@@ -407,7 +407,7 @@ int masterControlProgram(const int paramCount, const int32 *params) {
 				nextBuilding = _vm->_moonbase->readFromArray(unitsArray, 0, unitsCounter);
 			}
 
-			_vm->nukeArray(unitsArray);
+			_vm->_moonbase->deallocateArray(unitsArray);
 
 			if (!balloonFlag) {
 				launchAction = new int[4];
@@ -907,7 +907,7 @@ int masterControlProgram(const int paramCount, const int32 *params) {
 				opponentBuilding = _vm->_moonbase->readFromArray(nearbyOpponents, 0, opponentCounter);
 			}
 
-			_vm->nukeArray(nearbyOpponents);
+			_vm->_moonbase->deallocateArray(nearbyOpponents);
 
 			if (defenseOn && defenseOff) {
 				if (!_vm->_rnd.getRandomNumber(1)) {
@@ -1164,7 +1164,7 @@ int chooseBehavior() {
 				energyBuilding = _vm->_moonbase->readFromArray(energyUnits, 0, energyCounter);
 			}
 
-			_vm->nukeArray(energyUnits);
+			_vm->_moonbase->deallocateArray(energyUnits);
 
 			if (energyCount < poolMaxCount) {
 				int closestHub = getClosestUnit(poolX, poolY, 300, currentPlayer, 1, BUILDING_MAIN_BASE, 1);
@@ -1257,7 +1257,7 @@ int chooseBehavior() {
 						defenseBuilding = _vm->_moonbase->readFromArray(defArray, 0, defCounter);
 					}
 
-					_vm->nukeArray(defArray);
+					_vm->_moonbase->deallocateArray(defArray);
 
 					if (!numDefenders) {
 						int defArray2 = getUnitsWithinRadius(hubX, hubY, 170);
@@ -1276,7 +1276,7 @@ int chooseBehavior() {
 							defenseBuilding2 = _vm->_moonbase->readFromArray(defArray, 0, defCounter);
 						}
 
-						_vm->nukeArray(defArray2);
+						_vm->_moonbase->deallocateArray(defArray2);
 
 					}
 
@@ -1314,7 +1314,7 @@ int chooseBehavior() {
 			}
 		}
 
-		_vm->nukeArray(enemyArray);
+		_vm->_moonbase->deallocateArray(enemyArray);
 		offCon--;
 	}
 
@@ -1363,7 +1363,7 @@ int chooseBehavior() {
 						closeBuilding = _vm->_moonbase->readFromArray(closeBuildingsArray, 0, closeBuildingCounter);
 					}
 
-					_vm->nukeArray(closeBuildingsArray);
+					_vm->_moonbase->deallocateArray(closeBuildingsArray);
 
 					int defCounter = 0;
 					int defArray = getUnitsWithinRadius(hubX, hubY, 170);
@@ -1382,7 +1382,7 @@ int chooseBehavior() {
 						defenseBuilding = _vm->_moonbase->readFromArray(defArray, 0, defCounter);
 					}
 
-					_vm->nukeArray(defArray);
+					_vm->_moonbase->deallocateArray(defArray);
 
 					if (numDefenders > 2)
 						defCon++;
@@ -1481,7 +1481,7 @@ int chooseTarget(int behavior1) {
 					thisPoolUnit = _vm->_moonbase->readFromArray(poolUnitsArray, 0, j);
 				}
 
-				_vm->nukeArray(poolUnitsArray);
+				_vm->_moonbase->deallocateArray(poolUnitsArray);
 
 				// if enemy collector, put at bottom
 				if (enemyPool) {
@@ -1532,7 +1532,7 @@ int chooseTarget(int behavior1) {
 					if ((getTerrain(getHubX(thisBuilding), getHubY(thisBuilding)) != TERRAIN_TYPE_WATER) || (getPlayerEnergy() > 6)) {
 						if (getClosestUnit(getHubX(thisBuilding), getHubY(thisBuilding), 380, currentPlayer, 1, BUILDING_MAIN_BASE, 1)) {
 							returnBuilding = thisBuilding;
-							_vm->nukeArray(enemyArray);
+							_vm->_moonbase->deallocateArray(enemyArray);
 							return returnBuilding;
 						}
 					} else {
@@ -1558,7 +1558,7 @@ int chooseTarget(int behavior1) {
 			}
 		}
 
-		_vm->nukeArray(enemyArray);
+		_vm->_moonbase->deallocateArray(enemyArray);
 
 		if (attackableIndex) {
 			int thisWorth = 0;
@@ -1718,7 +1718,7 @@ int chooseTarget(int behavior1) {
 						defenseBuilding = _vm->_moonbase->readFromArray(defenseArray, 0, j);
 					}
 
-					_vm->nukeArray(defenseArray);
+					_vm->_moonbase->deallocateArray(defenseArray);
 
 					// Calculate if this unit is attackable
 					// get dist to nearest enemy hub, offense
@@ -1925,7 +1925,7 @@ Tree *initAcquireTarget(int targetX, int targetY, Node **retNode) {
 
 	int thisElement = _vm->_moonbase->readFromArray(unitsArray, 0, 0);
 
-	_vm->nukeArray(unitsArray);
+	_vm->_moonbase->deallocateArray(unitsArray);
 
 	if (!thisElement) {
 		delete myBaseTarget;
@@ -2062,7 +2062,7 @@ int *energizeTarget(int &targetX, int &targetY, int index) {
 	}
 
 	if (poolUnitsArray)
-		_vm->nukeArray(poolUnitsArray);
+		_vm->_moonbase->deallocateArray(poolUnitsArray);
 
 	poolUnitsArray = getUnitsWithinRadius(targetX, targetY, 450);
 	assert(poolUnitsArray);
@@ -2175,14 +2175,14 @@ int *energizeTarget(int &targetX, int &targetY, int index) {
 								if (nextUnit <= 0)
 									retVal[0] = 0;
 
-								_vm->nukeArray(poolUnitsArray);
+								_vm->_moonbase->deallocateArray(poolUnitsArray);
 								poolUnitsArray = 0;
 								return retVal;
 							}
 						}
 
 						if (result > 0) {
-							_vm->nukeArray(poolUnitsArray);
+							_vm->_moonbase->deallocateArray(poolUnitsArray);
 							poolUnitsArray = 0;
 
 							targetX = xPos;
@@ -2205,7 +2205,7 @@ int *energizeTarget(int &targetX, int &targetY, int index) {
 					} else {
 						int *retVal = new int[4];
 						retVal[0] = 0;
-						_vm->nukeArray(poolUnitsArray);
+						_vm->_moonbase->deallocateArray(poolUnitsArray);
 						poolUnitsArray = 0;
 
 						return retVal;
@@ -2224,12 +2224,12 @@ int *energizeTarget(int &targetX, int &targetY, int index) {
 			j = 0;
 		}
 	} else {
-		_vm->nukeArray(poolUnitsArray);
+		_vm->_moonbase->deallocateArray(poolUnitsArray);
 		poolUnitsArray = 0;
 		return NULL;
 	}
 
-	_vm->nukeArray(poolUnitsArray);
+	_vm->_moonbase->deallocateArray(poolUnitsArray);
 	poolUnitsArray = 0;
 	int *retVal = new int[4];
 	retVal[0] = 0;

@@ -361,7 +361,7 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 		}
 	}
 
-	_vm->nukeArray(unitsArray);
+	_vm->_moonbase->deallocateArray(unitsArray);
 
 	//Check if repair is needed
 	int targetUnit = getClosestUnit(targetX + 5, targetY, 15, currentPlayer, 1, 0, 0, 0);
@@ -384,7 +384,7 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 				}
 			}
 
-			_vm->nukeArray(unitsArray);
+			_vm->_moonbase->deallocateArray(unitsArray);
 
 			if (defCount) {
 				//repair
@@ -480,7 +480,7 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 				setPower(power);
 				setAngle(angle);
 
-				_vm->nukeArray(unitsArray2);
+				_vm->_moonbase->deallocateArray(unitsArray2);
 				return 1;
 			}
 

@@ -119,7 +119,7 @@ byte *ScummEngine_v72he::defineArray(int array, int type, int dim2start, int dim
 
 	id = findFreeArrayId();
 
-	debug(9,"defineArray (array %d, dim2start %d, dim2end %d dim1start %d dim1end %d", id, dim2start, dim2end, dim1start, dim1end);
+	debug(9, "defineArray (array %d, dim2start %d, dim2end %d dim1start %d dim1end %d", id, dim2start, dim2end, dim1start, dim1end);
 
 	if (array & 0x80000000) {
 		error("Can't define bit variable as array pointer");
