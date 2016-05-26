@@ -27,7 +27,9 @@
 
 namespace Stark {
 
-class Resource;
+namespace Resources {
+class Script;
+}
 
 class Console : public GUI::Debugger {
 public:
@@ -54,6 +56,8 @@ private:
 	bool Cmd_ChangeChapter(int argc, const char **argv);
 	bool Cmd_ChangeKnowledge(int argc, const char **argv);
 	bool Cmd_SelectDialogOption(int argc, const char **argv);
+
+	Common::Array<Resources::Script *> listAllLocationScripts() const;
 };
 
 } // End of namespace Stark

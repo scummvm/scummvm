@@ -183,20 +183,28 @@ bool Console::Cmd_ChangeKnowledge(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::Cmd_ListScripts(int argc, const char **argv) {
+Common::Array<Resources::Script *> Console::listAllLocationScripts() const {
+	Common::Array<Resources::Script *> scripts;
+
 	Resources::Level *level = StarkGlobal->getCurrent()->getLevel();
 	Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
-	Common::Array<Resources::Script *> scriptArr = level->listChildrenRecursive<Resources::Script>();
-	scriptArr.insert_at(scriptArr.size(), location->listChildrenRecursive<Resources::Script>());
+	scripts.push_back(level->listChildrenRecursive<Resources::Script>());
+	scripts.push_back(location->listChildrenRecursive<Resources::Script>());
 
-	Common::Array<Resources::Script *>::iterator it;
-	int i = 0;
-	for (it = scriptArr.begin(); it != scriptArr.end(); ++it) {
-		debugPrintf("%d: %s - enabled: %d", i++, (*it)->getName().c_str(), (*it)->isEnabled());
+	return scripts;
+}
+
+bool Console::Cmd_ListScripts(int argc, const char **argv) {
+	Common::Array<Resources::Script *> scripts = listAllLocationScripts();
+
+	for (uint i = 0; i < scripts.size(); i++) {
+		Resources::Script *script = scripts[i];
+
+		debugPrintf("%d: %s - enabled: %d", i, script->getName().c_str(), script->isEnabled());
 
 		// Print which resource is causing the script to wait
-		if ((*it)->isSuspended()) {
-			Resources::Object *suspending = (*it)->getSuspendingResource();
+		if (script->isSuspended()) {
+			Resources::Object *suspending = script->getSuspendingResource();
 			if (suspending) {
 				debugPrintf(", waiting for: %s (%s)", suspending->getName().c_str(), suspending->getType().getName());
 			} else {
@@ -220,22 +228,20 @@ bool Console::Cmd_EnableScript(int argc, const char **argv) {
 		if (argc >= 3) {
 			value = atoi(argv[2]);
 		}
-		Resources::Level *level = StarkGlobal->getCurrent()->getLevel();
-		Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
-		Common::Array<Resources::Script *> scriptArr = level->listChildrenRecursive<Resources::Script>();
-		scriptArr.insert_at(scriptArr.size(), location->listChildrenRecursive<Resources::Script>());
-		if (index < scriptArr.size() ) {
-			Resources::Script *script = scriptArr[index];
+
+		Common::Array<Resources::Script *> scripts = listAllLocationScripts();
+		if (index < scripts.size() ) {
+			Resources::Script *script = scripts[index];
 			script->enable(value);
 			return true;
 		} else {
-			debugPrintf("Invalid index %d, only %d indices available\n", index, scriptArr.size());
+			debugPrintf("Invalid index %d, only %d indices available\n", index, scripts.size());
 		}
 	} else {
 		debugPrintf("Too few args\n");
 	}
 
-	debugPrintf("Change the value of some knowledge. Use dumpKnowledge to get an id\n");
+	debugPrintf("Enable or disable a script. Use listScripts to get an id\n");
 	debugPrintf("Usage :\n");
 	debugPrintf("enableScript [id] (value)\n");
 	return true;
@@ -247,30 +253,23 @@ bool Console::Cmd_ForceScript(int argc, const char **argv) {
 	if (argc >= 2) {
 		index = atoi(argv[1]);
 
-		bool value = true;
-		if (argc >= 3) {
-			value = atoi(argv[2]);
-		}
-		Resources::Level *level = StarkGlobal->getCurrent()->getLevel();
-		Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
-		Common::Array<Resources::Script *> scriptArr = level->listChildrenRecursive<Resources::Script>();
-		scriptArr.insert_at(scriptArr.size(), location->listChildrenRecursive<Resources::Script>());
-		if (index < scriptArr.size() ) {
-			Resources::Script *script = scriptArr[index];
-			script->enable(value);
+		Common::Array<Resources::Script *> scripts = listAllLocationScripts();
+		if (index < scripts.size() ) {
+			Resources::Script *script = scripts[index];
+			script->enable(true);
 			script->goToNextCommand(); // Skip the begin command to avoid checks
 			script->execute(Resources::Script::kCallModePlayerAction);
 			return true;
 		} else {
-			debugPrintf("Invalid index %d, only %d indices available\n", index, scriptArr.size());
+			debugPrintf("Invalid index %d, only %d indices available\n", index, scripts.size());
 		}
 	} else {
 		debugPrintf("Too few args\n");
 	}
 
-	debugPrintf("Change the value of some knowledge. Use dumpKnowledge to get an id\n");
+	debugPrintf("Force the execution of a script. Use listScripts to get an id\n");
 	debugPrintf("Usage :\n");
-	debugPrintf("enableScript [id] (value)\n");
+	debugPrintf("forceScript [id]\n");
 	return true;
 }
 
