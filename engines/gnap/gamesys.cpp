@@ -475,7 +475,7 @@ void GameSys::seqInsertGfx(int index, int duration) {
 		gfxItem->_prevFrame._spriteId = -1;
 		gfxItem->_prevFrame._soundId = -1;
 		int totalDuration = duration;
-		if ((seqItem->_flags & 4) && totalDuration > 0) {
+		if ((seqItem->_flags & kSeqUnk) && totalDuration > 0) {
 			gfxItem->_prevFrame._duration = 1;
 			if (gfxItem->_delayTicks <= totalDuration)
 				gfxItem->_delayTicks = 0;
@@ -498,7 +498,7 @@ void GameSys::seqInsertGfx(int index, int duration) {
 			if (gfxItem->_currFrame._spriteId != -1 && (seqItem->_x != 0 || seqItem->_y != 0))
 				gfxItem->_currFrame._rect.translate(seqItem->_x, seqItem->_y);
 			// Update sprite scaling
-			if ((seqItem->_flags & 1) && gfxItem->_currFrame._rect.bottom >= _backgroundImageValue1 && gfxItem->_currFrame._rect.bottom <= _backgroundImageValue3) {
+			if ((seqItem->_flags & kSeqScale) && gfxItem->_currFrame._rect.bottom >= _backgroundImageValue1 && gfxItem->_currFrame._rect.bottom <= _backgroundImageValue3) {
 				int scaleValue = _backgroundImageValue2	+ (gfxItem->_currFrame._rect.bottom - _backgroundImageValue1) *
 					(_backgroundImageValue4 - _backgroundImageValue2) /
 					(_backgroundImageValue3 - _backgroundImageValue1);
@@ -1027,7 +1027,7 @@ void GameSys::fatUpdateFrame() {
 					gfxItem->_currFrame._spriteId = -1;
 					gfxItem->_currFrame._soundId = -1;
 					gfxItem->_updFlag = true;
-				} else if ((seqItem->_flags & 4) && clockDelta > 1) {
+				} else if ((seqItem->_flags & kSeqUnk) && clockDelta > 1) {
 					if (gfxItem->_delayTicks < clockDelta) {
 						duration = clockDelta - gfxItem->_delayTicks;
 						gfxItem->_delayTicks = 0;
@@ -1067,7 +1067,7 @@ void GameSys::fatUpdateFrame() {
 							if (gfxItem->_currFrame._spriteId != -1 && (seqItem->_x != 0 || seqItem->_y != 0))
 								gfxItem->_currFrame._rect.translate(seqItem->_x, seqItem->_y);
 							// Update sprite scaling
-							if ((seqItem->_flags & 1) && gfxItem->_currFrame._rect.bottom >= _backgroundImageValue1 && gfxItem->_currFrame._rect.bottom <= _backgroundImageValue3) {
+							if ((seqItem->_flags & kSeqScale) && gfxItem->_currFrame._rect.bottom >= _backgroundImageValue1 && gfxItem->_currFrame._rect.bottom <= _backgroundImageValue3) {
 								int v17 = _backgroundImageValue2 + (gfxItem->_currFrame._rect.bottom - _backgroundImageValue1) *
 									(_backgroundImageValue4 - _backgroundImageValue2) /
 									(_backgroundImageValue3 - _backgroundImageValue1);
@@ -1159,9 +1159,9 @@ void GameSys::fatUpdateFrame() {
 
 	for (uint i = 0; i < _fatSequenceItems.size(); ++i) {
 		Sequence *seqItem = &_fatSequenceItems[i];
-		if (((seqItem->_flags & 8) || (seqItem->_flags & 0x20)) && seqItem->_sequenceId2 != -1) {
+		if (((seqItem->_flags & kSeqSyncWait) || (seqItem->_flags & kSeqSyncExists)) && seqItem->_sequenceId2 != -1) {
 			duration = 0;
-			if (((seqItem->_flags & 0x20) && seqLocateGfx(seqItem->_sequenceId2, seqItem->_id2, nullptr)) ||
+			if (((seqItem->_flags & kSeqSyncExists) && seqLocateGfx(seqItem->_sequenceId2, seqItem->_id2, nullptr)) ||
 				updateSequenceDuration(seqItem->_sequenceId2, seqItem->_id2, &duration)) {
 				int index = -1;
 				bool found = false;
@@ -1214,7 +1214,7 @@ void GameSys::fatUpdateFrame() {
 		Sequence *seqItem = &_seqItems[i];
 		if (seqLocateGfx(seqItem->_sequenceId, seqItem->_id, nullptr)) {
 			updateAnimationsStatus(seqItem->_sequenceId, seqItem->_id);
-			if (seqItem->_flags & 2) {
+			if (seqItem->_flags & kSeqLoop) {
 				int gfxDuration;
 				if (updateSequenceDuration(seqItem->_sequenceId, seqItem->_id, &gfxDuration)) {
 					seqRemoveGfx(seqItem->_sequenceId, seqItem->_id);
