@@ -80,6 +80,8 @@ public:
 		return conceptNode ? conceptNode->get18() : 0;
 	}
 	int get58() const { return _field58; }
+	int is18(int val, const TTconceptNode *node) const;
+	int is1C(int val, const TTconceptNode *node) const;
 
 	int getStatus() const { return _status; }
 

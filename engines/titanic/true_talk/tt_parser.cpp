@@ -791,9 +791,14 @@ int TTparser::considerRequests(TTword *word) {
 
 			case SEEK_ACTOR:
 				if (_sentenceConcept->_concept0P) {
+					if (_sentenceConcept->_concept0P->compareTo("?") &&
+							_sentenceConcept->_concept1P->isWordId(113) &&
+							word->_wordClass == WC_THING) {
+						// TODO
+					}
 
-				}
-				else {
+
+				} else {
 
 				}
 				break;
@@ -804,12 +809,33 @@ int TTparser::considerRequests(TTword *word) {
 			case SEEK_FROM:
 			case SEEK_TO_OVERRIDE:
 			case SEEK_FROM_OVERRIDE:
+				if (_sentenceConcept->_concept4P) {
+					delete _sentenceConcept->_concept4P;
+					_sentenceConcept->_concept4P = nullptr;
+				}
+
+				addNode(8);
+				flag = true;
+				break;
+
 			case SEEK_LOCATION:
 			case SEEK_OWNERSHIP:
 			case SEEK_STATE:
 			case SEEK_MODIFIERS:
 			case SEEK_NEW_FRAME:
 			case SEEK_STATE_OBJECT:
+				if (!_sentenceConcept->_concept5P) {
+					addToConceptList(word);
+				} else if (_sentenceConcept->concept5WordId() == 113 ||
+						_sentenceConcept->concept5WordId() == 112) {
+					_sentenceConcept->createConcept(1, 2, word);
+				} else {
+					addToConceptList(word);
+				}
+
+				flag = true;
+				break;
+
 			case SET_ACTION:
 			case SET_COLOR:
 			case ACTOR_IS_TO:

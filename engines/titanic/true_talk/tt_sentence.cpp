@@ -218,4 +218,16 @@ TTconcept *TTsentence::getFrameSlot(int conceptIndex, TTconceptNode *conceptNode
 	return newConcept;
 }
 
+int TTsentence::is18(int val, const TTconceptNode *node) const {
+	if (!node)
+		node = &_sentenceConcept;
+	return node->_field18 == val;
+}
+
+int TTsentence::is1C(int val, const TTconceptNode *node) const {
+	if (!node)
+		node = &_sentenceConcept;
+	return node->_field1C == val;
+}
+
 } // End of namespace Titanic

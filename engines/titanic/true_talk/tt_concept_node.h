@@ -60,9 +60,13 @@ public:
 	TTconcept **setConcept(int conceptIndex, TTconcept *src);
 	int replaceConcept(int mode, int conceptIndex, TTconcept *concept);
 	int changeConcept(int mode, TTconcept **conceptPP, int conceptIndex);
+	bool createConcept(int mode, int conceptIndex, TTword *word);
 
 	int concept1WordId() const {
 		return _concept1P ? _concept1P->getWordId() : 0;
+	}
+	int concept5WordId() const {
+		return _concept5P ? _concept5P->getWordId() : 0;
 	}
 };
 

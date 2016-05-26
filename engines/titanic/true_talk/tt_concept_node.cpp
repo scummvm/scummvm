@@ -148,4 +148,18 @@ int TTconceptNode::changeConcept(int mode, TTconcept **conceptPP, int conceptInd
 	}
 }
 
+bool TTconceptNode::createConcept(int mode, int conceptIndex, TTword *word) {
+	TTconcept *newConcept = new TTconcept(word, ST_UNKNOWN_SCRIPT);
+	TTconcept **conceptPP = setConcept(conceptIndex, newConcept);
+
+	if (mode == 0 || (mode == 1 && !*conceptPP)) {
+		delete *conceptPP;
+		*conceptPP = newConcept;
+		return false;
+	} else {
+		delete newConcept;
+		return true;
+	}
+}
+
 } // End of namespace Titanic
