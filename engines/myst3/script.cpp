@@ -995,7 +995,7 @@ void Script::varSetMinDistanceToZone(Context &c, const Opcode &cmd) {
 	float heading = _vm->_state->getLookAtHeading();
 	float pitch = _vm->_state->getLookAtPitch();
 	int16 distance = (int16)(100 * _vm->_scene->distanceToZone(cmd.args[2], cmd.args[1], cmd.args[3], heading, pitch));
-	if (distance < _vm->_state->getVar(cmd.args[0]))
+	if (distance >= _vm->_state->getVar(cmd.args[0]))
 		_vm->_state->setVar(cmd.args[0], distance);
 }
 
