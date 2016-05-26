@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	fonts/winfont.o \
 	maccursor.o \
 	managed_surface.o \
+	nine_patch.o \
 	pixelformat.o \
 	primitives.o \
 	scaler.o \
