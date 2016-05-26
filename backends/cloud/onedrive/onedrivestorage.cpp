@@ -31,6 +31,7 @@
 #include <common/file.h>
 #include "common/system.h"
 #include "common/cloudmanager.h"
+#include "onedrivetokenrefresher.h"
 
 namespace Cloud {
 namespace OneDrive {
@@ -113,23 +114,10 @@ void OneDriveStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "refresh_token", _refreshToken, "cloud");
 }
 
-void OneDriveStorage::printJsonTokenReceived(RequestBoolPair pair) {
-	if (pair.value) syncSaves(0); //try again
-}
-
 void OneDriveStorage::printJson(Networking::RequestJsonPair pair) {
 	Common::JSONValue *json = pair.value;
 	if (!json) {
 		warning("printJson: NULL");
-		return;
-	}
-
-	Common::JSONObject result = json->asObject();
-	if (result.contains("error")) {
-		//Common::JSONObject error = result.getVal("error")->asObject();
-		debug("bad token, trying again...");
-		getAccessToken(new Common::Callback<OneDriveStorage, RequestBoolPair>(this, &OneDriveStorage::printJsonTokenReceived));
-		delete json;
 		return;
 	}
 
@@ -140,7 +128,7 @@ void OneDriveStorage::printJson(Networking::RequestJsonPair pair) {
 int32 OneDriveStorage::syncSaves(BoolCallback callback) {
 	//this is not the real syncSaves() implementation	
 	Networking::JsonCallback innerCallback = new Common::Callback<OneDriveStorage, Networking::RequestJsonPair>(this, &OneDriveStorage::printJson);
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://api.onedrive.com/v1.0/drives/");	
+	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, "https://api.onedrive.com/v1.0/drives/");	
 	request->addHeader("Authorization: bearer " + _token);
 	return ConnMan.addRequest(request);
 }

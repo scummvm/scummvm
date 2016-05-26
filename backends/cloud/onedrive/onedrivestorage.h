@@ -44,12 +44,6 @@ class OneDriveStorage: public Cloud::Storage {
 	*/
 	OneDriveStorage(Common::String code);
 
-	/**
-	* Gets new access_token. If <code> passed is "", refresh_token is used.
-	* Use "" in order to refresh token and pass a callback, so you could
-	* continue your work when new token is available.
-	*/
-	void getAccessToken(BoolCallback callback, Common::String code = "");	
 	void tokenRefreshed(BoolCallback callback, Networking::RequestJsonPair pair);
 	void codeFlowComplete(RequestBoolPair pair);
 
@@ -122,6 +116,15 @@ public:
 	* Show message with OneDrive auth instructions. (Temporary)
 	*/
 	static void authThroughConsole();
+
+	/**
+	* Gets new access_token. If <code> passed is "", refresh_token is used.
+	* Use "" in order to refresh token and pass a callback, so you could
+	* continue your work when new token is available.
+	*/
+	void getAccessToken(BoolCallback callback, Common::String code = "");
+
+	Common::String accessToken() { return _token; }
 };
 
 } //end of namespace OneDrive

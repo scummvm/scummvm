@@ -74,11 +74,18 @@ void CurlJsonRequest::handle() {
 				char *contents = getPreparedContents();
 				if (_stream->httpResponseCode() != 200)
 					debug("%s", contents);
-				Common::JSONValue *json = Common::JSON::parse(contents);				
+				Common::JSONValue *json = Common::JSON::parse(contents);
 				(*_jsonCallback)(RequestJsonPair(_id, json)); //potential memory leak, free it in your callbacks!
 			}
 		}
 	}
+}
+
+void CurlJsonRequest::restart() {
+	if (_stream) delete _stream;
+	_stream = 0;
+	_contentsStream = Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
+	//with no stream available next handle() will create another one
 }
 
 } //end of namespace Networking

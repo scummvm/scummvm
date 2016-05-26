@@ -45,7 +45,8 @@ public:
 	CurlJsonRequest(JsonCallback cb, const char *url);
 	virtual ~CurlJsonRequest();
 
-	virtual void handle();
+	virtual void handle(); 
+	virtual void restart();
 };
 
 }  //end of namespace Networking

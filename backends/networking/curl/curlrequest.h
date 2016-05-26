@@ -25,6 +25,7 @@
 
 #include "backends/networking/curl/request.h"
 #include "common/str.h"
+#include <common/array.h>
 
 struct curl_slist;
 
@@ -46,11 +47,12 @@ public:
 	virtual void handle();
 	virtual void restart();
 
-	void addHeader(Common::String header);
-	void addPostField(Common::String header);
+	virtual void setHeaders(Common::Array<Common::String> &headers);
+	virtual void addHeader(Common::String header);
+	virtual void addPostField(Common::String field);
 
 	/** Start this Request with ConnMan. Returns its ReadStream. */
-	NetworkReadStream *execute();
+	virtual NetworkReadStream *execute();
 };
 
 }  //end of namespace Networking

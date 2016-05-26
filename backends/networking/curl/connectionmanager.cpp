@@ -76,6 +76,7 @@ void ConnectionManager::startTimer(int interval) {
 }
 
 void ConnectionManager::stopTimer() {
+	debug("timer stopped");
 	Common::TimerManager *manager = g_system->getTimerManager();
 	manager->removeTimerProc(connectionsThread);
 	_timerStarted = false;
@@ -111,6 +112,7 @@ void ConnectionManager::interateRequests() {
 			else {
 				info.state = PROCESSING;
 				info.request->restart();
+				debug("request restarted");
 			}
 
 		default:

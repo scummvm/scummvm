@@ -27,7 +27,8 @@ MODULE_OBJS += \
 	cloud/downloadrequest.o \
 	cloud/dropbox/dropboxstorage.o \
 	cloud/dropbox/dropboxlistdirectoryrequest.o \
-	cloud/onedrive/onedrivestorage.o
+	cloud/onedrive/onedrivestorage.o \
+	cloud/onedrive/onedrivetokenrefresher.o
 endif
 
 ifdef USE_LIBCURL

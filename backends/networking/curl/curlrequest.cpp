@@ -53,6 +53,13 @@ void CurlRequest::restart() {
 	//with no stream available next handle() will create another one
 }
 
+void CurlRequest::setHeaders(Common::Array<Common::String> &headers) {
+	curl_slist_free_all(_headersList);
+	_headersList = 0;
+	for (uint32 i = 0; i < headers.size(); ++i)
+		addHeader(headers[i]);
+}
+
 void CurlRequest::addHeader(Common::String header) {
 	_headersList = curl_slist_append(_headersList, header.c_str());
 }
