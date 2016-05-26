@@ -74,31 +74,31 @@ public:
 	/** Public Cloud API comes down there. */
 
 	/** Returns Common::Array<StorageFile>. */
-	virtual void listDirectory(Common::String path, FileArrayCallback callback, bool recursive = false) {} //TODO
+	virtual int32 listDirectory(Common::String path, FileArrayCallback callback, bool recursive = false) { return -1; } //TODO
 
 	/** Calls the callback when finished. */
-	virtual void upload(Common::String path, Common::ReadStream *contents, BoolCallback callback) {} //TODO
+	virtual int32 upload(Common::String path, Common::ReadStream *contents, BoolCallback callback) { return -1; } //TODO
 
 	/** Returns pointer to Networking::NetworkReadStream. */
 	virtual Networking::NetworkReadStream *streamFile(Common::String path) { return 0; } //TODO
 
 	/** Calls the callback when finished. */
-	virtual void download(Common::String remotePath, Common::String localPath, BoolCallback callback) {} //TODO
+	virtual int32 download(Common::String remotePath, Common::String localPath, BoolCallback callback) { return -1; } //TODO
 
 	/** Calls the callback when finished. */
-	virtual void remove(Common::String path, BoolCallback callback) {} //TODO
+	virtual int32 remove(Common::String path, BoolCallback callback) { return -1; } //TODO
 
 	/** Calls the callback when finished. */
-	virtual void syncSaves(BoolCallback callback);
+	virtual int32 syncSaves(BoolCallback callback);
 
 	/** Calls the callback when finished. */
-	virtual void createDirectory(Common::String path, BoolCallback callback) {} //TODO
+	virtual int32 createDirectory(Common::String path, BoolCallback callback) { return -1; } //TODO
 
 	/** Calls the callback when finished. */
-	virtual void touch(Common::String path, BoolCallback callback) {} //TODO
+	virtual int32 touch(Common::String path, BoolCallback callback) { return -1; } //TODO
 
 	/** Returns the StorageInfo struct. */
-	virtual void info(StorageInfoCallback callback) {} //TODO
+	virtual int32 info(StorageInfoCallback callback) { return -1; } //TODO
 
 	/** Returns whether saves sync process is running. */
 	virtual bool isSyncing() { return false; } //TODO

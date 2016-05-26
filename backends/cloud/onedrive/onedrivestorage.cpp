@@ -137,12 +137,12 @@ void OneDriveStorage::printJson(void *jsonPointer) {
 	delete json;
 }
 
-void OneDriveStorage::syncSaves(BoolCallback callback) {
+int32 OneDriveStorage::syncSaves(BoolCallback callback) {
 	//this is not the real syncSaves() implementation	
 	Common::BaseCallback<> *innerCallback = new Common::Callback<OneDriveStorage>(this, &OneDriveStorage::printJson);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://api.onedrive.com/v1.0/drives/");	
 	request->addHeader("Authorization: bearer " + _token);
-	ConnMan.addRequest(request);
+	return ConnMan.addRequest(request);
 }
 
 OneDriveStorage *OneDriveStorage::loadFromConfig(Common::String keyPrefix) {

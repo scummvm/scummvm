@@ -24,6 +24,7 @@
 #define BACKENDS_NETWORKING_CURL_REQUEST_H
 
 #include "common/callback.h"
+#include "common/scummsys.h"
 
 namespace Networking {
 
@@ -36,9 +37,11 @@ protected:
 
 	Common::BaseCallback<> *_callback;
 
+	int32 _id;
+
 public:
-	Request(Common::BaseCallback<> *cb): _callback(cb) {};
-	virtual ~Request() { delete _callback; };
+	Request(Common::BaseCallback<> *cb): _callback(cb), _id(-1) {}
+	virtual ~Request() { delete _callback; }
 
 	/**
 	* Method, which does actual work. Depends on what this Request is doing.
@@ -47,6 +50,8 @@ public:
 	*/
 
 	virtual bool handle() = 0;
+
+	void setId(int32 id) { _id = id; }
 };
 
 } //end of namespace Cloud

@@ -57,34 +57,40 @@ public:
 
 	virtual void saveConfig(Common::String keyPrefix) = 0;
 
-	/** Public Cloud API comes down there. */
+	/**
+	 * Public Cloud API comes down there.
+	 *
+	 * All Cloud API methods return int32 request id, which might be used to access
+	 * request through ConnectionManager. All methods also accept a callback, which
+	 * would be called, when request is complete.
+	 */
 
 	/** Returns Common::Array<StorageFile>. */
-	virtual void listDirectory(Common::String path, FileArrayCallback callback, bool recursive = false) = 0;
+	virtual int32 listDirectory(Common::String path, FileArrayCallback callback, bool recursive = false) = 0;
 
 	/** Calls the callback when finished. */
-	virtual void upload(Common::String path, Common::ReadStream *contents, BoolCallback callback) = 0;
+	virtual int32 upload(Common::String path, Common::ReadStream *contents, BoolCallback callback) = 0;
 
 	/** Returns pointer to Networking::NetworkReadStream. */
-	virtual Networking::NetworkReadStream *streamFile(Common::String path) = 0;
+	virtual Networking::NetworkReadStream *streamFile(Common::String path) = 0; //TODO: return int32 somehow
 
 	/** Calls the callback when finished. */
-	virtual void download(Common::String remotePath, Common::String localPath, BoolCallback callback) = 0;
+	virtual int32 download(Common::String remotePath, Common::String localPath, BoolCallback callback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual void remove(Common::String path, BoolCallback callback) = 0;
+	virtual int32 remove(Common::String path, BoolCallback callback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual void syncSaves(BoolCallback callback) = 0;
+	virtual int32 syncSaves(BoolCallback callback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual void createDirectory(Common::String path, BoolCallback callback) = 0;
+	virtual int32 createDirectory(Common::String path, BoolCallback callback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual void touch(Common::String path, BoolCallback callback) = 0;
+	virtual int32 touch(Common::String path, BoolCallback callback) = 0;
 
 	/** Returns the StorageInfo struct. */
-	virtual void info(StorageInfoCallback callback) = 0;
+	virtual int32 info(StorageInfoCallback callback) = 0;
 
 	/** Returns whether saves sync process is running. */
 	virtual bool isSyncing() = 0;

@@ -84,8 +84,8 @@ void DropboxStorage::printFiles(Common::Array<StorageFile> files) {
 		debug("\t%s", files[i].name().c_str());
 }
 
-void DropboxStorage::listDirectory(Common::String path, FileArrayCallback outerCallback, bool recursive) {
-	ConnMan.addRequest(new DropboxListDirectoryRequest(_token, path, outerCallback, recursive));
+int32 DropboxStorage::listDirectory(Common::String path, FileArrayCallback outerCallback, bool recursive) {
+	return ConnMan.addRequest(new DropboxListDirectoryRequest(_token, path, outerCallback, recursive));
 }
 
 Networking::NetworkReadStream *DropboxStorage::streamFile(Common::String path) {
@@ -101,30 +101,30 @@ Networking::NetworkReadStream *DropboxStorage::streamFile(Common::String path) {
 	return request->execute();
 }
 
-void DropboxStorage::download(Common::String remotePath, Common::String localPath, BoolCallback callback) {
+int32 DropboxStorage::download(Common::String remotePath, Common::String localPath, BoolCallback callback) {
 	Common::DumpFile *f = new Common::DumpFile();
 	if (!f->open(localPath, true)) {
 		warning("DropboxStorage: unable to open file to download into");
 		if (callback) (*callback)(false);
 		delete f;
-		return;
+		return -1;
 	}
 
-	ConnMan.addRequest(new DownloadRequest(callback, streamFile(remotePath), f));
+	return ConnMan.addRequest(new DownloadRequest(callback, streamFile(remotePath), f));
 }
 
-void DropboxStorage::syncSaves(BoolCallback callback) {
+int32 DropboxStorage::syncSaves(BoolCallback callback) {
 	//this is not the real syncSaves() implementation	
 	//"" is root in Dropbox, not "/"
 	//this must create all these directories:
-	download("/remote/test.jpg", "local/a/b/c/d/test.jpg", 0);
+	return download("/remote/test.jpg", "local/a/b/c/d/test.jpg", 0);
 }
 
-void DropboxStorage::info(StorageInfoCallback outerCallback) {
+int32 DropboxStorage::info(StorageInfoCallback outerCallback) {
 	Common::BaseCallback<> *innerCallback = new Common::CallbackBridge<DropboxStorage, StorageInfo>(this, &DropboxStorage::infoInnerCallback, outerCallback);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://api.dropboxapi.com/1/account/info");
 	request->addHeader("Authorization: Bearer " + _token);
-	ConnMan.addRequest(request);
+	return ConnMan.addRequest(request);
 	//that callback bridge wraps the outerCallback (passed in arguments from user) into innerCallback
 	//so, when CurlJsonRequest is finished, it calls the innerCallback
 	//innerCallback (which is DropboxStorage::infoInnerCallback in this case) processes the void *ptr

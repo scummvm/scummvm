@@ -48,9 +48,12 @@ void ConnectionManager::registerEasyHandle(CURL *easy) {
 	curl_multi_add_handle(_multi, easy);
 }
 
-void ConnectionManager::addRequest(Request *request) {
-	_requests.push_back(request);
+int32 ConnectionManager::addRequest(Request *request) {
+	int32 newId = _nextId++;
+	_requests[newId] = request;
+	request->setId(newId);
 	if (!_timerStarted) startTimer();
+	return newId;
 }
 
 //private goes here:
@@ -84,10 +87,13 @@ void ConnectionManager::handle() {
 void ConnectionManager::interateRequests() {
 	//call handle() of all running requests (so they can do their work)
 	debug("handling %d request(s)", _requests.size());
-	for (Common::Array<Request *>::iterator i = _requests.begin(); i != _requests.end();) {
-		if ((*i)->handle()) {
-			delete (*i);
-			_requests.erase(i);
+	for (Common::HashMap<int32, Request *>::iterator i = _requests.begin(); i != _requests.end();) {
+		Request *request = i->_value;
+		if (request && request->handle()) {
+			delete request;
+			//_requests.erase(i);
+			_requests[i->_key] = 0;
+			++i; //that's temporary
 		} else ++i;
 	}
 	if (_requests.empty()) stopTimer();

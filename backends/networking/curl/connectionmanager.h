@@ -26,7 +26,7 @@
 #include "backends/networking/curl/request.h"
 #include "common/str.h"
 #include "common/singleton.h"
-#include "common/array.h"
+#include "common/hashmap.h"
 
 typedef void CURL;
 typedef void CURLM;
@@ -41,7 +41,8 @@ class ConnectionManager : public Common::Singleton<ConnectionManager> {
 
 	CURLM *_multi;	
 	bool _timerStarted;
-	Common::Array<Request *> _requests;	
+	Common::HashMap<int32, Request *> _requests;
+	int32 _nextId;
 	
 	void startTimer(int interval = 1000000); //1 second is the default interval
 	void stopTimer();
@@ -66,8 +67,10 @@ public:
 	* Requests until they return true.
 	*
 	* @note This method starts the timer if it's not started yet.
+	*
+	* @return generated Request's id, which might be used to get its status
 	*/
-	void addRequest(Request *request);
+	int32 addRequest(Request *request);
 };
 
 /** Shortcut for accessing the connection manager. */
