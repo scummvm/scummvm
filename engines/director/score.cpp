@@ -61,6 +61,12 @@ Score::Score(Common::SeekableReadStream &stream) {
 	_frames.remove_at(0);
 }
 
+void Score::readVersion(uint32 rid) {
+	_versionMinor = rid & 0xffff;
+	_versionMajor = rid >> 16;
+	debug("%d.%d", _versionMajor, _versionMinor);
+}
+
 void Score::play() {
 	initGraphics(800, 800, true);
 	uint32 frameId = 0;

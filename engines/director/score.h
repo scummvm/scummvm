@@ -117,8 +117,13 @@ class Score {
 public:
     Common::Array<Frame *> _frames;
 
+private:
+    uint16 _versionMinor;
+    uint16 _versionMajor;
+
 public:
     Score(Common::SeekableReadStream &stream);
+    void readVersion(uint32 rid);
     void play();
 };
 
