@@ -26,6 +26,7 @@
 #include "backends/cloud/storage.h"
 #include "backends/networking/curl/request.h"
 #include "common/callback.h"
+#include "backends/networking/curl/curljsonrequest.h"
 
 namespace Cloud {
 namespace Dropbox {
@@ -40,7 +41,7 @@ class DropboxListDirectoryRequest: public Networking::Request {
 	Common::Array<StorageFile> _files;
 	int32 _requestId;
 
-	void responseCallback(Networking::RequestDataPair pair);
+	void responseCallback(Networking::RequestJsonPair pair);
 	void startupWork();
 
 public:

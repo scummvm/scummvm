@@ -25,19 +25,24 @@
 
 #include "backends/networking/curl/curlrequest.h"
 #include "common/memstream.h"
+#include "common/json.h"
 
 namespace Networking {
 
 class NetworkReadStream;
 
-class CurlJsonRequest: public CurlRequest {	
+typedef RequestIdPair<Common::JSONValue*> RequestJsonPair;
+typedef Common::BaseCallback<RequestJsonPair> *JsonCallback;
+
+class CurlJsonRequest: public CurlRequest {
+	JsonCallback _jsonCallback;
 	Common::MemoryWriteStreamDynamic _contentsStream;
 
 	/** Prepares raw bytes from _contentsStream to be parsed with Common::JSON::parse(). */
 	char *getPreparedContents();
 
 public:
-	CurlJsonRequest(DataCallback cb, const char *url); //TODO: use some Callback<JSON> already
+	CurlJsonRequest(JsonCallback cb, const char *url);
 	virtual ~CurlJsonRequest();
 
 	virtual void handle();

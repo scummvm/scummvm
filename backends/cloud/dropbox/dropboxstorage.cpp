@@ -38,7 +38,7 @@ namespace Dropbox {
 Common::String DropboxStorage::KEY; //can't use ConfMan there yet, loading it on instance creation/auth
 Common::String DropboxStorage::SECRET; //TODO: hide these secrets somehow
 
-static void saveAccessTokenCallback(Networking::RequestDataPair pair) {
+static void saveAccessTokenCallback(Networking::RequestJsonPair pair) {
 	Common::JSONValue *json = (Common::JSONValue *)pair.value;
 	if (json) {
 		debug("saveAccessTokenCallback:");
@@ -121,7 +121,7 @@ int32 DropboxStorage::syncSaves(BoolCallback callback) {
 }
 
 int32 DropboxStorage::info(StorageInfoCallback outerCallback) {
-	Networking::DataCallback innerCallback = new Common::CallbackBridge<DropboxStorage, RequestStorageInfoPair, Networking::RequestDataPair>(this, &DropboxStorage::infoInnerCallback, outerCallback);
+	Networking::JsonCallback innerCallback = new Common::CallbackBridge<DropboxStorage, RequestStorageInfoPair, Networking::RequestJsonPair>(this, &DropboxStorage::infoInnerCallback, outerCallback);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://api.dropboxapi.com/1/account/info");
 	request->addHeader("Authorization: Bearer " + _token);
 	return ConnMan.addRequest(request);
@@ -131,8 +131,8 @@ int32 DropboxStorage::info(StorageInfoCallback outerCallback) {
 	//and then calls the outerCallback (which wants to receive StorageInfo, not void *)
 }
 
-void DropboxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking::RequestDataPair pair) {
-	Common::JSONValue *json = (Common::JSONValue *)pair.value;
+void DropboxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking::RequestJsonPair pair) {
+	Common::JSONValue *json = pair.value;
 	if (!json) {
 		warning("NULL passed instead of JSON");
 		delete outerCallback;
@@ -214,7 +214,7 @@ void DropboxStorage::authThroughConsole() {
 }
 
 void DropboxStorage::getAccessToken(Common::String code) {
-	Networking::DataCallback callback = new Common::GlobalFunctionCallback<Networking::RequestDataPair>(saveAccessTokenCallback);
+	Networking::JsonCallback callback = new Common::GlobalFunctionCallback<Networking::RequestJsonPair>(saveAccessTokenCallback);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, "https://api.dropboxapi.com/1/oauth2/token");
 	request->addPostField("code=" + code);
 	request->addPostField("grant_type=authorization_code");

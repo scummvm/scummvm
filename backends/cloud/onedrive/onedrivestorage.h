@@ -25,6 +25,7 @@
 
 #include "backends/cloud/storage.h"
 #include "common/callback.h"
+#include "backends/networking/curl/curljsonrequest.h"
 
 namespace Cloud {
 namespace OneDrive {
@@ -49,10 +50,10 @@ class OneDriveStorage: public Cloud::Storage {
 	* continue your work when new token is available.
 	*/
 	void getAccessToken(BoolCallback callback, Common::String code = "");	
-	void tokenRefreshed(BoolCallback callback, Networking::RequestDataPair pair);
+	void tokenRefreshed(BoolCallback callback, Networking::RequestJsonPair pair);
 	void codeFlowComplete(RequestBoolPair pair);
 
-	void printJson(Networking::RequestDataPair pair);
+	void printJson(Networking::RequestJsonPair pair);
 	void printJsonTokenReceived(RequestBoolPair pair);
 public:	
 	virtual ~OneDriveStorage();

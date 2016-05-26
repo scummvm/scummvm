@@ -56,7 +56,7 @@ void OneDriveStorage::getAccessToken(BoolCallback callback, Common::String code)
 		return;
 	}
 
-	Networking::DataCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, RequestBoolPair, Networking::RequestDataPair>(this, &OneDriveStorage::tokenRefreshed, callback);
+	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, RequestBoolPair, Networking::RequestJsonPair>(this, &OneDriveStorage::tokenRefreshed, callback);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://login.live.com/oauth20_token.srf");
 	if (codeFlow) {
 		request->addPostField("code=" + code);
@@ -71,8 +71,8 @@ void OneDriveStorage::getAccessToken(BoolCallback callback, Common::String code)
 	ConnMan.addRequest(request);
 }
 
-void OneDriveStorage::tokenRefreshed(BoolCallback callback, Networking::RequestDataPair pair) {
-	Common::JSONValue *json = (Common::JSONValue *)pair.value;
+void OneDriveStorage::tokenRefreshed(BoolCallback callback, Networking::RequestJsonPair pair) {
+	Common::JSONValue *json = pair.value;
 	if (!json) {
 		warning("OneDriveStorage: got NULL instead of JSON");
 		if (callback) (*callback)(RequestBoolPair(-1, false));
@@ -117,8 +117,8 @@ void OneDriveStorage::printJsonTokenReceived(RequestBoolPair pair) {
 	if (pair.value) syncSaves(0); //try again
 }
 
-void OneDriveStorage::printJson(Networking::RequestDataPair pair) {
-	Common::JSONValue *json = (Common::JSONValue *)pair.value;
+void OneDriveStorage::printJson(Networking::RequestJsonPair pair) {
+	Common::JSONValue *json = pair.value;
 	if (!json) {
 		warning("printJson: NULL");
 		return;
@@ -139,7 +139,7 @@ void OneDriveStorage::printJson(Networking::RequestDataPair pair) {
 
 int32 OneDriveStorage::syncSaves(BoolCallback callback) {
 	//this is not the real syncSaves() implementation	
-	Networking::DataCallback innerCallback = new Common::Callback<OneDriveStorage, Networking::RequestDataPair>(this, &OneDriveStorage::printJson);
+	Networking::JsonCallback innerCallback = new Common::Callback<OneDriveStorage, Networking::RequestJsonPair>(this, &OneDriveStorage::printJson);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://api.onedrive.com/v1.0/drives/");	
 	request->addHeader("Authorization: bearer " + _token);
 	return ConnMan.addRequest(request);

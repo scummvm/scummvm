@@ -40,7 +40,7 @@ void DropboxListDirectoryRequest::startupWork() {
 	_files.clear();
 	_complete = false;
 
-	Networking::DataCallback innerCallback = new Common::Callback<DropboxListDirectoryRequest, Networking::RequestDataPair>(this, &DropboxListDirectoryRequest::responseCallback);
+	Networking::JsonCallback innerCallback = new Common::Callback<DropboxListDirectoryRequest, Networking::RequestJsonPair>(this, &DropboxListDirectoryRequest::responseCallback);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://api.dropboxapi.com/2/files/list_folder");
 	request->addHeader("Authorization: Bearer " + _token);
 	request->addHeader("Content-Type: application/json");
@@ -58,8 +58,8 @@ void DropboxListDirectoryRequest::startupWork() {
 }
 
 
-void DropboxListDirectoryRequest::responseCallback(Networking::RequestDataPair pair) {
-	Common::JSONValue *json = (Common::JSONValue *)pair.value;
+void DropboxListDirectoryRequest::responseCallback(Networking::RequestJsonPair pair) {
+	Common::JSONValue *json = pair.value;
 	if (json) {
 		Common::JSONObject response = json->asObject();
 		
@@ -89,7 +89,7 @@ void DropboxListDirectoryRequest::responseCallback(Networking::RequestDataPair p
 		bool hasMore = response.getVal("has_more")->asBool();
 
 		if (hasMore) {
-			Networking::DataCallback innerCallback = new Common::Callback<DropboxListDirectoryRequest, Networking::RequestDataPair>(this, &DropboxListDirectoryRequest::responseCallback);
+			Networking::JsonCallback innerCallback = new Common::Callback<DropboxListDirectoryRequest, Networking::RequestJsonPair>(this, &DropboxListDirectoryRequest::responseCallback);
 			Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://api.dropboxapi.com/2/files/list_folder/continue");
 			request->addHeader("Authorization: Bearer " + _token);
 			request->addHeader("Content-Type: application/json");

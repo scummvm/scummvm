@@ -25,6 +25,7 @@
 
 #include "backends/cloud/storage.h"
 #include "common/callback.h"
+#include "backends/networking/curl/curljsonrequest.h"
 
 namespace Cloud {
 namespace Dropbox {
@@ -40,7 +41,7 @@ class DropboxStorage: public Cloud::Storage {
 	static void getAccessToken(Common::String code);
 
 	/** Constructs StorageInfo based on JSON response from cloud. */
-	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::RequestDataPair json);
+	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::RequestJsonPair json);
 
 	void printFiles(Common::Array<StorageFile> files);
 
