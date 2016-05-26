@@ -29,6 +29,8 @@
 namespace Scumm {
 
 class ScummEngine_v100he;
+class AIEntity;
+class patternList;
 
 enum {
 	TERRAIN_TYPE_GOOD = 0,
@@ -83,7 +85,7 @@ enum {
 
 class AI {
 public:
-	AI(ScummEngine_v100he *vm) : _vm(vm) {}
+	AI(ScummEngine_v100he *vm);
 
 	void resetAI();
 	void cleanUpAI();
@@ -188,10 +190,20 @@ private:
 	int getMaxCollectors(int pool);
 
 public:
-	Common::Array<int> lastXCoord[5];
-	Common::Array<int> lastYCoord[5];
+	Common::Array<int> _lastXCoord[5];
+	Common::Array<int> _lastYCoord[5];
 
 	ScummEngine_v100he *_vm;
+
+	AIEntity *_aiType[5];
+
+	int _aiState;
+	int _behavior;
+	int _energyHogType;
+
+	patternList *_moveList[5];
+
+	const int32 *_mcpParams;
 };
 
 } // End of namespace Scumm

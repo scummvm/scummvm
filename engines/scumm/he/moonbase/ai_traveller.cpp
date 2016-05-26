@@ -210,7 +210,7 @@ IContainedObject *Traveller::createChildObj(int index, int &completionFlag) {
 		retTraveller->setPosX(xCoord);
 
 		// Iterate through the previous action list, making sure this one isn't on it
-		for (Common::Array<int>::iterator i = (_ai->lastXCoord[whoseTurn]).begin(), j = (_ai->lastYCoord[whoseTurn]).begin(); i != (_ai->lastXCoord[whoseTurn]).end(); i++, j++) {
+		for (Common::Array<int>::iterator i = (_ai->_lastXCoord[whoseTurn]).begin(), j = (_ai->_lastYCoord[whoseTurn]).begin(); i != (_ai->_lastXCoord[whoseTurn]).end(); i++, j++) {
 			// Check if this shot is the same as the last time we tried
 			if ((*i == retTraveller->getPosX()) && (*j == retTraveller->getPosY())) {
 				retTraveller->setDisabled();

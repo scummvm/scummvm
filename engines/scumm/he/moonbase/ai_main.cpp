@@ -152,38 +152,36 @@ enum {
 	TREE_DEPTH = 2
 };
 
-AIEntity *AItype[5];
+AI::AI(ScummEngine_v100he *vm) : _vm(vm) {
+	memset(_aiType, 0, sizeof(_aiType));
+	_aiState = STATE_CHOOSE_BEHAVIOR;
+	_behavior = 2;
+	_energyHogType = 0;
 
-int AIstate = STATE_CHOOSE_BEHAVIOR;
-int behavior = 2;
-static int energyHogType = 0;
-
-patternList *moveList[5];
-
-int *storedLaunchAction[5] = {NULL};
-
-const int32 *MCP_params;
+	memset(_moveList, 0, sizeof(_moveList));
+	_mcpParams = 0;
+}
 
 void AI::resetAI() {
-	AIstate = STATE_CHOOSE_BEHAVIOR;
+	_aiState = STATE_CHOOSE_BEHAVIOR;
 	warning("----------------------> Resetting AI");
 
 	for (int i = 1; i != 5; i++) {
-		if (AItype[i]) {
-			delete AItype[i];
-			AItype[i] = NULL;
+		if (_aiType[i]) {
+			delete _aiType[i];
+			_aiType[i] = NULL;
 		}
 
-		AItype[i] = new AIEntity(BRUTAKAS);
+		_aiType[i] = new AIEntity(BRUTAKAS);
 	}
 
 	for (int i = 1; i != 5; i++) {
-		if (moveList[i]) {
-			delete moveList[i];
-			moveList[i] = NULL;
+		if (_moveList[i]) {
+			delete _moveList[i];
+			_moveList[i] = NULL;
 		}
 
-		moveList[i] = new patternList;
+		_moveList[i] = new patternList;
 	}
 }
 
@@ -191,35 +189,35 @@ void AI::cleanUpAI() {
 	warning("----------------------> Cleaning Up AI");
 
 	for (int i = 1; i != 5; i++) {
-		if (AItype[i]) {
-			delete AItype[i];
-			AItype[i] = NULL;
+		if (_aiType[i]) {
+			delete _aiType[i];
+			_aiType[i] = NULL;
 		}
 	}
 
 	for (int i = 1; i != 5; i++) {
-		if (moveList[i]) {
-			delete moveList[i];
-			moveList[i] = NULL;
+		if (_moveList[i]) {
+			delete _moveList[i];
+			_moveList[i] = NULL;
 		}
 	}
 }
 
 void AI::setAIType(const int paramCount, const int32 *params) {
-	if (AItype[params[AI_TYPE_PLAYER_NUM]]) {
-		delete AItype[params[AI_TYPE_PLAYER_NUM]];
-		AItype[params[AI_TYPE_PLAYER_NUM]] = NULL;
+	if (_aiType[params[AI_TYPE_PLAYER_NUM]]) {
+		delete _aiType[params[AI_TYPE_PLAYER_NUM]];
+		_aiType[params[AI_TYPE_PLAYER_NUM]] = NULL;
 	}
 
-	AItype[params[AI_TYPE_PLAYER_NUM]] = new AIEntity(params[AI_TYPE_TYPE]);
+	_aiType[params[AI_TYPE_PLAYER_NUM]] = new AIEntity(params[AI_TYPE_TYPE]);
 
 	if (params[AI_TYPE_TYPE] == ENERGY_HOG) {
-		energyHogType = 1;
+		_energyHogType = 1;
 	} else {
-		energyHogType = 0;
+		_energyHogType = 0;
 	}
 
-	warning("AI for player %d is %s", params[AI_TYPE_PLAYER_NUM], AItype[params[AI_TYPE_PLAYER_NUM]]->getNameString());
+	warning("AI for player %d is %s", params[AI_TYPE_PLAYER_NUM], _aiType[params[AI_TYPE_PLAYER_NUM]]->getNameString());
 }
 
 int AI::masterControlProgram(const int paramCount, const int32 *params) {
@@ -227,7 +225,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 
 	static int index;
 
-	MCP_params = params;
+	_mcpParams = params;
 
 	static int lastSource[5];
 	static int lastAngle[5];
@@ -278,7 +276,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 	int timerValue = getTimerValue(3);
 
 	// If timer has run out
-	if ((AIstate > STATE_CHOOSE_BEHAVIOR) && ((maxTime) && (timerValue > maxTime))) {
+	if ((_aiState > STATE_CHOOSE_BEHAVIOR) && ((maxTime) && (timerValue > maxTime))) {
 		if (myTree != NULL) {
 			delete myTree;
 			myTree = NULL;
@@ -305,41 +303,43 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 				launchAction[1] = SKIP_TURN;
 		}
 
-		AIstate = STATE_LAUNCH;
+		_aiState = STATE_LAUNCH;
 	}
 
-	static int oldAIstate = 0;
+	static int old_aiState = 0;
 
-	if (oldAIstate != AIstate) {
-		warning("<<%d>>", AIstate);
-		oldAIstate = AIstate;
+	if (old_aiState != _aiState) {
+		warning("<<%d>>", _aiState);
+		old_aiState = _aiState;
 	}
 
-	switch (AIstate) {
+	switch (_aiState) {
 	case STATE_CHOOSE_BEHAVIOR:
-		behavior = chooseBehavior();
-		warning("Behavior mode: %d", behavior);
+		_behavior = chooseBehavior();
+		warning("Behavior mode: %d", _behavior);
 
-		if ((int)_vm->_rnd.getRandomNumber(99) < AItype[getCurrentPlayer()]->getBehaviorVariation() * AI_VAR_BASE_BEHAVIOR + 1) {
+		if ((int)_vm->_rnd.getRandomNumber(99) < _aiType[getCurrentPlayer()]->getBehaviorVariation() * AI_VAR_BASE_BEHAVIOR + 1) {
 			if (_vm->_rnd.getRandomNumber(1)) {
-				behavior--;
+				_behavior--;
 
-				if (behavior < ENERGY_MODE) behavior = DEFENSE_MODE;
+				if (_behavior < ENERGY_MODE)
+					_behavior = DEFENSE_MODE;
 			} else {
-				behavior++;
+				_behavior++;
 
-				if (behavior > DEFENSE_MODE) behavior = ENERGY_MODE;
+				if (_behavior > DEFENSE_MODE)
+					_behavior = ENERGY_MODE;
 			}
 
-			warning("Alternative behavior: %d", behavior);
+			warning("Alternative behavior: %d", _behavior);
 		}
 
-		if (behavior == ENERGY_MODE)
+		if (_behavior == ENERGY_MODE)
 			if (!getNumberOfPools())
-				behavior = OFFENSE_MODE;
+				_behavior = OFFENSE_MODE;
 
-		if (AItype[getCurrentPlayer()]->getID() == CRAWLER_CHUCKER)
-			behavior = OFFENSE_MODE;
+		if (_aiType[getCurrentPlayer()]->getID() == CRAWLER_CHUCKER)
+			_behavior = OFFENSE_MODE;
 
 		if (launchAction != NULL) {
 			delete launchAction;
@@ -347,16 +347,16 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 		}
 
 		index = 0;
-		AIstate = STATE_CHOOSE_TARGET;
+		_aiState = STATE_CHOOSE_TARGET;
 		break;
 
 	case STATE_CHOOSE_TARGET:
-		target = chooseTarget(behavior);
+		target = chooseTarget(_behavior);
 
 		if (!target)
 			target = chooseTarget(OFFENSE_MODE);
 
-		if (behavior == ENERGY_MODE) {
+		if (_behavior == ENERGY_MODE) {
 			int energyPoolScummArray = getEnergyPoolsArray();
 			targetX = _vm->_moonbase->readFromArray(energyPoolScummArray, target, ENERGY_POOL_X);
 			targetY = _vm->_moonbase->readFromArray(energyPoolScummArray, target, ENERGY_POOL_Y);
@@ -368,9 +368,9 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 		warning("Target (%d, %d) id: %d", targetX, targetY, target);
 
 		if (getFOW())
-			AIstate = STATE_ATTEMPT_SEARCH;
+			_aiState = STATE_ATTEMPT_SEARCH;
 		else
-			AIstate = STATE_INIT_APPROACH_TARGET;
+			_aiState = STATE_INIT_APPROACH_TARGET;
 
 		break;
 
@@ -420,26 +420,26 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 				targetX = newTargetPos % getMaxX();
 				targetY = newTargetPos / getMaxY();
 
-				AIstate = STATE_INIT_ACQUIRE_TARGET;
+				_aiState = STATE_INIT_ACQUIRE_TARGET;
 				break;
 			}
 		}
 
-		AIstate = STATE_INIT_APPROACH_TARGET;
+		_aiState = STATE_INIT_APPROACH_TARGET;
 		break;
 
 	case STATE_INIT_APPROACH_TARGET:
 	{
 		int closestOL = getClosestUnit(targetX, targetY, 900, currentPlayer, 1, BUILDING_OFFENSIVE_LAUNCHER, 1);
 
-		if (closestOL && (behavior == OFFENSE_MODE)) {
-			AIstate = STATE_OFFEND_TARGET;
+		if (closestOL && (_behavior == OFFENSE_MODE)) {
+			_aiState = STATE_OFFEND_TARGET;
 			break;
 		}
 	}
 
 	// get closest hub...if attack mode and almost close enough, maybe throw an offense
-	if ((behavior == OFFENSE_MODE) && (getPlayerEnergy() > 6)) {
+	if ((_behavior == OFFENSE_MODE) && (getPlayerEnergy() > 6)) {
 		if (!_vm->_rnd.getRandomNumber(2)) {
 			int closestHub = getClosestUnit(targetX, targetY, getMaxX(), currentPlayer, 1, BUILDING_MAIN_BASE, 1);
 
@@ -454,19 +454,19 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 					targetX = getHubX(closestHub);
 					targetY = getHubY(closestHub);
 
-					AIstate = STATE_DEFEND_TARGET;
+					_aiState = STATE_DEFEND_TARGET;
 					break;
 				}
 			}
 		}
 	}
 
-	if ((behavior == OFFENSE_MODE) && (AItype[currentPlayer]->getID() == RANGER) && (getPlayerEnergy() > 2)) {
+	if ((_behavior == OFFENSE_MODE) && (_aiType[currentPlayer]->getID() == RANGER) && (getPlayerEnergy() > 2)) {
 		int closestHub = getClosestUnit(targetX, targetY, getMaxX(), currentPlayer, 1, BUILDING_MAIN_BASE, 1);
 		int dist = getDistance(targetX, targetY, getHubX(closestHub), getHubY(closestHub));
 
 		if (dist < 750) {
-			AIstate = STATE_OFFEND_TARGET;
+			_aiState = STATE_OFFEND_TARGET;
 			break;
 		}
 	}
@@ -475,21 +475,21 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 
 	// If no need to approach, apply appropriate behavior
 	if (retNode == myTree->getBaseNode()) {
-		switch (behavior) {
+		switch (_behavior) {
 		case 0:
-			AIstate = STATE_ENERGIZE_TARGET;
+			_aiState = STATE_ENERGIZE_TARGET;
 			break;
 
 		case 1:
-			AIstate = STATE_OFFEND_TARGET;
+			_aiState = STATE_OFFEND_TARGET;
 			break;
 
 		case 2:
-			AIstate = STATE_DEFEND_TARGET;
+			_aiState = STATE_DEFEND_TARGET;
 			break;
 
 		case -1:
-			AIstate = STATE_LAUNCH;
+			_aiState = STATE_LAUNCH;
 			break;
 		}
 
@@ -503,8 +503,8 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 
 	if (getPlayerEnergy() < 7) {
 		if (!_vm->_rnd.getRandomNumber(3)) {
-			behavior = DEFENSE_MODE;
-			AIstate = STATE_CHOOSE_TARGET;
+			_behavior = DEFENSE_MODE;
+			_aiState = STATE_CHOOSE_TARGET;
 		} else {
 			if (launchAction == NULL) {
 				launchAction = new int[4];
@@ -516,7 +516,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 				launchAction[1] = SKIP_TURN;
 			}
 
-			AIstate = STATE_LAUNCH;
+			_aiState = STATE_LAUNCH;
 		}
 
 		delete myTree;
@@ -524,7 +524,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 		break;
 	}
 
-	AIstate = STATE_CRAWLER_DECISION;
+	_aiState = STATE_CRAWLER_DECISION;
 	break;
 
 	// If behavior is offense, possibly just chuck a crawler
@@ -533,7 +533,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 		// Brace just here to scope throwCrawler
 		int throwCrawler = 0;
 
-		if (behavior == OFFENSE_MODE) {
+		if (_behavior == OFFENSE_MODE) {
 			if (getPlayerEnergy() > 6) {
 				int crawlerTest = _vm->_rnd.getRandomNumber(9);
 
@@ -542,7 +542,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 			}
 		}
 
-		if (AItype[getCurrentPlayer()]->getID() == CRAWLER_CHUCKER) {
+		if (_aiType[getCurrentPlayer()]->getID() == CRAWLER_CHUCKER) {
 			if (getPlayerEnergy() > 6) {
 				throwCrawler = 1;
 			} else {
@@ -553,7 +553,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 				else
 					launchAction[1] = SKIP_TURN;
 
-				AIstate = STATE_LAUNCH;
+				_aiState = STATE_LAUNCH;
 				delete myTree;
 				myTree = NULL;
 			}
@@ -581,11 +581,11 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 			targetX = (targetX + getMaxX()) % getMaxX();
 			targetY = (targetY + getMaxY()) % getMaxY();
 
-			AIstate = STATE_INIT_ACQUIRE_TARGET;
+			_aiState = STATE_INIT_ACQUIRE_TARGET;
 			delete myTree;
 			myTree = NULL;
 		} else {
-			AIstate = STATE_APPROACH_TARGET;
+			_aiState = STATE_APPROACH_TARGET;
 		}
 		break;
 	}
@@ -608,7 +608,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 
 				delete launchAction;
 				launchAction = NULL;
-				AIstate = STATE_DEFEND_TARGET;
+				_aiState = STATE_DEFEND_TARGET;
 				delete myTree;
 				myTree = NULL;
 				break;
@@ -621,8 +621,8 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 			targetX = (targetX + getMaxX()) % getMaxX();
 			targetY = (targetY + getMaxY()) % getMaxY();
 
-			AIstate = STATE_INIT_ACQUIRE_TARGET;
-			behavior = -1;
+			_aiState = STATE_INIT_ACQUIRE_TARGET;
+			_behavior = -1;
 
 			delete myTree;
 			myTree = NULL;
@@ -640,10 +640,10 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 				if (launchAction[1] == ITEM_HUB) {
 					index = 0;
 					retNodeFlag = 0;
-					AIstate = STATE_INIT_ACQUIRE_TARGET;
+					_aiState = STATE_INIT_ACQUIRE_TARGET;
 				} else {
 					index = 0;
-					AIstate = STATE_INIT_ACQUIRE_TARGET;
+					_aiState = STATE_INIT_ACQUIRE_TARGET;
 				}
 			} else {
 				index++;
@@ -651,10 +651,10 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 				launchAction = NULL;
 			}
 		} else {
-			behavior = DEFENSE_MODE;
+			_behavior = DEFENSE_MODE;
 			retNodeFlag = 0;
 			index = 0;
-			AIstate = STATE_CHOOSE_TARGET;
+			_aiState = STATE_CHOOSE_TARGET;
 		}
 		break;
 
@@ -664,7 +664,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 		if (launchAction != NULL) {
 			if (launchAction[0]) {
 				retNodeFlag = 0;
-				AIstate = STATE_INIT_ACQUIRE_TARGET;
+				_aiState = STATE_INIT_ACQUIRE_TARGET;
 			} else {
 				index++;
 				delete launchAction;
@@ -679,7 +679,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 		if (launchAction != NULL) {
 			if (launchAction[0]) {
 				retNodeFlag = 0;
-				AIstate = STATE_INIT_ACQUIRE_TARGET;
+				_aiState = STATE_INIT_ACQUIRE_TARGET;
 
 				if (launchAction[LAUNCH_UNIT] != ITEM_BRIDGE) {
 					if (OLflag) {
@@ -705,7 +705,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 		myTree = initAcquireTarget(targetX, targetY, &retNode);
 
 		if (myTree == NULL) {
-			AIstate = STATE_LAUNCH;
+			_aiState = STATE_LAUNCH;
 			break;
 		}
 
@@ -715,7 +715,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 
 		_acquireTarget = 0;
 
-		AIstate = STATE_ACQUIRE_TARGET;
+		_aiState = STATE_ACQUIRE_TARGET;
 		break;
 
 	case STATE_ACQUIRE_TARGET: {
@@ -757,7 +757,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 			assert(launchAction != NULL);
 			delete myTree;
 			myTree = NULL;
-			AIstate = STATE_LAUNCH;
+			_aiState = STATE_LAUNCH;
 		}
 	}
 	break;
@@ -766,7 +766,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 		break;
 	}
 
-	if (AIstate == STATE_LAUNCH) {
+	if (_aiState == STATE_LAUNCH) {
 		static float randomAttenuation = 1;
 
 		if (((launchAction[LAUNCH_UNIT] == ITEM_REPAIR) || (launchAction[LAUNCH_UNIT] == ITEM_ANTIAIR) || (launchAction[LAUNCH_UNIT] == ITEM_BRIDGE) || (launchAction[LAUNCH_UNIT] == ITEM_TOWER) || (launchAction[LAUNCH_UNIT] == ITEM_RECLAIMER) || (launchAction[LAUNCH_UNIT] == ITEM_BALLOON) || (launchAction[LAUNCH_UNIT] == ITEM_MINE) || (launchAction[LAUNCH_UNIT] == ITEM_ENERGY) || (launchAction[LAUNCH_UNIT] == ITEM_SHIELD) || (launchAction[LAUNCH_UNIT] == ITEM_OFFENSE) || (launchAction[LAUNCH_UNIT] == ITEM_HUB)) && (getBuildingType(launchAction[LAUNCH_SOURCE_HUB]) == BUILDING_OFFENSIVE_LAUNCHER)) {
@@ -818,7 +818,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 		{
 			// ANGLE setting
 			int angleAdjustment = 0;
-			angleAdjustment = _vm->_rnd.getRandomNumber(AItype[getCurrentPlayer()]->getAngleVariation() * AI_VAR_BASE_ANGLE) * 3.6;
+			angleAdjustment = _vm->_rnd.getRandomNumber(_aiType[getCurrentPlayer()]->getAngleVariation() * AI_VAR_BASE_ANGLE) * 3.6;
 			//pos or neg choice
 			angleAdjustment *= ((_vm->_rnd.getRandomNumber(1) * 2) - 1);
 			angleAdjustment *= randomAttenuation;
@@ -850,7 +850,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 		{
 			// POWER setting
 			int powerRangeFactor = (getMaxPower() - getMinPower()) / 100;
-			int powerAdjustment = static_cast<float>(_vm->_rnd.getRandomNumber(AItype[getCurrentPlayer()]->getPowerVariation() * AI_VAR_BASE_POWER)) * powerRangeFactor;
+			int powerAdjustment = static_cast<float>(_vm->_rnd.getRandomNumber(_aiType[getCurrentPlayer()]->getPowerVariation() * AI_VAR_BASE_POWER)) * powerRangeFactor;
 			//pos or neg choice
 			powerAdjustment *= ((_vm->_rnd.getRandomNumber(1) * 2) - 1);
 			powerAdjustment *= randomAttenuation;
@@ -935,7 +935,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 		delete[] launchAction;
 		launchAction = NULL;
 
-		AIstate = STATE_CHOOSE_BEHAVIOR;
+		_aiState = STATE_CHOOSE_BEHAVIOR;
 
 		int rSh, rU, rP, rA = 0;
 		rSh = _vm->readVar(_vm->VAR_U32_USER_VAR_A);
@@ -947,11 +947,11 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 
 		{
 			// Checking for patterns
-			if ((AItype[currentPlayer]->getID() != CRAWLER_CHUCKER) &&
-					(AItype[currentPlayer]->getID() != ENERGY_HOG) && (getBuildingStackPtr() > 5))
-				moveList[currentPlayer]->addPattern(rSh, rU, rP, rA);
+			if ((_aiType[currentPlayer]->getID() != CRAWLER_CHUCKER) &&
+					(_aiType[currentPlayer]->getID() != ENERGY_HOG) && (getBuildingStackPtr() > 5))
+				_moveList[currentPlayer]->addPattern(rSh, rU, rP, rA);
 
-			int patternFound = moveList[currentPlayer]->evaluatePattern(rSh, rU, rP, rA);
+			int patternFound = _moveList[currentPlayer]->evaluatePattern(rSh, rU, rP, rA);
 
 			if (!_vm->_rnd.getRandomNumber(9))
 				patternFound = 0;
@@ -960,26 +960,26 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 				warning("------------------------------------------>Eliminating pattern");
 
 				if (_vm->_rnd.getRandomNumber(1)) {
-					behavior--;
+					_behavior--;
 
-					if (behavior < ENERGY_MODE)
-						behavior = DEFENSE_MODE;
+					if (_behavior < ENERGY_MODE)
+						_behavior = DEFENSE_MODE;
 				} else {
-					behavior++;
+					_behavior++;
 
-					if (behavior > DEFENSE_MODE)
-						behavior = ENERGY_MODE;
+					if (_behavior > DEFENSE_MODE)
+						_behavior = ENERGY_MODE;
 				}
 
-				if (behavior == ENERGY_MODE)
+				if (_behavior == ENERGY_MODE)
 					if (!getNumberOfPools())
-						behavior = OFFENSE_MODE;
+						_behavior = OFFENSE_MODE;
 
 				_vm->writeVar(_vm->VAR_U32_USER_VAR_A, 0);
 				_vm->writeVar(_vm->VAR_U32_USER_VAR_B, 0);
 				_vm->writeVar(_vm->VAR_U32_USER_VAR_C, 0);
 				_vm->writeVar(_vm->VAR_U32_USER_VAR_D, 0);
-				AIstate = STATE_CHOOSE_TARGET;
+				_aiState = STATE_CHOOSE_TARGET;
 			}
 		}
 
@@ -1011,7 +1011,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 
 	if (selectedUnit) {
 		if (selectedUnit > 0)
-			_vm->writeVar(_vm->VAR_U32_USER_VAR_E, behavior);
+			_vm->writeVar(_vm->VAR_U32_USER_VAR_E, _behavior);
 		else
 			_vm->writeVar(_vm->VAR_U32_USER_VAR_E, -999);
 	}
@@ -1027,7 +1027,7 @@ int AI::chooseBehavior() {
 
 	int currentPlayer = getCurrentPlayer();
 
-	int AIpersonality = AItype[currentPlayer]->getID();
+	int AIpersonality = _aiType[currentPlayer]->getID();
 
 	switch (AIpersonality) {
 	case BRUTAKAS:
@@ -1413,7 +1413,7 @@ int AI::chooseBehavior() {
 			defCon += 2;
 	}
 
-	warning("%s-------------------------------> Energy: %d     Offense: %d     Defense: %d", AItype[currentPlayer]->getNameString(), eneCon, offCon, defCon);
+	warning("%s-------------------------------> Energy: %d     Offense: %d     Defense: %d", _aiType[currentPlayer]->getNameString(), eneCon, offCon, defCon);
 
 	if (dominantMode == DEFENSE_MODE)
 		if ((defCon <= offCon) && (defCon <= eneCon))
@@ -1439,7 +1439,7 @@ int AI::chooseBehavior() {
 	return -1;
 }
 
-int AI::chooseTarget(int behavior1) {
+int AI::chooseTarget(int behavior) {
 	int numPools = getNumberOfPools();
 	int currentPlayer = getCurrentPlayer();
 
@@ -1447,7 +1447,7 @@ int AI::chooseTarget(int behavior1) {
 	int selectionValues[50] = {0};
 	int selectionDist = 10000000;
 
-	if (behavior1 == ENERGY_MODE) {
+	if (behavior == ENERGY_MODE) {
 		// loop through energy pool array
 		int energyPoolScummArray = getEnergyPoolsArray();
 
@@ -1508,7 +1508,7 @@ int AI::chooseTarget(int behavior1) {
 		return selection;
 	}
 
-	if (behavior1 == OFFENSE_MODE) {
+	if (behavior == OFFENSE_MODE) {
 		int returnBuilding = 0;
 		int attackableArray[500];
 		int nearAttackableArray[500];
@@ -1640,7 +1640,7 @@ int AI::chooseTarget(int behavior1) {
 		return returnBuilding;
 	}
 
-	if (behavior1 == DEFENSE_MODE) {
+	if (behavior == DEFENSE_MODE) {
 		int returnBuilding = 0;
 
 		int savedTally = 0;
@@ -1801,7 +1801,7 @@ int AI::chooseTarget(int behavior1) {
 Tree *AI::initApproachTarget(int targetX, int targetY, Node **retNode) {
 	int sourceHub = 0;
 
-	if (behavior == 2)
+	if (_behavior == 2)
 		sourceHub = getClosestUnit(targetX + 10, targetY, getMaxX(), getCurrentPlayer(), 1, BUILDING_MAIN_BASE, 1);
 	else
 		sourceHub = getClosestUnit(targetX + 10, targetY, getMaxX(), getCurrentPlayer(), 1, BUILDING_MAIN_BASE, 1, MIN_DIST);
@@ -1878,13 +1878,13 @@ int *AI::approachTarget(Tree *myTree, int &xTarget, int &yTarget, Node **current
 
 		int whoseTurn = getCurrentPlayer();
 
-		if ((lastXCoord[whoseTurn]).size() >= MAX_MEMORY) {
-			(lastXCoord[whoseTurn]).erase((lastXCoord[whoseTurn]).begin());
-			(lastYCoord[whoseTurn]).erase((lastYCoord[whoseTurn]).begin());
+		if ((_lastXCoord[whoseTurn]).size() >= MAX_MEMORY) {
+			(_lastXCoord[whoseTurn]).erase((_lastXCoord[whoseTurn]).begin());
+			(_lastYCoord[whoseTurn]).erase((_lastYCoord[whoseTurn]).begin());
 		}
 
-		(lastXCoord[whoseTurn]).push_back(retTraveller->getPosX());
-		(lastYCoord[whoseTurn]).push_back(retTraveller->getPosY());
+		(_lastXCoord[whoseTurn]).push_back(retTraveller->getPosX());
+		(_lastYCoord[whoseTurn]).push_back(retTraveller->getPosY());
 
 		int temp = static_cast<int>(retTraveller->calcT());
 		int temp2 = static_cast<int>(retTraveller->getValueG());
@@ -2402,215 +2402,215 @@ int *AI::defendTarget(int &targetX, int &targetY, int index) {
 int AI::getClosestUnit(int x, int y, int radius, int player, int alignment, int unitType, int checkUnitEnabled) {
 	assert((unitType >= 0) && (unitType <= 12));
 
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_CLOSEST_UNIT], 7, x, y, radius, player, alignment, unitType, checkUnitEnabled);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_CLOSEST_UNIT], 7, x, y, radius, player, alignment, unitType, checkUnitEnabled);
 	return retVal;
 }
 
 int AI::getClosestUnit(int x, int y, int radius, int player, int alignment, int unitType, int checkUnitEnabled, int minDist) {
 	assert((unitType >= 0) && (unitType <= 12));
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_CLOSEST_UNIT], 8, x, y, radius, player, alignment, unitType, checkUnitEnabled, minDist);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_CLOSEST_UNIT], 8, x, y, radius, player, alignment, unitType, checkUnitEnabled, minDist);
 	return retVal;
 }
 
 int AI::getDistance(int originX, int originY, int endX, int endY) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_WORLD_DIST], 4, originX, originY, endX, endY);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_WORLD_DIST], 4, originX, originY, endX, endY);
 	return retVal;
 }
 
 int AI::calcAngle(int originX, int originY, int endX, int endY) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_WORLD_ANGLE], 5, originX, originY, endX, endY, 0);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_WORLD_ANGLE], 5, originX, originY, endX, endY, 0);
 	return retVal;
 }
 
 int AI::calcAngle(int originX, int originY, int endX, int endY, int noWrapFlag) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_WORLD_ANGLE], 5, originX, originY, endX, endY, noWrapFlag);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_WORLD_ANGLE], 5, originX, originY, endX, endY, noWrapFlag);
 	return retVal;
 }
 
 int AI::getTerrain(int x, int y) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_TERRAIN_TYPE], 2, x, y);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_TERRAIN_TYPE], 2, x, y);
 	return retVal;
 }
 
 int AI::estimateNextRoundEnergy(int player) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_ESTIMATE_NEXT_ROUND_ENERGY], 1, player);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_ESTIMATE_NEXT_ROUND_ENERGY], 1, player);
 	return retVal / 10;
 }
 
 int AI::getHubX(int hub) {
 	assert(hub >= 0 && hub <= 500);
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_HUB_X, hub);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 2, D_GET_HUB_X, hub);
 	return retVal;
 }
 
 int AI::getHubY(int hub) {
 	assert(hub >= 0 && hub <= 500);
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_HUB_Y, hub);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 2, D_GET_HUB_Y, hub);
 	return retVal;
 }
 
 int AI::getMaxX() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_WORLD_X_SIZE);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_WORLD_X_SIZE);
 	return retVal;
 }
 
 int AI::getMaxY() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_WORLD_Y_SIZE);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_WORLD_Y_SIZE);
 	return retVal;
 }
 
 int AI::getCurrentPlayer() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_CURRENT_PLAYER);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_CURRENT_PLAYER);
 	assert(retVal != 0);
 	return retVal;
 }
 
 int AI::getMaxPower() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_MAX_POWER);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_MAX_POWER);
 	return retVal;
 }
 
 int AI::getMinPower() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_MIN_POWER);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_MIN_POWER);
 	return retVal;
 }
 
 int AI::getTerrainSquareSize() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_TERRAIN_SQUARE_SIZE);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_TERRAIN_SQUARE_SIZE);
 	return retVal;
 }
 
 int AI::getBuildingOwner(int building) {
 	assert((building > 0) && (building < 501));
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_BUILDING_OWNER, building);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 2, D_GET_BUILDING_OWNER, building);
 	return retVal;
 }
 
 int AI::getBuildingState(int building) {
 	assert((building > 0) && (building < 501));
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_BUILDING_STATE, building);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 2, D_GET_BUILDING_STATE, building);
 	return retVal;
 }
 
 int AI::getBuildingType(int building) {
 	assert((building > 0) && (building < 501));
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_BUILDING_TYPE, building);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 2, D_GET_BUILDING_TYPE, building);
 	return retVal;
 }
 
 int AI::getBuildingArmor(int building) {
 	assert((building > 0) && (building < 501));
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_BUILDING_ARMOR, building);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 2, D_GET_BUILDING_ARMOR, building);
 	return retVal;
 }
 
 int AI::getBuildingWorth(int building) {
 	assert((building > 0) && (building < 501));
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_BUILDING_WORTH, building);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 2, D_GET_BUILDING_WORTH, building);
 	return retVal;
 }
 
 int AI::getEnergyPoolsArray() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_ENERGY_POOLS_ARRAY);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_ENERGY_POOLS_ARRAY);
 	return retVal;
 }
 
 int AI::getCoordinateVisibility(int x, int y, int playerNum) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 4, D_GET_COORDINATE_VISIBILITY, x, y, playerNum);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 4, D_GET_COORDINATE_VISIBILITY, x, y, playerNum);
 	return retVal;
 }
 
 int AI::getUnitVisibility(int unit, int playerNum) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 3, D_GET_UNIT_VISIBILITY, unit, playerNum);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 3, D_GET_UNIT_VISIBILITY, unit, playerNum);
 	return retVal;
 }
 
 int AI::getEnergyPoolVisibility(int pool, int playerNum) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 3, D_GET_ENERGY_POOL_VISIBILITY, pool, playerNum);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 3, D_GET_ENERGY_POOL_VISIBILITY, pool, playerNum);
 	return retVal;
 }
 
 int AI::getNumberOfPools() {
 	int retVal = 0;
 
-	if (AItype[getCurrentPlayer()]->getID() == ENERGY_HOG) {
+	if (_aiType[getCurrentPlayer()]->getID() == ENERGY_HOG) {
 		retVal = 1;
 	} else {
-		retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_NUMBER_OF_POOLS);
+		retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_NUMBER_OF_POOLS);
 	}
 
 	return retVal;
 }
 
 int AI::getNumberOfPlayers() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_NUMBER_OF_PLAYERS);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_NUMBER_OF_PLAYERS);
 	return retVal;
 }
 
 int AI::getPlayerEnergy() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_PLAYER_ENERGY);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_PLAYER_ENERGY);
 	return static_cast<int>(static_cast<float>(retVal) / 10.0);
 }
 
 int AI::getPlayerMaxTime() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_PLAYER_MAX_TIME);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_PLAYER_MAX_TIME);
 	return retVal;
 }
 
 int AI::getWindXSpeed() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_WIND_X_SPEED);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_WIND_X_SPEED);
 	return retVal;
 }
 
 int AI::getWindYSpeed() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_WIND_Y_SPEED);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_WIND_Y_SPEED);
 	return retVal;
 }
 
 int AI::getTotalWindSpeed() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_TOTAL_WIND_SPEED);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_TOTAL_WIND_SPEED);
 	return retVal;
 }
 
 int AI::getWindXSpeedMax() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_WIND_X_SPEED_MAX);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_WIND_X_SPEED_MAX);
 	return retVal;
 }
 
 int AI::getWindYSpeedMax() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_WIND_Y_SPEED_MAX);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_WIND_Y_SPEED_MAX);
 	return retVal;
 }
 
 int AI::getBigXSize() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_BIG_X_SIZE);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_BIG_X_SIZE);
 	return retVal;
 }
 
 int AI::getBigYSize() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_BIG_Y_SIZE);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_BIG_Y_SIZE);
 	return retVal;
 }
 
 int AI::getEnergyPoolWidth(int pool) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_ENERGY_POOL_WIDTH, pool);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 2, D_GET_ENERGY_POOL_WIDTH, pool);
 	return retVal;
 }
 
 int AI::getBuildingMaxArmor(int building) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_BUILDING_MAX_ARMOR, building);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 2, D_GET_BUILDING_MAX_ARMOR, building);
 	return retVal;
 }
 
 int AI::getTimerValue(int timerNum) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_TIMER_VALUE, timerNum);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 2, D_GET_TIMER_VALUE, timerNum);
 	return retVal;
 }
 
 int AI::getLastAttacked(int &x, int &y) {
 	int currentPlayer = getCurrentPlayer();
-	x = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_LAST_ATTACKED_X, currentPlayer);
-	y = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_LAST_ATTACKED_Y, currentPlayer);
+	x = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 2, D_GET_LAST_ATTACKED_X, currentPlayer);
+	y = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 2, D_GET_LAST_ATTACKED_Y, currentPlayer);
 
 	if (x || y) return 1;
 
@@ -2618,7 +2618,7 @@ int AI::getLastAttacked(int &x, int &y) {
 }
 
 int AI::getPlayerTeam(int player) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_PLAYER_TEAM, player);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 2, D_GET_PLAYER_TEAM, player);
 	return retVal;
 }
 
@@ -2627,37 +2627,37 @@ int AI::getBuildingTeam(int building) {
 
 	if (getBuildingOwner(building) == 0) return 0;
 
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_BUILDING_TEAM, building);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 2, D_GET_BUILDING_TEAM, building);
 	return retVal;
 }
 
 int AI::getFOW() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_FOW);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_FOW);
 	return retVal;
 }
 
 int AI::getAnimSpeed() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_ANIM_SPEED);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_ANIM_SPEED);
 	return retVal;
 }
 
 int AI::getBuildingStackPtr() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_BUILDING_STACK_PTR);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_BUILDING_STACK_PTR);
 	return retVal;
 }
 
 int AI::getTurnCounter() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_TURN_COUNTER);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 1, D_GET_TURN_COUNTER);
 	return retVal;
 }
 
 int AI::getGroundAltitude(int x, int y) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_GROUND_ALTITUDE], 2, x, y);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_GROUND_ALTITUDE], 2, x, y);
 	return retVal;
 }
 
 int AI::checkForCordOverlap(int xStart, int yStart, int affectRadius, int simulateFlag) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_CHECK_FOR_CORD_OVERLAP], 4, xStart, yStart, affectRadius, simulateFlag);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_CHECK_FOR_CORD_OVERLAP], 4, xStart, yStart, affectRadius, simulateFlag);
 	return retVal;
 }
 
@@ -2667,42 +2667,42 @@ int AI::checkForAngleOverlap(int unit, int angle) {
 
 	if (!unit) return 0;
 
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_CHECK_FOR_ANGLE_OVERLAP], 2, unit, angle);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_CHECK_FOR_ANGLE_OVERLAP], 2, unit, angle);
 	return retVal;
 }
 
 int AI::checkForUnitOverlap(int x, int y, int radius, int ignoredUnit) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_CHECK_FOR_UNIT_OVERLAP], 4, x, y, radius, ignoredUnit);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_CHECK_FOR_UNIT_OVERLAP], 4, x, y, radius, ignoredUnit);
 	return retVal;
 }
 
 int AI::checkForEnergySquare(int x, int y) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_CHECK_FOR_ENERGY_SQUARE], 2, x, y);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_CHECK_FOR_ENERGY_SQUARE], 2, x, y);
 	return retVal;
 }
 
 int AI::aiChat() {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_AI_CHAT], 0);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_AI_CHAT], 0);
 	return retVal;
 }
 
 int AI::getPowerAngleFromPoint(int originX, int originY, int endX, int endY, int threshold, int olFlag) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_POWER_ANGLE_FROM_POINT], 6, originX, originY, endX, endY, threshold, olFlag);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_POWER_ANGLE_FROM_POINT], 6, originX, originY, endX, endY, threshold, olFlag);
 	return retVal;
 }
 
 int AI::getPowerAngleFromPoint(int originX, int originY, int endX, int endY, int threshold) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_POWER_ANGLE_FROM_POINT], 5, originX, originY, endX, endY, threshold);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_POWER_ANGLE_FROM_POINT], 5, originX, originY, endX, endY, threshold);
 	return retVal;
 }
 
 int AI::checkIfWaterState(int x, int y) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_CHECK_IF_WATER_STATE], 2, x, y);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_CHECK_IF_WATER_STATE], 2, x, y);
 	return retVal;
 }
 
 int AI::checkIfWaterSquare(int x, int y) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_CHECK_IF_WATER_SQUARE], 2, x, y);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_CHECK_IF_WATER_SQUARE], 2, x, y);
 	return retVal;
 }
 
@@ -2713,17 +2713,17 @@ int AI::getUnitsWithinRadius(int x, int y, int radius) {
 
 	debug(0, "getUnitsWithinRadius(%d, %d, %d)", x, y, radius);
 
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_UNITS_WITHIN_RADIUS], 3, x, y, radius);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_UNITS_WITHIN_RADIUS], 3, x, y, radius);
 	return retVal;
 }
 
 int AI::getLandingPoint(int x, int y, int power, int angle) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_LANDING_POINT], 4, x, y, power, angle);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_LANDING_POINT], 4, x, y, power, angle);
 	return retVal;
 }
 
 int AI::getEnemyUnitsVisible(int playerNum) {
-	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_ENEMY_UNITS_VISIBLE], 1, playerNum);
+	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_ENEMY_UNITS_VISIBLE], 1, playerNum);
 	return retVal;
 }
 
@@ -3062,7 +3062,7 @@ int AI::fakeSimulateWeaponLaunch(int x, int y, int power, int angle) {
 }
 
 int AI::getEnergyHogType() {
-	return energyHogType;
+	return _energyHogType;
 }
 
 } // End of namespace Scumm
