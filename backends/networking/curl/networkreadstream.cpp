@@ -45,6 +45,7 @@ NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, C
 	curl_easy_setopt(_easy, CURLOPT_HEADER, 0L);
 	curl_easy_setopt(_easy, CURLOPT_URL, url);
 	curl_easy_setopt(_easy, CURLOPT_VERBOSE, 0L);
+	curl_easy_setopt(_easy, CURLOPT_FOLLOWLOCATION, 1L); //probably it's OK to have it always on
 	curl_easy_setopt(_easy, CURLOPT_HTTPHEADER, headersList);
 	if (postFields.size() != 0) {
 		curl_easy_setopt(_easy, CURLOPT_POSTFIELDSIZE, postFields.size());

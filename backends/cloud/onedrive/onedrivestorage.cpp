@@ -22,16 +22,17 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/cloud/onedrive/onedrivestorage.h"
+#include "backends/cloud/onedrive/onedrivetokenrefresher.h"
+#include "backends/cloud/downloadrequest.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
+#include "common/cloudmanager.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
+#include "common/file.h"
 #include "common/json.h"
-#include <curl/curl.h>
-#include <common/file.h>
 #include "common/system.h"
-#include "common/cloudmanager.h"
-#include "onedrivetokenrefresher.h"
+#include <curl/curl.h>
 
 namespace Cloud {
 namespace OneDrive {
@@ -125,12 +126,42 @@ void OneDriveStorage::printJson(Networking::RequestJsonPair pair) {
 	delete json;
 }
 
+Networking::NetworkReadStream *OneDriveStorage::streamFile(Common::String path) {
+	Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot:/" + path + ":/content";
+	//NOT USING OneDriveTokenRefresher, because it's CurlJsonRequest, which saves all contents in memory to parse as JSON
+	//we actually don't even need a token if the download is "pre-authenticated" (whatever it means)
+	//still, we'd have to know direct URL (might be found in Item's "@content.downloadUrl", received from the server)
+	Networking::CurlRequest *request = new Networking::CurlRequest(0, url.c_str());	
+	request->addHeader("Authorization: Bearer " + _token);
+	return request->execute();
+}
+
+int32 OneDriveStorage::download(Common::String remotePath, Common::String localPath, BoolCallback callback) {
+	Common::DumpFile *f = new Common::DumpFile();
+	if (!f->open(localPath, true)) {
+		warning("OneDriveStorage: unable to open file to download into");
+		if (callback) (*callback)(RequestBoolPair(-1, false));
+		delete f;
+		return -1;
+	}
+
+	return ConnMan.addRequest(new DownloadRequest(callback, streamFile(remotePath), f));
+}
+
+void OneDriveStorage::fileDownloaded(RequestBoolPair pair) {
+	if (pair.value) debug("file downloaded!");
+	else debug("download failed!");
+}
+
 int32 OneDriveStorage::syncSaves(BoolCallback callback) {
-	//this is not the real syncSaves() implementation	
+	//this is not the real syncSaves() implementation
+	/*
 	Networking::JsonCallback innerCallback = new Common::Callback<OneDriveStorage, Networking::RequestJsonPair>(this, &OneDriveStorage::printJson);
-	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, "https://api.onedrive.com/v1.0/drives/");	
+	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, "https://api.onedrive.com/v1.0/drive/special/approot");
 	request->addHeader("Authorization: bearer " + _token);
 	return ConnMan.addRequest(request);
+	*/
+	return download("pic.jpg", "local/onedrive/2/doom.jpg", new Common::Callback<OneDriveStorage, RequestBoolPair>(this, &OneDriveStorage::fileDownloaded));
 }
 
 OneDriveStorage *OneDriveStorage::loadFromConfig(Common::String keyPrefix) {

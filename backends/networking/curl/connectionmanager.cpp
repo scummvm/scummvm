@@ -34,7 +34,7 @@ DECLARE_SINGLETON(Networking::ConnectionManager);
 
 namespace Networking {
 
-ConnectionManager::ConnectionManager(): _multi(0), _timerStarted(false) {
+ConnectionManager::ConnectionManager(): _multi(0), _timerStarted(false), _nextId(0) {
 	curl_global_init(CURL_GLOBAL_ALL);
 	_multi = curl_multi_init();
 }
