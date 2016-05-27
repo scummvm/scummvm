@@ -198,15 +198,59 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	{
 		{
+			// Masters of the Elements - English (from rootfather)
+			// Developed by IJsfontein, published by Tivola
+			// File version of MVM.EXE is 6.0.2.32
+			// The game disc is a hybrid CD-ROM containing both the Windows and the Macintosh release.
+			
+			"melements", "",
+			{
+				{"CHECK.DXR", 0, "c31ee30eebd24a8cf31691fc9926daa4", 901820},
+				{"MVM.EXE", 0, 0, 2565921},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		5
+	},
+
+	{
+		{
+			// Masters of the Elements - English (from rootfather)
+			
+			"melements", "",
+			{
+				{"check.dxr", 0, "36f42340e819d1532c850880afe16581", 898206},
+				{"Masters of the Elements", 0, 0, 1034962},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		5
+	},
+
+	{
+		{
 			// Masters of the Elements - German (from rootfather)
 			// Released in Germany as "Meister Zufall und die Herrscher der Elemente"
 			// Developed by IJsfontein, published by Tivola
 			// File version of MVM.EXE is 6.0.2.32
 			// The game disc is a hybrid CD-ROM containing both the Windows and the Macintosh release.
 			
-			"melements",
-			"",
-			AD_ENTRY1("MVM.EXE", "518a98696fe1122e08410b0f157f21bf"),
+			"melements", "",
+			{
+				{"CHECK.DXR", 0, "d1cd0ed95b0e30597e0089bf3e5caf0f", 575414},
+				{"MVM.EXE", 0, 0, 1512503},
+				AD_LISTEND
+			},
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -219,12 +263,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			// Masters of the Elements - German (from rootfather)
-			// Released in Germany as "Meister Zufall und die Herrscher der Elemente"
-			// Released on the same CD-ROM as the Windows release.
 			
-			"melements",
-			"",
-			AD_ENTRY1("Meister Zufall", "65063397536553c4f6ff2a6c07194bf7"),
+			"melements", "",
+			{
+				{"check.dxr", 0, "9c81934b7616ab077f44825b8afaa83e", 575426},
+				{"Meister Zufall", 0, 0, 1034962},
+				AD_LISTEND
+			},
 			Common::DE_DEU,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK,
