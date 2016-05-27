@@ -173,7 +173,7 @@ void Plane::addPicInternal(const GuiResourceId pictureId, const Common::Point *p
 		screenItem->_pictureId = pictureId;
 		screenItem->_mirrorX = mirrorX;
 		screenItem->_priority = celObj->_priority;
-		screenItem->_fixPriority = true;
+		screenItem->_fixedPriority = true;
 		if (position != nullptr) {
 			screenItem->_position = *position + celObj->_relativePosition;
 		} else {

@@ -132,7 +132,7 @@ public:
 	 * in place. Otherwise, the priority of the screen item
 	 * is calculated from its y-position + z-index.
 	 */
-	bool _fixPriority;
+	bool _fixedPriority;
 
 	/**
 	 * The rendering priority of the screen item, relative
