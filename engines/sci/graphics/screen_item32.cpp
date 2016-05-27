@@ -326,6 +326,9 @@ void ScreenItem::calcRects(const Plane &plane) {
 				mulinc(temp, celToScreenX, Ratio());
 
 				CelObjPic *celObjPic = dynamic_cast<CelObjPic *>(_celObj);
+				if (celObjPic == nullptr) {
+					error("Expected a CelObjPic");
+				}
 				temp.translate((celObjPic->_relativePosition.x * scriptToScreenX).toInt() - displaceX, 0);
 
 				// TODO: This is weird.
@@ -369,6 +372,9 @@ void ScreenItem::calcRects(const Plane &plane) {
 				}
 
 				CelObjPic *celObjPic = dynamic_cast<CelObjPic *>(_celObj);
+				if (celObjPic == nullptr) {
+					error("Expected a CelObjPic");
+				}
 				temp.translate(celObjPic->_relativePosition.x - (displaceX * scaleX).toInt(), celObjPic->_relativePosition.y - (celObj._displace.y * scaleY).toInt());
 
 				// TODO: This is weird.

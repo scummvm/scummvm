@@ -680,7 +680,7 @@ void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseL
 					int splitCount = splitRects(*rectlist[rectIndex], _planes[innerIndex]->_screenRect, outRects);
 
 					if (splitCount == 0) {
-						if (visibleInnerPlane != nullptr) {
+						if (visibleInnerPlane != nullptr && visibleOuterPlane != nullptr) {
 							// same priority, or relative priority between inner/outer changed
 							if ((visibleOuterPlane->_priority - visibleInnerPlane->_priority) * (outerPlane->_priority - innerPlane->_priority) <= 0) {
 								if (outerPlane->_priority <= innerPlane->_priority) {
@@ -697,7 +697,7 @@ void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseL
 							rectlist.add(outRects[i]);
 						}
 
-						if (visibleInnerPlane != nullptr) {
+						if (visibleInnerPlane != nullptr && visibleOuterPlane != nullptr) {
 							// same priority, or relative priority between inner/outer changed
 							if ((visibleOuterPlane->_priority - visibleInnerPlane->_priority) * (outerPlane->_priority - innerPlane->_priority) <= 0) {
 								*rectlist[rectIndex] = outerPlane->_screenRect.findIntersectingRect(innerPlane->_screenRect);

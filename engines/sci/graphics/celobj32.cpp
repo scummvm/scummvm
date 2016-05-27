@@ -736,7 +736,11 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 	int cacheIndex = searchCache(_info, &cacheInsertIndex);
 	if (cacheIndex != -1) {
 		CelCacheEntry &entry = (*_cache)[cacheIndex];
-		*this = *dynamic_cast<CelObjView *>(entry.celObj);
+		const CelObjView *const cachedCelObj = dynamic_cast<CelObjView *>(entry.celObj);
+		if (cachedCelObj == nullptr) {
+			error("Expected a CelObjView in cache slot %d", cacheIndex);
+		}
+		*this = *cachedCelObj;
 		entry.id = ++_nextCacheId;
 		return;
 	}
@@ -868,7 +872,11 @@ CelObjView *CelObjView::duplicate() const {
 }
 
 byte *CelObjView::getResPointer() const {
-	return g_sci->getResMan()->findResource(ResourceId(kResourceTypeView, _info.resourceId), false)->data;
+	const Resource *const resource = g_sci->getResMan()->findResource(ResourceId(kResourceTypeView, _info.resourceId), false);
+	if (resource == nullptr) {
+		error("Failed to load view %d from resource manager", _info.resourceId);
+	}
+	return resource->data;
 }
 
 #pragma mark -
@@ -887,7 +895,11 @@ CelObjPic::CelObjPic(const GuiResourceId picId, const int16 celNo) {
 	int cacheIndex = searchCache(_info, &cacheInsertIndex);
 	if (cacheIndex != -1) {
 		CelCacheEntry &entry = (*_cache)[cacheIndex];
-		*this = *dynamic_cast<CelObjPic *>(entry.celObj);
+		const CelObjPic *const cachedCelObj = dynamic_cast<CelObjPic *>(entry.celObj);
+		if (cachedCelObj == nullptr) {
+			error("Expected a CelObjPic in cache slot %d", cacheIndex);
+		}
+		*this = *cachedCelObj;
 		entry.id = ++_nextCacheId;
 		return;
 	}
@@ -981,7 +993,11 @@ CelObjPic *CelObjPic::duplicate() const {
 }
 
 byte *CelObjPic::getResPointer() const {
-	return g_sci->getResMan()->findResource(ResourceId(kResourceTypePic, _info.resourceId), false)->data;
+	const Resource *const resource = g_sci->getResMan()->findResource(ResourceId(kResourceTypePic, _info.resourceId), false);
+	if (resource == nullptr) {
+		error("Failed to load pic %d from resource manager", _info.resourceId);
+	}
+	return resource->data;
 }
 
 #pragma mark -

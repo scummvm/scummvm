@@ -216,6 +216,9 @@ reg_t kTextSize32(EngineState *s, int argc, reg_t *argv) {
 	g_sci->_gfxText32->setFont(argv[2].toUint16());
 
 	reg_t *rect = s->_segMan->derefRegPtr(argv[0], 4);
+	if (rect == nullptr) {
+		error("kTextSize: %04x:%04x cannot be dereferenced", PRINT_REG(argv[0]));
+	}
 
 	Common::String text = s->_segMan->getString(argv[1]);
 	int16 maxWidth = argc > 3 ? argv[3].toSint16() : 0;
