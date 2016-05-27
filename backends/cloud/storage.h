@@ -23,28 +23,26 @@
 #ifndef BACKENDS_CLOUD_STORAGE_H
 #define BACKENDS_CLOUD_STORAGE_H
 
+#include "backends/cloud/storagefile.h"
+#include "backends/cloud/storageinfo.h"
+#include "backends/networking/curl/request.h"
+#include "backends/networking/curl/curlrequest.h"
 #include "common/array.h"
 #include "common/stream.h"
 #include "common/str.h"
 #include "common/callback.h"
-#include "backends/cloud/storagefile.h"
-#include "backends/cloud/storageinfo.h"
-#include "backends/networking/curl/networkreadstream.h"
-#include <backends/networking/curl/request.h>
 
 namespace Cloud {
 
 class Storage {
 public:
-	typedef Networking::RequestIdPair<Common::Array<StorageFile>&> RequestFileArrayPair;
-	typedef Networking::RequestIdPair<Networking::NetworkReadStream *> RequestReadStreamPair;
-	typedef Networking::RequestIdPair<StorageInfo> RequestStorageInfoPair;
-	typedef Networking::RequestIdPair<bool> RequestBoolPair;	
+	typedef Networking::Response<Common::Array<StorageFile>&> FileArrayResponse;
+	typedef Networking::Response<StorageInfo> StorageInfoResponse;
+	typedef Networking::Response<bool> BoolResponse;
 
-	typedef Common::BaseCallback<RequestFileArrayPair> *FileArrayCallback;
-	typedef Common::BaseCallback<RequestReadStreamPair> *ReadStreamCallback;
-	typedef Common::BaseCallback<RequestStorageInfoPair> *StorageInfoCallback;
-	typedef Common::BaseCallback<RequestBoolPair> *BoolCallback;
+	typedef Common::BaseCallback<FileArrayResponse> *FileArrayCallback;
+	typedef Common::BaseCallback<StorageInfoResponse> *StorageInfoCallback;
+	typedef Common::BaseCallback<BoolResponse> *BoolCallback;
 
 	Storage() {}
 	virtual ~Storage() {}
@@ -66,37 +64,37 @@ public:
 	/**
 	 * Public Cloud API comes down there.
 	 *
-	 * All Cloud API methods return int32 request id, which might be used to access
-	 * request through ConnectionManager. All methods also accept a callback, which
-	 * would be called, when request is complete.
+	 * All Cloud API methods return Networking::Request *, which
+	 * might be used to control request. All methods also accept
+	 * a callback, which is called, when request is complete.
 	 */
 
 	/** Returns Common::Array<StorageFile>. */
-	virtual int32 listDirectory(Common::String path, FileArrayCallback callback, bool recursive = false) = 0;
+	virtual Networking::Request *listDirectory(Common::String path, FileArrayCallback callback, bool recursive = false) = 0;
 
 	/** Calls the callback when finished. */
-	virtual int32 upload(Common::String path, Common::ReadStream *contents, BoolCallback callback) = 0;
+	virtual Networking::Request *upload(Common::String path, Common::ReadStream *contents, BoolCallback callback) = 0;
 
 	/** Returns pointer to Networking::NetworkReadStream. */
-	virtual int32 streamFile(Common::String path, ReadStreamCallback callback) = 0;
+	virtual Networking::Request *streamFile(Common::String path, Networking::NetworkReadStreamCallback callback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual int32 download(Common::String remotePath, Common::String localPath, BoolCallback callback) = 0;
+	virtual Networking::Request *download(Common::String remotePath, Common::String localPath, BoolCallback callback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual int32 remove(Common::String path, BoolCallback callback) = 0;
+	virtual Networking::Request *remove(Common::String path, BoolCallback callback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual int32 syncSaves(BoolCallback callback) = 0;
+	virtual Networking::Request *syncSaves(BoolCallback callback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual int32 createDirectory(Common::String path, BoolCallback callback) = 0;
+	virtual Networking::Request *createDirectory(Common::String path, BoolCallback callback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual int32 touch(Common::String path, BoolCallback callback) = 0;
+	virtual Networking::Request *touch(Common::String path, BoolCallback callback) = 0;
 
 	/** Returns the StorageInfo struct. */
-	virtual int32 info(StorageInfoCallback callback) = 0;
+	virtual Networking::Request *info(StorageInfoCallback callback) = 0;
 
 	/** Returns whether saves sync process is running. */
 	virtual bool isSyncing() = 0;

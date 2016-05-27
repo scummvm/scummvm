@@ -41,7 +41,7 @@ class DropboxStorage: public Cloud::Storage {
 	static void getAccessToken(Common::String code);
 
 	/** Constructs StorageInfo based on JSON response from cloud. */
-	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::RequestJsonPair json);
+	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);
 
 	void printFiles(Common::Array<StorageFile> files);
 
@@ -65,34 +65,34 @@ public:
 	/** Public Cloud API comes down there. */
 
 	/** Returns Common::Array<StorageFile>. */
-	virtual int32 listDirectory(Common::String path, FileArrayCallback callback, bool recursive = false);
+	virtual Networking::Request *listDirectory(Common::String path, FileArrayCallback callback, bool recursive = false);
 
 	/** Calls the callback when finished. */
-	virtual int32 upload(Common::String path, Common::ReadStream *contents, BoolCallback callback) { return -1; } //TODO
+	virtual Networking::Request *upload(Common::String path, Common::ReadStream *contents, BoolCallback callback) { return nullptr; } //TODO
 
 	/** Returns pointer to Networking::NetworkReadStream. */
-	virtual int32 streamFile(Common::String path, ReadStreamCallback callback);
+	virtual Networking::Request *streamFile(Common::String path, Networking::NetworkReadStreamCallback callback);
 
 	/** Calls the callback when finished. */
-	virtual int32 download(Common::String remotePath, Common::String localPath, BoolCallback callback);
+	virtual Networking::Request *download(Common::String remotePath, Common::String localPath, BoolCallback callback);
 
 	/** Calls the callback when finished. */
-	virtual int32 remove(Common::String path, BoolCallback callback) { return -1; } //TODO
+	virtual Networking::Request *remove(Common::String path, BoolCallback callback) { return nullptr; } //TODO
 
 	/** Calls the callback when finished. */
-	virtual int32 syncSaves(BoolCallback callback);
+	virtual Networking::Request *syncSaves(BoolCallback callback);
 
 	/** Calls the callback when finished. */
-	virtual int32 createDirectory(Common::String path, BoolCallback callback) { return -1; } //TODO
+	virtual Networking::Request *createDirectory(Common::String path, BoolCallback callback) { return nullptr; } //TODO
 
 	/** Calls the callback when finished. */
-	virtual int32 touch(Common::String path, BoolCallback callback) { return -1; } //TODO
+	virtual Networking::Request *touch(Common::String path, BoolCallback callback) { return nullptr; } //TODO
 
 	/** Returns the StorageInfo struct. */
-	virtual int32 info(StorageInfoCallback callback);
+	virtual Networking::Request *info(StorageInfoCallback callback);
 
 	/** This method is passed into info(). (Temporary) */
-	void infoMethodCallback(RequestStorageInfoPair pair);
+	void infoMethodCallback(StorageInfoResponse pair);
 
 	/** Returns whether saves sync process is running. */
 	virtual bool isSyncing() { return false; } //TODO

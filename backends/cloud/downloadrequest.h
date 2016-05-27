@@ -26,7 +26,7 @@
 #include "backends/networking/curl/request.h"
 #include "backends/networking/curl/networkreadstream.h"
 #include "backends/cloud/storage.h"
-#include <common/file.h>
+#include "common/file.h"
 
 namespace Cloud {
 
@@ -35,13 +35,16 @@ class DownloadRequest: public Networking::Request {
 	Networking::NetworkReadStream *_remoteFileStream;
 	Common::DumpFile *_localFile;	
 
-	void streamCallback(Storage::RequestReadStreamPair pair);
+	void streamCallback(Networking::NetworkReadStreamResponse pair);
+
+	void finishBool(bool success);
 public:
 	DownloadRequest(Storage *storage, Storage::BoolCallback callback, Common::String remoteFile, Common::DumpFile *dumpFile);
 	virtual ~DownloadRequest() { delete _localFile; }
 
 	virtual void handle();
 	virtual void restart();
+	virtual void finish();
 };
 
 } //end of namespace Cloud

@@ -69,14 +69,11 @@ void CurlJsonRequest::handle() {
 			if (_stream->httpResponseCode() != 200)
 				warning("HTTP response code is not 200 OK (it's %ld)", _stream->httpResponseCode());
 
-			ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
-			if (_jsonCallback) {
-				char *contents = getPreparedContents();
-				if (_stream->httpResponseCode() != 200)
-					debug("%s", contents);
-				Common::JSONValue *json = Common::JSON::parse(contents);
-				(*_jsonCallback)(RequestJsonPair(_id, json)); //potential memory leak, free it in your callbacks!
-			}
+			char *contents = getPreparedContents();
+			if (_stream->httpResponseCode() != 200)
+				debug("%s", contents);
+			Common::JSONValue *json = Common::JSON::parse(contents);
+			finishJson(json);
 		}
 	}
 }
@@ -86,6 +83,16 @@ void CurlJsonRequest::restart() {
 	_stream = 0;
 	_contentsStream = Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 	//with no stream available next handle() will create another one
+}
+
+void CurlJsonRequest::finishJson(Common::JSONValue *json) {
+	Request::finish();
+	if (_jsonCallback) (*_jsonCallback)(JsonResponse(this, json)); //potential memory leak, free it in your callbacks!
+	else delete json;
+}
+
+void CurlJsonRequest::finish() {
+	finishJson(0);
 }
 
 } //end of namespace Networking

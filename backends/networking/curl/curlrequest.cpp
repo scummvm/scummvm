@@ -40,10 +40,10 @@ CurlRequest::~CurlRequest() {
 void CurlRequest::handle() {
 	if (!_stream) _stream = new NetworkReadStream(_url.c_str(), _headersList, _postFields);	
 
-	if (_stream && _stream->eos()) {		
+	if (_stream && _stream->eos()) {
 		if (_stream->httpResponseCode() != 200)
 			warning("HTTP response code is not 200 OK (it's %ld)", _stream->httpResponseCode());
-		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;		
+		finish();
 	}
 }
 
@@ -71,13 +71,13 @@ void CurlRequest::addPostField(Common::String keyValuePair) {
 		_postFields += "&" + keyValuePair;
 }
 
-Cloud::Storage::RequestReadStreamPair CurlRequest::execute() {
+NetworkReadStreamResponse CurlRequest::execute() {
 	if (!_stream) {
 		_stream = new NetworkReadStream(_url.c_str(), _headersList, _postFields);
 		ConnMan.addRequest(this);
 	}
 
-	return Cloud::Storage::RequestReadStreamPair(_id, _stream);
+	return NetworkReadStreamResponse(this, _stream);
 }
 
 } //end of namespace Networking

@@ -29,14 +29,13 @@ namespace Cloud {
 
 DownloadRequest::DownloadRequest(Storage *storage, Storage::BoolCallback callback, Common::String remoteFile, Common::DumpFile *dumpFile):
 	Request(0), _boolCallback(callback), _remoteFileStream(0), _localFile(dumpFile) {
-	storage->streamFile(remoteFile, new Common::Callback<DownloadRequest, Storage::RequestReadStreamPair>(this, &DownloadRequest::streamCallback));
+	storage->streamFile(remoteFile, new Common::Callback<DownloadRequest, Networking::NetworkReadStreamResponse>(this, &DownloadRequest::streamCallback));
 }
 
-void DownloadRequest::streamCallback(Storage::RequestReadStreamPair pair) {
+void DownloadRequest::streamCallback(Networking::NetworkReadStreamResponse pair) {
 	if (!pair.value) {
 		warning("DownloadRequest: no ReadStream passed");
-		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
-		if (_boolCallback) (*_boolCallback)(Storage::RequestBoolPair(_id, false));
+		finish();
 		return;
 	}
 
@@ -46,15 +45,13 @@ void DownloadRequest::streamCallback(Storage::RequestReadStreamPair pair) {
 void DownloadRequest::handle() {	
 	if (!_localFile) {
 		warning("DownloadRequest: no file to write");
-		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
-		if (_boolCallback) (*_boolCallback)(Storage::RequestBoolPair(_id, false));
+		finish();
 		return;
 	}
 
 	if (!_localFile->isOpen()) {
 		warning("DownloadRequest: failed to open file to write");
-		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
-		if (_boolCallback) (*_boolCallback)(Storage::RequestBoolPair(_id, false));
+		finish();
 		return;
 	}
 
@@ -70,8 +67,7 @@ void DownloadRequest::handle() {
 	if (readBytes != 0)
 		if (_localFile->write(buf, readBytes) != readBytes) {
 			warning("DownloadRequest: unable to write all received bytes into output file");
-			ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
-			if (_boolCallback) (*_boolCallback)(Storage::RequestBoolPair(_id, false));
+			finish();
 			return;
 		}
 
@@ -81,8 +77,7 @@ void DownloadRequest::handle() {
 			//TODO: do something about it actually			
 		}
 
-		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
-		if (_boolCallback) (*_boolCallback)(Storage::RequestBoolPair(_id, _remoteFileStream->httpResponseCode() == 200));
+		finishBool(_remoteFileStream->httpResponseCode() == 200);
 
 		_localFile->close(); //yes, I know it's closed automatically in ~DumpFile()		
 	}
@@ -92,9 +87,17 @@ void DownloadRequest::restart() {
 	//this request doesn't know anything about the _remoteFileStream it's reading
 	//thus, it can't restart it
 	warning("DownloadRequest: cannot be restarted");
-	ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
-	if (_boolCallback) (*_boolCallback)(Storage::RequestBoolPair(_id, false));
+	finish();
 	//TODO: fix that
+}
+
+void DownloadRequest::finish() {
+	finishBool(false);
+}
+
+void DownloadRequest::finishBool(bool success) {
+	Request::finish();
+	if (_boolCallback) (*_boolCallback)(Storage::BoolResponse(this, success));
 }
 
 } //end of namespace Cloud

@@ -24,7 +24,6 @@
 #define BACKENDS_NETWORKING_CURL_CURLREQUEST_H
 
 #include "backends/networking/curl/request.h"
-#include "backends/cloud/storage.h"
 #include "common/str.h"
 #include "common/array.h"
 
@@ -33,6 +32,9 @@ struct curl_slist;
 namespace Networking {
 
 class NetworkReadStream;
+
+typedef Response<NetworkReadStream *> NetworkReadStreamResponse;
+typedef Common::BaseCallback<NetworkReadStreamResponse> *NetworkReadStreamCallback;
 
 class CurlRequest: public Request {
 protected:
@@ -48,12 +50,20 @@ public:
 	virtual void handle();
 	virtual void restart();
 
+	/** Replaces all headers with the passed array of headers. */
 	virtual void setHeaders(Common::Array<Common::String> &headers);
+
+	/** Adds a header into headers list. */
 	virtual void addHeader(Common::String header);
+
+	/** Adds a post field (key=value pair). */
 	virtual void addPostField(Common::String field);
 
-	/** Start this Request with ConnMan. Returns its ReadStream and request id. */
-	virtual Cloud::Storage::RequestReadStreamPair execute();
+	/**
+	* Starts this Request with ConnMan.
+	* @return its NetworkReadStream in NetworkReadStreamResponse.
+	*/
+	virtual NetworkReadStreamResponse execute();
 };
 
 }  //end of namespace Networking

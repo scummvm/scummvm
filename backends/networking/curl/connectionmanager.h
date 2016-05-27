@@ -36,30 +36,12 @@ namespace Networking {
 
 class NetworkReadStream;
 
-enum RequestState {
-	PROCESSING,
-	PAUSED,
-	RETRY,
-	FINISHED
-};
-
-struct RequestInfo {
-	int32 id;
-	Request *request;
-	RequestState state;	
-	uint32 retryInSeconds;
-
-	RequestInfo() : id(-1), request(0), state(FINISHED), retryInSeconds(0) {}
-	RequestInfo(int32 rqId, Request *rq) : id(rqId), request(rq), state(PROCESSING), retryInSeconds(0) {}
-};
-
 class ConnectionManager : public Common::Singleton<ConnectionManager> {
 	friend void connectionsThread(void *); //calls handle()
 
 	CURLM *_multi;	
 	bool _timerStarted;
-	Common::HashMap<int32, RequestInfo> _requests;
-	int32 _nextId;
+	Common::Array<Request *> _requests;	
 	
 	void startTimer(int interval = 1000000); //1 second is the default interval
 	void stopTimer();
@@ -81,15 +63,15 @@ public:
 	/**
 	* Use this method to add new Request into manager's queue.
 	* Manager will periodically call handle() method of these
-	* Requests until they return true.
+	* Requests until they set their state to FINISHED.
+	*
+	* If Request's state is RETRY, handleRetry() is called instead.
 	*
 	* @note This method starts the timer if it's not started yet.
 	*
-	* @return generated Request's id, which might be used to get its status
+	* @return the same Request pointer, just as a shortcut
 	*/
-	int32 addRequest(Request *request);	
-
-	RequestInfo &getRequestInfo(int32 id);
+	Request *addRequest(Request *request);
 };
 
 /** Shortcut for accessing the connection manager. */

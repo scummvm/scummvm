@@ -35,24 +35,27 @@ class OneDriveStorage;
 class OneDriveTokenRefresher: public Networking::CurlJsonRequest {
 	OneDriveStorage *_parentStorage;
 	Common::Array<Common::String> _headers;
-	Networking::CurlJsonRequest *_innerRequest;
+	CurlJsonRequest *_innerRequest;
 	Networking::JsonCallback _jsonCallback;
-	int32 _retryId;
+	Request *_retryRequest;
 	bool _started;
 
-	void innerRequestCallback(Networking::RequestJsonPair pair);
-	void tokenRefreshed(Storage::RequestBoolPair pair);
+	void innerRequestCallback(Networking::JsonResponse pair);
+	void tokenRefreshed(Storage::BoolResponse pair);
+
+	virtual void finishJson(Common::JSONValue *json);
 public:	
 	OneDriveTokenRefresher(OneDriveStorage *parent, Networking::JsonCallback callback, const char *url);
 	virtual ~OneDriveTokenRefresher();
 
 	virtual void handle();
 	virtual void restart();
+	virtual void finish();
 
 	virtual void setHeaders(Common::Array<Common::String> &headers) { _headers = headers; }
 	virtual void addHeader(Common::String header) { _headers.push_back(header); }
 	virtual void addPostField(Common::String field) { _innerRequest->addPostField(field); }
-	virtual Cloud::Storage::RequestReadStreamPair execute();
+	virtual Networking::NetworkReadStreamResponse execute();
 };
 
 } //end of namespace OneDrive

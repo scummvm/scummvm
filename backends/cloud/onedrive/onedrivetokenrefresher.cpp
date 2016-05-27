@@ -38,50 +38,45 @@ OneDriveTokenRefresher::OneDriveTokenRefresher(OneDriveStorage *parent, Networki
 	_parentStorage(parent),
 	_innerRequest(
 		new CurlJsonRequest(
-			new Common::Callback<OneDriveTokenRefresher, Networking::RequestJsonPair>(this, &OneDriveTokenRefresher::innerRequestCallback),
+			new Common::Callback<OneDriveTokenRefresher, Networking::JsonResponse>(this, &OneDriveTokenRefresher::innerRequestCallback),
 			url
 		)
-	), _jsonCallback(callback), _retryId(-1), _started(false) {}
+	), _jsonCallback(callback), _retryRequest(nullptr), _started(false) {}
 
 OneDriveTokenRefresher::~OneDriveTokenRefresher() {}
 
-void OneDriveTokenRefresher::innerRequestCallback(Networking::RequestJsonPair pair) {
+void OneDriveTokenRefresher::innerRequestCallback(Networking::JsonResponse pair) {
 	if (!pair.value) {
 		//notify user of failure
 		warning("OneDriveTokenRefresher: got NULL instead of JSON");
-		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
-		if (_jsonCallback) (*_jsonCallback)(Networking::RequestJsonPair(_id, 0));
+		finish();
 		return;
 	}
 
 	Common::JSONObject result = pair.value->asObject();
 	if (result.contains("error")) {
 		//new token needed => request token & then retry original request		
-		ConnMan.getRequestInfo(pair.id).state = Networking::PAUSED;
-		_retryId = pair.id;	
+		if (pair.request) pair.request->pause();
+		_retryRequest = pair.request;
 		delete pair.value;
-		_parentStorage->getAccessToken(new Common::Callback<OneDriveTokenRefresher, Storage::RequestBoolPair>(this, &OneDriveTokenRefresher::tokenRefreshed));
+		_parentStorage->getAccessToken(new Common::Callback<OneDriveTokenRefresher, Storage::BoolResponse>(this, &OneDriveTokenRefresher::tokenRefreshed));
 		return;
 	}
 
 	//notify user of success	
-	ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
-	if (_jsonCallback) (*_jsonCallback)(Networking::RequestJsonPair(_id, pair.value));
+	finishJson(pair.value);
 }
 
-void OneDriveTokenRefresher::tokenRefreshed(Storage::RequestBoolPair pair) {
+void OneDriveTokenRefresher::tokenRefreshed(Storage::BoolResponse pair) {
 	if (!pair.value) {
 		//failed to refresh token, notify user with NULL in original callback
 		warning("OneDriveTokenRefresher: failed to refresh token");
-		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
-		if (_jsonCallback) (*_jsonCallback)(Networking::RequestJsonPair(_id, 0));
+		finish();
 		return;
 	}
 
 	//successfully received refreshed token, can restart the original request now	
-	Networking::RequestInfo &info = ConnMan.getRequestInfo(_retryId);
-	info.state = Networking::RETRY;
-	info.retryInSeconds = 1;
+	if (_retryRequest) _retryRequest->retry(1);
 
 	//update headers: first change header with token, then pass those to request
 	for (uint32 i = 0; i < _headers.size(); ++i) {
@@ -89,7 +84,7 @@ void OneDriveTokenRefresher::tokenRefreshed(Storage::RequestBoolPair pair) {
 			_headers[i] = "Authorization: bearer " + _parentStorage->accessToken();
 		}
 	}
-	CurlJsonRequest *retryRequest = (CurlJsonRequest *)info.request;
+	CurlJsonRequest *retryRequest = (CurlJsonRequest *)_retryRequest;
 	if (retryRequest) retryRequest->setHeaders(_headers);
 }
 
@@ -105,11 +100,19 @@ void OneDriveTokenRefresher::handle() {
 void OneDriveTokenRefresher::restart() {
 	//can't restart as all headers were passed to _innerRequest which is probably dead now
 	warning("OneDriveTokenRefresher: cannot be restarted");
-	ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
-	if (_jsonCallback) (*_jsonCallback)(Networking::RequestJsonPair(_id, 0));
+	finish();
 }
 
-Cloud::Storage::RequestReadStreamPair OneDriveTokenRefresher::execute() {
+void OneDriveTokenRefresher::finish() {
+	finishJson(0);
+}
+
+void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
+	Request::finish();
+	if (_jsonCallback) (*_jsonCallback)(Networking::JsonResponse(this, json));
+}
+
+Networking::NetworkReadStreamResponse OneDriveTokenRefresher::execute() {
 	if (!_started) {
 		for (uint32 i = 0; i < _headers.size(); ++i)
 			_innerRequest->addHeader(_headers[i]);

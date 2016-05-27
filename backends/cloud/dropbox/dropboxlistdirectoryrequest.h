@@ -39,10 +39,12 @@ class DropboxListDirectoryRequest: public Networking::Request {
 	Common::String _token;
 	bool _complete;
 	Common::Array<StorageFile> _files;
-	int32 _requestId;
+	Request *_innerRequest;
 
-	void responseCallback(Networking::RequestJsonPair pair);
+	void responseCallback(Networking::JsonResponse pair);
 	void startupWork();
+
+	void finishFiles(Common::Array<StorageFile> &files);
 
 public:
 	DropboxListDirectoryRequest(Common::String token, Common::String path, Storage::FileArrayCallback cb, bool recursive = false);
@@ -50,6 +52,7 @@ public:
 
 	virtual void handle();
 	virtual void restart();
+	virtual void finish();
 };
 
 } //end of namespace Dropbox

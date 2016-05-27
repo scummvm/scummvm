@@ -32,7 +32,7 @@ namespace Dropbox {
 
 DropboxListDirectoryRequest::DropboxListDirectoryRequest(Common::String token, Common::String path, Storage::FileArrayCallback cb, bool recursive):
 	Networking::Request(0), _requestedPath(path), _requestedRecursive(recursive), _filesCallback(cb),
-	_token(token), _complete(false), _requestId(-1) {
+	_token(token), _complete(false), _innerRequest(nullptr) {
 	startupWork();
 }
 
@@ -40,7 +40,7 @@ void DropboxListDirectoryRequest::startupWork() {
 	_files.clear();
 	_complete = false;
 
-	Networking::JsonCallback innerCallback = new Common::Callback<DropboxListDirectoryRequest, Networking::RequestJsonPair>(this, &DropboxListDirectoryRequest::responseCallback);
+	Networking::JsonCallback innerCallback = new Common::Callback<DropboxListDirectoryRequest, Networking::JsonResponse>(this, &DropboxListDirectoryRequest::responseCallback);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://api.dropboxapi.com/2/files/list_folder");
 	request->addHeader("Authorization: Bearer " + _token);
 	request->addHeader("Content-Type: application/json");
@@ -54,11 +54,11 @@ void DropboxListDirectoryRequest::startupWork() {
 	Common::JSONValue value(jsonRequestParameters);
 	request->addPostField(Common::JSON::stringify(&value));
 
-	_requestId = ConnMan.addRequest(request);
+	_innerRequest = ConnMan.addRequest(request);
 }
 
 
-void DropboxListDirectoryRequest::responseCallback(Networking::RequestJsonPair pair) {
+void DropboxListDirectoryRequest::responseCallback(Networking::JsonResponse pair) {
 	Common::JSONValue *json = pair.value;
 	if (json) {
 		Common::JSONObject response = json->asObject();
@@ -89,7 +89,7 @@ void DropboxListDirectoryRequest::responseCallback(Networking::RequestJsonPair p
 		bool hasMore = response.getVal("has_more")->asBool();
 
 		if (hasMore) {
-			Networking::JsonCallback innerCallback = new Common::Callback<DropboxListDirectoryRequest, Networking::RequestJsonPair>(this, &DropboxListDirectoryRequest::responseCallback);
+			Networking::JsonCallback innerCallback = new Common::Callback<DropboxListDirectoryRequest, Networking::JsonResponse>(this, &DropboxListDirectoryRequest::responseCallback);
 			Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://api.dropboxapi.com/2/files/list_folder/continue");
 			request->addHeader("Authorization: Bearer " + _token);
 			request->addHeader("Content-Type: application/json");
@@ -113,21 +113,27 @@ void DropboxListDirectoryRequest::responseCallback(Networking::RequestJsonPair p
 }
 
 void DropboxListDirectoryRequest::handle() {
-	if (_complete) {
-		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
-		if (_filesCallback) (*_filesCallback)(Storage::RequestFileArrayPair(_id, _files));
-	}
+	if (_complete) finishFiles(_files);	
 }
 
 void DropboxListDirectoryRequest::restart() {
-	if (_requestId != -1) {
-		Networking::RequestInfo &info = ConnMan.getRequestInfo(_requestId);
+	if (_innerRequest) {		
 		//TODO: I'm really not sure some CurlRequest would handle this (it must stop corresponding CURL transfer)
-		info.state = Networking::FINISHED; //may be CANCELED or INTERRUPTED or something?
-		_requestId = -1;
+		_innerRequest->finish(); //may be CANCELED or INTERRUPTED or something?
+		_innerRequest = nullptr;
 	}
 
 	startupWork();
+}
+
+void DropboxListDirectoryRequest::finish() {
+	Common::Array<StorageFile> files;
+	finishFiles(files);
+}
+
+void DropboxListDirectoryRequest::finishFiles(Common::Array<StorageFile> &files) {
+	Request::finish();
+	if (_filesCallback) (*_filesCallback)(Storage::FileArrayResponse(this, files));
 }
 
 } //end of namespace Dropbox

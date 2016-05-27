@@ -83,6 +83,6 @@ public:
 	long httpResponseCode();
 };
 
-} //end of namespace Cloud
+} //end of namespace Networking
 
 #endif

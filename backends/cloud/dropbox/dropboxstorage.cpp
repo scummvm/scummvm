@@ -38,7 +38,7 @@ namespace Dropbox {
 Common::String DropboxStorage::KEY; //can't use ConfMan there yet, loading it on instance creation/auth
 Common::String DropboxStorage::SECRET; //TODO: hide these secrets somehow
 
-static void saveAccessTokenCallback(Networking::RequestJsonPair pair) {
+static void saveAccessTokenCallback(Networking::JsonResponse pair) {
 	Common::JSONValue *json = (Common::JSONValue *)pair.value;
 	if (json) {
 		debug("saveAccessTokenCallback:");
@@ -55,6 +55,7 @@ static void saveAccessTokenCallback(Networking::RequestJsonPair pair) {
 			ConfMan.set("storage1_access_token", result.getVal("access_token")->asString(), "cloud");
 			ConfMan.set("storage1_user_id", result.getVal("uid")->asString(), "cloud");
 			ConfMan.removeKey("dropbox_code", "cloud");
+			ConfMan.flushToDisk();
 			debug("Now please restart ScummVM to apply the changes.");
 		}
 
@@ -84,11 +85,11 @@ void DropboxStorage::printFiles(Common::Array<StorageFile> files) {
 		debug("\t%s", files[i].name().c_str());
 }
 
-int32 DropboxStorage::listDirectory(Common::String path, FileArrayCallback outerCallback, bool recursive) {
+Networking::Request *DropboxStorage::listDirectory(Common::String path, FileArrayCallback outerCallback, bool recursive) {
 	return ConnMan.addRequest(new DropboxListDirectoryRequest(_token, path, outerCallback, recursive));
 }
 
-int32 DropboxStorage::streamFile(Common::String path, ReadStreamCallback callback) {
+Networking::Request *DropboxStorage::streamFile(Common::String path, Networking::NetworkReadStreamCallback callback) {
 	Common::JSONObject jsonRequestParameters;
 	jsonRequestParameters.setVal("path", new Common::JSONValue(path));
 	Common::JSONValue value(jsonRequestParameters);
@@ -98,32 +99,32 @@ int32 DropboxStorage::streamFile(Common::String path, ReadStreamCallback callbac
 	request->addHeader("Dropbox-API-Arg: " + Common::JSON::stringify(&value));
 	request->addHeader("Content-Type: "); //required to be empty (as we do POST, it's usually app/form-url-encoded)
 
-	RequestReadStreamPair pair = request->execute();
+	Networking::NetworkReadStreamResponse pair = request->execute();
 	if (callback) (*callback)(pair);
-	return pair.id;
+	return pair.request;
 }
 
-int32 DropboxStorage::download(Common::String remotePath, Common::String localPath, BoolCallback callback) {
+Networking::Request *DropboxStorage::download(Common::String remotePath, Common::String localPath, BoolCallback callback) {
 	Common::DumpFile *f = new Common::DumpFile();
 	if (!f->open(localPath, true)) {
 		warning("DropboxStorage: unable to open file to download into");
-		if (callback) (*callback)(RequestBoolPair(-1, false));
+		if (callback) (*callback)(BoolResponse(nullptr, false));
 		delete f;
-		return -1;
+		return nullptr;
 	}
 
 	return ConnMan.addRequest(new DownloadRequest(this, callback, remotePath, f));
 }
 
-int32 DropboxStorage::syncSaves(BoolCallback callback) {
+Networking::Request *DropboxStorage::syncSaves(BoolCallback callback) {
 	//this is not the real syncSaves() implementation	
 	//"" is root in Dropbox, not "/"
 	//this must create all these directories:
 	return download("/remote/test.jpg", "local/a/b/c/d/test.jpg", 0);
 }
 
-int32 DropboxStorage::info(StorageInfoCallback outerCallback) {
-	Networking::JsonCallback innerCallback = new Common::CallbackBridge<DropboxStorage, RequestStorageInfoPair, Networking::RequestJsonPair>(this, &DropboxStorage::infoInnerCallback, outerCallback);
+Networking::Request *DropboxStorage::info(StorageInfoCallback outerCallback) {
+	Networking::JsonCallback innerCallback = new Common::CallbackBridge<DropboxStorage, StorageInfoResponse, Networking::JsonResponse>(this, &DropboxStorage::infoInnerCallback, outerCallback);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://api.dropboxapi.com/1/account/info");
 	request->addHeader("Authorization: Bearer " + _token);
 	return ConnMan.addRequest(request);
@@ -133,7 +134,7 @@ int32 DropboxStorage::info(StorageInfoCallback outerCallback) {
 	//and then calls the outerCallback (which wants to receive StorageInfo, not void *)
 }
 
-void DropboxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking::RequestJsonPair pair) {
+void DropboxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse pair) {
 	Common::JSONValue *json = pair.value;
 	if (!json) {
 		warning("NULL passed instead of JSON");
@@ -151,14 +152,14 @@ void DropboxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networ
 		uint32 quotaNormal = quota.getVal("normal")->asNumber();
 		uint32 quotaShared = quota.getVal("shared")->asNumber();
 		uint32 quotaAllocated = quota.getVal("quota")->asNumber();
-		(*outerCallback)(RequestStorageInfoPair(-1, StorageInfo(uid, name, email, quotaNormal+quotaShared, quotaAllocated)));
+		(*outerCallback)(StorageInfoResponse(nullptr, StorageInfo(uid, name, email, quotaNormal+quotaShared, quotaAllocated)));
 		delete outerCallback;
 	}
 	
 	delete json;
 }
 
-void DropboxStorage::infoMethodCallback(RequestStorageInfoPair pair) {
+void DropboxStorage::infoMethodCallback(StorageInfoResponse pair) {
 	debug("\nStorage info:");
 	debug("User name: %s", pair.value.name().c_str());
 	debug("Email: %s", pair.value.email().c_str());
@@ -216,7 +217,7 @@ void DropboxStorage::authThroughConsole() {
 }
 
 void DropboxStorage::getAccessToken(Common::String code) {
-	Networking::JsonCallback callback = new Common::GlobalFunctionCallback<Networking::RequestJsonPair>(saveAccessTokenCallback);
+	Networking::JsonCallback callback = new Common::GlobalFunctionCallback<Networking::JsonResponse>(saveAccessTokenCallback);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, "https://api.dropboxapi.com/1/oauth2/token");
 	request->addPostField("code=" + code);
 	request->addPostField("grant_type=authorization_code");

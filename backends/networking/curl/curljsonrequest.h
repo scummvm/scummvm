@@ -29,10 +29,8 @@
 
 namespace Networking {
 
-class NetworkReadStream;
-
-typedef RequestIdPair<Common::JSONValue*> RequestJsonPair;
-typedef Common::BaseCallback<RequestJsonPair> *JsonCallback;
+typedef Response<Common::JSONValue *> JsonResponse;
+typedef Common::BaseCallback<JsonResponse> *JsonCallback;
 
 class CurlJsonRequest: public CurlRequest {
 	JsonCallback _jsonCallback;
@@ -41,12 +39,17 @@ class CurlJsonRequest: public CurlRequest {
 	/** Prepares raw bytes from _contentsStream to be parsed with Common::JSON::parse(). */
 	char *getPreparedContents();
 
+protected:
+	/** Sets FINISHED state and passes the JSONValue * into user's callback in JsonResponse. */
+	virtual void finishJson(Common::JSONValue *json);
+
 public:
 	CurlJsonRequest(JsonCallback cb, Common::String url);
 	virtual ~CurlJsonRequest();
 
 	virtual void handle(); 
 	virtual void restart();
+	virtual void finish();
 };
 
 }  //end of namespace Networking

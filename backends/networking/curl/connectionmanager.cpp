@@ -34,7 +34,7 @@ DECLARE_SINGLETON(Networking::ConnectionManager);
 
 namespace Networking {
 
-ConnectionManager::ConnectionManager(): _multi(0), _timerStarted(false), _nextId(0) {
+ConnectionManager::ConnectionManager(): _multi(0), _timerStarted(false) {
 	curl_global_init(CURL_GLOBAL_ALL);
 	_multi = curl_multi_init();
 }
@@ -48,16 +48,10 @@ void ConnectionManager::registerEasyHandle(CURL *easy) {
 	curl_multi_add_handle(_multi, easy);
 }
 
-int32 ConnectionManager::addRequest(Request *request) {
-	int32 newId = _nextId++;
-	_requests[newId] = RequestInfo(newId, request);
-	request->setId(newId);
+Request *ConnectionManager::addRequest(Request *request) {
+	_requests.push_back(request);
 	if (!_timerStarted) startTimer();
-	return newId;
-}
-
-RequestInfo &ConnectionManager::getRequestInfo(int32 id) {
-	return _requests[id];
+	return request;
 }
 
 //private goes here:
@@ -91,36 +85,22 @@ void ConnectionManager::handle() {
 
 void ConnectionManager::interateRequests() {
 	//call handle() of all running requests (so they can do their work)
-	debug("handling %d request(s)", _requests.size());
-	Common::Array<int32> idsToRemove;
-	for (Common::HashMap<int32, RequestInfo>::iterator i = _requests.begin(); i != _requests.end(); ++i) {
-		RequestInfo &info = _requests[i->_key];
-		
-		switch(info.state) {
-		case FINISHED:
-			delete info.request;
-			info.request = 0;
-			idsToRemove.push_back(info.id);
-			break;
-
-		case PROCESSING:
-			info.request->handle();
-			break;
-
-		case RETRY:
-			if (info.retryInSeconds > 0) --info.retryInSeconds;
-			else {
-				info.state = PROCESSING;
-				info.request->restart();
-				debug("request restarted");
-			}
-
-		default:
-			; //nothing to do
+	debug("handling %d request(s)", _requests.size());	
+	for (Common::Array<Request *>::iterator i = _requests.begin(); i != _requests.end();) {
+		Request *request = *i;
+		if (!request || request->state() == FINISHED) {
+			delete (*i);
+			_requests.erase(i);
+			continue;
 		}
+		
+		if (request) {
+			if (request->state() == PROCESSING) request->handle();
+			else if (request->state() == RETRY) request->handleRetry();
+		}
+
+		++i;		
 	}
-	for (uint32 i = 0; i < idsToRemove.size(); ++i)
-		_requests.erase(idsToRemove[i]);
 	if (_requests.empty()) stopTimer();
 }
 
