@@ -113,7 +113,8 @@ void Score::loadCastData(Common::SeekableReadStream &stream) {
 	for (uint16 i = 0; i < _frames.size(); i++) {
 		for (uint16 j = 0; j < _frames[i]->_sprites.size(); j++) {
 			byte castId = _frames[i]->_sprites[j]->_castId;
-			_frames[i]->_sprites[j]->_cast = _casts[castId];
+			if (_casts.contains(castId))
+				_frames[i]->_sprites[j]->_cast = _casts.find(castId)->_value;
 		}
 	}
 }
@@ -124,8 +125,8 @@ BitmapCast *Score::getBitmapCast(Common::SeekableReadStream &stream) {
 	/*uint16 someFlaggyThing = */ stream.readUint16BE();
 	cast->initialRect = readRect(stream);
 	cast->boundingRect = readRect(stream);
-	cast->regX = stream.readUint16BE();
 	cast->regY = stream.readUint16BE();
+	cast->regX = stream.readUint16BE();
 	/*uint16 unk1 =*/ stream.readUint16BE();
 	/*uint16 unk2 =*/ stream.readUint16BE();
 	return cast;
@@ -182,12 +183,12 @@ ButtonCast *Score::getButtonCast(Common::SeekableReadStream &stream) {
 }
 
 Common::Rect Score::readRect(Common::SeekableReadStream &stream) {
-	Common::Rect rect;
-	rect.top = stream.readUint16BE();
-	rect.left = stream.readUint16BE();
-	rect.bottom = stream.readUint16BE();
-	rect.right = stream.readUint16BE();
-	return rect;
+	Common::Rect *rect = new Common::Rect();
+	rect->top = stream.readUint16BE();
+	rect->left = stream.readUint16BE();
+	rect->bottom = stream.readUint16BE();
+	rect->right = stream.readUint16BE();
+	return *rect;
 }
 
 void Score::play() {
@@ -206,7 +207,7 @@ void Score::play() {
 		_frames[frameId]->display();
 		frameId++;
 		g_system->updateScreen();
-		g_system->delayMillis(200);
+		g_system->delayMillis(50);
 	}
 }
 
@@ -408,14 +409,26 @@ void Frame::display() {
 		if (_sprites[i]->_enabled) {
 			DIBDecoder img;
 			//TODO check cast type
-			uint32 castId = 1024 + _sprites[i]->_castId;
-			img.loadStream(*riff.getResource(MKTAG('D', 'I', 'B', ' '), castId));
+			uint32 imgId = 1024 + _sprites[i]->_castId;
+			img.loadStream(*riff.getResource(MKTAG('D', 'I', 'B', ' '), imgId));
+			uint32 regX = static_cast<BitmapCast *>(_sprites[i]->_cast)->regX;
+			uint32 regY = static_cast<BitmapCast *>(_sprites[i]->_cast)->regY;
+			uint32 rectLeft = static_cast<BitmapCast *>(_sprites[i]->_cast)->initialRect.left;
+			uint32 rectTop = static_cast<BitmapCast *>(_sprites[i]->_cast)->initialRect.top;
 
-			g_system->copyRectToScreen(img.getSurface()->getPixels(), img.getSurface()->pitch,
-				_sprites[i]->_startPoint.x,
-				_sprites[i]->_startPoint.y,
-				_sprites[i]->_height,
-				_sprites[i]->_width);
+			int x = _sprites[i]->_startPoint.x - regX + rectLeft;
+			int y = _sprites[i]->_startPoint.y - regY + rectTop;
+			int height = _sprites[i]->_height;
+			int width = _sprites[i]->_width;
+			if (x < 0) {
+				width += x;
+				x = 0;
+			}
+			if (y < 0) {
+				height += y;
+				y = 0;
+			}
+			g_system->copyRectToScreen(img.getSurface()->getPixels(), img.getSurface()->pitch, x, y, height, width);
 		}
 	}
 }
