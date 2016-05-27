@@ -23,10 +23,7 @@
 
 #include "backends/cloud/onedrive/onedrivetokenrefresher.h"
 #include "backends/cloud/onedrive/onedrivestorage.h"
-#include "backends/networking/curl/connectionmanager.h"
-#include "backends/networking/curl/curljsonrequest.h"
 #include "backends/networking/curl/networkreadstream.h"
-#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/json.h"
 #include <curl/curl.h>
@@ -35,49 +32,9 @@ namespace Cloud {
 namespace OneDrive {
 
 OneDriveTokenRefresher::OneDriveTokenRefresher(OneDriveStorage *parent, Networking::JsonCallback callback, const char *url):
-	CurlJsonRequest(0, url),
-	_parentStorage(parent),
-	_innerRequest(
-		new CurlJsonRequest(
-			new Common::Callback<OneDriveTokenRefresher, Networking::JsonResponse>(this, &OneDriveTokenRefresher::innerRequestCallback),
-			url
-		)
-	), _jsonCallback(callback), _retryRequest(nullptr), _started(false) {}
+	CurlJsonRequest(callback, url), _parentStorage(parent) {}
 
 OneDriveTokenRefresher::~OneDriveTokenRefresher() {}
-
-void OneDriveTokenRefresher::innerRequestCallback(Networking::JsonResponse pair) {
-	if (!pair.value) {
-		//notify user of failure
-		warning("OneDriveTokenRefresher: got NULL instead of JSON");
-		finish();
-		return;
-	}
-
-	Common::JSONObject result = pair.value->asObject();
-	if (result.contains("error")) {
-		//new token needed => request token & then retry original request		
-		CurlJsonRequest *streamRequest = (CurlJsonRequest *)pair.request;
-		if (streamRequest) {
-			const Networking::NetworkReadStream *stream = streamRequest->getNetworkReadStream();
-			if (stream) {
-				debug("code %ld", stream->httpResponseCode());
-			}
-		}
-
-		Common::JSONObject error = result.getVal("error")->asObject();
-		debug("code = %s", error.getVal("code")->asString().c_str());
-		debug("message = %s", error.getVal("message")->asString().c_str());
-		if (pair.request) pair.request->pause();
-		_retryRequest = pair.request;
-		delete pair.value;
-		_parentStorage->getAccessToken(new Common::Callback<OneDriveTokenRefresher, Storage::BoolResponse>(this, &OneDriveTokenRefresher::tokenRefreshed));
-		return;
-	}
-
-	//notify user of success	
-	finishJson(pair.value);
-}
 
 void OneDriveTokenRefresher::tokenRefreshed(Storage::BoolResponse pair) {
 	if (!pair.value) {
@@ -87,53 +44,54 @@ void OneDriveTokenRefresher::tokenRefreshed(Storage::BoolResponse pair) {
 		return;
 	}
 
-	//successfully received refreshed token, can restart the original request now	
-	if (_retryRequest) _retryRequest->retry(1);
-
 	//update headers: first change header with token, then pass those to request
 	for (uint32 i = 0; i < _headers.size(); ++i) {
 		if (_headers[i].contains("Authorization")) {
 			_headers[i] = "Authorization: bearer " + _parentStorage->accessToken();
 		}
 	}
-	CurlJsonRequest *retryRequest = (CurlJsonRequest *)_retryRequest;
-	if (retryRequest) retryRequest->setHeaders(_headers);
+	setHeaders(_headers);
+
+	//successfully received refreshed token, can restart the original request now	
+	retry(0);
 }
 
-void OneDriveTokenRefresher::handle() {
-	if (!_started) {
-		for (uint32 i = 0; i < _headers.size(); ++i)
-			_innerRequest->addHeader(_headers[i]);
-		_started = true;
-		ConnMan.addRequest(_innerRequest);
+void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {	
+	if (!json) {
+		//notify user of failure
+		warning("OneDriveTokenRefresher: got NULL instead of JSON");
+		CurlJsonRequest::finish();
+		return;
 	}
-}
 
-void OneDriveTokenRefresher::restart() {
-	//can't restart as all headers were passed to _innerRequest which is probably dead now
-	warning("OneDriveTokenRefresher: cannot be restarted");
-	finish();
-}
+	Common::JSONObject result = json->asObject();
+	if (result.contains("error")) {
+		//new token needed => request token & then retry original request		
+		if (_stream) {
+			debug("code %ld", _stream->httpResponseCode());
+		}
 
-void OneDriveTokenRefresher::finish() {
-	finishJson(0);
-}
-
-void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
-	Request::finish();
-	if (_jsonCallback) (*_jsonCallback)(Networking::JsonResponse(this, json));
-}
-
-Networking::NetworkReadStreamResponse OneDriveTokenRefresher::execute() {
-	if (!_started) {
-		for (uint32 i = 0; i < _headers.size(); ++i)
-			_innerRequest->addHeader(_headers[i]);
-		_started = true;
-	} else {
-		warning("OneDriveTokenRefresher: inner Request is already started");
+		Common::JSONObject error = result.getVal("error")->asObject();
+		debug("code = %s", error.getVal("code")->asString().c_str());
+		debug("message = %s", error.getVal("message")->asString().c_str());
+		pause();		
+		delete json;
+		_parentStorage->getAccessToken(new Common::Callback<OneDriveTokenRefresher, Storage::BoolResponse>(this, &OneDriveTokenRefresher::tokenRefreshed));
+		return;
 	}
-	return _innerRequest->execute();
+
+	//notify user of success
+	CurlJsonRequest::finishJson(json);
 }
+
+void OneDriveTokenRefresher::setHeaders(Common::Array<Common::String> &headers) {	
+	_headers = headers;
+	curl_slist_free_all(_headersList);
+	_headersList = 0;
+	for (uint32 i = 0; i < headers.size(); ++i)
+		CurlJsonRequest::addHeader(headers[i]);
+}
+
 
 } //end of namespace OneDrive
 } //end of namespace Cloud

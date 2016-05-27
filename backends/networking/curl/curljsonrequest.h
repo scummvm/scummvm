@@ -33,13 +33,13 @@ typedef Response<Common::JSONValue *> JsonResponse;
 typedef Common::BaseCallback<JsonResponse> *JsonCallback;
 
 class CurlJsonRequest: public CurlRequest {
+protected:
 	JsonCallback _jsonCallback;
 	Common::MemoryWriteStreamDynamic _contentsStream;
 
 	/** Prepares raw bytes from _contentsStream to be parsed with Common::JSON::parse(). */
 	char *getPreparedContents();
 
-protected:
 	/** Sets FINISHED state and passes the JSONValue * into user's callback in JsonResponse. */
 	virtual void finishJson(Common::JSONValue *json);
 
