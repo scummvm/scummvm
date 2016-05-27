@@ -120,6 +120,7 @@ struct SCALER_NoScale {
 	const int16 _sourceY;
 
 	SCALER_NoScale(const CelObj &celObj, const int16 maxWidth, const Common::Point &scaledPosition) :
+	_row(nullptr),
 	_reader(celObj, FLIP ? celObj._width : maxWidth),
 	_lastIndex(celObj._width - 1),
 	_sourceX(scaledPosition.x),
@@ -166,6 +167,7 @@ struct SCALER_Scale {
 	static int16 _valuesY[1024];
 
 	SCALER_Scale(const CelObj &celObj, const Common::Rect &targetRect, const Common::Point &scaledPosition, const Ratio scaleX, const Ratio scaleY) :
+	_row(nullptr),
 #ifndef NDEBUG
 	_maxX(targetRect.right - 1),
 #endif
