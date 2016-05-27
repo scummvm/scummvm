@@ -525,30 +525,30 @@ int CelObj::_nextCacheId = 1;
 CelCache *CelObj::_cache = nullptr;
 
 int CelObj::searchCache(const CelInfo32 &celInfo, int *nextInsertIndex) const {
+	*nextInsertIndex = -1;
 	int oldestId = _nextCacheId + 1;
-	int oldestIndex = -1;
+	int oldestIndex = 0;
 
 	for (int i = 0, len = _cache->size(); i < len; ++i) {
 		CelCacheEntry &entry = (*_cache)[i];
 
-		if (entry.celObj != nullptr) {
-			if (entry.celObj->_info == celInfo) {
-				entry.id = ++_nextCacheId;
-				return i;
+		if (entry.celObj == nullptr) {
+			if (*nextInsertIndex == -1) {
+				*nextInsertIndex = i;
 			}
-
-			if (oldestId > entry.id) {
-				oldestId = entry.id;
-				oldestIndex = i;
-			}
-		} else if (oldestIndex == -1) {
+		} else if (entry.celObj->_info == celInfo) {
+			entry.id = ++_nextCacheId;
+			return i;
+		} else if (oldestId > entry.id) {
+			oldestId = entry.id;
 			oldestIndex = i;
 		}
 	}
 
-	// NOTE: Unlike the original SCI engine code, the out-param
-	// here is only updated if there was not a cache hit.
-	*nextInsertIndex = oldestIndex;
+	if (*nextInsertIndex == -1) {
+		*nextInsertIndex = oldestIndex;
+	}
+
 	return -1;
 }
 
