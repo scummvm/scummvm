@@ -201,7 +201,7 @@ void DirtyAreas::mergeAreas(int idx1, int idx2) {
 	da1._textActive = true;
 }
 
-void DirtyAreas::copy(MSurface *srcSurface, MSurface *destSurface, const Common::Point &posAdjust) {
+void DirtyAreas::copy(BaseSurface *srcSurface, BaseSurface *destSurface, const Common::Point &posAdjust) {
 	for (uint i = 0; i < size(); ++i) {
 		const Common::Rect &srcBounds = (*this)[i]._bounds;
 
@@ -555,7 +555,7 @@ void ScreenObjects::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
-Screen::Screen(): Graphics::Screen(), MSurface() {
+Screen::Screen(): BaseSurface() {
 	// Create the screen surface separately on another surface, since the screen
 	// surface will be subject to change as the clipping area is altered
 	_rawSurface.create(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT);

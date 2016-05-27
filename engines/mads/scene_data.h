@@ -189,36 +189,36 @@ public:
 	 * loads the data
 	 */
 	void load(int sceneId, int variant, const Common::String &resName, int flags,
-		DepthSurface &depthSurface, MSurface &bgSurface);
+		DepthSurface &depthSurface, BaseSurface &bgSurface);
 
 	/**
 	 * Loads the palette for a scene
 	 */
-	void loadPalette(int sceneId, int artFileNum, const Common::String &resName, int flags, MSurface &bgSurface);
+	void loadPalette(int sceneId, int artFileNum, const Common::String &resName, int flags, BaseSurface &bgSurface);
 
 	/**
 	 * Loads a V1 game background
 	 */
-	void loadMadsV1Background(int sceneId, const Common::String &resName, int flags, MSurface &bgSurface);
+	void loadMadsV1Background(int sceneId, const Common::String &resName, int flags, BaseSurface &bgSurface);
 
 	/**
 	 * Loads a V2 game background
 	 */
-	void loadMadsV2Background(int sceneId, const Common::String &resName, int flags, MSurface &bgSurface);
+	void loadMadsV2Background(int sceneId, const Common::String &resName, int flags, BaseSurface &bgSurface);
 
 	/**
 	 * Loads the given surface with depth information of a given scene
 	 * @param depthSurface	Depth/walk surface
 	 * @param variant		Variant number to load
 	 */
-	virtual void loadCodes(MSurface &depthSurface, int variant) = 0;
+	virtual void loadCodes(BaseSurface &depthSurface, int variant) = 0;
 
 	/**
 	 * Loads the given surface with depth information of a given scene
 	 * @param depthSurface	Depth/walk surface
 	 * @param stream		Stream to load the data from
 	 */
-	virtual void loadCodes(MSurface &depthSurface, Common::SeekableReadStream *stream) = 0;
+	virtual void loadCodes(BaseSurface &depthSurface, Common::SeekableReadStream *stream) = 0;
 };
 
 } // End of namespace MADS

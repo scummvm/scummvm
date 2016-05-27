@@ -145,7 +145,7 @@ void Font::setColorMode(SelectionMode mode) {
 	}
 }
 
-int Font::writeString(MSurface *surface, const Common::String &msg, const Common::Point &pt,
+int Font::writeString(BaseSurface *surface, const Common::String &msg, const Common::Point &pt,
 		int spaceWidth, int width) {
 	int xEnd;
 	if (width > 0)

@@ -558,7 +558,7 @@ void TextDisplayList::setDirtyAreas2() {
 	}
 }
 
-void TextDisplayList::draw(MSurface *s) {
+void TextDisplayList::draw(BaseSurface *s) {
 	for (uint idx = 0; idx < size(); ++idx) {
 		TextDisplay &td = (*this)[idx];
 		if (td._active && (td._expire >= 0)) {

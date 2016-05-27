@@ -30,9 +30,9 @@
 
 namespace MADS {
 
-MADSEngine *MSurface::_vm = nullptr;
+MADSEngine *BaseSurface::_vm = nullptr;
 
-int MSurface::scaleValue(int value, int scale, int err) {
+int BaseSurface::scaleValue(int value, int scale, int err) {
 	int scaled = 0;
 	while (value--) {
 		err -= scale;
@@ -44,7 +44,7 @@ int MSurface::scaleValue(int value, int scale, int err) {
 	return scaled;
 }
 
-void MSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Common::Rect &clipRect) {
+void BaseSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Common::Rect &clipRect) {
 	enum {
 		kStatusSkip,
 		kStatusScale,
@@ -171,7 +171,7 @@ void MSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Commo
 	delete[] scaledLineBuf;
 }
 
-void MSurface::scrollX(int xAmount) {
+void BaseSurface::scrollX(int xAmount) {
 	if (xAmount == 0)
 		return;
 
@@ -203,7 +203,7 @@ void MSurface::scrollX(int xAmount) {
 	markAllDirty();
 }
 
-void MSurface::scrollY(int yAmount) {
+void BaseSurface::scrollY(int yAmount) {
 	if (yAmount == 0)
 		return;
 
@@ -238,7 +238,7 @@ void MSurface::scrollY(int yAmount) {
 	delete[] tempData;
 }
 
-void MSurface::translate(Common::Array<RGB6> &palette) {
+void BaseSurface::translate(Common::Array<RGB6> &palette) {
 	for (int y = 0; y < this->h; ++y) {
 		byte *pDest = (byte *)getBasePtr(0, y);
 
@@ -251,7 +251,7 @@ void MSurface::translate(Common::Array<RGB6> &palette) {
 	markAllDirty();
 }
 
-void MSurface::translate(byte map[PALETTE_COUNT]) {
+void BaseSurface::translate(byte map[PALETTE_COUNT]) {
 	for (int y = 0; y < this->h; ++y) {
 		byte *pDest = (byte *)getBasePtr(0, y);
 
@@ -263,7 +263,7 @@ void MSurface::translate(byte map[PALETTE_COUNT]) {
 	markAllDirty();
 }
 
-MSurface *MSurface::flipHorizontal() const {
+BaseSurface *BaseSurface::flipHorizontal() const {
 	MSurface *dest = new MSurface(this->w, this->h);
 
 	for (int y = 0; y < this->h; ++y) {
@@ -277,7 +277,7 @@ MSurface *MSurface::flipHorizontal() const {
 	return dest;
 }
 
-void MSurface::copyRectTranslate(MSurface &srcSurface, const byte *paletteMap,
+void BaseSurface::copyRectTranslate(BaseSurface &srcSurface, const byte *paletteMap,
 		const Common::Point &destPos, const Common::Rect &srcRect) {
 	// Loop through the lines
 	for (int yCtr = 0; yCtr < srcRect.height(); ++yCtr) {
@@ -294,7 +294,7 @@ void MSurface::copyRectTranslate(MSurface &srcSurface, const byte *paletteMap,
 		destPos.y + srcRect.height()));
 }
 
-void MSurface::copyFrom(MSurface &src, const Common::Point &destPos, int depth,
+void BaseSurface::copyFrom(BaseSurface &src, const Common::Point &destPos, int depth,
 	DepthSurface *depthSurface, int scale, bool flipped, int transparentColor) {
 	int destX = destPos.x, destY = destPos.y;
 	int frameWidth = src.w;
@@ -337,15 +337,13 @@ void MSurface::copyFrom(MSurface &src, const Common::Point &destPos, int depth,
 		if (destX < 0) {
 			copyRect.left += -destX;
 			destX = 0;
-		}
-		else if (destX + copyRect.width() > w) {
+		} else if (destX + copyRect.width() > w) {
 			copyRect.right -= destX + copyRect.width() - w;
 		}
 		if (destY < 0) {
 			copyRect.top += -destY;
 			destY = 0;
-		}
-		else if (destY + copyRect.height() > h) {
+		} else if (destY + copyRect.height() > h) {
 			copyRect.bottom -= destY + copyRect.height() - h;
 		}
 

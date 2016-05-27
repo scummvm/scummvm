@@ -128,7 +128,7 @@ SceneInfo *SceneInfo::init(MADSEngine *vm) {
 }
 
 void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
-		int flags, DepthSurface &depthSurface, MSurface &bgSurface) {
+		int flags, DepthSurface &depthSurface, BaseSurface &bgSurface) {
 	bool sceneFlag = sceneId >= 0;
 
 	// Figure out the resource to use
@@ -299,7 +299,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 	}
 }
 
-void SceneInfo::loadPalette(int sceneId, int artFileNum, const Common::String &resName, int flags, MSurface &bgSurface) {
+void SceneInfo::loadPalette(int sceneId, int artFileNum, const Common::String &resName, int flags, BaseSurface &bgSurface) {
 	bool sceneFlag = sceneId >= 0;
 	Common::String resourceName;
 	bool isV2 = (_vm->getGameID() != GType_RexNebular);
@@ -351,7 +351,7 @@ void SceneInfo::loadPalette(int sceneId, int artFileNum, const Common::String &r
 	}
 }
 
-void SceneInfo::loadMadsV1Background(int sceneId, const Common::String &resName, int flags, MSurface &bgSurface) {
+void SceneInfo::loadMadsV1Background(int sceneId, const Common::String &resName, int flags, BaseSurface &bgSurface) {
 	bool sceneFlag = sceneId >= 0;
 	Common::String resourceName;
 	Common::SeekableReadStream *stream;
@@ -397,7 +397,7 @@ void SceneInfo::loadMadsV1Background(int sceneId, const Common::String &resName,
 	artFile.close();
 }
 
-void SceneInfo::loadMadsV2Background(int sceneId, const Common::String &resName, int flags, MSurface &bgSurface) {
+void SceneInfo::loadMadsV2Background(int sceneId, const Common::String &resName, int flags, BaseSurface &bgSurface) {
 	Common::String tileMapResourceName = Resources::formatName(RESPREFIX_RM, sceneId, ".MM");
 	File tileMapFile(tileMapResourceName);
 	MadsPack tileMapPack(&tileMapFile);

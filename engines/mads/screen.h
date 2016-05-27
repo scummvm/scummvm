@@ -25,7 +25,6 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
-#include "graphics/screen.h"
 #include "mads/msurface.h"
 #include "mads/action.h"
 
@@ -118,7 +117,7 @@ public:
 	* @param destSurface	Dest surface
 	* @param posAdjust		Position adjustment
 	*/
-	void copy(MSurface *srcSurface, MSurface *destSurface, const Common::Point &posAdjust);
+	void copy(BaseSurface *srcSurface, BaseSurface *destSurface, const Common::Point &posAdjust);
 
 	/**
 	* Use the lsit of dirty areas to copy areas of the screen surface to
@@ -128,7 +127,6 @@ public:
 
 	void reset();
 };
-
 
 class ScreenObject {
 public:
@@ -208,7 +206,7 @@ public:
 	void synchronize(Common::Serializer &s);
 };
 
-class Screen : virtual public Graphics::Screen, virtual public MSurface {
+class Screen : public BaseSurface {
 private:
 	uint16 _random;
 	MSurface _rawSurface;

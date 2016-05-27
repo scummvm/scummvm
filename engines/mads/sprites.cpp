@@ -337,7 +337,7 @@ void SpriteSlots::drawSprites(MSurface *s) {
 				s->copyFrom(*sprite, Common::Point(xp, yp), slot._depth, &scene._depthSurface,
 					-1, flipped, sprite->getTransparencyIndex());
 			} else {
-				MSurface *spr = sprite;
+				BaseSurface *spr = sprite;
 				if (flipped) {
 					// Create a flipped copy of the sprite temporarily
 					spr = sprite->flipHorizontal();

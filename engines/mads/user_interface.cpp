@@ -161,7 +161,7 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 					MSprite *sprite = asset->getFrame(frameNumber - 1);
 
 					if (flipped) {
-						MSurface *spr = sprite->flipHorizontal();
+						BaseSurface *spr = sprite->flipHorizontal();
 						userInterface.mergeFrom(spr, spr->getBounds(), slot._position,
 							sprite->getTransparencyIndex());
 						spr->free();
@@ -429,7 +429,7 @@ void UserInterface::drawTextElements() {
 	}
 }
 
-void UserInterface::mergeFrom(MSurface *src, const Common::Rect &srcBounds,
+void UserInterface::mergeFrom(BaseSurface *src, const Common::Rect &srcBounds,
 	const Common::Point &destPos, int transparencyIndex) {
 	// Validation of the rectangle and position
 	int destX = destPos.x, destY = destPos.y;

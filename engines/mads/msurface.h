@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
-#include "graphics/managed_surface.h"
+#include "graphics/screen.h"
 #include "mads/palette.h"
 
 namespace MADS {
@@ -48,9 +48,11 @@ struct SpriteInfo {
 };
 
 /*
- * MADS graphics surface
+ * Base MADS surface class. This derivces from Graphics::Screen
+ * because it has logic we'll need for our own Screen class that
+ * derives from this one
  */
-class MSurface : virtual public Graphics::ManagedSurface {
+class BaseSurface : public Graphics::Screen {
 private:
 	/**
 	 * Helper method for calculating new dimensions when scaling a sprite
@@ -72,17 +74,17 @@ public:
 	/**
 	 * Basic constructor
 	 */
-	MSurface() : Graphics::ManagedSurface() {}
+	BaseSurface() : Graphics::Screen() {}
 
 	/**
 	 * Constructor for a surface with fixed dimensions
 	 */
-	MSurface(int width, int height) : Graphics::ManagedSurface(width, height) {}
+	BaseSurface(int width, int height) : Graphics::Screen(width, height) {}
 
 	/**
 	 * Destructor
 	 */
-	virtual ~MSurface() {}
+	virtual ~BaseSurface() {}
 
 	/**
 	 * Return a rect containing the bounds of the surface
@@ -142,13 +144,13 @@ public:
 	/**
 	 * Create a new surface which is a flipped horizontal copy of the current one
 	 */
-	MSurface *flipHorizontal() const;
+	BaseSurface *flipHorizontal() const;
 
 	/**
 	 * Copy an area from one surface to another, translating it using a palette
 	 * map as it's done
 	 */
-	void copyRectTranslate(MSurface &srcSurface, const byte *paletteMap,
+	void copyRectTranslate(BaseSurface &srcSurface, const byte *paletteMap,
 		const Common::Point &destPos, const Common::Rect &srcRect);
 
 	/**
@@ -161,8 +163,20 @@ public:
 	 * @param flipped		Flag for whether image is to be flipped
 	 * @param transparentColor	Transparency palette index
 	 */
-	void copyFrom(MSurface &src, const Common::Point &destPos, int depth, DepthSurface *depthSurface,
+	void copyFrom(BaseSurface &src, const Common::Point &destPos, int depth, DepthSurface *depthSurface,
 		int scale, bool flipped, int transparentColor = -1);
+};
+
+class MSurface : public BaseSurface {
+protected:
+	/**
+	 * Override the addDirtyRect from Graphics::Screen, since for standard
+	 * surfaces we don't need dirty rects to be tracked
+	 */
+	virtual void addDirtyRect(const Common::Rect &r) {}
+public:
+	MSurface() : BaseSurface() {}
+	MSurface(int width, int height) : BaseSurface(width, height) {}
 };
 
 class DepthSurface : public MSurface {

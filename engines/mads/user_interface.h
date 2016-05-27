@@ -238,7 +238,7 @@ public:
 	* @param destPos		Destination position to draw in current surface
 	* @param transparencyIndex	Transparency color
 	*/
-	void mergeFrom(MSurface *src, const Common::Rect &srcBounds, const Common::Point &destPos,
+	void mergeFrom(BaseSurface *src, const Common::Rect &srcBounds, const Common::Point &destPos,
 		int transparencyIndex = -1);
 
 	/**
