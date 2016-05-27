@@ -51,6 +51,7 @@ class OneDriveStorage: public Cloud::Storage {
 
 	void printJson(Networking::JsonResponse pair);
 	void fileDownloaded(BoolResponse pair);
+	void printFiles(FileArrayResponse pair);
 
 	void fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse pair);
 public:	
@@ -73,7 +74,7 @@ public:
 	/** Public Cloud API comes down there. */
 
 	/** Returns Common::Array<StorageFile>. */
-	virtual Networking::Request *listDirectory(Common::String path, FileArrayCallback callback, bool recursive = false) { return nullptr; } //TODO
+	virtual Networking::Request *listDirectory(Common::String path, FileArrayCallback callback, bool recursive = false);
 
 	/** Calls the callback when finished. */
 	virtual Networking::Request *upload(Common::String path, Common::ReadStream *contents, BoolCallback callback) { return nullptr; } //TODO

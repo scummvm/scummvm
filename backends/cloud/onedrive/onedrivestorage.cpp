@@ -23,6 +23,7 @@
 
 #include "backends/cloud/onedrive/onedrivestorage.h"
 #include "backends/cloud/onedrive/onedrivetokenrefresher.h"
+#include "backends/cloud/onedrive/onedrivelistdirectoryrequest.h"
 #include "backends/cloud/downloadrequest.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
@@ -161,6 +162,11 @@ void OneDriveStorage::fileInfoCallback(Networking::NetworkReadStreamCallback out
 	delete pair.value;
 }
 
+Networking::Request *OneDriveStorage::listDirectory(Common::String path, FileArrayCallback callback, bool recursive) {
+	return ConnMan.addRequest(new OneDriveListDirectoryRequest(this, path, callback, recursive));
+}
+
+
 Networking::Request *OneDriveStorage::streamFile(Common::String path, Networking::NetworkReadStreamCallback outerCallback) {
 	Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot:/" + path;
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, Networking::NetworkReadStreamResponse, Networking::JsonResponse>(this, &OneDriveStorage::fileInfoCallback, outerCallback);
@@ -186,6 +192,13 @@ void OneDriveStorage::fileDownloaded(BoolResponse pair) {
 	else debug("download failed!");
 }
 
+void OneDriveStorage::printFiles(FileArrayResponse pair) {
+	debug("files:");
+	Common::Array<StorageFile> &files = pair.value;
+	for (uint32 i = 0; i < files.size(); ++i)
+		debug("\t%s", files[i].path().c_str());
+}
+
 Networking::Request *OneDriveStorage::syncSaves(BoolCallback callback) {
 	//this is not the real syncSaves() implementation
 	/*
@@ -194,7 +207,7 @@ Networking::Request *OneDriveStorage::syncSaves(BoolCallback callback) {
 	request->addHeader("Authorization: bearer " + _token);
 	return ConnMan.addRequest(request);
 	*/
-	return download("pic.jpg", "local/onedrive/2/doom.jpg", new Common::Callback<OneDriveStorage, BoolResponse>(this, &OneDriveStorage::fileDownloaded));
+	return listDirectory("subfolder", new Common::Callback<OneDriveStorage, FileArrayResponse>(this, &OneDriveStorage::printFiles), true);
 }
 
 OneDriveStorage *OneDriveStorage::loadFromConfig(Common::String keyPrefix) {
