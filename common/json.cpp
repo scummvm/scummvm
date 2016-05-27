@@ -934,7 +934,7 @@ String JSONValue::stringifyImpl(size_t const indentDepth) const {
 			ret_string = "null";
 		else {
 			char str[80];
-			sprintf(str, "%.15Lf", _numberValue); //ss.precision(15);
+			sprintf(str, "%lg", _numberValue);
 			ret_string = str;
 		}
 		break;

@@ -168,7 +168,7 @@ void DropboxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networ
 	if (outerCallback) {		
 		//Dropbox documentation states there is no errors for this API method
 		Common::JSONObject info = json->asObject();
-		Common::String uid = Common::String::format("%d", info.getVal("uid")->asNumber());
+		Common::String uid = Common::String::format("%d", (int)info.getVal("uid")->asNumber());
 		Common::String name = info.getVal("display_name")->asString();
 		Common::String email = info.getVal("email")->asString();
 		Common::JSONObject quota = info.getVal("quota_info")->asObject();
