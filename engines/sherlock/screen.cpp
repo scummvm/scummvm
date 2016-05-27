@@ -40,7 +40,9 @@ Screen *Screen::init(SherlockEngine *vm) {
 		return new Scalpel::ScalpelScreen(vm);
 }
 
-Screen::Screen(SherlockEngine *vm) : BaseSurface(), _vm(vm) {
+Screen::Screen(SherlockEngine *vm) : BaseSurface(), _vm(vm),
+		_backBuffer1(vm->getGameID() == GType_RoseTattoo ? 640 : 320, vm->getGameID() == GType_RoseTattoo ? 480 : 200),
+		_backBuffer2(vm->getGameID() == GType_RoseTattoo ? 640 : 320, vm->getGameID() == GType_RoseTattoo ? 480 : 200) {
 	_transitionSeed = 1;
 	_fadeStyle = false;
 	Common::fill(&_cMap[0], &_cMap[PALETTE_SIZE], 0);
@@ -55,6 +57,7 @@ Screen::Screen(SherlockEngine *vm) : BaseSurface(), _vm(vm) {
 	_oldFadePercent = 0;
 	_flushScreen = false;
 
+	create(_backBuffer1.w, _backBuffer1.h);
 	_backBuffer.create(_backBuffer1, _backBuffer1.getBounds());
 }
 

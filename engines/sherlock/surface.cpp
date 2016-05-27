@@ -25,7 +25,8 @@
 
 namespace Sherlock {
 
-BaseSurface::BaseSurface() : Graphics::Screen(), Fonts() {
+BaseSurface::BaseSurface() : Graphics::Screen(0, 0), Fonts() {
+	free();		// Free the 0x0 surface allocated by Graphics::Screen
 }
 
 BaseSurface::BaseSurface(int width, int height) : Graphics::Screen(width, height),
