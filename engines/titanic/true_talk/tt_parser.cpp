@@ -1231,4 +1231,24 @@ bool TTparser::resetConcept(TTconcept **conceptPP, int conceptIndex) {
 	return !result;
 }
 
+int TTparser::processModifiers(int modifier, TTword *word) {
+	TTconcept *newConcept = new TTconcept(word, ST_UNKNOWN_SCRIPT);
+
+	for (TTword *currP = _currentWordP; currP != word; currP = currP->_nextP) {
+		if ((modifier == 2 && currP->_wordClass == WC_ADJECTIVE) ||
+				(modifier == 1 && currP->_wordClass == WC_ADVERB)) {
+			newConcept->_string2 += ' ';
+			newConcept->_string2 += _currentWordP->getText();
+		} else if (word->_id == 113 && currP->_wordClass == WC_ADJECTIVE) {
+			addToConceptList(currP);
+			addNode(13);
+		}
+
+		if (modifier == 2 || modifier == 3) {
+			// TODO
+		}
+	}
+	return 0;
+}
+
 } // End of namespace Titanic

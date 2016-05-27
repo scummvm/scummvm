@@ -169,6 +169,7 @@ private:
 	 */
 	void removeNode(TTparserNode *node);
 
+	int processModifiers(int modifier, TTword *word);
 
 	int checkForAction();
 	int fn2(TTword *word);

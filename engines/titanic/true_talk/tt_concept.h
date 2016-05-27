@@ -41,7 +41,6 @@ private:
 	int _field14;
 	int _field1C;
 	int _field20;
-	TTstring _string2;
 	TTword *_word2P;
 	int _field30;
 	int _field34;
@@ -75,6 +74,7 @@ private:
 public:
 	TTconcept *_nextP;
 	ScriptType _scriptType;
+	TTstring _string2;
 public:
 	TTconcept();
 	TTconcept(TTscriptBase *script, ScriptType scriptType);
