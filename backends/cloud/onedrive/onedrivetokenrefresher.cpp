@@ -92,7 +92,7 @@ void OneDriveTokenRefresher::tokenRefreshed(Storage::BoolResponse pair) {
 
 	//update headers: first change header with token, then pass those to request
 	for (uint32 i = 0; i < _headers.size(); ++i) {
-		if (_headers[i].contains("Authorization: bearer ")) {			
+		if (_headers[i].contains("Authorization")) {
 			_headers[i] = "Authorization: bearer " + _parentStorage->accessToken();
 		}
 	}
