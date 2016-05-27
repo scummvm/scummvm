@@ -39,7 +39,7 @@ namespace Graphics {
  * calls, and provides an update that method that blits the affected 
  * areas to the physical screen
  */
-class Screen : virtual public ManagedSurface {
+class Screen : public ManagedSurface {
 private:
 	/**
 	 * List of affected areas of the screen
