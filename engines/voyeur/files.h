@@ -325,9 +325,13 @@ private:
 		ViewPortAddPtr addFn, ViewPortRestorePtr restoreFn);
 public:
 	ViewPortResource *_parent;
+	ViewPortSetupPtr _setupFn;
 	int _pageCount;
+	ViewPortAddPtr _addFn;
 	int _pageIndex;
+	ViewPortRestorePtr _restoreFn;
 	int _lastPage;
+	ScreenMethodPtr _fn1;
 	Common::Rect _bounds;
 	PictureResource *_currentPic;
 	PictureResource *_activePage;
@@ -340,10 +344,6 @@ public:
 	int _rectListCount[3];
 
 	Common::Rect _clipRect;
-	ScreenMethodPtr _fn1;
-	ViewPortSetupPtr _setupFn;
-	ViewPortAddPtr _addFn;
-	ViewPortRestorePtr _restoreFn;
 	Common::Rect _fontRect;
 public:
 	ViewPortResource(BoltFilesState &state, const byte *src);
