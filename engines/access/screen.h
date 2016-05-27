@@ -45,7 +45,7 @@ struct ScreenSave {
 	int _screenYOff;
 };
 
-class Screen : public virtual ASurface, public virtual Graphics::Screen {
+class Screen : public BaseSurface {
 private:
 	AccessEngine *_vm;
 	byte _tempPalette[PALETTE_SIZE];

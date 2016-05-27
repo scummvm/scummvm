@@ -264,22 +264,22 @@ void Screen::copyBlock(ASurface *src, const Common::Rect &bounds) {
 void Screen::restoreBlock() {
 	if (!_savedBounds.isEmpty())
 		addDirtyRect(_savedBounds);
-	ASurface::restoreBlock();
+	BaseSurface::restoreBlock();
 }
 
 void Screen::drawRect() {
 	addDirtyRect(Common::Rect(_orgX1, _orgY1, _orgX2, _orgY2));
-	ASurface::drawRect();
+	BaseSurface::drawRect();
 }
 
 void Screen::drawBox() {
 	addDirtyRect(Common::Rect(_orgX1, _orgY1, _orgX2, _orgY2));
-	ASurface::drawBox();
+	BaseSurface::drawBox();
 }
 
 void Screen::copyBuffer(Graphics::ManagedSurface *src) {
 	addDirtyRect(Common::Rect(0, 0, src->w, src->h));
-	ASurface::copyBuffer(src);
+	BaseSurface::copyBuffer(src);
 }
 
 void Screen::setPaletteCycle(int startCycle, int endCycle, int timer) {

@@ -244,7 +244,7 @@ void AccessEngine::freeCells() {
 	}
 }
 
-void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
+void AccessEngine::speakText(BaseSurface *s, const Common::String &msg) {
 	Common::String lines = msg;
 	Common::String line;
 	int curPage = 0;
@@ -325,7 +325,7 @@ void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
 	}
 }
 
-void AccessEngine::printText(ASurface *s, const Common::String &msg) {
+void AccessEngine::printText(BaseSurface *s, const Common::String &msg) {
 	Common::String lines = msg;
 	Common::String line;
 	int width = 0;

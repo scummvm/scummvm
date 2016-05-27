@@ -27,7 +27,7 @@
 #include "common/array.h"
 #include "common/memstream.h"
 #include "common/rect.h"
-#include "graphics/managed_surface.h"
+#include "graphics/screen.h"
 #include "access/data.h"
 
 namespace Access {
@@ -35,11 +35,16 @@ namespace Access {
 class SpriteResource;
 class SpriteFrame;
 
-class ASurface : virtual public Graphics::ManagedSurface {
+/**
+ * Base Access surface class. This derivces from Graphics::Screen
+ * because it has logic we'll need for our own Screen class that
+ * derives from this one
+ */
+class BaseSurface : virtual public Graphics::Screen {
 private:
 	Graphics::Surface _savedBlock;
 
-	void flipHorizontal(ASurface &dest);
+	void flipHorizontal(BaseSurface &dest);
 protected:
 	Common::Rect _savedBounds;
 public:
@@ -57,9 +62,9 @@ public:
 public:
 	static int _clipWidth, _clipHeight;
 public:
-	ASurface();
+	BaseSurface();
 
-	virtual ~ASurface();
+	virtual ~BaseSurface();
 
 	void clearBuffer();
 
@@ -85,7 +90,7 @@ public:
 	 */
 	void plotB(SpriteFrame *frame, const Common::Point &pt);
 
-	virtual void copyBlock(ASurface *src, const Common::Rect &bounds);
+	virtual void copyBlock(BaseSurface *src, const Common::Rect &bounds);
 
 	virtual void restoreBlock();
 
@@ -99,7 +104,7 @@ public:
 
 	virtual void copyBuffer(Graphics::ManagedSurface *src);
 
-	void copyTo(ASurface *dest);
+	void copyTo(BaseSurface *dest);
 
 	void saveBlock(const Common::Rect &bounds);
 
@@ -112,6 +117,17 @@ public:
 	void moveBufferDown();
 
 	bool clip(Common::Rect &r);
+};
+
+class ASurface : public BaseSurface {
+protected:
+	/**
+	 * Override the addDirtyRect from Graphics::Screen, since for standard
+	 * surfaces we don't need dirty rects to be tracked
+	 */
+	virtual void addDirtyRect(const Common::Rect &r) {}
+public:
+	ASurface() : BaseSurface() {}
 };
 
 class SpriteFrame : public ASurface {

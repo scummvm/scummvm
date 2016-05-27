@@ -48,7 +48,7 @@ VideoPlayer::~VideoPlayer() {
 	closeVideo();
 }
 
-void VideoPlayer::setVideo(ASurface *vidSurface, const Common::Point &pt, int rate) {
+void VideoPlayer::setVideo(BaseSurface *vidSurface, const Common::Point &pt, int rate) {
 	_vidSurface = vidSurface;
 	vidSurface->_orgX1 = pt.x;
 	vidSurface->_orgY1 = pt.y;
@@ -87,14 +87,14 @@ void VideoPlayer::setVideo(ASurface *vidSurface, const Common::Point &pt, int ra
 	_videoEnd = false;
 }
 
-void VideoPlayer::setVideo(ASurface *vidSurface, const Common::Point &pt, const Common::String filename, int rate) {
+void VideoPlayer::setVideo(BaseSurface *vidSurface, const Common::Point &pt, const Common::String filename, int rate) {
 	// Open up video stream
 	_videoData = _vm->_files->loadFile(filename);
 
 	setVideo(vidSurface, pt, rate);
 }
 
-void VideoPlayer::setVideo(ASurface *vidSurface, const Common::Point &pt, const FileIdent &videoFile, int rate) {
+void VideoPlayer::setVideo(BaseSurface *vidSurface, const Common::Point &pt, const FileIdent &videoFile, int rate) {
 	// Open up video stream
 	_videoData = _vm->_files->loadFile(videoFile);
 	

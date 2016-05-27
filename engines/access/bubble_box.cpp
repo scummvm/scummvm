@@ -228,7 +228,7 @@ void BubbleBox::drawBubble(int index) {
 
 void BubbleBox::doBox(int item, int box) {
 	FontManager &fonts = _vm->_fonts;
-	ASurface &screen = *_vm->_screen;
+	Screen &screen = *_vm->_screen;
 
 	_startItem = item;
 	_startBox = box;

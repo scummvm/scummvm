@@ -496,7 +496,7 @@ void AmazonEngine::drawHelp(const Common::String str) {
 
 	_files->loadScreen(95, 2);
 	if (_moreHelp == 1) {
-		ASurface *oldDest = _destIn;
+		BaseSurface *oldDest = _destIn;
 		_destIn = _screen;
 		int oldClip = _screen->_clipHeight;
 		_screen->_clipHeight = 200;
