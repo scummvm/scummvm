@@ -39,6 +39,7 @@
 #include <dirent.h>
 #include <stdio.h>
 #include <errno.h>
+#include <fcntl.h>
 
 #ifdef __OS2__
 #define INCL_DOS
