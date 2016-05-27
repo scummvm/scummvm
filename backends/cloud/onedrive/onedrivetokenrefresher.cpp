@@ -25,6 +25,7 @@
 #include "backends/cloud/onedrive/onedrivestorage.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/curl/networkreadstream.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/json.h"
@@ -56,6 +57,17 @@ void OneDriveTokenRefresher::innerRequestCallback(Networking::JsonResponse pair)
 	Common::JSONObject result = pair.value->asObject();
 	if (result.contains("error")) {
 		//new token needed => request token & then retry original request		
+		CurlJsonRequest *streamRequest = (CurlJsonRequest *)pair.request;
+		if (streamRequest) {
+			const Networking::NetworkReadStream *stream = streamRequest->getNetworkReadStream();
+			if (stream) {
+				debug("code %ld", stream->httpResponseCode());
+			}
+		}
+
+		Common::JSONObject error = result.getVal("error")->asObject();
+		debug("code = %s", error.getVal("code")->asString().c_str());
+		debug("message = %s", error.getVal("message")->asString().c_str());
 		if (pair.request) pair.request->pause();
 		_retryRequest = pair.request;
 		delete pair.value;

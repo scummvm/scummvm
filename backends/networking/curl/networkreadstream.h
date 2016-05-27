@@ -80,7 +80,7 @@ public:
 	*
 	* @note This method should be called when eos() == true.
 	*/
-	long httpResponseCode();
+	long httpResponseCode() const;
 };
 
 } //end of namespace Networking

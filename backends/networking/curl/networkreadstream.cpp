@@ -78,7 +78,7 @@ void NetworkReadStream::finished() {
 	_requestComplete = true;
 }
 
-long NetworkReadStream::httpResponseCode() {
+long NetworkReadStream::httpResponseCode() const {
 	long responseCode = -1;
 	if (_easy)
 		curl_easy_getinfo(_easy, CURLINFO_RESPONSE_CODE, &responseCode);

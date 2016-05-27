@@ -64,6 +64,9 @@ public:
 	* @return its NetworkReadStream in NetworkReadStreamResponse.
 	*/
 	virtual NetworkReadStreamResponse execute();
+
+	/** Returns Request's NetworkReadStream. */
+	const NetworkReadStream *getNetworkReadStream() const { return _stream; }
 };
 
 }  //end of namespace Networking
