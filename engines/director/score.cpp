@@ -64,10 +64,7 @@ Score::Score(Common::SeekableReadStream &stream) {
 void Score::loadConfig(Common::SeekableReadStream &stream) {
 	/*uint16 unk1 = */ stream.readUint16BE();
 	/*ver1 = */ stream.readUint16BE();
-	_movieRect.top = stream.readUint16BE();
-	_movieRect.left = stream.readUint16BE();
-	_movieRect.bottom = stream.readUint16BE();
-	_movieRect.right = stream.readUint16BE();
+	_movieRect = readRect(stream);
 
 	_castArrayStart = stream.readUint16BE();
 	_castArrayEnd = stream.readUint16BE();
@@ -85,31 +82,38 @@ void Score::readVersion(uint32 rid) {
 void Score::loadCastData(Common::SeekableReadStream &stream) {
 	for (uint16 id = _castArrayStart; id < _castArrayEnd; id++) {
 		byte size = stream.readByte();
-		if (size > 0) {
-			debug("%d", stream.pos());
-			uint8 castType = stream.readByte();
-			switch (castType) {
-			case kCastBitmap:
-				_casts[id] = getBitmapCast(stream);
-				_casts[id]->type = kCastBitmap;
-				break;
-			case kCastText:
-				_casts[id] = getTextCast(stream);
-				_casts[id]->type = kCastText;
-				break;
-			case kCastShape:
-				_casts[id] = getShapeCast(stream);
-				_casts[id]->type = kCastShape;
-				break;
-			case kCastButton:
-				_casts[id] = getButtonCast(stream);
-				_casts[id]->type = kCastButton;
-				break;
-			default:
-				warning("Unhandled cast type: %d", castType);
-				stream.skip(size - 1);
-				break;
-			}
+		if (size == 0)
+			continue;
+
+		uint8 castType = stream.readByte();
+		switch (castType) {
+		case kCastBitmap:
+			_casts[id] = getBitmapCast(stream);
+			_casts[id]->type = kCastBitmap;
+			break;
+		case kCastText:
+			_casts[id] = getTextCast(stream);
+			_casts[id]->type = kCastText;
+			break;
+		case kCastShape:
+			_casts[id] = getShapeCast(stream);
+			_casts[id]->type = kCastShape;
+			break;
+		case kCastButton:
+			_casts[id] = getButtonCast(stream);
+			_casts[id]->type = kCastButton;
+			break;
+		default:
+			warning("Unhandled cast type: %d", castType);
+			stream.skip(size - 1);
+			break;
+		}
+	}
+	//Set cast pointers to sprites
+	for (uint16 i = 0; i < _frames.size(); i++) {
+		for (uint16 j = 0; j < _frames[i]->_sprites.size(); j++) {
+			byte castId = _frames[i]->_sprites[j]->_castId;
+			_frames[i]->_sprites[j]->_cast = _casts[castId];
 		}
 	}
 }
@@ -118,17 +122,8 @@ BitmapCast *Score::getBitmapCast(Common::SeekableReadStream &stream) {
 	BitmapCast *cast = new BitmapCast();
 	/*byte flags = */ stream.readByte();
 	/*uint16 someFlaggyThing = */ stream.readUint16BE();
-
-	cast->initialRect.top = stream.readUint16BE();
-	cast->initialRect.left = stream.readUint16BE();
-	cast->initialRect.bottom = stream.readUint16BE();
-	cast->initialRect.right = stream.readUint16BE();
-
-	cast->boundingRect.top = stream.readUint16BE();
-	cast->boundingRect.left = stream.readUint16BE();
-	cast->boundingRect.bottom = stream.readUint16BE();
-	cast->boundingRect.right = stream.readUint16BE();
-
+	cast->initialRect = readRect(stream);
+	cast->boundingRect = readRect(stream);
 	cast->regX = stream.readUint16BE();
 	cast->regY = stream.readUint16BE();
 	/*uint16 unk1 =*/ stream.readUint16BE();
@@ -146,12 +141,7 @@ TextCast *Score::getTextCast(Common::SeekableReadStream &stream) {
 	cast->textAlign = stream.readUint16BE();
 	stream.skip(6); //palinfo
 	/*uint32 unk1 = */ stream.readUint32BE();
-
-	cast->initialRect.top = stream.readUint16BE();
-	cast->initialRect.left = stream.readUint16BE();
-	cast->initialRect.bottom = stream.readUint16BE();
-	cast->initialRect.right = stream.readUint16BE();
-
+	cast->initialRect = readRect(stream);
 	cast->textShadow = stream.readByte();
 	cast->textFlags = stream.readByte();
 	/*uint16 unk2 =*/ stream.readUint16BE();
@@ -163,12 +153,7 @@ ShapeCast *Score::getShapeCast(Common::SeekableReadStream &stream) {
 	/*byte flags = */ stream.readByte();
 	/*unk1 = */ stream.readByte();
 	cast->shapeType = stream.readByte();
-
-	cast->initialRect.top = stream.readUint16BE();
-	cast->initialRect.left = stream.readUint16BE();
-	cast->initialRect.bottom = stream.readUint16BE();
-	cast->initialRect.right = stream.readUint16BE();
-
+	cast->initialRect = readRect(stream);
 	cast->pattern = stream.readUint16BE();
 	cast->fgCol = stream.readByte();
 	cast->bgCol = stream.readByte();
@@ -188,17 +173,21 @@ ButtonCast *Score::getButtonCast(Common::SeekableReadStream &stream) {
 	cast->textAlign = stream.readUint16BE();
 	stream.skip(6); //palinfo
 	/*uint32 unk1 = */ stream.readUint32BE();
-
-	cast->initialRect.top = stream.readUint16BE();
-	cast->initialRect.left = stream.readUint16BE();
-	cast->initialRect.bottom = stream.readUint16BE();
-	cast->initialRect.right = stream.readUint16BE();
-
+	cast->initialRect = readRect(stream);
 	cast->textShadow = stream.readByte();
 	cast->textFlags = stream.readByte();
 	/*uint16 unk2 =*/ stream.readUint16BE();
 	cast->buttonType = stream.readUint16BE();
 	return cast;
+}
+
+Common::Rect Score::readRect(Common::SeekableReadStream &stream) {
+	Common::Rect rect;
+	rect.top = stream.readUint16BE();
+	rect.left = stream.readUint16BE();
+	rect.bottom = stream.readUint16BE();
+	rect.right = stream.readUint16BE();
+	return rect;
 }
 
 void Score::play() {
@@ -418,8 +407,10 @@ void Frame::display() {
 	for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
 		if (_sprites[i]->_enabled) {
 			DIBDecoder img;
+			//TODO check cast type
 			uint32 castId = 1024 + _sprites[i]->_castId;
 			img.loadStream(*riff.getResource(MKTAG('D', 'I', 'B', ' '), castId));
+
 			g_system->copyRectToScreen(img.getSurface()->getPixels(), img.getSurface()->pitch,
 				_sprites[i]->_startPoint.x,
 				_sprites[i]->_startPoint.y,

@@ -114,8 +114,9 @@ public:
     Sprite();
     Sprite(const Sprite &sprite);
     bool _enabled;
-    uint8 _castId;
+    byte _castId;
     //castType type;
+    Cast *_cast;
     uint16 _flags;
     Common::Point _startPoint;
     uint16 _width;
@@ -165,6 +166,7 @@ private:
     TextCast *getTextCast(Common::SeekableReadStream &stream);
     ButtonCast *getButtonCast(Common::SeekableReadStream &stream);
     ShapeCast *getShapeCast(Common::SeekableReadStream &stream);
+    Common::Rect readRect(Common::SeekableReadStream &stream);
 
 public:
     Common::Array<Frame *> _frames;
