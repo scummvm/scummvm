@@ -24,6 +24,7 @@
 #include "backends/cloud/dropbox/dropboxstorage.h"
 #include "backends/cloud/dropbox/dropboxlistdirectoryrequest.h"
 #include "backends/cloud/downloadrequest.h"
+#include "backends/cloud/folderdownloadrequest.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
 #include "common/config-manager.h"
@@ -79,8 +80,9 @@ void DropboxStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "user_id", _uid, "cloud");
 }
 
-void DropboxStorage::printFiles(Common::Array<StorageFile> files) {
+void DropboxStorage::printFiles(FileArrayResponse pair) {
 	debug("files:");
+	Common::Array<StorageFile> &files = pair.value;
 	for (uint32 i = 0; i < files.size(); ++i)
 		debug("\t%s", files[i].name().c_str());
 }
@@ -116,11 +118,20 @@ Networking::Request *DropboxStorage::download(Common::String remotePath, Common:
 	return ConnMan.addRequest(new DownloadRequest(this, callback, remotePath, f));
 }
 
+Networking::Request *DropboxStorage::downloadFolder(Common::String remotePath, Common::String localPath, FileArrayCallback callback, bool recursive) {
+	return ConnMan.addRequest(new FolderDownloadRequest(this, callback, remotePath, localPath, recursive));
+}
+
 Networking::Request *DropboxStorage::syncSaves(BoolCallback callback) {
 	//this is not the real syncSaves() implementation	
 	//"" is root in Dropbox, not "/"
 	//this must create all these directories:
-	return download("/remote/test.jpg", "local/a/b/c/d/test.jpg", 0);
+	//return download("/remote/test.jpg", "local/a/b/c/d/test.jpg", 0);
+	return downloadFolder(
+		"/not_flat", "local/not_flat_1_level/",
+		new Common::Callback<DropboxStorage, FileArrayResponse>(this, &DropboxStorage::printFiles),
+		false
+	);
 }
 
 Networking::Request *DropboxStorage::info(StorageInfoCallback outerCallback) {

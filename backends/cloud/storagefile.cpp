@@ -24,6 +24,14 @@
 
 namespace Cloud {
 
+StorageFile::StorageFile() {
+	_path = "";
+	_name = "";
+	_size = 0;
+	_timestamp = 0;
+	_isDirectory = false;
+}
+
 StorageFile::StorageFile(Common::String pth, uint32 sz, uint32 ts, bool dir) {
 	_path = pth;
 

@@ -39,6 +39,7 @@ class StorageFile {
 	bool _isDirectory;
 
 public:
+	StorageFile(); //invalid empty file
 	StorageFile(Common::String pth, uint32 sz, uint32 ts, bool dir);
 
 	Common::String path() const { return _path; }
