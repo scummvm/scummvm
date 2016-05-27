@@ -74,7 +74,9 @@ public:
 	/**
 	 * Basic constructor
 	 */
-	BaseSurface() : Graphics::Screen() {}
+	BaseSurface() : Graphics::Screen(0, 0) {
+		free();		// Free the 0x0 surface allocated by Graphics::Screen
+	}
 
 	/**
 	 * Constructor for a surface with fixed dimensions
