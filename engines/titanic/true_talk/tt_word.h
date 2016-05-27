@@ -59,7 +59,7 @@ protected:
 public:
 	TTword *_nextP;
 	TTsynonym *_synP;
-	TTstring _string;
+	TTstring _text;
 	WordClass _wordClass;
 	int _id;
 	uint _tag;
@@ -111,13 +111,13 @@ public:
 	 */
 	bool findSynByName(const TTstring &str, TTsynonym *dest, int mode) const;
 
-	const char *c_str() const { return _string.c_str(); }
+	const char *c_str() const { return _text.c_str(); }
 	operator const char *() const { return c_str(); }
 
 	/**
 	 * Return the text of the word
 	 */
-	const TTstring getText() { return _string; }
+	const TTstring getText() { return _text; }
 
 	/**
 	 * Compares the word's text to a passed string
@@ -135,6 +135,11 @@ public:
 	 * Return the status of the word
 	 */
 	TTstringStatus getStatus() const { return _status; }
+
+	/**
+	 * Returns true if the word is in a valid state
+	 */
+	bool isValid() const { return _status == SS_VALID; }
 
 	/**
 	 * Return the status of the entire word chain

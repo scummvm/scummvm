@@ -131,7 +131,7 @@ int TTvocab::load(const CString &name) {
 }
 
 void TTvocab::addWord(TTword *word) {
-	TTword *existingWord = findWord(word->_string);
+	TTword *existingWord = findWord(word->_text);
 
 	if (existingWord) {
 		if (word->_synP) {
@@ -540,7 +540,7 @@ TTword *TTvocab::getPrefixedWord(TTstring &str) const {
 		if (word->hasSynonyms())
 			word->setSynStr(str);
 		else
-			word->_string = str;
+			word->_text = str;
 	}
 
 	delete tempStr;

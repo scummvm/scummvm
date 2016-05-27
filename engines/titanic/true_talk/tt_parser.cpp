@@ -915,8 +915,88 @@ void TTparser::removeConcept(TTconcept *concept) {
 }
 
 int TTparser::checkForAction() {
+	int status = SS_VALID;
+	bool flag = false;
+	bool actionFlag = false;
+
+	if (_conceptP && _currentWordP) {
+		// Firstly we need to get the next word to process, and remove it from
+		// the list pointed to by _currentWordP
+		TTword *word = _currentWordP;	
+		if (word->_nextP) {
+			// Chain of words, so we need to find the last word of the chain,
+			// and set the last-but-one's _nextP to nullptr to detach the last one
+			TTword *prior = nullptr;
+			for (word = word->_nextP; word->_nextP; word = word->_nextP) {
+				prior = word;
+			}
+
+			if (prior)
+				prior->_nextP = nullptr;
+		} else {
+			// No chain, so singular word can simply be removed
+			_currentWordP = nullptr;
+			if (word->_id == 906 && _sentence->_field2C == 1)
+				_sentence->_field2C = 12;
+		}
+
+		if (word->_text == "do" || word->_text == "doing" || word->_text == "does" ||
+				word->_text == "done") {
+			TTstring doStr("do");
+			TTaction *action = new TTaction(doStr, WC_ACTION, 112, 0, _sentenceConcept->get18());
+			
+			if (!action->isValid()) {
+				status = SS_4;
+			} else {
+				// Have the new action replace the old word instance
+				delete word;
+				word = action;
+				actionFlag = true;
+			}
+		}
+
+		addToConceptList(word);
+		delete word;
+		flag = true;
+	}
+
+	// Handle any remaining words
+	TTword *reqWord = nullptr;
+	while (_currentWordP) {
+		if (considerRequests(_currentWordP) > 1) {
+			reqWord = _currentWordP;
+		} else {
+			// Delete the top of the word chain
+			TTword *wordP = _currentWordP;
+			_currentWordP = _currentWordP->_nextP;
+			delete wordP;
+		}
+	}
+
+	if (flag && _conceptP) {
+		if (actionFlag && (!_sentenceConcept->_concept1P || _sentenceConcept->_concept1P->isWordId(113))) {
+			_sentenceConcept->replaceConcept(0, 1, _conceptP);
+		} else if (!_sentenceConcept->_concept5P) {
+			_sentenceConcept->replaceConcept(1, 5, _conceptP);
+		} else if (_sentenceConcept->_concept5P->isWordId(904)) {
+			_sentenceConcept->replaceConcept(0, 5, _conceptP);
+		}
+
+		removeConcept(_conceptP);
+	}
+
+	if (_sentence->fn2(3, TTstring("thePlayer"), _sentenceConcept) && !flag) {
+		if (_sentenceConcept->concept1WordId() == 101) {
+			_sentence->_field2C = 16;
+		} else if (_sentence->_field2C != 18 && _sentenceConcept->concept1WordId() == 102) {
+			if (_sentence->fn2(0, TTstring("targetNpc"), _sentenceConcept))
+				_sentence->_field2C = 15;
+		}
+	}
+
+
 	// TODO
-	return 0;
+	return status;
 }
 
 int TTparser::fn2(TTword *word) {

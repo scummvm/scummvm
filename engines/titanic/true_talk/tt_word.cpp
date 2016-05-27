@@ -26,7 +26,7 @@
 
 namespace Titanic {
 
-TTword::TTword(TTstring &str, WordClass wordClass, int id) : _string(str),
+TTword::TTword(TTstring &str, WordClass wordClass, int id) : _text(str),
 		_wordClass(wordClass), _id(id), _tag(0), _field24(0),
 		_field28(0), _synP(nullptr), _nextP(nullptr) {
 	_status = str.getStatus() == SS_VALID ? SS_VALID : SS_5;
@@ -38,7 +38,7 @@ TTword::TTword(const TTword *src) {
 		return;
 	}
 
-	_string = src->_string;
+	_text = src->_text;
 	_wordClass = src->_wordClass;
 	_id = src->_id;
 	_tag = src->_tag;
@@ -138,7 +138,7 @@ int TTword::load(SimpleFile *file, WordClass wordClass) {
 	int id;
 
 	if (file->scanf("%d %s %s", &id, &str1, &str2)) {
-		_string = str1;
+		_text = str1;
 		_id = id;
 		_tag = readNumber(str2.c_str());
 		_wordClass = wordClass;
@@ -186,7 +186,7 @@ bool TTword::findSynByName(const TTstring &str, TTsynonym *dest, int mode) const
 }
 
 bool TTword::compareTo(const char *str) const {
-	return _string == str;
+	return _text == str;
 }
 
 TTword *TTword::copy() const {
