@@ -32,6 +32,13 @@ FolderDownloadRequest::FolderDownloadRequest(Storage *storage, Storage::FileArra
 	start();
 }
 
+FolderDownloadRequest::~FolderDownloadRequest() {
+	_ignoreCallback = true;
+	if (_workingRequest) _workingRequest->finish();
+	delete _fileArrayCallback;
+}
+
+
 void FolderDownloadRequest::start() {
 	//cleanup
 	_ignoreCallback = true;

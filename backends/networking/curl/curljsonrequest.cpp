@@ -34,7 +34,7 @@ namespace Networking {
 CurlJsonRequest::CurlJsonRequest(JsonCallback cb, Common::String url):
 	CurlRequest(0, url), _jsonCallback(cb), _contentsStream(DisposeAfterUse::YES) {}
 
-CurlJsonRequest::~CurlJsonRequest() {}
+CurlJsonRequest::~CurlJsonRequest() { delete _jsonCallback; }
 
 char *CurlJsonRequest::getPreparedContents() {
 	//write one more byte in the end

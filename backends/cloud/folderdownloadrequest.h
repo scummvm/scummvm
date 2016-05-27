@@ -47,7 +47,7 @@ class FolderDownloadRequest: public Networking::Request {
 	void finishFiles(Common::Array<StorageFile> &files);
 public:
 	FolderDownloadRequest(Storage *storage, Storage::FileArrayCallback callback, Common::String remoteDirectoryPath, Common::String localDirectoryPath, bool recursive);
-	virtual ~FolderDownloadRequest() {}
+	virtual ~FolderDownloadRequest();
 
 	virtual void handle() {}
 	virtual void restart() { start(); }

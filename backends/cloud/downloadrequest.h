@@ -40,7 +40,10 @@ class DownloadRequest: public Networking::Request {
 	void finishBool(bool success);
 public:
 	DownloadRequest(Storage *storage, Storage::BoolCallback callback, Common::String remoteFile, Common::DumpFile *dumpFile);
-	virtual ~DownloadRequest() { delete _localFile; }
+	virtual ~DownloadRequest() {
+		delete _boolCallback;
+		delete _localFile;
+	}
 
 	virtual void handle();
 	virtual void restart();

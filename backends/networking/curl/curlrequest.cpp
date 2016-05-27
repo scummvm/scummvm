@@ -33,9 +33,7 @@ namespace Networking {
 CurlRequest::CurlRequest(DataCallback cb, Common::String url):
 	Request(cb), _url(url), _stream(0), _headersList(0) {}
 
-CurlRequest::~CurlRequest() {
-	if (_stream) delete _stream;
-}
+CurlRequest::~CurlRequest() { delete _stream; }
 
 void CurlRequest::handle() {
 	if (!_stream) _stream = new NetworkReadStream(_url.c_str(), _headersList, _postFields);	
