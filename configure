@@ -155,6 +155,7 @@ _build_hq_scalers=yes
 _enable_prof=no
 _global_constructors=no
 _bink=yes
+_cloud=auto
 # Default vkeybd/keymapper/eventrec options
 _vkeybd=no
 _keymapper=no
@@ -962,6 +963,7 @@ Optional Features:
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers
   --disable-translation    don't build support for translated messages
   --disable-taskbar        don't build support for taskbar and launcher integration
+  --disable-cloud          don't build cloud support
   --enable-vkeybd          build virtual keyboard support
   --enable-keymapper       build key mapper support
   --enable-eventrecorder   enable event recording functionality
@@ -1044,6 +1046,9 @@ Optional Libraries:
   --with-sndio-prefix=DIR  Prefix where sndio is installed (optional)
   --disable-sndio          disable sndio MIDI driver [autodetect]
 
+  --disable-sdlnet         disable SDL_Net networking library [autodetect]
+  --disable-libcurl        disable libcurl networking library [autodetect]
+
 Some influential environment variables:
   LDFLAGS        linker flags, e.g. -L<lib dir> if you have libraries in a
                  nonstandard directory <lib dir>
@@ -1122,6 +1127,12 @@ for ac_option in $@; do
 	--disable-freetype2)      _freetype2=no   ;;
 	--enable-taskbar)         _taskbar=yes    ;;
 	--disable-taskbar)        _taskbar=no     ;;
+	--enable-sdlnet)          _sdlnet=yes     ;;
+	--disable-sdlnet)         _sdlnet=no      ;;
+	--enable-libcurl)         _libcurl=yes     ;;
+	--disable-libcurl)        _libcurl=no      ;;
+	--enable-cloud)           _cloud=yes      ;;
+	--disable-cloud)          _cloud=no       ;;
 	--enable-updates)         _updates=yes    ;;
 	--disable-updates)        _updates=no     ;;
 	--enable-libunity)        _libunity=yes   ;;
@@ -4795,7 +4806,11 @@ if test "$_keymapper" = yes ; then
 fi
 
 if test "$_eventrec" = yes ; then
-	echo ", event recorder"
+	echo_n ", event recorder"
+fi
+
+if test "$_cloud" = yes ; then
+	echo ", cloud"
 else
 	echo
 fi
