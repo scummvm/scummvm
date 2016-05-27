@@ -819,6 +819,11 @@ int TTparser::considerRequests(TTword *word) {
 				break;
 
 			case SEEK_LOCATION:
+				addNode(5);
+				_sentenceConcept->createConcept(0, 5, word);
+				flag = true;
+				break;
+
 			case SEEK_OWNERSHIP:
 			case SEEK_STATE:
 			case SEEK_MODIFIERS:
@@ -837,15 +842,35 @@ int TTparser::considerRequests(TTword *word) {
 				break;
 
 			case SET_ACTION:
-			case SET_COLOR:
+				if (_sentence->fn4(1, 104, _sentenceConcept) ||
+						_sentence->fn4(1, 107, _sentenceConcept)) {
+					concept = _sentenceConcept->_concept1P;
+					_sentenceConcept->_concept1P = nullptr;
+					addNode(15);
+				}
+
+				if (_sentence->check2C() && word->_id == 113)
+					addNode(4);
+
+				if (word->_wordClass == WC_ACTION)
+					_sentenceConcept->createConcept(0, 1, word);
+
+				flag = true;
+				break;
+
 			case ACTOR_IS_TO:
+				_sentenceConcept->changeConcept(1, &_sentenceConcept->_concept0P, 3);
+				flag = true;
+				break;
+
 			case ACTOR_IS_FROM:
+				_sentenceConcept->changeConcept(1, &_sentenceConcept->_concept0P, 4);
+				break;
 
 			case ACTOR_IS_OBJECT:
 				flag = resetConcept(&_sentenceConcept->_concept0P, 2);
 				break;
 
-			case STATE_IDENTITY:
 			case WORD_TYPE_IS_SENTENCE_TYPE:
 			case COMPLEX_VERB:
 				// TODO

@@ -95,7 +95,7 @@ public:
 	int storeVocabHit(TTword *word);
 
 	bool fn2(int conceptIndex, const TTstring &str, TTconceptNode *conceptNode);
-	bool fn4(int mode, int wordId, TTconcept *concept);
+	bool fn4(int mode, int wordId, TTconceptNode *node);
 };
 
 } // End of namespace Titanic

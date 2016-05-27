@@ -186,16 +186,16 @@ exit:
 	return abortFlag;
 }
 
-bool TTsentence::fn4(int mode, int wordId, TTconcept *concept) {
-	if (!concept)
-		return false;
+bool TTsentence::fn4(int mode, int wordId, TTconceptNode *node) {
+	if (!node)
+		node = &_sentenceConcept;
 
 	switch (mode) {
 	case 1:
-		return _sentenceConcept._concept1P && _sentenceConcept._concept1P->getWordId() == wordId;
+		return node->_concept1P && node->_concept1P->getWordId() == wordId;
 
 	case 5:
-		return _sentenceConcept._concept5P && _sentenceConcept._concept5P->getWordId() == wordId;
+		return node->_concept5P && node->_concept5P->getWordId() == wordId;
 
 	default:
 		return false;
