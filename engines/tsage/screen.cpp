@@ -25,8 +25,13 @@
 
 namespace TsAGE {
 
-Screen::Screen(): GfxSurface(), Graphics::Screen() {
+Screen::Screen(): GfxSurface() {
 	create(SCREEN_WIDTH, SCREEN_HEIGHT);
+}
+
+Screen::~Screen() {
+	// Delete the screen's surface
+	free();
 }
 
 void Screen::update() {

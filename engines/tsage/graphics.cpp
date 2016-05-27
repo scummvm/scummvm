@@ -229,14 +229,16 @@ void Rect::synchronize(Serializer &s) {
 
 /*--------------------------------------------------------------------------*/
 
-GfxSurface::GfxSurface() : Graphics::ManagedSurface(), _bounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) {
+GfxSurface::GfxSurface() : Graphics::Screen(0, 0), _bounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) {
+	free();		// Free the 0x0 surface allocated by Graphics::Screen
 	_disableUpdates = false;
 	_lockSurfaceCtr = 0;
 	_transColor = -1;
 	_flags = 0;
 }
 
-GfxSurface::GfxSurface(const GfxSurface &s): Graphics::ManagedSurface() {
+GfxSurface::GfxSurface(const GfxSurface &s): Graphics::Screen(0, 0) {
+	free();		// Free the 0x0 surface allocated by Graphics::Screen
 	_lockSurfaceCtr = 0;
 	
 	operator=(s);

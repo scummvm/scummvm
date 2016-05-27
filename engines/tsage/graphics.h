@@ -28,7 +28,7 @@
 #include "common/list.h"
 #include "common/rect.h"
 #include "common/system.h"
-#include "graphics/managed_surface.h"
+#include "graphics/screen.h"
 
 namespace TsAGE {
 
@@ -73,13 +73,23 @@ public:
 
 enum FrameFlag { FRAME_FLIP_CENTROID_X = 4, FRAME_FLIP_CENTROID_Y = 8 };
 
-class GfxSurface: virtual public Graphics::ManagedSurface {
+/**
+ * Surface class. This derivces from Graphics::Screen because it has
+ * logic we'll need for our own Screen class that derives from this one
+ */
+ class GfxSurface: public Graphics::Screen {
 private:
 	int _lockSurfaceCtr;
 	Graphics::ManagedSurface _rawSurface;
 
 	bool _disableUpdates;
 	Rect _bounds;
+ protected:
+	 /**
+	  * Override the addDirtyRect from Graphics::Screen, since for standard
+	  * surfaces we don't need dirty rects to be tracked
+	  */
+	 virtual void addDirtyRect(const Common::Rect &r) {}
 public:
 	Common::Point _centroid;
 	int _transColor;

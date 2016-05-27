@@ -36,7 +36,14 @@ namespace TsAGE {
 #define SCREEN_CENTER_Y 100
 #define UI_INTERFACE_Y 168
 
-class Screen : virtual public Graphics::Screen, virtual public GfxSurface {
+class Screen : public GfxSurface {
+	/**
+	 * Override the addDirtyRect from GfxSurface, since for our screen
+	 * class we need to reintroduce the standard Graphics::Screen implementation
+	 */
+	virtual void addDirtyRect(const Common::Rect &r) {
+		Graphics::Screen::addDirtyRect(r);
+	}
 public:
 	/**
 	 * Constructor
@@ -46,7 +53,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Screen() {}
+	virtual ~Screen();
 
 	/**
 	 * Update the screen
