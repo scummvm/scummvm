@@ -28,9 +28,12 @@
 #include "common/system.h"
 #include "common/timer.h"
 #include <curl/curl.h>
-using Common::Singleton;
+
+namespace Common {
 
 DECLARE_SINGLETON(Networking::ConnectionManager);
+
+}
 
 namespace Networking {
 
