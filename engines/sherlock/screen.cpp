@@ -40,7 +40,7 @@ Screen *Screen::init(SherlockEngine *vm) {
 		return new Scalpel::ScalpelScreen(vm);
 }
 
-Screen::Screen(SherlockEngine *vm) : Graphics::Screen(), _vm(vm) {
+Screen::Screen(SherlockEngine *vm) : BaseSurface(), _vm(vm) {
 	_transitionSeed = 1;
 	_fadeStyle = false;
 	Common::fill(&_cMap[0], &_cMap[PALETTE_SIZE], 0);

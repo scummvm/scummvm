@@ -25,7 +25,7 @@
 
 #include "common/rect.h"
 #include "common/platform.h"
-#include "graphics/managed_surface.h"
+#include "graphics/screen.h"
 #include "sherlock/fonts.h"
 #include "sherlock/image_file.h"
 
@@ -35,21 +35,21 @@ namespace Sherlock {
 #define TRANSPARENCY 255
 
 /**
- * Implements a descendent surface that combines both a managed surface and the font
+ * Implements a base surface that combines both a managed surface and the font
  * drawing code. It also introduces a series of drawing method stubs that the 3DO
  * Serrated Scalpel screen overrides to implement sprite doubling
  */
-class Surface: virtual public Graphics::ManagedSurface, public Fonts {
+class BaseSurface: public Graphics::Screen, public Fonts {
 public:
 	/**
 	 * Constructor
 	 */
-	Surface();
+	BaseSurface();
 	
 	/**
 	 * Constructor
 	 */
-	Surface(int width, int height);
+	BaseSurface(int width, int height);
 
 	/**
 	 * Draws a surface on this surface
@@ -110,6 +110,18 @@ public:
 	 * Draws a fancy version of the given string at the given position
 	 */
 	void writeFancyString(const Common::String &str, const Common::Point &pt, uint overrideColor1, uint overrideColor2);
+};
+
+class Surface : public BaseSurface {
+protected:
+	/**
+	* Override the addDirtyRect from Graphics::Screen, since for standard
+	* surfaces we don't need dirty rects to be tracked
+	*/
+	virtual void addDirtyRect(const Common::Rect &r) {}
+public:
+	Surface() : BaseSurface() {}
+	Surface(int width, int height) : BaseSurface(width, height) {}
 };
 
 } // End of namespace Sherlock

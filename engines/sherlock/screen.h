@@ -25,7 +25,6 @@
 
 #include "common/list.h"
 #include "common/rect.h"
-#include "graphics/screen.h"
 #include "sherlock/image_file.h"
 #include "sherlock/surface.h"
 #include "sherlock/resources.h"
@@ -39,7 +38,7 @@ namespace Sherlock {
 
 class SherlockEngine;
 
-class Screen : virtual public Graphics::Screen, virtual public Surface {
+class Screen : public BaseSurface {
 private:
 	uint32 _transitionSeed;
 

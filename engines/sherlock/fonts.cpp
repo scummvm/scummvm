@@ -195,7 +195,7 @@ inline byte Fonts::translateChar(byte c) {
 	}
 }
 
-void Fonts::writeString(Surface *surface, const Common::String &str,
+void Fonts::writeString(BaseSurface *surface, const Common::String &str,
 		const Common::Point &pt, int overrideColor) {
 	Common::Point charPos = pt;
 

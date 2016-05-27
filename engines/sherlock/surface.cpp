@@ -25,19 +25,19 @@
 
 namespace Sherlock {
 
-Surface::Surface() : Graphics::ManagedSurface(), Fonts() {
+BaseSurface::BaseSurface() : Graphics::Screen(), Fonts() {
 }
 
-Surface::Surface(int width, int height) : Graphics::ManagedSurface(width, height),
+BaseSurface::BaseSurface(int width, int height) : Graphics::Screen(width, height),
 		Fonts() {
 	create(width, height);
 }
 
-void Surface::writeString(const Common::String &str, const Common::Point &pt, uint overrideColor) {
+void BaseSurface::writeString(const Common::String &str, const Common::Point &pt, uint overrideColor) {
 	Fonts::writeString(this, str, pt, overrideColor);
 }
 
-void Surface::writeFancyString(const Common::String &str, const Common::Point &pt, uint overrideColor1, uint overrideColor2) {
+void BaseSurface::writeFancyString(const Common::String &str, const Common::Point &pt, uint overrideColor1, uint overrideColor2) {
 	writeString(str, Common::Point(pt.x, pt.y), overrideColor1);
 	writeString(str, Common::Point(pt.x + 1, pt.y), overrideColor1);
 	writeString(str, Common::Point(pt.x + 2, pt.y), overrideColor1);
@@ -49,19 +49,19 @@ void Surface::writeFancyString(const Common::String &str, const Common::Point &p
 	writeString(str, Common::Point(pt.x + 1, pt.y + 1), overrideColor2);
 }
 
-void Surface::SHtransBlitFrom(const ImageFrame &src, const Common::Point &pt,
+void BaseSurface::SHtransBlitFrom(const ImageFrame &src, const Common::Point &pt,
 		bool flipped, int overrideColor, int scaleVal) {
 	Common::Point drawPt(pt.x + src.sDrawXOffset(scaleVal), pt.y + src.sDrawYOffset(scaleVal));
 	SHtransBlitFrom(src._frame, drawPt, flipped, overrideColor, scaleVal);
 }
 
-void Surface::SHtransBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
+void BaseSurface::SHtransBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
 		bool flipped, int overrideColor, int scaleVal) {
 	Common::Rect srcRect(0, 0, src.w, src.h);
 	Common::Rect destRect(pt.x, pt.y, pt.x + src.w * SCALE_THRESHOLD / scaleVal,
 		pt.y + src.h * SCALE_THRESHOLD / scaleVal);
 	
-	Graphics::ManagedSurface::transBlitFrom(src, srcRect, destRect, TRANSPARENCY,
+	Graphics::Screen::transBlitFrom(src, srcRect, destRect, TRANSPARENCY,
 		flipped, overrideColor);
 }
 
