@@ -37,8 +37,20 @@
 namespace Cloud {
 namespace OneDrive {
 
-Common::String OneDriveStorage::KEY; //can't use ConfMan there yet, loading it on instance creation/auth
-Common::String OneDriveStorage::SECRET; //TODO: hide these secrets somehow
+char *OneDriveStorage::KEY; //can't use ConfMan there yet, loading it on instance creation/auth
+char *OneDriveStorage::SECRET; //TODO: hide these secrets somehow
+
+void OneDriveStorage::loadKeyAndSecret() {
+	Common::String k = ConfMan.get("ONEDRIVE_KEY", "cloud");
+	KEY = new char[k.size() + 1];
+	memcpy(KEY, k.c_str(), k.size());
+	KEY[k.size()] = 0;
+
+	k = ConfMan.get("ONEDRIVE_SECRET", "cloud");
+	SECRET = new char[k.size() + 1];
+	memcpy(SECRET, k.c_str(), k.size());
+	SECRET[k.size()] = 0;
+}
 
 OneDriveStorage::OneDriveStorage(Common::String accessToken, Common::String userId, Common::String refreshToken):
 	_token(accessToken), _uid(userId), _refreshToken(refreshToken) {}
@@ -67,8 +79,8 @@ void OneDriveStorage::getAccessToken(BoolCallback callback, Common::String code)
 		request->addPostField("refresh_token=" + _refreshToken);
 		request->addPostField("grant_type=refresh_token");
 	}
-	request->addPostField("client_id=" + KEY);
-	request->addPostField("client_secret=" + SECRET);
+	request->addPostField("client_id=" + Common::String(KEY));
+	request->addPostField("client_secret=" + Common::String(SECRET));
 	request->addPostField("&redirect_uri=http%3A%2F%2Flocalhost%3A12345%2F");
 	ConnMan.addRequest(request);
 }
@@ -186,8 +198,7 @@ Networking::Request *OneDriveStorage::syncSaves(BoolCallback callback) {
 }
 
 OneDriveStorage *OneDriveStorage::loadFromConfig(Common::String keyPrefix) {
-	KEY = ConfMan.get("ONEDRIVE_KEY", "cloud");
-	SECRET = ConfMan.get("ONEDRIVE_SECRET", "cloud");
+	loadKeyAndSecret();
 
 	if (!ConfMan.hasKey(keyPrefix + "access_token", "cloud")) {
 		warning("No access_token found");
@@ -215,7 +226,7 @@ Common::String OneDriveStorage::getAuthLink() {
 	url += "?response_type=code";
 	url += "&redirect_uri=http://localhost:12345/"; //that's for copy-pasting
 	//url += "&redirect_uri=http%3A%2F%2Flocalhost%3A12345%2F"; //that's "http://localhost:12345/" for automatic opening
-	url += "&client_id=" + KEY;
+	url += "&client_id="; url += KEY;
 	url += "&scope=onedrive.appfolder%20offline_access"; //TODO
 	return url;
 }
@@ -226,8 +237,7 @@ void OneDriveStorage::authThroughConsole() {
 		return;
 	}
 
-	KEY = ConfMan.get("ONEDRIVE_KEY", "cloud");
-	SECRET = ConfMan.get("ONEDRIVE_SECRET", "cloud");
+	loadKeyAndSecret();
 
 	if (ConfMan.hasKey("onedrive_code", "cloud")) {
 		//phase 2: get access_token using specified code

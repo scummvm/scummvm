@@ -31,7 +31,9 @@ namespace Cloud {
 namespace Dropbox {
 
 class DropboxStorage: public Cloud::Storage {
-	static Common::String KEY, SECRET;
+	static char *KEY, *SECRET;
+
+	static void loadKeyAndSecret();
 
 	Common::String _token, _uid;
 

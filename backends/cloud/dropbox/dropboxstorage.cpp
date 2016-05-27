@@ -36,8 +36,20 @@
 namespace Cloud {
 namespace Dropbox {
 
-Common::String DropboxStorage::KEY; //can't use ConfMan there yet, loading it on instance creation/auth
-Common::String DropboxStorage::SECRET; //TODO: hide these secrets somehow
+char *DropboxStorage::KEY; //can't use ConfMan there yet, loading it on instance creation/auth
+char *DropboxStorage::SECRET; //TODO: hide these secrets somehow
+
+void DropboxStorage::loadKeyAndSecret() {
+	Common::String k = ConfMan.get("DROPBOX_KEY", "cloud");
+	KEY = new char[k.size() + 1];
+	memcpy(KEY, k.c_str(), k.size());
+	KEY[k.size()] = 0;
+
+	k = ConfMan.get("DROPBOX_SECRET", "cloud");
+	SECRET = new char[k.size() + 1];
+	memcpy(SECRET, k.c_str(), k.size());
+	SECRET[k.size()] = 0;
+}
 
 static void saveAccessTokenCallback(Networking::JsonResponse pair) {
 	Common::JSONValue *json = (Common::JSONValue *)pair.value;
@@ -178,8 +190,7 @@ void DropboxStorage::infoMethodCallback(StorageInfoResponse pair) {
 }
 
 DropboxStorage *DropboxStorage::loadFromConfig(Common::String keyPrefix) {
-	KEY = ConfMan.get("DROPBOX_KEY", "cloud");
-	SECRET = ConfMan.get("DROPBOX_SECRET", "cloud");
+	loadKeyAndSecret();
 
 	if (!ConfMan.hasKey(keyPrefix + "access_token", "cloud")) {
 		warning("No access_token found");
@@ -201,7 +212,7 @@ Common::String DropboxStorage::getAuthLink() {
 	url += "?response_type=code";
 	url += "&redirect_uri=http://localhost:12345/"; //that's for copy-pasting
 	//url += "&redirect_uri=http%3A%2F%2Flocalhost%3A12345%2F"; //that's "http://localhost:12345/" for automatic opening
-	url += "&client_id=" + KEY;
+	url += "&client_id="; url += KEY;
 	return url;
 }
 
@@ -211,8 +222,7 @@ void DropboxStorage::authThroughConsole() {
 		return;
 	}
 
-	KEY = ConfMan.get("DROPBOX_KEY", "cloud");
-	SECRET = ConfMan.get("DROPBOX_SECRET", "cloud");
+	loadKeyAndSecret();
 
 	if (ConfMan.hasKey("dropbox_code", "cloud")) {
 		//phase 2: get access_token using specified code
@@ -232,8 +242,8 @@ void DropboxStorage::getAccessToken(Common::String code) {
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, "https://api.dropboxapi.com/1/oauth2/token");
 	request->addPostField("code=" + code);
 	request->addPostField("grant_type=authorization_code");
-	request->addPostField("client_id=" + KEY);
-	request->addPostField("client_secret=" + SECRET);
+	request->addPostField("client_id=" + Common::String(KEY));
+	request->addPostField("client_secret=" + Common::String(SECRET));
 	request->addPostField("&redirect_uri=http%3A%2F%2Flocalhost%3A12345%2F");	
 	ConnMan.addRequest(request);	
 }
