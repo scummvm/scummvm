@@ -164,6 +164,12 @@ private:
 	 */
 	void removeConcept(TTconcept *concept);
 
+	/**
+	 * Detaches a node from the main node list
+	 */
+	void removeNode(TTparserNode *node);
+
+
 	int checkForAction();
 	int fn2(TTword *word);
 	bool checkConcept2(TTconcept *concept, int conceptMode);

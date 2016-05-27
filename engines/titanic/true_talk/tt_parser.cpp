@@ -975,6 +975,14 @@ void TTparser::removeConcept(TTconcept *concept) {
 	delete concept;
 }
 
+void TTparser::removeNode(TTparserNode *node) {
+	if (!node->_priorP)
+		// Node is the head of the chain, so reset parser's nodes pointer
+		_nodesP = static_cast<TTparserNode *>(node->_nextP);
+
+	delete node;
+}
+
 int TTparser::checkForAction() {
 	int status = SS_VALID;
 	bool flag = false;
