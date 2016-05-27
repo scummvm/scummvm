@@ -888,8 +888,44 @@ int TTparser::considerRequests(TTword *word) {
 }
 
 int TTparser::processRequests(TTword *word) {
-	// TODO
-	return 0;
+	int status = loadRequests(word);
+	switch (status) {
+	case 0:
+		status = considerRequests(word);
+		
+		// Iterate through the words
+		while (_currentWordP) {
+			considerRequests(_currentWordP);
+			TTword *nextP = _currentWordP->_nextP;
+
+			delete _currentWordP;
+			_currentWordP = nextP;
+		}
+		break;
+
+	case 1: {
+		TTword *newWord = new TTword(word);
+		newWord->_nextP = nullptr;
+
+		// Add word to word chain
+		if (_currentWordP) {
+			// Add at end of existing chain
+			for (word = _currentWordP; word->_nextP; word = word->_nextP)
+				;
+			word->_nextP = newWord;
+		} else {
+			// First word, so set as head
+			_currentWordP = newWord;
+		}
+		break;
+	}
+
+	default:
+		warning("unexpected return from consider requests");
+		break;
+	}
+
+	return status;
 }
 
 void TTparser::addToConceptList(TTword *word) {
