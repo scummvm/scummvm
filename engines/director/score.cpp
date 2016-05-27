@@ -68,7 +68,7 @@ void Score::loadConfig(Common::SeekableReadStream &stream) {
 
 	_castArrayStart = stream.readUint16BE();
 	_castArrayEnd = stream.readUint16BE();
-	_initialFrameRate = stream.readByte();
+	_currentFrameRate = stream.readByte();
 	stream.skip(9);
 	/*uint16 stageColor = */ stream.readUint16BE();
 }
@@ -193,21 +193,43 @@ Common::Rect Score::readRect(Common::SeekableReadStream &stream) {
 
 void Score::play() {
 	initGraphics(800, 800, true);
-	uint32 frameId = 0;
 
-	bool stop = false;
+	_currentFrame = 1;
+	_stopPlay = false;
+	_nextFrameTime = g_system->getMillis() + (float)_currentFrameRate / 60 * 1000;
+	while (!_stopPlay) {
+		display();
+		processEvents();
+		g_system->delayMillis(10);
+	}
+}
 
-	while (frameId != _frames.size() && !stop) {
-		Common::Event event;
+void Score::display() {
+	if (g_system->getMillis() < _nextFrameTime)
+		return;
 
-		while (g_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_QUIT)
-				stop = true;
+	_frames[_currentFrame]->display();
+	g_system->updateScreen();
+	_currentFrame++;
+	byte tempo = _frames[_currentFrame]->_tempo;
+	if (tempo) {
+		if (tempo > 161) {
+			//Delay
+			_nextFrameTime = g_system->getMillis() + (256 - tempo) * 1000;
+		} else {
+			//FPS
+			_nextFrameTime = g_system->getMillis() + (float)tempo / 60 * 1000;
+			_currentFrameRate = tempo;
 		}
-		_frames[frameId]->display();
-		frameId++;
-		g_system->updateScreen();
-		g_system->delayMillis(50);
+	}
+	_nextFrameTime = g_system->getMillis() + (float)_currentFrameRate / 60 * 1000;
+}
+
+void Score::processEvents() {
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+		if (event.type == Common::EVENT_QUIT)
+			_stopPlay = true;
 	}
 }
 

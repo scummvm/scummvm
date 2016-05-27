@@ -167,6 +167,8 @@ private:
     ButtonCast *getButtonCast(Common::SeekableReadStream &stream);
     ShapeCast *getShapeCast(Common::SeekableReadStream &stream);
     Common::Rect readRect(Common::SeekableReadStream &stream);
+    void processEvents();
+    void display();
 
 public:
     Common::Array<Frame *> _frames;
@@ -175,8 +177,11 @@ public:
 private:
     uint16 _versionMinor;
     uint16 _versionMajor;
-    byte _initialFrameRate;
+    byte _currentFrameRate;
     uint16 _castArrayStart;
+    uint16 _currentFrame;
+    uint32 _nextFrameTime;
+    bool _stopPlay;
     uint16 _castArrayEnd;
     Common::Rect _movieRect;
 };
