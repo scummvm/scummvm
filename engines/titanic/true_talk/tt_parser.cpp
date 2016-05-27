@@ -1019,8 +1019,56 @@ int TTparser::checkForAction() {
 		}
 	}
 
+	if (_sentence->fn2(2, TTstring("thePlayer"), _sentenceConcept) &&
+			_sentenceConcept->concept1WordId() == 101 && flag)
+		_sentence->_field2C = 17;
 
-	// TODO
+	if (!_sentenceConcept->_concept0P && !_sentenceConcept->_concept1P &&
+			!_sentenceConcept->_concept2P && !_sentenceConcept->_concept5P && !flag) {
+		if (_conceptP)
+			filterConcepts(5, 2);
+
+		if (!_sentenceConcept->_concept2P && _sentence->_field2C == 1)
+			_sentence->_field2C = 0;
+	}
+
+	if (_sentence->_field58 < 5 && _sentence->_field2C == 1 && !flag)
+		_sentence->_field2C = 19;
+
+	for (TTconceptNode *nodeP = &_sentence->_sentenceConcept; nodeP; nodeP = nodeP->_nextP) {
+		if (nodeP->_field18 == 0 && nodeP->_concept1P) {
+			nodeP->_field18 = _sentence->concept18(nodeP);
+		} else if (nodeP->_field18 == 4 && !_sentenceConcept->_concept0P) {
+			if (_sentenceConcept->_concept3P) {
+				_sentenceConcept->_concept0P = _sentenceConcept->_concept3P;
+				_sentenceConcept->_concept3P = nullptr;
+			} else if (_sentenceConcept->_concept2P) {
+				_sentenceConcept->_concept0P = _sentenceConcept->_concept2P;
+				_sentenceConcept->_concept2P = nullptr;
+			}
+		}
+	}
+
+	if (_sentence->_field2C == 1 && _sentenceConcept->_concept5P &&
+			_sentenceConcept->_concept2P) {
+		if (_sentence->fn4(1, 113, nullptr)) {
+			if (_sentence->fn2(2, TTstring("targetNpc"), nullptr)) {
+				_sentence->_field2C = 20;
+			} else if (_sentence->fn2(2, TTstring("thePlayer"), nullptr)) {
+				_sentence->_field2C = 21;
+			} else {
+				_sentence->_field2C = 22;
+			}
+		}
+	} else if (!_sentenceConcept->_concept0P && !_sentenceConcept->_concept1P &&
+			!_sentenceConcept->_concept2P && !_sentenceConcept->_concept5P) {
+		if (_conceptP)
+			filterConcepts(5, 2);
+
+		if (!_sentenceConcept->_concept2P && _sentence->_field2C == 1)
+			_sentence->_field2C = 0;
+	}
+
 	return status;
 }
 
