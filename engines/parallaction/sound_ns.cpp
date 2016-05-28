@@ -335,7 +335,7 @@ void SoundMan_ns::setMusicVolume(int value) {
 }
 
 void SoundMan_ns::setMusicFile(const char *filename) {
-	strcpy(_musicFile, filename);
+	Common::strlcpy(_musicFile, filename, PATH_LEN);
 }
 
 void SoundMan_ns::execute(int command, const char *parm = 0) {

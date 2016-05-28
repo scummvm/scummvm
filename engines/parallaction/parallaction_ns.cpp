@@ -395,7 +395,7 @@ void Parallaction_ns::changeLocation() {
 		changeCharacter(locname.character());
 	}
 
-	strcpy(g_saveData1, locname.location());
+	Common::strlcpy(g_saveData1, locname.location(), 30);
 	parseLocation(g_saveData1);
 
 	if (_location._startPosition.x != -1000) {

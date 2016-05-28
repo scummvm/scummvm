@@ -93,7 +93,7 @@ void SaveLoad_ns::doLoadGame(uint16 slot) {
 	uint16 _si;
 	for (_si = 0; _si < _vm->_numLocations; _si++) {
 		s = f->readLine();
-		strcpy(_vm->_locationNames[_si], s.c_str());
+		Common::strlcpy(_vm->_locationNames[_si], s.c_str(), 32);
 
 		s = f->readLine();
 		_vm->_localFlags[_si] = atoi(s.c_str());
