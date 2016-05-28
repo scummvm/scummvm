@@ -725,17 +725,16 @@ int TTparser::loadRequests(TTword *word) {
 }
 
 int TTparser::considerRequests(TTword *word) {
-	if (_nodesP)
+	if (!_nodesP || !word)
 		return 0;
-
-	TTparserNode *nodeP = _nodesP;
+	
 	TTconcept *concept = nullptr;
 	int status = 0;
 	bool flag = false;
 	bool modifierFlag = false;
 	int seekVal = 0;
 
-	while (word) {
+	for (TTparserNode *nodeP = _nodesP; nodeP; ) {
 		switch (nodeP->_tag) {
 		case CHECK_COMMAND_FORM:
 			if (_sentenceConcept->_concept1P && _sentence->_field2C == 1 &&
@@ -1274,9 +1273,13 @@ int TTparser::considerRequests(TTword *word) {
 			flag = true;
 			break;
 		}
+
+		TTparserNode *nextP = static_cast<TTparserNode *>(nodeP->_nextP);		
+		if (flag)
+			delete nodeP;
+		nodeP = nextP;
 	}
 
-	// TODO
 	delete concept;
 	return status;
 }
