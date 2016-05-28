@@ -24,6 +24,20 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CDeskbot, CTrueTalkNPC)
+	ON_MESSAGE(TurnOn)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(LeaveViewMsg)
+	ON_MESSAGE(TrueTalkTriggerActionMsg)
+	ON_MESSAGE(NPCPlayTalkingAnimationMsg)
+	ON_MESSAGE(NPCPlayIdleAnimationMsg)
+	ON_MESSAGE(TrueTalkNotifySpeechStartedMsg)
+	ON_MESSAGE(TrueTalkNotifySpeechEndedMsg)
+	ON_MESSAGE(TurnOff)
+END_MESSAGE_MAP()
+
 int CDeskbot::_v1;
 int CDeskbot::_v2;
 
@@ -48,6 +62,61 @@ void CDeskbot::load(SimpleFile *file) {
 	_field10C = file->readNumber();
 
 	CTrueTalkNPC::load(file);
+}
+
+bool CDeskbot::TurnOn(CTurnOn *msg) {
+	// TODO
+	return true;
+}
+
+bool CDeskbot::EnterViewMsg(CEnterViewMsg *msg) {
+	// TODO
+	return true;
+}
+
+bool CDeskbot::ActMsg(CActMsg *msg) {
+	// TODO
+	return true;
+}
+
+bool CDeskbot::MovieEndMsg(CMovieEndMsg *msg) {
+	// TODO
+	return true;
+}
+
+bool CDeskbot::LeaveViewMsg(CLeaveViewMsg *msg) {
+	// TODO
+	return true;
+}
+
+bool CDeskbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
+	// TODO
+	return true;
+}
+
+bool CDeskbot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
+	// TODO
+	return true;
+}
+
+bool CDeskbot::NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg) {
+	// TODO
+	return true;
+}
+
+bool CDeskbot::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMsg *msg) {
+	// TODO
+	return true;
+}
+
+bool CDeskbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) {
+	// TODO
+	return true;
+}
+
+bool CDeskbot::TurnOff(CTurnOff *msg) {
+	// TODO
+	return true;
 }
 
 } // End of namespace Titanic

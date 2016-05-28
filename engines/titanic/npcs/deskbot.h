@@ -28,6 +28,18 @@
 namespace Titanic {
 
 class CDeskbot : public CTrueTalkNPC {
+	DECLARE_MESSAGE_MAP
+	bool TurnOn(CTurnOn *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool ActMsg(CActMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg);
+	bool NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg);
+	bool NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg);
+	bool TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMsg *msg);
+	bool TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg);
+	bool TurnOff(CTurnOff *msg);
 private:
 	static int _v1;
 	static int _v2;
