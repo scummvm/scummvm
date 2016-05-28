@@ -97,7 +97,7 @@ void Manager::addStorage(Cloud::Storage *storage, bool makeCurrent, bool saveCon
 Storage *Manager::getCurrentStorage() {
 	if (_currentStorageIndex < _storages.size())
 		return _storages[_currentStorageIndex];
-	return 0;
+	return nullptr;
 }
 
 void Manager::syncSaves(Storage::BoolCallback callback) {
