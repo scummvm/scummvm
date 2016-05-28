@@ -146,7 +146,7 @@ private:
 	int considerRequests(TTword *word);
 	int processRequests(TTword *word);
 
-	void addToConceptList(TTword *word);
+	int addToConceptList(TTword *word);
 	int checkReferent(TTpronoun *pronoun);
 
 	/**

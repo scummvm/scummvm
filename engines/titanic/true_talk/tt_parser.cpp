@@ -763,6 +763,7 @@ int TTparser::considerRequests(TTword *word) {
 			break;
 
 		case SEEK_ACTOR:
+		case MKTAG('S', 'A', 'C', 'T'):
 			if (!_sentenceConcept->_concept0P) {
 				flag = filterConcepts(5, 0);
 			} else if (_sentenceConcept->_concept0P->compareTo("?") &&
@@ -1202,10 +1203,59 @@ int TTparser::considerRequests(TTword *word) {
 
 		case MKTAG('L', 'O', 'C', 'F'):
 			status = _sentenceConcept->createConcept(1, 5, word);
-			if (!status) {
+			if (!status)
 				_sentenceConcept->_concept5P->_field20 = 2;
-				flag = true;
+
+			flag = true;
+			break;
+
+		case MKTAG('L', 'O', 'C', 'N'):
+			status = _sentenceConcept->createConcept(1, 5, word);
+			if (!status)
+				_sentenceConcept->_concept5P->_field20 = 1;
+
+			flag = true;
+			break;
+
+		case MKTAG('N', 'E', 'A', 'R'):
+			if (_conceptP->findBy20(0)) {
+				_conceptP->_field20 = 1;
+			} else {
+				TTpicture *newPictP = new TTpicture(TTstring("?"), WC_THING, 0, 0, 0, 0, 0);
+				status = addToConceptList(newPictP);
+				_conceptP->_field20 = 1;
+				if (!status)
+					delete newPictP;
 			}
+
+			flag = true;
+			break;
+
+		case MKTAG('P', 'A', 'S', 'T'):
+			_sentenceConcept->_field18 = 1;
+			flag = true;
+			break;
+
+		case MKTAG('P', 'L', 'E', 'Z'):
+			if (_sentence->_field58 < 10)
+				_sentence->_field58++;
+			break;
+
+		case MKTAG('P', 'R', 'E', 'Z'):
+			_sentenceConcept->_field18 = 2;
+			flag = true;
+			break;
+
+		case MKTAG('S', 'A', 'A', 'O'):
+			addNode(5);
+			addNode(4);
+			flag = true;
+			break;
+
+		case MKTAG('S', 'S', 'T', 'A'):
+			addNode(13);
+			addNode(5);
+			flag = true;
 			break;
 
 		case MKTAG('T', 'E', 'A', 'C'):
@@ -1215,7 +1265,13 @@ int TTparser::considerRequests(TTword *word) {
 			flag = true;
 			break;
 
+		case MKTAG('V', 'O', 'B', 'J'):
+			status = _sentenceConcept->createConcept(1, 2, word);
+			flag = true;
+			break;
+
 		default:
+			flag = true;
 			break;
 		}
 	}
@@ -1266,9 +1322,10 @@ int TTparser::processRequests(TTword *word) {
 	return status;
 }
 
-void TTparser::addToConceptList(TTword *word) {
+int TTparser::addToConceptList(TTword *word) {
 	TTconcept *concept = new TTconcept(word, ST_UNKNOWN_SCRIPT);
 	addConcept(concept);
+	return 0;
 }
 
 void TTparser::addNode(uint tag) {
