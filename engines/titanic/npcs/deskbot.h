@@ -44,8 +44,8 @@ private:
 	static int _v1;
 	static int _v2;
 public:
-	int _field108;
-	int _field10C;
+	bool _deskbotActive;
+	bool _field10C;
 public:
 	CLASSDEF
 	CDeskbot();

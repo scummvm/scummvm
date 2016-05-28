@@ -707,6 +707,30 @@ void CGameObject::incState38() {
 	getGameManager()->_gameState.inc38();
 }
 
+void CGameObject::inc54() {
+	getGameManager()->inc54();
+}
+
+void CGameObject::dec54() {
+	getGameManager()->dec54();
+}
+
+void CGameObject::lockMouse() {
+	CGameManager *gameMan = getGameManager();
+	gameMan->lockInputHandler();
+
+	if (CScreenManager::_screenManagerPtr->_mouseCursor)
+		CScreenManager::_screenManagerPtr->_mouseCursor->hide();
+}
+
+void CGameObject::unlockMouse() {
+	if (CScreenManager::_screenManagerPtr->_mouseCursor)
+		CScreenManager::_screenManagerPtr->_mouseCursor->show();
+
+	CGameManager *gameMan = getGameManager();
+	gameMan->unlockInputHandler();
+}
+
 void CGameObject::startTalking(const CString &npcName, uint id, CViewItem *view) {
 	CTrueTalkNPC *npc = static_cast<CTrueTalkNPC *>(getRoot()->findByName(npcName));
 	startTalking(npc, id, view);
@@ -719,6 +743,10 @@ void CGameObject::startTalking(CTrueTalkNPC *npc, uint id, CViewItem *view) {
 		if (talkManager)
 			talkManager->start(npc, id, view);
 	}
+}
+
+void CGameObject::endTalking(CTrueTalkNPC *npc, uint id, CViewItem *view) {
+	warning("TODO: CGameObject::endTalking");
 }
 
 void CGameObject::loadSurface() {

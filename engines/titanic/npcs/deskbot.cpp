@@ -41,14 +41,14 @@ END_MESSAGE_MAP()
 int CDeskbot::_v1;
 int CDeskbot::_v2;
 
-CDeskbot::CDeskbot() : CTrueTalkNPC(), _field108(0), _field10C(0) {
+CDeskbot::CDeskbot() : CTrueTalkNPC(), _deskbotActive(false), _field10C(0) {
 }
 
 void CDeskbot::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_v2, indent);
-	file->writeNumberLine(_field108, indent);
+	file->writeNumberLine(_deskbotActive, indent);
 	file->writeNumberLine(_field10C, indent);
 
 	CTrueTalkNPC::save(file, indent);
@@ -58,34 +58,99 @@ void CDeskbot::load(SimpleFile *file) {
 	file->readNumber();
 	_v1 = file->readNumber();
 	_v2 = file->readNumber();
-	_field108 = file->readNumber();
+	_deskbotActive = file->readNumber();
 	_field10C = file->readNumber();
 
 	CTrueTalkNPC::load(file);
 }
 
 bool CDeskbot::TurnOn(CTurnOn *msg) {
-	// TODO
+	if (!_deskbotActive) {
+		setVisible(true);
+		playClip("BellRinging", 4);
+		playSound("b#69.wav");
+		setPetArea(PET_CONVERSATION);
+
+		_npcFlags |= NPCFLAG_20000;
+		_deskbotActive = true;
+	}
+
 	return true;
 }
 
 bool CDeskbot::EnterViewMsg(CEnterViewMsg *msg) {
-	// TODO
+	setVisible(false);
+	_deskbotActive = false;
+	_fieldC4 = 0;
+	loadFrame(625);
+	
 	return true;
 }
 
 bool CDeskbot::ActMsg(CActMsg *msg) {
-	// TODO
+	if (msg->_action == "2ndClassUpgrade" && getPassengerClass() > 2) {
+		startTalking(this, 140, findView());
+	}
+
 	return true;
 }
 
 bool CDeskbot::MovieEndMsg(CMovieEndMsg *msg) {
-	// TODO
+	bool flag = false;
+	if (_npcFlags & NPCFLAG_10000) {
+		if (_field10C) {
+			setPetArea(PET_ROOMS);
+			dec54();
+			unlockMouse();
+			playSound("z#47.wav", 100, 0, 0);
+			_field10C = false;
+		}
+
+		_npcFlags &= ~NPCFLAG_10000;
+		flag = true;
+	}
+
+	bool flag = false;
+	if (_npcFlags & NPCFLAG_40000) {
+		_deskbotActive = false;
+		_npcFlags &= ~(NPCFLAG_40000 | NPCFLAG_20000);
+
+		if (_npcFlags & NPCFLAG_80000) {
+			CTurnOn turnOn;
+			turnOn.execute("EmbBellbotTrigger");
+			unlockMouse();
+			changeView("EmbLobby.Node 4.N", "");
+		} else if (_npcFlags & NPCFLAG_100000) {
+			CTurnOn turnOn;
+			turnOn.execute("EmbDoorBotTrigger");
+			unlockMouse();
+			changeView("EmbLobby.Node 4.N", "");
+		}
+
+		_npcFlags &= ~(NPCFLAG_80000 | NPCFLAG_100000);
+		flag = true;
+	}
+
+	if (_npcFlags & NPCFLAG_20000) {
+		_npcFlags &= ~(NPCFLAG_40000 | NPCFLAG_20000);
+		endTalking(this, 1, findView());
+
+		_npcFlags |= NPCFLAG_4;
+		flag = true;
+	}
+
+	if (!flag)
+		CTrueTalkNPC::MovieEndMsg(msg);
+
 	return true;
 }
 
 bool CDeskbot::LeaveViewMsg(CLeaveViewMsg *msg) {
-	// TODO
+	if (_deskbotActive) {
+		CTurnOff turnOff;
+		turnOff.execute(this);
+	}
+
 	return true;
 }
 
@@ -115,7 +180,14 @@ bool CDeskbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 }
 
 bool CDeskbot::TurnOff(CTurnOff *msg) {
-	// TODO
+	if (_deskbotActive) {
+		stopMovie();
+		performAction(1, findView());
+
+		_npcFlags = (_npcFlags & ~(NPCFLAG_SPEAKING | NPCFLAG_2 | NPCFLAG_4)) | NPCFLAG_40000;
+		playClip("Closing", 0x14);
+	}
+
 	return true;
 }
 

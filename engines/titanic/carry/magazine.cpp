@@ -54,7 +54,7 @@ void CMagazine::load(SimpleFile *file) {
 bool CMagazine::UseWithCharMsg(CUseWithCharMsg *msg) {
 	CDeskbot *deskbot = static_cast<CDeskbot *>(msg->_character);
 	if (deskbot) {
-		if (deskbot->_field108) {
+		if (deskbot->_deskbotActive) {
 			setVisible(false);
 			setPosition(Point(1000, 1000));
 			CActMsg actMsg("2ndClassUpgrade");

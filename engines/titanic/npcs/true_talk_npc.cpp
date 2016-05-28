@@ -197,7 +197,7 @@ void CTrueTalkNPC::processInput(CTextInputMsg *msg, CViewItem *view) {
 		talkManager->processInput(this, msg, view);
 }
 
-void CTrueTalkNPC::performAction(int val1, int val2) {
+void CTrueTalkNPC::performAction(int actionNum, CViewItem *view) {
 	// TODO
 }
 

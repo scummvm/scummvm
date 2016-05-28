@@ -30,7 +30,9 @@
 namespace Titanic {
 
 enum NpcFlag {
-	NPCFLAG_SPEAKING = 1, NPCFLAG_2 = 2, NPCFLAG_4 = 4, NPCFLAG_8 = 8
+	NPCFLAG_SPEAKING = 1, NPCFLAG_2 = 2, NPCFLAG_4 = 4, NPCFLAG_8 = 8,
+	NPCFLAG_10000 = 0x10000, NPCFLAG_20000 = 0x20000, NPCFLAG_40000 = 0x40000,
+	NPCFLAG_80000 = 0x80000, NPCFLAG_100000 = 0x100000
 };
 
 class CViewItem;
@@ -60,7 +62,11 @@ protected:
 	int _field104;
 protected:
 	void processInput(CTextInputMsg *msg, CViewItem *view);
-	void performAction(int val1, int val2);
+	
+	/**
+	 * Perform an action
+	 */
+	void performAction(int actionNum, CViewItem *view = nullptr);
 	
 	/**
 	 * Start an animation timer

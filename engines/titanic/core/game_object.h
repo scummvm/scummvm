@@ -126,6 +126,18 @@ protected:
 	void petFn2(int val);
 	void petFn3(CTreeItem *item);
 	void incState38();
+	void inc54();
+	void dec54();
+
+	/**
+	 * Locks/hides the mouse
+	 */
+	void lockMouse();
+
+	/**
+	 * Unlocks/shows the mouse
+	 */
+	void unlockMouse();
 
 	/**
 	 * Load a sound
@@ -226,6 +238,11 @@ protected:
 	 * Start a conversation with the NPC
 	 */
 	void startTalking(CTrueTalkNPC *npc, uint id, CViewItem *view = nullptr);
+
+	/**
+	 * Stop a conversation with the NPC
+	 */
+	void endTalking(CTrueTalkNPC *npc, uint id, CViewItem *view = nullptr);
 
 	/**
 	 * Load the surface
