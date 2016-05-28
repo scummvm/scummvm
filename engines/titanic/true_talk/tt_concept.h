@@ -153,6 +153,8 @@ public:
 	 */
 	TTconcept *findByWordClass(WordClass wordClass);
 
+	TTconcept *findBy20(int val);
+
 	/**
 	 * Returns true if the concept has a word with a given Id
 	 */

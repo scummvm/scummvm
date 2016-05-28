@@ -1173,6 +1173,48 @@ int TTparser::considerRequests(TTword *word) {
 				_sentence->_field2C = 14;
 			break;
 
+		case MKTAG('F', 'A', 'R', 'R'):
+			if (_conceptP->findBy20(0))
+				_conceptP->_field20 = 2;
+			break;
+
+		case MKTAG('F', 'U', 'T', 'R'):
+			_sentenceConcept->_field18 = 3;
+			break;
+
+		case MKTAG('G', 'O', 'G', 'O'):
+			addNode(7);
+			addNode(5);
+			addNode(21);
+
+			if (_sentence->_field2C == 1)
+				_sentence->_field2C = 14;
+
+			flag = true;
+			break;
+
+		case MKTAG('H', 'E', 'L', 'P'):
+			if (_sentence->_field2C == 1)
+				_sentence->_field2C = 18;
+			
+			flag = true;
+			break;
+
+		case MKTAG('L', 'O', 'C', 'F'):
+			status = _sentenceConcept->createConcept(1, 5, word);
+			if (!status) {
+				_sentenceConcept->_concept5P->_field20 = 2;
+				flag = true;
+			}
+			break;
+
+		case MKTAG('T', 'E', 'A', 'C'):
+			if (_sentence->_field2C == 1)
+				_sentence->_field2C = 10;
+
+			flag = true;
+			break;
+
 		default:
 			break;
 		}

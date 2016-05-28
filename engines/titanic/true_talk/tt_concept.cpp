@@ -288,6 +288,15 @@ TTconcept *TTconcept::findByWordClass(WordClass wordClass) {
 	return nullptr;
 }
 
+TTconcept *TTconcept::findBy20(int val) {
+	for (TTconcept *conceptP = this; conceptP; conceptP = conceptP->_nextP) {
+		if (conceptP->_field20 == val)
+			return conceptP;
+	}
+
+	return nullptr;
+}
+
 bool TTconcept::isWordId(int id) const {
 	return this && _wordP && _wordP->_id == id;
 }
