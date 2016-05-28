@@ -946,20 +946,15 @@ void GnapEngine::updateIdleTimer() {
 }
 
 void GnapEngine::screenEffect(int dir, byte r, byte g, byte b) {
-	if (dir == 1) {
-		for (int y = 300; y < 600 && !_gameDone; y += 50) {
-			_gameSys->fillSurface(nullptr, 0, y, 800, 50, r, g, b);
-			_gameSys->fillSurface(nullptr, 0, 549 - y + 1, 800, 50, r, g, b);
-			gameUpdateTick();
-			_system->delayMillis(50);
-		}
-	} else {
-		for (int y = 0; y < 300 && !_gameDone; y += 50) {
-			_gameSys->fillSurface(nullptr, 0, y, 800, 50, r, g, b);
-			_gameSys->fillSurface(nullptr, 0, 549 - y + 1, 800, 50, r, g, b);
-			gameUpdateTick();
-			_system->delayMillis(50);
-		}
+	int startVal = 0;
+	if (dir == 1)
+		startVal = 300;
+
+	for (int y = startVal; y < startVal + 300 && !_gameDone; y += 50) {
+		_gameSys->fillSurface(nullptr, 0, y, 800, 50, r, g, b);
+		_gameSys->fillSurface(nullptr, 0, 549 - y + 1, 800, 50, r, g, b);
+		gameUpdateTick();
+		_system->delayMillis(50);
 	}
 }
 
