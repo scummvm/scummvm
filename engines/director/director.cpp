@@ -71,7 +71,7 @@ Common::Error DirectorEngine::run() {
 	_mainArchive->openFile("bookshelf_example.mmm");
 
 	Common::SeekableReadStream *scr = _mainArchive->getResource(MKTAG('V','W','S','C'), 1024);
-	Score score(*scr);
+	Score score(*scr, *_mainArchive);
 
 	Common::SeekableReadStream *conf = _mainArchive->getResource(MKTAG('V','W','C','F'), 1024);
 	score.loadConfig(*conf);

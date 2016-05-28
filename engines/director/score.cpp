@@ -34,8 +34,8 @@
 
 namespace Director {
 
-Score::Score(Common::SeekableReadStream &stream) {
-
+Score::Score(Common::SeekableReadStream &stream, Archive &movie) {
+	_movieArchive = &movie;
 	uint32 size = stream.readUint32BE();
 	size -= 4;
 	uint16 channelSize;
@@ -43,7 +43,7 @@ Score::Score(Common::SeekableReadStream &stream) {
 
 	Frame *initial = new Frame();
 	_frames.push_back(initial);
-	
+
 	while (size != 0) {
 		uint16 frameSize = stream.readUint16BE();
 		size -= frameSize;
@@ -185,7 +185,7 @@ void Score::display() {
 	if (g_system->getMillis() < _nextFrameTime)
 		return;
 
-	_frames[_currentFrame]->display();
+	_frames[_currentFrame]->display(*_movieArchive);
 	_currentFrame++;
 	byte tempo = _frames[_currentFrame]->_tempo;
 	if (tempo) {
@@ -393,13 +393,10 @@ void Frame::readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16
 	}
 }
 
-void Frame::display() {
-	//FIXME
-	RIFFArchive riff;
-	riff.openFile("bookshelf_example.mmm");
+void Frame::display(Archive &_movie) {
 
 	DIBDecoder palette;
-	Common::SeekableReadStream *pal = riff.getResource(MKTAG('C', 'L', 'U', 'T'), 1025);
+	Common::SeekableReadStream *pal = _movie.getResource(MKTAG('C', 'L', 'U', 'T'), 1025);
 	palette.loadPalette(*pal);
 	g_system->getPaletteManager()->setPalette(palette.getPalette(), 0, 255);
 
@@ -408,7 +405,7 @@ void Frame::display() {
 			DIBDecoder img;
 			//TODO check cast type
 			uint32 imgId = 1024 + _sprites[i]->_castId;
-			img.loadStream(*riff.getResource(MKTAG('D', 'I', 'B', ' '), imgId));
+			img.loadStream(*_movie.getResource(MKTAG('D', 'I', 'B', ' '), imgId));
 			uint32 regX = static_cast<BitmapCast *>(_sprites[i]->_cast)->regX;
 			uint32 regY = static_cast<BitmapCast *>(_sprites[i]->_cast)->regY;
 			uint32 rectLeft = static_cast<BitmapCast *>(_sprites[i]->_cast)->initialRect.left;

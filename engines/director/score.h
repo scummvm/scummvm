@@ -135,7 +135,7 @@ public:
     ~Frame();
     Frame(const Frame &frame);
     void readChannel(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
-    void display();
+    void display(Archive &_movie);
 
 private:
     void readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
@@ -160,7 +160,7 @@ public:
 
 class Score {
 public:
-    Score(Common::SeekableReadStream &stream);
+    Score(Common::SeekableReadStream &stream, Archive &movie);
     void readVersion(uint32 rid);
     void loadConfig(Common::SeekableReadStream &stream);
     void loadCastData(Common::SeekableReadStream &stream);
@@ -185,6 +185,7 @@ private:
     bool _stopPlay;
     uint16 _castArrayEnd;
     Common::Rect _movieRect;
+    Archive *_movieArchive;
 };
 
 } //End of namespace Director
