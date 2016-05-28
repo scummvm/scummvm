@@ -736,448 +736,445 @@ int TTparser::considerRequests(TTword *word) {
 	int seekVal = 0;
 
 	while (word) {
-		if (nodeP->_tag == MKTAG('C', 'O', 'M', 'E')) {
+		switch (nodeP->_tag) {
+		case CHECK_COMMAND_FORM:
+			if (_sentenceConcept->_concept1P && _sentence->_field2C == 1 &&
+					!_sentenceConcept->_concept0P) {
+				concept = new TTconcept(_sentence->_npcScript, ST_NPC_SCRIPT);
+				_sentenceConcept->_concept0P = concept;
+				_sentenceConcept->_field18 = 3;
+			}
+
+			flag = true;
+			break;
+
+		case EXPECT_THING:
+			if (!word->_wordClass) {
+				word->_wordClass = WC_THING;
+				addToConceptList(word);
+				addNode(14);
+			}
+
+			flag = true;
+			break;
+
+		case OBJECT_IS_TO:
+			flag = resetConcept(&_sentenceConcept->_concept2P, 3);
+			break;
+
+		case SEEK_ACTOR:
+			if (!_sentenceConcept->_concept0P) {
+				flag = filterConcepts(5, 0);
+			} else if (_sentenceConcept->_concept0P->compareTo("?") &&
+						_sentenceConcept->_concept1P->isWordId(113) &&
+						word->_wordClass == WC_THING) {
+				TTconcept *oldConcept = _sentenceConcept->_concept0P;
+				_sentenceConcept->_concept0P = nullptr;
+				flag = filterConcepts(5, 2);
+				if (flag)
+					delete oldConcept;
+			} else {
+				flag = true;
+			}
+			break;
+
+		case SEEK_OBJECT:
+			if (_sentenceConcept->_concept2P && _sentenceConcept->_concept2P->compareTo(word)) {
+				flag = true;
+			} else if (!_sentenceConcept->_concept2P) {
+				if (filterConcepts(5, 2) && _sentenceConcept->_concept2P->checkWordId1())
+					addNode(5);
+			} else if (word->_wordClass == WC_THING && _sentence->fn2(2, TTstring("?"), _sentenceConcept)) {
+				TTconcept *oldConcept = _sentenceConcept->_concept2P;
+				flag = filterConcepts(5, 2);
+				_sentenceConcept->_concept2P->_field20 = oldConcept->get20();
+				if (flag)
+					delete oldConcept;
+			} else if (!_sentenceConcept->_concept3P &&
+					(!_sentenceConcept->_concept1P || (_sentenceConcept->_concept1P->getWordId() &&
+					_sentenceConcept->_concept1P->getWordId() == 112)) &&
+					_sentenceConcept->_concept2P->checkWordId1() &&
+					(word->_wordClass == WC_THING || word->_wordClass == WC_PRONOUN)) {
+				_sentenceConcept->changeConcept(0, &_sentenceConcept->_concept2P, 3);
+
+				if (_conceptP && _conceptP->isWordId(word->_id)) {
+					status = _sentenceConcept->replaceConcept(0, 2, _conceptP);
+					removeConcept(_conceptP);
+				} else {
+					status = _sentenceConcept->createConcept(0, 2, word);
+				}
+					
+				if (!status && !_sentenceConcept->_concept4P && _sentenceConcept->_concept0P) {
+					TTconcept *oldConcept = _sentenceConcept->_concept2P;
+					flag = filterConcepts(5, 2);
+					_sentenceConcept->_concept2P->_field20 = oldConcept->get20();
+					if (flag)
+						delete oldConcept;
+				} else {
+					flag = true;
+				}
+			}
+			break;
+			
+		case SEEK_OBJECT_OVERRIDE:
+			if ((word->_wordClass == WC_THING || word->_wordClass == WC_PRONOUN) &&
+					_sentence->fn2(2, TTstring("thePlayer"), _sentenceConcept) &&
+					!_sentenceConcept->_concept3P) {
+				_sentenceConcept->_concept3P = _sentenceConcept->_concept2P;
+				_sentenceConcept->_concept2P = nullptr;
+					
+				flag = filterConcepts(5, 2);
+				if (!flag) {
+					status = _sentenceConcept->createConcept(0, 2, word);
+				}
+			}
+			break;
+
+		case SEEK_TO:
+			if (!_sentenceConcept->_concept3P) {
+				if (!filterConcepts(8, 3))
+					flag = filterConcepts(3, 3);
+			} else {
+				flag = true;
+			}
+			break;
+
+		case SEEK_FROM:
+			if (!_sentenceConcept->_concept4P) {
+				if (!filterConcepts(8, 4))
+					flag = filterConcepts(3, 3);
+			} else {
+				flag = true;
+			}
+			break;
+
+		case SEEK_TO_OVERRIDE:
+			if (word->_wordClass == WC_ACTION) {
+				status = _sentenceConcept->createConcept(0, 1, word);
+				if (!status) {
+					seekVal = _sentenceConcept->_field18;
+					_sentenceConcept->_field18 = 4;
+					flag = true;
+				}
+			} else if (word->_id == 703) {
+				if (_sentenceConcept->_concept2P) {
+					delete _sentenceConcept->_concept2P;
+					_sentenceConcept->_concept2P = nullptr;
+				}
+
+				if (_sentenceConcept->_concept4P || !_sentenceConcept->_concept0P) {
+					addNode(7);
+				} else {
+					_sentenceConcept->changeConcept(1, &_sentenceConcept->_concept0P, 4);
+					concept = nullptr;
+					addNode(7);
+				}
+			} else {
+				flag = true;
+			}
+			break;
+
+		case SEEK_FROM_OVERRIDE:
+			if (_sentenceConcept->_concept4P) {
+				delete _sentenceConcept->_concept4P;
+				_sentenceConcept->_concept4P = nullptr;
+			}
+
+			addNode(8);
+			flag = true;
+			break;
+
+		case SEEK_LOCATION:
+			addNode(5);
+			_sentenceConcept->createConcept(0, 5, word);
+			flag = true;
+			break;
+
+		case SEEK_OWNERSHIP:
+			if (word->_id == 601) {
+				if (_conceptP->findByWordClass(WC_THING))
+					status = _conceptP->setOwner(word, false);
+					
+				flag = true;
+			}
+			break;
+
+		case SEEK_STATE:
+			if (_sentenceConcept->_concept5P) {
+				if (_sentenceConcept->_concept5P->findByWordId(306) ||
+						_sentenceConcept->_concept5P->findByWordId(904)) {
+					TTconcept *oldConcept = _sentenceConcept->_concept5P;
+					_sentenceConcept->_concept5P = nullptr;
+					flag = filterConcepts(9, 5);
+					if (flag)
+						delete oldConcept;
+				} else {
+					flag = true;
+				}
+			} else {
+				flag = filterConcepts(9, 5);
+				if (!flag && word->_wordClass == WC_ADVERB) {
+					status = _sentenceConcept->createConcept(1, 5, word);
+					flag = true;
+				}
+			}
+			break;
+
+		case SEEK_MODIFIERS:
+			if (!modifierFlag) {
+				bool tempFlag = false;
+
+				switch (word->_wordClass) {
+				case WC_ACTION:
+					status = processModifiers(1, word);
+					break;
+				case WC_THING:
+					status = processModifiers(2, word);
+					break;
+				case WC_ABSTRACT:
+					if (word->_id != 300) {
+						status = processModifiers(3, word);
+					} else if (!_conceptP->findByWordClass(WC_THING)) {
+						status = processModifiers(3, word);
+					} else {
+						word->_id = atoi(word->_text.c_str());
+					}
+					break;
+				case WC_PRONOUN:
+					if (word->_id != 602)
+						addToConceptList(word);
+					break;
+				case WC_ADJECTIVE: {
+					TTconcept *conceptP = _conceptP->findByWordClass(WC_THING);
+					if (conceptP) {
+						conceptP->_string2 += ' ';
+						conceptP->_string2 += word->getText();
+					} else {
+						status = processModifiers(8, word);
+					}
+					break;
+				}
+				case WC_ADVERB:
+					if (word->_id == 906) {
+						for (TTconcept *currP = _conceptP; currP; currP = currP->_nextP) {
+							if (_sentence->isFrameSlotClass(1, WC_ACTION) ||
+									_sentence->isFrameSlotClass(1, WC_THING))
+								currP->_field34 = 1;
+						}
+					} else {
+						TTconcept *conceptP = _conceptP->findByWordClass(WC_ACTION);
+
+						if (conceptP) {
+							conceptP->_string2 += ' ';
+							conceptP->_string2 += word->getText();
+						} else {
+							tempFlag = true;
+						}
+					}
+					break;
+				default:
+					addToConceptList(word);
+					status = 0;
+					break;
+				}
+
+				if (tempFlag)
+					status = _sentenceConcept->createConcept(1, 5, word);
+
+				modifierFlag = true;
+				flag = true;
+			}
+			break;
+
+		case SEEK_NEW_FRAME:
+			if (word->_wordClass == WC_ACTION && word->_id != 104 && word->_id != 107) {
+				if (concept && (_sentenceConcept->_concept5P || _sentenceConcept->_concept2P)) {
+					TTsentenceConcept *oldNode = _sentenceConcept;
+					oldNode->_field1C = 2;
+					_sentenceConcept = oldNode->addSibling();
+					concept = nullptr;
+						
+					_sentenceConcept->_concept1P = oldNode->_concept1P;
+					_sentenceConcept->_concept5P = oldNode->_concept5P;
+					_sentenceConcept->_concept2P = oldNode->_concept2P;
+						
+					if (seekVal) {
+						seekVal = 0;
+
+						_sentenceConcept->_field18 = oldNode->_field18;
+						oldNode->_field18 = seekVal;
+					}
+				}
+
+				flag = true;
+			}
+			break;
+
+		case SEEK_STATE_OBJECT:
+			if (!_sentenceConcept->_concept5P) {
+				addToConceptList(word);
+			} else if (_sentenceConcept->concept5WordId() == 113 ||
+					_sentenceConcept->concept5WordId() == 112) {
+				_sentenceConcept->createConcept(1, 2, word);
+			} else {
+				addToConceptList(word);
+			}
+
+			flag = true;
+			break;
+
+		case SET_ACTION:
+			if (_sentence->fn4(1, 104, _sentenceConcept) ||
+					_sentence->fn4(1, 107, _sentenceConcept)) {
+				concept = _sentenceConcept->_concept1P;
+				_sentenceConcept->_concept1P = nullptr;
+				addNode(15);
+			}
+
+			if (_sentence->check2C() && word->_id == 113)
+				addNode(4);
+
+			if (word->_wordClass == WC_ACTION)
+				_sentenceConcept->createConcept(0, 1, word);
+
+			flag = true;
+			break;
+
+		case ACTOR_IS_TO:
+			_sentenceConcept->changeConcept(1, &_sentenceConcept->_concept0P, 3);
+			flag = true;
+			break;
+
+		case ACTOR_IS_FROM:
+			_sentenceConcept->changeConcept(1, &_sentenceConcept->_concept0P, 4);
+			break;
+
+		case ACTOR_IS_OBJECT:
+			flag = resetConcept(&_sentenceConcept->_concept0P, 2);
+			break;
+
+		case WORD_TYPE_IS_SENTENCE_TYPE:
+			if (_sentence->_field2C == 1 || _sentence->_field2C == 10) {
+				for (TTword *wordP = _currentWordP; wordP; wordP = wordP->_nextP) {
+					if (wordP->_id == 906) {
+						_sentence->_field2C = 12;
+						flag = true;
+						break;
+					}
+				}
+
+				TTpicture *newPictP;
+				TTconcept *newConceptP;
+				switch (word->_id) {
+				case 108:
+					_sentence->_field2C = 8;
+					break;
+				case 113:
+					if (!_sentenceConcept->_concept3P)
+						_sentence->_field2C = 22;
+					break;
+				case 304:
+					_sentence->_field2C = 25;
+					break;
+				case 305:
+					_sentence->_field2C = 24;
+					break;
+				case 306:
+					_sentence->_field2C = 7;
+					break;
+				case 501:
+					_sentence->_field2C = 9;
+					break;
+				case 900:
+					_sentence->_field2C = 5;
+					break;
+				case 901:
+					_sentence->_field2C = 4;
+					break;
+				case 904:
+					_sentence->_field2C = 6;
+					break;
+				case 905:
+					_sentence->_field2C = 11;
+					break;
+				case 906:
+					_sentence->_field2C = 12;
+					break;
+				case 907:
+					_sentence->_field2C = 13;
+					break;
+				case 908:
+					_sentence->_field2C = 2;
+					if (!_sentenceConcept->_concept0P) {
+						newPictP = new TTpicture(TTstring("?"), WC_THING, 0, 0, 0, 0, 0);
+						newConceptP = new TTconcept(newPictP);
+							
+						_sentenceConcept->_concept0P = newConceptP;
+						delete newPictP;
+						addNode(4);
+					}
+					break;
+				case 909:
+					_sentence->_field2C = 3;
+					newPictP = new TTpicture(TTstring("?"), WC_THING, 0, 0, 0, 0, 0);
+					newConceptP = new TTconcept(newPictP);
+
+					_sentenceConcept->_concept2P = newConceptP;
+					delete newPictP;
+					addNode(4);
+					break;
+
+				default:
+					break;
+				}
+			}
+
+			flag = true;
+			break;
+
+		case COMPLEX_VERB:
+			if (word->_wordClass == WC_ACTION) {
+				flag = true;
+			} else if (!_sentenceConcept->_concept1P) {
+				TTstring wordStr = word->getText();
+				if (wordStr == "do" || wordStr == "doing" || wordStr == "does" || wordStr == "done") {
+					TTaction *verbP = new TTaction(TTstring("do"), WC_ACTION, 112, 0,
+						_sentenceConcept->get18());
+					status = _sentenceConcept->createConcept(1, 1, verbP);
+					delete verbP;
+				}
+
+				flag = true;
+			}
+			break;
+
+		case MKTAG('C', 'O', 'M', 'E'):
 			addNode(7);
 			addNode(5);
 			addNode(21);
 
 			if (!_sentence->_field2C)
 				_sentence->_field2C = 15;
-		} else if (nodeP->_tag == MKTAG('C', 'U', 'R', 'S') ||
-				nodeP->_tag == MKTAG('S', 'E', 'X', 'X')) {
+			break;
+
+		case MKTAG('C', 'U', 'R', 'S'):
+		case MKTAG('S', 'E', 'X', 'X'):
 			if (_sentence->_field58 > 1)
 				_sentence->_field58--;
 			flag = true;
+			break;
 
-		} else if (nodeP->_tag == MKTAG('E', 'X', 'I', 'T')) {
+		case MKTAG('E', 'X', 'I', 'T'):
 			addNode(8);
 			addNode(5);
 			addNode(21);
 
 			if (!_sentence->_field2C)
 				_sentence->_field2C = 14;
+			break;
 
-
-		} else if (nodeP->_tag < MKTAG('C', 'O', 'M', 'E')) {
-			if (_sentence->_field58 > 1)
-				_sentence->_field58--;
-			flag = true;
-		} else {
-			switch (nodeP->_tag) {
-			case CHECK_COMMAND_FORM:
-				if (_sentenceConcept->_concept1P && _sentence->_field2C == 1 &&
-						!_sentenceConcept->_concept0P) {
-					concept = new TTconcept(_sentence->_npcScript, ST_NPC_SCRIPT);
-					_sentenceConcept->_concept0P = concept;
-					_sentenceConcept->_field18 = 3;
-				}
-
-				flag = true;
-				break;
-
-			case EXPECT_THING:
-				if (!word->_wordClass) {
-					word->_wordClass = WC_THING;
-					addToConceptList(word);
-					addNode(14);
-				}
-
-				flag = true;
-				break;
-
-			case OBJECT_IS_TO:
-				flag = resetConcept(&_sentenceConcept->_concept2P, 3);
-				break;
-
-			case SEEK_ACTOR:
-				if (!_sentenceConcept->_concept0P) {
-					flag = filterConcepts(5, 0);
-				} else if (_sentenceConcept->_concept0P->compareTo("?") &&
-							_sentenceConcept->_concept1P->isWordId(113) &&
-							word->_wordClass == WC_THING) {
-					TTconcept *oldConcept = _sentenceConcept->_concept0P;
-					_sentenceConcept->_concept0P = nullptr;
-					flag = filterConcepts(5, 2);
-					if (flag)
-						delete oldConcept;
-				} else {
-					flag = true;
-				}
-				break;
-
-			case SEEK_OBJECT:
-				if (_sentenceConcept->_concept2P && _sentenceConcept->_concept2P->compareTo(word)) {
-					flag = true;
-				} else if (!_sentenceConcept->_concept2P) {
-					if (filterConcepts(5, 2) && _sentenceConcept->_concept2P->checkWordId1())
-						addNode(5);
-				} else if (word->_wordClass == WC_THING && _sentence->fn2(2, TTstring("?"), _sentenceConcept)) {
-					TTconcept *oldConcept = _sentenceConcept->_concept2P;
-					flag = filterConcepts(5, 2);
-					_sentenceConcept->_concept2P->_field20 = oldConcept->get20();
-					if (flag)
-						delete oldConcept;
-				} else if (!_sentenceConcept->_concept3P &&
-						(!_sentenceConcept->_concept1P || (_sentenceConcept->_concept1P->getWordId() &&
-						_sentenceConcept->_concept1P->getWordId() == 112)) &&
-						_sentenceConcept->_concept2P->checkWordId1() &&
-						(word->_wordClass == WC_THING || word->_wordClass == WC_PRONOUN)) {
-					_sentenceConcept->changeConcept(0, &_sentenceConcept->_concept2P, 3);
-
-					if (_conceptP && _conceptP->isWordId(word->_id)) {
-						status = _sentenceConcept->replaceConcept(0, 2, _conceptP);
-						removeConcept(_conceptP);
-					} else {
-						status = _sentenceConcept->createConcept(0, 2, word);
-					}
-					
-					if (!status && !_sentenceConcept->_concept4P && _sentenceConcept->_concept0P) {
-						TTconcept *oldConcept = _sentenceConcept->_concept2P;
-						flag = filterConcepts(5, 2);
-						_sentenceConcept->_concept2P->_field20 = oldConcept->get20();
-						if (flag)
-							delete oldConcept;
-					} else {
-						flag = true;
-					}
-				}
-				break;
-			
-			case SEEK_OBJECT_OVERRIDE:
-				if ((word->_wordClass == WC_THING || word->_wordClass == WC_PRONOUN) &&
-						_sentence->fn2(2, TTstring("thePlayer"), _sentenceConcept) &&
-						!_sentenceConcept->_concept3P) {
-					_sentenceConcept->_concept3P = _sentenceConcept->_concept2P;
-					_sentenceConcept->_concept2P = nullptr;
-					
-					flag = filterConcepts(5, 2);
-					if (!flag) {
-						status = _sentenceConcept->createConcept(0, 2, word);
-					}
-				}
-				break;
-
-			case SEEK_TO:
-				if (!_sentenceConcept->_concept3P) {
-					if (!filterConcepts(8, 3))
-						flag = filterConcepts(3, 3);
-				} else {
-					flag = true;
-				}
-				break;
-
-			case SEEK_FROM:
-				if (!_sentenceConcept->_concept4P) {
-					if (!filterConcepts(8, 4))
-						flag = filterConcepts(3, 3);
-				} else {
-					flag = true;
-				}
-				break;
-
-			case SEEK_TO_OVERRIDE:
-				if (word->_wordClass == WC_ACTION) {
-					status = _sentenceConcept->createConcept(0, 1, word);
-					if (!status) {
-						seekVal = _sentenceConcept->_field18;
-						_sentenceConcept->_field18 = 4;
-						flag = true;
-					}
-				} else if (word->_id == 703) {
-					if (_sentenceConcept->_concept2P) {
-						delete _sentenceConcept->_concept2P;
-						_sentenceConcept->_concept2P = nullptr;
-					}
-
-					if (_sentenceConcept->_concept4P || !_sentenceConcept->_concept0P) {
-						addNode(7);
-					} else {
-						_sentenceConcept->changeConcept(1, &_sentenceConcept->_concept0P, 4);
-						concept = nullptr;
-						addNode(7);
-					}
-				} else {
-					flag = true;
-				}
-				break;
-
-			case SEEK_FROM_OVERRIDE:
-				if (_sentenceConcept->_concept4P) {
-					delete _sentenceConcept->_concept4P;
-					_sentenceConcept->_concept4P = nullptr;
-				}
-
-				addNode(8);
-				flag = true;
-				break;
-
-			case SEEK_LOCATION:
-				addNode(5);
-				_sentenceConcept->createConcept(0, 5, word);
-				flag = true;
-				break;
-
-			case SEEK_OWNERSHIP:
-				if (word->_id == 601) {
-					if (_conceptP->findByWordClass(WC_THING))
-						status = _conceptP->setOwner(word, false);
-					
-					flag = true;
-				}
-				break;
-
-			case SEEK_STATE:
-				if (_sentenceConcept->_concept5P) {
-					if (_sentenceConcept->_concept5P->findByWordId(306) ||
-							_sentenceConcept->_concept5P->findByWordId(904)) {
-						TTconcept *oldConcept = _sentenceConcept->_concept5P;
-						_sentenceConcept->_concept5P = nullptr;
-						flag = filterConcepts(9, 5);
-						if (flag)
-							delete oldConcept;
-					} else {
-						flag = true;
-					}
-				} else {
-					flag = filterConcepts(9, 5);
-					if (!flag && word->_wordClass == WC_ADVERB) {
-						status = _sentenceConcept->createConcept(1, 5, word);
-						flag = true;
-					}
-				}
-				break;
-
-			case SEEK_MODIFIERS:
-				if (!modifierFlag) {
-					bool tempFlag = false;
-
-					switch (word->_wordClass) {
-					case WC_ACTION:
-						status = processModifiers(1, word);
-						break;
-					case WC_THING:
-						status = processModifiers(2, word);
-						break;
-					case WC_ABSTRACT:
-						if (word->_id != 300) {
-							status = processModifiers(3, word);
-						} else if (!_conceptP->findByWordClass(WC_THING)) {
-							status = processModifiers(3, word);
-						} else {
-							word->_id = atoi(word->_text.c_str());
-						}
-						break;
-					case WC_PRONOUN:
-						if (word->_id != 602)
-							addToConceptList(word);
-						break;
-					case WC_ADJECTIVE: {
-						TTconcept *concept = _conceptP->findByWordClass(WC_THING);
-						if (concept) {
-							concept->_string2 += ' ';
-							concept->_string2 += word->getText();
-						} else {
-							status = processModifiers(8, word);
-						}
-						break;
-					}
-					case WC_ADVERB:
-						if (word->_id == 906) {
-							for (TTconcept *currP = _conceptP; currP; currP = currP->_nextP) {
-								if (_sentence->isFrameSlotClass(1, WC_ACTION) ||
-										_sentence->isFrameSlotClass(1, WC_THING))
-									currP->_field34 = 1;
-							}
-						} else {
-							TTconcept *conceptP = _conceptP->findByWordClass(WC_ACTION);
-
-							if (conceptP) {
-								conceptP->_string2 += ' ';
-								conceptP->_string2 += word->getText();
-							} else {
-								tempFlag = true;
-							}
-						}
-						break;
-					default:
-						addToConceptList(word);
-						status = 0;
-						break;
-					}
-
-					if (tempFlag)
-						status = _sentenceConcept->createConcept(1, 5, word);
-
-					modifierFlag = true;
-					flag = true;
-				}
-				break;
-
-			case SEEK_NEW_FRAME:
-				if (word->_wordClass == WC_ACTION && word->_id != 104 && word->_id != 107) {
-					if (concept && (_sentenceConcept->_concept5P || _sentenceConcept->_concept2P)) {
-						TTsentenceConcept *oldNode = _sentenceConcept;
-						oldNode->_field1C = 2;
-						_sentenceConcept = oldNode->addSibling();
-						concept = nullptr;
-						
-						_sentenceConcept->_concept1P = oldNode->_concept1P;
-						_sentenceConcept->_concept5P = oldNode->_concept5P;
-						_sentenceConcept->_concept2P = oldNode->_concept2P;
-						
-						if (seekVal) {
-							seekVal = 0;
-
-							_sentenceConcept->_field18 = oldNode->_field18;
-							oldNode->_field18 = seekVal;
-						}
-					}
-
-					flag = true;
-				}
-				break;
-
-			case SEEK_STATE_OBJECT:
-				if (!_sentenceConcept->_concept5P) {
-					addToConceptList(word);
-				} else if (_sentenceConcept->concept5WordId() == 113 ||
-						_sentenceConcept->concept5WordId() == 112) {
-					_sentenceConcept->createConcept(1, 2, word);
-				} else {
-					addToConceptList(word);
-				}
-
-				flag = true;
-				break;
-
-			case SET_ACTION:
-				if (_sentence->fn4(1, 104, _sentenceConcept) ||
-						_sentence->fn4(1, 107, _sentenceConcept)) {
-					concept = _sentenceConcept->_concept1P;
-					_sentenceConcept->_concept1P = nullptr;
-					addNode(15);
-				}
-
-				if (_sentence->check2C() && word->_id == 113)
-					addNode(4);
-
-				if (word->_wordClass == WC_ACTION)
-					_sentenceConcept->createConcept(0, 1, word);
-
-				flag = true;
-				break;
-
-			case ACTOR_IS_TO:
-				_sentenceConcept->changeConcept(1, &_sentenceConcept->_concept0P, 3);
-				flag = true;
-				break;
-
-			case ACTOR_IS_FROM:
-				_sentenceConcept->changeConcept(1, &_sentenceConcept->_concept0P, 4);
-				break;
-
-			case ACTOR_IS_OBJECT:
-				flag = resetConcept(&_sentenceConcept->_concept0P, 2);
-				break;
-
-			case WORD_TYPE_IS_SENTENCE_TYPE:
-				if (_sentence->_field2C == 1 || _sentence->_field2C == 10) {
-					for (TTword *wordP = _currentWordP; wordP; wordP = wordP->_nextP) {
-						if (wordP->_id == 906) {
-							_sentence->_field2C = 12;
-							flag = true;
-							break;
-						}
-					}
-
-					TTpicture *newPictP;
-					TTconcept *newConceptP;
-					switch (word->_id) {
-					case 108:
-						_sentence->_field2C = 8;
-						break;
-					case 113:
-						if (!_sentenceConcept->_concept3P)
-							_sentence->_field2C = 22;
-						break;
-					case 304:
-						_sentence->_field2C = 25;
-						break;
-					case 305:
-						_sentence->_field2C = 24;
-						break;
-					case 306:
-						_sentence->_field2C = 7;
-						break;
-					case 501:
-						_sentence->_field2C = 9;
-						break;
-					case 900:
-						_sentence->_field2C = 5;
-						break;
-					case 901:
-						_sentence->_field2C = 4;
-						break;
-					case 904:
-						_sentence->_field2C = 6;
-						break;
-					case 905:
-						_sentence->_field2C = 11;
-						break;
-					case 906:
-						_sentence->_field2C = 12;
-						break;
-					case 907:
-						_sentence->_field2C = 13;
-						break;
-					case 908:
-						_sentence->_field2C = 2;
-						if (!_sentenceConcept->_concept0P) {
-							newPictP = new TTpicture(TTstring("?"), WC_THING, 0, 0, 0, 0, 0);
-							newConceptP = new TTconcept(newPictP);
-							
-							_sentenceConcept->_concept0P = newConceptP;
-							delete newPictP;
-							addNode(4);
-						}
-						break;
-					case 909:
-						_sentence->_field2C = 3;
-						newPictP = new TTpicture(TTstring("?"), WC_THING, 0, 0, 0, 0, 0);
-						newConceptP = new TTconcept(newPictP);
-
-						_sentenceConcept->_concept2P = newConceptP;
-						delete newPictP;
-						addNode(4);
-						break;
-
-					default:
-						break;
-					}
-				}
-
-				flag = true;
-				break;
-
-			case COMPLEX_VERB:
-				if (word->_wordClass == WC_ACTION) {
-					flag = true;
-				} else if (!_sentenceConcept->_concept1P) {
-					TTstring wordStr = word->getText();
-					if (wordStr == "do" || wordStr == "doing" || wordStr == "does" || wordStr == "done") {
-						TTaction *verbP = new TTaction(TTstring("do"), WC_ACTION, 112, 0,
-							_sentenceConcept->get18());
-						status = _sentenceConcept->createConcept(1, 1, verbP);
-						delete verbP;
-					}
-
-					flag = true;
-				}
-				break;
-
-			default:
-				break;
-			}
+		default:
+			break;
 		}
 	}
 
