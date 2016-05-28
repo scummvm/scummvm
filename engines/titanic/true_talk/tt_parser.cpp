@@ -1234,7 +1234,8 @@ bool TTparser::resetConcept(TTconcept **conceptPP, int conceptIndex) {
 int TTparser::processModifiers(int modifier, TTword *word) {
 	TTconcept *newConcept = new TTconcept(word, ST_UNKNOWN_SCRIPT);
 
-	for (TTword *currP = _currentWordP; currP != word; currP = currP->_nextP) {
+	// Cycles through each word
+	for (TTword *currP = _currentWordP; currP != word; currP = _currentWordP) {
 		if ((modifier == 2 && currP->_wordClass == WC_ADJECTIVE) ||
 				(modifier == 1 && currP->_wordClass == WC_ADVERB)) {
 			newConcept->_string2 += ' ';
@@ -1245,9 +1246,70 @@ int TTparser::processModifiers(int modifier, TTword *word) {
 		}
 
 		if (modifier == 2 || modifier == 3) {
-			// TODO
+			switch (_currentWordP->_id) {
+			case 94:
+				_currentConceptP->setOwner(newConcept);
+				if (_currentWordP) {
+					_currentWordP->deleteSiblings();
+					delete _currentWordP;
+					_currentWordP = nullptr;
+				}
+
+				delete newConcept;
+				newConcept = nullptr;
+				break;
+
+			case 204:
+				newConcept->_field34 = 1;
+				if (_sentence->_field2C == 1)
+					_sentence->_field2C = 12;
+				newConcept->_field14 = 1;
+				break;
+
+			case 300:
+				newConcept->set1C(atoi(_currentWordP->_text.c_str()));
+				break;
+
+			case 400:
+				newConcept->_field14 = 2;
+				break;
+
+			case 401:
+				newConcept->_field14 = 1;
+				break;
+
+			case 601:
+				newConcept->setOwner(_currentWordP, false);
+				break;
+
+			case 608:
+				if (_currentWordP->comparePronounTo(10)) {
+					newConcept->_field20 = 1;
+				} else if (_currentWordP->comparePronounTo(11)) {
+					newConcept->_field20 = 2;
+				}
+
+			default:
+				break;
+			}
+		}
+
+		if (_currentWordP) {
+			// Detaches word and deletes it
+			TTword *wordP = _currentWordP;
+			_currentWordP = wordP->_nextP;
+
+			wordP->_nextP = nullptr;
+			delete wordP;
 		}
 	}
+
+	if (newConcept) {
+		newConcept->setFlag(true);
+		_currentConceptP = newConcept;
+		addConcept(newConcept);
+	}
+
 	return 0;
 }
 

@@ -38,12 +38,9 @@ private:
 	TTscriptBase *_scriptP;
 	TTword *_wordP;
 	TTstring _string1;
-	int _field14;
 	int _field1C;
-	int _field20;
 	TTword *_word2P;
 	int _field30;
-	int _field34;
 	bool _flag;
 	int _status;
 private:
@@ -74,6 +71,9 @@ private:
 public:
 	TTconcept *_nextP;
 	ScriptType _scriptType;
+	int _field14;
+	int _field20;
+	int _field34;
 	TTstring _string2;
 public:
 	TTconcept();
