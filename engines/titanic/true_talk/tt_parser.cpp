@@ -733,7 +733,7 @@ int TTparser::considerRequests(TTword *word) {
 	int status = 0;
 	bool flag = false;
 	bool modifierFlag = false;
-	int seekFlag = 0;
+	int seekVal = 0;
 
 	while (word) {
 		if (nodeP->_tag == MKTAG('C', 'O', 'M', 'E')) {
@@ -804,10 +804,65 @@ int TTparser::considerRequests(TTword *word) {
 				break;
 
 			case SEEK_OBJECT:
+			
 			case SEEK_OBJECT_OVERRIDE:
+				if ((word->_wordClass == WC_THING || word->_wordClass == WC_PRONOUN) &&
+						_sentence->fn2(2, TTstring("thePlayer"), _sentenceConcept) &&
+						!_sentenceConcept->_concept3P) {
+					_sentenceConcept->_concept3P = _sentenceConcept->_concept2P;
+					_sentenceConcept->_concept2P = nullptr;
+					
+					flag = filterConcepts(5, 2);
+					if (!flag) {
+						status = _sentenceConcept->createConcept(0, 2, word);
+					}
+				}
+				break;
+
 			case SEEK_TO:
+				if (!_sentenceConcept->_concept3P) {
+					if (!filterConcepts(8, 3))
+						flag = filterConcepts(3, 3);
+				} else {
+					flag = true;
+				}
+				break;
+
 			case SEEK_FROM:
+				if (!_sentenceConcept->_concept4P) {
+					if (!filterConcepts(8, 4))
+						flag = filterConcepts(3, 3);
+				} else {
+					flag = true;
+				}
+				break;
+
 			case SEEK_TO_OVERRIDE:
+				if (word->_wordClass == WC_ACTION) {
+					status = _sentenceConcept->createConcept(0, 1, word);
+					if (!status) {
+						seekVal = _sentenceConcept->_field18;
+						_sentenceConcept->_field18 = 4;
+						flag = true;
+					}
+				} else if (word->_id == 703) {
+					if (_sentenceConcept->_concept2P) {
+						delete _sentenceConcept->_concept2P;
+						_sentenceConcept->_concept2P = nullptr;
+					}
+
+					if (_sentenceConcept->_concept4P || !_sentenceConcept->_concept0P) {
+						addNode(7);
+					} else {
+						_sentenceConcept->changeConcept(1, &_sentenceConcept->_concept0P, 4);
+						concept = nullptr;
+						addNode(7);
+					}
+				} else {
+					flag = true;
+				}
+				break;
+
 			case SEEK_FROM_OVERRIDE:
 				if (_sentenceConcept->_concept4P) {
 					delete _sentenceConcept->_concept4P;
@@ -904,11 +959,11 @@ int TTparser::considerRequests(TTword *word) {
 						_sentenceConcept->_concept5P = oldNode->_concept5P;
 						_sentenceConcept->_concept2P = oldNode->_concept2P;
 						
-						if (seekFlag) {
-							seekFlag = 0;
+						if (seekVal) {
+							seekVal = 0;
 
 							_sentenceConcept->_field18 = oldNode->_field18;
-							oldNode->_field18 = seekFlag;
+							oldNode->_field18 = seekVal;
 						}
 					}
 
@@ -1039,7 +1094,19 @@ int TTparser::considerRequests(TTword *word) {
 				break;
 
 			case COMPLEX_VERB:
-				// TODO
+				if (word->_wordClass == WC_ACTION) {
+					flag = true;
+				} else if (!_sentenceConcept->_concept1P) {
+					TTstring wordStr = word->getText();
+					if (wordStr == "do" || wordStr == "doing" || wordStr == "does" || wordStr == "done") {
+						TTaction *verbP = new TTaction(TTstring("do"), WC_ACTION, 112, 0,
+							_sentenceConcept->get18());
+						status = _sentenceConcept->createConcept(1, 1, verbP);
+						delete verbP;
+					}
+
+					flag = true;
+				}
 				break;
 
 			default:
