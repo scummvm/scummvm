@@ -238,7 +238,7 @@ void Disk_ns::setLanguage(uint16 language) {
 #pragma mark -
 
 
-DosDisk_ns::DosDisk_ns(Parallaction* vm) : Disk_ns(vm) {
+DosDisk_ns::DosDisk_ns(Parallaction* vm) : Disk_ns(vm), _gfx(NULL) {
 
 }
 

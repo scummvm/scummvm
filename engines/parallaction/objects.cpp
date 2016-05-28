@@ -145,6 +145,8 @@ Program::Program() {
 	_locals = new LocalVariable[NUM_LOCALS];
 	_numLocals = 0;
 	_status = kProgramIdle;
+	_ip = 0;
+	_loopStart = 0;
 }
 
 Program::~Program() {
@@ -259,6 +261,8 @@ Answer::Answer() {
 	_noFlags = 0;
 	_yesFlags = 0;
 	_hasCounterCondition = false;
+	_counterValue = 0;
+	_counterOp = 0;
 }
 
 bool Answer::textIsNull() {
@@ -298,6 +302,7 @@ Instruction::Instruction() {
 
 	// common
 	_immediate = 0;
+	_endif = 0;
 
 	// BRA specific
 	_text = 0;

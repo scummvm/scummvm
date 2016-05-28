@@ -323,6 +323,11 @@ void AmigaSoundMan_ns::playLocationMusic(const char *location) {
 
 SoundMan_ns::SoundMan_ns(Parallaction_ns *vm) : _vm(vm) {
 	_mixer = _vm->_mixer;
+	_sfxLooping = false;
+	_sfxVolume = 0;
+	_sfxRate = 0;
+	_sfxChannel = 0;
+	_musicType = 0;
 }
 
 void SoundMan_ns::setMusicVolume(int value) {

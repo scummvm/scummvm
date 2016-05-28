@@ -70,6 +70,9 @@ Input::Input(Parallaction *vm) : _vm(vm) {
 	_mouseButtons = 0;
 	_delayedActionZone.reset();
 
+	_inputMode = 0;
+	_hasKeyPressEvent = false;
+
 	_dinoCursor = 0;
 	_dougCursor = 0;
 	_donnaCursor = 0;

@@ -55,7 +55,7 @@ protected:
 	}
 
 public:
-	WrappedLineFormatter(Font *font) : _font(font) { }
+	WrappedLineFormatter(Font *font) : _font(font), _lines(0), _lineWidth(0) { }
 	virtual ~WrappedLineFormatter() { }
 
 	virtual void calc(const Common::String &text, uint16 maxwidth) {
@@ -136,7 +136,7 @@ protected:
 	}
 
 public:
-	StringExtent_NS(Font *font) : WrappedLineFormatter(font) { }
+	StringExtent_NS(Font *font) : WrappedLineFormatter(font), _width(0), _height(0) { }
 
 	uint width() const { return _width; }
 	uint height() const { return _height; }
@@ -189,7 +189,8 @@ protected:
 	}
 
 public:
-	StringWriter_NS(Parallaction_ns *vm, Font *font) : WrappedLineFormatter(font), _vm(vm) { }
+	StringWriter_NS(Parallaction_ns *vm, Font *font) : WrappedLineFormatter(font), _vm(vm),
+		_width(0), _height(0), _color(0), _surf(NULL) { }
 
 	void write(const Common::String &text, uint maxWidth, byte color, Graphics::Surface *surf) {
 		StringExtent_NS	se(_font);
@@ -464,7 +465,7 @@ protected:
 	}
 
 public:
-	StringExtent_BR(Font *font) : WrappedLineFormatter(font) { }
+	StringExtent_BR(Font *font) : WrappedLineFormatter(font), _width(0), _height(0) { }
 
 	uint width() const { return _width; }
 	uint height() const { return _height; }
@@ -480,7 +481,8 @@ class StringWriter_BR : public WrappedLineFormatter {
 	Graphics::Surface	*_surf;
 
 protected:
-	StringWriter_BR(Font *font, byte color) : WrappedLineFormatter(font) {
+	StringWriter_BR(Font *font, byte color) : WrappedLineFormatter(font), _width(0), _height(0),
+			_color(color), _x(0), _y(0), _surf(NULL) {
 
 	}
 
@@ -504,7 +506,8 @@ protected:
 	}
 
 public:
-	StringWriter_BR(Font *font) : WrappedLineFormatter(font) { }
+	StringWriter_BR(Font *font) : WrappedLineFormatter(font), _width(0), _height(0),
+			_color(0), _x(0), _y(0), _surf(NULL) { }
 
 	void write(const Common::String &text, uint maxWidth, byte color, Graphics::Surface *surf) {
 		StringExtent_BR	se(_font);

@@ -81,7 +81,7 @@ void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator 
 	return;
 }
 
-ProgramExec::ProgramExec() : _modCounter(0) {
+ProgramExec::ProgramExec() : _modCounter(0), _instructionNames(NULL) {
 }
 
 

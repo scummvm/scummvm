@@ -302,7 +302,7 @@ protected:
 	}
 
 public:
-	DosFont(Cnv *cnv) : _data(cnv), _pitch(cnv->_width) {
+	DosFont(Cnv *cnv) : _data(cnv), _pitch(cnv->_width), _cp(NULL), _bufPitch(0) {
 	}
 
 	~DosFont() {
