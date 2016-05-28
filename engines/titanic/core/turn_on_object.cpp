@@ -24,21 +24,36 @@
 
 namespace Titanic {
 
-CTurnOnObject::CTurnOnObject() : CBackground(), _string3("NULL") {
+BEGIN_MESSAGE_MAP(CTurnOnObject, CBackground)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MouseButtonUpMsg)
+END_MESSAGE_MAP()
+
+CTurnOnObject::CTurnOnObject() : CBackground(), _msgName("NULL") {
 }
 
 void CTurnOnObject::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string3, indent);
+	file->writeQuotedLine(_msgName, indent);
 
 	CBackground::save(file, indent);
 }
 
 void CTurnOnObject::load(SimpleFile *file) {
 	file->readNumber();
-	_string3 = file->readString();
+	_msgName = file->readString();
 
 	CBackground::load(file);
+}
+
+bool CTurnOnObject::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	return true;
+}
+
+bool CTurnOnObject::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	CTurnOn turnOn;
+	turnOn.execute(_msgName);
+	return true;
 }
 
 } // End of namespace Titanic
