@@ -790,20 +790,58 @@ int TTparser::considerRequests(TTword *word) {
 				break;
 
 			case SEEK_ACTOR:
-				if (_sentenceConcept->_concept0P) {
-					if (_sentenceConcept->_concept0P->compareTo("?") &&
+				if (!_sentenceConcept->_concept0P) {
+					flag = filterConcepts(5, 0);
+				} else if (_sentenceConcept->_concept0P->compareTo("?") &&
 							_sentenceConcept->_concept1P->isWordId(113) &&
 							word->_wordClass == WC_THING) {
-						// TODO
-					}
-
-
+					TTconcept *oldConcept = _sentenceConcept->_concept0P;
+					_sentenceConcept->_concept0P = nullptr;
+					flag = filterConcepts(5, 2);
+					if (flag)
+						delete oldConcept;
 				} else {
-
+					flag = true;
 				}
 				break;
 
 			case SEEK_OBJECT:
+				if (_sentenceConcept->_concept2P && _sentenceConcept->_concept2P->compareTo(word)) {
+					flag = true;
+				} else if (!_sentenceConcept->_concept2P) {
+					if (filterConcepts(5, 2) && _sentenceConcept->_concept2P->checkWordId1())
+						addNode(5);
+				} else if (word->_wordClass == WC_THING && _sentence->fn2(2, TTstring("?"), _sentenceConcept)) {
+					TTconcept *oldConcept = _sentenceConcept->_concept2P;
+					flag = filterConcepts(5, 2);
+					_sentenceConcept->_concept2P->_field20 = oldConcept->get20();
+					if (flag)
+						delete oldConcept;
+				} else if (!_sentenceConcept->_concept3P &&
+						(!_sentenceConcept->_concept1P || (_sentenceConcept->_concept1P->getWordId() &&
+						_sentenceConcept->_concept1P->getWordId() == 112)) &&
+						_sentenceConcept->_concept2P->checkWordId1() &&
+						(word->_wordClass == WC_THING || word->_wordClass == WC_PRONOUN)) {
+					_sentenceConcept->changeConcept(0, &_sentenceConcept->_concept2P, 3);
+
+					if (_conceptP && _conceptP->isWordId(word->_id)) {
+						status = _sentenceConcept->replaceConcept(0, 2, _conceptP);
+						removeConcept(_conceptP);
+					} else {
+						status = _sentenceConcept->createConcept(0, 2, word);
+					}
+					
+					if (!status && !_sentenceConcept->_concept4P && _sentenceConcept->_concept0P) {
+						TTconcept *oldConcept = _sentenceConcept->_concept2P;
+						flag = filterConcepts(5, 2);
+						_sentenceConcept->_concept2P->_field20 = oldConcept->get20();
+						if (flag)
+							delete oldConcept;
+					} else {
+						flag = true;
+					}
+				}
+				break;
 			
 			case SEEK_OBJECT_OVERRIDE:
 				if ((word->_wordClass == WC_THING || word->_wordClass == WC_PRONOUN) &&
@@ -880,7 +918,35 @@ int TTparser::considerRequests(TTword *word) {
 				break;
 
 			case SEEK_OWNERSHIP:
+				if (word->_id == 601) {
+					if (_conceptP->findByWordClass(WC_THING))
+						status = _conceptP->setOwner(word, false);
+					
+					flag = true;
+				}
+				break;
+
 			case SEEK_STATE:
+				if (_sentenceConcept->_concept5P) {
+					if (_sentenceConcept->_concept5P->findByWordId(306) ||
+							_sentenceConcept->_concept5P->findByWordId(904)) {
+						TTconcept *oldConcept = _sentenceConcept->_concept5P;
+						_sentenceConcept->_concept5P = nullptr;
+						flag = filterConcepts(9, 5);
+						if (flag)
+							delete oldConcept;
+					} else {
+						flag = true;
+					}
+				} else {
+					flag = filterConcepts(9, 5);
+					if (!flag && word->_wordClass == WC_ADVERB) {
+						status = _sentenceConcept->createConcept(1, 5, word);
+						flag = true;
+					}
+				}
+				break;
+
 			case SEEK_MODIFIERS:
 				if (!modifierFlag) {
 					bool tempFlag = false;

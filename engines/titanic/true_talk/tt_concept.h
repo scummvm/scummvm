@@ -93,10 +93,14 @@ public:
 	void copyFrom(TTconcept *src);
 
 	/**
-	 * Compares the name of the associated word, if any,
-	 * to the passed string
+	 * Compares the name of the associated word, if any, to the passed string
 	 */
 	bool compareTo(const char *str) const;
+
+	/**
+	 * Compares the concept to the specified word
+	 */
+	bool compareTo(TTword *word) const;
 
 	/**
 	 * Set an owner for the concept
@@ -126,8 +130,8 @@ public:
 	}
 
 	void setFlag(bool val) { _flag = val; }
-
 	void set1C(int val) { _field1C = val; }
+	int get20() const { return _field20; }
 
 	bool checkWordId1() const;
 	bool checkWordId2() const;

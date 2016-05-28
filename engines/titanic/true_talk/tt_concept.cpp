@@ -150,6 +150,16 @@ bool TTconcept::compareTo(const char *str) const {
 		_wordP->compareTo(str);
 }
 
+bool TTconcept::compareTo(TTword *word) const {
+	if (_wordP && _wordP->compareTo(word->_text))
+		return true;
+
+	if (_scriptP && _scriptP->getId() == 1 && word->comparePronounTo(1))
+		return true;
+
+	return false;
+}
+
 void TTconcept::initialize(TTconcept &src) {
 	_nextP = src._nextP;
 	_field14 = src._field14;
