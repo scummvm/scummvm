@@ -806,8 +806,6 @@ void GfxPalette32::saveLoadWithSerializer(Common::Serializer &s) {
 			s.syncAsUint16LE(cycler->numTimesPaused);
 		}
 	}
-
-	// TODO: _clutTable
 }
 #endif
 
