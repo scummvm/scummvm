@@ -550,7 +550,7 @@ Common::Rect GfxText32::getTextSize(const Common::String &text, int16 maxWidth, 
 			// before the compiler took over.
 			// Verify this by looking at a game that uses a
 			// scriptWidth other than 320, like LSL7
-			maxWidth = _scaledWidth * (scriptWidth * 0.6) / scriptWidth;
+			maxWidth = (int16)(_scaledWidth * (scriptWidth * 0.6) / scriptWidth);
 		}
 
 		result.right = maxWidth;
