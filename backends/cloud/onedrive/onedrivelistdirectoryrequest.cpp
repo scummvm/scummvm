@@ -76,7 +76,6 @@ void OneDriveListDirectoryRequest::makeRequest(Common::String url) {
 	_workingRequest = ConnMan.addRequest(request);
 }
 
-
 void OneDriveListDirectoryRequest::listedDirectoryCallback(Networking::JsonResponse pair) {	
 	Common::JSONValue *json = pair.value;
 

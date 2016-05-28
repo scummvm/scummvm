@@ -38,7 +38,6 @@ FolderDownloadRequest::~FolderDownloadRequest() {
 	delete _fileArrayCallback;
 }
 
-
 void FolderDownloadRequest::start() {
 	//cleanup
 	_ignoreCallback = true;
