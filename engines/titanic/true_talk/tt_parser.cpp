@@ -731,6 +731,7 @@ int TTparser::considerRequests(TTword *word) {
 	TTconcept *concept = nullptr;
 	int status = 0;
 	bool flag = false;
+	bool modifierFlag = false;
 
 	while (word) {
 		//int ecx = 906;
@@ -827,6 +828,71 @@ int TTparser::considerRequests(TTword *word) {
 			case SEEK_OWNERSHIP:
 			case SEEK_STATE:
 			case SEEK_MODIFIERS:
+				if (!modifierFlag) {
+					bool tempFlag = false;
+
+					switch (word->_wordClass) {
+					case WC_ACTION:
+						status = processModifiers(1, word);
+						break;
+					case WC_THING:
+						status = processModifiers(2, word);
+						break;
+					case WC_ABSTRACT:
+						if (word->_id != 300) {
+							status = processModifiers(3, word);
+						} else if (!_conceptP->findByWordClass(WC_THING)) {
+							status = processModifiers(3, word);
+						} else {
+							word->_id = atoi(word->_text.c_str());
+						}
+						break;
+					case WC_PRONOUN:
+						if (word->_id != 602)
+							addToConceptList(word);
+						break;
+					case WC_ADJECTIVE: {
+						TTconcept *concept = _conceptP->findByWordClass(WC_THING);
+						if (concept) {
+							concept->_string2 += ' ';
+							concept->_string2 += word->getText();
+						} else {
+							status = processModifiers(8, word);
+						}
+						break;
+					}
+					case WC_ADVERB:
+						if (word->_id == 906) {
+							for (TTconcept *currP = _conceptP; currP; currP = currP->_nextP) {
+								if (_sentence->isFrameSlotClass(1, WC_ACTION) ||
+										_sentence->isFrameSlotClass(1, WC_THING))
+									currP->_field34 = 1;
+							}
+						} else {
+							TTconcept *conceptP = _conceptP->findByWordClass(WC_ACTION);
+
+							if (conceptP) {
+								conceptP->_string2 += ' ';
+								conceptP->_string2 += word->getText();
+							} else {
+								tempFlag = true;
+							}
+						}
+						break;
+					default:
+						addToConceptList(word);
+						status = 0;
+						break;
+					}
+
+					if (tempFlag)
+						status = _sentenceConcept->createConcept(1, 5, word);
+
+					modifierFlag = true;
+					flag = true;
+				}
+				break;
+
 			case SEEK_NEW_FRAME:
 			case SEEK_STATE_OBJECT:
 				if (!_sentenceConcept->_concept5P) {

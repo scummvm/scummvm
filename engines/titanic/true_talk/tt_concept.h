@@ -35,8 +35,6 @@ class TTword;
 
 class TTconcept {
 private:
-	TTscriptBase *_scriptP;
-	TTword *_wordP;
 	TTstring _string1;
 	int _field1C;
 	TTword *_word2P;
@@ -70,6 +68,8 @@ private:
 	void initialize(TTconcept &src);
 public:
 	TTconcept *_nextP;
+	TTscriptBase *_scriptP;
+	TTword *_wordP;
 	ScriptType _scriptType;
 	int _field14;
 	int _field20;

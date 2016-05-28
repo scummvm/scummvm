@@ -85,7 +85,20 @@ public:
 
 	int getStatus() const { return _status; }
 
-	TTconcept *getFrameSlot(int conceptIndex, TTconceptNode *conceptNode);
+	/**
+	 * Gets a concept slot
+	 */
+	TTconcept *getFrameEntry(int slotIndex, const TTconceptNode *conceptNode = nullptr) const;
+
+	/**
+	 * Gets a conecpt slot and returns a duplicate of it
+	 */
+	TTconcept *getFrameSlot(int slotIndex, const TTconceptNode *conceptNode = nullptr) const;
+
+	/**
+	 * Returns true if the specified slot has an attached word with a given class
+	 */
+	bool isFrameSlotClass(int slotIndex, WordClass wordClass, const TTconceptNode *conceptNode = nullptr) const;
 
 	/**
 	 * Adds a found vocab word to the list of words representing
@@ -94,7 +107,7 @@ public:
 	 */
 	int storeVocabHit(TTword *word);
 
-	bool fn2(int conceptIndex, const TTstring &str, TTconceptNode *conceptNode);
+	bool fn2(int slotIndex, const TTstring &str, TTconceptNode *conceptNode);
 	bool fn4(int mode, int wordId, TTconceptNode *node);
 };
 

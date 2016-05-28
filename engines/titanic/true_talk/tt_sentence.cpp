@@ -107,10 +107,10 @@ int TTsentence::storeVocabHit(TTword *word) {
 	return 0;
 }
 
-bool TTsentence::fn2(int conceptIndex, const TTstring &str, TTconceptNode *conceptNode) {
+bool TTsentence::fn2(int slotIndex, const TTstring &str, TTconceptNode *conceptNode) {
 	if (!conceptNode)
 		conceptNode = &_sentenceConcept;
-	TTconcept *concept = getFrameSlot(conceptIndex, conceptNode);
+	TTconcept *concept = getFrameSlot(slotIndex, conceptNode);
 
 	if (!concept)
 		return str == "isEmpty";
@@ -142,14 +142,14 @@ bool TTsentence::fn2(int conceptIndex, const TTstring &str, TTconceptNode *conce
 		return true;
 	}
 
-	if (conceptIndex == 1 && g_vm->_exeResources._owner->_concept4P) {
+	if (slotIndex == 1 && g_vm->_exeResources._owner->_concept4P) {
 		if (str == g_vm->_exeResources._owner->_concept4P->getText() &&
 				conceptText == "do")
 			goto exit;
 	}
 
-	if (g_vm->_exeResources._owner->_concept2P && (conceptIndex == 0 ||
-			conceptIndex == 3 || conceptIndex == 4)) {
+	if (g_vm->_exeResources._owner->_concept2P && (slotIndex == 0 ||
+			slotIndex == 3 || slotIndex == 4)) {
 		if (str == g_vm->_exeResources._owner->_concept2P->getText() &&
 				(conceptText == "it" || conceptText == "he" || conceptText == "she" ||
 				conceptText == "him" || conceptText == "her" || conceptText == "them" ||
@@ -157,8 +157,8 @@ bool TTsentence::fn2(int conceptIndex, const TTstring &str, TTconceptNode *conce
 			goto exit;
 	}
 
-	if (g_vm->_exeResources._owner->_concept1P && (conceptIndex == 0 ||
-		conceptIndex == 2 || conceptIndex == 3 || conceptIndex == 4 || conceptIndex == 5)) {
+	if (g_vm->_exeResources._owner->_concept1P && (slotIndex == 0 ||
+		slotIndex == 2 || slotIndex == 3 || slotIndex == 4 || slotIndex == 5)) {
 		if (str == g_vm->_exeResources._owner->_concept2P->getText() &&
 			(conceptText == "it" || conceptText == "that" || conceptText == "he" ||
 				conceptText == "she" || conceptText == "him" || conceptText == "her" ||
@@ -167,7 +167,7 @@ bool TTsentence::fn2(int conceptIndex, const TTstring &str, TTconceptNode *conce
 			goto exit;
 	}
 
-	if (g_vm->_exeResources._owner->_concept1P && (conceptIndex == 0 || conceptIndex == 2)) {
+	if (g_vm->_exeResources._owner->_concept1P && (slotIndex == 0 || slotIndex == 2)) {
 		if (conceptText == "?" && str == g_vm->_exeResources._owner->_concept2P->getText()) {
 			delete concept;
 			concept = getFrameSlot(5, conceptNode);
@@ -202,12 +202,16 @@ bool TTsentence::fn4(int mode, int wordId, TTconceptNode *node) {
 	}
 }
 
-TTconcept *TTsentence::getFrameSlot(int conceptIndex, TTconceptNode *conceptNode) {
-	TTconcept *newConcept = new TTconcept();
-	
+TTconcept *TTsentence::getFrameEntry(int slotIndex, const TTconceptNode *conceptNode) const {
 	if (!conceptNode)
 		conceptNode = &_sentenceConcept;
-	TTconcept *concept = conceptNode->_concepts[conceptIndex];
+
+	return conceptNode->_concepts[slotIndex];
+}
+
+TTconcept *TTsentence::getFrameSlot(int slotIndex, const TTconceptNode *conceptNode) const {
+	TTconcept *newConcept = new TTconcept();
+	TTconcept *concept = getFrameEntry(slotIndex, conceptNode);
 	newConcept->copyFrom(concept);
 
 	if (!newConcept->isValid()) {
@@ -216,6 +220,15 @@ TTconcept *TTsentence::getFrameSlot(int conceptIndex, TTconceptNode *conceptNode
 	}
 
 	return newConcept;
+}
+
+bool TTsentence::isFrameSlotClass(int slotIndex, WordClass wordClass, const TTconceptNode *conceptNode) const {
+	TTconcept *concept = getFrameEntry(slotIndex, conceptNode);
+	if (concept && concept->_wordP) {
+		return concept->_wordP->isClass(wordClass);
+	} else {
+		return false;
+	}
 }
 
 int TTsentence::is18(int val, const TTconceptNode *node) const {
