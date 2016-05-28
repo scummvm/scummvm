@@ -86,7 +86,7 @@ public:
 	 */
 	virtual void update();
 
-	virtual void copyBlock(ASurface *src, const Common::Rect &bounds);
+	virtual void copyBlock(BaseSurface *src, const Common::Rect &bounds);
 
 	virtual void restoreBlock();
 
