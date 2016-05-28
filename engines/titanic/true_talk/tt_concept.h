@@ -78,7 +78,7 @@ public:
 public:
 	TTconcept();
 	TTconcept(TTscriptBase *script, ScriptType scriptType);
-	TTconcept(TTword *word, ScriptType scriptType);
+	TTconcept(TTword *word, ScriptType scriptType = ST_UNKNOWN_SCRIPT);
 	TTconcept(TTconcept &src);
 	~TTconcept();
 

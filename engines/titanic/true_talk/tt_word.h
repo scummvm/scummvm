@@ -64,7 +64,7 @@ public:
 	int _id;
 	uint _tag;
 public:
-	TTword(TTstring &str, WordClass wordClass, int val2);
+	TTword(const TTstring &str, WordClass wordClass, int val2);
 	TTword(const TTword *src);
 	~TTword();
 

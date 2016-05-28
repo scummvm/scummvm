@@ -26,7 +26,7 @@ namespace Titanic {
 
 bool TTpicture::_staticFlag;
 
-TTpicture::TTpicture(TTstring &str, WordClass wordClass, int val2, int val3, int val4, int val5, int val6) :
+TTpicture::TTpicture(const TTstring &str, WordClass wordClass, int val2, int val3, int val4, int val5, int val6) :
 		TTmajorWord(str, wordClass, val2, val4), _tag(val3), _field30(val5), _field3C(val6),
 		_field38(0) {
 }

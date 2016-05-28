@@ -38,7 +38,7 @@ protected:
 	 */
 	int saveData(SimpleFile *file, int val) const;
 public:
-	TTmajorWord(TTstring &str, WordClass wordClass, int val2, int val3);
+	TTmajorWord(const TTstring &str, WordClass wordClass, int val2, int val3);
 	TTmajorWord(const TTmajorWord *src);
 
 	/**

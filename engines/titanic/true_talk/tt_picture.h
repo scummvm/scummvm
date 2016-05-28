@@ -36,7 +36,7 @@ protected:
 	int _field38;
 	int _field3C;
 public:
-	TTpicture(TTstring &str, WordClass wordClass, int val2, int val3, int val4, int val5, int val6);
+	TTpicture(const TTstring &str, WordClass wordClass, int val2, int val3, int val4, int val5, int val6);
 	TTpicture(const TTpicture *src);
 
 	/**

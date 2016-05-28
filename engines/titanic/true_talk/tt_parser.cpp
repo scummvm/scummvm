@@ -24,6 +24,7 @@
 #include "titanic/true_talk/script_handler.h"
 #include "titanic/true_talk/tt_action.h"
 #include "titanic/true_talk/tt_concept.h"
+#include "titanic/true_talk/tt_picture.h"
 #include "titanic/true_talk/tt_sentence.h"
 #include "titanic/true_talk/tt_word.h"
 #include "titanic/titanic.h"
@@ -732,11 +733,9 @@ int TTparser::considerRequests(TTword *word) {
 	int status = 0;
 	bool flag = false;
 	bool modifierFlag = false;
+	int seekFlag = 0;
 
 	while (word) {
-		//int ecx = 906;
-		//int edx = 12;
-
 		if (nodeP->_tag == MKTAG('C', 'O', 'M', 'E')) {
 			addNode(7);
 			addNode(5);
@@ -894,6 +893,29 @@ int TTparser::considerRequests(TTword *word) {
 				break;
 
 			case SEEK_NEW_FRAME:
+				if (word->_wordClass == WC_ACTION && word->_id != 104 && word->_id != 107) {
+					if (concept && (_sentenceConcept->_concept5P || _sentenceConcept->_concept2P)) {
+						TTsentenceConcept *oldNode = _sentenceConcept;
+						oldNode->_field1C = 2;
+						_sentenceConcept = oldNode->addSibling();
+						concept = nullptr;
+						
+						_sentenceConcept->_concept1P = oldNode->_concept1P;
+						_sentenceConcept->_concept5P = oldNode->_concept5P;
+						_sentenceConcept->_concept2P = oldNode->_concept2P;
+						
+						if (seekFlag) {
+							seekFlag = 0;
+
+							_sentenceConcept->_field18 = oldNode->_field18;
+							oldNode->_field18 = seekFlag;
+						}
+					}
+
+					flag = true;
+				}
+				break;
+
 			case SEEK_STATE_OBJECT:
 				if (!_sentenceConcept->_concept5P) {
 					addToConceptList(word);
@@ -938,6 +960,84 @@ int TTparser::considerRequests(TTword *word) {
 				break;
 
 			case WORD_TYPE_IS_SENTENCE_TYPE:
+				if (_sentence->_field2C == 1 || _sentence->_field2C == 10) {
+					for (TTword *wordP = _currentWordP; wordP; wordP = wordP->_nextP) {
+						if (wordP->_id == 906) {
+							_sentence->_field2C = 12;
+							flag = true;
+							break;
+						}
+					}
+
+					TTpicture *newPictP;
+					TTconcept *newConceptP;
+					switch (word->_id) {
+					case 108:
+						_sentence->_field2C = 8;
+						break;
+					case 113:
+						if (!_sentenceConcept->_concept3P)
+							_sentence->_field2C = 22;
+						break;
+					case 304:
+						_sentence->_field2C = 25;
+						break;
+					case 305:
+						_sentence->_field2C = 24;
+						break;
+					case 306:
+						_sentence->_field2C = 7;
+						break;
+					case 501:
+						_sentence->_field2C = 9;
+						break;
+					case 900:
+						_sentence->_field2C = 5;
+						break;
+					case 901:
+						_sentence->_field2C = 4;
+						break;
+					case 904:
+						_sentence->_field2C = 6;
+						break;
+					case 905:
+						_sentence->_field2C = 11;
+						break;
+					case 906:
+						_sentence->_field2C = 12;
+						break;
+					case 907:
+						_sentence->_field2C = 13;
+						break;
+					case 908:
+						_sentence->_field2C = 2;
+						if (!_sentenceConcept->_concept0P) {
+							newPictP = new TTpicture(TTstring("?"), WC_THING, 0, 0, 0, 0, 0);
+							newConceptP = new TTconcept(newPictP);
+							
+							_sentenceConcept->_concept0P = newConceptP;
+							delete newPictP;
+							addNode(4);
+						}
+						break;
+					case 909:
+						_sentence->_field2C = 3;
+						newPictP = new TTpicture(TTstring("?"), WC_THING, 0, 0, 0, 0, 0);
+						newConceptP = new TTconcept(newPictP);
+
+						_sentenceConcept->_concept2P = newConceptP;
+						delete newPictP;
+						addNode(4);
+						break;
+
+					default:
+						break;
+					}
+				}
+
+				flag = true;
+				break;
+
 			case COMPLEX_VERB:
 				// TODO
 				break;

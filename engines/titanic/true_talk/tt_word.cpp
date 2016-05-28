@@ -26,7 +26,7 @@
 
 namespace Titanic {
 
-TTword::TTword(TTstring &str, WordClass wordClass, int id) : _text(str),
+TTword::TTword(const TTstring &str, WordClass wordClass, int id) : _text(str),
 		_wordClass(wordClass), _id(id), _tag(0), _field24(0),
 		_field28(0), _synP(nullptr), _nextP(nullptr) {
 	_status = str.getStatus() == SS_VALID ? SS_VALID : SS_5;
