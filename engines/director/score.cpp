@@ -192,14 +192,15 @@ Common::Rect Score::readRect(Common::SeekableReadStream &stream) {
 }
 
 void Score::play() {
-	initGraphics(800, 800, true);
+	initGraphics(800, 600, true);
 
-	_currentFrame = 1;
+	_currentFrame = 0;
 	_stopPlay = false;
-	_nextFrameTime = g_system->getMillis() + (float)_currentFrameRate / 60 * 1000;
+	_nextFrameTime = 0;
 	while (!_stopPlay) {
 		display();
 		processEvents();
+		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
 }
@@ -209,7 +210,6 @@ void Score::display() {
 		return;
 
 	_frames[_currentFrame]->display();
-	g_system->updateScreen();
 	_currentFrame++;
 	byte tempo = _frames[_currentFrame]->_tempo;
 	if (tempo) {
