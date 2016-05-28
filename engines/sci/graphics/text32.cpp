@@ -48,12 +48,6 @@ GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts) :
 	// Not a typo, the original engine did not initialise height, only width
 	_width(0),
 	_text(""),
-	_field_20(0),
-	_field_2C(2),
-	_field_30(0),
-	_field_34(0),
-	_field_38(0),
-	_field_3C(0),
 	_bitmap(NULL_REG) {
 		_fontId = _defaultFontId;
 		_font = _cache->getFont(_defaultFontId);
@@ -61,7 +55,6 @@ GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts) :
 
 reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect &rect, const Common::String &text, const uint8 foreColor, const uint8 backColor, const uint8 skipColor, const GuiResourceId fontId, const TextAlign alignment, const int16 borderColor, const bool dimmed, const bool doScaling) {
 
-	_field_22 = 0;
 	_borderColor = borderColor;
 	_text = text;
 	_textRect = rect;
@@ -111,7 +104,6 @@ reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect 
 }
 
 reg_t GfxText32::createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &rect, const Common::String &text, const int16 foreColor, const int16 backColor, const GuiResourceId fontId, const int16 skipColor, const int16 borderColor, const bool dimmed) {
-	_field_22 = 0;
 	_borderColor = borderColor;
 	_text = text;
 	_textRect = rect;
@@ -169,11 +161,6 @@ reg_t GfxText32::createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &
 	}
 
 	return _bitmap;
-}
-
-reg_t GfxText32::createTitledBitmap(const int16 width, const int16 height, const Common::Rect &textRect, const Common::String &text, const int16 foreColor, const int16 backColor, const int16 skipColor, const GuiResourceId fontId, const TextAlign alignment, const int16 borderColor, Common::String &title, const int16 titleForeColor, const int16 titleBackColor, const GuiResourceId titleFontId, const bool doScaling) {
-	warning("TODO: createTitledBitmap incomplete !");
-	return createFontBitmap(width, height, textRect, text, foreColor, backColor, skipColor, fontId, alignment, borderColor, false, doScaling);
 }
 
 void GfxText32::setFont(const GuiResourceId fontId) {

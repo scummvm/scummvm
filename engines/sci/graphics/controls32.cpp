@@ -104,10 +104,7 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 			bool dimmed = readSelectorValue(_segMan, controlObject, SELECTOR(dimmed));
 			editor.bitmap = _gfxText32->createFontBitmap(width, height, editor.textRect, editor.text, editor.foreColor, editor.backColor, editor.skipColor, editor.fontId, alignment, editor.borderColor, dimmed, true);
 		} else {
-			Common::String title = _segMan->getString(titleObject);
-			int16 titleBackColor = readSelectorValue(_segMan, controlObject, SELECTOR(titleBack));
-			int16 titleForeColor = readSelectorValue(_segMan, controlObject, SELECTOR(titleFore));
-			editor.bitmap = _gfxText32->createTitledBitmap(width, height, editor.textRect, editor.text, editor.foreColor, editor.backColor, editor.skipColor, editor.fontId, alignment, editor.borderColor, title, titleForeColor, titleBackColor, titleFontId, true);
+			error("Titled bitmaps are not known to be used by any game. Please submit a bug report with details about the game you were playing and what you were doing that triggered this error. Thanks!");
 		}
 	}
 
