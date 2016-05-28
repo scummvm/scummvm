@@ -76,6 +76,7 @@ struct Cast {
 };
 
 struct BitmapCast : Cast {
+    BitmapCast(Common::SeekableReadStream &stream);
     Common::Rect boundingRect;
     uint16 regX;
     uint16 regY;
@@ -83,6 +84,7 @@ struct BitmapCast : Cast {
 };
 
 struct ShapeCast : Cast {
+    ShapeCast(Common::SeekableReadStream &stream);
     byte shapeType;
     uint16 pattern;
     byte fgCol;
@@ -93,6 +95,7 @@ struct ShapeCast : Cast {
 };
 
 struct TextCast : Cast {
+    TextCast(Common::SeekableReadStream &stream);
     byte borderSize;
     byte gutterSize;
     byte boxShadow;
@@ -104,6 +107,9 @@ struct TextCast : Cast {
 };
 
 struct ButtonCast : TextCast {
+    ButtonCast(Common::SeekableReadStream &stream) : TextCast(stream) {
+        buttonType = stream.readUint16BE();
+    }
     //TODO types?
     uint16 buttonType;
 };
@@ -150,7 +156,6 @@ public:
     uint8 _skipFrameFlag;
     uint8 _blend;
     Common::Array<Sprite *> _sprites;
-
 };
 
 class Score {
@@ -159,14 +164,10 @@ public:
     void readVersion(uint32 rid);
     void loadConfig(Common::SeekableReadStream &stream);
     void loadCastData(Common::SeekableReadStream &stream);
+    static Common::Rect readRect(Common::SeekableReadStream &stream);
     void play();
 
 private:
-    BitmapCast *getBitmapCast(Common::SeekableReadStream &stream);
-    TextCast *getTextCast(Common::SeekableReadStream &stream);
-    ButtonCast *getButtonCast(Common::SeekableReadStream &stream);
-    ShapeCast *getShapeCast(Common::SeekableReadStream &stream);
-    Common::Rect readRect(Common::SeekableReadStream &stream);
     void processEvents();
     void display();
 

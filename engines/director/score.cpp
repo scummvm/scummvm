@@ -64,7 +64,7 @@ Score::Score(Common::SeekableReadStream &stream) {
 void Score::loadConfig(Common::SeekableReadStream &stream) {
 	/*uint16 unk1 = */ stream.readUint16BE();
 	/*ver1 = */ stream.readUint16BE();
-	_movieRect = readRect(stream);
+	_movieRect = Score::readRect(stream);
 
 	_castArrayStart = stream.readUint16BE();
 	_castArrayEnd = stream.readUint16BE();
@@ -88,19 +88,19 @@ void Score::loadCastData(Common::SeekableReadStream &stream) {
 		uint8 castType = stream.readByte();
 		switch (castType) {
 		case kCastBitmap:
-			_casts[id] = getBitmapCast(stream);
+			_casts[id] = new BitmapCast(stream);
 			_casts[id]->type = kCastBitmap;
 			break;
 		case kCastText:
-			_casts[id] = getTextCast(stream);
+			_casts[id] = new TextCast(stream);
 			_casts[id]->type = kCastText;
 			break;
 		case kCastShape:
-			_casts[id] = getShapeCast(stream);
+			_casts[id] = new ShapeCast(stream);
 			_casts[id]->type = kCastShape;
 			break;
 		case kCastButton:
-			_casts[id] = getButtonCast(stream);
+			_casts[id] = new ButtonCast(stream);
 			_casts[id]->type = kCastButton;
 			break;
 		default:
@@ -119,67 +119,43 @@ void Score::loadCastData(Common::SeekableReadStream &stream) {
 	}
 }
 
-BitmapCast *Score::getBitmapCast(Common::SeekableReadStream &stream) {
-	BitmapCast *cast = new BitmapCast();
+BitmapCast::BitmapCast(Common::SeekableReadStream &stream) {
 	/*byte flags = */ stream.readByte();
 	/*uint16 someFlaggyThing = */ stream.readUint16BE();
-	cast->initialRect = readRect(stream);
-	cast->boundingRect = readRect(stream);
-	cast->regY = stream.readUint16BE();
-	cast->regX = stream.readUint16BE();
+	initialRect = Score::readRect(stream);
+	boundingRect = Score::readRect(stream);
+	regY = stream.readUint16BE();
+	regX = stream.readUint16BE();
 	/*uint16 unk1 =*/ stream.readUint16BE();
 	/*uint16 unk2 =*/ stream.readUint16BE();
-	return cast;
 }
 
-TextCast *Score::getTextCast(Common::SeekableReadStream &stream) {
-	TextCast *cast = new TextCast();
+TextCast::TextCast(Common::SeekableReadStream &stream) {
 	/*byte flags =*/ stream.readByte();
-	cast->borderSize = stream.readByte();
-	cast->gutterSize = stream.readByte();
-	cast->boxShadow = stream.readByte();
-	cast->textType = stream.readByte();
-	cast->textAlign = stream.readUint16BE();
+	borderSize = stream.readByte();
+	gutterSize = stream.readByte();
+	boxShadow = stream.readByte();
+	textType = stream.readByte();
+	textAlign = stream.readUint16BE();
 	stream.skip(6); //palinfo
 	/*uint32 unk1 = */ stream.readUint32BE();
-	cast->initialRect = readRect(stream);
-	cast->textShadow = stream.readByte();
-	cast->textFlags = stream.readByte();
+	initialRect = Score::readRect(stream);
+	textShadow = stream.readByte();
+	textFlags = stream.readByte();
 	/*uint16 unk2 =*/ stream.readUint16BE();
-	return cast;
 }
 
-ShapeCast *Score::getShapeCast(Common::SeekableReadStream &stream) {
-	ShapeCast *cast = new ShapeCast();
+ShapeCast::ShapeCast(Common::SeekableReadStream &stream) {
 	/*byte flags = */ stream.readByte();
 	/*unk1 = */ stream.readByte();
-	cast->shapeType = stream.readByte();
-	cast->initialRect = readRect(stream);
-	cast->pattern = stream.readUint16BE();
-	cast->fgCol = stream.readByte();
-	cast->bgCol = stream.readByte();
-	cast->fillType = stream.readByte();
-	cast->lineThickness = stream.readByte();
-	cast->lineDirection = stream.readByte();
-	return cast;
-}
-
-ButtonCast *Score::getButtonCast(Common::SeekableReadStream &stream) {
-	ButtonCast *cast = new ButtonCast();
-	/*byte flags =*/ stream.readByte();
-	cast->borderSize = stream.readByte();
-	cast->gutterSize = stream.readByte();
-	cast->boxShadow = stream.readByte();
-	cast->textType = stream.readByte();
-	cast->textAlign = stream.readUint16BE();
-	stream.skip(6); //palinfo
-	/*uint32 unk1 = */ stream.readUint32BE();
-	cast->initialRect = readRect(stream);
-	cast->textShadow = stream.readByte();
-	cast->textFlags = stream.readByte();
-	/*uint16 unk2 =*/ stream.readUint16BE();
-	cast->buttonType = stream.readUint16BE();
-	return cast;
+	shapeType = stream.readByte();
+	initialRect = Score::readRect(stream);
+	pattern = stream.readUint16BE();
+	fgCol = stream.readByte();
+	bgCol = stream.readByte();
+	fillType = stream.readByte();
+	lineThickness = stream.readByte();
+	lineDirection = stream.readByte();
 }
 
 Common::Rect Score::readRect(Common::SeekableReadStream &stream) {
