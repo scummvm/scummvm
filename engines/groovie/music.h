@@ -141,7 +141,7 @@ private:
 	// Timbres
 	class Timbre {
 	public:
-		Timbre() : data(NULL) {}
+		Timbre() : data(NULL), patch(0), bank(0), size(0) {}
 		byte patch;
 		byte bank;
 		uint32 size;
