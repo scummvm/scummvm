@@ -109,7 +109,7 @@ void ScalpelInventory::drawInventory(InvNewMode mode) {
 	_invMode = (InvMode)((int)mode);
 
 	if (mode != PLAIN_INVENTORY) {
-		assert(mode < sizeof(_hotkeysIndexed));
+		assert((uint)mode < sizeof(_hotkeysIndexed));
 		ui._oldKey = _hotkeysIndexed[mode];
 	} else {
 		ui._oldKey = -1;

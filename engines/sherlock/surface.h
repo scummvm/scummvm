@@ -45,7 +45,7 @@ public:
 	 * Constructor
 	 */
 	BaseSurface();
-	
+
 	/**
 	 * Constructor
 	 */
@@ -95,7 +95,7 @@ public:
 	 * Return the width of the surface
 	 */
 	virtual uint16 width() const { return this->w; }
-	
+
 	/**
 	 * Return the height of the surface
 	 */
@@ -105,7 +105,7 @@ public:
 	 * Draws the given string into the back buffer using the images stored in _font
 	 */
 	void writeString(const Common::String &str, const Common::Point &pt, uint overrideColor);
-	
+
 	/**
 	 * Draws a fancy version of the given string at the given position
 	 */
@@ -121,7 +121,7 @@ protected:
 	virtual void addDirtyRect(const Common::Rect &r) {}
 public:
 	Surface() : BaseSurface() {}
-	Surface(int width, int height) : BaseSurface(width, height) {}
+	Surface(int w, int h) : BaseSurface(w, h) {}
 };
 
 } // End of namespace Sherlock
