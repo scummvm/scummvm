@@ -60,7 +60,7 @@ NinePatchSide::~NinePatchSide() {
 
 bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical) {
 	const int len = vertical ? bmp->h : bmp->w;
-	uint i;
+	int i;
 	int s, t, n, z;
 
 	_m.clear();
@@ -109,7 +109,7 @@ bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical) {
 }
 
 void NinePatchSide::calcOffsets(int len) {
-	int i, j;
+	uint i, j;
 	int dest_offset = 0;
 	int remaining_stretch = len - _fix;
 
