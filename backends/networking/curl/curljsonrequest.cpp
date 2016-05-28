@@ -95,4 +95,4 @@ void CurlJsonRequest::finish() {
 	finishJson(0);
 }
 
-} //end of namespace Networking
+} // End of namespace Networking

@@ -31,18 +31,18 @@ namespace Networking {
 class Request;
 
 /**
-* Response<T> is a struct to be returned from Request
-* to user's callbacks. It's a type safe way to indicate
-* which "return value" Request has and user awaits.
-*
-* It just keeps a Request pointer together with
-* some T value (which might be a pointer, a reference
-* or a plain type (copied by value)).
-*
-* To make it more convenient, typedefs are used.
-* For example, Response<void *> is called DataResponse
-* and corresponding callback pointer is DataCallback.
-*/
+ * Response<T> is a struct to be returned from Request
+ * to user's callbacks. It's a type safe way to indicate
+ * which "return value" Request has and user awaits.
+ *
+ * It just keeps a Request pointer together with
+ * some T value (which might be a pointer, a reference
+ * or a plain type (copied by value)).
+ *
+ * To make it more convenient, typedefs are used.
+ * For example, Response<void *> is called DataResponse
+ * and corresponding callback pointer is DataCallback.
+ */
 
 template<typename T> struct Response {
 	Request *request;
@@ -55,27 +55,26 @@ typedef Response<void *> DataReponse;
 typedef Common::BaseCallback<DataReponse> *DataCallback;
 
 /**
-* RequestState is used to indicate current Request state.
-* ConnectionManager uses it to decide what to do with the Request.
-*
-* PROCESSING state indicates that Request is working.
-* ConnectionManager calls handle() method of Requests in that state.
-*
-* PAUSED state indicates that Request is not working.
-* ConnectionManager keeps Requests in that state and doesn't call any methods of those.
-*
-* RETRY state indicates that Request must restart after a few seconds.
-* ConnectionManager calls handleRetry() method of Requests in that state.
-* Default handleRetry() implementation decreases _retryInSeconds value
-* until it reaches zero. When it does, Request's restart() method is called.
-*
-* FINISHED state indicates that Request did the work and might be deleted.
-* ConnectionManager deletes Requests in that state.
-* After this state is set, but before ConnectionManager deletes the Request,
-* Request calls user's callback. User can ask Request to change its state
-* by calling retry() or pause() methods and Request won't be deleted.
-*/
-
+ * RequestState is used to indicate current Request state.
+ * ConnectionManager uses it to decide what to do with the Request.
+ *
+ * PROCESSING state indicates that Request is working.
+ * ConnectionManager calls handle() method of Requests in that state.
+ *
+ * PAUSED state indicates that Request is not working.
+ * ConnectionManager keeps Requests in that state and doesn't call any methods of those.
+ *
+ * RETRY state indicates that Request must restart after a few seconds.
+ * ConnectionManager calls handleRetry() method of Requests in that state.
+ * Default handleRetry() implementation decreases _retryInSeconds value
+ * until it reaches zero. When it does, Request's restart() method is called.
+ *
+ * FINISHED state indicates that Request did the work and might be deleted.
+ * ConnectionManager deletes Requests in that state.
+ * After this state is set, but before ConnectionManager deletes the Request,
+ * Request calls user's callback. User can ask Request to change its state
+ * by calling retry() or pause() methods and Request won't be deleted.
+ */
 enum RequestState {
 	PROCESSING,
 	PAUSED,
@@ -86,24 +85,22 @@ enum RequestState {
 class Request {
 protected:
 	/**
-	* Callback, which should be called when Request is finished.
-	* That's the way Requests pass the result to the code which asked to create this request.
-	*
-	* @note some Requests use their own callbacks to return something but void *.
-	* @note callback must be called in finish() or similar method.
-	*/
-
+	 * Callback, which should be called when Request is finished.
+	 * That's the way Requests pass the result to the code which asked to create this request.
+	 *
+	 * @note some Requests use their own callbacks to return something but void *.
+	 * @note callback must be called in finish() or similar method.
+	 */
 	DataCallback _callback;
 
 	/**
-	* Request state, which is used by ConnectionManager to determine
-	* whether request might be deleted or it's still working.
-	*
-	* State might be changed from outside with finish(), pause() or
-	* retry() methods. Override these if you want to react to these
-	* changes correctly.
-	*/
-
+	 * Request state, which is used by ConnectionManager to determine
+	 * whether request might be deleted or it's still working.
+	 *
+	 * State might be changed from outside with finish(), pause() or
+	 * retry() methods. Override these if you want to react to these
+	 * changes correctly.
+	 */
 	RequestState _state;
 
 	/** In RETRY state this indicates whether it's time to call restart(). */
@@ -132,10 +129,10 @@ public:
 	virtual void pause() { _state = PAUSED; }
 
 	/**
-	* Method, which is called to *interrupt* the Request.
-	* When it's called, Request must stop its work and
-	* call the callback to notify user of failure.
-	*/
+	 * Method, which is called to *interrupt* the Request.
+	 * When it's called, Request must stop its work and
+	 * call the callback to notify user of failure.
+	 */
 	virtual void finish() { _state = FINISHED; }
 
 	/** Method, which is called to retry the Request. */
@@ -148,6 +145,6 @@ public:
 	RequestState state() const { return _state; }
 };
 
-} //end of namespace Cloud
+} // End of namespace Cloud
 
 #endif

@@ -50,6 +50,6 @@ public:
 	virtual void finish();
 };
 
-} //end of namespace Cloud
+} // End of namespace Cloud
 
 #endif

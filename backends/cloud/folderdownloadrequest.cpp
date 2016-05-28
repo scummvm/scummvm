@@ -115,4 +115,4 @@ void FolderDownloadRequest::finishFiles(Common::Array<StorageFile> &files) {
 	if (_fileArrayCallback) (*_fileArrayCallback)(Storage::FileArrayResponse(this, files));
 }
 
-} //end of namespace Cloud
+} // End of namespace Cloud

@@ -85,4 +85,4 @@ long NetworkReadStream::httpResponseCode() const {
 	return responseCode;
 }
 
-} //end of namespace Cloud
+} // End of namespace Cloud

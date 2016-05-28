@@ -51,17 +51,16 @@ public:
 	virtual ~DropboxStorage();
 
 	/**
-	* Storage methods, which are used by CloudManager to save
-	* storage in configuration file.
-	*/
+	 * Storage methods, which are used by CloudManager to save
+	 * storage in configuration file.
+	 */
 
 	/**
-	* Save storage data using ConfMan.
-	* @param keyPrefix all saved keys must start with this prefix.
-	* @note every Storage must write keyPrefix + "type" key
-	*       with common value (e.g. "Dropbox").
-	*/
-
+	 * Save storage data using ConfMan.
+	 * @param keyPrefix all saved keys must start with this prefix.
+	 * @note every Storage must write keyPrefix + "type" key
+	 *       with common value (e.g. "Dropbox").
+	 */
 	virtual void saveConfig(Common::String keyPrefix);
 
 	/** Public Cloud API comes down there. */
@@ -106,23 +105,23 @@ public:
 	virtual bool isWorking() { return false; } //TODO
 
 	/**
-	* Load token and user id from configs and return DropboxStorage for those.	
-	* @return pointer to the newly created DropboxStorage or 0 if some problem occured.
-	*/
+	 * Load token and user id from configs and return DropboxStorage for those.	
+	 * @return pointer to the newly created DropboxStorage or 0 if some problem occured.
+	 */
 	static DropboxStorage *loadFromConfig(Common::String keyPrefix);
 
 	/**
-	* Returns Dropbox auth link.
-	*/
+	 * Returns Dropbox auth link.
+	 */
 	static Common::String getAuthLink();
 
 	/**
-	* Show message with Dropbox auth instructions. (Temporary)
-	*/
+	 * Show message with Dropbox auth instructions. (Temporary)
+	 */
 	static void authThroughConsole();
 };
 
-} //end of namespace Dropbox
-} //end of namespace Cloud
+} // End of namespace Dropbox
+} // End of namespace Cloud
 
 #endif

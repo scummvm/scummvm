@@ -48,6 +48,6 @@ public:
 
 };
 
-} //end of namespace Cloud
+} // End of namespace Cloud
 
 #endif

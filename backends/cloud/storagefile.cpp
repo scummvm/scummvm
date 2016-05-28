@@ -53,4 +53,4 @@ StorageFile::StorageFile(Common::String pth, uint32 sz, uint32 ts, bool dir) {
 	_isDirectory = dir;
 }
 
-} //end of namespace Cloud
+} // End of namespace Cloud

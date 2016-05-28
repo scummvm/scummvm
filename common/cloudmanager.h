@@ -33,45 +33,40 @@ public:
 	virtual ~CloudManager() {}
 
 	/**
-	* Loads all information from configs and creates current Storage instance.
-	*
-	* @note It's called once on startup in scummvm_main().
-	*/
-
+	 * Loads all information from configs and creates current Storage instance.
+	 *
+	 * @note It's called once on startup in scummvm_main().
+	 */
 	virtual void init() = 0;
 
 	/**
-	* Saves all information into configuration file.
-	*/
-
+	 * Saves all information into configuration file.
+	 */
 	virtual void save() = 0;
 
 	/**
-	* Adds new Storage into list.	
-	*
-	* @param	storage Cloud::Storage to add.
-	* @param	makeCurrent whether added storage should be the new current storage.
-	* @param	saveConfig whether save() should be called to update configuration file.
-	*/
-
+	 * Adds new Storage into list.	
+	 *
+	 * @param	storage Cloud::Storage to add.
+	 * @param	makeCurrent whether added storage should be the new current storage.
+	 * @param	saveConfig whether save() should be called to update configuration file.
+	 */
 	virtual void addStorage(Cloud::Storage *storage, bool makeCurrent = true, bool saveConfig = true) = 0;
 
 	/**
-	* Returns active Storage, which could be used to interact
-	*  with cloud storage.
-	*
-	* @return	active Cloud::Storage or null, if there is no active Storage.
-	*/
-
+	 * Returns active Storage, which could be used to interact
+	 *  with cloud storage.
+	 *
+	 * @return	active Cloud::Storage or null, if there is no active Storage.
+	 */
 	virtual Cloud::Storage *getCurrentStorage() = 0;
 
 	/**
-	* Starts saves syncing process in currently active storage if there is any.
-	*/
-
+	 * Starts saves syncing process in currently active storage if there is any.
+	 */
 	virtual void syncSaves(Cloud::Storage::BoolCallback callback = 0) = 0;
 };
 
-} //end of namespace Common
+} // End of namespace Common
 
 #endif

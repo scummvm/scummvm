@@ -271,5 +271,5 @@ void OneDriveStorage::authThroughConsole() {
 	debug("http://wiki.scummvm.org/index.php/User_Manual/Configuring_ScummVM#Using_the_configuration_file_to_configure_ScummVM\n");	
 }
 
-} //end of namespace OneDrive
-} //end of namespace Cloud
+} // End of namespace OneDrive
+} // End of namespace Cloud

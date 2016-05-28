@@ -58,7 +58,7 @@ public:
 	virtual void finish();
 };
 
-} //end of namespace OneDrive
-} //end of namespace Cloud
+} // End of namespace OneDrive
+} // End of namespace Cloud
 
 #endif

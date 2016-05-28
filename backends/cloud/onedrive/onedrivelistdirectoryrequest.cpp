@@ -134,5 +134,5 @@ void OneDriveListDirectoryRequest::finishFiles(Common::Array<StorageFile> &files
 	if (_filesCallback) (*_filesCallback)(Storage::FileArrayResponse(this, files));
 }
 
-} //end of namespace OneDrive
-} //end of namespace Cloud
+} // End of namespace OneDrive
+} // End of namespace Cloud

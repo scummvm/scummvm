@@ -55,7 +55,7 @@ public:
 	virtual void finish();
 };
 
-} //end of namespace Dropbox
-} //end of namespace Cloud
+} // End of namespace Dropbox
+} // End of namespace Cloud
 
 #endif

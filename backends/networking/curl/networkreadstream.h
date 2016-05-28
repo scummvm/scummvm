@@ -41,48 +41,48 @@ public:
 	virtual ~NetworkReadStream();
 
 	/**
-	* Returns true if a read failed because the stream end has been reached.
-	* This flag is cleared by clearErr().
-	* For a SeekableReadStream, it is also cleared by a successful seek.
-	*
-	* @note The semantics of any implementation of this method are
-	* supposed to match those of ISO C feof(). In particular, in a stream
-	* with N bytes, reading exactly N bytes from the start should *not*
-	* set eos; only reading *beyond* the available data should set it.
-	*/
+	 * Returns true if a read failed because the stream end has been reached.
+	 * This flag is cleared by clearErr().
+	 * For a SeekableReadStream, it is also cleared by a successful seek.
+	 *
+	 * @note The semantics of any implementation of this method are
+	 * supposed to match those of ISO C feof(). In particular, in a stream
+	 * with N bytes, reading exactly N bytes from the start should *not*
+	 * set eos; only reading *beyond* the available data should set it.
+	 */
 	virtual bool eos() const;
 
 	/**
-	* Read data from the stream. Subclasses must implement this
-	* method; all other read methods are implemented using it.
-	*
-	* @note The semantics of any implementation of this method are
-	* supposed to match those of ISO C fread(), in particular where
-	* it concerns setting error and end of file/stream flags.
-	*
-	* @param dataPtr	pointer to a buffer into which the data is read
-	* @param dataSize	number of bytes to be read
-	* @return the number of bytes which were actually read.
-	*/
+	 * Read data from the stream. Subclasses must implement this
+	 * method; all other read methods are implemented using it.
+	 *
+	 * @note The semantics of any implementation of this method are
+	 * supposed to match those of ISO C fread(), in particular where
+	 * it concerns setting error and end of file/stream flags.
+	 *
+	 * @param dataPtr	pointer to a buffer into which the data is read
+	 * @param dataSize	number of bytes to be read
+	 * @return the number of bytes which were actually read.
+	 */
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 
 	/**
-	* This method is called by ConnectionManager to indicate
-	* that transfer is finished.
-	*
-	* @note It's called on failure too.
-	*/
+	 * This method is called by ConnectionManager to indicate
+	 * that transfer is finished.
+	 *
+	 * @note It's called on failure too.
+	 */
 	void finished();
 
 	/**
-	* Returns HTTP response code from inner CURL handle.
-	* It returns -1 to indicate there is no inner handle.
-	*
-	* @note This method should be called when eos() == true.
-	*/
+	 * Returns HTTP response code from inner CURL handle.
+	 * It returns -1 to indicate there is no inner handle.
+	 *
+	 * @note This method should be called when eos() == true.
+	 */
 	long httpResponseCode() const;
 };
 
-} //end of namespace Networking
+} // End of namespace Networking
 
 #endif

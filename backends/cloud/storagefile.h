@@ -28,11 +28,10 @@
 namespace Cloud {
 
 /**
-* StorageFile represents a file storaged on remote cloud storage.
-* It contains basic information about a file, and might be used
-* when listing directories or syncing files.
-*/
-
+ * StorageFile represents a file storaged on remote cloud storage.
+ * It contains basic information about a file, and might be used
+ * when listing directories or syncing files.
+ */
 class StorageFile {
 	Common::String _path, _name;
 	uint32 _size, _timestamp;
@@ -49,6 +48,6 @@ public:
 	bool isDirectory() const { return _isDirectory; }
 };
 
-} //end of namespace Cloud
+} // End of namespace Cloud
 
 #endif

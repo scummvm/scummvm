@@ -93,5 +93,5 @@ void OneDriveTokenRefresher::setHeaders(Common::Array<Common::String> &headers) 
 }
 
 
-} //end of namespace OneDrive
-} //end of namespace Cloud
+} // End of namespace OneDrive
+} // End of namespace Cloud

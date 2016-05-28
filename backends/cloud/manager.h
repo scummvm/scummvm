@@ -44,6 +44,6 @@ public:
 	virtual void syncSaves(Storage::BoolCallback callback);
 };
 
-} //end of namespace Cloud
+} // End of namespace Cloud
 
 #endif

@@ -100,4 +100,4 @@ void DownloadRequest::finishBool(bool success) {
 	if (_boolCallback) (*_boolCallback)(Storage::BoolResponse(this, success));
 }
 
-} //end of namespace Cloud
+} // End of namespace Cloud

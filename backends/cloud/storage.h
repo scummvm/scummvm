@@ -58,7 +58,6 @@ public:
 	 * @note every Storage must write keyPrefix + "type" key
 	 *       with common value (e.g. "Dropbox").
 	 */
-
 	virtual void saveConfig(Common::String keyPrefix) = 0;
 
 	/**
@@ -106,6 +105,6 @@ public:
 	virtual bool isWorking() = 0;
 };
 
-} //end of namespace Cloud
+} // End of namespace Cloud
 
 #endif

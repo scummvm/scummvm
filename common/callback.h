@@ -26,20 +26,19 @@
 namespace Common {
 
 /**
-* BaseCallback<S> is a simple base class for object-oriented callbacks.
-*
-* Object-oriented callbacks are such callbacks that know exact instance
-* which method must be called.
-*
-* For backwards compatibility purposes, there is a GlobalFunctionCallback,
-* which is BaseCallback<void *>, so it can be used with global C-like
-* functions too.
-*
-* <S> is the type, which is passed to operator() of this callback.
-* This allows you to specify that you accept a callback, which wants
-* to receive an <S> object.
-*/
-
+ * BaseCallback<S> is a simple base class for object-oriented callbacks.
+ *
+ * Object-oriented callbacks are such callbacks that know exact instance
+ * which method must be called.
+ *
+ * For backwards compatibility purposes, there is a GlobalFunctionCallback,
+ * which is BaseCallback<void *>, so it can be used with global C-like
+ * functions too.
+ *
+ * <S> is the type, which is passed to operator() of this callback.
+ * This allows you to specify that you accept a callback, which wants
+ * to receive an <S> object.
+ */
 template<typename S = void *> class BaseCallback {
 public:
 	BaseCallback() {}
@@ -48,13 +47,12 @@ public:
 };
 
 /**
-* GlobalFunctionCallback<T> is a simple wrapper for global C functions.
-*
-* If there is a method, which accepts BaseCallback<T>, you can
-* easily pass your C function by passing
-*     new GlobalFunctionCallback<T>(yourFunction)
-*/
-
+ * GlobalFunctionCallback<T> is a simple wrapper for global C functions.
+ *
+ * If there is a method, which accepts BaseCallback<T>, you can
+ * easily pass your C function by passing
+ *     new GlobalFunctionCallback<T>(yourFunction)
+ */
 template<typename T> class GlobalFunctionCallback: public BaseCallback<T> {
 	typedef void(*GlobalFunction)(T result);
 	GlobalFunction _callback;
@@ -68,20 +66,19 @@ public:
 };
 
 /**
-* Callback<T, S> implements an object-oriented callback.
-*
-* <T> stands for a class which method you want to call.
-* <S>, again, is the type of an object passed to operator().
-*
-* So, if you have void MyClass::myMethod(AnotherClass) method,
-* the corresponding callback is Callback<MyClass, AnotherClass>.
-* You create it similarly to this:
-*     new Callback<MyClass, AnotherClass>(
-*         pointerToMyClassObject,
-*         &MyClass::myMethod
-*     )
-*/
-
+ * Callback<T, S> implements an object-oriented callback.
+ *
+ * <T> stands for a class which method you want to call.
+ * <S>, again, is the type of an object passed to operator().
+ *
+ * So, if you have void MyClass::myMethod(AnotherClass) method,
+ * the corresponding callback is Callback<MyClass, AnotherClass>.
+ * You create it similarly to this:
+ *     new Callback<MyClass, AnotherClass>(
+ *         pointerToMyClassObject,
+ *         &MyClass::myMethod
+ *     )
+ */
 template<class T, typename S = void *> class Callback: public BaseCallback<S> {
 protected:
 	typedef void(T::*TMethod)(S);
@@ -94,37 +91,36 @@ public:
 };
 
 /**
-* CallbackBridge<T, OS, S> helps you to chain callbacks.
-*
-* CallbackBridge keeps a pointer to BaseCallback<OS>.
-* When its operator() is called, it passes this pointer
-* along with the actual data (of type <S>) to the method
-* of <T> class.
-*
-* This is needed when you have to call a callback only
-* when your own callback is called. So, your callback
-* is "inner" and the other one is "outer".
-*
-* CallbackBridge implements the "inner" one and calls
-* the method you wanted. It passes the "outer", so you
-* can call it from your method. You can ignore it, but
-* probably there is no point in using CallbackBridge then.
-*
-* So, if you receive a BaseCallback<SomeClass> callback
-* and you want to call it from your MyClass::myMethod method,
-* you should create CallbackBridge<MyClass, SomeClass, S>,
-* where <S> is data type you want to receive in MyClass::myMethod.
-*
-* You create it similarly to this:
-*     new Callback<MyClass, SomeClass, AnotherClass>(
-*         pointerToMyClassObject,
-*         &MyClass::myMethod,
-*         outerCallback
-*     )
-* where `outerCallback` is BaseCallback<SomeClass> and `myMethod` is:
-* void MyClass::myMethod(BaseCallback<SomeClass> *, AnotherClass)
-*/
-
+ * CallbackBridge<T, OS, S> helps you to chain callbacks.
+ *
+ * CallbackBridge keeps a pointer to BaseCallback<OS>.
+ * When its operator() is called, it passes this pointer
+ * along with the actual data (of type <S>) to the method
+ * of <T> class.
+ *
+ * This is needed when you have to call a callback only
+ * when your own callback is called. So, your callback
+ * is "inner" and the other one is "outer".
+ *
+ * CallbackBridge implements the "inner" one and calls
+ * the method you wanted. It passes the "outer", so you
+ * can call it from your method. You can ignore it, but
+ * probably there is no point in using CallbackBridge then.
+ *
+ * So, if you receive a BaseCallback<SomeClass> callback
+ * and you want to call it from your MyClass::myMethod method,
+ * you should create CallbackBridge<MyClass, SomeClass, S>,
+ * where <S> is data type you want to receive in MyClass::myMethod.
+ *
+ * You create it similarly to this:
+ *     new Callback<MyClass, SomeClass, AnotherClass>(
+ *         pointerToMyClassObject,
+ *         &MyClass::myMethod,
+ *         outerCallback
+ *     )
+ * where `outerCallback` is BaseCallback<SomeClass> and `myMethod` is:
+ * void MyClass::myMethod(BaseCallback<SomeClass>  *, AnotherClass)
+ */
 template<class T, typename OS, typename S = void *> class CallbackBridge: public BaseCallback<S> {
 	typedef void(T::*TCallbackMethod)(BaseCallback<OS> *, S);
 	T *_object;

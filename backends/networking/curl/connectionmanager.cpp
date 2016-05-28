@@ -131,4 +131,4 @@ void ConnectionManager::processTransfers() {
 	}
 }
 
-} //end of namespace Cloud
+} // End of namespace Cloud

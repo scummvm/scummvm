@@ -41,9 +41,9 @@ class OneDriveStorage: public Cloud::Storage {
 	OneDriveStorage(Common::String token, Common::String uid, Common::String refreshToken);
 
 	/**
-	* This private constructor is called from authThroughConsole() (phase 2).
-	* It uses OAuth code flow to get tokens.
-	*/
+	 * This private constructor is called from authThroughConsole() (phase 2).
+	 * It uses OAuth code flow to get tokens.
+	 */
 	OneDriveStorage(Common::String code);
 
 	void tokenRefreshed(BoolCallback callback, Networking::JsonResponse pair);
@@ -58,17 +58,16 @@ public:
 	virtual ~OneDriveStorage();
 
 	/**
-	* Storage methods, which are used by CloudManager to save
-	* storage in configuration file.
-	*/
+	 * Storage methods, which are used by CloudManager to save
+	 * storage in configuration file.
+	 */
 
 	/**
-	* Save storage data using ConfMan.
-	* @param keyPrefix all saved keys must start with this prefix.
-	* @note every Storage must write keyPrefix + "type" key
-	*       with common value (e.g. "Dropbox").
-	*/
-
+	 * Save storage data using ConfMan.
+	 * @param keyPrefix all saved keys must start with this prefix.
+	 * @note every Storage must write keyPrefix + "type" key
+	 *       with common value (e.g. "Dropbox").
+	 */
 	virtual void saveConfig(Common::String keyPrefix);
 
 	/** Public Cloud API comes down there. */
@@ -110,32 +109,32 @@ public:
 	virtual bool isWorking() { return false; } //TODO
 
 	/**
-	* Load token and user id from configs and return OneDriveStorage for those.	
-	* @return pointer to the newly created OneDriveStorage or 0 if some problem occured.
-	*/
+	 * Load token and user id from configs and return OneDriveStorage for those.	
+	 * @return pointer to the newly created OneDriveStorage or 0 if some problem occured.
+	 */
 	static OneDriveStorage *loadFromConfig(Common::String keyPrefix);
 
 	/**
-	* Returns OneDrive auth link.
-	*/
+	 * Returns OneDrive auth link.
+	 */
 	static Common::String getAuthLink();
 
 	/**
-	* Show message with OneDrive auth instructions. (Temporary)
-	*/
+	 * Show message with OneDrive auth instructions. (Temporary)
+	 */
 	static void authThroughConsole();
 
 	/**
-	* Gets new access_token. If <code> passed is "", refresh_token is used.
-	* Use "" in order to refresh token and pass a callback, so you could
-	* continue your work when new token is available.
-	*/
+	 * Gets new access_token. If <code> passed is "", refresh_token is used.
+	 * Use "" in order to refresh token and pass a callback, so you could
+	 * continue your work when new token is available.
+	 */
 	void getAccessToken(BoolCallback callback, Common::String code = "");
 
 	Common::String accessToken() { return _token; }
 };
 
-} //end of namespace OneDrive
-} //end of namespace Cloud
+} // End of namespace OneDrive
+} // End of namespace Cloud
 
 #endif

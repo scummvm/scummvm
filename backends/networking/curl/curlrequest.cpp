@@ -78,4 +78,4 @@ NetworkReadStreamResponse CurlRequest::execute() {
 	return NetworkReadStreamResponse(this, _stream);
 }
 
-} //end of namespace Networking
+} // End of namespace Networking

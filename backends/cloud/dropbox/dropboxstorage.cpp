@@ -248,5 +248,5 @@ void DropboxStorage::getAccessToken(Common::String code) {
 	ConnMan.addRequest(request);	
 }
 
-} //end of namespace Dropbox
-} //end of namespace Cloud
+} // End of namespace Dropbox
+} // End of namespace Cloud

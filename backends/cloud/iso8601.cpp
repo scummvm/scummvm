@@ -87,5 +87,5 @@ uint32 convertToTimestamp(const Common::String &iso8601Date) {
 	return minutes * 60 + s;
 }
 
-} //end of namespace ISO8601
-} //end of namespace Cloud
+} // End of namespace ISO8601
+} // End of namespace Cloud

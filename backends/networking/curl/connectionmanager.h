@@ -54,29 +54,29 @@ public:
 	virtual ~ConnectionManager();
 
 	/**
-	* All libcurl transfers are going through this ConnectionManager.
-	* So, if you want to start any libcurl transfer, you must create
-	* an easy handle and register it using this method.
-	*/
+	 * All libcurl transfers are going through this ConnectionManager.
+	 * So, if you want to start any libcurl transfer, you must create
+	 * an easy handle and register it using this method.
+	 */
 	void registerEasyHandle(CURL *easy);
 
 	/**
-	* Use this method to add new Request into manager's queue.
-	* Manager will periodically call handle() method of these
-	* Requests until they set their state to FINISHED.
-	*
-	* If Request's state is RETRY, handleRetry() is called instead.
-	*
-	* @note This method starts the timer if it's not started yet.
-	*
-	* @return the same Request pointer, just as a shortcut
-	*/
+	 * Use this method to add new Request into manager's queue.
+	 * Manager will periodically call handle() method of these
+	 * Requests until they set their state to FINISHED.
+	 *
+	 * If Request's state is RETRY, handleRetry() is called instead.
+	 *
+	 * @note This method starts the timer if it's not started yet.
+	 *
+	 * @return the same Request pointer, just as a shortcut
+	 */
 	Request *addRequest(Request *request);
 };
 
 /** Shortcut for accessing the connection manager. */
 #define ConnMan		Networking::ConnectionManager::instance()
 
-} //end of namespace Networking
+} // End of namespace Networking
 
 #endif

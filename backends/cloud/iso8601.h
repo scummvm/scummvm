@@ -31,7 +31,7 @@ namespace ISO8601 {
 	/** Returns timestamp corresponding to given ISO 8601 date */
 	uint32 convertToTimestamp(const Common::String &iso8601Date);
 
-} //end of namespace ISO8601
-} //end of namespace Cloud
+} // End of namespace ISO8601
+} // End of namespace Cloud
 
 #endif

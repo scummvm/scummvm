@@ -52,6 +52,6 @@ public:
 	virtual void finish();
 };
 
-}  //end of namespace Networking
+} // End of namespace Networking
 
 #endif

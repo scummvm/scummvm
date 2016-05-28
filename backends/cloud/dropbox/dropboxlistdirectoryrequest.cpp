@@ -136,5 +136,5 @@ void DropboxListDirectoryRequest::finishFiles(Common::Array<StorageFile> &files)
 	if (_filesCallback) (*_filesCallback)(Storage::FileArrayResponse(this, files));
 }
 
-} //end of namespace Dropbox
-} //end of namespace Cloud
+} // End of namespace Dropbox
+} // End of namespace Cloud

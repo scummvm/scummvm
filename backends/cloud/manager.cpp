@@ -105,4 +105,4 @@ void Manager::syncSaves(Storage::BoolCallback callback) {
 	if (storage) storage->syncSaves(callback);
 }
 
-} //end of namespace Cloud
+} // End of namespace Cloud
