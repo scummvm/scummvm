@@ -3071,6 +3071,86 @@ static const uint16 qfg3PatchCombatSpeedThrottling2[] = {
 	PATCH_END
 };
 
+// In room #750, when the hero enters from the top east path (room #755), it
+// could go out of the contained-access polygon bounds, and be able to travel
+// freely in the room.
+// The reason is that the cutoff y value (42) that determines whether the hero
+// enters from the top or bottom path is inaccurate: it's possible to enter the
+// top path from as low as y=45.
+// This patch changes the cutoff to be 50 which should be low enough.
+// It also changes the position in which the hero enters from the top east path
+// as the current location is hidden behind the tree.
+//
+// Applies to: English, French, German, Italian, Spanish and the GOG release.
+// Responsible method: enterEast::changeState (script 750)
+// Fixes bug #6693
+static const uint16 qfg3SignatureRoom750Bounds1[] = {
+	// (if (< (ego y?) 42)
+	0x76,                               // push0 ("y")
+	0x76,                               // push0
+	0x81, 0x00,                         // lag global[0] (ego)
+	0x4a, 0x04,                         // send 4
+	SIG_MAGICDWORD,
+	0x36,                               // push
+	0x35,   42,                         // ldi 42 <-- comparing ego.y with 42
+	0x22,                               // lt?
+	SIG_END
+};
+
+static const uint16 qfg3PatchRoom750Bounds1[] = {
+	// (if (< (ego y?) 50)
+	PATCH_ADDTOOFFSET(+8),
+	50,                                 // 42 --> 50
+	PATCH_END
+};
+
+static const uint16 qfg3SignatureRoom750Bounds2[] = {
+	// (ego x: 294 y: 39)
+	0x78,                               // push1 ("x")
+	0x78,                               // push1 
+	0x38, SIG_UINT16(294),              // pushi 294
+	0x76,                               // push0 ("y")
+	0x78,                               // push1
+	SIG_MAGICDWORD,
+	0x39,   29,                         // pushi 29
+	0x81, 0x00,                         // lag global[0] (ego)
+	0x4a, 0x0c,                         // send 12
+	SIG_END
+};
+
+static const uint16 qfg3PatchRoom750Bounds2[] = {
+	// (ego x: 320 y: 39)
+	PATCH_ADDTOOFFSET(+3),
+	PATCH_UINT16(320),                  // 294 --> 320
+	PATCH_ADDTOOFFSET(+3),
+	39,                                 //  29 -->  39
+	PATCH_END
+};
+
+static const uint16 qfg3SignatureRoom750Bounds3[] = {
+	// (ego setMotion: MoveTo 282 29 self)
+	0x38, SIG_SELECTOR16(setMotion),    // pushi "setMotion" 0x133 in QfG3
+	0x39, 0x04,                         // pushi 4
+	0x51, SIG_ADDTOOFFSET(+1),          // class MoveTo
+	0x36,                               // push
+	0x38, SIG_UINT16(282),              // pushi 282
+	SIG_MAGICDWORD,
+	0x39,   29,                         // pushi 29
+	0x7c,                               // pushSelf
+	0x81, 0x00,                         // lag global[0] (ego)
+	0x4a, 0x0c,                         // send 12
+	SIG_END
+};
+
+static const uint16 qfg3PatchRoom750Bounds3[] = {
+	// (ego setMotion: MoveTo 309 35 self)
+	PATCH_ADDTOOFFSET(+9),
+	PATCH_UINT16(309),                  // 282 --> 309
+	PATCH_ADDTOOFFSET(+1),
+	35,                                 //  29 -->  35
+	PATCH_END
+};
+
 //          script, description,                                      signature                    patch
 static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   944, "import dialog continuous calls",                     1, qfg3SignatureImportDialog,           qfg3PatchImportDialog },
@@ -3084,6 +3164,9 @@ static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   285, "missing points for telling about initiation script", 1, qfg3SignatureMissingPoints2b,        qfg3PatchMissingPoints2 },
 	{  true,   550, "combat speed throttling script",                     1, qfg3SignatureCombatSpeedThrottling1, qfg3PatchCombatSpeedThrottling1 },
 	{  true,   550, "combat speed throttling heap",                       1, qfg3SignatureCombatSpeedThrottling2, qfg3PatchCombatSpeedThrottling2 },
+	{  true,   750, "hero goes out of bounds in room 750",                2, qfg3SignatureRoom750Bounds1,         qfg3PatchRoom750Bounds1 },
+	{  true,   750, "hero goes out of bounds in room 750",                2, qfg3SignatureRoom750Bounds2,         qfg3PatchRoom750Bounds2 },
+	{  true,   750, "hero goes out of bounds in room 750",                2, qfg3SignatureRoom750Bounds3,         qfg3PatchRoom750Bounds3 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
