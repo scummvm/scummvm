@@ -23,21 +23,27 @@
 #ifndef TITANIC_PROXIMITY_H
 #define TITANIC_PROXIMITY_H
 
+#include "common/scummsys.h"
+
 namespace Titanic {
+
+typedef bool (*CProximityFn)(int val);
+
+class TTtalker;
 
 class CProximity {
 public:
 	int _field4;
 	int _field8;
 	int _fieldC;
-	int _field10;
+	int _speechHandle;
 	int _field14;
 	int _field18;
 	int _field1C;
 	int _field20;
 	int _field24;
 	int _field28;
-	int _field2C;
+	uint32 _field2C;
 	int _field30;
 	int _field34;
 	double _double1;
@@ -51,8 +57,9 @@ public:
 	int _field58;
 	int _field5C;
 	int _field60;
-	int _field64;
-	int _field68;
+	CProximityFn _method1;
+	TTtalker *_talker;
+	int _field6C;
 public:
 	CProximity();
 };

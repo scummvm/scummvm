@@ -31,7 +31,7 @@ namespace Titanic {
 
 class CTrueTalkManager;
 
-class TTTalker : public ListItem {
+class TTtalker : public ListItem {
 public:
 	CTrueTalkManager *_owner;
 	CTrueTalkNPC *_npc;
@@ -40,15 +40,15 @@ public:
 	int _field24;
 	int _done;
 public:
-	TTTalker() : _owner(nullptr), _npc(nullptr),
+	TTtalker() : _owner(nullptr), _npc(nullptr),
 		_dialogueId(0), _field24(0), _done(0) {}
-	TTTalker(CTrueTalkManager *owner, CTrueTalkNPC *npc) :
+	TTtalker(CTrueTalkManager *owner, CTrueTalkNPC *npc) :
 		_owner(owner), _npc(npc), _dialogueId(0), _field24(0), _done(0) {}
 
 	void speechStarted(const CString &dialogueStr, uint dialogueId, uint soundId);
 };
 
-class TTTalkerList : public List<TTTalker> {
+class TTtalkerList : public List<TTtalker> {
 };
 
 } // End of namespace Titanic

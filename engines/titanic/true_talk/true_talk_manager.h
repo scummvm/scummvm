@@ -47,7 +47,7 @@ private:
 	CDialogueFile *_dialogueFile;
 	int _dialogueId;
 	int _field18;
-	TTTalkerList _talkers;
+	TTtalkerList _talkers;
 private:
 	/**
 	 * Loads the statics for the class
@@ -101,7 +101,12 @@ private:
 	 */
 	void triggerNPC(CTrueTalkNPC *npc);
 
-	void setTalker(TTTalker *talker, TTroomScript *roomScript, CViewItem *view, bool isParrot);
+	/**
+	 * Plays speech specified by the manager's indexes array
+	 */
+	void playSpeech(TTtalker *talker, TTroomScript *roomScript, CViewItem *view, bool isParrot);
+
+	static bool proximityMethod1(int val);
 public:
 	static int _v1;
 	static int _v2;

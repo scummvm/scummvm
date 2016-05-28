@@ -69,6 +69,11 @@ void CSound::fn3(int handle, int val2, int val3) {
 	warning("TODO: CSound::fn3");
 }
 
+int CSound::playSpeech(CDialogueFile *dialogueFile, int speechId, const CProximity &prox) {
+	warning("TODO: CSound::playSpeech");
+	return 0;
+}
+
 uint CSound::loadSound(const CString &name) {
 	checkSounds();
 

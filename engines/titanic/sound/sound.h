@@ -24,6 +24,7 @@
 #define TITANIC_SOUND_H
 
 #include "titanic/support/simple_file.h"
+#include "titanic/support/proximity.h"
 #include "titanic/sound/sound_manager.h"
 #include "titanic/core/list.h"
 #include "titanic/core/view_item.h"
@@ -118,6 +119,12 @@ public:
 	bool fn1(int val);
 	void fn2(int handle);
 	void fn3(int handle, int val2, int val3);
+
+	/**
+	 * Play a speech
+	 */
+	int playSpeech(CDialogueFile *dialogueFile, int speechId, const CProximity &prox);
+		
 	void managerProc8(int v) { _soundManager.proc8(v); }
 
 	CSoundItem *getTrueTalkSound(CDialogueFile *dialogueFile, int index);

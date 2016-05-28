@@ -306,4 +306,8 @@ void CViewItem::handleButtonUpMsg(CMouseButtonUpMsg *msg) {
 	}
 }
 
+void CViewItem::fn1(double val1, double val2, double val3) {
+	warning("TODO: CViewItem::fn1");
+}
+
 } // End of namespace Titanic

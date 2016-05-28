@@ -24,6 +24,7 @@
 #include "titanic/core/tree_item.h"
 #include "titanic/npcs/true_talk_npc.h"
 #include "titanic/game_manager.h"
+#include "titanic/titanic.h"
 
 #define MKTAG_BE(a3,a2,a1,a0) ((uint32)((a3) | ((a2) << 8) | ((a1) << 16) | ((a0) << 24)))
 
@@ -195,14 +196,14 @@ void CTrueTalkManager::saveNPC(SimpleFile *file, int charId) const {
 
 void CTrueTalkManager::preLoad() {
 	// Delete any previous talkers
-	for (TTTalkerList::iterator i = _talkers.begin(); i != _talkers.end(); ++i)
+	for (TTtalkerList::iterator i = _talkers.begin(); i != _talkers.end(); ++i)
 		delete *i;
 	_talkers.clear();
 }
 
 void CTrueTalkManager::removeCompleted() {
-	for (TTTalkerList::iterator i = _talkers.begin(); i != _talkers.end(); ) {
-		TTTalker *talker = *i;
+	for (TTtalkerList::iterator i = _talkers.begin(); i != _talkers.end(); ) {
+		TTtalker *talker = *i;
 		
 		if (talker->_done) {
 			i = _talkers.erase(i);
@@ -327,12 +328,12 @@ void CTrueTalkManager::setDialogue(CTrueTalkNPC *npc, TTroomScript *roomScript, 
 		return;
 
 	int soundId = readDialogSound();
-	TTTalker *talker = new TTTalker(this, npc);
+	TTtalker *talker = new TTtalker(this, npc);
 	_talkers.push_back(talker);
 
 	bool isParrot = npc->getName().contains("parrot");
 	triggerNPC(npc);
-	setTalker(talker, roomScript, view, isParrot);
+	playSpeech(talker, roomScript, view, isParrot);
 	talker->speechStarted(dialogueStr, _titleEngine._indexes[0], soundId);
 }
 
@@ -422,8 +423,107 @@ void CTrueTalkManager::triggerNPC(CTrueTalkNPC *npc) {
 	}
 }
 
-void CTrueTalkManager::setTalker(TTTalker *talker, TTroomScript *roomScript, CViewItem *view, bool isParrot) {
-	warning("TODO: CTrueTalkManager::setTalker");
+void CTrueTalkManager::playSpeech(TTtalker *talker, TTroomScript *roomScript, CViewItem *view, bool isParrot) {
+	uint milli, index;
+	switch (roomScript->_scriptId) {
+	case 101:
+		milli = 300;
+		index = 16;
+		break;
+	case 106:
+	case 107:
+	case 110:
+	case 114:
+	case 115:
+	case 122:
+		milli = 130;
+		index = 10;
+		break;
+	case 108:
+	case 109:
+		milli = 200;
+		index = 10;
+		break;
+	case 111:
+	case 116:
+	case 121:
+		milli = 80;
+		index = 12;
+		break;
+	case 112:
+	case 124:
+	case 128:
+	case 130:
+		milli = 80;
+		index = 4;
+		break;
+	case 132:
+		milli = 60;
+		index = 4;
+		break;
+	default:
+		milli = 0;
+		index = 4;
+		break;
+	}
+
+	// Setup proximities
+	CProximity p1, p2, p3;
+	if (isParrot) {
+		p1._field24 = 3;
+		p2._field24 = 5;
+		p3._field24 = 4;
+	} else {
+		p1._field24 = 0;
+		p2._field24 = 1;
+		p3._field24 = 2;
+	}
+
+	if (milli > 0) {
+		p3._field8 = (index * 3) / 2;
+		p3._field28 = 1;
+		p3._field2C = 0xC3070000;
+		p3._field30 = 0x3F800000;
+		p3._field34 = 0;
+
+		p3._field8 = (index * 3) / 4;
+		p2._field28 = 0;
+		p2._field2C = 0x43070000;
+		p2._field30 = 0x3F800000;
+		p2._field34 = 0;
+	}
+
+	_gameManager->_sound.managerProc8(p1._field24);
+	if (view) {
+		p1._field28 = 2;
+		view->fn1(p1._double1, p1._double2, p1._double3);	
+	}
+
+	for (uint idx = 0; idx < _titleEngine._indexes.size(); ++idx) {
+		uint id = _titleEngine._indexes[idx];
+		if (id > 100000)
+			continue;
+
+		if (idx == (_titleEngine._indexes.size() - 1)) {
+			// Final iteration of speech segments to play
+			p1._method1 = &proximityMethod1;
+			p1._talker = talker;
+		}
+
+		// Start the 
+		p1._speechHandle = _gameManager->_sound.playSpeech(_dialogueFile, id - _dialogueId, p1);
+		if (!milli)
+			continue;
+
+		if (idx == 0)
+			g_vm->_events->sleep(milli);
+
+		p3._speechHandle = _gameManager->_sound.playSpeech(_dialogueFile, id - _dialogueId, p3);
+		if (idx == 0)
+			g_vm->_events->sleep(milli);
+
+		p2._speechHandle = _gameManager->_sound.playSpeech(_dialogueFile, id - _dialogueId, p2);
+	}
 }
 
 int CTrueTalkManager::getStateVal(int stateNum) {
@@ -442,6 +542,11 @@ bool CTrueTalkManager::triggerAction(int action, int param) {
 	CTrueTalkTriggerActionMsg msg(action, param, 0);
 	msg.execute(_currentNPC);
 	return true;
+}
+
+bool CTrueTalkManager::proximityMethod1(int val) {
+	// TODO
+	return false;
 }
 
 } // End of namespace Titanic

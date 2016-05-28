@@ -96,6 +96,8 @@ public:
 	 * Finds a link which connects to another designated view
 	 */
 	CLinkItem *findLink(CViewItem *newView);
+
+	void fn1(double val1, double val2, double val3);
 };
 
 } // End of namespace Titanic
