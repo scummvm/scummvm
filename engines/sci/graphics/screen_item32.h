@@ -273,7 +273,7 @@ public:
 
 typedef StablePointerArray<ScreenItem, 250> ScreenItemListBase;
 class ScreenItemList : public ScreenItemListBase {
-	static bool inline sortHelper(const ScreenItem *a, const ScreenItem *b) {
+	inline static bool sortHelper(const ScreenItem *a, const ScreenItem *b) {
 		return *a < *b;
 	}
 public:
