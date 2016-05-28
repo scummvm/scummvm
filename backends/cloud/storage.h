@@ -81,6 +81,9 @@ public:
 	/** Calls the callback when finished. */
 	virtual Networking::Request *download(Common::String remotePath, Common::String localPath, BoolCallback callback) = 0;
 
+	/** Returns Common::Array<StorageFile> with list of files, which were not downloaded. */
+	virtual Networking::Request *downloadFolder(Common::String remotePath, Common::String localPath, FileArrayCallback callback, bool recursive = false) = 0;
+
 	/** Calls the callback when finished. */
 	virtual Networking::Request *remove(Common::String path, BoolCallback callback) = 0;
 

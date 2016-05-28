@@ -25,6 +25,7 @@
 #include "backends/cloud/onedrive/onedrivetokenrefresher.h"
 #include "backends/cloud/onedrive/onedrivelistdirectoryrequest.h"
 #include "backends/cloud/downloadrequest.h"
+#include "backends/cloud/folderdownloadrequest.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
 #include "common/cloudmanager.h"
@@ -187,6 +188,11 @@ Networking::Request *OneDriveStorage::download(Common::String remotePath, Common
 	return ConnMan.addRequest(new DownloadRequest(this, callback, remotePath, f));
 }
 
+/** Returns Common::Array<StorageFile> with list of files, which were not downloaded. */
+Networking::Request *OneDriveStorage::downloadFolder(Common::String remotePath, Common::String localPath, FileArrayCallback callback, bool recursive) {
+	return ConnMan.addRequest(new FolderDownloadRequest(this, callback, remotePath, localPath, recursive));
+}
+
 void OneDriveStorage::fileDownloaded(BoolResponse pair) {
 	if (pair.value) debug("file downloaded!");
 	else debug("download failed!");
@@ -207,7 +213,7 @@ Networking::Request *OneDriveStorage::syncSaves(BoolCallback callback) {
 	request->addHeader("Authorization: bearer " + _token);
 	return ConnMan.addRequest(request);
 	*/
-	return listDirectory("subfolder", new Common::Callback<OneDriveStorage, FileArrayResponse>(this, &OneDriveStorage::printFiles), true);
+	return downloadFolder("subfolder", "local/onedrive/subfolder_downloaded", new Common::Callback<OneDriveStorage, FileArrayResponse>(this, &OneDriveStorage::printFiles), false);
 }
 
 OneDriveStorage *OneDriveStorage::loadFromConfig(Common::String keyPrefix) {
