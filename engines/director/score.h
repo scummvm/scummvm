@@ -43,7 +43,7 @@ enum castType {
     kCastScript
 };
 
-enum spritePositions { 
+enum spritePositions {
     kSpritePositionUnk1 = 0,
     kSpritePositionEnabled,
     kSpritePositionUnk2,
@@ -68,6 +68,28 @@ enum mainChannelsPosition {
     kSound2Position,
     kSound2TypePosition = 11,
     kPaletePosition = 15
+};
+
+enum inkType {
+    kInkTypeCopy,
+    kInkTypeTransparent,
+    kInkTypeReverse,
+    kInkTypeGhost,
+    kInkTypeNotCopy,
+    kInkTypeNotTrans,
+    kInkTypeNotReverse,
+    kInkTypeNotGhost,
+    kIntTypeMatte,
+    kInkTypeMask,
+    //10-31 Not used (Lingo in a Nutshell)
+    kInkTypeBlend = 32,
+    kInkTypeAddPin,
+    kInkTypeAdd,
+    kInkTypeSubPin,
+    kInkTypeBackgndTrans,
+    kInkTypeLight,
+    kInkTypeSub,
+    kInkTypeDark
 };
 
 struct Cast {
@@ -121,7 +143,7 @@ public:
     Sprite(const Sprite &sprite);
     bool _enabled;
     byte _castId;
-    //castType type;
+    inkType _ink;
     Cast *_cast;
     uint16 _flags;
     Common::Point _startPoint;

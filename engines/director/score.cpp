@@ -362,6 +362,7 @@ void Frame::readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16
 			break;
 		case kSpritePositionFlags:
 			sprite._flags = stream.readUint16BE();
+			sprite._ink = static_cast<inkType>(sprite._flags & 0x3f); //TODO more flags?
 			fieldPosition += 2;
 			break;
 		case kSpritePositionCastId:
@@ -431,6 +432,7 @@ void Frame::display(Archive &_movie) {
 Sprite::Sprite() { 
 	_enabled = false;
 	_width = 0;
+	_ink = kInkTypeCopy;
 	_flags = 0;
 	_height = 0;
 	_castId = 0;
@@ -441,6 +443,7 @@ Sprite::Sprite(const Sprite &sprite) {
 	_enabled = sprite._enabled;
 	_castId = sprite._castId;
 	_flags = sprite._flags;
+	_ink = sprite._ink;
 	_width = sprite._width;
 	_height = sprite._height;
 	_startPoint.x = sprite._startPoint.x;
