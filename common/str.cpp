@@ -144,7 +144,7 @@ void String::ensureCapacity(uint32 new_size, bool keep_old) {
 	// Allocate new storage
 	newStorage = new char[newCapacity];
 	assert(newStorage);
-	
+
 
 	// Copy old data if needed, elsewise reset the new storage.
 	if (keep_old) {
@@ -447,12 +447,12 @@ void String::replace(uint32 pos, uint32 count, const char *str) {
 	replace(pos, count, str, 0, strlen(str));
 }
 
-void String::replace(iterator begin, iterator end, const String &str) {
-	replace(begin - _str, end - begin, str._str, 0, str._size);
+void String::replace(iterator begin_, iterator end_, const String &str) {
+	replace(begin_ - _str, end_ - begin_, str._str, 0, str._size);
 }
 
-void String::replace(iterator begin, iterator end, const char *str) {
-	replace(begin - _str, end - begin, str, 0, strlen(str));
+void String::replace(iterator begin_, iterator end_, const char *str) {
+	replace(begin_ - _str, end_ - begin_, str, 0, strlen(str));
 }
 
 void String::replace(uint32 posOri, uint32 countOri, const String &str,
@@ -472,21 +472,21 @@ void String::replace(uint32 posOri, uint32 countOri, const char *str,
 		_size = newSize;
 
 		// Push the old characters to the end of the string
-		for (uint32 i = _size; i >= posOri + countDest; i--) 
+		for (uint32 i = _size; i >= posOri + countDest; i--)
 			_str[i] = _str[i - offset];
 
 	} else if (countOri > countDest){
 		uint32 offset = countOri - countDest; ///< Number of positions that we have to pull back
 
 		// Pull the remainder string back
-		for (uint32 i = posOri + countDest; i < _size; i++) 
-			_str[i] = _str[i + offset];	
+		for (uint32 i = posOri + countDest; i < _size; i++)
+			_str[i] = _str[i + offset];
 
-		_size -= offset; 
+		_size -= offset;
 	}
 
 	// Copy the replaced part of the string
-	for (uint32 i = 0; i < countDest; i++) 
+	for (uint32 i = 0; i < countDest; i++)
 		_str[posOri + i] = str[posDest + i];
 
 }
