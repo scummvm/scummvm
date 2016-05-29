@@ -121,7 +121,7 @@ protected:
 	virtual void addDirtyRect(const Common::Rect &r) {}
 public:
 	Surface() : BaseSurface() {}
-	Surface(int w, int h) : BaseSurface(w, h) {}
+	Surface(int width, int height) : BaseSurface(width, height) {}
 };
 
 } // End of namespace Sherlock
