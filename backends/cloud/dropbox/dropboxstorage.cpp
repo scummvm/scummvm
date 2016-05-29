@@ -23,15 +23,16 @@
 
 #include "backends/cloud/dropbox/dropboxstorage.h"
 #include "backends/cloud/dropbox/dropboxlistdirectoryrequest.h"
+#include "backends/cloud/dropbox/dropboxuploadrequest.h"
 #include "backends/cloud/downloadrequest.h"
 #include "backends/cloud/folderdownloadrequest.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
+#include "common/file.h"
 #include "common/json.h"
 #include <curl/curl.h>
-#include <common/file.h>
 
 namespace Cloud {
 namespace Dropbox {
@@ -99,8 +100,16 @@ void DropboxStorage::printFiles(FileArrayResponse pair) {
 		debug("\t%s", files[i].name().c_str());
 }
 
+void DropboxStorage::printBool(BoolResponse pair) {
+	debug("bool: %s", (pair.value?"true":"false"));
+}
+
 Networking::Request *DropboxStorage::listDirectory(Common::String path, FileArrayCallback outerCallback, bool recursive) {
 	return ConnMan.addRequest(new DropboxListDirectoryRequest(_token, path, outerCallback, recursive));
+}
+
+Networking::Request *DropboxStorage::upload(Common::String path, Common::SeekableReadStream *contents, BoolCallback callback) {
+	return ConnMan.addRequest(new DropboxUploadRequest(_token, path, contents, callback));
 }
 
 Networking::Request *DropboxStorage::streamFile(Common::String path, Networking::NetworkReadStreamCallback callback) {
@@ -139,11 +148,20 @@ Networking::Request *DropboxStorage::syncSaves(BoolCallback callback) {
 	//"" is root in Dropbox, not "/"
 	//this must create all these directories:
 	//return download("/remote/test.jpg", "local/a/b/c/d/test.jpg", 0);
+	/*
 	return downloadFolder(
 		"/not_flat", "local/not_flat_1_level/",
 		new Common::Callback<DropboxStorage, FileArrayResponse>(this, &DropboxStorage::printFiles),
 		false
 	);
+	*/
+	Common::File *file = new Common::File();
+	if (!file->open("final.bmp")) {
+		warning("no such file");		
+		delete file;
+		return nullptr;
+	}
+	return upload("/remote/test3.bmp", file, new Common::Callback<DropboxStorage, BoolResponse>(this, &DropboxStorage::printBool));
 }
 
 Networking::Request *DropboxStorage::info(StorageInfoCallback outerCallback) {

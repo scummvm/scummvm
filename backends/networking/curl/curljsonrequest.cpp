@@ -55,7 +55,7 @@ char *CurlJsonRequest::getPreparedContents() {
 }
 
 void CurlJsonRequest::handle() {
-	if (!_stream) _stream = new NetworkReadStream(_url.c_str(), _headersList, _postFields);
+	if (!_stream) _stream = makeStream();
 
 	if (_stream) {
 		const int kBufSize = 16*1024;

@@ -72,7 +72,7 @@ public:
 	virtual Networking::Request *listDirectory(Common::String path, FileArrayCallback callback, bool recursive = false) = 0;
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *upload(Common::String path, Common::ReadStream *contents, BoolCallback callback) = 0;
+	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, BoolCallback callback) = 0;
 
 	/** Returns pointer to Networking::NetworkReadStream. */
 	virtual Networking::Request *streamFile(Common::String path, Networking::NetworkReadStreamCallback callback) = 0;

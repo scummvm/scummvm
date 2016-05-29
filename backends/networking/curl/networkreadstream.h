@@ -38,6 +38,7 @@ class NetworkReadStream: public Common::MemoryReadWriteStream {
 
 public:	
 	NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields);
+	NetworkReadStream(const char *url, curl_slist *headersList, byte *buffer, uint32 bufferSize, bool post = true);
 	virtual ~NetworkReadStream();
 
 	/**

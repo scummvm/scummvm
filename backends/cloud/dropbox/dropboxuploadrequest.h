@@ -20,45 +20,41 @@
 *
 */
 
-#ifndef BACKENDS_CLOUD_SAVESSYNCREQUEST_H
-#define BACKENDS_CLOUD_SAVESSYNCREQUEST_H
+#ifndef BACKENDS_CLOUD_DROPBOX_DROPBOXUPLOADREQUEST_H
+#define BACKENDS_CLOUD_DROPBOX_DROPBOXUPLOADREQUEST_H
 
-#include "backends/networking/curl/request.h"
 #include "backends/cloud/storage.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
+#include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/curl/request.h"
+#include "common/callback.h"
 
 namespace Cloud {
+namespace Dropbox {
 
-class SavesSyncRequest: public Networking::Request {
-	Storage *_storage;
+class DropboxUploadRequest: public Networking::Request {
+	Common::String _token;
+	Common::String _savePath;
+	Common::SeekableReadStream *_contentsStream;
 	Storage::BoolCallback _boolCallback;
-	Common::HashMap<Common::String, uint32> _localFilesTimestamps;
-	Common::Array<StorageFile> _filesToDownload;
-	Common::Array<Common::String> _filesToUpload;
-	StorageFile _currentDownloadingFile;
-	Common::String _currentUploadingFile;
 	Request *_workingRequest;
 	bool _ignoreCallback;
-
+	Common::String _sessionId;
+	
 	void start();
-	void directoryListedCallback(Storage::FileArrayResponse pair);
-	void fileDownloadedCallback(Storage::BoolResponse pair);
-	void fileUploadedCallback(Storage::BoolResponse pair);
-	void downloadNextFile();
-	void uploadNextFile();
+	void uploadNextPart();
+	void partUploadedCallback(Networking::JsonResponse pair);
 	void finishBool(bool success);
-	void loadTimestamps();
-	void saveTimestamps();	
+
 public:
-	SavesSyncRequest(Storage *storage, Storage::BoolCallback callback);
-	virtual ~SavesSyncRequest();
+	DropboxUploadRequest(Common::String token, Common::String path, Common::SeekableReadStream *contents, Storage::BoolCallback callback);
+	virtual ~DropboxUploadRequest();
 
 	virtual void handle();
 	virtual void restart();
 	virtual void finish();
 };
 
+} // End of namespace Dropbox
 } // End of namespace Cloud
 
 #endif

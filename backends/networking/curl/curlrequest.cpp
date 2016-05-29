@@ -31,12 +31,22 @@
 namespace Networking {
 
 CurlRequest::CurlRequest(DataCallback cb, Common::String url):
-	Request(cb), _url(url), _stream(0), _headersList(0) {}
+	Request(cb), _url(url), _stream(nullptr), _headersList(nullptr), _bytesBuffer(nullptr), _bytesBufferSize(0) {}
 
-CurlRequest::~CurlRequest() { delete _stream; }
+CurlRequest::~CurlRequest() {
+	delete _stream;
+	delete _bytesBuffer;
+}
+
+NetworkReadStream *CurlRequest::makeStream() {
+	if (_bytesBuffer)
+		return new NetworkReadStream(_url.c_str(), _headersList, _bytesBuffer, _bytesBufferSize, true);
+	return new NetworkReadStream(_url.c_str(), _headersList, _postFields);
+}
+
 
 void CurlRequest::handle() {
-	if (!_stream) _stream = new NetworkReadStream(_url.c_str(), _headersList, _postFields);	
+	if (!_stream) _stream = makeStream();	
 
 	if (_stream && _stream->eos()) {
 		if (_stream->httpResponseCode() != 200)
@@ -47,13 +57,13 @@ void CurlRequest::handle() {
 
 void CurlRequest::restart() {
 	if (_stream) delete _stream;
-	_stream = 0;
+	_stream = nullptr;
 	//with no stream available next handle() will create another one
 }
 
 void CurlRequest::setHeaders(Common::Array<Common::String> &headers) {
 	curl_slist_free_all(_headersList);
-	_headersList = 0;
+	_headersList = nullptr;
 	for (uint32 i = 0; i < headers.size(); ++i)
 		addHeader(headers[i]);
 }
@@ -63,15 +73,28 @@ void CurlRequest::addHeader(Common::String header) {
 }
 
 void CurlRequest::addPostField(Common::String keyValuePair) {
+	if (_bytesBuffer)
+		warning("CurlRequest: added POST fields would be ignored, because there is buffer present");
+
 	if (_postFields == "")
 		_postFields = keyValuePair;
 	else
 		_postFields += "&" + keyValuePair;
 }
 
+void CurlRequest::setBuffer(byte *buffer, uint32 size) {
+	if (_postFields != "")
+		warning("CurlRequest: added POST fields would be ignored, because buffer added");
+
+	if (_bytesBuffer) delete _bytesBuffer;
+
+	_bytesBuffer = buffer;
+	_bytesBufferSize = size;
+}
+
 NetworkReadStreamResponse CurlRequest::execute() {
 	if (!_stream) {
-		_stream = new NetworkReadStream(_url.c_str(), _headersList, _postFields);
+		_stream = makeStream();
 		ConnMan.addRequest(this);
 	}
 

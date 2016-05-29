@@ -42,6 +42,10 @@ protected:
 	NetworkReadStream *_stream;
 	curl_slist *_headersList;
 	Common::String _postFields;
+	byte *_bytesBuffer;
+	uint32 _bytesBufferSize;
+
+	virtual NetworkReadStream *makeStream();
 
 public:
 	CurlRequest(DataCallback cb, Common::String url);
@@ -58,6 +62,9 @@ public:
 
 	/** Adds a post field (key=value pair). */
 	virtual void addPostField(Common::String field);
+
+	/** Sets bytes buffer. */
+	virtual void setBuffer(byte *buffer, uint32 size);
 
 	/**
 	 * Starts this Request with ConnMan.

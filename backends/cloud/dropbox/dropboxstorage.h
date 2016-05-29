@@ -46,6 +46,7 @@ class DropboxStorage: public Cloud::Storage {
 	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);
 
 	void printFiles(FileArrayResponse pair);
+	void printBool(BoolResponse pair);
 
 public:	
 	virtual ~DropboxStorage();
@@ -69,7 +70,7 @@ public:
 	virtual Networking::Request *listDirectory(Common::String path, FileArrayCallback callback, bool recursive = false);
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *upload(Common::String path, Common::ReadStream *contents, BoolCallback callback) { return nullptr; } //TODO
+	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, BoolCallback callback);
 
 	/** Returns pointer to Networking::NetworkReadStream. */
 	virtual Networking::Request *streamFile(Common::String path, Networking::NetworkReadStreamCallback callback);
