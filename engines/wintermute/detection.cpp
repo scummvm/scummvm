@@ -85,7 +85,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Copyright (c) 2011 Jan Nedoma";
+		return "Copyright (C) 2011 Jan Nedoma";
 	}
 
 	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
