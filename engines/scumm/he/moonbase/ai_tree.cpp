@@ -29,7 +29,12 @@
 namespace Scumm {
 
 static int compareTreeNodes(const void *a, const void *b) {
-	return ((const TreeNode *)a)->value - ((const TreeNode *)b)->value;
+	if (((const TreeNode *)a)->value < ((const TreeNode *)b)->value)
+		return -1;
+	else if (((const TreeNode *)a)->value > ((const TreeNode *)b)->value)
+		return 1;
+	else
+		return 0;
 }
 
 Tree::Tree(AI *ai) : _ai(ai) {

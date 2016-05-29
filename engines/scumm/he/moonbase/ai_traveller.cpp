@@ -143,10 +143,10 @@ IContainedObject *Traveller::createChildObj(int index, int &completionFlag) {
 		if (directDist > _maxDist + 120)
 			maxPower = _ai->getMaxPower();
 		else
-			maxPower = (static_cast<float>(directDist) / static_cast<float>(_maxDist + 120)) * _ai->getMaxPower();
+			maxPower = (int)((static_cast<float>(directDist) / static_cast<float>(_maxDist + 120)) * _ai->getMaxPower());
 
 		maxPower -= 70;
-		power = maxPower * (1 - ((index % NUM_POWER_STEPS) * SIZE_POWER_STEP));
+		power = (int)(maxPower * (1 - ((index % NUM_POWER_STEPS) * SIZE_POWER_STEP)));
 	}
 
 	retTraveller->setAngleTo(angle);
@@ -188,8 +188,8 @@ IContainedObject *Traveller::createChildObj(int index, int &completionFlag) {
 		float pwr = _ai->getMinPower() * .3;
 		float cosine = cos((static_cast<float>(angle) / 360) * (2 * M_PI));
 		float sine = sin((static_cast<float>(angle) / 360) * (2 * M_PI));
-		int xParam = xCoord + (pwr * cosine);
-		int yParam = yCoord + (pwr * sine);
+		int xParam = (int)(xCoord + (pwr * cosine));
+		int yParam = (int)(yCoord + (pwr * sine));
 
 		if (xParam < 0)
 			xParam += _ai->getMaxX();
@@ -233,8 +233,8 @@ IContainedObject *Traveller::createChildObj(int index, int &completionFlag) {
 
 			int xDist = xCoord - _posX;
 			int yDist = yCoord - _posY;
-			retTraveller->setPosX(xCoord + (terrainSquareSize * 1.414 * (xDist / (abs(xDist) + 1))));
-			retTraveller->setPosY(yCoord + (terrainSquareSize * 1.414 * (yDist / (abs(yDist) + 1))));
+			retTraveller->setPosX((int)(xCoord + (terrainSquareSize * 1.414 * (xDist / (abs(xDist) + 1)))));
+			retTraveller->setPosY((int)(yCoord + (terrainSquareSize * 1.414 * (yDist / (abs(yDist) + 1)))));
 
 			int closestHub = _ai->getClosestUnit(retTraveller->getPosX(), retTraveller->getPosY(), _ai->getMaxX(), _ai->getCurrentPlayer(), 1, BUILDING_MAIN_BASE, 1, 110);
 

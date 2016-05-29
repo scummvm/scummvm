@@ -817,8 +817,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 
 		{
 			// ANGLE setting
-			int angleAdjustment = 0;
-			angleAdjustment = _vm->_rnd.getRandomNumber(_aiType[getCurrentPlayer()]->getAngleVariation() * AI_VAR_BASE_ANGLE) * 3.6;
+			int angleAdjustment = (int)(_vm->_rnd.getRandomNumber(_aiType[getCurrentPlayer()]->getAngleVariation() * AI_VAR_BASE_ANGLE) * 3.6);
 			//pos or neg choice
 			angleAdjustment *= ((_vm->_rnd.getRandomNumber(1) * 2) - 1);
 			angleAdjustment *= randomAttenuation;

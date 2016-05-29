@@ -80,14 +80,14 @@ Common::Point *AntiAirUnit::createTargetPos(int index, int distance, int weaponT
 			targetPos->y = getPosY();
 		} else {
 			ratio = MAX(0, (getRadius() / distance));
-			targetPos->x = getPosX() - ratio * (getPosX() - sourceX);
-			targetPos->y = getPosY() - ratio * (getPosY() - sourceY);
+			targetPos->x = (int16)(getPosX() - ratio * (getPosX() - sourceX));
+			targetPos->y = (int16)(getPosY() - ratio * (getPosY() - sourceY));
 		}
 
 		break;
 
 	case ITEM_EMP:
-		if (getRadius() + 215 > distance) { //emp radius
+		if (getRadius() + 215 > distance) { // Emp radius
 			double x1 = static_cast<double>(sourceX);
 			double y1 = static_cast<double>(sourceY);
 			double x2 = static_cast<double>(getPosX());
@@ -96,17 +96,17 @@ Common::Point *AntiAirUnit::createTargetPos(int index, int distance, int weaponT
 			double r2 = static_cast<double>(getRadius() + 3);
 			double d = static_cast<double>(distance);
 
-			//formulae for calculating one point of intersection of two circles
+			// Formulae for calculating one point of intersection of two circles
 			float root = sqrt((((r1 + r2) * (r1 + r2)) - (d * d)) * ((d * d) - ((r2 - r1) * (r2 - r1))));
-			int x = ((x1 + x2) / 2) + ((x2 - x1) * (r1 * r1 - r2 * r2)) / (2 * d * d) + ((y2 - y1) / (2 * d * d)) * root;
-			int y = ((y1 + y2) / 2) + ((y2 - y1) * (r1 * r1 - r2 * r2)) / (2 * d * d) - ((x2 - x1) / (2 * d * d)) * root;
+			int x = (int)(((x1 + x2) / 2) + ((x2 - x1) * (r1 * r1 - r2 * r2)) / (2 * d * d) + ((y2 - y1) / (2 * d * d)) * root);
+			int y = (int)(((y1 + y2) / 2) + ((y2 - y1) * (r1 * r1 - r2 * r2)) / (2 * d * d) - ((x2 - x1) / (2 * d * d)) * root);
 
 			targetPos->x = x;
 			targetPos->y = y;
 		} else {
 			ratio = 1 - (getRadius() / static_cast<float>(distance - 20));
-			targetPos->x = sourceX + ratio * (getPosX() - sourceX);
-			targetPos->y = sourceY + ratio * (getPosY() - sourceY);
+			targetPos->x = (int16)(sourceX + ratio * (getPosX() - sourceX));
+			targetPos->y = (int16)(sourceY + ratio * (getPosY() - sourceY));
 		}
 
 		break;
@@ -188,7 +188,7 @@ Common::Point *ShieldUnit::createTargetPos(int index, int distance, int weaponTy
 			break;
 
 		case ITEM_EMP:
-			if (getRadius() + 215 > distance) { //emp radius
+			if (getRadius() + 215 > distance) { // Emp radius
 				double x1 = static_cast<double>(sourceX);
 				double y1 = static_cast<double>(sourceY);
 				double x2 = static_cast<double>(getPosX());
@@ -197,17 +197,17 @@ Common::Point *ShieldUnit::createTargetPos(int index, int distance, int weaponTy
 				double r2 = static_cast<double>(getRadius() + 10);
 				double d = static_cast<double>(distance);
 
-				//formulae for calculating one point of intersection of two circles
+				// Formulae for calculating one point of intersection of two circles
 				float root = sqrt((((r1 + r2) * (r1 + r2)) - (d * d)) * ((d * d) - ((r2 - r1) * (r2 - r1))));
-				int x = ((x1 + x2) / 2) + ((x2 - x1) * (r1 * r1 - r2 * r2)) / (2 * d * d) + ((y2 - y1) / (2 * d * d)) * root;
-				int y = ((y1 + y2) / 2) + ((y2 - y1) * (r1 * r1 - r2 * r2)) / (2 * d * d) - ((x2 - x1) / (2 * d * d)) * root;
+				int x = (int)(((x1 + x2) / 2) + ((x2 - x1) * (r1 * r1 - r2 * r2)) / (2 * d * d) + ((y2 - y1) / (2 * d * d)) * root);
+				int y = (int)(((y1 + y2) / 2) + ((y2 - y1) * (r1 * r1 - r2 * r2)) / (2 * d * d) - ((x2 - x1) / (2 * d * d)) * root);
 
 				targetPos->x = x;
 				targetPos->y = y;
 			} else {
 				ratio = 1 - (getRadius() / static_cast<float>(distance - 20));
-				targetPos->x = sourceX + ratio * (getPosX() - sourceX);
-				targetPos->y = sourceY + ratio * (getPosY() - sourceY);
+				targetPos->x = (int16)(sourceX + ratio * (getPosX() - sourceX));
+				targetPos->y = (int16)(sourceY + ratio * (getPosY() - sourceY));
 			}
 
 			if (distance < getRadius()) {
@@ -282,8 +282,8 @@ Common::Point *MineUnit::createTargetPos(int index, int distance, int weaponType
 
 	case ITEM_EMP:
 		ratio = 1 - (getRadius() / static_cast<float>(distance - 20));
-		targetPos->x = sourceX + ratio * (getPosX() - sourceX);
-		targetPos->y = sourceY + ratio * (getPosY() - sourceY);
+		targetPos->x = (int16)(sourceX + ratio * (getPosX() - sourceX));
+		targetPos->y = (int16)(sourceY + ratio * (getPosY() - sourceY));
 		break;
 
 	default:

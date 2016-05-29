@@ -226,7 +226,7 @@ IContainedObject *Sortie::createChildObj(int index, int &completionFlag) {
 				if (!_ai->_vm->_rnd.getRandomNumber(4))
 					currentWeapon->setTypeID(ITEM_MINE);
 
-				(*i)->setDamage(thisDamage);
+				(*i)->setDamage((int)thisDamage);
 
 				// Apply emp effect
 				if (currentWeapon->getTypeID() == ITEM_EMP) {
@@ -278,7 +278,8 @@ float Sortie::calcH() {
 }
 
 int Sortie::checkSuccess() {
-	if (!_enemyDefenses.size()) return SUCCESS;
+	if (!_enemyDefenses.size())
+		return SUCCESS;
 
 	int targetX = getTargetPosX();
 	int targetY = getTargetPosY();
@@ -431,8 +432,8 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 			int randAngle = directAngleToHub + _ai->_vm->_rnd.getRandomNumber(179) - 90;
 			int randDist = _ai->_vm->_rnd.getRandomNumber(109) + 40;
 
-			int x = targetX + randDist * cos(_ai->degToRad(randAngle));
-			int y = targetY + randDist * sin(_ai->degToRad(randAngle));
+			int x = (int)(targetX + randDist * cos(_ai->degToRad(randAngle)));
+			int y = (int)(targetY + randDist * sin(_ai->degToRad(randAngle)));
 
 			int powAngle = _ai->getPowerAngleFromPoint(hubX, hubY, x, y, 20);
 
@@ -496,8 +497,8 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 
 					int xDist = xCoord - x;
 					int yDist = yCoord - y;
-					x = xCoord + (terrainSquareSize * 1.414 * (xDist / (abs(xDist) + 1)));
-					y = yCoord + (terrainSquareSize * 1.414 * (yDist / (abs(yDist) + 1)));
+					x = (int)(xCoord + (terrainSquareSize * 1.414 * (xDist / (abs(xDist) + 1))));
+					y = (int)(yCoord + (terrainSquareSize * 1.414 * (yDist / (abs(yDist) + 1))));
 
 					setTargetX(x);
 					setTargetY(y);
