@@ -613,6 +613,11 @@ bool CGameObject::compareViewNameTo(const CString &name) const {
 	return getViewFullName().compareToIgnoreCase(name);
 }
 
+int CGameObject::compareRoomNameTo(const CString &name) {
+	CRoomItem *room = getGameManager()->getRoom();
+	return room->getName().compareToIgnoreCase(name);
+}
+
 void CGameObject::petDisplayMsg(const CString &msg) const {
 	CPetControl *pet = getPetControl();
 	if (pet)
@@ -805,6 +810,71 @@ void CGameObject::checkPlayMovie(const CString &name, int flags) {
 		_surface->proc35(name, flags, (flags & CLIPFLAG_4) ? this : nullptr);
 		if (flags & CLIPFLAG_PLAY)
 			getGameManager()->_gameState.addMovie(_surface->_movie);
+	}
+}
+
+void CGameObject::clearPet() const {
+	CPetControl *petControl = getPetControl();
+	if (petControl)
+		petControl->clear();
+}
+
+CPetControl *CGameObject::getPetControl() const {
+	return static_cast<CPetControl *>(getDontSaveChild(CPetControl::_type));
+}
+
+CMailMan *CGameObject::getMailMan() const {
+	return dynamic_cast<CMailMan *>(getDontSaveChild(CMailMan::_type));
+}
+
+CTreeItem *CGameObject::getDontSaveChild(ClassDef *classDef) const {
+	CProjectItem *root = getRoot();
+	if (!root)
+		return nullptr;
+
+	CDontSaveFileItem *dontSave = root->getDontSaveFileItem();
+	if (!dontSave)
+		return nullptr;
+
+	return dontSave->findChildInstanceOf(classDef);
+}
+
+CRoomItem *CGameObject::getRoom() const {
+	CGameManager *gameManager = getGameManager();
+	return gameManager ? gameManager->getRoom() : nullptr;
+}
+
+CRoomItem *CGameObject::getHiddenRoom() const {
+	CProjectItem *root = getRoot();
+	return root ? root->findHiddenRoom() : nullptr;
+}
+
+CMusicRoom *CGameObject::getMusicRoom() const {
+	CGameManager *gameManager = getGameManager();
+	return gameManager ? &gameManager->_musicRoom : nullptr;
+}
+
+int CGameObject::getPassengerClass() const {
+	CGameManager *gameManager = getGameManager();
+	return gameManager ? gameManager->_gameState._passengerClass : 3;
+}
+
+int CGameObject::getPriorClass() const {
+	CGameManager *gameManager = getGameManager();
+	return gameManager ? gameManager->_gameState._priorClass : 3;
+}
+
+void CGameObject::setPassengerClass(int newClass) {
+	if (newClass >= 1 && newClass <= 4) {
+		// Change the passenger class
+		CGameManager *gameMan = getGameManager();
+		gameMan->_gameState._priorClass = gameMan->_gameState._passengerClass;
+		gameMan->_gameState._passengerClass = newClass;
+
+		// Setup the PET again, so the new class's PET background can take effect
+		CPetControl *petControl = getPetControl();
+		if (petControl)
+			petControl->setup();
 	}
 }
 

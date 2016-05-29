@@ -103,11 +103,6 @@ protected:
 	bool checkStartDragging(CMouseDragStartMsg *msg);
 
 	/**
-	 * Marks the area in the passed rect as dirty, and requiring re-rendering
-	 */
-	void makeDirty(const Rect &r);
-
-	/**
 	 * Sets a new area in the PET
 	 */
 	void setPetArea(PetArea newArea) const;
@@ -195,6 +190,11 @@ protected:
 	bool compareViewNameTo(const CString &name) const;
 
 	/**
+	 * Compare the name of the parent room to the item to a passed string
+	 */
+	int compareRoomNameTo(const CString &name);
+
+	/**
 	* Display a message in the PET
 	*/
 	void petDisplayMsg(const CString &msg) const;
@@ -258,6 +258,80 @@ protected:
 	 * Support function for drag moving
 	 */
 	void dragMove(const Point &pt);
+
+	/**
+	 * Set the position of the object
+	 */
+	void setPosition(const Point &newPos);
+
+	void sound8(bool flag) const;
+
+	/**
+	 * Play an arbitrary clip
+	 */
+	void playClip(const CString &name, uint flags);
+
+	/**
+	 * Play a clip
+	 */
+	void playClip(uint startFrame, uint endFrame);
+
+	/**
+	 * Return the current view/node/room as a single string
+	 */
+	CString getViewFullName() const;
+
+	/**
+	 * Returns true if a clip exists in the list with a given name
+	 * and starting frame number
+	 */
+	bool clipExistsByStart(const CString &name, int startFrame = 0) const;
+
+	/**
+	 * Returns true if a clip exists in the list with a given name
+	 * and ending frame number
+	 */
+	bool clipExistsByEnd(const CString &name, int endFrame = 0) const;
+
+	/**
+	 * Clear the PET display
+	 */
+	void clearPet() const;
+	
+	/**
+	 * Returns the PET control
+	 */
+	CPetControl *getPetControl() const;
+
+	/**
+	 * Returns the MailMan
+	 */
+	CMailMan *getMailMan() const;
+
+	/**
+	 * Returns a child of the Dont Save area of the project of the given class
+	 */
+	CTreeItem *getDontSaveChild(ClassDef *classDef) const;
+
+	/**
+	 * Return the current room
+	 */
+	CRoomItem *getRoom() const;
+
+	/**
+	 * Returns the special hidden room container
+	 */
+	CRoomItem *getHiddenRoom() const;
+
+	/**
+	 * Returns the music room instance from the game manager
+	 */
+	CMusicRoom *getMusicRoom() const;
+
+	/**
+	 * Set's the player's passenger class
+	 */
+	void setPassengerClass(int newClass);
 public:
 	int _field60;
 	CursorId _cursorId;
@@ -292,9 +366,14 @@ public:
 	virtual bool isPet() const;
 
 	/**
-	 * Stops any movie currently playing for the object
+	 * Play the movie specified in _resource
 	 */
-	void stopMovie();
+	void playMovie(uint startFrame, uint endFrame, uint flags);
+
+	/**
+	 * Moves the item from it's original position to be under the hidden room
+	 */
+	void moveToHiddenRoom();
 
 	/**
 	 * Checks the passed point is validly in the object,
@@ -303,9 +382,14 @@ public:
 	bool checkPoint(const Point &pt, bool ignore40 = false, bool visibleOnly = false);
 
 	/**
-	 * Set the position of the object
+	 * Change the object's status
 	 */
-	void setPosition(const Point &newPos);
+	void playMovie(uint flags);
+	
+	/**
+	 * Checks and plays a pending clip
+	 */
+	void checkPlayMovie(const CString &name, int flags);
 
 	/**
 	 * Returns true if the object has a currently active movie
@@ -313,12 +397,19 @@ public:
 	bool hasActiveMovie() const;
 
 	/**
+	 * Stops any movie currently playing for the object
+	 */
+	void stopMovie();
+
+	/**
 	 * Get the current movie frame
 	 */
 	int getMovieFrame() const;
 	
-	int getSurface45() const;
-	void sound8(bool flag) const;
+	/**
+	 * Returns the object's frame number
+	 */
+	int getFrameNumber() const { return _frameNumber; }
 
 	/**
 	 * Loads a frame
@@ -326,29 +417,14 @@ public:
 	void loadFrame(int frameNumber);
 
 	/**
-	 * Change the object's status
+	 * Marks the area occupied by the object as dirty, requiring re-rendering
 	 */
-	void playMovie(uint flags);
+	void makeDirty();
 
 	/**
-	 * Play the movie specified in _resource
+	 * Marks the area in the passed rect as dirty, and requiring re-rendering
 	 */
-	void playMovie(uint startFrame, uint endFrame, uint flags);
-
-	/**
-	 * Play an arbitrary clip
-	 */
-	void playClip(const CString &name, uint flags);
-
-	/**
-	 * Play a clip
-	 */
-	void playClip(uint startFrame, uint endFrame);
-
-	/**
-	 * Return the current view/node/room as a single string
-	 */
-	CString getViewFullName() const;
+	void makeDirty(const Rect &r);
 
 	/**
 	 * Sets whether the object is visible
@@ -356,36 +432,16 @@ public:
 	void setVisible(bool val);
 
 	/**
-	 * Moves the item from it's original position to be under the hidden room
+	 * Return the player's passenger class
 	 */
-	void moveToHiddenRoom();
-
+	int getPassengerClass() const;
+	
 	/**
-	 * Returns the object's frame number
+	 * Return the player's previous passenger class
 	 */
-	int getFrameNumber() const { return _frameNumber; }
+	int getPriorClass() const;
 
-	/**
-	 * Marks the area occupied by the object as dirty, requiring re-rendering
-	 */
-	void makeDirty();
-
-	/**
-	 * Returns true if a clip exists in the list with a given name
-	 * and starting frame number
-	 */
-	bool clipExistsByStart(const CString &name, int startFrame = 0) const;
-
-	/**
-	 * Returns true if a clip exists in the list with a given name
-	 * and ending frame number
-	 */
-	bool clipExistsByEnd(const CString &name, int endFrame = 0) const;
-
-	/**
-	 * Checks and plays a pending clip
-	 */
-	void checkPlayMovie(const CString &name, int flags);
+	int getSurface45() const;
 };
 
 } // End of namespace Titanic

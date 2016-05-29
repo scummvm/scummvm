@@ -238,61 +238,6 @@ public:
 	 * Finds a tree item by name
 	 */
 	CNamedItem *findByName(const CString &name, int maxLen = 0);
-
-	/**
-	 * Compare the name of the parent room to the item to a passed string
-	 */
-	int compareRoomNameTo(const CString &name);
-
-	/**
-	 * Clear the PET display
-	 */
-	void clearPet() const;
-	
-	/**
-	 * Returns the PET control
-	 */
-	CPetControl *getPetControl() const;
-
-	/**
-	 * Returns the MailMan
-	 */
-	CMailMan *getMailMan() const;
-
-	/**
-	 * Returns a child of the Dont Save area of the project of the given class
-	 */
-	CTreeItem *getDontSaveChild(ClassDef *classDef) const;
-
-	/**
-	 * Return the current room
-	 */
-	CRoomItem *getRoom() const;
-
-	/**
-	 * Returns the special hidden room container
-	 */
-	CRoomItem *getHiddenRoom() const;
-
-	/**
-	 * Returns the music room instance from the game manager
-	 */
-	CMusicRoom *getMusicRoom() const;
-
-	/**
-	 * Return the player's passenger class
-	 */
-	int getPassengerClass() const;
-	
-	/**
-	 * Return the player's previous passenger class
-	 */
-	int getPriorClass() const;
-
-	/**
-	 * Set's the player's passenger class
-	 */
-	void setPassengerClass(int newClass);
 };
 
 } // End of namespace Titanic

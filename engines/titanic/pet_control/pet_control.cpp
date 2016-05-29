@@ -225,7 +225,7 @@ void CPetControl::fn3(CTreeItem *item) {
 
 CRoomItem *CPetControl::getHiddenRoom() {
 	if (!_hiddenRoom)
-		_hiddenRoom = CTreeItem::getHiddenRoom();
+		_hiddenRoom = CGameObject::getHiddenRoom();
 
 	return _hiddenRoom;
 }
