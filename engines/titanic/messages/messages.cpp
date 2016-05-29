@@ -73,7 +73,7 @@ bool CMessage::execute(const CString &target, const ClassDef *classDef, int flag
 	// Scan for the target by name
 	CProjectItem *project = g_vm->_window->_project;
 	for (CTreeItem *treeItem = project; treeItem; treeItem = treeItem->scan(project)) {
-		if (treeItem->getName().compareToIgnoreCase(target))
+		if (!treeItem->getName().compareToIgnoreCase(target))
 			return execute(treeItem, classDef, flags);
 	}
 
