@@ -29,10 +29,14 @@
 
 namespace Titanic {
 
+/**
+ * Types of words
+ */
 enum WordClass { 
 	WC_UNKNOWN = 0, WC_ACTION = 1, WC_THING = 2, WC_ABSTRACT = 3,
 	WC_ARTICLE = 4, WC_CONJUNCTION = 5, WC_PRONOUN = 6,
 	WC_PREPOSITION = 7, WC_ADJECTIVE = 8, WC_ADVERB = 9,
+	// TODO: These may not actually be part of this enum
 	WC_UNK_ACTION = 10,
 	WC_ATRANS = 11,		// transfer possession, eg: give/take
 	WC_PTRANS = 12,		// physical transfer, eg: go
