@@ -119,6 +119,7 @@ MODULE_OBJS += \
 	midi/windows.o \
 	plugins/win32/win32-provider.o \
 	saves/windows/windows-saves.o \
+	updates/win32/win32-updates.o \
 	taskbar/win32/win32-taskbar.o
 endif
 

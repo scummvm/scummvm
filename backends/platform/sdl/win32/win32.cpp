@@ -41,6 +41,7 @@
 #include "backends/saves/windows/windows-saves.h"
 #include "backends/fs/windows/windows-fs-factory.h"
 #include "backends/taskbar/win32/win32-taskbar.h"
+#include "backends/updates/win32/win32-updates.h"
 
 #include "common/memstream.h"
 
@@ -81,6 +82,11 @@ void OSystem_Win32::initBackend() {
 	// Create the savefile manager
 	if (_savefileManager == 0)
 		_savefileManager = new WindowsSaveFileManager();
+
+#if defined(USE_SPARKLE)
+	// Initialize updates manager
+	_updateManager = new Win32UpdateManager();
+#endif
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::initBackend();
