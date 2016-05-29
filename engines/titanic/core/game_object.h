@@ -35,9 +35,13 @@ namespace Titanic {
 enum Find { FIND_GLOBAL = 1, FIND_ROOM = 2, FIND_PET = 4, FIND_MAILMAN = 8 };
 enum Found { FOUND_NONE = 0, FOUND_GLOBAL = 1, FOUND_ROOM = 2, FOUND_PET = 3, FOUND_MAILMAN = 4 };
 
-class CVideoSurface;
+class CMailMan;
+class CMusicRoom;
+class CRoomItem;
+class CStarControl;
 class CMouseDragStartMsg;
 class CTrueTalkNPC;
+class CVideoSurface;
 class OSMovie;
 
 class CGameObject : public CNamedItem {
@@ -125,6 +129,11 @@ protected:
 	void dec54();
 
 	/**
+	 * Adds a room to the room list
+	 */
+	void petAddRoom(int roomNum);
+
+	/**
 	 * Locks/hides the mouse
 	 */
 	void lockMouse();
@@ -195,9 +204,14 @@ protected:
 	int compareRoomNameTo(const CString &name);
 
 	/**
-	* Display a message in the PET
-	*/
+	 * Display a message in the PET
+	 */
 	void petDisplayMsg(const CString &msg) const;
+
+	/**
+	 * Display a message
+	 */
+	void displayMessage(const CString &msg) const;
 
 	/**
 	 * Gets the first object under the system MailMan
@@ -307,6 +321,11 @@ protected:
 	 * Returns the MailMan
 	 */
 	CMailMan *getMailMan() const;
+
+	/**
+	 * Returns the star control
+	 */
+	CStarControl *getStarControl() const;
 
 	/**
 	 * Returns a child of the Dont Save area of the project of the given class

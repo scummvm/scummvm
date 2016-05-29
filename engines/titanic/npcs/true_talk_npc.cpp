@@ -111,8 +111,8 @@ bool CTrueTalkNPC::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMs
 			CNPCPlayTalkingAnimationMsg msg1(_soundId, 0, 0);
 			msg1.execute(this);
 
-			if (msg1._value3) {
-				CNPCPlayAnimationMsg msg2(msg1._value3, msg1._value1);
+			if (msg1._names) {
+				CNPCPlayAnimationMsg msg2(msg1._names, msg1._value1);
 				msg2.execute(this);
 			}
 		}
@@ -151,8 +151,8 @@ bool CTrueTalkNPC::MovieEndMsg(CMovieEndMsg *msg) {
 	CNPCPlayTalkingAnimationMsg msg1(ticks, ticks > 1000 ? 2 : 1, 0);
 	msg1.execute(this);
 
-	if (msg1._value3) {
-		CNPCPlayAnimationMsg msg2(msg1._value3, msg1._value1);
+	if (msg1._names) {
+		CNPCPlayAnimationMsg msg2(msg1._names, msg1._value1);
 		msg2.execute(this);
 	}
 	
@@ -173,8 +173,8 @@ bool CTrueTalkNPC::TimerMsg(CTimerMsg *msg) {
 
 		CNPCPlayIdleAnimationMsg idleMsg;
 		if (idleMsg.execute(this)) {
-			if (idleMsg._value) {
-				CNPCPlayAnimationMsg animMsg(idleMsg._value, 0);
+			if (idleMsg._names) {
+				CNPCPlayAnimationMsg animMsg(idleMsg._names, 0);
 				animMsg.execute(this);
 			}
 

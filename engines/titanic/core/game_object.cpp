@@ -26,6 +26,7 @@
 #include "titanic/core/room_item.h"
 #include "titanic/npcs/true_talk_npc.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/star_control/star_control.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/support/screen_manager.h"
 #include "titanic/support/video_surface.h"
@@ -624,6 +625,10 @@ void CGameObject::petDisplayMsg(const CString &msg) const {
 		pet->displayMessage(msg);
 }
 
+void CGameObject::displayMessage(const CString &msg) const {
+	petDisplayMsg(msg);
+}
+
 CGameObject *CGameObject::getMailManFirstObject() const {
 	CMailMan *mailMan = getMailMan();
 	return mailMan ? mailMan->getFirstObject() : nullptr;
@@ -718,6 +723,12 @@ void CGameObject::inc54() {
 
 void CGameObject::dec54() {
 	getGameManager()->dec54();
+}
+
+void CGameObject::petAddRoom(int roomNum) {
+	CPetControl *petControl = getPetControl();
+	if (petControl)
+		petControl->addRoom(roomNum);
 }
 
 void CGameObject::lockMouse() {
@@ -825,6 +836,17 @@ CPetControl *CGameObject::getPetControl() const {
 
 CMailMan *CGameObject::getMailMan() const {
 	return dynamic_cast<CMailMan *>(getDontSaveChild(CMailMan::_type));
+}
+
+CStarControl *CGameObject::getStarControl() const {
+	CStarControl *starControl = static_cast<CStarControl *>(getDontSaveChild(CStarControl::_type));
+	if (!starControl) {
+		CViewItem *view = getGameManager()->getView();
+		if (view)
+			starControl = starControl = static_cast<CStarControl *>(view->findChildInstanceOf(CStarControl::_type));
+	}
+
+	return starControl;
 }
 
 CTreeItem *CGameObject::getDontSaveChild(ClassDef *classDef) const {

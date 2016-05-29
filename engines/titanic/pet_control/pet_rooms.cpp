@@ -202,6 +202,11 @@ int CPetRooms::fn1() {
 	return 0;
 }
 
+int CPetRooms::fn2(int val) {
+	warning("TODO: CPetRooms::fn2");
+	return 0;
+}
+
 void CPetRooms::areaChanged(PetArea area) {
 	if (_petControl && _petControl->_currentArea == area)
 		_petControl->makeDirty();
@@ -219,6 +224,10 @@ CPetRoomsGlyph *CPetRooms::addGlyph(int val, bool highlight) {
 
 		return glyph;
 	}
+}
+
+void CPetRooms::addRoom(int roomNum) {
+	warning("TODO: CPetRooms::addRoom");
 }
 
 } // End of namespace Titanic

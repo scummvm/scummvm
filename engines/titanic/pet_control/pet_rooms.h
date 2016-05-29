@@ -147,6 +147,13 @@ public:
 	virtual CPetText *getText();
 
 	virtual CGameObject *getBackground(int index);
+
+	/**
+	 * Adds a room to the room list
+	 */
+	void addRoom(int roomNum);
+
+	int fn2(int val);
 };
 
 } // End of namespace Titanic

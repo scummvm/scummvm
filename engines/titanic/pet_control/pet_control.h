@@ -293,6 +293,12 @@ public:
 	 * room.node.view tuplet form
 	 */
 	CString getFullViewName();
+
+	/**
+	 * Adds a room to the room list
+	 */
+	void addRoom(int roomNum);
+	int roomFn2(int val);
 };
 
 } // End of namespace Titanic

@@ -24,19 +24,14 @@
 #define TITANIC_TREE_ITEM_H
 
 #include "titanic/core/message_target.h"
+#include "titanic/support/simple_file.h"
 
 namespace Titanic {
 
 class CGameManager;
-class CDontSaveFileItem;
-class CMailMan;
-class CMessage;
-class CMusicRoom;
 class CNamedItem;
-class CPetControl;
 class CProjectItem;
 class CScreenManager;
-class CRoomItem;
 class CViewItem;
 
 class CTreeItem: public CMessageTarget {

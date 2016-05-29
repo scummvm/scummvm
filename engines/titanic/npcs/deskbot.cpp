@@ -21,8 +21,19 @@
  */
 
 #include "titanic/npcs/deskbot.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
+
+static const char *const TALKING_NAMES[] = {
+	"NeutralTalking", "HandFidget1", "HandFidget2", "LookingAround",
+	"FriendlyTalking", "MoreRudeness", "HandUp", "TapFingers",
+	"WaveOn", "WaveArmsAround", "HandsOverEdge"
+};
+
+static const char *const IDLE_NAMES[] = {
+	"WaveOn", "HandFidget1", "HandFidget2", "TapFingers", "HandsOverEdge"
+};
 
 BEGIN_MESSAGE_MAP(CDeskbot, CTrueTalkNPC)
 	ON_MESSAGE(TurnOn)
@@ -41,7 +52,7 @@ END_MESSAGE_MAP()
 int CDeskbot::_v1;
 int CDeskbot::_v2;
 
-CDeskbot::CDeskbot() : CTrueTalkNPC(), _deskbotActive(false), _field10C(0) {
+CDeskbot::CDeskbot() : CTrueTalkNPC(), _deskbotActive(false), _classNum(0) {
 }
 
 void CDeskbot::save(SimpleFile *file, int indent) const {
@@ -49,7 +60,7 @@ void CDeskbot::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_v2, indent);
 	file->writeNumberLine(_deskbotActive, indent);
-	file->writeNumberLine(_field10C, indent);
+	file->writeNumberLine(_classNum, indent);
 
 	CTrueTalkNPC::save(file, indent);
 }
@@ -59,7 +70,7 @@ void CDeskbot::load(SimpleFile *file) {
 	_v1 = file->readNumber();
 	_v2 = file->readNumber();
 	_deskbotActive = file->readNumber();
-	_field10C = file->readNumber();
+	_classNum = file->readNumber();
 
 	CTrueTalkNPC::load(file);
 }
@@ -98,12 +109,12 @@ bool CDeskbot::ActMsg(CActMsg *msg) {
 bool CDeskbot::MovieEndMsg(CMovieEndMsg *msg) {
 	bool flag = false;
 	if (_npcFlags & NPCFLAG_10000) {
-		if (_field10C) {
+		if (_classNum) {
 			setPetArea(PET_ROOMS);
 			dec54();
 			unlockMouse();
 			playSound("z#47.wav", 100, 0, 0);
-			_field10C = false;
+			_classNum = false;
 		}
 
 		_npcFlags &= ~NPCFLAG_10000;
@@ -161,39 +172,126 @@ bool CDeskbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 		setPetArea(PET_CONVERSATION);
 		playClip("ReprogramPETInHand", 4);
 		_npcFlags |= NPCFLAG_10000;
-		_field10C = msg->_param1;
+		_classNum = msg->_param1;
 
-		switch (_field10C) {
+		switch (_classNum) {
 		case 1:
 			petDisplayMsg("You have been upgraded to 1st Class status. Enjoy hugely.");
-			
+			setPassengerClass(_classNum);
+			petAddRoom(_classNum);
 			break;
 		case 2:
 			petDisplayMsg("You have been upgraded to 2nd Class status. Enjoy.");
+			setPassengerClass(_classNum);
+			petAddRoom(_classNum);
+			break;
+		case 3:
+			setPassengerClass(3);
+			petAddRoom(_classNum);
+			break;
+		default:
 			break;
 		}
+
+	case 20:
+		if (getPassengerClass() == 1) {
+			CPetControl *petControl = getPetControl();
+			if (petControl)
+				petControl->roomFn2(4);
+		}
+		break;
+
+	case 21:
+		if (getPassengerClass() == 1) {
+			CPetControl *petControl = getPetControl();
+			if (petControl)
+				petControl->roomFn2(3);
+		}
+		break;
+
+	case 22:
+		if (getPassengerClass() == 1) {
+			CPetControl *petControl = getPetControl();
+			if (petControl)
+				petControl->roomFn2(2);
+		}
+		break;
+
+	case 23:
+		if (getPassengerClass() == 1) {
+			CPetControl *petControl = getPetControl();
+			if (petControl)
+				petControl->roomFn2(1);
+		}
+		break;
+
+	case 26:
+		_npcFlags |= NPCFLAG_80000;
+		CTurnOff turnOff;
+		turnOff.execute(this);
+		lockMouse();
+		break;
 	}
 
 	return true;
 }
 
 bool CDeskbot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
-	// TODO
+	if (msg->_value2 != 2)
+		msg->_names = TALKING_NAMES;
+
 	return true;
 }
 
 bool CDeskbot::NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg) {
-	// TODO
+	msg->_names = IDLE_NAMES;
 	return true;
 }
 
 bool CDeskbot::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMsg *msg) {
-	// TODO
+	if (_npcFlags & NPCFLAG_40000)
+		return true;
+
+	CTrueTalkNPC::TrueTalkNotifySpeechStartedMsg(msg);
+	switch (msg->_dialogueId) {
+	case 41684:
+	case 41686:
+	case 41787:
+	case 41788:
+	case 41789:
+		lockMouse();
+		break;
+	default:
+		break;
+	}
+	
 	return true;
 }
 
 bool CDeskbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) {
-	// TODO
+	if (_npcFlags & NPCFLAG_40000)
+		return true;
+
+	CTurnOff turnOff;
+	CTrueTalkNPC::TrueTalkNotifySpeechEndedMsg(msg);
+
+	switch (msg->_dialogueId) {
+	case 41684:
+	case 41787:
+	case 41788:
+	case 41789:
+		_npcFlags |= NPCFLAG_80000;
+		turnOff.execute(this);
+
+	case 41686:
+		_npcFlags |= NPCFLAG_100000;
+		turnOff.execute(this);
+		break;
+
+	default:
+		break;
+	}
+
 	return true;
 }
 

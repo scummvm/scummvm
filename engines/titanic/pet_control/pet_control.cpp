@@ -516,4 +516,12 @@ CString CPetControl::getFullViewName() {
 	return gameManager ? gameManager->getFullViewName() : CString();
 }
 
+void CPetControl::addRoom(int roomNum) {
+	_rooms.addRoom(roomNum);
+}
+
+int CPetControl::roomFn2(int val) {
+	return _rooms.fn2(val);
+}
+
 } // End of namespace Titanic
