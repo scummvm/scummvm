@@ -83,7 +83,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "(c) Tsunami Media";
+		return "(C) Tsunami Media";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const {

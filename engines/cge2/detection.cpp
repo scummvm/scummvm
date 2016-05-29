@@ -119,7 +119,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Sfinx (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon";
+		return "Sfinx (C) 1994-1997 Janus B. Wisniewski and L.K. Avalon";
 	}
 
 	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
