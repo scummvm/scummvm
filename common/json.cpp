@@ -300,13 +300,15 @@ JSONValue *JSONValue::parse(const char **data) {
 		bool neg = **data == '-';
 		if (neg) (*data)++;
 
+		int integer = 0;
 		double number = 0.0;
+		bool onlyInteger = true;
 
 		// Parse the whole part of the number - only if it wasn't 0
 		if (**data == '0')
 			(*data)++;
 		else if (**data >= '1' && **data <= '9')
-			number = JSON::parseInt(data);
+			number = integer = JSON::parseInt(data);
 		else
 			return NULL;
 
@@ -325,6 +327,7 @@ JSONValue *JSONValue::parse(const char **data) {
 
 			// Save the number
 			number += decimal;
+			onlyInteger = false;
 		}
 
 		// Could be an exponent now...
@@ -346,10 +349,14 @@ JSONValue *JSONValue::parse(const char **data) {
 			double expo = JSON::parseInt(data);
 			for (double i = 0.0; i < expo; i++)
 				number = neg_expo ? (number / 10.0) : (number * 10.0);
+			onlyInteger = false;
 		}
 
 		// Was it neg?
 		if (neg) number *= -1;
+
+		if (onlyInteger)
+			return new JSONValue(neg ? -integer : integer);
 
 		return new JSONValue(number);
 	}
@@ -555,6 +562,18 @@ JSONValue::JSONValue(double numberValue) {
 }
 
 /**
+* Basic constructor for creating a JSON Value of type Number (Integer)
+*
+* @access public
+*
+* @param int numberValue The number to use as the value
+*/
+JSONValue::JSONValue(int numberValue) {
+	_type = JSONType_IntegerNumber;
+	_integerValue = numberValue;
+}
+
+/**
 * Basic constructor for creating a JSON Value of type Array
 *
 * @access public
@@ -599,6 +618,10 @@ JSONValue::JSONValue(const JSONValue &source) {
 
 	case JSONType_Number:
 		_numberValue = source._numberValue;
+		break;
+
+	case JSONType_IntegerNumber:
+		_integerValue = source._integerValue;
 		break;
 
 	case JSONType_Array: {
@@ -695,6 +718,17 @@ bool JSONValue::isNumber() const {
 }
 
 /**
+* Checks if the value is an Integer
+*
+* @access public
+*
+* @return bool Returns true if it is an Integer value, false otherwise
+*/
+bool JSONValue::isIntegerNumber() const {
+	return _type == JSONType_IntegerNumber;
+}
+
+/**
 * Checks if the value is an Array
 *
 * @access public
@@ -750,6 +784,18 @@ bool JSONValue::asBool() const {
 */
 double JSONValue::asNumber() const {
 	return _numberValue;
+}
+
+/**
+* Retrieves the Integer value of this JSONValue
+* Use isIntegerNumber() before using this method.
+*
+* @access public
+*
+* @return int Returns the number value
+*/
+int JSONValue::asIntegerNumber() const {
+	return _integerValue;
 }
 
 /**
@@ -937,6 +983,13 @@ String JSONValue::stringifyImpl(size_t const indentDepth) const {
 			sprintf(str, "%lg", _numberValue);
 			ret_string = str;
 		}
+		break;
+	}
+
+	case JSONType_IntegerNumber: {
+		char str[80];
+		sprintf(str, "%d", _integerValue);
+		ret_string = str;		
 		break;
 	}
 

@@ -85,7 +85,7 @@ typedef HashMap<String, JSONValue*> JSONObject;
 
 class JSON;
 
-enum JSONType { JSONType_Null, JSONType_String, JSONType_Bool, JSONType_Number, JSONType_Array, JSONType_Object };
+enum JSONType { JSONType_Null, JSONType_String, JSONType_Bool, JSONType_Number, JSONType_IntegerNumber, JSONType_Array, JSONType_Object };
 
 class JSONValue {
 	friend class JSON;
@@ -96,6 +96,7 @@ public:
 	JSONValue(const String &stringValue);
 	JSONValue(bool boolValue);
 	JSONValue(double numberValue);
+	JSONValue(int numberValue);
 	JSONValue(const JSONArray &arrayValue);
 	JSONValue(const JSONObject &objectValue);
 	JSONValue(const JSONValue &source);
@@ -105,12 +106,14 @@ public:
 	bool isString() const;
 	bool isBool() const;
 	bool isNumber() const;
+	bool isIntegerNumber() const;
 	bool isArray() const;
 	bool isObject() const;
 
 	const String &asString() const;
 	bool asBool() const;
 	double asNumber() const;
+	int asIntegerNumber() const;
 	const JSONArray &asArray() const;
 	const JSONObject &asObject() const;
 
@@ -135,6 +138,7 @@ private:
 	union {
 		bool _boolValue;
 		double _numberValue;
+		int _integerValue;
 		String *_stringValue;
 		JSONArray *_arrayValue;
 		JSONObject *_objectValue;
