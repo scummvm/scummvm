@@ -114,6 +114,23 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Neverhood earlier English demo version
+		{
+			"neverhood",
+			"Demo",
+			AD_ENTRY1s("nevdemo.blb", "9cbc33bc8ebacacfc8071f3e26a9c85f", 22357020),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NONE)
+		},
+		0,
+		0,
+		0,
+		0,
+	},
+
+	{
 		// Neverhood Russian version. Dyadyushka Risech
 		{
 			"neverhood",
