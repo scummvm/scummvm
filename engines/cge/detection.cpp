@@ -123,7 +123,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Soltys (c) 1994-1996 L.K. Avalon";
+		return "Soltys (C) 1994-1996 L.K. Avalon";
 	}
 
 	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
