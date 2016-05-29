@@ -75,7 +75,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Voyeur (c) Philips P.O.V. Entertainment Group";
+		return "Voyeur (C) Philips P.O.V. Entertainment Group";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
