@@ -1748,7 +1748,7 @@ void Wiz::copyCompositeWizImage(uint8 *dst, uint8 *wizPtr, uint8 *compositeInfoB
 			drawFlags = flags;
 		}
 
-		uint srcw1, srch1;
+		uint srcw1 = 0, srch1 = 0;
 		if (drawFlags & (kWIFFlipX | kWIFFlipY)) {
 			uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), wizPtr, subState, 0);
 			assert(wizh);
