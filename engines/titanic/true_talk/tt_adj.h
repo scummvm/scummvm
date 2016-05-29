@@ -31,7 +31,7 @@ class TTadj : public TTmajorWord {
 private:
 	static bool _staticFlag;
 protected:
-	int _field30;
+	int _val;
 public:
 	TTadj(TTstring &str, WordClass wordClass, int val2, int val3, int val4);
 	TTadj(const TTadj *src);
@@ -41,22 +41,24 @@ public:
 	 */
 	int load(SimpleFile *file);
 
+	int adjFn1(int val);
+
 	/**
 	 * Creates a copy of the word
 	 */
 	virtual TTword *copy() const;
 
-	virtual bool proc14(int val) const { return _field30 == val; }
-	virtual int proc15() const { return _field30; }
-	virtual bool proc16() const { return _field30 >= 7; }
-	virtual bool proc17() const { return _field30 <= 3; }
-	virtual bool proc18() const { return _field30 > 3 && _field30 < 7; }
+	virtual bool proc14(int val) const { return _val == val; }
+	virtual int proc15() const { return _val; }
+	virtual bool proc16() const { return _val >= 7; }
+	virtual bool proc17() const { return _val <= 3; }
+	virtual bool proc18() const { return _val > 3 && _val < 7; }
 
 	/**
 	 * Dumps data associated with the word to file
 	 */
 	virtual int save(SimpleFile *file) const {
-		return saveData(file, _field30);
+		return saveData(file, _val);
 	}
 };
 

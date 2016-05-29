@@ -29,19 +29,19 @@ bool TTadj::_staticFlag;
 TTadj::TTadj(TTstring &str, WordClass wordClass, int val2, int val3, int val4) :
 		TTmajorWord(str, wordClass, val2, val3) {
 	if (val4 >= 0 && val4 <= 9) {
-		_field30 = val4;
+		_val = val4;
 	} else {
-		_field30 = 0;
+		_val = 0;
 		_status = SS_5;
 	}
 }
 
 TTadj::TTadj(const TTadj *src) : TTmajorWord(src) {
 	if (src->getStatus()) {
-		_field30 = 0;
+		_val = 0;
 		_status = SS_5;
 	} else {
-		_field30 = src->_field30;
+		_val = src->_val;
 	}
 }
 
@@ -49,10 +49,19 @@ int TTadj::load(SimpleFile *file) {
 	int val;
 
 	if (!TTword::load(file, WC_ADJECTIVE) && file->scanf("%d", &val)) {
-		_field30 = val;
+		_val = val;
 		return 0;
 	} else {
 		return 8;
+	}
+}
+
+int TTadj::adjFn1(int val) {
+	if (_val < 0 || _val > 9) {
+		return SS_4;
+	} else {
+		_val = val;
+		return SS_VALID;
 	}
 }
 

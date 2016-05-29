@@ -193,10 +193,6 @@ TTword *TTword::copy() const {
 	return new TTword(this);
 }
 
-void TTword::unkFn1(int val) {
-	// TODO: This method seems to reference a field beyond the size of TTword
-}
-
 FileHandle TTword::getSynFile() const {
 	return _synP ? _synP->_file : HANDLE_STDIN;
 }

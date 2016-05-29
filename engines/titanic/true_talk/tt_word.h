@@ -161,8 +161,6 @@ public:
 	 */
 	virtual TTword *copy() const;
 	
-	void unkFn1(int val);
-
 	virtual bool proc2(int val) const { return false; }
 	virtual int proc3() const { return -1; }
 	virtual void proc4() {}
