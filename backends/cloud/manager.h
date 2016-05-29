@@ -31,6 +31,7 @@ namespace Cloud {
 class Manager: public Common::CloudManager {
 	Common::Array<Storage *> _storages;
 	uint _currentStorageIndex;
+	uint _deviceId;
 
 public:
 	Manager();

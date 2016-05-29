@@ -22,12 +22,13 @@
 
 #include "backends/cloud/manager.h"
 #include "backends/cloud/dropbox/dropboxstorage.h"
+#include "backends/cloud/onedrive/onedrivestorage.h"
 #include "common/config-manager.h"
-#include "onedrive/onedrivestorage.h"
+#include "common/random.h"
 
 namespace Cloud {
 
-Manager::Manager(): _currentStorageIndex(0) {}
+Manager::Manager(): _currentStorageIndex(0), _deviceId(0) {}
 
 Manager::~Manager() {
 	//TODO: do we have to save storages on manager destruction?	
@@ -39,6 +40,15 @@ Manager::~Manager() {
 void Manager::init() {
 	bool offerDropbox = false;
 	bool offerOneDrive = true;
+
+	if (!ConfMan.hasKey("device_id", "cloud")) {
+		Common::RandomSource source("Cloud Random Source");
+		_deviceId = source.getRandomNumber(UINT_MAX - 1);
+		ConfMan.setInt("device_id", _deviceId, "cloud");
+		ConfMan.flushToDisk();
+	} else {
+		_deviceId = ConfMan.getInt("device_id", "cloud");
+	}
 
 	if (ConfMan.hasKey("storages_number", "cloud")) {
 		int storages = ConfMan.getInt("storages_number", "cloud");
