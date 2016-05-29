@@ -154,11 +154,11 @@ SaveStateDescriptor GnapMetaEngine::querySaveMetaInfos(const char *target, int s
 			return SaveStateDescriptor();
 		}
 
-		char saveName[256];
+		Common::String saveName;
 		char ch;
 		int i = 0;
 		while ((ch = (char)file->readByte()) != '\0')
-			saveName[i++] = ch;
+			saveName += ch;
 
 		SaveStateDescriptor desc(slot, saveName);
 
