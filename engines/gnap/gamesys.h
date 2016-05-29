@@ -167,6 +167,8 @@ public:
 	int _backgroundImageValue4, _backgroundImageValue2;
 
 	int32 _gameSysClock, _lastUpdateClock;
+	bool _animationsDone;
+	
 
 	Graphics::Surface *_backgroundSurface;
 	Graphics::Surface *_frontSurface;

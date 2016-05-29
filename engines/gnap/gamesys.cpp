@@ -48,6 +48,7 @@ GameSys::GameSys(GnapEngine *vm) : _vm(vm) {
 	_removeSequenceItemValue = 0;
 	_gfxItemsCount = 0;
 	_animationsCount = 0;
+	_animationsDone = false;
 	_backgroundImageValue3 = 0;
 	_backgroundImageValue1 = 0;
 	_backgroundImageValue4 = 1000;
@@ -167,6 +168,9 @@ void GameSys::requestRemoveSequence(int sequenceId, int id) {
 void GameSys::waitForUpdate() {
 	//ResetEvent(updateEvent);
 	//WaitForSingleObject(updateEvent, INFINITE);
+	while ( !_animationsDone) {
+		_vm->gameUpdateTick();
+	}
 }
 
 int GameSys::isSequenceActive(int sequenceId, int id) {
@@ -1006,6 +1010,8 @@ void GameSys::fatUpdateFrame() {
 	if (clockDelta <= 0)
 		return;
 
+	_animationsDone = true;
+
 	int duration, currFrameNum;
 
 	for (int i = 0; i < _gfxItemsCount; ++i) {
@@ -1091,10 +1097,12 @@ void GameSys::fatUpdateFrame() {
 					} else {
 						gfxItem->_prevFrame._duration -= duration;
 						gfxItem->_updFlag = false;
+						_animationsDone = false;
 					}
 				} else {
 					gfxItem->_delayTicks -= clockDelta;
 					gfxItem->_updFlag = false;
+					_animationsDone = false;
 				}
 			}
 		} else {
@@ -1132,6 +1140,7 @@ void GameSys::fatUpdateFrame() {
 				gfxItem->_currFrame._rect = _newSpriteDrawItems[k]._rect;
 				gfxItem->_currFrame._spriteId = _newSpriteDrawItems[k]._surface ? 0xCAFEBABE : -1;// TODO
 				gfxItem->_currFrame._soundId = -1;
+				_animationsDone = false;
 			}
 		}
 		_newSpriteDrawItemsCount = 0;
@@ -1149,6 +1158,7 @@ void GameSys::fatUpdateFrame() {
 				gfxItem->_currFrame._soundId = -1;
 				gfxItem->_updFlag = true;
 				gfxItem->_surface = _grabSpriteSurface2;
+				_animationsDone = false;
 				break;
 			}
 		}
@@ -1175,6 +1185,7 @@ void GameSys::fatUpdateFrame() {
 					found = true;
 				}
 				if (found) {
+					_animationsDone = false;
 					seqRemoveGfx(seqItem->_sequenceId2, seqItem->_id2);
 					seqRemoveGfx(seqItem->_sequenceId, seqItem->_id);
 					_fatSequenceItems.remove_at(i);
@@ -1197,6 +1208,7 @@ void GameSys::fatUpdateFrame() {
 					found = true;
 				}
 				if (found) {
+					_animationsDone = false;
 					seqRemoveGfx(seqItem->_sequenceId, seqItem->_id);
 					_fatSequenceItems.remove_at(i);
 					--i;
@@ -1220,6 +1232,7 @@ void GameSys::fatUpdateFrame() {
 					seqRemoveGfx(seqItem->_sequenceId, seqItem->_id);
 					seqInsertGfx(i, gfxDuration);
 				}
+				_animationsDone = false;
 			}
 		} else {
 			_seqItems.remove_at(i);
