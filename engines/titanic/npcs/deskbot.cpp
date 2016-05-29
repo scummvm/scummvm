@@ -110,7 +110,6 @@ bool CDeskbot::MovieEndMsg(CMovieEndMsg *msg) {
 		flag = true;
 	}
 
-	bool flag = false;
 	if (_npcFlags & NPCFLAG_40000) {
 		_deskbotActive = false;
 		_npcFlags &= ~(NPCFLAG_40000 | NPCFLAG_20000);
@@ -155,7 +154,26 @@ bool CDeskbot::LeaveViewMsg(CLeaveViewMsg *msg) {
 }
 
 bool CDeskbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
-	// TODO
+	switch (msg->_action) {
+	case 19:
+		inc54();
+		lockMouse();
+		setPetArea(PET_CONVERSATION);
+		playClip("ReprogramPETInHand", 4);
+		_npcFlags |= NPCFLAG_10000;
+		_field10C = msg->_param1;
+
+		switch (_field10C) {
+		case 1:
+			petDisplayMsg("You have been upgraded to 1st Class status. Enjoy hugely.");
+			
+			break;
+		case 2:
+			petDisplayMsg("You have been upgraded to 2nd Class status. Enjoy.");
+			break;
+		}
+	}
+
 	return true;
 }
 

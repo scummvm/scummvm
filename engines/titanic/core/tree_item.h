@@ -284,7 +284,15 @@ public:
 	 */
 	int getPassengerClass() const;
 	
-	int getStateC() const;
+	/**
+	 * Return the player's previous passenger class
+	 */
+	int getPriorClass() const;
+
+	/**
+	 * Set's the player's passenger class
+	 */
+	void setPassengerClass(int newClass);
 };
 
 } // End of namespace Titanic

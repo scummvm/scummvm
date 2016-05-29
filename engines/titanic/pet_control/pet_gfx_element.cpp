@@ -54,7 +54,7 @@ void CPetGfxElement::reset(const CString &name, CPetControl *petControl, PetElem
 	if (classNum >= 1 && classNum <= 3) {
 		numString = CString(classNum);
 	} else if (classNum == 4) {
-		int stateC = petControl->getStateC();
+		int stateC = petControl->getPriorClass();
 		if (stateC == 1)
 			numString = CString(stateC);
 	}

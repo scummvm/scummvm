@@ -319,9 +319,23 @@ int CTreeItem::getPassengerClass() const {
 	return gameManager ? gameManager->_gameState._passengerClass : 3;
 }
 
-int CTreeItem::getStateC() const {
+int CTreeItem::getPriorClass() const {
 	CGameManager *gameManager = getGameManager();
-	return gameManager ? gameManager->_gameState._fieldC : 3;
+	return gameManager ? gameManager->_gameState._priorClass : 3;
+}
+
+void CTreeItem::setPassengerClass(int newClass) {
+	if (newClass >= 1 && newClass <= 4) {
+		// Change the passenger class
+		CGameManager *gameMan = getGameManager();
+		gameMan->_gameState._priorClass = gameMan->_gameState._passengerClass;
+		gameMan->_gameState._passengerClass = newClass;
+
+		// Setup the PET again, so the new class's PET background can take effect
+		CPetControl *petControl = getPetControl();
+		if (petControl)
+			petControl->setup();
+	}
 }
 
 } // End of namespace Titanic

@@ -55,7 +55,7 @@ public:
 	CGameLocation _gameLocation;
 	CGameStateMovieList _movieList;
 	int _passengerClass;
-	int _fieldC;
+	int _priorClass;
 	GameStateMode _mode;
 	int _field14;
 	bool _petActive;
