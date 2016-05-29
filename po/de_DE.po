@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-04-07 08:55+0200\n"
-"PO-Revision-Date: 2016-05-01 15:45+0200\n"
+"PO-Revision-Date: 2016-05-29 17:00+0200\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
 "Language-Team: Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari "
 "<rootfather@scummvm.org>\n"
@@ -696,7 +696,7 @@ msgstr "Schneller Modus"
 
 #: gui/options.cpp:87 common/updates.cpp:56
 msgid "Never"
-msgstr "Niemals"
+msgstr "nie"
 
 #: gui/options.cpp:87
 msgid "every 5 mins"
