@@ -59,8 +59,8 @@ NinePatchSide::~NinePatchSide() {
 
 
 bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical) {
-	const int len = vertical ? bmp->h : bmp->w;
-	int i;
+	const uint len = vertical ? bmp->h : bmp->w;
+	uint i;
 	int s, t, z;
 
 	_m.clear();
