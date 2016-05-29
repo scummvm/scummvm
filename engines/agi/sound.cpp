@@ -29,8 +29,18 @@
 #include "agi/sound_pcjr.h"
 
 #include "common/textconsole.h"
+#include "audio/mixer.h"
 
 namespace Agi {
+
+SoundGen::SoundGen(AgiBase *vm, Audio::Mixer *pMixer) : _vm(vm), _mixer(pMixer) {
+	_sampleRate = pMixer->getOutputRate();
+	_soundHandle = new Audio::SoundHandle();
+}
+
+SoundGen::~SoundGen() {
+	delete _soundHandle;
+}
 
 //
 // TODO: add support for variable sampling rate in the output device

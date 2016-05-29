@@ -27,6 +27,7 @@
 #include "common/memstream.h"
 #include "common/str-array.h"
 #include "common/textconsole.h"
+#include "audio/mixer.h"
 
 #include "agi/agi.h"
 #include "agi/sound_2gs.h"
@@ -55,11 +56,11 @@ SoundGen2GS::SoundGen2GS(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixe
 	// Load instruments
 	_disableMidi = !loadInstruments();
 
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, _soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 SoundGen2GS::~SoundGen2GS() {
-	_mixer->stopHandle(_soundHandle);
+	_mixer->stopHandle(*_soundHandle);
 	delete[] _wavetable;
 	delete[] _out;
 }
