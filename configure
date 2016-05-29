@@ -992,8 +992,8 @@ Optional Libraries:
                            installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
 
-  --with-sparkle-prefix=DIR   Prefix where sparkle is installed (Mac OS X only - optional)
-  --disable-sparkle        disable sparkle automatic update support [Mac OS X only - autodetect]
+  --with-sparkle-prefix=DIR   Prefix where sparkle is installed (OS X/Windows only - optional)
+  --disable-sparkle        disable sparkle automatic update support [OS X/Windows only - autodetect]
 
   --disable-osx-dock-plugin disable the NSDockTilePlugin support [Mac OS X only - autodetect]
 
@@ -4032,6 +4032,31 @@ EOF
 			fi
 			if test "$_sparkle" = yes ; then
 				append_var LIBS "$SPARKLE_LIBS -framework Sparkle"
+				append_var INCLUDES "$SPARKLE_CFLAGS"
+			fi
+			define_in_config_if_yes "$_sparkle" 'USE_SPARKLE'
+		fi
+		echo "$_sparkle"
+	;;
+	mingw*)
+		echocheck "Sparkle"
+		if test "$_updates" = no; then
+			_sparkle=no
+		else
+			if test ! -z $_sparklepath ; then
+				SPARKLE_CFLAGS="-I$_sparklepath/include"
+				SPARKLE_LIBS="-L$_sparklepath/Release -L$_sparklepath/x64/Release"
+			fi
+			if test "$_sparkle" = auto ; then
+				_sparkle=no
+				cat > $TMPC << EOF
+#include <winsparkle.h>
+int main(void) { win_sparkle_get_update_check_interval(); return 0; }
+EOF
+				cc_check $SPARKLE_CFLAGS $SPARKLE_LIBS -lWinSparkle && _sparkle=yes
+			fi
+			if test "$_sparkle" = yes ; then
+				append_var LIBS "$SPARKLE_LIBS -lWinSparkle"
 				append_var INCLUDES "$SPARKLE_CFLAGS"
 			fi
 			define_in_config_if_yes "$_sparkle" 'USE_SPARKLE'
