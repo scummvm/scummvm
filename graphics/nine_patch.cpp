@@ -61,11 +61,11 @@ NinePatchSide::~NinePatchSide() {
 bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical) {
 	const int len = vertical ? bmp->h : bmp->w;
 	int i;
-	int s, t, n, z;
+	int s, t, z;
 
 	_m.clear();
 
-	for (i = 1, s = -1, t = 0, n = 0, z = -1; i < len; ++i) {
+	for (i = 1, s = -1, t = 0, z = -1; i < len; ++i) {
 		int zz;
 		uint8 r, g, b, a;
 		uint32 *color = vertical ? (uint32 *)bmp->getBasePtr(0, i) : (uint32 *)bmp->getBasePtr(i, 0);
