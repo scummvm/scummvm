@@ -160,8 +160,6 @@ GnapEngine::GnapEngine(OSystem *syst, const ADGameDescription *gd) :
 	_fullScreenSpriteId = 0;
 	_deviceX1 = 0;
 	_deviceY1 = 0;
-	_deviceX2 = 0;
-	_deviceY2 = 0;
 	_soundTimerIndexA = 0;
 	_soundTimerIndexB = 0;
 	_soundTimerIndexC = 0;
@@ -654,19 +652,19 @@ void GnapEngine::removeDeviceIconActive() {
 
 void GnapEngine::setDeviceHotspot(int hotspotIndex, int x1, int y1, int x2, int y2) {
 	_deviceX1 = x1;
-	_deviceX2 = x2;
 	_deviceY1 = y1;
-	_deviceY2 = y2;
+	int deviceX2 = x2;
+	int deviceY2 = y2;
 	if (x1 == -1)
 		_deviceX1 = 730;
 	if (x2 == -1)
-		_deviceX2 = 780;
+		deviceX2 = 780;
 	if (y1 == -1)
 		_deviceY1 = 14;
 	if (y2 == -1)
-		_deviceY2 = 79;
+		deviceY2 = 79;
 
-	_hotspots[hotspotIndex]._rect = Common::Rect(_deviceX1, _deviceY1, _deviceX2, _deviceY2);
+	_hotspots[hotspotIndex]._rect = Common::Rect(_deviceX1, _deviceY1, deviceX2, deviceY2);
 	_hotspots[hotspotIndex]._flags = SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
 }
 

@@ -296,7 +296,7 @@ public:
 	Graphics::Surface *_fullScreenSprite;
 	int _fullScreenSpriteId;
 
-	int _deviceX1, _deviceY1, _deviceX2, _deviceY2;
+	int _deviceX1, _deviceY1;
 
 	int _soundTimerIndexA;
 	int _soundTimerIndexB;
