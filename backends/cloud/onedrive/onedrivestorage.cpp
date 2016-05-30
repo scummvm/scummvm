@@ -35,6 +35,7 @@
 #include "common/json.h"
 #include "common/system.h"
 #include <curl/curl.h>
+#include "../savessyncrequest.h"
 
 namespace Cloud {
 namespace OneDrive {
@@ -205,6 +206,11 @@ void OneDriveStorage::printFiles(FileArrayResponse pair) {
 		debug("\t%s", files[i].path().c_str());
 }
 
+void OneDriveStorage::printBool(BoolResponse pair) {
+	debug("bool: %s", pair.value ? "true" : "false");
+}
+
+
 Networking::Request *OneDriveStorage::syncSaves(BoolCallback callback) {
 	//this is not the real syncSaves() implementation
 	/*
@@ -213,7 +219,8 @@ Networking::Request *OneDriveStorage::syncSaves(BoolCallback callback) {
 	request->addHeader("Authorization: bearer " + _token);
 	return ConnMan.addRequest(request);
 	*/
-	return downloadFolder("subfolder", "local/onedrive/subfolder_downloaded", new Common::Callback<OneDriveStorage, FileArrayResponse>(this, &OneDriveStorage::printFiles), false);
+	//return downloadFolder("subfolder", "local/onedrive/subfolder_downloaded", new Common::Callback<OneDriveStorage, FileArrayResponse>(this, &OneDriveStorage::printFiles), false);
+	return ConnMan.addRequest(new SavesSyncRequest(this, new Common::Callback<OneDriveStorage, BoolResponse>(this, &OneDriveStorage::printBool)));
 }
 
 OneDriveStorage *OneDriveStorage::loadFromConfig(Common::String keyPrefix) {

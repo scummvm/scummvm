@@ -52,6 +52,7 @@ class OneDriveStorage: public Cloud::Storage {
 	void printJson(Networking::JsonResponse pair);
 	void fileDownloaded(BoolResponse pair);
 	void printFiles(FileArrayResponse pair);
+	void printBool(BoolResponse pair);
 
 	void fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse pair);
 public:	

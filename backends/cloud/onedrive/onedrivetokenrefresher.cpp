@@ -60,7 +60,7 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 	if (!json) {
 		//notify user of failure
 		warning("OneDriveTokenRefresher: got NULL instead of JSON");
-		CurlJsonRequest::finish();
+		CurlJsonRequest::finishJson(nullptr);
 		return;
 	}
 
@@ -72,8 +72,24 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 		}
 
 		Common::JSONObject error = result.getVal("error")->asObject();
-		debug("code = %s", error.getVal("code")->asString().c_str());
-		debug("message = %s", error.getVal("message")->asString().c_str());
+		bool irrecoverable = true;
+
+		if (error.contains("code")) {
+			Common::String code = error.getVal("code")->asString();
+			debug("code = %s", code.c_str());
+			//if (code == "itemNotFound") irrecoverable = true;
+		}
+
+		if (error.contains("message")) {
+			Common::String message = error.getVal("message")->asString();
+			debug("message = %s", message.c_str());
+		}
+
+		if (irrecoverable) {
+			CurlJsonRequest::finishJson(nullptr);
+			return;
+		}
+
 		pause();		
 		delete json;
 		_parentStorage->getAccessToken(new Common::Callback<OneDriveTokenRefresher, Storage::BoolResponse>(this, &OneDriveTokenRefresher::tokenRefreshed));
