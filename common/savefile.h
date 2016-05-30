@@ -137,6 +137,15 @@ public:
 	virtual InSaveFile *openForLoading(const String &name) = 0;
 
 	/**
+	* Open the file with the specified name in the given directory for loading.
+	* In contrast to openForLoading(), it returns raw file instead of unpacked.
+	*
+	* @param name  The name of the savefile.
+	* @return Pointer to an InSaveFile, or NULL if an error occurred.
+	*/
+	virtual InSaveFile *openRawFile(const String &name) = 0;
+
+	/**
 	 * Removes the given savefile from the system.
 	 *
 	 * @param name  The name of the savefile to be removed.

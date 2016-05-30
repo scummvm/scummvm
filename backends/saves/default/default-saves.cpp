@@ -75,6 +75,22 @@ Common::StringArray DefaultSaveFileManager::listSavefiles(const Common::String &
 	return results;
 }
 
+Common::InSaveFile *DefaultSaveFileManager::openRawFile(const Common::String &filename) {
+	// Assure the savefile name cache is up-to-date.
+	assureCached(getSavePath());
+	if (getError().getCode() != Common::kNoError)
+		return nullptr;
+
+	SaveFileCache::const_iterator file = _saveFileCache.find(filename);
+	if (file == _saveFileCache.end()) {
+		return nullptr;
+	} else {
+		// Open the file for loading.
+		Common::SeekableReadStream *sf = file->_value.createReadStream();
+		return sf;
+	}
+}
+
 Common::InSaveFile *DefaultSaveFileManager::openForLoading(const Common::String &filename) {
 	// Assure the savefile name cache is up-to-date.
 	assureCached(getSavePath());
