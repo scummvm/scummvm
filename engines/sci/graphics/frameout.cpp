@@ -667,6 +667,10 @@ void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseL
 			--outerPlane->_priorityChanged;
 
 			Plane *visibleOuterPlane = _visiblePlanes.findByObject(outerPlane->_object);
+			if (visibleOuterPlane == nullptr) {
+				warning("calcLists could not find visible plane for %04x:%04x", PRINT_REG(outerPlane->_object));
+				continue;
+			}
 
 			rectlist.add(outerPlane->_screenRect.findIntersectingRect(visibleOuterPlane->_screenRect));
 
@@ -680,7 +684,7 @@ void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseL
 					int splitCount = splitRects(*rectlist[rectIndex], _planes[innerIndex]->_screenRect, outRects);
 
 					if (splitCount == 0) {
-						if (visibleInnerPlane != nullptr && visibleOuterPlane != nullptr) {
+						if (visibleInnerPlane != nullptr) {
 							// same priority, or relative priority between inner/outer changed
 							if ((visibleOuterPlane->_priority - visibleInnerPlane->_priority) * (outerPlane->_priority - innerPlane->_priority) <= 0) {
 								if (outerPlane->_priority <= innerPlane->_priority) {
@@ -697,7 +701,7 @@ void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseL
 							rectlist.add(outRects[i]);
 						}
 
-						if (visibleInnerPlane != nullptr && visibleOuterPlane != nullptr) {
+						if (visibleInnerPlane != nullptr) {
 							// same priority, or relative priority between inner/outer changed
 							if ((visibleOuterPlane->_priority - visibleInnerPlane->_priority) * (outerPlane->_priority - innerPlane->_priority) <= 0) {
 								*rectlist[rectIndex] = outerPlane->_screenRect.findIntersectingRect(innerPlane->_screenRect);
