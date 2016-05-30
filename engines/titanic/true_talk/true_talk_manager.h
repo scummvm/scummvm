@@ -33,6 +33,7 @@
 namespace Titanic {
 
 class CGameManager;
+class CGameState;
 class CTreeItem;
 class CViewItem;
 class CTrueTalkManager;
@@ -107,10 +108,27 @@ private:
 	void playSpeech(TTtalker *talker, TTroomScript *roomScript, CViewItem *view, bool isParrot);
 
 	static bool proximityMethod1(int val);
+
+	/**
+	 * Return the game manager
+	 */
+	CGameManager *getGameManager() const;
+
+	/**
+	 * Return the game state
+	 */
+	CGameState *getGameState() const;
+
+	/**
+	 * Get the player's passenger class
+	 */
+	int getPassengerClass() const;
+
+	int getState14() const;
 public:
 	static int _v1;
 	static int _v2;
-	static int _v3;
+	static int _passengerClass;
 	static bool _v4;
 	static bool _v5;
 	static int _v6;
@@ -126,7 +144,7 @@ public:
 	/**
 	 * Get a specified state value from the currently set NPC
 	 */
-	static int getStateVal(int stateNum);
+	static int getStateValue(int stateNum);
 
 	/**
 	 * Trigger an NPC action
@@ -189,6 +207,16 @@ public:
 	void start(CTrueTalkNPC *npc, uint id, CViewItem *view);
 
 	/**
+	 * Start a TrueTalk conversation
+	 */
+	void start3(CTrueTalkNPC *npc, CViewItem *view);
+
+	/**
+	 * Start a TrueTalk conversation
+	 */
+	void start4(CTrueTalkNPC *npc, CViewItem *view);
+
+	/**
 	 * Return a TrueTalk talker/script
 	 */
 	TTnpcScript *getTalker(const CString &name) const;
@@ -197,6 +225,11 @@ public:
 	 * Process player's input
 	 */
 	void processInput(CTrueTalkNPC *npc, CTextInputMsg *msg, CViewItem *view);
+
+	/**
+	 * Gets the script associated with a specific room
+	 */
+	TTroomScript *getRoomScript(int roomId) const;
 };
 
 } // End of namespace Titanic

@@ -121,6 +121,7 @@ public:
 	Common::RandomSource _randomSource;
 	CScriptHandler *_scriptHandler;
 	TTscriptBase *_script;
+	CTrueTalkManager *_trueTalkManager;
 	CExeResources _exeResources;
 	CMovieList _activeMovies;
 	StringArray _itemNames;

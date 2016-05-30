@@ -32,7 +32,7 @@ namespace Titanic {
 
 int CTrueTalkManager::_v1;
 int CTrueTalkManager::_v2;
-int CTrueTalkManager::_v3;
+int CTrueTalkManager::_passengerClass;
 bool CTrueTalkManager::_v4;
 bool CTrueTalkManager::_v5;
 int CTrueTalkManager::_v6;
@@ -50,10 +50,12 @@ CTrueTalkManager::CTrueTalkManager(CGameManager *owner) :
 		_dialogueFile(nullptr), _dialogueId(0) {
 	_titleEngine.setup(3, 3);
 	_currentNPC = nullptr;
+	g_vm->_trueTalkManager = this;
 }
 
 CTrueTalkManager::~CTrueTalkManager() {
 	clear();
+	g_vm->_trueTalkManager = nullptr;
 }
 
 void CTrueTalkManager::save(SimpleFile *file) const {
@@ -100,7 +102,7 @@ void CTrueTalkManager::loadStatics(SimpleFile *file) {
 	int count = file->readNumber();
 	_v1 = file->readNumber();
 	_v2 = file->readNumber();
-	_v3 = file->readNumber();
+	_passengerClass = file->readNumber();
 	_v4 = file->readNumber() != 0;
 	_v5 = file->readNumber() != 0;
 	_v6 = file->readNumber();
@@ -124,7 +126,7 @@ void CTrueTalkManager::saveStatics(SimpleFile *file) {
 	file->writeNumber(10);
 	file->writeNumber(_v1);
 	file->writeNumber(_v2);
-	file->writeNumber(_v3);
+	file->writeNumber(_passengerClass);
 	file->writeNumber(_v4 ? 1 : 0);
 	file->writeNumber(_v5 ? 1 : 0);
 	file->writeNumber(_v6);
@@ -148,7 +150,7 @@ void CTrueTalkManager::setFlags(int index, int val) {
 	switch (index) {
 	case 1:
 		if (val >= 1 && val <= 3)
-			_v3 = val;
+			_passengerClass = val;
 		break;
 
 	case 2:
@@ -233,6 +235,14 @@ void CTrueTalkManager::start(CTrueTalkNPC *npc, uint id, CViewItem *view) {
 	setDialogue(npc, roomScript, view);
 }
 
+void CTrueTalkManager::start3(CTrueTalkNPC *npc, CViewItem *view) {
+	start(npc, 3, view);
+}
+
+void CTrueTalkManager::start4(CTrueTalkNPC *npc, CViewItem *view) {
+	start(npc, 4, view);
+}
+
 TTnpcScript *CTrueTalkManager::getTalker(const CString &name) const {
 	if (name.contains("Doorbot"))
 		return _scripts.getNpcScript(104);
@@ -281,6 +291,18 @@ TTroomScript *CTrueTalkManager::getRoomScript() const {
 		// Fall back on the default Room script
 		script = _scripts.getRoomScript(110);
 	}
+
+	return script;
+}
+
+TTroomScript *CTrueTalkManager::getRoomScript(int roomId) const {
+	TTroomScript *script = nullptr;
+	if (roomId)
+		script = _scripts.getRoomScript(roomId);
+
+	if (!script)
+		// Fall back on the default Room script
+		script = _scripts.getRoomScript(110);
 
 	return script;
 }
@@ -526,7 +548,7 @@ void CTrueTalkManager::playSpeech(TTtalker *talker, TTroomScript *roomScript, CV
 	}
 }
 
-int CTrueTalkManager::getStateVal(int stateNum) {
+int CTrueTalkManager::getStateValue(int stateNum) {
 	if (!_currentNPC)
 		return -1000;
 
@@ -547,6 +569,24 @@ bool CTrueTalkManager::triggerAction(int action, int param) {
 bool CTrueTalkManager::proximityMethod1(int val) {
 	// TODO
 	return false;
+}
+
+CGameManager *CTrueTalkManager::getGameManager() const {
+	return _gameManager;
+}
+
+CGameState *CTrueTalkManager::getGameState() const {
+	return _gameManager ? &_gameManager->_gameState : nullptr;
+}
+
+int CTrueTalkManager::getPassengerClass() const {
+	CGameState *gameState = getGameState();
+	return gameState ? gameState->_passengerClass : 4;
+}
+
+int CTrueTalkManager::getState14() const {
+	CGameState *gameState = getGameState();
+	return gameState ? gameState->_field14 : 0;
 }
 
 } // End of namespace Titanic

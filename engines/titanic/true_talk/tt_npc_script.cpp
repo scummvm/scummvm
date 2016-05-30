@@ -23,6 +23,7 @@
 #include "common/textconsole.h"
 #include "titanic/true_talk/tt_npc_script.h"
 #include "titanic/true_talk/true_talk_manager.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -228,5 +229,11 @@ void TTnpcScript::preLoad() {
 		error("TODO");
 	}
 }
+
+int TTnpcScript::getRoom54(int roomId) {
+	TTroomScript *room = g_vm->_trueTalkManager->getRoomScript(roomId);
+	return room ? room->_field54 : 0;
+}
+
 
 } // End of namespace Titanic

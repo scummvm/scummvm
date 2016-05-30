@@ -52,7 +52,7 @@ public:
 
 
 class TTroomScript : public TTroomScriptBase {
-private:
+public:
 	int _field54;
 public:
 	TTroomScript(int scriptId);
