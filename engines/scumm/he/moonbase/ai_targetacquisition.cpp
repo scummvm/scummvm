@@ -320,6 +320,15 @@ void Sortie::printEnemyDefenses() {
 	}
 }
 
+Defender::Defender(AI *ai) : _ai(ai) {
+	_sourceX = _sourceY = 0;
+	_targetX = _targetY = 0;
+	_sourceUnit = 0;
+	_power = 0;
+	_angle = 0;
+	_unit = 0;
+}
+
 int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) {
 	int currentPlayer = _ai->getCurrentPlayer();
 

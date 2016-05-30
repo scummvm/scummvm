@@ -46,6 +46,8 @@ Traveller::Traveller(AI *ai) : _ai(ai) {
 	_waterSourceY = 0;
 	_waterDestX = 0;
 	_waterDestY = 0;
+
+	_posX = _posY = 0;
 }
 
 Traveller::Traveller(int originX, int originY, AI *ai) : _ai(ai) {

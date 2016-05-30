@@ -2110,7 +2110,7 @@ int *AI::energizeTarget(int &targetX, int &targetY, int index) {
 								break;
 							}
 
-							testDist = ((((n - attempt) / n) * .5) + .5) * (getDistance(getHubX(nextUnit), getHubY(nextUnit), targetX, targetY) / .8);
+							testDist = (((((double)n - (double)attempt) / n) * .5) + .5) * (getDistance(getHubX(nextUnit), getHubY(nextUnit), targetX, targetY) / .8);
 							xPos = getHubX(nextUnit) + testDist * cos(degToRad(testAngle));
 							yPos = getHubY(nextUnit) + testDist * sin(degToRad(testAngle));
 						}

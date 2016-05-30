@@ -112,7 +112,7 @@ private:
 	AI *_ai;
 
 public:
-	Defender(AI *ai) : _ai(ai) {}
+	Defender(AI *ai);
 	void setSourceX(int sourceX) { _sourceX = sourceX; }
 	void setSourceY(int sourceY) { _sourceY = sourceY; }
 	void setTargetX(int targetX) { _targetX = targetX; }
