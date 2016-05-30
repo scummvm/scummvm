@@ -352,8 +352,8 @@ void Parallaction_ns::changeLocation() {
 	}
 
 	char location[200];
-	strcpy(location, _newLocationName.c_str());
-	strcpy(_location._name, _newLocationName.c_str());
+	Common::strlcpy(location, _newLocationName.c_str(), 200);
+	Common::strlcpy(_location._name, _newLocationName.c_str(), 100);
 
 	debugC(1, kDebugExec, "changeLocation(%s)", location);
 
