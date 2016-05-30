@@ -156,7 +156,6 @@ SaveStateDescriptor GnapMetaEngine::querySaveMetaInfos(const char *target, int s
 
 		Common::String saveName;
 		char ch;
-		int i = 0;
 		while ((ch = (char)file->readByte()) != '\0')
 			saveName += ch;
 
