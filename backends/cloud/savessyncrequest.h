@@ -31,6 +31,9 @@
 namespace Cloud {
 
 class SavesSyncRequest: public Networking::Request {
+	const uint32 INVALID_TIMESTAMP = UINT_MAX;
+	static const char *TIMESTAMPS_FILENAME;
+
 	Storage *_storage;
 	Storage::BoolCallback _boolCallback;
 	Common::HashMap<Common::String, uint32> _localFilesTimestamps;
@@ -49,7 +52,8 @@ class SavesSyncRequest: public Networking::Request {
 	void uploadNextFile();
 	void finishBool(bool success);
 	void loadTimestamps();
-	void saveTimestamps();	
+	void saveTimestamps();
+	Common::String concatWithSavesPath(Common::String name);
 public:
 	SavesSyncRequest(Storage *storage, Storage::BoolCallback callback);
 	virtual ~SavesSyncRequest();

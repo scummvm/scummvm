@@ -21,12 +21,16 @@
 */
 
 #include "backends/cloud/savessyncrequest.h"
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
-#include "common/system.h"
 #include "common/savefile.h"
+#include "common/system.h"
+#include <common/json.h>
 
 namespace Cloud {
+
+const char *SavesSyncRequest::TIMESTAMPS_FILENAME = "timestamps";
 
 SavesSyncRequest::SavesSyncRequest(Storage *storage, Storage::BoolCallback callback):
 	Request(nullptr), _storage(storage), _boolCallback(callback),
@@ -55,25 +59,44 @@ void SavesSyncRequest::start() {
 	loadTimestamps();
 
 	//list saves directory
-	_workingRequest = _storage->listDirectory("saves", new Common::Callback<SavesSyncRequest, Storage::ListDirectoryResponse>(this, &SavesSyncRequest::directoryListedCallback));
+	_workingRequest = _storage->listDirectory("/saves", new Common::Callback<SavesSyncRequest, Storage::ListDirectoryResponse>(this, &SavesSyncRequest::directoryListedCallback));
 }
 
 void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse pair) {
+	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 
 	ListDirectoryStatus status = pair.value;
-	if (status.interrupted || status.failed) {
+	bool irrecoverable = status.interrupted || status.failed;
+	if (status.failed) {
+		Common::JSONValue *value = Common::JSON::parse(status.response.c_str());
+		if (value) {
+			if (value->isObject()) {
+				Common::JSONObject object = value->asObject();
+				//Dropbox-related error:
+				if (object.contains("error_summary")) {
+					Common::String summary = object.getVal("error_summary")->asString();
+					if (summary.contains("not_found")) {
+						//oh how lucky we are! It's just user don't have /cloud/ folder yet!
+						irrecoverable = false;
+					}
+				}
+			}
+			delete value;
+		}
+	}
+
+	if (irrecoverable) {
 		finishBool(false);
 		return;
 	}
-
-	const uint32 INVALID_TIMESTAMP = UINT_MAX;
 	
 	//determine which files to download and which files to upload
 	Common::Array<StorageFile> &remoteFiles = status.files;
 	for (uint32 i = 0; i < remoteFiles.size(); ++i) {
 		StorageFile &file = remoteFiles[i];
 		if (file.isDirectory()) continue;
+		if (file.name() == TIMESTAMPS_FILENAME) continue;
 		Common::String name = file.name();
 		if (!_localFilesTimestamps.contains(name))
 			_filesToDownload.push_back(file);
@@ -92,13 +115,23 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse pa
 		}
 	}
 
-	//TODO: upload files which are added to local directory (not available on cloud), but have no timestamp
-
 	//upload files with invalid timestamp (the ones we've added - means they might not have any remote version)
 	for (Common::HashMap<Common::String, uint32>::iterator i = _localFilesTimestamps.begin(); i != _localFilesTimestamps.end(); ++i) {
+		if (i->_key == TIMESTAMPS_FILENAME) continue;
 		if (i->_value == INVALID_TIMESTAMP)
 			_filesToUpload.push_back(i->_key);
 	}
+
+	///////
+	debug("\ndownload files:");
+	for (uint32 i = 0; i < _filesToDownload.size(); ++i) {
+		debug("%s", _filesToDownload[i].name().c_str());
+	}
+	debug("\nupload files:");
+	for (uint32 i = 0; i < _filesToUpload.size(); ++i) {
+		debug("%s", _filesToUpload[i].c_str());
+	}
+	///////
 
 	//start downloading files
 	downloadNextFile();
@@ -113,12 +146,16 @@ void SavesSyncRequest::downloadNextFile() {
 	_currentDownloadingFile = _filesToDownload.back();
 	_filesToDownload.pop_back();
 
-	_workingRequest = _storage->download(_currentDownloadingFile.path(), "saves/" + _currentDownloadingFile.name(), //TODO: real saves folder here
+	///////
+	debug("downloading %s", _currentDownloadingFile.name().c_str());
+	///////
+	_workingRequest = _storage->download(_currentDownloadingFile.path(), concatWithSavesPath(_currentDownloadingFile.name()),
 		new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::fileDownloadedCallback)
 	);
 }
 
 void SavesSyncRequest::fileDownloadedCallback(Storage::BoolResponse pair) {
+	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 
 	//stop syncing if download failed
@@ -143,12 +180,16 @@ void SavesSyncRequest::uploadNextFile() {
 	_currentUploadingFile = _filesToUpload.back();
 	_filesToUpload.pop_back();
 	
-	_workingRequest = _storage->upload("saves/" + _currentUploadingFile, g_system->getSavefileManager()->openForLoading(_currentUploadingFile),
+	///////
+	debug("uploading %s", _currentUploadingFile.c_str());
+	///////
+	_workingRequest = _storage->upload("/saves/" + _currentUploadingFile, g_system->getSavefileManager()->openRawFile(_currentUploadingFile),
 		new Common::Callback<SavesSyncRequest, Storage::UploadResponse>(this, &SavesSyncRequest::fileUploadedCallback)
 	);
 }
 
 void SavesSyncRequest::fileUploadedCallback(Storage::UploadResponse pair) {
+	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 	UploadStatus status = pair.value;
 
@@ -181,16 +222,24 @@ void SavesSyncRequest::finishBool(bool success) {
 }
 
 void SavesSyncRequest::loadTimestamps() {
-	Common::File f;
-	//TODO: real saves folder here
-	if (!f.open("saves/timestamps"))
-		error("SavesSyncRequest: failed to open 'saves/timestamps' file to load timestamps");
+	//start with listing all the files in saves/ directory and setting invalid timestamp to them
+	Common::StringArray localFiles = g_system->getSavefileManager()->listSavefiles("*");
+	for (uint32 i = 0; i < localFiles.size(); ++i)
+		_localFilesTimestamps[localFiles[i]] = INVALID_TIMESTAMP;
+
+	//now actually load timestamps from file
+	Common::InSaveFile *file = g_system->getSavefileManager()->openRawFile(TIMESTAMPS_FILENAME);
+	if (!file) {
+		warning("SavesSyncRequest: failed to open '%s' file to load timestamps", TIMESTAMPS_FILENAME);
+		return;
+	}
+
 	
-	while (!f.eos()) {
+	while (!file->eos()) {
 		//read filename into buffer (reading until the first ' ')
 		Common::String buffer;
-		while (!f.eos()) {
-			byte b = f.readByte();
+		while (!file->eos()) {
+			byte b = file->readByte();
 			if (b == ' ') break;
 			buffer += (char)b;
 		}
@@ -199,8 +248,8 @@ void SavesSyncRequest::loadTimestamps() {
 		Common::String filename = buffer;
 		bool lineEnded = false;
 		buffer = "";
-		while (!f.eos()) {
-			byte b = f.readByte();
+		while (!file->eos()) {
+			byte b = file->readByte();
 			if (b == ' ' || b == '\n' || b == '\r') {
 				lineEnded = (b == '\n');
 				break;
@@ -210,32 +259,53 @@ void SavesSyncRequest::loadTimestamps() {
 
 		//parse timestamp
 		uint timestamp = atol(buffer.c_str());
+		if (buffer == "" || timestamp == 0) break;
 		_localFilesTimestamps[filename] = timestamp;
 
 		//read until the end of the line
 		if (!lineEnded) {
-			while (!f.eos()) {
-				byte b = f.readByte();
+			while (!file->eos()) {
+				byte b = file->readByte();
 				if (b == '\n') break;
 			}
+		}
+	}
+	
+	delete file;
+}
+
+void SavesSyncRequest::saveTimestamps() {
+	Common::DumpFile f;	
+	Common::String filename = concatWithSavesPath(TIMESTAMPS_FILENAME);
+	if (!f.open(filename, true)) {
+		warning("SavesSyncRequest: failed to open '%s' file to save timestamps", filename.c_str());
+		return;
+	}
+	
+	for (Common::HashMap<Common::String, uint32>::iterator i = _localFilesTimestamps.begin(); i != _localFilesTimestamps.end(); ++i) {
+		Common::String data = i->_key + Common::String::format(" %u\n", i->_value);
+		if (f.write(data.c_str(), data.size()) != data.size()) {
+			warning("SavesSyncRequest: failed to write timestamps data into '%s'", filename.c_str());
+			return;
 		}
 	}
 
 	f.close();
 }
 
-void SavesSyncRequest::saveTimestamps() {
-	Common::DumpFile f;
-	//TODO: real saves folder here
-	if (!f.open("saves/timestamps", true))
-		error("SavesSyncRequest: failed to open 'saves/timestamps' file to save timestamps");
-	Common::String data;
-	for (Common::HashMap<Common::String, uint32>::iterator i = _localFilesTimestamps.begin(); i != _localFilesTimestamps.end(); ++i)
-		data += i->_key + Common::String::format(" %u\n", i->_value);
-	if (f.write(data.c_str(), data.size()) != data.size())
-		error("SavesSyncRequest: failed to write timestamps data into 'saves/timestamps'");
-	f.close();
-}
+Common::String SavesSyncRequest::concatWithSavesPath(Common::String name) {
+	Common::String path = ConfMan.get("savepath");
+	if (path.size() > 0 && (path.lastChar() == '/' || path.lastChar() == '\\'))
+		return path + name;
 
+	//simple heuristic to determine which path separator to use
+	int backslashes = 0;
+	for (uint32 i = 0; i < path.size(); ++i)
+		if (path[i] == '/') --backslashes;
+		else if (path[i] == '\\') ++backslashes;
+
+	if (backslashes) return path + '\\' + name;
+	return path + '/' + name;
+}
 
 } // End of namespace Cloud

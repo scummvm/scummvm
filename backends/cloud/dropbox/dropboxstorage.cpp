@@ -33,6 +33,9 @@
 #include "common/file.h"
 #include "common/json.h"
 #include <curl/curl.h>
+#include "common/system.h"
+#include "common/savefile.h"
+#include "../savessyncrequest.h"
 
 namespace Cloud {
 namespace Dropbox {
@@ -188,7 +191,18 @@ Networking::Request *DropboxStorage::syncSaves(BoolCallback callback) {
 		false
 	);
 	*/
-	return upload("/remote/test4.bmp", "final.bmp", new Common::Callback<DropboxStorage, UploadResponse>(this, &DropboxStorage::printUploadStatus));
+	/*
+	debug("%s", ConfMan.get("savepath").c_str());
+	Common::StringArray arr = g_system->getSavefileManager()->listSavefiles("*");
+	for (uint32 i = 0; i < arr.size(); ++i) {
+		debug("%s", arr[i].c_str());
+	}
+	debug("EOL");
+	*/
+	//return upload("/remote/backslash", "C:\\Users\\Tkachov\\AppData\\Roaming\\ScummVM\\Saved games\\sword25.000", new Common::Callback<DropboxStorage, UploadResponse>(this, &DropboxStorage::printUploadStatus));
+	//return upload("/remote/slash", "C:/Users/Tkachov/AppData/Roaming/ScummVM/Saved games/sword25.000", new Common::Callback<DropboxStorage, UploadResponse>(this, &DropboxStorage::printUploadStatus));
+	return ConnMan.addRequest(new SavesSyncRequest(this, new Common::Callback<DropboxStorage, BoolResponse>(this, &DropboxStorage::printBool)));
+	//return upload("/remote/test4.bmp", "final.bmp", new Common::Callback<DropboxStorage, UploadResponse>(this, &DropboxStorage::printUploadStatus));
 }
 
 Networking::Request *DropboxStorage::info(StorageInfoCallback outerCallback) {
