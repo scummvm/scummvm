@@ -101,6 +101,10 @@ SpriteResource::SpriteResource(byte *data, uint32 size) {
 	_colorsCount = READ_LE_UINT16(_data + 10);
 	_palette = (uint32 *)(_data + 12);
 	_pixels = _data + 12 + _colorsCount * 4;
+#if defined(SCUMM_BIG_ENDIAN)
+	for (uint16 c = 0; c < _colorsCount; ++c)
+		_palette[c] = SWAP_BYTES_32(_palette[c]);
+#endif
 	debugC(kDebugBasic, "SpriteResource() width: %d; height: %d; colorsCount: %d", _width, _height, _colorsCount);
 }
 
