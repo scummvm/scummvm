@@ -1885,8 +1885,6 @@ Scene52::Scene52(GnapEngine *vm) : Scene(vm) {
 	_nextUfoSequenceId = -1;
 	_ufoSequenceId = -1;
 	_liveAlienRows = 0;
-	_arcadeScreenLeft = 0;
-	_arcadeScreenRight = 0;
 }
 
 int Scene52::init() {
@@ -2642,8 +2640,8 @@ void Scene52::run() {
 	_shipMidY = _vm->_gameSys->getSpriteHeightById(15);
 	_shipPosX = (800 - _shipMidX) / 2;
 	_arcadeScreenBottom = 496;
-	_arcadeScreenRight = 595 - _shipMidX;
-	_arcadeScreenLeft = 210;
+	int arcadeScreenRight = 595 - _shipMidX;
+	int arcadeScreenLeft = 210;
 	_shipsLeft = 3;
 	_alienCounter = 0;
 
@@ -2685,10 +2683,10 @@ void Scene52::run() {
 		while (_vm->isKeyStatus2(Common::KEYCODE_RIGHT)) {
 			update();
 			if (_vm->_gameSys->getAnimationStatus(7) == 2) {
-				if (_shipPosX < _arcadeScreenRight) {
+				if (_shipPosX < arcadeScreenRight) {
 					_shipPosX += 15;
-					if (_shipPosX > _arcadeScreenRight)
-						_shipPosX = _arcadeScreenRight;
+					if (_shipPosX > arcadeScreenRight)
+						_shipPosX = arcadeScreenRight;
 					_vm->_gameSys->setAnimation(_nextUfoSequenceId, 256, 7);
 					_vm->_gameSys->insertSequence(_nextUfoSequenceId, 256, _ufoSequenceId, 256, kSeqSyncWait, 0, _shipPosX, _arcadeScreenBottom);
 					_ufoSequenceId = _nextUfoSequenceId;
@@ -2702,10 +2700,10 @@ void Scene52::run() {
 		while (_vm->isKeyStatus2(Common::KEYCODE_LEFT)) {
 			update();
 			if (_vm->_gameSys->getAnimationStatus(7) == 2) {
-				if (_shipPosX > _arcadeScreenLeft) {
+				if (_shipPosX > arcadeScreenLeft) {
 					_shipPosX -= 15;
-					if (_shipPosX < _arcadeScreenLeft)
-						_shipPosX = _arcadeScreenLeft;
+					if (_shipPosX < arcadeScreenLeft)
+						_shipPosX = arcadeScreenLeft;
 					_vm->_gameSys->setAnimation(_nextUfoSequenceId, 256, 7);
 					_vm->_gameSys->insertSequence(_nextUfoSequenceId, 256, _ufoSequenceId, 256, kSeqSyncWait, 0, _shipPosX, _arcadeScreenBottom);
 					_ufoSequenceId = _nextUfoSequenceId;

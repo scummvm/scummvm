@@ -216,8 +216,6 @@ private:
 	int _liveAlienRows;
 	int _gameScore;
 	bool _soundToggle;
-	int _arcadeScreenLeft;
-	int _arcadeScreenRight;
 	int _arcadeScreenBottom;
 	int _shipsLeft;
 	int _shieldSpriteIds[3];
