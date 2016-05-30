@@ -249,11 +249,7 @@ void GameSys::drawSpriteToBackground(int x, int y, int resourceId) {
 Graphics::Surface *GameSys::allocSurface(int width, int height) {
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->create(width, height, _backgroundSurface->format);
-#if defined(SCUMM_BIG_ENDIAN)
-	surface->fillRect(Common::Rect(0, 0, surface->w, surface->h), 0x00FFFFFF);
-#else
 	surface->fillRect(Common::Rect(0, 0, surface->w, surface->h), 0xFFFFFF00);
-#endif
 	return surface;
 }
 
@@ -646,9 +642,9 @@ void GameSys::blitSurface32(Graphics::Surface *destSurface, int x, int y, Graphi
 		byte *rsrc = src;
 		byte *rdst = dst;
 		for (int xc = 0; xc < width; ++xc) {
-			uint32 pixel = READ_LE_UINT32(rsrc);
+			uint32 pixel = READ_UINT32(rsrc);
 			if (!transparent || pixel != 0xFFFFFF00)
-				WRITE_LE_UINT32(rdst, pixel);
+				WRITE_UINT32(rdst, pixel);
 			rsrc += 4;
 			rdst += 4;
 		}
