@@ -34,53 +34,13 @@
 
 namespace Cloud {
 
-/** Struct to represent upload() resulting status. */
-struct UploadStatus {
-	/** true if Request was interrupted (finished by user with finish()) */
-	bool interrupted;
-	/** true if Request has failed (bad server response or some other error occurred) */
-	bool failed;
-	/** Contains uploaded file description (empty if failed) */
-	StorageFile file;
-	/** Server's original response (empty if not failed) */
-	Common::String response;
-	/** Server's HTTP response code. */
-	long httpResponseCode;
-
-	UploadStatus():
-		interrupted(false), failed(false), file(), response(), httpResponseCode(-1) {}
-
-	UploadStatus(bool interrupt, bool failure, StorageFile f, Common::String resp, long code):
-		interrupted(interrupt), failed(failure), file(f), response(resp), httpResponseCode(code) {}
-};
-
-/** Struct to represent upload() resulting status. */
-struct ListDirectoryStatus {
-	/** true if Request was interrupted (finished by user with finish()) */
-	bool interrupted;
-	/** true if Request has failed (bad server response or some other error occurred) */
-	bool failed;
-	/** Contains listed files (might be incomplete if failed or interrupted) */
-	Common::Array<StorageFile> &files;
-	/** Server's original response (empty if not failed) */
-	Common::String response;
-	/** Server's HTTP response code. */
-	long httpResponseCode;
-
-	ListDirectoryStatus(Common::Array<StorageFile> &f) :
-		interrupted(false), failed(false), files(f), response(), httpResponseCode(-1) {}
-
-	ListDirectoryStatus(bool interrupt, bool failure, Common::Array<StorageFile> &f, Common::String resp, long code) :
-		interrupted(interrupt), failed(failure), files(f), response(resp), httpResponseCode(code) {}
-};
-
 class Storage {
 public:
 	typedef Networking::Response<Common::Array<StorageFile>&> FileArrayResponse;
 	typedef Networking::Response<StorageInfo> StorageInfoResponse;
 	typedef Networking::Response<bool> BoolResponse;
-	typedef Networking::Response<UploadStatus> UploadResponse;
-	typedef Networking::Response<ListDirectoryStatus> ListDirectoryResponse;
+	typedef Networking::Response<StorageFile> UploadResponse;
+	typedef Networking::Response<Common::Array<StorageFile> &> ListDirectoryResponse;
 
 	typedef Common::BaseCallback<FileArrayResponse> *FileArrayCallback;
 	typedef Common::BaseCallback<StorageInfoResponse> *StorageInfoCallback;
@@ -113,35 +73,35 @@ public:
 	 */
 
 	/** Returns ListDirectoryStatus struct with list of files. */
-	virtual Networking::Request *listDirectory(Common::String path, ListDirectoryCallback callback, bool recursive = false) = 0;
+	virtual Networking::Request *listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false) = 0;
 	
 	/** Returns UploadStatus struct with info about uploaded file. */
-	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback) = 0;
-	virtual Networking::Request *upload(Common::String remotePath, Common::String localPath, UploadCallback callback) = 0;
+	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) = 0;
+	virtual Networking::Request *upload(Common::String remotePath, Common::String localPath, UploadCallback callback, Networking::ErrorCallback errorCallback) = 0;
 
 	/** Returns pointer to Networking::NetworkReadStream. */
-	virtual Networking::Request *streamFile(Common::String path, Networking::NetworkReadStreamCallback callback) = 0;
+	virtual Networking::Request *streamFile(Common::String path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *download(Common::String remotePath, Common::String localPath, BoolCallback callback) = 0;
+	virtual Networking::Request *download(Common::String remotePath, Common::String localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) = 0;
 
 	/** Returns Common::Array<StorageFile> with list of files, which were not downloaded. */
-	virtual Networking::Request *downloadFolder(Common::String remotePath, Common::String localPath, FileArrayCallback callback, bool recursive = false) = 0;
+	virtual Networking::Request *downloadFolder(Common::String remotePath, Common::String localPath, FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false) = 0;
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *remove(Common::String path, BoolCallback callback) = 0;
+	virtual Networking::Request *remove(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *syncSaves(BoolCallback callback) = 0;
+	virtual Networking::Request *syncSaves(BoolCallback callback, Networking::ErrorCallback errorCallback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *createDirectory(Common::String path, BoolCallback callback) = 0;
+	virtual Networking::Request *createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *touch(Common::String path, BoolCallback callback) = 0;
+	virtual Networking::Request *touch(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) = 0;
 
 	/** Returns the StorageInfo struct. */
-	virtual Networking::Request *info(StorageInfoCallback callback) = 0;
+	virtual Networking::Request *info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) = 0;
 
 	/** Returns whether saves sync process is running. */
 	virtual bool isSyncing() = 0;

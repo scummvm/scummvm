@@ -45,22 +45,25 @@ class SavesSyncRequest: public Networking::Request {
 	bool _ignoreCallback;
 
 	void start();
-	void directoryListedCallback(Storage::ListDirectoryResponse pair);
-	void fileDownloadedCallback(Storage::BoolResponse pair);
-	void fileUploadedCallback(Storage::UploadResponse pair);
+	void directoryListedCallback(Storage::ListDirectoryResponse response);
+	void directoryListedErrorCallback(Networking::ErrorResponse error);
+	void fileDownloadedCallback(Storage::BoolResponse response);
+	void fileDownloadedErrorCallback(Networking::ErrorResponse error);
+	void fileUploadedCallback(Storage::UploadResponse response);
+	void fileUploadedErrorCallback(Networking::ErrorResponse error);
 	void downloadNextFile();
 	void uploadNextFile();
-	void finishBool(bool success);
+	virtual void finishError(Networking::ErrorResponse error);
+	void finishSuccess(bool success);
 	void loadTimestamps();
 	void saveTimestamps();
 	Common::String concatWithSavesPath(Common::String name);
 public:
-	SavesSyncRequest(Storage *storage, Storage::BoolCallback callback);
+	SavesSyncRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb);
 	virtual ~SavesSyncRequest();
 
 	virtual void handle();
-	virtual void restart();
-	virtual void finish();
+	virtual void restart();	
 };
 
 } // End of namespace Cloud

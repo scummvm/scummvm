@@ -31,8 +31,8 @@
 namespace Cloud {
 namespace OneDrive {
 
-OneDriveListDirectoryRequest::OneDriveListDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, bool recursive):
-	Networking::Request(0),
+OneDriveListDirectoryRequest::OneDriveListDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive):
+	Networking::Request(nullptr, ecb),
 	_requestedPath(path), _requestedRecursive(recursive), _storage(storage), _listDirectoryCallback(cb),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
@@ -55,12 +55,12 @@ void OneDriveListDirectoryRequest::start() {
 	_ignoreCallback = false;
 
 	_directoriesQueue.push_back(_requestedPath);
-	listNextDirectory(_files);
+	listNextDirectory();
 }
 
-void OneDriveListDirectoryRequest::listNextDirectory(ListDirectoryStatus status) {
+void OneDriveListDirectoryRequest::listNextDirectory() {
 	if (_directoriesQueue.empty()) {
-		finishStatus(status);
+		finishSuccess(_files);
 		return;
 	}
 
@@ -78,36 +78,37 @@ void OneDriveListDirectoryRequest::listNextDirectory(ListDirectoryStatus status)
 
 void OneDriveListDirectoryRequest::makeRequest(Common::String url) {	
 	Networking::JsonCallback callback = new Common::Callback<OneDriveListDirectoryRequest, Networking::JsonResponse>(this, &OneDriveListDirectoryRequest::listedDirectoryCallback);
-	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(_storage, callback, url.c_str());
+	Networking::ErrorCallback failureCallback = new Common::Callback<OneDriveListDirectoryRequest, Networking::ErrorResponse>(this, &OneDriveListDirectoryRequest::listedDirectoryErrorCallback);
+	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(_storage, callback, failureCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	_workingRequest = ConnMan.addRequest(request);
 }
 
-void OneDriveListDirectoryRequest::listedDirectoryCallback(Networking::JsonResponse pair) {
+void OneDriveListDirectoryRequest::listedDirectoryCallback(Networking::JsonResponse response) {
 	_workingRequest = nullptr;
-	Common::JSONValue *json = pair.value;
+	Common::JSONValue *json = response.value;
 
 	if (_ignoreCallback) {
 		delete json;
 		return;
 	}
 
-	ListDirectoryStatus status(_files);
-	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)pair.request;
+	Networking::ErrorResponse error(this);
+	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
-		status.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
+		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
 	if (!json) {
-		status.failed = true;
-		finishStatus(status);
+		error.failed = true;
+		finishError(error);
 		return;
 	}
 
-	Common::JSONObject response = json->asObject();		
+	Common::JSONObject object = json->asObject();		
 	
 	//TODO: check that ALL keys exist AND HAVE RIGHT TYPE to avoid segfaults
 
-	Common::JSONArray items = response.getVal("value")->asArray();
+	Common::JSONArray items = object.getVal("value")->asArray();
 	for (uint32 i = 0; i < items.size(); ++i) {
 		Common::JSONObject item = items[i]->asObject();	
 
@@ -123,26 +124,29 @@ void OneDriveListDirectoryRequest::listedDirectoryCallback(Networking::JsonRespo
 		}
 	}
 
-	bool hasMore = response.contains("@odata.nextLink");
+	bool hasMore = object.contains("@odata.nextLink");
 	if (hasMore) {
-		makeRequest(response.getVal("@odata.nextLink")->asString());
+		makeRequest(object.getVal("@odata.nextLink")->asString());
 	} else {
-		listNextDirectory(status);
+		listNextDirectory();
 	}
 
 	delete json;
 }
 
-void OneDriveListDirectoryRequest::finish() {	
-	Common::Array<StorageFile> files;
-	ListDirectoryStatus status(files);
-	status.interrupted = true;
-	finishStatus(status);
+void OneDriveListDirectoryRequest::listedDirectoryErrorCallback(Networking::ErrorResponse error) {
+	_workingRequest = nullptr;
+	if (_ignoreCallback) return;
+	finishError(error);
 }
 
-void OneDriveListDirectoryRequest::finishStatus(ListDirectoryStatus status) {
-	Request::finish();
-	if (_listDirectoryCallback) (*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, status));
+void OneDriveListDirectoryRequest::handle() {}
+
+void OneDriveListDirectoryRequest::restart() { start(); }
+
+void OneDriveListDirectoryRequest::finishSuccess(Common::Array<StorageFile> &files) {
+	Request::finishSuccess();
+	if (_listDirectoryCallback) (*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, files));
 }
 
 } // End of namespace OneDrive

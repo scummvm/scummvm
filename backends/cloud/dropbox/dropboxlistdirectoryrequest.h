@@ -42,15 +42,15 @@ class DropboxListDirectoryRequest: public Networking::Request {
 	bool _ignoreCallback;
 	
 	void start();
-	void responseCallback(Networking::JsonResponse pair);
-	void finishStatus(ListDirectoryStatus status);
+	void responseCallback(Networking::JsonResponse response);
+	void errorCallback(Networking::ErrorResponse error);
+	void finishSuccess(Common::Array<StorageFile> &files);
 public:
-	DropboxListDirectoryRequest(Common::String token, Common::String path, Storage::ListDirectoryCallback cb, bool recursive = false);
+	DropboxListDirectoryRequest(Common::String token, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive = false);
 	virtual ~DropboxListDirectoryRequest();
 
 	virtual void handle();
 	virtual void restart();
-	virtual void finish();
 };
 
 } // End of namespace Dropbox

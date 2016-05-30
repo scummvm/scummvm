@@ -46,15 +46,18 @@ class OneDriveStorage: public Cloud::Storage {
 	 */
 	OneDriveStorage(Common::String code);
 
-	void tokenRefreshed(BoolCallback callback, Networking::JsonResponse pair);
-	void codeFlowComplete(BoolResponse pair);
+	void tokenRefreshed(BoolCallback callback, Networking::JsonResponse response);
+	void codeFlowComplete(BoolResponse response);
 
-	void printJson(Networking::JsonResponse pair);
-	void fileDownloaded(BoolResponse pair);
-	void printFiles(FileArrayResponse pair);
-	void printBool(BoolResponse pair);
+	void printJson(Networking::JsonResponse response);
+	void fileDownloaded(BoolResponse response);
+	void printFiles(FileArrayResponse response);
+	void printBool(BoolResponse response);
+	void printErrorResponse(Networking::ErrorResponse error);
 
-	void fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse pair);
+	Networking::ErrorCallback getErrorPrintingCallback();
+
+	void fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response);
 public:	
 	virtual ~OneDriveStorage();
 
@@ -74,35 +77,35 @@ public:
 	/** Public Cloud API comes down there. */
 
 	/** Returns ListDirectoryStatus struct with list of files. */
-	virtual Networking::Request *listDirectory(Common::String path, ListDirectoryCallback callback, bool recursive = false);
+	virtual Networking::Request *listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
 
 	/** Returns UploadStatus struct with info about uploaded file. */
-	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback) { return nullptr; } //TODO
-	virtual Networking::Request *upload(Common::String remotePath, Common::String localPath, UploadCallback callback) { return nullptr; }
+	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) { return nullptr; } //TODO
+	virtual Networking::Request *upload(Common::String remotePath, Common::String localPath, UploadCallback callback, Networking::ErrorCallback errorCallback) { return nullptr; } //TODO
 
 	/** Returns pointer to Networking::NetworkReadStream. */
-	virtual Networking::Request *streamFile(Common::String path, Networking::NetworkReadStreamCallback callback);
+	virtual Networking::Request *streamFile(Common::String path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *download(Common::String remotePath, Common::String localPath, BoolCallback callback);
+	virtual Networking::Request *download(Common::String remotePath, Common::String localPath, BoolCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Returns Common::Array<StorageFile> with list of files, which were not downloaded. */
-	virtual Networking::Request *downloadFolder(Common::String remotePath, Common::String localPath, FileArrayCallback callback, bool recursive = false);
+	virtual Networking::Request *downloadFolder(Common::String remotePath, Common::String localPath, FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *remove(Common::String path, BoolCallback callback) { return nullptr; } //TODO
+	virtual Networking::Request *remove(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) { return nullptr; } //TODO
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *syncSaves(BoolCallback callback);
+	virtual Networking::Request *syncSaves(BoolCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *createDirectory(Common::String path, BoolCallback callback) { return nullptr; } //TODO
+	virtual Networking::Request *createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) { return nullptr; } //TODO
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *touch(Common::String path, BoolCallback callback) { return nullptr; } //TODO
+	virtual Networking::Request *touch(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) { return nullptr; } //TODO
 
 	/** Returns the StorageInfo struct. */
-	virtual Networking::Request *info(StorageInfoCallback callback) { return nullptr; } //TODO
+	virtual Networking::Request *info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) { return nullptr; } //TODO
 
 	/** Returns whether saves sync process is running. */
 	virtual bool isSyncing() { return false; } //TODO

@@ -42,7 +42,7 @@ public:
 	virtual void addStorage(Cloud::Storage *storage, bool makeCurrent = true, bool saveConfig = true);
 
 	virtual Storage *getCurrentStorage();
-	virtual void syncSaves(Storage::BoolCallback callback);
+	virtual void syncSaves(Storage::BoolCallback callback, Networking::ErrorCallback errorCallback);
 };
 
 } // End of namespace Cloud

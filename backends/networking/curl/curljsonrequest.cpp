@@ -31,8 +31,8 @@
 
 namespace Networking {
 
-CurlJsonRequest::CurlJsonRequest(JsonCallback cb, Common::String url):
-	CurlRequest(0, url), _jsonCallback(cb), _contentsStream(DisposeAfterUse::YES) {}
+CurlJsonRequest::CurlJsonRequest(JsonCallback cb, ErrorCallback ecb, Common::String url):
+	CurlRequest(nullptr, ecb, url), _jsonCallback(cb), _contentsStream(DisposeAfterUse::YES) {}
 
 CurlJsonRequest::~CurlJsonRequest() { delete _jsonCallback; }
 
@@ -65,34 +65,32 @@ void CurlJsonRequest::handle() {
 			if (_contentsStream.write(buf, readBytes) != readBytes)
 				warning("MemoryWriteStreamDynamic was unable to write all the bytes");
 
-		if (_stream->eos()) {			
-			if (_stream->httpResponseCode() != 200)
-				warning("HTTP response code is not 200 OK (it's %ld)", _stream->httpResponseCode());
-
+		if (_stream->eos()) {
 			char *contents = getPreparedContents();
-			if (_stream->httpResponseCode() != 200)
-				debug("%s", contents);
 			Common::JSONValue *json = Common::JSON::parse(contents);
-			finishJson(json);
+			if (json) {
+				finishSuccess(json); //it's JSON even if's not 200 OK? That's fine!..
+			} else {
+				if (_stream->httpResponseCode() == 200) //no JSON, but 200 OK? That's fine!..
+					finishSuccess(nullptr);
+				else
+					finishError(ErrorResponse(this, false, true, contents, _stream->httpResponseCode()));
+			}
 		}
 	}
 }
 
 void CurlJsonRequest::restart() {
 	if (_stream) delete _stream;
-	_stream = 0;
+	_stream = nullptr;
 	_contentsStream = Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 	//with no stream available next handle() will create another one
 }
 
-void CurlJsonRequest::finishJson(Common::JSONValue *json) {
-	Request::finish();
+void CurlJsonRequest::finishSuccess(Common::JSONValue *json) {
+	Request::finishSuccess();
 	if (_jsonCallback) (*_jsonCallback)(JsonResponse(this, json)); //potential memory leak, free it in your callbacks!
 	else delete json;
-}
-
-void CurlJsonRequest::finish() {
-	finishJson(0);
 }
 
 } // End of namespace Networking

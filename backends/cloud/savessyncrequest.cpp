@@ -32,8 +32,8 @@ namespace Cloud {
 
 const char *SavesSyncRequest::TIMESTAMPS_FILENAME = "timestamps";
 
-SavesSyncRequest::SavesSyncRequest(Storage *storage, Storage::BoolCallback callback):
-	Request(nullptr), _storage(storage), _boolCallback(callback),
+SavesSyncRequest::SavesSyncRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb):
+	Request(nullptr, ecb), _storage(storage), _boolCallback(callback),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
@@ -59,48 +59,35 @@ void SavesSyncRequest::start() {
 	loadTimestamps();
 
 	//list saves directory
-	_workingRequest = _storage->listDirectory("/saves", new Common::Callback<SavesSyncRequest, Storage::ListDirectoryResponse>(this, &SavesSyncRequest::directoryListedCallback));
+	_workingRequest = _storage->listDirectory(
+		"/saves",
+		new Common::Callback<SavesSyncRequest, Storage::ListDirectoryResponse>(this, &SavesSyncRequest::directoryListedCallback),
+		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::directoryListedErrorCallback)
+	);
 }
 
-void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse pair) {
+void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 
-	ListDirectoryStatus status = pair.value;
-	bool irrecoverable = status.interrupted || status.failed;
-	if (status.failed) {
-		Common::JSONValue *value = Common::JSON::parse(status.response.c_str());
-		if (value) {
-			if (value->isObject()) {
-				Common::JSONObject object = value->asObject();
-				//Dropbox-related error:
-				if (object.contains("error_summary")) {
-					Common::String summary = object.getVal("error_summary")->asString();
-					if (summary.contains("not_found")) {
-						//oh how lucky we are! It's just user don't have /cloud/ folder yet!
-						irrecoverable = false;
-					}
-				}
-			}
-			delete value;
-		}
+	Common::HashMap<Common::String, bool> localFileNotAvailableInCloud;
+	for (Common::HashMap<Common::String, uint32>::iterator i = _localFilesTimestamps.begin(); i != _localFilesTimestamps.end(); ++i) {		
+		localFileNotAvailableInCloud[i->_key] = true;
 	}
 
-	if (irrecoverable) {
-		finishBool(false);
-		return;
-	}
-	
 	//determine which files to download and which files to upload
-	Common::Array<StorageFile> &remoteFiles = status.files;
+	Common::Array<StorageFile> &remoteFiles = response.value;
 	for (uint32 i = 0; i < remoteFiles.size(); ++i) {
 		StorageFile &file = remoteFiles[i];
 		if (file.isDirectory()) continue;
 		if (file.name() == TIMESTAMPS_FILENAME) continue;
+
 		Common::String name = file.name();
 		if (!_localFilesTimestamps.contains(name))
 			_filesToDownload.push_back(file);
 		else {
+			localFileNotAvailableInCloud[name] = false;
+
 			if (_localFilesTimestamps[name] != INVALID_TIMESTAMP) {
 				if (_localFilesTimestamps[name] == file.timestamp())
 					continue;
@@ -115,11 +102,10 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse pa
 		}
 	}
 
-	//upload files with invalid timestamp (the ones we've added - means they might not have any remote version)
-	for (Common::HashMap<Common::String, uint32>::iterator i = _localFilesTimestamps.begin(); i != _localFilesTimestamps.end(); ++i) {
+	//upload files which are unavailable in cloud
+	for (Common::HashMap<Common::String, bool>::iterator i = localFileNotAvailableInCloud.begin(); i != localFileNotAvailableInCloud.end(); ++i) {
 		if (i->_key == TIMESTAMPS_FILENAME) continue;
-		if (i->_value == INVALID_TIMESTAMP)
-			_filesToUpload.push_back(i->_key);
+		if (i->_value) _filesToUpload.push_back(i->_key);
 	}
 
 	///////
@@ -137,6 +123,50 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse pa
 	downloadNextFile();
 }
 
+void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse error) {
+	_workingRequest = nullptr;
+	if (_ignoreCallback) return;
+
+	bool irrecoverable = error.interrupted || error.failed;
+	if (error.failed) {
+		Common::JSONValue *value = Common::JSON::parse(error.response.c_str());
+		if (value) {
+			if (value->isObject()) {
+				Common::JSONObject object = value->asObject();
+
+				//Dropbox-related error:
+				if (object.contains("error_summary")) {
+					Common::String summary = object.getVal("error_summary")->asString();
+					if (summary.contains("not_found")) {						
+						irrecoverable = false;
+					}
+				}
+
+				//OneDrive-related error:
+				if (object.contains("error") && object.getVal("error")->isObject()) {
+					Common::JSONObject errorNode = object.getVal("error")->asObject();
+					if (errorNode.contains("code") && errorNode.contains("message")) {
+						Common::String code = errorNode.getVal("code")->asString();
+						if (code == "itemNotFound") {
+							irrecoverable = false;
+						}
+					}
+				}
+			}
+			delete value;
+		}
+	}
+
+	if (irrecoverable) {
+		finishError(error);
+		return;
+	}
+
+	//we're lucky - user just lacks his "/cloud/" folder
+	Common::Array<StorageFile> files;
+	directoryListedCallback(Storage::ListDirectoryResponse(error.request, files));
+}
+
 void SavesSyncRequest::downloadNextFile() {
 	if (_filesToDownload.empty()) {
 		uploadNextFile();
@@ -150,17 +180,18 @@ void SavesSyncRequest::downloadNextFile() {
 	debug("downloading %s", _currentDownloadingFile.name().c_str());
 	///////
 	_workingRequest = _storage->download(_currentDownloadingFile.path(), concatWithSavesPath(_currentDownloadingFile.name()),
-		new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::fileDownloadedCallback)
+		new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::fileDownloadedCallback),
+		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileDownloadedErrorCallback)
 	);
 }
 
-void SavesSyncRequest::fileDownloadedCallback(Storage::BoolResponse pair) {
+void SavesSyncRequest::fileDownloadedCallback(Storage::BoolResponse response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 
 	//stop syncing if download failed
-	if (!pair.value) {
-		finish();
+	if (!response.value) {
+		finishError(Networking::ErrorResponse(this, false, true, "", -1));
 		return;
 	}
 
@@ -171,9 +202,17 @@ void SavesSyncRequest::fileDownloadedCallback(Storage::BoolResponse pair) {
 	downloadNextFile();
 }
 
+void SavesSyncRequest::fileDownloadedErrorCallback(Networking::ErrorResponse error) {
+	_workingRequest = nullptr;
+	if (_ignoreCallback) return;
+
+	//stop syncing if download failed
+	finishError(error);	
+}
+
 void SavesSyncRequest::uploadNextFile() {
 	if (_filesToUpload.empty()) {
-		finishBool(true);
+		finishSuccess(true);
 		return;
 	}
 
@@ -184,36 +223,45 @@ void SavesSyncRequest::uploadNextFile() {
 	debug("uploading %s", _currentUploadingFile.c_str());
 	///////
 	_workingRequest = _storage->upload("/saves/" + _currentUploadingFile, g_system->getSavefileManager()->openRawFile(_currentUploadingFile),
-		new Common::Callback<SavesSyncRequest, Storage::UploadResponse>(this, &SavesSyncRequest::fileUploadedCallback)
+		new Common::Callback<SavesSyncRequest, Storage::UploadResponse>(this, &SavesSyncRequest::fileUploadedCallback),
+		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileUploadedErrorCallback)
 	);
 }
 
-void SavesSyncRequest::fileUploadedCallback(Storage::UploadResponse pair) {
+void SavesSyncRequest::fileUploadedCallback(Storage::UploadResponse response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
-	UploadStatus status = pair.value;
-
-	//stop syncing if upload failed
-	if (status.interrupted || status.failed) {
-		finish();
-		return;
-	}
-
+	
 	//update local timestamp for the uploaded file
-	_localFilesTimestamps[_currentUploadingFile] = status.file.timestamp();
+	_localFilesTimestamps[_currentUploadingFile] = response.value.timestamp();
 
 	//continue uploading files
 	uploadNextFile();
+}
+
+void SavesSyncRequest::fileUploadedErrorCallback(Networking::ErrorResponse error) {
+	_workingRequest = nullptr;
+	if (_ignoreCallback) return;
+
+	//stop syncing if upload failed
+	finishError(error);
 }
 
 void SavesSyncRequest::handle() {}
 
 void SavesSyncRequest::restart() { start(); }
 
-void SavesSyncRequest::finish() { finishBool(false); }
+void SavesSyncRequest::finishError(Networking::ErrorResponse error) {
+	debug("SavesSync::finishError");
 
-void SavesSyncRequest::finishBool(bool success) {
-	Request::finish();
+	//save updated timestamps (even if Request failed, there would be only valid timestamps)
+	saveTimestamps();
+
+	Request::finishError(error);
+}
+
+void SavesSyncRequest::finishSuccess(bool success) {
+	Request::finishSuccess();
 
 	//save updated timestamps (even if Request failed, there would be only valid timestamps)
 	saveTimestamps();
@@ -233,7 +281,6 @@ void SavesSyncRequest::loadTimestamps() {
 		warning("SavesSyncRequest: failed to open '%s' file to load timestamps", TIMESTAMPS_FILENAME);
 		return;
 	}
-
 	
 	while (!file->eos()) {
 		//read filename into buffer (reading until the first ' ')

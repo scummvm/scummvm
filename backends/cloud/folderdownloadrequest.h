@@ -40,17 +40,18 @@ class FolderDownloadRequest: public Networking::Request {
 	bool _ignoreCallback;
 
 	void start();
-	void directoryListedCallback(Storage::ListDirectoryResponse pair);
-	void fileDownloadedCallback(Storage::BoolResponse pair);
+	void directoryListedCallback(Storage::ListDirectoryResponse response);
+	void directoryListedErrorCallback(Networking::ErrorResponse error);
+	void fileDownloadedCallback(Storage::BoolResponse response);
+	void fileDownloadedErrorCallback(Networking::ErrorResponse error);
 	void downloadNextFile();
-	void finishFiles(Common::Array<StorageFile> &files);
+	void finishSuccess(Common::Array<StorageFile> &files);
 public:
-	FolderDownloadRequest(Storage *storage, Storage::FileArrayCallback callback, Common::String remoteDirectoryPath, Common::String localDirectoryPath, bool recursive);
+	FolderDownloadRequest(Storage *storage, Storage::FileArrayCallback callback, Networking::ErrorCallback ecb, Common::String remoteDirectoryPath, Common::String localDirectoryPath, bool recursive);
 	virtual ~FolderDownloadRequest();
 
-	virtual void handle() {}
-	virtual void restart() { start(); }
-	virtual void finish();
+	virtual void handle();
+	virtual void restart();	
 };
 
 } // End of namespace Cloud

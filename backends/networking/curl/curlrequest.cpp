@@ -30,8 +30,8 @@
 
 namespace Networking {
 
-CurlRequest::CurlRequest(DataCallback cb, Common::String url):
-	Request(cb), _url(url), _stream(nullptr), _headersList(nullptr), _bytesBuffer(nullptr), _bytesBufferSize(0) {}
+CurlRequest::CurlRequest(DataCallback cb, ErrorCallback ecb, Common::String url):
+	Request(cb, ecb), _url(url), _stream(nullptr), _headersList(nullptr), _bytesBuffer(nullptr), _bytesBufferSize(0) {}
 
 CurlRequest::~CurlRequest() {
 	delete _stream;
@@ -49,9 +49,14 @@ void CurlRequest::handle() {
 	if (!_stream) _stream = makeStream();	
 
 	if (_stream && _stream->eos()) {
-		if (_stream->httpResponseCode() != 200)
+		if (_stream->httpResponseCode() != 200) {
 			warning("HTTP response code is not 200 OK (it's %ld)", _stream->httpResponseCode());
-		finish();
+			ErrorResponse error(this, false, true, "", _stream->httpResponseCode());
+			finishError(error);
+			return;
+		}
+
+		finishSuccess(); //note that this Request doesn't call its callback on success (that's because it has nothing to return)
 	}
 }
 
@@ -100,5 +105,7 @@ NetworkReadStreamResponse CurlRequest::execute() {
 
 	return NetworkReadStreamResponse(this, _stream);
 }
+
+const NetworkReadStream *CurlRequest::getNetworkReadStream() const { return _stream; }
 
 } // End of namespace Networking

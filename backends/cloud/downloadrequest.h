@@ -31,23 +31,24 @@
 namespace Cloud {
 
 class DownloadRequest: public Networking::Request {	
-	Storage::BoolCallback _boolCallback;
+	Storage::BoolCallback _boolCallback;	
+	Common::DumpFile *_localFile;
+	Common::String _remoteFileName;
+	Storage *_storage;
 	Networking::NetworkReadStream *_remoteFileStream;
-	Common::DumpFile *_localFile;	
+	Request *_workingRequest;
+	bool _ignoreCallback;
 
-	void streamCallback(Networking::NetworkReadStreamResponse pair);
-
-	void finishBool(bool success);
+	void start();
+	void streamCallback(Networking::NetworkReadStreamResponse response);
+	void streamErrorCallback(Networking::ErrorResponse error);
+	void finishSuccess(bool success);
 public:
-	DownloadRequest(Storage *storage, Storage::BoolCallback callback, Common::String remoteFile, Common::DumpFile *dumpFile);
-	virtual ~DownloadRequest() {
-		delete _boolCallback;
-		delete _localFile;
-	}
+	DownloadRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb, Common::String remoteFile, Common::DumpFile *dumpFile);
+	virtual ~DownloadRequest();
 
 	virtual void handle();
 	virtual void restart();
-	virtual void finish();
 };
 
 } // End of namespace Cloud

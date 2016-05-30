@@ -74,7 +74,7 @@ void OneDriveStorage::getAccessToken(BoolCallback callback, Common::String code)
 	}
 
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, BoolResponse, Networking::JsonResponse>(this, &OneDriveStorage::tokenRefreshed, callback);
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://login.live.com/oauth20_token.srf");
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, getErrorPrintingCallback(), "https://login.live.com/oauth20_token.srf"); //TODO
 	if (codeFlow) {
 		request->addPostField("code=" + code);
 		request->addPostField("grant_type=authorization_code");
@@ -88,8 +88,8 @@ void OneDriveStorage::getAccessToken(BoolCallback callback, Common::String code)
 	ConnMan.addRequest(request);
 }
 
-void OneDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResponse pair) {
-	Common::JSONValue *json = pair.value;
+void OneDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResponse response) {
+	Common::JSONValue *json = response.value;
 	if (!json) {
 		warning("OneDriveStorage: got NULL instead of JSON");
 		if (callback) (*callback)(BoolResponse(nullptr, false));
@@ -111,8 +111,8 @@ void OneDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResp
 	delete json;
 }
 
-void OneDriveStorage::codeFlowComplete(BoolResponse pair) {
-	if (!pair.value) {
+void OneDriveStorage::codeFlowComplete(BoolResponse response) {
+	if (!response.value) {
 		warning("OneDriveStorage: failed to get access token through code flow");
 		return;
 	}
@@ -130,8 +130,8 @@ void OneDriveStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "refresh_token", _refreshToken, "cloud");
 }
 
-void OneDriveStorage::printJson(Networking::JsonResponse pair) {
-	Common::JSONValue *json = pair.value;
+void OneDriveStorage::printJson(Networking::JsonResponse response) {
+	Common::JSONValue *json = response.value;
 	if (!json) {
 		warning("printJson: NULL");
 		return;
@@ -141,77 +141,85 @@ void OneDriveStorage::printJson(Networking::JsonResponse pair) {
 	delete json;
 }
 
-void OneDriveStorage::fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse pair) {
-	if (!pair.value) {
+void OneDriveStorage::fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response) {
+	if (!response.value) {
 		warning("fileInfoCallback: NULL");
-		if (outerCallback) (*outerCallback)(Networking::NetworkReadStreamResponse(pair.request, 0));
+		if (outerCallback) (*outerCallback)(Networking::NetworkReadStreamResponse(response.request, 0));
 		return;
 	}
 
-	Common::JSONObject result = pair.value->asObject();
+	Common::JSONObject result = response.value->asObject();
 	if (result.contains("@content.downloadUrl")) {
 		const char *url = result.getVal("@content.downloadUrl")->asString().c_str();
 		if (outerCallback)
 			(*outerCallback)(Networking::NetworkReadStreamResponse(
-				pair.request,
+				response.request,
 				new Networking::NetworkReadStream(url, 0, "")
 			));
 	} else {
 		warning("downloadUrl not found in passed JSON");
-		debug("%s", pair.value->stringify().c_str());
-		if (outerCallback) (*outerCallback)(Networking::NetworkReadStreamResponse(pair.request, 0));
+		debug("%s", response.value->stringify().c_str());
+		if (outerCallback) (*outerCallback)(Networking::NetworkReadStreamResponse(response.request, 0));
 	}
-	delete pair.value;
+	delete response.value;
 }
 
-Networking::Request *OneDriveStorage::listDirectory(Common::String path, ListDirectoryCallback callback, bool recursive) {
-	return ConnMan.addRequest(new OneDriveListDirectoryRequest(this, path, callback, recursive));
+Networking::Request *OneDriveStorage::listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
+	return ConnMan.addRequest(new OneDriveListDirectoryRequest(this, path, callback, errorCallback, recursive));
 }
 
 
-Networking::Request *OneDriveStorage::streamFile(Common::String path, Networking::NetworkReadStreamCallback outerCallback) {
+Networking::Request *OneDriveStorage::streamFile(Common::String path, Networking::NetworkReadStreamCallback outerCallback, Networking::ErrorCallback errorCallback) {
 	Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot:/" + path;
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, Networking::NetworkReadStreamResponse, Networking::JsonResponse>(this, &OneDriveStorage::fileInfoCallback, outerCallback);
-	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, url.c_str());
+	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, errorCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + _token);
 	return ConnMan.addRequest(request);
 }
 
-Networking::Request *OneDriveStorage::download(Common::String remotePath, Common::String localPath, BoolCallback callback) {
+Networking::Request *OneDriveStorage::download(Common::String remotePath, Common::String localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	Common::DumpFile *f = new Common::DumpFile();
 	if (!f->open(localPath, true)) {
 		warning("OneDriveStorage: unable to open file to download into");
-		if (callback) (*callback)(BoolResponse(nullptr, false));
+		if (errorCallback) (*errorCallback)(Networking::ErrorResponse(nullptr, false, true, "", -1));
 		delete f;
 		return nullptr;
 	}
 
-	return ConnMan.addRequest(new DownloadRequest(this, callback, remotePath, f));
+	return ConnMan.addRequest(new DownloadRequest(this, callback, errorCallback, remotePath, f));
 }
 
 /** Returns Common::Array<StorageFile> with list of files, which were not downloaded. */
-Networking::Request *OneDriveStorage::downloadFolder(Common::String remotePath, Common::String localPath, FileArrayCallback callback, bool recursive) {
-	return ConnMan.addRequest(new FolderDownloadRequest(this, callback, remotePath, localPath, recursive));
+Networking::Request *OneDriveStorage::downloadFolder(Common::String remotePath, Common::String localPath, FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
+	return ConnMan.addRequest(new FolderDownloadRequest(this, callback, errorCallback, remotePath, localPath, recursive));
 }
 
-void OneDriveStorage::fileDownloaded(BoolResponse pair) {
-	if (pair.value) debug("file downloaded!");
+void OneDriveStorage::fileDownloaded(BoolResponse response) {
+	if (response.value) debug("file downloaded!");
 	else debug("download failed!");
 }
 
-void OneDriveStorage::printFiles(FileArrayResponse pair) {
+void OneDriveStorage::printFiles(FileArrayResponse response) {
 	debug("files:");
-	Common::Array<StorageFile> &files = pair.value;
+	Common::Array<StorageFile> &files = response.value;
 	for (uint32 i = 0; i < files.size(); ++i)
 		debug("\t%s", files[i].path().c_str());
 }
 
-void OneDriveStorage::printBool(BoolResponse pair) {
-	debug("bool: %s", pair.value ? "true" : "false");
+void OneDriveStorage::printBool(BoolResponse response) {
+	debug("bool: %s", response.value ? "true" : "false");
 }
 
+void OneDriveStorage::printErrorResponse(Networking::ErrorResponse error) {
+	debug("error response (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
+	debug("%s", error.response.c_str());
+}
 
-Networking::Request *OneDriveStorage::syncSaves(BoolCallback callback) {
+Networking::ErrorCallback OneDriveStorage::getErrorPrintingCallback() {
+	return new Common::Callback<OneDriveStorage, Networking::ErrorResponse>(this, &OneDriveStorage::printErrorResponse);
+}
+
+Networking::Request *OneDriveStorage::syncSaves(BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	//this is not the real syncSaves() implementation
 	/*
 	Networking::JsonCallback innerCallback = new Common::Callback<OneDriveStorage, Networking::RequestJsonPair>(this, &OneDriveStorage::printJson);
@@ -220,7 +228,7 @@ Networking::Request *OneDriveStorage::syncSaves(BoolCallback callback) {
 	return ConnMan.addRequest(request);
 	*/
 	//return downloadFolder("subfolder", "local/onedrive/subfolder_downloaded", new Common::Callback<OneDriveStorage, FileArrayResponse>(this, &OneDriveStorage::printFiles), false);
-	return ConnMan.addRequest(new SavesSyncRequest(this, new Common::Callback<OneDriveStorage, BoolResponse>(this, &OneDriveStorage::printBool)));
+	return ConnMan.addRequest(new SavesSyncRequest(this, new Common::Callback<OneDriveStorage, BoolResponse>(this, &OneDriveStorage::printBool), getErrorPrintingCallback())); //TODO
 }
 
 OneDriveStorage *OneDriveStorage::loadFromConfig(Common::String keyPrefix) {

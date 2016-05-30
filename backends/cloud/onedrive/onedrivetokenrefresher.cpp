@@ -31,16 +31,16 @@
 namespace Cloud {
 namespace OneDrive {
 
-OneDriveTokenRefresher::OneDriveTokenRefresher(OneDriveStorage *parent, Networking::JsonCallback callback, const char *url):
-	CurlJsonRequest(callback, url), _parentStorage(parent) {}
+OneDriveTokenRefresher::OneDriveTokenRefresher(OneDriveStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url):
+	CurlJsonRequest(callback, ecb, url), _parentStorage(parent) {}
 
 OneDriveTokenRefresher::~OneDriveTokenRefresher() {}
 
-void OneDriveTokenRefresher::tokenRefreshed(Storage::BoolResponse pair) {
-	if (!pair.value) {
+void OneDriveTokenRefresher::tokenRefreshed(Storage::BoolResponse response) {
+	if (!response.value) {
 		//failed to refresh token, notify user with NULL in original callback
 		warning("OneDriveTokenRefresher: failed to refresh token");
-		finish();
+		finishError(Networking::ErrorResponse(this, false, true, "", -1));
 		return;
 	}
 
@@ -56,11 +56,10 @@ void OneDriveTokenRefresher::tokenRefreshed(Storage::BoolResponse pair) {
 	retry(0);
 }
 
-void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {	
+void OneDriveTokenRefresher::finishSuccess(Common::JSONValue *json) {
 	if (!json) {
-		//notify user of failure
-		warning("OneDriveTokenRefresher: got NULL instead of JSON");
-		CurlJsonRequest::finishJson(nullptr);
+		//that's probably not an error (200 OK)
+		CurlJsonRequest::finishSuccess(nullptr);
 		return;
 	}
 
@@ -74,19 +73,26 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 		Common::JSONObject error = result.getVal("error")->asObject();
 		bool irrecoverable = true;
 
+		Common::String code, message;
 		if (error.contains("code")) {
-			Common::String code = error.getVal("code")->asString();
-			debug("code = %s", code.c_str());
-			//if (code == "itemNotFound") irrecoverable = true;
+			code = error.getVal("code")->asString();
+			debug("code = %s", code.c_str());			
 		}
 
 		if (error.contains("message")) {
-			Common::String message = error.getVal("message")->asString();
+			message = error.getVal("message")->asString();
 			debug("message = %s", message.c_str());
 		}
 
-		if (irrecoverable) {
-			CurlJsonRequest::finishJson(nullptr);
+		//determine whether token refreshing would help in this situation
+		if (code == "itemNotFound") {
+			if (message.contains("application ID"))
+				irrecoverable = false;
+		}
+
+		if (irrecoverable) {			
+			finishError(Networking::ErrorResponse(this, false, true, json->stringify(true), -1)); //TODO: httpCode
+			delete json;
 			return;
 		}
 
@@ -97,7 +103,7 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 	}
 
 	//notify user of success
-	CurlJsonRequest::finishJson(json);
+	CurlJsonRequest::finishSuccess(json);
 }
 
 void OneDriveTokenRefresher::setHeaders(Common::Array<Common::String> &headers) {	
@@ -108,6 +114,10 @@ void OneDriveTokenRefresher::setHeaders(Common::Array<Common::String> &headers) 
 		CurlJsonRequest::addHeader(headers[i]);
 }
 
+void OneDriveTokenRefresher::addHeader(Common::String header) {
+	_headers.push_back(header);
+	CurlJsonRequest::addHeader(header);
+}
 
 } // End of namespace OneDrive
 } // End of namespace Cloud

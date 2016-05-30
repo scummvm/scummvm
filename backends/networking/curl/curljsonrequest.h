@@ -41,15 +41,14 @@ protected:
 	char *getPreparedContents();
 
 	/** Sets FINISHED state and passes the JSONValue * into user's callback in JsonResponse. */
-	virtual void finishJson(Common::JSONValue *json);
+	virtual void finishSuccess(Common::JSONValue *json);
 
 public:
-	CurlJsonRequest(JsonCallback cb, Common::String url);
+	CurlJsonRequest(JsonCallback cb, ErrorCallback ecb, Common::String url);
 	virtual ~CurlJsonRequest();
 
 	virtual void handle(); 
 	virtual void restart();
-	virtual void finish();
 };
 
 } // End of namespace Networking

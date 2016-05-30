@@ -40,7 +40,8 @@ MODULE_OBJS += \
 	networking/curl/connectionmanager.o \
 	networking/curl/networkreadstream.o \
 	networking/curl/curlrequest.o \
-	networking/curl/curljsonrequest.o
+	networking/curl/curljsonrequest.o \
+	networking/curl/request.o
 endif
 
 ifdef USE_ELF_LOADER

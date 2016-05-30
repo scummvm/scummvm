@@ -25,6 +25,7 @@
 
 #include "common/callback.h"
 #include "common/scummsys.h"
+#include "common/str.h"
 
 namespace Networking {
 
@@ -51,8 +52,39 @@ template<typename T> struct Response {
 	Response(Request *rq, T v) : request(rq), value(v) {}
 };
 
+/**
+ * ErrorResponse is a struct to be returned from Request
+ * to user's failure callbacks.
+ *
+ * It keeps a Request pointer together with some useful
+ * information fields, which would explain why failure
+ * callback was called.
+ *
+ * <interrupted> flag is set when Request was interrupted,
+ * i.e. finished by user with finish() call.
+ *
+ * <failed> flag is set when Request has failed because of
+ * some error (bad server response, for example).
+ *
+ * <response> contains server's original response.
+ *
+ * <httpResponseCode> contains server's HTTP response code.
+ */
+
+struct ErrorResponse {
+	Request *request;
+	bool interrupted;
+	bool failed;
+	Common::String response;
+	long httpResponseCode;
+
+	ErrorResponse(Request *rq);
+	ErrorResponse(Request *rq, bool interrupt, bool failure, Common::String resp, long httpCode);
+};
+
 typedef Response<void *> DataReponse;
 typedef Common::BaseCallback<DataReponse> *DataCallback;
+typedef Common::BaseCallback<ErrorResponse> *ErrorCallback;
 
 /**
  * RequestState is used to indicate current Request state.
@@ -74,6 +106,9 @@ typedef Common::BaseCallback<DataReponse> *DataCallback;
  * After this state is set, but before ConnectionManager deletes the Request,
  * Request calls user's callback. User can ask Request to change its state
  * by calling retry() or pause() methods and Request won't be deleted.
+ *
+ * Request get a success and failure callbacks. Request must call one
+ * (and only one!) of these callbacks when it sets FINISHED state.
  */
 enum RequestState {
 	PROCESSING,
@@ -94,6 +129,13 @@ protected:
 	DataCallback _callback;
 
 	/**
+	* Callback, which should be called when Request is failed/interrupted.
+	* That's the way Requests pass error information to the code which asked to create this request.
+	* @note callback must be called in finish() or similar method.
+	*/
+	ErrorCallback _errorCallback;
+
+	/**
 	 * Request state, which is used by ConnectionManager to determine
 	 * whether request might be deleted or it's still working.
 	 *
@@ -106,45 +148,42 @@ protected:
 	/** In RETRY state this indicates whether it's time to call restart(). */
 	uint32 _retryInSeconds;
 
+	/** Sets FINISHED state and calls the _errorCallback with given error. */
+	virtual void finishError(ErrorResponse error);
+
+	/** Sets FINISHED state. Implementations might extend it if needed. */
+	virtual void finishSuccess();
+
 public:
-	Request(DataCallback cb): _callback(cb), _state(PROCESSING), _retryInSeconds(0) {}
-	virtual ~Request() { delete _callback; }
+	Request(DataCallback cb, ErrorCallback ecb);
+	virtual ~Request();
 
 	/** Method, which does actual work. Depends on what this Request is doing. */
 	virtual void handle() = 0;
 
 	/** Method, which is called by ConnectionManager when Request's state is RETRY.	 */
-	virtual void handleRetry() {
-		if (_retryInSeconds > 0) --_retryInSeconds;
-		else {
-			_state = PROCESSING;
-			restart();
-		}
-	}
+	virtual void handleRetry();
 
 	/** Method, which is used to restart the Request. */
 	virtual void restart() = 0;
 
 	/** Method, which is called to pause the Request. */
-	virtual void pause() { _state = PAUSED; }
+	virtual void pause();
 
 	/**
 	 * Method, which is called to *interrupt* the Request.
 	 * When it's called, Request must stop its work and
-	 * call the callback to notify user of failure.
+	 * call the failure callback to notify user.
 	 */
-	virtual void finish() { _state = FINISHED; }
+	virtual void finish();
 
 	/** Method, which is called to retry the Request. */
-	virtual void retry(uint32 seconds) {		
-		_state = RETRY;
-		_retryInSeconds = seconds;
-	}
+	virtual void retry(uint32 seconds);
 
 	/** Returns Request's current state. */
-	RequestState state() const { return _state; }
+	RequestState state() const;
 };
 
-} // End of namespace Cloud
+} // End of namespace Networking
 
 #endif

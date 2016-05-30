@@ -48,7 +48,7 @@ protected:
 	virtual NetworkReadStream *makeStream();
 
 public:
-	CurlRequest(DataCallback cb, Common::String url);
+	CurlRequest(DataCallback cb, ErrorCallback ecb, Common::String url);
 	virtual ~CurlRequest();
 
 	virtual void handle();
@@ -73,7 +73,7 @@ public:
 	virtual NetworkReadStreamResponse execute();
 
 	/** Returns Request's NetworkReadStream. */
-	const NetworkReadStream *getNetworkReadStream() const { return _stream; }
+	const NetworkReadStream *getNetworkReadStream() const;
 };
 
 } // End of namespace Networking

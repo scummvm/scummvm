@@ -110,9 +110,9 @@ Storage *Manager::getCurrentStorage() {
 	return nullptr;
 }
 
-void Manager::syncSaves(Storage::BoolCallback callback) {
+void Manager::syncSaves(Storage::BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	Storage *storage = getCurrentStorage();
-	if (storage) storage->syncSaves(callback);
+	if (storage) storage->syncSaves(callback, errorCallback);
 }
 
 } // End of namespace Cloud
