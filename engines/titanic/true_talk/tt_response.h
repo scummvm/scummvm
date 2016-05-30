@@ -32,21 +32,30 @@ class TTresponse {
 private:
 	int _field0;
 	TTstring _text;
-	int _fieldC;
+	int _dialogueId;
 	TTresponse *_nextP;
 	TTresponse *_linkP;
 
 	TTresponse *copyChain() const;
-private:
-	/**
-	 * 
-	 */
-	void addLink(TTresponse *item);
 public:
 	TTresponse(const TTstring &src);
 	TTresponse(int val1, int val2);
 	TTresponse(const TTresponse *src);
 	virtual ~TTresponse();
+
+	TTresponse *getLink() const { return _linkP; }
+
+	void addLink(TTresponse *item);
+
+	/**
+	 * Get the dialogue Id for the response
+	 */
+	int getDialogueId() const { return _dialogueId; }
+
+	/**
+	 * Return the next response item, if present
+	 */
+	TTresponse *getNext() const { return _nextP; }
 };
 
 } // End of namespace Titanic

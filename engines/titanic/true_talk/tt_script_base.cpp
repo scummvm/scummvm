@@ -27,12 +27,12 @@ namespace Titanic {
 
 TTscriptBase::TTscriptBase(int scriptId, const char *charClass, int v2,
 		const char *charName, int v3, int v4, int v5, int v6, int v7) :
-		_charName(charName), _charClass(charClass), 
-		_nodesP(nullptr), _id(0), _hist(nullptr),
+		_charName(charName), _charClass(charClass), _status(0),
+		_nodesP(nullptr), _id(0), _hist1P(nullptr),
 		_field20(0), _field24(0), _field28(0), _field2C(0),
-		_field30(0), _field34(0), _field38(0), _field3C(0),
-		_field40(0), _field44(0), _field48(0), _status(0) {
-	if (!areNamesValid()) {
+		_field30(0), _field34(0), _hist2P(nullptr), _field3C(0),
+		_respHeadP(nullptr), _respTailP(nullptr), _responseP(nullptr) {
+	if (!isValid()) {
 		if (!v7 || !getStatus()) {
 			_id = scriptId;
 			_field20 = v3;
@@ -51,13 +51,19 @@ TTscriptBase::TTscriptBase(int scriptId, const char *charClass, int v2,
 }
 
 TTscriptBase::~TTscriptBase() {
+	deleteResponses();
+	delete _responseP;
+
+	delete _hist1P;
+	delete _hist2P;
+
 	if (_nodesP) {
 		_nodesP->deleteSiblings();
 		delete _nodesP;
 	}
 }
 
-bool TTscriptBase::areNamesValid() {
+bool TTscriptBase::isValid() {
 	bool result = !_charName.isValid() && !_charClass.isValid();
 	_status = result ? 0 : 11;
 	return result;
@@ -66,25 +72,25 @@ bool TTscriptBase::areNamesValid() {
 void TTscriptBase::reset() {
 	_nodesP = nullptr;
 	_id = 4;
-	_hist = nullptr;
+	_hist1P = nullptr;
 	_field20 = 0;
 	_field24 = -1;
 	_field28 = -1;
 	_field2C = -1;
 	_field30 = 0;
 	_field34 = 0;
-	_field38 = 0;
+	_hist2P = nullptr;
 	_field3C = 0;
-	_field40 = 0;
-	_field44 = 0;
-	_field48 = 0;
+	_respHeadP = nullptr;
+	_respTailP = nullptr;
+	_responseP = nullptr;
 }
 
 int TTscriptBase::preprocess(TTsentence *sentence) {
-	delete _hist;
-	_hist = new TTscriptHist(sentence);
+	delete _hist1P;
+	_hist1P = new TTscriptHist(sentence);
 
-	return _hist ? SS_VALID : SS_7;
+	return _hist1P ? SS_VALID : SS_7;
 }
 
 void TTscriptBase::proc2(int v) {
@@ -101,6 +107,42 @@ void TTscriptBase::proc4(int v) {
 
 void TTscriptBase::proc5() {
 	warning("TODO");
+}
+
+void TTscriptBase::deleteResponses() {
+	while (_respTailP) {
+		_respHeadP = _respTailP;
+		_respTailP = _respHeadP->getLink();
+		delete _respHeadP;
+	}
+}
+
+void TTscriptBase::appendResponse(int val1, int *val2, int val3) {
+	if (!val2 || val1 <= *val2) {
+		if (_respHeadP) {
+			_respHeadP = new TTresponse(_respHeadP);
+		} else {
+			_respHeadP = new TTresponse(val3, 3);
+			if (_respTailP)
+				_respTailP->addLink(_respHeadP);
+			else
+				_respTailP = _respHeadP;
+		}
+	}
+}
+
+void TTscriptBase::appendResponse(int val1, int *val2, const TTstring &str) {
+	if (!val2 || val1 <= *val2) {
+		if (_respHeadP) {
+			_respHeadP = new TTresponse(str);
+		} else {
+			_respHeadP = new TTresponse(str);
+			if (_respTailP)
+				_respTailP->addLink(_respHeadP);
+			else
+				_respTailP = _respHeadP;
+		}
+	}
 }
 
 } // End of namespace Titanic

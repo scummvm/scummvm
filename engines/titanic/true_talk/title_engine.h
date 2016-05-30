@@ -27,6 +27,7 @@
 #include "common/winexe_pe.h"
 #include "titanic/support/string.h"
 #include "titanic/true_talk/script_handler.h"
+#include "titanic/true_talk/tt_response.h"
 #include "titanic/true_talk/tt_script_base.h"
 #include "titanic/true_talk/tt_title_script.h"
 
@@ -52,7 +53,10 @@ public:
 	 */
 	virtual void setup(int val1, int val2 = 0);
 
-	virtual int proc2(int val1, int val2) { return 2; }
+	/**
+	 * Sets a conversation reponse
+	 */
+	virtual int setResponse(TTscriptBase *script, TTresponse *response) { return SS_4; }
 	
 	virtual int proc4(int unused) const = 0;
 	virtual int proc5(int64 unused) const = 0;
@@ -69,6 +73,7 @@ public:
 class STtitleEngine : public CTitleEngine {
 private:
 	Common::SeekableReadStream *_stream;
+	TTresponse *_responseP;
 	int _field58;
 public:
 	Common::Array<uint> _indexes;
@@ -84,7 +89,10 @@ public:
 	 */
 	virtual void setup(int val1, int val2 = 0);
 
-	virtual int proc2(int val1, int val2);
+	/**
+	 * Sets a conversation reponse
+	 */
+	virtual int setResponse(TTscriptBase *script, TTresponse *response);
 
 	virtual void dump(int val1, int val2);
 

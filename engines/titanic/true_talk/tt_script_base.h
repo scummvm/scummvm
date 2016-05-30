@@ -26,6 +26,7 @@
 #include "titanic/true_talk/tt_string.h"
 #include "titanic/true_talk/tt_hist.h"
 #include "titanic/true_talk/tt_node.h"
+#include "titanic/true_talk/tt_response.h"
 
 namespace Titanic {
 
@@ -40,7 +41,7 @@ private:
 	void reset();
 protected:
 	TTnode *_nodesP;
-	TThist *_hist;
+	TThist *_hist1P;
 	TTstring _charName, _charClass;
 	int _field20;
 	int _field24;
@@ -48,12 +49,28 @@ protected:
 	int _field2C;
 	int _field30;
 	int _field34;
-	int _field38;
+	TThist *_hist2P;
 	int _field3C;
-	int _field40;
-	int _field44;
-	int _field48;
+	TTresponse *_respHeadP;
+	TTresponse *_respTailP;
+	TTresponse *_responseP;
 	int _status;
+protected:
+	/**
+	 * Delete any responses set up for the script
+	 */
+	void deleteResponses();
+	
+	/**
+	 * Creates and appends a new response to the script
+	 */
+	void appendResponse(int val1, int *val2, int val3);
+
+	void appendResponse(int val1, int *val2, const TTstring &str);
+
+	void appendResponse2(int val1, int *val2, const TTstring &str) {
+		appendResponse(val1, val2, str);
+	}
 public:
 	int _id;
 public:
@@ -61,7 +78,19 @@ public:
 		int v3, int v4, int v5, int v6, int v7);
 	virtual ~TTscriptBase();
 
-	bool areNamesValid();
+	virtual void proc2(int v);
+
+	virtual void proc3(int v);
+
+	virtual void proc4(int v);
+
+	virtual void proc5();
+
+
+	/**
+	 * Returns true if the script is in a valid state
+	 */
+	bool isValid();
 
 	/**
 	 * Return the Id of the script
@@ -83,13 +112,6 @@ public:
 	 */
 	int preprocess(TTsentence *sentence);
 
-	virtual void proc2(int v);
-
-	virtual void proc3(int v);
-
-	virtual void proc4(int v);
-
-	virtual void proc5();
 };
 
 

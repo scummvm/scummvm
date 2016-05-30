@@ -38,7 +38,10 @@ struct TTstringData {
 	TTstringData(const CString &str) : _string(str), _referenceCount(1) {}
 };
 
-enum TTstringStatus { SS_VALID = 0, SS_1 = 1, SS_4 = 4, SS_5 = 5, SS_7 = 7, SS_8 = 8, SS_11 = 11, SS_13 = 13 };
+enum TTstringStatus {
+	SS_VALID = 0, SS_1 = 1, SS_2 = 2, SS_3 = 3, SS_4 = 4, 
+	SS_5 = 5, SS_7 = 7, SS_8 = 8, SS_11 = 11, SS_13 = 13
+};
 
 class TTstring {
 private:
