@@ -23,6 +23,8 @@
 #include "backends/cloud/savessyncrequest.h"
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/system.h"
+#include "common/savefile.h"
 
 namespace Cloud {
 
@@ -85,6 +87,8 @@ void SavesSyncRequest::directoryListedCallback(Storage::FileArrayResponse pair) 
 		}
 	}
 
+	//TODO: upload files which are added to local directory (not available on cloud), but have no timestamp
+
 	//upload files with invalid timestamp (the ones we've added - means they might not have any remote version)
 	for (Common::HashMap<Common::String, uint32>::iterator i = _localFilesTimestamps.begin(); i != _localFilesTimestamps.end(); ++i) {
 		if (i->_value == INVALID_TIMESTAMP)
@@ -104,7 +108,7 @@ void SavesSyncRequest::downloadNextFile() {
 	_currentDownloadingFile = _filesToDownload.back();
 	_filesToDownload.pop_back();
 
-	_workingRequest = _storage->download(_currentDownloadingFile.path(), "saves/" + _currentDownloadingFile.name(),
+	_workingRequest = _storage->download(_currentDownloadingFile.path(), "saves/" + _currentDownloadingFile.name(), //TODO: real saves folder here
 		new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::fileDownloadedCallback)
 	);
 }
@@ -133,23 +137,24 @@ void SavesSyncRequest::uploadNextFile() {
 
 	_currentUploadingFile = _filesToUpload.back();
 	_filesToUpload.pop_back();
-
-	_workingRequest = _storage->upload("saves/" + _currentUploadingFile, nullptr, //TODO: pass save's read stream
-		new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::fileUploadedCallback)
+	
+	_workingRequest = _storage->upload("saves/" + _currentUploadingFile, g_system->getSavefileManager()->openForLoading(_currentUploadingFile),
+		new Common::Callback<SavesSyncRequest, Storage::UploadResponse>(this, &SavesSyncRequest::fileUploadedCallback)
 	);
 }
 
-void SavesSyncRequest::fileUploadedCallback(Storage::BoolResponse pair) {
+void SavesSyncRequest::fileUploadedCallback(Storage::UploadResponse pair) {
 	if (_ignoreCallback) return;
+	UploadStatus status = pair.value;
 
 	//stop syncing if upload failed
-	if (!pair.value) {
+	if (status.interrupted || status.failed) {
 		finish();
 		return;
 	}
 
-	//TODO: update local timestamp for the uploaded file
-	//_localFilesTimestamps[_currentUploadingFile] = pair.request.<what?>;
+	//update local timestamp for the uploaded file
+	_localFilesTimestamps[_currentUploadingFile] = status.file.timestamp();
 
 	//continue uploading files
 	uploadNextFile();
@@ -172,6 +177,7 @@ void SavesSyncRequest::finishBool(bool success) {
 
 void SavesSyncRequest::loadTimestamps() {
 	Common::File f;
+	//TODO: real saves folder here
 	if (!f.open("saves/timestamps"))
 		error("SavesSyncRequest: failed to open 'saves/timestamps' file to load timestamps");
 	
@@ -215,6 +221,7 @@ void SavesSyncRequest::loadTimestamps() {
 
 void SavesSyncRequest::saveTimestamps() {
 	Common::DumpFile f;
+	//TODO: real saves folder here
 	if (!f.open("saves/timestamps", true))
 		error("SavesSyncRequest: failed to open 'saves/timestamps' file to save timestamps");
 	Common::String data;

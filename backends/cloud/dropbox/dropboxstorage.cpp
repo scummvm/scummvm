@@ -104,12 +104,44 @@ void DropboxStorage::printBool(BoolResponse pair) {
 	debug("bool: %s", (pair.value?"true":"false"));
 }
 
+void DropboxStorage::printUploadStatus(UploadResponse pair) {
+	UploadStatus status = pair.value;
+	if (status.interrupted) {
+		debug("upload interrupted by user");
+		return;
+	}
+	if (status.failed) {
+		debug("upload failed with following response:");
+		debug("%s", status.response.c_str());
+		return;
+	}
+	debug("upload HTTP response code = %ld", status.httpResponseCode);
+	if (!status.failed) {
+		debug("uploaded file info:");
+		debug("path: %s", status.file.path().c_str());
+		debug("size: %u", status.file.size());
+		debug("timestamp: %u", status.file.timestamp());
+	}
+}
+
 Networking::Request *DropboxStorage::listDirectory(Common::String path, FileArrayCallback outerCallback, bool recursive) {
 	return ConnMan.addRequest(new DropboxListDirectoryRequest(_token, path, outerCallback, recursive));
 }
 
-Networking::Request *DropboxStorage::upload(Common::String path, Common::SeekableReadStream *contents, BoolCallback callback) {
+Networking::Request *DropboxStorage::upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback) {
 	return ConnMan.addRequest(new DropboxUploadRequest(_token, path, contents, callback));
+}
+
+Networking::Request *DropboxStorage::upload(Common::String remotePath, Common::String localPath, UploadCallback callback) {
+	Common::File *f = new Common::File();
+	if (!f->open(localPath)) {
+		warning("DropboxStorage: unable to open file to upload from");
+		UploadStatus status(false, true, StorageFile(), "", -1);
+		if (callback) (*callback)(UploadResponse(nullptr, status));
+		delete f;
+		return nullptr;
+	}
+	return upload(remotePath, f, callback);
 }
 
 Networking::Request *DropboxStorage::streamFile(Common::String path, Networking::NetworkReadStreamCallback callback) {
@@ -155,13 +187,7 @@ Networking::Request *DropboxStorage::syncSaves(BoolCallback callback) {
 		false
 	);
 	*/
-	Common::File *file = new Common::File();
-	if (!file->open("final.bmp")) {
-		warning("no such file");		
-		delete file;
-		return nullptr;
-	}
-	return upload("/remote/test3.bmp", file, new Common::Callback<DropboxStorage, BoolResponse>(this, &DropboxStorage::printBool));
+	return upload("/remote/test4.bmp", "final.bmp", new Common::Callback<DropboxStorage, UploadResponse>(this, &DropboxStorage::printUploadStatus));
 }
 
 Networking::Request *DropboxStorage::info(StorageInfoCallback outerCallback) {
@@ -186,13 +212,13 @@ void DropboxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networ
 	if (outerCallback) {		
 		//Dropbox documentation states there is no errors for this API method
 		Common::JSONObject info = json->asObject();
-		Common::String uid = Common::String::format("%d", (int)info.getVal("uid")->asNumber());
+		Common::String uid = Common::String::format("%d", (int)info.getVal("uid")->asIntegerNumber());
 		Common::String name = info.getVal("display_name")->asString();
 		Common::String email = info.getVal("email")->asString();
 		Common::JSONObject quota = info.getVal("quota_info")->asObject();
-		uint32 quotaNormal = quota.getVal("normal")->asNumber();
-		uint32 quotaShared = quota.getVal("shared")->asNumber();
-		uint32 quotaAllocated = quota.getVal("quota")->asNumber();
+		uint32 quotaNormal = quota.getVal("normal")->asIntegerNumber();
+		uint32 quotaShared = quota.getVal("shared")->asIntegerNumber();
+		uint32 quotaAllocated = quota.getVal("quota")->asIntegerNumber();
 		(*outerCallback)(StorageInfoResponse(nullptr, StorageInfo(uid, name, email, quotaNormal+quotaShared, quotaAllocated)));
 		delete outerCallback;
 	}

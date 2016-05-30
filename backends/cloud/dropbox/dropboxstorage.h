@@ -47,6 +47,7 @@ class DropboxStorage: public Cloud::Storage {
 
 	void printFiles(FileArrayResponse pair);
 	void printBool(BoolResponse pair);
+	void printUploadStatus(UploadResponse pair);
 
 public:	
 	virtual ~DropboxStorage();
@@ -70,7 +71,8 @@ public:
 	virtual Networking::Request *listDirectory(Common::String path, FileArrayCallback callback, bool recursive = false);
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, BoolCallback callback);
+	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback);
+	virtual Networking::Request *upload(Common::String remotePath, Common::String localPath, UploadCallback callback);
 
 	/** Returns pointer to Networking::NetworkReadStream. */
 	virtual Networking::Request *streamFile(Common::String path, Networking::NetworkReadStreamCallback callback);

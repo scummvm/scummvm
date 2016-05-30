@@ -76,11 +76,11 @@ void DropboxListDirectoryRequest::responseCallback(Networking::JsonResponse pair
 		Common::JSONArray items = response.getVal("entries")->asArray();
 		for (uint32 i = 0; i < items.size(); ++i) {
 			Common::JSONObject item = items[i]->asObject();
-			Common::String path = item.getVal("path_lower")->asString();			
+			Common::String path = item.getVal("path_lower")->asString();
 			bool isDirectory = (item.getVal(".tag")->asString() == "folder");
 			uint32 size = 0, timestamp = 0;
 			if (!isDirectory) {
-				size = item.getVal("size")->asNumber();
+				size = item.getVal("size")->asIntegerNumber();
 				timestamp = ISO8601::convertToTimestamp(item.getVal("server_modified")->asString());
 			}
 			_files.push_back(StorageFile(path, size, timestamp, isDirectory));

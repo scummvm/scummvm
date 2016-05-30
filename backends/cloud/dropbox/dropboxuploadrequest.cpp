@@ -21,17 +21,19 @@
 */
 
 #include "backends/cloud/dropbox/dropboxuploadrequest.h"
+#include "backends/cloud/iso8601.h"
 #include "backends/cloud/storage.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/curl/networkreadstream.h"
 #include "common/json.h"
 #include "common/debug.h"
 
 namespace Cloud {
 namespace Dropbox {
 
-DropboxUploadRequest::DropboxUploadRequest(Common::String token, Common::String path, Common::SeekableReadStream *contents, Storage::BoolCallback callback):
-	Networking::Request(0), _token(token), _savePath(path), _contentsStream(contents), _boolCallback(callback),
+DropboxUploadRequest::DropboxUploadRequest(Common::String token, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback):
+	Networking::Request(0), _token(token), _savePath(path), _contentsStream(contents), _uploadCallback(callback),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
@@ -40,7 +42,7 @@ DropboxUploadRequest::~DropboxUploadRequest() {
 	_ignoreCallback = true;
 	if (_workingRequest) _workingRequest->finish();
 	delete _contentsStream;
-	delete _boolCallback;
+	delete _uploadCallback;
 }
 
 
@@ -105,6 +107,11 @@ void DropboxUploadRequest::partUploadedCallback(Networking::JsonResponse pair) {
 	if (_ignoreCallback) return;
 	_workingRequest = nullptr;
 
+	UploadStatus status;
+	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)pair.request;
+	if (rq && rq->getNetworkReadStream())
+		status.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
+
 	Common::JSONValue *json = pair.value;
 	if (json) {
 		bool needsFinishRequest = false;
@@ -117,13 +124,19 @@ void DropboxUploadRequest::partUploadedCallback(Networking::JsonResponse pair) {
 			if (response.contains("error") || response.contains("error_summary")) {
 				warning("Dropbox returned error: %s", response.getVal("error_summary")->asString().c_str());
 				delete json;
-				finish();
+				status.failed = true;
+				status.response = json->stringify(true);
+				finishUpload(status);
 				return;
 			}
 
 			if (response.contains("server_modified")) {
 				//finished
-				finishBool(true);
+				Common::String path = response.getVal("path_lower")->asString();				
+				uint32 size = response.getVal("size")->asIntegerNumber();
+				uint32 timestamp = ISO8601::convertToTimestamp(response.getVal("server_modified")->asString());				
+				status.file = StorageFile(path, size, timestamp, false);
+				finishUpload(status);
 				return;
 			}
 
@@ -136,13 +149,19 @@ void DropboxUploadRequest::partUploadedCallback(Networking::JsonResponse pair) {
 			}
 		}
 
-		if (!needsFinishRequest && (_contentsStream->eos() || _contentsStream->pos() >= _contentsStream->size() - 1))
-			finishBool(true);
-		else
+		if (!needsFinishRequest && (_contentsStream->eos() || _contentsStream->pos() >= _contentsStream->size() - 1)) {			
+			if (status.file.name() == "") {
+				status.file = StorageFile(_savePath, 0, 0, false);
+				warning("no file info to put into status");
+			}
+			finishUpload(status);
+		} else {
 			uploadNextPart();
+		}
 	} else {
-		warning("null, not json");		
-		finish();		
+		warning("null, not json");
+		status.failed = true;
+		finishUpload(status);
 	}
 
 	delete json;
@@ -152,11 +171,15 @@ void DropboxUploadRequest::handle() {}
 
 void DropboxUploadRequest::restart() { start(); }
 
-void DropboxUploadRequest::finish() { finishBool(false); }
+void DropboxUploadRequest::finish() {
+	UploadStatus status;
+	status.interrupted = true;
+	finishUpload(status);
+}
 
-void DropboxUploadRequest::finishBool(bool success) {
+void DropboxUploadRequest::finishUpload(UploadStatus status) {
 	Request::finish();
-	if (_boolCallback) (*_boolCallback)(Storage::BoolResponse(this, success));
+	if (_uploadCallback) (*_uploadCallback)(Storage::UploadResponse(this, status));
 }
 
 } // End of namespace Dropbox

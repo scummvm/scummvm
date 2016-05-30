@@ -34,15 +34,37 @@
 
 namespace Cloud {
 
+/** Struct to represent upload() resulting status. */
+struct UploadStatus {
+	/** true if Request was interrupted (finished by user with finish()) */
+	bool interrupted;
+	/** true if Request has failed (bad server response or some other error occurred) */
+	bool failed;
+	/** Contains uploaded file description (empty if failed) */
+	StorageFile file;
+	/** Server's original response (empty if not failed) */
+	Common::String response;
+	/** Server's HTTP response code. */
+	long httpResponseCode;
+
+	UploadStatus():
+		interrupted(false), failed(false), file(), response(), httpResponseCode(-1) {}
+
+	UploadStatus(bool interrupt, bool failure, StorageFile f, Common::String resp, long code):
+		interrupted(interrupt), failed(failure), file(f), response(resp), httpResponseCode(code) {}
+};
+
 class Storage {
 public:
 	typedef Networking::Response<Common::Array<StorageFile>&> FileArrayResponse;
 	typedef Networking::Response<StorageInfo> StorageInfoResponse;
 	typedef Networking::Response<bool> BoolResponse;
+	typedef Networking::Response<UploadStatus> UploadResponse;
 
 	typedef Common::BaseCallback<FileArrayResponse> *FileArrayCallback;
 	typedef Common::BaseCallback<StorageInfoResponse> *StorageInfoCallback;
 	typedef Common::BaseCallback<BoolResponse> *BoolCallback;
+	typedef Common::BaseCallback<UploadResponse> *UploadCallback;
 
 	Storage() {}
 	virtual ~Storage() {}
@@ -72,7 +94,8 @@ public:
 	virtual Networking::Request *listDirectory(Common::String path, FileArrayCallback callback, bool recursive = false) = 0;
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, BoolCallback callback) = 0;
+	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback) = 0;
+	virtual Networking::Request *upload(Common::String remotePath, Common::String localPath, UploadCallback callback) = 0;
 
 	/** Returns pointer to Networking::NetworkReadStream. */
 	virtual Networking::Request *streamFile(Common::String path, Networking::NetworkReadStreamCallback callback) = 0;

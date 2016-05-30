@@ -35,7 +35,7 @@ class DropboxUploadRequest: public Networking::Request {
 	Common::String _token;
 	Common::String _savePath;
 	Common::SeekableReadStream *_contentsStream;
-	Storage::BoolCallback _boolCallback;
+	Storage::UploadCallback _uploadCallback;
 	Request *_workingRequest;
 	bool _ignoreCallback;
 	Common::String _sessionId;
@@ -43,10 +43,10 @@ class DropboxUploadRequest: public Networking::Request {
 	void start();
 	void uploadNextPart();
 	void partUploadedCallback(Networking::JsonResponse pair);
-	void finishBool(bool success);
+	void finishUpload(UploadStatus status);
 
 public:
-	DropboxUploadRequest(Common::String token, Common::String path, Common::SeekableReadStream *contents, Storage::BoolCallback callback);
+	DropboxUploadRequest(Common::String token, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback);
 	virtual ~DropboxUploadRequest();
 
 	virtual void handle();
