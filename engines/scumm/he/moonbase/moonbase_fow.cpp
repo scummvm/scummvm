@@ -169,6 +169,21 @@ void Moonbase::setFOWInfo(int fowInfoArray, int downDim, int acrossDim, int view
 	if (!_fowImage)
 		return;
 
+	for (int y = 0; y < downDim; y++) {
+		Common::String s;
+
+		for (int x = 0; x < acrossDim; x++)
+			if (readFOWVisibilityArray(fowInfoArray, x, y))
+				s += "@";
+			else
+				s+= " ";
+
+		debug(0, "%s", s.c_str());
+	}
+	debug(0, "");
+
+	memset(_fowRenderTable, 0, sizeof(_fowRenderTable));
+
 	_fowDrawX = clipX1;
 	_fowDrawY = clipY1;
 
@@ -228,7 +243,7 @@ void Moonbase::setFOWInfo(int fowInfoArray, int downDim, int acrossDim, int view
 			int visibility = readFOWVisibilityArray(fowInfoArray, m, c);
 
 			if (visibility == FOW_EMPTY) {
-				int bits = 0;
+				uint32 bits = 0;
 
 				if (readFOWVisibilityArray(fowInfoArray, t, l) != 0) bits |= FF_T_L;
 				if (readFOWVisibilityArray(fowInfoArray, t, c) != 0) bits |= FF_T;
@@ -333,7 +348,7 @@ static void blackRect_16bpp(uint8 *destSurface, int dstPitch, int dstw, int dsth
 	int h = y2 - y1;
 	int w = ((x2 - x1) + 1) * 2;
 
-	while ( --h >= 0 ) {
+	while (--h >= 0) {
 		memset(dst, 0, w);
 		dst += dstPitch;
 	}
