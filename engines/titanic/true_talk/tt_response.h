@@ -35,13 +35,16 @@ private:
 	int _dialogueId;
 	TTresponse *_nextP;
 	TTresponse *_linkP;
-
-	TTresponse *copyChain() const;
 public:
 	TTresponse(const TTstring &src);
 	TTresponse(int val1, int val2);
 	TTresponse(const TTresponse *src);
 	virtual ~TTresponse();
+
+	/**
+	 * Makes a copy of the chain of responses
+	 */
+	TTresponse *copyChain() const;
 
 	TTresponse *getLink() const { return _linkP; }
 

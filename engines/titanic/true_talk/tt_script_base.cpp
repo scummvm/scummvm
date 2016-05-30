@@ -22,6 +22,7 @@
 
 #include "common/textconsole.h"
 #include "titanic/true_talk/tt_script_base.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -31,7 +32,7 @@ TTscriptBase::TTscriptBase(int scriptId, const char *charClass, int v2,
 		_nodesP(nullptr), _id(0), _hist1P(nullptr),
 		_field20(0), _field24(0), _field28(0), _field2C(0),
 		_field30(0), _field34(0), _hist2P(nullptr), _field3C(0),
-		_respHeadP(nullptr), _respTailP(nullptr), _responseP(nullptr) {
+		_respHeadP(nullptr), _respTailP(nullptr), _oldResponseP(nullptr) {
 	if (!isValid()) {
 		if (!v7 || !getStatus()) {
 			_id = scriptId;
@@ -52,7 +53,7 @@ TTscriptBase::TTscriptBase(int scriptId, const char *charClass, int v2,
 
 TTscriptBase::~TTscriptBase() {
 	deleteResponses();
-	delete _responseP;
+	delete _oldResponseP;
 
 	delete _hist1P;
 	delete _hist2P;
@@ -83,7 +84,7 @@ void TTscriptBase::reset() {
 	_field3C = 0;
 	_respHeadP = nullptr;
 	_respTailP = nullptr;
-	_responseP = nullptr;
+	_oldResponseP = nullptr;
 }
 
 int TTscriptBase::preprocess(TTsentence *sentence) {
@@ -93,20 +94,27 @@ int TTscriptBase::preprocess(TTsentence *sentence) {
 	return _hist1P ? SS_VALID : SS_7;
 }
 
-void TTscriptBase::proc2(int v) {
-	warning("TODO");
+void TTscriptBase::addResponse(const TTstring &str) {
+	appendResponse2(-1, nullptr, str);
 }
 
-void TTscriptBase::proc3(int v) {
-	warning("TODO");
+void TTscriptBase::addResponse(int val) {
+	appendResponse(-1, nullptr, val);
 }
 
-void TTscriptBase::proc4(int v) {
-	warning("TODO");
-}
+void TTscriptBase::applyResponse() {
+	delete _oldResponseP;
+	_oldResponseP = nullptr;
 
-void TTscriptBase::proc5() {
-	warning("TODO");
+	if (_respHeadP) {
+		g_vm->_scriptHandler->setResponse(this, _respHeadP);
+		_oldResponseP = _respHeadP->copyChain();
+		TTresponse *oldRespP = _respHeadP;
+		_respHeadP = _respHeadP->getLink();
+		_respTailP = nullptr;
+
+		delete oldRespP;
+	}
 }
 
 void TTscriptBase::deleteResponses() {

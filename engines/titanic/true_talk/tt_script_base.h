@@ -53,7 +53,7 @@ protected:
 	int _field3C;
 	TTresponse *_respHeadP;
 	TTresponse *_respTailP;
-	TTresponse *_responseP;
+	TTresponse *_oldResponseP;
 	int _status;
 protected:
 	/**
@@ -78,14 +78,15 @@ public:
 		int v3, int v4, int v5, int v6, int v7);
 	virtual ~TTscriptBase();
 
-	virtual void proc2(int v);
+	virtual void addResponse(const TTstring &str);
 
-	virtual void proc3(int v);
+	virtual void addResponse(int val);
 
-	virtual void proc4(int v);
-
-	virtual void proc5();
-
+	/**
+	 * Passes on the list of dialogue Ids stored in the response(s)
+	 * to the title engine for later display in the PET
+	 */
+	virtual void applyResponse();
 
 	/**
 	 * Returns true if the script is in a valid state

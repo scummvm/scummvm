@@ -85,6 +85,11 @@ public:
 	 * Called when concept data is copied from one to another
 	 */
 	void setParserConcept(TTconcept *newConcept, TTconcept *oldConcept);
+
+	/**
+	 * Sets a conversation reponse
+	 */
+	int setResponse(TTscriptBase *script, TTresponse *response);
 };
 
 } // End of namespace Titanic

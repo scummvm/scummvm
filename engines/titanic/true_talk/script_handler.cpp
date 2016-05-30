@@ -112,4 +112,8 @@ void CScriptHandler::setParserConcept(TTconcept *newConcept, TTconcept *oldConce
 	_parser.conceptChanged(newConcept, oldConcept);
 }
 
+int CScriptHandler::setResponse(TTscriptBase *script, TTresponse *response) {
+	return _owner->setResponse(script, response);
+}
+
 } // End of namespace Titanic
