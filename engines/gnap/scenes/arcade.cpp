@@ -1884,6 +1884,9 @@ Scene52::Scene52(GnapEngine *vm) : Scene(vm) {
 	_aliensCount = 0;
 	_nextUfoSequenceId = -1;
 	_ufoSequenceId = -1;
+	_liveAlienRows = 0;
+	_arcadeScreenLeft = 0;
+	_arcadeScreenRight = 0;
 }
 
 int Scene52::init() {

@@ -1021,6 +1021,7 @@ Scene22::Scene22(GnapEngine *vm) : Scene(vm) {
 	_caughtBefore = false;
 	_cashierCtr = 3;
 	_nextCashierSequenceId = -1;
+	_currCashierSequenceId = -1;
 }
 
 int Scene22::init() {
