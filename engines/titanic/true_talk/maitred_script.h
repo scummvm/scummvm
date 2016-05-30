@@ -32,19 +32,19 @@ public:
 	MaitreDScript(int val1, const char *charClass, int v2,
 			const char *charName, int v3, int val2);
 
-	virtual int proc6() const;
+	virtual int proc6(TTnpcScript *npcScript, TTsentence *sentence, uint tag);
 	virtual void proc7(int v1, int v2);
 	virtual int proc10() const;
 	virtual bool proc16() const;
 	virtual bool proc17() const;
 	virtual bool proc18() const;
-	virtual int proc21(int v);
+	virtual int proc21(int v1, int v2, int v3);
 	virtual int proc22() const;
 	virtual int proc23() const;
-	virtual void proc24();
+	virtual const int *getTablePtr(int id);
 	virtual int proc25() const;
 	virtual void proc26();
-	virtual int proc37() const;
+	virtual uint translateId(uint id) const;
 };
 
 } // End of namespace Titanic

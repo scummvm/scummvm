@@ -33,7 +33,7 @@ public:
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {}
 
-	virtual int proc6() const;
+	virtual int proc6(TTnpcScript *npcScript, TTsentence *sentence, uint tag);
 	virtual void proc7(int v1, int v2);
 	virtual int proc9() const;
 	virtual int proc10() const;
@@ -41,14 +41,14 @@ public:
 	virtual bool proc16() const;
 	virtual bool proc17() const;
 	virtual bool proc18() const;
-	virtual int proc21(int v);
+	virtual int proc21(int v1, int v2, int v3);
 	virtual int proc22() const;
 	virtual int proc23() const;
-	virtual void proc24();
+	virtual const int *getTablePtr(int id);
 	virtual int proc25() const;
 	virtual void proc26();
 	virtual void proc32();
-	virtual int proc37() const;
+	virtual uint translateId(uint id) const;
 };
 
 } // End of namespace Titanic

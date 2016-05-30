@@ -25,7 +25,7 @@
 
 namespace Titanic {
 
-int BarbotScript::proc6() const {
+int BarbotScript::proc6(TTnpcScript *npcScript, TTsentence *sentence, uint tag) {
 	warning("TODO");
 	return 2;
 }
@@ -59,7 +59,7 @@ bool BarbotScript::proc18() const {
 	return false;
 }
 
-int BarbotScript::proc21(int v) {
+int BarbotScript::proc21(int v1, int v2, int v3) {
 	warning("TODO");
 	return 0;
 }
@@ -74,8 +74,9 @@ int BarbotScript::proc23() const {
 	return 0;
 }
 
-void BarbotScript::proc24() {
+const int *BarbotScript::getTablePtr(int id) {
 	warning("TODO");
+	return nullptr;
 }
 
 int BarbotScript::proc25() const {
@@ -90,12 +91,12 @@ void BarbotScript::proc32() {
 	warning("TODO");
 }
 
-int BarbotScript::proc36() const {
+int BarbotScript::proc36(int tagId) const {
 	warning("TODO");
 	return 0;
 }
 
-int BarbotScript::proc37() const {
+uint BarbotScript::translateId(uint id) const {
 	warning("TODO");
 	return 0;
 }

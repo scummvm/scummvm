@@ -25,7 +25,7 @@
 
 namespace Titanic {
 
-int DoorbotScript::proc6() const {
+int DoorbotScript::proc6(TTnpcScript *npcScript, TTsentence *sentence, uint tag) {
 	warning("TODO");
 	return 2;
 }
@@ -59,7 +59,7 @@ bool DoorbotScript::proc18() const {
 	return 0;
 }
 
-int DoorbotScript::proc21(int v) {
+int DoorbotScript::proc21(int v1, int v2, int v3) {
 	warning("TODO");
 	return 0;
 }
@@ -74,8 +74,9 @@ int DoorbotScript::proc23() const {
 	return 0;
 }
 
-void DoorbotScript::proc24() {
+const int *DoorbotScript::getTablePtr(int id) {
 	warning("TODO");
+	return nullptr;
 }
 
 int DoorbotScript::proc25() const {
@@ -90,12 +91,12 @@ void DoorbotScript::proc32() {
 	warning("TODO");
 }
 
-int DoorbotScript::proc36() const {
+int DoorbotScript::proc36(int id) const {
 	warning("TODO");
 	return 0;
 }
 
-int DoorbotScript::proc37() const {
+uint DoorbotScript::translateId(uint id) const {
 	warning("TODO");
 	return 0;
 }

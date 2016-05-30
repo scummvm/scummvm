@@ -27,6 +27,17 @@
 
 namespace Titanic {
 
+int TTnpcScriptTag::size() const {
+	for (int idx = 0; idx < 4; ++idx) {
+		if (_values[idx] == 0)
+			return idx;
+	}
+
+	return 4;
+}
+
+/*------------------------------------------------------------------------*/
+
 TTnpcScriptBase::TTnpcScriptBase(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTscriptBase(0, charClass, v2, charName, v3, v4, v5, v6, v7),
@@ -40,9 +51,9 @@ TTnpcScript::TTnpcScript(int charId, const char *charClass, int v2,
 		TTnpcScriptBase(charId, charClass, v2, charName, v3, val2, v4, v5, v6, v7),
 		_subPtr(nullptr), _field60(0), _field64(0), _field68(0),
 		_field6C(0), _field70(0), _field74(0), _field78(0),
-		_field7C(0), _field80(0) {
+		_field7C(0), _field80(0), _field2CC(false) {
 	CTrueTalkManager::_v2 = 0;
-	Common::fill(&_array[0], &_array[147], 0);
+	Common::fill(&_array[0], &_array[146], 0);
 
 	if (!CTrueTalkManager::_v10) {
 		Common::fill(&CTrueTalkManager::_v11[0], &CTrueTalkManager::_v11[41], 0);
@@ -53,7 +64,8 @@ TTnpcScript::TTnpcScript(int charId, const char *charClass, int v2,
 }
 
 void TTnpcScript::resetFlags() {
-	Common::fill(&_array[26], &_array[146], 0);
+	Common::fill(&_array[20], &_array[140], 0);
+	_field2CC = false;
 }
 
 void TTnpcScript::randomizeFlags() {
@@ -109,16 +121,18 @@ bool TTnpcScript::proc18() const {
 	return true;
 }
 
-void TTnpcScript::proc19(int v) {
+uint TTnpcScript::proc19(uint v) {
 	warning("TODO");
+	return 0;
 }
 
 void TTnpcScript::proc20(int v) {
 	warning("TODO");
 }
 
-int TTnpcScript::proc21(int v) {
-	return v;
+int TTnpcScript::proc21(int v1, int v2, int v3) {
+	// TODO
+	return v1;
 }
 
 int TTnpcScript::proc22() const {
@@ -216,11 +230,11 @@ int TTnpcScript::getDialLevel(uint dialNum, bool flag) {
 	return 0;
 }
 
-int TTnpcScript::proc36() const {
+int TTnpcScript::proc36(int id) const {
 	return 0;
 }
 
-int TTnpcScript::proc37() const {
+uint TTnpcScript::translateId(uint id) const {
 	return 0;
 }
 
@@ -282,6 +296,80 @@ int TTnpcScript::getValue(int testNum) {
 	default:
 		return CTrueTalkManager::_v11[testNum];
 	}
+}
+
+uint TTnpcScript::getRandomNumber(int max) const {
+	return 1 + g_vm->getRandomNumber(max - 1);
+}
+
+uint TTnpcScript::getDialogueId(uint tagId) {
+	if (tagId < 200000)
+		return tagId;
+
+	// Perform any script specific translation
+	uint origId = tagId;
+	if (tagId >= 290000 && tagId <= 290263)
+		tagId = translateId(tagId);
+	if (!tagId)
+		return 0;
+
+	if (!_field2CC) {
+		_field2CC = true;
+		int val = translateByArray(tagId);
+		if (val > 0) {
+			if (proc36(val))
+				return 4;
+		}
+	}
+
+	uint oldTagId = tagId;
+	tagId = proc19(tagId);
+	if (tagId != oldTagId)
+		tagId = proc19(tagId);
+
+	oldTagId = proc23();
+	int v21 = proc21(origId, tagId, oldTagId);
+	if (!v21)
+		return 0;
+
+	int idx = 0;
+	const int *tableP;
+	for (;;) {
+		tableP = getTablePtr(idx++);
+		if (!tableP)
+			return 0;
+
+		if (*tableP == v21)
+			break;
+	}
+	uint newVal = tableP[oldTagId + 1];
+
+	idx = 0;
+	int *arrP = &_array[26];
+	while (idx < 4 && arrP[idx])
+		++idx;
+	if (idx == 4)
+		return newVal;
+
+	_array[26] = origId;
+	idx = 0;
+	arrP = &_array[30];
+	while (idx < 4 && arrP[idx])
+		++idx;
+	if (idx == 4)
+		return newVal;
+
+	arrP[idx] = newVal;
+	return newVal;
+}
+
+int TTnpcScript::translateByArray(int id) {
+	for (uint idx = 1, arrIndex = 35; idx < 15; ++idx, arrIndex += 8) {
+		if (_array[idx - 1] == id && _array[idx] == 0)
+			return idx;
+	}
+
+	return -1;
 }
 
 } // End of namespace Titanic

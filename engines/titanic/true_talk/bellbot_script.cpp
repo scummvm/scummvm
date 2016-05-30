@@ -40,7 +40,7 @@ BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
 	_array[1] = 0;
 }
 
-int BellbotScript::proc6() const {
+int BellbotScript::proc6(TTnpcScript *npcScript, TTsentence *sentence, uint tag) {
 	warning("TODO");
 	return 2;
 }
@@ -74,7 +74,7 @@ bool BellbotScript::proc18() const {
 	return 0;
 }
 
-int BellbotScript::proc21(int v) {
+int BellbotScript::proc21(int v1, int v2, int v3) {
 	warning("TODO");
 	return 0;
 }
@@ -89,8 +89,9 @@ int BellbotScript::proc23() const {
 	return 0;
 }
 
-void BellbotScript::proc24() {
+const int *BellbotScript::getTablePtr(int id) {
 	warning("TODO");
+	return nullptr;
 }
 
 int BellbotScript::proc25() const {
@@ -101,12 +102,12 @@ int BellbotScript::proc25() const {
 void BellbotScript::proc26() {
 }
 
-int BellbotScript::proc36() const {
+int BellbotScript::proc36(int id) const {
 	warning("TODO");
 	return 0;
 }
 
-int BellbotScript::proc37() const {
+uint BellbotScript::translateId(uint id) const {
 	warning("TODO");
 	return 0;
 }

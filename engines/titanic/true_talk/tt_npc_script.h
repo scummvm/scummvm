@@ -31,6 +31,16 @@ namespace Titanic {
 class TTroomScript;
 class TTsentence;
 
+struct TTnpcScriptTag {
+	uint _tag;
+	uint _values[4];
+
+	/**
+	 * Returns the size of the values list plus 1
+	 */
+	int size() const;
+};
+
 class TTnpcScriptBase : public TTscriptBase {
 protected:
 	int _field54;
@@ -59,6 +69,8 @@ public:
 };
 
 class TTnpcScript : public TTnpcScriptBase {
+private:
+	int translateByArray(int id);
 protected:
 	byte *_subPtr;
 	int _field60;
@@ -70,7 +82,8 @@ protected:
 	int _field78;
 	int _field7C;
 	int _field80;
-	int _array[147];
+	int _array[146];
+	bool _field2CC;
 protected:
 	void resetFlags();
 
@@ -82,6 +95,16 @@ protected:
 	 * Perform test on various state values
 	 */
 	int getValue(int testNum);
+
+	/**
+	 * Gets a random number between 1 and a given max
+	 */
+	uint getRandomNumber(int max) const;
+
+	/**
+	 * Returns a dialogue Id by script tag value Id
+	 */
+	uint getDialogueId(uint tagId);
 public:
 	TTnpcScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4,
@@ -108,12 +131,12 @@ public:
 	virtual bool proc16() const;
 	virtual bool proc17() const;
 	virtual bool proc18() const;
-	virtual void proc19(int v);
+	virtual uint proc19(uint v);
 	virtual void proc20(int v);
-	virtual int proc21(int v);
+	virtual int proc21(int v1, int v2, int v3);
 	virtual int proc22() const;
 	virtual int proc23() const;
-	virtual void proc24() = 0;
+	virtual const int *getTablePtr(int id) = 0;
 	virtual int proc25() const;
 	virtual void proc26();
 	virtual void save(SimpleFile *file);
@@ -130,8 +153,8 @@ public:
 	 */
 	virtual int getDialLevel(uint dialNum, bool flag = true);
 
-	virtual int proc36() const;
-	virtual int proc37() const;
+	virtual int proc36(int val) const;
+	virtual uint translateId(uint id) const;
 
 	void preLoad();
 

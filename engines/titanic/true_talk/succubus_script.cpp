@@ -25,7 +25,7 @@
 
 namespace Titanic {
 
-int SuccUBusScript::proc6() const {
+int SuccUBusScript::proc6(TTnpcScript *npcScript, TTsentence *sentence, uint tag) {
 	warning("TODO");
 	return 2;
 }
@@ -49,7 +49,7 @@ bool SuccUBusScript::proc18() const {
 	return 0;
 }
 
-int SuccUBusScript::proc21(int v) {
+int SuccUBusScript::proc21(int v1, int v2, int v3) {
 	warning("TODO");
 	return 0;
 }
@@ -59,8 +59,9 @@ int SuccUBusScript::proc23() const {
 	return 0;
 }
 
-void SuccUBusScript::proc24() {
+const int *SuccUBusScript::getTablePtr(int id) {
 	warning("TODO");
+	return nullptr;
 }
 
 int SuccUBusScript::proc25() const {

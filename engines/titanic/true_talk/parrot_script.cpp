@@ -25,7 +25,7 @@
 
 namespace Titanic {
 
-int ParrotScript::proc6() const {
+int ParrotScript::proc6(TTnpcScript *npcScript, TTsentence *sentence, uint tag) {
 	warning("TODO");
 	return 2;
 }
@@ -54,8 +54,9 @@ int ParrotScript::proc23() const {
 	return 0;
 }
 
-void ParrotScript::proc24() {
+const int *ParrotScript::getTablePtr(int id) {
 	warning("TODO");
+	return nullptr;
 }
 
 int ParrotScript::proc25() const {

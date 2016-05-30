@@ -23,30 +23,33 @@
 #ifndef TITANIC_DESKBOT_SCRIPT_H
 #define TITANIC_DESKBOT_SCRIPT_H
 
+#include "common/array.h"
 #include "titanic/true_talk/tt_npc_script.h"
 
 namespace Titanic {
 
 class DeskbotScript : public TTnpcScript {
+private:
+	Common::Array<TTnpcScriptTag> _tags;
 public:
 	DeskbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2);
 
-	virtual int proc6() const;
+	virtual int proc6(TTnpcScript *npcScript, TTsentence *sentence, uint tag);
 	virtual void proc7(int v1, int v2);
 	virtual int proc10() const;
 	virtual int proc15() const;
 	virtual bool proc16() const;
 	virtual bool proc17() const;
 	virtual bool proc18() const;
-	virtual int proc21(int v);
+	virtual int proc21(int v1, int v2, int v3);
 	virtual int proc22() const;
 	virtual int proc23() const;
-	virtual void proc24();
+	virtual const int *getTablePtr(int id);
 	virtual int proc25() const;
 	virtual void proc26();
-	virtual int proc36() const;
-	virtual int proc37() const;
+	virtual int proc36(int val) const;
+	virtual uint translateId(uint id) const;
 
 	virtual void proc38();
 	virtual void proc39();

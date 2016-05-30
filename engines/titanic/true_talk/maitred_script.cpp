@@ -39,7 +39,7 @@ MaitreDScript::MaitreDScript(int val1, const char *charClass, int v2,
 	CTrueTalkManager::setFlags(16, 0);
 }
 
-int MaitreDScript::proc6() const {
+int MaitreDScript::proc6(TTnpcScript *npcScript, TTsentence *sentence, uint tag) {
 	warning("TODO");
 	return 2;
 }
@@ -68,7 +68,7 @@ bool MaitreDScript::proc18() const {
 	return 0;
 }
 
-int MaitreDScript::proc21(int v) {
+int MaitreDScript::proc21(int v1, int v2, int v3) {
 	warning("TODO");
 	return 0;
 }
@@ -83,8 +83,9 @@ int MaitreDScript::proc23() const {
 	return 0;
 }
 
-void MaitreDScript::proc24() {
+const int *MaitreDScript::getTablePtr(int id) {
 	warning("TODO");
+	return nullptr;
 }
 
 int MaitreDScript::proc25() const {
@@ -95,7 +96,7 @@ int MaitreDScript::proc25() const {
 void MaitreDScript::proc26() {
 }
 
-int MaitreDScript::proc37() const {
+uint MaitreDScript::translateId(uint id) const {
 	warning("TODO");
 	return 0;
 }

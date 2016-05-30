@@ -41,9 +41,21 @@ DeskbotScript::DeskbotScript(int val1, const char *charClass, int v2,
 		_field74 = 0;
 }
 
-int DeskbotScript::proc6() const {
-	warning("TODO");
-	return 2;
+int DeskbotScript::proc6(TTnpcScript *npcScript, TTsentence *sentence, uint tag) {
+	for (uint idx = 0; idx < _tags.size(); ++idx) {
+		const TTnpcScriptTag &scriptTag = _tags[idx];		
+		uint currTag = (idx == 0) ? MKTAG('P', 'K', 'U', 'P') : scriptTag._tag;
+
+		if (currTag == tag) {
+			int valIndex = getRandomNumber(scriptTag.size()) - 1;
+			uint diagId = getDialogueId(scriptTag._values[valIndex]);
+			addResponse(diagId);
+			applyResponse();
+			break;
+		}
+	}
+
+	return SS_1;
 }
 
 void DeskbotScript::proc7(int v1, int v2) {
@@ -75,7 +87,7 @@ bool DeskbotScript::proc18() const {
 	return 0;
 }
 
-int DeskbotScript::proc21(int v) {
+int DeskbotScript::proc21(int v1, int v2, int v3) {
 	warning("TODO");
 	return 0;
 }
@@ -90,8 +102,9 @@ int DeskbotScript::proc23() const {
 	return 0;
 }
 
-void DeskbotScript::proc24() {
+const int *DeskbotScript::getTablePtr(int id) {
 	warning("TODO");
+	return nullptr;
 }
 
 int DeskbotScript::proc25() const {
@@ -102,12 +115,12 @@ int DeskbotScript::proc25() const {
 void DeskbotScript::proc26() {
 }
 
-int DeskbotScript::proc36() const {
+int DeskbotScript::proc36(int id) const {
 	warning("TODO");
 	return 0;
 }
 
-int DeskbotScript::proc37() const {
+uint DeskbotScript::translateId(uint id) const {
 	warning("TODO");
 	return 0;
 }

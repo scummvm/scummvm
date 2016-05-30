@@ -36,14 +36,14 @@ public:
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7),
 		_field2D0(0) {}
 
-	virtual int proc6() const;
+	virtual int proc6(TTnpcScript *npcScript, TTsentence *sentence, uint tag);
 	virtual void proc7(int v1, int v2);
 	virtual int proc10() const;
 	virtual bool proc17() const;
 	virtual bool proc18() const;
-	virtual int proc21(int v);
+	virtual int proc21(int v1, int v2, int v3);
 	virtual int proc23() const;
-	virtual void proc24();
+	virtual const int *getTablePtr(int id);
 	virtual int proc25() const;
 	virtual void proc26();
 };

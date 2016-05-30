@@ -25,7 +25,7 @@
 
 namespace Titanic {
 
-int LiftbotScript::proc6() const {
+int LiftbotScript::proc6(TTnpcScript *npcScript, TTsentence *sentence, uint tag) {
 	warning("TODO");
 	return 2;
 }
@@ -64,7 +64,7 @@ bool LiftbotScript::proc18() const {
 	return 0;
 }
 
-int LiftbotScript::proc21(int v) {
+int LiftbotScript::proc21(int v1, int v2, int v3) {
 	warning("TODO");
 	return 0;
 }
@@ -79,8 +79,9 @@ int LiftbotScript::proc23() const {
 	return 0;
 }
 
-void LiftbotScript::proc24() {
+const int *LiftbotScript::getTablePtr(int id) {
 	warning("TODO");
+	return nullptr;
 }
 
 int LiftbotScript::proc25() const {
@@ -95,7 +96,7 @@ void LiftbotScript::proc32() {
 	warning("TODO");
 }
 
-int LiftbotScript::proc37() const {
+uint LiftbotScript::translateId(uint id) const {
 	warning("TODO");
 	return 0;
 }
