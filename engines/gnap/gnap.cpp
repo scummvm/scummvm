@@ -138,6 +138,33 @@ GnapEngine::GnapEngine(OSystem *syst, const ADGameDescription *gd) :
 		_savegameSprites[i] = nullptr;
 	for (int i = 0; i < 30; i++)
 		_menuInventorySprites[i] = nullptr;
+
+	_newSceneNum = 0;
+	_sceneDone = false;
+	_inventory = 0;
+	_gameFlags = 0;
+	_hotspotsCount = 0;
+	_sceneClickedHotspot = -1;
+	_isLeavingScene = false;
+	_isStockDatLoaded = false;
+	_newCursorValue = 0;
+	_cursorValue = 0;
+	_verbCursor = 0;
+	_cursorIndex = -1;
+	_leftClickMouseX = 0;
+	_leftClickMouseY = 0;
+	_grabCursorSprite = nullptr;
+	_grabCursorSpriteIndex = 0;
+	_newGrabCursorSpriteIndex = 0;
+	_fullScreenSprite = nullptr;
+	_fullScreenSpriteId = 0;
+	_deviceX1 = 0;
+	_deviceY1 = 0;
+	_deviceX2 = 0;
+	_deviceY2 = 0;
+	_soundTimerIndexA = 0;
+	_soundTimerIndexB = 0;
+	_soundTimerIndexC = 0;
 }
 
 GnapEngine::~GnapEngine() {
