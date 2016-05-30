@@ -37,6 +37,24 @@ Module::~Module() {
 }
 
 Feature::Feature(View *view) : _view(view) {
+	_next = _prev = nullptr;
+	_drawProc = nullptr;
+	_moveProc = nullptr;
+	_doneProc = nullptr;
+	_frameProc = nullptr;
+	_timeProc = nullptr;
+	_region = 0;
+	_id = 0;
+	_scrbId = 0;
+	_storedScrbId = 0;
+	_flags = 0;
+	_nextTime = 0;
+	_delayTime = 0;
+	_dirty = 0;
+	_needsReset = 0;
+	_justReset = 0;
+	_notifyDone = 0;
+	_done = 0;
 }
 
 Feature::~Feature() {
