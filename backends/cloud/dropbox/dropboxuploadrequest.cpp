@@ -65,8 +65,16 @@ void DropboxUploadRequest::uploadNextPart() {
 	Common::JSONObject jsonRequestParameters;
 
 	if (_contentsStream->pos() == 0 || _sessionId == "") {
-		url += "start";		
-		jsonRequestParameters.setVal("close", new Common::JSONValue(false));
+		if (_contentsStream->size() <= UPLOAD_PER_ONE_REQUEST) {
+			url = "https://content.dropboxapi.com/2/files/upload";
+			jsonRequestParameters.setVal("path", new Common::JSONValue(_savePath));
+			jsonRequestParameters.setVal("mode", new Common::JSONValue("overwrite"));
+			jsonRequestParameters.setVal("autorename", new Common::JSONValue(false));
+			jsonRequestParameters.setVal("mute", new Common::JSONValue(false));
+		} else {
+			url += "start";
+			jsonRequestParameters.setVal("close", new Common::JSONValue(false));
+		}
 	} else {
 		if (_contentsStream->size() - _contentsStream->pos() <= UPLOAD_PER_ONE_REQUEST) {
 			url += "finish";			

@@ -105,6 +105,7 @@ void DropboxStorage::printBool(BoolResponse pair) {
 }
 
 void DropboxStorage::printUploadStatus(UploadResponse pair) {
+	debug(" ");
 	UploadStatus status = pair.value;
 	if (status.interrupted) {
 		debug("upload interrupted by user");
@@ -118,9 +119,9 @@ void DropboxStorage::printUploadStatus(UploadResponse pair) {
 	debug("upload HTTP response code = %ld", status.httpResponseCode);
 	if (!status.failed) {
 		debug("uploaded file info:");
-		debug("path: %s", status.file.path().c_str());
-		debug("size: %u", status.file.size());
-		debug("timestamp: %u", status.file.timestamp());
+		debug("\tpath: %s", status.file.path().c_str());
+		debug("\tsize: %u", status.file.size());
+		debug("\ttimestamp: %u", status.file.timestamp());
 	}
 }
 
