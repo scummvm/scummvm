@@ -55,17 +55,22 @@ void SavesSyncRequest::start() {
 	loadTimestamps();
 
 	//list saves directory
-	_workingRequest = _storage->listDirectory("saves", new Common::Callback<SavesSyncRequest, Storage::FileArrayResponse>(this, &SavesSyncRequest::directoryListedCallback));
+	_workingRequest = _storage->listDirectory("saves", new Common::Callback<SavesSyncRequest, Storage::ListDirectoryResponse>(this, &SavesSyncRequest::directoryListedCallback));
 }
 
-void SavesSyncRequest::directoryListedCallback(Storage::FileArrayResponse pair) {
+void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse pair) {
 	if (_ignoreCallback) return;
-	//TODO: somehow ListDirectory requests must indicate that file array is incomplete
+
+	ListDirectoryStatus status = pair.value;
+	if (status.interrupted || status.failed) {
+		finishBool(false);
+		return;
+	}
 
 	const uint32 INVALID_TIMESTAMP = UINT_MAX;
 	
 	//determine which files to download and which files to upload
-	Common::Array<StorageFile> &remoteFiles = pair.value;
+	Common::Array<StorageFile> &remoteFiles = status.files;
 	for (uint32 i = 0; i < remoteFiles.size(); ++i) {
 		StorageFile &file = remoteFiles[i];
 		if (file.isDirectory()) continue;

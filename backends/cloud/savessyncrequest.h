@@ -42,7 +42,7 @@ class SavesSyncRequest: public Networking::Request {
 	bool _ignoreCallback;
 
 	void start();
-	void directoryListedCallback(Storage::FileArrayResponse pair);
+	void directoryListedCallback(Storage::ListDirectoryResponse pair);
 	void fileDownloadedCallback(Storage::BoolResponse pair);
 	void fileUploadedCallback(Storage::UploadResponse pair);
 	void downloadNextFile();

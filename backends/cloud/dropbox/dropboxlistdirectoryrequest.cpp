@@ -22,23 +22,32 @@
 
 #include "backends/cloud/dropbox/dropboxlistdirectoryrequest.h"
 #include "backends/cloud/iso8601.h"
+#include "backends/cloud/storage.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/curl/networkreadstream.h"
 #include "common/json.h"
-#include "backends/cloud/storage.h"
 
 namespace Cloud {
 namespace Dropbox {
 
-DropboxListDirectoryRequest::DropboxListDirectoryRequest(Common::String token, Common::String path, Storage::FileArrayCallback cb, bool recursive):
-	Networking::Request(0), _requestedPath(path), _requestedRecursive(recursive), _filesCallback(cb),
-	_token(token), _complete(false), _innerRequest(nullptr) {
-	startupWork();
+DropboxListDirectoryRequest::DropboxListDirectoryRequest(Common::String token, Common::String path, Storage::ListDirectoryCallback cb, bool recursive):
+	Networking::Request(0), _requestedPath(path), _requestedRecursive(recursive), _listDirectoryCallback(cb),
+	_token(token), _workingRequest(nullptr), _ignoreCallback(false) {
+	start();
 }
 
-void DropboxListDirectoryRequest::startupWork() {
+DropboxListDirectoryRequest::~DropboxListDirectoryRequest() {
+	_ignoreCallback = true;
+	if (_workingRequest) _workingRequest->finish();
+	delete _listDirectoryCallback;
+}
+
+void DropboxListDirectoryRequest::start() {
+	_ignoreCallback = true;
+	if (_workingRequest) _workingRequest->finish();
 	_files.clear();
-	_complete = false;
+	_ignoreCallback = false;
 
 	Networking::JsonCallback innerCallback = new Common::Callback<DropboxListDirectoryRequest, Networking::JsonResponse>(this, &DropboxListDirectoryRequest::responseCallback);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://api.dropboxapi.com/2/files/list_folder");
@@ -54,39 +63,50 @@ void DropboxListDirectoryRequest::startupWork() {
 	Common::JSONValue value(jsonRequestParameters);
 	request->addPostField(Common::JSON::stringify(&value));
 
-	_innerRequest = ConnMan.addRequest(request);
+	_workingRequest = ConnMan.addRequest(request);
 }
 
 
 void DropboxListDirectoryRequest::responseCallback(Networking::JsonResponse pair) {
+	_workingRequest = nullptr;
+	if (_ignoreCallback) return;
+
+	ListDirectoryStatus status(_files);
+	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)pair.request;
+	if (rq && rq->getNetworkReadStream())
+		status.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
+
 	Common::JSONValue *json = pair.value;
 	if (json) {
 		Common::JSONObject response = json->asObject();
 		
 		if (response.contains("error") || response.contains("error_summary")) {
 			warning("Dropbox returned error: %s", response.getVal("error_summary")->asString().c_str());
-			_complete = true;
+			status.failed = true;
+			status.response = json->stringify();
+			finishStatus(status);
 			delete json;
 			return;
 		}
 
-		//TODO: check that all keys exist to avoid segfaults
-		//TODO: get more files in the folder to check "has_more" case
+		//TODO: check that ALL keys exist AND HAVE RIGHT TYPE to avoid segfaults		
 
-		Common::JSONArray items = response.getVal("entries")->asArray();
-		for (uint32 i = 0; i < items.size(); ++i) {
-			Common::JSONObject item = items[i]->asObject();
-			Common::String path = item.getVal("path_lower")->asString();
-			bool isDirectory = (item.getVal(".tag")->asString() == "folder");
-			uint32 size = 0, timestamp = 0;
-			if (!isDirectory) {
-				size = item.getVal("size")->asIntegerNumber();
-				timestamp = ISO8601::convertToTimestamp(item.getVal("server_modified")->asString());
+		if (response.contains("entries")) {
+			Common::JSONArray items = response.getVal("entries")->asArray();
+			for (uint32 i = 0; i < items.size(); ++i) {
+				Common::JSONObject item = items[i]->asObject();
+				Common::String path = item.getVal("path_lower")->asString();
+				bool isDirectory = (item.getVal(".tag")->asString() == "folder");
+				uint32 size = 0, timestamp = 0;
+				if (!isDirectory) {
+					size = item.getVal("size")->asIntegerNumber();
+					timestamp = ISO8601::convertToTimestamp(item.getVal("server_modified")->asString());
+				}
+				_files.push_back(StorageFile(path, size, timestamp, isDirectory));
 			}
-			_files.push_back(StorageFile(path, size, timestamp, isDirectory));
 		}
 
-		bool hasMore = response.getVal("has_more")->asBool();
+		bool hasMore = (response.contains("has_more") && response.getVal("has_more")->asBool());
 
 		if (hasMore) {
 			Networking::JsonCallback innerCallback = new Common::Callback<DropboxListDirectoryRequest, Networking::JsonResponse>(this, &DropboxListDirectoryRequest::responseCallback);
@@ -100,40 +120,33 @@ void DropboxListDirectoryRequest::responseCallback(Networking::JsonResponse pair
 			Common::JSONValue value(jsonRequestParameters);
 			request->addPostField(Common::JSON::stringify(&value));
 
-			ConnMan.addRequest(request);
-		} else {
-			_complete = true;
+			_workingRequest = ConnMan.addRequest(request);
+		} else {			
+			finishStatus(status);
 		}		
 	} else {
 		warning("null, not json");
-		_complete = true;
+		status.failed = true;
+		finishStatus(status);
 	}
 
 	delete json;
 }
 
-void DropboxListDirectoryRequest::handle() {
-	if (_complete) finishFiles(_files);	
-}
+void DropboxListDirectoryRequest::handle() {}
 
-void DropboxListDirectoryRequest::restart() {
-	if (_innerRequest) {		
-		//TODO: I'm really not sure some CurlRequest would handle this (it must stop corresponding CURL transfer)
-		_innerRequest->finish(); //may be CANCELED or INTERRUPTED or something?
-		_innerRequest = nullptr;
-	}
-
-	startupWork();
-}
+void DropboxListDirectoryRequest::restart() { start(); }
 
 void DropboxListDirectoryRequest::finish() {
 	Common::Array<StorageFile> files;
-	finishFiles(files);
+	ListDirectoryStatus status(files);
+	status.interrupted = true;
+	finishStatus(status);
 }
 
-void DropboxListDirectoryRequest::finishFiles(Common::Array<StorageFile> &files) {
+void DropboxListDirectoryRequest::finishStatus(ListDirectoryStatus status) {
 	Request::finish();
-	if (_filesCallback) (*_filesCallback)(Storage::FileArrayResponse(this, files));
+	if (_listDirectoryCallback) (*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, status));
 }
 
 } // End of namespace Dropbox

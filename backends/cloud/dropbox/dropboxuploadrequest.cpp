@@ -45,7 +45,6 @@ DropboxUploadRequest::~DropboxUploadRequest() {
 	delete _uploadCallback;
 }
 
-
 void DropboxUploadRequest::start() {
 	_ignoreCallback = true;
 	if (_workingRequest) _workingRequest->finish();

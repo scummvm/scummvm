@@ -50,15 +50,21 @@ void FolderDownloadRequest::start() {
 	//list directory first
 	_workingRequest = _storage->listDirectory(
 		_remoteDirectoryPath,
-		new Common::Callback<FolderDownloadRequest, Storage::FileArrayResponse>(this, &FolderDownloadRequest::directoryListedCallback),
+		new Common::Callback<FolderDownloadRequest, Storage::ListDirectoryResponse>(this, &FolderDownloadRequest::directoryListedCallback),
 		_recursive
 	);
 }
 
-void FolderDownloadRequest::directoryListedCallback(Storage::FileArrayResponse pair) {
+void FolderDownloadRequest::directoryListedCallback(Storage::ListDirectoryResponse pair) {
 	if (_ignoreCallback) return;
-	//TODO: somehow ListDirectory requests must indicate that file array is incomplete
-	_files = pair.value;
+
+	ListDirectoryStatus status = pair.value;
+	if (status.failed || status.interrupted) {
+		finish();
+		return;
+	}
+	
+	_files = pair.value.files;
 	downloadNextFile();
 }
 

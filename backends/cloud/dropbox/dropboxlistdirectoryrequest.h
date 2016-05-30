@@ -35,20 +35,18 @@ class DropboxListDirectoryRequest: public Networking::Request {
 	Common::String _requestedPath;
 	bool _requestedRecursive;
 
-	Storage::FileArrayCallback _filesCallback;
+	Storage::ListDirectoryCallback _listDirectoryCallback;
 	Common::String _token;
-	bool _complete;
 	Common::Array<StorageFile> _files;
-	Request *_innerRequest;
-
+	Request *_workingRequest;
+	bool _ignoreCallback;
+	
+	void start();
 	void responseCallback(Networking::JsonResponse pair);
-	void startupWork();
-
-	void finishFiles(Common::Array<StorageFile> &files);
-
+	void finishStatus(ListDirectoryStatus status);
 public:
-	DropboxListDirectoryRequest(Common::String token, Common::String path, Storage::FileArrayCallback cb, bool recursive = false);
-	virtual ~DropboxListDirectoryRequest() { delete _filesCallback; }
+	DropboxListDirectoryRequest(Common::String token, Common::String path, Storage::ListDirectoryCallback cb, bool recursive = false);
+	virtual ~DropboxListDirectoryRequest();
 
 	virtual void handle();
 	virtual void restart();

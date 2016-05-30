@@ -163,7 +163,7 @@ void OneDriveStorage::fileInfoCallback(Networking::NetworkReadStreamCallback out
 	delete pair.value;
 }
 
-Networking::Request *OneDriveStorage::listDirectory(Common::String path, FileArrayCallback callback, bool recursive) {
+Networking::Request *OneDriveStorage::listDirectory(Common::String path, ListDirectoryCallback callback, bool recursive) {
 	return ConnMan.addRequest(new OneDriveListDirectoryRequest(this, path, callback, recursive));
 }
 

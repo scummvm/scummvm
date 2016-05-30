@@ -125,7 +125,7 @@ void DropboxStorage::printUploadStatus(UploadResponse pair) {
 	}
 }
 
-Networking::Request *DropboxStorage::listDirectory(Common::String path, FileArrayCallback outerCallback, bool recursive) {
+Networking::Request *DropboxStorage::listDirectory(Common::String path, ListDirectoryCallback outerCallback, bool recursive) {
 	return ConnMan.addRequest(new DropboxListDirectoryRequest(_token, path, outerCallback, recursive));
 }
 

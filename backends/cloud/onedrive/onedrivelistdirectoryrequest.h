@@ -37,7 +37,7 @@ class OneDriveListDirectoryRequest: public Networking::Request {
 	Common::String _requestedPath;
 	bool _requestedRecursive;
 	OneDriveStorage *_storage;
-	Storage::FileArrayCallback _filesCallback;	
+	Storage::ListDirectoryCallback _listDirectoryCallback;
 	Common::Array<StorageFile> _files;
 	Common::Array<Common::String> _directoriesQueue;
 	Common::String _currentDirectory;
@@ -45,13 +45,13 @@ class OneDriveListDirectoryRequest: public Networking::Request {
 	bool _ignoreCallback;
 
 	void start();
-	void listNextDirectory();
+	void listNextDirectory(ListDirectoryStatus status);
 	void listedDirectoryCallback(Networking::JsonResponse pair);
 	void makeRequest(Common::String url);
-	void finishFiles(Common::Array<StorageFile> &files);
+	void finishStatus(ListDirectoryStatus status);
 public:
-	OneDriveListDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::FileArrayCallback cb, bool recursive = false);
-	virtual ~OneDriveListDirectoryRequest() { delete _filesCallback; }
+	OneDriveListDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, bool recursive = false);
+	virtual ~OneDriveListDirectoryRequest();
 
 	virtual void handle() {}
 	virtual void restart() { start(); }

@@ -26,7 +26,6 @@
 #include "backends/networking/curl/request.h"
 #include "backends/networking/curl/networkreadstream.h"
 #include "backends/cloud/storage.h"
-#include "common/file.h"
 
 namespace Cloud {
 
@@ -41,7 +40,7 @@ class FolderDownloadRequest: public Networking::Request {
 	bool _ignoreCallback;
 
 	void start();
-	void directoryListedCallback(Storage::FileArrayResponse pair);
+	void directoryListedCallback(Storage::ListDirectoryResponse pair);
 	void fileDownloadedCallback(Storage::BoolResponse pair);
 	void downloadNextFile();
 	void finishFiles(Common::Array<StorageFile> &files);

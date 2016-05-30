@@ -54,17 +54,39 @@ struct UploadStatus {
 		interrupted(interrupt), failed(failure), file(f), response(resp), httpResponseCode(code) {}
 };
 
+/** Struct to represent upload() resulting status. */
+struct ListDirectoryStatus {
+	/** true if Request was interrupted (finished by user with finish()) */
+	bool interrupted;
+	/** true if Request has failed (bad server response or some other error occurred) */
+	bool failed;
+	/** Contains listed files (might be incomplete if failed or interrupted) */
+	Common::Array<StorageFile> &files;
+	/** Server's original response (empty if not failed) */
+	Common::String response;
+	/** Server's HTTP response code. */
+	long httpResponseCode;
+
+	ListDirectoryStatus(Common::Array<StorageFile> &f) :
+		interrupted(false), failed(false), files(f), response(), httpResponseCode(-1) {}
+
+	ListDirectoryStatus(bool interrupt, bool failure, Common::Array<StorageFile> &f, Common::String resp, long code) :
+		interrupted(interrupt), failed(failure), files(f), response(resp), httpResponseCode(code) {}
+};
+
 class Storage {
 public:
 	typedef Networking::Response<Common::Array<StorageFile>&> FileArrayResponse;
 	typedef Networking::Response<StorageInfo> StorageInfoResponse;
 	typedef Networking::Response<bool> BoolResponse;
 	typedef Networking::Response<UploadStatus> UploadResponse;
+	typedef Networking::Response<ListDirectoryStatus> ListDirectoryResponse;
 
 	typedef Common::BaseCallback<FileArrayResponse> *FileArrayCallback;
 	typedef Common::BaseCallback<StorageInfoResponse> *StorageInfoCallback;
 	typedef Common::BaseCallback<BoolResponse> *BoolCallback;
 	typedef Common::BaseCallback<UploadResponse> *UploadCallback;
+	typedef Common::BaseCallback<ListDirectoryResponse> *ListDirectoryCallback;
 
 	Storage() {}
 	virtual ~Storage() {}
@@ -90,10 +112,10 @@ public:
 	 * a callback, which is called, when request is complete.
 	 */
 
-	/** Returns Common::Array<StorageFile>. */
-	virtual Networking::Request *listDirectory(Common::String path, FileArrayCallback callback, bool recursive = false) = 0;
-
-	/** Calls the callback when finished. */
+	/** Returns ListDirectoryStatus struct with list of files. */
+	virtual Networking::Request *listDirectory(Common::String path, ListDirectoryCallback callback, bool recursive = false) = 0;
+	
+	/** Returns UploadStatus struct with info about uploaded file. */
 	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback) = 0;
 	virtual Networking::Request *upload(Common::String remotePath, Common::String localPath, UploadCallback callback) = 0;
 

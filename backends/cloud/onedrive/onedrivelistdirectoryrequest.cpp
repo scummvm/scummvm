@@ -25,16 +25,23 @@
 #include "backends/cloud/onedrive/onedrivetokenrefresher.h"
 #include "backends/cloud/iso8601.h"
 #include "backends/networking/curl/connectionmanager.h"
+#include "backends/networking/curl/networkreadstream.h"
 #include "common/json.h"
 
 namespace Cloud {
 namespace OneDrive {
 
-OneDriveListDirectoryRequest::OneDriveListDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::FileArrayCallback cb, bool recursive):
+OneDriveListDirectoryRequest::OneDriveListDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, bool recursive):
 	Networking::Request(0),
-	_requestedPath(path), _requestedRecursive(recursive), _storage(storage), _filesCallback(cb),
+	_requestedPath(path), _requestedRecursive(recursive), _storage(storage), _listDirectoryCallback(cb),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
+}
+
+OneDriveListDirectoryRequest::~OneDriveListDirectoryRequest() {
+	_ignoreCallback = true;
+	if (_workingRequest) _workingRequest->finish();
+	delete _listDirectoryCallback;
 }
 
 void OneDriveListDirectoryRequest::start() {
@@ -48,12 +55,12 @@ void OneDriveListDirectoryRequest::start() {
 	_ignoreCallback = false;
 
 	_directoriesQueue.push_back(_requestedPath);
-	listNextDirectory();
+	listNextDirectory(_files);
 }
 
-void OneDriveListDirectoryRequest::listNextDirectory() {
+void OneDriveListDirectoryRequest::listNextDirectory(ListDirectoryStatus status) {
 	if (_directoriesQueue.empty()) {
-		finishFiles(_files);
+		finishStatus(status);
 		return;
 	}
 
@@ -76,7 +83,8 @@ void OneDriveListDirectoryRequest::makeRequest(Common::String url) {
 	_workingRequest = ConnMan.addRequest(request);
 }
 
-void OneDriveListDirectoryRequest::listedDirectoryCallback(Networking::JsonResponse pair) {	
+void OneDriveListDirectoryRequest::listedDirectoryCallback(Networking::JsonResponse pair) {
+	_workingRequest = nullptr;
 	Common::JSONValue *json = pair.value;
 
 	if (_ignoreCallback) {
@@ -84,26 +92,29 @@ void OneDriveListDirectoryRequest::listedDirectoryCallback(Networking::JsonRespo
 		return;
 	}
 
+	ListDirectoryStatus status(_files);
+	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)pair.request;
+	if (rq && rq->getNetworkReadStream())
+		status.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
+
 	if (!json) {
-		finish();
+		status.failed = true;
+		finishStatus(status);
 		return;
 	}
 
 	Common::JSONObject response = json->asObject();		
 	
-	//TODO: check that all keys exist to avoid segfaults
+	//TODO: check that ALL keys exist AND HAVE RIGHT TYPE to avoid segfaults
 
 	Common::JSONArray items = response.getVal("value")->asArray();
 	for (uint32 i = 0; i < items.size(); ++i) {
 		Common::JSONObject item = items[i]->asObject();	
 
 		Common::String path = _currentDirectory + item.getVal("name")->asString();
-		bool isDirectory = item.contains("folder");
-		uint32 size = 0, timestamp = 0;		
-		//if (!isDirectory) {
-		size = item.getVal("size")->asNumber();
-		timestamp = ISO8601::convertToTimestamp(item.getVal("lastModifiedDateTime")->asString());
-		//}
+		bool isDirectory = item.contains("folder");		
+		uint32 size = item.getVal("size")->asIntegerNumber();
+		uint32 timestamp = ISO8601::convertToTimestamp(item.getVal("lastModifiedDateTime")->asString());		
 
 		StorageFile file(path, size, timestamp, isDirectory);
 		_files.push_back(file);
@@ -116,21 +127,22 @@ void OneDriveListDirectoryRequest::listedDirectoryCallback(Networking::JsonRespo
 	if (hasMore) {
 		makeRequest(response.getVal("@odata.nextLink")->asString());
 	} else {
-		listNextDirectory();
+		listNextDirectory(status);
 	}
 
 	delete json;
 }
 
-void OneDriveListDirectoryRequest::finish() {
-	//TODO: indicate it's interrupted
+void OneDriveListDirectoryRequest::finish() {	
 	Common::Array<StorageFile> files;
-	finishFiles(files);
+	ListDirectoryStatus status(files);
+	status.interrupted = true;
+	finishStatus(status);
 }
 
-void OneDriveListDirectoryRequest::finishFiles(Common::Array<StorageFile> &files) {
+void OneDriveListDirectoryRequest::finishStatus(ListDirectoryStatus status) {
 	Request::finish();
-	if (_filesCallback) (*_filesCallback)(Storage::FileArrayResponse(this, files));
+	if (_listDirectoryCallback) (*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, status));
 }
 
 } // End of namespace OneDrive

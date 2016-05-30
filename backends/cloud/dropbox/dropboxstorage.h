@@ -67,10 +67,10 @@ public:
 
 	/** Public Cloud API comes down there. */
 
-	/** Returns Common::Array<StorageFile>. */
-	virtual Networking::Request *listDirectory(Common::String path, FileArrayCallback callback, bool recursive = false);
-
-	/** Calls the callback when finished. */
+	/** Returns ListDirectoryStatus struct with list of files. */
+	virtual Networking::Request *listDirectory(Common::String path, ListDirectoryCallback callback, bool recursive = false);
+	
+	/** Returns UploadStatus struct with info about uploaded file. */
 	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback);
 	virtual Networking::Request *upload(Common::String remotePath, Common::String localPath, UploadCallback callback);
 
