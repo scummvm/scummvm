@@ -918,7 +918,6 @@ void Scene50::run() {
 	_timesPlayedModifier = _timesPlayed / 4;
 	_leftTongueRoundsWon = 0;
 	_rightTongueRoundsWon = 0;
-	// initFont();
 	_leftTongueSequenceId = 186;
 	_rightTongueSequenceId = 194;
 	_rightTongueNextSequenceId = -1;
