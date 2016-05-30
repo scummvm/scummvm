@@ -225,16 +225,16 @@ void Moonbase::setFOWInfo(int fowInfoArray, int downDim, int acrossDim, int view
 
 	int dataOffset = (_fowVw * 3);
 	int dataOffset2 = (dataOffset * 2);
-	int *pOutterRenderTableA = _fowRenderTable;
-	int *pOutterRenderTableB = pOutterRenderTableA + dataOffset;
+	int32 *pOutterRenderTableA = _fowRenderTable;
+	int32 *pOutterRenderTableB = pOutterRenderTableA + dataOffset;
 
 	for (int ay = 0; ay < _fowVh; ay++) {
 		int l = il;
 		int c = ic;
 		int r = ir;
 
-		int *pRenderTableA = pOutterRenderTableA;
-		int *pRenderTableB = pOutterRenderTableB;
+		int32 *pRenderTableA = pOutterRenderTableA;
+		int32 *pRenderTableB = pOutterRenderTableB;
 
 		pOutterRenderTableA += dataOffset2;
 		pOutterRenderTableB += dataOffset2;
@@ -358,7 +358,7 @@ void Moonbase::renderFOW(uint8 *destSurface, int dstPitch, int dstType, int dstw
 	if (!_fowImage)
 		return;
 
-	const int *pOutterRenderTable = _fowRenderTable;
+	const int32 *pOutterRenderTable = _fowRenderTable;
 	int ixPos = ((_fowVtx1 * _fowTileW) - _fowMvx) + _fowDrawX;
 	int yPos = ((_fowVty1 * _fowTileH) - _fowMvy) + _fowDrawY;
 	int dataOffset = _fowVw * 3;
@@ -370,7 +370,7 @@ void Moonbase::renderFOW(uint8 *destSurface, int dstPitch, int dstType, int dstw
 		int real_yPos = yPos;
 
 		for (int i = 0; i < 2; i++) {
-			const int *pRenderTable = pOutterRenderTable;
+			const int32 *pRenderTable = pOutterRenderTable;
 			pOutterRenderTable += dataOffset;
 
 			int xPos = ixPos;
