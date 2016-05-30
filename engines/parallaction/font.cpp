@@ -70,6 +70,8 @@ public:
 		_data = (byte *)malloc(size);
 		stream.read(_data, size);
 
+		_cp = 0;
+		_bufPitch = 0;
 	}
 
 	~BraFont() {

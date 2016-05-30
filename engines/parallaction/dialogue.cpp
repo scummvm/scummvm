@@ -153,6 +153,8 @@ DialogueManager::DialogueManager(Parallaction *vm, ZonePtr z) : _vm(vm), _z(z) {
 	_downKey = 0;
 
 	_mouseButtons = 0;
+
+	_state = DIALOGUE_START;
 }
 
 void DialogueManager::start() {

@@ -77,6 +77,8 @@ Input::Input(Parallaction *vm) : _vm(vm) {
 	_dougCursor = 0;
 	_donnaCursor = 0;
 	_comboArrow = 0;
+	_mouseArrow = 0;
+
 	initCursors();
 }
 
