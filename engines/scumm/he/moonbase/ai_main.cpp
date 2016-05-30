@@ -606,7 +606,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 				targetX = getHubX(closestHub);
 				targetY = getHubY(closestHub);
 
-				delete launchAction;
+				delete[] launchAction;
 				launchAction = NULL;
 				_aiState = STATE_DEFEND_TARGET;
 				delete myTree;
@@ -647,7 +647,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 				}
 			} else {
 				index++;
-				delete launchAction;
+				delete[] launchAction;
 				launchAction = NULL;
 			}
 		} else {
@@ -667,7 +667,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 				_aiState = STATE_INIT_ACQUIRE_TARGET;
 			} else {
 				index++;
-				delete launchAction;
+				delete[] launchAction;
 				launchAction = NULL;
 			}
 		}
@@ -695,7 +695,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 				}
 			} else {
 				index++;
-				delete launchAction;
+				delete[] launchAction;
 				launchAction = NULL;
 			}
 		}
