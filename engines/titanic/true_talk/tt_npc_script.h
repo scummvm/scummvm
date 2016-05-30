@@ -77,6 +77,11 @@ protected:
 	void randomizeFlags();
 
 	static int getRoom54(int roomId);
+
+	/**
+	 * Perform test on various state values
+	 */
+	int getValue(int testNum);
 public:
 	TTnpcScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4,

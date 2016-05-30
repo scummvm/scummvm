@@ -118,17 +118,10 @@ private:
 	 * Return the game state
 	 */
 	CGameState *getGameState() const;
-
-	/**
-	 * Get the player's passenger class
-	 */
-	int getPassengerClass() const;
-
-	int getState14() const;
 public:
 	static int _v1;
 	static int _v2;
-	static int _passengerClass;
+	static int _v3;
 	static bool _v4;
 	static bool _v5;
 	static int _v6;
@@ -230,6 +223,13 @@ public:
 	 * Gets the script associated with a specific room
 	 */
 	TTroomScript *getRoomScript(int roomId) const;
+
+	/**
+	 * Get the player's passenger class
+	 */
+	int getPassengerClass() const;
+
+	int getState14() const;
 };
 
 } // End of namespace Titanic

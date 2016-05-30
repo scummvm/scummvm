@@ -32,7 +32,7 @@ namespace Titanic {
 
 int CTrueTalkManager::_v1;
 int CTrueTalkManager::_v2;
-int CTrueTalkManager::_passengerClass;
+int CTrueTalkManager::_v3;
 bool CTrueTalkManager::_v4;
 bool CTrueTalkManager::_v5;
 int CTrueTalkManager::_v6;
@@ -102,7 +102,7 @@ void CTrueTalkManager::loadStatics(SimpleFile *file) {
 	int count = file->readNumber();
 	_v1 = file->readNumber();
 	_v2 = file->readNumber();
-	_passengerClass = file->readNumber();
+	_v3 = file->readNumber();
 	_v4 = file->readNumber() != 0;
 	_v5 = file->readNumber() != 0;
 	_v6 = file->readNumber();
@@ -126,7 +126,7 @@ void CTrueTalkManager::saveStatics(SimpleFile *file) {
 	file->writeNumber(10);
 	file->writeNumber(_v1);
 	file->writeNumber(_v2);
-	file->writeNumber(_passengerClass);
+	file->writeNumber(_v3);
 	file->writeNumber(_v4 ? 1 : 0);
 	file->writeNumber(_v5 ? 1 : 0);
 	file->writeNumber(_v6);
@@ -150,7 +150,7 @@ void CTrueTalkManager::setFlags(int index, int val) {
 	switch (index) {
 	case 1:
 		if (val >= 1 && val <= 3)
-			_passengerClass = val;
+			_v3 = val;
 		break;
 
 	case 2:

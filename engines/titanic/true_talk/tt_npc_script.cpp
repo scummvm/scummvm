@@ -235,5 +235,53 @@ int TTnpcScript::getRoom54(int roomId) {
 	return room ? room->_field54 : 0;
 }
 
+int TTnpcScript::getValue(int testNum) {
+	switch (testNum) {
+	case 0:
+		return CTrueTalkManager::_v2;
+	
+	case 1:
+		if (g_vm->_trueTalkManager)
+			CTrueTalkManager::_v3 = g_vm->_trueTalkManager->getPassengerClass();
+		return CTrueTalkManager::_v3;
+
+	case 2:
+		return CTrueTalkManager::_v4;
+
+	case 3:
+		return CTrueTalkManager::_v5 != 0;
+	
+	case 4:
+		if (g_vm->_trueTalkManager) {
+			switch (g_vm->_trueTalkManager->getState14()) {
+			case 1:
+				CTrueTalkManager::_v6 = 3;
+				break;
+			case 2:
+				CTrueTalkManager::_v6 = 0;
+				break;
+			case 3:
+				CTrueTalkManager::_v6 = 1;
+				break;
+			default:
+				CTrueTalkManager::_v6 = 2;
+				break;
+			}
+		}		
+		return CTrueTalkManager::_v6;
+
+	case 5:
+		return CTrueTalkManager::_v7;
+
+	case 6:
+		return CTrueTalkManager::_v8 != 0;
+
+	case 7:
+		return !!getRoom54(123);
+
+	default:
+		return CTrueTalkManager::_v11[testNum];
+	}
+}
 
 } // End of namespace Titanic
