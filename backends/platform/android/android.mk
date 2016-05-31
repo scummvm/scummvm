@@ -1,7 +1,7 @@
 # Android specific build targets
 
 # These must be incremented for each market upload
-ANDROID_VERSIONCODE = 6
+ANDROID_VERSIONCODE = 16
 
 ANDROID_TARGET_VERSION = 23
 
