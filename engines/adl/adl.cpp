@@ -880,23 +880,23 @@ void AdlEngine::getInput(uint &verb, uint &noun) {
 			return;
 
 		uint index = 0;
-		Common::String verbStr = getWord(line, index);
+		Common::String verbString = getWord(line, index);
 
-		if (!_verbs.contains(verbStr)) {
-			_display->printString(formatVerbError(verbStr));
+		if (!_verbs.contains(verbString)) {
+			_display->printString(formatVerbError(verbString));
 			continue;
 		}
 
-		verb = _verbs[verbStr];
+		verb = _verbs[verbString];
 
-		Common::String nounStr = getWord(line, index);
+		Common::String nounString = getWord(line, index);
 
-		if (!_nouns.contains(nounStr)) {
-			_display->printString(formatNounError(verbStr, nounStr));
+		if (!_nouns.contains(nounString)) {
+			_display->printString(formatNounError(verbString, nounString));
 			continue;
 		}
 
-		noun = _nouns[nounStr];
+		noun = _nouns[nounString];
 		return;
 	}
 }
