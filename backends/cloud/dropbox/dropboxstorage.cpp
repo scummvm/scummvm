@@ -22,20 +22,15 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/cloud/dropbox/dropboxstorage.h"
+#include "backends/cloud/dropbox/dropboxcreatedirectoryrequest.h"
 #include "backends/cloud/dropbox/dropboxlistdirectoryrequest.h"
 #include "backends/cloud/dropbox/dropboxuploadrequest.h"
-#include "backends/cloud/downloadrequest.h"
-#include "backends/cloud/folderdownloadrequest.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
-#include "common/file.h"
 #include "common/json.h"
 #include <curl/curl.h>
-#include "common/system.h"
-#include "common/savefile.h"
-#include "../savessyncrequest.h"
 
 namespace Cloud {
 namespace Dropbox {
@@ -135,6 +130,11 @@ Networking::Request *DropboxStorage::streamFile(Common::String path, Networking:
 	Networking::NetworkReadStreamResponse response = request->execute();
 	if (callback) (*callback)(response);
 	return response.request;
+}
+
+Networking::Request *DropboxStorage::createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) {
+	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+	return ConnMan.addRequest(new DropboxCreateDirectoryRequest(_token, path, callback, errorCallback));
 }
 
 Networking::Request *DropboxStorage::info(StorageInfoCallback outerCallback, Networking::ErrorCallback errorCallback) {

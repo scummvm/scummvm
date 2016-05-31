@@ -59,8 +59,10 @@ void SavesSyncRequest::start() {
 	loadTimestamps();
 
 	//list saves directory
+	Common::String dir = _storage->savesDirectoryPath();
+	if (dir.lastChar() == '/') dir.deleteLastChar();
 	_workingRequest = _storage->listDirectory(
-		_storage->savesDirectoryPath(),
+		dir,
 		new Common::Callback<SavesSyncRequest, Storage::ListDirectoryResponse>(this, &SavesSyncRequest::directoryListedCallback),
 		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::directoryListedErrorCallback)
 	);

@@ -65,6 +65,11 @@ public:
 	 * Starts saves syncing process in currently active storage if there is any.
 	 */
 	virtual void syncSaves(Cloud::Storage::BoolCallback callback = nullptr, Networking::ErrorCallback errorCallback = nullptr) = 0;
+
+	/**
+	 * Starts feature testing (the one I'm working on currently). (Temporary)
+	 */
+	virtual void testFeature() = 0;
 };
 
 } // End of namespace Common

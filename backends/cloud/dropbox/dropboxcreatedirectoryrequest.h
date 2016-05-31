@@ -20,34 +20,36 @@
 *
 */
 
-#ifndef BACKENDS_CLOUD_MANAGER_H
-#define BACKENDS_CLOUD_MANAGER_H
+#ifndef BACKENDS_CLOUD_DROPBOX_DROPBOXCREATEDIRECTORYREQUEST_H
+#define BACKENDS_CLOUD_DROPBOX_DROPBOXCREATEDIRECTORYREQUEST_H
 
-#include "common/cloudmanager.h"
-#include "common/str.h"
+#include "backends/cloud/storage.h"
+#include "backends/networking/curl/request.h"
+#include "backends/networking/curl/curljsonrequest.h"
 
 namespace Cloud {
+namespace Dropbox {
 
-class Manager: public Common::CloudManager {
-	Common::Array<Storage *> _storages;
-	uint _currentStorageIndex;
-	uint _deviceId;
-
-	void printBool(Storage::BoolResponse response);
-
+class DropboxCreateDirectoryRequest: public Networking::Request {
+	Common::String _token;
+	Common::String _path;
+	Storage::BoolCallback _boolCallback;
+	Request *_workingRequest;
+	bool _ignoreCallback;
+	
+	void start();
+	void responseCallback(Networking::JsonResponse response);
+	void errorCallback(Networking::ErrorResponse error);
+	void finishSuccess(bool success);
 public:
-	Manager();
-	virtual ~Manager();
+	DropboxCreateDirectoryRequest(Common::String token, Common::String path, Storage::BoolCallback cb, Networking::ErrorCallback ecb);
+	virtual ~DropboxCreateDirectoryRequest();
 
-	virtual void init();
-	virtual void save();
-	virtual void addStorage(Cloud::Storage *storage, bool makeCurrent = true, bool saveConfig = true);
-
-	virtual Storage *getCurrentStorage();
-	virtual void syncSaves(Storage::BoolCallback callback, Networking::ErrorCallback errorCallback);
-	virtual void testFeature();
+	virtual void handle();
+	virtual void restart();
 };
 
+} // End of namespace Dropbox
 } // End of namespace Cloud
 
 #endif

@@ -25,6 +25,7 @@
 #include "backends/cloud/onedrive/onedrivestorage.h"
 #include "common/config-manager.h"
 #include "common/random.h"
+#include "common/debug.h"
 
 namespace Cloud {
 
@@ -110,9 +111,19 @@ Storage *Manager::getCurrentStorage() {
 	return nullptr;
 }
 
+void Manager::printBool(Storage::BoolResponse response) {
+	debug("bool = %s", (response.value ? "true" : "false"));
+}
+
 void Manager::syncSaves(Storage::BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	Storage *storage = getCurrentStorage();
 	if (storage) storage->syncSaves(callback, errorCallback);
+}
+
+void Manager::testFeature() {
+	Storage *storage = getCurrentStorage();
+	if (storage) storage->createDirectory("/remote/sub2/dir",
+		new Common::Callback<Manager, Storage::BoolResponse>(this, &Manager::printBool), nullptr);
 }
 
 } // End of namespace Cloud
