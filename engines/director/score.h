@@ -24,6 +24,7 @@
 #include "common/stream.h"
 #include "common/array.h"
 #include "director/resource.h"
+#include "graphics/managed_surface.h"
 
 namespace Director {
 
@@ -79,7 +80,7 @@ enum inkType {
     kInkTypeNotTrans,
     kInkTypeNotReverse,
     kInkTypeNotGhost,
-    kIntTypeMatte,
+    kInkTypeMatte,
     kInkTypeMask,
     //10-31 Not used (Lingo in a Nutshell)
     kInkTypeBlend = 32,
@@ -157,7 +158,7 @@ public:
     ~Frame();
     Frame(const Frame &frame);
     void readChannel(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
-    void display(Archive &_movie);
+    void display(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect moviRect);
 
 private:
     void readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
@@ -208,6 +209,7 @@ private:
     uint16 _castArrayEnd;
     Common::Rect _movieRect;
     Archive *_movieArchive;
+    Graphics::ManagedSurface *_surface;
 };
 
 } //End of namespace Director

@@ -77,9 +77,6 @@ void DIBDecoder::loadPalette(Common::SeekableReadStream &stream) {
 }
 
 bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
-
-
-
 	uint32 headerSize = stream.readUint32LE();
 	if (headerSize != 40)
 		return false;

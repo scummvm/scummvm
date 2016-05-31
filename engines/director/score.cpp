@@ -31,10 +31,14 @@
 #include "graphics/palette.h"
 #include "common/events.h"
 #include "engines/util.h"
+#include "graphics/managed_surface.h"
 
 namespace Director {
 
 Score::Score(Common::SeekableReadStream &stream, Archive &movie) {
+
+	_surface = new Graphics::ManagedSurface;
+
 	_movieArchive = &movie;
 	uint32 size = stream.readUint32BE();
 	size -= 4;
@@ -169,7 +173,7 @@ Common::Rect Score::readRect(Common::SeekableReadStream &stream) {
 
 void Score::play() {
 	initGraphics(800, 600, true);
-
+	_surface->create(800, 600);
 	_currentFrame = 0;
 	_stopPlay = false;
 	_nextFrameTime = 0;
@@ -185,7 +189,7 @@ void Score::display() {
 	if (g_system->getMillis() < _nextFrameTime)
 		return;
 
-	_frames[_currentFrame]->display(*_movieArchive);
+	_frames[_currentFrame]->display(*_movieArchive, *_surface, _movieRect);
 	_currentFrame++;
 	byte tempo = _frames[_currentFrame]->_tempo;
 	if (tempo) {
@@ -394,8 +398,8 @@ void Frame::readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16
 	}
 }
 
-void Frame::display(Archive &_movie) {
-
+void Frame::display(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect moviRect) {
+	surface.clear();
 	DIBDecoder palette;
 	Common::SeekableReadStream *pal = _movie.getResource(MKTAG('C', 'L', 'U', 'T'), 1025);
 	palette.loadPalette(*pal);
@@ -407,6 +411,7 @@ void Frame::display(Archive &_movie) {
 			//TODO check cast type
 			uint32 imgId = 1024 + _sprites[i]->_castId;
 			img.loadStream(*_movie.getResource(MKTAG('D', 'I', 'B', ' '), imgId));
+
 			uint32 regX = static_cast<BitmapCast *>(_sprites[i]->_cast)->regX;
 			uint32 regY = static_cast<BitmapCast *>(_sprites[i]->_cast)->regY;
 			uint32 rectLeft = static_cast<BitmapCast *>(_sprites[i]->_cast)->initialRect.left;
@@ -416,6 +421,7 @@ void Frame::display(Archive &_movie) {
 			int y = _sprites[i]->_startPoint.y - regY + rectTop;
 			int height = _sprites[i]->_height;
 			int width = _sprites[i]->_width;
+
 			if (x < 0) {
 				width += x;
 				x = 0;
@@ -424,7 +430,9 @@ void Frame::display(Archive &_movie) {
 				height += y;
 				y = 0;
 			}
-			g_system->copyRectToScreen(img.getSurface()->getPixels(), img.getSurface()->pitch, x, y, height, width);
+			Common::Rect drawRect = Common::Rect(x, y, x + width, y + height);
+			surface.blitFrom(*img.getSurface());
+			g_system->copyRectToScreen(surface.getPixels(), surface.pitch, drawRect.left, drawRect.top, drawRect.height(), drawRect.width());
 		}
 	}
 }
