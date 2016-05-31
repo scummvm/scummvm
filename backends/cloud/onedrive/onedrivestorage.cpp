@@ -22,6 +22,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/cloud/onedrive/onedrivestorage.h"
+#include "backends/cloud/onedrive/onedrivecreatedirectoryrequest.h"
 #include "backends/cloud/onedrive/onedrivetokenrefresher.h"
 #include "backends/cloud/onedrive/onedrivelistdirectoryrequest.h"
 #include "backends/cloud/onedrive/onedriveuploadrequest.h"
@@ -233,6 +234,11 @@ void OneDriveStorage::printFile(UploadResponse response) {
 	debug("\tpath: %s", response.value.path().c_str());
 	debug("\tsize: %u", response.value.size());
 	debug("\ttimestamp: %u", response.value.timestamp());
+}
+
+Networking::Request *OneDriveStorage::createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) {
+	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+	return ConnMan.addRequest(new OneDriveCreateDirectoryRequest(this, path, callback, errorCallback));
 }
 
 Networking::Request *OneDriveStorage::info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) {

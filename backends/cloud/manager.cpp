@@ -122,7 +122,7 @@ void Manager::syncSaves(Storage::BoolCallback callback, Networking::ErrorCallbac
 
 void Manager::testFeature() {
 	Storage *storage = getCurrentStorage();
-	if (storage) storage->createDirectory("/remote/sub2/dir",
+	if (storage) storage->createDirectory("base/belong_to_us",
 		new Common::Callback<Manager, Storage::BoolResponse>(this, &Manager::printBool), nullptr);
 }
 
