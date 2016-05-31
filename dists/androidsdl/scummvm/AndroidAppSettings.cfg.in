@@ -174,7 +174,7 @@ AppMinimumRAM=256
 AppVersionCode=@ANDROID_VERSIONCODE@
 
 # Application user-visible version name (string)
-AppVersionName="1.9.0git"
+AppVersionName="@VERSION@"
 
 # Reset SDL config when updating application to the new version (y) / (n)
 ResetSdlConfigForThisVersion=y
