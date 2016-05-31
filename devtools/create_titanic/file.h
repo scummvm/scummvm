@@ -210,4 +210,6 @@ public:
 
 }
 
+extern Common::File inputFile, outputFile;
+
 #endif

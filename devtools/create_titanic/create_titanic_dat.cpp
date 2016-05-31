@@ -36,6 +36,7 @@
 #include "common/rect.h"
 #include "winexe_pe.h"
 #include "file.h"
+#include "script_tags.h"
 
 /**
  * Format of the access.dat file that will be created:
@@ -352,6 +353,7 @@ void writeData() {
 	writeStringArray("TEXT/PRONOUNS", 0x22F718, 15);
 
 	writeNumbers();
+	writeAllScriptTags();
 }
 
 int main(int argc, char *argv[]) {

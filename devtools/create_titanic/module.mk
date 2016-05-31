@@ -4,6 +4,7 @@ MODULE := devtools/create_titanic
 MODULE_OBJS := \
 	create_titanic_dat.o \
 	hashmap.o \
+	script_tags.o \
 	str.o \
 	winexe.o \
 	winexe_pe.o
