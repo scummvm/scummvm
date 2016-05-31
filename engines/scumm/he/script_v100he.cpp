@@ -643,6 +643,11 @@ void ScummEngine_v100he::o100_arrayOps() {
 			dim2end = pop();
 			dim2start = pop();
 
+			debug(0, "Complex: %d = %d[%d to %d][%d to %d] %c %d[%d to %d][%d to %d]", array,
+				array1, a1_dim1start, a1_dim2end, a1_dim1start, a1_dim2end,
+				" +-&|^"[type],
+				array2, a2_dim1start, a2_dim2end, a2_dim1start, a2_dim2end);
+
 			int a12_num = a1_dim2end - a1_dim2start + 1;
 			int a11_num = a1_dim1end - a1_dim1start + 1;
 			int a22_num = a2_dim2end - a2_dim2start + 1;
@@ -689,8 +694,6 @@ void ScummEngine_v100he::o100_arrayOps() {
 					writeArray(array, dim2start, dim1, res);
 				}
 			}
-
-			warning("STUB: o100_arrayOps: case 132 type %d", type);
 			break;
 		}
 	case 133:			// SO_RANGE_ARRAY_ASSIGNMENT
