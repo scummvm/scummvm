@@ -171,12 +171,12 @@ Common::Rect Score::readRect(Common::SeekableReadStream &stream) {
 }
 
 void Score::play() {
-	initGraphics(800, 600, true);
-	_surface->create(800, 600);
+	initGraphics(_movieRect.width(), _movieRect.height(), true);
+	_surface->create(_movieRect.width(), _movieRect.height());
 	_currentFrame = 0;
 	_stopPlay = false;
 	_nextFrameTime = 0;
-	while (!_stopPlay) {
+	while (!_stopPlay && _currentFrame < _frames.size() - 2) {
 		display();
 		processEvents();
 		g_system->updateScreen();
@@ -434,11 +434,10 @@ void Frame::display(Archive &_movie, Graphics::ManagedSurface &surface, Common::
 				height += y;
 				y = 0;
 			}
-			Common::Rect drawRect = Common::Rect(x, y, x + width, y + height);
-			surface.blitFrom(*img.getSurface());
-			g_system->copyRectToScreen(surface.getPixels(), surface.pitch, drawRect.left, drawRect.top, drawRect.height(), drawRect.width());
+			surface.blitFrom(*img.getSurface(), Common::Point(x, y));
 		}
 	}
+	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, surface.getBounds().width(), surface.getBounds().height());
 }
 
 Sprite::Sprite() { 
