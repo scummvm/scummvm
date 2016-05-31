@@ -132,6 +132,8 @@ void PalettesToVideoDAC() {
 	VIDEO_DAC_Q *pDACtail = g_vidDACdata;	// set tail pointer
 	byte pal[768];
 
+	memset(pal, 0, sizeof(pal));
+
 	// while Q is not empty
 	while (g_pDAChead != pDACtail) {
 		const PALETTE *pPalette;	// pointer to hardware palette
