@@ -131,6 +131,40 @@ void OneDriveStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "refresh_token", _refreshToken, "cloud");
 }
 
+void OneDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse response) {
+	Common::JSONValue *json = response.value;
+	if (!json) {
+		warning("NULL passed instead of JSON");
+		delete outerCallback;
+		return;
+	}
+
+	if (outerCallback) {
+		Common::JSONObject info = json->asObject();
+
+		Common::String uid, name, email;
+		uint32 quotaUsed = 0, quotaAllocated = 25 * 1024 * 1024 * 1024; // 25 GB, because I actually don't know any way to find out the real one
+
+		if (info.contains("createdBy") && info.getVal("createdBy")->isObject()) {
+			Common::JSONObject createdBy = info.getVal("createdBy")->asObject();
+			if (createdBy.contains("user") && createdBy.getVal("user")->isObject()) {
+				Common::JSONObject user = createdBy.getVal("user")->asObject();
+				uid = user.getVal("id")->asString();
+				name = user.getVal("displayName")->asString();
+			}
+		}
+
+		if (info.contains("size") && info.getVal("size")->isIntegerNumber()) {
+			quotaUsed = info.getVal("size")->asIntegerNumber();
+		}
+
+		(*outerCallback)(StorageInfoResponse(nullptr, StorageInfo(uid, name, email, quotaUsed, quotaAllocated)));
+		delete outerCallback;
+	}
+
+	delete json;
+}
+
 void OneDriveStorage::printJson(Networking::JsonResponse response) {
 	Common::JSONValue *json = response.value;
 	if (!json) {
@@ -232,13 +266,14 @@ Networking::ErrorCallback OneDriveStorage::getErrorPrintingCallback() {
 
 Networking::Request *OneDriveStorage::syncSaves(BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	//this is not the real syncSaves() implementation
-	/*
-	Networking::JsonCallback innerCallback = new Common::Callback<OneDriveStorage, Networking::RequestJsonPair>(this, &OneDriveStorage::printJson);
-	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, "https://api.onedrive.com/v1.0/drive/special/approot");
+	return ConnMan.addRequest(new SavesSyncRequest(this, new Common::Callback<OneDriveStorage, BoolResponse>(this, &OneDriveStorage::printBool), getErrorPrintingCallback())); //TODO	
+}
+
+Networking::Request *OneDriveStorage::info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) {
+	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, StorageInfoResponse, Networking::JsonResponse>(this, &OneDriveStorage::infoInnerCallback, callback);
+	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, errorCallback, "https://api.onedrive.com/v1.0/drive/special/approot");
 	request->addHeader("Authorization: bearer " + _token);
 	return ConnMan.addRequest(request);
-	*/
-	return ConnMan.addRequest(new SavesSyncRequest(this, new Common::Callback<OneDriveStorage, BoolResponse>(this, &OneDriveStorage::printBool), getErrorPrintingCallback())); //TODO
 }
 
 Common::String OneDriveStorage::savesDirectoryPath() { return "saves/"; }

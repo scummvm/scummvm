@@ -49,6 +49,9 @@ class OneDriveStorage: public Cloud::Storage {
 	void tokenRefreshed(BoolCallback callback, Networking::JsonResponse response);
 	void codeFlowComplete(BoolResponse response);
 
+	/** Constructs StorageInfo based on JSON response from cloud. */
+	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);
+
 	void printJson(Networking::JsonResponse response);
 	void fileDownloaded(BoolResponse response);
 	void printFiles(FileArrayResponse response);
@@ -105,7 +108,7 @@ public:
 	virtual Networking::Request *touch(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) { return nullptr; } //TODO
 
 	/** Returns the StorageInfo struct. */
-	virtual Networking::Request *info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) { return nullptr; } //TODO
+	virtual Networking::Request *info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Returns storage's saves directory path with the trailing slash. */
 	virtual Common::String savesDirectoryPath();
