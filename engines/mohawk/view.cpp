@@ -343,12 +343,6 @@ View::View(MohawkEngine *vm) : _vm(vm) {
 	_gfx = nullptr;
 	_rootNode = nullptr;
 	_cursorNode = nullptr;
-
-	for (int i = 0; i < 17; i++) {
-		_syncChannels[i].masterId = 0;
-		_syncChannels[i].state = 0;
-		_syncChannels[i].alternate = false;
-	}
 }
 
 View::~View() {

@@ -192,13 +192,6 @@ protected:
 	void finishResetFeatureScript();
 };
 
-#define NUM_SYNC_CHANNELS 17
-struct SyncChannel {
-	uint16 masterId;
-	byte state;
-	bool alternate;
-};
-
 class View {
 public:
 	View(MohawkEngine *vm);
@@ -234,7 +227,6 @@ public:
 	void sortView();
 
 	uint32 _lastIdleTime;
-	SyncChannel _syncChannels[NUM_SYNC_CHANNELS];
 
 	virtual uint32 getTime() = 0;
 
