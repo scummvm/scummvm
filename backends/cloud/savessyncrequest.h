@@ -47,6 +47,8 @@ class SavesSyncRequest: public Networking::Request {
 	void start();
 	void directoryListedCallback(Storage::ListDirectoryResponse response);
 	void directoryListedErrorCallback(Networking::ErrorResponse error);
+	void directoryCreatedCallback(Storage::BoolResponse response);
+	void directoryCreatedErrorCallback(Networking::ErrorResponse error);
 	void fileDownloadedCallback(Storage::BoolResponse response);
 	void fileDownloadedErrorCallback(Networking::ErrorResponse error);
 	void fileUploadedCallback(Storage::UploadResponse response);

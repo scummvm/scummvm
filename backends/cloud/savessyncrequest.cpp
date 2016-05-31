@@ -164,10 +164,37 @@ void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse er
 		return;
 	}
 
-	//we're lucky - user just lacks his "/cloud/" folder
+	//we're lucky - user just lacks his "/cloud/" folder - let's create one
+	Common::String dir = _storage->savesDirectoryPath();
+	if (dir.lastChar() == '/') dir.deleteLastChar();
+	debug("creating %s", dir.c_str());
+	_workingRequest = _storage->createDirectory(dir,
+		new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::directoryCreatedCallback),
+		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::directoryCreatedErrorCallback)
+	);
+}
+
+void SavesSyncRequest::directoryCreatedCallback(Storage::BoolResponse response) {
+	_workingRequest = nullptr;
+	if (_ignoreCallback) return;
+
+	//stop syncing if failed to create saves directory
+	if (!response.value) {
+		finishError(Networking::ErrorResponse(this, false, true, "", -1));
+		return;
+	}
+
+	//continue with empty files list
 	Common::Array<StorageFile> files;
-	directoryListedCallback(Storage::ListDirectoryResponse(error.request, files));
-	//TODO: create it before uploading stuff
+	directoryListedCallback(Storage::ListDirectoryResponse(response.request, files));
+}
+
+void SavesSyncRequest::directoryCreatedErrorCallback(Networking::ErrorResponse error) {
+	_workingRequest = nullptr;
+	if (_ignoreCallback) return;
+
+	//stop syncing if failed to create saves directory
+	finishError(error);
 }
 
 void SavesSyncRequest::downloadNextFile() {
