@@ -84,11 +84,10 @@ void Score::readVersion(uint32 rid) {
 }
 
 void Score::loadCastData(Common::SeekableReadStream &stream) {
-	for (uint16 id = _castArrayStart; id < _castArrayEnd; id++) {
+	for (uint16 id = _castArrayStart; id <= _castArrayEnd; id++) {
 		byte size = stream.readByte();
 		if (size == 0)
 			continue;
-
 		uint8 castType = stream.readByte();
 		switch (castType) {
 		case kCastBitmap:
@@ -410,6 +409,11 @@ void Frame::display(Archive &_movie, Graphics::ManagedSurface &surface, Common::
 			DIBDecoder img;
 			//TODO check cast type
 			uint32 imgId = 1024 + _sprites[i]->_castId;
+			//TODO looks like bad file?
+			if (!_movie.hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
+				continue;
+			}
+
 			img.loadStream(*_movie.getResource(MKTAG('D', 'I', 'B', ' '), imgId));
 
 			uint32 regX = static_cast<BitmapCast *>(_sprites[i]->_cast)->regX;
