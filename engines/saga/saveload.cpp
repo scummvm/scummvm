@@ -185,7 +185,7 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 
 	// Original game title
 	memset(title, 0, TITLESIZE);
-	strncpy(title, _gameTitle.c_str(), TITLESIZE);
+	Common::strlcpy(title, _gameTitle.c_str(), TITLESIZE);
 	out->write(title, TITLESIZE);
 
 	// Thumbnail
