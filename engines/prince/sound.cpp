@@ -118,6 +118,7 @@ const uint8 MusicPlayer::_musRoomTable[] = {
 
 MusicPlayer::MusicPlayer(PrinceEngine *vm) : _vm(vm) {
 	_data = nullptr;
+	_dataSize = 0;
 	_isGM = false;
 
 	MidiPlayer::createDriver();

@@ -44,6 +44,8 @@ GraphicsMan::GraphicsMan(PrinceEngine *vm) : _vm(vm), _changed(false) {
 
 	_shadowTable70 = (byte *)malloc(256);
 	_shadowTable50 = (byte *)malloc(256);
+
+	_roomBackground = 0;
 }
 
 GraphicsMan::~GraphicsMan() {

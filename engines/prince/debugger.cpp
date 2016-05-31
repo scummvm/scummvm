@@ -37,6 +37,8 @@ Debugger::Debugger(PrinceEngine *vm, InterpreterFlags *flags) : GUI::Debugger(),
 	registerCmd("initroom",		WRAP_METHOD(Debugger, Cmd_InitRoom));
 	registerCmd("changecursor",	WRAP_METHOD(Debugger, Cmd_ChangeCursor));
 	registerCmd("additem",		WRAP_METHOD(Debugger, Cmd_AddItem));
+
+	_cursorNr = 0;
 }
 
 static int strToInt(const char *s) {
