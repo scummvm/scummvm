@@ -623,6 +623,8 @@ void PrinceEngine::changeCursor(uint16 curId) {
 	const Graphics::Surface *curSurface = nullptr;
 
 	switch (curId) {
+	default:
+		error("Unknown cursor Id: %d", curId);
 	case 0:
 		CursorMan.showMouse(false);
 		_optionsFlag = 0;
