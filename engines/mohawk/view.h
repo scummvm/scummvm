@@ -138,11 +138,11 @@ public:
 	uint32 _flags;
 	uint32 _nextTime;
 	uint32 _delayTime;
-	uint16 _dirty; // byte in old
-	byte _needsReset;
-	byte _justReset; // old
+	bool _dirty; // byte in old
+	bool _needsReset;
+	bool _justReset; // old
 	byte _notifyDone; // old
-	byte _done; // new
+	bool _done; // new
 
 	FeatureData _data;
 

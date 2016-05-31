@@ -50,11 +50,11 @@ Feature::Feature(View *view) : _view(view) {
 	_flags = 0;
 	_nextTime = 0;
 	_delayTime = 0;
-	_dirty = 0;
-	_needsReset = 0;
-	_justReset = 0;
+	_dirty = false;
+	_needsReset = false;
+	_justReset = false;
 	_notifyDone = 0;
-	_done = 0;
+	_done = false;
 }
 
 Feature::~Feature() {
@@ -93,11 +93,11 @@ void Feature::setNodeDefaults(Feature *prev, Feature *next) {
 
 	_flags = 0;
 
-	_dirty = 1;
-	_needsReset = 1;
-	_justReset = 0; // old
+	_dirty = true;
+	_needsReset = true;
+	_justReset = false; // old
 	_notifyDone = 0;
-	_done = 0; // new
+	_done = false; // new
 
 	_nextTime = 0;
 	_delayTime = 0;
@@ -125,11 +125,11 @@ void Feature::resetFeatureScript(uint16 enabled, uint16 scrbId) {
 	resetFrame();
 	_nextTime = 0; // New feature code uses _view->_lastIdleTime, but should be equivalent.
 	_data.enabled = enabled;
-	_dirty = 1;
+	_dirty = true;
 
 	finishResetFeatureScript();
 
-	_needsReset = 0;
+	_needsReset = false;
 
 	if (_region) {
 		// TODO: mark _region as dirty
@@ -177,7 +177,7 @@ void Feature::moveAndUpdate(Common::Point newPos) {
 		return;
 
 	_nextTime = 0;
-	_dirty = 1;
+	_dirty = true;
 	// TODO: mark _data.bounds as dirty
 
 	if (_data.bitmapIds[0])
@@ -246,7 +246,7 @@ void OldFeature::resetScript() {
 }
 
 void OldFeature::finishResetFeatureScript() {
-	_justReset = 1;
+	_justReset = true;
 
 	if (_flags & kFeatureOldAdjustByPos) {
 		Common::SeekableReadStream *ourSCRB = _view->getSCRB(_data.scrbIndex, _scrbId);
@@ -325,7 +325,7 @@ void NewFeature::resetScript() {
 }
 
 void NewFeature::finishResetFeatureScript() {
-	_done = 0;
+	_done = false;
 }
 
 View::View(MohawkEngine *vm) : _vm(vm) {
@@ -371,7 +371,7 @@ void View::idleView() {
 		}
 		if (node->_drawProc)
 			(_currentModule->*(node->_drawProc))(node);
-		node->_dirty = 0;
+		node->_dirty = false;
 	}
 
 	if (_needsUpdate) {
