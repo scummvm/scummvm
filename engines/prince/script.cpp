@@ -400,9 +400,12 @@ bool Script::loadAllMasks(Common::Array<Mask> &maskList, int offset) {
 					return false;
 				}
 				delete msStream;
+
+				tempMask._width = tempMask.getWidth();
+				tempMask._height = tempMask.getHeight();
+			} else {
+				return false;
 			}
-			tempMask._width = tempMask.getWidth();
-			tempMask._height = tempMask.getHeight();
 		}
 
 		maskList.push_back(tempMask);
