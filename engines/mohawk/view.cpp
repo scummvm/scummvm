@@ -53,7 +53,6 @@ Feature::Feature(View *view) : _view(view) {
 	_dirty = false;
 	_needsReset = false;
 	_justReset = false;
-	_notifyDone = 0;
 	_done = false;
 }
 
@@ -96,7 +95,6 @@ void Feature::setNodeDefaults(Feature *prev, Feature *next) {
 	_dirty = true;
 	_needsReset = true;
 	_justReset = false; // old
-	_notifyDone = 0;
 	_done = false; // new
 
 	_nextTime = 0;
@@ -141,7 +139,6 @@ void Feature::resetFeatureScript(uint16 enabled, uint16 scrbId) {
 void Feature::resetFeature(bool notifyDone, Module::FeatureProc doneProc, uint16 scrbId) {
 	resetFeatureScript(1, scrbId);
 	_doneProc = doneProc;
-	_notifyDone = notifyDone;
 }
 
 void Feature::hide(bool clip) {

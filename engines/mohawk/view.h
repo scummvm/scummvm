@@ -141,7 +141,6 @@ public:
 	bool _dirty; // byte in old
 	bool _needsReset;
 	bool _justReset; // old
-	byte _notifyDone; // old
 	bool _done; // new
 
 	FeatureData _data;
