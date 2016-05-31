@@ -935,9 +935,11 @@ bool ToonEngine::showOptions() {
 	_gameState->_inMenu = false;
 	_firstFrame = true;
 	_gameState->_currentScrollValue = oldScrollValue;
-	
+
 	restorePalette();
 	dirtyAllScreen();
+
+	delete optionPicture;
 
 	return exitGame;
 }
