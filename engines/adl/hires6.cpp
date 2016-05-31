@@ -363,11 +363,11 @@ void HiRes6Engine::showRoom() {
 	_linesPrinted = 0;
 }
 
-Common::String HiRes6Engine::formatVerbError(const Common::String &verbStr) const {
+Common::String HiRes6Engine::formatVerbError(const Common::String &verb) const {
 	Common::String err = _strings.verbError;
 
-	for (uint i = 0; i < verbStr.size(); ++i)
-		err.setChar(verbStr[i], i + 24);
+	for (uint i = 0; i < verb.size(); ++i)
+		err.setChar(verb[i], i + 24);
 
 	err.setChar(APPLECHAR(' '), 32);
 
@@ -380,11 +380,11 @@ Common::String HiRes6Engine::formatVerbError(const Common::String &verbStr) cons
 	return err;
 }
 
-Common::String HiRes6Engine::formatNounError(const Common::String &verbStr, const Common::String &nounStr) const {
+Common::String HiRes6Engine::formatNounError(const Common::String &verb, const Common::String &noun) const {
 	Common::String err = _strings.nounError;
 
-	for (uint i = 0; i < nounStr.size(); ++i)
-		err.setChar(nounStr[i], i + 24);
+	for (uint i = 0; i < noun.size(); ++i)
+		err.setChar(noun[i], i + 24);
 
 	for (uint  i = 35; i > 31; --i)
 		err.setChar(APPLECHAR(' '), i);

@@ -855,19 +855,19 @@ Common::String AdlEngine::getWord(const Common::String &line, uint &index) const
 	}
 }
 
-Common::String AdlEngine::formatVerbError(const Common::String &verbStr) const {
+Common::String AdlEngine::formatVerbError(const Common::String &verb) const {
 	Common::String err = _strings.verbError;
-	for (uint i = 0; i < verbStr.size(); ++i)
-		err.setChar(verbStr[i], i + 19);
+	for (uint i = 0; i < verb.size(); ++i)
+		err.setChar(verb[i], i + 19);
 	return err;
 }
 
-Common::String AdlEngine::formatNounError(const Common::String &verbStr, const Common::String &nounStr) const {
+Common::String AdlEngine::formatNounError(const Common::String &verb, const Common::String &noun) const {
 	Common::String err = _strings.nounError;
-	for (uint i = 0; i < verbStr.size(); ++i)
-		err.setChar(verbStr[i], i + 19);
-	for (uint i = 0; i < nounStr.size(); ++i)
-		err.setChar(nounStr[i], i + 30);
+	for (uint i = 0; i < verb.size(); ++i)
+		err.setChar(verb[i], i + 19);
+	for (uint i = 0; i < noun.size(); ++i)
+		err.setChar(noun[i], i + 30);
 	return err;
 }
 
