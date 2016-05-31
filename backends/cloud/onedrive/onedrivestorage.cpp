@@ -255,20 +255,6 @@ void OneDriveStorage::printFile(UploadResponse response) {
 	debug("\ttimestamp: %u", response.value.timestamp());
 }
 
-void OneDriveStorage::printErrorResponse(Networking::ErrorResponse error) {
-	debug("error response (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
-	debug("%s", error.response.c_str());
-}
-
-Networking::ErrorCallback OneDriveStorage::getErrorPrintingCallback() {
-	return new Common::Callback<OneDriveStorage, Networking::ErrorResponse>(this, &OneDriveStorage::printErrorResponse);
-}
-
-Networking::Request *OneDriveStorage::syncSaves(BoolCallback callback, Networking::ErrorCallback errorCallback) {
-	//this is not the real syncSaves() implementation
-	return ConnMan.addRequest(new SavesSyncRequest(this, new Common::Callback<OneDriveStorage, BoolResponse>(this, &OneDriveStorage::printBool), getErrorPrintingCallback())); //TODO	
-}
-
 Networking::Request *OneDriveStorage::info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) {
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, StorageInfoResponse, Networking::JsonResponse>(this, &OneDriveStorage::infoInnerCallback, callback);
 	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, errorCallback, "https://api.onedrive.com/v1.0/drive/special/approot");

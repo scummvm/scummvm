@@ -21,11 +21,25 @@
 */
 
 #include "backends/cloud/storage.h"
+#include "backends/cloud/savessyncrequest.h"
+#include "backends/networking/curl/connectionmanager.h"
+#include "common/debug.h"
 #include "common/file.h"
 
 namespace Cloud {
 
+Networking::ErrorCallback Storage::getErrorPrintingCallback() {
+	return new Common::Callback<Storage, Networking::ErrorResponse>(this, &Storage::printErrorResponse);
+}
+
+void Storage::printErrorResponse(Networking::ErrorResponse error) {
+	debug("error response (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
+	debug("%s", error.response.c_str());
+}
+
 Networking::Request *Storage::upload(Common::String remotePath, Common::String localPath, UploadCallback callback, Networking::ErrorCallback errorCallback) {
+	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+
 	Common::File *f = new Common::File();
 	if (!f->open(localPath)) {
 		warning("Storage: unable to open file to upload from");
@@ -35,8 +49,15 @@ Networking::Request *Storage::upload(Common::String remotePath, Common::String l
 		delete f;
 		return nullptr;
 	}
+
 	return upload(remotePath, f, callback, errorCallback);
 }
+
+Networking::Request *Storage::syncSaves(BoolCallback callback, Networking::ErrorCallback errorCallback) {
+	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+	return ConnMan.addRequest(new SavesSyncRequest(this, callback, errorCallback));
+}
+
 
 } // End of namespace Cloud
 

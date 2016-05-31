@@ -48,9 +48,6 @@ class DropboxStorage: public Cloud::Storage {
 	void printFiles(FileArrayResponse response);
 	void printBool(BoolResponse response);
 	void printStorageFile(UploadResponse response);
-	void printErrorResponse(Networking::ErrorResponse error);
-
-	Networking::ErrorCallback getErrorPrintingCallback();
 
 public:	
 	virtual ~DropboxStorage();
@@ -87,9 +84,6 @@ public:
 
 	/** Calls the callback when finished. */
 	virtual Networking::Request *remove(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) { return nullptr; } //TODO
-
-	/** Calls the callback when finished. */
-	virtual Networking::Request *syncSaves(BoolCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Calls the callback when finished. */
 	virtual Networking::Request *createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) { return nullptr; } //TODO

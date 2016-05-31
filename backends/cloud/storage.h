@@ -48,6 +48,15 @@ public:
 	typedef Common::BaseCallback<UploadResponse> *UploadCallback;
 	typedef Common::BaseCallback<ListDirectoryResponse> *ListDirectoryCallback;
 
+protected:	
+
+	/** Returns default error callback (printErrorResponse). */
+	virtual Networking::ErrorCallback getErrorPrintingCallback();
+
+	/** Prints ErrorResponse contents with debug(). */
+	virtual void printErrorResponse(Networking::ErrorResponse error);
+
+public:
 	Storage() {}
 	virtual ~Storage() {}
 
@@ -92,7 +101,7 @@ public:
 	virtual Networking::Request *remove(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *syncSaves(BoolCallback callback, Networking::ErrorCallback errorCallback) = 0;
+	virtual Networking::Request *syncSaves(BoolCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Calls the callback when finished. */
 	virtual Networking::Request *createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) = 0;

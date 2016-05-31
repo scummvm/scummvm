@@ -114,15 +114,6 @@ void DropboxStorage::printStorageFile(UploadResponse response) {
 	debug("\ttimestamp: %u", response.value.timestamp());
 }
 
-void DropboxStorage::printErrorResponse(Networking::ErrorResponse error) {
-	debug("error response (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
-	debug("%s", error.response.c_str());
-}
-
-Networking::ErrorCallback DropboxStorage::getErrorPrintingCallback() {
-	return new Common::Callback<DropboxStorage, Networking::ErrorResponse>(this, &DropboxStorage::printErrorResponse);
-}
-
 Networking::Request *DropboxStorage::listDirectory(Common::String path, ListDirectoryCallback outerCallback, Networking::ErrorCallback errorCallback, bool recursive) {
 	return ConnMan.addRequest(new DropboxListDirectoryRequest(_token, path, outerCallback, errorCallback, recursive));
 }
@@ -160,11 +151,6 @@ Networking::Request *DropboxStorage::download(Common::String remotePath, Common:
 
 Networking::Request *DropboxStorage::downloadFolder(Common::String remotePath, Common::String localPath, FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
 	return ConnMan.addRequest(new FolderDownloadRequest(this, callback, errorCallback, remotePath, localPath, recursive));
-}
-
-Networking::Request *DropboxStorage::syncSaves(BoolCallback callback, Networking::ErrorCallback errorCallback) {
-	//this might be the real syncSaves() implementation
-	return ConnMan.addRequest(new SavesSyncRequest(this, new Common::Callback<DropboxStorage, BoolResponse>(this, &DropboxStorage::printBool), getErrorPrintingCallback())); //TODO	
 }
 
 Networking::Request *DropboxStorage::info(StorageInfoCallback outerCallback, Networking::ErrorCallback errorCallback) {

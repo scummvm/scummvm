@@ -57,9 +57,6 @@ class OneDriveStorage: public Cloud::Storage {
 	void printFiles(FileArrayResponse response);
 	void printBool(BoolResponse response);
 	void printFile(UploadResponse response);
-	void printErrorResponse(Networking::ErrorResponse error);
-
-	Networking::ErrorCallback getErrorPrintingCallback();
 
 	void fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response);
 public:	
@@ -97,9 +94,6 @@ public:
 
 	/** Calls the callback when finished. */
 	virtual Networking::Request *remove(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) { return nullptr; } //TODO
-
-	/** Calls the callback when finished. */
-	virtual Networking::Request *syncSaves(BoolCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Calls the callback when finished. */
 	virtual Networking::Request *createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) { return nullptr; } //TODO
