@@ -181,9 +181,9 @@ void DropboxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networ
 		Common::String name = info.getVal("display_name")->asString();
 		Common::String email = info.getVal("email")->asString();
 		Common::JSONObject quota = info.getVal("quota_info")->asObject();
-		uint32 quotaNormal = quota.getVal("normal")->asIntegerNumber();
-		uint32 quotaShared = quota.getVal("shared")->asIntegerNumber();
-		uint32 quotaAllocated = quota.getVal("quota")->asIntegerNumber();
+		uint64 quotaNormal = quota.getVal("normal")->asIntegerNumber();
+		uint64 quotaShared = quota.getVal("shared")->asIntegerNumber();
+		uint64 quotaAllocated = quota.getVal("quota")->asIntegerNumber();
 		(*outerCallback)(StorageInfoResponse(nullptr, StorageInfo(uid, name, email, quotaNormal+quotaShared, quotaAllocated)));
 		delete outerCallback;
 	}
@@ -195,7 +195,7 @@ void DropboxStorage::infoMethodCallback(StorageInfoResponse response) {
 	debug("\nStorage info:");
 	debug("User name: %s", response.value.name().c_str());
 	debug("Email: %s", response.value.email().c_str());
-	debug("Disk usage: %u/%u", response.value.used(), response.value.available());
+	debug("Disk usage: %u/%u", (uint32)response.value.used(), (uint32)response.value.available());
 }
 
 DropboxStorage *DropboxStorage::loadFromConfig(Common::String keyPrefix) {

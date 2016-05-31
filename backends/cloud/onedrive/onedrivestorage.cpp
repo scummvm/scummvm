@@ -143,7 +143,7 @@ void OneDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Netwo
 		Common::JSONObject info = json->asObject();
 
 		Common::String uid, name, email;
-		uint32 quotaUsed = 0, quotaAllocated = 25 * 1024 * 1024 * 1024; // 25 GB, because I actually don't know any way to find out the real one
+		uint64 quotaUsed = 0, quotaAllocated = 26843545600L; // 25 GB, because I actually don't know any way to find out the real one
 
 		if (info.contains("createdBy") && info.getVal("createdBy")->isObject()) {
 			Common::JSONObject createdBy = info.getVal("createdBy")->asObject();

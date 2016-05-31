@@ -34,17 +34,17 @@ namespace Cloud {
 
 class StorageInfo {	
 	Common::String _uid, _name, _email;
-	uint32 _usedBytes, _allocatedBytes;
+	uint64 _usedBytes, _allocatedBytes;
 
 public:
-	StorageInfo(Common::String uid, Common::String name, Common::String email, uint32 used, uint32 allocated):
+	StorageInfo(Common::String uid, Common::String name, Common::String email, uint64 used, uint64 allocated):
 		_uid(uid), _name(name), _email(email), _usedBytes(used), _allocatedBytes(allocated) {}
 
 	Common::String uid() const { return _uid; }
 	Common::String name() const { return _name; }
 	Common::String email() const { return _email; }
-	uint32 used() const { return _usedBytes; }
-	uint32 available() const { return _allocatedBytes; }
+	uint64 used() const { return _usedBytes; }
+	uint64 available() const { return _allocatedBytes; }
 
 };
 
