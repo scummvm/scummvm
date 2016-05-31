@@ -264,11 +264,11 @@ void GnapEngine::updateEvents() {
 				_debugger->onFrame();
 			}
 
-			_keyPressState[event.kbd.keycode] = 1;
-			_keyDownState[event.kbd.keycode] = 1;
+			_keyPressState[event.kbd.keycode] = true;
+			_keyDownState[event.kbd.keycode] = true;
 			break;
 		case Common::EVENT_KEYUP:
-			_keyDownState[event.kbd.keycode] = 0;
+			_keyDownState[event.kbd.keycode] = false;
   			break;
 		case Common::EVENT_MOUSEMOVE:
   			_mousePos = event.mouse;
@@ -988,21 +988,19 @@ void GnapEngine::screenEffect(int dir, byte r, byte g, byte b) {
 }
 
 bool GnapEngine::isKeyStatus1(int key) {
-	return _keyPressState[key] != 0;
+	return _keyPressState[key];
 }
 
 bool GnapEngine::isKeyStatus2(int key) {
-	return _keyDownState[key] != 0;
+	return _keyDownState[key];
 }
 
 void GnapEngine::clearKeyStatus1(int key) {
-	_keyPressState[key] = 0;
-	_keyDownState[key] = 0;
+	_keyPressState[key] = false;
+	_keyDownState[key] = false;
 }
 
 void GnapEngine::clearAllKeyStatus1() {
-	_keyStatus1[0] = 0;
-	_keyStatus1[1] = 0;
 	memset(_keyPressState, 0, sizeof(_keyPressState));
 	memset(_keyDownState, 0, sizeof(_keyDownState));
 }

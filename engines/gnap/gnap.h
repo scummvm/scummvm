@@ -253,8 +253,8 @@ public:
 	int _lastUpdateClock;
 	bool _gameDone;
 
-	byte _keyPressState[512];
-	byte _keyDownState[512];
+	bool _keyPressState[512];
+	bool _keyDownState[512];
 
 	bool _isPaused;
 	Graphics::Surface *_pauseSprite;
@@ -262,8 +262,6 @@ public:
 
 	MouseButtonState _mouseButtonState;
 	MouseButtonState _mouseClickState;
-
-	uint32 _keyStatus1[2];
 
 	bool _sceneSavegameLoaded, _wasSavegameLoaded;
 
