@@ -35,10 +35,13 @@ namespace Networking {
 class NetworkReadStream: public Common::MemoryReadWriteStream {	
 	CURL *_easy;
 	bool _eos, _requestComplete;
+	byte *_sendingContentsBuffer;
+	uint32 _sendingContentsSize;
+	uint32 _sendingContentsPos;
 
 public:	
-	NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields);
-	NetworkReadStream(const char *url, curl_slist *headersList, byte *buffer, uint32 bufferSize, bool post = true);
+	NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading = false);
+	NetworkReadStream(const char *url, curl_slist *headersList, byte *buffer, uint32 bufferSize, bool uploading = false, bool post = true);
 	virtual ~NetworkReadStream();
 
 	/**
@@ -82,6 +85,15 @@ public:
 	 * @note This method should be called when eos() == true.
 	 */
 	long httpResponseCode() const;
+
+	/**
+	 * Fills the passed buffer with _sendingContentsBuffer contents.
+	 * It works similarly to read(), expect it's not for reading
+	 * Stream's contents, but for sending our own data to the server.
+	 *
+	 * @returns how many bytes were actually read (filled in)
+	 */
+	uint32 fillWithSendingContents(char *bufferToFill, uint32 maxSize);
 };
 
 } // End of namespace Networking

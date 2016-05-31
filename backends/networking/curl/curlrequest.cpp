@@ -31,7 +31,7 @@
 namespace Networking {
 
 CurlRequest::CurlRequest(DataCallback cb, ErrorCallback ecb, Common::String url):
-	Request(cb, ecb), _url(url), _stream(nullptr), _headersList(nullptr), _bytesBuffer(nullptr), _bytesBufferSize(0) {}
+	Request(cb, ecb), _url(url), _stream(nullptr), _headersList(nullptr), _bytesBuffer(nullptr), _bytesBufferSize(0), _uploading(false) {}
 
 CurlRequest::~CurlRequest() {
 	delete _stream;
@@ -40,8 +40,8 @@ CurlRequest::~CurlRequest() {
 
 NetworkReadStream *CurlRequest::makeStream() {
 	if (_bytesBuffer)
-		return new NetworkReadStream(_url.c_str(), _headersList, _bytesBuffer, _bytesBufferSize, true);
-	return new NetworkReadStream(_url.c_str(), _headersList, _postFields);
+		return new NetworkReadStream(_url.c_str(), _headersList, _bytesBuffer, _bytesBufferSize, _uploading, true);
+	return new NetworkReadStream(_url.c_str(), _headersList, _postFields, _uploading);
 }
 
 
@@ -96,6 +96,8 @@ void CurlRequest::setBuffer(byte *buffer, uint32 size) {
 	_bytesBuffer = buffer;
 	_bytesBufferSize = size;
 }
+
+void CurlRequest::usePut() { _uploading = true; }
 
 NetworkReadStreamResponse CurlRequest::execute() {
 	if (!_stream) {

@@ -35,11 +35,17 @@ static size_t curlDataCallback(char *d, size_t n, size_t l, void *p) {
 	return 0;
 }
 
-NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields):
-	NetworkReadStream(url, headersList, (byte *)postFields.c_str(), postFields.size(), false) {}
+static size_t curlReadDataCallback(char *d, size_t n, size_t l, void *p) {	
+	NetworkReadStream *stream = (NetworkReadStream *)p;
+	if (stream) return stream->fillWithSendingContents(d, n*l);
+	return 0;
+}
 
-NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, byte *buffer, uint32 bufferSize, bool post) :
-	_easy(0), _eos(false), _requestComplete(false) {
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading):
+	NetworkReadStream(url, headersList, (byte *)postFields.c_str(), postFields.size(), uploading, false) {}
+
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, byte *buffer, uint32 bufferSize, bool uploading, bool post):
+	_easy(0), _eos(false), _requestComplete(false), _sendingContentsBuffer(nullptr), _sendingContentsSize(0), _sendingContentsPos(0) {
 	_easy = curl_easy_init();
 	curl_easy_setopt(_easy, CURLOPT_WRITEFUNCTION, curlDataCallback);
 	curl_easy_setopt(_easy, CURLOPT_WRITEDATA, this); //so callback can call us
@@ -49,9 +55,17 @@ NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, b
 	curl_easy_setopt(_easy, CURLOPT_VERBOSE, 0L);
 	curl_easy_setopt(_easy, CURLOPT_FOLLOWLOCATION, 1L); //probably it's OK to have it always on
 	curl_easy_setopt(_easy, CURLOPT_HTTPHEADER, headersList);	
-	if (post || bufferSize != 0) {
-		curl_easy_setopt(_easy, CURLOPT_POSTFIELDSIZE, bufferSize);
-		curl_easy_setopt(_easy, CURLOPT_COPYPOSTFIELDS, buffer);
+	if (uploading) {
+		curl_easy_setopt(_easy, CURLOPT_UPLOAD, 1L);
+		curl_easy_setopt(_easy, CURLOPT_READDATA, this);
+		curl_easy_setopt(_easy, CURLOPT_READFUNCTION, curlReadDataCallback);
+		_sendingContentsBuffer = buffer;
+		_sendingContentsSize = bufferSize;
+	} else {
+		if (post || bufferSize != 0) {
+			curl_easy_setopt(_easy, CURLOPT_POSTFIELDSIZE, bufferSize);
+			curl_easy_setopt(_easy, CURLOPT_COPYPOSTFIELDS, buffer);
+		}
 	}
 	ConnMan.registerEasyHandle(_easy);
 }
@@ -85,6 +99,16 @@ long NetworkReadStream::httpResponseCode() const {
 	if (_easy)
 		curl_easy_getinfo(_easy, CURLINFO_RESPONSE_CODE, &responseCode);
 	return responseCode;
+}
+
+uint32 NetworkReadStream::fillWithSendingContents(char *bufferToFill, uint32 maxSize) {
+	uint32 size = _sendingContentsSize - _sendingContentsPos;
+	if (size > maxSize) size = maxSize;
+	for (uint32 i = 0; i < size; ++i) {
+		bufferToFill[i] = _sendingContentsBuffer[_sendingContentsPos + i];
+	}
+	_sendingContentsPos += size;
+	return size;
 }
 
 } // End of namespace Cloud

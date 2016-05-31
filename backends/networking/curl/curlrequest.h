@@ -44,6 +44,7 @@ protected:
 	Common::String _postFields;
 	byte *_bytesBuffer;
 	uint32 _bytesBufferSize;
+	bool _uploading; //using PUT method
 
 	virtual NetworkReadStream *makeStream();
 
@@ -65,6 +66,9 @@ public:
 
 	/** Sets bytes buffer. */
 	virtual void setBuffer(byte *buffer, uint32 size);
+
+	/** Remembers to use PUT method when it would create NetworkReadStream. */
+	virtual void usePut();
 
 	/**
 	 * Starts this Request with ConnMan.

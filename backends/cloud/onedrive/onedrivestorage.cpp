@@ -24,8 +24,10 @@
 #include "backends/cloud/onedrive/onedrivestorage.h"
 #include "backends/cloud/onedrive/onedrivetokenrefresher.h"
 #include "backends/cloud/onedrive/onedrivelistdirectoryrequest.h"
+#include "backends/cloud/onedrive/onedriveuploadrequest.h"
 #include "backends/cloud/downloadrequest.h"
 #include "backends/cloud/folderdownloadrequest.h"
+#include "backends/cloud/savessyncrequest.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
 #include "common/cloudmanager.h"
@@ -35,7 +37,6 @@
 #include "common/json.h"
 #include "common/system.h"
 #include <curl/curl.h>
-#include "../savessyncrequest.h"
 
 namespace Cloud {
 namespace OneDrive {
@@ -168,6 +169,9 @@ Networking::Request *OneDriveStorage::listDirectory(Common::String path, ListDir
 	return ConnMan.addRequest(new OneDriveListDirectoryRequest(this, path, callback, errorCallback, recursive));
 }
 
+Networking::Request *OneDriveStorage::upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) {
+	return ConnMan.addRequest(new OneDriveUploadRequest(this, path, contents, callback, errorCallback));
+}
 
 Networking::Request *OneDriveStorage::streamFile(Common::String path, Networking::NetworkReadStreamCallback outerCallback, Networking::ErrorCallback errorCallback) {
 	Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot:/" + path;
@@ -210,6 +214,13 @@ void OneDriveStorage::printBool(BoolResponse response) {
 	debug("bool: %s", response.value ? "true" : "false");
 }
 
+void OneDriveStorage::printFile(UploadResponse response) {
+	debug("\nuploaded file info:");
+	debug("\tpath: %s", response.value.path().c_str());
+	debug("\tsize: %u", response.value.size());
+	debug("\ttimestamp: %u", response.value.timestamp());
+}
+
 void OneDriveStorage::printErrorResponse(Networking::ErrorResponse error) {
 	debug("error response (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
 	debug("%s", error.response.c_str());
@@ -228,7 +239,11 @@ Networking::Request *OneDriveStorage::syncSaves(BoolCallback callback, Networkin
 	return ConnMan.addRequest(request);
 	*/
 	//return downloadFolder("subfolder", "local/onedrive/subfolder_downloaded", new Common::Callback<OneDriveStorage, FileArrayResponse>(this, &OneDriveStorage::printFiles), false);
-	return ConnMan.addRequest(new SavesSyncRequest(this, new Common::Callback<OneDriveStorage, BoolResponse>(this, &OneDriveStorage::printBool), getErrorPrintingCallback())); //TODO
+	return Storage::upload(
+		"uploads/test.jpg", "test.jpg",
+		new Common::Callback<OneDriveStorage, UploadResponse>(this, &OneDriveStorage::printFile), getErrorPrintingCallback()
+	);
+	//return ConnMan.addRequest(new SavesSyncRequest(this, new Common::Callback<OneDriveStorage, BoolResponse>(this, &OneDriveStorage::printBool), getErrorPrintingCallback())); //TODO
 }
 
 OneDriveStorage *OneDriveStorage::loadFromConfig(Common::String keyPrefix) {

@@ -23,6 +23,7 @@ ifdef USE_CLOUD
 MODULE_OBJS += \
 	cloud/iso8601.o \
 	cloud/manager.o \
+	cloud/storage.o \
 	cloud/storagefile.o \
 	cloud/downloadrequest.o \
 	cloud/folderdownloadrequest.o \
@@ -32,7 +33,8 @@ MODULE_OBJS += \
 	cloud/dropbox/dropboxuploadrequest.o \
 	cloud/onedrive/onedrivestorage.o \
 	cloud/onedrive/onedrivetokenrefresher.o \
-	cloud/onedrive/onedrivelistdirectoryrequest.o
+	cloud/onedrive/onedrivelistdirectoryrequest.o \
+	cloud/onedrive/onedriveuploadrequest.o
 endif
 
 ifdef USE_LIBCURL

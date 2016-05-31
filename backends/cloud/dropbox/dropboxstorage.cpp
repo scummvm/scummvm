@@ -131,19 +131,6 @@ Networking::Request *DropboxStorage::upload(Common::String path, Common::Seekabl
 	return ConnMan.addRequest(new DropboxUploadRequest(_token, path, contents, callback, errorCallback));
 }
 
-Networking::Request *DropboxStorage::upload(Common::String remotePath, Common::String localPath, UploadCallback callback, Networking::ErrorCallback errorCallback) {
-	Common::File *f = new Common::File();
-	if (!f->open(localPath)) {
-		warning("DropboxStorage: unable to open file to upload from");
-		if (errorCallback) (*errorCallback)(Networking::ErrorResponse(nullptr, false, true, "", -1));
-		delete errorCallback;
-		delete callback;
-		delete f;
-		return nullptr;
-	}
-	return upload(remotePath, f, callback, errorCallback);
-}
-
 Networking::Request *DropboxStorage::streamFile(Common::String path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) {
 	Common::JSONObject jsonRequestParameters;
 	jsonRequestParameters.setVal("path", new Common::JSONValue(path));
