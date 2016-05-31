@@ -103,6 +103,9 @@ public:
 	/** This method is passed into info(). (Temporary) */
 	void infoMethodCallback(StorageInfoResponse response);
 
+	/** Returns storage's saves directory path with the trailing slash. */
+	virtual Common::String savesDirectoryPath();
+
 	/** Returns whether saves sync process is running. */
 	virtual bool isSyncing() { return false; } //TODO
 

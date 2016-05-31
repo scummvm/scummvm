@@ -238,13 +238,10 @@ Networking::Request *OneDriveStorage::syncSaves(BoolCallback callback, Networkin
 	request->addHeader("Authorization: bearer " + _token);
 	return ConnMan.addRequest(request);
 	*/
-	//return downloadFolder("subfolder", "local/onedrive/subfolder_downloaded", new Common::Callback<OneDriveStorage, FileArrayResponse>(this, &OneDriveStorage::printFiles), false);
-	return Storage::upload(
-		"uploads/test.jpg", "test.jpg",
-		new Common::Callback<OneDriveStorage, UploadResponse>(this, &OneDriveStorage::printFile), getErrorPrintingCallback()
-	);
-	//return ConnMan.addRequest(new SavesSyncRequest(this, new Common::Callback<OneDriveStorage, BoolResponse>(this, &OneDriveStorage::printBool), getErrorPrintingCallback())); //TODO
+	return ConnMan.addRequest(new SavesSyncRequest(this, new Common::Callback<OneDriveStorage, BoolResponse>(this, &OneDriveStorage::printBool), getErrorPrintingCallback())); //TODO
 }
+
+Common::String OneDriveStorage::savesDirectoryPath() { return "saves/"; }
 
 OneDriveStorage *OneDriveStorage::loadFromConfig(Common::String keyPrefix) {
 	loadKeyAndSecret();

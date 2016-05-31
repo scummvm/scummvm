@@ -103,6 +103,9 @@ public:
 	/** Returns the StorageInfo struct. */
 	virtual Networking::Request *info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) = 0;
 
+	/** Returns storage's saves directory path with the trailing slash. */
+	virtual Common::String savesDirectoryPath() = 0;
+
 	/** Returns whether saves sync process is running. */
 	virtual bool isSyncing() = 0;
 

@@ -60,7 +60,7 @@ void SavesSyncRequest::start() {
 
 	//list saves directory
 	_workingRequest = _storage->listDirectory(
-		"/saves",
+		_storage->savesDirectoryPath(),
 		new Common::Callback<SavesSyncRequest, Storage::ListDirectoryResponse>(this, &SavesSyncRequest::directoryListedCallback),
 		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::directoryListedErrorCallback)
 	);
@@ -165,6 +165,7 @@ void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse er
 	//we're lucky - user just lacks his "/cloud/" folder
 	Common::Array<StorageFile> files;
 	directoryListedCallback(Storage::ListDirectoryResponse(error.request, files));
+	//TODO: create it before uploading stuff
 }
 
 void SavesSyncRequest::downloadNextFile() {
@@ -222,7 +223,7 @@ void SavesSyncRequest::uploadNextFile() {
 	///////
 	debug("uploading %s", _currentUploadingFile.c_str());
 	///////
-	_workingRequest = _storage->upload("/saves/" + _currentUploadingFile, g_system->getSavefileManager()->openRawFile(_currentUploadingFile),
+	_workingRequest = _storage->upload(_storage->savesDirectoryPath() + _currentUploadingFile, g_system->getSavefileManager()->openRawFile(_currentUploadingFile),
 		new Common::Callback<SavesSyncRequest, Storage::UploadResponse>(this, &SavesSyncRequest::fileUploadedCallback),
 		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileUploadedErrorCallback)
 	);

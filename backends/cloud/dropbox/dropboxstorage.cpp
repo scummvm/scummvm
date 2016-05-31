@@ -178,6 +178,8 @@ Networking::Request *DropboxStorage::info(StorageInfoCallback outerCallback, Net
 	//and then calls the outerCallback (which wants to receive StorageInfo, not void *)
 }
 
+Common::String DropboxStorage::savesDirectoryPath() { return "/saves/"; }
+
 void DropboxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse response) {
 	Common::JSONValue *json = response.value;
 	if (!json) {
