@@ -215,23 +215,6 @@ Networking::Request *OneDriveStorage::streamFile(Common::String path, Networking
 	return ConnMan.addRequest(request);
 }
 
-Networking::Request *OneDriveStorage::download(Common::String remotePath, Common::String localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) {
-	Common::DumpFile *f = new Common::DumpFile();
-	if (!f->open(localPath, true)) {
-		warning("OneDriveStorage: unable to open file to download into");
-		if (errorCallback) (*errorCallback)(Networking::ErrorResponse(nullptr, false, true, "", -1));
-		delete f;
-		return nullptr;
-	}
-
-	return ConnMan.addRequest(new DownloadRequest(this, callback, errorCallback, remotePath, f));
-}
-
-/** Returns Common::Array<StorageFile> with list of files, which were not downloaded. */
-Networking::Request *OneDriveStorage::downloadFolder(Common::String remotePath, Common::String localPath, FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
-	return ConnMan.addRequest(new FolderDownloadRequest(this, callback, errorCallback, remotePath, localPath, recursive));
-}
-
 void OneDriveStorage::fileDownloaded(BoolResponse response) {
 	if (response.value) debug("file downloaded!");
 	else debug("download failed!");

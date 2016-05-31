@@ -137,22 +137,6 @@ Networking::Request *DropboxStorage::streamFile(Common::String path, Networking:
 	return response.request;
 }
 
-Networking::Request *DropboxStorage::download(Common::String remotePath, Common::String localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) {
-	Common::DumpFile *f = new Common::DumpFile();
-	if (!f->open(localPath, true)) {
-		warning("DropboxStorage: unable to open file to download into");
-		if (errorCallback) (*errorCallback)(Networking::ErrorResponse(nullptr, false, true, "", -1));
-		delete f;
-		return nullptr;
-	}
-
-	return ConnMan.addRequest(new DownloadRequest(this, callback, errorCallback, remotePath, f));
-}
-
-Networking::Request *DropboxStorage::downloadFolder(Common::String remotePath, Common::String localPath, FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
-	return ConnMan.addRequest(new FolderDownloadRequest(this, callback, errorCallback, remotePath, localPath, recursive));
-}
-
 Networking::Request *DropboxStorage::info(StorageInfoCallback outerCallback, Networking::ErrorCallback errorCallback) {
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<DropboxStorage, StorageInfoResponse, Networking::JsonResponse>(this, &DropboxStorage::infoInnerCallback, outerCallback);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, "https://api.dropboxapi.com/1/account/info");

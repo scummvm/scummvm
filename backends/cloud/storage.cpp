@@ -21,6 +21,8 @@
 */
 
 #include "backends/cloud/storage.h"
+#include "backends/cloud/downloadrequest.h"
+#include "backends/cloud/folderdownloadrequest.h"
 #include "backends/cloud/savessyncrequest.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "common/debug.h"
@@ -51,6 +53,27 @@ Networking::Request *Storage::upload(Common::String remotePath, Common::String l
 	}
 
 	return upload(remotePath, f, callback, errorCallback);
+}
+
+Networking::Request *Storage::download(Common::String remotePath, Common::String localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) {
+	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+
+	Common::DumpFile *f = new Common::DumpFile();
+	if (!f->open(localPath, true)) {
+		warning("Storage: unable to open file to download into");
+		if (errorCallback) (*errorCallback)(Networking::ErrorResponse(nullptr, false, true, "", -1));
+		delete errorCallback;
+		delete callback;
+		delete f;
+		return nullptr;
+	}
+
+	return ConnMan.addRequest(new DownloadRequest(this, callback, errorCallback, remotePath, f));
+}
+
+Networking::Request *Storage::downloadFolder(Common::String remotePath, Common::String localPath, FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
+	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+	return ConnMan.addRequest(new FolderDownloadRequest(this, callback, errorCallback, remotePath, localPath, recursive));
 }
 
 Networking::Request *Storage::syncSaves(BoolCallback callback, Networking::ErrorCallback errorCallback) {
