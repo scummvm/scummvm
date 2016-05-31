@@ -340,6 +340,8 @@ void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool withPa
 	uint32 lineSize = MAX<int>(width * bytesPerPixel + (8 * 2 / packBitsData.pixMap.pixelSize), packBitsData.pixMap.rowBytes);
 	byte *buffer = new byte[lineSize * height];
 
+	memset(buffer, 0, lineSize * height);
+
 	// Read in amount of data per row
 	for (uint16 i = 0; i < packBitsData.pixMap.bounds.height(); i++) {
 		// NOTE: Compression 0 is "default". The format in SCI games is packed when 0.
