@@ -289,7 +289,7 @@ void HiRes6Engine::initGameState() {
 
 	byte id;
 	while ((id = stream->readByte()) != 0xff) {
-		Item item = { };
+		Item item = Item();
 		item.id = id;
 		item.noun = stream->readByte();
 		item.room = stream->readByte();
