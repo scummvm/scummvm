@@ -36,7 +36,7 @@
 #include "common/rect.h"
 #include "winexe_pe.h"
 #include "file.h"
-#include "script_tags.h"
+#include "script_responses.h"
 
 /**
  * Format of the access.dat file that will be created:
@@ -356,7 +356,48 @@ void writeData() {
 	writeAllScriptTags();
 }
 
+// Support method used for translating IDA debugger's output for
+// an NPC's chooseResponse method tag list to a format for inclusion
+// in this tool's script_respones.cpp file
+void createScriptResponses() {
+	Common::File inFile;
+	char line[80];
+	char c[2];
+	c[0] = c[1] = '\0';
+
+	inFile.open("d:\\temp\\bellbot.txt");
+	printf("static const int xxxx_RESPONSES[][5] = {\n");
+
+	do {
+		strcpy(line, "");
+
+		while (!inFile.eof()) {
+			c[0] = inFile.readByte();
+			if (c[0] == '\n')
+				c[0] = ' ';
+			else if (c[0] == '\r')
+				continue;
+			strcat(line, c);
+			if (inFile.eof() || strlen(line) == (5 * 9))
+				break;
+		}
+
+		int tag, v1, v2, v3, v4;
+		sscanf(line, "%x %x %x %x %x", &tag, &v1, &v2, &v3, &v4);
+
+		printf("\t{ MKTAG('%c', '%c', '%c', '%c'), %d, %d, %d, %d },\n",
+			(tag >> 24) & 0xff, (tag >> 16) & 0xff, (tag >> 8) & 0xff, tag & 0xff,
+			v1, v2, v3, v4);
+
+	} while (!inFile.eof());
+
+	printf("};\r\n");
+	inFile.close();
+}
+
 int main(int argc, char *argv[]) {
+	createScriptResponses();
+
 	if (argc != 3) {
 		printf("Format: %s ST.exe titanic.dat\n", argv[0]);
 		exit(0);
