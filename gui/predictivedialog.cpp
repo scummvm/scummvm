@@ -142,6 +142,9 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 	_numMemory = 0;
 
 	_navigationWithKeys = false;
+
+	_curPressedButton = kNoAct;
+	_needRefresh = true;
 }
 
 PredictiveDialog::~PredictiveDialog() {

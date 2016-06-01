@@ -112,6 +112,7 @@ void OptionsDialog::init() {
 	_fullscreenCheckbox = 0;
 	_aspectCheckbox = 0;
 	_enableAudioSettings = false;
+	_midiTabId = 0;
 	_midiPopUp = 0;
 	_midiPopUpDesc = 0;
 	_oplPopUp = 0;
@@ -144,6 +145,7 @@ void OptionsDialog::init() {
 	_speechVolumeSlider = 0;
 	_speechVolumeLabel = 0;
 	_muteCheckbox = 0;
+	_enableSubtitleSettings = false;
 	_subToggleDesc = 0;
 	_subToggleGroup = 0;
 	_subToggleSubOnly = 0;
@@ -152,6 +154,8 @@ void OptionsDialog::init() {
 	_subSpeedDesc = 0;
 	_subSpeedSlider = 0;
 	_subSpeedLabel = 0;
+
+	_pathsTabId = 0;
 	_oldTheme = g_gui.theme()->getThemeId();
 
 	// Retrieve game GUI options
