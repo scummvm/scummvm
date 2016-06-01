@@ -55,9 +55,19 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_gameOver = false;
 	_activatedSLST = false;
 	_ignoreNextMouseUp = false;
-	_extrasFile = 0;
+	_extrasFile = nullptr;
 	_curStack = kStackUnknown;
-	_hotspots = 0;
+	_hotspots = nullptr;
+	_gfx = nullptr;
+	_externalScriptHandler = nullptr;
+	_rnd = nullptr;
+	_scriptMan = nullptr;
+	_console = nullptr;
+	_saveLoad = nullptr;
+	_optionsDialog = nullptr;
+	_curCard = 0;
+	_hotspotCount = 0;
+	_curHotspot = -1;
 	removeTimer();
 
 	// NOTE: We can never really support CD swapping. All of the music files

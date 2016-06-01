@@ -51,6 +51,8 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm
 
 	_creditsImage = 302;
 	_creditsPos = 0;
+
+	_transitionSpeed = 0;
 }
 
 RivenGraphics::~RivenGraphics() {

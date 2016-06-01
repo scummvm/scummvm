@@ -255,6 +255,13 @@ void OldFeature::finishResetFeatureScript() {
 }
 
 NewFeature::NewFeature(View *view) : Feature(view) {
+	_unknown168 = 0;
+	_pickupProc = nullptr;
+	_dropProc = nullptr;
+	_dragMoveProc = nullptr;
+	_oldMoveProc = nullptr;
+	_dragFlags = 0;
+	_oldFlags = 0;
 }
 
 NewFeature::~NewFeature() {

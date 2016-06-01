@@ -53,6 +53,16 @@ MohawkBitmap::MohawkBitmap() {
 
 	_drawTable = drawTable;
 	_drawTableSize = ARRAYSIZE(drawTable);
+
+	_header.width = 0;
+	_header.height = 0;
+	_header.bytesPerRow = 0;
+	_header.format = 0;
+	_header.colorTable.colorCount = 0;
+	_header.colorTable.palette = nullptr;
+	_header.colorTable.rgbBits = 0;
+	_header.colorTable.tableSize = 0;
+	_data = nullptr;
 }
 
 MohawkBitmap::~MohawkBitmap() {
