@@ -410,6 +410,12 @@ bool Decompiler::verifyCommandSuccessorInAST(CFGCommand *cfgCommand, CFGCommand 
 		}
 
 		const ASTCommand *astSuccessorCommand = astSuccessor->getFirstCommand();
+		if (!astSuccessorCommand) {
+			_error = Common::String::format("Command %d has an empty %s in the AST",
+			                                cfgCommand->getIndex(), successorType);
+			return false;
+		}
+
 		int16 expectedSuccessorIndex = cfgSuccessor->getIndex();
 		if (astSuccessorCommand->getIndex() != expectedSuccessorIndex) {
 			_error = Common::String::format("Command %d has an unexpected %s %d in the AST, should be %d",

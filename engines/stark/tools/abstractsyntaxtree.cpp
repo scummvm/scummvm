@@ -106,7 +106,11 @@ void ASTBlock::findSuccessorsIntern(const ASTNode *node, ASTNode **follower, AST
 }
 
 const ASTCommand *ASTBlock::getFirstCommand() const {
-	return _children[0]->getFirstCommand();
+	if (!_children.empty()) {
+		return _children[0]->getFirstCommand();
+	} else {
+		return nullptr;
+	}
 }
 
 ASTCommand::ASTCommand(ASTNode *parent, Command *command) :
