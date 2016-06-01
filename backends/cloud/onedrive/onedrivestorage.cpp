@@ -84,7 +84,7 @@ void OneDriveStorage::getAccessToken(BoolCallback callback, Common::String code)
 	request->addPostField("client_id=" + Common::String(KEY));
 	request->addPostField("client_secret=" + Common::String(SECRET));
 	request->addPostField("&redirect_uri=http%3A%2F%2Flocalhost%3A12345%2F");
-	ConnMan.addRequest(request);
+	addRequest(request);
 }
 
 void OneDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResponse response) {
@@ -198,11 +198,11 @@ void OneDriveStorage::fileInfoCallback(Networking::NetworkReadStreamCallback out
 }
 
 Networking::Request *OneDriveStorage::listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
-	return ConnMan.addRequest(new OneDriveListDirectoryRequest(this, path, callback, errorCallback, recursive));
+	return addRequest(new OneDriveListDirectoryRequest(this, path, callback, errorCallback, recursive));
 }
 
 Networking::Request *OneDriveStorage::upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) {
-	return ConnMan.addRequest(new OneDriveUploadRequest(this, path, contents, callback, errorCallback));
+	return addRequest(new OneDriveUploadRequest(this, path, contents, callback, errorCallback));
 }
 
 Networking::Request *OneDriveStorage::streamFile(Common::String path, Networking::NetworkReadStreamCallback outerCallback, Networking::ErrorCallback errorCallback) {
@@ -210,7 +210,7 @@ Networking::Request *OneDriveStorage::streamFile(Common::String path, Networking
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, Networking::NetworkReadStreamResponse, Networking::JsonResponse>(this, &OneDriveStorage::fileInfoCallback, outerCallback);
 	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, errorCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + _token);
-	return ConnMan.addRequest(request);
+	return addRequest(request);
 }
 
 void OneDriveStorage::fileDownloaded(BoolResponse response) {
@@ -238,14 +238,14 @@ void OneDriveStorage::printFile(UploadResponse response) {
 
 Networking::Request *OneDriveStorage::createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	if (!errorCallback) errorCallback = getErrorPrintingCallback();
-	return ConnMan.addRequest(new OneDriveCreateDirectoryRequest(this, path, callback, errorCallback));
+	return addRequest(new OneDriveCreateDirectoryRequest(this, path, callback, errorCallback));
 }
 
 Networking::Request *OneDriveStorage::info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) {
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, StorageInfoResponse, Networking::JsonResponse>(this, &OneDriveStorage::infoInnerCallback, callback);
 	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, errorCallback, "https://api.onedrive.com/v1.0/drive/special/approot");
 	request->addHeader("Authorization: bearer " + _token);
-	return ConnMan.addRequest(request);
+	return addRequest(request);
 }
 
 Common::String OneDriveStorage::savesDirectoryPath() { return "saves/"; }

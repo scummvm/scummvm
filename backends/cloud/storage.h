@@ -48,7 +48,9 @@ public:
 	typedef Common::BaseCallback<UploadResponse> *UploadCallback;
 	typedef Common::BaseCallback<ListDirectoryResponse> *ListDirectoryCallback;
 
-protected:	
+protected:
+	/** Keeps track of running requests. */
+	uint32 _runningRequestsCount;
 
 	/** Returns default error callback (printErrorResponse). */
 	virtual Networking::ErrorCallback getErrorPrintingCallback();
@@ -56,9 +58,25 @@ protected:
 	/** Prints ErrorResponse contents with debug(). */
 	virtual void printErrorResponse(Networking::ErrorResponse error);
 
+	/**
+	 * Adds request to the ConnMan, but also increases _runningRequestsCount.
+	 * This method should be used by Storage implementations instead of
+	 * direct ConnMan.addRequest() call.
+	 *
+	 * @return the same Request pointer, just as a shortcut
+	 */
+	virtual Networking::Request *addRequest(Networking::Request *request);
+
+	/**
+	 * Decreases _runningRequestCount. It's called from ConnMan automatically.
+	 * Passed pointer is dangling, but one can use the address to determine
+	 * some special Requests (which addresses were remembered somewhere).
+	 */
+	virtual void requestFinishedCallback(Networking::Request *invalidRequestPointer);
+
 public:
-	Storage() {}
-	virtual ~Storage() {}
+	Storage();
+	virtual ~Storage();
 
 	/**
 	 * Storage methods, which are used by CloudManager to save
@@ -113,7 +131,7 @@ public:
 	virtual Common::String savesDirectoryPath() = 0;
 
 	/** Returns whether there are any requests running. */
-	virtual bool isWorking() = 0;
+	virtual bool isWorking();
 };
 
 } // End of namespace Cloud

@@ -39,9 +39,18 @@ class NetworkReadStream;
 class ConnectionManager : public Common::Singleton<ConnectionManager> {
 	friend void connectionsThread(void *); //calls handle()
 
+	typedef Common::BaseCallback<Request *> *RequestCallback;
+
+	struct RequestWithCallback { //I'm completely out of ideas
+		Request *request;
+		RequestCallback callback;
+		
+		RequestWithCallback(Request *rq = nullptr, RequestCallback cb = nullptr): request(rq), callback(cb) {}
+	};
+
 	CURLM *_multi;	
 	bool _timerStarted;
-	Common::Array<Request *> _requests;	
+	Common::Array<RequestWithCallback> _requests;
 	
 	void startTimer(int interval = 1000000); //1 second is the default interval
 	void stopTimer();
@@ -71,7 +80,7 @@ public:
 	 *
 	 * @return the same Request pointer, just as a shortcut
 	 */
-	Request *addRequest(Request *request);
+	Request *addRequest(Request *request, RequestCallback callback = nullptr);
 };
 
 /** Shortcut for accessing the connection manager. */

@@ -30,6 +30,10 @@
 
 namespace Cloud {
 
+Storage::Storage(): _runningRequestsCount(0) {}
+
+Storage::~Storage() {}
+
 Networking::ErrorCallback Storage::getErrorPrintingCallback() {
 	return new Common::Callback<Storage, Networking::ErrorResponse>(this, &Storage::printErrorResponse);
 }
@@ -37,6 +41,17 @@ Networking::ErrorCallback Storage::getErrorPrintingCallback() {
 void Storage::printErrorResponse(Networking::ErrorResponse error) {
 	debug("error response (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
 	debug("%s", error.response.c_str());
+}
+
+Networking::Request *Storage::addRequest(Networking::Request *request) {
+	++_runningRequestsCount;
+	if (_runningRequestsCount == 1) debug("Storage is working now");
+	return ConnMan.addRequest(request, new Common::Callback<Storage, Networking::Request *>(this, &Storage::requestFinishedCallback));
+}
+
+void Storage::requestFinishedCallback(Networking::Request *invalidRequestPointer) {
+	--_runningRequestsCount;
+	if (_runningRequestsCount == 0) debug("Storage is not working now");
 }
 
 Networking::Request *Storage::upload(Common::String remotePath, Common::String localPath, UploadCallback callback, Networking::ErrorCallback errorCallback) {
@@ -68,19 +83,22 @@ Networking::Request *Storage::download(Common::String remotePath, Common::String
 		return nullptr;
 	}
 
-	return ConnMan.addRequest(new DownloadRequest(this, callback, errorCallback, remotePath, f));
+	return addRequest(new DownloadRequest(this, callback, errorCallback, remotePath, f));
 }
 
 Networking::Request *Storage::downloadFolder(Common::String remotePath, Common::String localPath, FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
 	if (!errorCallback) errorCallback = getErrorPrintingCallback();
-	return ConnMan.addRequest(new FolderDownloadRequest(this, callback, errorCallback, remotePath, localPath, recursive));
+	return addRequest(new FolderDownloadRequest(this, callback, errorCallback, remotePath, localPath, recursive));
 }
 
 Networking::Request *Storage::syncSaves(BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	if (!errorCallback) errorCallback = getErrorPrintingCallback();
-	return ConnMan.addRequest(new SavesSyncRequest(this, callback, errorCallback));
+	return addRequest(new SavesSyncRequest(this, callback, errorCallback));
 }
 
+bool Storage::isWorking() {
+	return _runningRequestsCount > 0;
+}
 
 } // End of namespace Cloud
 

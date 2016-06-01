@@ -51,8 +51,8 @@ void ConnectionManager::registerEasyHandle(CURL *easy) {
 	curl_multi_add_handle(_multi, easy);
 }
 
-Request *ConnectionManager::addRequest(Request *request) {
-	_requests.push_back(request);
+Request *ConnectionManager::addRequest(Request *request, RequestCallback callback) {
+	_requests.push_back(RequestWithCallback(request, callback));
 	if (!_timerStarted) startTimer();
 	return request;
 }
@@ -89,10 +89,11 @@ void ConnectionManager::handle() {
 void ConnectionManager::interateRequests() {
 	//call handle() of all running requests (so they can do their work)
 	debug("handling %d request(s)", _requests.size());	
-	for (Common::Array<Request *>::iterator i = _requests.begin(); i != _requests.end();) {
-		Request *request = *i;
+	for (Common::Array<RequestWithCallback>::iterator i = _requests.begin(); i != _requests.end();) {
+		Request *request = i->request;
 		if (!request || request->state() == FINISHED) {
-			delete (*i);
+			delete (i->request);
+			if (i->callback) (*i->callback)(i->request); //that's not a mistake (we're passing an address and that method knows there is no object anymore)
 			_requests.erase(i);
 			continue;
 		}

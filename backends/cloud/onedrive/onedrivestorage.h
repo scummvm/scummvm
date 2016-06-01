@@ -98,9 +98,6 @@ public:
 	/** Returns storage's saves directory path with the trailing slash. */
 	virtual Common::String savesDirectoryPath();
 
-	/** Returns whether there are any requests running. */
-	virtual bool isWorking() { return false; } //TODO
-
 	/**
 	 * Load token and user id from configs and return OneDriveStorage for those.	
 	 * @return pointer to the newly created OneDriveStorage or 0 if some problem occured.
