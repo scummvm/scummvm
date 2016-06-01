@@ -63,13 +63,13 @@ TTnpcScript::TTnpcScript(int charId, const char *charClass, int v2,
 	resetFlags();
 }
 
-void TTnpcScript::load(const char *name) {
+void TTnpcScript::load(const char *name, int valuesPerTag) {
 	Common::SeekableReadStream *r = g_vm->_filesManager->getResource(name);
 
 	while (r->pos() < r->size()) {
 		TTnpcScriptResponse sr;
 		sr._tag = r->readUint32LE();
-		for (int idx = 0; idx < 4; ++idx)
+		for (int idx = 0; idx < valuesPerTag; ++idx)
 			sr._values[idx] = r->readUint32LE();
 		
 		_responses.push_back(sr);

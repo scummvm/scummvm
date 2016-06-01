@@ -74,10 +74,9 @@ public:
 
 class TTnpcScript : public TTnpcScriptBase {
 private:
-	Common::Array<TTnpcScriptResponse> _responses;
-private:
 	int translateByArray(int id);
 protected:
+	Common::Array<TTnpcScriptResponse> _responses;
 	byte *_subPtr;
 	int _field60;
 	int _field64;
@@ -94,7 +93,7 @@ protected:
 	/**
 	 * Loads response data for the NPC from the given resource
 	 */
-	void load(const char *name);
+	void load(const char *name, int valuesPerTag = 1);
 
 	/**
 	 * Reset script flags

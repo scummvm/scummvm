@@ -27,8 +27,8 @@
 namespace Titanic {
 
 MaitreDScript::MaitreDScript(int val1, const char *charClass, int v2,
-	const char *charName, int v3, int val2) :
-	TTnpcScript(val1, charClass, v2, charName, v3, val2, -1, -1, -1, 0) {
+		const char *charName, int v3, int val2) :
+		TTnpcScript(val1, charClass, v2, charName, v3, val2, -1, -1, -1, 0) {
 	CTrueTalkManager::setFlags(9, 1);
 	CTrueTalkManager::setFlags(10, 0);
 	CTrueTalkManager::setFlags(11, 0);
@@ -37,6 +37,8 @@ MaitreDScript::MaitreDScript(int val1, const char *charClass, int v2,
 	CTrueTalkManager::setFlags(14, 0);
 	CTrueTalkManager::setFlags(15, 0);
 	CTrueTalkManager::setFlags(16, 0);
+
+	load("Responses/MaitreD");
 }
 
 int MaitreDScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {

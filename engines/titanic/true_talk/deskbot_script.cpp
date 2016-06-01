@@ -40,7 +40,7 @@ DeskbotScript::DeskbotScript(int val1, const char *charClass, int v2,
 	if (_field74 == 1)
 		_field74 = 0;
 
-	load("Responses/Deskbot");
+	load("Responses/Deskbot", 4);
 }
 
 void DeskbotScript::proc7(int v1, int v2) {

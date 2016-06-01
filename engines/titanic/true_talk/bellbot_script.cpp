@@ -39,7 +39,7 @@ BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
 	_array[0] = 100;
 	_array[1] = 0;
 
-	load("Responses/Bellbot");
+	load("Responses/Bellbot", 4);
 }
 
 void BellbotScript::proc7(int v1, int v2) {
