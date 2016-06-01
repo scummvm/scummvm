@@ -70,15 +70,7 @@ Common::Error DirectorEngine::run() {
 	_mainArchive = new RIFFArchive();
 	_mainArchive->openFile("bookshelf_example.mmm");
 
-	Common::SeekableReadStream *scr = _mainArchive->getResource(MKTAG('V','W','S','C'), 1024);
-	Score score(*scr, *_mainArchive);
-
-	Common::SeekableReadStream *conf = _mainArchive->getResource(MKTAG('V','W','C','F'), 1024);
-	score.loadConfig(*conf);
-
-	Common::SeekableReadStream *records = _mainArchive->getResource(MKTAG('V','W','C','R'), 1024);
-	score.loadCastData(*records);
-
+	Score score(*_mainArchive);
 	score.play();
 
 	if (getPlatform() == Common::kPlatformWindows)

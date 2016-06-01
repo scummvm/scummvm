@@ -184,17 +184,17 @@ public:
 
 class Score {
 public:
-    Score(Common::SeekableReadStream &stream, Archive &movie);
-    void readVersion(uint32 rid);
-    void loadConfig(Common::SeekableReadStream &stream);
-    void loadCastData(Common::SeekableReadStream &stream);
+    Score(Archive &movie);
     static Common::Rect readRect(Common::SeekableReadStream &stream);
     void play();
 
 private:
     void processEvents();
     void display();
-
+    void readVersion(uint32 rid);
+    void loadConfig(Common::SeekableReadStream &stream);
+    void loadCastData(Common::SeekableReadStream &stream);
+    void loadFrames(Common::SeekableReadStream &stream);
 public:
     Common::Array<Frame *> _frames;
     Common::HashMap<int, Cast *> _casts;

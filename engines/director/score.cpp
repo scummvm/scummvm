@@ -35,11 +35,20 @@
 
 namespace Director {
 
-Score::Score(Common::SeekableReadStream &stream, Archive &movie) {
+Score::Score(Archive &movie) {
 
 	_surface = new Graphics::ManagedSurface;
-
 	_movieArchive = &movie;
+	assert(_movieArchive->hasResource(MKTAG('V','W','S','C'), 1024));
+	assert(_movieArchive->hasResource(MKTAG('V','W','C','F'), 1024));
+	assert(_movieArchive->hasResource(MKTAG('V','W','C','R'), 1024));
+
+	loadFrames(*_movieArchive->getResource(MKTAG('V','W','S','C'), 1024));
+	loadConfig(*_movieArchive->getResource(MKTAG('V','W','C','F'), 1024));
+	loadCastData(*_movieArchive->getResource(MKTAG('V','W','C','R'), 1024));
+}
+
+void Score::loadFrames(Common::SeekableReadStream &stream) {
 	uint32 size = stream.readUint32BE();
 	size -= 4;
 	uint16 channelSize;
