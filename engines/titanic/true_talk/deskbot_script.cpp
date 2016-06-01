@@ -39,23 +39,8 @@ DeskbotScript::DeskbotScript(int val1, const char *charClass, int v2,
 	_array[0] = 100;
 	if (_field74 == 1)
 		_field74 = 0;
-}
 
-int DeskbotScript::proc6(TTnpcScript *npcScript, TTsentence *sentence, uint tag) {
-	for (uint idx = 0; idx < _tags.size(); ++idx) {
-		const TTnpcScriptTag &scriptTag = _tags[idx];		
-		uint currTag = (idx == 0) ? MKTAG('P', 'K', 'U', 'P') : scriptTag._tag;
-
-		if (currTag == tag) {
-			int valIndex = getRandomNumber(scriptTag.size()) - 1;
-			uint diagId = getDialogueId(scriptTag._values[valIndex]);
-			addResponse(diagId);
-			applyResponse();
-			break;
-		}
-	}
-
-	return SS_1;
+	load("Responses/Deskbot");
 }
 
 void DeskbotScript::proc7(int v1, int v2) {

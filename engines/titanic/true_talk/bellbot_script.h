@@ -38,7 +38,6 @@ public:
 	BellbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2);
 
-	virtual int proc6(TTnpcScript *npcScript, TTsentence *sentence, uint tag);
 	virtual void proc7(int v1, int v2);
 	virtual int proc10() const;
 	virtual int proc15() const;

@@ -27,7 +27,7 @@
 
 namespace Titanic {
 
-int TTnpcScriptTag::size() const {
+int TTnpcScriptResponse::size() const {
 	for (int idx = 0; idx < 4; ++idx) {
 		if (_values[idx] == 0)
 			return idx;
@@ -63,6 +63,21 @@ TTnpcScript::TTnpcScript(int charId, const char *charClass, int v2,
 	resetFlags();
 }
 
+void TTnpcScript::load(const char *name) {
+	Common::SeekableReadStream *r = g_vm->_filesManager->getResource(name);
+
+	while (r->pos() < r->size()) {
+		TTnpcScriptResponse sr;
+		sr._tag = r->readUint32LE();
+		for (int idx = 0; idx < 4; ++idx)
+			sr._values[idx] = r->readUint32LE();
+		
+		_responses.push_back(sr);
+	}
+
+	delete r;
+}
+
 void TTnpcScript::resetFlags() {
 	Common::fill(&_array[20], &_array[140], 0);
 	_field2CC = false;
@@ -74,6 +89,22 @@ void TTnpcScript::randomizeFlags() {
 
 void TTnpcScript::proc4(int v) {
 	warning("TODO");
+}
+
+int TTnpcScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {
+	for (uint idx = 0; idx < _responses.size(); ++idx) {
+		const TTnpcScriptResponse &response = _responses[idx];
+
+		if (response._tag == tag) {
+			int valIndex = getRandomNumber(response.size()) - 1;
+			uint diagId = getDialogueId(response._values[valIndex]);
+			addResponse(diagId);
+			applyResponse();
+			return 2;
+		}
+	}
+
+	return 1;
 }
 
 void TTnpcScript::proc7(int v1, int v2) {

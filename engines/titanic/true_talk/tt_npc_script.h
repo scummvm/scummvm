@@ -31,7 +31,7 @@ namespace Titanic {
 class TTroomScript;
 class TTsentence;
 
-struct TTnpcScriptTag {
+struct TTnpcScriptResponse {
 	uint _tag;
 	uint _values[4];
 
@@ -52,7 +52,11 @@ public:
 		const char *charName, int v3, int val2, int v4,
 		int v5, int v6, int v7);
 
-	virtual int proc6(TTroomScript *roomScript, TTsentence *sentence, int val) const = 0;
+	/**
+	 * Chooses and adds a conversation response based on a specified tag Id.
+	 */
+	virtual int chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) = 0;
+
 	virtual void proc7(int v1, int v2) = 0;
 	virtual int proc8() const = 0;
 	virtual int proc9() const = 0;
@@ -70,6 +74,8 @@ public:
 
 class TTnpcScript : public TTnpcScriptBase {
 private:
+	Common::Array<TTnpcScriptResponse> _responses;
+private:
 	int translateByArray(int id);
 protected:
 	byte *_subPtr;
@@ -85,6 +91,14 @@ protected:
 	int _array[146];
 	bool _field2CC;
 protected:
+	/**
+	 * Loads response data for the NPC from the given resource
+	 */
+	void load(const char *name);
+
+	/**
+	 * Reset script flags
+	 */
 	void resetFlags();
 
 	void randomizeFlags();
@@ -111,7 +125,14 @@ public:
 		int v5, int v6, int v7);
 
 	virtual void proc4(int v);
-	virtual int proc6(TTroomScript *roomScript, TTsentence *sentence, int val) const { return 1; }
+
+	/**
+	 * Chooses and adds a conversation response based on a specified tag Id.
+	 * This default implementation does a lookup into a list of known tags,
+	 * and chooses a random dialogue Id from the available ones for that tag
+	 */
+	virtual int chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag);
+
 	virtual void proc7(int v1, int v2);
 	virtual int proc8() const;
 	virtual int proc9() const;

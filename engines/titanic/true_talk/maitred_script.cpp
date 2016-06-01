@@ -39,9 +39,9 @@ MaitreDScript::MaitreDScript(int val1, const char *charClass, int v2,
 	CTrueTalkManager::setFlags(16, 0);
 }
 
-int MaitreDScript::proc6(TTnpcScript *npcScript, TTsentence *sentence, uint tag) {
+int MaitreDScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {
 	warning("TODO");
-	return 2;
+	return SS_2;
 }
 
 void MaitreDScript::proc7(int v1, int v2) {

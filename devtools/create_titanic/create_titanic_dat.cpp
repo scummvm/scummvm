@@ -50,7 +50,7 @@
  */
 
 #define VERSION_NUMBER 1
-#define HEADER_SIZE 0x300
+#define HEADER_SIZE 0x340
 
 Common::File inputFile, outputFile;
 Common::PEResources res;

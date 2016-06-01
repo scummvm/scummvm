@@ -25,9 +25,9 @@
 
 namespace Titanic {
 
-int ParrotScript::proc6(TTnpcScript *npcScript, TTsentence *sentence, uint tag) {
+int ParrotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {
 	warning("TODO");
-	return 2;
+	return SS_2;
 }
 
 void ParrotScript::proc7(int v1, int v2) {

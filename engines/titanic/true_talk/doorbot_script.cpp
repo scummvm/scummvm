@@ -25,9 +25,9 @@
 
 namespace Titanic {
 
-int DoorbotScript::proc6(TTnpcScript *npcScript, TTsentence *sentence, uint tag) {
+int DoorbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {
 	warning("TODO");
-	return 2;
+	return SS_2;
 }
 
 void DoorbotScript::proc7(int v1, int v2) {

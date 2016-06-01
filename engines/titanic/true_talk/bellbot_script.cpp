@@ -38,11 +38,8 @@ BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
 	randomizeFlags();
 	_array[0] = 100;
 	_array[1] = 0;
-}
 
-int BellbotScript::proc6(TTnpcScript *npcScript, TTsentence *sentence, uint tag) {
-	warning("TODO");
-	return 2;
+	load("Responses/Bellbot");
 }
 
 void BellbotScript::proc7(int v1, int v2) {
