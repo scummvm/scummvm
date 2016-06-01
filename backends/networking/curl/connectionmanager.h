@@ -27,6 +27,7 @@
 #include "common/str.h"
 #include "common/singleton.h"
 #include "common/hashmap.h"
+#include "common/mutex.h"
 
 typedef void CURL;
 typedef void CURLM;
@@ -51,6 +52,7 @@ class ConnectionManager : public Common::Singleton<ConnectionManager> {
 	CURLM *_multi;	
 	bool _timerStarted;
 	Common::Array<RequestWithCallback> _requests;
+	Common::Mutex _handleMutex;
 	
 	void startTimer(int interval = 1000000); //1 second is the default interval
 	void stopTimer();

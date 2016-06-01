@@ -67,6 +67,9 @@
 
 #include "backends/keymapper/keymapper.h"
 #include "common/cloudmanager.h"
+#ifdef USE_LIBCURL
+#include "backends/networking/curl/connectionmanager.h"
+#endif
 
 #if defined(_WIN32_WCE)
 #include "backends/platform/wince/CELauncherDialog.h"
@@ -591,6 +594,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			launcherDialog();
 		}
 	}
+#ifdef USE_LIBCURL
+	Networking::ConnectionManager::destroy();
+#endif
 	PluginManager::instance().unloadAllPlugins();
 	PluginManager::destroy();
 	GUI::GuiManager::destroy();

@@ -43,6 +43,19 @@ ConnectionManager::ConnectionManager(): _multi(0), _timerStarted(false) {
 }
 
 ConnectionManager::~ConnectionManager() {
+	//terminate all requests
+	_handleMutex.lock();
+	for (Common::Array<RequestWithCallback>::iterator i = _requests.begin(); i != _requests.end(); ++i) {
+		Request *request = i->request;
+		RequestCallback callback = i->callback;
+		if (request) request->finish();
+		delete request;
+		if (callback) (*callback)(request);
+	}
+	_requests.clear();
+	_handleMutex.unlock();
+
+	//cleanup
 	curl_multi_cleanup(_multi);
 	curl_global_cleanup();
 }
@@ -80,10 +93,11 @@ void ConnectionManager::stopTimer() {
 }
 
 void ConnectionManager::handle() {
-	//TODO: lock mutex here (in case another handle() would be called before this one ends)
+	//lock mutex here (in case another handle() would be called before this one ends)
+	_handleMutex.lock();
 	interateRequests();
 	processTransfers();
-	//TODO: unlock mutex here
+	_handleMutex.unlock();
 }
 
 void ConnectionManager::interateRequests() {
