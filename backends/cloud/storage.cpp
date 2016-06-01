@@ -44,14 +44,18 @@ void Storage::printErrorResponse(Networking::ErrorResponse error) {
 }
 
 Networking::Request *Storage::addRequest(Networking::Request *request) {
+	_runningRequestsMutex.lock();
 	++_runningRequestsCount;
 	if (_runningRequestsCount == 1) debug("Storage is working now");
+	_runningRequestsMutex.unlock();
 	return ConnMan.addRequest(request, new Common::Callback<Storage, Networking::Request *>(this, &Storage::requestFinishedCallback));
 }
 
 void Storage::requestFinishedCallback(Networking::Request *invalidRequestPointer) {
+	_runningRequestsMutex.lock();
 	--_runningRequestsCount;
 	if (_runningRequestsCount == 0) debug("Storage is not working now");
+	_runningRequestsMutex.unlock();
 }
 
 Networking::Request *Storage::upload(Common::String remotePath, Common::String localPath, UploadCallback callback, Networking::ErrorCallback errorCallback) {
@@ -97,7 +101,10 @@ Networking::Request *Storage::syncSaves(BoolCallback callback, Networking::Error
 }
 
 bool Storage::isWorking() {
-	return _runningRequestsCount > 0;
+	_runningRequestsMutex.lock();
+	bool working = _runningRequestsCount > 0;
+	_runningRequestsMutex.unlock();
+	return working;
 }
 
 } // End of namespace Cloud

@@ -28,9 +28,10 @@
 #include "backends/networking/curl/request.h"
 #include "backends/networking/curl/curlrequest.h"
 #include "common/array.h"
+#include "common/callback.h"
+#include "common/mutex.h"
 #include "common/stream.h"
 #include "common/str.h"
-#include "common/callback.h"
 
 namespace Cloud {
 
@@ -51,6 +52,7 @@ public:
 protected:
 	/** Keeps track of running requests. */
 	uint32 _runningRequestsCount;
+	Common::Mutex _runningRequestsMutex;
 
 	/** Returns default error callback (printErrorResponse). */
 	virtual Networking::ErrorCallback getErrorPrintingCallback();
