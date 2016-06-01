@@ -108,6 +108,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opGameEnd();
 	case kInventoryOpen:
 		return opInventoryOpen(_arguments[1].intValue);
+	case kDoNothing:
+		return opDoNothing();
 	case kItem3DPlaceOn:
 		return opItem3DPlaceOn(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kItem3DWalkTo:
@@ -413,6 +415,10 @@ Command *Command::opGameEnd() {
 Command *Command::opInventoryOpen(bool open) {
 	StarkUserInterface->inventoryOpen(open);
 
+	return nextCommand();
+}
+
+Command *Command::opDoNothing() {
 	return nextCommand();
 }
 
