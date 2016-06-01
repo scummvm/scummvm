@@ -33,7 +33,6 @@
 #include "gui/EventRecorder.h"
 #include "common/taskbar.h"
 #include "common/textconsole.h"
-#include "backends/cloud/manager.h"
 
 #include "backends/saves/default/default-saves.h"
 
@@ -157,11 +156,6 @@ void OSystem_SDL::init() {
 #if defined(USE_TASKBAR)
 	if (_taskbarManager == 0)
 		_taskbarManager = new Common::TaskbarManager();
-#endif
-
-#if defined(USE_CLOUD)
-	if (_cloudManager == 0)
-		_cloudManager = new Cloud::Manager();
 #endif
 
 }

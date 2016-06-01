@@ -22,6 +22,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/cloud/onedrive/onedrivestorage.h"
+#include "backends/cloud/cloudmanager.h"
 #include "backends/cloud/onedrive/onedrivecreatedirectoryrequest.h"
 #include "backends/cloud/onedrive/onedrivetokenrefresher.h"
 #include "backends/cloud/onedrive/onedrivelistdirectoryrequest.h"
@@ -29,11 +30,9 @@
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
 #include "backends/networking/curl/networkreadstream.h"
-#include "common/cloudmanager.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/json.h"
-#include "common/system.h"
 #include <curl/curl.h>
 
 namespace Cloud {
@@ -104,7 +103,7 @@ void OneDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResp
 		_token = result.getVal("access_token")->asString();
 		_uid = result.getVal("user_id")->asString();
 		_refreshToken = result.getVal("refresh_token")->asString();
-		g_system->getCloudManager()->save(); //ask CloudManager to save our new refreshToken
+		CloudMan.save(); //ask CloudManager to save our new refreshToken
 		if (callback) (*callback)(BoolResponse(nullptr, true));
 	}
 	delete json;
@@ -116,10 +115,10 @@ void OneDriveStorage::codeFlowComplete(BoolResponse response) {
 		return;
 	}
 
-	g_system->getCloudManager()->addStorage(this);
+	CloudMan.addStorage(this);
 	ConfMan.removeKey("onedrive_code", "cloud");
 	debug("Done! You can use OneDrive now! Look:");
-	g_system->getCloudManager()->syncSaves();
+	CloudMan.syncSaves();
 }
 
 void OneDriveStorage::saveConfig(Common::String keyPrefix) {

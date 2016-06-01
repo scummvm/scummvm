@@ -20,29 +20,36 @@
 *
 */
 
-#ifndef COMMON_CLOUDMANAGER_H
-#define COMMON_CLOUDMANAGER_H
+#ifndef CLOUD_CLOUDMANAGER_H
+#define CLOUD_CLOUDMANAGER_H
 
 #include "backends/cloud/storage.h"
+#include "common/array.h"
+#include "common/singleton.h"
 
-namespace Common {
+namespace Cloud {
 
-class CloudManager {
+class CloudManager : public Common::Singleton<CloudManager> {
+	Common::Array<Cloud::Storage *> _storages;
+	uint _currentStorageIndex;	
+
+	void printBool(Cloud::Storage::BoolResponse response) const;
+
 public:
-	CloudManager() {}
-	virtual ~CloudManager() {}
+	CloudManager();
+	virtual ~CloudManager();
 
 	/**
 	 * Loads all information from configs and creates current Storage instance.
 	 *
 	 * @note It's called once on startup in scummvm_main().
 	 */
-	virtual void init() = 0;
+	void init();
 
 	/**
 	 * Saves all information into configuration file.
 	 */
-	virtual void save() = 0;
+	void save();
 
 	/**
 	 * Adds new Storage into list.	
@@ -51,7 +58,7 @@ public:
 	 * @param	makeCurrent whether added storage should be the new current storage.
 	 * @param	saveConfig whether save() should be called to update configuration file.
 	 */
-	virtual void addStorage(Cloud::Storage *storage, bool makeCurrent = true, bool saveConfig = true) = 0;
+	void addStorage(Cloud::Storage *storage, bool makeCurrent = true, bool saveConfig = true);
 
 	/**
 	 * Returns active Storage, which could be used to interact
@@ -59,19 +66,22 @@ public:
 	 *
 	 * @return	active Cloud::Storage or null, if there is no active Storage.
 	 */
-	virtual Cloud::Storage *getCurrentStorage() = 0;
+	Cloud::Storage *getCurrentStorage();
 
 	/**
 	 * Starts saves syncing process in currently active storage if there is any.
 	 */
-	virtual void syncSaves(Cloud::Storage::BoolCallback callback = nullptr, Networking::ErrorCallback errorCallback = nullptr) = 0;
+	void syncSaves(Cloud::Storage::BoolCallback callback = nullptr, Networking::ErrorCallback errorCallback = nullptr);
 
 	/**
 	 * Starts feature testing (the one I'm working on currently). (Temporary)
 	 */
-	virtual void testFeature() = 0;
+	void testFeature();
 };
 
-} // End of namespace Common
+/** Shortcut for accessing the connection manager. */
+#define CloudMan		Cloud::CloudManager::instance()
+
+} // End of namespace Cloud
 
 #endif

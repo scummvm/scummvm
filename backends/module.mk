@@ -21,8 +21,8 @@ MODULE_OBJS := \
 
 ifdef USE_CLOUD
 MODULE_OBJS += \
+	cloud/cloudmanager.o \
 	cloud/iso8601.o \
-	cloud/manager.o \
 	cloud/storage.o \
 	cloud/storagefile.o \
 	cloud/downloadrequest.o \

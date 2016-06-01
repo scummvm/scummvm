@@ -20,37 +20,33 @@
 *
 */
 
-#include "backends/cloud/manager.h"
+#include "backends/cloud/cloudmanager.h"
 #include "backends/cloud/dropbox/dropboxstorage.h"
 #include "backends/cloud/onedrive/onedrivestorage.h"
 #include "common/config-manager.h"
-#include "common/random.h"
 #include "common/debug.h"
+
+namespace Common {
+
+DECLARE_SINGLETON(Cloud::CloudManager);
+
+}
 
 namespace Cloud {
 
-Manager::Manager(): _currentStorageIndex(0), _deviceId(0) {}
+CloudManager::CloudManager() : _currentStorageIndex(0) {}
 
-Manager::~Manager() {
+CloudManager::~CloudManager() {
 	//TODO: do we have to save storages on manager destruction?	
 	for (uint32 i = 0; i < _storages.size(); ++i)
 		delete _storages[i];
-	_storages.clear();	
+	_storages.clear();
 }
 
-void Manager::init() {
+void CloudManager::init() {
 	bool offerDropbox = false;
 	bool offerOneDrive = true;
-
-	if (!ConfMan.hasKey("device_id", "cloud")) {
-		Common::RandomSource source("Cloud Random Source");
-		_deviceId = source.getRandomNumber(UINT_MAX - 1);
-		ConfMan.setInt("device_id", _deviceId, "cloud");
-		ConfMan.flushToDisk();
-	} else {
-		_deviceId = ConfMan.getInt("device_id", "cloud");
-	}
-
+	
 	if (ConfMan.hasKey("storages_number", "cloud")) {
 		int storages = ConfMan.getInt("storages_number", "cloud");
 		for (int i = 1; i <= storages; ++i) {
@@ -80,50 +76,47 @@ void Manager::init() {
 	} else {
 		offerDropbox = true;
 	}
-
 	if (offerDropbox) {
 		//this is temporary console offer to auth with Dropbox
 		Dropbox::DropboxStorage::authThroughConsole();
-	} else if(offerOneDrive) {
+	} else if (offerOneDrive) {
 		//OneDrive time
 		OneDrive::OneDriveStorage::authThroughConsole();
 	}
 }
 
-void Manager::save() {
+void CloudManager::save() {
 	ConfMan.set("storages_number", Common::String::format("%d", _storages.size()), "cloud");
 	ConfMan.set("current_storage", Common::String::format("%d", _currentStorageIndex + 1), "cloud");
 	for (uint32 i = 0; i < _storages.size(); ++i)
-		_storages[i]->saveConfig(Common::String::format("storage%d_", i+1));
+		_storages[i]->saveConfig(Common::String::format("storage%d_", i + 1));
 	ConfMan.flushToDisk();
 }
 
-void Manager::addStorage(Cloud::Storage *storage, bool makeCurrent, bool saveConfig) {
-	if (!storage) error("Cloud::Manager: NULL storage passed");
+void CloudManager::addStorage(Storage *storage, bool makeCurrent, bool saveConfig) {
+	if (!storage) error("Cloud::CloudManager: NULL storage passed");
 	_storages.push_back(storage);
 	if (makeCurrent) _currentStorageIndex = _storages.size() - 1;
 	if (saveConfig) save();
 }
 
-Storage *Manager::getCurrentStorage() {
+Storage *CloudManager::getCurrentStorage() {
 	if (_currentStorageIndex < _storages.size())
 		return _storages[_currentStorageIndex];
 	return nullptr;
 }
 
-void Manager::printBool(Storage::BoolResponse response) {
+void CloudManager::printBool(Storage::BoolResponse response) const {
 	debug("bool = %s", (response.value ? "true" : "false"));
 }
 
-void Manager::syncSaves(Storage::BoolCallback callback, Networking::ErrorCallback errorCallback) {
+void CloudManager::syncSaves(Storage::BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	Storage *storage = getCurrentStorage();
 	if (storage) storage->syncSaves(callback, errorCallback);
 }
 
-void Manager::testFeature() {
+void CloudManager::testFeature() {
 	Storage *storage = getCurrentStorage();
-	if (storage) storage->createDirectory("base/belong_to_us",
-		new Common::Callback<Manager, Storage::BoolResponse>(this, &Manager::printBool), nullptr);
 }
 
-} // End of namespace Cloud
+} // End of namespace Common
