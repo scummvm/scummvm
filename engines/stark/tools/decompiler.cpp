@@ -290,6 +290,18 @@ void Decompiler::buildASTFromBlock(ASTBlock *parent, Block *block, Block *stopBl
 		stopBlock = block;
 	}
 
+	{
+		bool alreadyVisited = Common::find(_visitedBlocks.begin(), _visitedBlocks.end(), block) != _visitedBlocks.end();
+		if (alreadyVisited && !block->allowDuplication()) {
+			// FIXME: We just return for now when an already visited block is visited again.
+			// Obviously, this leads to invalid decompiled code, which is caught by the verification step.
+			// To fix, either handle the cases leading to multiple visits, or generate gotos.
+			return;
+		}
+	}
+
+	_visitedBlocks.push_back(block);
+
 	Common::Array<CFGCommand *> commands = block->getLinearCommands();
 	for (uint i = 0; i < commands.size(); i++) {
 		parent->addNode(new ASTCommand(parent, commands[i]));
@@ -376,7 +388,7 @@ bool Decompiler::verifyCommandInAST(CFGCommand *cfgCommand) {
 		return false;
 	}
 
-	if (list.size() > 1) {
+	if (list.size() > 1 && !cfgCommand->getBlock()->allowDuplication()) {
 		_error = Common::String::format("Command %d found %d times in the AST", cfgCommand->getIndex(), list.size());
 		return false;
 	}

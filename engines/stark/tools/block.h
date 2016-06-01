@@ -87,6 +87,9 @@ public:
 	bool isInfiniteLoopStart() const;
 	void setInfiniteLoopStart(bool infiniteLoopStart);
 
+	/** Can this block appear multiple times in the decompiled output? */
+	bool allowDuplication() const;
+
 	// Graph query methods
 	bool hasPredecessor(Block *predecessor) const;
 	bool hasSuccessor(Block *successor) const;

@@ -307,6 +307,14 @@ CFGCommand *Block::getConditionCommand() const {
 	}
 }
 
+bool Block::allowDuplication() const {
+	// Allow simple termination blocks to be duplicated in the decompiled output
+	bool isScriptEnd = !_follower && !_trueBranch && !_falseBranch;
+	bool isShort = _commands.size() < 5;
+
+	return isScriptEnd && isShort;
+}
+
 ControlStructure::ControlStructure(ControlStructureType t) :
 		type(t),
 		condition(nullptr),

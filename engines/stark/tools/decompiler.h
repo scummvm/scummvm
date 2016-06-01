@@ -92,6 +92,7 @@ private:
 
 	ASTNode *_astHead;
 	Common::Array<Block *> _visitedInfiniteLoopStarts;
+	Common::Array<Block *> _visitedBlocks;
 };
 
 } // End of namespace Tools
