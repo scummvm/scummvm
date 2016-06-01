@@ -50,6 +50,10 @@ Score::Score(Archive &movie) {
 	if (_movieArchive->hasResource(MKTAG('V','W','L','B'), 1024)) {
 		loadLabels(*_movieArchive->getResource(MKTAG('V','W','L','B'), 1024));
 	}
+
+	if (_movieArchive->hasResource(MKTAG('V','W','A','C'), 1024)) {
+		loadActions(*_movieArchive->getResource(MKTAG('V','W','A','C'), 1024));
+	}
 }
 
 void Score::loadFrames(Common::SeekableReadStream &stream) {
@@ -163,6 +167,39 @@ void Score::loadLabels(Common::SeekableReadStream &stream) {
 	Common::HashMap<uint16, Common::String>::iterator j;
 	for (j = _labels.begin(); j != _labels.end(); ++j) {
 		debug("Frame %d, Label %s", j->_key, j->_value.c_str());
+	}
+}
+
+void Score::loadActions(Common::SeekableReadStream &stream) {
+	uint16 count = stream.readUint16BE() + 1;
+	uint16 offset = count * 4 + 2;
+
+	byte id = stream.readByte();
+	/*byte subId = */ stream.readByte(); //I couldn't find how it used in continuity (except print). Frame actionId = 1 byte.
+	uint16 stringPos = stream.readUint16BE() + offset;
+
+	for (uint16 i = 0; i < count; i++) {
+
+		uint16 nextId = stream.readByte();
+		/*byte subId = */ stream.readByte();
+		uint16 nextStringPos = stream.readUint16BE() + offset;
+		uint16 streamPos = stream.pos();
+
+		stream.seek(stringPos);
+
+		for (uint16 j = stringPos; j < nextStringPos; j++) {
+			_actions[id] += stream.readByte();
+		}
+
+		stream.seek(streamPos);
+
+		id = nextId;
+		stringPos = nextStringPos;
+	}
+
+	Common::HashMap<uint16, Common::String>::iterator j;
+	for (j = _actions.begin(); j != _actions.end(); ++j) {
+		debug("Id %d, Script %s", j->_key, j->_value.c_str());
 	}
 }
 

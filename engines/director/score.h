@@ -197,10 +197,13 @@ private:
     void loadCastData(Common::SeekableReadStream &stream);
     void loadFrames(Common::SeekableReadStream &stream);
     void loadLabels(Common::SeekableReadStream &stream);
+    void loadActions(Common::SeekableReadStream &stream);
+
 public:
     Common::Array<Frame *> _frames;
     Common::HashMap<int, Cast *> _casts;
     Common::HashMap<uint16, Common::String> _labels;
+    Common::HashMap<uint16, Common::String> _actions;
 
 private:
     uint16 _versionMinor;
