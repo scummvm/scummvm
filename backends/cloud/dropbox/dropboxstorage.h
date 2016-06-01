@@ -82,9 +82,6 @@ public:
 	/** Calls the callback when finished. */
 	virtual Networking::Request *createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback);
 
-	/** Calls the callback when finished. */
-	virtual Networking::Request *touch(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) { return nullptr; } //TODO
-
 	/** Returns the StorageInfo struct. */
 	virtual Networking::Request *info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback);
 
@@ -93,9 +90,6 @@ public:
 
 	/** Returns storage's saves directory path with the trailing slash. */
 	virtual Common::String savesDirectoryPath();
-
-	/** Returns whether saves sync process is running. */
-	virtual bool isSyncing() { return false; } //TODO
 
 	/** Returns whether there are any requests running. */
 	virtual bool isWorking() { return false; } //TODO
