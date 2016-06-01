@@ -46,6 +46,10 @@ Score::Score(Archive &movie) {
 	loadFrames(*_movieArchive->getResource(MKTAG('V','W','S','C'), 1024));
 	loadConfig(*_movieArchive->getResource(MKTAG('V','W','C','F'), 1024));
 	loadCastData(*_movieArchive->getResource(MKTAG('V','W','C','R'), 1024));
+
+	if (_movieArchive->hasResource(MKTAG('V','W','L','B'), 1024)) {
+		loadLabels(*_movieArchive->getResource(MKTAG('V','W','L','B'), 1024));
+	}
 }
 
 void Score::loadFrames(Common::SeekableReadStream &stream) {
@@ -128,6 +132,37 @@ void Score::loadCastData(Common::SeekableReadStream &stream) {
 			if (_casts.contains(castId))
 				_frames[i]->_sprites[j]->_cast = _casts.find(castId)->_value;
 		}
+	}
+}
+
+void Score::loadLabels(Common::SeekableReadStream &stream) {
+	uint16 count = stream.readUint16BE() + 1;
+	uint16 offset = count * 4 + 2;
+
+	uint16 frame = stream.readUint16BE();
+	uint16 stringPos = stream.readUint16BE() + offset;
+
+	for (uint16 i = 0; i < count; i++) {
+
+		uint16 nextFrame = stream.readUint16BE();
+		uint16 nextStringPos = stream.readUint16BE() + offset;
+		uint16 streamPos = stream.pos();
+
+		stream.seek(stringPos);
+
+		for (uint16 j = stringPos; j < nextStringPos; j++) {
+			_labels[frame] += stream.readByte();
+		}
+
+		stream.seek(streamPos);
+
+		frame = nextFrame;
+		stringPos = nextStringPos;
+	}
+
+	Common::HashMap<uint16, Common::String>::iterator j;
+	for (j = _labels.begin(); j != _labels.end(); ++j) {
+		debug("Frame %d, Label %s", j->_key, j->_value.c_str());
 	}
 }
 

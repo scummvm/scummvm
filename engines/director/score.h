@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "director/resource.h"
 #include "graphics/managed_surface.h"
+#include "common/str.h"
 
 namespace Director {
 
@@ -195,9 +196,11 @@ private:
     void loadConfig(Common::SeekableReadStream &stream);
     void loadCastData(Common::SeekableReadStream &stream);
     void loadFrames(Common::SeekableReadStream &stream);
+    void loadLabels(Common::SeekableReadStream &stream);
 public:
     Common::Array<Frame *> _frames;
     Common::HashMap<int, Cast *> _casts;
+    Common::HashMap<uint16, Common::String> _labels;
 
 private:
     uint16 _versionMinor;
