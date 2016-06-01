@@ -381,11 +381,11 @@ void Frame::readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16
 			fieldPosition += 2;
 			break;
 		case kSpritePositionWidth:
-			sprite._width = stream.readUint16BE();
+			sprite._height = stream.readUint16BE();
 			fieldPosition += 2;
 			break;
 		case kSpritePositionHeight:
-			sprite._height = stream.readUint16BE();
+			sprite._width = stream.readUint16BE();
 			fieldPosition += 2;
 			break;
 		default:
@@ -434,10 +434,70 @@ void Frame::display(Archive &_movie, Graphics::ManagedSurface &surface, Common::
 				height += y;
 				y = 0;
 			}
-			surface.blitFrom(*img.getSurface(), Common::Point(x, y));
+
+			Common::Rect drawRect = Common::Rect(x, y, x + width, y + height);
+
+			switch(_sprites[i]->_ink) {
+			case kInkTypeCopy:
+				surface.blitFrom(*img.getSurface(), Common::Point(x, y));
+				break;
+			case kInkTypeBackgndTrans:
+				drawBackgndTransSprite(surface, *img.getSurface(), drawRect);
+				break;
+			case kInkTypeMatte:
+				drawMatteSprite(surface, *img.getSurface(), drawRect);
+				break;
+			default:
+				warning("Unhandled ink type %d", _sprites[i]->_ink);
+				surface.blitFrom(*img.getSurface(), Common::Point(x, y));
+				break;
+			}
 		}
 	}
 	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, surface.getBounds().width(), surface.getBounds().height());
+}
+
+void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
+	uint8 skipColor = 15; //FIXME is it always white (last entry in pallette) ?
+	for (int ii = 0; ii < sprite.h; ii++) {
+		const byte *src = (const byte *)sprite.getBasePtr(0, ii);
+		byte *dst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + ii);
+		for (int j = 0; j < drawRect.width(); j++) {
+			if (*src != skipColor)
+				*dst = *src;
+			src++;
+			dst++;
+		}
+	}
+}
+
+void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
+	//Like background trans, but all white pixels NOT ENCLOSED by coloured pixels are transparent
+	uint8 skipColor = 15;
+	for (int ii = 0; ii < sprite.h; ii++) {
+		const byte *leftSrc = (const byte *)sprite.getBasePtr(0, ii);
+		byte *leftDst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + ii);
+		bool skip = true;
+		for (int j = 0; j < drawRect.width() / 2; j++) {
+			if ((*leftSrc != skipColor) || !skip) {
+				*leftDst = *leftSrc;
+				skip = false;
+			}
+			leftSrc++;
+			leftDst++;
+		}
+		skip = true;
+		const byte *rightSrc = (const byte *)sprite.getBasePtr(sprite.w - 1, ii);
+		byte *rightDst = (byte *)target.getBasePtr(drawRect.right - 1, drawRect.top + ii);
+		for (int j = 0; j <= drawRect.width() / 2; j++) {
+			if ((*rightSrc != skipColor) || !skip) {
+				*rightDst = *rightSrc;
+				skip = false;
+			}
+			rightSrc--;
+			rightDst--;
+		}
+	}
 }
 
 Sprite::Sprite() { 

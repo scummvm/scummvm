@@ -163,7 +163,8 @@ public:
 private:
     void readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
     void readMainChannels(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
-
+    void drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
+    void drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
 public:
     uint8 _actionId;
     uint8 _transFlags;
