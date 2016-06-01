@@ -25,16 +25,44 @@
 
 namespace Titanic {
 
+static const int STATE_ARRAY[7] = {
+	0x78BE, 0x78C0, 0x78C1, 0x78C2, 0x78C3, 0x78C4, 0x78C5
+};
+
 LiftbotScript::LiftbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
+	_state = 0;
 	load("Responses/Liftbot");
 }
 
-
 int LiftbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {
-	warning("TODO");
-	return SS_2;
+	switch (tag) {
+	case MKTAG('D', 'N', 'A', '1'):
+	case MKTAG('H', 'H', 'G', 'Q'):
+	case MKTAG('A', 'N', 'S', 'W'):
+		if (_state >= 7) {
+			proc14(30918);
+			set34(2);
+			_state = 0;
+		} else {
+			addResponse(STATE_ARRAY[_state++]);
+		}
+
+		applyResponse();
+		return 2;
+
+	case MKTAG('O', 'R', 'D', '8'):
+		addResponse(30475);
+		addResponse(30467);
+		addResponse(30466);
+		addResponse(30474);
+		applyResponse();
+		return SS_2;
+
+	default:
+		return TTnpcScript::chooseResponse(roomScript, sentence, tag);
+	}
 }
 
 void LiftbotScript::proc7(int v1, int v2) {

@@ -26,8 +26,36 @@
 namespace Titanic {
 
 int SuccUBusScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {
-	warning("TODO");
-	return SS_2;
+	uint dialogueId = tag;
+
+	switch (tag) {
+	case MKTAG('S', 'L', 'O', 'W'):
+	case MKTAG('T', 'H', 'R', 'T'):
+		dialogueId = 70021;
+
+	case MKTAG('S', 'U', 'C', '1'):
+		dialogueId = getDialogueId(230009);
+		break;
+
+	case MKTAG('S', 'U', 'C', '2'):
+		dialogueId = 70117;
+		break;
+
+	case MKTAG('S', 'W', 'E', 'R'):
+		dialogueId = getRandomNumber(100) > 40 ? 70103 : getDialogueId(230030);
+		break;
+
+	default:
+		break;
+	}
+
+	if (dialogueId) {
+		addResponse(dialogueId);
+		applyResponse();
+		return 2;
+	} else {
+		return 1;
+	}
 }
 
 void SuccUBusScript::proc7(int v1, int v2) {

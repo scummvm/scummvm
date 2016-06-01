@@ -71,6 +71,8 @@ protected:
 	void appendResponse2(int val1, int *val2, const TTstring &str) {
 		appendResponse(val1, val2, str);
 	}
+
+	void set34(int val) { _field34 = val; }
 public:
 	int _id;
 public:

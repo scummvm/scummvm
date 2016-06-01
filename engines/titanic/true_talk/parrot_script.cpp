@@ -26,8 +26,13 @@
 namespace Titanic {
 
 int ParrotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {
-	warning("TODO");
-	return SS_2;
+	if (tag == MKTAG('B', 'Y', 'Z', 'A')) {
+		addResponse(getDialogueId(280246));
+		applyResponse();
+		return 2;
+	} else {
+		return 1;
+	}
 }
 
 void ParrotScript::proc7(int v1, int v2) {

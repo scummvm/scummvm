@@ -42,8 +42,15 @@ MaitreDScript::MaitreDScript(int val1, const char *charClass, int v2,
 }
 
 int MaitreDScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {
-	warning("TODO");
-	return SS_2;
+	if (tag == MKTAG('F', 'O', 'O', 'D') || tag == MKTAG('F', 'I', 'S', 'H') ||
+			tag == MKTAG('C', 'H', 'S', 'E')) {
+		addResponse(getDialogueId(260388));
+		addResponse(getDialogueId(260659));
+		applyResponse();
+		return 2;
+	}
+
+	return TTnpcScript::chooseResponse(roomScript, sentence, tag);
 }
 
 void MaitreDScript::proc7(int v1, int v2) {
