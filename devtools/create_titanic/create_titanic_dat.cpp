@@ -353,7 +353,7 @@ void writeData() {
 	writeStringArray("TEXT/PRONOUNS", 0x22F718, 15);
 
 	writeNumbers();
-	writeAllScriptTags();
+	writeAllScriptResponses();
 }
 
 // Support method used for translating IDA debugger's output for
@@ -365,7 +365,7 @@ void createScriptResponses() {
 	char c[2];
 	c[0] = c[1] = '\0';
 
-	inFile.open("d:\\temp\\bellbot.txt");
+	inFile.open("d:\\temp\\deskbot.txt");
 	printf("static const int xxxx_RESPONSES[][5] = {\n");
 
 	do {
@@ -396,8 +396,6 @@ void createScriptResponses() {
 }
 
 int main(int argc, char *argv[]) {
-	createScriptResponses();
-
 	if (argc != 3) {
 		printf("Format: %s ST.exe titanic.dat\n", argv[0]);
 		exit(0);
