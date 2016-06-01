@@ -28,6 +28,7 @@
 namespace Stark {
 
 namespace Resources {
+class Object;
 class Script;
 }
 
@@ -46,6 +47,7 @@ private:
 	bool Cmd_DumpLocation(int argc, const char **argv);
 	bool Cmd_ForceScript(int argc, const char **argv);
 	bool Cmd_DecompileScript(int argc, const char **argv);
+	bool Cmd_TestDecompiler(int argc, const char** argv);
 	bool Cmd_ListInventory(int argc, const char **argv);
 	bool Cmd_EnableInventoryItem(int argc, const char **argv);
 	bool Cmd_ListLocations(int argc, const char** argv);
@@ -59,6 +61,10 @@ private:
 	bool Cmd_SelectDialogOption(int argc, const char **argv);
 
 	Common::Array<Resources::Script *> listAllLocationScripts() const;
+	void decompileScriptChildren(Stark::Resources::Object *level);
+
+	int _testDecompilerTotalScripts;
+	int _testDecompilerOKScripts;
 };
 
 } // End of namespace Stark

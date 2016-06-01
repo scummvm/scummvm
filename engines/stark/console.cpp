@@ -41,7 +41,10 @@
 
 namespace Stark {
 
-Console::Console() : GUI::Debugger() {
+Console::Console() :
+		GUI::Debugger(),
+		_testDecompilerTotalScripts(0),
+		_testDecompilerOKScripts(0) {
 	registerCmd("dumpArchive",          WRAP_METHOD(Console, Cmd_DumpArchive));
 	registerCmd("dumpRoot",             WRAP_METHOD(Console, Cmd_DumpRoot));
 	registerCmd("dumpStatic",           WRAP_METHOD(Console, Cmd_DumpStatic));
@@ -53,6 +56,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("enableScript",         WRAP_METHOD(Console, Cmd_EnableScript));
 	registerCmd("forceScript",          WRAP_METHOD(Console, Cmd_ForceScript));
 	registerCmd("decompileScript",      WRAP_METHOD(Console, Cmd_DecompileScript));
+	registerCmd("testDecompiler",       WRAP_METHOD(Console, Cmd_TestDecompiler));
 	registerCmd("listInventory",        WRAP_METHOD(Console, Cmd_ListInventory));
 	registerCmd("listLocations",        WRAP_METHOD(Console, Cmd_ListLocations));
 	registerCmd("location",             WRAP_METHOD(Console, Cmd_Location));
@@ -306,6 +310,93 @@ bool Console::Cmd_DecompileScript(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::Cmd_TestDecompiler(int argc, const char **argv) {
+	_testDecompilerTotalScripts = 0;
+	_testDecompilerOKScripts = 0;
+
+	ArchiveLoader *archiveLoader = new ArchiveLoader();
+
+	// Temporarily replace the global archive loader with our instance
+	ArchiveLoader *gameArchiveLoader = StarkArchiveLoader;
+	StarkArchiveLoader = archiveLoader;
+
+	archiveLoader->load("x.xarc");
+	Resources::Root *root = archiveLoader->useRoot<Resources::Root>("x.xarc");
+
+	// Find all the levels
+	Common::Array<Resources::Level *> levels = root->listChildren<Resources::Level>();
+
+	// Loop over the levels
+	for (uint i = 0; i < levels.size(); i++) {
+		Resources::Level *level = levels[i];
+
+		Common::String levelArchive = archiveLoader->buildArchiveName(level);
+		debug("%s - %s", levelArchive.c_str(), level->getName().c_str());
+
+		// Load the detailed level archive
+		archiveLoader->load(levelArchive);
+		level = archiveLoader->useRoot<Resources::Level>(levelArchive);
+
+		// Decompile all the scripts in the level archive
+		decompileScriptChildren(level);
+
+		Common::Array<Resources::Location *> locations = level->listChildren<Resources::Location>();
+
+		// Loop over the locations
+		for (uint j = 0; j < locations.size(); j++) {
+			Resources::Location *location = locations[j];
+
+			Common::String locationArchive = archiveLoader->buildArchiveName(level, location);
+			debug("%s - %s", locationArchive.c_str(), location->getName().c_str());
+
+			// Load the detailed location archive
+			archiveLoader->load(locationArchive);
+			location = archiveLoader->useRoot<Resources::Location>(locationArchive);
+
+			// Decompile all the scripts in the location archive
+			decompileScriptChildren(location);
+
+			archiveLoader->returnRoot(locationArchive);
+			archiveLoader->unloadUnused();
+		}
+
+		archiveLoader->returnRoot(levelArchive);
+		archiveLoader->unloadUnused();
+	}
+
+	// Restore the global archive loader
+	StarkArchiveLoader = gameArchiveLoader;
+
+	delete archiveLoader;
+
+	debugPrintf("Successfully decompiled %d scripts out of %d\n", _testDecompilerOKScripts, _testDecompilerTotalScripts);
+
+	return true;
+}
+
+void Console::decompileScriptChildren(Resources::Object *level) {
+	Common::Array<Resources::Script *> scripts = level->listChildrenRecursive<Resources::Script>();
+
+	for (uint j = 0; j < scripts.size(); j++) {
+		Resources::Script *script = scripts[j];
+
+		Tools::Decompiler *decompiler = new Tools::Decompiler(script);
+		_testDecompilerTotalScripts++;
+
+		Common::String result;
+		if (decompiler->getError() == "") {
+			result = "OK";
+			_testDecompilerOKScripts++;
+		} else {
+			result = decompiler->getError();
+		}
+
+		debug("%d - %s: %s", script->getIndex(), script->getName().c_str(), result.c_str());
+
+		delete decompiler;
+	}
+}
+
 bool Console::Cmd_DumpLocation(int argc, const char **argv) {
 	StarkGlobal->getCurrent()->getLocation()->print();
 
@@ -328,7 +419,6 @@ bool Console::Cmd_EnableInventoryItem(int argc, const char **argv) {
 	StarkGlobal->enableInventoryItem(atoi(argv[1]));
 	return true;
 }
-
 
 bool Console::Cmd_ListLocations(int argc, const char **argv) {
 	ArchiveLoader *archiveLoader = new ArchiveLoader();
