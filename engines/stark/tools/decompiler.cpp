@@ -34,7 +34,8 @@ namespace Tools {
 
 Decompiler::Decompiler(Resources::Script *script) :
 		_entryPoint(nullptr),
-		_astHead(nullptr) {
+		_astHead(nullptr),
+		_definitionRegistry(nullptr) {
 	// Convert the script commands to decompiler commands
 	Common::Array<Resources::Command *> resourceCommands = script->listChildren<Resources::Command>();
 	for (uint i = 0; i < resourceCommands.size(); i++) {
@@ -52,6 +53,8 @@ Decompiler::Decompiler(Resources::Script *script) :
 	linkCommandBranches();
 	buildBlocks();
 	analyseControlFlow();
+
+	_definitionRegistry = new DefinitionRegistry();
 	_astHead = buildAST();
 	verifyAST();
 }
@@ -69,6 +72,14 @@ void Decompiler::printBlocks() const {
 	}
 }
 
+void Decompiler::printDecompiled() {
+	if (_astHead) {
+		_definitionRegistry->printAll();
+		debug(" "); // Empty line
+		_astHead->print(0, _definitionRegistry);
+	}
+}
+
 Decompiler::~Decompiler() {
 	for (uint i = 0; i < _commands.size(); i++) {
 		delete _commands[i];
@@ -83,6 +94,7 @@ Decompiler::~Decompiler() {
 	}
 
 	delete _astHead;
+	delete _definitionRegistry;
 }
 
 void Decompiler::linkCommandBranches() {
@@ -304,7 +316,7 @@ void Decompiler::buildASTFromBlock(ASTBlock *parent, Block *block, Block *stopBl
 
 	Common::Array<CFGCommand *> commands = block->getLinearCommands();
 	for (uint i = 0; i < commands.size(); i++) {
-		parent->addNode(new ASTCommand(parent, commands[i]));
+		parent->addNode(new ASTCommand(parent, commands[i], _definitionRegistry));
 	}
 
 	if (block->hasControlStructure()) {
@@ -338,7 +350,7 @@ ASTCondition *Decompiler::buildASTConditionFromBlock(ASTNode *parent, Block *blo
 	ControlStructure *controlStructure = block->getControlStructure();
 
 	ASTCondition *condition = new ASTCondition(parent);
-	condition->condition = new ASTCommand(condition, block->getConditionCommand());
+	condition->condition = new ASTCommand(condition, block->getConditionCommand(), _definitionRegistry);
 	condition->invertedCondition = controlStructure->invertedCondition;
 
 	condition->thenBlock = new ASTBlock(condition);
@@ -356,19 +368,13 @@ ASTLoop *Decompiler::buildASTLoopFromBlock(ASTNode *parent, Block *block) {
 	ControlStructure *controlStructure = block->getControlStructure();
 
 	ASTLoop *loop = new ASTLoop(parent);
-	loop->condition = new ASTCommand(loop, block->getConditionCommand());
+	loop->condition = new ASTCommand(loop, block->getConditionCommand(), _definitionRegistry);
 	loop->invertedCondition = controlStructure->invertedCondition;
 
 	loop->loopBlock = new ASTBlock(loop);
 	buildASTFromBlock(loop->loopBlock, controlStructure->loopHead, block);
 
 	return loop;
-}
-
-void Decompiler::printDecompiled() {
-	if (_astHead) {
-		_astHead->print(0);
-	}
 }
 
 void Decompiler::verifyAST() {

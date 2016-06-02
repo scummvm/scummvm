@@ -292,6 +292,7 @@ bool Console::Cmd_DecompileScript(int argc, const char **argv) {
 				debugPrintf("Decompilation failure: %s\n", decompiler->getError().c_str());
 			}
 
+			debug("Script %d - %s:", index, script->getName().c_str());
 			decompiler->printDecompiled();
 
 			delete decompiler;

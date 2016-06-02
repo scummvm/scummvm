@@ -64,9 +64,9 @@ void ASTBlock::addNode(ASTNode *node) {
 	_children.push_back(node);
 }
 
-void ASTBlock::print(uint depth) {
+void ASTBlock::print(uint depth, DefinitionRegistry *definitions) {
 	for (uint i = 0; i < _children.size(); i++) {
-		_children[i]->print(depth);
+		_children[i]->print(depth, definitions);
 	}
 }
 
@@ -113,18 +113,24 @@ const ASTCommand *ASTBlock::getFirstCommand() const {
 	}
 }
 
-ASTCommand::ASTCommand(ASTNode *parent, Command *command) :
+ASTCommand::ASTCommand(ASTNode *parent, Command *command, DefinitionRegistry *definitions) :
 		ASTNode(parent),
 		Command(command) {
 	_arguments = command->getEffectiveArguments();
+
+	for (uint i = 0; i < _arguments.size(); i++) {
+		if (_arguments[i].type == Resources::Command::Argument::kTypeResourceReference) {
+			definitions->registerReference(_arguments[i].referenceValue);
+		}
+	}
 }
 
-void ASTCommand::print(uint depth) {
-	printWithDepth(depth, callString());
+void ASTCommand::print(uint depth, DefinitionRegistry *definitions) {
+	printWithDepth(depth, callString(definitions));
 }
 
-Common::String ASTCommand::callString() {
-	return Common::String::format("%s(%s)", _subTypeDesc->name, describeArguments().c_str());
+Common::String ASTCommand::callString(DefinitionRegistry *definitions) {
+	return Common::String::format("%s(%s)", _subTypeDesc->name, describeArguments(definitions).c_str());
 }
 
 Common::Array<const ASTCommand *> ASTCommand::listCommands(uint16 index) const {
@@ -162,15 +168,16 @@ ASTCondition::~ASTCondition() {
 	delete elseBlock;
 }
 
-void ASTCondition::print(uint depth) {
-	Common::String ifHeader = Common::String::format("if (%s%s) {", invertedCondition ? "!" : "", condition->callString().c_str());
+void ASTCondition::print(uint depth, DefinitionRegistry *definitions) {
+	Common::String ifHeader = Common::String::format("if (%s%s) {", invertedCondition ? "!" : "",
+	                                                 condition->callString(definitions).c_str());
 	printWithDepth(depth, ifHeader);
 
-	thenBlock->print(depth + 1);
+	thenBlock->print(depth + 1, definitions);
 
 	if (elseBlock) {
 		printWithDepth(depth, "} else {");
-		elseBlock->print(depth + 1);
+		elseBlock->print(depth + 1, definitions);
 	}
 	printWithDepth(depth, "}");
 }
@@ -240,17 +247,17 @@ ASTLoop::~ASTLoop() {
 	delete loopBlock;
 }
 
-void ASTLoop::print(uint depth) {
+void ASTLoop::print(uint depth, DefinitionRegistry *definitions) {
 	Common::String loopHeader;
 	if (condition) {
 		loopHeader = Common::String::format("while (%s%s) {", invertedCondition ? "!" : "",
-		                         condition->callString().c_str());
+		                                    condition->callString(definitions).c_str());
 	} else {
 		loopHeader = "loop {";
 	}
 	printWithDepth(depth, loopHeader);
 
-	loopBlock->print(depth + 1);
+	loopBlock->print(depth + 1, definitions);
 
 	printWithDepth(depth, "}");
 }

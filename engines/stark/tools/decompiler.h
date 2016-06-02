@@ -37,6 +37,7 @@ namespace Tools {
 
 class Block;
 class CFGCommand;
+class DefinitionRegistry;
 struct ControlStructure;
 struct ASTBlock;
 struct ASTNode;
@@ -93,6 +94,8 @@ private:
 	ASTNode *_astHead;
 	Common::Array<Block *> _visitedInfiniteLoopStarts;
 	Common::Array<Block *> _visitedBlocks;
+
+	DefinitionRegistry *_definitionRegistry;
 };
 
 } // End of namespace Tools

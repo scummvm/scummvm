@@ -42,7 +42,7 @@ struct ASTNode {
 	virtual ~ASTNode();
 
 	/** Print the script source code for this node and its children */
-	virtual void print(uint depth) = 0;
+	virtual void print(uint depth, DefinitionRegistry *definitions) = 0;
 
 	/** Recursively list all the commands in the tree with the requested index */
 	virtual Common::Array<const ASTCommand *> listCommands(uint16 index) const = 0;
@@ -66,16 +66,16 @@ protected:
  * Commands are leaf AST nodes. They represent an engine command call.
  */
 struct ASTCommand : public ASTNode, public Command {
-	ASTCommand(ASTNode *parent, Command *command);
+	ASTCommand(ASTNode *parent, Command *command, DefinitionRegistry *definitions);
 
 	// ASTNode API
-	void print(uint depth) override;
+	void print(uint depth, DefinitionRegistry *definitions) override;
 	Common::Array<const ASTCommand *> listCommands(uint16 index) const override;
 	void findSuccessorsIntern(const ASTNode *node, ASTNode **follower, ASTNode **trueBranch, ASTNode **falseBranch) const override;
 	const ASTCommand *getFirstCommand() const override;
 
 	/** Build a script source code call for this command */
-	Common::String callString();
+	Common::String callString(DefinitionRegistry *definitions);
 };
 
 /**
@@ -88,7 +88,7 @@ struct ASTBlock : public ASTNode {
 	~ASTBlock() override;
 
 	// ASTNode API
-	void print(uint depth) override;
+	void print(uint depth, DefinitionRegistry *definitions) override;
 	Common::Array<const ASTCommand *> listCommands(uint16 index) const override;
 	void findSuccessorsIntern(const ASTNode *node, ASTNode **follower, ASTNode **trueBranch, ASTNode **falseBranch) const override;
 	const ASTCommand *getFirstCommand() const override;
@@ -110,7 +110,7 @@ struct ASTCondition : public ASTNode {
 	~ASTCondition() override;
 
 	// ASTNode API
-	void print(uint depth) override;
+	void print(uint depth, DefinitionRegistry *definitions) override;
 	Common::Array<const ASTCommand *> listCommands(uint16 index) const override;
 	void findSuccessorsIntern(const ASTNode *node, ASTNode **follower, ASTNode **trueBranch, ASTNode **falseBranch) const override;
 	const ASTCommand *getFirstCommand() const override;
@@ -131,7 +131,7 @@ struct ASTLoop : public ASTNode {
 	~ASTLoop() override;
 
 	// ASTNode API
-	void print(uint depth) override;
+	void print(uint depth, DefinitionRegistry *definitions) override;
 	Common::Array<const ASTCommand *> listCommands(uint16 index) const override;
 	void findSuccessorsIntern(const ASTNode *node, ASTNode **follower, ASTNode **trueBranch, ASTNode **falseBranch) const override;
 	const ASTCommand *getFirstCommand() const override;

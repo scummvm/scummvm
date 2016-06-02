@@ -24,13 +24,16 @@
 #define STARK_TOOLS_COMMAND_H
 
 #include "common/array.h"
+#include "common/hashmap.h"
 
+#include "engines/stark/hash-ptr.h"
 #include "engines/stark/resources/command.h"
 
 namespace Stark {
 namespace Tools {
 
 class Block;
+class DefinitionRegistry;
 
 /**
  * A base script command for disassembly use
@@ -75,7 +78,7 @@ protected:
 	static const SubTypeDesc *searchSubTypeDesc(Resources::Command::SubType subType);
 
 	/** List the arguments values as a coma separated string */
-	Common::String describeArguments() const;
+	Common::String describeArguments(DefinitionRegistry *definitions) const;
 
 	uint16 _index;
 	Resources::Command::SubType _subType;
@@ -143,6 +146,32 @@ protected:
 	Common::Array<CFGCommand *> _predecessors;
 
 	Block *_block;
+};
+
+/**
+ * Storage for aliases between world resources and names
+ */
+class DefinitionRegistry {
+public:
+	/**
+	 * Add a definition from a reference
+	 *
+	 * The name is computed from the object's name
+	 */
+	void registerReference(const ResourceReference &reference);
+
+	/** Get a previously registered definition from a reference */
+	Common::String getFromReference(const ResourceReference &reference) const;
+
+	/** Print all the registered definitions */
+	void printAll() const;
+
+private:
+	typedef Common::HashMap<Resources::Object *, Common::String> DefinitionMap;
+
+	Common::String stringToCamelCase(const Common::String &input);
+
+	DefinitionMap _definitions;
 };
 
 } // End of namespace Tools

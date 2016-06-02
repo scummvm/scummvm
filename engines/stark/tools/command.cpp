@@ -20,6 +20,7 @@
  *
  */
 
+#include <common/tokenizer.h>
 #include "engines/stark/tools/command.h"
 
 #include "common/debug.h"
@@ -157,7 +158,7 @@ Command::ArgumentArray Command::getEffectiveArguments() const {
 	return  effectiveArguments;
 }
 
-Common::String Command::describeArguments() const {
+Common::String Command::describeArguments(DefinitionRegistry *definitions) const {
 	Common::String desc;
 
 	for (uint i = 0; i < _arguments.size(); i++) {
@@ -168,11 +169,15 @@ Common::String Command::describeArguments() const {
 				break;
 
 			case Resources::Command::Argument::kTypeResourceReference: {
-				desc += Common::String::format("%s", _arguments[i].referenceValue.describe().c_str());
+				if (definitions) {
+					desc += definitions->getFromReference(_arguments[i].referenceValue);
+				} else {
+					desc += _arguments[i].referenceValue.describe();
+				}
 			}
 				break;
 			case Resources::Command::Argument::kTypeString:
-				desc += Common::String::format("%s", _arguments[i].stringValue.c_str());
+				desc += _arguments[i].stringValue;
 				break;
 			default:
 				error("Unknown argument type %d", _arguments[i].type);
@@ -187,7 +192,7 @@ Common::String Command::describeArguments() const {
 }
 
 void Command::printCall() const {
-	debug("%d: %s(%s)", _index, _subTypeDesc->name, describeArguments().c_str());
+	debug("%d: %s(%s)", _index, _subTypeDesc->name, describeArguments(nullptr).c_str());
 }
 
 uint16 Command::getIndex() const {
@@ -295,6 +300,66 @@ CFGCommand *CFGCommand::findCommandWithIndex(const Common::Array<CFGCommand *> &
 	}
 
 	error("Unable to find command with index %d", index);
+}
+
+void DefinitionRegistry::registerReference(const ResourceReference &reference) {
+	if (!reference.canResolve()) {
+		// The reference uses archives that are not currently loaded
+		return;
+	}
+
+	Resources::Object *object = reference.resolve<Resources::Object>();
+	if (!_definitions.contains(object)) {
+		// TODO: There is no guarantee the definition is unique
+		_definitions[object] = object->getType().getName() + stringToCamelCase(object->getName());;
+	}
+}
+
+Common::String DefinitionRegistry::getFromReference(const ResourceReference &reference) const {
+	Resources::Object *object = reference.resolve<Resources::Object>();
+
+	if (_definitions.contains(object)) {
+		return _definitions.getVal(object);
+	} else {
+		return reference.describe();
+	}
+}
+
+Common::String DefinitionRegistry::stringToCamelCase(const Common::String &input) {
+	Common::String clean = input;
+
+	// First replace all non alphanumerical characters with spaces
+	for (uint i = 0; i < clean.size(); i++) {
+		if (!Common::isAlnum(clean[i])) {
+			clean.setChar(' ', i);
+		}
+	}
+
+	// Then turn the string into camel case
+	Common::String output;
+	Common::StringTokenizer tokens = Common::StringTokenizer(clean);
+	while (!tokens.empty()) {
+		Common::String token = tokens.nextToken();
+
+		char upperFirstLetter = toupper(token[0]);
+		token.setChar(upperFirstLetter, 0);
+
+		output += token;
+	}
+
+	return output;
+}
+
+void DefinitionRegistry::printAll() const {
+	DefinitionMap::const_iterator it = _definitions.begin();
+	while (it != _definitions.end()) {
+		ResourceReference reference;
+		reference.buildFromResource(it->_key);
+
+		debug("let %s = %s", it->_value.c_str(), reference.describe().c_str());
+
+		it++;
+	}
 }
 
 } // End of namespace Tools
