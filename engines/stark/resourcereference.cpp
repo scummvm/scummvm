@@ -50,7 +50,7 @@ void ResourceReference::addPathElement(Resources::Type type, uint16 index) {
 Resources::Object *ResourceReference::resolve() const {
 	Resources::Object *resource = nullptr;
 	for (uint i = 0; i < _path.size(); i++) {
-		PathElement element = _path[i];
+		const PathElement &element = _path[i];
 
 		switch (element.getType().get()) {
 		case Resources::Type::kLevel:
@@ -80,6 +80,49 @@ Resources::Object *ResourceReference::resolve() const {
 	}
 
 	return resource;
+}
+
+bool ResourceReference::canResolve() const {
+	if (empty()) {
+		return false;
+	}
+
+	Resources::Object *level = nullptr;
+	for (uint i = 0; i < _path.size(); i++) {
+		const PathElement &element = _path[i];
+
+		switch (element.getType().get()) {
+			case Resources::Type::kLevel:
+				if (element.getIndex()) {
+					level = StarkResourceProvider->getLevel(element.getIndex());
+				} else {
+					level = StarkGlobal->getLevel();
+				}
+
+				if (!level) {
+					return false;
+				}
+
+				break;
+			case Resources::Type::kLocation: {
+				if (!level) {
+					return false;
+				}
+
+				Resources::Object *location = StarkResourceProvider->getLocation(level->getIndex(), element.getIndex());
+
+				if (!location) {
+					return false;
+				}
+
+				break;
+			}
+			default:
+				return true;
+		}
+	}
+
+	return true;
 }
 
 bool ResourceReference::empty() const {
