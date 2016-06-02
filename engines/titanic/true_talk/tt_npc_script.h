@@ -198,7 +198,8 @@ public:
 	virtual int getDialRegion(int dialNum);
 
 	/**
-	 * Get the NPC's dial level
+	 * Gets the value for a dial, introducing a slight random variance so that
+	 * the displayed dial will oscillate randomly around it's real level
 	 */
 	virtual int getDialLevel(uint dialNum, bool flag = true);
 

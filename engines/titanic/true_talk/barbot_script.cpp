@@ -49,14 +49,53 @@ int BarbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence,
 
 		applyResponse();
 		return 2;
-	}
+
+	} else if (tag == MKTAG('S', 'W', 'E', 'R')) {
+		adjustDial(0, -18);
+		adjustDial(1, -5);
+
+		if (getRandomNumber(100) > 50) {
+			addResponse(getDialogueId(getDialRegion(0) == 0 ? 250200 : 250062));
+			applyResponse();
+			return 2;
+		}
+
+	} else if (tag == MKTAG('B', 'A', 'R', 'K') && getRandomNumber(100) > 50) {
+		proc14(250025);
+		switch (proc23()) {
+		case 4:
+		case 6:
+			addResponse(getDialogueId(250125));
+			break;
+		default:
+			break;
+		}
+
+		applyResponse();
+		return 2;
 	
-	if (tag == MKTAG('S', 'W', 'E', 'R')) {
+	} else if (tag == MKTAG('B', 'A', 'R', 'U') && getRandomNumber(100) > 50) {
+		proc14(250025);
+		switch (proc23()) {
+		case 4:
+		case 6:
+			addResponse(getDialogueId(250112));
+			break;
+		default:
+			break;
+		}
 
+		applyResponse();
+		return 2;	
 	}
 
-	warning("TODO");
-	return SS_2;
+	if (tag == MKTAG('T', 'H', 'R', 'T') || tag == MKTAG('S', 'L', 'O', 'W') ||
+			tag == MKTAG('S', 'E', 'X', '1') || tag == MKTAG('P', 'K', 'U', 'P')) {
+		adjustDial(0, -7);
+		adjustDial(1, -3);
+	}
+
+	return TTnpcScript::chooseResponse(roomScript, sentence, tag);
 }
 
 void BarbotScript::proc7(int v1, int v2) {
