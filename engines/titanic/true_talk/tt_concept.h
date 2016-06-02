@@ -70,7 +70,7 @@ public:
 	TTconcept *_nextP;
 	TTscriptBase *_scriptP;
 	TTword *_wordP;
-	ScriptType _scriptType;
+	int _scriptType;
 	int _field14;
 	int _field20;
 	int _field34;
