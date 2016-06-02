@@ -462,11 +462,11 @@ void Frame::readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16
 			fieldPosition += 2;
 			break;
 		case kSpritePositionWidth:
-			sprite._height = stream.readUint16BE();
+			sprite._width = stream.readUint16BE();
 			fieldPosition += 2;
 			break;
 		case kSpritePositionHeight:
-			sprite._width = stream.readUint16BE();
+			sprite._height = stream.readUint16BE();
 			fieldPosition += 2;
 			break;
 		default:
@@ -518,7 +518,7 @@ void Frame::display(Archive &_movie, Graphics::ManagedSurface &surface, Common::
 
 			Common::Rect drawRect = Common::Rect(x, y, x + width, y + height);
 
-			switch(_sprites[i]->_ink) {
+			switch (_sprites[i]->_ink) {
 			case kInkTypeCopy:
 				surface.blitFrom(*img.getSurface(), Common::Point(x, y));
 				break;
@@ -533,6 +533,7 @@ void Frame::display(Archive &_movie, Graphics::ManagedSurface &surface, Common::
 				surface.blitFrom(*img.getSurface(), Common::Point(x, y));
 				break;
 			}
+			surface.frameRect(drawRect, 0);
 		}
 	}
 	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, surface.getBounds().width(), surface.getBounds().height());

@@ -53,8 +53,8 @@ enum spritePositions {
     kSpritePositionCastId = 6,
     kSpritePositionY = 8,
     kSpritePositionX = 10,
-    kSpritePositionWidth = 12,
-    kSpritePositionHeight = 14
+    kSpritePositionHeight = 12,
+    kSpritePositionWidth = 14
 };
 
 enum mainChannelsPosition {
