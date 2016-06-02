@@ -42,11 +42,31 @@ class ConnectionManager : public Common::Singleton<ConnectionManager> {
 
 	typedef Common::BaseCallback<Request *> *RequestCallback;
 
-	struct RequestWithCallback { //I'm completely out of ideas
+	/**
+	 * RequestWithCallback is used by ConnectionManager to
+	 * storage the Request and a callback which should be
+	 * called on Request delete.
+	 *
+	 * Usually one won't need to pass such callback, but
+	 * in some cases you'd like to know whether Request is
+	 * still running.
+	 *
+	 * For example, Cloud::Storage is keeping track of how
+	 * many Requests are running, and thus it needs to know
+	 * that Request was destroyed to decrease its counter.
+	 *
+	 * onDeleteCallback is called with *invalid* pointer.
+	 * ConnectionManager deletes Request first and then passes
+	 * the pointer to the callback. One may use the address
+	 * to find it in own HashMap or Array and remove it.
+	 * So, again, this pointer is for information only. One
+	 * cannot use it.
+	 */
+	struct RequestWithCallback {
 		Request *request;
-		RequestCallback callback;
+		RequestCallback onDeleteCallback;
 		
-		RequestWithCallback(Request *rq = nullptr, RequestCallback cb = nullptr): request(rq), callback(cb) {}
+		RequestWithCallback(Request *rq = nullptr, RequestCallback cb = nullptr): request(rq), onDeleteCallback(cb) {}
 	};
 
 	CURLM *_multi;	
@@ -77,6 +97,8 @@ public:
 	 * Requests until they set their state to FINISHED.
 	 *
 	 * If Request's state is RETRY, handleRetry() is called instead.
+	 *
+	 * The passed callback would be called after Request is deleted.
 	 *
 	 * @note This method starts the timer if it's not started yet.
 	 *

@@ -47,7 +47,7 @@ ConnectionManager::~ConnectionManager() {
 	_handleMutex.lock();
 	for (Common::Array<RequestWithCallback>::iterator i = _requests.begin(); i != _requests.end(); ++i) {
 		Request *request = i->request;
-		RequestCallback callback = i->callback;
+		RequestCallback callback = i->onDeleteCallback;
 		if (request) request->finish();
 		delete request;
 		if (callback) (*callback)(request);
@@ -107,7 +107,7 @@ void ConnectionManager::interateRequests() {
 		Request *request = i->request;
 		if (!request || request->state() == FINISHED) {
 			delete (i->request);
-			if (i->callback) (*i->callback)(i->request); //that's not a mistake (we're passing an address and that method knows there is no object anymore)
+			if (i->onDeleteCallback) (*i->onDeleteCallback)(i->request); //that's not a mistake (we're passing an address and that method knows there is no object anymore)
 			_requests.erase(i);
 			continue;
 		}
