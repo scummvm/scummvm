@@ -46,6 +46,7 @@ public:
 		kFlowBranch,
 		kFlowEnd
 	};
+	typedef Common::Array<Resources::Command::Argument> ArgumentArray;
 
 	Command(Command *command);
 	Command(Resources::Command *resource);
@@ -60,6 +61,8 @@ public:
 	Resources::Command::SubType getSubType() const;
 	bool hasSubtypeDescription() const;
 
+	/** List the command's arguments ignoring the control flow related ones */
+	ArgumentArray getEffectiveArguments() const;
 
 protected:
 	struct SubTypeDesc {
@@ -77,7 +80,7 @@ protected:
 	uint16 _index;
 	Resources::Command::SubType _subType;
 	const SubTypeDesc *_subTypeDesc;
-	Common::Array<Resources::Command::Argument> _arguments;
+	ArgumentArray _arguments;
 };
 
 /**

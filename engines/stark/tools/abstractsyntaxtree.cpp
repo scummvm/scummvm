@@ -116,7 +116,7 @@ const ASTCommand *ASTBlock::getFirstCommand() const {
 ASTCommand::ASTCommand(ASTNode *parent, Command *command) :
 		ASTNode(parent),
 		Command(command) {
-
+	_arguments = command->getEffectiveArguments();
 }
 
 void ASTCommand::print(uint depth) {

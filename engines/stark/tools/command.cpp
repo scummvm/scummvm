@@ -133,6 +133,30 @@ const Command::SubTypeDesc *Command::searchSubTypeDesc(Resources::Command::SubTy
 	return nullptr;
 }
 
+Command::ArgumentArray Command::getEffectiveArguments() const {
+	uint effectiveArgumentsStart;
+	switch (_subTypeDesc->controlFlowType) {
+		case kFlowEnd:
+			effectiveArgumentsStart = 0;
+			break;
+		case kFlowNormal:
+			effectiveArgumentsStart = 1;
+			break;
+		case kFlowBranch:
+			effectiveArgumentsStart = 2;
+			break;
+		default:
+			error("Unhandled control flow type '%d'", _subTypeDesc->controlFlowType);
+	}
+
+	ArgumentArray effectiveArguments;
+	for (uint i = effectiveArgumentsStart; i < _arguments.size(); i++) {
+		effectiveArguments.push_back(_arguments[i]);
+	}
+
+	return  effectiveArguments;
+}
+
 Common::String Command::describeArguments() const {
 	Common::String desc;
 
