@@ -299,6 +299,11 @@ public:
 	 */
 	void addRoom(int roomNum);
 	int roomFn2(int val);
+
+	/**
+	 * Resets the dial display to reflect new values
+	 */
+	void resetDials(int flag = 1);
 };
 
 } // End of namespace Titanic

@@ -28,6 +28,8 @@
 
 namespace Titanic {
 
+#define DIALS_ARRAY_COUNT 10
+
 class TTroomScript;
 class TTsentence;
 
@@ -87,7 +89,8 @@ protected:
 	int _field78;
 	int _field7C;
 	int _field80;
-	int _array[146];
+	int _dialValues[DIALS_ARRAY_COUNT];
+	int _array[136];
 	bool _field2CC;
 protected:
 	/**
@@ -113,6 +116,13 @@ protected:
 	 * Gets a random number between 1 and a given max
 	 */
 	uint getRandomNumber(int max) const;
+
+	/**
+	 * Gets a random number of 0 or 1
+	 */
+	uint getRandomBit() const {
+		return getRandomNumber(2) - 1;
+	}
 
 	/**
 	 * Returns a dialogue Id by script tag value Id
@@ -164,9 +174,14 @@ public:
 	virtual void saveBody(SimpleFile *file);
 	virtual void loadBody(SimpleFile *file);
 	virtual int proc31();
-	virtual void proc32();
-	virtual void proc33(int v1, int v2);
-	virtual int proc34();
+	virtual void proc32(int dialNum, int region);
+
+	/**
+	 * Sets the value for an NPC's dial
+	 */
+	virtual void setDial(int dialNum, int value);
+	
+	virtual int proc34(int dialNum);
 
 	/**
 	 * Get the NPC's dial level

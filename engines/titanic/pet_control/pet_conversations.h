@@ -148,11 +148,6 @@ private:
 	 * Called when the dial for an NPC is being changed
 	 */
 	void npcDialChange(uint dialNum, int oldLevel, int newLevel);
-
-	/**
-	 * Reset the dials with those for a given NPC
-	 */
-	void resetDials(const CString &name);
 public:
 	CPetConversations();
 	virtual ~CPetConversations() {}
@@ -241,6 +236,11 @@ public:
 	 * Hide the text cursor
 	 */
 	virtual void hideCursor();
+
+	/**
+	 * Reset the dials with those for a given NPC
+	 */
+	void resetDials(const CString &name);
 };
 
 } // End of namespace Titanic

@@ -110,11 +110,6 @@ private:
 	static bool proximityMethod1(int val);
 
 	/**
-	 * Return the game manager
-	 */
-	CGameManager *getGameManager() const;
-
-	/**
 	 * Return the game state
 	 */
 	CGameState *getGameState() const;
@@ -191,6 +186,11 @@ public:
 	 * Remove any completed talkers
 	 */
 	void removeCompleted();
+
+	/**
+	 * Return the game manager
+	 */
+	CGameManager *getGameManager() const;
 
 	void update2();
 

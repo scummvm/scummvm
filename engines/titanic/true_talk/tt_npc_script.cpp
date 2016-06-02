@@ -21,6 +21,7 @@
  */
 
 #include "common/textconsole.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/true_talk/tt_npc_script.h"
 #include "titanic/true_talk/true_talk_manager.h"
 #include "titanic/titanic.h"
@@ -53,7 +54,8 @@ TTnpcScript::TTnpcScript(int charId, const char *charClass, int v2,
 		_field6C(0), _field70(0), _field74(0), _field78(0),
 		_field7C(0), _field80(0), _field2CC(false) {
 	CTrueTalkManager::_v2 = 0;
-	Common::fill(&_array[0], &_array[146], 0);
+	Common::fill(&_dialValues[0], &_dialValues[DIALS_ARRAY_COUNT], 0);
+	Common::fill(&_array[0], &_array[136], 0);
 
 	if (!CTrueTalkManager::_v10) {
 		Common::fill(&CTrueTalkManager::_v11[0], &CTrueTalkManager::_v11[41], 0);
@@ -243,15 +245,34 @@ int TTnpcScript::proc31() {
 	return 0;
 }
 
-void TTnpcScript::proc32() {
+void TTnpcScript::proc32(int dialNum, int region) {
 	warning("TODO");
 }
 
-void TTnpcScript::proc33(int v1, int v2) {
-	warning("TODO");
+void TTnpcScript::setDial(int dialNum, int value) {
+	if (dialNum < DIALS_ARRAY_COUNT) {
+		int oldRegion = proc34(dialNum);
+
+		int newRegion = 1;
+		if (value < 50)
+			newRegion = 0;
+		else if (value > 150)
+			newRegion = 2;
+
+		if (oldRegion == newRegion)
+			proc32(dialNum, newRegion);
+
+		_dialValues[dialNum] = value;
+	}
+
+	if (g_vm->_trueTalkManager) {
+		CPetControl *petControl = g_vm->_trueTalkManager->getGameManager()->getPetControl();
+		if (petControl)
+			petControl->resetDials();
+	}
 }
 
-int TTnpcScript::proc34() {
+int TTnpcScript::proc34(int dialNum) {
 	warning("TODO");
 	return 0;
 }

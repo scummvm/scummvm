@@ -524,4 +524,9 @@ int CPetControl::roomFn2(int val) {
 	return _rooms.fn2(val);
 }
 
+void CPetControl::resetDials(int flag) {
+	if (flag == 1)
+		_conversations.resetDials(_activeNPCName);
+}
+
 } // End of namespace Titanic
