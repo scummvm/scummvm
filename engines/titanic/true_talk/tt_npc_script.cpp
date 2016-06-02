@@ -24,6 +24,7 @@
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/true_talk/tt_npc_script.h"
 #include "titanic/true_talk/true_talk_manager.h"
+#include "titanic/game_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -245,13 +246,20 @@ int TTnpcScript::proc31() {
 	return 0;
 }
 
-void TTnpcScript::proc32(int dialNum, int region) {
-	warning("TODO");
+void TTnpcScript::setDialRegion(int dialNum, int region) {
+	if (dialNum < DIALS_ARRAY_COUNT)
+		_dialValues[dialNum] = region * 100;
+
+	if (g_vm->_trueTalkManager) {
+		CPetControl *petControl = getPetControl(g_vm->_trueTalkManager->getGameManager());
+		if (petControl)
+			petControl->playSound(1);
+	}
 }
 
 void TTnpcScript::setDial(int dialNum, int value) {
 	if (dialNum < DIALS_ARRAY_COUNT) {
-		int oldRegion = proc34(dialNum);
+		int oldRegion = getDialRegion(dialNum);
 
 		int newRegion = 1;
 		if (value < 50)
@@ -260,21 +268,30 @@ void TTnpcScript::setDial(int dialNum, int value) {
 			newRegion = 2;
 
 		if (oldRegion == newRegion)
-			proc32(dialNum, newRegion);
+			setDialRegion(dialNum, newRegion);
 
 		_dialValues[dialNum] = value;
 	}
 
 	if (g_vm->_trueTalkManager) {
-		CPetControl *petControl = g_vm->_trueTalkManager->getGameManager()->getPetControl();
+		CPetControl *petControl = getPetControl(g_vm->_trueTalkManager->getGameManager());
 		if (petControl)
 			petControl->resetDials();
 	}
 }
 
-int TTnpcScript::proc34(int dialNum) {
-	warning("TODO");
-	return 0;
+int TTnpcScript::getDialRegion(int dialNum) {
+	if (dialNum < DIALS_ARRAY_COUNT) {
+		int value = _dialValues[dialNum];
+		if (value < 50)
+			return 0;
+		else if (value > 150)
+			return 2;
+		else
+			return 1;
+	} else {
+		return 0;
+	}
 }
 
 int TTnpcScript::getDialLevel(uint dialNum, bool flag) {
@@ -422,6 +439,12 @@ int TTnpcScript::translateByArray(int id) {
 	}
 
 	return -1;
+}
+
+CPetControl *TTnpcScript::getPetControl(CGameManager *gameManager) {
+	if (gameManager && gameManager->_project)
+		return gameManager->_project->getPetControl();
+	return nullptr;
 }
 
 } // End of namespace Titanic

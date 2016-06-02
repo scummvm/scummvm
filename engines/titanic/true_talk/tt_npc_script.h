@@ -30,6 +30,8 @@ namespace Titanic {
 
 #define DIALS_ARRAY_COUNT 10
 
+class CGameManager;
+class CPetControl;
 class TTroomScript;
 class TTsentence;
 
@@ -128,6 +130,11 @@ protected:
 	 * Returns a dialogue Id by script tag value Id
 	 */
 	uint getDialogueId(uint tagId);
+
+	/**
+	 * Returns a pointer to the PET control
+	 */
+	static CPetControl *getPetControl(CGameManager *gameManager);
 public:
 	TTnpcScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4,
@@ -174,14 +181,21 @@ public:
 	virtual void saveBody(SimpleFile *file);
 	virtual void loadBody(SimpleFile *file);
 	virtual int proc31();
-	virtual void proc32(int dialNum, int region);
+
+	/**
+	 * Sets a given dial to be pointing in a specified region (0 to 2)
+	 */
+	virtual void setDialRegion(int dialNum, int region);
 
 	/**
 	 * Sets the value for an NPC's dial
 	 */
 	virtual void setDial(int dialNum, int value);
 	
-	virtual int proc34(int dialNum);
+	/**
+	 * Returns a dial's region number
+	 */
+	virtual int getDialRegion(int dialNum);
 
 	/**
 	 * Get the NPC's dial level
