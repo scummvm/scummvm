@@ -2575,62 +2575,62 @@ void ScummEngine_v100he::o100_getWizData() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 20:
+	case 20: // SO_COLOR
 		y = pop();
 		x = pop();
 		state = pop();
 		resId = pop();
 		push(_wiz->getWizPixelColor(resId, state, x, y));
 		break;
-	case 26:
+	case 26: // SO_COUNT
 		resId = pop();
 		push(_wiz->getWizImageStates(resId));
 		break;
-	case 33:
+	case 33: // SO_FIND
 		y = pop();
 		x = pop();
 		state = pop();
 		resId = pop();
 		push(_wiz->isWizPixelNonTransparent(resId, state, x, y, 0));
 		break;
-	case 39:
+	case 39: // SO_HEIGHT
 		state = pop();
 		resId = pop();
 		_wiz->getWizImageDim(resId, state, w, h);
 		push(h);
 		break;
-	case 54:
+	case 54: // SO_NEW_GENERAL_PROPERTY
 		type = pop();
 		state = pop();
 		resId = pop();
 		push(_wiz->getWizImageData(resId, state, type));
 		break;
-	case 84:
+	case 84: // SO_WIDTH
 		state = pop();
 		resId = pop();
 		_wiz->getWizImageDim(resId, state, w, h);
 		push(w);
 		break;
-	case 85:
+	case 85: // SO_XPOS
 		state = pop();
 		resId = pop();
 		_wiz->getWizImageSpot(resId, state, x, y);
 		push(x);
 		break;
-	case 86:
+	case 86: // SO_YPOS
 		state = pop();
 		resId = pop();
 		_wiz->getWizImageSpot(resId, state, x, y);
 		push(y);
 		break;
-	case 131:
+	case 131: // SO_FONT_START
 		pop();
 		copyScriptString(filename, sizeof(filename));
 		pop();
 		push(0);
 		debug(0, "o100_getWizData() case 111 unhandled");
 		break;
-	case 132:
+	case 132: // SO_HISTOGRAM
 		h = pop();
 		w = pop();
 		y = pop();
