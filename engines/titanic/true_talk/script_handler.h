@@ -35,24 +35,11 @@ namespace Titanic {
 class CTitleEngine;
 class CScriptHandler;
 
-class CScriptHandlerSub1 {
-public:
-	int _field0;
-	int _field4;
-	int _field8;
-	int _fieldC;
-	int _field10;
-public:
-	CScriptHandlerSub1() : _field0(0), _field4(0), _field8(0),
-		_fieldC(0), _field10(0) {}
-};
-
 class CScriptHandler {
 private:
 	CTitleEngine *_owner;
 	CExeResources &_resources;
 	int _field10;
-	CScriptHandlerSub1 _sub1;
 	int _inputCtr;
 	int _field30;
 public:

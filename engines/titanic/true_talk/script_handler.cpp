@@ -32,7 +32,7 @@ namespace Titanic {
 
 CScriptHandler::CScriptHandler(CTitleEngine *owner, int val1, int val2) :
 		_owner(owner), _script(owner->_script), _resources(g_vm->_exeResources),
-		_sub1(), _parser(this), _field10(0), _inputCtr(0), 
+		_parser(this), _field10(0), _inputCtr(0), 
 		_concept1P(nullptr), _concept2P(nullptr), _concept3P(nullptr),
 		_concept4P(nullptr), _field30(0) {
 	g_vm->_scriptHandler = this;
@@ -94,12 +94,13 @@ int CScriptHandler::processInput(TTroomScript *roomScript, TTnpcScript *npcScrip
 	}
 
 	if (canProcess == 0 || canProcess == 1) {
-		_parser.findFrames(sentence);
+		if (!_parser.findFrames(sentence)) {
+			if (roomScript->canProcess(npcScript, sentence) && npcScript) {
+				npcScript->process(roomScript, sentence);
+			}
+		}
 	}
 
-	warning("TODO: CScriptHandler::processInput");
-
-	// TODO
 	delete sentence;
 	return SS_VALID;
 }

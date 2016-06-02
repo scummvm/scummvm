@@ -116,7 +116,7 @@ int TTnpcScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, 
 	return 1;
 }
 
-void TTnpcScript::proc7(int v1, int v2) {
+void TTnpcScript::process(TTroomScript *roomScript, TTsentence *sentence) {
 	warning("TODO");
 }
 
