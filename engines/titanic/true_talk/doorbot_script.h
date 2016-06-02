@@ -30,6 +30,12 @@ namespace Titanic {
 class DoorbotScript : public TTnpcScript {
 private:
 	int _array[148];
+	int _state;
+private:
+	/**
+	 * Sets a response
+	 */
+	int setResponse(int dialogueId, int v34 = -1);
 public:
 	DoorbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7);

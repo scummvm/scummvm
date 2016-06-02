@@ -28,6 +28,13 @@
 namespace Titanic {
 
 class BarbotScript : public TTnpcScript {
+private:
+	int _state;
+private:
+	/**
+	 * Adjust a given dial number by a given delta amount
+	 */
+	void adjustDial(int dialNum, int amount);
 public:
 	BarbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7);

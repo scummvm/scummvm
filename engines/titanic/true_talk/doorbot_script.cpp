@@ -22,18 +22,76 @@
 
 #include "common/textconsole.h"
 #include "titanic/true_talk/doorbot_script.h"
+#include "titanic/true_talk/tt_room_script.h"
 
 namespace Titanic {
+
+static const int STATE_ARRAY[9] = {
+	0x2E2A, 0x2E2B, 0x2E2C, 0x2E2D, 0x2E2E, 0x2E2F, 0x2E30, 0x2E31, 0x2E32
+};
 
 DoorbotScript::DoorbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
+	Common::fill(&_array[0], &_array[148], 0);
+	_state = 0;
 	load("Responses/Doorbot");
 }
 
 int DoorbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {
-	warning("TODO");
-	return SS_2;
+	if (tag == MKTAG('D', 'N', 'A', '1') || tag == MKTAG('H', 'H', 'G', 'Q') ||
+		tag == MKTAG('A', 'N', 'S', 'W') || tag == MKTAG('S', 'U', 'M', 'S')) {
+		if (_state > 9)
+			_state = 0;
+		addResponse(STATE_ARRAY[_state]);
+		applyResponse();
+
+		if (STATE_ARRAY[_state] == 11826)
+			set34(1);
+		++_state;
+		return 2;
+	}
+
+	if (tag == MKTAG('C', 'H', 'S', 'E') || tag == MKTAG('C', 'M', 'N', 'T') ||
+			tag == MKTAG('J', 'F', 'O', 'D'))
+		tag = MKTAG('F', 'O', 'O', 'D');
+
+	if (tag == MKTAG('F', 'O', 'O', 'D') && roomScript->_scriptId == 132) {
+		return setResponse(getDialogueId(220818));
+	}
+
+	if (tag == MKTAG('T', 'R', 'A', 'V')) {
+		return setResponse(11858 - getRandomBit());
+	} else if (tag == MKTAG('C', 'S', 'P', 'Y')) {
+		return setResponse(10405, 3);
+	} else if (tag == MKTAG('S', 'C', 'I', 'T')) {
+		return setResponse(10410, 14);
+	} else if (tag == MKTAG('L', 'I', 'T', 'E')) {
+		return setResponse(10296, 17);
+	} else if (tag == MKTAG('D', 'O', 'R', '1')) {
+		return setResponse(getDialogueId(222034));
+	} else if (tag == MKTAG('W', 'T', 'H', 'R')) {
+		return setResponse(getDialogueId(222126));
+	} else if (tag == MKTAG('N', 'A', 'U', 'T')) {
+		return setResponse(getDialogueId(222259));
+	} else if (tag == MKTAG('T', 'R', 'A', '2')) {
+		return setResponse(getRandomBit() ? 11860 : 11859);
+	} else if (tag == MKTAG('T', 'R', 'A', '3')) {
+		return setResponse(getRandomBit() ? 11859 : 11858);
+	} else if (tag == MKTAG('B', 'R', 'N', 'D')) {
+		switch (getRandomNumber(3)) {
+		case 1:
+			tag = MKTAG('B', 'R', 'N', '2');
+			break;
+		case 2:
+			tag = MKTAG('B', 'R', 'N', '3');
+			break;
+		default:
+			break;
+		}
+	}
+
+	return TTnpcScript::chooseResponse(roomScript, sentence, tag);
 }
 
 void DoorbotScript::proc7(int v1, int v2) {
@@ -105,6 +163,15 @@ int DoorbotScript::proc36(int id) const {
 uint DoorbotScript::translateId(uint id) const {
 	warning("TODO");
 	return 0;
+}
+
+int DoorbotScript::setResponse(int dialogueId, int v34) {
+	addResponse(dialogueId);
+	applyResponse();
+
+	if (v34 != -1)
+		set34(v34);
+	return 2;
 }
 
 } // End of namespace Titanic

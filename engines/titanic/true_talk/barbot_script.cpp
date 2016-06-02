@@ -25,13 +25,36 @@
 
 namespace Titanic {
 
+static const int STATE_ARRAY[7] = {
+	0xCAB0, 0xCAB2, 0xCAB3, 0xCAB4, 0xCAB5, 0xCAB6, 0xCAB7
+};
+
 BarbotScript::BarbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
+	_state = 0;
 	load("Responses/Barbot");
 }
 
 int BarbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {
+	if (tag == MKTAG('D', 'N', 'A', '1') || tag == MKTAG('H', 'H', 'G', 'Q') ||
+			tag == MKTAG('A', 'N', 'S', 'W') || tag == MKTAG('S', 'U', 'M', 'S')) {
+		if (_state < 7) {
+			addResponse(STATE_ARRAY[_state++]);
+		} else {
+			proc14(51896);
+			set34(1);
+			_state = 0;
+		}
+
+		applyResponse();
+		return 2;
+	}
+	
+	if (tag == MKTAG('S', 'W', 'E', 'R')) {
+
+	}
+
 	warning("TODO");
 	return SS_2;
 }
@@ -105,6 +128,11 @@ int BarbotScript::proc36(int tagId) const {
 uint BarbotScript::translateId(uint id) const {
 	warning("TODO");
 	return 0;
+}
+
+void BarbotScript::adjustDial(int dialNum, int amount) {
+	int level = CLIP(getDialLevel(dialNum) + amount, 0, 100);
+	setDial(dialNum, level);
 }
 
 } // End of namespace Titanic
