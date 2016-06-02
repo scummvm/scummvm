@@ -42,7 +42,7 @@ int BarbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence,
 		if (_state < 7) {
 			addResponse(STATE_ARRAY[_state++]);
 		} else {
-			proc14(51896);
+			selectResponse(51896);
 			set34(1);
 			_state = 0;
 		}
@@ -61,7 +61,7 @@ int BarbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence,
 		}
 
 	} else if (tag == MKTAG('B', 'A', 'R', 'K') && getRandomNumber(100) > 50) {
-		proc14(250025);
+		selectResponse(250025);
 		switch (proc23()) {
 		case 4:
 		case 6:
@@ -75,7 +75,7 @@ int BarbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence,
 		return 2;
 	
 	} else if (tag == MKTAG('B', 'A', 'R', 'U') && getRandomNumber(100) > 50) {
-		proc14(250025);
+		selectResponse(250025);
 		switch (proc23()) {
 		case 4:
 		case 6:

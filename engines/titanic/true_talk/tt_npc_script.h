@@ -81,6 +81,7 @@ private:
 	int translateByArray(int id);
 protected:
 	Common::Array<TTnpcScriptResponse> _responses;
+	int _valuesPerResponse;
 	byte *_subPtr;
 	int _field60;
 	int _field64;
@@ -98,7 +99,7 @@ protected:
 	/**
 	 * Loads response data for the NPC from the given resource
 	 */
-	void load(const char *name, int valuesPerTag = 1);
+	void load(const char *name, int valuesPerResponse = 1);
 
 	/**
 	 * Reset script flags
@@ -163,7 +164,13 @@ public:
 	virtual int proc11() const;
 	virtual int proc12() const;
 	virtual bool proc13() const;
-	virtual void proc14(int v);
+
+	/**
+	 * Translate a passed Id to a dialogue Id if necessary,
+	 * and adds it to the response
+	 */
+	virtual void selectResponse(int id);
+	
 	virtual int proc15() const;
 	virtual bool proc16() const;
 	virtual bool proc17() const;

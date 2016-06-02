@@ -42,7 +42,7 @@ int LiftbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence
 	case MKTAG('H', 'H', 'G', 'Q'):
 	case MKTAG('A', 'N', 'S', 'W'):
 		if (_state >= 7) {
-			proc14(30918);
+			selectResponse(30918);
 			set34(2);
 			_state = 0;
 		} else {

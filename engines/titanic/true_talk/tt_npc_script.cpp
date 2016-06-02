@@ -66,13 +66,14 @@ TTnpcScript::TTnpcScript(int charId, const char *charClass, int v2,
 	resetFlags();
 }
 
-void TTnpcScript::load(const char *name, int valuesPerTag) {
+void TTnpcScript::load(const char *name, int valuesPerResponse) {
+	_valuesPerResponse = valuesPerResponse;
 	Common::SeekableReadStream *r = g_vm->_filesManager->getResource(name);
 
 	while (r->pos() < r->size()) {
 		TTnpcScriptResponse sr;
 		sr._tag = r->readUint32LE();
-		for (int idx = 0; idx < valuesPerTag; ++idx)
+		for (int idx = 0; idx < valuesPerResponse; ++idx)
 			sr._values[idx] = r->readUint32LE();
 		
 		_responses.push_back(sr);
@@ -99,9 +100,14 @@ int TTnpcScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, 
 		const TTnpcScriptResponse &response = _responses[idx];
 
 		if (response._tag == tag) {
-			int valIndex = getRandomNumber(response.size()) - 1;
-			uint diagId = getDialogueId(response._values[valIndex]);
-			addResponse(diagId);
+			if (_valuesPerResponse == 1) {
+				selectResponse(response._values[0]);
+			} else {
+				int valIndex = getRandomNumber(response.size()) - 1;
+				uint diagId = getDialogueId(response._values[valIndex]);
+				addResponse(diagId);
+			}
+			
 			applyResponse();
 			return 2;
 		}
@@ -135,8 +141,11 @@ bool TTnpcScript::proc13() const {
 	return true;
 }
 
-void TTnpcScript::proc14(int v) {
-	warning("TODO");
+void TTnpcScript::selectResponse(int id) {
+	if (id >= 200000 && id <= 290264)
+		id = getDialogueId(id);
+
+	addResponse(id);
 }
 
 int TTnpcScript::proc15() const {
