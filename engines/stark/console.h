@@ -27,7 +27,10 @@
 
 namespace Stark {
 
-class Resource;
+namespace Resources {
+class Object;
+class Script;
+}
 
 class Console : public GUI::Debugger {
 public:
@@ -43,6 +46,8 @@ private:
 	bool Cmd_DumpLevel(int argc, const char **argv);
 	bool Cmd_DumpLocation(int argc, const char **argv);
 	bool Cmd_ForceScript(int argc, const char **argv);
+	bool Cmd_DecompileScript(int argc, const char **argv);
+	bool Cmd_TestDecompiler(int argc, const char** argv);
 	bool Cmd_ListInventory(int argc, const char **argv);
 	bool Cmd_EnableInventoryItem(int argc, const char **argv);
 	bool Cmd_ListLocations(int argc, const char** argv);
@@ -54,6 +59,12 @@ private:
 	bool Cmd_ChangeChapter(int argc, const char **argv);
 	bool Cmd_ChangeKnowledge(int argc, const char **argv);
 	bool Cmd_SelectDialogOption(int argc, const char **argv);
+
+	Common::Array<Resources::Script *> listAllLocationScripts() const;
+	void decompileScriptChildren(Stark::Resources::Object *level);
+
+	int _testDecompilerTotalScripts;
+	int _testDecompilerOKScripts;
 };
 
 } // End of namespace Stark

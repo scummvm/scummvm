@@ -59,6 +59,8 @@ public:
 	/** Return true if this reference is a null pointer */
 	bool empty() const;
 
+	/** Can this reference be resolved using currently loaded archives? */
+	bool canResolve() const;
 private:
 	void addPathElement(Resources::Type type, uint16 index);
 	Resources::Object *resolve() const;

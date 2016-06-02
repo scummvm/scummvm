@@ -80,7 +80,9 @@ public:
 		kLocationGoToNewCD = 22,
 		kGameEnd = 23,
 		kInventoryOpen = 24,
+		kBookOfSecretsOpen = 26,
 
+		kDoNothing = 80,
 		kItem3DPlaceOn = 81,
 		kItem3DWalkTo = 82,
 		kItem3DFollowPath = 83,
@@ -184,9 +186,11 @@ public:
 	/** Obtain the next command to be executed, depending on a predicate */
 	Command *nextCommandIf(bool predicate);
 
+	/** Get the command's list of arguments */
+	Common::Array<Argument> getArguments() const;
+
 protected:
 	void readData(Formats::XRCReadStream *stream) override;
-	void printData() override;
 
 	Command *resolveArgumentSiblingReference(const Argument &argument);
 
@@ -208,6 +212,7 @@ protected:
 	Command *opFadeScene(int32 unknown1, int32 unknown2, int32 unknown3);
 	Command *opGameEnd();
 	Command *opInventoryOpen(bool open);
+	Command *opDoNothing();
 	Command *opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
 	Command *opItem3DWalkTo(Script *script, const ResourceReference &itemRef, const ResourceReference &targetRef, bool suspend);
 	Command *opItemFollowPath(Script *script, ResourceReference itemRef, ResourceReference pathRef, uint32 speed, uint32 suspend);

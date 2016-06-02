@@ -151,6 +151,7 @@ public:
 	void setResumeStatus(ResumeStatus status);
 
 protected:
+	void print(uint depth) override;
 	void printData() override;
 
 	void updateSuspended();

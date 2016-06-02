@@ -108,6 +108,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opGameEnd();
 	case kInventoryOpen:
 		return opInventoryOpen(_arguments[1].intValue);
+	case kDoNothing:
+		return opDoNothing();
 	case kItem3DPlaceOn:
 		return opItem3DPlaceOn(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kItem3DWalkTo:
@@ -413,6 +415,10 @@ Command *Command::opGameEnd() {
 Command *Command::opInventoryOpen(bool open) {
 	StarkUserInterface->inventoryOpen(open);
 
+	return nextCommand();
+}
+
+Command *Command::opDoNothing() {
 	return nextCommand();
 }
 
@@ -1175,25 +1181,8 @@ void Command::readData(Formats::XRCReadStream *stream) {
 	}
 }
 
-void Command::printData() {
-	for (uint i = 0; i < _arguments.size(); i++) {
-		switch (_arguments[i].type) {
-		case Argument::kTypeInteger1:
-		case Argument::kTypeInteger2:
-			debug("%d: %d", i, _arguments[i].intValue);
-			break;
-
-		case Argument::kTypeResourceReference: {
-			debug("%d: %s", i, _arguments[i].referenceValue.describe().c_str());
-		}
-			break;
-		case Argument::kTypeString:
-			debug("%d: %s", i, _arguments[i].stringValue.c_str());
-			break;
-		default:
-			error("Unknown argument type %d", _arguments[i].type);
-		}
-	}
+Common::Array<Command::Argument> Command::getArguments() const {
+	return _arguments;
 }
 
 } // End of namespace Resources

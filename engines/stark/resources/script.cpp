@@ -36,6 +36,8 @@
 #include "engines/stark/services/stateprovider.h"
 #include "engines/stark/services/userinterface.h"
 
+#include "engines/stark/tools/decompiler.h"
+
 namespace Stark {
 namespace Resources {
 
@@ -360,6 +362,30 @@ void Script::resumeCallerExecution(Object *callerObject) {
 
 void Script::addReturnObject(Object *object) {
 	_returnObjects.push_back(object);
+}
+
+void Script::print(uint depth) {
+	printDescription(depth);
+	printData();
+
+	// Print anything that is not a command
+	for (uint i = 0; i < _children.size(); i++) {
+		if (_children[i]->getType() != Type::kCommand) {
+			_children[i]->print(depth + 1);
+		}
+	}
+
+	Tools::Decompiler *decompiler = new Tools::Decompiler(this);
+
+	// Print the decompiled output
+	printWithDepth(depth + 1, "Decompiled output");
+	if (decompiler->getError() == "") {
+		decompiler->printDecompiled();
+	} else {
+		debug("Decompilation failure: %s", decompiler->getError().c_str());
+	}
+
+	delete decompiler;
 }
 
 void Script::printData() {

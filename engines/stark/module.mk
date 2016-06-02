@@ -74,6 +74,10 @@ MODULE_OBJS := \
 	services/staticprovider.o \
 	services/userinterface.o \
 	stark.o \
+	tools/abstractsyntaxtree.o \
+	tools/block.o \
+	tools/command.o \
+	tools/decompiler.o \
 	ui/actionmenu.o \
 	ui/button.o \
 	ui/clicktext.o \

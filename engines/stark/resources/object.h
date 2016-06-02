@@ -79,7 +79,7 @@ public:
 	Type();
 	Type(ResourceType type);
 
-	ResourceType get();
+	ResourceType get() const;
 	const char *getName() const;
 
 	bool operator==(const Type &other) const {
@@ -255,11 +255,13 @@ public:
 	void addChild(Object *child);
 
 	/** Print debug information for the resource */
-	void print(uint depth = 0);
+	virtual void print(uint depth = 0);
 
 protected:
 	Object(Object *parent, byte subType, uint16 index, const Common::String &name);
 
+	void printWithDepth(uint depth, const Common::String &string) const;
+	void printDescription(uint depth) const;
 	virtual void printData();
 
 	Type _type;
