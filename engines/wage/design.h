@@ -100,21 +100,6 @@ private:
 	void drawBitmap(Graphics::ManagedSurface *surface, Common::SeekableReadStream &in);
 };
 
-class FloodFill {
-public:
-	FloodFill(Graphics::ManagedSurface *surface, byte color1, byte color2);
-	~FloodFill();
-	void addSeed(int x, int y);
-	void fill();
-
-private:
-	Common::List<Common::Point *> _queue;
-	Graphics::ManagedSurface *_surface;
-	byte _color1, _color2;
-	byte *_visited;
-	int _w, _h;
-};
-
 } // End of namespace Wage
 
 #endif

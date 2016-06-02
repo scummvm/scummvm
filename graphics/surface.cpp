@@ -498,4 +498,64 @@ Graphics::Surface *Surface::convertTo(const PixelFormat &dstFormat, const byte *
 	return surface;
 }
 
+FloodFill::FloodFill(Graphics::Surface *surface, uint32 oldColor, uint32 fillColor) {
+	_surface = surface;
+	_oldColor = oldColor;
+	_fillColor = fillColor;
+	_w = surface->w;
+	_h = surface->h;
+
+	_visited = (byte *)calloc(_w * _h, 1);
+}
+
+FloodFill::~FloodFill() {
+	while(!_queue.empty()) {
+		Common::Point *p = _queue.front();
+
+		delete p;
+		_queue.pop_front();
+	}
+
+	free(_visited);
+}
+
+void FloodFill::addSeed(int x, int y) {
+	if (x >= 0 && x < _w && y >= 0 && y < _h) {
+		if (!_visited[y * _w + x]) {
+			_visited[y * _w + x] = 1;
+			void *p = _surface->getBasePtr(x, y);
+
+			if (_surface->format.bytesPerPixel == 1) {
+				if (*((byte *)p) == _oldColor)
+					*((byte *)p) = _fillColor;
+			} else if (_surface->format.bytesPerPixel == 2) {
+				if (READ_UINT16(p) == _oldColor)
+					WRITE_UINT16(p, _fillColor);
+			} else if (_surface->format.bytesPerPixel == 4) {
+				if (READ_UINT32(p) == _oldColor)
+					WRITE_UINT32(p, _fillColor);
+			} else {
+				error("Unsupported bpp in FloodFill");
+			}
+
+			Common::Point *pt = new Common::Point(x, y);
+
+			_queue.push_back(pt);
+		}
+	}
+}
+
+void FloodFill::fill() {
+	while (!_queue.empty()) {
+		Common::Point *p = _queue.front();
+		_queue.pop_front();
+		addSeed(p->x    , p->y - 1);
+		addSeed(p->x - 1, p->y    );
+		addSeed(p->x    , p->y + 1);
+		addSeed(p->x + 1, p->y    );
+
+		delete p;
+	}
+}
+
 } // End of namespace Graphics

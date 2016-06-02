@@ -24,9 +24,11 @@
 #define GRAPHICS_SURFACE_H
 
 #include "common/scummsys.h"
+#include "common/list.h"
 
 namespace Common {
 struct Rect;
+struct Point;
 }
 
 #include "graphics/pixelformat.h"
@@ -341,6 +343,20 @@ struct SharedPtrSurfaceDeleter {
 	}
 };
 
+class FloodFill {
+public:
+	FloodFill(Surface *surface, uint32 oldColor, uint32 fillColor);
+	~FloodFill();
+	void addSeed(int x, int y);
+	void fill();
+
+private:
+	Common::List<Common::Point *> _queue;
+	Surface *_surface;
+	uint32 _oldColor, _fillColor;
+	byte *_visited;
+	int _w, _h;
+};
 
 } // End of namespace Graphics
 

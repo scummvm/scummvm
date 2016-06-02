@@ -422,7 +422,7 @@ void Design::drawBitmap(Graphics::ManagedSurface *surface, Common::SeekableReadS
 	int x2 = in.readSint16BE();
 	int w = x2 - x1;
 	int h = y2 - y1;
-	Graphics::ManagedSurface tmp;
+	Graphics::Surface tmp;
 
 	tmp.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 
@@ -477,7 +477,7 @@ void Design::drawBitmap(Graphics::ManagedSurface *surface, Common::SeekableReadS
 	if (_boundsCalculationMode)
 		return;
 
-	FloodFill ff(&tmp, kColorWhite, kColorGreen);
+	Graphics::FloodFill ff(&tmp, kColorWhite, kColorGreen);
 	for (int yy = 0; yy < h; yy++) {
 		ff.addSeed(0, yy);
 		ff.addSeed(w - 1, yy);
@@ -540,55 +540,5 @@ void Design::drawVLine(Graphics::ManagedSurface *surface, int x, int y1, int y2,
 
 	Graphics::drawVLine(x, y1, y2, color, drawPixel, &pd);
 }
-
-FloodFill::FloodFill(Graphics::ManagedSurface *surface, byte color1, byte color2) {
-	_surface = surface;
-	_color1 = color1;
-	_color2 = color2;
-	_w = surface->w;
-	_h = surface->h;
-
-	_visited = (byte *)calloc(_w * _h, 1);
-}
-
-FloodFill::~FloodFill() {
-	while(!_queue.empty()) {
-		Common::Point *p = _queue.front();
-
-		delete p;
-		_queue.pop_front();
-	}
-
-	free(_visited);
-}
-
-void FloodFill::addSeed(int x, int y) {
-	byte *p;
-
-	if (x >= 0 && x < _w && y >= 0 && y < _h) {
-		if (!_visited[y * _w + x] && *(p = (byte *)_surface->getBasePtr(x, y)) == _color1) {
-			_visited[y * _w + x] = 1;
-			*p = _color2;
-
-			Common::Point *pt = new Common::Point(x, y);
-
-			_queue.push_back(pt);
-		}
-	}
-}
-
-void FloodFill::fill() {
-	while (!_queue.empty()) {
-		Common::Point *p = _queue.front();
-		_queue.pop_front();
-		addSeed(p->x    , p->y - 1);
-		addSeed(p->x - 1, p->y    );
-		addSeed(p->x    , p->y + 1);
-		addSeed(p->x + 1, p->y    );
-
-		delete p;
-	}
-}
-
 
 } // End of namespace Wage
