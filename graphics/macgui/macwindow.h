@@ -149,8 +149,8 @@ private:
 	ManagedSurface _borderSurface;
 	ManagedSurface _composeSurface;
 
-	NinePatchBitmap _bmp;
-	TransparentSurface _borders;
+	NinePatchBitmap *_bmp;
+	TransparentSurface *_borders = nullptr;
 
 	bool _scrollable;
 	bool _resizable;
