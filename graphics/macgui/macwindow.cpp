@@ -203,12 +203,12 @@ void MacWindow::prepareBorderSurface(ManagedSurface *g) {
 }
 
 void MacWindow::drawBorderFromSurface(ManagedSurface *g) {
+	assert(_borders);
+
 	TransparentSurface srf;
-	srf.create(_composeSurface.w, _composeSurface.h, _borders->format);
+	srf.create(_borderSurface.w, _borderSurface.h, _borders->format);
 
-	_bmp = new NinePatchBitmap(_borders, false);
-
-	_bmp->blit(srf, 0, 0, srf.w, srf.h);
+	_macBorder.blitBorderInto(_borderSurface, false);
 	_borderSurface.transBlitFrom(srf, _borderSurface.format.ARGBToColor(0, 255, 255, 255));
 }
 
@@ -304,6 +304,8 @@ void MacWindow::setHighlight(WindowClick highlightedPart) {
 
  void MacWindow::setBorders(TransparentSurface *source) {
 	 _borders = new TransparentSurface(*source);
+	 if (_borders)
+		 _macBorder.addInactiveBorder(_borders);
  }
 
 

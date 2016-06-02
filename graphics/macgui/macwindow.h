@@ -53,9 +53,12 @@
 #include "graphics/nine_patch.h"
 #include "graphics/palette.h"
 
+#include "graphics/macgui/macwindowborder.h"
+
 namespace Graphics {
 
 class MacWindowManager;
+class MacWindowBorder;
 
 namespace MacWindowConstants {
 	enum WindowType {
@@ -154,6 +157,8 @@ private:
 
 	NinePatchBitmap *_bmp;
 	TransparentSurface *_borders;
+
+	MacWindowBorder _macBorder;
 
 	bool _scrollable;
 	bool _resizable;

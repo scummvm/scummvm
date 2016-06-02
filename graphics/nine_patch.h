@@ -47,6 +47,7 @@
 #define GRAPHICS_NINE_PATCH_H
 
 #include "common/array.h"
+#include "common/rect.h"
 
 namespace Graphics {
 
