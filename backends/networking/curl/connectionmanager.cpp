@@ -109,17 +109,17 @@ void ConnectionManager::interateRequests() {
 	//call handle() of all running requests (so they can do their work)
 	debug("handling %d request(s)", _requests.size());	
 	for (Common::Array<RequestWithCallback>::iterator i = _requests.begin(); i != _requests.end();) {
-		Request *request = i->request;
+		Request *request = i->request;		
+		if (request) {
+			if (request->state() == PROCESSING) request->handle();
+			else if (request->state() == RETRY) request->handleRetry();
+		}
+
 		if (!request || request->state() == FINISHED) {
 			delete (i->request);
 			if (i->onDeleteCallback) (*i->onDeleteCallback)(i->request); //that's not a mistake (we're passing an address and that method knows there is no object anymore)
 			_requests.erase(i);
 			continue;
-		}
-		
-		if (request) {
-			if (request->state() == PROCESSING) request->handle();
-			else if (request->state() == RETRY) request->handleRetry();
 		}
 
 		++i;		
