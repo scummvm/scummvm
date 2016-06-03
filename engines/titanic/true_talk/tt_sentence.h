@@ -141,6 +141,11 @@ public:
 	 */
 	int storeVocabHit(TTword *word);
 
+	bool fn1(const CString &str, int wordId1, const CString &str1, const CString &str2,
+		const CString &str3, int wordId2, int val, int val2, const TTconceptNode *node);
+	bool fn3(const CString &str1, const CString &str2, const CString &str3,
+		const CString &str4, const CString &str5, const CString &str6,
+		int val, int val2, const TTconceptNode *node);
 	bool fn2(int slotIndex, const TTstring &str, TTconceptNode *conceptNode);
 	bool fn4(int mode, int wordId, TTconceptNode *node);
 };

@@ -456,7 +456,37 @@ CPetControl *TTnpcScript::getPetControl(CGameManager *gameManager) {
 	return nullptr;
 }
 
-void TTnpcScript::processSentence(const TTsentenceEntries *entries, int entryCount, TTroomScript *roomScript, TTsentence *sentence) {
+int TTnpcScript::processSentence(const TTsentenceEntries *entries, uint entryCount, TTroomScript *roomScript, TTsentence *sentence) {
+	if (!entries)
+		return SS_1;
+	if (!entryCount)
+		// No count specified, so use entire list
+		entryCount = entries->size();
+	int entryId = _field2C;
+
+	for (uint loopCtr = 0; loopCtr < 2; ++loopCtr) {
+		for (uint entryCtr = 0; entryCtr < entryCount; ++entryCtr) {
+			const TTsentenceEntry &entry = (*entries)[entryCtr];
+			if (entry._field4 != entryId && (loopCtr == 0 || entry._field4))
+				continue;
+
+			bool flag;
+			if (entry._fieldC || entry._string10.empty()) {
+				flag = sentence->fn1(entry._string8, entry._fieldC,
+					entry._string14, entry._string18, entry._string1C,
+					entry._field20, entry._field28, 0, nullptr);
+			} else {
+				flag = sentence->fn3(entry._string8, entry._string10,
+					entry._string14, entry._string18, entry._string1C,
+					entry._string24, entry._field28, 0, nullptr);
+			}
+
+			if (flag) {
+				// TODO
+			}
+		}
+	}
+
 	warning("TODO");
 }
 

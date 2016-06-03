@@ -138,7 +138,7 @@ protected:
 	 */
 	static CPetControl *getPetControl(CGameManager *gameManager);
 
-	void processSentence(const TTsentenceEntries *entries, int entryCount, TTroomScript *roomScript, TTsentence *sentence);
+	int processSentence(const TTsentenceEntries *entries, uint entryCount, TTroomScript *roomScript, TTsentence *sentence);
 public:
 	TTnpcScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4,
