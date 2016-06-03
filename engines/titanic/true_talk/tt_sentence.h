@@ -23,6 +23,7 @@
 #ifndef TITANIC_TT_SENTENCE_H
 #define TITANIC_TT_SENTENCE_H
 
+#include "common/array.h"
 #include "titanic/true_talk/tt_concept_node.h"
 #include "titanic/true_talk/tt_npc_script.h"
 #include "titanic/true_talk/tt_room_script.h"
@@ -43,6 +44,39 @@ public:
 	 * Adds a new sibling instance
 	 */
 	TTsentenceConcept *addSibling();
+};
+
+struct TTsentenceEntry {
+	int _field0;
+	int _field4;
+	CString _string8;
+	int _fieldC;
+	CString _string10;
+	CString _string14;
+	CString _string18;
+	CString _string1C;
+	int _field20;
+	CString _string24;
+	int _field28;
+	int _field2C;
+	int _field30;
+
+	TTsentenceEntry() : _field0(0), _field4(0), _fieldC(0),
+		_field20(0), _field28(0), _field2C(0), _field30(0) {}
+
+	/**
+	 * Load an entry from the passed stream, and returns true
+	 * if an entry was successfully loaded
+	 */
+	bool load(Common::SeekableReadStream *s);
+};
+
+class TTsentenceEntries : public Common::Array<TTsentenceEntry> {
+public:
+	/**
+	 * Load a list of entries from the specified resource
+	 */
+	void load(const CString &resName);
 };
 
 class TTsentence {

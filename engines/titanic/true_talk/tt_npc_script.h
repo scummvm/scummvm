@@ -34,6 +34,7 @@ class CGameManager;
 class CPetControl;
 class TTroomScript;
 class TTsentence;
+class TTsentenceEntries;
 
 struct TTnpcScriptResponse {
 	uint _tag;
@@ -83,8 +84,8 @@ protected:
 	Common::Array<TTnpcScriptResponse> _responses;
 	int _valuesPerResponse;
 	byte *_subPtr;
-	int _field60;
-	int _field64;
+	const TTsentenceEntries *_entriesP;
+	int _entryCount;
 	int _field68;
 	int _field6C;
 	int _field70;
@@ -136,6 +137,8 @@ protected:
 	 * Returns a pointer to the PET control
 	 */
 	static CPetControl *getPetControl(CGameManager *gameManager);
+
+	void processSentence(const TTsentenceEntries *entries, int entryCount, TTroomScript *roomScript, TTsentence *sentence);
 public:
 	TTnpcScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4,

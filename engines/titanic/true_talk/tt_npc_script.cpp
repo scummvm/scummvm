@@ -51,7 +51,7 @@ TTnpcScriptBase::TTnpcScriptBase(int charId, const char *charClass, int v2,
 TTnpcScript::TTnpcScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTnpcScriptBase(charId, charClass, v2, charName, v3, val2, v4, v5, v6, v7),
-		_subPtr(nullptr), _field60(0), _field64(0), _field68(0),
+		_subPtr(nullptr), _entriesP(nullptr), _entryCount(0), _field68(0),
 		_field6C(0), _field70(0), _field74(0), _field78(0),
 		_field7C(0), _field80(0), _field2CC(false) {
 	CTrueTalkManager::_v2 = 0;
@@ -117,7 +117,7 @@ int TTnpcScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, 
 }
 
 void TTnpcScript::process(TTroomScript *roomScript, TTsentence *sentence) {
-	warning("TODO");
+	processSentence(_entriesP, _entryCount, roomScript, sentence);
 }
 
 int TTnpcScript::proc8() const {
@@ -454,6 +454,10 @@ CPetControl *TTnpcScript::getPetControl(CGameManager *gameManager) {
 	if (gameManager && gameManager->_project)
 		return gameManager->_project->getPetControl();
 	return nullptr;
+}
+
+void TTnpcScript::processSentence(const TTsentenceEntries *entries, int entryCount, TTroomScript *roomScript, TTsentence *sentence) {
+	warning("TODO");
 }
 
 } // End of namespace Titanic

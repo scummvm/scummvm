@@ -39,6 +39,41 @@ TTsentenceConcept *TTsentenceConcept::addSibling() {
 
 /*------------------------------------------------------------------------*/
 
+bool TTsentenceEntry::load(Common::SeekableReadStream *s) {
+	if (s->pos() >= s->size())
+		return false;
+
+	_field0 = s->readUint32LE();
+	_field4 = s->readUint32LE();
+	_string8 = readStringFromStream(s);
+	_fieldC = s->readUint32LE();
+	_string10 = readStringFromStream(s);
+	_string14 = readStringFromStream(s);
+	_string18 = readStringFromStream(s);
+	_string1C = readStringFromStream(s);
+	_field20 = s->readUint32LE();
+	_string24 = readStringFromStream(s);
+	_field28 = s->readUint32LE();
+	_field2C = s->readUint32LE();
+	_field30 = s->readUint32LE();
+
+	return true;
+}
+
+/*------------------------------------------------------------------------*/
+
+void TTsentenceEntries::load(const CString &resName) {
+	TTsentenceEntry entry;
+	Common::SeekableReadStream *r = g_vm->_filesManager->getResource(resName);
+
+	while (entry.load(r))
+		push_back(entry);
+
+	delete r;
+}
+
+/*------------------------------------------------------------------------*/
+
 TTsentence::TTsentence(int inputCtr, const TTstring &line, CScriptHandler *owner,
 		TTroomScript *roomScript, TTnpcScript *npcScript) :
 		_owner(owner), _field2C(1), _inputCtr(inputCtr), _field34(0),
