@@ -148,6 +148,8 @@ public:
 		int val, int val2, const TTconceptNode *node);
 	bool fn2(int slotIndex, const TTstring &str, TTconceptNode *conceptNode);
 	bool fn4(int mode, int wordId, TTconceptNode *node);
+
+	bool isConcept34(int slotIndex, TTconceptNode *node = nullptr);
 };
 
 } // End of namespace Titanic

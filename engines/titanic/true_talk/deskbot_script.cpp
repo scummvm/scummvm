@@ -77,7 +77,7 @@ int DeskbotScript::proc21(int v1, int v2, int v3) {
 	return 0;
 }
 
-int DeskbotScript::proc22() const {
+int DeskbotScript::proc22(int id) const {
 	warning("TODO");
 	return 0;
 }
@@ -92,12 +92,12 @@ const int *DeskbotScript::getTablePtr(int id) {
 	return nullptr;
 }
 
-int DeskbotScript::proc25() const {
+int DeskbotScript::proc25(int val1, int val2, TTroomScript *roomScript, TTsentence *sentence) const {
 	warning("TODO");
 	return 0;
 }
 
-void DeskbotScript::proc26() {
+void DeskbotScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence) {
 }
 
 int DeskbotScript::proc36(int id) const {

@@ -104,7 +104,7 @@ int LiftbotScript::proc21(int v1, int v2, int v3) {
 	return 0;
 }
 
-int LiftbotScript::proc22() const {
+int LiftbotScript::proc22(int id) const {
 	warning("TODO");
 	return 0;
 }
@@ -119,12 +119,12 @@ const int *LiftbotScript::getTablePtr(int id) {
 	return nullptr;
 }
 
-int LiftbotScript::proc25() const {
+int LiftbotScript::proc25(int val1, int val2, TTroomScript *roomScript, TTsentence *sentence) const {
 	warning("TODO");
 	return 0;
 }
 
-void LiftbotScript::proc26() {
+void LiftbotScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence) {
 }
 
 void LiftbotScript::proc32() {

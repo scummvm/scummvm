@@ -178,7 +178,7 @@ int TTnpcScript::proc21(int v1, int v2, int v3) {
 	return v1;
 }
 
-int TTnpcScript::proc22() const {
+int TTnpcScript::proc22(int id) const {
 	return 0;
 }
 
@@ -186,11 +186,11 @@ int TTnpcScript::proc23() const {
 	return 0;
 }
 
-int TTnpcScript::proc25() const {
+int TTnpcScript::proc25(int val1, int val2, TTroomScript *roomScript, TTsentence *sentence) const {
 	return 0;
 }
 
-void TTnpcScript::proc26() {
+void TTnpcScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence) {
 }
 
 void TTnpcScript::save(SimpleFile *file) {
@@ -482,12 +482,49 @@ int TTnpcScript::processSentence(const TTsentenceEntries *entries, uint entryCou
 			}
 
 			if (flag) {
-				// TODO
+				if (entry._field2C) {
+					bool flag2 = true;
+					if (entry._field2C & 0x1000000)
+						flag2 = sentence->isConcept34(1);
+
+					if (entry._field2C & 0x2000000)
+						flag2 = sentence->isConcept34(0) || sentence->isConcept34(4);
+
+					if (!flag2) {
+						flag = false;
+					} else {
+						int result = proc25(entry._field2C & 0xFFFFFF, entry._field0,
+							roomScript, sentence);
+						if (result == 2)
+							return 2;
+						flag = !result;
+					}
+				}
+
+				if (flag) {
+					int dialogueId = getDialogueId(entry._field0);
+					int id;
+					if (!dialogueId)
+						return 1;
+					else if (dialogueId == 4)
+						return 2;	
+					addResponse(dialogueId);
+
+					id = proc22(dialogueId);
+					if (id)
+						addResponse(getDialogueId(id));
+					applyResponse();
+
+					if (entry._field30)
+						proc26(entry._field30, &entry, roomScript, sentence);
+
+					return 2;
+				}
 			}
 		}
 	}
 
-	warning("TODO");
+	return 1;
 }
 
 } // End of namespace Titanic

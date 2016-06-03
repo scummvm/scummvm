@@ -92,12 +92,12 @@ const int *SuccUBusScript::getTablePtr(int id) {
 	return nullptr;
 }
 
-int SuccUBusScript::proc25() const {
+int SuccUBusScript::proc25(int val1, int val2, TTroomScript *roomScript, TTsentence *sentence) const {
 	warning("TODO");
 	return 0;
 }
 
-void SuccUBusScript::proc26() {
+void SuccUBusScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence) {
 }
 
 } // End of namespace Titanic

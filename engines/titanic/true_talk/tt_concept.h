@@ -132,6 +132,7 @@ public:
 	void setFlag(bool val) { _flag = val; }
 	void set1C(int val) { _field1C = val; }
 	int get20() const { return _field20; }
+	int get34() const { return _field34; }
 
 	bool checkWordId1() const;
 	bool checkWordId2() const;

@@ -64,12 +64,12 @@ const int *ParrotScript::getTablePtr(int id) {
 	return nullptr;
 }
 
-int ParrotScript::proc25() const {
+int ParrotScript::proc25(int val1, int val2, TTroomScript *roomScript, TTsentence *sentence) const {
 	warning("TODO");
 	return 0;
 }
 
-void ParrotScript::proc26() {
+void ParrotScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence) {
 }
 
 } // End of namespace Titanic

@@ -132,7 +132,7 @@ int BarbotScript::proc21(int v1, int v2, int v3) {
 	return 0;
 }
 
-int BarbotScript::proc22() const {
+int BarbotScript::proc22(int id) const {
 	warning("TODO");
 	return 0;
 }
@@ -147,12 +147,12 @@ const int *BarbotScript::getTablePtr(int id) {
 	return nullptr;
 }
 
-int BarbotScript::proc25() const {
+int BarbotScript::proc25(int val1, int val2, TTroomScript *roomScript, TTsentence *sentence) const {
 	warning("TODO");
 	return 0;
 }
 
-void BarbotScript::proc26() {
+void BarbotScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence) {
 }
 
 void BarbotScript::proc32() {

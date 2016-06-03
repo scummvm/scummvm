@@ -47,11 +47,11 @@ public:
 	virtual bool proc17() const;
 	virtual bool proc18() const;
 	virtual int proc21(int v1, int v2, int v3);
-	virtual int proc22() const;
+	virtual int proc22(int id) const;
 	virtual int proc23() const;
 	virtual const int *getTablePtr(int id);
-	virtual int proc25() const;
-	virtual void proc26();
+	virtual int proc25(int val1, int val2, TTroomScript *roomScript, TTsentence *sentence) const;
+	virtual void proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence);
 	virtual void proc32();
 	virtual uint translateId(uint id) const;
 };

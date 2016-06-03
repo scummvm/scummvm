@@ -291,4 +291,9 @@ int TTsentence::is1C(int val, const TTconceptNode *node) const {
 	return node->_field1C == val;
 }
 
+bool TTsentence::isConcept34(int slotIndex, TTconceptNode *node) {
+	TTconcept *concept = getFrameEntry(slotIndex, node);
+	return concept && concept->get34();
+}
+
 } // End of namespace Titanic
