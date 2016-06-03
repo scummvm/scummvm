@@ -297,12 +297,12 @@ Frame::Frame() {
 	_transFlags = 0;
 	_transChunkSize = 0;
 	_tempo = 0;
-	
+
 	_sound1 = 0;
 	_sound2 = 0;
 	_soundType1 = 0;
 	_soundType2 = 0;
-	
+
 	_actionId = 0;
 	_skipFrameFlag = 0;
 	_blend = 0;
@@ -556,7 +556,7 @@ void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graph
 void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
 	//Like background trans, but all white pixels NOT ENCLOSED by coloured pixels are transparent
 	uint8 skipColor = 15;
-	uint8 toColor = 16;
+	uint8 toColor = 0;  // Could be anything, not used.
 
 	Graphics::Surface tmp;
 	tmp.copyFrom(sprite);
@@ -571,23 +571,22 @@ void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Su
 		ff.addSeed(xx, 0);
 		ff.addSeed(xx, tmp.h - 1);
 	}
-	ff.fill();
+	ff.fillMask();
 
 	for (int yy = 0; yy < tmp.h; yy++) {
 		const byte *src = (const byte *)tmp.getBasePtr(0, yy);
+		const byte *mask = (const byte *)ff.getMask()->getBasePtr(0, yy);
 		byte *dst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + yy);
-		for (int xx = 0; xx < drawRect.width(); xx++) {
-			if (*src != toColor)
+
+		for (int xx = 0; xx < drawRect.width(); xx++, src++, dst++, mask++)
+			if (*mask == 0)
 				*dst = *src;
-			src++;
-			dst++;
-		}
 	}
 
 	tmp.free();
 }
 
-Sprite::Sprite() { 
+Sprite::Sprite() {
 	_enabled = false;
 	_width = 0;
 	_ink = kInkTypeCopy;
