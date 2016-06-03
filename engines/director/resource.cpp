@@ -244,6 +244,18 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 		if (tag == 0)
 			break;
+		uint16 startResPos = stream->pos();
+		stream->seek(offset + 12);
+
+		Common::String name = "";
+		byte nameSize = stream->readByte();
+		if (nameSize) {
+			for (uint8 i = 0; i < nameSize; i++) {
+				name += stream->readByte();
+			}
+		}
+
+		stream->seek(startResPos);
 
 		debug(0, "Found RIFF resource '%s' %d: %d @ 0x%08x", tag2str(tag), id, size, offset);
 
@@ -251,6 +263,7 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		Resource &res = resMap[id];
 		res.offset = offset;
 		res.size = size;
+		res.name = name;
 	}
 
 	_stream = stream;
@@ -273,9 +286,10 @@ Common::SeekableReadStream *RIFFArchive::getResource(uint32 tag, uint16 id) {
 	uint32 size = res.size - 4;
 	// Skip the Pascal string
 	_stream->seek(offset);
-	byte stringSize = _stream->readByte() + 1; // 1 for this byte
-	offset += stringSize;
-	size -= stringSize;
+	byte stringSize = _stream->readByte(); // 1 for this byte
+
+	offset += stringSize + 1;
+	size -= stringSize + 1;
 
 	// Align to nearest word boundary
 	if (offset & 1) {
@@ -285,7 +299,6 @@ Common::SeekableReadStream *RIFFArchive::getResource(uint32 tag, uint16 id) {
 
 	return new Common::SeekableSubReadStream(_stream, offset, offset + size);
 }
-
 
 // RIFX Archive code
 

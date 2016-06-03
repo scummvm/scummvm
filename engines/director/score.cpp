@@ -54,6 +54,10 @@ Score::Score(Archive &movie) {
 	if (_movieArchive->hasResource(MKTAG('V','W','A','C'), 1024)) {
 		loadActions(*_movieArchive->getResource(MKTAG('V','W','A','C'), 1024));
 	}
+
+	if (_movieArchive->hasResource(MKTAG('M','C','N','M'), 0)) {
+		debug("Mac name %s", _movieArchive->getName(MKTAG('M','C','N','M'), 0).c_str());
+	}
 }
 
 void Score::loadFrames(Common::SeekableReadStream &stream) {
