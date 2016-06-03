@@ -2197,6 +2197,54 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 	// Ensure a full redraw takes place next time the screen is updated
 	_forceFull = true;
 }
+
+void SurfaceSdlGraphicsManager::copyRectToOSD(const void *buf, int pitch, int x, int y, int w, int h) {
+	assert(_transactionMode == kTransactionNone);
+	assert(buf);
+
+	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
+
+	// Lock the OSD surface for drawing
+	if (SDL_LockSurface(_osdSurface))
+		error("displayMessageOnOSD: SDL_LockSurface failed: %s", SDL_GetError());
+
+#ifdef USE_RGB_COLOR
+	byte *dst = (byte *)_osdSurface->pixels + y * _osdSurface->pitch + x * _osdSurface->format->BytesPerPixel;
+	if (_videoMode.screenWidth == w && pitch == _osdSurface->pitch) {
+		memcpy(dst, buf, h*pitch);
+	} else {
+		const byte *src = (const byte *)buf;
+		do {
+			memcpy(dst, src, w * _osdSurface->format->BytesPerPixel);
+			src += pitch;
+			dst += _osdSurface->pitch;
+		} while (--h);
+	}
+#else
+	byte *dst = (byte *)_osdSurface->pixels + y * _osdSurface->pitch + x;
+	if (_osdSurface->pitch == pitch && pitch == w) {
+		memcpy(dst, buf, h*w);
+	} else {
+		const byte *src = (const byte *)buf;
+		do {
+			memcpy(dst, src, w);
+			src += pitch;
+			dst += _osdSurface->pitch;
+		} while (--h);
+	}
+#endif
+
+	// Finished drawing, so unlock the OSD surface again
+	SDL_UnlockSurface(_osdSurface);
+
+	// Init the OSD display parameters, and the fade out
+	_osdAlpha = SDL_ALPHA_TRANSPARENT + kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
+	_osdFadeStartTime = SDL_GetTicks() + kOSDFadeOutDelay;
+	SDL_SetAlpha(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, _osdAlpha);
+
+	// Ensure a full redraw takes place next time the screen is updated
+	_forceFull = true;
+}
 #endif
 
 bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {

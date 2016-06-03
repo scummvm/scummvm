@@ -751,6 +751,12 @@ void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
 #endif
 }
 
+void OpenGLGraphicsManager::copyRectToOSD(const void *buf, int pitch, int x, int y, int w, int h) {
+#ifdef USE_OSD
+	warning("implement copyRectToOSD"); //TODO
+#endif
+}
+
 void OpenGLGraphicsManager::setPalette(const byte *colors, uint start, uint num) {
 	assert(_gameScreen->hasPalette());
 

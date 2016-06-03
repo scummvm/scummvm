@@ -39,6 +39,10 @@ void BaseBackend::displayMessageOnOSD(const char *msg) {
 	dialog.runModal();
 }
 
+void BaseBackend::copyRectToOSD(const void *buf, int pitch, int x, int y, int w, int h) {
+	warning("BaseBackend::copyRectToOSD not implemented"); //TODO
+}
+
 void BaseBackend::initBackend() {
 	// Init Event manager
 #ifndef DISABLE_DEFAULT_EVENT_MANAGER

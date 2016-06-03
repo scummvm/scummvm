@@ -1086,6 +1086,33 @@ public:
 	virtual void displayMessageOnOSD(const char *msg) = 0;
 
 	/**
+	* Blit a bitmap to the 'on screen display'.
+	*
+	* If the current pixel format has one byte per pixel, the graphics data
+	* uses 8 bits per pixel, using the palette specified via setPalette.
+	* If more than one byte per pixel is in use, the graphics data uses the
+	* pixel format returned by getScreenFormat.
+	*
+	* @param buf		the buffer containing the graphics data source
+	* @param pitch		the pitch of the buffer (number of bytes in a scanline)
+	* @param x			the x coordinate of the destination rectangle
+	* @param y			the y coordinate of the destination rectangle
+	* @param w			the width of the destination rectangle
+	* @param h			the height of the destination rectangle
+	*
+	* @note The specified destination rectangle must be completly contained
+	*       in the visible screen space, and must be non-empty. If not, a
+	*       backend may or may not perform clipping, trigger an assert or
+	*       silently corrupt memory.
+	*
+	* @see updateScreen
+	* @see getScreenFormat
+	* @see copyRectToScreen
+	*/
+
+	virtual void copyRectToOSD(const void *buf, int pitch, int x, int y, int w, int h) = 0;
+
+	/**
 	 * Return the SaveFileManager, used to store and load savestates
 	 * and other modifiable persistent game data. For more information,
 	 * refer to the SaveFileManager documentation.

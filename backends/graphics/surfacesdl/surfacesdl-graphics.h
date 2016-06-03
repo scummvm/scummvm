@@ -145,6 +145,7 @@ public:
 
 #ifdef USE_OSD
 	virtual void displayMessageOnOSD(const char *msg);
+	virtual void copyRectToOSD(const void *buf, int pitch, int x, int y, int w, int h);
 #endif
 
 	// Override from Common::EventObserver

@@ -241,6 +241,10 @@ void ModularBackend::displayMessageOnOSD(const char *msg) {
 	_graphicsManager->displayMessageOnOSD(msg);
 }
 
+void ModularBackend::copyRectToOSD(const void *buf, int pitch, int x, int y, int w, int h) {
+	_graphicsManager->copyRectToOSD(buf, pitch, x, y, w, h);
+}
+
 void ModularBackend::quit() {
 	exit(0);
 }
