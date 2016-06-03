@@ -54,6 +54,7 @@
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/macmenu.h"
+#include "graphics/macgui/macwindowborder.h"
 
 #include "common/events.h"
 #include "common/rect.h"
@@ -156,6 +157,7 @@ private:
 	void updateTextSelection(int x, int y);
 	
 	void loadBorders();
+	void loadBorder(Graphics::MacWindow *target, Common::String filename, bool active);
 
 public:
 	Graphics::ManagedSurface _screen;
@@ -175,8 +177,6 @@ public:
 	Graphics::MacWindow *_consoleWindow;
 
 private:
-	Graphics::TransparentSurface *_activeBorder;
-	Graphics::TransparentSurface *_inactiveBorder;
 
 	Graphics::ManagedSurface _console;
 	Graphics::Menu *_menu;

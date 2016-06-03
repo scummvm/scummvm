@@ -170,8 +170,7 @@ Gui::Gui(WageEngine *engine) {
 	_consoleWindow->setCallback(consoleWindowCallback, this);
 
 	loadBorders();
-	_sceneWindow->setBorder(_activeBorder, true);
-	_sceneWindow->setBorder(_inactiveBorder, false);
+	
 }
 
 Gui::~Gui() {
@@ -367,9 +366,15 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 	}
 }
 
-void Gui::loadBorders() {
+void Gui::loadBorders() {	
+	loadBorder(_sceneWindow, "border_inac.bmp", false);
+	loadBorder(_sceneWindow, "border_act.bmp", true);
+}
+
+void Gui::loadBorder(Graphics::MacWindow *target, Common::String filename, bool active) {
 	Common::File borderfile;
-	if (!borderfile.open("border_act.bmp")) {
+
+	if (!borderfile.open(filename)) {
 		debug(1, "Cannot open border file");
 		return;
 	}
@@ -377,36 +382,21 @@ void Gui::loadBorders() {
 	Image::BitmapDecoder bmpDecoder;
 	Common::SeekableReadStream *stream = borderfile.readStream(borderfile.size());
 	Graphics::Surface source;
+	Graphics::TransparentSurface *surface  = new Graphics::TransparentSurface();
 
 	if (stream) {
-		bmpDecoder.loadStream(*stream);	
-		source = *(bmpDecoder.getSurface());
-
-		_activeBorder = new Graphics::TransparentSurface();
-		source.convertToInPlace(_activeBorder->getSupportedPixelFormat(), bmpDecoder.getPalette());		
-		_activeBorder->create(source.w, source.h, source.format);
-		_activeBorder->copyFrom(source);
-		_activeBorder->applyColorKey(255, 0, 255, false);
-
-		delete stream;
-	}
-
-	if (!borderfile.open("border_inac.bmp")) {
-		debug(1, "Cannot open border file");
-		return;
-	}
-	
-	stream = borderfile.readStream(borderfile.size());
-
-	if (stream) {
+		debug(4, "Loading %s border from %s", (active ? "active" : "inactive"), filename);
 		bmpDecoder.loadStream(*stream);
 		source = *(bmpDecoder.getSurface());
 
-		_inactiveBorder = new Graphics::TransparentSurface();
-		source.convertToInPlace(_inactiveBorder->getSupportedPixelFormat(), bmpDecoder.getPalette());
-		_inactiveBorder->create(source.w, source.h, source.format);
-		_inactiveBorder->copyFrom(source);
-		_inactiveBorder->applyColorKey(255, 0, 255, false);
+		source.convertToInPlace(surface->getSupportedPixelFormat(), bmpDecoder.getPalette());
+		surface->create(source.w, source.h, source.format);
+		surface->copyFrom(source);
+		surface->applyColorKey(255, 0, 255, false);
+
+		target->setBorder(*surface, active);
+
+		borderfile.close();
 
 		delete stream;
 	}
