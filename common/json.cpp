@@ -300,7 +300,7 @@ JSONValue *JSONValue::parse(const char **data) {
 		bool neg = **data == '-';
 		if (neg) (*data)++;
 
-		int integer = 0;
+		long long int integer = 0;
 		double number = 0.0;
 		bool onlyInteger = true;
 
@@ -568,7 +568,7 @@ JSONValue::JSONValue(double numberValue) {
 *
 * @param int numberValue The number to use as the value
 */
-JSONValue::JSONValue(int numberValue) {
+JSONValue::JSONValue(long long int numberValue) {
 	_type = JSONType_IntegerNumber;
 	_integerValue = numberValue;
 }
@@ -794,7 +794,7 @@ double JSONValue::asNumber() const {
 *
 * @return int Returns the number value
 */
-int JSONValue::asIntegerNumber() const {
+long long int JSONValue::asIntegerNumber() const {
 	return _integerValue;
 }
 

@@ -23,6 +23,7 @@
 #include "backends/cloud/cloudmanager.h"
 #include "backends/cloud/dropbox/dropboxstorage.h"
 #include "backends/cloud/onedrive/onedrivestorage.h"
+#include "backends/cloud/googledrive/googledrivestorage.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 
@@ -45,7 +46,8 @@ CloudManager::~CloudManager() {
 
 void CloudManager::init() {
 	bool offerDropbox = false;
-	bool offerOneDrive = true;
+	bool offerOneDrive = false;
+	bool offerGoogleDrive = true;
 	
 	if (ConfMan.hasKey("storages_number", "cloud")) {
 		int storages = ConfMan.getInt("storages_number", "cloud");
@@ -55,9 +57,10 @@ void CloudManager::init() {
 			if (ConfMan.hasKey(keyPrefix + "type", "cloud")) {
 				Common::String storageType = ConfMan.get(keyPrefix + "type", "cloud");
 				if (storageType == "Dropbox") loaded = Dropbox::DropboxStorage::loadFromConfig(keyPrefix);
-				else if (storageType == "OneDrive") {
-					loaded = OneDrive::OneDriveStorage::loadFromConfig(keyPrefix);
-					offerOneDrive = false;
+				else if (storageType == "OneDrive") loaded = OneDrive::OneDriveStorage::loadFromConfig(keyPrefix);
+				else if (storageType == "Google Drive") {
+					loaded = GoogleDrive::GoogleDriveStorage::loadFromConfig(keyPrefix);
+					offerGoogleDrive = false;
 				} else warning("Unknown cloud storage type '%s' passed", storageType.c_str());
 			} else {
 				warning("Cloud storage #%d (out of %d) is missing.", i, storages);
@@ -82,6 +85,9 @@ void CloudManager::init() {
 	} else if (offerOneDrive) {
 		//OneDrive time
 		OneDrive::OneDriveStorage::authThroughConsole();
+	} else if (offerGoogleDrive) {		
+		GoogleDrive::GoogleDriveStorage::authThroughConsole();
+		_currentStorageIndex = 100;
 	}
 }
 
@@ -117,6 +123,7 @@ void CloudManager::syncSaves(Storage::BoolCallback callback, Networking::ErrorCa
 
 void CloudManager::testFeature() {
 	Storage *storage = getCurrentStorage();
+	if (storage) storage->info(nullptr, nullptr);
 }
 
 } // End of namespace Common

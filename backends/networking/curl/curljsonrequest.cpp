@@ -44,9 +44,11 @@ char *CurlJsonRequest::getPreparedContents() {
 	//replace all "bad" bytes with '.' character
 	byte *result = _contentsStream.getData();
 	uint32 size = _contentsStream.size();
-	for (uint32 i = 0; i < size; ++i)
-		if (result[i] < 0x20 || result[i] > 0x7f)
+	for (uint32 i = 0; i < size; ++i) {
+		if (result[i] == '\n') result[i] = ' '; //yeah, kinda stupid
+		else if (result[i] < 0x20 || result[i] > 0x7f)
 			result[i] = '.';
+	}
 
 	//make it zero-terminated string
 	result[size - 1] = '\0';

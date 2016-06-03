@@ -96,7 +96,7 @@ public:
 	JSONValue(const String &stringValue);
 	JSONValue(bool boolValue);
 	JSONValue(double numberValue);
-	JSONValue(int numberValue);
+	JSONValue(long long int numberValue);
 	JSONValue(const JSONArray &arrayValue);
 	JSONValue(const JSONObject &objectValue);
 	JSONValue(const JSONValue &source);
@@ -113,7 +113,7 @@ public:
 	const String &asString() const;
 	bool asBool() const;
 	double asNumber() const;
-	int asIntegerNumber() const;
+	long long int asIntegerNumber() const;
 	const JSONArray &asArray() const;
 	const JSONObject &asObject() const;
 
@@ -138,7 +138,7 @@ private:
 	union {
 		bool _boolValue;
 		double _numberValue;
-		int _integerValue;
+		long long int _integerValue;
 		String *_stringValue;
 		JSONArray *_arrayValue;
 		JSONObject *_objectValue;
