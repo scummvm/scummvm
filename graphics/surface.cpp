@@ -505,6 +505,9 @@ FloodFill::FloodFill(Graphics::Surface *surface, uint32 oldColor, uint32 fillCol
 	_w = surface->w;
 	_h = surface->h;
 
+	_mask = nullptr;
+	_maskMode = false;
+
 	_visited = (byte *)calloc(_w * _h, 1);
 }
 
@@ -517,28 +520,45 @@ FloodFill::~FloodFill() {
 	}
 
 	free(_visited);
+
+	if (_mask)
+		delete _mask;
 }
 
 void FloodFill::addSeed(int x, int y) {
 	if (x >= 0 && x < _w && y >= 0 && y < _h) {
 		if (!_visited[y * _w + x]) {
 			_visited[y * _w + x] = 1;
-			void *p = _surface->getBasePtr(x, y);
+			void *src = _surface->getBasePtr(x, y);
+			void *dst;
 			bool changed = false;
 
+			if (_maskMode)
+				dst = _mask->getBasePtr(x, y);
+			else
+				dst = src;
+
 			if (_surface->format.bytesPerPixel == 1) {
-				if (*((byte *)p) == _oldColor) {
-					*((byte *)p) = _fillColor;
+				if (*((byte *)src) == _oldColor) {
+					*((byte *)dst) = _maskMode ? 255 : _fillColor;
 					changed = true;
 				}
 			} else if (_surface->format.bytesPerPixel == 2) {
-				if (READ_UINT16(p) == _oldColor) {
-					WRITE_UINT16(p, _fillColor);
+				if (READ_UINT16(src) == _oldColor) {
+					if (!_maskMode)
+						WRITE_UINT16(src, _fillColor);
+					else
+						*((byte *)dst) = 255;
+
 					changed = true;
 				}
 			} else if (_surface->format.bytesPerPixel == 4) {
-				if (READ_UINT32(p) == _oldColor) {
-					WRITE_UINT32(p, _fillColor);
+				if (READ_UINT32(src) == _oldColor) {
+					if (!_maskMode)
+						WRITE_UINT32(src, _fillColor);
+					else
+						*((byte *)dst) = 255;
+
 					changed = true;
 				}
 			} else {
@@ -565,6 +585,14 @@ void FloodFill::fill() {
 
 		delete p;
 	}
+}
+
+void FloodFill::fillMask() {
+	_mask = new Graphics::Surface();
+	_mask->create(_w, _h, Graphics::PixelFormat::createFormatCLUT8()); // Uses calloc()
+	_maskMode = true;
+
+	fill();
 }
 
 } // End of namespace Graphics
