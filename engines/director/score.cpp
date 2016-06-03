@@ -539,7 +539,6 @@ void Frame::display(Archive &_movie, Graphics::ManagedSurface &surface, Common::
 				surface.blitFrom(*img.getSurface(), Common::Point(x, y));
 				break;
 			}
-			surface.frameRect(drawRect, 0);
 		}
 	}
 	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, surface.getBounds().width(), surface.getBounds().height());
@@ -561,13 +560,10 @@ void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graph
 
 void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
 	//Like background trans, but all white pixels NOT ENCLOSED by coloured pixels are transparent
-	uint8 skipColor = 15;
-	uint8 toColor = 0;  // Could be anything, not used.
-
 	Graphics::Surface tmp;
 	tmp.copyFrom(sprite);
 
-	Graphics::FloodFill ff(&tmp, skipColor, toColor);
+	Graphics::FloodFill ff(&tmp, *(byte *)tmp.getBasePtr(0, 0), 0);
 
 	for (int yy = 0; yy < tmp.h; yy++) {
 		ff.addSeed(0, yy);
