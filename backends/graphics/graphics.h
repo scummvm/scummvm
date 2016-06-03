@@ -85,6 +85,7 @@ public:
 
 	virtual void displayMessageOnOSD(const char *msg) {}
 	virtual void copyRectToOSD(const void *buf, int pitch, int x, int y, int w, int h) {}
+	virtual void clearOSD() {}
 
 	// Graphics::PaletteManager interface
 	//virtual void setPalette(const byte *colors, uint start, uint num) = 0;

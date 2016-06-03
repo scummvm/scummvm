@@ -245,6 +245,10 @@ void ModularBackend::copyRectToOSD(const void *buf, int pitch, int x, int y, int
 	_graphicsManager->copyRectToOSD(buf, pitch, x, y, w, h);
 }
 
+void ModularBackend::clearOSD() {
+	_graphicsManager->clearOSD();
+}
+
 void ModularBackend::quit() {
 	exit(0);
 }

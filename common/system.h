@@ -1113,6 +1113,12 @@ public:
 	virtual void copyRectToOSD(const void *buf, int pitch, int x, int y, int w, int h) = 0;
 
 	/**
+	* Clears 'on screen display' from everything drawn on it.
+	*/
+
+	virtual void clearOSD() = 0;
+
+	/**
 	 * Return the SaveFileManager, used to store and load savestates
 	 * and other modifiable persistent game data. For more information,
 	 * refer to the SaveFileManager documentation.

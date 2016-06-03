@@ -2245,6 +2245,38 @@ void SurfaceSdlGraphicsManager::copyRectToOSD(const void *buf, int pitch, int x,
 	// Ensure a full redraw takes place next time the screen is updated
 	_forceFull = true;
 }
+
+void SurfaceSdlGraphicsManager::clearOSD() {
+	assert(_transactionMode == kTransactionNone);	
+
+	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
+
+	// Lock the OSD surface for drawing
+	if (SDL_LockSurface(_osdSurface))
+		error("displayMessageOnOSD: SDL_LockSurface failed: %s", SDL_GetError());
+
+	Graphics::Surface dst;
+	dst.init(_osdSurface->w, _osdSurface->h, _osdSurface->pitch, _osdSurface->pixels,
+		Graphics::PixelFormat(_osdSurface->format->BytesPerPixel,
+			8 - _osdSurface->format->Rloss, 8 - _osdSurface->format->Gloss,
+			8 - _osdSurface->format->Bloss, 8 - _osdSurface->format->Aloss,
+			_osdSurface->format->Rshift, _osdSurface->format->Gshift,
+			_osdSurface->format->Bshift, _osdSurface->format->Ashift));
+
+	// Clear everything with the "transparent" color, i.e. the colorkey
+	SDL_FillRect(_osdSurface, 0, kOSDColorKey);
+
+	// Finished drawing, so unlock the OSD surface again
+	SDL_UnlockSurface(_osdSurface);
+
+	// Init the OSD display parameters, and the fade out
+	_osdAlpha = SDL_ALPHA_TRANSPARENT + kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
+	_osdFadeStartTime = SDL_GetTicks() + kOSDFadeOutDelay;
+	SDL_SetAlpha(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, _osdAlpha);
+
+	// Ensure a full redraw takes place next time the screen is updated
+	_forceFull = true;
+}
 #endif
 
 bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {

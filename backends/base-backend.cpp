@@ -43,6 +43,11 @@ void BaseBackend::copyRectToOSD(const void *buf, int pitch, int x, int y, int w,
 	warning("BaseBackend::copyRectToOSD not implemented"); //TODO
 }
 
+void BaseBackend::clearOSD() {
+	warning("BaseBackend::clearOSD not implemented"); //TODO
+	//what should I do? Remove all TimedMessageDialogs?
+}
+
 void BaseBackend::initBackend() {
 	// Init Event manager
 #ifndef DISABLE_DEFAULT_EVENT_MANAGER
