@@ -524,23 +524,32 @@ void FloodFill::addSeed(int x, int y) {
 		if (!_visited[y * _w + x]) {
 			_visited[y * _w + x] = 1;
 			void *p = _surface->getBasePtr(x, y);
+			bool changed = false;
 
 			if (_surface->format.bytesPerPixel == 1) {
-				if (*((byte *)p) == _oldColor)
+				if (*((byte *)p) == _oldColor) {
 					*((byte *)p) = _fillColor;
+					changed = true;
+				}
 			} else if (_surface->format.bytesPerPixel == 2) {
-				if (READ_UINT16(p) == _oldColor)
+				if (READ_UINT16(p) == _oldColor) {
 					WRITE_UINT16(p, _fillColor);
+					changed = true;
+				}
 			} else if (_surface->format.bytesPerPixel == 4) {
-				if (READ_UINT32(p) == _oldColor)
+				if (READ_UINT32(p) == _oldColor) {
 					WRITE_UINT32(p, _fillColor);
+					changed = true;
+				}
 			} else {
 				error("Unsupported bpp in FloodFill");
 			}
 
-			Common::Point *pt = new Common::Point(x, y);
+			if (changed) {
+				Common::Point *pt = new Common::Point(x, y);
 
-			_queue.push_back(pt);
+				_queue.push_back(pt);
+			}
 		}
 	}
 }
