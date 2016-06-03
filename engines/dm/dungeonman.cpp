@@ -53,7 +53,62 @@ void DungeonMan::mapCoordsAfterRelMovement(direction dir, int16 stepsForward, in
 	posY += dirIntoStepCountNorth[dir] * stepsRight;
 }
 
-DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine), _rawDunFileData(NULL), _maps(NULL), _rawMapData(NULL) {}
+DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine), _rawDunFileData(NULL), _maps(NULL), _rawMapData(NULL) {
+	_dunData.columCount = 0;
+	_dunData.eventMaximumCount = 0;
+
+	_dunData.mapsFirstColumnIndex = nullptr;
+	_dunData.columnsCumulativeSquareThingCount = nullptr;
+	_dunData.squareFirstThings = nullptr;
+	_dunData.textData = nullptr;
+	_dunData.mapData = nullptr;
+
+	for (int i = 0; i < 16; i++)
+		_dunData.thingsData[i] = nullptr;
+
+	_currMap.partyDir = kDirNorth;
+	_currMap.partyPosX = 0;
+	_currMap.partyPosY = 0;
+	_currMap.currPartyMapIndex = 0;
+	_currMap.index = 0;
+	_currMap.width = 0;
+	_currMap.height = 0;
+
+	_currMap.data = nullptr;
+	_currMap.map = nullptr;
+	_currMap.colCumulativeSquareFirstThingCount = nullptr;
+
+	_messages.newGame = true;
+	_messages.restartGameRequest = false;
+
+	_rawDunFileDataSize = 0;
+	_rawDunFileData = nullptr;
+
+	_fileHeader.dungeonId = 0;
+	_fileHeader.ornamentRandomSeed = 0;
+	_fileHeader.rawMapDataSize = 0;
+	_fileHeader.mapCount = 0;
+	_fileHeader.textDataWordCount = 0;
+	_fileHeader.partyStartDir = kDirNorth;
+	_fileHeader.partyStartPosX = 0;
+	_fileHeader.partyStartPosY = 0;
+	_fileHeader.squareFirstThingCount = 0;
+
+	for (int i = 0; i < 16; i++)
+		_fileHeader.thingCounts[i] = 0;
+
+	_maps = nullptr;
+	_rawMapData = nullptr;
+
+	_currMapInscriptionWallOrnIndex = 0;
+	_isFacingAlcove = false;
+	_isFacingViAltar = false;
+	_isFacingFountain = false;
+
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 6; j++)
+			_dungeonViewClickableBoxes[j][i] = 0;
+}
 
 DungeonMan::~DungeonMan() {
 	delete[] _rawDunFileData;

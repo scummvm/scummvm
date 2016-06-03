@@ -331,7 +331,6 @@ public:
 	byte toByte() { return data; } // I don't like 'em casts
 };
 
-
 struct DungeonFileHeader {
 	uint16 dungeonId; // @ G0526_ui_DungeonID
 	// equal to dungeonId
@@ -366,21 +365,19 @@ struct Map {
 	uint8 doorSet0, doorSet1;
 }; // @ MAP
 
-
-
 struct DungeonData {
 	// I have no idea the heck is this
-	uint16 *mapsFirstColumnIndex = NULL; // @ G0281_pui_DungeonMapsFirstColumnIndex
+	uint16 *mapsFirstColumnIndex; // @ G0281_pui_DungeonMapsFirstColumnIndex
 	uint16 columCount; // @ G0282_ui_DungeonColumnCount
 
 	// I have no idea the heck is this
-	uint16 *columnsCumulativeSquareThingCount = NULL; // @ G0280_pui_DungeonColumnsCumulativeSquareThingCount
-	Thing *squareFirstThings = NULL; // @ G0283_pT_SquareFirstThings
-	uint16 *textData = NULL; // @ G0260_pui_DungeonTextData
+	uint16 *columnsCumulativeSquareThingCount; // @ G0280_pui_DungeonColumnsCumulativeSquareThingCount
+	Thing *squareFirstThings; // @ G0283_pT_SquareFirstThings
+	uint16 *textData; // @ G0260_pui_DungeonTextData
 
-	uint16 **thingsData[16] = {NULL}; // @ G0284_apuc_ThingData
+	uint16 **thingsData[16]; // @ G0284_apuc_ThingData
 
-	byte ***mapData = NULL; // @ G0279_pppuc_DungeonMapData
+	byte ***mapData; // @ G0279_pppuc_DungeonMapData
 
 	// TODO: ??? is this doing here
 	uint16 eventMaximumCount; // @ G0369_ui_EventMaximumCount
@@ -393,20 +390,17 @@ struct CurrMapData {
 	uint8 currPartyMapIndex; // @ G0309_i_PartyMapIndex
 
 	uint8 index; // @ G0272_i_CurrentMapIndex
-	byte **data = NULL; // @ G0271_ppuc_CurrentMapData
-	Map *map = NULL; // @ G0269_ps_CurrentMap
+	byte **data; // @ G0271_ppuc_CurrentMapData
+	Map *map; // @ G0269_ps_CurrentMap
 	uint16 width; // @ G0273_i_CurrentMapWidth
 	uint16 height; // @ G0274_i_CurrentMapHeight
-	uint16 *colCumulativeSquareFirstThingCount = NULL; // @G0270_pui_CurrentMapColumnsCumulativeSquareFirstThingCount
+	uint16 *colCumulativeSquareFirstThingCount; // @G0270_pui_CurrentMapColumnsCumulativeSquareFirstThingCount
 }; // @ AGGREGATE
 
 struct Messages {
-	bool newGame = true; // @ G0298_B_NewGame
-	bool restartGameRequest = false; // @ G0523_B_RestartGameRequested
+	bool newGame; // @ G0298_B_NewGame
+	bool restartGameRequest; // @ G0523_B_RestartGameRequested
 }; // @ AGGREGATE
-
-
-
 
 class DungeonMan {
 	DMEngine *_vm;
@@ -446,15 +440,15 @@ public:
 	void setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX, int16 mapY); // @ F0172_DUNGEON_SetSquareAspect
 	void decodeText(char *destString, Thing thing, TextType type); // F0168_DUNGEON_DecodeText
 
-		uint32 _rawDunFileDataSize = 0;	 // @ probably NONE
-	byte *_rawDunFileData = NULL; // @ ???
+	uint32 _rawDunFileDataSize;	 // @ probably NONE
+	byte *_rawDunFileData; // @ ???
 	DungeonFileHeader _fileHeader; // @ G0278_ps_DungeonHeader
 
 	DungeonData _dunData; // @ NONE
 	CurrMapData _currMap; // @ NONE
-	Map *_maps = NULL; // @ G0277_ps_DungeonMaps
+	Map *_maps; // @ G0277_ps_DungeonMaps
 	// does not have to be freed
-	byte *_rawMapData = NULL; // @ G0276_puc_DungeonRawMapData
+	byte *_rawMapData; // @ G0276_puc_DungeonRawMapData
 	Messages _messages; // @ NONE;
 
 	int16 _currMapInscriptionWallOrnIndex; // @ G0265_i_CurrentMapInscriptionWallOrnamentIndex

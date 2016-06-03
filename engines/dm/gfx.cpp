@@ -633,15 +633,62 @@ int gFountainOrnIndices[kFountainOrnCount] = {35}; // @ G0193_ai_Graphic558_Foun
 byte gAlcoveOrnIndices[kAlcoveOrnCount] = { // @ G0192_auc_Graphic558_AlcoveOrnamentIndices
 	1,   /* Square Alcove */
 	2,   /* Vi Altar */
-	3}; /* Arched Alcove */
-
+	3};  /* Arched Alcove */
 }
 
 using namespace DM;
 
-DisplayMan::DisplayMan(DMEngine *dmEngine) :
-	_vm(dmEngine), _screenWidth(0), _screenHeight(0),
-	_vgaBuffer(NULL), _bitmaps(NULL) {}
+DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {	
+	_vgaBuffer = nullptr;
+	_bitmaps = nullptr;
+	_grapItemCount = 0;
+	_packedItemPos = nullptr;
+	_packedBitmaps = nullptr;
+	_bitmaps = nullptr;
+	_tmpBitmap = nullptr;
+	_floorBitmap = nullptr;
+	_ceilingBitmap = nullptr;
+	_currMapAllowedCreatureTypes = nullptr;
+
+	_screenWidth = _screenHeight = 0;
+	_championPortraitOrdinal = 0;
+	_currMapViAltarIndex = 0;
+
+	for (int i = 0; i < 25; i++)
+		_wallSetBitMaps[i] = nullptr;
+
+	for (int i = 0; i < kStairsGraphicCount; i++)
+		_stairIndices[i] = 0;
+	
+	for (int i = 0; i < 4; i++)
+		_palChangesProjectile[i] =  nullptr;
+
+	for (int i = 0; i < kAlcoveOrnCount; i++)
+		_currMapAlcoveOrnIndices[i] = 0;
+
+	for (int i = 0; i < kFountainOrnCount; i++)
+		_currMapFountainOrnIndices[i] = 0;
+
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < 16; j++) {
+			_currMapWallOrnInfo[j][i] = 0;
+			_currMapFloorOrnInfo[j][i] = 0;
+		}
+		for (int j = 0; j < 17; j++) {
+			_currMapDoorOrnInfo[j][i] = 0;
+		}
+	}
+	
+	for (int i = 0; i < 16; i++) {
+		_currMapWallOrnIndices[i] = 0;
+		_currMapFloorOrnIndices[i] = 0;
+	}
+
+	for (int i = 0; i < 18; i++)
+		_currMapDoorOrnIndices[i] = 0;
+
+	Thing _inscriptionThing = Thing::thingNone;
+}
 
 DisplayMan::~DisplayMan() {
 	delete[] _packedItemPos;

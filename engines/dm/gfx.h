@@ -121,36 +121,26 @@ extern Viewport gDungeonViewport;
 #define kDoorOrnDestroyedMask 15 // @ C15_DOOR_ORNAMENT_DESTROYED_MASK
 #define kDoorOrnThivesEyeMask 16 // @ C16_DOOR_ORNAMENT_THIEVES_EYE_MASK
 
-
-
-
 class DisplayMan {
-	DMEngine *_vm = NULL;
+	DMEngine *_vm;
 	uint16 _screenWidth;
-	uint16 _screenHeight = 0;
-	byte *_vgaBuffer = NULL;
-
+	uint16 _screenHeight;
+	byte *_vgaBuffer;
 
 	/// Related to graphics.dat file
-	uint16 _grapItemCount = 0; // @ G0632_ui_GraphicCount
-	uint32 *_packedItemPos = NULL;
-	byte *_packedBitmaps = NULL;
-	byte **_bitmaps = NULL;
-
+	uint16 _grapItemCount; // @ G0632_ui_GraphicCount
+	uint32 *_packedItemPos;
+	byte *_packedBitmaps;
+	byte **_bitmaps;
 
 	// pointers 13,14 and [15-19] are owned by this array
-	byte *_wallSetBitMaps[25] = {NULL};	// @G[0696..0710]_puc_Bitmap_WallSet_...
-
-	uint16 _stairIndices[kStairsGraphicCount] = {0};
-
+	byte *_wallSetBitMaps[25];	// @G[0696..0710]_puc_Bitmap_WallSet_...
+	uint16 _stairIndices[kStairsGraphicCount];
 
 	// pointers are not owned by these fields
-	byte *_floorBitmap = NULL;
-	byte *_ceilingBitmap = NULL;
-
-
-	byte *_palChangesProjectile[4] = {NULL}; // @G0075_apuc_PaletteChanges_Projectile
-
+	byte *_floorBitmap;
+	byte *_ceilingBitmap;
+	byte *_palChangesProjectile[4]; // @G0075_apuc_PaletteChanges_Projectile
 
 	DisplayMan(const DisplayMan &other); // no implementation on purpose
 	void operator=(const DisplayMan &rhs); // no implementation on purpose
@@ -185,16 +175,14 @@ class DisplayMan {
 	bool isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex); // @ F0107_DUNGEONVIEW_IsDrawnWallOrnamentAnAlcove_CPSF
 
 	// some methods use this for a stratchpad, don't make assumptions about content between function calls
-	byte *_tmpBitmap = NULL;
+	byte *_tmpBitmap;
 public:
 	DisplayMan(DMEngine *dmEngine);
 	~DisplayMan();
+
 	void setUpScreens(uint16 width, uint16 height);
-
 	void loadGraphics(); // @ F0479_MEMORY_ReadGraphicsDatHeader, F0460_START_InitializeGraphicData
-
 	void loadCurrentMapGraphics();
-
 	void loadPalette(uint16 *palette);
 
 	/// Gives the width of an IMG0 type item
@@ -222,20 +210,20 @@ public:
 	void drawDungeon(direction dir, int16 posX, int16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
 	void updateScreen();
 
-	int16 _championPortraitOrdinal = 0; // @ G0289_i_DungeonView_ChampionPortraitOrdinal
-	int16 _currMapAlcoveOrnIndices[kAlcoveOrnCount] = {0}; // @ G0267_ai_CurrentMapAlcoveOrnamentIndices
-	int16 _currMapFountainOrnIndices[kFountainOrnCount] = {0}; // @ G0268_ai_CurrentMapFountainOrnamentIndices
-	int16 _currMapWallOrnInfo[16][2] = {0}; // @ G0101_aai_CurrentMapWallOrnamentsInfo
-	int16 _currMapFloorOrnInfo[16][2] = {0}; // @ G0102_aai_CurrentMapFloorOrnamentsInfo
-	int16 _currMapDoorOrnInfo[17][2] = {0}; // @ G0103_aai_CurrentMapDoorOrnamentsInfo
-	byte *_currMapAllowedCreatureTypes = NULL; // @ G0264_puc_CurrentMapAllowedCreatureTypes
-	byte _currMapWallOrnIndices[16] = {0}; // @ G0261_auc_CurrentMapWallOrnamentIndices
-	byte _currMapFloorOrnIndices[16] = {0}; // @ G0262_auc_CurrentMapFloorOrnamentIndices
-	byte _currMapDoorOrnIndices[18] = {0}; // @ G0263_auc_CurrentMapDoorOrnamentIndices
+	int16 _championPortraitOrdinal; // @ G0289_i_DungeonView_ChampionPortraitOrdinal
+	int16 _currMapAlcoveOrnIndices[kAlcoveOrnCount]; // @ G0267_ai_CurrentMapAlcoveOrnamentIndices
+	int16 _currMapFountainOrnIndices[kFountainOrnCount]; // @ G0268_ai_CurrentMapFountainOrnamentIndices
+	int16 _currMapWallOrnInfo[16][2]; // @ G0101_aai_CurrentMapWallOrnamentsInfo
+	int16 _currMapFloorOrnInfo[16][2]; // @ G0102_aai_CurrentMapFloorOrnamentsInfo
+	int16 _currMapDoorOrnInfo[17][2]; // @ G0103_aai_CurrentMapDoorOrnamentsInfo
+	byte *_currMapAllowedCreatureTypes; // @ G0264_puc_CurrentMapAllowedCreatureTypes
+	byte _currMapWallOrnIndices[16]; // @ G0261_auc_CurrentMapWallOrnamentIndices
+	byte _currMapFloorOrnIndices[16]; // @ G0262_auc_CurrentMapFloorOrnamentIndices
+	byte _currMapDoorOrnIndices[18]; // @ G0263_auc_CurrentMapDoorOrnamentIndices
 
-	int16 _currMapViAltarIndex = 0; // @ G0266_i_CurrentMapViAltarWallOrnamentIndex
+	int16 _currMapViAltarIndex; // @ G0266_i_CurrentMapViAltarWallOrnamentIndex
 
-	Thing _inscriptionThing = Thing::thingNone; // @ G0290_T_DungeonView_InscriptionThing
+	Thing _inscriptionThing; // @ G0290_T_DungeonView_InscriptionThing
 };
 
 }
