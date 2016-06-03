@@ -209,13 +209,15 @@ void Score::loadActions(Common::SeekableReadStream &stream) {
 
 BitmapCast::BitmapCast(Common::SeekableReadStream &stream) {
 	/*byte flags = */ stream.readByte();
-	/*uint16 someFlaggyThing = */ stream.readUint16BE();
+	uint16 someFlaggyThing = stream.readUint16BE();
 	initialRect = Score::readRect(stream);
 	boundingRect = Score::readRect(stream);
 	regY = stream.readUint16BE();
 	regX = stream.readUint16BE();
-	/*uint16 unk1 =*/ stream.readUint16BE();
-	/*uint16 unk2 =*/ stream.readUint16BE();
+	if (someFlaggyThing & 0x8000) {
+		/*uint16 unk1 =*/ stream.readUint16BE();
+		/*uint16 unk2 =*/ stream.readUint16BE();
+	}
 }
 
 TextCast::TextCast(Common::SeekableReadStream &stream) {
