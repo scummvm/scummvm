@@ -2,9 +2,9 @@
 
 namespace Graphics {
 
-MacWindowBorder::MacWindowBorder() {
+MacWindowBorder::MacWindowBorder() : _activeInitialized(false), _inactiveInitialized(false) {
 	_activeBorder = nullptr;
-	_inactiveBorder = nullptr;
+	_inactiveBorder = nullptr;	
 }
 
 
@@ -15,15 +15,20 @@ MacWindowBorder::~MacWindowBorder() {
 		delete _inactiveBorder;
 }
 
-bool MacWindowBorder::empty() { return !(_activeBorder || _inactiveBorder); }
-
-void MacWindowBorder::addActiveBorder(TransparentSurface *source) {
-	// Assumes NinePatchBitmap invariants hold
-	_activeBorder = new NinePatchBitmap(source, false);	
+bool MacWindowBorder::hasBorder(bool active) { 
+	return active ? _activeInitialized : _inactiveInitialized; 
 }
 
-void MacWindowBorder::addInactiveBorder(TransparentSurface *source) {
-	_inactiveBorder = new NinePatchBitmap(source, false);
+void MacWindowBorder::addActiveBorder(TransparentSurface &source) {
+	assert(!_activeBorder);
+	_activeBorder = new NinePatchBitmap(&source, false);	
+	_activeInitialized = true;
+}
+
+void MacWindowBorder::addInactiveBorder(TransparentSurface &source) {
+	assert(!_inactiveBorder);
+	_inactiveBorder = new NinePatchBitmap(&source, false);
+	_inactiveInitialized = true;
 }
 
 void MacWindowBorder::blitBorderInto(ManagedSurface &destination, bool active) {

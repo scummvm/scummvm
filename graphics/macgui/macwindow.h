@@ -138,7 +138,7 @@ public:
 	bool processEvent(Common::Event &event);
 	bool hasAllFocus() { return _beingDragged || _beingResized; }
 
-	void setBorder(TransparentSurface *source, bool active);
+	void setBorder(TransparentSurface &border, bool active);
 
 private:
 	void drawBorder();
@@ -154,8 +154,6 @@ private:
 private:
 	ManagedSurface _borderSurface;
 	ManagedSurface _composeSurface;
-
-	TransparentSurface *_borders;
 
 	MacWindowBorder _macBorder;
 

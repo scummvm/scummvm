@@ -62,15 +62,18 @@ public:
 	MacWindowBorder();
 	~MacWindowBorder();
 
-	bool empty();
-	void addActiveBorder(TransparentSurface *source);
-	void addInactiveBorder(TransparentSurface *source);
+	bool hasBorder(bool active);
+	void addActiveBorder(TransparentSurface &source);
+	void addInactiveBorder(TransparentSurface &source);
 	void blitBorderInto(ManagedSurface &destination, bool active);
 
 private:
 
 	NinePatchBitmap *_activeBorder;
 	NinePatchBitmap *_inactiveBorder;
+
+	bool _activeInitialized;
+	bool _inactiveInitialized;
 
 };
 

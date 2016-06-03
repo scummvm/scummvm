@@ -78,9 +78,6 @@ MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Mac
 	_draggedX = _draggedY = 0;
 
 	_type = kWindowWindow;
-
-	_borders = nullptr;
-
 }
 
 MacWindow::~MacWindow() {
@@ -186,7 +183,7 @@ void MacWindow::drawBorder() {
 	ManagedSurface *g = &_borderSurface;
 	prepareBorderSurface(g);
 
-	if (!_macBorder.empty())
+	if (_macBorder.hasBorder(_active))
 		drawBorderFromSurface(g);
 	else
 		drawSimpleBorder(g);
@@ -203,12 +200,7 @@ void MacWindow::prepareBorderSurface(ManagedSurface *g) {
 }
 
 void MacWindow::drawBorderFromSurface(ManagedSurface *g) {
-
-	TransparentSurface srf;
-	srf.create(_borderSurface.w, _borderSurface.h, _borders->format);
-
 	_macBorder.blitBorderInto(_borderSurface, _active);
-	_borderSurface.transBlitFrom(srf, _borderSurface.format.ARGBToColor(0, 255, 255, 255));
 }
 
 void MacWindow::drawSimpleBorder(ManagedSurface *g) {
@@ -301,14 +293,12 @@ void MacWindow::setHighlight(WindowClick highlightedPart) {
 	_borderIsDirty = true;
  }
 
- void MacWindow::setBorder(TransparentSurface *source, bool active) {
-	 _borders = new TransparentSurface(*source);
+ void MacWindow::setBorder(TransparentSurface &border, bool active) {
 	 if (active)
-		 _macBorder.addActiveBorder(_borders);
-	 else	
-		_macBorder.addInactiveBorder(_borders);
+		 _macBorder.addActiveBorder(border);
+	 else
+		 _macBorder.addInactiveBorder(border);
  }
-
 
 void MacWindow::drawBox(ManagedSurface *g, int x, int y, int w, int h) {
 	Common::Rect r(x, y, x + w + 1, y + h + 1);
