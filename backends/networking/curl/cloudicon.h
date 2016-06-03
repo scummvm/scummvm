@@ -27,6 +27,7 @@ namespace Networking {
 
 class CloudIcon {
 	int _frame;
+	bool _wasVisible;
 
 public:
 	CloudIcon();

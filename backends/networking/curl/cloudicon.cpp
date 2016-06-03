@@ -27,23 +27,27 @@
 
 namespace Networking {
 
-CloudIcon::CloudIcon(): _frame(0) {}
+CloudIcon::CloudIcon(): _frame(0), _wasVisible(false) {}
 
 CloudIcon::~CloudIcon() {}
 
 void CloudIcon::draw() {	 
-	Cloud::Storage *storage = CloudMan.getCurrentStorage();
-	bool working = (storage && storage->isWorking());
-	if (working) {
-		//buf = animation frame;
+	Cloud::Storage *storage = CloudMan.getCurrentStorage();	
+	if (storage && storage->isWorking()) {
 		if (g_system) {
+			if (!_wasVisible) {
+				g_system->clearOSD();
+				_wasVisible = true;
+			}
+
 			const Graphics::Surface *s = g_gui.theme()->getImageSurface(GUI::ThemeEngine::kImageLogoSmall);
-			int x = 10, y = 10;
+			int x = g_system->getOverlayWidth() - s->w - 10, y = 10;
 			g_system->copyRectToOSD(s->getPixels(), s->pitch, x, y, s->w, s->h);
+		} else {
+			_wasVisible = false;
 		}
 	} else {
-		//buf = empty;
-		//TODO: put empty piece to OSD?
+		_wasVisible = false;
 	}
 }
 
