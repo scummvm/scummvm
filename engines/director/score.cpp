@@ -556,30 +556,35 @@ void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graph
 void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
 	//Like background trans, but all white pixels NOT ENCLOSED by coloured pixels are transparent
 	uint8 skipColor = 15;
-	for (int ii = 0; ii < sprite.h; ii++) {
-		const byte *leftSrc = (const byte *)sprite.getBasePtr(0, ii);
-		byte *leftDst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + ii);
-		bool skip = true;
-		for (int j = 0; j < drawRect.width() / 2; j++) {
-			if ((*leftSrc != skipColor) || !skip) {
-				*leftDst = *leftSrc;
-				skip = false;
-			}
-			leftSrc++;
-			leftDst++;
-		}
-		skip = true;
-		const byte *rightSrc = (const byte *)sprite.getBasePtr(sprite.w - 1, ii);
-		byte *rightDst = (byte *)target.getBasePtr(drawRect.right - 1, drawRect.top + ii);
-		for (int j = 0; j <= drawRect.width() / 2; j++) {
-			if ((*rightSrc != skipColor) || !skip) {
-				*rightDst = *rightSrc;
-				skip = false;
-			}
-			rightSrc--;
-			rightDst--;
+	uint8 toColor = 16;
+
+	Graphics::Surface tmp;
+	tmp.copyFrom(sprite);
+
+	Graphics::FloodFill ff(&tmp, skipColor, toColor);
+
+	for (int yy = 0; yy < tmp.h; yy++) {
+		ff.addSeed(0, yy);
+		ff.addSeed(tmp.w - 1, yy);
+	}
+	for (int xx = 0; xx < tmp.w; xx++) {
+		ff.addSeed(xx, 0);
+		ff.addSeed(xx, tmp.h - 1);
+	}
+	ff.fill();
+
+	for (int yy = 0; yy < tmp.h; yy++) {
+		const byte *src = (const byte *)tmp.getBasePtr(0, yy);
+		byte *dst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + yy);
+		for (int xx = 0; xx < drawRect.width(); xx++) {
+			if (*src != toColor)
+				*dst = *src;
+			src++;
+			dst++;
 		}
 	}
+
+	tmp.free();
 }
 
 Sprite::Sprite() { 
