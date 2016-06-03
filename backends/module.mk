@@ -45,6 +45,7 @@ ifdef USE_LIBCURL
 MODULE_OBJS += \
 	networking/curl/connectionmanager.o \
 	networking/curl/networkreadstream.o \
+	networking/curl/cloudicon.o \
 	networking/curl/curlrequest.o \
 	networking/curl/curljsonrequest.o \
 	networking/curl/request.o

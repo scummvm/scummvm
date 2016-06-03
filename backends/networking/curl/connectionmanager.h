@@ -23,6 +23,7 @@
 #ifndef BACKENDS_NETWORKING_CURL_CONNECTIONMANAGER_H
 #define BACKENDS_NETWORKING_CURL_CONNECTIONMANAGER_H
 
+#include "backends/networking/curl/cloudicon.h"
 #include "backends/networking/curl/request.h"
 #include "common/str.h"
 #include "common/singleton.h"
@@ -38,6 +39,11 @@ namespace Networking {
 class NetworkReadStream;
 
 class ConnectionManager : public Common::Singleton<ConnectionManager> {
+	static const uint32 FRAMES_PER_SECOND = 20;
+	static const uint32 TIMER_INTERVAL = 1000000 / FRAMES_PER_SECOND;
+	static const uint32 CLOUD_PERIOD = 20; //every 20th frame
+	static const uint32 CURL_PERIOD = 1; //every frame
+
 	friend void connectionsThread(void *); //calls handle()
 
 	typedef Common::BaseCallback<Request *> *RequestCallback;
@@ -73,8 +79,10 @@ class ConnectionManager : public Common::Singleton<ConnectionManager> {
 	bool _timerStarted;
 	Common::Array<RequestWithCallback> _requests;
 	Common::Mutex _handleMutex;
+	CloudIcon _icon;
+	uint32 _frame;
 	
-	void startTimer(int interval = 1000000); //1 second is the default interval
+	void startTimer(int interval = TIMER_INTERVAL);
 	void stopTimer();
 	void handle();
 	void interateRequests();

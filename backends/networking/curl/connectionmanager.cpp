@@ -37,7 +37,7 @@ DECLARE_SINGLETON(Networking::ConnectionManager);
 
 namespace Networking {
 
-ConnectionManager::ConnectionManager(): _multi(0), _timerStarted(false) {
+ConnectionManager::ConnectionManager(): _multi(0), _timerStarted(false), _frame(0) {
 	curl_global_init(CURL_GLOBAL_ALL);
 	_multi = curl_multi_init();
 }
@@ -52,12 +52,13 @@ ConnectionManager::~ConnectionManager() {
 		delete request;
 		if (callback) (*callback)(request);
 	}
-	_requests.clear();
-	_handleMutex.unlock();
+	_requests.clear();	
 
 	//cleanup
 	curl_multi_cleanup(_multi);
 	curl_global_cleanup();
+	_multi = nullptr;
+	_handleMutex.unlock();
 }
 
 void ConnectionManager::registerEasyHandle(CURL *easy) {
@@ -95,9 +96,13 @@ void ConnectionManager::stopTimer() {
 void ConnectionManager::handle() {
 	//lock mutex here (in case another handle() would be called before this one ends)
 	_handleMutex.lock();
-	interateRequests();
-	processTransfers();
+	++_frame;
+	if (_frame % CLOUD_PERIOD == 0) interateRequests();
+	if (_frame % CURL_PERIOD == 0) processTransfers();
 	_handleMutex.unlock();
+
+	//icon redrawing is doesn't require any mutex, but must be done after requests are iterated
+	_icon.draw();
 }
 
 void ConnectionManager::interateRequests() {
@@ -123,6 +128,8 @@ void ConnectionManager::interateRequests() {
 }
 
 void ConnectionManager::processTransfers() {
+	if (!_multi) return;
+
 	//check libcurl's transfers and notify requests of messages from queue (transfer completion or failure)
 	int transfersRunning;
 	curl_multi_perform(_multi, &transfersRunning);
