@@ -54,7 +54,7 @@ const Graphics::Surface *BitmapRawDecoder::decodeFrame(Common::SeekableReadStrea
 	}
 
 	if (_bitsPerPixel == 1) {
-		for (int i = _height - 1; i >= 0; i--) {
+		for (int i = 0; i < _height; i++) {
 			byte *dst = (byte *)_surface->getBasePtr(0, i);
 			for (int j = 0; j != _width;) {
 				byte color = stream.readByte();
