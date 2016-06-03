@@ -88,12 +88,15 @@ void SceneIntro::run() {
 					frame1->free();
 					delete frame1;
 				} else {
+					Graphics::Surface *frame1 = frame->convertTo(_vm->_system->getScreenFormat());
+
 					// The intro AVI is played upside down, it's the only video played in the English version
-					for (uint16 y = 0; y < frame->h / 2; y++) {
-						uint32 *ptrFrom = (uint32 *)frame->getBasePtr(0, y);
-						uint32 *ptrTo = (uint32 *)frame->getBasePtr(0, frame->h - y - 1);
-						for (uint16 x = 0; x < frame->w; x++) {
-							uint32 t = *ptrFrom; 
+					for (uint16 y = 0; y < frame1->h / 2; y++) {
+						uint32 *ptrFrom = (uint32 *)frame1->getBasePtr(0, y);
+						uint32 *ptrTo = (uint32 *)frame1->getBasePtr(0, frame1->h - y - 1);
+						// in this else branch, bytesPerPixel equals 4
+						for (uint16 x = 0; x < frame1->pitch / 4; x++) {
+							uint32 t = *ptrFrom;
 							*ptrFrom = *ptrTo;
 							*ptrTo = t;
 							ptrFrom++;
@@ -101,7 +104,6 @@ void SceneIntro::run() {
 						}
 					}
 
-					Graphics::Surface *frame1 = frame->convertTo(_vm->_system->getScreenFormat());
 					_vm->_system->copyRectToScreen(frame1->getPixels(), frame1->pitch, vidPosX, vidPosY, frame1->w, frame1->h);
 					frame1->free();
 					delete frame1;
