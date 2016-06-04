@@ -23,12 +23,11 @@
 #ifndef BACKENDS_NETWORKING_CURL_CLOUDICON_H
 #define BACKENDS_NETWORKING_CURL_CLOUDICON_H
 
-#include "backends/networking/curl/request.h"
 #include "graphics/transparent_surface.h"
 
 namespace Networking {
 
-class CloudIcon: public Request {
+class CloudIcon {
 	static const float ALPHA_STEP, ALPHA_MAX, ALPHA_MIN;
 
 	bool _wasVisible, _iconsInited;
@@ -43,9 +42,8 @@ public:
 	CloudIcon();
 	~CloudIcon();
 
-	void draw();
-	virtual void handle();
-	virtual void restart();
+	/** Returns true if ConnMan's timer could be stopped. */
+	bool draw();
 };
 
 } // End of namespace Networking

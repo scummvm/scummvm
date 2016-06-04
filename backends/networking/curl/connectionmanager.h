@@ -79,7 +79,7 @@ class ConnectionManager : public Common::Singleton<ConnectionManager> {
 	bool _timerStarted;
 	Common::Array<RequestWithCallback> _requests;
 	Common::Mutex _handleMutex;
-	CloudIcon *_icon;
+	CloudIcon _icon;
 	uint32 _frame;
 	
 	void startTimer(int interval = TIMER_INTERVAL);
@@ -87,7 +87,6 @@ class ConnectionManager : public Common::Singleton<ConnectionManager> {
 	void handle();
 	void interateRequests();
 	void processTransfers();
-	void cloudIconDeleted(Request *icon);
 
 public:
 	ConnectionManager();

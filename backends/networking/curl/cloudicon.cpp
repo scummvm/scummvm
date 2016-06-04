@@ -34,13 +34,13 @@ const float CloudIcon::ALPHA_STEP = 0.03;
 const float CloudIcon::ALPHA_MAX = 1;
 const float CloudIcon::ALPHA_MIN = 0.5;
 
-CloudIcon::CloudIcon(): Request(nullptr, nullptr), _wasVisible(false), _iconsInited(false), _currentAlpha(0), _alphaRising(true) {
+CloudIcon::CloudIcon(): _wasVisible(false), _iconsInited(false), _currentAlpha(0), _alphaRising(true) {
 	initIcons();
 }
 
 CloudIcon::~CloudIcon() {}
 
-void CloudIcon::draw() {
+bool CloudIcon::draw() {
 	initIcons();
 
 	Cloud::Storage *storage = CloudMan.getCurrentStorage();	
@@ -71,7 +71,7 @@ void CloudIcon::draw() {
 		_currentAlpha -= 3 * ALPHA_STEP;
 		if (_currentAlpha <= 0) {
 			_currentAlpha = 0;
-			finish();
+			return true;
 		}
 	}
 
@@ -84,13 +84,8 @@ void CloudIcon::draw() {
 			g_system->copyRectToOSD(surface->getPixels(), surface->pitch, x, y, surface->w, surface->h);
 		}
 	}
-}
 
-void CloudIcon::handle() {}
-
-void CloudIcon::restart() {
-	_currentAlpha = 0;
-	_alphaRising = true;
+	return false;
 }
 
 void CloudIcon::initIcons() {

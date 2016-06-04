@@ -37,7 +37,7 @@ DECLARE_SINGLETON(Networking::ConnectionManager);
 
 namespace Networking {
 
-ConnectionManager::ConnectionManager(): _multi(0), _timerStarted(false), _frame(0), _icon(nullptr) {
+ConnectionManager::ConnectionManager(): _multi(0), _timerStarted(false), _frame(0) {
 	curl_global_init(CURL_GLOBAL_ALL);
 	_multi = curl_multi_init();
 }
@@ -84,10 +84,6 @@ void ConnectionManager::startTimer(int interval) {
 	} else {
 		warning("Failed to install Networking::ConnectionManager's timer");
 	}
-	if (_timerStarted && !_icon) {
-		_icon = new CloudIcon();
-		addRequest(_icon, new Common::Callback<ConnectionManager, Request *>(this, &ConnectionManager::cloudIconDeleted));
-	}
 }
 
 void ConnectionManager::stopTimer() {
@@ -95,7 +91,6 @@ void ConnectionManager::stopTimer() {
 	Common::TimerManager *manager = g_system->getTimerManager();
 	manager->removeTimerProc(connectionsThread);
 	_timerStarted = false;
-	if (_icon) _icon->finish();
 }
 
 void ConnectionManager::handle() {
@@ -104,10 +99,10 @@ void ConnectionManager::handle() {
 	++_frame;
 	if (_frame % CLOUD_PERIOD == 0) interateRequests();
 	if (_frame % CURL_PERIOD == 0) processTransfers();
-	_handleMutex.unlock();
 
-	//icon redrawing is doesn't require any mutex, but must be done after requests are iterated
-	if (_icon) _icon->draw();
+	if (_icon.draw() && _requests.empty())
+		stopTimer();
+	_handleMutex.unlock();
 }
 
 void ConnectionManager::interateRequests() {
@@ -129,7 +124,6 @@ void ConnectionManager::interateRequests() {
 
 		++i;		
 	}
-	if (_requests.empty()) stopTimer();
 }
 
 void ConnectionManager::processTransfers() {
@@ -156,10 +150,6 @@ void ConnectionManager::processTransfers() {
 
 		curl_multi_remove_handle(_multi, easyHandle);
 	}
-}
-
-void ConnectionManager::cloudIconDeleted(Request *icon) {
-	if (_icon == icon) _icon = nullptr;
 }
 
 } // End of namespace Cloud
