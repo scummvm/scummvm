@@ -10,20 +10,6 @@
 
 namespace DM {
 
-// The frames in the orignal sources contain inclusive boundaries and byte widths, not pixel widths
-struct Frame {
-	uint16 destFromX, destToX, destFromY, destToY;
-	uint16 srcWidth, srcHeight;
-	uint16 srcX, srcY;
-
-	Frame() {}
-	Frame(uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
-		  uint16 srcWidth, uint16 srcHeight, uint16 srcX, uint16 srcY) :
-		destFromX(destFromX), destToX(destToX + 1), destFromY(destFromY), destToY(destToY + 1),
-		srcWidth(srcWidth * 2), srcHeight(srcHeight), srcX(srcX), srcY(srcY) {}
-};
-
-
 enum ViewCell {
 	kViewCellFronLeft = 0, // @ C00_VIEW_CELL_FRONT_LEFT
 	kViewCellFrontRight = 1, // @ C01_VIEW_CELL_FRONT_RIGHT
@@ -380,25 +366,6 @@ byte gWallOrnCoordSetIndices[60] = { // @ G0194_auc_Graphic558_WallOrnamentCoord
 	6,   /* Wall Ornament 58 Amalgam (Without Gem) */
 	7}; /* Wall Ornament 59 Lord Order (Outside) */
 
-struct CreatureAspect {
-	uint16 firstNativeBitmapRelativeIndex;
-	uint16 firstDerivedBitmapIndex;
-	byte byteWidthFront;
-	byte heightFront;
-	byte byteWidthSide;
-	byte heightSide;
-	byte byteWidthAttack;
-	byte heightAttack;
-	byte coordinateSet_TransparentColor;
-	byte replacementColorSetIndices;
-
-	byte getCoordSet() { return (coordinateSet_TransparentColor >> 4) & 0xF; } // @ M71_COORDINATE_SET
-	byte getTranspColour() { return  coordinateSet_TransparentColor & 0xF; } // @ M72_TRANSPARENT_COLOR
-	byte getReplColour10() { return (replacementColorSetIndices >> 4) & 0xF; } // @ M74_COLOR_10_REPLACEMENT_COLOR_SET
-	byte getReplColour9() { return replacementColorSetIndices & 0xF; } // @ M73_COLOR_09_REPLACEMENT_COLOR_SET
-}; // @ CREATURE_ASPECT
-
-
 CreatureAspect gCreatureAspects[kCreatureTypeCount] = { // @ G0219_as_Graphic558_CreatureAspects
 /* { FirstNativeBitmapRelativeIndex, FirstDerivedBitmapIndex, pixelWidthFront, HeightFront,
 pixelWidthSide, HeightSide, pixelWidthAttack, HeightAttack, CoordinateSet / TransparentColor,
@@ -430,18 +397,6 @@ Replacement Color Set Index for color 10 / Replacement Color Set Index for color
 	{81, 0, 64 * 2,  94, 72 * 2,  94, 64 * 2,  94, 0x04, 0xCB},   /* Creature #24 Red Dragon / Dragon */
 	{85, 0, 32 * 2,  93,  0 * 2,   0,  0 * 2,   0, 0x04, 0xCB},   /* Creature #25 Lord Order */
 	{86, 0, 32 * 2,  93,  0 * 2,   0,  0 * 2,   0, 0x04, 0xCB}}; /* Creature #26 Grey Lord */
-
-struct ObjectAspect {
-	byte firstNativeBitmapRelativeIndex;
-	byte firstDerivedBitmapRelativeIndex;
-	byte width;
-	byte height;
-	byte graphicInfo; /* Bits 7-5 and 3-1 Unreferenced */
-	byte coordinateSet;
-	ObjectAspect(byte firstN, byte firstD, byte byteWidth, byte h, byte grap, byte coord) :
-		firstNativeBitmapRelativeIndex(firstN), firstDerivedBitmapRelativeIndex(firstD),
-		width(byteWidth * 2), height(h), graphicInfo(grap), coordinateSet(coord) {}
-}; // @ OBJECT_ASPECT
 
 ObjectAspect gObjectAspects[kObjAspectCount] = { // @ G0209_as_Graphic558_ObjectAspects
 	/* FirstNativeBitmapRelativeIndex, FirstDerivedBitmapRelativeIndex, ByteWidth, Height, GraphicInfo, CoordinateSet */
@@ -529,20 +484,8 @@ ObjectAspect gObjectAspects[kObjAspectCount] = { // @ G0209_as_Graphic558_Object
 	ObjectAspect(82, 170, 24, 28, 0x00, 0),
 	ObjectAspect(83, 172, 40, 13, 0x00, 1),
 	ObjectAspect(84, 174,  8,  4, 0x00, 1),
-	ObjectAspect(85, 176, 32, 17, 0x00, 0)};
-
-struct ProjectileAspect {
-	byte firstNativeBitmapRelativeIndex;
-	byte firstDerivedBitmapRelativeIndex;
-	byte width;
-	byte height;
-	uint16 graphicInfo; /* Bits 15-9, 7-5 and 3-2 Unreferenced */
-
-	ProjectileAspect(byte firstN, byte firstD, byte byteWidth, byte h, uint16 grap) :
-		firstNativeBitmapRelativeIndex(firstN), firstDerivedBitmapRelativeIndex(firstD),
-		width(byteWidth * 2), height(h), graphicInfo(grap) {}
-}; // @ PROJECTIL_ASPECT
-
+	ObjectAspect(85, 176, 32, 17, 0x00, 0)
+};
 
 ProjectileAspect gProjectileAspect[kProjectileAspectCount] = { // @ G0210_as_Graphic558_ProjectileAspects
 	/* ProjectileAspect( FirstNativeBitmapRelativeIndex, FirstDerivedBitmapRelativeIndex, ByteWidth, Height, GraphicInfo ) */
@@ -561,7 +504,6 @@ ProjectileAspect gProjectileAspect[kProjectileAspectCount] = { // @ G0210_as_Gra
 	ProjectileAspect(30, 156, 16, 28, 0x0103),   /* Explosion Slime */
 	ProjectileAspect(31, 156, 16, 24, 0x0103) /* Explosion Poison Bolt Poison Cloud */
 };
-
 
 // TODO: this is ONLY for the Amiga version, name will have to be refactored
 
@@ -584,14 +526,8 @@ uint16 gPalDungeonView[6][16] = { // @ G0021_aaui_Graphic562_Palette_DungeonView
 	/* Atari ST: { 0x000, 0x000, 0x000, 0x000, 0x066, 0x100, 0x000, 0x020, 0x300, 0x310, 0x200, 0x530, 0x000, 0x111, 0x003, 0x333 }, RGB colors are different */
 	0x000, 0x000, 0x000, 0x000, 0x0CC, 0x200, 0x000, 0x040, 0x600, 0x000, 0x000, 0xA60, 0x000, 0x222, 0x006, 0x666,
 	/* Atari ST: { 0x000, 0x000, 0x000, 0x000, 0x066, 0x000, 0x000, 0x010, 0x200, 0x200, 0x100, 0x320, 0x000, 0x000, 0x002, 0x222 }, RGB colors are different */
-	0x000, 0x000, 0x000, 0x000, 0x0CC, 0x000, 0x000, 0x020, 0x400, 0x000, 0x000, 0x640, 0x000, 0x000, 0x004, 0x444};
-
-
-struct CreatureReplColorSet {
-	uint16 RGBColor[6];
-	byte D2ReplacementColor;
-	byte D3ReplacementColor;
-}; // @ CREATURE_REPLACEMENT_COLOR_SET
+	0x000, 0x000, 0x000, 0x000, 0x0CC, 0x000, 0x000, 0x020, 0x400, 0x000, 0x000, 0x640, 0x000, 0x000, 0x004, 0x444
+};
 
 CreatureReplColorSet gCreatureReplColorSets[13] = { // @ G0220_as_Graphic558_CreatureReplacementColorSets
 	/* { Color, Color, Color, Color, Color, Color, D2 replacement color index (x10), D3 replacement color index (x10) } */
@@ -612,13 +548,11 @@ CreatureReplColorSet gCreatureReplColorSets[13] = { // @ G0220_as_Graphic558_Cre
 byte gPalChangesCreature_D3[16] = {0, 120, 10, 30, 40, 30, 0, 60, 30, 0, 0, 110, 0, 20, 0, 130}; // @ G0221_auc_Graphic558_PaletteChanges_Creature_D3
 byte gPalChangesCreature_D2[16] = {0, 10, 20, 30, 40, 30, 60, 70, 50, 0, 0, 110, 120, 130, 140, 150}; // @ G0222_auc_Graphic558_PaletteChanges_Creature_D2
 
-
 enum GraphicIndice {
 	kInscriptionFontIndice = 120, // @ C120_GRAPHIC_INSCRIPTION_FONT
 	kDoorMaskDestroyedIndice = 301, // @ C301_GRAPHIC_DOOR_MASK_DESTROYED
 	kChampionPortraitsIndice = 26 // @ C026_GRAPHIC_CHAMPION_PORTRAITS
 };
-
 
 
 Viewport gDefultViewPort = {0, 0};

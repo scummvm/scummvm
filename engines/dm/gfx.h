@@ -12,8 +12,6 @@ extern uint16 gPalCredits[16];
 extern uint16 gPalEntrance[16];
 extern uint16 gPalDungeonView[6][16];
 
-
-
 typedef struct {
 	uint16 X1;
 	uint16 X2;
@@ -21,7 +19,19 @@ typedef struct {
 	uint16 Y2;
 } Box; // @ BOX_BYTE, BOX_WORD
 
-struct Frame;
+// The frames in the original sources contain inclusive boundaries and byte widths, not pixel widths
+struct Frame {
+	uint16 destFromX, destToX, destFromY, destToY;
+	uint16 srcWidth, srcHeight;
+	uint16 srcX, srcY;
+
+	Frame() {}
+	Frame(uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
+		uint16 srcWidth, uint16 srcHeight, uint16 srcX, uint16 srcY) :
+	destFromX(destFromX), destToX(destToX + 1), destFromY(destFromY), destToY(destToY + 1),
+		srcWidth(srcWidth * 2), srcHeight(srcHeight), srcX(srcX), srcY(srcY) {}
+};
+
 enum WallSet {
 	kWallSetStone = 0 // @ C0_WALL_SET_STONE
 };
@@ -67,8 +77,6 @@ enum ViewWall {
 	kViewWall_D1C_FRONT = 12  // @ C12_VIEW_WALL_D1C_FRONT
 };
 
-
-
 enum Color {
 	kColorNoTransparency = 255,
 	kColorBlack = 0,
@@ -89,15 +97,61 @@ enum Color {
 	kColorWhite = 15
 };
 
-
 struct Viewport {
 	// TODO: should probably add width and height, seems redundant right meow
 	uint16 posX, posY;
 };
 
+struct CreatureAspect {
+	uint16 firstNativeBitmapRelativeIndex;
+	uint16 firstDerivedBitmapIndex;
+	byte byteWidthFront;
+	byte heightFront;
+	byte byteWidthSide;
+	byte heightSide;
+	byte byteWidthAttack;
+	byte heightAttack;
+	byte coordinateSet_TransparentColor;
+	byte replacementColorSetIndices;
+
+	byte getCoordSet() { return (coordinateSet_TransparentColor >> 4) & 0xF; } // @ M71_COORDINATE_SET
+	byte getTranspColour() { return  coordinateSet_TransparentColor & 0xF; } // @ M72_TRANSPARENT_COLOR
+	byte getReplColour10() { return (replacementColorSetIndices >> 4) & 0xF; } // @ M74_COLOR_10_REPLACEMENT_COLOR_SET
+	byte getReplColour9() { return replacementColorSetIndices & 0xF; } // @ M73_COLOR_09_REPLACEMENT_COLOR_SET
+}; // @ CREATURE_ASPECT
+
+struct ObjectAspect {
+	byte firstNativeBitmapRelativeIndex;
+	byte firstDerivedBitmapRelativeIndex;
+	byte width;
+	byte height;
+	byte graphicInfo; /* Bits 7-5 and 3-1 Unreferenced */
+	byte coordinateSet;
+	ObjectAspect(byte firstN, byte firstD, byte byteWidth, byte h, byte grap, byte coord) :
+	firstNativeBitmapRelativeIndex(firstN), firstDerivedBitmapRelativeIndex(firstD),
+		width(byteWidth * 2), height(h), graphicInfo(grap), coordinateSet(coord) {}
+}; // @ OBJECT_ASPECT
+
+struct ProjectileAspect {
+	byte firstNativeBitmapRelativeIndex;
+	byte firstDerivedBitmapRelativeIndex;
+	byte width;
+	byte height;
+	uint16 graphicInfo; /* Bits 15-9, 7-5 and 3-2 Unreferenced */
+
+	ProjectileAspect(byte firstN, byte firstD, byte byteWidth, byte h, uint16 grap) :
+	firstNativeBitmapRelativeIndex(firstN), firstDerivedBitmapRelativeIndex(firstD),
+		width(byteWidth * 2), height(h), graphicInfo(grap) {}
+}; // @ PROJECTIL_ASPECT
+
+struct CreatureReplColorSet {
+	uint16 RGBColor[6];
+	byte D2ReplacementColor;
+	byte D3ReplacementColor;
+}; // @ CREATURE_REPLACEMENT_COLOR_SET
+
 extern Viewport gDefultViewPort;
 extern Viewport gDungeonViewport;
-
 
 #define kAlcoveOrnCount 3
 #define kFountainOrnCount 1
@@ -113,7 +167,6 @@ extern Viewport gDungeonViewport;
 #define kExplosionAspectCount 4 // @ C004_EXPLOSION_ASPECT_COUNT
 #define kObjAspectCount 85 // @ C085_OBJECT_ASPECT_COUNT
 #define kProjectileAspectCount 14 // @ C014_PROJECTILE_ASPECT_COUNT
-
 
 #define kDoorButton 0 // @ C0_DOOR_BUTTON
 #define kWallOrnInscription 0 // @ C0_WALL_ORNAMENT_INSCRIPTION
