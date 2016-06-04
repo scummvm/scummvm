@@ -42,7 +42,21 @@ public:
 	CloudIcon();
 	~CloudIcon();
 
-	/** Returns true if ConnMan's timer could be stopped. */
+	/**
+	 * This method is called from ConnectionManager every time
+	 * its own timer calls the handle() method. The primary
+	 * responsibility of this draw() method is to draw cloud icon
+	 * on ScummVM's OSD when current cloud Storage is working.
+	 *
+	 * As we don't want ConnectionManager to work when no
+	 * Requests are running, we'd like to stop the timer. But then
+	 * this icon wouldn't have time to disappear smoothly. So,
+	 * in order to do that, ConnectionManager stop its timer
+	 * only when this draw() method returns true, indicating that
+	 * the CloudIcon has disappeared and the timer could be stopped.
+	 *
+	 * @return true if ConnMan's timer could be stopped.
+	 */
 	bool draw();
 };
 
