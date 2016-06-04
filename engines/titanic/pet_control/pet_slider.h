@@ -80,6 +80,7 @@ protected:
 	bool containsPt(const Point &pt) const { return _bounds.contains(pt); }
 public:
 	CPetSlider();
+	virtual ~CPetSlider() {}
 
 	/**
 	 * Setup the background

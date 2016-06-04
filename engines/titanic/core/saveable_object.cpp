@@ -783,9 +783,9 @@ DEFFN(CDropObjectMsg)
 DEFFN(CDropZoneGotObjectMsg)
 DEFFN(CDropZoneLostObjectMsg)
 DEFFN(CEditControlMsg)
-DEFFN(CEnterNodeMsg);
-DEFFN(CEnterRoomMsg);
-DEFFN(CEnterViewMsg);
+DEFFN(CEnterNodeMsg)
+DEFFN(CEnterRoomMsg)
+DEFFN(CEnterViewMsg)
 DEFFN(CEjectCylinderMsg)
 DEFFN(CErasePhonographCylinderMsg)
 DEFFN(CFrameMsg)
@@ -805,9 +805,9 @@ DEFFN(CIsEarBowlPuzzleDone)
 DEFFN(CIsHookedOnMsg)
 DEFFN(CIsParrotPresentMsg)
 DEFFN(CKeyCharMsg)
-DEFFN(CLeaveNodeMsg);
-DEFFN(CLeaveRoomMsg);
-DEFFN(CLeaveViewMsg);
+DEFFN(CLeaveNodeMsg)
+DEFFN(CLeaveRoomMsg)
+DEFFN(CLeaveViewMsg)
 DEFFN(CLemonFallsFromTreeMsg)
 DEFFN(CLightsMsg)
 DEFFN(CLoadSuccessMsg)
@@ -868,9 +868,9 @@ DEFFN(CPhonographRecordMsg)
 DEFFN(CPhonographStopMsg)
 DEFFN(CPlayRangeMsg)
 DEFFN(CPlayerTriesRestaurantTableMsg)
-DEFFN(CPreEnterNodeMsg);
-DEFFN(CPreEnterRoomMsg);
-DEFFN(CPreEnterViewMsg);
+DEFFN(CPreEnterNodeMsg)
+DEFFN(CPreEnterRoomMsg)
+DEFFN(CPreEnterViewMsg)
 DEFFN(CPreSaveMsg)
 DEFFN(CProdMaitreDMsg)
 DEFFN(CPumpingMsg)
@@ -900,7 +900,7 @@ DEFFN(CSetChevLiftBits)
 DEFFN(CSetChevPanelBitMsg)
 DEFFN(CSetChevPanelButtonsMsg)
 DEFFN(CSetChevRoomBits)
-DEFFN(CSetFrameMsg);
+DEFFN(CSetFrameMsg)
 DEFFN(CSetMusicControlsMsg)
 DEFFN(CSetVarMsg)
 DEFFN(CSetVolumeMsg)
@@ -998,7 +998,7 @@ DEFFN(CMusicPlayer)
 DEFFN(CNodeAutoSoundPlayer)
 DEFFN(CRestrictedAutoMusicPlayer)
 DEFFN(CRoomAutoSoundPlayer)
-DEFFN(CRoomTriggerAutoMusicPlayer);
+DEFFN(CRoomTriggerAutoMusicPlayer)
 DEFFN(CSeasonNoises)
 DEFFN(CSeasonalMusicPlayer)
 DEFFN(CTitaniaSpeech)

@@ -404,7 +404,7 @@ bool CPetText::handleKey(char c) {
 		return true;
 
 	default:
-		if (c >= 32 && c <= 127)
+		if ((byte)c >= 32 && (byte)c <= 127)
 			appendText(CString(c, 1));
 		break;
 	}

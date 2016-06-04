@@ -38,7 +38,7 @@ BEGIN_MESSAGE_MAP(CViewItem, CNamedItem)
 END_MESSAGE_MAP()
 
 CViewItem::CViewItem() : CNamedItem() {
-	Common::fill(&_buttonUpTargets[0], &_buttonUpTargets[4], nullptr);
+	Common::fill(&_buttonUpTargets[0], &_buttonUpTargets[4], (CTreeItem *)nullptr);
 	_field24 = 0;
 	_field28 = 0.0;
 	_viewNumber = 0;

@@ -112,7 +112,7 @@ int STFont::stringWidth(const CString &text) const {
 	const char *srcP = text.c_str();
 	int total = 0;
 	char c;
-	while (c = *srcP++) {
+	while (c = (*srcP++)) {
 		if (c == 26) {
 			// Skip over command parameter bytes
 			srcP += 3;
@@ -265,7 +265,7 @@ void STFont::checkLineWrap(Point &textSize, int maxWidth, const char *&str) cons
 		else if (*srcPtr == TEXTCMD_SET_COLOR)
 			srcPtr += 4;
 		else
-			totalWidth += _chars[*srcPtr]._width;
+			totalWidth += _chars[(byte)*srcPtr]._width;
 	}
 	
 	if ((textSize.x + totalWidth) >= maxWidth && totalWidth < maxWidth) {

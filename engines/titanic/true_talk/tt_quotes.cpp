@@ -63,7 +63,7 @@ void TTquotes::load(const CString &name) {
 	// Read in buffer and then decode it
 	r->read((byte *)_dataP, _dataSize);
 	for (size_t idx = 0; idx < _dataSize; idx += 4)
-		WRITE_LE_UINT32((byte *)_dataP + idx, READ_LE_UINT32((byte *)_dataP + idx) ^ 0xA55A5AA5);
+		WRITE_LE_UINT32((byte *)_dataP + idx, READ_LE_UINT32((const byte *)_dataP + idx) ^ 0xA55A5AA5);
 
 	delete r;
 }

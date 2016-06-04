@@ -476,7 +476,6 @@ const NumberEntry *TTparser::replaceNumbers2(TTstring &line, int *startIndex) {
 }
 
 int TTparser::findFrames(TTsentence *sentence) {
-	static bool flag;
 	_sentenceConcept = &sentence->_sentenceConcept;
 	_sentence = sentence;
 
@@ -1428,10 +1427,10 @@ int TTparser::checkForAction() {
 	}
 
 	// Handle any remaining words
-	TTword *reqWord = nullptr;
 	while (_currentWordP) {
-		if (considerRequests(_currentWordP) > 1) {
-			reqWord = _currentWordP;
+		int result = considerRequests(_currentWordP);
+		if (result > 1) {
+			status = result;
 		} else {
 			// Delete the top of the word chain
 			TTword *wordP = _currentWordP;
