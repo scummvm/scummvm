@@ -2908,7 +2908,7 @@ void Scene08::updateHotspots() {
 	_vm->setHotspot(kHS08Meat, 405, 450, 480, 485, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
 	_vm->setHotspot(kHS08Bone, 200, 405, 270, 465, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
 	_vm->setHotspot(kHS08Toy, 540, 430, 615, 465, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	_vm->setHotspot(kHS08WalkArea1, 290, 340, -1, -1);
+	_vm->setHotspot(kHS08WalkArea1, 0, 0, 290, 340);
 	_vm->setHotspot(kHS08WalkArea2, 0, 0, 799, 420);
 	_vm->setDeviceHotspot(kHS08Device, -1, -1, -1, -1);
 	if (_vm->isFlag(kGFBarnPadlockOpen))
