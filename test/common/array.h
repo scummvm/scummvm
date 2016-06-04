@@ -362,7 +362,7 @@ struct ListElement {
 };
 
 static int compareInts(const void *a, const void *b) {
-	return ((ListElement *)a)->value - ((ListElement *)a)->value;
+	return ((ListElement *)a)->value - ((ListElement *)b)->value;
 }
 
 class SortedArrayTestSuite : public CxxTest::TestSuite {
@@ -373,8 +373,6 @@ public:
 
 		// Fill the container with some random data
 		container.insert(new ListElement(1));
-		return;
-
 		container.insert(new ListElement(7));
 		container.insert(new ListElement(8));
 		container.insert(new ListElement(3));
@@ -390,8 +388,9 @@ public:
 		for (int i = 1; i < 10; i++) {
 			TS_ASSERT_EQUALS((*iter)->value, i);
 			++iter;
-			TS_ASSERT_DIFFERS(iter, container.end());
 		}
+
+		TS_ASSERT_EQUALS(iter, container.end());
 	}
 
 };
