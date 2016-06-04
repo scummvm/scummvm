@@ -87,6 +87,7 @@ void ConnectionManager::startTimer(int interval) {
 }
 
 void ConnectionManager::stopTimer() {
+	return;
 	debug("timer stopped");
 	Common::TimerManager *manager = g_system->getTimerManager();
 	manager->removeTimerProc(connectionsThread);

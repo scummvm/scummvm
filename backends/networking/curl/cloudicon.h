@@ -28,11 +28,16 @@
 namespace Networking {
 
 class CloudIcon {
+	static const float ALPHA_STEP, ALPHA_MAX, ALPHA_MIN;
+
 	int _frame;
 	bool _wasVisible, _iconsInited;
-	Graphics::TransparentSurface _icon;
+	Graphics::TransparentSurface _icon, _alphaIcon;
+	float _currentAlpha;
+	bool _alphaRising;
 
 	void initIcons();
+	void makeAlphaIcon(float alpha);
 
 public:
 	CloudIcon();
