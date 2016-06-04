@@ -296,10 +296,12 @@ double SavesSyncRequest::getProgress() {
 	return (double)(_totalFilesToHandle - _filesToDownload.size() - _filesToUpload.size()) / (double)(_totalFilesToHandle);
 }
 
-Common::Array<Common::String> SavesSyncRequest::getFilesToUpload() {
-	Common::Array<Common::String> result = _filesToUpload;
-	if (_currentUploadingFile != "")
-		result.push_back(_currentUploadingFile);
+Common::Array<Common::String> SavesSyncRequest::getFilesToDownload() {
+	Common::Array<Common::String> result;
+	for (uint32 i = 0; i < _filesToDownload.size(); ++i)
+		result.push_back(_filesToDownload[i].name());
+	if (_currentDownloadingFile.name() != "")
+		result.push_back(_currentDownloadingFile.name());
 	return result;
 }
 

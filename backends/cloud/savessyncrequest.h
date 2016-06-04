@@ -71,8 +71,8 @@ public:
 	/** Returns a number in range [0, 1], where 1 is "complete". */
 	double getProgress();
 
-	/** Returns an array of saves names which are not uploaded yet. */
-	Common::Array<Common::String> getFilesToUpload();
+	/** Returns an array of saves names which are not downloaded yet. */
+	Common::Array<Common::String> getFilesToDownload();
 };
 
 } // End of namespace Cloud

@@ -137,7 +137,7 @@ Common::Array<Common::String> Storage::getSyncingFiles() {
 	Common::Array<Common::String> result;
 	_runningRequestsMutex.lock();
 	if (_savesSyncRequest)
-		result = _savesSyncRequest->getFilesToUpload();
+		result = _savesSyncRequest->getFilesToDownload();
 	_runningRequestsMutex.unlock();
 	return result;
 }
