@@ -293,10 +293,18 @@ void Score::display() {
 		if (tempo > 161) {
 			//Delay
 			_nextFrameTime = g_system->getMillis() + (256 - tempo) * 1000;
-		} else {
+		} else if (tempo <= 60) {
 			//FPS
 			_nextFrameTime = g_system->getMillis() + (float)tempo / 60 * 1000;
 			_currentFrameRate = tempo;
+		} else if (tempo >= 136) {
+			//TODO Wait for channel tempo - 135
+		} else if (tempo == 128) {
+			//TODO Wait for Click/Key
+		} else if (tempo == 135) {
+			//TODO Wait for sound channel 1
+		} else if (tempo == 134) {
+			//TODO Wait for sound channel 2
 		}
 	}
 	_nextFrameTime = g_system->getMillis() + (float)_currentFrameRate / 60 * 1000;
