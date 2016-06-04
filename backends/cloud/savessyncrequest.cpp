@@ -53,6 +53,7 @@ void SavesSyncRequest::start() {
 	_filesToDownload.clear();
 	_filesToUpload.clear();
 	_localFilesTimestamps.clear();
+	_totalFilesToHandle = 0;
 	_ignoreCallback = false;
 
 	//load timestamps
@@ -120,6 +121,7 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 	for (uint32 i = 0; i < _filesToUpload.size(); ++i) {
 		debug("%s", _filesToUpload[i].c_str());
 	}
+	_totalFilesToHandle = _filesToDownload.size() + _filesToUpload.size();
 	///////
 
 	//start downloading files
@@ -209,7 +211,7 @@ void SavesSyncRequest::downloadNextFile() {
 	_filesToDownload.pop_back();
 
 	///////
-	debug("downloading %s", _currentDownloadingFile.name().c_str());
+	debug("downloading %s (%d %%)", _currentDownloadingFile.name().c_str(), (int)(getProgress() * 100));
 	///////
 	_workingRequest = _storage->download(_currentDownloadingFile.path(), concatWithSavesPath(_currentDownloadingFile.name()),
 		new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::fileDownloadedCallback),
@@ -253,7 +255,7 @@ void SavesSyncRequest::uploadNextFile() {
 	_filesToUpload.pop_back();
 	
 	///////
-	debug("uploading %s", _currentUploadingFile.c_str());
+	debug("uploading %s (%d %%)", _currentUploadingFile.c_str(), (int)(getProgress()*100));
 	///////
 	_workingRequest = _storage->upload(_storage->savesDirectoryPath() + _currentUploadingFile, g_system->getSavefileManager()->openRawFile(_currentUploadingFile),
 		new Common::Callback<SavesSyncRequest, Storage::UploadResponse>(this, &SavesSyncRequest::fileUploadedCallback),
@@ -284,6 +286,22 @@ void SavesSyncRequest::fileUploadedErrorCallback(Networking::ErrorResponse error
 void SavesSyncRequest::handle() {}
 
 void SavesSyncRequest::restart() { start(); }
+
+double SavesSyncRequest::getProgress() {
+	if (_totalFilesToHandle == 0) {
+		if (_state == Networking::FINISHED) return 1; //nothing to upload and download => Request ends soon
+		return 0; //directory not listed yet
+	}
+
+	return (double)(_totalFilesToHandle - _filesToDownload.size() - _filesToUpload.size()) / (double)(_totalFilesToHandle);
+}
+
+Common::Array<Common::String> SavesSyncRequest::getFilesToUpload() {
+	Common::Array<Common::String> result = _filesToUpload;
+	if (_currentUploadingFile != "")
+		result.push_back(_currentUploadingFile);
+	return result;
+}
 
 void SavesSyncRequest::finishError(Networking::ErrorResponse error) {
 	debug("SavesSync::finishError");

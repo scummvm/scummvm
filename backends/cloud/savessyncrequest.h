@@ -43,6 +43,7 @@ class SavesSyncRequest: public Networking::Request {
 	Common::String _currentUploadingFile;
 	Request *_workingRequest;
 	bool _ignoreCallback;
+	uint32 _totalFilesToHandle;
 
 	void start();
 	void directoryListedCallback(Storage::ListDirectoryResponse response);
@@ -65,7 +66,13 @@ public:
 	virtual ~SavesSyncRequest();
 
 	virtual void handle();
-	virtual void restart();	
+	virtual void restart();
+
+	/** Returns a number in range [0, 1], where 1 is "complete". */
+	double getProgress();
+
+	/** Returns an array of saves names which are not uploaded yet. */
+	Common::Array<Common::String> getFilesToUpload();
 };
 
 } // End of namespace Cloud

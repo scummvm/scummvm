@@ -35,6 +35,8 @@
 
 namespace Cloud {
 
+class SavesSyncRequest;
+
 class Storage {
 public:
 	typedef Networking::Response<Common::Array<StorageFile>&> FileArrayResponse;
@@ -53,6 +55,7 @@ protected:
 	/** Keeps track of running requests. */
 	uint32 _runningRequestsCount;
 	Common::Mutex _runningRequestsMutex;
+	SavesSyncRequest *_savesSyncRequest;
 
 	/** Returns default error callback (printErrorResponse). */
 	virtual Networking::ErrorCallback getErrorPrintingCallback();
@@ -134,6 +137,15 @@ public:
 
 	/** Returns whether there are any requests running. */
 	virtual bool isWorking();
+
+	/** Returns whether there is a SavesSyncRequest running. */
+	virtual bool isSyncing();
+
+	/** Returns a number in [0, 1] range which represents current sync progress (1 = complete). */
+	virtual double getSyncProgress();
+
+	/** Returns an array of saves names which are not yet synced (thus cannot be used). */
+	virtual Common::Array<Common::String> getSyncingFiles();
 };
 
 } // End of namespace Cloud
