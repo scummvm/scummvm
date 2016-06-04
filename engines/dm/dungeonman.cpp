@@ -495,10 +495,6 @@ Thing DungeonMan::getSquareFirstThing(int16 mapX, int16 mapY) {
 
 // TODO: get rid of the GOTOs
 void DungeonMan::setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX, int16 mapY) {	// complete, except where marked
-	bool leftOrnAllowed, rightOrnAllowed, frontOrnAllowed;
-	bool squareIsFakeWall;
-	bool footPrintsAllowed;
-
 	_vm->_displayMan->_championPortraitOrdinal = 0; // BUG0_75, possible fix
 
 	memset(aspectArray, 0, 5 * sizeof(uint16));
@@ -506,6 +502,12 @@ void DungeonMan::setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX,
 	Square square = getSquare(mapX, mapY);
 
 	aspectArray[kElemAspect] = square.getType();
+
+	bool leftOrnAllowed = false;
+	bool rightOrnAllowed = false;
+	bool frontOrnAllowed = false;
+	bool squareIsFakeWall = false;
+	bool footPrintsAllowed = false;
 	switch (square.getType()) {
 	case kWallElemType:
 		switch (dir) {
@@ -531,7 +533,6 @@ void DungeonMan::setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX,
 			break;
 		}
 
-		squareIsFakeWall = false;
 T0172010_ClosedFakeWall:
 		setSquareAspectOrnOrdinals(aspectArray, leftOrnAllowed, frontOrnAllowed, rightOrnAllowed, dir, mapX, mapY, squareIsFakeWall);
 
@@ -775,8 +776,8 @@ void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 		uint16 codeCounter = 0;
 		int16 escChar = 0;
 		uint16 *codeWord = _dunData.textData + textString.getWordOffset();
-		uint16 code, codes;
-		char *escReplString = NULL;
+		uint16 code = 0, codes = 0;
+		char *escReplString = nullptr;
 		for (;;) { /*infinite loop*/
 			if (!codeCounter) {
 				codes = *codeWord++;
