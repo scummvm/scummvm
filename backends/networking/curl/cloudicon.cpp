@@ -30,9 +30,9 @@
 
 namespace Networking {
 
-const float CloudIcon::ALPHA_STEP = 0.03;
+const float CloudIcon::ALPHA_STEP = 0.025;
 const float CloudIcon::ALPHA_MAX = 1;
-const float CloudIcon::ALPHA_MIN = 0.5;
+const float CloudIcon::ALPHA_MIN = 0.6;
 
 CloudIcon::CloudIcon(): _wasVisible(false), _iconsInited(false), _currentAlpha(0), _alphaRising(true) {
 	initIcons();
@@ -41,6 +41,7 @@ CloudIcon::CloudIcon(): _wasVisible(false), _iconsInited(false), _currentAlpha(0
 CloudIcon::~CloudIcon() {}
 
 bool CloudIcon::draw() {
+	bool stop = false;
 	initIcons();
 
 	Cloud::Storage *storage = CloudMan.getCurrentStorage();	
@@ -51,7 +52,10 @@ bool CloudIcon::draw() {
 				_wasVisible = true;
 			}
 			if (_alphaRising) {
-				_currentAlpha += ALPHA_STEP;
+				if (_currentAlpha < ALPHA_MIN)
+					_currentAlpha += 5 * ALPHA_STEP;
+				else
+					_currentAlpha += ALPHA_STEP;
 				if (_currentAlpha > ALPHA_MAX) {
 					_currentAlpha = ALPHA_MAX;
 					_alphaRising = false;
@@ -68,10 +72,10 @@ bool CloudIcon::draw() {
 		}
 	} else {
 		_wasVisible = false;
-		_currentAlpha -= 3 * ALPHA_STEP;
+		_currentAlpha -= 5 * ALPHA_STEP;
 		if (_currentAlpha <= 0) {
 			_currentAlpha = 0;
-			return true;
+			stop = true;
 		}
 	}
 
@@ -85,7 +89,7 @@ bool CloudIcon::draw() {
 		}
 	}
 
-	return false;
+	return stop;
 }
 
 void CloudIcon::initIcons() {
