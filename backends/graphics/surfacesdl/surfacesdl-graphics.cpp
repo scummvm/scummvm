@@ -883,13 +883,26 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	_osdSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
 						_hwscreen->w,
 						_hwscreen->h,
-						16,
-						_hwscreen->format->Rmask,
-						_hwscreen->format->Gmask,
-						_hwscreen->format->Bmask,
-						_hwscreen->format->Amask);
+						32,
+						0xFF000000,
+						0x00FF0000,
+						0x0000FF00,
+						0x000000FF
+	);
 	if (_osdSurface == NULL)
 		error("allocating _osdSurface failed");
+
+	_osdFormat.bytesPerPixel = _osdSurface->format->BytesPerPixel;
+
+	_osdFormat.rLoss = _osdSurface->format->Rloss;
+	_osdFormat.gLoss = _osdSurface->format->Gloss;
+	_osdFormat.bLoss = _osdSurface->format->Bloss;
+	_osdFormat.aLoss = _osdSurface->format->Aloss;
+
+	_osdFormat.rShift = _osdSurface->format->Rshift;
+	_osdFormat.gShift = _osdSurface->format->Gshift;
+	_osdFormat.bShift = _osdSurface->format->Bshift;
+	_osdFormat.aShift = _osdSurface->format->Ashift;
 	SDL_SetColorKey(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kOSDColorKey);
 #endif
 
@@ -2276,6 +2289,10 @@ void SurfaceSdlGraphicsManager::clearOSD() {
 
 	// Ensure a full redraw takes place next time the screen is updated
 	_forceFull = true;
+}
+
+Graphics::PixelFormat SurfaceSdlGraphicsManager::getOSDFormat() {
+	return _osdFormat;
 }
 #endif
 

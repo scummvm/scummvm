@@ -249,6 +249,10 @@ void ModularBackend::clearOSD() {
 	_graphicsManager->clearOSD();
 }
 
+Graphics::PixelFormat ModularBackend::getOSDFormat() {
+	return _graphicsManager->getOSDFormat();
+}
+
 void ModularBackend::quit() {
 	exit(0);
 }

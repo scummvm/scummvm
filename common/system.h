@@ -1119,6 +1119,12 @@ public:
 	virtual void clearOSD() = 0;
 
 	/**
+	* Returns 'on screen display' pixel format.
+	*/
+
+	virtual Graphics::PixelFormat getOSDFormat() = 0;
+
+	/**
 	 * Return the SaveFileManager, used to store and load savestates
 	 * and other modifiable persistent game data. For more information,
 	 * refer to the SaveFileManager documentation.

@@ -147,6 +147,7 @@ public:
 	virtual void displayMessageOnOSD(const char *msg);
 	virtual void copyRectToOSD(const void *buf, int pitch, int x, int y, int w, int h);
 	virtual void clearOSD();
+	virtual Graphics::PixelFormat getOSDFormat();	
 #endif
 
 	// Override from Common::EventObserver
@@ -175,6 +176,8 @@ protected:
 		kOSDColorKey = 1,				/** < Transparent color key */
 		kOSDInitialAlpha = 80			/** < Initial alpha level, in percent */
 	};
+	/** OSD pixel format */
+	Graphics::PixelFormat _osdFormat;
 #endif
 
 	/** Hardware screen */

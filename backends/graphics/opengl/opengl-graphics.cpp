@@ -774,6 +774,8 @@ void OpenGLGraphicsManager::clearOSD() {
 #endif
 }
 
+Graphics::PixelFormat OpenGLGraphicsManager::getOSDFormat() { return Graphics::PixelFormat(); } //TODO
+
 void OpenGLGraphicsManager::setPalette(const byte *colors, uint start, uint num) {
 	assert(_gameScreen->hasPalette());
 
