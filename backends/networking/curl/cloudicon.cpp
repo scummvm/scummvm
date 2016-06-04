@@ -34,11 +34,64 @@ const float CloudIcon::ALPHA_STEP = 0.03;
 const float CloudIcon::ALPHA_MAX = 1;
 const float CloudIcon::ALPHA_MIN = 0.5;
 
-CloudIcon::CloudIcon(): _frame(0), _wasVisible(false), _iconsInited(false), _currentAlpha(0), _alphaRising(true) {
+CloudIcon::CloudIcon(): Request(nullptr, nullptr), _wasVisible(false), _iconsInited(false), _currentAlpha(0), _alphaRising(true) {
 	initIcons();
 }
 
 CloudIcon::~CloudIcon() {}
+
+void CloudIcon::draw() {
+	initIcons();
+
+	Cloud::Storage *storage = CloudMan.getCurrentStorage();	
+	if (storage && storage->isWorking()) {
+		if (g_system) {
+			if (!_wasVisible) {
+				g_system->clearOSD();
+				_wasVisible = true;
+			}
+			if (_alphaRising) {
+				_currentAlpha += ALPHA_STEP;
+				if (_currentAlpha > ALPHA_MAX) {
+					_currentAlpha = ALPHA_MAX;
+					_alphaRising = false;
+				}
+			} else {
+				_currentAlpha -= ALPHA_STEP;
+				if (_currentAlpha < ALPHA_MIN) {
+					_currentAlpha = ALPHA_MIN;
+					_alphaRising = true;
+				}
+			}
+		} else {
+			_wasVisible = false;
+		}
+	} else {
+		_wasVisible = false;
+		_currentAlpha -= 3 * ALPHA_STEP;
+		if (_currentAlpha <= 0) {
+			_currentAlpha = 0;
+			finish();
+		}
+	}
+
+	if (g_system) {
+		Graphics::TransparentSurface *surface = &_icon;
+		makeAlphaIcon(_currentAlpha);
+		if (_alphaIcon.getPixels()) surface = &_alphaIcon;
+		if (surface && surface->getPixels()) {
+			int x = g_system->getOverlayWidth() - surface->w - 10, y = 10;
+			g_system->copyRectToOSD(surface->getPixels(), surface->pitch, x, y, surface->w, surface->h);
+		}
+	}
+}
+
+void CloudIcon::handle() {}
+
+void CloudIcon::restart() {
+	_currentAlpha = 0;
+	_alphaRising = true;
+}
 
 void CloudIcon::initIcons() {
 	if (_iconsInited) return;
@@ -47,8 +100,8 @@ void CloudIcon::initIcons() {
 	Common::ArchiveMemberList members;
 	Common::File file;
 	if (!file.open("cloudicon.png")) warning("failed");
-	Common::SeekableReadStream *stream = &file;	
-	if (stream) {			
+	Common::SeekableReadStream *stream = &file;
+	if (stream) {
 		if (!decoder.loadStream(*stream))
 			error("Error decoding PNG");
 
@@ -64,8 +117,7 @@ void CloudIcon::initIcons() {
 				_icon.copyFrom(*s);
 			}
 			delete s;
-		}
-		else warning("failed reading");
+		} else warning("failed reading");
 	}
 	_iconsInited = true;
 }
@@ -97,50 +149,6 @@ void CloudIcon::makeAlphaIcon(float alpha) {
 				*((uint32 *)row) = color;
 
 			row += _alphaIcon.format.bytesPerPixel;
-		}
-	}
-}
-
-void CloudIcon::draw() {
-	initIcons();
-	_frame++;
-
-	Cloud::Storage *storage = CloudMan.getCurrentStorage();	
-	if (storage && storage->isWorking()) {
-		if (g_system) {
-			if (!_wasVisible) {
-				g_system->clearOSD();
-				_wasVisible = true;
-			}
-			if (_alphaRising) {
-				_currentAlpha += ALPHA_STEP;
-				if (_currentAlpha > ALPHA_MAX) {
-					_currentAlpha = ALPHA_MAX;
-					_alphaRising = false;
-				}
-			} else {
-				_currentAlpha -= ALPHA_STEP;
-				if (_currentAlpha < ALPHA_MIN) {
-					_currentAlpha = ALPHA_MIN;
-					_alphaRising = true;
-				}
-			}
-		} else {
-			_wasVisible = false;
-		}
-	} else {
-		_wasVisible = false;
-		_currentAlpha -= 3 * ALPHA_STEP;
-		if (_currentAlpha <= 0) _currentAlpha = 0;
-	}
-
-	if (g_system) {
-		Graphics::TransparentSurface *surface = &_icon;
-		makeAlphaIcon(_currentAlpha);
-		if (_alphaIcon.getPixels()) surface = &_alphaIcon;
-		if (surface && surface->getPixels()) {
-			int x = g_system->getOverlayWidth() - surface->w - 10, y = 10;
-			g_system->copyRectToOSD(surface->getPixels(), surface->pitch, x, y, surface->w, surface->h);
 		}
 	}
 }
