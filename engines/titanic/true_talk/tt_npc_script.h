@@ -171,7 +171,11 @@ public:
 
 	virtual int proc11() const;
 	virtual int proc12() const;
-	virtual bool proc13() const;
+
+	/**
+	 * Handles loading quotes used by the scripts
+	 */
+	virtual bool loadQuotes();
 
 	/**
 	 * Translate a passed Id to a dialogue Id if necessary,

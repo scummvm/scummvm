@@ -136,9 +136,17 @@ int TTnpcScript::proc12() const {
 	return 1;
 }
 
-bool TTnpcScript::proc13() const {
-	warning("TODO");
-	return true;
+
+bool TTnpcScript::loadQuotes() {
+	// Original did a load of a global quotes here the first time
+	// this method is called. ScummVM implementation has refactored
+	// the loading to the CTrueTalkManager constructor
+
+	if (!proc18()) {
+		return false;
+	} else {
+		return proc17();
+	}
 }
 
 void TTnpcScript::selectResponse(int id) {

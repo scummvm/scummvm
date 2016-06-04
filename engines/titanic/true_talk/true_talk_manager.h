@@ -27,6 +27,7 @@
 #include "titanic/support/simple_file.h"
 #include "titanic/true_talk/dialogue_file.h"
 #include "titanic/true_talk/title_engine.h"
+#include "titanic/true_talk/tt_quotes.h"
 #include "titanic/true_talk/tt_scripts.h"
 #include "titanic/true_talk/tt_talker.h"
 
@@ -128,6 +129,8 @@ public:
 	static CTrueTalkNPC *_currentNPC;
 
 	static void setFlags(int index, int val);
+public:
+	TTquotes _quotes;
 public:
 	/**
 	 * Get a specified state value from the currently set NPC
