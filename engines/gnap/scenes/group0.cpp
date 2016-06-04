@@ -3379,7 +3379,7 @@ int Scene09::init() {
 }
 
 void Scene09::updateHotspots() {
-	_vm->setHotspot(kHS09Platypus, 0, 200, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHS09Platypus, 0, 0, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
 	_vm->setHotspot(kHS09ExitKitchen, 280, 200, 380, 400, SF_EXIT_U_CURSOR);
 	_vm->setHotspot(kHS09ExitHouse, 790, 200, 799, 450, SF_EXIT_R_CURSOR | SF_WALKABLE);
 	_vm->setHotspot(kHS09Trash, 440, 310, 680, 420, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
