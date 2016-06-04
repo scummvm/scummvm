@@ -163,12 +163,14 @@ public:
 
 protected:
 #ifdef USE_OSD
-	/** Surface containing the OSD message */
+	/** Surface containing the OSD */
 	SDL_Surface *_osdSurface;
-	/** Transparency level of the OSD */
-	uint8 _osdAlpha;
+	/** Surface containing the OSD message */
+	SDL_Surface *_osdMessageSurface;
+	/** Transparency level of the OSD message */
+	uint8 _osdMessageAlpha;
 	/** When to start the fade out */
-	uint32 _osdFadeStartTime;
+	uint32 _osdMessageFadeStartTime;
 	/** Enum with OSD options */
 	enum {
 		kOSDFadeOutDelay = 2 * 1000,	/** < Delay before the OSD is faded out (in milliseconds) */
@@ -178,6 +180,9 @@ protected:
 	};
 	/** OSD pixel format */
 	Graphics::PixelFormat _osdFormat;
+
+	void removeOSDMessage();
+	void blitOSDMessage(SDL_Rect dstRect);
 #endif
 
 	/** Hardware screen */
@@ -362,6 +367,8 @@ protected:
 	bool _enableFocusRect;
 	Common::Rect _focusRect;
 #endif
+
+	static Graphics::PixelFormat getSurfaceFormat(SDL_Surface *surface);
 
 	virtual void addDirtyRect(int x, int y, int w, int h, bool realCoordinates = false);
 
