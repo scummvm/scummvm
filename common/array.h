@@ -383,56 +383,59 @@ public:
 			return;
 		}
 
-		T *where = (T *)bsearchMin(element, this->front(), this->_size, sizeof(T), _comparator);
-		insert(where, element);
+		T *where = bsearchMin(element);
+
+		if (where > this->_storage + this->_size)
+			Array<T>::push_back(element);
+		else
+			Array<T>::insert(where, element);
 	}
 
 	T &operator[](size_type idx) {
-		error("Operation not allowed with SortedArray");
+		error("Operation []= not allowed with SortedArray");
 	}
 
 	void insert_at(size_type idx, const T &element) {
-		error("Operation not allowed with SortedArray");
+		error("Operation insert_at(idx, element) not allowed with SortedArray");
 	}
 
 	void insert_at(size_type idx, const Array<T> &array) {
-		error("Operation not allowed with SortedArray");
+		error("Operation insert_at(idx, array) not allowed with SortedArray");
 	}
 
 	void insert(iterator pos, const T &element) {
-		error("Operation not allowed with SortedArray");
+		error("Operation insert(pos, elemnet) not allowed with SortedArray");
 	}
 
 	void push_back(const T &element) {
-		error("Operation not allowed with SortedArray");
+		error("Operation push_back(element) not allowed with SortedArray");
 	}
 
 	void push_back(const Array<T> &array) {
-		error("Operation not allowed with SortedArray");
+		error("Operation push_back(array) not allowed with SortedArray");
 	}
 
 private:
 	// Based on code Copyright (C) 2008-2009 Ksplice, Inc.
 	// Author: Tim Abbott <tabbott@ksplice.com>
 	// Licensed under GPLv2+
-	void *bsearchMin(void *key, void *base, uint num, uint size_,
-					int (*cmp)(const void *key, const void *elt)) {
-		uint start_ = 0, end_ = num;
+	T *bsearchMin(void *key) {
+		uint start_ = 0, end_ = this->_size;
 		int result;
 
 		while (start_ < end_) {
 			uint mid = start_ + (end_ - start_) / 2;
 
-			result = cmp(key, (byte *)base + mid * size_);
+			result = this->_comparator(key, this->_storage[mid]);
 			if (result < 0)
 				end_ = mid;
 			else if (result > 0)
 				start_ = mid + 1;
 			else
-				return (void *)((byte *)base + mid * size_);
+				return &this->_storage[mid];
 		}
 
-		return (void *)((byte *)base + start_ * size_);
+		return &this->_storage[start_];
 	}
 
 private:
