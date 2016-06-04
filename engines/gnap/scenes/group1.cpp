@@ -2324,7 +2324,8 @@ int Scene17::init() {
 }
 
 void Scene17::updateHotspots() {
-	_vm->setHotspot(kHS17Platypus, 1, 0, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	// The original is using (1, 0, 0, 0)
+	_vm->setHotspot(kHS17Platypus, 0, 0, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
 	_vm->setHotspot(kHS17Phone1, 61, 280, 97, 322, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR, 1, 7);
 	_vm->setHotspot(kHS17Phone2, 80, 204, 178, 468, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR, 1, 7);
 	_vm->setHotspot(kHS17ExitGrubCity, 196, 207, 280, 304, SF_EXIT_U_CURSOR, 3, 5);
