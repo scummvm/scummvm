@@ -178,9 +178,9 @@ void Moonbase::setFOWInfo(int fowInfoArray, int downDim, int acrossDim, int view
 			else
 				s+= " ";
 
-		debug(0, "%s", s.c_str());
+		debug(5, "%s", s.c_str());
 	}
-	debug(0, "");
+	debug(5, "");
 
 	memset(_fowRenderTable, 0, sizeof(_fowRenderTable));
 

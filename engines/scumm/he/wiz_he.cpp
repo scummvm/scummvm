@@ -2790,6 +2790,14 @@ int Wiz::isWizPixelNonTransparent(uint8 *data, int state, int x, int y, int flag
 	int c = READ_LE_UINT32(wizh + 0x0);
 	int w = READ_LE_UINT32(wizh + 0x4);
 	int h = READ_LE_UINT32(wizh + 0x8);
+
+	if (_vm->_game.id == GID_MOONBASE) {
+		uint16 color = 0xffff;
+		drawWizImageEx((byte *)&color, data, 0, 2, kDstMemory, 1, 1, -x, -y, w, h, state, 0, 0, 0, 0, 2, 0, 0);
+
+		return color != 0xffff;
+	}
+
 	uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), data, state, 0);
 	assert(wizd);
 	if (x >= 0 && x < w && y >= 0 && y < h) {
@@ -2841,6 +2849,13 @@ uint16 Wiz::getWizPixelColor(int resNum, int state, int x, int y) {
 	int c = READ_LE_UINT32(wizh + 0x0);
 	int w = READ_LE_UINT32(wizh + 0x4);
 	int h = READ_LE_UINT32(wizh + 0x8);
+
+	if (_vm->_game.id == GID_MOONBASE) {
+		drawWizImageEx((byte *)&color, data, 0, 2, kDstMemory, 1, 1, -x, -y, w, h, state, 0, 0, 0, 0, 2, 0, 0);
+
+		return color;
+	}
+
 	uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), data, state, 0);
 	assert(wizd);
 	switch (c) {
