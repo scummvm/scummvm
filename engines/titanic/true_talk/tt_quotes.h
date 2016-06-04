@@ -24,23 +24,29 @@
 #define TITANIC_TT_QUOTES_H
 
 #include "common/scummsys.h"
+#include "common/stream.h"
 #include "titanic/support/string.h"
 
 namespace Titanic {
 
 class TTquotes {
 	struct TTquotesEntry {
-		byte *_dataP;
+		byte _val1, _val2;
+		const char *_strP;
+		TTquotesEntry() : _val1(0), _val2(0), _strP(nullptr) {}
+	};
+	struct TTquotesLetter {
+		Common::Array<TTquotesEntry> _entries;
 		int _field4;
 		int _field8;
 
-		TTquotesEntry() : _dataP(nullptr), _field4(0), _field8(0) {}
+		TTquotesLetter() : _field4(0), _field8(0) {}
 	};
 private:
-	TTquotesEntry _alphabet[26];
+	TTquotesLetter _alphabet[26];
 	uint _array[256];
-	byte *_dataP;
-	int _field540;
+	const char *_dataP;
+	size_t _dataSize;
 	int _field544;
 private:
 	int read(const char *startP, const char *endP);

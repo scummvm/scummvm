@@ -22,25 +22,50 @@
 
 #include "common/algorithm.h"
 #include "titanic/true_talk/tt_quotes.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
 TTquotes::TTquotes() {
 	Common::fill(&_array[0], &_array[256], 0);
 	_dataP = nullptr;
-	_field540 = 0;
+	_dataSize = 0;
 	_field544 = 0;
 }
 
 TTquotes::~TTquotes() {
-	for (int idx = 0; idx < 26; ++idx)
-		delete _alphabet[idx]._dataP;
-
-	delete _dataP;
+	delete[] _dataP;
 }
 
 void TTquotes::load(const CString &name) {
-	// TODO
+	Common::SeekableReadStream *r = g_vm->_filesManager->getResource("TEXT/JRQuotes.txt");
+	size_t size = r->readUint32LE();
+
+	_dataSize = _field544 = size;
+	_dataP = new char[size + 0x10];
+
+	for (int idx = 0; idx < 256; ++idx)
+		_array[idx] = r->readUint32LE();
+
+	for (int charIdx = 0; charIdx < 26; ++charIdx) {
+		TTquotesLetter &letter = _alphabet[charIdx];
+		int count = r->readUint32LE();
+
+		// Load the list of entries for the given letter
+		letter._entries.resize(count);
+		for (int idx = 0; idx < count; ++idx) {
+			letter._entries[idx]._val1 = r->readByte();
+			letter._entries[idx]._val2 = r->readByte();
+			letter._entries[idx]._strP = _dataP + r->readUint32LE();
+		}
+	}
+
+	// Read in buffer and then decode it
+	r->read((byte *)_dataP, _dataSize);
+	for (size_t idx = 0; idx < _dataSize; idx += 4)
+		WRITE_LE_UINT32((byte *)_dataP + idx, READ_LE_UINT32((byte *)_dataP + idx) ^ 0xA55A5AA5);
+
+	delete r;
 }
 
 int TTquotes::read(const char *str) {
@@ -75,8 +100,9 @@ int TTquotes::read(const char *startP, const char *endP) {
 		return 0;
 
 	uint index = MIN((uint)(*startP - 'a'), (uint)25);
-	TTquotesEntry &entry = _alphabet[index];
-	if (!entry._dataP || entry._field4 <= 0)
+	TTquotesLetter &letter = _alphabet[index];
+	if (letter._entries.empty())
+		// No entries for the letter, so exit immediately
 		return 0;
 
 	// TODO
