@@ -20,10 +20,56 @@
  *
  */
 
- #include "base/plugins.h"
+#include "base/plugins.h"
 
- namespace MacVenture {
+#include "engines/advancedDetector.h"
+#include "common/system.h"
+
+#include "macventure/macventure.h"
+
+namespace MacVenture {
+
+#include "macventure/detection_tables.h"
+
+static const PlainGameDescriptor macventureGames[] = {
+	{ "Shadowgate", "Shadowgate" },
+	{ 0, 0 }
+};
+
+class MacVentureMetaEngine : public AdvancedMetaEngine {
+public:	
+	MacVentureMetaEngine() : AdvancedMetaEngine(MacVenture::gameDescriptions, sizeof(ADGameDescription), macventureGames) {
+		_guiOptions = GUIO0();
+		_md5Bytes = 5000000; // TODO: Upper limit, adjust it once all games are added
+	}
+
+	virtual const char * getName() const override {
+		return "MacVenture";
+	}
+	virtual const char * getOriginalCopyright() const override {
+		return "(C) ICOM Simulations";
+	}
+
+	virtual bool createInstance(OSystem * syst, Engine ** engine, const ADGameDescription * desc) const;
+	virtual bool hasFeature(MetaEngineFeature f) const;
+};
+
+bool MacVentureMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return false;
+}
+
+bool MacVentureMetaEngine::createInstance(OSystem * syst, Engine ** engine, const ADGameDescription *game) const {
+	if (game) {
+		*engine = new MacVentureEngine(syst, game);
+	}
+	return game != 0;
+}
 
 
+} // End of namespace MacVenture
 
- } // End of namespace MacVenture
+#if PLUGIN_ENABLED_DYNAMIC(MACVENTURE)
+ REGISTER_PLUGIN_DYNAMIC(MACVENTURE, PLUGIN_TYPE_ENGINE, MacVenture::MacVentureMetaEngine);
+#else
+ REGISTER_PLUGIN_STATIC(MACVENTURE, PLUGIN_TYPE_ENGINE, MacVenture::MacVentureMetaEngine);
+#endif

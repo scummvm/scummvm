@@ -8,7 +8,7 @@ MODULE_DIRS += \
 	engines/macventure
 
 # This module can be built as a plugin
-ifeq ($(ENABLE_WAGE), DYNAMIC_PLUGIN)
+ifeq ($(ENABLE_MACVENTURE), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
 

@@ -19,3 +19,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+
+#ifndef MACVENTURE_H
+#define MACVENTURE_H
+
+#include "engines/engine.h"
+
+struct ADGameDescription;
+
+namespace MacVenture {
+
+class MacVentureEngine : public Engine {
+
+public:
+	MacVentureEngine(OSystem *syst, const ADGameDescription *gameDesc);
+	~MacVentureEngine();
+
+	virtual Common::Error run();
+
+private:
+	const ADGameDescription *_gameDescription;
+
+};
+} // End of namespace MacVenture
+
+#endif
