@@ -58,6 +58,17 @@ Score::Score(Archive &movie) {
 	if (_movieArchive->hasResource(MKTAG('M','C','N','M'), 0)) {
 		debug("Mac name %s", _movieArchive->getName(MKTAG('M','C','N','M'), 0).c_str());
 	}
+	DIBDecoder palette;
+	Common::Array<uint16> clutList = _movieArchive->getResourceIDList(MKTAG('C','L','U','T'));
+
+	if (clutList.size() > 1)
+		error("More than one palette was found");
+	if (clutList.size() == 0)
+		error("CLUT not found");
+
+	Common::SeekableReadStream *pal = _movieArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[0]);
+	palette.loadPalette(*pal);
+	g_system->getPaletteManager()->setPalette(palette.getPalette(), 0, 255);
 }
 
 void Score::loadFrames(Common::SeekableReadStream &stream) {
@@ -486,10 +497,6 @@ void Frame::readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16
 
 void Frame::display(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect moviRect) {
 	surface.clear();
-	DIBDecoder palette;
-	Common::SeekableReadStream *pal = _movie.getResource(MKTAG('C', 'L', 'U', 'T'), 1025);
-	palette.loadPalette(*pal);
-	g_system->getPaletteManager()->setPalette(palette.getPalette(), 0, 255);
 
 	for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
 		if (_sprites[i]->_enabled) {
