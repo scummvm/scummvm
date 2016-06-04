@@ -23,11 +23,16 @@
 #ifndef BACKENDS_NETWORKING_CURL_CLOUDICON_H
 #define BACKENDS_NETWORKING_CURL_CLOUDICON_H
 
+#include "graphics/transparent_surface.h"
+
 namespace Networking {
 
 class CloudIcon {
 	int _frame;
-	bool _wasVisible;
+	bool _wasVisible, _iconsInited;
+	Graphics::TransparentSurface _icon;
+
+	void initIcons();
 
 public:
 	CloudIcon();
