@@ -1,0 +1,61 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#ifndef TITANIC_TT_QUOTES_H
+#define TITANIC_TT_QUOTES_H
+
+#include "common/scummsys.h"
+#include "titanic/support/string.h"
+
+namespace Titanic {
+
+class TTquotes {
+	struct TTquotesEntry {
+		byte *_dataP;
+		int _field4;
+		int _field8;
+
+		TTquotesEntry() : _dataP(nullptr), _field4(0), _field8(0) {}
+	};
+private:
+	TTquotesEntry _alphabet[26];
+	uint _array[256];
+	byte *_dataP;
+	int _field540;
+	int _field544;
+private:
+	int read(const char *startP, const char *endP);
+public:
+	TTquotes();
+	~TTquotes();
+
+	/**
+	 * Load quotes from the specified resource
+	 */
+	void load(const CString &name);
+
+	int read(const char *str);
+};
+
+} // End of namespace Titanic
+
+#endif /* TITANIC_TT_QUOTES_H */

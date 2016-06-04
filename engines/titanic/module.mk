@@ -471,6 +471,7 @@ MODULE_OBJS := \
 	true_talk/tt_parser.o \
 	true_talk/tt_picture.o \
 	true_talk/tt_pronoun.o \
+	true_talk/tt_quotes.o \
 	true_talk/tt_response.o \
 	true_talk/tt_room_script.o \
 	true_talk/tt_script_base.o \
