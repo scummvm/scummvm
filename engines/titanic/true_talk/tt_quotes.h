@@ -49,6 +49,10 @@ private:
 	size_t _dataSize;
 	int _field544;
 private:
+	/**
+	 * Test whether a substring contains one of the quotes,
+	 * and if so, returns the Id associated with it
+	 */
 	int read(const char *startP, const char *endP);
 public:
 	TTquotes();
@@ -59,6 +63,10 @@ public:
 	 */
 	void load(const CString &name);
 
+	/**
+	 * Test whether a passed string contains one of the quotes,
+	 * and if so, returns the Id associated with it
+	 */
 	int read(const char *str);
 };
 

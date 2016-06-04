@@ -100,12 +100,46 @@ int TTquotes::read(const char *startP, const char *endP) {
 		return 0;
 
 	uint index = MIN((uint)(*startP - 'a'), (uint)25);
-	TTquotesLetter &letter = _alphabet[index];
+	const TTquotesLetter &letter = _alphabet[index];
 	if (letter._entries.empty())
 		// No entries for the letter, so exit immediately
 		return 0;
 
-	// TODO
+	int maxSize = size + 4;
+	bool letterFlag = index != 25;
+
+	for (uint idx = 0; idx < letter._entries.size(); ++idx) {
+		const TTquotesEntry &entry = letter._entries[idx];
+		if (entry._val2 > maxSize)
+			continue;
+
+		const char *srcP = startP;
+		const char *destP = entry._strP;
+		int srcIndex = 0, destIndex = 0;
+		if (*destP) {
+			do {
+				if (!srcP[srcIndex]) {
+					break;
+				} else if (srcP[srcIndex] == '*') {
+					++srcIndex;
+				} else if (destP[destIndex] == '-') {
+					++destIndex;
+					if (srcP[srcIndex] == ' ')
+						++srcIndex;
+				} else if (srcP[srcIndex] != destP[destIndex]) {
+					break;
+				} else {
+					++destIndex;
+					++srcIndex;
+				}
+			} while (destP[destIndex]);
+
+			if (!destP[destIndex] && (srcP[srcIndex] <= '*' ||
+					(srcP[srcIndex] == 's' && srcP[srcIndex + 1] <= '*')))
+				return entry._val1;
+		}
+	}
+
 	return 0;
 }
 
