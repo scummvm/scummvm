@@ -39,6 +39,7 @@ public:
 	CVideoSurface *_surface;
 public:
 	CGameView();
+	virtual ~CGameView() {}
 
 	/**
 	 * Set the game manager

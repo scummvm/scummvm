@@ -36,6 +36,7 @@ protected:
 	int _field14;
 public:
 	SoundManager();
+	virtual ~SoundManager() {}
 	
 	/**
 	 * Loads a sound

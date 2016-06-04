@@ -70,7 +70,7 @@ public:
 public:
 	TTword(const TTstring &str, WordClass wordClass, int val2);
 	TTword(const TTword *src);
-	~TTword();
+	virtual ~TTword();
 
 	/**
 	 * Delete any following words chained to the word

@@ -149,7 +149,7 @@ public:
 	}
 
 	bool contains(const T *item) const {
-		for (Common::List<T *>::const_iterator i = Common::List<T *>::begin(); 
+		for (typename Common::List<T *>::const_iterator i = Common::List<T *>::begin(); 
 				i != Common::List<T *>::end(); ++i) {
 			if (*i == item)
 				return true;
