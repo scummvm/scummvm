@@ -50,7 +50,7 @@
  */
 
 #define VERSION_NUMBER 1
-#define HEADER_SIZE 0x340
+#define HEADER_SIZE 0x380
 
 Common::File inputFile, outputFile;
 Common::PEResources res;
@@ -309,6 +309,47 @@ void writeNumbers() {
 	dataOffset += size;
 }
 
+void writeResponseTree() {
+	const int FILE_DIFF = 0x401C00;
+	outputFile.seek(dataOffset);
+	
+	inputFile.seek(0x619500 - FILE_DIFF);
+	char buffer[32];
+	inputFile.read(buffer, 32);
+	if (strcmp(buffer, "ReadInt(): No number to read")) {
+		printf("Could not find tree data at expected position\n");
+		exit(1);
+	}
+
+	for (int idx = 0; idx < 1022; ++idx) {
+		inputFile.seek(0x619520 - FILE_DIFF + idx * 8);
+		uint id = inputFile.readLong();
+		uint offset = inputFile.readLong();
+
+		outputFile.writeLong(id);
+		if (!id) {
+			// An end of list id
+		} else if (offset >= 0x619520 && offset <= 0x61B510) {
+			// Offset to another table
+			outputFile.writeByte(0);
+			outputFile.writeLong((offset - 0x619520) / 8);
+		} else {
+			// Offset to ASCIIZ string
+			outputFile.writeByte(1);
+			inputFile.seek(offset - FILE_DIFF);
+			char c;
+			do {
+				c = inputFile.readByte();
+				outputFile.writeByte(c);
+			} while (c);
+		}
+	}
+
+	uint size = outputFile.size() - dataOffset;
+	writeEntryHeader("TEXT/TREE", dataOffset, size);
+	dataOffset += size;
+}
+
 void writeHeader() {
 	// Write out magic string
 	const char *MAGIC_STR = "SVTN";
@@ -337,6 +378,8 @@ void writeData() {
 	writeResource("STFONT", 152);
 	writeResource("STFONT", 153);
 
+	writeResource("STARFIELD", 132);
+
 	writeResource("TEXT", "STVOCAB.TXT");
 	writeResource("TEXT", "JRQUOTES.TXT");
 	writeResource("TEXT", 155);
@@ -351,6 +394,7 @@ void writeData() {
 	writeStringArray("TEXT/REPLACEMENTS2", 0x21C120, 1576);
 	writeStringArray("TEXT/REPLACEMENTS3", 0x21D9C8, 82);
 	writeStringArray("TEXT/PRONOUNS", 0x22F718, 15);
+	writeResponseTree();
 
 	writeNumbers();
 	writeAllScriptResponses();

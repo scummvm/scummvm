@@ -237,6 +237,8 @@ void CGameObject::loadResource(const CString &name) {
 	case FILETYPE_MOVIE:
 		loadMovie(name);
 		break;
+	default:
+		break;
 	}
 }
 

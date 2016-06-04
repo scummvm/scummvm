@@ -495,7 +495,7 @@ void CPetControl::summonNPC(const CString &name, int val) {
 
 void CPetControl::startPetTimer(uint timerIndex, uint firstDuration, uint duration, void *target) {
 	stopPetTimer(timerIndex);
-	_timers[timerIndex]._id = (timerIndex, firstDuration, duration);
+	_timers[timerIndex]._id = addTimer(timerIndex, firstDuration, duration);
 	_timers[timerIndex]._target = target;
 	setTimer44(_timers[timerIndex]._id, 0);
 }

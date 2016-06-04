@@ -210,7 +210,7 @@ public:
 	 * Sets the value for an NPC's dial
 	 */
 	virtual void setDial(int dialNum, int value);
-	
+
 	/**
 	 * Returns a dial's region number
 	 */

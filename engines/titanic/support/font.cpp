@@ -112,7 +112,7 @@ int STFont::stringWidth(const CString &text) const {
 	const char *srcP = text.c_str();
 	int total = 0;
 	char c;
-	while (c = (*srcP++)) {
+	while ((c = *srcP++)) {
 		if (c == 26) {
 			// Skip over command parameter bytes
 			srcP += 3;
@@ -120,7 +120,7 @@ int STFont::stringWidth(const CString &text) const {
 			// Skip over command parameter bytes
 			srcP += 4;
 		} else if (c != '\n') {
-			total += _chars[c]._width;
+			total += _chars[(byte)c]._width;
 		}
 	}
 
