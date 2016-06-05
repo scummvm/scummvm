@@ -53,7 +53,7 @@ private:
 	 * Test whether a substring contains one of the quotes,
 	 * and if so, returns the 4-character tag Id associated with it
 	 */
-	int read(const char *startP, const char *endP);
+	int find(const char *startP, const char *endP);
 public:
 	TTquotes();
 	~TTquotes();
@@ -67,7 +67,7 @@ public:
 	 * Test whether a passed string contains one of the quotes,
 	 * and if so, returns the 4-character tag Id associated with it
 	 */
-	int read(const char *str);
+	int find(const char *str);
 };
 
 } // End of namespace Titanic

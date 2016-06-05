@@ -35,7 +35,7 @@ void TTquotesTree::load() {
 	Common::SeekableReadStream *r = g_vm->_filesManager->getResource("TEXT/TREE");
 	
 	for (int idx = 0; idx < QUOTES_TREE_COUNT; ++idx) {
-		TTquotesTree::TTquotesTreeEntry &rec = _entries[idx];
+		TTquotesTreeEntry &rec = _entries[idx];
 		assert(r->pos() < r->size());
 		
 		rec._id = r->readUint32LE();		
@@ -59,12 +59,30 @@ void TTquotesTree::load() {
 	delete r;
 }
 
-void TTquotesTree::search(const char **str, TTquotesTreeEntry *bTree,
-		TTtreeBuffer *buffer, int quoteId) {
-	buffer->_strP = nullptr;
-	(buffer + 1)->_strP = nullptr;
+int TTquotesTree::search(const char *str, QuoteTreeNum treeNum,
+		TTtreeResult *buffer, uint tagId, int *remainder) {
+	const TTquotesTreeEntry *bTree = &_entries[TABLE_INDEXES[treeNum]];
+	if (!search1(&str, bTree, buffer, tagId) || !buffer->_treeItemP)
+		return -1;
+	
+	if (remainder) {
+		while (*str) {
+			if (*str >= 'a' && *str != 's')
+				*remainder += *str;
+		}
+	}
+	
+	return buffer->_treeItemP->_id & 0xffffff;
+}
 
+bool TTquotesTree::search1(const char **str, const TTquotesTreeEntry *bTree,
+		TTtreeResult *buffer, uint tagId) {
+	buffer->_treeItemP = nullptr;
+	(buffer + 1)->_treeItemP = nullptr;
+
+	const char *strP = *str;
 	bool flag = false;
+
 	for (uint mode = bTree->_id >> 24; mode != 0; 
 			++bTree, mode = bTree->_id >> 24) {
 
@@ -79,21 +97,83 @@ void TTquotesTree::search(const char **str, TTquotesTreeEntry *bTree,
 			break;
 		
 		case 5:
-			warning("TODO: TTquotesTree::search");
+			if (READ_LE_UINT32(bTree->_string.c_str()) == tagId)
+				flag = true;
 			break;
 
 		case 7:
+			if (search1(str, bTree->_subTable, buffer + 1, tagId))
+				flag = true;
+			break;
+
+		case 8:
+			if (search2(str, bTree->_subTable, buffer + 1, tagId))
+				flag = true;
+			break;
 
 		default:
 			break;
 		}
 
 		if (flag) {
-			// TODO
-			break;
+			buffer->_treeItemP = bTree;
+			return true;
 		}
 	}
 
+	*str = strP;
+	return false;
+}
+
+bool TTquotesTree::search2(const char **str, const TTquotesTreeEntry *bTree,
+		TTtreeResult *buffer, uint tagId) {
+	buffer->_treeItemP = bTree;
+	(buffer + 1)->_treeItemP = nullptr;
+
+	const char *strP = *str;
+	bool flag = false;
+	for (uint mode = bTree->_id >> 24; mode != 0;
+			++bTree, mode = bTree->_id >> 24) {
+		switch (mode) {
+		case 0:
+			return true;
+
+		case 1:
+			if (compareWord(str, bTree->_string.c_str()))
+				flag = true;
+			break;
+
+		case 2:
+			compareWord(str, bTree->_string.c_str());
+			break;
+
+		case 5:
+			if (READ_LE_UINT32(bTree->_string.c_str()) == tagId)
+				flag = true;
+			break;
+
+		case 7:
+			if (search1(str, bTree->_subTable, buffer + 1, tagId))
+				flag = true;
+			break;
+
+		case 8:
+			if (search2(str, bTree->_subTable, buffer + 1, tagId))
+				flag = true;
+			break;
+
+		default:
+			break;
+		}
+
+		if (flag) {
+			buffer->_treeItemP = nullptr;
+			*str = strP;
+			return false;
+		}
+	}
+
+	return true;
 }
 
 bool TTquotesTree::compareWord(const char **str, const char *refStr) {

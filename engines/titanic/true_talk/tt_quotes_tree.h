@@ -31,30 +31,39 @@ namespace Titanic {
 
 #define QUOTES_TREE_COUNT 1022
 
-class TTtreeBuffer {
+enum QuoteTreeNum { TREE_1 = 0, TREE_2 = 1, TREE_3 = 2 };
+
+struct TTquotesTreeEntry {
+	uint _id;
+	TTquotesTreeEntry *_subTable;
+	CString _string;
+
+	TTquotesTreeEntry() : _id(0), _subTable(nullptr) {}
+};
+
+class TTtreeResult {
 public:
-	int _field0;
-	const char *_strP;
+	int _id;
+	const TTquotesTreeEntry *_treeItemP;
 public:
-	TTtreeBuffer() : _field0(0), _strP(nullptr) {}
+	TTtreeResult() : _id(0), _treeItemP(nullptr) {}
 };
 
 class TTquotesTree {
-	struct TTquotesTreeEntry {
-		uint _id;
-		TTquotesTreeEntry *_subTable;
-		CString _string;
-
-		TTquotesTreeEntry() : _id(0), _subTable(nullptr) {}
-	};
 private:
 	TTquotesTreeEntry _entries[QUOTES_TREE_COUNT];
 private:
 	/**
-	 * Inner search method
+	 * First inner search method
 	 */
-	void search(const char **str, TTquotesTreeEntry *bTree, TTtreeBuffer *buffer,
-		int quoteId);
+	bool search1(const char **str, const TTquotesTreeEntry *bTree,
+		TTtreeResult *buffer, uint tagId);
+
+	/**
+	 * Second inner search method
+	 */
+	bool search2(const char **str, const TTquotesTreeEntry *bTree,
+		TTtreeResult *buffer, uint tagId);
 
 	/**
 	 * Compare the current word in the string against a specified word
@@ -66,6 +75,8 @@ public:
 	 */
 	void load();
 
+	int search(const char *str, QuoteTreeNum treeNum,
+		TTtreeResult *buffer, uint tagId, int *remainder);
 };
 
 } // End of namespace Titanic

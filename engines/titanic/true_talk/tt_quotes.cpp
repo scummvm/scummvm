@@ -68,7 +68,7 @@ void TTquotes::load() {
 	delete r;
 }
 
-int TTquotes::read(const char *str) {
+int TTquotes::find(const char *str) {
 	if (!str || !*str)
 		return 0;
 
@@ -78,9 +78,9 @@ int TTquotes::read(const char *str) {
 		++endP;
 
 	do {
-		int result = read(startP, endP);
-		if (result)
-			return result;
+		int tagId = find(startP, endP);
+		if (tagId)
+			return tagId;
 
 		// Move to next following space or end of string
 		while (*startP && *startP != ' ')
@@ -91,10 +91,11 @@ int TTquotes::read(const char *str) {
 
 	} while (*startP);
 
+	// No match
 	return 0;
 }
 
-int TTquotes::read(const char *startP, const char *endP) {
+int TTquotes::find(const char *startP, const char *endP) {
 	int size = endP - startP;
 	if (size < 3)
 		return 0;
