@@ -113,6 +113,9 @@ public:
 	 * @return the same Request pointer, just as a shortcut
 	 */
 	Request *addRequest(Request *request, RequestCallback callback = nullptr);
+
+	/** Shows a "cloud disabled" icon for a three seconds. */
+	void showCloudDisabledIcon();
 };
 
 /** Shortcut for accessing the connection manager. */

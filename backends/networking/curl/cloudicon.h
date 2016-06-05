@@ -30,13 +30,15 @@ namespace Networking {
 class CloudIcon {
 	static const float ALPHA_STEP, ALPHA_MAX, ALPHA_MIN;
 
-	bool _wasVisible, _iconsInited;
-	Graphics::TransparentSurface _icon, _alphaIcon;
+	bool _wasVisible, _iconsInited, _showingDisabled;
+	Graphics::TransparentSurface _icon, _disabledIcon, _alphaIcon;
 	float _currentAlpha;
 	bool _alphaRising;
+	int _disabledFrames;
 
 	void initIcons();
-	void makeAlphaIcon(float alpha);
+	void loadIcon(Graphics::TransparentSurface &icon, const char *filename);
+	void makeAlphaIcon(Graphics::TransparentSurface &icon, float alpha);
 
 public:
 	CloudIcon();
@@ -58,6 +60,9 @@ public:
 	 * @return true if ConnMan's timer could be stopped.
 	 */
 	bool draw();
+
+	/** Draw a "cloud disabled" icon instead of "cloud syncing" one. */
+	void showDisabled();
 };
 
 } // End of namespace Networking

@@ -60,6 +60,8 @@ public:
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
+	virtual void runSaveSync(bool hasSavepathOverride);
+
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	virtual SaveLoadChooserType getType() const = 0;
 #endif // !DISABLE_SAVELOADCHOOSER_GRID

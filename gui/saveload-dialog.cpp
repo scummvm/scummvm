@@ -21,6 +21,11 @@
  */
 
 #include "gui/saveload-dialog.h"
+
+#include "backends/cloud/cloudmanager.h"
+#include "backends/cloud/savessyncrequest.h"
+#include "backends/networking/curl/connectionmanager.h"
+
 #include "common/translation.h"
 #include "common/config-manager.h"
 
@@ -133,6 +138,17 @@ void SaveLoadChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uin
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 
 	return Dialog::handleCommand(sender, cmd, data);
+}
+
+void SaveLoadChooserDialog::runSaveSync(bool hasSavepathOverride) {
+	if (!CloudMan.isSyncing()) {
+		if (hasSavepathOverride) {
+			ConnMan.showCloudDisabledIcon();
+		} else {
+			Cloud::SavesSyncRequest *request = CloudMan.syncSaves();
+			if (request) request->setTarget(this);
+		}
+	}
 }
 
 void SaveLoadChooserDialog::reflowLayout() {

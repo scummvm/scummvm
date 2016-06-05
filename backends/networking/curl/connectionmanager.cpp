@@ -71,6 +71,11 @@ Request *ConnectionManager::addRequest(Request *request, RequestCallback callbac
 	return request;
 }
 
+void ConnectionManager::showCloudDisabledIcon() {
+	_icon.showDisabled();
+	startTimer();
+}
+
 //private goes here:
 
 void connectionsThread(void *ignored) {

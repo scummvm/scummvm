@@ -27,10 +27,11 @@
 #include "backends/cloud/storage.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "gui/object.h"
 
 namespace Cloud {
 
-class SavesSyncRequest: public Networking::Request {
+class SavesSyncRequest: public Networking::Request, public GUI::CommandSender {
 	const uint32 INVALID_TIMESTAMP = UINT_MAX;
 	static const char *TIMESTAMPS_FILENAME;
 

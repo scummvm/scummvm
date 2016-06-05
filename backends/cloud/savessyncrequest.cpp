@@ -33,7 +33,7 @@ namespace Cloud {
 const char *SavesSyncRequest::TIMESTAMPS_FILENAME = "timestamps";
 
 SavesSyncRequest::SavesSyncRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb):
-	Request(nullptr, ecb), _storage(storage), _boolCallback(callback),
+	Request(nullptr, ecb), CommandSender(nullptr), _storage(storage), _boolCallback(callback),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
