@@ -83,7 +83,7 @@ void TTnpcScript::load(const char *name, int valuesPerResponse) {
 }
 
 void TTnpcScript::resetFlags() {
-	Common::fill(&_array[20], &_array[140], 0);
+	Common::fill(&_array[20], &_array[136], 0);
 	_field2CC = false;
 }
 
