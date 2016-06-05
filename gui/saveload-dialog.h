@@ -32,11 +32,13 @@ namespace GUI {
 
 class SaveLoadCloudSyncProgressDialog : public Dialog { //protected?
 	StaticTextWidget *_label;
+	bool _close;
 public:
 	SaveLoadCloudSyncProgressDialog();
 	virtual ~SaveLoadCloudSyncProgressDialog();
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleTickle();
 };
 
 #define kSwitchSaveLoadDialog -2

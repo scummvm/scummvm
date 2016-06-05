@@ -46,7 +46,7 @@ enum {
 	kBackgroundSyncCmd = 'PDBS'
 };
 
-SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(): Dialog(10, 10, 320, 100) {
+SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(): Dialog(10, 10, 320, 100), _close(false) {
 	int x = 10;
 	int buttonHeight = 24;
 	int buttonWidth = 140;
@@ -77,12 +77,20 @@ void SaveLoadCloudSyncProgressDialog::handleCommand(CommandSender *sender, uint3
 
 	case kSavesSyncEndedCmd:
 	case kBackgroundSyncCmd:
-		setResult(kBackgroundSyncCmd);
-		close();
+		_close = true;
 		break;
 	}
 
 	Dialog::handleCommand(sender, cmd, data);
+}
+
+void SaveLoadCloudSyncProgressDialog::handleTickle() {
+	if (_close) {
+		setResult(kBackgroundSyncCmd);
+		close();
+	}
+
+	Dialog::handleTickle();
 }
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
