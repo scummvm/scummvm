@@ -63,6 +63,10 @@ Common::Error MacVentureEngine::run() {
 	_wm = new Graphics::MacWindowManager();
 	_wm->setScreen(&_screen);
 
+	_screen.fillRect(Common::Rect(0, 0, _screen.w, _screen.h), Graphics::kColorWhite);
+
+	Graphics::MacWindow *w = _wm->addWindow(false, true, true);
+	w->setDimensions(Common::Rect(100, 100));
 
 	// Your main even loop should be (invoked from) here.
 	debug("MacVentureEngine::go: Hello, World!");
@@ -71,7 +75,7 @@ Common::Error MacVentureEngine::run() {
 	while (!_shouldQuit) {
 		processEvents();
 
-		debug("Ping");
+		_wm->draw();
 
 		g_system->updateScreen();
 		g_system->delayMillis(50);
