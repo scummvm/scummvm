@@ -38,6 +38,53 @@
 
 namespace GUI {
 
+enum {
+	kSavesSyncProgressCmd = 'SSPR',
+	kSavesSyncEndedCmd = 'SSEN',
+
+	kCancelSyncCmd = 'PDCS',
+	kBackgroundSyncCmd = 'PDBS'
+};
+
+SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(): Dialog(10, 10, 320, 100) {
+	int x = 10;
+	int buttonHeight = 24;
+	int buttonWidth = 140;
+	int marginBottom = 8;
+	
+	uint32 progress = (uint32)(100 * CloudMan.getSyncProgress());
+	_label = new StaticTextWidget(this, 10, 10, 300, kLineHeight, Common::String::format("Downloading saves (%u%% complete)...", progress), Graphics::kTextAlignCenter);
+
+	//if (defaultButton)
+		new ButtonWidget(this, x, _h - buttonHeight - marginBottom, buttonWidth, buttonHeight, "Cancel", 0, kCancelSyncCmd, Common::ASCII_ESCAPE);	// Cancel dialog
+
+	//if (altButton)
+		new ButtonWidget(this, x + buttonWidth + 10, _h - buttonHeight - 8, buttonWidth, buttonHeight, "Run in background", 0, kBackgroundSyncCmd, Common::ASCII_RETURN);	// Confirm dialog
+}
+
+SaveLoadCloudSyncProgressDialog::~SaveLoadCloudSyncProgressDialog() {}
+
+void SaveLoadCloudSyncProgressDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	switch(cmd) {
+	case kSavesSyncProgressCmd:				
+		_label->setLabel(Common::String::format("Downloading saves (%u%% complete)...", data));
+		break;
+
+	case kCancelSyncCmd:
+		setResult(kCancelSyncCmd);
+		close();
+		break;
+
+	case kSavesSyncEndedCmd:
+	case kBackgroundSyncCmd:
+		setResult(kBackgroundSyncCmd);
+		close();
+		break;
+	}
+
+	Dialog::handleCommand(sender, cmd, data);
+}
+
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngine &metaEngine) {
 	const Common::String &userConfig = ConfMan.get("gui_saveload_chooser", Common::ConfigManager::kApplicationDomain);
@@ -71,7 +118,8 @@ enum {
 
 SaveLoadChooserDialog::SaveLoadChooserDialog(const Common::String &dialogName, const bool saveMode)
 	: Dialog(dialogName), _metaEngine(0), _delSupport(false), _metaInfoSupport(false),
-	_thumbnailSupport(false), _saveDateSupport(false), _playTimeSupport(false), _saveMode(saveMode)
+	_thumbnailSupport(false), _saveDateSupport(false), _playTimeSupport(false), _saveMode(saveMode),
+	_dialogWasShown(false)
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	, _listButton(0), _gridButton(0)
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
@@ -83,7 +131,8 @@ SaveLoadChooserDialog::SaveLoadChooserDialog(const Common::String &dialogName, c
 
 SaveLoadChooserDialog::SaveLoadChooserDialog(int x, int y, int w, int h, const bool saveMode)
 	: Dialog(x, y, w, h), _metaEngine(0), _delSupport(false), _metaInfoSupport(false),
-	_thumbnailSupport(false), _saveDateSupport(false), _playTimeSupport(false), _saveMode(saveMode)
+	_thumbnailSupport(false), _saveDateSupport(false), _playTimeSupport(false), _saveMode(saveMode),
+	_dialogWasShown(false)
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	, _listButton(0), _gridButton(0)
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
@@ -99,6 +148,8 @@ void SaveLoadChooserDialog::open() {
 	// So that quitting ScummVM will not cause the dialog result to say a
 	// saved game was selected.
 	setResult(-1);
+
+	_dialogWasShown = false;
 }
 
 int SaveLoadChooserDialog::run(const Common::String &target, const MetaEngine *metaEngine) {
@@ -137,6 +188,21 @@ void SaveLoadChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uin
 	}
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 
+	if (cmd == kSavesSyncProgressCmd || cmd == kSavesSyncEndedCmd) {
+		Cloud::SavesSyncRequest *request = (Cloud::SavesSyncRequest *)sender;
+
+		//this dialog only gets these commands if the progress dialog was shown and user clicked "run in background"
+		switch (cmd) {
+		case kSavesSyncProgressCmd:			
+			//TODO: unlock that save which was downloaded
+			break;
+
+		case kSavesSyncEndedCmd:
+			//TODO: ?
+			break;
+		}
+	}
+
 	return Dialog::handleCommand(sender, cmd, data);
 }
 
@@ -149,6 +215,23 @@ void SaveLoadChooserDialog::runSaveSync(bool hasSavepathOverride) {
 			if (request) request->setTarget(this);
 		}
 	}
+}
+
+void SaveLoadChooserDialog::handleTickle() {
+	if (!_dialogWasShown && CloudMan.isSyncing()) {
+		Common::Array<Common::String> files = CloudMan.getSyncingFiles();
+		if (!files.empty()) {
+			SaveLoadCloudSyncProgressDialog dialog;
+			CloudMan.setSyncTarget(&dialog);
+			int result = dialog.runModal();
+			if (result == kCancelSyncCmd) {
+				CloudMan.cancelSync();
+			}
+			CloudMan.setSyncTarget(this);
+			_dialogWasShown = true;
+		}
+	}
+	Dialog::handleTickle();
 }
 
 void SaveLoadChooserDialog::reflowLayout() {

@@ -30,6 +30,15 @@
 
 namespace GUI {
 
+class SaveLoadCloudSyncProgressDialog : public Dialog { //protected?
+	StaticTextWidget *_label;
+public:
+	SaveLoadCloudSyncProgressDialog();
+	virtual ~SaveLoadCloudSyncProgressDialog();
+
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+};
+
 #define kSwitchSaveLoadDialog -2
 
 // TODO: We might want to disable the grid based save/load chooser for more
@@ -61,6 +70,8 @@ public:
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 	virtual void runSaveSync(bool hasSavepathOverride);
+	
+	virtual void handleTickle();
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	virtual SaveLoadChooserType getType() const = 0;
@@ -80,6 +91,7 @@ protected:
 	bool					_saveDateSupport;
 	bool					_playTimeSupport;
 	Common::String			_target;
+	bool _dialogWasShown;
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	ButtonWidget *_listButton;

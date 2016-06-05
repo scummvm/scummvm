@@ -27,6 +27,12 @@
 #include "common/array.h"
 #include "common/singleton.h"
 
+namespace GUI {
+
+class CommandReceiver;
+
+}
+
 namespace Cloud {
 
 class CloudManager : public Common::Singleton<CloudManager> {
@@ -89,6 +95,12 @@ public:
 
 	/** Returns an array of saves names which are not yet synced (thus cannot be used). */
 	Common::Array<Common::String> getSyncingFiles();
+
+	/** Cancels running sync. */
+	void cancelSync();
+
+	/** Sets SavesSyncRequest's target to given CommandReceiver. */
+	void setSyncTarget(GUI::CommandReceiver *target);
 };
 
 /** Shortcut for accessing the connection manager. */

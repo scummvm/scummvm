@@ -151,4 +151,14 @@ Common::Array<Common::String> CloudManager::getSyncingFiles() {
 	return Common::Array<Common::String>();
 }
 
+void CloudManager::cancelSync() {
+	Storage *storage = getCurrentStorage();
+	if (storage) storage->cancelSync();
+}
+
+void CloudManager::setSyncTarget(GUI::CommandReceiver *target) {
+	Storage *storage = getCurrentStorage();
+	if (storage) storage->setSyncTarget(target);
+}
+
 } // End of namespace Common

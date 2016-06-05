@@ -33,6 +33,12 @@
 #include "common/stream.h"
 #include "common/str.h"
 
+namespace GUI {
+
+class CommandReceiver;
+
+}
+
 namespace Cloud {
 
 class SavesSyncRequest;
@@ -146,6 +152,12 @@ public:
 
 	/** Returns an array of saves names which are not yet synced (thus cannot be used). */
 	virtual Common::Array<Common::String> getSyncingFiles();
+
+	/** Cancels running sync. */
+	virtual void cancelSync();
+
+	/** Sets SavesSyncRequest's target to given CommandReceiver. */
+	virtual void setSyncTarget(GUI::CommandReceiver *target);
 };
 
 } // End of namespace Cloud

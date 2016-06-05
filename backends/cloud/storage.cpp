@@ -142,5 +142,19 @@ Common::Array<Common::String> Storage::getSyncingFiles() {
 	return result;
 }
 
+void Storage::cancelSync() {
+	_runningRequestsMutex.lock();
+	if (_savesSyncRequest)
+		_savesSyncRequest->finish();
+	_runningRequestsMutex.unlock();
+}
+
+void Storage::setSyncTarget(GUI::CommandReceiver *target) {
+	_runningRequestsMutex.lock();
+	if (_savesSyncRequest)
+		_savesSyncRequest->setTarget(target);
+	_runningRequestsMutex.unlock();
+}
+
 } // End of namespace Cloud
 

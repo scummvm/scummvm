@@ -24,13 +24,18 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/json.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include <common/json.h>
 
 namespace Cloud {
 
 const char *SavesSyncRequest::TIMESTAMPS_FILENAME = "timestamps";
+
+enum {
+	kSavesSyncProgressCmd = 'SSPR',
+	kSavesSyncEndedCmd = 'SSEN'
+};
 
 SavesSyncRequest::SavesSyncRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb):
 	Request(nullptr, ecb), CommandSender(nullptr), _storage(storage), _boolCallback(callback),
@@ -203,9 +208,12 @@ void SavesSyncRequest::directoryCreatedErrorCallback(Networking::ErrorResponse e
 
 void SavesSyncRequest::downloadNextFile() {
 	if (_filesToDownload.empty()) {
+		sendCommand(kSavesSyncEndedCmd, 0);
 		uploadNextFile();
 		return;
 	}
+
+	sendCommand(kSavesSyncProgressCmd, (int)(getProgress() * 100));
 
 	_currentDownloadingFile = _filesToDownload.back();
 	_filesToDownload.pop_back();
