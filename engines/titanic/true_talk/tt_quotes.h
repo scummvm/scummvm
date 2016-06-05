@@ -31,9 +31,9 @@ namespace Titanic {
 
 class TTquotes {
 	struct TTquotesEntry {
-		byte _val1, _val2;
+		byte _tagIndex, _maxSize;
 		const char *_strP;
-		TTquotesEntry() : _val1(0), _val2(0), _strP(nullptr) {}
+		TTquotesEntry() : _tagIndex(0), _maxSize(0), _strP(nullptr) {}
 	};
 	struct TTquotesLetter {
 		Common::Array<TTquotesEntry> _entries;
@@ -51,7 +51,7 @@ private:
 private:
 	/**
 	 * Test whether a substring contains one of the quotes,
-	 * and if so, returns the Id associated with it
+	 * and if so, returns the 4-character tag Id associated with it
 	 */
 	int read(const char *startP, const char *endP);
 public:
@@ -65,7 +65,7 @@ public:
 
 	/**
 	 * Test whether a passed string contains one of the quotes,
-	 * and if so, returns the Id associated with it
+	 * and if so, returns the 4-character tag Id associated with it
 	 */
 	int read(const char *str);
 };

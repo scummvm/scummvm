@@ -31,24 +31,41 @@ namespace Titanic {
 
 #define QUOTES_TREE_COUNT 1022
 
-enum TreeEntryType { ET_END = 0, ET_TABLE = 1, ET_STRING = 2 };
+class TTtreeBuffer {
+public:
+	int _field0;
+	const char *_strP;
+public:
+	TTtreeBuffer() : _field0(0), _strP(nullptr) {}
+};
 
 class TTquotesTree {
 	struct TTquotesTreeEntry {
 		uint _id;
-		TreeEntryType _type;
 		TTquotesTreeEntry *_subTable;
 		CString _string;
 
-		TTquotesTreeEntry() : _id(0), _type(ET_END), _subTable(nullptr) {}
+		TTquotesTreeEntry() : _id(0), _subTable(nullptr) {}
 	};
 private:
 	TTquotesTreeEntry _entries[QUOTES_TREE_COUNT];
+private:
+	/**
+	 * Inner search method
+	 */
+	void search(const char **str, TTquotesTreeEntry *bTree, TTtreeBuffer *buffer,
+		int quoteId);
+
+	/**
+	 * Compare the current word in the string against a specified word
+	 */
+	bool compareWord(const char **str, const char *refStr);
 public:
 	/**
 	 * Load data for the quotes tree
 	 */
 	void load();
+
 };
 
 } // End of namespace Titanic

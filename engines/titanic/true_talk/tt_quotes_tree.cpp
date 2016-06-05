@@ -40,7 +40,7 @@ void TTquotesTree::load() {
 		
 		rec._id = r->readUint32LE();		
 		if (rec._id == 0) {
-			rec._type = ET_END;
+			// Nothing needed
 		} else {
 			byte type = r->readByte();
 			if (type == 0) {
@@ -57,6 +57,78 @@ void TTquotesTree::load() {
 
 	assert(r->pos() == r->size());
 	delete r;
+}
+
+void TTquotesTree::search(const char **str, TTquotesTreeEntry *bTree,
+		TTtreeBuffer *buffer, int quoteId) {
+	buffer->_strP = nullptr;
+	(buffer + 1)->_strP = nullptr;
+
+	bool flag = false;
+	for (uint mode = bTree->_id >> 24; mode != 0; 
+			++bTree, mode = bTree->_id >> 24) {
+
+		switch (mode) {
+		case 1:
+			if (compareWord(str, bTree->_string.c_str()))
+				flag = true;
+			break;
+		
+		case 2:
+			compareWord(str, bTree->_string.c_str());
+			break;
+		
+		case 5:
+			warning("TODO: TTquotesTree::search");
+			break;
+
+		case 7:
+
+		default:
+			break;
+		}
+
+		if (flag) {
+			// TODO
+			break;
+		}
+	}
+
+}
+
+bool TTquotesTree::compareWord(const char **str, const char *refStr) {
+	// Skip over any spaces
+	const char *strP = *str;
+	while (*strP && *strP == ' ')
+		++strP;
+	*str = strP;
+
+	// Compare against the reference string
+	while (*strP && *refStr && *refStr != '*') {
+		if (*refStr == '-') {
+			if (*strP == ' ')
+				++strP;
+		} else if (*strP == *refStr) {
+			++strP;
+		} else {
+			return false;
+		}
+	}
+
+	if (*refStr && *refStr != '*')
+		return false;
+	if (!*refStr && *strP && *strP != ' ')
+		return false;
+
+	if (*refStr == '*') {
+		// Skip over to the end of the word
+		while (*strP && *strP != ' ')
+			++strP;
+	}
+
+	// Pass out the new updated string position
+	*str = strP;
+	return true;
 }
 
 } // End of namespace Titanic

@@ -54,8 +54,8 @@ void TTquotes::load() {
 		// Load the list of entries for the given letter
 		letter._entries.resize(count);
 		for (int idx = 0; idx < count; ++idx) {
-			letter._entries[idx]._val1 = r->readByte();
-			letter._entries[idx]._val2 = r->readByte();
+			letter._entries[idx]._tagIndex = r->readByte();
+			letter._entries[idx]._maxSize = r->readByte();
 			letter._entries[idx]._strP = _dataP + r->readUint32LE();
 		}
 	}
@@ -109,7 +109,7 @@ int TTquotes::read(const char *startP, const char *endP) {
 
 	for (uint idx = 0; idx < letter._entries.size(); ++idx) {
 		const TTquotesEntry &entry = letter._entries[idx];
-		if (entry._val2 > maxSize)
+		if (entry._maxSize > maxSize)
 			continue;
 
 		const char *srcP = startP;
@@ -135,7 +135,7 @@ int TTquotes::read(const char *startP, const char *endP) {
 
 			if (!destP[destIndex] && (srcP[srcIndex] <= '*' ||
 					(srcP[srcIndex] == 's' && srcP[srcIndex + 1] <= '*')))
-				return entry._val1;
+				return _tags[entry._tagIndex];
 		}
 	}
 
