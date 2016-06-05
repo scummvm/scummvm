@@ -59,19 +59,33 @@ void DefaultSaveFileManager::checkPath(const Common::FSNode &dir) {
 	}
 }
 
+void DefaultSaveFileManager::updateSavefilesList(Common::StringArray &lockedFiles) {
+	//make it refresh the cache next time it lists the saves
+	_cachedDirectory = "";
+
+	//remember the locked files list because some of these files don't exist yet
+	_lockedFiles = lockedFiles;
+}
+
 Common::StringArray DefaultSaveFileManager::listSavefiles(const Common::String &pattern) {
 	// Assure the savefile name cache is up-to-date.
 	assureCached(getSavePath());
 	if (getError().getCode() != Common::kNoError)
 		return Common::StringArray();
 
-	Common::StringArray results;
-	for (SaveFileCache::const_iterator file = _saveFileCache.begin(), end = _saveFileCache.end(); file != end; ++file) {
-		if (file->_key.matchString(pattern, true)) {
-			results.push_back(file->_key);
+	Common::HashMap<Common::String, bool> locked;
+	for (Common::StringArray::const_iterator i = _lockedFiles.begin(), end = _lockedFiles.end(); i != end; ++i) {
+		if (i->matchString(pattern, true)) {
+			locked[*i] = true;
 		}
 	}
 
+	Common::StringArray results;
+	for (SaveFileCache::const_iterator file = _saveFileCache.begin(), end = _saveFileCache.end(); file != end; ++file) {		
+		if (!locked.contains(file->_key) && file->_key.matchString(pattern, true)) {
+			results.push_back(file->_key);
+		}
+	}
 	return results;
 }
 

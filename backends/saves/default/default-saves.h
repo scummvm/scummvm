@@ -37,6 +37,7 @@ public:
 	DefaultSaveFileManager();
 	DefaultSaveFileManager(const Common::String &defaultSavepath);
 
+	virtual void updateSavefilesList(Common::StringArray &lockedFiles);
 	virtual Common::StringArray listSavefiles(const Common::String &pattern);
 	virtual Common::InSaveFile *openRawFile(const Common::String &filename);
 	virtual Common::InSaveFile *openForLoading(const Common::String &filename);
@@ -74,6 +75,12 @@ protected:
 	 * removeSavefile.
 	 */
 	SaveFileCache _saveFileCache;
+
+	/**
+	 * List of "locked" files. These cannot be used for saving/loading
+	 * because CloudManager is downloading those.
+	 */
+	Common::StringArray _lockedFiles;
 
 private:
 	/**

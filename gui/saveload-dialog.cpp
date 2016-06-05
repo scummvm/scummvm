@@ -35,6 +35,7 @@
 #include "gui/widgets/edittext.h"
 
 #include "graphics/scaler.h"
+#include <common/savefile.h>
 
 namespace GUI {
 
@@ -201,12 +202,9 @@ void SaveLoadChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uin
 
 		//this dialog only gets these commands if the progress dialog was shown and user clicked "run in background"
 		switch (cmd) {
-		case kSavesSyncProgressCmd:			
-			//TODO: unlock that save which was downloaded
-			break;
-
+		case kSavesSyncProgressCmd:
 		case kSavesSyncEndedCmd:
-			//TODO: ?
+			updateSaveList();
 			break;
 		}
 	}
@@ -237,6 +235,7 @@ void SaveLoadChooserDialog::handleTickle() {
 			}
 			CloudMan.setSyncTarget(this);
 			_dialogWasShown = true;
+			updateSaveList();
 		}
 	}
 	Dialog::handleTickle();
@@ -257,6 +256,11 @@ void SaveLoadChooserDialog::reflowLayout() {
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 
 	Dialog::reflowLayout();
+}
+
+void SaveLoadChooserDialog::updateSaveList() {	
+	Common::Array<Common::String> files = CloudMan.getSyncingFiles(); //returns empty array if not syncing	
+	g_system->getSavefileManager()->updateSavefilesList(files);
 }
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
@@ -570,6 +574,7 @@ void SaveLoadChooserSimple::close() {
 }
 
 void SaveLoadChooserSimple::updateSaveList() {
+	SaveLoadChooserDialog::updateSaveList();
 	_saveList = _metaEngine->listSaves(_target.c_str());
 
 	int curSlot = 0;
@@ -631,6 +636,7 @@ void SaveLoadChooserSimple::updateSaveList() {
 	}
 
 	_list->setList(saveNames, &colors);
+	draw();
 }
 
 // SaveLoadChooserGrid implementation
@@ -724,6 +730,13 @@ void SaveLoadChooserGrid::handleMouseWheel(int x, int y, int direction) {
 			draw();
 		}
 	}
+}
+
+void SaveLoadChooserGrid::updateSaveList() {
+	SaveLoadChooserDialog::updateSaveList();
+	_saveList = _metaEngine->listSaves(_target.c_str());
+	updateSaves();
+	draw();
 }
 
 void SaveLoadChooserGrid::open() {

@@ -183,6 +183,13 @@ public:
 	 * @see Common::matchString()
 	 */
 	virtual StringArray listSavefiles(const String &pattern) = 0;
+
+	/**
+	 * Refreshes the save files list (because some new files could've been added)
+	 * and remembers the "locked" files list. These files could not be used
+	 * for saving or loading because they are being synced by CloudManager.
+	 */
+	virtual void updateSavefilesList(StringArray &lockedFiles) = 0;
 };
 
 } // End of namespace Common

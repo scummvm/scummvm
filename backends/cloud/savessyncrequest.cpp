@@ -214,10 +214,10 @@ void SavesSyncRequest::downloadNextFile() {
 		return;
 	}
 
-	sendCommand(kSavesSyncProgressCmd, (int)(getDownloadingProgress() * 100));
-
 	_currentDownloadingFile = _filesToDownload.back();
 	_filesToDownload.pop_back();
+
+	sendCommand(kSavesSyncProgressCmd, (int)(getDownloadingProgress() * 100));
 
 	///////
 	debug("downloading %s (%d %%)", _currentDownloadingFile.name().c_str(), (int)(getProgress() * 100));

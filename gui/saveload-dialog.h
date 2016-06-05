@@ -84,6 +84,7 @@ public:
 
 protected:
 	virtual int runIntern() = 0;
+	virtual void updateSaveList();
 
 	const bool				_saveMode;
 	const MetaEngine		*_metaEngine;
@@ -122,6 +123,8 @@ public:
 
 	virtual void open();
 	virtual void close();
+protected:
+	virtual void updateSaveList();
 private:
 	virtual int runIntern();
 
@@ -136,8 +139,7 @@ private:
 
 	SaveStateList			_saveList;
 	String					_resultString;
-
-	void updateSaveList();
+	
 	void updateSelection(bool redraw);
 };
 
@@ -180,6 +182,7 @@ public:
 protected:
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void handleMouseWheel(int x, int y, int direction);
+	virtual void updateSaveList();
 private:
 	virtual int runIntern();
 
