@@ -71,7 +71,7 @@ public:
 	/**
 	 * Starts saves syncing process in currently active storage if there is any.
 	 */
-	void syncSaves(Cloud::Storage::BoolCallback callback = nullptr, Networking::ErrorCallback errorCallback = nullptr);
+	SavesSyncRequest *syncSaves(Cloud::Storage::BoolCallback callback = nullptr, Networking::ErrorCallback errorCallback = nullptr);
 
 	/**
 	 * Starts feature testing (the one I'm working on currently). (Temporary)

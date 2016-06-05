@@ -116,9 +116,10 @@ void CloudManager::printBool(Storage::BoolResponse response) const {
 	debug("bool = %s", (response.value ? "true" : "false"));
 }
 
-void CloudManager::syncSaves(Storage::BoolCallback callback, Networking::ErrorCallback errorCallback) {
+SavesSyncRequest *CloudManager::syncSaves(Storage::BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	Storage *storage = getCurrentStorage();
-	if (storage) storage->syncSaves(callback, errorCallback);
+	if (storage) return storage->syncSaves(callback, errorCallback);
+	return nullptr;
 }
 
 void CloudManager::testFeature() {

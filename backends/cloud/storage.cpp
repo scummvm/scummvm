@@ -97,7 +97,7 @@ Networking::Request *Storage::downloadFolder(Common::String remotePath, Common::
 	return addRequest(new FolderDownloadRequest(this, callback, errorCallback, remotePath, localPath, recursive));
 }
 
-Networking::Request *Storage::syncSaves(BoolCallback callback, Networking::ErrorCallback errorCallback) {
+SavesSyncRequest *Storage::syncSaves(BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	_runningRequestsMutex.lock();
 	if (_savesSyncRequest) {
 		warning("Storage::syncSaves: there is a sync in progress already");
@@ -106,8 +106,8 @@ Networking::Request *Storage::syncSaves(BoolCallback callback, Networking::Error
 	}
 	if (!errorCallback) errorCallback = getErrorPrintingCallback();
 	_savesSyncRequest = new SavesSyncRequest(this, callback, errorCallback);
-	_runningRequestsMutex.unlock();
-	return addRequest(_savesSyncRequest);
+	_runningRequestsMutex.unlock();	
+	return (SavesSyncRequest *)addRequest(_savesSyncRequest); //who knows what that ConnMan could return in the future
 }
 
 bool Storage::isWorking() {

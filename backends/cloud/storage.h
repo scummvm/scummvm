@@ -124,7 +124,7 @@ public:
 	virtual Networking::Request *remove(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *syncSaves(BoolCallback callback, Networking::ErrorCallback errorCallback);
+	virtual SavesSyncRequest *syncSaves(BoolCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Calls the callback when finished. */
 	virtual Networking::Request *createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) = 0;
