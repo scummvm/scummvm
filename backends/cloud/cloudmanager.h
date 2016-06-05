@@ -77,6 +77,18 @@ public:
 	 * Starts feature testing (the one I'm working on currently). (Temporary)
 	 */
 	void testFeature();
+
+	/** Returns whether there are any requests running. */
+	bool isWorking();
+
+	/** Returns whether there is a SavesSyncRequest running. */
+	bool isSyncing();
+
+	/** Returns a number in [0, 1] range which represents current sync progress (1 = complete). */
+	double getSyncProgress();
+
+	/** Returns an array of saves names which are not yet synced (thus cannot be used). */
+	Common::Array<Common::String> getSyncingFiles();
 };
 
 /** Shortcut for accessing the connection manager. */

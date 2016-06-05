@@ -43,9 +43,8 @@ CloudIcon::~CloudIcon() {}
 bool CloudIcon::draw() {
 	bool stop = false;
 	initIcons();
-
-	Cloud::Storage *storage = CloudMan.getCurrentStorage();	
-	if (storage && storage->isWorking()) {
+	
+	if (CloudMan.isWorking()) {
 		if (g_system) {
 			if (!_wasVisible) {
 				g_system->clearOSD();

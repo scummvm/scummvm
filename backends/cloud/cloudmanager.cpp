@@ -126,4 +126,28 @@ void CloudManager::testFeature() {
 	if (storage) storage->info(nullptr, nullptr);
 }
 
+bool CloudManager::isWorking() {
+	Storage *storage = getCurrentStorage();
+	if (storage) return storage->isWorking();
+	return false;
+}
+
+bool CloudManager::isSyncing() {
+	Storage *storage = getCurrentStorage();
+	if (storage) return storage->isSyncing();
+	return false;
+}
+
+double CloudManager::getSyncProgress() {
+	Storage *storage = getCurrentStorage();
+	if (storage) return storage->getSyncProgress();
+	return 1;
+}
+
+Common::Array<Common::String> CloudManager::getSyncingFiles() {
+	Storage *storage = getCurrentStorage();
+	if (storage) return storage->getSyncingFiles();
+	return Common::Array<Common::String>();
+}
+
 } // End of namespace Common
