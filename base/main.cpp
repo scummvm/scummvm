@@ -388,7 +388,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	if (settings.contains("debugflags")) {
 		specialDebug = settings["debugflags"];
 		settings.erase("debugflags");
-	}
+	} else if (ConfMan.hasKey("debugflags"))
+		specialDebug = ConfMan.get("debugflags");
 
 	PluginManager::instance().init();
  	PluginManager::instance().loadAllPlugins(); // load plugins for cached plugin manager
