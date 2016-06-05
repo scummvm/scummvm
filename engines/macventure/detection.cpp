@@ -32,7 +32,7 @@ namespace MacVenture {
 #include "macventure/detection_tables.h"
 
 static const PlainGameDescriptor macventureGames[] = {
-	{ "Shadowgate", "Shadowgate" },
+	{ "shadowgate", "Shadowgate" },
 	{ 0, 0 }
 };
 
