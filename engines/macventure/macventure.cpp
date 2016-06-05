@@ -20,8 +20,7 @@
  *
  */
 
-#include "common/scummsys.h"
-
+#include "common/system.h"
 #include "common/debug-channels.h"
 #include "common/debug.h"
 #include "common/error.h"
@@ -52,24 +51,47 @@ MacVentureEngine::~MacVentureEngine() {
 Common::Error MacVentureEngine::run() {
 	debug("MacVenture::MacVentureEngine::init()");
 
-	initGraphics(kScreenWidth, kScreenHeight, true);
-	
-	//_screen.create(kScreenWidth, kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
-	
-	//_wm = new Graphics::MacWindowManager();
-	//_wm->setScreen(&_screen);
+	initGraphics(kScreenWidth, kScreenHeight, true);	
 
-	// Create debugger console. It requires GFX to be initialized
 	_debugger = new Console(this);
 
 	// Additional setup.
 	debug("MacVentureEngine::init");
 
+	_screen.create(kScreenWidth, kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
+
+	_wm = new Graphics::MacWindowManager();
+	_wm->setScreen(&_screen);
+
+
 	// Your main even loop should be (invoked from) here.
 	debug("MacVentureEngine::go: Hello, World!");
 
+	_shouldQuit = false;
+	while (!_shouldQuit) {
+		processEvents();
+
+		debug("Ping");
+
+		g_system->updateScreen();
+		g_system->delayMillis(50);
+	}
 
 	return Common::kNoError;
+}
+
+void MacVentureEngine::processEvents() {
+	Common::Event event;
+
+	while (_eventMan->pollEvent(event)) {
+		switch (event.type) {
+			case Common::EVENT_QUIT:
+				_shouldQuit = true;
+				break;
+			default: 
+				break;
+		}
+	}
 }
 
 } // End of namespace MacVenture
