@@ -52,7 +52,7 @@ SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(): Dialog(10, 1
 	int buttonWidth = 140;
 	int marginBottom = 8;
 	
-	uint32 progress = (uint32)(100 * CloudMan.getSyncProgress());
+	uint32 progress = (uint32)(100 * CloudMan.getSyncDownloadingProgress());
 	_label = new StaticTextWidget(this, 10, 10, 300, kLineHeight, Common::String::format("Downloading saves (%u%% complete)...", progress), Graphics::kTextAlignCenter);
 
 	//if (defaultButton)

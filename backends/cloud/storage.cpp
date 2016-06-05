@@ -124,6 +124,15 @@ bool Storage::isSyncing() {
 	return syncing;
 }
 
+double Storage::getSyncDownloadingProgress() {
+	double result = 1;
+	_runningRequestsMutex.lock();
+	if (_savesSyncRequest)
+		result = _savesSyncRequest->getDownloadingProgress();
+	_runningRequestsMutex.unlock();
+	return result;
+}
+
 double Storage::getSyncProgress() {
 	double result = 1;
 	_runningRequestsMutex.lock();

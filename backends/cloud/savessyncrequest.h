@@ -70,6 +70,9 @@ public:
 	virtual void restart();
 
 	/** Returns a number in range [0, 1], where 1 is "complete". */
+	double getDownloadingProgress();
+
+	/** Returns a number in range [0, 1], where 1 is "complete". */
 	double getProgress();
 
 	/** Returns an array of saves names which are not downloaded yet. */

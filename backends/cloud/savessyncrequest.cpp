@@ -208,12 +208,13 @@ void SavesSyncRequest::directoryCreatedErrorCallback(Networking::ErrorResponse e
 
 void SavesSyncRequest::downloadNextFile() {
 	if (_filesToDownload.empty()) {
+		_currentDownloadingFile = StorageFile("", 0, 0, false); //so getFilesToDownload() would return an empty array
 		sendCommand(kSavesSyncEndedCmd, 0);
 		uploadNextFile();
 		return;
 	}
 
-	sendCommand(kSavesSyncProgressCmd, (int)(getProgress() * 100));
+	sendCommand(kSavesSyncProgressCmd, (int)(getDownloadingProgress() * 100));
 
 	_currentDownloadingFile = _filesToDownload.back();
 	_filesToDownload.pop_back();
@@ -294,6 +295,19 @@ void SavesSyncRequest::fileUploadedErrorCallback(Networking::ErrorResponse error
 void SavesSyncRequest::handle() {}
 
 void SavesSyncRequest::restart() { start(); }
+
+double SavesSyncRequest::getDownloadingProgress() {
+	if (_totalFilesToHandle == 0) {
+		if (_state == Networking::FINISHED) return 1; //nothing to upload and download => Request ends soon
+		return 0; //directory not listed yet
+	}
+
+	if (_totalFilesToHandle == _filesToUpload.size()) return 1; //nothing to download => download complete
+
+	uint32 totalFilesToDownload = _totalFilesToHandle - _filesToUpload.size();
+	uint32 filesLeftToDownload = _filesToDownload.size() + (_currentDownloadingFile.name() != "" ? 1 : 0);
+	return (double)(totalFilesToDownload - filesLeftToDownload) / (double)(totalFilesToDownload);
+}
 
 double SavesSyncRequest::getProgress() {
 	if (_totalFilesToHandle == 0) {

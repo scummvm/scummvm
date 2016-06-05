@@ -139,6 +139,12 @@ bool CloudManager::isSyncing() {
 	return false;
 }
 
+double CloudManager::getSyncDownloadingProgress() {
+	Storage *storage = getCurrentStorage();
+	if (storage) return storage->getSyncDownloadingProgress();
+	return 1;
+}
+
 double CloudManager::getSyncProgress() {
 	Storage *storage = getCurrentStorage();
 	if (storage) return storage->getSyncProgress();

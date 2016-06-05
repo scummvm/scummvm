@@ -90,6 +90,9 @@ public:
 	/** Returns whether there is a SavesSyncRequest running. */
 	bool isSyncing();
 
+	/** Returns a number in [0, 1] range which represents current sync downloading progress (1 = complete). */
+	double getSyncDownloadingProgress();
+
 	/** Returns a number in [0, 1] range which represents current sync progress (1 = complete). */
 	double getSyncProgress();
 

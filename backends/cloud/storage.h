@@ -148,6 +148,9 @@ public:
 	virtual bool isSyncing();
 
 	/** Returns a number in [0, 1] range which represents current sync progress (1 = complete). */
+	virtual double getSyncDownloadingProgress();
+
+	/** Returns a number in [0, 1] range which represents current sync progress (1 = complete). */
 	virtual double getSyncProgress();
 
 	/** Returns an array of saves names which are not yet synced (thus cannot be used). */
