@@ -2223,6 +2223,9 @@ void SurfaceSdlGraphicsManager::copyRectToOSD(const void *buf, int pitch, int x,
 	if (SDL_LockSurface(_osdSurface))
 		error("displayMessageOnOSD: SDL_LockSurface failed: %s", SDL_GetError());
 
+	// Mark that area as "dirty"
+	addDirtyRect(x, y, w, h, true);
+
 #ifdef USE_RGB_COLOR
 	byte *dst = (byte *)_osdSurface->pixels + y * _osdSurface->pitch + x * _osdSurface->format->BytesPerPixel;
 	if (_videoMode.screenWidth == w && pitch == _osdSurface->pitch) {
@@ -2251,9 +2254,6 @@ void SurfaceSdlGraphicsManager::copyRectToOSD(const void *buf, int pitch, int x,
 
 	// Finished drawing, so unlock the OSD surface again
 	SDL_UnlockSurface(_osdSurface);
-
-	// Ensure a full redraw takes place next time the screen is updated
-	_forceFull = true;
 }
 
 void SurfaceSdlGraphicsManager::clearOSD() {
