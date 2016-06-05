@@ -23,11 +23,33 @@
 #ifndef MACVENTURE_H
 #define MACVENTURE_H
 
+#include "common/debug.h"
+#include "common/random.h"
+
 #include "engines/engine.h"
+
+#include "graphics/managed_surface.h"
+#include "graphics/macgui/macwindowmanager.h"
+ 
+#include "gui/debugger.h"
 
 struct ADGameDescription;
 
 namespace MacVenture {
+
+class Console;
+
+enum {
+	kScreenWidth = 512,
+	kScreenHeight = 342
+};
+
+enum {
+	kMacVentureDebugExample = 1 << 0,
+	kMacVentureDebugExample2 = 1 << 1
+	// next new level must be 1 << 2 (4)
+	// the current limitation is 32 debug levels (1 << 31 is the last one)
+};
 
 class MacVentureEngine : public Engine {
 
@@ -39,7 +61,20 @@ public:
 
 private:
 	const ADGameDescription *_gameDescription;
+	Common::RandomSource *_rnd;
+	
+	Console *_debugger;
 
+	Graphics::MacWindowManager *_wm;
+
+	Graphics::ManagedSurface _screen;
+};
+
+
+class Console : public GUI::Debugger {
+public:
+	Console(MacVentureEngine *vm) {}
+	virtual ~Console(void) {}
 };
 } // End of namespace MacVenture
 

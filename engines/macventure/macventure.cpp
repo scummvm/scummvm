@@ -20,9 +20,13 @@
  *
  */
 
+#include "common/scummsys.h"
+
+#include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/error.h"
 
-#include "engines/engine.h"
+#include "engines/util.h"
 
 #include "macventure/macventure.h"
 
@@ -30,13 +34,42 @@ namespace MacVenture {
 
 MacVentureEngine::MacVentureEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst) {
 	_gameDescription = gameDesc;
+	_rnd = new Common::RandomSource("macventure");
+
+	_debugger= NULL;
+
+	debug("MacVenture::MacVentureEngine()");
 }
 
 MacVentureEngine::~MacVentureEngine() {
+	debug("MacVenture::~MacVentureEngine()");
+
+	DebugMan.clearAllDebugChannels();
+	delete _rnd;
+	delete _debugger;
 }
 
 Common::Error MacVentureEngine::run() {
-	return Common::Error();
+	debug("MacVenture::MacVentureEngine::init()");
+
+	initGraphics(kScreenWidth, kScreenHeight, true);
+	
+	//_screen.create(kScreenWidth, kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
+	
+	//_wm = new Graphics::MacWindowManager();
+	//_wm->setScreen(&_screen);
+
+	// Create debugger console. It requires GFX to be initialized
+	_debugger = new Console(this);
+
+	// Additional setup.
+	debug("MacVentureEngine::init");
+
+	// Your main even loop should be (invoked from) here.
+	debug("MacVentureEngine::go: Hello, World!");
+
+
+	return Common::kNoError;
 }
 
 } // End of namespace MacVenture
