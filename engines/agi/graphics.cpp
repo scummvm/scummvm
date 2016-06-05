@@ -61,6 +61,14 @@ GfxMgr::GfxMgr(AgiBase *vm, GfxFont *font) : _vm(vm), _font(font) {
 
 	_displayWidthMulAdjust = 0; // visualPos * (2+0) = displayPos
 	_displayHeightMulAdjust = 0; // visualPos * (1+0) = displayPos
+
+	_pixels = 0;
+	_displayPixels = 0;
+
+	_activeScreen = NULL;
+	_gameScreen = NULL;
+	_priorityScreen = NULL;
+	_displayScreen = NULL;
 }
 
 /**
