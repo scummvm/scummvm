@@ -39,6 +39,8 @@ TextMgr::TextMgr(AgiEngine *vm, Words *words, GfxMgr *gfx) {
 	_words = words;
 	_gfx = gfx;
 
+	_systemUI = NULL;
+
 	memset(&_messageState, 0, sizeof(_messageState));
 	_textPos.row = 0;
 	_textPos.column = 0;

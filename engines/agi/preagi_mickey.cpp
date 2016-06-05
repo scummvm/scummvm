@@ -255,7 +255,7 @@ bool MickeyEngine::checkMenu() {
 	return parse(menu.cmd[iSel0].data[iSel1], menu.arg[iSel0].data[iSel1]);
 }
 
-void MickeyEngine::drawMenu(MSA_MENU menu, int sel0, int sel1) {
+void MickeyEngine::drawMenu(MSA_MENU &menu, int sel0, int sel1) {
 	int iWord;
 	int iRow;
 	int sel;
@@ -286,7 +286,7 @@ void MickeyEngine::drawMenu(MSA_MENU menu, int sel0, int sel1) {
 	_gfx->updateScreen();
 }
 
-void MickeyEngine::getMouseMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow, int x, int y) {
+void MickeyEngine::getMouseMenuSelRow(MSA_MENU &menu, int *sel0, int *sel1, int iRow, int x, int y) {
 	int iWord;
 	int *sel = 0;
 
@@ -313,7 +313,7 @@ void MickeyEngine::getMouseMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int i
 	}
 }
 
-bool MickeyEngine::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
+bool MickeyEngine::getMenuSelRow(MSA_MENU &menu, int *sel0, int *sel1, int iRow) {
 	Common::Event event;
 	int *sel = 0;
 	int nWords;

@@ -126,6 +126,7 @@ public:
 		memset(&osc, 0, sizeof(osc));
 		seg = 0;
 		a = 0;
+		velocity = 0;
 	}
 
 	const IIgsInstrumentHeader *curInstrument; ///< Currently used instrument

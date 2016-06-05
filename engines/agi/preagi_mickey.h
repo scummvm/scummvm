@@ -710,9 +710,9 @@ protected:
 	void printExeMsg(int);
 	void printDesc(int);
 	bool checkMenu();
-	void drawMenu(MSA_MENU, int, int);
-	void getMouseMenuSelRow(MSA_MENU, int *, int *, int, int, int);
-	bool getMenuSelRow(MSA_MENU, int *, int *, int);
+	void drawMenu(MSA_MENU &, int, int);
+	void getMouseMenuSelRow(MSA_MENU &, int *, int *, int, int, int);
+	bool getMenuSelRow(MSA_MENU &, int *, int *, int);
 	void getMenuSel(char *, int *, int *);
 	void centerMenu(MSA_MENU *);
 	void patchMenu(MSA_MENU *);

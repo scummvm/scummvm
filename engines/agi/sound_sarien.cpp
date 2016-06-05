@@ -74,6 +74,7 @@ SoundGenSarien::SoundGenSarien(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm,
 	_useChorus = true;  // FIXME: Currently always true?
 
 	switch (_vm->_soundemu) {
+	default:
 	case SOUND_EMU_NONE:
 		_waveform = waveformRamp;
 		_env = true;

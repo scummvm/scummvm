@@ -193,6 +193,7 @@ SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) {
 	_playingSound = -1;
 
 	switch (_vm->_soundemu) {
+	default:
 	case SOUND_EMU_NONE:
 	case SOUND_EMU_AMIGA:
 	case SOUND_EMU_MAC:

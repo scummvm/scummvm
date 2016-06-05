@@ -44,6 +44,8 @@ PictureMgr::PictureMgr(AgiBase *agi, GfxMgr *gfx) {
 	_minCommand = 0xf0;
 	_flags = 0;
 	_currentStep = 0;
+
+	_width = _height = 0;
 }
 
 void PictureMgr::putVirtPixel(int x, int y) {

@@ -132,6 +132,8 @@ struct ScreenObjEntry {
 	uint8 wander_count;
 	// end of motion related variables
 	uint8 loop_flag;
+
+	ScreenObjEntry() { memset(this, 0, sizeof(ScreenObjEntry)); }
 }; // struct vt_entry
 
 } // End of namespace Agi
