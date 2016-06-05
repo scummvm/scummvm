@@ -25,6 +25,10 @@
 #include "common/debug.h"
 #include "common/error.h"
 
+// For border loading, should be gone later
+#include "common/file.h"
+#include "image/bmp.h"
+
 #include "engines/util.h"
 
 #include "macventure/macventure.h"
@@ -60,14 +64,8 @@ Common::Error MacVentureEngine::run() {
 
 	_screen.create(kScreenWidth, kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 
-	_wm = new Graphics::MacWindowManager();
-	_wm->setScreen(&_screen);
-
-	_screen.fillRect(Common::Rect(0, 0, _screen.w, _screen.h), Graphics::kColorWhite);
-
-	Graphics::MacWindow *w = _wm->addWindow(false, true, true);
-	w->setDimensions(Common::Rect(100, 100));
-
+	initGUI();
+	
 	// Your main even loop should be (invoked from) here.
 	debug("MacVentureEngine::go: Hello, World!");
 
@@ -95,6 +93,48 @@ void MacVentureEngine::processEvents() {
 			default: 
 				break;
 		}
+	}
+}
+
+void MacVentureEngine::initGUI() {
+	_wm = new Graphics::MacWindowManager();
+	_wm->setScreen(&_screen);
+	Graphics::MacWindow *w = _wm->addWindow(false, true, true);
+	w->setDimensions(Common::Rect(100, 100));
+	w->setActive(false);
+
+	loadBorder(w, "border_inac.bmp", false);
+
+}
+
+void MacVentureEngine::loadBorder(Graphics::MacWindow *target, Common::String filename, bool active) {
+	Common::File borderfile;
+
+	if (!borderfile.open(filename)) {
+		debug(1, "Cannot open border file");
+		return;
+	}
+
+	Image::BitmapDecoder bmpDecoder;
+	Common::SeekableReadStream *stream = borderfile.readStream(borderfile.size());
+	Graphics::Surface source;
+	Graphics::TransparentSurface *surface = new Graphics::TransparentSurface();
+
+	if (stream) {
+		debug(4, "Loading %s border from %s", (active ? "active" : "inactive"), filename);
+		bmpDecoder.loadStream(*stream);
+		source = *(bmpDecoder.getSurface());
+
+		source.convertToInPlace(surface->getSupportedPixelFormat(), bmpDecoder.getPalette());
+		surface->create(source.w, source.h, source.format);
+		surface->copyFrom(source);
+		surface->applyColorKey(255, 0, 255, false);
+
+		target->setBorder(*surface, active);
+
+		borderfile.close();
+
+		delete stream;
 	}
 }
 

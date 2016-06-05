@@ -62,6 +62,9 @@ public:
 private:
 	void processEvents();
 
+	void initGUI();
+	void loadBorder(Graphics::MacWindow * target, Common::String filename, bool active);
+
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource *_rnd;
