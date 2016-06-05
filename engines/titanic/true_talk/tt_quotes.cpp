@@ -27,7 +27,7 @@
 namespace Titanic {
 
 TTquotes::TTquotes() {
-	Common::fill(&_array[0], &_array[256], 0);
+	Common::fill(&_tags[0], &_tags[256], 0);
 	_dataP = nullptr;
 	_dataSize = 0;
 	_field544 = 0;
@@ -38,14 +38,14 @@ TTquotes::~TTquotes() {
 }
 
 void TTquotes::load(const CString &name) {
-	Common::SeekableReadStream *r = g_vm->_filesManager->getResource("TEXT/JRQuotes.txt");
+	Common::SeekableReadStream *r = g_vm->_filesManager->getResource(name);
 	size_t size = r->readUint32LE();
 
 	_dataSize = _field544 = size;
 	_dataP = new char[size + 0x10];
 
 	for (int idx = 0; idx < 256; ++idx)
-		_array[idx] = r->readUint32LE();
+		_tags[idx] = r->readUint32LE();
 
 	for (int charIdx = 0; charIdx < 26; ++charIdx) {
 		TTquotesLetter &letter = _alphabet[charIdx];

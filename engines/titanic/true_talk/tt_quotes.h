@@ -44,7 +44,7 @@ class TTquotes {
 	};
 private:
 	TTquotesLetter _alphabet[26];
-	uint _array[256];
+	uint _tags[256];
 	char *_dataP;
 	size_t _dataSize;
 	int _field544;

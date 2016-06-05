@@ -49,7 +49,7 @@ CTrueTalkManager::CTrueTalkManager(CGameManager *owner) :
 		_gameManager(owner), _scripts(&_titleEngine), _currentCharId(0),
 		_dialogueFile(nullptr), _dialogueId(0) {
 	_titleEngine.setup(3, 3);
-	_quotes.load("TEXT/JRQuotes.txt");
+	_quotes.load("TEXT/JRQUOTES.TXT");
 	_currentNPC = nullptr;
 	g_vm->_trueTalkManager = this;
 }

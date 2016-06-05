@@ -111,8 +111,10 @@ int CPetInventoryGlyph::populateItem(CGameObject *item, int val) {
 		break;
 
 	default:
-		return ITEM_MODES[itemIndex];
+		break;
 	}
+
+	return ITEM_MODES[itemIndex];
 }
 
 int CPetInventoryGlyph::subMode(CGameObject *item, int val) {
