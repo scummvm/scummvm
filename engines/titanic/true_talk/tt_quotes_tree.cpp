@@ -20,56 +20,43 @@
  *
  */
 
-#ifndef TITANIC_TT_QUOTES_H
-#define TITANIC_TT_QUOTES_H
-
-#include "common/scummsys.h"
-#include "common/stream.h"
-#include "titanic/support/string.h"
+#include "common/algorithm.h"
+#include "titanic/true_talk/tt_quotes_tree.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
-class TTquotes {
-	struct TTquotesEntry {
-		byte _val1, _val2;
-		const char *_strP;
-		TTquotesEntry() : _val1(0), _val2(0), _strP(nullptr) {}
-	};
-	struct TTquotesLetter {
-		Common::Array<TTquotesEntry> _entries;
-		int _field4;
-		int _field8;
+/**
+ * Specifies the starting index for each of the three main trees
+ */
+static uint TABLE_INDEXES[3] = { 922, 1015, 1018 };
 
-		TTquotesLetter() : _field4(0), _field8(0) {}
-	};
-private:
-	TTquotesLetter _alphabet[26];
-	uint _tags[256];
-	char *_dataP;
-	size_t _dataSize;
-	int _field544;
-private:
-	/**
-	 * Test whether a substring contains one of the quotes,
-	 * and if so, returns the Id associated with it
-	 */
-	int read(const char *startP, const char *endP);
-public:
-	TTquotes();
-	~TTquotes();
+void TTquotesTree::load() {
+	Common::SeekableReadStream *r = g_vm->_filesManager->getResource("TEXT/TREE");
+	
+	for (int idx = 0; idx < QUOTES_TREE_COUNT; ++idx) {
+		TTquotesTree::TTquotesTreeEntry &rec = _entries[idx];
+		assert(r->pos() < r->size());
+		
+		rec._id = r->readUint32LE();		
+		if (rec._id == 0) {
+			rec._type = ET_END;
+		} else {
+			byte type = r->readByte();
+			if (type == 0) {
+				// Index to sub-table
+				rec._subTable = &_entries[0] + r->readUint32LE();
+			} else {
+				// Read in string for entry
+				char c;
+				while ((c = r->readByte()) != '\0')
+					rec._string += c;
+			}
+		}
+	}
 
-	/**
-	 * Load quotes data resource
-	 */
-	void load();
-
-	/**
-	 * Test whether a passed string contains one of the quotes,
-	 * and if so, returns the Id associated with it
-	 */
-	int read(const char *str);
-};
+	assert(r->pos() == r->size());
+	delete r;
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_TT_QUOTES_H */

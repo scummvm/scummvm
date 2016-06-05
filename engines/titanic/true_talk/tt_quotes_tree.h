@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_TT_QUOTES_H
-#define TITANIC_TT_QUOTES_H
+#ifndef TITANIC_TT_QUOTES_TREE_H
+#define TITANIC_TT_QUOTES_TREE_H
 
 #include "common/scummsys.h"
 #include "common/stream.h"
@@ -29,47 +29,28 @@
 
 namespace Titanic {
 
-class TTquotes {
-	struct TTquotesEntry {
-		byte _val1, _val2;
-		const char *_strP;
-		TTquotesEntry() : _val1(0), _val2(0), _strP(nullptr) {}
-	};
-	struct TTquotesLetter {
-		Common::Array<TTquotesEntry> _entries;
-		int _field4;
-		int _field8;
+#define QUOTES_TREE_COUNT 1022
 
-		TTquotesLetter() : _field4(0), _field8(0) {}
+enum TreeEntryType { ET_END = 0, ET_TABLE = 1, ET_STRING = 2 };
+
+class TTquotesTree {
+	struct TTquotesTreeEntry {
+		uint _id;
+		TreeEntryType _type;
+		TTquotesTreeEntry *_subTable;
+		CString _string;
+
+		TTquotesTreeEntry() : _id(0), _type(ET_END), _subTable(nullptr) {}
 	};
 private:
-	TTquotesLetter _alphabet[26];
-	uint _tags[256];
-	char *_dataP;
-	size_t _dataSize;
-	int _field544;
-private:
-	/**
-	 * Test whether a substring contains one of the quotes,
-	 * and if so, returns the Id associated with it
-	 */
-	int read(const char *startP, const char *endP);
+	TTquotesTreeEntry _entries[QUOTES_TREE_COUNT];
 public:
-	TTquotes();
-	~TTquotes();
-
 	/**
-	 * Load quotes data resource
+	 * Load data for the quotes tree
 	 */
 	void load();
-
-	/**
-	 * Test whether a passed string contains one of the quotes,
-	 * and if so, returns the Id associated with it
-	 */
-	int read(const char *str);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_TT_QUOTES_H */
+#endif /* TITANIC_TT_QUOTES_TREE_H */

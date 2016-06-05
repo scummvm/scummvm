@@ -37,8 +37,8 @@ TTquotes::~TTquotes() {
 	delete[] _dataP;
 }
 
-void TTquotes::load(const CString &name) {
-	Common::SeekableReadStream *r = g_vm->_filesManager->getResource(name);
+void TTquotes::load() {
+	Common::SeekableReadStream *r = g_vm->_filesManager->getResource("TEXT/JRQUOTES.TXT");
 	size_t size = r->readUint32LE();
 
 	_dataSize = _field544 = size;
@@ -106,7 +106,6 @@ int TTquotes::read(const char *startP, const char *endP) {
 		return 0;
 
 	int maxSize = size + 4;
-	bool letterFlag = index != 25;
 
 	for (uint idx = 0; idx < letter._entries.size(); ++idx) {
 		const TTquotesEntry &entry = letter._entries[idx];
@@ -115,7 +114,7 @@ int TTquotes::read(const char *startP, const char *endP) {
 
 		const char *srcP = startP;
 		const char *destP = entry._strP;
-		int srcIndex = 0, destIndex = 0;
+		int srcIndex = index != 25 ? 1 : 0, destIndex = 0;
 		if (*destP) {
 			do {
 				if (!srcP[srcIndex]) {
