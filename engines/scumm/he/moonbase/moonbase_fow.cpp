@@ -59,7 +59,7 @@ void Moonbase::initFOW() {
 
 	_fowBlackMode = true;
 
-	memset(_fowRenderTable, 0, 32768);
+	memset(_fowRenderTable, 0, sizeof(_fowRenderTable));
 }
 
 void Moonbase::releaseFOWResources() {
