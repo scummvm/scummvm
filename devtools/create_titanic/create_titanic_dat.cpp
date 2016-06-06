@@ -37,6 +37,7 @@
 #include "winexe_pe.h"
 #include "file.h"
 #include "script_responses.h"
+#include "script_ranges.h"
 
 /**
  * Format of the access.dat file that will be created:
@@ -398,6 +399,7 @@ void writeData() {
 
 	writeNumbers();
 	writeAllScriptResponses();
+	writeAllScriptRanges();
 }
 
 // Support method used for translating IDA debugger's output for
