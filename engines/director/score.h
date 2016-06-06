@@ -20,6 +20,9 @@
  *
  */
 
+ #ifndef DIRECTOR_SCORE_H
+ #define DIRECTOR_SCORE_H
+
 #include "common/rect.h"
 #include "common/stream.h"
 #include "common/array.h"
@@ -235,3 +238,5 @@ private:
 };
 
 } //End of namespace Director
+
+#endif
