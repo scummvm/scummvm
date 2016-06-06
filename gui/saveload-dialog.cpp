@@ -44,47 +44,16 @@ enum {
 	kBackgroundSyncCmd = 'PDBS'
 };
 
-SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(): Dialog(0,0,0,0), _close(false) {
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
-
-	int buttonWidth = g_gui.xmlEval()->getVar("Globals.Button.Width", 0) * 1.4; // "Run in background" is too long
-	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
-	int progressBarHeight = buttonHeight;
-
-	int marginAround = 8;
-	int marginBottom = 8;
-	int marginBetween = 10;	
-
-	_w = screenW * 80 / 100;
-	_h = 0;
-	_h += buttonHeight + marginBottom; //buttons
-	_h += 2 * (kLineHeight + 2 * marginAround); //top label + bottom label
-	_h += progressBarHeight; //progress bar
-	if (_h > screenH) _h = screenH;
-
-	// Center the dialog
-	_x = (screenW - _w) / 2;
-	_y = (screenH - _h) / 2;	
-	
-	_label = new StaticTextWidget(this, marginAround, marginAround, _w - marginAround * 2, kLineHeight, "Downloading saves...", Graphics::kTextAlignCenter);
-
+SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(): Dialog("SaveLoadCloudSyncProgress"), _close(false) {
+	_label = new StaticTextWidget(this, "SaveLoadCloudSyncProgress.TitleText", "Downloading saves...");
 	uint32 progress = (uint32)(100 * CloudMan.getSyncDownloadingProgress());
-	_progressBar = new SliderWidget(this, marginAround, marginAround * 2 + kLineHeight, _w - marginAround * 2, progressBarHeight);
+	_progressBar = new SliderWidget(this, "SaveLoadCloudSyncProgress.ProgressBar");
 	_progressBar->setMinValue(0);
 	_progressBar->setMaxValue(100);
 	_progressBar->setValue(progress);
-	
-	_percentLabel = new StaticTextWidget(this, marginAround, marginAround * 3 + kLineHeight + progressBarHeight, _w - marginAround * 2, kLineHeight, Common::String::format("%u %%", progress), Graphics::kTextAlignCenter);
-
-	int x1 = (_w - buttonWidth * 2 - marginBetween) / 2;
-	int x2 = x1 + buttonWidth + marginBetween;
-
-	//if (defaultButton)
-		new ButtonWidget(this, x1, _h - buttonHeight - marginBottom, buttonWidth, buttonHeight, "Cancel", 0, kCancelSyncCmd, Common::ASCII_ESCAPE);	// Cancel dialog
-
-	//if (altButton)
-		new ButtonWidget(this, x2, _h - buttonHeight - marginBottom, buttonWidth, buttonHeight, "Run in background", 0, kBackgroundSyncCmd, Common::ASCII_RETURN);	// Confirm dialog
+	_percentLabel = new StaticTextWidget(this, "SaveLoadCloudSyncProgress.PercentText", Common::String::format("%u %%", progress));
+	new ButtonWidget(this, "SaveLoadCloudSyncProgress.Cancel", "Cancel", 0, kCancelSyncCmd, Common::ASCII_ESCAPE);	// Cancel dialog																																				
+	new ButtonWidget(this, "SaveLoadCloudSyncProgress.Background", "Run in background", 0, kBackgroundSyncCmd, Common::ASCII_RETURN);	// Confirm dialog
 }
 
 SaveLoadCloudSyncProgressDialog::~SaveLoadCloudSyncProgressDialog() {}

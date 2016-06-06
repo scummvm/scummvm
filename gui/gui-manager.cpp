@@ -216,7 +216,7 @@ void GuiManager::redraw() {
 	// Tanoku: Do not apply shading more than once when opening many dialogs
 	// on top of each other. Screen ends up being too dark and it's a
 	// performance hog.
-	if (_redrawStatus == kRedrawOpenDialog && _dialogStack.size() > 2)
+	if (_redrawStatus == kRedrawOpenDialog && _dialogStack.size() > 3)
 		shading = ThemeEngine::kShadingNone;
 
 	switch (_redrawStatus) {

@@ -1038,6 +1038,38 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'SaveLoadCloudSyncProgress' overlays = 'screen_center' inset = '8' shading = 'dim'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' center = 'true'>
+			<widget name = 'TitleText'
+					width = '240'
+					height = 'Globals.Line.Height'
+					textalign = 'center'
+			/>
+			<space size = '1'/>
+			<widget name = 'ProgressBar'
+					width = '240'
+					height = 'Globals.Button.Height'
+			/>
+			<space size = '1'/>	
+			<widget name = 'PercentText'
+					width = '240'
+					height = 'Globals.Line.Height'
+					textalign = 'center'
+			/>
+			<space size = '1'/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' center = 'true' spacing = '10'>
+				<widget name = 'Cancel'
+						width = '100'
+						height = 'Globals.Button.Height'
+				/>				
+				<widget name = 'Background'
+						width = '100'
+						height = 'Globals.Button.Height'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
 	<dialog name = 'SavenameDialog' overlays = 'screen_center'>
 		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<widget name = 'DescriptionText'
