@@ -30,6 +30,8 @@ namespace Titanic {
 
 #define DIALS_ARRAY_COUNT 10
 
+enum ScriptArrayFlag { SF_1 = 1, SF_2 = 2 };
+
 class CGameManager;
 class CPetControl;
 class TTroomScript;
@@ -45,6 +47,18 @@ struct TTnpcScriptResponse {
 	 * Returns the size of the values list plus 1
 	 */
 	int size() const;
+};
+
+struct TTscriptArrayItem {
+	uint _id;
+	const uint *_arrayP;
+	TTscriptArrayItem *_nextP;
+	uint _val;
+	int _flags;
+
+	TTscriptArrayItem() : _id(0), _arrayP(nullptr), _nextP(nullptr),
+		_val(0), _flags(0) {}
+	TTscriptArrayItem(uint id, const uint *arrayP, bool flag1, bool flag2);
 };
 
 class TTnpcScriptBase : public TTscriptBase {
@@ -84,7 +98,7 @@ private:
 protected:
 	Common::Array<TTnpcScriptResponse> _responses;
 	int _valuesPerResponse;
-	byte *_subPtr;
+	Common::Array<TTscriptArrayItem> _arrayItems;
 	const TTsentenceEntries *_entriesP;
 	int _entryCount;
 	int _field68;
@@ -139,7 +153,19 @@ protected:
 	 */
 	static CPetControl *getPetControl(CGameManager *gameManager);
 
+	/**
+	 * Adds a new item to the entries list
+	 */
+	void addArrayItem(uint id, const uint *arrayP, bool flag1, bool flag2);
+
+	/**
+	 * Finds an array item by Id
+	 */
+	TTscriptArrayItem *findArrayItem(uint id);
+
 	int processSentence(const TTsentenceEntries *entries, uint entryCount, TTroomScript *roomScript, TTsentence *sentence);
+
+	bool defaultProcess(TTroomScript *roomScript, TTsentence *sentence);
 public:
 	TTnpcScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4,
@@ -184,7 +210,8 @@ public:
 	virtual void selectResponse(int id);
 	
 	virtual int proc15() const;
-	virtual bool proc16() const;
+	virtual bool handleQuote(TTroomScript *roomScript, TTsentence *sentence,
+		int val, uint tagId, uint remainder) const;
 	virtual bool proc17() const;
 	virtual bool proc18() const;
 	virtual uint proc19(uint v);
@@ -199,7 +226,7 @@ public:
 	virtual void load(SimpleFile *file);
 	virtual void saveBody(SimpleFile *file);
 	virtual void loadBody(SimpleFile *file);
-	virtual int proc31();
+	virtual int proc31() const;
 
 	/**
 	 * Sets a given dial to be pointing in a specified region (0 to 2)

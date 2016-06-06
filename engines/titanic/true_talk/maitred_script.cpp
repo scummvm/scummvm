@@ -62,7 +62,8 @@ int MaitreDScript::proc10() const {
 	return 0;
 }
 
-bool MaitreDScript::proc16() const {
+bool MaitreDScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
+		int val, uint tagId, uint remainder) const {
 	warning("TODO");
 	return 0;
 }

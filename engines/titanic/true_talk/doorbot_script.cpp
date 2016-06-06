@@ -108,7 +108,8 @@ int DoorbotScript::proc15() const {
 	return 0;
 }
 
-bool DoorbotScript::proc16() const {
+bool DoorbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
+		int val, uint tagId, uint remainder) const {
 	warning("TODO");
 	return 0;
 }

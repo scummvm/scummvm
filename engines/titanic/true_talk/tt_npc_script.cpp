@@ -40,6 +40,17 @@ int TTnpcScriptResponse::size() const {
 
 /*------------------------------------------------------------------------*/
 
+TTscriptArrayItem::TTscriptArrayItem(uint id, const uint *arrayP, bool flag1, bool flag2) :
+		_id(id), _arrayP(arrayP), _nextP(nullptr) {
+	_flags = 0;
+	if (flag1)
+		_flags |= SF_1;
+	if (flag2)
+		_flags |= SF_2;
+}
+
+/*------------------------------------------------------------------------*/
+
 TTnpcScriptBase::TTnpcScriptBase(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTscriptBase(0, charClass, v2, charName, v3, v4, v5, v6, v7),
@@ -51,9 +62,8 @@ TTnpcScriptBase::TTnpcScriptBase(int charId, const char *charClass, int v2,
 TTnpcScript::TTnpcScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTnpcScriptBase(charId, charClass, v2, charName, v3, val2, v4, v5, v6, v7),
-		_subPtr(nullptr), _entriesP(nullptr), _entryCount(0), _field68(0),
-		_field6C(0), _field70(0), _field74(0), _field78(0),
-		_field7C(0), _field80(0), _field2CC(false) {
+		_entriesP(nullptr), _entryCount(0), _field68(0), _field6C(0), _field70(0),
+		_field74(0), _field78(0), _field7C(0), _field80(0), _field2CC(false) {
 	CTrueTalkManager::_v2 = 0;
 	Common::fill(&_dialValues[0], &_dialValues[DIALS_ARRAY_COUNT], 0);
 	Common::fill(&_array[0], &_array[136], 0);
@@ -136,7 +146,6 @@ int TTnpcScript::proc12() const {
 	return 1;
 }
 
-
 bool TTnpcScript::loadQuotes() {
 	// Original did a load of a global quotes here the first time
 	// this method is called. ScummVM implementation has refactored
@@ -160,7 +169,8 @@ int TTnpcScript::proc15() const {
 	return 0;
 }
 
-bool TTnpcScript::proc16() const {
+bool TTnpcScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
+		int val, uint tagId, uint remainder) const {
 	return true;
 }
 
@@ -240,8 +250,14 @@ void TTnpcScript::saveBody(SimpleFile *file) {
 	int v = proc31();
 	file->writeNumber(v);
 
-	if (v > 0 && _subPtr) {
-		warning("TODO");
+	if (v > 0) {
+		for (uint idx = 0; idx < _arrayItems.size(); ++idx) {
+			const TTscriptArrayItem &item = _arrayItems[idx];
+			if (item._flags == SF_1 && item._val) {
+				file->writeNumber(item._id);
+				file->writeNumber(item._val);
+			}
+		}
 	}
 }
 
@@ -252,15 +268,25 @@ void TTnpcScript::loadBody(SimpleFile *file) {
 	for (int index = 0; index < count; index += 2) {
 		int v = file->readNumber();
 
-		if (_subPtr) {
-			error("TODO - %d", v);
+		for (uint idx = 0; idx < _arrayItems.size(); ++idx) {
+			TTscriptArrayItem &item = _arrayItems[idx];
+			if (!item._id) {
+				item._id = v;
+				break;
+			}
 		}
 	}
 }
 
-int TTnpcScript::proc31() {
-	warning("TODO");
-	return 0;
+int TTnpcScript::proc31() const {
+	int count = 0;
+	for (uint idx = 0; idx < _arrayItems.size(); ++idx) {
+		const TTscriptArrayItem &item = _arrayItems[idx];
+		if (item._flags != SF_1 && item._val)
+			++count;
+	}
+
+	return count * 2;
 }
 
 void TTnpcScript::setDialRegion(int dialNum, int region) {
@@ -325,9 +351,8 @@ uint TTnpcScript::translateId(uint id) const {
 }
 
 void TTnpcScript::preLoad() {
-	if (_subPtr) {
-		error("TODO");
-	}
+	for (uint idx = 0; idx < _arrayItems.size(); ++idx)
+		_arrayItems[idx]._val = 0;
 }
 
 int TTnpcScript::getRoom54(int roomId) {
@@ -533,6 +558,36 @@ int TTnpcScript::processSentence(const TTsentenceEntries *entries, uint entryCou
 	}
 
 	return 1;
+}
+
+bool TTnpcScript::defaultProcess(TTroomScript *roomScript, TTsentence *sentence) {
+	uint remainder;
+	TTtreeResult results[32];
+	const TTstring &line = sentence->_normalizedLine;
+
+	uint tagId = g_vm->_trueTalkManager->_quotes.find(line.c_str());
+	int val = g_vm->_trueTalkManager->_quotesTree.search(line.c_str(), TREE_1, results, tagId, &remainder);
+
+	if (val > 0) {
+		if (!handleQuote(roomScript, sentence, val, tagId, remainder))
+			return true;
+	}
+
+	// TODO
+	return false;
+}
+
+void TTnpcScript::addArrayItem(uint id, const uint *arrayP, bool flag1, bool flag2) {
+	_arrayItems.push_back(TTscriptArrayItem(id, arrayP, flag1, flag2));
+}
+
+TTscriptArrayItem *TTnpcScript::findArrayItem(uint id) {
+	for (uint idx = 0; idx < _arrayItems.size(); ++idx) {
+		if (_arrayItems[idx]._id == id)
+			return &_arrayItems[idx];
+	}
+
+	return nullptr;
 }
 
 } // End of namespace Titanic

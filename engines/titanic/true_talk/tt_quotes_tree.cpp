@@ -60,7 +60,7 @@ void TTquotesTree::load() {
 }
 
 int TTquotesTree::search(const char *str, QuoteTreeNum treeNum,
-		TTtreeResult *buffer, uint tagId, int *remainder) {
+		TTtreeResult *buffer, uint tagId, uint *remainder) {
 	const TTquotesTreeEntry *bTree = &_entries[TABLE_INDEXES[treeNum]];
 	if (!search1(&str, bTree, buffer, tagId) || !buffer->_treeItemP)
 		return -1;

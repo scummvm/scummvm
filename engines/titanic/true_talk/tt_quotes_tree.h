@@ -76,7 +76,7 @@ public:
 	void load();
 
 	int search(const char *str, QuoteTreeNum treeNum,
-		TTtreeResult *buffer, uint tagId, int *remainder);
+		TTtreeResult *buffer, uint tagId, uint *remainder);
 };
 
 } // End of namespace Titanic
