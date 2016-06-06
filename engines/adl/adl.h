@@ -54,7 +54,7 @@ class Display;
 class GraphicsMan;
 class Speaker;
 struct AdlGameDescription;
-struct ScriptEnv;
+class ScriptEnv;
 
 enum kDebugChannels {
 	kDebugChannelScript = 1 << 0

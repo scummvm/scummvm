@@ -30,7 +30,7 @@
 
 namespace Common {
 class ReadStream;
-class Point;
+struct Point;
 }
 
 namespace Adl {

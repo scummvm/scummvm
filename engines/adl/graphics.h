@@ -25,7 +25,7 @@
 
 namespace Common {
 class SeekableReadStream;
-class Point;
+struct Point;
 }
 
 namespace Adl {
