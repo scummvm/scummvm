@@ -35,7 +35,7 @@ BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
 	CTrueTalkManager::setFlags(40, 0);
 	CTrueTalkManager::setFlags(26, 0);
 
-	randomizeFlags();
+	setupDials(0, 0, 0);
 	_array[0] = 100;
 	_array[1] = 0;
 

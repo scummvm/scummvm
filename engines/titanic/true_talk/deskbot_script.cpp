@@ -35,7 +35,7 @@ DeskbotScript::DeskbotScript(int val1, const char *charClass, int v2,
 	CTrueTalkManager::setFlags(21, 0);
 	CTrueTalkManager::setFlags(22, 0);
 
-	randomizeFlags();
+	setupDials(0, 0, 0);
 	_array[0] = 100;
 	if (_field74 == 1)
 		_field74 = 0;

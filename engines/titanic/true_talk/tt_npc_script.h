@@ -123,7 +123,10 @@ protected:
 	 */
 	void resetFlags();
 
-	void randomizeFlags();
+	/**
+	 * Setup dials
+	 */
+	void setupDials(int dial1, int dial2, int dial3);
 
 	static int getRoom54(int roomId);
 

@@ -98,8 +98,15 @@ void TTnpcScript::resetFlags() {
 	_field2CC = false;
 }
 
-void TTnpcScript::randomizeFlags() {
-	warning("TODO");
+void TTnpcScript::setupDials(int dial1, int dial2, int dial3) {
+	_dialValues[0] = dial1;
+	_dialValues[1] = dial2;
+	_dialValues[2] = dial3;
+	_field74 = getRandomNumber(3) - 1;
+	_field78 = getRandomNumber(5) + 6;
+
+	if (_dialValues[0] > 70)
+		_field78 = -_field78;
 }
 
 void TTnpcScript::proc4(int v) {
@@ -613,7 +620,11 @@ bool TTnpcScript::defaultProcess(TTroomScript *roomScript, TTsentence *sentence)
 			return true;
 	}
 
-	// TODO
+	if (tagId) {
+		if (chooseResponse(roomScript, sentence, tagId) == 2)
+			return true;
+	}
+
 	return false;
 }
 
