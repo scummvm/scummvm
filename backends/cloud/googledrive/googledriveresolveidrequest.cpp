@@ -104,7 +104,7 @@ void GoogleDriveResolveIdRequest::listedDirectoryCallback(Storage::FileArrayResp
 		Common::String path = _currentDirectory;
 		if (path != "") path += "/";
 		path += currentLevelName;
-		if (path == _requestedPath) finishError(Networking::ErrorResponse(this, false, true, "no such file found in its parent directory", 404));
+		if (path == _requestedPath) finishError(Networking::ErrorResponse(this, false, true, Common::String("no such file found in its parent directory\n")+_currentDirectoryId, 404));
 		else finishError(Networking::ErrorResponse(this, false, true, "subdirectory not found", 400));
 	}
 }

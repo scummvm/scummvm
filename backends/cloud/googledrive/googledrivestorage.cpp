@@ -33,6 +33,7 @@
 #include <curl/curl.h>
 #include "googledrivelistdirectorybyidrequest.h"
 #include "googledriveresolveidrequest.h"
+#include "googledrivecreatedirectoryrequest.h"
 
 namespace Cloud {
 namespace GoogleDrive {
@@ -187,11 +188,9 @@ void GoogleDriveStorage::createDirectoryInnerCallback(BoolCallback outerCallback
 		return;
 	}
 
-	debug("%s", json->stringify(true).c_str());
-
 	if (outerCallback) {
-		Common::JSONObject info = json->asObject();
-		///(*outerCallback)(BoolResponse(nullptr, true);
+		Common::JSONObject info = json->asObject();		
+		(*outerCallback)(BoolResponse(nullptr, info.contains("id")));
 		delete outerCallback;
 	}
 
@@ -240,7 +239,7 @@ Networking::Request *GoogleDriveStorage::resolveFileId(Common::String path, Uplo
 
 Networking::Request *GoogleDriveStorage::listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
 	//return addRequest(new GoogleDriveListDirectoryRequest(this, path, callback, errorCallback, recursive));
-	return nullptr; //TODO
+	return nullptr;
 }
 
 Networking::Request *GoogleDriveStorage::listDirectoryById(Common::String id, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback) {
@@ -301,16 +300,30 @@ void GoogleDriveStorage::printInfo(StorageInfoResponse response) {
 
 Networking::Request *GoogleDriveStorage::createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	if (!errorCallback) errorCallback = getErrorPrintingCallback();
-	//return addRequest(new GoogleDriveCreateDirectoryRequest(this, path, callback, errorCallback));
-	return nullptr; //TODO
+	if (!callback) callback = new Common::Callback<GoogleDriveStorage, BoolResponse>(this, &GoogleDriveStorage::printBool);
+
+	//find out the parent path and directory name
+	Common::String parentPath = "", directoryName = path;
+	for (uint32 i = path.size(); i > 0; --i) {
+		if (path[i-1] == '/' || path[i-1] == '\\') {
+			parentPath = path;
+			parentPath.erase(i-1);
+			directoryName.erase(0, i);
+			break;
+		}
+	}
+
+	if (parentPath == "") {
+		return createDirectoryWithParentId("appDataFolder", directoryName, callback, errorCallback);
+	}
+
+	return addRequest(new GoogleDriveCreateDirectoryRequest(this, parentPath, directoryName, callback, errorCallback));
 }
 
 Networking::Request *GoogleDriveStorage::createDirectoryWithParentId(Common::String parentId, Common::String name, BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	if (!errorCallback) errorCallback = getErrorPrintingCallback();
-	//return addRequest(new GoogleDriveCreateDirectoryRequest(this, path, callback, errorCallback));
-	Common::String url = "https://www.googleapis.com/drive/v3/files";
-	//Networking::JsonCallback callback = new Common::Callback<GoogleDriveListDirectoryByIdRequest, Networking::JsonResponse>(this, &GoogleDriveListDirectoryByIdRequest::responseCallback);
-	//Networking::ErrorCallback failureCallback = new Common::Callback<GoogleDriveListDirectoryByIdRequest, Networking::ErrorResponse>(this, &GoogleDriveListDirectoryByIdRequest::errorCallback);
+	
+	Common::String url = "https://www.googleapis.com/drive/v3/files";	
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<GoogleDriveStorage, BoolResponse, Networking::JsonResponse>(this, &GoogleDriveStorage::createDirectoryInnerCallback, callback);
 	Networking::CurlJsonRequest *request = new GoogleDriveTokenRefresher(this, innerCallback, errorCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + accessToken());
@@ -323,13 +336,11 @@ Networking::Request *GoogleDriveStorage::createDirectoryWithParentId(Common::Str
 	jsonRequestParameters.setVal("mimeType", new Common::JSONValue("application/vnd.google-apps.folder"));
 	jsonRequestParameters.setVal("name", new Common::JSONValue(name));
 	jsonRequestParameters.setVal("parents", new Common::JSONValue(parentsArray));
-	//jsonRequestParameters.setVal("include_deleted", new Common::JSONValue(false));
 
 	Common::JSONValue value(jsonRequestParameters);
 	request->addPostField(Common::JSON::stringify(&value));
 
 	return addRequest(request);
-	return nullptr; //TODO
 }
 
 Networking::Request *GoogleDriveStorage::info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) {

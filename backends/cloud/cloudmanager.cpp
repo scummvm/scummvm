@@ -126,7 +126,38 @@ void CloudManager::testFeature() {
 	Storage *storage = getCurrentStorage();
 	//if (storage) storage->info(nullptr, nullptr);
 	GoogleDrive::GoogleDriveStorage *gd = dynamic_cast<GoogleDrive::GoogleDriveStorage *>(storage);
-	if (gd) gd->resolveFileId("firstfolder/subfolder", nullptr, nullptr);
+	if (gd) {
+		//new folder in root: +
+		//gd->createDirectory("newfolder1", nullptr, nullptr);
+
+		//check it's there: +
+		//gd->listDirectoryById("appDataFolder", nullptr, nullptr);
+
+		//new folder in firstfolder: +
+		//gd->createDirectory("firstfolder/newfolder2", nullptr, nullptr);
+
+		//check it's there: +
+		//gd->listDirectoryById("1LWq-r1IwegkJJ0eZpswGlyjj8nu6XyUmosvxD7L0F9X3", nullptr, nullptr);
+
+		//create existing folder in firstfolder: +
+		//gd->createDirectory("firstfolder/subfolder", nullptr, nullptr);
+
+		//check no new folder there: +
+		//gd->listDirectoryById("1LWq-r1IwegkJJ0eZpswGlyjj8nu6XyUmosvxD7L0F9X3", nullptr, nullptr);
+
+		//create folder in subfolder: +
+		//gd->createDirectory("firstfolder/subfolder/newfolder3", nullptr, nullptr);
+
+		//check it's there: +
+		//gd->listDirectoryById("1OysvorQlmGl2ObMGb1c-JnjfC5yFL-Zj7AsQQhNNBnrk", nullptr, nullptr);
+
+		//one more time: +
+		//gd->createDirectory("firstfolder/subfolder/newfolder3/megafolder", nullptr, nullptr);
+
+		//check it's there: +
+		gd->listDirectoryById("1OXWPtfNgnmR_1K7SDm2v5J923bbAWrTdVDj-zRppLZDw", nullptr, nullptr);
+	}
+		//gd->resolveFileId("firstfolder/subfolder", nullptr, nullptr);
 		//gd->listDirectoryById("appDataFolder", nullptr, nullptr);
 		//gd->listDirectoryById("1LWq-r1IwegkJJ0eZpswGlyjj8nu6XyUmosvxD7L0F9X3", nullptr, nullptr);
 		//gd->createDirectoryWithParentId("1LWq-r1IwegkJJ0eZpswGlyjj8nu6XyUmosvxD7L0F9X3", "subfolder", nullptr, nullptr);
