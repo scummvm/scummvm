@@ -865,7 +865,7 @@ void ThemeEngine::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic, 
 void ThemeEngine::queueDDText(TextData type, TextColor color, const Common::Rect &r, const Common::String &text, bool restoreBg,
                               bool ellipsis, Graphics::TextAlign alignH, TextAlignVertical alignV, int deltax, const Common::Rect &drawableTextArea) {
 
-	if (type != kTextDataNone || _texts[type] == 0)
+	if (type == kTextDataNone || _texts[type] == 0)
 		return;
 
 	Common::Rect area = r;
