@@ -63,6 +63,10 @@ Score::Score(Archive &movie) {
 		loadFileInfo(*_movieArchive->getResource(MKTAG('V','W','F','I'), 1024));
 	}
 
+	if (_movieArchive->hasResource(MKTAG('V','W','F','M'), 1024)) {
+		loadFontMap(*_movieArchive->getResource(MKTAG('V','W','F','M'), 1024));
+	}
+
 	Common::Array<uint16> vwci = _movieArchive->getResourceIDList(MKTAG('V','W','C','I'));
 	if (vwci.size() > 0) {
 		Common::Array<uint16>::iterator iterator;
@@ -282,6 +286,30 @@ Common::Array<Common::String> Score::loadStrings(Common::SeekableReadStream &str
 		startPos = nextPos;
 	}
 	return strings;
+}
+
+void Score::loadFontMap(Common::SeekableReadStream &stream) {
+	uint16 count = stream.readUint16BE();
+	uint32 offset = (count * 2) + 2;
+	uint16 currentRawPosition = offset;
+
+	for (uint16 i = 0; i < count; i++) {
+		uint16 id = stream.readUint16BE();
+		uint32 positionInfo = stream.pos();
+
+		stream.seek(currentRawPosition);
+
+		uint16 size = stream.readByte();
+		Common::String font;
+
+		for (uint16 k = 0; k < size; k++) {
+			font += stream.readByte();
+		}
+
+		_fontMap[id] = font;
+		currentRawPosition = stream.pos();
+		stream.seek(positionInfo);
+	}
 }
 
 BitmapCast::BitmapCast(Common::SeekableReadStream &stream) {

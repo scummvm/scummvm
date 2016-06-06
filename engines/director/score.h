@@ -207,13 +207,14 @@ private:
     void loadActions(Common::SeekableReadStream &stream);
     void loadCastInfo(Common::SeekableReadStream &stream);
     void loadFileInfo(Common::SeekableReadStream &stream);
+    void loadFontMap(Common::SeekableReadStream &stream);
     Common::Array<Common::String> loadStrings(Common::SeekableReadStream &stream, uint32 &entryType, bool hasHeader = true);
 public:
     Common::Array<Frame *> _frames;
     Common::HashMap<int, Cast *> _casts;
     Common::HashMap<uint16, Common::String> _labels;
     Common::HashMap<uint16, Common::String> _actions;
-
+    Common::HashMap<uint16, Common::String> _fontMap;
 private:
     uint16 _versionMinor;
     uint16 _versionMajor;
@@ -225,6 +226,7 @@ private:
     uint16 _castArrayStart;
     uint16 _currentFrame;
     uint32 _nextFrameTime;
+    uint32 _flags;
     bool _stopPlay;
     uint16 _castArrayEnd;
     Common::Rect _movieRect;
