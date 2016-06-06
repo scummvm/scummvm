@@ -40,13 +40,14 @@ int TTnpcScriptResponse::size() const {
 
 /*------------------------------------------------------------------------*/
 
-TTscriptArrayItem::TTscriptArrayItem(uint id, const uint *arrayP, bool flag1, bool flag2) :
+TTscriptRange::TTscriptRange(uint id, const uint *arrayP, bool isRandom,
+		bool isSequential) :
 		_id(id), _arrayP(arrayP), _nextP(nullptr) {
-	_flags = 0;
-	if (flag1)
-		_flags |= SF_1;
-	if (flag2)
-		_flags |= SF_2;
+	_mode = SF_NONE;
+	if (isRandom)
+		_mode = SF_RANDOM;
+	if (isSequential)
+		_mode = SF_SEQUENTIAL;
 }
 
 /*------------------------------------------------------------------------*/
@@ -62,7 +63,7 @@ TTnpcScriptBase::TTnpcScriptBase(int charId, const char *charClass, int v2,
 TTnpcScript::TTnpcScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTnpcScriptBase(charId, charClass, v2, charName, v3, val2, v4, v5, v6, v7),
-		_entriesP(nullptr), _entryCount(0), _field68(0), _field6C(0), _field70(0),
+		_entriesP(nullptr), _entryCount(0), _field68(0), _field6C(0), _rangeResetCtr(0),
 		_field74(0), _field78(0), _field7C(0), _field80(0), _field2CC(false) {
 	CTrueTalkManager::_v2 = 0;
 	Common::fill(&_dialValues[0], &_dialValues[DIALS_ARRAY_COUNT], 0);
@@ -182,9 +183,48 @@ bool TTnpcScript::proc18() const {
 	return true;
 }
 
-uint TTnpcScript::proc19(uint v) {
-	warning("TODO");
-	return 0;
+uint TTnpcScript::getRangeValue(uint id) {
+	TTscriptRange *range = findRange(id);
+	if (!range)
+		return 0;
+
+	switch (range->_mode) {
+	case SF_RANDOM: {
+		uint count = 0;
+		for (const uint *p = range->_arrayP; *p; ++p)
+			++count;
+
+		uint index = getRandomNumber(count) - 1;
+		if (count > 1 && range->_arrayP[index] == range->_priorIndex) {
+			for (int retry = 0; retry < 8 && index != range->_priorIndex; ++retry)
+				index = getRandomNumber(count) - 1;
+		}
+
+		range->_priorIndex = index;
+		return range->_arrayP[index];
+	}
+
+	case SF_SEQUENTIAL: {
+		// Get the next value from the array sequentially
+		int val = range->_arrayP[range->_priorIndex];
+		if (!val) {
+			// Reached end of array, so reset back to start
+			range->_priorIndex = 1;
+			val = range->_arrayP[1];
+		}
+
+		++range->_priorIndex;
+		return val;
+	}
+
+	default:
+		if (range->_arrayP[range->_priorIndex])
+			return range->_arrayP[range->_priorIndex++];
+		
+		range->_priorIndex = 1;
+		++_rangeResetCtr;
+		return range->_arrayP[0];
+	}
 }
 
 void TTnpcScript::proc20(int v) {
@@ -216,7 +256,7 @@ void TTnpcScript::save(SimpleFile *file) {
 	saveBody(file);
 
 	file->writeNumber(4);
-	file->writeNumber(_field70);
+	file->writeNumber(_rangeResetCtr);
 	file->writeNumber(_field74);
 	file->writeNumber(_field78);
 	file->writeNumber(_field7C);
@@ -230,7 +270,7 @@ void TTnpcScript::load(SimpleFile *file) {
 	loadBody(file);
 
 	int count = file->readNumber();
-	_field70 = file->readNumber();
+	_rangeResetCtr = file->readNumber();
 	_field74 = file->readNumber();
 	_field78 = file->readNumber();
 	_field7C = file->readNumber();
@@ -251,11 +291,11 @@ void TTnpcScript::saveBody(SimpleFile *file) {
 	file->writeNumber(v);
 
 	if (v > 0) {
-		for (uint idx = 0; idx < _arrayItems.size(); ++idx) {
-			const TTscriptArrayItem &item = _arrayItems[idx];
-			if (item._flags == SF_1 && item._val) {
+		for (uint idx = 0; idx < _ranges.size(); ++idx) {
+			const TTscriptRange &item = _ranges[idx];
+			if (item._mode == SF_RANDOM && item._priorIndex) {
 				file->writeNumber(item._id);
-				file->writeNumber(item._val);
+				file->writeNumber(item._priorIndex);
 			}
 		}
 	}
@@ -268,8 +308,8 @@ void TTnpcScript::loadBody(SimpleFile *file) {
 	for (int index = 0; index < count; index += 2) {
 		int v = file->readNumber();
 
-		for (uint idx = 0; idx < _arrayItems.size(); ++idx) {
-			TTscriptArrayItem &item = _arrayItems[idx];
+		for (uint idx = 0; idx < _ranges.size(); ++idx) {
+			TTscriptRange &item = _ranges[idx];
 			if (!item._id) {
 				item._id = v;
 				break;
@@ -280,9 +320,9 @@ void TTnpcScript::loadBody(SimpleFile *file) {
 
 int TTnpcScript::proc31() const {
 	int count = 0;
-	for (uint idx = 0; idx < _arrayItems.size(); ++idx) {
-		const TTscriptArrayItem &item = _arrayItems[idx];
-		if (item._flags != SF_1 && item._val)
+	for (uint idx = 0; idx < _ranges.size(); ++idx) {
+		const TTscriptRange &item = _ranges[idx];
+		if (item._mode != SF_RANDOM && item._priorIndex)
 			++count;
 	}
 
@@ -351,8 +391,8 @@ uint TTnpcScript::translateId(uint id) const {
 }
 
 void TTnpcScript::preLoad() {
-	for (uint idx = 0; idx < _arrayItems.size(); ++idx)
-		_arrayItems[idx]._val = 0;
+	for (uint idx = 0; idx < _ranges.size(); ++idx)
+		_ranges[idx]._priorIndex = 0;
 }
 
 int TTnpcScript::getRoom54(int roomId) {
@@ -434,9 +474,9 @@ uint TTnpcScript::getDialogueId(uint tagId) {
 	}
 
 	uint oldTagId = tagId;
-	tagId = proc19(tagId);
+	tagId = getRangeValue(tagId);
 	if (tagId != oldTagId)
-		tagId = proc19(tagId);
+		tagId = getRangeValue(tagId);
 
 	oldTagId = proc23();
 	int v21 = proc21(origId, tagId, oldTagId);
@@ -577,14 +617,14 @@ bool TTnpcScript::defaultProcess(TTroomScript *roomScript, TTsentence *sentence)
 	return false;
 }
 
-void TTnpcScript::addArrayItem(uint id, const uint *arrayP, bool flag1, bool flag2) {
-	_arrayItems.push_back(TTscriptArrayItem(id, arrayP, flag1, flag2));
+void TTnpcScript::addRange(uint id, const uint *arrayP, bool isRandom, bool isSequential) {
+	_ranges.push_back(TTscriptRange(id, arrayP, isRandom, isSequential));
 }
 
-TTscriptArrayItem *TTnpcScript::findArrayItem(uint id) {
-	for (uint idx = 0; idx < _arrayItems.size(); ++idx) {
-		if (_arrayItems[idx]._id == id)
-			return &_arrayItems[idx];
+TTscriptRange *TTnpcScript::findRange(uint id) {
+	for (uint idx = 0; idx < _ranges.size(); ++idx) {
+		if (_ranges[idx]._id == id)
+			return &_ranges[idx];
 	}
 
 	return nullptr;

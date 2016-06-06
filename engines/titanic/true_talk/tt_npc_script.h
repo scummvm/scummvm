@@ -30,7 +30,7 @@ namespace Titanic {
 
 #define DIALS_ARRAY_COUNT 10
 
-enum ScriptArrayFlag { SF_1 = 1, SF_2 = 2 };
+enum ScriptArrayFlag { SF_NONE = 0, SF_RANDOM = 1, SF_SEQUENTIAL = 2 };
 
 class CGameManager;
 class CPetControl;
@@ -49,16 +49,17 @@ struct TTnpcScriptResponse {
 	int size() const;
 };
 
-struct TTscriptArrayItem {
+struct TTscriptRange {
 	uint _id;
 	const uint *_arrayP;
-	TTscriptArrayItem *_nextP;
-	uint _val;
-	int _flags;
+	TTscriptRange *_nextP;
+	uint _priorIndex;
+	ScriptArrayFlag _mode;
 
-	TTscriptArrayItem() : _id(0), _arrayP(nullptr), _nextP(nullptr),
-		_val(0), _flags(0) {}
-	TTscriptArrayItem(uint id, const uint *arrayP, bool flag1, bool flag2);
+	TTscriptRange() : _id(0), _arrayP(nullptr), _nextP(nullptr),
+		_priorIndex(0), _mode(SF_NONE) {}
+	TTscriptRange(uint id, const uint *arrayP, bool isRandom, 
+		bool isSequential);
 };
 
 class TTnpcScriptBase : public TTscriptBase {
@@ -98,12 +99,12 @@ private:
 protected:
 	Common::Array<TTnpcScriptResponse> _responses;
 	int _valuesPerResponse;
-	Common::Array<TTscriptArrayItem> _arrayItems;
+	Common::Array<TTscriptRange> _ranges;
 	const TTsentenceEntries *_entriesP;
 	int _entryCount;
 	int _field68;
 	int _field6C;
-	int _field70;
+	int _rangeResetCtr;
 	int _field74;
 	int _field78;
 	int _field7C;
@@ -154,14 +155,14 @@ protected:
 	static CPetControl *getPetControl(CGameManager *gameManager);
 
 	/**
-	 * Adds a new item to the entries list
+	 * Adds a new item to the list of number ranges
 	 */
-	void addArrayItem(uint id, const uint *arrayP, bool flag1, bool flag2);
+	void addRange(uint id, const uint *arrayP, bool isRandom, bool isSequential);
 
 	/**
-	 * Finds an array item by Id
+	 * Finds an entry in the list of prevoiusly registered number ranges
 	 */
-	TTscriptArrayItem *findArrayItem(uint id);
+	TTscriptRange *findRange(uint id);
 
 	int processSentence(const TTsentenceEntries *entries, uint entryCount, TTroomScript *roomScript, TTsentence *sentence);
 
@@ -214,7 +215,14 @@ public:
 		int val, uint tagId, uint remainder) const;
 	virtual bool proc17() const;
 	virtual bool proc18() const;
-	virtual uint proc19(uint v);
+
+	/**
+	 * Given an Id for a previously registered set of random number values,
+	 * picks one of the array values and returns it.. depending on flags,
+	 * either a random value, or each value in turn
+	 */
+	virtual uint getRangeValue(uint id);
+	
 	virtual void proc20(int v);
 	virtual int proc21(int v1, int v2, int v3);
 	virtual int proc22(int id) const;
