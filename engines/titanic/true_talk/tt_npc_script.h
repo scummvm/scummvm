@@ -51,22 +51,15 @@ struct TTnpcScriptResponse {
 
 struct TTscriptRange {
 	uint _id;
-	const uint *_arrayP;
+	Common::Array<uint> _values;
 	TTscriptRange *_nextP;
 	uint _priorIndex;
 	ScriptArrayFlag _mode;
 
-	TTscriptRange() : _id(0), _arrayP(nullptr), _nextP(nullptr),
+	TTscriptRange() : _id(0), _nextP(nullptr),
 		_priorIndex(0), _mode(SF_NONE) {}
-	TTscriptRange(uint id, const uint *arrayP, bool isRandom, 
+	TTscriptRange(uint id, const Common::Array<uint> &values, bool isRandom, 
 		bool isSequential);
-};
-
-struct TTscriptRangeInit {
-	uint id;
-	uint *_array;
-	bool _isRandom;
-	bool _isSequential;
 };
 
 class TTnpcScriptBase : public TTscriptBase {
@@ -123,7 +116,12 @@ protected:
 	/**
 	 * Loads response data for the NPC from the given resource
 	 */
-	void load(const char *name, int valuesPerResponse = 1);
+	void loadResponses(const char *name, int valuesPerResponse = 1);
+
+	/**
+	 * Load ranges data for the NPC from the given resource
+	 */
+	void loadRanges(const char *name);
 
 	/**
 	 * Reset script flags
@@ -167,7 +165,7 @@ protected:
 	/**
 	 * Adds a new item to the list of number ranges
 	 */
-	void addRange(uint id, const uint *arrayP, bool isRandom, bool isSequential);
+	void addRange(uint id, const Common::Array<uint> &values, bool isRandom, bool isSequential);
 
 	/**
 	 * Finds an entry in the list of prevoiusly registered number ranges

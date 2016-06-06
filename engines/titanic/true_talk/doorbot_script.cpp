@@ -35,7 +35,7 @@ DoorbotScript::DoorbotScript(int val1, const char *charClass, int v2,
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
 	Common::fill(&_array[0], &_array[148], 0);
 	_state = 0;
-	load("Responses/Doorbot");
+	loadResponses("Responses/Doorbot");
 }
 
 int DoorbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {

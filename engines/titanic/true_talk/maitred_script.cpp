@@ -38,7 +38,7 @@ MaitreDScript::MaitreDScript(int val1, const char *charClass, int v2,
 	CTrueTalkManager::setFlags(15, 0);
 	CTrueTalkManager::setFlags(16, 0);
 
-	load("Responses/MaitreD");
+	loadResponses("Responses/MaitreD");
 }
 
 int MaitreDScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {

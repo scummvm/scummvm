@@ -40,14 +40,17 @@ int TTnpcScriptResponse::size() const {
 
 /*------------------------------------------------------------------------*/
 
-TTscriptRange::TTscriptRange(uint id, const uint *arrayP, bool isRandom,
-		bool isSequential) :
-		_id(id), _arrayP(arrayP), _nextP(nullptr) {
+TTscriptRange::TTscriptRange(uint id, const Common::Array<uint> &values, 
+		bool isRandom, bool isSequential) :
+		_id(id), _nextP(nullptr) {
 	_mode = SF_NONE;
 	if (isRandom)
 		_mode = SF_RANDOM;
 	if (isSequential)
 		_mode = SF_SEQUENTIAL;
+
+	for (uint idx = 0; idx < values.size(); ++idx)
+		_values.push_back(values[idx]);
 }
 
 /*------------------------------------------------------------------------*/
@@ -77,7 +80,7 @@ TTnpcScript::TTnpcScript(int charId, const char *charClass, int v2,
 	resetFlags();
 }
 
-void TTnpcScript::load(const char *name, int valuesPerResponse) {
+void TTnpcScript::loadResponses(const char *name, int valuesPerResponse) {
 	_valuesPerResponse = valuesPerResponse;
 	Common::SeekableReadStream *r = g_vm->_filesManager->getResource(name);
 
@@ -88,6 +91,27 @@ void TTnpcScript::load(const char *name, int valuesPerResponse) {
 			sr._values[idx] = r->readUint32LE();
 		
 		_responses.push_back(sr);
+	}
+
+	delete r;
+}
+
+void TTnpcScript::loadRanges(const char *name) {
+	Common::SeekableReadStream *r = g_vm->_filesManager->getResource(name);
+
+	while (r->pos() < r->size()) {
+		Common::Array<uint> values;
+		uint id = r->readUint32LE();
+		bool isRandom = r->readByte();
+		bool isSequential = r->readByte();
+
+		uint v;
+		do {
+			v = r->readUint32LE();
+			values.push_back(v);
+		} while (v);
+
+		addRange(id, values, isRandom, isSequential);
 	}
 
 	delete r;
@@ -197,27 +221,25 @@ uint TTnpcScript::getRangeValue(uint id) {
 
 	switch (range->_mode) {
 	case SF_RANDOM: {
-		uint count = 0;
-		for (const uint *p = range->_arrayP; *p; ++p)
-			++count;
+		uint count = range->_values.size();
 
 		uint index = getRandomNumber(count) - 1;
-		if (count > 1 && range->_arrayP[index] == range->_priorIndex) {
+		if (count > 1 && range->_values[index] == range->_priorIndex) {
 			for (int retry = 0; retry < 8 && index != range->_priorIndex; ++retry)
 				index = getRandomNumber(count) - 1;
 		}
 
 		range->_priorIndex = index;
-		return range->_arrayP[index];
+		return range->_values[index];
 	}
 
 	case SF_SEQUENTIAL: {
 		// Get the next value from the array sequentially
-		int val = range->_arrayP[range->_priorIndex];
+		int val = range->_values[range->_priorIndex];
 		if (!val) {
 			// Reached end of array, so reset back to start
 			range->_priorIndex = 1;
-			val = range->_arrayP[1];
+			val = range->_values[1];
 		}
 
 		++range->_priorIndex;
@@ -225,12 +247,12 @@ uint TTnpcScript::getRangeValue(uint id) {
 	}
 
 	default:
-		if (range->_arrayP[range->_priorIndex])
-			return range->_arrayP[range->_priorIndex++];
+		if (range->_values[range->_priorIndex])
+			return range->_values[range->_priorIndex++];
 		
 		range->_priorIndex = 1;
 		++_rangeResetCtr;
-		return range->_arrayP[0];
+		return range->_values[0];
 	}
 }
 
@@ -628,8 +650,8 @@ bool TTnpcScript::defaultProcess(TTroomScript *roomScript, TTsentence *sentence)
 	return false;
 }
 
-void TTnpcScript::addRange(uint id, const uint *arrayP, bool isRandom, bool isSequential) {
-	_ranges.push_back(TTscriptRange(id, arrayP, isRandom, isSequential));
+void TTnpcScript::addRange(uint id, const Common::Array<uint> &values, bool isRandom, bool isSequential) {
+	_ranges.push_back(TTscriptRange(id, values, isRandom, isSequential));
 }
 
 TTscriptRange *TTnpcScript::findRange(uint id) {
