@@ -41,6 +41,9 @@ public:
 	StorageFile(); //invalid empty file
 	StorageFile(Common::String pth, uint32 sz, uint32 ts, bool dir);
 
+	/** In this constructor <path> is used to storage <id> (in Google Drive, for example) */
+	StorageFile(Common::String id, Common::String name, uint32 sz, uint32 ts, bool dir);
+
 	Common::String path() const { return _path; }
 	Common::String name() const { return _name; }
 	uint32 size() const { return _size; }

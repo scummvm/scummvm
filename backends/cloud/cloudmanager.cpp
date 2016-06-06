@@ -124,7 +124,14 @@ SavesSyncRequest *CloudManager::syncSaves(Storage::BoolCallback callback, Networ
 
 void CloudManager::testFeature() {
 	Storage *storage = getCurrentStorage();
-	if (storage) storage->info(nullptr, nullptr);
+	//if (storage) storage->info(nullptr, nullptr);
+	GoogleDrive::GoogleDriveStorage *gd = dynamic_cast<GoogleDrive::GoogleDriveStorage *>(storage);
+	if (gd) gd->resolveFileId("firstfolder/subfolder", nullptr, nullptr);
+		//gd->listDirectoryById("appDataFolder", nullptr, nullptr);
+		//gd->listDirectoryById("1LWq-r1IwegkJJ0eZpswGlyjj8nu6XyUmosvxD7L0F9X3", nullptr, nullptr);
+		//gd->createDirectoryWithParentId("1LWq-r1IwegkJJ0eZpswGlyjj8nu6XyUmosvxD7L0F9X3", "subfolder", nullptr, nullptr);
+		//gd->createDirectoryWithParentId("appDataFolder", "firstfolder", nullptr, nullptr);
+	else debug("FAILURE");
 }
 
 bool CloudManager::isWorking() {

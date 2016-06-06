@@ -52,6 +52,9 @@ class GoogleDriveStorage: public Cloud::Storage {
 	/** Constructs StorageInfo based on JSON response from cloud. */
 	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);
 
+	/** Returns bool based on JSON response from cloud. */
+	void createDirectoryInnerCallback(BoolCallback outerCallback, Networking::JsonResponse json);
+
 	void printJson(Networking::JsonResponse response);
 	void fileDownloaded(BoolResponse response);
 	void printFiles(FileArrayResponse response);
@@ -59,7 +62,7 @@ class GoogleDriveStorage: public Cloud::Storage {
 	void printFile(UploadResponse response);
 	void printInfo(StorageInfoResponse response);
 
-	void fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response);
+	void fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response);	
 public:	
 	virtual ~GoogleDriveStorage();
 
@@ -78,8 +81,14 @@ public:
 
 	/** Public Cloud API comes down there. */
 
-	/** Returns ListDirectoryStatus struct with list of files. */
+	/** Returns StorageFile with the resolved file's id. */
+	virtual Networking::Request *resolveFileId(Common::String path, UploadCallback callback, Networking::ErrorCallback errorCallback);
+
+	/** Returns Array<StorageFile> - the list of files. */
 	virtual Networking::Request *listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
+
+	/** Returns Array<StorageFile> - the list of files. */
+	virtual Networking::Request *listDirectoryById(Common::String id, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Returns UploadStatus struct with info about uploaded file. */
 	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback);
@@ -92,6 +101,9 @@ public:
 
 	/** Calls the callback when finished. */
 	virtual Networking::Request *createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback);
+
+	/** Calls the callback when finished. */
+	virtual Networking::Request *createDirectoryWithParentId(Common::String parentId, Common::String name, BoolCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Returns the StorageInfo struct. */
 	virtual Networking::Request *info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback);
