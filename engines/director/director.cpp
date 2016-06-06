@@ -31,15 +31,16 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "director/dib.h"
 
 #include "engines/util.h"
 
-#include "director/director.h"
-#include "director/score.h"
-#include "director/resource.h"
 #include "graphics/surface.h"
 
+#include "director/director.h"
+#include "director/dib.h"
+#include "director/resource.h"
+#include "director/score.h"
+#include "director/lingo/lingo.h"
 
 namespace Director {
 
@@ -66,6 +67,8 @@ DirectorEngine::~DirectorEngine() {
 Common::Error DirectorEngine::run() {
 	debug("Starting v%d Director game", getVersion());
 
+	_lingo = new Lingo();
+
 	//FIXME
 	_mainArchive = new RIFFArchive();
 	_mainArchive->openFile("bookshelf_example.mmm");
@@ -85,6 +88,8 @@ void DirectorEngine::loadEXE() {
 	Common::SeekableReadStream *exeStream = SearchMan.createReadStreamForMember(getEXEName());
 	if (!exeStream)
 		error("Failed to open EXE '%s'", getEXEName().c_str());
+
+	_lingo->processEvent(kEventStart, 0);
 
 	exeStream->seek(-4, SEEK_END);
 	exeStream->seek(exeStream->readUint32LE());

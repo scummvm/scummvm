@@ -5,7 +5,9 @@ MODULE_OBJS = \
 	dib.o \
 	director.o \
 	resource.o \
-	score.o
+	score.o \
+	lingo/lingo.o
+
 # This module can be built as a plugin
 ifeq ($(ENABLE_DIRECTOR), DYNAMIC_PLUGIN)
 PLUGIN := 1
