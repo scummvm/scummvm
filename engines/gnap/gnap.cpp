@@ -95,24 +95,21 @@ GnapEngine::GnapEngine(OSystem *syst, const ADGameDescription *gd) :
 	DebugMan.addDebugChannel(kDebugBasic, "basic", "Basic debug level");
 
 	Engine::syncSoundSettings();
+
+	_exe = nullptr;
+	_dat = nullptr;
+	_spriteCache = nullptr;
+	_soundCache = nullptr;
+	_sequenceCache = nullptr;
+	_gameSys = nullptr;
+	_soundMan = nullptr;
+	_debugger = nullptr;
+	_gnap = nullptr;
+	_plat = nullptr;
+	_font = nullptr;
 	_scene = nullptr;
 	_music = nullptr;
 	_tempThumbnail = nullptr;
-
-	_wasSavegameLoaded = false;
-	for (int i = 0; i < kMaxTimers; ++i)
-		_savedTimers[i] = _timers[i] = 0;
-
-	_isWaiting = false;
-	_sceneWaiting = false;
-
-	_mousePos = Common::Point(0, 0);
-	_currGrabCursorX = _currGrabCursorY = 0;
-
-	_idleTimerIndex = -1;
-	_menuStatus = 0;
-	_menuSpritesIndex = -1;
-	_menuDone = false;
 	_menuBackgroundSurface = nullptr;
 	_menuQuitQuerySprite = nullptr;
 	_largeSprite = nullptr;
@@ -121,6 +118,29 @@ GnapEngine::GnapEngine(OSystem *syst, const ADGameDescription *gd) :
 	_menuSprite1 = nullptr;
 	_spriteHandle = nullptr;
 	_cursorSprite = nullptr;
+	_pauseSprite = nullptr;
+	_backgroundSurface = nullptr;
+
+	_wasSavegameLoaded = false;
+	_isWaiting = false;
+	_sceneWaiting = false;
+	_menuDone = false;
+	_sceneDone = false;
+	_isLeavingScene = false;
+	_isStockDatLoaded = false;
+	_gameDone = false;
+	_isPaused = false;
+	_sceneSavegameLoaded = false;
+
+	for (int i = 0; i < kMaxTimers; ++i)
+		_savedTimers[i] = _timers[i] = 0;
+
+	_mousePos = Common::Point(0, 0);
+	_currGrabCursorX = _currGrabCursorY = 0;
+
+	_idleTimerIndex = -1;
+	_menuStatus = 0;
+	_menuSpritesIndex = -1;
 	_savegameIndex = -1;
 	_gridMinX = 0;
 	_gridMinY = 0;
@@ -140,13 +160,10 @@ GnapEngine::GnapEngine(OSystem *syst, const ADGameDescription *gd) :
 		_menuInventorySprites[i] = nullptr;
 
 	_newSceneNum = 0;
-	_sceneDone = false;
 	_inventory = 0;
 	_gameFlags = 0;
 	_hotspotsCount = 0;
 	_sceneClickedHotspot = -1;
-	_isLeavingScene = false;
-	_isStockDatLoaded = false;
 	_newCursorValue = 0;
 	_cursorValue = 0;
 	_verbCursor = 0;
@@ -163,6 +180,10 @@ GnapEngine::GnapEngine(OSystem *syst, const ADGameDescription *gd) :
 	_soundTimerIndexA = 0;
 	_soundTimerIndexB = 0;
 	_soundTimerIndexC = 0;
+	_loadGameSlot = -1;
+	_lastUpdateClock = 0;
+	_prevSceneNum = -1;
+	_currentSceneNum = -1;
 }
 
 GnapEngine::~GnapEngine() {
@@ -190,7 +211,6 @@ Common::Error GnapEngine::run() {
 	_cursorIndex = -1;
 	_verbCursor = 1;
 
-	_loadGameSlot = -1;
 	if (ConfMan.hasKey("save_slot"))
 		_loadGameSlot = ConfMan.getInt("save_slot");
 
