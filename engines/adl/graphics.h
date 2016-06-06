@@ -23,7 +23,7 @@
 #ifndef ADL_PICTURE_H
 #define ADL_PICTURE_H
 
-namespace Common{
+namespace Common {
 class SeekableReadStream;
 class Point;
 }

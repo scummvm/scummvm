@@ -28,7 +28,7 @@
 // Note: this version of ADL redraws only when necessary, but
 // this is not currently implemented.
 
-namespace Common{
+namespace Common {
 class RandomSource;
 }
 
