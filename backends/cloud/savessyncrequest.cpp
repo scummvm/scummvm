@@ -342,7 +342,11 @@ void SavesSyncRequest::finishSuccess(bool success) {
 }
 
 void SavesSyncRequest::loadTimestamps() {
-	//start with listing all the files in saves/ directory and setting invalid timestamp to them
+	//refresh the files list
+	Common::Array<Common::String> files;
+	g_system->getSavefileManager()->updateSavefilesList(files);
+
+	//start with listing all the files in saves/ directory and setting invalid timestamp to them	
 	Common::StringArray localFiles = g_system->getSavefileManager()->listSavefiles("*");
 	for (uint32 i = 0; i < localFiles.size(); ++i)
 		_localFilesTimestamps[localFiles[i]] = INVALID_TIMESTAMP;
