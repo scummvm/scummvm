@@ -59,6 +59,9 @@ Score::Score(Archive &movie) {
 		debug("Mac name %s", _movieArchive->getName(MKTAG('M','C','N','M'), 0).c_str());
 	}
 
+	if (_movieArchive->hasResource(MKTAG('V','W','F','I'), 1024)) {
+		loadFileInfo(*_movieArchive->getResource(MKTAG('V','W','F','I'), 1024));
+	}
 
 	Common::Array<uint16> vwci = _movieArchive->getResourceIDList(MKTAG('V','W','C','I'));
 	if (vwci.size() > 0) {
@@ -239,6 +242,14 @@ void Score::loadCastInfo(Common::SeekableReadStream &stream) {
 	//TODO storage in array, and use this info
 }
 
+void Score::loadFileInfo(Common::SeekableReadStream &stream) {
+	Common::Array<Common::String> fileInfoStrings = loadStrings(stream, _flags);
+	_script = fileInfoStrings[0];
+	_changedBy = fileInfoStrings[1];
+	_createdBy = fileInfoStrings[2];
+	_directory = fileInfoStrings[3];
+}
+
 Common::Array<Common::String> Score::loadStrings(Common::SeekableReadStream &stream, uint32 &entryType, bool hasHeader) {
 	Common::Array<Common::String> strings;
 	uint32 offset = 0;
@@ -251,7 +262,7 @@ Common::Array<Common::String> Score::loadStrings(Common::SeekableReadStream &str
 	}
 
 	uint16 count = stream.readUint16BE();
-	offset += count * 2 + 16; //positions info + header info
+	offset += (count + 1) * 4 + 2; //positions info + uint16 count
 	uint32 startPos = stream.readUint32BE() + offset;
 	for (uint16 i = 0; i < count; i++) {
 		Common::String entryString;

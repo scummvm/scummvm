@@ -206,6 +206,7 @@ private:
     void loadLabels(Common::SeekableReadStream &stream);
     void loadActions(Common::SeekableReadStream &stream);
     void loadCastInfo(Common::SeekableReadStream &stream);
+    void loadFileInfo(Common::SeekableReadStream &stream);
     Common::Array<Common::String> loadStrings(Common::SeekableReadStream &stream, uint32 &entryType, bool hasHeader = true);
 public:
     Common::Array<Frame *> _frames;
@@ -216,6 +217,10 @@ public:
 private:
     uint16 _versionMinor;
     uint16 _versionMajor;
+    Common::String _createdBy;
+    Common::String _changedBy;
+    Common::String _script;
+    Common::String _directory;
     byte _currentFrameRate;
     uint16 _castArrayStart;
     uint16 _currentFrame;
