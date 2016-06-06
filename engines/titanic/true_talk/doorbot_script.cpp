@@ -114,7 +114,7 @@ bool DoorbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 	return 0;
 }
 
-bool DoorbotScript::proc17() const {
+bool DoorbotScript::setupRanges() {
 	warning("TODO");
 	return 0;
 }

@@ -61,7 +61,7 @@ bool BellbotScript::proc16() const {
 	return 0;
 }
 
-bool BellbotScript::proc17() const {
+bool BellbotScript::setupRanges() {
 	warning("TODO");
 	return 0;
 }

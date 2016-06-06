@@ -63,7 +63,7 @@ bool DeskbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 	return 0;
 }
 
-bool DeskbotScript::proc17() const {
+bool DeskbotScript::setupRanges() {
 	warning("TODO");
 	return 0;
 }

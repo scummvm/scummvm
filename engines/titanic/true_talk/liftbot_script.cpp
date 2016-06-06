@@ -90,7 +90,7 @@ bool LiftbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 	return 0;
 }
 
-bool LiftbotScript::proc17() const {
+bool LiftbotScript::setupRanges() {
 	warning("TODO");
 	return 0;
 }

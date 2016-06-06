@@ -40,7 +40,12 @@ public:
 
 	virtual void proc7(int v1, int v2);
 	virtual int proc10() const;
-	virtual bool proc17() const;
+
+	/**
+	 * Setup range sets
+	 */
+	virtual bool setupRanges();
+
 	virtual bool proc18() const;
 	virtual int proc23() const;
 	virtual const int *getTablePtr(int id);

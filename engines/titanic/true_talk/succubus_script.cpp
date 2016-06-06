@@ -67,7 +67,7 @@ int SuccUBusScript::proc10() const {
 	return 0;
 }
 
-bool SuccUBusScript::proc17() const {
+bool SuccUBusScript::setupRanges() {
 	warning("TODO");
 	return 0;
 }

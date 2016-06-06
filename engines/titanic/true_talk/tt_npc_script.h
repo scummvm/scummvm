@@ -62,6 +62,13 @@ struct TTscriptRange {
 		bool isSequential);
 };
 
+struct TTscriptRangeInit {
+	uint id;
+	uint *_array;
+	bool _isRandom;
+	bool _isSequential;
+};
+
 class TTnpcScriptBase : public TTscriptBase {
 protected:
 	int _field54;

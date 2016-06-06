@@ -44,7 +44,7 @@ int ParrotScript::proc10() const {
 	return 0;
 }
 
-bool ParrotScript::proc17() const {
+bool ParrotScript::setupRanges() {
 	warning("TODO");
 	return 0;
 }

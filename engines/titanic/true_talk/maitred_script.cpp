@@ -68,7 +68,7 @@ bool MaitreDScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 	return 0;
 }
 
-bool MaitreDScript::proc17() const {
+bool MaitreDScript::setupRanges() {
 	warning("TODO");
 	return 0;
 }
