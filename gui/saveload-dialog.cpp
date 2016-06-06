@@ -44,20 +44,47 @@ enum {
 	kBackgroundSyncCmd = 'PDBS'
 };
 
-SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(): Dialog(10, 10, 320, 100), _close(false) {
-	int x = 10;
-	int buttonHeight = 24;
-	int buttonWidth = 140;
+SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(): Dialog(0,0,0,0), _close(false) {
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+
+	int buttonWidth = g_gui.xmlEval()->getVar("Globals.Button.Width", 0) * 1.4; // "Run in background" is too long
+	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
+	int progressBarHeight = buttonHeight;
+
+	int marginAround = 8;
 	int marginBottom = 8;
+	int marginBetween = 10;	
+
+	_w = screenW * 80 / 100;
+	_h = 0;
+	_h += buttonHeight + marginBottom; //buttons
+	_h += 2 * (kLineHeight + 2 * marginAround); //top label + bottom label
+	_h += progressBarHeight; //progress bar
+	if (_h > screenH) _h = screenH;
+
+	// Center the dialog
+	_x = (screenW - _w) / 2;
+	_y = (screenH - _h) / 2;	
 	
+	_label = new StaticTextWidget(this, marginAround, marginAround, _w - marginAround * 2, kLineHeight, "Downloading saves...", Graphics::kTextAlignCenter);
+
 	uint32 progress = (uint32)(100 * CloudMan.getSyncDownloadingProgress());
-	_label = new StaticTextWidget(this, 10, 10, 300, kLineHeight, Common::String::format("Downloading saves (%u%% complete)...", progress), Graphics::kTextAlignCenter);
+	_progressBar = new SliderWidget(this, marginAround, marginAround * 2 + kLineHeight, _w - marginAround * 2, progressBarHeight);
+	_progressBar->setMinValue(0);
+	_progressBar->setMaxValue(100);
+	_progressBar->setValue(progress);
+	
+	_percentLabel = new StaticTextWidget(this, marginAround, marginAround * 3 + kLineHeight + progressBarHeight, _w - marginAround * 2, kLineHeight, Common::String::format("%u %%", progress), Graphics::kTextAlignCenter);
+
+	int x1 = (_w - buttonWidth * 2 - marginBetween) / 2;
+	int x2 = x1 + buttonWidth + marginBetween;
 
 	//if (defaultButton)
-		new ButtonWidget(this, x, _h - buttonHeight - marginBottom, buttonWidth, buttonHeight, "Cancel", 0, kCancelSyncCmd, Common::ASCII_ESCAPE);	// Cancel dialog
+		new ButtonWidget(this, x1, _h - buttonHeight - marginBottom, buttonWidth, buttonHeight, "Cancel", 0, kCancelSyncCmd, Common::ASCII_ESCAPE);	// Cancel dialog
 
 	//if (altButton)
-		new ButtonWidget(this, x + buttonWidth + 10, _h - buttonHeight - 8, buttonWidth, buttonHeight, "Run in background", 0, kBackgroundSyncCmd, Common::ASCII_RETURN);	// Confirm dialog
+		new ButtonWidget(this, x2, _h - buttonHeight - marginBottom, buttonWidth, buttonHeight, "Run in background", 0, kBackgroundSyncCmd, Common::ASCII_RETURN);	// Confirm dialog
 }
 
 SaveLoadCloudSyncProgressDialog::~SaveLoadCloudSyncProgressDialog() {}
@@ -65,7 +92,9 @@ SaveLoadCloudSyncProgressDialog::~SaveLoadCloudSyncProgressDialog() {}
 void SaveLoadCloudSyncProgressDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch(cmd) {
 	case kSavesSyncProgressCmd:				
-		_label->setLabel(Common::String::format("Downloading saves (%u%% complete)...", data));
+		_percentLabel->setLabel(Common::String::format("%u%%", data));
+		_progressBar->setValue(data);
+		_progressBar->draw();
 		break;
 
 	case kCancelSyncCmd:
@@ -264,8 +293,7 @@ void SaveLoadChooserDialog::listSaves() {
 
 		//make up some slot number
 		int slotNum = 0;
-		for (int j = files[i].size() - 3; j < files[i].size(); ++j) { //3 last chars
-			if (j < 0) continue;
+		for (uint32 j = (files[i].size() > 3 ? files[i].size() - 3 : 0); j < files[i].size(); ++j) { //3 last chars			
 			char c = files[i][j];
 			if (c < '0' || c > '9') continue;
 			slotNum = slotNum * 10 + (c - '0');

@@ -36,7 +36,8 @@ enum SaveLoadCloudSyncProgress {
 };
 
 class SaveLoadCloudSyncProgressDialog : public Dialog { //protected?
-	StaticTextWidget *_label;
+	StaticTextWidget *_label, *_percentLabel;
+	SliderWidget *_progressBar;
 	bool _close;
 public:
 	SaveLoadCloudSyncProgressDialog();
