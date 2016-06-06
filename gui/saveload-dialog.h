@@ -30,6 +30,11 @@
 
 namespace GUI {
 
+enum SaveLoadCloudSyncProgress {
+	kSavesSyncProgressCmd = 'SSPR',
+	kSavesSyncEndedCmd = 'SSEN'
+};
+
 class SaveLoadCloudSyncProgressDialog : public Dialog { //protected?
 	StaticTextWidget *_label;
 	bool _close;

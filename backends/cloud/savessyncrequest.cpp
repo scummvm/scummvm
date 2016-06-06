@@ -27,15 +27,11 @@
 #include "common/json.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "gui/saveload-dialog.h"
 
 namespace Cloud {
 
 const char *SavesSyncRequest::TIMESTAMPS_FILENAME = "timestamps";
-
-enum {
-	kSavesSyncProgressCmd = 'SSPR',
-	kSavesSyncEndedCmd = 'SSEN'
-};
 
 SavesSyncRequest::SavesSyncRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb):
 	Request(nullptr, ecb), CommandSender(nullptr), _storage(storage), _boolCallback(callback),
@@ -209,7 +205,7 @@ void SavesSyncRequest::directoryCreatedErrorCallback(Networking::ErrorResponse e
 void SavesSyncRequest::downloadNextFile() {
 	if (_filesToDownload.empty()) {
 		_currentDownloadingFile = StorageFile("", 0, 0, false); //so getFilesToDownload() would return an empty array
-		sendCommand(kSavesSyncEndedCmd, 0);
+		sendCommand(GUI::kSavesSyncEndedCmd, 0);
 		uploadNextFile();
 		return;
 	}
@@ -217,7 +213,7 @@ void SavesSyncRequest::downloadNextFile() {
 	_currentDownloadingFile = _filesToDownload.back();
 	_filesToDownload.pop_back();
 
-	sendCommand(kSavesSyncProgressCmd, (int)(getDownloadingProgress() * 100));
+	sendCommand(GUI::kSavesSyncProgressCmd, (int)(getDownloadingProgress() * 100));
 
 	///////
 	debug("downloading %s (%d %%)", _currentDownloadingFile.name().c_str(), (int)(getProgress() * 100));

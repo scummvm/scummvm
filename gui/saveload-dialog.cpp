@@ -40,9 +40,6 @@
 namespace GUI {
 
 enum {
-	kSavesSyncProgressCmd = 'SSPR',
-	kSavesSyncEndedCmd = 'SSEN',
-
 	kCancelSyncCmd = 'PDCS',
 	kBackgroundSyncCmd = 'PDBS'
 };
@@ -198,15 +195,8 @@ void SaveLoadChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uin
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 
 	if (cmd == kSavesSyncProgressCmd || cmd == kSavesSyncEndedCmd) {
-		Cloud::SavesSyncRequest *request = (Cloud::SavesSyncRequest *)sender;
-
 		//this dialog only gets these commands if the progress dialog was shown and user clicked "run in background"
-		switch (cmd) {
-		case kSavesSyncProgressCmd:
-		case kSavesSyncEndedCmd:
-			updateSaveList();
-			break;
-		}
+		return updateSaveList();
 	}
 
 	return Dialog::handleCommand(sender, cmd, data);
