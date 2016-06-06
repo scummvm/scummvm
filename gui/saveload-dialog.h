@@ -70,6 +70,7 @@ class SaveLoadChooserDialog : protected Dialog {
 public:
 	SaveLoadChooserDialog(const Common::String &dialogName, const bool saveMode);
 	SaveLoadChooserDialog(int x, int y, int w, int h, const bool saveMode);
+	virtual ~SaveLoadChooserDialog();
 
 	virtual void open();
 

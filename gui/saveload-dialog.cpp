@@ -51,12 +51,15 @@ SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(): Dialog("Save
 	_progressBar->setMinValue(0);
 	_progressBar->setMaxValue(100);
 	_progressBar->setValue(progress);
+	_progressBar->setEnabled(false);
 	_percentLabel = new StaticTextWidget(this, "SaveLoadCloudSyncProgress.PercentText", Common::String::format("%u %%", progress));
 	new ButtonWidget(this, "SaveLoadCloudSyncProgress.Cancel", "Cancel", 0, kCancelSyncCmd, Common::ASCII_ESCAPE);	// Cancel dialog																																				
 	new ButtonWidget(this, "SaveLoadCloudSyncProgress.Background", "Run in background", 0, kBackgroundSyncCmd, Common::ASCII_RETURN);	// Confirm dialog
 }
 
-SaveLoadCloudSyncProgressDialog::~SaveLoadCloudSyncProgressDialog() {}
+SaveLoadCloudSyncProgressDialog::~SaveLoadCloudSyncProgressDialog() {
+	CloudMan.setSyncTarget(nullptr); //not that dialog, at least
+}
 
 void SaveLoadCloudSyncProgressDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch(cmd) {
@@ -146,6 +149,10 @@ SaveLoadChooserDialog::SaveLoadChooserDialog(int x, int y, int w, int h, const b
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 }
 
+SaveLoadChooserDialog::~SaveLoadChooserDialog() {
+	CloudMan.setSyncTarget(nullptr); //not that dialog, at least
+}
+
 void SaveLoadChooserDialog::open() {
 	Dialog::open();
 
@@ -215,12 +222,15 @@ void SaveLoadChooserDialog::handleTickle() {
 	if (!_dialogWasShown && CloudMan.isSyncing()) {
 		Common::Array<Common::String> files = CloudMan.getSyncingFiles();
 		if (!files.empty()) {
-			SaveLoadCloudSyncProgressDialog dialog;
-			CloudMan.setSyncTarget(&dialog);
-			int result = dialog.runModal();
-			if (result == kCancelSyncCmd) {
-				CloudMan.cancelSync();
+			{
+				SaveLoadCloudSyncProgressDialog dialog;
+				CloudMan.setSyncTarget(&dialog);
+				int result = dialog.runModal();
+				if (result == kCancelSyncCmd) {
+					CloudMan.cancelSync();
+				}
 			}
+			//dialog changes syncTarget to nullptr after that }
 			CloudMan.setSyncTarget(this);
 			_dialogWasShown = true;
 			updateSaveList();
@@ -253,6 +263,7 @@ void SaveLoadChooserDialog::updateSaveList() {
 }
 
 void SaveLoadChooserDialog::listSaves() {
+	if (!_metaEngine) return; //very strange
 	_saveList = _metaEngine->listSaves(_target.c_str());
 
 	Common::String pattern = _metaEngine->getSavefilesPattern(_target);
@@ -1007,10 +1018,6 @@ void SaveLoadChooserGrid::updateSaves() {
 		}
 		curButton.description->setLabel(Common::String::format("%d. %s", saveSlot, desc.getDescription().c_str()));
 
-		//that would make it look "disabled" if slot is locked
-		curButton.button->setEnabled(!desc.getLocked());
-		curButton.description->setEnabled(!desc.getLocked());
-
 		Common::String tooltip(_("Name: "));
 		tooltip += desc.getDescription();
 
@@ -1045,6 +1052,10 @@ void SaveLoadChooserGrid::updateSaves() {
 		} else {
 			curButton.button->setEnabled(true);
 		}
+
+		//that would make it look "disabled" if slot is locked
+		curButton.button->setEnabled(!desc.getLocked());
+		curButton.description->setEnabled(!desc.getLocked());
 	}
 
 	const uint numPages = (_entriesPerPage != 0 && !_saveList.empty()) ? ((_saveList.size() + _entriesPerPage - 1) / _entriesPerPage) : 1;
