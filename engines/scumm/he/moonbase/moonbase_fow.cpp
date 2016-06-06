@@ -158,7 +158,7 @@ enum FOWElement {
 };
 
 int Moonbase::readFOWVisibilityArray(int array, int y, int x) {
-	if (readFromArray(array, y, x) > 0)
+	if (readFromArray(array, x, y) > 0)
 		return FOW_EMPTY;
 
 	return FOW_SOLID;
