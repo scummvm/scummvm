@@ -110,7 +110,7 @@ private:
 	void initCowSystem();
 
 	uint32 getSampleId(int32 fxNo);
-	int16 *uncompressSpeech(uint32 index, uint32 cSize, uint32 *size);
+	int16 *uncompressSpeech(uint32 index, uint32 cSize, uint32 *size, bool* ok = 0);
 	void calcWaveVolume(int16 *data, uint32 length);
 	bool _waveVolume[WAVE_VOL_TAB_LENGTH];
 	uint16 _waveVolPos;
