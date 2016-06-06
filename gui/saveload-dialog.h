@@ -89,7 +89,19 @@ public:
 
 protected:
 	virtual int runIntern() = 0;
+
+	/** Common function to refresh the list on the screen. */
 	virtual void updateSaveList();
+
+	/**
+	* Common function to get saves list from MetaEngine.
+	*
+	* It also checks whether there are some locked saves
+	* because of saves sync and adds such saves as locked
+	* slots. User sees these slots, but is unable to save
+	* or load from these.
+	*/
+	virtual void listSaves();
 
 	const bool				_saveMode;
 	const MetaEngine		*_metaEngine;
@@ -100,6 +112,7 @@ protected:
 	bool					_playTimeSupport;
 	Common::String			_target;
 	bool _dialogWasShown;
+	SaveStateList			_saveList;
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	ButtonWidget *_listButton;
@@ -128,8 +141,8 @@ public:
 
 	virtual void open();
 	virtual void close();
-protected:
-	virtual void updateSaveList();
+protected:	
+	virtual void updateSaveList();	
 private:
 	virtual int runIntern();
 
@@ -142,7 +155,6 @@ private:
 	StaticTextWidget	*_time;
 	StaticTextWidget	*_playtime;
 
-	SaveStateList			_saveList;
 	String					_resultString;
 	
 	void updateSelection(bool redraw);
@@ -194,7 +206,6 @@ private:
 	uint _columns, _lines;
 	uint _entriesPerPage;
 	uint _curPage;
-	SaveStateList _saveList;
 
 	ButtonWidget *_nextButton;
 	ButtonWidget *_prevButton;

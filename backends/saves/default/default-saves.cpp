@@ -75,9 +75,7 @@ Common::StringArray DefaultSaveFileManager::listSavefiles(const Common::String &
 
 	Common::HashMap<Common::String, bool> locked;
 	for (Common::StringArray::const_iterator i = _lockedFiles.begin(), end = _lockedFiles.end(); i != end; ++i) {
-		if (i->matchString(pattern, true)) {
-			locked[*i] = true;
-		}
+		locked[*i] = true;
 	}
 
 	Common::StringArray results;

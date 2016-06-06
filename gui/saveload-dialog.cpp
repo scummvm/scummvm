@@ -251,6 +251,32 @@ void SaveLoadChooserDialog::reflowLayout() {
 void SaveLoadChooserDialog::updateSaveList() {	
 	Common::Array<Common::String> files = CloudMan.getSyncingFiles(); //returns empty array if not syncing	
 	g_system->getSavefileManager()->updateSavefilesList(files);
+	listSaves();
+}
+
+void SaveLoadChooserDialog::listSaves() {
+	_saveList = _metaEngine->listSaves(_target.c_str());
+
+	Common::String pattern = _metaEngine->getSavefilesPattern(_target);
+	Common::Array<Common::String> files = CloudMan.getSyncingFiles(); //returns empty array if not syncing
+	for (uint32 i = 0; i < files.size(); ++i) {		
+		if (!files[i].matchString(pattern, true)) continue;
+
+		//make up some slot number
+		int slotNum = 0;
+		for (int j = files[i].size() - 3; j < files[i].size(); ++j) { //3 last chars
+			if (j < 0) continue;
+			char c = files[i][j];
+			if (c < '0' || c > '9') continue;
+			slotNum = slotNum * 10 + (c - '0');
+		}
+
+		SaveStateDescriptor slot(slotNum, files[i]);
+		slot.setLocked(true);
+		_saveList.push_back(slot);
+	}
+
+	Common::sort(_saveList.begin(), _saveList.end(), SaveStateDescriptorSlotComparator());
 }
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
@@ -454,6 +480,7 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 	bool isDeletable = _delSupport;
 	bool isWriteProtected = false;
 	bool startEditMode = _list->isEditable();
+	bool isLocked = false;
 
 	// We used to support letting the themes specify the fill color with our
 	// initial theme based GUI. But this support was dropped.
@@ -463,10 +490,11 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 	_playtime->setLabel(_("No playtime saved"));
 
 	if (selItem >= 0 && _metaInfoSupport) {
-		SaveStateDescriptor desc = _metaEngine->querySaveMetaInfos(_target.c_str(), _saveList[selItem].getSaveSlot());
+		SaveStateDescriptor desc = (_saveList[selItem].getLocked() ? _saveList[selItem] : _metaEngine->querySaveMetaInfos(_target.c_str(), _saveList[selItem].getSaveSlot()));
 
 		isDeletable = desc.getDeletableFlag() && _delSupport;
 		isWriteProtected = desc.getWriteProtectedFlag();
+		isLocked = desc.getLocked();
 
 		// Don't allow the user to change the description of write protected games
 		if (isWriteProtected)
@@ -499,9 +527,9 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 
 
 	if (_list->isEditable()) {
-		// Disable the save button if nothing is selected, or if the selected
-		// game is write protected
-		_chooseButton->setEnabled(selItem >= 0 && !isWriteProtected);
+		// Disable the save button if slot is locked, nothing is selected,
+		// or if the selected game is write protected
+		_chooseButton->setEnabled(!isLocked && selItem >= 0 && !isWriteProtected);
 
 		if (startEditMode) {
 			_list->startEditMode();
@@ -513,13 +541,13 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 			}
 		}
 	} else {
-		// Disable the load button if nothing is selected, or if an empty
-		// list item is selected.
-		_chooseButton->setEnabled(selItem >= 0 && !_list->getSelectedString().empty());
+		// Disable the load button if slot is locked, nothing is selected,
+		// or if an empty list item is selected.
+		_chooseButton->setEnabled(!isLocked && selItem >= 0 && !_list->getSelectedString().empty());
 	}
 
 	// Delete will always be disabled if the engine doesn't support it.
-	_deleteButton->setEnabled(isDeletable && (selItem >= 0) && (!_list->getSelectedString().empty()));
+	_deleteButton->setEnabled(isDeletable && !isLocked && (selItem >= 0) && (!_list->getSelectedString().empty()));
 
 	if (redraw) {
 		_gfxWidget->draw();
@@ -565,7 +593,6 @@ void SaveLoadChooserSimple::close() {
 
 void SaveLoadChooserSimple::updateSaveList() {
 	SaveLoadChooserDialog::updateSaveList();
-	_saveList = _metaEngine->listSaves(_target.c_str());
 
 	int curSlot = 0;
 	int saveSlot = 0;
@@ -598,7 +625,7 @@ void SaveLoadChooserSimple::updateSaveList() {
 			description = _("Untitled savestate");
 			colors.push_back(ThemeEngine::kFontColorAlternate);
 		} else {
-			colors.push_back(ThemeEngine::kFontColorNormal);
+			colors.push_back((x->getLocked() ? ThemeEngine::kFontColorAlternate : ThemeEngine::kFontColorNormal));
 		}
 
 		saveNames.push_back(description);
@@ -724,7 +751,6 @@ void SaveLoadChooserGrid::handleMouseWheel(int x, int y, int direction) {
 
 void SaveLoadChooserGrid::updateSaveList() {
 	SaveLoadChooserDialog::updateSaveList();
-	_saveList = _metaEngine->listSaves(_target.c_str());
 	updateSaves();
 	draw();
 }
@@ -732,7 +758,7 @@ void SaveLoadChooserGrid::updateSaveList() {
 void SaveLoadChooserGrid::open() {
 	SaveLoadChooserDialog::open();
 
-	_saveList = _metaEngine->listSaves(_target.c_str());
+	listSaves();
 	_resultString.clear();
 
 	// Load information to restore the last page the user had open.
@@ -973,7 +999,7 @@ void SaveLoadChooserGrid::updateSaves() {
 	for (uint i = _curPage * _entriesPerPage, curNum = 0; i < _saveList.size() && curNum < _entriesPerPage; ++i, ++curNum) {
 		const uint saveSlot = _saveList[i].getSaveSlot();
 
-		SaveStateDescriptor desc = _metaEngine->querySaveMetaInfos(_target.c_str(), saveSlot);
+		SaveStateDescriptor desc =  (_saveList[i].getLocked() ? _saveList[i] : _metaEngine->querySaveMetaInfos(_target.c_str(), saveSlot));
 		SlotButton &curButton = _buttons[curNum];
 		curButton.setVisible(true);
 		const Graphics::Surface *thumbnail = desc.getThumbnail();
@@ -983,6 +1009,10 @@ void SaveLoadChooserGrid::updateSaves() {
 			curButton.button->setGfx(kThumbnailWidth, kThumbnailHeight2, 0, 0, 0);
 		}
 		curButton.description->setLabel(Common::String::format("%d. %s", saveSlot, desc.getDescription().c_str()));
+
+		//that would make it look "disabled" if slot is locked
+		curButton.button->setEnabled(!desc.getLocked());
+		curButton.description->setEnabled(!desc.getLocked());
 
 		Common::String tooltip(_("Name: "));
 		tooltip += desc.getDescription();

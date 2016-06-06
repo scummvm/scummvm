@@ -116,6 +116,16 @@ public:
 	}
 
 	/**
+	* Return a common pattern which all engine's save filenames should match.
+	*
+	* @param target	name of a config manager target
+	* @return			a pattern for filenames
+	*/
+	virtual Common::String getSavefilesPattern(Common::String &target) const {
+		return target + ".s##";
+	}
+
+	/**
 	 * Return a list of extra GUI options for the specified target.
 	 * If no target is specified, all of the available custom GUI options are
 	 * Returned for the plugin (used to set default values).
