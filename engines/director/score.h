@@ -138,6 +138,13 @@ struct ButtonCast : TextCast {
     uint16 buttonType;
 };
 
+struct CastInfo {
+    Common::String script;
+    Common::String name;
+    Common::String directory;
+    Common::String fileName;
+    Common::String type;
+};
 
 class Sprite {
 public:
@@ -198,7 +205,8 @@ private:
     void loadFrames(Common::SeekableReadStream &stream);
     void loadLabels(Common::SeekableReadStream &stream);
     void loadActions(Common::SeekableReadStream &stream);
-
+    void loadCastInfo(Common::SeekableReadStream &stream);
+    Common::Array<Common::String> loadStrings(Common::SeekableReadStream &stream, uint32 &entryType, bool hasHeader = true);
 public:
     Common::Array<Frame *> _frames;
     Common::HashMap<int, Cast *> _casts;

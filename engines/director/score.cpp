@@ -58,6 +58,15 @@ Score::Score(Archive &movie) {
 	if (_movieArchive->hasResource(MKTAG('M','C','N','M'), 0)) {
 		debug("Mac name %s", _movieArchive->getName(MKTAG('M','C','N','M'), 0).c_str());
 	}
+
+
+	Common::Array<uint16> vwci = _movieArchive->getResourceIDList(MKTAG('V','W','C','I'));
+	if (vwci.size() > 0) {
+		Common::Array<uint16>::iterator iterator;
+		for (iterator = vwci.begin(); iterator != vwci.end(); ++iterator)
+			loadCastInfo(*_movieArchive->getResource(MKTAG('V','W','C','I'), *iterator));
+	}
+
 	DIBDecoder palette;
 	Common::Array<uint16> clutList = _movieArchive->getResourceIDList(MKTAG('C','L','U','T'));
 
@@ -216,6 +225,52 @@ void Score::loadActions(Common::SeekableReadStream &stream) {
 	for (j = _actions.begin(); j != _actions.end(); ++j) {
 		debug("Id %d, Script %s", j->_key, j->_value.c_str());
 	}
+}
+
+void Score::loadCastInfo(Common::SeekableReadStream &stream) {
+	uint32 entryType = 0;
+	Common::Array<Common::String> castStrings = loadStrings(stream, entryType);
+	CastInfo ci;
+	ci.script = castStrings[0];
+	ci.name = castStrings[1];
+	ci.directory = castStrings[2];
+	ci.fileName = castStrings[3];
+	ci.type = castStrings[4];
+	//TODO storage in array, and use this info
+}
+
+Common::Array<Common::String> Score::loadStrings(Common::SeekableReadStream &stream, uint32 &entryType, bool hasHeader) {
+	Common::Array<Common::String> strings;
+	uint32 offset = 0;
+	if (hasHeader) {
+		offset = stream.readUint32BE();
+		/*uint32 unk1 = */ stream.readUint32BE();
+		/*uint32 unk2 = */ stream.readUint32BE();
+		entryType = stream.readUint32BE();
+		stream.seek(offset);
+	}
+
+	uint16 count = stream.readUint16BE();
+	offset += count * 2 + 16; //positions info + header info
+	uint32 startPos = stream.readUint32BE() + offset;
+	for (uint16 i = 0; i < count; i++) {
+		Common::String entryString;
+		uint32 nextPos = stream.readUint32BE() + offset;
+		uint32 streamPos = stream.pos();
+
+		stream.seek(startPos);
+
+		while (startPos != nextPos) {
+			entryString += stream.readByte();
+			++startPos;
+		}
+
+		strings.push_back(entryString);
+
+		stream.seek(streamPos);
+		startPos = nextPos;
+	}
+	return strings;
 }
 
 BitmapCast::BitmapCast(Common::SeekableReadStream &stream) {
