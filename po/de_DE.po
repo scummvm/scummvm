@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-06-07 19:20+0200\n"
-"PO-Revision-Date: 2016-05-29 17:00+0200\n"
+"PO-Revision-Date: 2016-06-07 20:00+0200\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
 "Language-Team: Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari "
 "<rootfather@scummvm.org>\n"
@@ -2386,22 +2386,20 @@ msgid "Check for Updates..."
 msgstr "Suche nach Aktualisierungen..."
 
 #: engines/adl/detection.cpp:43 engines/adl/detection.cpp:53
-#, fuzzy
 msgid "Color mode"
-msgstr "Modus für Farbenblinde"
+msgstr "Farbmodus einschalten"
 
 #: engines/adl/detection.cpp:44 engines/adl/detection.cpp:54
 msgid "Use color graphics"
-msgstr ""
+msgstr "Farbgrafik verwenden"
 
 #: engines/adl/detection.cpp:63
 msgid "Scanlines"
-msgstr ""
+msgstr "Abtastzeilen/Scanlines"
 
 #: engines/adl/detection.cpp:64
-#, fuzzy
 msgid "Show scanlines"
-msgstr "Objektzeile zeigen"
+msgstr "Abtastzeilen (Scanlines) anzeigen"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:48
