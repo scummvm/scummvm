@@ -41,6 +41,9 @@ class GoogleDriveCreateDirectoryRequest: public Networking::Request {
 	bool _ignoreCallback;
 
 	void start();
+	void createdBaseDirectoryCallback(Storage::BoolResponse response);
+	void createdBaseDirectoryErrorCallback(Networking::ErrorResponse error);
+	void resolveId();
 	void idResolvedCallback(Storage::UploadResponse response);
 	void idResolveFailedCallback(Networking::ErrorResponse error);
 	void createdDirectoryCallback(Storage::BoolResponse response);

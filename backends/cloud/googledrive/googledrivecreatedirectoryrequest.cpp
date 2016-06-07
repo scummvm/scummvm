@@ -46,12 +46,38 @@ void GoogleDriveCreateDirectoryRequest::start() {
 	if (_workingRequest) _workingRequest->finish();
 	_workingRequest = nullptr;
 	_ignoreCallback = false;
+
+	//the only exception when we create parent folder - is when it's ScummVM/ base folder
+	Common::String prefix = _requestedParentPath;
+	if (prefix.size() > 7) prefix.erase(7);
+	if (prefix.equalsIgnoreCase("ScummVM")) {
+		Storage::BoolCallback callback = new Common::Callback<GoogleDriveCreateDirectoryRequest, Storage::BoolResponse>(this, &GoogleDriveCreateDirectoryRequest::createdBaseDirectoryCallback);
+		Networking::ErrorCallback failureCallback = new Common::Callback<GoogleDriveCreateDirectoryRequest, Networking::ErrorResponse>(this, &GoogleDriveCreateDirectoryRequest::createdBaseDirectoryErrorCallback);
+		_workingRequest = _storage->createDirectory("ScummVM", callback, failureCallback);
+		return;
+	}
 	
-	//find out the parent id
+	resolveId();
+}
+
+void GoogleDriveCreateDirectoryRequest::createdBaseDirectoryCallback(Storage::BoolResponse response) {
+	_workingRequest = nullptr;
+	if (_ignoreCallback) return;
+	resolveId();
+}
+
+void GoogleDriveCreateDirectoryRequest::createdBaseDirectoryErrorCallback(Networking::ErrorResponse error) {
+	_workingRequest = nullptr;
+	if (_ignoreCallback) return;
+	finishError(error);
+}
+
+void GoogleDriveCreateDirectoryRequest::resolveId() {
+	//check whether such folder already exists
 	Storage::UploadCallback innerCallback = new Common::Callback<GoogleDriveCreateDirectoryRequest, Storage::UploadResponse>(this, &GoogleDriveCreateDirectoryRequest::idResolvedCallback);
 	Networking::ErrorCallback innerErrorCallback = new Common::Callback<GoogleDriveCreateDirectoryRequest, Networking::ErrorResponse>(this, &GoogleDriveCreateDirectoryRequest::idResolveFailedCallback);
 	Common::String path = _requestedParentPath;
-	path += "/";
+	if (_requestedParentPath != "") path += "/";
 	path += _requestedDirectoryName;
 	_workingRequest = _storage->resolveFileId(path, innerCallback, innerErrorCallback);
 }

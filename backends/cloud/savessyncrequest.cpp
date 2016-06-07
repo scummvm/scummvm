@@ -158,8 +158,17 @@ void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse er
 						}
 					}
 				}
+
+				//TODO: Google Drive-related JSON error
 			}
 			delete value;
+		}
+
+		//Google Drive-related ScummVM-based error
+		if (error.response.contains("subdirectory not found")) {
+			irrecoverable = false; //base "/ScummVM/" folder not found
+		} else if (error.response.contains("no such file found in its parent directory")) {
+			irrecoverable = false; //"Saves" folder within "/ScummVM/" not found
 		}
 	}
 

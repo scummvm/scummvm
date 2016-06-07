@@ -315,10 +315,6 @@ Networking::Request *GoogleDriveStorage::createDirectory(Common::String path, Bo
 		}
 	}
 
-	if (parentPath == "") {
-		return createDirectoryWithParentId("root", directoryName, callback, errorCallback);
-	}
-
 	return addRequest(new GoogleDriveCreateDirectoryRequest(this, parentPath, directoryName, callback, errorCallback));
 }
 
@@ -353,7 +349,7 @@ Networking::Request *GoogleDriveStorage::info(StorageInfoCallback callback, Netw
 	return addRequest(request);	
 }
 
-Common::String GoogleDriveStorage::savesDirectoryPath() { return "saves/"; }
+Common::String GoogleDriveStorage::savesDirectoryPath() { return "scummvm/saves/"; }
 
 GoogleDriveStorage *GoogleDriveStorage::loadFromConfig(Common::String keyPrefix) {
 	loadKeyAndSecret();
