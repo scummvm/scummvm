@@ -34,6 +34,7 @@
 #include "googledrivelistdirectorybyidrequest.h"
 #include "googledriveresolveidrequest.h"
 #include "googledrivecreatedirectoryrequest.h"
+#include "googledrivelistdirectoryrequest.h"
 
 namespace Cloud {
 namespace GoogleDrive {
@@ -238,8 +239,9 @@ Networking::Request *GoogleDriveStorage::resolveFileId(Common::String path, Uplo
 }
 
 Networking::Request *GoogleDriveStorage::listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
-	//return addRequest(new GoogleDriveListDirectoryRequest(this, path, callback, errorCallback, recursive));
-	return nullptr;
+	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+	if (!callback) callback = new Common::Callback<GoogleDriveStorage, FileArrayResponse>(this, &GoogleDriveStorage::printFiles);
+	return addRequest(new GoogleDriveListDirectoryRequest(this, path, callback, errorCallback, recursive));	
 }
 
 Networking::Request *GoogleDriveStorage::listDirectoryById(Common::String id, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback) {

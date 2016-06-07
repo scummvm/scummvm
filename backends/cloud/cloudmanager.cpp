@@ -155,7 +155,11 @@ void CloudManager::testFeature() {
 		//gd->createDirectory("firstfolder/subfolder/newfolder3/megafolder", nullptr, nullptr);
 
 		//check it's there: +
-		gd->listDirectoryById("1OXWPtfNgnmR_1K7SDm2v5J923bbAWrTdVDj-zRppLZDw", nullptr, nullptr);
+		//gd->listDirectoryById("1OXWPtfNgnmR_1K7SDm2v5J923bbAWrTdVDj-zRppLZDw", nullptr, nullptr);
+
+		//gd->listDirectory("", nullptr, nullptr);
+		//gd->listDirectory("firstfolder", nullptr, nullptr);
+		gd->listDirectory("firstfolder/subfolder", nullptr, nullptr, true);
 	}
 		//gd->resolveFileId("firstfolder/subfolder", nullptr, nullptr);
 		//gd->listDirectoryById("appDataFolder", nullptr, nullptr);

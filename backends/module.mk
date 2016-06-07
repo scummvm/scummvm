@@ -34,6 +34,7 @@ MODULE_OBJS += \
 	cloud/dropbox/dropboxuploadrequest.o \
 	cloud/googledrive/googledrivecreatedirectoryrequest.o \
 	cloud/googledrive/googledrivelistdirectorybyidrequest.o \
+	cloud/googledrive/googledrivelistdirectoryrequest.o \
 	cloud/googledrive/googledriveresolveidrequest.o \
 	cloud/googledrive/googledrivestorage.o \
 	cloud/googledrive/googledrivetokenrefresher.o \
