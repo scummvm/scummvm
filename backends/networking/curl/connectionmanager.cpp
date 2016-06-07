@@ -66,8 +66,10 @@ void ConnectionManager::registerEasyHandle(CURL *easy) {
 }
 
 Request *ConnectionManager::addRequest(Request *request, RequestCallback callback) {
-	_requests.push_back(RequestWithCallback(request, callback));
-	if (!_timerStarted) startTimer();
+	_addedRequestsMutex.lock();	
+	_addedRequests.push_back(RequestWithCallback(request, callback));
+	if (!_timerStarted) startTimer();	
+	_addedRequestsMutex.unlock();
 	return request;
 }
 
@@ -98,21 +100,36 @@ void ConnectionManager::stopTimer() {
 	_timerStarted = false;
 }
 
+bool ConnectionManager::hasAddedRequests() {
+	_addedRequestsMutex.lock();
+	bool hasNewRequests = !_addedRequests.empty();
+	_addedRequestsMutex.unlock();
+	return hasNewRequests;
+}
+
 void ConnectionManager::handle() {
 	//lock mutex here (in case another handle() would be called before this one ends)
 	_handleMutex.lock();
 	++_frame;
 	if (_frame % CLOUD_PERIOD == 0) interateRequests();
 	if (_frame % CURL_PERIOD == 0) processTransfers();
-
-	if (_icon.draw() && _requests.empty())
+	
+	if (_icon.draw() && _requests.empty() && !hasAddedRequests())
 		stopTimer();
 	_handleMutex.unlock();
 }
 
 void ConnectionManager::interateRequests() {
+	//add new requests
+	_addedRequestsMutex.lock();
+	for (Common::Array<RequestWithCallback>::iterator i = _addedRequests.begin(); i != _addedRequests.end(); ++i) {
+		_requests.push_back(*i);
+	}
+	_addedRequests.clear();
+	_addedRequestsMutex.unlock();
+
 	//call handle() of all running requests (so they can do their work)
-	debug("handling %d request(s)", _requests.size());	
+	debug("handling %d request(s)", _requests.size());
 	for (Common::Array<RequestWithCallback>::iterator i = _requests.begin(); i != _requests.end();) {
 		Request *request = i->request;		
 		if (request) {

@@ -77,8 +77,8 @@ class ConnectionManager : public Common::Singleton<ConnectionManager> {
 
 	CURLM *_multi;	
 	bool _timerStarted;
-	Common::Array<RequestWithCallback> _requests;
-	Common::Mutex _handleMutex;
+	Common::Array<RequestWithCallback> _requests, _addedRequests;
+	Common::Mutex _handleMutex, _addedRequestsMutex;
 	CloudIcon _icon;
 	uint32 _frame;
 	
@@ -87,6 +87,7 @@ class ConnectionManager : public Common::Singleton<ConnectionManager> {
 	void handle();
 	void interateRequests();
 	void processTransfers();
+	bool hasAddedRequests();
 
 public:
 	ConnectionManager();
