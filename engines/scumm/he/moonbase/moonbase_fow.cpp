@@ -114,8 +114,14 @@ bool Moonbase::setFOWImage(int image) {
 			delete stream;
 		}
 
-		if (!_fowImage && image > 0)
-			_fowImage = _vm->getResourceAddress(rtImage, image);
+		if (!_fowImage && image > 0) {
+			int sz = _vm->getResourceSize(rtImage, image);
+			_fowImage = (uint8 *)malloc(sz);
+
+			// We have to copy it, otherwise the resource manager
+			// will kill it earlier or later. Matches original.
+			memcpy(_fowImage, _vm->getResourceAddress(rtImage, image), sz);
+		}
 
 		if (!_fowImage)
 			return false;
