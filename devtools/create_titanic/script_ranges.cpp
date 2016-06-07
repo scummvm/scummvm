@@ -1013,6 +1013,86 @@ const ScriptRange MAITRED_RANGES[97] = {
 	{ 261017, MAITRED_RANGE97, true, false }
 };
 
+const uint PARROT_RANGE1[] = { 280171, 280172, 280173, 280174, 280175, 280176, 280153, 280154, 280155, 0 };
+const uint PARROT_RANGE2[] = { 280004, 280005, 280006, 280007, 280008, 280009, 280010, 280011, 280012, 0 };
+const uint PARROT_RANGE3[] = { 280000, 280001, 280002, 0 };
+const uint PARROT_RANGE4[] = { 280161, 280162, 280163, 280164, 280165, 0 };
+const uint PARROT_RANGE5[] = { 280156, 280157, 0 };
+const uint PARROT_RANGE6[] = { 280158, 280159, 280160, 0 };
+const uint PARROT_RANGE7[] = { 280166, 280167, 280168, 0 };
+const uint PARROT_RANGE8[] = { 280179, 280180, 280181, 0 };
+const uint PARROT_RANGE9[] = { 280086, 280087, 280088, 280089, 280090, 280091, 0 };
+const uint PARROT_RANGE10[] = { 280153, 280154, 280155, 0 };
+const uint PARROT_RANGE11[] = { 280043, 280044, 280045, 280046, 280047, 280048, 280049, 280050, 280051, 280052, 0 };
+const uint PARROT_RANGE12[] = { 280014, 280015, 280016, 0 };
+const uint PARROT_RANGE13[] = { 280217, 280039, 280040, 280041, 280042, 0 };
+const uint PARROT_RANGE14[] = { 280119, 280120, 280121, 280122, 280028, 280029, 280030, 280031, 280116, 280117,
+	280118, 0 };
+const uint PARROT_RANGE15[] = { 280028, 280029, 280030, 280031, 0 };
+const uint PARROT_RANGE16[] = { 280123, 280124, 280125, 280126, 280127, 280128, 0 };
+const uint PARROT_RANGE17[] = { 280129, 280130, 280131, 280132, 280133, 280134, 280135, 280136, 280137, 280138, 0 };
+const uint PARROT_RANGE18[] = { 280035, 280036, 280037, 280038, 0 };
+const uint PARROT_RANGE19[] = { 280094, 280095, 280096, 280097, 280098, 280099, 280100, 280101, 280102, 280103,
+	280104, 0 };
+const uint PARROT_RANGE20[] = { 280078, 280079, 280080, 280081, 280082, 280083, 280084, 0 };
+const uint PARROT_RANGE21[] = { 280067, 280068, 0 };
+const uint PARROT_RANGE22[] = { 280139, 280140, 280141, 0 };
+const uint PARROT_RANGE23[] = { 280017, 280018, 280019, 280020, 280021, 280022, 280023, 280024, 280025, 280026,
+	280027, 0 };
+const uint PARROT_RANGE24[] = { 280065, 280143, 280142, 280190, 280144, 280066, 280145, 280146, 280147, 0 };
+const uint PARROT_RANGE25[] = { 280148, 280062, 280063, 0 };
+const uint PARROT_RANGE26[] = { 280071, 280072, 280073, 280074, 280075, 280076, 280077, 0 };
+const uint PARROT_RANGE27[] = { 280218, 280219, 0 };
+const uint PARROT_RANGE28[] = { 280057, 280058, 280059, 280060, 280061, 0 };
+const uint PARROT_RANGE29[] = { 280196, 280197, 280198, 280199, 280200, 0 };
+const uint PARROT_RANGE30[] = { 280202, 280203, 280204, 280205, 0 };
+const uint PARROT_RANGE31[] = { 280193, 280194, 280195, 0 };
+const uint PARROT_RANGE32[] = { 280149, 280069, 280070, 0 };
+const uint PARROT_RANGE33[] = { 280222, 280223, 280224, 280225, 280226, 280227, 280228, 280229, 280230, 280231,
+	280232, 280233, 280234, 0 };
+const uint PARROT_RANGE34[] = { 280268, 280269, 280270, 280271, 280272, 280273, 280274, 0 };
+
+#define PARROT_RANGE_COUNT 34
+const ScriptRange PARROT_RANGES[34] = {
+	{ 280235, PARROT_RANGE1, false, false },
+	{ 280236, PARROT_RANGE1, false, false },
+	{ 280237, PARROT_RANGE1, false, false },
+	{ 280238, PARROT_RANGE1, false, false },
+	{ 280239, PARROT_RANGE1, false, false },
+	{ 280240, PARROT_RANGE1, false, false },
+	{ 280241, PARROT_RANGE1, false, false },
+	{ 280242, PARROT_RANGE1, false, false },
+	{ 280243, PARROT_RANGE1, false, false },
+	{ 280244, PARROT_RANGE1, false, false },
+
+	{ 280245, PARROT_RANGE1, false, false },
+	{ 280246, PARROT_RANGE1, false, false },
+	{ 280247, PARROT_RANGE1, false, false },
+	{ 280248, PARROT_RANGE1, false, false },
+	{ 280249, PARROT_RANGE1, false, false },
+	{ 280250, PARROT_RANGE1, false, false },
+	{ 280251, PARROT_RANGE1, false, false },
+	{ 280252, PARROT_RANGE1, false, false },
+	{ 280253, PARROT_RANGE1, false, false },
+	{ 280254, PARROT_RANGE1, false, false },
+
+	{ 280255, PARROT_RANGE1, false, false },
+	{ 280256, PARROT_RANGE1, false, false },
+	{ 280257, PARROT_RANGE1, false, false },
+	{ 280258, PARROT_RANGE1, false, false },
+	{ 280259, PARROT_RANGE1, false, false },
+	{ 280260, PARROT_RANGE1, false, false },
+	{ 280261, PARROT_RANGE1, false, false },
+	{ 280262, PARROT_RANGE1, false, false },
+	{ 280263, PARROT_RANGE1, false, false },
+	{ 280264, PARROT_RANGE1, false, false },
+
+	{ 280265, PARROT_RANGE1, false, false },
+	{ 280266, PARROT_RANGE1, false, false },
+	{ 280222, PARROT_RANGE1, false, false },
+	{ 280267, PARROT_RANGE1, false, false }
+};
+
 void writeScriptRange(const char *name, const ScriptRange *ranges, int count) {
 	outputFile.seek(dataOffset);
 
@@ -1038,4 +1118,5 @@ void writeAllScriptRanges() {
 	writeScriptRange("Ranges/Doorbot", DOORBOT_RANGES, DOORBOT_RANGE_COUNT);
 	writeScriptRange("Ranges/Liftbot", LIFTBOT_RANGES, LIFTBOT_RANGE_COUNT);
 	writeScriptRange("Ranges/MaitreD", MAITRED_RANGES, MAITRED_RANGE_COUNT);
+	writeScriptRange("Ranges/Parrot", PARROT_RANGES, PARROT_RANGE_COUNT);
 }
