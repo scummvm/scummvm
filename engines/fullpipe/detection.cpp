@@ -90,6 +90,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual int getMaximumSaveSlot() const { return 8; }
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual bool simpleSaveNames() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
@@ -133,6 +134,8 @@ SaveStateList FullpipeMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
+
+bool FullpipeMetaEngine::simpleSaveNames() const { return false; }
 
 void FullpipeMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(Fullpipe::getSavegameFile(slot));

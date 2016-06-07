@@ -518,6 +518,7 @@ public:
 	const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual bool simpleSaveNames() const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
@@ -789,6 +790,8 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
+
+bool SciMetaEngine::simpleSaveNames() const { return true; }
 
 SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int slotNr) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slotNr);

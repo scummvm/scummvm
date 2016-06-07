@@ -162,6 +162,7 @@ public:
 	bool hasFeature(MetaEngineFeature f) const;
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	SaveStateList listSaves(const char *target) const;
+	virtual bool simpleSaveNames() const;
 	virtual int getMaximumSaveSlot() const;
 	void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
@@ -272,6 +273,8 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
+
+bool KyraMetaEngine::simpleSaveNames() const { return true; }
 
 int KyraMetaEngine::getMaximumSaveSlot() const {
 	return 999;

@@ -187,6 +187,8 @@ public:
 		return saveList;
 	}
 
+	virtual bool simpleSaveNames() const { return false; }
+
 	virtual int getMaximumSaveSlot() const {
 		return Tucker::kLastSaveSlot;
 	}

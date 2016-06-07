@@ -78,12 +78,13 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
-	virtual GameDescriptor findGame(const char *gameid) const;
+	virtual GameDescriptor findGame(const char *gameid) const;	
 	virtual GameList detectGames(const Common::FSList &fslist) const;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual bool simpleSaveNames() const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 };
@@ -246,6 +247,8 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
+
+bool SkyMetaEngine::simpleSaveNames() const { return false; }
 
 int SkyMetaEngine::getMaximumSaveSlot() const { return MAX_SAVE_GAMES; }
 

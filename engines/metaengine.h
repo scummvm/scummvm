@@ -116,14 +116,18 @@ public:
 	}
 
 	/**
-	* Return a common pattern which all engine's save filenames should match.
+	* Return whether engine's saves could be detected with
+	* "<target>.###" pattern and "###" corresponds to slot
+	* number.
 	*
-	* @param target	name of a config manager target
-	* @return			a pattern for filenames
+	* If that's not true or engine is using some unusual way
+	* of detecting saves and slot numbers, this should return
+	* false. In that case Save/Load dialog would be unavailable
+	* during cloud saves sync.
+	*
+	* @return	true, if "<target>.###" is OK for this engine
 	*/
-	virtual Common::String getSavefilesPattern(Common::String &target) const {
-		return target + ".s##";
-	}
+	virtual bool simpleSaveNames() const { return false; }
 
 	/**
 	 * Return a list of extra GUI options for the specified target.

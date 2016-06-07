@@ -83,6 +83,7 @@ public:
 
 	int getMaximumSaveSlot() const { return 99; }
 	SaveStateList listSaves(const char *target) const;
+	virtual bool simpleSaveNames() const;
 	void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
@@ -155,6 +156,8 @@ SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
+
+bool AvalancheMetaEngine::simpleSaveNames() const { return true; }
 
 void AvalancheMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);

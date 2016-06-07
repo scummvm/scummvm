@@ -175,6 +175,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	int getMaximumSaveSlot() const { return 'O' - 'A'; }
 	SaveStateList listSaves(const char *target) const;
+	virtual bool simpleSaveNames() const;
 	void removeSaveState(const char *target, int slot) const;
 
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
@@ -288,6 +289,8 @@ SaveStateList AdlMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
+
+bool AdlMetaEngine::simpleSaveNames() const { return true; }
 
 void AdlMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.s%02d", target, slot);

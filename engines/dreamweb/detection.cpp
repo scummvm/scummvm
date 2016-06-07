@@ -86,6 +86,7 @@ public:
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual bool simpleSaveNames() const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
@@ -150,6 +151,8 @@ SaveStateList DreamWebMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
+
+bool DreamWebMetaEngine::simpleSaveNames() const { return false; }
 
 int DreamWebMetaEngine::getMaximumSaveSlot() const { return 99; }
 

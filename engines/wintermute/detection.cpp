@@ -164,6 +164,8 @@ public:
 		return saves;
 	}
 
+	virtual bool simpleSaveNames() const { return false; }
+
 	int getMaximumSaveSlot() const {
 		return 100;
 	}

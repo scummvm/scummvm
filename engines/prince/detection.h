@@ -121,6 +121,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual bool simpleSaveNames() const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	virtual void removeSaveState(const char *target, int slot) const;
 };

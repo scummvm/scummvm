@@ -326,6 +326,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual bool simpleSaveNames() const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
@@ -381,6 +382,8 @@ SaveStateList DrasculaMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
+
+bool DrasculaMetaEngine::simpleSaveNames() const { return true; }
 
 SaveStateDescriptor DrasculaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);

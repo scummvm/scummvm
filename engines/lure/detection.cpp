@@ -212,6 +212,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual bool simpleSaveNames() const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 };
@@ -265,6 +266,8 @@ SaveStateList LureMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
+
+bool LureMetaEngine::simpleSaveNames() const { return false; }
 
 int LureMetaEngine::getMaximumSaveSlot() const { return 999; }
 

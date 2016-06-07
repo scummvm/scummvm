@@ -352,6 +352,7 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const;
 	SaveStateList listSaves(const char *target) const;
+	virtual bool simpleSaveNames() const;
 	int getMaximumSaveSlot() const;
 	void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
@@ -375,6 +376,8 @@ bool GroovieMetaEngine::hasFeature(MetaEngineFeature f) const {
 SaveStateList GroovieMetaEngine::listSaves(const char *target) const {
 	return SaveLoad::listValidSaves(target);
 }
+
+bool GroovieMetaEngine::simpleSaveNames() const { return false; }
 
 int GroovieMetaEngine::getMaximumSaveSlot() const {
 	return SaveLoad::getMaximumSlot();

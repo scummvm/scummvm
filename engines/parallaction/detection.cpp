@@ -234,6 +234,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
+	virtual bool simpleSaveNames() const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 };
@@ -293,6 +294,8 @@ SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
+
+bool ParallactionMetaEngine::simpleSaveNames() const { return false; }
 
 int ParallactionMetaEngine::getMaximumSaveSlot() const { return 99; }
 

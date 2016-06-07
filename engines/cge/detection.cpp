@@ -131,7 +131,7 @@ public:
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual SaveStateList listSaves(const char *target) const;
-	virtual Common::String getSavefilesPattern(Common::String &target) const;
+	virtual bool simpleSaveNames() const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	virtual void removeSaveState(const char *target, int slot) const;
 };
@@ -240,9 +240,7 @@ SaveStateList CGEMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-Common::String CGEMetaEngine::getSavefilesPattern(Common::String &target) const {
-	return target + ".###";
-}
+bool CGEMetaEngine::simpleSaveNames() const { return true; }
 
 SaveStateDescriptor CGEMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);

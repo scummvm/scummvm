@@ -105,6 +105,8 @@ SaveStateList PrinceMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
+bool PrinceMetaEngine::simpleSaveNames() const { return true; }
+
 SaveStateDescriptor PrinceMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);

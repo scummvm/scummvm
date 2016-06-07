@@ -266,25 +266,27 @@ void SaveLoadChooserDialog::listSaves() {
 	if (!_metaEngine) return; //very strange
 	_saveList = _metaEngine->listSaves(_target.c_str());
 
-	Common::String pattern = _metaEngine->getSavefilesPattern(_target);
-	Common::Array<Common::String> files = CloudMan.getSyncingFiles(); //returns empty array if not syncing
-	for (uint32 i = 0; i < files.size(); ++i) {		
-		if (!files[i].matchString(pattern, true)) continue;
+	if (_metaEngine->simpleSaveNames()) {
+		Common::String pattern = _target + ".###";
+		Common::Array<Common::String> files = CloudMan.getSyncingFiles(); //returns empty array if not syncing
+		for (uint32 i = 0; i < files.size(); ++i) {
+			if (!files[i].matchString(pattern, true)) continue;
 
-		//make up some slot number
-		int slotNum = 0;
-		for (uint32 j = (files[i].size() > 3 ? files[i].size() - 3 : 0); j < files[i].size(); ++j) { //3 last chars			
-			char c = files[i][j];
-			if (c < '0' || c > '9') continue;
-			slotNum = slotNum * 10 + (c - '0');
+			//make up some slot number
+			int slotNum = 0;
+			for (uint32 j = (files[i].size() > 3 ? files[i].size() - 3 : 0); j < files[i].size(); ++j) { //3 last chars			
+				char c = files[i][j];
+				if (c < '0' || c > '9') continue;
+				slotNum = slotNum * 10 + (c - '0');
+			}
+
+			SaveStateDescriptor slot(slotNum, files[i]);
+			slot.setLocked(true);
+			_saveList.push_back(slot);
 		}
 
-		SaveStateDescriptor slot(slotNum, files[i]);
-		slot.setLocked(true);
-		_saveList.push_back(slot);
+		Common::sort(_saveList.begin(), _saveList.end(), SaveStateDescriptorSlotComparator());
 	}
-
-	Common::sort(_saveList.begin(), _saveList.end(), SaveStateDescriptorSlotComparator());
 }
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
