@@ -1170,7 +1170,7 @@ void Interface::processStatusTextInput(Common::KeyState keystate) {
 		_statusTextInputPos--;
 		_statusTextInputString[_statusTextInputPos] = 0;
 	default:
-		if (_statusTextInputPos > STATUS_TEXT_INPUT_MAX - 1) { // -1 because of the null termination
+		if (_statusTextInputPos >= STATUS_TEXT_INPUT_MAX - 1) { // -1 because of the null termination
 			break;
 		}
 		if (Common::isAlnum(keystate.ascii) || (keystate.ascii == ' ')) {
