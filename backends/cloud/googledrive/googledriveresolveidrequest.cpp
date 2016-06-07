@@ -57,7 +57,7 @@ void GoogleDriveResolveIdRequest::start() {
 }
 
 void GoogleDriveResolveIdRequest::listNextDirectory(StorageFile fileToReturn) {
-	if (_currentDirectory == _requestedPath) {		
+	if (_currentDirectory.equalsIgnoreCase(_requestedPath)) {
 		finishFile(fileToReturn);
 		return;
 	}
@@ -89,7 +89,7 @@ void GoogleDriveResolveIdRequest::listedDirectoryCallback(Storage::FileArrayResp
 	Common::Array<StorageFile> &files = response.value;
 	bool found = false;
 	for (uint32 i = 0; i < files.size(); ++i) {
-		if (files[i].isDirectory() && files[i].name() == currentLevelName) {
+		if (files[i].isDirectory() && files[i].name().equalsIgnoreCase(currentLevelName)) {
 			if (_currentDirectory != "") _currentDirectory += "/";
 			_currentDirectory += files[i].name();
 			_currentDirectoryId = files[i].path();
@@ -104,7 +104,7 @@ void GoogleDriveResolveIdRequest::listedDirectoryCallback(Storage::FileArrayResp
 		Common::String path = _currentDirectory;
 		if (path != "") path += "/";
 		path += currentLevelName;
-		if (path == _requestedPath) finishError(Networking::ErrorResponse(this, false, true, Common::String("no such file found in its parent directory\n")+_currentDirectoryId, 404));
+		if (path.equalsIgnoreCase(_requestedPath)) finishError(Networking::ErrorResponse(this, false, true, Common::String("no such file found in its parent directory\n")+_currentDirectoryId, 404));
 		else finishError(Networking::ErrorResponse(this, false, true, "subdirectory not found", 400));
 	}
 }
