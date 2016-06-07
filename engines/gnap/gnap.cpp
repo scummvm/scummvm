@@ -525,9 +525,11 @@ void GnapEngine::updateMouseCursor() {
 	}
 	if (_isWaiting && ((_gnap->_actionStatus < 0 && _plat->_actionStatus < 0) || _sceneWaiting)) {
 		setCursor(kDisabledCursors[_verbCursor]);
+		showCursor();
 		_isWaiting = false;
 	} else if (!_isWaiting && (_gnap->_actionStatus >= 0 || _plat->_actionStatus >= 0) && !_sceneWaiting) {
 		setCursor(WAIT_CURSOR);
+		hideCursor();
 		_isWaiting = true;
 	}
 }
