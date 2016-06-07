@@ -37,8 +37,6 @@ class GoogleDriveCreateDirectoryRequest: public Networking::Request {
 	Common::String _requestedDirectoryName;
 	GoogleDriveStorage *_storage;
 	Storage::BoolCallback _boolCallback;
-	Common::String _currentDirectory;
-	Common::String _currentDirectoryId;
 	Request *_workingRequest;
 	bool _ignoreCallback;
 

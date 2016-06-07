@@ -316,7 +316,7 @@ Networking::Request *GoogleDriveStorage::createDirectory(Common::String path, Bo
 	}
 
 	if (parentPath == "") {
-		return createDirectoryWithParentId("appDataFolder", directoryName, callback, errorCallback);
+		return createDirectoryWithParentId("root", directoryName, callback, errorCallback);
 	}
 
 	return addRequest(new GoogleDriveCreateDirectoryRequest(this, parentPath, directoryName, callback, errorCallback));
@@ -379,7 +379,7 @@ Common::String GoogleDriveStorage::getAuthLink() {
 	url += "&redirect_uri=http://localhost"; //that's for copy-pasting
 	//url += "&redirect_uri=http%3A%2F%2Flocalhost"; //that's "http://localhost" for automatic opening
 	url += "&client_id="; url += KEY;	
-	url += "&scope=https://www.googleapis.com/auth/drive.appfolder"; //for copy-pasting
+	url += "&scope=https://www.googleapis.com/auth/drive"; //for copy-pasting
 	return url;
 }
 

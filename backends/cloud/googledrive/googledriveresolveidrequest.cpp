@@ -50,7 +50,7 @@ void GoogleDriveResolveIdRequest::start() {
 	if (_workingRequest) _workingRequest->finish();
 	_workingRequest = nullptr;
 	_currentDirectory = "";
-	_currentDirectoryId = "appDataFolder";
+	_currentDirectoryId = "root";
 	_ignoreCallback = false;
 	
 	listNextDirectory(StorageFile(_currentDirectoryId, 0, 0, true));

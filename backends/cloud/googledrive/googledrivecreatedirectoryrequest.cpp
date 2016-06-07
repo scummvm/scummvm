@@ -45,8 +45,6 @@ void GoogleDriveCreateDirectoryRequest::start() {
 	_ignoreCallback = true;
 	if (_workingRequest) _workingRequest->finish();
 	_workingRequest = nullptr;
-	_currentDirectory = "";
-	_currentDirectoryId = "appDataFolder";
 	_ignoreCallback = false;
 	
 	//find out the parent id

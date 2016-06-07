@@ -55,7 +55,8 @@ void GoogleDriveListDirectoryByIdRequest::start() {
 }
 
 void GoogleDriveListDirectoryByIdRequest::makeRequest(Common::String pageToken) {
-	Common::String url = "https://www.googleapis.com/drive/v3/files?spaces=appDataFolder";
+	Common::String url = "https://www.googleapis.com/drive/v3/files?spaces=drive&fields=files%28id,mimeType,modifiedTime,name,size%29,nextPageToken";
+	//files(id,mimeType,modifiedTime,name,size),nextPageToken
 	if (pageToken != "") url += "&pageToken=" + pageToken;
 	url += "&q=%27" + _requestedId + "%27+in+parents";
 
@@ -64,6 +65,17 @@ void GoogleDriveListDirectoryByIdRequest::makeRequest(Common::String pageToken) 
 	Networking::CurlJsonRequest *request = new GoogleDriveTokenRefresher(_storage, callback, failureCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	_workingRequest = ConnMan.addRequest(request);
+}
+
+namespace {
+uint64 atoull(Common::String s) {
+	uint64 result = 0;
+	for (uint32 i = 0; i < s.size(); ++i) {
+		if (s[i] < '0' || s[i] > '9') break;
+		result = result * 10L + (s[i] - '0');
+	}
+	return result;
+}
 }
 
 void GoogleDriveListDirectoryByIdRequest::responseCallback(Networking::JsonResponse response) {
@@ -100,10 +112,10 @@ void GoogleDriveListDirectoryByIdRequest::responseCallback(Networking::JsonRespo
 				Common::String name = item.getVal("name")->asString();
 				bool isDirectory = (item.getVal("mimeType")->asString() == "application/vnd.google-apps.folder");
 				uint32 size = 0, timestamp = 0;
-				if (!isDirectory) {
-					size = item.getVal("size")->asIntegerNumber();
+				if (item.contains("size") && item.getVal("size")->isString())
+					size = atoull(item.getVal("size")->asString());
+				if (item.contains("modifiedTime") && item.getVal("modifiedTime")->isString())
 					timestamp = ISO8601::convertToTimestamp(item.getVal("modifiedTime")->asString());
-				}
 				_files.push_back(StorageFile(path, name, size, timestamp, isDirectory));
 			}
 		}
