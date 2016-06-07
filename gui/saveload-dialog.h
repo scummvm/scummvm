@@ -40,7 +40,7 @@ class SaveLoadCloudSyncProgressDialog : public Dialog { //protected?
 	SliderWidget *_progressBar;
 	bool _close;
 public:
-	SaveLoadCloudSyncProgressDialog();
+	SaveLoadCloudSyncProgressDialog(bool canRunInBackground);
 	virtual ~SaveLoadCloudSyncProgressDialog();
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
