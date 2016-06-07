@@ -27,6 +27,10 @@
 
 #include "common/scummsys.h"
 
+#ifdef USE_CLOUD
+#include "backends/cloud/cloudmanager.h"
+#endif
+
 #if !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 
 #include "backends/saves/default/default-saves.h"
@@ -109,6 +113,12 @@ Common::InSaveFile *DefaultSaveFileManager::openForLoading(const Common::String 
 	if (getError().getCode() != Common::kNoError)
 		return nullptr;
 
+	for (Common::StringArray::const_iterator i = _lockedFiles.begin(), end = _lockedFiles.end(); i != end; ++i) {
+		if (filename == *i) {
+			return nullptr; //file is locked, no loading available
+		}
+	}
+
 	SaveFileCache::const_iterator file = _saveFileCache.find(filename);
 	if (file == _saveFileCache.end()) {
 		return nullptr;
@@ -125,6 +135,12 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const Common::String 
 	assureCached(savePathName);
 	if (getError().getCode() != Common::kNoError)
 		return nullptr;
+
+	for (Common::StringArray::const_iterator i = _lockedFiles.begin(), end = _lockedFiles.end(); i != end; ++i) {
+		if (filename == *i) {			
+			return nullptr; //file is locked, no saving available
+		}
+	}
 
 	// Obtain node.
 	SaveFileCache::const_iterator file = _saveFileCache.find(filename);
@@ -208,6 +224,12 @@ Common::String DefaultSaveFileManager::getSavePath() const {
 void DefaultSaveFileManager::assureCached(const Common::String &savePathName) {
 	// Check that path exists and is usable.
 	checkPath(Common::FSNode(savePathName));
+
+#ifdef USE_CLOUD
+	Common::Array<Common::String> files = CloudMan.getSyncingFiles(); //returns empty array if not syncing	
+	if (!files.empty()) updateSavefilesList(files); //makes this cache invalid
+	else _lockedFiles = files;
+#endif
 
 	if (_cachedDirectory == savePathName) {
 		return;
