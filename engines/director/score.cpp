@@ -259,9 +259,12 @@ void Score::dumpScript(uint16 id, scriptType type, Common::String script) {
 		break;
 	}
 
-	sprintf(buf, "./dump/%s-%s-%d.txt", _macName.c_str(), typeName.c_str(), id);
+	sprintf(buf, "./dumps/%s-%s-%d.txt", _macName.c_str(), typeName.c_str(), id);
 
-	out.open(buf);
+	if (!out.open(buf)) {
+		warning("Can not open dump file %s", buf);
+		return;
+	}
 	out.writeString(script);
 
 	out.flush();
