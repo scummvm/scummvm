@@ -23,6 +23,8 @@
 #include "director/score.h"
 #include "common/stream.h"
 #include "common/debug.h"
+#include "common/file.h"
+#include "common/config-manager.h"
 
 #include "common/system.h"
 #include "director/dib.h"
@@ -47,16 +49,16 @@ Score::Score(Archive &movie) {
 	loadConfig(*_movieArchive->getResource(MKTAG('V','W','C','F'), 1024));
 	loadCastData(*_movieArchive->getResource(MKTAG('V','W','C','R'), 1024));
 
+	if (_movieArchive->hasResource(MKTAG('M','C','N','M'), 0)) {
+		_macName = _movieArchive->getName(MKTAG('M','C','N','M'), 0).c_str();
+	}
+
 	if (_movieArchive->hasResource(MKTAG('V','W','L','B'), 1024)) {
 		loadLabels(*_movieArchive->getResource(MKTAG('V','W','L','B'), 1024));
 	}
 
 	if (_movieArchive->hasResource(MKTAG('V','W','A','C'), 1024)) {
 		loadActions(*_movieArchive->getResource(MKTAG('V','W','A','C'), 1024));
-	}
-
-	if (_movieArchive->hasResource(MKTAG('M','C','N','M'), 0)) {
-		debug("Mac name %s", _movieArchive->getName(MKTAG('M','C','N','M'), 0).c_str());
 	}
 
 	if (_movieArchive->hasResource(MKTAG('V','W','F','I'), 1024)) {
@@ -202,6 +204,7 @@ void Score::loadLabels(Common::SeekableReadStream &stream) {
 }
 
 void Score::loadActions(Common::SeekableReadStream &stream) {
+
 	uint16 count = stream.readUint16BE() + 1;
 	uint16 offset = count * 4 + 2;
 
@@ -229,9 +232,40 @@ void Score::loadActions(Common::SeekableReadStream &stream) {
 	}
 
 	Common::HashMap<uint16, Common::String>::iterator j;
+
+	debug("%d", ConfMan.getBool("dump_scripts"));
+	if (!ConfMan.getBool("dump_scripts"))
+		return;
+
 	for (j = _actions.begin(); j != _actions.end(); ++j) {
-		debug("Id %d, Script %s", j->_key, j->_value.c_str());
+		dumpScript(j->_key, kFrameScript, j->_value);
 	}
+}
+
+void Score::dumpScript(uint16 id, scriptType type, Common::String script) {
+	Common::DumpFile out;
+	Common::String typeName;
+	char buf[256];
+
+	switch (type) {
+	case kFrameScript:
+		typeName = "frame";
+		break;
+	case kMovieScript:
+		typeName = "movie";
+		break;
+	case kSpriteScript:
+		typeName = "sprite";
+		break;
+	}
+
+	sprintf(buf, "./dump/%s-%s-%d.txt", _macName.c_str(), typeName.c_str(), id);
+
+	out.open(buf);
+	out.writeString(script);
+
+	out.flush();
+	out.close();
 }
 
 void Score::loadCastInfo(Common::SeekableReadStream &stream) {
