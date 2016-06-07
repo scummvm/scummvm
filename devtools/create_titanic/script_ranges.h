@@ -27,7 +27,7 @@
 
 struct ScriptRange {
 	uint _id;
-	uint *_array;
+	const uint *_array;
 	bool _isRandom;
 	bool _isSequential;
 };
