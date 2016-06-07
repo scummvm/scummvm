@@ -773,6 +773,7 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI0(Common::File &file) {
 
 		if (id < 0 || id > 255) {
 			warning("Amiga/Mac driver: Error: instrument ID out of bounds");
+			delete instrument;
 			return false;
 		}
 
