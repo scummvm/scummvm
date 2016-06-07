@@ -399,28 +399,28 @@ const ScriptRange DESKBOT_RANGES[146] = {
 	{ 240565, DESKBOT_RANGE20, false, false },
 
 	{ 240566, DESKBOT_RANGE21, false, false },
-	{ 240567, DESKBOT_RANGE22, false, false },
+	{ 240567, DESKBOT_RANGE22, true, false },
 	{ 240568, DESKBOT_RANGE23, false, false },
 	{ 240569, DESKBOT_RANGE24, false, false },
 	{ 240570, DESKBOT_RANGE25, false, false },
 	{ 240571, DESKBOT_RANGE26, false, false },
 	{ 240572, DESKBOT_RANGE27, false, false },
-	{ 240573, DESKBOT_RANGE28, false, false },
+	{ 240573, DESKBOT_RANGE28, true, false },
 	{ 240574, DESKBOT_RANGE29, false, false },
 	{ 240575, DESKBOT_RANGE30, false, false },
 
 	{ 240576, DESKBOT_RANGE31, false, false },
-	{ 240577, DESKBOT_RANGE32, false, false },
-	{ 240578, DESKBOT_RANGE33, false, false },
+	{ 240577, DESKBOT_RANGE32, true, false },
+	{ 240578, DESKBOT_RANGE33, true, false },
 	{ 240579, DESKBOT_RANGE34, false, false },
-	{ 240580, DESKBOT_RANGE35, false, false },
+	{ 240580, DESKBOT_RANGE35, true, false },
 	{ 240581, DESKBOT_RANGE36, false, false },
 	{ 240582, DESKBOT_RANGE37, false, false },
 	{ 240583, DESKBOT_RANGE38, false, false },
 	{ 241167, DESKBOT_RANGE39, false, false },
-	{ 241168, DESKBOT_RANGE40, false, false },
+	{ 241168, DESKBOT_RANGE40, true, false },
 
-	{ 241169, DESKBOT_RANGE41, false, false },
+	{ 241169, DESKBOT_RANGE41, true, false },
 	{ 241170, DESKBOT_RANGE42, false, false },
 	{ 241171, DESKBOT_RANGE43, false, false },
 	{ 241172, DESKBOT_RANGE44, false, false },
@@ -429,29 +429,29 @@ const ScriptRange DESKBOT_RANGES[146] = {
 	{ 241175, DESKBOT_RANGE47, false, false },
 	{ 241176, DESKBOT_RANGE48, false, false },
 	{ 241177, DESKBOT_RANGE49, false, false },
-	{ 241178, DESKBOT_RANGE50, false, false },
+	{ 241178, DESKBOT_RANGE50, true, false },
 
-	{ 241179, DESKBOT_RANGE51, false, false },
-	{ 241180, DESKBOT_RANGE52, false, false },
-	{ 241181, DESKBOT_RANGE53, false, false },
-	{ 241182, DESKBOT_RANGE54, false, false },
-	{ 241183, DESKBOT_RANGE55, false, false },
-	{ 241184, DESKBOT_RANGE56, false, false },
+	{ 241179, DESKBOT_RANGE51, true, false },
+	{ 241180, DESKBOT_RANGE52, true, false },
+	{ 241181, DESKBOT_RANGE53, true, false },
+	{ 241182, DESKBOT_RANGE54, true, false },
+	{ 241183, DESKBOT_RANGE55, true, false },
+	{ 241184, DESKBOT_RANGE56, true, false },
 	{ 241185, DESKBOT_RANGE57, false, false },
 	{ 241186, DESKBOT_RANGE58, false, false },
 	{ 241187, DESKBOT_RANGE59, false, false },
-	{ 241188, DESKBOT_RANGE60, false, false },
+	{ 241188, DESKBOT_RANGE60, true, false },
 
 	{ 241189, DESKBOT_RANGE61, false, false },
-	{ 241190, DESKBOT_RANGE62, false, false },
-	{ 241191, DESKBOT_RANGE63, false, false },
+	{ 241190, DESKBOT_RANGE62, true, false },
+	{ 241191, DESKBOT_RANGE63, true, false },
 	{ 241192, DESKBOT_RANGE64, false, false },
 	{ 241193, DESKBOT_RANGE65, false, false },
 	{ 241194, DESKBOT_RANGE66, false, false },
 	{ 241195, DESKBOT_RANGE67, false, false },
 	{ 241196, DESKBOT_RANGE68, false, false },
-	{ 241197, DESKBOT_RANGE69, false, false },
-	{ 241198, DESKBOT_RANGE70, false, false },
+	{ 241197, DESKBOT_RANGE69, true, false },
+	{ 241198, DESKBOT_RANGE70, true, false },
 
 	{ 241199, DESKBOT_RANGE71, false, false },
 	{ 241200, DESKBOT_RANGE72, false, false },
@@ -462,16 +462,16 @@ const ScriptRange DESKBOT_RANGES[146] = {
 	{ 241205, DESKBOT_RANGE77, false, false },
 	{ 241166, DESKBOT_RANGE78, false, false },
 	{ 241206, DESKBOT_RANGE79, false, false },
-	{ 241207, DESKBOT_RANGE80, false, false },
+	{ 241207, DESKBOT_RANGE80, true, false },
 
-	{ 241208, DESKBOT_RANGE81, false, false },
-	{ 241209, DESKBOT_RANGE82, false, false },
-	{ 241210, DESKBOT_RANGE83, false, false },
-	{ 241211, DESKBOT_RANGE84, false, false },
-	{ 241212, DESKBOT_RANGE85, false, false },
-	{ 241213, DESKBOT_RANGE86, false, false },
-	{ 241214, DESKBOT_RANGE87, false, false },
-	{ 241215, DESKBOT_RANGE88, false, false },
+	{ 241208, DESKBOT_RANGE81, true, false },
+	{ 241209, DESKBOT_RANGE82, true, false },
+	{ 241210, DESKBOT_RANGE83, true, false },
+	{ 241211, DESKBOT_RANGE84, true, false },
+	{ 241212, DESKBOT_RANGE85, true, false },
+	{ 241213, DESKBOT_RANGE86, true, false },
+	{ 241214, DESKBOT_RANGE87, true, false },
+	{ 241215, DESKBOT_RANGE88, true, false },
 
 	{ 241217, DESKBOT_RANGE89, false, false },
 	{ 241218, DESKBOT_RANGE89, false, false },
@@ -517,22 +517,142 @@ const ScriptRange DESKBOT_RANGES[146] = {
 	{ 241258, DESKBOT_RANGE89, false, false },
 	{ 241259, DESKBOT_RANGE89, false, false },
 
-	{ 241216, DESKBOT_RANGE90, false, false },
+	{ 241216, DESKBOT_RANGE90, true, false },
 	{ 241625, DESKBOT_RANGE91, false, false },
-	{ 241626, DESKBOT_RANGE92, false, false },
+	{ 241626, DESKBOT_RANGE92, true, false },
 	{ 241627, DESKBOT_RANGE93, false, false },
-	{ 241628, DESKBOT_RANGE94, false, false },
-	{ 241629, DESKBOT_RANGE95, false, false },
-	{ 241630, DESKBOT_RANGE96, false, false },
-	{ 241631, DESKBOT_RANGE97, false, false },
-	{ 241632, DESKBOT_RANGE98, false, false },
-	{ 241633, DESKBOT_RANGE99, false, false },
-	{ 241634, DESKBOT_RANGE100, false, false },
+	{ 241628, DESKBOT_RANGE94, true, false },
+	{ 241629, DESKBOT_RANGE95, true, false },
+	{ 241630, DESKBOT_RANGE96, true, false },
+	{ 241631, DESKBOT_RANGE97, true, false },
+	{ 241632, DESKBOT_RANGE98, true, false },
+	{ 241633, DESKBOT_RANGE99, true, false },
+	{ 241634, DESKBOT_RANGE100, true, false },
 
-	{ 241738, DESKBOT_RANGE101, false, false },
-	{ 241739, DESKBOT_RANGE102, false, false },
-	{ 241740, DESKBOT_RANGE103, false, false },
-	{ 241741, DESKBOT_RANGE104, false, false }
+	{ 241738, DESKBOT_RANGE101, true, false },
+	{ 241739, DESKBOT_RANGE102, true, false },
+	{ 241740, DESKBOT_RANGE103, true, false },
+	{ 241741, DESKBOT_RANGE104, true, false }
+};
+
+const uint DOORBOT_RANGE1[] = { 220075, 220078, 220080, 220081, 220082, 220083, 220084, 0 };
+const uint DOORBOT_RANGE2[] = { 220077, 220079, 220076, 0 };
+const uint DOORBOT_RANGE3[] = {
+	220008, 220009, 220010, 220011, 220012, 220013, 220014,
+	220015, 220016, 221053, 221054, 221055, 221056, 221057,
+	221058, 221059, 221060, 221061, 0
+};
+const uint DOORBOT_RANGE4[] = {
+	221062, 221063, 221064, 221065, 221066, 221067, 221068,
+	221069, 221070, 221071, 221072, 221073, 221074, 221075,
+	221076, 221077, 221078, 221079, 221080, 221081, 221082,
+	0
+};
+const uint DOORBOT_RANGE5[] = { 220737, 220738, 220739, 220740, 0 };
+const uint DOORBOT_RANGE6[] = { 220759, 220760, 220761, 0 };
+const uint DOORBOT_RANGE7[] = { 220771, 220772, 220773, 220774, 220775, 0 };
+const uint DOORBOT_RANGE8[] = { 220792, 220793, 220794, 220795, 220796, 220797, 220798, 0 };
+const uint DOORBOT_RANGE9[] = { 220017, 220018, 220019, 220020, 220833, 0 };
+const uint DOORBOT_RANGE10[] = { 220035, 220036, 220038, 0 };
+
+const uint DOORBOT_RANGE11[] = { 220093, 220094, 220095, 0 };
+const uint DOORBOT_RANGE12[] = { 220109, 220117, 0 };
+const uint DOORBOT_RANGE13[] = { 220837, 220838, 220839, 0 };
+const uint DOORBOT_RANGE14[] = { 220849, 220850, 220851, 220852, 0 };
+const uint DOORBOT_RANGE15[] = { 220858, 220860, 0 };
+const uint DOORBOT_RANGE16[] = { 221043, 221045, 221046, 221047, 221048, 221049, 221050,
+	221051, 221052, 221044, 0 };
+const uint DOORBOT_RANGE17[] = { 221140, 221141, 221142, 221143, 221144, 221145, 221146,
+	221147, 0 };
+const uint DOORBOT_RANGE18[] = { 220885, 220886, 220887, 220888, 220890, 220883, 220884,
+	220889, 0 };
+const uint DOORBOT_RANGE19[] = {
+	221356, 221364, 221365, 221366, 221129, 221367, 221368,
+	221132, 221369, 221357, 221359, 221363, 220902, 0
+};
+const uint DOORBOT_RANGE20[] = { 221129, 221130, 221131, 221132, 221133, 221136, 221137,
+	221138, 0 };
+const uint DOORBOT_RANGE21[] = { 221157, 221165, 221166, 221167, 221130, 221168, 221169,
+	221132, 221170, 221171, 221158, 220910, 0 };
+const uint DOORBOT_RANGE22[] = { 221356, 221364, 221366, 221129, 221368, 221132, 221369,
+	221357, 221359, 221363, 220902, 220919, 220911, 220936,
+	220942, 220946, 220988, 0
+};
+const uint DOORBOT_RANGE23[] = {
+	221157, 221165, 221166, 221167, 221130, 221168, 221169,
+	221132, 221170, 221171, 221158, 220910, 220911, 220929,
+	220944, 220948, 220909, 0
+};
+const uint DOORBOT_RANGE24[] = { 220980, 220981, 220982, 220984, 220956, 220931, 220926,
+	220916, 220914, 220913, 220974, 220952, 0 };
+const uint DOORBOT_RANGE25[] = { 220873, 220874, 220875, 220876, 220877, 0 };
+const uint DOORBOT_RANGE26[] = { 221242, 221243, 221244, 221242, 221243, 221244, 221251, 0 };
+const uint DOORBOT_RANGE27[] = { 221245, 221246, 221247, 221248, 221249, 221250, 0 };
+const uint DOORBOT_RANGE28[] = { 221777, 221780, 0 };
+const uint DOORBOT_RANGE29[] = { 221966, 221967, 0 };
+const uint DOORBOT_RANGE30[] = { 220986, 222096, 222099, 222102, 0 };
+const uint DOORBOT_RANGE31[] = { 222193, 222197, 222198, 222199, 222200, 222201, 222202,
+	222203, 222204, 222194, 222195, 222196, 0 };
+const uint DOORBOT_RANGE32[] = { 221927, 221931, 0 };
+const uint DOORBOT_RANGE33[] = { 221945, 221948, 0 };
+const uint DOORBOT_RANGE34[] = { 222004, 222001, 0 };
+const uint DOORBOT_RANGE35[] = { 222259, 222262, 222265, 222268, 222271, 222274, 222277,
+	222280, 222283, 222254, 222257, 0 };
+const uint DOORBOT_RANGE36[] = { 221364, 221365, 221360, 221252, 220952, 220916, 220996,
+	220924, 220926, 220931, 220956, 220967, 220968, 220980,
+	220981, 220982, 220984, 220988, 0 };
+const uint DOORBOT_RANGE37[] = {
+	221166, 221252, 220984, 220952, 220996, 220916, 220926,
+	220931, 220948, 220965, 220967, 220980, 220981, 220982,
+	220983, 220988, 220903, 221019, 221355, 0 };
+const uint DOORBOT_RANGE38[] = { 222248, 220081, 220082, 220083, 220084, 0 };
+const uint DOORBOT_RANGE39[] = { 221095, 222202, 222239, 221758, 221759, 221762, 221763,
+	221766, 221767, 221768, 0 };
+
+#define DOORBOT_RANGE_COUNT 39
+const ScriptRange DOORBOT_RANGES[39] = {
+	{ 220074, DOORBOT_RANGE1, false, false },
+	{ 221381, DOORBOT_RANGE2, false, false },
+	{ 220000, DOORBOT_RANGE3, true, false },
+	{ 221380, DOORBOT_RANGE4, true, false },
+	{ 220736, DOORBOT_RANGE5, false, false },
+	{ 220759, DOORBOT_RANGE6, false, false },
+	{ 220771, DOORBOT_RANGE7, false, false },
+	{ 220792, DOORBOT_RANGE8, false, false },
+	{ 220017, DOORBOT_RANGE9, false, false },
+	{ 220037, DOORBOT_RANGE10, false, false },
+
+	{ 220093, DOORBOT_RANGE11, false, false },
+	{ 220109, DOORBOT_RANGE12, false, false },
+	{ 220837, DOORBOT_RANGE13, false, false },
+	{ 220849, DOORBOT_RANGE14, false, false },
+	{ 220858, DOORBOT_RANGE15, false, false },
+	{ 221043, DOORBOT_RANGE16, false, false },
+	{ 221140, DOORBOT_RANGE17, false, false },
+	{ 220883, DOORBOT_RANGE18, false, false },
+	{ 221375, DOORBOT_RANGE19, true, false },
+	{ 221129, DOORBOT_RANGE20, true, false },
+
+	{ 221376, DOORBOT_RANGE21, true, false },
+	{ 221377, DOORBOT_RANGE22, true, false },
+	{ 221378, DOORBOT_RANGE23, true, false },
+	{ 221379, DOORBOT_RANGE24, true, false },
+	{ 220873, DOORBOT_RANGE25, false, false },
+	{ 221242, DOORBOT_RANGE26, false, false },
+	{ 221245, DOORBOT_RANGE27, false, false },
+	{ 221777, DOORBOT_RANGE28, false, false },
+	{ 221966, DOORBOT_RANGE29, false, false },
+	{ 220986, DOORBOT_RANGE30, false, false },
+
+	{ 222193, DOORBOT_RANGE31, false, false },
+	{ 221927, DOORBOT_RANGE32, false, false },
+	{ 221948, DOORBOT_RANGE33, false, true },
+	{ 222000, DOORBOT_RANGE34, false, false },
+	{ 222259, DOORBOT_RANGE35, false, false },
+	{ 222415, DOORBOT_RANGE36, true, false },
+	{ 222416, DOORBOT_RANGE37, true, false },
+	{ 222248, DOORBOT_RANGE38, false, false },
+	{ 221095, DOORBOT_RANGE39, true, false }
 };
 
 void writeScriptRange(const char *name, const ScriptRange *ranges, int count) {
@@ -557,4 +677,5 @@ void writeScriptRange(const char *name, const ScriptRange *ranges, int count) {
 void writeAllScriptRanges() {
 	writeScriptRange("Ranges/Barbot", BARBOT_RANGES, BARBOT_RANGE_COUNT);
 	writeScriptRange("Ranges/Deskbot", DESKBOT_RANGES, DESKBOT_RANGE_COUNT);
+	writeScriptRange("Ranges/Doorbot", DOORBOT_RANGES, DOORBOT_RANGE_COUNT);
 }
