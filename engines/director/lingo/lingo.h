@@ -29,6 +29,14 @@
 namespace Director {
 
 enum LEvent {
+	kEventPrepareMovie,
+	kEventStartMovie,
+	kEventStopMovie,
+
+	kEventNew,
+	kEventBeginSprite,
+	kEventEndSprite,
+
 	kEventNone,
 	kEventEnterFrame,
 	kEventPrepareFrame,
@@ -40,6 +48,17 @@ enum LEvent {
 	kEventResizeWindow,
 	kEventOpenWindow,
 	kEventCloseWindow,
+
+	kEventKeyUp,
+	kEventKeyDown,
+	kEventMouseUp,
+	kEventMouseDown,
+	kEventRightMouseUp,
+	kEventRightMouseDown,
+	kEventMouseEnter,
+	kEventMouseLeave,
+	kEventMouseUpOutSide,
+	kEventMouseWithin,
 
 	kEventStart
 };

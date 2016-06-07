@@ -28,6 +28,14 @@ struct EventHandlerType {
 	LEvent handler;
 	const char *name;
 } static const eventHanlerDescs[] = {
+	{ kEventPrepareMovie,		"prepareMovie" },
+	{ kEventStartMovie,			"startMovie" },
+	{ kEventStopMovie,			"stopMovie" },
+
+	{ kEventNew,				"newSprite" },
+	{ kEventBeginSprite,		"beginSprite" },
+	{ kEventEndSprite,			"endSprite" },
+
 	{ kEventEnterFrame, 		"enterFrame" },
 	{ kEventPrepareFrame, 		"prepareFrame" },
 	{ kEventExitFrame, 			"exitFrame" },
@@ -39,6 +47,18 @@ struct EventHandlerType {
 	{ kEventOpenWindow,			"openWindow" },
 	{ kEventCloseWindow,		"closeWindow" },
 	{ kEventStart,				"start" },
+
+	{ kEventKeyUp,				"keyUp" },
+	{ kEventKeyDown,			"keyDown" },
+	{ kEventMouseUp,			"mouseUp" },
+	{ kEventMouseDown,			"mouseDown" },
+	{ kEventRightMouseDown,		"rightMouseDown" },
+	{ kEventRightMouseUp,		"rightMouseUp" },
+	{ kEventMouseEnter,			"mouseEnter" },
+	{ kEventMouseLeave,			"mouseLeave" },
+	{ kEventMouseUpOutSide,		"mouseUpOutSide" },
+	{ kEventMouseWithin			"mouseWithin" },
+
 	{ kEventNone,				0 },
 };
 
