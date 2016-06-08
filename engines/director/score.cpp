@@ -229,11 +229,12 @@ void Score::loadActions(Common::SeekableReadStream &stream) {
 
 		id = nextId;
 		stringPos = nextStringPos;
+		if (stringPos == stream.size())
+			break;
 	}
 
 	Common::HashMap<uint16, Common::String>::iterator j;
 
-	debug("%d", ConfMan.getBool("dump_scripts"));
 	if (!ConfMan.getBool("dump_scripts"))
 		return;
 
