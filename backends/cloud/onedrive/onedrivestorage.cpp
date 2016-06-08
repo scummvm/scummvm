@@ -204,7 +204,7 @@ Networking::Request *OneDriveStorage::upload(Common::String path, Common::Seekab
 	return addRequest(new OneDriveUploadRequest(this, path, contents, callback, errorCallback));
 }
 
-Networking::Request *OneDriveStorage::streamFile(Common::String path, Networking::NetworkReadStreamCallback outerCallback, Networking::ErrorCallback errorCallback) {
+Networking::Request *OneDriveStorage::streamFileById(Common::String path, Networking::NetworkReadStreamCallback outerCallback, Networking::ErrorCallback errorCallback) {
 	Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot:/" + path;
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, Networking::NetworkReadStreamResponse, Networking::JsonResponse>(this, &OneDriveStorage::fileInfoCallback, outerCallback);
 	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, errorCallback, url.c_str());

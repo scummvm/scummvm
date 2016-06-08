@@ -33,7 +33,7 @@ namespace Cloud {
 class DownloadRequest: public Networking::Request {	
 	Storage::BoolCallback _boolCallback;	
 	Common::DumpFile *_localFile;
-	Common::String _remoteFileName;
+	Common::String _remoteFileId;
 	Storage *_storage;
 	Networking::NetworkReadStream *_remoteFileStream;
 	Request *_workingRequest;
@@ -44,7 +44,7 @@ class DownloadRequest: public Networking::Request {
 	void streamErrorCallback(Networking::ErrorResponse error);
 	void finishSuccess(bool success);
 public:
-	DownloadRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb, Common::String remoteFile, Common::DumpFile *dumpFile);
+	DownloadRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb, Common::String remoteFileId, Common::DumpFile *dumpFile);
 	virtual ~DownloadRequest();
 
 	virtual void handle();

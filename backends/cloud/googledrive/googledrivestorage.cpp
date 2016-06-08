@@ -263,6 +263,18 @@ Networking::Request *GoogleDriveStorage::streamFile(Common::String path, Network
 	request->addHeader("Authorization: Bearer " + _token);
 	return addRequest(request);
 	*/
+	//TODO: resolve id
+	//TODO: then call streamFileById()
+	return nullptr; //TODO
+}
+
+Networking::Request *GoogleDriveStorage::streamFileById(Common::String id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) {
+	return nullptr; //TODO
+}
+
+Networking::Request *GoogleDriveStorage::download(Common::String remotePath, Common::String localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) {
+	//TODO: resolve id
+	//TODO: then call downloadById()
 	return nullptr; //TODO
 }
 

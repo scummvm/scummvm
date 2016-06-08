@@ -117,7 +117,7 @@ Networking::Request *DropboxStorage::upload(Common::String path, Common::Seekabl
 	return addRequest(new DropboxUploadRequest(_token, path, contents, callback, errorCallback));
 }
 
-Networking::Request *DropboxStorage::streamFile(Common::String path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) {
+Networking::Request *DropboxStorage::streamFileById(Common::String path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) {
 	Common::JSONObject jsonRequestParameters;
 	jsonRequestParameters.setVal("path", new Common::JSONValue(path));
 	Common::JSONValue value(jsonRequestParameters);

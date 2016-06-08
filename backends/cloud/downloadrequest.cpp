@@ -27,8 +27,8 @@
 
 namespace Cloud {
 
-DownloadRequest::DownloadRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb, Common::String remoteFile, Common::DumpFile *dumpFile):
-	Request(nullptr, ecb), _boolCallback(callback), _localFile(dumpFile), _remoteFileName(remoteFile), _storage(storage),
+DownloadRequest::DownloadRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb, Common::String remoteFileId, Common::DumpFile *dumpFile):
+	Request(nullptr, ecb), _boolCallback(callback), _localFile(dumpFile), _remoteFileId(remoteFileId), _storage(storage),
 	_remoteFileStream(nullptr), _workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
@@ -47,8 +47,8 @@ void DownloadRequest::start() {
 	//TODO: reopen DumpFile
 	_ignoreCallback = false;
 
-	_workingRequest = _storage->streamFile(
-		_remoteFileName,
+	_workingRequest = _storage->streamFileById(
+		_remoteFileId,
 		new Common::Callback<DownloadRequest, Networking::NetworkReadStreamResponse>(this, &DownloadRequest::streamCallback),
 		new Common::Callback<DownloadRequest, Networking::ErrorResponse>(this, &DownloadRequest::streamErrorCallback)
 	);

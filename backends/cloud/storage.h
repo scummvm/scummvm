@@ -118,7 +118,8 @@ public:
 	virtual Networking::Request *upload(Common::String remotePath, Common::String localPath, UploadCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Returns pointer to Networking::NetworkReadStream. */
-	virtual Networking::Request *streamFile(Common::String path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) = 0;
+	virtual Networking::Request *streamFile(Common::String path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback);
+	virtual Networking::Request *streamFileById(Common::String id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) = 0;
 
 	/** Calls the callback when finished. */
 	virtual Networking::Request *download(Common::String remotePath, Common::String localPath, BoolCallback callback, Networking::ErrorCallback errorCallback);
