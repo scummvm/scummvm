@@ -31,24 +31,33 @@ namespace Cloud {
  * StorageFile represents a file storaged on remote cloud storage.
  * It contains basic information about a file, and might be used
  * when listing directories or syncing files.
+ *
+ * Some storages (Google Drive, for example) don't have an actual
+ * path notation to address files. Instead, they are using ids.
+ * As resolving id by path is not a fast operation, it's required
+ * to use ids if they are known, but user-friendly paths are
+ * necessary too, because these are used by Requests.
+ *
+ * If storage supports path notation, id would actually contain path.
  */
 class StorageFile {
-	Common::String _path, _name;
+	Common::String _id, _path, _name;
 	uint32 _size, _timestamp;
 	bool _isDirectory;
 
 public:
 	StorageFile(); //invalid empty file
 	StorageFile(Common::String pth, uint32 sz, uint32 ts, bool dir);
+	StorageFile(Common::String id, Common::String path, Common::String name, uint32 sz, uint32 ts, bool dir);
 
-	/** In this constructor <path> is used to storage <id> (in Google Drive, for example) */
-	StorageFile(Common::String id, Common::String name, uint32 sz, uint32 ts, bool dir);
-
+	Common::String id() const { return _id; }
 	Common::String path() const { return _path; }
 	Common::String name() const { return _name; }
 	uint32 size() const { return _size; }
 	uint32 timestamp() const { return _timestamp; }
 	bool isDirectory() const { return _isDirectory; }
+
+	void setPath(Common::String path) { _path = path; }
 };
 
 } // End of namespace Cloud

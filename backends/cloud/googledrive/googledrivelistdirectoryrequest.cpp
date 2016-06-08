@@ -46,7 +46,7 @@ void GoogleDriveListDirectoryRequest::start() {
 	_workingRequest = nullptr;
 	_files.clear();
 	_directoriesQueue.clear();
-	_currentDirectory = "";
+	_currentDirectory = StorageFile();
 	_ignoreCallback = false;
 
 	//find out that directory's id
@@ -59,7 +59,9 @@ void GoogleDriveListDirectoryRequest::idResolvedCallback(Storage::UploadResponse
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 
-	_directoriesQueue.push_back(response.value.path());
+	StorageFile directory = response.value;
+	directory.setPath(_requestedPath);
+	_directoriesQueue.push_back(directory);
 	listNextDirectory();
 }
 
@@ -80,7 +82,7 @@ void GoogleDriveListDirectoryRequest::listNextDirectory() {
 
 	Storage::FileArrayCallback callback = new Common::Callback<GoogleDriveListDirectoryRequest, Storage::FileArrayResponse>(this, &GoogleDriveListDirectoryRequest::listedDirectoryCallback);
 	Networking::ErrorCallback failureCallback = new Common::Callback<GoogleDriveListDirectoryRequest, Networking::ErrorResponse>(this, &GoogleDriveListDirectoryRequest::listedDirectoryErrorCallback);	
-	_workingRequest = _storage->listDirectoryById(_currentDirectory, callback, failureCallback);
+	_workingRequest = _storage->listDirectoryById(_currentDirectory.id(), callback, failureCallback);
 }
 
 void GoogleDriveListDirectoryRequest::listedDirectoryCallback(Storage::FileArrayResponse response) {
@@ -89,9 +91,13 @@ void GoogleDriveListDirectoryRequest::listedDirectoryCallback(Storage::FileArray
 
 	for (uint32 i = 0; i < response.value.size(); ++i) {
 		StorageFile &file = response.value[i];
+		Common::String path = _currentDirectory.path();
+		if (path.size() && path.lastChar() != '/' && path.lastChar() != '\\') path += '/';
+		path += file.name();
+		file.setPath(path);
 		_files.push_back(file);
 		if (_requestedRecursive && file.isDirectory()) {
-			_directoriesQueue.push_back(file.path());
+			_directoriesQueue.push_back(file);
 		}
 	}
 

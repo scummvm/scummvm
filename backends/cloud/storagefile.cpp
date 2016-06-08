@@ -25,6 +25,7 @@
 namespace Cloud {
 
 StorageFile::StorageFile() {
+	_id = "";
 	_path = "";
 	_name = "";
 	_size = 0;
@@ -33,6 +34,7 @@ StorageFile::StorageFile() {
 }
 
 StorageFile::StorageFile(Common::String pth, uint32 sz, uint32 ts, bool dir) {
+	_id = pth;
 	_path = pth;
 
 	_name = pth;
@@ -53,8 +55,9 @@ StorageFile::StorageFile(Common::String pth, uint32 sz, uint32 ts, bool dir) {
 	_isDirectory = dir;
 }
 
-StorageFile::StorageFile(Common::String id, Common::String name, uint32 sz, uint32 ts, bool dir) {
-	_path = id;
+StorageFile::StorageFile(Common::String id, Common::String path, Common::String name, uint32 sz, uint32 ts, bool dir) {
+	_id = id;
+	_path = path;
 	_name = name;
 	_size = sz;
 	_timestamp = ts;

@@ -108,7 +108,7 @@ void GoogleDriveListDirectoryByIdRequest::responseCallback(Networking::JsonRespo
 			Common::JSONArray items = responseObject.getVal("files")->asArray();
 			for (uint32 i = 0; i < items.size(); ++i) {
 				Common::JSONObject item = items[i]->asObject();
-				Common::String path = item.getVal("id")->asString();
+				Common::String id = item.getVal("id")->asString();
 				Common::String name = item.getVal("name")->asString();
 				bool isDirectory = (item.getVal("mimeType")->asString() == "application/vnd.google-apps.folder");
 				uint32 size = 0, timestamp = 0;
@@ -116,7 +116,9 @@ void GoogleDriveListDirectoryByIdRequest::responseCallback(Networking::JsonRespo
 					size = atoull(item.getVal("size")->asString());
 				if (item.contains("modifiedTime") && item.getVal("modifiedTime")->isString())
 					timestamp = ISO8601::convertToTimestamp(item.getVal("modifiedTime")->asString());
-				_files.push_back(StorageFile(path, name, size, timestamp, isDirectory));
+
+				//as we list directory by id, we can't determine full path for the file, so we leave it empty
+				_files.push_back(StorageFile(id, "", name, size, timestamp, isDirectory));
 			}
 		}
 

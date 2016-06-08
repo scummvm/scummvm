@@ -277,6 +277,7 @@ void GoogleDriveStorage::printFiles(FileArrayResponse response) {
 	for (uint32 i = 0; i < files.size(); ++i) {
 		debug("\t%s%s", files[i].name().c_str(), files[i].isDirectory() ? " (directory)" : "");
 		debug("\t%s", files[i].path().c_str());
+		debug("\t%s", files[i].id().c_str());
 		debug("");
 	}
 }

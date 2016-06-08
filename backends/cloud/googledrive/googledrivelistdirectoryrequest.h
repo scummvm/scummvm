@@ -39,8 +39,8 @@ class GoogleDriveListDirectoryRequest: public Networking::Request {
 	GoogleDriveStorage *_storage;
 	Storage::ListDirectoryCallback _listDirectoryCallback;
 	Common::Array<StorageFile> _files;
-	Common::Array<Common::String> _directoriesQueue;
-	Common::String _currentDirectory;
+	Common::Array<StorageFile> _directoriesQueue;
+	StorageFile _currentDirectory;
 	Request *_workingRequest;
 	bool _ignoreCallback;
 

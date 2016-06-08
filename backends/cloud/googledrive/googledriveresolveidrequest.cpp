@@ -92,7 +92,7 @@ void GoogleDriveResolveIdRequest::listedDirectoryCallback(Storage::FileArrayResp
 		if (files[i].isDirectory() && files[i].name().equalsIgnoreCase(currentLevelName)) {
 			if (_currentDirectory != "") _currentDirectory += "/";
 			_currentDirectory += files[i].name();
-			_currentDirectoryId = files[i].path();
+			_currentDirectoryId = files[i].id();
 			///debug("found it! new directory and its id: '%s', '%s'", _currentDirectory.c_str(), _currentDirectoryId.c_str());
 			listNextDirectory(files[i]);
 			found = true;
