@@ -41,16 +41,24 @@ static size_t curlReadDataCallback(char *d, size_t n, size_t l, void *p) {
 	return 0;
 }
 
-NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading):
-	NetworkReadStream(url, headersList, (byte *)postFields.c_str(), postFields.size(), uploading, false) {}
+static size_t curlHeadersCallback(char *d, size_t n, size_t l, void *p) {
+	NetworkReadStream *stream = (NetworkReadStream *)p;
+	if (stream) return stream->addResponseHeaders(d, n*l);
+	return 0;
+}
 
-NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, byte *buffer, uint32 bufferSize, bool uploading, bool post):
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading, bool usingPatch):
+	NetworkReadStream(url, headersList, (byte *)postFields.c_str(), postFields.size(), uploading, usingPatch, false) {}
+
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post):
 	_easy(0), _eos(false), _requestComplete(false), _sendingContentsBuffer(nullptr), _sendingContentsSize(0), _sendingContentsPos(0) {
 	_easy = curl_easy_init();
 	curl_easy_setopt(_easy, CURLOPT_WRITEFUNCTION, curlDataCallback);
 	curl_easy_setopt(_easy, CURLOPT_WRITEDATA, this); //so callback can call us
 	curl_easy_setopt(_easy, CURLOPT_PRIVATE, this); //so ConnectionManager can call us when request is complete
 	curl_easy_setopt(_easy, CURLOPT_HEADER, 0L);
+	curl_easy_setopt(_easy, CURLOPT_HEADERDATA, this);
+	curl_easy_setopt(_easy, CURLOPT_HEADERFUNCTION, curlHeadersCallback);
 	curl_easy_setopt(_easy, CURLOPT_URL, url);
 	curl_easy_setopt(_easy, CURLOPT_VERBOSE, 0L);
 	curl_easy_setopt(_easy, CURLOPT_FOLLOWLOCATION, 1L); //probably it's OK to have it always on
@@ -61,6 +69,8 @@ NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, b
 		curl_easy_setopt(_easy, CURLOPT_READFUNCTION, curlReadDataCallback);
 		_sendingContentsBuffer = buffer;
 		_sendingContentsSize = bufferSize;
+	} else if (usingPatch) {		
+		curl_easy_setopt(_easy, CURLOPT_CUSTOMREQUEST, "PATCH");
 	} else {
 		if (post || bufferSize != 0) {
 			curl_easy_setopt(_easy, CURLOPT_POSTFIELDSIZE, bufferSize);
@@ -101,6 +111,20 @@ long NetworkReadStream::httpResponseCode() const {
 	return responseCode;
 }
 
+Common::String NetworkReadStream::currentLocation() const {
+	Common::String result = "";
+	if (_easy) {
+		char *pointer;
+		curl_easy_getinfo(_easy, CURLINFO_EFFECTIVE_URL, &pointer);
+		result = Common::String(pointer);
+	}
+	return result;
+}
+
+Common::String NetworkReadStream::responseHeaders() const {
+	return _responseHeaders;
+}
+
 uint32 NetworkReadStream::fillWithSendingContents(char *bufferToFill, uint32 maxSize) {
 	uint32 size = _sendingContentsSize - _sendingContentsPos;
 	if (size > maxSize) size = maxSize;
@@ -108,6 +132,11 @@ uint32 NetworkReadStream::fillWithSendingContents(char *bufferToFill, uint32 max
 		bufferToFill[i] = _sendingContentsBuffer[_sendingContentsPos + i];
 	}
 	_sendingContentsPos += size;
+	return size;
+}
+
+uint32 NetworkReadStream::addResponseHeaders(char *buffer, uint32 size) {
+	_responseHeaders += Common::String(buffer, size);
 	return size;
 }
 

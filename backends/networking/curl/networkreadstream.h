@@ -38,10 +38,11 @@ class NetworkReadStream: public Common::MemoryReadWriteStream {
 	byte *_sendingContentsBuffer;
 	uint32 _sendingContentsSize;
 	uint32 _sendingContentsPos;
+	Common::String _responseHeaders;
 
 public:	
-	NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading = false);
-	NetworkReadStream(const char *url, curl_slist *headersList, byte *buffer, uint32 bufferSize, bool uploading = false, bool post = true);
+	NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading = false, bool usingPatch = false);
+	NetworkReadStream(const char *url, curl_slist *headersList, byte *buffer, uint32 bufferSize, bool uploading = false, bool usingPatch = false, bool post = true);
 	virtual ~NetworkReadStream();
 
 	/**
@@ -87,6 +88,21 @@ public:
 	long httpResponseCode() const;
 
 	/**
+	* Return current location URL from inner CURL handle.
+	* "" is returned to indicate there is no inner handle.
+	*
+	* @note This method should be called when eos() == true.
+	*/
+	Common::String currentLocation() const;
+
+	/**
+	* Return response headers.
+	*
+	* @note This method should be called when eos() == true.
+	*/
+	Common::String responseHeaders() const;
+
+	/**
 	 * Fills the passed buffer with _sendingContentsBuffer contents.
 	 * It works similarly to read(), expect it's not for reading
 	 * Stream's contents, but for sending our own data to the server.
@@ -94,6 +110,13 @@ public:
 	 * @returns how many bytes were actually read (filled in)
 	 */
 	uint32 fillWithSendingContents(char *bufferToFill, uint32 maxSize);
+
+	/**
+	* Remembers headers returned to CURL in server's response.
+	*
+	* @returns how many bytes were actually read
+	*/
+	uint32 addResponseHeaders(char *buffer, uint32 size);
 };
 
 } // End of namespace Networking

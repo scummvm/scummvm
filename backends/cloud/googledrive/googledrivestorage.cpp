@@ -37,6 +37,7 @@
 #include "googledrivelistdirectoryrequest.h"
 #include "googledrivestreamfilerequest.h"
 #include "googledrivedownloadrequest.h"
+#include "googledriveuploadrequest.h"
 
 namespace Cloud {
 namespace GoogleDrive {
@@ -230,8 +231,7 @@ Networking::Request *GoogleDriveStorage::listDirectoryById(Common::String id, Li
 }
 
 Networking::Request *GoogleDriveStorage::upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) {
-	//return addRequest(new GoogleDriveUploadRequest(this, path, contents, callback, errorCallback));
-	return nullptr; //TODO
+	return addRequest(new GoogleDriveUploadRequest(this, path, contents, callback, errorCallback));	
 }
 
 Networking::Request *GoogleDriveStorage::streamFile(Common::String path, Networking::NetworkReadStreamCallback outerCallback, Networking::ErrorCallback errorCallback) {	

@@ -45,6 +45,7 @@ protected:
 	byte *_bytesBuffer;
 	uint32 _bytesBufferSize;
 	bool _uploading; //using PUT method
+	bool _usingPatch; //using PATCH method
 
 	virtual NetworkReadStream *makeStream();
 
@@ -69,6 +70,9 @@ public:
 
 	/** Remembers to use PUT method when it would create NetworkReadStream. */
 	virtual void usePut();
+
+	/** Remembers to use PATCH method when it would create NetworkReadStream. */
+	virtual void usePatch();
 
 	/**
 	 * Starts this Request with ConnMan.

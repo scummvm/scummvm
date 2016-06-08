@@ -40,6 +40,7 @@ MODULE_OBJS += \
 	cloud/googledrive/googledrivestorage.o \
 	cloud/googledrive/googledrivestreamfilerequest.o \
 	cloud/googledrive/googledrivetokenrefresher.o \
+	cloud/googledrive/googledriveuploadrequest.o \
 	cloud/onedrive/onedrivestorage.o \
 	cloud/onedrive/onedrivecreatedirectoryrequest.o \
 	cloud/onedrive/onedrivetokenrefresher.o \

@@ -31,7 +31,8 @@
 namespace Networking {
 
 CurlRequest::CurlRequest(DataCallback cb, ErrorCallback ecb, Common::String url):
-	Request(cb, ecb), _url(url), _stream(nullptr), _headersList(nullptr), _bytesBuffer(nullptr), _bytesBufferSize(0), _uploading(false) {}
+	Request(cb, ecb), _url(url), _stream(nullptr), _headersList(nullptr), _bytesBuffer(nullptr),
+	_bytesBufferSize(0), _uploading(false), _usingPatch(false) {}
 
 CurlRequest::~CurlRequest() {
 	delete _stream;
@@ -40,10 +41,9 @@ CurlRequest::~CurlRequest() {
 
 NetworkReadStream *CurlRequest::makeStream() {
 	if (_bytesBuffer)
-		return new NetworkReadStream(_url.c_str(), _headersList, _bytesBuffer, _bytesBufferSize, _uploading, true);
-	return new NetworkReadStream(_url.c_str(), _headersList, _postFields, _uploading);
+		return new NetworkReadStream(_url.c_str(), _headersList, _bytesBuffer, _bytesBufferSize, _uploading, _usingPatch, true);
+	return new NetworkReadStream(_url.c_str(), _headersList, _postFields, _uploading, _usingPatch);
 }
-
 
 void CurlRequest::handle() {
 	if (!_stream) _stream = makeStream();	
@@ -98,6 +98,8 @@ void CurlRequest::setBuffer(byte *buffer, uint32 size) {
 }
 
 void CurlRequest::usePut() { _uploading = true; }
+
+void CurlRequest::usePatch() { _usingPatch = true; }
 
 NetworkReadStreamResponse CurlRequest::execute() {
 	if (!_stream) {
