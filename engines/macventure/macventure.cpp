@@ -24,12 +24,18 @@
 #include "common/debug-channels.h"
 #include "common/debug.h"
 #include "common/error.h"
-
 #include "engines/util.h"
 
 #include "macventure/macventure.h"
 
+// To move
+#include "common/file.h"
+
 namespace MacVenture {
+
+enum {
+	kMaxMenuTitleLength = 30
+};
 
 MacVentureEngine::MacVentureEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst) {
 	_gameDescription = gameDesc;
@@ -57,9 +63,7 @@ Common::Error MacVentureEngine::run() {
 	_debugger = new Console(this);
 
 	// Additional setup.
-	debug("MacVentureEngine::init");
-
-	_gui = new Gui();
+	debug("MacVentureEngine::init");	
 
 	// Your main even loop should be (invoked from) here.
 	debug("MacVentureEngine::go: Hello, World!");
@@ -67,6 +71,11 @@ Common::Error MacVentureEngine::run() {
 	_resourceManager = new Common::MacResManager();
 	if (!_resourceManager->open(getGameFileName()))
 		error("Could not open %s as a resource fork", getGameFileName());
+
+	if (!loadMenuData())
+		error("Could not load menu data from %s", getGameFileName());
+
+	_gui = new Gui(this);
 
 	_shouldQuit = false;
 	while (!_shouldQuit) {
@@ -93,6 +102,46 @@ void MacVentureEngine::processEvents() {
 				break;
 		}
 	}
+}
+
+bool MacVentureEngine::loadMenuData() {
+	Common::MacResIDArray resArray;
+	Common::SeekableReadStream *res;
+	Common::MacResIDArray::const_iterator iter;
+	
+	if ((resArray = _resourceManager->getResIDArray(MKTAG('M', 'E', 'N', 'U'))).size() == 0)
+		return false;
+
+	_menuData = new Graphics::MenuData[resArray.size()];
+	int i = 0;
+
+	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
+		res = _resourceManager->getResource(MKTAG('M', 'E', 'N', 'U'), *iter);
+
+		Graphics::MenuData data;
+		int menunum = -1;
+		for (int i = 0; i < 5; i++) {
+			res->readUint16BE();
+			// Skip menuID, width, height, resourceID, placeholder
+		}		
+		bool enabled = res->readUint32BE();
+		uint8 titleLength = res->readByte();
+		char* title = new char[titleLength+1];
+		res->read(title, titleLength);
+		title[titleLength] = '\0';
+
+		_menuData[i] = { menunum, title, 0, 0, enabled};
+		i++;
+	}
+
+	// Override last value (end-of-menu) with our end-of-menu
+	_menuData[resArray.size() - 1] = { 0, 0, 0, 0, false };
+
+	return true;
+}
+
+Graphics::MenuData* MacVentureEngine::getMenuData() {
+	return _menuData;
 }
 
 

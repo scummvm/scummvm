@@ -24,29 +24,35 @@
 #define MACVENTURE_GUI_H
 
 #include "graphics/macgui/macwindowmanager.h"
-
-#include "macventure/macventure.h"
+#include "graphics/macgui/macwindow.h"
+#include "graphics/macgui/macmenu.h"
 
 namespace MacVenture {
 
 using namespace Graphics::MacGUIConstants;
+class MacVentureEngine;
 
 class Gui {	
 
 public:
-	Gui(); 
+	Gui(MacVentureEngine *engine);
 	~Gui();
 
 	void draw();
 
 private: // Attributes
 
+	MacVentureEngine *_engine;
+
 	Graphics::ManagedSurface _screen;
 	Graphics::MacWindowManager _wm;
+
+	Graphics::Menu *_menu;
 
 private: // Methods
 
 	void initGUI();
+	void loadMenus();
 	void loadBorder(Graphics::MacWindow * target, Common::String filename, bool active);
 
 };
