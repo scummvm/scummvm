@@ -49,6 +49,7 @@ private: // Attributes
 	Graphics::ManagedSurface _screen;
 	Graphics::MacWindowManager _wm;
 
+	Graphics::MacWindow *_outConsoleWindow;
 	Graphics::Menu *_menu;
 
 private: // Methods

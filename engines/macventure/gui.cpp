@@ -59,9 +59,9 @@ bool Gui::processEvent(Common::Event &event) {
 void Gui::initGUI() {
 	_screen.create(kScreenWidth, kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 	_wm.setScreen(&_screen);
-	Graphics::MacWindow *w = _wm.addWindow(false, true, true);
-	w->setDimensions(Common::Rect(100, 100));
-	w->setActive(false);
+	_outConsoleWindow = _wm.addWindow(false, true, true);
+	_outConsoleWindow->setDimensions(Common::Rect(20, 20, 120, 120));
+	_outConsoleWindow->setActive(false);
 
 	_menu = _wm.addMenu();
 
@@ -70,7 +70,7 @@ void Gui::initGUI() {
 
 	_menu->calcDimensions();
 
-	loadBorder(w, "border_inac.bmp", false);
+	loadBorder(_outConsoleWindow, "border_inac.bmp", false);
 }
 
 void Gui::loadBorder(Graphics::MacWindow * target, Common::String filename, bool active) {
@@ -113,19 +113,23 @@ bool Gui::loadMenus() {
 		return false;
 
 	_menu->addMenuItem("(c)");
-	_menu->addMenuSubItem(0, "Hello", 0, 0, 'K', true);
+	_menu->addMenuSubItem(0, "Hello", 0, 0, 'K', false);
 
 	int i = 1;
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = _resourceManager->getResource(MKTAG('M', 'E', 'N', 'U'), *iter);
+		bool enabled;
+		uint16 key;
+		uint8 titleLength;
+		char* title;
 
 		Graphics::MenuData data;
 		int menunum = -1; // High level menus have level -1
 		/* Skip menuID, width, height, resourceID, placeholder */
 		for (int skip = 0; skip < 5; skip++) { res->readUint16BE(); }
-		bool enabled = res->readUint32BE();
-		uint8 titleLength = res->readByte();
-		char* title = new char[titleLength + 1];
+		enabled = res->readUint32BE();
+		titleLength = res->readByte();
+		title = new char[titleLength + 1];
 		res->read(title, titleLength);
 		title[titleLength] = '\0';
 
@@ -137,9 +141,12 @@ bool Gui::loadMenus() {
 				title = new char[titleLength + 1];
 				res->read(title, titleLength);
 				title[titleLength] = '\0';
-				// Skip icon, key, mark, style
-				for (int skip = 0; skip < 4; skip++) { res->readUint16BE(); }
-				_menu->addMenuSubItem(i, title, 0);
+				// Skip icon
+				res->readUint16BE();
+				key = res->readUint16BE();
+				// Skip key, mark, style
+				for (int skip = 0; skip < 2; skip++) { res->readUint16BE(); }
+				_menu->addMenuSubItem(i, title, 0, 0, key, false);
 			}
 		}	
 
