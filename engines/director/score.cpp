@@ -475,6 +475,7 @@ Frame::Frame(const Frame &frame) {
 	_actionId = frame._actionId;
 	_transFlags = frame._transFlags;
 	_transType = frame._transType;
+	_transChunkSize = frame._transChunkSize;
 	_tempo = frame._tempo;
 	_sound1 = frame._sound1;
 	_sound2 = frame._sound2;
@@ -542,7 +543,7 @@ void Frame::readMainChannels(Common::SeekableReadStream &stream, uint16 offset, 
 			offset++;
 			break;
 		case kTransTypePosition:
-			_transType = stream.readByte();
+			_transType = static_cast<transitionType>(stream.readByte());
 			offset++;
 			break;
 		case kSound1Position:

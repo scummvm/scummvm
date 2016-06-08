@@ -103,6 +103,61 @@ enum scriptType {
     kFrameScript
 };
 
+enum transitionType {
+    kTransWipeRight = 1,
+    kTransWipeLeft,
+    kTransWipeDown,
+    kTransWipeUp,
+    kTransCenterOutHorizontal,
+    kTransEdgesInHorizontal,
+    kTransCenterOutVertical,
+    kTransEdgesInVertical,
+    kTransCenterOutSquare,
+    kTransEdgesInSquare,
+    kTransPushLeft,
+    kTransPushRight,
+    kTransPushDown,
+    kTransPushUp,
+    kTransRevealUp,
+    kTransRevealUpRight,
+    kTransRevealRight,
+    kTransRevealDown,
+    kTransRevealDownRight,
+    kTransRevealDownLeft,
+    kTransRevealLeft,
+    kTransRevealUpLeft,
+    kTransDisolvePixelsFast,
+    kTransDisolveBoxyRects,
+    kTransDisolveBoxySquares,
+    kTransDisolvePatterns,
+    kTransRandomRows,
+    kTransRandomColumns,
+    kTransCoverDown,
+    kTransCoverDownLeft,
+    kTransCoverDownRight,
+    kTransCoverLeft,
+    kTransCoverRight,
+    kTransCoverUp,
+    kTransCoverUpLeft,
+    kTransCoverUpRight,
+    kTransTypeVenitianBlind,
+    kTransTypeCheckerboard,
+    kTransTypeStripsBottomBuildLeft,
+    kTransTypeStripsBottomBuildRight,
+    kTransTypeStripsLeftBuildDown,
+    kTransTypeStripsLeftBuildUp,
+    kTransTypeStripsRightBuildDown,
+    kTransTypeStripsRightBuildUp,
+    kTransTypeStripsTopBuildLeft,
+    kTransTypeStripsTopBuildRight,
+    kTransZoomOpen,
+    kTransZoomClose,
+    kTransVerticalBinds,
+    kTransDisolveBitsTrans,
+    kTransDisolvePixels,
+    kTransDisolveBits
+};
+
 struct Cast {
     castType type;
     Common::Rect initialRect;
@@ -186,7 +241,7 @@ public:
     uint8 _actionId;
     uint8 _transFlags;
     uint8 _transChunkSize;
-    uint8 _transType;
+    transitionType _transType;
     uint8 _tempo;
 
     uint16 _sound1;
