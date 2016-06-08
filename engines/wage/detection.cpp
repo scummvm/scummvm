@@ -101,7 +101,7 @@ SaveStateList WageMetaEngine::listSaves(const char *target) const {
 	Common::StringArray filenames;
 	char saveDesc[31];
 	Common::String pattern = target;
-	pattern += ".???";
+	pattern += ".###";
 
 	filenames = saveFileMan->listSavefiles(pattern);
 
