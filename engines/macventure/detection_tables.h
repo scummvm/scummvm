@@ -27,7 +27,7 @@ namespace MacVenture {
 #define BASEGAME(n, v, f, md5, s) {n, v, AD_ENTRY1s(f, md5, s), Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEFAULT, GUIO0()}
 
 static const ADGameDescription gameDescriptions[] = {
-	BASEGAME("shadowgate", "Zojoi Rerelease", "Shadowgate.dsk", "4e03e9ef1cd5f65ce1de14d512510537", 839680), // Zojoi Rerelease
+	BASEGAME("shadowgate", "Zojoi Rerelease", "Shadowgate.bin", "054db22bdc6db3ccb89a23cd840f858e", 70528), // Zojoi Rerelease
 	AD_TABLE_END_MARKER
 };
 } // End of namespace MacVenture
