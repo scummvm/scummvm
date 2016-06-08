@@ -1116,7 +1116,10 @@ void GameSys::fatUpdateFrame() {
 	if (_newSpriteDrawItemsCount > 0) {
 		debugC(kDebugBasic, "_newSpriteDrawItemsCount: %d", _newSpriteDrawItemsCount);
 		for (int k = 0; k < _newSpriteDrawItemsCount; ++k) {
-			if (_gfxItemsCount < 50) {
+			// The original was allowing a buffer overflow.
+			// In order to fit in memory, insertIndex + 1 + (_gfxItemsCount - InsertIndex) must be
+			// smaller than the size _gfxItems array (50).
+			if (_gfxItemsCount + 1 < 50) {
 				int insertIndex;
 				seqLocateGfx(-1, _newSpriteDrawItems[k]._id, &insertIndex);
 				if (_gfxItemsCount != insertIndex)
