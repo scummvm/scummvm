@@ -26,6 +26,7 @@
 #include "backends/cloud/storage.h"
 #include "common/array.h"
 #include "common/singleton.h"
+#include <cge/console.h>
 
 namespace GUI {
 
@@ -72,7 +73,35 @@ public:
 	 *
 	 * @return	active Cloud::Storage or null, if there is no active Storage.
 	 */
-	Cloud::Storage *getCurrentStorage();
+	Cloud::Storage *getCurrentStorage() const;
+
+	/**
+	* Return active Storage's name.
+	*
+	* @return	active Storage's or _("No active storage"), if there is no active Storage.
+	*/
+	Common::String getStorageName() const;
+
+	/**
+	* Return active Storage's index.
+	*
+	* @return	active Storage's index.
+	*/
+	uint32 getStorageIndex() const;
+
+	/**
+	* Return Storages names as list.
+	*
+	* @return	a list of Storages names.
+	*/
+	Common::StringArray listStorages() const;
+
+	/**
+	* Changes the storage to the one with given index.
+	*
+	* @param	new Storage's index.
+	*/
+	bool switchStorage(uint32 index);
 
 	/**
 	 * Starts saves syncing process in currently active storage if there is any.

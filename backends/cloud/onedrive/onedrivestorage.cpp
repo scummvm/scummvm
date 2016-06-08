@@ -128,6 +128,10 @@ void OneDriveStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "refresh_token", _refreshToken, "cloud");
 }
 
+Common::String OneDriveStorage::name() const {
+	return "OneDrive";
+}
+
 void OneDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse response) {
 	Common::JSONValue *json = response.value;
 	if (!json) {

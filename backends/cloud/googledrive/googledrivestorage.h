@@ -77,6 +77,12 @@ public:
 	 */
 	virtual void saveConfig(Common::String keyPrefix);
 
+	/**
+	* Return unique storage name.
+	* @returns	some unique storage name (for example, "Dropbox (user@example.com)")
+	*/
+	virtual Common::String name() const;
+
 	/** Public Cloud API comes down there. */
 
 	/** Returns StorageFile with the resolved file's id. */

@@ -26,6 +26,7 @@
 #include "backends/cloud/googledrive/googledrivestorage.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
+#include "common/translation.h"
 
 namespace Common {
 
@@ -106,10 +107,45 @@ void CloudManager::addStorage(Storage *storage, bool makeCurrent, bool saveConfi
 	if (saveConfig) save();
 }
 
-Storage *CloudManager::getCurrentStorage() {
+Storage *CloudManager::getCurrentStorage() const {
 	if (_currentStorageIndex < _storages.size())
 		return _storages[_currentStorageIndex];
 	return nullptr;
+}
+
+Common::String CloudManager::getStorageName() const {
+	Storage *storage = getCurrentStorage();
+	if (storage) return storage->name();
+	return _("No active storage");
+}
+
+uint32 CloudManager::getStorageIndex() const {
+	return _currentStorageIndex;
+}
+
+Common::StringArray CloudManager::listStorages() const {
+	Common::StringArray result;
+	for (uint32 i = 0; i < _storages.size(); ++i) {
+		result.push_back(_storages[i]->name());
+	}
+	return result;
+}
+
+bool CloudManager::switchStorage(uint32 index) {
+	if (index < 0 || index > _storages.size()) {
+		warning("CloudManager::switchStorage: invalid index passed");
+		return false;
+	}
+
+	Storage *storage = getCurrentStorage();
+	if (storage && storage->isWorking()) {
+		warning("CloudManager::switchStorage: another storage is working now");
+		return false;
+	}
+
+	_currentStorageIndex = index;
+	save();
+	return true;
 }
 
 void CloudManager::printBool(Storage::BoolResponse response) const {

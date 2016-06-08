@@ -91,6 +91,10 @@ void DropboxStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "user_id", _uid, "cloud");
 }
 
+Common::String DropboxStorage::name() const {
+	return "Dropbox";
+}
+
 void DropboxStorage::printFiles(FileArrayResponse response) {
 	debug("files:");
 	Common::Array<StorageFile> &files = response.value;

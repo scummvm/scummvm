@@ -134,6 +134,10 @@ void GoogleDriveStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "refresh_token", _refreshToken, "cloud");
 }
 
+Common::String GoogleDriveStorage::name() const {
+	return "Google Drive";
+}
+
 namespace {
 uint64 atoull(Common::String s) {
 	uint64 result = 0;
