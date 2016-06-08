@@ -58,12 +58,8 @@ public:
 
 	virtual Common::Error run();
 
-	Graphics::MenuData *getMenuData();
-
 private:
 	void processEvents();
-
-	bool loadMenuData();
 	
 private: // Attributes
 
@@ -81,10 +77,6 @@ private: // Attributes
 private: // Methods
 
 	const char* getGameFileName() const;
-
-private: //To move
-
-	Graphics::MenuData *_menuData;
 
 };
 

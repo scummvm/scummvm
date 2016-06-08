@@ -19,46 +19,35 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 *
 */
+#include "macventure/menu.h"
+#include "macventure/macventure.h"
 
-#ifndef MACVENTURE_GUI_H
-#define MACVENTURE_GUI_H
-
+#include "common/file.h"
 #include "graphics/macgui/macwindowmanager.h"
-#include "graphics/macgui/macwindow.h"
-#include "graphics/macgui/macmenu.h"
 
 namespace MacVenture {
 
-using namespace Graphics::MacGUIConstants;
-class MacVentureEngine;
+Menu::Menu(MacVentureEngine *engine, Graphics::MacWindowManager *wm) {
 
-class Gui {	
+	_engine = engine;
+	_wm = wm;
 
-public:
-	Gui(MacVentureEngine *engine, Common::MacResManager *resman);
-	~Gui();
+	_menu = _wm->addMenu();
 
-	void draw();
-	bool processEvent(Common::Event &event);
+	if (!loadMenuData())
+		error("Could not load menu data from %s", _engine->getGameFileName());
+}
 
-private: // Attributes
+Menu::~Menu() {
+	delete _
+}
 
-	MacVentureEngine *_engine;
-	Common::MacResManager *_resourceManager;
+void Menu::draw() {
 
-	Graphics::ManagedSurface _screen;
-	Graphics::MacWindowManager _wm;
+}
 
-	Graphics::Menu *_menu;
+bool Menu::loadMenuData() {
 
-private: // Methods
-
-	void initGUI();
-	bool loadMenus();
-	void loadBorder(Graphics::MacWindow * target, Common::String filename, bool active);
-
-};
+}
 
 } // End of namespace MacVenture
-
-#endif

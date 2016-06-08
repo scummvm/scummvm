@@ -1,3 +1,25 @@
+/* ScummVM - Graphic Adventure Engine
+*
+* ScummVM is the legal property of its developers, whose names
+* are too numerous to list here. Please refer to the COPYRIGHT
+* file distributed with this source distribution.
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+*
+*/
+
 #include "common/file.h"
 #include "image/bmp.h"
 
@@ -16,8 +38,9 @@ static const Graphics::MenuData menuSubItems[] = {
 	{ 0, "How yo duin",	0, 0, false },
 };
 
-Gui::Gui(MacVentureEngine *engine) {
+Gui::Gui(MacVentureEngine *engine, Common::MacResManager *resman) {
 	_engine = engine;
+	_resourceManager = resman;
 	initGUI();
 }
 
@@ -29,6 +52,10 @@ void Gui::draw() {
 	_wm.draw();
 }
 
+bool Gui::processEvent(Common::Event &event) {
+	return _wm.processEvent(event);
+}
+
 void Gui::initGUI() {
 	_screen.create(kScreenWidth, kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 	_wm.setScreen(&_screen);
@@ -38,7 +65,8 @@ void Gui::initGUI() {
 
 	_menu = _wm.addMenu();
 
-	loadMenus();
+	if (!loadMenus())
+		error("Could not load menus");
 
 	_menu->calcDimensions();
 
@@ -76,10 +104,50 @@ void Gui::loadBorder(Graphics::MacWindow * target, Common::String filename, bool
 	}
 }
 
-void Gui::loadMenus() {
-	Graphics::MenuData data;
-	Common::Array<Graphics::MenuData>::const_iterator iter;
-	_menu->addStaticMenus(_engine->getMenuData());	
+bool Gui::loadMenus() {
+	Common::MacResIDArray resArray;
+	Common::SeekableReadStream *res;
+	Common::MacResIDArray::const_iterator iter;
+
+	if ((resArray = _resourceManager->getResIDArray(MKTAG('M', 'E', 'N', 'U'))).size() == 0)
+		return false;
+
+	_menu->addMenuItem("(c)");
+	_menu->addMenuSubItem(0, "Hello", 0, 0, 'K', true);
+
+	int i = 1;
+	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
+		res = _resourceManager->getResource(MKTAG('M', 'E', 'N', 'U'), *iter);
+
+		Graphics::MenuData data;
+		int menunum = -1; // High level menus have level -1
+		/* Skip menuID, width, height, resourceID, placeholder */
+		for (int skip = 0; skip < 5; skip++) { res->readUint16BE(); }
+		bool enabled = res->readUint32BE();
+		uint8 titleLength = res->readByte();
+		char* title = new char[titleLength + 1];
+		res->read(title, titleLength);
+		title[titleLength] = '\0';
+
+		if (titleLength > 2) {
+			_menu->addMenuItem(title);
+
+			// Read submenu items
+			while (titleLength = res->readByte()) {
+				title = new char[titleLength + 1];
+				res->read(title, titleLength);
+				title[titleLength] = '\0';
+				// Skip icon, key, mark, style
+				for (int skip = 0; skip < 4; skip++) { res->readUint16BE(); }
+				_menu->addMenuSubItem(i, title, 0);
+			}
+		}	
+
+		i++;
+	}	
+
+	return true;
+	
 }
 
 } // End of namespace MacVenture
