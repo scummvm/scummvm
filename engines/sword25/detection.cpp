@@ -91,7 +91,7 @@ const ExtraGuiOptions Sword25MetaEngine::getExtraGuiOptions(const Common::String
 
 SaveStateList Sword25MetaEngine::listSaves(const char *target) const {
 	Common::String pattern = target;
-	pattern = pattern + ".???";
+	pattern = pattern + ".###";
 	SaveStateList saveList;
 
 	Sword25::PersistenceService ps;
