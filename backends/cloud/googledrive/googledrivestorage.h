@@ -61,8 +61,6 @@ class GoogleDriveStorage: public Cloud::Storage {
 	void printBool(BoolResponse response);
 	void printFile(UploadResponse response);
 	void printInfo(StorageInfoResponse response);
-
-	void fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response);	
 public:	
 	virtual ~GoogleDriveStorage();
 

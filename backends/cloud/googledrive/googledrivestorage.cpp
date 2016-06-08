@@ -35,6 +35,8 @@
 #include "googledriveresolveidrequest.h"
 #include "googledrivecreatedirectoryrequest.h"
 #include "googledrivelistdirectoryrequest.h"
+#include "googledrivestreamfilerequest.h"
+#include "googledrivedownloadrequest.h"
 
 namespace Cloud {
 namespace GoogleDrive {
@@ -209,29 +211,6 @@ void GoogleDriveStorage::printJson(Networking::JsonResponse response) {
 	delete json;
 }
 
-void GoogleDriveStorage::fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response) {
-	if (!response.value) {
-		warning("fileInfoCallback: NULL");
-		if (outerCallback) (*outerCallback)(Networking::NetworkReadStreamResponse(response.request, 0));
-		return;
-	}
-
-	Common::JSONObject result = response.value->asObject();
-	if (result.contains("@content.downloadUrl")) {
-		const char *url = result.getVal("@content.downloadUrl")->asString().c_str();
-		if (outerCallback)
-			(*outerCallback)(Networking::NetworkReadStreamResponse(
-				response.request,
-				new Networking::NetworkReadStream(url, 0, "")
-			));
-	} else {
-		warning("downloadUrl not found in passed JSON");
-		debug("%s", response.value->stringify().c_str());
-		if (outerCallback) (*outerCallback)(Networking::NetworkReadStreamResponse(response.request, 0));
-	}
-	delete response.value;
-}
-
 Networking::Request *GoogleDriveStorage::resolveFileId(Common::String path, UploadCallback callback, Networking::ErrorCallback errorCallback) {
 	if (!errorCallback) errorCallback = getErrorPrintingCallback();
 	if (!callback) callback = new Common::Callback<GoogleDriveStorage, UploadResponse>(this, &GoogleDriveStorage::printFile);
@@ -255,27 +234,25 @@ Networking::Request *GoogleDriveStorage::upload(Common::String path, Common::See
 	return nullptr; //TODO
 }
 
-Networking::Request *GoogleDriveStorage::streamFile(Common::String path, Networking::NetworkReadStreamCallback outerCallback, Networking::ErrorCallback errorCallback) {
-	/*
-	Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot:/" + path;
-	Networking::JsonCallback innerCallback = new Common::CallbackBridge<GoogleDriveStorage, Networking::NetworkReadStreamResponse, Networking::JsonResponse>(this, &GoogleDriveStorage::fileInfoCallback, outerCallback);
-	Networking::CurlJsonRequest *request = new GoogleDriveTokenRefresher(this, innerCallback, errorCallback, url.c_str());
-	request->addHeader("Authorization: Bearer " + _token);
-	return addRequest(request);
-	*/
-	//TODO: resolve id
-	//TODO: then call streamFileById()
-	return nullptr; //TODO
+Networking::Request *GoogleDriveStorage::streamFile(Common::String path, Networking::NetworkReadStreamCallback outerCallback, Networking::ErrorCallback errorCallback) {	
+	return addRequest(new GoogleDriveStreamFileRequest(this, path, outerCallback, errorCallback));
 }
 
 Networking::Request *GoogleDriveStorage::streamFileById(Common::String id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) {
-	return nullptr; //TODO
+	if (callback) {
+		Common::String url = "https://www.googleapis.com/drive/v3/files/" + id + "?alt=media";
+		Common::String header = "Authorization: Bearer " + _token;
+		curl_slist *headersList = curl_slist_append(nullptr, header.c_str());
+		Networking::NetworkReadStream *stream = new Networking::NetworkReadStream(url.c_str(), headersList, "");
+		(*callback)(Networking::NetworkReadStreamResponse(nullptr, stream));		
+	}
+	delete callback;
+	delete errorCallback;
+	return nullptr;
 }
 
 Networking::Request *GoogleDriveStorage::download(Common::String remotePath, Common::String localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) {
-	//TODO: resolve id
-	//TODO: then call downloadById()
-	return nullptr; //TODO
+	return addRequest(new GoogleDriveDownloadRequest(this, remotePath, localPath, callback, errorCallback));
 }
 
 void GoogleDriveStorage::fileDownloaded(BoolResponse response) {
