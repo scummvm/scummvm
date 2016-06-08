@@ -267,7 +267,6 @@ void GoogleDriveUploadRequest::partUploadedCallback(Networking::JsonResponse res
 
 	Common::JSONValue *json = response.value;
 	if (json) {
-		debug("%s", json->stringify(true).c_str());		
 		if (json->isObject()) {
 			Common::JSONObject object = json->asObject();
 
