@@ -23,14 +23,11 @@
 #ifndef MACVENTURE_H
 #define MACVENTURE_H
 
+#include "engines/engine.h"
 #include "common/debug.h"
 #include "common/random.h"
+#include "common/macresman.h"
 
-#include "engines/engine.h"
-
-#include "graphics/managed_surface.h"
-#include "graphics/macgui/macwindowmanager.h"
- 
 #include "gui/debugger.h"
 
 #include "macventure/gui.h"
@@ -64,15 +61,22 @@ public:
 private:
 	void processEvents();
 	
-private:
+private: // Attributes
+
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource *_rnd;
+
+	Common::MacResManager *_resourceManager;
 	
 	Console *_debugger;
 
 	Gui *_gui;
 
 	bool _shouldQuit;
+
+private: // Methods
+
+	const char* getGameFileName() const;
 };
 
 

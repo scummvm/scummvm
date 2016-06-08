@@ -64,6 +64,10 @@ Common::Error MacVentureEngine::run() {
 	// Your main even loop should be (invoked from) here.
 	debug("MacVentureEngine::go: Hello, World!");
 
+	_resourceManager = new Common::MacResManager();
+	if (!_resourceManager->open(getGameFileName()))
+		error("Could not open %s as a resource fork", getGameFileName());
+
 	_shouldQuit = false;
 	while (!_shouldQuit) {
 		processEvents();
@@ -90,4 +94,6 @@ void MacVentureEngine::processEvents() {
 		}
 	}
 }
+
+
 } // End of namespace MacVenture

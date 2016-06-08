@@ -27,7 +27,13 @@
 
 #include "macventure/macventure.h"
 
-#include "macventure.h"
+namespace MacVenture {
+
+	const char *MacVentureEngine::getGameFileName() const {
+		return _gameDescription->filesDescriptions[0].fileName;
+	}
+
+}
 
 namespace MacVenture {
 
@@ -66,6 +72,8 @@ bool MacVentureMetaEngine::createInstance(OSystem * syst, Engine ** engine, cons
 	}
 	return game != 0;
 }
+
+
 
 
 } // End of namespace MacVenture
