@@ -80,6 +80,8 @@ public: // for debugging purposes
 
 	struct PathPoint {
 		int16 y, x;
+
+		PathPoint() : x(0), y(0) {}
 	};
 
 	typedef Common::Array<SegmapMaskRect> SegmapMaskRectArray;
