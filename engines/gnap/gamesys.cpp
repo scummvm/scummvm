@@ -1141,7 +1141,7 @@ void GameSys::fatUpdateFrame() {
 				gfxItem->_currFrame._duration = 0;
 				gfxItem->_currFrame._isScaled = false;
 				gfxItem->_currFrame._rect = _newSpriteDrawItems[k]._rect;
-				gfxItem->_currFrame._spriteId = _newSpriteDrawItems[k]._surface ? 0xCAFEBABE : -1;// TODO
+				gfxItem->_currFrame._spriteId = _newSpriteDrawItems[k]._surface ? (int32)0xCAFEBABE : -1;// TODO
 				gfxItem->_currFrame._soundId = -1;
 				_animationsDone = false;
 			}
