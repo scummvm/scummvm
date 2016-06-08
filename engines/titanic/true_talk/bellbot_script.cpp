@@ -39,6 +39,7 @@ BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
 	_array[0] = 100;
 	_array[1] = 0;
 
+	loadRanges("Ranges/Bellbot");
 	loadResponses("Responses/Bellbot", 4);
 }
 
@@ -57,11 +58,6 @@ int BellbotScript::proc15() const {
 }
 
 bool BellbotScript::proc16() const {
-	warning("TODO");
-	return 0;
-}
-
-bool BellbotScript::setupRanges() {
 	warning("TODO");
 	return 0;
 }

@@ -33,6 +33,7 @@ LiftbotScript::LiftbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
 	_state = 0;
+	loadRanges("Ranges/Liftbot");
 	loadResponses("Responses/Liftbot");
 }
 
@@ -86,11 +87,6 @@ int LiftbotScript::proc15() const {
 
 bool LiftbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 		int val, uint tagId, uint remainder) const {
-	warning("TODO");
-	return 0;
-}
-
-bool LiftbotScript::setupRanges() {
 	warning("TODO");
 	return 0;
 }

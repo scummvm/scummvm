@@ -35,6 +35,7 @@ DoorbotScript::DoorbotScript(int val1, const char *charClass, int v2,
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
 	Common::fill(&_array[0], &_array[148], 0);
 	_state = 0;
+	loadRanges("Ranges/Doorbot");
 	loadResponses("Responses/Doorbot");
 }
 
@@ -110,11 +111,6 @@ int DoorbotScript::proc15() const {
 
 bool DoorbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 		int val, uint tagId, uint remainder) const {
-	warning("TODO");
-	return 0;
-}
-
-bool DoorbotScript::setupRanges() {
 	warning("TODO");
 	return 0;
 }

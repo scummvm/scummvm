@@ -118,11 +118,6 @@ bool BarbotScript::proc16() const {
 	return false;
 }
 
-bool BarbotScript::setupRanges() {
-	warning("TODO");
-	return false;
-}
-
 bool BarbotScript::proc18() const {
 	warning("TODO");
 	return false;

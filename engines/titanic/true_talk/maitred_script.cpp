@@ -38,6 +38,7 @@ MaitreDScript::MaitreDScript(int val1, const char *charClass, int v2,
 	CTrueTalkManager::setFlags(15, 0);
 	CTrueTalkManager::setFlags(16, 0);
 
+	loadRanges("Ranges/MaitreD");
 	loadResponses("Responses/MaitreD");
 }
 
@@ -64,11 +65,6 @@ int MaitreDScript::proc10() const {
 
 bool MaitreDScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 		int val, uint tagId, uint remainder) const {
-	warning("TODO");
-	return 0;
-}
-
-bool MaitreDScript::setupRanges() {
 	warning("TODO");
 	return 0;
 }

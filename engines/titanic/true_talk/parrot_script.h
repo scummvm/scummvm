@@ -30,8 +30,7 @@ namespace Titanic {
 class ParrotScript : public TTnpcScript {
 public:
 	ParrotScript(int val1, const char *charClass, int v2,
-		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
-		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {}
+		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7);
 
 	/**
 	 * Chooses and adds a conversation response based on a specified tag Id.
@@ -40,11 +39,6 @@ public:
 
 	virtual void proc7(int v1, int v2);
 	virtual int proc10() const;
-
-	/**
-	 * Setup range sets
-	 */
-	virtual bool setupRanges();
 
 	virtual bool proc18() const;
 	virtual int proc23() const;

@@ -49,11 +49,6 @@ public:
 	virtual int proc15() const;
 	virtual bool proc16() const;
 	
-	/**
-	 * Setup range sets
-	 */
-	virtual bool setupRanges();
-	
 	virtual bool proc18() const;
 	virtual int proc21(int v1, int v2, int v3);
 	virtual int proc22(int id) const;
