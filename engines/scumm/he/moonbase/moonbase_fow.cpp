@@ -175,19 +175,6 @@ void Moonbase::setFOWInfo(int fowInfoArray, int downDim, int acrossDim, int view
 	if (!_fowImage)
 		return;
 
-	for (int y = 0; y < downDim; y++) {
-		Common::String s;
-
-		for (int x = 0; x < acrossDim; x++)
-			if (readFOWVisibilityArray(fowInfoArray, x, y))
-				s += "@";
-			else
-				s+= " ";
-
-		debug(5, "%s", s.c_str());
-	}
-	debug(5, "");
-
 	memset(_fowRenderTable, 0, sizeof(_fowRenderTable));
 
 	_fowDrawX = clipX1;
