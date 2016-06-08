@@ -62,6 +62,20 @@ struct TTscriptRange {
 		bool isSequential);
 };
 
+struct TTscriptMapping {
+	uint _id;
+	uint _values[8];
+
+	TTscriptMapping();
+};
+
+class TTscriptMappings : public Common::Array<TTscriptMapping> {
+public:
+	int _valuesPerMapping;
+
+	void load(const char *name, int valuesPerMapping);
+};
+
 class TTnpcScriptBase : public TTscriptBase {
 protected:
 	int _field54;
@@ -100,6 +114,7 @@ protected:
 	Common::Array<TTnpcScriptResponse> _responses;
 	int _valuesPerResponse;
 	Common::Array<TTscriptRange> _ranges;
+	TTscriptMappings _mappings;
 	const TTsentenceEntries *_entriesP;
 	int _entryCount;
 	int _field68;

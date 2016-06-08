@@ -40,6 +40,7 @@ DeskbotScript::DeskbotScript(int val1, const char *charClass, int v2,
 	if (_field74 == 1)
 		_field74 = 0;
 
+	_mappings.load("Mappings/Deskbot", 4);
 	loadRanges("Ranges/Deskbot");
 	loadResponses("Responses/Deskbot", 4);
 }

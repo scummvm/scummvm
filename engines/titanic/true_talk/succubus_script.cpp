@@ -29,6 +29,7 @@ SuccUBusScript::SuccUBusScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7),
 		_field2D0(0) {
+	_mappings.load("Mappings/SuccUBus", 1);
 	loadRanges("Ranges/SuccUBus");
 }
 

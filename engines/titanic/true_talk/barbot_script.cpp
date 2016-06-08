@@ -33,6 +33,7 @@ BarbotScript::BarbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
 	_state = 0;
+	_mappings.load("Mappings/Barbot", 8);
 	loadRanges("Ranges/Barbot");
 	loadResponses("Responses/Barbot");
 }

@@ -55,6 +55,30 @@ TTscriptRange::TTscriptRange(uint id, const Common::Array<uint> &values,
 
 /*------------------------------------------------------------------------*/
 
+TTscriptMapping::TTscriptMapping() : _id(0) {
+	Common::fill(&_values[0], &_values[8], 0);
+}
+
+/*------------------------------------------------------------------------*/
+
+void TTscriptMappings::load(const char *name, int valuesPerMapping) {
+	Common::SeekableReadStream *r = g_vm->_filesManager->getResource(name);
+	_valuesPerMapping = valuesPerMapping;
+
+	while (r->pos() < r->size()) {
+		resize(size() + 1);
+		TTscriptMapping &m = (*this)[size() - 1];
+
+		m._id = r->readUint32LE();
+		for (int idx = 0; idx < valuesPerMapping; ++idx)
+			m._values[idx] = r->readUint32LE();
+	}
+
+	delete r;
+}
+
+/*------------------------------------------------------------------------*/
+
 TTnpcScriptBase::TTnpcScriptBase(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTscriptBase(0, charClass, v2, charName, v3, v4, v5, v6, v7),

@@ -39,6 +39,7 @@ BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
 	_array[0] = 100;
 	_array[1] = 0;
 
+	_mappings.load("Mappings/Bellbot", 1);
 	loadRanges("Ranges/Bellbot");
 	loadResponses("Responses/Bellbot", 4);
 }

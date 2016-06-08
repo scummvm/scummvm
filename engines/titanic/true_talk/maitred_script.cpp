@@ -38,6 +38,7 @@ MaitreDScript::MaitreDScript(int val1, const char *charClass, int v2,
 	CTrueTalkManager::setFlags(15, 0);
 	CTrueTalkManager::setFlags(16, 0);
 
+	_mappings.load("Mappings/MaitreD", 1);
 	loadRanges("Ranges/MaitreD");
 	loadResponses("Responses/MaitreD");
 }
