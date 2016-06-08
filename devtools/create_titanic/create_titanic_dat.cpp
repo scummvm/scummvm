@@ -51,13 +51,15 @@
  */
 
 #define VERSION_NUMBER 1
-#define HEADER_SIZE 0x500
+#define HEADER_SIZE 0x580
 
 Common::File inputFile, outputFile;
 Common::PEResources res;
 uint headerOffset = 6;
 uint dataOffset = HEADER_SIZE;
 #define SEGMENT_OFFSET 0x401C00
+
+const int FILE_DIFF = 0x401C00;
 
 static const char *const ITEM_NAMES[46] = {
 	"LeftArmWith", "LeftArmWithout", "RightArmWith", "RightArmWithout", "BridgeRed",
@@ -311,7 +313,6 @@ void writeNumbers() {
 }
 
 void writeString(uint offset) {
-	const int FILE_DIFF = 0x401C00;
 	inputFile.seek(offset - FILE_DIFF);
 	char c;
 	do {
@@ -321,7 +322,6 @@ void writeString(uint offset) {
 }
 
 void writeResponseTree() {
-	const int FILE_DIFF = 0x401C00;
 	outputFile.seek(dataOffset);
 	
 	inputFile.seek(0x619500 - FILE_DIFF);
@@ -358,7 +358,6 @@ void writeResponseTree() {
 
 
 void writeSentenceEntries(const char *name, uint tableOffset) {
-	const int FILE_DIFF = 0x401C00;
 	outputFile.seek(dataOffset);
 
 	uint v1, v2, v4, v9, v11, v12, v13;
@@ -402,6 +401,23 @@ void writeSentenceEntries(const char *name, uint tableOffset) {
 
 	uint size = outputFile.size() - dataOffset;
 	writeEntryHeader("TEXT/TREE", dataOffset, size);
+	dataOffset += size;
+}
+
+void writeSentenceMappings(const char *name, uint offset, int numValues) {
+	inputFile.seek(offset - FILE_DIFF);
+	outputFile.seek(dataOffset);
+
+	uint id;
+	while ((id = inputFile.readLong()) != 0) {
+		outputFile.writeLong(id);
+
+		for (int ctr = 0; ctr < numValues; ++ctr)
+			outputFile.writeLong(inputFile.readLong());
+	}
+
+	uint size = outputFile.size() - dataOffset;
+	writeEntryHeader(name, dataOffset, size);
 	dataOffset += size;
 }
 
@@ -458,6 +474,14 @@ void writeData() {
 	writeSentenceEntries("Sentences/MaitreD", 0x60CFD8);
 	writeSentenceEntries("Sentences/Parrot", 0x615858);
 	writeSentenceEntries("Sentences/SuccUBus", 0x616698);
+	writeSentenceMappings("Sentences/Barbot", 0x5B28A0, 8);
+	writeSentenceMappings("Sentences/Bellbot", 0x5CD830, 1);
+	writeSentenceMappings("Sentences/Deskbot", 0x5E2BB8, 4);
+	writeSentenceMappings("Sentences/Doorbot", 0x5F7950, 4);
+	writeSentenceMappings("Sentences/Liftbot", 0x608660, 4);
+	writeSentenceMappings("Sentences/MaitreD", 0x6125C8, 1);
+	writeSentenceMappings("Sentences/Parrot", 0x615B68, 1);
+	writeSentenceMappings("Sentences/SuccUBus", 0x6189F0, 1);
 
 	writeResponseTree();
 	writeNumbers();
