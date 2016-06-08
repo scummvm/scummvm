@@ -33,6 +33,8 @@
  
 #include "gui/debugger.h"
 
+#include "macventure/gui.h"
+
 struct ADGameDescription;
 
 namespace MacVenture {
@@ -61,18 +63,14 @@ public:
 
 private:
 	void processEvents();
-
-	void initGUI();
-	void loadBorder(Graphics::MacWindow * target, Common::String filename, bool active);
-
+	
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource *_rnd;
 	
 	Console *_debugger;
 
-	Graphics::MacWindowManager *_wm;
-	Graphics::ManagedSurface _screen;
+	Gui *_gui;
 
 	bool _shouldQuit;
 };

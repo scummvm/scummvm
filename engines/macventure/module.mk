@@ -2,6 +2,7 @@ MODULE := engines/macventure
 
 MODULE_OBJS := \
 	detection.o \
+	gui.o \
 	macventure.o
 
 MODULE_DIRS += \

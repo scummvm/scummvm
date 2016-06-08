@@ -27,6 +27,8 @@
 
 #include "macventure/macventure.h"
 
+#include "macventure.h"
+
 namespace MacVenture {
 
 #include "macventure/detection_tables.h"
@@ -37,7 +39,7 @@ static const PlainGameDescriptor macventureGames[] = {
 };
 
 class MacVentureMetaEngine : public AdvancedMetaEngine {
-public:	
+public:
 	MacVentureMetaEngine() : AdvancedMetaEngine(MacVenture::gameDescriptions, sizeof(ADGameDescription), macventureGames) {
 		_guiOptions = GUIO0();
 		_md5Bytes = 5000000; // TODO: Upper limit, adjust it once all games are added
