@@ -227,7 +227,7 @@ void SavesSyncRequest::downloadNextFile() {
 	///////
 	debug("downloading %s (%d %%)", _currentDownloadingFile.name().c_str(), (int)(getProgress() * 100));
 	///////
-	_workingRequest = _storage->download(_currentDownloadingFile.path(), concatWithSavesPath(_currentDownloadingFile.name()),
+	_workingRequest = _storage->downloadById(_currentDownloadingFile.id(), concatWithSavesPath(_currentDownloadingFile.name()),
 		new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::fileDownloadedCallback),
 		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileDownloadedErrorCallback)
 	);

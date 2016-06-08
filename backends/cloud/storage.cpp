@@ -92,6 +92,11 @@ Networking::Request *Storage::download(Common::String remotePath, Common::String
 	return addRequest(new DownloadRequest(this, callback, errorCallback, remotePath, f));
 }
 
+Networking::Request *Storage::downloadById(Common::String remoteId, Common::String localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) {
+	//most Storages use paths instead of ids, so this should work
+	return download(remoteId, localPath, callback, errorCallback);
+}
+
 Networking::Request *Storage::downloadFolder(Common::String remotePath, Common::String localPath, FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
 	if (!errorCallback) errorCallback = getErrorPrintingCallback();
 	return addRequest(new FolderDownloadRequest(this, callback, errorCallback, remotePath, localPath, recursive));

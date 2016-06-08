@@ -122,6 +122,7 @@ public:
 
 	/** Calls the callback when finished. */
 	virtual Networking::Request *download(Common::String remotePath, Common::String localPath, BoolCallback callback, Networking::ErrorCallback errorCallback);
+	virtual Networking::Request *downloadById(Common::String remoteId, Common::String localPath, BoolCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Returns Common::Array<StorageFile> with list of files, which were not downloaded. */
 	virtual Networking::Request *downloadFolder(Common::String remotePath, Common::String localPath, FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
