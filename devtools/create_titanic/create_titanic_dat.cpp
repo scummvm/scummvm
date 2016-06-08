@@ -474,14 +474,14 @@ void writeData() {
 	writeSentenceEntries("Sentences/MaitreD", 0x60CFD8);
 	writeSentenceEntries("Sentences/Parrot", 0x615858);
 	writeSentenceEntries("Sentences/SuccUBus", 0x616698);
-	writeSentenceMappings("Sentences/Barbot", 0x5B28A0, 8);
-	writeSentenceMappings("Sentences/Bellbot", 0x5CD830, 1);
-	writeSentenceMappings("Sentences/Deskbot", 0x5E2BB8, 4);
-	writeSentenceMappings("Sentences/Doorbot", 0x5F7950, 4);
-	writeSentenceMappings("Sentences/Liftbot", 0x608660, 4);
-	writeSentenceMappings("Sentences/MaitreD", 0x6125C8, 1);
-	writeSentenceMappings("Sentences/Parrot", 0x615B68, 1);
-	writeSentenceMappings("Sentences/SuccUBus", 0x6189F0, 1);
+	writeSentenceMappings("Mappings/Barbot", 0x5B28A0, 8);
+	writeSentenceMappings("Mappings/Bellbot", 0x5CD830, 1);
+	writeSentenceMappings("Mappings/Deskbot", 0x5E2BB8, 4);
+	writeSentenceMappings("Mappings/Doorbot", 0x5F7950, 4);
+	writeSentenceMappings("Mappings/Liftbot", 0x608660, 4);
+	writeSentenceMappings("Mappings/MaitreD", 0x6125C8, 1);
+	writeSentenceMappings("Mappings/Parrot", 0x615B68, 1);
+	writeSentenceMappings("Mappings/SuccUBus", 0x6189F0, 1);
 
 	writeResponseTree();
 	writeNumbers();
