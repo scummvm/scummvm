@@ -51,7 +51,7 @@
  */
 
 #define VERSION_NUMBER 1
-#define HEADER_SIZE 0x420
+#define HEADER_SIZE 0x500
 
 Common::File inputFile, outputFile;
 Common::PEResources res;
@@ -310,6 +310,16 @@ void writeNumbers() {
 	dataOffset += size;
 }
 
+void writeString(uint offset) {
+	const int FILE_DIFF = 0x401C00;
+	inputFile.seek(offset - FILE_DIFF);
+	char c;
+	do {
+		c = inputFile.readByte();
+		outputFile.writeByte(c);
+	} while (c);
+}
+
 void writeResponseTree() {
 	const int FILE_DIFF = 0x401C00;
 	outputFile.seek(dataOffset);
@@ -337,13 +347,57 @@ void writeResponseTree() {
 		} else {
 			// Offset to ASCIIZ string
 			outputFile.writeByte(1);
-			inputFile.seek(offset - FILE_DIFF);
-			char c;
-			do {
-				c = inputFile.readByte();
-				outputFile.writeByte(c);
-			} while (c);
+			writeString(offset);
 		}
+	}
+
+	uint size = outputFile.size() - dataOffset;
+	writeEntryHeader("TEXT/TREE", dataOffset, size);
+	dataOffset += size;
+}
+
+
+void writeSentenceEntries(const char *name, uint tableOffset) {
+	const int FILE_DIFF = 0x401C00;
+	outputFile.seek(dataOffset);
+
+	uint v1, v2, v4, v9, v11, v12, v13;
+	uint offset3, offset5, offset6, offset7, offset8, offset10;
+
+	for (uint idx = 0; ; ++idx) {
+		inputFile.seek(tableOffset - FILE_DIFF + idx * 0x34);
+		v1 = inputFile.readLong();
+		if (!v1)
+			// Reached end of list
+			break;
+
+		// Read data fields
+		v2 = inputFile.readLong();
+		offset3 = inputFile.readLong();
+		v4 = inputFile.readLong();
+		offset5 = inputFile.readLong();
+		offset6 = inputFile.readLong();
+		offset7 = inputFile.readLong();
+		offset8 = inputFile.readLong();
+		v9 = inputFile.readLong();
+		offset10 = inputFile.readLong();
+		v11 = inputFile.readLong();
+		v12 = inputFile.readLong();
+		v13 = inputFile.readLong();
+
+		outputFile.writeLong(v1);
+		outputFile.writeLong(v2);
+		writeString(offset3);
+		outputFile.writeLong(v1);
+		writeString(offset5);
+		writeString(offset6);
+		writeString(offset7);
+		writeString(offset8);
+		outputFile.writeLong(v9);
+		writeString(offset10);
+		outputFile.writeLong(v11);
+		outputFile.writeLong(v12);
+		outputFile.writeLong(v13);
 	}
 
 	uint size = outputFile.size() - dataOffset;
@@ -395,8 +449,17 @@ void writeData() {
 	writeStringArray("TEXT/REPLACEMENTS2", 0x21C120, 1576);
 	writeStringArray("TEXT/REPLACEMENTS3", 0x21D9C8, 82);
 	writeStringArray("TEXT/PRONOUNS", 0x22F718, 15);
-	writeResponseTree();
 
+	writeSentenceEntries("Sentences/Barbot", 0x5ABE60);
+	writeSentenceEntries("Sentences/Bellbot", 0x5C2230);
+	writeSentenceEntries("Sentences/Deskbot", 0x5DCD10);
+	writeSentenceEntries("Sentences/Doorbot", 0x5EC110);
+	writeSentenceEntries("Sentences/Liftbot", 0x6026B0);
+	writeSentenceEntries("Sentences/MaitreD", 0x60CFD8);
+	writeSentenceEntries("Sentences/Parrot", 0x615858);
+	writeSentenceEntries("Sentences/SuccUBus", 0x616698);
+
+	writeResponseTree();
 	writeNumbers();
 	writeAllScriptResponses();
 	writeAllScriptRanges();
