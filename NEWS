@@ -16,7 +16,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      it was not possible to get all points in the original game.
 
  Windows port:
-   - Fixed taskbar support on Windows 10 onwards
+   - Fixed taskbar support on Windows 10 onwards.
 
 1.8.1 (2016-05-25)
  New ports:
