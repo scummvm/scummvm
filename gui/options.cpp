@@ -43,6 +43,11 @@
 #include "audio/mixer.h"
 #include "audio/fmopl.h"
 
+#ifdef USE_CLOUD
+#include "backends/cloud/cloudmanager.h"
+#include "gui/storagebrowser.h"
+#endif
+
 namespace GUI {
 
 enum {
@@ -81,6 +86,12 @@ enum {
 #ifdef USE_FLUIDSYNTH
 enum {
 	kFluidSynthSettingsCmd		= 'flst'
+};
+#endif
+
+#ifdef USE_CLOUD
+enum {
+	kChooseStorageCmd = 'chst'
 };
 #endif
 
@@ -1251,6 +1262,19 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	new ButtonWidget(tab, "GlobalOptions_Misc.UpdatesCheckManuallyButton", _("Check now"), 0, kUpdatesCheckCmd);
 #endif
 
+#ifdef USE_CLOUD
+	//
+	// 7) The cloud tab
+	//
+	if (g_system->getOverlayWidth() > 320)
+		tab->addTab(_("Cloud"));
+	else
+		tab->addTab(_c("Cloud", "lowres"));
+
+	new ButtonWidget(tab, "GlobalOptions_Cloud.StorageButton", _("Storage:"), 0, kChooseStorageCmd);
+	_curStorage = new StaticTextWidget(tab, "GlobalOptions_Cloud.CurStorage", CloudMan.getStorageName());
+#endif
+
 	// Activate the first tab
 	tab->setActiveTab(0);
 	_tabWidget = tab;
@@ -1481,7 +1505,8 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		}
 		break;
 	}
-	case kChooseThemeCmd: {
+	case kChooseThemeCmd:
+	{
 		ThemeBrowser browser;
 		if (browser.runModal() > 0) {
 			// User made his choice...
@@ -1513,6 +1538,33 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		}
 		break;
 	}
+#ifdef USE_CLOUD
+	case kChooseStorageCmd:
+	{
+		StorageBrowser storageBrowser;
+		if (storageBrowser.runModal() > 0) {
+			// User made his choice...
+			uint32 storageIndex = storageBrowser.getSelected();
+			// FIXME: Actually, any changes (including the storage change?) should
+			// only become active *after* the options dialog has closed.			
+			if (CloudMan.switchStorage(storageIndex)) {
+				_curStorage->setLabel(CloudMan.getStorageName());
+				//automatically saves in the config if switched successfully
+			} else {
+				bool anotherStorageIsWorking = CloudMan.isWorking();
+				Common::String message = _("Failed to change cloud storage!");
+				if (anotherStorageIsWorking) {
+					message += "\n";
+					message += _("Current cloud storage is working at the moment.");
+				}
+				MessageDialog dialog(message);
+				dialog.runModal();
+			}
+			draw();
+		}
+		break;
+	}
+#endif
 #ifdef GUI_ENABLE_KEYSDIALOG
 	case kChooseKeyMappingCmd:
 		_keysDialog->runModal();

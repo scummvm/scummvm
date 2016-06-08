@@ -241,6 +241,13 @@ protected:
 	StaticTextWidget *_updatesPopUpDesc;
 	PopUpWidget *_updatesPopUp;
 #endif
+
+#ifdef USE_CLOUD
+	//
+	// Misc controls
+	//
+	StaticTextWidget *_curStorage;
+#endif
 };
 
 } // End of namespace GUI
