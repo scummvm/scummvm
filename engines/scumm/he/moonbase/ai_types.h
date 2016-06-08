@@ -72,7 +72,7 @@ public:
 	AIEntity(int id);
 	~AIEntity() {
 		if (_nameString) {
-			delete _nameString;
+			delete[] _nameString;
 			_nameString = 0;
 		}
 	}
