@@ -73,8 +73,8 @@ Common::Error DirectorEngine::run() {
 	_mainArchive = new RIFFArchive();
 	_mainArchive->openFile("bookshelf_example.mmm");
 
-	Score score(*_mainArchive);
-	score.play();
+	Score score(*_mainArchive, *_lingo);
+	score.startLoop();
 
 	if (getPlatform() == Common::kPlatformWindows)
 		loadEXE();

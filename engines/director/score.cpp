@@ -29,6 +29,7 @@
 #include "common/system.h"
 #include "director/dib.h"
 #include "director/resource.h"
+#include "lingo/lingo.h"
 
 #include "graphics/palette.h"
 #include "common/events.h"
@@ -37,10 +38,14 @@
 
 namespace Director {
 
-Score::Score(Archive &movie) {
+Score::Score(Archive &movie, Lingo &lingo) {
 
 	_surface = new Graphics::ManagedSurface;
 	_movieArchive = &movie;
+	_lingo = &lingo;
+
+	_lingo->processEvent(kEventPrepareMovie, 0);
+
 	assert(_movieArchive->hasResource(MKTAG('V','W','S','C'), 1024));
 	assert(_movieArchive->hasResource(MKTAG('V','W','C','F'), 1024));
 	assert(_movieArchive->hasResource(MKTAG('V','W','C','R'), 1024));
@@ -124,7 +129,7 @@ void Score::loadConfig(Common::SeekableReadStream &stream) {
 	_castArrayEnd = stream.readUint16BE();
 	_currentFrameRate = stream.readByte();
 	stream.skip(9);
-	/*uint16 stageColor = */ stream.readUint16BE();
+	_stageColor = stream.readUint16BE();
 }
 
 void Score::readVersion(uint32 rid) {
@@ -400,27 +405,48 @@ Common::Rect Score::readRect(Common::SeekableReadStream &stream) {
 	return *rect;
 }
 
-void Score::play() {
+void Score::startLoop() {
 	initGraphics(_movieRect.width(), _movieRect.height(), true);
 	_surface->create(_movieRect.width(), _movieRect.height());
 	_currentFrame = 0;
 	_stopPlay = false;
 	_nextFrameTime = 0;
+
+	_lingo->processEvent(kEventStartMovie, 0);
+
 	while (!_stopPlay && _currentFrame < _frames.size() - 2) {
-		display();
+		update();
 		processEvents();
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
 }
 
-void Score::display() {
+void Score::update() {
 	if (g_system->getMillis() < _nextFrameTime)
 		return;
 
-	_frames[_currentFrame]->display(*_movieArchive, *_surface, _movieRect);
+	_surface->clear(_stageColor);
+
+	//Exit from previous frame, and step to next
+	_lingo->processEvent(kEventExitFrame, _currentFrame - 1);
+	_lingo->processEvent(kEventStepFrame, _currentFrame);
+
+	//Director step: send beginSprite event to any sprites whose span begin in the upcoming frame
+	for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
+		if (_frames[_currentFrame]->_sprites[i]->_enabled)
+			_lingo->processEvent(kEventBeginSprite, i);
+	}
+
+	//Director step: send prepareFrame event to all sprites and the script channel in upcoming frame
+	_lingo->processEvent(kEventPrepareFrame, _currentFrame);
+	_frames[_currentFrame]->prepareFrame(*_movieArchive, *_surface, _movieRect);
+	//Stage is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell)
+	_lingo->processEvent(kEventEnterFrame, _currentFrame);
+
 	_currentFrame++;
 	byte tempo = _frames[_currentFrame]->_tempo;
+
 	if (tempo) {
 		if (tempo > 161) {
 			//Delay
@@ -605,6 +631,8 @@ void Frame::readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16
 		case kSpritePositionFlags:
 			sprite._flags = stream.readUint16BE();
 			sprite._ink = static_cast<inkType>(sprite._flags & 0x3f); //TODO more flags?
+			sprite._trails = sprite._flags & 0x40;
+			debug("%d", sprite._trails);
 			fieldPosition += 2;
 			break;
 		case kSpritePositionCastId:
@@ -636,15 +664,31 @@ void Frame::readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16
 	}
 }
 
-void Frame::display(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect moviRect) {
-	surface.clear();
+void Frame::prepareFrame(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect movieRect) {
+	renderSprites(_movie, surface, movieRect);
+	renderTrailSprites(_movie, surface, movieRect);
+	if (_transType != 0)
+		playTranisition();
+	if (_sound1 != 0)
+		playSoundChannel(_sound1);
+	if (_sound2 != 0)
+		playSoundChannel(_sound2);
+}
 
+void Frame::playSoundChannel(uint16 id) {
+	warning("STUB: playSound(%d)", id);
+}
+
+void Frame::playTranisition() {
+	warning("STUB: playTranisition(%d, %d, %d)", _transType, _transFlags, _transChunkSize);
+}
+
+void Frame::renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect movieRect) {
 	for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
+		//TODO if trails == 0 -> render as trail sprite
 		if (_sprites[i]->_enabled) {
 			DIBDecoder img;
-			//TODO check cast type
 			uint32 imgId = 1024 + _sprites[i]->_castId;
-			//TODO looks like bad file?
 			if (!_movie.hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
 				continue;
 			}
@@ -669,7 +713,6 @@ void Frame::display(Archive &_movie, Graphics::ManagedSurface &surface, Common::
 				height += y;
 				y = 0;
 			}
-
 			Common::Rect drawRect = Common::Rect(x, y, x + width, y + height);
 
 			switch (_sprites[i]->_ink) {
@@ -690,6 +733,13 @@ void Frame::display(Archive &_movie, Graphics::ManagedSurface &surface, Common::
 		}
 	}
 	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, surface.getBounds().width(), surface.getBounds().height());
+}
+
+void Frame::renderTrailSprites(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect movieRect) {
+	for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
+		if (_sprites[i]->_enabled && _sprites[i]->_trails != 0)
+			warning("STUB: renderTrailSprites(%d)", i);
+	}
 }
 
 void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {

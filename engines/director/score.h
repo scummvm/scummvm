@@ -29,6 +29,7 @@
 #include "director/resource.h"
 #include "graphics/managed_surface.h"
 #include "common/str.h"
+#include "lingo/lingo.h"
 
 namespace Director {
 
@@ -217,6 +218,7 @@ public:
     bool _enabled;
     byte _castId;
     inkType _ink;
+    uint16 _trails;
     Cast *_cast;
     uint16 _flags;
     Common::Point _startPoint;
@@ -230,9 +232,13 @@ public:
     ~Frame();
     Frame(const Frame &frame);
     void readChannel(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
-    void display(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect moviRect);
+    void prepareFrame(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect movieRect);
 
 private:
+    void playTranisition();
+    void playSoundChannel(uint16 id);
+    void renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect movieRect);
+    void renderTrailSprites(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect movieRect);
     void readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
     void readMainChannels(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
     void drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
@@ -256,13 +262,13 @@ public:
 
 class Score {
 public:
-    Score(Archive &movie);
+    Score(Archive &movie, Lingo &lingo);
     static Common::Rect readRect(Common::SeekableReadStream &stream);
-    void play();
+    void startLoop();
 
 private:
     void processEvents();
-    void display();
+    void update();
     void readVersion(uint32 rid);
     void loadConfig(Common::SeekableReadStream &stream);
     void loadCastData(Common::SeekableReadStream &stream);
@@ -296,8 +302,10 @@ private:
     bool _stopPlay;
     uint16 _castArrayEnd;
     Common::Rect _movieRect;
+    uint16 _stageColor;
     Archive *_movieArchive;
     Graphics::ManagedSurface *_surface;
+    Lingo *_lingo;
 };
 
 } //End of namespace Director
