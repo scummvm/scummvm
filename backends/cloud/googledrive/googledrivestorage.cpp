@@ -156,33 +156,32 @@ void GoogleDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Ne
 		return;
 	}
 
+	Common::JSONObject info = json->asObject();
+
+	Common::String uid, name, email;
+	uint64 quotaUsed = 0, quotaAllocated = 0;
+
+	if (info.contains("user") && info.getVal("user")->isObject()) {
+		//"me":true, "kind":"drive#user","photoLink": "",
+		//"displayName":"Alexander Tkachev","emailAddress":"alexander@tkachov.ru","permissionId":""
+		Common::JSONObject user = info.getVal("user")->asObject();
+		uid = user.getVal("permissionId")->asString(); //not sure it's user's id, but who cares anyway?
+		name = user.getVal("displayName")->asString();
+		email = user.getVal("emailAddress")->asString();
+	}
+
+	if (info.contains("storageQuota") && info.getVal("storageQuota")->isObject()) {
+		//"usageInDrive":"6332462","limit":"18253611008","usage":"6332462","usageInDriveTrash":"0"
+		Common::JSONObject storageQuota = info.getVal("storageQuota")->asObject();
+		Common::String usage = storageQuota.getVal("usage")->asString();
+		Common::String limit = storageQuota.getVal("limit")->asString();			
+		quotaUsed = atoull(usage);
+		quotaAllocated = atoull(limit);
+	}
+		
+	CloudMan.setStorageUsername(kStorageGoogleDriveId, email);
+
 	if (outerCallback) {
-		Common::JSONObject info = json->asObject();
-
-		Common::String uid, name, email;
-		uint64 quotaUsed = 0, quotaAllocated = 0;
-
-		if (info.contains("user") && info.getVal("user")->isObject()) {
-			//"me":true, "kind":"drive#user","photoLink": "",
-			//"displayName":"Alexander Tkachev","emailAddress":"alexander@tkachov.ru","permissionId":""
-			Common::JSONObject user = info.getVal("user")->asObject();
-			uid = user.getVal("permissionId")->asString(); //not sure it's user's id, but who cares anyway?
-			name = user.getVal("displayName")->asString();
-			email = user.getVal("emailAddress")->asString();
-		}
-
-		if (info.contains("storageQuota") && info.getVal("storageQuota")->isObject()) {
-			//"usageInDrive":"6332462","limit":"18253611008","usage":"6332462","usageInDriveTrash":"0"
-			Common::JSONObject storageQuota = info.getVal("storageQuota")->asObject();
-			Common::String usage = storageQuota.getVal("usage")->asString();
-			Common::String limit = storageQuota.getVal("limit")->asString();			
-			quotaUsed = atoull(usage);
-			quotaAllocated = atoull(limit);
-		}
-
-		CloudMan.setStorageUsedSpace(kStorageGoogleDriveId, quotaUsed); //TODO that's not ScummVM's actually
-		CloudMan.setStorageUsername(kStorageGoogleDriveId, email);
-
 		(*outerCallback)(StorageInfoResponse(nullptr, StorageInfo(uid, name, email, quotaUsed, quotaAllocated)));
 		delete outerCallback;
 	}

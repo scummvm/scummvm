@@ -37,6 +37,10 @@
 #include "gui/fluidsynth-dialog.h"
 #endif
 
+#ifdef USE_CLOUD
+#include "backends/cloud/storage.h"
+#endif
+
 namespace GUI {
 
 class CheckboxWidget;
@@ -206,6 +210,7 @@ public:
 	void open();
 	void close();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void handleTickle();
 
 	virtual void reflowLayout();
 
@@ -256,8 +261,12 @@ protected:
 	StaticTextWidget *_storageLastSyncDesc;
 	StaticTextWidget *_storageLastSync;
 	ButtonWidget	 *_storageConnectButton;
+	ButtonWidget	 *_storageRefreshButton;
+	bool _redrawCloudTab;
 
 	void setupCloudTab();
+	void storageInfoCallback(Cloud::Storage::StorageInfoResponse response);
+	void storageListDirectoryCallback(Cloud::Storage::ListDirectoryResponse response);
 #endif
 };
 

@@ -162,20 +162,19 @@ void DropboxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networ
 		return;
 	}
 
-	if (outerCallback) {		
-		//Dropbox documentation states there is no errors for this API method
-		Common::JSONObject info = json->asObject();
-		Common::String uid = Common::String::format("%d", (int)info.getVal("uid")->asIntegerNumber());
-		Common::String name = info.getVal("display_name")->asString();
-		Common::String email = info.getVal("email")->asString();
-		Common::JSONObject quota = info.getVal("quota_info")->asObject();
-		uint64 quotaNormal = quota.getVal("normal")->asIntegerNumber();
-		uint64 quotaShared = quota.getVal("shared")->asIntegerNumber();
-		uint64 quotaAllocated = quota.getVal("quota")->asIntegerNumber();
+	//Dropbox documentation states there is no errors for this API method
+	Common::JSONObject info = json->asObject();
+	Common::String uid = Common::String::format("%d", (int)info.getVal("uid")->asIntegerNumber());
+	Common::String name = info.getVal("display_name")->asString();
+	Common::String email = info.getVal("email")->asString();
+	Common::JSONObject quota = info.getVal("quota_info")->asObject();
+	uint64 quotaNormal = quota.getVal("normal")->asIntegerNumber();
+	uint64 quotaShared = quota.getVal("shared")->asIntegerNumber();
+	uint64 quotaAllocated = quota.getVal("quota")->asIntegerNumber();
+		
+	CloudMan.setStorageUsername(kStorageDropboxId, email);
 
-		CloudMan.setStorageUsedSpace(kStorageDropboxId, quotaNormal + quotaShared); //TODO that's not ScummVM's actually
-		CloudMan.setStorageUsername(kStorageDropboxId, email);
-
+	if (outerCallback) {
 		(*outerCallback)(StorageInfoResponse(nullptr, StorageInfo(uid, name, email, quotaNormal+quotaShared, quotaAllocated)));
 		delete outerCallback;
 	}

@@ -116,7 +116,7 @@ public:
 	 * a callback, which is called, when request is complete.
 	 */
 
-	/** Returns ListDirectoryStatus struct with list of files. */
+	/** Returns ListDirectoryResponse with list of files. */
 	virtual Networking::Request *listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false) = 0;
 	
 	/** Returns UploadStatus struct with info about uploaded file. */
@@ -143,7 +143,13 @@ public:
 	/** Calls the callback when finished. */
 	virtual Networking::Request *createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) = 0;
 
-	/** Returns the StorageInfo struct. */
+	/**
+	 * Return the StorageInfo struct via <callback>.
+	 * Call the <errorCallback> if failed to get information.
+	 *
+	 * @note on success Storage should also call
+	 *	     CloudMan.setStorageUsername().
+	 */
 	virtual Networking::Request *info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) = 0;
 
 	/** Returns storage's saves directory path with the trailing slash. */

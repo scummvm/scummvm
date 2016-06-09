@@ -21,6 +21,7 @@
 */
 
 #include "backends/cloud/savessyncrequest.h"
+#include "backends/cloud/cloudmanager.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
@@ -82,9 +83,11 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 
 	//determine which files to download and which files to upload
 	Common::Array<StorageFile> &remoteFiles = response.value;
+	uint64 totalSize = 0;
 	for (uint32 i = 0; i < remoteFiles.size(); ++i) {
 		StorageFile &file = remoteFiles[i];
 		if (file.isDirectory()) continue;
+		totalSize += file.size();
 		if (file.name() == TIMESTAMPS_FILENAME) continue;
 
 		Common::String name = file.name();
@@ -106,6 +109,8 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 			}
 		}
 	}
+
+	CloudMan.setStorageUsedSpace(CloudMan.getStorageIndex(), totalSize);
 
 	//upload files which are unavailable in cloud
 	for (Common::HashMap<Common::String, bool>::iterator i = localFileNotAvailableInCloud.begin(); i != localFileNotAvailableInCloud.end(); ++i) {

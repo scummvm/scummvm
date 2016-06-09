@@ -135,6 +135,7 @@ void CloudManager::replaceStorage(Storage *storage, uint32 index) {
 	_activeStorage = storage;
 	_currentStorageIndex = index;
 	save();
+	if (_activeStorage) _activeStorage->info(nullptr, nullptr); //automatically calls setStorageUsername()
 }
 
 Storage *CloudManager::getCurrentStorage() const {
@@ -207,6 +208,34 @@ void CloudManager::setStorageLastSync(uint32 index, Common::String date) {
 
 void CloudManager::printBool(Storage::BoolResponse response) const {
 	debug("bool = %s", (response.value ? "true" : "false"));
+}
+
+Networking::Request *CloudManager::listDirectory(Common::String path, Storage::ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
+	Storage *storage = getCurrentStorage();
+	if (storage) storage->listDirectory(path, callback, errorCallback, recursive);
+	else {
+		delete callback;
+		delete errorCallback;
+		//TODO: should we call errorCallback?
+	}
+	return nullptr;
+}
+
+Networking::Request *CloudManager::info(Storage::StorageInfoCallback callback, Networking::ErrorCallback errorCallback) {
+	Storage *storage = getCurrentStorage();
+	if (storage) storage->info(callback, errorCallback);
+	else {
+		delete callback;
+		delete errorCallback;
+		//TODO: should we call errorCallback?
+	}
+	return nullptr;
+}
+
+Common::String CloudManager::savesDirectoryPath() {
+	Storage *storage = getCurrentStorage();
+	if (storage) return storage->savesDirectoryPath();
+	return "";
 }
 
 SavesSyncRequest *CloudManager::syncSaves(Storage::BoolCallback callback, Networking::ErrorCallback errorCallback) {

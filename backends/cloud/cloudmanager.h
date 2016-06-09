@@ -170,6 +170,15 @@ public:
 	*/
 	void setStorageLastSync(uint32 index, Common::String date);
 
+	/** Returns ListDirectoryResponse with list of files. */
+	Networking::Request *listDirectory(Common::String path, Storage::ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
+
+	/** Return the StorageInfo struct. */
+	Networking::Request *info(Storage::StorageInfoCallback callback, Networking::ErrorCallback errorCallback);
+
+	/** Returns storage's saves directory path with the trailing slash. */
+	Common::String savesDirectoryPath();
+
 	/**
 	 * Starts saves syncing process in currently active storage if there is any.
 	 */

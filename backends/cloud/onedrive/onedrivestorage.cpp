@@ -139,28 +139,31 @@ void OneDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Netwo
 		delete outerCallback;
 		return;
 	}
+	
+	Common::JSONObject info = json->asObject();
+
+	Common::String uid, name, email;
+	uint64 quotaUsed = 0, quotaAllocated = 26843545600L; // 25 GB, because I actually don't know any way to find out the real one
+
+	if (info.contains("createdBy") && info.getVal("createdBy")->isObject()) {
+		Common::JSONObject createdBy = info.getVal("createdBy")->asObject();
+		if (createdBy.contains("user") && createdBy.getVal("user")->isObject()) {
+			Common::JSONObject user = createdBy.getVal("user")->asObject();
+			uid = user.getVal("id")->asString();
+			name = user.getVal("displayName")->asString();
+		}
+	}
+
+	if (info.contains("size") && info.getVal("size")->isIntegerNumber()) {
+		quotaUsed = info.getVal("size")->asIntegerNumber();
+	}
+
+	Common::String username = email;
+	if (username == "") username = name;
+	if (username == "") username = uid;
+	CloudMan.setStorageUsername(kStorageOneDriveId, username);
 
 	if (outerCallback) {
-		Common::JSONObject info = json->asObject();
-
-		Common::String uid, name, email;
-		uint64 quotaUsed = 0, quotaAllocated = 26843545600L; // 25 GB, because I actually don't know any way to find out the real one
-
-		if (info.contains("createdBy") && info.getVal("createdBy")->isObject()) {
-			Common::JSONObject createdBy = info.getVal("createdBy")->asObject();
-			if (createdBy.contains("user") && createdBy.getVal("user")->isObject()) {
-				Common::JSONObject user = createdBy.getVal("user")->asObject();
-				uid = user.getVal("id")->asString();
-				name = user.getVal("displayName")->asString();
-			}
-		}
-
-		if (info.contains("size") && info.getVal("size")->isIntegerNumber()) {
-			quotaUsed = info.getVal("size")->asIntegerNumber();
-		}
-
-		CloudMan.setStorageUsedSpace(kStorageOneDriveId, quotaUsed); //TODO that's not ScummVM's actually
-		CloudMan.setStorageUsername(kStorageOneDriveId, email);
 		(*outerCallback)(StorageInfoResponse(nullptr, StorageInfo(uid, name, email, quotaUsed, quotaAllocated)));
 		delete outerCallback;
 	}

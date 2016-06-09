@@ -573,6 +573,9 @@
 				<widget name = 'ConnectButton'
 						type = 'Button'
 				/>
+				<widget name = 'RefreshButton'
+						type = 'Button'
+				/>
 			</layout>
 		</layout>
 	</dialog>

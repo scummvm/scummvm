@@ -91,7 +91,8 @@ enum {
 
 #ifdef USE_CLOUD
 enum {
-	kConfigureStorageCmd = 'cfst'
+	kConfigureStorageCmd = 'cfst',
+	kRefreshStorageCmd = 'rfst'
 };
 #endif
 
@@ -1290,8 +1291,10 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	_storageLastSync = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageLastSyncLabel", "<never>");
 
 	_storageConnectButton = new ButtonWidget(tab, "GlobalOptions_Cloud.ConnectButton", _("Connect"), _("Open wizard dialog to connect your cloud storage account"), kConfigureStorageCmd);
+	_storageRefreshButton = new ButtonWidget(tab, "GlobalOptions_Cloud.RefreshButton", _("Refresh"), _("Refresh current cloud storage information (username and usage)"), kRefreshStorageCmd);
 
 	setupCloudTab();
+	_redrawCloudTab = false;
 #endif
 
 	// Activate the first tab
@@ -1587,6 +1590,14 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		draw();
 		break;
 	}
+	case kRefreshStorageCmd:
+	{
+		CloudMan.info(new Common::Callback<GlobalOptionsDialog, Cloud::Storage::StorageInfoResponse>(this, &GlobalOptionsDialog::storageInfoCallback), nullptr);
+		Common::String dir = CloudMan.savesDirectoryPath();
+		if (dir.lastChar() == '/') dir.deleteLastChar();
+		CloudMan.listDirectory(dir, new Common::Callback<GlobalOptionsDialog, Cloud::Storage::ListDirectoryResponse>(this, &GlobalOptionsDialog::storageListDirectoryCallback), nullptr);
+		break;
+	}
 #endif
 #ifdef GUI_ENABLE_KEYSDIALOG
 	case kChooseKeyMappingCmd:
@@ -1607,6 +1618,17 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	default:
 		OptionsDialog::handleCommand(sender, cmd, data);
 	}
+}
+
+void GlobalOptionsDialog::handleTickle() {
+	OptionsDialog::handleTickle();
+#ifdef USE_CLOUD
+	if (_redrawCloudTab) {
+		setupCloudTab();
+		draw();
+		_redrawCloudTab = false;
+	}
+#endif
 }
 
 void GlobalOptionsDialog::reflowLayout() {
@@ -1673,6 +1695,24 @@ void GlobalOptionsDialog::setupCloudTab() {
 		_storageLastSync->setVisible(shown);
 	}
 	if (_storageConnectButton) _storageConnectButton->setVisible(shown);
+	if (_storageRefreshButton) _storageRefreshButton->setVisible(shown && _selectedStorageIndex == CloudMan.getStorageIndex());
+}
+
+void GlobalOptionsDialog::storageInfoCallback(Cloud::Storage::StorageInfoResponse response) {
+	//we could've used response.value.email()
+	//but Storage already notified CloudMan
+	//so we just set the flag to redraw our cloud tab
+	_redrawCloudTab = true;
+}
+
+void GlobalOptionsDialog::storageListDirectoryCallback(Cloud::Storage::ListDirectoryResponse response) {
+	Common::Array<Cloud::StorageFile> &files = response.value;
+	uint64 totalSize = 0;
+	for (uint32 i = 0; i < files.size(); ++i)
+		if (!files[i].isDirectory())
+			totalSize += files[i].size();	
+	CloudMan.setStorageUsedSpace(CloudMan.getStorageIndex(), totalSize);
+	_redrawCloudTab = true;
 }
 #endif
 
