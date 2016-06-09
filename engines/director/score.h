@@ -29,9 +29,10 @@
 #include "director/resource.h"
 #include "graphics/managed_surface.h"
 #include "common/str.h"
-#include "lingo/lingo.h"
 
 namespace Director {
+
+class Lingo;
 
 #define CHANNEL_COUNT 24
 

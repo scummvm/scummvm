@@ -29,7 +29,7 @@
 #include "common/system.h"
 #include "director/dib.h"
 #include "director/resource.h"
-#include "lingo/lingo.h"
+#include "director/lingo/lingo.h"
 
 #include "graphics/palette.h"
 #include "common/events.h"
@@ -428,21 +428,23 @@ void Score::update() {
 
 	_surface->clear(_stageColor);
 
-	//Exit from previous frame, and step to next
-	_lingo->processEvent(kEventExitFrame, _currentFrame - 1);
-	_lingo->processEvent(kEventStepFrame, _currentFrame);
-
-	//Director step: send beginSprite event to any sprites whose span begin in the upcoming frame
-	for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
-		if (_frames[_currentFrame]->_sprites[i]->_enabled)
-			_lingo->processEvent(kEventBeginSprite, i);
+	if (_currentFrame > 0) {
+		//Enter and exit from previous frame (Director 4)
+		_lingo->processEvent(kEventEnterFrame, _currentFrame - 1);
+		_lingo->processEvent(kEventExitFrame, _currentFrame - 1);
+		//TODO Director 6 - another order
 	}
 
-	//Director step: send prepareFrame event to all sprites and the script channel in upcoming frame
-	_lingo->processEvent(kEventPrepareFrame, _currentFrame);
+	//TODO Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
+	//for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
+	//	if (_frames[_currentFrame]->_sprites[i]->_enabled)
+	//		_lingo->processEvent(kEventBeginSprite, i);
+	//}
+
+	//TODO Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
+	//_lingo->processEvent(kEventPrepareFrame, _currentFrame);
 	_frames[_currentFrame]->prepareFrame(*_movieArchive, *_surface, _movieRect);
 	//Stage is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell)
-	_lingo->processEvent(kEventEnterFrame, _currentFrame);
 
 	_currentFrame++;
 	byte tempo = _frames[_currentFrame]->_tempo;
@@ -451,6 +453,7 @@ void Score::update() {
 		if (tempo > 161) {
 			//Delay
 			_nextFrameTime = g_system->getMillis() + (256 - tempo) * 1000;
+			return;
 		} else if (tempo <= 60) {
 			//FPS
 			_nextFrameTime = g_system->getMillis() + (float)tempo / 60 * 1000;
@@ -469,6 +472,9 @@ void Score::update() {
 }
 
 void Score::processEvents() {
+	if (_currentFrame > 0)
+		_lingo->processEvent(kEventIdle, _currentFrame - 1);
+
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		if (event.type == Common::EVENT_QUIT)

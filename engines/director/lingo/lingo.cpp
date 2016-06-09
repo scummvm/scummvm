@@ -38,6 +38,7 @@ struct EventHandlerType {
 
 	{ kEventEnterFrame, 		"enterFrame" },
 	{ kEventPrepareFrame, 		"prepareFrame" },
+	{ kEventIdle,				"idle" },
 	{ kEventStepFrame,			"stepFrame"},
 	{ kEventExitFrame, 			"exitFrame" },
 

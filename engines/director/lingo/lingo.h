@@ -40,6 +40,7 @@ enum LEvent {
 	kEventNone,
 	kEventEnterFrame,
 	kEventPrepareFrame,
+	kEventIdle,
 	kEventStepFrame,
 	kEventExitFrame,
 
