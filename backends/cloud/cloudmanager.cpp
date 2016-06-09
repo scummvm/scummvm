@@ -132,7 +132,7 @@ Common::StringArray CloudManager::listStorages() const {
 }
 
 bool CloudManager::switchStorage(uint32 index) {
-	if (index < 0 || index > _storages.size()) {
+	if (index >= _storages.size()) {
 		warning("CloudManager::switchStorage: invalid index passed");
 		return false;
 	}
@@ -146,6 +146,22 @@ bool CloudManager::switchStorage(uint32 index) {
 	_currentStorageIndex = index;
 	save();
 	return true;
+}
+
+Common::String CloudManager::getStorageUsername(uint32 index) {
+	if (index >= _storages.size()) return "";
+	return _storages[index]->name(); //TODO
+}
+
+uint64 CloudManager::getStorageUsedSpace(uint32 index) {
+	if (index >= _storages.size()) return 0;
+	return 0; //return _storages[index]->usedSpace(); //TODO
+}
+
+Common::String CloudManager::getStorageLastSync(uint32 index) {
+	if (index >= _storages.size()) return "";
+	if (_storages[index]->isSyncing()) return "";
+	return _storages[index]->name(); //->lastSyncDate(); //TODO
 }
 
 void CloudManager::printBool(Storage::BoolResponse response) const {

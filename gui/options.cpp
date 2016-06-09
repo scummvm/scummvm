@@ -1273,6 +1273,17 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 	new ButtonWidget(tab, "GlobalOptions_Cloud.StorageButton", _("Storage:"), 0, kChooseStorageCmd);
 	_curStorage = new StaticTextWidget(tab, "GlobalOptions_Cloud.CurStorage", CloudMan.getStorageName());
+
+	new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageUsernameDesc", _("Username:"), _("Username used by this storage"));
+	_storageUsername = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageUsernameLabel", "<none>");
+
+	new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageUsedSpaceDesc", _("Used space:"), _("Space used by ScummVM on this storage"));
+	_storageUsedSpace = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageUsedSpaceLabel", "0 bytes");
+
+	new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageLastSyncDesc", _("Last sync time:"), _("When this storage did last saves sync"));
+	_storageLastSync = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageLastSyncLabel", "<never>");
+
+	setupCloudTab();
 #endif
 
 	// Activate the first tab
@@ -1550,6 +1561,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			if (CloudMan.switchStorage(storageIndex)) {
 				_curStorage->setLabel(CloudMan.getStorageName());
 				//automatically saves in the config if switched successfully
+				setupCloudTab();
 			} else {
 				bool anotherStorageIsWorking = CloudMan.isWorking();
 				Common::String message = _("Failed to change cloud storage!");
@@ -1620,5 +1632,28 @@ void GlobalOptionsDialog::reflowLayout() {
 	_tabWidget->setActiveTab(activeTab);
 	OptionsDialog::reflowLayout();
 }
+
+#ifdef USE_CLOUD
+void GlobalOptionsDialog::setupCloudTab() {
+	uint32 index = CloudMan.getStorageIndex();
+	if (_storageUsername) {
+		Common::String username = CloudMan.getStorageUsername(index);
+		if (username == "") username = _("<none>");
+		_storageUsername->setLabel(username);
+	}
+	if (_storageUsedSpace) {
+		uint64 usedSpace = CloudMan.getStorageUsedSpace(index);
+		_storageUsedSpace->setLabel(Common::String::format(_("%llu bytes"), usedSpace));
+	}
+	if (_storageLastSync) {
+		Common::String sync = CloudMan.getStorageLastSync(index);
+		if (sync == "") {
+			if (CloudMan.isSyncing()) sync = _("<right now>");
+			else sync = _("<never>");
+		}
+		_storageLastSync->setLabel(sync);
+	}
+}
+#endif
 
 } // End of namespace GUI

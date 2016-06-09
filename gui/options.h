@@ -244,9 +244,14 @@ protected:
 
 #ifdef USE_CLOUD
 	//
-	// Misc controls
+	// Cloud controls
 	//
 	StaticTextWidget *_curStorage;
+	StaticTextWidget *_storageUsername;
+	StaticTextWidget *_storageUsedSpace;
+	StaticTextWidget *_storageLastSync;
+
+	void setupCloudTab();
 #endif
 };
 

@@ -104,6 +104,32 @@ public:
 	bool switchStorage(uint32 index);
 
 	/**
+	* Return username used by Storage.
+	*
+	* @param	Storage's index.
+	* @returns	username or "" if index is invalid (no such Storage).
+	*/
+	Common::String getStorageUsername(uint32 index);
+
+	/**
+	* Return space used by Storage.
+	*
+	* @param	Storage's index.
+	* @returns	used space in bytes or 0 if index is invalid (no such Storage).
+	*/
+	uint64 getStorageUsedSpace(uint32 index);
+
+	/**
+	* Return Storage's last sync date.
+	*
+	* @param	Storage's index.
+	* @returns	last sync date or "" if index is invalid (no such Storage).
+				It also returns "" if there never was any sync
+				or if storage is syncing right now.
+	*/
+	Common::String getStorageLastSync(uint32 index);
+
+	/**
 	 * Starts saves syncing process in currently active storage if there is any.
 	 */
 	SavesSyncRequest *syncSaves(Cloud::Storage::BoolCallback callback = nullptr, Networking::ErrorCallback errorCallback = nullptr);
