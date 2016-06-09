@@ -180,6 +180,9 @@ void GoogleDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Ne
 			quotaAllocated = atoull(limit);
 		}
 
+		CloudMan.setStorageUsedSpace(kStorageGoogleDriveId, quotaUsed); //TODO that's not ScummVM's actually
+		CloudMan.setStorageUsername(kStorageGoogleDriveId, email);
+
 		(*outerCallback)(StorageInfoResponse(nullptr, StorageInfo(uid, name, email, quotaUsed, quotaAllocated)));
 		delete outerCallback;
 	}

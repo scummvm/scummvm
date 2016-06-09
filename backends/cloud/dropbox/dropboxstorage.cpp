@@ -25,6 +25,7 @@
 #include "backends/cloud/dropbox/dropboxcreatedirectoryrequest.h"
 #include "backends/cloud/dropbox/dropboxlistdirectoryrequest.h"
 #include "backends/cloud/dropbox/dropboxuploadrequest.h"
+#include "backends/cloud/cloudmanager.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
 #include "common/config-manager.h"
@@ -171,6 +172,10 @@ void DropboxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networ
 		uint64 quotaNormal = quota.getVal("normal")->asIntegerNumber();
 		uint64 quotaShared = quota.getVal("shared")->asIntegerNumber();
 		uint64 quotaAllocated = quota.getVal("quota")->asIntegerNumber();
+
+		CloudMan.setStorageUsedSpace(kStorageDropboxId, quotaNormal + quotaShared); //TODO that's not ScummVM's actually
+		CloudMan.setStorageUsername(kStorageDropboxId, email);
+
 		(*outerCallback)(StorageInfoResponse(nullptr, StorageInfo(uid, name, email, quotaNormal+quotaShared, quotaAllocated)));
 		delete outerCallback;
 	}

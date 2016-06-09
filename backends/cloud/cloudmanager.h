@@ -144,6 +144,33 @@ public:
 	Common::String getStorageLastSync(uint32 index);
 
 	/**
+	* Set Storage's username.
+	* Automatically saves changes to the config.
+	*
+	* @param	index	Storage's index.
+	* @param	name	username to set
+	*/
+	void setStorageUsername(uint32 index, Common::String name);
+
+	/**	
+	* Set Storage's used space field.
+	* Automatically saves changes to the config.
+	*
+	* @param	index	Storage's index.
+	* @param	used	value to set
+	*/
+	void setStorageUsedSpace(uint32 index, uint64 used);
+
+	/**
+	* Set Storage's last sync date.
+	* Automatically saves changes to the config.
+	*
+	* @param	index	Storage's index.
+	* @param	date	date to set
+	*/
+	void setStorageLastSync(uint32 index, Common::String date);
+
+	/**
 	 * Starts saves syncing process in currently active storage if there is any.
 	 */
 	SavesSyncRequest *syncSaves(Cloud::Storage::BoolCallback callback = nullptr, Networking::ErrorCallback errorCallback = nullptr);

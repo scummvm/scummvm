@@ -114,6 +114,14 @@ void CloudManager::init() {
 }
 
 void CloudManager::save() {
+	for (uint32 i = 0; i < _storages.size(); ++i) {
+		if (i == kStorageNoneId) continue;
+		Common::String name = getStorageConfigName(i);
+		ConfMan.set("storage_" + name + "_username", _storages[i].username, "cloud");		
+		ConfMan.set("storage_" + name + "_lastSync", _storages[i].lastSyncDate, "cloud");
+		ConfMan.set("storage_" + name + "_usedBytes", Common::String::format("%llu", _storages[i].usedBytes), "cloud");
+	}
+
 	ConfMan.set("current_storage", Common::String::format("%d", _currentStorageIndex), "cloud");
 	if (_activeStorage)
 		_activeStorage->saveConfig("storage_" + getStorageConfigName(_currentStorageIndex) + "_");
@@ -179,13 +187,34 @@ Common::String CloudManager::getStorageLastSync(uint32 index) {
 	return _storages[index].lastSyncDate;
 }
 
+void CloudManager::setStorageUsername(uint32 index, Common::String name) {
+	if (index >= _storages.size()) return;
+	_storages[index].username = name;
+	save();
+}
+
+void CloudManager::setStorageUsedSpace(uint32 index, uint64 used) {
+	if (index >= _storages.size()) return;
+	_storages[index].usedBytes = used;
+	save();
+}
+
+void CloudManager::setStorageLastSync(uint32 index, Common::String date) {
+	if (index >= _storages.size()) return;
+	_storages[index].lastSyncDate = date;
+	save();
+}
+
 void CloudManager::printBool(Storage::BoolResponse response) const {
 	debug("bool = %s", (response.value ? "true" : "false"));
 }
 
 SavesSyncRequest *CloudManager::syncSaves(Storage::BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	Storage *storage = getCurrentStorage();
-	if (storage) return storage->syncSaves(callback, errorCallback);
+	if (storage) {
+		setStorageLastSync(_currentStorageIndex, "???"); //TODO get the date
+		return storage->syncSaves(callback, errorCallback);
+	}
 	return nullptr;
 }
 

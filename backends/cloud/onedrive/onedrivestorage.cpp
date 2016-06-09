@@ -159,6 +159,8 @@ void OneDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Netwo
 			quotaUsed = info.getVal("size")->asIntegerNumber();
 		}
 
+		CloudMan.setStorageUsedSpace(kStorageOneDriveId, quotaUsed); //TODO that's not ScummVM's actually
+		CloudMan.setStorageUsername(kStorageOneDriveId, email);
 		(*outerCallback)(StorageInfoResponse(nullptr, StorageInfo(uid, name, email, quotaUsed, quotaAllocated)));
 		delete outerCallback;
 	}
