@@ -39,9 +39,17 @@ BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
 	_array[0] = 100;
 	_array[1] = 0;
 
-	_mappings.load("Mappings/Bellbot", 1);
 	loadRanges("Ranges/Bellbot");
 	loadResponses("Responses/Bellbot", 4);
+	setupSentences();
+}
+
+void BellbotScript::setupSentences() {
+	_mappings.load("Mappings/Bellbot", 1);
+	_entries.load("Sentences/Bellbot");
+	_field2DC = 0;
+	_field68 = 0;
+	_entryCount = 0;
 }
 
 void BellbotScript::proc7(int v1, int v2) {

@@ -23,6 +23,7 @@
 #include "common/textconsole.h"
 #include "titanic/true_talk/doorbot_script.h"
 #include "titanic/true_talk/tt_room_script.h"
+#include "titanic/true_talk/true_talk_manager.h"
 
 namespace Titanic {
 
@@ -33,11 +34,21 @@ static const int STATE_ARRAY[9] = {
 DoorbotScript::DoorbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
-	Common::fill(&_array[0], &_array[148], 0);
-	_state = 0;
-	_mappings.load("Mappings/Doorbot", 4);
 	loadRanges("Ranges/Doorbot");
 	loadResponses("Responses/Doorbot");
+	setupSentences();
+}
+
+void DoorbotScript::setupSentences() {
+	for (int idx = 35; idx < 40; ++idx)
+		CTrueTalkManager::setFlags(idx, 0);
+	_state = 1;
+	_dialValues[0] = _dialValues[1] = 100;
+
+	_mappings.load("Mappings/Doorbot", 4);
+	_entries.load("Sentences/Doorbot");
+	_field68 = 0;
+	_entryCount = 0;
 }
 
 int DoorbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {

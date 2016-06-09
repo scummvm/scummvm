@@ -40,9 +40,17 @@ DeskbotScript::DeskbotScript(int val1, const char *charClass, int v2,
 	if (_field74 == 1)
 		_field74 = 0;
 
-	_mappings.load("Mappings/Deskbot", 4);
 	loadRanges("Ranges/Deskbot");
 	loadResponses("Responses/Deskbot", 4);
+	setupSentences();
+}
+
+void DeskbotScript::setupSentences() {
+	_mappings.load("Mappings/Deskbot", 4);
+	_entries.load("Sentences/Deskbot");
+	_dialValues[0] = _dialValues[1] = 0;
+	_field68 = 0;
+	_entryCount = 0;
 }
 
 void DeskbotScript::proc7(int v1, int v2) {

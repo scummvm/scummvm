@@ -34,6 +34,11 @@ private:
 	int _field2D4;
 	int _field2D8;
 	int _field2DC;
+private:
+	/**
+	 * Setup sentence data
+	 */
+	void setupSentences();
 public:
 	BellbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2);

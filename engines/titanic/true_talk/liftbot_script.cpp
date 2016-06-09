@@ -22,6 +22,7 @@
 
 #include "common/textconsole.h"
 #include "titanic/true_talk/liftbot_script.h"
+#include "titanic/true_talk/true_talk_manager.h"
 
 namespace Titanic {
 
@@ -33,9 +34,20 @@ LiftbotScript::LiftbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
 	_state = 0;
-	_mappings.load("Mappings/Liftbot", 4);
+
 	loadRanges("Ranges/Liftbot");
 	loadResponses("Responses/Liftbot");
+	setupSentences();
+}
+
+void LiftbotScript::setupSentences() {
+	CTrueTalkManager::setFlags(27, 0);
+	setupDials(getRandomNumber(40) + 60, getRandomNumber(40) + 60, 0);
+
+	_mappings.load("Mappings/Liftbot", 4);
+	_entries.load("Sentences/Liftbot");
+	_field68 = 0;
+	_entryCount = 0;
 }
 
 int LiftbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {

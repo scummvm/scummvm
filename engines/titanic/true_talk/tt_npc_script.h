@@ -37,7 +37,6 @@ class CPetControl;
 class TTroomScript;
 class TTsentence;
 struct TTsentenceEntry;
-class TTsentenceEntries;
 
 struct TTnpcScriptResponse {
 	uint _tag;
@@ -60,6 +59,40 @@ struct TTscriptRange {
 		_priorIndex(0), _mode(SF_NONE) {}
 	TTscriptRange(uint id, const Common::Array<uint> &values, bool isRandom, 
 		bool isSequential);
+};
+
+
+struct TTsentenceEntry {
+	int _field0;
+	int _field4;
+	CString _string8;
+	int _fieldC;
+	CString _string10;
+	CString _string14;
+	CString _string18;
+	CString _string1C;
+	int _field20;
+	CString _string24;
+	int _field28;
+	int _field2C;
+	int _field30;
+
+	TTsentenceEntry() : _field0(0), _field4(0), _fieldC(0),
+		_field20(0), _field28(0), _field2C(0), _field30(0) {}
+
+	/**
+	* Load an entry from the passed stream, and returns true
+	* if an entry was successfully loaded
+	*/
+	bool load(Common::SeekableReadStream *s);
+};
+
+class TTsentenceEntries : public Common::Array<TTsentenceEntry> {
+public:
+	/**
+	* Load a list of entries from the specified resource
+	*/
+	void load(const CString &resName);
 };
 
 struct TTscriptMapping {
@@ -115,7 +148,7 @@ protected:
 	int _valuesPerResponse;
 	Common::Array<TTscriptRange> _ranges;
 	TTscriptMappings _mappings;
-	const TTsentenceEntries *_entriesP;
+	TTsentenceEntries _entries;
 	int _entryCount;
 	int _field68;
 	int _field6C;

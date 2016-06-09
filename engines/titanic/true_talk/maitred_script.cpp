@@ -38,9 +38,16 @@ MaitreDScript::MaitreDScript(int val1, const char *charClass, int v2,
 	CTrueTalkManager::setFlags(15, 0);
 	CTrueTalkManager::setFlags(16, 0);
 
-	_mappings.load("Mappings/MaitreD", 1);
 	loadRanges("Ranges/MaitreD");
 	loadResponses("Responses/MaitreD");
+	setupSentences();
+}
+
+void MaitreDScript::setupSentences() {
+	_mappings.load("Mappings/MaitreD", 1);
+	_entries.load("Sentences/MaitreD");
+	_field68 = 0;
+	_entryCount = 0;
 }
 
 int MaitreDScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {

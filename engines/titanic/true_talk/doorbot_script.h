@@ -29,9 +29,13 @@ namespace Titanic {
 
 class DoorbotScript : public TTnpcScript {
 private:
-	int _array[148];
 	int _state;
 private:
+	/**
+	 * Setup sentence data
+	 */
+	void setupSentences();
+
 	/**
 	 * Sets a response
 	 */

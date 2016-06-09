@@ -55,6 +55,42 @@ TTscriptRange::TTscriptRange(uint id, const Common::Array<uint> &values,
 
 /*------------------------------------------------------------------------*/
 
+
+bool TTsentenceEntry::load(Common::SeekableReadStream *s) {
+	if (s->pos() >= s->size())
+		return false;
+
+	_field0 = s->readUint32LE();
+	_field4 = s->readUint32LE();
+	_string8 = readStringFromStream(s);
+	_fieldC = s->readUint32LE();
+	_string10 = readStringFromStream(s);
+	_string14 = readStringFromStream(s);
+	_string18 = readStringFromStream(s);
+	_string1C = readStringFromStream(s);
+	_field20 = s->readUint32LE();
+	_string24 = readStringFromStream(s);
+	_field28 = s->readUint32LE();
+	_field2C = s->readUint32LE();
+	_field30 = s->readUint32LE();
+
+	return true;
+}
+
+/*------------------------------------------------------------------------*/
+
+void TTsentenceEntries::load(const CString &resName) {
+	TTsentenceEntry entry;
+	Common::SeekableReadStream *r = g_vm->_filesManager->getResource(resName);
+
+	while (entry.load(r))
+		push_back(entry);
+
+	delete r;
+}
+
+/*------------------------------------------------------------------------*/
+
 TTscriptMapping::TTscriptMapping() : _id(0) {
 	Common::fill(&_values[0], &_values[8], 0);
 }
@@ -90,7 +126,7 @@ TTnpcScriptBase::TTnpcScriptBase(int charId, const char *charClass, int v2,
 TTnpcScript::TTnpcScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTnpcScriptBase(charId, charClass, v2, charName, v3, val2, v4, v5, v6, v7),
-		_entriesP(nullptr), _entryCount(0), _field68(0), _field6C(0), _rangeResetCtr(0),
+		_entryCount(0), _field68(0), _field6C(0), _rangeResetCtr(0),
 		_field74(0), _field78(0), _field7C(0), _field80(0), _field2CC(false) {
 	CTrueTalkManager::_v2 = 0;
 	Common::fill(&_dialValues[0], &_dialValues[DIALS_ARRAY_COUNT], 0);
@@ -183,7 +219,7 @@ int TTnpcScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, 
 }
 
 void TTnpcScript::process(TTroomScript *roomScript, TTsentence *sentence) {
-	processSentence(_entriesP, _entryCount, roomScript, sentence);
+	processSentence(&_entries, _entryCount, roomScript, sentence);
 }
 
 int TTnpcScript::proc8() const {

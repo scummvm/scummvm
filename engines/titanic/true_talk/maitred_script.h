@@ -28,6 +28,11 @@
 namespace Titanic {
 
 class MaitreDScript : public TTnpcScript {
+private:
+	/**
+	 * Setup sentence data
+	 */
+	void setupSentences();
 public:
 	MaitreDScript(int val1, const char *charClass, int v2,
 			const char *charName, int v3, int val2);
