@@ -37,12 +37,13 @@ TTroomScript::TTroomScript(int scriptId) :
 	TTroomScriptBase(scriptId, "", "", 0, -1, -1, -1, 0, 0) {
 }
 
-void TTroomScript::proc8() {
-	warning("TODO");
+bool TTroomScript::proc8() const {
+	return false;
 }
 
-void TTroomScript::proc9() {
-	warning("TODO");
+void TTroomScript::proc9(int v) {
+	if (v == 1)
+		_field54 = 1;
 }
 
 ScriptChangedResult TTroomScript::scriptChanged(TTscriptBase *npcScript, int id) {
@@ -52,8 +53,8 @@ ScriptChangedResult TTroomScript::scriptChanged(TTscriptBase *npcScript, int id)
 	return SCR_1;
 }
 
-void TTroomScript::proc11() {
-	warning("TODO");
+bool TTroomScript::proc11() const {
+	return true;
 }
 
 } // End of namespace Titanic

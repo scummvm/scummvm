@@ -47,15 +47,15 @@ public:
 	 */
 	virtual bool canProcess(TTnpcScript *npcScript, TTsentence *sentence) const = 0;
 
-	virtual void proc8() = 0;
-	virtual void proc9() = 0;
+	virtual bool proc8() const = 0;
+	virtual void proc9(int v) = 0;
 	
 	/**
 	 * Called when the script changes
 	 */
 	virtual ScriptChangedResult scriptChanged(TTscriptBase *npcScript, int id) = 0;
 	
-	virtual void proc11() = 0;
+	virtual bool proc11() const = 0;
 };
 
 
@@ -79,15 +79,16 @@ public:
 		return true;
 	}
 
-	virtual void proc8();
-	virtual void proc9();
+	virtual bool  proc8() const;
+
+	virtual void proc9(int v);
 
 	/**
 	 * Called when the script changes
 	 */
 	virtual ScriptChangedResult scriptChanged(TTscriptBase *npcScript, int id);
 
-	virtual void proc11();
+	virtual bool proc11() const;
 
 	/**
 	 * Called with the new script and id
