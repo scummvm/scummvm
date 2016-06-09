@@ -246,9 +246,13 @@ protected:
 	//
 	// Cloud controls
 	//
+	uint32 _selectedStorageIndex;
 	StaticTextWidget *_curStorage;
+	StaticTextWidget *_storageUsernameDesc;
 	StaticTextWidget *_storageUsername;
+	StaticTextWidget *_storageUsedSpaceDesc;
 	StaticTextWidget *_storageUsedSpace;
+	StaticTextWidget *_storageLastSyncDesc;
 	StaticTextWidget *_storageLastSync;
 
 	void setupCloudTab();

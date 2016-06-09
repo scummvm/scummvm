@@ -1271,16 +1271,18 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	else
 		tab->addTab(_c("Cloud", "lowres"));
 
-	new ButtonWidget(tab, "GlobalOptions_Cloud.StorageButton", _("Storage:"), 0, kChooseStorageCmd);
-	_curStorage = new StaticTextWidget(tab, "GlobalOptions_Cloud.CurStorage", CloudMan.getStorageName());
+	_selectedStorageIndex = CloudMan.getStorageIndex();
 
-	new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageUsernameDesc", _("Username:"), _("Username used by this storage"));
+	new ButtonWidget(tab, "GlobalOptions_Cloud.StorageButton", _("Storage:"), 0, kChooseStorageCmd);
+	_curStorage = new StaticTextWidget(tab, "GlobalOptions_Cloud.CurStorage", CloudMan.listStorages()[_selectedStorageIndex]);
+
+	_storageUsernameDesc = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageUsernameDesc", _("Username:"), _("Username used by this storage"));
 	_storageUsername = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageUsernameLabel", "<none>");
 
-	new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageUsedSpaceDesc", _("Used space:"), _("Space used by ScummVM on this storage"));
+	_storageUsedSpaceDesc = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageUsedSpaceDesc", _("Used space:"), _("Space used by ScummVM on this storage"));
 	_storageUsedSpace = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageUsedSpaceLabel", "0 bytes");
 
-	new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageLastSyncDesc", _("Last sync time:"), _("When this storage did last saves sync"));
+	_storageLastSyncDesc = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageLastSyncDesc", _("Last sync time:"), _("When this storage did last saves sync"));
 	_storageLastSync = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageLastSyncLabel", "<never>");
 
 	setupCloudTab();
@@ -1437,6 +1439,21 @@ void GlobalOptionsDialog::close() {
 		}
 #endif
 
+#ifdef USE_CLOUD
+		if (CloudMan.getStorageIndex() != _selectedStorageIndex) {
+			if (!CloudMan.switchStorage(_selectedStorageIndex)) {
+				bool anotherStorageIsWorking = CloudMan.isWorking();
+				Common::String message = _("Failed to change cloud storage!");
+				if (anotherStorageIsWorking) {
+					message += "\n";
+					message += _("Current cloud storage is working at the moment.");
+				}
+				MessageDialog dialog(message);
+				dialog.runModal();
+			}
+		}
+#endif
+
 	}
 	OptionsDialog::close();
 }
@@ -1555,23 +1572,8 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		StorageBrowser storageBrowser;
 		if (storageBrowser.runModal() > 0) {
 			// User made his choice...
-			uint32 storageIndex = storageBrowser.getSelected();
-			// FIXME: Actually, any changes (including the storage change?) should
-			// only become active *after* the options dialog has closed.			
-			if (CloudMan.switchStorage(storageIndex)) {
-				_curStorage->setLabel(CloudMan.getStorageName());
-				//automatically saves in the config if switched successfully
-				setupCloudTab();
-			} else {
-				bool anotherStorageIsWorking = CloudMan.isWorking();
-				Common::String message = _("Failed to change cloud storage!");
-				if (anotherStorageIsWorking) {
-					message += "\n";
-					message += _("Current cloud storage is working at the moment.");
-				}
-				MessageDialog dialog(message);
-				dialog.runModal();
-			}
+			_selectedStorageIndex = storageBrowser.getSelected();
+			setupCloudTab();
 			draw();
 		}
 		break;
@@ -1635,23 +1637,32 @@ void GlobalOptionsDialog::reflowLayout() {
 
 #ifdef USE_CLOUD
 void GlobalOptionsDialog::setupCloudTab() {
-	uint32 index = CloudMan.getStorageIndex();
+	if (_curStorage)
+		_curStorage->setLabel(CloudMan.listStorages()[_selectedStorageIndex]);
+
+	bool shown = (_selectedStorageIndex != Cloud::kStorageNoneId);
+	if (_storageUsernameDesc) _storageUsernameDesc->setVisible(shown);
 	if (_storageUsername) {
-		Common::String username = CloudMan.getStorageUsername(index);
+		Common::String username = CloudMan.getStorageUsername(_selectedStorageIndex);
 		if (username == "") username = _("<none>");
 		_storageUsername->setLabel(username);
+		_storageUsername->setVisible(shown);
 	}
+	if (_storageUsedSpaceDesc) _storageUsedSpaceDesc->setVisible(shown);
 	if (_storageUsedSpace) {
-		uint64 usedSpace = CloudMan.getStorageUsedSpace(index);
+		uint64 usedSpace = CloudMan.getStorageUsedSpace(_selectedStorageIndex);
 		_storageUsedSpace->setLabel(Common::String::format(_("%llu bytes"), usedSpace));
+		_storageUsedSpace->setVisible(shown);
 	}
+	if (_storageLastSyncDesc) _storageLastSyncDesc->setVisible(shown);
 	if (_storageLastSync) {
-		Common::String sync = CloudMan.getStorageLastSync(index);
+		Common::String sync = CloudMan.getStorageLastSync(_selectedStorageIndex);
 		if (sync == "") {
-			if (CloudMan.isSyncing()) sync = _("<right now>");
+			if (_selectedStorageIndex == CloudMan.getStorageIndex() && CloudMan.isSyncing()) sync = _("<right now>");
 			else sync = _("<never>");
 		}
 		_storageLastSync->setLabel(sync);
+		_storageLastSync->setVisible(shown);
 	}
 }
 #endif

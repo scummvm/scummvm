@@ -115,14 +115,14 @@ void OneDriveStorage::codeFlowComplete(BoolResponse response) {
 		return;
 	}
 
-	CloudMan.addStorage(this);
 	ConfMan.removeKey("onedrive_code", "cloud");
+	CloudMan.replaceStorage(this, kStorageOneDriveId);
+	ConfMan.flushToDisk();
 	debug("Done! You can use OneDrive now! Look:");
 	CloudMan.syncSaves();
 }
 
-void OneDriveStorage::saveConfig(Common::String keyPrefix) {
-	ConfMan.set(keyPrefix + "type", "OneDrive", "cloud");
+void OneDriveStorage::saveConfig(Common::String keyPrefix) {	
 	ConfMan.set(keyPrefix + "access_token", _token, "cloud");
 	ConfMan.set(keyPrefix + "user_id", _uid, "cloud");
 	ConfMan.set(keyPrefix + "refresh_token", _refreshToken, "cloud");

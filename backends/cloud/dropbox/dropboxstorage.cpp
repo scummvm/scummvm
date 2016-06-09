@@ -61,11 +61,11 @@ static void saveAccessTokenCallback(Networking::JsonResponse pair) {
 			warning("Bad response, no token/uid passed");
 		} else {
 			//we suppose that's the first storage
-			ConfMan.set("storages_number", "1", "cloud");
+			//TODO: update it to use CloudMan.replaceStorage()			
 			ConfMan.set("current_storage", "1", "cloud");
-			ConfMan.set("storage1_type", "Dropbox", "cloud");
-			ConfMan.set("storage1_access_token", result.getVal("access_token")->asString(), "cloud");
-			ConfMan.set("storage1_user_id", result.getVal("uid")->asString(), "cloud");
+			ConfMan.set("storage_Dropbox_type", "Dropbox", "cloud");
+			ConfMan.set("storage_Dropbox_access_token", result.getVal("access_token")->asString(), "cloud");
+			ConfMan.set("storage_Dropbox_user_id", result.getVal("uid")->asString(), "cloud");
 			ConfMan.removeKey("dropbox_code", "cloud");
 			ConfMan.flushToDisk();
 			debug("Now please restart ScummVM to apply the changes.");
@@ -85,8 +85,7 @@ DropboxStorage::~DropboxStorage() {
 	curl_global_cleanup();
 }
 
-void DropboxStorage::saveConfig(Common::String keyPrefix) {
-	ConfMan.set(keyPrefix + "type", "Dropbox", "cloud");
+void DropboxStorage::saveConfig(Common::String keyPrefix) {	
 	ConfMan.set(keyPrefix + "access_token", _token, "cloud");
 	ConfMan.set(keyPrefix + "user_id", _uid, "cloud");
 }

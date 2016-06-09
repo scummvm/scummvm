@@ -121,15 +121,14 @@ void GoogleDriveStorage::codeFlowComplete(BoolResponse response) {
 		return;
 	}
 
-	ConfMan.removeKey("googledrive_code", "cloud");
-	CloudMan.addStorage(this);
+	ConfMan.removeKey("googledrive_code", "cloud");	
+	CloudMan.replaceStorage(this, kStorageGoogleDriveId);
 	ConfMan.flushToDisk();
 	debug("Done! You can use Google Drive now! Look:");
 	CloudMan.testFeature();
 }
 
-void GoogleDriveStorage::saveConfig(Common::String keyPrefix) {
-	ConfMan.set(keyPrefix + "type", "Google Drive", "cloud");
+void GoogleDriveStorage::saveConfig(Common::String keyPrefix) {	
 	ConfMan.set(keyPrefix + "access_token", _token, "cloud");
 	ConfMan.set(keyPrefix + "refresh_token", _refreshToken, "cloud");
 }

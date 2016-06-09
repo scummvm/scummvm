@@ -36,11 +36,32 @@ class CommandReceiver;
 
 namespace Cloud {
 
+//that's actual indexes in CloudManager's array
+enum StorageIDs {
+	kStorageNoneId = 0,
+	kStorageDropboxId = 1,
+	kStorageOneDriveId = 2,
+	kStorageGoogleDriveId = 3,
+
+	kStorageTotal
+};
+
 class CloudManager : public Common::Singleton<CloudManager> {
-	Common::Array<Cloud::Storage *> _storages;
-	uint _currentStorageIndex;	
+	struct StorageConfig {
+		Common::String name, username;
+		uint64 usedBytes;
+		Common::String lastSyncDate;
+	};
+
+	Common::Array<StorageConfig> _storages;
+	uint _currentStorageIndex;
+	Storage *_activeStorage;
 
 	void printBool(Cloud::Storage::BoolResponse response) const;
+
+	void loadStorage();
+
+	Common::String getStorageConfigName(uint32 index) const;
 
 public:
 	CloudManager();
@@ -59,13 +80,13 @@ public:
 	void save();
 
 	/**
-	 * Adds new Storage into list.	
+	 * Replace active Storage.
+	 * @note this method automatically saves the changes with ConfMan.
 	 *
-	 * @param	storage Cloud::Storage to add.
-	 * @param	makeCurrent whether added storage should be the new current storage.
-	 * @param	saveConfig whether save() should be called to update configuration file.
+	 * @param	storage Cloud::Storage to replace active storage with.
+	 * @param	index   one of Cloud::StorageIDs enum values to indicate what storage type is replaced.	 
 	 */
-	void addStorage(Cloud::Storage *storage, bool makeCurrent = true, bool saveConfig = true);
+	void replaceStorage(Storage *storage, uint32 index);
 
 	/**
 	 * Returns active Storage, which could be used to interact
@@ -74,13 +95,6 @@ public:
 	 * @return	active Cloud::Storage or null, if there is no active Storage.
 	 */
 	Cloud::Storage *getCurrentStorage() const;
-
-	/**
-	* Return active Storage's name.
-	*
-	* @return	active Storage's or _("No active storage"), if there is no active Storage.
-	*/
-	Common::String getStorageName() const;
 
 	/**
 	* Return active Storage's index.

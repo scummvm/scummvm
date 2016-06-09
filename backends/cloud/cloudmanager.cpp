@@ -36,87 +36,101 @@ DECLARE_SINGLETON(Cloud::CloudManager);
 
 namespace Cloud {
 
-CloudManager::CloudManager() : _currentStorageIndex(0) {}
+CloudManager::CloudManager() : _currentStorageIndex(0), _activeStorage(nullptr) {}
 
 CloudManager::~CloudManager() {
 	//TODO: do we have to save storages on manager destruction?	
-	for (uint32 i = 0; i < _storages.size(); ++i)
-		delete _storages[i];
-	_storages.clear();
+	delete _activeStorage;
+}
+
+namespace {
+uint64 atoull(Common::String s) {
+	uint64 result = 0;
+	for (uint32 i = 0; i < s.size(); ++i) {
+		if (s[i] < '0' || s[i] > '9') break;
+		result = result * 10L + (s[i] - '0');
+	}
+	return result;
+}
+}
+
+Common::String CloudManager::getStorageConfigName(uint32 index) const {
+	switch (index) {
+	case kStorageNoneId: return "<none>";
+	case kStorageDropboxId: return "Dropbox";
+	case kStorageOneDriveId: return "OneDrive";
+	case kStorageGoogleDriveId: return "GoogleDrive";
+	}
+	return "Unknown";
+}
+
+void CloudManager::loadStorage() {
+	switch (_currentStorageIndex) {
+	case kStorageDropboxId:
+		_activeStorage = Dropbox::DropboxStorage::loadFromConfig("storage_" + getStorageConfigName(_currentStorageIndex) + "_");
+		break;
+
+	case kStorageOneDriveId:
+		_activeStorage = OneDrive::OneDriveStorage::loadFromConfig("storage_" + getStorageConfigName(_currentStorageIndex) + "_");
+		break;
+
+	case kStorageGoogleDriveId:
+		_activeStorage = GoogleDrive::GoogleDriveStorage::loadFromConfig("storage_" + getStorageConfigName(_currentStorageIndex) + "_");
+		break;
+
+	default:
+		_activeStorage = nullptr;
+	}
+
+	if (!_activeStorage) {
+		_currentStorageIndex = kStorageNoneId;
+	}
 }
 
 void CloudManager::init() {
-	bool offerDropbox = false;
-	bool offerOneDrive = false;
-	bool offerGoogleDrive = true;
-	
-	if (ConfMan.hasKey("storages_number", "cloud")) {
-		int storages = ConfMan.getInt("storages_number", "cloud");
-		for (int i = 1; i <= storages; ++i) {
-			Storage *loaded = 0;
-			Common::String keyPrefix = Common::String::format("storage%d_", i);
-			if (ConfMan.hasKey(keyPrefix + "type", "cloud")) {
-				Common::String storageType = ConfMan.get(keyPrefix + "type", "cloud");
-				if (storageType == "Dropbox") loaded = Dropbox::DropboxStorage::loadFromConfig(keyPrefix);
-				else if (storageType == "OneDrive") loaded = OneDrive::OneDriveStorage::loadFromConfig(keyPrefix);
-				else if (storageType == "Google Drive") {
-					loaded = GoogleDrive::GoogleDriveStorage::loadFromConfig(keyPrefix);
-					offerGoogleDrive = false;
-				} else warning("Unknown cloud storage type '%s' passed", storageType.c_str());
-			} else {
-				warning("Cloud storage #%d (out of %d) is missing.", i, storages);
-			}
-			if (loaded) _storages.push_back(loaded);
-		}
-
-		uint32 index = 0;
-		if (ConfMan.hasKey("current_storage", "cloud")) {
-			index = ConfMan.getInt("current_storage", "cloud") - 1; //count from 1, all for UX
-		}
-		if (index >= _storages.size()) index = 0;
-		_currentStorageIndex = index;
-
-		if (_storages.size() == 0) offerDropbox = true;
-	} else {
-		offerDropbox = true;
+	//init configs structs
+	for (uint32 i = 0; i < kStorageTotal; ++i) {
+		Common::String name = getStorageConfigName(i);
+		StorageConfig config;
+		config.name = _(name);
+		config.username = "";
+		config.lastSyncDate = "";
+		config.usedBytes = 0;
+		if (ConfMan.hasKey("storage_" + name + "_username", "cloud"))
+			config.username = ConfMan.get("storage_" + name + "_username", "cloud");
+		if (ConfMan.hasKey("storage_" + name + "_lastSync", "cloud"))
+			config.lastSyncDate = ConfMan.get("storage_" + name + "_lastSync", "cloud");
+		if (ConfMan.hasKey("storage_" + name + "_usedBytes", "cloud"))
+			config.usedBytes = atoull(ConfMan.get("storage_" + name + "_usedBytes", "cloud"));
+		_storages.push_back(config);
 	}
-	if (offerDropbox) {
-		//this is temporary console offer to auth with Dropbox
-		Dropbox::DropboxStorage::authThroughConsole();
-	} else if (offerOneDrive) {
-		//OneDrive time
-		OneDrive::OneDriveStorage::authThroughConsole();
-	} else if (offerGoogleDrive) {		
-		GoogleDrive::GoogleDriveStorage::authThroughConsole();
-		_currentStorageIndex = 100;
-	}
+
+	//load an active storage if there is any
+	_currentStorageIndex = kStorageNoneId;
+	if (ConfMan.hasKey("current_storage", "cloud"))
+		_currentStorageIndex = ConfMan.getInt("current_storage", "cloud");
+
+	loadStorage();
 }
 
 void CloudManager::save() {
-	ConfMan.set("storages_number", Common::String::format("%d", _storages.size()), "cloud");
-	ConfMan.set("current_storage", Common::String::format("%d", _currentStorageIndex + 1), "cloud");
-	for (uint32 i = 0; i < _storages.size(); ++i)
-		_storages[i]->saveConfig(Common::String::format("storage%d_", i + 1));
+	ConfMan.set("current_storage", Common::String::format("%d", _currentStorageIndex), "cloud");
+	if (_activeStorage)
+		_activeStorage->saveConfig("storage_" + getStorageConfigName(_currentStorageIndex) + "_");
 	ConfMan.flushToDisk();
 }
 
-void CloudManager::addStorage(Storage *storage, bool makeCurrent, bool saveConfig) {
-	if (!storage) error("Cloud::CloudManager: NULL storage passed");
-	_storages.push_back(storage);
-	if (makeCurrent) _currentStorageIndex = _storages.size() - 1;
-	if (saveConfig) save();
+void CloudManager::replaceStorage(Storage *storage, uint32 index) {
+	if (!storage) error("CloudManager::replaceStorage: NULL storage passed");
+	if (index >= kStorageTotal) error("CloudManager::replaceStorage: invalid index passed");
+	delete _activeStorage;
+	_activeStorage = storage;
+	_currentStorageIndex = index;
+	save();
 }
 
 Storage *CloudManager::getCurrentStorage() const {
-	if (_currentStorageIndex < _storages.size())
-		return _storages[_currentStorageIndex];
-	return nullptr;
-}
-
-Common::String CloudManager::getStorageName() const {
-	Storage *storage = getCurrentStorage();
-	if (storage) return storage->name();
-	return _("No active storage");
+	return _activeStorage;
 }
 
 uint32 CloudManager::getStorageIndex() const {
@@ -126,7 +140,7 @@ uint32 CloudManager::getStorageIndex() const {
 Common::StringArray CloudManager::listStorages() const {
 	Common::StringArray result;
 	for (uint32 i = 0; i < _storages.size(); ++i) {
-		result.push_back(_storages[i]->name());
+		result.push_back(_storages[i].name);
 	}
 	return result;
 }
@@ -144,24 +158,25 @@ bool CloudManager::switchStorage(uint32 index) {
 	}
 
 	_currentStorageIndex = index;
+	loadStorage();
 	save();
 	return true;
 }
 
 Common::String CloudManager::getStorageUsername(uint32 index) {
 	if (index >= _storages.size()) return "";
-	return _storages[index]->name(); //TODO
+	return _storages[index].username;
 }
 
 uint64 CloudManager::getStorageUsedSpace(uint32 index) {
 	if (index >= _storages.size()) return 0;
-	return 0; //return _storages[index]->usedSpace(); //TODO
+	return _storages[index].usedBytes;
 }
 
 Common::String CloudManager::getStorageLastSync(uint32 index) {
 	if (index >= _storages.size()) return "";
-	if (_storages[index]->isSyncing()) return "";
-	return _storages[index]->name(); //->lastSyncDate(); //TODO
+	if (index == _currentStorageIndex && isSyncing()) return "";
+	return _storages[index].lastSyncDate;
 }
 
 void CloudManager::printBool(Storage::BoolResponse response) const {
