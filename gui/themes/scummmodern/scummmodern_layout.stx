@@ -541,11 +541,11 @@
 	<dialog name = 'GlobalOptions_Cloud' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
-				<widget name = 'StorageButton'
-						type = 'Button'
+				<widget name = 'StoragePopupDesc'
+						type = 'OptionsLabel'
 				/>
-				<widget name = 'CurStorage'
-						height = 'Globals.Line.Height'
+				<widget name = 'StoragePopup'
+						type = 'PopUp'
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>

@@ -247,7 +247,8 @@ protected:
 	// Cloud controls
 	//
 	uint32 _selectedStorageIndex;
-	StaticTextWidget *_curStorage;
+	StaticTextWidget *_storagePopUpDesc;
+	PopUpWidget *_storagePopUp;
 	StaticTextWidget *_storageUsernameDesc;
 	StaticTextWidget *_storageUsername;
 	StaticTextWidget *_storageUsedSpaceDesc;

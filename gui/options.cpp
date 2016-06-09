@@ -45,7 +45,6 @@
 
 #ifdef USE_CLOUD
 #include "backends/cloud/cloudmanager.h"
-#include "gui/storagebrowser.h"
 #endif
 
 namespace GUI {
@@ -1273,16 +1272,20 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 	_selectedStorageIndex = CloudMan.getStorageIndex();
 
-	new ButtonWidget(tab, "GlobalOptions_Cloud.StorageButton", _("Storage:"), 0, kChooseStorageCmd);
-	_curStorage = new StaticTextWidget(tab, "GlobalOptions_Cloud.CurStorage", CloudMan.listStorages()[_selectedStorageIndex]);
+	_storagePopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Cloud.StoragePopupDesc", _("Storage:"), _("Active cloud storage"));
+	_storagePopUp = new PopUpWidget(tab, "GlobalOptions_Cloud.StoragePopup");
+	Common::StringArray list = CloudMan.listStorages();
+	for (uint32 i = 0; i < list.size(); ++i)
+		_storagePopUp->appendEntry(list[i], i);
+	_storagePopUp->setSelected(_selectedStorageIndex);
 
 	_storageUsernameDesc = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageUsernameDesc", _("Username:"), _("Username used by this storage"));
 	_storageUsername = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageUsernameLabel", "<none>");
 
-	_storageUsedSpaceDesc = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageUsedSpaceDesc", _("Used space:"), _("Space used by ScummVM on this storage"));
+	_storageUsedSpaceDesc = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageUsedSpaceDesc", _("Used space:"), _("Space used by ScummVM's saves on this storage"));
 	_storageUsedSpace = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageUsedSpaceLabel", "0 bytes");
 
-	_storageLastSyncDesc = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageLastSyncDesc", _("Last sync time:"), _("When this storage did last saves sync"));
+	_storageLastSyncDesc = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageLastSyncDesc", _("Last sync time:"), _("When this storage did saves sync last time"));
 	_storageLastSync = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageLastSyncLabel", "<never>");
 
 	setupCloudTab();
@@ -1567,15 +1570,10 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 #ifdef USE_CLOUD
-	case kChooseStorageCmd:
+	case kPopUpItemSelectedCmd:
 	{
-		StorageBrowser storageBrowser;
-		if (storageBrowser.runModal() > 0) {
-			// User made his choice...
-			_selectedStorageIndex = storageBrowser.getSelected();
-			setupCloudTab();
-			draw();
-		}
+		setupCloudTab();
+		draw();
 		break;
 	}
 #endif
@@ -1637,8 +1635,7 @@ void GlobalOptionsDialog::reflowLayout() {
 
 #ifdef USE_CLOUD
 void GlobalOptionsDialog::setupCloudTab() {
-	if (_curStorage)
-		_curStorage->setLabel(CloudMan.listStorages()[_selectedStorageIndex]);
+	_selectedStorageIndex = _storagePopUp->getSelectedTag();
 
 	bool shown = (_selectedStorageIndex != Cloud::kStorageNoneId);
 	if (_storageUsernameDesc) _storageUsernameDesc->setVisible(shown);
