@@ -30,7 +30,28 @@
 namespace MacVenture {
 
 using namespace Graphics::MacGUIConstants;
+using namespace Graphics::MacWindowConstants;
 class MacVentureEngine;
+
+//namespace MacVentureMenuActions {
+enum MenuAction {
+	kMenuActionAbout,
+	kMenuActionNew,
+	kMenuActionOpen,
+	kMenuActionSave,
+	kMenuActionSaveAs,
+	kMenuActionQuit,
+	kMenuActionUndo,
+	kMenuActionCut,
+	kMenuActionCopy,
+	kMenuActionPaste,
+	kMenuActionClear,
+	kMenuActionCleanUp,
+	kMenuActionMessUp,
+
+	kMenuActionCommand
+};
+//} using namespace MacVentureMenuActions;
 
 class Gui {	
 
@@ -40,6 +61,7 @@ public:
 
 	void draw();
 	bool processEvent(Common::Event &event);
+	void handleMenuAction(MenuAction action);
 
 private: // Attributes
 
@@ -56,7 +78,7 @@ private: // Methods
 
 	void initGUI();
 	bool loadMenus();
-	void loadBorder(Graphics::MacWindow * target, Common::String filename, bool active);
+	void loadBorder(Graphics::MacWindow * target, Common::String filename, bool active);	
 
 };
 

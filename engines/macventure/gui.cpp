@@ -28,15 +28,48 @@
 
 namespace MacVenture {
 
-/* priority, name, action, shortcut, enabled*/
-#define MV_MENU5(p, n, a, s, e) Graphics::MenuData{p, n, a, s, e}
-#define MV_MENU4(p, n, a, s) Graphics::MenuData{p, n, a, s, false}
-#define MV_MENUtop(n, a, s) Graphics::MenuData{-1, n, a, s, true}
+enum MenuAction;
+
+enum {
+	kMenuHighLevel = -1,
+	kMenuAbout = 0,
+	kMenuFile = 1,
+	kMenuEdit = 2,
+	kMenuSpecial = 3
+};
 
 static const Graphics::MenuData menuSubItems[] = {
-	{ -1, "Hello World",	0, 0, false },
-	{ 0, "How yo duin",	0, 0, false },
+	{ kMenuHighLevel,	"File",				0, 0, false },
+	{ kMenuHighLevel,	"Edit",				0, 0, false },		
+	{ kMenuHighLevel,	"Special",			0, 0, false },
+	{ kMenuHighLevel,	"Font",				0, 0, false },
+	{ kMenuHighLevel,	"FontSize",			0, 0, false },
+
+	//{ kMenuAbout,		"About",			kMenuActionAbout, 0, true},
+
+	{ kMenuFile,		"New",				kMenuActionNew, 0, true },
+	{ kMenuFile,		NULL,				0, 0, false },
+	{ kMenuFile,		"Open...",			kMenuActionOpen, 0, true },
+	{ kMenuFile,		"Save",				kMenuActionSave, 0, true },
+	{ kMenuFile,		"Save as...",		kMenuActionSaveAs, 0, true },
+	{ kMenuFile,		NULL,				0, 0, false },
+	{ kMenuFile,		"Quit",				kMenuActionQuit, 0, true },
+
+	{ kMenuEdit,		"Undo",				kMenuActionUndo, 'Z', true },
+	{ kMenuEdit,		NULL,				0, 0, false },
+	{ kMenuEdit,		"Cut",				kMenuActionCut, 'K', true },
+	{ kMenuEdit,		"Copy",				kMenuActionCopy, 'C', true },
+	{ kMenuEdit,		"Paste",			kMenuActionPaste, 'V', true },
+	{ kMenuEdit,		"Clear",			kMenuActionClear, 'B', true },
+
+	{ kMenuSpecial,		"Clean Up",			kMenuActionCleanUp, 0, true },
+	{ kMenuSpecial,		"Mess Up",			kMenuActionMessUp, 0, true },
+
+	{ 0,				NULL,				0, 0, false }
 };
+
+bool outConsoleWindowCallback(Graphics::WindowClick, Common::Event &event, void *gui);
+void menuCommandsCallback(int action, Common::String &text, void *data);
 
 Gui::Gui(MacVentureEngine *engine, Common::MacResManager *resman) {
 	_engine = engine;
@@ -59,18 +92,20 @@ bool Gui::processEvent(Common::Event &event) {
 void Gui::initGUI() {
 	_screen.create(kScreenWidth, kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 	_wm.setScreen(&_screen);
+
+	// Menu
+	_menu = _wm.addMenu();
+	if (!loadMenus())
+		error("Could not load menus");
+	_menu->setCommandsCallback(menuCommandsCallback, this);
+	_menu->calcDimensions();
+
+	// In-game Output Console
 	_outConsoleWindow = _wm.addWindow(false, true, true);
 	_outConsoleWindow->setDimensions(Common::Rect(20, 20, 120, 120));
 	_outConsoleWindow->setActive(false);
-
-	_menu = _wm.addMenu();
-
-	if (!loadMenus())
-		error("Could not load menus");
-
-	_menu->calcDimensions();
-
-	loadBorder(_outConsoleWindow, "border_inac.bmp", false);
+	_outConsoleWindow->setCallback(outConsoleWindowCallback, this);
+	loadBorder(_outConsoleWindow, "border_inac.bmp", false);	
 }
 
 void Gui::loadBorder(Graphics::MacWindow * target, Common::String filename, bool active) {
@@ -105,25 +140,31 @@ void Gui::loadBorder(Graphics::MacWindow * target, Common::String filename, bool
 }
 
 bool Gui::loadMenus() {
+
+	// We assume that, if there are static menus, we don't need dynamic ones
+	if (menuSubItems) {
+		_menu->addStaticMenus(menuSubItems);
+		return true;
+	}
+
 	Common::MacResIDArray resArray;
 	Common::SeekableReadStream *res;
 	Common::MacResIDArray::const_iterator iter;
 
 	if ((resArray = _resourceManager->getResIDArray(MKTAG('M', 'E', 'N', 'U'))).size() == 0)
-		return false;
+		return false;	
 
-	_menu->addMenuItem("(c)");
-	_menu->addMenuSubItem(0, "Hello", 0, 0, 'K', false);
+	_menu->addMenuSubItem(0, "Abb", kMenuActionAbout, 0, 'A', true);
 
 	int i = 1;
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = _resourceManager->getResource(MKTAG('M', 'E', 'N', 'U'), *iter);
 		bool enabled;
 		uint16 key;
+		uint16 style;
 		uint8 titleLength;
 		char* title;
 
-		Graphics::MenuData data;
 		int menunum = -1; // High level menus have level -1
 		/* Skip menuID, width, height, resourceID, placeholder */
 		for (int skip = 0; skip < 5; skip++) { res->readUint16BE(); }
@@ -133,7 +174,7 @@ bool Gui::loadMenus() {
 		res->read(title, titleLength);
 		title[titleLength] = '\0';
 
-		if (titleLength > 2) {
+		if (titleLength > 1) {
 			_menu->addMenuItem(title);
 
 			// Read submenu items
@@ -143,18 +184,81 @@ bool Gui::loadMenus() {
 				title[titleLength] = '\0';
 				// Skip icon
 				res->readUint16BE();
+				// Read key
 				key = res->readUint16BE();
-				// Skip key, mark, style
-				for (int skip = 0; skip < 2; skip++) { res->readUint16BE(); }
-				_menu->addMenuSubItem(i, title, 0, 0, key, false);
+				// Skip mark
+				res->readUint16BE();
+				// Read style
+				style = res->readUint16BE();
+				_menu->addMenuSubItem(i, title, 0, style, key, false);
 			}
 		}	
 
 		i++;
-	}	
+	}
 
+	return true;	
+}
+
+/* CALLBACKS */
+bool outConsoleWindowCallback(Graphics::WindowClick, Common::Event &event, void *gui) {
 	return true;
-	
+}
+
+void menuCommandsCallback(int action, Common::String &text, void *data) {
+	Gui *g = (Gui *)data;
+
+	g->handleMenuAction((MenuAction)action);
+}
+
+/* HANDLERS */
+void Gui::handleMenuAction(MenuAction action) {
+	switch (action)	{
+	case MacVenture::kMenuActionAbout:
+		debug("MacVenture Menu Action: About");
+		break;
+	case MacVenture::kMenuActionNew:
+		debug("MacVenture Menu Action: New");
+		break;
+	case MacVenture::kMenuActionOpen:
+		debug("MacVenture Menu Action: Open");
+		break;
+	case MacVenture::kMenuActionSave:
+		debug("MacVenture Menu Action: Save");
+		break;
+	case MacVenture::kMenuActionSaveAs:
+		debug("MacVenture Menu Action: Save As");
+		break;
+	case MacVenture::kMenuActionQuit:
+		debug("MacVenture Menu Action: Quit");
+		break;
+	case MacVenture::kMenuActionUndo:
+		debug("MacVenture Menu Action: Undo");
+		break;
+	case MacVenture::kMenuActionCut:
+		debug("MacVenture Menu Action: Cut");
+		break;
+	case MacVenture::kMenuActionCopy:
+		debug("MacVenture Menu Action: Copy");
+		break;
+	case MacVenture::kMenuActionPaste:
+		debug("MacVenture Menu Action: Paste");
+		break;
+	case MacVenture::kMenuActionClear:
+		debug("MacVenture Menu Action: Clear");
+		break;
+	case MacVenture::kMenuActionCleanUp:
+		debug("MacVenture Menu Action: Clean Up");
+		break;
+	case MacVenture::kMenuActionMessUp:
+		debug("MacVenture Menu Action: Mess Up");
+		break;
+	case MacVenture::kMenuActionCommand:
+		debug("MacVenture Menu Action: GENERIC");
+		break;
+	default:
+		break;
+	}
 }
 
 } // End of namespace MacVenture
