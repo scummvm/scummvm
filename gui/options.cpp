@@ -45,6 +45,7 @@
 
 #ifdef USE_CLOUD
 #include "backends/cloud/cloudmanager.h"
+#include "gui/storagewizarddialog.h"
 #endif
 
 namespace GUI {
@@ -90,7 +91,7 @@ enum {
 
 #ifdef USE_CLOUD
 enum {
-	kChooseStorageCmd = 'chst'
+	kConfigureStorageCmd = 'cfst'
 };
 #endif
 
@@ -1288,6 +1289,8 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	_storageLastSyncDesc = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageLastSyncDesc", _("Last sync time:"), _("When this storage did saves sync last time"));
 	_storageLastSync = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageLastSyncLabel", "<never>");
 
+	_storageConnectButton = new ButtonWidget(tab, "GlobalOptions_Cloud.ConnectButton", _("Connect"), _("Open wizard dialog to connect your cloud storage account"), kConfigureStorageCmd);
+
 	setupCloudTab();
 #endif
 
@@ -1576,6 +1579,14 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		draw();
 		break;
 	}
+	case kConfigureStorageCmd:
+	{
+		StorageWizardDialog dialog(_selectedStorageIndex);
+		dialog.runModal();
+		setupCloudTab();
+		draw();
+		break;
+	}
 #endif
 #ifdef GUI_ENABLE_KEYSDIALOG
 	case kChooseKeyMappingCmd:
@@ -1661,6 +1672,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 		_storageLastSync->setLabel(sync);
 		_storageLastSync->setVisible(shown);
 	}
+	if (_storageConnectButton) _storageConnectButton->setVisible(shown);
 }
 #endif
 

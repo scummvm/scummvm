@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	predictivedialog.o \
 	saveload.o \
 	saveload-dialog.o \
+	storagewizarddialog.o \
 	themebrowser.o \
 	ThemeEngine.o \
 	ThemeEval.o \

@@ -255,6 +255,7 @@ protected:
 	StaticTextWidget *_storageUsedSpace;
 	StaticTextWidget *_storageLastSyncDesc;
 	StaticTextWidget *_storageLastSync;
+	ButtonWidget	 *_storageConnectButton;
 
 	void setupCloudTab();
 #endif

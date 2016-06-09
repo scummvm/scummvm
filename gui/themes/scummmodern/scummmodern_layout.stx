@@ -572,6 +572,49 @@
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'ConnectButton'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GlobalOptions_Cloud_ConnectionWizard' overlays = 'Dialog.GlobalOptions'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'Picture'
+						type = 'OptionsLabel'
+				/>
+				<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '6'>
+					<widget name = 'Headline'
+							height = 'Globals.Line.Height'
+					/>
+					<space size = '4' />
+					<widget name = 'NavigateLine'
+							height = 'Globals.Line.Height'
+					/>
+					<widget name = 'URLLine'
+							height = 'Globals.Line.Height'
+					/>
+					<space size = '4' />
+					<widget name = 'ReturnLine1'
+							height = 'Globals.Line.Height'
+					/>
+					<widget name = 'ReturnLine2'
+							height = 'Globals.Line.Height'
+					/>
+					<space size = '6' />
+				</layout>
+			</layout>			
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'CancelButton'
+						type = 'Button'
+				/>
+				<widget name = 'ConnectButton'
+						type = 'Button'
+				/>
+			</layout>
 		</layout>
 	</dialog>
 
