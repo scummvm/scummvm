@@ -26,8 +26,7 @@
 
 namespace Gnap {
 
-SoundMan::SoundMan(GnapEngine *vm)
-	: _vm(vm) {
+SoundMan::SoundMan(GnapEngine *vm) : _vm(vm) {
 }
 
 SoundMan::~SoundMan() {
@@ -49,11 +48,12 @@ void SoundMan::playSound(int resourceId, bool looping) {
 
 void SoundMan::stopSound(int resourceId) {
 	const int index = find(resourceId);
-	if (index >= 0) {
-		_vm->_soundCache->release(_items[index]._resourceId);
-		_vm->_mixer->stopHandle(_items[index]._handle);
-		_items.remove_at(index);
-	}
+	if (index < 0)
+		return;
+
+	_vm->_soundCache->release(_items[index]._resourceId);
+	_vm->_mixer->stopHandle(_items[index]._handle);
+	_items.remove_at(index);
 }
 
 void SoundMan::setSoundVolume(int resourceId, int volume) {
@@ -61,13 +61,19 @@ void SoundMan::setSoundVolume(int resourceId, int volume) {
 		return;
 
 	const int index = find(resourceId);
+	if (index < 0)
+		return;
+
 	int realVol = volume * 2.55;
 	_vm->_mixer->setChannelVolume(_items[index]._handle, realVol);
 }
 
 bool SoundMan::isSoundPlaying(int resourceId) {
 	const int index = find(resourceId);
-	return index >= 0 && _vm->_mixer->isSoundHandleActive(_items[index]._handle);
+	if (index < 0)
+		return false;
+
+	return _vm->_mixer->isSoundHandleActive(_items[index]._handle);
 }
 
 void SoundMan::stopAll() {
