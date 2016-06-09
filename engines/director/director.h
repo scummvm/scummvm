@@ -42,6 +42,7 @@ enum DirectorGameID {
 class Archive;
 struct DirectorGameDescription;
 class Lingo;
+class DirectorSound;
 
 class DirectorEngine : public ::Engine {
 public:
@@ -77,6 +78,7 @@ private:
 
 	Archive *_mainArchive;
 	Common::MacResManager *_macBinary;
+	DirectorSound *_soundManager;
 
 	Lingo *_lingo;
 };

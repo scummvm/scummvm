@@ -632,7 +632,6 @@ void Frame::readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16
 			sprite._flags = stream.readUint16BE();
 			sprite._ink = static_cast<inkType>(sprite._flags & 0x3f); //TODO more flags?
 			sprite._trails = sprite._flags & 0x40;
-			debug("%d", sprite._trails);
 			fieldPosition += 2;
 			break;
 		case kSpritePositionCastId:

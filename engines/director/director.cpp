@@ -41,6 +41,7 @@
 #include "director/resource.h"
 #include "director/score.h"
 #include "director/lingo/lingo.h"
+#include "director/sound.h"
 
 namespace Director {
 
@@ -68,6 +69,8 @@ Common::Error DirectorEngine::run() {
 	debug("Starting v%d Director game", getVersion());
 
 	_lingo = new Lingo();
+
+	_soundManager = new DirectorSound();
 
 	//FIXME
 	_mainArchive = new RIFFArchive();

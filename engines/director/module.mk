@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	director.o \
 	resource.o \
 	score.o \
+	sound.o \
 	lingo/lingo.o
 
 # This module can be built as a plugin
