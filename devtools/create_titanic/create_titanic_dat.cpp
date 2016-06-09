@@ -51,7 +51,7 @@
  */
 
 #define VERSION_NUMBER 1
-#define HEADER_SIZE 0x580
+#define HEADER_SIZE 0x5A0
 
 Common::File inputFile, outputFile;
 Common::PEResources res;
@@ -400,7 +400,7 @@ void writeSentenceEntries(const char *name, uint tableOffset) {
 	}
 
 	uint size = outputFile.size() - dataOffset;
-	writeEntryHeader("TEXT/TREE", dataOffset, size);
+	writeEntryHeader(name, dataOffset, size);
 	dataOffset += size;
 }
 
