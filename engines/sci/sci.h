@@ -56,6 +56,7 @@ class SoundCommandParser;
 class EventManager;
 class SegManager;
 class ScriptPatcher;
+class Sync;
 
 class GfxAnimate;
 class GfxCache;
@@ -372,6 +373,7 @@ public:
 #endif
 
 	AudioPlayer *_audio;
+	Sync *_sync;
 	SoundCommandParser *_soundCmd;
 	GameFeatures *_features;
 

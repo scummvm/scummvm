@@ -69,6 +69,7 @@ MODULE_OBJS := \
 	sound/midiparser_sci.o \
 	sound/music.o \
 	sound/soundcmd.o \
+	sound/sync.o \
 	sound/drivers/adlib.o \
 	sound/drivers/amigamac.o \
 	sound/drivers/cms.o \
