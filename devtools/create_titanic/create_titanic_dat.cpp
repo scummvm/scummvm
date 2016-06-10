@@ -38,6 +38,7 @@
 #include "file.h"
 #include "script_responses.h"
 #include "script_ranges.h"
+#include "tag_maps.h"
 
 /**
  * Format of the access.dat file that will be created:
@@ -51,7 +52,7 @@
  */
 
 #define VERSION_NUMBER 1
-#define HEADER_SIZE 0x5A0
+#define HEADER_SIZE 0x640
 
 Common::File inputFile, outputFile;
 Common::PEResources res;
@@ -487,19 +488,18 @@ void writeData() {
 	writeNumbers();
 	writeAllScriptResponses();
 	writeAllScriptRanges();
+	writeAllTagMappings();
 }
 
-// Support method used for translating IDA debugger's output for
-// an NPC's chooseResponse method tag list to a format for inclusion
-// in this tool's script_respones.cpp file
-void createScriptResponses() {
+void createScriptMap() {
 	Common::File inFile;
 	char line[80];
 	char c[2];
 	c[0] = c[1] = '\0';
+	int counter = 0;
 
-	inFile.open("d:\\temp\\deskbot.txt");
-	printf("static const int xxxx_RESPONSES[][5] = {\n");
+	inFile.open("d:\\temp\\map.txt");
+	printf("static const TagMapping xxxx_ID_MAP[] = {\n");
 
 	do {
 		strcpy(line, "");
@@ -511,17 +511,20 @@ void createScriptResponses() {
 			else if (c[0] == '\r')
 				continue;
 			strcat(line, c);
-			if (inFile.eof() || strlen(line) == (5 * 9))
+			if (inFile.eof() || strlen(line) == (2 * 9))
 				break;
 		}
 
-		int tag, v1, v2, v3, v4;
-		sscanf(line, "%x %x %x %x %x", &tag, &v1, &v2, &v3, &v4);
+		int v1, v2;
+		sscanf(line, "%x %x", &v1, &v2);
 
-		printf("\t{ MKTAG('%c', '%c', '%c', '%c'), %d, %d, %d, %d },\n",
-			(tag >> 24) & 0xff, (tag >> 16) & 0xff, (tag >> 8) & 0xff, tag & 0xff,
-			v1, v2, v3, v4);
+		if (counter != 0 && (counter % 3) == 0)
+			printf("\r\n");
+		if ((counter % 3) == 0)
+			printf("\t");
 
+		printf("{ 0x%.5x, 0x%.5x }, ", v1, v2);
+		++counter;
 	} while (!inFile.eof());
 
 	printf("};\r\n");

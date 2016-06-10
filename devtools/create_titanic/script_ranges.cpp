@@ -1794,6 +1794,7 @@ void writeScriptRange(const char *name, const ScriptRange *ranges, int count) {
 
 void writeAllScriptRanges() {
 	writeScriptRange("Ranges/Barbot", BARBOT_RANGES, BARBOT_RANGE_COUNT);
+	writeScriptRange("Ranges/Bellbot", BELLBOT_RANGES, BELLBOT_RANGE_COUNT);
 	writeScriptRange("Ranges/Deskbot", DESKBOT_RANGES, DESKBOT_RANGE_COUNT);
 	writeScriptRange("Ranges/Doorbot", DOORBOT_RANGES, DOORBOT_RANGE_COUNT);
 	writeScriptRange("Ranges/Liftbot", LIFTBOT_RANGES, LIFTBOT_RANGE_COUNT);

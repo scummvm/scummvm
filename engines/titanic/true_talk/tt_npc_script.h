@@ -276,8 +276,10 @@ public:
 	virtual void selectResponse(int id);
 	
 	virtual int proc15(int id) const;
+
 	virtual bool handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 		int val, uint tagId, uint remainder) const;
+
 	virtual bool proc17() const;
 	virtual bool proc18() const;
 

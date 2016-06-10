@@ -66,9 +66,10 @@ int BellbotScript::proc15() const {
 	return 0;
 }
 
-bool BellbotScript::proc16() const {
-	warning("TODO");
-	return 0;
+bool BellbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
+	int val, uint tagId, uint remainder) const {
+	warning("TODO: handleQuote");
+	return false;
 }
 
 bool BellbotScript::proc18() const {

@@ -48,6 +48,7 @@ public:
 	virtual int proc9() const;
 	virtual int proc10() const;
 	virtual int proc15() const;
+
 	virtual bool handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 		int val, uint tagId, uint remainder) const;
 
