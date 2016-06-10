@@ -98,8 +98,8 @@ void TTscriptBase::addResponse(const TTstring &str) {
 	appendResponse2(-1, nullptr, str);
 }
 
-void TTscriptBase::addResponse(int val) {
-	appendResponse(-1, nullptr, val);
+void TTscriptBase::addResponse(int id) {
+	appendResponse(-1, nullptr, id);
 }
 
 void TTscriptBase::applyResponse() {

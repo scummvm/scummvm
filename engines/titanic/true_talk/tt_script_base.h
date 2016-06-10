@@ -82,7 +82,7 @@ public:
 
 	virtual void addResponse(const TTstring &str);
 
-	virtual void addResponse(int val);
+	virtual void addResponse(int id);
 
 	/**
 	 * Passes on the list of dialogue Ids stored in the response(s)

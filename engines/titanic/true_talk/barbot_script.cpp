@@ -30,10 +30,21 @@ static const int STATE_ARRAY[7] = {
 	0xCAB0, 0xCAB2, 0xCAB3, 0xCAB4, 0xCAB5, 0xCAB6, 0xCAB7
 };
 
+static const uint ARRAY1[] = {
+	0, 50033, 50044, 50045, 50046, 50047, 50048, 50049,
+	50050, 50051, 50034, 50035, 50036, 50037, 50038, 50039,
+	50040, 50041, 50042, 50043, 50411, 0
+};
+
+static const uint ARRAY2[] = {
+	51899, 51900, 51901, 51902, 51903, 51904, 51905, 51906, 51907, 0
+};
+
 BarbotScript::BarbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
 	_state = 0;
+	_arrIndex = 0;
 
 	loadRanges("Ranges/Barbot");
 	loadResponses("Responses/Barbot");
@@ -115,8 +126,72 @@ int BarbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence,
 }
 
 int BarbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
+	int dialogueId = 0;
+
 	if (roomScript->_scriptId != 112)
 		return 2;
+
+	checkItems(roomScript, sentence);
+	if (isState9()) {
+		if (sentence->localWord("visioncenter") || sentence->localWord("brain") ||
+				sentence->contains("vision") || sentence->contains("visual") ||
+				sentence->contains("brain") || sentence->contains("crystal")) {
+			if (CTrueTalkManager::getStateValue(2)) {
+				addResponse(getDialogueId(251003));
+				applyResponse();
+				CTrueTalkManager::triggerAction(6, 0);
+				return 2;
+			}
+		}
+
+		if (sentence->contains("goldfish")) {
+			addResponse(getDialogueId(250184));
+			applyResponse();
+			return 2;
+		}
+
+		dialogueId = ARRAY1[getRandomNumber(20)];
+		if (!ARRAY2[_arrIndex])
+			_arrIndex = 0;
+
+		if (_arrIndex) {
+			dialogueId = ARRAY2[_arrIndex++];
+		} else if (getRandomNumber(100) > 35) {
+			dialogueId = ARRAY2[0];
+			_arrIndex = 1;		
+		} else if (getRandomNumber(100) > 60) {
+			switch (sentence->_field2C) {
+			case 2:
+				dialogueId = 51914;
+				break;
+			case 3:
+				dialogueId = 51911;
+				break;
+			case 4:
+				dialogueId = 51913;
+				break;
+			case 5:
+				dialogueId = 51912;
+				break;
+			case 6:
+				dialogueId = 51915;
+				break;
+			case 7:
+				dialogueId = 51909;
+				break;
+			default:
+				break;
+			}
+		}
+
+		addResponse(dialogueId);
+		if (getRandomNumber(100) > 65)
+			addResponse(getDialogueId(251250));
+		applyResponse();
+		return 2;
+	}
+
+
 
 	// TODO
 	return 2;
@@ -187,6 +262,10 @@ uint BarbotScript::translateId(uint id) const {
 void BarbotScript::adjustDial(int dialNum, int amount) {
 	int level = CLIP(getDialLevel(dialNum) + amount, 0, 100);
 	setDial(dialNum, level);
+}
+
+bool BarbotScript::isState9() const {
+	return CTrueTalkManager::getStateValue(9) != 0;
 }
 
 } // End of namespace Titanic

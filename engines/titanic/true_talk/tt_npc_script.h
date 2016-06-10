@@ -237,7 +237,7 @@ public:
 		const char *charName, int v3, int val2, int v4,
 		int v5, int v6, int v7);
 
-	virtual void proc4(int v);
+	virtual void addResponse(int id);
 
 	/**
 	 * Chooses and adds a conversation response based on a specified tag Id.
@@ -275,7 +275,7 @@ public:
 	 */
 	virtual void selectResponse(int id);
 	
-	virtual int proc15() const;
+	virtual int proc15(int id) const;
 	virtual bool handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 		int val, uint tagId, uint remainder) const;
 	virtual bool proc17() const;

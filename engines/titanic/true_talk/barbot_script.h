@@ -30,6 +30,7 @@ namespace Titanic {
 class BarbotScript : public TTnpcScript {
 private:
 	int _state;
+	int _arrIndex;
 private:
 	/**
 	 * Adjust a given dial number by a given delta amount
@@ -40,6 +41,8 @@ private:
 	 * Setup sentence data
 	 */
 	void setupSentences();
+
+	bool isState9() const;
 public:
 	BarbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7);

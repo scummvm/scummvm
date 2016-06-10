@@ -202,8 +202,12 @@ void TTnpcScript::setupDials(int dial1, int dial2, int dial3) {
 		_field78 = -_field78;
 }
 
-void TTnpcScript::proc4(int v) {
-	warning("TODO");
+void TTnpcScript::addResponse(int id) {
+	if (id > 200000)
+		id = getDialogueId(id);
+
+	proc15(id);
+	TTscriptBase::addResponse(id);
 }
 
 int TTnpcScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {
@@ -266,7 +270,7 @@ void TTnpcScript::selectResponse(int id) {
 	addResponse(id);
 }
 
-int TTnpcScript::proc15() const {
+int TTnpcScript::proc15(int id) const {
 	return 0;
 }
 
