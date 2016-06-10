@@ -91,7 +91,8 @@ Score::Score(Archive &movie, Lingo &lingo) {
 
 	Common::SeekableReadStream *pal = _movieArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[0]);
 	palette.loadPalette(*pal);
-	g_system->getPaletteManager()->setPalette(palette.getPalette(), 0, 255);
+	g_system->getPaletteManager()->setPalette(palette.getPalette(), 0, palette.getPaletteColorCount());
+
 }
 
 void Score::loadFrames(Common::SeekableReadStream &stream) {
