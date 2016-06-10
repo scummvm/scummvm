@@ -38,7 +38,7 @@ TTstring::TTstring(const CString &str) {
 	_data = new TTstringData(str);
 }
 
-TTstring::TTstring(TTstring &str) {
+TTstring::TTstring(const TTstring &str) {
 	if (str._status != SS_VALID) {
 		_status = SS_5;
 		_data = nullptr;

@@ -51,7 +51,7 @@ public:
 	TTstring();
 	TTstring(const char *str);
 	TTstring(const CString &str);
-	TTstring(TTstring &str);
+	TTstring(const TTstring &str);
 	virtual ~TTstring();
 
 	void operator=(const TTstring &str);
