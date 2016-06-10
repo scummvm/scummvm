@@ -234,7 +234,7 @@ Networking::Request *GoogleDriveStorage::streamFile(Common::String path, Network
 
 Networking::Request *GoogleDriveStorage::streamFileById(Common::String id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) {
 	if (callback) {
-		Common::String url = "https://www.googleapis.com/drive/v3/files/" + id + "?alt=media";
+		Common::String url = "https://www.googleapis.com/drive/v3/files/" + ConnMan.urlEncode(id) + "?alt=media";
 		Common::String header = "Authorization: Bearer " + _token;
 		curl_slist *headersList = curl_slist_append(nullptr, header.c_str());
 		Networking::NetworkReadStream *stream = new Networking::NetworkReadStream(url.c_str(), headersList, "");

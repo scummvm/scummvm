@@ -214,7 +214,7 @@ Networking::Request *OneDriveStorage::upload(Common::String path, Common::Seekab
 }
 
 Networking::Request *OneDriveStorage::streamFileById(Common::String path, Networking::NetworkReadStreamCallback outerCallback, Networking::ErrorCallback errorCallback) {
-	Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot:/" + path;
+	Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot:/" + ConnMan.urlEncode(path);
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, Networking::NetworkReadStreamResponse, Networking::JsonResponse>(this, &OneDriveStorage::fileInfoCallback, outerCallback);
 	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, errorCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + _token);

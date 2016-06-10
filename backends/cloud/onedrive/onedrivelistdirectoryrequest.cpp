@@ -70,8 +70,9 @@ void OneDriveListDirectoryRequest::listNextDirectory() {
 	if (_currentDirectory != "" && _currentDirectory.lastChar() != '/' && _currentDirectory.lastChar() != '\\')
 		_currentDirectory += '/';
 
-	Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot:/" + _currentDirectory;
-	url.deleteLastChar();
+	Common::String dir = _currentDirectory;
+	dir.deleteLastChar();
+	Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot:/" + ConnMan.urlEncode(dir);
 	url += ":/children";
 	makeRequest(url);
 }

@@ -63,7 +63,7 @@ void OneDriveCreateDirectoryRequest::start() {
 	}
 
 	Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot";	
-	if (parent != "") url += ":/" + parent + ":";
+	if (parent != "") url += ":/" + ConnMan.urlEncode(parent) + ":";
 	url += "/children";	
 	Networking::JsonCallback innerCallback = new Common::Callback<OneDriveCreateDirectoryRequest, Networking::JsonResponse>(this, &OneDriveCreateDirectoryRequest::responseCallback);
 	Networking::ErrorCallback errorCallback = new Common::Callback<OneDriveCreateDirectoryRequest, Networking::ErrorResponse>(this, &OneDriveCreateDirectoryRequest::errorCallback);

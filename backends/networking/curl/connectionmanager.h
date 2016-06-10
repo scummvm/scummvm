@@ -117,6 +117,9 @@ public:
 
 	/** Shows a "cloud disabled" icon for a three seconds. */
 	void showCloudDisabledIcon();
+
+	/** Return URL-encoded version of given string. */
+	Common::String urlEncode(Common::String s);
 };
 
 /** Shortcut for accessing the connection manager. */

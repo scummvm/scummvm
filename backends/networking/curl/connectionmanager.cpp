@@ -78,6 +78,17 @@ void ConnectionManager::showCloudDisabledIcon() {
 	startTimer();
 }
 
+Common::String ConnectionManager::urlEncode(Common::String s) {
+	if (!_multi) return "";
+	char *output = curl_easy_escape(_multi, s.c_str(), s.size());
+	if (output) {
+		Common::String result = output;
+		curl_free(output);
+		return result;
+	}
+	return "";
+}
+
 //private goes here:
 
 void connectionsThread(void *ignored) {

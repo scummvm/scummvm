@@ -63,7 +63,7 @@ void OneDriveUploadRequest::uploadNextPart() {
 	const uint32 UPLOAD_PER_ONE_REQUEST = 10 * 1024 * 1024;
 
 	if (_uploadUrl == "" && _contentsStream->size() > UPLOAD_PER_ONE_REQUEST) {
-		Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot:/"+_savePath+":/upload.createSession"; //folder must exist
+		Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot:/"+ConnMan.urlEncode(_savePath)+":/upload.createSession"; //folder must exist
 		Networking::JsonCallback callback = new Common::Callback<OneDriveUploadRequest, Networking::JsonResponse>(this, &OneDriveUploadRequest::partUploadedCallback);
 		Networking::ErrorCallback failureCallback = new Common::Callback<OneDriveUploadRequest, Networking::ErrorResponse>(this, &OneDriveUploadRequest::partUploadedErrorCallback);
 		Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(_storage, callback, failureCallback, url.c_str());
@@ -75,7 +75,7 @@ void OneDriveUploadRequest::uploadNextPart() {
 
 	Common::String url;
 	if (_uploadUrl == "") {		
-		url = "https://api.onedrive.com/v1.0/drive/special/approot:/"+_savePath+":/content";
+		url = "https://api.onedrive.com/v1.0/drive/special/approot:/"+ConnMan.urlEncode(_savePath)+":/content";
 	} else {		
 		url = _uploadUrl;
 	}

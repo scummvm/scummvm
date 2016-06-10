@@ -108,7 +108,7 @@ void GoogleDriveUploadRequest::startUpload() {
 	}
 
 	Common::String url = "https://www.googleapis.com/upload/drive/v3/files";
-	if (_resolvedId != "") url += "/" + _resolvedId;
+	if (_resolvedId != "") url += "/" + ConnMan.urlEncode(_resolvedId);
 	url += "?uploadType=resumable&fields=id,mimeType,modifiedTime,name,size";
 	Networking::JsonCallback callback = new Common::Callback<GoogleDriveUploadRequest, Networking::JsonResponse>(this, &GoogleDriveUploadRequest::startUploadCallback);
 	Networking::ErrorCallback failureCallback = new Common::Callback<GoogleDriveUploadRequest, Networking::ErrorResponse>(this, &GoogleDriveUploadRequest::startUploadErrorCallback);
