@@ -95,6 +95,14 @@ Score::Score(Archive &movie, Lingo &lingo) {
 
 }
 
+Score::~Score() {
+	_surface->free();
+	delete _surface;
+
+	_movieArchive->close();
+	delete _movieArchive;
+}
+
 void Score::loadFrames(Common::SeekableReadStream &stream) {
 	uint32 size = stream.readUint32BE();
 	size -= 4;
@@ -537,6 +545,10 @@ Frame::Frame(const Frame &frame) {
 Frame::~Frame() {
 	for (uint16 i = 0; i < _sprites.size(); i++) {
 		delete _sprites[i];
+	}
+
+	for (uint16 i = 0; i < _drawRects.size(); i++) {
+		delete _drawRects[i];
 	}
 }
 

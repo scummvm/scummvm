@@ -265,6 +265,7 @@ public:
 class Score {
 public:
     Score(Archive &movie, Lingo &lingo);
+    ~Score();
     static Common::Rect readRect(Common::SeekableReadStream &stream);
     void startLoop();
 
