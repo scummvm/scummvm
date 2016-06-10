@@ -27,6 +27,7 @@
 #include "sci/engine/vm.h"		// for Object
 #include "sci/sound/audio.h"
 #include "sci/sound/soundcmd.h"
+#include "sci/sound/sync.h"
 
 #include "audio/mixer.h"
 #include "common/system.h"
@@ -286,14 +287,12 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->_segMan;
 	switch (argv[0].toUint16()) {
 	case kSciAudioSyncStart: {
 		ResourceId id;
 
-		g_sci->_audio->stopSoundSync();
+		g_sci->_sync->stop();
 
-		// Load sound sync resource and lock it
 		if (argc == 3) {
 			id = ResourceId(kResourceTypeSync, argv[2].toUint16());
 		} else if (argc == 7) {
@@ -304,14 +303,14 @@ reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
 			return s->r_acc;
 		}
 
-		g_sci->_audio->setSoundSync(id, argv[1], segMan);
+		g_sci->_sync->start(id, argv[1]);
 		break;
 	}
 	case kSciAudioSyncNext:
-		g_sci->_audio->doSoundSync(argv[1], segMan);
+		g_sci->_sync->next(argv[1]);
 		break;
 	case kSciAudioSyncStop:
-		g_sci->_audio->stopSoundSync();
+		g_sci->_sync->stop();
 		break;
 	default:
 		error("DoSync: Unhandled subfunction %d", argv[0].toUint16());

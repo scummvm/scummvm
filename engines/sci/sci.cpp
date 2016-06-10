@@ -43,6 +43,7 @@
 
 #include "sci/sound/audio.h"
 #include "sci/sound/music.h"
+#include "sci/sound/sync.h"
 #include "sci/sound/soundcmd.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
@@ -86,6 +87,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	_gfxMacIconBar = 0;
 
 	_audio = 0;
+	_sync = nullptr;
 	_features = 0;
 	_resMan = 0;
 	_gamestate = 0;
@@ -182,6 +184,7 @@ SciEngine::~SciEngine() {
 	delete _gfxScreen;
 
 	delete _audio;
+	delete _sync;
 	delete _soundCmd;
 	delete _kernel;
 	delete _vocabulary;
@@ -267,6 +270,7 @@ Common::Error SciEngine::run() {
 	if (getGameId() == GID_CHRISTMAS1990)
 		_vocabulary = new Vocabulary(_resMan, false);
 	_audio = new AudioPlayer(_resMan);
+	_sync = new Sync(_resMan, segMan);
 	_gamestate = new EngineState(segMan);
 	_eventMan = new EventManager(_resMan->detectFontExtended());
 
@@ -802,6 +806,7 @@ void SciEngine::exitGame() {
 	if (_gamestate->abortScriptProcessing != kAbortLoadGame) {
 		_gamestate->_executionStack.clear();
 		_audio->stopAllAudio();
+		_sync->stop();
 		_soundCmd->clearPlayList();
 	}
 
