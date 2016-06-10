@@ -335,6 +335,15 @@ bool String::contains(char x) const {
 	return strchr(c_str(), x) != NULL;
 }
 
+uint64 String::asUint64() const {
+	uint64 result = 0;
+	for (uint32 i = 0; i < _size; ++i) {
+		if (_str[i] < '0' || _str[i] > '9') break;
+		result = result * 10L + (_str[i] - '0');
+	}
+	return result;
+}
+
 bool String::matchString(const char *pat, bool ignoreCase, bool pathMode) const {
 	return Common::matchString(c_str(), pat, ignoreCase, pathMode);
 }

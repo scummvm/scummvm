@@ -43,17 +43,6 @@ CloudManager::~CloudManager() {
 	delete _activeStorage;
 }
 
-namespace {
-uint64 atoull(Common::String s) {
-	uint64 result = 0;
-	for (uint32 i = 0; i < s.size(); ++i) {
-		if (s[i] < '0' || s[i] > '9') break;
-		result = result * 10L + (s[i] - '0');
-	}
-	return result;
-}
-}
-
 Common::String CloudManager::getStorageConfigName(uint32 index) const {
 	switch (index) {
 	case kStorageNoneId: return "<none>";
@@ -101,7 +90,7 @@ void CloudManager::init() {
 		if (ConfMan.hasKey("storage_" + name + "_lastSync", "cloud"))
 			config.lastSyncDate = ConfMan.get("storage_" + name + "_lastSync", "cloud");
 		if (ConfMan.hasKey("storage_" + name + "_usedBytes", "cloud"))
-			config.usedBytes = atoull(ConfMan.get("storage_" + name + "_usedBytes", "cloud"));
+			config.usedBytes = ConfMan.get("storage_" + name + "_usedBytes", "cloud").asUint64();
 		_storages.push_back(config);
 	}
 

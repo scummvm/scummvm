@@ -67,17 +67,6 @@ void GoogleDriveListDirectoryByIdRequest::makeRequest(Common::String pageToken) 
 	_workingRequest = ConnMan.addRequest(request);
 }
 
-namespace {
-uint64 atoull(Common::String s) {
-	uint64 result = 0;
-	for (uint32 i = 0; i < s.size(); ++i) {
-		if (s[i] < '0' || s[i] > '9') break;
-		result = result * 10L + (s[i] - '0');
-	}
-	return result;
-}
-}
-
 void GoogleDriveListDirectoryByIdRequest::responseCallback(Networking::JsonResponse response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
@@ -113,7 +102,7 @@ void GoogleDriveListDirectoryByIdRequest::responseCallback(Networking::JsonRespo
 				bool isDirectory = (item.getVal("mimeType")->asString() == "application/vnd.google-apps.folder");
 				uint32 size = 0, timestamp = 0;
 				if (item.contains("size") && item.getVal("size")->isString())
-					size = atoull(item.getVal("size")->asString());
+					size = item.getVal("size")->asString().asUint64();
 				if (item.contains("modifiedTime") && item.getVal("modifiedTime")->isString())
 					timestamp = ISO8601::convertToTimestamp(item.getVal("modifiedTime")->asString());
 

@@ -162,6 +162,9 @@ public:
 	bool contains(const char *x) const;
 	bool contains(char x) const;
 
+	/** Return uint64 corrensponding to String's contents. */
+	uint64 asUint64() const;
+
 	/**
 	 * Simple DOS-style pattern matching function (understands * and ? like used in DOS).
 	 * Taken from exult/files/listfiles.cc

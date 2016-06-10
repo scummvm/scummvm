@@ -207,17 +207,6 @@ void GoogleDriveUploadRequest::uploadNextPart() {
 	_workingRequest = ConnMan.addRequest(request);
 }
 
-namespace {
-uint64 atoull(Common::String s) {
-	uint64 result = 0;
-	for (uint32 i = 0; i < s.size(); ++i) {
-		if (s[i] < '0' || s[i] > '9') break;
-		result = result * 10L + (s[i] - '0');
-	}
-	return result;
-}
-}
-
 bool GoogleDriveUploadRequest::handleHttp308(const Networking::NetworkReadStream *stream) {
 	//308 Resume Incomplete, with Range: X-Y header
 	if (!stream) return false;
@@ -238,7 +227,7 @@ bool GoogleDriveUploadRequest::handleHttp308(const Networking::NetworkReadStream
 				if (c == '\n' || c == '\r') break;
 				result += c;
 			}
-			_serverReceivedBytes = atoull(result) + 1;			
+			_serverReceivedBytes = result.asUint64() + 1;
 			uploadNextPart();
 			return true;
 		}
@@ -285,7 +274,7 @@ void GoogleDriveUploadRequest::partUploadedCallback(Networking::JsonResponse res
 				bool isDirectory = (object.getVal("mimeType")->asString() == "application/vnd.google-apps.folder");
 				uint32 size = 0, timestamp = 0;
 				if (object.contains("size") && object.getVal("size")->isString())
-					size = atoull(object.getVal("size")->asString());
+					size = object.getVal("size")->asString().asUint64();
 				if (object.contains("modifiedTime") && object.getVal("modifiedTime")->isString())
 					timestamp = ISO8601::convertToTimestamp(object.getVal("modifiedTime")->asString());
 

@@ -137,17 +137,6 @@ Common::String GoogleDriveStorage::name() const {
 	return "Google Drive";
 }
 
-namespace {
-uint64 atoull(Common::String s) {
-	uint64 result = 0;
-	for (uint32 i = 0; i < s.size(); ++i) {
-		if (s[i] < '0' || s[i] > '9') break;
-		result = result * 10L + (s[i] - '0');
-	}
-	return result;
-}
-}
-
 void GoogleDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse response) {
 	Common::JSONValue *json = response.value;
 	if (!json) {
@@ -175,8 +164,8 @@ void GoogleDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Ne
 		Common::JSONObject storageQuota = info.getVal("storageQuota")->asObject();
 		Common::String usage = storageQuota.getVal("usage")->asString();
 		Common::String limit = storageQuota.getVal("limit")->asString();			
-		quotaUsed = atoull(usage);
-		quotaAllocated = atoull(limit);
+		quotaUsed = usage.asUint64();
+		quotaAllocated = limit.asUint64();
 	}
 		
 	CloudMan.setStorageUsername(kStorageGoogleDriveId, email);
