@@ -119,6 +119,12 @@ public:
 	bool isConcept34(int slotIndex, TTconceptNode *node = nullptr);
 
 	bool localWord(const char *str) const;
+
+	/**
+	 * Returns true if the sentence (either the original or normalized lines)
+	 * contain the specified substring
+	 */
+	bool contains(const char *str) const;
 };
 
 } // End of namespace Titanic

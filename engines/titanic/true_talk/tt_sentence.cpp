@@ -266,4 +266,8 @@ bool TTsentence::localWord(const char *str) const {
 	return false;
 }
 
+bool TTsentence::contains(const char *str) const {
+	return _initialLine.contains(str) || _normalizedLine.contains(str);
+}
+
 } // End of namespace Titanic
