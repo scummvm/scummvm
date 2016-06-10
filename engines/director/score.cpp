@@ -414,7 +414,7 @@ void Score::startLoop() {
 	_nextFrameTime = 0;
 
 	_lingo->processEvent(kEventStartMovie, 0);
-
+	_frames[_currentFrame]->prepareFrame(*_movieArchive, *_surface, _movieRect);
 	while (!_stopPlay && _currentFrame < _frames.size() - 2) {
 		update();
 		processEvents();
@@ -426,15 +426,15 @@ void Score::startLoop() {
 void Score::update() {
 	if (g_system->getMillis() < _nextFrameTime)
 		return;
+	//FIXME  0 - default white? (Still believe that last color in palette everywhere white)
+	if (_stageColor == 0)
+		_surface->clear(15);
 
-	_surface->clear(_stageColor);
+	//Enter and exit from previous frame (Director 4)
+	_lingo->processEvent(kEventEnterFrame, _currentFrame);
+	_lingo->processEvent(kEventExitFrame, _currentFrame);
+	//TODO Director 6 - another order
 
-	if (_currentFrame > 0) {
-		//Enter and exit from previous frame (Director 4)
-		_lingo->processEvent(kEventEnterFrame, _currentFrame - 1);
-		_lingo->processEvent(kEventExitFrame, _currentFrame - 1);
-		//TODO Director 6 - another order
-	}
 
 	//TODO Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
 	//for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
@@ -444,10 +444,10 @@ void Score::update() {
 
 	//TODO Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
 	//_lingo->processEvent(kEventPrepareFrame, _currentFrame);
+	_currentFrame++;
 	_frames[_currentFrame]->prepareFrame(*_movieArchive, *_surface, _movieRect);
 	//Stage is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell)
 
-	_currentFrame++;
 	byte tempo = _frames[_currentFrame]->_tempo;
 
 	if (tempo) {
@@ -480,6 +480,17 @@ void Score::processEvents() {
 	while (g_system->getEventManager()->pollEvent(event)) {
 		if (event.type == Common::EVENT_QUIT)
 			_stopPlay = true;
+
+		if (event.type == Common::EVENT_LBUTTONDOWN) {
+			Common::Point pos = g_system->getEventManager()->getMousePos();
+			//TODO there is dont send frame id
+			_lingo->processEvent(kEventMouseDown, _frames[_currentFrame]->getSpriteIDFromPos(pos));
+		}
+
+		if (event.type == Common::EVENT_LBUTTONUP) {
+			Common::Point pos = g_system->getEventManager()->getMousePos();
+			_lingo->processEvent(kEventMouseUp, _frames[_currentFrame]->getSpriteIDFromPos(pos));
+		}
 	}
 }
 
@@ -710,7 +721,6 @@ void Frame::renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Co
 			int y = _sprites[i]->_startPoint.y - regY + rectTop;
 			int height = _sprites[i]->_height;
 			int width = _sprites[i]->_width;
-
 			if (x < 0) {
 				width += x;
 				x = 0;
@@ -720,6 +730,7 @@ void Frame::renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Co
 				y = 0;
 			}
 			Common::Rect drawRect = Common::Rect(x, y, x + width, y + height);
+			_drawRects.push_back(drawRect);
 
 			switch (_sprites[i]->_ink) {
 			case kInkTypeCopy:
@@ -790,6 +801,15 @@ void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Su
 	}
 
 	tmp.free();
+}
+
+uint16 Frame::getSpriteIDFromPos(Common::Point pos) {
+	//Find first from top to bottom
+	for (uint16 i = _drawRects.size() - 1; i > 0; i--) {
+		if (_drawRects[i].contains(pos))
+			return i;
+	}
+	return 0;
 }
 
 Sprite::Sprite() {

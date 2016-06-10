@@ -234,7 +234,7 @@ public:
     Frame(const Frame &frame);
     void readChannel(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
     void prepareFrame(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect movieRect);
-
+    uint16 getSpriteIDFromPos(Common::Point pos);
 private:
     void playTranisition();
     void playSoundChannel(uint16 id);
@@ -259,6 +259,7 @@ public:
     uint8 _skipFrameFlag;
     uint8 _blend;
     Common::Array<Sprite *> _sprites;
+    Common::Array<Common::Rect > _drawRects;
 };
 
 class Score {
