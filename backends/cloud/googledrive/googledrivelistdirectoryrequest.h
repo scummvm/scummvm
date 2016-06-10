@@ -43,6 +43,7 @@ class GoogleDriveListDirectoryRequest: public Networking::Request {
 	StorageFile _currentDirectory;
 	Request *_workingRequest;
 	bool _ignoreCallback;
+	Common::String _date;
 
 	void start();
 	void idResolvedCallback(Storage::UploadResponse response);
@@ -57,6 +58,7 @@ public:
 
 	virtual void handle();
 	virtual void restart();
+	virtual Common::String date() const;
 };
 
 } // End of namespace GoogleDrive

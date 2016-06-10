@@ -60,6 +60,8 @@ void Request::retry(uint32 seconds) {
 
 RequestState Request::state() const { return _state; }
 
+Common::String Request::date() const { return ""; }
+
 void Request::finishError(ErrorResponse error) {
 	_state = FINISHED;
 	if (_errorCallback) (*_errorCallback)(error);

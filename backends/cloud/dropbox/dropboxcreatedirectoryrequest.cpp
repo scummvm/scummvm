@@ -68,6 +68,7 @@ void DropboxCreateDirectoryRequest::responseCallback(Networking::JsonResponse re
 		delete json;
 		return;
 	}
+	if (response.request) _date = response.request->date();
 
 	Networking::ErrorResponse error(this);
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
@@ -93,12 +94,15 @@ void DropboxCreateDirectoryRequest::responseCallback(Networking::JsonResponse re
 void DropboxCreateDirectoryRequest::errorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
+	if (error.request) _date = error.request->date();
 	finishError(error);
 }
 
 void DropboxCreateDirectoryRequest::handle() {}
 
 void DropboxCreateDirectoryRequest::restart() { start(); }
+
+Common::String DropboxCreateDirectoryRequest::date() const { return _date; }
 
 void DropboxCreateDirectoryRequest::finishSuccess(bool success) {
 	Request::finishSuccess();

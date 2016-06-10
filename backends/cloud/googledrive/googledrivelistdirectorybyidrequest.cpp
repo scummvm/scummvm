@@ -70,6 +70,7 @@ void GoogleDriveListDirectoryByIdRequest::makeRequest(Common::String pageToken) 
 void GoogleDriveListDirectoryByIdRequest::responseCallback(Networking::JsonResponse response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
+	if (response.request) _date = response.request->date();
 
 	Networking::ErrorResponse error(this);
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
@@ -131,12 +132,15 @@ void GoogleDriveListDirectoryByIdRequest::responseCallback(Networking::JsonRespo
 void GoogleDriveListDirectoryByIdRequest::errorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
+	if (error.request) _date = error.request->date();
 	finishError(error);
 }
 
 void GoogleDriveListDirectoryByIdRequest::handle() {}
 
 void GoogleDriveListDirectoryByIdRequest::restart() { start(); }
+
+Common::String GoogleDriveListDirectoryByIdRequest::date() const { return _date; }
 
 void GoogleDriveListDirectoryByIdRequest::finishSuccess(Common::Array<StorageFile> &files) {	
 	Request::finishSuccess();

@@ -76,6 +76,8 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 
+	if (response.request) _date = response.request->date();
+
 	Common::HashMap<Common::String, bool> localFileNotAvailableInCloud;
 	for (Common::HashMap<Common::String, uint32>::iterator i = _localFilesTimestamps.begin(); i != _localFilesTimestamps.end(); ++i) {		
 		localFileNotAvailableInCloud[i->_key] = true;
@@ -351,6 +353,9 @@ void SavesSyncRequest::finishSuccess(bool success) {
 
 	//save updated timestamps (even if Request failed, there would be only valid timestamps)
 	saveTimestamps();
+
+	//update last successful sync date
+	CloudMan.setStorageLastSync(CloudMan.getStorageIndex(), _date);
 
 	if (_boolCallback) (*_boolCallback)(Storage::BoolResponse(this, success));
 }

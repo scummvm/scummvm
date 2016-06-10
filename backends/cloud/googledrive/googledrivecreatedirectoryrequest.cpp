@@ -63,12 +63,14 @@ void GoogleDriveCreateDirectoryRequest::start() {
 void GoogleDriveCreateDirectoryRequest::createdBaseDirectoryCallback(Storage::BoolResponse response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
+	if (response.request) _date = response.request->date();
 	resolveId();
 }
 
 void GoogleDriveCreateDirectoryRequest::createdBaseDirectoryErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
+	if (error.request) _date = error.request->date();
 	finishError(error);
 }
 
@@ -85,6 +87,7 @@ void GoogleDriveCreateDirectoryRequest::resolveId() {
 void GoogleDriveCreateDirectoryRequest::idResolvedCallback(Storage::UploadResponse response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
+	if (response.request) _date = response.request->date();
 
 	//resolved => folder already exists
 	finishSuccess(false);
@@ -93,6 +96,7 @@ void GoogleDriveCreateDirectoryRequest::idResolvedCallback(Storage::UploadRespon
 void GoogleDriveCreateDirectoryRequest::idResolveFailedCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
+	if (error.request) _date = error.request->date();
 	
 	//not resolved => folder not exists
 	if (error.response.contains("no such file found in its parent directory")) {		
@@ -116,18 +120,22 @@ void GoogleDriveCreateDirectoryRequest::idResolveFailedCallback(Networking::Erro
 void GoogleDriveCreateDirectoryRequest::createdDirectoryCallback(Storage::BoolResponse response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
+	if (response.request) _date = response.request->date();
 	finishSuccess(response.value);
 }
 
 void GoogleDriveCreateDirectoryRequest::createdDirectoryErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
+	if (error.request) _date = error.request->date();
 	finishError(error);
 }
 
 void GoogleDriveCreateDirectoryRequest::handle() {}
 
 void GoogleDriveCreateDirectoryRequest::restart() { start(); }
+
+Common::String GoogleDriveCreateDirectoryRequest::date() const { return _date; }
 
 void GoogleDriveCreateDirectoryRequest::finishSuccess(bool success) {
 	Request::finishSuccess();

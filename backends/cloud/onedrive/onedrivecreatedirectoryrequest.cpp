@@ -87,6 +87,7 @@ void OneDriveCreateDirectoryRequest::responseCallback(Networking::JsonResponse r
 		delete json;
 		return;
 	}
+	if (response.request) _date = response.request->date();
 
 	Networking::ErrorResponse error(this);
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
@@ -112,12 +113,15 @@ void OneDriveCreateDirectoryRequest::responseCallback(Networking::JsonResponse r
 void OneDriveCreateDirectoryRequest::errorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
+	if (error.request) _date = error.request->date();
 	finishError(error);
 }
 
 void OneDriveCreateDirectoryRequest::handle() {}
 
 void OneDriveCreateDirectoryRequest::restart() { start(); }
+
+Common::String OneDriveCreateDirectoryRequest::date() const { return _date; }
 
 void OneDriveCreateDirectoryRequest::finishSuccess(bool success) {
 	Request::finishSuccess();

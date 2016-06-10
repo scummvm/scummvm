@@ -71,6 +71,8 @@ void DropboxListDirectoryRequest::responseCallback(Networking::JsonResponse resp
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 
+	if (response.request) _date = response.request->date();
+
 	Networking::ErrorResponse error(this);
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
@@ -137,12 +139,15 @@ void DropboxListDirectoryRequest::responseCallback(Networking::JsonResponse resp
 void DropboxListDirectoryRequest::errorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
+	if (error.request) _date = error.request->date();
 	finishError(error);
 }
 
 void DropboxListDirectoryRequest::handle() {}
 
 void DropboxListDirectoryRequest::restart() { start(); }
+
+Common::String DropboxListDirectoryRequest::date() const { return _date; }
 
 void DropboxListDirectoryRequest::finishSuccess(Common::Array<StorageFile> &files) {	
 	Request::finishSuccess();

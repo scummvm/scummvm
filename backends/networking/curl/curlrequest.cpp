@@ -66,6 +66,25 @@ void CurlRequest::restart() {
 	//with no stream available next handle() will create another one
 }
 
+Common::String CurlRequest::date() const {	
+	if (_stream) {
+		Common::String headers = _stream->responseHeaders();
+		const char *cstr = headers.c_str();
+		const char *position = strstr(cstr, "Date: ");
+
+		if (position) {
+			Common::String result = "";
+			char c;
+			for (const char *i = position + 6; c = *i, c != 0; ++i) {
+				if (c == '\n' || c == '\r') break;
+				result += c;
+			}
+			return result;
+		}
+	}
+	return "";
+}
+
 void CurlRequest::setHeaders(Common::Array<Common::String> &headers) {
 	curl_slist_free_all(_headersList);
 	_headersList = nullptr;

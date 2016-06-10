@@ -94,6 +94,8 @@ void OneDriveListDirectoryRequest::listedDirectoryCallback(Networking::JsonRespo
 		return;
 	}
 
+	if (response.request) _date = response.request->date();
+
 	Networking::ErrorResponse error(this);
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
@@ -138,12 +140,15 @@ void OneDriveListDirectoryRequest::listedDirectoryCallback(Networking::JsonRespo
 void OneDriveListDirectoryRequest::listedDirectoryErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
+	if (error.request) _date = error.request->date();
 	finishError(error);
 }
 
 void OneDriveListDirectoryRequest::handle() {}
 
 void OneDriveListDirectoryRequest::restart() { start(); }
+
+Common::String OneDriveListDirectoryRequest::date() const { return _date; }
 
 void OneDriveListDirectoryRequest::finishSuccess(Common::Array<StorageFile> &files) {
 	Request::finishSuccess();

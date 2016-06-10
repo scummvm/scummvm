@@ -43,6 +43,7 @@ class OneDriveListDirectoryRequest: public Networking::Request {
 	Common::String _currentDirectory;
 	Request *_workingRequest;
 	bool _ignoreCallback;
+	Common::String _date;
 
 	void start();
 	void listNextDirectory();
@@ -56,6 +57,7 @@ public:
 
 	virtual void handle();
 	virtual void restart();
+	virtual Common::String date() const;
 };
 
 } // End of namespace OneDrive

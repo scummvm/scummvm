@@ -55,6 +55,7 @@ public:
 
 	virtual void handle();
 	virtual void restart();
+	virtual Common::String date() const;
 
 	/** Replaces all headers with the passed array of headers. */
 	virtual void setHeaders(Common::Array<Common::String> &headers);

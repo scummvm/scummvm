@@ -182,6 +182,20 @@ public:
 
 	/** Returns Request's current state. */
 	RequestState state() const;
+
+	/**
+	 * Return date this Request received from server.
+	 * It could be extracted from "Date" header,
+	 * which is kept in NetworkReadStream.
+	 *
+	 * @note not all Requests do that, so "" is returned
+	 * to indicate the date is unknown. That's also true
+	 * if no server response available or no "Date" header
+	 * was passed.
+	 *
+	 * @returns date from "Date" response header.
+	 */
+	virtual Common::String date() const;
 };
 
 } // End of namespace Networking

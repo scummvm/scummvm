@@ -58,6 +58,7 @@ void GoogleDriveListDirectoryRequest::start() {
 void GoogleDriveListDirectoryRequest::idResolvedCallback(Storage::UploadResponse response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
+	if (response.request) _date = response.request->date();
 
 	StorageFile directory = response.value;
 	directory.setPath(_requestedPath);
@@ -68,6 +69,7 @@ void GoogleDriveListDirectoryRequest::idResolvedCallback(Storage::UploadResponse
 void GoogleDriveListDirectoryRequest::idResolveErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
+	if (error.request) _date = error.request->date();
 	finishError(error);
 }
 
@@ -88,6 +90,7 @@ void GoogleDriveListDirectoryRequest::listNextDirectory() {
 void GoogleDriveListDirectoryRequest::listedDirectoryCallback(Storage::FileArrayResponse response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
+	if (response.request) _date = response.request->date();
 
 	for (uint32 i = 0; i < response.value.size(); ++i) {
 		StorageFile &file = response.value[i];
@@ -107,12 +110,15 @@ void GoogleDriveListDirectoryRequest::listedDirectoryCallback(Storage::FileArray
 void GoogleDriveListDirectoryRequest::listedDirectoryErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
+	if (error.request) _date = error.request->date();
 	finishError(error);
 }
 
 void GoogleDriveListDirectoryRequest::handle() {}
 
 void GoogleDriveListDirectoryRequest::restart() { start(); }
+
+Common::String GoogleDriveListDirectoryRequest::date() const { return _date; }
 
 void GoogleDriveListDirectoryRequest::finishSuccess(Common::Array<StorageFile> &files) {
 	Request::finishSuccess();

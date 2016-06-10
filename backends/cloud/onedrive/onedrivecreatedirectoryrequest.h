@@ -38,6 +38,7 @@ class OneDriveCreateDirectoryRequest: public Networking::Request {
 	Storage::BoolCallback _boolCallback;
 	Request *_workingRequest;
 	bool _ignoreCallback;
+	Common::String _date;
 	
 	void start();
 	void responseCallback(Networking::JsonResponse response);
@@ -49,6 +50,7 @@ public:
 
 	virtual void handle();
 	virtual void restart();
+	virtual Common::String date() const;
 };
 
 } // End of namespace OneDrive

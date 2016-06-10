@@ -45,6 +45,7 @@ class SavesSyncRequest: public Networking::Request, public GUI::CommandSender {
 	Request *_workingRequest;
 	bool _ignoreCallback;
 	uint32 _totalFilesToHandle;
+	Common::String _date;
 
 	void start();
 	void directoryListedCallback(Storage::ListDirectoryResponse response);
