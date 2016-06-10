@@ -261,4 +261,9 @@ bool TTsentence::isConcept34(int slotIndex, TTconceptNode *node) {
 	return concept && concept->get34();
 }
 
+bool TTsentence::localWord(const char *str) const {
+	// TODO
+	return false;
+}
+
 } // End of namespace Titanic

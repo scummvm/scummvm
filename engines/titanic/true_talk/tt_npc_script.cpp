@@ -23,11 +23,20 @@
 #include "common/textconsole.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/true_talk/tt_npc_script.h"
+#include "titanic/true_talk/tt_sentence.h"
 #include "titanic/true_talk/true_talk_manager.h"
 #include "titanic/game_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
+
+static const char *const ITEMS[] = {
+	"chicken", "napkin", "parrot", "moth", "fuse", "eye", "nose", "ear", "mouth",
+	"auditorycenter", "visioncenter", "olfactorycenter", "speechcenter", "stick",
+	"longstick", "bomb", "lemon", "puree", "television", "hammer", nullptr
+};
+
+/*------------------------------------------------------------------------*/
 
 int TTnpcScriptResponse::size() const {
 	for (int idx = 0; idx < 4; ++idx) {
@@ -127,7 +136,7 @@ TTnpcScript::TTnpcScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTnpcScriptBase(charId, charClass, v2, charName, v3, val2, v4, v5, v6, v7),
 		_entryCount(0), _field68(0), _field6C(0), _rangeResetCtr(0),
-		_field74(0), _field78(0), _field7C(0), _field80(0), _field2CC(false) {
+		_field74(0), _field78(0), _field7C(0), _itemStringP(nullptr), _field2CC(false) {
 	CTrueTalkManager::_v2 = 0;
 	Common::fill(&_dialValues[0], &_dialValues[DIALS_ARRAY_COUNT], 0);
 	Common::fill(&_array[0], &_array[136], 0);
@@ -218,8 +227,8 @@ int TTnpcScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, 
 	return 1;
 }
 
-void TTnpcScript::process(TTroomScript *roomScript, TTsentence *sentence) {
-	processSentence(&_entries, _entryCount, roomScript, sentence);
+int TTnpcScript::process(TTroomScript *roomScript, TTsentence *sentence) {
+	return processEntries(&_entries, _entryCount, roomScript, sentence);
 }
 
 int TTnpcScript::proc8() const {
@@ -618,7 +627,7 @@ CPetControl *TTnpcScript::getPetControl(CGameManager *gameManager) {
 	return nullptr;
 }
 
-int TTnpcScript::processSentence(const TTsentenceEntries *entries, uint entryCount, TTroomScript *roomScript, TTsentence *sentence) {
+int TTnpcScript::processEntries(const TTsentenceEntries *entries, uint entryCount, TTroomScript *roomScript, TTsentence *sentence) {
 	if (!entries)
 		return SS_1;
 	if (!entryCount)
@@ -721,6 +730,25 @@ TTscriptRange *TTnpcScript::findRange(uint id) {
 	}
 
 	return nullptr;
+}
+
+void TTnpcScript::checkItems(TTroomScript *roomScript, TTsentence *sentence) {
+	_field2CC = 0;
+	++CTrueTalkManager::_v2;
+
+	if (sentence) {
+		if (!_itemStringP || getRandomNumber(100) > 80) {
+			for (const char *const *strP = &ITEMS[0]; *strP; ++strP) {
+				if (sentence->localWord(*strP)) {
+					_itemStringP = *strP;
+					break;
+				}
+			}
+		}
+
+		if (sentence->localWord("bomb"))
+			_field7C = 1;
+	}
 }
 
 } // End of namespace Titanic

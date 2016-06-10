@@ -125,7 +125,11 @@ public:
 	 */
 	virtual int chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) = 0;
 
-	virtual void proc7(int v1, int v2) = 0;
+	/**
+	 * Does NPC specific processing of the parsed sentence
+	 */
+	virtual int process(TTroomScript *roomScript, TTsentence *sentence) = 0;
+
 	virtual int proc8() const = 0;
 	virtual int proc9() const = 0;
 
@@ -156,7 +160,7 @@ protected:
 	int _field74;
 	int _field78;
 	int _field7C;
-	int _field80;
+	const char *_itemStringP;
 	int _dialValues[DIALS_ARRAY_COUNT];
 	int _array[136];
 	bool _field2CC;
@@ -220,9 +224,14 @@ protected:
 	 */
 	TTscriptRange *findRange(uint id);
 
-	int processSentence(const TTsentenceEntries *entries, uint entryCount, TTroomScript *roomScript, TTsentence *sentence);
+	/**
+	 * Scans through a list of sentence entries for a matching standardized response
+	 */
+	int processEntries(const TTsentenceEntries *entries, uint entryCount, TTroomScript *roomScript, TTsentence *sentence);
 
 	bool defaultProcess(TTroomScript *roomScript, TTsentence *sentence);
+
+	void checkItems(TTroomScript *roomScript, TTsentence *sentence);
 public:
 	TTnpcScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4,
@@ -238,9 +247,9 @@ public:
 	virtual int chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag);
 
 	/**
-	 * Does further NPC specific processing of the sentence
+	 * Does NPC specific processing of the parsed sentence
 	 */
-	virtual void process(TTroomScript *roomScript, TTsentence *sentence);
+	virtual int process(TTroomScript *roomScript, TTsentence *sentence);
 
 	virtual int proc8() const;
 	virtual int proc9() const;

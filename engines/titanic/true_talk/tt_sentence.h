@@ -117,6 +117,8 @@ public:
 	bool fn4(int mode, int wordId, TTconceptNode *node);
 
 	bool isConcept34(int slotIndex, TTconceptNode *node = nullptr);
+
+	bool localWord(const char *str) const;
 };
 
 } // End of namespace Titanic

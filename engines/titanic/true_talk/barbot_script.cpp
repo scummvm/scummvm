@@ -114,8 +114,12 @@ int BarbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence,
 	return TTnpcScript::chooseResponse(roomScript, sentence, tag);
 }
 
-void BarbotScript::proc7(int v1, int v2) {
-	warning("TODO");
+int BarbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
+	if (roomScript->_scriptId != 112)
+		return 2;
+
+	// TODO
+	return 2;
 }
 
 int BarbotScript::proc10() const {
