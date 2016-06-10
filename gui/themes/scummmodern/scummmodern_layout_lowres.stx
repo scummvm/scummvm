@@ -600,6 +600,10 @@
 				<widget name = 'ReturnLine2'
 						height = 'Globals.Line.Height'
 				/>
+				<widget name = 'CodeBox'
+						width = '150'
+						height = '16'
+				/>
 				<space size = '4' />
 			</layout>		
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>

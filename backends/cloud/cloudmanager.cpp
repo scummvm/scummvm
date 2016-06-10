@@ -195,6 +195,16 @@ void CloudManager::setStorageLastSync(uint32 index, Common::String date) {
 	save();
 }
 
+void CloudManager::connectStorage(uint32 index, Common::String code) {
+	Storage *storage = nullptr;
+	switch (index) {
+	case kStorageDropboxId: storage = new Dropbox::DropboxStorage(code); break;
+	case kStorageOneDriveId: storage = new OneDrive::OneDriveStorage(code); break;
+	case kStorageGoogleDriveId: storage = new GoogleDrive::GoogleDriveStorage(code); break;
+	}
+	//these would automatically request replaceStorage() when they receive the token
+}
+
 void CloudManager::printBool(Storage::BoolResponse response) const {
 	debug("bool = %s", (response.value ? "true" : "false"));
 }

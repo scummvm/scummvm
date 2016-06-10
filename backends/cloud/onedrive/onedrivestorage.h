@@ -40,12 +40,6 @@ class OneDriveStorage: public Cloud::Storage {
 	/** This private constructor is called from loadFromConfig(). */
 	OneDriveStorage(Common::String token, Common::String uid, Common::String refreshToken);
 
-	/**
-	 * This private constructor is called from authThroughConsole() (phase 2).
-	 * It uses OAuth code flow to get tokens.
-	 */
-	OneDriveStorage(Common::String code);
-
 	void tokenRefreshed(BoolCallback callback, Networking::JsonResponse response);
 	void codeFlowComplete(BoolResponse response);
 
@@ -60,6 +54,8 @@ class OneDriveStorage: public Cloud::Storage {
 
 	void fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response);
 public:	
+	/** This constructor uses OAuth code flow to get tokens. */
+	OneDriveStorage(Common::String code);
 	virtual ~OneDriveStorage();
 
 	/**

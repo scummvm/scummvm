@@ -40,12 +40,6 @@ class GoogleDriveStorage: public Cloud::Storage {
 	/** This private constructor is called from loadFromConfig(). */
 	GoogleDriveStorage(Common::String token, Common::String refreshToken);
 
-	/**
-	 * This private constructor is called from authThroughConsole() (phase 2).
-	 * It uses OAuth code flow to get tokens.
-	 */
-	GoogleDriveStorage(Common::String code);
-
 	void tokenRefreshed(BoolCallback callback, Networking::JsonResponse response);
 	void codeFlowComplete(BoolResponse response);
 
@@ -61,7 +55,9 @@ class GoogleDriveStorage: public Cloud::Storage {
 	void printBool(BoolResponse response);
 	void printFile(UploadResponse response);
 	void printInfo(StorageInfoResponse response);
-public:	
+public:
+	/** This constructor uses OAuth code flow to get tokens. */
+	GoogleDriveStorage(Common::String code);
 	virtual ~GoogleDriveStorage();
 
 	/**

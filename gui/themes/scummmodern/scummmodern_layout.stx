@@ -607,6 +607,10 @@
 					<widget name = 'ReturnLine2'
 							height = 'Globals.Line.Height'
 					/>
+					<widget name = 'CodeBox'
+						width = '150'
+						height = 'Globals.Line.Height'
+					/>
 					<space size = '6' />
 				</layout>
 			</layout>			

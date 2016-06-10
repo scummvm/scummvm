@@ -29,9 +29,11 @@
 namespace GUI {
 
 class CommandSender;
+class EditTextWidget;
 
 class StorageWizardDialog : public Dialog {
 	uint32 _storageId;
+	EditTextWidget *_codeWidget;
 public:
 	StorageWizardDialog(uint32 storageId);
 

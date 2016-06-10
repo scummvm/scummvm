@@ -27,11 +27,13 @@
 
 #include "common/translation.h"
 #include "backends/cloud/cloudmanager.h"
+#include "widgets/edittext.h"
 
 namespace GUI {
 
 enum {
-	kConnectCmd = 'Cnnt'
+	kConnectCmd = 'Cnnt',
+	kCodeBoxCmd = 'CdBx'
 };
 
 StorageWizardDialog::StorageWizardDialog(uint32 storageId): Dialog("GlobalOptions_Cloud_ConnectionWizard"), _storageId(storageId) {
@@ -42,17 +44,18 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId): Dialog("GlobalOption
 	
 	new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.NavigateLine", _s("Navigate to the following URL:"));
 
-	Common::String url = "https://www.scummvm.org/cloud-";
+	Common::String url = "https://www.scummvm.org/c/";
 	switch (storageId) {
-	case Cloud::kStorageDropboxId: url += "dropbox"; break;
-	case Cloud::kStorageOneDriveId: url += "onedrive"; break;
-	case Cloud::kStorageGoogleDriveId: url += "googledrive"; break;
+	case Cloud::kStorageDropboxId: url += "db"; break;
+	case Cloud::kStorageOneDriveId: url += "od"; break;
+	case Cloud::kStorageGoogleDriveId: url += "gd"; break;
 	}
 
 	new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.URLLine", url);
 
-	new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.ReturnLine1", _s("Press 'Continue' when you obtain"));
-	new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.ReturnLine2", _s("the code from the storage."));
+	new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.ReturnLine1", _s("Obtain the code from the storage, enter it"));
+	new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.ReturnLine2", _s("in the following field and press 'Connect':"));
+	_codeWidget = new EditTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.CodeBox", _s("Code"), 0, kCodeBoxCmd);
 
 	// Buttons
 	new ButtonWidget(this, "GlobalOptions_Cloud_ConnectionWizard.CancelButton", _("Cancel"), 0, kCloseCmd);
@@ -61,7 +64,10 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId): Dialog("GlobalOption
 
 void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
+	case kCodeBoxCmd:
+		break;
 	case kConnectCmd:
+		CloudMan.connectStorage(_storageId, _codeWidget->getEditString());
 		setResult(1);
 		close();
 		break;
