@@ -28,6 +28,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "gui/object.h"
+#include <limits.h>
 
 namespace Cloud {
 
