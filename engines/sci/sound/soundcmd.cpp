@@ -118,6 +118,7 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 	newSound->resourceId = resourceId;
 	newSound->soundObj = obj;
 	newSound->loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
+	newSound->overridePriority = false;
 	if (_soundVersion <= SCI_VERSION_0_LATE)
 		newSound->priority = readSelectorValue(_segMan, obj, SELECTOR(priority));
 	else
