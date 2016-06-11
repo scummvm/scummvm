@@ -685,12 +685,15 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 	} else
 #endif
 	{
-		SDL_Rect dstrect;
-		dstrect.x = _gameRect.getTopLeft().getX();
-		dstrect.y = _gameRect.getTopLeft().getY();
-		dstrect.w = _gameRect.getWidth();
-		dstrect.h = _gameRect.getHeight();
-		SDL_BlitSurface(_subScreen, NULL, _screen, &dstrect);
+		if (_subScreen) {
+			SDL_Rect dstrect;
+			dstrect.x = _gameRect.getTopLeft().getX();
+			dstrect.y = _gameRect.getTopLeft().getY();
+			dstrect.w = _gameRect.getWidth();
+			dstrect.h = _gameRect.getHeight();
+			SDL_BlitSurface(_subScreen, NULL, _screen, &dstrect);
+		}
+
 		if (_overlayVisible) {
 			drawOverlay();
 		}
@@ -945,29 +948,27 @@ void SurfaceSdlGraphicsManager::closeOverlay() {
 #endif
 	if (_overlayscreen) {
 		SDL_FreeSurface(_overlayscreen);
-		_overlayscreen = NULL;
-#ifdef USE_OPENGL
-		delete _surfaceRenderer;
-		_surfaceRenderer = nullptr;
-
-		if (_opengl) {
-			for (uint i = 0; i < _overlayTextures.size(); i++) {
-				delete _overlayTextures[i];
-			}
-			_overlayTextures.clear();
-
-			if (_frameBuffer) {
-				delete _frameBuffer;
-				_frameBuffer = nullptr;
-			}
-		} else if (_subScreen) {
-			SDL_FreeSurface(_subScreen);
-			_subScreen = nullptr;
-		}
-
-		OpenGL::Context::destroy();
-#endif
+		_overlayscreen = nullptr;
 	}
+	if (_subScreen) {
+		SDL_FreeSurface(_subScreen);
+		_subScreen = nullptr;
+	}
+
+#ifdef USE_OPENGL
+	delete _surfaceRenderer;
+	_surfaceRenderer = nullptr;
+
+	for (uint i = 0; i < _overlayTextures.size(); i++) {
+		delete _overlayTextures[i];
+	}
+	_overlayTextures.clear();
+
+	delete _frameBuffer;
+	_frameBuffer = nullptr;
+
+	OpenGL::Context::destroy();
+#endif
 }
 
 #pragma mark -
