@@ -32,14 +32,17 @@ namespace Director {
 class DirectorSound {
 
 private:
-	Audio::SoundHandle *_soundHandle;
+	Audio::SoundHandle *_sound1;
+	Audio::SoundHandle *_sound2;
+
 	Audio::Mixer *_mixer;
 
 public:
 	DirectorSound();
 
-	void playWAV(Common::String filename);
-	void playAIFF(Common::String filename);
+	void playWAV(Common::String filename, uint8 channelID);
+	void playAIFF(Common::String filename, uint8 channelID);
+	bool isChannelActive(uint8 channelID);
 	void stopSound();
 };
 

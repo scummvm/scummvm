@@ -30,11 +30,12 @@
 namespace Director {
 
 DirectorSound::DirectorSound() {
-	_soundHandle = new Audio::SoundHandle();
+	_sound1 = new Audio::SoundHandle();
+	_sound2 = new Audio::SoundHandle();
     _mixer = g_system->getMixer();
 }
 
-void DirectorSound::playWAV(Common::String filename) {
+void DirectorSound::playWAV(Common::String filename, uint8 soundChannel) {
 	Common::File *file = new Common::File();
 
 	if (!file->open(filename)) {
@@ -43,12 +44,14 @@ void DirectorSound::playWAV(Common::String filename) {
 		return;
 	}
 
-    Audio::RewindableAudioStream *sound = Audio::makeWAVStream(file, DisposeAfterUse::YES);
-    _mixer->playStream(Audio::Mixer::kSFXSoundType, _soundHandle, sound);
+	Audio::RewindableAudioStream *sound = Audio::makeWAVStream(file, DisposeAfterUse::YES);
+    if (soundChannel == 1)
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, _sound1, sound);
+    else
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, _sound2, sound);
 }
 
-void DirectorSound::playAIFF(Common::String filename) {
-
+void DirectorSound::playAIFF(Common::String filename, uint8 soundChannel) {
 	Common::File *file = new Common::File();
 	if (!file->open(filename)) {
 		warning("Failed to open %s", filename.c_str());
@@ -57,11 +60,25 @@ void DirectorSound::playAIFF(Common::String filename) {
 	}
 
     Audio::RewindableAudioStream *sound = Audio::makeAIFFStream(file, DisposeAfterUse::YES);
-    _mixer->playStream(Audio::Mixer::kSFXSoundType, _soundHandle, sound);
+	if (soundChannel == 1)
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, _sound1, sound);
+	else
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, _sound2, sound);
+}
+
+bool DirectorSound::isChannelActive(uint8 channelID) {
+	if (channelID == 1) {
+		return _mixer->isSoundHandleActive(*_sound1);
+	} else if (channelID == 2) {
+		return _mixer->isSoundHandleActive(*_sound2);
+	}
+	error("Incorrect sound channel");
+	return false;
 }
 
 void DirectorSound::stopSound() {
-	_mixer->stopHandle(*_soundHandle);
+	_mixer->stopHandle(*_sound1);
+	_mixer->stopHandle(*_sound2);
 }
 
 } //End of namespace Director

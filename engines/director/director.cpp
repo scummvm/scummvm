@@ -78,7 +78,7 @@ Common::Error DirectorEngine::run() {
 	_mainArchive = new RIFFArchive();
 	_mainArchive->openFile("bookshelf_example.mmm");
 
-	Score score(*_mainArchive, *_lingo);
+	Score score(*_mainArchive, *_lingo, *_soundManager);
 	score.startLoop();
 
 	if (getPlatform() == Common::kPlatformWindows)

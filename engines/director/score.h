@@ -33,6 +33,7 @@
 namespace Director {
 
 class Lingo;
+class DirectorSound;
 
 #define CHANNEL_COUNT 24
 
@@ -264,7 +265,7 @@ public:
 
 class Score {
 public:
-    Score(Archive &movie, Lingo &lingo);
+    Score(Archive &movie, Lingo &lingo, DirectorSound &soundManager);
     ~Score();
     static Common::Rect readRect(Common::SeekableReadStream &stream);
     void startLoop();
@@ -311,6 +312,7 @@ private:
     Archive *_movieArchive;
     Graphics::ManagedSurface *_surface;
     Lingo *_lingo;
+    DirectorSound *_soundManager;
 };
 
 } //End of namespace Director

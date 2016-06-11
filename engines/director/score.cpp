@@ -30,6 +30,7 @@
 #include "director/dib.h"
 #include "director/resource.h"
 #include "director/lingo/lingo.h"
+#include "director/sound.h"
 
 #include "graphics/palette.h"
 #include "common/events.h"
@@ -38,12 +39,12 @@
 
 namespace Director {
 
-Score::Score(Archive &movie, Lingo &lingo) {
+Score::Score(Archive &movie, Lingo &lingo, DirectorSound &soundManager) {
 
 	_surface = new Graphics::ManagedSurface;
 	_movieArchive = &movie;
 	_lingo = &lingo;
-
+	_soundManager = &soundManager;
 	_lingo->processEvent(kEventPrepareMovie, 0);
 
 	assert(_movieArchive->hasResource(MKTAG('V','W','S','C'), 1024));
