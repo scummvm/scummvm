@@ -32,6 +32,8 @@ extern int yylex();
 extern int yyparse();
 void yyerror(char *s) { error("%s", s); }
 
+int func_mci(Common::String *s);
+
 %}
 
 %union { int i; Common::String *s; }
@@ -39,7 +41,11 @@ void yyerror(char *s) { error("%s", s); }
 %token UNARY
 %token<i> INT
 %token<s> VAR
+%token<s> STRING
+%token FUNC_MCI
+
 %type<i> expr
+%type<i> func
 
 %right '='
 %left '+' '-'
@@ -49,24 +55,33 @@ void yyerror(char *s) { error("%s", s); }
 %%
 
 list: statement
-    | list statement
-    ;
+	| list statement
+	;
 
-statement: expr ','
-    | expr ':'          { warning("%d", $1); }
-    ;
+statement: expr { warning("%d", $1); }
+	| func { warning("%d", $1); }
+	;
 
-expr: INT               { $$ = $1; }
-    | VAR               { $$ = vars[*$1];      delete $1; }
-    | VAR '=' expr      { $$ = vars[*$1] = $3; delete $1; }
-    | expr '+' expr     { $$ = $1 + $3; }
-    | expr '-' expr     { $$ = $1 - $3; }
-    | expr '*' expr     { $$ = $1 * $3; }
-    | expr '/' expr     { $$ = $1 / $3; }
-    | expr '%' expr     { $$ = $1 % $3; }
-    | '+' expr  %prec UNARY    { $$ =  $2; }
-    | '-' expr  %prec UNARY    { $$ = -$2; }
-    | '(' expr ')'             { $$ =  $2; }
-    ;
+expr: INT						{ $$ = $1; }
+	| VAR						{ $$ = vars[*$1];      delete $1; }
+	| VAR '=' expr				{ $$ = vars[*$1] = $3; delete $1; }
+	| expr '+' expr				{ $$ = $1 + $3; }
+	| expr '-' expr				{ $$ = $1 - $3; }
+	| expr '*' expr				{ $$ = $1 * $3; }
+	| expr '/' expr				{ $$ = $1 / $3; }
+	| expr '%' expr				{ $$ = $1 % $3; }
+	| '+' expr  %prec UNARY		{ $$ =  $2; }
+	| '-' expr  %prec UNARY		{ $$ = -$2; }
+	| '(' expr ')'				{ $$ =  $2; }
+	|
+	;
+
+func: FUNC_MCI STRING	{ func_mci($2); delete $2; }
 
 %%
+
+int func_mci(Common::String *s) {
+	warning("mci: %s", s->c_str());
+
+	return 0;
+}

@@ -41,23 +41,27 @@
    enum yytokentype {
      UNARY = 258,
      INT = 259,
-     VAR = 260
+     VAR = 260,
+     STRING = 261,
+     FUNC_MCI = 262
    };
 #endif
 /* Tokens.  */
 #define UNARY 258
 #define INT 259
 #define VAR 260
+#define STRING 261
+#define FUNC_MCI 262
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 37 "engines/director/lingo/lingo-gr.y"
+#line 39 "engines/director/lingo/lingo-gr.y"
 { int i; Common::String *s; }
 /* Line 1529 of yacc.c.  */
-#line 61 "engines/director/lingo/lingo-gr.hpp"
+#line 65 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

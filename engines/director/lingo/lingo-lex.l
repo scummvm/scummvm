@@ -34,12 +34,18 @@ void yyparse();
 
 %}
 
+variable [_[:alpha:]][_[:alnum:]]*
+constinteger [[:digit:]]+
+conststring \"[^\"\n]*\"
+operator [-+*/%=^:,]
+
 %%
 
-[_[:alpha:]][_[:alnum:]]*     yylval.s = new Common::String(yytext);  return VAR;
-[[:digit:]]+                  yylval.i = strtol(yytext, NULL, 10); return INT;
-[-+*/%=^:,]                   return *yytext;
-.|\n                          ; /* ignore all the rest */
+mci					{ return FUNC_MCI; }
+{variable}			{ yylval.s = new Common::String(yytext);  return VAR; }
+{constinteger}		{ yylval.i = strtol(yytext, NULL, 10); return INT; }
+{operator}			{ return *yytext; }
+{conststring}		{ yylval.s = new Common::String(yytext); return STRING; }
 
 %%
 

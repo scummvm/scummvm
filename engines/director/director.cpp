@@ -70,7 +70,7 @@ Common::Error DirectorEngine::run() {
 
 	_lingo = new Lingo();
 
-	_lingo->parse("test = 2 + 2 * 6, test:");
+	_lingo->parse("mci \"open MM\\T005045a.wav type WaveAudio alias T005045a\"");
 
 	_soundManager = new DirectorSound();
 
