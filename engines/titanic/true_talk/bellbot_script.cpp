@@ -57,9 +57,9 @@ void BellbotScript::proc7(int v1, int v2) {
 	warning("TODO");
 }
 
-int BellbotScript::proc10() const {
+ScriptChangedResult BellbotScript::scriptChanged(TTscriptBase *roomScript, uint id) {
 	warning("TODO");
-	return 0;
+	return SCR_1;
 }
 
 int BellbotScript::proc15() const {

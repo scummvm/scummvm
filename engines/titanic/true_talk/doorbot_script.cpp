@@ -112,9 +112,9 @@ void DoorbotScript::proc7(int v1, int v2) {
 	warning("TODO");
 }
 
-int DoorbotScript::proc10() const {
+ScriptChangedResult DoorbotScript::scriptChanged(TTscriptBase *roomScript, uint id) {
 	warning("TODO");
-	return 0;
+	return SCR_1;
 }
 
 int DoorbotScript::proc15() const {

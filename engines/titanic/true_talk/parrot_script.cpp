@@ -54,9 +54,9 @@ void ParrotScript::proc7(int v1, int v2) {
 	warning("TODO");
 }
 
-int ParrotScript::proc10() const {
+ScriptChangedResult ParrotScript::scriptChanged(TTscriptBase *roomScript, uint id) {
 	warning("TODO");
-	return 0;
+	return SCR_1;
 }
 
 bool ParrotScript::proc18() const {

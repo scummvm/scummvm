@@ -46,7 +46,12 @@ public:
 
 	virtual void proc7(int v1, int v2);
 	virtual int proc9() const;
-	virtual int proc10() const;
+
+	/**
+	 * Called when the script/id changes
+	 */
+	virtual ScriptChangedResult scriptChanged(TTscriptBase *roomScript, uint id);
+
 	virtual int proc15() const;
 
 	virtual bool handleQuote(TTroomScript *roomScript, TTsentence *sentence,

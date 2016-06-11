@@ -43,7 +43,11 @@ public:
 	virtual int chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag);
 
 	virtual void proc7(int v1, int v2);
-	virtual int proc10() const;
+
+	/**
+	 * Called when the script/id changes
+	 */
+	virtual ScriptChangedResult scriptChanged(TTscriptBase *roomScript, uint id);
 
 	virtual bool handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 		int val, uint tagId, uint remainder) const;

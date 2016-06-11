@@ -67,9 +67,9 @@ void MaitreDScript::proc7(int v1, int v2) {
 	warning("TODO");
 }
 
-int MaitreDScript::proc10() const {
+ScriptChangedResult MaitreDScript::scriptChanged(TTscriptBase *roomScript, uint id) {
 	warning("TODO");
-	return 0;
+	return SCR_1;
 }
 
 bool MaitreDScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,

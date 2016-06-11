@@ -58,9 +58,9 @@ void DeskbotScript::proc7(int v1, int v2) {
 	warning("TODO");
 }
 
-int DeskbotScript::proc10() const {
+ScriptChangedResult DeskbotScript::scriptChanged(TTscriptBase *roomScript, uint id) {
 	warning("TODO");
-	return 0;
+	return SCR_1;
 }
 
 int DeskbotScript::proc15() const {

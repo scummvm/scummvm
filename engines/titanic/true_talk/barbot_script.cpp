@@ -198,9 +198,9 @@ int BarbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
 	return 2;
 }
 
-int BarbotScript::proc10() const {
+ScriptChangedResult BarbotScript::scriptChanged(TTscriptBase *roomScript, uint id) {
 	warning("TODO");
-	return 0;
+	return SCR_1;
 }
 
 int BarbotScript::proc15() const {
