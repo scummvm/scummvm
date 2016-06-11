@@ -109,6 +109,17 @@ public:
 	void load(const char *name, int valuesPerMapping);
 };
 
+struct TTtagMapping {
+	uint _src, _dest;
+	TTtagMapping() : _src(0), _dest(0) {}
+	TTtagMapping(uint src, uint dest) : _src(src), _dest(dest) {}
+};
+
+class TTtagMappings : public Common::Array<TTtagMapping> {
+public:
+	void load(const char *name);
+};
+
 class TTnpcScriptBase : public TTscriptBase {
 protected:
 	int _field54;
@@ -153,6 +164,7 @@ protected:
 	Common::Array<TTscriptRange> _ranges;
 	TTscriptMappings _mappings;
 	TTsentenceEntries _entries;
+	TTtagMappings _tagMappings;
 	int _entryCount;
 	int _field68;
 	int _field6C;

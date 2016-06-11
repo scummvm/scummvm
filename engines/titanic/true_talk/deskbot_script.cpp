@@ -43,6 +43,7 @@ DeskbotScript::DeskbotScript(int val1, const char *charClass, int v2,
 	loadRanges("Ranges/Deskbot");
 	loadResponses("Responses/Deskbot", 4);
 	setupSentences();
+	_tagMappings.load("TagMap/Deskbot");
 }
 
 void DeskbotScript::setupSentences() {
@@ -107,11 +108,6 @@ void DeskbotScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *r
 }
 
 int DeskbotScript::proc36(int id) const {
-	warning("TODO");
-	return 0;
-}
-
-uint DeskbotScript::translateId(uint id) const {
 	warning("TODO");
 	return 0;
 }

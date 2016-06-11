@@ -37,6 +37,7 @@ DoorbotScript::DoorbotScript(int val1, const char *charClass, int v2,
 	loadRanges("Ranges/Doorbot");
 	loadResponses("Responses/Doorbot");
 	setupSentences();
+	_tagMappings.load("TagMap/Doorbot");
 }
 
 void DoorbotScript::setupSentences() {
@@ -165,11 +166,6 @@ void DoorbotScript::proc32() {
 }
 
 int DoorbotScript::proc36(int id) const {
-	warning("TODO");
-	return 0;
-}
-
-uint DoorbotScript::translateId(uint id) const {
 	warning("TODO");
 	return 0;
 }

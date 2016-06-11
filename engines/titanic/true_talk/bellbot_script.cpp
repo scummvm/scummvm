@@ -42,6 +42,7 @@ BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
 	loadRanges("Ranges/Bellbot");
 	loadResponses("Responses/Bellbot", 4);
 	setupSentences();
+	_tagMappings.load("TagMap/Bellbot");
 }
 
 void BellbotScript::setupSentences() {
@@ -106,11 +107,6 @@ void BellbotScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *r
 }
 
 int BellbotScript::proc36(int id) const {
-	warning("TODO");
-	return 0;
-}
-
-uint BellbotScript::translateId(uint id) const {
 	warning("TODO");
 	return 0;
 }

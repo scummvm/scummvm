@@ -41,6 +41,7 @@ MaitreDScript::MaitreDScript(int val1, const char *charClass, int v2,
 	loadRanges("Ranges/MaitreD");
 	loadResponses("Responses/MaitreD");
 	setupSentences();
+	_tagMappings.load("TagMap/MaitreD");
 }
 
 void MaitreDScript::setupSentences() {
@@ -108,11 +109,6 @@ int MaitreDScript::proc25(int val1, int val2, TTroomScript *roomScript, TTsenten
 }
 
 void MaitreDScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence) {
-}
-
-uint MaitreDScript::translateId(uint id) const {
-	warning("TODO");
-	return 0;
 }
 
 } // End of namespace Titanic

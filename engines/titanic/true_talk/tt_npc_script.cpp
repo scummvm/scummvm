@@ -124,6 +124,21 @@ void TTscriptMappings::load(const char *name, int valuesPerMapping) {
 
 /*------------------------------------------------------------------------*/
 
+void TTtagMappings::load(const char *name) {
+	Common::SeekableReadStream *r = g_vm->_filesManager->getResource(name);
+
+	while (r->pos() < r->size()) {
+		uint src = r->readUint32LE();
+		uint dest = r->readUint32LE();
+
+		push_back(TTtagMapping(src, dest));
+	}
+
+	delete r;
+}
+
+/*------------------------------------------------------------------------*/
+
 TTnpcScriptBase::TTnpcScriptBase(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTscriptBase(0, charClass, v2, charName, v3, v4, v5, v6, v7),
@@ -489,6 +504,11 @@ int TTnpcScript::proc36(int id) const {
 }
 
 uint TTnpcScript::translateId(uint id) const {
+	for (uint idx = 0; idx < _tagMappings.size(); ++idx) {
+		if (_tagMappings[idx]._src == id)
+			return _tagMappings[idx]._dest;
+	}
+
 	return 0;
 }
 

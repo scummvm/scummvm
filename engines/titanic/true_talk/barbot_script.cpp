@@ -49,6 +49,7 @@ BarbotScript::BarbotScript(int val1, const char *charClass, int v2,
 	loadRanges("Ranges/Barbot");
 	loadResponses("Responses/Barbot");
 	setupSentences();
+	_tagMappings.load("TagMap/Barbot");
 }
 
 void BarbotScript::setupSentences() {
@@ -251,11 +252,6 @@ void BarbotScript::proc32() {
 }
 
 int BarbotScript::proc36(int tagId) const {
-	warning("TODO");
-	return 0;
-}
-
-uint BarbotScript::translateId(uint id) const {
 	warning("TODO");
 	return 0;
 }

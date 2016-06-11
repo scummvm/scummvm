@@ -38,6 +38,7 @@ LiftbotScript::LiftbotScript(int val1, const char *charClass, int v2,
 	loadRanges("Ranges/Liftbot");
 	loadResponses("Responses/Liftbot");
 	setupSentences();
+	_tagMappings.load("TagMap/Liftbot");
 }
 
 void LiftbotScript::setupSentences() {
@@ -139,11 +140,6 @@ void LiftbotScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *r
 
 void LiftbotScript::proc32() {
 	warning("TODO");
-}
-
-uint LiftbotScript::translateId(uint id) const {
-	warning("TODO");
-	return 0;
 }
 
 } // End of namespace Titanic

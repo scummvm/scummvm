@@ -55,7 +55,6 @@ public:
 	virtual const int *getTablePtr(int id);
 	virtual int proc25(int val1, int val2, TTroomScript *roomScript, TTsentence *sentence) const;
 	virtual void proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence);
-	virtual uint translateId(uint id) const;
 };
 
 } // End of namespace Titanic

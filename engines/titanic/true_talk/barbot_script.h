@@ -72,8 +72,6 @@ public:
 	virtual void proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence);
 	virtual void proc32();
 	virtual int proc36(int val) const;
-	
-	virtual uint translateId(uint id) const;
 };
 
 } // End of namespace Titanic
