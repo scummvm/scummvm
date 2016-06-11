@@ -54,8 +54,9 @@ void DeskbotScript::setupSentences() {
 	_entryCount = 0;
 }
 
-void DeskbotScript::proc7(int v1, int v2) {
-	warning("TODO");
+int DeskbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
+	// TODO
+	return 0;
 }
 
 ScriptChangedResult DeskbotScript::scriptChanged(TTscriptBase *roomScript, uint id) {

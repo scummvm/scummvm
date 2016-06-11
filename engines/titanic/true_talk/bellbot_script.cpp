@@ -53,8 +53,9 @@ void BellbotScript::setupSentences() {
 	_entryCount = 0;
 }
 
-void BellbotScript::proc7(int v1, int v2) {
-	warning("TODO");
+int BellbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
+	// TODO
+	return 0;
 }
 
 ScriptChangedResult BellbotScript::scriptChanged(TTscriptBase *roomScript, uint id) {

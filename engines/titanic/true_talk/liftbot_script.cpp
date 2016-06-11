@@ -80,8 +80,9 @@ int LiftbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence
 	}
 }
 
-void LiftbotScript::proc7(int v1, int v2) {
-	warning("TODO");
+int LiftbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
+	// TODO
+	return 0;
 }
 
 int LiftbotScript::proc9() const {

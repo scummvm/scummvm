@@ -74,8 +74,9 @@ int SuccUBusScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentenc
 	}
 }
 
-void SuccUBusScript::proc7(int v1, int v2) {
-	warning("TODO");
+int SuccUBusScript::process(TTroomScript *roomScript, TTsentence *sentence) {
+	// TODO
+	return 0;
 }
 
 ScriptChangedResult SuccUBusScript::scriptChanged(TTscriptBase *roomScript, uint id) {

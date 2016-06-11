@@ -44,7 +44,10 @@ public:
 	 */
 	virtual int chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag);
 
-	virtual void proc7(int v1, int v2);
+	/**
+	 * Does NPC specific processing of the parsed sentence
+	 */
+	virtual int process(TTroomScript *roomScript, TTsentence *sentence);
 
 	/**
 	 * Called when the script/id changes

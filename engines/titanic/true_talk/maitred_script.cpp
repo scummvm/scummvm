@@ -63,8 +63,9 @@ int MaitreDScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence
 	return TTnpcScript::chooseResponse(roomScript, sentence, tag);
 }
 
-void MaitreDScript::proc7(int v1, int v2) {
-	warning("TODO");
+int MaitreDScript::process(TTroomScript *roomScript, TTsentence *sentence) {
+	// TODO
+	return 0;
 }
 
 ScriptChangedResult MaitreDScript::scriptChanged(TTscriptBase *roomScript, uint id) {

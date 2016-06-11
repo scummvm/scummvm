@@ -38,7 +38,10 @@ public:
 	DeskbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2);
 
-	virtual void proc7(int v1, int v2);
+	/**
+	 * Does NPC specific processing of the parsed sentence
+	 */
+	virtual int process(TTroomScript *roomScript, TTsentence *sentence);
 
 	/**
 	 * Called when the script/id changes

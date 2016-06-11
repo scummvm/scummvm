@@ -108,8 +108,9 @@ int DoorbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence
 	return TTnpcScript::chooseResponse(roomScript, sentence, tag);
 }
 
-void DoorbotScript::proc7(int v1, int v2) {
-	warning("TODO");
+int DoorbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
+	// TODO
+	return 0;
 }
 
 ScriptChangedResult DoorbotScript::scriptChanged(TTscriptBase *roomScript, uint id) {
