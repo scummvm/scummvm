@@ -237,7 +237,7 @@ public:
     uint16 getSpriteIDFromPos(Common::Point pos);
 private:
     void playTranisition();
-    void playSoundChannel(uint16 id);
+    void playSoundChannel();
     void renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect movieRect);
     void renderTrailSprites(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect movieRect);
     void readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
@@ -278,14 +278,16 @@ private:
     void loadFrames(Common::SeekableReadStream &stream);
     void loadLabels(Common::SeekableReadStream &stream);
     void loadActions(Common::SeekableReadStream &stream);
-    void loadCastInfo(Common::SeekableReadStream &stream);
+    void loadCastInfo(Common::SeekableReadStream &stream, uint16 id);
     void loadFileInfo(Common::SeekableReadStream &stream);
     void loadFontMap(Common::SeekableReadStream &stream);
     void dumpScript(uint16 id, scriptType type, Common::String script);
+    Common::String getString(Common::String str);
     Common::Array<Common::String> loadStrings(Common::SeekableReadStream &stream, uint32 &entryType, bool hasHeader = true);
 public:
     Common::Array<Frame *> _frames;
     Common::HashMap<int, Cast *> _casts;
+    Common::HashMap<uint16, CastInfo *> _castsInfo;
     Common::HashMap<uint16, Common::String> _labels;
     Common::HashMap<uint16, Common::String> _actions;
     Common::HashMap<uint16, Common::String> _fontMap;

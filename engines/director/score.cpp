@@ -78,7 +78,7 @@ Score::Score(Archive &movie, Lingo &lingo) {
 	if (vwci.size() > 0) {
 		Common::Array<uint16>::iterator iterator;
 		for (iterator = vwci.begin(); iterator != vwci.end(); ++iterator)
-			loadCastInfo(*_movieArchive->getResource(MKTAG('V','W','C','I'), *iterator));
+			loadCastInfo(*_movieArchive->getResource(MKTAG('V','W','C','I'), *iterator), *iterator);
 	}
 
 	DIBDecoder palette;
@@ -87,11 +87,11 @@ Score::Score(Archive &movie, Lingo &lingo) {
 	if (clutList.size() > 1)
 		error("More than one palette was found");
 	if (clutList.size() == 0)
-		error("CLUT not found");
+		warning("CLUT not found");
 
-	Common::SeekableReadStream *pal = _movieArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[0]);
-	palette.loadPalette(*pal);
-	g_system->getPaletteManager()->setPalette(palette.getPalette(), 0, palette.getPaletteColorCount());
+	//Common::SeekableReadStream *pal = _movieArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[0]);
+	//palette.loadPalette(*pal);
+	//g_system->getPaletteManager()->setPalette(palette.getPalette(), 0, palette.getPaletteColorCount());
 
 }
 
@@ -286,16 +286,32 @@ void Score::dumpScript(uint16 id, scriptType type, Common::String script) {
 	out.close();
 }
 
-void Score::loadCastInfo(Common::SeekableReadStream &stream) {
+void Score::loadCastInfo(Common::SeekableReadStream &stream, uint16 id) {
 	uint32 entryType = 0;
 	Common::Array<Common::String> castStrings = loadStrings(stream, entryType);
-	CastInfo ci;
-	ci.script = castStrings[0];
-	ci.name = castStrings[1];
-	ci.directory = castStrings[2];
-	ci.fileName = castStrings[3];
-	ci.type = castStrings[4];
-	//TODO storage in array, and use this info
+	CastInfo *ci = new CastInfo();
+	ci->script = castStrings[0];
+	ci->name = getString(castStrings[1]);
+	ci->directory = getString(castStrings[2]);
+	ci->fileName = getString(castStrings[3]);
+	ci->type = castStrings[4];
+	_castsInfo[id] = ci;
+}
+
+Common::String Score::getString(Common::String str) {
+	if (str.size() == 0) {
+		return str;
+	}
+	uint8 f = static_cast<uint8>(str.firstChar());
+
+	if (f == 0) {
+		return "";
+	}
+	str.deleteChar(0);
+	if (str.lastChar() == '\x00') {
+		str.deleteLastChar();
+	}
+	return str;
 }
 
 void Score::loadFileInfo(Common::SeekableReadStream &stream) {
@@ -546,10 +562,6 @@ Frame::~Frame() {
 	for (uint16 i = 0; i < _sprites.size(); i++) {
 		delete _sprites[i];
 	}
-
-	for (uint16 i = 0; i < _drawRects.size(); i++) {
-		delete _drawRects[i];
-	}
 }
 
 void Frame::readChannel(Common::SeekableReadStream &stream, uint16 offset, uint16 size) {
@@ -603,7 +615,7 @@ void Frame::readMainChannels(Common::SeekableReadStream &stream, uint16 offset, 
 			offset++;
 			break;
 		case kSound1Position:
-			_sound1 = stream.readUint16BE();
+			_sound1 = stream.readUint16LE();
 			offset+=2;
 			break;
 		case kSkipFrameFlagsPosition:
@@ -615,7 +627,7 @@ void Frame::readMainChannels(Common::SeekableReadStream &stream, uint16 offset, 
 			offset++;
 			break;
 		case kSound2Position:
-			_sound2 = stream.readUint16BE();
+			_sound2 = stream.readUint16LE();
 			offset += 2;
 			break;
 		case kSound2TypePosition:
@@ -698,14 +710,14 @@ void Frame::prepareFrame(Archive &_movie, Graphics::ManagedSurface &surface, Com
 	renderTrailSprites(_movie, surface, movieRect);
 	if (_transType != 0)
 		playTranisition();
-	if (_sound1 != 0)
-		playSoundChannel(_sound1);
-	if (_sound2 != 0)
-		playSoundChannel(_sound2);
+	if (_sound1 != 0 || _sound2 != 0) {
+		playSoundChannel();
+	}
 }
 
-void Frame::playSoundChannel(uint16 id) {
-	warning("STUB: playSound(%d)", id);
+void Frame::playSoundChannel() {
+	debug(0, "Sound2 %d", _sound2);
+	debug(0, "Sound1 %d", _sound1);
 }
 
 void Frame::playTranisition() {
