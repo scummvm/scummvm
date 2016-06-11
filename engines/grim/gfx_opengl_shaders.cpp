@@ -405,7 +405,6 @@ void GfxOpenGLS::setupShaders() {
 }
 
 byte *GfxOpenGLS::setupScreen(int screenW, int screenH, bool fullscreen) {
-	_pixelFormat = g_system->getScreenPixelBuffer().getFormat();
 	_screenWidth = screenW;
 	_screenHeight = screenH;
 	_scaleW = _screenWidth / (float)_gameWidth;

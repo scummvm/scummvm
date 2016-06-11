@@ -26,7 +26,6 @@
 #include "math/vector3d.h"
 #include "math/quat.h"
 
-#include "graphics/pixelformat.h"
 #include "graphics/pixelbuffer.h"
 #include "common/str.h"
 #include "common/rect.h"
@@ -299,7 +298,6 @@ protected:
 	bool _renderBitmaps;
 	bool _renderZBitmaps;
 	bool _shadowModeActive;
-	Graphics::PixelFormat _pixelFormat;
 	Math::Vector3d _currentPos;
 	Math::Matrix4 _currentRot;
 	float _dimLevel;

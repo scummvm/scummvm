@@ -140,6 +140,7 @@ protected:
 
 private:
 	TinyGL::FrameBuffer *_zb;
+	Graphics::PixelFormat _pixelFormat;
 	Graphics::BlitImage *_emergFont[96];
 	Graphics::BlitImage *_smushImage;
 	Graphics::PixelBuffer _storedDisplay;
