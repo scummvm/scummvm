@@ -78,7 +78,7 @@ void DropboxStorage::codeFlowComplete(Networking::JsonResponse response) {
 			warning("Bad response, no token/uid passed");
 		} else {
 			_token = result.getVal("access_token")->asString();
-			_uid = result.getVal("user_id")->asString();			
+			_uid = result.getVal("uid")->asString();			
 			ConfMan.removeKey("dropbox_code", "cloud");
 			CloudMan.replaceStorage(this, kStorageDropboxId);
 			ConfMan.flushToDisk();
