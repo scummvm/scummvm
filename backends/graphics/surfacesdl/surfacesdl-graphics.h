@@ -166,7 +166,9 @@ protected:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_Renderer *_renderer;
 	SDL_Texture *_screenTexture;
+	SDL_GLContext _glContext;
 	void deinitializeRenderer();
+	SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags);
 #endif
 
 	SDL_Surface *_screen;
@@ -243,6 +245,7 @@ protected:
 	void drawSideTextures();
 
 	bool detectFramebufferSupport();
+	void detectDesktopResolution();
 };
 
 #endif

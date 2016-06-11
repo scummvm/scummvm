@@ -57,6 +57,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	SdlGraphicsManager(sdlEventSource, window),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_renderer(nullptr), _screenTexture(nullptr),
+	_glContext(nullptr),
 #endif
 	_screen(0),
 	_subScreen(0),
@@ -77,9 +78,8 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 		ConfMan.registerDefault("aspect_ratio", true);
 		ConfMan.registerDefault("antialiasing", 0);
 
-		const SDL_VideoInfo *vi = SDL_GetVideoInfo();
-		_desktopW = vi->current_w;
-		_desktopH = vi->current_h;
+		detectDesktopResolution();
+
 		_sideSurfaces[0] = _sideSurfaces[1] = nullptr;
 #ifdef USE_OPENGL
 		_sideTextures[0] = _sideTextures[1] = nullptr;
@@ -188,8 +188,23 @@ void SurfaceSdlGraphicsManager::launcherInitSize(uint w, uint h) {
 	setupScreen(w, h, false, false);
 }
 
-void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d) {
+void SurfaceSdlGraphicsManager::detectDesktopResolution() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_DisplayMode di;
+	if (SDL_GetCurrentDisplayMode(0, &di) != 0) {
+		warning("Error: %s", SDL_GetError());
+		g_system->quit();
+	}
+	_desktopW = di.w;
+	_desktopH = di.h;
+#else
+	const SDL_VideoInfo *vi = SDL_GetVideoInfo();
+	_desktopW = vi->current_w;
+	_desktopH = vi->current_h;
+#endif
+}
 
+void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d) {
 	closeOverlay();
 
 #ifdef USE_OPENGL
@@ -392,13 +407,29 @@ Math::Rect2d SurfaceSdlGraphicsManager::computeGameRect(GameRenderTarget gameRen
 
 bool SurfaceSdlGraphicsManager::detectFramebufferSupport() {
 	bool framebufferSupported = false;
-#if defined(USE_OPENGL) && !defined(AMIGAOS)
-	// Spawn a 32x32 window off-screen
+#if defined(USE_GLES2)
+	// Framebuffers are always available with GLES2
+	framebufferSupported = true;
+#elif defined(USE_OPENGL) && !defined(AMIGAOS)
+	// Spawn a 32x32 window off-screen with a GL context to test if framebuffers are supported
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_Window *window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 32, 32, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
+	if (window) {
+		SDL_GLContext glContext = SDL_GL_CreateContext(window);
+		if (glContext) {
+			initializeOpenGLContext();
+			framebufferSupported = OpenGLContext.framebufferObjectSupported;
+			SDL_GL_DeleteContext(glContext);
+		}
+		SDL_DestroyWindow(window);
+	}
+#else
 	SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=9000,9000"));
 	SDL_SetVideoMode(32, 32, 0, SDL_OPENGL);
 	SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=center"));
 	initializeOpenGLContext();
 	framebufferSupported = OpenGLContext.framebufferObjectSupported;
+#endif
 #endif
 	return framebufferSupported;
 }
@@ -489,10 +520,6 @@ bool SurfaceSdlGraphicsManager::createScreenOpenGL(uint effectiveWidth, uint eff
 	pixelFormats.push_back(OpenGLPixelFormat(16, 5, 5, 5, 1, 0));
 	pixelFormats.push_back(OpenGLPixelFormat(16, 5, 6, 5, 0, 0));
 
-	uint32 sdlflags = SDL_OPENGL;
-	if (_fullscreen)
-		sdlflags |= SDL_FULLSCREEN;
-
 	// Unfortunatly, SDL does not provide a list of valid pixel formats
 	// for the current OpenGL implementation and hardware.
 	// SDL may not be able to create a screen with the preferred pixel format.
@@ -508,11 +535,41 @@ bool SurfaceSdlGraphicsManager::createScreenOpenGL(uint effectiveWidth, uint eff
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, it->multisampleSamples > 0);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, it->multisampleSamples);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+#ifdef USE_GLES2
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+#else
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+#endif
+#endif
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		uint32 sdlflags = SDL_WINDOW_OPENGL;
+		if (_fullscreen)
+			sdlflags |= SDL_WINDOW_FULLSCREEN;
+
+		if (_window->createWindow(effectiveWidth, effectiveHeight, sdlflags)) {
+			_glContext = SDL_GL_CreateContext(_window->getSDLWindow());
+			if (_glContext) {
+				break;
+			}
+		}
+
+		_window->destroyWindow();
+#else
+		uint32 sdlflags = SDL_OPENGL;
+		if (_fullscreen)
+			sdlflags |= SDL_FULLSCREEN;
 
 		SDL_Surface *screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, it->bytesPerPixel, sdlflags);
 		if (screen) {
 			break;
 		}
+#endif
 	}
 
 	// Display a warning if the effective pixel format is not the preferred one
@@ -686,7 +743,11 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 			drawOverlayOpenGL();
 		}
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		SDL_GL_SwapWindow(_window->getSDLWindow());
+#else
 		SDL_GL_SwapBuffers();
+#endif
 
 		if (_frameBuffer) {
 			_frameBuffer->attach();
@@ -706,7 +767,16 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 			drawOverlay();
 		}
 		drawSideTextures();
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		SDL_UpdateTexture(_screenTexture, nullptr, _screen->pixels, _screen->pitch);
+
+		SDL_RenderClear(_renderer);
+		SDL_RenderCopy(_renderer, _screenTexture, nullptr, nullptr);
+		SDL_RenderPresent(_renderer);
+#else
 		SDL_Flip(_screen);
+#endif
 	}
 }
 
@@ -962,7 +1032,12 @@ void SurfaceSdlGraphicsManager::closeOverlay() {
 		SDL_FreeSurface(_subScreen);
 		_subScreen = nullptr;
 	}
-	_screen = nullptr;
+	if (_screen) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		SDL_FreeSurface(_screen);
+#endif
+		_screen = nullptr;
+	}
 
 #ifdef USE_OPENGL
 	delete _surfaceRenderer;
@@ -978,6 +1053,10 @@ void SurfaceSdlGraphicsManager::closeOverlay() {
 
 	OpenGL::Context::destroy();
 #endif
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	deinitializeRenderer();
+#endif
 }
 
 #pragma mark -
@@ -991,10 +1070,17 @@ bool SurfaceSdlGraphicsManager::showMouse(bool visible) {
 
 // ResidualVM specific method
 bool SurfaceSdlGraphicsManager::lockMouse(bool lock) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (lock)
+		SDL_SetRelativeMouseMode(SDL_TRUE);
+	else
+		SDL_SetRelativeMouseMode(SDL_FALSE);
+#else
 	if (lock)
 		SDL_WM_GrabInput(SDL_GRAB_ON);
 	else
 		SDL_WM_GrabInput(SDL_GRAB_OFF);
+#endif
 	return true;
 }
 
@@ -1019,7 +1105,7 @@ void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
 		y += _gameRect.getTopLeft().getY();
 	}
 
-	SDL_WarpMouse(x, y);
+	_window->warpMouseInWindow(x, y);
 }
 
 void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
@@ -1101,6 +1187,11 @@ void SurfaceSdlGraphicsManager::notifyMousePos(Common::Point mouse) {
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 void SurfaceSdlGraphicsManager::deinitializeRenderer() {
+#ifdef USE_OPENGL
+	SDL_GL_DeleteContext(_glContext);
+	_glContext = nullptr;
+#endif
+
 	SDL_DestroyTexture(_screenTexture);
 	_screenTexture = nullptr;
 
@@ -1108,6 +1199,42 @@ void SurfaceSdlGraphicsManager::deinitializeRenderer() {
 	_renderer = nullptr;
 
 	_window->destroyWindow();
+}
+
+SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
+	deinitializeRenderer();
+
+	uint32 createWindowFlags = 0;
+#ifdef USE_SDL_RESIZABLE_WINDOW
+	createWindowFlags |= SDL_WINDOW_RESIZABLE;
+#endif
+	if ((flags & SDL_FULLSCREEN) != 0) {
+		createWindowFlags |= SDL_WINDOW_FULLSCREEN;
+	}
+
+	if (!_window->createWindow(width, height, createWindowFlags)) {
+		return nullptr;
+	}
+
+	_renderer = SDL_CreateRenderer(_window->getSDLWindow(), -1, 0);
+	if (!_renderer) {
+		deinitializeRenderer();
+		return nullptr;
+	}
+
+	_screenTexture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, width, height);
+	if (!_screenTexture) {
+		deinitializeRenderer();
+		return nullptr;
+	}
+
+	SDL_Surface *screen = SDL_CreateRGBSurface(0, width, height, 16, 0xF800, 0x7E0, 0x1F, 0);
+	if (!screen) {
+		deinitializeRenderer();
+		return nullptr;
+	} else {
+		return screen;
+	}
 }
 #endif // SDL_VERSION_ATLEAST(2, 0, 0)
 
