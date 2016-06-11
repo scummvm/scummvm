@@ -47,11 +47,11 @@ static size_t curlHeadersCallback(char *d, size_t n, size_t l, void *p) {
 	return 0;
 }
 
-NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading, bool usingPatch):
-	NetworkReadStream(url, headersList, (byte *)postFields.c_str(), postFields.size(), uploading, usingPatch, false) {}
+void NetworkReadStream::init(const char *url, curl_slist *headersList, byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) {
+	_eos = _requestComplete = false;
+	_sendingContentsBuffer = nullptr;
+	_sendingContentsSize = _sendingContentsPos = 0;
 
-NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post):
-	_easy(0), _eos(false), _requestComplete(false), _sendingContentsBuffer(nullptr), _sendingContentsSize(0), _sendingContentsPos(0) {
 	_easy = curl_easy_init();
 	curl_easy_setopt(_easy, CURLOPT_WRITEFUNCTION, curlDataCallback);
 	curl_easy_setopt(_easy, CURLOPT_WRITEDATA, this); //so callback can call us
@@ -78,6 +78,14 @@ NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, b
 		}
 	}
 	ConnMan.registerEasyHandle(_easy);
+}
+
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading, bool usingPatch) {
+	init(url, headersList, (byte *)postFields.c_str(), postFields.size(), uploading, usingPatch, false);
+}
+
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) {
+	init(url, headersList, buffer, bufferSize, uploading, usingPatch, post);
 }
 
 NetworkReadStream::~NetworkReadStream() {
