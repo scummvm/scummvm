@@ -53,7 +53,7 @@ enum MenuAction {
 };
 //} using namespace MacVentureMenuActions;
 
-class Gui {	
+class Gui {
 
 public:
 	Gui(MacVentureEngine *engine, Common::MacResManager *resman);
@@ -78,8 +78,54 @@ private: // Methods
 
 	void initGUI();
 	bool loadMenus();
-	void loadBorder(Graphics::MacWindow * target, Common::String filename, bool active);	
+	void loadBorder(Graphics::MacWindow * target, Common::String filename, bool active);
 
+};
+
+class CommandButton {
+
+enum {
+	kCommandsLeftPadding = 0,
+	kCommandsTopPadding = 0
+};
+
+public:
+	CommandButton(ControlData data, Gui *g) {
+		_data = data;
+		_gui = g;
+	}
+	~CommandButton() {}
+
+	void draw(Graphics::ManagedSurface &surface) {
+
+
+		surface.fillRect(_data.bounds, kColorWhite);
+		surface.frameRect(_data.bounds, kColorBlack);
+
+		const Graphics::Font &font = _gui->getCurrentFont();
+		Common::String title(_data.title);
+		font.drawString(
+			&surface,
+			title,
+			_data.bounds.left,
+			_data.bounds.top,
+			_data.bounds.right - _data.bounds.left,
+			kColorBlack,
+			Graphics::kTextAlignCenter);
+
+	}
+
+	bool isInsideBounds(Common::Point point) {
+		return _data.bounds.contains(point);
+	}
+
+	const ControlData& getData() {
+		return _data;
+	}
+
+private:
+	ControlData _data;
+	Gui *_gui;
 };
 
 } // End of namespace MacVenture

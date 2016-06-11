@@ -40,7 +40,7 @@ enum {
 
 static const Graphics::MenuData menuSubItems[] = {
 	{ kMenuHighLevel,	"File",				0, 0, false },
-	{ kMenuHighLevel,	"Edit",				0, 0, false },		
+	{ kMenuHighLevel,	"Edit",				0, 0, false },
 	{ kMenuHighLevel,	"Special",			0, 0, false },
 	{ kMenuHighLevel,	"Font",				0, 0, false },
 	{ kMenuHighLevel,	"FontSize",			0, 0, false },
@@ -83,6 +83,12 @@ Gui::~Gui() {
 
 void Gui::draw() {
 	_wm.draw();
+	Common::List<CommandButton>::const_iterator it = _controlData->begin();
+	for (; it != _controlData->end(); ++it) {
+		CommandButton button = *it;
+		if (button.getData().refcon != kControlExitBox)
+			button.draw(*_controlsWindow->getSurface());
+	}
 }
 
 bool Gui::processEvent(Common::Event &event) {
@@ -100,12 +106,34 @@ void Gui::initGUI() {
 	_menu->setCommandsCallback(menuCommandsCallback, this);
 	_menu->calcDimensions();
 
+	if (!loadWindows())
+		error("Could not load windows");
+
+	initWindows();
+
+	if (!loadControls())
+		error("Could not load controls");
+
+	draw();
+
+}
+
+void Gui::initWindows() {
+
 	// In-game Output Console
 	_outConsoleWindow = _wm.addWindow(false, true, true);
 	_outConsoleWindow->setDimensions(Common::Rect(20, 20, 120, 120));
 	_outConsoleWindow->setActive(false);
 	_outConsoleWindow->setCallback(outConsoleWindowCallback, this);
-	loadBorder(_outConsoleWindow, "border_inac.bmp", false);	
+	loadBorder(_outConsoleWindow, "border_command.bmp", false);
+
+	// Game Controls Window
+	_controlsWindow = _wm.addWindow(false, false, false);
+	_controlsWindow->setDimensions(getWindowData(kCommandsWindow).bounds);
+	_controlsWindow->setActive(false);
+	_controlsWindow->setCallback(controlsWindowCallback, this);
+	loadBorder(_controlsWindow, "border_command.bmp", false);
+
 }
 
 void Gui::loadBorder(Graphics::MacWindow * target, Common::String filename, bool active) {
@@ -152,7 +180,7 @@ bool Gui::loadMenus() {
 	Common::MacResIDArray::const_iterator iter;
 
 	if ((resArray = _resourceManager->getResIDArray(MKTAG('M', 'E', 'N', 'U'))).size() == 0)
-		return false;	
+		return false;
 
 	_menu->addMenuSubItem(0, "Abb", kMenuActionAbout, 0, 'A', true);
 
@@ -192,12 +220,12 @@ bool Gui::loadMenus() {
 				style = res->readUint16BE();
 				_menu->addMenuSubItem(i, title, 0, style, key, false);
 			}
-		}	
+		}
 
 		i++;
 	}
 
-	return true;	
+	return true;
 }
 
 /* CALLBACKS */
