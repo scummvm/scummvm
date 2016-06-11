@@ -28,38 +28,23 @@ namespace OpenGL {
 namespace BuiltinShaders {
 
 const char *compatVertex =
-#if defined(SDL_BACKEND)
-	"#if __VERSION__ < 130\n"
+	"#if defined(GL_ES)\n"
+		"mediump float round(in mediump float x) {\n"
+			"return sign(x) * floor(abs(x) + .5);\n"
+		"}\n"
+		"#define in attribute\n"
+		"#define out varying\n"
+	"#elif __VERSION__ < 130\n"
 		"float round(in float x) {\n"
 		"return sign(x) * floor(abs(x) + .5);\n"
 		"}\n"
 		"#define highp\n"
 		"#define in attribute\n"
 		"#define out varying\n"
-	"#endif\n"
-#else
-	"#ifdef GL_ES\n"
-		"mediump float round(in mediump float x) {\n"
-			"return sign(x) * floor(abs(x) + .5);\n"
-		"}\n"
-		"#define in attribute\n"
-		"#define out varying\n"
-	"#endif\n"
-#endif
-;
+	"#endif\n";
 
 const char *compatFragment =
-#if defined(SDL_BACKEND)
-	"#if __VERSION__ < 130\n"
-		"#define in varying\n"
-		"#define OUTPUT\n"
-		"#define outColor gl_FragColor\n"
-		"#define texture texture2D\n"
-	"#else\n"
-		"#define OUTPUT out vec4 outColor;\n"
-	"#endif\n"
-#else
-	"#ifdef GL_ES\n"
+	"#if defined(GL_ES)\n"
 		"#define in varying\n"
 		"#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
 			"precision highp float;\n"
@@ -69,11 +54,14 @@ const char *compatFragment =
 		"#define OUTPUT\n"
 		"#define outColor gl_FragColor\n"
 		"#define texture texture2D\n"
+	"#elif __VERSION__ < 130\n"
+		"#define in varying\n"
+		"#define OUTPUT\n"
+		"#define outColor gl_FragColor\n"
+		"#define texture texture2D\n"
 	"#else\n"
 		"#define OUTPUT out vec4 outColor;\n"
-	"#endif\n"
-#endif
-;
+	"#endif\n";
 
 }
 } // End of namespace OpenGL
