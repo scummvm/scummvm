@@ -302,7 +302,11 @@ public:
 	 */
 	virtual uint getRangeValue(uint id);
 	
-	virtual void proc20(int v);
+	/**
+	 * Resets the prior used index for the specified range
+	 */
+	virtual void resetRange(int id);
+
 	virtual int proc21(int v1, int v2, int v3);
 	virtual int proc22(int id) const;
 	virtual int proc23() const;
@@ -328,7 +332,7 @@ public:
 	/**
 	 * Returns a dial's region number
 	 */
-	virtual int getDialRegion(int dialNum);
+	virtual int getDialRegion(int dialNum) const;
 
 	/**
 	 * Gets the value for a dial

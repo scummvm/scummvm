@@ -112,20 +112,20 @@ int DeskbotScript::proc36(int id) const {
 	return 0;
 }
 
-void DeskbotScript::proc38() {
-	warning("TODO");
+bool DeskbotScript::isDial0Medium() const {
+	return getDialRegion(0) == 1;
 }
 
-void DeskbotScript::proc39() {
-	warning("TODO");
+bool DeskbotScript::isDial0Low() const {
+	return getDialRegion(0) == 0;
 }
 
-void DeskbotScript::proc40() {
-	warning("TODO");
+bool DeskbotScript::isDial1Medium() const {
+	return getDialRegion(1) == 1;
 }
 
-void DeskbotScript::proc41() {
-	warning("TODO");
+bool DeskbotScript::isDial1Low() const {
+	return getDialRegion(1) == 0;
 }
 
 } // End of namespace Titanic

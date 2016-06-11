@@ -54,10 +54,25 @@ public:
 	virtual void proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence);
 	virtual int proc36(int val) const;
 
-	virtual void proc38();
-	virtual void proc39();
-	virtual void proc40();
-	virtual void proc41();
+	/**
+	 * Returns true if dial 1 is the medium (1) region
+	 */
+	virtual bool isDial0Medium() const;
+
+	/**
+	 * Returns true if dial 0 is the low end region
+	 */
+	virtual bool isDial0Low() const;
+
+	/**
+	 * Returns true if dial 1 is the medium (1) region
+	 */
+	bool isDial1Medium() const;
+
+	/**
+	 * Returns true if dial 1 is the low end region
+	 */
+	virtual bool isDial1Low() const;
 };
 
 } // End of namespace Titanic

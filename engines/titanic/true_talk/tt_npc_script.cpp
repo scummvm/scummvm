@@ -345,13 +345,14 @@ uint TTnpcScript::getRangeValue(uint id) {
 	}
 }
 
-void TTnpcScript::proc20(int v) {
-	warning("TODO");
+void TTnpcScript::resetRange(int id) {
+	TTscriptRange *range = findRange(id);
+	if (range && range->_mode != SF_RANDOM)
+		range->_priorIndex = 0;
 }
 
 int TTnpcScript::proc21(int v1, int v2, int v3) {
-	// TODO
-	return v1;
+	return v2;
 }
 
 int TTnpcScript::proc22(int id) const {
@@ -481,7 +482,7 @@ void TTnpcScript::setDial(int dialNum, int value) {
 	}
 }
 
-int TTnpcScript::getDialRegion(int dialNum) {
+int TTnpcScript::getDialRegion(int dialNum) const {
 	if (dialNum < DIALS_ARRAY_COUNT) {
 		int value = _dialValues[dialNum];
 		if (value < 50)
