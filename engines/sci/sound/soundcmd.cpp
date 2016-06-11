@@ -225,17 +225,6 @@ void SoundCommandParser::processPlaySound(reg_t obj, bool playBed) {
 	musicSlot->fadeStep = 0;
 }
 
-reg_t SoundCommandParser::kDoSoundRestore(int argc, reg_t *argv, reg_t acc) {
-	// Called after loading, to restore the playlist
-	// We don't really use or need this
-	return acc;
-}
-
-reg_t SoundCommandParser::kDoSoundDummy(int argc, reg_t *argv, reg_t acc) {
-	warning("cmdDummy invoked");	// not supposed to occur
-	return acc;
-}
-
 reg_t SoundCommandParser::kDoSoundDispose(int argc, reg_t *argv, reg_t acc) {
 	debugC(kDebugLevelSound, "kDoSound(dispose): %04x:%04x", PRINT_REG(argv[0]));
 	processDisposeSound(argv[0]);
