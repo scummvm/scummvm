@@ -23,8 +23,7 @@
 #include "engines/stark/gfx/opengltexture.h"
 
 #include "graphics/surface.h"
-
-#include <SDL_opengl.h>
+#include "graphics/opengl/system_headers.h"
 
 namespace Stark {
 namespace Gfx {
@@ -58,16 +57,24 @@ void OpenGlTexture::updateLevel(uint32 level, const Graphics::Surface *surface, 
 		_height = surface->h;
 	}
 
+#if defined(USE_GLES2)
+	// OpenGL ES does not support the GL_UNSIGNED_INT_8_8_8_8_REV texture format
+	// FIXME: Big endian support
+	GLuint sourceFormat = GL_UNSIGNED_BYTE;
+#else
+	GLuint sourceFormat = GL_UNSIGNED_INT_8_8_8_8_REV;
+#endif
+
 	if (surface->format.bytesPerPixel != 4) {
 		// Convert the surface to texture format
 		Graphics::Surface *convertedSurface = surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), palette);
 
-		glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, convertedSurface->w, convertedSurface->h, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, convertedSurface->getPixels());
+		glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, convertedSurface->w, convertedSurface->h, 0, GL_RGBA, sourceFormat, convertedSurface->getPixels());
 
 		convertedSurface->free();
 		delete convertedSurface;
 	} else {
-		glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, surface->getPixels());
+		glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, sourceFormat, surface->getPixels());
 	}
 }
 
@@ -80,10 +87,15 @@ void OpenGlTexture::setLevelCount(uint32 count) {
 	_levelCount = count;
 
 	if (count >= 1) {
+#if !defined(USE_GLES2)
+		// GLES2 does not allow setting the max provided mipmap level.
+		// It expects all the levels to be provided, which is not the case in TLJ.
+		// FIXME: Enable mipmapping on GLES2
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, count - 1);
 
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+#endif
 
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -93,7 +105,12 @@ void OpenGlTexture::setLevelCount(uint32 count) {
 void OpenGlTexture::addLevel(uint32 level, const Graphics::Surface *surface, const byte *palette) {
 	assert(level < _levelCount);
 
-	updateLevel(level, surface, palette);
+#if defined(USE_GLES2)
+	if (level == 0)
+#endif
+	{
+		updateLevel(level, surface, palette);
+	}
 }
 
 } // End of namespace Gfx
