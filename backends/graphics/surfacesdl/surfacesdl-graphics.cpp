@@ -226,24 +226,11 @@ void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, boo
 
 #ifdef USE_OPENGL
 	if (_opengl) {
-		createScreenOpenGL(effectiveWidth, effectiveHeight, gameRenderTarget);
-	} else
-#endif
-	{
-		uint32 sdlflags = SDL_SWSURFACE;
-		if (_fullscreen)
-			sdlflags |= SDL_FULLSCREEN;
+		if (!createScreenOpenGL(effectiveWidth, effectiveHeight, gameRenderTarget)) {
+			warning("Error: %s", SDL_GetError());
+			g_system->quit();
+		}
 
-		_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, 16, sdlflags);
-	}
-
-	if (!_screen) {
-		warning("Error: %s", SDL_GetError());
-		g_system->quit();
-	}
-
-#ifdef USE_OPENGL
-	if (_opengl) {
 		int glflag;
 		const GLubyte *str;
 
@@ -286,11 +273,19 @@ void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, boo
 
 		initializeOpenGLContext();
 		_surfaceRenderer = OpenGL::createBestSurfaceRenderer();
-	}
+	} else
 #endif
+	{
+		uint32 sdlflags = SDL_SWSURFACE;
+		if (_fullscreen)
+			sdlflags |= SDL_FULLSCREEN;
 
-	_overlayWidth = effectiveWidth;
-	_overlayHeight = effectiveHeight;
+		_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, 16, sdlflags);
+		if (!_screen) {
+			warning("Error: %s", SDL_GetError());
+			g_system->quit();
+		}
+	}
 
 #ifdef USE_OPENGL
 	if (_opengl) {
@@ -306,13 +301,18 @@ void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, boo
 		bmask = 0x0000001f;
 		amask = 0x00000000;
 #endif
-		_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth, _overlayHeight, 16,
+		_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, effectiveWidth, effectiveHeight, 16,
 						rmask, gmask, bmask, amask);
+		_overlayFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	} else
 #endif
 	{
-		_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth, _overlayHeight, 16,
-					_screen->format->Rmask, _screen->format->Gmask, _screen->format->Bmask, _screen->format->Amask);
+		SDL_PixelFormat *f = _screen->format;
+		_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, effectiveWidth, effectiveHeight, f->BitsPerPixel,
+		                                      f->Rmask, f->Gmask, f->Bmask, f->Amask);
+
+		_overlayFormat = Graphics::PixelFormat(f->BytesPerPixel, 8 - f->Rloss, 8 - f->Gloss, 8 - f->Bloss, 0,
+		                                      f->Rshift, f->Gshift, f->Bshift, f->Ashift);
 	}
 
 	if (!_overlayscreen) {
@@ -320,26 +320,11 @@ void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, boo
 		g_system->quit();
 	}
 
-	/*_overlayFormat.bytesPerPixel = _overlayscreen->format->BytesPerPixel;
-
-// 	For some reason the values below aren't right, at least on my system
-	_overlayFormat.rLoss = _overlayscreen->format->Rloss;
-	_overlayFormat.gLoss = _overlayscreen->format->Gloss;
-	_overlayFormat.bLoss = _overlayscreen->format->Bloss;
-	_overlayFormat.aLoss = _overlayscreen->format->Aloss;
-
-	_overlayFormat.rShift = _overlayscreen->format->Rshift;
-	_overlayFormat.gShift = _overlayscreen->format->Gshift;
-	_overlayFormat.bShift = _overlayscreen->format->Bshift;
-	_overlayFormat.aShift = _overlayscreen->format->Ashift;*/
-
-	_overlayFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	_overlayWidth = effectiveWidth;
+	_overlayHeight = effectiveHeight;
+	_screenFormat = _overlayFormat;
 
 	_screenChangeCount++;
-
-	SDL_PixelFormat *f = _screen->format;
-	_screenFormat = Graphics::PixelFormat(f->BytesPerPixel, 8 - f->Rloss, 8 - f->Gloss, 8 - f->Bloss, 0,
-										f->Rshift, f->Gshift, f->Bshift, f->Ashift);
 
 #if defined(USE_OPENGL) && !defined(AMIGAOS)
 	if (gameRenderTarget == kFramebuffer) {
@@ -349,6 +334,7 @@ void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, boo
 	}
 #endif
 	if (gameRenderTarget == kSubScreen) {
+		SDL_PixelFormat *f = _screen->format;
 		_subScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, gameWidth, gameHeight, f->BitsPerPixel, f->Rmask, f->Gmask, f->Bmask, f->Amask);
 	}
 }
@@ -453,6 +439,12 @@ Common::Rect SurfaceSdlGraphicsManager::getPreferredFullscreenResolution() {
 }
 
 Graphics::PixelBuffer SurfaceSdlGraphicsManager::getScreenPixelBuffer() {
+#ifdef USE_OPENGL
+	if (_opengl) {
+		error("Direct screen buffer access is not allowed when using OpenGL");
+	}
+#endif
+
 	if (_subScreen) {
 		return Graphics::PixelBuffer(_screenFormat, (byte *)_subScreen->pixels);
 	}
@@ -484,7 +476,7 @@ SurfaceSdlGraphicsManager::OpenGLPixelFormat::OpenGLPixelFormat(uint screenBytes
 
 }
 
-void SurfaceSdlGraphicsManager::createScreenOpenGL(uint effectiveWidth, uint effectiveHeight, GameRenderTarget gameRenderTarget) {
+bool SurfaceSdlGraphicsManager::createScreenOpenGL(uint effectiveWidth, uint effectiveHeight, GameRenderTarget gameRenderTarget) {
 	// Build a list of OpenGL pixel formats usable by ResidualVM
 	Common::Array<OpenGLPixelFormat> pixelFormats;
 	if (_antialiasing > 0 && gameRenderTarget == kScreen) {
@@ -517,8 +509,8 @@ void SurfaceSdlGraphicsManager::createScreenOpenGL(uint effectiveWidth, uint eff
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, it->multisampleSamples > 0);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, it->multisampleSamples);
 
-		_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, it->bytesPerPixel, sdlflags);
-		if (_screen) {
+		SDL_Surface *screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, it->bytesPerPixel, sdlflags);
+		if (screen) {
 			break;
 		}
 	}
@@ -534,6 +526,8 @@ void SurfaceSdlGraphicsManager::createScreenOpenGL(uint effectiveWidth, uint eff
 		        it->bytesPerPixel,
 		        wantsAA && !gotAA ? " without AA" : "");
 	}
+
+	return it != pixelFormats.end();
 }
 
 #define BITMAP_TEXTURE_SIZE 256
@@ -600,15 +594,15 @@ void SurfaceSdlGraphicsManager::drawOverlayOpenGL() {
 
 void SurfaceSdlGraphicsManager::drawSideTexturesOpenGL() {
 	if (_fullscreen && _lockAspectRatio) {
-		const Math::Vector2d nudge(1.0 / float(_screen->w), 0);
+		const Math::Vector2d nudge(1.0 / float(_overlayWidth), 0);
 		if (_sideTextures[0] != nullptr) {
-			float left = _gameRect.getBottomLeft().getX() - (float(_screen->h) / float(_sideTextures[0]->getHeight())) * _sideTextures[0]->getWidth() / float(_screen->w);
+			float left = _gameRect.getBottomLeft().getX() - (float(_overlayHeight) / float(_sideTextures[0]->getHeight())) * _sideTextures[0]->getWidth() / float(_overlayWidth);
 			Math::Rect2d leftRect(Math::Vector2d(left, 0.0), _gameRect.getBottomLeft() + nudge);
 			_surfaceRenderer->render(_sideTextures[0], leftRect, true);
 		}
 
 		if (_sideTextures[1] != nullptr) {
-			float right = _gameRect.getTopRight().getX() + (float(_screen->h) / float(_sideTextures[1]->getHeight())) * _sideTextures[1]->getWidth() / float(_screen->w);
+			float right = _gameRect.getTopRight().getX() + (float(_overlayHeight) / float(_sideTextures[1]->getHeight())) * _sideTextures[1]->getWidth() / float(_overlayWidth);
 			Math::Rect2d rightRect(_gameRect.getTopRight() - nudge, Math::Vector2d(right, 1.0));
 			_surfaceRenderer->render(_sideTextures[1], rightRect, true);
 		}
@@ -676,7 +670,7 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 	if (_opengl) {
 		if (_frameBuffer) {
 			_frameBuffer->detach();
-			glViewport(0, 0, _screen->w, _screen->h);
+			glViewport(0, 0, _overlayWidth, _overlayHeight);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 			_surfaceRenderer->prepareState();
 			drawSideTexturesOpenGL();
@@ -708,7 +702,6 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 			dstrect.h = _gameRect.getHeight();
 			SDL_BlitSurface(_subScreen, NULL, _screen, &dstrect);
 		}
-
 		if (_overlayVisible) {
 			drawOverlay();
 		}
@@ -743,7 +736,7 @@ int16 SurfaceSdlGraphicsManager::getHeight() {
 	if (_subScreen)
 		return _subScreen->h;
 	else
-		return _screen->h;
+		return _overlayHeight;
 }
 
 int16 SurfaceSdlGraphicsManager::getWidth() {
@@ -756,7 +749,7 @@ int16 SurfaceSdlGraphicsManager::getWidth() {
 	if (_subScreen)
 		return _subScreen->w;
 	else
-		return _screen->w;
+		return _overlayWidth;
 }
 
 void SurfaceSdlGraphicsManager::setPalette(const byte *colors, uint start, uint num) {
@@ -969,6 +962,7 @@ void SurfaceSdlGraphicsManager::closeOverlay() {
 		SDL_FreeSurface(_subScreen);
 		_subScreen = nullptr;
 	}
+	_screen = nullptr;
 
 #ifdef USE_OPENGL
 	delete _surfaceRenderer;
@@ -1009,11 +1003,11 @@ void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
 #ifdef USE_OPENGL
 	if (_frameBuffer) {
 		// Scale from game coordinates to screen coordinates
-		x = (x * _gameRect.getWidth() * _screen->w) / _frameBuffer->getWidth();
-		y = (y * _gameRect.getHeight() * _screen->h) / _frameBuffer->getHeight();
+		x = (x * _gameRect.getWidth() * _overlayWidth) / _frameBuffer->getWidth();
+		y = (y * _gameRect.getHeight() * _overlayHeight) / _frameBuffer->getHeight();
 
-		x += _gameRect.getTopLeft().getX() * _screen->w;
-		y += _gameRect.getTopLeft().getY() * _screen->h;
+		x += _gameRect.getTopLeft().getX() * _overlayWidth;
+		y += _gameRect.getTopLeft().getY() * _overlayHeight;
 	} else
 #endif
 	if (_subScreen) {
@@ -1074,11 +1068,11 @@ void SurfaceSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) 
 #ifdef USE_OPENGL
 	if (_frameBuffer) {
 		// Scale from screen coordinates to game coordinates
-		point.x -= _gameRect.getTopLeft().getX() * _screen->w;
-		point.y -= _gameRect.getTopLeft().getY() * _screen->h;
+		point.x -= _gameRect.getTopLeft().getX() * _overlayWidth;
+		point.y -= _gameRect.getTopLeft().getY() * _overlayHeight;
 
-		point.x = (point.x * _frameBuffer->getWidth())  / (_gameRect.getWidth() * _screen->w);
-		point.y = (point.y * _frameBuffer->getHeight()) / (_gameRect.getHeight() * _screen->h);
+		point.x = (point.x * _frameBuffer->getWidth())  / (_gameRect.getWidth() * _overlayWidth);
+		point.y = (point.y * _frameBuffer->getHeight()) / (_gameRect.getHeight() * _overlayHeight);
 
 		// Make sure we only supply valid coordinates.
 		point.x = CLIP<int16>(point.x, 0, _frameBuffer->getWidth() - 1);
