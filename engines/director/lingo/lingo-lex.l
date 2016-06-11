@@ -20,64 +20,42 @@
  *
  */
 
-#ifndef DIRECTOR_LINGO_LINGO_H
-#define DIRECTOR_LINGO_LINGO_H
+%option noyywrap
+%{
 
-#include "common/debug.h"
-#include "common/hashmap.h"
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include "common/str.h"
+
+#include "director/lingo/lingo.h"
+#include "director/lingo/lingo-gr.h"
+
+void yyparse();
+
+%}
+
+%%
+
+[_[:alpha:]][_[:alnum:]]*     yylval.s = new Common::String(yytext);  return VAR;
+[[:digit:]]+                  yylval.i = strtol(yytext, NULL, 10); return INT;
+[-+*/%=^:,]                   return *yytext;
+.|\n                          ; /* ignore all the rest */
+
+%%
 
 namespace Director {
 
-enum LEvent {
-	kEventPrepareMovie,
-	kEventStartMovie,
-	kEventStopMovie,
+int Lingo::parse(char *code) {
+	YY_BUFFER_STATE bp;
 
-	kEventNew,
-	kEventBeginSprite,
-	kEventEndSprite,
+	yy_delete_buffer(YY_CURRENT_BUFFER);
 
-	kEventNone,
-	kEventEnterFrame,
-	kEventPrepareFrame,
-	kEventIdle,
-	kEventStepFrame,
-	kEventExitFrame,
+	bp = yy_scan_string(code);
+	yy_switch_to_buffer(bp);
+	yyparse();
+	yy_delete_buffer(bp);
 
-	kEventActivateWindow,
-	kEventDeactivateWindow,
-	kEventMoveWindow,
-	kEventResizeWindow,
-	kEventOpenWindow,
-	kEventCloseWindow,
+	return 0;
+}
 
-	kEventKeyUp,
-	kEventKeyDown,
-	kEventMouseUp,
-	kEventMouseDown,
-	kEventRightMouseUp,
-	kEventRightMouseDown,
-	kEventMouseEnter,
-	kEventMouseLeave,
-	kEventMouseUpOutSide,
-	kEventMouseWithin,
-
-	kEventStart
-};
-
-class Lingo {
-public:
-	Lingo();
-	~Lingo();
-
-	void processEvent(LEvent event, int entityId);
-
-	int parse(char *code);
-
-private:
-	Common::HashMap<uint32, const char *> _eventHandlerTypes;
-};
-
-} // End of namespace Director
-
-#endif
+}

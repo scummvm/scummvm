@@ -70,6 +70,8 @@ Common::Error DirectorEngine::run() {
 
 	_lingo = new Lingo();
 
+	_lingo->parse("test = 2 + 2 * 6, test:");
+
 	_soundManager = new DirectorSound();
 
 	//FIXME
