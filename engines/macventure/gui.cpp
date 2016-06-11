@@ -82,13 +82,15 @@ Gui::~Gui() {
 }
 
 void Gui::draw() {
-	_wm.draw();
+
 	Common::List<CommandButton>::const_iterator it = _controlData->begin();
 	for (; it != _controlData->end(); ++it) {
 		CommandButton button = *it;
 		if (button.getData().refcon != kControlExitBox)
 			button.draw(*_controlsWindow->getSurface());
 	}
+
+	_wm.draw();
 }
 
 bool Gui::processEvent(Common::Event &event) {
@@ -133,6 +135,7 @@ void Gui::initWindows() {
 	_controlsWindow->setActive(false);
 	_controlsWindow->setCallback(controlsWindowCallback, this);
 	loadBorder(_controlsWindow, "border_command.bmp", false);
+	loadBorder(_controlsWindow, "border_command.bmp", true);
 
 }
 
@@ -229,8 +232,14 @@ bool Gui::loadMenus() {
 }
 
 /* CALLBACKS */
-bool outConsoleWindowCallback(Graphics::WindowClick, Common::Event &event, void *gui) {
+bool outConsoleWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
 	return true;
+}
+
+bool controlsWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
+	Gui *g = (Gui*)gui;
+
+	return g->processCommandEvents(click, event);
 }
 
 void menuCommandsCallback(int action, Common::String &text, void *data) {
@@ -287,6 +296,24 @@ void Gui::handleMenuAction(MenuAction action) {
 	default:
 		break;
 	}
+}
+
+
+bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
+	if (event.type == Common::EVENT_LBUTTONUP) {
+		Common::Point position(
+			event.mouse.x - _controlsWindow->getDimensions().left,
+			event.mouse.y - _controlsWindow->getDimensions().top);
+		//debug("Click at: %d, %d", p)
+		Common::List<CommandButton>::const_iterator it = _controlData->begin();
+		for (; it != _controlData->end(); ++it) {
+			const CommandButton &data = *it;
+			if (data.isInsideBounds(position)) {
+				debug("Command active: %s", data.getData().title);
+			}
+		}
+	}
+	return false;
 }
 
 } // End of namespace MacVenture

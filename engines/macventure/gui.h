@@ -62,6 +62,7 @@ public:
 	void draw();
 	bool processEvent(Common::Event &event);
 	void handleMenuAction(MenuAction action);
+	bool processCommandEvents(WindowClick click, Common::Event &event);
 
 private: // Attributes
 
@@ -96,7 +97,7 @@ public:
 	}
 	~CommandButton() {}
 
-	void draw(Graphics::ManagedSurface &surface) {
+	void draw(Graphics::ManagedSurface &surface) const {
 
 
 		surface.fillRect(_data.bounds, kColorWhite);
@@ -115,11 +116,11 @@ public:
 
 	}
 
-	bool isInsideBounds(Common::Point point) {
+	bool isInsideBounds(const Common::Point point) const {
 		return _data.bounds.contains(point);
 	}
 
-	const ControlData& getData() {
+	const ControlData& getData() const {
 		return _data;
 	}
 
