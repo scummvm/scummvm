@@ -331,10 +331,12 @@ public:
 	virtual int getDialRegion(int dialNum);
 
 	/**
-	 * Gets the value for a dial, introducing a slight random variance so that
-	 * the displayed dial will oscillate randomly around it's real level
+	 * Gets the value for a dial
+	 * @param dialNum		Dial number
+	 * @param randomizeFlag	If set, introduces a slight random variance so that
+	 *		the displayed dial will oscillate randomly around it's real level
 	 */
-	virtual int getDialLevel(uint dialNum, bool flag = true);
+	virtual int getDialLevel(uint dialNum, bool randomizeFlag = true);
 
 	virtual int proc36(int val) const;
 	virtual uint translateId(uint id) const;

@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "common/textconsole.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/true_talk/tt_npc_script.h"
@@ -494,9 +495,20 @@ int TTnpcScript::getDialRegion(int dialNum) {
 	}
 }
 
-int TTnpcScript::getDialLevel(uint dialNum, bool flag) {
-	warning("TODO");
-	return 0;
+int TTnpcScript::getDialLevel(uint dialNum, bool randomizeFlag) {
+	int result = _dialValues[dialNum];
+	if (randomizeFlag) {
+		bool lowFlag = result <= 50;
+		result = CLIP(result + (int)getRandomNumber(18) - 9, 0, 100);
+
+		if (lowFlag) {
+			result = MIN(result, 46);
+		} else {
+			result = MAX(result, 54);
+		}
+	}
+
+	return result;
 }
 
 int TTnpcScript::proc36(int id) const {
