@@ -35,14 +35,15 @@ enum MCITokenType {
 	kMCITokenAlias,
 	kMCITokenBuffer,
 	kMCITokenFrom,
-	kMCITokenTo
+	kMCITokenTo,
+	kMCITokenRepeat
 };
 
 struct MCIToken {
-	MCITokenType command;
+	MCITokenType command; // Command this flag belongs to
 	MCITokenType flag;
 	const char *token;
-	int pos;
+	int pos;  // Position of parameter to store. 0 is always filename. Negative parameters mean boolean
 } MCITokens[] = {
 	{ kMCITokenNone, kMCITokenOpen,   "open", 0 },
 	{ kMCITokenOpen, kMCITokenType,   "type", 1 },
@@ -52,6 +53,7 @@ struct MCIToken {
 	{ kMCITokenNone, kMCITokenPlay,   "play", 0 },
 	{ kMCITokenPlay, kMCITokenFrom,   "from", 1 },
 	{ kMCITokenPlay, kMCITokenTo,     "to", 2 },
+	{ kMCITokenPlay, kMCITokenRepeat, "repeat", -3 }, // This is boolean parameter
 
 	{ kMCITokenNone, kMCITokenWait,   "wait", 0 },
 
@@ -93,13 +95,18 @@ int Lingo::func_mci(Common::String *s) {
 
 				if (command == kMCITokenNone) { // We caught command
 					command = f->flag; // Switching to processing this command parameters
-				} else if (f->flag == kMCITokenNone) { // Unmatched token, parsing as filename
+				} else if (f->flag == kMCITokenNone) { // Unmatched token, storing as filename
 					if (!params[0].empty())
 						warning("Duplicate filename in MCI command: %s -> %s", params[0].c_str(), token.c_str());
 					params[0] = token;
-				} else {
-					state = f->flag;
-					respos = f->pos;
+				} else { // This is normal parameter, storing next token to designated position
+					if (f->pos > 0) { // This is normal parameter
+						state = f->flag;
+						respos = f->pos;
+					} else { // This is boolean
+						params[-f->pos] = "true";
+						state = kMCITokenNone;
+					}
 				}
 				break;
 			}
@@ -116,7 +123,7 @@ int Lingo::func_mci(Common::String *s) {
 		warning("MCI open file: %s, type: %s, alias: %s buffer: %s", params[0].c_str(), params[1].c_str(), params[2].c_str(), params[3].c_str());
 		break;
 	case kMCITokenPlay:
-		warning("MCI play file: %s, from: %s, to: %s", params[0].c_str(), params[1].c_str(), params[2].c_str());
+		warning("MCI play file: %s, from: %s, to: %s, repeat: %s", params[0].c_str(), params[1].c_str(), params[2].c_str(), params[3].c_str());
 		break;
 	default:
 		warning("Unhandled MCI command: %s", s->c_str());
