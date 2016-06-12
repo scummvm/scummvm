@@ -38,8 +38,8 @@
 namespace Cloud {
 namespace OneDrive {
 
-char *OneDriveStorage::KEY; //can't use ConfMan there yet, loading it on instance creation/auth
-char *OneDriveStorage::SECRET; //TODO: hide these secrets somehow
+char *OneDriveStorage::KEY = nullptr; //can't use ConfMan there yet, loading it on instance creation/auth
+char *OneDriveStorage::SECRET = nullptr; //TODO: hide these secrets somehow
 
 void OneDriveStorage::loadKeyAndSecret() {
 	Common::String k = ConfMan.get("ONEDRIVE_KEY", "cloud");
@@ -63,6 +63,7 @@ OneDriveStorage::OneDriveStorage(Common::String code) {
 OneDriveStorage::~OneDriveStorage() {}
 
 void OneDriveStorage::getAccessToken(BoolCallback callback, Common::String code) {
+	if (!KEY || !SECRET) loadKeyAndSecret();
 	bool codeFlow = (code != "");
 
 	if (!codeFlow && _refreshToken == "") {

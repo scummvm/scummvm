@@ -42,8 +42,8 @@
 namespace Cloud {
 namespace GoogleDrive {
 
-char *GoogleDriveStorage::KEY; //can't use ConfMan there yet, loading it on instance creation/auth
-char *GoogleDriveStorage::SECRET; //TODO: hide these secrets somehow
+char *GoogleDriveStorage::KEY = nullptr; //can't use ConfMan there yet, loading it on instance creation/auth
+char *GoogleDriveStorage::SECRET = nullptr; //TODO: hide these secrets somehow
 
 void GoogleDriveStorage::loadKeyAndSecret() {
 	Common::String k = ConfMan.get("GOOGLE_DRIVE_KEY", "cloud");
@@ -67,6 +67,7 @@ GoogleDriveStorage::GoogleDriveStorage(Common::String code) {
 GoogleDriveStorage::~GoogleDriveStorage() {}
 
 void GoogleDriveStorage::getAccessToken(BoolCallback callback, Common::String code) {
+	if (!KEY || !SECRET) loadKeyAndSecret();
 	bool codeFlow = (code != "");
 
 	if (!codeFlow && _refreshToken == "") {

@@ -36,8 +36,8 @@
 namespace Cloud {
 namespace Dropbox {
 
-char *DropboxStorage::KEY; //can't use ConfMan there yet, loading it on instance creation/auth
-char *DropboxStorage::SECRET; //TODO: hide these secrets somehow
+char *DropboxStorage::KEY = nullptr; //can't use ConfMan there yet, loading it on instance creation/auth
+char *DropboxStorage::SECRET = nullptr; //TODO: hide these secrets somehow
 
 void DropboxStorage::loadKeyAndSecret() {
 	Common::String k = ConfMan.get("DROPBOX_KEY", "cloud");
@@ -59,7 +59,8 @@ DropboxStorage::DropboxStorage(Common::String code) {
 
 DropboxStorage::~DropboxStorage() {}
 
-void DropboxStorage::getAccessToken(Common::String code) {	
+void DropboxStorage::getAccessToken(Common::String code) {
+	if (!KEY || !SECRET) loadKeyAndSecret();
 	Networking::JsonCallback callback = new Common::Callback<DropboxStorage, Networking::JsonResponse>(this, &DropboxStorage::codeFlowComplete);		
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, nullptr, "https://api.dropboxapi.com/1/oauth2/token");
 	request->addPostField("code=" + code);
