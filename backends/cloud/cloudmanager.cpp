@@ -50,7 +50,8 @@ Common::String CloudManager::getStorageConfigName(uint32 index) const {
 	case kStorageOneDriveId: return "OneDrive";
 	case kStorageGoogleDriveId: return "GoogleDrive";
 	}
-	return "Unknown";
+	assert(false); // Unhandled StorageIDs value
+	return "";
 }
 
 void CloudManager::loadStorage() {
