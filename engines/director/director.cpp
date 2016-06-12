@@ -70,7 +70,8 @@ Common::Error DirectorEngine::run() {
 
 	_lingo = new Lingo();
 
-	_lingo->parse("mci \"open MM\\T005045a.wav type WaveAudio alias T005045a\"");
+	_lingo->parse("mci \"open MM\\T005045a.wav type WaveAudio alias T005045a\"\n\
+	mci \"play T005045a from 22710 to 32872\"");
 
 #if 0
 	_lingo->parse("set x = 1\n\
