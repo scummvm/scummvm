@@ -40,17 +40,8 @@
 
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
-	<!-- Always needs some sort of qwerty keyboard.
-			Can work with a D-pad / trackball -->
-	<uses-configuration android:reqFiveWayNav="true"
-			android:reqKeyboardType="qwerty"/>
-
-	<!-- .. or touchscreen -->
-	<uses-configuration android:reqTouchScreen="finger"
-			android:reqKeyboardType="qwerty"/>
-
-	<uses-configuration android:reqTouchScreen="stylus"
-			android:reqKeyboardType="qwerty"/>
+	<uses-feature android:name="android.hardware.screen.landscape"
+		        android:required="false" />
 
 	<uses-feature android:name="android.hardware.touchscreen"
 		        android:required="false" />
