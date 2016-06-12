@@ -37,6 +37,12 @@ enum {
 	kMaxMenuTitleLength = 30
 };
 
+enum {
+	kGlobalSettingsID = 0x80,
+	kDiplomaGeometryID = 0x81,
+	kTextHuffmanTableID = 0x83
+};
+
 MacVentureEngine::MacVentureEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst) {
 	_gameDescription = gameDesc;
 	_rnd = new Common::RandomSource("macventure");
@@ -65,12 +71,12 @@ Common::Error MacVentureEngine::run() {
 	// Additional setup.
 	debug("MacVentureEngine::init");
 
-	// Your main even loop should be (invoked from) here.
-	debug("MacVentureEngine::go: Hello, World!");
-
 	_resourceManager = new Common::MacResManager();
 	if (!_resourceManager->open(getGameFileName()))
 		error("Could not open %s as a resource fork", getGameFileName());
+
+	if (!loadGlobalSettings())
+		error("Could not load the engine settings");
 
 	_gui = new Gui(this, _resourceManager);
 
@@ -85,6 +91,51 @@ Common::Error MacVentureEngine::run() {
 	}
 
 	return Common::kNoError;
+}
+
+bool MacVentureEngine::loadGlobalSettings() {
+	Common::MacResIDArray resArray;
+	Common::SeekableReadStream *res;
+
+	if ((resArray = _resourceManager->getResIDArray(MKTAG('G', 'N', 'R', 'L'))).size() == 0)
+		return false;
+
+	res = _resourceManager->getResource(MKTAG('G', 'N', 'R', 'L'), kGlobalSettingsID);
+	if (res) {
+		_globalSettings.numObjects = res->readUint16BE();
+		_globalSettings.numGlobals = res->readUint16BE();
+		_globalSettings.numCommands = res->readUint16BE();
+		_globalSettings.numAttributes = res->readUint16BE();
+		_globalSettings.numGroups = res->readUint16BE();
+		res->readUint16BE(); // unknown
+		_globalSettings.invTop = res->readUint16BE();
+		_globalSettings.invLeft = res->readUint16BE();
+		_globalSettings.invWidth = res->readUint16BE();
+		_globalSettings.invHeight = res->readUint16BE();
+		_globalSettings.invOffsetY = res->readUint16BE();
+		_globalSettings.invOffsetX = res->readSint16BE();
+		_globalSettings.defaultFont = res->readUint16BE();
+		_globalSettings.defaultSize = res->readUint16BE();
+
+		_globalSettings.attrIndices = new uint8[_globalSettings.numAttributes];
+		res->read(_globalSettings.attrIndices, _globalSettings.numAttributes);
+
+		_globalSettings.attrMasks = new uint16[_globalSettings.numAttributes];
+		for (int i = 0; i < _globalSettings.numAttributes; i++)
+			_globalSettings.attrMasks[i] = res->readUint16BE();
+
+		_globalSettings.attrShifts = new uint8[_globalSettings.numAttributes];
+		res->read(_globalSettings.attrShifts, _globalSettings.numAttributes);
+
+		_globalSettings.cmdArgCnts = new uint8[_globalSettings.numCommands];
+		res->read(_globalSettings.cmdArgCnts, _globalSettings.numCommands);
+
+
+
+		return true;
+	}
+
+	return false;
 }
 
 void MacVentureEngine::requestQuit() {
