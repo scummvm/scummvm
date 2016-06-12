@@ -241,6 +241,13 @@ protected:
 	 */
 	int processEntries(const TTsentenceEntries *entries, uint entryCount, TTroomScript *roomScript, TTsentence *sentence);
 
+	/**
+	 * Scans through a list of sentence entries for a matching standardized response
+	 */
+	int processEntries(TTroomScript *roomScript, TTsentence *sentence) {
+		return processEntries(&_entries, _entryCount, roomScript, sentence);
+	}
+
 	bool defaultProcess(TTroomScript *roomScript, TTsentence *sentence);
 
 	void checkItems(TTroomScript *roomScript, TTsentence *sentence);

@@ -22,6 +22,7 @@
 
 #include "common/textconsole.h"
 #include "titanic/true_talk/parrot_script.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -51,13 +52,55 @@ int ParrotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence,
 }
 
 int ParrotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
-	// TODO
-	return 0;
+	if (processEntries(roomScript, sentence) == 2) {
+		int tagId = g_vm->_trueTalkManager->_quotes.find(sentence->_normalizedLine);
+		if (!tagId || chooseResponse(roomScript, sentence, tagId) != 2) {
+			addResponse(getDialogueId(sentence->check2C() ? 280248 : 280235));
+			applyResponse();
+		}
+	}
+
+	return 2;
 }
 
 ScriptChangedResult ParrotScript::scriptChanged(TTscriptBase *roomScript, uint id) {
-	warning("TODO");
-	return SCR_1;
+	if (id >= 280000 && id <= 280276) {
+		if (id == 280258) {
+			if (CTrueTalkManager::_currentNPC) {
+				CGameObject *chicken;
+				if (CTrueTalkManager::_currentNPC->find("Chicken", &chicken, FIND_PET))
+					id = 280147 - getRandomBit();
+			}
+
+			id = getDialogueId(id);
+		} else {
+			if ((id == 280146 || id == 280147) && CTrueTalkManager::_currentNPC) {
+				CGameObject *chicken;
+				if (CTrueTalkManager::_currentNPC->find("Chicken", &chicken, FIND_PET))
+					id = 280142;
+			}
+
+			addResponse(getDialogueId(id));
+			if (id == 280192)
+				addResponse(getDialogueId(280222));
+			applyResponse();
+		}
+	}
+
+	if (id >= 80000 && id <= 80244) {
+		if ((id == 80155 || id == 80156) && CTrueTalkManager::_currentNPC) {
+			CGameObject *chicken;
+			if (CTrueTalkManager::_currentNPC->find("Chicken", &chicken, FIND_PET))
+				id = 80151;
+		}
+
+		addResponse(id);
+		if (id == 80201)
+			addResponse(getDialogueId(280222));
+		applyResponse();
+	}
+
+	return (id == 3) ? SCR_2 : SCR_1;
 }
 
 bool ParrotScript::proc18() const {

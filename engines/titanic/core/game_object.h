@@ -229,11 +229,6 @@ protected:
 	CGameObject *findRoomObject(const CString &name) const;
 
 	/**
-	 * Finds an item in various system areas
-	 */
-	Found find(const CString &name, CGameObject **item, int findAreas);
-
-	/**
 	 * Scan the specified room for an item by name
 	 */
 	static CGameObject *findUnder(CTreeItem *parent, const CString &name);
@@ -461,6 +456,11 @@ public:
 	int getPriorClass() const;
 
 	int getSurface45() const;
+
+	/**
+	 * Finds an item in various system areas
+	 */
+	Found find(const CString &name, CGameObject **item, int findAreas);
 };
 
 } // End of namespace Titanic
