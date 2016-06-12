@@ -26,7 +26,7 @@
 #include "backends/cloud/storage.h"
 #include "common/array.h"
 #include "common/singleton.h"
-#include <cge/console.h>
+#include "common/str-array.h"
 
 namespace GUI {
 
