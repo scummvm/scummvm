@@ -616,7 +616,7 @@ void SurfaceSdlGraphicsManager::drawSideTexturesOpenGL() {
 }
 
 OpenGL::FrameBuffer *SurfaceSdlGraphicsManager::createFramebuffer(uint width, uint height) {
-#ifndef USE_GLES2
+#if !defined(USE_GLES2) && !defined(AMIGAOS)
 	if (_antialiasing && OpenGLContext.framebufferObjectMultisampleSupported) {
 		return new OpenGL::MultiSampleFrameBuffer(width, height, _antialiasing);
 	} else

@@ -46,11 +46,6 @@
 #define GL_UNPACK_ROW_LENGTH 0x0CF2
 #endif
 
-#if !defined(GL_MAX_SAMPLES)
-// The Android SDK does not declare GL_MAX_SAMPLES
-#define GL_MAX_SAMPLES 0x8D57
-#endif
-
 #elif defined(USE_GLEW)
 #include <GL/glew.h>
 #elif defined(SDL_BACKEND) && defined(USE_OPENGL)
@@ -59,4 +54,9 @@
 #include <GL/gl.h>
 #endif
 
+#endif
+
+#if !defined(GL_MAX_SAMPLES)
+// The Android SDK and SDL1 don't declare GL_MAX_SAMPLES
+#define GL_MAX_SAMPLES 0x8D57
 #endif
