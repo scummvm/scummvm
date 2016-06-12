@@ -36,13 +36,18 @@ int func_mci(Common::String *s);
 
 %}
 
-%union { int i; Common::String *s; }
+%union { float f; int i; Common::String *s; }
 
 %token UNARY
+%token<f> FLOAT
 %token<i> INT
 %token<s> VAR
 %token<s> STRING
+%token OP_INTO
+%token OP_TO
 %token FUNC_MCI
+%token FUNC_PUT
+%token FUNC_SET
 
 %type<i> expr
 %type<i> func
@@ -55,7 +60,7 @@ int func_mci(Common::String *s);
 %%
 
 list: statement
-	| list statement
+	| list '\n' statement
 	;
 
 statement: expr { warning("%d", $1); }
@@ -63,25 +68,27 @@ statement: expr { warning("%d", $1); }
 	;
 
 expr: INT						{ $$ = $1; }
-	| VAR						{ $$ = vars[*$1];      delete $1; }
-	| VAR '=' expr				{ $$ = vars[*$1] = $3; delete $1; }
+	| VAR						{ $$ = vars[*$1]; delete $1; }
 	| expr '+' expr				{ $$ = $1 + $3; }
 	| expr '-' expr				{ $$ = $1 - $3; }
 	| expr '*' expr				{ $$ = $1 * $3; }
 	| expr '/' expr				{ $$ = $1 / $3; }
-	| expr '%' expr				{ $$ = $1 % $3; }
 	| '+' expr  %prec UNARY		{ $$ =  $2; }
 	| '-' expr  %prec UNARY		{ $$ = -$2; }
 	| '(' expr ')'				{ $$ =  $2; }
 	|
 	;
 
-func: FUNC_MCI STRING	{ func_mci($2); delete $2; }
+func: FUNC_MCI STRING			{ func_mci($2); delete $2; }
+	| FUNC_PUT expr OP_INTO VAR	{ $$ = vars[*$4] = $2; delete $4; }
+	| FUNC_SET VAR '=' expr		{ $$ = vars[*$2] = $4; delete $2; }
+	| FUNC_SET VAR OP_TO expr	{ $$ = vars[*$2] = $4; delete $2; }
+	;
 
 %%
 
 int func_mci(Common::String *s) {
-	warning("mci: %s", s->c_str());
+	warning("STUB: mci(\"%s\")", s->c_str());
 
 	return 0;
 }

@@ -35,17 +35,26 @@ void yyparse();
 %}
 
 variable [_[:alpha:]][_[:alnum:]]*
+constfloat [[:digit:]]+\.[[:digit:]]*
 constinteger [[:digit:]]+
 conststring \"[^\"\n]*\"
 operator [-+*/%=^:,]
+newline [\n\r]+
 
 %%
 
-mci					{ return FUNC_MCI; }
-{variable}			{ yylval.s = new Common::String(yytext);  return VAR; }
-{constinteger}		{ yylval.i = strtol(yytext, NULL, 10); return INT; }
-{operator}			{ return *yytext; }
-{conststring}		{ yylval.s = new Common::String(yytext); return STRING; }
+into			{ return OP_INTO; }
+mci				{ return FUNC_MCI; }
+put				{ return FUNC_PUT; }
+set				{ return FUNC_SET; }
+to				{ return OP_TO; }
+
+{variable}		{ yylval.s = new Common::String(yytext);  return VAR; }
+{constfloat}	{ yylval.f = atof(yytext); return FLOAT; }
+{constinteger}	{ yylval.i = strtol(yytext, NULL, 10); return INT; }
+{operator}		{ return *yytext; }
+{newline}		{ return '\n'; }
+{conststring}	{ yylval.s = new Common::String(yytext); return STRING; }
 
 %%
 
