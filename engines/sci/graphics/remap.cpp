@@ -329,7 +329,6 @@ bool GfxRemap32::applyRemap(byte index) {
 	RemapParams *curRemap = &_remaps[index];
 	const bool *cycleMap = _palette->getCyclemap();
 	bool unmappedColors[NON_REMAPPED_COLOR_COUNT];
-	Color newColors[NON_REMAPPED_COLOR_COUNT];
 	bool changed = false;
 
 	Common::fill(unmappedColors, unmappedColors + NON_REMAPPED_COLOR_COUNT, false);
@@ -339,12 +338,6 @@ bool GfxRemap32::applyRemap(byte index) {
 	for (int i = 0; i < NON_REMAPPED_COLOR_COUNT; i++)  {
 		if (cycleMap[i])
 			unmappedColors[i] = true;
-	}
-
-	int curColor = 0;
-	for (int i = 1; i < NON_REMAPPED_COLOR_COUNT; i++)  {
-		if (curRemap->colorChanged[i] && !unmappedColors[i])
-			newColors[curColor++] = curRemap->curColor[i];
 	}
 
 	for (int i = 1; i < NON_REMAPPED_COLOR_COUNT; i++)  {
