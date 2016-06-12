@@ -68,7 +68,14 @@ static const Graphics::MenuData menuSubItems[] = {
 	{ 0,				NULL,				0, 0, false }
 };
 
+bool controlsWindowCallback(Graphics::WindowClick, Common::Event &event, void *gui);
+bool mainGameWindowCallback(Graphics::WindowClick, Common::Event &event, void *gui);
 bool outConsoleWindowCallback(Graphics::WindowClick, Common::Event &event, void *gui);
+bool selfWindowCallback(Graphics::WindowClick, Common::Event &event, void *gui);
+bool exitsWindowCallback(Graphics::WindowClick, Common::Event &event, void *gui);
+bool diplomaWindowCallback(Graphics::WindowClick, Common::Event &event, void *gui);
+bool inventoryWindowCallback(Graphics::WindowClick, Common::Event &event, void *gui);
+
 void menuCommandsCallback(int action, Common::String &text, void *data);
 
 Gui::Gui(MacVentureEngine *engine, Common::MacResManager *resman) {
@@ -90,6 +97,24 @@ void Gui::draw() {
 
 bool Gui::processEvent(Common::Event &event) {
 	return _wm.processEvent(event);
+}
+
+const WindowData& Gui::getWindowData(WindowReference reference) {
+	assert(_windowData);
+
+	Common::List<WindowData>::const_iterator iter = _windowData->begin();
+	while (iter->refcon != reference && iter != _windowData->end()) {
+		iter++;
+	}
+
+	if (iter->refcon == reference)
+		return *iter;
+
+	error("Could not locate the desired window data");
+}
+
+const Graphics::Font& Gui::getCurrentFont() {
+	return *_wm.getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
 }
 
 void Gui::initGUI() {
@@ -126,6 +151,12 @@ void Gui::initWindows() {
 	loadBorder(_controlsWindow, "border_command.bmp", true);
 
 	// Main Game Window
+	_mainGameWindow = _wm.addWindow(false, false, false);
+	_mainGameWindow->setDimensions(getWindowData(kMainGameWindow).bounds);
+	_mainGameWindow->setActive(false);
+	_mainGameWindow->setCallback(mainGameWindowCallback, this);
+	loadBorder(_mainGameWindow, "border_command.bmp", false);
+	loadBorder(_mainGameWindow, "border_command.bmp", true);
 
 	// In-game Output Console
 	_outConsoleWindow = _wm.addWindow(false, true, true);
@@ -133,6 +164,36 @@ void Gui::initWindows() {
 	_outConsoleWindow->setActive(false);
 	_outConsoleWindow->setCallback(outConsoleWindowCallback, this);
 	loadBorder(_outConsoleWindow, "border_command.bmp", false);
+
+	// Self Window
+	_selfWindow = _wm.addWindow(false, true, true);
+	_selfWindow->setDimensions(getWindowData(kSelfWindow).bounds);
+	_selfWindow->setActive(false);
+	_selfWindow->setCallback(selfWindowCallback, this);
+	loadBorder(_selfWindow, "border_command.bmp", false);
+
+	// Exits Window
+	_exitsWindow = _wm.addWindow(false, true, true);
+	_exitsWindow->setDimensions(getWindowData(kExitsWindow).bounds);
+	_exitsWindow->setActive(false);
+	_exitsWindow->setCallback(exitsWindowCallback, this);
+	loadBorder(_exitsWindow, "border_command.bmp", false);
+
+	// Diploma Window
+	_diplomaWindow = _wm.addWindow(false, true, true);
+	_diplomaWindow->setDimensions(getWindowData(kDiplomaWindow).bounds);
+	_diplomaWindow->setActive(false);
+	_diplomaWindow->setCallback(diplomaWindowCallback, this);
+	loadBorder(_diplomaWindow, "border_command.bmp", false);
+	// Render invisible for now
+	_diplomaWindow->getSurface()->fillRect(_diplomaWindow->getSurface()->getBounds(), kColorGreen2);
+
+	// Inventory Window
+	_inventoryWindow = _wm.addWindow(false, true, true);
+	_inventoryWindow->setDimensions(getWindowData(kInventoryWindow).bounds);
+	_inventoryWindow->setActive(false);
+	_inventoryWindow->setCallback(inventoryWindowCallback, this);
+	loadBorder(_inventoryWindow, "border_command.bmp", false);
 
 }
 
@@ -265,10 +326,26 @@ bool Gui::loadWindows() {
 			data.title[data.titleLength] = '\0';
 		}
 
+		debug(5, "Window loaded: %s", data.title);
+
 		_windowData->push_back(data);
 	}
 
+	loadInventoryWindow();
+
 	return true;
+}
+
+void Gui::loadInventoryWindow() {
+	WindowData data;
+	data.bounds = Common::Rect(5, 30, 125, 190);
+	data.title = "Inventory";
+	data.visible = true;
+	data.hasCloseBox = false;
+	data.refcon = kInventoryWindow;
+	data.titleLength = 10;
+
+	_windowData->push_back(data);
 }
 
 bool Gui::loadControls() {
@@ -344,14 +421,45 @@ void Gui::drawCommandsWindow() {
 
 
 /* CALLBACKS */
-bool outConsoleWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
-	return true;
-}
 
 bool controlsWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
 	Gui *g = (Gui*)gui;
 
 	return g->processCommandEvents(click, event);
+}
+
+bool mainGameWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
+	Gui *g = (Gui*)gui;
+
+	return true;
+}
+
+bool outConsoleWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
+	return true;
+}
+
+bool selfWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
+	Gui *g = (Gui*)gui;
+
+	return true;
+}
+
+bool exitsWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
+	Gui *g = (Gui*)gui;
+
+	return true;
+}
+
+bool diplomaWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
+	Gui *g = (Gui*)gui;
+
+	return true;
+}
+
+bool inventoryWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
+	Gui *g = (Gui*)gui;
+
+	return true;
 }
 
 void menuCommandsCallback(int action, Common::String &text, void *data) {
