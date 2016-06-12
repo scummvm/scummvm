@@ -103,11 +103,6 @@ ScriptChangedResult ParrotScript::scriptChanged(TTscriptBase *roomScript, uint i
 	return (id == 3) ? SCR_2 : SCR_1;
 }
 
-bool ParrotScript::proc18() const {
-	warning("TODO");
-	return 0;
-}
-
 int ParrotScript::proc23() const {
 	warning("TODO");
 	return 0;

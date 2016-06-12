@@ -75,8 +75,6 @@ TTscripts::TTscripts(CTitleEngine *titleEngine) :
 }
 
 void TTscripts::addScript(TTnpcScript *script, int scriptId) {
-	script->loadQuotes();
-	
 	// Find the room script this is associated with
 	TTroomScript *roomScript = getRoomScript(scriptId);
 	assert(roomScript);

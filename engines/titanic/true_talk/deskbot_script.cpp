@@ -75,11 +75,6 @@ bool DeskbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 	return 0;
 }
 
-bool DeskbotScript::proc18() const {
-	warning("TODO");
-	return 0;
-}
-
 int DeskbotScript::proc21(int v1, int v2, int v3) {
 	warning("TODO");
 	return 0;

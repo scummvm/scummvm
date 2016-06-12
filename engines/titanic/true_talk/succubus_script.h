@@ -54,8 +54,6 @@ public:
 	 */
 	virtual ScriptChangedResult scriptChanged(TTscriptBase *roomScript, uint id);
 
-
-	virtual bool proc18() const;
 	virtual int proc21(int v1, int v2, int v3);
 	virtual int proc23() const;
 	virtual const int *getTablePtr(int id);

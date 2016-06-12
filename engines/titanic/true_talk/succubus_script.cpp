@@ -84,11 +84,6 @@ ScriptChangedResult SuccUBusScript::scriptChanged(TTscriptBase *roomScript, uint
 	return SCR_1;
 }
 
-bool SuccUBusScript::proc18() const {
-	warning("TODO");
-	return 0;
-}
-
 int SuccUBusScript::proc21(int v1, int v2, int v3) {
 	warning("TODO");
 	return 0;

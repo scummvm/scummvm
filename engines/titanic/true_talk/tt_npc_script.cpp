@@ -267,18 +267,6 @@ int TTnpcScript::proc12() const {
 	return 1;
 }
 
-bool TTnpcScript::loadQuotes() {
-	// Original did a load of a global quotes here the first time
-	// this method is called. ScummVM implementation has refactored
-	// the loading to the CTrueTalkManager constructor
-
-	if (!proc18()) {
-		return false;
-	} else {
-		return proc17();
-	}
-}
-
 void TTnpcScript::selectResponse(int id) {
 	if (id >= 200000 && id <= 290264)
 		id = getDialogueId(id);
@@ -292,14 +280,6 @@ int TTnpcScript::proc15(int id) const {
 
 bool TTnpcScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 		int val, uint tagId, uint remainder) const {
-	return true;
-}
-
-bool TTnpcScript::proc17() const {
-	return true;
-}
-
-bool TTnpcScript::proc18() const {
 	return true;
 }
 

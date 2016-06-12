@@ -129,11 +129,6 @@ bool DoorbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 	return 0;
 }
 
-bool DoorbotScript::proc18() const {
-	warning("TODO");
-	return 0;
-}
-
 int DoorbotScript::proc21(int v1, int v2, int v3) {
 	warning("TODO");
 	return 0;

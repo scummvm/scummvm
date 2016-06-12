@@ -284,11 +284,6 @@ public:
 	virtual int proc12() const;
 
 	/**
-	 * Handles loading quotes used by the scripts
-	 */
-	virtual bool loadQuotes();
-
-	/**
 	 * Translate a passed Id to a dialogue Id if necessary,
 	 * and adds it to the response
 	 */
@@ -298,9 +293,6 @@ public:
 
 	virtual bool handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 		int val, uint tagId, uint remainder) const;
-
-	virtual bool proc17() const;
-	virtual bool proc18() const;
 
 	/**
 	 * Given an Id for a previously registered set of random number values,
