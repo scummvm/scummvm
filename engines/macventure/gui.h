@@ -53,6 +53,65 @@ enum MenuAction {
 };
 //} using namespace MacVentureMenuActions;
 
+enum WindowReference {
+	kCommandsWindow = 0x80,
+	kMainGameWindow = 0x81,
+	kOutConsoleWindow = 0x82,
+	kSelfWindow = 0x83,
+	kExitsWindow = 0x84,
+	kDiplomaWindow = 0x85
+};
+
+enum MVWindowType {
+	kDocument = 0x00,
+	kDBox = 0x01,
+	kPlainDBox = 0x02,
+	kAltBox = 0x03,
+	kNoGrowDoc = 0x04,
+	kMovableDBox = 0x05,
+	kZoomDoc = 0x08,
+	kZoomNoGrow = 0x0c,
+	kRDoc16 = 0x10,
+	kRDoc4 = 0x12,
+	kRDoc6 = 0x14,
+	kRDoc10 = 0x16
+};
+
+struct WindowData {
+	Common::Rect bounds;
+	MVWindowType type;
+	uint16 visible;
+	uint16 hasCloseBox;
+	WindowReference refcon;
+	uint8 titleLength;
+	char* title;
+};
+
+enum ControlReference {
+	kControlExitBox = 0,
+	kControlExamine = 1,
+	kControlOpen = 2,
+	kControlClose = 3,
+	kControlSpeak = 4,
+	kControlOperate = 5,
+	kControlGo = 6,
+	kControlHit = 7,
+	kControlConsume = 8
+};
+
+struct ControlData {
+	Common::Rect bounds;
+	uint16 scrollValue;
+	uint8 visible;
+	uint16 scrollMax;
+	uint16 scrollMin;
+	uint16 cdef;
+	uint32 refcon;
+	uint8 titleLength;
+	char* title;
+};
+
+
 class Gui {
 
 public:
@@ -80,6 +139,8 @@ private: // Methods
 	void initGUI();
 	bool loadMenus();
 	void loadBorder(Graphics::MacWindow * target, Common::String filename, bool active);
+
+	uint16 borderThickness(MVWindowType type);
 
 };
 
@@ -113,7 +174,6 @@ public:
 			_data.bounds.right - _data.bounds.left,
 			kColorBlack,
 			Graphics::kTextAlignCenter);
-
 	}
 
 	bool isInsideBounds(const Common::Point point) const {

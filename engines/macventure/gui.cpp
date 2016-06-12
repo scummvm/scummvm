@@ -231,6 +231,91 @@ bool Gui::loadMenus() {
 	return true;
 }
 
+bool Gui::loadWindows() {
+	Common::MacResIDArray resArray;
+	Common::SeekableReadStream *res;
+	Common::MacResIDArray::const_iterator iter;
+
+	_windowData = new Common::List<WindowData>();
+
+	if ((resArray = _resourceManager->getResIDArray(MKTAG('W', 'I', 'N', 'D'))).size() == 0)
+		return false;
+
+	uint32 id = kCommandsWindow;
+	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
+		res = _resourceManager->getResource(MKTAG('W', 'I', 'N', 'D'), *iter);
+		WindowData data;
+		uint16 top, left, bottom, right;
+		uint16 borderSize;
+		top = res->readUint16BE();
+		left = res->readUint16BE();
+		bottom = res->readUint16BE();
+		right = res->readUint16BE();
+		data.type = (MVWindowType)res->readUint16BE();
+		data.bounds = Common::Rect(
+			left,
+			top,
+			right + borderThickness(data.type),
+			bottom + borderThickness(data.type));
+		data.visible = res->readUint16BE();
+		data.hasCloseBox = res->readUint16BE();
+		data.refcon = (WindowReference)id; id++;
+		res->readUint32BE(); // Skip the true id. For some reason it's reading 0
+		data.titleLength = res->readByte();
+		if (data.titleLength) {
+			data.title = new char[data.titleLength + 1];
+			res->read(data.title, data.titleLength);
+			data.title[data.titleLength] = '\0';
+		}
+
+		_windowData->push_back(data);
+	}
+
+	return true;
+}
+
+bool Gui::loadControls() {
+	Common::MacResIDArray resArray;
+	Common::SeekableReadStream *res;
+	Common::MacResIDArray::const_iterator iter;
+
+	_controlData = new Common::List<CommandButton>();
+
+	if ((resArray = _resourceManager->getResIDArray(MKTAG('C', 'N', 'T', 'L'))).size() == 0)
+		return false;
+
+	uint32 id = kControlExitBox;
+	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
+		res = _resourceManager->getResource(MKTAG('C', 'N', 'T', 'L'), *iter);
+		ControlData data;
+		uint16 top, left, bottom, right;
+		top = res->readUint16BE();
+		left = res->readUint16BE();
+		bottom = res->readUint16BE();
+		right = res->readUint16BE();
+		Common::Rect bounds(left, top, right, bottom); // For some reason, if I remove this it segfaults
+		data.bounds = Common::Rect(left, top, right, bottom);
+		data.scrollValue = res->readUint16BE();
+		data.visible = res->readByte();
+		res->readByte(); // Unused
+		data.scrollMax = res->readUint16BE();
+		data.scrollMin = res->readUint16BE();
+		data.cdef = res->readUint16BE();
+		data.refcon = (ControlReference)id; id++;
+		res->readUint32BE();
+		data.titleLength = res->readByte();
+		if (data.titleLength) {
+			data.title = new char[data.titleLength + 1];
+			res->read(data.title, data.titleLength);
+			data.title[data.titleLength] = '\0';
+		}
+
+		i++;
+	}
+
+	return true;
+}
+
 /* CALLBACKS */
 bool outConsoleWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
 	return true;
@@ -304,7 +389,6 @@ bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 		Common::Point position(
 			event.mouse.x - _controlsWindow->getDimensions().left,
 			event.mouse.y - _controlsWindow->getDimensions().top);
-		//debug("Click at: %d, %d", p)
 		Common::List<CommandButton>::const_iterator it = _controlData->begin();
 		for (; it != _controlData->end(); ++it) {
 			const CommandButton &data = *it;
@@ -314,6 +398,41 @@ bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 		}
 	}
 	return false;
+}
+
+/* Ugly switches */
+
+uint16 Gui::borderThickness(MVWindowType type) {
+	switch (type) {
+	case MacVenture::kDocument:
+		break;
+	case MacVenture::kDBox:
+		break;
+	case MacVenture::kPlainDBox:
+		return 6;
+	case MacVenture::kAltBox:
+		break;
+	case MacVenture::kNoGrowDoc:
+		break;
+	case MacVenture::kMovableDBox:
+		break;
+	case MacVenture::kZoomDoc:
+		break;
+	case MacVenture::kZoomNoGrow:
+		break;
+	case MacVenture::kRDoc16:
+		break;
+	case MacVenture::kRDoc4:
+		break;
+	case MacVenture::kRDoc6:
+		break;
+	case MacVenture::kRDoc10:
+		break;
+	default:
+		break;
+	}
+
+	return 0;
 }
 
 } // End of namespace MacVenture
