@@ -83,12 +83,7 @@ Gui::~Gui() {
 
 void Gui::draw() {
 
-	Common::List<CommandButton>::const_iterator it = _controlData->begin();
-	for (; it != _controlData->end(); ++it) {
-		CommandButton button = *it;
-		if (button.getData().refcon != kControlExitBox)
-			button.draw(*_controlsWindow->getSurface());
-	}
+	drawCommandsWindow();
 
 	_wm.draw();
 }
@@ -122,13 +117,6 @@ void Gui::initGUI() {
 
 void Gui::initWindows() {
 
-	// In-game Output Console
-	_outConsoleWindow = _wm.addWindow(false, true, true);
-	_outConsoleWindow->setDimensions(Common::Rect(20, 20, 120, 120));
-	_outConsoleWindow->setActive(false);
-	_outConsoleWindow->setCallback(outConsoleWindowCallback, this);
-	loadBorder(_outConsoleWindow, "border_command.bmp", false);
-
 	// Game Controls Window
 	_controlsWindow = _wm.addWindow(false, false, false);
 	_controlsWindow->setDimensions(getWindowData(kCommandsWindow).bounds);
@@ -136,6 +124,15 @@ void Gui::initWindows() {
 	_controlsWindow->setCallback(controlsWindowCallback, this);
 	loadBorder(_controlsWindow, "border_command.bmp", false);
 	loadBorder(_controlsWindow, "border_command.bmp", true);
+
+	// Main Game Window
+
+	// In-game Output Console
+	_outConsoleWindow = _wm.addWindow(false, true, true);
+	_outConsoleWindow->setDimensions(Common::Rect(20, 20, 120, 120));
+	_outConsoleWindow->setActive(false);
+	_outConsoleWindow->setCallback(outConsoleWindowCallback, this);
+	loadBorder(_outConsoleWindow, "border_command.bmp", false);
 
 }
 
@@ -253,10 +250,10 @@ bool Gui::loadWindows() {
 		right = res->readUint16BE();
 		data.type = (MVWindowType)res->readUint16BE();
 		data.bounds = Common::Rect(
-			left,
-			top,
-			right + borderThickness(data.type),
-			bottom + borderThickness(data.type));
+			left - borderThickness(data.type),
+			top - borderThickness(data.type),
+			right + borderThickness(data.type) * 2,
+			bottom + borderThickness(data.type) * 2);
 		data.visible = res->readUint16BE();
 		data.hasCloseBox = res->readUint16BE();
 		data.refcon = (WindowReference)id; id++;
@@ -284,6 +281,7 @@ bool Gui::loadControls() {
 	if ((resArray = _resourceManager->getResIDArray(MKTAG('C', 'N', 'T', 'L'))).size() == 0)
 		return false;
 
+	uint16 commandsBorder = borderThickness(kPlainDBox);
 	uint32 id = kControlExitBox;
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = _resourceManager->getResource(MKTAG('C', 'N', 'T', 'L'), *iter);
@@ -293,8 +291,6 @@ bool Gui::loadControls() {
 		left = res->readUint16BE();
 		bottom = res->readUint16BE();
 		right = res->readUint16BE();
-		Common::Rect bounds(left, top, right, bottom); // For some reason, if I remove this it segfaults
-		data.bounds = Common::Rect(left, top, right, bottom);
 		data.scrollValue = res->readUint16BE();
 		data.visible = res->readByte();
 		res->readByte(); // Unused
@@ -309,12 +305,43 @@ bool Gui::loadControls() {
 			res->read(data.title, data.titleLength);
 			data.title[data.titleLength] = '\0';
 		}
+		if (data.refcon != kControlExitBox)
+			data.border = commandsBorder;
+
+		Common::Rect bounds(left, top, right, bottom); // For some reason, if I remove this it segfaults
+		data.bounds = Common::Rect(left + data.border, top + data.border, right + data.border, bottom + data.border);
 
 		i++;
 	}
 
 	return true;
 }
+
+void Gui::drawCommandsWindow() {
+	if (_engine->isPaused()) {
+		Graphics::ManagedSurface *srf = _controlsWindow->getSurface();
+		WindowData data = getWindowData(kCommandsWindow);
+		uint16 border = borderThickness(data.type);
+		srf->fillRect(Common::Rect(border * 2, border * 2, srf->w - (border * 3), srf->h - (border * 3)), kColorWhite);
+		getCurrentFont().drawString(
+			srf,
+			_engine->getCommandsPausedString(),
+			0,
+			(srf->h / 2) - getCurrentFont().getFontHeight(),
+			data.bounds.right - data.bounds.left,
+			kColorBlack,
+			Graphics::kTextAlignCenter);
+	}
+	else {
+		Common::List<CommandButton>::const_iterator it = _controlData->begin();
+		for (; it != _controlData->end(); ++it) {
+			CommandButton button = *it;
+			if (button.getData().refcon != kControlExitBox)
+				button.draw(*_controlsWindow->getSurface());
+		}
+	}
+}
+
 
 /* CALLBACKS */
 bool outConsoleWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
@@ -386,14 +413,18 @@ void Gui::handleMenuAction(MenuAction action) {
 
 bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 	if (event.type == Common::EVENT_LBUTTONUP) {
-		Common::Point position(
-			event.mouse.x - _controlsWindow->getDimensions().left,
-			event.mouse.y - _controlsWindow->getDimensions().top);
-		Common::List<CommandButton>::const_iterator it = _controlData->begin();
-		for (; it != _controlData->end(); ++it) {
-			const CommandButton &data = *it;
-			if (data.isInsideBounds(position)) {
-				debug("Command active: %s", data.getData().title);
+		if (_engine->isPaused()) {
+			_engine->requestUnpause();
+		} else {
+			Common::Point position(
+				event.mouse.x - _controlsWindow->getDimensions().left,
+				event.mouse.y - _controlsWindow->getDimensions().top);
+			Common::List<CommandButton>::const_iterator it = _controlData->begin();
+			for (; it != _controlData->end(); ++it) {
+				const CommandButton &data = *it;
+				if (data.isInsideBounds(position)) {
+					debug("Command active: %s", data.getData().title);
+				}
 			}
 		}
 	}

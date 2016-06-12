@@ -58,16 +58,23 @@ public:
 
 	virtual Common::Error run();
 
+	void requestQuit();
+	void requestUnpause();
+
+	// Data retrieval
+	bool isPaused();
+	Common::String getCommandsPausedString();
+
 private:
 	void processEvents();
-	
+
 private: // Attributes
 
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource *_rnd;
 
 	Common::MacResManager *_resourceManager;
-	
+
 	Console *_debugger;
 
 	Gui *_gui;
