@@ -40,15 +40,36 @@ public:
 #else
 	virtual ~FrameBuffer();
 
-	void attach();
-	void detach();
+	virtual void attach();
+	virtual void detach();
 #endif
+
+protected:
+	GLuint getFrameBufferName() const { return _frameBuffer; }
 
 private:
 	void init();
 	GLuint _renderBuffers[2];
 	GLuint _frameBuffer;
 };
+
+#if !defined(USE_GLES2) && !defined(AMIGAOS)
+class MultiSampleFrameBuffer : public FrameBuffer {
+public:
+	MultiSampleFrameBuffer(uint width, uint height, int samples);
+	virtual ~MultiSampleFrameBuffer();
+
+	virtual void attach();
+	virtual void detach();
+
+private:
+	void init();
+	GLuint _msFrameBufferId;
+	GLuint _msColorId;
+	GLuint _msDepthId;
+	GLuint _msSamples;
+};
+#endif
 
 } // End of namespace OpenGL
 

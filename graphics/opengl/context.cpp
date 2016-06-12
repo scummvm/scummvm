@@ -49,6 +49,8 @@ void Context::reset() {
 	framebufferObjectSupported = false;
 	packedDepthStencilSupported = false;
 	unpackSubImageSupported = false;
+	framebufferObjectMultisampleSupported = false;
+	multisampleMaxSamples = -1;
 }
 
 void Context::initialize(ContextType contextType) {
@@ -67,6 +69,8 @@ void Context::initialize(ContextType contextType) {
 	bool ARBShadingLanguage100 = false;
 	bool ARBVertexShader = false;
 	bool ARBFragmentShader = false;
+	bool EXTFramebufferMultisample = false;
+	bool EXTFramebufferBlit = false;
 
 	Common::StringTokenizer tokenizer(extString, " ");
 	while (!tokenizer.empty()) {
@@ -88,6 +92,10 @@ void Context::initialize(ContextType contextType) {
 			packedDepthStencilSupported = true;
 		} else if (token == "GL_EXT_unpack_subimage") {
 			unpackSubImageSupported = true;
+		} else if (token == "GL_EXT_framebuffer_multisample") {
+			EXTFramebufferMultisample = true;
+		} else if (token == "GL_EXT_framebuffer_blit") {
+			EXTFramebufferBlit = true;
 		}
 	}
 
@@ -103,11 +111,21 @@ void Context::initialize(ContextType contextType) {
 
 		// GLES2 always has FBO support.
 		framebufferObjectSupported = true;
+
+		// ResidualVM does not support multisample FBOs with GLES2 for now
+		framebufferObjectMultisampleSupported = false;
+		multisampleMaxSamples = -1;
 	} else {
 		shadersSupported = ARBShaderObjects && ARBShadingLanguage100 && ARBVertexShader && ARBFragmentShader && glslVersion >= 120;
 
 		// Desktop GL always has unpack sub-image support
 		unpackSubImageSupported = true;
+
+		framebufferObjectMultisampleSupported = EXTFramebufferMultisample && EXTFramebufferBlit;
+
+		if (framebufferObjectMultisampleSupported) {
+			glGetIntegerv(GL_MAX_SAMPLES, (GLint *)&multisampleMaxSamples);
+		}
 	}
 
 	// Log context type.

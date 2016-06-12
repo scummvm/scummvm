@@ -71,6 +71,15 @@ public:
 	/** Whether FBO support is available or not. */
 	bool framebufferObjectSupported;
 
+	/** Whether multisample FBO support is available or not */
+	bool framebufferObjectMultisampleSupported;
+
+	/**
+	 * Contains the maximum number of supported multisample samples
+	 * if multisample FBOs are supported. Contains -1 otherwise.
+	 */
+	int multisampleMaxSamples;
+
 	/** Whether packing the depth and stencil buffers is possible or not. */
 	bool packedDepthStencilSupported;
 
