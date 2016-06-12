@@ -32,7 +32,11 @@ extern int yylex();
 extern int yyparse();
 void yyerror(char *s) { error("%s", s); }
 
-int func_mci(Common::String *s);
+using namespace Director;
+
+namespace Director {
+extern Lingo *g_lingo;
+}
 
 %}
 
@@ -79,16 +83,10 @@ expr: INT						{ $$ = $1; }
 	|
 	;
 
-func: FUNC_MCI STRING			{ func_mci($2); delete $2; }
+func: FUNC_MCI STRING			{ g_lingo->func_mci($2); delete $2; }
 	| FUNC_PUT expr OP_INTO VAR	{ $$ = vars[*$4] = $2; delete $4; }
 	| FUNC_SET VAR '=' expr		{ $$ = vars[*$2] = $4; delete $2; }
 	| FUNC_SET VAR OP_TO expr	{ $$ = vars[*$2] = $4; delete $2; }
 	;
 
 %%
-
-int func_mci(Common::String *s) {
-	warning("STUB: mci(\"%s\")", s->c_str());
-
-	return 0;
-}

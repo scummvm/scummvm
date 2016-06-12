@@ -20,66 +20,14 @@
  *
  */
 
-#ifndef DIRECTOR_LINGO_LINGO_H
-#define DIRECTOR_LINGO_LINGO_H
-
-#include "common/debug.h"
-#include "common/hashmap.h"
+#include "engines/director/lingo/lingo.h"
 
 namespace Director {
 
-enum LEvent {
-	kEventPrepareMovie,
-	kEventStartMovie,
-	kEventStopMovie,
+int Lingo::func_mci(Common::String *s) {
+	warning("STUB: mci(\"%s\")", s->c_str());
 
-	kEventNew,
-	kEventBeginSprite,
-	kEventEndSprite,
+	return 0;
+}
 
-	kEventNone,
-	kEventEnterFrame,
-	kEventPrepareFrame,
-	kEventIdle,
-	kEventStepFrame,
-	kEventExitFrame,
-
-	kEventActivateWindow,
-	kEventDeactivateWindow,
-	kEventMoveWindow,
-	kEventResizeWindow,
-	kEventOpenWindow,
-	kEventCloseWindow,
-
-	kEventKeyUp,
-	kEventKeyDown,
-	kEventMouseUp,
-	kEventMouseDown,
-	kEventRightMouseUp,
-	kEventRightMouseDown,
-	kEventMouseEnter,
-	kEventMouseLeave,
-	kEventMouseUpOutSide,
-	kEventMouseWithin,
-
-	kEventStart
-};
-
-class Lingo {
-public:
-	Lingo();
-	~Lingo();
-
-	void processEvent(LEvent event, int entityId);
-
-	int parse(char *code);
-
-	int func_mci(Common::String *s);
-
-private:
-	Common::HashMap<uint32, const char *> _eventHandlerTypes;
-};
-
-} // End of namespace Director
-
-#endif
+}

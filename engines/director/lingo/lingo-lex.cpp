@@ -502,7 +502,7 @@ char *yytext;
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-gr.h"
 
-void yyparse();
+int yyparse();
 
 #line 508 "engines/director/lingo/lingo-lex.cpp"
 

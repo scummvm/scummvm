@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	score.o \
 	sound.o \
 	lingo/lingo.o \
+	lingo/lingo-funcs.o \
 	lingo/lingo-gr.o \
 	lingo/lingo-lex.o
 

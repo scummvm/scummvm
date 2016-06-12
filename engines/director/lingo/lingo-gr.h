@@ -68,7 +68,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 39 "engines/director/lingo/lingo-gr.y"
+#line 43 "engines/director/lingo/lingo-gr.y"
 { float f; int i; Common::String *s; }
 /* Line 1529 of yacc.c.  */
 #line 75 "engines/director/lingo/lingo-gr.hpp"

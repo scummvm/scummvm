@@ -24,6 +24,8 @@
 
 namespace Director {
 
+Lingo *g_lingo;
+
 struct EventHandlerType {
 	LEvent handler;
 	const char *name;
@@ -65,6 +67,8 @@ struct EventHandlerType {
 };
 
 Lingo::Lingo() {
+	g_lingo = this;
+
 	for (const EventHandlerType *t = &eventHanlerDescs[0]; t->handler != kEventNone; ++t)
 		_eventHandlerTypes[t->handler] = t->name;
 }
