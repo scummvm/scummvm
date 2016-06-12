@@ -36,8 +36,8 @@ class CommandReceiver;
 
 namespace Cloud {
 
-//that's actual indexes in CloudManager's array
-enum StorageIDs {
+// The actual indexes in CloudManager's array
+enum StorageID {
 	kStorageNoneId = 0,
 	kStorageDropboxId = 1,
 	kStorageOneDriveId = 2,
@@ -84,7 +84,7 @@ public:
 	 * @note this method automatically saves the changes with ConfMan.
 	 *
 	 * @param	storage Cloud::Storage to replace active storage with.
-	 * @param	index   one of Cloud::StorageIDs enum values to indicate what storage type is replaced.	 
+	 * @param	index   one of Cloud::StorageID enum values to indicate what storage type is replaced.	 
 	 */
 	void replaceStorage(Storage *storage, uint32 index);
 
