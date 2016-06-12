@@ -300,4 +300,4 @@ void CloudManager::setSyncTarget(GUI::CommandReceiver *target) {
 	if (storage) storage->setSyncTarget(target);
 }
 
-} // End of namespace Common
+} // End of namespace Cloud
