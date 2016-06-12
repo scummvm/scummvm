@@ -43,6 +43,7 @@ newline [\n\r]+
 
 %%
 
+--[^\r\n]*
 into			{ return OP_INTO; }
 mci				{ return FUNC_MCI; }
 put				{ return FUNC_PUT; }

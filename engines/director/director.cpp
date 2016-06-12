@@ -71,10 +71,12 @@ Common::Error DirectorEngine::run() {
 	_lingo = new Lingo();
 
 	_lingo->parse("mci \"open MM\\T005045a.wav type WaveAudio alias T005045a\"");
+
 #if 0
 	_lingo->parse("set x = 1\n\
-	set y to 2\n\
-	put 5 into z\n");
+	set y to 2 -- this set y to 4\n\
+	put 5 into z\n\
+-- some more\n");
 #endif
 
 	_soundManager = new DirectorSound();
