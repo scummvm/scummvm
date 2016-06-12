@@ -104,17 +104,10 @@ ScriptChangedResult ParrotScript::scriptChanged(TTscriptBase *roomScript, uint i
 }
 
 int ParrotScript::proc23() const {
-	warning("TODO");
 	return 0;
 }
 
-const int *ParrotScript::getTablePtr(int id) {
-	warning("TODO");
-	return nullptr;
-}
-
 int ParrotScript::proc25(int val1, int val2, TTroomScript *roomScript, TTsentence *sentence) const {
-	warning("TODO");
 	return 0;
 }
 

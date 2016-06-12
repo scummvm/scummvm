@@ -94,11 +94,6 @@ int MaitreDScript::proc23() const {
 	return 0;
 }
 
-const int *MaitreDScript::getTablePtr(int id) {
-	warning("TODO");
-	return nullptr;
-}
-
 int MaitreDScript::proc25(int val1, int val2, TTroomScript *roomScript, TTsentence *sentence) const {
 	warning("TODO");
 	return 0;

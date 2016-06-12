@@ -56,7 +56,6 @@ public:
 
 	virtual int proc21(int v1, int v2, int v3);
 	virtual int proc23() const;
-	virtual const int *getTablePtr(int id);
 	virtual int proc25(int val1, int val2, TTroomScript *roomScript, TTsentence *sentence) const;
 	virtual void proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence);
 };

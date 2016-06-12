@@ -343,6 +343,12 @@ int TTnpcScript::proc23() const {
 	return 0;
 }
 
+const TTscriptMapping *TTnpcScript::getMapping(int index) {
+	if (index >= 0 && index < (int)_mappings.size())
+		return &_mappings[index];
+	return nullptr;
+}
+
 int TTnpcScript::proc25(int val1, int val2, TTroomScript *roomScript, TTsentence *sentence) const {
 	return 0;
 }
@@ -594,21 +600,21 @@ uint TTnpcScript::getDialogueId(uint tagId) {
 		tagId = getRangeValue(tagId);
 
 	oldTagId = proc23();
-	int v21 = proc21(origId, tagId, oldTagId);
-	if (!v21)
+	uint newId = proc21(origId, tagId, oldTagId);
+	if (!newId)
 		return 0;
 
 	int idx = 0;
-	const int *tableP;
+	const TTscriptMapping *tableP;
 	for (;;) {
-		tableP = getTablePtr(idx++);
+		tableP = getMapping(idx++);
 		if (!tableP)
 			return 0;
 
-		if (*tableP == v21)
+		if (tableP->_id == newId)
 			break;
 	}
-	uint newVal = tableP[oldTagId + 1];
+	uint newVal = tableP->_values[oldTagId];
 
 	idx = 0;
 	int *arrP = &_array[26];
