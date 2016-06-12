@@ -615,8 +615,9 @@ void SurfaceSdlGraphicsManager::drawSideTexturesOpenGL() {
 	}
 }
 
+#ifndef AMIGAOS
 OpenGL::FrameBuffer *SurfaceSdlGraphicsManager::createFramebuffer(uint width, uint height) {
-#if !defined(USE_GLES2) && !defined(AMIGAOS)
+#if !defined(USE_GLES2)
 	if (_antialiasing && OpenGLContext.framebufferObjectMultisampleSupported) {
 		return new OpenGL::MultiSampleFrameBuffer(width, height, _antialiasing);
 	} else
@@ -625,6 +626,7 @@ OpenGL::FrameBuffer *SurfaceSdlGraphicsManager::createFramebuffer(uint width, ui
 		return new OpenGL::FrameBuffer(width, height);
 	}
 }
+#endif // AMIGAOS
 
 #endif
 
