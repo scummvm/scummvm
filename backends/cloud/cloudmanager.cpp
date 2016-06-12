@@ -24,9 +24,9 @@
 #include "backends/cloud/dropbox/dropboxstorage.h"
 #include "backends/cloud/onedrive/onedrivestorage.h"
 #include "backends/cloud/googledrive/googledrivestorage.h"
-#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/translation.h"
+#include "backends/cloud/cloudconfighelper.h"
 
 namespace Common {
 
@@ -85,19 +85,19 @@ void CloudManager::init() {
 		config.username = "";
 		config.lastSyncDate = "";
 		config.usedBytes = 0;
-		if (ConfMan.hasKey(kStoragePrefix + name + "_username", "cloud"))
-			config.username = ConfMan.get(kStoragePrefix + name + "_username", "cloud");
-		if (ConfMan.hasKey(kStoragePrefix + name + "_lastSync", "cloud"))
-			config.lastSyncDate = ConfMan.get(kStoragePrefix + name + "_lastSync", "cloud");
-		if (ConfMan.hasKey(kStoragePrefix + name + "_usedBytes", "cloud"))
-			config.usedBytes = ConfMan.get(kStoragePrefix + name + "_usedBytes", "cloud").asUint64();
+		if (CloudConfig.hasKey(kStoragePrefix + name + "_username"))
+			config.username = CloudConfig.get(kStoragePrefix + name + "_username");
+		if (CloudConfig.hasKey(kStoragePrefix + name + "_lastSync"))
+			config.lastSyncDate = CloudConfig.get(kStoragePrefix + name + "_lastSync");
+		if (CloudConfig.hasKey(kStoragePrefix + name + "_usedBytes"))
+			config.usedBytes = CloudConfig.get(kStoragePrefix + name + "_usedBytes").asUint64();
 		_storages.push_back(config);
 	}
 
 	//load an active storage if there is any
 	_currentStorageIndex = kStorageNoneId;
-	if (ConfMan.hasKey("current_storage", "cloud"))
-		_currentStorageIndex = ConfMan.getInt("current_storage", "cloud");
+	if (CloudConfig.hasKey("current_storage"))
+		_currentStorageIndex = CloudConfig.getInt("current_storage");
 
 	loadStorage();
 }
@@ -106,15 +106,15 @@ void CloudManager::save() {
 	for (uint32 i = 0; i < _storages.size(); ++i) {
 		if (i == kStorageNoneId) continue;
 		Common::String name = getStorageConfigName(i);
-		ConfMan.set(kStoragePrefix + name + "_username", _storages[i].username, "cloud");		
-		ConfMan.set(kStoragePrefix + name + "_lastSync", _storages[i].lastSyncDate, "cloud");
-		ConfMan.set(kStoragePrefix + name + "_usedBytes", Common::String::format("%llu", _storages[i].usedBytes), "cloud");
+		CloudConfig.set(kStoragePrefix + name + "_username", _storages[i].username);		
+		CloudConfig.set(kStoragePrefix + name + "_lastSync", _storages[i].lastSyncDate);
+		CloudConfig.set(kStoragePrefix + name + "_usedBytes", Common::String::format("%llu", _storages[i].usedBytes));
 	}
 
-	ConfMan.set("current_storage", Common::String::format("%d", _currentStorageIndex), "cloud");
+	CloudConfig.set("current_storage", Common::String::format("%d", _currentStorageIndex));
 	if (_activeStorage)
 		_activeStorage->saveConfig(kStoragePrefix + getStorageConfigName(_currentStorageIndex) + "_");
-	ConfMan.flushToDisk();
+	CloudConfig.flushToDisk();
 }
 
 void CloudManager::replaceStorage(Storage *storage, uint32 index) {

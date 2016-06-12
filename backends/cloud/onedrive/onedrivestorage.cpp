@@ -30,24 +30,24 @@
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
 #include "backends/networking/curl/networkreadstream.h"
-#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/json.h"
 #include <curl/curl.h>
+#include "backends/cloud/cloudconfighelper.h"
 
 namespace Cloud {
 namespace OneDrive {
 
-char *OneDriveStorage::KEY = nullptr; //can't use ConfMan there yet, loading it on instance creation/auth
+char *OneDriveStorage::KEY = nullptr; //can't use CloudConfig there yet, loading it on instance creation/auth
 char *OneDriveStorage::SECRET = nullptr; //TODO: hide these secrets somehow
 
 void OneDriveStorage::loadKeyAndSecret() {
-	Common::String k = ConfMan.get("ONEDRIVE_KEY", "cloud");
+	Common::String k = CloudConfig.get("ONEDRIVE_KEY");
 	KEY = new char[k.size() + 1];
 	memcpy(KEY, k.c_str(), k.size());
 	KEY[k.size()] = 0;
 
-	k = ConfMan.get("ONEDRIVE_SECRET", "cloud");
+	k = CloudConfig.get("ONEDRIVE_SECRET");
 	SECRET = new char[k.size() + 1];
 	memcpy(SECRET, k.c_str(), k.size());
 	SECRET[k.size()] = 0;
@@ -116,17 +116,17 @@ void OneDriveStorage::codeFlowComplete(BoolResponse response) {
 		return;
 	}
 
-	ConfMan.removeKey("onedrive_code", "cloud");
+	CloudConfig.removeKey("onedrive_code");
 	CloudMan.replaceStorage(this, kStorageOneDriveId);
-	ConfMan.flushToDisk();
+	CloudConfig.flushToDisk();
 	debug("Done! You can use OneDrive now! Look:");
 	CloudMan.syncSaves();
 }
 
 void OneDriveStorage::saveConfig(Common::String keyPrefix) {	
-	ConfMan.set(keyPrefix + "access_token", _token, "cloud");
-	ConfMan.set(keyPrefix + "user_id", _uid, "cloud");
-	ConfMan.set(keyPrefix + "refresh_token", _refreshToken, "cloud");
+	CloudConfig.set(keyPrefix + "access_token", _token);
+	CloudConfig.set(keyPrefix + "user_id", _uid);
+	CloudConfig.set(keyPrefix + "refresh_token", _refreshToken);
 }
 
 Common::String OneDriveStorage::name() const {
@@ -262,24 +262,24 @@ Common::String OneDriveStorage::savesDirectoryPath() { return "saves/"; }
 OneDriveStorage *OneDriveStorage::loadFromConfig(Common::String keyPrefix) {
 	loadKeyAndSecret();
 
-	if (!ConfMan.hasKey(keyPrefix + "access_token", "cloud")) {
+	if (!CloudConfig.hasKey(keyPrefix + "access_token")) {
 		warning("No access_token found");
 		return 0;
 	}
 
-	if (!ConfMan.hasKey(keyPrefix + "user_id", "cloud")) {
+	if (!CloudConfig.hasKey(keyPrefix + "user_id")) {
 		warning("No user_id found");
 		return 0;
 	}
 
-	if (!ConfMan.hasKey(keyPrefix + "refresh_token", "cloud")) {
+	if (!CloudConfig.hasKey(keyPrefix + "refresh_token")) {
 		warning("No refresh_token found");
 		return 0;
 	}
 
-	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", "cloud");
-	Common::String userId = ConfMan.get(keyPrefix + "user_id", "cloud");
-	Common::String refreshToken = ConfMan.get(keyPrefix + "refresh_token", "cloud");
+	Common::String accessToken = CloudConfig.get(keyPrefix + "access_token");
+	Common::String userId = CloudConfig.get(keyPrefix + "user_id");
+	Common::String refreshToken = CloudConfig.get(keyPrefix + "refresh_token");
 	return new OneDriveStorage(accessToken, userId, refreshToken);
 }
 
@@ -294,16 +294,16 @@ Common::String OneDriveStorage::getAuthLink() {
 }
 
 void OneDriveStorage::authThroughConsole() {
-	if (!ConfMan.hasKey("ONEDRIVE_KEY", "cloud") || !ConfMan.hasKey("ONEDRIVE_SECRET", "cloud")) {
+	if (!CloudConfig.hasKey("ONEDRIVE_KEY") || !CloudConfig.hasKey("ONEDRIVE_SECRET")) {
 		warning("No OneDrive keys available, cannot do auth");
 		return;
 	}
 
 	loadKeyAndSecret();
 
-	if (ConfMan.hasKey("onedrive_code", "cloud")) {
+	if (CloudConfig.hasKey("onedrive_code")) {
 		//phase 2: get access_token using specified code
-		new OneDriveStorage(ConfMan.get("onedrive_code", "cloud"));
+		new OneDriveStorage(CloudConfig.get("onedrive_code"));
 		return;
 	}
 
