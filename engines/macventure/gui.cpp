@@ -89,8 +89,7 @@ Gui::~Gui() {
 }
 
 void Gui::draw() {
-
-	drawCommandsWindow();
+	drawWindows();
 
 	_wm.draw();
 }
@@ -170,7 +169,8 @@ void Gui::initWindows() {
 	_selfWindow->setDimensions(getWindowData(kSelfWindow).bounds);
 	_selfWindow->setActive(false);
 	_selfWindow->setCallback(selfWindowCallback, this);
-	loadBorder(_selfWindow, "border_command.bmp", false);
+	loadBorder(_selfWindow, "border_self_inac.bmp", false);
+	loadBorder(_selfWindow, "border_self_act.bmp", true);
 
 	// Exits Window
 	_exitsWindow = _wm.addWindow(false, true, true);
@@ -402,6 +402,14 @@ bool Gui::loadControls() {
 	return true;
 }
 
+void Gui::drawWindows() {
+
+	drawCommandsWindow();
+	drawMainGameWindow();
+
+	drawSelfWindow();
+}
+
 void Gui::drawCommandsWindow() {
 	if (_engine->isPaused()) {
 		Graphics::ManagedSurface *srf = _controlsWindow->getSurface();
@@ -425,6 +433,30 @@ void Gui::drawCommandsWindow() {
 				button.draw(*_controlsWindow->getSurface());
 		}
 	}
+}
+
+void Gui::drawMainGameWindow() {
+	Graphics::ManagedSurface *srf = _mainGameWindow->getSurface();
+	BorderBounds border = borderBounds(getWindowData(kMainGameWindow).type);
+	srf->fillRect(
+		Common::Rect(
+			border.leftOffset * 2,
+			border.topOffset * 2,
+			srf->w - (border.rightOffset * 3),
+			srf->h - (border.bottomOffset * 3)),
+		kColorWhite);
+	getCurrentFont().drawString(
+		srf,
+		Common::String("Main Game Window"),
+		0,
+		(srf->h / 2) - getCurrentFont().getFontHeight(),
+		srf->w,
+		kColorBlack,
+		Graphics::kTextAlignCenter);
+}
+
+void Gui::drawSelfWindow() {
+
 }
 
 
@@ -585,6 +617,7 @@ BorderBounds Gui::borderBounds(MVWindowType type) {
 	case MacVenture::kPlainDBox:
 		return BorderBounds(6, 6, 6, 6);
 	case MacVenture::kAltBox:
+		//return BorderBounds(8, 9, 11, 10); // For now, I'll stick to the original bmp, it's gorgeous
 		break;
 	case MacVenture::kNoGrowDoc:
 		return BorderBounds(1, 17, 1, 1);
