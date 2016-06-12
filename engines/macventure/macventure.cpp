@@ -93,6 +93,47 @@ Common::Error MacVentureEngine::run() {
 	return Common::kNoError;
 }
 
+void MacVentureEngine::requestQuit() {
+	_shouldQuit = true;
+}
+
+void MacVentureEngine::requestUnpause() {
+	_paused = false;
+}
+
+const GlobalSettings& MacVentureEngine::getGlobalSettings() {
+	return _globalSettings;
+}
+
+// Data retrieval
+
+bool MacVentureEngine::isPaused() {
+	return _paused;
+}
+
+Common::String MacVentureEngine::getCommandsPausedString() {
+	return Common::String("Click to continue");
+}
+
+void MacVentureEngine::processEvents() {
+	Common::Event event;
+
+	while (_eventMan->pollEvent(event)) {
+		if (_gui->processEvent(event))
+			continue;
+
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+			_shouldQuit = true;
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+// Data loading
+
 bool MacVentureEngine::loadGlobalSettings() {
 	Common::MacResIDArray resArray;
 	Common::SeekableReadStream *res;
@@ -130,47 +171,13 @@ bool MacVentureEngine::loadGlobalSettings() {
 		_globalSettings.cmdArgCnts = new uint8[_globalSettings.numCommands];
 		res->read(_globalSettings.cmdArgCnts, _globalSettings.numCommands);
 
-
+		_globalSettings.commands = new uint8[_globalSettings.numCommands];
+		res->read(_globalSettings.commands, _globalSettings.numCommands);
 
 		return true;
 	}
 
 	return false;
-}
-
-void MacVentureEngine::requestQuit() {
-	_shouldQuit = true;
-}
-
-void MacVentureEngine::requestUnpause() {
-	_paused = false;
-}
-
-// Data retrieval
-
-bool MacVentureEngine::isPaused() {
-	return _paused;
-}
-
-Common::String MacVentureEngine::getCommandsPausedString() {
-	return Common::String("Click to continue");
-}
-
-void MacVentureEngine::processEvents() {
-	Common::Event event;
-
-	while (_eventMan->pollEvent(event)) {
-		if (_gui->processEvent(event))
-			continue;
-
-		switch (event.type) {
-		case Common::EVENT_QUIT:
-			_shouldQuit = true;
-			break;
-		default:
-			break;
-		}
-	}
 }
 
 

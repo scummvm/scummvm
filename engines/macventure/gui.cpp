@@ -338,7 +338,12 @@ bool Gui::loadWindows() {
 
 void Gui::loadInventoryWindow() {
 	WindowData data;
-	data.bounds = Common::Rect(5, 30, 125, 190);
+	GlobalSettings settings = _engine->getGlobalSettings();
+	data.bounds = Common::Rect(
+		settings.invLeft, 
+		settings.invTop, 
+		settings.invLeft + settings.invWidth, 
+		settings.invTop + settings.invHeight);
 	data.title = "Inventory";
 	data.visible = true;
 	data.hasCloseBox = false;

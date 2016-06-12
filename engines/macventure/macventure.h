@@ -82,15 +82,16 @@ public:
 	void requestQuit();
 	void requestUnpause();
 
-	// Data loading
-	bool loadGlobalSettings();
-
 	// Data retrieval
 	bool isPaused();
 	Common::String getCommandsPausedString();
+	const GlobalSettings& getGlobalSettings();
 
 private:
 	void processEvents();
+
+	// Data loading
+	bool loadGlobalSettings();
 
 private: // Attributes
 
