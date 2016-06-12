@@ -59,15 +59,12 @@ void CloudManager::loadStorage() {
 	case kStorageDropboxId:
 		_activeStorage = Dropbox::DropboxStorage::loadFromConfig("storage_" + getStorageConfigName(_currentStorageIndex) + "_");
 		break;
-
 	case kStorageOneDriveId:
 		_activeStorage = OneDrive::OneDriveStorage::loadFromConfig("storage_" + getStorageConfigName(_currentStorageIndex) + "_");
 		break;
-
 	case kStorageGoogleDriveId:
 		_activeStorage = GoogleDrive::GoogleDriveStorage::loadFromConfig("storage_" + getStorageConfigName(_currentStorageIndex) + "_");
 		break;
-
 	default:
 		_activeStorage = nullptr;
 	}
