@@ -831,7 +831,7 @@ YY_RULE_SETUP
 case 12:
 YY_RULE_SETUP
 #line 58 "engines/director/lingo/lingo-lex.l"
-{ yylval.s = new Common::String(yytext); return STRING; }
+{ yylval.s = new Common::String(&yytext[1]); yylval.s->deleteLastChar(); return STRING; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP

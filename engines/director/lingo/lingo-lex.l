@@ -55,7 +55,7 @@ to				{ return OP_TO; }
 {constinteger}	{ yylval.i = strtol(yytext, NULL, 10); return INT; }
 {operator}		{ return *yytext; }
 {newline}		{ return '\n'; }
-{conststring}	{ yylval.s = new Common::String(yytext); return STRING; }
+{conststring}	{ yylval.s = new Common::String(&yytext[1]); yylval.s->deleteLastChar(); return STRING; }
 
 %%
 
