@@ -47,6 +47,8 @@ enum StorageID {
 };
 
 class CloudManager : public Common::Singleton<CloudManager> {
+	static const char *const kStoragePrefix;
+
 	struct StorageConfig {
 		Common::String name, username;
 		uint64 usedBytes;
