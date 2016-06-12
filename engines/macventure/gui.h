@@ -123,7 +123,14 @@ public:
 	void draw();
 	bool processEvent(Common::Event &event);
 	void handleMenuAction(MenuAction action);
+
+	// Event processors
 	bool processCommandEvents(WindowClick click, Common::Event &event);
+	bool processMainGameEvents(WindowClick click, Common::Event &event);
+	bool processOutConsoleEvents(WindowClick click, Common::Event &event);
+	bool processSelfEvents(WindowClick click, Common::Event &event);
+	bool processExitsEvents(WindowClick click, Common::Event &event);
+	bool processDiplomaEvents(WindowClick click, Common::Event &event);
 
 	const WindowData& getWindowData(WindowReference reference);
 

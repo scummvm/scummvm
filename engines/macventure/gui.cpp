@@ -429,6 +429,7 @@ void Gui::drawCommandsWindow() {
 
 bool controlsWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
 	Gui *g = (Gui*)gui;
+	
 
 	return g->processCommandEvents(click, event);
 }
@@ -436,29 +437,31 @@ bool controlsWindowCallback(Graphics::WindowClick click, Common::Event &event, v
 bool mainGameWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
 	Gui *g = (Gui*)gui;
 
-	return true;
+	return g->processMainGameEvents(click, event);
 }
 
 bool outConsoleWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
-	return true;
+	Gui *g = (Gui*)gui;
+
+	return g->processOutConsoleEvents(click, event);
 }
 
 bool selfWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
 	Gui *g = (Gui*)gui;
 
-	return true;
+	return g->processSelfEvents(click, event);
 }
 
 bool exitsWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
 	Gui *g = (Gui*)gui;
 
-	return true;
+	return g->processExitsEvents(click, event);
 }
 
 bool diplomaWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
 	Gui *g = (Gui*)gui;
 
-	return true;
+	return g->processDiplomaEvents(click, event);
 }
 
 bool inventoryWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
@@ -542,6 +545,30 @@ bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 		}
 	}
 	return false;
+}
+
+bool MacVenture::Gui::processMainGameEvents(WindowClick click, Common::Event & event) {
+	debug(6, "Processing event in Main Game Window");
+	return getWindowData(kMainGameWindow).visible;
+}
+bool MacVenture::Gui::processOutConsoleEvents(WindowClick click, Common::Event & event) {
+	debug(6, "Processing event in Out Console Window");
+	return getWindowData(kOutConsoleWindow).visible;
+}
+
+bool MacVenture::Gui::processSelfEvents(WindowClick click, Common::Event & event) {
+	debug(6, "Processing event in Self Window");
+	return getWindowData(kSelfWindow).visible;
+}
+
+bool MacVenture::Gui::processExitsEvents(WindowClick click, Common::Event & event) {
+	debug(6, "Processing event in Exits Window");
+	return getWindowData(kExitsWindow).visible;
+}
+
+bool MacVenture::Gui::processDiplomaEvents(WindowClick click, Common::Event & event) {
+	debug(6, "Processing event in Diploma Window");
+	return getWindowData(kDiplomaWindow).visible;
 }
 
 /* Ugly switches */
