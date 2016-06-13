@@ -2377,22 +2377,20 @@ msgid "Check for Updates..."
 msgstr "Recherche des mises à jour..."
 
 #: engines/adl/detection.cpp:43 engines/adl/detection.cpp:53
-#, fuzzy
 msgid "Color mode"
-msgstr "Mode Daltonien"
+msgstr "Mode Couleurs"
 
 #: engines/adl/detection.cpp:44 engines/adl/detection.cpp:54
 msgid "Use color graphics"
-msgstr ""
+msgstr "Utiliser les graphiques en couleurs"
 
 #: engines/adl/detection.cpp:63
 msgid "Scanlines"
-msgstr ""
+msgstr "Tracé par ligne"
 
 #: engines/adl/detection.cpp:64
-#, fuzzy
 msgid "Show scanlines"
-msgstr "Afficher la barre d'objets"
+msgstr "Afficher le tracé par ligne"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:48
