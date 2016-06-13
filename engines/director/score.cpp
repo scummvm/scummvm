@@ -497,9 +497,17 @@ void Score::update() {
 		} else if (tempo == 128) {
 			//TODO Wait for Click/Key
 		} else if (tempo == 135) {
-			//TODO Wait for sound channel 1
+			//Wait for sound channel 1
+			while (_soundManager->isChannelActive(1)) {
+				processEvents();
+				g_system->delayMillis(10);
+			}
 		} else if (tempo == 134) {
-			//TODO Wait for sound channel 2
+			//Wait for sound channel 2
+			while (_soundManager->isChannelActive(2)) {
+				processEvents();
+				g_system->delayMillis(10);
+			}
 		}
 	}
 	_nextFrameTime = g_system->getMillis() + (float)_currentFrameRate / 60 * 1000;
@@ -562,6 +570,7 @@ Frame::Frame(const Frame &frame) {
 	_soundType2 = frame._soundType2;
 	_skipFrameFlag = frame._skipFrameFlag;
 	_blend = frame._blend;
+	_palette = new PaletteInfo();
 
 	_sprites.resize(CHANNEL_COUNT);
 	for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
@@ -652,8 +661,8 @@ void Frame::readMainChannels(Common::SeekableReadStream &stream, uint16 offset, 
 			offset += 1;
 			break;
 		case kPaletePosition:
-			//TODO palette channel
-			stream.skip(16);
+			if (stream.readUint16LE())
+				readPaletteInfo(stream);
 			offset += 16;
 		default:
 			offset++;
@@ -662,6 +671,14 @@ void Frame::readMainChannels(Common::SeekableReadStream &stream, uint16 offset, 
 			break;
 		}
 	}
+}
+void Frame::readPaletteInfo(Common::SeekableReadStream &stream) {
+	_palette->firstColor = stream.readByte();
+	_palette->lastColor = stream.readByte();
+	_palette->flags = stream.readByte();
+	_palette->speed = stream.readByte();
+	_palette->frameCount = stream.readUint16LE();
+	stream.skip(8); //unknown
 }
 
 void Frame::readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16 size) {

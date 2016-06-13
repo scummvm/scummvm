@@ -213,6 +213,14 @@ struct CastInfo {
     Common::String type;
 };
 
+struct PaletteInfo {
+    uint8 firstColor;
+    uint8 lastColor;
+    uint8 flags;
+    uint8 speed;
+    uint16 frameCount;
+};
+
 class Sprite {
 public:
     Sprite();
@@ -240,6 +248,7 @@ private:
     void playTransition(Graphics::ManagedSurface &frameSurface, Common::Rect transRect);
     void playSoundChannel();
     void renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect movieRect, bool renderTrail);
+    void readPaletteInfo(Common::SeekableReadStream &stream);
     void readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
     void readMainChannels(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
     void drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
@@ -250,6 +259,7 @@ public:
     uint8 _transArea; //1 - Whole Stage, 0 - Changing Area
     uint8 _transChunkSize;
     transitionType _transType;
+    PaletteInfo *_palette;
     uint8 _tempo;
 
     uint16 _sound1;
