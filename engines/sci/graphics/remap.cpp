@@ -117,8 +117,9 @@ GfxRemap32::GfxRemap32(GfxPalette32 *palette) : _palette(palette) {
 	_update = false;
 	_remapCount = 0;
 
-	// The remap range was 245 - 254 in SCI2, but was changed to 235 - 244 in SCI21 middle
-	_remapEndColor = (getSciVersion() >= SCI_VERSION_2_1_MIDDLE) ? 244 : 254;
+	// The remap range was 245 - 254 in SCI2, but was changed to 235 - 244 in SCI21 middle.
+	// All versions of KQ7 are using the older remap range semantics.
+	_remapEndColor = (getSciVersion() >= SCI_VERSION_2_1_MIDDLE || g_sci->getGameId() == GID_KQ7) ? 244 : 254;
 }
 
 void GfxRemap32::remapOff(byte color) {
