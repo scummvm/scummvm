@@ -24,6 +24,7 @@
 #define MACVENTURE_WORLD_H
 
 #include "macventure/macventure.h"
+#include "macventure/container.h"
 
 namespace MacVenture {
 
@@ -64,6 +65,7 @@ private:
 	Common::String _startGameFileName;	
 
 	SaveGame *_saveGame;
+	Container<uint16> *_objectConstants;
 
 };
 

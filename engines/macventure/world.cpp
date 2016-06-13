@@ -4,7 +4,7 @@
 
 namespace MacVenture {
 
-World::World(MacVentureEngine *engine, Common::MacResManager *resMan) {
+World::World(MacVentureEngine *engine, Common::MacResManager *resMan)  {
 	_resourceManager = resMan;	
 	_engine = engine;
 
@@ -19,6 +19,8 @@ World::World(MacVentureEngine *engine, Common::MacResManager *resMan) {
 
 	_saveGame = new SaveGame(_engine, saveGameRes);
 
+	_objectConstants = new Container<uint16>("Shadowgate II/Shadow Object.TXT");
+
 	delete saveGameRes;
 	saveGameFile.close();		
 }
@@ -28,6 +30,9 @@ World::~World()	{
 	
 	if (_saveGame)
 		delete _saveGame;
+
+	if (_objectConstants)
+		delete _objectConstants;
 }
 
 bool World::loadStartGameFileName() {

@@ -27,22 +27,6 @@
 
 namespace MacVenture {
 
-struct ContainerHeader {
-	uint32 header;
-};
-
-struct ObjectGroup {
-	uint32 bitOffset; // Actually uint24, but we don't have that
-	uint32 offset;
-};
-
-struct ContainerSubHeader {
-	uint16 numObjects;
-	uint16 *huff;
-	uint8 *lengths;
-	ObjectGroup *groups;
-};
-
 class Object {
 public:
 	Object();
