@@ -31,12 +31,14 @@
 #include "gui/debugger.h"
 
 #include "macventure/gui.h"
+#include "macventure/world.h"
 
 struct ADGameDescription;
 
 namespace MacVenture {
 
 class Console;
+class World;
 
 enum {
 	kScreenWidth = 512,
@@ -48,6 +50,19 @@ enum {
 	kMacVentureDebugExample2 = 1 << 1
 	// next new level must be 1 << 2 (4)
 	// the current limitation is 32 debug levels (1 << 31 is the last one)
+};
+
+enum {
+	kGlobalSettingsID = 0x80,
+	kDiplomaGeometryID = 0x81,
+	kTextHuffmanTableID = 0x83
+};
+
+enum {
+	kSaveGameStrID = 0x82,
+	kDiplomaFilenameID = 0x83,
+	kClickToContinueTextID = 0x84,
+	kStartGameFilenameID = 0x85
 };
 
 struct GlobalSettings {
@@ -102,6 +117,7 @@ private: // Attributes
 
 	Console *_debugger;
 	Gui *_gui;
+	World *_world;
 
 	// Engine state
 	GlobalSettings _globalSettings;

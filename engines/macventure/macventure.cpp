@@ -37,12 +37,6 @@ enum {
 	kMaxMenuTitleLength = 30
 };
 
-enum {
-	kGlobalSettingsID = 0x80,
-	kDiplomaGeometryID = 0x81,
-	kTextHuffmanTableID = 0x83
-};
-
 MacVentureEngine::MacVentureEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst) {
 	_gameDescription = gameDesc;
 	_rnd = new Common::RandomSource("macventure");
@@ -79,6 +73,7 @@ Common::Error MacVentureEngine::run() {
 		error("Could not load the engine settings");
 
 	_gui = new Gui(this, _resourceManager);
+	_world = new World(this, _resourceManager);
 
 	_shouldQuit = false;
 	while (!_shouldQuit) {
