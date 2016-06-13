@@ -237,7 +237,7 @@ public:
     void prepareFrame(Archive &_movie, Graphics::ManagedSurface &surface, Graphics::ManagedSurface &trailSurface, Common::Rect movieRect);
     uint16 getSpriteIDFromPos(Common::Point pos);
 private:
-    void playTransition();
+    void playTransition(Graphics::ManagedSurface &frameSurface, Common::Rect transRect);
     void playSoundChannel();
     void renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect movieRect, bool renderTrail);
     void readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16 size);

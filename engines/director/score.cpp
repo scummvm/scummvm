@@ -729,7 +729,8 @@ void Frame::prepareFrame(Archive &_movie, Graphics::ManagedSurface &surface, Gra
 	renderSprites(_movie, surface, movieRect, false);
 	renderSprites(_movie, trailSurface, movieRect, true);
 	if (_transType != 0)
-		playTransition();
+		//TODO Handle changing area case
+		playTransition(surface, movieRect);
 	if (_sound1 != 0 || _sound2 != 0) {
 		playSoundChannel();
 	}
@@ -741,8 +742,40 @@ void Frame::playSoundChannel() {
 	debug(0, "Sound1 %d", _sound1);
 }
 
-void Frame::playTransition() {
-	warning("STUB: playTransition(%d, %d, %d)", _transType, _transDuration, _transChunkSize);
+void Frame::playTransition(Graphics::ManagedSurface &frameSurface, Common::Rect transRect) {
+	uint16 duration = _transDuration * 250; // _transDuration in 1/4 of sec
+	duration = (duration == 0 ? 250 : duration); // director support transition duration = 0, but animation play like value = 1, idk.
+	uint16 stepDuration = duration / _transChunkSize;
+	uint16 steps = duration / stepDuration;
+
+	switch (_transType) {
+	case kTransCoverDown: {
+			uint16 stepSize = transRect.height() / steps;
+			Common::Rect r = transRect;
+			for (uint16 i = 1; i < steps; i++) {
+				r.setHeight(stepSize * i);
+				g_system->delayMillis(stepDuration);
+				g_system->copyRectToScreen(frameSurface.getPixels(), frameSurface.pitch, 0, 0, r.width(), r.height());
+				g_system->updateScreen();
+			}
+		}
+		break;
+	case kTransCoverUp: {
+			uint16 stepSize = transRect.height() / steps;
+			Common::Rect r = transRect;
+			for (uint16 i = 1; i < steps; i++) {
+				r.setHeight(stepSize*i);
+				g_system->delayMillis(stepDuration);
+				g_system->copyRectToScreen(frameSurface.getPixels(), frameSurface.pitch, 0, transRect.height() - stepSize * i, r.width(), r.height());
+				g_system->updateScreen();
+			}
+		}
+		break;
+	default:
+		warning("Unhandled transition type %d", _transType);
+		break;
+
+	}
 }
 
 void Frame::renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect movieRect, bool renderTrail) {
