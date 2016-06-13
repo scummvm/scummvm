@@ -62,6 +62,7 @@ protected:
 	uint32 _runningRequestsCount;
 	Common::Mutex _runningRequestsMutex;
 	SavesSyncRequest *_savesSyncRequest;
+	bool _syncRestartRequestsed;
 
 	/** Returns default error callback (printErrorResponse). */
 	virtual Networking::ErrorCallback getErrorPrintingCallback();

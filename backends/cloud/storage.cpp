@@ -52,12 +52,18 @@ Networking::Request *Storage::addRequest(Networking::Request *request) {
 }
 
 void Storage::requestFinishedCallback(Networking::Request *invalidRequestPointer) {
+	bool restartSync = false;
+
 	_runningRequestsMutex.lock();
 	if (invalidRequestPointer == _savesSyncRequest)
 		_savesSyncRequest = nullptr;
 	--_runningRequestsCount;
-	if (_runningRequestsCount == 0) debug("Storage is not working now");
+	if (_syncRestartRequestsed) restartSync = true;
+	if (_runningRequestsCount == 0 && !restartSync) debug("Storage is not working now");
 	_runningRequestsMutex.unlock();
+
+	if (restartSync)
+		syncSaves(nullptr, nullptr);
 }
 
 Networking::Request *Storage::upload(Common::String remotePath, Common::String localPath, UploadCallback callback, Networking::ErrorCallback errorCallback) {
@@ -111,11 +117,13 @@ SavesSyncRequest *Storage::syncSaves(BoolCallback callback, Networking::ErrorCal
 	_runningRequestsMutex.lock();
 	if (_savesSyncRequest) {
 		warning("Storage::syncSaves: there is a sync in progress already");
+		_syncRestartRequestsed = true;
 		_runningRequestsMutex.unlock();
 		return _savesSyncRequest;
 	}
 	if (!errorCallback) errorCallback = getErrorPrintingCallback();
 	_savesSyncRequest = new SavesSyncRequest(this, callback, errorCallback);
+	_syncRestartRequestsed = false;
 	_runningRequestsMutex.unlock();	
 	return (SavesSyncRequest *)addRequest(_savesSyncRequest); //who knows what that ConnMan could return in the future
 }
