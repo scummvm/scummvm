@@ -234,20 +234,20 @@ public:
     ~Frame();
     Frame(const Frame &frame);
     void readChannel(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
-    void prepareFrame(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect movieRect);
+    void prepareFrame(Archive &_movie, Graphics::ManagedSurface &surface, Graphics::ManagedSurface &trailSurface, Common::Rect movieRect);
     uint16 getSpriteIDFromPos(Common::Point pos);
 private:
-    void playTranisition();
+    void playTransition();
     void playSoundChannel();
-    void renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect movieRect);
-    void renderTrailSprites(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect movieRect);
+    void renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect movieRect, bool renderTrail);
     void readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
     void readMainChannels(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
     void drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
     void drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
 public:
     uint8 _actionId;
-    uint8 _transFlags;
+    uint8 _transDuration;
+    uint8 _transArea; //1 - Whole Stage, 0 - Changing Area
     uint8 _transChunkSize;
     transitionType _transType;
     uint8 _tempo;
@@ -311,6 +311,7 @@ private:
     uint16 _stageColor;
     Archive *_movieArchive;
     Graphics::ManagedSurface *_surface;
+    Graphics::ManagedSurface *_trailSurface;
     Lingo *_lingo;
     DirectorSound *_soundManager;
 };

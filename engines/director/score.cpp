@@ -528,7 +528,8 @@ void Score::processEvents() {
 }
 
 Frame::Frame() {
-	_transFlags = 0;
+	_transDuration = 0;
+	_transArea = 0;
 	_transChunkSize = 0;
 	_tempo = 0;
 
@@ -550,7 +551,8 @@ Frame::Frame() {
 
 Frame::Frame(const Frame &frame) {
 	_actionId = frame._actionId;
-	_transFlags = frame._transFlags;
+	_transArea = frame._transArea;
+	_transDuration = frame._transDuration;
 	_transType = frame._transType;
 	_transChunkSize = frame._transChunkSize;
 	_tempo = frame._tempo;
@@ -607,9 +609,15 @@ void Frame::readMainChannels(Common::SeekableReadStream &stream, uint16 offset, 
 			_soundType1 = stream.readByte();
 			offset++;
 			break;
-		case kTransFlagsPosition:
-			_transFlags = stream.readByte();
+		case kTransFlagsPosition: {
+			uint8 transFlags = stream.readByte();
+			if (transFlags & 0x80)
+				_transArea = 1;
+			else
+				_transArea = 0;
+			_transDuration = transFlags & 0x7f;
 			offset++;
+			}
 			break;
 		case kTransChunkSizePosition:
 			_transChunkSize = stream.readByte();
@@ -721,7 +729,7 @@ void Frame::prepareFrame(Archive &_movie, Graphics::ManagedSurface &surface, Gra
 	renderSprites(_movie, surface, movieRect, false);
 	renderSprites(_movie, trailSurface, movieRect, true);
 	if (_transType != 0)
-		playTranisition();
+		playTransition();
 	if (_sound1 != 0 || _sound2 != 0) {
 		playSoundChannel();
 	}
@@ -733,8 +741,8 @@ void Frame::playSoundChannel() {
 	debug(0, "Sound1 %d", _sound1);
 }
 
-void Frame::playTranisition() {
-	warning("STUB: playTranisition(%d, %d, %d)", _transType, _transFlags, _transChunkSize);
+void Frame::playTransition() {
+	warning("STUB: playTransition(%d, %d, %d)", _transType, _transDuration, _transChunkSize);
 }
 
 void Frame::renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect movieRect, bool renderTrail) {
