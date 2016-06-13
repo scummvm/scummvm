@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-06-07 19:20+0200\n"
-"PO-Revision-Date: 2016-04-08 07:38+0200\n"
+"PO-Revision-Date: 2016-06-08 06:22+0200\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian\n"
 "Language: Magyar\n"
@@ -2351,22 +2351,20 @@ msgid "Check for Updates..."
 msgstr "Frissítések keresése..."
 
 #: engines/adl/detection.cpp:43 engines/adl/detection.cpp:53
-#, fuzzy
 msgid "Color mode"
-msgstr "Színvak Mód"
+msgstr "Szines mód"
 
 #: engines/adl/detection.cpp:44 engines/adl/detection.cpp:54
 msgid "Use color graphics"
-msgstr ""
+msgstr "Szines grafikát használ"
 
 #: engines/adl/detection.cpp:63
 msgid "Scanlines"
-msgstr ""
+msgstr "Pászta"
 
 #: engines/adl/detection.cpp:64
-#, fuzzy
 msgid "Show scanlines"
-msgstr "Tárgynév sor látható"
+msgstr "Pászta megjelenítés"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:48
