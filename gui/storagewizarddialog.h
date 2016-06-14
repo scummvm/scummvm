@@ -30,10 +30,19 @@ namespace GUI {
 
 class CommandSender;
 class EditTextWidget;
+class StaticTextWidget;
+class ButtonWidget;
 
 class StorageWizardDialog : public Dialog {
+	static const uint32 CODE_FIELDS = 8;
 	uint32 _storageId;
-	EditTextWidget *_codeWidget;
+	EditTextWidget *_codeWidget[CODE_FIELDS];
+	StaticTextWidget *_messageWidget;
+	ButtonWidget *_connectWidget;
+
+	int calculate(char b);
+	bool correctChecksum(Common::String s);
+	uint32 crc32(Common::String s);
 public:
 	StorageWizardDialog(uint32 storageId);
 

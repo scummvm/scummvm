@@ -606,10 +606,45 @@
 					/>
 					<widget name = 'ReturnLine2'
 							height = 'Globals.Line.Height'
-					/>
-					<widget name = 'CodeBox'
-						width = '150'
-						height = 'Globals.Line.Height'
+					/>					
+					<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '4' center = 'true'>
+						<widget name = 'CodeBox1'
+							width = '70'
+							height = 'Globals.Line.Height'
+						/>
+						<widget name = 'CodeBox2'
+							width = '70'
+							height = 'Globals.Line.Height'
+						/>
+						<widget name = 'CodeBox3'
+							width = '70'
+							height = 'Globals.Line.Height'
+						/>
+						<widget name = 'CodeBox4'
+							width = '70'
+							height = 'Globals.Line.Height'
+						/>
+					</layout>
+					<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '4' center = 'true'>
+						<widget name = 'CodeBox5'
+							width = '70'
+							height = 'Globals.Line.Height'
+						/>
+						<widget name = 'CodeBox6'
+							width = '70'
+							height = 'Globals.Line.Height'
+						/>
+						<widget name = 'CodeBox7'
+							width = '70'
+							height = 'Globals.Line.Height'
+						/>
+						<widget name = 'CodeBox8'
+							width = '70'
+							height = 'Globals.Line.Height'
+						/>
+					</layout>
+					<widget name = 'MessageLine'
+							height = 'Globals.Line.Height'
 					/>
 					<space size = '6' />
 				</layout>
