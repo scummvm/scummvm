@@ -76,6 +76,10 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 Lingo::~Lingo() {
 }
 
+void Lingo::addCode(Common::String code, scriptType type, uint16 id) {
+	debug(0, "Add code %s for type %d with id %d", code.c_str(), type, id);
+}
+
 void Lingo::processEvent(LEvent event, int entityId) {
 	if (!_eventHandlerTypes.contains(event))
 		error("processEvent: Unknown event %d for entity %d", event, entityId);

@@ -252,6 +252,8 @@ void Score::loadActions(Common::SeekableReadStream &stream) {
 	}
 
 	Common::HashMap<uint16, Common::String>::iterator j;
+	for (j = _actions.begin(); j != _actions.end(); ++j)
+		_lingo->addCode(j->_value, kFrameScript, j->_key);
 
 	if (!ConfMan.getBool("dump_scripts"))
 		return;

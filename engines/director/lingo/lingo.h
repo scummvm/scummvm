@@ -29,6 +29,7 @@
 #include "audio/audiostream.h"
 #include "common/str.h"
 #include "engines/director/director.h"
+#include "engines/director/score.h"
 
 namespace Director {
 
@@ -73,6 +74,8 @@ class Lingo {
 public:
 	Lingo(DirectorEngine *vm);
 	~Lingo();
+
+	void addCode(Common::String code, scriptType type, uint16 id);
 
 	void processEvent(LEvent event, int entityId);
 
