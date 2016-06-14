@@ -42,6 +42,9 @@ GlobeTracker::GlobeTracker(Movie *globeMovie, Picture *leftHighlight, Picture *r
 	_rightHighlight = rightHighlight;
 	_upHighlight = upHighlight;
 	_downHighlight = downHighlight;
+	_trackSpot = nullptr;
+	_trackTime = -1;
+	_trackDirection = kTrackDown;
 }
 
 void GlobeTracker::setTrackParameters(const Hotspot *trackSpot, GlobeTrackDirection direction) {

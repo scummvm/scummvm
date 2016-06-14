@@ -34,6 +34,7 @@ PressureTracker::PressureTracker(PressureDoor *pressureDoor) {
 	_pressureDoor = pressureDoor;
 	_trackSpot = 0;
 	_trackTime = 0;
+	_trackButton = nullptr;
 }
 
 void PressureTracker::setTrackParameters(const Hotspot *trackSpot, Sprite *trackButton) {

@@ -35,6 +35,8 @@ static const NotificationFlags kMessageDoneFlag = 1;
 
 CaldoriaMessages::CaldoriaMessages(Neighborhood *owner, const NotificationID id, NotificationManager *manager) :
 		GameInteraction(kCaldoriaMessagesInteractionID, owner), Notification(id, manager), _messageMovie(kCaldoriaMessagesID) {
+	_neighborhoodNotification = nullptr;
+	_messageNumber = 0;
 }
 
 void CaldoriaMessages::openInteraction() {

@@ -93,6 +93,7 @@ NoradAlpha::NoradAlpha(InputHandler *nextHandler, PegasusEngine *owner) : Norad(
 	_subControlRoom = kNorad22West;
 
 	_subPrepFailed = false;
+	_fillingStationItem = nullptr;
 
 	setIsItemTaken(kGasCanister);
 }

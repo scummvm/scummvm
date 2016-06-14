@@ -32,6 +32,7 @@
 namespace Pegasus {
 
 CaldoriaMirror::CaldoriaMirror(Neighborhood *owner) : GameInteraction(kCaldoriaMirrorInteractionID, owner) {
+	_neighborhoodNotification = nullptr;
 }
 
 void CaldoriaMirror::openInteraction() {
