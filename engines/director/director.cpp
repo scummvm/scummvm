@@ -68,8 +68,8 @@ DirectorEngine::~DirectorEngine() {
 Common::Error DirectorEngine::run() {
 	debug("Starting v%d Director game", getVersion());
 
-	_lingo = new Lingo();
-
+	_lingo = new Lingo(this);
+	_soundManager = new DirectorSound();
 	_lingo->parse("mci \"open MM\\T005045a.wav type WaveAudio alias T005045a\"\n\
 	mci \"play T005045a from 22710 to 32872\"");
 
@@ -80,7 +80,7 @@ Common::Error DirectorEngine::run() {
 -- some more\n");
 #endif
 
-	_soundManager = new DirectorSound();
+
 
 	//FIXME
 	_mainArchive = new RIFFArchive();

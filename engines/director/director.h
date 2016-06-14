@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 
 #include "engines/engine.h"
-
+#include "engines/director/sound.h"
 class OSystem;
 
 namespace Common {
@@ -42,7 +42,7 @@ enum DirectorGameID {
 class Archive;
 struct DirectorGameDescription;
 class Lingo;
-class DirectorSound;
+
 
 class DirectorEngine : public ::Engine {
 public:
@@ -56,7 +56,7 @@ public:
 	Common::Platform getPlatform() const;
 	Common::Language getLanguage() const;
 	Common::String getEXEName() const;
-
+	DirectorSound *getSoundManager() const { return _soundManager; }
 	bool hasFeature(EngineFeature f) const;
 
 protected:

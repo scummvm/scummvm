@@ -25,6 +25,10 @@
 
 #include "common/debug.h"
 #include "common/hashmap.h"
+#include "common/hash-str.h"
+#include "audio/audiostream.h"
+#include "common/str.h"
+#include "engines/director/director.h"
 
 namespace Director {
 
@@ -67,7 +71,7 @@ enum LEvent {
 
 class Lingo {
 public:
-	Lingo();
+	Lingo(DirectorEngine *vm);
 	~Lingo();
 
 	void processEvent(LEvent event, int entityId);
@@ -78,6 +82,8 @@ public:
 
 private:
 	Common::HashMap<uint32, const char *> _eventHandlerTypes;
+	Common::HashMap<Common::String, Audio::AudioStream *> _audioAliases;
+	DirectorEngine *_vm;
 };
 
 } // End of namespace Director

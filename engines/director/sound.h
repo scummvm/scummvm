@@ -34,7 +34,7 @@ class DirectorSound {
 private:
 	Audio::SoundHandle *_sound1;
 	Audio::SoundHandle *_sound2;
-
+	Audio::SoundHandle *_scriptSound;
 	Audio::Mixer *_mixer;
 
 public:
@@ -42,6 +42,7 @@ public:
 
 	void playWAV(Common::String filename, uint8 channelID);
 	void playAIFF(Common::String filename, uint8 channelID);
+	void playMCI(Audio::AudioStream &stream);
 	bool isChannelActive(uint8 channelID);
 	void stopSound();
 };

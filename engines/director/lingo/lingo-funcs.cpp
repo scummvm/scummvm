@@ -21,9 +21,10 @@
  */
 
 #include "engines/director/lingo/lingo.h"
+#include "common/file.h"
+#include "audio/decoders/wave.h"
 
 namespace Director {
-
 enum MCITokenType {
 	kMCITokenNone,
 
@@ -119,11 +120,31 @@ int Lingo::func_mci(Common::String *s) {
 	}
 
 	switch (command) {
-	case kMCITokenOpen:
+	case kMCITokenOpen: {
 		warning("MCI open file: %s, type: %s, alias: %s buffer: %s", params[0].c_str(), params[1].c_str(), params[2].c_str(), params[3].c_str());
+		Common::File *file = new Common::File();
+		if (!file->open(params[0])) {
+			warning("Failed to open %s", params[0].c_str());
+			delete file;
+			return 0;
+		}
+		if (params[1] == "waveaudio") {
+			Audio::AudioStream *sound = Audio::makeWAVStream(file, DisposeAfterUse::YES);
+			_audioAliases[params[2]] = sound;
+		}
+		else
+			warning("Unhandled audio type %s", params[2].c_str());
+		}
 		break;
-	case kMCITokenPlay:
+	case kMCITokenPlay: {
 		warning("MCI play file: %s, from: %s, to: %s, repeat: %s", params[0].c_str(), params[1].c_str(), params[2].c_str(), params[3].c_str());
+		if (!_audioAliases.contains(params[0])) {
+			warning("Unknown alias %s", params[0].c_str());
+			return 0;
+		}
+		//TODO seek
+		_vm->getSoundManager()->playMCI(*_audioAliases[params[0]]);
+		}
 		break;
 	default:
 		warning("Unhandled MCI command: %s", s->c_str());

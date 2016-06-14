@@ -66,7 +66,7 @@ struct EventHandlerType {
 	{ kEventNone,				0 },
 };
 
-Lingo::Lingo() {
+Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	g_lingo = this;
 
 	for (const EventHandlerType *t = &eventHanlerDescs[0]; t->handler != kEventNone; ++t)
