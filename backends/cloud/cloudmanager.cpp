@@ -78,9 +78,6 @@ void CloudManager::loadStorage() {
 }
 
 void CloudManager::init() {
-	Common::String oldDomain = ConfMan.getActiveDomainName();
-	ConfMan.setActiveDomain(ConfMan.kCloudDomain);
-
 	//init configs structs
 	for (uint32 i = 0; i < kStorageTotal; ++i) {
 		Common::String name = getStorageConfigName(i);
@@ -89,43 +86,36 @@ void CloudManager::init() {
 		config.username = "";
 		config.lastSyncDate = "";
 		config.usedBytes = 0;
-		if (ConfMan.hasKey(kStoragePrefix + name + "_username"))
-			config.username = ConfMan.get(kStoragePrefix + name + "_username");
-		if (ConfMan.hasKey(kStoragePrefix + name + "_lastSync"))
-			config.lastSyncDate = ConfMan.get(kStoragePrefix + name + "_lastSync");
-		if (ConfMan.hasKey(kStoragePrefix + name + "_usedBytes"))
-			config.usedBytes = ConfMan.get(kStoragePrefix + name + "_usedBytes").asUint64();
+		if (ConfMan.hasKey(kStoragePrefix + name + "_username", ConfMan.kCloudDomain))
+			config.username = ConfMan.get(kStoragePrefix + name + "_username", ConfMan.kCloudDomain);
+		if (ConfMan.hasKey(kStoragePrefix + name + "_lastSync", ConfMan.kCloudDomain))
+			config.lastSyncDate = ConfMan.get(kStoragePrefix + name + "_lastSync", ConfMan.kCloudDomain);
+		if (ConfMan.hasKey(kStoragePrefix + name + "_usedBytes", ConfMan.kCloudDomain))
+			config.usedBytes = ConfMan.get(kStoragePrefix + name + "_usedBytes", ConfMan.kCloudDomain).asUint64();
 		_storages.push_back(config);
 	}
 
 	//load an active storage if there is any
 	_currentStorageIndex = kStorageNoneId;
-	if (ConfMan.hasKey("current_storage"))
-		_currentStorageIndex = ConfMan.getInt("current_storage");
+	if (ConfMan.hasKey("current_storage", ConfMan.kCloudDomain))
+		_currentStorageIndex = ConfMan.getInt("current_storage", ConfMan.kCloudDomain);
 
 	loadStorage();
-
-	ConfMan.setActiveDomain(oldDomain);
 }
 
 void CloudManager::save() {
-	Common::String oldDomain = ConfMan.getActiveDomainName();
-	ConfMan.setActiveDomain(ConfMan.kCloudDomain);
-
 	for (uint32 i = 0; i < _storages.size(); ++i) {
 		if (i == kStorageNoneId) continue;
 		Common::String name = getStorageConfigName(i);
-		ConfMan.set(kStoragePrefix + name + "_username", _storages[i].username);
-		ConfMan.set(kStoragePrefix + name + "_lastSync", _storages[i].lastSyncDate);
-		ConfMan.set(kStoragePrefix + name + "_usedBytes", Common::String::format("%llu", _storages[i].usedBytes));
+		ConfMan.set(kStoragePrefix + name + "_username", _storages[i].username, ConfMan.kCloudDomain);
+		ConfMan.set(kStoragePrefix + name + "_lastSync", _storages[i].lastSyncDate, ConfMan.kCloudDomain);
+		ConfMan.set(kStoragePrefix + name + "_usedBytes", Common::String::format("%llu", _storages[i].usedBytes, ConfMan.kCloudDomain));
 	}
 
-	ConfMan.set("current_storage", Common::String::format("%d", _currentStorageIndex));
+	ConfMan.set("current_storage", Common::String::format("%d", _currentStorageIndex, ConfMan.kCloudDomain));
 	if (_activeStorage)
 		_activeStorage->saveConfig(kStoragePrefix + getStorageConfigName(_currentStorageIndex) + "_");
 	ConfMan.flushToDisk();
-
-	ConfMan.setActiveDomain(oldDomain);
 }
 
 void CloudManager::replaceStorage(Storage *storage, uint32 index) {
