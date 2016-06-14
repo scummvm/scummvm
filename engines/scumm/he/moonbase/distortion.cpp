@@ -26,7 +26,6 @@
 namespace Scumm {
 
 enum {
-	kHalfRange = (0x1f / 2),
 	kBptHeaderSize = 8,
 
 	kReflectionClipped = 0,
@@ -34,14 +33,13 @@ enum {
 	kSpecializedNotClipped = 2
 };
 
-void blitCore(
+static void blitDistortionCore(
 	Graphics::Surface *dstBitmap,
 	const int x, const int y,
 	const Graphics::Surface *distortionBitmap,
 	const Common::Rect *optionalclipRectPtr,
 	int transferOp,
 	const Graphics::Surface *srcBitmap,
-	int offset_x, int offset_y,
 	Common::Rect *srcClipRect
 ) {
 	Common::Rect clipRect(dstBitmap->w, dstBitmap->h);
@@ -76,8 +74,8 @@ void blitCore(
 	switch (transferOp) {
 	case kReflectionClipped:
 	case kNotClipped:
-		baseX = offset_x - kHalfRange;
-		baseY = offset_y - kHalfRange;
+		baseX = -(0x1f / 2); // Half range
+		baseY = -(0x1f / 2);
 		break;
 
 	case kSpecializedNotClipped:
@@ -128,39 +126,6 @@ void blitCore(
 	}
 }
 
-void distortionBlit(
-	Graphics::Surface *dstBitmap,
-	Graphics::Surface *srcBitmap,
-	Graphics::Surface *distortionBitmap,
-	const int dst_x, const int dst_y,
-	const int src_x, const int src_y,
-	const int l_reach, const int r_reach, const int t_reach, const int b_reach,
-	const Common::Rect &srcClipRect, const Common::Rect &dstClipRect
-) {
-	Common::Rect srcReach((src_x - l_reach), (src_y - t_reach), (src_x + r_reach), (src_y + b_reach));
-	Common::Rect srcLimits(srcBitmap->w, srcBitmap->h);
-
-	if (!srcLimits.intersects(srcClipRect))
-		return;
-
-	srcLimits.clip(srcClipRect);
-
-	if (!srcReach.intersects(srcLimits))
-		return;
-
-	srcReach.clip(srcLimits);
-
-	if (srcLimits.contains(srcReach)) {
-		if (srcBitmap->pitch == 1280) {
-			blitCore(dstBitmap, dst_x, dst_y, distortionBitmap, &dstClipRect, kSpecializedNotClipped, srcBitmap, (dst_x - src_x), (dst_y - src_y), 0);
-		} else {
-			blitCore(dstBitmap, dst_x, dst_y, distortionBitmap, &dstClipRect, kNotClipped, srcBitmap, (dst_x - src_x), (dst_y - src_y), 0);
-		}
-	} else {
-		blitCore(dstBitmap, dst_x, dst_y, distortionBitmap, &dstClipRect, kReflectionClipped, srcBitmap, (dst_x - src_x), (dst_y - src_y), &srcLimits);
-	}
-}
-
 void Moonbase::blitDistortion(byte *bufferData, const int bufferWidth, const int bufferHeight, const int bufferPitch,
 		const Common::Rect *optionalClippingRect, byte *dataStream, const int x, const int y, byte *altSourceBuffer) {
 	byte *sourcePixels = (altSourceBuffer) ? altSourceBuffer : bufferData;
@@ -201,35 +166,52 @@ void Moonbase::blitDistortion(byte *bufferData, const int bufferWidth, const int
 		int yOffset = READ_LE_UINT16(blockData); blockData += 2;
 		int width = READ_LE_UINT16(blockData); blockData += 2;
 		int height = READ_LE_UINT16(blockData); blockData += 2;
-		int l_Reach = READ_LE_UINT16(blockData); blockData += 2;
-		int r_Reach = READ_LE_UINT16(blockData); blockData += 2;
-		int t_Reach = READ_LE_UINT16(blockData); blockData += 2;
-		int b_Reach = READ_LE_UINT16(blockData); blockData += 2;
+		int l_reach = READ_LE_UINT16(blockData); blockData += 2;
+		int r_reach = READ_LE_UINT16(blockData); blockData += 2;
+		int t_reach = READ_LE_UINT16(blockData); blockData += 2;
+		int b_reach = READ_LE_UINT16(blockData); blockData += 2;
 		int distortionPitch = ((width * 2 + 7) / 8); // 2 for 555
 
 		if (width == 0 && height == 0)
 			continue;
 
-		Graphics::Surface mappedDstBitmap;
-		mappedDstBitmap.init(bufferWidth, bufferHeight, bufferPitch, bufferData, Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
+		Graphics::Surface dstBitmap;
+		dstBitmap.init(bufferWidth, bufferHeight, bufferPitch, bufferData, Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
 
-		Graphics::Surface mappedSrcBitmap;
-		mappedSrcBitmap.init(bufferWidth, bufferHeight, bufferPitch, sourcePixels, Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
+		Graphics::Surface srcBitmap;
+		srcBitmap.init(bufferWidth, bufferHeight, bufferPitch, sourcePixels, Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
 
-		Graphics::Surface mappedDistortionBitmap;
-		mappedDistortionBitmap.init(width, height, distortionPitch, blockData, Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
+		Graphics::Surface distortionBitmap;
+		distortionBitmap.init(width, height, distortionPitch, blockData, Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
 
 		Common::Rect srcClipRect(cx1, cy1, cx2, cy2);
 		Common::Rect dstClipRect(cx1, cy1, cx2, cy2);
 
-		distortionBlit(
-			&mappedDstBitmap,
-			&mappedSrcBitmap,
-			&mappedDistortionBitmap,
-			(x + xOffset), (y + yOffset),
-			(x + xOffset), (y + yOffset),
-			l_Reach, r_Reach, t_Reach, b_Reach,
-			srcClipRect, dstClipRect);
+		int src_x = (x + xOffset);
+		int src_y = (y + yOffset);
+
+		Common::Rect srcReach((src_x - l_reach), (src_y - t_reach), (src_x + r_reach), (src_y + b_reach));
+		Common::Rect srcLimits(srcBitmap.w, srcBitmap.h);
+
+		if (!srcLimits.intersects(srcClipRect))
+			return;
+
+		srcLimits.clip(srcClipRect);
+
+		if (!srcReach.intersects(srcLimits))
+			return;
+
+		srcReach.clip(srcLimits);
+
+		if (srcLimits.contains(srcReach)) {
+			if (srcBitmap.pitch == 1280) {
+				blitDistortionCore(&dstBitmap, src_x, src_y, &distortionBitmap, &dstClipRect, kSpecializedNotClipped, &srcBitmap, 0);
+			} else {
+				blitDistortionCore(&dstBitmap, src_x, src_y, &distortionBitmap, &dstClipRect, kNotClipped, &srcBitmap, 0);
+			}
+		} else {
+			blitDistortionCore(&dstBitmap, src_x, src_y, &distortionBitmap, &dstClipRect, kReflectionClipped, &srcBitmap, &srcLimits);
+		}
 	}
 }
 
