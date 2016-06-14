@@ -230,7 +230,7 @@ void DungeonMan::loadDungeonFile() {
 	if (_messages.newGame)
 		decompressDungeonFile();
 
-	Common::MemoryReadStream dunDataStream(_rawDunFileData, _fileHeader.rawMapDataSize, DisposeAfterUse::NO);
+	Common::MemoryReadStream dunDataStream(_rawDunFileData, _rawDunFileDataSize, DisposeAfterUse::NO);
 
 	// initialize _fileHeader
 	_fileHeader.dungeonId = _fileHeader.ornamentRandomSeed = dunDataStream.readUint16BE();
