@@ -19,7 +19,7 @@ World::World(MacVentureEngine *engine, Common::MacResManager *resMan)  {
 
 	_saveGame = new SaveGame(_engine, saveGameRes);
 
-	_objectConstants = new Container<uint16>("Shadowgate II/Shadow Object.TXT");
+	_objectConstants = new Container<uint16>("Shadowgate II/Shadow Graphic");
 
 	delete saveGameRes;
 	saveGameFile.close();		
@@ -47,7 +47,7 @@ bool World::loadStartGameFileName() {
 	res->read(fileName, length);
 	fileName[length] = '\0';
 	_startGameFileName = Common::String(fileName, length);
-	_startGameFileName.replace(_startGameFileName.end(), _startGameFileName.end(), ".TXT");
+	_startGameFileName.replace(_startGameFileName.end(), _startGameFileName.end(), ".bin");
 
 	return true;
 }

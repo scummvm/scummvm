@@ -26,6 +26,7 @@
 #include "macventure/macventure.h"
 
 #include "common/file.h"
+#include "common/bitstream.h"
 
 namespace MacVenture {
 
@@ -56,8 +57,8 @@ public:
 			_numObjs = dataLen / _lenObjs;
 		}
 		else {
-			ContainerHeader subHead = _header & 0x7fffffff;
-			_res->seek(subHead, SEEK_SET);
+			_header &= 0x7fffffff;
+			_res->seek(_header, SEEK_SET);
 			_numObjs = _res->readUint16BE();
 
 			for (int i = 0; i < 15; ++i)
@@ -66,71 +67,50 @@ public:
 			for (int i = 0; i < 16; ++i)
 				_lens[i] = _res->readByte();
 
-			ItemGroup group;
-			for (int i = 0; i < _numObjs; ++i) {	
-				uint32 bits;
-				if ((i & 0x37) == 0) { // It's the start of a group					
-					// Place myself in the correct position to read group
-					_res->seek(subHead + (i >> 6) * 6 + 0x30, SEEK_SET);
-					_res->read(&bits, 3);
-					bits >>= 4;
-					_res->read(&group.offset, 3); // Read 3 bytes
-					group.offset >>= 4;
-					bits &= 7;
-					group.bitOffset = bits;
-					_res->seek(subHead + (bits >> 3), SEEK_SET);
-				}	
+			// Read groups
+			uint numGroups = _numObjs / 64;
+			if ((_numObjs % 64) > 0)
+				numGroups++;
 
-				// Workaround to implement peek
-				// Read the value in 32 bits
-				uint32 v = (_res->readUint32BE() >> (16 - bits)) & 0xffff;
-				// Go back
-				_res->seek(-4, SEEK_CUR); 
+			for (uint i = 0; i < numGroups; ++i) {
+				ItemGroup group;
+				
+				// Place myself in the correct position to read group
+				_res->seek(_header + (i * 6) + 0x30, SEEK_SET);
+				byte b1, b2, b3;
+				b1 = _res->readByte();
+				b2 = _res->readByte();
+				b3 = _res->readByte();
+				group.bitOffset = (b1 << 16) + (b2 << 8) + (b3 << 0);
 
-				// Look in the Huffman table
-				int x;
-				for (x = 0; x<16; x++)
-					if (_huff[x] > v) break;
+				b1 = _res->readByte();
+				b2 = _res->readByte();
+				b3 = _res->readByte();
+				group.offset = (b1 << 16) + (b2 << 8) + (b3 << 0);
 
-				// Bits that we need to read from the length table
-				uint8 bitsToRead = _lens[x];
+				// Place the bit reader in the correct position
+				// group.bitOffset indicates the offset from the start of the subHeader
+				_res->seek(_header + (group.bitOffset >> 3), SEEK_SET);				
 
-				bits += (bitsToRead & 0xf);
-				if (bits & 0x10) {
-					bits &= 0xf;
-					_res->seek(2, SEEK_CUR);
+				Common::BitStream32BEMSB bitStream(_res);
+				// Skip the last 3 bits that we couldn't skip with seek
+				bitStream.skip(group.bitOffset & 7); 
+				for (uint j = 0; j < 64; ++j) {
+					uint32 length = 0;
+					uint32 mask = bitStream.peekBits(16);
+					// Look in the Huffman table
+					int x;
+					for (x = 0; x<16; x++)
+						if (_huff[x] > mask) break;
+					// OK UNTIL HERE
+					// There may be a bug from this point forward, as the 
+					// lengths do not seem to coincide
+					length = bitStream.getBits(_lens[x]);
+
+					group.lengths[j] = length;
 				}
-
-				// We already have in bits the first 4 bits (97)
-				bitsToRead = bitsToRead >> 4;
-
-				// The actual length of the object
-				uint32 len = 0;
-				if (bitsToRead) {
-					// Peek 4 bytes
-					len = _res->readUint32BE();
-					_res->seek(-4, SEEK_CUR);
-
-					bitsToRead--;
-
-					if (bitsToRead == 0) len = 0;
-					else len >>= (32 - bitsToRead) - bits;
-
-					len &= (1 << bitsToRead) - 1;
-					len |= 1 << bitsToRead;
-
-					if (bits & 0x10) {
-						bits &= 0xf;
-						_res->seek(2, SEEK_CUR);
-					}
-
-				}
-
-				group.lengths[(i & 0x3f)] = len;
-
-				if ((i & 0x37) == 0) {
-					_groups.push_back(group);
-				}
+				
+				_groups.push_back(group);				
 			}			 
 		}
 	}
@@ -169,6 +149,19 @@ public:
 		return item;
 	}
 
+	/*
+	void seekBits(uint32 bitNum) {
+		uint bytes = bits / 8;
+		_remainderOffset = bits % 8;
+		_res->seek(bytes, SEEK_SET);
+	}
+
+	void readBits((void*)target, uint32 bitNum) {
+		// Skip the first _remainderOffset bits, read bitNum from that point
+		byte offset = 0xFF << _remainderOffset;
+		
+	}*/
+
 protected:
 	
 	uint _lenObjs;
@@ -182,6 +175,9 @@ protected:
 
 	Common::File _file;
 	Common::SeekableReadStream *_res;
+
+	// To be moved
+	//byte _remainderOffset;
 
 };
 
