@@ -125,8 +125,6 @@ void GoogleDriveStorage::codeFlowComplete(BoolResponse response) {
 	CloudConfig.removeKey("googledrive_code");	
 	CloudMan.replaceStorage(this, kStorageGoogleDriveId);
 	CloudConfig.flushToDisk();
-	debug("Done! You can use Google Drive now! Look:");
-	CloudMan.testFeature();
 }
 
 void GoogleDriveStorage::saveConfig(Common::String keyPrefix) {	

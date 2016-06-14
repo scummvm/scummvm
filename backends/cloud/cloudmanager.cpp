@@ -124,7 +124,12 @@ void CloudManager::replaceStorage(Storage *storage, uint32 index) {
 	_activeStorage = storage;
 	_currentStorageIndex = index;
 	save();
-	if (_activeStorage) _activeStorage->info(nullptr, nullptr); //automatically calls setStorageUsername()
+
+	//do what should be done on first Storage connect
+	if (_activeStorage) {
+		_activeStorage->info(nullptr, nullptr); //automatically calls setStorageUsername()
+		_activeStorage->syncSaves(nullptr, nullptr);
+	}
 }
 
 Storage *CloudManager::getCurrentStorage() const {

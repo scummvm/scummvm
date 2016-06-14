@@ -76,6 +76,7 @@ void DropboxStorage::codeFlowComplete(Networking::JsonResponse response) {
 	if (json) {
 		Common::JSONObject result = json->asObject();
 		if (!result.contains("access_token") || !result.contains("uid")) {
+			warning(json->stringify(true).c_str());
 			warning("Bad response, no token/uid passed");
 		} else {
 			_token = result.getVal("access_token")->asString();
@@ -83,8 +84,6 @@ void DropboxStorage::codeFlowComplete(Networking::JsonResponse response) {
 			CloudConfig.removeKey("dropbox_code");
 			CloudMan.replaceStorage(this, kStorageDropboxId);
 			CloudConfig.flushToDisk();
-			debug("Done! You can use Dropbox now! Look:");
-			CloudMan.testFeature();
 		}
 
 		delete json;

@@ -119,8 +119,6 @@ void OneDriveStorage::codeFlowComplete(BoolResponse response) {
 	CloudConfig.removeKey("onedrive_code");
 	CloudMan.replaceStorage(this, kStorageOneDriveId);
 	CloudConfig.flushToDisk();
-	debug("Done! You can use OneDrive now! Look:");
-	CloudMan.syncSaves();
 }
 
 void OneDriveStorage::saveConfig(Common::String keyPrefix) {	
