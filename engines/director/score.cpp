@@ -871,7 +871,7 @@ void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Su
 	Graphics::Surface tmp;
 	tmp.copyFrom(sprite);
 
-	Graphics::FloodFill ff(&tmp, *(byte *)tmp.getBasePtr(0, 0), 0);
+	Graphics::FloodFill ff(&tmp, *(byte *)tmp.getBasePtr(0, 0), 0, true);
 
 	for (int yy = 0; yy < tmp.h; yy++) {
 		ff.addSeed(0, yy);
