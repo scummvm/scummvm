@@ -498,7 +498,7 @@ Graphics::Surface *Surface::convertTo(const PixelFormat &dstFormat, const byte *
 	return surface;
 }
 
-FloodFill::FloodFill(Graphics::Surface *surface, uint32 oldColor, uint32 fillColor) {
+FloodFill::FloodFill(Graphics::Surface *surface, uint32 oldColor, uint32 fillColor, bool maskMode) {
 	_surface = surface;
 	_oldColor = oldColor;
 	_fillColor = fillColor;
@@ -506,7 +506,7 @@ FloodFill::FloodFill(Graphics::Surface *surface, uint32 oldColor, uint32 fillCol
 	_h = surface->h;
 
 	_mask = nullptr;
-	_maskMode = false;
+	_maskMode = maskMode;
 
 	_visited = (byte *)calloc(_w * _h, 1);
 }

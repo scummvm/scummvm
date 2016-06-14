@@ -362,7 +362,7 @@ public:
 	 * @param oldColor Color on the surface to change
 	 * @param fillColor Color to fill with
 	 */
-	FloodFill(Surface *surface, uint32 oldColor, uint32 fillColor);
+	FloodFill(Surface *surface, uint32 oldColor, uint32 fillColor, bool maskMode = false);
 	~FloodFill();
 
 	/**
