@@ -142,8 +142,9 @@ int Lingo::func_mci(Common::String *s) {
 			warning("Unknown alias %s", params[0].c_str());
 			return 0;
 		}
-		//TODO seek
-		_vm->getSoundManager()->playMCI(*_audioAliases[params[0]]);
+		uint32 from = strtol(params[1].c_str(), 0, 10);
+		uint32 to = strtol(params[2].c_str(), 0, 10);
+		_vm->getSoundManager()->playMCI(*_audioAliases[params[0]], from, to);
 		}
 		break;
 	default:

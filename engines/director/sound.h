@@ -42,7 +42,7 @@ public:
 
 	void playWAV(Common::String filename, uint8 channelID);
 	void playAIFF(Common::String filename, uint8 channelID);
-	void playMCI(Audio::AudioStream &stream);
+	void playMCI(Audio::AudioStream &stream, uint32 from, uint32 to);
 	bool isChannelActive(uint8 channelID);
 	void stopSound();
 };
