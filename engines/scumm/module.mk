@@ -147,6 +147,7 @@ MODULE_OBJS += \
 	he/moonbase/ai_tree.o \
 	he/moonbase/ai_types.o \
 	he/moonbase/ai_weapon.o \
+	he/moonbase/distortion.o \
 	he/moonbase/moonbase.o \
 	he/moonbase/moonbase_fow.o
 endif
