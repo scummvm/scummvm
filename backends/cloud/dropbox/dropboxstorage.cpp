@@ -31,7 +31,7 @@
 #include "common/debug.h"
 #include "common/json.h"
 #include <curl/curl.h>
-#include "backends/cloud/cloudconfighelper.h"
+#include "common/config-manager.h"
 
 namespace Cloud {
 namespace Dropbox {
@@ -40,12 +40,12 @@ char *DropboxStorage::KEY = nullptr; //can't use CloudConfig there yet, loading 
 char *DropboxStorage::SECRET = nullptr; //TODO: hide these secrets somehow
 
 void DropboxStorage::loadKeyAndSecret() {
-	Common::String k = CloudConfig.get("DROPBOX_KEY");
+	Common::String k = ConfMan.get("DROPBOX_KEY", ConfMan.kCloudDomain);
 	KEY = new char[k.size() + 1];
 	memcpy(KEY, k.c_str(), k.size());
 	KEY[k.size()] = 0;
 
-	k = CloudConfig.get("DROPBOX_SECRET");
+	k = ConfMan.get("DROPBOX_SECRET", ConfMan.kCloudDomain);
 	SECRET = new char[k.size() + 1];
 	memcpy(SECRET, k.c_str(), k.size());
 	SECRET[k.size()] = 0;
@@ -81,9 +81,9 @@ void DropboxStorage::codeFlowComplete(Networking::JsonResponse response) {
 		} else {
 			_token = result.getVal("access_token")->asString();
 			_uid = result.getVal("uid")->asString();			
-			CloudConfig.removeKey("dropbox_code");
+			ConfMan.removeKey("dropbox_code", ConfMan.kCloudDomain);
 			CloudMan.replaceStorage(this, kStorageDropboxId);
-			CloudConfig.flushToDisk();
+			ConfMan.flushToDisk();
 		}
 
 		delete json;
@@ -92,9 +92,9 @@ void DropboxStorage::codeFlowComplete(Networking::JsonResponse response) {
 	}
 }
 
-void DropboxStorage::saveConfig(Common::String keyPrefix) {	
-	CloudConfig.set(keyPrefix + "access_token", _token);
-	CloudConfig.set(keyPrefix + "user_id", _uid);
+void DropboxStorage::saveConfig(Common::String keyPrefix) {
+	ConfMan.set(keyPrefix + "access_token", _token, ConfMan.kCloudDomain);
+	ConfMan.set(keyPrefix + "user_id", _uid, ConfMan.kCloudDomain);
 }
 
 Common::String DropboxStorage::name() const {
@@ -198,18 +198,19 @@ void DropboxStorage::infoMethodCallback(StorageInfoResponse response) {
 DropboxStorage *DropboxStorage::loadFromConfig(Common::String keyPrefix) {
 	loadKeyAndSecret();
 
-	if (!CloudConfig.hasKey(keyPrefix + "access_token")) {
+	if (!ConfMan.hasKey(keyPrefix + "access_token", ConfMan.kCloudDomain)) {
 		warning("No access_token found");
 		return 0;
 	}
 
-	if (!CloudConfig.hasKey(keyPrefix + "user_id")) {
+	if (!ConfMan.hasKey(keyPrefix + "user_id", ConfMan.kCloudDomain)) {
 		warning("No user_id found");
 		return 0;
 	}
 
-	Common::String accessToken = CloudConfig.get(keyPrefix + "access_token");
-	Common::String userId = CloudConfig.get(keyPrefix + "user_id");
+	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", ConfMan.kCloudDomain);
+	Common::String userId = ConfMan.get(keyPrefix + "user_id", ConfMan.kCloudDomain);
+
 	return new DropboxStorage(accessToken, userId);
 }
 

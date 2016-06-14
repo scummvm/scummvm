@@ -37,7 +37,7 @@
 #include "googledrivestreamfilerequest.h"
 #include "googledrivedownloadrequest.h"
 #include "googledriveuploadrequest.h"
-#include "backends/cloud/cloudconfighelper.h"
+#include "common/config-manager.h"
 
 namespace Cloud {
 namespace GoogleDrive {
@@ -46,12 +46,12 @@ char *GoogleDriveStorage::KEY = nullptr; //can't use CloudConfig there yet, load
 char *GoogleDriveStorage::SECRET = nullptr; //TODO: hide these secrets somehow
 
 void GoogleDriveStorage::loadKeyAndSecret() {
-	Common::String k = CloudConfig.get("GOOGLE_DRIVE_KEY");
+	Common::String k = ConfMan.get("GOOGLE_DRIVE_KEY", ConfMan.kCloudDomain);
 	KEY = new char[k.size() + 1];
 	memcpy(KEY, k.c_str(), k.size());
 	KEY[k.size()] = 0;
 
-	k = CloudConfig.get("GOOGLE_DRIVE_SECRET");
+	k = ConfMan.get("GOOGLE_DRIVE_SECRET", ConfMan.kCloudDomain);
 	SECRET = new char[k.size() + 1];
 	memcpy(SECRET, k.c_str(), k.size());
 	SECRET[k.size()] = 0;
@@ -122,14 +122,14 @@ void GoogleDriveStorage::codeFlowComplete(BoolResponse response) {
 		return;
 	}
 
-	CloudConfig.removeKey("googledrive_code");	
+	ConfMan.removeKey("googledrive_code", ConfMan.kCloudDomain);
 	CloudMan.replaceStorage(this, kStorageGoogleDriveId);
-	CloudConfig.flushToDisk();
+	ConfMan.flushToDisk();
 }
 
 void GoogleDriveStorage::saveConfig(Common::String keyPrefix) {	
-	CloudConfig.set(keyPrefix + "access_token", _token);
-	CloudConfig.set(keyPrefix + "refresh_token", _refreshToken);
+	ConfMan.set(keyPrefix + "access_token", _token, ConfMan.kCloudDomain);
+	ConfMan.set(keyPrefix + "refresh_token", _refreshToken, ConfMan.kCloudDomain);
 }
 
 Common::String GoogleDriveStorage::name() const {
@@ -337,18 +337,18 @@ Common::String GoogleDriveStorage::savesDirectoryPath() { return "scummvm/saves/
 GoogleDriveStorage *GoogleDriveStorage::loadFromConfig(Common::String keyPrefix) {
 	loadKeyAndSecret();
 
-	if (!CloudConfig.hasKey(keyPrefix + "access_token")) {
+	if (!ConfMan.hasKey(keyPrefix + "access_token", ConfMan.kCloudDomain)) {
 		warning("No access_token found");
 		return 0;
 	}
 
-	if (!CloudConfig.hasKey(keyPrefix + "refresh_token")) {
+	if (!ConfMan.hasKey(keyPrefix + "refresh_token", ConfMan.kCloudDomain)) {
 		warning("No refresh_token found");
 		return 0;
 	}
 
-	Common::String accessToken = CloudConfig.get(keyPrefix + "access_token");	
-	Common::String refreshToken = CloudConfig.get(keyPrefix + "refresh_token");
+	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", ConfMan.kCloudDomain);
+	Common::String refreshToken = ConfMan.get(keyPrefix + "refresh_token", ConfMan.kCloudDomain);
 	return new GoogleDriveStorage(accessToken, refreshToken);
 }
 
@@ -363,16 +363,16 @@ Common::String GoogleDriveStorage::getAuthLink() {
 }
 
 void GoogleDriveStorage::authThroughConsole() {
-	if (!CloudConfig.hasKey("GOOGLE_DRIVE_KEY") || !CloudConfig.hasKey("GOOGLE_DRIVE_SECRET")) {
+	if (!ConfMan.hasKey("GOOGLE_DRIVE_KEY", ConfMan.kCloudDomain) || !ConfMan.hasKey("GOOGLE_DRIVE_SECRET", ConfMan.kCloudDomain)) {
 		warning("No Google Drive keys available, cannot do auth");
 		return;
 	}
 
 	loadKeyAndSecret();
 
-	if (CloudConfig.hasKey("googledrive_code")) {
+	if (ConfMan.hasKey("googledrive_code", ConfMan.kCloudDomain)) {
 		//phase 2: get access_token using specified code
-		new GoogleDriveStorage(CloudConfig.get("googledrive_code"));
+		new GoogleDriveStorage(ConfMan.get("googledrive_code", ConfMan.kCloudDomain));
 		return;
 	}
 
