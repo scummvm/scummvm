@@ -508,6 +508,11 @@ FloodFill::FloodFill(Graphics::Surface *surface, uint32 oldColor, uint32 fillCol
 	_mask = nullptr;
 	_maskMode = maskMode;
 
+	if (_maskMode) {
+		_mask = new Graphics::Surface();
+		_mask->create(_w, _h, Graphics::PixelFormat::createFormatCLUT8()); // Uses calloc()
+	}
+
 	_visited = (byte *)calloc(_w * _h, 1);
 }
 
@@ -588,9 +593,12 @@ void FloodFill::fill() {
 }
 
 void FloodFill::fillMask() {
-	_mask = new Graphics::Surface();
-	_mask->create(_w, _h, Graphics::PixelFormat::createFormatCLUT8()); // Uses calloc()
 	_maskMode = true;
+
+	if (!_mask) {
+		_mask = new Graphics::Surface();
+		_mask->create(_w, _h, Graphics::PixelFormat::createFormatCLUT8()); // Uses calloc()
+	}
 
 	fill();
 }
