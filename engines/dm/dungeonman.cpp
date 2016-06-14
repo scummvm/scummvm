@@ -497,7 +497,9 @@ Thing DungeonMan::getSquareFirstThing(int16 mapX, int16 mapY) {
 void DungeonMan::setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX, int16 mapY) {	// complete, except where marked
 	_vm->_displayMan->_championPortraitOrdinal = 0; // BUG0_75, possible fix
 
-	memset(aspectArray, 0, 5 * sizeof(uint16));
+	for (uint16 i = 0; i < 5; ++i)
+		aspectArray[i] = 0;
+
 	Thing thing = getSquareFirstThing(mapX, mapY);
 	Square square = getSquare(mapX, mapY);
 
@@ -560,11 +562,13 @@ T0172010_ClosedFakeWall:
 		}
 		break;
 	case kPitElemType:
-		if (square.get(kPitOpen))
+		if (square.get(kPitOpen)) {
 			aspectArray[kPitInvisibleAspect] = square.get(kPitInvisible);
-		else
+			footPrintsAllowed = square.toByte() & 1;
+		} else {
 			aspectArray[kElemAspect] = kCorridorElemType;
-		footPrintsAllowed = true;
+			footPrintsAllowed = true;
+		}
 		goto T0172030_Pit;
 	case kFakeWallElemType:
 		if (!square.get(kFakeWallOpen)) {
@@ -575,6 +579,7 @@ T0172010_ClosedFakeWall:
 		}
 		aspectArray[kWallElemType] = kCorridorElemType;
 		footPrintsAllowed = square.get(kFakeWallRandOrnOrFootPAllowed);
+		square = footPrintsAllowed ? 8 : 0;
 		// intentional fallthrough
 	case kCorridorElemType:
 		aspectArray[kFloorOrnOrdAspect] = getRandomOrnOrdinal(square.get(kCorridorRandOrnAllowed), _currMap.map->randFloorOrnCount, mapX, mapY, 30);
@@ -608,6 +613,7 @@ T0172046_Stairs:
 		while ((thing != Thing::thingEndOfList) && (thing.getType() <= kSensorThingType))
 			thing = getNextThing(thing);
 T0172049_Footprints:
+		unsigned char scentOrdinal; // see next line comment
 		if (footPrintsAllowed) // TODO: I skipped some party query code, must come back later and complete
 			aspectArray[kFloorOrnOrdAspect] &= kFootprintsAspect;
 	}
