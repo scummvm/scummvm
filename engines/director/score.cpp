@@ -447,7 +447,7 @@ void Score::startLoop() {
 	_nextFrameTime = 0;
 
 	_lingo->processEvent(kEventStartMovie, 0);
-	_frames[_currentFrame]->prepareFrame(*_movieArchive, *_surface, *_trailSurface, _movieRect);
+	_frames[_currentFrame]->prepareFrame(this);
 	while (!_stopPlay && _currentFrame < _frames.size() - 2) {
 		update();
 		processEvents();
@@ -478,7 +478,7 @@ void Score::update() {
 	//TODO Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
 	//_lingo->processEvent(kEventPrepareFrame, _currentFrame);
 	_currentFrame++;
-	_frames[_currentFrame]->prepareFrame(*_movieArchive, *_surface, *_trailSurface, _movieRect);
+	_frames[_currentFrame]->prepareFrame(this);
 	//Stage is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell)
 
 	byte tempo = _frames[_currentFrame]->_tempo;
@@ -742,16 +742,16 @@ void Frame::readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16
 	}
 }
 
-void Frame::prepareFrame(Archive &_movie, Graphics::ManagedSurface &surface, Graphics::ManagedSurface &trailSurface, Common::Rect movieRect) {
-	renderSprites(_movie, surface, movieRect, false);
-	renderSprites(_movie, trailSurface, movieRect, true);
+void Frame::prepareFrame(Score *score) {
+	renderSprites(*score->_movieArchive, *score->_surface, score->_movieRect, false);
+	renderSprites(*score->_movieArchive, *score->_trailSurface, score->_movieRect, true);
 	if (_transType != 0)
 		//TODO Handle changing area case
-		playTransition(surface, movieRect);
+		playTransition(score);
 	if (_sound1 != 0 || _sound2 != 0) {
 		playSoundChannel();
 	}
-	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, surface.getBounds().width(), surface.getBounds().height());
+	g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, score->_surface->getBounds().width(), score->_surface->getBounds().height());
 }
 
 void Frame::playSoundChannel() {
@@ -759,7 +759,7 @@ void Frame::playSoundChannel() {
 	debug(0, "Sound1 %d", _sound1);
 }
 
-void Frame::playTransition(Graphics::ManagedSurface &frameSurface, Common::Rect transRect) {
+void Frame::playTransition(Score *score) {
 	uint16 duration = _transDuration * 250; // _transDuration in 1/4 of sec
 	duration = (duration == 0 ? 250 : duration); // director support transition duration = 0, but animation play like value = 1, idk.
 	uint16 stepDuration = duration / _transChunkSize;
@@ -767,23 +767,25 @@ void Frame::playTransition(Graphics::ManagedSurface &frameSurface, Common::Rect 
 
 	switch (_transType) {
 	case kTransCoverDown: {
-			uint16 stepSize = transRect.height() / steps;
-			Common::Rect r = transRect;
+			uint16 stepSize = score->_movieRect.height() / steps;
+			Common::Rect r = score->_movieRect;
 			for (uint16 i = 1; i < steps; i++) {
 				r.setHeight(stepSize * i);
 				g_system->delayMillis(stepDuration);
-				g_system->copyRectToScreen(frameSurface.getPixels(), frameSurface.pitch, 0, 0, r.width(), r.height());
+				score->processEvents();
+				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height());
 				g_system->updateScreen();
 			}
 		}
 		break;
 	case kTransCoverUp: {
-			uint16 stepSize = transRect.height() / steps;
-			Common::Rect r = transRect;
+			uint16 stepSize = score->_movieRect.height() / steps;
+			Common::Rect r = score->_movieRect;
 			for (uint16 i = 1; i < steps; i++) {
 				r.setHeight(stepSize*i);
 				g_system->delayMillis(stepDuration);
-				g_system->copyRectToScreen(frameSurface.getPixels(), frameSurface.pitch, 0, transRect.height() - stepSize * i, r.width(), r.height());
+				score->processEvents();
+				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, score->_movieRect.height() - stepSize * i, r.width(), r.height());
 				g_system->updateScreen();
 			}
 		}

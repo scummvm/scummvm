@@ -34,6 +34,7 @@ namespace Director {
 
 class Lingo;
 class DirectorSound;
+class Score;
 
 #define CHANNEL_COUNT 24
 
@@ -242,10 +243,10 @@ public:
     ~Frame();
     Frame(const Frame &frame);
     void readChannel(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
-    void prepareFrame(Archive &_movie, Graphics::ManagedSurface &surface, Graphics::ManagedSurface &trailSurface, Common::Rect movieRect);
+    void prepareFrame(Score *score);
     uint16 getSpriteIDFromPos(Common::Point pos);
 private:
-    void playTransition(Graphics::ManagedSurface &frameSurface, Common::Rect transRect);
+    void playTransition(Score *score);
     void playSoundChannel();
     void renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect movieRect, bool renderTrail);
     void readPaletteInfo(Common::SeekableReadStream &stream);
@@ -279,9 +280,9 @@ public:
     ~Score();
     static Common::Rect readRect(Common::SeekableReadStream &stream);
     void startLoop();
-
-private:
     void processEvents();
+private:
+
     void update();
     void readVersion(uint32 rid);
     void loadConfig(Common::SeekableReadStream &stream);
@@ -302,6 +303,10 @@ public:
     Common::HashMap<uint16, Common::String> _labels;
     Common::HashMap<uint16, Common::String> _actions;
     Common::HashMap<uint16, Common::String> _fontMap;
+    Graphics::ManagedSurface *_surface;
+    Graphics::ManagedSurface *_trailSurface;
+    Archive *_movieArchive;
+    Common::Rect _movieRect;
 private:
     uint16 _versionMinor;
     uint16 _versionMajor;
@@ -317,11 +322,7 @@ private:
     uint32 _flags;
     bool _stopPlay;
     uint16 _castArrayEnd;
-    Common::Rect _movieRect;
     uint16 _stageColor;
-    Archive *_movieArchive;
-    Graphics::ManagedSurface *_surface;
-    Graphics::ManagedSurface *_trailSurface;
     Lingo *_lingo;
     DirectorSound *_soundManager;
 };
