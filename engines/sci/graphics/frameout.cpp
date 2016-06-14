@@ -77,6 +77,8 @@ GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAd
 	_screen(screen),
 	_segMan(segMan),
 	_paint32(paint32),
+	_benchmarkingFinished(false),
+	_throttleFrameOut(true),
 	_showStyles(nullptr),
 	// TODO: Stop using _gfxScreen
 	_currentBuffer(screen->getDisplayWidth(), screen->getDisplayHeight(), nullptr),
@@ -258,6 +260,17 @@ void GfxFrameout::syncWithScripts(bool addElements) {
 #pragma mark Screen items
 
 void GfxFrameout::kernelAddScreenItem(const reg_t object) {
+	// The "fred" object is used to test graphics performance;
+	// it is impacted by framerate throttling, so disable the
+	// throttling when this item is on the screen for the
+	// performance check to pass.
+	if (!_benchmarkingFinished && (
+		(int16)readSelectorValue(_segMan, object, SELECTOR(view)) == -556 ||
+		Common::String(_segMan->getObjectName(object)) == "fred"
+	)) {
+		_throttleFrameOut = false;
+	}
+
 	const reg_t planeObject = readSelector(_segMan, object, SELECTOR(plane));
 
 	_segMan->getObject(object)->setInfoSelectorFlag(kInfoFlagViewInserted);
@@ -297,6 +310,18 @@ void GfxFrameout::kernelUpdateScreenItem(const reg_t object) {
 }
 
 void GfxFrameout::kernelDeleteScreenItem(const reg_t object) {
+	// The "fred" object is used to test graphics performance;
+	// it is impacted by framerate throttling, so disable the
+	// throttling when this item is on the screen for the
+	// performance check to pass.
+	if (!_benchmarkingFinished && (
+		(int16)readSelectorValue(_segMan, object, SELECTOR(view)) == -556 ||
+		Common::String(_segMan->getObjectName(object)) == "fred"
+	)) {
+		_benchmarkingFinished = true;
+		_throttleFrameOut = true;
+	}
+
 	_segMan->getObject(object)->clearInfoSelectorFlag(kInfoFlagViewInserted);
 
 	const reg_t planeObject = readSelector(_segMan, object, SELECTOR(plane));
@@ -1394,6 +1419,11 @@ void GfxFrameout::kernelFrameOut(const bool shouldShowBits) {
 //		}
 
 		frameOut(shouldShowBits);
+	}
+
+	if (_throttleFrameOut) {
+		g_sci->getEngineState()->speedThrottler(16);
+		g_sci->getEngineState()->_throttleTrigger = true;
 	}
 }
 

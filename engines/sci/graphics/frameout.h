@@ -179,6 +179,22 @@ public:
 	void run();
 
 #pragma mark -
+#pragma mark Benchmarking
+private:
+	/**
+	 * Optimization to avoid the more expensive object name
+	 * comparision on every call to kAddScreenItem and
+	 * kRemoveScreenItem.
+	 */
+	bool _benchmarkingFinished;
+
+	/**
+	 * Whether or not calls to kFrameOut should be framerate
+	 * limited to ~60fps.
+	 */
+	bool _throttleFrameOut;
+
+#pragma mark -
 #pragma mark Screen items
 private:
 	void deleteScreenItem(ScreenItem *screenItem, const reg_t plane);
