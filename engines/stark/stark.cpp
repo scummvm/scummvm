@@ -107,7 +107,7 @@ Common::Error StarkEngine::run() {
 	_stateProvider = new StateProvider();
 	_global = new Global();
 	_resourceProvider = new ResourceProvider(_archiveLoader, _stateProvider, _global);
-	_staticProvider = new StaticProvider(_archiveLoader, _global);
+	_staticProvider = new StaticProvider(_archiveLoader);
 	_randomSource = new Common::RandomSource("stark");
 	_fontProvider = new FontProvider();
 	_scene = new Scene(_gfx);

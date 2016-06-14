@@ -32,9 +32,8 @@
 
 namespace Stark {
 
-StaticProvider::StaticProvider(ArchiveLoader *archiveLoader, Global *global) :
+StaticProvider::StaticProvider(ArchiveLoader *archiveLoader) :
 		_archiveLoader(archiveLoader),
-		_global(global),
 		_level(nullptr) {
 }
 

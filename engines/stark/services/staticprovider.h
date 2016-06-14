@@ -46,7 +46,7 @@ class VisualImageXMG;
  */
 class StaticProvider {
 public:
-	StaticProvider(ArchiveLoader *archiveLoader, Global *global);
+	StaticProvider(ArchiveLoader *archiveLoader);
 
 	enum UIElement {
 		kInventoryScrollUpArrow = 1,
@@ -90,7 +90,6 @@ public:
 
 private:
 	ArchiveLoader *_archiveLoader;
-	Global *_global;
 
 	Resources::Level *_level;
 	Common::Array<Resources::Anim *> _stockAnims;
