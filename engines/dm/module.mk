@@ -4,7 +4,8 @@ MODULE_OBJS := \
 	detection.o \
 	dm.o \
 	gfx.o \
-	dungeonman.o
+	dungeonman.o \
+	eventman.o
 
 MODULE_DIRS += \
 	engines/dm

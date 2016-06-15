@@ -4,6 +4,7 @@
 #include "common/random.h"
 #include "engines/engine.h"
 #include "gui/debugger.h"
+#include "eventman.h"
 
 
 namespace DM {
@@ -87,6 +88,7 @@ public:
 	Common::RandomSource *_rnd;
 	DisplayMan *_displayMan;
 	DungeonMan *_dungeonMan;
+	EventManager *_eventMan;
 };
 
 class Console : public GUI::Debugger {

@@ -50,6 +50,7 @@ DMEngine::~DMEngine() {
 	delete _console;
 	delete _displayMan;
 	delete _dungeonMan;
+	delete _eventMan;
 
 	// clear debug channels
 	DebugMan.clearAllDebugChannels();
@@ -61,6 +62,7 @@ Common::Error DMEngine::run() {
 	_console = new Console(this);
 	_displayMan = new DisplayMan(this);
 	_dungeonMan = new DungeonMan(this);
+	_eventMan = new EventManager(this);
 
 	_displayMan->setUpScreens(320, 200);
 
@@ -77,40 +79,10 @@ Common::Error DMEngine::run() {
 
 	_displayMan->loadPalette(gPalCredits);
 
-	CurrMapData &currMap = _dungeonMan->_currMap;
+	_eventMan->initMouse();
+
 	while (true) {
-		Common::Event event;
-		while (_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_KEYDOWN && !event.synthetic)
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_w:
-					_dungeonMan->mapCoordsAfterRelMovement(currMap.partyDir, 1, 0, currMap.partyPosX, currMap.partyPosY);
-					break;
-				case Common::KEYCODE_a:
-					_dungeonMan->mapCoordsAfterRelMovement(currMap.partyDir, 0, -1, currMap.partyPosX, currMap.partyPosY);
-					break;
-				case Common::KEYCODE_s:
-					_dungeonMan->mapCoordsAfterRelMovement(currMap.partyDir, -1, 0, currMap.partyPosX, currMap.partyPosY);
-					break;
-				case Common::KEYCODE_d:
-					_dungeonMan->mapCoordsAfterRelMovement(currMap.partyDir, 0, 1, currMap.partyPosX, currMap.partyPosY);
-					break;
-				case Common::KEYCODE_q:
-					turnDirLeft(currMap.partyDir);
-					break;
-				case Common::KEYCODE_e:
-					turnDirRight(currMap.partyDir);
-					break;
-				case Common::KEYCODE_UP:
-					if (dummyMapIndex < 13)
-						_dungeonMan->setCurrentMapAndPartyMap(++dummyMapIndex);
-					break;
-				case Common::KEYCODE_DOWN:
-					if (dummyMapIndex > 0)
-						_dungeonMan->setCurrentMapAndPartyMap(--dummyMapIndex);
-					break;
-				}
-		}
+		_eventMan->processInput();
 		_displayMan->clearScreen(kColorBlack);
 		_displayMan->drawDungeon(_dungeonMan->_currMap.partyDir, _dungeonMan->_currMap.partyPosX, _dungeonMan->_currMap.partyPosY);
 		_displayMan->updateScreen();
