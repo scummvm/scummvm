@@ -1816,7 +1816,6 @@ void Wiz::copy555WizImage(uint8 *dst, uint8 *wizd, int dstPitch, int dstType,
 	if (compID == 0x12340102) {
 		((ScummEngine_v100he *)_vm)->_moonbase->blitT14WizImage(dst, dstw, dsth, dstPitch, clipBox, wizd, srcx, srcy, rawROP, paramROP);
 	} else if (compID == 0x12340802) {
-		warning("Distortion codec");
 		((ScummEngine_v100he *)_vm)->_moonbase->blitDistortion(dst, dstw, dsth, dstPitch, clipBox, wizd, srcx, srcy, 0);
 	} else if (compID == 0x12340902) {
 		error("Unsupported Distortion");
