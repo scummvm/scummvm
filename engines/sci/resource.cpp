@@ -1352,6 +1352,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 		Common::File *file = new Common::File();
 		if (!file->open(source->getLocationName())) {
 			warning("ResourceManager::processPatch(): failed to open %s", source->getLocationName().c_str());
+			delete source;
 			return;
 		}
 		fileStream = file;
@@ -1360,6 +1361,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	int fsize = fileStream->size();
 	if (fsize < 3) {
 		debug("Patching %s failed - file too small", source->getLocationName().c_str());
+		delete source;
 		return;
 	}
 
@@ -1370,6 +1372,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 
 	if (patchType != checkForType) {
 		debug("Patching %s failed - resource type mismatch", source->getLocationName().c_str());
+		delete source;
 		return;
 	}
 
@@ -1394,6 +1397,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	if (patchDataOffset + 2 >= fsize) {
 		debug("Patching %s failed - patch starting at offset %d can't be in file of size %d",
 		      source->getLocationName().c_str(), patchDataOffset + 2, fsize);
+		delete source;
 		return;
 	}
 
