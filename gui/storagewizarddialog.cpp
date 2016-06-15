@@ -141,6 +141,7 @@ int StorageWizardDialog::decodeHashchar(char c) {
 }
 
 bool StorageWizardDialog::correctChecksum(Common::String s) {
+	if (s.size() == 0) return false; //no last char
 	int providedChecksum = decodeHashchar(s.lastChar());
 	int calculatedChecksum = 0x2A;
 	for (uint32 i = 0; i < s.size()-1; ++i) {
