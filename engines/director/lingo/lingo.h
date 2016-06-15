@@ -75,7 +75,7 @@ public:
 	Lingo(DirectorEngine *vm);
 	~Lingo();
 
-	void addCode(Common::String code, scriptType type, uint16 id);
+	void addCode(Common::String code, ScriptType type, uint16 id);
 
 	void processEvent(LEvent event, int entityId);
 

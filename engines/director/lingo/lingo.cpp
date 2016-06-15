@@ -76,7 +76,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 Lingo::~Lingo() {
 }
 
-void Lingo::addCode(Common::String code, scriptType type, uint16 id) {
+void Lingo::addCode(Common::String code, ScriptType type, uint16 id) {
 	debug(0, "Add code %s for type %d with id %d", code.c_str(), type, id);
 }
 

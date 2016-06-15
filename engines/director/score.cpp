@@ -263,7 +263,7 @@ void Score::loadActions(Common::SeekableReadStream &stream) {
 	}
 }
 
-void Score::dumpScript(uint16 id, scriptType type, Common::String script) {
+void Score::dumpScript(uint16 id, ScriptType type, Common::String script) {
 	Common::DumpFile out;
 	Common::String typeName;
 	char buf[256];
@@ -297,6 +297,9 @@ void Score::loadCastInfo(Common::SeekableReadStream &stream, uint16 id) {
 	Common::Array<Common::String> castStrings = loadStrings(stream, entryType);
 	CastInfo *ci = new CastInfo();
 	ci->script = castStrings[0];
+	if (ci->script != "") {
+		_lingo->addCode(ci->script, kSpriteScript, id);
+	}
 	ci->name = getString(castStrings[1]);
 	ci->directory = getString(castStrings[2]);
 	ci->fileName = getString(castStrings[3]);
@@ -323,6 +326,9 @@ Common::String Score::getString(Common::String str) {
 void Score::loadFileInfo(Common::SeekableReadStream &stream) {
 	Common::Array<Common::String> fileInfoStrings = loadStrings(stream, _flags);
 	_script = fileInfoStrings[0];
+	if (_script != "") {
+		_lingo->addCode(_script, kMovieScript, 0);
+	}
 	_changedBy = fileInfoStrings[1];
 	_createdBy = fileInfoStrings[2];
 	_directory = fileInfoStrings[3];
@@ -639,7 +645,7 @@ void Frame::readMainChannels(Common::SeekableReadStream &stream, uint16 offset, 
 			offset++;
 			break;
 		case kTransTypePosition:
-			_transType = static_cast<transitionType>(stream.readByte());
+			_transType = static_cast<TransitionType>(stream.readByte());
 			offset++;
 			break;
 		case kSound1Position:
@@ -708,7 +714,7 @@ void Frame::readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16
 			break;
 		case kSpritePositionFlags:
 			sprite._flags = stream.readUint16BE();
-			sprite._ink = static_cast<inkType>(sprite._flags & 0x3f);
+			sprite._ink = static_cast<InkType>(sprite._flags & 0x3f);
 			if (sprite._flags & 0x40)
 				sprite._trails = 1;
 			else
@@ -853,7 +859,7 @@ void Frame::renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Co
 }
 
 void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
-	uint8 skipColor = 15; //FIXME is it always white (last entry in pallette) ?
+	uint8 skipColor = *(byte *)target.getBasePtr(0, 0); //FIXME is it always white (last entry in pallette) ?
 	for (int ii = 0; ii < sprite.h; ii++) {
 		const byte *src = (const byte *)sprite.getBasePtr(0, ii);
 		byte *dst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + ii);

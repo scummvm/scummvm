@@ -38,7 +38,7 @@ class Score;
 
 #define CHANNEL_COUNT 24
 
-enum castType {
+enum CastType {
     kCastBitmap = 1,
     kCastFilmLoop,
     kCastText,
@@ -52,7 +52,7 @@ enum castType {
     kCastScript
 };
 
-enum spritePositions {
+enum SpritePosition {
     kSpritePositionUnk1 = 0,
     kSpritePositionEnabled,
     kSpritePositionUnk2,
@@ -64,7 +64,7 @@ enum spritePositions {
     kSpritePositionWidth = 14
 };
 
-enum mainChannelsPosition {
+enum MainChannelsPosition {
     kScriptIdPosition = 0,
     kSoundType1Position,
     kTransFlagsPosition,
@@ -79,7 +79,7 @@ enum mainChannelsPosition {
     kPaletePosition = 15
 };
 
-enum inkType {
+enum InkType {
     kInkTypeCopy,
     kInkTypeTransparent,
     kInkTypeReverse,
@@ -101,13 +101,13 @@ enum inkType {
     kInkTypeDark
 };
 
-enum scriptType {
+enum ScriptType {
     kMovieScript,
     kSpriteScript,
     kFrameScript
 };
 
-enum transitionType {
+enum TransitionType {
     kTransWipeRight = 1,
     kTransWipeLeft,
     kTransWipeDown,
@@ -163,7 +163,7 @@ enum transitionType {
 };
 
 struct Cast {
-    castType type;
+    CastType type;
     Common::Rect initialRect;
 };
 
@@ -228,7 +228,7 @@ public:
     Sprite(const Sprite &sprite);
     bool _enabled;
     byte _castId;
-    inkType _ink;
+    InkType _ink;
     uint16 _trails;
     Cast *_cast;
     uint16 _flags;
@@ -259,7 +259,7 @@ public:
     uint8 _transDuration;
     uint8 _transArea; //1 - Whole Stage, 0 - Changing Area
     uint8 _transChunkSize;
-    transitionType _transType;
+    TransitionType _transType;
     PaletteInfo *_palette;
     uint8 _tempo;
 
@@ -293,7 +293,7 @@ private:
     void loadCastInfo(Common::SeekableReadStream &stream, uint16 id);
     void loadFileInfo(Common::SeekableReadStream &stream);
     void loadFontMap(Common::SeekableReadStream &stream);
-    void dumpScript(uint16 id, scriptType type, Common::String script);
+    void dumpScript(uint16 id, ScriptType type, Common::String script);
     Common::String getString(Common::String str);
     Common::Array<Common::String> loadStrings(Common::SeekableReadStream &stream, uint32 &entryType, bool hasHeader = true);
 public:
