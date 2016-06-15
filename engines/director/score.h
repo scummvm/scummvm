@@ -130,10 +130,10 @@ enum TransitionType {
     kTransRevealDownLeft,
     kTransRevealLeft,
     kTransRevealUpLeft,
-    kTransDisolvePixelsFast,
-    kTransDisolveBoxyRects,
-    kTransDisolveBoxySquares,
-    kTransDisolvePatterns,
+    kTransDissolvePixelsFast,
+    kTransDissolveBoxyRects,
+    kTransDissolveBoxySquares,
+    kTransDissolvePatterns,
     kTransRandomRows,
     kTransRandomColumns,
     kTransCoverDown,
@@ -157,9 +157,9 @@ enum TransitionType {
     kTransZoomOpen,
     kTransZoomClose,
     kTransVerticalBinds,
-    kTransDisolveBitsTrans,
-    kTransDisolvePixels,
-    kTransDisolveBits
+    kTransDissolveBitsTrans,
+    kTransDissolvePixels,
+    kTransDissolveBits
 };
 
 struct Cast {
