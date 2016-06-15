@@ -58,7 +58,7 @@ class Settings;
 
 class ScalpelUserInterface: public UserInterface {
 	friend class Settings;
-	friend class Talk;
+	friend class Sherlock::Talk;
 private:
 	char _keyPress;
 	int _lookHelp;
