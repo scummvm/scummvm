@@ -190,6 +190,7 @@ void Moonbase::blitDistortion(byte *bufferData, const int bufferWidth, const int
 		int src_x = (x + xOffset);
 		int src_y = (y + yOffset);
 
+		warning("x1: %d y1: %d x2: %d y2: %d", (src_x - l_reach), (src_y - t_reach), (src_x + r_reach), (src_y + b_reach));
 		Common::Rect srcReach((src_x - l_reach), (src_y - t_reach), (src_x + r_reach), (src_y + b_reach));
 		Common::Rect srcLimits(srcBitmap.w, srcBitmap.h);
 
