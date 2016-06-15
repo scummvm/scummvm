@@ -17,12 +17,13 @@ class EventManager {
 public:
 	EventManager(DMEngine *vm);
 	void initMouse();
+	void showMouse(bool visibility);
 
 	void setMousePos(Common::Point pos);
 	void processInput();
 };
 
-};
+}
 
 
 #endif DM_EVENTMAN_H

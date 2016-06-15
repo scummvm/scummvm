@@ -80,6 +80,7 @@ Common::Error DMEngine::run() {
 	_displayMan->loadPalette(gPalCredits);
 
 	_eventMan->initMouse();
+	_eventMan->showMouse(true);
 
 	while (true) {
 		_eventMan->processInput();

@@ -2,23 +2,52 @@
 #include "dm.h"
 #include "common/system.h"
 #include "dungeonman.h"
+#include "graphics/cursorman.h"
+#include "gfx.h"
 
 
 
 using namespace DM;
 
 
-EventManager::EventManager(DMEngine *vm) : _vm(vm) {}
+EventManager::EventManager(DMEngine *vm) : _vm(vm) {
+	_dummyMapIndex = 0;				
+}
+
+
+// dummy data
+static const byte mouseData[] = {
+	1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 7, 1, 0, 0, 0, 0, 0, 0, 0,
+	1, 7, 7, 1, 0, 0, 0, 0, 0, 0,
+	1, 7, 7, 7, 1, 0, 0, 0, 0, 0,
+	1, 7, 7, 7, 7, 1, 0, 0, 0, 0,
+	1, 7, 7, 7, 7, 7, 1, 0, 0, 0,
+	1, 7, 7, 7, 7, 7, 7, 1, 0, 0,
+	1, 7, 7, 7, 7, 7, 7, 7, 1, 0,
+	1, 7, 7, 7, 7, 7, 1, 1, 1, 1,
+	1, 7, 7, 1, 7, 7, 1, 0, 0, 0,
+	1, 7, 1, 0, 1, 7, 7, 1, 0, 0,
+	1, 1, 0, 0, 1, 7, 7, 1, 0, 0,
+	0, 0, 0, 0, 0, 1, 7, 7, 1, 0,
+	0, 0, 0, 0, 0, 1, 7, 7, 1, 0,
+	0, 0, 0, 0, 0, 0, 1, 1, 0, 0
+};
+#define MOUSE_WIDTH 10
+#define MOUSE_HEIGHT 15
 
 
 void EventManager::initMouse() {
 	_mousePos = Common::Point(0, 0);
-	_dummyMapIndex = 0;				
+	CursorMan.pushCursor(mouseData, MOUSE_WIDTH, MOUSE_HEIGHT, 0, 0, 0);
+	CursorMan.showMouse(false);
+
+	setMousePos(Common::Point(320/2, 200/2));
 	// TODO: add cursor creatin, set to hidden
 }
 
-void showMouse(bool visibility) {
-	// TODO: add code
+void EventManager::showMouse(bool visibility) {
+	CursorMan.showMouse(visibility);
 }
 
 void EventManager::setMousePos(Common::Point pos) {
