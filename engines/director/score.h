@@ -291,6 +291,7 @@ private:
     void loadLabels(Common::SeekableReadStream &stream);
     void loadActions(Common::SeekableReadStream &stream);
     void loadCastInfo(Common::SeekableReadStream &stream, uint16 id);
+    void loadScriptText(Common::SeekableReadStream &stream);
     void loadFileInfo(Common::SeekableReadStream &stream);
     void loadFontMap(Common::SeekableReadStream &stream);
     void dumpScript(uint16 id, ScriptType type, Common::String script);

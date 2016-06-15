@@ -83,13 +83,21 @@ Score::Score(Archive &movie, Lingo &lingo, DirectorSound &soundManager) {
 			loadCastInfo(*_movieArchive->getResource(MKTAG('V','W','C','I'), *iterator), *iterator);
 	}
 
+	Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
+	if (stxt.size() > 0) {
+		Common::Array<uint16>::iterator iterator;
+		for (iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
+			loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *iterator));
+		}
+	}
+
 	DIBDecoder palette;
 	Common::Array<uint16> clutList = _movieArchive->getResourceIDList(MKTAG('C','L','U','T'));
 
 	if (clutList.size() > 1)
 		error("More than one palette was found");
 	if (clutList.size() == 0)
-		warning("CLUT not found");
+		error("CLUT not found");
 
 	Common::SeekableReadStream *pal = _movieArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[0]);
 	palette.loadPalette(*pal);
@@ -261,6 +269,22 @@ void Score::loadActions(Common::SeekableReadStream &stream) {
 	for (j = _actions.begin(); j != _actions.end(); ++j) {
 		dumpScript(j->_key, kFrameScript, j->_value);
 	}
+}
+
+void Score::loadScriptText(Common::SeekableReadStream &stream) {
+	/*uint32 unk1 = */ stream.readUint32BE();
+	uint32 strLen = stream.readUint32BE();
+	/*uin32 dataLen = */ stream.readUint32BE();
+	Common::String script;
+	for (uint32 i = 0; i < strLen; i++) {
+		byte ch = stream.readByte();
+		if (ch == 0x0d){
+			//in old Mac systems \r was the code for end-of-line instead.
+			ch = '\n';
+		}
+		script += ch;
+	}
+	_lingo->addCode(script, kMovieScript, 0);
 }
 
 void Score::dumpScript(uint16 id, ScriptType type, Common::String script) {
