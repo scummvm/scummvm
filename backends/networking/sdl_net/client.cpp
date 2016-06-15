@@ -60,17 +60,58 @@ void Client::readHeaders() {
 	int bytes = SDLNet_TCP_Recv(_socket, buffer, BUFFER_SIZE);	
 	if (bytes <= 0) {
 		warning("Client::readHeaders recv fail");		
-		_state = INVALID;
+		close();
 		return;
-	}	
+	}
 	_headers += Common::String(buffer, bytes);	
 	checkIfHeadersEnded();
+	checkIfBadRequest();
 }
 
 void Client::checkIfHeadersEnded() {
 	const char *cstr = _headers.c_str();
 	const char *position = strstr(cstr, "\r\n\r\n");
 	if (position) _state = READ_HEADERS;
+}
+
+void Client::checkIfBadRequest() {
+	if (_state != READING_HEADERS) return;
+	uint32 headersSize = _headers.size();
+	bool bad = false;
+
+	const uint32 SUSPICIOUS_HEADERS_SIZE = 128 * 1024;
+	if (headersSize > SUSPICIOUS_HEADERS_SIZE) bad = true;
+
+	if (!bad) {
+		if (headersSize > 0) {
+			const char *cstr = _headers.c_str();
+			const char *position = strstr(cstr, "\r\n");
+			if (position) { //we have at least one line - and we want the first one
+				//"<METHOD> <path> HTTP/<VERSION>\r\n"
+				Common::String method, path, http, buf;
+				for (uint32 i = 0; i < headersSize; ++i) {
+					if (_headers[i] == ' ') {
+						if (method == "") method = buf;
+						else if (path == "") path = buf;
+						else if (http == "") http = buf;
+						else {
+							bad = true;
+							break;
+						}
+						buf = "";
+					} else buf += _headers[i];
+				}
+
+				//check that method is supported
+				if (method != "GET" && method != "PUT" && method != "POST") bad = true;
+
+				//check that HTTP/<VERSION> is OK
+				if (!http.hasPrefix("HTTP/")) bad = true;
+			}
+		}
+	}
+
+	if (bad) _state = BAD_REQUEST;	
 }
 
 void Client::close() {

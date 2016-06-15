@@ -128,6 +128,10 @@ void LocalWebserver::handleClient(uint32 i) {
 		warning("headers %s", _client[i].headers().c_str());
 		_client[i].close();
 		break;
+	case BAD_REQUEST:
+		//TODO: answer with BAD REQUEST
+		_client[i].close();
+		break;
 	}
 }
 

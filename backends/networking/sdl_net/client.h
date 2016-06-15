@@ -34,7 +34,8 @@ namespace Networking {
 enum ClientState {
 	INVALID,
 	READING_HEADERS,
-	READ_HEADERS
+	READ_HEADERS,
+	BAD_REQUEST
 };
 
 class Client {
@@ -44,6 +45,7 @@ class Client {
 	Common::String _headers;
 
 	void checkIfHeadersEnded();
+	void checkIfBadRequest();
 
 public:
 	Client();
