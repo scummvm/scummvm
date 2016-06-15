@@ -81,6 +81,9 @@ public:
 protected:
 	bool _inited;
 	bool _initedSDL;
+#ifdef USE_SDL_NET
+	bool _initedSDLnet;
+#endif
 
 	/**
 	 * Mixer manager that configures and setups SDL for

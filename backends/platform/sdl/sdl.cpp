@@ -60,6 +60,10 @@
 #endif // !WIN32
 #endif
 
+#ifdef USE_SDL_NET
+#include <SDL/SDL_net.h>
+#endif
+
 OSystem_SDL::OSystem_SDL()
 	:
 #ifdef USE_OPENGL
@@ -73,6 +77,9 @@ OSystem_SDL::OSystem_SDL()
 #endif
 	_inited(false),
 	_initedSDL(false),
+#ifdef USE_SDL_NET
+	_initedSDLnet(false),
+#endif
 	_logger(0),
 	_mixerManager(0),
 	_eventSource(0),
@@ -119,6 +126,10 @@ OSystem_SDL::~OSystem_SDL() {
 
 	delete _logger;
 	_logger = 0;
+
+#ifdef USE_SDL_NET
+	if (_initedSDLnet) SDLNet_Quit();
+#endif
 
 	SDL_Quit();
 }
@@ -294,6 +305,17 @@ void OSystem_SDL::initSDL() {
 
 		_initedSDL = true;
 	}
+
+#ifdef USE_SDL_NET
+	// Check if SDL_net has not been initialized
+	if (!_initedSDLnet) {
+		// Initialize SDL_net
+		if (SDLNet_Init() == -1)
+			error("Could not initialize SDL_net: %s", SDLNet_GetError());
+
+		_initedSDLnet = true;
+	}
+#endif
 }
 
 void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
