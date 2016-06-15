@@ -91,8 +91,8 @@ static void blitDistortionCore(
 
 		for (int i = cw; --i >= 0;) {
 			uint16 p = READ_LE_UINT16(is);
-			int sx = baseX + dx + (p >> 5) & 0x1f; // G color
-			int sy = baseY + dy + p & 0x1f;        // B color;
+			int sx = baseX + dx + ((p >> 5) & 0x1f); // G color
+			int sy = baseY + dy + (p & 0x1f);        // B color;
 
 			if (transferOp == kReflectionClipped) {
 				if (sx < srcClipRect->left)
