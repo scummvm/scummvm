@@ -40,9 +40,9 @@ class StorageWizardDialog : public Dialog {
 	StaticTextWidget *_messageWidget;
 	ButtonWidget *_connectWidget;
 
-	int calculate(char b);
+	int decodeHashchar(char c);
 	bool correctChecksum(Common::String s);
-	uint32 crc32(Common::String s);
+	uint32 crc16(Common::String s);
 public:
 	StorageWizardDialog(uint32 storageId);
 
