@@ -1046,6 +1046,8 @@ Optional Libraries:
   --with-sndio-prefix=DIR  Prefix where sndio is installed (optional)
   --disable-sndio          disable sndio MIDI driver [autodetect]
 
+  --with-sdlnet-prefix=DIR  Prefix where SDL_Net is
+                           installed (optional)
   --disable-sdlnet         disable SDL_Net networking library [autodetect]
   --disable-libcurl        disable libcurl networking library [autodetect]
 
@@ -1240,6 +1242,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		LIBUNITY_CFLAGS="-I$arg/include"
 		LIBUNITY_LIBS="-L$arg/lib"
+		;;
+	--with-sdlnet-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		SDL_NET_CFLAGS="-I$arg/include"
+		SDL_NET_LIBS="-L$arg/lib"
 		;;
 	--backend=*)
 		_backend=`echo $ac_option | cut -d '=' -f 2`
@@ -4132,10 +4139,11 @@ if test "$_sdlnet" = auto ; then
 #include "SDL/SDL_net.h"
 int main(int argc, char *argv[]) { SDLNet_Init(); return 0; }
 EOF
-	cc_check $LIBS $INCLUDES -lSDL_net && _sdlnet=yes
+	cc_check $LIBS $INCLUDES $SDL_NET_CFLAGS $SDL_NET_LIBS -lSDL_net && _sdlnet=yes
 fi
-if test "$_sdlnet" = yes ; then
-	LIBS="$LIBS -lSDL_net"
+if test "$_sdlnet" = yes ; then	
+	append_var LIBS "$SDL_NET_LIBS -lSDL_net"
+	append_var INCLUDES "$SDL_NET_CFLAGS"
 fi
 define_in_config_if_yes "$_sdlnet" 'USE_SDL_NET'
 echo "$_sdlnet"
