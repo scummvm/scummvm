@@ -39,7 +39,6 @@ struct ItemGroup {
 
 typedef uint32 ContainerHeader;
 
-template <class T>
 class Container {	
 
 public:
@@ -49,9 +48,11 @@ public:
 
 		_res = _file.readStream(_file.size());
 		_header = _res->readUint32BE();
+		_simplified = false;
 		
 		if (!(_header & 0x80000000)) { 
 			// Is simplified container
+			_simplified = true;
 			int dataLen = _res->size() - sizeof(_header);
 			_lenObjs = _header;
 			_numObjs = dataLen / _lenObjs;
@@ -90,24 +91,51 @@ public:
 
 				// Place the bit reader in the correct position
 				// group.bitOffset indicates the offset from the start of the subHeader
-				_res->seek(_header + (group.bitOffset >> 3), SEEK_SET);				
+				_res->seek(_header + (group.bitOffset >> 3), SEEK_SET);		
+				uint32 bits = group.bitOffset & 7;
 
-				Common::BitStream32BEMSB bitStream(_res);
-				// Skip the last 3 bits that we couldn't skip with seek
-				bitStream.skip(group.bitOffset & 7); 
-				for (uint j = 0; j < 64; ++j) {
+				for (uint j = 0; j < 64; ++j) {					
 					uint32 length = 0;
-					uint32 mask = bitStream.peekBits(16);
+					//debug("reading mask from address %x", _res->pos());
+					uint32 mask = _res->readUint32BE();
+					mask >>= (16 - bits);
+					mask &= 0xFFFF;
+					debug(11, "Load mask of object &%d:%d is %x", i, j, mask);
+					_res->seek(-4, SEEK_CUR);
 					// Look in the Huffman table
-					int x;
-					for (x = 0; x<16; x++)
+					int x = 0;
+					for (x = 0; x < 16; x++) {
 						if (_huff[x] > mask) break;
-					// OK UNTIL HERE
-					// There may be a bug from this point forward, as the 
-					// lengths do not seem to coincide
-					length = bitStream.getBits(_lens[x]);
+					}
+					
+					// I will opt to copy the code from webventure, 
+					// But according to the docs, this call should suffice:
+					// length = bitStream.getBits(_lens[x]);
+					// The problem is that _lens[] usually contains values larger
+					// Than 32, so we have to read them with the method below
+
+					//This code below, taken from the implementation, seems to give the same results.
+
+					uint32 bitSize = _lens[x];
+					bits += bitSize & 0xF;
+					if (bits & 0x10) {
+						bits &= 0xf;
+						_res->seek(2, SEEK_CUR);
+					}
+					bitSize >>= 4;
+					if (bitSize) {
+						length = _res->readUint32BE();
+						_res->seek(-4, SEEK_CUR);
+						bitSize--;
+						if (bitSize == 0) length = 0;
+						else length >>= (32 - bitSize) - bits;
+						length &= (1 << bitSize) - 1;
+						length |= 1 << bitSize;
+						bits += bitSize;						
+					}		
 
 					group.lengths[j] = length;
+					debug(11, "Load legth of object %d:%d is %d", i, j, length);
 				}
 				
 				_groups.push_back(group);				
@@ -125,11 +153,26 @@ public:
 	}
 
 public:
-	T getItem(uint32 id) {
-		T item;
-		if (!(_header & 0x80000000)) {
+	/**
+	* Must be called before retrieving an object.
+	*/
+	uint32 getItemByteSize(uint32 id) {
+		if (_simplified) {
+			return _lenObjs;
+		} else {
+			uint32 groupID = (id >> 6);
+			uint32 objectIndex = id & 0x3f; // Index within the group
+			return _groups[groupID].lengths[objectIndex];
+		}
+	}
+
+	/**
+	* Assumes storage is initialized.
+	*/
+	void getItem(uint32 id, void* storage) {		
+		if (_simplified) {
 			_res->seek((id * _lenObjs) + sizeof(_header), SEEK_SET);
-			_res->read(&item, _lenObjs);
+			_res->read(storage, _lenObjs);
 		} else {
 			ContainerHeader subHead = _header & 0x7fffffff;
 			uint32 groupID = (id >> 6);
@@ -144,27 +187,15 @@ public:
 
 			_res->seek(offset, SEEK_CUR);
 
-			_res->read(&item, _groups[groupID].lengths[objectIndex]);
+			_res->read(storage, _groups[groupID].lengths[objectIndex]);
 		}
-		return item;
 	}
-
-	/*
-	void seekBits(uint32 bitNum) {
-		uint bytes = bits / 8;
-		_remainderOffset = bits % 8;
-		_res->seek(bytes, SEEK_SET);
-	}
-
-	void readBits((void*)target, uint32 bitNum) {
-		// Skip the first _remainderOffset bits, read bitNum from that point
-		byte offset = 0xFF << _remainderOffset;
-		
-	}*/
-
-protected:
 	
-	uint _lenObjs;
+protected:
+
+	bool _simplified;
+	
+	uint _lenObjs; // In the case of simple container, lenght of an object
 	uint _numObjs;
 
 	ContainerHeader _header;

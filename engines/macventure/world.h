@@ -65,7 +65,7 @@ private:
 	Common::String _startGameFileName;	
 
 	SaveGame *_saveGame;
-	Container<uint16> *_objectConstants;
+	Container *_objectConstants;
 
 };
 

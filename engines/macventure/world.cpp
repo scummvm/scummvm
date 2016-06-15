@@ -19,7 +19,11 @@ World::World(MacVentureEngine *engine, Common::MacResManager *resMan)  {
 
 	_saveGame = new SaveGame(_engine, saveGameRes);
 
-	_objectConstants = new Container<uint16>("Shadowgate II/Shadow Graphic");
+	_objectConstants = new Container("Shadowgate II/Shadow Graphic");
+
+	uint32 size = _objectConstants->getItemByteSize(2);
+	char * ob1 = new char[size];
+	_objectConstants->getItem(2, ob1);
 
 	delete saveGameRes;
 	saveGameFile.close();		
