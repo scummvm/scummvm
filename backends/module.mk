@@ -58,6 +58,11 @@ MODULE_OBJS += \
 	networking/curl/request.o
 endif
 
+ifdef USE_SDL_NET
+MODULE_OBJS += \
+	networking/sdl_net/localwebserver.o
+endif
+
 ifdef USE_ELF_LOADER
 MODULE_OBJS += \
 	plugins/elf/arm-loader.o \

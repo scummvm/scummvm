@@ -66,7 +66,9 @@ class StorageWizardDialog : public Dialog {
 public:
 	StorageWizardDialog(uint32 storageId);
 
-	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void open();
+	virtual void close();
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 };
 
 } // End of namespace GUI

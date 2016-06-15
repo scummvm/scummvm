@@ -72,6 +72,9 @@
 #ifdef USE_LIBCURL
 #include "backends/networking/curl/connectionmanager.h"
 #endif
+#ifdef USE_SDL_NET
+#include "backends/networking/sdl_net/localwebserver.h"
+#endif
 
 #if defined(_WIN32_WCE)
 #include "backends/platform/wince/CELauncherDialog.h"
@@ -596,6 +599,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			launcherDialog();
 		}
 	}
+#ifdef USE_SDL_NET
+	Networking::LocalWebserver::destroy();
+#endif
 #ifdef USE_LIBCURL
 	Networking::ConnectionManager::destroy();
 #endif

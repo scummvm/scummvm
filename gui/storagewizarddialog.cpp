@@ -24,9 +24,11 @@
 #include "gui/widgets/list.h"
 #include "gui/widget.h"
 #include "gui/gui-manager.h"
-
-#include "common/translation.h"
 #include "backends/cloud/cloudmanager.h"
+#ifdef USE_SDL_NET
+#include "backends/networking/sdl_net/localwebserver.h"
+#endif
+#include "common/translation.h"
 #include "widgets/edittext.h"
 
 namespace GUI {
@@ -62,6 +64,20 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId): Dialog("GlobalOption
 	// Buttons
 	new ButtonWidget(this, "GlobalOptions_Cloud_ConnectionWizard.CancelButton", _("Cancel"), 0, kCloseCmd);
 	_connectWidget = new ButtonWidget(this, "GlobalOptions_Cloud_ConnectionWizard.ConnectButton", _("Connect"), 0, kConnectCmd);
+}
+
+void StorageWizardDialog::open() {
+	Dialog::open();
+#ifdef USE_SDL_NET
+	LocalServer.start();
+#endif
+}
+
+void StorageWizardDialog::close() {
+#ifdef USE_SDL_NET
+	LocalServer.stop();
+#endif
+	Dialog::close();
 }
 
 void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
