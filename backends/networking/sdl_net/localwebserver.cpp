@@ -37,10 +37,7 @@ DECLARE_SINGLETON(Networking::LocalWebserver);
 
 namespace Networking {
 
-LocalWebserver::LocalWebserver(): _set(nullptr), _serverSocket(nullptr), _timerStarted(false), _clients(0) {
-	for (uint32 i = 0; i < MAX_CONNECTIONS; ++i)
-		_clientSocket[i] = nullptr;
-}
+LocalWebserver::LocalWebserver(): _set(nullptr), _serverSocket(nullptr), _timerStarted(false), _clients(0) {}
 
 LocalWebserver::~LocalWebserver() {
 	stop();
@@ -94,51 +91,59 @@ void LocalWebserver::start() {
 void LocalWebserver::stop() {
 	if (_timerStarted) stopTimer();
 
-	if (_set) {
-		SDLNet_FreeSocketSet(_set);
-		_set = nullptr;
-	}
-
 	if (_serverSocket) {
 		SDLNet_TCP_Close(_serverSocket);
 		_serverSocket = nullptr;
 	}
 
 	for (uint32 i = 0; i < MAX_CONNECTIONS; ++i)
-		if (_clientSocket[i]) {			
-			SDLNet_TCP_Close(_clientSocket[i]);
-			_clientSocket[i] = nullptr;
-		}
+		_client[i].close();
 
 	_clients = 0;
+
+	if (_set) {
+		SDLNet_FreeSocketSet(_set);
+		_set = nullptr;
+	}
 }
 
 void LocalWebserver::handle() {
 	int numready = SDLNet_CheckSockets(_set, 0);
 	if (numready == -1) {
 		error("SDLNet_CheckSockets: %s\n", SDLNet_GetError());
-	} else if (numready) {
-		if (SDLNet_SocketReady(_serverSocket)) {
-			TCPsocket client = SDLNet_TCP_Accept(_serverSocket);
-			if (client) {
-				if (_clients == MAX_CONNECTIONS) { //drop the connection
-					SDLNet_TCP_Close(client);
-				} else {
-					int numused = SDLNet_TCP_AddSocket(_set, _serverSocket);
-					if (numused == -1) {
-						error("SDLNet_AddSocket: %s\n", SDLNet_GetError());
-					}					
-					_clientSocket[_clients++] = client;
-				}
-			}
-		}
+	} else if (numready) acceptClient();
 
-		for (uint32 i = 0; i < MAX_CONNECTIONS; ++i) {
-			if (!_clientSocket[i]) continue;
-			if (!SDLNet_SocketReady(_clientSocket[i])) continue;
-			//TODO: handle client
-		}
+	for (uint32 i = 0; i < MAX_CONNECTIONS; ++i)
+		handleClient(i);
+}
+
+void LocalWebserver::handleClient(uint32 i) {	
+	switch (_client[i].state()) {
+	case INVALID: return;
+	case READING_HEADERS: _client[i].readHeaders(); break;
+	case READ_HEADERS: //decide what to do next with that client
+		//if GET, check whether we know a handler for such URL
+		//if PUT, check whether we know a handler for that URL
+		//if no handler, answer with default BAD REQUEST
+		warning("headers %s", _client[i].headers().c_str());
+		_client[i].close();
+		break;
 	}
+}
+
+
+void LocalWebserver::acceptClient() {
+	if (!SDLNet_SocketReady(_serverSocket)) return;
+
+	TCPsocket client = SDLNet_TCP_Accept(_serverSocket);
+	if (!client) return;
+
+	if (_clients == MAX_CONNECTIONS) { //drop the connection
+		SDLNet_TCP_Close(client);
+		return;
+	}
+	
+	_client[_clients++].open(_set, client);
 }
 
 } // End of namespace Networking

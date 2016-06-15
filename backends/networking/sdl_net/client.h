@@ -20,48 +20,43 @@
 *
 */
 
-#ifndef BACKENDS_NETWORKING_SDL_NET_LOCALWEBSERVER_H
-#define BACKENDS_NETWORKING_SDL_NET_LOCALWEBSERVER_H
+#ifndef BACKENDS_NETWORKING_SDL_NET_CLIENT_H
+#define BACKENDS_NETWORKING_SDL_NET_CLIENT_H
 
-#include "backends/networking/sdl_net/client.h"
-#include "common/singleton.h"
 #include "common/scummsys.h"
+#include "common/str.h"
 
 typedef struct _SDLNet_SocketSet *SDLNet_SocketSet;
 typedef struct _TCPsocket *TCPsocket;
 
 namespace Networking {
 
-class LocalWebserver : public Common::Singleton<LocalWebserver> {
-	static const uint32 FRAMES_PER_SECOND = 20;
-	static const uint32 TIMER_INTERVAL = 1000000 / FRAMES_PER_SECOND;
-	static const uint32 SERVER_PORT = 12345;
-	static const uint32 MAX_CONNECTIONS = 10;
-
-	friend void localWebserverTimer(void *); //calls handle()
-
-	SDLNet_SocketSet _set;
-	TCPsocket _serverSocket;
-	Client _client[MAX_CONNECTIONS];
-	int _clients;
-	bool _timerStarted;
-
-	void startTimer(int interval = TIMER_INTERVAL);
-	void stopTimer();
-	void handle();
-	void handleClient(uint32 i);
-	void acceptClient();
-
-public:
-	LocalWebserver();
-	virtual ~LocalWebserver();
-
-	void start();
-	void stop();
+enum ClientState {
+	INVALID,
+	READING_HEADERS,
+	READ_HEADERS
 };
 
-/** Shortcut for accessing the local webserver. */
-#define LocalServer		Networking::LocalWebserver::instance()
+class Client {
+	ClientState _state;
+	SDLNet_SocketSet _set;
+	TCPsocket _socket;
+	Common::String _headers;
+
+	void checkIfHeadersEnded();
+
+public:
+	Client();
+	Client(SDLNet_SocketSet set, TCPsocket socket);
+	virtual ~Client();
+
+	void open(SDLNet_SocketSet set, TCPsocket socket);
+	void readHeaders();
+	void close();
+
+	ClientState state();
+	Common::String headers();
+};
 
 } // End of namespace Networking
 
