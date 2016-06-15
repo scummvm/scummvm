@@ -60,7 +60,7 @@ static void blitDistortionCore(
 
 	distortionRect.moveTo(dstRect.left - x, dstRect.top - y);
 
-	byte *distortionPtr = (byte *)distortionBitmap->getBasePtr(distortionRect.left, distortionRect.top);
+	const byte *distortionPtr = (const byte *)distortionBitmap->getBasePtr(distortionRect.left, distortionRect.top);
 	byte *dstPtr = (byte *)dstBitmap->getBasePtr(dstRect.left, dstRect.top);
 	int cw = dstRect.width();
 	int ch = dstRect.height();
@@ -68,7 +68,7 @@ static void blitDistortionCore(
 	int dy = dstRect.top;
 
 	int baseX, baseY;
-	byte *srcData = (byte *)srcBitmap->getBasePtr(0, 0);
+	const byte *srcData = (const byte *)srcBitmap->getBasePtr(0, 0);
 	int srcPitch = srcBitmap->pitch;
 
 	switch (transferOp) {
@@ -86,7 +86,7 @@ static void blitDistortionCore(
 
 	while (--ch >= 0) {
 		uint16 *d = (uint16 *)dstPtr;
-		uint16 *is = (uint16 *)distortionPtr;
+		const uint16 *is = (const uint16 *)distortionPtr;
 		int dx = idx;
 
 		for (int i = cw; --i >= 0;) {
@@ -112,7 +112,7 @@ static void blitDistortionCore(
 				sy = MAX<int>(srcClipRect->top, MIN<int>(sy, srcClipRect->bottom));
 			}
 
-			*d = *((uint16 *)(srcData + sy * srcPitch + sx * 2));
+			*d = *((const uint16 *)(srcData + sy * srcPitch + sx * 2));
 
 			++d;
 			++is;
