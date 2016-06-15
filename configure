@@ -4104,6 +4104,9 @@ echocheck "GL Extension Wrangler (GLEW)"
 if test "$_glew" != "no" && test "$_opengl" = "no"; then
 	_glew=no
 	echo "cannot use GLEW without OpenGL"
+elif test "$_glew" != "no" && test "$_opengles2" = "yes"; then
+	_glew=no
+	echo "not needed with OpenGL ES v2"
 else
 
 	case $_host_os in
