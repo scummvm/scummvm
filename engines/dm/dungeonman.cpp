@@ -1,8 +1,6 @@
-#include "dungeonman.h"
-#include "gfx.h"
 #include "common/file.h"
 #include "common/memstream.h"
-
+#include "dungeonman.h"
 
 
 using namespace DM;

@@ -12,8 +12,9 @@
 #include "common/events.h"
 
 #include "dm/dm.h"
-#include "dm/gfx.h"
-#include "dm/dungeonman.h"
+#include "gfx.h"
+#include "dungeonman.h"
+#include "eventman.h"
 
 namespace DM {
 

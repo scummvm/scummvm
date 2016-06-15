@@ -2,7 +2,7 @@
 #define GFX_H
 
 #include "common/scummsys.h"
-#include "dm/dm.h"
+#include "dm.h"
 
 namespace DM {
 
@@ -12,12 +12,15 @@ extern uint16 gPalCredits[16];
 extern uint16 gPalEntrance[16];
 extern uint16 gPalDungeonView[6][16];
 
-typedef struct {
+class Box {
+public:
 	uint16 X1;
 	uint16 X2;
 	uint16 Y1;
 	uint16 Y2;
-} Box; // @ BOX_BYTE, BOX_WORD
+
+	Box(uint16 x1, uint16 x2, uint16 y1, uint16 y2): X1(x1), X2(x2), Y1(y1), Y2(y2) {}
+}; // @ BOX_BYTE, BOX_WORD
 
 // The frames in the original sources contain inclusive boundaries and byte widths, not pixel widths
 struct Frame {

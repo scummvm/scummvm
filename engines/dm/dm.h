@@ -4,7 +4,6 @@
 #include "common/random.h"
 #include "engines/engine.h"
 #include "gui/debugger.h"
-#include "eventman.h"
 
 
 namespace DM {
@@ -12,6 +11,7 @@ namespace DM {
 class Console;
 class DisplayMan;
 class DungeonMan;
+class EventManager;
 
 
 enum direction {

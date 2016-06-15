@@ -2,12 +2,12 @@
 #define DUNGEONMAN_H
 
 #include "dm.h"
+#include "dungeonman.h"
 #include "gfx.h"
+
 
 namespace DM {
 
-class DungeonMan;
-struct Map;
 
 int16 ordinalToIndex(int16 val); // @ M01_ORDINAL_TO_INDEX
 int16 indexToOrdinal(int16 val); // @ M00_INDEX_TO_ORDINAL
@@ -458,7 +458,7 @@ public:
 	bool _isFacingFountain; // @ G0288_B_FacingFountain
 };
 
-}
+};
 
 
 #endif

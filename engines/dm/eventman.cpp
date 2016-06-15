@@ -1,9 +1,8 @@
-#include "eventman.h"
-#include "dm.h"
 #include "common/system.h"
-#include "dungeonman.h"
 #include "graphics/cursorman.h"
-#include "gfx.h"
+
+#include "eventman.h"
+#include "dungeonman.h"
 
 
 
