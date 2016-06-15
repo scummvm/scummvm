@@ -35,7 +35,16 @@ enum ClientState {
 	INVALID,
 	READING_HEADERS,
 	READ_HEADERS,
-	BAD_REQUEST
+	BAD_REQUEST,
+	BEING_HANDLED
+};
+
+class Client;
+
+class ClientHandler {
+public:
+	virtual ~ClientHandler() {};
+	virtual void handle(Client *client) = 0;
 };
 
 class Client {
@@ -43,6 +52,7 @@ class Client {
 	SDLNet_SocketSet _set;
 	TCPsocket _socket;
 	Common::String _headers;
+	ClientHandler *_handler;
 
 	void checkIfHeadersEnded();
 	void checkIfBadRequest();
@@ -54,10 +64,23 @@ public:
 
 	void open(SDLNet_SocketSet set, TCPsocket socket);
 	void readHeaders();
+	void setHandler(ClientHandler *handler);
+	void handle();
 	void close();
 
 	ClientState state();
 	Common::String headers();
+
+	/**
+	 * Return SDLNet_SocketReady(_socket).
+	 *
+	 * It's "ready" when it has something
+	 * to read (recv()). You can send()
+	 * when this is false.
+	 */
+	bool socketIsReady();
+	int recv(void *data, int maxlen);
+	int send(void *data, int len);
 };
 
 } // End of namespace Networking

@@ -61,6 +61,7 @@ endif
 ifdef USE_SDL_NET
 MODULE_OBJS += \
 	networking/sdl_net/client.o \
+	networking/sdl_net/getclienthandler.o \
 	networking/sdl_net/localwebserver.o
 endif
 

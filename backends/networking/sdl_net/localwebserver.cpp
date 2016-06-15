@@ -23,6 +23,8 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/networking/sdl_net/localwebserver.h"
+#include "backends/networking/sdl_net/getclienthandler.h"
+#include "common/memstream.h"
 #include "common/str.h"
 #include "common/system.h"
 #include "common/timer.h"
@@ -30,6 +32,7 @@
 #include <SDL/SDL_net.h>
 
 namespace Common {
+class MemoryReadWriteStream;
 
 DECLARE_SINGLETON(Networking::LocalWebserver);
 
@@ -126,15 +129,16 @@ void LocalWebserver::handleClient(uint32 i) {
 		//if PUT, check whether we know a handler for that URL
 		//if no handler, answer with default BAD REQUEST
 		warning("headers %s", _client[i].headers().c_str());
-		_client[i].close();
+		setClientGetHandler(_client[i], "<html><head><title>ScummVM</title></head><body>Hello, World!</body></html>");
 		break;
 	case BAD_REQUEST:
-		//TODO: answer with BAD REQUEST
-		_client[i].close();
+		setClientGetHandler(_client[i], "<html><head><title>ScummVM - Bad Request</title></head><body>BAD REQUEST</body></html>", 400);
+		break;
+	case BEING_HANDLED:
+		_client[i].handle();
 		break;
 	}
 }
-
 
 void LocalWebserver::acceptClient() {
 	if (!SDLNet_SocketReady(_serverSocket)) return;
@@ -148,6 +152,15 @@ void LocalWebserver::acceptClient() {
 	}
 	
 	_client[_clients++].open(_set, client);
+}
+
+void LocalWebserver::setClientGetHandler(Client &client, Common::String response, long code) {
+	byte *data = new byte[response.size()];
+	memcpy(data, response.c_str(), response.size());
+	Common::MemoryReadStream *stream = new Common::MemoryReadStream(data, response.size(), DisposeAfterUse::YES);
+	GetClientHandler *handler = new GetClientHandler(stream);
+	handler->setResponseCode(code);
+	client.setHandler(handler);
 }
 
 } // End of namespace Networking

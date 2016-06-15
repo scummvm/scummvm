@@ -51,6 +51,7 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	void handle();
 	void handleClient(uint32 i);
 	void acceptClient();
+	void setClientGetHandler(Client &client, Common::String response, long code = 200);
 
 public:
 	LocalWebserver();

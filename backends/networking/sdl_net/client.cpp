@@ -28,9 +28,9 @@
 
 namespace Networking {
 
-Client::Client(): _state(INVALID), _set(nullptr), _socket(nullptr) {}
+Client::Client(): _state(INVALID), _set(nullptr), _socket(nullptr), _handler(nullptr) {}
 
-Client::Client(SDLNet_SocketSet set, TCPsocket socket): _state(INVALID), _set(nullptr), _socket(nullptr) {
+Client::Client(SDLNet_SocketSet set, TCPsocket socket): _state(INVALID), _set(nullptr), _socket(nullptr), _handler(nullptr) {
 	open(set, socket);
 }
 
@@ -74,8 +74,7 @@ void Client::checkIfHeadersEnded() {
 	if (position) _state = READ_HEADERS;
 }
 
-void Client::checkIfBadRequest() {
-	if (_state != READING_HEADERS) return;
+void Client::checkIfBadRequest() {	
 	uint32 headersSize = _headers.size();
 	bool bad = false;
 
@@ -114,6 +113,18 @@ void Client::checkIfBadRequest() {
 	if (bad) _state = BAD_REQUEST;	
 }
 
+void Client::setHandler(ClientHandler *handler) {	
+	if (_handler) delete _handler;
+	_state = BEING_HANDLED;
+	_handler = handler;
+}
+
+void Client::handle() {
+	if (_state != BEING_HANDLED) warning("handle() called in a wrong Client's state");
+	if (!_handler) warning("Client doesn't have handler to be handled by");
+	if (_handler) _handler->handle(this);
+}
+
 void Client::close() {
 	if (_set) {
 		if (_socket) {
@@ -136,5 +147,11 @@ void Client::close() {
 ClientState Client::state() { return _state; }
 
 Common::String Client::headers() { return _headers; }
+
+bool Client::socketIsReady() { return SDLNet_SocketReady(_socket); }
+
+int Client::recv(void *data, int maxlen) { return SDLNet_TCP_Recv(_socket, data, maxlen); }
+
+int Client::send(void *data, int len) { return SDLNet_TCP_Send(_socket, data, len); }
 
 } // End of namespace Networking
