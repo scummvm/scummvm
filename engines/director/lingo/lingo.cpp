@@ -71,6 +71,8 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	for (const EventHandlerType *t = &eventHanlerDescs[0]; t->handler != kEventNone; ++t)
 		_eventHandlerTypes[t->handler] = t->name;
+
+	_currentScript = 0;
 }
 
 Lingo::~Lingo() {
@@ -78,6 +80,15 @@ Lingo::~Lingo() {
 
 void Lingo::addCode(Common::String code, ScriptType type, uint16 id) {
 	debug(0, "Add code %s for type %d with id %d", code.c_str(), type, id);
+
+	if (_scripts[type].contains(id)) {
+		free(_scripts[type][id]);
+	}
+
+	_currentScript = new Common::Array<inst>();
+	_scripts[type][id] = _currentScript;
+
+	parse(code.c_str());
 }
 
 void Lingo::processEvent(LEvent event, int entityId) {
@@ -86,6 +97,5 @@ void Lingo::processEvent(LEvent event, int entityId) {
 
 	debug(0, "processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
 }
-
 
 } // End of namespace Director

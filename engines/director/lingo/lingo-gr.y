@@ -71,14 +71,14 @@ statement: expr { warning("%d", $1); }
 	| func { warning("%d", $1); }
 	;
 
-expr: INT						{ $$ = $1; }
+expr: INT						{ $$ = g_lingo->code2(g_lingo->func_constpush, (inst)$1); }
 	| VAR						{ $$ = vars[*$1]; delete $1; }
-	| expr '+' expr				{ $$ = $1 + $3; }
-	| expr '-' expr				{ $$ = $1 - $3; }
-	| expr '*' expr				{ $$ = $1 * $3; }
-	| expr '/' expr				{ $$ = $1 / $3; }
+	| expr '+' expr				{ g_lingo->code1(g_lingo->func_add); }
+	| expr '-' expr				{ g_lingo->code1(g_lingo->func_sub); }
+	| expr '*' expr				{ g_lingo->code1(g_lingo->func_mul); }
+	| expr '/' expr				{ g_lingo->code1(g_lingo->func_div); }
 	| '+' expr  %prec UNARY		{ $$ =  $2; }
-	| '-' expr  %prec UNARY		{ $$ = -$2; }
+	| '-' expr  %prec UNARY		{ $$ = $2; g_lingo->code1(g_lingo->func_negate); }
 	| '(' expr ')'				{ $$ =  $2; }
 	|
 	;

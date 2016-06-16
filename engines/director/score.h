@@ -102,9 +102,10 @@ enum InkType {
 };
 
 enum ScriptType {
-    kMovieScript,
-    kSpriteScript,
-    kFrameScript
+    kMovieScript = 0,
+    kSpriteScript = 1,
+    kFrameScript = 2,
+	kMaxScriptType = 2
 };
 
 enum TransitionType {

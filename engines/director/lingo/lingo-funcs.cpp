@@ -154,4 +154,22 @@ int Lingo::func_mci(Common::String *s) {
 	return 0;
 }
 
+void Lingo::func_constpush() {
+}
+
+void Lingo::func_add() {
+}
+
+void Lingo::func_sub() {
+}
+
+void Lingo::func_mul() {
+}
+
+void Lingo::func_div() {
+}
+
+void Lingo::func_negate() {
+}
+
 }

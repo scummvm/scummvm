@@ -1841,7 +1841,7 @@ void yyfree (void * ptr )
 
 namespace Director {
 
-int Lingo::parse(char *code) {
+int Lingo::parse(const char *code) {
 	YY_BUFFER_STATE bp;
 
 	yy_delete_buffer(YY_CURRENT_BUFFER);

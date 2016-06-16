@@ -1374,7 +1374,7 @@ yyreduce:
 
   case 6:
 #line 74 "engines/director/lingo/lingo-gr.y"
-    { (yyval.i) = (yyvsp[(1) - (1)].i); ;}
+    { (yyval.i) = g_lingo->code2(g_lingo->func_constpush, (inst)(yyvsp[(1) - (1)].i)); ;}
     break;
 
   case 7:
@@ -1384,22 +1384,22 @@ yyreduce:
 
   case 8:
 #line 76 "engines/director/lingo/lingo-gr.y"
-    { (yyval.i) = (yyvsp[(1) - (3)].i) + (yyvsp[(3) - (3)].i); ;}
+    { g_lingo->code1(g_lingo->func_add); ;}
     break;
 
   case 9:
 #line 77 "engines/director/lingo/lingo-gr.y"
-    { (yyval.i) = (yyvsp[(1) - (3)].i) - (yyvsp[(3) - (3)].i); ;}
+    { g_lingo->code1(g_lingo->func_sub); ;}
     break;
 
   case 10:
 #line 78 "engines/director/lingo/lingo-gr.y"
-    { (yyval.i) = (yyvsp[(1) - (3)].i) * (yyvsp[(3) - (3)].i); ;}
+    { g_lingo->code1(g_lingo->func_mul); ;}
     break;
 
   case 11:
 #line 79 "engines/director/lingo/lingo-gr.y"
-    { (yyval.i) = (yyvsp[(1) - (3)].i) / (yyvsp[(3) - (3)].i); ;}
+    { g_lingo->code1(g_lingo->func_div); ;}
     break;
 
   case 12:
@@ -1409,7 +1409,7 @@ yyreduce:
 
   case 13:
 #line 81 "engines/director/lingo/lingo-gr.y"
-    { (yyval.i) = -(yyvsp[(2) - (2)].i); ;}
+    { (yyval.i) = (yyvsp[(2) - (2)].i); g_lingo->code1(g_lingo->func_negate); ;}
     break;
 
   case 14:

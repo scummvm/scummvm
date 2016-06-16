@@ -70,6 +70,9 @@ enum LEvent {
 	kEventStart
 };
 
+typedef void (*inst)(void);
+#define	STOP (inst)0
+
 class Lingo {
 public:
 	Lingo(DirectorEngine *vm);
@@ -79,13 +82,28 @@ public:
 
 	void processEvent(LEvent event, int entityId);
 
-	int parse(char *code);
+	int parse(const char *code);
 
+	int code1(inst code) { _currentScript->push_back(code); return _currentScript->size(); }
+	int code2(inst code_1, inst code_2) { code1(code_1); return code1(code_2); }
+	int code3(inst code_1, inst code_2, inst code_3) { code1(code_1); code1(code_2); return code1(code_3); }
+
+public:
+	static void func_add();
+	static void func_sub();
+	static void func_mul();
+	static void func_div();
+	static void func_negate();
+	static void func_constpush();
 	int func_mci(Common::String *s);
 
 private:
 	Common::HashMap<uint32, const char *> _eventHandlerTypes;
 	Common::HashMap<Common::String, Audio::AudioStream *> _audioAliases;
+
+	Common::HashMap<int32, Common::Array<inst> *> _scripts[kMaxScriptType];
+	Common::Array<inst> *_currentScript;
+
 	DirectorEngine *_vm;
 };
 
