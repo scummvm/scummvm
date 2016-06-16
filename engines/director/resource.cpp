@@ -159,6 +159,7 @@ uint32 Archive::convertTagToUppercase(uint32 tag) {
 	uint32 newTag = toupper(tag >> 24) << 24;
 	newTag |= toupper((tag >> 16) & 0xFF) << 16;
 	newTag |= toupper((tag >> 8) & 0xFF) << 8;
+
 	return newTag | toupper(tag & 0xFF);
 }
 
@@ -195,6 +196,7 @@ bool MacArchive::openFile(const Common::String &fileName) {
 
 		for (uint32 j = 0; j < idArray.size(); j++) {
 			Resource &res = resMap[idArray[j]];
+
 			res.offset = res.size = 0; // unused
 			res.name = _resFork->getResName(tagArray[i], idArray[j]);
 		}
@@ -235,6 +237,7 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	uint32 cftcSize = stream->readUint32LE();
 	uint32 startPos = stream->pos();
 	stream->readUint32LE(); // unknown (always 0?)
+
 	while ((uint32)stream->pos() < startPos + cftcSize) {
 		uint32 tag = convertTagToUppercase(stream->readUint32BE());
 
@@ -244,11 +247,13 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 		if (tag == 0)
 			break;
+
 		uint16 startResPos = stream->pos();
 		stream->seek(offset + 12);
 
 		Common::String name = "";
 		byte nameSize = stream->readByte();
+
 		if (nameSize) {
 			for (uint8 i = 0; i < nameSize; i++) {
 				name += stream->readByte();
@@ -321,6 +326,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	subStream.readUint32(); // size
 
 	uint32 rifxType = subStream.readUint32();
+
 	if (rifxType != MKTAG('M', 'V', '9', '3') && rifxType != MKTAG('A', 'P', 'P', 'L'))
 		return false;
 
@@ -393,6 +399,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	if (casRes) {
 		Common::SeekableSubReadStreamEndian casStream(stream, casRes->offset + 8, casRes->offset + 8 + casRes->size, _isBigEndian, DisposeAfterUse::NO);
 		casEntries.resize(casRes->size / 4);
+
 		for (uint32 i = 0; i < casEntries.size(); i++)
 			casEntries[i] = casStream.readUint32();
 	}

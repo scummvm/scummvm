@@ -33,7 +33,7 @@ DirectorSound::DirectorSound() {
 	_sound1 = new Audio::SoundHandle();
 	_sound2 = new Audio::SoundHandle();
 	_scriptSound = new Audio::SoundHandle();
-    _mixer = g_system->getMixer();
+	_mixer = g_system->getMixer();
 }
 
 void DirectorSound::playWAV(Common::String filename, uint8 soundChannel) {
@@ -41,26 +41,31 @@ void DirectorSound::playWAV(Common::String filename, uint8 soundChannel) {
 
 	if (!file->open(filename)) {
 		warning("Failed to open %s", filename.c_str());
+
 		delete file;
+
 		return;
 	}
 
 	Audio::RewindableAudioStream *sound = Audio::makeWAVStream(file, DisposeAfterUse::YES);
-    if (soundChannel == 1)
+
+	if (soundChannel == 1)
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, _sound1, sound);
-    else
+	else
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, _sound2, sound);
 }
 
 void DirectorSound::playAIFF(Common::String filename, uint8 soundChannel) {
 	Common::File *file = new Common::File();
+
 	if (!file->open(filename)) {
 		warning("Failed to open %s", filename.c_str());
 		delete file;
 		return;
 	}
 
-    Audio::RewindableAudioStream *sound = Audio::makeAIFFStream(file, DisposeAfterUse::YES);
+	Audio::RewindableAudioStream *sound = Audio::makeAIFFStream(file, DisposeAfterUse::YES);
+
 	if (soundChannel == 1)
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, _sound1, sound);
 	else
@@ -70,6 +75,7 @@ void DirectorSound::playAIFF(Common::String filename, uint8 soundChannel) {
 void DirectorSound::playMCI(Audio::AudioStream &stream, uint32 from, uint32 to) {
 	Audio::SeekableAudioStream *seekStream = dynamic_cast<Audio::SeekableAudioStream *>(&stream);
 	Audio::SubSeekableAudioStream *subSeekStream = new Audio::SubSeekableAudioStream(seekStream, Audio::Timestamp(from, seekStream->getRate()), Audio::Timestamp(to, seekStream->getRate()));
+
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, _scriptSound, subSeekStream);
 }
 
@@ -79,7 +85,9 @@ bool DirectorSound::isChannelActive(uint8 channelID) {
 	} else if (channelID == 2) {
 		return _mixer->isSoundHandleActive(*_sound2);
 	}
+
 	error("Incorrect sound channel");
+
 	return false;
 }
 

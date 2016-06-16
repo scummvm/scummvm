@@ -40,7 +40,6 @@
 namespace Director {
 
 Score::Score(Archive &movie, Lingo &lingo, DirectorSound &soundManager) {
-
 	_surface = new Graphics::ManagedSurface;
 	_trailSurface = new Graphics::ManagedSurface;
 	_movieArchive = &movie;
@@ -48,6 +47,7 @@ Score::Score(Archive &movie, Lingo &lingo, DirectorSound &soundManager) {
 	_soundManager = &soundManager;
 	_lingo->processEvent(kEventPrepareMovie, 0);
 	_movieScriptCount = 0;
+
 	assert(_movieArchive->hasResource(MKTAG('V','W','S','C'), 1024));
 	assert(_movieArchive->hasResource(MKTAG('V','W','C','F'), 1024));
 	assert(_movieArchive->hasResource(MKTAG('V','W','C','R'), 1024));
@@ -77,15 +77,19 @@ Score::Score(Archive &movie, Lingo &lingo, DirectorSound &soundManager) {
 	}
 
 	Common::Array<uint16> vwci = _movieArchive->getResourceIDList(MKTAG('V','W','C','I'));
+
 	if (vwci.size() > 0) {
 		Common::Array<uint16>::iterator iterator;
+
 		for (iterator = vwci.begin(); iterator != vwci.end(); ++iterator)
 			loadCastInfo(*_movieArchive->getResource(MKTAG('V','W','C','I'), *iterator), *iterator);
 	}
 
 	Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
+
 	if (stxt.size() > 0) {
 		Common::Array<uint16>::iterator iterator;
+
 		for (iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
 			loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *iterator));
 		}
@@ -96,18 +100,20 @@ Score::Score(Archive &movie, Lingo &lingo, DirectorSound &soundManager) {
 
 	if (clutList.size() > 1)
 		error("More than one palette was found");
+
 	if (clutList.size() == 0)
 		error("CLUT not found");
 
 	Common::SeekableReadStream *pal = _movieArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[0]);
+
 	palette.loadPalette(*pal);
 	g_system->getPaletteManager()->setPalette(palette.getPalette(), 0, palette.getPaletteColorCount());
-
 }
 
 Score::~Score() {
 	_surface->free();
 	_trailSurface->free();
+
 	delete _surface;
 	delete _trailSurface;
 
@@ -129,14 +135,17 @@ void Score::loadFrames(Common::SeekableReadStream &stream) {
 		size -= frameSize;
 		frameSize -= 2;
 		Frame *frame = new Frame(*_frames.back());
+
 		while (frameSize != 0) {
 			channelSize = stream.readByte() * 2;
 			channelOffset = stream.readByte() * 2;
 			frame->readChannel(stream, channelOffset, channelSize);
 			frameSize -= channelSize + 2;
 		}
+
 		_frames.push_back(frame);
 	}
+
 	//remove initial frame
 	_frames.remove_at(0);
 }
@@ -156,15 +165,19 @@ void Score::loadConfig(Common::SeekableReadStream &stream) {
 void Score::readVersion(uint32 rid) {
 	_versionMinor = rid & 0xffff;
 	_versionMajor = rid >> 16;
-	debug("%d.%d", _versionMajor, _versionMinor);
+
+	debug("Version: %d.%d", _versionMajor, _versionMinor);
 }
 
 void Score::loadCastData(Common::SeekableReadStream &stream) {
 	for (uint16 id = _castArrayStart; id <= _castArrayEnd; id++) {
 		byte size = stream.readByte();
+
 		if (size == 0)
 			continue;
+
 		uint8 castType = stream.readByte();
+
 		switch (castType) {
 		case kCastBitmap:
 			_casts[id] = new BitmapCast(stream);
@@ -188,10 +201,12 @@ void Score::loadCastData(Common::SeekableReadStream &stream) {
 			break;
 		}
 	}
+
 	//Set cast pointers to sprites
 	for (uint16 i = 0; i < _frames.size(); i++) {
 		for (uint16 j = 0; j < _frames[i]->_sprites.size(); j++) {
 			byte castId = _frames[i]->_sprites[j]->_castId;
+
 			if (_casts.contains(castId))
 				_frames[i]->_sprites[j]->_cast = _casts.find(castId)->_value;
 		}
@@ -206,7 +221,6 @@ void Score::loadLabels(Common::SeekableReadStream &stream) {
 	uint16 stringPos = stream.readUint16BE() + offset;
 
 	for (uint16 i = 0; i < count; i++) {
-
 		uint16 nextFrame = stream.readUint16BE();
 		uint16 nextStringPos = stream.readUint16BE() + offset;
 		uint16 streamPos = stream.pos();
@@ -224,13 +238,13 @@ void Score::loadLabels(Common::SeekableReadStream &stream) {
 	}
 
 	Common::HashMap<uint16, Common::String>::iterator j;
+
 	for (j = _labels.begin(); j != _labels.end(); ++j) {
 		debug("Frame %d, Label %s", j->_key, j->_value.c_str());
 	}
 }
 
 void Score::loadActions(Common::SeekableReadStream &stream) {
-
 	uint16 count = stream.readUint16BE() + 1;
 	uint16 offset = count * 4 + 2;
 
@@ -239,7 +253,6 @@ void Score::loadActions(Common::SeekableReadStream &stream) {
 	uint16 stringPos = stream.readUint16BE() + offset;
 
 	for (uint16 i = 0; i < count; i++) {
-
 		uint16 nextId = stream.readByte();
 		/*byte subId = */ stream.readByte();
 		uint16 nextStringPos = stream.readUint16BE() + offset;
@@ -255,11 +268,13 @@ void Score::loadActions(Common::SeekableReadStream &stream) {
 
 		id = nextId;
 		stringPos = nextStringPos;
+
 		if (stringPos == stream.size())
 			break;
 	}
 
 	Common::HashMap<uint16, Common::String>::iterator j;
+
 	for (j = _actions.begin(); j != _actions.end(); ++j)
 		_lingo->addCode(j->_value, kFrameScript, j->_key);
 
@@ -276,18 +291,23 @@ void Score::loadScriptText(Common::SeekableReadStream &stream) {
 	uint32 strLen = stream.readUint32BE();
 	/*uin32 dataLen = */ stream.readUint32BE();
 	Common::String script;
+
 	for (uint32 i = 0; i < strLen; i++) {
 		byte ch = stream.readByte();
-		if (ch == 0x0d){
+
+		if (ch == 0x0d) {
 			//in old Mac systems \r was the code for end-of-line instead.
 			ch = '\n';
 		}
 		script += ch;
 	}
+
 	_lingo->addCode(script, kMovieScript, _movieScriptCount);
+
 	if (ConfMan.getBool("dump_scripts")) {
 		dumpScript(_movieScriptCount, kMovieScript, script);
 	}
+
 	_movieScriptCount++;
 }
 
@@ -314,6 +334,7 @@ void Score::dumpScript(uint16 id, ScriptType type, Common::String script) {
 		warning("Can not open dump file %s", buf);
 		return;
 	}
+
 	out.writeString(script);
 
 	out.flush();
@@ -324,10 +345,13 @@ void Score::loadCastInfo(Common::SeekableReadStream &stream, uint16 id) {
 	uint32 entryType = 0;
 	Common::Array<Common::String> castStrings = loadStrings(stream, entryType);
 	CastInfo *ci = new CastInfo();
+
 	ci->script = castStrings[0];
+
 	if (ci->script != "") {
 		_lingo->addCode(ci->script, kSpriteScript, id);
 	}
+
 	if (!ConfMan.getBool("dump_scripts")) {
 		dumpScript(id, kSpriteScript, ci->script);
 	}
@@ -336,6 +360,7 @@ void Score::loadCastInfo(Common::SeekableReadStream &stream, uint16 id) {
 	ci->directory = getString(castStrings[2]);
 	ci->fileName = getString(castStrings[3]);
 	ci->type = castStrings[4];
+
 	_castsInfo[id] = ci;
 }
 
@@ -343,27 +368,34 @@ Common::String Score::getString(Common::String str) {
 	if (str.size() == 0) {
 		return str;
 	}
+
 	uint8 f = static_cast<uint8>(str.firstChar());
 
 	if (f == 0) {
 		return "";
 	}
+
 	str.deleteChar(0);
+
 	if (str.lastChar() == '\x00') {
 		str.deleteLastChar();
 	}
+
 	return str;
 }
 
 void Score::loadFileInfo(Common::SeekableReadStream &stream) {
 	Common::Array<Common::String> fileInfoStrings = loadStrings(stream, _flags);
 	_script = fileInfoStrings[0];
+
 	if (_script != "") {
 		_lingo->addCode(_script, kMovieScript, _movieScriptCount);
 	}
+
 	if (!ConfMan.getBool("dump_scripts")) {
 		dumpScript(_movieScriptCount, kMovieScript, _script);
 	}
+
 	_movieScriptCount++;
 	_changedBy = fileInfoStrings[1];
 	_createdBy = fileInfoStrings[2];
@@ -373,6 +405,7 @@ void Score::loadFileInfo(Common::SeekableReadStream &stream) {
 Common::Array<Common::String> Score::loadStrings(Common::SeekableReadStream &stream, uint32 &entryType, bool hasHeader) {
 	Common::Array<Common::String> strings;
 	uint32 offset = 0;
+
 	if (hasHeader) {
 		offset = stream.readUint32BE();
 		/*uint32 unk1 = */ stream.readUint32BE();
@@ -384,6 +417,7 @@ Common::Array<Common::String> Score::loadStrings(Common::SeekableReadStream &str
 	uint16 count = stream.readUint16BE();
 	offset += (count + 1) * 4 + 2; //positions info + uint16 count
 	uint32 startPos = stream.readUint32BE() + offset;
+
 	for (uint16 i = 0; i < count; i++) {
 		Common::String entryString;
 		uint32 nextPos = stream.readUint32BE() + offset;
@@ -401,6 +435,7 @@ Common::Array<Common::String> Score::loadStrings(Common::SeekableReadStream &str
 		stream.seek(streamPos);
 		startPos = nextPos;
 	}
+
 	return strings;
 }
 
@@ -435,6 +470,7 @@ BitmapCast::BitmapCast(Common::SeekableReadStream &stream) {
 	boundingRect = Score::readRect(stream);
 	regY = stream.readUint16BE();
 	regX = stream.readUint16BE();
+
 	if (someFlaggyThing & 0x8000) {
 		/*uint16 unk1 =*/ stream.readUint16BE();
 		/*uint16 unk2 =*/ stream.readUint16BE();
@@ -475,26 +511,32 @@ Common::Rect Score::readRect(Common::SeekableReadStream &stream) {
 	rect->left = stream.readUint16BE();
 	rect->bottom = stream.readUint16BE();
 	rect->right = stream.readUint16BE();
+
 	return *rect;
 }
 
 void Score::startLoop() {
 	initGraphics(_movieRect.width(), _movieRect.height(), true);
+
 	_surface->create(_movieRect.width(), _movieRect.height());
 	_trailSurface->create(_movieRect.width(), _movieRect.height());
+
 	if (_stageColor == 0)
 		_trailSurface->clear(15);
 	else
 		_trailSurface->clear(_stageColor);
+
 	_currentFrame = 0;
 	_stopPlay = false;
 	_nextFrameTime = 0;
 
 	_lingo->processEvent(kEventStartMovie, 0);
 	_frames[_currentFrame]->prepareFrame(this);
+
 	while (!_stopPlay && _currentFrame < _frames.size() - 2) {
 		update();
 		processEvents();
+
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
@@ -531,6 +573,7 @@ void Score::update() {
 		if (tempo > 161) {
 			//Delay
 			_nextFrameTime = g_system->getMillis() + (256 - tempo) * 1000;
+
 			return;
 		} else if (tempo <= 60) {
 			//FPS
@@ -562,18 +605,21 @@ void Score::processEvents() {
 		_lingo->processEvent(kEventIdle, _currentFrame - 1);
 
 	Common::Event event;
+
 	while (g_system->getEventManager()->pollEvent(event)) {
 		if (event.type == Common::EVENT_QUIT)
 			_stopPlay = true;
 
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
 			Common::Point pos = g_system->getEventManager()->getMousePos();
+
 			//TODO there is dont send frame id
 			_lingo->processEvent(kEventMouseDown, _frames[_currentFrame]->getSpriteIDFromPos(pos));
 		}
 
 		if (event.type == Common::EVENT_LBUTTONUP) {
 			Common::Point pos = g_system->getEventManager()->getMousePos();
+
 			_lingo->processEvent(kEventMouseUp, _frames[_currentFrame]->getSpriteIDFromPos(pos));
 		}
 	}
@@ -595,6 +641,7 @@ Frame::Frame() {
 	_blend = 0;
 
 	_sprites.resize(CHANNEL_COUNT);
+
 	for (uint16 i = 0; i < _sprites.size(); i++) {
 		Sprite *sp = new Sprite();
 		_sprites[i] = sp;
@@ -617,6 +664,7 @@ Frame::Frame(const Frame &frame) {
 	_palette = new PaletteInfo();
 
 	_sprites.resize(CHANNEL_COUNT);
+
 	for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
 		_sprites[i] = new Sprite(*frame._sprites[i]);
 	}
@@ -716,6 +764,7 @@ void Frame::readMainChannels(Common::SeekableReadStream &stream, uint16 offset, 
 		}
 	}
 }
+
 void Frame::readPaletteInfo(Common::SeekableReadStream &stream) {
 	_palette->firstColor = stream.readByte();
 	_palette->lastColor = stream.readByte();
@@ -751,10 +800,12 @@ void Frame::readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16
 		case kSpritePositionFlags:
 			sprite._flags = stream.readUint16BE();
 			sprite._ink = static_cast<InkType>(sprite._flags & 0x3f);
+
 			if (sprite._flags & 0x40)
 				sprite._trails = 1;
 			else
 				sprite._trails = 0;
+
 			fieldPosition += 2;
 			break;
 		case kSpritePositionCastId:
@@ -789,12 +840,15 @@ void Frame::readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16
 void Frame::prepareFrame(Score *score) {
 	renderSprites(*score->_movieArchive, *score->_surface, score->_movieRect, false);
 	renderSprites(*score->_movieArchive, *score->_trailSurface, score->_movieRect, true);
+
 	if (_transType != 0)
 		//TODO Handle changing area case
 		playTransition(score);
+
 	if (_sound1 != 0 || _sound2 != 0) {
 		playSoundChannel();
 	}
+
 	g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, score->_surface->getBounds().width(), score->_surface->getBounds().height());
 }
 
@@ -810,25 +864,33 @@ void Frame::playTransition(Score *score) {
 	uint16 steps = duration / stepDuration;
 
 	switch (_transType) {
-	case kTransCoverDown: {
+	case kTransCoverDown:
+		{
 			uint16 stepSize = score->_movieRect.height() / steps;
 			Common::Rect r = score->_movieRect;
+
 			for (uint16 i = 1; i < steps; i++) {
 				r.setHeight(stepSize * i);
+
 				g_system->delayMillis(stepDuration);
 				score->processEvents();
+
 				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height());
 				g_system->updateScreen();
 			}
 		}
 		break;
-	case kTransCoverUp: {
+	case kTransCoverUp:
+		{
 			uint16 stepSize = score->_movieRect.height() / steps;
 			Common::Rect r = score->_movieRect;
+
 			for (uint16 i = 1; i < steps; i++) {
 				r.setHeight(stepSize * i);
+
 				g_system->delayMillis(stepDuration);
 				score->processEvents();
+
 				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, score->_movieRect.height() - stepSize * i, r.width(), r.height());
 				g_system->updateScreen();
 			}
@@ -837,10 +899,13 @@ void Frame::playTransition(Score *score) {
 	case kTransCoverRight: {
 			uint16 stepSize = score->_movieRect.width() / steps;
 			Common::Rect r = score->_movieRect;
+
 			for (uint16 i = 1; i < steps; i++) {
 				r.setWidth(stepSize * i);
+
 				g_system->delayMillis(stepDuration);
 				score->processEvents();
+
 				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height());
 				g_system->updateScreen();
 			}
@@ -849,10 +914,13 @@ void Frame::playTransition(Score *score) {
 	case kTransCoverLeft: {
 			uint16 stepSize = score->_movieRect.width() / steps;
 			Common::Rect r = score->_movieRect;
+
 			for (uint16 i = 1; i < steps; i++) {
 				r.setWidth(stepSize * i);
+
 				g_system->delayMillis(stepDuration);
 				score->processEvents();
+
 				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, 0, r.width(), r.height());
 				g_system->updateScreen();
 			}
@@ -861,11 +929,14 @@ void Frame::playTransition(Score *score) {
 	case kTransCoverUpLeft: {
 			uint16 stepSize = score->_movieRect.width() / steps;
 			Common::Rect r = score->_movieRect;
+
 			for (uint16 i = 1; i < steps; i++) {
 				r.setWidth(stepSize * i);
 				r.setHeight(stepSize * i);
+
 				g_system->delayMillis(stepDuration);
 				score->processEvents();
+
 				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, score->_movieRect.height() - stepSize * i, r.width(), r.height());
 				g_system->updateScreen();
 			}
@@ -874,11 +945,14 @@ void Frame::playTransition(Score *score) {
 	case kTransCoverUpRight: {
 			uint16 stepSize = score->_movieRect.width() / steps;
 			Common::Rect r = score->_movieRect;
+
 			for (uint16 i = 1; i < steps; i++) {
 				r.setWidth(stepSize * i);
 				r.setHeight(stepSize * i);
+
 				g_system->delayMillis(stepDuration);
 				score->processEvents();
+
 				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, score->_movieRect.height() - stepSize * i, r.width(), r.height());
 				g_system->updateScreen();
 			}
@@ -887,11 +961,14 @@ void Frame::playTransition(Score *score) {
 	case kTransCoverDownLeft: {
 			uint16 stepSize = score->_movieRect.width() / steps;
 			Common::Rect r = score->_movieRect;
+
 			for (uint16 i = 1; i < steps; i++) {
 				r.setWidth(stepSize * i);
 				r.setHeight(stepSize * i);
+
 				g_system->delayMillis(stepDuration);
 				score->processEvents();
+
 				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, 0, r.width(), r.height());
 				g_system->updateScreen();
 			}
@@ -900,11 +977,14 @@ void Frame::playTransition(Score *score) {
 	case kTransCoverDownRight: {
 			uint16 stepSize = score->_movieRect.width() / steps;
 			Common::Rect r = score->_movieRect;
+
 			for (uint16 i = 1; i < steps; i++) {
 				r.setWidth(stepSize * i);
 				r.setHeight(stepSize * i);
+
 				g_system->delayMillis(stepDuration);
 				score->processEvents();
+
 				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height());
 				g_system->updateScreen();
 			}
@@ -925,6 +1005,7 @@ void Frame::renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Co
 
 			DIBDecoder img;
 			uint32 imgId = 1024 + _sprites[i]->_castId;
+
 			if (!_movie.hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
 				continue;
 			}
@@ -940,6 +1021,7 @@ void Frame::renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Co
 			int y = _sprites[i]->_startPoint.y - regY + rectTop;
 			int height = _sprites[i]->_height;
 			int width = _sprites[i]->_width;
+
 			Common::Rect drawRect = Common::Rect(x, y, x + width, y + height);
 			_drawRects.push_back(drawRect);
 
@@ -964,12 +1046,15 @@ void Frame::renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Co
 
 void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
 	uint8 skipColor = 15; //FIXME is it always white (last entry in pallette) ?
+
 	for (int ii = 0; ii < sprite.h; ii++) {
 		const byte *src = (const byte *)sprite.getBasePtr(0, ii);
 		byte *dst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + ii);
+
 		for (int j = 0; j < drawRect.width(); j++) {
 			if (*src != skipColor)
 				*dst = *src;
+
 			src++;
 			dst++;
 		}
@@ -987,6 +1072,7 @@ void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Su
 		ff.addSeed(0, yy);
 		ff.addSeed(tmp.w - 1, yy);
 	}
+
 	for (int xx = 0; xx < tmp.w; xx++) {
 		ff.addSeed(xx, 0);
 		ff.addSeed(xx, tmp.h - 1);
@@ -1012,6 +1098,7 @@ uint16 Frame::getSpriteIDFromPos(Common::Point pos) {
 		if (_drawRects[i].contains(pos))
 			return i;
 	}
+
 	return 0;
 }
 

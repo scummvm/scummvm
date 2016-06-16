@@ -80,8 +80,6 @@ Common::Error DirectorEngine::run() {
 -- some more\n");
 #endif
 
-
-
 	//FIXME
 	_mainArchive = new RIFFArchive();
 	_mainArchive->openFile("bookshelf_example.mmm");

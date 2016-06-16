@@ -59,10 +59,11 @@ void DIBDecoder::destroy() {
 }
 
 void DIBDecoder::loadPalette(Common::SeekableReadStream &stream) {
-	uint16 steps = stream.size()/6;
+	uint16 steps = stream.size() / 6;
 	uint16 index = (steps * 3) - 1;
 	_paletteColorCount = steps;
 	_palette = new byte[index];
+
 	for (uint8 i = 0; i < steps; i++) {
 		_palette[index - 2] = stream.readByte();
 		stream.readByte();
@@ -98,9 +99,12 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 	Common::SeekableSubReadStream subStream(&stream, 40, stream.size());
 
 	_codec = Image::createBitmapCodec(compression, width, height, bitsPerPixel);
+
 	if (!_codec)
 		return false;
+
 	_surface = _codec->decodeFrame(subStream);
+
 	return true;
 }
 

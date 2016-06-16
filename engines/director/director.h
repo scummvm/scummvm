@@ -27,7 +27,6 @@
 
 #include "engines/engine.h"
 #include "engines/director/sound.h"
-class OSystem;
 
 namespace Common {
 class MacResManager;

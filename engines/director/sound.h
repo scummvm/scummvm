@@ -24,9 +24,9 @@
 #include "audio/mixer.h"
 #include "common/str.h"
 
-
 #ifndef DIRECTOR_SOUND_H
 #define DIRECTOR_SOUND_H
+
 namespace Director {
 
 class DirectorSound {
