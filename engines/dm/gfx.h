@@ -2,6 +2,7 @@
 #define GFX_H
 
 #include "common/scummsys.h"
+#include "common/rect.h"
 #include "dm.h"
 
 namespace DM {
@@ -20,6 +21,9 @@ public:
 	uint16 Y2;
 
 	Box(uint16 x1, uint16 x2, uint16 y1, uint16 y2): X1(x1), X2(x2), Y1(y1), Y2(y2) {}
+	bool isPointInside(Common::Point point) {
+		return (X1 <= point.x) && (point.x < X2) && (Y1 <= point.y) && (point.y < Y2);
+	}
 }; // @ BOX_BYTE, BOX_WORD
 
 // The frames in the original sources contain inclusive boundaries and byte widths, not pixel widths

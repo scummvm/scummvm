@@ -2,6 +2,7 @@
 #define DM_EVENTMAN_H
 
 #include "common/events.h"
+#include "common/queue.h"
 #include "gfx.h"
 
 
@@ -127,10 +128,10 @@ enum CommandType {
 
 class Command {
 public:
-	int16 posX, posY;
+	Common::Point pos;
 	CommandType type;
 
-	Command(int16 x, int16 y, CommandType commandType): posX(x), posY(y), type(type) {}
+	Command(Common::Point position, CommandType commandType): pos(position), type(type) {}
 }; // @ COMMAND
 
 
@@ -141,7 +142,7 @@ public:
 	MouseButton button;
 
 	MouseInput(CommandType type, uint16 x1, uint16 x2, uint16 y1, uint16 y2, MouseButton mouseButton)
-		: commandTypeToIssue(type), hitbox(x1, x2, y1, y2), button(mouseButton) {}
+		: commandTypeToIssue(type), hitbox(x1, x2 + 1, y1, y2 + 1), button(mouseButton) {}
 }; // @ MOUSE_INPUT
 
 extern MouseInput gPrimaryMouseInput_Entrance[4]; // @ G0445_as_Graphic561_PrimaryMouseInput_Entrance[4]
@@ -183,13 +184,26 @@ class EventManager {
 
 	Common::Point _mousePos;
 	uint16 _dummyMapIndex;
+
+	bool _pendingClickPresent; // G0436_B_PendingClickPresent
+	Common::Point _pendingClickPos; // @ G0437_i_PendingClickX, G0438_i_PendingClickY
+	MouseButton _pendingClickButton; // @ G0439_i_PendingClickButtonsStatus
+
+	bool _isCommandQueueLocked;
+	Common::Queue<Command> _commandQueue;
 public:
+	MouseInput* _primaryMouseInput;// @ G0441_ps_PrimaryMouseInput
+	MouseInput* _secondaryMouseInput;// @ G0442_ps_SecondaryMouseInput
+
 	EventManager(DMEngine *vm);
 	void initMouse();
 	void showMouse(bool visibility);
 
 	void setMousePos(Common::Point pos);
 	void processInput();
+	void processPendingClick(); // @ F0360_COMMAND_ProcessPendingClick
+	void processClick(Common::Point mousePos, MouseButton button); // @	F0359_COMMAND_ProcessClick_CPSC
+	CommandType getCommandTypeFromMouseInput(MouseInput *input, Common::Point mousePos, MouseButton button); // @ F0358_COMMAND_GetCommandFromMouseInput_CPSC
 };
 
 }

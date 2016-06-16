@@ -74,14 +74,14 @@ Common::Error DMEngine::run() {
 	_dungeonMan->setCurrentMapAndPartyMap(dummyMapIndex);
 
 
-
-
 	_displayMan->loadCurrentMapGraphics();
-
 	_displayMan->loadPalette(gPalCredits);
 
 	_eventMan->initMouse();
 	_eventMan->showMouse(true);
+
+	startGame();
+
 
 	while (true) {
 		_eventMan->processInput();
@@ -93,6 +93,12 @@ Common::Error DMEngine::run() {
 
 
 	return Common::kNoError;
+}
+
+
+void DMEngine::startGame() {
+	_eventMan->_primaryMouseInput = gPrimaryMouseInput_Interface;
+	_eventMan->_secondaryMouseInput = gSecondaryMouseInput_Movement;
 }
 
 } // End of namespace DM

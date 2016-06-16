@@ -622,7 +622,7 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	for (int i = 0; i < 18; i++)
 		_currMapDoorOrnIndices[i] = 0;
 
-	Thing _inscriptionThing = Thing::thingNone;
+	_inscriptionThing = Thing::thingNone;
 }
 
 DisplayMan::~DisplayMan() {

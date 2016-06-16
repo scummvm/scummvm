@@ -76,6 +76,7 @@ enum {
 };
 
 class DMEngine : public Engine {
+	void startGame(); // @ F0462_START_StartGame_CPSF
 public:
 	DMEngine(OSystem *syst);
 	~DMEngine();
