@@ -9,6 +9,207 @@
 using namespace DM;
 
 
+MouseInput DM::gPrimaryMouseInput_Entrance[4] = { // @ G0445_as_Graphic561_PrimaryMouseInput_Entrance[4]
+												  /* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+	MouseInput(kCommandEntranceEnterDungeon, 244, 298,  45,  58, kLeftMouseButton),
+	// Strangerke - C201_COMMAND_ENTRANCE_RESUME isn't present in the demo
+	MouseInput(kCommandEntranceResume,        244, 298,  76,  93, kLeftMouseButton),
+	MouseInput(kCommandEntranceDrawCredits,  248, 293, 187, 199, kLeftMouseButton),
+	MouseInput(kCommandNone, 0, 0, 0, 0, kNoneMouseButton)};
+MouseInput DM::gPrimaryMouseInput_RestartGame[2] = { // @ G0446_as_Graphic561_PrimaryMouseInput_RestartGame[2]
+													 /* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+	MouseInput(kCommandRestartGame, 103, 217, 145, 159, kLeftMouseButton),
+	MouseInput(kCommandNone, 0, 0, 0, 0, kNoneMouseButton)};
+MouseInput DM::gPrimaryMouseInput_Interface[20] = { // @ G0447_as_Graphic561_PrimaryMouseInput_Interface[20]
+													/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+	MouseInput(kCommandClickInChampion_0_StatusBox,       0,  42,   0,  28, kLeftMouseButton),
+	MouseInput(kCommandClickInChampion_1_StatusBox,      69, 111,   0,  28, kLeftMouseButton),
+	MouseInput(kCommandClickInChampion_2_StatusBox,     138, 180,   0,  28, kLeftMouseButton),
+	MouseInput(kCommandClickInChampion_3_StatusBox,     207, 249,   0,  28, kLeftMouseButton),
+	MouseInput(kCommandClickOnChamptionIcon_Top_Left,    274, 299,   0,  13, kLeftMouseButton),
+	MouseInput(kCommandClickOnChamptionIcon_Top_Right,   301, 319,   0,  13, kLeftMouseButton),
+	MouseInput(kCommandClickOnChamptionIcon_Lower_Right, 301, 319,  15,  28, kLeftMouseButton),
+	MouseInput(kCommandClickOnChamptionIcon_Lower_Left,  274, 299,  15,  28, kLeftMouseButton),
+	MouseInput(kCommandToggleInventoryChampion_0,         43,  66,   0,  28, kLeftMouseButton), /* Atari ST: Only present in CSB 2.x and with Box.X1 =  44. swapped with 4 next entries */
+	MouseInput(kCommandToggleInventoryChampion_1,        112, 135,   0,  28, kLeftMouseButton), /* Atari ST: Only present in CSB 2.x and with Box.X1 = 113. swapped with 4 next entries */
+	MouseInput(kCommandToggleInventoryChampion_2,        181, 204,   0,  28, kLeftMouseButton), /* Atari ST: Only present in CSB 2.x and with Box.X1 = 182. swapped with 4 next entries */
+	MouseInput(kCommandToggleInventoryChampion_3,        250, 273,   0,  28, kLeftMouseButton), /* Atari ST: Only present in CSB 2.x and with Box.X1 = 251. swapped with 4 next entries */
+	MouseInput(kCommandToggleInventoryChampion_0,          0,  66,   0,  28, kRightMouseButton), /* Atari ST: swapped with 4 previous entries */
+	MouseInput(kCommandToggleInventoryChampion_1,         69, 135,   0,  28, kRightMouseButton), /* Atari ST: swapped with 4 previous entries */
+	MouseInput(kCommandToggleInventoryChampion_2,        138, 204,   0,  28, kRightMouseButton), /* Atari ST: swapped with 4 previous entries */
+	MouseInput(kCommandToggleInventoryChampion_3,        207, 273,   0,  28, kRightMouseButton), /* Atari ST: swapped with 4 previous entries */
+	MouseInput(kCommandClickInSpellArea,                233, 319,  42,  73, kLeftMouseButton),
+	MouseInput(kCommandClickInActionArea,               233, 319,  77, 121, kLeftMouseButton),
+	MouseInput(kCommandFreezeGame,                          0,   1, 198, 199, kLeftMouseButton),
+	MouseInput(kCommandNone, 0, 0, 0, 0, kNoneMouseButton)};
+MouseInput DM::gSecondaryMouseInput_Movement[9] = { // @ G0448_as_Graphic561_SecondaryMouseInput_Movement[9]
+													/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+	MouseInput(kCommandTurnLeft,             234, 261, 125, 145, kLeftMouseButton),
+	MouseInput(kCommandMoveForward,          263, 289, 125, 145, kLeftMouseButton),
+	MouseInput(kCommandTurnRight,            291, 318, 125, 145, kLeftMouseButton),
+	MouseInput(kCommandMoveLeft,             234, 261, 147, 167, kLeftMouseButton),
+	MouseInput(kCommandMoveBackward,         263, 289, 147, 167, kLeftMouseButton),
+	MouseInput(kCommandMoveRight,            291, 318, 147, 167, kLeftMouseButton),
+	MouseInput(kCommandClickInDungeonView,   0, 223,  33, 168, kLeftMouseButton),
+	MouseInput(kCommandToggleInventoryLeader, 0, 319,  33, 199, kRightMouseButton),
+	MouseInput(kCommandNone, 0, 0, 0, 0, kNoneMouseButton)};
+MouseInput DM::gSecondaryMouseInput_ChampionInventory[38] = { // @ G0449_as_Graphic561_SecondaryMouseInput_ChampionInventory[38]
+															  /* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+	MouseInput(kCommandCloseInventory,                                   0, 319,   0, 199, kRightMouseButton),
+	MouseInput(kCommandSaveGame,                                       174, 182,  36,  44, kLeftMouseButton),
+	MouseInput(kCommandSleep,                                           188, 204,  36,  44, kLeftMouseButton),
+	MouseInput(kCommandCloseInventory,                                 210, 218,  36,  44, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryReadyHand ,        6,  21,  86, 101, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryActionHand,       62,  77,  86, 101, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryHead,              34,  49,  59,  74, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryTorso,             34,  49,  79,  94, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryLegs,              34,  49,  99, 114, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryFeet,              34,  49, 119, 134, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryPouch_2,            6,  21, 123, 138, kLeftMouseButton),
+	MouseInput(kCommandClickOnMouth,                                   56,  71,  46,  61, kLeftMouseButton),
+	MouseInput(kCommandClickOnEye,                                     12,  27,  46,  61, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryQuiverLine_2_1,    79,  94, 106, 121, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryQuiverLine_1_2,    62,  77, 123, 138, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryQuiverLine_2_2,    79,  94, 123, 138, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryNeck,               6,  21,  66,  81, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryPouch_1,            6,  21, 106, 121, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryQuiverLine_1_1,    62,  77, 106, 121, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryBackpackLine_1_1,  66,  81,  66,  81, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryBackpackLine_2_2,  83,  98,  49,  64, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryBackpackLine_2_3, 100, 115,  49,  64, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryBackpackLine_2_4, 117, 132,  49,  64, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryBackpackLine_2_5, 134, 149,  49,  64, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryBackpackLine_2_6, 151, 166,  49,  64, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryBackpackLine_2_7, 168, 183,  49,  64, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryBackpackLine_2_8, 185, 200,  49,  64, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryBackpackLine_2_9, 202, 217,  49,  64, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryBackpackLine_1_2,  83,  98,  66,  81, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryBackpackLine_1_3, 100, 115,  66,  81, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryBackpackLine_1_4, 117, 132,  66,  81, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryBackpackLine_1_5, 134, 149,  66,  81, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryBackpackLine_1_6, 151, 166,  66,  81, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryBackpackLine_1_7, 168, 183,  66,  81, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryBackpackLine_1_8, 185, 200,  66,  81, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxInventoryBackpackLine_1_9, 202, 217,  66,  81, kLeftMouseButton),
+	MouseInput(kCommandClickInPanel,                                   96, 223,  83, 167, kLeftMouseButton),
+	MouseInput(kCommandNone, 0, 0, 0, 0, kNoneMouseButton)};
+MouseInput DM::gPrimaryMouseInput_PartySleeping[3] = { // @ G0450_as_Graphic561_PrimaryMouseInput_PartySleeping[3]
+													   /* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+	MouseInput(kCommandWakeUp, 0, 223, 33, 168, kLeftMouseButton),
+	MouseInput(kCommandWakeUp, 0, 223, 33, 168, kRightMouseButton),
+	MouseInput(kCommandNone, 0, 0, 0, 0, kNoneMouseButton)};
+MouseInput DM::gPrimaryMouseInput_FrozenGame[3] = { // @ G0451_as_Graphic561_PrimaryMouseInput_FrozenGame[3]
+													/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+	MouseInput(kCommandUnfreezeGame, 0, 319, 0, 199, kLeftMouseButton),
+	MouseInput(kCommandUnfreezeGame, 0, 319, 0, 199, kRightMouseButton),
+	MouseInput(kCommandNone, 0, 0, 0, 0, kNoneMouseButton)};
+MouseInput DM::gMouseInput_ActionAreaNames[5] = { // @ G0452_as_Graphic561_MouseInput_ActionAreaNames[5]
+												  /* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+	MouseInput(kCommandClickInActionAreaPass,     285, 318,  77,  83, kLeftMouseButton),
+	MouseInput(kCommandClickInActionAreaAction_0, 234, 318,  86,  96, kLeftMouseButton),
+	MouseInput(kCommandClickInActionAreaAction_1, 234, 318,  98, 108, kLeftMouseButton),
+	MouseInput(kCommandClickInActionAreaAction_2, 234, 318, 110, 120, kLeftMouseButton),
+	MouseInput(kCommandNone, 0, 0, 0, 0, kNoneMouseButton)};
+MouseInput DM::gMouseInput_ActionAreaIcons[5] = { // @ G0453_as_Graphic561_MouseInput_ActionAreaIcons[5]
+												  /* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+	MouseInput(kCommandClickInActionAreaChampion_0_Action, 233, 252, 86, 120, kLeftMouseButton),
+	MouseInput(kCommandClickInActionAreaChampion_1_Action, 255, 274, 86, 120, kLeftMouseButton),
+	MouseInput(kCommandClickInActionAreaChampion_2_Action, 277, 296, 86, 120, kLeftMouseButton),
+	MouseInput(kCommandClickInActionAreaChampion_3_Action, 299, 318, 86, 120, kLeftMouseButton),
+	MouseInput(kCommandNone, 0, 0, 0, 0, kNoneMouseButton)};
+MouseInput DM::gMouseInput_SpellArea[9] = { // @ G0454_as_Graphic561_MouseInput_SpellArea[9]
+											/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+	MouseInput(kCommandClickInSpellAreaSymbol_1,      235, 247, 51, 61, kLeftMouseButton),
+	MouseInput(kCommandClickInSpellAreaSymbol_2,      249, 261, 51, 61, kLeftMouseButton),
+	MouseInput(kCommandClickInSpellAreaSymbol_3,      263, 275, 51, 61, kLeftMouseButton),
+	MouseInput(kCommandClickInSpellAreaSymbol_4,      277, 289, 51, 61, kLeftMouseButton),
+	MouseInput(kCommandClickInSpellAreaSymbol_5,      291, 303, 51, 61, kLeftMouseButton),
+	MouseInput(kCommandClickInSpellAreaSymbol_6,      305, 317, 51, 61, kLeftMouseButton),
+	MouseInput(kCommandClickInSpeallAreaCastSpell,    234, 303, 63, 73, kLeftMouseButton),
+	MouseInput(kCommandClickInSpellAreaRecantSymbol, 305, 318, 63, 73, kLeftMouseButton),
+	MouseInput(kCommandNone, 0, 0, 0, 0, kNoneMouseButton)};
+MouseInput DM::gMouseInput_ChampionNamesHands[13] = { // @ G0455_as_Graphic561_MouseInput_ChampionNamesHands[13]
+													  /* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+	MouseInput(kCommandSetLeaderChampion_0,                                    0,  42,  0,  6, kLeftMouseButton),
+	MouseInput(kCommandSetLeaderChampion_1,                                   69, 111,  0,  6, kLeftMouseButton),
+	MouseInput(kCommandSetLeaderChampion_2,                                  138, 180,  0,  6, kLeftMouseButton),
+	MouseInput(kCommandSetLeaderChampion_3,                                  207, 249,  0,  6, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxChampion_0_StatusBoxReadyHand,    4,  19, 10, 25, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxChampion_0_StatusBoxActionHand,  24,  39, 10, 25, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxChampion_1_StatusBoxReadyHand,   73,  88, 10, 25, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxChampion_1_StatusBoxActionHand,  93, 108, 10, 25, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxChampion_2_StatusBoxReadyHand,  142, 157, 10, 25, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxChampion_2_StatusBoxActionHand, 162, 177, 10, 25, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxChampion_3_StatusBoxReadyHand,  211, 226, 10, 25, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxChampion_3_StatusBoxActionHand, 231, 246, 10, 25, kLeftMouseButton),
+	MouseInput(kCommandNone, 0, 0, 0, 0, kNoneMouseButton)};
+MouseInput DM::gMouseInput_PanelChest[9] = { // @ G0456_as_Graphic561_MouseInput_PanelChest[9]
+											 /* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+	MouseInput(kCommandClickOnSlotBoxChest_1, 117, 132,  92, 107, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxChest_2, 106, 121, 109, 124, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxChest_3, 111, 126, 126, 141, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxChest_4, 128, 143, 131, 146, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxChest_5, 145, 160, 134, 149, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxChest_6, 162, 177, 136, 151, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxChest_7, 179, 194, 137, 152, kLeftMouseButton),
+	MouseInput(kCommandClickOnSlotBoxChest_8, 196, 211, 138, 153, kLeftMouseButton),
+	MouseInput(kCommandNone, 0, 0, 0, 0, kNoneMouseButton)};
+MouseInput DM::gMouseInput_PanelResurrectReincarnateCancel[4] = { // @ G0457_as_Graphic561_MouseInput_PanelResurrectReincarnateCancel[4]
+																  /* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+	MouseInput(kCommandClickInPanelResurrect,   108, 158,  90, 138, kLeftMouseButton), /* Atari ST: Box = 104, 158,  86, 142 */
+	MouseInput(kCommandClickInPanelReincarnate, 161, 211,  90, 138, kLeftMouseButton), /* Atari ST: Box = 163, 217,  86, 142 */
+	MouseInput(kCommandClickInPanelCancel,      108, 211, 141, 153, kLeftMouseButton), /* Atari ST: Box = 104, 217, 146, 156 */
+	MouseInput(kCommandNone, 0, 0, 0, 0, kNoneMouseButton)};
+
+
+MouseInput DM::gPrimaryMouseInput_ViewportDialog1Choice[2] = { // @ G0471_as_Graphic561_PrimaryMouseInput_ViewportDialog1Choice[2]
+	MouseInput(kCommandClickOnDialogChoice_1, 16, 207, 138, 152, kLeftMouseButton), /* Bottom button */
+	MouseInput(kCommandNone, 0, 0, 0, 0, kNoneMouseButton)};
+MouseInput DM::gPrimaryMouseInput_ViewportDialog2Choices[3] = { // @ G0472_as_Graphic561_PrimaryMouseInput_ViewportDialog2Choices[3]
+	MouseInput(kCommandClickOnDialogChoice_1, 16, 207, 101, 115, kLeftMouseButton), /* Top button */
+	MouseInput(kCommandClickOnDialogChoice_2, 16, 207, 138, 152, kLeftMouseButton), /* Bottom button */
+	MouseInput(kCommandNone, 0, 0, 0, 0, kNoneMouseButton)};
+MouseInput DM::gPrimaryMouseInput_ViewportDialog3Choices[4] = { // @ G0473_as_Graphic561_PrimaryMouseInput_ViewportDialog3Choices[4]
+	MouseInput(kCommandClickOnDialogChoice_1,  16, 207, 101, 115, kLeftMouseButton), /* Top button */
+	MouseInput(kCommandClickOnDialogChoice_2,  16, 101, 138, 152, kLeftMouseButton), /* Lower left button */
+	MouseInput(kCommandClickOnDialogChoice_3, 123, 207, 138, 152, kLeftMouseButton), /* Lower right button */
+	MouseInput(kCommandNone, 0, 0, 0, 0, kNoneMouseButton)};
+MouseInput DM::gPrimaryMouseInput_ViewportDialog4Choices[5] = { // @ G0474_as_Graphic561_PrimaryMouseInput_ViewportDialog4Choices[5]
+	MouseInput(kCommandClickOnDialogChoice_1,  16, 101, 101, 115, kLeftMouseButton), /* Top left button */
+	MouseInput(kCommandClickOnDialogChoice_2, 123, 207, 101, 115, kLeftMouseButton), /* Top right button */
+	MouseInput(kCommandClickOnDialogChoice_3,  16, 101, 138, 152, kLeftMouseButton), /* Lower left button */
+	MouseInput(kCommandClickOnDialogChoice_4, 123, 207, 138, 152, kLeftMouseButton), /* Lower right button */
+	MouseInput(kCommandNone, 0, 0, 0, 0, kNoneMouseButton)};
+MouseInput DM::gPrimaryMouseInput_ScreenDialog1Choice[2] = { // @ G0475_as_Graphic561_PrimaryMouseInput_ScreenDialog1Choice[2]
+	MouseInput(kCommandClickOnDialogChoice_1, 63, 254, 138, 152, kLeftMouseButton), /* Bottom button */
+	MouseInput(kCommandNone, 0, 0, 0, 0, kNoneMouseButton)};
+MouseInput DM::gPrimaryMouseInput_ScreenDialog2Choices[3] = { // @ G0476_as_Graphic561_PrimaryMouseInput_ScreenDialog2Choices[3]
+	MouseInput(kCommandClickOnDialogChoice_1, 63, 254, 101, 115, kLeftMouseButton), /* Top button */
+	MouseInput(kCommandClickOnDialogChoice_2, 63, 254, 138, 152, kLeftMouseButton), /* Bottom button */
+	MouseInput(kCommandNone, 0, 0, 0, 0, kNoneMouseButton)};
+MouseInput DM::gPrimaryMouseInput_ScreenDialog3Choices[4] = { // @ G0477_as_Graphic561_PrimaryMouseInput_ScreenDialog3Choices[4]
+	MouseInput(kCommandClickOnDialogChoice_1,  63, 254, 101, 115, kLeftMouseButton), /* Top button */
+	MouseInput(kCommandClickOnDialogChoice_2,  63, 148, 138, 152, kLeftMouseButton), /* Lower left button */
+	MouseInput(kCommandClickOnDialogChoice_3, 170, 254, 138, 152, kLeftMouseButton), /* Lower right button */
+	MouseInput(kCommandNone, 0, 0, 0, 0, kNoneMouseButton)};
+MouseInput DM::gPrimaryMouseInput_ScreenDialog4Choices[5] = { // @ G0478_as_Graphic561_PrimaryMouseInput_ScreenDialog4Choices[5]
+	MouseInput(kCommandClickOnDialogChoice_1,  63, 148, 101, 115, kLeftMouseButton), /* Top left button */
+	MouseInput(kCommandClickOnDialogChoice_2, 170, 254, 101, 115, kLeftMouseButton), /* Top right button */
+	MouseInput(kCommandClickOnDialogChoice_3,  63, 148, 138, 152, kLeftMouseButton), /* Lower left button */
+	MouseInput(kCommandClickOnDialogChoice_4, 170, 254, 138, 152, kLeftMouseButton), /* Lower right button */
+	MouseInput(kCommandNone, 0, 0, 0, 0, kNoneMouseButton)};
+
+MouseInput* DM::gPrimaryMouseInput_DialogSets[2][4] = { // @ G0480_aaps_PrimaryMouseInput_DialogSets
+	{gPrimaryMouseInput_ViewportDialog1Choice,
+	gPrimaryMouseInput_ViewportDialog2Choices,
+	gPrimaryMouseInput_ViewportDialog3Choices,
+	gPrimaryMouseInput_ViewportDialog4Choices},
+	{gPrimaryMouseInput_ScreenDialog1Choice,
+	gPrimaryMouseInput_ScreenDialog2Choices,
+	gPrimaryMouseInput_ScreenDialog3Choices,
+	gPrimaryMouseInput_ScreenDialog4Choices},};
+
+
 EventManager::EventManager(DMEngine *vm) : _vm(vm) {
 	_dummyMapIndex = 0;				
 }

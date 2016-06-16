@@ -8,8 +8,9 @@
 namespace DM {
 
 enum MouseButton {
-	kLeftMouseButton,
-	kRightMouseButton
+	kNoneMouseButton = 0, // present only because of typesafety
+	kLeftMouseButton = 1,
+	kRightMouseButton = 2
 };
 
 enum CommandType {
@@ -36,7 +37,7 @@ enum CommandType {
 	kCommandClickOnSlotBoxChampion_0_StatusBoxReadyHand = 20, // @ C020_COMMAND_CLICK_ON_SLOT_BOX_00_CHAMPION_0_STATUS_BOX_READY_HAND
 	kCommandClickOnSlotBoxChampion_0_StatusBoxActionHand = 21, // @ C021_COMMAND_CLICK_ON_SLOT_BOX_01_CHAMPION_0_STATUS_BOX_ACTION_HAND
 	kCommandClickOnSlotBoxChampion_1_StatusBoxReadyHand = 22, // @ C022_COMMAND_CLICK_ON_SLOT_BOX_02_CHAMPION_1_STATUS_BOX_READY_HAND
-	kCommandClickOnSlotBoxChampion_1_StatusBoxAactionHand = 23, // @ C023_COMMAND_CLICK_ON_SLOT_BOX_03_CHAMPION_1_STATUS_BOX_ACTION_HAND
+	kCommandClickOnSlotBoxChampion_1_StatusBoxActionHand = 23, // @ C023_COMMAND_CLICK_ON_SLOT_BOX_03_CHAMPION_1_STATUS_BOX_ACTION_HAND
 	kCommandClickOnSlotBoxChampion_2_StatusBoxReadyHand = 24, // @ C024_COMMAND_CLICK_ON_SLOT_BOX_04_CHAMPION_2_STATUS_BOX_READY_HAND
 	kCommandClickOnSlotBoxChampion_2_StatusBoxActionHand = 25, // @ C025_COMMAND_CLICK_ON_SLOT_BOX_05_CHAMPION_2_STATUS_BOX_ACTION_HAND
 	kCommandClickOnSlotBoxChampion_3_StatusBoxReadyHand = 26, // @ C026_COMMAND_CLICK_ON_SLOT_BOX_06_CHAMPION_3_STATUS_BOX_READY_HAND
@@ -142,6 +143,30 @@ public:
 	MouseInput(CommandType type, uint16 x1, uint16 x2, uint16 y1, uint16 y2, MouseButton mouseButton)
 		: commandTypeToIssue(type), hitbox(x1, x2, y1, y2), button(mouseButton) {}
 }; // @ MOUSE_INPUT
+
+extern MouseInput gPrimaryMouseInput_Entrance[4]; // @ G0445_as_Graphic561_PrimaryMouseInput_Entrance[4]
+extern MouseInput gPrimaryMouseInput_RestartGame[2]; // @ G0446_as_Graphic561_PrimaryMouseInput_RestartGame[2]
+extern MouseInput gPrimaryMouseInput_Interface[20]; // @ G0447_as_Graphic561_PrimaryMouseInput_Interface[20]
+extern MouseInput gSecondaryMouseInput_Movement[9]; // @ G0448_as_Graphic561_SecondaryMouseInput_Movement[9]
+extern MouseInput gSecondaryMouseInput_ChampionInventory[38]; // @ G0449_as_Graphic561_SecondaryMouseInput_ChampionInventory[38]
+extern MouseInput gPrimaryMouseInput_PartySleeping[3]; // @ G0450_as_Graphic561_PrimaryMouseInput_PartySleeping[3]
+extern MouseInput gPrimaryMouseInput_FrozenGame[3]; // @ G0451_as_Graphic561_PrimaryMouseInput_FrozenGame[3]
+extern MouseInput gMouseInput_ActionAreaNames[5]; // @ G0452_as_Graphic561_MouseInput_ActionAreaNames[5]
+extern MouseInput gMouseInput_ActionAreaIcons[5]; // @ G0453_as_Graphic561_MouseInput_ActionAreaIcons[5]
+extern MouseInput gMouseInput_SpellArea[9]; // @ G0454_as_Graphic561_MouseInput_SpellArea[9]
+extern MouseInput gMouseInput_ChampionNamesHands[13]; // @ G0455_as_Graphic561_MouseInput_ChampionNamesHands[13]
+extern MouseInput gMouseInput_PanelChest[9]; // @ G0456_as_Graphic561_MouseInput_PanelChest[9]
+extern MouseInput gMouseInput_PanelResurrectReincarnateCancel[4]; // @ G0457_as_Graphic561_MouseInput_PanelResurrectReincarnateCancel[4]
+extern MouseInput gPrimaryMouseInput_ViewportDialog1Choice[2]; // @ G0471_as_Graphic561_PrimaryMouseInput_ViewportDialog1Choice[2]
+extern MouseInput gPrimaryMouseInput_ViewportDialog2Choices[3]; // @ G0472_as_Graphic561_PrimaryMouseInput_ViewportDialog2Choices[3]
+extern MouseInput gPrimaryMouseInput_ViewportDialog3Choices[4]; // @ G0473_as_Graphic561_PrimaryMouseInput_ViewportDialog3Choices[4]
+extern MouseInput gPrimaryMouseInput_ViewportDialog4Choices[5]; // @ G0474_as_Graphic561_PrimaryMouseInput_ViewportDialog4Choices[5]
+extern MouseInput gPrimaryMouseInput_ScreenDialog1Choice[2]; // @ G0475_as_Graphic561_PrimaryMouseInput_ScreenDialog1Choice[2]
+extern MouseInput gPrimaryMouseInput_ScreenDialog2Choices[3]; // @ G0476_as_Graphic561_PrimaryMouseInput_ScreenDialog2Choices[3]
+extern MouseInput gPrimaryMouseInput_ScreenDialog3Choices[4]; // @ G0477_as_Graphic561_PrimaryMouseInput_ScreenDialog3Choices[4]
+extern MouseInput gPrimaryMouseInput_ScreenDialog4Choices[5]; // @ G0478_as_Graphic561_PrimaryMouseInput_ScreenDialog4Choices[5]
+extern MouseInput* gPrimaryMouseInput_DialogSets[2][4]; // @ G0480_aaps_PrimaryMouseInput_DialogSets
+
 
 class DMEngine;
 
