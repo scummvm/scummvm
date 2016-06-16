@@ -167,6 +167,14 @@ extern MouseInput gPrimaryMouseInput_ScreenDialog3Choices[4]; // @ G0477_as_Grap
 extern MouseInput gPrimaryMouseInput_ScreenDialog4Choices[5]; // @ G0478_as_Graphic561_PrimaryMouseInput_ScreenDialog4Choices[5]
 extern MouseInput* gPrimaryMouseInput_DialogSets[2][4]; // @ G0480_aaps_PrimaryMouseInput_DialogSets
 
+class KeyboardInput {
+public:
+	Command commandToIssue;
+	Common::KeyCode key;
+	byte modifiers;
+
+	KeyboardInput(Command command, Common::KeyCode keycode, byte modifierFlags) : commandToIssue(command), key(keycode), modifiers(modifierFlags) {}
+}; // @ KEYBOARD_INPUT
 
 class DMEngine;
 
