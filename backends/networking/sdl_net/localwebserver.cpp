@@ -110,6 +110,11 @@ void LocalWebserver::stop() {
 	}
 }
 
+void LocalWebserver::addPathHandler(Common::String path, ClientHandler handler) {
+	if (_pathHandlers.contains(path)) warning("LocalWebserver::addPathHandler: path already had a handler");
+	_pathHandlers[path] = handler;
+}
+
 void LocalWebserver::handle() {
 	int numready = SDLNet_CheckSockets(_set, 0);
 	if (numready == -1) {
@@ -127,10 +132,13 @@ void LocalWebserver::handleClient(uint32 i) {
 	case READ_HEADERS: //decide what to do next with that client
 		//if GET, check whether we know a handler for such URL
 		//if PUT, check whether we know a handler for that URL
+		if (_pathHandlers.contains(_client[i].path()))
+			(*_pathHandlers[_client[i].path()])(_client[i]);		
+		
+		if (_client[i].state() == BEING_HANDLED || _client[i].state() == INVALID) break;
+
 		//if no handler, answer with default BAD REQUEST
-		warning("headers %s", _client[i].headers().c_str());
-		setClientGetHandler(_client[i], "<html><head><title>ScummVM</title></head><body>Hello, World!</body></html>");
-		break;
+		//fallthrough
 	case BAD_REQUEST:
 		setClientGetHandler(_client[i], "<html><head><title>ScummVM - Bad Request</title></head><body>BAD REQUEST</body></html>", 400);
 		break;

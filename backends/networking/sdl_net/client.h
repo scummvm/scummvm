@@ -52,10 +52,12 @@ class Client {
 	SDLNet_SocketSet _set;
 	TCPsocket _socket;
 	Common::String _headers;
+	Common::String _method, _path, _query, _anchor;
 	ClientHandler *_handler;
 
 	void checkIfHeadersEnded();
 	void checkIfBadRequest();
+	void parsePathQueryAndAnchor(Common::String path);
 
 public:
 	Client();
@@ -68,8 +70,13 @@ public:
 	void handle();
 	void close();
 
-	ClientState state();
-	Common::String headers();
+	ClientState state() const;
+	Common::String headers() const;
+	Common::String method() const;
+	Common::String path() const;
+	Common::String query() const;
+	Common::String queryParameter(Common::String name) const;
+	Common::String anchor() const;
 
 	/**
 	 * Return SDLNet_SocketReady(_socket).

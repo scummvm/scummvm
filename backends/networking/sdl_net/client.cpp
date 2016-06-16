@@ -28,9 +28,9 @@
 
 namespace Networking {
 
-Client::Client(): _state(INVALID), _set(nullptr), _socket(nullptr), _handler(nullptr) {}
+Client::Client() : _state(INVALID), _set(nullptr), _socket(nullptr), _handler(nullptr) {}
 
-Client::Client(SDLNet_SocketSet set, TCPsocket socket): _state(INVALID), _set(nullptr), _socket(nullptr), _handler(nullptr) {
+Client::Client(SDLNet_SocketSet set, TCPsocket socket) : _state(INVALID), _set(nullptr), _socket(nullptr), _handler(nullptr) {
 	open(set, socket);
 }
 
@@ -38,7 +38,7 @@ Client::~Client() {
 	close();
 }
 
-void Client::open(SDLNet_SocketSet set, TCPsocket socket) {	
+void Client::open(SDLNet_SocketSet set, TCPsocket socket) {
 	if (_state != INVALID) close();
 	_state = READING_HEADERS;
 	_socket = socket;
@@ -56,14 +56,14 @@ void Client::readHeaders() {
 	if (!SDLNet_SocketReady(_socket)) return;
 
 	const uint32 BUFFER_SIZE = 16 * 1024;
-	char buffer[BUFFER_SIZE];	
-	int bytes = SDLNet_TCP_Recv(_socket, buffer, BUFFER_SIZE);	
+	char buffer[BUFFER_SIZE];
+	int bytes = SDLNet_TCP_Recv(_socket, buffer, BUFFER_SIZE);
 	if (bytes <= 0) {
-		warning("Client::readHeaders recv fail");		
+		warning("Client::readHeaders recv fail");
 		close();
 		return;
 	}
-	_headers += Common::String(buffer, bytes);	
+	_headers += Common::String(buffer, bytes);
 	checkIfHeadersEnded();
 	checkIfBadRequest();
 }
@@ -74,7 +74,7 @@ void Client::checkIfHeadersEnded() {
 	if (position) _state = READ_HEADERS;
 }
 
-void Client::checkIfBadRequest() {	
+void Client::checkIfBadRequest() {
 	uint32 headersSize = _headers.size();
 	bool bad = false;
 
@@ -92,7 +92,7 @@ void Client::checkIfBadRequest() {
 				if (headersSize > length) headersSize = length;
 				for (uint32 i = 0; i < headersSize; ++i) {
 					if (_headers[i] != ' ') buf += _headers[i];
-					if (_headers[i] == ' ' || i == headersSize-1) {
+					if (_headers[i] == ' ' || i == headersSize - 1) {
 						if (method == "") method = buf;
 						else if (path == "") path = buf;
 						else if (http == "") http = buf;
@@ -109,11 +109,35 @@ void Client::checkIfBadRequest() {
 
 				//check that HTTP/<VERSION> is OK
 				if (!http.hasPrefix("HTTP/")) bad = true;
+
+				_method = method;
+				parsePathQueryAndAnchor(path);
 			}
 		}
 	}
 
-	if (bad) _state = BAD_REQUEST;	
+	if (bad) _state = BAD_REQUEST;
+}
+
+void Client::parsePathQueryAndAnchor(Common::String path) {
+	//<path>[?query][#anchor]
+	bool readingPath = true;
+	bool readingQuery = false;
+	_path = "";
+	_query = "";
+	_anchor = "";
+	for (uint32 i = 0; i < path.size(); ++i) {
+		if (readingPath) {
+			if (path[i] == '?') {
+				readingPath = false;
+				readingQuery = true;
+			} else _path += path[i];
+		} else if(readingQuery) {
+			if (path[i] == '#') {
+				readingQuery = false;
+			} else _query += path[i];
+		} else _anchor += path[i];
+	}
 }
 
 void Client::setHandler(ClientHandler *handler) {	
@@ -147,9 +171,40 @@ void Client::close() {
 }
 
 
-ClientState Client::state() { return _state; }
+ClientState Client::state() const { return _state; }
 
-Common::String Client::headers() { return _headers; }
+Common::String Client::headers() const { return _headers; }
+
+Common::String Client::method() const { return _method; }
+
+Common::String Client::path() const { return _path; }
+
+Common::String Client::query() const { return _query; }
+
+Common::String Client::queryParameter(Common::String name) const {
+	// this approach is a bit slower than searching for the <name>
+	// yet I believe it to be the right one, because we probably can have "<name>=" in the value of other key
+	Common::String key = "";
+	Common::String value = "";
+	bool readingKey = true;
+	for (uint32 i = 0; i < _query.size(); ++i) {
+		if (readingKey) {
+			if (_query[i] == '=') {
+				readingKey = false;
+				value = "";
+			} else key += _query[i];
+		} else {
+			if (_query[i] == '&') {
+				if (key == name) return value;
+				readingKey = true;
+				key = "";
+			} else value += _query[i];
+		}
+	}
+	return "";
+}
+
+Common::String Client::anchor() const { return _anchor; }
 
 bool Client::socketIsReady() { return SDLNet_SocketReady(_socket); }
 

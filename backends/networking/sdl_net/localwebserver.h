@@ -24,6 +24,8 @@
 #define BACKENDS_NETWORKING_SDL_NET_LOCALWEBSERVER_H
 
 #include "backends/networking/sdl_net/client.h"
+#include "common/callback.h"
+#include "common/hash-str.h"
 #include "common/singleton.h"
 #include "common/scummsys.h"
 
@@ -38,6 +40,8 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	static const uint32 SERVER_PORT = 12345;
 	static const uint32 MAX_CONNECTIONS = 10;
 
+	typedef Common::BaseCallback<Client &> *ClientHandler;
+
 	friend void localWebserverTimer(void *); //calls handle()
 
 	SDLNet_SocketSet _set;
@@ -45,6 +49,7 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	Client _client[MAX_CONNECTIONS];
 	int _clients;
 	bool _timerStarted;
+	Common::HashMap<Common::String, ClientHandler> _pathHandlers;
 
 	void startTimer(int interval = TIMER_INTERVAL);
 	void stopTimer();
@@ -59,6 +64,7 @@ public:
 
 	void start();
 	void stop();
+	void addPathHandler(Common::String path, ClientHandler handler);
 };
 
 /** Shortcut for accessing the local webserver. */
