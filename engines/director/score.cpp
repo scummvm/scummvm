@@ -48,14 +48,6 @@ Score::Score(Archive &movie, Lingo &lingo, DirectorSound &soundManager) {
 	_lingo->processEvent(kEventPrepareMovie, 0);
 	_movieScriptCount = 0;
 
-	assert(_movieArchive->hasResource(MKTAG('V','W','S','C'), 1024));
-	assert(_movieArchive->hasResource(MKTAG('V','W','C','F'), 1024));
-	assert(_movieArchive->hasResource(MKTAG('V','W','C','R'), 1024));
-
-	loadFrames(*_movieArchive->getResource(MKTAG('V','W','S','C'), 1024));
-	loadConfig(*_movieArchive->getResource(MKTAG('V','W','C','F'), 1024));
-	loadCastData(*_movieArchive->getResource(MKTAG('V','W','C','R'), 1024));
-
 	if (_movieArchive->hasResource(MKTAG('M','C','N','M'), 0)) {
 		_macName = _movieArchive->getName(MKTAG('M','C','N','M'), 0).c_str();
 	}
@@ -63,7 +55,15 @@ Score::Score(Archive &movie, Lingo &lingo, DirectorSound &soundManager) {
 	if (_movieArchive->hasResource(MKTAG('V','W','L','B'), 1024)) {
 		loadLabels(*_movieArchive->getResource(MKTAG('V','W','L','B'), 1024));
 	}
+}
 
+void Score::loadArchive() {
+	assert(_movieArchive->hasResource(MKTAG('V','W','S','C'), 1024));
+	assert(_movieArchive->hasResource(MKTAG('V','W','C','F'), 1024));
+	assert(_movieArchive->hasResource(MKTAG('V','W','C','R'), 1024));
+	loadFrames(*_movieArchive->getResource(MKTAG('V','W','S','C'), 1024));
+	loadConfig(*_movieArchive->getResource(MKTAG('V','W','C','F'), 1024));
+	loadCastData(*_movieArchive->getResource(MKTAG('V','W','C','R'), 1024));
 	if (_movieArchive->hasResource(MKTAG('V','W','A','C'), 1024)) {
 		loadActions(*_movieArchive->getResource(MKTAG('V','W','A','C'), 1024));
 	}

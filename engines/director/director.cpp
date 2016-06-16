@@ -85,8 +85,9 @@ Common::Error DirectorEngine::run() {
 	_mainArchive->openFile("bookshelf_example.mmm");
 
 	Score score(*_mainArchive, *_lingo, *_soundManager);
+	score.loadArchive();
 	score.startLoop();
-
+	debug(0, "Score name %s", score.getMacName().c_str());
 	if (getPlatform() == Common::kPlatformWindows)
 		loadEXE();
 	else

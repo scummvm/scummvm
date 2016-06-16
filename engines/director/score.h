@@ -289,9 +289,11 @@ public:
 	~Score();
 
 	static Common::Rect readRect(Common::SeekableReadStream &stream);
+	void loadArchive();
 	void startLoop();
 	void processEvents();
 
+	Common::String getMacName() const { return _macName; }
 private:
 	void update();
 	void readVersion(uint32 rid);
