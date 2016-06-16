@@ -940,14 +940,6 @@ void Frame::renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Co
 			int y = _sprites[i]->_startPoint.y - regY + rectTop;
 			int height = _sprites[i]->_height;
 			int width = _sprites[i]->_width;
-			if (x < 0) {
-				width += x;
-				x = 0;
-			}
-			if (y < 0) {
-				height += y;
-				y = 0;
-			}
 			Common::Rect drawRect = Common::Rect(x, y, x + width, y + height);
 			_drawRects.push_back(drawRect);
 
@@ -971,7 +963,7 @@ void Frame::renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Co
 }
 
 void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
-	uint8 skipColor = *(byte *)target.getBasePtr(0, 0); //FIXME is it always white (last entry in pallette) ?
+	uint8 skipColor = 15; //FIXME is it always white (last entry in pallette) ?
 	for (int ii = 0; ii < sprite.h; ii++) {
 		const byte *src = (const byte *)sprite.getBasePtr(0, ii);
 		byte *dst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + ii);
