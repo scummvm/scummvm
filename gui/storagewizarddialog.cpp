@@ -53,11 +53,14 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 	case Cloud::kStorageOneDriveId: url += "od"; break;
 	case Cloud::kStorageGoogleDriveId: url += "gd"; break;
 	}
+#ifdef USE_SDL_NET
+	url += "s";
+#endif
 
 	new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.URLLine", url);
 
-	new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.ReturnLine1", _s("Obtain the code from the storage, enter it"));
-	new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.ReturnLine2", _s("in the following field and press 'Connect':"));
+	StaticTextWidget *returnLine1 = new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.ReturnLine1", _s("Obtain the code from the storage, enter it"));
+	StaticTextWidget *returnLine2 = new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.ReturnLine2", _s("in the following field and press 'Connect':"));
 	for (uint32 i = 0; i < CODE_FIELDS; ++i)
 		_codeWidget[i] = new EditTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.CodeBox" + Common::String::format("%d", i+1), "", 0, kCodeBoxCmd);
 	_messageWidget = new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.MessageLine", "");
@@ -65,6 +68,16 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 	// Buttons
 	new ButtonWidget(this, "GlobalOptions_Cloud_ConnectionWizard.CancelButton", _("Cancel"), 0, kCloseCmd);
 	_connectWidget = new ButtonWidget(this, "GlobalOptions_Cloud_ConnectionWizard.ConnectButton", _("Connect"), 0, kConnectCmd);
+
+#ifdef USE_SDL_NET
+	// hide fields and even the button if local webserver is on
+	returnLine1->setLabel(_s("You would be navigated to ScummVM's page"));
+	returnLine2->setLabel(_s("when you'd allow it to use your storage."));	
+	for (uint32 i = 0; i < CODE_FIELDS; ++i)
+		_codeWidget[i]->setVisible(false);
+	_messageWidget->setVisible(false);
+	_connectWidget->setVisible(false);
+#endif
 }
 
 void StorageWizardDialog::open() {

@@ -69,6 +69,7 @@ void LocalWebserver::stopTimer() {
 }
 
 void LocalWebserver::start() {
+	_stopOnIdle = false;
 	if (_timerStarted) return;
 	startTimer();
 
