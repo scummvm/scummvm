@@ -17,11 +17,7 @@ World::World(MacVentureEngine *engine, Common::MacResManager *resMan)  {
 
 	Common::SeekableReadStream *saveGameRes = saveGameFile.readStream(saveGameFile.size());
 
-	_saveGame = new SaveGame(_engine, saveGameRes);
-
-	debug("%x", _saveGame->getGroups()[0][1]);
-	debug(11, "Parent of player is %d", getObjAttr(1, 0));
-
+	_saveGame = new SaveGame(_engine, saveGameRes);	
 	_objectConstants = new Container(_engine->getFilePath(kObjectPathID).c_str());
 		
 	delete saveGameRes;
@@ -39,7 +35,7 @@ World::~World()	{
 }
 
 
-uint32 World::getObjAttr(uint32 objID, uint32 attrID) {
+uint32 World::getObjAttr(ObjID objID, uint32 attrID) {
 	uint32 res;
 	uint32 index = _engine->getGlobalSettings().attrIndices[attrID];
 	if (!(index & 0x80)) { // It's not a constant
@@ -54,6 +50,10 @@ uint32 World::getObjAttr(uint32 objID, uint32 attrID) {
 	res >>= _engine->getGlobalSettings().attrShifts[attrID];
 	debug(11, "Attribute %x from object %x is %x", attrID, objID, res);
 	return res;
+}
+
+bool MacVenture::World::isObjActive(ObjID obj) {
+	return false;
 }
 
 bool World::loadStartGameFileName() {

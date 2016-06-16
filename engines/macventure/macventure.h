@@ -34,6 +34,7 @@
 #include "macventure/gui.h"
 #include "macventure/world.h"
 #include "macventure/stringtable.h"
+#include "macventure/script.h"
 
 struct ADGameDescription;
 
@@ -41,6 +42,9 @@ namespace MacVenture {
 
 class Console;
 class World;
+class ScriptEngine;
+
+typedef uint32 ObjID;
 
 enum {
 	kScreenWidth = 512,
@@ -108,6 +112,29 @@ enum GameState {
 	kGameStateQuitting
 };
 
+enum ObjectQueueID {
+	kFocusWindow = 2,
+	kOpenWindow = 3,
+	kCloseWindow = 4,
+	kUpdateObject = 7,
+	kUpdateWindow = 8,
+	kSetToPlayerParent = 12,
+	kHightlightExits = 13,
+	kAnimateBack = 14
+};
+
+struct QueuedObject {
+	ObjectQueueID id;
+	ObjID object;
+	ObjID parent;
+	uint x;
+	uint y;
+	uint exitx;
+	uint exity;
+	bool hidden;
+	bool offsecreen;
+	bool invisible;
+};
 
 class MacVentureEngine : public Engine {
 
@@ -120,6 +147,8 @@ public:
 	void requestQuit();
 	void requestUnpause();
 
+	void enqueueObject(ObjID id);
+
 	// Data retrieval
 	bool isPaused();
 	Common::String getCommandsPausedString() const;
@@ -128,6 +157,13 @@ public:
 
 private:
 	void processEvents();
+
+	bool runScriptEngine();
+	void endGame();
+	bool updateState();
+	void runObjQueue();
+	void updateControls();
+	void resetVars();
 
 	// Data loading
 	bool loadGlobalSettings();
@@ -143,6 +179,7 @@ private: // Attributes
 	Console *_debugger;
 	Gui *_gui;
 	World *_world;
+	ScriptEngine *_scriptEngine;
 
 	// Engine state
 	GameState _gameState;
@@ -150,8 +187,20 @@ private: // Attributes
 	StringTable *_filenames;
 	Common::Huffman *_textHuffman;
 	bool _oldTextEncoding;
-	bool _shouldQuit;
-	bool _paused;
+	bool _paused, _halted, _cmdReady;
+	bool _haltedAtEnd, _haltedInSelection;
+	bool _gameChanged;
+
+	Common::List<QueuedObject> _objQueue;
+	Common::List<QueuedObject> _soundQueue;
+	Common::List<QueuedObject> _textQueue;
+
+	// Selections
+	ObjID _destObject;
+	ControlAction _selectedControl;
+	ControlAction _activeControl;
+	Common::List<ObjID> _currentSelection;
+	Common::Point _deltaPoint;
 
 private: // Methods
 

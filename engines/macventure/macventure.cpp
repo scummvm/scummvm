@@ -53,10 +53,11 @@ MacVentureEngine::~MacVentureEngine() {
 	delete _rnd;
 	delete _debugger;
 	delete _gui;
+	delete _scriptEngine;
 
-	if (_filenames) 
+	if (_filenames)
 		delete _filenames;
-	
+
 	if (_textHuffman)
 		delete _textHuffman;
 }
@@ -80,18 +81,42 @@ Common::Error MacVentureEngine::run() {
 		error("Could not load the engine settings");
 
 	_oldTextEncoding = !loadTextHuffman();
-	
+
 	_filenames = new StringTable(this, _resourceManager, kFilenamesStringTableID);
-	
+
 	// Big class instantiation
 	_gui = new Gui(this, _resourceManager);
 	_world = new World(this, _resourceManager);
+	_scriptEngine = new ScriptEngine();
 
-	_shouldQuit = false;
+	_paused = false;
+	_halted = true;
+	_cmdReady = false;
+	_haltedAtEnd = false;
+	_haltedInSelection = false;
 	while (!(_gameState == kGameStateQuitting)) {
 		processEvents();
-		
-		_gui->draw();
+
+		if (!_halted) {
+			_gui->draw();
+		}
+
+		if (_cmdReady || _halted) {
+			_halted = false;
+			if (runScriptEngine()) {
+				_halted = true;
+				_paused = true;
+			} else {
+				_paused = false;
+				if (!updateState()) {
+					updateControls();
+				}
+			}
+		}
+
+		if (_gameState == kGameStateWinnig || _gameState == kGameStateLosing) {
+			endGame();
+		}
 
 		g_system->updateScreen();
 		g_system->delayMillis(50);
@@ -101,17 +126,124 @@ Common::Error MacVentureEngine::run() {
 }
 
 void MacVentureEngine::requestQuit() {
-	_shouldQuit = true;
+	// TODO: Display save game dialog and such
 	_gameState = kGameStateQuitting;
 }
 
 void MacVentureEngine::requestUnpause() {
 	_paused = false;
-	_gameState = kGameStatePlaying;	
+	_gameState = kGameStatePlaying;
+}
+
+void MacVentureEngine::enqueueObject(ObjID id) {
+	QueuedObject obj;
+	obj.parent = _world->getObjAttr(id, kAttrParentObject);
+	obj.x = _world->getObjAttr(id, kAttrPosX);
+	obj.y = _world->getObjAttr(id, kAttrPosY);
+	obj.exitx = _world->getObjAttr(id, kAttrExitX);
+	obj.exity = _world->getObjAttr(id, kAttrExitY);
+	obj.hidden = _world->getObjAttr(id, kAttrHiddenExit);
+	obj.offsecreen = _world->getObjAttr(id, kAttrInvisible);
+	obj.invisible = _world->getObjAttr(id, kAttrUnclickable);
+	_objQueue.push_back(obj);
 }
 
 const GlobalSettings& MacVentureEngine::getGlobalSettings() const {
 	return _globalSettings;
+}
+
+
+// Private engine methods
+void MacVentureEngine::processEvents() {
+	Common::Event event;
+
+	while (_eventMan->pollEvent(event)) {
+		if (_gui->processEvent(event))
+			continue;
+
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+			_gameState = kGameStateQuitting;
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+bool MacVenture::MacVentureEngine::runScriptEngine() {
+	debug(5, "MAIN: Running script engine");
+	if (_haltedAtEnd) {
+		_haltedAtEnd = false;
+		if (_scriptEngine->resume()) {
+			_haltedAtEnd = true;
+			return true;
+		}
+		return false;
+	}
+
+	if (_haltedInSelection) {
+		_haltedInSelection = false;
+		if (_scriptEngine->resume()) {
+			_haltedInSelection = true;
+			return true;
+		}
+		if (updateState())
+			return true;
+	}
+
+	while (!_currentSelection.empty()) {
+		ObjID obj = _currentSelection.front();
+		_currentSelection.pop_front();
+		if ((_gameState == kGameStateInit || _gameState == kGameStatePlaying) && _world->isObjActive(obj)) {
+			if (_scriptEngine->runControl(_selectedControl, obj, _destObject, _deltaPoint)) {
+				_haltedInSelection = true;
+				return true;
+			}
+			if (updateState()) {
+				return true;
+			}
+		}
+	}
+	if (_selectedControl == 1)
+		_gameChanged = false;
+
+	else if (_gameState == kGameStateInit || _gameState == kGameStatePlaying){
+		if (_scriptEngine->runControl(kTick, _selectedControl, _destObject, _deltaPoint)) {
+			_haltedAtEnd = true;
+			return true;
+		}
+	}
+	return false;
+}
+
+void MacVentureEngine::endGame() {
+	requestQuit();
+}
+
+bool MacVentureEngine::updateState() {
+	runObjQueue();
+	return true;
+}
+
+void MacVentureEngine::runObjQueue() {
+
+}
+
+void MacVentureEngine::updateControls() {
+	if (_activeControl)
+		_activeControl = kNoCommand;
+	// toggleExits();
+	// resetVars();
+}
+
+void MacVentureEngine::resetVars() {
+	_selectedControl = kNoCommand;
+	_activeControl = kNoCommand;
+	_currentSelection.clear();
+	_destObject = 0;
+	_deltaPoint = Common::Point(0, 0);
+	_cmdReady = false;
 }
 
 // Data retrieval
@@ -122,23 +254,6 @@ bool MacVentureEngine::isPaused() {
 
 Common::String MacVentureEngine::getCommandsPausedString() const {
 	return Common::String("Click to continue");
-}
-
-void MacVentureEngine::processEvents() {
-	Common::Event event;
-
-	while (_eventMan->pollEvent(event)) {
-		if (_gui->processEvent(event))
-			continue;
-
-		switch (event.type) {
-		case Common::EVENT_QUIT:			
-			_gameState = kGameStateQuitting;
-			break;
-		default:
-			break;
-		}
-	}
 }
 
 Common::String MacVentureEngine::getFilePath(FilePathID id) const {
@@ -226,8 +341,8 @@ bool MacVentureEngine::loadTextHuffman() {
 		_textHuffman = new Common::Huffman(0, numEntries, masks, lengths, values);
 		debug(5, "Text is huffman-encoded");
 		return true;
-	} 
-	return false;	
+	}
+	return false;
 }
 
 

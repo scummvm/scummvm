@@ -28,7 +28,34 @@
 
 namespace MacVenture {
 
+typedef uint32 ObjID;
 typedef Common::Array<uint16> AttributeGroup;
+
+enum ObjectAttributeID {
+	kAttrParentObject = 0,
+	kAttrPosX = 1,
+	kAttrPosY = 2,
+	kAttrInvisible = 3,
+	kAttrUnclickable = 4,
+	kAttrUndraggable = 5,
+	kAttrContainerOpen = 6,
+	kAttrPrefixes = 7,
+	kAttrIsExit = 8,
+	kAttrExitX = 9,
+	kAttrExitY = 10,
+	kAttrHiddenExit = 11,
+	kAttrOtherDoor = 12,
+	kAttrIsOpen = 13,
+	kAttrIsLocked = 14,
+	kAttrWeight = 16,
+	kAttrSize = 17,
+	kAttrHasDescription = 19,
+	kAttrIsDoor = 20,
+	kAttrIsContainer = 22,
+	kAttrIsOperable = 23,
+	kAttrIsEnterable = 24,
+	kAttrIsEdible = 25
+};
 
 class SaveGame {
 public:
@@ -55,7 +82,8 @@ public:
 	World(MacVentureEngine *engine, Common::MacResManager *resMan);
 	~World();
 
-	uint32 getObjAttr(uint32 objID, uint32 attrID);
+	uint32 getObjAttr(ObjID objID, uint32 attrID);
+	bool isObjActive(ObjID obj);
 
 private:
 	bool loadStartGameFileName();
