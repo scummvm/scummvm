@@ -88,8 +88,11 @@ void Client::checkIfBadRequest() {
 			if (position) { //we have at least one line - and we want the first one
 				//"<METHOD> <path> HTTP/<VERSION>\r\n"
 				Common::String method, path, http, buf;
+				uint32 length = position - cstr;
+				if (headersSize > length) headersSize = length;
 				for (uint32 i = 0; i < headersSize; ++i) {
-					if (_headers[i] == ' ') {
+					if (_headers[i] != ' ') buf += _headers[i];
+					if (_headers[i] == ' ' || i == headersSize-1) {
 						if (method == "") method = buf;
 						else if (path == "") path = buf;
 						else if (http == "") http = buf;
@@ -98,7 +101,7 @@ void Client::checkIfBadRequest() {
 							break;
 						}
 						buf = "";
-					} else buf += _headers[i];
+					}
 				}
 
 				//check that method is supported
