@@ -47,7 +47,7 @@ Score::Score(Archive &movie, Lingo &lingo, DirectorSound &soundManager) {
 	_lingo = &lingo;
 	_soundManager = &soundManager;
 	_lingo->processEvent(kEventPrepareMovie, 0);
-
+	_movieScriptCount = 0;
 	assert(_movieArchive->hasResource(MKTAG('V','W','S','C'), 1024));
 	assert(_movieArchive->hasResource(MKTAG('V','W','C','F'), 1024));
 	assert(_movieArchive->hasResource(MKTAG('V','W','C','R'), 1024));
@@ -284,7 +284,11 @@ void Score::loadScriptText(Common::SeekableReadStream &stream) {
 		}
 		script += ch;
 	}
-	_lingo->addCode(script, kMovieScript, 0);
+	_lingo->addCode(script, kMovieScript, _movieScriptCount);
+	if (ConfMan.getBool("dump_scripts")) {
+		dumpScript(_movieScriptCount, kMovieScript, script);
+	}
+	_movieScriptCount++;
 }
 
 void Score::dumpScript(uint16 id, ScriptType type, Common::String script) {
@@ -324,6 +328,10 @@ void Score::loadCastInfo(Common::SeekableReadStream &stream, uint16 id) {
 	if (ci->script != "") {
 		_lingo->addCode(ci->script, kSpriteScript, id);
 	}
+	if (!ConfMan.getBool("dump_scripts")) {
+		dumpScript(id, kSpriteScript, ci->script);
+	}
+
 	ci->name = getString(castStrings[1]);
 	ci->directory = getString(castStrings[2]);
 	ci->fileName = getString(castStrings[3]);
@@ -351,8 +359,12 @@ void Score::loadFileInfo(Common::SeekableReadStream &stream) {
 	Common::Array<Common::String> fileInfoStrings = loadStrings(stream, _flags);
 	_script = fileInfoStrings[0];
 	if (_script != "") {
-		_lingo->addCode(_script, kMovieScript, 0);
+		_lingo->addCode(_script, kMovieScript, _movieScriptCount);
 	}
+	if (!ConfMan.getBool("dump_scripts")) {
+		dumpScript(_movieScriptCount, kMovieScript, _script);
+	}
+	_movieScriptCount++;
 	_changedBy = fileInfoStrings[1];
 	_createdBy = fileInfoStrings[2];
 	_directory = fileInfoStrings[3];
