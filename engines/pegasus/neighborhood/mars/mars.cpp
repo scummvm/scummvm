@@ -100,6 +100,14 @@ Mars::Mars(InputHandler *nextHandler, PegasusEngine *owner) : Neighborhood(nextH
 		_planetMovie(kNoDisplayElement), _junk(kNoDisplayElement), _energyChoiceSpot(kShuttleEnergySpotID),
 		_gravitonChoiceSpot(kShuttleGravitonSpotID), _tractorChoiceSpot(kShuttleTractorSpotID),
 		_shuttleViewSpot(kShuttleViewSpotID), _shuttleTransportSpot(kShuttleTransportSpotID) {
+
+	_reactorStage  = 0;
+	_nextGuess  = 0;
+	_attackingItem  = nullptr;
+	_marsEvent.mars  = nullptr;
+	_marsEvent.event  = kMarsLaunchTubeReached;
+	_weaponSelection  = kNoWeapon;
+
 	_noAirFuse.setFunctor(new Common::Functor0Mem<void, Mars>(this, &Mars::airStageExpired));
 	setIsItemTaken(kMarsCard);
 	setIsItemTaken(kAirMask);

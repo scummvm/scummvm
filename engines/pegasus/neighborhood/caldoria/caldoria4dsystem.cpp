@@ -104,6 +104,14 @@ static const ExtraID s_shutDownExtras[3][3] = {
 
 Caldoria4DSystem::Caldoria4DSystem(Neighborhood *owner) : GameInteraction(kCaldoria4DInteractionID, owner),
 		_4DSpritesMovie(kCaldoria4DSpritesID) {
+	_4DSpritesScale = 0;
+	_whichMenu = k4DVideoMenu;
+	_videoChoice = k4DIslandChoice;
+	_audioChoice = k4DRockChoice;
+	_neighborhoodNotification = nullptr;
+	_loopStart = 0;
+	_clickedHotspotID = kNoHotSpotID;
+	
 	g_AIArea->lockAIOut();
 }
 
