@@ -27,6 +27,7 @@
 #include "common/debug.h"
 #include "common/random.h"
 #include "common/macresman.h"
+#include "common/huffman.h"
 
 #include "gui/debugger.h"
 
@@ -121,6 +122,7 @@ private:
 
 	// Data loading
 	bool loadGlobalSettings();
+	bool loadTextHuffman();
 
 private: // Attributes
 
@@ -136,6 +138,8 @@ private: // Attributes
 	// Engine state
 	GlobalSettings _globalSettings;
 	StringTable *_filenames;
+	Common::Huffman *_textHuffman;
+	bool _oldTextEncoding;
 	bool _shouldQuit;
 	bool _paused;
 

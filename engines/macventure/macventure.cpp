@@ -54,9 +54,11 @@ MacVentureEngine::~MacVentureEngine() {
 	delete _debugger;
 	delete _gui;
 
-	if (_filenames) {
+	if (_filenames) 
 		delete _filenames;
-	}
+	
+	if (_textHuffman)
+		delete _textHuffman;
 }
 
 Common::Error MacVentureEngine::run() {
@@ -73,12 +75,14 @@ Common::Error MacVentureEngine::run() {
 	if (!_resourceManager->open(getGameFileName()))
 		error("Could not open %s as a resource fork", getGameFileName());
 
+	// Engine-wide loading
 	if (!loadGlobalSettings())
 		error("Could not load the engine settings");
 
-	// Engine-wide loading
+	_oldTextEncoding = !loadTextHuffman();
+	
 	_filenames = new StringTable(this, _resourceManager, kFilenamesStringTableID);
-
+	
 	// Big class instantiation
 	_gui = new Gui(this, _resourceManager);
 	_world = new World(this, _resourceManager);
@@ -192,5 +196,36 @@ bool MacVentureEngine::loadGlobalSettings() {
 	return false;
 }
 
+bool MacVentureEngine::loadTextHuffman() {
+	Common::MacResIDArray resArray;
+	Common::SeekableReadStream *res;
+
+	if ((resArray = _resourceManager->getResIDArray(MKTAG('G', 'N', 'R', 'L'))).size() == 0)
+		return false;
+
+	res = _resourceManager->getResource(MKTAG('G', 'N', 'R', 'L'), kTextHuffmanTableID);
+	if (res) {
+		uint32 numEntries = res->readUint16BE();
+		res->readUint16BE(); // Skip
+
+		uint32 *masks = new uint32[numEntries];
+		for (uint i = 0; i < numEntries - 1; i++)
+			// For some reason there are one lass mask than entries
+			masks[i] = res->readUint16BE();
+
+		uint8 *lengths = new uint8[numEntries];
+		for (uint i = 0; i < numEntries; i++)
+			lengths[i] = res->readByte();
+
+		uint32 *values = new uint32[numEntries];
+		for (uint i = 0; i < numEntries; i++)
+			values[i] = res->readByte();
+
+		_textHuffman = new Common::Huffman(0, numEntries, masks, lengths, values);
+
+		return true;
+	} 
+	return false;	
+}
 
 } // End of namespace MacVenture
