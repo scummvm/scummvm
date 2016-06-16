@@ -22,35 +22,135 @@
 
 #include "backends/networking/sdl_net/indexpagehandler.h"
 #include "backends/networking/sdl_net/localwebserver.h"
+#include "common/archive.h"
+#include "common/file.h"
+#include "common/translation.h"
+#include "common/unzip.h"
 #include "gui/storagewizarddialog.h"
 
 namespace Networking {
+
+#define ARCHIVE_NAME "wwwroot.zip"
+#define INDEX_PAGE_NAME "index.html"
 
 IndexPageHandler::IndexPageHandler(): CommandSender(nullptr) {}
 
 IndexPageHandler::~IndexPageHandler() {
 	LocalServer.removePathHandler("/");
+
+	Common::ArchiveMemberList fileList = listArchive();
+	for (Common::ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
+		Common::ArchiveMember const &m = **it;
+		if (m.getName() == INDEX_PAGE_NAME) continue;
+		LocalServer.removePathHandler("/" + m.getName());
+	}
 }
 
-void IndexPageHandler::handle(Client &client) {	
+void IndexPageHandler::handle(Client &client) {
+	Common::String response = "<html><head><title>ScummVM</title></head><body>{message}</body></html>";
+
+	// load stylish response page from the archive
+	Common::SeekableReadStream *const stream = getArchiveFile(INDEX_PAGE_NAME);
+	if (stream) response = readEverythingFromStream(stream);
+
 	Common::String code = client.queryParameter("code");
 
-	if (code == "") {
-		LocalWebserver::setClientGetHandler(client, "<html><head><title>ScummVM</title></head><body>This is a local webserver index page.</body></html>");
+	if (code == "") {		
+		replace(response, "{message}", _("This is a local webserver index page."));
+		LocalWebserver::setClientGetHandler(client, response);
 		return;
 	}
 
 	_code = code;
 	sendCommand(GUI::kStorageCodePassedCmd, 0);
-	LocalWebserver::setClientGetHandler(client, "<html><head><title>ScummVM</title></head><body>ScummVM got the code and already connects to your cloud storage!</body></html>");
+	replace(response, "{message}", _("ScummVM got the code and already connects to your cloud storage!"));
+	LocalWebserver::setClientGetHandler(client, response);
 }
+
+void IndexPageHandler::handleResource(Client &client) {
+	Common::String filename = client.path();
+	filename.deleteChar(0);
+	LocalWebserver::setClientGetHandler(client, getArchiveFile(filename), 200, LocalWebserver::determineMimeType(filename));
+}
+
+/// public
 
 void IndexPageHandler::addPathHandler(LocalWebserver &server) {
 	// we can't use LocalServer yet, because IndexPageHandler is created while LocalWebserver is created
 	// (thus no _instance is available and it causes stack overflow)
 	server.addPathHandler("/", new Common::Callback<IndexPageHandler, Client &>(this, &IndexPageHandler::handle));
+
+	Common::ArchiveMemberList fileList = listArchive();
+	for (Common::ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
+		Common::ArchiveMember const &m = **it;
+		if (m.getName() == INDEX_PAGE_NAME) continue;		
+		server.addPathHandler("/" + m.getName(), new Common::Callback<IndexPageHandler, Client &>(this, &IndexPageHandler::handleResource));		
+	}
 }
 
 Common::String IndexPageHandler::code() { return _code; }
+
+/// utils
+
+void IndexPageHandler::replace(Common::String &source, const Common::String &what, const Common::String &with) {
+	const char *cstr = source.c_str();
+	const char *position = strstr(cstr, what.c_str());
+	if (position) {
+		uint32 index = position - cstr;
+		source.replace(index, what.size(), with);
+	}
+}
+
+Common::ArchiveMemberList IndexPageHandler::listArchive() {
+	Common::ArchiveMemberList resultList;
+
+	// Find "wwwroot.zip" with SearchMan and call its listMembers()
+	Common::ArchiveMemberList fileList;
+	SearchMan.listMatchingMembers(fileList, ARCHIVE_NAME);
+	for (Common::ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
+		Common::ArchiveMember       const &m = **it;
+		Common::SeekableReadStream *const stream = m.createReadStream();
+		Common::Archive *zipArchive = Common::makeZipArchive(stream);
+		if (zipArchive) {
+			zipArchive->listMembers(resultList);
+			delete zipArchive;
+			break;
+		}
+	}
+
+	return resultList;
+}
+
+Common::SeekableReadStream *const IndexPageHandler::getArchiveFile(Common::String name) {
+	Common::SeekableReadStream *result = nullptr;
+
+	// Find "wwwroot.zip" with SearchMan and call its getMember(name)
+	Common::ArchiveMemberList fileList;
+	SearchMan.listMatchingMembers(fileList, ARCHIVE_NAME);
+	for (Common::ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
+		Common::ArchiveMember       const &m = **it;
+		Common::SeekableReadStream *const stream = m.createReadStream();
+		Common::Archive *zipArchive = Common::makeZipArchive(stream);
+		if (zipArchive) {
+			const Common::ArchiveMemberPtr ptr = zipArchive->getMember(name);
+			result = ptr->createReadStream();
+			delete zipArchive;
+			break;
+		}
+	}
+
+	return result;
+}
+
+Common::String IndexPageHandler::readEverythingFromStream(Common::SeekableReadStream *const stream) {
+	Common::String result;
+	char buf[1024];
+	uint32 readBytes;
+	while (!stream->eos()) {
+		readBytes = stream->read(buf, 1024);
+		result += Common::String(buf, readBytes);
+	}
+	return result;
+}
 
 } // End of namespace Networking

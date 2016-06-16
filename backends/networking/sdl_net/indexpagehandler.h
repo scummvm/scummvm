@@ -24,6 +24,7 @@
 #define BACKENDS_NETWORKING_SDL_NET_INDEXPAGEHANDLER_H
 
 #include "backends/networking/sdl_net/client.h"
+#include "common/archive.h"
 #include "gui/object.h"
 
 namespace Networking {
@@ -33,6 +34,12 @@ class IndexPageHandler: public GUI::CommandSender {
 	Common::String _code;
 
 	void handle(Client &client);
+	void handleResource(Client &client);
+
+	void replace(Common::String &source, const Common::String &what, const Common::String &with);
+	Common::ArchiveMemberList listArchive();
+	Common::SeekableReadStream *const getArchiveFile(Common::String name);
+	Common::String readEverythingFromStream(Common::SeekableReadStream *const stream);
 
 public:
 	IndexPageHandler();

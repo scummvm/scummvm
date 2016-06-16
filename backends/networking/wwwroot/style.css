@@ -1,0 +1,21 @@
+body, .header { background: #FFCC33; }
+
+.container {
+	width: 80%;
+	margin: 0 auto;
+}
+
+.header {
+	padding: 10pt;
+	/*margin: 8pt;*/
+	margin-bottom: 0;
+}
+
+.content {
+	padding: 8pt;
+	background: rgb(251, 241, 206);
+	font-family: Tahoma;
+	font-size: 16pt;
+}
+
+.content p { margin: 0 0 6pt 0; }
