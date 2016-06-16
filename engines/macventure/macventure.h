@@ -32,6 +32,7 @@
 
 #include "macventure/gui.h"
 #include "macventure/world.h"
+#include "macventure/stringtable.h"
 
 struct ADGameDescription;
 
@@ -64,6 +65,18 @@ enum {
 	kClickToContinueTextID = 0x84,
 	kStartGameFilenameID = 0x85
 };
+
+enum FilePathID {
+	kMCVID = 1,
+	kTitlePathID = 2,
+	kSubdirPathID = 3,
+	kObjectPathID = 4,
+	kFilterPathID = 5,
+	kTextPathID = 6,
+	kGraphicPathID = 7,
+	kSoundPathID = 8
+};
+
 
 struct GlobalSettings {
 	uint16 numObjects;    // number of game objects defined
@@ -99,8 +112,9 @@ public:
 
 	// Data retrieval
 	bool isPaused();
-	Common::String getCommandsPausedString();
-	const GlobalSettings& getGlobalSettings();
+	Common::String getCommandsPausedString() const;
+	const GlobalSettings& getGlobalSettings() const;
+	Common::String getFilePath(FilePathID id) const;
 
 private:
 	void processEvents();
@@ -121,6 +135,7 @@ private: // Attributes
 
 	// Engine state
 	GlobalSettings _globalSettings;
+	StringTable *_filenames;
 	bool _shouldQuit;
 	bool _paused;
 

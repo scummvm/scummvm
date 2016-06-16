@@ -66,6 +66,7 @@ private:
 
 	SaveGame *_saveGame;
 	Container *_objectConstants;
+	Container *_gameText;
 
 };
 

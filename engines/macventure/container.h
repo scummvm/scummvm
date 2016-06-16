@@ -42,7 +42,7 @@ typedef uint32 ContainerHeader;
 class Container {	
 
 public:
-	Container(char *filename) {
+	Container(const char *filename) {
 		if (!_file.open(filename))
 			error("Could not open %s", filename);
 

@@ -53,6 +53,10 @@ MacVentureEngine::~MacVentureEngine() {
 	delete _rnd;
 	delete _debugger;
 	delete _gui;
+
+	if (_filenames) {
+		delete _filenames;
+	}
 }
 
 Common::Error MacVentureEngine::run() {
@@ -72,6 +76,10 @@ Common::Error MacVentureEngine::run() {
 	if (!loadGlobalSettings())
 		error("Could not load the engine settings");
 
+	// Engine-wide loading
+	_filenames = new StringTable(this, _resourceManager, kFilenamesStringTableID);
+
+	// Big class instantiation
 	_gui = new Gui(this, _resourceManager);
 	_world = new World(this, _resourceManager);
 
@@ -96,7 +104,7 @@ void MacVentureEngine::requestUnpause() {
 	_paused = false;
 }
 
-const GlobalSettings& MacVentureEngine::getGlobalSettings() {
+const GlobalSettings& MacVentureEngine::getGlobalSettings() const {
 	return _globalSettings;
 }
 
@@ -106,7 +114,7 @@ bool MacVentureEngine::isPaused() {
 	return _paused;
 }
 
-Common::String MacVentureEngine::getCommandsPausedString() {
+Common::String MacVentureEngine::getCommandsPausedString() const {
 	return Common::String("Click to continue");
 }
 
@@ -124,6 +132,15 @@ void MacVentureEngine::processEvents() {
 		default:
 			break;
 		}
+	}
+}
+
+Common::String MacVentureEngine::getFilePath(FilePathID id) const {
+	const Common::Array<Common::String> *names = _filenames->getStrings();
+	if (id <= 3) { // We don't want a file in the subdirectory
+		return Common::String((*names)[id]);
+	} else { // We want a game file
+		return Common::String((*names)[3] + "/" + (*names)[id]);
 	}
 }
 
