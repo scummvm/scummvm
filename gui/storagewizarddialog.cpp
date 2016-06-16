@@ -91,7 +91,7 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 				++correctFields;
 				continue;
 			}
-			bool correct = correctChecksum(subcode);			
+			bool correct = correctChecksum(subcode);
 			if (correct) {
 				code += subcode;
 				code.deleteLastChar();
@@ -114,18 +114,18 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 
 		bool ok = false;
 		if (correctFields == CODE_FIELDS && code.size() > 0) {
-			//the last 3 chars must be an encoded crc16			
+			//the last 3 chars must be an encoded crc16
 			if (code.size() > 3) {
 				uint32 size = code.size();
-				uint32 gotcrc = decodeHashchar(code[size-3]) | (decodeHashchar(code[size-2]) << 6) | (decodeHashchar(code[size-1]) << 12);				
+				uint32 gotcrc = decodeHashchar(code[size-3]) | (decodeHashchar(code[size-2]) << 6) | (decodeHashchar(code[size-1]) << 12);
 				code.erase(size - 3);
 				uint32 crc = crc16(code);
 				ok = (crc == gotcrc);
-			}			
+			}
 			if (ok) message = _("All OK!");
 			else message = _("Invalid code");
 		}
-		_connectWidget->setEnabled(ok);		
+		_connectWidget->setEnabled(ok);
 		_messageWidget->setLabel(message);
 		break;
 	}
@@ -171,7 +171,7 @@ uint32 StorageWizardDialog::crc16(Common::String s) { //"CRC16_CCITT_FALSE"
 	for (uint32 i = 0; i < s.size(); ++i) {
 		x = ((crc >> 8) ^ s[i]) & 0xFF;
 		x ^= x >> 4;
-		crc = ((crc << 8) ^ (x << 12) ^ (x << 5) ^ x) & 0xFFFF;		
+		crc = ((crc << 8) ^ (x << 12) ^ (x << 5) ^ x) & 0xFFFF;
 	}
 	return crc;
 }
