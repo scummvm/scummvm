@@ -30,6 +30,10 @@
 #include "common/singleton.h"
 #include "common/scummsys.h"
 
+namespace Common {
+class SeekableReadStream;
+}
+
 typedef struct _SDLNet_SocketSet *SDLNet_SocketSet;
 typedef struct _TCPsocket *TCPsocket;
 
@@ -52,6 +56,7 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	bool _timerStarted, _stopOnIdle;
 	Common::HashMap<Common::String, ClientHandler> _pathHandlers;
 	IndexPageHandler _indexPageHandler;
+	uint32 _idlingFrames;
 
 	void startTimer(int interval = TIMER_INTERVAL);
 	void stopTimer();
@@ -71,7 +76,9 @@ public:
 
 	IndexPageHandler &indexPageHandler();
 
-	static void setClientGetHandler(Client &client, Common::String response, long code = 200);
+	static void setClientGetHandler(Client &client, Common::String response, long code = 200, const char *mimeType = nullptr);
+	static void setClientGetHandler(Client &client, Common::SeekableReadStream *responseStream, long code = 200, const char *mimeType = nullptr);
+	static const char *determineMimeType(Common::String &filename);
 };
 
 /** Shortcut for accessing the local webserver. */

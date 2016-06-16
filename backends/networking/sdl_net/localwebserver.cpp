@@ -40,7 +40,8 @@ DECLARE_SINGLETON(Networking::LocalWebserver);
 
 namespace Networking {
 
-LocalWebserver::LocalWebserver(): _set(nullptr), _serverSocket(nullptr), _timerStarted(false), _stopOnIdle(false), _clients(0) {
+LocalWebserver::LocalWebserver(): _set(nullptr), _serverSocket(nullptr), _timerStarted(false),
+	_stopOnIdle(false), _clients(0), _idlingFrames(0) {
 	_indexPageHandler.addPathHandler(*this);
 }
 
@@ -135,15 +136,15 @@ void LocalWebserver::handle() {
 	for (uint32 i = 0; i < MAX_CONNECTIONS; ++i)
 		handleClient(i);
 
-	if (_stopOnIdle) {
-		bool idle = true;
-		for (uint32 i = 0; i < MAX_CONNECTIONS; ++i)
-			if (_client[i].state() != INVALID) {
-				idle = false;
-				break;
-			}
-		if (idle) stop();
-	}
+	_clients = 0;
+	for (uint32 i = 0; i < MAX_CONNECTIONS; ++i)
+		if (_client[i].state() != INVALID)
+			++_clients;
+
+	if (_clients == 0) ++_idlingFrames;
+	else _idlingFrames = 0;
+	
+	if (_idlingFrames > FRAMES_PER_SECOND && _stopOnIdle) stop();	
 }
 
 void LocalWebserver::handleClient(uint32 i) {	
@@ -179,17 +180,47 @@ void LocalWebserver::acceptClient() {
 		SDLNet_TCP_Close(client);
 		return;
 	}
-	
-	_client[_clients++].open(_set, client);
+
+	++_clients;
+	for (uint32 i = 0; i < MAX_CONNECTIONS; ++i)
+		if (_client[i].state() == INVALID) {
+			_client[i].open(_set, client);
+			break;
+		}
 }
 
-void LocalWebserver::setClientGetHandler(Client &client, Common::String response, long code) {
+void LocalWebserver::setClientGetHandler(Client &client, Common::String response, long code, const char *mimeType) {
 	byte *data = new byte[response.size()];
 	memcpy(data, response.c_str(), response.size());
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(data, response.size(), DisposeAfterUse::YES);
-	GetClientHandler *handler = new GetClientHandler(stream);
+	setClientGetHandler(client, stream, code, mimeType);
+}
+
+void LocalWebserver::setClientGetHandler(Client &client, Common::SeekableReadStream *responseStream, long code, const char *mimeType) {
+	GetClientHandler *handler = new GetClientHandler(responseStream);
 	handler->setResponseCode(code);
+	if (mimeType) handler->setHeader("Content-Type", mimeType);
 	client.setHandler(handler);
+}
+
+const char *LocalWebserver::determineMimeType(Common::String &filename) {
+	// text
+	if (filename.hasSuffix(".html")) return "text/html";
+	if (filename.hasSuffix(".css")) return "text/css";
+	if (filename.hasSuffix(".txt")) return "text/plain";
+	if (filename.hasSuffix(".js")) return "application/javascript";
+
+	// images
+	if (filename.hasSuffix(".jpeg") || filename.hasSuffix(".jpg") || filename.hasSuffix(".jpe")) return "image/jpeg";
+	if (filename.hasSuffix(".gif")) return "image/gif";
+	if (filename.hasSuffix(".png")) return "image/png";
+	if (filename.hasSuffix(".svg")) return "image/svg+xml";
+	if (filename.hasSuffix(".tiff")) return "image/tiff";
+	if (filename.hasSuffix(".ico")) return "image/vnd.microsoft.icon";
+	if (filename.hasSuffix(".wbmp")) return "image/vnd.wap.wbmp";
+
+	if (filename.hasSuffix(".zip")) return "application/zip";
+	return "application/octet-stream";
 }
 
 } // End of namespace Networking
