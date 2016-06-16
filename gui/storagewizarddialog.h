@@ -33,12 +33,19 @@ class EditTextWidget;
 class StaticTextWidget;
 class ButtonWidget;
 
+#ifdef USE_SDL_NET
+enum StorageWizardDialogCommands {
+	kStorageCodePassedCmd = 'SWDC'
+};
+#endif
+
 class StorageWizardDialog : public Dialog {
 	static const uint32 CODE_FIELDS = 8;
 	uint32 _storageId;
 	EditTextWidget *_codeWidget[CODE_FIELDS];
 	StaticTextWidget *_messageWidget;
 	ButtonWidget *_connectWidget;
+	bool _close;
 
 	/**
 	 * Return the value corresponding to the given character.
@@ -69,6 +76,7 @@ public:
 	virtual void open();
 	virtual void close();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleTickle();
 };
 
 } // End of namespace GUI

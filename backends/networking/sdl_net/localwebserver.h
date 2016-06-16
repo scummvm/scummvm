@@ -24,6 +24,7 @@
 #define BACKENDS_NETWORKING_SDL_NET_LOCALWEBSERVER_H
 
 #include "backends/networking/sdl_net/client.h"
+#include "backends/networking/sdl_net/indexpagehandler.h"
 #include "common/callback.h"
 #include "common/hash-str.h"
 #include "common/singleton.h"
@@ -48,23 +49,29 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	TCPsocket _serverSocket;
 	Client _client[MAX_CONNECTIONS];
 	int _clients;
-	bool _timerStarted;
+	bool _timerStarted, _stopOnIdle;
 	Common::HashMap<Common::String, ClientHandler> _pathHandlers;
+	IndexPageHandler _indexPageHandler;
 
 	void startTimer(int interval = TIMER_INTERVAL);
 	void stopTimer();
 	void handle();
 	void handleClient(uint32 i);
 	void acceptClient();
-	void setClientGetHandler(Client &client, Common::String response, long code = 200);
-
+	
 public:
 	LocalWebserver();
 	virtual ~LocalWebserver();
 
 	void start();
 	void stop();
+	void stopOnIdle();
 	void addPathHandler(Common::String path, ClientHandler handler);
+	void removePathHandler(Common::String path);
+
+	IndexPageHandler &indexPageHandler();
+
+	static void setClientGetHandler(Client &client, Common::String response, long code = 200);
 };
 
 /** Shortcut for accessing the local webserver. */

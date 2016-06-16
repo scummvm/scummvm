@@ -40,7 +40,9 @@ DECLARE_SINGLETON(Networking::LocalWebserver);
 
 namespace Networking {
 
-LocalWebserver::LocalWebserver(): _set(nullptr), _serverSocket(nullptr), _timerStarted(false), _clients(0) {}
+LocalWebserver::LocalWebserver(): _set(nullptr), _serverSocket(nullptr), _timerStarted(false), _stopOnIdle(false), _clients(0) {
+	_indexPageHandler.addPathHandler(*this);
+}
 
 LocalWebserver::~LocalWebserver() {
 	stop();
@@ -110,10 +112,19 @@ void LocalWebserver::stop() {
 	}
 }
 
+void LocalWebserver::stopOnIdle() { _stopOnIdle = true; }
+
 void LocalWebserver::addPathHandler(Common::String path, ClientHandler handler) {
 	if (_pathHandlers.contains(path)) warning("LocalWebserver::addPathHandler: path already had a handler");
 	_pathHandlers[path] = handler;
 }
+
+void LocalWebserver::removePathHandler(Common::String path) {
+	if (!_pathHandlers.contains(path)) warning("LocalWebserver::removePathHandler: no handler known for this path");
+	_pathHandlers.erase(path);
+}
+
+IndexPageHandler &LocalWebserver::indexPageHandler() { return _indexPageHandler; }
 
 void LocalWebserver::handle() {
 	int numready = SDLNet_CheckSockets(_set, 0);
@@ -123,6 +134,16 @@ void LocalWebserver::handle() {
 
 	for (uint32 i = 0; i < MAX_CONNECTIONS; ++i)
 		handleClient(i);
+
+	if (_stopOnIdle) {
+		bool idle = true;
+		for (uint32 i = 0; i < MAX_CONNECTIONS; ++i)
+			if (_client[i].state() != INVALID) {
+				idle = false;
+				break;
+			}
+		if (idle) stop();
+	}
 }
 
 void LocalWebserver::handleClient(uint32 i) {	

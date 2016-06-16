@@ -38,7 +38,8 @@ enum {
 	kCodeBoxCmd = 'CdBx'
 };
 
-StorageWizardDialog::StorageWizardDialog(uint32 storageId): Dialog("GlobalOptions_Cloud_ConnectionWizard"), _storageId(storageId) {
+StorageWizardDialog::StorageWizardDialog(uint32 storageId):
+	Dialog("GlobalOptions_Cloud_ConnectionWizard"), _storageId(storageId), _close(false) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	Common::String headline = Common::String::format(_("%s Storage Connection Wizard"), CloudMan.listStorages()[_storageId].c_str());
@@ -70,12 +71,14 @@ void StorageWizardDialog::open() {
 	Dialog::open();
 #ifdef USE_SDL_NET
 	LocalServer.start();
+	LocalServer.indexPageHandler().setTarget(this);
 #endif
 }
 
 void StorageWizardDialog::close() {
 #ifdef USE_SDL_NET
-	LocalServer.stop();
+	LocalServer.stopOnIdle();
+	LocalServer.indexPageHandler().setTarget(nullptr);
 #endif
 	Dialog::close();
 }
@@ -143,9 +146,24 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		close();
 		break;
 	}
+#ifdef USE_SDL_NET
+	case kStorageCodePassedCmd:
+		CloudMan.connectStorage(_storageId, LocalServer.indexPageHandler().code());
+		_close = true;		
+		break;
+#endif
 	default:
 		Dialog::handleCommand(sender, cmd, data);
 	}
+}
+
+void StorageWizardDialog::handleTickle() {
+	if (_close) {
+		setResult(1);
+		close();
+	}
+
+	Dialog::handleTickle();
 }
 
 int StorageWizardDialog::decodeHashchar(char c) {
