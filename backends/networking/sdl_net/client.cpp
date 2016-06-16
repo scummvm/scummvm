@@ -43,6 +43,12 @@ void Client::open(SDLNet_SocketSet set, TCPsocket socket) {
 	_state = READING_HEADERS;
 	_socket = socket;
 	_set = set;
+	_headers = "";
+	_method = "";
+	_path = "";
+	_query = "";
+	_anchor = "";
+	_handler = nullptr;
 	if (set) {
 		int numused = SDLNet_TCP_AddSocket(set, socket);
 		if (numused == -1) {
