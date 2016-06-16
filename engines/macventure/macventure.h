@@ -100,6 +100,15 @@ struct GlobalSettings {
 	uint8  *commands;    // command buttons
 };
 
+enum GameState {
+	kGameStateInit,
+	kGameStatePlaying,
+	kGameStateWinnig,
+	kGameStateLosing,
+	kGameStateQuitting
+};
+
+
 class MacVentureEngine : public Engine {
 
 public:
@@ -136,6 +145,7 @@ private: // Attributes
 	World *_world;
 
 	// Engine state
+	GameState _gameState;
 	GlobalSettings _globalSettings;
 	StringTable *_filenames;
 	Common::Huffman *_textHuffman;

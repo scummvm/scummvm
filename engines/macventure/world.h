@@ -55,6 +55,8 @@ public:
 	World(MacVentureEngine *engine, Common::MacResManager *resMan);
 	~World();
 
+	uint32 getObjAttr(uint32 objID, uint32 attrID);
+
 private:
 	bool loadStartGameFileName();
 
@@ -67,7 +69,6 @@ private:
 	SaveGame *_saveGame;
 	Container *_objectConstants;
 	Container *_gameText;
-
 };
 
 } // End of namespace MacVenture
