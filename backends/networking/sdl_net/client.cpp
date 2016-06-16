@@ -201,6 +201,7 @@ Common::String Client::queryParameter(Common::String name) const {
 			} else value += _query[i];
 		}
 	}
+	if (key == name) return value; //the last key doesn't have an '&' in the end of the query
 	return "";
 }
 
