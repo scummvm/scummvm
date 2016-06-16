@@ -25,6 +25,8 @@
 
 #include "common/scummsys.h"
 
+#include "common/str.h"
+#include "common/hashmap.h"
 #include "engines/engine.h"
 #include "engines/director/sound.h"
 
@@ -41,6 +43,7 @@ enum DirectorGameID {
 class Archive;
 struct DirectorGameDescription;
 class Lingo;
+class Score;
 
 
 class DirectorEngine : public ::Engine {
@@ -64,6 +67,7 @@ protected:
 private:
 	const DirectorGameDescription *_gameDescription;
 
+	Common::HashMap<Common::String, Score *> loadMMMNames(Common::String folder);
 	void loadEXE();
 	void loadEXEv3(Common::SeekableReadStream *stream);
 	void loadEXEv4(Common::SeekableReadStream *stream);

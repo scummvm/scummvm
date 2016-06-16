@@ -261,7 +261,11 @@ void Score::loadActions(Common::SeekableReadStream &stream) {
 		stream.seek(stringPos);
 
 		for (uint16 j = stringPos; j < nextStringPos; j++) {
-			_actions[id] += stream.readByte();
+			byte ch = stream.readByte();
+			if (ch == 0x0d) {
+				ch = '\n';
+			}
+			_actions[id] += ch;
 		}
 
 		stream.seek(streamPos);
@@ -276,13 +280,15 @@ void Score::loadActions(Common::SeekableReadStream &stream) {
 	Common::HashMap<uint16, Common::String>::iterator j;
 
 	for (j = _actions.begin(); j != _actions.end(); ++j)
-		_lingo->addCode(j->_value, kFrameScript, j->_key);
+		if (j->_value != "")
+			_lingo->addCode(j->_value, kFrameScript, j->_key);
 
 	if (!ConfMan.getBool("dump_scripts"))
 		return;
 
 	for (j = _actions.begin(); j != _actions.end(); ++j) {
-		dumpScript(j->_key, kFrameScript, j->_value);
+		if (j->_value != "")
+			dumpScript(j->_key, kFrameScript, j->_value);
 	}
 }
 
@@ -301,10 +307,10 @@ void Score::loadScriptText(Common::SeekableReadStream &stream) {
 		}
 		script += ch;
 	}
+	if (script != "")
+		_lingo->addCode(script, kMovieScript, _movieScriptCount);
 
-	_lingo->addCode(script, kMovieScript, _movieScriptCount);
-
-	if (ConfMan.getBool("dump_scripts")) {
+	if (ConfMan.getBool("dump_scripts") && (script != "")) {
 		dumpScript(_movieScriptCount, kMovieScript, script);
 	}
 

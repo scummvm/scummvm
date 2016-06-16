@@ -31,6 +31,7 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/fs.h"
 
 #include "engines/util.h"
 
@@ -85,15 +86,36 @@ Common::Error DirectorEngine::run() {
 	_mainArchive->openFile("bookshelf_example.mmm");
 
 	Score score(*_mainArchive, *_lingo, *_soundManager);
+	debug(0, "Score name %s", score.getMacName().c_str());
+
 	score.loadArchive();
 	score.startLoop();
-	debug(0, "Score name %s", score.getMacName().c_str());
+
 	if (getPlatform() == Common::kPlatformWindows)
 		loadEXE();
 	else
 		loadMac();
 
 	return Common::kNoError;
+}
+
+Common::HashMap<Common::String, Score *> DirectorEngine::loadMMMNames(Common::String folder) {
+	Common::FSNode directory(folder);
+	Common::FSList movies;
+
+	Common::HashMap<Common::String, Score *> nameMap;
+	directory.getChildren(movies, Common::FSNode::kListFilesOnly);
+
+	if (!movies.empty()) {
+		for (Common::FSList::const_iterator i = movies.begin(); i != movies.end(); ++i) {
+			RIFFArchive *arc = new RIFFArchive();
+			arc->openFile(i->getPath());
+			Score *sc = new Score(*arc, *_lingo, *_soundManager);
+			nameMap[sc->getMacName()] = sc;
+		}
+	}
+
+	return nameMap;
 }
 
 void DirectorEngine::loadEXE() {
@@ -126,7 +148,6 @@ void DirectorEngine::loadEXE() {
 
 void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
 	uint16 entryCount = stream->readUint16LE();
-
 	if (entryCount != 1)
 		error("Unhandled multiple entry v3 EXE");
 

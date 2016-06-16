@@ -81,6 +81,8 @@ Lingo::~Lingo() {
 void Lingo::addCode(Common::String code, ScriptType type, uint16 id) {
 	debug(0, "Add code %s for type %d with id %d", code.c_str(), type, id);
 
+	//FIXME
+	return;
 	if (_scripts[type].contains(id)) {
 		free(_scripts[type][id]);
 	}
