@@ -62,10 +62,10 @@ public:
 			_res->seek(_header, SEEK_SET);
 			_numObjs = _res->readUint16BE();
 
-			for (int i = 0; i < 15; ++i)
+			for (uint i = 0; i < 15; ++i)
 				_huff[i] = _res->readUint16BE();
 
-			for (int i = 0; i < 16; ++i)
+			for (uint i = 0; i < 16; ++i)
 				_lens[i] = _res->readByte();
 
 			// Read groups
@@ -167,12 +167,12 @@ public:
 	}
 
 	/**
-	* Assumes storage is initialized.
+	* getItemByteSize should be called before this one
 	*/
-	void getItem(uint32 id, void* storage) {		
+	Common::SeekableReadStream *getItem(uint32 id) {		
 		if (_simplified) {
 			_res->seek((id * _lenObjs) + sizeof(_header), SEEK_SET);
-			_res->read(storage, _lenObjs);
+			return _res;
 		} else {
 			ContainerHeader subHead = _header & 0x7fffffff;
 			uint32 groupID = (id >> 6);
@@ -181,13 +181,13 @@ public:
 			_res->seek(subHead + (groupID * 6), SEEK_SET);
 
 			uint32 offset = 0;
-			for (int i = 0; i < objectIndex; i++) {
+			for (uint i = 0; i < objectIndex; i++) {
 				offset += _groups[groupID].lengths[i];
 			}
 
 			_res->seek(offset, SEEK_CUR);
 
-			_res->read(storage, _groups[groupID].lengths[objectIndex]);
+			return _res;
 		}
 	}
 	
