@@ -50,7 +50,7 @@ const Graphics::Surface *BitmapRawDecoder::decodeFrame(Common::SeekableReadStrea
 
 	if (_bitsPerPixel == 1) {
 		srcPitch = (_width + 7) / 8;
-		extraDataLength = (srcPitch % 2) ? 2 - (srcPitch % 4) : 0;
+		extraDataLength = (srcPitch % 2) ? 2 - (srcPitch % 2) : 0;
 	}
 
 	if (_bitsPerPixel == 1) {
