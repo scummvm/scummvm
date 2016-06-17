@@ -73,21 +73,21 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 		_eventHandlerTypes[t->handler] = t->name;
 
 	_currentScript = 0;
+
+	warning("Lingo Inited");
 }
 
 Lingo::~Lingo() {
 }
 
 void Lingo::addCode(Common::String code, ScriptType type, uint16 id) {
-	debug(0, "Add code %s for type %d with id %d", code.c_str(), type, id);
+	debug(0, "Add code \"%s\" for type %d with id %d", code.c_str(), type, id);
 
-	//FIXME
-	return;
 	if (_scripts[type].contains(id)) {
-		free(_scripts[type][id]);
+		delete _scripts[type][id];
 	}
 
-	_currentScript = new Common::Array<inst>();
+	_currentScript = new ScriptData;
 	_scripts[type][id] = _currentScript;
 
 	parse(code.c_str());

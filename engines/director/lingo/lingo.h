@@ -73,6 +73,9 @@ enum LEvent {
 typedef void (*inst)(void);
 #define	STOP (inst)0
 
+typedef Common::Array<inst> ScriptData;
+typedef Common::HashMap<int32, ScriptData *> ScriptHash;
+
 class Lingo {
 public:
 	Lingo(DirectorEngine *vm);
@@ -101,8 +104,8 @@ private:
 	Common::HashMap<uint32, const char *> _eventHandlerTypes;
 	Common::HashMap<Common::String, Audio::AudioStream *> _audioAliases;
 
-	Common::HashMap<int32, Common::Array<inst> *> _scripts[kMaxScriptType];
-	Common::Array<inst> *_currentScript;
+	ScriptHash _scripts[kMaxScriptType + 1];
+	ScriptData *_currentScript;
 
 	DirectorEngine *_vm;
 };
