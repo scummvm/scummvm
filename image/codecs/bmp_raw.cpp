@@ -59,7 +59,7 @@ const Graphics::Surface *BitmapRawDecoder::decodeFrame(Common::SeekableReadStrea
 			for (int j = 0; j != _width;) {
 				byte color = stream.readByte();
 				for (int k = 0; k < 8; k++) {
-					*dst++ = (color & 0x80) ? 0x01 : 0x00;
+					*dst++ = (color & 0x80) ? 0x0f : 0x00;
 					color <<= 1;
 					j++;
 					if (j == _width) {
