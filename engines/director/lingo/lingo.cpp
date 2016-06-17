@@ -81,7 +81,7 @@ Lingo::~Lingo() {
 }
 
 void Lingo::addCode(Common::String code, ScriptType type, uint16 id) {
-	debug(0, "Add code \"%s\" for type %d with id %d", code.c_str(), type, id);
+	debug(2, "Add code \"%s\" for type %d with id %d", code.c_str(), type, id);
 
 	if (_scripts[type].contains(id)) {
 		delete _scripts[type][id];
@@ -97,7 +97,7 @@ void Lingo::processEvent(LEvent event, int entityId) {
 	if (!_eventHandlerTypes.contains(event))
 		error("processEvent: Unknown event %d for entity %d", event, entityId);
 
-	debug(0, "processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
+	debug(2, "processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
 }
 
 } // End of namespace Director
