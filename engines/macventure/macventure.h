@@ -146,6 +146,8 @@ public:
 
 	void requestQuit();
 	void requestUnpause();
+	void selectControl(ControlReference id);
+	void activateCommand(ControlReference id);
 
 	void enqueueObject(ObjID id);
 
@@ -168,6 +170,9 @@ private:
 	// Data loading
 	bool loadGlobalSettings();
 	bool loadTextHuffman();
+
+	// Utils
+	ControlAction referenceToAction(ControlReference id);
 
 private: // Attributes
 

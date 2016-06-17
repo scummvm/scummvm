@@ -135,6 +135,22 @@ void MacVentureEngine::requestUnpause() {
 	_gameState = kGameStatePlaying;
 }
 
+void MacVentureEngine::selectControl(ControlReference id) {
+	ControlAction action = referenceToAction(id);
+	debug(7, "Select control %x", action);
+	_selectedControl = action;
+}
+
+void MacVentureEngine::activateCommand(ControlReference id) {
+	ControlAction action = referenceToAction(id);
+	if (action != _activeControl) {
+		if (_activeControl) 
+			_activeControl = kNoCommand;
+		_activeControl = action;
+	}
+	debug(7, "Activating Command %x... Command %x is active", action, _activeControl);
+}
+
 void MacVentureEngine::enqueueObject(ObjID id) {
 	QueuedObject obj;
 	obj.parent = _world->getObjAttr(id, kAttrParentObject);
@@ -244,6 +260,31 @@ void MacVentureEngine::resetVars() {
 	_destObject = 0;
 	_deltaPoint = Common::Point(0, 0);
 	_cmdReady = false;
+}
+
+ControlAction MacVenture::MacVentureEngine::referenceToAction(ControlReference id) {
+	switch (id) {
+	case MacVenture::kControlExitBox:
+		return kActivateObject;//??
+	case MacVenture::kControlExamine:
+		return kExamine;
+	case MacVenture::kControlOpen:
+		return kOpen;
+	case MacVenture::kControlClose:
+		return kClose;
+	case MacVenture::kControlSpeak:
+		return kSpeak;
+	case MacVenture::kControlOperate:
+		return kOperate;
+	case MacVenture::kControlGo:
+		return kGo;
+	case MacVenture::kControlHit:
+		return kHit;
+	case MacVenture::kControlConsume:
+		return kConsume;
+	default:
+		return kNoCommand;
+	}
 }
 
 // Data retrieval

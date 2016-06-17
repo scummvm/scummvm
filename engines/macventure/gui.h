@@ -198,6 +198,11 @@ enum {
 };
 
 public:
+
+	CommandButton() {
+		_gui = nullptr;
+	}
+
 	CommandButton(ControlData data, Gui *g) {
 		_data = data;
 		_gui = g;

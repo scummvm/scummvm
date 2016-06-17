@@ -68,7 +68,7 @@ static const Graphics::MenuData menuSubItems[] = {
 	{ 0,				NULL,				0, 0, false }
 };
 
-bool controlsWindowCallback(Graphics::WindowClick, Common::Event &event, void *gui);
+bool commandsWindowCallback(Graphics::WindowClick, Common::Event &event, void *gui);
 bool mainGameWindowCallback(Graphics::WindowClick, Common::Event &event, void *gui);
 bool outConsoleWindowCallback(Graphics::WindowClick, Common::Event &event, void *gui);
 bool selfWindowCallback(Graphics::WindowClick, Common::Event &event, void *gui);
@@ -145,7 +145,7 @@ void Gui::initWindows() {
 	_controlsWindow = _wm.addWindow(false, false, false);
 	_controlsWindow->setDimensions(getWindowData(kCommandsWindow).bounds);
 	_controlsWindow->setActive(false);
-	_controlsWindow->setCallback(controlsWindowCallback, this);
+	_controlsWindow->setCallback(commandsWindowCallback, this);
 	loadBorder(_controlsWindow, "border_command.bmp", false);
 	loadBorder(_controlsWindow, "border_command.bmp", true);
 
@@ -462,7 +462,7 @@ void Gui::drawSelfWindow() {
 
 /* CALLBACKS */
 
-bool controlsWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
+bool commandsWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
 	Gui *g = (Gui*)gui;
 
 
@@ -564,20 +564,27 @@ void Gui::handleMenuAction(MenuAction action) {
 
 bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 	if (event.type == Common::EVENT_LBUTTONUP) {
-		if (_engine->isPaused()) {
-			_engine->requestUnpause();
-		} else {
-			Common::Point position(
-				event.mouse.x - _controlsWindow->getDimensions().left,
-				event.mouse.y - _controlsWindow->getDimensions().top);
-			Common::List<CommandButton>::const_iterator it = _controlData->begin();
-			for (; it != _controlData->end(); ++it) {
-				const CommandButton &data = *it;
-				if (data.isInsideBounds(position)) {
-					debug("Command active: %s", data.getData().title);
-				}
+		if (_engine->isPaused()) 
+			return true;
+		
+		Common::Point position(
+			event.mouse.x - _controlsWindow->getDimensions().left,
+			event.mouse.y - _controlsWindow->getDimensions().top);
+
+		CommandButton data;
+		Common::List<CommandButton>::const_iterator it = _controlData->begin();
+		for (; it != _controlData->end(); ++it) {
+			if (it->isInsideBounds(position)) {
+				debug("Command active: %s", it->getData().title);
+				data = *it;
 			}
 		}
+
+		_engine->selectControl((ControlReference)data.getData().refcon);
+		_engine->activateCommand((ControlReference)data.getData().refcon);
+		
+		// Run main
+		
 	}
 	return false;
 }
