@@ -161,6 +161,7 @@ FPSfx::FPSfx(bool soundOn) {
 	_loopStream = 0;
 	_rewindableStream = 0;
 	_paused = false;
+	_loop = 0;
 
 	g_vm->_activeSfx.push_back(this);
 }

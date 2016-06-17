@@ -83,6 +83,8 @@ TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Eng
 	_bTimeFreezed = false;
 	_nTimeFreezed = 0;
 	_vdbCodec = FPCODEC_UNKNOWN;
+
+	memset(_funcList, 0, sizeof(_funcList));
 }
 
 TonyEngine::~TonyEngine() {

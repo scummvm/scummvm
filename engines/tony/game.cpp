@@ -319,6 +319,11 @@ RMOptionScreen::RMOptionScreen() {
 	_fadeTime = 0;
 	_nEditPos = 0;
 	_nLastState = MENUGAME;
+
+	_bExit = false;
+	_bLoadMenuOnly = false;
+	_bNoLoadSave = false;
+	_bAlterGfx = false;
 }
 
 RMOptionScreen::~RMOptionScreen() {
