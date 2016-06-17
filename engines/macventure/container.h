@@ -30,7 +30,6 @@
 
 namespace MacVenture {
 
-
 struct ItemGroup {
 	uint32 bitOffset; //It's really uint24
 	uint32 offset; //It's really uint24
@@ -173,7 +172,6 @@ public:
 			_res->seek((id * _lenObjs) + sizeof(_header), SEEK_SET);
 			return _res;
 		} else {
-			ContainerHeader subHead = _header & 0x7fffffff;
 			uint32 groupID = (id >> 6);
 			uint32 objectIndex = id & 0x3f; // Index within the group
 
