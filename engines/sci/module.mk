@@ -69,6 +69,7 @@ MODULE_OBJS := \
 	sound/midiparser_sci.o \
 	sound/music.o \
 	sound/soundcmd.o \
+	sound/sync.o \
 	sound/drivers/adlib.o \
 	sound/drivers/amigamac.o \
 	sound/drivers/cms.o \
@@ -90,6 +91,8 @@ MODULE_OBJS += \
 	graphics/palette32.o \
 	graphics/screen_item32.o \
 	graphics/text32.o \
+	sound/audio32.o \
+	sound/decoders/sol.o \
 	video/robot_decoder.o
 endif
 

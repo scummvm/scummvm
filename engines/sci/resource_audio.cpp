@@ -25,7 +25,7 @@
 #include "common/archive.h"
 #include "common/file.h"
 #include "common/textconsole.h"
-
+#include "common/memstream.h"
 #include "sci/resource.h"
 #include "sci/resource_intern.h"
 #include "sci/util.h"

@@ -56,6 +56,7 @@ class SoundCommandParser;
 class EventManager;
 class SegManager;
 class ScriptPatcher;
+class Sync;
 
 class GfxAnimate;
 class GfxCache;
@@ -82,6 +83,7 @@ class GfxTransitions;
 #ifdef ENABLE_SCI32
 class RobotDecoder;
 class GfxFrameout;
+class Audio32;
 #endif
 
 // our engine debug levels
@@ -367,11 +369,13 @@ public:
 	GfxMacIconBar *_gfxMacIconBar; // Mac Icon Bar manager
 
 #ifdef ENABLE_SCI32
+	Audio32 *_audio32;
 	RobotDecoder *_robotDecoder;
 	GfxFrameout *_gfxFrameout; // kFrameout and the like for 32-bit gfx
 #endif
 
 	AudioPlayer *_audio;
+	Sync *_sync;
 	SoundCommandParser *_soundCmd;
 	GameFeatures *_features;
 

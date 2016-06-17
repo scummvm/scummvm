@@ -420,6 +420,26 @@ reg_t kStubNull(EngineState *s, int argc, reg_t *argv);
 
 #ifdef ENABLE_SCI32
 // SCI2 Kernel Functions
+reg_t kDoAudio32(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioInit(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioWaitForPlay(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioPlay(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioStop(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioPause(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioResume(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioPosition(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioRate(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioVolume(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioGetCapability(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioBitDepth(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioDistort(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioMixing(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioChannels(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioPreload(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioFade(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioHasSignal(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioSetLoop(EngineState *s, int argc, reg_t *argv);
+
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv);
 reg_t kArray(EngineState *s, int argc, reg_t *argv);
 reg_t kListAt(EngineState *s, int argc, reg_t *argv);
@@ -558,7 +578,6 @@ reg_t kPlayDuck(EngineState *s, int argc, reg_t *argv);
 
 reg_t kDoSoundInit(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundPlay(EngineState *s, int argc, reg_t *argv);
-reg_t kDoSoundRestore(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundDispose(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundMute(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundStop(EngineState *s, int argc, reg_t *argv);
@@ -573,7 +592,6 @@ reg_t kDoSoundUpdateCues(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundSendMidi(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundGlobalReverb(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundSetHold(EngineState *s, int argc, reg_t *argv);
-reg_t kDoSoundDummy(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundGetAudioCapability(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundSuspend(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundSetVolume(EngineState *s, int argc, reg_t *argv);

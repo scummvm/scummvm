@@ -26,7 +26,11 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/vm.h"		// for Object
 #include "sci/sound/audio.h"
+#ifdef ENABLE_SCI32
+#include "sci/sound/audio32.h"
+#endif
 #include "sci/sound/soundcmd.h"
+#include "sci/sound/sync.h"
 
 #include "audio/mixer.h"
 #include "common/system.h"
@@ -46,7 +50,6 @@ reg_t kDoSound(EngineState *s, int argc, reg_t *argv) {
 
 CREATE_DOSOUND_FORWARD(DoSoundInit)
 CREATE_DOSOUND_FORWARD(DoSoundPlay)
-CREATE_DOSOUND_FORWARD(DoSoundRestore)
 CREATE_DOSOUND_FORWARD(DoSoundDispose)
 CREATE_DOSOUND_FORWARD(DoSoundMute)
 CREATE_DOSOUND_FORWARD(DoSoundStop)
@@ -61,12 +64,40 @@ CREATE_DOSOUND_FORWARD(DoSoundUpdateCues)
 CREATE_DOSOUND_FORWARD(DoSoundSendMidi)
 CREATE_DOSOUND_FORWARD(DoSoundGlobalReverb)
 CREATE_DOSOUND_FORWARD(DoSoundSetHold)
-CREATE_DOSOUND_FORWARD(DoSoundDummy)
 CREATE_DOSOUND_FORWARD(DoSoundGetAudioCapability)
 CREATE_DOSOUND_FORWARD(DoSoundSuspend)
 CREATE_DOSOUND_FORWARD(DoSoundSetVolume)
 CREATE_DOSOUND_FORWARD(DoSoundSetPriority)
 CREATE_DOSOUND_FORWARD(DoSoundSetLoop)
+
+#ifdef ENABLE_SCI32
+reg_t kDoSoundPhantasmagoriaMac(EngineState *s, int argc, reg_t *argv) {
+	// Phantasmagoria Mac (and seemingly no other game (!)) uses this
+	// cutdown version of kDoSound.
+
+	switch (argv[0].toUint16()) {
+	case 0:
+		return g_sci->_soundCmd->kDoSoundMasterVolume(argc - 1, argv + 1, s->r_acc);
+	case 2:
+		return g_sci->_soundCmd->kDoSoundInit(argc - 1, argv + 1, s->r_acc);
+	case 3:
+		return g_sci->_soundCmd->kDoSoundDispose(argc - 1, argv + 1, s->r_acc);
+	case 4:
+		return g_sci->_soundCmd->kDoSoundPlay(argc - 1, argv + 1, s->r_acc);
+	case 5:
+		return g_sci->_soundCmd->kDoSoundStop(argc - 1, argv + 1, s->r_acc);
+	case 8:
+		return g_sci->_soundCmd->kDoSoundSetVolume(argc - 1, argv + 1, s->r_acc);
+	case 9:
+		return g_sci->_soundCmd->kDoSoundSetLoop(argc - 1, argv + 1, s->r_acc);
+	case 10:
+		return g_sci->_soundCmd->kDoSoundUpdateCues(argc - 1, argv + 1, s->r_acc);
+	}
+
+	error("Unknown kDoSound Phantasmagoria Mac subop %d", argv[0].toUint16());
+	return s->r_acc;
+}
+#endif
 
 reg_t kDoCdAudio(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
@@ -113,7 +144,8 @@ reg_t kDoCdAudio(EngineState *s, int argc, reg_t *argv) {
 }
 
 /**
- * Used for speech playback and digital soundtracks in CD games
+ * Used for speech playback and digital soundtracks in CD games.
+ * This is the SCI16 version; SCI32 is handled separately.
  */
 reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 	// JonesCD uses different functions based on the cdaudio.map file
@@ -184,14 +216,6 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 		int16 volume = argv[1].toUint16();
 		volume = CLIP<int16>(volume, 0, AUDIO_VOLUME_MAX);
 		debugC(kDebugLevelSound, "kDoAudio: set volume to %d", volume);
-#ifdef ENABLE_SCI32
-		if (getSciVersion() >= SCI_VERSION_2_1_EARLY) {
-			int16 volumePrev = mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) / 2;
-			volumePrev = CLIP<int16>(volumePrev, 0, AUDIO_VOLUME_MAX);
-			mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume * 2);
-			return make_reg(0, volumePrev);
-		} else
-#endif
 		mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume * 2);
 		break;
 	}
@@ -232,12 +256,6 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 		if (getSciVersion() <= SCI_VERSION_1_1) {
 			debugC(kDebugLevelSound, "kDoAudio: CD audio subop");
 			return kDoCdAudio(s, argc - 1, argv + 1);
-#ifdef ENABLE_SCI32
-		} else {
-			// TODO: This isn't CD Audio in SCI32 anymore
-			warning("kDoAudio: Unhandled case 10, %d extra arguments passed", argc - 1);
-			break;
-#endif
 		}
 
 		// 3 new subops in Pharkas CD (including CD demo). kDoAudio in Pharkas sits at seg026:038C
@@ -286,14 +304,12 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->_segMan;
 	switch (argv[0].toUint16()) {
 	case kSciAudioSyncStart: {
 		ResourceId id;
 
-		g_sci->_audio->stopSoundSync();
+		g_sci->_sync->stop();
 
-		// Load sound sync resource and lock it
 		if (argc == 3) {
 			id = ResourceId(kResourceTypeSync, argv[2].toUint16());
 		} else if (argc == 7) {
@@ -304,14 +320,14 @@ reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
 			return s->r_acc;
 		}
 
-		g_sci->_audio->setSoundSync(id, argv[1], segMan);
+		g_sci->_sync->start(id, argv[1]);
 		break;
 	}
 	case kSciAudioSyncNext:
-		g_sci->_audio->doSoundSync(argv[1], segMan);
+		g_sci->_sync->next(argv[1]);
 		break;
 	case kSciAudioSyncStop:
-		g_sci->_audio->stopSoundSync();
+		g_sci->_sync->stop();
 		break;
 	default:
 		error("DoSync: Unhandled subfunction %d", argv[0].toUint16());
@@ -321,6 +337,155 @@ reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
 }
 
 #ifdef ENABLE_SCI32
+reg_t kDoAudio32(EngineState *s, int argc, reg_t *argv) {
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
+
+reg_t kDoAudioInit(EngineState *s, int argc, reg_t *argv) {
+	return make_reg(0, 0);
+}
+
+reg_t kDoAudioWaitForPlay(EngineState *s, int argc, reg_t *argv) {
+	return g_sci->_audio32->kernelPlay(false, argc, argv);
+}
+
+reg_t kDoAudioPlay(EngineState *s, int argc, reg_t *argv) {
+	return g_sci->_audio32->kernelPlay(true, argc, argv);
+}
+
+reg_t kDoAudioStop(EngineState *s, int argc, reg_t *argv) {
+	const int16 channelIndex = g_sci->_audio32->findChannelByArgs(argc, argv, 0, argc > 1 ? argv[1] : NULL_REG);
+	return make_reg(0, g_sci->_audio32->stop(channelIndex));
+}
+
+reg_t kDoAudioPause(EngineState *s, int argc, reg_t *argv) {
+	const int16 channelIndex = g_sci->_audio32->findChannelByArgs(argc, argv, 0, argc > 1 ? argv[1] : NULL_REG);
+	return make_reg(0, g_sci->_audio32->pause(channelIndex));
+}
+
+reg_t kDoAudioResume(EngineState *s, int argc, reg_t *argv) {
+	const int16 channelIndex = g_sci->_audio32->findChannelByArgs(argc, argv, 0, argc > 1 ? argv[1] : NULL_REG);
+	return make_reg(0, g_sci->_audio32->resume(channelIndex));
+}
+
+reg_t kDoAudioPosition(EngineState *s, int argc, reg_t *argv) {
+	const int16 channelIndex = g_sci->_audio32->findChannelByArgs(argc, argv, 0, argc > 1 ? argv[1] : NULL_REG);
+	return make_reg(0, g_sci->_audio32->getPosition(channelIndex));
+}
+
+reg_t kDoAudioRate(EngineState *s, int argc, reg_t *argv) {
+	// NOTE: In the original engine this would set the hardware
+	// DSP sampling rate; ScummVM mixer does not need this, so
+	// we only store the value to satisfy engine compatibility.
+
+	if (argc > 0) {
+		const uint16 sampleRate = argv[0].toUint16();
+		if (sampleRate != 0) {
+			g_sci->_audio32->setSampleRate(sampleRate);
+		}
+	}
+
+	return make_reg(0, g_sci->_audio32->getSampleRate());
+}
+
+reg_t kDoAudioVolume(EngineState *s, int argc, reg_t *argv) {
+	const int16 volume = argc > 0 ? argv[0].toSint16() : -1;
+	const int16 channelIndex = g_sci->_audio32->findChannelByArgs(argc, argv, 1, argc > 2 ? argv[2] : NULL_REG);
+
+	if (volume != -1) {
+		g_sci->_audio32->setVolume(channelIndex, volume);
+	}
+
+	return make_reg(0, g_sci->_audio32->getVolume(channelIndex));
+}
+
+reg_t kDoAudioGetCapability(EngineState *s, int argc, reg_t *argv) {
+	return make_reg(0, 1);
+}
+
+reg_t kDoAudioBitDepth(EngineState *s, int argc, reg_t *argv) {
+	// NOTE: In the original engine this would set the hardware
+	// DSP bit depth; ScummVM mixer does not need this, so
+	// we only store the value to satisfy engine compatibility.
+
+	if (argc > 0) {
+		const uint16 bitDepth = argv[0].toUint16();
+		if (bitDepth != 0) {
+			g_sci->_audio32->setBitDepth(bitDepth);
+		}
+	}
+
+	return make_reg(0, g_sci->_audio32->getBitDepth());
+}
+
+reg_t kDoAudioMixing(EngineState *s, int argc, reg_t *argv) {
+	if (argc > 0) {
+		g_sci->_audio32->setAttenuatedMixing(argv[0].toUint16());
+	}
+
+	return make_reg(0, g_sci->_audio32->getAttenuatedMixing());
+}
+
+reg_t kDoAudioChannels(EngineState *s, int argc, reg_t *argv) {
+	// NOTE: In the original engine this would set the hardware
+	// DSP stereo output; ScummVM mixer does not need this, so
+	// we only store the value to satisfy engine compatibility.
+
+	if (argc > 0) {
+		const int16 numChannels = argv[0].toSint16();
+		if (numChannels != 0) {
+			g_sci->_audio32->setNumOutputChannels(numChannels);
+		}
+	}
+
+	return make_reg(0, g_sci->_audio32->getNumOutputChannels());
+}
+
+reg_t kDoAudioPreload(EngineState *s, int argc, reg_t *argv) {
+	// NOTE: In the original engine this would cause audio
+	// data for new channels to be preloaded to memory when
+	// the channel was initialized; we do not need this, so
+	// we only store the value to satisfy engine compatibility.
+
+	if (argc > 0) {
+		g_sci->_audio32->setPreload(argv[0].toUint16());
+	}
+
+	return make_reg(0, g_sci->_audio32->getPreload());
+}
+
+reg_t kDoAudioFade(EngineState *s, int argc, reg_t *argv) {
+	if (argc < 4) {
+		return make_reg(0, 0);
+	}
+
+	// NOTE: Sierra did a nightmarish hack here, temporarily replacing
+	// the argc of the kernel arguments with 2 and then restoring it
+	// after findChannelByArgs was called.
+	const int16 channelIndex = g_sci->_audio32->findChannelByArgs(2, argv, 0, argc > 5 ? argv[5] : NULL_REG);
+
+	const int16 volume = argv[1].toSint16();
+	const int16 speed = argv[2].toSint16();
+	const int16 steps = argv[3].toSint16();
+	const bool stopAfterFade = argc > 4 ? (bool)argv[4].toUint16() : false;
+
+	return make_reg(0, g_sci->_audio32->fadeChannel(channelIndex, volume, speed, steps, stopAfterFade));
+}
+
+reg_t kDoAudioHasSignal(EngineState *s, int argc, reg_t *argv) {
+	return make_reg(0, g_sci->_audio32->hasSignal());
+}
+
+reg_t kDoAudioSetLoop(EngineState *s, int argc, reg_t *argv) {
+	const int16 channelIndex = g_sci->_audio32->findChannelByArgs(argc, argv, 0, argc == 3 ? argv[2] : NULL_REG);
+
+	const bool loop = argv[0].toSint16() != 0 && argv[0].toSint16() != 1;
+
+	g_sci->_audio32->setLoop(channelIndex, loop);
+	return s->r_acc;
+}
 
 reg_t kSetLanguage(EngineState *s, int argc, reg_t *argv) {
 	// This is used by script 90 of MUMG Deluxe from the main menu to toggle
@@ -332,33 +497,6 @@ reg_t kSetLanguage(EngineState *s, int argc, reg_t *argv) {
 	//warning("SetLanguage: set audio resource directory to '%s'", audioDirectory.c_str());
 	g_sci->getResMan()->changeAudioDirectory(audioDirectory);
 
-	return s->r_acc;
-}
-
-reg_t kDoSoundPhantasmagoriaMac(EngineState *s, int argc, reg_t *argv) {
-	// Phantasmagoria Mac (and seemingly no other game (!)) uses this
-	// cutdown version of kDoSound.
-
-	switch (argv[0].toUint16()) {
-	case 0:
-		return g_sci->_soundCmd->kDoSoundMasterVolume(argc - 1, argv + 1, s->r_acc);
-	case 2:
-		return g_sci->_soundCmd->kDoSoundInit(argc - 1, argv + 1, s->r_acc);
-	case 3:
-		return g_sci->_soundCmd->kDoSoundDispose(argc - 1, argv + 1, s->r_acc);
-	case 4:
-		return g_sci->_soundCmd->kDoSoundPlay(argc - 1, argv + 1, s->r_acc);
-	case 5:
-		return g_sci->_soundCmd->kDoSoundStop(argc - 1, argv + 1, s->r_acc);
-	case 8:
-		return g_sci->_soundCmd->kDoSoundSetVolume(argc - 1, argv + 1, s->r_acc);
-	case 9:
-		return g_sci->_soundCmd->kDoSoundSetLoop(argc - 1, argv + 1, s->r_acc);
-	case 10:
-		return g_sci->_soundCmd->kDoSoundUpdateCues(argc - 1, argv + 1, s->r_acc);
-	}
-
-	error("Unknown kDoSound Phantasmagoria Mac subop %d", argv[0].toUint16());
 	return s->r_acc;
 }
 

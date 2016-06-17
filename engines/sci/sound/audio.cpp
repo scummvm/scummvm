@@ -22,7 +22,6 @@
 
 #include "sci/resource.h"
 #include "sci/engine/kernel.h"
-#include "sci/engine/selector.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/sound/audio.h"
 
@@ -45,7 +44,7 @@
 namespace Sci {
 
 AudioPlayer::AudioPlayer(ResourceManager *resMan) : _resMan(resMan), _audioRate(11025),
-		_syncResource(NULL), _syncOffset(0), _audioCdStart(0), _initCD(false) {
+		_audioCdStart(0), _initCD(false) {
 
 	_mixer = g_system->getMixer();
 	_wPlayFlag = false;
@@ -56,7 +55,6 @@ AudioPlayer::~AudioPlayer() {
 }
 
 void AudioPlayer::stopAllAudio() {
-	stopSoundSync();
 	stopAudio();
 	if (_audioCdStart > 0)
 		audioCdStop();
@@ -255,13 +253,7 @@ static void deDPCM16(byte *soundBuf, Common::SeekableReadStream &audioStream, ui
 
 static void deDPCM8Nibble(byte *soundBuf, int32 &s, byte b) {
 	if (b & 8) {
-#ifdef ENABLE_SCI32
-		// SCI2.1 reverses the order of the table values here
-		if (getSciVersion() >= SCI_VERSION_2_1_EARLY)
-			s -= tableDPCM8[b & 7];
-		else
-#endif
-			s -= tableDPCM8[7 - (b & 7)];
+		s -= tableDPCM8[7 - (b & 7)];
 	} else
 		s += tableDPCM8[b & 7];
 	s = CLIP<int32>(s, 0, 255);
@@ -472,43 +464,6 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		return audioStream;
 
 	return NULL;
-}
-
-void AudioPlayer::setSoundSync(ResourceId id, reg_t syncObjAddr, SegManager *segMan) {
-	_syncResource = _resMan->findResource(id, 1);
-	_syncOffset = 0;
-
-	if (_syncResource) {
-		writeSelectorValue(segMan, syncObjAddr, SELECTOR(syncCue), 0);
-	} else {
-		warning("setSoundSync: failed to find resource %s", id.toString().c_str());
-		// Notify the scripts to stop sound sync
-		writeSelectorValue(segMan, syncObjAddr, SELECTOR(syncCue), SIGNAL_OFFSET);
-	}
-}
-
-void AudioPlayer::doSoundSync(reg_t syncObjAddr, SegManager *segMan) {
-	if (_syncResource && (_syncOffset < _syncResource->size - 1)) {
-		int16 syncCue = -1;
-		int16 syncTime = (int16)READ_SCI11ENDIAN_UINT16(_syncResource->data + _syncOffset);
-
-		_syncOffset += 2;
-
-		if ((syncTime != -1) && (_syncOffset < _syncResource->size - 1)) {
-			syncCue = (int16)READ_SCI11ENDIAN_UINT16(_syncResource->data + _syncOffset);
-			_syncOffset += 2;
-		}
-
-		writeSelectorValue(segMan, syncObjAddr, SELECTOR(syncTime), syncTime);
-		writeSelectorValue(segMan, syncObjAddr, SELECTOR(syncCue), syncCue);
-	}
-}
-
-void AudioPlayer::stopSoundSync() {
-	if (_syncResource) {
-		_resMan->unlockResource(_syncResource);
-		_syncResource = NULL;
-	}
 }
 
 int AudioPlayer::audioCdPlay(int track, int start, int duration) {

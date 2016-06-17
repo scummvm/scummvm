@@ -102,7 +102,7 @@ struct SciKernelMapSubEntry {
 static const SciKernelMapSubEntry kDoSound_subops[] = {
 	{ SIG_SOUNDSCI0,       0, MAP_CALL(DoSoundInit),               "o",                    NULL },
 	{ SIG_SOUNDSCI0,       1, MAP_CALL(DoSoundPlay),               "o",                    NULL },
-	{ SIG_SOUNDSCI0,       2, MAP_CALL(DoSoundRestore),            "(o)",                  NULL },
+	{ SIG_SOUNDSCI0,       2, MAP_EMPTY(DoSoundRestore),           "(o)",                  NULL },
 	{ SIG_SOUNDSCI0,       3, MAP_CALL(DoSoundDispose),            "o",                    NULL },
 	{ SIG_SOUNDSCI0,       4, MAP_CALL(DoSoundMute),               "(i)",                  NULL },
 	{ SIG_SOUNDSCI0,       5, MAP_CALL(DoSoundStop),               "o",                    NULL },
@@ -115,7 +115,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 	{ SIG_SOUNDSCI0,      12, MAP_CALL(DoSoundStopAll),            "",                     NULL },
 	{ SIG_SOUNDSCI1EARLY,  0, MAP_CALL(DoSoundMasterVolume),       NULL,                   NULL },
 	{ SIG_SOUNDSCI1EARLY,  1, MAP_CALL(DoSoundMute),               NULL,                   NULL },
-	{ SIG_SOUNDSCI1EARLY,  2, MAP_CALL(DoSoundRestore),            NULL,                   NULL },
+	{ SIG_SOUNDSCI1EARLY,  2, MAP_EMPTY(DoSoundRestore),           NULL,                   NULL },
 	{ SIG_SOUNDSCI1EARLY,  3, MAP_CALL(DoSoundGetPolyphony),       NULL,                   NULL },
 	{ SIG_SOUNDSCI1EARLY,  4, MAP_CALL(DoSoundUpdate),             NULL,                   NULL },
 	{ SIG_SOUNDSCI1EARLY,  5, MAP_CALL(DoSoundInit),               NULL,                   NULL },
@@ -128,11 +128,11 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 	{ SIG_SOUNDSCI1EARLY, 12, MAP_CALL(DoSoundSendMidi),           "oiii",                 NULL },
 	{ SIG_SOUNDSCI1EARLY, 13, MAP_CALL(DoSoundGlobalReverb),       "(i)",                  NULL },
 	{ SIG_SOUNDSCI1EARLY, 14, MAP_CALL(DoSoundSetHold),            "oi",                   NULL },
-	{ SIG_SOUNDSCI1EARLY, 15, MAP_CALL(DoSoundDummy),              "",                     NULL },
+	{ SIG_SOUNDSCI1EARLY, 15, MAP_EMPTY(DoSoundDummy),             "",                     NULL },
 	//  ^^ Longbow demo
 	{ SIG_SOUNDSCI1LATE,   0, MAP_CALL(DoSoundMasterVolume),       NULL,                   NULL },
 	{ SIG_SOUNDSCI1LATE,   1, MAP_CALL(DoSoundMute),               NULL,                   NULL },
-	{ SIG_SOUNDSCI1LATE,   2, MAP_CALL(DoSoundRestore),            "",                     NULL },
+	{ SIG_SOUNDSCI1LATE,   2, MAP_EMPTY(DoSoundRestore),           "",                     NULL },
 	{ SIG_SOUNDSCI1LATE,   3, MAP_CALL(DoSoundGetPolyphony),       NULL,                   NULL },
 	{ SIG_SOUNDSCI1LATE,   4, MAP_CALL(DoSoundGetAudioCapability), "",                     NULL },
 	{ SIG_SOUNDSCI1LATE,   5, MAP_CALL(DoSoundSuspend),            "i",                    NULL },
@@ -143,7 +143,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 	{ SIG_SOUNDSCI1LATE,  10, MAP_CALL(DoSoundPause),              NULL,                   NULL },
 	{ SIG_SOUNDSCI1LATE,  11, MAP_CALL(DoSoundFade),               "oiiii(i)",             kDoSoundFade_workarounds },
 	{ SIG_SOUNDSCI1LATE,  12, MAP_CALL(DoSoundSetHold),            NULL,                   NULL },
-	{ SIG_SOUNDSCI1LATE,  13, MAP_CALL(DoSoundDummy),              NULL,                   NULL },
+	{ SIG_SOUNDSCI1LATE,  13, MAP_EMPTY(DoSoundDummy),             NULL,                   NULL },
 	{ SIG_SOUNDSCI1LATE,  14, MAP_CALL(DoSoundSetVolume),          "oi",                   NULL },
 	{ SIG_SOUNDSCI1LATE,  15, MAP_CALL(DoSoundSetPriority),        "oi",                   NULL },
 	{ SIG_SOUNDSCI1LATE,  16, MAP_CALL(DoSoundSetLoop),            "oi",                   NULL },
@@ -152,35 +152,96 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 	{ SIG_SOUNDSCI1LATE,  19, MAP_CALL(DoSoundGlobalReverb),       NULL,                   NULL },
 	{ SIG_SOUNDSCI1LATE,  20, MAP_CALL(DoSoundUpdate),             NULL,                   NULL },
 #ifdef ENABLE_SCI32
-	{ SIG_SOUNDSCI21,      0, MAP_CALL(DoSoundMasterVolume),       NULL,                   NULL },
-	{ SIG_SOUNDSCI21,      1, MAP_CALL(DoSoundMute),               NULL,                   NULL },
-	{ SIG_SOUNDSCI21,      2, MAP_CALL(DoSoundRestore),            NULL,                   NULL },
-	{ SIG_SOUNDSCI21,      3, MAP_CALL(DoSoundGetPolyphony),       NULL,                   NULL },
-	{ SIG_SOUNDSCI21,      4, MAP_CALL(DoSoundGetAudioCapability), NULL,                   NULL },
-	{ SIG_SOUNDSCI21,      5, MAP_CALL(DoSoundSuspend),            NULL,                   NULL },
-	{ SIG_SOUNDSCI21,      6, MAP_CALL(DoSoundInit),               NULL,                   NULL },
-	{ SIG_SOUNDSCI21,      7, MAP_CALL(DoSoundDispose),            NULL,                   NULL },
-	{ SIG_SOUNDSCI21,      8, MAP_CALL(DoSoundPlay),               "o(i)",                 NULL },
+	{ SIG_SOUNDSCI21,      0, MAP_CALL(DoSoundMasterVolume),       "(i)",                  NULL },
+	{ SIG_SOUNDSCI21,      1, MAP_CALL(DoSoundMute),               "(i)",                  NULL },
+	{ SIG_SOUNDSCI21,      2, MAP_EMPTY(DoSoundRestore),           NULL,                   NULL },
+	{ SIG_SOUNDSCI21,      3, MAP_CALL(DoSoundGetPolyphony),       "",                     NULL },
+	{ SIG_SOUNDSCI21,      4, MAP_CALL(DoSoundGetAudioCapability), "",                     NULL },
+	{ SIG_SOUNDSCI21,      5, MAP_CALL(DoSoundSuspend),            "i",                    NULL },
+	{ SIG_SOUNDSCI21,      6, MAP_CALL(DoSoundInit),               "o",                    NULL },
+	{ SIG_SOUNDSCI21,      7, MAP_CALL(DoSoundDispose),            "o",                    NULL },
+	{ SIG_SOUNDSCI21,      8, MAP_CALL(DoSoundPlay),               "o",                    NULL },
 	// ^^ TODO: if this is really the only change between SCI1LATE AND SCI21, we could rename the
 	//     SIG_SOUNDSCI1LATE #define to SIG_SINCE_SOUNDSCI1LATE and make it being SCI1LATE+. Although
 	//     I guess there are many more changes somewhere
 	// TODO: Quest for Glory 4 (SCI2.1) uses the old scheme, we need to detect it accordingly
 	//        signature for SCI21 should be "o"
-	{ SIG_SOUNDSCI21,      9, MAP_CALL(DoSoundStop),               NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     10, MAP_CALL(DoSoundPause),              NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     11, MAP_CALL(DoSoundFade),               NULL,                   kDoSoundFade_workarounds },
-	{ SIG_SOUNDSCI21,     12, MAP_CALL(DoSoundSetHold),            NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     13, MAP_CALL(DoSoundDummy),              NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     14, MAP_CALL(DoSoundSetVolume),          NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     15, MAP_CALL(DoSoundSetPriority),        NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     16, MAP_CALL(DoSoundSetLoop),            NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     17, MAP_CALL(DoSoundUpdateCues),         NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     18, MAP_CALL(DoSoundSendMidi),           NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     19, MAP_CALL(DoSoundGlobalReverb),       NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     20, MAP_CALL(DoSoundUpdate),             NULL,                   NULL },
+	{ SIG_SOUNDSCI21,      9, MAP_CALL(DoSoundStop),               "o",                    NULL },
+	{ SIG_SOUNDSCI21,     10, MAP_CALL(DoSoundPause),              "[o0]i",                NULL },
+	{ SIG_SOUNDSCI21,     11, MAP_CALL(DoSoundFade),               "oiiii",                kDoSoundFade_workarounds },
+	{ SIG_SOUNDSCI21,     12, MAP_CALL(DoSoundSetHold),            "oi",                   NULL },
+	{ SIG_SOUNDSCI21,     13, MAP_EMPTY(DoSoundDummy),             NULL,                   NULL },
+	{ SIG_SOUNDSCI21,     14, MAP_CALL(DoSoundSetVolume),          "oi",                   NULL },
+	{ SIG_SOUNDSCI21,     15, MAP_CALL(DoSoundSetPriority),        "oi",                   NULL },
+	{ SIG_SOUNDSCI21,     16, MAP_CALL(DoSoundSetLoop),            "oi",                   NULL },
+	{ SIG_SOUNDSCI21,     17, MAP_CALL(DoSoundUpdateCues),         "o",                    NULL },
+	{ SIG_SOUNDSCI21,     18, MAP_CALL(DoSoundSendMidi),           "oiiii",                NULL },
+	{ SIG_SOUNDSCI21,     19, MAP_CALL(DoSoundGlobalReverb),       "(i)",                  NULL },
+	{ SIG_SOUNDSCI21,     20, MAP_CALL(DoSoundUpdate),             "o",                    NULL },
 #endif
 	SCI_SUBOPENTRY_TERMINATOR
 };
+
+#ifdef ENABLE_SCI32
+// NOTE: In SSCI, some 'unused' kDoAudio subops are actually
+// called indirectly by kDoSound:
+//
+// kDoSoundGetAudioCapability -> kDoAudioGetCapability
+// kDoSoundPlay       -> kDoAudioPlay, kDoAudioStop
+// kDoSoundPause      -> kDoAudioPause, kDoAudioResume
+// kDoSoundFade       -> kDoAudioFade
+// kDoSoundSetVolume  -> kDoAudioVolume
+// kDoSoundSetLoop    -> kDoAudioSetLoop
+// kDoSoundUpdateCues -> kDoAudioPosition
+//
+// In ScummVM, logic inside these kernel functions has been
+// moved to methods of Audio32, and direct calls to Audio32
+// are made from kDoSound instead.
+//
+// Some kDoAudio methods are esoteric and appear to be used
+// only by one or two games:
+//
+// kDoAudioMixing: Phantasmagoria (other games call this
+// function, but only to disable the feature)
+// kDoAudioHasSignal: SQ6 TalkRandCycle
+// kDoAudioPan: Rama RegionSFX::pan method
+//
+// Finally, there is a split in SCI2.1mid audio code.
+// QFG4CD & SQ6 do not have opcodes 18 and 19, but they
+// exist in GK2, KQ7 2.00b, Phantasmagoria 1, PQ:SWAT, and
+// Torin. (It is unknown if they exist in MUMG Deluxe or
+// Shivers 1; they are not used in either of these games.)
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kDoAudio_subops[] = {
+	{ SIG_SCI32,           0, MAP_CALL(DoAudioInit),               "",                     NULL },
+	// SCI2 includes a Sync script that would call
+	// kDoAudioWaitForPlay, but SSCI has no opcode 1 until
+	// SCI2.1early
+	{ SIG_SINCE_SCI21,     1, MAP_CALL(DoAudioWaitForPlay),        "(i)(i)(i)(i)(i)(i)(i)", NULL },
+	{ SIG_SCI32,           2, MAP_CALL(DoAudioPlay),               "(i)(i)(i)(i)(i)(i)(i)", NULL },
+	{ SIG_SCI32,           3, MAP_CALL(DoAudioStop),               "(i)(i)(i)(i)(i)",      NULL },
+	{ SIG_SCI32,           4, MAP_CALL(DoAudioPause),              "(i)(i)(i)(i)(i)",      NULL },
+	{ SIG_SCI32,           5, MAP_CALL(DoAudioResume),             "(i)(i)(i)(i)(i)",      NULL },
+	{ SIG_SCI32,           6, MAP_CALL(DoAudioPosition),           "(i)(i)(i)(i)(i)",      NULL },
+	{ SIG_SCI32,           7, MAP_CALL(DoAudioRate),               "(i)",                  NULL },
+	{ SIG_SCI32,           8, MAP_CALL(DoAudioVolume),             "(i)(i)(i)(i)(i)(i)",   NULL },
+	{ SIG_SCI32,           9, MAP_CALL(DoAudioGetCapability),      "",                     NULL },
+	{ SIG_SCI32,          10, MAP_CALL(DoAudioBitDepth),           "(i)",                  NULL },
+	{ SIG_SCI32,          11, MAP_DUMMY(DoAudioDistort),           "(i)",                  NULL },
+	{ SIG_SCI32,          12, MAP_CALL(DoAudioMixing),             "(i)",                  NULL },
+	{ SIG_SCI32,          13, MAP_CALL(DoAudioChannels),           "(i)",                  NULL },
+	{ SIG_SCI32,          14, MAP_CALL(DoAudioPreload),            "(i)",                  NULL },
+	{ SIG_SINCE_SCI21MID, 15, MAP_CALL(DoAudioFade),               "(iiii)(i)(i)",         NULL },
+	{ SIG_SINCE_SCI21MID, 16, MAP_DUMMY(DoAudioFade36),            "iiiii(iii)(i)",        NULL },
+	{ SIG_SINCE_SCI21MID, 17, MAP_CALL(DoAudioHasSignal),          "",                     NULL },
+	{ SIG_SINCE_SCI21MID, 18, MAP_EMPTY(DoAudioCritical),          "",                     NULL },
+	{ SIG_SINCE_SCI21MID, 19, MAP_CALL(DoAudioSetLoop),            "iii(o)",               NULL },
+	{ SIG_SCI3,           20, MAP_DUMMY(DoAudioPan),               "",                     NULL },
+	{ SIG_SCI3,           21, MAP_DUMMY(DoAudioPanOff),            "",                     NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+#endif
 
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kGraph_subops[] = {
@@ -484,7 +545,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(DisposeList),       SIG_EVERYWHERE,           "l",                     NULL,            NULL },
 	{ MAP_CALL(DisposeScript),     SIG_EVERYWHERE,           "i(i*)",                 NULL,            kDisposeScript_workarounds },
 	{ MAP_CALL(DisposeWindow),     SIG_EVERYWHERE,           "i(i)",                  NULL,            NULL },
-	{ MAP_CALL(DoAudio),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
+	{ MAP_CALL(DoAudio),           SCI_VERSION_NONE, SCI_VERSION_2, SIGFOR_ALL, "i(.*)", NULL,         NULL }, // subop
+#ifdef ENABLE_SCI32
+	{ "DoAudio", kDoAudio32,       SIG_SINCE_SCI21, SIGFOR_ALL, "(.*)",          kDoAudio_subops, NULL },
+#endif
 	{ MAP_CALL(DoAvoider),         SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
 	{ MAP_CALL(DoBresen),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(DoSound),           SIG_EVERYWHERE,           "i(.*)",                 kDoSound_subops, NULL },
