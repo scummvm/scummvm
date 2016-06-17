@@ -1150,7 +1150,7 @@ void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 							// Turn on edit mode
 							_bEditSaveName = true;
 							_nEditPos = _ctx->i;
-							strcpy(_editName, _curThumbName[_ctx->i].c_str());
+							Common::strlcpy(_editName, _curThumbName[_ctx->i].c_str(), sizeof(_editName));
 							_ctx->bRefresh = true;
 						}
 
