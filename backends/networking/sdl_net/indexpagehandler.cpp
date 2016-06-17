@@ -23,6 +23,7 @@
 #include "backends/networking/sdl_net/indexpagehandler.h"
 #include "backends/networking/sdl_net/localwebserver.h"
 #include "common/archive.h"
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/translation.h"
 #include "common/unzip.h"
@@ -101,44 +102,52 @@ void IndexPageHandler::replace(Common::String &source, const Common::String &wha
 	}
 }
 
-Common::ArchiveMemberList IndexPageHandler::listArchive() {
-	Common::ArchiveMemberList resultList;
+Common::Archive *IndexPageHandler::getZipArchive() {
+	// first search in themepath
+	if (ConfMan.hasKey("themepath")) {
+		const Common::FSNode &node = Common::FSNode(ConfMan.get("themepath"));
+		if (!node.exists() || !node.isReadable() || !node.isDirectory())
+			return false;
 
-	// Find "wwwroot.zip" with SearchMan and call its listMembers()
+		Common::FSNode fileNode = node.getChild(ARCHIVE_NAME);
+		if (fileNode.exists() && fileNode.isReadable() && !fileNode.isDirectory()) {
+			Common::SeekableReadStream *const stream = fileNode.createReadStream();
+			Common::Archive *zipArchive = Common::makeZipArchive(stream);
+			if (zipArchive) return zipArchive;
+		}
+	}
+
+	// then use SearchMan to find it
 	Common::ArchiveMemberList fileList;
 	SearchMan.listMatchingMembers(fileList, ARCHIVE_NAME);
 	for (Common::ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
 		Common::ArchiveMember       const &m = **it;
 		Common::SeekableReadStream *const stream = m.createReadStream();
 		Common::Archive *zipArchive = Common::makeZipArchive(stream);
-		if (zipArchive) {
-			zipArchive->listMembers(resultList);
-			delete zipArchive;
-			break;
-		}
+		if (zipArchive) return zipArchive;
 	}
 
+	return nullptr;
+}
+
+Common::ArchiveMemberList IndexPageHandler::listArchive() {
+	Common::ArchiveMemberList resultList;
+	Common::Archive *zipArchive = getZipArchive();
+	if (zipArchive) {
+		zipArchive->listMembers(resultList);
+		delete zipArchive;
+	}
 	return resultList;
 }
 
 Common::SeekableReadStream *const IndexPageHandler::getArchiveFile(Common::String name) {
 	Common::SeekableReadStream *result = nullptr;
-
-	// Find "wwwroot.zip" with SearchMan and call its getMember(name)
-	Common::ArchiveMemberList fileList;
-	SearchMan.listMatchingMembers(fileList, ARCHIVE_NAME);
-	for (Common::ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
-		Common::ArchiveMember       const &m = **it;
-		Common::SeekableReadStream *const stream = m.createReadStream();
-		Common::Archive *zipArchive = Common::makeZipArchive(stream);
-		if (zipArchive) {
-			const Common::ArchiveMemberPtr ptr = zipArchive->getMember(name);
-			result = ptr->createReadStream();
-			delete zipArchive;
-			break;
-		}
+	Common::Archive *zipArchive = getZipArchive();
+	if (zipArchive) {
+		const Common::ArchiveMemberPtr ptr = zipArchive->getMember(name);
+		result = ptr->createReadStream();
+		delete zipArchive;
 	}
-
 	return result;
 }
 

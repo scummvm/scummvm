@@ -37,6 +37,7 @@ class IndexPageHandler: public GUI::CommandSender {
 	void handleResource(Client &client);
 
 	void replace(Common::String &source, const Common::String &what, const Common::String &with);
+	Common::Archive *getZipArchive();
 	Common::ArchiveMemberList listArchive();
 	Common::SeekableReadStream *const getArchiveFile(Common::String name);
 	Common::String readEverythingFromStream(Common::SeekableReadStream *const stream);
