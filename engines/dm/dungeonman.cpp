@@ -594,12 +594,12 @@ T0172030_Pit:
 		aspectArray[kTeleporterVisibleAspect] = square.get(kTeleporterOpen) && square.get(kTeleporterVisible);
 		goto T0172029_Teleporter;
 	case kStairsElemType:
-		aspectArray[kElemAspect] = ((square.get(kStairsNorthSouthOrient) >> 3) == isOrientedWestEast(dir)) ? kStairsSideElemType : kStairsFrontElemType;
+		aspectArray[kElemAspect] = ((square.get(kStairsNorthSouthOrient) >> 3) == (isOrientedWestEast(dir) ? 1 : 0)) ? kStairsSideElemType : kStairsFrontElemType;
 		aspectArray[kStairsUpAspect] = square.get(kStairsUp);
 		footPrintsAllowed = false;
 		goto T0172046_Stairs;
 	case kDoorElemType:
-		if ((square.get(kDoorNorthSouthOrient) >> 3) == isOrientedWestEast(dir)) {
+		if ((square.get(kDoorNorthSouthOrient) >> 3) == (isOrientedWestEast(dir) ? 1 : 0)) {
 			aspectArray[kElemAspect] = kDoorSideElemType;
 		} else {
 			aspectArray[kElemAspect] = kDoorFrontElemType;
