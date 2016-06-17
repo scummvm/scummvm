@@ -39,18 +39,24 @@
 namespace Sci {
 
 int16 GfxText32::_defaultFontId = 0;
+int16 GfxText32::_scaledWidth = 0;
+int16 GfxText32::_scaledHeight = 0;
 
 GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts) :
 	_segMan(segMan),
 	_cache(fonts),
-	_scaledWidth(g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth),
-	_scaledHeight(g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight),
 	// Not a typo, the original engine did not initialise height, only width
 	_width(0),
 	_text(""),
 	_bitmap(NULL_REG) {
 		_fontId = _defaultFontId;
 		_font = _cache->getFont(_defaultFontId);
+
+		if (_scaledWidth == 0) {
+			// initialize the statics
+			_scaledWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+			_scaledHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+		}
 	}
 
 reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect &rect, const Common::String &text, const uint8 foreColor, const uint8 backColor, const uint8 skipColor, const GuiResourceId fontId, const TextAlign alignment, const int16 borderColor, const bool dimmed, const bool doScaling) {
@@ -231,8 +237,10 @@ void GfxText32::drawTextBox() {
 	int16 textRectWidth = _textRect.width();
 	_drawPosition.y = _textRect.top;
 	uint charIndex = 0;
-	if (getLongest(&charIndex, textRectWidth) == 0) {
-		error("DrawTextBox GetLongest=0");
+	if (g_sci->getGameId() != GID_PHANTASMAGORIA) {
+		if (getLongest(&charIndex, textRectWidth) == 0) {
+			error("DrawTextBox GetLongest=0");
+		}
 	}
 
 	charIndex = 0;
@@ -308,6 +316,10 @@ void GfxText32::drawText(const uint index, uint length) {
 			}
 
 			while (length > 0 && *text != '|') {
+				++text;
+				--length;
+			}
+			if (length > 0) {
 				++text;
 				--length;
 			}
@@ -498,7 +510,7 @@ int16 GfxText32::getTextWidth(const uint index, uint length) const {
 					--length;
 
 					fontId = fontId * 10 + currentChar - '0';
-				} while (length > 0 && currentChar >= '0' && currentChar <= '9');
+				} while (length > 0 && *text >= '0' && *text <= '9');
 
 				if (length > 0) {
 					font = _cache->getFont(fontId);
@@ -506,7 +518,11 @@ int16 GfxText32::getTextWidth(const uint index, uint length) const {
 			}
 
 			// Forward through any more unknown control character data
-			while (length > 0 && currentChar != '|') {
+			while (length > 0 && *text != '|') {
+				++text;
+				--length;
+			}
+			if (length > 0) {
 				++text;
 				--length;
 			}
@@ -514,8 +530,10 @@ int16 GfxText32::getTextWidth(const uint index, uint length) const {
 			width += font->getCharWidth(currentChar);
 		}
 
-		currentChar = *text++;
-		--length;
+		if (length > 0) {
+			currentChar = *text++;
+			--length;
+		}
 	}
 
 	return width;
@@ -633,6 +651,70 @@ int16 GfxText32::getTextCount(const Common::String &text, const uint index, cons
 int16 GfxText32::getTextCount(const Common::String &text, const uint index, const GuiResourceId fontId, const Common::Rect &textRect, const bool doScaling) {
 	setFont(fontId);
 	return getTextCount(text, index, textRect, doScaling);
+}
+
+void GfxText32::scrollLine(const Common::String &lineText, int numLines, uint8 color, TextAlign align, GuiResourceId fontId, ScrollDirection dir) {
+	BitmapResource bmr(_bitmap);
+	byte *pixels = bmr.getPixels();
+
+	int h = _font->getHeight();
+
+	if (dir == kScrollUp) {
+		// Scroll existing text down
+		for (int i = 0; i < (numLines - 1) * h; ++i) {
+			int y = _textRect.top + numLines * h - i - 1;
+			memcpy(pixels + y * _width + _textRect.left,
+			       pixels + (y - h) * _width + _textRect.left,
+			       _textRect.width());
+		}
+	} else {
+		// Scroll existing text up
+		for (int i = 0; i < (numLines - 1) * h; ++i) {
+			int y = _textRect.top + i;
+			memcpy(pixels + y * _width + _textRect.left,
+			       pixels + (y + h) * _width + _textRect.left,
+			       _textRect.width());
+		}
+	}
+
+	Common::Rect lineRect = _textRect;
+
+	if (dir == kScrollUp) {
+		lineRect.bottom = lineRect.top + h;
+	} else {
+		// It is unclear to me what the purpose of this bottom++ is.
+		// It does not seem to be the usual inc/exc issue.
+		lineRect.top += (numLines - 1) * h;
+		lineRect.bottom++;
+	}
+
+	erase(lineRect, false);
+
+	_drawPosition.x = _textRect.left;
+	_drawPosition.y = _textRect.top;
+	if (dir == kScrollDown) {
+		_drawPosition.y += (numLines - 1) * h;
+	}
+
+	_foreColor = color;
+	_alignment = align;
+	//int fc = _foreColor;
+
+	setFont(fontId);
+
+	_text = lineText;
+	int16 textWidth = getTextWidth(0, lineText.size());
+
+	if (_alignment == kTextAlignCenter) {
+		_drawPosition.x += (_textRect.width() - textWidth) / 2;
+	} else if (_alignment == kTextAlignRight) {
+		_drawPosition.x += _textRect.width() - textWidth;
+	}
+
+	//_foreColor = fc;
+	//setFont(fontId);
+
+	drawText(0, lineText.size());
 }
 
 

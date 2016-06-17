@@ -48,7 +48,6 @@
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/controls16.h"
-#include "sci/graphics/controls32.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/maciconbar.h"
@@ -64,6 +63,7 @@
 #include "sci/graphics/transitions.h"
 
 #ifdef ENABLE_SCI32
+#include "sci/graphics/controls32.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/text32.h"
 #include "sci/graphics/frameout.h"
