@@ -1098,7 +1098,29 @@ void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Su
 	Graphics::Surface tmp;
 	tmp.copyFrom(sprite);
 
-	Graphics::FloodFill ff(&tmp, *(byte *)tmp.getBasePtr(0, 0), 0, true);
+	// Searching white color in the corners
+	int whiteColor = -1;
+
+	for (int corner = 0; corner < 4; corner++) {
+		int x = (corner & 0x1) ? tmp.w - 1 : 0;
+		int y = (corner & 0x2) ? tmp.h - 1 : 0;
+
+		byte color = *(byte *)tmp.getBasePtr(x, y);
+
+		if (_vm->getPalette()[color * 3 + 0] == 0xff &&
+			_vm->getPalette()[color * 3 + 1] == 0xff &&
+			_vm->getPalette()[color * 3 + 2] == 0xff) {
+			whiteColor = color;
+			break;
+		}
+	}
+
+	if (whiteColor == -1) {
+		warning("No white color for Matte image");
+		whiteColor = *(byte *)tmp.getBasePtr(0, 0);
+	}
+
+	Graphics::FloodFill ff(&tmp, whiteColor, 0, true);
 
 	for (int yy = 0; yy < tmp.h; yy++) {
 		ff.addSeed(0, yy);
