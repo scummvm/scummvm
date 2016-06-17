@@ -10,7 +10,7 @@
 
 namespace DM {
 
-Box gBoxMovementArrows = {224, 319, 124, 168};
+Box gBoxMovementArrows = Box(224, 319, 124, 168);
 
 
 
@@ -1165,8 +1165,8 @@ void DisplayMan::loadFloorSet(FloorSet set) {
 }
 
 
-Box gBoxWallBitmap_D3LCR = {0, 115, 0, 50}; // @ G0161_s_Graphic558_Box_WallBitmap_D3LCR
-Box gBoxWallBitmap_D2LCR = {0, 135, 0, 70}; // @ G0162_s_Graphic558_Box_WallBitmap_D2LCR
+Box gBoxWallBitmap_D3LCR = Box(0, 115, 0, 50); // @ G0161_s_Graphic558_Box_WallBitmap_D3LCR
+Box gBoxWallBitmap_D2LCR = Box(0, 135, 0, 70); // @ G0162_s_Graphic558_Box_WallBitmap_D2LCR
 
 void DisplayMan::loadWallSet(WallSet set) {
 	uint16 firstIndice = (set * kWallSetGraphicCount) + kFirstWallSet;
@@ -1311,7 +1311,7 @@ void DisplayMan::drawFloorPitOrStairsBitmapFlippedHorizontally(StairIndex relInd
 }
 
 
-Box gBoxWallPatchBehindInscription = {110, 113, 37, 63}; // @ G0202_ac_Graphic558_Box_WallPatchBehindInscription 
+Box gBoxWallPatchBehindInscription = Box(110, 113, 37, 63); // @ G0202_ac_Graphic558_Box_WallPatchBehindInscription 
 byte gInscriptionLineY[4] = { // @ G0203_auc_Graphic558_InscriptionLineY
 	48,   /* 1 Line  */
 	59,   /* 2 lines */
@@ -1342,7 +1342,7 @@ byte gUnreadableInscriptionBoxY2[15] = { // @ G0204_auc_Graphic558_UnreadableIns
 	46, 53, 63,   /* D2L Front, D2C Front, D2R Front */
 	46, 57, 68}; /* D1L Right, D1R Left */
 
-Box gBoxChampionPortraitOnWall = {96, 127, 35, 63}; // G0109_s_Graphic558_Box_ChampionPortraitOnWall
+Box gBoxChampionPortraitOnWall = Box(96, 127, 35, 63); // G0109_s_Graphic558_Box_ChampionPortraitOnWall
 
 bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex) {
 	byte *bitmapGreen;
