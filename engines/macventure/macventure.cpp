@@ -94,28 +94,34 @@ Common::Error MacVentureEngine::run() {
 	_cmdReady = false;
 	_haltedAtEnd = false;
 	_haltedInSelection = false;
+	_prepared = true;
 	while (!(_gameState == kGameStateQuitting)) {
 		processEvents();
 
-		if (!_halted) {
-			_gui->draw();
-		}
+		if (_prepared) {
+			_prepared = false;
 
-		if (_cmdReady || _halted) {
-			_halted = false;
-			if (runScriptEngine()) {
-				_halted = true;
-				_paused = true;
-			} else {
-				_paused = false;
-				if (!updateState()) {
-					updateControls();
+			if (!_halted) {
+				_gui->draw();
+			}
+
+			if (_cmdReady || _halted) {
+				_halted = false;
+				if (runScriptEngine()) {
+					_halted = true;
+					_paused = true;
+				}
+				else {
+					_paused = false;
+					if (!updateState()) {
+						updateControls();
+					}
 				}
 			}
-		}
 
-		if (_gameState == kGameStateWinnig || _gameState == kGameStateLosing) {
-			endGame();
+			if (_gameState == kGameStateWinnig || _gameState == kGameStateLosing) {
+				endGame();
+			}
 		}
 
 		g_system->updateScreen();
@@ -144,11 +150,30 @@ void MacVentureEngine::selectControl(ControlReference id) {
 void MacVentureEngine::activateCommand(ControlReference id) {
 	ControlAction action = referenceToAction(id);
 	if (action != _activeControl) {
-		if (_activeControl) 
+		if (_activeControl)
 			_activeControl = kNoCommand;
 		_activeControl = action;
 	}
 	debug(7, "Activating Command %x... Command %x is active", action, _activeControl);
+}
+
+void MacVentureEngine::refreshReady() {
+	switch (objectsToApplyCommand()) {
+	case 0: // No selected object
+		_cmdReady = true;
+		break;
+	case 1: // We have some selected object
+		_cmdReady = _currentSelection.size() != 0;
+		break;
+	case 2:
+		if (_destObject > 0) // We have a destination seleted
+			_cmdReady = true;
+		break;
+	}
+}
+
+void MacVentureEngine::preparedToRun() {
+	_prepared = true;
 }
 
 void MacVentureEngine::enqueueObject(ObjID id) {
@@ -285,6 +310,10 @@ ControlAction MacVenture::MacVentureEngine::referenceToAction(ControlReference i
 	default:
 		return kNoCommand;
 	}
+}
+
+uint MacVentureEngine::objectsToApplyCommand() {
+	return uint();
 }
 
 // Data retrieval

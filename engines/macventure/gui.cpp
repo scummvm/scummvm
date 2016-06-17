@@ -582,9 +582,8 @@ bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 
 		_engine->selectControl((ControlReference)data.getData().refcon);
 		_engine->activateCommand((ControlReference)data.getData().refcon);
-		
-		// Run main
-		
+		_engine->refreshReady();
+		_engine->preparedToRun();		
 	}
 	return false;
 }

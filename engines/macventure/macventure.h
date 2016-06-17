@@ -148,6 +148,8 @@ public:
 	void requestUnpause();
 	void selectControl(ControlReference id);
 	void activateCommand(ControlReference id);
+	void refreshReady();
+	void preparedToRun();
 
 	void enqueueObject(ObjID id);
 
@@ -173,6 +175,7 @@ private:
 
 	// Utils
 	ControlAction referenceToAction(ControlReference id);
+	uint objectsToApplyCommand();
 
 private: // Attributes
 
@@ -192,7 +195,7 @@ private: // Attributes
 	StringTable *_filenames;
 	Common::Huffman *_textHuffman;
 	bool _oldTextEncoding;
-	bool _paused, _halted, _cmdReady;
+	bool _paused, _halted, _cmdReady, _prepared;
 	bool _haltedAtEnd, _haltedInSelection;
 	bool _gameChanged;
 
