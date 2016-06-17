@@ -99,6 +99,7 @@ public:
 	static void func_negate();
 	static void func_constpush();
 	int func_mci(Common::String *s);
+	void func_mciwait(Common::String *s);
 
 private:
 	Common::HashMap<uint32, const char *> _eventHandlerTypes;

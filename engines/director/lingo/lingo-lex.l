@@ -46,6 +46,7 @@ newline [\n\r]+
 --[^\r\n]*
 into			{ return OP_INTO; }
 mci				{ return FUNC_MCI; }
+mciwait			{ return FUNC_MCIWAIT; }
 put				{ return FUNC_PUT; }
 set				{ return FUNC_SET; }
 to				{ return OP_TO; }

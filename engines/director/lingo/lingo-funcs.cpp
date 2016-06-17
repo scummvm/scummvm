@@ -154,6 +154,10 @@ int Lingo::func_mci(Common::String *s) {
 	return 0;
 }
 
+void Lingo::func_mciwait(Common::String *s) {
+	warning("MCI wait file: %s", s->c_str());
+}
+
 void Lingo::func_constpush() {
 }
 

@@ -50,6 +50,7 @@ extern Lingo *g_lingo;
 %token OP_INTO
 %token OP_TO
 %token FUNC_MCI
+%token FUNC_MCIWAIT
 %token FUNC_PUT
 %token FUNC_SET
 
@@ -84,6 +85,7 @@ expr: INT						{ $$ = g_lingo->code2(g_lingo->func_constpush, (inst)$1); }
 	;
 
 func: FUNC_MCI STRING			{ g_lingo->func_mci($2); delete $2; }
+	| FUNC_MCIWAIT VAR			{ g_lingo->func_mciwait($2); }
 	| FUNC_PUT expr OP_INTO VAR	{ $$ = vars[*$4] = $2; delete $4; }
 	| FUNC_SET VAR '=' expr		{ $$ = vars[*$2] = $4; delete $2; }
 	| FUNC_SET VAR OP_TO expr	{ $$ = vars[*$2] = $4; delete $2; }

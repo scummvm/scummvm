@@ -47,8 +47,9 @@
      OP_INTO = 263,
      OP_TO = 264,
      FUNC_MCI = 265,
-     FUNC_PUT = 266,
-     FUNC_SET = 267
+     FUNC_MCIWAIT = 266,
+     FUNC_PUT = 267,
+     FUNC_SET = 268
    };
 #endif
 /* Tokens.  */
@@ -60,8 +61,9 @@
 #define OP_INTO 263
 #define OP_TO 264
 #define FUNC_MCI 265
-#define FUNC_PUT 266
-#define FUNC_SET 267
+#define FUNC_MCIWAIT 266
+#define FUNC_PUT 267
+#define FUNC_SET 268
 
 
 
@@ -71,7 +73,7 @@ typedef union YYSTYPE
 #line 43 "engines/director/lingo/lingo-gr.y"
 { float f; int i; Common::String *s; }
 /* Line 1529 of yacc.c.  */
-#line 75 "engines/director/lingo/lingo-gr.hpp"
+#line 77 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
