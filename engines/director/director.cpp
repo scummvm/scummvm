@@ -64,6 +64,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 DirectorEngine::~DirectorEngine() {
 	delete _mainArchive;
 	delete _macBinary;
+	delete[] _currentPalette;
 }
 
 Common::Error DirectorEngine::run() {
@@ -85,7 +86,7 @@ Common::Error DirectorEngine::run() {
 	_mainArchive = new RIFFArchive();
 	_mainArchive->openFile("bookshelf_example.mmm");
 
-	Score score(*_mainArchive, *_lingo, *_soundManager);
+	Score score(this);
 	debug(0, "Score name %s", score.getMacName().c_str());
 
 	score.loadArchive();
@@ -110,7 +111,7 @@ Common::HashMap<Common::String, Score *> DirectorEngine::loadMMMNames(Common::St
 		for (Common::FSList::const_iterator i = movies.begin(); i != movies.end(); ++i) {
 			RIFFArchive *arc = new RIFFArchive();
 			arc->openFile(i->getPath());
-			Score *sc = new Score(*arc, *_lingo, *_soundManager);
+			Score *sc = new Score(this);
 			nameMap[sc->getMacName()] = sc;
 		}
 	}
@@ -264,6 +265,11 @@ Common::String DirectorEngine::readPascalString(Common::SeekableReadStream &stre
 		x += (char)stream.readByte();
 
 	return x;
+}
+
+void DirectorEngine::setPalette(byte *palette, uint16 count) {
+	_currentPalette = palette;
+	_currentPaletteLength = count;
 }
 
 } // End of namespace Director

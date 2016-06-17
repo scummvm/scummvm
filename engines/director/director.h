@@ -59,7 +59,12 @@ public:
 	Common::Language getLanguage() const;
 	Common::String getEXEName() const;
 	DirectorSound *getSoundManager() const { return _soundManager; }
+	Archive *getMainArchive() const { return _mainArchive; }
+	Lingo *getLingo() const { return _lingo; }
+	void setPalette(byte *palette, uint16 count);
 	bool hasFeature(EngineFeature f) const;
+	const byte *getPalette() const { return _currentPalette; }
+	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
 
 protected:
 	virtual Common::Error run();
@@ -74,7 +79,6 @@ private:
 	void loadEXEv5(Common::SeekableReadStream *stream);
 	void loadEXEv7(Common::SeekableReadStream *stream);
 	void loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
-
 	void loadMac();
 
 	Common::String readPascalString(Common::SeekableReadStream &stream);
@@ -82,7 +86,8 @@ private:
 	Archive *_mainArchive;
 	Common::MacResManager *_macBinary;
 	DirectorSound *_soundManager;
-
+	byte *_currentPalette;
+	uint16 _currentPaletteLength;
 	Lingo *_lingo;
 };
 

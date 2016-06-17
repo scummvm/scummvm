@@ -39,12 +39,13 @@
 
 namespace Director {
 
-Score::Score(Archive &movie, Lingo &lingo, DirectorSound &soundManager) {
+Score::Score(DirectorEngine *vm) {
+	_vm = vm;
 	_surface = new Graphics::ManagedSurface;
 	_trailSurface = new Graphics::ManagedSurface;
-	_movieArchive = &movie;
-	_lingo = &lingo;
-	_soundManager = &soundManager;
+	_movieArchive = _vm->getMainArchive();
+	_lingo = _vm->getLingo();
+	_soundManager = _vm->getSoundManager();
 	_lingo->processEvent(kEventPrepareMovie, 0);
 	_movieScriptCount = 0;
 
@@ -95,7 +96,7 @@ void Score::loadArchive() {
 		}
 	}
 
-	DIBDecoder palette;
+
 	Common::Array<uint16> clutList = _movieArchive->getResourceIDList(MKTAG('C','L','U','T'));
 
 	if (clutList.size() > 1)
@@ -106,8 +107,8 @@ void Score::loadArchive() {
 
 	Common::SeekableReadStream *pal = _movieArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[0]);
 
-	palette.loadPalette(*pal);
-	g_system->getPaletteManager()->setPalette(palette.getPalette(), 0, palette.getPaletteColorCount());
+	loadPalette(*pal);
+	g_system->getPaletteManager()->setPalette(_vm->getPalette(), 0, _vm->getPaletteColorCount());
 }
 
 Score::~Score() {
@@ -119,6 +120,26 @@ Score::~Score() {
 
 	_movieArchive->close();
 	delete _movieArchive;
+}
+
+void Score::loadPalette(Common::SeekableReadStream &stream) {
+	uint16 steps = stream.size() / 6;
+	uint16 index = (steps * 3) - 1;
+	uint16 _paletteColorCount = steps;
+	byte *_palette = new byte[index];
+
+	for (uint8 i = 0; i < steps; i++) {
+		_palette[index - 2] = stream.readByte();
+		stream.readByte();
+
+		_palette[index - 1] = stream.readByte();
+		stream.readByte();
+
+		_palette[index] = stream.readByte();
+		stream.readByte();
+		index -= 3;
+	}
+	_vm->setPalette(_palette, _paletteColorCount);
 }
 
 void Score::loadFrames(Common::SeekableReadStream &stream) {

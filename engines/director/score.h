@@ -35,6 +35,7 @@ namespace Director {
 class Lingo;
 class DirectorSound;
 class Score;
+class DirectorEngine;
 
 #define CHANNEL_COUNT 24
 
@@ -285,7 +286,7 @@ public:
 
 class Score {
 public:
-	Score(Archive &movie, Lingo &lingo, DirectorSound &soundManager);
+	Score(DirectorEngine *vm);
 	~Score();
 
 	static Common::Rect readRect(Common::SeekableReadStream &stream);
@@ -298,6 +299,7 @@ private:
 	void update();
 	void readVersion(uint32 rid);
 	void loadConfig(Common::SeekableReadStream &stream);
+	void loadPalette(Common::SeekableReadStream &stream);
 	void loadCastData(Common::SeekableReadStream &stream);
 	void loadFrames(Common::SeekableReadStream &stream);
 	void loadLabels(Common::SeekableReadStream &stream);
@@ -341,6 +343,7 @@ private:
 	uint16 _stageColor;
 	Lingo *_lingo;
 	DirectorSound *_soundManager;
+	DirectorEngine *_vm;
 };
 
 } //End of namespace Director
