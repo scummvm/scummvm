@@ -888,6 +888,10 @@ void Frame::playSoundChannel() {
 void Frame::playTransition(Score *score) {
 	uint16 duration = _transDuration * 250; // _transDuration in 1/4 of sec
 	duration = (duration == 0 ? 250 : duration); // director support transition duration = 0, but animation play like value = 1, idk.
+
+	if (_transChunkSize == 0)
+		_transChunkSize = 1; //equal 1 step
+
 	uint16 stepDuration = duration / _transChunkSize;
 	uint16 steps = duration / stepDuration;
 
