@@ -823,6 +823,9 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 		_console(0), _sound(0), _midiMusic(0), _pcmMusic(0), _bmv(0) {
 	_vm = this;
 
+	_gameId = 0;
+	_driver = NULL;
+
 	_config = new Config(this);
 
 	// Register debug flags

@@ -401,7 +401,7 @@ MidiMusicPlayer::MidiMusicPlayer(TinselEngine *vm) {
 	if (milesAudioEnabled) {
 		// Discworld 1 (DOS) uses Miles Audio 3
 		// use our own Miles Audio drivers
-		// 
+		//
 		// It seems that there are multiple versions of Discworld 1
 		//
 		// Version 1:
@@ -639,9 +639,13 @@ PCMMusicPlayer::PCMMusicPlayer() {
 	_dimmed = false;
 	_dimmedTinsel = false;
 	_dimIteration = 0;
+	_dimmedVolume = 0;
+	_dimPosition = 0;
 
 	_fadeOutVolume = 0;
 	_fadeOutIteration = 0;
+
+	_hScript = _hSegment = 0;
 
 	_end = true;
 
