@@ -218,6 +218,7 @@ EventManager::EventManager(DMEngine *vm) : _vm(vm) {
 	_isCommandQueueLocked = true;
 
 	_dummyMapIndex = 0;
+	_pendingClickButton = kNoneMouseButton;
 }
 
 

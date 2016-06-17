@@ -773,7 +773,7 @@ void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 			*destString++ = '\n';
 			sepChar = ' ';
 		} else if (type == kTextTypeInscription) {
-			sepChar = 0x80;
+			sepChar = (char)0x80;
 		} else {
 			sepChar = '\n';
 		}

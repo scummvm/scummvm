@@ -55,7 +55,7 @@ public:
 	static const Thing thingNone;
 	static const Thing thingEndOfList;
 
-	Thing() {}
+	Thing() : data(0) {}
 	Thing(uint16 d) { set(d); }
 
 	void set(uint16 d) {

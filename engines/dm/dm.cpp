@@ -41,6 +41,13 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	// register random source
 	_rnd = new Common::RandomSource("quux");
 
+	_displayMan = nullptr;
+	_dungeonMan = nullptr;
+	_eventMan = nullptr;
+	_menuMan = nullptr;
+	_stopWaitingForPlayerInput = false;
+	_gameTimeTicking = false;
+
 	debug("DMEngine::DMEngine");
 }
 
