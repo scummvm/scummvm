@@ -24,6 +24,7 @@
 #define MACVENTURE_SCRIPT_H
 
 #include "macventure/macventure.h"
+#include "macventure/container.h"
 
 namespace MacVenture {
 
@@ -47,7 +48,28 @@ enum ControlAction {
 };
 
 typedef uint32 ObjID;
-	
+
+class ScriptAsset {
+public:
+	ScriptAsset(ObjID id, Container *container, MacVentureEngine *engine) {
+		_id = id;
+		_container = container;
+		_engine = engine;
+	}
+	~ScriptAsset() {
+
+	}
+
+	void execute() {
+		debug("SCRIPT: Executing script %x ", _id);
+	}
+
+private:
+	ObjID _id;
+	Container *_container;
+	MacVentureEngine *_engine;
+};
+
 class ScriptEngine {
 public:
 	ScriptEngine() {}

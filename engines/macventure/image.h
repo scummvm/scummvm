@@ -27,12 +27,23 @@
 
 namespace MacVenture {
 
-class Image {
+class ImageAsset {
 public:
-	Image();
-	~Image();
+	ImageAsset(ObjID id, Container *container) {
+		_id = id;
+		_container = container;
+	}
+	~ImageAsset() {
 
-	void blit(Graphics::ManagedSurface *target);
+	}
+
+	void blit(Graphics::ManagedSurface *target) {
+		debug("Blitting image %x ", _id);
+	}
+
+private:
+	ObjID _id;
+	Container *_container;
 };
 
 } // End of namespace MacVenture

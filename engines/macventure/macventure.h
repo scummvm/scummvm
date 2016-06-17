@@ -192,10 +192,13 @@ private: // Attributes
 	World *_world;
 	ScriptEngine *_scriptEngine;
 
+	// String tables
+	StringTable *_filenames;
+	StringTable *_decodingArticles;
+
 	// Engine state
 	GameState _gameState;
 	GlobalSettings _globalSettings;
-	StringTable *_filenames;
 	HuffmanLists *_textHuffman;
 	bool _oldTextEncoding;
 	bool _paused, _halted, _cmdReady, _prepared;

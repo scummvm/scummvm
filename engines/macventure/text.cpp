@@ -27,8 +27,9 @@ TextAsset::TextAsset(ObjID objid, Container *container, bool isOld, const Huffma
 	_id = objid;
 	_container = container;
 	_huffman = huffman;
+	_isOld = isOld;
 
-	if (isOld) {
+	if (_isOld) {
 		decodeOld();
 	}
 	else {
@@ -99,7 +100,7 @@ void TextAsset::decodeOld() {
 }
 
 void TextAsset::decodeHuffman() {
-	_decoded = Common::String("Huffman string");
+	_decoded = Common::String("");
 	Common::SeekableReadStream *res = _container->getItem(_id);
 	Common::BitStream32BEMSB stream(res);
 	uint16 strLen = 0;
@@ -110,7 +111,6 @@ void TextAsset::decodeHuffman() {
 		strLen = stream.getBits(7);
 	}
 
-	char* str = new char[strLen + 1];
 	uint32 mask = 0;
 	uint32 symbol = 0;
 	char c;
@@ -130,17 +130,22 @@ void TextAsset::decodeHuffman() {
 			c = stream.getBits(7);
 		}
 		else if (symbol == 2) { // Composite
-			warning("Composite huffman strings not implemented");
+			warning("Composite huffman strings not tested");
+			if (stream.getBit()) { // TextID
+				ObjID embedId = stream.getBits(15);
+				TextAsset embedded(embedId, _container, _isOld, _huffman);
+				_decoded += *embedded.decode();
+			} else { //Composite obj string
+				_decoded += Common::String("Unimplemented");
+			}
 		}
 		else { // Plain ascii
 			c = symbol & 0xFF;
 		}
 
-		str[i] = c;
+		_decoded += c;
 	}
-
-	str[strLen] = '\0';
-	debug(7, "Decoded %d'th string (new): %s", _id, str);
-	_decoded = Common::String(str);
+	_decoded += '\0';
+	debug(7, "Decoded %d'th string (new): %s", _id, _decoded.c_str());	
 }
 } // End of namespace MacVenture

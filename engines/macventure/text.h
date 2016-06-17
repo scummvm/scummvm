@@ -46,6 +46,7 @@ private:
 	Container *_container;
 	ObjID _id;
 	const HuffmanLists *_huffman;
+	bool _isOld;
 	
 	Common::String _decoded;
 

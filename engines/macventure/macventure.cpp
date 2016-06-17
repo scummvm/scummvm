@@ -59,6 +59,9 @@ MacVentureEngine::~MacVentureEngine() {
 	if (_filenames)
 		delete _filenames;
 
+	if (_decodingArticles)
+		delete _decodingArticles;
+
 	if (_textHuffman)
 		delete _textHuffman;
 }
@@ -84,6 +87,7 @@ Common::Error MacVentureEngine::run() {
 	_oldTextEncoding = !loadTextHuffman();
 
 	_filenames = new StringTable(this, _resourceManager, kFilenamesStringTableID);
+	_decodingArticles = new StringTable(this, _resourceManager, kCommonArticlesStringTableID);
 
 	// Big class instantiation
 	_gui = new Gui(this, _resourceManager);
