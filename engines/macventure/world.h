@@ -23,7 +23,6 @@
 #ifndef MACVENTURE_WORLD_H
 #define MACVENTURE_WORLD_H
 
-#include "macventure/macventure.h"
 #include "macventure/container.h"
 #include "macventure/text.h"
 
@@ -92,6 +91,8 @@ public:
 	uint32 getObjAttr(ObjID objID, uint32 attrID);
 	void setObjAttr(ObjID objID, uint32 attrID, Attribute value);
 	bool isObjActive(ObjID obj);
+	Common::Array<ObjID> getFamily(ObjID objID, bool recursive);
+	Common::Array<ObjID> getChildren(ObjID objID, bool recursive);
 
 private:
 	bool loadStartGameFileName();

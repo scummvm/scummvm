@@ -92,7 +92,7 @@ Common::Error MacVentureEngine::run() {
 	// Big class instantiation
 	_gui = new Gui(this, _resourceManager);
 	_world = new World(this, _resourceManager);
-	_scriptEngine = new ScriptEngine();
+	_scriptEngine = new ScriptEngine(_world);
 
 	_paused = false;
 	_halted = true;
@@ -233,7 +233,7 @@ bool MacVenture::MacVentureEngine::runScriptEngine() {
 	debug(4, "MAIN: Running script engine");
 	if (_haltedAtEnd) {
 		_haltedAtEnd = false;
-		if (_scriptEngine->resume()) {
+		if (_scriptEngine->resume(false)) {
 			_haltedAtEnd = true;
 			return true;
 		}
@@ -242,7 +242,7 @@ bool MacVenture::MacVentureEngine::runScriptEngine() {
 
 	if (_haltedInSelection) {
 		_haltedInSelection = false;
-		if (_scriptEngine->resume()) {
+		if (_scriptEngine->resume(false)) {
 			_haltedInSelection = true;
 			return true;
 		}

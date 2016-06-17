@@ -1,4 +1,5 @@
 #include "macventure/world.h"
+#include "macventure/macventure.h"
 
 #include "common/file.h"
 
@@ -80,6 +81,25 @@ void World::setObjAttr(ObjID objID, uint32 attrID, Attribute value) {
 
 bool MacVenture::World::isObjActive(ObjID obj) {
 	return false;
+}
+
+Common::Array<ObjID> World::getFamily(ObjID objID, bool recursive) {
+	Common::Array<ObjID> res;
+	res.push_back(objID);
+	res.push_back(getChildren(objID, recursive));
+	return res;
+}
+
+Common::Array<ObjID> World::getChildren(ObjID objID, bool recursive) {
+	Common::Array<ObjID> res;
+	ObjID child = _relations[objID * 2];
+	while (child) {
+		res.push_back(child);
+		if (!recursive)
+			res.push_back(getChildren(child, false));
+		child = _relations[child * 2 + 1];
+	}
+	return Common::Array<ObjID>();
 }
 
 bool World::loadStartGameFileName() {

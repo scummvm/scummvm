@@ -23,10 +23,13 @@
 #ifndef MACVENTURE_SCRIPT_H
 #define MACVENTURE_SCRIPT_H
 
-#include "macventure/macventure.h"
 #include "macventure/container.h"
+#include "macventure/world.h"
 
 namespace MacVenture {
+		
+class Container;
+class World;
 
 enum ControlAction {
 	kNoCommand = 0,
@@ -51,42 +54,68 @@ typedef uint32 ObjID;
 
 class ScriptAsset {
 public:
-	ScriptAsset(ObjID id, Container *container, MacVentureEngine *engine) {
-		_id = id;
-		_container = container;
-		_engine = engine;
-	}
-	~ScriptAsset() {
+	ScriptAsset(ObjID id, Container *container); 
+	~ScriptAsset() {}
 
-	}
+	void reset();
+	uint8 fecth(); 
 
-	void execute() {
-		debug("SCRIPT: Executing script %x ", _id);
-	}
+private:
+
+	void loadInstructions();
 
 private:
 	ObjID _id;
 	Container *_container;
-	MacVentureEngine *_engine;
+
+	Common::Array<uint8> _instructions;
+	uint32 _ip; // Instruction pointer
+};
+
+struct EngineState {
+	uint8 stack[0x80];
+	uint8 sp;
+
+	EngineState() {
+		sp = 0x80;
+	}
+};
+
+struct EngineFrame {
+	ControlAction action;
+	ObjID src;
+	ObjID dest;
+	int x;
+	int y;
+	EngineState state;
+	Common::Array<ScriptAsset> scripts;
+	uint32 familyIdx;
+
+	bool haltedInFirst;
+	bool haltedInFamily;
+	bool haltedInSaves;
 };
 
 class ScriptEngine {
 public:
-	ScriptEngine() {}
-	~ScriptEngine() {}
+	ScriptEngine(World *world);
+	~ScriptEngine();
 
-	bool runControl(ControlAction action, ObjID source, ObjID destination, Common::Point delta) {
-		debug(7, "SCRIPT: Running control %d from obj %d into obj %d, at delta (%d, %d)", 
-			action, source, destination, delta.x, delta.y);
-		
-		return false;
-	}
+public:
+	bool runControl(ControlAction action, ObjID source, ObjID destination, Common::Point delta); 
+	bool resume(bool execAll); 
+	void reset();
 
-	bool resume() {
-		debug(7, "SCRIPT: Resume");
+private:
+	bool execFrame(bool execAll);
+	bool loadScript(EngineFrame * frame, uint32 scriptID);
+	bool resumeFunc(EngineFrame * frame); 
+	bool runFunc(); 
 
-		return false;
-	}
+private:
+	World *_world;
+	Common::Array<EngineFrame> _frames;
+	Container *_scripts;
 };
 
 } // End of namespace MacVenture
