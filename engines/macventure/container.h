@@ -56,8 +56,7 @@ public:
 			int dataLen = _res->size() - sizeof(_header);
 			_lenObjs = _header;
 			_numObjs = dataLen / _lenObjs;
-		}
-		else {
+		} else {
 			_header &= 0x7fffffff;
 			_res->seek(_header, SEEK_SET);
 			_numObjs = _res->readUint16BE();
@@ -178,7 +177,7 @@ public:
 			uint32 groupID = (id >> 6);
 			uint32 objectIndex = id & 0x3f; // Index within the group
 
-			_res->seek(subHead + (groupID * 6), SEEK_SET);
+			_res->seek((groupID * 6), SEEK_SET);
 
 			uint32 offset = 0;
 			for (uint i = 0; i < objectIndex; i++) {
