@@ -15,11 +15,13 @@ World::World(MacVentureEngine *engine, Common::MacResManager *resMan)  {
 	if (!saveGameFile.open(_startGameFileName)) 
 		error("Could not load initial game configuration");
 
+	debug("Loading save game state from %s", _startGameFileName.c_str());
 	Common::SeekableReadStream *saveGameRes = saveGameFile.readStream(saveGameFile.size());
 
 	_saveGame = new SaveGame(_engine, saveGameRes);	
 	_objectConstants = new Container(_engine->getFilePath(kObjectPathID).c_str());
-	//_gameText = new Container(_engine->getFilePath(kTextPathID).c_str());
+	calculateObjectRelations();
+	
 	_gameText = new Container("Shadowgate II/Shadow Text");
 
 	ObjID tid = (ObjID)1;
@@ -73,9 +75,23 @@ bool World::loadStartGameFileName() {
 	res->read(fileName, length);
 	fileName[length] = '\0';
 	_startGameFileName = Common::String(fileName, length);
-	_startGameFileName.replace(_startGameFileName.end(), _startGameFileName.end(), ".bin");
 
 	return true;
+}
+
+void World::calculateObjectRelations() {
+	ObjID val, next;
+	uint32 numObjs = _engine->getGlobalSettings().numObjects;
+	const AttributeGroup &parents = *_saveGame->getGroup(0);
+	for (uint i = 0; i < numObjs * 2; i++) {
+		_relations.push_back(0);
+	}
+	for (uint i = numObjs - 1; i > 0; i--) {
+		val = parents[i];
+		next = _relations[val * 2];
+		if (next) { _relations[i * 2 + 1] = next; }
+		_relations[val * 2] = i;
+	}
 }
 
 // SaveGame
@@ -95,6 +111,11 @@ const Common::Array<AttributeGroup>& MacVenture::SaveGame::getGroups() {
 	return _groups;
 }
 
+const AttributeGroup * SaveGame::getGroup(uint32 groupID) {
+	assert(groupID < _groups.size());
+	return &(_groups[groupID]);
+}
+
 const Common::Array<uint16>& MacVenture::SaveGame::getGlobals() {
 	return _globals;
 }
@@ -107,7 +128,7 @@ void SaveGame::loadGroups(MacVentureEngine *engine, Common::SeekableReadStream *
 	GlobalSettings settings = engine->getGlobalSettings();
 	for (int i = 0; i < settings.numGroups; ++i) {
 		AttributeGroup g;
-		for (int j = 0; j < settings.numObjects; ++j) 
+		for (int j = 0; j < settings.numObjects; ++j)
 			g.push_back(res->readUint16BE());
 		
 		_groups.push_back(g);

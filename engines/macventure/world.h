@@ -30,7 +30,8 @@
 namespace MacVenture {
 
 typedef uint32 ObjID;
-typedef Common::Array<uint16> AttributeGroup;
+typedef uint16 Attribute;
+typedef Common::Array<Attribute> AttributeGroup;
 class TextAsset;
 
 enum ObjectAttributeID {
@@ -65,6 +66,7 @@ public:
 	~SaveGame();
 
 	const Common::Array<AttributeGroup> &getGroups();
+	const AttributeGroup *getGroup(uint32 groupID);
 	const Common::Array<uint16> &getGlobals();
 	const Common::String &getText();
 
@@ -89,6 +91,7 @@ public:
 
 private:
 	bool loadStartGameFileName();
+	void calculateObjectRelations();
 
 private:
 	MacVentureEngine *_engine;
@@ -99,6 +102,8 @@ private:
 	SaveGame *_saveGame;
 	Container *_objectConstants;
 	Container *_gameText;
+
+	Common::Array<ObjID> _relations; // Parent-child relations, stored in Williams Heap format
 };
 
 } // End of namespace MacVenture
