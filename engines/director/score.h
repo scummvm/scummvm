@@ -246,7 +246,7 @@ public:
 
 class Frame {
 public:
-	Frame();
+	Frame(DirectorEngine *vm);
 	Frame(const Frame &frame);
 	~Frame();
 
@@ -282,6 +282,7 @@ public:
 	uint8 _blend;
 	Common::Array<Sprite *> _sprites;
 	Common::Array<Common::Rect > _drawRects;
+	DirectorEngine *_vm;
 };
 
 class Score {

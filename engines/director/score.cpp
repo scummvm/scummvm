@@ -59,12 +59,25 @@ Score::Score(DirectorEngine *vm) {
 }
 
 void Score::loadArchive() {
+	Common::Array<uint16> clutList = _movieArchive->getResourceIDList(MKTAG('C','L','U','T'));
+
+	if (clutList.size() > 1)
+		error("More than one palette was found");
+
+	if (clutList.size() == 0)
+		error("CLUT not found");
+
+	Common::SeekableReadStream *pal = _movieArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[0]);
+
+	loadPalette(*pal);
+	g_system->getPaletteManager()->setPalette(_vm->getPalette(), 0, _vm->getPaletteColorCount());
 	assert(_movieArchive->hasResource(MKTAG('V','W','S','C'), 1024));
 	assert(_movieArchive->hasResource(MKTAG('V','W','C','F'), 1024));
 	assert(_movieArchive->hasResource(MKTAG('V','W','C','R'), 1024));
 	loadFrames(*_movieArchive->getResource(MKTAG('V','W','S','C'), 1024));
 	loadConfig(*_movieArchive->getResource(MKTAG('V','W','C','F'), 1024));
 	loadCastData(*_movieArchive->getResource(MKTAG('V','W','C','R'), 1024));
+
 	if (_movieArchive->hasResource(MKTAG('V','W','A','C'), 1024)) {
 		loadActions(*_movieArchive->getResource(MKTAG('V','W','A','C'), 1024));
 	}
@@ -95,20 +108,6 @@ void Score::loadArchive() {
 			loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *iterator));
 		}
 	}
-
-
-	Common::Array<uint16> clutList = _movieArchive->getResourceIDList(MKTAG('C','L','U','T'));
-
-	if (clutList.size() > 1)
-		error("More than one palette was found");
-
-	if (clutList.size() == 0)
-		error("CLUT not found");
-
-	Common::SeekableReadStream *pal = _movieArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[0]);
-
-	loadPalette(*pal);
-	g_system->getPaletteManager()->setPalette(_vm->getPalette(), 0, _vm->getPaletteColorCount());
 }
 
 Score::~Score() {
@@ -148,7 +147,7 @@ void Score::loadFrames(Common::SeekableReadStream &stream) {
 	uint16 channelSize;
 	uint16 channelOffset;
 
-	Frame *initial = new Frame();
+	Frame *initial = new Frame(_vm);
 	_frames.push_back(initial);
 
 	while (size != 0) {
@@ -652,7 +651,8 @@ void Score::processEvents() {
 	}
 }
 
-Frame::Frame() {
+Frame::Frame(DirectorEngine *vm) {
+	_vm = vm;
 	_transDuration = 0;
 	_transArea = 0;
 	_transChunkSize = 0;
@@ -676,6 +676,7 @@ Frame::Frame() {
 }
 
 Frame::Frame(const Frame &frame) {
+	_vm = frame._vm;
 	_actionId = frame._actionId;
 	_transArea = frame._transArea;
 	_transDuration = frame._transDuration;
