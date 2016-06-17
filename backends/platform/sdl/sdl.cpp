@@ -48,6 +48,7 @@
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
+#include "backends/graphics/openglsdl/openglsdl-graphics.h"
 
 #include <time.h>	// for getTimeAndDate()
 
@@ -281,6 +282,32 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 	}
 
 	_window->setWindowCaption(cap);
+}
+
+void OSystem_SDL::setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {
+#ifdef USE_OPENGL
+	bool switchedManager = false;
+	if (accel3d && !dynamic_cast<OpenGLSdlGraphicsManager *>(_graphicsManager)) {
+		switchedManager = true;
+	} else if (!accel3d && !dynamic_cast<SurfaceSdlGraphicsManager *>(_graphicsManager)) {
+		switchedManager = true;
+	}
+
+	if (switchedManager) {
+		SdlGraphicsManager *sdlGraphicsManager = dynamic_cast<SdlGraphicsManager *>(_graphicsManager);
+		sdlGraphicsManager->deactivateManager();
+		delete _graphicsManager;
+
+		if (accel3d) {
+			_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphicsManager(_eventSource, _window);
+		} else {
+			_graphicsManager = sdlGraphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window);
+		}
+		sdlGraphicsManager->activateManager();
+	}
+#endif
+
+	ModularBackend::setupScreen(screenW, screenH, fullscreen, accel3d);
 }
 
 void OSystem_SDL::quit() {

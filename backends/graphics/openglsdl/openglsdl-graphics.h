@@ -20,8 +20,13 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_SURFACESDL_GRAPHICS_H
-#define BACKENDS_GRAPHICS_SURFACESDL_GRAPHICS_H
+#ifndef BACKENDS_GRAPHICS_OPENGLSDL_GRAPHICS_H
+#define BACKENDS_GRAPHICS_OPENGLSDL_GRAPHICS_H
+
+#include "graphics/opengl/system_headers.h"
+#include "graphics/opengl/framebuffer.h"
+#include "graphics/opengl/texture.h"
+#include "graphics/opengl/surfacerenderer.h"
 
 #include "backends/graphics/graphics.h"
 #include "backends/graphics/sdl/resvm-sdl-graphics.h"
@@ -39,10 +44,10 @@
 /**
  * SDL graphics manager
  */
-class SurfaceSdlGraphicsManager : public ResVmSdlGraphicsManager {
+class OpenGLSdlGraphicsManager : public ResVmSdlGraphicsManager {
 public:
-	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
-	virtual ~SurfaceSdlGraphicsManager();
+	OpenGLSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
+	virtual ~OpenGLSdlGraphicsManager();
 
 	virtual bool hasFeature(OSystem::Feature f);
 
@@ -68,30 +73,58 @@ public:
 
 	virtual void warpMouse(int x, int y);
 
-
-	// SdlGraphicsManager interface
 	virtual void transformMouseCoordinates(Common::Point &point);
 
 protected:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_Renderer *_renderer;
-	SDL_Texture *_screenTexture;
+	SDL_GLContext _glContext;
 	void deinitializeRenderer();
 	SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags);
 #endif
-
-	SDL_Surface *_screen;
-	SDL_Surface *_subScreen;
 
 	// overlay
 	SDL_Surface *_overlayscreen;
 
 	Math::Rect2d _gameRect;
 
-	SDL_Surface *_sideSurfaces[2];
+	struct OpenGLPixelFormat {
+		uint bytesPerPixel;
+		uint redSize;
+		uint blueSize;
+		uint greenSize;
+		uint alphaSize;
+		int multisampleSamples;
 
-	void drawOverlay();
-	void drawSideTextures();
+		OpenGLPixelFormat(uint screenBytesPerPixel, uint red, uint blue, uint green, uint alpha, int samples);
+	};
+
+	/**
+	 * Initialize an OpenGL window matching as closely as possible the required properties
+	 *
+	 * When unable to create a context with anti-aliasing this tries without.
+	 * When unable to create a context with the desired pixel depth this tries lower values.
+	 */
+	bool createScreenOpenGL(uint effectiveWidth, uint effectiveHeight, GameRenderTarget gameRenderTarget);
+
+	// Antialiasing
+	int _antialiasing;
+
+	// Overlay
+	Common::Array<OpenGL::Texture *> _overlayTextures;
+
+	OpenGL::Texture *_sideTextures[2];
+
+	void initializeOpenGLContext() const;
+	void updateOverlayTextures();
+	void drawOverlayOpenGL();
+	void drawSideTexturesOpenGL();
+
+	OpenGL::FrameBuffer *_frameBuffer;
+	OpenGL::FrameBuffer *createFramebuffer(uint width, uint height);
+
+	OpenGL::SurfaceRenderer *_surfaceRenderer;
+
+	bool detectFramebufferSupport();
 };
 
 #endif
