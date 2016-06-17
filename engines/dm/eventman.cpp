@@ -268,7 +268,7 @@ void EventManager::processInput() {
 	Common::Event event;
 	while (_vm->_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
-		// DUMMY CODE: EVENT_KEYDOWN, only for testing
+		// DUMMY CODE: case EVENT_KEYDOWN, only for testing
 		case Common::EVENT_KEYDOWN:
 			if (event.synthetic)
 				break;

@@ -6,7 +6,8 @@ MODULE_OBJS := \
 	gfx.o \
 	dungeonman.o \
 	eventman.o \
-	menus.o
+	menus.o \
+	champion.o
 
 MODULE_DIRS += \
 	engines/dm
