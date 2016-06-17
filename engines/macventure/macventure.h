@@ -151,6 +151,7 @@ public:
 	void activateCommand(ControlReference id);
 	void refreshReady();
 	void preparedToRun();
+	void gameChanged();
 
 	void enqueueObject(ObjID id);
 

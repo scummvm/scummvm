@@ -46,7 +46,7 @@ uint32 World::getObjAttr(ObjID objID, uint32 attrID) {
 	uint32 res;
 	uint32 index = _engine->getGlobalSettings().attrIndices[attrID];
 	if (!(index & 0x80)) { // It's not a constant
-		res = _saveGame->getGroups()[attrID][objID];
+		res = _saveGame->getAttr(objID, index);
 	} else {
 		Common::SeekableReadStream *objStream = _objectConstants->getItem(objID);
 		index &= 0x7F;
@@ -57,6 +57,25 @@ uint32 World::getObjAttr(ObjID objID, uint32 attrID) {
 	res >>= _engine->getGlobalSettings().attrShifts[attrID];
 	debug(11, "Attribute %x from object %x is %x", attrID, objID, res);
 	return res;
+}
+
+void World::setObjAttr(ObjID objID, uint32 attrID, Attribute value) {
+	if (attrID == kAttrPosX || attrID == kAttrPosY) {}
+		// Round to scale
+	
+	if (attrID == kAttrParentObject) 
+		setParent(objID, value);
+	
+	if (attrID < kAttrOtherDoor)
+		_engine->enqueueObject(objID);
+
+	uint32 idx = _engine->getGlobalSettings().attrIndices[attrID];
+	value <<= _engine->getGlobalSettings().attrShifts[attrID];
+	value &= _engine->getGlobalSettings().attrMasks[attrID];
+	Attribute oldVal = _saveGame->getAttr(objID, idx);
+	oldVal &= ~_engine->getGlobalSettings().attrMasks[attrID];
+	_saveGame->setAttr(idx, objID, (value | oldVal));
+	_engine->gameChanged();
 }
 
 bool MacVenture::World::isObjActive(ObjID obj) {
@@ -94,6 +113,28 @@ void World::calculateObjectRelations() {
 	}
 }
 
+void World::setParent(ObjID child, ObjID newParent) {
+	ObjID old = _saveGame->getAttr(child, kAttrParentObject);
+	if (newParent == child)
+		return;
+
+	ObjID oldNdx = old * 2;
+	old = _relations[oldNdx];
+	while (old != child) {
+		oldNdx = (old * 2) + 1;
+		old = _relations[oldNdx];
+	}
+	_relations[oldNdx] = _relations[(old * 2) + 1];
+	oldNdx = newParent * 2;
+	old = _relations[oldNdx];
+	while (old && old <= child) {
+		oldNdx = (old * 2) + 1;
+		old = _relations[oldNdx];
+	}
+	_relations[child * 2 + 1] = old;
+	_relations[oldNdx] = child;
+}
+
 // SaveGame
 SaveGame::SaveGame(MacVentureEngine *engine, Common::SeekableReadStream *res) {
 	_groups = Common::Array<AttributeGroup>();
@@ -105,6 +146,15 @@ SaveGame::SaveGame(MacVentureEngine *engine, Common::SeekableReadStream *res) {
 }
 
 SaveGame::~SaveGame() {
+}
+
+
+Attribute SaveGame::getAttr(ObjID objID, uint32 attrID) {
+	return _groups[attrID][objID];
+}
+
+void SaveGame::setAttr(uint32 attrID, ObjID objID, Attribute value) {
+	_groups[attrID][objID] = value;
 }
 
 const Common::Array<AttributeGroup>& MacVenture::SaveGame::getGroups() {

@@ -65,6 +65,9 @@ public:
 	SaveGame(MacVentureEngine *engine, Common::SeekableReadStream *res);
 	~SaveGame();
 
+	Attribute getAttr(ObjID objID, uint32 attrID);
+	void setAttr(uint32 attrID, ObjID objID, Attribute value);
+
 	const Common::Array<AttributeGroup> &getGroups();
 	const AttributeGroup *getGroup(uint32 groupID);
 	const Common::Array<uint16> &getGlobals();
@@ -87,11 +90,13 @@ public:
 	~World();
 
 	uint32 getObjAttr(ObjID objID, uint32 attrID);
+	void setObjAttr(ObjID objID, uint32 attrID, Attribute value);
 	bool isObjActive(ObjID obj);
 
 private:
 	bool loadStartGameFileName();
 	void calculateObjectRelations();
+	void setParent(ObjID child, ObjID newParent);
 
 private:
 	MacVentureEngine *_engine;

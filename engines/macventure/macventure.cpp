@@ -99,6 +99,14 @@ Common::Error MacVentureEngine::run() {
 	_cmdReady = false;
 	_haltedAtEnd = false;
 	_haltedInSelection = false;
+
+	//if !savegame
+	_cmdReady = true;
+	_selectedControl = kStartOrResume;
+	ObjID playerParent = _world->getObjAttr(1, kAttrParentObject);
+	_currentSelection.push_back(playerParent);// Push the parent of the player
+	_world->setObjAttr(playerParent, 6, 1);
+
 	_prepared = true;
 	while (!(_gameState == kGameStateQuitting)) {
 		processEvents();
@@ -179,6 +187,10 @@ void MacVentureEngine::refreshReady() {
 
 void MacVentureEngine::preparedToRun() {
 	_prepared = true;
+}
+
+void MacVentureEngine::gameChanged() {
+	_gameChanged = true;
 }
 
 void MacVentureEngine::enqueueObject(ObjID id) {
