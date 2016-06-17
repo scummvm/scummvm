@@ -268,6 +268,7 @@ void EventManager::processInput() {
 	Common::Event event;
 	while (_vm->_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
+		// DUMMY CODE: EVENT_KEYDOWN, only for testing
 		case Common::EVENT_KEYDOWN:
 			if (event.synthetic)
 				break;
@@ -303,11 +304,11 @@ void EventManager::processInput() {
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
 			break;
-		case Common::EVENT_LBUTTONUP:
-		case Common::EVENT_RBUTTONUP:
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
 			_pendingClickPresent = true;
 			_pendingClickPos = _mousePos;
-			_pendingClickButton = (event.type == Common::EVENT_LBUTTONUP) ? kLeftMouseButton : kRightMouseButton;
+			_pendingClickButton = (event.type == Common::EVENT_LBUTTONDOWN) ? kLeftMouseButton : kRightMouseButton;
 			break;
 		}
 	}
@@ -344,6 +345,78 @@ CommandType EventManager::getCommandTypeFromMouseInput(MouseInput *input, Common
 		input++;
 	}
 	return commandType;
+}
+
+
+void EventManager::processCommandQueue() {
+	_isCommandQueueLocked = true;
+	if (_commandQueue.empty()) {
+		_isCommandQueueLocked = false;
+		processPendingClick();
+		return;
+	}
+
+	Command cmd = _commandQueue.pop();
+
+	// MISSING CODE: for when movement is disabled
+
+	_isCommandQueueLocked = false;
+	processPendingClick();
+
+	if ((cmd.type == kCommandTurnRight) || (cmd.type == kCommandTurnLeft)) {
+		commandTurnParty(cmd.type);
+		return;
+	}
+
+	if ((cmd.type >= kCommandMoveForward) && (cmd.type <= kCommandMoveLeft)) {
+		commandMoveParty(cmd.type);
+		return;
+	}
+
+	// MISSING CODE: the rest of the function
+}
+
+void EventManager::commandTurnParty(CommandType cmdType) {
+	_vm->_stopWaitingForPlayerInput = true;
+
+	// MISSING CODE: highlight turn left/right buttons
+
+	// MISSING CODE: processing stairs
+
+	// MISSING CODE: process sensors
+
+	// DUMMY CODE: should call F0284_CHAMPION_SetPartyDirection instead
+	direction &partyDir = _vm->_dungeonMan->_currMap.partyDir;
+	(cmdType == kCommandTurnLeft) ? turnDirLeft(partyDir) : turnDirRight(partyDir);
+
+	// MISSING CODE: process sensors
+}
+
+void EventManager::commandMoveParty(CommandType cmdType) {
+	_vm->_stopWaitingForPlayerInput = true;
+
+	// MISSING CODE: Lots of code
+
+	// DUMMY CODE:
+	DungeonMan &dungeonMan = *_vm->_dungeonMan;
+	CurrMapData &currMap = dungeonMan._currMap;
+
+	switch (cmdType) {
+	case kCommandMoveForward:
+		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap.partyDir, 1, 0, currMap.partyPosX, currMap.partyPosY);
+		break;
+	case kCommandMoveLeft:
+		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap.partyDir, 0, -1, currMap.partyPosX, currMap.partyPosY);
+		break;
+	case kCommandMoveBackward:
+		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap.partyDir, -1, 0, currMap.partyPosX, currMap.partyPosY);
+		break;
+	case kCommandMoveRight:
+		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap.partyDir, 0, 1, currMap.partyPosX, currMap.partyPosY);
+		break;
+	}
+
+	// MISSING CODE: Lots of code
 }
 
 

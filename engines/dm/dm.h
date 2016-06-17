@@ -12,6 +12,7 @@ class Console;
 class DisplayMan;
 class DungeonMan;
 class EventManager;
+class MenuMan;
 
 
 enum direction {
@@ -90,6 +91,9 @@ public:
 	DisplayMan *_displayMan;
 	DungeonMan *_dungeonMan;
 	EventManager *_eventMan;
+	MenuMan *_menuMan;
+	bool _stopWaitingForPlayerInput; // G0321_B_StopWaitingForPlayerInput
+	bool _gameTimeTicking; // @ G0301_B_GameTimeTicking
 };
 
 class Console : public GUI::Debugger {

@@ -10,6 +10,8 @@
 
 namespace DM {
 
+Box gBoxMovementArrows = {224, 319, 124, 168};
+
 enum ViewCell {
 	kViewCellFronLeft = 0, // @ C00_VIEW_CELL_FRONT_LEFT
 	kViewCellFrontRight = 1, // @ C01_VIEW_CELL_FRONT_RIGHT
@@ -548,11 +550,7 @@ CreatureReplColorSet gCreatureReplColorSets[13] = { // @ G0220_as_Graphic558_Cre
 byte gPalChangesCreature_D3[16] = {0, 120, 10, 30, 40, 30, 0, 60, 30, 0, 0, 110, 0, 20, 0, 130}; // @ G0221_auc_Graphic558_PaletteChanges_Creature_D3
 byte gPalChangesCreature_D2[16] = {0, 10, 20, 30, 40, 30, 60, 70, 50, 0, 0, 110, 120, 130, 140, 150}; // @ G0222_auc_Graphic558_PaletteChanges_Creature_D2
 
-enum GraphicIndice {
-	kInscriptionFontIndice = 120, // @ C120_GRAPHIC_INSCRIPTION_FONT
-	kDoorMaskDestroyedIndice = 301, // @ C301_GRAPHIC_DOOR_MASK_DESTROYED
-	kChampionPortraitsIndice = 26 // @ C026_GRAPHIC_CHAMPION_PORTRAITS
-};
+
 
 
 Viewport gDefultViewPort = {0, 0};
@@ -1504,4 +1502,8 @@ void DisplayMan::blitToBitmapShrinkWithPalChange(byte *srcBitmap, int16 srcWidth
 		}
 	}
 
+}
+
+byte* DisplayMan::getBitmap(uint16 index) {
+	return _bitmaps[index];
 }

@@ -131,7 +131,7 @@ public:
 	Common::Point pos;
 	CommandType type;
 
-	Command(Common::Point position, CommandType commandType): pos(position), type(type) {}
+	Command(Common::Point position, CommandType commandType): pos(position), type(commandType) {}
 }; // @ COMMAND
 
 
@@ -189,8 +189,11 @@ class EventManager {
 	Common::Point _pendingClickPos; // @ G0437_i_PendingClickX, G0438_i_PendingClickY
 	MouseButton _pendingClickButton; // @ G0439_i_PendingClickButtonsStatus
 
-	bool _isCommandQueueLocked;
+	bool _isCommandQueueLocked; // this doesn't seem to be used anywhere at all
 	Common::Queue<Command> _commandQueue;
+
+	void commandTurnParty(CommandType cmdType); // @ F0365_COMMAND_ProcessTypes1To2_TurnParty
+	void commandMoveParty(CommandType cmdType); // @ F0366_COMMAND_ProcessTypes3To6_MoveParty
 public:
 	MouseInput* _primaryMouseInput;// @ G0441_ps_PrimaryMouseInput
 	MouseInput* _secondaryMouseInput;// @ G0442_ps_SecondaryMouseInput
@@ -200,10 +203,11 @@ public:
 	void showMouse(bool visibility);
 
 	void setMousePos(Common::Point pos);
-	void processInput();
+	void processInput(); // acknowledges mouse and keyboard input
 	void processPendingClick(); // @ F0360_COMMAND_ProcessPendingClick
 	void processClick(Common::Point mousePos, MouseButton button); // @	F0359_COMMAND_ProcessClick_CPSC
 	CommandType getCommandTypeFromMouseInput(MouseInput *input, Common::Point mousePos, MouseButton button); // @ F0358_COMMAND_GetCommandFromMouseInput_CPSC
+	void processCommandQueue(); // @ F0380_COMMAND_ProcessQueue_CPSC
 };
 
 }

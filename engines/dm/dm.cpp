@@ -15,6 +15,7 @@
 #include "gfx.h"
 #include "dungeonman.h"
 #include "eventman.h"
+#include "menus.h"
 
 namespace DM {
 
@@ -52,6 +53,7 @@ DMEngine::~DMEngine() {
 	delete _displayMan;
 	delete _dungeonMan;
 	delete _eventMan;
+	delete _menuMan;
 
 	// clear debug channels
 	DebugMan.clearAllDebugChannels();
@@ -64,6 +66,7 @@ Common::Error DMEngine::run() {
 	_displayMan = new DisplayMan(this);
 	_dungeonMan = new DungeonMan(this);
 	_eventMan = new EventManager(this);
+	_menuMan = new MenuMan(this);
 
 	_displayMan->setUpScreens(320, 200);
 
@@ -84,9 +87,16 @@ Common::Error DMEngine::run() {
 
 
 	while (true) {
-		_eventMan->processInput();
+		_stopWaitingForPlayerInput = false;
+		//do {
+			_eventMan->processInput();
+			_eventMan->processCommandQueue();
+		//} while (!_stopWaitingForPlayerInput || !_gameTimeTicking);
+
 		_displayMan->clearScreen(kColorBlack);
 		_displayMan->drawDungeon(_dungeonMan->_currMap.partyDir, _dungeonMan->_currMap.partyPosX, _dungeonMan->_currMap.partyPosY);
+		// DUMMY CODE:
+		_menuMan->drawMovementArrows();
 		_displayMan->updateScreen();
 		_system->delayMillis(10);
 	}
@@ -99,6 +109,9 @@ Common::Error DMEngine::run() {
 void DMEngine::startGame() {
 	_eventMan->_primaryMouseInput = gPrimaryMouseInput_Interface;
 	_eventMan->_secondaryMouseInput = gSecondaryMouseInput_Movement;
+
+	_menuMan->drawMovementArrows();
+	_gameTimeTicking = true;
 }
 
 } // End of namespace DM

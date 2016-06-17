@@ -7,6 +7,14 @@
 
 namespace DM {
 
+
+enum GraphicIndice {
+	kInscriptionFontIndice = 120, // @ C120_GRAPHIC_INSCRIPTION_FONT
+	kDoorMaskDestroyedIndice = 301, // @ C301_GRAPHIC_DOOR_MASK_DESTROYED
+	kChampionPortraitsIndice = 26, // @ C026_GRAPHIC_CHAMPION_PORTRAITS
+	kMovementArrowsIndice = 13 // @ C013_GRAPHIC_MOVEMENT_ARROWS
+};
+
 extern uint16 gPalSwoosh[16];
 extern uint16 gPalMousePointer[16];
 extern uint16 gPalCredits[16];
@@ -20,11 +28,13 @@ public:
 	uint16 Y1;
 	uint16 Y2;
 
-	Box(uint16 x1, uint16 x2, uint16 y1, uint16 y2): X1(x1), X2(x2), Y1(y1), Y2(y2) {}
+	Box(uint16 x1, uint16 x2, uint16 y1, uint16 y2): X1(x1), X2(x2 + 1), Y1(y1), Y2(y2 + 1) {}
 	bool isPointInside(Common::Point point) {
 		return (X1 <= point.x) && (point.x < X2) && (Y1 <= point.y) && (point.y < Y2);
 	}
 }; // @ BOX_BYTE, BOX_WORD
+
+extern Box gBoxMovementArrows; // G0002_s_Graphic562_Box_MovementArrows
 
 // The frames in the original sources contain inclusive boundaries and byte widths, not pixel widths
 struct Frame {
@@ -269,6 +279,7 @@ public:
 	void clearScreen(Color color);
 	void drawDungeon(direction dir, int16 posX, int16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
 	void updateScreen();
+	byte* getBitmap(uint16 index);
 
 	int16 _championPortraitOrdinal; // @ G0289_i_DungeonView_ChampionPortraitOrdinal
 	int16 _currMapAlcoveOrnIndices[kAlcoveOrnCount]; // @ G0267_ai_CurrentMapAlcoveOrnamentIndices
