@@ -33,6 +33,7 @@
 
 #include "macventure/gui.h"
 #include "macventure/world.h"
+#include "macventure/hufflists.h"
 #include "macventure/stringtable.h"
 #include "macventure/script.h"
 
@@ -158,6 +159,8 @@ public:
 	Common::String getCommandsPausedString() const;
 	const GlobalSettings& getGlobalSettings() const;
 	Common::String getFilePath(FilePathID id) const;
+	bool isOldText() const;
+	const HuffmanLists *getDecodingHuffman() const;
 
 private:
 	void processEvents();
@@ -193,7 +196,7 @@ private: // Attributes
 	GameState _gameState;
 	GlobalSettings _globalSettings;
 	StringTable *_filenames;
-	Common::Huffman *_textHuffman;
+	HuffmanLists *_textHuffman;
 	bool _oldTextEncoding;
 	bool _paused, _halted, _cmdReady, _prepared;
 	bool _haltedAtEnd, _haltedInSelection;

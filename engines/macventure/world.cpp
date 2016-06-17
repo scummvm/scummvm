@@ -19,7 +19,12 @@ World::World(MacVentureEngine *engine, Common::MacResManager *resMan)  {
 
 	_saveGame = new SaveGame(_engine, saveGameRes);	
 	_objectConstants = new Container(_engine->getFilePath(kObjectPathID).c_str());
-		
+	//_gameText = new Container(_engine->getFilePath(kTextPathID).c_str());
+	_gameText = new Container("Shadowgate II/Shadow Text");
+
+	ObjID tid = (ObjID)1;
+	TextAsset test = TextAsset(tid, _gameText, _engine->isOldText(), _engine->getDecodingHuffman());
+
 	delete saveGameRes;
 	saveGameFile.close();		
 }

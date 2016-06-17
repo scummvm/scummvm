@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	detection.o \
 	gui.o \
 	object.o \
+	text.o \
 	macventure.o \
 	world.o \
 

@@ -25,11 +25,13 @@
 
 #include "macventure/macventure.h"
 #include "macventure/container.h"
+#include "macventure/text.h"
 
 namespace MacVenture {
 
 typedef uint32 ObjID;
 typedef Common::Array<uint16> AttributeGroup;
+class TextAsset;
 
 enum ObjectAttributeID {
 	kAttrParentObject = 0,
