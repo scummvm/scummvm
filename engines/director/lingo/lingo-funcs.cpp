@@ -116,35 +116,42 @@ int Lingo::func_mci(Common::String *s) {
 			state = kMCITokenNone;
 			break;
 		}
-
 	}
 
 	switch (command) {
-	case kMCITokenOpen: {
-		warning("MCI open file: %s, type: %s, alias: %s buffer: %s", params[0].c_str(), params[1].c_str(), params[2].c_str(), params[3].c_str());
-		Common::File *file = new Common::File();
-		if (!file->open(params[0])) {
-			warning("Failed to open %s", params[0].c_str());
-			delete file;
-			return 0;
-		}
-		if (params[1] == "waveaudio") {
-			Audio::AudioStream *sound = Audio::makeWAVStream(file, DisposeAfterUse::YES);
-			_audioAliases[params[2]] = sound;
-		}
-		else
-			warning("Unhandled audio type %s", params[2].c_str());
+	case kMCITokenOpen:
+		{
+			warning("MCI open file: %s, type: %s, alias: %s buffer: %s", params[0].c_str(), params[1].c_str(), params[2].c_str(), params[3].c_str());
+
+			Common::File *file = new Common::File();
+
+			if (!file->open(params[0])) {
+				warning("Failed to open %s", params[0].c_str());
+				delete file;
+				return 0;
+			}
+
+			if (params[1] == "waveaudio") {
+				Audio::AudioStream *sound = Audio::makeWAVStream(file, DisposeAfterUse::YES);
+				_audioAliases[params[2]] = sound;
+			} else {
+				warning("Unhandled audio type %s", params[2].c_str());
+			}
 		}
 		break;
-	case kMCITokenPlay: {
-		warning("MCI play file: %s, from: %s, to: %s, repeat: %s", params[0].c_str(), params[1].c_str(), params[2].c_str(), params[3].c_str());
-		if (!_audioAliases.contains(params[0])) {
-			warning("Unknown alias %s", params[0].c_str());
-			return 0;
-		}
-		uint32 from = strtol(params[1].c_str(), 0, 10);
-		uint32 to = strtol(params[2].c_str(), 0, 10);
-		_vm->getSoundManager()->playMCI(*_audioAliases[params[0]], from, to);
+	case kMCITokenPlay:
+		{
+			warning("MCI play file: %s, from: %s, to: %s, repeat: %s", params[0].c_str(), params[1].c_str(), params[2].c_str(), params[3].c_str());
+
+			if (!_audioAliases.contains(params[0])) {
+				warning("Unknown alias %s", params[0].c_str());
+				return 0;
+			}
+
+			uint32 from = strtol(params[1].c_str(), 0, 10);
+			uint32 to = strtol(params[2].c_str(), 0, 10);
+
+			_vm->getSoundManager()->playMCI(*_audioAliases[params[0]], from, to);
 		}
 		break;
 	default:
