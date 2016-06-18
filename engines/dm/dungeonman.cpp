@@ -3,7 +3,8 @@
 #include "dungeonman.h"
 
 
-using namespace DM;
+
+namespace DM {
 
 uint16 gJunkInfo[53] = { // @ G0241_auc_Graphic559_JunkInfo
 	1,   /* COMPASS */
@@ -529,9 +530,10 @@ void DungeonMan::loadDungeonFile() {
 				_dunData.thingsData[thingType][i][4] = dunDataStream.readUint16BE();
 			}
 		} else {
-			for (uint16 i = 0; i < thingCount; ++i)
+			for (uint16 i = 0; i < thingCount; ++i) {
 				for (uint16 j = 0; j < thingStoreWordCount; ++j)
 					_dunData.thingsData[thingType][i][j] = dunDataStream.readUint16BE();
+			}
 		}
 
 		if (_messages.newGame) {
@@ -992,4 +994,46 @@ void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 		}
 	}
 	*destString = ((type == kTextTypeInscription) ? 0x81 : '\0');
+}
+
+
+uint16 DungeonMan::getObjectWeight(Thing thing) {
+	if (thing == Thing::thingNone)
+		return 0;
+	switch (thing.getType()) {
+	case kWeaponThingType:
+		return gWeaponInfo[Weapon(getThingData(thing)).getType()]._weight;
+	case kArmourThingType:
+		return gArmourInfo[Armour(getThingData(thing)).getType()]._weight;
+	case kJunkThingType: {
+		Junk junk = getThingData(thing);
+		uint16 weight = gJunkInfo[junk.getType()];
+		if (junk.getType() == kJunkTypeWaterskin)
+			weight += junk.getChargeCount() * 2;
+		return weight;
+	}
+	case kContainerThingType: {
+		uint16 weight = 50;
+		Container container = getThingData(thing);
+		Thing slotThing = container.getNextContainedThing();
+		while (slotThing != Thing::thingEndOfList) {
+			weight += getObjectWeight(slotThing);
+			slotThing = getNextThing(slotThing);
+		}
+		return weight;
+	}
+	case kPotionThingType:
+		if (Junk(getThingData(thing)).getType() == kPotionTypeEmptyFlask) {
+			return 1;
+		} else {
+			return 3;
+		}
+	case kScrollThingType:
+		return 1;
+	}
+
+	assert(false); // this should never be taken
+	return 0; // dummy
+}
+
 }

@@ -257,21 +257,43 @@ public:
 	Thing getNextThing() { return nextThing; }
 }; // @ GROUP
 
+enum WeaponType {
+	kWeaponTypeTorch = 2, // @ C02_WEAPON_TORCH
+	kWeaponTypeDagger = 8, // @ C08_WEAPON_DAGGER
+	kWeaponTypeFalchion = 9, // @ C09_WEAPON_FALCHION
+	kWeaponTypeSword = 10, // @ C10_WEAPON_SWORD
+	kWeaponTypeClub = 23, // @ C23_WEAPON_CLUB
+	kWeaponTypeStoneClub = 24, // @ C24_WEAPON_STONE_CLUB
+	kWeaponTypeArrow = 27, // @ C27_WEAPON_ARROW
+	kWeaponTypeSlayer = 28, // @ C28_WEAPON_SLAYER
+	kWeaponTypeRock = 30, // @ C30_WEAPON_ROCK
+	kWeaponTypePoisonDart = 31, // @ C31_WEAPON_POISON_DART
+	kWeaponTypeThrowingStar = 32 // @ C32_WEAPON_THROWING_STAR
+};
 class Weapon {
 	Thing nextThing;
 	uint16 desc;
 public:
 	Weapon(uint16 *rawDat) : nextThing(rawDat[0]), desc(rawDat[1]) {}
 
+	WeaponType getType() { return (WeaponType)(desc & 0x7F); }
 	Thing getNextThing() { return nextThing; }
 }; // @ WEAPON
 
+enum ArmourType {
+	kArmourTypeWoodenShield = 30, // @ C30_ARMOUR_WOODEN_SHIELD
+	kArmourTypeArmet = 38, // @ C38_ARMOUR_ARMET
+	kArmourTypeTorsoPlate = 39, // @ C39_ARMOUR_TORSO_PLATE
+	kArmourTypeLegPlate = 40, // @ C40_ARMOUR_LEG_PLATE
+	kArmourTypeFootPlate = 41 // @ C41_ARMOUR_FOOT_PLATE
+};
 class Armour {
 	Thing nextThing;
 	uint16 attributes;
 public:
 	Armour(uint16 *rawDat) : nextThing(rawDat[0]), attributes(rawDat[1]) {}
 
+	ArmourType getType() { return (ArmourType)(attributes & 0x7F); }
 	Thing getNextThing() { return nextThing; }
 }; // @ ARMOUR
 
@@ -287,12 +309,28 @@ public:
 	Thing getNextThing() { return nextThing; }
 }; // @ SCROLL
 
+enum PotionType {
+	kPotionTypeVen = 3, // @ C03_POTION_VEN_POTION,
+	kPotionTypeRos = 6, // @ C06_POTION_ROS_POTION,
+	kPotionTypeKu = 7, // @ C07_POTION_KU_POTION,
+	kPotionTypeDane = 8, // @ C08_POTION_DANE_POTION,
+	kPotionTypeNeta = 9, // @ C09_POTION_NETA_POTION,
+	kPotionTypeAntivenin = 10, // @ C10_POTION_ANTIVENIN,
+	kPotionTypeMon = 11, // @ C11_POTION_MON_POTION,
+	kPotionTypeYa = 12, // @ C12_POTION_YA_POTION,
+	kPotionTypeEe = 13, // @ C13_POTION_EE_POTION,
+	kPotionTypeVi = 14, // @ C14_POTION_VI_POTION,
+	kPotionTypeWaterFlask = 15, // @ C15_POTION_WATER_FLASK,
+	kPotionTypeFulBomb = 19, // @ C19_POTION_FUL_BOMB,
+	kPotionTypeEmptyFlask = 20 // @ C20_POTION_EMPTY_FLASK,
+};
 class Potion {
 	Thing nextThing;
 	uint16 attributes;
 public:
 	Potion(uint16 *rawDat) : nextThing(rawDat[0]), attributes(rawDat[1]) {}
 
+	PotionType getType() { return (PotionType)((attributes >> 8) & 0x7F); }
 	Thing getNextThing() { return nextThing; }
 }; // @ POTION
 
@@ -303,14 +341,31 @@ class Container {
 public:
 	Container(uint16 *rawDat) : nextThing(rawDat[0]), nextContainedThing(rawDat[1]), type(rawDat[2]) {}
 
+	Thing getNextContainedThing() { return nextContainedThing; }
 	Thing getNextThing() { return nextThing; }
 }; // @ CONTAINER
+
+enum JunkType {
+	kJunkTypeWaterskin = 1, // @ C01_JUNK_WATERSKIN,
+	kJunkTypeBones = 5, // @ C05_JUNK_BONES,
+	kJunkTypeBoulder = 25, // @ C25_JUNK_BOULDER,
+	kJunkTypeScreamerSlice = 33, // @ C33_JUNK_SCREAMER_SLICE,
+	kJunkTypeWormRound = 34, // @ C34_JUNK_WORM_ROUND,
+	kJunkTypeDrumstickShank = 35, // @ C35_JUNK_DRUMSTICK_SHANK,
+	kJunkTypeDragonSteak = 36, // @ C36_JUNK_DRAGON_STEAK,
+	kJunkTypeMagicalBoxBlue = 42, // @ C42_JUNK_MAGICAL_BOX_BLUE,
+	kJunkTypeMagicalBoxGreen = 43, // @ C43_JUNK_MAGICAL_BOX_GREEN,
+	kJunkTypeZokathra = 51 // @ C51_JUNK_ZOKATHRA,
+};
 
 class Junk {
 	Thing nextThing;
 	uint16 attributes;
 public:
 	Junk(uint16 *rawDat) : nextThing(rawDat[0]), attributes(rawDat[1]) {}
+
+	JunkType getType() { return (JunkType)(attributes & 0x7F); }
+	uint16 getChargeCount() { return (attributes >> 14) & 0x3; }
 
 	Thing getNextThing() { return nextThing; }
 }; // @ JUNK
@@ -498,6 +553,8 @@ public:
 	} // @ F0153_DUNGEON_GetRelativeSquareType
 	void setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX, int16 mapY); // @ F0172_DUNGEON_SetSquareAspect
 	void decodeText(char *destString, Thing thing, TextType type); // F0168_DUNGEON_DecodeText
+
+	uint16 getObjectWeight(Thing thing);// @ F0140_DUNGEON_GetObjectWeight
 
 	uint32 _rawDunFileDataSize;	 // @ probably NONE
 	byte *_rawDunFileData; // @ ???
