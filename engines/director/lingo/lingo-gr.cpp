@@ -107,7 +107,7 @@ Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase
 
 extern int yylex();
 extern int yyparse();
-void yyerror(char *s) { error("%s", s); }
+void yyerror(char *s) { warning("%s", s); }
 
 using namespace Director;
 
@@ -1368,17 +1368,7 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 4:
-#line 71 "engines/director/lingo/lingo-gr.y"
-    { warning("%d", (yyvsp[(1) - (1)].i)); ;}
-    break;
-
-  case 5:
-#line 72 "engines/director/lingo/lingo-gr.y"
-    { warning("%d", (yyvsp[(1) - (1)].i)); ;}
-    break;
-
-  case 6:
+        case 6:
 #line 75 "engines/director/lingo/lingo-gr.y"
     { (yyval.i) = g_lingo->code2(g_lingo->func_constpush, (inst)(yyvsp[(1) - (1)].i)); ;}
     break;
@@ -1450,7 +1440,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 1454 "engines/director/lingo/lingo-gr.cpp"
+#line 1444 "engines/director/lingo/lingo-gr.cpp"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);

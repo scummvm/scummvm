@@ -30,7 +30,7 @@ Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase
 
 extern int yylex();
 extern int yyparse();
-void yyerror(char *s) { error("%s", s); }
+void yyerror(char *s) { warning("%s", s); }
 
 using namespace Director;
 
@@ -68,8 +68,8 @@ list: statement
 	| list '\n' statement
 	;
 
-statement: expr { warning("%d", $1); }
-	| func { warning("%d", $1); }
+statement: expr
+	| func
 	;
 
 expr: INT						{ $$ = g_lingo->code2(g_lingo->func_constpush, (inst)$1); }
