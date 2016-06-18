@@ -80,6 +80,7 @@ enum {
 
 class DMEngine : public Engine {
 	void startGame(); // @ F0462_START_StartGame_CPSF
+	void processNewPartyMap(uint16 mapIndex); // @ F0003_MAIN_ProcessNewPartyMap_CPSE
 public:
 	DMEngine(OSystem *syst);
 	~DMEngine();

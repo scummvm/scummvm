@@ -109,10 +109,7 @@ void DMEngine::startGame() {
 	_eventMan->_secondaryMouseInput = gSecondaryMouseInput_Movement;
 	warning("MISSING CODE: set primary/secondary keyboard input");
 
-	// MISSING CODE: F0003_MAIN_ProcessNewPartyMap_CPSE
-	// TODO:(next 2 lines) move to F0003_MAIN_ProcessNewPartyMap_CPSE
-	_dungeonMan->setCurrentMapAndPartyMap(0);
-	_displayMan->loadCurrentMapGraphics();
+	processNewPartyMap(_dungeonMan->_currMap._currPartyMapIndex);
 
 	if (!_dungeonMan->_messages._newGame) {
 		// MISSING CODE: loading game
@@ -125,6 +122,14 @@ void DMEngine::startGame() {
 	_menuMan->drawMovementArrows();
 	warning("MISSING CODE: F0278_CHAMPION_ResetDataToStartGame");
 	_gameTimeTicking = true;
+}
+
+void DMEngine::processNewPartyMap(uint16 mapIndex) {
+	warning("MISSING CODE: F0194_GROUP_RemoveAllActiveGroups");
+	_dungeonMan->setCurrentMapAndPartyMap(mapIndex);
+	_displayMan->loadCurrentMapGraphics();
+	warning("MISSING CODE: F0195_GROUP_AddAllActiveGroups");
+	warning("MISSING CODE: F0337_INVENTORY_SetDungeonViewPalette");
 }
 
 Common::Error DMEngine::run() {
