@@ -13,6 +13,8 @@ class DisplayMan;
 class DungeonMan;
 class EventManager;
 class MenuMan;
+class ChampionMan;
+class LoadsaveMan;
 
 
 enum direction {
@@ -92,8 +94,12 @@ public:
 	DungeonMan *_dungeonMan;
 	EventManager *_eventMan;
 	MenuMan *_menuMan;
+	ChampionMan *_championMan;
+	LoadsaveMan *_loadsaveMan;
 	bool _stopWaitingForPlayerInput; // G0321_B_StopWaitingForPlayerInput
 	bool _gameTimeTicking; // @ G0301_B_GameTimeTicking
+	bool _restartGameAllowed; // @ G0524_B_RestartGameAllowed
+	uint32 _gameId; // @ G0525_l_GameID, probably useless here
 };
 
 class Console : public GUI::Debugger {

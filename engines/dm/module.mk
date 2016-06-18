@@ -7,7 +7,8 @@ MODULE_OBJS := \
 	dungeonman.o \
 	eventman.o \
 	menus.o \
-	champion.o
+	champion.o \
+	loadsave.o
 
 MODULE_DIRS += \
 	engines/dm

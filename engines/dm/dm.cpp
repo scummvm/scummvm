@@ -16,6 +16,8 @@
 #include "dungeonman.h"
 #include "eventman.h"
 #include "menus.h"
+#include "champion.h"
+#include "loadsave.h"
 
 namespace DM {
 
@@ -41,10 +43,12 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	// register random source
 	_rnd = new Common::RandomSource("quux");
 
-	_displayMan = nullptr;
 	_dungeonMan = nullptr;
+	_displayMan = nullptr;
 	_eventMan = nullptr;
 	_menuMan = nullptr;
+	_championMan = nullptr;
+	_loadsaveMan = nullptr;
 	_stopWaitingForPlayerInput = false;
 	_gameTimeTicking = false;
 
@@ -61,6 +65,8 @@ DMEngine::~DMEngine() {
 	delete _dungeonMan;
 	delete _eventMan;
 	delete _menuMan;
+	delete _championMan;
+	delete _loadsaveMan;
 
 	// clear debug channels
 	DebugMan.clearAllDebugChannels();
@@ -74,14 +80,15 @@ Common::Error DMEngine::run() {
 	_dungeonMan = new DungeonMan(this);
 	_eventMan = new EventManager(this);
 	_menuMan = new MenuMan(this);
+	_championMan = new ChampionMan(this);
+	_loadsaveMan = new LoadsaveMan(this);
 
 	_displayMan->setUpScreens(320, 200);
 
 	_displayMan->loadGraphics();
 
 	_dungeonMan->loadDungeonFile();
-	int16 dummyMapIndex = 0;
-	_dungeonMan->setCurrentMapAndPartyMap(dummyMapIndex);
+	_dungeonMan->setCurrentMapAndPartyMap(0);
 
 
 	_displayMan->loadCurrentMapGraphics();
@@ -90,13 +97,15 @@ Common::Error DMEngine::run() {
 	_eventMan->initMouse();
 	_eventMan->showMouse(true);
 
+	_loadsaveMan->loadgame();
+
 	startGame();
 
 
 	while (true) {
 		_stopWaitingForPlayerInput = false;
 		//do {
-			_eventMan->processInput();
+				_eventMan->processInput();
 			_eventMan->processCommandQueue();
 		//} while (!_stopWaitingForPlayerInput || !_gameTimeTicking);
 
@@ -117,8 +126,11 @@ void DMEngine::startGame() {
 	_eventMan->_primaryMouseInput = gPrimaryMouseInput_Interface;
 	_eventMan->_secondaryMouseInput = gSecondaryMouseInput_Movement;
 
+
 	_menuMan->drawMovementArrows();
 	_gameTimeTicking = true;
+
+	// MISSING CODE: Lot of stuff
 }
 
 } // End of namespace DM

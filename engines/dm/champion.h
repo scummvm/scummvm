@@ -6,9 +6,12 @@
 
 namespace DM {
 
-enum ChampionIndice {
+enum ChampionIndex {
 	kChampionNone = -1, // @ CM1_CHAMPION_NONE
 	kChampionFirst = 0, // @ C00_CHAMPION_FIRST
+	kChampionSecond = 1,
+	kChampionThird = 2,
+	kChampionFourth = 3,
 	kChmpionCloseInventory = 4, // @ C04_CHAMPION_CLOSE_INVENTORY
 	kChampionSpecialInventory = 5 // @ C05_CHAMPION_SPECIAL_INVENTORY
 };
@@ -242,7 +245,12 @@ class ChampionMan {
 	DMEngine *_vm;
 	Champion champions[4];
 public:
+	uint16 _partChampionCount;
+	bool _partyDead; // @ G0303_B_PartyDead
+	Thing _leaderHand;
+
 	ChampionMan(DMEngine *vm);
+	ChampionIndex getIndexInCell(int16 mapX, int16 mapY, ViewCell cell); // @ F0285_CHAMPION_GetIndexInCell
 };
 
 }
