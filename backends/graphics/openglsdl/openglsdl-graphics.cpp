@@ -505,7 +505,7 @@ void OpenGLSdlGraphicsManager::clearOverlay() {
 	_overlayDirty = true;
 }
 
-void OpenGLSdlGraphicsManager::setSideTextures(Graphics::Surface *left, Graphics::Surface *right) {
+void OpenGLSdlGraphicsManager::suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) {
 	delete _sideTextures[0];
 	_sideTextures[0] = nullptr;
 	delete _sideTextures[1];

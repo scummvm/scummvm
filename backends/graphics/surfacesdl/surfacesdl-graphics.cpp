@@ -248,7 +248,7 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 	_overlayDirty = true;
 }
 
-void SurfaceSdlGraphicsManager::setSideTextures(Graphics::Surface *left, Graphics::Surface *right) {
+void SurfaceSdlGraphicsManager::suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) {
 	delete _sideSurfaces[0];
 	_sideSurfaces[0] = nullptr;
 	delete _sideSurfaces[1];

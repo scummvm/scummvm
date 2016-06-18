@@ -476,10 +476,3 @@ bool OSystem_SDL::hasFeature(Feature f) {
 		return true;
 	return ModularBackend::hasFeature(f);
 }
-
-// ResidualVM specific code
-void OSystem_SDL::suggestSideTextures(Graphics::Surface *left,
-                                      Graphics::Surface *right) {
-	SurfaceSdlGraphicsManager *ssgm = dynamic_cast<SurfaceSdlGraphicsManager *>(_graphicsManager);
-	ssgm->setSideTextures(left, right);
-}

@@ -69,7 +69,7 @@ public:
 	 * This is used for widescreen support in the Grim engine.
 	 * Note: we must copy the Surfaces, as they are free()d after this call.
 	 */
-	virtual void setSideTextures(Graphics::Surface *left, Graphics::Surface *right);
+	virtual void suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) override;
 
 	virtual void warpMouse(int x, int y);
 

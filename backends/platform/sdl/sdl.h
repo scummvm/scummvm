@@ -79,9 +79,6 @@ public:
 
 	// ResidualVM specific code
 	virtual bool hasFeature(Feature f);
-	// ResidualVM specific code
-	virtual void suggestSideTextures(Graphics::Surface *left,
-	                                 Graphics::Surface *right) override;
 
 	// ResidualVM specific code
 	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) override;
