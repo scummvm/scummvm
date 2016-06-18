@@ -228,7 +228,7 @@ public:
 			_attributes &= ~flag;
 		}
 	}
-	void clearAttributes(){ _attributes = kChampionAttributNone; }
+	void clearAttributes() { _attributes = kChampionAttributNone; }
 
 	uint16 getWounds() { return _wounds; }
 	void setWoundsFlag(ChampionWound flag, bool value) {
@@ -238,19 +238,24 @@ public:
 			_wounds &= ~flag;
 		}
 	}
-	void clearWounds(){ _wounds = kChampionWoundNone; }
+	void clearWounds() { _wounds = kChampionWoundNone; }
 }; // @ CHAMPION_INCLUDING_PORTRAIT
 
 class ChampionMan {
 	DMEngine *_vm;
 	Champion _champions[4];
+
+	uint16 getChampionPortraitX(uint16 index); // @ M27_PORTRAIT_X
+	uint16 getChampionPortraitY(uint16 index); // @ M28_PORTRAIT_Y
+
+	ChampionIndex getIndexInCell(ViewCell cell); // @ F0285_CHAMPION_GetIndexInCell
+	int16 getDecodedValue(char *string, uint16 characterCount); // @ F0279_CHAMPION_GetDecodedValue
 public:
 	uint16 _partyChampionCount;
 	bool _partyDead; // @ G0303_B_PartyDead
 	Thing _leaderHand;
 
 	ChampionMan(DMEngine *vm);
-	ChampionIndex getIndexInCell(ViewCell cell); // @ F0285_CHAMPION_GetIndexInCell
 };
 
 }
