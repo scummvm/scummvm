@@ -47,7 +47,7 @@ static size_t curlHeadersCallback(char *d, size_t n, size_t l, void *p) {
 	return 0;
 }
 
-void NetworkReadStream::init(const char *url, curl_slist *headersList, byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) {
+void NetworkReadStream::init(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) {
 	_eos = _requestComplete = false;
 	_sendingContentsBuffer = nullptr;
 	_sendingContentsSize = _sendingContentsPos = 0;
@@ -81,10 +81,10 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, byte *buf
 }
 
 NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading, bool usingPatch) {
-	init(url, headersList, (byte *)postFields.c_str(), postFields.size(), uploading, usingPatch, false);
+	init(url, headersList, (const byte *)postFields.c_str(), postFields.size(), uploading, usingPatch, false);
 }
 
-NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) {
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) {
 	init(url, headersList, buffer, bufferSize, uploading, usingPatch, post);
 }
 

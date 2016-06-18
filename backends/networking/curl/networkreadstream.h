@@ -35,15 +35,15 @@ namespace Networking {
 class NetworkReadStream: public Common::MemoryReadWriteStream {	
 	CURL *_easy;
 	bool _eos, _requestComplete;
-	byte *_sendingContentsBuffer;
+	const byte *_sendingContentsBuffer;
 	uint32 _sendingContentsSize;
 	uint32 _sendingContentsPos;
 	Common::String _responseHeaders;
-	void init(const char *url, curl_slist *headersList, byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post);
+	void init(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post);
 
 public:	
 	NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading = false, bool usingPatch = false);
-	NetworkReadStream(const char *url, curl_slist *headersList, byte *buffer, uint32 bufferSize, bool uploading = false, bool usingPatch = false, bool post = true);
+	NetworkReadStream(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading = false, bool usingPatch = false, bool post = true);
 	virtual ~NetworkReadStream();
 
 	/**
