@@ -304,6 +304,8 @@ public:
 	int16 _currMapViAltarIndex; // @ G0266_i_CurrentMapViAltarWallOrnamentIndex
 
 	Thing _inscriptionThing; // @ G0290_T_DungeonView_InscriptionThing
+
+	bool _useByteBoxCoordinates; // @ G0578_B_UseByteBoxCoordinates
 };
 
 }

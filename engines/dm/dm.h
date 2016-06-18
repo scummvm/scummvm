@@ -102,6 +102,11 @@ public:
 	bool _gameTimeTicking; // @ G0301_B_GameTimeTicking
 	bool _restartGameAllowed; // @ G0524_B_RestartGameAllowed
 	uint32 _gameId; // @ G0525_l_GameID, probably useless here
+	bool _pressingEye; // @ G0331_B_PressingEye
+	bool _stopPressingEye; // @ G0332_B_StopPressingEye
+	bool _pressingMouth; // @ G0333_B_PressingMouth
+	bool _stopPressingMouth; // @ G0334_B_StopPressingMouth
+	bool _highlightBoxInversionRequested; // @ G0340_B_HighlightBoxInversionRequested
 };
 
 class Console : public GUI::Debugger {

@@ -256,6 +256,8 @@ public:
 	Thing _leaderHand; // @ G0414_T_LeaderHandObject
 	ChampionIndex _leaderIndex;	// @ G0411_i_LeaderIndex
 	uint16 _candidateChampionOrdinal; // @ G0299_ui_CandidateChampionOrdinal
+	bool _partyIsSleeping; // @ G0300_B_PartyIsSleeping
+	uint16 _actingChampionOrdinal; // @ G0506_ui_ActingChampionOrdinal
 
 	ChampionMan(DMEngine *vm);
 };

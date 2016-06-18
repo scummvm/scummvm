@@ -9,6 +9,7 @@ class MenuMan {
 	DMEngine *_vm;
 public:
 	bool _shouldRefreshActionArea; // @ G0508_B_RefreshActionArea
+	bool _actionAreaContainsIcons; // @ G0509_B_ActionAreaContainsIcons
 	MenuMan(DMEngine *vm);
 
 	void drawMovementArrows();

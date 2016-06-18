@@ -94,17 +94,37 @@ void DMEngine::initializeGame() {
 
 
 void DMEngine::startGame() {
+	_pressingEye = false;
+	_stopPressingEye = false;
+	_pressingMouth = false;
+	_stopPressingMouth = false;
+	_highlightBoxInversionRequested = false;
+	_eventMan->_highlightBoxEnabled = false;
+	_championMan->_partyIsSleeping = false;
+	_championMan->_actingChampionOrdinal = indexToOrdinal(kChampionNone);
+	_menuMan->_actionAreaContainsIcons = true;
+	_eventMan->_useChampionIconOrdinalAsMousePointerBitmap = indexToOrdinal(kChampionNone);
+
 	_eventMan->_primaryMouseInput = gPrimaryMouseInput_Interface;
 	_eventMan->_secondaryMouseInput = gSecondaryMouseInput_Movement;
+	warning("MISSING CODE: set primary/secondary keyboard input");
+
+	// MISSING CODE: F0003_MAIN_ProcessNewPartyMap_CPSE
 	// TODO:(next 2 lines) move to F0003_MAIN_ProcessNewPartyMap_CPSE
 	_dungeonMan->setCurrentMapAndPartyMap(0);
 	_displayMan->loadCurrentMapGraphics();
 
+	if (!_dungeonMan->_messages._newGame) {
+		// MISSING CODE: loading game
+	} {
+		_displayMan->_useByteBoxCoordinates = false;
+		// MISSING CODE: clear screen
+	}
 
+	// MISSING CODE: build copper
 	_menuMan->drawMovementArrows();
+	warning("MISSING CODE: F0278_CHAMPION_ResetDataToStartGame");
 	_gameTimeTicking = true;
-
-	// MISSING CODE: Lot of stuff
 }
 
 Common::Error DMEngine::run() {
