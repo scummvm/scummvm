@@ -111,10 +111,6 @@ void yyerror(char *s) { warning("%s", s); }
 
 using namespace Director;
 
-namespace Director {
-extern Lingo *g_lingo;
-}
-
 
 
 /* Enabling traces.  */
@@ -137,10 +133,10 @@ extern Lingo *g_lingo;
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 43 "engines/director/lingo/lingo-gr.y"
+#line 39 "engines/director/lingo/lingo-gr.y"
 { float f; int i; Common::String *s; }
 /* Line 193 of yacc.c.  */
-#line 144 "engines/director/lingo/lingo-gr.cpp"
+#line 140 "engines/director/lingo/lingo-gr.cpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -153,7 +149,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 157 "engines/director/lingo/lingo-gr.cpp"
+#line 153 "engines/director/lingo/lingo-gr.cpp"
 
 #ifdef short
 # undef short
@@ -443,9 +439,9 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    67,    67,    68,    71,    72,    75,    76,    77,    78,
-      79,    80,    81,    82,    83,    84,    87,    88,    89,    90,
-      91
+       0,    63,    63,    64,    67,    68,    71,    72,    73,    74,
+      75,    76,    77,    78,    79,    80,    83,    84,    85,    86,
+      87
 };
 #endif
 
@@ -1369,78 +1365,78 @@ yyreduce:
   switch (yyn)
     {
         case 6:
-#line 75 "engines/director/lingo/lingo-gr.y"
+#line 71 "engines/director/lingo/lingo-gr.y"
     { (yyval.i) = g_lingo->code2(g_lingo->func_constpush, (inst)(yyvsp[(1) - (1)].i)); ;}
     break;
 
   case 7:
-#line 76 "engines/director/lingo/lingo-gr.y"
+#line 72 "engines/director/lingo/lingo-gr.y"
     { g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString((yyvsp[(1) - (1)].s)->c_str()); (yyval.i) = g_lingo->code1(g_lingo->func_eval); delete (yyvsp[(1) - (1)].s); ;}
     break;
 
   case 8:
-#line 77 "engines/director/lingo/lingo-gr.y"
+#line 73 "engines/director/lingo/lingo-gr.y"
     { g_lingo->code1(g_lingo->func_add); ;}
     break;
 
   case 9:
-#line 78 "engines/director/lingo/lingo-gr.y"
+#line 74 "engines/director/lingo/lingo-gr.y"
     { g_lingo->code1(g_lingo->func_sub); ;}
     break;
 
   case 10:
-#line 79 "engines/director/lingo/lingo-gr.y"
+#line 75 "engines/director/lingo/lingo-gr.y"
     { g_lingo->code1(g_lingo->func_mul); ;}
     break;
 
   case 11:
-#line 80 "engines/director/lingo/lingo-gr.y"
+#line 76 "engines/director/lingo/lingo-gr.y"
     { g_lingo->code1(g_lingo->func_div); ;}
     break;
 
   case 12:
-#line 81 "engines/director/lingo/lingo-gr.y"
+#line 77 "engines/director/lingo/lingo-gr.y"
     { (yyval.i) = (yyvsp[(2) - (2)].i); ;}
     break;
 
   case 13:
-#line 82 "engines/director/lingo/lingo-gr.y"
+#line 78 "engines/director/lingo/lingo-gr.y"
     { (yyval.i) = (yyvsp[(2) - (2)].i); g_lingo->code1(g_lingo->func_negate); ;}
     break;
 
   case 14:
-#line 83 "engines/director/lingo/lingo-gr.y"
+#line 79 "engines/director/lingo/lingo-gr.y"
     { (yyval.i) = (yyvsp[(2) - (3)].i); ;}
     break;
 
   case 16:
-#line 87 "engines/director/lingo/lingo-gr.y"
+#line 83 "engines/director/lingo/lingo-gr.y"
     { g_lingo->code1(g_lingo->func_mci); g_lingo->codeString((yyvsp[(2) - (2)].s)->c_str()); delete (yyvsp[(2) - (2)].s); ;}
     break;
 
   case 17:
-#line 88 "engines/director/lingo/lingo-gr.y"
+#line 84 "engines/director/lingo/lingo-gr.y"
     { g_lingo->code1(g_lingo->func_mciwait); g_lingo->codeString((yyvsp[(2) - (2)].s)->c_str()); delete (yyvsp[(2) - (2)].s); ;}
     break;
 
   case 18:
-#line 89 "engines/director/lingo/lingo-gr.y"
+#line 85 "engines/director/lingo/lingo-gr.y"
     { g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString((yyvsp[(4) - (4)].s)->c_str()); g_lingo->code1(g_lingo->func_assign); (yyval.i) = (yyvsp[(2) - (4)].i); delete (yyvsp[(4) - (4)].s); ;}
     break;
 
   case 19:
-#line 90 "engines/director/lingo/lingo-gr.y"
+#line 86 "engines/director/lingo/lingo-gr.y"
     { g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString((yyvsp[(2) - (4)].s)->c_str()); g_lingo->code1(g_lingo->func_assign); (yyval.i) = (yyvsp[(4) - (4)].i); delete (yyvsp[(2) - (4)].s); ;}
     break;
 
   case 20:
-#line 91 "engines/director/lingo/lingo-gr.y"
+#line 87 "engines/director/lingo/lingo-gr.y"
     { g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString((yyvsp[(2) - (4)].s)->c_str()); g_lingo->code1(g_lingo->func_assign); (yyval.i) = (yyvsp[(4) - (4)].i); delete (yyvsp[(2) - (4)].s); ;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1444 "engines/director/lingo/lingo-gr.cpp"
+#line 1440 "engines/director/lingo/lingo-gr.cpp"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1654,6 +1650,6 @@ yyreturn:
 }
 
 
-#line 94 "engines/director/lingo/lingo-gr.y"
+#line 90 "engines/director/lingo/lingo-gr.y"
 
 

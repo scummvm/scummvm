@@ -34,10 +34,6 @@ void yyerror(char *s) { warning("%s", s); }
 
 using namespace Director;
 
-namespace Director {
-extern Lingo *g_lingo;
-}
-
 %}
 
 %union { float f; int i; Common::String *s; }

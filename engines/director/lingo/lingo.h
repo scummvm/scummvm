@@ -125,6 +125,8 @@ public:
 
 private:
 	int parse(const char *code);
+	void push(Datum d);
+	Datum pop(void);
 
 	Common::HashMap<uint32, const char *> _eventHandlerTypes;
 	Common::HashMap<Common::String, Audio::AudioStream *> _audioAliases;
@@ -132,10 +134,14 @@ private:
 	ScriptHash _scripts[kMaxScriptType + 1];
 	ScriptData *_currentScript;
 
+	inst *_pc;
+
 	StackData _stack;
 
 	DirectorEngine *_vm;
 };
+
+extern Lingo *g_lingo;
 
 } // End of namespace Director
 

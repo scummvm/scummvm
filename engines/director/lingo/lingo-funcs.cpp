@@ -165,7 +165,24 @@ void Lingo::exec_mciwait(Common::String *s) {
 	warning("MCI wait file: %s", s->c_str());
 }
 
+void Lingo::push(Datum d) {
+	_stack.push_back(d);
+}
+
+Datum Lingo::pop(void) {
+	if (_stack.size() == 0)
+		error("stack underflow");
+
+	Datum ret = _stack.back();
+	_stack.pop_back();
+
+	return ret;
+}
+
 void Lingo::func_constpush() {
+	Datum d;
+	d.val = ((Symbol *)*g_lingo->_pc++)->u.val;
+	g_lingo->push(d);
 }
 
 void Lingo::func_varpush() {
@@ -178,15 +195,39 @@ void Lingo::func_eval() {
 }
 
 void Lingo::func_add() {
+	Datum d1, d2;
+	d2 = g_lingo->pop();
+	d1 = g_lingo->pop();
+	d1.val += d2.val;
+	g_lingo->push(d1);
 }
 
 void Lingo::func_sub() {
+	Datum d1, d2;
+	d2 = g_lingo->pop();
+	d1 = g_lingo->pop();
+	d1.val -= d2.val;
+	g_lingo->push(d1);
 }
 
 void Lingo::func_mul() {
+	Datum d1, d2;
+	d2 = g_lingo->pop();
+	d1 = g_lingo->pop();
+	d1.val *= d2.val;
+	g_lingo->push(d1);
 }
 
 void Lingo::func_div() {
+	Datum d1, d2;
+	d2 = g_lingo->pop();
+
+	if (d2.val == 0)
+		error("division by zero");
+
+	d1 = g_lingo->pop();
+	d1.val /= d2.val;
+	g_lingo->push(d1);
 }
 
 void Lingo::func_negate() {

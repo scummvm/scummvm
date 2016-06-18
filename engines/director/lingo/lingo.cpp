@@ -73,6 +73,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 		_eventHandlerTypes[t->handler] = t->name;
 
 	_currentScript = 0;
+	_pc = 0;
 
 	warning("Lingo Inited");
 }
