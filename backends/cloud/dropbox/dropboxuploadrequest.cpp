@@ -69,7 +69,7 @@ void DropboxUploadRequest::uploadNextPart() {
 	Common::JSONObject jsonRequestParameters;
 
 	if (_contentsStream->pos() == 0 || _sessionId == "") {
-		if (_contentsStream->size() <= UPLOAD_PER_ONE_REQUEST) {
+		if ((uint32)_contentsStream->size() <= UPLOAD_PER_ONE_REQUEST) {
 			url = "https://content.dropboxapi.com/2/files/upload";
 			jsonRequestParameters.setVal("path", new Common::JSONValue(_savePath));
 			jsonRequestParameters.setVal("mode", new Common::JSONValue("overwrite"));
@@ -80,7 +80,7 @@ void DropboxUploadRequest::uploadNextPart() {
 			jsonRequestParameters.setVal("close", new Common::JSONValue(false));
 		}
 	} else {
-		if (_contentsStream->size() - _contentsStream->pos() <= UPLOAD_PER_ONE_REQUEST) {
+		if ((uint32)(_contentsStream->size() - _contentsStream->pos()) <= UPLOAD_PER_ONE_REQUEST) {
 			url += "finish";			
 			Common::JSONObject jsonCursor, jsonCommit;			
 			jsonCursor.setVal("session_id", new Common::JSONValue(_sessionId));

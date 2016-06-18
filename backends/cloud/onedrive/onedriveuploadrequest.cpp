@@ -62,7 +62,7 @@ void OneDriveUploadRequest::start() {
 void OneDriveUploadRequest::uploadNextPart() {	
 	const uint32 UPLOAD_PER_ONE_REQUEST = 10 * 1024 * 1024;
 
-	if (_uploadUrl == "" && _contentsStream->size() > UPLOAD_PER_ONE_REQUEST) {
+	if (_uploadUrl == "" && (uint32)_contentsStream->size() > UPLOAD_PER_ONE_REQUEST) {
 		Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot:/"+ConnMan.urlEncode(_savePath)+":/upload.createSession"; //folder must exist
 		Networking::JsonCallback callback = new Common::Callback<OneDriveUploadRequest, Networking::JsonResponse>(this, &OneDriveUploadRequest::partUploadedCallback);
 		Networking::ErrorCallback failureCallback = new Common::Callback<OneDriveUploadRequest, Networking::ErrorResponse>(this, &OneDriveUploadRequest::partUploadedErrorCallback);

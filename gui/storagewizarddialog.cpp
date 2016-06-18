@@ -100,7 +100,7 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	switch (cmd) {
 	case kCodeBoxCmd: {		
 		Common::String code, message;
-		int correctFields = 0;
+		uint32 correctFields = 0;
 		for (uint32 i = 0; i < CODE_FIELDS; ++i) {
 			Common::String subcode = _codeWidget[i]->getEditString();
 			if (subcode.size() == 0) {
