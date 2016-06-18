@@ -8,6 +8,40 @@
 
 namespace DM {
 
+enum ObjectAllowedSlot {
+	kObjectAllowedSlotMouth = 0x0001, // @ MASK0x0001_MOUTH
+	kObjectAllowedSlotHead = 0x0002, // @ MASK0x0002_HEAD
+	kObjectAllowedSlotNeck = 0x0004, // @ MASK0x0004_NECK
+	kObjectAllowedSlotTorso = 0x0008, // @ MASK0x0008_TORSO
+	kObjectAllowedSlotLegs = 0x0010, // @ MASK0x0010_LEGS
+	kObjectAllowedSlotFeet = 0x0020, // @ MASK0x0020_FEET
+	kObjectAllowedSlotQuiverLine_1 = 0x0040, // @ MASK0x0040_QUIVER_LINE1
+	kObjectAllowedSlotQuiverLine_2 = 0x0080, // @ MASK0x0080_QUIVER_LINE2
+	kObjectAllowedSlotPouchPassAndThroughDoors = 0x0100, // @ MASK0x0100_POUCH_PASS_AND_THROUGH_DOORS
+	kObjectAllowedSlotHands = 0x0200, // @ MASK0x0200_HANDS
+	kObjectAllowedSlotContainer = 0x0400 // @ MASK0x0400_CONTAINER
+};
+
+class ObjectInfo {
+public:
+	int16 _type;
+	uint16 _objectAspectIndex;
+	uint16 _actionSetIndex;
+private:
+	uint16 _allowedSlots;
+public:
+	ObjectInfo(int16 type, uint16 objectAspectIndex, uint16 actionSetIndex, uint16 allowedSlots)
+		: _type(type), _objectAspectIndex(objectAspectIndex), _actionSetIndex(actionSetIndex), _allowedSlots(allowedSlots) {}
+	bool getAllowedSlot(ObjectAllowedSlot slot) { return _allowedSlots & slot; }
+	void setAllowedSlot(ObjectAllowedSlot slot, bool val) {
+		if (val) {
+			_allowedSlots |= slot;
+		} else {
+			_allowedSlots &= ~slot;
+		}
+	}
+}; // @ OBJECT_INFO
+
 extern uint16 gJunkInfo[53];
 				
 enum ArmourAttribute {
