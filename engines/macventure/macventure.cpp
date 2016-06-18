@@ -92,7 +92,7 @@ Common::Error MacVentureEngine::run() {
 	// Big class instantiation
 	_gui = new Gui(this, _resourceManager);
 	_world = new World(this, _resourceManager);
-	_scriptEngine = new ScriptEngine(_world);
+	_scriptEngine = new ScriptEngine(this, _world);
 
 	_paused = false;
 	_halted = true;
@@ -193,6 +193,14 @@ void MacVentureEngine::gameChanged() {
 	_gameChanged = true;
 }
 
+void MacVentureEngine::winGame() {
+	_gameState = kGameStateWinnig;
+}
+
+void MacVentureEngine::loseGame() {
+	_gameState = kGameStateLosing;
+}
+
 void MacVentureEngine::enqueueObject(ObjID id) {
 	QueuedObject obj;
 	obj.parent = _world->getObjAttr(id, kAttrParentObject);
@@ -204,6 +212,13 @@ void MacVentureEngine::enqueueObject(ObjID id) {
 	obj.offsecreen = _world->getObjAttr(id, kAttrInvisible);
 	obj.invisible = _world->getObjAttr(id, kAttrUnclickable);
 	_objQueue.push_back(obj);
+}
+
+void MacVentureEngine::enqueueText(TextQueueID type, ObjID target, ObjID source, ObjID text) {
+}
+
+void MacVentureEngine::printTexts() {
+	debug("Printing texts..");
 }
 
 const GlobalSettings& MacVentureEngine::getGlobalSettings() const {
@@ -284,6 +299,9 @@ bool MacVentureEngine::updateState() {
 	return true;
 }
 
+void MacVentureEngine::revert() {
+}
+
 void MacVentureEngine::runObjQueue() {
 
 }
@@ -358,6 +376,10 @@ bool MacVentureEngine::isOldText() const {
 
 const HuffmanLists * MacVentureEngine::getDecodingHuffman() const {
 	return _textHuffman;
+}
+
+uint32 MacVentureEngine::randBetween(uint32 min, uint32 max) {
+	return _rnd->getRandomNumber(max - min) + min;
 }
 
 // Data loading

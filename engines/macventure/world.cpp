@@ -102,6 +102,56 @@ Common::Array<ObjID> World::getChildren(ObjID objID, bool recursive) {
 	return Common::Array<ObjID>();
 }
 
+WindowReference World::getObjWindow(ObjID objID) {
+	switch (objID) {
+	case 0xfffc: return kExitsWindow;
+	case 0xfffd: return kSelfWindow;
+	case 0xfffe: return kOutConsoleWindow;
+	case 0xffff: return kCommandsWindow;
+	}
+
+	return findObjWindow(objID);
+}
+
+WindowReference World::findObjWindow(ObjID objID) {
+	return kMainGameWindow;
+}
+
+Attribute World::getGlobal(uint32 attrID) {
+	return _saveGame->getGlobals()[attrID];
+}
+
+void World::setGlobal(uint32 attrID, Attribute value) {
+	_saveGame->setGlobal(attrID, value);
+}
+
+void World::updateObj(ObjID objID) {
+	WindowReference win;
+	if (getObjAttr(1, kAttrParentObject) == objID) {
+		win = kMainGameWindow;
+	} else {
+		win = getObjWindow(objID);
+	}
+	if (win) {
+		//focusObjWin(objID);
+		_engine->runObjQueue();
+		//_engine->updateWindow(win);
+	}
+}
+
+void World::captureChildren(ObjID objID) {
+}
+
+void World::releaseChildren(ObjID objID) {
+}
+
+Common::String World::getText(ObjID objID) {
+	TextAsset text = TextAsset(objID, _gameText, _engine->isOldText(), _engine->getDecodingHuffman());
+	
+	return *text.decode();
+}
+
+
 bool World::loadStartGameFileName() {
 	Common::SeekableReadStream *res;
 
@@ -184,6 +234,10 @@ const Common::Array<AttributeGroup>& MacVenture::SaveGame::getGroups() {
 const AttributeGroup * SaveGame::getGroup(uint32 groupID) {
 	assert(groupID < _groups.size());
 	return &(_groups[groupID]);
+}
+
+void SaveGame::setGlobal(uint32 attrID, Attribute value) {
+	_globals[attrID] = value;
 }
 
 const Common::Array<uint16>& MacVenture::SaveGame::getGlobals() {

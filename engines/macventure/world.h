@@ -67,9 +67,11 @@ public:
 	Attribute getAttr(ObjID objID, uint32 attrID);
 	void setAttr(uint32 attrID, ObjID objID, Attribute value);
 
+	void setGlobal(uint32 attrID, Attribute value);
+	const Common::Array<uint16> &getGlobals();
+
 	const Common::Array<AttributeGroup> &getGroups();
 	const AttributeGroup *getGroup(uint32 groupID);
-	const Common::Array<uint16> &getGlobals();
 	const Common::String &getText();
 
 private:
@@ -88,11 +90,22 @@ public:
 	World(MacVentureEngine *engine, Common::MacResManager *resMan);
 	~World();
 
-	uint32 getObjAttr(ObjID objID, uint32 attrID);
+	
 	void setObjAttr(ObjID objID, uint32 attrID, Attribute value);
+	void setGlobal(uint32 attrID, Attribute value);
+	void updateObj(ObjID objID);
+	void captureChildren(ObjID objID);
+	void releaseChildren(ObjID objID);
+
+	uint32 getObjAttr(ObjID objID, uint32 attrID);
+	Attribute getGlobal(uint32 attrID);
+	Common::String getText(ObjID objID);
+
 	bool isObjActive(ObjID obj);
 	Common::Array<ObjID> getFamily(ObjID objID, bool recursive);
 	Common::Array<ObjID> getChildren(ObjID objID, bool recursive);
+	WindowReference getObjWindow(ObjID objID);
+	WindowReference findObjWindow(ObjID objID);
 
 private:
 	bool loadStartGameFileName();

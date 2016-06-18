@@ -124,6 +124,12 @@ enum ObjectQueueID {
 	kAnimateBack = 14
 };
 
+enum TextQueueID {
+	kTextNumber = 1,
+	kTextNewLine = 2,
+	kTextPlain = 3
+};
+
 struct QueuedObject {
 	ObjectQueueID id;
 	ObjID object;
@@ -152,8 +158,17 @@ public:
 	void refreshReady();
 	void preparedToRun();
 	void gameChanged();
+	void winGame();
+	void loseGame();
+
+	bool updateState();
+	void revert();
 
 	void enqueueObject(ObjID id);
+	void enqueueText(TextQueueID type, ObjID target, ObjID source, ObjID text);
+
+	void runObjQueue();
+	void printTexts();
 
 	// Data retrieval
 	bool isPaused();
@@ -162,14 +177,13 @@ public:
 	Common::String getFilePath(FilePathID id) const;
 	bool isOldText() const;
 	const HuffmanLists *getDecodingHuffman() const;
+	uint32 randBetween(uint32 min, uint32 max);
 
 private:
 	void processEvents();
 
 	bool runScriptEngine();
 	void endGame();
-	bool updateState();
-	void runObjQueue();
 	void updateControls();
 	void resetVars();
 
@@ -180,6 +194,8 @@ private:
 	// Utils
 	ControlAction referenceToAction(ControlReference id);
 	uint objectsToApplyCommand();
+
+	const char* getGameFileName() const;
 
 private: // Attributes
 
@@ -216,10 +232,6 @@ private: // Attributes
 	ControlAction _activeControl;
 	Common::List<ObjID> _currentSelection;
 	Common::Point _deltaPoint;
-
-private: // Methods
-
-	const char* getGameFileName() const;
 
 };
 
