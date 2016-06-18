@@ -3,7 +3,9 @@
 
 #include "common/events.h"
 #include "common/queue.h"
+
 #include "gfx.h"
+#include "champion.h"
 
 
 namespace DM {
@@ -208,6 +210,8 @@ public:
 	void processClick(Common::Point mousePos, MouseButton button); // @	F0359_COMMAND_ProcessClick_CPSC
 	CommandType getCommandTypeFromMouseInput(MouseInput *input, Common::Point mousePos, MouseButton button); // @ F0358_COMMAND_GetCommandFromMouseInput_CPSC
 	void processCommandQueue(); // @ F0380_COMMAND_ProcessQueue_CPSC
+
+	void commandSetLeader(ChampionIndex index); // @ F0368_COMMAND_SetLeader
 };
 
 }

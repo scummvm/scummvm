@@ -182,6 +182,9 @@ class Skill {
 class Champion {
 	Thing _slots[30];
 	Skill _skills[20];
+	uint16 _attributes;
+	byte _statistics[7][3];
+	uint16 _wounds;
 public:
 	char _name[8];
 	char _title[20];
@@ -195,8 +198,6 @@ public:
 	uint16 _poisonEventCount;
 	int16 _enableActionEventIndex;
 	int16 _hideDamageReceivedIndex;
-	uint16 _attributes;
-	uint16 _wounds;
 	int16 _currHealth;
 	int16 _maxHealth;
 	int16 _currStamina;
@@ -206,7 +207,6 @@ public:
 	int16 _actionDefense;
 	int16 _food;
 	int16 _water;
-	byte _statistics[7][3];
 	uint16 _load;
 	int16 _shieldDefense;
 	byte Portrait[464]; // 32 x 29 pixel portrait
@@ -243,7 +243,6 @@ public:
 
 class ChampionMan {
 	DMEngine *_vm;
-	Champion _champions[4];
 
 	uint16 getChampionPortraitX(uint16 index); // @ M27_PORTRAIT_X
 	uint16 getChampionPortraitY(uint16 index); // @ M28_PORTRAIT_Y
@@ -251,9 +250,12 @@ class ChampionMan {
 	ChampionIndex getIndexInCell(ViewCell cell); // @ F0285_CHAMPION_GetIndexInCell
 	int16 getDecodedValue(char *string, uint16 characterCount); // @ F0279_CHAMPION_GetDecodedValue
 public:
-	uint16 _partyChampionCount;
+	Champion _champions[4];
+	uint16 _partyChampionCount;	// @ G0305_ui_PartyChampionCount
 	bool _partyDead; // @ G0303_B_PartyDead
-	Thing _leaderHand;
+	Thing _leaderHand; // @ G0414_T_LeaderHandObject
+	ChampionIndex _leaderIndex;	// @ G0411_i_LeaderIndex
+	uint16 _candidateChampionOrdinal; // @ G0299_ui_CandidateChampionOrdinal
 
 	ChampionMan(DMEngine *vm);
 };

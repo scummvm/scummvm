@@ -420,5 +420,34 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 	// MISSING CODE: Lots of code
 }
 
+void EventManager::commandSetLeader(ChampionIndex index) {
+	ChampionMan &cm = *_vm->_championMan;
+	ChampionIndex leaderIndex;
+
+	if ((cm._leaderIndex == index) || ((index != kChampionNone) && !cm._champions[index]._currHealth))
+		return;
+
+	if (cm._leaderIndex != kChampionNone) {
+		leaderIndex = cm._leaderIndex;
+		cm._champions[leaderIndex].setAttributeFlag(kChampionAttributeLoad, true);
+		cm._champions[leaderIndex].setAttributeFlag(kChampionAttributeNameTitle, true);
+		cm._champions[leaderIndex]._load -= _vm->_dungeonMan->getObjectWeight(cm._leaderHand);
+		cm._leaderIndex = kChampionNone;
+		warning("MISSING CODE: F0292_CHAMPION_DrawState");
+	}
+	if (index == kChampionNone) {
+		cm._leaderIndex = kChampionNone;
+		return;
+	}
+	cm._leaderIndex = index;
+	Champion *champion = &cm._champions[cm._leaderIndex];
+	champion->_dir = _vm->_dungeonMan->_currMap.partyDir;
+	cm._champions[index]._load += _vm->_dungeonMan->getObjectWeight(cm._leaderHand);
+	if (indexToOrdinal(index) != cm._candidateChampionOrdinal) {
+		champion->setAttributeFlag(kChampionAttributeIcon, true);
+		champion->setAttributeFlag(kChampionAttributeNameTitle, true);
+		warning("MISSING CODE: F0292_CHAMPION_DrawState");
+	}
+}
 
 }; // end of namespace DM

@@ -3,7 +3,9 @@
 
 namespace DM {
 
-ChampionMan::ChampionMan(DMEngine *vm) : _vm(vm) {}
+ChampionMan::ChampionMan(DMEngine *vm) : _vm(vm) {
+	_leaderIndex = kChampionNone;
+}
 
 uint16 ChampionMan::getChampionPortraitX(uint16 index) {
 	return ((index) & 0x7) << 5;
