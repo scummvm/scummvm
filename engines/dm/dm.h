@@ -84,7 +84,9 @@ public:
 	DMEngine(OSystem *syst);
 	~DMEngine();
 
-	virtual Common::Error run();
+	virtual Common::Error run(); // @ main
+	void initializeGame(); // @ F0463_START_InitializeGame_CPSADEF
+	void gameloop(); // @ F0002_MAIN_GameLoop_CPSDF
 
 private:
 	Console *_console;

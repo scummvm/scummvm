@@ -22,6 +22,7 @@ LoadgameResponse LoadsaveMan::loadgame() {
 		assert(false);
 		// MISSING CODE: load game
 	}
+	_vm->_dungeonMan->loadDungeonFile();
 
 
 	if (newGame) {

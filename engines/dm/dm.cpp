@@ -72,8 +72,43 @@ DMEngine::~DMEngine() {
 	DebugMan.clearAllDebugChannels();
 }
 
+void DMEngine::initializeGame() {
+	_displayMan->loadGraphics();
+	// DUMMY CODE: next line
+	_displayMan->loadPalette(gPalCredits);
+
+	_eventMan->initMouse();
+
+	while (_loadsaveMan->loadgame() != kLoadgameSuccess) {
+		// MISSING CODE: F0441_STARTEND_ProcessEntrance
+	}
+
+	_displayMan->loadFloorSet(kFloorSetStone);
+	_displayMan->loadWallSet(kWallSetStone);
+
+	startGame();
+	warning("MISSING CODE: F0267_MOVE_GetMoveResult_CPSCE (if newGame)");
+	_eventMan->showMouse(true);
+	warning("MISSING CODE: F0357_COMMAND_DiscardAllInput");
+}
+
+
+void DMEngine::startGame() {
+	_eventMan->_primaryMouseInput = gPrimaryMouseInput_Interface;
+	_eventMan->_secondaryMouseInput = gSecondaryMouseInput_Movement;
+	// TODO:(next 2 lines) move to F0003_MAIN_ProcessNewPartyMap_CPSE
+	_dungeonMan->setCurrentMapAndPartyMap(0);
+	_displayMan->loadCurrentMapGraphics();
+
+
+	_menuMan->drawMovementArrows();
+	_gameTimeTicking = true;
+
+	// MISSING CODE: Lot of stuff
+}
 
 Common::Error DMEngine::run() {
+	// scummvm/engine specific
 	initGraphics(320, 200, false);
 	_console = new Console(this);
 	_displayMan = new DisplayMan(this);
@@ -82,55 +117,32 @@ Common::Error DMEngine::run() {
 	_menuMan = new MenuMan(this);
 	_championMan = new ChampionMan(this);
 	_loadsaveMan = new LoadsaveMan(this);
-
 	_displayMan->setUpScreens(320, 200);
 
-	_displayMan->loadGraphics();
-
-	_dungeonMan->loadDungeonFile();
-	_dungeonMan->setCurrentMapAndPartyMap(0);
-
-
-	_displayMan->loadCurrentMapGraphics();
-	_displayMan->loadPalette(gPalCredits);
-
-	_eventMan->initMouse();
-	_eventMan->showMouse(true);
-
-	_loadsaveMan->loadgame();
-
-	startGame();
-
-
+	initializeGame(); // @ F0463_START_InitializeGame_CPSADEF
 	while (true) {
-		_stopWaitingForPlayerInput = false;
-		//do {
-				_eventMan->processInput();
-			_eventMan->processCommandQueue();
-		//} while (!_stopWaitingForPlayerInput || !_gameTimeTicking);
-
-		_displayMan->clearScreen(kColorBlack);
-		_displayMan->drawDungeon(_dungeonMan->_currMap.partyDir, _dungeonMan->_currMap.partyPosX, _dungeonMan->_currMap.partyPosY);
-		// DUMMY CODE:
-		_menuMan->drawMovementArrows();
-		_displayMan->updateScreen();
-		_system->delayMillis(10);
+		gameloop();
+		// MISSING CODE: F0444_STARTEND_Endgame(G0303_B_PartyDead);
 	}
-
 
 	return Common::kNoError;
 }
 
+void DMEngine::gameloop() {
+	while (true) {
+		_stopWaitingForPlayerInput = false;
+		//do {
+		_eventMan->processInput();
+		_eventMan->processCommandQueue();
+		//} while (!_stopWaitingForPlayerInput || !_gameTimeTicking);
 
-void DMEngine::startGame() {
-	_eventMan->_primaryMouseInput = gPrimaryMouseInput_Interface;
-	_eventMan->_secondaryMouseInput = gSecondaryMouseInput_Movement;
-
-
-	_menuMan->drawMovementArrows();
-	_gameTimeTicking = true;
-
-	// MISSING CODE: Lot of stuff
+		_displayMan->clearScreen(kColorBlack);
+		_displayMan->drawDungeon(_dungeonMan->_currMap.partyDir, _dungeonMan->_currMap.partyPosX, _dungeonMan->_currMap.partyPosY);
+		// DUMMY CODE: next line
+		_menuMan->drawMovementArrows();
+		_displayMan->updateScreen();
+		_system->delayMillis(10);
+	}
 }
 
 } // End of namespace DM

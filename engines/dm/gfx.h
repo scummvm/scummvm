@@ -245,8 +245,6 @@ class DisplayMan {
 	void drawSquareD0R(direction dir, int16 posX, int16 posY); // @ F0126_DUNGEONVIEW_DrawSquareD0R
 	void drawSquareD0C(direction dir, int16 posX, int16 posY); // @ F0127_DUNGEONVIEW_DrawSquareD0C
 
-	void loadWallSet(WallSet set); // @ F0095_DUNGEONVIEW_LoadWallSet
-	void loadFloorSet(FloorSet set); // @ F0094_DUNGEONVIEW_LoadFloorSet
 
 	void applyCreatureReplColors(int replacedColor, int replacementColor); // @ F0093_DUNGEONVIEW_ApplyCreatureReplacementColors
 
@@ -257,6 +255,9 @@ class DisplayMan {
 public:
 	DisplayMan(DMEngine *dmEngine);
 	~DisplayMan();
+
+	void loadWallSet(WallSet set); // @ F0095_DUNGEONVIEW_LoadWallSet
+	void loadFloorSet(FloorSet set); // @ F0094_DUNGEONVIEW_LoadFloorSet
 
 	void setUpScreens(uint16 width, uint16 height);
 	void loadGraphics(); // @ F0479_MEMORY_ReadGraphicsDatHeader, F0460_START_InitializeGraphicData
