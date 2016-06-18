@@ -130,21 +130,21 @@ enum CommandType {
 
 class Command {
 public:
-	Common::Point pos;
-	CommandType type;
+	Common::Point _pos;
+	CommandType _type;
 
-	Command(Common::Point position, CommandType commandType): pos(position), type(commandType) {}
+	Command(Common::Point position, CommandType commandType): _pos(position), _type(commandType) {}
 }; // @ COMMAND
 
 
 class MouseInput {
 public:
-	CommandType commandTypeToIssue;
-	Box hitbox;
-	MouseButton button;
+	CommandType _commandTypeToIssue;
+	Box _hitbox;
+	MouseButton _button;
 
 	MouseInput(CommandType type, uint16 x1, uint16 x2, uint16 y1, uint16 y2, MouseButton mouseButton)
-		: commandTypeToIssue(type), hitbox(x1, x2 + 1, y1, y2 + 1), button(mouseButton) {}
+		: _commandTypeToIssue(type), _hitbox(x1, x2 + 1, y1, y2 + 1), _button(mouseButton) {}
 }; // @ MOUSE_INPUT
 
 extern MouseInput gPrimaryMouseInput_Entrance[4]; // @ G0445_as_Graphic561_PrimaryMouseInput_Entrance[4]
@@ -172,11 +172,11 @@ extern MouseInput* gPrimaryMouseInput_DialogSets[2][4]; // @ G0480_aaps_PrimaryM
 
 class KeyboardInput {
 public:
-	Command commandToIssue;
-	Common::KeyCode key;
-	byte modifiers;
+	Command _commandToIssue;
+	Common::KeyCode _key;
+	byte _modifiers;
 
-	KeyboardInput(Command command, Common::KeyCode keycode, byte modifierFlags) : commandToIssue(command), key(keycode), modifiers(modifierFlags) {}
+	KeyboardInput(Command command, Common::KeyCode keycode, byte modifierFlags) : _commandToIssue(command), _key(keycode), _modifiers(modifierFlags) {}
 }; // @ KEYBOARD_INPUT
 
 class DMEngine;
@@ -215,6 +215,5 @@ public:
 };
 
 }
-
 
 #endif

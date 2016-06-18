@@ -31,14 +31,14 @@ extern uint16 gPalDungeonView[6][16];
 
 class Box {
 public:
-	uint16 X1;
-	uint16 X2;
-	uint16 Y1;
-	uint16 Y2;
+	uint16 _x1;
+	uint16 _x2;
+	uint16 _y1;
+	uint16 _y2;
 
-	Box(uint16 x1, uint16 x2, uint16 y1, uint16 y2): X1(x1), X2(x2 + 1), Y1(y1), Y2(y2 + 1) {}
+	Box(uint16 x1, uint16 x2, uint16 y1, uint16 y2): _x1(x1), _x2(x2 + 1), _y1(y1), _y2(y2 + 1) {}
 	bool isPointInside(Common::Point point) {
-		return (X1 <= point.x) && (point.x < X2) && (Y1 <= point.y) && (point.y < Y2);
+		return (_x1 <= point.x) && (point.x < _x2) && (_y1 <= point.y) && (point.y < _y2);
 	}
 }; // @ BOX_BYTE, BOX_WORD
 
@@ -46,15 +46,15 @@ extern Box gBoxMovementArrows; // G0002_s_Graphic562_Box_MovementArrows
 
 // The frames in the original sources contain inclusive boundaries and byte widths, not pixel widths
 struct Frame {
-	uint16 destFromX, destToX, destFromY, destToY;
-	uint16 srcWidth, srcHeight;
-	uint16 srcX, srcY;
+	uint16 _destFromX, _destToX, _destFromY, _destToY;
+	uint16 _srcWidth, _srcHeight;
+	uint16 _srcX, _srcY;
 
 	Frame() {}
 	Frame(uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
 		uint16 srcWidth, uint16 srcHeight, uint16 srcX, uint16 srcY) :
-	destFromX(destFromX), destToX(destToX + 1), destFromY(destFromY), destToY(destToY + 1),
-		srcWidth(srcWidth * 2), srcHeight(srcHeight), srcX(srcX), srcY(srcY) {}
+	_destFromX(destFromX), _destToX(destToX + 1), _destFromY(destFromY), _destToY(destToY + 1),
+		_srcWidth(srcWidth * 2), _srcHeight(srcHeight), _srcX(srcX), _srcY(srcY) {}
 };
 
 enum WallSet {
@@ -124,55 +124,55 @@ enum Color {
 
 struct Viewport {
 	// TODO: should probably add width and height, seems redundant right meow
-	uint16 posX, posY;
+	uint16 _posX, _posY;
 };
 
 struct CreatureAspect {
-	uint16 firstNativeBitmapRelativeIndex;
-	uint16 firstDerivedBitmapIndex;
-	byte byteWidthFront;
-	byte heightFront;
-	byte byteWidthSide;
-	byte heightSide;
-	byte byteWidthAttack;
-	byte heightAttack;
-	byte coordinateSet_TransparentColor;
-	byte replacementColorSetIndices;
+	uint16 _firstNativeBitmapRelativeIndex;
+	uint16 _firstDerivedBitmapIndex;
+	byte _byteWidthFront;
+	byte _heightFront;
+	byte _byteWidthSide;
+	byte _heightSide;
+	byte _byteWidthAttack;
+	byte _heightAttack;
+	byte _coordinateSet_TransparentColor;
+	byte _replacementColorSetIndices;
 
-	byte getCoordSet() { return (coordinateSet_TransparentColor >> 4) & 0xF; } // @ M71_COORDINATE_SET
-	byte getTranspColour() { return  coordinateSet_TransparentColor & 0xF; } // @ M72_TRANSPARENT_COLOR
-	byte getReplColour10() { return (replacementColorSetIndices >> 4) & 0xF; } // @ M74_COLOR_10_REPLACEMENT_COLOR_SET
-	byte getReplColour9() { return replacementColorSetIndices & 0xF; } // @ M73_COLOR_09_REPLACEMENT_COLOR_SET
+	byte getCoordSet() { return (_coordinateSet_TransparentColor >> 4) & 0xF; } // @ M71_COORDINATE_SET
+	byte getTranspColour() { return  _coordinateSet_TransparentColor & 0xF; } // @ M72_TRANSPARENT_COLOR
+	byte getReplColour10() { return (_replacementColorSetIndices >> 4) & 0xF; } // @ M74_COLOR_10_REPLACEMENT_COLOR_SET
+	byte getReplColour9() { return _replacementColorSetIndices & 0xF; } // @ M73_COLOR_09_REPLACEMENT_COLOR_SET
 }; // @ CREATURE_ASPECT
 
 struct ObjectAspect {
-	byte firstNativeBitmapRelativeIndex;
-	byte firstDerivedBitmapRelativeIndex;
-	byte width;
-	byte height;
-	byte graphicInfo; /* Bits 7-5 and 3-1 Unreferenced */
-	byte coordinateSet;
+	byte _firstNativeBitmapRelativeIndex;
+	byte _firstDerivedBitmapRelativeIndex;
+	byte _width;
+	byte _height;
+	byte _graphicInfo; /* Bits 7-5 and 3-1 Unreferenced */
+	byte _coordinateSet;
 	ObjectAspect(byte firstN, byte firstD, byte byteWidth, byte h, byte grap, byte coord) :
-	firstNativeBitmapRelativeIndex(firstN), firstDerivedBitmapRelativeIndex(firstD),
-		width(byteWidth * 2), height(h), graphicInfo(grap), coordinateSet(coord) {}
+		_firstNativeBitmapRelativeIndex(firstN), _firstDerivedBitmapRelativeIndex(firstD),
+		_width(byteWidth * 2), _height(h), _graphicInfo(grap), _coordinateSet(coord) {}
 }; // @ OBJECT_ASPECT
 
 struct ProjectileAspect {
-	byte firstNativeBitmapRelativeIndex;
-	byte firstDerivedBitmapRelativeIndex;
-	byte width;
-	byte height;
-	uint16 graphicInfo; /* Bits 15-9, 7-5 and 3-2 Unreferenced */
+	byte _firstNativeBitmapRelativeIndex;
+	byte _firstDerivedBitmapRelativeIndex;
+	byte _width;
+	byte _height;
+	uint16 _graphicInfo; /* Bits 15-9, 7-5 and 3-2 Unreferenced */
 
 	ProjectileAspect(byte firstN, byte firstD, byte byteWidth, byte h, uint16 grap) :
-	firstNativeBitmapRelativeIndex(firstN), firstDerivedBitmapRelativeIndex(firstD),
-		width(byteWidth * 2), height(h), graphicInfo(grap) {}
+		_firstNativeBitmapRelativeIndex(firstN), _firstDerivedBitmapRelativeIndex(firstD),
+		_width(byteWidth * 2), _height(h), _graphicInfo(grap) {}
 }; // @ PROJECTIL_ASPECT
 
 struct CreatureReplColorSet {
-	uint16 RGBColor[6];
-	byte D2ReplacementColor;
-	byte D3ReplacementColor;
+	uint16 _RGBColor[6];
+	byte _D2ReplacementColor;
+	byte _D3ReplacementColor;
 }; // @ CREATURE_REPLACEMENT_COLOR_SET
 
 extern Viewport gDefultViewPort;
@@ -265,9 +265,9 @@ public:
 	void loadPalette(uint16 *palette);
 
 	/// Gives the width of an IMG0 type item
-	uint16 width(uint16 index);
+	uint16 getWidth(uint16 index);
 	/// Gives the height of an IMG1 type item
-	uint16 height(uint16 index);
+	uint16 getHeight(uint16 index);
 
 	void blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
 					  byte *destBitmap, uint16 destWidth,

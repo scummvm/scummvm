@@ -340,8 +340,8 @@ CommandType EventManager::getCommandTypeFromMouseInput(MouseInput *input, Common
 		return kCommandNone;
 	CommandType commandType = kCommandNone;
 
-	while ((commandType = input->commandTypeToIssue) != kCommandNone) {
-		if (input->hitbox.isPointInside(mousePos) && input->button == button)
+	while ((commandType = input->_commandTypeToIssue) != kCommandNone) {
+		if (input->_hitbox.isPointInside(mousePos) && input->_button == button)
 			break;
 		input++;
 	}
@@ -364,13 +364,13 @@ void EventManager::processCommandQueue() {
 	_isCommandQueueLocked = false;
 	processPendingClick();
 
-	if ((cmd.type == kCommandTurnRight) || (cmd.type == kCommandTurnLeft)) {
-		commandTurnParty(cmd.type);
+	if ((cmd._type == kCommandTurnRight) || (cmd._type == kCommandTurnLeft)) {
+		commandTurnParty(cmd._type);
 		return;
 	}
 
-	if ((cmd.type >= kCommandMoveForward) && (cmd.type <= kCommandMoveLeft)) {
-		commandMoveParty(cmd.type);
+	if ((cmd._type >= kCommandMoveForward) && (cmd._type <= kCommandMoveLeft)) {
+		commandMoveParty(cmd._type);
 		return;
 	}
 

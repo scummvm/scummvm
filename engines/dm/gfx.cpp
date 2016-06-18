@@ -682,9 +682,9 @@ void DisplayMan::loadGraphics() {
 void DisplayMan::unpackGraphics() {
 	uint32 unpackedBitmapsSize = 0;
 	for (uint16 i = 0; i <= 20; ++i)
-		unpackedBitmapsSize += width(i) * height(i);
+		unpackedBitmapsSize += getWidth(i) * getHeight(i);
 	for (uint16 i = 22; i <= 532; ++i)
-		unpackedBitmapsSize += width(i) * height(i);
+		unpackedBitmapsSize += getWidth(i) * getHeight(i);
 	// graphics items go from 0-20 and 22-532 inclusive, _unpackedItemPos 21 and 22 are there for indexing convenience
 	if (_bitmaps) {
 		delete[] _bitmaps[0];
@@ -694,12 +694,12 @@ void DisplayMan::unpackGraphics() {
 	_bitmaps[0] = new byte[unpackedBitmapsSize];
 	loadIntoBitmap(0, _bitmaps[0]);
 	for (uint16 i = 1; i <= 20; ++i) {
-		_bitmaps[i] = _bitmaps[i - 1] + width(i - 1) * height(i - 1);
+		_bitmaps[i] = _bitmaps[i - 1] + getWidth(i - 1) * getHeight(i - 1);
 		loadIntoBitmap(i, _bitmaps[i]);
 	}
-	_bitmaps[22] = _bitmaps[20] + width(20) * height(20);
+	_bitmaps[22] = _bitmaps[20] + getWidth(20) * getHeight(20);
 	for (uint16 i = 23; i < 533; ++i) {
-		_bitmaps[i] = _bitmaps[i - 1] + width(i - 1) * height(i - 1);
+		_bitmaps[i] = _bitmaps[i - 1] + getWidth(i - 1) * getHeight(i - 1);
 		loadIntoBitmap(i, _bitmaps[i]);
 	}
 }
@@ -771,7 +771,7 @@ void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uin
 		for (uint16 x = 0; x < destToX - destFromX; ++x) {
 			byte srcPixel = srcBitmap[srcWidth * (y + srcY) + srcX + x];
 			if (srcPixel != transparent)
-				destBitmap[destWidth * (y + destFromY + destViewport.posY) + destFromX + x + destViewport.posX] = srcPixel;
+				destBitmap[destWidth * (y + destFromY + destViewport._posY) + destFromX + x + destViewport._posX] = srcPixel;
 		}
 }
 
@@ -820,25 +820,25 @@ byte *DisplayMan::getCurrentVgaBuffer() {
 	return _vgaBuffer;
 }
 
-uint16 DisplayMan::width(uint16 index) {
+uint16 DisplayMan::getWidth(uint16 index) {
 	byte *data = _packedBitmaps + _packedItemPos[index];
 	return READ_BE_UINT16(data);
 }
 
-uint16 DisplayMan::height(uint16 index) {
+uint16 DisplayMan::getHeight(uint16 index) {
 	uint8 *data = _packedBitmaps + _packedItemPos[index];
 	return READ_BE_UINT16(data + 2);
 }
 
 
 void DisplayMan::drawWallSetBitmapWithoutTransparency(byte *bitmap, Frame &f) {
-	if (f.srcWidth)
-		blitToScreen(bitmap, f.srcWidth, f.srcX, f.srcY, f.destFromX, f.destToX, f.destFromY, f.destToY, kColorNoTransparency, gDungeonViewport);
+	if (f._srcWidth)
+		blitToScreen(bitmap, f._srcWidth, f._srcX, f._srcY, f._destFromX, f._destToX, f._destFromY, f._destToY, kColorNoTransparency, gDungeonViewport);
 }
 
 void DisplayMan::drawWallSetBitmap(byte *bitmap, Frame &f) {
-	if (f.srcWidth)
-		blitToScreen(bitmap, f.srcWidth, f.srcX, f.srcY, f.destFromX, f.destToX, f.destFromY, f.destToY, kColorFlesh, gDungeonViewport);
+	if (f._srcWidth)
+		blitToScreen(bitmap, f._srcWidth, f._srcX, f._srcY, f._destFromX, f._destToX, f._destFromY, f._destToY, kColorFlesh, gDungeonViewport);
 }
 
 void DisplayMan::drawSquareD3L(direction dir, int16 posX, int16 posY) {
@@ -1085,7 +1085,7 @@ void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
 	}
 
 	if (flippedFloorCeiling) {
-		uint16 w = gFloorFrame.srcWidth, h = gFloorFrame.srcHeight;
+		uint16 w = gFloorFrame._srcWidth, h = gFloorFrame._srcHeight;
 		blitToBitmap(_floorBitmap, w, h, tmpBitmap, w);
 		flipBitmapHorizontal(tmpBitmap, w, h);
 		drawWallSetBitmap(tmpBitmap, gFloorFrame);
@@ -1094,7 +1094,7 @@ void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
 		for (uint16 i = 0; i <= kWall_D3LCR - kWall_D0R; ++i)
 			_wallSetBitMaps[i + kWall_D0R] = _wallSetBitMaps[i + kWall_D0R_Flipped];
 	} else {
-		uint16 w = gCeilingFrame.srcWidth, h = gCeilingFrame.srcHeight;
+		uint16 w = gCeilingFrame._srcWidth, h = gCeilingFrame._srcHeight;
 		blitToBitmap(_ceilingBitmap, w, h, tmpBitmap, w);
 		flipBitmapHorizontal(tmpBitmap, w, h);
 		drawWallSetBitmap(tmpBitmap, gCeilingFrame);
@@ -1187,7 +1187,7 @@ void DisplayMan::loadWallSet(WallSet set) {
 
 	for (uint16 i = 0; i < 7; ++i) {
 		uint16 srcGraphicIndice = firstIndice + srcIndex[i];
-		uint16 w = width(srcGraphicIndice), h = height(srcGraphicIndice);
+		uint16 w = getWidth(srcGraphicIndice), h = getHeight(srcGraphicIndice);
 		delete[] _wallSetBitMaps[destIndex[i]];
 		_wallSetBitMaps[destIndex[i]] = new byte[w * h];
 		blitToBitmap(_wallSetBitMaps[srcIndex[i]], w, h, _wallSetBitMaps[destIndex[i]], w);
@@ -1290,23 +1290,23 @@ void DisplayMan::loadCurrentMapGraphics() {
 
 void DisplayMan::applyCreatureReplColors(int replacedColor, int replacementColor) {
 	for (int16 i = 0; i < 6; ++i)
-		gPalDungeonView[i][replacedColor] = gCreatureReplColorSets[replacementColor].RGBColor[i];
+		gPalDungeonView[i][replacedColor] = gCreatureReplColorSets[replacementColor]._RGBColor[i];
 
-	gPalChangesCreature_D2[replacedColor] = gCreatureReplColorSets[replacementColor].D2ReplacementColor;
-	gPalChangesCreature_D3[replacedColor] = gCreatureReplColorSets[replacementColor].D3ReplacementColor;
+	gPalChangesCreature_D2[replacedColor] = gCreatureReplColorSets[replacementColor]._D2ReplacementColor;
+	gPalChangesCreature_D3[replacedColor] = gCreatureReplColorSets[replacementColor]._D3ReplacementColor;
 }
 
 void DisplayMan::drawFloorPitOrStairsBitmap(StairIndex relIndex, Frame &f) {
-	if (f.srcWidth) {
-		blitToScreen(_bitmaps[_stairIndices[relIndex]], f.srcWidth, f.srcX, f.srcY, f.destFromX, f.destToX, f.destFromY, f.destToY, kColorFlesh, gDungeonViewport);
+	if (f._srcWidth) {
+		blitToScreen(_bitmaps[_stairIndices[relIndex]], f._srcWidth, f._srcX, f._srcY, f._destFromX, f._destToX, f._destFromY, f._destToY, kColorFlesh, gDungeonViewport);
 	}
 }
 
 void DisplayMan::drawFloorPitOrStairsBitmapFlippedHorizontally(StairIndex relIndex, Frame &f) {
-	if (f.srcWidth) {
-		blitToBitmap(_bitmaps[_stairIndices[relIndex]], f.srcWidth, f.srcHeight, _tmpBitmap, f.srcWidth);
-		flipBitmapHorizontal(_tmpBitmap, f.srcWidth, f.srcHeight);
-		blitToScreen(_tmpBitmap, f.srcWidth, f.srcX, f.srcY, f.destFromX, f.destToX, f.destFromY, f.destToY, kColorFlesh, gDungeonViewport);
+	if (f._srcWidth) {
+		blitToBitmap(_bitmaps[_stairIndices[relIndex]], f._srcWidth, f._srcHeight, _tmpBitmap, f._srcWidth);
+		flipBitmapHorizontal(_tmpBitmap, f._srcWidth, f._srcHeight);
+		blitToScreen(_tmpBitmap, f._srcWidth, f._srcX, f._srcY, f._destFromX, f._destToX, f._destFromY, f._destToY, kColorFlesh, gDungeonViewport);
 	}
 }
 
@@ -1370,8 +1370,8 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 			if (viewWallIndex == kViewWall_D1C_FRONT) {
 				if (isInscription) {
 					Frame &D1CFrame = gFrameWalls[kViewSquare_D1C];
-					blitToScreen(_wallSetBitMaps[kWall_D1LCR], D1CFrame.srcWidth, 94, 28, gBoxWallPatchBehindInscription.X1, gBoxWallPatchBehindInscription.X2,
-								 gBoxWallPatchBehindInscription.Y1, gBoxWallPatchBehindInscription.Y2, kColorNoTransparency, gDungeonViewport);
+					blitToScreen(_wallSetBitMaps[kWall_D1LCR], D1CFrame._srcWidth, 94, 28, gBoxWallPatchBehindInscription._x1, gBoxWallPatchBehindInscription._x2,
+								 gBoxWallPatchBehindInscription._y1, gBoxWallPatchBehindInscription._y2, kColorNoTransparency, gDungeonViewport);
 
 					unsigned char *string = inscriptionString;
 					bitmapRed = _bitmaps[kInscriptionFontIndice];
@@ -1382,12 +1382,12 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 						while (*character++ < 0x80) {
 							characterCount++;
 						}
-						frame.destToX = (frame.destFromX = 112 - (characterCount * 4)) + 7;
-						frame.destFromY = (frame.destToY = gInscriptionLineY[textLineIndex++]) - 7;
+						frame._destToX = (frame._destFromX = 112 - (characterCount * 4)) + 7;
+						frame._destFromY = (frame._destToY = gInscriptionLineY[textLineIndex++]) - 7;
 						while (characterCount--) {
-							blitToScreen(bitmapRed, 288, (*string++) * 8, 0, frame.destFromX, frame.destToX, frame.destFromY, frame.destToY, kColorFlesh, gDungeonViewport);
-							frame.destFromX += 8;
-							frame.destToX += 8;
+							blitToScreen(bitmapRed, 288, (*string++) * 8, 0, frame._destFromX, frame._destToX, frame._destFromY, frame._destToY, kColorFlesh, gDungeonViewport);
+							frame._destFromX += 8;
+							frame._destToX += 8;
 						}
 					} while (*string++ != 0x81);
 					return isAlcove;
@@ -1457,14 +1457,14 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 			} while (*string++ != 0x81);
 
 			if (unreadableTextLineCount < 4) {
-				frame.destFromX = coordinateSetA[0];
-				frame.destToX = coordinateSetA[1];
-				frame.destFromY = coordinateSetA[2];
-				frame.destToY = coordinateSetA[3];
-				frame.srcWidth = coordinateSetA[4];
-				frame.srcHeight = coordinateSetA[5];
+				frame._destFromX = coordinateSetA[0];
+				frame._destToX = coordinateSetA[1];
+				frame._destFromY = coordinateSetA[2];
+				frame._destToY = coordinateSetA[3];
+				frame._srcWidth = coordinateSetA[4];
+				frame._srcHeight = coordinateSetA[5];
 
-				coordinateSetA = &frame.destFromX;
+				coordinateSetA = &frame._destFromX;
 
 				coordinateSetA[3] = gUnreadableInscriptionBoxY2[gWallOrnDerivedBitmapIndexIncrement[viewWallIndex] * 3 + unreadableTextLineCount - 1];
 			}
@@ -1473,7 +1473,7 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 
 		if ((viewWallIndex == kViewWall_D1C_FRONT) && _championPortraitOrdinal--) {
 			Box &box = gBoxChampionPortraitOnWall;
-			blitToScreen(_bitmaps[kChampionPortraitsIndice], 256, (_championPortraitOrdinal & 0x7) << 5, (_championPortraitOrdinal >> 3) * 29, box.X1, box.X2, box.Y1, box.Y2,
+			blitToScreen(_bitmaps[kChampionPortraitsIndice], 256, (_championPortraitOrdinal & 0x7) << 5, (_championPortraitOrdinal >> 3) * 29, box._x1, box._x2, box._y1, box._y2,
 						 kColorDarkGary, gDungeonViewport);
 		}
 		return isAlcove;
