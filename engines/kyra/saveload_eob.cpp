@@ -328,7 +328,7 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 		fileName = getSavegameFilename(slot);
 	}
 
-	Common::OutSaveFile *out = openSaveForWriting(fileName, saveName, thumbnail);
+	Common::OutSaveFile *out = new Common::OutSaveFile(openSaveForWriting(fileName, saveName, thumbnail));
 	if (!out)
 		return _saveFileMan->getError();
 
@@ -995,7 +995,7 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 		return false;
 
 	Common::FSNode nf = nd.getChild(_flags.gameID == GI_EOB1 ? "EOBDATA.SAV" : Common::String::format("EOBDATA%d.SAV", slot));
-	Common::WriteStream *out = nf.createWriteStream();
+	Common::OutSaveFile *out = new Common::OutSaveFile(nf.createWriteStream());
 
 	if (_flags.gameID == GI_EOB2) {
 		static const char tempStr[20] = "SCUMMVM EXPORT     ";

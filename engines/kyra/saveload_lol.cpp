@@ -335,7 +335,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 Common::Error LoLEngine::saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) {
 	const char *fileName = getSavegameFilename(slot);
 
-	Common::OutSaveFile *out = openSaveForWriting(fileName, saveName, thumbnail);
+	Common::OutSaveFile *out = new Common::OutSaveFile(openSaveForWriting(fileName, saveName, thumbnail));
 	if (!out)
 		return _saveFileMan->getError();
 

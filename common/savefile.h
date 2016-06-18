@@ -28,6 +28,7 @@
 #include "common/stream.h"
 #include "common/str-array.h"
 #include "common/error.h"
+#include "common/ptr.h"
 
 namespace Common {
 
@@ -44,8 +45,20 @@ typedef SeekableReadStream InSaveFile;
  * That typically means "save games", but also includes things like the
  * IQ points in Indy3.
  */
-typedef WriteStream OutSaveFile;
+class OutSaveFile: public WriteStream {
+protected:
+	ScopedPtr<WriteStream> _wrapped;
 
+public:
+	OutSaveFile(WriteStream *w);
+	virtual ~OutSaveFile();
+
+	virtual bool err() const;
+	virtual void clearErr();
+	virtual void finalize();
+	virtual bool flush();
+	virtual uint32 write(const void *dataPtr, uint32 dataSize);
+};
 
 /**
  * The SaveFileManager is serving as a factory for InSaveFile

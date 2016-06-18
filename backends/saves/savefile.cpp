@@ -23,8 +23,32 @@
 #include "common/util.h"
 #include "common/savefile.h"
 #include "common/str.h"
+#ifdef USE_CLOUD
+#include "backends/cloud/cloudmanager.h"
+#endif
 
 namespace Common {
+
+OutSaveFile::OutSaveFile(WriteStream *w): _wrapped(w) {}
+
+OutSaveFile::~OutSaveFile() {}
+
+bool OutSaveFile::err() const { return _wrapped->err(); }
+
+void OutSaveFile::clearErr() { _wrapped->clearErr(); }
+
+void OutSaveFile::finalize() {
+	_wrapped->finalize();
+#ifdef USE_CLOUD
+	CloudMan.syncSaves();
+#endif
+}
+
+bool OutSaveFile::flush() { return _wrapped->flush(); }
+
+uint32 OutSaveFile::write(const void *dataPtr, uint32 dataSize) {
+	return _wrapped->write(dataPtr, dataSize);
+}
 
 bool SaveFileManager::copySavefile(const String &oldFilename, const String &newFilename) {
 	InSaveFile *inFile = 0;

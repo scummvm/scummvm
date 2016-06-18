@@ -241,7 +241,7 @@ Common::Error KyraEngine_LoK::saveGameStateIntern(int slot, const char *saveName
 	if (shouldQuit())
 		return Common::kNoError;
 
-	Common::OutSaveFile *out = openSaveForWriting(fileName, saveName, thumb);
+	Common::OutSaveFile *out = new Common::OutSaveFile(openSaveForWriting(fileName, saveName, thumb));
 	if (!out)
 		return _saveFileMan->getError();
 
