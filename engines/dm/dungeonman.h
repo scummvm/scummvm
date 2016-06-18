@@ -313,6 +313,8 @@ public:
 	Weapon(uint16 *rawDat) : _nextThing(rawDat[0]), _desc(rawDat[1]) {}
 
 	WeaponType getType() { return (WeaponType)(_desc & 0x7F); }
+	bool isLit() { return (_desc >> 15) & 1; }
+	uint16 getChargeCount() { return (_desc >> 10) & 0xF; }
 	Thing getNextThing() { return _nextThing; }
 }; // @ WEAPON
 
@@ -343,6 +345,7 @@ public:
 		_attributes = attribs;
 	}
 	Thing getNextThing() { return _nextThing; }
+	uint16 getClosed() { return (_attributes >> 10) & 0x3F; } // ??? dunno why, the original bitfield is 6 bits long
 }; // @ SCROLL
 
 enum PotionType {
@@ -574,11 +577,13 @@ class DungeonMan {
 
 	void setCurrentMap(uint16 mapIndex); // @ F0173_DUNGEON_SetCurrentMap
 
-	Thing getNextThing(Thing thing); // @ F0159_DUNGEON_GetNextThing(THING P0280_T_Thing)
-	uint16 *getThingData(Thing thing); // @ unsigned char* F0156_DUNGEON_GetThingData(register THING P0276_T_Thing)
 public:
 	DungeonMan(DMEngine *dmEngine);
 	~DungeonMan();
+
+	Thing getNextThing(Thing thing); // @ F0159_DUNGEON_GetNextThing(THING P0280_T_Thing)
+	uint16 *getThingData(Thing thing); // @ unsigned char* F0156_DUNGEON_GetThingData(register THING P0276_T_Thing)
+
 	// TODO: this does stuff other than load the file!
 	void loadDungeonFile();	// @ F0434_STARTEND_IsLoadDungeonSuccessful_CPSC
 	void setCurrentMapAndPartyMap(uint16 mapIndex); // @ F0174_DUNGEON_SetCurrentMapAndPartyMap
