@@ -55,6 +55,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 	_mainArchive = 0;
 	_macBinary = 0;
+	_currentPalette = 0;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
@@ -75,12 +76,12 @@ Common::Error DirectorEngine::run() {
 	_lingo->addCode("mci \"open MM\\T005045a.wav type WaveAudio alias T005045a\"\n\
 	mci \"play T005045a from 22710 to 32872\"", kMovieScript, 1);
 
-#if 0
-	_lingo->addCode("set x = 1\n\
+	_lingo->addCode("set x = 1 + 3\n\
 	set y to 2 -- this set y to 4\n\
 	put 5 into z\n\
 -- some more\n", kMovieScript, 2);
-#endif
+
+	return Common::kNoError;
 
 	//FIXME
 	_mainArchive = new RIFFArchive();
