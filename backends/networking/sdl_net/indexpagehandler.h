@@ -39,7 +39,7 @@ class IndexPageHandler: public GUI::CommandSender {
 	void replace(Common::String &source, const Common::String &what, const Common::String &with);
 	Common::Archive *getZipArchive();
 	Common::ArchiveMemberList listArchive();
-	Common::SeekableReadStream *const getArchiveFile(Common::String name);
+	Common::SeekableReadStream *getArchiveFile(Common::String name);
 	Common::String readEverythingFromStream(Common::SeekableReadStream *const stream);
 
 public:

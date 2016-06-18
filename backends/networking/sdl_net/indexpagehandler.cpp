@@ -140,7 +140,7 @@ Common::ArchiveMemberList IndexPageHandler::listArchive() {
 	return resultList;
 }
 
-Common::SeekableReadStream *const IndexPageHandler::getArchiveFile(Common::String name) {
+Common::SeekableReadStream *IndexPageHandler::getArchiveFile(Common::String name) {
 	Common::SeekableReadStream *result = nullptr;
 	Common::Archive *zipArchive = getZipArchive();
 	if (zipArchive) {
