@@ -216,17 +216,17 @@ void DungeonMan::mapCoordsAfterRelMovement(direction dir, int16 stepsForward, in
 }
 
 DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine), _rawDunFileData(NULL), _maps(NULL), _rawMapData(NULL) {
-	_dunData.columCount = 0;
-	_dunData.eventMaximumCount = 0;
+	_dunData._columCount = 0;
+	_dunData._eventMaximumCount = 0;
 
-	_dunData.mapsFirstColumnIndex = nullptr;
-	_dunData.columnsCumulativeSquareThingCount = nullptr;
-	_dunData.squareFirstThings = nullptr;
-	_dunData.textData = nullptr;
-	_dunData.mapData = nullptr;
+	_dunData._mapsFirstColumnIndex = nullptr;
+	_dunData._columnsCumulativeSquareThingCount = nullptr;
+	_dunData._squareFirstThings = nullptr;
+	_dunData._textData = nullptr;
+	_dunData._mapData = nullptr;
 
 	for (int i = 0; i < 16; i++)
-		_dunData.thingsData[i] = nullptr;
+		_dunData._thingsData[i] = nullptr;
 
 	_currMap.partyDir = kDirNorth;
 	_currMap.partyPosX = 0;
@@ -246,18 +246,18 @@ DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine), _rawDunFileData(NULL
 	_rawDunFileDataSize = 0;
 	_rawDunFileData = nullptr;
 
-	_fileHeader.dungeonId = 0;
-	_fileHeader.ornamentRandomSeed = 0;
-	_fileHeader.rawMapDataSize = 0;
-	_fileHeader.mapCount = 0;
-	_fileHeader.textDataWordCount = 0;
-	_fileHeader.partyStartDir = kDirNorth;
-	_fileHeader.partyStartPosX = 0;
-	_fileHeader.partyStartPosY = 0;
-	_fileHeader.squareFirstThingCount = 0;
+	_fileHeader._dungeonId = 0;
+	_fileHeader._ornamentRandomSeed = 0;
+	_fileHeader._rawMapDataSize = 0;
+	_fileHeader._mapCount = 0;
+	_fileHeader._textDataWordCount = 0;
+	_fileHeader._partyStartDir = kDirNorth;
+	_fileHeader._partyStartPosX = 0;
+	_fileHeader._partyStartPosY = 0;
+	_fileHeader._squareFirstThingCount = 0;
 
 	for (int i = 0; i < 16; i++)
-		_fileHeader.thingCounts[i] = 0;
+		_fileHeader._thingCounts[i] = 0;
 
 	_maps = nullptr;
 	_rawMapData = nullptr;
@@ -275,15 +275,15 @@ DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine), _rawDunFileData(NULL
 DungeonMan::~DungeonMan() {
 	delete[] _rawDunFileData;
 	delete[] _maps;
-	delete[] _dunData.mapsFirstColumnIndex;
-	delete[] _dunData.columnsCumulativeSquareThingCount;
-	delete[] _dunData.squareFirstThings;
-	delete[] _dunData.textData;
-	delete[] _dunData.mapData;
+	delete[] _dunData._mapsFirstColumnIndex;
+	delete[] _dunData._columnsCumulativeSquareThingCount;
+	delete[] _dunData._squareFirstThings;
+	delete[] _dunData._textData;
+	delete[] _dunData._mapData;
 	for (uint16 i = 0; i < 16; ++i) {
-		if (_dunData.thingsData[i])
-			delete[] _dunData.thingsData[i][0];
-		delete[] _dunData.thingsData[i];
+		if (_dunData._thingsData[i])
+			delete[] _dunData._thingsData[i][0];
+		delete[] _dunData._thingsData[i];
 	}
 }
 
@@ -384,8 +384,8 @@ unsigned char gThingDataWordCount[16] = {
 	2    /* Explosion */
 }; // @ G0235_auc_Graphic559_ThingDataByteCount
 
-const Thing Thing::thingNone(0);
-const Thing Thing::thingEndOfList(0xFFFE);
+const Thing Thing::_thingNone(0);
+const Thing Thing::_thingEndOfList(0xFFFE);
 
 
 void DungeonMan::loadDungeonFile() {
@@ -395,152 +395,152 @@ void DungeonMan::loadDungeonFile() {
 	Common::MemoryReadStream dunDataStream(_rawDunFileData, _rawDunFileDataSize, DisposeAfterUse::NO);
 
 	// initialize _fileHeader
-	_fileHeader.dungeonId = _fileHeader.ornamentRandomSeed = dunDataStream.readUint16BE();
-	_fileHeader.rawMapDataSize = dunDataStream.readUint16BE();
-	_fileHeader.mapCount = dunDataStream.readByte();
+	_fileHeader._dungeonId = _fileHeader._ornamentRandomSeed = dunDataStream.readUint16BE();
+	_fileHeader._rawMapDataSize = dunDataStream.readUint16BE();
+	_fileHeader._mapCount = dunDataStream.readByte();
 	dunDataStream.readByte(); // discard 1 byte
-	_fileHeader.textDataWordCount = dunDataStream.readUint16BE();
+	_fileHeader._textDataWordCount = dunDataStream.readUint16BE();
 	uint16 partyPosition = dunDataStream.readUint16BE();
-	_fileHeader.partyStartDir = (direction)((partyPosition >> 10) & 3);
-	_fileHeader.partyStartPosY = (partyPosition >> 5) & 0x1F;
-	_fileHeader.partyStartPosX = (partyPosition >> 0) & 0x1F;
-	_fileHeader.squareFirstThingCount = dunDataStream.readUint16BE();
+	_fileHeader._partyStartDir = (direction)((partyPosition >> 10) & 3);
+	_fileHeader._partyStartPosY = (partyPosition >> 5) & 0x1F;
+	_fileHeader._partyStartPosX = (partyPosition >> 0) & 0x1F;
+	_fileHeader._squareFirstThingCount = dunDataStream.readUint16BE();
 	for (uint16 i = 0; i < kThingTypeTotal; ++i)
-		_fileHeader.thingCounts[i] = dunDataStream.readUint16BE();
+		_fileHeader._thingCounts[i] = dunDataStream.readUint16BE();
 
 	// init party position and mapindex
 	if (_messages.newGame) {
-		_currMap.partyDir = _fileHeader.partyStartDir;
-		_currMap.partyPosX = _fileHeader.partyStartPosX;
-		_currMap.partyPosY = _fileHeader.partyStartPosY;
+		_currMap.partyDir = _fileHeader._partyStartDir;
+		_currMap.partyPosX = _fileHeader._partyStartPosX;
+		_currMap.partyPosY = _fileHeader._partyStartPosY;
 		_currMap.currPartyMapIndex = 0;
 	}
 
 	// load map data
 	delete[] _maps;
-	_maps = new Map[_fileHeader.mapCount];
-	for (uint16 i = 0; i < _fileHeader.mapCount; ++i) {
-		_maps[i].rawDunDataOffset = dunDataStream.readUint16BE();
+	_maps = new Map[_fileHeader._mapCount];
+	for (uint16 i = 0; i < _fileHeader._mapCount; ++i) {
+		_maps[i]._rawDunDataOffset = dunDataStream.readUint16BE();
 		dunDataStream.readUint32BE(); // discard 4 bytes
-		_maps[i].offsetMapX = dunDataStream.readByte();
-		_maps[i].offsetMapY = dunDataStream.readByte();
+		_maps[i]._offsetMapX = dunDataStream.readByte();
+		_maps[i]._offsetMapY = dunDataStream.readByte();
 
 		uint16 tmp = dunDataStream.readUint16BE();
-		_maps[i].height = tmp >> 11;
-		_maps[i].width = (tmp >> 6) & 0x1F;
-		_maps[i].level = tmp & 0x1F; // Only used in DMII
+		_maps[i]._height = tmp >> 11;
+		_maps[i]._width = (tmp >> 6) & 0x1F;
+		_maps[i]._level = tmp & 0x1F; // Only used in DMII
 
 		tmp = dunDataStream.readUint16BE();
-		_maps[i].randFloorOrnCount = tmp >> 12;
-		_maps[i].floorOrnCount = (tmp >> 8) & 0xF;
-		_maps[i].randWallOrnCount = (tmp >> 4) & 0xF;
-		_maps[i].wallOrnCount = tmp & 0xF;
+		_maps[i]._randFloorOrnCount = tmp >> 12;
+		_maps[i]._floorOrnCount = (tmp >> 8) & 0xF;
+		_maps[i]._randWallOrnCount = (tmp >> 4) & 0xF;
+		_maps[i]._wallOrnCount = tmp & 0xF;
 
 		tmp = dunDataStream.readUint16BE();
-		_maps[i].difficulty = tmp >> 12;
-		_maps[i].creatureTypeCount = (tmp >> 4) & 0xF;
-		_maps[i].doorOrnCount = tmp & 0xF;
+		_maps[i]._difficulty = tmp >> 12;
+		_maps[i]._creatureTypeCount = (tmp >> 4) & 0xF;
+		_maps[i]._doorOrnCount = tmp & 0xF;
 
 		tmp = dunDataStream.readUint16BE();
-		_maps[i].doorSet1 = (tmp >> 12) & 0xF;
-		_maps[i].doorSet0 = (tmp >> 8) & 0xF;
-		_maps[i].wallSet = (WallSet)((tmp >> 4) & 0xF);
-		_maps[i].floorSet = (FloorSet)(tmp & 0xF);
+		_maps[i]._doorSet1 = (tmp >> 12) & 0xF;
+		_maps[i]._doorSet0 = (tmp >> 8) & 0xF;
+		_maps[i]._wallSet = (WallSet)((tmp >> 4) & 0xF);
+		_maps[i]._floorSet = (FloorSet)(tmp & 0xF);
 	}
 
 	// TODO: ??? is this - begin
-	delete[] _dunData.mapsFirstColumnIndex;
-	_dunData.mapsFirstColumnIndex = new uint16[_fileHeader.mapCount];
+	delete[] _dunData._mapsFirstColumnIndex;
+	_dunData._mapsFirstColumnIndex = new uint16[_fileHeader._mapCount];
 	uint16 columCount = 0;
-	for (uint16 i = 0; i < _fileHeader.mapCount; ++i) {
-		_dunData.mapsFirstColumnIndex[i] = columCount;
-		columCount += _maps[i].width + 1;
+	for (uint16 i = 0; i < _fileHeader._mapCount; ++i) {
+		_dunData._mapsFirstColumnIndex[i] = columCount;
+		columCount += _maps[i]._width + 1;
 	}
-	_dunData.columCount = columCount;
+	_dunData._columCount = columCount;
 	// TODO: ??? is this - end
 
 
-	uint32 actualSquareFirstThingCount = _fileHeader.squareFirstThingCount;
+	uint32 actualSquareFirstThingCount = _fileHeader._squareFirstThingCount;
 	if (_messages.newGame) // TODO: what purpose does this serve?
-		_fileHeader.squareFirstThingCount += 300;
+		_fileHeader._squareFirstThingCount += 300;
 
 	// TODO: ??? is this - begin
-	delete[] _dunData.columnsCumulativeSquareThingCount;
-	_dunData.columnsCumulativeSquareThingCount = new uint16[columCount];
+	delete[] _dunData._columnsCumulativeSquareThingCount;
+	_dunData._columnsCumulativeSquareThingCount = new uint16[columCount];
 	for (uint16 i = 0; i < columCount; ++i)
-		_dunData.columnsCumulativeSquareThingCount[i] = dunDataStream.readUint16BE();
+		_dunData._columnsCumulativeSquareThingCount[i] = dunDataStream.readUint16BE();
 	// TODO: ??? is this - end
 
 	// TODO: ??? is this - begin
-	delete[] _dunData.squareFirstThings;
-	_dunData.squareFirstThings = new Thing[_fileHeader.squareFirstThingCount];
+	delete[] _dunData._squareFirstThings;
+	_dunData._squareFirstThings = new Thing[_fileHeader._squareFirstThingCount];
 	for (uint16 i = 0; i < actualSquareFirstThingCount; ++i)
-		_dunData.squareFirstThings[i].set(dunDataStream.readUint16BE());
+		_dunData._squareFirstThings[i].set(dunDataStream.readUint16BE());
 	if (_messages.newGame)
 		for (uint16 i = 0; i < 300; ++i)
-			_dunData.squareFirstThings[actualSquareFirstThingCount + i] = Thing::thingNone;
+			_dunData._squareFirstThings[actualSquareFirstThingCount + i] = Thing::_thingNone;
 
 	// TODO: ??? is this - end
 
 	// load text data
-	delete[] _dunData.textData;
-	_dunData.textData = new uint16[_fileHeader.textDataWordCount];
-	for (uint16 i = 0; i < _fileHeader.textDataWordCount; ++i)
-		_dunData.textData[i] = dunDataStream.readUint16BE();
+	delete[] _dunData._textData;
+	_dunData._textData = new uint16[_fileHeader._textDataWordCount];
+	for (uint16 i = 0; i < _fileHeader._textDataWordCount; ++i)
+		_dunData._textData[i] = dunDataStream.readUint16BE();
 
 	// TODO: ??? what this
 	if (_messages.newGame)
-		_dunData.eventMaximumCount = 100;
+		_dunData._eventMaximumCount = 100;
 
 
 	// load things
 	for (uint16 thingType = kDoorThingType; thingType < kThingTypeTotal; ++thingType) {
-		uint16 thingCount = _fileHeader.thingCounts[thingType];
+		uint16 thingCount = _fileHeader._thingCounts[thingType];
 		if (_messages.newGame) {
-			_fileHeader.thingCounts[thingType] = MIN((thingType == kExplosionThingType) ? 768 : 1024, thingCount + gAdditionalThingCounts[thingType]);
+			_fileHeader._thingCounts[thingType] = MIN((thingType == kExplosionThingType) ? 768 : 1024, thingCount + gAdditionalThingCounts[thingType]);
 		}
 		uint16 thingStoreWordCount = gThingDataWordCount[thingType];
 
 		if (thingStoreWordCount == 0)
 			continue;
 
-		if (_dunData.thingsData[thingType]) {
-			delete[] _dunData.thingsData[thingType][0];
-			delete[] _dunData.thingsData[thingType];
+		if (_dunData._thingsData[thingType]) {
+			delete[] _dunData._thingsData[thingType][0];
+			delete[] _dunData._thingsData[thingType];
 		}
-		_dunData.thingsData[thingType] = new uint16*[_fileHeader.thingCounts[thingType]];
-		_dunData.thingsData[thingType][0] = new uint16[_fileHeader.thingCounts[thingType] * thingStoreWordCount];
-		for (uint16 i = 0; i < _fileHeader.thingCounts[thingType]; ++i)
-			_dunData.thingsData[thingType][i] = _dunData.thingsData[thingType][0] + i * thingStoreWordCount;
+		_dunData._thingsData[thingType] = new uint16*[_fileHeader._thingCounts[thingType]];
+		_dunData._thingsData[thingType][0] = new uint16[_fileHeader._thingCounts[thingType] * thingStoreWordCount];
+		for (uint16 i = 0; i < _fileHeader._thingCounts[thingType]; ++i)
+			_dunData._thingsData[thingType][i] = _dunData._thingsData[thingType][0] + i * thingStoreWordCount;
 
 		if (thingType == kGroupThingType) {
 			for (uint16 i = 0; i < thingCount; ++i)
 				for (uint16 j = 0; j < thingStoreWordCount; ++j) {
 					if (j == 2 || j == 3)
-						_dunData.thingsData[thingType][i][j] = dunDataStream.readByte();
+						_dunData._thingsData[thingType][i][j] = dunDataStream.readByte();
 					else
-						_dunData.thingsData[thingType][i][j] = dunDataStream.readUint16BE();
+						_dunData._thingsData[thingType][i][j] = dunDataStream.readUint16BE();
 				}
 		} else if (thingType == kProjectileThingType) {
 			for (uint16 i = 0; i < thingCount; ++i) {
-				_dunData.thingsData[thingType][i][0] = dunDataStream.readUint16BE();
-				_dunData.thingsData[thingType][i][1] = dunDataStream.readUint16BE();
-				_dunData.thingsData[thingType][i][2] = dunDataStream.readByte();
-				_dunData.thingsData[thingType][i][3] = dunDataStream.readByte();
-				_dunData.thingsData[thingType][i][4] = dunDataStream.readUint16BE();
+				_dunData._thingsData[thingType][i][0] = dunDataStream.readUint16BE();
+				_dunData._thingsData[thingType][i][1] = dunDataStream.readUint16BE();
+				_dunData._thingsData[thingType][i][2] = dunDataStream.readByte();
+				_dunData._thingsData[thingType][i][3] = dunDataStream.readByte();
+				_dunData._thingsData[thingType][i][4] = dunDataStream.readUint16BE();
 			}
 		} else {
 			for (uint16 i = 0; i < thingCount; ++i) {
 				for (uint16 j = 0; j < thingStoreWordCount; ++j)
-					_dunData.thingsData[thingType][i][j] = dunDataStream.readUint16BE();
+					_dunData._thingsData[thingType][i][j] = dunDataStream.readUint16BE();
 			}
 		}
 
 		if (_messages.newGame) {
 			if ((thingType == kGroupThingType) || thingType >= kProjectileThingType)
-				_dunData.eventMaximumCount += _fileHeader.thingCounts[thingType];
+				_dunData._eventMaximumCount += _fileHeader._thingCounts[thingType];
 			for (uint16 i = 0; i < gAdditionalThingCounts[thingType]; ++i) {
-				_dunData.thingsData[thingType][thingCount + i][0] = Thing::thingNone.toUint16();
+				_dunData._thingsData[thingType][thingCount + i][0] = Thing::_thingNone.toUint16();
 			}
 		}
 
@@ -553,16 +553,16 @@ void DungeonMan::loadDungeonFile() {
 
 
 	if (!_messages.restartGameRequest) {
-		uint8 mapCount = _fileHeader.mapCount;
-		delete[] _dunData.mapData;
-		_dunData.mapData = new byte**[_dunData.columCount + mapCount];
-		byte **colFirstSquares = (byte**)_dunData.mapData + mapCount;
+		uint8 mapCount = _fileHeader._mapCount;
+		delete[] _dunData._mapData;
+		_dunData._mapData = new byte**[_dunData._columCount + mapCount];
+		byte **colFirstSquares = (byte**)_dunData._mapData + mapCount;
 		for (uint8 i = 0; i < mapCount; ++i) {
-			_dunData.mapData[i] = colFirstSquares;
-			byte *square = _rawMapData + _maps[i].rawDunDataOffset;
+			_dunData._mapData[i] = colFirstSquares;
+			byte *square = _rawMapData + _maps[i]._rawDunDataOffset;
 			*colFirstSquares++ = square;
-			for (uint16 w = 1; w <= _maps[i].width; ++w) {
-				square += _maps[i].height + 1;
+			for (uint16 w = 1; w <= _maps[i]._width; ++w) {
+				square += _maps[i]._height + 1;
 				*colFirstSquares++ = square;
 			}
 		}
@@ -571,12 +571,12 @@ void DungeonMan::loadDungeonFile() {
 
 void DungeonMan::setCurrentMap(uint16 mapIndex) {
 	_currMap.index = mapIndex;
-	_currMap.data = _dunData.mapData[mapIndex];
+	_currMap.data = _dunData._mapData[mapIndex];
 	_currMap.map = _maps + mapIndex;
-	_currMap.width = _maps[mapIndex].width + 1;
-	_currMap.height = _maps[mapIndex].height + 1;
+	_currMap.width = _maps[mapIndex]._width + 1;
+	_currMap.height = _maps[mapIndex]._height + 1;
 	_currMap.colCumulativeSquareFirstThingCount
-		= &_dunData.columnsCumulativeSquareThingCount[_dunData.mapsFirstColumnIndex[mapIndex]];
+		= &_dunData._columnsCumulativeSquareThingCount[_dunData._mapsFirstColumnIndex[mapIndex]];
 }
 
 void DungeonMan::setCurrentMapAndPartyMap(uint16 mapIndex) {
@@ -585,16 +585,16 @@ void DungeonMan::setCurrentMapAndPartyMap(uint16 mapIndex) {
 	byte *metaMapData = _currMap.data[_currMap.width - 1] + _currMap.height;
 	_vm->_displayMan->_currMapAllowedCreatureTypes = metaMapData;
 
-	metaMapData += _currMap.map->creatureTypeCount;
-	memcpy(_vm->_displayMan->_currMapWallOrnIndices, metaMapData, _currMap.map->wallOrnCount);
+	metaMapData += _currMap.map->_creatureTypeCount;
+	memcpy(_vm->_displayMan->_currMapWallOrnIndices, metaMapData, _currMap.map->_wallOrnCount);
 
-	metaMapData += _currMap.map->wallOrnCount;
-	memcpy(_vm->_displayMan->_currMapFloorOrnIndices, metaMapData, _currMap.map->floorOrnCount);
+	metaMapData += _currMap.map->_wallOrnCount;
+	memcpy(_vm->_displayMan->_currMapFloorOrnIndices, metaMapData, _currMap.map->_floorOrnCount);
 
-	metaMapData += _currMap.map->wallOrnCount;
-	memcpy(_vm->_displayMan->_currMapDoorOrnIndices, metaMapData, _currMap.map->doorOrnCount);
+	metaMapData += _currMap.map->_wallOrnCount;
+	memcpy(_vm->_displayMan->_currMapDoorOrnIndices, metaMapData, _currMap.map->_doorOrnCount);
 
-	_currMapInscriptionWallOrnIndex = _currMap.map->wallOrnCount;
+	_currMapInscriptionWallOrnIndex = _currMap.map->_wallOrnCount;
 	_vm->_displayMan->_currMapWallOrnIndices[_currMapInscriptionWallOrnIndex] = kWallOrnInscription;
 }
 
@@ -651,8 +651,8 @@ int16 DungeonMan::getSquareFirstThingIndex(int16 mapX, int16 mapY) {
 Thing DungeonMan::getSquareFirstThing(int16 mapX, int16 mapY) {
 	int16 index = getSquareFirstThingIndex(mapX, mapY);
 	if (index == -1)
-		return Thing::thingEndOfList;
-	return _dunData.squareFirstThings[index];
+		return Thing::_thingEndOfList;
+	return _dunData._squareFirstThings[index];
 }
 
 
@@ -701,7 +701,7 @@ void DungeonMan::setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX,
 T0172010_ClosedFakeWall:
 		setSquareAspectOrnOrdinals(aspectArray, leftOrnAllowed, frontOrnAllowed, rightOrnAllowed, dir, mapX, mapY, squareIsFakeWall);
 
-		while ((thing != Thing::thingEndOfList) && (thing.getType() <= kSensorThingType)) {
+		while ((thing != Thing::_thingEndOfList) && (thing.getType() <= kSensorThingType)) {
 			int16 sideIndex = (thing.getCell() - dir) & 3;
 			if (sideIndex) {
 				if (thing.getType() == kTextstringType) {
@@ -720,7 +720,7 @@ T0172010_ClosedFakeWall:
 			thing = getNextThing(thing);
 		}
 		if (squareIsFakeWall && (_currMap.partyPosX != mapX) && (_currMap.partyPosY != mapY)) {
-			aspectArray[kFirstGroupOrObjectAspect] = Thing::thingEndOfList.toUint16();
+			aspectArray[kFirstGroupOrObjectAspect] = Thing::_thingEndOfList.toUint16();
 			return;
 		}
 		break;
@@ -745,11 +745,11 @@ T0172010_ClosedFakeWall:
 		square = footPrintsAllowed ? 8 : 0;
 		// intentional fallthrough
 	case kCorridorElemType:
-		aspectArray[kFloorOrnOrdAspect] = getRandomOrnOrdinal(square.get(kCorridorRandOrnAllowed), _currMap.map->randFloorOrnCount, mapX, mapY, 30);
+		aspectArray[kFloorOrnOrdAspect] = getRandomOrnOrdinal(square.get(kCorridorRandOrnAllowed), _currMap.map->_randFloorOrnCount, mapX, mapY, 30);
 T0172029_Teleporter:
 		footPrintsAllowed = true;
 T0172030_Pit:
-		while ((thing != Thing::thingEndOfList) && (thing.getType() <= kSensorThingType)) {
+		while ((thing != Thing::_thingEndOfList) && (thing.getType() <= kSensorThingType)) {
 			if (thing.getType() == kSensorThingType)
 				aspectArray[kFloorOrnOrdAspect] = Sensor(getThingData(thing)).getOrnOrdinal();
 			thing = getNextThing(thing);
@@ -773,7 +773,7 @@ T0172030_Pit:
 		}
 		footPrintsAllowed = true;
 T0172046_Stairs:
-		while ((thing != Thing::thingEndOfList) && (thing.getType() <= kSensorThingType))
+		while ((thing != Thing::_thingEndOfList) && (thing.getType() <= kSensorThingType))
 			thing = getNextThing(thing);
 T0172049_Footprints:
 		unsigned char scentOrdinal; // see next line comment
@@ -785,7 +785,7 @@ T0172049_Footprints:
 
 void DungeonMan::setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowed, bool frontAllowed, bool rightAllowed, direction dir,
 											int16 mapX, int16 mapY, bool isFakeWall) {
-	int16 ornCount = _currMap.map->randWallOrnCount;
+	int16 ornCount = _currMap.map->_randWallOrnCount;
 
 	turnDirRight(dir);
 	aspectArray[kRightWallOrnOrdAspect] = getRandomOrnOrdinal(leftAllowed, ornCount, mapX, ++mapY * (dir + 1), 30);
@@ -805,7 +805,7 @@ void DungeonMan::setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowe
 int16 DungeonMan::getRandomOrnOrdinal(bool allowed, int16 count, int16 mapX, int16 mapY, int16 modulo) {
 	int16 index = (((((2000 + (mapX << 5) + mapY) * 31417) >> 1)
 					+ (3000 + (_currMap.index << 6) + _currMap.width + _currMap.height) * 11
-					+ _fileHeader.ornamentRandomSeed) >> 2) % modulo;
+					+ _fileHeader._ornamentRandomSeed) >> 2) % modulo;
 	if (allowed && index < count)
 		return indexToOrdinal(index);
 	return 0;
@@ -821,7 +821,7 @@ bool DungeonMan::isWallOrnAnAlcove(int16 wallOrnIndex) {
 }
 
 uint16 *DungeonMan::getThingData(Thing thing) {
-	return _dunData.thingsData[thing.getType()][thing.getIndex()];
+	return _dunData._thingsData[thing.getType()][thing.getIndex()];
 }
 
 Thing DungeonMan::getNextThing(Thing thing) {
@@ -931,7 +931,7 @@ char gInscriptionEscReplacementStrings[32][8] = { // @ G0257_aac_Graphic559_Insc
 
 void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 	char sepChar;
-	TextString textString(_dunData.thingsData[kTextstringType][thing.getIndex()]);
+	TextString textString(_dunData._thingsData[kTextstringType][thing.getIndex()]);
 	if ((textString.isVisible()) || (type & kDecodeEvenIfInvisible)) {
 		type = (TextType)(type & ~kDecodeEvenIfInvisible);
 		if (type == kTextTypeMessage) {
@@ -944,7 +944,7 @@ void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 		}
 		uint16 codeCounter = 0;
 		int16 escChar = 0;
-		uint16 *codeWord = _dunData.textData + textString.getWordOffset();
+		uint16 *codeWord = _dunData._textData + textString.getWordOffset();
 		uint16 code = 0, codes = 0;
 		char *escReplString = nullptr;
 		for (;;) { /*infinite loop*/
@@ -998,7 +998,7 @@ void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 
 
 uint16 DungeonMan::getObjectWeight(Thing thing) {
-	if (thing == Thing::thingNone)
+	if (thing == Thing::_thingNone)
 		return 0;
 	switch (thing.getType()) {
 	case kWeaponThingType:
@@ -1016,7 +1016,7 @@ uint16 DungeonMan::getObjectWeight(Thing thing) {
 		uint16 weight = 50;
 		Container container = getThingData(thing);
 		Thing slotThing = container.getNextContainedThing();
-		while (slotThing != Thing::thingEndOfList) {
+		while (slotThing != Thing::_thingEndOfList) {
 			weight += getObjectWeight(slotThing);
 			slotThing = getNextThing(slotThing);
 		}

@@ -16,7 +16,7 @@ LoadgameResponse LoadsaveMan::loadgame() {
 	if (newGame) {
 		_vm->_restartGameAllowed = false;
 		cm._partyChampionCount = 0;
-		cm._leaderHand = Thing::thingNone;
+		cm._leaderHand = Thing::_thingNone;
 		_vm->_gameId = _vm->_rnd->getRandomNumber(65536) * _vm->_rnd->getRandomNumber(65536);
 	} else {
 		assert(false);

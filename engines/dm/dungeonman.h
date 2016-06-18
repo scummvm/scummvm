@@ -98,40 +98,40 @@ enum SquareAspectIndice {
 
 
 struct CreatureInfo {
-	byte creatureAspectIndex;
-	byte attackSoundOrdinal;
-	uint16 attributes; /* Bits 15-14 Unreferenced */
-	uint16 graphicInfo; /* Bits 11 and 6 Unreferenced */
-	byte movementTicks; /* Value 255 means the creature cannot move */
-	byte attackTicks; /* Minimum ticks between attacks */
-	byte defense;
-	byte baseHealth;
-	byte attack;
-	byte poisonAttack;
-	byte dexterity;
-	uint16 Ranges; /* Bits 7-4 Unreferenced */
-	uint16 Properties;
-	uint16 Resistances; /* Bits 15-12 and 3-0 Unreferenced */
-	uint16 AnimationTicks; /* Bits 15-12 Unreferenced */
-	uint16 WoundProbabilities; /* Contains 4 probabilities to wound a champion's Head (Bits 15-12), Legs (Bits 11-8), Torso (Bits 7-4) and Feet (Bits 3-0) */
-	byte AttackType;
+	byte _creatureAspectIndex;
+	byte _attackSoundOrdinal;
+	uint16 _attributes; /* Bits 15-14 Unreferenced */
+	uint16 _graphicInfo; /* Bits 11 and 6 Unreferenced */
+	byte _movementTicks; /* Value 255 means the creature cannot move */
+	byte _attackTicks; /* Minimum ticks between attacks */
+	byte _defense;
+	byte _baseHealth;
+	byte _attack;
+	byte _poisonAttack;
+	byte _dexterity;
+	uint16 _ranges; /* Bits 7-4 Unreferenced */
+	uint16 _properties;
+	uint16 _resistances; /* Bits 15-12 and 3-0 Unreferenced */
+	uint16 _animationTicks; /* Bits 15-12 Unreferenced */
+	uint16 _woundProbabilities; /* Contains 4 probabilities to wound a champion's Head (Bits 15-12), Legs (Bits 11-8), Torso (Bits 7-4) and Feet (Bits 3-0) */
+	byte _attackType;
 }; // @ CREATURE_INFO
 
 
 extern CreatureInfo gCreatureInfo[kCreatureTypeCount];
 
 class Door {
-	Thing nextThing;
-	uint16 attributes;
+	Thing _nextThing;
+	uint16 _attributes;
 public:
-	Door(uint16 *rawDat) : nextThing(rawDat[0]), attributes(rawDat[1]) {}
-	Thing getNextThing() { return nextThing; }
-	bool isMeleeDestructible() { return (attributes >> 8) & 1; }
-	bool isMagicDestructible() { return (attributes >> 7) & 1; }
-	bool hasButton() { return (attributes >> 6) & 1; }
-	bool opensVertically() { return (attributes >> 5) & 1; }
-	byte getOrnOrdinal() { return (attributes >> 1) & 0xF; }
-	byte getType() { return attributes & 1; }
+	Door(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
+	Thing getNextThing() { return _nextThing; }
+	bool isMeleeDestructible() { return (_attributes >> 8) & 1; }
+	bool isMagicDestructible() { return (_attributes >> 7) & 1; }
+	bool hasButton() { return (_attributes >> 6) & 1; }
+	bool opensVertically() { return (_attributes >> 5) & 1; }
+	byte getOrnOrdinal() { return (_attributes >> 1) & 0xF; }
+	byte getType() { return _attributes & 1; }
 }; // @ DOOR
 
 enum TeleporterScope {
@@ -159,14 +159,14 @@ public:
 
 
 class TextString {
-	Thing nextThing;
-	uint16 textDataRef;
+	Thing _nextThing;
+	uint16 _textDataRef;
 public:
-	TextString(uint16 *rawDat) : nextThing(rawDat[0]), textDataRef(rawDat[1]) {}
+	TextString(uint16 *rawDat) : _nextThing(rawDat[0]), _textDataRef(rawDat[1]) {}
 
-	Thing getNextThing() { return nextThing; }
-	uint16 getWordOffset() { return textDataRef >> 3; }
-	bool isVisible() { return textDataRef & 1; }
+	Thing getNextThing() { return _nextThing; }
+	uint16 getWordOffset() { return _textDataRef >> 3; }
+	bool isVisible() { return _textDataRef & 1; }
 }; // @ TEXTSTRING
 
 enum SensorActionType {
@@ -211,50 +211,50 @@ enum SensorType {
 };
 
 class Sensor {
-	Thing nextThing;
-	uint16 datAndType;
-	uint16 attributes;
-	uint16 action;
+	Thing _nextThing;
+	uint16 _datAndType;
+	uint16 _attributes;
+	uint16 _action;
 public:
-	Sensor(uint16 *rawDat) : nextThing(rawDat[0]), datAndType(rawDat[1]), attributes(rawDat[2]), action(rawDat[3]) {}
+	Sensor(uint16 *rawDat) : _nextThing(rawDat[0]), _datAndType(rawDat[1]), _attributes(rawDat[2]), _action(rawDat[3]) {}
 
-	Thing getNextThing() { return nextThing; }
-	SensorType getType() { return (SensorType)(datAndType & 0x7F); } // @ M39_TYPE
-	uint16 getData() { return datAndType >> 7; } // @ M40_DATA
-	uint16 getDataMask1() { return (datAndType >> 7) & 0xF; } // @ M42_MASK1
-	uint16 getDataMask2() { return (datAndType >> 11) & 0xF; } // @ M43_MASK2
-	void setData(int16 dat) { datAndType = (datAndType & 0x7F) | (dat << 7); } // @ M41_SET_DATA
-	void setTypeDisabled() { datAndType &= 0xFF80; } // @ M44_SET_TYPE_DISABLED
-	uint16 getOrnOrdinal() { return attributes >> 12; }
-	bool isLocalAction() { return (attributes >> 11) & 1; }
-	uint16 getDelay() { return (attributes >> 7) & 0xF; }
-	bool hasSound() { return (attributes >> 6) & 1; }
-	bool shouldRevert() { return (attributes >> 5) & 1; }
-	SensorActionType getActionType() { return (SensorActionType)((attributes >> 3) & 3); }
-	bool isSingleUse() { return (attributes >> 2) & 1; }
-	uint16 getRemoteMapY() { return (action >> 11); }
-	uint16 getRemoteMapX() { return (action >> 6) & 0x1F; }
-	direction getRemoteDir() { return (direction)((action >> 4) & 3); }
-	uint16 getLocalAction() { return (action >> 4); }
+	Thing getNextThing() { return _nextThing; }
+	SensorType getType() { return (SensorType)(_datAndType & 0x7F); } // @ M39_TYPE
+	uint16 getData() { return _datAndType >> 7; } // @ M40_DATA
+	uint16 getDataMask1() { return (_datAndType >> 7) & 0xF; } // @ M42_MASK1
+	uint16 getDataMask2() { return (_datAndType >> 11) & 0xF; } // @ M43_MASK2
+	void setData(int16 dat) { _datAndType = (_datAndType & 0x7F) | (dat << 7); } // @ M41_SET_DATA
+	void setTypeDisabled() { _datAndType &= 0xFF80; } // @ M44_SET_TYPE_DISABLED
+	uint16 getOrnOrdinal() { return _attributes >> 12; }
+	bool isLocalAction() { return (_attributes >> 11) & 1; }
+	uint16 getDelay() { return (_attributes >> 7) & 0xF; }
+	bool hasSound() { return (_attributes >> 6) & 1; }
+	bool shouldRevert() { return (_attributes >> 5) & 1; }
+	SensorActionType getActionType() { return (SensorActionType)((_attributes >> 3) & 3); }
+	bool isSingleUse() { return (_attributes >> 2) & 1; }
+	uint16 getRemoteMapY() { return (_action >> 11); }
+	uint16 getRemoteMapX() { return (_action >> 6) & 0x1F; }
+	direction getRemoteDir() { return (direction)((_action >> 4) & 3); }
+	uint16 getLocalAction() { return (_action >> 4); }
 	// some macros missing, i got bored
 }; // @ SENSOR
 
 class Group {
-	Thing nextThing;
-	Thing possessionID;
-	byte type;
-	byte position;
-	uint16 health[4];
-	uint16 attributes;
+	Thing _nextThing;
+	Thing _possessionID;
+	byte _type;
+	byte _position;
+	uint16 _health[4];
+	uint16 _attributes;
 public:
-	Group(uint16 *rawDat) : nextThing(rawDat[0]), possessionID(rawDat[1]), type(rawDat[2]),
-		position(rawDat[3]), attributes(rawDat[8]) {
-		health[0] = rawDat[4];
-		health[1] = rawDat[5];
-		health[2] = rawDat[6];
-		health[3] = rawDat[7];
+	Group(uint16 *rawDat) : _nextThing(rawDat[0]), _possessionID(rawDat[1]), _type(rawDat[2]),
+		_position(rawDat[3]), _attributes(rawDat[8]) {
+		_health[0] = rawDat[4];
+		_health[1] = rawDat[5];
+		_health[2] = rawDat[6];
+		_health[3] = rawDat[7];
 	}
-	Thing getNextThing() { return nextThing; }
+	Thing getNextThing() { return _nextThing; }
 }; // @ GROUP
 
 enum WeaponType {
@@ -271,13 +271,13 @@ enum WeaponType {
 	kWeaponTypeThrowingStar = 32 // @ C32_WEAPON_THROWING_STAR
 };
 class Weapon {
-	Thing nextThing;
-	uint16 desc;
+	Thing _nextThing;
+	uint16 _desc;
 public:
-	Weapon(uint16 *rawDat) : nextThing(rawDat[0]), desc(rawDat[1]) {}
+	Weapon(uint16 *rawDat) : _nextThing(rawDat[0]), _desc(rawDat[1]) {}
 
-	WeaponType getType() { return (WeaponType)(desc & 0x7F); }
-	Thing getNextThing() { return nextThing; }
+	WeaponType getType() { return (WeaponType)(_desc & 0x7F); }
+	Thing getNextThing() { return _nextThing; }
 }; // @ WEAPON
 
 enum ArmourType {
@@ -288,25 +288,25 @@ enum ArmourType {
 	kArmourTypeFootPlate = 41 // @ C41_ARMOUR_FOOT_PLATE
 };
 class Armour {
-	Thing nextThing;
-	uint16 attributes;
+	Thing _nextThing;
+	uint16 _attributes;
 public:
-	Armour(uint16 *rawDat) : nextThing(rawDat[0]), attributes(rawDat[1]) {}
+	Armour(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
 
-	ArmourType getType() { return (ArmourType)(attributes & 0x7F); }
-	Thing getNextThing() { return nextThing; }
+	ArmourType getType() { return (ArmourType)(_attributes & 0x7F); }
+	Thing getNextThing() { return _nextThing; }
 }; // @ ARMOUR
 
 class Scroll {
-	Thing nextThing;
-	uint16 attributes;
+	Thing _nextThing;
+	uint16 _attributes;
 public:
-	Scroll(uint16 *rawDat) : nextThing(rawDat[0]), attributes(rawDat[1]) {}
+	Scroll(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
 	void set(Thing next, uint16 attribs) {
-		nextThing = next;
-		attributes = attribs;
+		_nextThing = next;
+		_attributes = attribs;
 	}
-	Thing getNextThing() { return nextThing; }
+	Thing getNextThing() { return _nextThing; }
 }; // @ SCROLL
 
 enum PotionType {
@@ -325,24 +325,24 @@ enum PotionType {
 	kPotionTypeEmptyFlask = 20 // @ C20_POTION_EMPTY_FLASK,
 };
 class Potion {
-	Thing nextThing;
-	uint16 attributes;
+	Thing _nextThing;
+	uint16 _attributes;
 public:
-	Potion(uint16 *rawDat) : nextThing(rawDat[0]), attributes(rawDat[1]) {}
+	Potion(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
 
-	PotionType getType() { return (PotionType)((attributes >> 8) & 0x7F); }
-	Thing getNextThing() { return nextThing; }
+	PotionType getType() { return (PotionType)((_attributes >> 8) & 0x7F); }
+	Thing getNextThing() { return _nextThing; }
 }; // @ POTION
 
 class Container {
-	Thing nextThing;
-	Thing nextContainedThing;
-	uint16 type;
+	Thing _nextThing;
+	Thing _nextContainedThing;
+	uint16 _type;
 public:
-	Container(uint16 *rawDat) : nextThing(rawDat[0]), nextContainedThing(rawDat[1]), type(rawDat[2]) {}
+	Container(uint16 *rawDat) : _nextThing(rawDat[0]), _nextContainedThing(rawDat[1]), _type(rawDat[2]) {}
 
-	Thing getNextContainedThing() { return nextContainedThing; }
-	Thing getNextThing() { return nextThing; }
+	Thing getNextContainedThing() { return _nextContainedThing; }
+	Thing getNextThing() { return _nextThing; }
 }; // @ CONTAINER
 
 enum JunkType {
@@ -359,37 +359,37 @@ enum JunkType {
 };
 
 class Junk {
-	Thing nextThing;
-	uint16 attributes;
+	Thing _nextThing;
+	uint16 _attributes;
 public:
-	Junk(uint16 *rawDat) : nextThing(rawDat[0]), attributes(rawDat[1]) {}
+	Junk(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
 
-	JunkType getType() { return (JunkType)(attributes & 0x7F); }
-	uint16 getChargeCount() { return (attributes >> 14) & 0x3; }
+	JunkType getType() { return (JunkType)(_attributes & 0x7F); }
+	uint16 getChargeCount() { return (_attributes >> 14) & 0x3; }
 
-	Thing getNextThing() { return nextThing; }
+	Thing getNextThing() { return _nextThing; }
 }; // @ JUNK
 
 class Projectile {
-	Thing nextThing;
-	Thing object;
-	byte kineticEnergy;
-	byte damageEnergy;
-	uint16 timerIndex;
+	Thing _nextThing;
+	Thing _object;
+	byte _kineticEnergy;
+	byte _damageEnergy;
+	uint16 _timerIndex;
 public:
-	Projectile(uint16 *rawDat) : nextThing(rawDat[0]), object(rawDat[1]), kineticEnergy(rawDat[2]),
-		damageEnergy(rawDat[3]), timerIndex(rawDat[4]) {}
+	Projectile(uint16 *rawDat) : _nextThing(rawDat[0]), _object(rawDat[1]), _kineticEnergy(rawDat[2]),
+		_damageEnergy(rawDat[3]), _timerIndex(rawDat[4]) {}
 
-	Thing getNextThing() { return nextThing; }
+	Thing getNextThing() { return _nextThing; }
 }; // @ PROJECTILE
 
 class Explosion {
-	Thing nextThing;
-	uint16 attributes;
+	Thing _nextThing;
+	uint16 _attributes;
 public:
-	Explosion(uint16 *rawDat) : nextThing(rawDat[0]), attributes(rawDat[1]) {}
+	Explosion(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
 
-	Thing getNextThing() { return nextThing; }
+	Thing getNextThing() { return _nextThing; }
 }; // @ EXPLOSION
 
 
@@ -431,70 +431,70 @@ enum SquareType {
 }; // @ C[-2..19]_ELEMENT_...
 
 class Square {
-	byte data;
+	byte _data;
 public:
-	Square(byte dat = 0) : data(dat) {}
+	Square(byte dat = 0) : _data(dat) {}
 	Square(SquareType type) { setType(type); }
-	Square &set(byte dat) { this->data = dat; return *this; }
-	Square &set(SquareMask mask) { data |= mask; return *this; }
-	byte get(SquareMask mask) { return data & mask; }
-	byte getDoorState() { return data & 0x7; } // @ M36_DOOR_STATE
-	Square &setDoorState(byte state) { data = ((data & ~0x7) | state); } // @ M37_SET_DOOR_STATE
-	SquareType getType() { return (SquareType)(data >> 5); } // @ M34_SQUARE_TYPE
-	Square &setType(SquareType type) { data = (data & 0x1F) | type << 5; return *this; }
-	byte toByte() { return data; } // I don't like 'em casts
+	Square &set(byte dat) { this->_data = dat; return *this; }
+	Square &set(SquareMask mask) { _data |= mask; return *this; }
+	byte get(SquareMask mask) { return _data & mask; }
+	byte getDoorState() { return _data & 0x7; } // @ M36_DOOR_STATE
+	Square &setDoorState(byte state) { _data = ((_data & ~0x7) | state); } // @ M37_SET_DOOR_STATE
+	SquareType getType() { return (SquareType)(_data >> 5); } // @ M34_SQUARE_TYPE
+	Square &setType(SquareType type) { _data = (_data & 0x1F) | type << 5; return *this; }
+	byte toByte() { return _data; } // I don't like 'em casts
 };
 
 struct DungeonFileHeader {
-	uint16 dungeonId; // @ G0526_ui_DungeonID
+	uint16 _dungeonId; // @ G0526_ui_DungeonID
 	// equal to dungeonId
-	uint16 ornamentRandomSeed;
-	uint32 rawMapDataSize;
-	uint8 mapCount;
-	uint16 textDataWordCount;
-	direction partyStartDir; // @ InitialPartyLocation
-	uint16 partyStartPosX, partyStartPosY;
-	uint16 squareFirstThingCount; // @ SquareFirstThingCount
-	uint16 thingCounts[16]; // @ ThingCount[16]
+	uint16 _ornamentRandomSeed;
+	uint32 _rawMapDataSize;
+	uint8 _mapCount;
+	uint16 _textDataWordCount;
+	direction _partyStartDir; // @ InitialPartyLocation
+	uint16 _partyStartPosX, _partyStartPosY;
+	uint16 _squareFirstThingCount; // @ SquareFirstThingCount
+	uint16 _thingCounts[16]; // @ ThingCount[16]
 }; // @ DUNGEON_HEADER
 
 struct Map {
-	uint32 rawDunDataOffset;
-	uint8 offsetMapX, offsetMapY;
+	uint32 _rawDunDataOffset;
+	uint8 _offsetMapX, _offsetMapY;
 
-	uint8 level; // only used in DMII
-	uint8 width, height; // !!! THESRE ARE INCLUSIVE BOUNDARIES
+	uint8 _level; // only used in DMII
+	uint8 _width, _height; // !!! THESRE ARE INCLUSIVE BOUNDARIES
 	// orn short for Ornament
-	uint8 wallOrnCount; /* May be used in a Sensor on a Wall or closed Fake Wall square */
-	uint8 randWallOrnCount; /* Used only on some Wall squares and some closed Fake Wall squares */
-	uint8 floorOrnCount; /* May be used in a Sensor on a Pit, open Fake Wall, Corridor or Teleporter square */
-	uint8 randFloorOrnCount; /* Used only on some Corridor squares and some open Fake Wall squares */
+	uint8 _wallOrnCount; /* May be used in a Sensor on a Wall or closed Fake Wall square */
+	uint8 _randWallOrnCount; /* Used only on some Wall squares and some closed Fake Wall squares */
+	uint8 _floorOrnCount; /* May be used in a Sensor on a Pit, open Fake Wall, Corridor or Teleporter square */
+	uint8 _randFloorOrnCount; /* Used only on some Corridor squares and some open Fake Wall squares */
 
-	uint8 doorOrnCount;
-	uint8 creatureTypeCount;
-	uint8 difficulty;
+	uint8 _doorOrnCount;
+	uint8 _creatureTypeCount;
+	uint8 _difficulty;
 
-	FloorSet floorSet;
-	WallSet wallSet;
-	uint8 doorSet0, doorSet1;
+	FloorSet _floorSet;
+	WallSet _wallSet;
+	uint8 _doorSet0, _doorSet1;
 }; // @ MAP
 
 struct DungeonData {
 	// I have no idea the heck is this
-	uint16 *mapsFirstColumnIndex; // @ G0281_pui_DungeonMapsFirstColumnIndex
-	uint16 columCount; // @ G0282_ui_DungeonColumnCount
+	uint16 *_mapsFirstColumnIndex; // @ G0281_pui_DungeonMapsFirstColumnIndex
+	uint16 _columCount; // @ G0282_ui_DungeonColumnCount
 
 	// I have no idea the heck is this
-	uint16 *columnsCumulativeSquareThingCount; // @ G0280_pui_DungeonColumnsCumulativeSquareThingCount
-	Thing *squareFirstThings; // @ G0283_pT_SquareFirstThings
-	uint16 *textData; // @ G0260_pui_DungeonTextData
+	uint16 *_columnsCumulativeSquareThingCount; // @ G0280_pui_DungeonColumnsCumulativeSquareThingCount
+	Thing *_squareFirstThings; // @ G0283_pT_SquareFirstThings
+	uint16 *_textData; // @ G0260_pui_DungeonTextData
 
-	uint16 **thingsData[16]; // @ G0284_apuc_ThingData
+	uint16 **_thingsData[16]; // @ G0284_apuc_ThingData
 
-	byte ***mapData; // @ G0279_pppuc_DungeonMapData
+	byte ***_mapData; // @ G0279_pppuc_DungeonMapData
 
 	// TODO: ??? is this doing here
-	uint16 eventMaximumCount; // @ G0369_ui_EventMaximumCount
+	uint16 _eventMaximumCount; // @ G0369_ui_EventMaximumCount
 }; // @ AGGREGATE
 
 struct CurrMapData {

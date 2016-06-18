@@ -613,7 +613,7 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	for (int i = 0; i < 18; i++)
 		_currMapDoorOrnIndices[i] = 0;
 
-	_inscriptionThing = Thing::thingNone;
+	_inscriptionThing = Thing::_thingNone;
 }
 
 DisplayMan::~DisplayMan() {
@@ -1218,12 +1218,12 @@ void DisplayMan::loadWallSet(WallSet set) {
 
 
 void DisplayMan::loadCurrentMapGraphics() {
-	loadFloorSet(_vm->_dungeonMan->_currMap.map->floorSet);
-	loadWallSet(_vm->_dungeonMan->_currMap.map->wallSet);
+	loadFloorSet(_vm->_dungeonMan->_currMap.map->_floorSet);
+	loadWallSet(_vm->_dungeonMan->_currMap.map->_wallSet);
 
 	// the original loads some flipped walls here, I moved it to loadWallSet
 
-	for (uint16 i = 0, firstGraphicIndex = _vm->_dungeonMan->_currMap.map->wallSet * kStairsGraphicCount + kFirstStairs; i < kStairsGraphicCount; ++i)
+	for (uint16 i = 0, firstGraphicIndex = _vm->_dungeonMan->_currMap.map->_wallSet * kStairsGraphicCount + kFirstStairs; i < kStairsGraphicCount; ++i)
 		_stairIndices[i] = firstGraphicIndex + i;
 
 	for (int16 i = 0; i < kAlcoveOrnCount; ++i)
@@ -1240,7 +1240,7 @@ void DisplayMan::loadCurrentMapGraphics() {
 
 	_currMapViAltarIndex = -1;
 
-	for (uint16 i = 0; i < currMap.wallOrnCount; ++i) {
+	for (uint16 i = 0; i < currMap._wallOrnCount; ++i) {
 		uint16 ornIndice = _currMapWallOrnIndices[i];
 		uint16 nativeIndice = kFirstWallOrn + ornIndice * 2;
 
@@ -1260,14 +1260,14 @@ void DisplayMan::loadCurrentMapGraphics() {
 		_currMapWallOrnInfo[i][kNativeCoordinateSet] = gWallOrnCoordSetIndices[ornIndice];
 	}
 
-	for (uint16 i = 0; i < currMap.floorOrnCount; ++i) {
+	for (uint16 i = 0; i < currMap._floorOrnCount; ++i) {
 		uint16 ornIndice = _currMapFloorOrnIndices[i];
 		uint16 nativeIndice = kFirstFloorOrn + ornIndice * 6;
 		_currMapFloorOrnInfo[i][kNativeBitmapIndex] = nativeIndice;
 		_currMapFloorOrnInfo[i][kNativeCoordinateSet] = gFloorOrnCoordSetIndices[ornIndice];
 	}
 
-	for (uint16 i = 0; i < currMap.doorOrnCount; ++i) {
+	for (uint16 i = 0; i < currMap._doorOrnCount; ++i) {
 		uint16 ornIndice = _currMapDoorOrnIndices[i];
 		uint16 nativeIndice = kFirstDoorOrn + ornIndice;
 		_currMapDoorOrnInfo[i][kNativeBitmapIndex] = nativeIndice;
@@ -1277,7 +1277,7 @@ void DisplayMan::loadCurrentMapGraphics() {
 	applyCreatureReplColors(9, 8);
 	applyCreatureReplColors(10, 12);
 
-	for (uint16 creatureType = 0; creatureType < currMap.creatureTypeCount; ++creatureType) {
+	for (uint16 creatureType = 0; creatureType < currMap._creatureTypeCount; ++creatureType) {
 		CreatureAspect &aspect = gCreatureAspects[_currMapAllowedCreatureTypes[creatureType]];
 		uint16 replColorOrdinal = aspect.getReplColour9();
 		if (replColorOrdinal)

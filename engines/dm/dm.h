@@ -52,24 +52,24 @@ enum ThingType {
 }; // @ C[00..15]_THING_TYPE_...
 
 class Thing {
-	uint16 data;
+	uint16 _data;
 public:
-	static const Thing thingNone;
-	static const Thing thingEndOfList;
+	static const Thing _thingNone;
+	static const Thing _thingEndOfList;
 
-	Thing() : data(0) {}
+	Thing() : _data(0) {}
 	Thing(uint16 d) { set(d); }
 
 	void set(uint16 d) {
-		data = d;
+		_data = d;
 	}
 
-	byte getCell() const { return data >> 14; }
-	ThingType getType() const { return (ThingType)((data >> 10) & 0xF); }
-	uint16 getIndex() const { return data & 0x1FF; }
-	uint16 toUint16() const { return data; } // I don't like 'em cast operators
-	bool operator==(const Thing &rhs) const { return data == rhs.data; }
-	bool operator!=(const Thing &rhs) const { return data != rhs.data; }
+	byte getCell() const { return _data >> 14; }
+	ThingType getType() const { return (ThingType)((_data >> 10) & 0xF); }
+	uint16 getIndex() const { return _data & 0x1FF; }
+	uint16 toUint16() const { return _data; } // I don't like 'em cast operators
+	bool operator==(const Thing &rhs) const { return _data == rhs._data; }
+	bool operator!=(const Thing &rhs) const { return _data != rhs._data; }
 }; // @ THING
 
 
