@@ -82,16 +82,18 @@ Lingo::~Lingo() {
 
 int Lingo::codeString(const char *str) {
 	int instLen = sizeof(inst);
-	int numInsts = (strlen(str) + 1 + instLen - 1) % instLen;
+	int numInsts = strlen(str) / instLen + (strlen(str) + 1 + instLen - 1) % instLen;
+
+	// Where we copy the string over
+	int pos = _currentScript->size();
 
 	// Allocate needed space in script
-	_currentScript->push_back(0);
-	char *start = (char *)(&_currentScript->back());
-
-	for (int i = 0; i < numInsts - 1; i++)
+	for (int i = 0; i < numInsts; i++)
 		_currentScript->push_back(0);
 
-	Common::strlcpy(start, str, numInsts * instLen);
+	byte *dst = (byte *)&_currentScript->front() + pos * sizeof(inst);
+
+	memcpy(dst, str, strlen(str) + 1);
 
 	return _currentScript->size();
 }
@@ -107,6 +109,8 @@ void Lingo::addCode(Common::String code, ScriptType type, uint16 id) {
 	_scripts[type][id] = _currentScript;
 
 	parse(code.c_str());
+
+	Common::hexdump((byte *)&_currentScript->front(), _currentScript->size() * sizeof(inst));
 }
 
 void Lingo::processEvent(LEvent event, int entityId) {
