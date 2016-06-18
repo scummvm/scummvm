@@ -498,22 +498,22 @@ struct DungeonData {
 }; // @ AGGREGATE
 
 struct CurrMapData {
-	direction partyDir; // @ G0308_i_PartyDirection
-	int16 partyPosX; // @ G0306_i_PartyMapX
-	int16 partyPosY; // @ G0307_i_PartyMapY
-	uint8 currPartyMapIndex; // @ G0309_i_PartyMapIndex
+	direction _partyDir; // @ G0308_i_PartyDirection
+	int16 _partyPosX; // @ G0306_i_PartyMapX
+	int16 _partyPosY; // @ G0307_i_PartyMapY
+	uint8 _currPartyMapIndex; // @ G0309_i_PartyMapIndex
 
-	uint8 index; // @ G0272_i_CurrentMapIndex
-	byte **data; // @ G0271_ppuc_CurrentMapData
-	Map *map; // @ G0269_ps_CurrentMap
-	uint16 width; // @ G0273_i_CurrentMapWidth
-	uint16 height; // @ G0274_i_CurrentMapHeight
-	uint16 *colCumulativeSquareFirstThingCount; // @G0270_pui_CurrentMapColumnsCumulativeSquareFirstThingCount
+	uint8 _index; // @ G0272_i_CurrentMapIndex
+	byte **_data; // @ G0271_ppuc_CurrentMapData
+	Map *_map; // @ G0269_ps_CurrentMap
+	uint16 _width; // @ G0273_i_CurrentMapWidth
+	uint16 _height; // @ G0274_i_CurrentMapHeight
+	uint16 *_colCumulativeSquareFirstThingCount; // @G0270_pui_CurrentMapColumnsCumulativeSquareFirstThingCount
 }; // @ AGGREGATE
 
 struct Messages {
-	bool newGame; // @ G0298_B_NewGame
-	bool restartGameRequest; // @ G0523_B_RestartGameRequested
+	bool _newGame; // @ G0298_B_NewGame
+	bool _restartGameRequest; // @ G0523_B_RestartGameRequested
 }; // @ AGGREGATE
 
 class DungeonMan {
@@ -574,7 +574,6 @@ public:
 	bool _isFacingFountain; // @ G0288_B_FacingFountain
 };
 
-};
-
+}
 
 #endif

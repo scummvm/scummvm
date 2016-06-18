@@ -10,7 +10,7 @@ LoadsaveMan::LoadsaveMan(DMEngine *vm) : _vm(vm) {}
 
 
 LoadgameResponse LoadsaveMan::loadgame() {
-	bool newGame = _vm->_dungeonMan->_messages.newGame;
+	bool newGame = _vm->_dungeonMan->_messages._newGame;
 	ChampionMan &cm = *_vm->_championMan;
 
 	if (newGame) {

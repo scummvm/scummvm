@@ -1218,12 +1218,12 @@ void DisplayMan::loadWallSet(WallSet set) {
 
 
 void DisplayMan::loadCurrentMapGraphics() {
-	loadFloorSet(_vm->_dungeonMan->_currMap.map->_floorSet);
-	loadWallSet(_vm->_dungeonMan->_currMap.map->_wallSet);
+	loadFloorSet(_vm->_dungeonMan->_currMap._map->_floorSet);
+	loadWallSet(_vm->_dungeonMan->_currMap._map->_wallSet);
 
 	// the original loads some flipped walls here, I moved it to loadWallSet
 
-	for (uint16 i = 0, firstGraphicIndex = _vm->_dungeonMan->_currMap.map->_wallSet * kStairsGraphicCount + kFirstStairs; i < kStairsGraphicCount; ++i)
+	for (uint16 i = 0, firstGraphicIndex = _vm->_dungeonMan->_currMap._map->_wallSet * kStairsGraphicCount + kFirstStairs; i < kStairsGraphicCount; ++i)
 		_stairIndices[i] = firstGraphicIndex + i;
 
 	for (int16 i = 0; i < kAlcoveOrnCount; ++i)
@@ -1236,7 +1236,7 @@ void DisplayMan::loadCurrentMapGraphics() {
 
 	uint16 alcoveCount = 0;
 	uint16 fountainCount = 0;
-	Map &currMap = *_vm->_dungeonMan->_currMap.map;
+	Map &currMap = *_vm->_dungeonMan->_currMap._map;
 
 	_currMapViAltarIndex = -1;
 

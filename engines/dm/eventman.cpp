@@ -276,22 +276,22 @@ void EventManager::processInput() {
 
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_w:
-				dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap.partyDir, 1, 0, currMap.partyPosX, currMap.partyPosY);
+				dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap._partyDir, 1, 0, currMap._partyPosX, currMap._partyPosY);
 				break;
 			case Common::KEYCODE_a:
-				dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap.partyDir, 0, -1, currMap.partyPosX, currMap.partyPosY);
+				dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap._partyDir, 0, -1, currMap._partyPosX, currMap._partyPosY);
 				break;
 			case Common::KEYCODE_s:
-				dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap.partyDir, -1, 0, currMap.partyPosX, currMap.partyPosY);
+				dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap._partyDir, -1, 0, currMap._partyPosX, currMap._partyPosY);
 				break;
 			case Common::KEYCODE_d:
-				dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap.partyDir, 0, 1, currMap.partyPosX, currMap.partyPosY);
+				dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap._partyDir, 0, 1, currMap._partyPosX, currMap._partyPosY);
 				break;
 			case Common::KEYCODE_q:
-				turnDirLeft(currMap.partyDir);
+				turnDirLeft(currMap._partyDir);
 				break;
 			case Common::KEYCODE_e:
-				turnDirRight(currMap.partyDir);
+				turnDirRight(currMap._partyDir);
 				break;
 			case Common::KEYCODE_UP:
 				if (_dummyMapIndex < 13)
@@ -387,7 +387,7 @@ void EventManager::commandTurnParty(CommandType cmdType) {
 	// MISSING CODE: process sensors
 
 	// DUMMY CODE: should call F0284_CHAMPION_SetPartyDirection instead
-	direction &partyDir = _vm->_dungeonMan->_currMap.partyDir;
+	direction &partyDir = _vm->_dungeonMan->_currMap._partyDir;
 	(cmdType == kCommandTurnLeft) ? turnDirLeft(partyDir) : turnDirRight(partyDir);
 
 	// MISSING CODE: process sensors
@@ -404,16 +404,16 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 
 	switch (cmdType) {
 	case kCommandMoveForward:
-		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap.partyDir, 1, 0, currMap.partyPosX, currMap.partyPosY);
+		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap._partyDir, 1, 0, currMap._partyPosX, currMap._partyPosY);
 		break;
 	case kCommandMoveLeft:
-		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap.partyDir, 0, -1, currMap.partyPosX, currMap.partyPosY);
+		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap._partyDir, 0, -1, currMap._partyPosX, currMap._partyPosY);
 		break;
 	case kCommandMoveBackward:
-		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap.partyDir, -1, 0, currMap.partyPosX, currMap.partyPosY);
+		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap._partyDir, -1, 0, currMap._partyPosX, currMap._partyPosY);
 		break;
 	case kCommandMoveRight:
-		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap.partyDir, 0, 1, currMap.partyPosX, currMap.partyPosY);
+		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap._partyDir, 0, 1, currMap._partyPosX, currMap._partyPosY);
 		break;
 	}
 
@@ -441,7 +441,7 @@ void EventManager::commandSetLeader(ChampionIndex index) {
 	}
 	cm._leaderIndex = index;
 	Champion *champion = &cm._champions[cm._leaderIndex];
-	champion->_dir = _vm->_dungeonMan->_currMap.partyDir;
+	champion->_dir = _vm->_dungeonMan->_currMap._partyDir;
 	cm._champions[index]._load += _vm->_dungeonMan->getObjectWeight(cm._leaderHand);
 	if (indexToOrdinal(index) != cm._candidateChampionOrdinal) {
 		champion->setAttributeFlag(kChampionAttributeIcon, true);

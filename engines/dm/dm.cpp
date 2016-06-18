@@ -137,7 +137,7 @@ void DMEngine::gameloop() {
 		//} while (!_stopWaitingForPlayerInput || !_gameTimeTicking);
 
 		_displayMan->clearScreen(kColorBlack);
-		_displayMan->drawDungeon(_dungeonMan->_currMap.partyDir, _dungeonMan->_currMap.partyPosX, _dungeonMan->_currMap.partyPosY);
+		_displayMan->drawDungeon(_dungeonMan->_currMap._partyDir, _dungeonMan->_currMap._partyPosX, _dungeonMan->_currMap._partyPosY);
 		// DUMMY CODE: next line
 		_menuMan->drawMovementArrows();
 		_displayMan->updateScreen();
