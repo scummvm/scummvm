@@ -1076,6 +1076,12 @@ void Frame::renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Co
 			case kInkTypeMatte:
 				drawMatteSprite(surface, *img.getSurface(), drawRect);
 				break;
+			case kInkTypeGhost:
+				drawGhostSprite(surface, *img.getSurface(), drawRect);
+				break;
+			case kInkTypeReverse:
+				drawReverseSprite(surface, *img.getSurface(), drawRect);
+				break;
 			default:
 				warning("Unhandled ink type %d", _sprites[i]->_ink);
 				surface.blitFrom(*img.getSurface(), Common::Point(x, y));
@@ -1086,7 +1092,7 @@ void Frame::renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Co
 }
 
 void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
-	uint8 skipColor = 15; //FIXME is it always white (last entry in pallette) ?
+	uint8 skipColor = _vm->getPaletteColorCount() - 1; //FIXME is it always white (last entry in pallette) ?
 
 	for (int ii = 0; ii < sprite.h; ii++) {
 		const byte *src = (const byte *)sprite.getBasePtr(0, ii);
@@ -1096,6 +1102,39 @@ void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graph
 			if (*src != skipColor)
 				*dst = *src;
 
+			src++;
+			dst++;
+		}
+	}
+}
+
+void Frame::drawGhostSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
+	uint8 skipColor = _vm->getPaletteColorCount() - 1;
+	for (int ii = 0; ii < sprite.h; ii++) {
+		const byte *src = (const byte *)sprite.getBasePtr(0, ii);
+		byte *dst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + ii);
+
+		for (int j = 0; j < drawRect.width(); j++) {
+			if ((getSpriteIDFromPos(Common::Point(drawRect.left + j, drawRect.top + ii)) != 0) && (*src != skipColor))
+				*dst = (_vm->getPaletteColorCount() - 1) - *src; //Oposite color
+
+			src++;
+			dst++;
+		}
+	}
+}
+
+void Frame::drawReverseSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
+	uint8 skipColor = _vm->getPaletteColorCount() - 1;
+	for (int ii = 0; ii < sprite.h; ii++) {
+		const byte *src = (const byte *)sprite.getBasePtr(0, ii);
+		byte *dst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + ii);
+
+		for (int j = 0; j < drawRect.width(); j++) {
+			if ((getSpriteIDFromPos(Common::Point(drawRect.left + j, drawRect.top + ii)) != 0))
+				*dst = (_vm->getPaletteColorCount() - 1) - *src;
+			else if (*src != skipColor)
+				*dst = *src;
 			src++;
 			dst++;
 		}
