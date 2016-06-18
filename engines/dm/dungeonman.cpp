@@ -6,6 +6,67 @@
 using namespace DM;
 
 
+ArmourInfo gArmourInfo[58] = { // G0239_as_Graphic559_ArmourInfo
+/* { Weight, Defense, Attributes, Unreferenced } */
+	ArmourInfo(3,   5, 0x01),   /* CAPE */
+	ArmourInfo(4,  10, 0x01),   /* CLOAK OF NIGHT */
+	ArmourInfo(3,   4, 0x01),   /* BARBARIAN HIDE */
+	ArmourInfo(6,   5, 0x02),   /* SANDALS */
+	ArmourInfo(16,  25, 0x04),   /* LEATHER BOOTS */
+	ArmourInfo(4,   5, 0x00),   /* ROBE */
+	ArmourInfo(4,   5, 0x00),   /* ROBE */
+	ArmourInfo(3,   7, 0x01),   /* FINE ROBE */
+	ArmourInfo(3,   7, 0x01),   /* FINE ROBE */
+	ArmourInfo(4,   6, 0x01),   /* KIRTLE */
+	ArmourInfo(2,   4, 0x00),   /* SILK SHIRT */
+	ArmourInfo(4,   5, 0x01),   /* TABARD */
+	ArmourInfo(5,   7, 0x01),   /* GUNNA */
+	ArmourInfo(3,  11, 0x02),   /* ELVEN DOUBLET */
+	ArmourInfo(3,  13, 0x02),   /* ELVEN HUKE */
+	ArmourInfo(4,  13, 0x02),   /* ELVEN BOOTS */
+	ArmourInfo(6,  17, 0x03),   /* LEATHER JERKIN */
+	ArmourInfo(8,  20, 0x03),   /* LEATHER PANTS */
+	ArmourInfo(14,  20, 0x03),   /* SUEDE BOOTS */
+	ArmourInfo(6,  12, 0x02),   /* BLUE PANTS */
+	ArmourInfo(5,   9, 0x01),   /* TUNIC */
+	ArmourInfo(5,   8, 0x01),   /* GHI */
+	ArmourInfo(5,   9, 0x01),   /* GHI TROUSERS */
+	ArmourInfo(4,   1, 0x04),   /* CALISTA */
+	ArmourInfo(6,   5, 0x04),   /* CROWN OF NERRA */
+	ArmourInfo(11,  12, 0x05),   /* BEZERKER HELM */
+	ArmourInfo(14,  17, 0x05),   /* HELMET */
+	ArmourInfo(15,  20, 0x05),   /* BASINET */
+	ArmourInfo(11,  22, 0x85),   /* BUCKLER */
+	ArmourInfo(10,  16, 0x82),   /* HIDE SHIELD */
+	ArmourInfo(14,  20, 0x83),   /* WOODEN SHIELD */
+	ArmourInfo(21,  35, 0x84),   /* SMALL SHIELD */
+	ArmourInfo(65,  35, 0x05),   /* MAIL AKETON */
+	ArmourInfo(53,  35, 0x05),   /* LEG MAIL */
+	ArmourInfo(52,  70, 0x07),   /* MITHRAL AKETON */
+	ArmourInfo(41,  55, 0x07),   /* MITHRAL MAIL */
+	ArmourInfo(16,  25, 0x06),   /* CASQUE 'N COIF */
+	ArmourInfo(16,  30, 0x06),   /* HOSEN */
+	ArmourInfo(19,  40, 0x07),   /* ARMET */
+	ArmourInfo(120,  65, 0x04),   /* TORSO PLATE */
+	ArmourInfo(80,  56, 0x04),   /* LEG PLATE */
+	ArmourInfo(28,  37, 0x05),   /* FOOT PLATE */
+	ArmourInfo(34,  56, 0x84),   /* LARGE SHIELD */
+	ArmourInfo(17,  62, 0x05),   /* HELM OF LYTE */
+	ArmourInfo(108, 125, 0x04),   /* PLATE OF LYTE */
+	ArmourInfo(72,  90, 0x04),   /* POLEYN OF LYTE */
+	ArmourInfo(24,  50, 0x05),   /* GREAVE OF LYTE */
+	ArmourInfo(30,  85, 0x84),   /* SHIELD OF LYTE */
+	ArmourInfo(35,  76, 0x04),   /* HELM OF DARC */
+	ArmourInfo(141, 160, 0x04),   /* PLATE OF DARC */
+	ArmourInfo(90, 101, 0x04),   /* POLEYN OF DARC */
+	ArmourInfo(31,  60, 0x05),   /* GREAVE OF DARC */
+	ArmourInfo(40, 100, 0x84),   /* SHIELD OF DARC */
+	ArmourInfo(14,  54, 0x06),   /* DEXHELM */
+	ArmourInfo(57,  60, 0x07),   /* FLAMEBAIN */
+	ArmourInfo(81,  88, 0x04),   /* POWERTOWERS */
+	ArmourInfo(3,  16, 0x02),   /* BOOTS OF SPEED */
+	ArmourInfo(2,   3, 0x03)}; /* HALTER */
+
 WeaponInfo gWeaponInfo[46] = { // @ G0238_as_Graphic559_WeaponInfo
 							   /* { Weight, Class, Strength, KineticEnergy, Attributes } */
 	WeaponInfo(1, (WeaponClass)130,   2,   0, 0x2000),   /* EYE OF TIME */

@@ -21,12 +21,14 @@ public:
 private:
 	uint16 _attributes;
 public:
-	ArmourInfo(uint16 weight, uint16 defense)
-		:_weight(weight), _defense(defense) {}
+	ArmourInfo(uint16 weight, uint16 defense, uint16 attributes)
+		:_weight(weight), _defense(defense), _attributes(attributes) {}
 
 	uint16 getAttribute(ArmourAttribute attribute) { return _attributes & attribute; }
 	void setAttribute(ArmourAttribute attribute) { _attributes |= attribute; }
 }; // @ ARMOUR_INFO
+
+extern ArmourInfo gArmourInfo[58];
 
 enum WeaponClass {
 /* Class 0: SWING weapons */
@@ -61,6 +63,8 @@ public:
         uint16 getShootAttack() {return _attributes & 0xFF;} // @ M65_SHOOT_ATTACK
         uint16 getProjectileAspectOrdinal() {return (_attributes >> 8) & 0x1F;} // @ M66_PROJECTILE_ASPECT_ORDINAL
 }; // @ WEAPON_INFO
+
+extern WeaponInfo gWeaponInfo[46];
 
 
 int16 ordinalToIndex(int16 val); // @ M01_ORDINAL_TO_INDEX
