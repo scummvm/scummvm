@@ -307,52 +307,52 @@ ArmourInfo gArmourInfo[58] = { // G0239_as_Graphic559_ArmourInfo
 
 WeaponInfo gWeaponInfo[46] = { // @ G0238_as_Graphic559_WeaponInfo
 							   /* { Weight, Class, Strength, KineticEnergy, Attributes } */
-	WeaponInfo(1, (WeaponClass)130,   2,   0, 0x2000),   /* EYE OF TIME */
-	WeaponInfo(1, (WeaponClass)131,   2,   0, 0x2000),   /* STORMRING */
-	WeaponInfo(11, (WeaponClass)0,   8,   2, 0x2000),   /* TORCH */
-	WeaponInfo(12, (WeaponClass)112,  10,  80, 0x2028),   /* FLAMITT */
-	WeaponInfo(9, (WeaponClass)129,  16,   7, 0x2000),   /* STAFF OF CLAWS */
-	WeaponInfo(30, (WeaponClass)113,  49, 110, 0x0942),   /* BOLT BLADE */
-	WeaponInfo(47, (WeaponClass)0,  55,  20, 0x0900),   /* FURY */
-	WeaponInfo(24, (WeaponClass)255,  25,  10, 0x20FF),   /* THE FIRESTAFF */
-	WeaponInfo(5, (WeaponClass)2,  10,  19, 0x0200),   /* DAGGER */
-	WeaponInfo(33, (WeaponClass)0,  30,   8, 0x0900),   /* FALCHION */
-	WeaponInfo(32, (WeaponClass)0,  34,  10, 0x0900),   /* SWORD */
-	WeaponInfo(26, (WeaponClass)0,  38,  10, 0x0900),   /* RAPIER */
-	WeaponInfo(35, (WeaponClass)0,  42,  11, 0x0900),   /* SABRE */
-	WeaponInfo(36, (WeaponClass)0,  46,  12, 0x0900),   /* SAMURAI SWORD */
-	WeaponInfo(33, (WeaponClass)0,  50,  14, 0x0900),   /* DELTA */
-	WeaponInfo(37, (WeaponClass)0,  62,  14, 0x0900),   /* DIAMOND EDGE */
-	WeaponInfo(30, (WeaponClass)0,  48,  13, 0x0000),   /* VORPAL BLADE */
-	WeaponInfo(39, (WeaponClass)0,  58,  15, 0x0900),   /* THE INQUISITOR */
-	WeaponInfo(43, (WeaponClass)2,  49,  33, 0x0300),   /* AXE */
-	WeaponInfo(65, (WeaponClass)2,  70,  44, 0x0300),   /* HARDCLEAVE */
-	WeaponInfo(31, (WeaponClass)0,  32,  10, 0x2000),   /* MACE */
-	WeaponInfo(41, (WeaponClass)0,  42,  13, 0x2000),   /* MACE OF ORDER */
-	WeaponInfo(50, (WeaponClass)0,  60,  15, 0x2000),   /* MORNINGSTAR */
-	WeaponInfo(36, (WeaponClass)0,  19,  10, 0x2700),   /* CLUB */
-	WeaponInfo(110, (WeaponClass)0,  44,  22, 0x2600),   /* STONE CLUB */
-	WeaponInfo(10, (WeaponClass)20,   1,  50, 0x2032),   /* BOW */
-	WeaponInfo(28, (WeaponClass)30,   1, 180, 0x2078),   /* CROSSBOW */
-	WeaponInfo(2, (WeaponClass)10,   2,  10, 0x0100),   /* ARROW */
-	WeaponInfo(2, (WeaponClass)10,   2,  28, 0x0500),   /* SLAYER */
-	WeaponInfo(19, (WeaponClass)39,   5,  20, 0x2032),   /* SLING */
-	WeaponInfo(10, (WeaponClass)11,   6,  18, 0x2000),   /* ROCK */
-	WeaponInfo(3, (WeaponClass)12,   7,  23, 0x0800),   /* POISON DART */
-	WeaponInfo(1, (WeaponClass)1,   3,  19, 0x0A00),   /* THROWING STAR */
-	WeaponInfo(8, (WeaponClass)0,   4,   4, 0x2000),   /* STICK */
-	WeaponInfo(26, (WeaponClass)129,  12,   4, 0x2000),   /* STAFF */
-	WeaponInfo(1, (WeaponClass)130,   0,   0, 0x2000),   /* WAND */
-	WeaponInfo(2, (WeaponClass)140,   1,  20, 0x2000),   /* TEOWAND */
-	WeaponInfo(35, (WeaponClass)128,  18,   6, 0x2000),   /* YEW STAFF */
-	WeaponInfo(29, (WeaponClass)159,   0,   4, 0x2000),   /* STAFF OF MANAR */
-	WeaponInfo(21, (WeaponClass)131,   0,   3, 0x2000),   /* SNAKE STAFF */
-	WeaponInfo(33, (WeaponClass)136,   0,   7, 0x2000),   /* THE CONDUIT */
-	WeaponInfo(8, (WeaponClass)132,   3,   1, 0x2000),   /* DRAGON SPIT */
-	WeaponInfo(18, (WeaponClass)131,   9,   4, 0x2000),   /* SCEPTRE OF LYF */
-	WeaponInfo(8, (WeaponClass)192,   1,   1, 0x2000),   /* HORN OF FEAR */
-	WeaponInfo(30, (WeaponClass)26,   1, 220, 0x207D),   /* SPEEDBOW */
-	WeaponInfo(36, (WeaponClass)255, 100,  50, 0x20FF)}; /* THE FIRESTAFF */
+	WeaponInfo(1, 130,   2,   0, 0x2000),   /* EYE OF TIME */
+	WeaponInfo(1, 131,   2,   0, 0x2000),   /* STORMRING */
+	WeaponInfo(11, 0,   8,   2, 0x2000),   /* TORCH */
+	WeaponInfo(12, 112,  10,  80, 0x2028),   /* FLAMITT */
+	WeaponInfo(9, 129,  16,   7, 0x2000),   /* STAFF OF CLAWS */
+	WeaponInfo(30, 113,  49, 110, 0x0942),   /* BOLT BLADE */
+	WeaponInfo(47, 0,  55,  20, 0x0900),   /* FURY */
+	WeaponInfo(24, 255,  25,  10, 0x20FF),   /* THE FIRESTAFF */
+	WeaponInfo(5, 2,  10,  19, 0x0200),   /* DAGGER */
+	WeaponInfo(33, 0,  30,   8, 0x0900),   /* FALCHION */
+	WeaponInfo(32, 0,  34,  10, 0x0900),   /* SWORD */
+	WeaponInfo(26, 0,  38,  10, 0x0900),   /* RAPIER */
+	WeaponInfo(35, 0,  42,  11, 0x0900),   /* SABRE */
+	WeaponInfo(36, 0,  46,  12, 0x0900),   /* SAMURAI SWORD */
+	WeaponInfo(33, 0,  50,  14, 0x0900),   /* DELTA */
+	WeaponInfo(37, 0,  62,  14, 0x0900),   /* DIAMOND EDGE */
+	WeaponInfo(30, 0,  48,  13, 0x0000),   /* VORPAL BLADE */
+	WeaponInfo(39, 0,  58,  15, 0x0900),   /* THE INQUISITOR */
+	WeaponInfo(43, 2,  49,  33, 0x0300),   /* AXE */
+	WeaponInfo(65, 2,  70,  44, 0x0300),   /* HARDCLEAVE */
+	WeaponInfo(31, 0,  32,  10, 0x2000),   /* MACE */
+	WeaponInfo(41, 0,  42,  13, 0x2000),   /* MACE OF ORDER */
+	WeaponInfo(50, 0,  60,  15, 0x2000),   /* MORNINGSTAR */
+	WeaponInfo(36, 0,  19,  10, 0x2700),   /* CLUB */
+	WeaponInfo(110, 0,  44,  22, 0x2600),   /* STONE CLUB */
+	WeaponInfo(10, 20,   1,  50, 0x2032),   /* BOW */
+	WeaponInfo(28, 30,   1, 180, 0x2078),   /* CROSSBOW */
+	WeaponInfo(2, 10,   2,  10, 0x0100),   /* ARROW */
+	WeaponInfo(2, 10,   2,  28, 0x0500),   /* SLAYER */
+	WeaponInfo(19, 39,   5,  20, 0x2032),   /* SLING */
+	WeaponInfo(10, 11,   6,  18, 0x2000),   /* ROCK */
+	WeaponInfo(3, 12,   7,  23, 0x0800),   /* POISON DART */
+	WeaponInfo(1, 1,   3,  19, 0x0A00),   /* THROWING STAR */
+	WeaponInfo(8, 0,   4,   4, 0x2000),   /* STICK */
+	WeaponInfo(26, 129,  12,   4, 0x2000),   /* STAFF */
+	WeaponInfo(1, 130,   0,   0, 0x2000),   /* WAND */
+	WeaponInfo(2, 140,   1,  20, 0x2000),   /* TEOWAND */
+	WeaponInfo(35, 128,  18,   6, 0x2000),   /* YEW STAFF */
+	WeaponInfo(29, 159,   0,   4, 0x2000),   /* STAFF OF MANAR */
+	WeaponInfo(21, 131,   0,   3, 0x2000),   /* SNAKE STAFF */
+	WeaponInfo(33, 136,   0,   7, 0x2000),   /* THE CONDUIT */
+	WeaponInfo(8, 132,   3,   1, 0x2000),   /* DRAGON SPIT */
+	WeaponInfo(18, 131,   9,   4, 0x2000),   /* SCEPTRE OF LYF */
+	WeaponInfo(8, 192,   1,   1, 0x2000),   /* HORN OF FEAR */
+	WeaponInfo(30, 26,   1, 220, 0x207D),   /* SPEEDBOW */
+	WeaponInfo(36, 255, 100,  50, 0x20FF)}; /* THE FIRESTAFF */
 
 CreatureInfo gCreatureInfo[kCreatureTypeCount] = { // @ G0243_as_Graphic559_CreatureInfo
 												   /* { CreatureAspectIndex, AttackSoundOrdinal, Attributes, GraphicInfo,

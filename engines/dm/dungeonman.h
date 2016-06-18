@@ -67,34 +67,32 @@ public:
 
 extern ArmourInfo gArmourInfo[58];
 
-enum WeaponClass {
 /* Class 0: SWING weapons */
-	kWeaponClassSwingWeapon = 0, // @ C000_CLASS_SWING_WEAPON 
-	/* Class 1 to 15: THROW weapons */
-	kWeaponClassDaggerAndAxes = 2, // @ C002_CLASS_DAGGER_AND_AXES 
-	kWeaponClassBowAmmunition = 10, // @ C010_CLASS_BOW_AMMUNITION
-	kWeaponClassSlingAmmunition = 11, // @ C011_CLASS_SLING_AMMUNITION
-	kWeaponClassPoisinDart = 12, // @ C012_CLASS_POISON_DART
-	/* Class 16 to 111: SHOOT weapons */
-	kWeaponClassFirstBow = 16, // @ C016_CLASS_FIRST_BOW 
-	kWeaponClassLastBow = 31, // @ C031_CLASS_LAST_BOW
-	kWeaponClassFirstSling = 32, // @ C032_CLASS_FIRST_SLING
-	kWeaponClassLastSling = 47, // @ C047_CLASS_LAST_SLING
-	/* Class 112 to 255: Magic and special weapons */
-	kWeaponClassFirstMagicWeapon = 112 // @ C112_CLASS_FIRST_MAGIC_WEAPON
-};
+#define kWeaponClassSwingWeapon			0 // @ C000_CLASS_SWING_WEAPON 
+/* Class 1 to 15: THROW weapons */
+#define kWeaponClassDaggerAndAxes		2 // @ C002_CLASS_DAGGER_AND_AXES 
+#define kWeaponClassBowAmmunition		10 // @ C010_CLASS_BOW_AMMUNITION
+#define kWeaponClassSlingAmmunition		11 // @ C011_CLASS_SLING_AMMUNITION
+#define kWeaponClassPoisinDart			12 // @ C012_CLASS_POISON_DART
+/* Class 16 to 111: SHOOT weapons */
+#define kWeaponClassFirstBow			16 // @ C016_CLASS_FIRST_BOW 
+#define kWeaponClassLastBow				31 // @ C031_CLASS_LAST_BOW
+#define kWeaponClassFirstSling			32 // @ C032_CLASS_FIRST_SLING
+#define kWeaponClassLastSling			47 // @ C047_CLASS_LAST_SLING
+/* Class 112 to 255: Magic and special weapons */
+#define kWeaponClassFirstMagicWeapon	112 // @ C112_CLASS_FIRST_MAGIC_WEAPON
 
 class WeaponInfo {
 
 public:
         uint16 _weight;
-        WeaponClass _class;
+        uint16 _class;
         uint16 _strength;
         uint16 _kineticEnergy;
 private:
 	uint16 _attributes; /* Bits 15-13 Unreferenced */
 public:
-        WeaponInfo(uint16 weight, WeaponClass wClass, uint16 strength, uint16 kineticEnergy, uint16 attributes)
+        WeaponInfo(uint16 weight, uint16 wClass, uint16 strength, uint16 kineticEnergy, uint16 attributes)
         	: _weight(weight), _class(wClass), _strength(strength), _kineticEnergy(kineticEnergy), _attributes(attributes) {}
 
         uint16 getShootAttack() {return _attributes & 0xFF;} // @ M65_SHOOT_ATTACK
