@@ -243,14 +243,14 @@ public:
 
 class ChampionMan {
 	DMEngine *_vm;
-	Champion champions[4];
+	Champion _champions[4];
 public:
-	uint16 _partChampionCount;
+	uint16 _partyChampionCount;
 	bool _partyDead; // @ G0303_B_PartyDead
 	Thing _leaderHand;
 
 	ChampionMan(DMEngine *vm);
-	ChampionIndex getIndexInCell(int16 mapX, int16 mapY, ViewCell cell); // @ F0285_CHAMPION_GetIndexInCell
+	ChampionIndex getIndexInCell(ViewCell cell); // @ F0285_CHAMPION_GetIndexInCell
 };
 
 }
