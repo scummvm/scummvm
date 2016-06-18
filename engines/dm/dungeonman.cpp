@@ -1036,4 +1036,32 @@ uint16 DungeonMan::getObjectWeight(Thing thing) {
 	return 0; // dummy
 }
 
+/* Object info */
+#define kObjectInfoIndexFirstScroll 0 // @ C000_OBJECT_INFO_INDEX_FIRST_SCROLL
+#define kObjectInfoIndexFirstContainer 1 // @ C001_OBJECT_INFO_INDEX_FIRST_CONTAINER
+#define kObjectInfoIndexFirstPotion 2 // @ C002_OBJECT_INFO_INDEX_FIRST_POTION
+#define kObjectInfoIndexFirstWeapon 23 // @ C023_OBJECT_INFO_INDEX_FIRST_WEAPON
+#define kObjectInfoIndexFirstArmour 69 // @ C069_OBJECT_INFO_INDEX_FIRST_ARMOUR
+#define kObjectInfoIndexFirstJunk 127 // @ C127_OBJECT_INFO_INDEX_FIRST_JUNK
+
+int16 DungeonMan::getObjectInfoIndex(Thing thing) {
+	uint16 *rawType = getThingData(thing);
+	switch (thing.getType()) {
+	case kScrollThingType:
+		return kObjectInfoIndexFirstScroll;
+	case kContainerThingType:
+		return kObjectInfoIndexFirstContainer + Container(rawType).getType();
+	case kJunkThingType:
+		return kObjectInfoIndexFirstJunk + Junk(rawType).getType();
+	case kWeaponThingType:
+		return kObjectInfoIndexFirstWeapon + Weapon(rawType).getType();
+	case kArmourThingType:
+		return kObjectInfoIndexFirstArmour + Armour(rawType).getType();
+	case kPotionThingType:
+		return kObjectInfoIndexFirstPotion + Potion(rawType).getType();
+	default:
+		return -1;
+	}
+}
+
 }

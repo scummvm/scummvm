@@ -341,6 +341,7 @@ class Container {
 public:
 	Container(uint16 *rawDat) : _nextThing(rawDat[0]), _nextContainedThing(rawDat[1]), _type(rawDat[2]) {}
 
+	uint16 getType() { return (_type >> 1) & 0x3; }
 	Thing getNextContainedThing() { return _nextContainedThing; }
 	Thing getNextThing() { return _nextThing; }
 }; // @ CONTAINER
@@ -554,7 +555,8 @@ public:
 	void setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX, int16 mapY); // @ F0172_DUNGEON_SetSquareAspect
 	void decodeText(char *destString, Thing thing, TextType type); // F0168_DUNGEON_DecodeText
 
-	uint16 getObjectWeight(Thing thing);// @ F0140_DUNGEON_GetObjectWeight
+	uint16 getObjectWeight(Thing thing); // @ F0140_DUNGEON_GetObjectWeight
+	int16 getObjectInfoIndex(Thing thing); // @ F0141_DUNGEON_GetObjectInfoIndex
 
 	uint32 _rawDunFileDataSize;	 // @ probably NONE
 	byte *_rawDunFileData; // @ ???
