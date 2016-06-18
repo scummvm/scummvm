@@ -506,23 +506,30 @@ BitmapCast::BitmapCast(Common::SeekableReadStream &stream) {
 
 TextCast::TextCast(Common::SeekableReadStream &stream) {
 	/*byte flags =*/ stream.readByte();
-	borderSize = stream.readByte();
-	gutterSize = stream.readByte();
-	boxShadow = stream.readByte();
-	textType = stream.readByte();
-	textAlign = stream.readUint16BE();
+	borderSize = static_cast<SizeType>(stream.readByte());
+	gutterSize = static_cast<SizeType>(stream.readByte());
+	boxShadow = static_cast<SizeType>(stream.readByte());
+	textType = static_cast<TextType>(stream.readByte());
+	textAlign = static_cast<TextAlignType>(stream.readUint16BE());
 	stream.skip(6); //palinfo
 	/*uint32 unk1 = */ stream.readUint32BE();
 	initialRect = Score::readRect(stream);
-	textShadow = stream.readByte();
-	textFlags = stream.readByte();
+	textShadow = static_cast<SizeType>(stream.readByte());
+	byte flags = stream.readByte();
+	if (flags & 0x1)
+		textFlags.push_back(kTextFlagEditable);
+	if (flags & 0x2)
+		textFlags.push_back(kTextFlagAutoTab);
+	if (flags & 0x4)
+		textFlags.push_back(kTextFlagDoNotWrap);
+
 	/*uint16 unk2 =*/ stream.readUint16BE();
 }
 
 ShapeCast::ShapeCast(Common::SeekableReadStream &stream) {
 	/*byte flags = */ stream.readByte();
 	/*unk1 = */ stream.readByte();
-	shapeType = stream.readByte();
+	shapeType = static_cast<ShapeType>(stream.readByte());
 	initialRect = Score::readRect(stream);
 	pattern = stream.readUint16BE();
 	fgCol = stream.readByte();

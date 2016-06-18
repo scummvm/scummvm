@@ -179,10 +179,17 @@ struct BitmapCast : Cast {
 	uint8 flags;
 };
 
+enum ShapeType {
+	kShapeRectangle,
+	kShapeRoundRect,
+	kShapeOval,
+	kShapeLine
+};
+
 struct ShapeCast : Cast {
 	ShapeCast(Common::SeekableReadStream &stream);
 
-	byte shapeType;
+	ShapeType shapeType;
 	uint16 pattern;
 	byte fgCol;
 	byte bgCol;
@@ -191,26 +198,58 @@ struct ShapeCast : Cast {
 	byte lineDirection;
 };
 
+enum TextType {
+	kTextTypeAdjustToFit,
+	kTextTypeScrolling,
+	kTextTypeFixed
+};
+
+enum TextAlignType {
+	kTextAlignRight = -1,
+	kTextAlignLeft,
+	kTextAlignCenter
+};
+
+enum TextFlag {
+	kTextFlagEditable,
+	kTextFlagAutoTab,
+	kTextFlagDoNotWrap
+};
+
+enum SizeType {
+	kSizeNone,
+	kSizeSmallest,
+	kSizeSmall,
+	kSizeMedium,
+	kSizeLarge,
+	kSizeLargest
+};
+
 struct TextCast : Cast {
 	TextCast(Common::SeekableReadStream &stream);
 
-	byte borderSize;
-	byte gutterSize;
-	byte boxShadow;
+	SizeType borderSize;
+	SizeType gutterSize;
+	SizeType boxShadow;
 
-	byte textType;
-	byte textAlign;
-	byte textShadow;
-	byte textFlags;
+	TextType textType;
+	TextAlignType textAlign;
+	SizeType textShadow;
+	Common::Array<TextFlag> textFlags;
+};
+
+enum ButtonType {
+	kTypeButton,
+	kTypeCheckBox,
+	kTypeRadio
 };
 
 struct ButtonCast : TextCast {
 	ButtonCast(Common::SeekableReadStream &stream) : TextCast(stream) {
-		buttonType = stream.readUint16BE();
+		buttonType = static_cast<ButtonType>(stream.readUint16BE());
 	}
 
-	//TODO types?
-	uint16 buttonType;
+	ButtonType buttonType;
 };
 
 struct CastInfo {
