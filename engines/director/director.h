@@ -61,6 +61,7 @@ public:
 	DirectorSound *getSoundManager() const { return _soundManager; }
 	Archive *getMainArchive() const { return _mainArchive; }
 	Lingo *getLingo() const { return _lingo; }
+	Score *getCurrentScore() const { return _currentScore; }
 	void setPalette(byte *palette, uint16 count);
 	bool hasFeature(EngineFeature f) const;
 	const byte *getPalette() const { return _currentPalette; }
@@ -89,6 +90,7 @@ private:
 	byte *_currentPalette;
 	uint16 _currentPaletteLength;
 	Lingo *_lingo;
+	Score *_currentScore;
 };
 
 } // End of namespace Director

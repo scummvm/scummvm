@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	detection.o \
 	dib.o \
 	director.o \
+	movie.o \
 	resource.o \
 	score.o \
 	sound.o \

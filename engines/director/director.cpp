@@ -87,11 +87,11 @@ Common::Error DirectorEngine::run() {
 	_mainArchive = new RIFFArchive();
 	_mainArchive->openFile("bookshelf_example.mmm");
 
-	Score score(this);
-	debug(0, "Score name %s", score.getMacName().c_str());
+	_currentScore = new Score(this);
+	debug(0, "Score name %s", _currentScore->getMacName().c_str());
 
-	score.loadArchive();
-	score.startLoop();
+	_currentScore->loadArchive();
+	_currentScore->startLoop();
 
 	if (getPlatform() == Common::kPlatformWindows)
 		loadEXE();
