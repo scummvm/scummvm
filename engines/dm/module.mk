@@ -8,7 +8,8 @@ MODULE_OBJS := \
 	eventman.o \
 	menus.o \
 	champion.o \
-	loadsave.o
+	loadsave.o \
+	objectman.o
 
 MODULE_DIRS += \
 	engines/dm
