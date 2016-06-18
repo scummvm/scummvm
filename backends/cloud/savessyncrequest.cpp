@@ -29,10 +29,9 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "gui/saveload-dialog.h"
+#include <backends/saves/default/default-saves.h>
 
 namespace Cloud {
-
-const char *SavesSyncRequest::TIMESTAMPS_FILENAME = "timestamps";
 
 SavesSyncRequest::SavesSyncRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb):
 	Request(nullptr, ecb), CommandSender(nullptr), _storage(storage), _boolCallback(callback),
@@ -59,7 +58,7 @@ void SavesSyncRequest::start() {
 	_ignoreCallback = false;
 
 	//load timestamps
-	loadTimestamps();
+	_localFilesTimestamps = DefaultSaveFileManager::loadTimestamps();
 
 	//list saves directory
 	Common::String dir = _storage->savesDirectoryPath();
@@ -90,25 +89,23 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 		StorageFile &file = remoteFiles[i];
 		if (file.isDirectory()) continue;
 		totalSize += file.size();
-		if (file.name() == TIMESTAMPS_FILENAME) continue;
+		if (file.name() == DefaultSaveFileManager::TIMESTAMPS_FILENAME) continue;
 
 		Common::String name = file.name();
 		if (!_localFilesTimestamps.contains(name))
 			_filesToDownload.push_back(file);
 		else {
 			localFileNotAvailableInCloud[name] = false;
+			
+			if (_localFilesTimestamps[name] == file.timestamp())
+				continue;
 
-			if (_localFilesTimestamps[name] != INVALID_TIMESTAMP) {
-				if (_localFilesTimestamps[name] == file.timestamp())
-					continue;
-
-				//we actually can have some files not only with timestamp < remote
-				//but also with timestamp > remote (when we have been using ANOTHER CLOUD and then switched back)
-				if (_localFilesTimestamps[name] < file.timestamp())
-					_filesToDownload.push_back(file);
-				else
-					_filesToUpload.push_back(file.name());
-			}
+			//we actually can have some files not only with timestamp < remote
+			//but also with timestamp > remote (when we have been using ANOTHER CLOUD and then switched back)
+			if (_localFilesTimestamps[name] > file.timestamp() || _localFilesTimestamps[name] == DefaultSaveFileManager::INVALID_TIMESTAMP)
+				_filesToUpload.push_back(file.name());
+			else
+				_filesToDownload.push_back(file);
 		}
 	}
 
@@ -116,7 +113,7 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 
 	//upload files which are unavailable in cloud
 	for (Common::HashMap<Common::String, bool>::iterator i = localFileNotAvailableInCloud.begin(); i != localFileNotAvailableInCloud.end(); ++i) {
-		if (i->_key == TIMESTAMPS_FILENAME) continue;
+		if (i->_key == DefaultSaveFileManager::TIMESTAMPS_FILENAME) continue;
 		if (i->_value) _filesToUpload.push_back(i->_key);
 	}
 
@@ -234,7 +231,7 @@ void SavesSyncRequest::downloadNextFile() {
 	///////
 	debug("downloading %s (%d %%)", _currentDownloadingFile.name().c_str(), (int)(getProgress() * 100));
 	///////
-	_workingRequest = _storage->downloadById(_currentDownloadingFile.id(), concatWithSavesPath(_currentDownloadingFile.name()),
+	_workingRequest = _storage->downloadById(_currentDownloadingFile.id(), DefaultSaveFileManager::concatWithSavesPath(_currentDownloadingFile.name()),
 		new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::fileDownloadedCallback),
 		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileDownloadedErrorCallback)
 	);
@@ -252,7 +249,9 @@ void SavesSyncRequest::fileDownloadedCallback(Storage::BoolResponse response) {
 	}
 
 	//update local timestamp for downloaded file
+	_localFilesTimestamps = DefaultSaveFileManager::loadTimestamps();
 	_localFilesTimestamps[_currentDownloadingFile.name()] = _currentDownloadingFile.timestamp();
+	DefaultSaveFileManager::saveTimestamps(_localFilesTimestamps);
 
 	//continue downloading files
 	downloadNextFile();
@@ -290,7 +289,9 @@ void SavesSyncRequest::fileUploadedCallback(Storage::UploadResponse response) {
 	if (_ignoreCallback) return;
 	
 	//update local timestamp for the uploaded file
+	_localFilesTimestamps = DefaultSaveFileManager::loadTimestamps();
 	_localFilesTimestamps[_currentUploadingFile] = response.value.timestamp();
+	DefaultSaveFileManager::saveTimestamps(_localFilesTimestamps);
 
 	//continue uploading files
 	uploadNextFile();
@@ -342,112 +343,16 @@ Common::Array<Common::String> SavesSyncRequest::getFilesToDownload() {
 void SavesSyncRequest::finishError(Networking::ErrorResponse error) {
 	debug("SavesSync::finishError");
 
-	//save updated timestamps (even if Request failed, there would be only valid timestamps)
-	saveTimestamps();
-
 	Request::finishError(error);
 }
 
 void SavesSyncRequest::finishSuccess(bool success) {
 	Request::finishSuccess();
 
-	//save updated timestamps (even if Request failed, there would be only valid timestamps)
-	saveTimestamps();
-
 	//update last successful sync date
 	CloudMan.setStorageLastSync(CloudMan.getStorageIndex(), _date);
 
 	if (_boolCallback) (*_boolCallback)(Storage::BoolResponse(this, success));
-}
-
-void SavesSyncRequest::loadTimestamps() {
-	//refresh the files list
-	Common::Array<Common::String> files;
-	g_system->getSavefileManager()->updateSavefilesList(files);
-
-	//start with listing all the files in saves/ directory and setting invalid timestamp to them	
-	Common::StringArray localFiles = g_system->getSavefileManager()->listSavefiles("*");
-	for (uint32 i = 0; i < localFiles.size(); ++i)
-		_localFilesTimestamps[localFiles[i]] = INVALID_TIMESTAMP;
-
-	//now actually load timestamps from file
-	Common::InSaveFile *file = g_system->getSavefileManager()->openRawFile(TIMESTAMPS_FILENAME);
-	if (!file) {
-		warning("SavesSyncRequest: failed to open '%s' file to load timestamps", TIMESTAMPS_FILENAME);
-		return;
-	}
-	
-	while (!file->eos()) {
-		//read filename into buffer (reading until the first ' ')
-		Common::String buffer;
-		while (!file->eos()) {
-			byte b = file->readByte();
-			if (b == ' ') break;
-			buffer += (char)b;
-		}
-		
-		//read timestamp info buffer (reading until ' ' or some line ending char)
-		Common::String filename = buffer;
-		bool lineEnded = false;
-		buffer = "";
-		while (!file->eos()) {
-			byte b = file->readByte();
-			if (b == ' ' || b == '\n' || b == '\r') {
-				lineEnded = (b == '\n');
-				break;
-			}
-			buffer += (char)b;
-		}
-
-		//parse timestamp
-		uint timestamp = atol(buffer.c_str());
-		if (buffer == "" || timestamp == 0) break;
-		_localFilesTimestamps[filename] = timestamp;
-
-		//read until the end of the line
-		if (!lineEnded) {
-			while (!file->eos()) {
-				byte b = file->readByte();
-				if (b == '\n') break;
-			}
-		}
-	}
-	
-	delete file;
-}
-
-void SavesSyncRequest::saveTimestamps() {
-	Common::DumpFile f;	
-	Common::String filename = concatWithSavesPath(TIMESTAMPS_FILENAME);
-	if (!f.open(filename, true)) {
-		warning("SavesSyncRequest: failed to open '%s' file to save timestamps", filename.c_str());
-		return;
-	}
-	
-	for (Common::HashMap<Common::String, uint32>::iterator i = _localFilesTimestamps.begin(); i != _localFilesTimestamps.end(); ++i) {
-		Common::String data = i->_key + Common::String::format(" %u\n", i->_value);
-		if (f.write(data.c_str(), data.size()) != data.size()) {
-			warning("SavesSyncRequest: failed to write timestamps data into '%s'", filename.c_str());
-			return;
-		}
-	}
-
-	f.close();
-}
-
-Common::String SavesSyncRequest::concatWithSavesPath(Common::String name) {
-	Common::String path = ConfMan.get("savepath");
-	if (path.size() > 0 && (path.lastChar() == '/' || path.lastChar() == '\\'))
-		return path + name;
-
-	//simple heuristic to determine which path separator to use
-	int backslashes = 0;
-	for (uint32 i = 0; i < path.size(); ++i)
-		if (path[i] == '/') --backslashes;
-		else if (path[i] == '\\') ++backslashes;
-
-	if (backslashes) return path + '\\' + name;
-	return path + '/' + name;
 }
 
 } // End of namespace Cloud

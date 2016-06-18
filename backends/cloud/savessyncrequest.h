@@ -28,14 +28,10 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "gui/object.h"
-#include <limits.h>
 
 namespace Cloud {
 
 class SavesSyncRequest: public Networking::Request, public GUI::CommandSender {
-	const uint32 INVALID_TIMESTAMP = UINT_MAX;
-	static const char *TIMESTAMPS_FILENAME;
-
 	Storage *_storage;
 	Storage::BoolCallback _boolCallback;
 	Common::HashMap<Common::String, uint32> _localFilesTimestamps;
@@ -61,9 +57,7 @@ class SavesSyncRequest: public Networking::Request, public GUI::CommandSender {
 	void uploadNextFile();
 	virtual void finishError(Networking::ErrorResponse error);
 	void finishSuccess(bool success);
-	void loadTimestamps();
-	void saveTimestamps();
-	Common::String concatWithSavesPath(Common::String name);
+	
 public:
 	SavesSyncRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb);
 	virtual ~SavesSyncRequest();

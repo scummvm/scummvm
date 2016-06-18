@@ -29,6 +29,7 @@
 
 #ifdef USE_CLOUD
 #include "backends/cloud/cloudmanager.h"
+#include "common/file.h"
 #endif
 
 #if !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
@@ -44,6 +45,10 @@
 
 #ifndef _WIN32_WCE
 #include <errno.h>	// for removeSavefile()
+#endif
+
+#ifdef USE_CLOUD
+const char *DefaultSaveFileManager::TIMESTAMPS_FILENAME = "timestamps";
 #endif
 
 DefaultSaveFileManager::DefaultSaveFileManager() {
@@ -141,6 +146,13 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const Common::String 
 			return nullptr; //file is locked, no saving available
 		}
 	}
+
+#ifdef USE_CLOUD
+	// Update file's timestamp
+	Common::HashMap<Common::String, uint32> timestamps = loadTimestamps();
+	timestamps[filename] = INVALID_TIMESTAMP;
+	saveTimestamps(timestamps);
+#endif
 
 	// Obtain node.
 	SaveFileCache::const_iterator file = _saveFileCache.find(filename);
@@ -265,5 +277,102 @@ void DefaultSaveFileManager::assureCached(const Common::String &savePathName) {
 	// cached the directory.
 	_cachedDirectory = savePathName;
 }
+
+#ifdef USE_CLOUD
+
+Common::HashMap<Common::String, uint32> DefaultSaveFileManager::loadTimestamps() {
+	Common::HashMap<Common::String, uint32> timestamps;
+
+	//refresh the files list
+	Common::Array<Common::String> files;
+	g_system->getSavefileManager()->updateSavefilesList(files);
+
+	//start with listing all the files in saves/ directory and setting invalid timestamp to them	
+	Common::StringArray localFiles = g_system->getSavefileManager()->listSavefiles("*");
+	for (uint32 i = 0; i < localFiles.size(); ++i)
+		timestamps[localFiles[i]] = INVALID_TIMESTAMP;
+
+	//now actually load timestamps from file
+	Common::InSaveFile *file = g_system->getSavefileManager()->openRawFile(TIMESTAMPS_FILENAME);
+	if (!file) {
+		warning("DefaultSaveFileManager: failed to open '%s' file to load timestamps", TIMESTAMPS_FILENAME);
+		return timestamps;
+	}
+
+	while (!file->eos()) {
+		//read filename into buffer (reading until the first ' ')
+		Common::String buffer;
+		while (!file->eos()) {
+			byte b = file->readByte();
+			if (b == ' ') break;
+			buffer += (char)b;
+		}
+
+		//read timestamp info buffer (reading until ' ' or some line ending char)
+		Common::String filename = buffer;
+		while (true) {
+			bool lineEnded = false;
+			buffer = "";
+			while (!file->eos()) {
+				byte b = file->readByte();
+				if (b == ' ' || b == '\n' || b == '\r') {
+					lineEnded = (b == '\n');
+					break;
+				}
+				buffer += (char)b;
+			}
+
+			if (buffer == "" && file->eos()) break;
+			if (!lineEnded) filename += " " + buffer;
+			else break;
+		}
+
+		//parse timestamp
+		uint32 timestamp = buffer.asUint64();
+		if (buffer == "" || timestamp == 0) break;		
+		timestamps[filename] = timestamp;
+	}
+
+	delete file;
+	return timestamps;
+}
+
+void DefaultSaveFileManager::saveTimestamps(Common::HashMap<Common::String, uint32> &timestamps) {
+	Common::DumpFile f;
+	Common::String filename = concatWithSavesPath(TIMESTAMPS_FILENAME);
+	if (!f.open(filename, true)) {
+		warning("DefaultSaveFileManager: failed to open '%s' file to save timestamps", filename.c_str());
+		return;
+	}
+
+	for (Common::HashMap<Common::String, uint32>::iterator i = timestamps.begin(); i != timestamps.end(); ++i) {
+		Common::String data = i->_key + Common::String::format(" %u\n", i->_value);
+		if (f.write(data.c_str(), data.size()) != data.size()) {
+			warning("DefaultSaveFileManager: failed to write timestamps data into '%s'", filename.c_str());
+			return;
+		}
+	}
+
+	f.flush();
+	f.finalize();
+	f.close();
+}
+
+Common::String DefaultSaveFileManager::concatWithSavesPath(Common::String name) {
+	Common::String path = ConfMan.get("savepath");
+	if (path.size() > 0 && (path.lastChar() == '/' || path.lastChar() == '\\'))
+		return path + name;
+
+	//simple heuristic to determine which path separator to use
+	int backslashes = 0;
+	for (uint32 i = 0; i < path.size(); ++i)
+		if (path[i] == '/') --backslashes;
+		else if (path[i] == '\\') ++backslashes;
+
+		if (backslashes) return path + '\\' + name;
+		return path + '/' + name;
+}
+
+#endif // ifdef USE_CLOUD
 
 #endif // !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
