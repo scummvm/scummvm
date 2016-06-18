@@ -1,4 +1,5 @@
 #include "champion.h"
+#include "dungeonman.h"
 
 
 namespace DM {
@@ -30,6 +31,17 @@ ChampionIndex ChampionMan::getIndexInCell(ViewCell cell) {
 	}
 
 	return kChampionNone;
+}
+
+void ChampionMan::resetDataToStartGame() {
+	if (!_vm->_dungeonMan->_messages._newGame) {
+		warning("MISSING CODE: stuff for reeseting for loaded games");
+		assert(false);
+	}
+
+	_leaderHand = Thing::_thingNone;
+	_leaderHandObjectIconIndex = kIconIndiceNone;
+	_leaderEmptyHanded = true;
 }
 
 }

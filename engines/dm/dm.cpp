@@ -120,7 +120,7 @@ void DMEngine::startGame() {
 
 	// MISSING CODE: build copper
 	_menuMan->drawMovementArrows();
-	warning("MISSING CODE: F0278_CHAMPION_ResetDataToStartGame");
+	_championMan->resetDataToStartGame();
 	_gameTimeTicking = true;
 }
 
