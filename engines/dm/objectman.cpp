@@ -18,4 +18,7 @@ IconIndice ObjectMan::getObjectType(Thing thing) {
 }
 
 
+byte gChargeCountToTorchType[16] = {0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3}; // @ G0029_auc_Graphic562_ChargeCountToTorchType
+
+
 }
