@@ -80,7 +80,7 @@ void DMEngine::initializeGame() {
 	_eventMan->initMouse();
 
 	while (_loadsaveMan->loadgame() != kLoadgameSuccess) {
-		// MISSING CODE: F0441_STARTEND_ProcessEntrance
+		warning("TODO: F0441_STARTEND_ProcessEntrance");
 	}
 
 	_displayMan->loadFloorSet(kFloorSetStone);
@@ -112,13 +112,13 @@ void DMEngine::startGame() {
 	processNewPartyMap(_dungeonMan->_currMap._currPartyMapIndex);
 
 	if (!_dungeonMan->_messages._newGame) {
-		// MISSING CODE: loading game
+		warning("TODO: loading game");
 	} {
 		_displayMan->_useByteBoxCoordinates = false;
-		// MISSING CODE: clear screen
+		warning("TODO: clear screen");
 	}
 
-	// MISSING CODE: build copper
+	warning("TODO: build copper");
 	_menuMan->drawMovementArrows();
 	_championMan->resetDataToStartGame();
 	_gameTimeTicking = true;
@@ -147,7 +147,7 @@ Common::Error DMEngine::run() {
 	initializeGame(); // @ F0463_START_InitializeGame_CPSADEF
 	while (true) {
 		gameloop();
-		// MISSING CODE: F0444_STARTEND_Endgame(G0303_B_PartyDead);
+		warning("TODO: F0444_STARTEND_Endgame(G0303_B_PartyDead);");
 	}
 
 	return Common::kNoError;
