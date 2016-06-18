@@ -27,15 +27,17 @@ enum WeaponClass {
 };
 
 class WeaponInfo {
-		uint16 _attributes; /* Bits 15-13 Unreferenced */
+
 public:
-        byte _weight;
+        uint16 _weight;
         WeaponClass _class;
-        byte _strength;
-        byte _kineticEnergy;
-        
-        WeaponInfo(byte weight, WeaponClass wClass, byte strength, byte kineticEnergy, uint16 attributes)
-        	: _attributes(attributes), _weight(weight), _class(wClass), _strength(strength), _kineticEnergy(kineticEnergy) {}
+        uint16 _strength;
+        uint16 _kineticEnergy;
+private:
+	uint16 _attributes; /* Bits 15-13 Unreferenced */
+public:
+        WeaponInfo(uint16 weight, WeaponClass wClass, uint16 strength, uint16 kineticEnergy, uint16 attributes)
+        	: _weight(weight), _class(wClass), _strength(strength), _kineticEnergy(kineticEnergy), _attributes(attributes) {}
 
         uint16 getShootAttack() {return _attributes & 0xFF;} // @ M65_SHOOT_ATTACK
         uint16 getProjectileAspectOrdinal() {return (_attributes >> 8) & 0x1F;} // @ M66_PROJECTILE_ASPECT_ORDINAL
