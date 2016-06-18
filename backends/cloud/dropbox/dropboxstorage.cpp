@@ -67,7 +67,11 @@ void DropboxStorage::getAccessToken(Common::String code) {
 	request->addPostField("grant_type=authorization_code");
 	request->addPostField("client_id=" + Common::String(KEY));
 	request->addPostField("client_secret=" + Common::String(SECRET));
+#ifdef USE_SDL_NET
 	request->addPostField("&redirect_uri=http%3A%2F%2Flocalhost%3A12345%2F");
+#else
+	request->addPostField("&redirect_uri=https%3A%2F%2Fwww.scummvm.org/c/code");
+#endif
 	addRequest(request);
 }
 
