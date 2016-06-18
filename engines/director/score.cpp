@@ -71,6 +71,7 @@ void Score::loadArchive() {
 
 	loadPalette(*pal);
 	g_system->getPaletteManager()->setPalette(_vm->getPalette(), 0, _vm->getPaletteColorCount());
+
 	assert(_movieArchive->hasResource(MKTAG('V','W','S','C'), 1024));
 	assert(_movieArchive->hasResource(MKTAG('V','W','C','F'), 1024));
 	assert(_movieArchive->hasResource(MKTAG('V','W','C','R'), 1024));
@@ -1158,6 +1159,7 @@ uint16 Frame::getSpriteIDFromPos(Common::Point pos) {
 
 Sprite::Sprite() {
 	_enabled = false;
+	_trails = 0;
 	_width = 0;
 	_ink = kInkTypeCopy;
 	_flags = 0;
@@ -1170,6 +1172,7 @@ Sprite::Sprite(const Sprite &sprite) {
 	_enabled = sprite._enabled;
 	_castId = sprite._castId;
 	_flags = sprite._flags;
+	_trails = sprite._trails;
 	_ink = sprite._ink;
 	_width = sprite._width;
 	_height = sprite._height;
