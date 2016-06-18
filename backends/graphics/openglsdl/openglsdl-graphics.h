@@ -27,6 +27,7 @@
 #include "graphics/opengl/framebuffer.h"
 #include "graphics/opengl/texture.h"
 #include "graphics/opengl/surfacerenderer.h"
+#include "graphics/opengl/tiledsurface.h"
 
 #include "backends/graphics/graphics.h"
 #include "backends/graphics/sdl/resvm-sdl-graphics.h"
@@ -59,6 +60,8 @@ public:
 
 	virtual void updateScreen();
 
+	virtual void showOverlay() override;
+	virtual void hideOverlay() override;
 	virtual void clearOverlay();
 	virtual void grabOverlay(void *buf, int pitch);
 	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
@@ -83,7 +86,8 @@ protected:
 #endif
 
 	// overlay
-	SDL_Surface *_overlayscreen;
+	OpenGL::TiledSurface *_overlayScreen;
+	OpenGL::TiledSurface *_overlayBackground;
 
 	Math::Rect2d _gameRect;
 
@@ -109,13 +113,9 @@ protected:
 	// Antialiasing
 	int _antialiasing;
 
-	// Overlay
-	Common::Array<OpenGL::Texture *> _overlayTextures;
-
 	OpenGL::Texture *_sideTextures[2];
 
 	void initializeOpenGLContext() const;
-	void updateOverlayTextures();
 	void drawOverlay();
 	void drawSideTextures();
 

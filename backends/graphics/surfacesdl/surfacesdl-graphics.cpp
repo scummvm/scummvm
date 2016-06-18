@@ -53,6 +53,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_screen(0),
 	_subScreen(0),
 	_overlayscreen(0),
+	_overlayDirty(true),
 	_gameRect()
 	{
 		_sideSurfaces[0] = _sideSurfaces[1] = nullptr;
@@ -261,6 +262,24 @@ void SurfaceSdlGraphicsManager::suggestSideTextures(Graphics::Surface *left, Gra
 		_sideSurfaces[1] = SDL_CreateRGBSurface(SDL_SWSURFACE, right->w, right->h, 32, 0xff << right->format.rShift, 0xff << right->format.gShift, 0xff << right->format.bShift, 0xff << right->format.aShift);
 		memcpy(_sideSurfaces[1]->pixels, right->getPixels(), right->w * right->h * 4);
 	}
+}
+
+void SurfaceSdlGraphicsManager::showOverlay() {
+	if (_overlayVisible)
+		return;
+
+	_overlayVisible = true;
+
+	clearOverlay();
+}
+
+void SurfaceSdlGraphicsManager::hideOverlay() {
+	if (!_overlayVisible)
+		return;
+
+	_overlayVisible = false;
+
+	clearOverlay();
 }
 
 void SurfaceSdlGraphicsManager::grabOverlay(void *buf, int pitch) {

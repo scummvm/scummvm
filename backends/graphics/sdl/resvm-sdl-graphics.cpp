@@ -39,7 +39,6 @@ ResVmSdlGraphicsManager::ResVmSdlGraphicsManager(SdlEventSource *source, SdlWind
 		_overlayVisible(false),
 		_overlayWidth(0),
 		_overlayHeight(0),
-		_overlayDirty(true),
 		_screenChangeCount(0),
 		_capabilities(capabilities) {
 	ConfMan.registerDefault("fullscreen_res", "desktop");
@@ -273,28 +272,6 @@ void ResVmSdlGraphicsManager::setFocusRectangle(const Common::Rect &rect) {
 
 void ResVmSdlGraphicsManager::clearFocusRectangle() {
 	// ResidualVM: not use it
-}
-
-#pragma mark -
-#pragma mark --- Overlays ---
-#pragma mark -
-
-void ResVmSdlGraphicsManager::showOverlay() {
-	if (_overlayVisible)
-		return;
-
-	_overlayVisible = true;
-
-	clearOverlay();
-}
-
-void ResVmSdlGraphicsManager::hideOverlay() {
-	if (!_overlayVisible)
-		return;
-
-	_overlayVisible = false;
-
-	clearOverlay();
 }
 
 #pragma mark -

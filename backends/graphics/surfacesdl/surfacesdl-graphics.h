@@ -54,6 +54,8 @@ public:
 
 	virtual void updateScreen();
 
+	virtual void showOverlay();
+	virtual void hideOverlay();
 	virtual void clearOverlay();
 	virtual void grabOverlay(void *buf, int pitch);
 	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
@@ -85,6 +87,7 @@ protected:
 
 	// overlay
 	SDL_Surface *_overlayscreen;
+	bool _overlayDirty;
 
 	Math::Rect2d _gameRect;
 

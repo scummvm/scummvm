@@ -86,9 +86,6 @@ public:
 	virtual int16 getOverlayWidth() { return _overlayWidth; }
 	virtual Graphics::PixelFormat getOverlayFormat() const { return _overlayFormat; }
 
-	virtual void showOverlay();
-	virtual void hideOverlay();
-
 	virtual bool showMouse(bool visible);
 	virtual bool lockMouse(bool lock); // ResidualVM specific method
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL);
@@ -113,7 +110,6 @@ protected:
 	bool _overlayVisible;
 	Graphics::PixelFormat _overlayFormat;
 	int _overlayWidth, _overlayHeight;
-	bool _overlayDirty;
 
 	virtual void closeOverlay() = 0;
 
