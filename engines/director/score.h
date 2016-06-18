@@ -110,7 +110,8 @@ enum ScriptType {
 };
 
 enum TransitionType {
-	kTransWipeRight = 1,
+	kTransNone,
+	kTransWipeRight,
 	kTransWipeLeft,
 	kTransWipeDown,
 	kTransWipeUp,

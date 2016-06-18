@@ -655,6 +655,7 @@ void Score::processEvents() {
 Frame::Frame(DirectorEngine *vm) {
 	_vm = vm;
 	_transDuration = 0;
+	_transType = kTransNone;
 	_transArea = 0;
 	_transChunkSize = 0;
 	_tempo = 0;
