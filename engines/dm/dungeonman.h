@@ -8,6 +8,25 @@
 
 namespace DM {
 
+				
+enum ArmourAttribute {
+	kArmourAttributeIsAShield = 0x0080, // @ MASK0x0080_IS_A_SHIELD
+	kArmourAttributeSharpDefense = 0x0007, // @ MASK0x0007_SHARP_DEFENSE
+};
+
+class ArmourInfo {
+public:
+	uint16 _weight;
+	uint16 _defense;
+private:
+	uint16 _attributes;
+public:
+	ArmourInfo(uint16 weight, uint16 defense)
+		:_weight(weight), _defense(defense) {}
+
+	uint16 getAttribute(ArmourAttribute attribute) { return _attributes & attribute; }
+	void setAttribute(ArmourAttribute attribute) { _attributes |= attribute; }
+}; // @ ARMOUR_INFO
 
 enum WeaponClass {
 /* Class 0: SWING weapons */
