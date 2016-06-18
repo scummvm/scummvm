@@ -5,6 +5,60 @@
 
 using namespace DM;
 
+uint16 gJunkInfo[53] = { // @ G0241_auc_Graphic559_JunkInfo
+	1,   /* COMPASS */
+	3,   /* WATERSKIN */
+	2,   /* JEWEL SYMAL */
+	2,   /* ILLUMULET */
+	4,   /* ASHES */
+	15,  /* BONES */
+	1,   /* COPPER COIN */
+	1,   /* SILVER COIN */
+	1,   /* GOLD COIN */
+	2,   /* IRON KEY */
+	1,   /* KEY OF B */
+	1,   /* SOLID KEY */
+	1,   /* SQUARE KEY */
+	1,   /* TOURQUOISE KEY */
+	1,   /* CROSS KEY */
+	1,   /* ONYX KEY */
+	1,   /* SKELETON KEY */
+	1,   /* GOLD KEY */
+	1,   /* WINGED KEY */
+	1,   /* TOPAZ KEY */
+	1,   /* SAPPHIRE KEY */
+	1,   /* EMERALD KEY */
+	1,   /* RUBY KEY */
+	1,   /* RA KEY */
+	1,   /* MASTER KEY */
+	81,  /* BOULDER */
+	2,   /* BLUE GEM */
+	3,   /* ORANGE GEM */
+	2,   /* GREEN GEM */
+	4,   /* APPLE */
+	4,   /* CORN */
+	3,   /* BREAD */
+	8,   /* CHEESE */
+	5,   /* SCREAMER SLICE */
+	11,  /* WORM ROUND */
+	4,   /* DRUMSTICK */
+	6,   /* DRAGON STEAK */
+	2,   /* GEM OF AGES */
+	3,   /* EKKHARD CROSS */
+	2,   /* MOONSTONE */
+	2,   /* THE HELLION */
+	2,   /* PENDANT FERAL */
+	6,   /* MAGICAL BOX */
+	9,   /* MAGICAL BOX */
+	3,   /* MIRROR OF DAWN */
+	10,  /* ROPE */
+	1,   /* RABBIT'S FOOT */
+	0,   /* CORBAMITE */
+	1,   /* CHOKER */
+	1,   /* LOCK PICKS */
+	2,   /* MAGNIFIER */
+	0,   /* ZOKATHRA SPELL */
+	8}; /* BONES */
 
 ArmourInfo gArmourInfo[58] = { // G0239_as_Graphic559_ArmourInfo
 /* { Weight, Defense, Attributes, Unreferenced } */

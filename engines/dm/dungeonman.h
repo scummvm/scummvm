@@ -8,6 +8,7 @@
 
 namespace DM {
 
+extern uint16 gJunkInfo[53];
 				
 enum ArmourAttribute {
 	kArmourAttributeIsAShield = 0x0080, // @ MASK0x0080_IS_A_SHIELD
