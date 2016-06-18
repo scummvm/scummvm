@@ -104,7 +104,7 @@ protected:
 	 * When unable to create a context with anti-aliasing this tries without.
 	 * When unable to create a context with the desired pixel depth this tries lower values.
 	 */
-	bool createScreenOpenGL(uint effectiveWidth, uint effectiveHeight, GameRenderTarget gameRenderTarget);
+	bool createScreen(uint effectiveWidth, uint effectiveHeight, GameRenderTarget gameRenderTarget);
 
 	// Antialiasing
 	int _antialiasing;
@@ -116,8 +116,8 @@ protected:
 
 	void initializeOpenGLContext() const;
 	void updateOverlayTextures();
-	void drawOverlayOpenGL();
-	void drawSideTexturesOpenGL();
+	void drawOverlay();
+	void drawSideTextures();
 
 	OpenGL::FrameBuffer *_frameBuffer;
 	OpenGL::FrameBuffer *createFramebuffer(uint width, uint height);

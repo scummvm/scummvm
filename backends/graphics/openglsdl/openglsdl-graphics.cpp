@@ -108,7 +108,7 @@ void OpenGLSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool
 	// Compute the rectangle where to draw the game inside the effective screen
 	_gameRect = computeGameRect(gameRenderTarget, gameWidth, gameHeight, effectiveWidth, effectiveHeight);
 
-	if (!createScreenOpenGL(effectiveWidth, effectiveHeight, gameRenderTarget)) {
+	if (!createScreen(effectiveWidth, effectiveHeight, gameRenderTarget)) {
 		warning("Error: %s", SDL_GetError());
 		g_system->quit();
 	}
@@ -247,7 +247,8 @@ OpenGLSdlGraphicsManager::OpenGLPixelFormat::OpenGLPixelFormat(uint screenBytesP
 
 }
 
-bool OpenGLSdlGraphicsManager::createScreenOpenGL(uint effectiveWidth, uint effectiveHeight, GameRenderTarget gameRenderTarget) {
+bool OpenGLSdlGraphicsManager::createScreen(uint effectiveWidth, uint effectiveHeight,
+                                            GameRenderTarget gameRenderTarget) {
 	// Build a list of OpenGL pixel formats usable by ResidualVM
 	Common::Array<OpenGLPixelFormat> pixelFormats;
 	if (_antialiasing > 0 && gameRenderTarget == kScreen) {
@@ -360,7 +361,7 @@ void OpenGLSdlGraphicsManager::updateOverlayTextures() {
 	}
 }
 
-void OpenGLSdlGraphicsManager::drawOverlayOpenGL() {
+void OpenGLSdlGraphicsManager::drawOverlay() {
 	if (!_overlayscreen)
 		return;
 
@@ -389,7 +390,7 @@ void OpenGLSdlGraphicsManager::drawOverlayOpenGL() {
 	_surfaceRenderer->restorePreviousState();
 }
 
-void OpenGLSdlGraphicsManager::drawSideTexturesOpenGL() {
+void OpenGLSdlGraphicsManager::drawSideTextures() {
 	if (_fullscreen && _lockAspectRatio) {
 		const Math::Vector2d nudge(1.0 / float(_overlayWidth), 0);
 		if (_sideTextures[0] != nullptr) {
@@ -425,7 +426,7 @@ void OpenGLSdlGraphicsManager::updateScreen() {
 		glViewport(0, 0, _overlayWidth, _overlayHeight);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		_surfaceRenderer->prepareState();
-		drawSideTexturesOpenGL();
+		drawSideTextures();
 		_surfaceRenderer->render(_frameBuffer, _gameRect);
 		_surfaceRenderer->restorePreviousState();
 	}
@@ -435,7 +436,7 @@ void OpenGLSdlGraphicsManager::updateScreen() {
 			updateOverlayTextures();
 		}
 
-		drawOverlayOpenGL();
+		drawOverlay();
 	}
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
