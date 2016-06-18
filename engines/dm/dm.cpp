@@ -113,7 +113,7 @@ void DMEngine::startGame() {
 
 	if (!_dungeonMan->_messages._newGame) {
 		warning("TODO: loading game");
-	} {
+	} else {
 		_displayMan->_useByteBoxCoordinates = false;
 		warning("TODO: clear screen");
 	}
