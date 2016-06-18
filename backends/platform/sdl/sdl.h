@@ -85,6 +85,7 @@ public:
 
 	// ResidualVM specific code
 	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) override;
+	virtual void launcherInitSize(uint w, uint h) override;
 
 protected:
 	bool _inited;

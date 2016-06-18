@@ -99,11 +99,6 @@ Common::List<Graphics::PixelFormat> ModularBackend::getSupportedFormats() const 
 #endif
 
 // ResidualVM specific method
-void ModularBackend::launcherInitSize(uint w, uint h) {
-	_graphicsManager->launcherInitSize(w, h);
-}
-
-// ResidualVM specific method
 void ModularBackend::setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {
 	_graphicsManager->setupScreen(screenW, screenH, fullscreen, accel3d);
 }

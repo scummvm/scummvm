@@ -61,7 +61,6 @@ public:
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif
 	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL);
-	virtual void launcherInitSize(uint w, uint h); // ResidualVM specific method
 	virtual int getScreenChangeID() const { return _screenChangeCount; }
 
 	virtual void beginGFXTransaction();

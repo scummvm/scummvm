@@ -235,11 +235,6 @@ void ResVmSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelForm
 	// ResidualVM: not use it
 }
 
-void ResVmSdlGraphicsManager::launcherInitSize(uint w, uint h) {
-	closeOverlay();
-	setupScreen(w, h, false, false);
-}
-
 void ResVmSdlGraphicsManager::copyRectToScreen(const void *src, int pitch, int x, int y, int w, int h) {
 	// ResidualVM: not use it
 }

@@ -310,6 +310,10 @@ void OSystem_SDL::setupScreen(uint screenW, uint screenH, bool fullscreen, bool 
 	ModularBackend::setupScreen(screenW, screenH, fullscreen, accel3d);
 }
 
+void OSystem_SDL::launcherInitSize(uint w, uint h) {
+	setupScreen(w, h, false, false);
+}
+
 void OSystem_SDL::quit() {
 	delete this;
 	exit(0);
