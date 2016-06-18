@@ -69,6 +69,7 @@ void LocalWebserver::stopTimer() {
 }
 
 void LocalWebserver::start() {
+	_handleMutex.lock();
 	_stopOnIdle = false;
 	if (_timerStarted) return;
 	startTimer();
@@ -93,9 +94,11 @@ void LocalWebserver::start() {
 	if (numused == -1) {
 		error("SDLNet_AddSocket: %s\n", SDLNet_GetError());
 	}
+	_handleMutex.unlock();
 }
 
 void LocalWebserver::stop() {
+	_handleMutex.lock();
 	if (_timerStarted) stopTimer();
 
 	if (_serverSocket) {
@@ -112,6 +115,7 @@ void LocalWebserver::stop() {
 		SDLNet_FreeSocketSet(_set);
 		_set = nullptr;
 	}
+	_handleMutex.unlock();
 }
 
 void LocalWebserver::stopOnIdle() { _stopOnIdle = true; }
@@ -129,6 +133,7 @@ void LocalWebserver::removePathHandler(Common::String path) {
 IndexPageHandler &LocalWebserver::indexPageHandler() { return _indexPageHandler; }
 
 void LocalWebserver::handle() {
+	_handleMutex.lock();
 	int numready = SDLNet_CheckSockets(_set, 0);
 	if (numready == -1) {
 		error("SDLNet_CheckSockets: %s\n", SDLNet_GetError());
@@ -145,7 +150,13 @@ void LocalWebserver::handle() {
 	if (_clients == 0) ++_idlingFrames;
 	else _idlingFrames = 0;
 	
-	if (_idlingFrames > FRAMES_PER_SECOND && _stopOnIdle) stop();	
+	if (_idlingFrames > FRAMES_PER_SECOND && _stopOnIdle) {
+		_handleMutex.unlock();
+		stop();
+		return;
+	}
+
+	_handleMutex.unlock();
 }
 
 void LocalWebserver::handleClient(uint32 i) {	

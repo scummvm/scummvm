@@ -27,6 +27,7 @@
 #include "backends/networking/sdl_net/indexpagehandler.h"
 #include "common/callback.h"
 #include "common/hash-str.h"
+#include "common/mutex.h"
 #include "common/singleton.h"
 #include "common/scummsys.h"
 
@@ -57,6 +58,7 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	Common::HashMap<Common::String, ClientHandler> _pathHandlers;
 	IndexPageHandler _indexPageHandler;
 	uint32 _idlingFrames;
+	Common::Mutex _handleMutex;
 
 	void startTimer(int interval = TIMER_INTERVAL);
 	void stopTimer();
