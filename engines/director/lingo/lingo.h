@@ -85,11 +85,11 @@ public:
 
 	void processEvent(LEvent event, int entityId);
 
-	int parse(const char *code);
-
 	int code1(inst code) { _currentScript->push_back(code); return _currentScript->size(); }
 	int code2(inst code_1, inst code_2) { code1(code_1); return code1(code_2); }
 	int code3(inst code_1, inst code_2, inst code_3) { code1(code_1); code1(code_2); return code1(code_3); }
+	int codeString(const char *s);
+
 
 public:
 	static void func_add();
@@ -98,10 +98,17 @@ public:
 	static void func_div();
 	static void func_negate();
 	static void func_constpush();
-	int func_mci(Common::String *s);
-	void func_mciwait(Common::String *s);
+	static void func_varpush();
+	static void func_assign();
+	static void func_eval();
+	static void func_mci();
+	static void func_mciwait();
+	int exec_mci(Common::String *s);
+	void exec_mciwait(Common::String *s);
 
 private:
+	int parse(const char *code);
+
 	Common::HashMap<uint32, const char *> _eventHandlerTypes;
 	Common::HashMap<Common::String, Audio::AudioStream *> _audioAliases;
 

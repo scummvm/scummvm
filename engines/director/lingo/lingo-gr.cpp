@@ -1385,7 +1385,7 @@ yyreduce:
 
   case 7:
 #line 76 "engines/director/lingo/lingo-gr.y"
-    { (yyval.i) = vars[*(yyvsp[(1) - (1)].s)]; delete (yyvsp[(1) - (1)].s); ;}
+    { g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString((yyvsp[(1) - (1)].s)->c_str()); (yyval.i) = g_lingo->code1(g_lingo->func_eval); delete (yyvsp[(1) - (1)].s); ;}
     break;
 
   case 8:
@@ -1410,7 +1410,7 @@ yyreduce:
 
   case 12:
 #line 81 "engines/director/lingo/lingo-gr.y"
-    { (yyval.i) =  (yyvsp[(2) - (2)].i); ;}
+    { (yyval.i) = (yyvsp[(2) - (2)].i); ;}
     break;
 
   case 13:
@@ -1420,32 +1420,32 @@ yyreduce:
 
   case 14:
 #line 83 "engines/director/lingo/lingo-gr.y"
-    { (yyval.i) =  (yyvsp[(2) - (3)].i); ;}
+    { (yyval.i) = (yyvsp[(2) - (3)].i); ;}
     break;
 
   case 16:
 #line 87 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->func_mci((yyvsp[(2) - (2)].s)); delete (yyvsp[(2) - (2)].s); ;}
+    { g_lingo->code1(g_lingo->func_mci); g_lingo->codeString((yyvsp[(2) - (2)].s)->c_str()); delete (yyvsp[(2) - (2)].s); ;}
     break;
 
   case 17:
 #line 88 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->func_mciwait((yyvsp[(2) - (2)].s)); ;}
+    { g_lingo->code1(g_lingo->func_mciwait); g_lingo->codeString((yyvsp[(2) - (2)].s)->c_str()); delete (yyvsp[(2) - (2)].s); ;}
     break;
 
   case 18:
 #line 89 "engines/director/lingo/lingo-gr.y"
-    { (yyval.i) = vars[*(yyvsp[(4) - (4)].s)] = (yyvsp[(2) - (4)].i); delete (yyvsp[(4) - (4)].s); ;}
+    { g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString((yyvsp[(4) - (4)].s)->c_str()); g_lingo->code1(g_lingo->func_assign); (yyval.i) = (yyvsp[(2) - (4)].i); delete (yyvsp[(4) - (4)].s); ;}
     break;
 
   case 19:
 #line 90 "engines/director/lingo/lingo-gr.y"
-    { (yyval.i) = vars[*(yyvsp[(2) - (4)].s)] = (yyvsp[(4) - (4)].i); delete (yyvsp[(2) - (4)].s); ;}
+    { g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString((yyvsp[(2) - (4)].s)->c_str()); g_lingo->code1(g_lingo->func_assign); (yyval.i) = (yyvsp[(4) - (4)].i); delete (yyvsp[(2) - (4)].s); ;}
     break;
 
   case 20:
 #line 91 "engines/director/lingo/lingo-gr.y"
-    { (yyval.i) = vars[*(yyvsp[(2) - (4)].s)] = (yyvsp[(4) - (4)].i); delete (yyvsp[(2) - (4)].s); ;}
+    { g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString((yyvsp[(2) - (4)].s)->c_str()); g_lingo->code1(g_lingo->func_assign); (yyval.i) = (yyvsp[(4) - (4)].i); delete (yyvsp[(2) - (4)].s); ;}
     break;
 
 

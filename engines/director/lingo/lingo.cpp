@@ -80,6 +80,22 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 Lingo::~Lingo() {
 }
 
+int Lingo::codeString(const char *str) {
+	int instLen = sizeof(inst);
+	int numInsts = (strlen(str) + 1 + instLen - 1) % instLen;
+
+	// Allocate needed space in script
+	_currentScript->push_back(0);
+	char *start = (char *)(&_currentScript->back());
+
+	for (int i = 0; i < numInsts - 1; i++)
+		_currentScript->push_back(0);
+
+	Common::strlcpy(start, str, numInsts * instLen);
+
+	return _currentScript->size();
+}
+
 void Lingo::addCode(Common::String code, ScriptType type, uint16 id) {
 	debug(2, "Add code \"%s\" for type %d with id %d", code.c_str(), type, id);
 

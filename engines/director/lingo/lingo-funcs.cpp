@@ -61,7 +61,7 @@ struct MCIToken {
 	{ kMCITokenNone, kMCITokenNone,   0, 0 }
 };
 
-int Lingo::func_mci(Common::String *s) {
+int Lingo::exec_mci(Common::String *s) {
 	Common::String params[5];
 	MCITokenType command = kMCITokenNone;
 
@@ -161,11 +161,20 @@ int Lingo::func_mci(Common::String *s) {
 	return 0;
 }
 
-void Lingo::func_mciwait(Common::String *s) {
+void Lingo::exec_mciwait(Common::String *s) {
 	warning("MCI wait file: %s", s->c_str());
 }
 
 void Lingo::func_constpush() {
+}
+
+void Lingo::func_varpush() {
+}
+
+void Lingo::func_assign() {
+}
+
+void Lingo::func_eval() {
 }
 
 void Lingo::func_add() {
@@ -181,6 +190,12 @@ void Lingo::func_div() {
 }
 
 void Lingo::func_negate() {
+}
+
+void Lingo::func_mci() {
+}
+
+void Lingo::func_mciwait() {
 }
 
 }

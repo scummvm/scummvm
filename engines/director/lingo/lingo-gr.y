@@ -73,22 +73,22 @@ statement: expr { warning("%d", $1); }
 	;
 
 expr: INT						{ $$ = g_lingo->code2(g_lingo->func_constpush, (inst)$1); }
-	| VAR						{ $$ = vars[*$1]; delete $1; }
+	| VAR						{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($1->c_str()); $$ = g_lingo->code1(g_lingo->func_eval); delete $1; }
 	| expr '+' expr				{ g_lingo->code1(g_lingo->func_add); }
 	| expr '-' expr				{ g_lingo->code1(g_lingo->func_sub); }
 	| expr '*' expr				{ g_lingo->code1(g_lingo->func_mul); }
 	| expr '/' expr				{ g_lingo->code1(g_lingo->func_div); }
-	| '+' expr  %prec UNARY		{ $$ =  $2; }
+	| '+' expr  %prec UNARY		{ $$ = $2; }
 	| '-' expr  %prec UNARY		{ $$ = $2; g_lingo->code1(g_lingo->func_negate); }
-	| '(' expr ')'				{ $$ =  $2; }
+	| '(' expr ')'				{ $$ = $2; }
 	|
 	;
 
-func: FUNC_MCI STRING			{ g_lingo->func_mci($2); delete $2; }
-	| FUNC_MCIWAIT VAR			{ g_lingo->func_mciwait($2); }
-	| FUNC_PUT expr OP_INTO VAR	{ $$ = vars[*$4] = $2; delete $4; }
-	| FUNC_SET VAR '=' expr		{ $$ = vars[*$2] = $4; delete $2; }
-	| FUNC_SET VAR OP_TO expr	{ $$ = vars[*$2] = $4; delete $2; }
+func: FUNC_MCI STRING			{ g_lingo->code1(g_lingo->func_mci); g_lingo->codeString($2->c_str()); delete $2; }
+	| FUNC_MCIWAIT VAR			{ g_lingo->code1(g_lingo->func_mciwait); g_lingo->codeString($2->c_str()); delete $2; }
+	| FUNC_PUT expr OP_INTO VAR	{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($4->c_str()); g_lingo->code1(g_lingo->func_assign); $$ = $2; delete $4; }
+	| FUNC_SET VAR '=' expr		{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($2->c_str()); g_lingo->code1(g_lingo->func_assign); $$ = $4; delete $2; }
+	| FUNC_SET VAR OP_TO expr	{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($2->c_str()); g_lingo->code1(g_lingo->func_assign); $$ = $4; delete $2; }
 	;
 
 %%

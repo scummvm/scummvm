@@ -72,14 +72,14 @@ Common::Error DirectorEngine::run() {
 
 	_lingo = new Lingo(this);
 	_soundManager = new DirectorSound();
-	_lingo->parse("mci \"open MM\\T005045a.wav type WaveAudio alias T005045a\"\n\
-	mci \"play T005045a from 22710 to 32872\"");
+	_lingo->addCode("mci \"open MM\\T005045a.wav type WaveAudio alias T005045a\"\n\
+	mci \"play T005045a from 22710 to 32872\"", kMovieScript, 1);
 
 #if 0
-	_lingo->parse("set x = 1\n\
+	_lingo->addCode("set x = 1\n\
 	set y to 2 -- this set y to 4\n\
 	put 5 into z\n\
--- some more\n");
+-- some more\n", kMovieScript, 2);
 #endif
 
 	//FIXME
