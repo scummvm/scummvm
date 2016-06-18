@@ -22,11 +22,10 @@
 
 #include "backends/networking/curl/cloudicon.h"
 #include "backends/cloud/cloudmanager.h"
+#include "common/memstream.h"
 #include "gui/ThemeEngine.h"
 #include "gui/gui-manager.h"
 #include "image/png.h"
-#include <common/file.h>
-#include <backends/graphics/surfacesdl/surfacesdl-graphics.h>
 
 namespace Networking {
 
@@ -100,37 +99,35 @@ void CloudIcon::showDisabled() {
 	_disabledFrames = 20 * 3; //3 seconds 20 fps
 }
 
+#include "backends/networking/curl/cloudicon_data.h"
+#include "backends/networking/curl/cloudicon_disabled_data.h"
+
 void CloudIcon::initIcons() {
 	if (_iconsInited) return;
-	loadIcon(_icon, "cloudicon.png");
-	loadIcon(_disabledIcon, "cloudicon_disabled.png");
+	loadIcon(_icon, cloudicon_data, ARRAYSIZE(cloudicon_data));
+	loadIcon(_disabledIcon, cloudicon_disabled_data, ARRAYSIZE(cloudicon_disabled_data));
 	_iconsInited = true;
 }
 
-void CloudIcon::loadIcon(Graphics::TransparentSurface &icon, const char *filename) {
-	Image::PNGDecoder decoder;
-	Common::ArchiveMemberList members;
-	Common::File file;
-	if (!file.open(filename)) warning("CloudIcon::loadIcon: unable to open %s", filename);
-	Common::SeekableReadStream *stream = &file;
-	if (stream) {
-		if (!decoder.loadStream(*stream))
-			error("CloudIcon::loadIcon: error decoding PNG");
+void CloudIcon::loadIcon(Graphics::TransparentSurface &icon, byte *data, uint32 size) {	
+	Image::PNGDecoder decoder;	
+	Common::MemoryReadStream stream(data, size);
+	if (!decoder.loadStream(stream))
+		error("CloudIcon::loadIcon: error decoding PNG");
 
-		Graphics::TransparentSurface *s = new Graphics::TransparentSurface(*decoder.getSurface(), true);
-		if (s) {
-			Graphics::PixelFormat f = g_system->getOSDFormat();
-			if (f != s->format) {
-				Graphics::TransparentSurface *s2 = s->convertTo(f);
-				if (s2) icon.copyFrom(*s2);
-				else warning("CloudIcon::loadIcon: failed converting TransparentSurface");
-				delete s2;
-			} else {
-				icon.copyFrom(*s);
-			}
-			delete s;
-		} else warning("CloudIcon::loadIcon: failed reading TransparentSurface from PNGDecoder");
-	}
+	Graphics::TransparentSurface *s = new Graphics::TransparentSurface(*decoder.getSurface(), true);
+	if (s) {
+		Graphics::PixelFormat f = g_system->getOSDFormat();
+		if (f != s->format) {
+			Graphics::TransparentSurface *s2 = s->convertTo(f);
+			if (s2) icon.copyFrom(*s2);
+			else warning("CloudIcon::loadIcon: failed converting TransparentSurface");
+			delete s2;
+		} else {
+			icon.copyFrom(*s);
+		}
+		delete s;
+	} else warning("CloudIcon::loadIcon: failed reading TransparentSurface from PNGDecoder");
 }
 
 void CloudIcon::makeAlphaIcon(Graphics::TransparentSurface &icon, float alpha) {

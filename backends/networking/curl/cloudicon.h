@@ -37,7 +37,7 @@ class CloudIcon {
 	int _disabledFrames;
 
 	void initIcons();
-	void loadIcon(Graphics::TransparentSurface &icon, const char *filename);
+	void loadIcon(Graphics::TransparentSurface &icon, byte *data, uint32 size);
 	void makeAlphaIcon(Graphics::TransparentSurface &icon, float alpha);
 
 public:
