@@ -42,6 +42,8 @@ public:
 	}
 }; // @ OBJECT_INFO
 
+extern ObjectInfo gObjectInfo[180];
+
 extern uint16 gJunkInfo[53];
 				
 enum ArmourAttribute {

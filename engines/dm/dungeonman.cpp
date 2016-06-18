@@ -6,6 +6,189 @@
 
 namespace DM {
 
+ObjectInfo gObjectInfo[180] = { // @ G0237_as_Graphic559_ObjectInfo
+/* { Type, ObjectAspectIndex, ActionSetIndex, AllowedSlots } */
+	ObjectInfo(30,  1,  0, 0x0500),   /* COMPASS        Pouch/Chest */
+	ObjectInfo(144,  0,  0, 0x0200),   /* COMPASS        Hands */
+	ObjectInfo(148, 67,  0, 0x0500),   /* COMPASS        Pouch/Chest */
+	ObjectInfo(149, 67,  0, 0x0500),   /* COMPASS        Pouch/Chest */
+	ObjectInfo(150, 67,  0, 0x0500),   /* TORCH          Pouch/Chest */
+	ObjectInfo(151, 67, 42, 0x0500),   /* TORCH          Pouch/Chest */
+	ObjectInfo(152, 67,  0, 0x0500),   /* TORCH          Pouch/Chest */
+	ObjectInfo(153, 67,  0, 0x0500),   /* TORCH          Pouch/Chest */
+	ObjectInfo(154,  2,  0, 0x0501),   /* WATERSKIN      Mouth/Pouch/Chest */
+	ObjectInfo(155,  2,  0, 0x0501),   /* WATER          Mouth/Pouch/Chest */
+	ObjectInfo(156,  2,  0, 0x0501),   /* JEWEL SYMAL    Mouth/Pouch/Chest */
+	ObjectInfo(157,  2,  0, 0x0501),   /* JEWEL SYMAL    Mouth/Pouch/Chest */
+	ObjectInfo(158,  2,  0, 0x0501),   /* ILLUMULET      Mouth/Pouch/Chest */
+	ObjectInfo(159,  2,  0, 0x0501),   /* ILLUMULET      Mouth/Pouch/Chest */
+	ObjectInfo(160,  2,  0, 0x0501),   /* FLAMITT        Mouth/Pouch/Chest */
+	ObjectInfo(161,  2,  0, 0x0501),   /* FLAMITT        Mouth/Pouch/Chest */
+	ObjectInfo(162,  2,  0, 0x0501),   /* EYE OF TIME    Mouth/Pouch/Chest */
+	ObjectInfo(163,  2,  0, 0x0501),   /* EYE OF TIME    Mouth/Pouch/Chest */
+	ObjectInfo(164, 68,  0, 0x0500),   /* STORMRING      Pouch/Chest */
+	ObjectInfo(165, 68,  0, 0x0500),   /* STORMRING      Pouch/Chest */
+	ObjectInfo(166, 68,  0, 0x0500),   /* STAFF OF CLAWS Pouch/Chest */
+	ObjectInfo(167, 68, 42, 0x0500),   /* STAFF OF CLAWS Pouch/Chest */
+	ObjectInfo(195, 80,  0, 0x0500),   /* STAFF OF CLAWS Pouch/Chest */
+	ObjectInfo(16, 38, 43, 0x0500),   /* BOLT BLADE     Pouch/Chest */
+	ObjectInfo(18, 38,  7, 0x0500),   /* BOLT BLADE     Pouch/Chest */
+	ObjectInfo(4, 35,  5, 0x0400),   /* FURY           Chest */
+	ObjectInfo(14, 37,  6, 0x0400),   /* FURY           Chest */
+	ObjectInfo(20, 11,  8, 0x0040),   /* THE FIRESTAFF  Quiver 1 */
+	ObjectInfo(23, 12,  9, 0x0040),   /* THE FIRESTAFF  Quiver 1 */
+	ObjectInfo(25, 12, 10, 0x0040),   /* THE FIRESTAFF  Quiver 1 */
+	ObjectInfo(27, 39, 11, 0x0040),   /* OPEN SCROLL    Quiver 1 */
+	ObjectInfo(32, 17, 12, 0x05C0),   /* SCROLL         Quiver 1/Quiver 2/Pouch/Chest */
+	ObjectInfo(33, 12, 13, 0x0040),   /* DAGGER         Quiver 1 */
+	ObjectInfo(34, 12, 13, 0x0040),   /* FALCHION       Quiver 1 */
+	ObjectInfo(35, 12, 14, 0x0040),   /* SWORD          Quiver 1 */
+	ObjectInfo(36, 12, 15, 0x0040),   /* RAPIER         Quiver 1 */
+	ObjectInfo(37, 12, 15, 0x0040),   /* SABRE          Quiver 1 */
+	ObjectInfo(38, 12, 16, 0x0040),   /* SAMURAI SWORD  Quiver 1 */
+	ObjectInfo(39, 12, 17, 0x0040),   /* DELTA          Quiver 1 */
+	ObjectInfo(40, 42, 18, 0x0040),   /* DIAMOND EDGE   Quiver 1 */
+	ObjectInfo(41, 12, 19, 0x0040),   /* VORPAL BLADE   Quiver 1 */
+	ObjectInfo(42, 13, 20, 0x0040),   /* THE INQUISITOR Quiver 1 */
+	ObjectInfo(43, 13, 21, 0x0040),   /* AXE            Quiver 1 */
+	ObjectInfo(44, 21, 22, 0x0040),   /* HARDCLEAVE     Quiver 1 */
+	ObjectInfo(45, 21, 22, 0x0040),   /* MACE           Quiver 1 */
+	ObjectInfo(46, 33, 23, 0x0440),   /* MACE OF ORDER  Quiver 1/Chest */
+	ObjectInfo(47, 43, 24, 0x0040),   /* MORNINGSTAR    Quiver 1 */
+	ObjectInfo(48, 44, 24, 0x0040),   /* CLUB           Quiver 1 */
+	ObjectInfo(49, 14, 27, 0x0040),   /* STONE CLUB     Quiver 1 */
+	ObjectInfo(50, 45, 27, 0x0040),   /* BOW            Quiver 1 */
+	ObjectInfo(51, 16, 26, 0x05C0),   /* CROSSBOW       Quiver 1/Quiver 2/Pouch/Chest */
+	ObjectInfo(52, 46, 26, 0x05C0),   /* ARROW          Quiver 1/Quiver 2/Pouch/Chest */
+	ObjectInfo(53, 11, 27, 0x0440),   /* SLAYER         Quiver 1/Chest */
+	ObjectInfo(54, 47, 42, 0x05C0),   /* SLING          Quiver 1/Quiver 2/Pouch/Chest */
+	ObjectInfo(55, 48, 40, 0x05C0),   /* ROCK           Quiver 1/Quiver 2/Pouch/Chest */
+	ObjectInfo(56, 49, 42, 0x05C0),   /* POISON DART    Quiver 1/Quiver 2/Pouch/Chest */
+	ObjectInfo(57, 50,  5, 0x0040),   /* THROWING STAR  Quiver 1 */
+	ObjectInfo(58, 11,  5, 0x0040),   /* STICK          Quiver 1 */
+	ObjectInfo(59, 31, 28, 0x0540),   /* STAFF          Quiver 1/Pouch/Chest */
+	ObjectInfo(60, 31, 29, 0x0540),   /* WAND           Quiver 1/Pouch/Chest */
+	ObjectInfo(61, 11, 30, 0x0040),   /* TEOWAND        Quiver 1 */
+	ObjectInfo(62, 11, 31, 0x0040),   /* YEW STAFF      Quiver 1 */
+	ObjectInfo(63, 11, 32, 0x0040),   /* STAFF OF MANAR Quiver 1 Atari ST Version 1.0 1987-12-08: ObjectAspectIndex = 35 */
+	ObjectInfo(64, 51, 33, 0x0040),   /* SNAKE STAFF    Quiver 1 */
+	ObjectInfo(65, 32,  5, 0x0440),   /* THE CONDUIT    Quiver 1/Chest */
+	ObjectInfo(66, 30, 35, 0x0040),   /* DRAGON SPIT    Quiver 1 */
+	ObjectInfo(135, 65, 36, 0x0440),   /* SCEPTRE OF LYF Quiver 1/Chest */
+	ObjectInfo(143, 45, 27, 0x0040),   /* ROBE           Quiver 1 */
+	ObjectInfo(28, 82,  1, 0x0040),   /* FINE ROBE      Quiver 1 */
+	ObjectInfo(80, 23,  0, 0x040C),   /* KIRTLE         Neck/Torso/Chest */
+	ObjectInfo(81, 23,  0, 0x040C),   /* SILK SHIRT     Neck/Torso/Chest */
+	ObjectInfo(82, 23,  0, 0x0410),   /* ELVEN DOUBLET  Legs/Chest */
+	ObjectInfo(112, 55,  0, 0x0420),   /* LEATHER JERKIN Feet/Chest */
+	ObjectInfo(114,  8,  0, 0x0420),   /* TUNIC          Feet/Chest */
+	ObjectInfo(67, 24,  0, 0x0408),   /* GHI            Torso/Chest */
+	ObjectInfo(83, 24,  0, 0x0410),   /* MAIL AKETON    Legs/Chest */
+	ObjectInfo(68, 24,  0, 0x0408),   /* MITHRAL AKETON Torso/Chest */
+	ObjectInfo(84, 24,  0, 0x0410),   /* TORSO PLATE    Legs/Chest */
+	ObjectInfo(69, 69,  0, 0x0408),   /* PLATE OF LYTE  Torso/Chest */
+	ObjectInfo(70, 24,  0, 0x0408),   /* PLATE OF DARC  Torso/Chest */
+	ObjectInfo(85, 24,  0, 0x0410),   /* CAPE           Legs/Chest */
+	ObjectInfo(86, 69,  0, 0x0410),   /* CLOAK OF NIGHT Legs/Chest */
+	ObjectInfo(71,  7,  0, 0x0408),   /* BARBARIAN HIDE Torso/Chest */
+	ObjectInfo(87,  7,  0, 0x0410),   /* ROBE           Legs/Chest */
+	ObjectInfo(119, 57,  0, 0x0420),   /* FINE ROBE      Feet/Chest */
+	ObjectInfo(72, 23,  0, 0x0408),   /* TABARD         Torso/Chest */
+	ObjectInfo(88, 23,  0, 0x0410),   /* GUNNA          Legs/Chest */
+	ObjectInfo(113, 29,  0, 0x0420),   /* ELVEN HUKE     Feet/Chest */
+	ObjectInfo(89, 69,  0, 0x0410),   /* LEATHER PANTS  Legs/Chest */
+	ObjectInfo(73, 69,  0, 0x0408),   /* BLUE PANTS     Torso/Chest */
+	ObjectInfo(74, 24,  0, 0x0408),   /* GHI TROUSERS   Torso/Chest */
+	ObjectInfo(90, 24,  0, 0x0410),   /* LEG MAIL       Legs/Chest */
+	ObjectInfo(103, 53,  0, 0x0402),   /* MITHRAL MAIL   Head/Chest */
+	ObjectInfo(104, 53,  0, 0x0402),   /* LEG PLATE      Head/Chest */
+	ObjectInfo(96,  9,  0, 0x0402),   /* POLEYN OF LYTE Head/Chest */
+	ObjectInfo(97,  9,  0, 0x0402),   /* POLEYN OF DARC Head/Chest */
+	ObjectInfo(98,  9,  0, 0x0402),   /* BEZERKER HELM  Head/Chest */
+	ObjectInfo(105, 54, 41, 0x0400),   /* HELMET         Chest */
+	ObjectInfo(106, 54, 41, 0x0200),   /* BASINET        Hands */
+	ObjectInfo(108, 10, 41, 0x0200),   /* CASQUE 'N COIF Hands */
+	ObjectInfo(107, 54, 41, 0x0200),   /* ARMET          Hands */
+	ObjectInfo(75, 19,  0, 0x0408),   /* HELM OF LYTE   Torso/Chest */
+	ObjectInfo(91, 19,  0, 0x0410),   /* HELM OF DARC   Legs/Chest */
+	ObjectInfo(76, 19,  0, 0x0408),   /* CALISTA        Torso/Chest */
+	ObjectInfo(92, 19,  0, 0x0410),   /* CROWN OF NERRA Legs/Chest */
+	ObjectInfo(99,  9,  0, 0x0402),   /* BUCKLER        Head/Chest */
+	ObjectInfo(115, 19,  0, 0x0420),   /* HIDE SHIELD    Feet/Chest */
+	ObjectInfo(100, 52,  0, 0x0402),   /* SMALL SHIELD   Head/Chest */
+	ObjectInfo(77, 20,  0, 0x0008),   /* WOODEN SHIELD  Torso */
+	ObjectInfo(93, 22,  0, 0x0010),   /* LARGE SHIELD   Legs */
+	ObjectInfo(116, 56,  0, 0x0420),   /* SHIELD OF LYTE Feet/Chest */
+	ObjectInfo(109, 10, 41, 0x0200),   /* SHIELD OF DARC Hands */
+	ObjectInfo(101, 52,  0, 0x0402),   /* SANDALS        Head/Chest */
+	ObjectInfo(78, 20,  0, 0x0008),   /* SUEDE BOOTS    Torso */
+	ObjectInfo(94, 22,  0, 0x0010),   /* LEATHER BOOTS  Legs */
+	ObjectInfo(117, 56,  0, 0x0420),   /* HOSEN          Feet/Chest */
+	ObjectInfo(110, 10, 41, 0x0200),   /* FOOT PLATE     Hands */
+	ObjectInfo(102, 52,  0, 0x0402),   /* GREAVE OF LYTE Head/Chest */
+	ObjectInfo(79, 20,  0, 0x0008),   /* GREAVE OF DARC Torso */
+	ObjectInfo(95, 22,  0, 0x0010),   /* ELVEN BOOTS    Legs */
+	ObjectInfo(118, 56,  0, 0x0420),   /* GEM OF AGES    Feet/Chest */
+	ObjectInfo(111, 10, 41, 0x0200),   /* EKKHARD CROSS  Hands */
+	ObjectInfo(140, 52,  0, 0x0402),   /* MOONSTONE      Head/Chest */
+	ObjectInfo(141, 19,  0, 0x0408),   /* THE HELLION    Torso/Chest */
+	ObjectInfo(142, 22,  0, 0x0010),   /* PENDANT FERAL  Legs */
+	ObjectInfo(194, 81,  0, 0x0420),   /* COPPER COIN    Feet/Chest */
+	ObjectInfo(196, 84,  0, 0x0408),   /* SILVER COIN    Torso/Chest */
+	ObjectInfo(0, 34,  0, 0x0500),   /* GOLD COIN      Pouch/Chest */
+	ObjectInfo(8,  6,  0, 0x0501),   /* BOULDER        Mouth/Pouch/Chest */
+	ObjectInfo(10, 15,  0, 0x0504),   /* BLUE GEM       Neck/Pouch/Chest */
+	ObjectInfo(12, 15,  0, 0x0504),   /* ORANGE GEM     Neck/Pouch/Chest */
+	ObjectInfo(146, 40,  0, 0x0500),   /* GREEN GEM      Pouch/Chest */
+	ObjectInfo(147, 41,  0, 0x0400),   /* MAGICAL BOX    Chest */
+	ObjectInfo(125,  4, 37, 0x0500),   /* MAGICAL BOX    Pouch/Chest */
+	ObjectInfo(126, 83, 37, 0x0500),   /* MIRROR OF DAWN Pouch/Chest */
+	ObjectInfo(127,  4, 37, 0x0500),   /* HORN OF FEAR   Pouch/Chest */
+	ObjectInfo(176, 18,  0, 0x0500),   /* ROPE           Pouch/Chest */
+	ObjectInfo(177, 18,  0, 0x0500),   /* RABBIT'S FOOT  Pouch/Chest */
+	ObjectInfo(178, 18,  0, 0x0500),   /* CORBAMITE      Pouch/Chest */
+	ObjectInfo(179, 18,  0, 0x0500),   /* CHOKER         Pouch/Chest */
+	ObjectInfo(180, 18,  0, 0x0500),   /* DEXHELM        Pouch/Chest */
+	ObjectInfo(181, 18,  0, 0x0500),   /* FLAMEBAIN      Pouch/Chest */
+	ObjectInfo(182, 18,  0, 0x0500),   /* POWERTOWERS    Pouch/Chest */
+	ObjectInfo(183, 18,  0, 0x0500),   /* SPEEDBOW       Pouch/Chest */
+	ObjectInfo(184, 62,  0, 0x0500),   /* CHEST          Pouch/Chest */
+	ObjectInfo(185, 62,  0, 0x0500),   /* OPEN CHEST     Pouch/Chest */
+	ObjectInfo(186, 62,  0, 0x0500),   /* ASHES          Pouch/Chest */
+	ObjectInfo(187, 62,  0, 0x0500),   /* BONES          Pouch/Chest */
+	ObjectInfo(188, 62,  0, 0x0500),   /* MON POTION     Pouch/Chest */
+	ObjectInfo(189, 62,  0, 0x0500),   /* UM POTION      Pouch/Chest */
+	ObjectInfo(190, 62,  0, 0x0500),   /* DES POTION     Pouch/Chest */
+	ObjectInfo(191, 62,  0, 0x0500),   /* VEN POTION     Pouch/Chest */
+	ObjectInfo(128, 76,  0, 0x0200),   /* SAR POTION     Hands */
+	ObjectInfo(129,  3,  0, 0x0500),   /* ZO POTION      Pouch/Chest */
+	ObjectInfo(130, 60,  0, 0x0500),   /* ROS POTION     Pouch/Chest */
+	ObjectInfo(131, 61,  0, 0x0500),   /* KU POTION      Pouch/Chest */
+	ObjectInfo(168, 27,  0, 0x0501),   /* DANE POTION    Mouth/Pouch/Chest */
+	ObjectInfo(169, 28,  0, 0x0501),   /* NETA POTION    Mouth/Pouch/Chest */
+	ObjectInfo(170, 25,  0, 0x0501),   /* BRO POTION     Mouth/Pouch/Chest */
+	ObjectInfo(171, 26,  0, 0x0501),   /* MA POTION      Mouth/Pouch/Chest */
+	ObjectInfo(172, 71,  0, 0x0401),   /* YA POTION      Mouth/Chest */
+	ObjectInfo(173, 70,  0, 0x0401),   /* EE POTION      Mouth/Chest */
+	ObjectInfo(174,  5,  0, 0x0501),   /* VI POTION      Mouth/Pouch/Chest */
+	ObjectInfo(175, 66,  0, 0x0501),   /* WATER FLASK    Mouth/Pouch/Chest */
+	ObjectInfo(120, 15,  0, 0x0504),   /* KATH BOMB      Neck/Pouch/Chest */
+	ObjectInfo(121, 15,  0, 0x0504),   /* PEW BOMB       Neck/Pouch/Chest */
+	ObjectInfo(122, 58,  0, 0x0504),   /* RA BOMB        Neck/Pouch/Chest */
+	ObjectInfo(123, 59,  0, 0x0504),   /* FUL BOMB       Neck/Pouch/Chest */
+	ObjectInfo(124, 59,  0, 0x0504),   /* APPLE          Neck/Pouch/Chest */
+	ObjectInfo(132, 79, 38, 0x0500),   /* CORN           Pouch/Chest */
+	ObjectInfo(133, 63, 38, 0x0500),   /* BREAD          Pouch/Chest */
+	ObjectInfo(134, 64,  0, 0x0500),   /* CHEESE         Pouch/Chest */
+	ObjectInfo(136, 72, 39, 0x0400),   /* SCREAMER SLICE Chest */
+	ObjectInfo(137, 73,  0, 0x0500),   /* WORM ROUND     Pouch/Chest */
+	ObjectInfo(138, 74,  0, 0x0500),   /* DRUMSTICK      Pouch/Chest */
+	ObjectInfo(139, 75,  0, 0x0504),   /* DRAGON STEAK   Neck/Pouch/Chest */
+	ObjectInfo(192, 77,  0, 0x0500),   /* IRON KEY       Pouch/Chest */
+	ObjectInfo(193, 78,  0, 0x0500),   /* KEY OF B       Pouch/Chest */
+	ObjectInfo(197, 74,  0, 0x0000),   /* SOLID KEY */
+	ObjectInfo(198, 41,  0, 0x0400)}; /* SQUARE KEY     Chest */
+
 uint16 gJunkInfo[53] = { // @ G0241_auc_Graphic559_JunkInfo
 	1,   /* COMPASS */
 	3,   /* WATERSKIN */
