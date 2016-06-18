@@ -73,8 +73,25 @@ enum LEvent {
 typedef void (*inst)(void);
 #define	STOP (inst)0
 
+typedef struct Symbol {	/* symbol table entry */
+	char	*name;
+	long	type;
+	union {
+		int		val;		/* VAR */
+		float	fval;		/* FLOAT */
+		inst	*defn;		/* FUNCTION, PROCEDURE */
+		char	*str;		/* STRING */
+	} u;
+} Symbol;
+
+typedef union Datum {	/* interpreter stack type */
+	double	val;
+	Symbol	*sym;
+} Datum;
+
 typedef Common::Array<inst> ScriptData;
 typedef Common::HashMap<int32, ScriptData *> ScriptHash;
+typedef Common::Array<Datum> StackData;
 
 class Lingo {
 public:
@@ -114,6 +131,8 @@ private:
 
 	ScriptHash _scripts[kMaxScriptType + 1];
 	ScriptData *_currentScript;
+
+	StackData _stack;
 
 	DirectorEngine *_vm;
 };
