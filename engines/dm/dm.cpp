@@ -18,6 +18,7 @@
 #include "menus.h"
 #include "champion.h"
 #include "loadsave.h"
+#include "objectman.h"
 
 namespace DM {
 
@@ -49,6 +50,7 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	_menuMan = nullptr;
 	_championMan = nullptr;
 	_loadsaveMan = nullptr;
+	_objectMan = nullptr;
 	_stopWaitingForPlayerInput = false;
 	_gameTimeTicking = false;
 
@@ -67,6 +69,7 @@ DMEngine::~DMEngine() {
 	delete _menuMan;
 	delete _championMan;
 	delete _loadsaveMan;
+	delete _objectMan;
 
 	// clear debug channels
 	DebugMan.clearAllDebugChannels();
@@ -142,6 +145,7 @@ Common::Error DMEngine::run() {
 	_menuMan = new MenuMan(this);
 	_championMan = new ChampionMan(this);
 	_loadsaveMan = new LoadsaveMan(this);
+	_objectMan = new ObjectMan(this);
 	_displayMan->setUpScreens(320, 200);
 
 	initializeGame(); // @ F0463_START_InitializeGame_CPSADEF

@@ -15,6 +15,7 @@ class EventManager;
 class MenuMan;
 class ChampionMan;
 class LoadsaveMan;
+class ObjectMan;
 
 
 enum direction {
@@ -99,6 +100,7 @@ public:
 	MenuMan *_menuMan;
 	ChampionMan *_championMan;
 	LoadsaveMan *_loadsaveMan;
+	ObjectMan *_objectMan;
 	bool _stopWaitingForPlayerInput; // G0321_B_StopWaitingForPlayerInput
 	bool _gameTimeTicking; // @ G0301_B_GameTimeTicking
 	bool _restartGameAllowed; // @ G0524_B_RestartGameAllowed
