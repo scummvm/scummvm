@@ -9,7 +9,8 @@ MODULE_OBJS := \
 	menus.o \
 	champion.o \
 	loadsave.o \
-	objectman.o
+	objectman.o \
+	inventory.o
 
 MODULE_DIRS += \
 	engines/dm
