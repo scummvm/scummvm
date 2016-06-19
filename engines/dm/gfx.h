@@ -27,7 +27,8 @@ enum GraphicIndice {
 	kObjectIcons_096_TO_127 = 45, // @ C045_GRAPHIC_OBJECT_ICONS_096_TO_127
 	kObjectIcons_128_TO_159 = 46, // @ C046_GRAPHIC_OBJECT_ICONS_128_TO_159
 	kObjectIcons_160_TO_191 = 47, // @ C047_GRAPHIC_OBJECT_ICONS_160_TO_191
-	kObjectIcons_192_TO_223 = 48 // @ C048_GRAPHIC_OBJECT_ICONS_192_TO_223
+	kObjectIcons_192_TO_223 = 48, // @ C048_GRAPHIC_OBJECT_ICONS_192_TO_223
+	kInventoryGraphicIndice = 17 // @ C017_GRAPHIC_INVENTORY
 };
 
 extern uint16 gPalSwoosh[16];
@@ -295,7 +296,7 @@ public:
 
 	void clearBitmap(byte *bitmap, uint16 width, uint16 height, Color color);
 	void clearScreen(Color color);
-	void clearScreenBox(Color color, Box &box); // @ D24_FillScreenBox
+	void clearScreenBox(Color color, Box &box, Viewport &viewport = gDefultViewPort); // @ D24_FillScreenBox
 	void drawDungeon(direction dir, int16 posX, int16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
 	void updateScreen();
 	byte* getBitmap(uint16 index);
