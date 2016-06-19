@@ -254,6 +254,10 @@ reg_t kWinHelp(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kMessageBox(EngineState *s, int argc, reg_t *argv) {
+	return g_sci->_gfxControls32->kernelMessageBox(s->_segMan->getString(argv[0]), s->_segMan->getString(argv[1]), argv[2].toUint16());
+}
+
 /**
  * Causes an immediate plane transition with an optional transition
  * effect

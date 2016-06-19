@@ -728,6 +728,8 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(ListEachElementDo), SIG_EVERYWHERE,           "li(.*)",                NULL,            NULL },
 	{ MAP_CALL(ListFirstTrue),     SIG_EVERYWHERE,           "li(.*)",                NULL,            NULL },
 	{ MAP_CALL(ListIndexOf),       SIG_EVERYWHERE,           "l[o0]",                 NULL,            NULL },
+	// kMessageBox is used only by KQ7 1.51
+	{ MAP_CALL(MessageBox),        SIG_SCI32, SIGFOR_ALL,    "rri",                   NULL,            NULL },
 	{ "OnMe", kIsOnMe,             SIG_EVERYWHERE,           "iioi",                  NULL,            NULL },
 	// Purge is used by the memory manager in SSCI to ensure that X number of bytes (the so called "unmovable
 	// memory") are available when the current room changes. This is similar to the SCI0-SCI1.1 FlushResources

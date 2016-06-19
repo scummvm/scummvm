@@ -31,6 +31,10 @@ class GfxCache;
 class GfxScreen;
 class GfxText32;
 
+enum MessageBoxStyle {
+	kMessageBoxOK               = 0x0,
+	kMessageBoxYesNo            = 0x4
+};
 
 struct TextEditor {
 	/**
@@ -485,6 +489,21 @@ private:
 	 * A lookup table for registered ScrollWindow instances.
 	 */
 	ScrollWindowMap _scrollWindows;
+
+#pragma mark -
+#pragma mark Message box
+public:
+	/**
+	 * Displays an OS-level message dialog.
+	 */
+	reg_t kernelMessageBox(const Common::String &message, const Common::String &title, const uint16 style);
+
+private:
+	/**
+	 * Convenience function for creating and showing a
+	 * message box.
+	 */
+	int16 showMessageBox(const Common::String &message, const char *const okLabel, const char *const altLabel, const int16 okValue, const int16 altValue);
 };
 
 } // End of namespace Sci

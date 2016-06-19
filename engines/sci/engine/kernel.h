@@ -566,6 +566,7 @@ reg_t kMoveToFront(EngineState *s, int argc, reg_t *argv);
 reg_t kMoveToEnd(EngineState *s, int argc, reg_t *argv);
 reg_t kGetWindowsOption(EngineState *s, int argc, reg_t *argv);
 reg_t kWinHelp(EngineState *s, int argc, reg_t *argv);
+reg_t kMessageBox(EngineState *s, int argc, reg_t *argv);
 reg_t kGetConfig(EngineState *s, int argc, reg_t *argv);
 reg_t kGetSierraProfileInt(EngineState *s, int argc, reg_t *argv);
 reg_t kCelInfo(EngineState *s, int argc, reg_t *argv);

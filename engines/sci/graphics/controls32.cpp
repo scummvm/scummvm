@@ -21,7 +21,8 @@
  */
 
 #include "common/system.h"
-
+#include "common/translation.h"
+#include "gui/message.h"
 #include "sci/sci.h"
 #include "sci/console.h"
 #include "sci/event.h"
@@ -805,6 +806,39 @@ void GfxControls32::destroyScrollWindow(const reg_t id) {
 	scrollWindow->hide();
 	_scrollWindows.erase(id.getOffset());
 	delete scrollWindow;
+}
+
+#pragma mark -
+#pragma mark Message box
+
+int16 GfxControls32::showMessageBox(const Common::String &message, const char *const okLabel, const char *const altLabel, const int16 okValue, const int16 altValue) {
+	GUI::MessageDialog dialog(message, okLabel, altLabel);
+	return (dialog.runModal() == GUI::kMessageOK) ? okValue : altValue;
+}
+
+reg_t GfxControls32::kernelMessageBox(const Common::String &message, const Common::String &title, const uint16 style) {
+	if (g_engine) {
+		g_engine->pauseEngine(true);
+	}
+
+	int16 result;
+
+	switch (style & 0xF) {
+	case kMessageBoxOK:
+		result = showMessageBox(message, _("OK"), NULL, 1, 1);
+	break;
+	case kMessageBoxYesNo:
+		result = showMessageBox(message, _("Yes"), _("No"), 6, 7);
+	break;
+	default:
+		error("Unsupported MessageBox style 0x%x", style & 0xF);
+	}
+
+	if (g_engine) {
+		g_engine->pauseEngine(false);
+	}
+
+	return make_reg(0, result);
 }
 
 } // End of namespace Sci
