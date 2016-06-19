@@ -171,7 +171,7 @@ void MacVentureEngine::activateCommand(ControlReference id) {
 }
 
 void MacVentureEngine::refreshReady() {
-	switch (objectsToApplyCommand()) {
+	switch (getInvolvedObjects()) {
 	case 0: // No selected object
 		_cmdReady = true;
 		break;
@@ -201,16 +201,18 @@ void MacVentureEngine::loseGame() {
 	_gameState = kGameStateLosing;
 }
 
-void MacVentureEngine::enqueueObject(ObjID id) {
+void MacVentureEngine::enqueueObject(ObjectQueueID type, ObjID objID) {
 	QueuedObject obj;
-	obj.parent = _world->getObjAttr(id, kAttrParentObject);
-	obj.x = _world->getObjAttr(id, kAttrPosX);
-	obj.y = _world->getObjAttr(id, kAttrPosY);
-	obj.exitx = _world->getObjAttr(id, kAttrExitX);
-	obj.exity = _world->getObjAttr(id, kAttrExitY);
-	obj.hidden = _world->getObjAttr(id, kAttrHiddenExit);
-	obj.offsecreen = _world->getObjAttr(id, kAttrInvisible);
-	obj.invisible = _world->getObjAttr(id, kAttrUnclickable);
+	obj.id = type;
+	obj.object = objID;
+	obj.parent = _world->getObjAttr(objID, kAttrParentObject);
+	obj.x = _world->getObjAttr(objID, kAttrPosX);
+	obj.y = _world->getObjAttr(objID, kAttrPosY);
+	obj.exitx = _world->getObjAttr(objID, kAttrExitX);
+	obj.exity = _world->getObjAttr(objID, kAttrExitY);
+	obj.hidden = _world->getObjAttr(objID, kAttrHiddenExit);
+	obj.offsecreen = _world->getObjAttr(objID, kAttrInvisible);
+	obj.invisible = _world->getObjAttr(objID, kAttrUnclickable);
 	_objQueue.push_back(obj);
 }
 
@@ -300,16 +302,58 @@ bool MacVentureEngine::updateState() {
 }
 
 void MacVentureEngine::revert() {
+	warning("revert: unimplemented");
 }
 
 void MacVentureEngine::runObjQueue() {
-
+	warning("runObjQueue: not fully implemented");
+	while (!_objQueue.empty()) {
+		uint32 biggest = 0;
+		uint32 index = 0;
+		uint32 temp;
+		for (uint i = 0; i < _objQueue.size(); i++) {
+			temp = _objQueue[i].id;
+			if (temp > biggest) {
+				biggest = temp;
+				index = i;
+			}
+		}
+		QueuedObject obj = _objQueue[index];
+		_objQueue.remove_at(index);
+		switch (obj.id) {
+		case 0x2:
+			focusObjectWindow(obj.object);
+			break;
+		case 0x3:
+			openObject(obj.object);
+			break;
+		case 0x4:
+			closeObject(obj.object);
+			break;
+		case 0x7:
+			checkObject(obj.object);
+			break;
+		case 0x8:
+			reflectSwap(obj.object);
+			break;
+		case 0xc:
+			_world->setObjAttr(_gui->getWindowData(kMainGameWindow).refcon, kAttrContainerOpen, 0);
+			_world->setObjAttr(_world->getObjAttr(1, kAttrParentObject), kAttrContainerOpen, 1);
+			break;
+		case 0xd:
+			toggleExits();
+			break;
+		case 0xe:
+			zoomObject(obj.object);
+			break;
+		}
+	}
 }
 
 void MacVentureEngine::updateControls() {
 	if (_activeControl)
 		_activeControl = kNoCommand;
-	// toggleExits();
+	toggleExits();
 	// resetVars();
 }
 
@@ -320,6 +364,52 @@ void MacVentureEngine::resetVars() {
 	_destObject = 0;
 	_deltaPoint = Common::Point(0, 0);
 	_cmdReady = false;
+}
+
+void MacVentureEngine::focusObjectWindow(ObjID objID) {
+	if (objID) {
+		WindowReference win = getObjWindow(objID);
+		if (win)
+			_gui->bringToFront(win);
+	}
+}
+
+void MacVentureEngine::openObject(ObjID objID) {
+	if (getObjWindow(objID)) return;
+	if (objID == _world->getObjAttr(1, kAttrParentObject)) {
+		//_gui->setRefcon(objID, kMainGameWindow); // FIXME: Find better name
+		_gui->updateWindow(kMainGameWindow, _world->getObjAttr(objID, kAttrContainerOpen));
+		//_gui->drawExits();
+		_gui->setWindowTitle(kMainGameWindow, _world->getText(objID));
+	} else { // Open inventory window
+		Common::Point p(_world->getObjAttr(objID, kAttrPosX), _world->getObjAttr(objID, kAttrPosY));
+		//getParentWin(obj).localToGlobal(p);
+		//globalToDesktop(p);
+		WindowReference invID = _gui->createInventoryWindow();
+		_gui->setWindowTitle(invID, _world->getText(objID));
+		//_gui->setRefCon(objID, invID);
+		_gui->updateWindow(invID, _world->getObjAttr(objID, kAttrContainerOpen));
+	}
+}
+
+void MacVentureEngine::closeObject(ObjID objID) {
+	warning("closeObject: unimplemented");
+}
+
+void MacVentureEngine::checkObject(ObjID objID) {
+	warning("checkObject: unimplemented");
+}
+
+void MacVentureEngine::reflectSwap(ObjID objID) {
+	warning("reflectSwap: unimplemented");
+}
+
+void MacVentureEngine::toggleExits() {
+	warning("toggleExits: unimplemented");
+}
+
+void MacVentureEngine::zoomObject(ObjID objID) {
+	warning("zoomObject: unimplemented");
 }
 
 ControlAction MacVenture::MacVentureEngine::referenceToAction(ControlReference id) {
@@ -345,10 +435,6 @@ ControlAction MacVenture::MacVentureEngine::referenceToAction(ControlReference i
 	default:
 		return kNoCommand;
 	}
-}
-
-uint MacVentureEngine::objectsToApplyCommand() {
-	return uint();
 }
 
 // Data retrieval
@@ -380,6 +466,37 @@ const HuffmanLists * MacVentureEngine::getDecodingHuffman() const {
 
 uint32 MacVentureEngine::randBetween(uint32 min, uint32 max) {
 	return _rnd->getRandomNumber(max - min) + min;
+}
+
+uint32 MacVentureEngine::getInvolvedObjects() {
+	return (_selectedControl ? _globalSettings.cmdArgCnts[_selectedControl - 1] : 3000);
+}
+
+WindowReference MacVentureEngine::getObjWindow(ObjID objID) {
+	switch (objID) {
+	case 0xfffc: return kExitsWindow;
+	case 0xfffd: return kSelfWindow;
+	case 0xfffe: return kOutConsoleWindow;
+	case 0xffff: return kCommandsWindow;
+	}
+
+	return findObjWindow(objID);
+}
+
+WindowReference MacVentureEngine::findObjWindow(ObjID objID) {
+	return kMainGameWindow;
+}
+
+Common::Point MacVentureEngine::getDeltaPoint() {
+	return _deltaPoint;
+}
+
+ObjID MacVentureEngine::getDestObject() {
+	return _destObject;
+}
+
+ControlAction MacVentureEngine::getSelectedControl() {
+	return _selectedControl;
 }
 
 // Data loading

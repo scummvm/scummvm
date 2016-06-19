@@ -151,6 +151,7 @@ bool ScriptEngine::runFunc(EngineFrame *frame) {
 	byte op;	
 	while (script.hasNext()) {
 		op = script.fetch();
+		debug(8, "SCRIPT: I'm running operation %x", op);
 		if (!(op & 0x80)) {
 			state->push(op);
 		} else {
@@ -900,7 +901,7 @@ void ScriptEngine::opbcCALL(EngineState * state, EngineFrame * frame, ScriptAsse
 
 void ScriptEngine::opbdFOOB(EngineState * state, EngineFrame * frame) {
 	word obj = state->pop();
-	_engine->enqueueObject(obj);
+	_engine->enqueueObject(kFocusWindow, obj);
 }
 
 void ScriptEngine::opbeSWOB(EngineState * state, EngineFrame * frame) {

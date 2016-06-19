@@ -68,7 +68,7 @@ void World::setObjAttr(ObjID objID, uint32 attrID, Attribute value) {
 		setParent(objID, value);
 	
 	if (attrID < kAttrOtherDoor)
-		_engine->enqueueObject(objID);
+		_engine->enqueueObject(kUpdateObject, objID);
 
 	uint32 idx = _engine->getGlobalSettings().attrIndices[attrID];
 	value <<= _engine->getGlobalSettings().attrShifts[attrID];
@@ -80,7 +80,29 @@ void World::setObjAttr(ObjID objID, uint32 attrID, Attribute value) {
 }
 
 bool MacVenture::World::isObjActive(ObjID obj) {
-	return false;
+	ObjID destObj = _engine->getDestObject();
+	Common::Point p = _engine->getDeltaPoint();
+	ControlAction selectedControl = _engine->getSelectedControl();
+	if (!getAncestor(obj)) return false; // If our ancestor is the garbage (obj 0), we're inactive
+	if (_engine->getInvolvedObjects() >= 2 &&	// If (we need > 1 objs for the command) && 
+		destObj > 0 &&			// we have a destination object &&
+		!getAncestor(destObj))  // but that destination object is in the garbage
+		return false;
+	if (selectedControl != kMoveObject) return true; // We only need one 
+	// Handle move object
+	if (!isObjDraggable(obj)) return false; // We can't move it
+	if (getObjAttr(1, kAttrParentObject) != destObj) return true; // if the target is not the player's parent, we can go
+	Common::Rect rect(kScreenWidth, kScreenHeight);
+	rect.top -= getObjAttr(obj, kAttrPosY) + p.y;
+	rect.left -= getObjAttr(obj, kAttrPosX) + p.x;	
+	return intersects(obj, rect);
+}
+
+ObjID World::getAncestor(ObjID objID) {
+	ObjID root = getObjAttr(1, kAttrParentObject);
+	while (objID != 0 && objID != 1 && objID != root)
+		objID = getObjAttr(objID, kAttrParentObject);
+	return objID;
 }
 
 Common::Array<ObjID> World::getFamily(ObjID objID, bool recursive) {
@@ -102,21 +124,6 @@ Common::Array<ObjID> World::getChildren(ObjID objID, bool recursive) {
 	return Common::Array<ObjID>();
 }
 
-WindowReference World::getObjWindow(ObjID objID) {
-	switch (objID) {
-	case 0xfffc: return kExitsWindow;
-	case 0xfffd: return kSelfWindow;
-	case 0xfffe: return kOutConsoleWindow;
-	case 0xffff: return kCommandsWindow;
-	}
-
-	return findObjWindow(objID);
-}
-
-WindowReference World::findObjWindow(ObjID objID) {
-	return kMainGameWindow;
-}
-
 Attribute World::getGlobal(uint32 attrID) {
 	return _saveGame->getGlobals()[attrID];
 }
@@ -130,7 +137,7 @@ void World::updateObj(ObjID objID) {
 	if (getObjAttr(1, kAttrParentObject) == objID) {
 		win = kMainGameWindow;
 	} else {
-		win = getObjWindow(objID);
+		win = _engine->getObjWindow(objID);
 	}
 	if (win) {
 		//focusObjWin(objID);
@@ -151,6 +158,17 @@ Common::String World::getText(ObjID objID) {
 	return *text.decode();
 }
 
+
+bool World::isObjDraggable(ObjID objID) {
+	return (getObjAttr(objID, kAttrInvisible) == 0 &&
+			getObjAttr(objID, kAttrUnclickable) == 0 &&
+			getObjAttr(objID, kAttrUndraggable) == 0);
+}
+
+bool World::intersects(ObjID objID, Common::Rect rect) {
+	warning("Intersects: unimplemented");
+	return true;
+}
 
 bool World::loadStartGameFileName() {
 	Common::SeekableReadStream *res;

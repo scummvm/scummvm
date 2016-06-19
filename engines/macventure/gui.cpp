@@ -99,21 +99,42 @@ bool Gui::processEvent(Common::Event &event) {
 }
 
 const WindowData& Gui::getWindowData(WindowReference reference) {
-	assert(_windowData);
-
-	Common::List<WindowData>::const_iterator iter = _windowData->begin();
-	while (iter->refcon != reference && iter != _windowData->end()) {
-		iter++;
-	}
-
-	if (iter->refcon == reference)
-		return *iter;
-
-	error("Could not locate the desired window data");
+	return findWindowData(reference);
 }
 
 const Graphics::Font& Gui::getCurrentFont() {
 	return *_wm.getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
+}
+
+void Gui::bringToFront(WindowReference winID) {
+	// FIXME: There has to be a better way to do this, maybe with the _wm
+	switch (winID) {
+	case MacVenture::kCommandsWindow:
+		_controlsWindow->setActive(true);
+		break;
+	case MacVenture::kMainGameWindow:
+		_mainGameWindow->setActive(true);
+		break;
+	case MacVenture::kOutConsoleWindow:
+		_outConsoleWindow->setActive(true);
+		break;
+	case MacVenture::kSelfWindow:
+		_selfWindow->setActive(true);
+		break;
+	case MacVenture::kExitsWindow:
+		_exitsWindow->setActive(true);
+		break;
+	case MacVenture::kDiplomaWindow:
+		_diplomaWindow->setActive(true);
+		break;
+	default:
+		break;
+	}
+}
+
+void Gui::setWindowTitle(WindowReference winID, Common::String string) {
+	findWindowData(winID).title = string;
+	findWindowData(winID).titleLength = string.size();
 }
 
 void Gui::initGUI() {
@@ -190,13 +211,6 @@ void Gui::initWindows() {
 	// Render invisible for now
 	_diplomaWindow->getSurface()->fillRect(_diplomaWindow->getSurface()->getBounds(), kColorGreen2);
 	*/
-
-	// Inventory Window
-	_inventoryWindow = _wm.addWindow(false, true, true);
-	_inventoryWindow->setDimensions(getWindowData(kInventoryWindow).bounds);
-	_inventoryWindow->setActive(false);
-	_inventoryWindow->setCallback(inventoryWindowCallback, this);
-	loadBorder(_inventoryWindow, "border_command.bmp", false);
 
 }
 
@@ -324,9 +338,10 @@ bool Gui::loadWindows() {
 		res->readUint32BE(); // Skip the true id. For some reason it's reading 0
 		data.titleLength = res->readByte();
 		if (data.titleLength) {
-			data.title = new char[data.titleLength + 1];
-			res->read(data.title, data.titleLength);
-			data.title[data.titleLength] = '\0';
+			char* newTitle = new char[data.titleLength + 1];
+			res->read(newTitle, data.titleLength);
+			newTitle[data.titleLength] = '\0';
+			data.title = Common::String(newTitle);
 		}
 
 		debug(5, "Window loaded: %s", data.title);
@@ -334,26 +349,7 @@ bool Gui::loadWindows() {
 		_windowData->push_back(data);
 	}
 
-	loadInventoryWindow();
-
 	return true;
-}
-
-void Gui::loadInventoryWindow() {
-	WindowData data;
-	GlobalSettings settings = _engine->getGlobalSettings();
-	data.bounds = Common::Rect(
-		settings.invLeft,
-		settings.invTop,
-		settings.invLeft + settings.invWidth,
-		settings.invTop + settings.invHeight);
-	data.title = "Inventory";
-	data.visible = true;
-	data.hasCloseBox = false;
-	data.refcon = kInventoryWindow;
-	data.titleLength = 10;
-
-	_windowData->push_back(data);
 }
 
 bool Gui::loadControls() {
@@ -456,7 +452,21 @@ void Gui::drawMainGameWindow() {
 }
 
 void Gui::drawSelfWindow() {
+	warning("drawSelfWindow: Unimplemented");
+}
 
+WindowData & Gui::findWindowData(WindowReference reference) {
+	assert(_windowData);
+
+	Common::List<WindowData>::iterator iter = _windowData->begin();
+	while (iter->refcon != reference && iter != _windowData->end()) {
+		iter++;
+	}
+
+	if (iter->refcon == reference)
+		return *iter;
+
+	error("Could not locate the desired window data");
 }
 
 
@@ -561,12 +571,60 @@ void Gui::handleMenuAction(MenuAction action) {
 	}
 }
 
+void Gui::updateWindow(WindowReference winID, bool containerOpen) {
+	if (winID > 0x90) return;
+	if (winID == kSelfWindow || containerOpen) {
+		if (winID == kMainGameWindow) {
+			warning("Unimplemented: draw main game window");
+		} else {
+			warning("Unimplemented: fill window with background");
+		}
+		WindowData &data = findWindowData(winID);
+		Common::Array<ObjID> children = data.children;
+		for (Common::Array<ObjID>::const_iterator it = children.begin(); it != children.end(); it++) {
+			warning("Unimplemented: draw object %x", *it);
+		}
+		if (data.type == kZoomDoc && data.updateScroll) {
+			warning("Unimplemented: update scroll");
+		}
+	}
+}
+
+WindowReference Gui::createInventoryWindow() {
+	Graphics::MacWindow *newWindow = _wm.addWindow(true, true, true);
+	WindowData newData;
+	GlobalSettings settings = _engine->getGlobalSettings();
+	newData.refcon = (WindowReference)ABS(_inventoryWindows.size()); // This is a hack
+
+	if (_windowData->back().refcon < 0x80) { // There is already another inventory window
+		newData.bounds = _windowData->back().bounds; // Inventory windows are always last
+		newData.bounds.translate(newData.bounds.left + settings.invOffsetX, newData.bounds.top + settings.invOffsetY);
+	} else {
+		newData.bounds = Common::Rect(
+			settings.invLeft,
+			settings.invTop,
+			settings.invLeft + settings.invWidth,
+			settings.invTop + settings.invHeight);
+	}
+	newData.type = kZoomDoc;
+	newData.hasCloseBox = true;
+	newData.visible = true;
+	_windowData->push_back(newData);
+
+	newWindow->setDimensions(newData.bounds);
+	newWindow->setCallback(inventoryWindowCallback, this);
+	loadBorder(newWindow, "border_self_inac.bmp", false);
+	loadBorder(newWindow, "border_self_act.bmp", true);
+	_inventoryWindows.push_back(newWindow);
+	return newData.refcon;
+}
+
 
 bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 	if (event.type == Common::EVENT_LBUTTONUP) {
-		if (_engine->isPaused()) 
+		if (_engine->isPaused())
 			return true;
-		
+
 		Common::Point position(
 			event.mouse.x - _controlsWindow->getDimensions().left,
 			event.mouse.y - _controlsWindow->getDimensions().top);
@@ -583,7 +641,7 @@ bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 		_engine->selectControl((ControlReference)data.getData().refcon);
 		_engine->activateCommand((ControlReference)data.getData().refcon);
 		_engine->refreshReady();
-		_engine->preparedToRun();		
+		_engine->preparedToRun();
 	}
 	return false;
 }

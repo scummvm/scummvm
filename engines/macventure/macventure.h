@@ -164,7 +164,7 @@ public:
 	bool updateState();
 	void revert();
 
-	void enqueueObject(ObjID id);
+	void enqueueObject(ObjectQueueID type, ObjID objID);
 	void enqueueText(TextQueueID type, ObjID target, ObjID source, ObjID text);
 
 	void runObjQueue();
@@ -178,6 +178,13 @@ public:
 	bool isOldText() const;
 	const HuffmanLists *getDecodingHuffman() const;
 	uint32 randBetween(uint32 min, uint32 max);
+	uint32 getInvolvedObjects();
+	WindowReference getObjWindow(ObjID objID);
+	WindowReference findObjWindow(ObjID objID);
+
+	Common::Point getDeltaPoint();
+	ObjID getDestObject();
+	ControlAction getSelectedControl();
 
 private:
 	void processEvents();
@@ -187,13 +194,21 @@ private:
 	void updateControls();
 	void resetVars();
 
+	// Object queue methods
+	void focusObjectWindow(ObjID objID);
+	void openObject(ObjID objID);
+	void closeObject(ObjID objID);
+	void checkObject(ObjID objID);
+	void reflectSwap(ObjID objID);
+	void toggleExits();
+	void zoomObject(ObjID objID);
+
 	// Data loading
 	bool loadGlobalSettings();
 	bool loadTextHuffman();
 
 	// Utils
 	ControlAction referenceToAction(ControlReference id);
-	uint objectsToApplyCommand();
 
 	const char* getGameFileName() const;
 
@@ -222,9 +237,9 @@ private: // Attributes
 	bool _haltedAtEnd, _haltedInSelection;
 	bool _gameChanged;
 
-	Common::List<QueuedObject> _objQueue;
-	Common::List<QueuedObject> _soundQueue;
-	Common::List<QueuedObject> _textQueue;
+	Common::Array<QueuedObject> _objQueue;
+	Common::Array<QueuedObject> _soundQueue;
+	Common::Array<QueuedObject> _textQueue;
 
 	// Selections
 	ObjID _destObject;

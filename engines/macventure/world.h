@@ -101,13 +101,16 @@ public:
 	Attribute getGlobal(uint32 attrID);
 	Common::String getText(ObjID objID);
 
-	bool isObjActive(ObjID obj);
+	bool isObjActive(ObjID objID);
+
+	ObjID getAncestor(ObjID objID);
 	Common::Array<ObjID> getFamily(ObjID objID, bool recursive);
-	Common::Array<ObjID> getChildren(ObjID objID, bool recursive);
-	WindowReference getObjWindow(ObjID objID);
-	WindowReference findObjWindow(ObjID objID);
+	Common::Array<ObjID> getChildren(ObjID objID, bool recursive);	
 
 private:
+	bool isObjDraggable(ObjID objID);
+	bool intersects(ObjID objID, Common::Rect rect);
+
 	bool loadStartGameFileName();
 	void calculateObjectRelations();
 	void setParent(ObjID child, ObjID newParent);
