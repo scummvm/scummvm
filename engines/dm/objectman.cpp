@@ -4,6 +4,15 @@
 
 namespace DM {
 
+int16 gIconGraphicFirstIndex[7] = { // G0026_ai_Graphic562_IconGraphicFirstIconIndex
+	0,     /* First icon index in graphic #42 */
+	32,    /* First icon index in graphic #43 */
+	64,    /* First icon index in graphic #44 */
+	96,    /* First icon index in graphic #45 */
+	128,   /* First icon index in graphic #46 */
+	160,   /* First icon index in graphic #47 */
+	192}; /* First icon index in graphic #48 */
+
 ObjectMan::ObjectMan(DMEngine *vm) : _vm(vm) {}
 
 IconIndice ObjectMan::getObjectType(Thing thing) {
