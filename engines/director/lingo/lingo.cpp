@@ -21,6 +21,7 @@
  */
 
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-gr.h"
 
 namespace Director {
 
@@ -66,6 +67,12 @@ struct EventHandlerType {
 	{ kEventNone,				0 },
 };
 
+Symbol::Symbol() {
+	name = NULL;
+	type = UNDEF;
+	u.str = NULL;
+}
+
 Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	g_lingo = this;
 
@@ -82,8 +89,7 @@ Lingo::~Lingo() {
 }
 
 int Lingo::codeString(const char *str) {
-	int instLen = sizeof(inst);
-	int numInsts = strlen(str) / instLen + (strlen(str) + 1 + instLen - 1) % instLen;
+	int numInsts = calcStringAlignment(str);
 
 	// Where we copy the string over
 	int pos = _currentScript->size();

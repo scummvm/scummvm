@@ -82,11 +82,15 @@ typedef struct Symbol {	/* symbol table entry */
 		inst	*defn;		/* FUNCTION, PROCEDURE */
 		char	*str;		/* STRING */
 	} u;
+
+	Symbol();
 } Symbol;
 
 typedef union Datum {	/* interpreter stack type */
 	int	val;
 	Symbol	*sym;
+
+	Datum() { val = 0; sym = NULL; }
 } Datum;
 
 typedef Common::Array<inst> ScriptData;
@@ -108,6 +112,10 @@ public:
 	int code3(inst code_1, inst code_2, inst code_3) { code1(code_1); code1(code_2); return code1(code_3); }
 	int codeString(const char *s);
 
+	int calcStringAlignment(const char *s) {
+		int instLen = sizeof(inst);
+		int l = strlen(s); return l / instLen + (l + 1 + instLen - 1) % instLen;
+	}
 
 public:
 	static void func_xpop();
@@ -120,6 +128,7 @@ public:
 	static void func_constpush();
 	static void func_varpush();
 	static void func_assign();
+	bool verify(Symbol *s);
 	static void func_eval();
 	static void func_mci();
 	static void func_mciwait();
@@ -136,6 +145,8 @@ private:
 
 	ScriptHash _scripts[kMaxScriptType + 1];
 	ScriptData *_currentScript;
+
+	Common::HashMap<Common::String, Symbol *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _vars;
 
 	inst *_pc;
 

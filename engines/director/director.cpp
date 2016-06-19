@@ -79,10 +79,13 @@ Common::Error DirectorEngine::run() {
 	_lingo->addCode("set x = 1 + 3\n\
 	set y to 2 + 3 * 2 -- this set y to 4\n\
 	put 5 into z\n\
--- some more\n", kMovieScript, 2);
+-- some more\n\
+x\n\
+y\n\
+z\n", kMovieScript, 2);
 
 	_lingo->addCode("2 + 3 * 2 / (5 - 2)", kMovieScript, 3);
-	_lingo->executeScript(kMovieScript, 3);
+	_lingo->executeScript(kMovieScript, 1);
 
 	//FIXME
 	_mainArchive = new RIFFArchive();

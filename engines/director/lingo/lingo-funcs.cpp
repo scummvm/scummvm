@@ -24,7 +24,10 @@
 #include "common/file.h"
 #include "audio/decoders/wave.h"
 
+#include "director/lingo/lingo-gr.h"
+
 namespace Director {
+
 enum MCITokenType {
 	kMCITokenNone,
 
@@ -186,7 +189,7 @@ void Lingo::func_xpop() {
 void Lingo::func_printtop(void) {
 	Datum d = g_lingo->pop();
 
-	warning("%d\n", d.val);
+	warning("%d", d.val);
 }
 
 void Lingo::func_constpush() {
@@ -197,12 +200,70 @@ void Lingo::func_constpush() {
 }
 
 void Lingo::func_varpush() {
+	Datum d;
+	Symbol *sym;
+	char *name = (char *)g_lingo->_pc;
+
+	if (!g_lingo->_vars.contains(name)) { // Create variable if it was not defined
+		sym = new Symbol;
+		sym->name = (char *)calloc(strlen(name) + 1, 1);
+		Common::strlcpy(sym->name, name, strlen(name) + 1);
+		sym->type = UNDEF;
+		sym->u.val = 0;
+
+		g_lingo->_vars[name] = sym;
+	} else {
+		sym = g_lingo->_vars[name];
+	}
+
+	d.sym = sym;
+
+	g_lingo->_pc += g_lingo->calcStringAlignment(name);
+
+	g_lingo->push(d);
 }
 
 void Lingo::func_assign() {
+	Datum d1, d2;
+	d1 = g_lingo->pop();
+	d2 = g_lingo->pop();
+
+	if (d1.sym->type != VAR && d1.sym->type != UNDEF) {
+		warning("assignment to non-variable '%s'", d1.sym->name);
+		return;
+	}
+
+	d1.sym->u.val = d2.val;
+	d1.sym->type = VAR;
+	g_lingo->push(d2);
+}
+
+bool Lingo::verify(Symbol *s) {
+	if (s->type != VAR && s->type != UNDEF) {
+		warning("attempt to evaluate non-variable '%s'", s->name);
+
+		return false;
+	}
+
+	if (s->type == UNDEF) {
+		warning("undefined variable '%s'", s->name);
+
+		return false;
+	}
+
+	return true;
 }
 
 void Lingo::func_eval() {
+	Datum d;
+	d = g_lingo->pop();
+
+	if (!g_lingo->verify(d.sym))
+		return;
+
+	d.val = d.sym->u.val;
+
+	g_lingo->push(d);
 }
 
 void Lingo::func_add() {
@@ -249,9 +310,19 @@ void Lingo::func_negate() {
 }
 
 void Lingo::func_mci() {
+	Common::String s((char *)g_lingo->_pc);
+
+	g_lingo->exec_mci(&s);
+
+	g_lingo->_pc += g_lingo->calcStringAlignment(s.c_str());
 }
 
 void Lingo::func_mciwait() {
+	Common::String s((char *)g_lingo->_pc);
+
+	g_lingo->exec_mciwait(&s);
+
+	g_lingo->_pc += g_lingo->calcStringAlignment(s.c_str());
 }
 
 }

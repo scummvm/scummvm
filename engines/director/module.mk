@@ -8,9 +8,9 @@ MODULE_OBJS = \
 	resource.o \
 	score.o \
 	sound.o \
+	lingo/lingo-gr.o \
 	lingo/lingo.o \
 	lingo/lingo-funcs.o \
-	lingo/lingo-gr.o \
 	lingo/lingo-lex.o
 
 engines/director/lingo/lingo-lex.cpp: engines/director/lingo/lingo-lex.l

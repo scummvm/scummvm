@@ -40,37 +40,39 @@
       know about them.  */
    enum yytokentype {
      UNARY = 258,
-     INT = 259,
-     FLOAT = 260,
-     VAR = 261,
-     STRING = 262,
-     OP_INTO = 263,
-     OP_TO = 264,
-     FUNC_MCI = 265,
-     FUNC_MCIWAIT = 266,
-     FUNC_PUT = 267,
-     FUNC_SET = 268
+     UNDEF = 259,
+     INT = 260,
+     FLOAT = 261,
+     VAR = 262,
+     STRING = 263,
+     OP_INTO = 264,
+     OP_TO = 265,
+     FUNC_MCI = 266,
+     FUNC_MCIWAIT = 267,
+     FUNC_PUT = 268,
+     FUNC_SET = 269
    };
 #endif
 /* Tokens.  */
 #define UNARY 258
-#define INT 259
-#define FLOAT 260
-#define VAR 261
-#define STRING 262
-#define OP_INTO 263
-#define OP_TO 264
-#define FUNC_MCI 265
-#define FUNC_MCIWAIT 266
-#define FUNC_PUT 267
-#define FUNC_SET 268
+#define UNDEF 259
+#define INT 260
+#define FLOAT 261
+#define VAR 262
+#define STRING 263
+#define OP_INTO 264
+#define OP_TO 265
+#define FUNC_MCI 266
+#define FUNC_MCIWAIT 267
+#define FUNC_PUT 268
+#define FUNC_SET 269
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 43 "engines/director/lingo/lingo-gr.y"
+#line 41 "engines/director/lingo/lingo-gr.y"
 {
 	Common::String *s;
 	int	i;
@@ -78,7 +80,7 @@ typedef union YYSTYPE
 	int code;
 }
 /* Line 1529 of yacc.c.  */
-#line 82 "engines/director/lingo/lingo-gr.hpp"
+#line 84 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

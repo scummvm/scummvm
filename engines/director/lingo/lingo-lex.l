@@ -40,11 +40,12 @@ constinteger [[:digit:]]+
 conststring \"[^\"\n]*\"
 operator [-+*/%=^:,()]
 newline [\n\r]+
+whitespace [\t ]
 
 %%
 
 --[^\r\n]*
-^[ \t]
+^{whitespace}
 [\t]+			{ return ' '; }
 into			{ return OP_INTO; }
 mci				{ return FUNC_MCI; }

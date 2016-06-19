@@ -30,8 +30,6 @@
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-gr.h"
 
-Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> vars;
-
 extern int yylex();
 extern int yyparse();
 void yyerror(char *s) { warning("%s", s); }
@@ -47,7 +45,7 @@ using namespace Director;
 	int code;
 }
 
-%token UNARY
+%token UNARY UNDEF
 %token<i> INT
 %token<f> FLOAT
 %token<s> VAR STRING
