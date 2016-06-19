@@ -49,7 +49,26 @@ SurfaceRenderer *createBestSurfaceRenderer() {
 #endif
 }
 
+SurfaceRenderer::SurfaceRenderer() :
+		_flipY(false),
+		_alphaBlending(false) {
+}
+
 SurfaceRenderer::~SurfaceRenderer() {
+}
+
+void SurfaceRenderer::setFlipY(bool flipY) {
+	_flipY = flipY;
+}
+
+void SurfaceRenderer::enableAlphaBlending(bool enable) {
+	if (_alphaBlending != enable) {
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	} else {
+		glDisable(GL_BLEND);
+	}
+	_alphaBlending = enable;
 }
 
 #ifndef USE_GLES2
@@ -82,11 +101,11 @@ void FixedSurfaceRenderer::prepareState() {
 	glDepthMask(GL_FALSE);
 }
 
-void FixedSurfaceRenderer::render(const Texture *tex, const Math::Rect2d &dest, bool flipY) {
+void FixedSurfaceRenderer::render(const Texture *tex, const Math::Rect2d &dest) {
 	float texcropX = tex->getWidth() / float(tex->getTexWidth());
 	float texcropY = tex->getHeight() / float(tex->getTexHeight());
-	float texTop    = flipY ? 0.0 : texcropY;
-	float texBottom = flipY ? texcropY : 0.0;
+	float texTop    = _flipY ? 0.0 : texcropY;
+	float texBottom = _flipY ? texcropY : 0.0;
 
 	float offsetX = dest.getTopLeft().getX();
 	float offsetY = dest.getTopLeft().getY();
@@ -119,6 +138,9 @@ void FixedSurfaceRenderer::restorePreviousState() {
 	glPopMatrix();
 
 	glPopAttrib();
+
+	_flipY = false;
+	_alphaBlending = false;
 }
 
 #endif
@@ -143,15 +165,18 @@ ShaderSurfaceRenderer::ShaderSurfaceRenderer() {
 
 void ShaderSurfaceRenderer::prepareState() {
 	_boxShader->use();
+
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
 }
 
-void ShaderSurfaceRenderer::render(const Texture *tex, const Math::Rect2d &dest, bool flipY) {
+void ShaderSurfaceRenderer::render(const Texture *tex, const Math::Rect2d &dest) {
 	glBindTexture(GL_TEXTURE_2D, tex->getTextureName());
 
 	float texcropX = tex->getWidth() / float(tex->getTexWidth());
 	float texcropY = tex->getHeight() / float(tex->getTexHeight());
 	_boxShader->setUniform("texcrop", Math::Vector2d(texcropX, texcropY));
-	_boxShader->setUniform("flipY", flipY);
+	_boxShader->setUniform("flipY", _flipY);
 
 	_boxShader->setUniform("offsetXY", dest.getTopLeft());
 	_boxShader->setUniform("sizeWH", Math::Vector2d(fabsf(dest.getWidth()), fabsf(dest.getHeight())));
@@ -161,6 +186,14 @@ void ShaderSurfaceRenderer::render(const Texture *tex, const Math::Rect2d &dest,
 }
 
 void ShaderSurfaceRenderer::restorePreviousState() {
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+
+	_flipY = false;
+	if (_alphaBlending) {
+		enableAlphaBlending(false);
+	}
+
 	_boxShader->unbind();
 }
 
