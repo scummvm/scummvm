@@ -206,42 +206,46 @@ void Lingo::func_eval() {
 }
 
 void Lingo::func_add() {
-	Datum d1, d2;
-	d2 = g_lingo->pop();
-	d1 = g_lingo->pop();
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
 	d1.val += d2.val;
 	g_lingo->push(d1);
 }
 
 void Lingo::func_sub() {
-	Datum d1, d2;
-	d2 = g_lingo->pop();
-	d1 = g_lingo->pop();
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
 	d1.val -= d2.val;
 	g_lingo->push(d1);
 }
 
 void Lingo::func_mul() {
-	Datum d1, d2;
-	d2 = g_lingo->pop();
-	d1 = g_lingo->pop();
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
 	d1.val *= d2.val;
 	g_lingo->push(d1);
 }
 
 void Lingo::func_div() {
-	Datum d1, d2;
-	d2 = g_lingo->pop();
+	Datum d2 = g_lingo->pop();
 
 	if (d2.val == 0)
 		error("division by zero");
 
-	d1 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
 	d1.val /= d2.val;
 	g_lingo->push(d1);
 }
 
 void Lingo::func_negate() {
+	Datum d = g_lingo->pop();
+
+	d.val -= d.val;
+	g_lingo->push(d);
 }
 
 void Lingo::func_mci() {
