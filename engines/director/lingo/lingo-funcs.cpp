@@ -191,7 +191,8 @@ void Lingo::func_printtop(void) {
 
 void Lingo::func_constpush() {
 	Datum d;
-	d.val = ((Symbol *)*g_lingo->_pc++)->u.val;
+	inst i = *g_lingo->_pc++;
+	d.val = READ_LE_UINT32(&i);
 	g_lingo->push(d);
 }
 

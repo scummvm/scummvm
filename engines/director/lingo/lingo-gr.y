@@ -67,7 +67,7 @@ list: /* empty */
 	| list '\n'
 	| list func '\n'
 	| list assign '\n'			{ g_lingo->code2(g_lingo->func_xpop, STOP); return 1; }
-	| list statement '\n'		{ g_lingo->code1(STOP); return 1; }
+//	| list statement '\n'		{ g_lingo->code1(STOP); return 1; }
 	| list expr '\n'  			{ g_lingo->code2(g_lingo->func_printtop, STOP); return 1; }
 	;
 
@@ -79,7 +79,7 @@ assign: FUNC_PUT expr OP_INTO VAR	{ g_lingo->code1(g_lingo->func_varpush); g_lin
 statement: expr 				{ g_lingo->code1(g_lingo->func_xpop); }
 	;
 
-expr: INT						{ $$ = g_lingo->code2(g_lingo->func_constpush, (inst)$1); }
+expr: INT						{ g_lingo->code1(g_lingo->func_constpush); inst i; WRITE_LE_UINT32(&i, $1); $$ = g_lingo->code1(i); };
 	| VAR						{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($1->c_str()); $$ = g_lingo->code1(g_lingo->func_eval); delete $1; }
 	| expr '+' expr				{ g_lingo->code1(g_lingo->func_add); }
 	| expr '-' expr				{ g_lingo->code1(g_lingo->func_sub); }
