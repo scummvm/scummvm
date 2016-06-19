@@ -328,7 +328,7 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 		fileName = getSavegameFilename(slot);
 	}
 
-	Common::OutSaveFile *out = new Common::OutSaveFile(openSaveForWriting(fileName, saveName, thumbnail));
+	Common::OutSaveFile *out = openSaveForWriting(fileName, saveName, thumbnail);
 	if (!out)
 		return _saveFileMan->getError();
 
