@@ -84,6 +84,7 @@ void TitanicEngine::initialize() {
 
 	CSaveableObject::initClassList();
 	CEnterExitFirstClassState::init();
+	CGameObject::init();
 	CGetLiftEye2::init();
 	CHose::init();
 	CParrotLobbyObject::init();
@@ -115,6 +116,7 @@ void TitanicEngine::deinitialize() {
 	CSGTStateRoom::deinit();
 	CExitPellerator::deinit();
 	CEnterExitSecClassMiniLift::deinit();
+	CGameObject::deinit();
 	CTelevision::deinit();
 }
 

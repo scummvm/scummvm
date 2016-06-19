@@ -440,6 +440,7 @@ MODULE_OBJS := \
 	support/movie.o \
 	support/movie_event.o \
 	support/movie_range_info.o \
+	support/credit_text.o \
 	support/proximity.o \
 	support/rect.o \
 	support/screen_manager.o \

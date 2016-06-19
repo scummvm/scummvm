@@ -24,6 +24,7 @@
 #define TITANIC_GAME_OBJECT_H
 
 #include "titanic/support/mouse_cursor.h"
+#include "titanic/support/credit_text.h"
 #include "titanic/support/proximity.h"
 #include "titanic/support/rect.h"
 #include "titanic/core/movie_clip.h"
@@ -47,8 +48,8 @@ class OSMovie;
 class CGameObject : public CNamedItem {
 	friend class OSMovie;
 	DECLARE_MESSAGE_MAP
-public:
-	static void *_v1;
+private:
+	static CCreditText *_credits;
 private:
 	/**
 	 * Load a visual resource for the object
@@ -357,6 +358,16 @@ public:
 	CursorId _cursorId;
 	bool _visible;
 public:
+	/**
+	 * Initializes statics
+	 */
+	static void init();
+
+	/**
+	 * Deinitializes statics
+	 */
+	static void deinit();
+public:
 	CLASSDEF
 	CGameObject();
 
@@ -477,6 +488,11 @@ public:
 	 * Finds an item in various system areas
 	 */
 	Found find(const CString &name, CGameObject **item, int findAreas);
+
+	/**
+	 * Sets up credits text
+	 */
+	void createCredits();
 };
 
 } // End of namespace Titanic

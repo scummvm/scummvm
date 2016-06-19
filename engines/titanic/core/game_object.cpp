@@ -38,7 +38,19 @@ namespace Titanic {
 BEGIN_MESSAGE_MAP(CGameObject, CNamedItem)
 END_MESSAGE_MAP()
 
-void *CGameObject::_v1 = nullptr;
+CCreditText *CGameObject::_credits;
+
+void CGameObject::init() {
+	_credits = nullptr;
+}
+
+void CGameObject::deinit() {
+	if (_credits) {
+		_credits->clear();
+		delete _credits;
+		_credits = nullptr;
+	}
+}
 
 CGameObject::CGameObject(): CNamedItem() {
 	_bounds = Rect(0, 0, 15, 15);
@@ -205,7 +217,7 @@ void CGameObject::draw(CScreenManager *screenManager, const Point &destPos, cons
 void CGameObject::draw(CScreenManager *screenManager) {
 	if (!_visible)
 		return;
-	if (_v1) {
+	if (_credits) {
 		error("TODO: Block in CGameObject::draw");
 	}
 
@@ -925,6 +937,13 @@ void CGameObject::setPassengerClass(int newClass) {
 		if (petControl)
 			petControl->setup();
 	}
+}
+
+void CGameObject::createCredits() {
+	_credits = new CCreditText();
+	CScreenManager *screenManager = getGameManager()->setScreenManager();
+	_credits->load(this, screenManager, _bounds);
+	
 }
 
 } // End of namespace Titanic
