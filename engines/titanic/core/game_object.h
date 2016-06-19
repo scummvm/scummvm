@@ -66,6 +66,12 @@ private:
 	void loadImage(const CString &name, bool pendingFlag = true);
 
 	void processClipList2();
+
+	/**
+	 * Merges one rect into another, and returns true if there was
+	 * a common intersection
+	 */
+	bool clipRect(const Rect &rect1, Rect &rect2) const;
 protected:
 	Rect _bounds;
 	double _field34;
@@ -367,12 +373,22 @@ public:
 	/**
 	 * Allows the item to draw itself
 	 */
-	virtual void draw(CScreenManager *screenManager);
+	void draw(CScreenManager *screenManager, const Rect &destRect, const Rect &srcRect);
 
 	/**
 	 * Allows the item to draw itself
 	 */
-	virtual void draw(CScreenManager *screenManager, const Common::Point &destPos);
+	void draw(CScreenManager *screenManager, const Point &destPos);
+
+	/**
+	 * Allows the item to draw itself
+	 */
+	void draw(CScreenManager *screenManager, const Point &destPos, const Rect &srcRect);
+
+	/**
+	 * Allows the item to draw itself
+	 */
+	virtual void draw(CScreenManager *screenManager);
 
 	/**
 	 * Returns true if the item is the PET control

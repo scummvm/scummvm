@@ -163,7 +163,7 @@ void OSScreenManager::fillRect(SurfaceNum surfaceNum, Rect *rect, byte r, byte g
 }
 
 void OSScreenManager::blitFrom(SurfaceNum surfaceNum, CVideoSurface *src,
-	const Point *destPos, const Rect *srcRect) {
+		const Point *destPos, const Rect *srcRect) {
 	// Get the dest surface
 	CVideoSurface *destSurface = _frontRenderSurface;
 	if (surfaceNum < -1)
@@ -200,7 +200,19 @@ void OSScreenManager::blitFrom(SurfaceNum surfaceNum, CVideoSurface *src,
 		destSurface->blitFrom(destPoint, src, bounds);
 }
 
-void OSScreenManager::proc12() {}
+void OSScreenManager::blitFrom(SurfaceNum surfaceNum, const Rect *rect, CVideoSurface *src, int v) {
+	// Get the dest surface
+	CVideoSurface *destSurface = _frontRenderSurface;
+	if (surfaceNum < -1)
+		return;
+	if (surfaceNum >= 0 && surfaceNum < (int)_backSurfaces.size())
+		destSurface = _backSurfaces[surfaceNum]._surface;
+	if (!destSurface->hasSurface())
+		return;
+
+	if (!rect->isEmpty())
+		destSurface->blitFrom(Point(rect->left, rect->top), src, rect);
+}
 
 int OSScreenManager::writeString(int surfaceNum, const Rect &destRect, 
 		int yOffset, const CString &str, CTextCursor *textCursor) {

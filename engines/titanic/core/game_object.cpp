@@ -161,6 +161,47 @@ bool CGameObject::checkPoint(const Point &pt, bool ignore40, bool visibleOnly) {
 	return pixel != transColor;
 }
 
+bool CGameObject::clipRect(const Rect &rect1, Rect &rect2) const {
+	if (!rect2.intersects(rect1))
+		return false;
+
+	rect2.clip(rect1);
+	return true;
+}
+
+void CGameObject::draw(CScreenManager *screenManager, const Rect &destRect, const Rect &srcRect) {
+	Rect tempRect = destRect;
+	if (clipRect(srcRect, tempRect)) {
+		if (!_surface && !_resource.empty()) {
+			loadResource(_resource);
+			_resource.clear();
+		}
+
+		if (_surface)
+			screenManager->blitFrom(SURFACE_PRIMARY, &tempRect, _surface);
+	}
+}
+
+void CGameObject::draw(CScreenManager *screenManager, const Point &destPos) {
+	if (!_surface && !_resource.empty()) {
+		loadResource(_resource);
+		_resource.clear();
+	}
+
+	if (_surface) {
+		int xSize = _surface->getWidth();
+		int ySize = _surface->getHeight();
+
+		if (xSize > 0 && ySize > 0) {
+			screenManager->blitFrom(SURFACE_BACKBUFFER, _surface, &destPos);
+		}
+	}
+}
+
+void CGameObject::draw(CScreenManager *screenManager, const Point &destPos, const Rect &srcRect) {
+	draw(screenManager, Rect(destPos.x, destPos.y, destPos.x + 52, destPos.y + 52), srcRect);
+}
+
 void CGameObject::draw(CScreenManager *screenManager) {
 	if (!_visible)
 		return;
@@ -205,22 +246,6 @@ void CGameObject::draw(CScreenManager *screenManager) {
 				if (_field90)
 					warning("TODO: sub_415f80(screenManager);");
 			}
-		}
-	}
-}
-
-void CGameObject::draw(CScreenManager *screenManager, const Common::Point &destPos) {
-	if (!_surface && !_resource.empty()) {
-		loadResource(_resource);
-		_resource.clear();
-	}
-
-	if (_surface) {
-		int xSize = _surface->getWidth();
-		int ySize = _surface->getHeight();
-
-		if (xSize > 0 && ySize > 0) {
-			screenManager->blitFrom(SURFACE_BACKBUFFER, _surface, &destPos);
 		}
 	}
 }

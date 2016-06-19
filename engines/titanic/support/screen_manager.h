@@ -41,8 +41,8 @@ namespace Titanic {
  * remapped to the primary surface
  */
 enum SurfaceNum {
-	SURFACE_PRIMARY = -1,
-	SURFACE_BACKBUFFER = -1
+	SURFACE_PRIMARY = -1,		// Surface 0
+	SURFACE_BACKBUFFER = -1		// Surface -1
 };
 
 class TitanicEngine;
@@ -109,8 +109,11 @@ public:
 	virtual void blitFrom(SurfaceNum surfaceNum, CVideoSurface *src, const Point *destPos = nullptr,
 		const Rect *srcRect = nullptr) = 0;
 
-	virtual void proc12() = 0;
-	
+	/**
+	 * Blits a surface onto one of the screen surfaces
+	 */
+	virtual void blitFrom(SurfaceNum surfaceNum, const Rect *rect, CVideoSurface *src, int v = 0) = 0;
+
 	/**
 	 * Write a string
 	 * @param surfaceNum	Destination surface
@@ -248,7 +251,10 @@ public:
 	virtual void blitFrom(SurfaceNum surfaceNum, CVideoSurface *src, const Point *destPos,
 		const Rect *srcRect = nullptr);
 
-	virtual void proc12();
+	/**
+	 * Blits a surface onto one of the screen surfaces
+	 */
+	virtual void blitFrom(SurfaceNum surfaceNum, const Rect *rect, CVideoSurface *src, int v = 0);
 
 	/**
 	 * Write a string
