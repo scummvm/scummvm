@@ -4,6 +4,8 @@
 
 namespace DM {
 
+Box gBoxChampionPortrait = {0, 31, 0, 28}; // @ G0047_s_Graphic562_Box_ChampionPortrait 
+
 ChampionMan::ChampionMan(DMEngine *vm) : _vm(vm) {
 	_leaderIndex = kChampionNone;
 }
