@@ -40,8 +40,8 @@
       know about them.  */
    enum yytokentype {
      UNARY = 258,
-     FLOAT = 259,
-     INT = 260,
+     INT = 259,
+     FLOAT = 260,
      VAR = 261,
      STRING = 262,
      OP_INTO = 263,
@@ -54,8 +54,8 @@
 #endif
 /* Tokens.  */
 #define UNARY 258
-#define FLOAT 259
-#define INT 260
+#define INT 259
+#define FLOAT 260
 #define VAR 261
 #define STRING 262
 #define OP_INTO 263
@@ -71,9 +71,14 @@
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
 #line 39 "engines/director/lingo/lingo-gr.y"
-{ float f; int i; Common::String *s; }
+{
+	Common::String *s;
+	int	i;
+	float f;
+	int code;
+}
 /* Line 1529 of yacc.c.  */
-#line 77 "engines/director/lingo/lingo-gr.hpp"
+#line 82 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

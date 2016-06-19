@@ -36,13 +36,17 @@ using namespace Director;
 
 %}
 
-%union { float f; int i; Common::String *s; }
+%union {
+	Common::String *s;
+	int	i;
+	float f;
+	int code;
+}
 
 %token UNARY
-%token<f> FLOAT
 %token<i> INT
-%token<s> VAR
-%token<s> STRING
+%token<f> FLOAT
+%token<s> VAR STRING
 %token OP_INTO
 %token OP_TO
 %token FUNC_MCI
@@ -50,8 +54,7 @@ using namespace Director;
 %token FUNC_PUT
 %token FUNC_SET
 
-%type<i> expr
-%type<i> func
+%type<code> assign expr
 
 %right '='
 %left '+' '-'
@@ -60,12 +63,20 @@ using namespace Director;
 
 %%
 
-list: statement
-	| list '\n' statement
+list: /* empty */
+	| list '\n'
+	| list func '\n'
+	| list assign '\n'			{ g_lingo->code2(g_lingo->func_xpop, STOP); return 1; }
+	| list statement '\n'		{ g_lingo->code1(STOP); return 1; }
+	| list expr '\n'  			{ g_lingo->code2(g_lingo->func_printtop, STOP); return 1; }
 	;
 
-statement: expr
-	| func
+assign: FUNC_PUT expr OP_INTO VAR	{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($4->c_str()); g_lingo->code1(g_lingo->func_assign); $$ = $2; delete $4; }
+	| FUNC_SET VAR '=' expr			{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($2->c_str()); g_lingo->code1(g_lingo->func_assign); $$ = $4; delete $2; }
+	| FUNC_SET VAR OP_TO expr		{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($2->c_str()); g_lingo->code1(g_lingo->func_assign); $$ = $4; delete $2; }
+	;
+
+statement: expr 				{ g_lingo->code1(g_lingo->func_xpop); }
 	;
 
 expr: INT						{ $$ = g_lingo->code2(g_lingo->func_constpush, (inst)$1); }
@@ -77,14 +88,10 @@ expr: INT						{ $$ = g_lingo->code2(g_lingo->func_constpush, (inst)$1); }
 	| '+' expr  %prec UNARY		{ $$ = $2; }
 	| '-' expr  %prec UNARY		{ $$ = $2; g_lingo->code1(g_lingo->func_negate); }
 	| '(' expr ')'				{ $$ = $2; }
-	|
 	;
 
 func: FUNC_MCI STRING			{ g_lingo->code1(g_lingo->func_mci); g_lingo->codeString($2->c_str()); delete $2; }
 	| FUNC_MCIWAIT VAR			{ g_lingo->code1(g_lingo->func_mciwait); g_lingo->codeString($2->c_str()); delete $2; }
-	| FUNC_PUT expr OP_INTO VAR	{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($4->c_str()); g_lingo->code1(g_lingo->func_assign); $$ = $2; delete $4; }
-	| FUNC_SET VAR '=' expr		{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($2->c_str()); g_lingo->code1(g_lingo->func_assign); $$ = $4; delete $2; }
-	| FUNC_SET VAR OP_TO expr	{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($2->c_str()); g_lingo->code1(g_lingo->func_assign); $$ = $4; delete $2; }
 	;
 
 %%

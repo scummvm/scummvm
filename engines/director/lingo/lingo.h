@@ -85,7 +85,7 @@ typedef struct Symbol {	/* symbol table entry */
 } Symbol;
 
 typedef union Datum {	/* interpreter stack type */
-	double	val;
+	int	val;
 	Symbol	*sym;
 } Datum;
 
@@ -109,6 +109,8 @@ public:
 
 
 public:
+	static void func_xpop();
+	static void func_printtop();
 	static void func_add();
 	static void func_sub();
 	static void func_mul();

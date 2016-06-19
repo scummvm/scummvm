@@ -179,6 +179,16 @@ Datum Lingo::pop(void) {
 	return ret;
 }
 
+void Lingo::func_xpop() {
+	g_lingo->pop();
+}
+
+void Lingo::func_printtop(void) {
+	Datum d = g_lingo->pop();
+
+	warning("%d\n", d.val);
+}
+
 void Lingo::func_constpush() {
 	Datum d;
 	d.val = ((Symbol *)*g_lingo->_pc++)->u.val;
