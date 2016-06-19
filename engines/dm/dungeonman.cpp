@@ -522,11 +522,10 @@ void DungeonMan::decompressDungeonFile() {
 			}
 		}
 	} else {
-		// TODO: if the dungeon is uncompressed, read it here
+		warning("TODO: if the dungeon is uncompressed, read it here");
 	}
 	f.close();
 }
-
 
 uint8 gAdditionalThingCounts[16] = {
 	0,    /* Door */
@@ -547,13 +546,13 @@ uint8 gAdditionalThingCounts[16] = {
 	50    /* Explosion */
 }; // @ G0236_auc_Graphic559_AdditionalThingCounts
 
-// this is the number of uint16s the data has to be stored, not the lenght of the data in dungeon.dat!
+// this is the number of uint16s the data has to be stored, not the length of the data in dungeon.dat!
 unsigned char gThingDataWordCount[16] = {
 	2,   /* Door */
 	3,   /* Teleporter */
 	2,   /* Text String */
 	4,   /* Sensor */
-	9,  /* Group */
+	9,   /* Group */
 	2,   /* Weapon */
 	2,   /* Armour */
 	2,   /* Scroll */
@@ -569,7 +568,6 @@ unsigned char gThingDataWordCount[16] = {
 
 const Thing Thing::_thingNone(0);
 const Thing Thing::_thingEndOfList(0xFFFE);
-
 
 void DungeonMan::loadDungeonFile() {
 	if (_messages._newGame)
@@ -675,7 +673,6 @@ void DungeonMan::loadDungeonFile() {
 	if (_messages._newGame)
 		_dunData._eventMaximumCount = 100;
 
-
 	// load things
 	for (uint16 thingType = kDoorThingType; thingType < kThingTypeTotal; ++thingType) {
 		uint16 thingCount = _fileHeader._thingCounts[thingType];
@@ -726,9 +723,7 @@ void DungeonMan::loadDungeonFile() {
 				_dunData._thingsData[thingType][thingCount + i][0] = Thing::_thingNone.toUint16();
 			}
 		}
-
 	}
-
 
 	// load map data
 	if (!_messages._restartGameRequest)

@@ -4,7 +4,7 @@
 
 namespace DM {
 
-Box gBoxChampionPortrait = {0, 31, 0, 28}; // @ G0047_s_Graphic562_Box_ChampionPortrait 
+Box gBoxChampionPortrait = Box(0, 31, 0, 28); // @ G0047_s_Graphic562_Box_ChampionPortrait 
 
 ChampionMan::ChampionMan(DMEngine *vm) : _vm(vm) {
 	_leaderIndex = kChampionNone;
@@ -37,7 +37,7 @@ ChampionIndex ChampionMan::getIndexInCell(ViewCell cell) {
 
 void ChampionMan::resetDataToStartGame() {
 	if (!_vm->_dungeonMan->_messages._newGame) {
-		warning("MISSING CODE: stuff for reeseting for loaded games");
+		warning("MISSING CODE: stuff for resetting for loaded games");
 		assert(false);
 	}
 
