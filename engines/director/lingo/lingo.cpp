@@ -113,6 +113,8 @@ void Lingo::addCode(Common::String code, ScriptType type, uint16 id) {
 
 	parse(code.c_str());
 
+	code1(STOP);
+
 	Common::hexdump((byte *)&_currentScript->front(), _currentScript->size() * sizeof(inst));
 }
 

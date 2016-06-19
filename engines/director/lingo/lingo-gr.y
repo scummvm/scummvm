@@ -67,12 +67,16 @@ using namespace Director;
 
 %%
 
-list: /* empty */
-	| list '\n'
-	| list func '\n'
-	| list assign '\n'			{ g_lingo->code2(g_lingo->func_xpop, STOP); return 1; }
-	| list statement '\n'		{ g_lingo->code1(STOP); return 1; }
-//	| list expr '\n'  			{ g_lingo->code2(g_lingo->func_printtop, STOP); return 1; }
+program: programline '\n' program
+	| programline
+	;
+
+programline:
+	| func
+	| assign			{ g_lingo->code1(g_lingo->func_xpop); }
+	| statement
+	| expr  			{ g_lingo->code1(g_lingo->func_printtop); }
+	| /* empty */
 	;
 
 assign: FUNC_PUT expr OP_INTO VAR	{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($4->c_str()); g_lingo->code1(g_lingo->func_assign); $$ = $2; delete $4; }

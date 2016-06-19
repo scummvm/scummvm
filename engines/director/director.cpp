@@ -84,8 +84,6 @@ Common::Error DirectorEngine::run() {
 	_lingo->addCode("2 + 3 * 2 / (5 - 2)", kMovieScript, 3);
 	_lingo->executeScript(kMovieScript, 3);
 
-	return Common::kNoError;
-
 	//FIXME
 	_mainArchive = new RIFFArchive();
 	_mainArchive->openFile("bookshelf_example.mmm");

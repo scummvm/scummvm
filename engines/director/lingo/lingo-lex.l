@@ -44,7 +44,8 @@ newline [\n\r]+
 %%
 
 --[^\r\n]*
-[\t]			{ return ' '; }
+^[ \t]
+[\t]+			{ return ' '; }
 into			{ return OP_INTO; }
 mci				{ return FUNC_MCI; }
 mciwait			{ return FUNC_MCIWAIT; }
@@ -68,7 +69,7 @@ namespace Director {
 int Lingo::parse(const char *code) {
 	YY_BUFFER_STATE bp;
 
-	yydebug = 1;
+	yydebug = 0;
 
 	yy_delete_buffer(YY_CURRENT_BUFFER);
 
