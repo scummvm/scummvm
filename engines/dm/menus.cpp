@@ -6,6 +6,8 @@
 
 namespace DM {
 
+byte gPalChangesActionAreaObjectIcon[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0}; // @ G0498_auc_Graphic560_PaletteChanges_ActionAreaObjectIcon
+
 MenuMan::MenuMan(DMEngine *vm): _vm(vm) {}
 
 void MenuMan::drawMovementArrows() {
