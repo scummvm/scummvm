@@ -38,12 +38,13 @@ variable [_[:alpha:]][_[:alnum:]]*
 constfloat [[:digit:]]+\.[[:digit:]]*
 constinteger [[:digit:]]+
 conststring \"[^\"\n]*\"
-operator [-+*/%=^:,]
+operator [-+*/%=^:,()]
 newline [\n\r]+
 
 %%
 
 --[^\r\n]*
+[\t]			{ return ' '; }
 into			{ return OP_INTO; }
 mci				{ return FUNC_MCI; }
 mciwait			{ return FUNC_MCIWAIT; }
@@ -60,10 +61,14 @@ to				{ return OP_TO; }
 
 %%
 
+extern int yydebug;
+
 namespace Director {
 
 int Lingo::parse(const char *code) {
 	YY_BUFFER_STATE bp;
+
+	yydebug = 1;
 
 	yy_delete_buffer(YY_CURRENT_BUFFER);
 

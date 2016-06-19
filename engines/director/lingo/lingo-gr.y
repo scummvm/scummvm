@@ -20,7 +20,11 @@
  *
  */
 
+%debug
+
 %{
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "common/hash-str.h"
 
 #include "director/lingo/lingo.h"
@@ -67,8 +71,8 @@ list: /* empty */
 	| list '\n'
 	| list func '\n'
 	| list assign '\n'			{ g_lingo->code2(g_lingo->func_xpop, STOP); return 1; }
-//	| list statement '\n'		{ g_lingo->code1(STOP); return 1; }
-	| list expr '\n'  			{ g_lingo->code2(g_lingo->func_printtop, STOP); return 1; }
+	| list statement '\n'		{ g_lingo->code1(STOP); return 1; }
+//	| list expr '\n'  			{ g_lingo->code2(g_lingo->func_printtop, STOP); return 1; }
 	;
 
 assign: FUNC_PUT expr OP_INTO VAR	{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($4->c_str()); g_lingo->code1(g_lingo->func_assign); $$ = $2; delete $4; }

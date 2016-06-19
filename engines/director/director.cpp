@@ -77,9 +77,12 @@ Common::Error DirectorEngine::run() {
 	mci \"play T005045a from 22710 to 32872\"", kMovieScript, 1);
 
 	_lingo->addCode("set x = 1 + 3\n\
-	set y to 2 -- this set y to 4\n\
+	set y to 2 + 3 * 2 -- this set y to 4\n\
 	put 5 into z\n\
 -- some more\n", kMovieScript, 2);
+
+	_lingo->addCode("2 + 3 * 2 / (5 - 2)", kMovieScript, 3);
+	_lingo->executeScript(kMovieScript, 3);
 
 	return Common::kNoError;
 
