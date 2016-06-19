@@ -99,6 +99,7 @@ public:
 	~Lingo();
 
 	void addCode(Common::String code, ScriptType type, uint16 id);
+	void executeScript(ScriptType type, uint16 id);
 
 	void processEvent(LEvent event, int entityId);
 

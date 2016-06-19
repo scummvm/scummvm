@@ -100,6 +100,8 @@ int Lingo::codeString(const char *str) {
 }
 
 void Lingo::addCode(Common::String code, ScriptType type, uint16 id) {
+	code += '\n';
+
 	debug(2, "Add code \"%s\" for type %d with id %d", code.c_str(), type, id);
 
 	if (_scripts[type].contains(id)) {
@@ -112,6 +114,17 @@ void Lingo::addCode(Common::String code, ScriptType type, uint16 id) {
 	parse(code.c_str());
 
 	Common::hexdump((byte *)&_currentScript->front(), _currentScript->size() * sizeof(inst));
+}
+
+void Lingo::executeScript(ScriptType type, uint16 id) {
+	if (!_scripts[type].contains(id)) {
+		warning("Request to execute non-existant script type %d id %d", type, id);
+		return;
+	}
+
+	for(_pc = &_scripts[type][id]->front(); *_pc != STOP;) {
+		(*((++_pc)[-1]))();
+	}
 }
 
 void Lingo::processEvent(LEvent event, int entityId) {
