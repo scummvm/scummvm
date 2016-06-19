@@ -514,6 +514,12 @@ const SciWorkaroundEntry kDisposeScript_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
+const SciWorkaroundEntry kDoSoundPlay_workarounds[] = {
+	{ GID_LSL6HIRES,    -1,  64989,   0,          NULL,          "play",                    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // always passes an extra null argument
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
 const SciWorkaroundEntry kDoSoundFade_workarounds[] = {
 	{ GID_KQ5,           213,   989,  0,       "globalSound3", "fade",                      NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // english floppy: when bandits leave the secret temple, parameter 4 is an object - bug #5078
 	{ GID_KQ6,           105,   989,  0,        "globalSound", "fade",                      NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // floppy: during intro, parameter 4 is an object

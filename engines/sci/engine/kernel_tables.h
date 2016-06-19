@@ -160,7 +160,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 	{ SIG_SOUNDSCI21,      5, MAP_CALL(DoSoundSuspend),            "i",                    NULL },
 	{ SIG_SOUNDSCI21,      6, MAP_CALL(DoSoundInit),               "o",                    NULL },
 	{ SIG_SOUNDSCI21,      7, MAP_CALL(DoSoundDispose),            "o",                    NULL },
-	{ SIG_SOUNDSCI21,      8, MAP_CALL(DoSoundPlay),               "o",                    NULL },
+	{ SIG_SOUNDSCI21,      8, MAP_CALL(DoSoundPlay),               "o",                    kDoSoundPlay_workarounds },
 	// ^^ TODO: if this is really the only change between SCI1LATE AND SCI21, we could rename the
 	//     SIG_SOUNDSCI1LATE #define to SIG_SINCE_SOUNDSCI1LATE and make it being SCI1LATE+. Although
 	//     I guess there are many more changes somewhere
