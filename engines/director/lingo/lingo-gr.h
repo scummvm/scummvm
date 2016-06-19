@@ -45,12 +45,12 @@
      FLOAT = 261,
      VAR = 262,
      STRING = 263,
-     OP_INTO = 264,
-     OP_TO = 265,
-     FUNC_MCI = 266,
-     FUNC_MCIWAIT = 267,
-     FUNC_PUT = 268,
-     FUNC_SET = 269
+     tINTO = 264,
+     tTO = 265,
+     tMCI = 266,
+     tMCIWAIT = 267,
+     tPUT = 268,
+     tSET = 269
    };
 #endif
 /* Tokens.  */
@@ -60,12 +60,12 @@
 #define FLOAT 261
 #define VAR 262
 #define STRING 263
-#define OP_INTO 264
-#define OP_TO 265
-#define FUNC_MCI 266
-#define FUNC_MCIWAIT 267
-#define FUNC_PUT 268
-#define FUNC_SET 269
+#define tINTO 264
+#define tTO 265
+#define tMCI 266
+#define tMCIWAIT 267
+#define tPUT 268
+#define tSET 269
 
 
 

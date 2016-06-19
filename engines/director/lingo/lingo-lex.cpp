@@ -802,32 +802,32 @@ YY_RULE_SETUP
 case 4:
 YY_RULE_SETUP
 #line 50 "engines/director/lingo/lingo-lex.l"
-{ return OP_INTO; }
+{ return tINTO; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 51 "engines/director/lingo/lingo-lex.l"
-{ return FUNC_MCI; }
+{ return tMCI; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 52 "engines/director/lingo/lingo-lex.l"
-{ return FUNC_MCIWAIT; }
+{ return tMCIWAIT; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 53 "engines/director/lingo/lingo-lex.l"
-{ return FUNC_PUT; }
+{ return tPUT; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 54 "engines/director/lingo/lingo-lex.l"
-{ return FUNC_SET; }
+{ return tSET; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 55 "engines/director/lingo/lingo-lex.l"
-{ return OP_TO; }
+{ return tTO; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP

@@ -47,12 +47,12 @@ whitespace [\t ]
 --[^\r\n]*
 ^{whitespace}
 [\t]+			{ return ' '; }
-into			{ return OP_INTO; }
-mci				{ return FUNC_MCI; }
-mciwait			{ return FUNC_MCIWAIT; }
-put				{ return FUNC_PUT; }
-set				{ return FUNC_SET; }
-to				{ return OP_TO; }
+into			{ return tINTO; }
+mci				{ return tMCI; }
+mciwait			{ return tMCIWAIT; }
+put				{ return tPUT; }
+set				{ return tSET; }
+to				{ return tTO; }
 
 {variable}		{ yylval.s = new Common::String(yytext);  return VAR; }
 {constfloat}	{ yylval.f = atof(yytext); return FLOAT; }
