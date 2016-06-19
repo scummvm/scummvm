@@ -64,16 +64,16 @@ struct MCIToken {
 	{ kMCITokenNone, kMCITokenNone,   0, 0 }
 };
 
-int Lingo::exec_mci(Common::String *s) {
+void Lingo::exec_mci(Common::String &s) {
 	Common::String params[5];
 	MCITokenType command = kMCITokenNone;
 
-	s->trim();
-	s->toLowercase();
+	s.trim();
+	s.toLowercase();
 
 	MCITokenType state = kMCITokenNone;
 	Common::String token;
-	const char *ptr = s->c_str();
+	const char *ptr = s.c_str();
 	int respos = -1;
 
 	while (*ptr) {
@@ -131,7 +131,7 @@ int Lingo::exec_mci(Common::String *s) {
 			if (!file->open(params[0])) {
 				warning("Failed to open %s", params[0].c_str());
 				delete file;
-				return 0;
+				return;
 			}
 
 			if (params[1] == "waveaudio") {
@@ -148,7 +148,7 @@ int Lingo::exec_mci(Common::String *s) {
 
 			if (!_audioAliases.contains(params[0])) {
 				warning("Unknown alias %s", params[0].c_str());
-				return 0;
+				return;
 			}
 
 			uint32 from = strtol(params[1].c_str(), 0, 10);
@@ -158,14 +158,16 @@ int Lingo::exec_mci(Common::String *s) {
 		}
 		break;
 	default:
-		warning("Unhandled MCI command: %s", s->c_str());
+		warning("Unhandled MCI command: %s", s.c_str());
 	}
-
-	return 0;
 }
 
-void Lingo::exec_mciwait(Common::String *s) {
-	warning("MCI wait file: %s", s->c_str());
+void Lingo::exec_mciwait(Common::String &s) {
+	warning("STUB: MCI wait file: %s", s.c_str());
+}
+
+void Lingo::exec_goto(Common::String &frame, Common::String &movie) {
+	warning("STUB: go to %s movie %s", frame.c_str(), movie.c_str());
 }
 
 void Lingo::push(Datum d) {
@@ -312,7 +314,7 @@ void Lingo::func_negate() {
 void Lingo::func_mci() {
 	Common::String s((char *)g_lingo->_pc);
 
-	g_lingo->exec_mci(&s);
+	g_lingo->exec_mci(s);
 
 	g_lingo->_pc += g_lingo->calcStringAlignment(s.c_str());
 }
@@ -320,9 +322,31 @@ void Lingo::func_mci() {
 void Lingo::func_mciwait() {
 	Common::String s((char *)g_lingo->_pc);
 
-	g_lingo->exec_mciwait(&s);
+	g_lingo->exec_mciwait(s);
 
 	g_lingo->_pc += g_lingo->calcStringAlignment(s.c_str());
+}
+
+void Lingo::func_goto() {
+	Common::String frame((char *)g_lingo->_pc);
+	g_lingo->_pc += g_lingo->calcStringAlignment(frame.c_str());
+
+	Common::String movie((char *)g_lingo->_pc);
+	g_lingo->_pc += g_lingo->calcStringAlignment(movie.c_str());
+
+	g_lingo->exec_goto(frame, movie);
+}
+
+void Lingo::func_gotoloop() {
+	warning("STUB: func_gotoloop()");
+}
+
+void Lingo::func_gotonext() {
+	warning("STUB: func_gotonext()");
+}
+
+void Lingo::func_gotoprevious() {
+	warning("STUB: func_gotoprevious()");
 }
 
 }

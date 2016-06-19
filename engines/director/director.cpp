@@ -76,16 +76,14 @@ Common::Error DirectorEngine::run() {
 	_lingo->addCode("mci \"open MM\\T005045a.wav type WaveAudio alias T005045a\"\n\
 	mci \"play T005045a from 22710 to 32872\"", kMovieScript, 1);
 
-	_lingo->addCode("set x = 1 + 3\n\
-	set y to 2 + 3 * 2 -- this set y to 4\n\
-	put 5 into z\n\
--- some more\n\
-x\n\
-y\n\
-z\n", kMovieScript, 2);
+	_lingo->addCode("go to frame \"Open23\" of movie \"OpenCabin23\"\n\
+go \"CARDBACK\"\n\
+go movie \"BAR 1\"\n\
+go to \"Open23\" of movie \"OpenCabin23\"\n\
+go to \"Chair\"\n\
+	", kMovieScript, 2);
 
-	_lingo->addCode("2 + 3 * 2 / (5 - 2)", kMovieScript, 3);
-	_lingo->executeScript(kMovieScript, 1);
+	_lingo->executeScript(kMovieScript, 2);
 
 	//FIXME
 	_mainArchive = new RIFFArchive();

@@ -132,8 +132,14 @@ public:
 	static void func_eval();
 	static void func_mci();
 	static void func_mciwait();
-	int exec_mci(Common::String *s);
-	void exec_mciwait(Common::String *s);
+	static void func_goto();
+	static void func_gotoloop();
+	static void func_gotonext();
+	static void func_gotoprevious();
+
+	void exec_mci(Common::String &s);
+	void exec_mciwait(Common::String &s);
+	void exec_goto(Common::String &frame, Common::String &movie);
 
 private:
 	int parse(const char *code);

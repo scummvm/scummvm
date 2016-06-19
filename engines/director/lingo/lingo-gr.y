@@ -49,10 +49,10 @@ using namespace Director;
 %token<i> INT
 %token<f> FLOAT
 %token<s> VAR STRING
-%token tINTO tTO
-%token tMCI tMCIWAIT tPUT tSET
+%token tFRAME tGO tINTO tLOOP tMCI tMCIWAIT tMOVIE tNEXT tOF tPREVIOUS tPUT tSET tTO
 
 %type<code> assign expr
+%type<s> gotoframe gotomovie
 
 %right '='
 %left '+' '-'
@@ -94,6 +94,33 @@ expr: INT						{ g_lingo->code1(g_lingo->func_constpush); inst i; WRITE_LE_UINT3
 
 func: tMCI STRING			{ g_lingo->code1(g_lingo->func_mci); g_lingo->codeString($2->c_str()); delete $2; }
 	| tMCIWAIT VAR			{ g_lingo->code1(g_lingo->func_mciwait); g_lingo->codeString($2->c_str()); delete $2; }
+	| tGO tLOOP					{ g_lingo->code1(g_lingo->func_gotoloop); }
+	| tGO tNEXT					{ g_lingo->code1(g_lingo->func_gotonext); }
+	| tGO tPREVIOUS				{ g_lingo->code1(g_lingo->func_gotoprevious); }
+	| tGO gotoframe 			{ g_lingo->code1(g_lingo->func_goto); g_lingo->codeString($2->c_str()); g_lingo->codeString(""); delete $2; }
+	| tGO gotoframe gotomovie	{ g_lingo->code1(g_lingo->func_goto); g_lingo->codeString($2->c_str()); g_lingo->codeString($3->c_str()); delete $2; delete $3; }
+	| tGO gotomovie				{ g_lingo->code1(g_lingo->func_goto); g_lingo->codeString(""); g_lingo->codeString($2->c_str()); delete $2; }
 	;
+
+// go {to} {frame} whichFrame {of movie whichMovie}
+// go {to} {frame "Open23" of} movie whichMovie
+// go loop
+// go next
+// go previous
+// go to {frame} whichFrame {of movie whichMovie}
+// go to {frame whichFrame of} movie whichMovie
+
+
+gotoframe: tTO tFRAME STRING	{ $$ = $3; }
+	| tFRAME STRING				{ $$ = $2; }
+	| tTO STRING				{ $$ = $2; }
+	| STRING					{ $$ = $1; }
+	;
+
+gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
+	| tMOVIE STRING				{ $$ = $2; }
+	| tTO tMOVIE STRING			{ $$ = $3; }
+	;
+
 
 %%

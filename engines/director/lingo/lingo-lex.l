@@ -47,9 +47,17 @@ whitespace [\t ]
 --[^\r\n]*
 ^{whitespace}
 [\t]+			{ return ' '; }
+
+frame			{ return tFRAME; }
+go				{ return tGO; }
 into			{ return tINTO; }
+loop			{ return tLOOP; }
 mci				{ return tMCI; }
 mciwait			{ return tMCIWAIT; }
+movie			{ return tMOVIE; }
+next			{ return tNEXT; }
+of				{ return tOF; }
+previous		{ return tPREVIOUS; }
 put				{ return tPUT; }
 set				{ return tSET; }
 to				{ return tTO; }

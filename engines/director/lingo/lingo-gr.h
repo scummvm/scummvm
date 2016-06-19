@@ -45,12 +45,19 @@
      FLOAT = 261,
      VAR = 262,
      STRING = 263,
-     tINTO = 264,
-     tTO = 265,
-     tMCI = 266,
-     tMCIWAIT = 267,
-     tPUT = 268,
-     tSET = 269
+     tFRAME = 264,
+     tGO = 265,
+     tINTO = 266,
+     tLOOP = 267,
+     tMCI = 268,
+     tMCIWAIT = 269,
+     tMOVIE = 270,
+     tNEXT = 271,
+     tOF = 272,
+     tPREVIOUS = 273,
+     tPUT = 274,
+     tSET = 275,
+     tTO = 276
    };
 #endif
 /* Tokens.  */
@@ -60,12 +67,19 @@
 #define FLOAT 261
 #define VAR 262
 #define STRING 263
-#define tINTO 264
-#define tTO 265
-#define tMCI 266
-#define tMCIWAIT 267
-#define tPUT 268
-#define tSET 269
+#define tFRAME 264
+#define tGO 265
+#define tINTO 266
+#define tLOOP 267
+#define tMCI 268
+#define tMCIWAIT 269
+#define tMOVIE 270
+#define tNEXT 271
+#define tOF 272
+#define tPREVIOUS 273
+#define tPUT 274
+#define tSET 275
+#define tTO 276
 
 
 
@@ -80,7 +94,7 @@ typedef union YYSTYPE
 	int code;
 }
 /* Line 1529 of yacc.c.  */
-#line 84 "engines/director/lingo/lingo-gr.hpp"
+#line 98 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
