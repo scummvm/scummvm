@@ -4,6 +4,8 @@
 
 namespace DM {
 
+int16 gIconGraphicHeight[7] = {32, 32, 32, 32, 32, 32, 32}; // @ K0077_ai_IconGraphicHeight
+
 int16 gIconGraphicFirstIndex[7] = { // G0026_ai_Graphic562_IconGraphicFirstIconIndex
 	0,     /* First icon index in graphic #42 */
 	32,    /* First icon index in graphic #43 */
@@ -74,6 +76,19 @@ int16 ObjectMan::getIconIndex(Thing thing) {
 	}
 
 	return iconIndex;
+}
+
+void ObjectMan::extractIconFromBitmap(uint16 iconIndex, byte *destBitmap) {
+	int16 i;
+	for (i = 0; i < 7; ++i)
+		if (gIconGraphicFirstIndex[i] > iconIndex)
+			break;
+	--i;
+	byte *srcBitmap = _vm->_displayMan->getBitmap(kObjectIcons_000_TO_031 + i);
+	iconIndex -= gIconGraphicFirstIndex[i];
+	_vm->_displayMan->_useByteBoxCoordinates = true;
+	_vm->_displayMan->blitToBitmap(srcBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, destBitmap, 16, 0, 16, 0, 16, kColorNoTransparency);
+
 }
 
 }
