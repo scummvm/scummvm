@@ -199,6 +199,8 @@ class EventManager {
 public:
 	MouseInput* _primaryMouseInput;// @ G0441_ps_PrimaryMouseInput
 	MouseInput* _secondaryMouseInput;// @ G0442_ps_SecondaryMouseInput
+	bool _mousePointerBitmapUpdated; // @ G0598_B_MousePointerBitmapUpdated
+	bool _refreshMousePointerInMainLoop; // @ G0326_B_RefreshMousePointerInMainLoop
 	bool _highlightBoxEnabled; // @ G0341_B_HighlightBoxEnabled
 	uint16 _useChampionIconOrdinalAsMousePointerBitmap; // @ G0599_ui_UseChampionIconOrdinalAsMousePointerBitmap
 	EventManager(DMEngine *vm);
