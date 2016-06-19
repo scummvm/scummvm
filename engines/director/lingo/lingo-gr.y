@@ -94,12 +94,7 @@ expr: INT						{ g_lingo->code1(g_lingo->func_constpush); inst i; WRITE_LE_UINT3
 
 func: tMCI STRING			{ g_lingo->code1(g_lingo->func_mci); g_lingo->codeString($2->c_str()); delete $2; }
 	| tMCIWAIT VAR			{ g_lingo->code1(g_lingo->func_mciwait); g_lingo->codeString($2->c_str()); delete $2; }
-	| tGO tLOOP					{ g_lingo->code1(g_lingo->func_gotoloop); }
-	| tGO tNEXT					{ g_lingo->code1(g_lingo->func_gotonext); }
-	| tGO tPREVIOUS				{ g_lingo->code1(g_lingo->func_gotoprevious); }
-	| tGO gotoframe 			{ g_lingo->code1(g_lingo->func_goto); g_lingo->codeString($2->c_str()); g_lingo->codeString(""); delete $2; }
-	| tGO gotoframe gotomovie	{ g_lingo->code1(g_lingo->func_goto); g_lingo->codeString($2->c_str()); g_lingo->codeString($3->c_str()); delete $2; delete $3; }
-	| tGO gotomovie				{ g_lingo->code1(g_lingo->func_goto); g_lingo->codeString(""); g_lingo->codeString($2->c_str()); delete $2; }
+	| gotofunc
 	;
 
 // go {to} {frame} whichFrame {of movie whichMovie}
@@ -110,6 +105,13 @@ func: tMCI STRING			{ g_lingo->code1(g_lingo->func_mci); g_lingo->codeString($2-
 // go to {frame} whichFrame {of movie whichMovie}
 // go to {frame whichFrame of} movie whichMovie
 
+gotofunc: tGO tLOOP				{ g_lingo->code1(g_lingo->func_gotoloop); }
+	| tGO tNEXT					{ g_lingo->code1(g_lingo->func_gotonext); }
+	| tGO tPREVIOUS				{ g_lingo->code1(g_lingo->func_gotoprevious); }
+	| tGO gotoframe 			{ g_lingo->code1(g_lingo->func_goto); g_lingo->codeString($2->c_str()); g_lingo->codeString(""); delete $2; }
+	| tGO gotoframe gotomovie	{ g_lingo->code1(g_lingo->func_goto); g_lingo->codeString($2->c_str()); g_lingo->codeString($3->c_str()); delete $2; delete $3; }
+	| tGO gotomovie				{ g_lingo->code1(g_lingo->func_goto); g_lingo->codeString(""); g_lingo->codeString($2->c_str()); delete $2; }
+	;
 
 gotoframe: tTO tFRAME STRING	{ $$ = $3; }
 	| tFRAME STRING				{ $$ = $2; }
