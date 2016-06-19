@@ -32,7 +32,7 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 		{0, 0, 0}
 };
 
-ResVmSdlGraphicsManager::ResVmSdlGraphicsManager(SdlEventSource *source, SdlWindow *window) :
+ResVmSdlGraphicsManager::ResVmSdlGraphicsManager(SdlEventSource *source, SdlWindow *window, const Capabilities &capabilities) :
 		SdlGraphicsManager(source, window),
 		_fullscreen(false),
 		_lockAspectRatio(true),
@@ -43,8 +43,6 @@ ResVmSdlGraphicsManager::ResVmSdlGraphicsManager(SdlEventSource *source, SdlWind
 		_capabilities(capabilities) {
 	ConfMan.registerDefault("fullscreen_res", "desktop");
 	ConfMan.registerDefault("aspect_ratio", true);
-
-	detectDesktopResolution();
 }
 
 ResVmSdlGraphicsManager::~ResVmSdlGraphicsManager() {
@@ -131,26 +129,10 @@ bool ResVmSdlGraphicsManager::canUsePreferredResolution(GameRenderTarget gameRen
 	}
 }
 
-void ResVmSdlGraphicsManager::detectDesktopResolution() {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_DisplayMode di;
-	if (SDL_GetCurrentDisplayMode(0, &di) != 0) {
-		warning("Error: %s", SDL_GetError());
-		g_system->quit();
-	}
-	_desktopW = di.w;
-	_desktopH = di.h;
-#else
-	const SDL_VideoInfo *vi = SDL_GetVideoInfo();
-	_desktopW = vi->current_w;
-	_desktopH = vi->current_h;
-#endif
-}
-
 Common::Rect ResVmSdlGraphicsManager::getPreferredFullscreenResolution() {
 	// Default to the desktop resolution ...
-	uint preferredWidth = _desktopW;
-	uint preferredHeight = _desktopH;
+	uint preferredWidth = _capabilities.desktopWidth;
+	uint preferredHeight = _capabilities.desktopHeight;
 
 	// ... unless the user has set a resolution in the configuration file
 	const Common::String &fsres = ConfMan.get("fullscreen_res");

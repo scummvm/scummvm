@@ -47,7 +47,7 @@
  */
 class OpenGLSdlGraphicsManager : public ResVmSdlGraphicsManager {
 public:
-	OpenGLSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
+	OpenGLSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window, const Capabilities &capabilities);
 	virtual ~OpenGLSdlGraphicsManager();
 
 	virtual bool hasFeature(OSystem::Feature f);

@@ -30,6 +30,7 @@
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/log/log.h"
 #include "backends/platform/sdl/sdl-window.h"
+#include "backends/graphics/sdl/resvm-sdl-graphics.h"
 
 #include "common/array.h"
 
@@ -103,6 +104,12 @@ protected:
 	 * The SDL output window.
 	 */
 	SdlWindow *_window;
+
+	// ResidualVM specific code
+	// Graphics capabilities
+	void detectDesktopResolution();
+	ResVmSdlGraphicsManager::Capabilities _capabilities;
+	// End of ResidualVM specific code
 
 	virtual Common::EventSource *getDefaultEventSource() { return _eventSource; }
 

@@ -41,7 +41,7 @@
  */
 class SurfaceSdlGraphicsManager : public ResVmSdlGraphicsManager {
 public:
-	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
+	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window, const Capabilities &capabilities);
 	virtual ~SurfaceSdlGraphicsManager();
 
 	virtual bool hasFeature(OSystem::Feature f);

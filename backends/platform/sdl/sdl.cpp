@@ -165,6 +165,8 @@ void OSystem_SDL::initBackend() {
 	// is not active by this point.
 	debug(1, "Using SDL Video Driver \"%s\"", sdlDriverName);
 
+	detectDesktopResolution();
+
 	// Create the default event source, in case a custom backend
 	// manager didn't provide one yet.
 	if (_eventSource == 0)
@@ -172,7 +174,7 @@ void OSystem_SDL::initBackend() {
 
 	if (_graphicsManager == 0) {
 		if (_graphicsManager == 0) {
-			_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window);
+			_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window, _capabilities);
 		}
 	}
 
@@ -217,6 +219,26 @@ void OSystem_SDL::initBackend() {
 	// manager.
 	dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->activateManager();
 }
+
+// ResidualVM specific code
+void OSystem_SDL::detectDesktopResolution() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_DisplayMode displayMode;
+	if (!SDL_GetDesktopDisplayMode(0, &displayMode)) {
+		_capabilities.desktopWidth = displayMode.w;
+		_capabilities.desktopHeight = displayMode.h;
+	}
+#else
+	// Query the desktop resolution. We simply hope nothing tried to change
+	// the resolution so far.
+	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
+	if (videoInfo && videoInfo->current_w > 0 && videoInfo->current_h > 0) {
+		_capabilities.desktopWidth = videoInfo->current_w;
+		_capabilities.desktopHeight = videoInfo->current_h;
+	}
+#endif
+}
+// End of ResidualVM specific code
 
 #if defined(USE_TASKBAR)
 void OSystem_SDL::engineInit() {
@@ -299,9 +321,9 @@ void OSystem_SDL::setupScreen(uint screenW, uint screenH, bool fullscreen, bool 
 		delete _graphicsManager;
 
 		if (accel3d) {
-			_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphicsManager(_eventSource, _window);
+			_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphicsManager(_eventSource, _window, _capabilities);
 		} else {
-			_graphicsManager = sdlGraphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window);
+			_graphicsManager = sdlGraphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window, _capabilities);
 		}
 		sdlGraphicsManager->activateManager();
 	}

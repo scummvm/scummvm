@@ -39,7 +39,13 @@ class SdlEventSource;
  */
 class ResVmSdlGraphicsManager : public SdlGraphicsManager, public Common::EventObserver {
 public:
-	ResVmSdlGraphicsManager(SdlEventSource *source, SdlWindow *window);
+	struct Capabilities {
+		uint desktopWidth, desktopHeight;
+
+		Capabilities() : desktopWidth(0), desktopHeight(0) {}
+	};
+
+	ResVmSdlGraphicsManager(SdlEventSource *source, SdlWindow *window, const Capabilities &capabilities);
 	virtual ~ResVmSdlGraphicsManager();
 
 	// SdlGraphicsManager API
@@ -98,9 +104,7 @@ public:
 	bool notifyEvent(const Common::Event &event) override;
 
 protected:
-	uint _desktopW, _desktopH;
-
-	void detectDesktopResolution();
+	const Capabilities &_capabilities;
 
 	bool _fullscreen;
 	bool _lockAspectRatio;

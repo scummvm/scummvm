@@ -44,9 +44,9 @@
 #include "graphics/pixelbuffer.h"
 #include "gui/EventRecorder.h"
 
-SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
+SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window, const Capabilities &capabilities)
 	:
-	ResVmSdlGraphicsManager(sdlEventSource, window),
+	ResVmSdlGraphicsManager(sdlEventSource, window, capabilities),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_renderer(nullptr), _screenTexture(nullptr),
 #endif

@@ -46,9 +46,9 @@
 
 #include "graphics/opengl/context.h"
 
-OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
+OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window, const Capabilities &capabilities)
 	:
-	ResVmSdlGraphicsManager(sdlEventSource, window),
+	ResVmSdlGraphicsManager(sdlEventSource, window, capabilities),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_glContext(nullptr),
 #endif
