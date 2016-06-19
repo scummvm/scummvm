@@ -286,6 +286,7 @@ public:
 
 	void clearBitmap(byte *bitmap, uint16 width, uint16 height, Color color);
 	void clearScreen(Color color);
+	void clearScreenBox(Color color, Box &box); // @ D24_FillScreenBox
 	void drawDungeon(direction dir, int16 posX, int16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
 	void updateScreen();
 	byte* getBitmap(uint16 index);
