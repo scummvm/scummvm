@@ -118,4 +118,9 @@ void DownloadRequest::finishSuccess(bool success) {
 	if (_boolCallback) (*_boolCallback)(Storage::BoolResponse(this, success));
 }
 
+void DownloadRequest::finishError(Networking::ErrorResponse error) {
+	if (_localFile) _localFile->close();
+	Request::finishError(error);
+}
+
 } // End of namespace Cloud

@@ -43,6 +43,8 @@ class DownloadRequest: public Networking::Request {
 	void streamCallback(Networking::NetworkReadStreamResponse response);
 	void streamErrorCallback(Networking::ErrorResponse error);
 	void finishSuccess(bool success);
+	virtual void finishError(Networking::ErrorResponse error);
+
 public:
 	DownloadRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb, Common::String remoteFileId, Common::DumpFile *dumpFile);
 	virtual ~DownloadRequest();

@@ -244,6 +244,8 @@ void SavesSyncRequest::fileDownloadedCallback(Storage::BoolResponse response) {
 
 	//stop syncing if download failed
 	if (!response.value) {
+		//delete the incomplete file
+		g_system->getSavefileManager()->removeSavefile(_currentDownloadingFile.name());
 		finishError(Networking::ErrorResponse(this, false, true, "", -1));
 		return;
 	}
@@ -342,7 +344,20 @@ Common::Array<Common::String> SavesSyncRequest::getFilesToDownload() {
 
 void SavesSyncRequest::finishError(Networking::ErrorResponse error) {
 	debug("SavesSync::finishError");
-
+	//if we were downloading a file - remember the name
+	//and make the Request close() it, so we can delete it
+	Common::String name = _currentDownloadingFile.name();	
+	if (_workingRequest) {
+		_ignoreCallback = true;
+		_workingRequest->finish();
+		_workingRequest = nullptr;
+		_ignoreCallback = false;
+	}
+	//unlock all the files by making getFilesToDownload() return empty array
+	_currentDownloadingFile = StorageFile();
+	_filesToDownload.clear();
+	//delete the incomplete file
+	if (name != "") g_system->getSavefileManager()->removeSavefile(name);
 	Request::finishError(error);
 }
 
