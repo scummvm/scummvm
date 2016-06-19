@@ -259,6 +259,22 @@ void GfxFrameout::syncWithScripts(bool addElements) {
 #pragma mark -
 #pragma mark Screen items
 
+void GfxFrameout::deleteScreenItem(ScreenItem *screenItem, Plane *plane) {
+	if (screenItem->_created == 0) {
+		screenItem->_created = 0;
+		screenItem->_updated = 0;
+		screenItem->_deleted = getScreenCount();
+	} else {
+		plane->_screenItemList.erase(screenItem);
+		plane->_screenItemList.pack();
+	}
+}
+
+void GfxFrameout::deleteScreenItem(ScreenItem *screenItem, const reg_t planeObject) {
+	Plane *plane = _planes.findByObject(planeObject);
+	deleteScreenItem(screenItem, plane);
+}
+
 void GfxFrameout::kernelAddScreenItem(const reg_t object) {
 	// The "fred" object is used to test graphics performance;
 	// it is impacted by framerate throttling, so disable the
@@ -335,14 +351,7 @@ void GfxFrameout::kernelDeleteScreenItem(const reg_t object) {
 		return;
 	}
 
-	if (screenItem->_created == 0) {
-		screenItem->_created = 0;
-		screenItem->_updated = 0;
-		screenItem->_deleted = getScreenCount();
-	} else {
-		plane->_screenItemList.erase(screenItem);
-		plane->_screenItemList.pack();
-	}
+	deleteScreenItem(screenItem, plane);
 }
 
 #pragma mark -

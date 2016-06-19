@@ -51,7 +51,6 @@ MODULE_OBJS := \
 	graphics/fontsjis.o \
 	graphics/maciconbar.o \
 	graphics/menu.o \
-	graphics/paint.o \
 	graphics/paint16.o \
 	graphics/palette.o \
 	graphics/picture.o \

@@ -23,6 +23,7 @@
 #ifndef SCI_GRAPHICS_TEXT32_H
 #define SCI_GRAPHICS_TEXT32_H
 
+#include "sci/engine/state.h"
 #include "sci/graphics/celobj32.h"
 #include "sci/graphics/frameout.h"
 

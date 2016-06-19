@@ -167,6 +167,7 @@ SciEngine::~SciEngine() {
 	// and will be destroyed when _gfxPalette16 is
 	// destroyed
 	delete _gfxControls32;
+	delete _gfxPaint32;
 	delete _gfxText32;
 	delete _robotDecoder;
 	delete _gfxFrameout;
@@ -177,7 +178,7 @@ SciEngine::~SciEngine() {
 	delete _gfxControls16;
 	delete _gfxText16;
 	delete _gfxAnimate;
-	delete _gfxPaint;
+	delete _gfxPaint16;
 	delete _gfxTransitions;
 	delete _gfxCompare;
 	delete _gfxCoordAdjuster;
@@ -675,7 +676,6 @@ void SciEngine::initGraphics() {
 	_gfxCursor = 0;
 	_gfxMacIconBar = 0;
 	_gfxMenu = 0;
-	_gfxPaint = 0;
 	_gfxPaint16 = 0;
 	_gfxPalette16 = 0;
 	_gfxRemap16 = 0;
@@ -718,8 +718,7 @@ void SciEngine::initGraphics() {
 		_gfxCoordAdjuster = new GfxCoordAdjuster32(_gamestate->_segMan);
 		_gfxCursor->init(_gfxCoordAdjuster, _eventMan);
 		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
-		_gfxPaint32 = new GfxPaint32(_resMan, _gfxCoordAdjuster, _gfxScreen, _gfxPalette32);
-		_gfxPaint = _gfxPaint32;
+		_gfxPaint32 = new GfxPaint32(_gamestate->_segMan);
 		_robotDecoder = new RobotDecoder(getPlatform() == Common::kPlatformMacintosh);
 		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette32, _gfxPaint32);
 		_gfxText32 = new GfxText32(_gamestate->_segMan, _gfxCache);
@@ -734,7 +733,6 @@ void SciEngine::initGraphics() {
 		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
 		_gfxTransitions = new GfxTransitions(_gfxScreen, _gfxPalette16);
 		_gfxPaint16 = new GfxPaint16(_resMan, _gamestate->_segMan, _gfxCache, _gfxPorts, _gfxCoordAdjuster, _gfxScreen, _gfxPalette16, _gfxTransitions, _audio);
-		_gfxPaint = _gfxPaint16;
 		_gfxAnimate = new GfxAnimate(_gamestate, _scriptPatcher, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen, _gfxPalette16, _gfxCursor, _gfxTransitions);
 		_gfxText16 = new GfxText16(_gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen);
 		_gfxControls16 = new GfxControls16(_gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen);

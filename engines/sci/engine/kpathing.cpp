@@ -326,7 +326,7 @@ static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int ty
 	p2.y = CLIP<int16>(p2.y, 0, height - 1);
 
 	assert(type >= 0 && type <= 3);
-	g_sci->_gfxPaint->kernelGraphDrawLine(p1, p2, poly_colors[type], 255, 255);
+	g_sci->_gfxPaint16->kernelGraphDrawLine(p1, p2, poly_colors[type], 255, 255);
 }
 
 static void draw_point(EngineState *s, Common::Point p, int start, int width, int height) {

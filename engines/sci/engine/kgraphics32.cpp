@@ -52,6 +52,7 @@
 #include "sci/graphics/controls32.h"
 #include "sci/graphics/font.h"	// TODO: remove once kBitmap is moved in a separate class
 #include "sci/graphics/frameout.h"
+#include "sci/graphics/paint32.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/text32.h"
 #endif
@@ -700,46 +701,77 @@ reg_t kEditText(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kAddLine(EngineState *s, int argc, reg_t *argv) {
-	return kStubNull(s, argc, argv); // return 0:0 for now, so that follow up calls won't create signature mismatches
-#if 0
-	reg_t plane = argv[0];
-	Common::Point startPoint(argv[1].toUint16(), argv[2].toUint16());
-	Common::Point endPoint(argv[3].toUint16(), argv[4].toUint16());
-	byte priority = (byte)argv[5].toUint16();
-	byte color = (byte)argv[6].toUint16();
-	byte style = (byte)argv[7].toUint16();	// 0: solid, 1: dashed, 2: pattern
-	byte pattern = (byte)argv[8].toUint16();
-	byte thickness = (byte)argv[9].toUint16();
-//	return g_sci->_gfxFrameout->addPlaneLine(plane, startPoint, endPoint, color, priority, 0);
-	return s->r_acc;
-#endif
+	const reg_t plane = argv[0];
+	const Common::Point startPoint(argv[1].toSint16(), argv[2].toSint16());
+	const Common::Point endPoint(argv[3].toSint16(), argv[4].toSint16());
+
+	int16 priority;
+	uint8 color;
+	LineStyle style;
+	uint16 pattern;
+	uint8 thickness;
+
+	if (argc == 10) {
+		priority = argv[5].toSint16();
+		color = (uint8)argv[6].toUint16();
+		style = (LineStyle)argv[7].toSint16();
+		pattern = argv[8].toUint16();
+		thickness = (uint8)argv[9].toUint16();
+	} else {
+		priority = 1000;
+		color = 255;
+		style = kLineStyleSolid;
+		pattern = 0;
+		thickness = 1;
+	}
+
+	return g_sci->_gfxPaint32->kernelAddLine(plane, startPoint, endPoint, priority, color, style, pattern, thickness);
 }
 
 reg_t kUpdateLine(EngineState *s, int argc, reg_t *argv) {
-	return kStub(s, argc, argv);
+	const reg_t screenItemObject = argv[0];
+	const reg_t planeObject = argv[1];
+	const Common::Point startPoint(argv[2].toSint16(), argv[3].toSint16());
+	const Common::Point endPoint(argv[4].toSint16(), argv[5].toSint16());
 
-#if 0
-	reg_t hunkId = argv[0];
-	reg_t plane = argv[1];
-	Common::Point startPoint(argv[2].toUint16(), argv[3].toUint16());
-	Common::Point endPoint(argv[4].toUint16(), argv[5].toUint16());
-	// argv[6] is unknown (a number, usually 200)
-	byte color = (byte)argv[7].toUint16();
-	byte priority = (byte)argv[8].toUint16();
-	byte control = (byte)argv[9].toUint16();
-	// argv[10] is unknown (usually a small number, 1 or 2). Thickness, perhaps?
-//	g_sci->_gfxFrameout->updatePlaneLine(plane, hunkId, startPoint, endPoint, color, priority, control);
+	int16 priority;
+	uint8 color;
+	LineStyle style;
+	uint16 pattern;
+	uint8 thickness;
+
+	Plane *plane = g_sci->_gfxFrameout->getPlanes().findByObject(planeObject);
+	if (plane == nullptr) {
+		error("kUpdateLine: Plane %04x:%04x not found", PRINT_REG(planeObject));
+	}
+
+	ScreenItem *screenItem = plane->_screenItemList.findByObject(screenItemObject);
+	if (screenItem == nullptr) {
+		error("kUpdateLine: Screen item %04x:%04x not found", PRINT_REG(screenItemObject));
+	}
+
+	if (argc == 11) {
+		priority = argv[6].toSint16();
+		color = (uint8)argv[7].toUint16();
+		style = (LineStyle)argv[8].toSint16();
+		pattern = argv[9].toUint16();
+		thickness = (uint8)argv[10].toUint16();
+	} else {
+		priority = screenItem->_priority;
+		color = screenItem->_celInfo.color;
+		style = kLineStyleSolid;
+		pattern = 0;
+		thickness = 1;
+	}
+
+	g_sci->_gfxPaint32->kernelUpdateLine(screenItem, plane, startPoint, endPoint, priority, color, style, pattern, thickness);
+
 	return s->r_acc;
-#endif
 }
+
 reg_t kDeleteLine(EngineState *s, int argc, reg_t *argv) {
-	return kStub(s, argc, argv);
-#if 0
-	reg_t hunkId = argv[0];
-	reg_t plane = argv[1];
-//	g_sci->_gfxFrameout->deletePlaneLine(plane, hunkId);
+	g_sci->_gfxPaint32->kernelDeleteLine(argv[0], argv[1]);
 	return s->r_acc;
-#endif
 }
 
 reg_t kSetScroll(EngineState *s, int argc, reg_t *argv) {

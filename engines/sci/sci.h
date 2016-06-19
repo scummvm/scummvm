@@ -67,7 +67,6 @@ class GfxCoordAdjuster;
 class GfxCursor;
 class GfxMacIconBar;
 class GfxMenu;
-class GfxPaint;
 class GfxPaint16;
 class GfxPaint32;
 class GfxPalette;
@@ -358,7 +357,6 @@ public:
 	GfxPalette32 *_gfxPalette32; // Palette for 32-bit gfx
 	GfxRemap *_gfxRemap16;	// Remapping for the QFG4 demo
 	GfxRemap32 *_gfxRemap32; // Remapping for 32-bit gfx
-	GfxPaint *_gfxPaint;
 	GfxPaint16 *_gfxPaint16; // Painting in 16-bit gfx
 	GfxPaint32 *_gfxPaint32; // Painting in 32-bit gfx
 	GfxPorts *_gfxPorts; // Port managment for 16-bit gfx

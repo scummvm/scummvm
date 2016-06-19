@@ -197,10 +197,19 @@ private:
 #pragma mark -
 #pragma mark Screen items
 private:
-	void deleteScreenItem(ScreenItem *screenItem, const reg_t plane);
 	void remapMarkRedraw();
 
 public:
+	/**
+	 * Deletes a screen item from the given plane.
+	 */
+	void deleteScreenItem(ScreenItem *screenItem, Plane *plane);
+
+	/**
+	 * Deletes a screen item from the given plane.
+	 */
+	void deleteScreenItem(ScreenItem *screenItem, const reg_t plane);
+
 	void kernelAddScreenItem(const reg_t object);
 	void kernelUpdateScreenItem(const reg_t object);
 	void kernelDeleteScreenItem(const reg_t object);

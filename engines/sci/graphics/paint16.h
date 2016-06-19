@@ -23,8 +23,6 @@
 #ifndef SCI_GRAPHICS_PAINT16_H
 #define SCI_GRAPHICS_PAINT16_H
 
-#include "sci/graphics/paint.h"
-
 namespace Sci {
 
 class GfxPorts;
@@ -36,7 +34,7 @@ class GfxView;
 /**
  * Paint16 class, handles painting/drawing for SCI16 (SCI0-SCI1.1) games
  */
-class GfxPaint16 : public GfxPaint {
+class GfxPaint16 {
 public:
 	GfxPaint16(ResourceManager *resMan, SegManager *segMan, GfxCache *cache, GfxPorts *ports, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions, AudioPlayer *audio);
 	~GfxPaint16();

@@ -41,9 +41,7 @@
 #include "sci/graphics/cache.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
-#include "sci/graphics/paint.h"
 #include "sci/graphics/paint16.h"
-#include "sci/graphics/paint32.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/view.h"
@@ -54,6 +52,7 @@
 #include "sci/video/seq_decoder.h"
 #ifdef ENABLE_SCI32
 #include "sci/graphics/frameout.h"
+#include "sci/graphics/paint32.h"
 #include "video/coktel_decoder.h"
 #include "sci/video/robot_decoder.h"
 #endif
@@ -1648,7 +1647,7 @@ bool Console::cmdDrawPic(int argc, const char **argv) {
 #endif
 
 	uint16 resourceId = atoi(argv[1]);
-	_engine->_gfxPaint->kernelDrawPicture(resourceId, 100, false, false, false, 0);
+	_engine->_gfxPaint16->kernelDrawPicture(resourceId, 100, false, false, false, 0);
 	_engine->_gfxScreen->copyToScreen();
 	_engine->sleep(2000);
 

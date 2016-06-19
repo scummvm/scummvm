@@ -800,9 +800,12 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(SetFontRes),        SIG_SCI21EARLY, SIGFOR_ALL, "ii",                  NULL,            NULL },
 	{ MAP_CALL(Font),              SIG_SINCE_SCI21MID, SIGFOR_ALL, "i(.*)",           kFont_subops,    NULL },
 	{ MAP_CALL(Bitmap),            SIG_EVERYWHERE,           "(.*)",                  kBitmap_subops,  NULL },
-	{ MAP_CALL(AddLine),           SIG_EVERYWHERE,           "oiiiiiiiii",            NULL,            NULL },
-	{ MAP_CALL(UpdateLine),        SIG_EVERYWHERE,           "[r0]oiiiiiiiii",        NULL,            NULL },
-	{ MAP_CALL(DeleteLine),        SIG_EVERYWHERE,           "[r0]o",                 NULL,            NULL },
+	{ MAP_CALL(AddLine),           SIG_EVERYWHERE,           "oiiii(iiiii)",          NULL,            NULL },
+	// The first argument is a ScreenItem instance ID that is created by the
+	// engine, not the VM; as a result, in ScummVM, this argument looks like
+	// an integer and not an object, although it is an object reference.
+	{ MAP_CALL(UpdateLine),        SIG_EVERYWHERE,           "ioiiii(iiiii)",         NULL,            NULL },
+	{ MAP_CALL(DeleteLine),        SIG_EVERYWHERE,           "io",                    NULL,            NULL },
 
 	// SCI2.1 Empty Functions
 
