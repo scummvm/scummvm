@@ -114,7 +114,7 @@ public:
 
 	int calcStringAlignment(const char *s) {
 		int instLen = sizeof(inst);
-		int l = strlen(s); return l / instLen + (l + 1 + instLen - 1) % instLen;
+		int l = strlen(s); return (l + 1 + instLen - 1) / instLen;
 	}
 
 public:
