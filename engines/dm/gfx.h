@@ -44,6 +44,7 @@ public:
 	uint16 _y2;
 
 	Box(uint16 x1, uint16 x2, uint16 y1, uint16 y2): _x1(x1), _x2(x2 + 1), _y1(y1), _y2(y2 + 1) {}
+	Box() {}
 	bool isPointInside(Common::Point point) {
 		return (_x1 <= point.x) && (point.x < _x2) && (_y1 <= point.y) && (point.y < _y2);
 	}
@@ -257,9 +258,10 @@ class DisplayMan {
 
 	bool isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex); // @ F0107_DUNGEONVIEW_IsDrawnWallOrnamentAnAlcove_CPSF
 
+public:
 	// some methods use this for a stratchpad, don't make assumptions about content between function calls
 	byte *_tmpBitmap;
-public:
+
 	DisplayMan(DMEngine *dmEngine);
 	~DisplayMan();
 

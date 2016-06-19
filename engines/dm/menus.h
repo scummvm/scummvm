@@ -2,6 +2,7 @@
 #define DM_MENUS_H
 
 #include "dm.h"
+#include "champion.h"
 
 namespace DM {
 
@@ -12,6 +13,7 @@ public:
 	bool _actionAreaContainsIcons; // @ G0509_B_ActionAreaContainsIcons
 	MenuMan(DMEngine *vm);
 	void clearActingChampion(); // @ F0388_MENUS_ClearActingChampion
+	void drawActionIcon(ChampionIndex championIndex); // @ F0386_MENUS_DrawActionIcon
 
 	void drawMovementArrows();
 };

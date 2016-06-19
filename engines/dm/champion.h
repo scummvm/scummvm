@@ -297,6 +297,7 @@ public:
 	void setStatistic(ChampionStatisticType type, ChampionStatisticValue valType, byte newVal) { _statistics[type][valType] = newVal; }
 
 	uint16 getAttributes() { return _attributes; }
+	uint16 getAttributes(ChampionAttribute flag) { return _attributes & flag; }
 	void setAttributeFlag(ChampionAttribute flag, bool value) {
 		if (value) {
 			_attributes |= flag;
