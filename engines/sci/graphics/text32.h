@@ -133,7 +133,7 @@ public:
 		setScaledHeight(scaledHeight);
 	}
 
-	reg_t getObject() const {
+	inline reg_t getObject() const {
 		return _object;
 	}
 
@@ -180,7 +180,7 @@ public:
 		return READ_SCI11ENDIAN_UINT32(_bitmap + 20);
 	}
 
-	void setHunkPaletteOffset(uint32 hunkPaletteOffset) {
+	inline void setHunkPaletteOffset(uint32 hunkPaletteOffset) {
 		if (hunkPaletteOffset) {
 			hunkPaletteOffset += getBitmapHeaderSize();
 		}

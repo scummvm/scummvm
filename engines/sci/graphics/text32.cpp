@@ -121,7 +121,6 @@ reg_t GfxText32::createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &
 	int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
 	int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
 
-	int borderSize = 1;
 	mulinc(_textRect, Ratio(_scaledWidth, scriptWidth), Ratio(_scaledHeight, scriptHeight));
 
 	CelObjView view(celInfo.resourceId, celInfo.loopNo, celInfo.celNo);
@@ -159,7 +158,7 @@ reg_t GfxText32::createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &
 			error("TODO: Implement transparent text");
 		} else {
 			if (borderColor != -1) {
-				drawFrame(bitmapRect, borderSize, _borderColor, false);
+				drawFrame(bitmapRect, 1, _borderColor, false);
 			}
 
 			drawTextBox();
@@ -237,7 +236,8 @@ void GfxText32::drawTextBox() {
 	int16 textRectWidth = _textRect.width();
 	_drawPosition.y = _textRect.top;
 	uint charIndex = 0;
-	if (g_sci->getGameId() != GID_PHANTASMAGORIA) {
+
+	if (g_sci->getGameId() == GID_SQ6 || g_sci->getGameId() == GID_MOTHERGOOSEHIRES) {
 		if (getLongest(&charIndex, textRectWidth) == 0) {
 			error("DrawTextBox GetLongest=0");
 		}
@@ -591,11 +591,16 @@ Common::Rect GfxText32::getTextSize(const Common::String &text, int16 maxWidth, 
 		}
 	} else {
 		result.right = getTextWidth(0, 10000);
-		// NOTE: In the original engine code, the bottom was not decremented
-		// by 1, which means that the rect was actually a pixel taller than
-		// the height of the font. This was not the case in the other branch,
-		// which decremented the bottom by 1 at the end of the loop.
-		result.bottom = _font->getHeight() + 1;
+
+		if (getSciVersion() < SCI_VERSION_2_1_MIDDLE) {
+			result.bottom = 0;
+		} else {
+			// NOTE: In the original engine code, the bottom was not decremented
+			// by 1, which means that the rect was actually a pixel taller than
+			// the height of the font. This was not the case in the other branch,
+			// which decremented the bottom by 1 at the end of the loop.
+			result.bottom = _font->getHeight() + 1;
+		}
 	}
 
 	if (doScaling) {
