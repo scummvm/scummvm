@@ -290,6 +290,9 @@ public:
 	void blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
 					  uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
 					  Color transparent = kColorNoTransparency, Viewport &viewport = gDefultViewPort);
+	void blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
+					  Box &box,
+					  Color transparent = kColorNoTransparency, Viewport &viewport = gDefultViewPort);
 
 	void flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height);
 	void flipBitmapVertical(byte *bitmap, uint16 width, uint16 height);

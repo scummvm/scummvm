@@ -117,7 +117,7 @@ enum ViewSquare {
 Frame gCeilingFrame(0, 223, 0, 28, 112, 29, 0, 0); // @ K0012_s_Frame_Ceiling
 Frame gFloorFrame(0, 223, 66, 135, 112, 70, 0, 0); // @ K0013_s_Frame_Floor
 
-Frame gFrameWall_D3L2 = Frame(0,  15, 25, 73, 8, 49, 0, 0); // @ G0711_s_Graphic558_Frame_Wall_D3L2
+Frame gFrameWall_D3L2 = Frame(0, 15, 25, 73, 8, 49, 0, 0); // @ G0711_s_Graphic558_Frame_Wall_D3L2
 Frame gFrameWall_D3R2 = Frame(208, 223, 25, 73, 8, 49, 0, 0); // @ G0712_s_Graphic558_Frame_Wall_D3R2
 Frame gFrameWalls[12] = { // @ G0163_as_Graphic558_Frame_Walls
 	/* { X1, X2, Y1, Y2, pixelWidth, Height, X, Y } */
@@ -564,7 +564,7 @@ byte gAlcoveOrnIndices[kAlcoveOrnCount] = { // @ G0192_auc_Graphic558_AlcoveOrna
 
 using namespace DM;
 
-DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {	
+DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_vgaBuffer = nullptr;
 	_bitmaps = nullptr;
 	_grapItemCount = 0;
@@ -585,9 +585,9 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 
 	for (int i = 0; i < kStairsGraphicCount; i++)
 		_stairIndices[i] = 0;
-	
+
 	for (int i = 0; i < 4; i++)
-		_palChangesProjectile[i] =  nullptr;
+		_palChangesProjectile[i] = nullptr;
 
 	for (int i = 0; i < kAlcoveOrnCount; i++)
 		_currMapAlcoveOrnIndices[i] = 0;
@@ -604,7 +604,7 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 			_currMapDoorOrnInfo[j][i] = 0;
 		}
 	}
-	
+
 	for (int i = 0; i < 16; i++) {
 		_currMapWallOrnIndices[i] = 0;
 		_currMapFloorOrnIndices[i] = 0;
@@ -1435,7 +1435,7 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 			bitmapGreen = _bitmaps[nativeBitmapIndex];
 			var_X = pixelWidth;
 			if (flipHorizontal) {
-				if(bitmapGreen != _tmpBitmap)
+				if (bitmapGreen != _tmpBitmap)
 					blitToBitmap(bitmapGreen, coordSetB[4], coordSetB[5], _tmpBitmap, coordSetB[4]);
 				flipBitmapHorizontal(_tmpBitmap, coordSetB[4], coordSetB[5]);
 				bitmapGreen = _tmpBitmap;
@@ -1505,4 +1505,10 @@ void DisplayMan::clearScreenBox(Color color, Box &box, Viewport &viewport) {
 	uint16 width = box._x2 - box._x1;
 	for (int y = box._y1; y < box._y2; ++y)
 		memset(_vgaBuffer + y * _screenWidth + box._x1, color, sizeof(byte) * width);
+}
+
+void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
+				  Box &box,
+				  Color transparent, Viewport &viewport) {
+	blitToScreen(srcBitmap, srcWidth, srcX, srcY, box._x1, box._x2, box._y1, box._y2, transparent, viewport);
 }
