@@ -133,6 +133,12 @@ public:
 	bool verify(Symbol *s);
 	static void func_eval();
 	static void func_ifcode();
+	static void func_eq();
+	static void func_neq();
+	static void func_gt();
+	static void func_lt();
+	static void func_ge();
+	static void func_le();
 
 	static void func_mci();
 	static void func_mciwait();

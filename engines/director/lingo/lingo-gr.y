@@ -75,6 +75,7 @@ using namespace Director;
 %token<s> VAR STRING
 %token tIF tEND tFRAME tGO tINTO tLOOP tMCI tMCIWAIT tMOVIE tNEXT tOF tPREVIOUS
 %token tPUT tSET tTHEN tTO
+%token tGE tLE tGT tLT tEQ tNEQ
 
 %type<code> assign cond expr if end stmtlist
 %type<s> gotoframe gotomovie
@@ -119,12 +120,18 @@ expr: INT						{ g_lingo->code1(g_lingo->func_constpush); inst i; WRITE_LE_UINT3
 	| expr '-' expr				{ g_lingo->code1(g_lingo->func_sub); }
 	| expr '*' expr				{ g_lingo->code1(g_lingo->func_mul); }
 	| expr '/' expr				{ g_lingo->code1(g_lingo->func_div); }
+	| expr '>' expr				{ g_lingo->code1(g_lingo->func_gt); }
+	| expr '<' expr				{ g_lingo->code1(g_lingo->func_lt); }
+	| expr tNEQ expr			{ g_lingo->code1(g_lingo->func_neq); }
+	| expr tGE expr				{ g_lingo->code1(g_lingo->func_ge); }
+	| expr tLE expr				{ g_lingo->code1(g_lingo->func_le); }
 	| '+' expr  %prec UNARY		{ $$ = $2; }
 	| '-' expr  %prec UNARY		{ $$ = $2; g_lingo->code1(g_lingo->func_negate); }
 	| '(' expr ')'				{ $$ = $2; }
 	;
 
-cond:	   expr 	{ g_lingo->code1(STOP); }
+cond:	   expr 				{ g_lingo->code1(STOP); }
+	| expr '=' expr				{ g_lingo->code2(g_lingo->func_eq, STOP); }
 	;
 if:	  tIF	{ $$ = g_lingo->code1(g_lingo->func_ifcode); g_lingo->code3(STOP,STOP,STOP); }
 	;

@@ -341,6 +341,55 @@ void Lingo::func_negate() {
 	g_lingo->push(d);
 }
 
+void Lingo::func_eq() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	d1.val = (d1.val == d2.val) ? 1 : 0;
+	g_lingo->push(d1);
+}
+
+void Lingo::func_neq() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	d1.val = (d1.val != d2.val) ? 1 : 0;
+	g_lingo->push(d1);
+}
+
+void Lingo::func_gt() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	d1.val = (d1.val > d2.val) ? 1 : 0;
+	g_lingo->push(d1);
+}
+
+void Lingo::func_lt() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	d1.val = (d1.val < d2.val) ? 1 : 0;
+	g_lingo->push(d1);
+}
+
+void Lingo::func_ge() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	d1.val = (d1.val >= d2.val) ? 1 : 0;
+	g_lingo->push(d1);
+}
+
+void Lingo::func_le() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	d1.val = (d1.val <= d2.val) ? 1 : 0;
+	g_lingo->push(d1);
+}
+
+
 void Lingo::func_ifcode() {
 	Datum d;
 	int savepc = g_lingo->_pc;	/* then part */

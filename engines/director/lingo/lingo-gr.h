@@ -60,7 +60,13 @@
      tPUT = 276,
      tSET = 277,
      tTHEN = 278,
-     tTO = 279
+     tTO = 279,
+     tGE = 280,
+     tLE = 281,
+     tGT = 282,
+     tLT = 283,
+     tEQ = 284,
+     tNEQ = 285
    };
 #endif
 /* Tokens.  */
@@ -86,6 +92,12 @@
 #define tSET 277
 #define tTHEN 278
 #define tTO 279
+#define tGE 280
+#define tLE 281
+#define tGT 282
+#define tLT 283
+#define tEQ 284
+#define tNEQ 285
 
 
 
@@ -100,7 +112,7 @@ typedef union YYSTYPE
 	int code;
 }
 /* Line 1529 of yacc.c.  */
-#line 104 "engines/director/lingo/lingo-gr.hpp"
+#line 116 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

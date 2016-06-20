@@ -38,7 +38,7 @@ variable [_[:alpha:]][_[:alnum:]]*
 constfloat [[:digit:]]+\.[[:digit:]]*
 constinteger [[:digit:]]+
 conststring \"[^\"\n]*\"
-operator [-+*/%=^:,()]
+operator [-+*/%=^:,()><]
 newline [\n\r]+
 whitespace [\t ]
 
@@ -64,6 +64,10 @@ put				{ return tPUT; }
 set				{ return tSET; }
 then			{ return tTHEN; }
 to				{ return tTO; }
+
+[!][=]			{ return tNEQ; }
+[>][=]			{ return tGE; }
+[<][=]			{ return tLE; }
 
 {variable}		{ yylval.s = new Common::String(yytext);  return VAR; }
 {constfloat}	{ yylval.f = atof(yytext); return FLOAT; }
