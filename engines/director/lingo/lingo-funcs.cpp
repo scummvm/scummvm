@@ -394,17 +394,25 @@ void Lingo::func_ifcode() {
 	Datum d;
 	int savepc = g_lingo->_pc;	/* then part */
 
+	int then = READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc]);
+	int elsep = READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
+	int end = READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
+
+	warning("cond: %d end: %d  then: %d elesp: %d", savepc + 3, end, then, elsep);
+
 	g_lingo->execute(savepc + 3);	/* condition */
 
 	d = g_lingo->pop();
+	warning("res: %d", d.val);
 
-	if (d.val)
-		g_lingo->execute(savepc);
-	else if ((*g_lingo->_currentScript)[savepc + 1]) /* else part? */
-		g_lingo->execute(savepc + 1);
+	if (d.val) {
+		g_lingo->execute(then);
+	} else if (elsep) { /* else part? */
+		g_lingo->execute(elsep);
+	}
 
 	//if (!returning)
-	g_lingo->_pc = savepc + 2; /* next stmt */
+	g_lingo->_pc = end; /* next stmt */
 }
 
 //************************

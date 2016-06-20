@@ -56,7 +56,7 @@
 
 extern int yylex();
 extern int yyparse();
-void yyerror(char *s) { warning("%s", s); }
+void yyerror(char *s) { error("%s", s); }
 
 using namespace Director;
 

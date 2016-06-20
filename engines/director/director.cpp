@@ -84,7 +84,12 @@ go to \"Chair\"\n\
 set x = 2 + 3 * (4 / 2)\n\
 put x\n", kMovieScript, 2);
 
-	_lingo->executeScript(kMovieScript, 2);
+_lingo->addCode("set x = 5\n\
+if 4 > 3 then x end if\n", kMovieScript, 3);
+
+	_lingo->executeScript(kMovieScript, 3);
+
+	return Common::kNoError;
 
 	//FIXME
 	_mainArchive = new RIFFArchive();
