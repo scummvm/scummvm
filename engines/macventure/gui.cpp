@@ -94,6 +94,10 @@ void Gui::draw() {
 	_wm.draw();
 }
 
+void Gui::drawMenu() {
+	_menu->draw(&_screen);
+}
+
 bool Gui::processEvent(Common::Event &event) {
 	return _wm.processEvent(event);
 }
@@ -271,7 +275,6 @@ bool Gui::loadMenus() {
 		uint8 titleLength;
 		char* title;
 
-		int menunum = -1; // High level menus have level -1
 		/* Skip menuID, width, height, resourceID, placeholder */
 		for (int skip = 0; skip < 5; skip++) { res->readUint16BE(); }
 		enabled = res->readUint32BE();
@@ -320,8 +323,7 @@ bool Gui::loadWindows() {
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = _resourceManager->getResource(MKTAG('W', 'I', 'N', 'D'), *iter);
 		WindowData data;
-		uint16 top, left, bottom, right;
-		uint16 borderSize;
+		uint16 top, left, bottom, right;		
 		top = res->readUint16BE();
 		left = res->readUint16BE();
 		bottom = res->readUint16BE();
@@ -512,7 +514,7 @@ bool diplomaWindowCallback(Graphics::WindowClick click, Common::Event &event, vo
 bool inventoryWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
 	Gui *g = (Gui*)gui;
 
-	return true;
+	return g->processInventoryEvents(click, event);
 }
 
 void menuCommandsCallback(int action, Common::String &text, void *data) {
@@ -668,6 +670,10 @@ bool MacVenture::Gui::processExitsEvents(WindowClick click, Common::Event & even
 bool MacVenture::Gui::processDiplomaEvents(WindowClick click, Common::Event & event) {
 	debug(6, "Processing event in Diploma Window");
 	return getWindowData(kDiplomaWindow).visible;
+}
+
+bool Gui::processInventoryEvents(WindowClick click, Common::Event & event) {
+	return false;
 }
 
 /* Ugly switches */

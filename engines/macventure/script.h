@@ -180,8 +180,8 @@ private:
 	void op85PUTA(EngineState *state, EngineFrame *frame);	//push target
 	void op86PUDX(EngineState *state, EngineFrame *frame);	//push deltax
 	void op87PUDY(EngineState *state, EngineFrame *frame);	//push deltay
-	void op88PUIB(EngineState *state, EngineFrame *frame, ScriptAsset *asset);//push immediate.b
-	void op89PUI(EngineState *state, EngineFrame *frame, ScriptAsset *asset);//push immediate
+	void op88PUIB(EngineState *state, EngineFrame *frame, ScriptAsset *script);//push immediate.b
+	void op89PUI(EngineState *state, EngineFrame *frame, ScriptAsset *script);//push immediate
 	void op8aGGLO(EngineState *state, EngineFrame *frame);	//get global
 	void op8bSGLO(EngineState *state, EngineFrame *frame);	//set global
 	void op8cRAND(EngineState *state, EngineFrame *frame);	//random
@@ -223,19 +223,19 @@ private:
 	void opaeCONT(EngineState *state, EngineFrame *frame);	//contains
 	void opafCONTW(EngineState *state, EngineFrame *frame); //contains word	
 
-	void opb0BRA(EngineState *state, EngineFrame *frame, ScriptAsset *asset);	//bra
-	void opb1BRAB(EngineState *state, EngineFrame *frame, ScriptAsset *asset);	//bra.b
-	void opb2BEQ(EngineState *state, EngineFrame *frame, ScriptAsset *asset);	//beq
-	void opb3BEQB(EngineState *state, EngineFrame *frame, ScriptAsset *asset); //beq.b
-	void opb4BNE(EngineState *state, EngineFrame *frame, ScriptAsset *asset);	//bne
-	void opb5BNEB(EngineState *state, EngineFrame *frame, ScriptAsset *asset);	//bne.b
+	void opb0BRA(EngineState *state, EngineFrame *frame, ScriptAsset *script);	//bra
+	void opb1BRAB(EngineState *state, EngineFrame *frame, ScriptAsset *script);	//bra.b
+	void opb2BEQ(EngineState *state, EngineFrame *frame, ScriptAsset *script);	//beq
+	void opb3BEQB(EngineState *state, EngineFrame *frame, ScriptAsset *script); //beq.b
+	void opb4BNE(EngineState *state, EngineFrame *frame, ScriptAsset *script);	//bne
+	void opb5BNEB(EngineState *state, EngineFrame *frame, ScriptAsset *script);	//bne.b
 	void opb6CLAT(EngineState *state, EngineFrame *frame);	//call later
 	void opb7CCA(EngineState *state, EngineFrame *frame);	//cancel call
 	void opb8CLOW(EngineState *state, EngineFrame *frame);	//cancel low priority
 	void opb9CHI(EngineState *state, EngineFrame *frame);	//cancel high priority
 	void opbaCRAN(EngineState *state, EngineFrame *frame);	//cancel priority range
 	void opbbFORK(EngineState *state, EngineFrame *frame);	//fork
-	void opbcCALL(EngineState *state, EngineFrame *frame, ScriptAsset *script);	//call
+	void opbcCALL(EngineState *state, EngineFrame *frame, ScriptAsset &script);	//call
 	void opbdFOOB(EngineState *state, EngineFrame *frame);	//focus object
 	void opbeSWOB(EngineState *state, EngineFrame *frame);	//swap objects
 	void opbfSNOB(EngineState *state, EngineFrame *frame);	//snap object

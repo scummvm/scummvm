@@ -132,6 +132,7 @@ public:
 	~Gui();
 
 	void draw();
+	void drawMenu();
 	bool processEvent(Common::Event &event);
 	void handleMenuAction(MenuAction action);
 	void updateWindow(WindowReference winID, bool containerOpen);
@@ -145,6 +146,7 @@ public:
 	bool processSelfEvents(WindowClick click, Common::Event &event);
 	bool processExitsEvents(WindowClick click, Common::Event &event);
 	bool processDiplomaEvents(WindowClick click, Common::Event &event);
+	bool processInventoryEvents(WindowClick click, Common::Event &event);
 
 	const WindowData& getWindowData(WindowReference reference);
 

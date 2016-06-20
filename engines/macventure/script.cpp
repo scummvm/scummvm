@@ -337,7 +337,7 @@ bool ScriptEngine::runFunc(EngineFrame *frame) {
 				opbbFORK(state, frame);
 				break;
 			case 0xbc: //call
-				opbcCALL(state, frame, &script);
+				opbcCALL(state, frame, script);
 				break;
 			case 0xbd: //focus object
 				opbdFOOB(state, frame);
@@ -537,14 +537,14 @@ void ScriptEngine::op87PUDY(EngineState * state, EngineFrame * frame) {
 	state->push(frame->y);
 }
 
-void ScriptEngine::op88PUIB(EngineState * state, EngineFrame * frame, ScriptAsset *asset) {
-	state->push(asset->fetch());
+void ScriptEngine::op88PUIB(EngineState * state, EngineFrame * frame, ScriptAsset *script) {
+	state->push(script->fetch());
 }
 
-void ScriptEngine::op89PUI(EngineState * state, EngineFrame * frame, ScriptAsset * asset) {
-	word val = asset->fetch();
+void ScriptEngine::op89PUI(EngineState * state, EngineFrame * frame, ScriptAsset * script) {
+	word val = script->fetch();
 	val <<= 8;
-	val = val | asset->fetch();
+	val = val | script->fetch();
 	state->push(val);
 }
 
@@ -798,50 +798,50 @@ void ScriptEngine::opafCONTW(EngineState * state, EngineFrame * frame) {
 	state->push(haystack.contains(needle) ? 1 : 0);
 }
 
-void ScriptEngine::opb0BRA(EngineState * state, EngineFrame * frame, ScriptAsset *asset) {
-	word val = asset->fetch();
+void ScriptEngine::opb0BRA(EngineState * state, EngineFrame * frame, ScriptAsset *script) {
+	word val = script->fetch();
 	val <<= 8;
-	val = val | asset->fetch();
+	val = val | script->fetch();
 	val = neg16(val);
-	asset->branch(val);
+	script->branch(val);
 }
 
-void ScriptEngine::opb1BRAB(EngineState * state, EngineFrame * frame, ScriptAsset *asset) {
-	word val = asset->fetch();
+void ScriptEngine::opb1BRAB(EngineState * state, EngineFrame * frame, ScriptAsset *script) {
+	word val = script->fetch();
 	val = neg8(val);
-	asset->branch(val);
+	script->branch(val);
 }
 
-void ScriptEngine::opb2BEQ(EngineState * state, EngineFrame * frame, ScriptAsset *asset) {
-	word val = asset->fetch();
+void ScriptEngine::opb2BEQ(EngineState * state, EngineFrame * frame, ScriptAsset *script) {
+	word val = script->fetch();
 	val <<= 8;
-	val = val | asset->fetch();
-	val = neg16(val);
-	word b = state->pop();
-	if (b != 0) asset->branch(val);
-}
-
-void ScriptEngine::opb3BEQB(EngineState * state, EngineFrame * frame, ScriptAsset *asset) {
-	word val = asset->fetch();
-	val = neg8(val);
-	word b = state->pop();
-	if (b != 0) asset->branch(val);
-}
-
-void ScriptEngine::opb4BNE(EngineState * state, EngineFrame * frame, ScriptAsset *asset) {
-	word val = asset->fetch();
-	val <<= 8;
-	val = val | asset->fetch();
+	val = val | script->fetch();
 	val = neg16(val);
 	word b = state->pop();
-	if (b == 0) asset->branch(val);
+	if (b != 0) script->branch(val);
 }
 
-void ScriptEngine::opb5BNEB(EngineState * state, EngineFrame * frame, ScriptAsset *asset) {
-	word val = asset->fetch();
+void ScriptEngine::opb3BEQB(EngineState * state, EngineFrame * frame, ScriptAsset *script) {
+	word val = script->fetch();
 	val = neg8(val);
 	word b = state->pop();
-	if (b == 0) asset->branch(val);
+	if (b != 0) script->branch(val);
+}
+
+void ScriptEngine::opb4BNE(EngineState * state, EngineFrame * frame, ScriptAsset *script) {
+	word val = script->fetch();
+	val <<= 8;
+	val = val | script->fetch();
+	val = neg16(val);
+	word b = state->pop();
+	if (b == 0) script->branch(val);
+}
+
+void ScriptEngine::opb5BNEB(EngineState * state, EngineFrame * frame, ScriptAsset *script) {
+	word val = script->fetch();
+	val = neg8(val);
+	word b = state->pop();
+	if (b == 0) script->branch(val);
 }
 
 void ScriptEngine::opb6CLAT(EngineState * state, EngineFrame * frame) {
@@ -852,7 +852,7 @@ void ScriptEngine::opb6CLAT(EngineState * state, EngineFrame * frame) {
 
 void ScriptEngine::opb7CCA(EngineState * state, EngineFrame * frame) {
 	word func = state->pop();
-	for (int i = 0; i < frame->saves.size(); i++) {
+	for (uint i = 0; i < frame->saves.size(); i++) {
 		if (frame->saves[i].func == func)
 			frame->saves[i].rank = 0;
 	}
@@ -860,14 +860,14 @@ void ScriptEngine::opb7CCA(EngineState * state, EngineFrame * frame) {
 
 void ScriptEngine::opb8CLOW(EngineState * state, EngineFrame * frame) {
 	word hi = state->pop();
-	for (int i = 0;i<frame->saves.size();i++)
+	for (uint i = 0;i<frame->saves.size();i++)
 		if (frame->saves[i].rank <= hi)
 			frame->saves[i].rank = 0;
 }
 
 void ScriptEngine::opb9CHI(EngineState * state, EngineFrame * frame) {
 	word lo = state->pop();
-	for (int i = 0;i<frame->saves.size();i++)
+	for (uint i = 0;i<frame->saves.size();i++)
 		if (frame->saves[i].rank >= lo)
 			frame->saves[i].rank = 0;
 }
@@ -875,7 +875,7 @@ void ScriptEngine::opb9CHI(EngineState * state, EngineFrame * frame) {
 void ScriptEngine::opbaCRAN(EngineState * state, EngineFrame * frame) {
 	word hi = state->pop();
 	word lo = state->pop();
-	for (int i = 0;i<frame->saves.size();i++)
+	for (uint i = 0;i<frame->saves.size();i++)
 		if (frame->saves[i].rank >= lo &&
 			frame->saves[i].rank <= hi)
 			frame->saves[i].rank = 0;
@@ -891,12 +891,12 @@ void ScriptEngine::opbbFORK(EngineState * state, EngineFrame * frame) {
 	_frames.push_back(newframe);
 }
 
-void ScriptEngine::opbcCALL(EngineState * state, EngineFrame * frame, ScriptAsset *script) {
+void ScriptEngine::opbcCALL(EngineState * state, EngineFrame * frame, ScriptAsset &script) {
 	word id = state->pop();
 	ScriptAsset newfun = ScriptAsset(id, _scripts);
 	frame->scripts.remove_at(0);
 	frame->scripts.insert_at(0, newfun);
-	script = &frame->scripts.front();
+	script = frame->scripts.front();
 }
 
 void ScriptEngine::opbdFOOB(EngineState * state, EngineFrame * frame) {
@@ -962,7 +962,7 @@ void ScriptEngine::opc9WAIT(EngineState * state, EngineFrame * frame) {
 }
 
 void ScriptEngine::opcaTIME(EngineState * state, EngineFrame * frame) {
-	for (int i = 0; i < 6; i++) // Dummy
+	for (uint i = 0; i < 6; i++) // Dummy
 		state->push(0x00);
 	op00NOOP(0xca);
 }
@@ -1005,12 +1005,14 @@ void ScriptEngine::opd1GOBD(EngineState * state, EngineFrame * frame) {
 	Common::Rect bounds(0, 0, 1, 1); //= _world->getObjBounds(obj);
 	state->push(bounds.width());
 	state->push(bounds.height());
+	op00NOOP(0xd1);
 }
 
 void ScriptEngine::opd2GOVP(EngineState * state, EngineFrame * frame) { 
 	word b = state->pop();
 	word a = state->pop();
 	state->push(0);//_world->getOverlapPercent(b, a));
+	op00NOOP(0xd2);
 }
 
 void ScriptEngine::opd3CAPC(EngineState * state, EngineFrame * frame) {

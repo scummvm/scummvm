@@ -137,6 +137,7 @@ Common::Error MacVentureEngine::run() {
 			}
 		}
 
+		_gui->drawMenu();
 		g_system->updateScreen();
 		g_system->delayMillis(50);
 	}
