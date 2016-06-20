@@ -70,6 +70,7 @@ programline:
 	| assign			{ g_lingo->code1(g_lingo->func_xpop); }
 	| statement
 	| expr  			{ g_lingo->code1(g_lingo->func_printtop); }
+	| error				{ yyerrok; }
 	| /* empty */
 	;
 
