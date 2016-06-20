@@ -140,7 +140,7 @@ bool CTelevision::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
 
 bool CTelevision::EnterViewMsg(CEnterViewMsg *msg) {
 	setPetArea(PET_REMOTE);
-	petFn2(2);
+	petHighlightGlyph(GLYPH_TELEVISION_CONTROL);
 	petFn3(0);
 	setVisible(0);
 	_fieldE0 = 1;

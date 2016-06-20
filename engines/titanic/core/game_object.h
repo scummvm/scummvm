@@ -126,7 +126,21 @@ protected:
 	 */
 	CViewItem * parseView(const CString &viewString);
 
-	void petFn2(int val);
+	/**
+	 * Highlights a glyph in the currently active PET section
+	 */
+	void petHighlightGlyph(int id);
+
+	/**
+	 * Hides the text cursor in the current section, if applicable
+	 */
+	void petHideCursor();
+
+	/**
+	 * Shows the text cursor in the current section, if applicable
+	 */
+	void petShowCursor();
+
 	void petFn3(CTreeItem *item);
 	void incState38();
 	void inc54();

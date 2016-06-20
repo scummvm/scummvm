@@ -182,7 +182,10 @@ public:
 	 */
 	virtual void hideCursor() {}
 
-	virtual void proc38(int val) {}
+	/**
+	 * Highlights a glyph item in the section, if applicable
+	 */
+	virtual void highlight(int id) {}
 
 	/**
 	 * Get the PET control

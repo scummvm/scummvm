@@ -211,8 +211,16 @@ PetArea CPetControl::setArea(PetArea newArea) {
 	return newArea;
 }
 
-void CPetControl::fn2(int val) {
-	_sections[_currentArea]->proc38(val);
+void CPetControl::hideCursor() {
+	_sections[_currentArea]->hideCursor();
+}
+
+void CPetControl::showCursor() {
+	_sections[_currentArea]->showCursor();
+}
+
+void CPetControl::highlightGlyph(int id) {
+	_sections[_currentArea]->highlight(id);
 }
 
 void CPetControl::fn3(CTreeItem *item) {

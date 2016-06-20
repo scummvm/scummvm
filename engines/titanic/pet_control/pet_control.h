@@ -163,8 +163,6 @@ public:
 
 	bool fn1(int val);
 
-	void fn2(int val);
-
 	void fn3(CTreeItem *item);
 
 	void fn4();
@@ -173,6 +171,21 @@ public:
 	 * Sets the currently viewed area within the PET
 	 */
 	PetArea setArea(PetArea newSection);
+
+	/**
+	 * Hides the text cursor in the current section, if applicable
+	 */
+	void hideCursor();
+
+	/**
+	 * Shows the text cursor in the current section, if applicable
+	 */
+	void showCursor();
+
+	/**
+	 * Highlights a glyph item in the currently active section, if applicable
+	 */
+	void highlightGlyph(int id);
 
 	/**
 	 * Returns true if the PET is currently unlocked

@@ -384,10 +384,22 @@ void CGameObject::setVisible(bool val) {
 	}
 }
 
-void CGameObject::petFn2(int val) {
+void CGameObject::petHighlightGlyph(int val) {
 	CPetControl *pet = getPetControl();
 	if (pet)
-		pet->fn2(val);
+		pet->highlightGlyph(val);
+}
+
+void CGameObject::petHideCursor() {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->hideCursor();
+}
+
+void CGameObject::petShowCursor() {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->showCursor();
 }
 
 void CGameObject::petFn3(CTreeItem *item) {

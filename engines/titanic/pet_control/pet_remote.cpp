@@ -214,8 +214,8 @@ CPetGfxElement *CPetRemote::getElement(uint id) {
 	}
 }
 
-void CPetRemote::proc38(int val) {
-	int highlightIndex = getHighlightIndex((RemoteGlyph)val);
+void CPetRemote::highlight(int id) {
+	int highlightIndex = getHighlightIndex((RemoteGlyph)id);
 	if (highlightIndex != -1)
 		_items.highlight(highlightIndex);
 }

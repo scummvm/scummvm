@@ -143,7 +143,10 @@ public:
 	 */
 	virtual CPetGfxElement *getElement(uint id);
 
-	virtual void proc38(int val);
+	/**
+	 * Highlights a glyph item in the section
+	 */
+	virtual void highlight(int id);
 
 	/**
 	 * Generates a PET message
