@@ -137,6 +137,7 @@ stmtlist: /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
 
 func: tMCI STRING			{ g_lingo->code1(g_lingo->func_mci); g_lingo->codeString($2->c_str()); delete $2; }
 	| tMCIWAIT VAR			{ g_lingo->code1(g_lingo->func_mciwait); g_lingo->codeString($2->c_str()); delete $2; }
+	| tPUT VAR				{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($2->c_str()); g_lingo->code1(g_lingo->func_eval); g_lingo->code1(g_lingo->func_printtop); delete $2; }
 	| gotofunc
 	;
 
