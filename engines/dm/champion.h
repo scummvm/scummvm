@@ -405,6 +405,7 @@ public:
 	void resetDataToStartGame(); // @ F0278_CHAMPION_ResetDataToStartGame
 	void addCandidateChampionToParty(uint16 championPortraitIndex); // @ F0280_CHAMPION_AddCandidateChampionToParty
 	void drawChampionBarGraphs(ChampionIndex champIndex); // @ F0287_CHAMPION_DrawBarGraphs
+	int16 getStaminaAdjustedValue(Champion *champ, int16 val); // @ F0306_CHAMPION_GetStaminaAdjustedValue
 };
 
 

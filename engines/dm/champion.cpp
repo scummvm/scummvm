@@ -336,4 +336,15 @@ void ChampionMan::drawChampionBarGraphs(ChampionIndex champIndex) {
 	warning("MISSING CODE: F0078_MOUSE_ShowPointer");
 }
 
+
+int16 ChampionMan::getStaminaAdjustedValue(Champion *champ, int16 val) {
+	int16 currStamina = champ->_currStamina;
+	int16 halfMaxStamina = champ->_maxStamina / 2;
+	if (currStamina < halfMaxStamina) {
+		val /= 2;
+		return val + ((uint32)val * (uint32)currStamina) / halfMaxStamina;
+	}
+	return val;
+}
+
 }
