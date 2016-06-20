@@ -20,6 +20,30 @@
  *
  */
 
+// Heavily inspired by hoc
+// Copyright (C) AT&T 1995
+// All Rights Reserved
+//
+// Permission to use, copy, modify, and distribute this software and
+// its documentation for any purpose and without fee is hereby
+// granted, provided that the above copyright notice appear in all
+// copies and that both that the copyright notice and this
+// permission notice and warranty disclaimer appear in supporting
+// documentation, and that the name of AT&T or any of its entities
+// not be used in advertising or publicity pertaining to
+// distribution of the software without specific, written prior
+// permission.
+//
+// AT&T DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+// INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS.
+// IN NO EVENT SHALL AT&T OR ANY OF ITS ENTITIES BE LIABLE FOR ANY
+// SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
+// IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+// ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
+// THIS SOFTWARE.
+ 
+
 %debug
 
 %{
@@ -124,6 +148,32 @@ gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
 	| tMOVIE STRING				{ $$ = $2; }
 	| tTO tMOVIE STRING			{ $$ = $3; }
 	;
+
+// macro
+//
+// Special Note  The macro keyword is retained in Director 3.0 to maintain compatibility
+// with scripts developed under Version 2.0. When writing new scripts, or editing old
+// scripts, you should use handlers instead of macros. (Handlers are defined with the on keyword.)
+//
+// Syntax:
+//
+// --  [comment]
+// macro macroName [argument1] [, argument2]
+// [, argument3]
+// [statement1]
+// [statement2]
+//
+// Keyword.  Defines a macro. A macro is a multiple-line script defined
+// in the Text window. Macros can accept arguments (inputs) and
+// optionally return a result. Macros can call other macros and can be
+// called from any other script or factory.
+//
+// The first line of a castmember in the Text window that contains a macro must be
+// a comment (--). You can define more than one macro in a given text castmember.
+// The macro definition ends where the next macro (or factory) begins.
+//
+// See also:
+//   on keyword
 
 
 %%
