@@ -43,6 +43,8 @@ ConnectionManager::ConnectionManager(): _multi(0), _timerStarted(false), _frame(
 }
 
 ConnectionManager::~ConnectionManager() {
+	stopTimer();
+
 	//terminate all requests
 	_handleMutex.lock();
 	for (Common::Array<RequestWithCallback>::iterator i = _requests.begin(); i != _requests.end(); ++i) {
