@@ -418,6 +418,10 @@ void OSVideoSurface::setMovieFrame(uint frameNumber) {
 		_movie->setFrame(frameNumber);
 }
 
+void OSVideoSurface::proc38(int v1, int v2) {
+	warning("OSVideoSurface::proc38");
+}
+
 bool OSVideoSurface::loadIfReady() {
 	_videoSurfaceNum = _videoSurfaceCounter;
 

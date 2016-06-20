@@ -54,7 +54,16 @@ public:
 	 * the passed game object
 	 */
 	CGameObject *getNextObject(CGameObject *prior) const;
+
+	void fn10(CGameObject *obj, int v);
+	void fn11(CGameObject *obj, int v);
+
+	/**
+	 * Scan the mail list for a specified item
+	 */
+	CGameObject *findMail(int id) const;
 };
+
 
 } // End of namespace Titanic
 

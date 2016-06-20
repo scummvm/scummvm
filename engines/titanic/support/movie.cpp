@@ -26,7 +26,8 @@
 
 namespace Titanic {
 
-CMovie::CMovie() : ListItem(), _state(MOVIE_STOPPED), _field10(0) {
+CMovie::CMovie() : ListItem(), _state(MOVIE_STOPPED), _field10(0),
+		_field14(0) {
 }
 
 CMovie::~CMovie() {
@@ -50,7 +51,10 @@ bool CMovie::get10() {
 
 OSMovie::OSMovie(const CResourceKey &name, CVideoSurface *surface) :
 		_videoSurface(surface), _gameObject(nullptr), _endFrame(-1) {
-	_video = new Video::AVIDecoder();
+	Video::AVIDecoder *decoder = new Video::AVIDecoder();
+	_video = decoder;
+	_field14 = 1;
+
 	if (!_video->loadFile(name.getString()))
 		error("Could not open video - %s", name.getString().c_str());
 }

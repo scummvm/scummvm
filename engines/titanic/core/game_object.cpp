@@ -343,7 +343,10 @@ void CGameObject::loadFrame(int frameNumber) {
 }
 
 void CGameObject::processClipList2() {
-	warning("CGameObject::processClipList2");
+	for (CMovieClipList::iterator i = _clipList2.begin(); i != _clipList2.end(); ++i)
+		(*i)->process(this);
+
+	_clipList2.destroyContents();
 }
 
 void CGameObject::makeDirty(const Rect &r) {
@@ -427,6 +430,17 @@ void CGameObject::playClip(uint startFrame, uint endFrame) {
 	CRoomItem *room = gameManager->getRoom();
 
 	gameManager->playClip(clip, room, room);
+}
+
+void CGameObject::playRandomClip(const char **names, uint flags) {
+	// Count size of array
+	int count = 0;
+	for (const char **p = names; *p; ++p)
+		++count;
+
+	// Play clip
+	const char *name = names[g_vm->getRandomNumber(count - 1)];
+	playClip(name, flags);
 }
 
 void CGameObject::playMovie(uint flags) {
@@ -844,6 +858,11 @@ void CGameObject::dragMove(const Point &pt) {
 	setPosition(Point(pt.x - _bounds.width() / 2, pt.y - _bounds.height() / 2));
 }
 
+Point CGameObject::getControid() const {
+	return Point(_bounds.left + _bounds.width() / 2,
+		_bounds.top + _bounds.height() / 2);
+}
+
 bool CGameObject::clipExistsByStart(const CString &name, int startFrame) const {
 	return _clipList1.existsByStart(name, startFrame);
 }
@@ -943,7 +962,75 @@ void CGameObject::createCredits() {
 	_credits = new CCreditText();
 	CScreenManager *screenManager = getGameManager()->setScreenManager();
 	_credits->load(this, screenManager, _bounds);
-	
+}
+
+void CGameObject::fn10(int v1, int v2, int v3) {
+	makeDirty();
+	_field44 = v1;
+	_field48 = v2;
+	_field4C = v3;
+}
+
+void CGameObject::setMovie14(int v) {
+	if (!_surface && !_resource.empty()) {
+		loadResource(_resource);
+		_resource.clear();
+	}
+
+	if (_surface && _surface->_movie)
+		_surface->_movie->_field14 = v;
+}
+
+void CGameObject::movie38(int v1, int v2) {
+	if (_surface)
+		_surface->proc38(v1, v2);
+}
+
+void CGameObject::movie38(int v1) {
+	if (_surface)
+		_surface->proc38(-1, v1);
+}
+
+int CGameObject::getClipDuration(const CString &name, int frameRate) const {
+	CMovieClip *clip = _clipList1.findByName(name);
+	return clip ? (clip->_endFrame - clip->_startFrame) * 1000 / frameRate : 0;
+}
+
+void CGameObject::petIncC0() {
+	getPetControl()->incC0();
+}
+
+void CGameObject::petDecC0() {
+	getPetControl()->decC0();
+}
+
+void CGameObject::setState1C(bool flag) {
+	getGameManager()->_gameState._field1C = flag;
+}
+
+void CGameObject::mailFn10(int v) {
+	CMailMan *mailMan = getMailMan();
+	if (mailMan) {
+		makeDirty();
+		mailMan->fn10(this, v);
+	}
+}
+
+void CGameObject::mailFn11(int v) {
+	CMailMan *mailMan = getMailMan();
+	if (mailMan) {
+		makeDirty();
+		mailMan->fn11(this, v);
+	}
+}
+
+bool CGameObject::mailExists(int id) const {
+	return findMail(id) != nullptr;
+}
+
+CGameObject *CGameObject::findMail(int id) const {
+	CMailMan *mailMan = getMailMan();
+	return mailMan ? mailMan->findMail(id) : nullptr;
 }
 
 } // End of namespace Titanic

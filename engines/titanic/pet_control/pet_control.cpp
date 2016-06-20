@@ -239,10 +239,6 @@ bool CPetControl::containsPt(const Common::Point &pt) const {
 	return _drawBounds.contains(pt);
 }
 
-bool CPetControl::getC0() const {
-	return _fieldC0 > 0;
-}
-
 bool CPetControl::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (!containsPt(msg->_mousePos) || getC0())
 		return false;

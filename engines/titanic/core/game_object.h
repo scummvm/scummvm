@@ -276,6 +276,11 @@ protected:
 	void dragMove(const Point &pt);
 
 	/**
+	 * Get the centre of the game object's bounds
+	 */
+	Point getControid() const;
+
+	/**
 	 * Set the position of the object
 	 */
 	void setPosition(const Point &newPos);
@@ -291,6 +296,11 @@ protected:
 	 * Play a clip
 	 */
 	void playClip(uint startFrame, uint endFrame);
+
+	/**
+	 * Play a clip randomly from a passed list of names
+	 */
+	void playRandomClip(const char **names, uint flags);
 
 	/**
 	 * Return the current view/node/room as a single string
@@ -353,6 +363,37 @@ protected:
 	 * Set's the player's passenger class
 	 */
 	void setPassengerClass(int newClass);
+
+	void setMovie14(int v);
+
+	void movie38(int v1, int v2);
+
+	void movie38(int v1);
+
+	void fn10(int v1, int v2, int v3);
+
+	/**
+	 * Gets the duration of a specified clip in milliseconds
+	 */
+	int getClipDuration(const CString &name, int frameRate = 14) const;
+
+	void petIncC0();
+	void petDecC0();
+
+	void setState1C(bool flag);
+
+	void mailFn10(int v);
+	void mailFn11(int v);
+
+	/**
+	 * Returns true if a mail with a specified Id exists
+	 */
+	bool mailExists(int id) const;
+
+	/**
+	 * Returns a specified mail, if one exists
+	 */
+	CGameObject *findMail(int id) const;
 public:
 	int _field60;
 	CursorId _cursorId;

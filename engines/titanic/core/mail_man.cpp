@@ -47,4 +47,21 @@ CGameObject *CMailMan::getNextObject(CGameObject *prior) const {
 	return static_cast<CGameObject *>(prior->getNextSibling());
 }
 
+void CMailMan::fn10(CGameObject *obj, int v) {
+	warning("TODO: CMailMan::fn10");
+}
+
+void CMailMan::fn11(CGameObject *obj, int v) {
+	warning("TODO: CMailMan::fn11");
+}
+
+CGameObject *CMailMan::findMail(int id) const {
+	for (CGameObject *obj = getFirstObject(); obj; obj = getNextObject(obj)) {
+		if (_field50 && _field54 == id)
+			return obj;
+	}
+
+	return nullptr;
+}
+
 } // End of namespace Titanic

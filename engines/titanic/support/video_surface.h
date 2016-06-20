@@ -178,6 +178,8 @@ public:
 	 */
 	virtual void setMovieFrame(uint frameNumber) = 0;
 
+	virtual void proc38(int v1, int v2) = 0;
+
 	/**
 	 * Loads the surface's resource if there's one pending
 	 */
@@ -342,6 +344,8 @@ public:
 	 * Sets the movie to the specified frame number
 	 */
 	virtual void setMovieFrame(uint frameNumber);
+
+	virtual void proc38(int v1, int v2);
 
 	/**
 	 * Loads the surface's resource if there's one pending

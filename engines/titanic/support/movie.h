@@ -46,6 +46,8 @@ protected:
 	MovieState _state;
 	int _field10;
 public:
+	int _field14;
+public:
 	CMovie();
 	virtual ~CMovie();
 

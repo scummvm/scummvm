@@ -92,8 +92,6 @@ private:
 	 */
 	bool containsPt(const Common::Point &pt) const;
 
-	bool getC0() const;
-
 	/**
 	 * Checks whether a designated NPC in present in the current view
 	 */
@@ -304,6 +302,10 @@ public:
 	 * Resets the dial display to reflect new values
 	 */
 	void resetDials(int flag = 1);
+
+	bool getC0() const { return _fieldC0 > 0; }
+	void incC0() { ++_fieldC0; }
+	void decC0() { --_fieldC0; }
 };
 
 } // End of namespace Titanic

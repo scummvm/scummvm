@@ -59,7 +59,7 @@ public:
 	GameStateMode _mode;
 	int _field14;
 	bool _petActive;
-	int _field1C;
+	bool _field1C;
 	bool _quitGame;
 	int _field24;
 	uint _nodeChangeCtr;
