@@ -280,7 +280,13 @@ void StaticTextWidget::setAlign(Graphics::TextAlign align) {
 
 
 void StaticTextWidget::drawWidget() {
-	g_gui.theme()->drawText(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state, _align, ThemeEngine::kTextInversionNone, 0, true, _font);
+	int px = _boss->getChildX();
+	int py = _boss->getChildY();
+	g_gui.theme()->drawTextClip(
+		Common::Rect(_x, _y, _x+_w, _y+_h),		
+		Common::Rect(px, py, px + _boss->getWidth(), py + _boss->getHeight()),
+		_label, _state, _align, ThemeEngine::kTextInversionNone, 0, true, _font
+	);
 }
 
 #pragma mark -

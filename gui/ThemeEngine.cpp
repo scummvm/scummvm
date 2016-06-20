@@ -881,6 +881,28 @@ void ThemeEngine::queueDDText(TextData type, TextColor color, const Common::Rect
 	}
 }
 
+void ThemeEngine::queueDDTextClip(TextData type, TextColor color, const Common::Rect &r, const Common::Rect &clippingArea, const Common::String &text, bool restoreBg,
+	bool ellipsis, Graphics::TextAlign alignH, TextAlignVertical alignV, int deltax, const Common::Rect &drawableTextArea) {
+
+	if (_texts[type] == 0)
+		return;
+
+	Common::Rect area = r;
+	area.clip(_screen.w, _screen.h);
+	Common::Rect textArea = drawableTextArea;
+	if (textArea.isEmpty()) textArea = clippingArea;
+	else textArea.clip(clippingArea);
+
+	ThemeItemTextData *q = new ThemeItemTextData(this, _texts[type], _textColors[color], area, textArea, text, alignH, alignV, ellipsis, restoreBg, deltax);
+
+	if (_buffering) {
+		_screenQueue.push_back(q);
+	} else {
+		q->drawSelf(true, false);
+		delete q;
+	}
+}
+
 void ThemeEngine::queueBitmap(const Graphics::Surface *bitmap, const Common::Rect &r, bool alpha) {
 
 	Common::Rect area = r;
@@ -1213,6 +1235,79 @@ void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, Wid
 	}
 
 	queueDDText(textId, colorId, r, str, restore, useEllipsis, align, kTextAlignVCenter, deltax, drawableTextArea);
+}
+
+void ThemeEngine::drawTextClip(const Common::Rect &r, const Common::Rect &clippingArea, const Common::String &str, WidgetStateInfo state, Graphics::TextAlign align, TextInversionState inverted, int deltax, bool useEllipsis, FontStyle font, FontColor color, bool restore, const Common::Rect &drawableTextArea) {
+	if (!ready())
+		return;
+
+	TextColor colorId = kTextColorMAX;
+
+	switch (color) {
+	case kFontColorNormal:
+		if (inverted) {
+			colorId = kTextColorNormalInverted;
+		} else {
+			switch (state) {
+			case kStateDisabled:
+				colorId = kTextColorNormalDisabled;
+				break;
+
+			case kStateHighlight:
+				colorId = kTextColorNormalHover;
+				break;
+
+			case kStateEnabled:
+			case kStatePressed:
+				colorId = kTextColorNormal;
+				break;
+			}
+		}
+		break;
+
+	case kFontColorAlternate:
+		if (inverted) {
+			colorId = kTextColorAlternativeInverted;
+		} else {
+			switch (state) {
+			case kStateDisabled:
+				colorId = kTextColorAlternativeDisabled;
+				break;
+
+			case kStateHighlight:
+				colorId = kTextColorAlternativeHover;
+				break;
+
+			case kStateEnabled:
+			case kStatePressed:
+				colorId = kTextColorAlternative;
+				break;
+			}
+		}
+		break;
+
+	default:
+		return;
+	}
+
+	TextData textId = fontStyleToData(font);
+
+	switch (inverted) {
+	case kTextInversion:
+		queueDD(kDDTextSelectionBackground, r);
+		restore = false;
+		break;
+
+	case kTextInversionFocus:
+		queueDD(kDDTextSelectionFocusBackground, r);
+		restore = false;
+		break;
+
+	default:
+		break;
+	}
+
+	queueDDTextClip(textId, colorId, r, clippingArea, str, restore, useEllipsis, align, kTextAlignVCenter, deltax, drawableTextArea);
 }
 
 void ThemeEngine::drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state, FontColor color) {
