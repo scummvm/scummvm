@@ -168,6 +168,9 @@ void DMEngine::gameloop() {
 	_dungeonMan->_currMap._partyPosY = 4;
 	_dungeonMan->_currMap._partyDir = kDirNorth;
 	
+
+	warning("DUMMY CODE: setting InventoryMan::_inventoryChampionOrdinal to zero");
+	_inventoryMan->_inventoryChampionOrdinal = 0;
 	while (true) {
 		_stopWaitingForPlayerInput = false;
 		//do {
@@ -175,8 +178,9 @@ void DMEngine::gameloop() {
 		_eventMan->processCommandQueue();
 		//} while (!_stopWaitingForPlayerInput || !_gameTimeTicking);
 
-		_displayMan->clearScreen(kColorBlack);
-		_displayMan->drawDungeon(_dungeonMan->_currMap._partyDir, _dungeonMan->_currMap._partyPosX, _dungeonMan->_currMap._partyPosY);
+		if (!_inventoryMan->_inventoryChampionOrdinal && !_championMan->_partyIsSleeping) {
+			_displayMan->drawDungeon(_dungeonMan->_currMap._partyDir, _dungeonMan->_currMap._partyPosX, _dungeonMan->_currMap._partyPosY);
+		}
 		// DUMMY CODE: next line
 		_menuMan->drawMovementArrows();
 		_displayMan->updateScreen();

@@ -9,7 +9,7 @@ namespace DM {
 
 Box gBoxFloppyZzzCross = Box(174, 218, 2, 12); // @ G0041_s_Graphic562_Box_ViewportFloppyZzzCross
 
-InventoryMan::InventoryMan(DMEngine *vm): _vm(vm) {}
+InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {}
 
 void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	ChampionMan &cm = *_vm->_championMan;
@@ -30,7 +30,7 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	if (invChampOrdinal) {
 		_inventoryChampionOrdinal = indexToOrdinal(kChampionNone);
 		warning("MISSING CODE: F0334_INVENTORY_CloseChest");
-		champion = &cm._champions[ordinalToIndex(kChampionNone)];
+		champion = &cm._champions[ordinalToIndex(_inventoryChampionOrdinal)];
 		if (champion->_currHealth && !cm._candidateChampionOrdinal) {
 			champion->setAttributeFlag(kChampionAttributeStatusBox, true);
 			warning("MISSING CODE: F0292_CHAMPION_DrawState");
@@ -60,9 +60,6 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	dm.blitToScreen(dm.getBitmap(kInventoryGraphicIndice), w, 0, 0, 0, w, 0, h, kColorNoTransparency, gDungeonViewport);
 	if (cm._candidateChampionOrdinal) {
 		dm.clearScreenBox(kColorDarkestGray, gBoxFloppyZzzCross, gDungeonViewport);
-	} else {
-		static Box gBoxFloppy = Box(174, 182, 2, 12); // @ K0300_s_Box_ViewportFloppy
-		dm.clearScreenBox(kColorDarkestGray, gBoxFloppy, gDungeonViewport);
 	}
 	warning("MISSING CODE: F0052_TEXT_PrintToViewport -> HEALTH");
 	warning("MISSING CODE: F0052_TEXT_PrintToViewport -> STAMINA");
