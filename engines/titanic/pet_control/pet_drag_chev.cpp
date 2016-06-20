@@ -56,7 +56,7 @@ bool CPetDragChev::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 		CSuccUBus *succubus = static_cast<CSuccUBus *>(msg->_dropTarget);
 
 		if (succubus) {
-			CSetChevRoomBits chevMsg(_field54);
+			CSetChevRoomBits chevMsg(_id);
 			chevMsg.execute(succubus);
 		} else {
 			CPetControl *petControl = getPetControl();

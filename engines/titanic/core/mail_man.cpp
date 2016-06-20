@@ -47,21 +47,35 @@ CGameObject *CMailMan::getNextObject(CGameObject *prior) const {
 	return static_cast<CGameObject *>(prior->getNextSibling());
 }
 
-void CMailMan::fn10(CGameObject *obj, int v) {
-	warning("TODO: CMailMan::fn10");
+void CMailMan::addMail(CGameObject *obj, int id) {
+	obj->detach();
+	obj->addUnder(this);
+	setMailId(obj, id);
 }
 
-void CMailMan::fn11(CGameObject *obj, int v) {
-	warning("TODO: CMailMan::fn11");
+void CMailMan::setMailId(CGameObject *obj, int id) {
+	obj->_id = id;
+	obj->_field58 = 0;
+	obj->_isMail = true;
 }
 
 CGameObject *CMailMan::findMail(int id) const {
 	for (CGameObject *obj = getFirstObject(); obj; obj = getNextObject(obj)) {
-		if (_field50 && _field54 == id)
+		if (obj->_isMail && obj->_id == id)
 			return obj;
 	}
 
 	return nullptr;
+}
+
+void CMailMan::removeMail(int id, int v) {
+	for (CGameObject *obj = getFirstObject(); obj; obj = getNextObject(obj)) {
+		if (obj->_isMail && obj->_id == id) {
+			obj->_isMail = false;
+			obj->_field58 = v;
+			break;
+		}
+	}
 }
 
 } // End of namespace Titanic

@@ -82,9 +82,6 @@ protected:
 	int _field44;
 	int _field48;
 	int _field4C;
-	int _field50;
-	int _field54;
-	int _field58;
 	CMovieClipList _clipList1;
 	int _initialFrame;
 	CMovieClipList _clipList2;
@@ -382,8 +379,15 @@ protected:
 
 	void setState1C(bool flag);
 
-	void mailFn10(int v);
-	void mailFn11(int v);
+	/**
+	 * Adds an object to the mail list
+	 */
+	void addMail(int mailId);
+
+	/**
+	 * Sets the mail identifier for an object
+	 */
+	void setMailId(int mailId);
 
 	/**
 	 * Returns true if a mail with a specified Id exists
@@ -394,7 +398,20 @@ protected:
 	 * Returns a specified mail, if one exists
 	 */
 	CGameObject *findMail(int id) const;
+
+	/**
+	 * Remove an object from the mail list
+	 */
+	void removeMail(int id, int v);
+
+	/**
+	 * Resets the Mail Man value
+	 */
+	void resetMail();
 public:
+	bool _isMail;
+	int _id;
+	int _field58;
 	int _field60;
 	CursorId _cursorId;
 	bool _visible;

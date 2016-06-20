@@ -61,8 +61,8 @@ CGameObject::CGameObject(): CNamedItem() {
 	_field44 = 0xF0;
 	_field48 = 0xF0;
 	_field4C = 0xFF;
-	_field50 = 0;
-	_field54 = 0;
+	_isMail = false;
+	_id = 0;
 	_field58 = 0;
 	_visible = true;
 	_field60 = 0;
@@ -124,8 +124,8 @@ void CGameObject::load(SimpleFile *file) {
 		_field4C = file->readNumber();
 		_fieldB8 = file->readNumber();
 		_visible = file->readNumber() != 0;
-		_field50 = file->readNumber();
-		_field54 = file->readNumber();
+		_isMail = file->readNumber();
+		_id = file->readNumber();
 		_field58 = file->readNumber();
 
 		resourceKey.load(file);		
@@ -1008,19 +1008,19 @@ void CGameObject::setState1C(bool flag) {
 	getGameManager()->_gameState._field1C = flag;
 }
 
-void CGameObject::mailFn10(int v) {
+void CGameObject::addMail(int mailId) {
 	CMailMan *mailMan = getMailMan();
 	if (mailMan) {
 		makeDirty();
-		mailMan->fn10(this, v);
+		mailMan->addMail(this, mailId);
 	}
 }
 
-void CGameObject::mailFn11(int v) {
+void CGameObject::setMailId(int mailId) {
 	CMailMan *mailMan = getMailMan();
 	if (mailMan) {
 		makeDirty();
-		mailMan->fn11(this, v);
+		mailMan->setMailId(this, mailId);
 	}
 }
 
@@ -1031,6 +1031,18 @@ bool CGameObject::mailExists(int id) const {
 CGameObject *CGameObject::findMail(int id) const {
 	CMailMan *mailMan = getMailMan();
 	return mailMan ? mailMan->findMail(id) : nullptr;
+}
+
+void CGameObject::removeMail(int id, int v) {
+	CMailMan *mailMan = getMailMan();
+	if (mailMan)
+		mailMan->removeMail(id, v);
+}
+
+void CGameObject::resetMail() {
+	CMailMan *mailMan = getMailMan();
+	if (mailMan)
+		mailMan->resetValue();
 }
 
 } // End of namespace Titanic

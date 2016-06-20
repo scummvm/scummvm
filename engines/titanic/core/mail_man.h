@@ -55,13 +55,27 @@ public:
 	 */
 	CGameObject *getNextObject(CGameObject *prior) const;
 
-	void fn10(CGameObject *obj, int v);
-	void fn11(CGameObject *obj, int v);
+	/**
+	 * Add an object to the mail list
+	 */
+	void addMail(CGameObject *obj, int id);
+
+	/**
+	 * Sets the mail identifier for an object
+	 */
+	static void setMailId(CGameObject *obj, int id);
 
 	/**
 	 * Scan the mail list for a specified item
 	 */
 	CGameObject *findMail(int id) const;
+
+	/**
+	 * Remove a mail item
+	 */
+	void removeMail(int id, int v);
+
+	void resetValue() { _value = 0; }
 };
 
 
