@@ -6,6 +6,8 @@
 
 namespace DM {
 
+#define kChampionStatusBoxSpacing 69 // @ C69_CHAMPION_STATUS_BOX_SPACING
+
 class InventoryMan {
 	DMEngine *_vm;
 public:

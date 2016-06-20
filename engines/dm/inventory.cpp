@@ -82,7 +82,6 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	warning("MISSING CODE: F0357_COMMAND_DiscardAllInput");
 }
 
-#define kChampionStatusBoxSpacing 69 // @ C69_CHAMPION_STATUS_BOX_SPACING
 void InventoryMan::drawStatusBoxPortrait(ChampionIndex championIndex) {
 	DisplayMan &dispMan = *_vm->_displayMan;
 	dispMan._useByteBoxCoordinates = false;

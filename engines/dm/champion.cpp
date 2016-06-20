@@ -13,8 +13,8 @@ Box gBoxChampionIcons[4] = { // @ G0054_ai_Graphic562_Box_ChampionIcons
 	Box(281, 299,  0, 13),
 	Box(301, 319,  0, 13),
 	Box(301, 319, 15, 28),
-	Box(281, 299, 15, 28) };
-byte gChampionColor[4] = {7, 11, 8, 14}; // @ G0046_auc_Graphic562_ChampionColor
+	Box(281, 299, 15, 28)};
+Color gChampionColor[4] = {(Color)7, (Color)11, (Color)8, (Color)14}; // @ G0046_auc_Graphic562_ChampionColor
 
 uint16 gSlotMasks[38] = {  // @ G0038_ai_Graphic562_SlotMasks
 	/* 30 for champion inventory, 8 for chest */
@@ -270,6 +270,70 @@ T0280048:
 
 	_vm->_inventoryMan->toggleInventory((ChampionIndex)prevChampCount);
 	_vm->_menuMan->drawDisabledMenu();
+}
+
+void ChampionMan::drawChampionBarGraphs(ChampionIndex champIndex) {
+
+	Champion *AL_6_champion = &_champions[champIndex];
+	int16 AL_2_barGraphIndex = 0;
+	int16 barGraphHeightArray[3];
+
+	if (AL_6_champion->_currHealth > 0) {
+		uint32 AL_4_barGraphHeight = (((uint32)(AL_6_champion->_currHealth) << 10) * 25) / AL_6_champion->_maxHealth;
+		if (AL_4_barGraphHeight & 0x3FF) {
+			barGraphHeightArray[AL_2_barGraphIndex++] = (AL_4_barGraphHeight >> 10) + 1;
+		} else {
+			barGraphHeightArray[AL_2_barGraphIndex++] = (AL_4_barGraphHeight >> 10);
+		}
+	} else {
+		barGraphHeightArray[AL_2_barGraphIndex++] = 0;
+	}
+
+	if (AL_6_champion->_currStamina > 0) {
+		uint32 AL_4_barGraphHeight = (((uint32)(AL_6_champion->_currStamina) << 10) * 25) / AL_6_champion->_maxStamina;
+		if (AL_4_barGraphHeight & 0x3FF) {
+			barGraphHeightArray[AL_2_barGraphIndex++] = (AL_4_barGraphHeight >> 10) + 1;
+		} else {
+			barGraphHeightArray[AL_2_barGraphIndex++] = (AL_4_barGraphHeight >> 10);
+		}
+	} else {
+		barGraphHeightArray[AL_2_barGraphIndex++] = 0;
+	}
+
+	if (AL_6_champion->_currMana > 0) {
+		uint32 AL_4_barGraphHeight = (((uint32)(AL_6_champion->_currMana) << 10) * 25) / AL_6_champion->_maxMana;
+		if (AL_4_barGraphHeight & 0x3FF) {
+			barGraphHeightArray[AL_2_barGraphIndex++] = (AL_4_barGraphHeight >> 10) + 1;
+		} else {
+			barGraphHeightArray[AL_2_barGraphIndex++] = (AL_4_barGraphHeight >> 10);
+		}
+	} else {
+		barGraphHeightArray[AL_2_barGraphIndex++] = 0;
+	}
+	warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
+
+	Box box;
+	box._x1 = champIndex * kChampionStatusBoxSpacing + 46;
+	box._x2 = box._x1 + 3;
+	box._y1 = 2;
+	box._y2 = 26;
+
+	for (int16 AL_0_barGraphIndex = 0; AL_0_barGraphIndex < 3; AL_0_barGraphIndex++) {
+		int16 AL_2_barGraphHeight = barGraphHeightArray[AL_0_barGraphIndex];
+		if (AL_2_barGraphHeight < 25) {
+			box._y1 = 2;
+			box._y1 = 27 - AL_2_barGraphHeight;
+			_vm->_displayMan->clearScreenBox(gChampionColor[champIndex], box);
+		}
+		if (AL_2_barGraphHeight) {
+			box._y1 = 27 - AL_2_barGraphHeight;
+			box._y2 = 26;
+			_vm->_displayMan->clearScreenBox(gChampionColor[champIndex], box);
+		}
+		box._x1 += 7;
+		box._x2 += 7;
+	}
+	warning("MISSING CODE: F0078_MOUSE_ShowPointer");
 }
 
 }
