@@ -48,6 +48,8 @@ whitespace [\t ]
 ^{whitespace}
 [\t]+			{ return ' '; }
 
+if				{ return tIF; }
+end				{ return tEND; }
 frame			{ return tFRAME; }
 go				{ return tGO; }
 into			{ return tINTO; }
@@ -60,6 +62,7 @@ of				{ return tOF; }
 previous		{ return tPREVIOUS; }
 put				{ return tPUT; }
 set				{ return tSET; }
+then			{ return tTHEN; }
 to				{ return tTO; }
 
 {variable}		{ yylval.s = new Common::String(yytext);  return VAR; }

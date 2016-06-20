@@ -130,9 +130,10 @@ void Lingo::executeScript(ScriptType type, uint16 id) {
 		return;
 	}
 
-	for(_pc = &_scripts[type][id]->front(); *_pc != STOP;) {
-		(*((++_pc)[-1]))();
-	}
+	_currentScript = _scripts[type][id];
+	_pc = 0;
+
+	execute(_pc);
 }
 
 void Lingo::processEvent(LEvent event, int entityId) {

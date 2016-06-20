@@ -193,6 +193,13 @@ void Lingo::exec_goto(Common::String &frame, Common::String &movie) {
 	warning("STUB: go to %s movie %s", frame.c_str(), movie.c_str());
 }
 
+void Lingo::execute(int pc) {
+	for(_pc = pc; (*_currentScript)[_pc] != STOP;) {
+		_pc++;
+		(*((*_currentScript)[_pc - 1]))();
+	}
+}
+
 void Lingo::push(Datum d) {
 	_stack.push_back(d);
 }
@@ -219,7 +226,7 @@ void Lingo::func_printtop(void) {
 
 void Lingo::func_constpush() {
 	Datum d;
-	inst i = *g_lingo->_pc++;
+	inst i = (*g_lingo->_currentScript)[g_lingo->_pc++];
 	d.val = READ_LE_UINT32(&i);
 	g_lingo->push(d);
 }
@@ -227,7 +234,7 @@ void Lingo::func_constpush() {
 void Lingo::func_varpush() {
 	Datum d;
 	Symbol *sym;
-	char *name = (char *)g_lingo->_pc;
+	char *name = (char *)(*g_lingo->_currentScript)[g_lingo->_pc];
 
 	if (!g_lingo->_vars.contains(name)) { // Create variable if it was not defined
 		sym = new Symbol;
@@ -334,8 +341,28 @@ void Lingo::func_negate() {
 	g_lingo->push(d);
 }
 
+void Lingo::func_ifcode() {
+	Datum d;
+	int savepc = g_lingo->_pc;	/* then part */
+
+	g_lingo->execute(savepc + 3);	/* condition */
+
+	d = g_lingo->pop();
+
+	if (d.val)
+		g_lingo->execute(savepc);
+	else if ((*g_lingo->_currentScript)[savepc + 1]) /* else part? */
+		g_lingo->execute(savepc + 1);
+
+	//if (!returning)
+	g_lingo->_pc = savepc + 2; /* next stmt */
+}
+
+//************************
+// Built-in functions
+//************************
 void Lingo::func_mci() {
-	Common::String s((char *)g_lingo->_pc);
+	Common::String s((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
 
 	g_lingo->exec_mci(s);
 
@@ -343,7 +370,7 @@ void Lingo::func_mci() {
 }
 
 void Lingo::func_mciwait() {
-	Common::String s((char *)g_lingo->_pc);
+	Common::String s((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
 
 	g_lingo->exec_mciwait(s);
 
@@ -351,10 +378,10 @@ void Lingo::func_mciwait() {
 }
 
 void Lingo::func_goto() {
-	Common::String frame((char *)g_lingo->_pc);
+	Common::String frame((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
 	g_lingo->_pc += g_lingo->calcStringAlignment(frame.c_str());
 
-	Common::String movie((char *)g_lingo->_pc);
+	Common::String movie((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
 	g_lingo->_pc += g_lingo->calcStringAlignment(movie.c_str());
 
 	g_lingo->exec_goto(frame, movie);

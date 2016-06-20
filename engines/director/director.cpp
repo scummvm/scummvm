@@ -81,7 +81,8 @@ go \"CARDBACK\"\n\
 go movie \"BAR 1\"\n\
 go to \"Open23\" of movie \"OpenCabin23\"\n\
 go to \"Chair\"\n\
-	", kMovieScript, 2);
+set x = 2 + 3 * (4 / 2)\n\
+x	", kMovieScript, 2);
 
 	_lingo->executeScript(kMovieScript, 2);
 

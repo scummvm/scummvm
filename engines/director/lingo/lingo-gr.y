@@ -42,7 +42,7 @@
 // IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
 // ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 // THIS SOFTWARE.
- 
+
 
 %debug
 
@@ -73,9 +73,10 @@ using namespace Director;
 %token<i> INT
 %token<f> FLOAT
 %token<s> VAR STRING
-%token tFRAME tGO tINTO tLOOP tMCI tMCIWAIT tMOVIE tNEXT tOF tPREVIOUS tPUT tSET tTO
+%token tIF tEND tFRAME tGO tINTO tLOOP tMCI tMCIWAIT tMOVIE tNEXT tOF tPREVIOUS
+%token tPUT tSET tTHEN tTO
 
-%type<code> assign expr
+%type<code> assign cond expr if end stmtlist
 %type<s> gotoframe gotomovie
 
 %right '='
@@ -92,7 +93,7 @@ program: programline '\n' program
 programline:
 	| func
 	| assign			{ g_lingo->code1(g_lingo->func_xpop); }
-	| statement
+	| stmt
 	| expr  			{ g_lingo->code1(g_lingo->func_printtop); }
 	| error				{ yyerrok; }
 	| /* empty */
@@ -103,7 +104,13 @@ assign: tPUT expr tINTO VAR		{ g_lingo->code1(g_lingo->func_varpush); g_lingo->c
 	| tSET VAR tTO expr			{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($2->c_str()); g_lingo->code1(g_lingo->func_assign); $$ = $4; delete $2; }
 	;
 
-statement: expr 				{ g_lingo->code1(g_lingo->func_xpop); }
+stmt: expr 				{ g_lingo->code1(g_lingo->func_xpop); }
+	| if cond tTHEN stmtlist end tEND tIF {
+		inst then, end;
+		WRITE_LE_UINT32(&then, $4);
+		WRITE_LE_UINT32(&end, $5);
+		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
+		(*g_lingo->_currentScript)[$1 + 3] = end; }	/* end, if cond fails */
 	;
 
 expr: INT						{ g_lingo->code1(g_lingo->func_constpush); inst i; WRITE_LE_UINT32(&i, $1); $$ = g_lingo->code1(i); };
@@ -115,6 +122,17 @@ expr: INT						{ g_lingo->code1(g_lingo->func_constpush); inst i; WRITE_LE_UINT3
 	| '+' expr  %prec UNARY		{ $$ = $2; }
 	| '-' expr  %prec UNARY		{ $$ = $2; g_lingo->code1(g_lingo->func_negate); }
 	| '(' expr ')'				{ $$ = $2; }
+	;
+
+cond:	   expr 	{ g_lingo->code1(STOP); }
+	;
+if:	  tIF	{ $$ = g_lingo->code1(g_lingo->func_ifcode); g_lingo->code3(STOP,STOP,STOP); }
+	;
+end:	  /* nothing */		{ g_lingo->code1(STOP); $$ = g_lingo->_currentScript->size(); }
+	;
+stmtlist: /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
+	| stmtlist '\n'
+	| stmtlist stmt
 	;
 
 func: tMCI STRING			{ g_lingo->code1(g_lingo->func_mci); g_lingo->codeString($2->c_str()); delete $2; }

@@ -107,7 +107,7 @@ public:
 
 	void processEvent(LEvent event, int entityId);
 
-	int code1(inst code) { _currentScript->push_back(code); return _currentScript->size(); }
+	int code1(inst code) { _currentScript->push_back(code); return _currentScript->size() - 1; }
 	int code2(inst code_1, inst code_2) { code1(code_1); return code1(code_2); }
 	int code3(inst code_1, inst code_2, inst code_3) { code1(code_1); code1(code_2); return code1(code_3); }
 	int codeString(const char *s);
@@ -118,6 +118,8 @@ public:
 	}
 
 public:
+	void execute(int pc);
+
 	static void func_xpop();
 	static void func_printtop();
 	static void func_add();
@@ -130,6 +132,8 @@ public:
 	static void func_assign();
 	bool verify(Symbol *s);
 	static void func_eval();
+	static void func_ifcode();
+
 	static void func_mci();
 	static void func_mciwait();
 	static void func_goto();
@@ -141,6 +145,9 @@ public:
 	void exec_mciwait(Common::String &s);
 	void exec_goto(Common::String &frame, Common::String &movie);
 
+public:
+	ScriptData *_currentScript;
+
 private:
 	int parse(const char *code);
 	void push(Datum d);
@@ -150,11 +157,10 @@ private:
 	Common::HashMap<Common::String, Audio::AudioStream *> _audioAliases;
 
 	ScriptHash _scripts[kMaxScriptType + 1];
-	ScriptData *_currentScript;
 
 	Common::HashMap<Common::String, Symbol *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _vars;
 
-	inst *_pc;
+	int _pc;
 
 	StackData _stack;
 
