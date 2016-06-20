@@ -107,4 +107,20 @@ void InventoryMan::drawPanelHorizontalBar(int16 x, int16 y, int16 pixelWidth, Co
 	_vm->_displayMan->clearScreenBox(color, box);
 }
 
+void InventoryMan::drawPanelFoodOrWaterBar(int16 amount, int16 y, Color color) {
+	if (amount < -512) {
+		color = kColorRed;
+	} else if(amount < 0) {
+		color = kColorYellow;
+	}
+
+	int16 pixelWidth = amount + 1024;
+	if (pixelWidth == 3072) {
+		pixelWidth = 3071;
+	}
+	pixelWidth /= 32;
+	drawPanelHorizontalBar(115, y + 2, pixelWidth, kColorBlack);
+	drawPanelHorizontalBar(113, y, pixelWidth, color);
+}
+
 }
