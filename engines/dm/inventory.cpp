@@ -2,6 +2,7 @@
 #include "dungeonman.h"
 #include "eventman.h"
 #include "menus.h"
+#include "gfx.h"
 
 
 
@@ -81,5 +82,16 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	warning("MISSING CODE: F0357_COMMAND_DiscardAllInput");
 }
 
+#define kChampionStatusBoxSpacing 69 // @ C69_CHAMPION_STATUS_BOX_SPACING
+void InventoryMan::drawStatusBoxPortrait(ChampionIndex championIndex) {
+	DisplayMan &dispMan = *_vm->_displayMan;
+	dispMan._useByteBoxCoordinates = false;
+	Box box;
+	box._y1 = 0;
+	box._y2 = 28 + 1;
+	box._x1 = championIndex * kChampionStatusBoxSpacing + 7;
+	box._x2 = box._x1 + 31 + 1;
+	dispMan.blitToScreen(_vm->_championMan->_champions[championIndex]._portrait, 32, 0, 0, box, kColorNoTransparency);
+}
 
 }
