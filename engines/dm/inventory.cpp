@@ -97,4 +97,14 @@ void InventoryMan::drawStatusBoxPortrait(ChampionIndex championIndex) {
 	dispMan.blitToScreen(_vm->_championMan->_champions[championIndex]._portrait, 32, 0, 0, box, kColorNoTransparency);
 }
 
+void InventoryMan::drawPanelHorizontalBar(int16 x, int16 y, int16 pixelWidth, Color color) {
+	Box box;
+	box._x1 = x;
+	box._x2 = box._x1 + pixelWidth;
+	box._y1 = y;
+	box._y2 = box._y1 + 6;
+	_vm->_displayMan->_useByteBoxCoordinates = false;
+	_vm->_displayMan->clearScreenBox(color, box);
+}
+
 }
