@@ -13,7 +13,7 @@ enum ViewCell {
 	kViewCellBackRight = 2, // @ C02_VIEW_CELL_BACK_RIGHT
 	kViewCellBackLeft = 3, // @ C03_VIEW_CELL_BACK_LEFT
 	kViewCellAlcove = 4, // @ C04_VIEW_CELL_ALCOVE
-	kViewCellDoorButtonOrWallOrn = 5 // @ C05_VIEW_CELL_DOOR_BUTTON_OR_WALL_ORNAMENT
+	kViewCellDoorButtonOrWallOrn = 5, // @ C05_VIEW_CELL_DOOR_BUTTON_OR_WALL_ORNAMENT
 };
 
 enum GraphicIndice {
@@ -28,7 +28,11 @@ enum GraphicIndice {
 	kObjectIcons_128_TO_159 = 46, // @ C046_GRAPHIC_OBJECT_ICONS_128_TO_159
 	kObjectIcons_160_TO_191 = 47, // @ C047_GRAPHIC_OBJECT_ICONS_160_TO_191
 	kObjectIcons_192_TO_223 = 48, // @ C048_GRAPHIC_OBJECT_ICONS_192_TO_223
-	kInventoryGraphicIndice = 17 // @ C017_GRAPHIC_INVENTORY
+	kInventoryGraphicIndice = 17, // @ C017_GRAPHIC_INVENTORY
+	kPanelEmptyIndice = 20, // @ C020_GRAPHIC_PANEL_EMPTY
+	kFoodLabelIndice = 30, // @ C030_GRAPHIC_FOOD_LABEL
+	kWaterLabelIndice = 31, // @ C031_GRAPHIC_WATER_LABEL
+	kPoisionedLabelIndice = 32 // @ C032_GRAPHIC_POISONED_LABEL
 };
 
 extern uint16 gPalSwoosh[16];

@@ -110,7 +110,7 @@ void InventoryMan::drawPanelHorizontalBar(int16 x, int16 y, int16 pixelWidth, Co
 void InventoryMan::drawPanelFoodOrWaterBar(int16 amount, int16 y, Color color) {
 	if (amount < -512) {
 		color = kColorRed;
-	} else if(amount < 0) {
+	} else if (amount < 0) {
 		color = kColorYellow;
 	}
 
@@ -121,6 +121,20 @@ void InventoryMan::drawPanelFoodOrWaterBar(int16 amount, int16 y, Color color) {
 	pixelWidth /= 32;
 	drawPanelHorizontalBar(115, y + 2, pixelWidth, kColorBlack);
 	drawPanelHorizontalBar(113, y, pixelWidth, color);
+}
+
+void InventoryMan::drawPanelFoodWaterPoisoned() {
+	Champion &champ = _vm->_championMan->_champions[_inventoryChampionOrdinal];
+	warning("MISSING CODE: F0334_INVENTORY_CloseChest");
+	DisplayMan &dispMan = *_vm->_displayMan;
+	dispMan.blitToScreen(dispMan.getBitmap(kPanelEmptyIndice), 144, 0, 0, gBoxPanel, kColorRed);
+	dispMan.blitToScreen(dispMan.getBitmap(kFoodLabelIndice), 48, 0, 0, gBoxFood, kColorDarkestGray);
+	dispMan.blitToScreen(dispMan.getBitmap(kWaterLabelIndice), 48, 0, 0, gBoxWater, kColorDarkestGray);
+	if (champ._poisonEventCount) {
+		dispMan.blitToScreen(dispMan.getBitmap(kPoisionedLabelIndice), 96, 0, 0, gBoxPoisoned, kColorDarkestGray);
+	}
+	drawPanelFoodOrWaterBar(champ._food, 69, kColorLightBrown);
+	drawPanelFoodOrWaterBar(champ._water, 92, kColorBlue);
 }
 
 }
