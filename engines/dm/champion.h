@@ -359,6 +359,7 @@ public:
 			_wounds &= ~flag;
 		}
 	}
+	uint16 getWoundsFlag(ChampionWound wound) { return _wounds & wound; }
 	void clearWounds() { _wounds = kChampionWoundNone; }
 	void resetToZero() { // oh boy > . <
 		for (int16 i = 0; i < 30; ++i)
@@ -405,7 +406,8 @@ public:
 	void resetDataToStartGame(); // @ F0278_CHAMPION_ResetDataToStartGame
 	void addCandidateChampionToParty(uint16 championPortraitIndex); // @ F0280_CHAMPION_AddCandidateChampionToParty
 	void drawChampionBarGraphs(ChampionIndex champIndex); // @ F0287_CHAMPION_DrawBarGraphs
-	int16 getStaminaAdjustedValue(Champion *champ, int16 val); // @ F0306_CHAMPION_GetStaminaAdjustedValue
+	uint16 getStaminaAdjustedValue(Champion *champ, int16 val); // @ F0306_CHAMPION_GetStaminaAdjustedValue
+	uint16 getMaximumLoad(Champion *champ); // @ F0309_CHAMPION_GetMaximumLoad
 };
 
 

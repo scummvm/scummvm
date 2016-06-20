@@ -3,6 +3,7 @@
 #include "eventman.h"
 #include "menus.h"
 #include "inventory.h"
+#include "objectman.h"
 
 
 namespace DM {
@@ -337,14 +338,30 @@ void ChampionMan::drawChampionBarGraphs(ChampionIndex champIndex) {
 }
 
 
-int16 ChampionMan::getStaminaAdjustedValue(Champion *champ, int16 val) {
+uint16 ChampionMan::getStaminaAdjustedValue(Champion *champ, int16 val) {
 	int16 currStamina = champ->_currStamina;
 	int16 halfMaxStamina = champ->_maxStamina / 2;
 	if (currStamina < halfMaxStamina) {
+		warning("Possible undefined behaviour in the original code");
 		val /= 2;
 		return val + ((uint32)val * (uint32)currStamina) / halfMaxStamina;
 	}
 	return val;
+}
+
+uint16 ChampionMan::getMaximumLoad(Champion *champ) {
+	uint16 maximumLoad = champ->getStatistic(kChampionStatStrength, kChampionStatCurrent) * 8 + 100;
+	maximumLoad = getStaminaAdjustedValue(champ, maximumLoad);
+	int16 wounds = champ->getWounds();
+	if (wounds) {
+		maximumLoad -= maximumLoad >> (champ->getWoundsFlag(kChampionWoundLegs) ? 2 : 3);
+	}
+	if (_vm->_objectMan->getIconIndex(champ->getSlot(kChampionSlotFeet)) == kIconIndiceArmourElvenBoots) {
+		maximumLoad += maximumLoad * 16;
+	}
+	maximumLoad += 9;
+	maximumLoad -= maximumLoad % 10;
+	return maximumLoad;
 }
 
 }
