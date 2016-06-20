@@ -124,12 +124,6 @@ enum ObjectQueueID {
 	kAnimateBack = 14
 };
 
-enum TextQueueID {
-	kTextNumber = 1,
-	kTextNewLine = 2,
-	kTextPlain = 3
-};
-
 struct QueuedObject {
 	ObjectQueueID id;
 	ObjID object;
@@ -141,6 +135,19 @@ struct QueuedObject {
 	bool hidden;
 	bool offsecreen;
 	bool invisible;
+};
+
+enum TextQueueID {
+	kTextNumber = 1,
+	kTextNewLine = 2,
+	kTextPlain = 3
+};
+
+struct QueuedText {
+	TextQueueID id;
+	ObjID source;
+	ObjID destination;
+	ObjID asset;
 };
 
 class MacVentureEngine : public Engine {
@@ -239,7 +246,7 @@ private: // Attributes
 
 	Common::Array<QueuedObject> _objQueue;
 	Common::Array<QueuedObject> _soundQueue;
-	Common::Array<QueuedObject> _textQueue;
+	Common::Array<QueuedText> _textQueue;
 
 	// Selections
 	ObjID _destObject;

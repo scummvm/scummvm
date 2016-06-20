@@ -112,11 +112,7 @@ Common::Error MacVentureEngine::run() {
 		processEvents();
 
 		if (_prepared) {
-			_prepared = false;
-
-			if (!_halted) {
-				_gui->draw();
-			}
+			_prepared = false;	
 
 			if (_cmdReady || _halted) {
 				_halted = false;
@@ -137,7 +133,7 @@ Common::Error MacVentureEngine::run() {
 			}
 		}
 
-		_gui->drawMenu();
+		_gui->draw();
 		g_system->updateScreen();
 		g_system->delayMillis(50);
 	}
@@ -218,10 +214,16 @@ void MacVentureEngine::enqueueObject(ObjectQueueID type, ObjID objID) {
 }
 
 void MacVentureEngine::enqueueText(TextQueueID type, ObjID target, ObjID source, ObjID text) {
+	QueuedText newText;
+	newText.id = type;
+	newText.destination = target;
+	newText.source = source;
+	newText.asset = text;
+	_textQueue.push_back(newText);
 }
 
 void MacVentureEngine::printTexts() {
-	debug("Printing texts..");
+	warning("printTexts: unimplemented");
 }
 
 const GlobalSettings& MacVentureEngine::getGlobalSettings() const {
