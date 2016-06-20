@@ -46,27 +46,28 @@
      VAR = 262,
      STRING = 263,
      tIF = 264,
-     tEND = 265,
-     tFRAME = 266,
-     tGO = 267,
-     tINTO = 268,
-     tLOOP = 269,
-     tMCI = 270,
-     tMCIWAIT = 271,
-     tMOVIE = 272,
-     tNEXT = 273,
-     tOF = 274,
-     tPREVIOUS = 275,
-     tPUT = 276,
-     tSET = 277,
-     tTHEN = 278,
-     tTO = 279,
-     tGE = 280,
-     tLE = 281,
-     tGT = 282,
-     tLT = 283,
-     tEQ = 284,
-     tNEQ = 285
+     tELSE = 265,
+     tEND = 266,
+     tFRAME = 267,
+     tGO = 268,
+     tINTO = 269,
+     tLOOP = 270,
+     tMCI = 271,
+     tMCIWAIT = 272,
+     tMOVIE = 273,
+     tNEXT = 274,
+     tOF = 275,
+     tPREVIOUS = 276,
+     tPUT = 277,
+     tSET = 278,
+     tTHEN = 279,
+     tTO = 280,
+     tGE = 281,
+     tLE = 282,
+     tGT = 283,
+     tLT = 284,
+     tEQ = 285,
+     tNEQ = 286
    };
 #endif
 /* Tokens.  */
@@ -77,27 +78,28 @@
 #define VAR 262
 #define STRING 263
 #define tIF 264
-#define tEND 265
-#define tFRAME 266
-#define tGO 267
-#define tINTO 268
-#define tLOOP 269
-#define tMCI 270
-#define tMCIWAIT 271
-#define tMOVIE 272
-#define tNEXT 273
-#define tOF 274
-#define tPREVIOUS 275
-#define tPUT 276
-#define tSET 277
-#define tTHEN 278
-#define tTO 279
-#define tGE 280
-#define tLE 281
-#define tGT 282
-#define tLT 283
-#define tEQ 284
-#define tNEQ 285
+#define tELSE 265
+#define tEND 266
+#define tFRAME 267
+#define tGO 268
+#define tINTO 269
+#define tLOOP 270
+#define tMCI 271
+#define tMCIWAIT 272
+#define tMOVIE 273
+#define tNEXT 274
+#define tOF 275
+#define tPREVIOUS 276
+#define tPUT 277
+#define tSET 278
+#define tTHEN 279
+#define tTO 280
+#define tGE 281
+#define tLE 282
+#define tGT 283
+#define tLT 284
+#define tEQ 285
+#define tNEQ 286
 
 
 
@@ -112,7 +114,7 @@ typedef union YYSTYPE
 	int code;
 }
 /* Line 1529 of yacc.c.  */
-#line 116 "engines/director/lingo/lingo-gr.hpp"
+#line 118 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

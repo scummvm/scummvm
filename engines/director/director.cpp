@@ -85,7 +85,13 @@ set x = 2 + 3 * (4 / 2)\n\
 put x\n", kMovieScript, 2);
 
 _lingo->addCode("set x = 5\n\
-if 4 > 3 then x end if\n", kMovieScript, 3);
+if x <= 5 then set x = 6 end if\n\
+if (x = 5) then\n\
+   set x = 7\n\
+else\n\
+	set x = 8\n\
+end if\n\
+put x", kMovieScript, 3);
 
 	_lingo->executeScript(kMovieScript, 3);
 

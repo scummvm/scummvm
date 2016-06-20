@@ -73,11 +73,11 @@ using namespace Director;
 %token<i> INT
 %token<f> FLOAT
 %token<s> VAR STRING
-%token tIF tEND tFRAME tGO tINTO tLOOP tMCI tMCIWAIT tMOVIE tNEXT tOF tPREVIOUS
+%token tIF tELSE tEND tFRAME tGO tINTO tLOOP tMCI tMCIWAIT tMOVIE tNEXT tOF tPREVIOUS
 %token tPUT tSET tTHEN tTO
 %token tGE tLE tGT tLT tEQ tNEQ
 
-%type<code> assign cond expr if end stmtlist
+%type<code> asgn cond expr if end stmtlist
 %type<s> gotoframe gotomovie
 
 %right '='
@@ -93,14 +93,14 @@ program: programline '\n' program
 
 programline:
 	| func
-	| assign			{ g_lingo->code1(g_lingo->func_xpop); }
+	| asgn				{ g_lingo->code1(g_lingo->func_xpop); }
 	| stmt
 	| expr  			{ g_lingo->code1(g_lingo->func_printtop); }
 	| error				{ yyerrok; }
 	| /* empty */
 	;
 
-assign: tPUT expr tINTO VAR		{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($4->c_str()); g_lingo->code1(g_lingo->func_assign); $$ = $2; delete $4; }
+asgn: tPUT expr tINTO VAR		{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($4->c_str()); g_lingo->code1(g_lingo->func_assign); $$ = $2; delete $4; }
 	| tSET VAR '=' expr			{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($2->c_str()); g_lingo->code1(g_lingo->func_assign); $$ = $4; delete $2; }
 	| tSET VAR tTO expr			{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($2->c_str()); g_lingo->code1(g_lingo->func_assign); $$ = $4; delete $2; }
 	;
@@ -112,10 +112,19 @@ stmt: expr 				{ g_lingo->code1(g_lingo->func_xpop); }
 		WRITE_LE_UINT32(&end, $5);
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
 		(*g_lingo->_currentScript)[$1 + 3] = end; }	/* end, if cond fails */
+	| if cond tTHEN stmtlist end tELSE stmtlist end tEND tIF {
+		inst then, else1, end;
+		WRITE_LE_UINT32(&then, $4);
+		WRITE_LE_UINT32(&else1, $7);
+		WRITE_LE_UINT32(&end, $8);
+		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
+		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
+		(*g_lingo->_currentScript)[$1 + 3] = end; }	/* end, if cond fails */
 	;
 
 expr: INT						{ g_lingo->code1(g_lingo->func_constpush); inst i; WRITE_LE_UINT32(&i, $1); $$ = g_lingo->code1(i); };
 	| VAR						{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($1->c_str()); $$ = g_lingo->code1(g_lingo->func_eval); delete $1; }
+	| asgn
 	| expr '+' expr				{ g_lingo->code1(g_lingo->func_add); }
 	| expr '-' expr				{ g_lingo->code1(g_lingo->func_sub); }
 	| expr '*' expr				{ g_lingo->code1(g_lingo->func_mul); }
@@ -132,6 +141,7 @@ expr: INT						{ g_lingo->code1(g_lingo->func_constpush); inst i; WRITE_LE_UINT3
 
 cond:	   expr 				{ g_lingo->code1(STOP); }
 	| expr '=' expr				{ g_lingo->code2(g_lingo->func_eq, STOP); }
+	| '(' cond ')'
 	;
 if:	  tIF	{ $$ = g_lingo->code1(g_lingo->func_ifcode); g_lingo->code3(STOP,STOP,STOP); }
 	;

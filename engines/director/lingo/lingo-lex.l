@@ -49,6 +49,7 @@ whitespace [\t ]
 [\t]+			{ return ' '; }
 
 if				{ return tIF; }
+else			{ return tELSE; }
 end				{ return tEND; }
 frame			{ return tFRAME; }
 go				{ return tGO; }
