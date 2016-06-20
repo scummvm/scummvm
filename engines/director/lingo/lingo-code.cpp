@@ -72,24 +72,24 @@ Datum Lingo::pop(void) {
 	return ret;
 }
 
-void Lingo::func_xpop() {
+void Lingo::c_xpop() {
 	g_lingo->pop();
 }
 
-void Lingo::func_printtop(void) {
+void Lingo::c_printtop(void) {
 	Datum d = g_lingo->pop();
 
 	warning("%d", d.val);
 }
 
-void Lingo::func_constpush() {
+void Lingo::c_constpush() {
 	Datum d;
 	inst i = (*g_lingo->_currentScript)[g_lingo->_pc++];
 	d.val = READ_LE_UINT32(&i);
 	g_lingo->push(d);
 }
 
-void Lingo::func_varpush() {
+void Lingo::c_varpush() {
 	Datum d;
 	Symbol *sym;
 	char *name = (char *)&(*g_lingo->_currentScript)[g_lingo->_pc];
@@ -113,7 +113,7 @@ void Lingo::func_varpush() {
 	g_lingo->push(d);
 }
 
-void Lingo::func_assign() {
+void Lingo::c_assign() {
 	Datum d1, d2;
 	d1 = g_lingo->pop();
 	d2 = g_lingo->pop();
@@ -144,7 +144,7 @@ bool Lingo::verify(Symbol *s) {
 	return true;
 }
 
-void Lingo::func_eval() {
+void Lingo::c_eval() {
 	Datum d;
 	d = g_lingo->pop();
 
@@ -156,7 +156,7 @@ void Lingo::func_eval() {
 	g_lingo->push(d);
 }
 
-void Lingo::func_add() {
+void Lingo::c_add() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
@@ -164,7 +164,7 @@ void Lingo::func_add() {
 	g_lingo->push(d1);
 }
 
-void Lingo::func_sub() {
+void Lingo::c_sub() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
@@ -172,7 +172,7 @@ void Lingo::func_sub() {
 	g_lingo->push(d1);
 }
 
-void Lingo::func_mul() {
+void Lingo::c_mul() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
@@ -180,7 +180,7 @@ void Lingo::func_mul() {
 	g_lingo->push(d1);
 }
 
-void Lingo::func_div() {
+void Lingo::c_div() {
 	Datum d2 = g_lingo->pop();
 
 	if (d2.val == 0)
@@ -192,14 +192,14 @@ void Lingo::func_div() {
 	g_lingo->push(d1);
 }
 
-void Lingo::func_negate() {
+void Lingo::c_negate() {
 	Datum d = g_lingo->pop();
 
 	d.val -= d.val;
 	g_lingo->push(d);
 }
 
-void Lingo::func_eq() {
+void Lingo::c_eq() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
@@ -207,7 +207,7 @@ void Lingo::func_eq() {
 	g_lingo->push(d1);
 }
 
-void Lingo::func_neq() {
+void Lingo::c_neq() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
@@ -215,7 +215,7 @@ void Lingo::func_neq() {
 	g_lingo->push(d1);
 }
 
-void Lingo::func_gt() {
+void Lingo::c_gt() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
@@ -223,7 +223,7 @@ void Lingo::func_gt() {
 	g_lingo->push(d1);
 }
 
-void Lingo::func_lt() {
+void Lingo::c_lt() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
@@ -231,7 +231,7 @@ void Lingo::func_lt() {
 	g_lingo->push(d1);
 }
 
-void Lingo::func_ge() {
+void Lingo::c_ge() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
@@ -239,7 +239,7 @@ void Lingo::func_ge() {
 	g_lingo->push(d1);
 }
 
-void Lingo::func_le() {
+void Lingo::c_le() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
@@ -248,7 +248,7 @@ void Lingo::func_le() {
 }
 
 
-void Lingo::func_ifcode() {
+void Lingo::c_ifcode() {
 	Datum d;
 	int savepc = g_lingo->_pc;	/* then part */
 
@@ -276,42 +276,42 @@ void Lingo::func_ifcode() {
 //************************
 // Built-in functions
 //************************
-void Lingo::func_mci() {
+void Lingo::c_mci() {
 	Common::String s((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
 
-	g_lingo->exec_mci(s);
+	g_lingo->func_mci(s);
 
 	g_lingo->_pc += g_lingo->calcStringAlignment(s.c_str());
 }
 
-void Lingo::func_mciwait() {
+void Lingo::c_mciwait() {
 	Common::String s((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
 
-	g_lingo->exec_mciwait(s);
+	g_lingo->func_mciwait(s);
 
 	g_lingo->_pc += g_lingo->calcStringAlignment(s.c_str());
 }
 
-void Lingo::func_goto() {
+void Lingo::c_goto() {
 	Common::String frame((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
 	g_lingo->_pc += g_lingo->calcStringAlignment(frame.c_str());
 
 	Common::String movie((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
 	g_lingo->_pc += g_lingo->calcStringAlignment(movie.c_str());
 
-	g_lingo->exec_goto(frame, movie);
+	g_lingo->func_goto(frame, movie);
 }
 
-void Lingo::func_gotoloop() {
-	warning("STUB: func_gotoloop()");
+void Lingo::c_gotoloop() {
+	warning("STUB: c_gotoloop()");
 }
 
-void Lingo::func_gotonext() {
-	warning("STUB: func_gotonext()");
+void Lingo::c_gotonext() {
+	warning("STUB: c_gotonext()");
 }
 
-void Lingo::func_gotoprevious() {
-	warning("STUB: func_gotoprevious()");
+void Lingo::c_gotoprevious() {
+	warning("STUB: c_gotoprevious()");
 }
 
 }

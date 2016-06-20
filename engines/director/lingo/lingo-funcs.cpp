@@ -87,7 +87,7 @@ struct MCIToken {
 	{ kMCITokenNone, kMCITokenNone,   0, 0 }
 };
 
-void Lingo::exec_mci(Common::String &s) {
+void Lingo::func_mci(Common::String &s) {
 	Common::String params[5];
 	MCITokenType command = kMCITokenNone;
 
@@ -185,11 +185,11 @@ void Lingo::exec_mci(Common::String &s) {
 	}
 }
 
-void Lingo::exec_mciwait(Common::String &s) {
+void Lingo::func_mciwait(Common::String &s) {
 	warning("STUB: MCI wait file: %s", s.c_str());
 }
 
-void Lingo::exec_goto(Common::String &frame, Common::String &movie) {
+void Lingo::func_goto(Common::String &frame, Common::String &movie) {
 	warning("STUB: go to %s movie %s", frame.c_str(), movie.c_str());
 }
 

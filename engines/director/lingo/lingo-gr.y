@@ -93,19 +93,19 @@ program: programline '\n' program
 
 programline:
 	| func
-	| asgn				{ g_lingo->code1(g_lingo->func_xpop); }
+	| asgn				{ g_lingo->code1(g_lingo->c_xpop); }
 	| stmt
-	| expr  			{ g_lingo->code1(g_lingo->func_printtop); }
+	| expr  			{ g_lingo->code1(g_lingo->c_printtop); }
 	| error				{ yyerrok; }
 	| /* empty */
 	;
 
-asgn: tPUT expr tINTO VAR		{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($4->c_str()); g_lingo->code1(g_lingo->func_assign); $$ = $2; delete $4; }
-	| tSET VAR '=' expr			{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($2->c_str()); g_lingo->code1(g_lingo->func_assign); $$ = $4; delete $2; }
-	| tSET VAR tTO expr			{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($2->c_str()); g_lingo->code1(g_lingo->func_assign); $$ = $4; delete $2; }
+asgn: tPUT expr tINTO VAR		{ g_lingo->code1(g_lingo->c_varpush); g_lingo->codeString($4->c_str()); g_lingo->code1(g_lingo->c_assign); $$ = $2; delete $4; }
+	| tSET VAR '=' expr			{ g_lingo->code1(g_lingo->c_varpush); g_lingo->codeString($2->c_str()); g_lingo->code1(g_lingo->c_assign); $$ = $4; delete $2; }
+	| tSET VAR tTO expr			{ g_lingo->code1(g_lingo->c_varpush); g_lingo->codeString($2->c_str()); g_lingo->code1(g_lingo->c_assign); $$ = $4; delete $2; }
 	;
 
-stmt: expr 				{ g_lingo->code1(g_lingo->func_xpop); }
+stmt: expr 				{ g_lingo->code1(g_lingo->c_xpop); }
 	| if cond tTHEN stmtlist end tEND tIF {
 		inst then, end;
 		WRITE_LE_UINT32(&then, $4);
@@ -122,28 +122,28 @@ stmt: expr 				{ g_lingo->code1(g_lingo->func_xpop); }
 		(*g_lingo->_currentScript)[$1 + 3] = end; }	/* end, if cond fails */
 	;
 
-expr: INT						{ g_lingo->code1(g_lingo->func_constpush); inst i; WRITE_LE_UINT32(&i, $1); $$ = g_lingo->code1(i); };
-	| VAR						{ g_lingo->code1(g_lingo->func_varpush); g_lingo->codeString($1->c_str()); $$ = g_lingo->code1(g_lingo->func_eval); delete $1; }
+expr: INT						{ g_lingo->code1(g_lingo->c_constpush); inst i; WRITE_LE_UINT32(&i, $1); $$ = g_lingo->code1(i); };
+	| VAR						{ g_lingo->code1(g_lingo->c_varpush); g_lingo->codeString($1->c_str()); $$ = g_lingo->code1(g_lingo->c_eval); delete $1; }
 	| asgn
-	| expr '+' expr				{ g_lingo->code1(g_lingo->func_add); }
-	| expr '-' expr				{ g_lingo->code1(g_lingo->func_sub); }
-	| expr '*' expr				{ g_lingo->code1(g_lingo->func_mul); }
-	| expr '/' expr				{ g_lingo->code1(g_lingo->func_div); }
-	| expr '>' expr				{ g_lingo->code1(g_lingo->func_gt); }
-	| expr '<' expr				{ g_lingo->code1(g_lingo->func_lt); }
-	| expr tNEQ expr			{ g_lingo->code1(g_lingo->func_neq); }
-	| expr tGE expr				{ g_lingo->code1(g_lingo->func_ge); }
-	| expr tLE expr				{ g_lingo->code1(g_lingo->func_le); }
+	| expr '+' expr				{ g_lingo->code1(g_lingo->c_add); }
+	| expr '-' expr				{ g_lingo->code1(g_lingo->c_sub); }
+	| expr '*' expr				{ g_lingo->code1(g_lingo->c_mul); }
+	| expr '/' expr				{ g_lingo->code1(g_lingo->c_div); }
+	| expr '>' expr				{ g_lingo->code1(g_lingo->c_gt); }
+	| expr '<' expr				{ g_lingo->code1(g_lingo->c_lt); }
+	| expr tNEQ expr			{ g_lingo->code1(g_lingo->c_neq); }
+	| expr tGE expr				{ g_lingo->code1(g_lingo->c_ge); }
+	| expr tLE expr				{ g_lingo->code1(g_lingo->c_le); }
 	| '+' expr  %prec UNARY		{ $$ = $2; }
-	| '-' expr  %prec UNARY		{ $$ = $2; g_lingo->code1(g_lingo->func_negate); }
+	| '-' expr  %prec UNARY		{ $$ = $2; g_lingo->code1(g_lingo->c_negate); }
 	| '(' expr ')'				{ $$ = $2; }
 	;
 
 cond:	   expr 				{ g_lingo->code1(STOP); }
-	| expr '=' expr				{ g_lingo->code2(g_lingo->func_eq, STOP); }
+	| expr '=' expr				{ g_lingo->code2(g_lingo->c_eq, STOP); }
 	| '(' cond ')'
 	;
-if:	  tIF	{ $$ = g_lingo->code1(g_lingo->func_ifcode); g_lingo->code3(STOP,STOP,STOP); }
+if:	  tIF	{ $$ = g_lingo->code1(g_lingo->c_ifcode); g_lingo->code3(STOP,STOP,STOP); }
 	;
 end:	  /* nothing */		{ g_lingo->code1(STOP); $$ = g_lingo->_currentScript->size(); }
 	;
@@ -152,9 +152,9 @@ stmtlist: /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
 	| stmtlist stmt
 	;
 
-func: tMCI STRING			{ g_lingo->code1(g_lingo->func_mci); g_lingo->codeString($2->c_str()); delete $2; }
-	| tMCIWAIT VAR			{ g_lingo->code1(g_lingo->func_mciwait); g_lingo->codeString($2->c_str()); delete $2; }
-	| tPUT expr				{ g_lingo->code1(g_lingo->func_printtop); }
+func: tMCI STRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c_str()); delete $2; }
+	| tMCIWAIT VAR			{ g_lingo->code1(g_lingo->c_mciwait); g_lingo->codeString($2->c_str()); delete $2; }
+	| tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| gotofunc
 	;
 
@@ -166,12 +166,12 @@ func: tMCI STRING			{ g_lingo->code1(g_lingo->func_mci); g_lingo->codeString($2-
 // go to {frame} whichFrame {of movie whichMovie}
 // go to {frame whichFrame of} movie whichMovie
 
-gotofunc: tGO tLOOP				{ g_lingo->code1(g_lingo->func_gotoloop); }
-	| tGO tNEXT					{ g_lingo->code1(g_lingo->func_gotonext); }
-	| tGO tPREVIOUS				{ g_lingo->code1(g_lingo->func_gotoprevious); }
-	| tGO gotoframe 			{ g_lingo->code1(g_lingo->func_goto); g_lingo->codeString($2->c_str()); g_lingo->codeString(""); delete $2; }
-	| tGO gotoframe gotomovie	{ g_lingo->code1(g_lingo->func_goto); g_lingo->codeString($2->c_str()); g_lingo->codeString($3->c_str()); delete $2; delete $3; }
-	| tGO gotomovie				{ g_lingo->code1(g_lingo->func_goto); g_lingo->codeString(""); g_lingo->codeString($2->c_str()); delete $2; }
+gotofunc: tGO tLOOP				{ g_lingo->code1(g_lingo->c_gotoloop); }
+	| tGO tNEXT					{ g_lingo->code1(g_lingo->c_gotonext); }
+	| tGO tPREVIOUS				{ g_lingo->code1(g_lingo->c_gotoprevious); }
+	| tGO gotoframe 			{ g_lingo->code1(g_lingo->c_goto); g_lingo->codeString($2->c_str()); g_lingo->codeString(""); delete $2; }
+	| tGO gotoframe gotomovie	{ g_lingo->code1(g_lingo->c_goto); g_lingo->codeString($2->c_str()); g_lingo->codeString($3->c_str()); delete $2; delete $3; }
+	| tGO gotomovie				{ g_lingo->code1(g_lingo->c_goto); g_lingo->codeString(""); g_lingo->codeString($2->c_str()); delete $2; }
 	;
 
 gotoframe: tTO tFRAME STRING	{ $$ = $3; }

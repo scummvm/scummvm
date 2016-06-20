@@ -120,36 +120,36 @@ public:
 public:
 	void execute(int pc);
 
-	static void func_xpop();
-	static void func_printtop();
-	static void func_add();
-	static void func_sub();
-	static void func_mul();
-	static void func_div();
-	static void func_negate();
-	static void func_constpush();
-	static void func_varpush();
-	static void func_assign();
+	static void c_xpop();
+	static void c_printtop();
+	static void c_add();
+	static void c_sub();
+	static void c_mul();
+	static void c_div();
+	static void c_negate();
+	static void c_constpush();
+	static void c_varpush();
+	static void c_assign();
 	bool verify(Symbol *s);
-	static void func_eval();
-	static void func_ifcode();
-	static void func_eq();
-	static void func_neq();
-	static void func_gt();
-	static void func_lt();
-	static void func_ge();
-	static void func_le();
+	static void c_eval();
+	static void c_ifcode();
+	static void c_eq();
+	static void c_neq();
+	static void c_gt();
+	static void c_lt();
+	static void c_ge();
+	static void c_le();
 
-	static void func_mci();
-	static void func_mciwait();
-	static void func_goto();
-	static void func_gotoloop();
-	static void func_gotonext();
-	static void func_gotoprevious();
+	static void c_mci();
+	static void c_mciwait();
+	static void c_goto();
+	static void c_gotoloop();
+	static void c_gotonext();
+	static void c_gotoprevious();
 
-	void exec_mci(Common::String &s);
-	void exec_mciwait(Common::String &s);
-	void exec_goto(Common::String &frame, Common::String &movie);
+	void func_mci(Common::String &s);
+	void func_mciwait(Common::String &s);
+	void func_goto(Common::String &frame, Common::String &movie);
 
 public:
 	ScriptData *_currentScript;
