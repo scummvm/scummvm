@@ -234,7 +234,7 @@ void Lingo::func_constpush() {
 void Lingo::func_varpush() {
 	Datum d;
 	Symbol *sym;
-	char *name = (char *)(*g_lingo->_currentScript)[g_lingo->_pc];
+	char *name = (char *)&(*g_lingo->_currentScript)[g_lingo->_pc];
 
 	if (!g_lingo->_vars.contains(name)) { // Create variable if it was not defined
 		sym = new Symbol;
