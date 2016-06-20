@@ -6,6 +6,46 @@
 
 namespace DM {
 
+class Scent {
+	uint16 _scent;
+public:
+	Scent(uint16 scent = 0): _scent(scent) {}
+
+	uint16 getMapX() { return _scent & 0x1F; }
+	uint16 getMapY() { return (_scent >> 5) & 0x1F; }
+	uint16 getMapIndex() { return (_scent >> 10) & 0x3F; }
+
+	uint16 setMapX(uint16 val) { _scent = (_scent & ~0x1F) & (val & 0x1F); }
+	uint16 setMapY(uint16 val) { _scent = (_scent & ~(0x1F << 5)) & (val & 0x1F); }
+	uint16 setMapIndex(uint16 val) { _scent = (_scent & ~(0x1F << 10)) & (val & 0x3F); }
+}; // @ SCENT
+
+class Party {
+public:
+	Party() {
+		_magicalLightAmount = _event73Count_ThievesEye = _event79Count_Footprints = _shieldDefense = 0;
+		_fireShieldDefense = _spellShieldDefense = _scentCount = _freezeLifeTicks = _firstScentIndex = 0;
+		_lastScentIndex = _event71Count_Invisibility = 0;
+		for (int16 i = 0; i < 24; ++i)
+			_scentStrengths[i] = 0;
+	}
+	int16 _magicalLightAmount;
+	byte _event73Count_ThievesEye;
+	byte _event79Count_Footprints;
+	int16 _shieldDefense;
+
+	int16 _fireShieldDefense;
+	int16 _spellShieldDefense;
+	byte _scentCount;
+	byte _freezeLifeTicks;
+	byte _firstScentIndex;
+
+	byte _lastScentIndex;
+	Scent _scents[24]; // if I remember correctly, user defined default constructors are always called
+	byte _scentStrengths[24];
+	byte _event71Count_Invisibility;
+}; // @  PARTY
+
 enum IconIndice {
 	kIconIndiceNone = -1, // @ CM1_ICON_NONE
 	kIconIndiceJunkCompassNorth = 0, // @ C000_ICON_JUNK_COMPASS_NORTH
