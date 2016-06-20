@@ -1051,7 +1051,13 @@ Resource *ResourceManager::findResource(ResourceId id, bool lock) {
 	if (retval->_status == kResStatusNoMalloc)
 		loadResource(retval);
 	else if (retval->_status == kResStatusEnqueued)
+		// The resource is removed from its current position
+		// in the LRU list because it has been requested
+		// again. Below, it will either be locked, or it
+		// will be added back to the LRU list at the 'most
+		// recent' position.
 		removeFromLRU(retval);
+
 	// Unless an error occurred, the resource is now either
 	// locked or allocated, but never queued or freed.
 
