@@ -46,7 +46,6 @@ void ScrollContainerWidget::init() {
 	_scrolledX = 0;
 	_scrolledY = 0;
 	_limitH = 140;
-	_clippingArea = Common::Rect(0, 0, _w, _h);
 	recalc();
 }
 
@@ -89,7 +88,6 @@ void ScrollContainerWidget::handleCommand(CommandSender *sender, uint32 cmd, uin
 }
 
 void ScrollContainerWidget::reflowLayout() {
-	_clippingArea = Common::Rect(0, 0, _w, _h);
 	recalc();
 	Widget::reflowLayout();
 }
