@@ -988,7 +988,7 @@ String JSONValue::stringifyImpl(size_t const indentDepth) const {
 
 	case JSONType_IntegerNumber: {
 		char str[80];
-		sprintf(str, "%d", _integerValue);
+		sprintf(str, "%lld", _integerValue);
 		ret_string = str;		
 		break;
 	}

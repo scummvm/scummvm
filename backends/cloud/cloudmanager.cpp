@@ -109,10 +109,10 @@ void CloudManager::save() {
 		Common::String name = getStorageConfigName(i);
 		ConfMan.set(kStoragePrefix + name + "_username", _storages[i].username, ConfMan.kCloudDomain);
 		ConfMan.set(kStoragePrefix + name + "_lastSync", _storages[i].lastSyncDate, ConfMan.kCloudDomain);
-		ConfMan.set(kStoragePrefix + name + "_usedBytes", Common::String::format("%llu", _storages[i].usedBytes, ConfMan.kCloudDomain));
+		ConfMan.set(kStoragePrefix + name + "_usedBytes", Common::String::format("%llu", _storages[i].usedBytes), ConfMan.kCloudDomain);
 	}
 
-	ConfMan.set("current_storage", Common::String::format("%d", _currentStorageIndex, ConfMan.kCloudDomain));
+	ConfMan.set("current_storage", Common::String::format("%u", _currentStorageIndex), ConfMan.kCloudDomain);
 	if (_activeStorage)
 		_activeStorage->saveConfig(kStoragePrefix + getStorageConfigName(_currentStorageIndex) + "_");
 	ConfMan.flushToDisk();
