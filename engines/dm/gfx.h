@@ -32,7 +32,8 @@ enum GraphicIndice {
 	kPanelEmptyIndice = 20, // @ C020_GRAPHIC_PANEL_EMPTY
 	kFoodLabelIndice = 30, // @ C030_GRAPHIC_FOOD_LABEL
 	kWaterLabelIndice = 31, // @ C031_GRAPHIC_WATER_LABEL
-	kPoisionedLabelIndice = 32 // @ C032_GRAPHIC_POISONED_LABEL
+	kPoisionedLabelIndice = 32, // @ C032_GRAPHIC_POISONED_LABEL
+	kPanelResurectReincaranteIndice // @ C040_GRAPHIC_PANEL_RESURRECT_REINCARNATE 
 };
 
 extern uint16 gPalSwoosh[16];

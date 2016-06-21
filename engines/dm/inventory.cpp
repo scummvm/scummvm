@@ -14,7 +14,9 @@ Box gBoxFood = Box(112, 159, 60, 68); // @ G0035_s_Graphic562_Box_Food
 Box gBoxWater = Box(112, 159, 83, 91); // @ G0036_s_Graphic562_Box_Water
 Box gBoxPoisoned = Box(112, 207, 105, 119); // @ G0037_s_Graphic562_Box_Poisoned
 
-InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {}
+InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {
+	_panelContent = kPanelContentFoodWaterPoisoned;
+}
 
 void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	ChampionMan &cm = *_vm->_championMan;
@@ -135,6 +137,11 @@ void InventoryMan::drawPanelFoodWaterPoisoned() {
 	}
 	drawPanelFoodOrWaterBar(champ._food, 69, kColorLightBrown);
 	drawPanelFoodOrWaterBar(champ._water, 92, kColorBlue);
+}
+
+void InventoryMan::drawPanelResurrectReincarnate() {
+	_panelContent = kPanelContentResurrectReincarnate;
+	_vm->_displayMan->blitToScreen(_vm->_displayMan->getBitmap(kPanelResurectReincaranteIndice), 144, 0, 0, gBoxPanel, kColorDarkGreen, gDungeonViewport);
 }
 
 }
