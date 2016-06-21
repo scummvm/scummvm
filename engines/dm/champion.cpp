@@ -168,6 +168,8 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	character_Green += 4;
 	champ->_currStamina = champ->_maxStamina = getDecodedValue(character_Green, 4);
 	character_Green += 4;
+	champ->_currMana = champ->_maxMana = getDecodedValue(character_Green, 4);
+	character_Green += 4;
 	character_Green++;
 
 	int16 AL_0_statisticIndex;
