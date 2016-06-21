@@ -171,6 +171,7 @@ void DMEngine::gameloop() {
 
 	warning("DUMMY CODE: setting InventoryMan::_inventoryChampionOrdinal to zero");
 	_inventoryMan->_inventoryChampionOrdinal = 0;
+	warning("DUMMY CODE: clearing screen to black");
 	while (true) {
 		_stopWaitingForPlayerInput = false;
 		//do {
@@ -179,6 +180,7 @@ void DMEngine::gameloop() {
 		//} while (!_stopWaitingForPlayerInput || !_gameTimeTicking);
 
 		if (!_inventoryMan->_inventoryChampionOrdinal && !_championMan->_partyIsSleeping) {
+			_displayMan->clearScreen(kColorBlack); // dummy code
 			_displayMan->drawDungeon(_dungeonMan->_currMap._partyDir, _dungeonMan->_currMap._partyPosX, _dungeonMan->_currMap._partyPosY);
 		}
 		// DUMMY CODE: next line

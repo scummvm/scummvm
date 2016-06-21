@@ -15,7 +15,7 @@ public:
 	void clearActingChampion(); // @ F0388_MENUS_ClearActingChampion
 	void drawActionIcon(ChampionIndex championIndex); // @ F0386_MENUS_DrawActionIcon
 
-	void drawMovementArrows();
+	void drawMovementArrows(); // @ F0395_MENUS_DrawMovementArrows
 	void drawDisabledMenu(); // @ F0456_START_DrawDisabledMenus
 };
 
