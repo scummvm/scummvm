@@ -898,9 +898,8 @@ void ThemeEngine::queueDDClip(DrawData type, const Common::Rect &r, const Common
 
 	Common::Rect area = r;
 	area.clip(_screen.w, _screen.h);
-	area.clip(clippingRect);
 
-	ThemeItemDrawData *q = new ThemeItemDrawData(this, _widgets[type], area, dynamic);
+	ThemeItemDrawDataClip *q = new ThemeItemDrawDataClip(this, _widgets[type], area, clippingRect, dynamic);
 
 	if (_buffering) {
 		if (_widgets[type]->_buffer) {

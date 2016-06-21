@@ -920,6 +920,29 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
+drawRoundedSquareClip(int x, int y, int r, int w, int h, int cx, int cy, int cw, int ch) {
+	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h ||
+		w <= 0 || h <= 0 || x < 0 || y < 0 || r <= 0)
+		return;
+
+	if ((r * 2) > w || (r * 2) > h)
+		r = MIN(w / 2, h / 2);
+
+	if (r <= 0)
+		return;
+
+	if (Base::_fillMode != kFillDisabled && Base::_shadowOffset
+		&& x + w + Base::_shadowOffset + 1 < Base::_activeSurface->w
+		&& y + h + Base::_shadowOffset + 1 < Base::_activeSurface->h
+		&& h > (Base::_shadowOffset + 1) * 2) {
+		drawRoundedSquareShadow(x, y, r, w, h, Base::_shadowOffset);
+	}
+
+	drawRoundedSquareAlg(x, y, r, w, h, _fgColor, Base::_fillMode);
+}
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
 drawTab(int x, int y, int r, int w, int h) {
 	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h ||
 		w <= 0 || h <= 0 || x < 0 || y < 0 || r > w || r > h)

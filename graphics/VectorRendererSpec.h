@@ -54,6 +54,7 @@ public:
 	void drawCircle(int x, int y, int r);
 	void drawSquare(int x, int y, int w, int h);
 	void drawRoundedSquare(int x, int y, int r, int w, int h);
+	void drawRoundedSquareClip(int x, int y, int r, int w, int h, int cx, int cy, int cw, int ch);
 	void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient);
 	void drawTab(int x, int y, int r, int w, int h);
 	void drawBeveledSquare(int x, int y, int w, int h, int bevel) {
