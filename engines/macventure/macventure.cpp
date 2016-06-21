@@ -76,6 +76,7 @@ Common::Error MacVentureEngine::run() {
 	// Additional setup.
 	debug("MacVentureEngine::init");
 
+
 	_resourceManager = new Common::MacResManager();
 	if (!_resourceManager->open(getGameFileName()))
 		error("Could not open %s as a resource fork", getGameFileName());

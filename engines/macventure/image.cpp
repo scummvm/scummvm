@@ -46,6 +46,20 @@ PPICHuff PPIC2Huff = {
 	0x09,0x0d,0x0b,0x0a,0x05 }
 };
 
+// Used to load the huffman table in PPIC3 decoding
+byte loadBits[] = {
+		0x08, 0x0f, 0x02, 0xff, 0x00,
+		0x04, 0xff, 0x01,
+		0x07, 0x09, 0x08, 0xff, 0x03,
+		0x04, 0xff, 0x04,
+		0x0a, 0x07, 0x0a, 0x0b, 0x06, 0xff, 0x05,
+		0x06, 0x06, 0x0b, 0xff, 0x07,
+		0x03, 0xff, 0x09,
+		0x04, 0x03, 0x0e, 0xff, 0x0c,
+		0x02, 0xff, 0x0d,
+		0x01, 0xff, 0x0f,
+		0xff };
+
 ImageAsset::ImageAsset(ObjID original, Container * container) {
 	_id = (original * 2);
 	_mask = (original * 2) + 1;
@@ -125,7 +139,47 @@ void ImageAsset::decodePPIC2(Common::BitStream & stream, Common::Array<byte> &da
 }
 
 void ImageAsset::decodePPIC3(Common::BitStream & stream, Common::Array<byte> &data) {
+	// We need to load the huffman from the PPIC itself
+	PPICHuff huff;
+	uint16 v, bits;
+	uint16 load = 0;
+	while ((bits = loadBits[load++]) != 0xFF) {
+		v = stream.getBits(bits);
+		while ((bits = loadBits[load++]) != 0xFF) {
+			huff.symbols[loadBits[load++]] = v % bits;
+			v = (v / bits) | 0;
+		}
+		huff.symbols[loadBits[load++]] = v;
+	}
+	huff.symbols[0x10] = 0;
+	for (uint i = 0x10; i > 0; i--)
+		for (uint j = i; j <= 0x10; j++)
+			if (huff.symbols[j] >= huff.symbols[i - 1])
+				huff.symbols[j]++;
 
+	for (uint i = 0x10; i >= 0; i--) {
+		if (huff.symbols[i] == 0x10) {
+			huff.symbols[i] = 0xff;
+			break;
+		}
+	}
+
+	bits = stream.getBits(2) + 1;
+	uint16 mask = 0;
+	for (uint i = 0; i < 0xf; i++) {
+		if (i)
+			while (!stream.getBit()) bits++;
+		huff.lens[i] = bits;
+		huff.masks[i] = mask;
+		mask += 1 << (16 - bits);
+	}
+	huff.masks[0xf] = mask;
+	while (mask&(1 << (16 - bits))) bits++;
+	huff.masks[0x10] = mask | (1 << (16 - bits));
+	huff.lens[0xf] = bits;
+	huff.lens[0x10] = bits;
+
+	decodeHuffGraphic(huff, stream, data);
 }
 
 void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & stream, Common::Array<byte> &data) {
@@ -263,6 +317,10 @@ byte ImageAsset::walkHuff(const PPICHuff & huff, Common::BitStream & stream) {
 
 void ImageAsset::blitInto(Graphics::ManagedSurface *target, uint32 x, uint32 y, BlitMode mode) {
 	debug("Blitting image %x ", _id);
+	if (mode == kBlitDirect) {
+		blitDirect(target, x, y, _imgData);
+	}
+
 	if (_container->getItemByteSize(_mask)) { // Has mask
 		switch (mode) {
 		case MacVenture::kBlitBIC:
@@ -285,6 +343,19 @@ void ImageAsset::blitInto(Graphics::ManagedSurface *target, uint32 x, uint32 y, 
 	}
 	if (_container->getItemByteSize(_id) && mode > 0) {
 		blitXOR(target, x, y, _maskData);
+	}
+}
+
+void ImageAsset::blitDirect(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte>& data) {
+	for (uint y = 0;y < _bitHeight; y++) {
+		uint bmpofs = y * _rowBytes;
+		byte pix = 0;
+		for (uint x = 0; x < _bitWidth; x++) {
+			pix = data[bmpofs + (x >> 3)] & (1 << (7 - (x & 7)));
+
+			pix = pix ? kColorWhite : kColorBlack;
+			*((byte *)target->getBasePtr(ox + x, oy + y)) = pix;
+		}
 	}
 }
 

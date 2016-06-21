@@ -138,6 +138,7 @@ public:
 
 	void draw();
 	void drawMenu();
+	void drawTitle();
 	bool processEvent(Common::Event &event);
 	void handleMenuAction(MenuAction action);
 	void updateWindow(WindowReference winID, bool containerOpen);

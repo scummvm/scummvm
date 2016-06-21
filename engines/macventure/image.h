@@ -45,6 +45,7 @@ struct PPICHuff {
 };
 
 enum BlitMode {
+	kBlitDirect = 0,
 	kBlitBIC = 1,
 	kBlitOR = 2,
 	kBlitXOR = 3
@@ -68,6 +69,7 @@ private:
 	void decodeHuffGraphic(const PPICHuff &huff, Common::BitStream &stream, Common::Array<byte> &data);
 	byte walkHuff(const PPICHuff &huff, Common::BitStream &stream);
 
+	void blitDirect(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data);
 	void blitBIC(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data);
 	void blitOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data);
 	void blitXOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data);
