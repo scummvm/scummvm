@@ -224,6 +224,29 @@ void MacVentureEngine::enqueueText(TextQueueID type, ObjID target, ObjID source,
 
 void MacVentureEngine::printTexts() {
 	warning("printTexts: unimplemented");
+	for (uint i = 0; i < _textQueue.size(); i++) {
+		QueuedText text = _textQueue.front();
+		_textQueue.remove_at(0);
+		switch (text.id) {
+		case kTextNumber:
+			debug("Print Number: %d", text.asset);
+			break;
+		case kTextNewLine:
+			debug("Print Newline: ");
+			break;
+		case kTextPlain:
+			debug("Print Plain Text: %s", _world->getText(text.asset).c_str());
+			break;		
+		}
+	}
+}
+
+void MacVentureEngine::focusObjWin(ObjID objID) {
+	_gui->bringToFront(getObjWindow(objID));
+}
+
+void MacVentureEngine::updateWindow(WindowReference winID) {
+	_gui->updateWindow(winID, true);
 }
 
 const GlobalSettings& MacVentureEngine::getGlobalSettings() const {
@@ -356,8 +379,8 @@ void MacVentureEngine::runObjQueue() {
 void MacVentureEngine::updateControls() {
 	if (_activeControl)
 		_activeControl = kNoCommand;
-	toggleExits();
-	// resetVars();
+	toggleExits();	
+	resetVars();
 }
 
 void MacVentureEngine::resetVars() {
@@ -378,9 +401,11 @@ void MacVentureEngine::focusObjectWindow(ObjID objID) {
 }
 
 void MacVentureEngine::openObject(ObjID objID) {
+
+	debug("openObject: %d", objID);
 	if (getObjWindow(objID)) return;
 	if (objID == _world->getObjAttr(1, kAttrParentObject)) {
-		//_gui->setRefcon(objID, kMainGameWindow); // FIXME: Find better name
+		_gui->updateWindowInfo(kMainGameWindow, objID, _world->getChildren(objID, true)); // FIXME: Find better name
 		_gui->updateWindow(kMainGameWindow, _world->getObjAttr(objID, kAttrContainerOpen));
 		//_gui->drawExits();
 		_gui->setWindowTitle(kMainGameWindow, _world->getText(objID));
@@ -390,17 +415,54 @@ void MacVentureEngine::openObject(ObjID objID) {
 		//globalToDesktop(p);
 		WindowReference invID = _gui->createInventoryWindow();
 		_gui->setWindowTitle(invID, _world->getText(objID));
-		//_gui->setRefCon(objID, invID);
+		_gui->updateWindowInfo(invID, objID, _world->getChildren(objID, true));
 		_gui->updateWindow(invID, _world->getObjAttr(objID, kAttrContainerOpen));
 	}
 }
 
 void MacVentureEngine::closeObject(ObjID objID) {
-	warning("closeObject: unimplemented");
+	warning("closeObject: not fully implemented");
+	bool success = _gui->tryCloseWindow(getObjWindow(objID));
+	return;
 }
 
 void MacVentureEngine::checkObject(ObjID objID) {
-	warning("checkObject: unimplemented");
+	//warning("checkObject: unimplemented");
+	bool hasChanged = false;
+	debug("Check Object[%d] parent[%d] x[%d] y[%d]",
+		objID, 
+		_world->getObjAttr(objID, kAttrParentObject),
+		_world->getObjAttr(objID, kAttrPosX),
+		_world->getObjAttr(objID, kAttrPosY));
+	//bool incoming = isIncomingObj(objID);
+	//if (incoming) removeIncoming(objID);
+	if (objID == 1) {
+		if (_world->getObjAttr(objID, kAttrParentObject) != 0) {
+			enqueueObject(kSetToPlayerParent, objID);
+		}		
+	} 
+	_gui->updateWindow(findParentWindow(objID), true);
+
+	WindowReference win = getObjWindow(objID);
+	ObjID parent = objID;
+	ObjID root = _world->getObjAttr(1, kAttrParentObject);
+	while (parent != root) {
+		if (parent == 0 || !_world->getObjAttr(parent, kAttrContainerOpen)) break;
+		parent = _world->getObjAttr(parent, kAttrParentObject);
+	}
+	if (parent == root) {
+		if (win) return;
+		enqueueObject(kOpenWindow, objID);
+	} else {
+		if (!win) return;
+		enqueueObject(kCloseWindow, objID);
+	}
+
+	// Update children
+	Common::Array<ObjID> children = _world->getChildren(objID, true);
+	for (uint i = 0; i < children.size(); i++) {
+		enqueueObject(kUpdateObject, children[i]);
+	}
 }
 
 void MacVentureEngine::reflectSwap(ObjID objID) {
@@ -475,6 +537,10 @@ uint32 MacVentureEngine::getInvolvedObjects() {
 	return (_selectedControl ? _globalSettings.cmdArgCnts[_selectedControl - 1] : 3000);
 }
 
+Common::Point MacVentureEngine::getObjPosition(ObjID objID) {
+	return Common::Point(_world->getObjAttr(objID, kAttrPosX), _world->getObjAttr(objID, kAttrPosY));
+}
+
 WindowReference MacVentureEngine::getObjWindow(ObjID objID) {
 	switch (objID) {
 	case 0xfffc: return kExitsWindow;
@@ -488,6 +554,12 @@ WindowReference MacVentureEngine::getObjWindow(ObjID objID) {
 
 WindowReference MacVentureEngine::findObjWindow(ObjID objID) {
 	return kMainGameWindow;
+}
+
+WindowReference MacVentureEngine::findParentWindow(ObjID objID) {
+	if (objID == 1) return kSelfWindow;
+	ObjID parent = _world->getObjAttr(objID, kAttrParentObject);
+	return getObjWindow(parent);
 }
 
 Common::Point MacVentureEngine::getDeltaPoint() {

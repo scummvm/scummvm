@@ -54,14 +54,14 @@ bool ScriptEngine::runControl(ControlAction action, ObjID source, ObjID destinat
 	frame.haltedInFirst = false;
 	frame.haltedInFamily = false;
 	_frames.push_back(frame);
-	debug(7, "SCRIPT: Stored frame %d, action: %d src: %d dest: %d point: (%d, %d)",
+	debug(3, "SCRIPT: Stored frame %d, action: %d src: %d dest: %d point: (%d, %d)",
 		_frames.size() - 1, frame.action, frame.src, frame.dest, frame.x, frame.y);
 
 	return resume(true);
 }
 
 bool ScriptEngine::resume(bool execAll) {	
-	debug(7, "SCRIPT: Resume");
+	debug(3, "SCRIPT: Resume");
 	while (_frames.size()) {
 		bool fail = execFrame(execAll);
 		if (fail) return true;
@@ -145,13 +145,13 @@ bool ScriptEngine::resumeFunc(EngineFrame * frame) {
 }
 
 bool ScriptEngine::runFunc(EngineFrame *frame) {
-	debug(7, "SCRIPT: I'm running the function");
+	debug(3, "SCRIPT: I'm running the function");
 	ScriptAsset &script = frame->scripts.front();
 	EngineState *state = &frame->state;
 	byte op;	
 	while (script.hasNext()) {
 		op = script.fetch();
-		debug(8, "SCRIPT: I'm running operation %x", op);
+		debug(3, "SCRIPT: I'm running operation %x", op);
 		if (!(op & 0x80)) {
 			state->push(op);
 		} else {
@@ -1157,7 +1157,7 @@ void ScriptAsset::loadInstructions() {
 	for (uint i = 0; i < amount; i++) {
 		_instructions.push_back(res->readByte());
 	}
-	debug(7, "SCRIPT: Load %d instructions for script %d", amount, _id);
+	debug(3, "SCRIPT: Load %d instructions for script %d", amount, _id);
 }
 
 } // End of namespace MacVenture

@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	text.o \
 	world.o \
 	script.o \
+	image.o \
 	macventure.o
 
 MODULE_DIRS += \

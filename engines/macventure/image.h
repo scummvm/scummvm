@@ -24,26 +24,59 @@
 #define MACVENTURE_IMAGE_H
 
 #include "macventure/macventure.h"
+#include "macventure/container.h"
 
 namespace MacVenture {
 
+typedef uint32 ObjID;
+class Container;
+
+enum GraphicsEncoding {
+	kPPIC0 = 0,
+	kPPIC1 = 1,
+	kPPIC2 = 2,
+	kPPIC3 = 3
+};
+
+struct PPICHuff {
+	uint16 masks[17];
+	uint16 lens[17];
+	uint8 symbols[17];
+};
+
 class ImageAsset {
 public:
-	ImageAsset(ObjID id, Container *container) {
-		_id = id;
-		_container = container;
-	}
-	~ImageAsset() {
+	ImageAsset(ObjID id, Container *container); 
+	~ImageAsset();
 
-	}
+	void blit(Graphics::ManagedSurface *target);
 
-	void blit(Graphics::ManagedSurface *target) {
-		debug("Blitting image %x ", _id);
-	}
+private:
+	void decodePPIC();
+
+	void decodePPIC0(Common::BitStream &stream); 
+	void decodePPIC1(Common::BitStream &stream); 
+	void decodePPIC2(Common::BitStream &stream);
+	void decodePPIC3(Common::BitStream &stream);
+
+	void decodeHuffGraphic(const PPICHuff &huff, Common::BitStream &stream); 
+	byte walkHuff(const PPICHuff &huff, Common::BitStream &stream);
 
 private:
 	ObjID _id;
 	Container *_container;
+
+	uint16 _walkRepeat;
+	uint16 _walkLast;
+
+	uint16 _rowBytes;
+	uint16 _bitWidth;
+	uint16 _bitHeight;
+
+	byte* _data;
+
+	Graphics::ManagedSurface *_surface;
+	Graphics::ManagedSurface *_mask;
 };
 
 } // End of namespace MacVenture

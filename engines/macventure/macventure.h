@@ -177,6 +177,9 @@ public:
 	void runObjQueue();
 	void printTexts();
 
+	void focusObjWin(ObjID objID);
+	void updateWindow(WindowReference winID);
+
 	// Data retrieval
 	bool isPaused();
 	Common::String getCommandsPausedString() const;
@@ -186,8 +189,12 @@ public:
 	const HuffmanLists *getDecodingHuffman() const;
 	uint32 randBetween(uint32 min, uint32 max);
 	uint32 getInvolvedObjects();
+
+	Common::Point getObjPosition(ObjID objID);
+
 	WindowReference getObjWindow(ObjID objID);
 	WindowReference findObjWindow(ObjID objID);
+	WindowReference findParentWindow(ObjID objID);
 
 	Common::Point getDeltaPoint();
 	ObjID getDestObject();

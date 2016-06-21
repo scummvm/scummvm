@@ -23,10 +23,14 @@ World::World(MacVentureEngine *engine, Common::MacResManager *resMan)  {
 	_objectConstants = new Container(_engine->getFilePath(kObjectPathID).c_str());
 	calculateObjectRelations();
 	
-	_gameText = new Container("Shadowgate II/Shadow Text");
+	warning("Test functions about to happen");
+	_gameGraphics = new Container("Shadowgate II/Shadow Graphic");
+	_gameText = new Container("Shadowgate II/Shadow Text");	
 
 	ObjID tid = (ObjID)1;
 	TextAsset test = TextAsset(tid, _gameText, _engine->isOldText(), _engine->getDecodingHuffman());
+
+	ImageAsset testImg(((428 * 2) + 1), _gameGraphics);
 
 	delete saveGameRes;
 	saveGameFile.close();		
@@ -140,9 +144,9 @@ void World::updateObj(ObjID objID) {
 		win = _engine->getObjWindow(objID);
 	}
 	if (win) {
-		//focusObjWin(objID);
+		_engine->focusObjWin(objID);
 		_engine->runObjQueue();
-		//_engine->updateWindow(win);
+		_engine->updateWindow(win);
 	}
 }
 

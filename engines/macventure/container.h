@@ -117,7 +117,7 @@ public:
 					uint32 bitSize = _lens[x];
 					bits += bitSize & 0xF;
 					if (bits & 0x10) {
-						bits &= 0xf;
+						bits &= 0xF;
 						_res->seek(2, SEEK_CUR);
 					}
 					bitSize >>= 4;
@@ -129,7 +129,11 @@ public:
 						else length >>= (32 - bitSize) - bits;
 						length &= (1 << bitSize) - 1;
 						length |= 1 << bitSize;
-						bits += bitSize;						
+						bits += bitSize;	
+						if (bits & 0x10) {
+							bits &= 0xF;
+							_res->seek(2, SEEK_CUR);
+						}
 					}		
 
 					group.lengths[j] = length;
@@ -173,16 +177,14 @@ public:
 			return _res;
 		} else {
 			uint32 groupID = (id >> 6);
-			uint32 objectIndex = id & 0x3f; // Index within the group
-
-			_res->seek(4 + (groupID * 6), SEEK_SET);
+			uint32 objectIndex = id & 0x3f; // Index within the group		
 
 			uint32 offset = 0;
 			for (uint i = 0; i < objectIndex; i++) {
 				offset += _groups[groupID].lengths[i];
 			}
 
-			_res->seek(offset, SEEK_CUR);
+			_res->seek(_groups[groupID].offset + offset + sizeof(_header), SEEK_SET);
 
 			return _res;
 		}
