@@ -68,7 +68,8 @@ enum {
 	kPopUpWidget		= 'POPU',
 	kTabWidget			= 'TABW',
 	kGraphicsWidget		= 'GFXW',
-	kContainerWidget	= 'CTNR'
+	kContainerWidget	= 'CTNR',
+	kScrollContainerWidget = 'SCTR'
 };
 
 enum {

@@ -1042,8 +1042,8 @@ void ThemeEngine::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHe
 	r2.top += sliderY;
 	r2.bottom = r2.top + sliderHeight;
 
-	r2.top += r.width() / 5;
-	r2.bottom -= r.width() / 5;
+	//r2.top += r.width() / 5;
+	//r2.bottom -= r.width() / 5;
 	queueDD(scrollState == kScrollbarStateSlider ? kDDScrollbarHandleHover : kDDScrollbarHandleIdle, r2);
 }
 
