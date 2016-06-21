@@ -25,13 +25,11 @@
 
 #include "gui/widget.h"
 #include "common/str.h"
-#include "common/array.h"
 #include "scrollbar.h"
 
 namespace GUI {
 
 class ScrollContainerWidget: public Widget {
-	//ButtonWidget *_navLeft, *_navRight; //TODO: add scrollbars similarly
 	ScrollBarWidget *_verticalScroll;
 	int16 _scrolledX, _scrolledY;
 	uint16 _limitH;
@@ -44,14 +42,8 @@ public:
 	~ScrollContainerWidget();
 
 	void init();
-
-	virtual void handleMouseDown(int x, int y, int button, int clickCount);
-	virtual bool handleKeyDown(Common::KeyState state);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-
 	virtual void reflowLayout();
-
-	virtual void draw();
 
 protected:
 	// We overload getChildY to make sure child widgets are positioned correctly.
