@@ -69,7 +69,7 @@ struct EventHandlerType {
 
 Symbol::Symbol() {
 	name = NULL;
-	type = UNDEF;
+	type = VOID;
 	u.str = NULL;
 }
 

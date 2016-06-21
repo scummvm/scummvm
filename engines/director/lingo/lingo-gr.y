@@ -69,7 +69,7 @@ using namespace Director;
 	int code;
 }
 
-%token UNARY UNDEF
+%token UNARY VOID
 %token<i> INT
 %token<f> FLOAT
 %token<s> VAR STRING

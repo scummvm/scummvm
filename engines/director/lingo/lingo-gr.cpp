@@ -67,7 +67,7 @@
       know about them.  */
    enum yytokentype {
      UNARY = 258,
-     UNDEF = 259,
+     VOID = 259,
      INT = 260,
      FLOAT = 261,
      VAR = 262,
@@ -99,7 +99,7 @@
 #endif
 /* Tokens.  */
 #define UNARY 258
-#define UNDEF 259
+#define VOID 259
 #define INT 260
 #define FLOAT 261
 #define VAR 262
@@ -511,7 +511,7 @@ static const yytype_uint8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "UNARY", "UNDEF", "INT", "FLOAT", "VAR",
+  "$end", "error", "$undefined", "UNARY", "VOID", "INT", "FLOAT", "VAR",
   "STRING", "tIF", "tELSE", "tEND", "tFRAME", "tGO", "tINTO", "tLOOP",
   "tMCI", "tMCIWAIT", "tMOVIE", "tNEXT", "tOF", "tPREVIOUS", "tPUT",
   "tSET", "tTHEN", "tTO", "tGE", "tLE", "tGT", "tLT", "tEQ", "tNEQ", "'='",
@@ -1937,6 +1937,6 @@ yyreturn:
 }
 
 
-#line 215 "engines/director/lingo/lingo-gr.y"
+#line 228 "engines/director/lingo/lingo-gr.y"
 
 

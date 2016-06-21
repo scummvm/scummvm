@@ -40,7 +40,7 @@
       know about them.  */
    enum yytokentype {
      UNARY = 258,
-     UNDEF = 259,
+     VOID = 259,
      INT = 260,
      FLOAT = 261,
      VAR = 262,
@@ -72,7 +72,7 @@
 #endif
 /* Tokens.  */
 #define UNARY 258
-#define UNDEF 259
+#define VOID 259
 #define INT 260
 #define FLOAT 261
 #define VAR 262

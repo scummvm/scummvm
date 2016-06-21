@@ -98,7 +98,7 @@ void Lingo::c_varpush() {
 		sym = new Symbol;
 		sym->name = (char *)calloc(strlen(name) + 1, 1);
 		Common::strlcpy(sym->name, name, strlen(name) + 1);
-		sym->type = UNDEF;
+		sym->type = VOID;
 		sym->u.val = 0;
 
 		g_lingo->_vars[name] = sym;
@@ -118,7 +118,7 @@ void Lingo::c_assign() {
 	d1 = g_lingo->pop();
 	d2 = g_lingo->pop();
 
-	if (d1.sym->type != VAR && d1.sym->type != UNDEF) {
+	if (d1.sym->type != VAR && d1.sym->type != VOID) {
 		warning("assignment to non-variable '%s'", d1.sym->name);
 		return;
 	}
@@ -129,13 +129,13 @@ void Lingo::c_assign() {
 }
 
 bool Lingo::verify(Symbol *s) {
-	if (s->type != VAR && s->type != UNDEF) {
+	if (s->type != VAR && s->type != VOID) {
 		warning("attempt to evaluate non-variable '%s'", s->name);
 
 		return false;
 	}
 
-	if (s->type == UNDEF) {
+	if (s->type == VOID) {
 		warning("undefined variable '%s'", s->name);
 
 		return false;
