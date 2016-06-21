@@ -33,7 +33,14 @@ enum GraphicIndice {
 	kFoodLabelIndice = 30, // @ C030_GRAPHIC_FOOD_LABEL
 	kWaterLabelIndice = 31, // @ C031_GRAPHIC_WATER_LABEL
 	kPoisionedLabelIndice = 32, // @ C032_GRAPHIC_POISONED_LABEL
-	kPanelResurectReincaranteIndice // @ C040_GRAPHIC_PANEL_RESURRECT_REINCARNATE 
+	kPanelResurectReincaranteIndice = 40, // @ C040_GRAPHIC_PANEL_RESURRECT_REINCARNATE 
+	kBorderPartyShieldIndice = 37, // @ C037_GRAPHIC_BORDER_PARTY_SHIELD
+	kBorderPartyFireshieldIndice = 38, // @ C038_GRAPHIC_BORDER_PARTY_FIRESHIELD
+	kBorderPartySpellshieldIndice = 39, // @ C039_GRAPHIC_BORDER_PARTY_SPELLSHIELD
+	kStatusBoxDeadChampion = 8, // @ C008_GRAPHIC_STATUS_BOX_DEAD_CHAMPION
+	kSlotBoxNormalIndice = 33, // @ C033_GRAPHIC_SLOT_BOX_NORMAL                   
+	kSlotBoxWoundedIndice = 34, // @ C034_GRAPHIC_SLOT_BOX_WOUNDED                  
+	kChampionIcons = 28 // @ C028_GRAPHIC_CHAMPION_ICONS
 };
 
 extern uint16 gPalSwoosh[16];
@@ -49,7 +56,7 @@ public:
 	uint16 _y1;
 	uint16 _y2;
 
-	Box(uint16 x1, uint16 x2, uint16 y1, uint16 y2): _x1(x1), _x2(x2 + 1), _y1(y1), _y2(y2 + 1) {}
+	Box(uint16 x1, uint16 x2, uint16 y1, uint16 y2) : _x1(x1), _x2(x2 + 1), _y1(y1), _y2(y2 + 1) {}
 	Box() {}
 	bool isPointInside(Common::Point point) {
 		return (_x1 <= point.x) && (point.x < _x2) && (_y1 <= point.y) && (point.y < _y2);
@@ -66,8 +73,8 @@ struct Frame {
 
 	Frame() {}
 	Frame(uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
-		uint16 srcWidth, uint16 srcHeight, uint16 srcX, uint16 srcY) :
-	_destFromX(destFromX), _destToX(destToX + 1), _destFromY(destFromY), _destToY(destToY + 1),
+		  uint16 srcWidth, uint16 srcHeight, uint16 srcX, uint16 srcY) :
+		_destFromX(destFromX), _destToX(destToX + 1), _destFromY(destFromY), _destToY(destToY + 1),
 		_srcWidth(srcWidth * 2), _srcHeight(srcHeight), _srcX(srcX), _srcY(srcY) {}
 };
 

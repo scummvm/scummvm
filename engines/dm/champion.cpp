@@ -364,4 +364,168 @@ uint16 ChampionMan::getMaximumLoad(Champion *champ) {
 	return maximumLoad;
 }
 
+void ChampionMan::drawChampionState(ChampionIndex champIndex) {
+	InventoryMan &invMan = *_vm->_inventoryMan;
+	DisplayMan &dispMan = *_vm->_displayMan;
+	MenuMan &menuMan = *_vm->_menuMan;
+	EventManager &eventMan = *_vm->_eventMan;
+
+	Box box;
+	int16 champStatusBoxX = champIndex * kChampionStatusBoxSpacing;
+	Champion *champ = &_champions[champIndex];
+	uint16 champAttributes = champ->getAttributes();
+	if (!((champAttributes) & (kChampionAttributeNameTitle | kChampionAttributeStatistics | kChampionAttributeLoad | kChampionAttributeIcon |
+												  kChampionAttributePanel | kChampionAttributeStatusBox | kChampionAttributeWounds | kChampionAttributeViewport |
+												  kChampionAttributeActionHand))) {
+		return;
+	}
+	bool isInventoryChamp = (indexToOrdinal(champIndex) == invMan._inventoryChampionOrdinal);
+	dispMan._useByteBoxCoordinates = false;
+	if (champAttributes & kChampionAttributeStatusBox) {
+		box._y1 = 0;
+		box._y2 = 28;
+		box._x1 = champStatusBoxX;
+		box._x2 = box._x1 + 66;
+		if (champ->_currHealth) {
+			dispMan.clearScreenBox(kColorDarkestGray, box);
+			int16 nativeBitmapIndices[3];
+			for (int16 i = 0; i < 3; ++i)
+				nativeBitmapIndices[i] = 0;
+			int16 AL_0_borderCount = 0;
+			if (_party._fireShieldDefense > 0)
+				nativeBitmapIndices[AL_0_borderCount++] = kBorderPartyFireshieldIndice;
+			if (_party._spellShieldDefense > 0)
+				nativeBitmapIndices[AL_0_borderCount++] = kBorderPartySpellshieldIndice;
+			if (_party._shieldDefense > 0)
+				nativeBitmapIndices[AL_0_borderCount++] = kBorderPartyShieldIndice;
+			while (AL_0_borderCount--) {
+				dispMan.blitToScreen(dispMan.getBitmap(nativeBitmapIndices[AL_0_borderCount]), 80, 0, 0, box, kColorFlesh);
+			}
+			if (isInventoryChamp) {
+				invMan.drawStatusBoxPortrait(champIndex);
+				champAttributes |= kChampionAttributeStatistics;
+			} else {
+				champAttributes |= (kChampionAttributeNameTitle | kChampionAttributeStatistics | kChampionAttributeWounds | kChampionAttributeActionHand);
+			}
+		} else {
+			dispMan.blitToScreen(dispMan.getBitmap(kStatusBoxDeadChampion), 80, 0, 0, box, kColorNoTransparency);
+			warning("MISSING CODE: F0053_TEXT_PrintToLogicalScreen");
+			menuMan.drawActionIcon(champIndex);
+			goto T0292042_green;
+		}
+	}
+
+	if (!champ->_currHealth)
+		goto T0292042_green;
+
+	if(champAttributes & kChampionAttributeNameTitle) {
+		int16 AL_0_colorIndex = (champIndex == _leaderIndex) ? kColorGold : kColorLightestGray; // unused because of missing functions
+		if(isInventoryChamp) {
+			char *champName = champ->_name;
+			warning("MISSING CODE: F0052_TEXT_PrintToViewport");
+			int16 champTitleX = 6 * strlen(champName) + 3;
+			char champTitleFirstChar = champ->_title[0];
+			if ((champTitleFirstChar != ',') && (champTitleFirstChar != ';') && (champTitleFirstChar != '-')) {
+				champTitleX += 6;
+			}
+			warning("MISSING CODE: F0052_TEXT_PrintToViewport");
+			champAttributes |= kChampionAttributeViewport;
+		} else {
+			box._y1 = 0;
+			box._y2 = 6;
+			box._x1 = champStatusBoxX;
+			box._x2 = box._x1 + 42;
+			dispMan.clearScreenBox(kColorDarkGary, box);
+			warning("MISSING CODE: F0053_TEXT_PrintToLogicalScreen");
+		}
+	}
+
+	if (champAttributes & kChampionAttributeStatistics) {
+		drawChampionBarGraphs(champIndex);
+		if (isInventoryChamp) {
+			warning("MISSING CODE: F0290_CHAMPION_DrawHealthStaminaManaValues");
+			int16 AL_2_nativeBitmapIndex;
+			if ((champ->_food < 0) || (champ->_water < 0) || (champ->_poisonEventCount)) {
+				AL_2_nativeBitmapIndex = kSlotBoxWoundedIndice;
+			} else {
+				AL_2_nativeBitmapIndex = kSlotBoxNormalIndice;
+			}
+			dispMan.blitToScreen(dispMan.getBitmap(AL_2_nativeBitmapIndex), 32, 0, 0, gBoxMouth, kColorDarkestGray, gDungeonViewport);
+			AL_2_nativeBitmapIndex = kSlotBoxNormalIndice;
+			for (int16 AL_0_statisticIndex = kChampionStatStrength; AL_0_statisticIndex <= kChampionStatAntifire; AL_0_statisticIndex++) {
+				if (champ->getStatistic((ChampionStatisticType)AL_0_statisticIndex, kChampionStatCurrent) 
+					< champ->getStatistic((ChampionStatisticType)AL_0_statisticIndex, kChampionStatMaximum)) {
+					AL_2_nativeBitmapIndex = kSlotBoxWoundedIndice;
+					break;
+				}
+			}
+			dispMan.blitToScreen(dispMan.getBitmap(AL_2_nativeBitmapIndex), 32, 0, 0, gBoxEye, kColorDarkestGray, gDungeonViewport);
+			champAttributes |= kChampionAttributeViewport;
+		}
+	}
+
+	if (champAttributes & kChampionAttributeWounds) {
+		for (int16 AL_0_slotIndex = isInventoryChamp ? kChampionSlotFeet : kChampionSlotActionHand; AL_0_slotIndex >= kChampionSlotReadyHand; AL_0_slotIndex--) {
+			warning("MISSING CODE: F0291_CHAMPION_DrawSlot");
+		}
+		if (isInventoryChamp) {
+			champAttributes |= kChampionAttributeViewport;
+		}
+	}
+
+	if (champAttributes & kChampionAttributeLoad) {
+		warning("MISSING CODE: whole if branch, many F0052_TEXT_PrintToViewport-s");
+
+
+
+		champAttributes |= kChampionAttributeViewport;
+	}
+
+	{ // block so goto won't skip AL_0_championIconIndex initialization 
+		int16 AL_0_championIconIndex = championIconIndex(champ->_cell, _vm->_dungeonMan->_currMap._partyDir);
+
+		if ((champAttributes & kChampionIcons) && (eventMan._useChampionIconOrdinalAsMousePointerBitmap != indexToOrdinal(AL_0_championIconIndex))) {
+			dispMan.clearScreenBox(gChampionColor[champIndex], gBoxChampionIcons[AL_0_championIconIndex]);
+			dispMan.blitToScreen(dispMan.getBitmap(kChampionIcons), 80, championIconIndex(champ->_dir, _vm->_dungeonMan->_currMap._partyDir) * 19, 0,
+								 gBoxChampionIcons[AL_0_championIconIndex], kColorDarkestGray);
+		}
+	}
+
+	if ((champAttributes & kChampionAttributePanel) && isInventoryChamp) {
+		if (_vm->_pressingMouth) {
+			invMan.drawPanelFoodWaterPoisoned();
+		} else if (_vm->_pressingEye) {
+			if (_leaderEmptyHanded) {
+				warning("MISSING CODE: F0351_INVENTORY_DrawChampionSkillsAndStatistics");
+			}
+		} else {
+			invMan.drawPanel();
+		}
+		champAttributes |= kChampionAttributeViewport;
+	}
+
+	if (champAttributes & kChampionAttributeActionHand) {
+		warning("MISSING CODE: F0291_CHAMPION_DrawSlot");
+		menuMan.drawActionIcon(champIndex);
+		if (isInventoryChamp) {
+			champAttributes |= kChampionAttributeViewport;
+		}
+	}
+
+	if (champAttributes & kChampionAttributeViewport) {
+		warning("MISSGIN CODE: F0097_DUNGEONVIEW_DrawViewport");
+	}
+
+
+T0292042_green:
+	champ->setAttributeFlag((ChampionAttribute)(kChampionAttributeNameTitle | kChampionAttributeStatistics | kChampionAttributeLoad | kChampionAttributeIcon |
+												kChampionAttributePanel | kChampionAttributeStatusBox | kChampionAttributeWounds | kChampionAttributeViewport |
+												kChampionAttributeActionHand), false);
+	warning("MISSING CODE: F0078_MOUSE_ShowPointer");
+}
+
+	uint16 ChampionMan::championIconIndex(int16 val, direction dir)
+	{
+		return ((val + 4 - dir) & 0x3);
+	}
 }

@@ -35,6 +35,7 @@ void turnDirLeft(direction &dir);
 direction returnOppositeDir(direction dir);
 bool isOrientedWestEast(direction dir);
 
+
 enum ThingType {
 	kPartyThingType = -1, // @ CM1_THING_TYPE_PARTY, special value
 	kDoorThingType = 0,

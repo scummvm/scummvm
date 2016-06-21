@@ -401,6 +401,7 @@ public:
 	uint16 _actingChampionOrdinal; // @ G0506_ui_ActingChampionOrdinal
 	IconIndice _leaderHandObjectIconIndex; // @ G0413_i_LeaderHandObjectIconIndex
 	bool _leaderEmptyHanded; // @ G0415_B_LeaderEmptyHanded
+	Party _party; // @ G0407_s_Party
 
 	ChampionMan(DMEngine *vm);
 	void resetDataToStartGame(); // @ F0278_CHAMPION_ResetDataToStartGame
@@ -408,6 +409,8 @@ public:
 	void drawChampionBarGraphs(ChampionIndex champIndex); // @ F0287_CHAMPION_DrawBarGraphs
 	uint16 getStaminaAdjustedValue(Champion *champ, int16 val); // @ F0306_CHAMPION_GetStaminaAdjustedValue
 	uint16 getMaximumLoad(Champion *champ); // @ F0309_CHAMPION_GetMaximumLoad
+	void drawChampionState(ChampionIndex champIndex); // @ F0292_CHAMPION_DrawState
+	uint16 championIconIndex(int16 val, direction dir); // @ M26_CHAMPION_ICON_INDEX
 };
 
 
