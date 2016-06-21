@@ -1362,7 +1362,8 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 
 		uint16 *coordinateSetA = gWallOrnCoordSets[_currMapWallOrnInfo[wallOrnIndex][kNativeCoordinateSet]][viewWallIndex];
 		isAlcove = _vm->_dungeonMan->isWallOrnAnAlcove(wallOrnIndex);
-		if (isInscription = (wallOrnIndex == _vm->_dungeonMan->_currMapInscriptionWallOrnIndex)) {
+		isInscription = (wallOrnIndex == _vm->_dungeonMan->_currMapInscriptionWallOrnIndex);
+		if (isInscription) {
 			_vm->_dungeonMan->decodeText((char*)inscriptionString, _inscriptionThing, kTextTypeInscription);
 		}
 
@@ -1416,7 +1417,8 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 			coordinateSetOffset = 0;
 			uint16 *coordSetB;
 			int16 wallOrnCoordSetIndex = _currMapWallOrnInfo[wallOrnIndex][kNativeCoordinateSet];
-			if (flipHorizontal = (viewWallIndex == kViewWall_D2R_LEFT) || (viewWallIndex == kViewWall_D3R_LEFT)) {
+			flipHorizontal = (viewWallIndex == kViewWall_D2R_LEFT) || (viewWallIndex == kViewWall_D3R_LEFT);
+			if (flipHorizontal) {
 				coordSetB = gWallOrnCoordSets[wallOrnCoordSetIndex][kViewWall_D1R_LEFT];
 			} else if ((viewWallIndex == kViewWall_D2L_RIGHT) || (viewWallIndex == kViewWall_D3L_RIGHT)) {
 				coordSetB = gWallOrnCoordSets[wallOrnCoordSetIndex][kViewWall_D1L_RIGHT];
