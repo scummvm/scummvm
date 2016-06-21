@@ -13,7 +13,7 @@ enum ViewCell {
 	kViewCellBackRight = 2, // @ C02_VIEW_CELL_BACK_RIGHT
 	kViewCellBackLeft = 3, // @ C03_VIEW_CELL_BACK_LEFT
 	kViewCellAlcove = 4, // @ C04_VIEW_CELL_ALCOVE
-	kViewCellDoorButtonOrWallOrn = 5, // @ C05_VIEW_CELL_DOOR_BUTTON_OR_WALL_ORNAMENT
+	kViewCellDoorButtonOrWallOrn = 5 // @ C05_VIEW_CELL_DOOR_BUTTON_OR_WALL_ORNAMENT
 };
 
 enum GraphicIndice {

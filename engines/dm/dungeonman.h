@@ -47,7 +47,7 @@ extern ObjectInfo gObjectInfo[180];
 				
 enum ArmourAttribute {
 	kArmourAttributeIsAShield = 0x0080, // @ MASK0x0080_IS_A_SHIELD
-	kArmourAttributeSharpDefense = 0x0007, // @ MASK0x0007_SHARP_DEFENSE
+	kArmourAttributeSharpDefense = 0x0007 // @ MASK0x0007_SHARP_DEFENSE
 };
 
 class ArmourInfo {
@@ -476,9 +476,9 @@ public:
 	Square &set(SquareMask mask) { _data |= mask; return *this; }
 	byte get(SquareMask mask) { return _data & mask; }
 	byte getDoorState() { return _data & 0x7; } // @ M36_DOOR_STATE
-	Square &setDoorState(byte state) { _data = ((_data & ~0x7) | state); } // @ M37_SET_DOOR_STATE
+	void setDoorState(byte state) { _data = ((_data & ~0x7) | state); } // @ M37_SET_DOOR_STATE
 	SquareType getType() { return (SquareType)(_data >> 5); } // @ M34_SQUARE_TYPE
-	Square &setType(SquareType type) { _data = (_data & 0x1F) | type << 5; return *this; }
+	void setType(SquareType type) { _data = (_data & 0x1F) | type << 5; }
 	byte toByte() { return _data; } // I don't like 'em casts
 };
 
