@@ -151,12 +151,13 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & st
 		}
 		pos += blank;
 	}
-	uint16 edge = _bitWidth & 3;
-	uint16 bits = 0;
-	uint16 val = 0;
-	uint16 v;
+
+	uint16 edge = _bitWidth & 3;	
 	if (edge) {
 		pos = _rowBytes - blank;
+		uint16 bits = 0;
+		uint16 val = 0;
+		uint16 v;
 		for (uint y = 0; y < _bitHeight; y++) {
 			if (flags & 1) {
 				if (bits < edge) {
@@ -182,6 +183,7 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & st
 	if (flags & 8) {
 		pos = 0;
 		for (uint y = 0; y < _bitHeight; y++) {
+			uint16 v = 0;
 			if (flags & 2) {
 				for (uint x = 0; x < _rowBytes; x++)
 				{
@@ -192,7 +194,7 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & st
 			}
 			else {
 				for (uint x = 0; x < _rowBytes; x++) {
-					val = _data[pos] ^ v;
+					uint16 val = _data[pos] ^ v;
 					val ^= (val >> 4) & 0xf;
 					_data[pos] = val;
 					pos++;
