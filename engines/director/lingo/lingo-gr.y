@@ -74,10 +74,10 @@ using namespace Director;
 %token<f> FLOAT
 %token<s> VAR STRING
 %token tIF tELSE tEND tFRAME tGO tINTO tLOOP tMCI tMCIWAIT tMOVIE tNEXT tOF tPREVIOUS
-%token tPUT tSET tTHEN tTO
+%token tPUT tREPEAT tSET tTHEN tTO tWHILE
 %token tGE tLE tGT tLT tEQ tNEQ
 
-%type<code> asgn cond expr if end stmtlist
+%type<code> asgn cond expr if end stmtlist while
 %type<s> gotoframe gotomovie
 
 %right '='
@@ -120,6 +120,31 @@ stmt: expr 				{ g_lingo->code1(g_lingo->c_xpop); }
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
 		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
 		(*g_lingo->_currentScript)[$1 + 3] = end; }	/* end, if cond fails */
+	// repeat while (expression = TRUE)
+	//   statements
+	// end repeat
+	//
+	| while '(' cond ')' stmtlist end tEND tREPEAT {
+		inst body, end;
+		WRITE_LE_UINT32(&body, $5);
+		WRITE_LE_UINT32(&end, $6);
+		(*g_lingo->_currentScript)[$1 + 1] = body;	/* body of loop */
+		(*g_lingo->_currentScript)[$1 + 2] = end; }	/* end, if cond fails */
+	;
+
+cond:	   expr 				{ g_lingo->code1(STOP); }
+	| expr '=' expr				{ g_lingo->code2(g_lingo->c_eq, STOP); }
+	| '(' cond ')'
+	;
+while:	tREPEAT tWHILE		{ $$ = g_lingo->code3(g_lingo->c_whilecode, STOP, STOP); }
+	;
+if:	  tIF	{ $$ = g_lingo->code1(g_lingo->c_ifcode); g_lingo->code3(STOP, STOP, STOP); }
+	;
+end:	  /* nothing */		{ g_lingo->code1(STOP); $$ = g_lingo->_currentScript->size(); }
+	;
+stmtlist: /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
+	| stmtlist '\n'
+	| stmtlist stmt
 	;
 
 expr: INT						{ g_lingo->code1(g_lingo->c_constpush); inst i; WRITE_LE_UINT32(&i, $1); $$ = g_lingo->code1(i); };
@@ -137,19 +162,6 @@ expr: INT						{ g_lingo->code1(g_lingo->c_constpush); inst i; WRITE_LE_UINT32(&
 	| '+' expr  %prec UNARY		{ $$ = $2; }
 	| '-' expr  %prec UNARY		{ $$ = $2; g_lingo->code1(g_lingo->c_negate); }
 	| '(' expr ')'				{ $$ = $2; }
-	;
-
-cond:	   expr 				{ g_lingo->code1(STOP); }
-	| expr '=' expr				{ g_lingo->code2(g_lingo->c_eq, STOP); }
-	| '(' cond ')'
-	;
-if:	  tIF	{ $$ = g_lingo->code1(g_lingo->c_ifcode); g_lingo->code3(STOP,STOP,STOP); }
-	;
-end:	  /* nothing */		{ g_lingo->code1(STOP); $$ = g_lingo->_currentScript->size(); }
-	;
-stmtlist: /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
-	| stmtlist '\n'
-	| stmtlist stmt
 	;
 
 func: tMCI STRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c_str()); delete $2; }
@@ -185,10 +197,6 @@ gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
 	| tTO tMOVIE STRING			{ $$ = $3; }
 	;
 
-// repeat while (expression = TRUE)
-//   statements
-// end repeat
-//
 // repeat with index = start to end
 //   statements
 // end repeat

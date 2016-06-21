@@ -132,6 +132,7 @@ public:
 	static void c_assign();
 	bool verify(Symbol *s);
 	static void c_eval();
+	static void c_whilecode();
 	static void c_ifcode();
 	static void c_eq();
 	static void c_neq();

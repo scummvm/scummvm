@@ -247,14 +247,36 @@ void Lingo::c_le() {
 	g_lingo->push(d1);
 }
 
+void Lingo::c_whilecode(void) {
+	Datum d;
+	int savepc = g_lingo->_pc;
+
+	int body = READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc]);
+	int end =  READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
+
+	g_lingo->execute(savepc + 2);	/* condition */
+	d = g_lingo->pop();
+
+	while (d.val) {
+		g_lingo->execute(body);	/* body */
+		if (0 /* returning */)
+			break;
+
+		g_lingo->execute(savepc + 2);	/* condition */
+		d = g_lingo->pop();
+	}
+
+	//if (!returning)
+	g_lingo->_pc = end; /* next stmt */
+}
 
 void Lingo::c_ifcode() {
 	Datum d;
 	int savepc = g_lingo->_pc;	/* then part */
 
-	int then = READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc]);
+	int then =  READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc]);
 	int elsep = READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
-	int end = READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
+	int end =   READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
 
 	warning("cond: %d end: %d  then: %d elesp: %d", savepc + 3, end, then, elsep);
 

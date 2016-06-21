@@ -62,9 +62,11 @@ next			{ return tNEXT; }
 of				{ return tOF; }
 previous		{ return tPREVIOUS; }
 put				{ return tPUT; }
+repeat			{ return tREPEAT; }
 set				{ return tSET; }
 then			{ return tTHEN; }
 to				{ return tTO; }
+while			{ return tWHILE; }
 
 [!][=]			{ return tNEQ; }
 [>][=]			{ return tGE; }

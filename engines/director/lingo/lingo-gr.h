@@ -59,15 +59,17 @@
      tOF = 275,
      tPREVIOUS = 276,
      tPUT = 277,
-     tSET = 278,
-     tTHEN = 279,
-     tTO = 280,
-     tGE = 281,
-     tLE = 282,
-     tGT = 283,
-     tLT = 284,
-     tEQ = 285,
-     tNEQ = 286
+     tREPEAT = 278,
+     tSET = 279,
+     tTHEN = 280,
+     tTO = 281,
+     tWHILE = 282,
+     tGE = 283,
+     tLE = 284,
+     tGT = 285,
+     tLT = 286,
+     tEQ = 287,
+     tNEQ = 288
    };
 #endif
 /* Tokens.  */
@@ -91,15 +93,17 @@
 #define tOF 275
 #define tPREVIOUS 276
 #define tPUT 277
-#define tSET 278
-#define tTHEN 279
-#define tTO 280
-#define tGE 281
-#define tLE 282
-#define tGT 283
-#define tLT 284
-#define tEQ 285
-#define tNEQ 286
+#define tREPEAT 278
+#define tSET 279
+#define tTHEN 280
+#define tTO 281
+#define tWHILE 282
+#define tGE 283
+#define tLE 284
+#define tGT 285
+#define tLT 286
+#define tEQ 287
+#define tNEQ 288
 
 
 
@@ -114,7 +118,7 @@ typedef union YYSTYPE
 	int code;
 }
 /* Line 1529 of yacc.c.  */
-#line 118 "engines/director/lingo/lingo-gr.hpp"
+#line 122 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
