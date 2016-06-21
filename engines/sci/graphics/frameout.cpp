@@ -69,14 +69,12 @@ static int16 unknownCDefaults[2][16] = {
 	/* SCI2.1mid+ */   { 0,  2,  2,  3,  3,  4,  4,  5,  5,  6,  6,  0,  0,   7,   7, 0 }
 };
 
-GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxCache *cache, GfxScreen *screen, GfxPalette32 *palette, GfxPaint32 *paint32) :
+GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette32 *palette) :
 	_isHiRes(false),
-	_cache(cache),
 	_palette(palette),
 	_resMan(resMan),
 	_screen(screen),
 	_segMan(segMan),
-	_paint32(paint32),
 	_benchmarkingFinished(false),
 	_throttleFrameOut(true),
 	_showStyles(nullptr),

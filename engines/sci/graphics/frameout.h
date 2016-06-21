@@ -149,10 +149,7 @@ struct ShowStyleEntry {
 typedef Common::Array<DrawList> ScreenItemListList;
 typedef Common::Array<RectList> EraseListList;
 
-class GfxCache;
 class GfxCoordAdjuster32;
-class GfxPaint32;
-class GfxPalette;
 class GfxScreen;
 
 /**
@@ -162,16 +159,14 @@ class GfxScreen;
 class GfxFrameout {
 private:
 	bool _isHiRes;
-	GfxCache *_cache;
 	GfxCoordAdjuster32 *_coordAdjuster;
 	GfxPalette32 *_palette;
 	ResourceManager *_resMan;
 	GfxScreen *_screen;
 	SegManager *_segMan;
-	GfxPaint32 *_paint32;
 
 public:
-	GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxCache *cache, GfxScreen *screen, GfxPalette32 *palette, GfxPaint32 *paint32);
+	GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette32 *palette);
 	~GfxFrameout();
 
 	void clear();
