@@ -144,4 +144,33 @@ void InventoryMan::drawPanelResurrectReincarnate() {
 	_vm->_displayMan->blitToScreen(_vm->_displayMan->getBitmap(kPanelResurectReincaranteIndice), 144, 0, 0, gBoxPanel, kColorDarkGreen, gDungeonViewport);
 }
 
+void InventoryMan::drawPanel() {
+	warning("MISSING CODE: F0334_INVENTORY_CloseChest, altho adding it may reintroduce BUG0_48");
+
+	ChampionMan &cm = *_vm->_championMan;
+	if (cm._candidateChampionOrdinal) {
+		drawPanelResurrectReincarnate();
+		return;
+	}
+
+	Thing thing = cm._champions[ordinalToIndex(_inventoryChampionOrdinal)].getSlot(kChampionSlotActionHand);
+
+	_panelContent = kPanelContentFoodWaterPoisoned;
+	switch (thing.getType()) {
+	case kContainerThingType:
+		_panelContent = kPanelContentChest;
+		break;
+	case kScrollThingType:
+		_panelContent = kPanelContentScroll;
+		break;
+	default:
+		thing = Thing::_thingNone;
+		break;
+	}
+	if (thing == Thing::_thingNone) {
+		drawPanelFoodWaterPoisoned();
+	} else {
+		warning("MISSING CODE: F0342_INVENTORY_DrawPanel_Object(L1075_T_Thing, C0_FALSE);");
+	}
+}
 }
