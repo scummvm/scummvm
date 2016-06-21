@@ -383,9 +383,9 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 	dispMan._useByteBoxCoordinates = false;
 	if (champAttributes & kChampionAttributeStatusBox) {
 		box._y1 = 0;
-		box._y2 = 28;
+		box._y2 = 28 + 1;
 		box._x1 = champStatusBoxX;
-		box._x2 = box._x1 + 66;
+		box._x2 = box._x1 + 66 + 1;
 		if (champ->_currHealth) {
 			dispMan.clearScreenBox(kColorDarkestGray, box);
 			int16 nativeBitmapIndices[3];
@@ -432,9 +432,9 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 			champAttributes |= kChampionAttributeViewport;
 		} else {
 			box._y1 = 0;
-			box._y2 = 6;
+			box._y2 = 6 + 1;
 			box._x1 = champStatusBoxX;
-			box._x2 = box._x1 + 42;
+			box._x2 = box._x1 + 42 + 1;
 			dispMan.clearScreenBox(kColorDarkGary, box);
 			warning("MISSING CODE: F0053_TEXT_PrintToLogicalScreen");
 		}
