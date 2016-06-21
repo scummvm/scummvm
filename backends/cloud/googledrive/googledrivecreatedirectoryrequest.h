@@ -49,7 +49,7 @@ class GoogleDriveCreateDirectoryRequest: public Networking::Request {
 	void idResolveFailedCallback(Networking::ErrorResponse error);
 	void createdDirectoryCallback(Storage::BoolResponse response);
 	void createdDirectoryErrorCallback(Networking::ErrorResponse error);
-	void finishSuccess(bool success);
+	void finishCreation(bool success);
 public:
 	GoogleDriveCreateDirectoryRequest(GoogleDriveStorage *storage, Common::String parentPath, Common::String directoryName, Storage::BoolCallback cb, Networking::ErrorCallback ecb);
 	virtual ~GoogleDriveCreateDirectoryRequest();

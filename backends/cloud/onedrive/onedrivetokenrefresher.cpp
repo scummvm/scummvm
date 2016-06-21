@@ -56,10 +56,10 @@ void OneDriveTokenRefresher::tokenRefreshed(Storage::BoolResponse response) {
 	retry(0);
 }
 
-void OneDriveTokenRefresher::finishSuccess(Common::JSONValue *json) {
+void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 	if (!json) {
 		//that's probably not an error (200 OK)
-		CurlJsonRequest::finishSuccess(nullptr);
+		CurlJsonRequest::finishJson(nullptr);
 		return;
 	}
 
@@ -105,7 +105,7 @@ void OneDriveTokenRefresher::finishSuccess(Common::JSONValue *json) {
 	}
 
 	//notify user of success
-	CurlJsonRequest::finishSuccess(json);
+	CurlJsonRequest::finishJson(json);
 }
 
 void OneDriveTokenRefresher::setHeaders(Common::Array<Common::String> &headers) {	

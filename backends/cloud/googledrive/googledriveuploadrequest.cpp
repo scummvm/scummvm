@@ -279,14 +279,14 @@ void GoogleDriveUploadRequest::partUploadedCallback(Networking::JsonResponse res
 					timestamp = ISO8601::convertToTimestamp(object.getVal("modifiedTime")->asString());
 
 				//as we list directory by id, we can't determine full path for the file, so we leave it empty
-				finishSuccess(StorageFile(id, _savePath, name, size, timestamp, isDirectory));
+				finishUpload(StorageFile(id, _savePath, name, size, timestamp, isDirectory));
 				return;
 			}
 		}
 
 		if (_contentsStream->eos() || _contentsStream->pos() >= _contentsStream->size() - 1) {
 			warning("no file info to return");
-			finishSuccess(StorageFile(_savePath, 0, 0, false));
+			finishUpload(StorageFile(_savePath, 0, 0, false));
 		} else {
 			uploadNextPart();
 		}
@@ -320,7 +320,7 @@ void GoogleDriveUploadRequest::handle() {}
 
 void GoogleDriveUploadRequest::restart() { start(); }
 
-void GoogleDriveUploadRequest::finishSuccess(StorageFile file) {
+void GoogleDriveUploadRequest::finishUpload(StorageFile file) {
 	Request::finishSuccess();
 	if (_uploadCallback) (*_uploadCallback)(Storage::UploadResponse(this, file));
 }

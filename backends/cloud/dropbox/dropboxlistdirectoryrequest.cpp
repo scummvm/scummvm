@@ -125,7 +125,7 @@ void DropboxListDirectoryRequest::responseCallback(Networking::JsonResponse resp
 
 			_workingRequest = ConnMan.addRequest(request);
 		} else {			
-			finishSuccess(_files);
+			finishListing(_files);
 		}		
 	} else {
 		warning("null, not json");
@@ -149,7 +149,7 @@ void DropboxListDirectoryRequest::restart() { start(); }
 
 Common::String DropboxListDirectoryRequest::date() const { return _date; }
 
-void DropboxListDirectoryRequest::finishSuccess(Common::Array<StorageFile> &files) {	
+void DropboxListDirectoryRequest::finishListing(Common::Array<StorageFile> &files) {	
 	Request::finishSuccess();
 	if (_listDirectoryCallback) (*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, files));
 }

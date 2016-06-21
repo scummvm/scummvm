@@ -56,10 +56,10 @@ void GoogleDriveTokenRefresher::tokenRefreshed(Storage::BoolResponse response) {
 	retry(0);
 }
 
-void GoogleDriveTokenRefresher::finishSuccess(Common::JSONValue *json) {
+void GoogleDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 	if (!json) {
 		//that's probably not an error (200 OK)
-		CurlJsonRequest::finishSuccess(nullptr);
+		CurlJsonRequest::finishJson(nullptr);
 		return;
 	}
 
@@ -101,7 +101,7 @@ void GoogleDriveTokenRefresher::finishSuccess(Common::JSONValue *json) {
 	}
 
 	//notify user of success
-	CurlJsonRequest::finishSuccess(json);
+	CurlJsonRequest::finishJson(json);
 }
 
 void GoogleDriveTokenRefresher::setHeaders(Common::Array<Common::String> &headers) {	

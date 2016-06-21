@@ -126,7 +126,7 @@ void OneDriveUploadRequest::partUploadedCallback(Networking::JsonResponse respon
 				Common::String path = _savePath; //object.getVal("name")->asString();; //object.getVal("id")->asString();
 				uint32 size = object.getVal("size")->asIntegerNumber();
 				uint32 timestamp = ISO8601::convertToTimestamp(object.getVal("lastModifiedDateTime")->asString());
-				finishSuccess(StorageFile(path, size, timestamp, false));
+				finishUpload(StorageFile(path, size, timestamp, false));
 				return;
 			}
 
@@ -140,7 +140,7 @@ void OneDriveUploadRequest::partUploadedCallback(Networking::JsonResponse respon
 
 		if (_contentsStream->eos() || _contentsStream->pos() >= _contentsStream->size() - 1) {
 			warning("no file info to return");
-			finishSuccess(StorageFile(_savePath, 0, 0, false));
+			finishUpload(StorageFile(_savePath, 0, 0, false));
 		} else {
 			uploadNextPart();
 		}
@@ -162,7 +162,7 @@ void OneDriveUploadRequest::handle() {}
 
 void OneDriveUploadRequest::restart() { start(); }
 
-void OneDriveUploadRequest::finishSuccess(StorageFile file) {
+void OneDriveUploadRequest::finishUpload(StorageFile file) {
 	Request::finishSuccess();
 	if (_uploadCallback) (*_uploadCallback)(Storage::UploadResponse(this, file));
 }

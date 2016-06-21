@@ -41,7 +41,7 @@ protected:
 	char *getPreparedContents();
 
 	/** Sets FINISHED state and passes the JSONValue * into user's callback in JsonResponse. */
-	virtual void finishSuccess(Common::JSONValue *json);
+	virtual void finishJson(Common::JSONValue *json);
 
 public:
 	CurlJsonRequest(JsonCallback cb, ErrorCallback ecb, Common::String url);

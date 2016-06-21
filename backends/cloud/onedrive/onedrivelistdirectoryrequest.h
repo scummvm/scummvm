@@ -50,7 +50,7 @@ class OneDriveListDirectoryRequest: public Networking::Request {
 	void listedDirectoryCallback(Networking::JsonResponse response);
 	void listedDirectoryErrorCallback(Networking::ErrorResponse error);
 	void makeRequest(Common::String url);
-	void finishSuccess(Common::Array<StorageFile> &files);
+	void finishListing(Common::Array<StorageFile> &files);
 public:
 	OneDriveListDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive = false);
 	virtual ~OneDriveListDirectoryRequest();

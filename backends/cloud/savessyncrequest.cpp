@@ -269,7 +269,7 @@ void SavesSyncRequest::fileDownloadedErrorCallback(Networking::ErrorResponse err
 
 void SavesSyncRequest::uploadNextFile() {
 	if (_filesToUpload.empty()) {
-		finishSuccess(true);
+		finishSync(true);
 		return;
 	}
 
@@ -361,7 +361,7 @@ void SavesSyncRequest::finishError(Networking::ErrorResponse error) {
 	Request::finishError(error);
 }
 
-void SavesSyncRequest::finishSuccess(bool success) {
+void SavesSyncRequest::finishSync(bool success) {
 	Request::finishSuccess();
 
 	//update last successful sync date

@@ -43,7 +43,7 @@ class OneDriveCreateDirectoryRequest: public Networking::Request {
 	void start();
 	void responseCallback(Networking::JsonResponse response);
 	void errorCallback(Networking::ErrorResponse error);
-	void finishSuccess(bool success);
+	void finishCreation(bool success);
 public:
 	OneDriveCreateDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::BoolCallback cb, Networking::ErrorCallback ecb);
 	virtual ~OneDriveCreateDirectoryRequest();

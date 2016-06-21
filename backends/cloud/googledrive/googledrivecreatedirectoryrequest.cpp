@@ -90,7 +90,7 @@ void GoogleDriveCreateDirectoryRequest::idResolvedCallback(Storage::UploadRespon
 	if (response.request) _date = response.request->date();
 
 	//resolved => folder already exists
-	finishSuccess(false);
+	finishCreation(false);
 }
 
 void GoogleDriveCreateDirectoryRequest::idResolveFailedCallback(Networking::ErrorResponse error) {
@@ -121,7 +121,7 @@ void GoogleDriveCreateDirectoryRequest::createdDirectoryCallback(Storage::BoolRe
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 	if (response.request) _date = response.request->date();
-	finishSuccess(response.value);
+	finishCreation(response.value);
 }
 
 void GoogleDriveCreateDirectoryRequest::createdDirectoryErrorCallback(Networking::ErrorResponse error) {
@@ -137,7 +137,7 @@ void GoogleDriveCreateDirectoryRequest::restart() { start(); }
 
 Common::String GoogleDriveCreateDirectoryRequest::date() const { return _date; }
 
-void GoogleDriveCreateDirectoryRequest::finishSuccess(bool success) {
+void GoogleDriveCreateDirectoryRequest::finishCreation(bool success) {
 	Request::finishSuccess();
 	if (_boolCallback) (*_boolCallback)(Storage::BoolResponse(this, success));
 }

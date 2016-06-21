@@ -45,7 +45,7 @@ class DropboxListDirectoryRequest: public Networking::Request {
 	void start();
 	void responseCallback(Networking::JsonResponse response);
 	void errorCallback(Networking::ErrorResponse error);
-	void finishSuccess(Common::Array<StorageFile> &files);
+	void finishListing(Common::Array<StorageFile> &files);
 public:
 	DropboxListDirectoryRequest(Common::String token, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive = false);
 	virtual ~DropboxListDirectoryRequest();

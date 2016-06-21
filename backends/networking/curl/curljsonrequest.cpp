@@ -71,10 +71,10 @@ void CurlJsonRequest::handle() {
 			char *contents = getPreparedContents();
 			Common::JSONValue *json = Common::JSON::parse(contents);
 			if (json) {
-				finishSuccess(json); //it's JSON even if's not 200 OK? That's fine!..
+				finishJson(json); //it's JSON even if's not 200 OK? That's fine!..
 			} else {
 				if (_stream->httpResponseCode() == 200) //no JSON, but 200 OK? That's fine!..
-					finishSuccess(nullptr);
+					finishJson(nullptr);
 				else
 					finishError(ErrorResponse(this, false, true, contents, _stream->httpResponseCode()));
 			}
@@ -89,7 +89,7 @@ void CurlJsonRequest::restart() {
 	//with no stream available next handle() will create another one
 }
 
-void CurlJsonRequest::finishSuccess(Common::JSONValue *json) {
+void CurlJsonRequest::finishJson(Common::JSONValue *json) {
 	Request::finishSuccess();
 	if (_jsonCallback) (*_jsonCallback)(JsonResponse(this, json)); //potential memory leak, free it in your callbacks!
 	else delete json;

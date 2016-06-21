@@ -148,7 +148,7 @@ void DropboxUploadRequest::partUploadedCallback(Networking::JsonResponse respons
 				Common::String path = object.getVal("path_lower")->asString();
 				uint32 size = object.getVal("size")->asIntegerNumber();
 				uint32 timestamp = ISO8601::convertToTimestamp(object.getVal("server_modified")->asString());
-				finishSuccess(StorageFile(path, size, timestamp, false));
+				finishUpload(StorageFile(path, size, timestamp, false));
 				return;
 			}
 
@@ -163,7 +163,7 @@ void DropboxUploadRequest::partUploadedCallback(Networking::JsonResponse respons
 
 		if (!needsFinishRequest && (_contentsStream->eos() || _contentsStream->pos() >= _contentsStream->size() - 1)) {			
 			warning("no file info to return");
-			finishSuccess(StorageFile(_savePath, 0, 0, false));
+			finishUpload(StorageFile(_savePath, 0, 0, false));
 		} else {
 			uploadNextPart();
 		}
@@ -186,7 +186,7 @@ void DropboxUploadRequest::handle() {}
 
 void DropboxUploadRequest::restart() { start(); }
 
-void DropboxUploadRequest::finishSuccess(StorageFile file) {
+void DropboxUploadRequest::finishUpload(StorageFile file) {
 	Request::finishSuccess();
 	if (_uploadCallback) (*_uploadCallback)(Storage::UploadResponse(this, file));
 }

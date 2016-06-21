@@ -101,7 +101,7 @@ void OneDriveCreateDirectoryRequest::responseCallback(Networking::JsonResponse r
 	}
 	
 	Common::JSONObject info = json->asObject();
-	if (info.contains("id")) finishSuccess(true);
+	if (info.contains("id")) finishCreation(true);
 	else {
 		error.response = json->stringify(true);
 		finishError(error);
@@ -123,7 +123,7 @@ void OneDriveCreateDirectoryRequest::restart() { start(); }
 
 Common::String OneDriveCreateDirectoryRequest::date() const { return _date; }
 
-void OneDriveCreateDirectoryRequest::finishSuccess(bool success) {
+void OneDriveCreateDirectoryRequest::finishCreation(bool success) {
 	Request::finishSuccess();
 	if (_boolCallback) (*_boolCallback)(Storage::BoolResponse(this, success));
 }

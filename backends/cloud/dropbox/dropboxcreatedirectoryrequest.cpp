@@ -82,7 +82,7 @@ void DropboxCreateDirectoryRequest::responseCallback(Networking::JsonResponse re
 	}
 	
 	Common::JSONObject info = json->asObject();
-	if (info.contains("id")) finishSuccess(true);
+	if (info.contains("id")) finishCreation(true);
 	else {
 		error.response = json->stringify(true);
 		finishError(error);
@@ -104,7 +104,7 @@ void DropboxCreateDirectoryRequest::restart() { start(); }
 
 Common::String DropboxCreateDirectoryRequest::date() const { return _date; }
 
-void DropboxCreateDirectoryRequest::finishSuccess(bool success) {
+void DropboxCreateDirectoryRequest::finishCreation(bool success) {
 	Request::finishSuccess();
 	if (_boolCallback) (*_boolCallback)(Storage::BoolResponse(this, success));
 }

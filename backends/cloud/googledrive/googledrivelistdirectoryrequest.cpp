@@ -75,7 +75,7 @@ void GoogleDriveListDirectoryRequest::idResolveErrorCallback(Networking::ErrorRe
 
 void GoogleDriveListDirectoryRequest::listNextDirectory() {
 	if (_directoriesQueue.empty()) {
-		finishSuccess(_files);
+		finishListing(_files);
 		return;
 	}
 
@@ -120,7 +120,7 @@ void GoogleDriveListDirectoryRequest::restart() { start(); }
 
 Common::String GoogleDriveListDirectoryRequest::date() const { return _date; }
 
-void GoogleDriveListDirectoryRequest::finishSuccess(Common::Array<StorageFile> &files) {
+void GoogleDriveListDirectoryRequest::finishListing(Common::Array<StorageFile> &files) {
 	Request::finishSuccess();
 	if (_listDirectoryCallback) (*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, files));
 }

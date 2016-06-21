@@ -51,7 +51,7 @@ class GoogleDriveListDirectoryRequest: public Networking::Request {
 	void listNextDirectory();
 	void listedDirectoryCallback(Storage::FileArrayResponse response);
 	void listedDirectoryErrorCallback(Networking::ErrorResponse error);
-	void finishSuccess(Common::Array<StorageFile> &files);
+	void finishListing(Common::Array<StorageFile> &files);
 public:
 	GoogleDriveListDirectoryRequest(GoogleDriveStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive = false);
 	virtual ~GoogleDriveListDirectoryRequest();

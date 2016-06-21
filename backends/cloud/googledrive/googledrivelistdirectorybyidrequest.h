@@ -47,7 +47,7 @@ class GoogleDriveListDirectoryByIdRequest: public Networking::Request {
 	void makeRequest(Common::String pageToken);
 	void responseCallback(Networking::JsonResponse response);
 	void errorCallback(Networking::ErrorResponse error);
-	void finishSuccess(Common::Array<StorageFile> &files);
+	void finishListing(Common::Array<StorageFile> &files);
 public:
 	GoogleDriveListDirectoryByIdRequest(GoogleDriveStorage *storage, Common::String id, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb);
 	virtual ~GoogleDriveListDirectoryByIdRequest();

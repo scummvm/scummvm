@@ -44,7 +44,7 @@ class GoogleDriveDownloadRequest: public Networking::Request {
 	void idResolveFailedCallback(Networking::ErrorResponse error);
 	void downloadCallback(Storage::BoolResponse response);
 	void downloadErrorCallback(Networking::ErrorResponse error);
-	void finishSuccess(bool success);
+	void finishDownload(bool success);
 public:
 	GoogleDriveDownloadRequest(GoogleDriveStorage *storage, Common::String remotePath, Common::String localPath, Storage::BoolCallback cb, Networking::ErrorCallback ecb);
 	virtual ~GoogleDriveDownloadRequest();

@@ -60,7 +60,7 @@ void OneDriveListDirectoryRequest::start() {
 
 void OneDriveListDirectoryRequest::listNextDirectory() {
 	if (_directoriesQueue.empty()) {
-		finishSuccess(_files);
+		finishListing(_files);
 		return;
 	}
 
@@ -150,7 +150,7 @@ void OneDriveListDirectoryRequest::restart() { start(); }
 
 Common::String OneDriveListDirectoryRequest::date() const { return _date; }
 
-void OneDriveListDirectoryRequest::finishSuccess(Common::Array<StorageFile> &files) {
+void OneDriveListDirectoryRequest::finishListing(Common::Array<StorageFile> &files) {
 	Request::finishSuccess();
 	if (_listDirectoryCallback) (*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, files));
 }

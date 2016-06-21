@@ -44,7 +44,7 @@ class DropboxUploadRequest: public Networking::Request {
 	void uploadNextPart();
 	void partUploadedCallback(Networking::JsonResponse response);
 	void partUploadedErrorCallback(Networking::ErrorResponse error);
-	void finishSuccess(StorageFile status);
+	void finishUpload(StorageFile status);
 
 public:
 	DropboxUploadRequest(Common::String token, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb);

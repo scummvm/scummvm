@@ -101,7 +101,7 @@ void DownloadRequest::handle() {
 			//TODO: do something about it actually			
 		}
 
-		finishSuccess(_remoteFileStream->httpResponseCode() == 200);
+		finishDownload(_remoteFileStream->httpResponseCode() == 200);
 
 		_localFile->close(); //yes, I know it's closed automatically in ~DumpFile()		
 	}
@@ -113,7 +113,7 @@ void DownloadRequest::restart() {
 	//start();
 }
 
-void DownloadRequest::finishSuccess(bool success) {
+void DownloadRequest::finishDownload(bool success) {
 	Request::finishSuccess();
 	if (_boolCallback) (*_boolCallback)(Storage::BoolResponse(this, success));
 }

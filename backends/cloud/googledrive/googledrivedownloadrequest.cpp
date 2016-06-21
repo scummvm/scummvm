@@ -69,7 +69,7 @@ void GoogleDriveDownloadRequest::idResolveFailedCallback(Networking::ErrorRespon
 void GoogleDriveDownloadRequest::downloadCallback(Storage::BoolResponse response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
-	finishSuccess(response.value);
+	finishDownload(response.value);
 }
 
 void GoogleDriveDownloadRequest::downloadErrorCallback(Networking::ErrorResponse error) {
@@ -82,7 +82,7 @@ void GoogleDriveDownloadRequest::handle() {}
 
 void GoogleDriveDownloadRequest::restart() { start(); }
 
-void GoogleDriveDownloadRequest::finishSuccess(bool success) {
+void GoogleDriveDownloadRequest::finishDownload(bool success) {
 	Request::finishSuccess();
 	if (_boolCallback) (*_boolCallback)(Storage::BoolResponse(this, success));
 }

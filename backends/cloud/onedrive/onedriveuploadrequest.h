@@ -45,7 +45,7 @@ class OneDriveUploadRequest: public Networking::Request {
 	void uploadNextPart();
 	void partUploadedCallback(Networking::JsonResponse response);
 	void partUploadedErrorCallback(Networking::ErrorResponse error);
-	void finishSuccess(StorageFile status);
+	void finishUpload(StorageFile status);
 
 public:
 	OneDriveUploadRequest(OneDriveStorage *storage, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb);

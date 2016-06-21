@@ -83,7 +83,7 @@ void FolderDownloadRequest::fileDownloadedErrorCallback(Networking::ErrorRespons
 void FolderDownloadRequest::downloadNextFile() {
 	do {
 		if (_files.empty()) {
-			finishSuccess(_failedFiles);
+			finishDownload(_failedFiles);
 			return;
 		}
 	
@@ -120,7 +120,7 @@ void FolderDownloadRequest::handle() {}
 
 void FolderDownloadRequest::restart() { start(); }
 
-void FolderDownloadRequest::finishSuccess(Common::Array<StorageFile> &files) {
+void FolderDownloadRequest::finishDownload(Common::Array<StorageFile> &files) {
 	Request::finishSuccess();
 	if (_fileArrayCallback) (*_fileArrayCallback)(Storage::FileArrayResponse(this, files));
 }

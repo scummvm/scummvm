@@ -42,7 +42,7 @@ class DownloadRequest: public Networking::Request {
 	void start();
 	void streamCallback(Networking::NetworkReadStreamResponse response);
 	void streamErrorCallback(Networking::ErrorResponse error);
-	void finishSuccess(bool success);
+	void finishDownload(bool success);
 	virtual void finishError(Networking::ErrorResponse error);
 
 public:
