@@ -163,7 +163,7 @@ enum WallSetIndices {
 	kWall_D0L_Native = 21,
 	kWall_D1LCR_Native = 22,
 	kWall_D2LCR_Native = 23,
-	kWall_D3LCR_Native = 24,
+	kWall_D3LCR_Native = 24
 };
 
 
@@ -916,7 +916,7 @@ void DisplayMan::drawSquareD2L(direction dir, int16 posX, int16 posY) {
 		}
 		break;
 	case kStairsSideElemType:
-		drawFloorPitOrStairsBitmap(kStairsNativeIndex_Side_D2L, gFrameWalls[kFrameStairsSide_D2L]);
+		drawFloorPitOrStairsBitmap(kStairsNativeIndex_Side_D2L, gStairFrames[kFrameStairsSide_D2L]);
 		break;
 	}
 }
