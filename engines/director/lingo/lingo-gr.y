@@ -73,11 +73,11 @@ using namespace Director;
 %token<i> INT
 %token<f> FLOAT
 %token<s> VAR STRING
-%token tIF tELSE tEND tFRAME tGO tINTO tLOOP tMCI tMCIWAIT tMOVIE tNEXT tOF tPREVIOUS
-%token tPUT tREPEAT tSET tTHEN tTO tWHILE
+%token tDOWN tELSE tEND tFRAME tGO tIF tINTO tLOOP tMCI tMCIWAIT tMOVIE tNEXT
+%token tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWITH tWHILE
 %token tGE tLE tGT tLT tEQ tNEQ
 
-%type<code> asgn cond expr if end stmtlist while
+%type<code> asgn cond end expr if repeatwhile repeatwith stmtlist
 %type<s> gotoframe gotomovie
 
 %right '='
@@ -125,19 +125,44 @@ stmt: expr 				{ g_lingo->code1(g_lingo->c_xpop); }
 	//   statements
 	// end repeat
 	//
-	| while '(' cond ')' stmtlist end tEND tREPEAT {
+	| repeatwhile '(' cond ')' stmtlist end tEND tREPEAT {
 		inst body, end;
 		WRITE_LE_UINT32(&body, $5);
 		WRITE_LE_UINT32(&end, $6);
 		(*g_lingo->_currentScript)[$1 + 1] = body;	/* body of loop */
 		(*g_lingo->_currentScript)[$1 + 2] = end; }	/* end, if cond fails */
 	;
+	// repeat with index = start to end
+	//   statements
+	// end repeat
+	//
+	// repeat with index = high down to low
+	//   statements
+	// end repeat
+	//
+	| repeatwith '=' expr tTO expr stmtlist end tEND tREPEAT {
+		inst init, finish, body, end;
+		WRITE_LE_UINT32(&init, $3);
+		WRITE_LE_UINT32(&finish, $5);
+		WRITE_LE_UINT32(&body, $6);
+		WRITE_LE_UINT32(&end, $7);
+		(*g_lingo->_currentScript)[$1 + 1] = init;	/* initial count value */
+		(*g_lingo->_currentScript)[$1 + 2] = finish;/* final count value */
+		(*g_lingo->_currentScript)[$1 + 3] = body;	/* body of loop */
+		(*g_lingo->_currentScript)[$1 + 4] = end; }	/* end, if cond fails */
+	;
 
 cond:	   expr 				{ g_lingo->code1(STOP); }
 	| expr '=' expr				{ g_lingo->code2(g_lingo->c_eq, STOP); }
 	| '(' cond ')'
 	;
-while:	tREPEAT tWHILE		{ $$ = g_lingo->code3(g_lingo->c_whilecode, STOP, STOP); }
+repeatwhile:	tREPEAT tWHILE		{ $$ = g_lingo->code3(g_lingo->c_repeatwhilecode, STOP, STOP); }
+	;
+repeatwith:		tREPEAT tWITH VAR	{
+		$$ = g_lingo->code3(g_lingo->c_repeatwithcode, STOP, STOP);
+		g_lingo->code2(STOP, STOP);
+		g_lingo->codeString($3->c_str());
+		delete $3; }
 	;
 if:	  tIF	{ $$ = g_lingo->code1(g_lingo->c_ifcode); g_lingo->code3(STOP, STOP, STOP); }
 	;
@@ -197,15 +222,6 @@ gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
 	| tMOVIE STRING				{ $$ = $2; }
 	| tTO tMOVIE STRING			{ $$ = $3; }
 	;
-
-// repeat with index = start to end
-//   statements
-// end repeat
-//
-// repeat with index = high down to low
-//   statements
-// end repeat
-//
 
 // macro
 //

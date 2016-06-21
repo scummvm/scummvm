@@ -48,6 +48,7 @@ whitespace [\t ]
 ^{whitespace}
 [\t]+			{ return ' '; }
 
+down			{ return tDOWN; }
 if				{ return tIF; }
 else			{ return tELSE; }
 end				{ return tEND; }
@@ -66,6 +67,7 @@ repeat			{ return tREPEAT; }
 set				{ return tSET; }
 then			{ return tTHEN; }
 to				{ return tTO; }
+with			{ return tWITH; }
 while			{ return tWHILE; }
 
 [!][=]			{ return tNEQ; }

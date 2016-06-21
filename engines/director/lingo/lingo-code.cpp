@@ -247,7 +247,7 @@ void Lingo::c_le() {
 	g_lingo->push(d1);
 }
 
-void Lingo::c_whilecode(void) {
+void Lingo::c_repeatwhilecode(void) {
 	Datum d;
 	int savepc = g_lingo->_pc;
 
@@ -263,6 +263,32 @@ void Lingo::c_whilecode(void) {
 			break;
 
 		g_lingo->execute(savepc + 2);	/* condition */
+		d = g_lingo->pop();
+	}
+
+	//if (!returning)
+	g_lingo->_pc = end; /* next stmt */
+}
+
+void Lingo::c_repeatwithcode(void) {
+	Datum d;
+	int savepc = g_lingo->_pc;
+
+	int init = READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc]);
+	int finish =  READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
+	int body = READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 3]);
+	int end =  READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 4]);
+	Common::String counter((char *)&(*g_lingo->_currentScript)[savepc + 5]);
+
+	g_lingo->execute(init);	/* condition */
+	d = g_lingo->pop();
+
+	while (d.val) {
+		g_lingo->execute(body);	/* body */
+		if (0 /* returning */)
+			break;
+
+		g_lingo->execute(finish);	/* condition */
 		d = g_lingo->pop();
 	}
 

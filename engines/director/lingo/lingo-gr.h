@@ -45,31 +45,33 @@
      FLOAT = 261,
      VAR = 262,
      STRING = 263,
-     tIF = 264,
+     tDOWN = 264,
      tELSE = 265,
      tEND = 266,
      tFRAME = 267,
      tGO = 268,
-     tINTO = 269,
-     tLOOP = 270,
-     tMCI = 271,
-     tMCIWAIT = 272,
-     tMOVIE = 273,
-     tNEXT = 274,
-     tOF = 275,
-     tPREVIOUS = 276,
-     tPUT = 277,
-     tREPEAT = 278,
-     tSET = 279,
-     tTHEN = 280,
-     tTO = 281,
-     tWHILE = 282,
-     tGE = 283,
-     tLE = 284,
-     tGT = 285,
-     tLT = 286,
-     tEQ = 287,
-     tNEQ = 288
+     tIF = 269,
+     tINTO = 270,
+     tLOOP = 271,
+     tMCI = 272,
+     tMCIWAIT = 273,
+     tMOVIE = 274,
+     tNEXT = 275,
+     tOF = 276,
+     tPREVIOUS = 277,
+     tPUT = 278,
+     tREPEAT = 279,
+     tSET = 280,
+     tTHEN = 281,
+     tTO = 282,
+     tWITH = 283,
+     tWHILE = 284,
+     tGE = 285,
+     tLE = 286,
+     tGT = 287,
+     tLT = 288,
+     tEQ = 289,
+     tNEQ = 290
    };
 #endif
 /* Tokens.  */
@@ -79,31 +81,33 @@
 #define FLOAT 261
 #define VAR 262
 #define STRING 263
-#define tIF 264
+#define tDOWN 264
 #define tELSE 265
 #define tEND 266
 #define tFRAME 267
 #define tGO 268
-#define tINTO 269
-#define tLOOP 270
-#define tMCI 271
-#define tMCIWAIT 272
-#define tMOVIE 273
-#define tNEXT 274
-#define tOF 275
-#define tPREVIOUS 276
-#define tPUT 277
-#define tREPEAT 278
-#define tSET 279
-#define tTHEN 280
-#define tTO 281
-#define tWHILE 282
-#define tGE 283
-#define tLE 284
-#define tGT 285
-#define tLT 286
-#define tEQ 287
-#define tNEQ 288
+#define tIF 269
+#define tINTO 270
+#define tLOOP 271
+#define tMCI 272
+#define tMCIWAIT 273
+#define tMOVIE 274
+#define tNEXT 275
+#define tOF 276
+#define tPREVIOUS 277
+#define tPUT 278
+#define tREPEAT 279
+#define tSET 280
+#define tTHEN 281
+#define tTO 282
+#define tWITH 283
+#define tWHILE 284
+#define tGE 285
+#define tLE 286
+#define tGT 287
+#define tLT 288
+#define tEQ 289
+#define tNEQ 290
 
 
 
@@ -118,7 +122,7 @@ typedef union YYSTYPE
 	int code;
 }
 /* Line 1529 of yacc.c.  */
-#line 122 "engines/director/lingo/lingo-gr.hpp"
+#line 126 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
