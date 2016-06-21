@@ -549,46 +549,31 @@ reg_t kBitmapDrawLine(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kBitmapDrawView(EngineState *s, int argc, reg_t *argv) {
-	// viewId, loopNo, celNo, displace x, displace y, unused, view x, view y
+	BitmapResource bitmap(argv[0]);
+	CelObjView view(argv[1].toUint16(), argv[2].toSint16(), argv[3].toSint16());
 
-	// called e.g. from TiledBitmap::resize() in Torin's Passage, script 64869
-	// The tiled view seems to always have 2 loops.
-	// These loops need to have 1 cel in loop 0 and 8 cels in loop 1.
+	const int16 x = argc > 4 ? argv[4].toSint16() : 0;
+	const int16 y = argc > 5 ? argv[5].toSint16() : 0;
+	const int16 alignX = argc > 7 ? argv[7].toSint16() : -1;
+	const int16 alignY = argc > 8 ? argv[8].toSint16() : -1;
 
-	return kStubNull(s, argc + 1, argv - 1);
+	Common::Point position(
+		x == -1 ? bitmap.getDisplace().x : x,
+		y == -1 ? bitmap.getDisplace().y : y
+	);
 
-#if 0
-	// tiled surface
-	// 6 params, called e.g. from TiledBitmap::resize() in Torin's Passage,
-	// script 64869
-	reg_t hunkId = argv[1];	// obtained from kBitmap(0)
-	// The tiled view seems to always have 2 loops.
-	// These loops need to have 1 cel in loop 0 and 8 cels in loop 1.
-	uint16 viewNum = argv[2].toUint16();	// vTiles selector
-	uint16 loop = argv[3].toUint16();
-	uint16 cel = argv[4].toUint16();
-	uint16 x = argv[5].toUint16();
-	uint16 y = argv[6].toUint16();
+	position.x -= alignX == -1 ? view._displace.x : alignX;
+	position.y -= alignY == -1 ? view._displace.y : alignY;
 
-	byte *memoryPtr = s->_segMan->getHunkPointer(hunkId);
-	// Get totalWidth, totalHeight
-	uint16 totalWidth = READ_LE_UINT16(memoryPtr);
-	uint16 totalHeight = READ_LE_UINT16(memoryPtr + 2);
-	byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
-
-	GfxView *view = g_sci->_gfxCache->getView(viewNum);
-	uint16 tileWidth = view->getWidth(loop, cel);
-	uint16 tileHeight = view->getHeight(loop, cel);
-	const byte *tileBitmap = view->getBitmap(loop, cel);
-	uint16 width = MIN<uint16>(totalWidth - x, tileWidth);
-	uint16 height = MIN<uint16>(totalHeight - y, tileHeight);
-
-	for (uint16 curY = 0; curY < height; curY++) {
-		for (uint16 curX = 0; curX < width; curX++) {
-			bitmap[(curY + y) * totalWidth + (curX + x)] = tileBitmap[curY * tileWidth + curX];
-		}
-	}
-#endif
+	Common::Rect drawRect(
+		position.x,
+		position.y,
+		position.x + view._width,
+		position.y + view._height
+	);
+	drawRect.clip(Common::Rect(bitmap.getWidth(), bitmap.getHeight()));
+	view.draw(bitmap.getBuffer(), drawRect, position, view._mirrorX);
+	return s->r_acc;
 }
 
 reg_t kBitmapDrawText(EngineState *s, int argc, reg_t *argv) {
