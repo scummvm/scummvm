@@ -480,15 +480,7 @@ void Gui::drawMainGameWindow() {
 			border.topOffset * 2,
 			srf->w - (border.rightOffset * 3),
 			srf->h - (border.bottomOffset * 3)),
-		kColorWhite);
-	getCurrentFont().drawString(
-		srf,
-		Common::String("Main Game Window"),
-		0,
-		(srf->h / 2) - getCurrentFont().getFontHeight(),
-		srf->w,
-		kColorBlack,
-		Graphics::kTextAlignCenter);
+		kColorBlack);	
 
 	WindowData &data = findWindowData(kMainGameWindow);
 	for (Common::Array<ObjID>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
@@ -506,8 +498,9 @@ void Gui::drawMainGameWindow() {
 	ImageAsset testBg(3, _graphics);
 	testBg.blitInto(srf, border.leftOffset * 2, border.topOffset * 2, kBlitDirect);
 
-	ImageAsset testImg(428, _graphics);
-	testImg.blitInto(srf, border.leftOffset * 2 + 10,border.topOffset * 2 + 10, kBlitBIC);
+	//ImageAsset testImg(428, _graphics);
+	//testImg.blitInto(srf, border.leftOffset * 2 + 10,border.topOffset * 2 + 10, kBlitBIC);
+
 }
 
 void Gui::drawSelfWindow() {

@@ -132,9 +132,10 @@ Common::Error MacVentureEngine::run() {
 			if (_gameState == kGameStateWinnig || _gameState == kGameStateLosing) {
 				endGame();
 			}
+
+			_gui->draw();
 		}
 
-		_gui->draw();
 		g_system->updateScreen();
 		g_system->delayMillis(50);
 	}

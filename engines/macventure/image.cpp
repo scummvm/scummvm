@@ -70,7 +70,9 @@ ImageAsset::ImageAsset(ObjID original, Container * container) {
 	//_maskData = nullptr;
 
 	decodePPIC(_id, _imgData);
-	decodePPIC(_mask, _maskData);
+
+	if (_container->getItemByteSize(_mask)) // Has mask
+		decodePPIC(_mask, _maskData);
 }
 
 ImageAsset::~ImageAsset() {
@@ -352,9 +354,8 @@ void ImageAsset::blitDirect(Graphics::ManagedSurface * target, uint32 ox, uint32
 		byte pix = 0;
 		for (uint x = 0; x < _bitWidth; x++) {
 			pix = data[bmpofs + (x >> 3)] & (1 << (7 - (x & 7)));
-
-			pix = pix ? kColorWhite : kColorBlack;
-			*((byte *)target->getBasePtr(ox + x, oy + y)) = pix;
+			pix = pix ? kColorBlack : kColorWhite;
+			if (pix) *((byte *)target->getBasePtr(ox + x, oy + y)) = pix;
 		}
 	}
 }
