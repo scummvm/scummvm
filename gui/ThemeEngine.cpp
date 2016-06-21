@@ -121,6 +121,19 @@ protected:
 	const WidgetDrawData *_data;
 };
 
+class ThemeItemDrawDataClip: public ThemeItem{
+public:
+	ThemeItemDrawDataClip(ThemeEngine *engine, const WidgetDrawData *data, const Common::Rect &area, const Common::Rect &clip, uint32 dynData) :
+		ThemeItem(engine, area), _dynamicData(dynData), _data(data), _clip(clip) {}
+
+	void drawSelf(bool draw, bool restore);
+
+protected:
+	uint32 _dynamicData;
+	const WidgetDrawData *_data;
+	const Common::Rect _clip;
+};
+
 class ThemeItemTextData : public ThemeItem {
 public:
 	ThemeItemTextData(ThemeEngine *engine, const TextDrawData *data, const TextColorData *color, const Common::Rect &area, const Common::Rect &textDrawableArea,
@@ -226,6 +239,23 @@ static const DrawDataInfo kDrawDataDefaults[] = {
  * ThemeItem functions for drawing queues.
  *********************************************************/
 void ThemeItemDrawData::drawSelf(bool draw, bool restore) {
+
+	Common::Rect extendedRect = _area;
+	extendedRect.grow(_engine->kDirtyRectangleThreshold + _data->_backgroundOffset);
+
+	if (restore)
+		_engine->restoreBackground(extendedRect);
+
+	if (draw) {
+		Common::List<Graphics::DrawStep>::const_iterator step;
+		for (step = _data->_steps.begin(); step != _data->_steps.end(); ++step)
+			_engine->renderer()->drawStep(_area, *step, _dynamicData);
+	}
+
+	_engine->addDirtyRect(extendedRect);
+}
+
+void ThemeItemDrawDataClip::drawSelf(bool draw, bool restore) {
 
 	Common::Rect extendedRect = _area;
 	extendedRect.grow(_engine->kDirtyRectangleThreshold + _data->_backgroundOffset);
@@ -862,6 +892,31 @@ void ThemeEngine::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic, 
 	}
 }
 
+void ThemeEngine::queueDDClip(DrawData type, const Common::Rect &r, const Common::Rect &clippingRect, uint32 dynamic, bool restore) {
+	if (_widgets[type] == 0)
+		return;
+
+	Common::Rect area = r;
+	area.clip(_screen.w, _screen.h);
+	area.clip(clippingRect);
+
+	ThemeItemDrawData *q = new ThemeItemDrawData(this, _widgets[type], area, dynamic);
+
+	if (_buffering) {
+		if (_widgets[type]->_buffer) {
+			_bufferQueue.push_back(q);
+		} else {
+			if (kDrawDataDefaults[type].parent != kDDNone && kDrawDataDefaults[type].parent != type)
+				queueDDClip(kDrawDataDefaults[type].parent, r, clippingRect);
+
+			_screenQueue.push_back(q);
+		}
+	} else {
+		q->drawSelf(!_widgets[type]->_buffer, restore || _widgets[type]->_buffer);
+		delete q;
+	}
+}
+
 void ThemeEngine::queueDDText(TextData type, TextColor color, const Common::Rect &r, const Common::String &text, bool restoreBg,
                               bool ellipsis, Graphics::TextAlign alignH, TextAlignVertical alignV, int deltax, const Common::Rect &drawableTextArea) {
 
@@ -940,6 +995,25 @@ void ThemeEngine::drawButton(const Common::Rect &r, const Common::String &str, W
 
 	queueDD(dd, r, 0, hints & WIDGET_CLEARBG);
 	queueDDText(getTextData(dd), getTextColor(dd), r, str, false, true, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
+}
+
+void ThemeEngine::drawButtonClip(const Common::Rect &r, const Common::Rect &clippingRect, const Common::String &str, WidgetStateInfo state, uint16 hints) {
+	if (!ready())
+		return;
+
+	DrawData dd = kDDButtonIdle;
+
+	if (state == kStateEnabled)
+		dd = kDDButtonIdle;
+	else if (state == kStateHighlight)
+		dd = kDDButtonHover;
+	else if (state == kStateDisabled)
+		dd = kDDButtonDisabled;
+	else if (state == kStatePressed)
+		dd = kDDButtonPressed;
+
+	queueDDClip(dd, r, clippingRect, 0, hints & WIDGET_CLEARBG);
+	queueDDTextClip(getTextData(dd), getTextColor(dd), r, clippingRect, str, false, true, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
 }
 
 void ThemeEngine::drawLineSeparator(const Common::Rect &r, WidgetStateInfo state) {

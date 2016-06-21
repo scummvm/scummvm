@@ -324,8 +324,14 @@ void ButtonWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	setPressedState();
 }
 
-void ButtonWidget::drawWidget() {
-	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state, getFlags());
+void ButtonWidget::drawWidget() {	
+	int px = _boss->getAbsX();
+	int py = _boss->getAbsY();
+	g_gui.theme()->drawButtonClip(
+		Common::Rect(_x, _y, _x + _w, _y + _h),
+		Common::Rect(px, py, px + _boss->getWidth(), py + _boss->getHeight()),
+		_label, _state, getFlags()
+	);
 }
 
 void ButtonWidget::setLabel(const Common::String &label) {

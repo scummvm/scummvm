@@ -38,7 +38,7 @@ class VectorRenderer;
 struct DrawStep;
 
 
-typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const Graphics::DrawStep &);
+typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const Graphics::DrawStep &, const Common::Rect &);
 
 
 struct DrawStep {
@@ -355,7 +355,7 @@ public:
 	/**
 	 * DrawStep callback functions for each drawing feature
 	 */
-	void drawCallback_CIRCLE(const Common::Rect &area, const DrawStep &step) {
+	void drawCallback_CIRCLE(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO
 		uint16 x, y, w, h, radius;
 
 		radius = stepGetRadius(step, area);
@@ -364,59 +364,59 @@ public:
 		drawCircle(x + radius, y + radius, radius);
 	}
 
-	void drawCallback_SQUARE(const Common::Rect &area, const DrawStep &step) {
+	void drawCallback_SQUARE(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
 		drawSquare(x, y, w, h);
 	}
 
-	void drawCallback_LINE(const Common::Rect &area, const DrawStep &step) {
+	void drawCallback_LINE(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
 		drawLine(x, y, x + w, y + w);
 	}
 
-	void drawCallback_ROUNDSQ(const Common::Rect &area, const DrawStep &step) {
+	void drawCallback_ROUNDSQ(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
 		drawRoundedSquare(x, y, stepGetRadius(step, area), w, h);
 	}
 
-	void drawCallback_FILLSURFACE(const Common::Rect &area, const DrawStep &step) {
+	void drawCallback_FILLSURFACE(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO
 		fillSurface();
 	}
 
-	void drawCallback_TRIANGLE(const Common::Rect &area, const DrawStep &step) {
+	void drawCallback_TRIANGLE(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
 		drawTriangle(x, y, w, h, (TriangleOrientation)step.extraData);
 	}
 
-	void drawCallback_BEVELSQ(const Common::Rect &area, const DrawStep &step) {
+	void drawCallback_BEVELSQ(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
 		drawBeveledSquare(x, y, w, h, _bevel);
 	}
 
-	void drawCallback_TAB(const Common::Rect &area, const DrawStep &step) {
+	void drawCallback_TAB(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
 		drawTab(x, y, stepGetRadius(step, area), w, h);
 	}
 
-	void drawCallback_BITMAP(const Common::Rect &area, const DrawStep &step) {
+	void drawCallback_BITMAP(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
 		blitAlphaBitmap(step.blitSrc, Common::Rect(x, y, x + w, y + h));
 	}
 
-	void drawCallback_CROSS(const Common::Rect &area, const DrawStep &step) {
+	void drawCallback_CROSS(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
 		drawCross(x, y, w, h);
 	}
 
-	void drawCallback_VOID(const Common::Rect &area, const DrawStep &step) {}
+	void drawCallback_VOID(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {}
 
 	/**
 	 * Draws the specified draw step on the screen.
@@ -426,6 +426,7 @@ public:
 	 * @param step Pointer to a DrawStep struct.
 	 */
 	virtual void drawStep(const Common::Rect &area, const DrawStep &step, uint32 extra = 0);
+	virtual void drawStepClip(const Common::Rect &area, const Common::Rect &clip, const DrawStep &step, uint32 extra = 0);
 
 	/**
 	 * Copies the part of the current frame to the system overlay.

@@ -344,6 +344,9 @@ public:
 	void drawButton(const Common::Rect &r, const Common::String &str,
 	                WidgetStateInfo state = kStateEnabled, uint16 hints = 0);
 
+	void drawButtonClip(const Common::Rect &r, const Common::Rect &clippingRect, const Common::String &str,
+		WidgetStateInfo state = kStateEnabled, uint16 hints = 0);
+
 	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface,
 	                 WidgetStateInfo state = kStateEnabled, int alpha = 256, bool themeTrans = false);
 
@@ -586,6 +589,7 @@ protected:
 	 * This function is called from all the Widget Drawing methods.
 	 */
 	void queueDD(DrawData type,  const Common::Rect &r, uint32 dynamic = 0, bool restore = false);
+	void queueDDClip(DrawData type, const Common::Rect &r, const Common::Rect &clippingRect, uint32 dynamic = 0, bool restore = false);
 	void queueDDText(TextData type, TextColor color, const Common::Rect &r, const Common::String &text, bool restoreBg,
 	                 bool elipsis, Graphics::TextAlign alignH = Graphics::kTextAlignLeft, TextAlignVertical alignV = kTextAlignVTop, int deltax = 0, const Common::Rect &drawableTextArea = Common::Rect(0, 0, 0, 0));
 	void queueDDTextClip(TextData type, TextColor color, const Common::Rect &r, const Common::Rect &clippingRect, const Common::String &text, bool restoreBg,
