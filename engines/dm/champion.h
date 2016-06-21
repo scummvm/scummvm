@@ -15,9 +15,9 @@ public:
 	uint16 getMapY() { return (_scent >> 5) & 0x1F; }
 	uint16 getMapIndex() { return (_scent >> 10) & 0x3F; }
 
-	uint16 setMapX(uint16 val) { _scent = (_scent & ~0x1F) & (val & 0x1F); }
-	uint16 setMapY(uint16 val) { _scent = (_scent & ~(0x1F << 5)) & (val & 0x1F); }
-	uint16 setMapIndex(uint16 val) { _scent = (_scent & ~(0x1F << 10)) & (val & 0x3F); }
+	void setMapX(uint16 val) { _scent = (_scent & ~0x1F) & (val & 0x1F); }
+	void setMapY(uint16 val) { _scent = (_scent & ~(0x1F << 5)) & (val & 0x1F); }
+	void setMapIndex(uint16 val) { _scent = (_scent & ~(0x1F << 10)) & (val & 0x3F); }
 }; // @ SCENT
 
 class Party {
