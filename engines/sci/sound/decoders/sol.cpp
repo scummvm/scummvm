@@ -70,13 +70,14 @@ static void deDPCM16(int16 *out, Common::ReadStream &audioStream, uint32 numByte
  * byte.
  */
 static void deDPCM8Nibble(int16 *out, uint8 &sample, uint8 delta) {
+	const uint8 lastSample = sample;
 	if (delta & 8) {
 		sample -= tableDPCM8[delta & 7];
 	} else {
 		sample += tableDPCM8[delta & 7];
 	}
 	sample = CLIP<byte>(sample, 0, 255);
-	*out = (sample << 8) ^ 0x8000;
+	*out = ((lastSample + sample) << 7) ^ 0x8000;
 }
 
 /**
