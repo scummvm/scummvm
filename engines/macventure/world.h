@@ -125,7 +125,6 @@ private:
 
 	Container *_objectConstants;
 	Container *_gameText;
-	Container *_gameGraphics;
 
 	Common::Array<ObjID> _relations; // Parent-child relations, stored in Williams Heap format
 };

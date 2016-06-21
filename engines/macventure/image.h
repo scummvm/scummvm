@@ -44,26 +44,37 @@ struct PPICHuff {
 	uint8 symbols[17];
 };
 
+enum BlitMode {
+	kBlitBIC = 1,
+	kBlitOR = 2,
+	kBlitXOR = 3
+};
+
 class ImageAsset {
 public:
-	ImageAsset(ObjID id, Container *container); 
+	ImageAsset(ObjID original, Container *container); 
 	~ImageAsset();
 
-	void blit(Graphics::ManagedSurface *target);
+	void blitInto(Graphics::ManagedSurface *target, uint32 x, uint32 y, BlitMode mode);
 
 private:
-	void decodePPIC();
+	void decodePPIC(ObjID id, Common::Array<byte> &data);
 
-	void decodePPIC0(Common::BitStream &stream); 
-	void decodePPIC1(Common::BitStream &stream); 
-	void decodePPIC2(Common::BitStream &stream);
-	void decodePPIC3(Common::BitStream &stream);
+	void decodePPIC0(Common::BitStream &stream, Common::Array<byte> &data);
+	void decodePPIC1(Common::BitStream &stream, Common::Array<byte> &data);
+	void decodePPIC2(Common::BitStream &stream, Common::Array<byte> &data);
+	void decodePPIC3(Common::BitStream &stream, Common::Array<byte> &data);
 
-	void decodeHuffGraphic(const PPICHuff &huff, Common::BitStream &stream); 
+	void decodeHuffGraphic(const PPICHuff &huff, Common::BitStream &stream, Common::Array<byte> &data);
 	byte walkHuff(const PPICHuff &huff, Common::BitStream &stream);
+
+	void blitBIC(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data);
+	void blitOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data);
+	void blitXOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data);
 
 private:
 	ObjID _id;
+	ObjID _mask;
 	Container *_container;
 
 	uint16 _walkRepeat;
@@ -73,10 +84,8 @@ private:
 	uint16 _bitWidth;
 	uint16 _bitHeight;
 
-	byte* _data;
-
-	Graphics::ManagedSurface *_surface;
-	Graphics::ManagedSurface *_mask;
+	Common::Array<byte> _imgData;
+	Common::Array<byte> _maskData;
 };
 
 } // End of namespace MacVenture

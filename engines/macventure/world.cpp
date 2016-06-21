@@ -24,14 +24,11 @@ World::World(MacVentureEngine *engine, Common::MacResManager *resMan)  {
 	calculateObjectRelations();
 	
 	warning("Test functions about to happen");
-	_gameGraphics = new Container("Shadowgate II/Shadow Graphic");
 	_gameText = new Container("Shadowgate II/Shadow Text");	
 
 	ObjID tid = (ObjID)1;
 	TextAsset test = TextAsset(tid, _gameText, _engine->isOldText(), _engine->getDecodingHuffman());
-
-	ImageAsset testImg(((428 * 2) + 1), _gameGraphics);
-
+	
 	delete saveGameRes;
 	saveGameFile.close();		
 }

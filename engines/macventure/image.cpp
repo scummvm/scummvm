@@ -46,28 +46,32 @@ PPICHuff PPIC2Huff = {
 	0x09,0x0d,0x0b,0x0a,0x05 }
 };
 
-ImageAsset::ImageAsset(ObjID id, Container * container) {
-	_id = id;
-	_container = container;
+ImageAsset::ImageAsset(ObjID original, Container * container) {
+	_id = (original * 2);
+	_mask = (original * 2) + 1;
 
-	decodePPIC();
+	_container = container;	
+
+	//_imgData = nullptr;
+	//_maskData = nullptr;
+
+	decodePPIC(_id, _imgData);
+	decodePPIC(_mask, _maskData);
 }
 
 ImageAsset::~ImageAsset() {
-	delete _surface;
-	delete _mask;
-	delete[] _data;
+	//if (_imgData)
+	//	delete[] _imgData;
+
+	//if (_maskData)
+	//	delete[] _maskData;
 }
 
-void ImageAsset::blit(Graphics::ManagedSurface * target) {
-	debug("Blitting image %x ", _id);
-}
-
-void ImageAsset::decodePPIC() {
-	ObjID realID = _id;
-	uint32 size = _container->getItemByteSize(_id);
+void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data) {
+	ObjID realID = id;
+	uint32 size = _container->getItemByteSize(id);
 	if (size == 2 || size == 0) {
-		realID = _container->getItem(_id)->readUint16BE();
+		realID = _container->getItem(id)->readUint16BE();
 	}
 	Common::BitStream32BEMSB stream(_container->getItem(realID));
 
@@ -83,46 +87,48 @@ void ImageAsset::decodePPIC() {
 	_bitWidth = w;
 	_bitHeight = h;
 
-	_surface = new Graphics::ManagedSurface(_rowBytes, h, Graphics::PixelFormat::createFormatCLUT8());
-	_mask = new Graphics::ManagedSurface(_rowBytes, h, Graphics::PixelFormat::createFormatCLUT8());
-	_data = new byte[_surface->w * _surface->h];
+	for (uint i = 0; i < _rowBytes * h; i++) {
+		data.push_back(0);
+	}
 
 	switch (mode)
 	{
 	case MacVenture::kPPIC0:
-		decodePPIC0(stream);
+		decodePPIC0(stream, data);
 		break;
 	case MacVenture::kPPIC1:
-		decodePPIC1(stream);
+		decodePPIC1(stream, data);
 		break;
 	case MacVenture::kPPIC2:
-		decodePPIC2(stream);
+		decodePPIC2(stream, data);
 		break;
 	case MacVenture::kPPIC3:
-		decodePPIC3(stream);
+		decodePPIC3(stream, data);
 		break;
 	}
 }
 
-void ImageAsset::decodePPIC0(Common::BitStream & stream) {	
-	for (uint y = 0; y < _surface->h; y++)
-		for (uint x = 0; x < _surface->w; x++)
-			*(byte*)_surface->getBasePtr(x, y) = (byte)stream.getBits(8);
+void ImageAsset::decodePPIC0(Common::BitStream & stream, Common::Array<byte> &data) {
+	warning("Untested loading function: decode PPIC0");
+	uint words = _bitWidth >> 4;
+	for (uint y = 0; y <_bitHeight; y++)
+		for (uint x = 0; x < words; x++)
+			data[y * words + x] = (byte)stream.getBits(8);
 }
 
-void ImageAsset::decodePPIC1(Common::BitStream & stream) {
-	decodeHuffGraphic(PPIC1Huff, stream);
+void ImageAsset::decodePPIC1(Common::BitStream & stream, Common::Array<byte> &data) {
+	decodeHuffGraphic(PPIC1Huff, stream, data);
 }
 
-void ImageAsset::decodePPIC2(Common::BitStream & stream) {
-	decodeHuffGraphic(PPIC2Huff, stream);
+void ImageAsset::decodePPIC2(Common::BitStream & stream, Common::Array<byte> &data) {
+	decodeHuffGraphic(PPIC2Huff, stream, data);
 }
 
-void ImageAsset::decodePPIC3(Common::BitStream & stream) {
+void ImageAsset::decodePPIC3(Common::BitStream & stream, Common::Array<byte> &data) {
 
 }
 
-void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & stream) {
+void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & stream, Common::Array<byte> &data) {
 	byte flags = 0;
 	_walkRepeat = 0;
 	_walkLast = 0;
@@ -144,10 +150,10 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & st
 		uint x = 0;
 		for (; x < _bitWidth >> 3; x++) {
 			byte hi = walkHuff(huff, stream) << 4;
-			_data[pos++] = walkHuff(huff, stream) | hi;
+			data[pos++] = walkHuff(huff, stream) | hi;
 		}
 		if (odd) {
-			_data[pos] = walkHuff(huff, stream) << 4;
+			data[pos] = walkHuff(huff, stream) << 4;
 		}
 		pos += blank;
 	}
@@ -176,7 +182,7 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & st
 			if (odd)
 				v >>= 4;
 
-			_data[pos] |= v & 0xff;
+			data[pos] |= v & 0xff;
 			pos += _rowBytes;
 		}
 	}
@@ -187,16 +193,16 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & st
 			if (flags & 2) {
 				for (uint x = 0; x < _rowBytes; x++)
 				{
-					_data[pos] ^= v;
-					v = _data[pos];
+					data[pos] ^= v;
+					v = data[pos];
 					pos++;
 				}
 			}
 			else {
 				for (uint x = 0; x < _rowBytes; x++) {
-					uint16 val = _data[pos] ^ v;
+					uint16 val = data[pos] ^ v;
 					val ^= (val >> 4) & 0xf;
-					_data[pos] = val;
+					data[pos] = val;
 					pos++;
 					v = (val << 4) & 0xff;
 				}
@@ -208,8 +214,8 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & st
 		if (flags & 2) delta *= 2;
 		pos = 0;
 		uint q = delta;
-		for (uint i = 0;i < _surface->h * _rowBytes - delta;i++) {
-			_data[q] ^= _data[pos];
+		for (uint i = 0;i < _bitHeight * _rowBytes - delta;i++) {
+			data[q] ^= data[pos];
 			q++;
 			pos++;
 		}
@@ -253,6 +259,74 @@ byte ImageAsset::walkHuff(const PPICHuff & huff, Common::BitStream & stream) {
 		_walkLast &= 0xFFFF;
 	}
 	return val;
+}
+
+void ImageAsset::blitInto(Graphics::ManagedSurface *target, uint32 x, uint32 y, BlitMode mode) {
+	debug("Blitting image %x ", _id);
+	if (_container->getItemByteSize(_mask)) { // Has mask
+		switch (mode) {
+		case MacVenture::kBlitBIC:
+			blitBIC(target, x, y, _maskData);
+			break;
+		case MacVenture::kBlitOR:
+			blitOR(target, x, y, _maskData);
+			break;
+		}
+	}
+	else if (_container->getItemByteSize(_id)) {
+		switch (mode) {
+		case MacVenture::kBlitBIC:
+			target->fillRect(Common::Rect(x, y, x + _bitWidth, y + _bitHeight * 2), kColorWhite);
+			break;
+		case MacVenture::kBlitOR:
+			target->fillRect(Common::Rect(x, y, x + _bitWidth, y + _bitHeight * 2), kColorBlack);
+			break;
+		}
+	}
+	if (_container->getItemByteSize(_id) && mode > 0) {
+		blitXOR(target, x, y, _maskData);
+	}
+}
+
+void ImageAsset::blitBIC(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data) {
+	for (uint y = 0;y < _bitHeight; y++) {
+		uint bmpofs = y * _rowBytes;
+		byte pix = 0;
+		for (uint x = 0; x < _bitWidth; x++) {
+			pix = data[bmpofs + (x >> 3)] & (1 << (7 - (x & 7)));
+			
+			if (pix) *((byte *)target->getBasePtr(ox + x, oy + y)) = kColorWhite;
+		}
+	}
+}
+
+void ImageAsset::blitOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data) {
+	for (uint y = 0;y < _bitHeight; y++) {
+		uint bmpofs = y * _rowBytes;
+		byte pix = 0;
+		for (uint x = 0; x < _bitWidth; x++) {
+			pix = data[bmpofs + (x >> 3)] & (1 << (7 - (x & 7)));
+
+			if (pix) *((byte *)target->getBasePtr(ox + x, oy + y)) = kColorBlack;
+		}
+	}
+}
+
+void ImageAsset::blitXOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data) {
+	for (uint y = 0;y < _bitHeight; y++) {
+		uint bmpofs = y * _rowBytes;
+		byte pix = 0;
+		for (uint x = 0; x < _bitWidth; x++) {
+			pix = data[bmpofs + (x >> 3)] & (1 << (7 - (x & 7)));
+
+			if (pix) { // We need to xor
+				byte p = *((byte *)target->getBasePtr(ox + x, oy + y));
+				if (p == kColorWhite) p = kColorBlack;
+				else p = kColorWhite;
+				*((byte *)target->getBasePtr(ox + x, oy + y)) = p;
+			}
+		}
+	}
 }
 
 } // End of namespace MacVenture

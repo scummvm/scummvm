@@ -29,6 +29,7 @@
 
 #include "graphics/font.h"
 
+#include "macventure/container.h"
 #include "macventure/image.h"
 
 namespace MacVenture {
@@ -185,6 +186,8 @@ private: // Attributes
 	Common::Array<Graphics::MacWindow*> _inventoryWindows;
 	Graphics::Menu *_menu;
 
+	Container *_graphics;
+
 private: // Methods
 
 
@@ -197,6 +200,7 @@ private: // Methods
 	bool loadWindows();
 	bool loadControls();
 	void loadBorder(Graphics::MacWindow * target, Common::String filename, bool active);
+	void loadGraphics();
 
 	// Drawers
 	void drawWindows();
