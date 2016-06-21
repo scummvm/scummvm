@@ -108,8 +108,8 @@ public:
 	void processEvent(LEvent event, int entityId);
 
 	int code1(inst code) { _currentScript->push_back(code); return _currentScript->size() - 1; }
-	int code2(inst code_1, inst code_2) { code1(code_1); return code1(code_2); }
-	int code3(inst code_1, inst code_2, inst code_3) { code1(code_1); code1(code_2); return code1(code_3); }
+	int code2(inst code_1, inst code_2) { int o = code1(code_1); code1(code_2); return o; }
+	int code3(inst code_1, inst code_2, inst code_3) { int o = code1(code_1); code1(code_2); code1(code_3); return o; }
 	int codeString(const char *s);
 
 	int calcStringAlignment(const char *s) {
