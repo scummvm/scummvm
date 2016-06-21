@@ -48,7 +48,11 @@
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
+
+#ifdef  USE_OPENGL
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
+#include "graphics/opengl/context.h"
+#endif
 
 #include <time.h>	// for getTimeAndDate()
 
@@ -166,6 +170,9 @@ void OSystem_SDL::initBackend() {
 	debug(1, "Using SDL Video Driver \"%s\"", sdlDriverName);
 
 	detectDesktopResolution();
+#ifdef USE_OPENGL
+	detectFramebufferSupport();
+#endif
 
 	// Create the default event source, in case a custom backend
 	// manager didn't provide one yet.
@@ -238,6 +245,38 @@ void OSystem_SDL::detectDesktopResolution() {
 	}
 #endif
 }
+
+#ifdef USE_OPENGL
+void OSystem_SDL::detectFramebufferSupport() {
+	_capabilities.openGLFrameBuffer = false;
+#if defined(USE_GLES2)
+	// Framebuffers are always available with GLES2
+	_capabilities.openGLFrameBuffer = true;
+#elif !defined(AMIGAOS)
+	// Spawn a 32x32 window off-screen with a GL context to test if framebuffers are supported
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_Window *window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 32, 32, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
+	if (window) {
+		SDL_GLContext glContext = SDL_GL_CreateContext(window);
+		if (glContext) {
+			OpenGLContext.initialize(OpenGL::kContextGL);
+			_capabilities.openGLFrameBuffer = OpenGLContext.framebufferObjectSupported;
+			OpenGLContext.reset();
+			SDL_GL_DeleteContext(glContext);
+		}
+		SDL_DestroyWindow(window);
+	}
+#else
+	SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=9000,9000"));
+	SDL_SetVideoMode(32, 32, 0, SDL_OPENGL);
+	SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=center"));
+	OpenGLContext.initialize(OpenGL::kContextGL);
+	_capabilities.openGLFrameBuffer = OpenGLContext.framebufferObjectSupported;
+	OpenGLContext.reset();
+#endif
+#endif
+}
+#endif // USE_OPENGL
 // End of ResidualVM specific code
 
 #if defined(USE_TASKBAR)

@@ -108,6 +108,7 @@ protected:
 	// ResidualVM specific code
 	// Graphics capabilities
 	void detectDesktopResolution();
+	void detectFramebufferSupport();
 	ResVmSdlGraphicsManager::Capabilities _capabilities;
 	// End of ResidualVM specific code
 

@@ -123,8 +123,6 @@ protected:
 	OpenGL::FrameBuffer *createFramebuffer(uint width, uint height);
 
 	OpenGL::SurfaceRenderer *_surfaceRenderer;
-
-	bool detectFramebufferSupport();
 };
 
 #endif

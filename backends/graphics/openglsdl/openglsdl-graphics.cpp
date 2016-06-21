@@ -87,13 +87,9 @@ void OpenGLSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool
 
 	bool engineSupportsArbitraryResolutions = g_engine && g_engine->hasFeature(Engine::kSupportsArbitraryResolutions);
 
-	// Detecting if OpenGL framebuffers are available relies on spawning an offscreen window
-	// thus it is only done when framebuffers may be used.
-	bool framebufferSupported = fullscreen && detectFramebufferSupport();
-
 	// Select how the game screen is going to be drawn
 	GameRenderTarget gameRenderTarget = selectGameRenderTarget(_fullscreen, true, engineSupportsArbitraryResolutions,
-	                                                           framebufferSupported, _lockAspectRatio);
+	                                                           _capabilities.openGLFrameBuffer, _lockAspectRatio);
 
 	// Choose the effective window size or fullscreen mode
 	uint effectiveWidth;
@@ -178,35 +174,6 @@ void OpenGLSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool
 		_frameBuffer->attach();
 	}
 #endif
-}
-
-bool OpenGLSdlGraphicsManager::detectFramebufferSupport() {
-	bool framebufferSupported = false;
-#if defined(USE_GLES2)
-	// Framebuffers are always available with GLES2
-	framebufferSupported = true;
-#elif !defined(AMIGAOS)
-	// Spawn a 32x32 window off-screen with a GL context to test if framebuffers are supported
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_Window *window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 32, 32, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
-	if (window) {
-		SDL_GLContext glContext = SDL_GL_CreateContext(window);
-		if (glContext) {
-			initializeOpenGLContext();
-			framebufferSupported = OpenGLContext.framebufferObjectSupported;
-			SDL_GL_DeleteContext(glContext);
-		}
-		SDL_DestroyWindow(window);
-	}
-#else
-	SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=9000,9000"));
-	SDL_SetVideoMode(32, 32, 0, SDL_OPENGL);
-	SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=center"));
-	initializeOpenGLContext();
-	framebufferSupported = OpenGLContext.framebufferObjectSupported;
-#endif
-#endif
-	return framebufferSupported;
 }
 
 Graphics::PixelBuffer OpenGLSdlGraphicsManager::getScreenPixelBuffer() {

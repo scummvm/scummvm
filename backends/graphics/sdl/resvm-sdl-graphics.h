@@ -41,8 +41,11 @@ class ResVmSdlGraphicsManager : public SdlGraphicsManager, public Common::EventO
 public:
 	struct Capabilities {
 		uint desktopWidth, desktopHeight;
+		bool openGLFrameBuffer;
 
-		Capabilities() : desktopWidth(0), desktopHeight(0) {}
+		Capabilities() :
+				desktopWidth(0), desktopHeight(0),
+				openGLFrameBuffer(false) {}
 	};
 
 	ResVmSdlGraphicsManager(SdlEventSource *source, SdlWindow *window, const Capabilities &capabilities);
