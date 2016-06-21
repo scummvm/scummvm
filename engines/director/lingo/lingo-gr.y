@@ -185,6 +185,19 @@ gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
 	| tTO tMOVIE STRING			{ $$ = $3; }
 	;
 
+// repeat while (expression = TRUE)
+//   statements
+// end repeat
+//
+// repeat with index = start to end
+//   statements
+// end repeat
+//
+// repeat with index = high down to low
+//   statements
+// end repeat
+//
+
 // macro
 //
 // Special Note  The macro keyword is retained in Director 3.0 to maintain compatibility
