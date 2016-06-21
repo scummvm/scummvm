@@ -106,6 +106,7 @@ asgn: tPUT expr tINTO VAR		{ g_lingo->code1(g_lingo->c_varpush); g_lingo->codeSt
 	;
 
 stmt: expr 				{ g_lingo->code1(g_lingo->c_xpop); }
+	| func
 	| if cond tTHEN stmtlist end tEND tIF {
 		inst then, end;
 		WRITE_LE_UINT32(&then, $4);

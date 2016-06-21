@@ -91,7 +91,13 @@ if (x = 5) then\n\
 else\n\
 	set x = 8\n\
 end if\n\
-put x", kMovieScript, 3);
+put x\n\
+set y = 1\n\
+repeat while (y < 5)\n\
+  set y = y + 1\n\
+  put y\n\
+end repeat\n\
+", kMovieScript, 3);
 
 	_lingo->executeScript(kMovieScript, 3);
 
