@@ -315,20 +315,20 @@ void ChampionMan::drawChampionBarGraphs(ChampionIndex champIndex) {
 
 	Box box;
 	box._x1 = champIndex * kChampionStatusBoxSpacing + 46;
-	box._x2 = box._x1 + 3;
+	box._x2 = box._x1 + 3 + 1;
 	box._y1 = 2;
-	box._y2 = 26;
+	box._y2 = 26 + 1;
 
 	for (int16 AL_0_barGraphIndex = 0; AL_0_barGraphIndex < 3; AL_0_barGraphIndex++) {
 		int16 barGraphHeight = barGraphHeightArray[AL_0_barGraphIndex];
 		if (barGraphHeight < 25) {
 			box._y1 = 2;
-			box._y1 = 27 - barGraphHeight;
+			box._y1 = 27 - barGraphHeight + 1;
 			_vm->_displayMan->clearScreenBox(gChampionColor[champIndex], box);
 		}
 		if (barGraphHeight) {
 			box._y1 = 27 - barGraphHeight;
-			box._y2 = 26;
+			box._y2 = 26 + 1;
 			_vm->_displayMan->clearScreenBox(gChampionColor[champIndex], box);
 		}
 		box._x1 += 7;
