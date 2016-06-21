@@ -189,61 +189,6 @@ ObjectInfo gObjectInfo[180] = { // @ G0237_as_Graphic559_ObjectInfo
 	ObjectInfo(197, 74,  0, 0x0000),   /* SOLID KEY */
 	ObjectInfo(198, 41,  0, 0x0400)}; /* SQUARE KEY     Chest */
 
-uint16 gJunkInfo[53] = { // @ G0241_auc_Graphic559_JunkInfo
-	1,   /* COMPASS */
-	3,   /* WATERSKIN */
-	2,   /* JEWEL SYMAL */
-	2,   /* ILLUMULET */
-	4,   /* ASHES */
-	15,  /* BONES */
-	1,   /* COPPER COIN */
-	1,   /* SILVER COIN */
-	1,   /* GOLD COIN */
-	2,   /* IRON KEY */
-	1,   /* KEY OF B */
-	1,   /* SOLID KEY */
-	1,   /* SQUARE KEY */
-	1,   /* TOURQUOISE KEY */
-	1,   /* CROSS KEY */
-	1,   /* ONYX KEY */
-	1,   /* SKELETON KEY */
-	1,   /* GOLD KEY */
-	1,   /* WINGED KEY */
-	1,   /* TOPAZ KEY */
-	1,   /* SAPPHIRE KEY */
-	1,   /* EMERALD KEY */
-	1,   /* RUBY KEY */
-	1,   /* RA KEY */
-	1,   /* MASTER KEY */
-	81,  /* BOULDER */
-	2,   /* BLUE GEM */
-	3,   /* ORANGE GEM */
-	2,   /* GREEN GEM */
-	4,   /* APPLE */
-	4,   /* CORN */
-	3,   /* BREAD */
-	8,   /* CHEESE */
-	5,   /* SCREAMER SLICE */
-	11,  /* WORM ROUND */
-	4,   /* DRUMSTICK */
-	6,   /* DRAGON STEAK */
-	2,   /* GEM OF AGES */
-	3,   /* EKKHARD CROSS */
-	2,   /* MOONSTONE */
-	2,   /* THE HELLION */
-	2,   /* PENDANT FERAL */
-	6,   /* MAGICAL BOX */
-	9,   /* MAGICAL BOX */
-	3,   /* MIRROR OF DAWN */
-	10,  /* ROPE */
-	1,   /* RABBIT'S FOOT */
-	0,   /* CORBAMITE */
-	1,   /* CHOKER */
-	1,   /* LOCK PICKS */
-	2,   /* MAGNIFIER */
-	0,   /* ZOKATHRA SPELL */
-	8}; /* BONES */
-
 ArmourInfo gArmourInfo[58] = { // G0239_as_Graphic559_ArmourInfo
 /* { Weight, Defense, Attributes, Unreferenced } */
 	ArmourInfo(3,   5, 0x01),   /* CAPE */
@@ -1176,6 +1121,31 @@ void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 
 
 uint16 DungeonMan::getObjectWeight(Thing thing) {
+	static const uint16 junkInfo[] = { // @ G0241_auc_Graphic559_JunkInfo
+		// COMPASS - WATERSKIN - JEWEL SYMAL - ILLUMULET - ASHES
+		1, 3, 2, 2, 4, 
+		// BONES - COPPER COIN - SILVER COIN - GOLD COIN - IRON KEY
+		15, 1, 1, 1, 2,
+		// KEY OF B - SOLID KEY - SQUARE KEY - TOURQUOISE KEY - CROSS KEY
+		1, 1, 1, 1, 1,
+		// ONYX KEY - SKELETON KEY - GOLD KEY - WINGED KEY - TOPAZ KEY
+		1, 1, 1, 1, 1,
+		// SAPPHIRE KEY - EMERALD KEY - RUBY KEY - RA KEY - MASTER KEY
+		1, 1, 1, 1, 1,
+		// BOULDER - BLUE GEM - ORANGE GEM - GREEN GEM - APPLE
+		81, 2, 3, 2, 4,
+		// CORN - BREAD - CHEESE - SCREAMER SLICE - WORM ROUND
+		4, 3, 8, 5, 11,
+		// DRUMSTICK - DRAGON STEAK - GEM OF AGES - EKKHARD CROSS - MOONSTONE
+		4, 6, 2, 3, 2,
+		// THE HELLION - PENDANT FERAL - MAGICAL BOX - MAGICAL BOX - MIRROR OF DAWN
+		2, 2, 6, 9, 3,
+		// ROPE - RABBIT'S FOOT - CORBAMITE - CHOKER - LOCK PICKS
+		10, 1, 0, 1, 1,
+		// MAGNIFIER - ZOKATHRA SPELL - BONES
+		2, 0, 8
+	};
+
 	if (thing == Thing::_thingNone)
 		return 0;
 	switch (thing.getType()) {
@@ -1185,7 +1155,7 @@ uint16 DungeonMan::getObjectWeight(Thing thing) {
 		return gArmourInfo[Armour(getThingData(thing)).getType()]._weight;
 	case kJunkThingType: {
 		Junk junk = getThingData(thing);
-		uint16 weight = gJunkInfo[junk.getType()];
+		uint16 weight = junkInfo[junk.getType()];
 		if (junk.getType() == kJunkTypeWaterskin)
 			weight += junk.getChargeCount() * 2;
 		return weight;

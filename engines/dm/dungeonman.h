@@ -44,8 +44,6 @@ public:
 }; // @ OBJECT_INFO
 
 extern ObjectInfo gObjectInfo[180];
-
-extern uint16 gJunkInfo[53];
 				
 enum ArmourAttribute {
 	kArmourAttributeIsAShield = 0x0080, // @ MASK0x0080_IS_A_SHIELD
@@ -571,7 +569,6 @@ class DungeonMan {
 	int16 getRandomOrnOrdinal(bool allowed, int16 count, int16 mapX, int16 mapY, int16 modulo); // @ F0170_DUNGEON_GetRandomOrnamentOrdinal
 	void setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowed, bool frontAllowed, bool rightAllowed, direction dir,
 									int16 mapX, int16 mapY, bool isFakeWall); // @ F0171_DUNGEON_SetSquareAspectRandomWallOrnamentOrdinals
-
 
 	void setCurrentMap(uint16 mapIndex); // @ F0173_DUNGEON_SetCurrentMap
 
