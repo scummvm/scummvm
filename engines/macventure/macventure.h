@@ -133,7 +133,7 @@ struct QueuedObject {
 	uint exitx;
 	uint exity;
 	bool hidden;
-	bool offsecreen;
+	bool offscreen;
 	bool invisible;
 };
 
@@ -175,7 +175,7 @@ public:
 	void enqueueText(TextQueueID type, ObjID target, ObjID source, ObjID text);
 
 	void runObjQueue();
-	void printTexts();
+	bool printTexts();
 
 	void focusObjWin(ObjID objID);
 	void updateWindow(WindowReference winID);
@@ -190,7 +190,11 @@ public:
 	uint32 randBetween(uint32 min, uint32 max);
 	uint32 getInvolvedObjects();
 
+	// Attributes consult
 	Common::Point getObjPosition(ObjID objID);
+	bool isObjVisible(ObjID objID);
+	bool isObjClickable(ObjID objID);
+	bool isObjSelected(ObjID objID);
 
 	WindowReference getObjWindow(ObjID objID);
 	WindowReference findObjWindow(ObjID objID);
@@ -212,7 +216,7 @@ private:
 	void focusObjectWindow(ObjID objID);
 	void openObject(ObjID objID);
 	void closeObject(ObjID objID);
-	void checkObject(ObjID objID);
+	void checkObject(QueuedObject objID);
 	void reflectSwap(ObjID objID);
 	void toggleExits();
 	void zoomObject(ObjID objID);
@@ -252,6 +256,7 @@ private: // Attributes
 	bool _gameChanged;
 
 	Common::Array<QueuedObject> _objQueue;
+	Common::Array<QueuedObject> _inQueue;
 	Common::Array<QueuedObject> _soundQueue;
 	Common::Array<QueuedText> _textQueue;
 

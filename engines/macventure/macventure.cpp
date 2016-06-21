@@ -115,13 +115,15 @@ Common::Error MacVentureEngine::run() {
 		if (_prepared) {
 			_prepared = false;	
 
+			if (!_halted)
+				updateState();
+
 			if (_cmdReady || _halted) {
 				_halted = false;
 				if (runScriptEngine()) {
 					_halted = true;
 					_paused = true;
-				}
-				else {
+				} else {
 					_paused = false;
 					if (!updateState()) {
 						updateControls();
@@ -131,10 +133,9 @@ Common::Error MacVentureEngine::run() {
 
 			if (_gameState == kGameStateWinnig || _gameState == kGameStateLosing) {
 				endGame();
-			}
-
-			_gui->draw();
+			}			
 		}
+		_gui->draw();
 
 		g_system->updateScreen();
 		g_system->delayMillis(50);
@@ -210,7 +211,7 @@ void MacVentureEngine::enqueueObject(ObjectQueueID type, ObjID objID) {
 	obj.exitx = _world->getObjAttr(objID, kAttrExitX);
 	obj.exity = _world->getObjAttr(objID, kAttrExitY);
 	obj.hidden = _world->getObjAttr(objID, kAttrHiddenExit);
-	obj.offsecreen = _world->getObjAttr(objID, kAttrInvisible);
+	obj.offscreen = _world->getObjAttr(objID, kAttrInvisible);
 	obj.invisible = _world->getObjAttr(objID, kAttrUnclickable);
 	_objQueue.push_back(obj);
 }
@@ -224,7 +225,7 @@ void MacVentureEngine::enqueueText(TextQueueID type, ObjID target, ObjID source,
 	_textQueue.push_back(newText);
 }
 
-void MacVentureEngine::printTexts() {
+bool MacVentureEngine::printTexts() {
 	warning("printTexts: unimplemented");
 	for (uint i = 0; i < _textQueue.size(); i++) {
 		QueuedText text = _textQueue.front();
@@ -232,12 +233,15 @@ void MacVentureEngine::printTexts() {
 		switch (text.id) {
 		case kTextNumber:
 			debug("Print Number: %d", text.asset);
+			gameChanged();
 			break;
 		case kTextNewLine:
 			debug("Print Newline: ");
+			gameChanged();
 			break;
 		case kTextPlain:
 			debug("Print Plain Text: %s", _world->getText(text.asset).c_str());
+			gameChanged();
 			break;		
 		}
 	}
@@ -326,7 +330,8 @@ void MacVentureEngine::endGame() {
 
 bool MacVentureEngine::updateState() {
 	runObjQueue();
-	return true;
+	bool wait = printTexts();
+	return wait;
 }
 
 void MacVentureEngine::revert() {
@@ -359,7 +364,7 @@ void MacVentureEngine::runObjQueue() {
 			closeObject(obj.object);
 			break;
 		case 0x7:
-			checkObject(obj.object);
+			checkObject(obj);
 			break;
 		case 0x8:
 			reflectSwap(obj.object);
@@ -428,40 +433,68 @@ void MacVentureEngine::closeObject(ObjID objID) {
 	return;
 }
 
-void MacVentureEngine::checkObject(ObjID objID) {
+void MacVentureEngine::checkObject(QueuedObject old) {
 	//warning("checkObject: unimplemented");
 	bool hasChanged = false;
 	debug("Check Object[%d] parent[%d] x[%d] y[%d]",
-		objID, 
-		_world->getObjAttr(objID, kAttrParentObject),
-		_world->getObjAttr(objID, kAttrPosX),
-		_world->getObjAttr(objID, kAttrPosY));
+		old.object,
+		_world->getObjAttr(old.object, kAttrParentObject),
+		_world->getObjAttr(old.object, kAttrPosX),
+		_world->getObjAttr(old.object, kAttrPosY));
 	//bool incoming = isIncomingObj(objID);
 	//if (incoming) removeIncoming(objID);
-	if (objID == 1) {
-		if (_world->getObjAttr(objID, kAttrParentObject) != 0) {
-			enqueueObject(kSetToPlayerParent, objID);
-		}		
-	} 
-	_gui->updateWindow(findParentWindow(objID), true);
+	ObjID id = old.object;
+	if (id == 1) {
+		if (old.parent != _world->getObjAttr(id, kAttrParentObject)) {
+			enqueueObject(kSetToPlayerParent, id);
+		}
+		if (old.offscreen != _world->getObjAttr(id, kAttrInvisible) ||
+			old.invisible != _world->getObjAttr(id, kAttrUnclickable)) {
+			updateWindow(findParentWindow(id));
+		}
+	} else if (old.parent != _world->getObjAttr(id, kAttrParentObject) ||
+				old.x != _world->getObjAttr(id, kAttrPosX) ||
+				old.y != _world->getObjAttr(id, kAttrPosY)) {
+		WindowReference oldWin = getObjWindow(old.parent);
+		if (oldWin) {
+			_gui->removeChild(oldWin, id);
+			hasChanged = true;
+		}
 
-	WindowReference win = getObjWindow(objID);
-	ObjID parent = objID;
-	ObjID root = _world->getObjAttr(1, kAttrParentObject);
-	while (parent != root) {
-		if (parent == 0 || !_world->getObjAttr(parent, kAttrContainerOpen)) break;
-		parent = _world->getObjAttr(parent, kAttrParentObject);
+		WindowReference newWin = getObjWindow(id);
+		if (newWin) {
+			_gui->addChild(newWin, id);
+			hasChanged = true;
+		}
+	} else if (old.offscreen != _world->getObjAttr(id, kAttrInvisible) ||
+				old.invisible != _world->getObjAttr(id, kAttrUnclickable)) {
+		updateWindow(findParentWindow(id));
 	}
-	if (parent == root) {
+
+	if (_world->getObjAttr(id, kAttrIsExit)) {
+		if (hasChanged ||
+			old.hidden != _world->getObjAttr(id, kAttrHiddenExit) ||
+			old.exitx != _world->getObjAttr(id, kAttrExitX) ||
+			old.exity != _world->getObjAttr(id, kAttrExitY))
+			_gui->drawExit(id);
+	}
+	WindowReference win = getObjWindow(id);
+	ObjID cur = id;
+	ObjID root = _world->getObjAttr(1, kAttrParentObject);
+	while (cur != root)	{
+		if (cur == 0 || !_world->getObjAttr(cur, kAttrContainerOpen)) break;
+		cur = _world->getObjAttr(cur, kAttrParentObject);
+	}
+	if (cur == root) {
 		if (win) return;
-		enqueueObject(kOpenWindow, objID);
+		enqueueObject(kOpenWindow, id); //open
 	} else {
 		if (!win) return;
-		enqueueObject(kCloseWindow, objID);
+		enqueueObject(kCloseWindow, id); //close
 	}
 
 	// Update children
-	Common::Array<ObjID> children = _world->getChildren(objID, true);
+	Common::Array<ObjID> children = _world->getChildren(id, true);
 	for (uint i = 0; i < children.size(); i++) {
 		enqueueObject(kUpdateObject, children[i]);
 	}
@@ -543,6 +576,19 @@ Common::Point MacVentureEngine::getObjPosition(ObjID objID) {
 	return Common::Point(_world->getObjAttr(objID, kAttrPosX), _world->getObjAttr(objID, kAttrPosY));
 }
 
+bool MacVentureEngine::isObjVisible(ObjID objID) {
+	return _world->getObjAttr(objID, kAttrInvisible) == 0;
+}
+
+bool MacVentureEngine::isObjClickable(ObjID objID) {
+	return _world->getObjAttr(objID, kAttrUnclickable) == 0;
+}
+
+bool MacVentureEngine::isObjSelected(ObjID objID) {
+	warning("Unimplemented: isObjSelected");
+	return false;
+}
+
 WindowReference MacVentureEngine::getObjWindow(ObjID objID) {
 	switch (objID) {
 	case 0xfffc: return kExitsWindow;
@@ -555,7 +601,12 @@ WindowReference MacVentureEngine::getObjWindow(ObjID objID) {
 }
 
 WindowReference MacVentureEngine::findObjWindow(ObjID objID) {
-	return kMainGameWindow;
+	// This is a bit of a hack, we take advantage of the consecutive nature of references
+	for (uint i = kCommandsWindow; i <= kDiplomaWindow; i++) {
+		const WindowData &data = _gui->getWindowData((WindowReference)i);
+		if (data.refcon == objID) { return data.refcon; }
+	}
+	return kNoWindow;
 }
 
 WindowReference MacVentureEngine::findParentWindow(ObjID objID) {

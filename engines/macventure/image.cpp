@@ -318,9 +318,9 @@ byte ImageAsset::walkHuff(const PPICHuff & huff, Common::BitStream & stream) {
 }
 
 void ImageAsset::blitInto(Graphics::ManagedSurface *target, uint32 x, uint32 y, BlitMode mode) {
-	debug("Blitting image %x ", _id);
 	if (mode == kBlitDirect) {
 		blitDirect(target, x, y, _imgData);
+		return;
 	}
 
 	if (_container->getItemByteSize(_mask)) { // Has mask
@@ -344,7 +344,7 @@ void ImageAsset::blitInto(Graphics::ManagedSurface *target, uint32 x, uint32 y, 
 		}
 	}
 	if (_container->getItemByteSize(_id) && mode > 0) {
-		blitXOR(target, x, y, _maskData);
+		blitXOR(target, x, y, _imgData);
 	}
 }
 

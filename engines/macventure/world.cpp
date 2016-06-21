@@ -122,7 +122,7 @@ Common::Array<ObjID> World::getChildren(ObjID objID, bool recursive) {
 			res.push_back(getChildren(child, false));
 		child = _relations[child * 2 + 1];
 	}
-	return Common::Array<ObjID>();
+	return res;
 }
 
 Attribute World::getGlobal(uint32 attrID) {

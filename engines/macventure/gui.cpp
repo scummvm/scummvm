@@ -86,6 +86,16 @@ Gui::Gui(MacVentureEngine *engine, Common::MacResManager *resman) {
 
 Gui::~Gui() {
 
+	if (_windowData)
+		delete _windowData;
+
+	if (_controlData)
+		delete _controlData;
+
+	Common::HashMap<ObjID, ImageAsset*>::const_iterator it = _assets.begin();
+	for (; it != _assets.end(); it++) {
+		delete it->_value;
+	}
 }
 
 void Gui::draw() {
@@ -102,6 +112,10 @@ void Gui::drawMenu() {
 
 void Gui::drawTitle() {
 	warning("drawTitle hasn't been tested yet");
+}
+
+void Gui::drawExit(ObjID id) {
+	warning("Unimplemented method: drawExit");
 }
 
 bool Gui::processEvent(Common::Event &event) {
@@ -164,12 +178,26 @@ void Gui::updateWindowInfo(WindowReference ref, ObjID objID, const Common::Array
 				originx = originx > childPos.x ? childPos.x : originx;
 				originy = originy > childPos.y ? childPos.y : originy;
 			}
-			data.children.push_back(child);
+			data.children.push_back(DrawableObject(child, kBlitDirect));
 		}
 	}
 	if (originx != 0x7fff) data.bounds.left = originx;
 	if (originy != 0x7fff) data.bounds.top = originy;
 	if (ref != kMainGameWindow) data.updateScroll = true;
+}
+
+void Gui::addChild(WindowReference target, ObjID child) {
+	findWindowData(target).children.push_back(DrawableObject(child, kBlitDirect));
+}
+
+void Gui::removeChild(WindowReference target, ObjID child) {
+	WindowData data = findWindowData(target);
+	uint index = 0;
+	for (;index < data.children.size(); index++) {
+		if (data.children[index].obj == child) break;
+	}
+
+	data.children.remove_at(index);
 }
 
 void Gui::initGUI() {
@@ -230,6 +258,7 @@ void Gui::initWindows() {
 	_selfWindow->setCallback(selfWindowCallback, this);
 	loadBorder(_selfWindow, "border_self_inac.bmp", false);
 	loadBorder(_selfWindow, "border_self_act.bmp", true);
+	findWindowData(kSelfWindow).children.push_back(DrawableObject(1, kBlitDirect));
 
 	// Exits Window
 	_exitsWindow = _wm.addWindow(false, true, true);
@@ -443,7 +472,6 @@ void Gui::drawWindows() {
 	drawCommandsWindow();
 	drawMainGameWindow();
 
-	drawSelfWindow();
 }
 
 void Gui::drawCommandsWindow() {
@@ -460,8 +488,7 @@ void Gui::drawCommandsWindow() {
 			data.bounds.right - data.bounds.left,
 			kColorBlack,
 			Graphics::kTextAlignCenter);
-	}
-	else {
+	} else {
 		Common::List<CommandButton>::const_iterator it = _controlData->begin();
 		for (; it != _controlData->end(); ++it) {
 			CommandButton button = *it;
@@ -474,32 +501,15 @@ void Gui::drawCommandsWindow() {
 void Gui::drawMainGameWindow() {
 	Graphics::ManagedSurface *srf = _mainGameWindow->getSurface();
 	BorderBounds border = borderBounds(getWindowData(kMainGameWindow).type);
-	srf->fillRect(
-		Common::Rect(
-			border.leftOffset * 2,
-			border.topOffset * 2,
-			srf->w - (border.rightOffset * 3),
-			srf->h - (border.bottomOffset * 3)),
-		kColorBlack);	
 
-	WindowData &data = findWindowData(kMainGameWindow);
-	for (Common::Array<ObjID>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
-		Common::Point pos = _engine->getObjPosition(*it);
-		srf->fillRect(
-			Common::Rect(
-				border.leftOffset * 2 + pos.x,
-				border.topOffset * 2 + pos.y,
-				5,
-				5),
-			kColorBlack);
-	}	
+	ImageAsset bg(3, _graphics);
+	bg.blitInto(
+		_mainGameWindow->getSurface(),
+		border.leftOffset * 2,
+		border.topOffset * 2,
+		kBlitDirect);
 
-	// Tests
-	ImageAsset testBg(3, _graphics);
-	testBg.blitInto(srf, border.leftOffset * 2, border.topOffset * 2, kBlitDirect);
-
-	//ImageAsset testImg(428, _graphics);
-	//testImg.blitInto(srf, border.leftOffset * 2 + 10,border.topOffset * 2 + 10, kBlitBIC);
+	drawObjectsInWindow(kMainGameWindow, _mainGameWindow->getSurface());
 
 }
 
@@ -513,6 +523,27 @@ void Gui::drawSelfWindow() {
 			srf->w - (border.rightOffset * 3),
 			srf->h - (border.bottomOffset * 3)),
 		kColorWhite);
+}
+
+void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface * surface) {
+	WindowData &data = findWindowData(kMainGameWindow);
+	BorderBounds border = borderBounds(data.type);
+	Common::Point pos;
+	ObjID child;
+	BlitMode mode;
+	for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
+		child = (*it).obj;
+		mode = (BlitMode)(*it).mode;
+		pos = _engine->getObjPosition(child);
+		if (!_assets.contains(child)) {
+			_assets[child] = new ImageAsset(child, _graphics);
+		}
+		_assets[child]->blitInto(
+			surface,
+			border.leftOffset * 2 + pos.x,
+			border.topOffset * 2 + pos.y,
+			mode);
+	}
 }
 
 WindowData & Gui::findWindowData(WindowReference reference) {
@@ -631,7 +662,7 @@ void Gui::handleMenuAction(MenuAction action) {
 }
 
 void Gui::updateWindow(WindowReference winID, bool containerOpen) {
-	if (winID > 0x90) return;
+	if (winID > 0x90 || winID == kNoWindow) return;
 	if (winID == kSelfWindow || containerOpen) {
 		if (winID == kMainGameWindow) {
 			drawMainGameWindow();
@@ -639,9 +670,21 @@ void Gui::updateWindow(WindowReference winID, bool containerOpen) {
 			warning("Unimplemented: fill window with background");
 		}
 		WindowData &data = findWindowData(winID);
-		Common::Array<ObjID> children = data.children;
-		for (Common::Array<ObjID>::const_iterator it = children.begin(); it != children.end(); it++) {
-			warning("Unimplemented: draw object %x", *it);
+		Common::Array<DrawableObject> &children = data.children;
+		for (uint i = 0; i < children.size(); i++) {
+			uint flag = 0;
+			ObjID child = children[i].obj;
+			BlitMode mode;
+			bool off = _engine->isObjVisible(child);
+			if (!off || _engine->isObjClickable(child)) {
+				mode = kBlitBIC;
+				if (_engine->isObjSelected(child)) {
+					mode = kBlitOR;
+				} else if (off || flag) {
+					mode = kBlitXOR;
+				}
+				children[i] = DrawableObject(child, mode);
+			}
 		}
 		if (data.type == kZoomDoc && data.updateScroll) {
 			warning("Unimplemented: update scroll");
@@ -682,7 +725,6 @@ WindowReference Gui::createInventoryWindow() {
 
 bool Gui::tryCloseWindow(WindowReference winID) {
 	WindowData data = findWindowData(winID);
-	Graphics::MacWindow *wind;
 	if (winID < 0x80) { // Inventory window
 		warning("Window closing not implemented");
 	} else {

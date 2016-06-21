@@ -31,6 +31,14 @@ namespace MacVenture {
 typedef uint32 ObjID;
 class Container;
 
+
+enum BlitMode {
+	kBlitDirect = 0,
+	kBlitBIC = 1,
+	kBlitOR = 2,
+	kBlitXOR = 3
+};
+
 enum GraphicsEncoding {
 	kPPIC0 = 0,
 	kPPIC1 = 1,
@@ -42,13 +50,6 @@ struct PPICHuff {
 	uint16 masks[17];
 	uint16 lens[17];
 	uint8 symbols[17];
-};
-
-enum BlitMode {
-	kBlitDirect = 0,
-	kBlitBIC = 1,
-	kBlitOR = 2,
-	kBlitXOR = 3
 };
 
 class ImageAsset {

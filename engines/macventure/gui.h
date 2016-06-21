@@ -39,7 +39,9 @@ using namespace Graphics::MacWindowConstants;
 class MacVentureEngine;
 typedef uint32 ObjID;
 
-//namespace MacVentureMenuActions {
+class CommandButton;
+class ImageAsset;
+
 enum MenuAction {
 	kMenuActionAbout,
 	kMenuActionNew,
@@ -60,6 +62,7 @@ enum MenuAction {
 //} using namespace MacVentureMenuActions;
 
 enum WindowReference {
+	kNoWindow = 0,
 	kCommandsWindow = 0x80,
 	kMainGameWindow = 0x81,
 	kOutConsoleWindow = 0x82,
@@ -83,6 +86,16 @@ enum MVWindowType {
 	kRDoc10 = 0x16
 };
 
+
+struct DrawableObject {
+	ObjID obj;
+	byte mode;
+	DrawableObject(ObjID id, byte md) {
+		obj = id;
+		mode = md;
+	}
+};
+
 struct WindowData {
 	Common::Rect bounds;
 	MVWindowType type;
@@ -91,7 +104,7 @@ struct WindowData {
 	WindowReference refcon;
 	uint8 titleLength;
 	Common::String title;
-	Common::Array<ObjID> children;
+	Common::Array<DrawableObject> children;
 	bool updateScroll;
 };
 
@@ -139,6 +152,7 @@ public:
 	void draw();
 	void drawMenu();
 	void drawTitle();
+	void drawExit(ObjID id);
 	bool processEvent(Common::Event &event);
 	void handleMenuAction(MenuAction action);
 	void updateWindow(WindowReference winID, bool containerOpen);
@@ -164,6 +178,9 @@ public:
 	void setWindowTitle(WindowReference winID, Common::String string);
 	void updateWindowInfo(WindowReference ref, ObjID objID, const Common::Array<ObjID> &children);
 
+	void addChild(WindowReference target, ObjID child);
+	void removeChild(WindowReference target, ObjID child);
+
 	// Ugly switches
 	BorderBounds borderBounds(MVWindowType type);
 
@@ -188,9 +205,9 @@ private: // Attributes
 	Graphics::Menu *_menu;
 
 	Container *_graphics;
+	Common::HashMap<ObjID, ImageAsset*> _assets;
 
 private: // Methods
-
 
 	// Initializers
 	void initGUI();
@@ -208,6 +225,8 @@ private: // Methods
 	void drawCommandsWindow();
 	void drawMainGameWindow();
 	void drawSelfWindow();
+
+	void drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *surface);
 
 	// Finders
 	WindowData& findWindowData(WindowReference reference);
