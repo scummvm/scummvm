@@ -26,6 +26,7 @@
 #include "sci/engine/state.h"
 #include "sci/graphics/celobj32.h"
 #include "sci/graphics/frameout.h"
+#include "sci/graphics/helpers.h"
 
 namespace Sci {
 
@@ -60,6 +61,7 @@ inline void set##property(uint##size value) {\
 class BitmapResource {
 	byte *_bitmap;
 	reg_t _object;
+	Buffer _buffer;
 
 	/**
 	 * Gets the size of the bitmap header for the current
@@ -103,6 +105,8 @@ public:
 			if (_bitmap == nullptr || getUncompressedDataOffset() != getBitmapHeaderSize()) {
 				error("Invalid Text bitmap %04x:%04x", PRINT_REG(bitmap));
 			}
+
+			_buffer = Buffer(getWidth(), getHeight(), getPixels());
 	}
 
 	/**
@@ -110,7 +114,6 @@ public:
 	 * segment manager.
 	 */
 	inline BitmapResource(SegManager *segMan, const int16 width, const int16 height, const uint8 skipColor, const int16 displaceX, const int16 displaceY, const int16 scaledWidth, const int16 scaledHeight, const uint32 hunkPaletteOffset, const bool remap) {
-
 		_object = segMan->allocateHunkEntry("Bitmap()", getBitmapSize(width, height));
 		_bitmap = segMan->getHunkPointer(_object);
 
@@ -131,10 +134,16 @@ public:
 		setControlOffset(0);
 		setScaledWidth(scaledWidth);
 		setScaledHeight(scaledHeight);
+
+		_buffer = Buffer(getWidth(), getHeight(), getPixels());
 	}
 
 	inline reg_t getObject() const {
 		return _object;
+	}
+
+	inline Buffer &getBuffer() {
+		return _buffer;
 	}
 
 	BITMAP_PROPERTY(16, Width, 0);

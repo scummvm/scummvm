@@ -137,7 +137,6 @@ reg_t GfxText32::createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &
 
 	BitmapResource bitmap(_segMan, _width, _height, _skipColor, 0, 0, _scaledWidth, _scaledHeight, 0, false);
 	_bitmap = bitmap.getObject();
-	Buffer buffer(_width, _height, bitmap.getPixels());
 
 	// NOTE: The engine filled the bitmap pixels with 11 here, which is silly
 	// because then it just erased the bitmap using the skip color. So we don't
@@ -147,7 +146,7 @@ reg_t GfxText32::createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &
 	erase(bitmapRect, false);
 	_backColor = backColor;
 
-	view.draw(buffer, bitmapRect, Common::Point(0, 0), false, Ratio(_scaledWidth, view._scaledWidth), Ratio(_scaledHeight, view._scaledHeight));
+	view.draw(bitmap.getBuffer(), bitmapRect, Common::Point(0, 0), false, Ratio(_scaledWidth, view._scaledWidth), Ratio(_scaledHeight, view._scaledHeight));
 
 	if (_backColor != skipColor && _foreColor != skipColor) {
 		erase(_textRect, false);
@@ -616,14 +615,8 @@ Common::Rect GfxText32::getTextSize(const Common::String &text, int16 maxWidth, 
 void GfxText32::erase(const Common::Rect &rect, const bool doScaling) {
 	Common::Rect targetRect = doScaling ? scaleRect(rect) : rect;
 
-	byte *bitmap = _segMan->getHunkPointer(_bitmap);
-	byte *pixels = bitmap + READ_SCI11ENDIAN_UINT32(bitmap + 28);
-
-	// NOTE: There is an extra optimisation within the SCI code to
-	// do a single memset if the scaledRect is the same size as
-	// the bitmap, not implemented here.
-	Buffer buffer(_width, _height, pixels);
-	buffer.fillRect(targetRect, _backColor);
+	BitmapResource bitmap(_bitmap);
+	bitmap.getBuffer().fillRect(targetRect, _backColor);
 }
 
 int16 GfxText32::getStringWidth(const Common::String &text) {

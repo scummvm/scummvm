@@ -191,6 +191,12 @@ struct Buffer : public Graphics::Surface {
 	uint16 scriptWidth;
 	uint16 scriptHeight;
 
+	Buffer() :
+		screenWidth(0),
+		screenHeight(0),
+		scriptWidth(320),
+		scriptHeight(200) {}
+
 	Buffer(const uint16 width, const uint16 height, uint8 *const pix) :
 		screenWidth(width),
 		screenHeight(height),

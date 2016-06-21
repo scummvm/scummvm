@@ -619,9 +619,8 @@ reg_t kBitmapDrawText(EngineState *s, int argc, reg_t *argv) {
 	textRect.clip(Common::Rect(bitmap.getWidth(), bitmap.getHeight()));
 
 	reg_t textBitmapObject = g_sci->_gfxText32->createFontBitmap(textRect.width(), textRect.height(), Common::Rect(textRect.width(), textRect.height()), text, foreColor, backColor, skipColor, fontId, alignment, borderColor, dimmed, false);
-	Buffer bitmapBuffer(bitmap.getWidth(), bitmap.getHeight(), bitmap.getPixels());
 	CelObjMem textCel(textBitmapObject);
-	textCel.draw(bitmapBuffer, textRect, Common::Point(textRect.left, textRect.top), false);
+	textCel.draw(bitmap.getBuffer(), textRect, Common::Point(textRect.left, textRect.top), false);
 	s->_segMan->freeHunkEntry(textBitmapObject);
 
 	return s->r_acc;
@@ -638,8 +637,7 @@ reg_t kBitmapDrawColor(EngineState *s, int argc, reg_t *argv) {
 		argv[4].toSint16() + 1
 	);
 
-	Buffer buffer(bitmap.getWidth(), bitmap.getHeight(), bitmap.getPixels());
-	buffer.fillRect(fillRect, argv[5].toSint16());
+	bitmap.getBuffer().fillRect(fillRect, argv[5].toSint16());
 	return s->r_acc;
 }
 
