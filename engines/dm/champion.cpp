@@ -275,41 +275,41 @@ T0280048:
 
 void ChampionMan::drawChampionBarGraphs(ChampionIndex champIndex) {
 
-	Champion *AL_6_champion = &_champions[champIndex];
-	int16 AL_2_barGraphIndex = 0;
+	Champion *curChampion = &_champions[champIndex];
+	int16 barGraphIndex = 0;
 	int16 barGraphHeightArray[3];
 
-	if (AL_6_champion->_currHealth > 0) {
-		uint32 AL_4_barGraphHeight = (((uint32)(AL_6_champion->_currHealth) << 10) * 25) / AL_6_champion->_maxHealth;
-		if (AL_4_barGraphHeight & 0x3FF) {
-			barGraphHeightArray[AL_2_barGraphIndex++] = (AL_4_barGraphHeight >> 10) + 1;
+	if (curChampion->_currHealth > 0) {
+		uint32 barGraphHeight = (((uint32)(curChampion->_currHealth) << 10) * 25) / curChampion->_maxHealth;
+		if (barGraphHeight & 0x3FF) {
+			barGraphHeightArray[barGraphIndex++] = (barGraphHeight >> 10) + 1;
 		} else {
-			barGraphHeightArray[AL_2_barGraphIndex++] = (AL_4_barGraphHeight >> 10);
+			barGraphHeightArray[barGraphIndex++] = (barGraphHeight >> 10);
 		}
 	} else {
-		barGraphHeightArray[AL_2_barGraphIndex++] = 0;
+		barGraphHeightArray[barGraphIndex++] = 0;
 	}
 
-	if (AL_6_champion->_currStamina > 0) {
-		uint32 AL_4_barGraphHeight = (((uint32)(AL_6_champion->_currStamina) << 10) * 25) / AL_6_champion->_maxStamina;
-		if (AL_4_barGraphHeight & 0x3FF) {
-			barGraphHeightArray[AL_2_barGraphIndex++] = (AL_4_barGraphHeight >> 10) + 1;
+	if (curChampion->_currStamina > 0) {
+		uint32 barGraphHeight = (((uint32)(curChampion->_currStamina) << 10) * 25) / curChampion->_maxStamina;
+		if (barGraphHeight & 0x3FF) {
+			barGraphHeightArray[barGraphIndex++] = (barGraphHeight >> 10) + 1;
 		} else {
-			barGraphHeightArray[AL_2_barGraphIndex++] = (AL_4_barGraphHeight >> 10);
+			barGraphHeightArray[barGraphIndex++] = (barGraphHeight >> 10);
 		}
 	} else {
-		barGraphHeightArray[AL_2_barGraphIndex++] = 0;
+		barGraphHeightArray[barGraphIndex++] = 0;
 	}
 
-	if (AL_6_champion->_currMana > 0) {
-		uint32 AL_4_barGraphHeight = (((uint32)(AL_6_champion->_currMana) << 10) * 25) / AL_6_champion->_maxMana;
-		if (AL_4_barGraphHeight & 0x3FF) {
-			barGraphHeightArray[AL_2_barGraphIndex++] = (AL_4_barGraphHeight >> 10) + 1;
+	if (curChampion->_currMana > 0) {
+		uint32 barGraphHeight = (((uint32)(curChampion->_currMana) << 10) * 25) / curChampion->_maxMana;
+		if (barGraphHeight & 0x3FF) {
+			barGraphHeightArray[barGraphIndex++] = (barGraphHeight >> 10) + 1;
 		} else {
-			barGraphHeightArray[AL_2_barGraphIndex++] = (AL_4_barGraphHeight >> 10);
+			barGraphHeightArray[barGraphIndex++] = (barGraphHeight >> 10);
 		}
 	} else {
-		barGraphHeightArray[AL_2_barGraphIndex++] = 0;
+		barGraphHeightArray[barGraphIndex++] = 0;
 	}
 	warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
 
@@ -320,14 +320,14 @@ void ChampionMan::drawChampionBarGraphs(ChampionIndex champIndex) {
 	box._y2 = 26;
 
 	for (int16 AL_0_barGraphIndex = 0; AL_0_barGraphIndex < 3; AL_0_barGraphIndex++) {
-		int16 AL_2_barGraphHeight = barGraphHeightArray[AL_0_barGraphIndex];
-		if (AL_2_barGraphHeight < 25) {
+		int16 barGraphHeight = barGraphHeightArray[AL_0_barGraphIndex];
+		if (barGraphHeight < 25) {
 			box._y1 = 2;
-			box._y1 = 27 - AL_2_barGraphHeight;
+			box._y1 = 27 - barGraphHeight;
 			_vm->_displayMan->clearScreenBox(gChampionColor[champIndex], box);
 		}
-		if (AL_2_barGraphHeight) {
-			box._y1 = 27 - AL_2_barGraphHeight;
+		if (barGraphHeight) {
+			box._y1 = 27 - barGraphHeight;
 			box._y2 = 26;
 			_vm->_displayMan->clearScreenBox(gChampionColor[champIndex], box);
 		}
@@ -342,7 +342,7 @@ uint16 ChampionMan::getStaminaAdjustedValue(Champion *champ, int16 val) {
 	int16 currStamina = champ->_currStamina;
 	int16 halfMaxStamina = champ->_maxStamina / 2;
 	if (currStamina < halfMaxStamina) {
-		warning("Possible undefined behaviour in the original code");
+		warning("Possible undefined behavior in the original code");
 		val /= 2;
 		return val + ((uint32)val * (uint32)currStamina) / halfMaxStamina;
 	}
