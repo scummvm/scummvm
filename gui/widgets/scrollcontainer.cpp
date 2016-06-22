@@ -81,7 +81,7 @@ void ScrollContainerWidget::handleCommand(CommandSender *sender, uint32 cmd, uin
 	switch (cmd) {
 	case kSetPositionCmd:
 		_scrolledY = _verticalScroll->_currentPos;
-		recalc();
+		reflowLayout();
 		draw();
 		break;
 	}	
@@ -90,6 +90,16 @@ void ScrollContainerWidget::handleCommand(CommandSender *sender, uint32 cmd, uin
 void ScrollContainerWidget::reflowLayout() {
 	recalc();
 	Widget::reflowLayout();
+	Widget *ptr = _firstWidget;
+	while (ptr) {
+		int y = ptr->getAbsY() - getChildY();
+		int h = ptr->getHeight();
+		bool visible = true;
+		if (y + h - _scrolledY < 0) visible = false;
+		if (y - _scrolledY > _limitH) visible = false;
+		ptr->setVisible(visible);
+		ptr = ptr->next();
+	}
 }
 
 void ScrollContainerWidget::drawWidget() {
