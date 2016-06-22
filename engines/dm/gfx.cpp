@@ -558,9 +558,7 @@ byte gAlcoveOrnIndices[kAlcoveOrnCount] = { // @ G0192_auc_Graphic558_AlcoveOrna
 	1,   /* Square Alcove */
 	2,   /* Vi Altar */
 	3};  /* Arched Alcove */
-}
 
-using namespace DM;
 
 DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_vgaBuffer = nullptr;
@@ -805,13 +803,14 @@ void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcHeight
 }
 
 void DisplayMan::flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height) {
-	for (uint16 y = 0; y < height; ++y)
+	for (uint16 y = 0; y < height; ++y) {
 		for (uint16 x = 0; x < width / 2; ++x) {
 			byte tmp;
 			tmp = bitmap[y*width + x];
 			bitmap[y*width + x] = bitmap[y*width + width - 1 - x];
 			bitmap[y*width + width - 1 - x] = tmp;
 		}
+	}
 }
 
 void DisplayMan::flipBitmapVertical(byte *bitmap, uint16 width, uint16 height) {
@@ -875,6 +874,8 @@ void DisplayMan::drawSquareD3L(direction dir, int16 posX, int16 posY) {
 			// ... missing code
 		}
 		break;
+	default:
+		break;
 	}
 }
 
@@ -895,6 +896,8 @@ void DisplayMan::drawSquareD3R(direction dir, int16 posX, int16 posY) {
 			// ... missing code
 		}
 		break;
+	default:
+		break;
 	}
 }
 void DisplayMan::drawSquareD3C(direction dir, int16 posX, int16 posY) {
@@ -912,6 +915,8 @@ void DisplayMan::drawSquareD3C(direction dir, int16 posX, int16 posY) {
 		if (isDrawnWallOrnAnAlcove(squareAspect[kFrontWallOrnOrdAspect], kViewWall_D3C_FRONT)) {
 			//... missing code
 		}
+		break;
+	default:
 		break;
 	}
 }
@@ -935,6 +940,8 @@ void DisplayMan::drawSquareD2L(direction dir, int16 posX, int16 posY) {
 	case kStairsSideElemType:
 		drawFloorPitOrStairsBitmap(kStairsNativeIndex_Side_D2L, gStairFrames[kFrameStairsSide_D2L]);
 		break;
+	default:
+		break;
 	}
 }
 void DisplayMan::drawSquareD2R(direction dir, int16 posX, int16 posY) {
@@ -957,6 +964,8 @@ void DisplayMan::drawSquareD2R(direction dir, int16 posX, int16 posY) {
 	case kStairsSideElemType:
 		drawFloorPitOrStairsBitmapFlippedHorizontally(kStairsNativeIndex_Side_D2L, gStairFrames[kFrameStairsSide_D2R]);
 		break;
+	default:
+		break;
 	}
 }
 void DisplayMan::drawSquareD2C(direction dir, int16 posX, int16 posY) {
@@ -974,6 +983,8 @@ void DisplayMan::drawSquareD2C(direction dir, int16 posX, int16 posY) {
 		if (isDrawnWallOrnAnAlcove(squareAspect[kFrontWallOrnOrdAspect], kViewWall_D2C_FRONT)) {
 			// ... missing code
 		}
+		break;
+	default:
 		break;
 	}
 }
@@ -997,6 +1008,8 @@ void DisplayMan::drawSquareD1L(direction dir, int16 posX, int16 posY) {
 		else
 			drawFloorPitOrStairsBitmap(kStairsNativeIndex_Down_Side_D1L, gStairFrames[kFrameStairsDownSide_D1L]);
 		break;
+	default:
+		break;
 	}
 }
 void DisplayMan::drawSquareD1R(direction dir, int16 posX, int16 posY) {
@@ -1019,6 +1032,8 @@ void DisplayMan::drawSquareD1R(direction dir, int16 posX, int16 posY) {
 		else
 			drawFloorPitOrStairsBitmapFlippedHorizontally(kStairsNativeIndex_Down_Side_D1L, gStairFrames[kFrameStairsDownSide_D1R]);
 		break;
+	default:
+		break;
 	}
 }
 void DisplayMan::drawSquareD1C(direction dir, int16 posX, int16 posY) {
@@ -1040,6 +1055,8 @@ void DisplayMan::drawSquareD1C(direction dir, int16 posX, int16 posY) {
 			// .... code not yet implemneted
 		}
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1054,6 +1071,8 @@ void DisplayMan::drawSquareD0L(direction dir, int16 posX, int16 posY) {
 	case kWallElemType:
 		drawWallSetBitmap(_wallSetBitMaps[kWall_D0L], gFrameWalls[kViewSquare_D0L]);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1067,6 +1086,8 @@ void DisplayMan::drawSquareD0R(direction dir, int16 posX, int16 posY) {
 		return;
 	case kWallElemType:
 		drawWallSetBitmap(_wallSetBitMaps[kWall_D0R], gFrameWalls[kViewSquare_D0R]);
+		break;
+	default:
 		break;
 	}
 }
@@ -1083,6 +1104,8 @@ void DisplayMan::drawSquareD0C(direction dir, int16 posX, int16 posY) {
 			drawFloorPitOrStairsBitmap(kStairsNativeIndex_Down_Front_D0C_Left, gStairFrames[kFrameStairsDownFront_D0L]);
 			drawFloorPitOrStairsBitmapFlippedHorizontally(kStairsNativeIndex_Down_Front_D0C_Left, gStairFrames[kFrameStairsDownFront_D0R]);
 		}
+		break;
+	default:
 		break;
 	}
 }
@@ -1530,4 +1553,6 @@ void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uin
 				  Box &box,
 				  Color transparent, Viewport &viewport) {
 	blitToScreen(srcBitmap, srcWidth, srcX, srcY, box._x1, box._x2, box._y1, box._y2, transparent, viewport);
+}
+
 }
