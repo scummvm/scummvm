@@ -805,6 +805,8 @@ ScummEngine_v70he::ScummEngine_v70he(OSystem *syst, const DetectorResult &dr)
 	_heSndChannel = 0;
 	_heSndFlags = 0;
 	_heSndSoundFreq = 0;
+	_heSndPan = 0;
+	_heSndVol = 0;
 
 	_numStoredFlObjects = 0;
 	_storedFlObjects = (ObjectData *)calloc(100, sizeof(ObjectData));

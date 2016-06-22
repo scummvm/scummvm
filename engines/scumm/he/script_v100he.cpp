@@ -1750,7 +1750,7 @@ void ScummEngine_v100he::o100_soundOps() {
 
 	switch (subOp) {
 	case 6:		// SO_AT
-		_heSndFlags |= 16;
+		_heSndFlags |= HE_SND_OFFSET;
 		_heSndOffset = pop();
 		break;
 	case 47:	// SO_LOAD
@@ -1760,7 +1760,7 @@ void ScummEngine_v100he::o100_soundOps() {
 			debug(0, "Load sound %d from file %s\n", _heSndSoundId, filename);
 		break;
 	case 55:	// SO_NOW
-		_heSndFlags |= 8;
+		_heSndFlags |= HE_SND_QUICK_START;
 		break;
 	case 83:	// SO_VARIABLE
 		value = pop();
@@ -1769,20 +1769,20 @@ void ScummEngine_v100he::o100_soundOps() {
 		((SoundHE *)_sound)->setSoundVar(_heSndSoundId, var, value);
 		break;
 	case 92:	// SO_END
-		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
+		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndSoundFreq, _heSndPan, _heSndVol);
 		break;
 	case 128:	// SO_SOUND_ADD
-		_heSndFlags |= 2;
+		_heSndFlags |= HE_SND_APPEND;
 		break;
 	case 129:	// SO_SOUND_CHANNEL
 		_heSndChannel = pop();
 		break;
 	case 130:	// SO_SOUND_FREQUENCY
-		_heSndFlags |= 64;
-		pop();
+		_heSndFlags |= HE_SND_FREQUENCY;
+		_heSndSoundFreq = pop();
 		break;
 	case 131:	// SO_SOUND_LOOPING
-		_heSndFlags |= 1;
+		_heSndFlags |= HE_SND_LOOP;
 		break;
 	case 132:	// SO_SOUND_MODIFY
 	case 134:	// SO_SOUND_START
@@ -1793,15 +1793,15 @@ void ScummEngine_v100he::o100_soundOps() {
 		_heSndFlags = 0;
 		break;
 	case 133:	// SO_SOUND_PAN
-		_heSndFlags |= 128;
-		pop();
+		_heSndFlags |= HE_SND_PAN;
+		_heSndPan = pop();
 		break;
 	case 135:	// SO_SOUND_SOFT
-		_heSndFlags |= 4;
+		_heSndFlags |= HE_SND_SOFT_SOUND;
 		break;
 	case 136:	// SO_SOUND_VOLUME
-		_heSndFlags |= 32;
-		pop();
+		_heSndFlags |= HE_SND_VOL;
+		_heSndVol = pop();
 		break;
 	default:
 		error("o100_soundOps invalid case %d", subOp);

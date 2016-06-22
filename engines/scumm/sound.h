@@ -67,6 +67,9 @@ protected:
 		int32 offset;
 		int16 channel;
 		int16 flags;
+		int16 freq;
+		int16 pan;
+		int16 vol;
 	} _soundQue2[10];
 
 	Common::String _sfxFilename;
@@ -101,8 +104,8 @@ public:
 public:
 	Sound(ScummEngine *parent, Audio::Mixer *mixer);
 	virtual ~Sound();
-	virtual void addSoundToQueue(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0);
-	virtual void addSoundToQueue2(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0);
+	virtual void addSoundToQueue(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0, int heFreq = 0, int hePan = 0, int heVol = 0);
+	virtual void addSoundToQueue2(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0, int heFreq = 0, int hePan = 0, int heVol = 0);
 	void processSound();
 
 	void playSound(int soundID);

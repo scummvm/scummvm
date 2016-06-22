@@ -59,7 +59,7 @@ void ScummEngine_v70he::o70_soundOps() {
 
 	switch (subOp) {
 	case 9:		// SO_SOUND_SOFT?
-		_heSndFlags |= 4;
+		_heSndFlags |= HE_SND_SOFT_SOUND;
 		break;
 	case 23:	// SO_VARIABLE
 		value = pop();
@@ -70,13 +70,13 @@ void ScummEngine_v70he::o70_soundOps() {
 	case 25:	// SO_SOUND_VOLUME
 		value = pop();
 		_heSndSoundId = pop();
-		_sound->addSoundToQueue(_heSndSoundId, 0, 0, 8);
+		_sound->addSoundToQueue(_heSndSoundId, 0, 0, HE_SND_VOL, 0, 0, value);
 		break;
 	case 56:	// SO_NOW
-		_heSndFlags |= 16;
+		_heSndFlags |= HE_SND_QUICK_START;
 		break;
 	case 164:	// SO_SOUND_ADD
-		_heSndFlags |= 2;
+		_heSndFlags |= HE_SND_APPEND;
 		break;
 	case 222:
 		// WORKAROUND: For errors in room script 240 (room 4) of maze
@@ -97,10 +97,10 @@ void ScummEngine_v70he::o70_soundOps() {
 		_heSndChannel = VAR(VAR_SOUND_CHANNEL);
 		break;
 	case 245:	// SO_SOUND_LOOPING
-		_heSndFlags |= 1;
+		_heSndFlags |= HE_SND_LOOP;
 		break;
 	case 255:	// SO_END
-		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
+		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndSoundFreq);
 		_heSndFlags = 0;
 		break;
 

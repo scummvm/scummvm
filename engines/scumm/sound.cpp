@@ -110,7 +110,7 @@ Sound::~Sound() {
 	delete _talkChannelHandle;
 }
 
-void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags) {
+void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
 	if (_vm->VAR_LAST_SOUND != 0xFF)
 		_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
 	_lastSound = sound;
@@ -119,15 +119,18 @@ void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags)
 	if (sound <= _vm->_numSounds)
 		_vm->ensureResourceLoaded(rtSound, sound);
 
-	addSoundToQueue2(sound, heOffset, heChannel, heFlags);
+	addSoundToQueue2(sound, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
 }
 
-void Sound::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFlags) {
+void Sound::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
 	assert(_soundQue2Pos < ARRAYSIZE(_soundQue2));
 	_soundQue2[_soundQue2Pos].sound = sound;
 	_soundQue2[_soundQue2Pos].offset = heOffset;
 	_soundQue2[_soundQue2Pos].channel = heChannel;
 	_soundQue2[_soundQue2Pos].flags = heFlags;
+	_soundQue2[_soundQue2Pos].freq = heFreq;
+	_soundQue2[_soundQue2Pos].pan = hePan;
+	_soundQue2[_soundQue2Pos].vol = heVol;
 	_soundQue2Pos++;
 }
 
@@ -806,6 +809,9 @@ void Sound::stopSound(int sound) {
 			_soundQue2[i].offset = 0;
 			_soundQue2[i].channel = 0;
 			_soundQue2[i].flags = 0;
+			_soundQue2[i].freq = 0;
+			_soundQue2[i].pan = 0;
+			_soundQue2[i].vol = 0;
 		}
 	}
 }

@@ -59,31 +59,29 @@ SoundHE::~SoundHE() {
 	delete[] _heSoundChannels;
 }
 
-void SoundHE::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags) {
+void SoundHE::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
 	if (_vm->VAR_LAST_SOUND != 0xFF)
 		_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
 
-	if ((_vm->_game.heversion <= 99 && (heFlags & 16)) || (_vm->_game.heversion >= 100 && (heFlags & 8))) {
-		playHESound(sound, heOffset, heChannel, heFlags);
-		return;
+	if (heFlags & 8) {
+		playHESound(sound, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
 	} else {
-
-		Sound::addSoundToQueue(sound, heOffset, heChannel, heFlags);
+		Sound::addSoundToQueue(sound, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
 	}
 }
 
-void SoundHE::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFlags) {
+void SoundHE::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
 	int i = _soundQue2Pos;
 	while (i--) {
 		if (_soundQue2[i].sound == sound && !(heFlags & 2))
 			return;
 	}
 
-	Sound::addSoundToQueue2(sound, heOffset, heChannel, heFlags);
+	Sound::addSoundToQueue2(sound, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
 }
 
 void SoundHE::processSoundQueues() {
-	int snd, heOffset, heChannel, heFlags;
+	int snd, heOffset, heChannel, heFlags, heFreq, hePan, heVol;
 
 	if (_vm->_game.heversion >= 72) {
 		for (int i = 0; i <_soundQue2Pos; i++) {
@@ -91,8 +89,11 @@ void SoundHE::processSoundQueues() {
 			heOffset = _soundQue2[i].offset;
 			heChannel = _soundQue2[i].channel;
 			heFlags = _soundQue2[i].flags;
+			heFreq = _soundQue2[_soundQue2Pos].freq;
+			hePan = _soundQue2[_soundQue2Pos].pan;
+			heVol = _soundQue2[_soundQue2Pos].vol;
 			if (snd)
-				playHESound(snd, heOffset, heChannel, heFlags);
+				playHESound(snd, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
 		}
 		_soundQue2Pos = 0;
 	} else {
@@ -102,8 +103,11 @@ void SoundHE::processSoundQueues() {
 			heOffset = _soundQue2[_soundQue2Pos].offset;
 			heChannel = _soundQue2[_soundQue2Pos].channel;
 			heFlags = _soundQue2[_soundQue2Pos].flags;
+			heFreq = _soundQue2[_soundQue2Pos].freq;
+			hePan = _soundQue2[_soundQue2Pos].pan;
+			heVol = _soundQue2[_soundQue2Pos].vol;
 			if (snd)
-				playHESound(snd, heOffset, heChannel, heFlags);
+				playHESound(snd, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
 		}
 	}
 
@@ -527,7 +531,7 @@ byte *findSoundTag(uint32 tag, byte *ptr) {
 	return NULL;
 }
 
-void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
+void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
 	Audio::RewindableAudioStream *stream = 0;
 	byte *ptr, *spoolPtr;
 	int size = -1;
