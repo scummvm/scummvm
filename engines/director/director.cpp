@@ -97,6 +97,10 @@ repeat while (y < 5)\n\
   set y = y + 1\n\
   put y\n\
 end repeat\n\
+\n\
+repeat with z = 10 to 15\n\
+	put z\n\
+end repeat\n\
 ", kMovieScript, 3);
 
 	_lingo->executeScript(kMovieScript, 3);

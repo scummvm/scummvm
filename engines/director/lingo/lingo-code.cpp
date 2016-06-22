@@ -280,15 +280,16 @@ void Lingo::c_repeatwithcode(void) {
 	int savepc = g_lingo->_pc;
 
 	int init = READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc]);
-	int finish =  READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
-	int body = READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 3]);
-	int end =  READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 4]);
-	Common::String countername((char *)&(*g_lingo->_currentScript)[savepc + 5]);
+	int finish =  READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
+	int body = READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
+	int end =  READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 3]);
+	Common::String countername((char *)&(*g_lingo->_currentScript)[savepc + 4]);
 	Symbol *counter = g_lingo->lookupVar(countername.c_str());
 
 	g_lingo->execute(init);	/* condition */
 	d = g_lingo->pop();
 	counter->u.val = d.val;
+	counter->type = VAR;
 
 	while (true) {
 		g_lingo->execute(body);	/* body */
