@@ -526,8 +526,8 @@ T0292042_green:
 	warning("MISSING CODE: F0078_MOUSE_ShowPointer");
 }
 
-	uint16 ChampionMan::championIconIndex(int16 val, direction dir)
-	{
-		return ((val + 4 - dir) & 0x3);
-	}
+uint16 ChampionMan::championIconIndex(int16 val, direction dir) {
+	return ((val + 4 - dir) & 0x3);
+}
+
 }
