@@ -177,6 +177,7 @@ public:
 	void runObjQueue();
 	bool printTexts();
 
+	void selectObject(ObjID objID);
 	void focusObjWin(ObjID objID);
 	void updateWindow(WindowReference winID);
 
@@ -264,7 +265,8 @@ private: // Attributes
 	ObjID _destObject;
 	ControlAction _selectedControl;
 	ControlAction _activeControl;
-	Common::List<ObjID> _currentSelection;
+	Common::Array<ObjID> _currentSelection;
+	Common::Array<ObjID> _selectedObjs;
 	Common::Point _deltaPoint;
 
 };

@@ -65,10 +65,6 @@ ImageAsset::ImageAsset(ObjID original, Container * container) {
 	_mask = (original * 2) + 1;
 
 	_container = container;	
-
-	//_imgData = nullptr;
-	//_maskData = nullptr;
-
 	decodePPIC(_id, _imgData);
 
 	if (_container->getItemByteSize(_mask)) // Has mask
@@ -76,11 +72,6 @@ ImageAsset::ImageAsset(ObjID original, Container * container) {
 }
 
 ImageAsset::~ImageAsset() {
-	//if (_imgData)
-	//	delete[] _imgData;
-
-	//if (_maskData)
-	//	delete[] _maskData;
 }
 
 void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data) {
@@ -346,6 +337,11 @@ void ImageAsset::blitInto(Graphics::ManagedSurface *target, uint32 x, uint32 y, 
 	if (_container->getItemByteSize(_id) && mode > 0) {
 		blitXOR(target, x, y, _imgData);
 	}
+}
+
+bool ImageAsset::isPointInside(Common::Point myPos, Common::Point click) {
+	Common::Rect bounds(myPos.x, myPos.y, myPos.x + _bitWidth, myPos.y + _bitHeight);
+	return bounds.contains(click);
 }
 
 void ImageAsset::blitDirect(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte>& data) {

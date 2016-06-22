@@ -905,15 +905,22 @@ void ScriptEngine::opbdFOOB(EngineState * state, EngineFrame * frame) {
 }
 
 void ScriptEngine::opbeSWOB(EngineState * state, EngineFrame * frame) {
-	op00NOOP(0xbe);
+	ObjID from = state->pop();
+	ObjID to = state->pop();
+	_engine->enqueueObject(kUpdateWindow, to);
+	_world->setObjAttr(to, kAttrContainerOpen, _world->getObjAttr(from, 6));
+	_world->setObjAttr(from, kAttrContainerOpen, 0);
+	Common::Array<ObjID> children = _world->getChildren(from, true);
+	for (uint i = 0; i < children.size(); i++)
+		_world->setObjAttr(children[i], 0, to);
 }
 
 void ScriptEngine::opbfSNOB(EngineState * state, EngineFrame * frame) {
-	op00NOOP(0xbf);
+	_engine->enqueueObject(kAnimateBack, frame->src);
 }
 
 void ScriptEngine::opc0TEXI(EngineState * state, EngineFrame * frame) {
-	op00NOOP(0xc0);
+	_engine->enqueueObject(kHightlightExits, 0);
 }
 
 void ScriptEngine::opc1PTXT(EngineState * state, EngineFrame * frame) {
@@ -1049,9 +1056,8 @@ void ScriptEngine::opd9SLEEP(EngineState * state, EngineFrame * frame) {
 }
 
 void ScriptEngine::opdaCLICK(EngineState * state, EngineFrame * frame) {
-	//_engine->updateScreen(false);
-	//clickToContinue();
-	op00NOOP(0xda);
+	_engine->updateState();
+	//_engine->clickToContinue();
 }
 
 void ScriptEngine::opdbROBQ(EngineState * state, EngineFrame * frame) {
@@ -1067,8 +1073,7 @@ void ScriptEngine::opddRTQ(EngineState * state, EngineFrame * frame) {
 }
 
 void ScriptEngine::opdeUPSC(EngineState * state, EngineFrame * frame) {
-	//_engine->updateScreen(false);
-	op00NOOP(0xde);
+	_engine->updateState();
 }
 
 void ScriptEngine::opdfFMAI(EngineState * state, EngineFrame * frame) {

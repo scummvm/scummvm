@@ -104,7 +104,6 @@ void Gui::draw() {
 	_wm.setFullRefresh(true);
 
 	drawWindows();
-	drawTitle();
 
 	_wm.draw();
 }
@@ -119,14 +118,6 @@ void Gui::drawTitle() {
 
 void Gui::drawExit(ObjID id) {
 	warning("Unimplemented method: drawExit");
-}
-
-bool Gui::processEvent(Common::Event &event) {
-	bool processed = false;
-	if (event.type == Common::EVENT_LBUTTONDOWN) {
-		debug("Click on the ui");
-	}
-	return (processed || _wm.processEvent(event));
 }
 
 const WindowData& Gui::getWindowData(WindowReference reference) {
@@ -736,6 +727,13 @@ bool Gui::tryCloseWindow(WindowReference winID) {
 	return true;
 }
 
+bool Gui::processEvent(Common::Event &event) {
+	bool processed = false;
+	if (event.type == Common::EVENT_LBUTTONDOWN) {
+		debug("Click on the ui");
+	}
+	return (processed || _wm.processEvent(event));
+}
 
 bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 	if (event.type == Common::EVENT_LBUTTONUP) {
@@ -764,7 +762,25 @@ bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 }
 
 bool MacVenture::Gui::processMainGameEvents(WindowClick click, Common::Event & event) {
-	return getWindowData(kMainGameWindow).visible;
+	if (click == kBorderInner && event.type == Common::EVENT_LBUTTONUP) {
+		WindowData &data = findWindowData(kMainGameWindow);
+		ObjID child;
+		BlitMode mode;
+		Common::Point pos;
+		for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
+			child = (*it).obj;
+			mode = (BlitMode)(*it).mode;
+			pos = _engine->getObjPosition(child);
+			pos.x += data.bounds.left;
+			pos.y += data.bounds.top;
+			if (_assets[child]->isPointInside(pos, event.mouse)) {
+				// select the first object clicked
+				_engine->selectObject(child);
+				return true;
+			}
+		}
+	}
+	return false;
 }
 bool MacVenture::Gui::processOutConsoleEvents(WindowClick click, Common::Event & event) {
 	return getWindowData(kOutConsoleWindow).visible;

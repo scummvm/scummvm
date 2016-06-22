@@ -204,15 +204,17 @@ void MacVentureEngine::loseGame() {
 void MacVentureEngine::enqueueObject(ObjectQueueID type, ObjID objID) {
 	QueuedObject obj;
 	obj.id = type;
-	obj.object = objID;
-	obj.parent = _world->getObjAttr(objID, kAttrParentObject);
-	obj.x = _world->getObjAttr(objID, kAttrPosX);
-	obj.y = _world->getObjAttr(objID, kAttrPosY);
-	obj.exitx = _world->getObjAttr(objID, kAttrExitX);
-	obj.exity = _world->getObjAttr(objID, kAttrExitY);
-	obj.hidden = _world->getObjAttr(objID, kAttrHiddenExit);
-	obj.offscreen = _world->getObjAttr(objID, kAttrInvisible);
-	obj.invisible = _world->getObjAttr(objID, kAttrUnclickable);
+	if (type != kHightlightExits) {		
+		obj.object = objID;
+		obj.parent = _world->getObjAttr(objID, kAttrParentObject);
+		obj.x = _world->getObjAttr(objID, kAttrPosX);
+		obj.y = _world->getObjAttr(objID, kAttrPosY);
+		obj.exitx = _world->getObjAttr(objID, kAttrExitX);
+		obj.exity = _world->getObjAttr(objID, kAttrExitY);
+		obj.hidden = _world->getObjAttr(objID, kAttrHiddenExit);
+		obj.offscreen = _world->getObjAttr(objID, kAttrInvisible);
+		obj.invisible = _world->getObjAttr(objID, kAttrUnclickable);
+	}
 	_objQueue.push_back(obj);
 }
 
@@ -245,6 +247,26 @@ bool MacVentureEngine::printTexts() {
 			break;		
 		}
 	}
+}
+
+void MacVentureEngine::selectObject(ObjID objID) {
+	bool found = false;
+	uint i = 0;
+	while (i < _currentSelection.size() && !found) {
+		if (_currentSelection[i] == objID) found = true;
+		else i++;
+	}		
+	
+	if (!found) _currentSelection.push_back(objID);
+
+	found = false;
+	i = 0;
+	while (i < _selectedObjs.size() && !found) {
+		if (_selectedObjs[i] == objID) found = true;
+		else i++;
+	}
+
+	if (!found) _selectedObjs.push_back(objID);
 }
 
 void MacVentureEngine::focusObjWin(ObjID objID) {
@@ -301,7 +323,7 @@ bool MacVenture::MacVentureEngine::runScriptEngine() {
 
 	while (!_currentSelection.empty()) {
 		ObjID obj = _currentSelection.front();
-		_currentSelection.pop_front();
+		_currentSelection.remove_at(0);
 		if ((_gameState == kGameStateInit || _gameState == kGameStatePlaying) && _world->isObjActive(obj)) {
 			if (_scriptEngine->runControl(_selectedControl, obj, _destObject, _deltaPoint)) {
 				_haltedInSelection = true;
