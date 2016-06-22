@@ -26,9 +26,6 @@
 #include "macventure/macventure.h"
 #include "macventure/gui.h"
 
-//Test
-#include "common/system.h"
-
 namespace MacVenture {
 
 enum MenuAction;
@@ -103,8 +100,10 @@ Gui::~Gui() {
 
 void Gui::draw() {
 
-	drawWindows();
+	// Will be performance-improved after the milestone
+	_wm.setFullRefresh(true);
 
+	drawWindows();
 	drawTitle();
 
 	_wm.draw();
@@ -224,7 +223,6 @@ void Gui::initGUI() {
 
 	if (!loadControls())
 		error("Could not load controls");
-
 
 	draw();
 
@@ -506,6 +504,8 @@ void Gui::drawMainGameWindow() {
 	Graphics::ManagedSurface *srf = _mainGameWindow->getSurface();
 	BorderBounds border = borderBounds(getWindowData(kMainGameWindow).type);
 
+	_mainGameWindow->setDirty(true);
+
 	if (!_assets.contains(3)) {
 		_assets[3] = new ImageAsset(3, _graphics);
 	}
@@ -517,11 +517,6 @@ void Gui::drawMainGameWindow() {
 		kBlitDirect);
 
 	drawObjectsInWindow(kMainGameWindow, _mainGameWindow->getSurface());
-
-	// To be deleted
-	_wm.draw();
-
-	g_system->updateScreen();
 
 }
 
@@ -549,11 +544,8 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 			border.topOffset * 2 + pos.y,
 			mode);
 
-		// To be deleted
+		// To be deleted, this is a big hack, but it doesn't work without it.
 		_wm.draw();
-
-		g_system->updateScreen();
-
 	}
 }
 
