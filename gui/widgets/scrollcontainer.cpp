@@ -50,11 +50,32 @@ void ScrollContainerWidget::init() {
 }
 
 void ScrollContainerWidget::recalc() {
-	_verticalScroll->_numEntries = _h + 40;
+	int scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
+
+	//calculate _limitH - available height (boss's height - boss's "offset")
+	int d = _boss->getChildY() - _boss->getAbsY();	
+	_limitH = _boss->getHeight() - d;
+	
+	//calculate virtual height
+	const int spacing = g_gui.xmlEval()->getVar("Global.Font.Height", 16); //on the bottom
+	int h = 0;
+	int min = spacing, max = 0;
+	Widget *ptr = _firstWidget;
+	while (ptr) {
+		if (ptr != _verticalScroll) {
+			int y = ptr->getAbsY() - getChildY();
+			min = MIN(min, y - spacing);
+			max = MAX(max, y + ptr->getHeight() + spacing);
+		}
+		ptr = ptr->next();
+	}
+	h = max - min;
+
+	_verticalScroll->_numEntries = h;
 	_verticalScroll->_currentPos = _scrolledY;
 	_verticalScroll->_entriesPerPage = _limitH;
-	_verticalScroll->setPos(_w - 16, _scrolledY+1);
-	_verticalScroll->setSize(16, _limitH -2);
+	_verticalScroll->setPos(_w - scrollbarWidth, _scrolledY+1);
+	_verticalScroll->setSize(scrollbarWidth, _limitH -2);
 }
 
 
@@ -69,7 +90,7 @@ int16 ScrollContainerWidget::getChildY() const {
 }
 
 uint16 ScrollContainerWidget::getWidth() const {
-	return (_boss ? _boss->getWidth() : _w);
+	return _w - _verticalScroll->getWidth();
 }
 
 uint16 ScrollContainerWidget::getHeight() const {
@@ -89,8 +110,8 @@ void ScrollContainerWidget::handleCommand(CommandSender *sender, uint32 cmd, uin
 }
 
 void ScrollContainerWidget::reflowLayout() {
-	recalc();
 	Widget::reflowLayout();
+	recalc();
 	Widget *ptr = _firstWidget;
 	while (ptr) {
 		int y = ptr->getAbsY() - getChildY();
@@ -108,6 +129,8 @@ void ScrollContainerWidget::drawWidget() {
 }
 
 Widget *ScrollContainerWidget::findWidget(int x, int y) {
+	if (x >= _w - _verticalScroll->getWidth())
+		return _verticalScroll;
 	return Widget::findWidgetInChain(_firstWidget, x + _scrolledX, y + _scrolledY);
 }
 
