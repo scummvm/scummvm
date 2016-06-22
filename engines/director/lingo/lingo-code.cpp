@@ -52,10 +52,28 @@
 namespace Director {
 
 void Lingo::execute(int pc) {
-	for(_pc = pc; (*_currentScript)[_pc] != STOP;) {
+	for(_pc = pc; (*_currentScript)[_pc] != STOP && !_returning;) {
 		_pc++;
 		(*((*_currentScript)[_pc - 1]))();
 	}
+}
+
+Symbol *Lingo::lookupVar(const char *name) {
+	Symbol *sym;
+
+	if (!_vars.contains(name)) { // Create variable if it was not defined
+		sym = new Symbol;
+		sym->name = (char *)calloc(strlen(name) + 1, 1);
+		Common::strlcpy(sym->name, name, strlen(name) + 1);
+		sym->type = VOID;
+		sym->u.val = 0;
+
+		_vars[name] = sym;
+	} else {
+		sym = g_lingo->_vars[name];
+	}
+
+	return sym;
 }
 
 void Lingo::push(Datum d) {
@@ -90,23 +108,10 @@ void Lingo::c_constpush() {
 }
 
 void Lingo::c_varpush() {
-	Datum d;
-	Symbol *sym;
 	char *name = (char *)&(*g_lingo->_currentScript)[g_lingo->_pc];
+	Datum d;
 
-	if (!g_lingo->_vars.contains(name)) { // Create variable if it was not defined
-		sym = new Symbol;
-		sym->name = (char *)calloc(strlen(name) + 1, 1);
-		Common::strlcpy(sym->name, name, strlen(name) + 1);
-		sym->type = VOID;
-		sym->u.val = 0;
-
-		g_lingo->_vars[name] = sym;
-	} else {
-		sym = g_lingo->_vars[name];
-	}
-
-	d.sym = sym;
+	d.sym = g_lingo->lookupVar(name);
 
 	g_lingo->_pc += g_lingo->calcStringAlignment(name);
 
@@ -259,15 +264,15 @@ void Lingo::c_repeatwhilecode(void) {
 
 	while (d.val) {
 		g_lingo->execute(body);	/* body */
-		if (0 /* returning */)
+		if (g_lingo->_returning)
 			break;
 
 		g_lingo->execute(savepc + 2);	/* condition */
 		d = g_lingo->pop();
 	}
 
-	//if (!returning)
-	g_lingo->_pc = end; /* next stmt */
+	if (!g_lingo->_returning)
+		g_lingo->_pc = end; /* next stmt */
 }
 
 void Lingo::c_repeatwithcode(void) {
@@ -278,22 +283,28 @@ void Lingo::c_repeatwithcode(void) {
 	int finish =  READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
 	int body = READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 3]);
 	int end =  READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 4]);
-	Common::String counter((char *)&(*g_lingo->_currentScript)[savepc + 5]);
+	Common::String countername((char *)&(*g_lingo->_currentScript)[savepc + 5]);
+	Symbol *counter = g_lingo->lookupVar(countername.c_str());
 
 	g_lingo->execute(init);	/* condition */
 	d = g_lingo->pop();
+	counter->u.val = d.val;
 
-	while (d.val) {
+	while (true) {
 		g_lingo->execute(body);	/* body */
-		if (0 /* returning */)
+		if (g_lingo->_returning)
 			break;
 
+		counter->u.val++;
 		g_lingo->execute(finish);	/* condition */
 		d = g_lingo->pop();
+
+		if (counter->u.val > d.val)
+			break;
 	}
 
-	//if (!returning)
-	g_lingo->_pc = end; /* next stmt */
+	if (!g_lingo->_returning)
+		g_lingo->_pc = end; /* next stmt */
 }
 
 void Lingo::c_ifcode() {
@@ -304,12 +315,9 @@ void Lingo::c_ifcode() {
 	int elsep = READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
 	int end =   READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
 
-	warning("cond: %d end: %d  then: %d elesp: %d", savepc + 3, end, then, elsep);
-
 	g_lingo->execute(savepc + 3);	/* condition */
 
 	d = g_lingo->pop();
-	warning("res: %d", d.val);
 
 	if (d.val) {
 		g_lingo->execute(then);
@@ -317,8 +325,8 @@ void Lingo::c_ifcode() {
 		g_lingo->execute(elsep);
 	}
 
-	//if (!returning)
-	g_lingo->_pc = end; /* next stmt */
+	if (!g_lingo->_returning)
+		g_lingo->_pc = end; /* next stmt */
 }
 
 //************************

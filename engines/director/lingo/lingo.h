@@ -119,6 +119,7 @@ public:
 
 public:
 	void execute(int pc);
+	Symbol *lookupVar(const char *name);
 
 	static void c_xpop();
 	static void c_printtop();
@@ -155,6 +156,7 @@ public:
 
 public:
 	ScriptData *_currentScript;
+	bool _returning;
 
 private:
 	int parse(const char *code);

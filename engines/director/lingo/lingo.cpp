@@ -132,6 +132,7 @@ void Lingo::executeScript(ScriptType type, uint16 id) {
 
 	_currentScript = _scripts[type][id];
 	_pc = 0;
+	_returning = false;
 
 	execute(_pc);
 }
