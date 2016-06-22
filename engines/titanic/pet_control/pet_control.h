@@ -36,6 +36,7 @@
 #include "titanic/pet_control/pet_real_life.h"
 #include "titanic/pet_control/pet_remote.h"
 #include "titanic/pet_control/pet_rooms.h"
+#include "titanic/room_flags.h"
 
 namespace Titanic {
 
@@ -319,6 +320,11 @@ public:
 	bool getC0() const { return _fieldC0 > 0; }
 	void incC0() { ++_fieldC0; }
 	void decC0() { --_fieldC0; }
+
+	/**
+	 * Get mail destination given the specified flags
+	 */
+	int getMailDest(const CRoomFlags &roomFlags) const;
 };
 
 } // End of namespace Titanic

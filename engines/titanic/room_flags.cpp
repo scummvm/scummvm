@@ -21,6 +21,7 @@
  */
 
 #include "titanic/room_flags.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -97,6 +98,43 @@ int CRoomFlags::getRoomCategory() const {
 	CRoomFlags tempFlags = _data;
 	tempFlags.setRoomBits(1);
 	return tempFlags.getRoomArea() != 5;
+}
+
+int CRoomFlags::getRoomArea() const {
+	if (isSuccUBusRoomFlags())
+		return 4;
+
+	if (!getBit0()) {
+		uint v3 = getFloorNum();
+		if (v3 <= 38) {
+			uint v4 = getRoomNum();
+			if (v4 <= 18) {
+				uint v6 = getElevatorNum();
+
+				if (v6 >= 1 && v6 <= 4) {
+					uint v7 = getPassengerClassNum() - 1;
+					if (v7) {
+						uint v8 = v7 - 1;
+						if (v8) {
+							if (v8 == 1 && is28To38(v3) && (v6 & 1) && v4 >= 1)
+								return 3;
+						} else if (is20To27(v3)) {
+							if (v6 & 1) {
+								if (v4 >= 1 && v4 <= 3)
+									return 2;
+							} else if (v4 >= 1 && v4 <= 4) {
+								return 2;
+							}
+						}
+					} else if (is2To19(v3) && v4 >= 1 && v4 <= 3) {
+						return 1;
+					}
+				}
+			}
+		}
+	}
+
+	return 5;
 }
 
 CString CRoomFlags::getRoomDesc() const {
@@ -286,11 +324,6 @@ uint CRoomFlags::getRoomBits() const {
 	return (_data >> ROOM_SHIFT) & ROOM_MASK;
 }
 
-uint CRoomFlags::getRoomArea() const {
-	warning("TODO: CRoomFlags::getRoomArea");
-	return 0;
-}
-
 bool CRoomFlags::isSuccUBusRoomFlags() const {
 	for (int idx = 0; idx < SUCCUBUS_ROOMS_SIZE; ++idx) {
 		if (SUCCUBUS_ROOMS[idx]._roomFlags == _data)
@@ -318,7 +351,7 @@ uint CRoomFlags::getSpecialRoomFlags(const CString &roomName) {
 	return 0;
 }
 
-uint CRoomFlags::getSuccUBusNum(const CString &roomName) {
+uint CRoomFlags::getSuccUBusNum(const CString &roomName) const {
 	for (int idx = 0; idx < SUCCUBUS_ROOMS_SIZE; ++idx) {
 		if (!roomName.compareTo(SUCCUBUS_ROOMS[idx]._roomName))
 			return SUCCUBUS_ROOMS[idx]._succubusNum;
@@ -398,6 +431,82 @@ void CRoomFlags::changeLocation(int action) {
 	// Set new floor and room
 	setFloorNum(floorNum);
 	setRoomBits(roomNum);
+}
+
+bool CRoomFlags::compareFlags(CRoomFlags flags1, CRoomFlags flags2) const {
+	if (flags1.getFloorNum() != flags2.getFloorNum())
+		return false;
+
+	uint elev1 = flags1.getElevatorNum();
+	uint elev2 = flags2.getElevatorNum();
+	uint class1 = getPassengerClassNum();
+	uint class2 = getPassengerClassNum();
+
+	if (class1 > 0 && class1 < 3) {
+		if (elev1 == 2)
+			elev1 = 1;
+		else if (elev1 == 4)
+			elev1 = 3;
+	}
+	if (class2 > 0 && class2 < 3) {
+		if (elev2 == 2)
+			elev2 = 1;
+		else if (elev2 == 4)
+			elev2 = 3;
+	}
+
+	return elev1 == elev2;
+}
+
+bool CRoomFlags::compareLocation(uint roomFlags) {
+	CRoomFlags flags(roomFlags);
+
+	return getElevatorNum() == flags.getElevatorBits() &&
+		getFloorNum() == flags.getFloorNum() &&
+		getRoomNum() == flags.getRoomNum();
+}
+
+void CRoomFlags::setRandomLocation(int classNum, bool flag) {
+	uint minRoom, elevNum, maxRoom, maxFloor, minFloor;
+
+	do {
+		switch (classNum) {
+		case 1:
+			minFloor = 2;
+			maxFloor = 19;
+			minRoom = 1;
+			maxRoom = 3;
+			elevNum = g_vm->getRandomNumber(flag ? 2 : 3);
+			break;
+
+		case 2:
+			minFloor = 20;
+			maxFloor = 27;
+			elevNum = g_vm->getRandomNumber(flag ? 2 : 3);
+			minRoom = 1;
+			maxRoom = ((elevNum - 1) & 1) ? 3 : 4;
+			break;
+
+		case 3:
+			minRoom = 1;
+			minFloor = 28;
+			maxFloor = 38;
+			maxRoom = 18;
+			elevNum = g_vm->getRandomNumber(1);
+			if (elevNum == 1)
+				elevNum = 2;
+			break;
+
+		default:
+			return;
+		}
+
+		uint floorNum = minFloor + g_vm->getRandomNumber(maxFloor - minFloor);
+		uint roomNum = minRoom + g_vm->getRandomNumber(maxRoom - minRoom);
+		setElevatorBits(elevNum);
+		setRoomBits(roomNum);
+		setFloorNum(floorNum);
+	} while (_data == 0x59706);
 }
 
 } // End of namespace Titanic

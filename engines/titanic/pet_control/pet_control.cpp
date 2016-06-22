@@ -533,4 +533,11 @@ void CPetControl::resetDials(int flag) {
 		_conversations.resetDials(_activeNPCName);
 }
 
+int CPetControl::getMailDest(const CRoomFlags &roomFlags) const {
+	if (!roomFlags.isSuccUBusRoomFlags())
+		return roomFlags.getPassengerClassNum();
+
+	return roomFlags.getSuccUBusNum(roomFlags.getSuccUBusRoomName());
+}
+
 } // End of namespace Titanic

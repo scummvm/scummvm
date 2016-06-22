@@ -43,6 +43,8 @@ private:
 
 	int getRoomCategory() const;
 
+	int getRoomArea() const;
+
 	/**
 	 * Set the bits for the elevator number
 	 */
@@ -63,27 +65,27 @@ private:
 	 */
 	uint decodeFloorBits(uint bits) const;
 
-	uint getRoomArea() const;
+	/**
+	 * Compares two room flags together
+	 */
+	bool compareFlags(CRoomFlags flags1, CRoomFlags flags2) const;
 
 	/**
-	 * Returns true if the current flags are in the succubus list
+	 * Compares the current flags against the specified flags
+	 * for a matching elevator, floor, and room
 	 */
-	bool isSuccUBusRoomFlags() const;
+	bool compareLocation(uint roomFlags);
 
 	/**
-	 * Gets the special flags for a transport or succubus room
+	 * Returns true if the current flags is for Titania's room
 	 */
-	uint getSpecialRoomFlags(const CString &roomName);
+	bool isTitania() const { return _data == 0x8A397; }
 
-	/**
-	 * Gets the succubus number associated with a given room
-	 */
-	uint getSuccUBusNum(const CString &roomName);
+	bool is59706() const { return _data == 0x59706; }
 
-	/**
-	 * Gets the succubus room name associated with the current room flags
-	 */
-	CString getSuccUBusRoomName() const;
+	bool is2To19(uint v) const { return v >= 2 && v <= 19; }
+	bool is20To27(uint v) const { return v >= 20 && v <= 27; }
+	bool is28To38(uint v) const { return v >= 28 && v <= 38; }
 public:
 	CRoomFlags() : _data(0) {}
 	CRoomFlags(uint data) : _data(data) {}
@@ -99,9 +101,15 @@ public:
 	 */
 	uint get() const { return _data; }
 
-	bool test5(const CRoomFlags &roomFlags) const {
-		return roomFlags.not5();
-	}
+	/**
+	 * Gets the special flags for a transport or succubus room
+	 */
+	uint getSpecialRoomFlags(const CString &roomName);
+
+	/**
+	 * Returns true if the current flags are in the succubus list
+	 */
+	bool isSuccUBusRoomFlags() const;
 
 	/**
 	 * Get a description for the room
@@ -195,6 +203,21 @@ public:
 	 * Change the passenger class
 	 */
 	void changeLocation(int action);
+
+	/**
+	 * Sets a random destination in the flags
+	 */
+	void setRandomLocation(int classNum, bool flag);
+
+	/**
+	 * Gets the succubus number associated with a given room
+	 */
+	uint getSuccUBusNum(const CString &roomName) const;
+
+	/**
+	 * Gets the succubus room name associated with the current room flags
+	 */
+	CString getSuccUBusRoomName() const;
 };
 
 } // End of namespace Titanic
