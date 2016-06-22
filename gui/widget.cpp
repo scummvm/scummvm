@@ -280,11 +280,8 @@ void StaticTextWidget::setAlign(Graphics::TextAlign align) {
 
 
 void StaticTextWidget::drawWidget() {
-	int px = _boss->getAbsX();
-	int py = _boss->getAbsY();
 	g_gui.theme()->drawTextClip(
-		Common::Rect(_x, _y, _x+_w, _y+_h),		
-		Common::Rect(px, py, px + _boss->getWidth(), py + _boss->getHeight()),
+		Common::Rect(_x, _y, _x+_w, _y+_h),	getBossClipRect(),
 		_label, _state, _align, ThemeEngine::kTextInversionNone, 0, true, _font
 	);
 }
@@ -324,12 +321,9 @@ void ButtonWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	setPressedState();
 }
 
-void ButtonWidget::drawWidget() {	
-	int px = _boss->getAbsX();
-	int py = _boss->getAbsY();
+void ButtonWidget::drawWidget() {
 	g_gui.theme()->drawButtonClip(
-		Common::Rect(_x, _y, _x + _w, _y + _h),
-		Common::Rect(px, py, px + _boss->getWidth(), py + _boss->getHeight()),
+		Common::Rect(_x, _y, _x + _w, _y + _h), getBossClipRect(),
 		_label, _state, getFlags()
 	);
 }

@@ -270,6 +270,8 @@ void ThemeItemDrawDataClip::drawSelf(bool draw, bool restore) {
 		}
 	}
 
+	extendedRect.clip(_clip);
+
 	_engine->addDirtyRect(extendedRect);
 }
 
@@ -1180,6 +1182,27 @@ void ThemeEngine::drawPopUpWidget(const Common::Rect &r, const Common::String &s
 	}
 }
 
+void ThemeEngine::drawPopUpWidgetClip(const Common::Rect &r, const Common::Rect &clip, const Common::String &sel, int deltax, WidgetStateInfo state, Graphics::TextAlign align) {
+	if (!ready())
+		return;
+
+	DrawData dd = kDDPopUpIdle;
+
+	if (state == kStateEnabled)
+		dd = kDDPopUpIdle;
+	else if (state == kStateHighlight)
+		dd = kDDPopUpHover;
+	else if (state == kStateDisabled)
+		dd = kDDPopUpDisabled;
+
+	queueDDClip(dd, r, clip);
+
+	if (!sel.empty()) {
+		Common::Rect text(r.left + 3, r.top + 1, r.right - 10, r.bottom);
+		queueDDTextClip(getTextData(dd), getTextColor(dd), text, clip, sel, true, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV, deltax);
+	}
+}
+
 void ThemeEngine::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, WidgetStateInfo state, int alpha, bool themeTrans) {
 	if (!ready())
 		return;
@@ -1206,6 +1229,29 @@ void ThemeEngine::drawWidgetBackground(const Common::Rect &r, uint16 hints, Widg
 
 	default:
 		queueDD(kDDWidgetBackgroundDefault, r);
+		break;
+	}
+}
+
+void ThemeEngine::drawWidgetBackgroundClip(const Common::Rect &r, const Common::Rect &clip, uint16 hints, WidgetBackground background, WidgetStateInfo state) {
+	if (!ready())
+		return;
+
+	switch (background) {
+	case kWidgetBackgroundBorderSmall:
+		queueDDClip(kDDWidgetBackgroundSmall, r, clip);
+		break;
+
+	case kWidgetBackgroundEditText:
+		queueDDClip(kDDWidgetBackgroundEditText, r, clip);
+		break;
+
+	case kWidgetBackgroundSlider:
+		queueDDClip(kDDWidgetBackgroundSlider, r, clip);
+		break;
+
+	default:
+		queueDDClip(kDDWidgetBackgroundDefault, r, clip);
 		break;
 	}
 }

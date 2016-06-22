@@ -341,6 +341,9 @@ public:
 	void drawWidgetBackground(const Common::Rect &r, uint16 hints,
 	                          WidgetBackground background = kWidgetBackgroundPlain, WidgetStateInfo state = kStateEnabled);
 
+	void drawWidgetBackgroundClip(const Common::Rect &r, const Common::Rect &clippingArea, uint16 hints,
+								WidgetBackground background = kWidgetBackgroundPlain, WidgetStateInfo state = kStateEnabled);
+
 	void drawButton(const Common::Rect &r, const Common::String &str,
 	                WidgetStateInfo state = kStateEnabled, uint16 hints = 0);
 
@@ -368,6 +371,8 @@ public:
 
 	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel,
 	                     int deltax, WidgetStateInfo state = kStateEnabled, Graphics::TextAlign align = Graphics::kTextAlignLeft);
+	void drawPopUpWidgetClip(const Common::Rect &r, const Common::Rect &clippingArea, const Common::String &sel,
+							int deltax, WidgetStateInfo state = kStateEnabled, Graphics::TextAlign align = Graphics::kTextAlignLeft);
 
 	void drawCaret(const Common::Rect &r, bool erase,
 	               WidgetStateInfo state = kStateEnabled);
