@@ -136,20 +136,34 @@ stmt: expr 				{ g_lingo->code1(g_lingo->c_xpop); }
 	//   statements
 	// end repeat
 	//
-	// repeat with index = high down to low
-	//   statements
-	// end repeat
-	//
 	| repeatwith '=' expr end tTO expr end stmtlist end tEND tREPEAT {
-		inst init = 0, finish = 0, body = 0, end = 0;
+		inst init = 0, finish = 0, body = 0, end = 0, inc = 0;
 		WRITE_LE_UINT32(&init, $3);
 		WRITE_LE_UINT32(&finish, $6);
 		WRITE_LE_UINT32(&body, $8);
 		WRITE_LE_UINT32(&end, $9);
+		WRITE_LE_UINT32(&inc, 1);
 		(*g_lingo->_currentScript)[$1 + 1] = init;	/* initial count value */
 		(*g_lingo->_currentScript)[$1 + 2] = finish;/* final count value */
 		(*g_lingo->_currentScript)[$1 + 3] = body;	/* body of loop */
-		(*g_lingo->_currentScript)[$1 + 4] = end; }	/* end, if cond fails */
+		(*g_lingo->_currentScript)[$1 + 4] = inc;	/* increment */
+		(*g_lingo->_currentScript)[$1 + 5] = end; }	/* end, if cond fails */
+	// repeat with index = high down to low
+	//   statements
+	// end repeat
+	//
+	| repeatwith '=' expr end tDOWN tTO expr end stmtlist end tEND tREPEAT {
+		inst init = 0, finish = 0, body = 0, end = 0, inc = 0;
+		WRITE_LE_UINT32(&init, $3);
+		WRITE_LE_UINT32(&finish, $7);
+		WRITE_LE_UINT32(&body, $9);
+		WRITE_LE_UINT32(&end, $10);
+		WRITE_LE_UINT32(&inc, -1);
+		(*g_lingo->_currentScript)[$1 + 1] = init;	/* initial count value */
+		(*g_lingo->_currentScript)[$1 + 2] = finish;/* final count value */
+		(*g_lingo->_currentScript)[$1 + 3] = body;	/* body of loop */
+		(*g_lingo->_currentScript)[$1 + 4] = inc;	/* increment */
+		(*g_lingo->_currentScript)[$1 + 5] = end; }	/* end, if cond fails */
 	;
 
 cond:	   expr 				{ g_lingo->code1(STOP); }
@@ -160,7 +174,7 @@ repeatwhile:	tREPEAT tWHILE		{ $$ = g_lingo->code3(g_lingo->c_repeatwhilecode, S
 	;
 repeatwith:		tREPEAT tWITH VAR	{
 		$$ = g_lingo->code3(g_lingo->c_repeatwithcode, STOP, STOP);
-		g_lingo->code2(STOP, STOP);
+		g_lingo->code3(STOP, STOP, STOP);
 		g_lingo->codeString($3->c_str());
 		delete $3; }
 	;

@@ -101,6 +101,9 @@ end repeat\n\
 repeat with z = 10 to 15\n\
 	put z\n\
 end repeat\n\
+repeat with y = 5 down to 1\n\
+put y\n\
+end repeat\n\
 ", kMovieScript, 3);
 
 	_lingo->executeScript(kMovieScript, 3);
