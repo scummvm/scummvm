@@ -168,7 +168,7 @@ protected:
 	virtual void setDefaultCursor();
 
 	/* HE version 70 script opcodes */
-	void o70_startSound();
+	void o70_soundOps();
 	void o70_pickupObject();
 	void o70_getActorRoom();
 	void o70_resourceRoutines();
@@ -622,7 +622,7 @@ protected:
 	void o100_redimArray();
 	void o100_roomOps();
 	void o100_setSystemMessage();
-	void o100_startSound();
+	void o100_soundOps();
 	void o100_setSpriteInfo();
 	void o100_startScript();
 	void o100_systemOps();

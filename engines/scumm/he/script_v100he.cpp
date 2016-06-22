@@ -184,7 +184,7 @@ void ScummEngine_v100he::setupOpcodes() {
 	OPCODE(0x74, o6_delay);
 	OPCODE(0x75, o6_delayMinutes);
 	OPCODE(0x76, o6_delaySeconds);
-	OPCODE(0x77, o100_startSound);
+	OPCODE(0x77, o100_soundOps);
 	/* 78 */
 	OPCODE(0x78, o80_sourceDebug);
 	OPCODE(0x79, o100_setSpriteInfo);
@@ -1742,69 +1742,69 @@ void ScummEngine_v100he::o100_setSystemMessage() {
 	}
 }
 
-void ScummEngine_v100he::o100_startSound() {
+void ScummEngine_v100he::o100_soundOps() {
 	byte filename[260];
 	int var, value;
 
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 6:
+	case 6:		// SO_AT
 		_heSndFlags |= 16;
 		_heSndOffset = pop();
 		break;
-	case 47:
+	case 47:	// SO_LOAD
 		copyScriptString(filename, sizeof(filename));
 		_heSndSoundId = pop();
 		if (_heSndSoundId)
 			debug(0, "Load sound %d from file %s\n", _heSndSoundId, filename);
 		break;
-	case 55:
+	case 55:	// SO_NOW
 		_heSndFlags |= 8;
 		break;
-	case 83:
+	case 83:	// SO_VARIABLE
 		value = pop();
 		var = pop();
 		_heSndSoundId = pop();
 		((SoundHE *)_sound)->setSoundVar(_heSndSoundId, var, value);
 		break;
-	case 92:
+	case 92:	// SO_END
 		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
 		break;
-	case 128:
+	case 128:	// SO_SOUND_ADD
 		_heSndFlags |= 2;
 		break;
-	case 129:
+	case 129:	// SO_SOUND_CHANNEL
 		_heSndChannel = pop();
 		break;
-	case 130:
+	case 130:	// SO_SOUND_FREQUENCY
 		_heSndFlags |= 64;
 		pop();
 		break;
-	case 131:
+	case 131:	// SO_SOUND_LOOPING
 		_heSndFlags |= 1;
 		break;
-	case 132: // Music
-	case 134: // Sound
+	case 132:	// SO_SOUND_MODIFY
+	case 134:	// SO_SOUND_START
 		_heSndSoundId = pop();
 		_heSndOffset = 0;
 		_heSndSoundFreq = 11025;
 		_heSndChannel = VAR(VAR_SOUND_CHANNEL);
 		_heSndFlags = 0;
 		break;
-	case 133:
+	case 133:	// SO_SOUND_PAN
 		_heSndFlags |= 128;
 		pop();
 		break;
-	case 135:
+	case 135:	// SO_SOUND_SOFT
 		_heSndFlags |= 4;
 		break;
-	case 136:
+	case 136:	// SO_SOUND_VOLUME
 		_heSndFlags |= 32;
 		pop();
 		break;
 	default:
-		error("o100_startSound invalid case %d", subOp);
+		error("o100_soundOps invalid case %d", subOp);
 	}
 }
 
