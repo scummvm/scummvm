@@ -564,6 +564,12 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 	}
 }
 
+void GuiManager::doFullRedraw() {
+	_redrawStatus = kRedrawFull;
+	redraw();
+	_system->updateScreen();
+}
+
 void GuiManager::giveFocusToDialog(Dialog *dialog) {
 	int16 dialogX = _globalMousePosition.x - dialog->_x;
 	int16 dialogY = _globalMousePosition.y - dialog->_y;
