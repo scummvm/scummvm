@@ -252,16 +252,6 @@ protected:
 		}
 	}
 
-	inline void blendFillClip(int x, PixelType *first, PixelType *last, PixelType color, uint8 alpha) {
-		while (first != last) {
-			if (x >= _clippingArea.left && x <= _clippingArea.right)
-				blendPixelPtr(first++, color, alpha);
-			else
-				++first;
-			++x;
-		}
-	}
-
 	void darkenFill(PixelType *first, PixelType *last);
 
 	const PixelFormat _format;

@@ -276,15 +276,19 @@ void ThemeItemDrawDataClip::drawSelf(bool draw, bool restore) {
 }
 
 void ThemeItemTextData::drawSelf(bool draw, bool restore) {
+	Common::Rect dirty = _textDrawableArea;
+	if (dirty.isEmpty()) dirty = _area;
+	else dirty.clip(_area);
+
 	if (_restoreBg || restore)
-		_engine->restoreBackground(_area);
+		_engine->restoreBackground(dirty);
 
 	if (draw) {
 		_engine->renderer()->setFgColor(_color->r, _color->g, _color->b);
 		_engine->renderer()->drawString(_data->_fontPtr, _text, _area, _alignH, _alignV, _deltax, _ellipsis, _textDrawableArea);
 	}
 
-	_engine->addDirtyRect(_area);
+	_engine->addDirtyRect(dirty);
 }
 
 void ThemeItemBitmap::drawSelf(bool draw, bool restore) {
@@ -1414,12 +1418,12 @@ void ThemeEngine::drawTextClip(const Common::Rect &r, const Common::Rect &clippi
 
 	switch (inverted) {
 	case kTextInversion:
-		queueDD(kDDTextSelectionBackground, r);
+		queueDDClip(kDDTextSelectionBackground, r, clippingArea);
 		restore = false;
 		break;
 
 	case kTextInversionFocus:
-		queueDD(kDDTextSelectionFocusBackground, r);
+		queueDDClip(kDDTextSelectionFocusBackground, r, clippingArea);
 		restore = false;
 		break;
 

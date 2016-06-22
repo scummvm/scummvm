@@ -2382,18 +2382,18 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 			if (y + ystart  < _clippingArea.top || y + ystart  > _clippingArea.bottom) continue;
 
 			if (((1 << x) & hb) == 0) {
-				blendFillClip(xstart + r + x, ptr_tl - y - px, ptr_tr + y - px, color, (uint8)alpha);
+				blendFill(ptr_tl - y - px, ptr_tr + y - px, color, (uint8)alpha);
 
 				// Will create a dark line of pixles if left out
 				if (hb > 0) {
-					blendFillClip(x, ptr_bl - y + px, ptr_br + y + px, color, (uint8)alpha);
+					blendFill(ptr_bl - y + px, ptr_br + y + px, color, (uint8)alpha);
 				}
 				hb |= (1 << x);
 			}
 
 			if (((1 << y) & hb) == 0) {
-				blendFillClip(x, ptr_tl - x - py, ptr_tr + x - py, color, (uint8)alpha);
-				blendFillClip(x, ptr_bl - x + py, ptr_br + x + py, color, (uint8)alpha);
+				blendFill(ptr_tl - x - py, ptr_tr + x - py, color, (uint8)alpha);
+				blendFill(ptr_bl - x + py, ptr_br + x + py, color, (uint8)alpha);
 				hb |= (1 << y);
 			}
 		}
@@ -2402,7 +2402,7 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 		int realy = ystart;
 		while (short_h--) {			
 			if (realy >= _clippingArea.top && realy <= _clippingArea.bottom)
-				blendFillClip(xstart+x, ptr_fill, ptr_fill + width + 1, color, (uint8)alpha);
+				blendFill(ptr_fill, ptr_fill + width + 1, color, (uint8)alpha);
 			ptr_fill += pitch;
 			++realy;
 		}
