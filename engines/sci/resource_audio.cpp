@@ -869,6 +869,7 @@ void WaveResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	if (!fileStream)
 		return;
 
+	assert(fileStream->size() == -1 || res->_fileOffset < fileStream->size());
 	fileStream->seek(res->_fileOffset, SEEK_SET);
 	res->loadFromWaveFile(fileStream);
 	if (_resourceFile)
@@ -922,6 +923,7 @@ void AudioVolumeResourceSource::loadResource(ResourceManager *resMan, Resource *
 			break;
 		}
 	} else {
+		assert(fileStream->size() == -1 || res->_fileOffset < fileStream->size());
 		// original file, directly seek to given offset and get SCI1/SCI1.1 audio resource
 		fileStream->seek(res->_fileOffset, SEEK_SET);
 	}
