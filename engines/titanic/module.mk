@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	input_handler.o \
 	input_translator.o \
 	main_game_window.o \
+	room_flags.o \
 	titanic.o \
 	carry/auditory_centre.o \
 	carry/arm.o \
