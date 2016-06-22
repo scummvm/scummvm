@@ -108,6 +108,33 @@ inline frac_t fp_sqroot(uint32 x) {
 	BE_DRAWCIRCLE_BOTTOM(ptr3,ptr4,x,y,px,py); \
 } while (0)
 
+#define BE_DRAWCIRCLE_TOP_CLIP(ptr1,ptr2,x,y,px,py,realX1,realY1,realX2,realY2) do { \
+	if (IS_IN_CLIP((realX1) + (y), (realY1) - (x))) \
+		*(ptr1 + (y) - (px)) = color; \
+	if (IS_IN_CLIP((realX1) + (x), (realY1) - (y))) \
+		*(ptr1 + (x) - (py)) = color; \
+	if (IS_IN_CLIP((realX2) - (x), (realY2) - (y))) \
+		*(ptr2 - (x) - (py)) = color; \
+	if (IS_IN_CLIP((realX2) - (y), (realY2) - (x))) \
+		*(ptr2 - (y) - (px)) = color; \
+} while (0)
+
+#define BE_DRAWCIRCLE_BOTTOM_CLIP(ptr3,ptr4,x,y,px,py,realX3,realY3,realX4,realY4) do { \
+	if (IS_IN_CLIP((realX3) - (y), (realY3) + (x))) \
+		*(ptr3 - (y) + (px)) = color; \
+	if (IS_IN_CLIP((realX3) - (x), (realY3) + (y))) \
+		*(ptr3 - (x) + (py)) = color; \
+	if (IS_IN_CLIP((realX4) + (x), (realY4) + (y))) \
+		*(ptr4 + (x) + (py)) = color; \
+	if (IS_IN_CLIP((realX4) + (y), (realY4) + (x))) \
+		*(ptr4 + (y) + (px)) = color; \
+} while (0)
+
+#define BE_DRAWCIRCLE_CLIP(ptr1,ptr2,ptr3,ptr4,x,y,px,py,realX1,realY1,realX2,realY2,realX3,realY3,realX4,realY4) do { \
+	BE_DRAWCIRCLE_TOP_CLIP(ptr1,ptr2,x,y,px,py,realX1,realY1,realX2,realY2); \
+	BE_DRAWCIRCLE_BOTTOM_CLIP(ptr3,ptr4,x,y,px,py,realX3,realY3,realX4,realY4); \
+} while (0)
+
 #define BE_DRAWCIRCLE_BCOLOR(ptr1,ptr2,ptr3,ptr4,x,y,px,py) do { \
 	*(ptr1 + (y) - (px)) = color1; \
 	*(ptr1 + (x) - (py)) = color1; \
@@ -119,12 +146,41 @@ inline frac_t fp_sqroot(uint32 x) {
 	*(ptr4 + (y) + (px)) = color2; \
 } while (0)
 
+#define BE_DRAWCIRCLE_BCOLOR_CLIP(ptr1,ptr2,ptr3,ptr4,x,y,px,py,realX1,realY1,realX2,realY2,realX3,realY3,realX4,realY4) do { \
+	if (IS_IN_CLIP((realX1) + (y), (realY1) - (x))) \
+		*(ptr1 + (y) - (px)) = color1; \
+	if (IS_IN_CLIP((realX1) + (x), (realY1) - (y))) \
+		*(ptr1 + (x) - (py)) = color1; \
+	if (IS_IN_CLIP((realX2) - (x), (realY2) - (y))) \
+		*(ptr2 - (x) - (py)) = color1; \
+	if (IS_IN_CLIP((realX2) - (y), (realY2) - (x))) \
+		*(ptr2 - (y) - (px)) = color1; \
+	if (IS_IN_CLIP((realX3) - (y), (realY3) + (x))) \
+		*(ptr3 - (y) + (px)) = color1; \
+	if (IS_IN_CLIP((realX3) - (x), (realY3) + (y))) \
+		*(ptr3 - (x) + (py)) = color1; \
+	if (IS_IN_CLIP((realX4) + (x), (realY4) + (y))) \
+		*(ptr4 + (x) + (py)) = color2; \
+	if (IS_IN_CLIP((realX4) + (y), (realY4) + (x))) \
+		*(ptr4 + (y) + (px)) = color2; \
+} while (0)
+
 #define BE_DRAWCIRCLE_BCOLOR_TR_CW(ptr,x,y,px,py,a) do { \
 	this->blendPixelPtr(ptr + (y) - (px), color, a); \
 } while (0)
 
 #define BE_DRAWCIRCLE_BCOLOR_TR_CCW(ptr,x,y,px,py,a) do { \
 	this->blendPixelPtr(ptr + (x) - (py), color, a); \
+} while (0)
+
+#define BE_DRAWCIRCLE_BCOLOR_TR_CW_CLIP(ptr,x,y,px,py,a,realX,realY) do { \
+	if (IS_IN_CLIP((realX) + (y), (realY) - (x))) \
+		this->blendPixelPtr(ptr + (y) - (px), color, a); \
+} while (0)
+
+#define BE_DRAWCIRCLE_BCOLOR_TR_CCW_CLIP(ptr,x,y,px,py,a,realX,realY) do { \
+	if (IS_IN_CLIP((realX) + (x), (realY) - (y))) \
+		this->blendPixelPtr(ptr + (x) - (py), color, a); \
 } while (0)
 
 #define BE_DRAWCIRCLE_BCOLOR_TL_CW(ptr,x,y,px,py,a) do { \
@@ -135,6 +191,16 @@ inline frac_t fp_sqroot(uint32 x) {
 	this->blendPixelPtr(ptr - (y) - (px), color, a); \
 } while (0)
 
+#define BE_DRAWCIRCLE_BCOLOR_TL_CW_CLIP(ptr,x,y,px,py,a,realX,realY) do { \
+	if (IS_IN_CLIP((realX) - (x), (realY) - (y))) \
+		this->blendPixelPtr(ptr - (x) - (py), color, a); \
+} while (0)
+
+#define BE_DRAWCIRCLE_BCOLOR_TL_CCW_CLIP(ptr,x,y,px,py,a,realX,realY) do { \
+	if (IS_IN_CLIP((realX) - (y), (realY) - (x))) \
+		this->blendPixelPtr(ptr - (y) - (px), color, a); \
+} while (0)
+
 #define BE_DRAWCIRCLE_BCOLOR_BL_CW(ptr,x,y,px,py,a) do { \
 	this->blendPixelPtr(ptr - (y) + (px), color, a); \
 } while (0)
@@ -143,12 +209,32 @@ inline frac_t fp_sqroot(uint32 x) {
 	this->blendPixelPtr(ptr - (x) + (py), color, a); \
 } while (0)
 
+#define BE_DRAWCIRCLE_BCOLOR_BL_CW_CLIP(ptr,x,y,px,py,a,realX,realY) do { \
+	if (IS_IN_CLIP((realX) - (y), (realY) + (x))) \
+		this->blendPixelPtr(ptr - (y) + (px), color, a); \
+} while (0)
+
+#define BE_DRAWCIRCLE_BCOLOR_BL_CCW_CLIP(ptr,x,y,px,py,a,realX,realY) do { \
+	if (IS_IN_CLIP((realX) - (x), (realY) + (y))) \
+		this->blendPixelPtr(ptr - (x) + (py), color, a); \
+} while (0)
+
 #define BE_DRAWCIRCLE_BCOLOR_BR_CW(ptr,x,y,px,py,a) do { \
 	this->blendPixelPtr(ptr + (x) + (py), color, a); \
 } while (0)
 
 #define BE_DRAWCIRCLE_BCOLOR_BR_CCW(ptr,x,y,px,py,a) do { \
 	this->blendPixelPtr(ptr + (y) + (px), color, a); \
+} while (0)
+
+#define BE_DRAWCIRCLE_BCOLOR_BR_CW_CLIP(ptr,x,y,px,py,a,realX,realY) do { \
+	if (IS_IN_CLIP((realX) + (x), (realY) + (y))) \
+		this->blendPixelPtr(ptr + (x) + (py), color, a); \
+} while (0)
+
+#define BE_DRAWCIRCLE_BCOLOR_BR_CCW_CLIP(ptr,x,y,px,py,a,realX,realY) do { \
+	if (IS_IN_CLIP((realX) + (y), (realY) + (x))) \
+		this->blendPixelPtr(ptr + (y) + (px), color, a); \
 } while (0)
 
 #define BE_DRAWCIRCLE_XCOLOR_TOP(ptr1,ptr2,x,y,px,py) do { \
@@ -168,6 +254,42 @@ inline frac_t fp_sqroot(uint32 x) {
 #define BE_DRAWCIRCLE_XCOLOR(ptr1,ptr2,ptr3,ptr4,x,y,px,py) do { \
 	BE_DRAWCIRCLE_XCOLOR_TOP(ptr1,ptr2,x,y,px,py); \
 	BE_DRAWCIRCLE_XCOLOR_BOTTOM(ptr3,ptr4,x,y,px,py); \
+} while (0)
+
+#define IS_IN_CLIP(x,y) (_clippingArea.left <= (x) && (x) < _clippingArea.right \
+	&& _clippingArea.top <= (y) && (y) < _clippingArea.bottom)
+
+#define BE_DRAWCIRCLE_XCOLOR_TOP_CLIP(ptr1,ptr2,x,y,px,py,realX1,realY1,realX2,realY2) do { \
+	if (IS_IN_CLIP((realX1) + (y), (realY1) - (x))) \
+		*(ptr1 + (y) - (px)) = color1; \
+\
+	if (IS_IN_CLIP((realX1) + (x), (realY1) - (y))) \
+		*(ptr1 + (x) - (py)) = color2; \
+\
+	if (IS_IN_CLIP((realX2) - (x), (realY2) - (y))) \
+		*(ptr2 - (x) - (py)) = color2; \
+\
+	if (IS_IN_CLIP((realX2) - (y), (realY2) - (x))) \
+		*(ptr2 - (y) - (px)) = color1; \
+} while (0)
+
+#define BE_DRAWCIRCLE_XCOLOR_BOTTOM_CLIP(ptr3,ptr4,x,y,px,py,realX3,realY3,realX4,realY4) do { \
+	if (IS_IN_CLIP((realX3) - (y), (realY3) + (x))) \
+		*(ptr3 - (y) + (px)) = color3; \
+\
+	if (IS_IN_CLIP((realX3) - (x), (realY3) + (y))) \
+		*(ptr3 - (x) + (py)) = color4; \
+\
+	if (IS_IN_CLIP((realX4) + (x), (realY4) + (y))) \
+		*(ptr4 + (x) + (py)) = color4; \
+\
+	if (IS_IN_CLIP((realX4) + (y), (realY4) + (x))) \
+		*(ptr4 + (y) + (px)) = color3; \
+} while (0)
+
+#define BE_DRAWCIRCLE_XCOLOR_CLIP(ptr1,ptr2,ptr3,ptr4,x,y,px,py,realX1,realY1,realX2,realY2,realX3,realY3,realX4,realY4) do { \
+	BE_DRAWCIRCLE_XCOLOR_TOP_CLIP(ptr1,ptr2,x,y,px,py,realX1,realY1,realX2,realY2); \
+	BE_DRAWCIRCLE_XCOLOR_BOTTOM_CLIP(ptr3,ptr4,x,y,px,py,realX3,realY3,realX4,realY4); \
 } while (0)
 
 
@@ -337,6 +459,45 @@ void colorFill(PixelType *first, PixelType *last, PixelType color) {
 	}
 }
 
+template<typename PixelType>
+void colorFillClip(PixelType *first, PixelType *last, PixelType color, int realX, int realY, Common::Rect &clippingArea) {
+	if (realY < clippingArea.top || realY >= clippingArea.bottom)
+		return;	
+
+	register int count = (last - first);
+
+	if (realX > clippingArea.right || realX + count < clippingArea.left)
+		return;
+
+	if (realX < clippingArea.left) {
+		register int diff = (clippingArea.left - realX);
+		realX += diff;
+		count -= diff;
+	}
+
+	if (clippingArea.right <= realX + count) {
+		register int diff = (realX + count - clippingArea.right);		
+		count -= diff;
+	}
+
+	if (!count)
+		return;
+
+	register int n = (count + 7) >> 3;
+	switch (count % 8) {
+	case 0: do {
+		*first++ = color;
+	case 7:		*first++ = color;
+	case 6:		*first++ = color;
+	case 5:		*first++ = color;
+	case 4:		*first++ = color;
+	case 3:		*first++ = color;
+	case 2:		*first++ = color;
+	case 1:		*first++ = color;
+	} while (--n > 0);
+	}
+}
+
 
 VectorRenderer *createRenderer(int mode) {
 #ifdef DISABLE_FANCY_THEMES
@@ -376,6 +537,7 @@ VectorRendererSpec(PixelFormat format) :
 	_alphaMask((0xFF >> format.aLoss) << format.aShift) {
 
 	_bitmapAlphaColor = _format.RGBToColor(255, 0, 255);
+	_clippingArea = Common::Rect(0, 0, 64 * 1024, 64 * 1024);
 }
 
 /****************************
@@ -466,6 +628,49 @@ gradientFill(PixelType *ptr, int width, int x, int y) {
 		colorFill<PixelType>(ptr, ptr + width, _gradCache[curGrad + 1]);
 	} else {
 		for (int j = x; j < x + width; j++, ptr++) {
+			bool oy = ((j & 1) == 1);
+
+			if ((ox && oy) ||
+				((grad == 2 || grad == 3) && ox && !oy) ||
+				(grad == 3 && oy))
+				*ptr = _gradCache[curGrad + 1];
+			else
+				*ptr = _gradCache[curGrad];
+		}
+	}
+}
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+gradientFillClip(PixelType *ptr, int width, int x, int y, int realX, int realY) {
+	if (realY < _clippingArea.top || realY >= _clippingArea.bottom) return;
+	bool ox = ((y & 1) == 1);
+	int curGrad = 0;
+
+	while (_gradIndexes[curGrad + 1] <= y)
+		curGrad++;
+
+	// precalcGradient assures that _gradIndexes entries always differ in
+	// their value. This assures stripSize is always different from zero.
+	int stripSize = _gradIndexes[curGrad + 1] - _gradIndexes[curGrad];
+
+	int grad = (((y - _gradIndexes[curGrad]) % stripSize) << 2) / stripSize;
+
+	// Dithering:
+	//   +--+ +--+ +--+ +--+
+	//   |  | |  | | *| | *|
+	//   |  | | *| |* | |**|
+	//   +--+ +--+ +--+ +--+
+	//     0    1    2    3
+	if (grad == 0 ||
+		_gradCache[curGrad] == _gradCache[curGrad + 1] || // no color change
+		stripSize < 2) { // the stip is small
+		colorFill<PixelType>(ptr, ptr + width, _gradCache[curGrad]);
+	} else if (grad == 3 && ox) {
+		colorFill<PixelType>(ptr, ptr + width, _gradCache[curGrad + 1]);
+	} else {
+		for (int j = x; j < x + width; j++, ptr++) {
+			if (realX + j - x < _clippingArea.left || realX + j - x >= _clippingArea.right) continue;
 			bool oy = ((j & 1) == 1);
 
 			if ((ox && oy) ||
@@ -931,14 +1136,25 @@ drawRoundedSquareClip(int x, int y, int r, int w, int h, int cx, int cy, int cw,
 	if (r <= 0)
 		return;
 
+	Common::Rect backup = _clippingArea;
+	_clippingArea = Common::Rect(cx, cy, cx + cw, cy + ch);	
+
 	if (Base::_fillMode != kFillDisabled && Base::_shadowOffset
 		&& x + w + Base::_shadowOffset + 1 < Base::_activeSurface->w
 		&& y + h + Base::_shadowOffset + 1 < Base::_activeSurface->h
 		&& h > (Base::_shadowOffset + 1) * 2) {
+		debug("shadow");
 		drawRoundedSquareShadow(x, y, r, w, h, Base::_shadowOffset);
 	}
 
-	drawRoundedSquareAlg(x, y, r, w, h, _fgColor, Base::_fillMode);
+	if (_clippingArea.isEmpty() || _clippingArea.contains(Common::Rect(x, y, x + w, y + h))) {
+		drawRoundedSquareAlg(x, y, r, w, h, _fgColor, Base::_fillMode);
+	} else {
+		debug("clipclipclip %d..%d %d..%d", cx, cw + cx, cy, cy + ch);
+		drawRoundedSquareAlgClip(x, y, r, w, h, _fgColor, Base::_fillMode);
+	}
+
+	_clippingArea = backup;
 }
 
 template<typename PixelType>
@@ -1688,6 +1904,7 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 	PixelType color1 = color;
 	PixelType color2 = color;
 
+	debug("from %d to %d (drawing from %d to %d or something)", _clippingArea.left, _clippingArea.right, x1, x1+w);
 	while (sw++ < Base::_strokeWidth) {
 		blendFill(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color1, alpha_t); // top
 		blendFill(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color2, alpha_b); // bottom
@@ -1704,6 +1921,9 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 		// Avoid blending the last pixels twice, since we have an alpha
 		while (x++ < (y - 2)) {
 			BE_ALGORITHM();
+
+			if (x < _clippingArea.left || x > _clippingArea.right) continue;
+			if (y < _clippingArea.top || y > _clippingArea.bottom) continue;
 
 			BE_DRAWCIRCLE_BCOLOR_TR_CW(ptr_tr, x, y, px, py, (uint8)(alpha_r + (alphaStep_tr * x)));
 			BE_DRAWCIRCLE_BCOLOR_BR_CW(ptr_br, x, y, px, py, (uint8)(alpha_b + (alphaStep_br * x)));
@@ -1726,6 +1946,74 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 	while (short_h--) {
 		blendFill(ptr_fill, ptr_fill + Base::_strokeWidth, color1, alpha_l); // left
 		blendFill(ptr_fill + w - Base::_strokeWidth + 1, ptr_fill + w + 1, color2, alpha_r); // right
+		ptr_fill += pitch;
+	}
+}
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+drawBorderRoundedSquareAlgClip(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m, uint8 alpha_t, uint8 alpha_r, uint8 alpha_b, uint8 alpha_l) {
+	int f, ddF_x, ddF_y;
+	int x, y, px, py;
+	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
+	int sw = 0, sp = 0, hp = h * pitch;
+
+	PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
+	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
+	PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + h - r);
+	PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + h - r);
+	PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
+
+	int real_radius = r;
+	int short_h = h - (2 * r) + 2;
+
+	PixelType color1 = color;
+	PixelType color2 = color;
+	
+	while (sw++ < Base::_strokeWidth) {
+		blendFillClip(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color1, alpha_t,
+			x1 + r, y1 + sp/pitch); // top
+		blendFillClip(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color2, alpha_b,
+			x1 + r, y1 + (hp - sp)/ pitch); // bottom
+		sp += pitch;
+
+		BE_RESET();
+		r--;
+
+		int alphaStep_tr = ((alpha_t - alpha_r) / (y + 1));
+		int alphaStep_br = ((alpha_r - alpha_b) / (y + 1));
+		int alphaStep_bl = ((alpha_b - alpha_l) / (y + 1));
+		int alphaStep_tl = ((alpha_l - alpha_t) / (y + 1));
+
+		// Avoid blending the last pixels twice, since we have an alpha
+		while (x++ < (y - 2)) {
+			BE_ALGORITHM();
+
+			BE_DRAWCIRCLE_BCOLOR_TR_CW_CLIP(ptr_tr, x, y, px, py, (uint8)(alpha_r + (alphaStep_tr * x)), x1 + w - r, y1 + r);
+			BE_DRAWCIRCLE_BCOLOR_BR_CW_CLIP(ptr_br, x, y, px, py, (uint8)(alpha_b + (alphaStep_br * x)), x1 + w - r, y1 + h - r);
+			BE_DRAWCIRCLE_BCOLOR_BL_CW_CLIP(ptr_bl, x, y, px, py, (uint8)(alpha_l + (alphaStep_bl * x)), x1 + r, y1 + h - r);
+			BE_DRAWCIRCLE_BCOLOR_TL_CW_CLIP(ptr_tl, x, y, px, py, (uint8)(alpha_t + (alphaStep_tl * x)), x1 + r, y1 + r);
+
+			BE_DRAWCIRCLE_BCOLOR_TR_CCW_CLIP(ptr_tr, x, y, px, py, (uint8)(alpha_t - (alphaStep_tr * x)), x1 + w - r, y1 + r);
+			BE_DRAWCIRCLE_BCOLOR_BR_CCW_CLIP(ptr_br, x, y, px, py, (uint8)(alpha_r - (alphaStep_br * x)), x1 + w - r, y1 + h - r);
+			BE_DRAWCIRCLE_BCOLOR_BL_CCW_CLIP(ptr_bl, x, y, px, py, (uint8)(alpha_b - (alphaStep_bl * x)), x1 + r, y1 + h - r);
+			BE_DRAWCIRCLE_BCOLOR_TL_CCW_CLIP(ptr_tl, x, y, px, py, (uint8)(alpha_l - (alphaStep_tl * x)), x1 + r, y1 + r);
+
+			if (Base::_strokeWidth > 1) {
+				BE_DRAWCIRCLE_BCOLOR_CLIP(ptr_tr, ptr_tl, ptr_bl, ptr_br, x - 1, y, px, py,
+					x1 + w - r, y1 + r, x1 + r, y1 + r, x1 + r, y1 + h - r, x1 + w - r, y1 + h - r);
+				BE_DRAWCIRCLE_BCOLOR_CLIP(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px - pitch, py,
+					x1 + w - r, y1 + r, x1 + r, y1 + r, x1 + r, y1 + h - r, x1 + w - r, y1 + h - r);
+			}
+		}
+	}
+
+	ptr_fill += pitch * real_radius;
+	while (short_h--) {
+		blendFillClip(ptr_fill, ptr_fill + Base::_strokeWidth, color1, alpha_l,
+			x1, y1 + real_radius + h - (2 * r) + 2 - short_h - 1); // left
+		blendFillClip(ptr_fill + w - Base::_strokeWidth + 1, ptr_fill + w + 1, color2, alpha_r,
+			x1 + w - Base::_strokeWidth + 1, y1 + real_radius + h - (2 * r) + 2 - short_h - 1); // right
 		ptr_fill += pitch;
 	}
 }
@@ -1762,6 +2050,8 @@ drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType colo
 
 		while (x++ < y) {
 			BE_ALGORITHM();
+
+			if (y1 + r + y < _clippingArea.top || y1 + r + y > _clippingArea.bottom) continue;
 
 			color1 = calcGradient(real_radius - x, long_h);
 			color2 = calcGradient(real_radius - y, long_h);
@@ -1804,6 +2094,91 @@ drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType colo
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
+drawInteriorRoundedSquareAlgClip(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
+	// Do not draw empty space rounded squares.
+	if (w <= 0 || h <= 0) {
+		return;
+	}
+
+	int f, ddF_x, ddF_y;
+	int x, y, px, py;
+	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
+
+	PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
+	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
+	PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + h - r);
+	PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + h - r);
+	PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
+
+	int real_radius = r;
+	int short_h = h - (2 * r) + 2;
+	int long_h = h;
+
+	BE_RESET();
+
+	PixelType color1 = color;
+
+	if (fill_m == kFillGradient) {
+		PixelType color2, color3, color4;
+		precalcGradient(long_h);
+
+		while (x++ < y) {
+			BE_ALGORITHM();
+
+			color1 = calcGradient(real_radius - x, long_h);
+			color2 = calcGradient(real_radius - y, long_h);
+			color3 = calcGradient(long_h - r + x, long_h);
+			color4 = calcGradient(long_h - r + y, long_h);
+
+			//TL = (x1 + r, y1 + r)			
+			gradientFillClip(ptr_tl - x - py, w - 2 * r + 2 * x, x1 + r - x - y, real_radius - y,
+				x1 + r - x, y1 + r - y);
+			gradientFillClip(ptr_tl - y - px, w - 2 * r + 2 * y, x1 + r - y - x, real_radius - x,
+				x1 + r - y, y1 + r - x);
+
+			//BL = (x1 + r, y1 + h - r)	
+			gradientFillClip(ptr_bl - x + py, w - 2 * r + 2 * x, x1 + r - x - y, long_h - r + y,
+				x1 + r - x, y1 + h - r + y);
+			gradientFillClip(ptr_bl - y + px, w - 2 * r + 2 * y, x1 + r - y - x, long_h - r + x,
+				x1 + r - y, y1 + h - r + x);
+			
+			BE_DRAWCIRCLE_XCOLOR_CLIP(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py,
+				x1 + w - r, y1 + r, x1 + r, y1 + r, x1 + r, y1 + h - r, x1 + w - r, y1 + h - r);
+		}
+	} else {
+		while (x++ < y) {
+			BE_ALGORITHM();
+
+			colorFillClip<PixelType>(ptr_tl - x - py, ptr_tr + x - py, color1,
+				x1 + r - x, y1 + r - y, _clippingArea);
+			colorFillClip<PixelType>(ptr_tl - y - px, ptr_tr + y - px, color1,
+				x1 + r - y, y1 + r - x, _clippingArea);
+
+			colorFillClip<PixelType>(ptr_bl - x + py, ptr_br + x + py, color1,
+				x1 + r - x, y1 + h - r + y, _clippingArea);
+			colorFillClip<PixelType>(ptr_bl - y + px, ptr_br + y + px, color1,
+				x1 + r - y, y1 + h - r + x, _clippingArea);
+
+			// do not remove - messes up the drawing at lower resolutions
+			BE_DRAWCIRCLE_CLIP(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py,
+				x1 + w - r, y1 + r, x1 + r, y1 + r, x1 + r, y1 + h - r, x1 + w - r, y1 + h - r);
+		}
+	}
+
+	ptr_fill += pitch * r;
+	int short_h_orig = short_h;
+	while (short_h--) {
+		if (fill_m == kFillGradient) {
+			gradientFillClip(ptr_fill, w + 1, x1, real_radius++, x1, y1 + r + short_h_orig - short_h -1);
+		} else {			
+			colorFillClip<PixelType>(ptr_fill, ptr_fill + w + 1, color1, x1, y1 + r + short_h_orig - short_h - 1, _clippingArea);
+		}
+		ptr_fill += pitch;
+	}
+}
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
 drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
 	const uint8 borderAlpha_t = 0;
 	const uint8 borderAlpha_r = 127;
@@ -1817,6 +2192,7 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 
 	// If only border is visible
 	if ((!(w <= 0 || h <= 0)) && (fill_m != Base::kFillDisabled)) {
+		debug("interior");
 		if (fill_m == Base::kFillBackground)
 			drawInteriorRoundedSquareAlg(x1, y1, r, w, h, _bgColor, fill_m);
 		else
@@ -1824,11 +2200,46 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 	}
 
 	if (Base::_strokeWidth) {
+		debug("stroke");
 		if (r != 0 && _bevel > 0) {
 			drawBorderRoundedSquareAlg(x1, y1, r, w, h, color, fill_m, borderAlpha_t, borderAlpha_r, borderAlpha_b, borderAlpha_l);
 			drawBorderRoundedSquareAlg(x1, y1, r, w, h, _bevelColor, fill_m, bevelAlpha_t, bevelAlpha_r, bevelAlpha_b, bevelAlpha_l);
 		} else {
 			drawBorderRoundedSquareAlg(x1, y1, r, w, h, color, fill_m, 255, 255, 255, 255);
+		}
+	}
+}
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+drawRoundedSquareAlgClip(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
+	const uint8 borderAlpha_t = 0;
+	const uint8 borderAlpha_r = 127;
+	const uint8 borderAlpha_b = 255;
+	const uint8 borderAlpha_l = 63;
+
+	const uint8 bevelAlpha_t = 255;
+	const uint8 bevelAlpha_r = 31;
+	const uint8 bevelAlpha_b = 0;
+	const uint8 bevelAlpha_l = 127;
+
+	debug("clip version");
+
+	// If only border is visible	
+	if ((!(w <= 0 || h <= 0)) && (fill_m != Base::kFillDisabled)) {		
+		if (fill_m == Base::kFillBackground)
+			drawInteriorRoundedSquareAlgClip(x1, y1, r, w, h, _bgColor, fill_m);
+		else
+			drawInteriorRoundedSquareAlgClip(x1, y1, r, w, h, color, fill_m);
+	}	
+
+	//I expect these to work fine with clipping:
+	if (Base::_strokeWidth) {
+		if (r != 0 && _bevel > 0) {
+			drawBorderRoundedSquareAlgClip(x1, y1, r, w, h, color, fill_m, borderAlpha_t, borderAlpha_r, borderAlpha_b, borderAlpha_l);
+			drawBorderRoundedSquareAlgClip(x1, y1, r, w, h, _bevelColor, fill_m, bevelAlpha_t, bevelAlpha_r, bevelAlpha_b, bevelAlpha_l);
+		} else {
+			drawBorderRoundedSquareAlgClip(x1, y1, r, w, h, color, fill_m, 255, 255, 255, 255);
 		}
 	}
 }
@@ -1941,6 +2352,8 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 	int width = w + offset + 2;
 	int height = h + offset + 1;
 
+	debug("from %d to %d (drawing from %d to %d or something)", _clippingArea.left, _clippingArea.right, xstart, xstart + width);
+
 	for (int i = offset; i >= 0; i--) {
 		int f, ddF_x, ddF_y;
 		int x, y, px, py;
@@ -1965,28 +2378,33 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 		while (x++ < y) {
 			BE_ALGORITHM();
 
+			if (x + xstart < _clippingArea.left || x + xstart > _clippingArea.right) continue;
+			if (y + ystart  < _clippingArea.top || y + ystart  > _clippingArea.bottom) continue;
 
 			if (((1 << x) & hb) == 0) {
-				blendFill(ptr_tl - y - px, ptr_tr + y - px, color, (uint8)alpha);
+				blendFillClip(xstart + r + x, ptr_tl - y - px, ptr_tr + y - px, color, (uint8)alpha);
 
 				// Will create a dark line of pixles if left out
 				if (hb > 0) {
-					blendFill(ptr_bl - y + px, ptr_br + y + px, color, (uint8)alpha);
+					blendFillClip(x, ptr_bl - y + px, ptr_br + y + px, color, (uint8)alpha);
 				}
 				hb |= (1 << x);
 			}
 
 			if (((1 << y) & hb) == 0) {
-				blendFill(ptr_tl - x - py, ptr_tr + x - py, color, (uint8)alpha);
-				blendFill(ptr_bl - x + py, ptr_br + x + py, color, (uint8)alpha);
+				blendFillClip(x, ptr_tl - x - py, ptr_tr + x - py, color, (uint8)alpha);
+				blendFillClip(x, ptr_bl - x + py, ptr_br + x + py, color, (uint8)alpha);
 				hb |= (1 << y);
 			}
 		}
 
 		ptr_fill += pitch * r;
-		while (short_h--) {
-			blendFill(ptr_fill, ptr_fill + width + 1, color, (uint8)alpha);
+		int realy = ystart;
+		while (short_h--) {			
+			if (realy >= _clippingArea.top && realy <= _clippingArea.bottom)
+				blendFillClip(xstart+x, ptr_fill, ptr_fill + width + 1, color, (uint8)alpha);
 			ptr_fill += pitch;
+			++realy;
 		}
 
 		// Make shadow smaller each iteration, and move it one pixel inward

@@ -50,7 +50,7 @@ void ScrollContainerWidget::init() {
 }
 
 void ScrollContainerWidget::recalc() {
-	_verticalScroll->_numEntries = _h;
+	_verticalScroll->_numEntries = _h + 40;
 	_verticalScroll->_currentPos = _scrolledY;
 	_verticalScroll->_entriesPerPage = _limitH;
 	_verticalScroll->setPos(_w - 16, _scrolledY);

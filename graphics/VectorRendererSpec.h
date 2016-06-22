@@ -81,6 +81,8 @@ public:
 
 protected:
 
+	Common::Rect _clippingArea;
+
 	/**
 	 * Draws a single pixel on the surface with the given coordinates and
 	 * the given color.
@@ -159,11 +161,20 @@ protected:
 	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h,
 	    PixelType color, FillMode fill_m);
 
+	virtual void drawRoundedSquareAlgClip(int x1, int y1, int r, int w, int h,
+		PixelType color, FillMode fill_m);
+
 	virtual void drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h,
 	    PixelType color, FillMode fill_m, uint8 alpha_t, uint8 alpha_r, uint8 alpha_b, uint8 alpha_l);
 
+	virtual void drawBorderRoundedSquareAlgClip(int x1, int y1, int r, int w, int h,
+		PixelType color, FillMode fill_m, uint8 alpha_t, uint8 alpha_r, uint8 alpha_b, uint8 alpha_l);
+
 	virtual void drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h,
 	    PixelType color, FillMode fill_m);
+
+	virtual void drawInteriorRoundedSquareAlgClip(int x1, int y1, int r, int w, int h,
+		PixelType color, FillMode fill_m);
 
 	virtual void drawSquareAlg(int x, int y, int w, int h,
 	    PixelType color, FillMode fill_m);
@@ -213,6 +224,7 @@ protected:
 
 	void precalcGradient(int h);
 	void gradientFill(PixelType *first, int width, int x, int y);
+	void gradientFillClip(PixelType *first, int width, int x, int y, int realX, int realY);
 
 	/**
 	 * Fills several pixels in a row with a given color and the specified alpha blending.
@@ -226,6 +238,28 @@ protected:
 	 */
 	inline void blendFill(PixelType *first, PixelType *last, PixelType color, uint8 alpha) {
 		while (first != last) blendPixelPtr(first++, color, alpha);
+	}
+
+	inline void blendFillClip(PixelType *first, PixelType *last, PixelType color, uint8 alpha, int realX, int realY) {
+		if (_clippingArea.top <= realY && realY < _clippingArea.bottom) {
+			while (first != last) {
+				if (_clippingArea.left <= realX && realX < _clippingArea.right)
+					blendPixelPtr(first++, color, alpha);
+				else
+					++first;
+				++realX;
+			}
+		}
+	}
+
+	inline void blendFillClip(int x, PixelType *first, PixelType *last, PixelType color, uint8 alpha) {
+		while (first != last) {
+			if (x >= _clippingArea.left && x <= _clippingArea.right)
+				blendPixelPtr(first++, color, alpha);
+			else
+				++first;
+			++x;
+		}
 	}
 
 	void darkenFill(PixelType *first, PixelType *last);
