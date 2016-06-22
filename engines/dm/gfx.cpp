@@ -685,12 +685,13 @@ void DisplayMan::unpackGraphics() {
 		unpackedBitmapsSize += getWidth(i) * getHeight(i);
 	for (uint16 i = 22; i <= 532; ++i)
 		unpackedBitmapsSize += getWidth(i) * getHeight(i);
+	unpackedBitmapsSize += (5 + 1) * (6 + 1) * 128; // 5 x 6 characters, 128 of them, +1 for convenience padding
 	// graphics items go from 0-20 and 22-532 inclusive, _unpackedItemPos 21 and 22 are there for indexing convenience
 	if (_bitmaps) {
 		delete[] _bitmaps[0];
 		delete[] _bitmaps;
 	}
-	_bitmaps = new byte*[533];
+	_bitmaps = new byte*[575]; // largest graphic indice (i think)
 	_bitmaps[0] = new byte[unpackedBitmapsSize];
 	loadIntoBitmap(0, _bitmaps[0]);
 	for (uint16 i = 1; i <= 20; ++i) {
@@ -698,10 +699,29 @@ void DisplayMan::unpackGraphics() {
 		loadIntoBitmap(i, _bitmaps[i]);
 	}
 	_bitmaps[22] = _bitmaps[20] + getWidth(20) * getHeight(20);
-	for (uint16 i = 23; i < 533; ++i) {
+	for (uint16 i = 23; i <= 532; ++i) {
 		_bitmaps[i] = _bitmaps[i - 1] + getWidth(i - 1) * getHeight(i - 1);
 		loadIntoBitmap(i, _bitmaps[i]);
 	}
+	_bitmaps[kFontGraphicIndice] = _bitmaps[532] + getWidth(532) * getHeight(532);
+	loadFNT1intoBitmap(kFontGraphicIndice, _bitmaps[kFontGraphicIndice]);
+}
+
+void DisplayMan::loadFNT1intoBitmap(uint16 index, byte* destBitmap)
+{
+	uint8 *data = _packedBitmaps + _packedItemPos[index];
+	for (uint16 i = 0; i < 6; i++) {
+		for (uint16 w = 0; w < 128; ++w) {
+			*destBitmap++ = kColorBlack;
+
+			uint16 nextByte = *data++;
+			for (int16 pixel = 4; pixel >= 0; --pixel) {
+				*destBitmap++ = (nextByte >> pixel) & 0x1;
+			}
+		}
+	}
+	memset(data, 0, 128);
+	data += 128;
 }
 
 void DisplayMan::loadPalette(uint16 *palette) {

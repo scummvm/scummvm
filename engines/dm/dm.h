@@ -17,6 +17,7 @@ class ChampionMan;
 class LoadsaveMan;
 class ObjectMan;
 class InventoryMan;
+class TextMan;
 
 
 enum direction {
@@ -104,6 +105,8 @@ public:
 	LoadsaveMan *_loadsaveMan;
 	ObjectMan *_objectMan;
 	InventoryMan *_inventoryMan;
+	TextMan *_textMan;
+
 	bool _stopWaitingForPlayerInput; // G0321_B_StopWaitingForPlayerInput
 	bool _gameTimeTicking; // @ G0301_B_GameTimeTicking
 	bool _restartGameAllowed; // @ G0524_B_RestartGameAllowed

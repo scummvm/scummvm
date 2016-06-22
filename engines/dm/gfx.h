@@ -40,7 +40,8 @@ enum GraphicIndice {
 	kStatusBoxDeadChampion = 8, // @ C008_GRAPHIC_STATUS_BOX_DEAD_CHAMPION
 	kSlotBoxNormalIndice = 33, // @ C033_GRAPHIC_SLOT_BOX_NORMAL                   
 	kSlotBoxWoundedIndice = 34, // @ C034_GRAPHIC_SLOT_BOX_WOUNDED                  
-	kChampionIcons = 28 // @ C028_GRAPHIC_CHAMPION_ICONS
+	kChampionIcons = 28, // @ C028_GRAPHIC_CHAMPION_ICONS
+	kFontGraphicIndice = 557 // @ C557_GRAPHIC_FONT 
 };
 
 extern uint16 gPalSwoosh[16];
@@ -221,6 +222,8 @@ extern Viewport gDungeonViewport;
 #define kDoorOrnThivesEyeMask 16 // @ C16_DOOR_ORNAMENT_THIEVES_EYE_MASK
 
 class DisplayMan {
+	friend class DM::TextMan;
+
 	DMEngine *_vm;
 	uint16 _screenWidth;
 	uint16 _screenHeight;
@@ -248,6 +251,7 @@ class DisplayMan {
 	// the original function has two position parameters, but they are always set to zero
 	void loadIntoBitmap(uint16 index, byte *destBitmap); // @ F0466_EXPAND_GraphicToBitmap
 	void unpackGraphics();
+	void loadFNT1intoBitmap(uint16 index, byte *destBitmap);
 
 	void drawFloorPitOrStairsBitmapFlippedHorizontally(StairIndex relIndex, Frame &frame); // @ F0105_DUNGEONVIEW_DrawFloorPitOrStairsBitmapFlippedHorizontally
 	void drawFloorPitOrStairsBitmap(StairIndex relIndex, Frame &frame); // @ F0104_DUNGEONVIEW_DrawFloorPitOrStairsBitmap
