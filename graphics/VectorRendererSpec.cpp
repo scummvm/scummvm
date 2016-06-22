@@ -1143,7 +1143,11 @@ drawRoundedSquareClip(int x, int y, int r, int w, int h, int cx, int cy, int cw,
 		&& x + w + Base::_shadowOffset + 1 < Base::_activeSurface->w
 		&& y + h + Base::_shadowOffset + 1 < Base::_activeSurface->h
 		&& h > (Base::_shadowOffset + 1) * 2) {
-		drawRoundedSquareShadow(x, y, r, w, h, Base::_shadowOffset);
+		if (_clippingArea.isEmpty() || _clippingArea.contains(Common::Rect(x, y, x + w, y + h))) {
+			drawRoundedSquareShadow(x, y, r, w, h, Base::_shadowOffset);
+		} else {
+			drawRoundedSquareShadowClip(x, y, r, w, h, Base::_shadowOffset);
+		}
 	}
 
 	if (_clippingArea.isEmpty() || _clippingArea.contains(Common::Rect(x, y, x + w, y + h))) {
@@ -2369,9 +2373,6 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 		while (x++ < y) {
 			BE_ALGORITHM();
 
-			if (x + xstart < _clippingArea.left || x + xstart > _clippingArea.right) continue;
-			if (y + ystart  < _clippingArea.top || y + ystart  > _clippingArea.bottom) continue;
-
 			if (((1 << x) & hb) == 0) {
 				blendFill(ptr_tl - y - px, ptr_tr + y - px, color, (uint8)alpha);
 
@@ -2390,12 +2391,9 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 		}
 
 		ptr_fill += pitch * r;
-		int realy = ystart;
 		while (short_h--) {			
-			if (realy >= _clippingArea.top && realy <= _clippingArea.bottom)
-				blendFill(ptr_fill, ptr_fill + width + 1, color, (uint8)alpha);
-			ptr_fill += pitch;
-			++realy;
+			blendFill(ptr_fill, ptr_fill + width + 1, color, (uint8)alpha);
+			ptr_fill += pitch;			
 		}
 
 		// Make shadow smaller each iteration, and move it one pixel inward
@@ -2410,6 +2408,83 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 	}
 }
 
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+drawRoundedSquareShadowClip(int x1, int y1, int r, int w, int h, int offset) {
+	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
+
+	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)
+	uint8 expFactor = 3;
+	uint16 alpha = (_activeSurface->format.bytesPerPixel > 2) ? 4 : 8;
+
+	// These constants ensure a border of 2px on the left and of each rounded square
+	int xstart = (x1 > 2) ? x1 - 2 : x1;
+	int ystart = y1;
+	int width = w + offset + 2;
+	int height = h + offset + 1;
+
+	for (int i = offset; i >= 0; i--) {
+		int f, ddF_x, ddF_y;
+		int x, y, px, py;
+
+		PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(xstart + r, ystart + r);
+		PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(xstart + width - r, ystart + r);
+		PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(xstart + r, ystart + height - r);
+		PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(xstart + width - r, ystart + height - r);
+		PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(xstart, ystart);
+
+		int short_h = height - (2 * r) + 2;
+		PixelType color = _format.RGBToColor(0, 0, 0);
+
+		BE_RESET();
+
+		// HACK: As we are drawing circles exploting 8-axis symmetry,
+		// there are 4 pixels on each circle which are drawn twice.
+		// this is ok on filled circles, but when blending on surfaces,
+		// we cannot let it blend twice. awful.
+		uint32 hb = 0;
+
+		while (x++ < y) {
+			BE_ALGORITHM();
+
+			if (((1 << x) & hb) == 0) {
+				blendFillClip(ptr_tl - y - px, ptr_tr + y - px, color, (uint8)alpha,
+					xstart + r - y, ystart + r - x);
+
+				// Will create a dark line of pixles if left out
+				if (hb > 0) {
+					blendFillClip(ptr_bl - y + px, ptr_br + y + px, color, (uint8)alpha,
+						xstart + r - y, ystart + height - r + x);
+				}
+				hb |= (1 << x);
+			}
+
+			if (((1 << y) & hb) == 0) {
+				blendFillClip(ptr_tl - x - py, ptr_tr + x - py, color, (uint8)alpha, xstart + r - x, ystart + r - y);
+				blendFillClip(ptr_bl - x + py, ptr_br + x + py, color, (uint8)alpha, xstart + r - x, ystart + height - r + y);
+				hb |= (1 << y);
+			}
+		}
+
+		ptr_fill += pitch * r;
+		int orig_short_h = short_h;
+		while (short_h--) {			
+			blendFillClip(ptr_fill, ptr_fill + width + 1, color, (uint8)alpha,
+				xstart, ystart + r + orig_short_h - short_h - 1);
+			ptr_fill += pitch;
+		}
+
+		// Make shadow smaller each iteration, and move it one pixel inward
+		xstart += 1;
+		ystart += 1;
+		width -= 2;
+		height -= 2;
+
+		if (_shadowFillMode == kShadowExponential)
+			// Multiply with expfactor
+			alpha = (alpha * (expFactor << 8)) >> 9;
+	}
+}
 
 /******************************************************************************/
 

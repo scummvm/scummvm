@@ -210,6 +210,7 @@ protected:
 	 */
 	virtual void drawSquareShadow(int x, int y, int w, int h, int offset);
 	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int offset);
+	virtual void drawRoundedSquareShadowClip(int x, int y, int r, int w, int h, int offset);
 
 	/**
 	 * Calculates the color gradient on a given point.
