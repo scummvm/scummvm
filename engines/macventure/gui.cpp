@@ -26,6 +26,9 @@
 #include "macventure/macventure.h"
 #include "macventure/gui.h"
 
+//Test
+#include "common/system.h"
+
 namespace MacVenture {
 
 enum MenuAction;
@@ -99,11 +102,12 @@ Gui::~Gui() {
 }
 
 void Gui::draw() {
+
 	drawWindows();
 
-	_wm.draw();
-
 	drawTitle();
+
+	_wm.draw();
 }
 
 void Gui::drawMenu() {
@@ -178,7 +182,7 @@ void Gui::updateWindowInfo(WindowReference ref, ObjID objID, const Common::Array
 				originx = originx > childPos.x ? childPos.x : originx;
 				originy = originy > childPos.y ? childPos.y : originy;
 			}
-			data.children.push_back(DrawableObject(child, kBlitDirect));
+			data.children.push_back(DrawableObject(child, kBlitBIC));
 		}
 	}
 	if (originx != 0x7fff) data.bounds.left = originx;
@@ -187,7 +191,7 @@ void Gui::updateWindowInfo(WindowReference ref, ObjID objID, const Common::Array
 }
 
 void Gui::addChild(WindowReference target, ObjID child) {
-	findWindowData(target).children.push_back(DrawableObject(child, kBlitDirect));
+	findWindowData(target).children.push_back(DrawableObject(child, kBlitBIC));
 }
 
 void Gui::removeChild(WindowReference target, ObjID child) {
@@ -502,8 +506,11 @@ void Gui::drawMainGameWindow() {
 	Graphics::ManagedSurface *srf = _mainGameWindow->getSurface();
 	BorderBounds border = borderBounds(getWindowData(kMainGameWindow).type);
 
-	ImageAsset bg(3, _graphics);
-	bg.blitInto(
+	if (!_assets.contains(3)) {
+		_assets[3] = new ImageAsset(3, _graphics);
+	}
+
+	_assets[3]->blitInto(
 		_mainGameWindow->getSurface(),
 		border.leftOffset * 2,
 		border.topOffset * 2,
@@ -511,18 +518,16 @@ void Gui::drawMainGameWindow() {
 
 	drawObjectsInWindow(kMainGameWindow, _mainGameWindow->getSurface());
 
+	// To be deleted
+	_wm.draw();
+
+	g_system->updateScreen();
+
 }
 
 void Gui::drawSelfWindow() {
 	Graphics::ManagedSurface *srf = _selfWindow->getSurface();
 	BorderBounds border = borderBounds(getWindowData(kSelfWindow).type);
-	srf->fillRect(
-		Common::Rect(
-			border.leftOffset * 2,
-			border.topOffset * 2,
-			srf->w - (border.rightOffset * 3),
-			srf->h - (border.bottomOffset * 3)),
-		kColorWhite);
 }
 
 void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface * surface) {
@@ -543,6 +548,12 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 			border.leftOffset * 2 + pos.x,
 			border.topOffset * 2 + pos.y,
 			mode);
+
+		// To be deleted
+		_wm.draw();
+
+		g_system->updateScreen();
+
 	}
 }
 
@@ -674,14 +685,14 @@ void Gui::updateWindow(WindowReference winID, bool containerOpen) {
 		for (uint i = 0; i < children.size(); i++) {
 			uint flag = 0;
 			ObjID child = children[i].obj;
-			BlitMode mode;
-			bool off = _engine->isObjVisible(child);
-			if (!off || _engine->isObjClickable(child)) {
+			BlitMode mode = kBlitDirect;
+			bool off = !_engine->isObjVisible(child);
+			if (flag || !off || !_engine->isObjClickable(child)) {
 				mode = kBlitBIC;
-				if (_engine->isObjSelected(child)) {
-					mode = kBlitOR;
-				} else if (off || flag) {
+				if (off || flag) {
 					mode = kBlitXOR;
+				} else if (_engine->isObjSelected(child)) {
+					mode = kBlitOR;
 				}
 				children[i] = DrawableObject(child, mode);
 			}

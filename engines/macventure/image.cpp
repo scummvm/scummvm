@@ -332,8 +332,7 @@ void ImageAsset::blitInto(Graphics::ManagedSurface *target, uint32 x, uint32 y, 
 			blitOR(target, x, y, _maskData);
 			break;
 		}
-	}
-	else if (_container->getItemByteSize(_id)) {
+	} else if (_container->getItemByteSize(_id)) {
 		switch (mode) {
 		case MacVenture::kBlitBIC:
 			target->fillRect(Common::Rect(x, y, x + _bitWidth, y + _bitHeight * 2), kColorWhite);
@@ -343,12 +342,24 @@ void ImageAsset::blitInto(Graphics::ManagedSurface *target, uint32 x, uint32 y, 
 			break;
 		}
 	}
+
 	if (_container->getItemByteSize(_id) && mode > 0) {
 		blitXOR(target, x, y, _imgData);
 	}
 }
 
 void ImageAsset::blitDirect(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte>& data) {
+	if (_bitWidth == 0 || _bitHeight == 0) return;
+	uint w = _bitWidth;
+	uint h = _bitHeight;
+	uint sx = 0;
+	uint sy = 0;
+	if (ox<0) { sx = -ox; ox = 0; }
+	if (oy<0) { sy = -oy; oy = 0; }
+	if (w + ox >= target->w) w = target->w - ox;
+	if (h + oy >= target->h) h = target->h - oy;
+	if (w == 0 || h == 0) return;
+	
 	for (uint y = 0;y < _bitHeight; y++) {
 		uint bmpofs = y * _rowBytes;
 		byte pix = 0;
@@ -361,10 +372,21 @@ void ImageAsset::blitDirect(Graphics::ManagedSurface * target, uint32 ox, uint32
 }
 
 void ImageAsset::blitBIC(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data) {
-	for (uint y = 0;y < _bitHeight; y++) {
+	if (_bitWidth == 0 || _bitHeight == 0) return;
+	uint w = _bitWidth;
+	uint h = _bitHeight;
+	uint sx = 0;
+	uint sy = 0;
+	if (ox<0) { sx = -ox; ox = 0; }
+	if (oy<0) { sy = -oy; oy = 0; }
+	if (w + ox >= target->w) w = target->w - ox;
+	if (h + oy >= target->h) h = target->h - oy;
+	if (w == 0 || h == 0) return;
+
+	for (uint y = 0;y < h; y++) {
 		uint bmpofs = y * _rowBytes;
 		byte pix = 0;
-		for (uint x = 0; x < _bitWidth; x++) {
+		for (uint x = 0; x < w; x++) {
 			pix = data[bmpofs + (x >> 3)] & (1 << (7 - (x & 7)));
 			
 			if (pix) *((byte *)target->getBasePtr(ox + x, oy + y)) = kColorWhite;
@@ -373,6 +395,17 @@ void ImageAsset::blitBIC(Graphics::ManagedSurface * target, uint32 ox, uint32 oy
 }
 
 void ImageAsset::blitOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data) {
+	if (_bitWidth == 0 || _bitHeight == 0) return;
+	uint w = _bitWidth;
+	uint h = _bitHeight;
+	uint sx = 0;
+	uint sy = 0;
+	if (ox<0) { sx = -ox; ox = 0; }
+	if (oy<0) { sy = -oy; oy = 0; }
+	if (w + ox >= target->w) w = target->w - ox;
+	if (h + oy >= target->h) h = target->h - oy;
+	if (w == 0 || h == 0) return;
+	
 	for (uint y = 0;y < _bitHeight; y++) {
 		uint bmpofs = y * _rowBytes;
 		byte pix = 0;
@@ -385,6 +418,17 @@ void ImageAsset::blitOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy,
 }
 
 void ImageAsset::blitXOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data) {
+	if (_bitWidth == 0 || _bitHeight == 0) return;
+	uint w = _bitWidth;
+	uint h = _bitHeight;
+	uint sx = 0;
+	uint sy = 0;
+	if (ox<0) { sx = -ox; ox = 0; }
+	if (oy<0) { sy = -oy; oy = 0; }
+	if (w + ox >= target->w) w = target->w - ox;
+	if (h + oy >= target->h) h = target->h - oy;
+	if (w == 0 || h == 0) return;
+	
 	for (uint y = 0;y < _bitHeight; y++) {
 		uint bmpofs = y * _rowBytes;
 		byte pix = 0;
@@ -393,9 +437,9 @@ void ImageAsset::blitXOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy
 
 			if (pix) { // We need to xor
 				byte p = *((byte *)target->getBasePtr(ox + x, oy + y));
-				if (p == kColorWhite) p = kColorBlack;
-				else p = kColorWhite;
-				*((byte *)target->getBasePtr(ox + x, oy + y)) = p;
+
+				*((byte *)target->getBasePtr(ox + x, oy + y)) = 
+					(p == kColorWhite) ? kColorBlack : kColorWhite;
 			}
 		}
 	}
