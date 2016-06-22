@@ -197,13 +197,15 @@ class EventManager {
 	void commandTurnParty(CommandType cmdType); // @ F0365_COMMAND_ProcessTypes1To2_TurnParty
 	void commandMoveParty(CommandType cmdType); // @ F0366_COMMAND_ProcessTypes3To6_MoveParty
 public:
+	explicit EventManager(DMEngine *vm);
+
 	MouseInput* _primaryMouseInput;// @ G0441_ps_PrimaryMouseInput
 	MouseInput* _secondaryMouseInput;// @ G0442_ps_SecondaryMouseInput
 	bool _mousePointerBitmapUpdated; // @ G0598_B_MousePointerBitmapUpdated
 	bool _refreshMousePointerInMainLoop; // @ G0326_B_RefreshMousePointerInMainLoop
 	bool _highlightBoxEnabled; // @ G0341_B_HighlightBoxEnabled
 	uint16 _useChampionIconOrdinalAsMousePointerBitmap; // @ G0599_ui_UseChampionIconOrdinalAsMousePointerBitmap
-	EventManager(DMEngine *vm);
+
 	void initMouse();
 	void showMouse(bool visibility);
 

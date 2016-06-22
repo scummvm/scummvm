@@ -279,7 +279,7 @@ public:
 	// some methods use this for a stratchpad, don't make assumptions about content between function calls
 	byte *_tmpBitmap;
 
-	DisplayMan(DMEngine *dmEngine);
+	explicit DisplayMan(DMEngine *dmEngine);
 	~DisplayMan();
 
 	void loadWallSet(WallSet set); // @ F0095_DUNGEONVIEW_LoadWallSet

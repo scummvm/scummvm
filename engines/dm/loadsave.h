@@ -13,13 +13,11 @@ enum LoadgameResponse {
 class LoadsaveMan {
 	DMEngine *_vm;
 public:
-	LoadsaveMan(DMEngine *vm);
+	explicit LoadsaveMan(DMEngine *vm);
 
 	LoadgameResponse loadgame(); // @ F0435_STARTEND_LoadGame_CPSF
-
 };
 
 }
 
 #endif
-

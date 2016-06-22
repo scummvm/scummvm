@@ -62,7 +62,7 @@ public:
 	static const Thing _thingEndOfList;
 
 	Thing() : _data(0) {}
-	Thing(uint16 d) { set(d); }
+	explicit Thing(uint16 d) { set(d); }
 
 	void set(uint16 d) {
 		_data = d;
@@ -88,7 +88,7 @@ class DMEngine : public Engine {
 	void initializeGame(); // @ F0463_START_InitializeGame_CPSADEF
 	void gameloop(); // @ F0002_MAIN_GameLoop_CPSDF
 public:
-	DMEngine(OSystem *syst);
+	explicit DMEngine(OSystem *syst);
 	~DMEngine();
 
 	virtual Common::Error run(); // @ main
@@ -120,7 +120,7 @@ public:
 
 class Console : public GUI::Debugger {
 public:
-	Console(DMEngine *vm) {}
+	explicit Console(DMEngine *vm) {}
 	virtual ~Console(void) {}
 };
 

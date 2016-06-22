@@ -9,7 +9,7 @@ namespace DM {
 class Scent {
 	uint16 _scent;
 public:
-	Scent(uint16 scent = 0): _scent(scent) {}
+	explicit Scent(uint16 scent = 0): _scent(scent) {}
 
 	uint16 getMapX() { return _scent & 0x1F; }
 	uint16 getMapY() { return (_scent >> 5) & 0x1F; }
@@ -403,7 +403,7 @@ public:
 	bool _leaderEmptyHanded; // @ G0415_B_LeaderEmptyHanded
 	Party _party; // @ G0407_s_Party
 
-	ChampionMan(DMEngine *vm);
+	explicit ChampionMan(DMEngine *vm);
 	void resetDataToStartGame(); // @ F0278_CHAMPION_ResetDataToStartGame
 	void addCandidateChampionToParty(uint16 championPortraitIndex); // @ F0280_CHAMPION_AddCandidateChampionToParty
 	void drawChampionBarGraphs(ChampionIndex champIndex); // @ F0287_CHAMPION_DrawBarGraphs

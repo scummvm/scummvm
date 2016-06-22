@@ -157,7 +157,7 @@ class Door {
 	Thing _nextThing;
 	uint16 _attributes;
 public:
-	Door(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
+	explicit Door(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
 	Thing getNextThing() { return _nextThing; }
 	bool isMeleeDestructible() { return (_attributes >> 8) & 1; }
 	bool isMagicDestructible() { return (_attributes >> 7) & 1; }
@@ -178,7 +178,7 @@ class Teleporter {
 	uint16 _attributes;
 	uint16 _destMapIndex;
 public:
-	Teleporter(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]), _destMapIndex(rawDat[2]) {}
+	explicit Teleporter(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]), _destMapIndex(rawDat[2]) {}
 	Thing getNextThing() { return _nextThing; }
 	bool makesSound() { return (_attributes >> 15) & 1; }
 	TeleporterScope getScope() { return (TeleporterScope)((_attributes >> 13) & 1); }
@@ -195,7 +195,7 @@ class TextString {
 	Thing _nextThing;
 	uint16 _textDataRef;
 public:
-	TextString(uint16 *rawDat) : _nextThing(rawDat[0]), _textDataRef(rawDat[1]) {}
+	explicit TextString(uint16 *rawDat) : _nextThing(rawDat[0]), _textDataRef(rawDat[1]) {}
 
 	Thing getNextThing() { return _nextThing; }
 	uint16 getWordOffset() { return _textDataRef >> 3; }
@@ -249,7 +249,7 @@ class Sensor {
 	uint16 _attributes;
 	uint16 _action;
 public:
-	Sensor(uint16 *rawDat) : _nextThing(rawDat[0]), _datAndType(rawDat[1]), _attributes(rawDat[2]), _action(rawDat[3]) {}
+	explicit Sensor(uint16 *rawDat) : _nextThing(rawDat[0]), _datAndType(rawDat[1]), _attributes(rawDat[2]), _action(rawDat[3]) {}
 
 	Thing getNextThing() { return _nextThing; }
 	SensorType getType() { return (SensorType)(_datAndType & 0x7F); } // @ M39_TYPE
@@ -280,7 +280,7 @@ class Group {
 	uint16 _health[4];
 	uint16 _attributes;
 public:
-	Group(uint16 *rawDat) : _nextThing(rawDat[0]), _possessionID(rawDat[1]), _type(rawDat[2]),
+	explicit Group(uint16 *rawDat) : _nextThing(rawDat[0]), _possessionID(rawDat[1]), _type(rawDat[2]),
 		_position(rawDat[3]), _attributes(rawDat[8]) {
 		_health[0] = rawDat[4];
 		_health[1] = rawDat[5];
@@ -307,7 +307,7 @@ class Weapon {
 	Thing _nextThing;
 	uint16 _desc;
 public:
-	Weapon(uint16 *rawDat) : _nextThing(rawDat[0]), _desc(rawDat[1]) {}
+	explicit Weapon(uint16 *rawDat) : _nextThing(rawDat[0]), _desc(rawDat[1]) {}
 
 	WeaponType getType() { return (WeaponType)(_desc & 0x7F); }
 	bool isLit() { return (_desc >> 15) & 1; }
@@ -326,7 +326,7 @@ class Armour {
 	Thing _nextThing;
 	uint16 _attributes;
 public:
-	Armour(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
+	explicit Armour(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
 
 	ArmourType getType() { return (ArmourType)(_attributes & 0x7F); }
 	Thing getNextThing() { return _nextThing; }
@@ -336,7 +336,7 @@ class Scroll {
 	Thing _nextThing;
 	uint16 _attributes;
 public:
-	Scroll(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
+	explicit Scroll(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
 	void set(Thing next, uint16 attribs) {
 		_nextThing = next;
 		_attributes = attribs;
@@ -364,7 +364,7 @@ class Potion {
 	Thing _nextThing;
 	uint16 _attributes;
 public:
-	Potion(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
+	explicit Potion(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
 
 	PotionType getType() { return (PotionType)((_attributes >> 8) & 0x7F); }
 	Thing getNextThing() { return _nextThing; }
@@ -375,7 +375,7 @@ class Container {
 	Thing _nextContainedThing;
 	uint16 _type;
 public:
-	Container(uint16 *rawDat) : _nextThing(rawDat[0]), _nextContainedThing(rawDat[1]), _type(rawDat[2]) {}
+	explicit Container(uint16 *rawDat) : _nextThing(rawDat[0]), _nextContainedThing(rawDat[1]), _type(rawDat[2]) {}
 
 	uint16 getType() { return (_type >> 1) & 0x3; }
 	Thing getNextContainedThing() { return _nextContainedThing; }
@@ -399,7 +399,7 @@ class Junk {
 	Thing _nextThing;
 	uint16 _attributes;
 public:
-	Junk(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
+	explicit Junk(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
 
 	JunkType getType() { return (JunkType)(_attributes & 0x7F); }
 	uint16 getChargeCount() { return (_attributes >> 14) & 0x3; }
@@ -414,7 +414,7 @@ class Projectile {
 	byte _damageEnergy;
 	uint16 _timerIndex;
 public:
-	Projectile(uint16 *rawDat) : _nextThing(rawDat[0]), _object(rawDat[1]), _kineticEnergy(rawDat[2]),
+	explicit Projectile(uint16 *rawDat) : _nextThing(rawDat[0]), _object(rawDat[1]), _kineticEnergy(rawDat[2]),
 		_damageEnergy(rawDat[3]), _timerIndex(rawDat[4]) {}
 
 	Thing getNextThing() { return _nextThing; }
@@ -424,7 +424,7 @@ class Explosion {
 	Thing _nextThing;
 	uint16 _attributes;
 public:
-	Explosion(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
+	explicit Explosion(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
 
 	Thing getNextThing() { return _nextThing; }
 }; // @ EXPLOSION
@@ -470,8 +470,8 @@ enum SquareType {
 class Square {
 	byte _data;
 public:
-	Square(byte dat = 0) : _data(dat) {}
-	Square(SquareType type) { setType(type); }
+	explicit Square(byte dat = 0) : _data(dat) {}
+	explicit Square(SquareType type) { setType(type); }
 	Square &set(byte dat) { this->_data = dat; return *this; }
 	Square &set(SquareMask mask) { _data |= mask; return *this; }
 	byte get(SquareMask mask) { return _data & mask; }
@@ -573,7 +573,7 @@ class DungeonMan {
 	void setCurrentMap(uint16 mapIndex); // @ F0173_DUNGEON_SetCurrentMap
 
 public:
-	DungeonMan(DMEngine *dmEngine);
+	explicit DungeonMan(DMEngine *dmEngine);
 	~DungeonMan();
 
 	Thing getSquareFirstThing(int16 mapX, int16 mapY); // @ F0161_DUNGEON_GetSquareFirstThing
