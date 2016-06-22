@@ -14,6 +14,12 @@ void TextMan::printTextToBitmap(byte* destBitmap, uint16 destPixelWidth, uint16 
 	uint16 nextY = destY;
 	byte *srcBitmap = _vm->_displayMan->getBitmap(kFontGraphicIndice);
 
+	byte *tmp = _vm->_displayMan->_tmpBitmap;
+	for (uint16 i = 0; i < (kLetterWidth + 1) * (kLetterHeight + 1) * 128; ++i) {
+		tmp[i] = srcBitmap[i] ? textColor : bgColor;
+	}
+	srcBitmap = tmp;
+
 
 	for (char *begin = text, *end = text + textLength; begin != end; ++begin) {
 		// Note: this does no wraps in the middle of words
