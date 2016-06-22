@@ -1143,14 +1143,12 @@ drawRoundedSquareClip(int x, int y, int r, int w, int h, int cx, int cy, int cw,
 		&& x + w + Base::_shadowOffset + 1 < Base::_activeSurface->w
 		&& y + h + Base::_shadowOffset + 1 < Base::_activeSurface->h
 		&& h > (Base::_shadowOffset + 1) * 2) {
-		debug("shadow");
 		drawRoundedSquareShadow(x, y, r, w, h, Base::_shadowOffset);
 	}
 
 	if (_clippingArea.isEmpty() || _clippingArea.contains(Common::Rect(x, y, x + w, y + h))) {
 		drawRoundedSquareAlg(x, y, r, w, h, _fgColor, Base::_fillMode);
 	} else {
-		debug("clipclipclip %d..%d %d..%d", cx, cw + cx, cy, cy + ch);
 		drawRoundedSquareAlgClip(x, y, r, w, h, _fgColor, Base::_fillMode);
 	}
 
@@ -1904,7 +1902,6 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 	PixelType color1 = color;
 	PixelType color2 = color;
 
-	debug("from %d to %d (drawing from %d to %d or something)", _clippingArea.left, _clippingArea.right, x1, x1+w);
 	while (sw++ < Base::_strokeWidth) {
 		blendFill(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color1, alpha_t); // top
 		blendFill(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color2, alpha_b); // bottom
@@ -2192,7 +2189,6 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 
 	// If only border is visible
 	if ((!(w <= 0 || h <= 0)) && (fill_m != Base::kFillDisabled)) {
-		debug("interior");
 		if (fill_m == Base::kFillBackground)
 			drawInteriorRoundedSquareAlg(x1, y1, r, w, h, _bgColor, fill_m);
 		else
@@ -2200,7 +2196,6 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 	}
 
 	if (Base::_strokeWidth) {
-		debug("stroke");
 		if (r != 0 && _bevel > 0) {
 			drawBorderRoundedSquareAlg(x1, y1, r, w, h, color, fill_m, borderAlpha_t, borderAlpha_r, borderAlpha_b, borderAlpha_l);
 			drawBorderRoundedSquareAlg(x1, y1, r, w, h, _bevelColor, fill_m, bevelAlpha_t, bevelAlpha_r, bevelAlpha_b, bevelAlpha_l);
@@ -2222,8 +2217,6 @@ drawRoundedSquareAlgClip(int x1, int y1, int r, int w, int h, PixelType color, V
 	const uint8 bevelAlpha_r = 31;
 	const uint8 bevelAlpha_b = 0;
 	const uint8 bevelAlpha_l = 127;
-
-	debug("clip version");
 
 	// If only border is visible	
 	if ((!(w <= 0 || h <= 0)) && (fill_m != Base::kFillDisabled)) {		
@@ -2351,8 +2344,6 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 	int ystart = y1;
 	int width = w + offset + 2;
 	int height = h + offset + 1;
-
-	debug("from %d to %d (drawing from %d to %d or something)", _clippingArea.left, _clippingArea.right, xstart, xstart + width);
 
 	for (int i = offset; i >= 0; i--) {
 		int f, ddF_x, ddF_y;
