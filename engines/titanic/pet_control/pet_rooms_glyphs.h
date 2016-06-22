@@ -27,11 +27,13 @@
 
 namespace Titanic {
 
+enum RoomGlyphMode { RGM_0 = 0, RGM_1 = 1, RGM_2 = 2 };
+
 class CPetRoomsGlyph : public CPetGlyph {
 protected:
-	int _field34;
+	uint _roomFlags;
 	int _field38;
-	int _field3C;
+	RoomGlyphMode _mode;
 	CGameObject *_field40;
 	CGameObject *_field44;
 	CGameObject *_field48;
@@ -42,13 +44,28 @@ protected:
 	CGameObject *_field5C;
 public:
 	CPetRoomsGlyph();
-	CPetRoomsGlyph(int val);
+	CPetRoomsGlyph(uint flags);
 
-	void set34(int val) { _field34 = val; }
+	/**
+	 * Set the room flags for the glyph
+	 */
+	void setFoomFlags(uint flags) { _roomFlags = flags; }
+
+	/**
+	 * Get the room flags for the glyph
+	 */
+	uint getRoomFlags() const { return _roomFlags; }
 
 	void set38(int val) { _field38 = val; }
 
-	void set3C(int val) { _field3C = val; }
+	/**
+	 * Sets the mode of the glyph
+	 */
+	void setMode(RoomGlyphMode mode) { _mode = mode; }
+
+	bool isModeValid() const { return _mode != RGM_0; }
+	bool isMode1() const { return _mode == RGM_1; }
+	bool isMode2() const { return _mode == RGM_2; }
 
 	/**
 	 * Setup the glyph
@@ -86,6 +103,8 @@ public:
 	 * Save the list
 	 */
 	void save2(SimpleFile *file, int indent) const;
+
+	CPetRoomsGlyph *findMode1() const;
 };
 
 } // End of namespace Titanic

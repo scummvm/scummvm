@@ -114,10 +114,10 @@ void CPetRooms::load(SimpleFile *file, int param) {
 
 		for (int idx = 0; idx < count; ++idx) {
 			CPetRoomsGlyph *glyph = addGlyph(file->readNumber(), false);
-			glyph->set3C(file->readNumber());
+			glyph->setMode((RoomGlyphMode)file->readNumber());
 		}
 
-		_glyphItem.set34(file->readNumber());
+		_glyphItem.setMode((RoomGlyphMode)file->readNumber());
 		file->readNumber();
 		_field1C0 = file->readNumber();
 		_field1C4 = file->readNumber();
@@ -191,15 +191,15 @@ bool CPetRooms::setupControl(CPetControl *petControl) {
 }
 
 void CPetRooms::resetHighlight() {
-	_glyphItem.set34(fn1());
+	_glyphItem.setMode(fn1());
 	_glyphs.resetHighlight();
 	_glyphItem.updateTooltip();
 	areaChanged(PET_ROOMS);
 }
 
-int CPetRooms::fn1() {
+RoomGlyphMode CPetRooms::fn1() {
 	warning("TODO: CPetRooms::fn1");
-	return 0;
+	return RGM_0;
 }
 
 int CPetRooms::fn2(int val) {
@@ -228,6 +228,11 @@ CPetRoomsGlyph *CPetRooms::addGlyph(int val, bool highlight) {
 
 void CPetRooms::addRoom(int roomNum) {
 	warning("TODO: CPetRooms::addRoom");
+}
+
+uint CPetRooms::mode1Flags() const {
+	CPetRoomsGlyph *glyph = _glyphs.findMode1();
+	return glyph ? glyph->getRoomFlags() : 0;
 }
 
 } // End of namespace Titanic

@@ -27,13 +27,13 @@
 namespace Titanic {
 
 CPetRoomsGlyph::CPetRoomsGlyph() : CPetGlyph(),
-	_field34(0), _field38(0), _field3C(0),
+	_roomFlags(0), _field38(0), _mode(RGM_0),
 	_field40(nullptr), _field44(nullptr), _field48(nullptr), _field4C(nullptr),
 	_field50(nullptr), _field54(nullptr), _field58(nullptr), _field5C(nullptr) {
 }
 
-CPetRoomsGlyph::CPetRoomsGlyph(int val) : CPetGlyph(),
-	_field34(val), _field38(0), _field3C(0),
+CPetRoomsGlyph::CPetRoomsGlyph(uint flags) : CPetGlyph(),
+	_roomFlags(flags), _field38(0), _mode(RGM_0),
 	_field40(nullptr), _field44(nullptr), _field48(nullptr), _field4C(nullptr),
 	_field50(nullptr), _field54(nullptr), _field58(nullptr), _field5C(nullptr) {
 }
@@ -71,8 +71,8 @@ int CPetRoomsGlyph::proc29(const Point &pt) {
 }
 
 void CPetRoomsGlyph::save2(SimpleFile *file, int indent) const {
-	file->writeNumberLine(_field34, indent);
-	file->writeNumberLine(_field3C, indent);
+	file->writeNumberLine(_roomFlags, indent);
+	file->writeNumberLine(_mode, indent);
 }
 
 int CPetRoomsGlyph::proc33() {
@@ -90,6 +90,16 @@ void CPetRoomsGlyphs::save2(SimpleFile *file, int indent) const {
 
 	for (const_iterator i = begin(); i != end(); ++i)
 		(*i)->save2(file, indent);
+}
+
+CPetRoomsGlyph *CPetRoomsGlyphs::findMode1() const {
+	for (const_iterator i = begin(); i != end(); ++i) {
+		CPetRoomsGlyph *glyph = static_cast<CPetRoomsGlyph *>(*i);
+		if (glyph->isMode1())
+			return glyph;
+	}
+
+	return nullptr;
 }
 
 } // End of namespace Titanic

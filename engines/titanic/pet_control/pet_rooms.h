@@ -65,7 +65,7 @@ private:
 	 */
 	void resetHighlight();
 
-	int fn1();
+	RoomGlyphMode fn1();
 
 	void areaChanged(PetArea area);
 
@@ -73,6 +73,8 @@ private:
 	 * Adds a glyph to the list
 	 */
 	CPetRoomsGlyph *addGlyph(int val, bool highlight);
+
+	uint mode1Flags() const;
 public:
 	CPetRooms();
 
