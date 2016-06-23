@@ -23,6 +23,7 @@
 #include "titanic/pet_control/pet_rooms_glyphs.h"
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/support/screen_manager.h"
+#include "titanic/room_flags.h"
 
 namespace Titanic {
 
@@ -81,6 +82,12 @@ int CPetRoomsGlyph::proc33() {
 
 void CPetRoomsGlyph::proc39() {
 
+}
+
+void CPetRoomsGlyph::changeLocation(int newClassNum) {
+	CRoomFlags roomFlags(_roomFlags);
+	roomFlags.changeLocation(newClassNum);
+	_roomFlags = roomFlags.get();
 }
 
 /*------------------------------------------------------------------------*/

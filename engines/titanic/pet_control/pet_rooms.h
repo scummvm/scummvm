@@ -43,9 +43,9 @@ private:
 	CGameObject *_chevRightOffLit;
 	CPetGfxElement _plinth;
 	CPetText _text;
-	int _field1C0;
-	int _field1C4;
-	int _field1C8;
+	int _floorNum;
+	int _elevatorNum;
+	int _roomNum;
 	int _field1CC;
 	int _field1D0;
 	int _field1D4;
@@ -60,13 +60,6 @@ private:
 	 */
 	Point getGlyphPos() const { return Point(509, 388); }
 
-	/**
-	 * Reset the highlight
-	 */
-	void resetHighlight();
-
-	RoomGlyphMode fn1();
-
 	void areaChanged(PetArea area);
 
 	/**
@@ -78,8 +71,6 @@ private:
 	 * Adds a glyph to the list
 	 */
 	CPetRoomsGlyph *addGlyph(uint roomFlags, bool highlight);
-
-	uint mode1Flags() const;
 public:
 	CPetRooms();
 
@@ -156,11 +147,47 @@ public:
 	virtual CGameObject *getBackground(int index);
 
 	/**
+	 * Reset the highlight
+	 */
+	void resetHighlight();
+
+	/**
 	 * Adds a random room to the glyph list
 	 */
 	void addRandomRoom(int passClassNum);
 
-	int fn2(int val);
+	/**
+	 * Change the current location passenger class
+	 */
+	bool changeLocationClass(int newClassNum);
+
+	/**
+	 * Returns true if a room glyph exists with the given flags
+	 */
+	bool hasRoomFlags(uint roomFlags) const;
+
+	int getMode1RoomNum() const;
+	int getMode1FloorNum() const;
+	int getMode1ElevatorNum() const;
+
+	/**
+	 * Gets room flags to use for glyphs
+	 */
+	uint getRoomFlags() const;
+
+	uint mode1Flags() const;
+
+	void setFloorNum(int floorNum) { _floorNum = floorNum; }
+	int getFloorNum() const { return _floorNum; }
+	void setElevatorNum(int elevNum) { _elevatorNum = elevNum; }
+	int getElevatorNum() const { return _elevatorNum; }
+	void setRoomNum(int roomNum) { _roomNum = roomNum; }
+	int getRoomNum() const { return _roomNum; }
+	void set1CC(int val) { _field1CC = val; }
+	int get1CC() const { return _field1CC; }
+	void set1D0(int val) { _field1D0 = val; }
+	int get1D0() const { return _field1D0; }
+	void set1D4(int val) { _field1D4 = val; }
 };
 
 } // End of namespace Titanic

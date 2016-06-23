@@ -78,7 +78,7 @@ public:
 	/**
 	 * Set the room flags for the glyph
 	 */
-	void setFoomFlags(uint flags) { _roomFlags = flags; }
+	void setRoomFlags(uint flags) { _roomFlags = flags; }
 
 	/**
 	 * Get the room flags for the glyph
@@ -91,6 +91,8 @@ public:
 	 * Sets the mode of the glyph
 	 */
 	void setMode(RoomGlyphMode mode) { _mode = mode; }
+
+	void changeLocation(int newClassNum);
 
 	bool isModeValid() const { return _mode != RGM_0; }
 	bool isMode1() const { return _mode == RGM_1; }

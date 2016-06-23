@@ -30,7 +30,7 @@ CPetRooms::CPetRooms() :
 		_chevRightOnDim(nullptr), _chevRightOffDim(nullptr),
 		_chevLeftOnLit(nullptr), _chevLeftOffLit(nullptr),
 		_chevRightOnLit(nullptr), _chevRightOffLit(nullptr),
-		_field1C0(0), _field1C4(0), _field1C8(0), _field1CC(0),
+		_floorNum(0), _elevatorNum(0), _roomNum(0), _field1CC(0),
 		_field1D0(0), _field1D4(0) {
 }
 
@@ -95,7 +95,22 @@ bool CPetRooms::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
 }
 
 bool CPetRooms::checkDragEnd(CGameObject *item) {
-	warning("TODO: CPetRooms::checkDragEnd");
+	// Ignore any item drops except valid mail items
+	if (!item->_isMail)
+		return false;
+
+	uint roomFlags = item->_id;
+	CPetRoomsGlyph *glyph = _glyphs.findGlyphByFlags(roomFlags);
+	if (glyph) {
+		if (_glyphs.findGlyphByFlags(0)) {
+			_glyphs.highlight(glyph);
+			return false;
+		}
+
+		roomFlags = 0;
+	}
+
+	addRoom(roomFlags, true);
 	return false;
 }
 
@@ -119,9 +134,9 @@ void CPetRooms::load(SimpleFile *file, int param) {
 
 		_glyphItem.setMode((RoomGlyphMode)file->readNumber());
 		file->readNumber();
-		_field1C0 = file->readNumber();
-		_field1C4 = file->readNumber();
-		_field1C8 = file->readNumber();
+		_floorNum = file->readNumber();
+		_elevatorNum = file->readNumber();
+		_roomNum = file->readNumber();
 		_field1CC = file->readNumber();
 		_field1D0 = file->readNumber();
 		_field1D4 = file->readNumber();
@@ -135,9 +150,9 @@ void CPetRooms::postLoad() {
 void CPetRooms::save(SimpleFile *file, int indent) const {
 	_glyphs.save2(file, indent);
 	_glyphItem.save2(file, indent);
-	file->writeNumberLine(_field1C0, indent);
-	file->writeNumberLine(_field1C4, indent);
-	file->writeNumberLine(_field1C8, indent);
+	file->writeNumberLine(_floorNum, indent);
+	file->writeNumberLine(_elevatorNum, indent);
+	file->writeNumberLine(_roomNum, indent);
 	file->writeNumberLine(_field1CC, indent);
 	file->writeNumberLine(_field1D0, indent);
 	file->writeNumberLine(_field1D4, indent);
@@ -157,7 +172,26 @@ CPetText *CPetRooms::getText() {
 }
 
 CGameObject *CPetRooms::getBackground(int index) {
-	return nullptr;
+	switch (index) {
+	case 8:
+		return _chevLeftOnDim;
+	case 9:
+		return _chevLeftOffDim;
+	case 10:
+		return _chevLeftOnLit;
+	case 11:
+		return _chevLeftOffLit;
+	case 12:
+		return _chevRightOnDim;
+	case 13:
+		return _chevRightOffDim;
+	case 14:
+		return _chevRightOnLit;
+	case 15:
+		return _chevRightOffLit;
+	default:
+		return nullptr;
+	}
 }
 
 bool CPetRooms::setupControl(CPetControl *petControl) {
@@ -191,20 +225,54 @@ bool CPetRooms::setupControl(CPetControl *petControl) {
 }
 
 void CPetRooms::resetHighlight() {
-	_glyphItem.setMode(fn1());
+	_glyphItem.setRoomFlags(getRoomFlags());
 	_glyphs.resetHighlight();
 	_glyphItem.updateTooltip();
 	areaChanged(PET_ROOMS);
 }
 
-RoomGlyphMode CPetRooms::fn1() {
-	warning("TODO: CPetRooms::fn1");
-	return RGM_0;
-}
+uint CPetRooms::getRoomFlags() const {
+	CRoomFlags roomFlags;
+	CString roomName = _petControl->getRoomName();
+	
+	uint flags = roomFlags.getSpecialRoomFlags(roomName);
+	if (flags)
+		return flags;
 
-int CPetRooms::fn2(int val) {
-	warning("TODO: CPetRooms::fn2");
-	return 0;
+	int classNum = roomFlags.whatPassengerClass(_floorNum);
+	roomFlags.setPassengerClassBits(classNum);
+	roomFlags.setFloorNum(_floorNum);
+
+	switch (classNum) {
+	case 1:
+		roomFlags.setElevatorNum(_elevatorNum);
+		roomFlags.setRoomBits(_roomNum);
+		break;
+
+	case 2:
+		if (_roomNum > 0) {
+			if (_roomNum >= 3) {
+				roomFlags.setElevatorNum(_elevatorNum == 1 || _elevatorNum == 2 ? 1 : 3);
+			} else {
+				roomFlags.setElevatorNum(_elevatorNum == 1 || _elevatorNum == 2 ? 2 : 4);
+			}
+
+			roomFlags.setRoomBits(((_roomNum - 1) & 1) + (_field1CC > 1 ? 3 : 2));			
+		} else {
+			roomFlags.setRoomBits(0);
+		}
+		break;
+
+	case 3:
+		roomFlags.setElevatorNum(_elevatorNum);
+		roomFlags.setRoomBits(_roomNum + _field1CC * 6 - 6);
+		break;
+
+	default:
+		break;
+	}
+
+	return roomFlags.get();
 }
 
 void CPetRooms::areaChanged(PetArea area) {
@@ -219,11 +287,11 @@ void CPetRooms::addRandomRoom(int passClassNum) {
 
 	CRoomFlags roomFlags;
 	roomFlags.setRandomLocation(passClassNum, _field1D4);
-	if (addRoom(roomFlags, true)) {
-
+	glyph = addRoom(roomFlags, true);
+	if (glyph) {
+		glyph->setMode(RGM_1);
+		_glyphs.highlight(glyph);
 	}
-
-	warning("TODO: CPetRooms::addRoom");
 }
 
 CPetRoomsGlyph *CPetRooms::addRoom(uint roomFlags, bool highlight) {
@@ -266,6 +334,49 @@ CPetRoomsGlyph *CPetRooms::addGlyph(uint roomFlags, bool highlight) {
 uint CPetRooms::mode1Flags() const {
 	CPetRoomsGlyph *glyph = _glyphs.findMode1();
 	return glyph ? glyph->getRoomFlags() : 0;
+}
+
+bool CPetRooms::changeLocationClass(int newClassNum) {
+	CPetRoomsGlyph *glyph = _glyphs.findMode1();
+	if (!glyph)
+		return 0;
+
+	glyph->changeLocation(newClassNum);
+	return true;
+}
+
+bool CPetRooms::hasRoomFlags(uint roomFlags) const {
+	for (CPetRoomsGlyphs::const_iterator i = _glyphs.begin(); i != _glyphs.end(); ++i) {
+		const CPetRoomsGlyph *glyph = static_cast<const CPetRoomsGlyph *>(*i);
+		if (glyph->isModeValid() && glyph->getRoomFlags() == roomFlags)
+			return true;
+	}
+
+	return false;
+}
+
+int CPetRooms::getMode1RoomNum() const {
+	uint flags = mode1Flags();
+	if (!flags)
+		return 0;
+
+	return CRoomFlags(flags).getRoomNum();
+}
+
+int CPetRooms::getMode1FloorNum() const {
+	uint flags = mode1Flags();
+	if (!flags)
+		return 0;
+
+	return CRoomFlags(flags).getFloorNum();
+}
+
+int CPetRooms::getMode1ElevatorNum() const {
+	uint flags = mode1Flags();
+	if (!flags)
+		return 0;
+
+	return CRoomFlags(flags).getElevatorNum();
 }
 
 } // End of namespace Titanic

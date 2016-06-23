@@ -166,8 +166,6 @@ public:
 
 	void fn3(CTreeItem *item);
 
-	void fn4();
-
 	/**
 	 * Sets the currently viewed area within the PET
 	 */
@@ -307,13 +305,6 @@ public:
 	CString getFullViewName();
 
 	/**
-	 * Adds a random room to the room list
-	 */
-	void addRandomRoom(int passClassNum);
-
-	int roomFn2(int val);
-
-	/**
 	 * Resets the dial display to reflect new values
 	 */
 	void resetDials(int flag = 1);
@@ -322,10 +313,136 @@ public:
 	void incC0() { ++_fieldC0; }
 	void decC0() { --_fieldC0; }
 
+	/* CPetRooms methods */
+
+	/**
+	 * Adds a random room to the room list
+	 */
+	void addRandomRoom(int passClassNum) {
+		_rooms.addRandomRoom(passClassNum);
+	}
+
+	/**
+	 * Change the current location passenger class
+	 */
+	bool changeLocationClass(int newClassNum) {
+		return _rooms.changeLocationClass(newClassNum);
+	}
+
+	/**
+	 * Returns true if the Rooms list has a room with the given flags
+	 */
+	bool hasRoomFlags() const {
+		return _rooms.hasRoomFlags(getRoomFlags());
+	}
+
+	uint getRoomFlags() const {
+		return _rooms.getRoomFlags();
+	}
+
+	/**
+	 * Set the current elevator number to use for room glyphs
+	 */
+	void setRoomsElevatorNum(int elevNum) {
+		_rooms.setElevatorNum(elevNum);
+	}
+
+	/**
+	 * Get the current elevator number used by room glyphs
+	 */
+	int getRoomsElevatorNum() const {
+		return _rooms.getElevatorNum();
+	}
+
+	/**
+	 * Set the current floor number to use for room glyphs
+	 */
+	void setRoomsFloorNum(int floorNum) {
+		_rooms.setFloorNum(floorNum);
+	}
+
+	/**
+	 * Get the current floor number used by room glyphs
+	 */
+	int getRoomsFloorNum() const {
+		return _rooms.getFloorNum();
+	}
+
+	/**
+	 * Set the current room number to use for room glyphs
+	 */
+	void setRoomsRoomNum(int roomNum) {
+		_rooms.setRoomNum(roomNum);
+	}
+
+	/**
+	 * Get the current floor number used by room glyphs
+	 */
+	int getRoomsRoomNum() const {
+		return _rooms.getRoomNum();
+	}
+
+	void setRooms1D0(int v) {
+		_rooms.set1D0(v);
+	}
+	int getRooms1D0() const {
+		return _rooms.get1D0();
+	}
+	void setRooms1CC(int v) {
+		_rooms.set1CC(v);
+	}
+	int getRooms1CC() const {
+		return _rooms.get1CC();
+	}
+
+	/**
+	 * Reset the highlight
+	 */
+	void resetRoomsHighlight() {
+		_rooms.resetHighlight();
+	}
+
+	int getRoomsMode1Flags() const {
+		return _rooms.mode1Flags();
+	}
+
+	uint getSpecialRoomFlags(const CString &name) {
+		return CRoomFlags::getSpecialRoomFlags(name);
+	}
+
 	/**
 	 * Get mail destination given the specified flags
 	 */
 	int getMailDest(const CRoomFlags &roomFlags) const;
+
+	bool testRooms5(uint roomFlags) {
+		return CRoomFlags(roomFlags).not5();
+	}
+
+	int getRoomsRoomNum1() const {
+		return _rooms.getMode1RoomNum();
+	}
+	int getRoomsFloorNum1() const {
+		return _rooms.getMode1FloorNum();
+	}
+	int getRoomsElevatorNum1() const {
+		return _rooms.getMode1ElevatorNum();
+	}
+
+	void setRooms1D4(int val) {
+		_rooms.set1D4(val);
+	}
+
+	bool isRoom59706() const {
+		return CRoomFlags(getRoomFlags()).is59706();
+	}
+
+	/**
+	 * Returns true if the passed room flags indicate the room has a succubus
+	 */
+	bool isSuccUBusRoom(const CRoomFlags &roomFlags) {
+		return roomFlags.isSuccUBusRoomFlags();
+	}
 };
 
 } // End of namespace Titanic

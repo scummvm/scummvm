@@ -188,10 +188,6 @@ bool CPetControl::fn1(int val) {
 	return false;
 }
 
-void CPetControl::fn4() {
-	warning("TODO: CPetControl::fn4");
-}
-
 PetArea CPetControl::setArea(PetArea newArea) {
 	if (newArea == _currentArea || !isUnlocked())
 		return _currentArea;
@@ -518,14 +514,6 @@ void CPetControl::setTimer44(int id, int val) {
 CString CPetControl::getFullViewName() {
 	CGameManager *gameManager = getGameManager();
 	return gameManager ? gameManager->getFullViewName() : CString();
-}
-
-void CPetControl::addRandomRoom(int passClassNum) {
-	_rooms.addRandomRoom(passClassNum);
-}
-
-int CPetControl::roomFn2(int val) {
-	return _rooms.fn2(val);
 }
 
 void CPetControl::resetDials(int flag) {

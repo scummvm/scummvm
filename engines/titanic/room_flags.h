@@ -33,8 +33,6 @@ private:
 private:
 	int getConditionally() const;
 
-	bool not5() const { return getConditionally() != 5; }
-
 	/**
 	 * Returns true if the current flags appear in the
 	 * list of transport rooms
@@ -49,11 +47,6 @@ private:
 	 * Set the bits for the elevator number
 	 */
 	void setElevatorBits(uint val);
-
-	/**
-	 * Set the bits for the passenger class
-	 */
-	void setPassengerClassBits(uint val);
 
 	/**
 	 * Set the bits for the floor number
@@ -81,11 +74,9 @@ private:
 	 */
 	bool isTitania() const { return _data == 0x8A397; }
 
-	bool is59706() const { return _data == 0x59706; }
-
-	bool is2To19(uint v) const { return v >= 2 && v <= 19; }
-	bool is20To27(uint v) const { return v >= 20 && v <= 27; }
-	bool is28To38(uint v) const { return v >= 28 && v <= 38; }
+	static bool is2To19(uint v) { return v >= 2 && v <= 19; }
+	static bool is20To27(uint v) { return v >= 20 && v <= 27; }
+	static bool is28To38(uint v) { return v >= 28 && v <= 38; }
 public:
 	CRoomFlags() : _data(0) {}
 	CRoomFlags(uint data) : _data(data) {}
@@ -104,7 +95,7 @@ public:
 	/**
 	 * Gets the special flags for a transport or succubus room
 	 */
-	uint getSpecialRoomFlags(const CString &roomName);
+	static uint getSpecialRoomFlags(const CString &roomName);
 
 	/**
 	 * Returns true if the current flags are in the succubus list
@@ -142,6 +133,11 @@ public:
 	 * Gets the bits for the passenger class
 	 */
 	uint getPassengerClassBits() const;
+
+	/**
+	 * Set the bits for the passenger class
+	 */
+	void setPassengerClassBits(uint val);
 
 	/**
 	 * Gets the passenger class number
@@ -218,6 +214,15 @@ public:
 	 * Gets the succubus room name associated with the current room flags
 	 */
 	CString getSuccUBusRoomName() const;
+
+	/**
+	 * Returns what passenger class a particular floor number belongs to
+	 */
+	static int whatPassengerClass(int floorNum);
+
+	bool not5() const { return getConditionally() != 5; }
+
+	bool is59706() const { return _data == 0x59706; }
 };
 
 } // End of namespace Titanic

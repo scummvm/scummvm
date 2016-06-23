@@ -197,7 +197,7 @@ bool CDeskbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 		if (getPassengerClass() == 1) {
 			CPetControl *petControl = getPetControl();
 			if (petControl)
-				petControl->roomFn2(4);
+				petControl->changeLocationClass(4);
 		}
 		break;
 
@@ -205,7 +205,7 @@ bool CDeskbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 		if (getPassengerClass() == 1) {
 			CPetControl *petControl = getPetControl();
 			if (petControl)
-				petControl->roomFn2(3);
+				petControl->changeLocationClass(3);
 		}
 		break;
 
@@ -213,7 +213,7 @@ bool CDeskbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 		if (getPassengerClass() == 1) {
 			CPetControl *petControl = getPetControl();
 			if (petControl)
-				petControl->roomFn2(2);
+				petControl->changeLocationClass(2);
 		}
 		break;
 
@@ -221,7 +221,7 @@ bool CDeskbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 		if (getPassengerClass() == 1) {
 			CPetControl *petControl = getPetControl();
 			if (petControl)
-				petControl->roomFn2(1);
+				petControl->changeLocationClass(1);
 		}
 		break;
 

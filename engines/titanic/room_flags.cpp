@@ -509,4 +509,11 @@ void CRoomFlags::setRandomLocation(int classNum, bool flag) {
 	} while (_data == 0x59706);
 }
 
+int CRoomFlags::whatPassengerClass(int floorNum) {
+	if (is2To19(floorNum))
+		return 1;
+
+	return is20To27(floorNum) ? 2 : 3;
+}
+
 } // End of namespace Titanic
