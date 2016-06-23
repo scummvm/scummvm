@@ -1350,10 +1350,10 @@ void DisplayMan::loadCurrentMapGraphics() {
 		CreatureAspect &aspect = gCreatureAspects[_currMapAllowedCreatureTypes[creatureType]];
 		uint16 replColorOrdinal = aspect.getReplColour9();
 		if (replColorOrdinal)
-			applyCreatureReplColors(9, ordinalToIndex(replColorOrdinal));
+			applyCreatureReplColors(9, _vm->ordinalToIndex(replColorOrdinal));
 		replColorOrdinal = aspect.getReplColour10();
 		if (replColorOrdinal)
-			applyCreatureReplColors(10, ordinalToIndex(replColorOrdinal));
+			applyCreatureReplColors(10, _vm->ordinalToIndex(replColorOrdinal));
 	}
 }
 

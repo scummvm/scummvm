@@ -59,18 +59,18 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 		return;
 	_vm->_stopWaitingForPlayerInput = true;
 	int16 invChampOrdinal = _inventoryChampionOrdinal; // copy, as the original will be edited
-	if (indexToOrdinal(championIndex) == invChampOrdinal) {
+	if (_vm->indexToOrdinal(championIndex) == invChampOrdinal) {
 		championIndex = kChmpionCloseInventory;
 	}
 
 	Champion *champion;
 	if (invChampOrdinal) {
-		_inventoryChampionOrdinal = indexToOrdinal(kChampionNone);
+		_inventoryChampionOrdinal = _vm->indexToOrdinal(kChampionNone);
 		warning("MISSING CODE: F0334_INVENTORY_CloseChest");
-		champion = &cm._champions[ordinalToIndex(invChampOrdinal)];
+		champion = &cm._champions[_vm->ordinalToIndex(invChampOrdinal)];
 		if (champion->_currHealth && !cm._candidateChampionOrdinal) {
 			champion->setAttributeFlag(kChampionAttributeStatusBox, true);
-			cm.drawChampionState((ChampionIndex)ordinalToIndex(invChampOrdinal));
+			cm.drawChampionState((ChampionIndex)_vm->ordinalToIndex(invChampOrdinal));
 		}
 		if (cm._partyIsSleeping) {
 			return;
@@ -86,7 +86,7 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	}
 
 	dm._useByteBoxCoordinates = false;
-	_inventoryChampionOrdinal = indexToOrdinal(championIndex);
+	_inventoryChampionOrdinal = _vm->indexToOrdinal(championIndex);
 	if (!invChampOrdinal) {
 		warning("MISSING CODE: F0136_VIDEO_ShadeScreenBox");
 	}
@@ -185,7 +185,7 @@ void InventoryMan::drawPanel() {
 		return;
 	}
 
-	Thing thing = cm._champions[ordinalToIndex(_inventoryChampionOrdinal)].getSlot(kChampionSlotActionHand);
+	Thing thing = cm._champions[_vm->ordinalToIndex(_inventoryChampionOrdinal)].getSlot(kChampionSlotActionHand);
 
 	_panelContent = kPanelContentFoodWaterPoisoned;
 	switch (thing.getType()) {

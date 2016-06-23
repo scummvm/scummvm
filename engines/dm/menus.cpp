@@ -56,7 +56,7 @@ void MenuMan::clearActingChampion() {
 		cm._actingChampionOrdinal--;
 		cm._champions[cm._actingChampionOrdinal].setAttributeFlag(kChampionAttributeActionHand, true);
 		cm.drawChampionState((ChampionIndex)cm._actingChampionOrdinal);
-		cm._actingChampionOrdinal = indexToOrdinal(kChampionNone);
+		cm._actingChampionOrdinal = _vm->indexToOrdinal(kChampionNone);
 		_shouldRefreshActionArea = true;
 	}
 }

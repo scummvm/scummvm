@@ -432,7 +432,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 							   kChampionAttributeActionHand))) {
 		return;
 	}
-	bool isInventoryChamp = (indexToOrdinal(champIndex) == invMan._inventoryChampionOrdinal);
+	bool isInventoryChamp = (_vm->indexToOrdinal(champIndex) == invMan._inventoryChampionOrdinal);
 	dispMan._useByteBoxCoordinates = false;
 	if (champAttributes & kChampionAttributeStatusBox) {
 		box._y1 = 0;
@@ -537,7 +537,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 	{ // block so goto won't skip AL_0_championIconIndex initialization 
 		int16 AL_0_championIconIndex = championIconIndex(champ->_cell, _vm->_dungeonMan->_currMap._partyDir);
 
-		if ((champAttributes & kChampionIcons) && (eventMan._useChampionIconOrdinalAsMousePointerBitmap != indexToOrdinal(AL_0_championIconIndex))) {
+		if ((champAttributes & kChampionIcons) && (eventMan._useChampionIconOrdinalAsMousePointerBitmap != _vm->indexToOrdinal(AL_0_championIconIndex))) {
 			dispMan.clearScreenBox(gChampionColor[champIndex], gBoxChampionIcons[AL_0_championIconIndex]);
 			dispMan.blitToScreen(dispMan.getBitmap(kChampionIcons), 80, championIconIndex(champ->_dir, _vm->_dungeonMan->_currMap._partyDir) * 19, 0,
 								 gBoxChampionIcons[AL_0_championIconIndex], kColorDarkestGray);
@@ -590,11 +590,11 @@ void ChampionMan::drawHealthStaminaManaValues(Champion* champ) {
 void ChampionMan::drawSlot(uint16 champIndex, ChampionSlot slotIndex) {
 	int16 nativeBitmapIndex = -1;
 	Champion *champ = &_champions[champIndex];
-	bool isInventoryChamp = (_vm->_inventoryMan->_inventoryChampionOrdinal == indexToOrdinal(champIndex));
+	bool isInventoryChamp = (_vm->_inventoryMan->_inventoryChampionOrdinal == _vm->indexToOrdinal(champIndex));
 
 	uint16 slotBoxIndex;
 	if (!isInventoryChamp) {  /* If drawing a slot for a champion other than the champion whose inventory is open */
-		if ((slotIndex > kChampionSlotActionHand) || (_candidateChampionOrdinal == indexToOrdinal(champIndex))) {
+		if ((slotIndex > kChampionSlotActionHand) || (_candidateChampionOrdinal == _vm->indexToOrdinal(champIndex))) {
 			return;
 		}
 		slotBoxIndex = (champIndex << 1) + slotIndex;
@@ -654,7 +654,7 @@ void ChampionMan::drawSlot(uint16 champIndex, ChampionSlot slotIndex) {
 		}
 	}
 
-	if ((slotIndex == kChampionSlotActionHand) && (indexToOrdinal(champIndex) == _actingChampionOrdinal)) {
+	if ((slotIndex == kChampionSlotActionHand) && (_vm->indexToOrdinal(champIndex) == _actingChampionOrdinal)) {
 		nativeBitmapIndex = kSlotBoxActingHandIndice;
 	}
 

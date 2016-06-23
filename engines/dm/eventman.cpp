@@ -499,7 +499,7 @@ void EventManager::commandSetLeader(ChampionIndex champIndex) {
 	Champion *champion = &cm._champions[cm._leaderIndex];
 	champion->_dir = _vm->_dungeonMan->_currMap._partyDir;
 	cm._champions[champIndex]._load += _vm->_dungeonMan->getObjectWeight(cm._leaderHand);
-	if (indexToOrdinal(champIndex) != cm._candidateChampionOrdinal) {
+	if (_vm->indexToOrdinal(champIndex) != cm._candidateChampionOrdinal) {
 		champion->setAttributeFlag(kChampionAttributeIcon, true);
 		champion->setAttributeFlag(kChampionAttributeNameTitle, true);
 		cm.drawChampionState(champIndex);

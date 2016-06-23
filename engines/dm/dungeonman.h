@@ -143,11 +143,6 @@ public:
 
 extern WeaponInfo gWeaponInfo[46];
 
-
-int16 ordinalToIndex(int16 val); // @ M01_ORDINAL_TO_INDEX
-int16 indexToOrdinal(int16 val); // @ M00_INDEX_TO_ORDINAL
-
-
 enum TextType {
 	/* Used for text on walls */
 	kTextTypeInscription = 0, // @ C0_TEXT_TYPE_INSCRIPTION 
