@@ -800,7 +800,7 @@ reg_t Audio32::kernelPlay(const bool autoPlay, const int argc, const reg_t *cons
 	bool loop;
 	int16 volume;
 	bool monitor = false;
-	reg_t soundNode;
+	reg_t soundNode = NULL_REG;
 
 	if (argc >= 5) {
 		resourceId = ResourceId(kResourceTypeAudio36, argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16());
