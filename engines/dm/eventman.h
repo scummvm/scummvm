@@ -244,6 +244,7 @@ public:
 	void processCommandQueue(); // @ F0380_COMMAND_ProcessQueue_CPSC
 
 	void commandSetLeader(ChampionIndex index); // @ F0368_COMMAND_SetLeader
+	void commandProcessType80ClickInDungeonViewTouchFrontWall(); // @ F0372_COMMAND_ProcessType80_ClickInDungeonView_TouchFrontWall
 };
 
 }

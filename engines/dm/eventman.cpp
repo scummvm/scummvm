@@ -30,6 +30,7 @@
 
 #include "eventman.h"
 #include "dungeonman.h"
+#include "movesens.h"
 
 
 
@@ -402,8 +403,8 @@ void EventManager::processCommandQueue() {
 	if ((cmd._type >= kCommandMoveForward) && (cmd._type <= kCommandMoveLeft)) {
 		commandMoveParty(cmd._type);
 		return;
-	}		 
-	
+	}
+
 	if (cmd._type == kCommandClickInDungeonView) {
 		warning("DUMMY CODE, all of this");
 		DungeonMan &dunMan = *_vm->_dungeonMan;
@@ -495,4 +496,18 @@ void EventManager::commandSetLeader(ChampionIndex champIndex) {
 	}
 }
 
+void EventManager::commandProcessType80ClickInDungeonViewTouchFrontWall() {
+	DungeonMan &dunMan = *_vm->_dungeonMan;
+	CurrMapData &currMap = dunMan._currMap;
+	uint16 mapX = currMap._partyPosX;
+	uint16 mapY = currMap._partyPosY;
+	mapX += _dirIntoStepCountEast[currMap._partyDir];
+	mapY += _dirIntoStepCountNorth[currMap._partyDir];
+	if ((mapX >= 0)
+		&& (mapX < currMap._width)
+		&& (mapY >= 0)
+		&& (mapY < currMap._height)) {
+		_vm->_stopWaitingForPlayerInput = _vm->_movsens->sensorIsTriggeredByClickOnWall(mapX, mapY, returnOppositeDir(currMap._partyDir));
+	}
+}
 }; // end of namespace DM
