@@ -83,6 +83,14 @@ enum ThingType {
 	kThingTypeTotal = 16 // +1 than the last (explosionThingType)
 }; // @ C[00..15]_THING_TYPE_...
 
+enum Cell {
+	kCellAny = -1, // @ CM1_CELL_ANY      
+	kCellNorthWest = 0, // @ C00_CELL_NORTHWEST 
+	kCellNorthEast = 1, // @ C01_CELL_NORTHEAST 
+	kCellSouthEast = 2, // @ C02_CELL_SOUTHEAST 
+	kCellSouthWest = 3 // @ C03_CELL_SOUTHWEST 
+};
+
 class Thing {
 	uint16 _data;
 public:

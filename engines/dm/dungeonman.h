@@ -278,6 +278,7 @@ public:
 	explicit Sensor(uint16 *rawDat) : _nextThing(rawDat[0]), _datAndType(rawDat[1]), _attributes(rawDat[2]), _action(rawDat[3]) {}
 
 	Thing getNextThing() { return _nextThing; }
+	void setNextThing(Thing thing) { _nextThing = thing; }
 	SensorType getType() { return (SensorType)(_datAndType & 0x7F); } // @ M39_TYPE
 	uint16 getData() { return _datAndType >> 7; } // @ M40_DATA
 	uint16 getDataMask1() { return (_datAndType >> 7) & 0xF; } // @ M42_MASK1
@@ -295,6 +296,11 @@ public:
 	uint16 getRemoteMapX() { return (_action >> 6) & 0x1F; }
 	direction getRemoteDir() { return (direction)((_action >> 4) & 3); }
 	uint16 getLocalAction() { return (_action >> 4); }
+	uint16 getEffectA() { return (_attributes >> 3) & 0x3; }
+	bool getRevertEffectA() { return (_attributes >> 5) & 0x1; }
+	bool getAudibleA() { return (_attributes >> 6) & 0x1; }
+
+
 	// some macros missing, i got bored
 }; // @ SENSOR
 

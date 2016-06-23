@@ -37,6 +37,7 @@ class MovesensMan {
 	DMEngine *_vm;
 public:
 	explicit MovesensMan(DMEngine *vm);
+	bool sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 cellParam); // @ F0275_SENSOR_IsTriggeredByClickOnWall
 };
 
 }
