@@ -520,8 +520,8 @@ CString CPetControl::getFullViewName() {
 	return gameManager ? gameManager->getFullViewName() : CString();
 }
 
-void CPetControl::addRoom(int roomNum) {
-	_rooms.addRoom(roomNum);
+void CPetControl::addRandomRoom(int passClassNum) {
+	_rooms.addRandomRoom(passClassNum);
 }
 
 int CPetControl::roomFn2(int val) {

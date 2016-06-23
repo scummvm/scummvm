@@ -102,4 +102,14 @@ CPetRoomsGlyph *CPetRoomsGlyphs::findMode1() const {
 	return nullptr;
 }
 
+CPetRoomsGlyph *CPetRoomsGlyphs::findGlyphByFlags(uint flags) const {
+	for (const_iterator i = begin(); i != end(); ++i) {
+		CPetRoomsGlyph *glyph = static_cast<CPetRoomsGlyph *>(*i);
+		if (glyph->getRoomFlags() == flags)
+			return glyph;
+	}
+
+	return nullptr;
+}
+
 } // End of namespace Titanic

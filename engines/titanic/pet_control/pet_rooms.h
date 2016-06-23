@@ -72,7 +72,12 @@ private:
 	/**
 	 * Adds a glyph to the list
 	 */
-	CPetRoomsGlyph *addGlyph(int val, bool highlight);
+	CPetRoomsGlyph *addRoom(uint roomFlags, bool highlight);
+
+	/**
+	 * Adds a glyph to the list
+	 */
+	CPetRoomsGlyph *addGlyph(uint roomFlags, bool highlight);
 
 	uint mode1Flags() const;
 public:
@@ -151,9 +156,9 @@ public:
 	virtual CGameObject *getBackground(int index);
 
 	/**
-	 * Adds a room to the room list
+	 * Adds a random room to the glyph list
 	 */
-	void addRoom(int roomNum);
+	void addRandomRoom(int passClassNum);
 
 	int fn2(int val);
 };

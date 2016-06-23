@@ -149,7 +149,7 @@ protected:
 	/**
 	 * Adds a room to the room list
 	 */
-	void petAddRoom(int roomNum);
+	void petAddRandomRoom(int passClassNum);
 
 	/**
 	 * Locks/hides the mouse

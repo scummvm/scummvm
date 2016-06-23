@@ -307,9 +307,10 @@ public:
 	CString getFullViewName();
 
 	/**
-	 * Adds a room to the room list
+	 * Adds a random room to the room list
 	 */
-	void addRoom(int roomNum);
+	void addRandomRoom(int passClassNum);
+
 	int roomFn2(int val);
 
 	/**

@@ -47,27 +47,6 @@ public:
 	CPetRoomsGlyph(uint flags);
 
 	/**
-	 * Set the room flags for the glyph
-	 */
-	void setFoomFlags(uint flags) { _roomFlags = flags; }
-
-	/**
-	 * Get the room flags for the glyph
-	 */
-	uint getRoomFlags() const { return _roomFlags; }
-
-	void set38(int val) { _field38 = val; }
-
-	/**
-	 * Sets the mode of the glyph
-	 */
-	void setMode(RoomGlyphMode mode) { _mode = mode; }
-
-	bool isModeValid() const { return _mode != RGM_0; }
-	bool isMode1() const { return _mode == RGM_1; }
-	bool isMode2() const { return _mode == RGM_2; }
-
-	/**
 	 * Setup the glyph
 	 */
 	virtual bool setup(CPetControl *petControl, CPetGlyphs *owner);
@@ -94,6 +73,28 @@ public:
 	virtual int proc33();
 	
 	virtual void proc39();
+
+
+	/**
+	 * Set the room flags for the glyph
+	 */
+	void setFoomFlags(uint flags) { _roomFlags = flags; }
+
+	/**
+	 * Get the room flags for the glyph
+	 */
+	uint getRoomFlags() const { return _roomFlags; }
+
+	void set38(int val) { _field38 = val; }
+
+	/**
+	 * Sets the mode of the glyph
+	 */
+	void setMode(RoomGlyphMode mode) { _mode = mode; }
+
+	bool isModeValid() const { return _mode != RGM_0; }
+	bool isMode1() const { return _mode == RGM_1; }
+	bool isMode2() const { return _mode == RGM_2; }
 };
 
 class CPetRoomsGlyphs : public CPetGlyphs {
@@ -105,6 +106,17 @@ public:
 	void save2(SimpleFile *file, int indent) const;
 
 	CPetRoomsGlyph *findMode1() const;
+
+
+	/**
+	 * Finds a glyph in the list by it's room flags
+	 */
+	CPetRoomsGlyph *findGlyphByFlags(uint flags) const;
+
+	/**
+	 * Returns true if there's a glyph in the list with a given room flags
+	 */
+	bool hasFlags(uint flags) const { return findGlyphByFlags(flags) != nullptr; }
 };
 
 } // End of namespace Titanic

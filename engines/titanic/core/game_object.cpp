@@ -790,10 +790,10 @@ void CGameObject::dec54() {
 	getGameManager()->dec54();
 }
 
-void CGameObject::petAddRoom(int roomNum) {
+void CGameObject::petAddRandomRoom(int passClassNum) {
 	CPetControl *petControl = getPetControl();
 	if (petControl)
-		petControl->addRoom(roomNum);
+		petControl->addRandomRoom(passClassNum);
 }
 
 void CGameObject::lockMouse() {

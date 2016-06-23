@@ -212,8 +212,45 @@ void CPetRooms::areaChanged(PetArea area) {
 		_petControl->makeDirty();
 }
 
-CPetRoomsGlyph *CPetRooms::addGlyph(int val, bool highlight) {
-	CPetRoomsGlyph *glyph = new CPetRoomsGlyph(val);
+void CPetRooms::addRandomRoom(int passClassNum) {
+	CPetRoomsGlyph *glyph = _glyphs.findMode1();
+	if (glyph)
+		glyph->setMode(RGM_2);
+
+	CRoomFlags roomFlags;
+	roomFlags.setRandomLocation(passClassNum, _field1D4);
+	if (addRoom(roomFlags, true)) {
+
+	}
+
+	warning("TODO: CPetRooms::addRoom");
+}
+
+CPetRoomsGlyph *CPetRooms::addRoom(uint roomFlags, bool highlight) {
+	// Ensure that we don't add room if the room is already present
+	if (_glyphs.hasFlags(roomFlags))
+		return nullptr;
+	
+	if (_glyphs.size() >= 32)
+		// Too many rooms already
+		return nullptr;
+
+	// Do a preliminary scan of the glyph list for any glyph that is
+	// no longer valid, and thus can be removed
+	for (CPetRoomsGlyphs::iterator i = _glyphs.begin(); i != _glyphs.end(); ++i) {
+		CPetRoomsGlyph *glyph = static_cast<CPetRoomsGlyph *>(*i);
+		if (!glyph->isModeValid()) {
+			_glyphs.erase(i);
+			break;
+		}
+	}
+
+	// Add the glyph
+	return addGlyph(roomFlags, highlight);
+}
+
+CPetRoomsGlyph *CPetRooms::addGlyph(uint roomFlags, bool highlight) {
+	CPetRoomsGlyph *glyph = new CPetRoomsGlyph(roomFlags);
 	if (!glyph->setup(_petControl, &_glyphs)) {
 		delete glyph;
 		return nullptr;
@@ -224,10 +261,6 @@ CPetRoomsGlyph *CPetRooms::addGlyph(int val, bool highlight) {
 
 		return glyph;
 	}
-}
-
-void CPetRooms::addRoom(int roomNum) {
-	warning("TODO: CPetRooms::addRoom");
 }
 
 uint CPetRooms::mode1Flags() const {
