@@ -48,31 +48,32 @@
      tDOWN = 264,
      tELSE = 265,
      tEND = 266,
-     tFRAME = 267,
-     tGO = 268,
-     tIF = 269,
-     tINTO = 270,
-     tLOOP = 271,
-     tMACRO = 272,
-     tMCI = 273,
-     tMCIWAIT = 274,
-     tMOVIE = 275,
-     tNEXT = 276,
-     tOF = 277,
-     tPREVIOUS = 278,
-     tPUT = 279,
-     tREPEAT = 280,
-     tSET = 281,
-     tTHEN = 282,
-     tTO = 283,
-     tWITH = 284,
-     tWHILE = 285,
-     tGE = 286,
-     tLE = 287,
-     tGT = 288,
-     tLT = 289,
-     tEQ = 290,
-     tNEQ = 291
+     tEXIT = 267,
+     tFRAME = 268,
+     tGO = 269,
+     tIF = 270,
+     tINTO = 271,
+     tLOOP = 272,
+     tMACRO = 273,
+     tMCI = 274,
+     tMCIWAIT = 275,
+     tMOVIE = 276,
+     tNEXT = 277,
+     tOF = 278,
+     tPREVIOUS = 279,
+     tPUT = 280,
+     tREPEAT = 281,
+     tSET = 282,
+     tTHEN = 283,
+     tTO = 284,
+     tWITH = 285,
+     tWHILE = 286,
+     tGE = 287,
+     tLE = 288,
+     tGT = 289,
+     tLT = 290,
+     tEQ = 291,
+     tNEQ = 292
    };
 #endif
 /* Tokens.  */
@@ -85,31 +86,32 @@
 #define tDOWN 264
 #define tELSE 265
 #define tEND 266
-#define tFRAME 267
-#define tGO 268
-#define tIF 269
-#define tINTO 270
-#define tLOOP 271
-#define tMACRO 272
-#define tMCI 273
-#define tMCIWAIT 274
-#define tMOVIE 275
-#define tNEXT 276
-#define tOF 277
-#define tPREVIOUS 278
-#define tPUT 279
-#define tREPEAT 280
-#define tSET 281
-#define tTHEN 282
-#define tTO 283
-#define tWITH 284
-#define tWHILE 285
-#define tGE 286
-#define tLE 287
-#define tGT 288
-#define tLT 289
-#define tEQ 290
-#define tNEQ 291
+#define tEXIT 267
+#define tFRAME 268
+#define tGO 269
+#define tIF 270
+#define tINTO 271
+#define tLOOP 272
+#define tMACRO 273
+#define tMCI 274
+#define tMCIWAIT 275
+#define tMOVIE 276
+#define tNEXT 277
+#define tOF 278
+#define tPREVIOUS 279
+#define tPUT 280
+#define tREPEAT 281
+#define tSET 282
+#define tTHEN 283
+#define tTO 284
+#define tWITH 285
+#define tWHILE 286
+#define tGE 287
+#define tLE 288
+#define tGT 289
+#define tLT 290
+#define tEQ 291
+#define tNEQ 292
 
 
 
@@ -125,7 +127,7 @@ typedef union YYSTYPE
 	int	narg;	/* number of arguments */
 }
 /* Line 1529 of yacc.c.  */
-#line 129 "engines/director/lingo/lingo-gr.hpp"
+#line 131 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

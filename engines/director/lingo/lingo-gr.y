@@ -74,8 +74,8 @@ using namespace Director;
 %token<i> INT
 %token<f> FLOAT
 %token<s> VAR STRING
-%token tDOWN tELSE tEND tFRAME tGO tIF tINTO tLOOP tMACRO tMCI tMCIWAIT tMOVIE tNEXT
-%token tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWITH tWHILE
+%token tDOWN tELSE tEND tEXIT tFRAME tGO tIF tINTO tLOOP tMACRO tMCI tMCIWAIT
+%token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWITH tWHILE
 %token tGE tLE tGT tLT tEQ tNEQ
 
 %type<code> asgn cond end expr if repeatwhile repeatwith stmtlist
@@ -90,6 +90,7 @@ using namespace Director;
 %%
 
 program: programline '\n' program
+	| programline program
 	| programline
 	;
 
@@ -211,6 +212,7 @@ func: tMCI STRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c_
 	| tMCIWAIT VAR			{ g_lingo->code1(g_lingo->c_mciwait); g_lingo->codeString($2->c_str()); delete $2; }
 	| tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| gotofunc
+	| tEXIT					{ g_lingo->code1(g_lingo->c_exit); }
 	;
 
 // go {to} {frame} whichFrame {of movie whichMovie}
@@ -265,7 +267,7 @@ gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
 //
 // See also:
 //   on keyword
-defn:	  tMACRO VAR { g_lingo->_indef = true; }
+defn: tMACRO VAR { g_lingo->_indef = true; }
 	    arglist stmtlist { g_lingo->code1(g_lingo->c_procret); g_lingo->define(*$2, $4); g_lingo->_indef = false; }
 	;
 arglist:  /* nothing */ 	{ $$ = 0; }

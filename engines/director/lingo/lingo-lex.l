@@ -48,15 +48,16 @@ whitespace [\t ]
 ^{whitespace}
 [\t]+			{ return ' '; }
 
---[^\r\n]*macro	{ return tMACRO; }
 down			{ return tDOWN; }
 if				{ return tIF; }
 else			{ return tELSE; }
 end				{ return tEND; }
+exit			{ return tEXIT; }
 frame			{ return tFRAME; }
 go				{ return tGO; }
 into			{ return tINTO; }
 loop			{ return tLOOP; }
+macro			{ return tMACRO; }
 mci				{ return tMCI; }
 mciwait			{ return tMCIWAIT; }
 movie			{ return tMOVIE; }

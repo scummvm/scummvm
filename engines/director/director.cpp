@@ -73,6 +73,29 @@ Common::Error DirectorEngine::run() {
 
 	_lingo = new Lingo(this);
 	_soundManager = new DirectorSound();
+	_lingo->addCode("--\n\
+macro SHIPX\n\
+set x = 5\n\
+if x = 1 then\n\
+go \"Zoom\"\n\
+exit\n\
+end if\n\
+if x >1 then\n\
+exit\n\
+end if\n\
+\n\
+--\n\
+macro ZIPX\n\
+set x = 5\n\
+if x = 1 then\n\
+go \"ZIP\"\n\
+exit\n\
+end if\n\
+if x >1 then\n\
+exit\n\
+end if\n\
+", kMovieScript, 1);
+
 	_lingo->addCode("mci \"open MM\\T005045a.wav type WaveAudio alias T005045a\"\n\
 	mci \"play T005045a from 22710 to 32872\"", kMovieScript, 1);
 
@@ -87,11 +110,13 @@ put x\n", kMovieScript, 2);
 _lingo->addCode("set x = 5\n\
 if x <= 5 then set x = 6 end if\n\
 if (x = 5) then\n\
-   set x = 7\n\
+   set x = 7 -- this is comment\n\
 else\n\
 	set x = 8\n\
+	-- this is another comment\n\
 end if\n\
 put x\n\
+-- this is more comment\n\
 set y = 1\n\
 repeat while (y < 5)\n\
   set y = y + 1\n\

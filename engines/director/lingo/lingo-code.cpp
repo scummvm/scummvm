@@ -334,6 +334,10 @@ void Lingo::c_ifcode() {
 //************************
 // Built-in functions
 //************************
+void Lingo::c_exit() {
+	warning("STUB: c_exit()");
+}
+
 void Lingo::c_mci() {
 	Common::String s((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
 

@@ -145,6 +145,7 @@ public:
 	static void c_le();
 	static void c_procret();
 
+	static void c_exit();
 	static void c_mci();
 	static void c_mciwait();
 	static void c_goto();
