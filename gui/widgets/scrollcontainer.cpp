@@ -90,7 +90,7 @@ int16 ScrollContainerWidget::getChildY() const {
 }
 
 uint16 ScrollContainerWidget::getWidth() const {
-	return _w - _verticalScroll->getWidth();
+	return _w - (_verticalScroll->isVisible() ? _verticalScroll->getWidth() : 0);
 }
 
 uint16 ScrollContainerWidget::getHeight() const {
@@ -133,6 +133,8 @@ void ScrollContainerWidget::reflowLayout() {
 		ptr->setVisible(visible);
 		ptr = ptr->next();
 	}
+
+	_verticalScroll->setVisible(_verticalScroll->_numEntries > _limitH); //show when there is something to scroll
 }
 
 void ScrollContainerWidget::drawWidget() {
@@ -140,7 +142,7 @@ void ScrollContainerWidget::drawWidget() {
 }
 
 Widget *ScrollContainerWidget::findWidget(int x, int y) {
-	if (x >= _w - _verticalScroll->getWidth())
+	if (_verticalScroll->isVisible() && x >= _w - _verticalScroll->getWidth())
 		return _verticalScroll;
 	return Widget::findWidgetInChain(_firstWidget, x + _scrolledX, y + _scrolledY);
 }
