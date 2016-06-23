@@ -311,40 +311,47 @@ byte ImageAsset::walkHuff(const PPICHuff & huff, Common::BitStream & stream) {
 void ImageAsset::blitInto(Graphics::ManagedSurface *target, uint32 x, uint32 y, BlitMode mode) {
 	if (mode == kBlitDirect) {
 		blitDirect(target, x, y, _imgData);
-		return;
-	}
-
-	if (_container->getItemByteSize(_mask)) { // Has mask
-		switch (mode) {
-		case MacVenture::kBlitBIC:
-			blitBIC(target, x, y, _maskData);
-			break;
-		case MacVenture::kBlitOR:
-			blitOR(target, x, y, _maskData);
-			break;
+	} else if (mode < kBlitXOR){
+		if (_container->getItemByteSize(_mask)) { // Has mask
+			switch (mode) {
+			case MacVenture::kBlitBIC:
+				blitBIC(target, x, y, _maskData);
+				break;
+			case MacVenture::kBlitOR:
+				blitOR(target, x, y, _maskData);
+				break;
+			default:
+				break;
+			}
+		} else if (_container->getItemByteSize(_id)) {
+			switch (mode) {
+			case MacVenture::kBlitBIC:
+				target->fillRect(Common::Rect(x, y, x + _bitWidth, y + _bitHeight * 2), kColorWhite);
+				break;
+			case MacVenture::kBlitOR:
+				target->fillRect(Common::Rect(x, y, x + _bitWidth, y + _bitHeight * 2), kColorBlack);
+				break;
+			default:
+				break;
+			}
 		}
-	} else if (_container->getItemByteSize(_id)) {
-		switch (mode) {
-		case MacVenture::kBlitBIC:
-			target->fillRect(Common::Rect(x, y, x + _bitWidth, y + _bitHeight * 2), kColorWhite);
-			break;
-		case MacVenture::kBlitOR:
-			target->fillRect(Common::Rect(x, y, x + _bitWidth, y + _bitHeight * 2), kColorBlack);
-			break;
-		}
-	}
 
-	if (_container->getItemByteSize(_id) && mode > 0) {
-		blitXOR(target, x, y, _imgData);
-	}
+		if (_container->getItemByteSize(_id) && mode > 0) {
+			blitXOR(target, x, y, _imgData);
+		}
+	}	
 }
 
-bool ImageAsset::isPointInside(Common::Point myPos, Common::Point click) {
-	Common::Rect bounds(myPos.x, myPos.y, myPos.x + _bitWidth, myPos.y + _bitHeight);
-	return bounds.contains(click);
+bool ImageAsset::isPointInside(Common::Point point) {
+	if (point.x >= _bitWidth || point.y >= _bitHeight) return false;
+	if (_maskData.empty()) return false;
+	// We see if the point lands on the mask.
+	uint pix = _maskData[(point.y * _rowBytes) + (point.x >> 3)] & (1 << (7 - (point.x & 7)));
+	return pix != 0;
 }
 
 void ImageAsset::blitDirect(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte>& data) {
+	/*
 	if (_bitWidth == 0 || _bitHeight == 0) return;
 	uint w = _bitWidth;
 	uint h = _bitHeight;
@@ -355,19 +362,21 @@ void ImageAsset::blitDirect(Graphics::ManagedSurface * target, uint32 ox, uint32
 	if (w + ox >= target->w) w = target->w - ox;
 	if (h + oy >= target->h) h = target->h - oy;
 	if (w == 0 || h == 0) return;
+	*/
 	
-	for (uint y = 0;y < _bitHeight; y++) {
+	for (uint y = 0; y < _bitHeight; y++) {
 		uint bmpofs = y * _rowBytes;
 		byte pix = 0;
 		for (uint x = 0; x < _bitWidth; x++) {
 			pix = data[bmpofs + (x >> 3)] & (1 << (7 - (x & 7)));
 			pix = pix ? kColorBlack : kColorWhite;
-			if (pix) *((byte *)target->getBasePtr(ox + x, oy + y)) = pix;
+			*((byte *)target->getBasePtr(ox + x, oy + y)) = pix;
 		}
 	}
 }
 
 void ImageAsset::blitBIC(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data) {
+	/*
 	if (_bitWidth == 0 || _bitHeight == 0) return;
 	uint w = _bitWidth;
 	uint h = _bitHeight;
@@ -378,19 +387,19 @@ void ImageAsset::blitBIC(Graphics::ManagedSurface * target, uint32 ox, uint32 oy
 	if (w + ox >= target->w) w = target->w - ox;
 	if (h + oy >= target->h) h = target->h - oy;
 	if (w == 0 || h == 0) return;
-
-	for (uint y = 0;y < h; y++) {
+	*/
+	for (uint y = 0; y < _bitHeight; y++) {
 		uint bmpofs = y * _rowBytes;
 		byte pix = 0;
-		for (uint x = 0; x < w; x++) {
-			pix = data[bmpofs + (x >> 3)] & (1 << (7 - (x & 7)));
-			
+		for (uint x = 0; x < _bitWidth; x++) {
+			pix = data[bmpofs + (x >> 3)] & (1 << (7 - (x & 7)));			
 			if (pix) *((byte *)target->getBasePtr(ox + x, oy + y)) = kColorWhite;
 		}
 	}
 }
 
 void ImageAsset::blitOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data) {
+	/*
 	if (_bitWidth == 0 || _bitHeight == 0) return;
 	uint w = _bitWidth;
 	uint h = _bitHeight;
@@ -401,8 +410,8 @@ void ImageAsset::blitOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy,
 	if (w + ox >= target->w) w = target->w - ox;
 	if (h + oy >= target->h) h = target->h - oy;
 	if (w == 0 || h == 0) return;
-	
-	for (uint y = 0;y < _bitHeight; y++) {
+	*/
+	for (uint y = 0; y < _bitHeight; y++) {
 		uint bmpofs = y * _rowBytes;
 		byte pix = 0;
 		for (uint x = 0; x < _bitWidth; x++) {
@@ -414,6 +423,7 @@ void ImageAsset::blitOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy,
 }
 
 void ImageAsset::blitXOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data) {
+	/*
 	if (_bitWidth == 0 || _bitHeight == 0) return;
 	uint w = _bitWidth;
 	uint h = _bitHeight;
@@ -424,7 +434,7 @@ void ImageAsset::blitXOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy
 	if (w + ox >= target->w) w = target->w - ox;
 	if (h + oy >= target->h) h = target->h - oy;
 	if (w == 0 || h == 0) return;
-	
+	*/
 	for (uint y = 0;y < _bitHeight; y++) {
 		uint bmpofs = y * _rowBytes;
 		byte pix = 0;

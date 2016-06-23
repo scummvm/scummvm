@@ -59,7 +59,7 @@ public:
 
 	void blitInto(Graphics::ManagedSurface *target, uint32 x, uint32 y, BlitMode mode);
 
-	bool isPointInside(Common::Point myPos, Common::Point click);
+	bool isPointInside(Common::Point point);
 
 private:
 	void decodePPIC(ObjID id, Common::Array<byte> &data);

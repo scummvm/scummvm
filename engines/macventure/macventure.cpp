@@ -100,45 +100,55 @@ Common::Error MacVentureEngine::run() {
 	_cmdReady = false;
 	_haltedAtEnd = false;
 	_haltedInSelection = false;
+	_clickToContinue = true;
+	_gameState = kGameStateInit;
+	_destObject = 0;
+	_prepared = true;
 
 	//if !savegame
 	_cmdReady = true;
 	_selectedControl = kStartOrResume;
 	ObjID playerParent = _world->getObjAttr(1, kAttrParentObject);
 	_currentSelection.push_back(playerParent);// Push the parent of the player
-	_world->setObjAttr(playerParent, 6, 1);
+	_world->setObjAttr(playerParent, kAttrContainerOpen, 1);
 
-	_prepared = true;
-	while (!(_gameState == kGameStateQuitting)) {
+	_gui->addChild(kSelfWindow, 1);
+	_gui->updateWindow(kSelfWindow, false);
+	
+	while (_gameState != kGameStateQuitting) {
 		processEvents();
 
-		if (_prepared) {
-			_prepared = false;	
+		if (_gameState != kGameStateQuitting) {
 
-			if (!_halted)
-				updateState();
+			if (_prepared) {
+				_prepared = false;
 
-			if (_cmdReady || _halted) {
-				_halted = false;
-				if (runScriptEngine()) {
-					_halted = true;
-					_paused = true;
-				} else {
-					_paused = false;
-					if (!updateState()) {
-						updateControls();
+				if (!_halted)
+					updateState();
+
+				if (_cmdReady || _halted) {
+					_halted = false;
+					if (runScriptEngine()) {
+						_halted = true;
+						_paused = true;
+					}
+					else {
+						_paused = false;
+						if (!updateState()) {
+							updateControls();
+						}
 					}
 				}
+
+				if (_gameState == kGameStateWinnig || _gameState == kGameStateLosing) {
+					endGame();
+				}
 			}
+			_gui->draw();
 
-			if (_gameState == kGameStateWinnig || _gameState == kGameStateLosing) {
-				endGame();
-			}			
+			g_system->updateScreen();
+			g_system->delayMillis(50);
 		}
-		_gui->draw();
-
-		g_system->updateScreen();
-		g_system->delayMillis(50);
 	}
 
 	return Common::kNoError;
@@ -161,6 +171,11 @@ void MacVentureEngine::selectControl(ControlReference id) {
 }
 
 void MacVentureEngine::activateCommand(ControlReference id) {
+	if (id == kControlClickToContinue) {
+		_clickToContinue = false;
+		_paused = true;
+		return;
+	}
 	ControlAction action = referenceToAction(id);
 	if (action != _activeControl) {
 		if (_activeControl)
@@ -168,6 +183,7 @@ void MacVentureEngine::activateCommand(ControlReference id) {
 		_activeControl = action;
 	}
 	debug(4, "Activating Command %x... Command %x is active", action, _activeControl);
+	refreshReady();
 }
 
 void MacVentureEngine::refreshReady() {
@@ -201,9 +217,16 @@ void MacVentureEngine::loseGame() {
 	_gameState = kGameStateLosing;
 }
 
-void MacVentureEngine::enqueueObject(ObjectQueueID type, ObjID objID) {
+void MacVentureEngine::clickToContinue() {
+	_clickToContinue = true;
+}
+
+void MacVentureEngine::enqueueObject(ObjectQueueID type, ObjID objID, ObjID target) {
 	QueuedObject obj;
 	obj.id = type;
+
+	if (type == kUpdateWindow) { obj.target = target; }
+
 	if (type != kHightlightExits) {		
 		obj.object = objID;
 		obj.parent = _world->getObjAttr(objID, kAttrParentObject);
@@ -257,7 +280,12 @@ void MacVentureEngine::selectObject(ObjID objID) {
 		else i++;
 	}		
 	
-	if (!found) _currentSelection.push_back(objID);
+	if (!found) {
+		_currentSelection.push_back(objID);
+		debug("Object %d selected", objID);
+	} else {
+		debug("Object %d already selected", objID);
+	}
 
 	found = false;
 	i = 0;
@@ -266,7 +294,15 @@ void MacVentureEngine::selectObject(ObjID objID) {
 		else i++;
 	}
 
-	if (!found) _selectedObjs.push_back(objID);
+	if (!found) _selectedObjs.push_back(objID);	
+}
+
+void MacVentureEngine::updateDelta(Common::Point newPos) {
+	Common::Point newDelta = newPos - _deltaPoint;
+	debug(4, "Update delta: Old(%d, %d), New(%d, %d)",
+		_deltaPoint.x, _deltaPoint.y,
+		newDelta.x, newDelta.y);
+	_deltaPoint = newDelta;
 }
 
 void MacVentureEngine::focusObjWin(ObjID objID) {
@@ -357,11 +393,11 @@ bool MacVentureEngine::updateState() {
 }
 
 void MacVentureEngine::revert() {
-	warning("revert: unimplemented");
+	_gui->invertWindowColors(kMainGameWindow);
+	preparedToRun();
 }
 
 void MacVentureEngine::runObjQueue() {
-	warning("runObjQueue: not fully implemented");
 	while (!_objQueue.empty()) {
 		uint32 biggest = 0;
 		uint32 index = 0;
@@ -389,7 +425,7 @@ void MacVentureEngine::runObjQueue() {
 			checkObject(obj);
 			break;
 		case 0x8:
-			reflectSwap(obj.object);
+			reflectSwap(obj.object, obj.target);
 			break;
 		case 0xc:
 			_world->setObjAttr(_gui->getWindowData(kMainGameWindow).refcon, kAttrContainerOpen, 0);
@@ -408,6 +444,7 @@ void MacVentureEngine::runObjQueue() {
 void MacVentureEngine::updateControls() {
 	if (_activeControl)
 		_activeControl = kNoCommand;
+	_gui->clearControls();
 	toggleExits();	
 	resetVars();
 }
@@ -434,7 +471,7 @@ void MacVentureEngine::openObject(ObjID objID) {
 	debug("openObject: %d", objID);
 	if (getObjWindow(objID)) return;
 	if (objID == _world->getObjAttr(1, kAttrParentObject)) {
-		_gui->updateWindowInfo(kMainGameWindow, objID, _world->getChildren(objID, true)); // FIXME: Find better name
+		_gui->updateWindowInfo(kMainGameWindow, objID, _world->getChildren(objID, true));
 		_gui->updateWindow(kMainGameWindow, _world->getObjAttr(objID, kAttrContainerOpen));
 		//_gui->drawExits();
 		_gui->setWindowTitle(kMainGameWindow, _world->getText(objID));
@@ -522,12 +559,30 @@ void MacVentureEngine::checkObject(QueuedObject old) {
 	}
 }
 
-void MacVentureEngine::reflectSwap(ObjID objID) {
-	warning("reflectSwap: unimplemented");
+void MacVentureEngine::reflectSwap(ObjID fromID, ObjID toID) {
+	warning("reflectSwap: untested");
+	WindowReference from = getObjWindow(fromID);
+	WindowReference to = getObjWindow(toID);
+	WindowReference tmp = to;
+	if (!to) {
+		tmp = from;
+	}
+	if (tmp) {
+		Common::String newTitle = _world->getText(toID);
+		_gui->setWindowTitle(tmp, newTitle);
+		_gui->updateWindowInfo(tmp, toID, _world->getChildren(toID, true));
+		updateWindow(tmp);
+	}
 }
 
 void MacVentureEngine::toggleExits() {
 	warning("toggleExits: unimplemented");
+	while (!_selectedObjs.empty()) {
+		ObjID obj = _selectedObjs.front();
+		_selectedObjs.remove_at(0);
+		// Todo: highlight exit
+		updateWindow(findParentWindow(obj));
+	}	
 }
 
 void MacVentureEngine::zoomObject(ObjID objID) {
@@ -563,6 +618,10 @@ ControlAction MacVenture::MacVentureEngine::referenceToAction(ControlReference i
 
 bool MacVentureEngine::isPaused() {
 	return _paused;
+}
+
+bool MacVentureEngine::needsClickToContinue() {
+	return _clickToContinue;
 }
 
 Common::String MacVentureEngine::getCommandsPausedString() const {
@@ -607,7 +666,10 @@ bool MacVentureEngine::isObjClickable(ObjID objID) {
 }
 
 bool MacVentureEngine::isObjSelected(ObjID objID) {
-	warning("Unimplemented: isObjSelected");
+	Common::Array<ObjID>::const_iterator it;
+	for (it = _currentSelection.begin(); it != _currentSelection.end(); it++) {
+		if (*it == objID) return true;
+	}
 	return false;
 }
 

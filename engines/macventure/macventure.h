@@ -135,6 +135,7 @@ struct QueuedObject {
 	bool hidden;
 	bool offscreen;
 	bool invisible;
+	ObjID target; // For swapping
 };
 
 enum TextQueueID {
@@ -167,22 +168,25 @@ public:
 	void gameChanged();
 	void winGame();
 	void loseGame();
+	void clickToContinue();
 
 	bool updateState();
 	void revert();
 
-	void enqueueObject(ObjectQueueID type, ObjID objID);
+	void enqueueObject(ObjectQueueID type, ObjID objID, ObjID target = 0);
 	void enqueueText(TextQueueID type, ObjID target, ObjID source, ObjID text);
 
 	void runObjQueue();
 	bool printTexts();
 
 	void selectObject(ObjID objID);
+	void updateDelta(Common::Point newPos);
 	void focusObjWin(ObjID objID);
 	void updateWindow(WindowReference winID);
 
 	// Data retrieval
 	bool isPaused();
+	bool needsClickToContinue();
 	Common::String getCommandsPausedString() const;
 	const GlobalSettings& getGlobalSettings() const;
 	Common::String getFilePath(FilePathID id) const;
@@ -218,7 +222,7 @@ private:
 	void openObject(ObjID objID);
 	void closeObject(ObjID objID);
 	void checkObject(QueuedObject objID);
-	void reflectSwap(ObjID objID);
+	void reflectSwap(ObjID fromID, ObjID toID);
 	void toggleExits();
 	void zoomObject(ObjID objID);
 
@@ -255,6 +259,7 @@ private: // Attributes
 	bool _paused, _halted, _cmdReady, _prepared;
 	bool _haltedAtEnd, _haltedInSelection;
 	bool _gameChanged;
+	bool _clickToContinue;
 
 	Common::Array<QueuedObject> _objQueue;
 	Common::Array<QueuedObject> _inQueue;

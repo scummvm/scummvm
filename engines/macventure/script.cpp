@@ -41,9 +41,6 @@ ScriptEngine::~ScriptEngine() {
 }
 
 bool ScriptEngine::runControl(ControlAction action, ObjID source, ObjID destination, Common::Point delta) {
-	//debug(7, "SCRIPT: Running control %d from obj %d into obj %d, at delta (%d, %d)", 
-	//	action, source, destination, delta.x, delta.y);
-
 	EngineFrame frame;
 	frame.action = action;
 	frame.src = source;
@@ -108,24 +105,37 @@ bool ScriptEngine::execFrame(bool execAll) {
 			}
 			doFamily = true;
 		}
-	}
+	}	
 
-	//Handle saves
-	/*
-
-	uint highest;
-	uint high;
+	// Halted in saves
 	if (frame->haltedInSaves) {
-	frame->haltedInSaves = false;
+		frame->haltedInSaves = false;
+		if (resumeFunc(frame)) {
+			frame->haltedInSaves = true;
+			return true;
+		}
 	}
 
-
-	do {
-	highest = 0;
-	for (uint i = 0; i < frame->haltedInSaves.size)
-	}
-	*/
-
+	uint highest = 0;
+	uint localHigh = 0;
+	do { // Saved function calls
+		highest = 0;
+		for (uint i = 0; i <frame->saves.size(); i++)
+		{
+			if (highest < frame->saves[i].rank) {
+				highest = frame->saves[i].rank;
+				localHigh = i;
+			}
+		}
+		if (highest) {
+			frame->saves[localHigh].rank = 0;
+			if (loadScript(frame, frame->saves[localHigh].func)) {
+				frame->haltedInSaves = true;
+				return true;
+			}
+		}
+	} while (highest);
+	
 	_frames.remove_at(0);
 	return false;
 }
@@ -907,7 +917,7 @@ void ScriptEngine::opbdFOOB(EngineState * state, EngineFrame * frame) {
 void ScriptEngine::opbeSWOB(EngineState * state, EngineFrame * frame) {
 	ObjID from = state->pop();
 	ObjID to = state->pop();
-	_engine->enqueueObject(kUpdateWindow, to);
+	_engine->enqueueObject(kUpdateWindow, from, to);
 	_world->setObjAttr(to, kAttrContainerOpen, _world->getObjAttr(from, 6));
 	_world->setObjAttr(from, kAttrContainerOpen, 0);
 	Common::Array<ObjID> children = _world->getChildren(from, true);
@@ -1057,7 +1067,7 @@ void ScriptEngine::opd9SLEEP(EngineState * state, EngineFrame * frame) {
 
 void ScriptEngine::opdaCLICK(EngineState * state, EngineFrame * frame) {
 	_engine->updateState();
-	//_engine->clickToContinue();
+	_engine->clickToContinue();
 }
 
 void ScriptEngine::opdbROBQ(EngineState * state, EngineFrame * frame) {
@@ -1083,13 +1093,11 @@ void ScriptEngine::opdfFMAI(EngineState * state, EngineFrame * frame) {
 }
 
 void ScriptEngine::ope0CHGR(EngineState * state, EngineFrame * frame) {
-	word txt = state->pop();
-	op00NOOP(0xe0);
+	state->pop();
 }
 
 void ScriptEngine::ope1CHSO(EngineState * state, EngineFrame * frame) {
-	word txt = state->pop();
-	op00NOOP(0xe1);
+	state->pop();
 }
 
 void ScriptEngine::ope2MDIV(EngineState * state, EngineFrame * frame) {
@@ -1108,7 +1116,6 @@ void ScriptEngine::ope3UPOB(EngineState * state, EngineFrame * frame) {
 
 void ScriptEngine::ope4PLEV(EngineState * state, EngineFrame * frame) {
 	state->push(0);
-	op00NOOP(0xe4);
 }
 
 void ScriptEngine::ope5WEV(EngineState * state, EngineFrame * frame) {

@@ -117,7 +117,8 @@ enum ControlReference {
 	kControlOperate = 5,
 	kControlGo = 6,
 	kControlHit = 7,
-	kControlConsume = 8
+	kControlConsume = 8,
+	kControlClickToContinue = 9
 };
 
 struct ControlData {
@@ -153,9 +154,11 @@ public:
 	void drawMenu();
 	void drawTitle();
 	void drawExit(ObjID id);
+	void clearControls();
 	bool processEvent(Common::Event &event);
 	void handleMenuAction(MenuAction action);
 	void updateWindow(WindowReference winID, bool containerOpen);
+	void invertWindowColors(WindowReference winID);
 
 	WindowReference createInventoryWindow();
 	bool tryCloseWindow(WindowReference winID);
@@ -225,11 +228,15 @@ private: // Methods
 	void drawCommandsWindow();
 	void drawMainGameWindow();
 	void drawSelfWindow();
+	void drawInventories();
+	void drawExitsWindow();
 
 	void drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *surface);
+	void drawWindowTitle(WindowReference target, Graphics::ManagedSurface *surface);
 
 	// Finders
 	WindowData& findWindowData(WindowReference reference);
+	Graphics::MacWindow *findWindow(WindowReference reference);
 
 };
 
@@ -249,12 +256,16 @@ public:
 	CommandButton(ControlData data, Gui *g) {
 		_data = data;
 		_gui = g;
+		_selected = false;
 	}
 	~CommandButton() {}
 
 	void draw(Graphics::ManagedSurface &surface) const {
 
-		surface.fillRect(_data.bounds, kColorWhite);
+		uint colorFill = _selected ? kColorBlack : kColorWhite;
+		uint colorText = _selected ? kColorWhite : kColorBlack;
+
+		surface.fillRect(_data.bounds, colorFill);
 		surface.frameRect(_data.bounds, kColorBlack);
 
 		const Graphics::Font &font = _gui->getCurrentFont();
@@ -265,7 +276,7 @@ public:
 			_data.bounds.left,
 			_data.bounds.top,
 			_data.bounds.right - _data.bounds.left,
-			kColorBlack,
+			colorText,
 			Graphics::kTextAlignCenter);
 	}
 
@@ -277,7 +288,20 @@ public:
 		return _data;
 	}
 
+	void select() {
+		_selected = true;
+	}
+
+	void unselect() {
+		_selected = false;
+	}
+
+	bool isSelected() {
+		return _selected;
+	}
+
 private:
+	bool _selected;
 	ControlData _data;
 	Gui *_gui;
 };
