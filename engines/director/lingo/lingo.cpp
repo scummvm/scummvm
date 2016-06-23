@@ -81,6 +81,8 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_currentScript = 0;
 	_pc = 0;
+	_returning = false;
+	_indef = false;
 
 	warning("Lingo Inited");
 }

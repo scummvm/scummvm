@@ -120,6 +120,7 @@ public:
 public:
 	void execute(int pc);
 	Symbol *lookupVar(const char *name);
+	void define(Common::String &s, int nargs);
 
 	static void c_xpop();
 	static void c_printtop();
@@ -142,6 +143,7 @@ public:
 	static void c_lt();
 	static void c_ge();
 	static void c_le();
+	static void c_procret();
 
 	static void c_mci();
 	static void c_mciwait();
@@ -157,6 +159,7 @@ public:
 public:
 	ScriptData *_currentScript;
 	bool _returning;
+	bool _indef;
 
 private:
 	int parse(const char *code);

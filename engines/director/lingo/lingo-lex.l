@@ -48,6 +48,7 @@ whitespace [\t ]
 ^{whitespace}
 [\t]+			{ return ' '; }
 
+--[^\r\n]*macro	{ return tMACRO; }
 down			{ return tDOWN; }
 if				{ return tIF; }
 else			{ return tELSE; }

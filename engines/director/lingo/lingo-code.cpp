@@ -372,4 +372,11 @@ void Lingo::c_gotoprevious() {
 	warning("STUB: c_gotoprevious()");
 }
 
+void Lingo::define(Common::String &s, int nargs) {
+	warning("STUB: define(\"%s\", %d)", s.c_str(), nargs);
+}
+void Lingo::c_procret() {
+	warning("STUB: c_procret()");
+}
+
 }

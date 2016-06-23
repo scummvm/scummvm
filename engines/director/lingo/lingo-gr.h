@@ -53,25 +53,26 @@
      tIF = 269,
      tINTO = 270,
      tLOOP = 271,
-     tMCI = 272,
-     tMCIWAIT = 273,
-     tMOVIE = 274,
-     tNEXT = 275,
-     tOF = 276,
-     tPREVIOUS = 277,
-     tPUT = 278,
-     tREPEAT = 279,
-     tSET = 280,
-     tTHEN = 281,
-     tTO = 282,
-     tWITH = 283,
-     tWHILE = 284,
-     tGE = 285,
-     tLE = 286,
-     tGT = 287,
-     tLT = 288,
-     tEQ = 289,
-     tNEQ = 290
+     tMACRO = 272,
+     tMCI = 273,
+     tMCIWAIT = 274,
+     tMOVIE = 275,
+     tNEXT = 276,
+     tOF = 277,
+     tPREVIOUS = 278,
+     tPUT = 279,
+     tREPEAT = 280,
+     tSET = 281,
+     tTHEN = 282,
+     tTO = 283,
+     tWITH = 284,
+     tWHILE = 285,
+     tGE = 286,
+     tLE = 287,
+     tGT = 288,
+     tLT = 289,
+     tEQ = 290,
+     tNEQ = 291
    };
 #endif
 /* Tokens.  */
@@ -89,25 +90,26 @@
 #define tIF 269
 #define tINTO 270
 #define tLOOP 271
-#define tMCI 272
-#define tMCIWAIT 273
-#define tMOVIE 274
-#define tNEXT 275
-#define tOF 276
-#define tPREVIOUS 277
-#define tPUT 278
-#define tREPEAT 279
-#define tSET 280
-#define tTHEN 281
-#define tTO 282
-#define tWITH 283
-#define tWHILE 284
-#define tGE 285
-#define tLE 286
-#define tGT 287
-#define tLT 288
-#define tEQ 289
-#define tNEQ 290
+#define tMACRO 272
+#define tMCI 273
+#define tMCIWAIT 274
+#define tMOVIE 275
+#define tNEXT 276
+#define tOF 277
+#define tPREVIOUS 278
+#define tPUT 279
+#define tREPEAT 280
+#define tSET 281
+#define tTHEN 282
+#define tTO 283
+#define tWITH 284
+#define tWHILE 285
+#define tGE 286
+#define tLE 287
+#define tGT 288
+#define tLT 289
+#define tEQ 290
+#define tNEQ 291
 
 
 
@@ -120,9 +122,10 @@ typedef union YYSTYPE
 	int	i;
 	float f;
 	int code;
+	int	narg;	/* number of arguments */
 }
 /* Line 1529 of yacc.c.  */
-#line 126 "engines/director/lingo/lingo-gr.hpp"
+#line 129 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

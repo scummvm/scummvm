@@ -67,18 +67,20 @@ using namespace Director;
 	int	i;
 	float f;
 	int code;
+	int	narg;	/* number of arguments */
 }
 
 %token UNARY VOID
 %token<i> INT
 %token<f> FLOAT
 %token<s> VAR STRING
-%token tDOWN tELSE tEND tFRAME tGO tIF tINTO tLOOP tMCI tMCIWAIT tMOVIE tNEXT
+%token tDOWN tELSE tEND tFRAME tGO tIF tINTO tLOOP tMACRO tMCI tMCIWAIT tMOVIE tNEXT
 %token tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWITH tWHILE
 %token tGE tLE tGT tLT tEQ tNEQ
 
 %type<code> asgn cond end expr if repeatwhile repeatwith stmtlist
 %type<s> gotoframe gotomovie
+%type<narg> arglist
 
 %right '='
 %left '+' '-'
@@ -92,6 +94,7 @@ program: programline '\n' program
 	;
 
 programline:
+	| defn
 	| func
 	| asgn				{ g_lingo->code1(g_lingo->c_xpop); }
 	| stmt
@@ -262,6 +265,14 @@ gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
 //
 // See also:
 //   on keyword
+defn:	  tMACRO VAR { g_lingo->_indef = true; }
+	    arglist stmtlist { g_lingo->code1(g_lingo->c_procret); g_lingo->define(*$2, $4); g_lingo->_indef = false; }
+	;
+arglist:  /* nothing */ 	{ $$ = 0; }
+	| VAR					{ $$ = 1; }
+	| arglist ',' VAR		{ $$ = $1 + 1; }
+	| arglist ',' '\n' VAR	{ $$ = $1 + 1; }
+	;
 
 
 %%
