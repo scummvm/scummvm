@@ -402,10 +402,10 @@ void CGameObject::petShowCursor() {
 		pet->showCursor();
 }
 
-void CGameObject::petFn3(CTreeItem *item) {
+void CGameObject::petSetRemoteTarget() {
 	CPetControl *pet = getPetControl();
 	if (pet)
-		pet->fn3(item);
+		pet->setRemoteTarget(this);
 }
 
 void CGameObject::playMovie(uint startFrame, uint endFrame, uint flags) {
@@ -1056,5 +1056,23 @@ void CGameObject::resetMail() {
 	if (mailMan)
 		mailMan->resetValue();
 }
+
+void CGameObject::petSetRooms1D0(int val) {
+	CPetControl *petControl = getPetControl();
+	if (petControl)
+		petControl->setRooms1D0(val);
+}
+
+int CGameObject::petGetRooms1D0() const {
+	CPetControl *petControl = getPetControl();
+	return petControl ? petControl->getRooms1D0() : 0;
+}
+
+void CGameObject::petAddRandomRoom(int passClassNum) {
+	CPetControl *petControl = getPetControl();
+	if (petControl)
+		petControl->addRandomRoom(passClassNum);
+}
+
 
 } // End of namespace Titanic

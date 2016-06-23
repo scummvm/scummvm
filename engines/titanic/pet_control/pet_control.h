@@ -63,7 +63,7 @@ private:
 	CPetMessage _message;
 	CPetFrame _frame;
 	CString _activeNPCName;
-	CString _string2;
+	CString _remoteTargetName;
 	CRoomItem *_hiddenRoom;
 	Rect _drawBounds;
 	PetEventInfo _timers[2];
@@ -112,7 +112,7 @@ protected:
 public:
 	PetArea _currentArea;
 	CTreeItem *_activeNPC;
-	CTreeItem *_remoteTarget;
+	CGameObject *_remoteTarget;
 public:
 	CLASSDEF
 	CPetControl();
@@ -158,13 +158,21 @@ public:
 	void enterRoom(CRoomItem *room);
 
 	/**
-	 * Called to clear the PET display
+	 * Called to reset the remote target
 	 */
-	void clear();
+	void resetRemoteTarget();
+
+	/**
+	 * Resets the Active NPC
+	 */
+	void resetActiveNPC();
 
 	bool fn1(int val);
 
-	void fn3(CTreeItem *item);
+	/**
+	 * Set the remote target
+	 */
+	void setRemoteTarget(CGameObject *item);
 
 	/**
 	 * Sets the currently viewed area within the PET

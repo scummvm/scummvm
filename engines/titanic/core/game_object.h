@@ -141,15 +141,14 @@ protected:
 	 */
 	void petShowCursor();
 
-	void petFn3(CTreeItem *item);
+	/**
+	 * Set the remote target in the PET to this object
+	 */
+	void petSetRemoteTarget();
+
 	void incState38();
 	void inc54();
 	void dec54();
-
-	/**
-	 * Adds a room to the room list
-	 */
-	void petAddRandomRoom(int passClassNum);
 
 	/**
 	 * Locks/hides the mouse
@@ -565,6 +564,15 @@ public:
 	 * Sets up credits text
 	 */
 	void createCredits();
+
+	void petSetRooms1D0(int val);
+
+	int petGetRooms1D0() const;
+
+	/**
+	 * Adds a random room to the pET
+	 */
+	void petAddRandomRoom(int passClassNum);
 };
 
 } // End of namespace Titanic

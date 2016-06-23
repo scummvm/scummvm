@@ -178,9 +178,14 @@ void CPetControl::enterRoom(CRoomItem *room) {
 	_remote.enterRoom(room);
 }
 
-void CPetControl::clear() {
+void CPetControl::resetRemoteTarget() {
 	_remoteTarget = nullptr;
-	_string2.clear();
+	_remoteTargetName.clear();
+}
+
+void CPetControl::resetActiveNPC() {
+	_activeNPC = nullptr;
+	_activeNPCName = "";
 }
 
 bool CPetControl::fn1(int val) {
@@ -219,12 +224,12 @@ void CPetControl::highlightGlyph(int id) {
 	_sections[_currentArea]->highlight(id);
 }
 
-void CPetControl::fn3(CTreeItem *item) {
+void CPetControl::setRemoteTarget(CGameObject *item) {
 	_remoteTarget = item;
 	if (item)
-		_string2 = item->getName();
+		_remoteTargetName = item->getName();
 	else
-		_string2.clear();
+		_remoteTargetName.clear();
 }
 
 CRoomItem *CPetControl::getHiddenRoom() {
