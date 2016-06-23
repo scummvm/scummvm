@@ -38,12 +38,12 @@ namespace DM {
 
 Box gBoxMouth = Box(55, 72, 12, 29); // @ G0048_s_Graphic562_Box_Mouth 
 Box gBoxEye = Box(11, 28, 12, 29); // @ G0049_s_Graphic562_Box_Eye 
-Box gBoxChampionIcons[4] = { // @ G0054_ai_Graphic562_Box_ChampionIcons
+Box gBoxChampionIcons[4] = { 
 	Box(281, 299,  0, 13),
 	Box(301, 319,  0, 13),
 	Box(301, 319, 15, 28),
 	Box(281, 299, 15, 28)};
-Color gChampionColor[4] = {(Color)7, (Color)11, (Color)8, (Color)14}; // @ G0046_auc_Graphic562_ChampionColor
+Color gChampionColor[4] = {(Color)7, (Color)11, (Color)8, (Color)14}; 
 
 uint16 gSlotMasks[38] = {  // @ G0038_ai_Graphic562_SlotMasks
 	/* 30 for champion inventory, 8 for chest */
@@ -265,8 +265,8 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	int16 mapY = _vm->_dungeonMan->_currMap._partyPosY;
 
 	uint16 championObjectsCell = returnOppositeDir((direction)(dunMan._currMap._partyDir));
-	mapX += _dirIntoStepCountEast[dunMan._currMap._partyDir];
-	mapY += _dirIntoStepCountNorth[dunMan._currMap._partyDir];
+	mapX += gDirIntoStepCountEast[dunMan._currMap._partyDir];
+	mapY += gDirIntoStepCountNorth[dunMan._currMap._partyDir];
 	thing = dunMan.getSquareFirstThing(mapX, mapY);
 	AL_0_slotIndex_Red = kChampionSlotBackpackLine_1_1;
 	uint16 slotIndex_Green;

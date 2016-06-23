@@ -31,6 +31,7 @@
 #include "common/events.h"
 #include "common/queue.h"
 
+#include "dm.h"
 #include "gfx.h"
 #include "champion.h"
 
@@ -248,6 +249,7 @@ public:
 	void commandSetLeader(ChampionIndex index); // @ F0368_COMMAND_SetLeader
 	void commandProcessType80ClickInDungeonViewTouchFrontWall(); // @ F0372_COMMAND_ProcessType80_ClickInDungeonView_TouchFrontWall
 	void commandProcessType80ClickInDungeonView(int16 posX, int16 posY); // @ F0377_COMMAND_ProcessType80_ClickInDungeonView
+	void commandProcessCommands160To162ClickInResurrectReincarnatePanel(CommandType commandType); // @ F0282_CHAMPION_ProcessCommands160To162_ClickInResurrectReincarnatePanel
 };
 
 }

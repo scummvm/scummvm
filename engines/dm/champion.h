@@ -35,6 +35,9 @@
 
 namespace DM {
 
+extern Box gBoxChampionIcons[4]; // @ G0054_ai_Graphic562_Box_ChampionIcons
+extern Color gChampionColor[4]; // @ G0046_auc_Graphic562_ChampionColor
+
 class Scent {
 	uint16 _scent;
 public:
@@ -157,7 +160,7 @@ enum ChampionIndex {
 	kChampionSecond = 1,
 	kChampionThird = 2,
 	kChampionFourth = 3,
-	kChmpionCloseInventory = 4, // @ C04_CHAMPION_CLOSE_INVENTORY
+	kChampionCloseInventory = 4, // @ C04_CHAMPION_CLOSE_INVENTORY
 	kChampionSpecialInventory = 5 // @ C05_CHAMPION_SPECIAL_INVENTORY
 };
 
@@ -366,7 +369,7 @@ public:
 	void setSkillExp(ChampionSkill skill,  int32 val) { _skills[skill]._experience = val; }
 	void setSkillTempExp(ChampionSkill skill,  int16 val) { _skills[skill]._temporaryExperience= val; }
 
-	byte getStatistic(ChampionStatisticType type, ChampionStatisticValue valType) { return _statistics[type][valType]; }
+	byte& getStatistic(ChampionStatisticType type, ChampionStatisticValue valType) { return _statistics[type][valType]; }
 	void setStatistic(ChampionStatisticType type, ChampionStatisticValue valType, byte newVal) { _statistics[type][valType] = newVal; }
 
 	uint16 getAttributes() { return _attributes; }
@@ -408,6 +411,10 @@ public:
 		_hideDamageReceivedIndex = _currHealth = _maxHealth = _currStamina = _maxStamina = _currMana = _maxMana = 0;
 		_actionDefense = _food = _water = _load = _shieldDefense = 0;
 		memset(_portrait, 0, 464);
+	}
+	void resetSkillsToZero() {
+		for (int16 i = 0; i < 20; ++i)
+			_skills[i].resetToZero();
 	}
 }; // @ CHAMPION_INCLUDING_PORTRAIT
 

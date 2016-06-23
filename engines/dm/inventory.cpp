@@ -53,14 +53,14 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	EventManager &em = *_vm->_eventMan;
 	DisplayMan &dm = *_vm->_displayMan;
 
-	if ((championIndex == kChmpionCloseInventory) && !cm._champions[championIndex]._currHealth)
+	if ((championIndex == kChampionCloseInventory) && !cm._champions[championIndex]._currHealth)
 		return;
 	if (_vm->_pressingEye || _vm->_pressingMouth)
 		return;
 	_vm->_stopWaitingForPlayerInput = true;
 	int16 invChampOrdinal = _inventoryChampionOrdinal; // copy, as the original will be edited
 	if (_vm->indexToOrdinal(championIndex) == invChampOrdinal) {
-		championIndex = kChmpionCloseInventory;
+		championIndex = kChampionCloseInventory;
 	}
 
 	Champion *champion;
@@ -75,7 +75,7 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 		if (cm._partyIsSleeping) {
 			return;
 		}
-		if (championIndex == kChmpionCloseInventory) {
+		if (championIndex == kChampionCloseInventory) {
 			em._refreshMousePointerInMainLoop = true;
 			_vm->_menuMan->drawMovementArrows();
 			em._secondaryMouseInput = gSecondaryMouseInput_Movement;

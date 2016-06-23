@@ -56,8 +56,8 @@ enum direction {
 };
 
 // TODO: refactor direction into a class
-extern int8 _dirIntoStepCountEast[4];
-extern int8 _dirIntoStepCountNorth[4];
+extern int8 gDirIntoStepCountEast[4];
+extern int8 gDirIntoStepCountNorth[4];
 
 void turnDirRight(direction &dir);
 void turnDirLeft(direction &dir);

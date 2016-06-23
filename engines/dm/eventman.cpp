@@ -32,6 +32,7 @@
 #include "dungeonman.h"
 #include "movesens.h"
 #include "objectman.h"
+#include "inventory.h"
 
 
 
@@ -517,8 +518,8 @@ void EventManager::commandProcessType80ClickInDungeonViewTouchFrontWall() {
 	CurrMapData &currMap = dunMan._currMap;
 	uint16 mapX = currMap._partyPosX;
 	uint16 mapY = currMap._partyPosY;
-	mapX += _dirIntoStepCountEast[currMap._partyDir];
-	mapY += _dirIntoStepCountNorth[currMap._partyDir];
+	mapX += gDirIntoStepCountEast[currMap._partyDir];
+	mapY += gDirIntoStepCountNorth[currMap._partyDir];
 	if ((mapX >= 0)
 		&& (mapX < currMap._width)
 		&& (mapY >= 0)
@@ -542,8 +543,8 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 		}
 		mapX = currMap._partyPosX;
 		mapY = currMap._partyPosY;
-		mapX += _dirIntoStepCountEast[currMap._partyDir];
-		mapY += _dirIntoStepCountNorth[currMap._partyDir];
+		mapX += gDirIntoStepCountEast[currMap._partyDir];
+		mapY += gDirIntoStepCountNorth[currMap._partyDir];
 
 		if (champMan._leaderEmptyHanded) {
 			if (Door(dunMan.getSquareFirstThingData(mapX, mapY)).hasButton() &&
@@ -564,7 +565,7 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 				if (viewCell == kViewCellDoorButtonOrWallOrn) {
 					if (!dunMan._isFacingAlcove) {
 						commandProcessType80ClickInDungeonViewTouchFrontWall();
-					} 
+					}
 				} else {
 					warning("MISSING CODE: F0373_COMMAND_ProcessType80_ClickInDungeonView_GrabLeaderHandObject");
 				}
@@ -614,6 +615,85 @@ T0377019:
 			}
 		}
 	}
+}
+
+void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePanel(CommandType commandType) {
+	ChampionMan &champMan = *_vm->_championMan;
+	InventoryMan &invMan = *_vm->_inventoryMan;
+	DisplayMan &dispMan = *_vm->_displayMan;
+	CurrMapData &currMap = _vm->_dungeonMan->_currMap;
+	DungeonMan &dunMan = *_vm->_dungeonMan;
+
+	uint16 championIndex = champMan._partyChampionCount - 1;
+	Champion *champ = &champMan._champions[championIndex];
+	if (commandType == kCommandClickInPanelCancel) {
+		invMan.toggleInventory(kChampionCloseInventory);
+		champMan._candidateChampionOrdinal = _vm->indexToOrdinal(kChampionNone);
+		if (champMan._partyChampionCount == 1) {
+			commandSetLeader(kChampionNone);
+		}
+		champMan._partyChampionCount--;
+		Box box;
+		box._y1 = 0;
+		box._y2 = 28 + 1;
+		box._x1 = championIndex * kChampionStatusBoxSpacing;
+		box._x2 = box._x1 + 66 + 1;
+		dispMan._useByteBoxCoordinates = false;
+		dispMan.clearScreenBox(kColorBlack, box);
+		dispMan.clearScreenBox(kColorBlack, gBoxChampionIcons[champMan.championIconIndex(champ->_cell, currMap._partyDir) * 2]);
+		warning("F0457_START_DrawEnabledMenus_CPSF");
+		warning("F0078_MOUSE_ShowPointer");
+		return;
+	}
+
+	champMan._candidateChampionOrdinal = _vm->indexToOrdinal(kChampionNone);
+	int16 mapX = currMap._partyPosX;
+	int16 mapY = currMap._partyPosY;
+
+	mapX += gDirIntoStepCountEast[currMap._partyDir];
+	mapY += gDirIntoStepCountNorth[currMap._partyDir];
+	for (uint16 slotIndex = kChampionSlotReadyHand; slotIndex < kChampionSlotChest_1; slotIndex++) {
+		Thing thing = champ->getSlot((ChampionSlot)slotIndex);
+		if (thing != Thing::_thingNone) {
+			warning("MISSING CODE: F0164_DUNGEON_UnlinkThingFromList");
+		}
+	}
+	Thing thing = dunMan.getSquareFirstThing(mapX, mapY);
+	for (;;) { // infinite
+		if (thing.getType() == kSensorThingType) {
+			((Sensor*)dunMan.getThingData(thing))->setTypeDisabled();
+			break;
+		}
+		thing = dunMan.getNextThing(thing);
+	}
+
+	if (commandType == kCommandClickInPanelReincarnate) {
+		warning("MISSING CODE: F0281_CHAMPION_Rename");
+		champ->resetSkillsToZero();
+
+		for (uint16 i = 0; i < 12; i++) {
+			uint16 statIndex = _vm->_rnd->getRandomNumber(7);
+			champ->getStatistic((ChampionStatisticType)statIndex, kChampionStatCurrent)++; // returns reference
+			champ->getStatistic((ChampionStatisticType)statIndex, kChampionStatMaximum)++; // returns reference
+		}
+	}
+
+	if (champMan._partyChampionCount == 1) {
+		warning("MISSING CODE: setting time, G0362_l_LastPartyMovementTime , G0313_ul_GameTime");
+		commandSetLeader(kChampionFirst);
+		warning("MISSING CODE: F0394_MENUS_SetMagicCasterAndDrawSpellArea");
+	} else {
+		warning("MISSING CODE: F0393_MENUS_DrawSpellAreaControls");
+	}
+
+	warning("MISSING CODE: F0051_TEXT_MESSAGEAREA_PrintLineFeed");
+	Color champColor = gChampionColor[championIndex]; // unreferenced because of missing code
+	warning("MISSING CODE: F0047_TEXT_MESSAGEAREA_PrintMessage");
+	warning("MISSING CODE: F0047_TEXT_MESSAGEAREA_PrintMessage");
+
+	invMan.toggleInventory(kChampionCloseInventory);
+	warning("MISSING CODE: F0457_START_DrawEnabledMenus_CPSF");
+	warning("MISSING CODE: F0067_MOUSE_SetPointerToNormal");
 }
 
 }; // end of namespace DM
