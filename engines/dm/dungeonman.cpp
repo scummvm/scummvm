@@ -842,6 +842,8 @@ void DungeonMan::setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX,
 			frontOrnAllowed = square.get(kWallEastRandOrnAllowed);
 			rightOrnAllowed = square.get(kWallSouthRandOrnAllowed);
 			break;
+		default:
+			break;
 		}
 
 T0172010_ClosedFakeWall:
@@ -925,6 +927,9 @@ T0172049_Footprints:
 		unsigned char scentOrdinal; // see next line comment
 		if (footPrintsAllowed) // TODO: I skipped some party query code, must come back later and complete
 			aspectArray[kFloorOrnOrdAspect] &= kFootprintsAspect;
+		break;
+	default:
+		break;
 	}
 	aspectArray[kFirstGroupOrObjectAspect] = thing.toUint16();
 }
@@ -1205,6 +1210,8 @@ uint16 DungeonMan::getObjectWeight(Thing thing) {
 		}
 	case kScrollThingType:
 		return 1;
+	default:
+		break;
 	}
 
 	assert(false); // this should never be taken

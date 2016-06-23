@@ -312,6 +312,9 @@ T0280046:
 					slotIndex_Green = AL_0_slotIndex_Red++;
 				}
 				break;
+			
+			default:
+				break;
 			}
 T0280048:
 			if (champ->getSlot((ChampionSlot)slotIndex_Green) != Thing::_thingNone) {

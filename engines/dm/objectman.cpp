@@ -146,6 +146,8 @@ IconIndice ObjectMan::getIconIndex(Thing thing) {
 				iconIndex = (IconIndice)(iconIndex + 1);
 			}
 			break;
+		default:
+			break;
 		}
 	}
 
