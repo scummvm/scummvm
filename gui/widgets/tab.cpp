@@ -258,6 +258,10 @@ void TabWidget::adjustTabs(int value) {
 void TabWidget::reflowLayout() {
 	Widget::reflowLayout();
 
+	_tabHeight = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Height");
+	_tabWidth = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Width");
+	_titleVPad = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Padding.Top");
+
 	for (uint i = 0; i < _tabs.size(); ++i) {
 		Widget *w = _tabs[i].firstWidget;
 		while (w) {
@@ -265,10 +269,6 @@ void TabWidget::reflowLayout() {
 			w = w->next();
 		}
 	}
-
-	_tabHeight = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Height");
-	_tabWidth = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Width");
-	_titleVPad = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Padding.Top");
 
 	if (_tabWidth == 0) {
 		_tabWidth = 40;

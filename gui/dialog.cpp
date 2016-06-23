@@ -113,13 +113,13 @@ void Dialog::reflowLayout() {
 	// changed, so any cached image may be invalid. The subsequent redraw
 	// should be treated as the very first draw.
 
+	GuiObject::reflowLayout();
+
 	Widget *w = _firstWidget;
 	while (w) {
 		w->reflowLayout();
 		w = w->_next;
 	}
-
-	GuiObject::reflowLayout();
 }
 
 void Dialog::lostFocus() {
