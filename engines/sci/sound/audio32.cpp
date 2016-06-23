@@ -233,7 +233,7 @@ int Audio32::writeAudioInternal(Audio::RewindableAudioStream *const sourceStream
 // completely fill the audio buffer, the functionality of
 // all these original functions is combined here and
 // simplified.
-int Audio32::readBuffer(Audio::st_sample_t *const buffer, const int numSamples) {
+int Audio32::readBuffer(Audio::st_sample_t *buffer, const int numSamples) {
 	Common::StackLock lock(_mutex);
 
 	// The system mixer should not try to get data when

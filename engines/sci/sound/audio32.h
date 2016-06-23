@@ -185,7 +185,7 @@ private:
 #pragma mark -
 #pragma mark AudioStream implementation
 public:
-	int readBuffer(Audio::st_sample_t *const buffer, const int numSamples);
+	int readBuffer(Audio::st_sample_t *buffer, const int numSamples);
 	bool isStereo() const { return true; }
 	int getRate() const { return _mixer->getOutputRate(); }
 	bool endOfData() const { return _numActiveChannels == 0; }
