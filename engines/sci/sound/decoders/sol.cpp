@@ -118,7 +118,7 @@ SOLStream<STEREO, S16BIT>::SOLStream(Common::SeekableReadStream *stream, const D
 	}
 
 template <bool STEREO, bool S16BIT>
-bool SOLStream<STEREO, S16BIT>::seek(const Audio::Timestamp &where) override {
+bool SOLStream<STEREO, S16BIT>::seek(const Audio::Timestamp &where) {
 	if (where != 0) {
 		// In order to seek in compressed SOL files, all
 		// previous bytes must be known since it uses
@@ -138,12 +138,12 @@ bool SOLStream<STEREO, S16BIT>::seek(const Audio::Timestamp &where) override {
 }
 
 template <bool STEREO, bool S16BIT>
-Audio::Timestamp SOLStream<STEREO, S16BIT>::getLength() const override {
+Audio::Timestamp SOLStream<STEREO, S16BIT>::getLength() const {
 	return _length;
 }
 
 template <bool STEREO, bool S16BIT>
-int SOLStream<STEREO, S16BIT>::readBuffer(int16 *buffer, const int numSamples) override {
+int SOLStream<STEREO, S16BIT>::readBuffer(int16 *buffer, const int numSamples) {
 	// Reading an odd number of 8-bit samples will result in a loss of samples
 	// since one byte represents two samples and we do not store the second
 	// nibble in this case; it should never happen in reality
@@ -167,22 +167,22 @@ int SOLStream<STEREO, S16BIT>::readBuffer(int16 *buffer, const int numSamples) o
 }
 
 template <bool STEREO, bool S16BIT>
-bool SOLStream<STEREO, S16BIT>::isStereo() const override {
+bool SOLStream<STEREO, S16BIT>::isStereo() const {
 	return STEREO;
 }
 
 template <bool STEREO, bool S16BIT>
-int SOLStream<STEREO, S16BIT>::getRate() const override {
+int SOLStream<STEREO, S16BIT>::getRate() const {
 	return _sampleRate;
 }
 
 template <bool STEREO, bool S16BIT>
-bool SOLStream<STEREO, S16BIT>::endOfData() const override {
+bool SOLStream<STEREO, S16BIT>::endOfData() const {
 	return _stream->eos() || _stream->pos() >= _dataOffset + _rawDataSize;
 }
 
 template <bool STEREO, bool S16BIT>
-bool SOLStream<STEREO, S16BIT>::rewind() override {
+bool SOLStream<STEREO, S16BIT>::rewind() {
 	return seek(0);
 }
 
