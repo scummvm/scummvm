@@ -31,11 +31,19 @@
 #include "eventman.h"
 #include "dungeonman.h"
 #include "movesens.h"
+#include "objectman.h"
 
 
 
 
 namespace DM {
+
+Box gBoxObjectPiles[4] = { // @ G0462_as_Graphic561_Box_ObjectPiles
+	/* { X1, X2, Y1, Y2 } */
+	Box(24, 111, 148, 168),   /* Front left */
+	Box(112, 199, 148, 168),   /* Front right */
+	Box(112, 183, 122, 147),   /* Back right */
+	Box(40, 111, 122, 147)}; /* Back left */
 
 MouseInput gPrimaryMouseInput_Entrance[4] = { // @ G0445_as_Graphic561_PrimaryMouseInput_Entrance[4]
 												  /* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
@@ -390,7 +398,8 @@ void EventManager::processCommandQueue() {
 
 	Command cmd = _commandQueue.pop();
 
-	// MISSING CODE: for when movement is disabled
+	int16 commandX = cmd._pos.x;
+	int16 commandY = cmd._pos.y;
 
 	_isCommandQueueLocked = false;
 	processPendingClick();
@@ -406,7 +415,7 @@ void EventManager::processCommandQueue() {
 	}
 
 	if (cmd._type == kCommandClickInDungeonView) {
-		warning("DUMMY CODE, all of this");
+		/*warning("DUMMY CODE, all of this");
 		DungeonMan &dunMan = *_vm->_dungeonMan;
 		CurrMapData &currMap = dunMan._currMap;
 		uint16 mapX = currMap._partyPosX;
@@ -417,7 +426,8 @@ void EventManager::processCommandQueue() {
 		Sensor sensor(dunMan.getThingData(squareFirstThing));
 		if (sensor.getType() == kSensorWallChampionPortrait) {
 			_vm->_championMan->addCandidateChampionToParty(sensor.getData());
-		}
+		}*/
+		commandProcessType80ClickInDungeonView(commandX, commandY);
 	}
 
 	// MISSING CODE: the rest of the function
@@ -510,4 +520,94 @@ void EventManager::commandProcessType80ClickInDungeonViewTouchFrontWall() {
 		_vm->_stopWaitingForPlayerInput = _vm->_movsens->sensorIsTriggeredByClickOnWall(mapX, mapY, returnOppositeDir(currMap._partyDir));
 	}
 }
+
+void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY) {
+	DungeonMan &dunMan = *_vm->_dungeonMan;
+	ChampionMan &champMan = *_vm->_championMan;
+	CurrMapData &currMap = _vm->_dungeonMan->_currMap;
+
+	int16 mapX;
+	int16 mapY;
+
+
+	if (dunMan._squareAheadElement == kElementTypeDoorFront) {
+		if (champMan._leaderIndex == kChampionNone) {
+			return;
+		}
+		mapX = currMap._partyPosX;
+		mapY = currMap._partyPosY;
+		mapX += _dirIntoStepCountEast[currMap._partyDir];
+		mapY += _dirIntoStepCountNorth[currMap._partyDir];
+
+		if (champMan._leaderEmptyHanded) {
+			if (Door(dunMan.getSquareFirstThingData(mapX, mapY)).hasButton() &&
+				dunMan._dungeonViewClickableBoxes[kViewCellDoorButtonOrWallOrn].isPointInside(Common::Point(posX, posY - 33))) {
+				_vm->_stopWaitingForPlayerInput = true;
+				warning("MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+				warning("MISSING CODE: F0268_SENSOR_AddEvent");
+				return;
+			}
+
+			warning("MISSING CODE: F0375_COMMAND_ProcessType80_ClickInDungeonView_IsLeaderHandObjectThrown in elseif condition");
+		}
+	}
+
+	if (champMan._leaderEmptyHanded) {
+		for (int16 viewCell = kViewCellFronLeft; viewCell <= kViewCellDoorButtonOrWallOrn; viewCell++) {
+			if (dunMan._dungeonViewClickableBoxes[viewCell].isPointInside(Common::Point(posX, posY - 33))) {
+				if (viewCell == kViewCellDoorButtonOrWallOrn) {
+					if (!dunMan._isFacingAlcove) {
+						commandProcessType80ClickInDungeonViewTouchFrontWall();
+					} 
+				} else {
+					warning("MISSING CODE: F0373_COMMAND_ProcessType80_ClickInDungeonView_GrabLeaderHandObject");
+				}
+				return;
+			}
+		}
+	} else {
+		Thing thing = champMan._leaderHand;
+		uint16 *rawThingPointer = dunMan.getThingData(thing);
+		if (dunMan._squareAheadElement == kElementTypeWall) {
+			for (int16 viewCell = kViewCellFronLeft; viewCell <= kViewCellFrontRight; ++viewCell) {
+				if (gBoxObjectPiles[viewCell].isPointInside(Common::Point(posX, posY))) {
+					warning("F0374_COMMAND_ProcessType80_ClickInDungeonView_DropLeaderHandObject");
+					return;
+				}
+			}
+
+			if (dunMan._dungeonViewClickableBoxes[kViewCellDoorButtonOrWallOrn].isPointInside(Common::Point(posX, posY - 33))) {
+				if (dunMan._isFacingAlcove) {
+					warning("MISSING CODE: F0374_COMMAND_ProcessType80_ClickInDungeonView_DropLeaderHandObject");
+				} else {
+					if (dunMan._isFacingFountain) {
+						uint16 iconIndex = _vm->_objectMan->getIconIndex(thing);
+						int16 weight = dunMan.getObjectWeight(thing);
+						if ((iconIndex >= kIconIndiceJunkWater) && (iconIndex <= kIconIndiceJunkWaterSkin)) {
+							((Junk*)rawThingPointer)->setChargeCount(3);
+						} else if (iconIndex == kIconIndicePotionEmptyFlask) {
+							((Potion*)rawThingPointer)->setType(kPotionTypeWaterFlask);
+						} else {
+							goto T0377019;
+						}
+						warning("MISSING CODE: F0296_CHAMPION_DrawChangedObjectIcons");
+						champMan._champions[champMan._leaderIndex]._load += dunMan.getObjectWeight(thing) - weight;
+					}
+T0377019:
+					commandProcessType80ClickInDungeonViewTouchFrontWall();
+				}
+			}
+
+		} else {
+			warning("MISSING CODE: F0375_COMMAND_ProcessType80_ClickInDungeonView_IsLeaderHandObjectThrown in if branch");
+			for (int16 viewCell = kViewCellFronLeft; viewCell <= kViewCellBackLeft; viewCell++) {
+				if (gBoxObjectPiles[viewCell].isPointInside(Common::Point(posX, posY))) {
+					warning("MISSING CODE: F0374_COMMAND_ProcessType80_ClickInDungeonView_DropLeaderHandObject");
+					return;
+				}
+			}
+		}
+	}
+}
+
 }; // end of namespace DM

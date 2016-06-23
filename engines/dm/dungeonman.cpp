@@ -423,9 +423,8 @@ DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine), _rawDunFileData(NULL
 	_isFacingViAltar = false;
 	_isFacingFountain = false;
 
-	for (int i = 0; i < 4; i++)
-		for (int j = 0; j < 6; j++)
-			_dungeonViewClickableBoxes[j][i] = 0;
+	for (int j = 0; j < 6; j++)
+		_dungeonViewClickableBoxes[j].setToZero();
 }
 
 DungeonMan::~DungeonMan() {
@@ -975,6 +974,10 @@ uint16 *DungeonMan::getThingData(Thing thing) {
 	return _dunData._thingsData[thing.getType()][thing.getIndex()];
 }
 
+uint16* DungeonMan::getSquareFirstThingData(int16 mapX, int16 mapY) {
+	return getThingData(getSquareFirstThing(mapX, mapY));
+}
+
 Thing DungeonMan::getNextThing(Thing thing) {
 	return getThingData(thing)[0]; // :)
 }
@@ -1151,7 +1154,7 @@ void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 uint16 DungeonMan::getObjectWeight(Thing thing) {
 	static const uint16 junkInfo[] = { // @ G0241_auc_Graphic559_JunkInfo
 		// COMPASS - WATERSKIN - JEWEL SYMAL - ILLUMULET - ASHES
-		1, 3, 2, 2, 4, 
+		1, 3, 2, 2, 4,
 		// BONES - COPPER COIN - SILVER COIN - GOLD COIN - IRON KEY
 		15, 1, 1, 1, 2,
 		// KEY OF B - SOLID KEY - SQUARE KEY - TOURQUOISE KEY - CROSS KEY

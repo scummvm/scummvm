@@ -37,6 +37,8 @@
 
 namespace DM {
 
+
+
 enum MouseButton {
 	kNoneMouseButton = 0, // present only because of typesafety
 	kLeftMouseButton = 1,
@@ -245,6 +247,7 @@ public:
 
 	void commandSetLeader(ChampionIndex index); // @ F0368_COMMAND_SetLeader
 	void commandProcessType80ClickInDungeonViewTouchFrontWall(); // @ F0372_COMMAND_ProcessType80_ClickInDungeonView_TouchFrontWall
+	void commandProcessType80ClickInDungeonView(int16 posX, int16 posY); // @ F0377_COMMAND_ProcessType80_ClickInDungeonView
 };
 
 }

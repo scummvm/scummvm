@@ -34,6 +34,23 @@
 
 namespace DM {
 
+enum ElementType {
+	kElementTypeChampion = -2, // @ CM2_ELEMENT_CHAMPION /* Values -2 and -1 are only used as projectile impact types */
+	kElementTypeCreature = -1, // @ CM1_ELEMENT_CREATURE
+	kElementTypeWall = 0, // @ C00_ELEMENT_WALL /* Values 0-6 are used as square types and projectile impact types. Values 0-2 and 5-6 are also used for square aspect */
+	kElementTypeCorridor = 1, // @ C01_ELEMENT_CORRIDOR
+	kElementTypePit = 2, // @ C02_ELEMENT_PIT
+	kElementTypeStairs = 3, // @ C03_ELEMENT_STAIRS
+	kElementTypeDoor = 4, // @ C04_ELEMENT_DOOR
+	kElementTypeTeleporter = 5, // @ C05_ELEMENT_TELEPORTER
+	kElementTypeFakeWall = 6, // @ C06_ELEMENT_FAKEWALL
+	kElementTypeDoorSide = 16, // @ C16_ELEMENT_DOOR_SIDE /* Values 16-19 are only used for square aspect */
+	kElementTypeDoorFront = 17, // @ C17_ELEMENT_DOOR_FRONT
+	kElementTypeStairsSide = 18, // @ C18_ELEMENT_STAIRS_SIDE
+	kElementTypeStaisFront = 19  // @ C19_ELEMENT_STAIRS_FRONT	
+};
+
+
 enum ObjectAllowedSlot {
 	kObjectAllowedSlotMouth = 0x0001, // @ MASK0x0001_MOUTH
 	kObjectAllowedSlotHead = 0x0002, // @ MASK0x0002_HEAD
@@ -399,6 +416,7 @@ public:
 	explicit Potion(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
 
 	PotionType getType() { return (PotionType)((_attributes >> 8) & 0x7F); }
+	void setType(PotionType val) { _attributes = (_attributes & ~(0x7F << 8)) | ((val & 0x7F) << 8); }
 	Thing getNextThing() { return _nextThing; }
 }; // @ POTION
 
@@ -435,6 +453,7 @@ public:
 
 	JunkType getType() { return (JunkType)(_attributes & 0x7F); }
 	uint16 getChargeCount() { return (_attributes >> 14) & 0x3; }
+	void setChargeCount(uint16 val) { _attributes = (_attributes & ~(0x3 << 14)) | ((val & 0x3) << 14); }
 
 	Thing getNextThing() { return _nextThing; }
 }; // @ JUNK
@@ -611,6 +630,7 @@ public:
 	Thing getSquareFirstThing(int16 mapX, int16 mapY); // @ F0161_DUNGEON_GetSquareFirstThing
 	Thing getNextThing(Thing thing); // @ F0159_DUNGEON_GetNextThing(THING P0280_T_Thing)
 	uint16 *getThingData(Thing thing); // @ unsigned char* F0156_DUNGEON_GetThingData(register THING P0276_T_Thing)
+	uint16 *getSquareFirstThingData(int16 mapX, int16 mapY); // @ F0157_DUNGEON_GetSquareFirstThingData
 
 	// TODO: this does stuff other than load the file!
 	void loadDungeonFile();	// @ F0434_STARTEND_IsLoadDungeonSuccessful_CPSC
@@ -639,10 +659,11 @@ public:
 	Messages _messages; // @ NONE;
 
 	int16 _currMapInscriptionWallOrnIndex; // @ G0265_i_CurrentMapInscriptionWallOrnamentIndex
-	uint16 _dungeonViewClickableBoxes[6][4]; // G0291_aauc_DungeonViewClickableBoxes
+	Box _dungeonViewClickableBoxes[6]; // G0291_aauc_DungeonViewClickableBoxes
 	bool _isFacingAlcove; // @ G0286_B_FacingAlcove
 	bool _isFacingViAltar; // @ G0287_B_FacingViAltar
 	bool _isFacingFountain; // @ G0288_B_FacingFountain
+	ElementType _squareAheadElement; // @ G0285_i_SquareAheadElement 
 };
 
 }

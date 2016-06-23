@@ -1146,9 +1146,11 @@ void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
 	byte  *tmpBitmap = new byte[305 * 111];
 	clearBitmap(tmpBitmap, 305, 111, kColorBlack);
 
-	memset(_vm->_dungeonMan->_dungeonViewClickableBoxes, 0, sizeof(_vm->_dungeonMan->_dungeonViewClickableBoxes));
+	for (int16 i = 0; i < 6; ++i)
+		_vm->_dungeonMan->_dungeonViewClickableBoxes[i].setToZero();
+
 	for (uint16 i = 0; i < 6; ++i) {
-		_vm->_dungeonMan->_dungeonViewClickableBoxes[i][0] = 255;
+		_vm->_dungeonMan->_dungeonViewClickableBoxes[i]._x1 = 255 + 1;
 	}
 
 	if (flippedFloorCeiling) {
@@ -1461,8 +1463,12 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 					return isAlcove;
 				}
 				nativeBitmapIndex++;
-				for (uint16 i = 0; i < 4; ++i)
-					_vm->_dungeonMan->_dungeonViewClickableBoxes[kViewCellDoorButtonOrWallOrn][i] = coordinateSetA[i];
+
+				_vm->_dungeonMan->_dungeonViewClickableBoxes[kViewCellDoorButtonOrWallOrn]._x1 = coordinateSetA[0];
+				_vm->_dungeonMan->_dungeonViewClickableBoxes[kViewCellDoorButtonOrWallOrn]._x2 = coordinateSetA[1];
+				_vm->_dungeonMan->_dungeonViewClickableBoxes[kViewCellDoorButtonOrWallOrn]._y1 = coordinateSetA[2];
+				_vm->_dungeonMan->_dungeonViewClickableBoxes[kViewCellDoorButtonOrWallOrn]._y2 = coordinateSetA[3];
+
 				_vm->_dungeonMan->_isFacingAlcove = isAlcove;
 				_vm->_dungeonMan->_isFacingViAltar = (wallOrnIndex == _currMapViAltarIndex);
 				_vm->_dungeonMan->_isFacingFountain = false;

@@ -91,6 +91,7 @@ public:
 	bool isPointInside(Common::Point point) {
 		return (_x1 <= point.x) && (point.x < _x2) && (_y1 <= point.y) && (point.y < _y2);
 	}
+	void setToZero() { _x1 = _x2 = _y1 = _y2 = 0; }
 }; // @ BOX_BYTE, BOX_WORD
 
 extern Box gBoxMovementArrows; // G0002_s_Graphic562_Box_MovementArrows

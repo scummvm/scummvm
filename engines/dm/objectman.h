@@ -43,7 +43,7 @@ public:
 	SlotBox(int16 x, int16 y, int16 iconIndex): _x(x), _y(y), _iconIndex(iconIndex) {}
 }; // @ SLOT_BOX
 
-extern SlotBox gSlotBoxes[46]; // @ G0030_as_Graphic562_SlotBoxes;
+extern SlotBox gSlotBoxes[46]; // @ G0030_as_Graphic562_SlotBoxes
 
 class ObjectMan {
 	DMEngine *_vm;
