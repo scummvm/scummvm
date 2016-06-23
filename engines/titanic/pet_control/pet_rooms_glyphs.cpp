@@ -80,8 +80,10 @@ int CPetRoomsGlyph::proc33() {
 	return 1;
 }
 
-void CPetRoomsGlyph::proc39() {
-
+void CPetRoomsGlyph::loadFlags(SimpleFile *file, int val) {
+	if (!val) {
+		_roomFlags = file->readNumber();
+	}
 }
 
 void CPetRoomsGlyph::changeLocation(int newClassNum) {

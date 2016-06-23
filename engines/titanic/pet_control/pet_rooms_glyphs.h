@@ -24,6 +24,7 @@
 #define TITANIC_PET_ROOMS_GLYPHS_H
 
 #include "titanic/pet_control/pet_glyphs.h"
+#include "titanic/support/simple_file.h"
 
 namespace Titanic {
 
@@ -71,9 +72,11 @@ public:
 	virtual void save2(SimpleFile *file, int indent) const;
 	
 	virtual int proc33();
-	
-	virtual void proc39();
 
+	/**
+	 * Loads flags for the glyph
+	 */
+	virtual void loadFlags(SimpleFile *file, int val);
 
 	/**
 	 * Set the room flags for the glyph

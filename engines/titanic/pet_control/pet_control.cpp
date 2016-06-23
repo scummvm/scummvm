@@ -59,7 +59,7 @@ void CPetControl::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(0, indent);
 	file->writeNumberLine(_currentArea, indent);
 	file->writeQuotedLine(_activeNPCName, indent);
-	file->writeQuotedLine(_string2, indent);
+	file->writeQuotedLine(_remoteTargetName, indent);
 
 	saveAreas(file, indent);
 	CGameObject::save(file, indent);
@@ -72,7 +72,7 @@ void CPetControl::load(SimpleFile *file) {
 	if (!val) {
 		_currentArea = (PetArea)file->readNumber();
 		_activeNPCName = file->readString();
-		_string2 = file->readString();
+		_remoteTargetName = file->readString();
 		
 		loadAreas(file, 0);
 	}
@@ -151,8 +151,8 @@ void CPetControl::postLoad() {
 
 	if (!_activeNPCName.empty() && root)
 		_activeNPC = root->findByName(_activeNPCName);
-	if (!_string2.empty() && root)
-		_remoteTarget = root->findByName(_string2);
+	if (!_remoteTargetName.empty() && root)
+		_remoteTarget = static_cast<CGameObject *>(root->findByName(_remoteTargetName));
 
 	setArea(_currentArea);
 	loaded();

@@ -790,12 +790,6 @@ void CGameObject::dec54() {
 	getGameManager()->dec54();
 }
 
-void CGameObject::petAddRandomRoom(int passClassNum) {
-	CPetControl *petControl = getPetControl();
-	if (petControl)
-		petControl->addRandomRoom(passClassNum);
-}
-
 void CGameObject::lockMouse() {
 	CGameManager *gameMan = getGameManager();
 	gameMan->lockInputHandler();
@@ -897,7 +891,7 @@ void CGameObject::checkPlayMovie(const CString &name, int flags) {
 void CGameObject::clearPet() const {
 	CPetControl *petControl = getPetControl();
 	if (petControl)
-		petControl->clear();
+		petControl->resetActiveNPC();
 }
 
 CPetControl *CGameObject::getPetControl() const {
