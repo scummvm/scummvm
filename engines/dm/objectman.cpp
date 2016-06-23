@@ -149,8 +149,8 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 	Box box;
 	box._x1 = slotBox->_x;
 	box._y1 = slotBox->_y;
-	box._x2 = box._x1 + 15; // no need to add +1, comes from a global array 
-	box._y2 = box._y1 + 15; // no need to add +1, comes from a global array
+	box._x2 = box._x1 + 15 + 1; 
+	box._y2 = box._y1 + 15 + 1;
 	
 	uint16 iconGraphicIndex;
 	for (iconGraphicIndex = 0; iconGraphicIndex < 7; ++iconGraphicIndex) {
@@ -164,9 +164,11 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 
 	_vm->_displayMan->_useByteBoxCoordinates = false;
 	if (slotBoxIndex >= kSlotBoxInventoryFirstSlot) {
-		_vm->_displayMan->blitToScreen(iconsBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, box, kColorNoTransparency, gDungeonViewport);
+		_vm->_displayMan->blitToScreen(iconsBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0,
+									   box, kColorNoTransparency, gDungeonViewport);
 	} else {
-		_vm->_displayMan->blitToScreen(iconsBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, box, kColorNoTransparency, gDefultViewPort);
+		_vm->_displayMan->blitToScreen(iconsBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0,
+									   box, kColorNoTransparency, gDefultViewPort);
 	}
 }
 

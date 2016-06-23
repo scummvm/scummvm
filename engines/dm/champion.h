@@ -416,6 +416,7 @@ public:
 	void drawChampionState(ChampionIndex champIndex); // @ F0292_CHAMPION_DrawState
 	uint16 championIconIndex(int16 val, direction dir); // @ M26_CHAMPION_ICON_INDEX
 	void drawHealthStaminaManaValues(Champion *champ); // @ F0290_CHAMPION_DrawHealthStaminaManaValues
+	void drawSlot(uint16 champIndex, ChampionSlot slotIndex); // @ F0291_CHAMPION_DrawSlot
 };
 
 

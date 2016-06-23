@@ -42,7 +42,8 @@ enum GraphicIndice {
 	kSlotBoxNormalIndice = 33, // @ C033_GRAPHIC_SLOT_BOX_NORMAL                   
 	kSlotBoxWoundedIndice = 34, // @ C034_GRAPHIC_SLOT_BOX_WOUNDED                  
 	kChampionIcons = 28, // @ C028_GRAPHIC_CHAMPION_ICONS
-	kFontGraphicIndice = 557 // @ C557_GRAPHIC_FONT 
+	kFontGraphicIndice = 557, // @ C557_GRAPHIC_FONT 
+	kSlotBoxActingHandIndice = 35 // @ C035_GRAPHIC_SLOT_BOX_ACTING_HAND
 };
 
 extern uint16 gPalSwoosh[16];
@@ -146,9 +147,13 @@ enum Color {
 };
 
 
-struct Viewport {
+class Viewport {
+public:
 	uint16 _posX, _posY;
 	uint16 _width, _height;
+	Viewport() {}
+	Viewport(uint16 posX, uint16 posY, uint16 width, uint16 height)
+		:_posX(posX), _posY(posY), _width(width), _height(height) {}
 };
 
 struct CreatureAspect {

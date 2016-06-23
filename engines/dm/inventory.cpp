@@ -17,6 +17,8 @@ Box gBoxPoisoned = Box(112, 207, 105, 119); // @ G0037_s_Graphic562_Box_Poisoned
 
 InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {
 	_panelContent = kPanelContentFoodWaterPoisoned;
+	for (uint16 i = 0; i < 8; ++i)
+		_chestSlots[i] = Thing::_thingNone;
 }
 
 void InventoryMan::toggleInventory(ChampionIndex championIndex) {
@@ -73,7 +75,9 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	_vm->_textMan->printToViewport(5, 124, kColorLightestGray, "STAMINA");
 	_vm->_textMan->printToViewport(5, 132, kColorLightestGray, "MANA");
 
-	warning("MISSING CODE: F0291_CHAMPION_DrawSlot in LOOOOOOOOOOOOP");
+	for (uint16 slotIndex = kChampionSlotReadyHand; slotIndex < kChampionSlotChest_1; slotIndex++) {
+		_vm->_championMan->drawSlot(championIndex, (ChampionSlot)slotIndex);
+	}
 
 	champion->setAttributeFlag(kChampionAttributeViewport, true);
 	champion->setAttributeFlag(kChampionAttributeStatusBox, true);

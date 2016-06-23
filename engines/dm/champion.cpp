@@ -492,7 +492,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 
 	if (champAttributes & kChampionAttributeWounds) {
 		for (int16 AL_0_slotIndex = isInventoryChamp ? kChampionSlotFeet : kChampionSlotActionHand; AL_0_slotIndex >= kChampionSlotReadyHand; AL_0_slotIndex--) {
-			warning("MISSING CODE: F0291_CHAMPION_DrawSlot");
+			drawSlot(champIndex, (ChampionSlot)AL_0_slotIndex);
 		}
 		if (isInventoryChamp) {
 			champAttributes |= kChampionAttributeViewport;
@@ -531,7 +531,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 	}
 
 	if (champAttributes & kChampionAttributeActionHand) {
-		warning("MISSING CODE: F0291_CHAMPION_DrawSlot");
+		drawSlot(champIndex, kChampionSlotActionHand);
 		menuMan.drawActionIcon(champIndex);
 		if (isInventoryChamp) {
 			champAttributes |= kChampionAttributeViewport;
@@ -560,4 +560,91 @@ void ChampionMan::drawHealthStaminaManaValues(Champion* champ) {
 	drawHealthOrStaminaOrManaValue(132, champ->_currMana, champ->_maxMana);
 }
 
+void ChampionMan::drawSlot(uint16 champIndex, ChampionSlot slotIndex) {
+	int16 nativeBitmapIndex = -1;
+	Champion *champ = &_champions[champIndex];
+	bool isInventoryChamp = (_vm->_inventoryMan->_inventoryChampionOrdinal == indexToOrdinal(champIndex));
+
+	uint16 slotBoxIndex;
+	if (!isInventoryChamp) {  /* If drawing a slot for a champion other than the champion whose inventory is open */
+		if ((slotIndex > kChampionSlotActionHand) || (_candidateChampionOrdinal == indexToOrdinal(champIndex))) {
+			return;
+		}
+		slotBoxIndex = (champIndex << 1) + slotIndex;
+	} else {
+		slotBoxIndex = kSlotBoxInventoryFirstSlot + slotIndex;
+	}
+
+	Thing thing;
+	if (slotIndex >= kChampionSlotChest_1) {
+		thing = _vm->_inventoryMan->_chestSlots[slotIndex - kChampionSlotChest_1];
+	} else {
+		thing = champ->getSlot(slotIndex);
+	}
+
+	SlotBox *slotBox = &gSlotBoxes[slotBoxIndex];
+	Box box;
+	box._x1 = slotBox->_x - 1;
+	box._y1 = slotBox->_y - 1;
+	box._x2 = box._x1 + 17 + 1;
+	box._y2 = box._y1 + 17 + 1;
+
+
+	if (!isInventoryChamp) {
+		warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
+	}
+
+	int16 iconIndex;
+	if (thing == Thing::_thingNone) {
+		if (slotIndex <= kChampionSlotFeet) {
+			iconIndex = kIconIndiceReadyHand + (slotIndex << 1);
+			if (champ->getWoundsFlag((ChampionWound)(1 << slotIndex))) {
+				iconIndex++;
+				nativeBitmapIndex = kSlotBoxWoundedIndice;
+			} else {
+				nativeBitmapIndex = kSlotBoxNormalIndice;
+			}
+		} else {
+			if ((slotIndex >= kChampionSlotNeck) && (slotIndex <= kChampionSlotBackpackLine_1_1)) {
+				iconIndex = kIconIndiceNeck + (slotIndex - kChampionSlotNeck);
+			} else {
+				iconIndex = kIconIndiceEmptyBox;
+			}
+		}
+	} else {
+		warning("BUG0_35");
+		iconIndex = _vm->_objectMan->getIconIndex(thing); // BUG0_35
+		if (isInventoryChamp && (slotIndex == kChampionSlotActionHand) && ((iconIndex == kIconIndiceContainerChestClosed) || (iconIndex == kIconIndiceScrollOpen))) {
+			warning("BUG2_00");
+			iconIndex++;
+		} // BUG2_00
+		if (slotIndex <= kChampionSlotFeet) {
+			if (champ->getWoundsFlag((ChampionWound)(1 << slotIndex))) {
+				nativeBitmapIndex = kSlotBoxWoundedIndice;
+			} else {
+				nativeBitmapIndex = kSlotBoxNormalIndice;
+			}
+		}
+	}
+
+	if ((slotIndex == kChampionSlotActionHand) && (indexToOrdinal(champIndex) == _actingChampionOrdinal)) {
+		nativeBitmapIndex = kSlotBoxActingHandIndice;
+	}
+
+	if (nativeBitmapIndex != -1) {
+		_vm->_displayMan->_useByteBoxCoordinates = false;
+		_vm->_displayMan->blitToScreen(_vm->_displayMan->getBitmap(nativeBitmapIndex), 32, 0, 0,
+									   box, kColorDarkestGray, isInventoryChamp ? gDungeonViewport : gDefultViewPort);
+	}
+
+	_vm->_objectMan->drawIconInSlotBox(slotBoxIndex, iconIndex);
+
+	if (!isInventoryChamp) {
+		warning("MISSING CODE: F0078_MOUSE_ShowPointer");
+	}
 }
+
+
+}
+
+
