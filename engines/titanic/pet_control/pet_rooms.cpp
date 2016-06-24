@@ -75,10 +75,11 @@ bool CPetRooms::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	if (_glyphs.MouseDragStartMsg(msg))
 		return true;
 
-	if (!_glyphItem.contains(getGlyphPos(), msg->_mousePos))
+	Point topLeft = getGlyphPos();
+	if (!_glyphItem.contains(topLeft, msg->_mousePos))
 		return false;
 
-	_glyphItem.proc29(msg->_mousePos);
+	_glyphItem.dragGlyph(topLeft, msg);
 	return true;
 }
 

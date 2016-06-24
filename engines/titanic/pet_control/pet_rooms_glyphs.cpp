@@ -101,7 +101,7 @@ void CPetRoomsGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool
 	_object5 = obj5;
 }
 
-void CPetRoomsGlyph::proc28(const Point &topLeft, const Point &pt) {
+void CPetRoomsGlyph::selectGlyph(const Point &topLeft, const Point &pt) {
 	if (isAssigned()) {
 		bool isShiftPressed = g_vm->_events->getSpecialButtons() & MK_SHIFT;
 
@@ -115,7 +115,7 @@ void CPetRoomsGlyph::proc28(const Point &topLeft, const Point &pt) {
 	}
 }
 
-int CPetRoomsGlyph::proc29(const Point &pt) {
+bool CPetRoomsGlyph::dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg) {
 	bool isShiftPressed = g_vm->_events->getSpecialButtons() & MK_SHIFT;
 	CPetControl *petControl = getPetControl();
 
@@ -128,12 +128,15 @@ int CPetRoomsGlyph::proc29(const Point &pt) {
 			petControl->removeFromInventory(chevron, false, false);
 			chevron->loadSurface();
 
-			warning("TODO: CPetRoomsGlyph::proc29");
-			// TODO
+			chevron->dragMove(msg->_mousePos);
+			msg->_handled = true;
+
+			if (msg->execute(chevron))
+				return true;
 		}
 	}
 
-	return 0; 
+	return false;
 }
 
 void CPetRoomsGlyph::getTooltip(CPetText *text) {

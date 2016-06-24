@@ -259,7 +259,7 @@ void CPetGlyphs::setFirstVisible(int index) {
 				int idx = getHighlightedIndex(_highlightIndex);
 				if (idx != -1) {
 					Point tempPt = getPosition(idx);
-					glyph->proc27(tempPt, true);
+					glyph->glyphFocused(tempPt, true);
 				}
 			}
 		}
@@ -318,7 +318,7 @@ bool CPetGlyphs::MouseButtonDownMsg(const Point &pt) {
 			CPetGlyph *glyph = getGlyph(index);
 			if (glyph) {
 				if (_highlightIndex == index) {
-					glyph->MouseButtonDownMsg(glyphRect);
+					glyph->selectGlyph(glyphRect, pt);
 					glyph->updateTooltip();
 				} else {
 					changeHighlight(index);
@@ -366,7 +366,7 @@ bool CPetGlyphs::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 		Rect glyphRect = getRect(index);
 
 		if (glyphRect.contains(msg->_mousePos))
-			return glyph->proc29(glyphRect);
+			return glyph->dragGlyph(glyphRect, msg);
 		else
 			return glyph->MouseDragStartMsg(msg);
 	}

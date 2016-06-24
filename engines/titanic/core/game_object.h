@@ -276,11 +276,6 @@ protected:
 	bool changeView(const CString &viewName, const CString &clipName);
 
 	/**
-	 * Support function for drag moving
-	 */
-	void dragMove(const Point &pt);
-
-	/**
 	 * Get the centre of the game object's bounds
 	 */
 	Point getControid() const;
@@ -573,6 +568,11 @@ public:
 	 * Gives the player a new assigned room in the specified passenger class
 	 */
 	void reassignRoom(int passClassNum);
+
+	/**
+	 * Support function for drag moving
+	 */
+	void dragMove(const Point &pt);
 };
 
 } // End of namespace Titanic

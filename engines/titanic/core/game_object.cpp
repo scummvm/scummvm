@@ -492,7 +492,7 @@ void CGameObject::setPosition(const Point &newPos) {
 }
 
 bool CGameObject::checkStartDragging(CMouseDragStartMsg *msg) {
-	if (_visible && checkPoint(msg->_mousePos, msg->_field14, 1)) {
+	if (_visible && checkPoint(msg->_mousePos, msg->_handled, 1)) {
 		savePosition();
 		msg->_dragItem = this;
 		return true;

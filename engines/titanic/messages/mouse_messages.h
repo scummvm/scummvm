@@ -127,12 +127,12 @@ public:
 class CMouseDragStartMsg : public CMouseDragMsg {
 public:
 	CTreeItem *_dragItem;
-	int _field14;
+	bool _handled;
 public:
 	CLASSDEF
-	CMouseDragStartMsg() : CMouseDragMsg(), _dragItem(nullptr), _field14(0) {}
+	CMouseDragStartMsg() : CMouseDragMsg(), _dragItem(nullptr), _handled(false) {}
 	CMouseDragStartMsg(const Point &pt) : CMouseDragMsg(pt),
-		_dragItem(nullptr), _field14(0) {}
+		_dragItem(nullptr), _handled(false) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
 		return supports(item, _type);

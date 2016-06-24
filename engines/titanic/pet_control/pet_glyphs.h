@@ -173,14 +173,20 @@ public:
 	 */
 	virtual void highlightCurrent(const Point &pt) {}
 
-	virtual void proc27(const Point &pt, bool flag) {}
+	/**
+	 * Glyph has been shifted to be first visible one
+	 */
+	virtual void glyphFocused(const Point &pt, bool flag) {}
 
 	/**
-	 *
+	 * Selects a glyph
 	 */
-	virtual void proc28(const Point &topLeft, const Point &pt) {}
+	virtual void selectGlyph(const Point &topLeft, const Point &pt) {}
 	
-	virtual int proc29(const Point &pt) { return 0; }
+	/**
+	 * Called when a glyph drag starts
+	 */
+	virtual bool dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg) { return false; }
 
 	/**
 	 * Returns true if the glyph's bounds, shifted to a given position,

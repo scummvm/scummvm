@@ -76,11 +76,14 @@ public:
 	virtual void draw2(CScreenManager *screenManager) {}
 
 	/**
-	 * 
+	 * Selects a glyph
 	 */
-	virtual void proc28(const Point &topLeft, const Point &pt);
+	virtual void selectGlyph(const Point &topLeft, const Point &pt);
 
-	virtual int proc29(const Point &pt);
+	/**
+	 * Called when a glyph drag starts
+	 */
+	virtual bool dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg);
 
 	/**
 	 * Returns the tooltip text for when the glyph is selected
