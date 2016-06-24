@@ -53,7 +53,7 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	EventManager &em = *_vm->_eventMan;
 	DisplayMan &dm = *_vm->_displayMan;
 
-	if ((championIndex == kChampionCloseInventory) && !cm._champions[championIndex]._currHealth)
+	if ((championIndex != kChampionCloseInventory) && !cm._champions[championIndex]._currHealth)
 		return;
 	if (_vm->_pressingEye || _vm->_pressingMouth)
 		return;

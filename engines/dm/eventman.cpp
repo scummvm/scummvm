@@ -420,19 +420,10 @@ void EventManager::processCommandQueue() {
 	}
 
 	if (cmd._type == kCommandClickInDungeonView) {
-		/*warning("DUMMY CODE, all of this");
-		DungeonMan &dunMan = *_vm->_dungeonMan;
-		CurrMapData &currMap = dunMan._currMap;
-		uint16 mapX = currMap._partyPosX;
-		uint16 mapY = currMap._partyPosY;
-		mapX += gDirIntoStepCountEast[currMap._partyDir];
-		mapY += gDirIntoStepCountNorth[currMap._partyDir];
-		Thing squareFirstThing = dunMan.getSquareFirstThing(mapX, mapY);
-		Sensor sensor(dunMan.getThingData(squareFirstThing));
-		if (sensor.getType() == kSensorWallChampionPortrait) {
-			_vm->_championMan->addCandidateChampionToParty(sensor.getData());
-		}*/
 		commandProcessType80ClickInDungeonView(commandX, commandY);
+	}
+	if (cmd._type == kCommandClickInPanel) {
+		commandProcess81ClickInPanel(commandX, commandY);
 	}
 
 	// MISSING CODE: the rest of the function
@@ -694,6 +685,29 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 	invMan.toggleInventory(kChampionCloseInventory);
 	warning("MISSING CODE: F0457_START_DrawEnabledMenus_CPSF");
 	warning("MISSING CODE: F0067_MOUSE_SetPointerToNormal");
+}
+
+void EventManager::commandProcess81ClickInPanel(int16 x, int16 y) {
+	ChampionMan &champMan = *_vm->_championMan;
+	InventoryMan &invMan = *_vm->_inventoryMan;
+
+	CommandType commandType;
+	switch (invMan._panelContent) {
+	case kPanelContentChest:
+		if (champMan._leaderIndex == kChampionNone) // if no leader
+			return;
+		commandType = getCommandTypeFromMouseInput(gMouseInput_PanelChest, Common::Point(x, y), kLeftMouseButton);
+		if (commandType != kCommandNone)
+			warning("MISSING CODE: F0302_CHAMPION_ProcessCommands28To65_ClickOnSlotBox");
+		break;
+	case kPanelContentResurrectReincarnate:
+		if (!champMan._leaderEmptyHanded)
+			break;
+		commandType = getCommandTypeFromMouseInput(gMouseInput_PanelChest, Common::Point(x, y), kLeftMouseButton);
+		if (commandType != kCommandNone)
+			commandProcessCommands160To162ClickInResurrectReincarnatePanel(commandType);
+		break;
+	}
 }
 
 }; // end of namespace DM
