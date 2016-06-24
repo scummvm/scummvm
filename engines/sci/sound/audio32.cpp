@@ -596,14 +596,11 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 	AudioChannel &channel = getChannel(channelIndex);
 	channel.id = resourceId;
 	channel.resource = resource;
-	// resourceStream, stream, converter, duration and startedAtTick will be initialized below
-	channel.pausedAtTick = 0;
 	channel.loop = loop;
-	channel.lastFadeTick = 0;
-	channel.fadeStepsRemaining = 0;
-	// fadeVolume, fadeSpeed and stopChannelOnFade will be initialized once they are actually used
 	channel.robot = false;
 	channel.vmd = false;
+	channel.lastFadeTick = 0;
+	channel.fadeStepsRemaining = 0;
 	channel.soundNode = soundNode;
 	channel.volume = volume < 0 || volume > kMaxVolume ? (int)kMaxVolume : volume;
 	// TODO: SCI3 introduces stereo audio
@@ -648,9 +645,7 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 	channel.duration = /* round up */ 1 + (channel.stream->getLength().msecs() * 60 / 1000);
 
 	const uint32 now = g_sci->getTickCount();
-	if (!autoPlay) {
-		channel.pausedAtTick = now;
-	}
+	channel.pausedAtTick = autoPlay ? 0 : now;
 	channel.startedAtTick = now;
 
 	if (_numActiveChannels == 1) {
