@@ -61,6 +61,9 @@ public:
 
 	bool isPointInside(Common::Point point);
 
+	uint getWidth();
+	uint getHeight();
+
 private:
 	void decodePPIC(ObjID id, Common::Array<byte> &data);
 

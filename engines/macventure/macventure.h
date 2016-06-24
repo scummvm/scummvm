@@ -179,7 +179,7 @@ public:
 	void runObjQueue();
 	bool printTexts();
 
-	void selectObject(ObjID objID);
+	void handleObjectSelect(ObjID objID, WindowReference win, Common::Event event);
 	void updateDelta(Common::Point newPos);
 	void focusObjWin(ObjID objID);
 	void updateWindow(WindowReference winID);
@@ -201,6 +201,10 @@ public:
 	bool isObjClickable(ObjID objID);
 	bool isObjSelected(ObjID objID);
 
+	// Encapsulation HACK
+	Common::Rect getObjBounds(ObjID objID);
+	uint getOverlapPercent(ObjID one, ObjID other);
+
 	WindowReference getObjWindow(ObjID objID);
 	WindowReference findObjWindow(ObjID objID);
 	WindowReference findParentWindow(ObjID objID);
@@ -216,6 +220,14 @@ private:
 	void endGame();
 	void updateControls();
 	void resetVars();
+
+	void unselectAll();
+	void selectObject(ObjID objID);
+	void unselectObject(ObjID objID);
+	int findObjectInArray(ObjID objID, const Common::Array<ObjID> &list);
+	void highlightExit(ObjID objID);
+	void selectPrimaryObject(ObjID objID);
+
 
 	// Object queue methods
 	void focusObjectWindow(ObjID objID);

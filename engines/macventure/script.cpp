@@ -136,32 +136,37 @@ bool ScriptEngine::execFrame(bool execAll) {
 		}
 	} while (highest);
 	
-	_frames.remove_at(0);
+	_frames.pop_front();
 	return false;
 }
 
 bool ScriptEngine::loadScript(EngineFrame * frame, uint32 scriptID) {
-	frame->scripts.push_back(ScriptAsset(scriptID, _scripts));
+	if (_scripts->getItemByteSize(scriptID) > 0) {
+		debug(3, "SCRIPT: Loading function %d", scriptID);
+		// Insert the new script at the front
+		frame->scripts.push_front(ScriptAsset(scriptID, _scripts));
+		return runFunc(frame);
+	}
 	return false;
 }
 
 bool ScriptEngine::resumeFunc(EngineFrame * frame) {
 	bool fail = runFunc(frame);
 	if (fail) return fail;
-	frame->scripts.remove_at(0);
+	frame->scripts.pop_front();
 	if (frame->scripts.size())
 		return resumeFunc(frame);
 	return false;
 }
 
 bool ScriptEngine::runFunc(EngineFrame *frame) {
-	debug(3, "SCRIPT: I'm running the function");
 	ScriptAsset &script = frame->scripts.front();
+	debug(3, "SCRIPT: Executing function %d", script.getId());
 	EngineState *state = &frame->state;
 	byte op;	
 	while (script.hasNext()) {
 		op = script.fetch();
-		debug(3, "SCRIPT: I'm running operation %x", op);
+		debug(3, "SCRIPT: I'm running operation %d", op);
 		if (!(op & 0x80)) {
 			state->push(op);
 		} else {
@@ -857,7 +862,7 @@ void ScriptEngine::opb5BNEB(EngineState * state, EngineFrame * frame, ScriptAsse
 void ScriptEngine::opb6CLAT(EngineState * state, EngineFrame * frame) {
 	word rank = state->pop();
 	word func = state->pop();
-	frame->saves.push_back(FunCall(rank, func));
+	frame->saves.push_back(FunCall(func, rank));
 }
 
 void ScriptEngine::opb7CCA(EngineState * state, EngineFrame * frame) {
@@ -904,9 +909,11 @@ void ScriptEngine::opbbFORK(EngineState * state, EngineFrame * frame) {
 void ScriptEngine::opbcCALL(EngineState * state, EngineFrame * frame, ScriptAsset &script) {
 	word id = state->pop();
 	ScriptAsset newfun = ScriptAsset(id, _scripts);
-	frame->scripts.remove_at(0);
-	frame->scripts.insert_at(0, newfun);
+	ScriptAsset current = script;
+	loadScript(frame, id);
+	frame->scripts.pop_front();
 	script = frame->scripts.front();
+	debug(3, "SCRIPT: Return from fuction %d", id);
 }
 
 void ScriptEngine::opbdFOOB(EngineState * state, EngineFrame * frame) {
@@ -1019,17 +1026,15 @@ void ScriptEngine::opd0P1(EngineState * state, EngineFrame * frame) {
 
 void ScriptEngine::opd1GOBD(EngineState * state, EngineFrame * frame) {
 	word obj = state->pop();
-	Common::Rect bounds(0, 0, 1, 1); //= _world->getObjBounds(obj);
+	Common::Rect bounds = _engine->getObjBounds(obj);
 	state->push(bounds.width());
 	state->push(bounds.height());
-	op00NOOP(0xd1);
 }
 
 void ScriptEngine::opd2GOVP(EngineState * state, EngineFrame * frame) { 
 	word b = state->pop();
 	word a = state->pop();
-	state->push(0);//_world->getOverlapPercent(b, a));
-	op00NOOP(0xd2);
+	state->push(_engine->getOverlapPercent(b, a));
 }
 
 void ScriptEngine::opd3CAPC(EngineState * state, EngineFrame * frame) {
@@ -1138,11 +1143,11 @@ void ScriptEngine::op00NOOP(byte op) {
 
 
 
-
 ScriptAsset::ScriptAsset(ObjID id, Container * container) {	
 	_id = id;
 	_container = container;
 	_ip = 0x0;	
+	loadInstructions();
 }
 
 void ScriptAsset::reset() {
@@ -1161,6 +1166,10 @@ bool ScriptAsset::hasNext() {
 
 void ScriptAsset::branch(word amount) {
 	_ip += amount;
+}
+
+ObjID ScriptAsset::getId() {
+	return _id;
 }
 
 void ScriptAsset::loadInstructions() {

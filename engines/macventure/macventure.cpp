@@ -41,7 +41,7 @@ MacVentureEngine::MacVentureEngine(OSystem *syst, const ADGameDescription *gameD
 	_gameDescription = gameDesc;
 	_rnd = new Common::RandomSource("macventure");
 
-	_debugger= NULL;
+	_debugger = NULL;
 	_gui = NULL;
 
 	debug("MacVenture::MacVentureEngine()");
@@ -96,7 +96,7 @@ Common::Error MacVentureEngine::run() {
 	_scriptEngine = new ScriptEngine(this, _world);
 
 	_paused = false;
-	_halted = true;
+	_halted = false;
 	_cmdReady = false;
 	_haltedAtEnd = false;
 	_haltedInSelection = false;
@@ -114,7 +114,7 @@ Common::Error MacVentureEngine::run() {
 
 	_gui->addChild(kSelfWindow, 1);
 	_gui->updateWindow(kSelfWindow, false);
-	
+
 	while (_gameState != kGameStateQuitting) {
 		processEvents();
 
@@ -227,7 +227,7 @@ void MacVentureEngine::enqueueObject(ObjectQueueID type, ObjID objID, ObjID targ
 
 	if (type == kUpdateWindow) { obj.target = target; }
 
-	if (type != kHightlightExits) {		
+	if (type != kHightlightExits) {
 		obj.object = objID;
 		obj.parent = _world->getObjAttr(objID, kAttrParentObject);
 		obj.x = _world->getObjAttr(objID, kAttrPosX);
@@ -267,34 +267,62 @@ bool MacVentureEngine::printTexts() {
 		case kTextPlain:
 			debug("Print Plain Text: %s", _world->getText(text.asset).c_str());
 			gameChanged();
-			break;		
+			break;
 		}
 	}
+	return false;
 }
 
-void MacVentureEngine::selectObject(ObjID objID) {
-	bool found = false;
-	uint i = 0;
-	while (i < _currentSelection.size() && !found) {
-		if (_currentSelection[i] == objID) found = true;
-		else i++;
-	}		
-	
-	if (!found) {
-		_currentSelection.push_back(objID);
-		debug("Object %d selected", objID);
-	} else {
-		debug("Object %d already selected", objID);
+void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, Common::Event event) {
+	if (win == kExitsWindow) {
+		win = kMainGameWindow;
 	}
 
-	found = false;
-	i = 0;
-	while (i < _selectedObjs.size() && !found) {
-		if (_selectedObjs[i] == objID) found = true;
-		else i++;
-	}
+	bool canDrag = (objID && !_world->getObjAttr(objID, kAttrInvisible));
 
-	if (!found) _selectedObjs.push_back(objID);	
+	const WindowData &windata = _gui->getWindowData(win);
+
+	if (event.kbd.flags & Common::KBD_SHIFT) {
+		// Do shift ;)
+	}
+	else {
+		if (_selectedControl && _currentSelection.size() > 0 && getInvolvedObjects() > 1) {
+			if (objID == 0)
+				selectPrimaryObject(windata.objRef);
+			else
+				selectPrimaryObject(objID);
+			preparedToRun();
+		}
+		else {
+			if (objID == 0) {
+				unselectAll();
+				//if (windata.type == kAnimateBack) {
+					//doLasso(win, event, canDrag);
+				//}
+				//else {
+					objID = win;
+				//}
+			}
+			if (objID > 0) {
+				int i = findObjectInArray(objID, _currentSelection);
+
+				/*if (event.type == Common::EVENT  isDoubleClick(event)) { // no double click for now
+					if (!found)
+						unSelectAll();
+					selectObj(obj);
+					doubleClickObject(obj, win, event, canDrag);
+				} else {*/
+				if (i >= 0)
+					unselectAll();
+				selectObject(objID);
+				if (getInvolvedObjects() == 1)
+					_cmdReady = true;
+				preparedToRun();
+				//singleClickObject(objID, win, event, canDrag);
+				//}
+			}
+		}
+	}
 }
 
 void MacVentureEngine::updateDelta(Common::Point newPos) {
@@ -373,7 +401,11 @@ bool MacVenture::MacVentureEngine::runScriptEngine() {
 	if (_selectedControl == 1)
 		_gameChanged = false;
 
+<<<<<<< HEAD
 	else if (_gameState == kGameStateInit || _gameState == kGameStatePlaying){
+=======
+	else if (_gameState == kGameStateInit || _gameState == kGameStatePlaying) {
+>>>>>>> 088fc4d... MACVENTURE: Script engine fixes
 		if (_scriptEngine->runControl(kTick, _selectedControl, _destObject, _deltaPoint)) {
 			_haltedAtEnd = true;
 			return true;
@@ -445,7 +477,7 @@ void MacVentureEngine::updateControls() {
 	if (_activeControl)
 		_activeControl = kNoCommand;
 	_gui->clearControls();
-	toggleExits();	
+	toggleExits();
 	resetVars();
 }
 
@@ -456,6 +488,70 @@ void MacVentureEngine::resetVars() {
 	_destObject = 0;
 	_deltaPoint = Common::Point(0, 0);
 	_cmdReady = false;
+}
+
+void MacVentureEngine::unselectAll() {
+	while (!_currentSelection.empty()) {
+		unselectObject(_currentSelection.front());
+		//_currentSelection.remove_at(0);
+	}
+}
+
+void MacVentureEngine::selectObject(ObjID objID) {
+	if (!_currentSelection.empty()) {
+		if (findParentWindow(objID) != findParentWindow(_currentSelection[0]))
+			unselectAll();
+	}
+	if (findObjectInArray(objID, _currentSelection) == -1)
+		_currentSelection.push_back(objID);
+	if (findObjectInArray(objID, _selectedObjs) == -1) {
+		_selectedObjs.push_back(objID);
+		highlightExit(objID);
+	}
+}
+
+void MacVentureEngine::unselectObject(ObjID objID) {
+	int idxCur = findObjectInArray(objID, _currentSelection);
+	int idxSel = findObjectInArray(objID, _selectedObjs);
+	if (idxCur != -1) _currentSelection.remove_at(idxCur);
+	if (idxSel != -1) {
+		_selectedObjs.remove_at(idxSel);
+		highlightExit(objID);
+	}
+}
+
+int MacVentureEngine::findObjectInArray(ObjID objID, const Common::Array<ObjID> &list) {
+	// Find the object in the current selection
+	bool found = false;
+	uint i = 0;
+	while (i < list.size() && !found) {
+		if (list[i] == objID) found = true;
+		else i++;
+	}
+	// HACK, should use iterator
+	return found ? i : -1;
+}
+
+void MacVentureEngine::highlightExit(ObjID objID) {
+	warning("highlightExit: unimplemented");
+}
+
+void MacVentureEngine::selectPrimaryObject(ObjID objID) {
+	if (objID == _destObject) return;
+	int idx;
+	if (_destObject > 0 &&
+		(idx = findObjectInArray(_destObject, _selectedObjs)) != -1 &&
+		findObjectInArray(_destObject, _currentSelection) == -1) 
+	{
+		_selectedObjs.remove_at(idx);
+		highlightExit(_destObject);
+	}
+	_destObject = objID;
+	if (findObjectInArray(_destObject, _selectedObjs) == -1) {
+		_selectedObjs.push_back(_destObject);
+		highlightExit(_destObject);
+	}
+	_cmdReady = true;
 }
 
 void MacVentureEngine::focusObjectWindow(ObjID objID) {
@@ -479,7 +575,7 @@ void MacVentureEngine::openObject(ObjID objID) {
 		Common::Point p(_world->getObjAttr(objID, kAttrPosX), _world->getObjAttr(objID, kAttrPosY));
 		//getParentWin(obj).localToGlobal(p);
 		//globalToDesktop(p);
-		WindowReference invID = _gui->createInventoryWindow();
+		WindowReference invID = _gui->createInventoryWindow(objID);
 		_gui->setWindowTitle(invID, _world->getText(objID));
 		_gui->updateWindowInfo(invID, objID, _world->getChildren(objID, true));
 		_gui->updateWindow(invID, _world->getObjAttr(objID, kAttrContainerOpen));
@@ -576,11 +672,10 @@ void MacVentureEngine::reflectSwap(ObjID fromID, ObjID toID) {
 }
 
 void MacVentureEngine::toggleExits() {
-	warning("toggleExits: unimplemented");
 	while (!_selectedObjs.empty()) {
 		ObjID obj = _selectedObjs.front();
 		_selectedObjs.remove_at(0);
-		// Todo: highlight exit
+		highlightExit(obj);
 		updateWindow(findParentWindow(obj));
 	}	
 }
@@ -666,11 +761,33 @@ bool MacVentureEngine::isObjClickable(ObjID objID) {
 }
 
 bool MacVentureEngine::isObjSelected(ObjID objID) {
-	Common::Array<ObjID>::const_iterator it;
-	for (it = _currentSelection.begin(); it != _currentSelection.end(); it++) {
-		if (*it == objID) return true;
+	int idx = findObjectInArray(objID, _currentSelection);
+	return idx != -1;
+}
+
+Common::Rect MacVentureEngine::getObjBounds(ObjID objID) {
+	Common::Point pos = getObjPosition(objID);
+	uint w = _gui->getObjWidth(objID); // This shouldn't go here
+	uint h = _gui->getObjHeight(objID);
+	return Common::Rect(pos.x, pos.y, pos.x + w, pos.y + h);
+}
+
+uint MacVentureEngine::getOverlapPercent(ObjID one, ObjID other) {
+	//not the same parent? 0 overlap
+	if (_world->getObjAttr(one, kAttrParentObject) !=
+		_world->getObjAttr(other, kAttrParentObject)) 
+		return 0;
+
+	Common::Rect oneBounds = getObjBounds(one);
+	Common::Rect otherBounds = getObjBounds(other);
+	if (otherBounds.intersects(oneBounds) ||
+		oneBounds.intersects(otherBounds)) 
+	{
+		uint areaOne = oneBounds.width() * oneBounds.height();
+		uint areaOther = otherBounds.width() * otherBounds.height();
+		return (areaOther * 100 / areaOne) | 0;
 	}
-	return false;
+	return 0;
 }
 
 WindowReference MacVentureEngine::getObjWindow(ObjID objID) {

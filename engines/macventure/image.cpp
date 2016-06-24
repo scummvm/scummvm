@@ -350,6 +350,14 @@ bool ImageAsset::isPointInside(Common::Point point) {
 	return pix != 0;
 }
 
+uint ImageAsset::getWidth() {
+	return _bitWidth;
+}
+
+uint ImageAsset::getHeight() {
+	return _bitWidth;
+}
+
 void ImageAsset::blitDirect(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte>& data) {
 	/*
 	if (_bitWidth == 0 || _bitHeight == 0) return;

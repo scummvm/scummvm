@@ -63,6 +63,8 @@ public:
 	bool hasNext();
 	void branch(word amount);
 
+	ObjID getId();
+
 private:
 
 	void loadInstructions();
@@ -82,12 +84,12 @@ public:
 	}
 
 	void push(word data) {
+		sp--;		
 		stack[sp] = unneg16(data);
-		sp--;
 	}
 
 	word pop() {
-		byte v = stack[sp];
+		word v = stack[sp];
 		sp++;
 		return v;
 	}
@@ -102,6 +104,9 @@ public:
 
 	void clear() {
 		sp = 0x80;
+		for (int i = 0; i < sp; i++) {
+			stack[i] = 0;
+		}
 	}
 
 	word size() {
@@ -139,7 +144,7 @@ struct EngineFrame {
 	int x;
 	int y;
 	EngineState state;
-	Common::Array<ScriptAsset> scripts;
+	Common::List<ScriptAsset> scripts;
 	Common::Array<FunCall> saves;
 	uint32 familyIdx;
 
@@ -288,7 +293,7 @@ private:
 private:
 	MacVentureEngine *_engine;
 	World *_world;
-	Common::Array<EngineFrame> _frames;
+	Common::List<EngineFrame> _frames;
 	Container *_scripts;
 };
 

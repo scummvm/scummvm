@@ -248,6 +248,7 @@ void Gui::initWindows() {
 	_mainGameWindow->setCallback(mainGameWindowCallback, this);
 	loadBorder(_mainGameWindow, "border_no_scroll_inac.bmp", false);
 	loadBorder(_mainGameWindow, "border_no_scroll_act.bmp", true);
+	findWindowData(kMainGameWindow).objRef = 3;
 
 	// In-game Output Console
 	_outConsoleWindow = _wm.addWindow(false, true, true);
@@ -264,6 +265,7 @@ void Gui::initWindows() {
 	_selfWindow->setCallback(selfWindowCallback, this);
 	loadBorder(_selfWindow, "border_no_scroll_inac.bmp", false);
 	loadBorder(_selfWindow, "border_no_scroll_inac.bmp", true);
+	findWindowData(kMainGameWindow).objRef = 0;
 
 	// Exits Window
 	_exitsWindow = _wm.addWindow(false, true, true);
@@ -273,9 +275,10 @@ void Gui::initWindows() {
 	loadBorder(_exitsWindow, "border_no_scroll_inac.bmp", false);
 	loadBorder(_exitsWindow, "border_no_scroll_act.bmp", true);
 
+
 }
 
-WindowReference Gui::createInventoryWindow() {
+WindowReference Gui::createInventoryWindow(ObjID objRef) {
 	Graphics::MacWindow *newWindow = _wm.addWindow(true, true, true);
 	WindowData newData;
 	GlobalSettings settings = _engine->getGlobalSettings();
@@ -295,6 +298,7 @@ WindowReference Gui::createInventoryWindow() {
 	newData.type = kZoomDoc;
 	newData.hasCloseBox = true;
 	newData.visible = true;
+	newData.objRef = objRef;
 	_windowData->push_back(newData);
 
 	newWindow->setDimensions(newData.bounds);
@@ -528,7 +532,6 @@ void Gui::drawCommandsWindow() {
 }
 
 void Gui::drawMainGameWindow() {
-	Graphics::ManagedSurface *srf = _mainGameWindow->getSurface();
 	const WindowData &data = getWindowData(kMainGameWindow);
 	BorderBounds border = borderBounds(data.type);
 
@@ -612,12 +615,18 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 				border.leftOffset + pos.x,
 				border.topOffset + pos.y,
 				mode);
+
+			if (_engine->isObjSelected(child))
+				_assets[child]->blitInto(
+					surface,
+					border.leftOffset + pos.x,
+					border.topOffset + pos.y,
+					kBlitOR);
 		}
 
 	}
 
 	findWindow(data.refcon)->setDirty(true);
-
 }
 
 void Gui::drawWindowTitle(WindowReference target, Graphics::ManagedSurface * surface) {
@@ -782,6 +791,9 @@ void Gui::updateWindow(WindowReference winID, bool containerOpen) {
 			for (; it != _controlData->end(); ++it) {
 				it->unselect();
 			}
+		}
+		if (winID == kMainGameWindow) {
+			drawMainGameWindow();
 		} else {
 			Graphics::MacWindow *winRef = findWindow(winID);
 			winRef->getSurface()->fillRect(data.bounds, kColorGray);
@@ -801,9 +813,6 @@ void Gui::updateWindow(WindowReference winID, bool containerOpen) {
 				}
 				children[i] = DrawableObject(child, mode);
 			}
-		}
-		if (winID == kMainGameWindow) {
-			drawMainGameWindow();
 		}
 		if (data.type == kZoomDoc && data.updateScroll) {
 			warning("Unimplemented: update scroll");
@@ -830,6 +839,16 @@ bool Gui::tryCloseWindow(WindowReference winID) {
 		warning("Window closing not implemented");
 	}
 	return true;
+}
+
+uint Gui::getObjWidth(ObjID obj) {
+	if (!_assets.contains(obj)) return 0;
+	return _assets[obj]->getWidth();
+}
+
+uint Gui::getObjHeight(ObjID obj) {
+	if (!_assets.contains(obj)) return 0;
+	return _assets[obj]->getHeight();
 }
 
 bool Gui::processEvent(Common::Event &event) {
@@ -884,7 +903,6 @@ bool MacVenture::Gui::processMainGameEvents(WindowClick click, Common::Event & e
 	if (click == kBorderInner && event.type == Common::EVENT_LBUTTONUP) {
 		WindowData &data = findWindowData(kMainGameWindow);
 		ObjID child;
-		BlitMode mode;
 		Common::Point pos;
 		for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
 			child = (*it).obj;
@@ -894,7 +912,7 @@ bool MacVenture::Gui::processMainGameEvents(WindowClick click, Common::Event & e
 			pos = event.mouse - pos;
 			if (_assets.contains(child) && _assets[child]->isPointInside(pos)) {
 				// select the first object clicked
-				_engine->selectObject(child);
+				_engine->handleObjectSelect(child, kMainGameWindow, event);
 			}
 		}
 	}
@@ -912,7 +930,7 @@ bool MacVenture::Gui::processSelfEvents(WindowClick click, Common::Event & event
 		return true;
 
 	if (event.type == Common::EVENT_LBUTTONUP) {
-		_engine->selectObject(1);
+		_engine->handleObjectSelect(1, kSelfWindow, event);
 	}
 	return true;
 }

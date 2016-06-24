@@ -99,6 +99,7 @@ struct DrawableObject {
 struct WindowData {
 	Common::Rect bounds;
 	MVWindowType type;
+	ObjID objRef;
 	uint16 visible;
 	uint16 hasCloseBox;
 	WindowReference refcon;
@@ -160,8 +161,11 @@ public:
 	void updateWindow(WindowReference winID, bool containerOpen);
 	void invertWindowColors(WindowReference winID);
 
-	WindowReference createInventoryWindow();
+	WindowReference createInventoryWindow(ObjID objRef);
 	bool tryCloseWindow(WindowReference winID);
+
+	uint getObjWidth(ObjID obj);
+	uint getObjHeight(ObjID obj);
 
 	// Event processors
 	bool processCommandEvents(WindowClick click, Common::Event &event);
@@ -171,6 +175,8 @@ public:
 	bool processExitsEvents(WindowClick click, Common::Event &event);
 	bool processDiplomaEvents(WindowClick click, Common::Event &event);
 	bool processInventoryEvents(WindowClick click, Common::Event &event);
+
+	//bool processClickObject(ObjID obj, WindowReference win, Common::Event event, bool canDrag);
 
 	const WindowData& getWindowData(WindowReference reference);
 
