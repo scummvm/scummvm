@@ -268,7 +268,7 @@ gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
 // See also:
 //   on keyword
 defn: tMACRO VAR { g_lingo->_indef = true; }
-	    arglist stmtlist {
+	    arglist stmtlist end {
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$2, $4);
 			g_lingo->_indef = false; }
