@@ -521,7 +521,7 @@ CString CPetControl::getFullViewName() {
 	return gameManager ? gameManager->getFullViewName() : CString();
 }
 
-void CPetControl::resetDials(int flag) {
+void CPetControl::convResetDials(int flag) {
 	if (flag == 1)
 		_conversations.resetDials(_activeNPCName);
 }

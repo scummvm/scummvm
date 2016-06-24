@@ -312,16 +312,25 @@ public:
 	 */
 	CString getFullViewName();
 
-	/**
-	 * Resets the dial display to reflect new values
-	 */
-	void resetDials(int flag = 1);
-
 	bool getC0() const { return _fieldC0 > 0; }
 	void incC0() { ++_fieldC0; }
 	void decC0() { --_fieldC0; }
 
-	/* CPetRooms methods */
+	/*--- CPetConversations methods ---*/
+
+	/**
+	 * Resets the dial display in the conversation tab to reflect new values
+	 */
+	void convResetDials(int flag = 1);
+
+	/**
+	 * Adds a line to the conversation log
+	 */
+	void convAddLine(const CString &line) {
+		_conversations.addLine(line);
+	}
+
+	/*--- CPetRooms methods ---*/
 
 	/**
 	 * Gives the player a new assigned room in the specified passenger class

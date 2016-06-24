@@ -35,7 +35,7 @@ class TTtalker : public ListItem {
 public:
 	CTrueTalkManager *_owner;
 	CTrueTalkNPC *_npc;
-	CString _string1;
+	CString _line;
 	int _dialogueId;
 	int _field24;
 	int _done;
@@ -44,8 +44,17 @@ public:
 		_dialogueId(0), _field24(0), _done(0) {}
 	TTtalker(CTrueTalkManager *owner, CTrueTalkNPC *npc) :
 		_owner(owner), _npc(npc), _dialogueId(0), _field24(0), _done(0) {}
+	~TTtalker();
 
+	/**
+	 * Start a new speech
+	 */
 	void speechStarted(const CString &dialogueStr, uint dialogueId, uint soundId);
+
+	/**
+	 * End the speech
+	 */
+	void endSpeech(int val);
 };
 
 class TTtalkerList : public List<TTtalker> {

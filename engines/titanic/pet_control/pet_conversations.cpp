@@ -239,6 +239,8 @@ void CPetConversations::save(SimpleFile *file, int indent) const {
 }
 
 void CPetConversations::enter(PetArea oldArea) {
+	resetDials();
+
 	if (_petControl && _petControl->_activeNPC)
 		// Start a timer for the NPC
 		startNPCTimer();
@@ -558,6 +560,10 @@ void CPetConversations::npcDialChange(uint dialNum, int oldLevel, int newLevel) 
 	}
 }
 
+void CPetConversations::resetDials() {
+	resetDials(getActiveNPCName());
+}
+
 void CPetConversations::resetDials(const CString &name) {
 	TTnpcScript *script = getNPCScript(name);
 
@@ -567,6 +573,11 @@ void CPetConversations::resetDials(const CString &name) {
 		npcDialChange(idx, oldLevel, newLevel);
 		_npcLevels[idx] = newLevel;
 	}
+}
+
+void CPetConversations::addLine(const CString &line) {
+	_log.addLine(line);
+	scrollToBottom();
 }
 
 } // End of namespace Titanic

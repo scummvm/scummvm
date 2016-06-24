@@ -328,11 +328,6 @@ protected:
 	 * Clear the PET display
 	 */
 	void clearPet() const;
-	
-	/**
-	 * Returns the PET control
-	 */
-	CPetControl *getPetControl() const;
 
 	/**
 	 * Returns the MailMan
@@ -471,6 +466,11 @@ public:
 	 * Returns true if the item is the PET control
 	 */
 	virtual bool isPet() const;
+	
+	/**
+	 * Returns the PET control
+	 */
+	CPetControl *getPetControl() const;
 
 	/**
 	 * Play the movie specified in _resource

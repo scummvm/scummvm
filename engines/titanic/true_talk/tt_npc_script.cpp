@@ -464,7 +464,7 @@ void TTnpcScript::setDial(int dialNum, int value) {
 	if (g_vm->_trueTalkManager) {
 		CPetControl *petControl = getPetControl(g_vm->_trueTalkManager->getGameManager());
 		if (petControl)
-			petControl->resetDials();
+			petControl->convResetDials();
 	}
 }
 

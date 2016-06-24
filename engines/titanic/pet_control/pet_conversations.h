@@ -238,9 +238,19 @@ public:
 	virtual void hideCursor();
 
 	/**
+	 * Resets the dials with the data for the currently active NPC
+	 */
+	void resetDials();
+
+	/**
 	 * Reset the dials with those for a given NPC
 	 */
 	void resetDials(const CString &name);
+
+	/**
+	 * Adds a line to the log
+	 */
+	void addLine(const CString &line);
 };
 
 } // End of namespace Titanic

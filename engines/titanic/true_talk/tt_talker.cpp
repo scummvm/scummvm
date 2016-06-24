@@ -22,6 +22,7 @@
 
 #include "titanic/true_talk/tt_talker.h"
 #include "titanic/messages/messages.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
@@ -30,6 +31,22 @@ void TTtalker::speechStarted(const CString &dialogueStr, uint dialogueId, uint s
 
 	CTrueTalkNotifySpeechStartedMsg msg(soundId, dialogueId, 0);
 	msg.execute(_npc, nullptr, MSGFLAG_BREAK_IF_HANDLED);
+}
+
+TTtalker::~TTtalker() {
+	CPetControl *petControl = _npc->getPetControl();
+	if (petControl)
+		// Add in final line
+		petControl->convAddLine(_line);
+
+	// Notify the end of the speech
+	CTrueTalkNotifySpeechEndedMsg endedMsg(_field24, _dialogueId);
+	endedMsg.execute(_npc, nullptr, MSGFLAG_BREAK_IF_HANDLED);
+}
+
+void TTtalker::endSpeech(int val) {
+	_done = true;
+	_field24 = val;
 }
 
 } // End of namespace Titanic
