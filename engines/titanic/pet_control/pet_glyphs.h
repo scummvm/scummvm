@@ -245,6 +245,11 @@ private:
 	int getItemIndex(int index);
 
 	/**
+	 * Set the item index
+	 */
+	void setSelectedIndex(int index);
+
+	/**
 	 * Return a specified glyph
 	 */
 	CPetGlyph *getGlyph(int index);
@@ -419,6 +424,16 @@ public:
 	 * Resets the scrolling of the glyphs list back to the start
 	 */
 	void scrollToStart() { _firstVisibleIndex = 0; }
+
+	/**
+	 * Increment the currently selected index
+	 */
+	void incSelection();
+
+	/**
+	 * Decrement the currently selected index
+	 */
+	void decSelection();
 };
 
 } // End of namespace Titanic

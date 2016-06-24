@@ -219,7 +219,11 @@ void CPetGlyphs::changeHighlight(int index) {
 }
 
 void CPetGlyphs::highlight(int index) {
-	warning("TODO: CPetGlyphs::highlight");
+	if (index >= 0) {
+		setSelectedIndex(index);
+		changeHighlight(index);
+		makePetDirty();
+	}
 }
 
 void CPetGlyphs::highlight(const CPetGlyph *glyph) {
@@ -233,6 +237,15 @@ int CPetGlyphs::getHighlightedIndex(int index) {
 
 int CPetGlyphs::getItemIndex(int index) {
 	return _firstVisibleIndex + index;
+}
+
+void CPetGlyphs::setSelectedIndex(int index) {
+	if (index >= 0 && index < (int)size() && getHighlightedIndex(index) == -1) {
+		if (_firstVisibleIndex <= index)
+			index -= _numVisibleGlyphs - 1;
+
+		setFirstVisible(index);
+	}
 }
 
 CPetGlyph *CPetGlyphs::getGlyph(int index) {
@@ -457,6 +470,26 @@ int CPetGlyphs::indexOf(const CPetGlyph *glyph) const {
 	}
 
 	return -1;
+}
+
+void CPetGlyphs::incSelection() {
+	if (_highlightIndex >= 0 && _highlightIndex < ((int)size() - 1)) {
+		if (getHighlightedIndex(_highlightIndex) >= (_numVisibleGlyphs - 1))
+			scrollRight();
+
+		changeHighlight(_highlightIndex + 1);
+		makePetDirty();
+	}
+}
+
+void CPetGlyphs::decSelection() {
+	if (_highlightIndex > 0) {
+		if (getHighlightedIndex(_highlightIndex) == 0)
+			scrollLeft();
+
+		changeHighlight(_highlightIndex - 1);
+		makePetDirty();
+	}
 }
 
 } // End of namespace Titanic
