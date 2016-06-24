@@ -251,12 +251,12 @@ public:
 	/**
 	 * Adds an item to the PET inventory
 	 */
-	void addToInventory(CCarry *item);
+	void addToInventory(CGameObject *item);
 
 	/**
 	 * Remove an item from the inventory
 	 */
-	void removeFromInventory(CCarry *item, CTreeItem *newParent,
+	void removeFromInventory(CGameObject *item, CTreeItem *newParent,
 		bool refreshUI = true, bool sendMsg = true);
 
 	/**
@@ -324,10 +324,10 @@ public:
 	/* CPetRooms methods */
 
 	/**
-	 * Adds a random room to the room list
+	 * Gives the player a new assigned room in the specified passenger class
 	 */
-	void addRandomRoom(int passClassNum) {
-		_rooms.addRandomRoom(passClassNum);
+	void reassignRoom(int passClassNum) {
+		_rooms.reassignRoom(passClassNum);
 	}
 
 	/**
@@ -410,8 +410,8 @@ public:
 		_rooms.resetHighlight();
 	}
 
-	int getRoomsMode1Flags() const {
-		return _rooms.mode1Flags();
+	int getAssignedRoomFlags() const {
+		return _rooms.getAssignedRoomFlags();
 	}
 
 	uint getSpecialRoomFlags(const CString &name) {
@@ -427,14 +427,25 @@ public:
 		return CRoomFlags(roomFlags).not5();
 	}
 
-	int getRoomsRoomNum1() const {
-		return _rooms.getMode1RoomNum();
+	/**
+	 * Returns the room number for the player's currently assigned room
+	 */
+	int getAssignedRoomNum() const {
+		return _rooms.getAssignedRoomNum();
 	}
-	int getRoomsFloorNum1() const {
-		return _rooms.getMode1FloorNum();
+
+	/**
+	 * Returns the floor number for the player's currently assigned room
+	 */
+	int getAssignedFloorNum() const {
+		return _rooms.getAssignedFloorNum();
 	}
+
+	/**
+	 * Returns the elevator number for the player's currently assigned room
+	 */
 	int getRoomsElevatorNum1() const {
-		return _rooms.getMode1ElevatorNum();
+		return _rooms.getAssignedElevatorNum();
 	}
 
 	void setRooms1D4(int val) {

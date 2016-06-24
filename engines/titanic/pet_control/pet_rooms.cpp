@@ -280,16 +280,18 @@ void CPetRooms::areaChanged(PetArea area) {
 		_petControl->makeDirty();
 }
 
-void CPetRooms::addRandomRoom(int passClassNum) {
-	CPetRoomsGlyph *glyph = _glyphs.findMode1();
+void CPetRooms::reassignRoom(int passClassNum) {
+	CPetRoomsGlyph *glyph = _glyphs.findAssignedRoom();
 	if (glyph)
-		glyph->setMode(RGM_2);
+		// Flag the old assigned room as no longer assigned
+		glyph->setMode(RGM_PREV_ASSIGNED_ROOM);
 
 	CRoomFlags roomFlags;
 	roomFlags.setRandomLocation(passClassNum, _field1D4);
 	glyph = addRoom(roomFlags, true);
 	if (glyph) {
-		glyph->setMode(RGM_1);
+		// Flag the new room as assigned to the player, and highlight it
+		glyph->setMode(RGM_ASSIGNED_ROOM);
 		_glyphs.highlight(glyph);
 	}
 }
@@ -307,7 +309,7 @@ CPetRoomsGlyph *CPetRooms::addRoom(uint roomFlags, bool highlight) {
 	// no longer valid, and thus can be removed
 	for (CPetRoomsGlyphs::iterator i = _glyphs.begin(); i != _glyphs.end(); ++i) {
 		CPetRoomsGlyph *glyph = static_cast<CPetRoomsGlyph *>(*i);
-		if (!glyph->isModeValid()) {
+		if (!glyph->isAssigned()) {
 			_glyphs.erase(i);
 			break;
 		}
@@ -331,13 +333,8 @@ CPetRoomsGlyph *CPetRooms::addGlyph(uint roomFlags, bool highlight) {
 	}
 }
 
-uint CPetRooms::mode1Flags() const {
-	CPetRoomsGlyph *glyph = _glyphs.findMode1();
-	return glyph ? glyph->getRoomFlags() : 0;
-}
-
 bool CPetRooms::changeLocationClass(int newClassNum) {
-	CPetRoomsGlyph *glyph = _glyphs.findMode1();
+	CPetRoomsGlyph *glyph = _glyphs.findAssignedRoom();
 	if (!glyph)
 		return 0;
 
@@ -348,31 +345,36 @@ bool CPetRooms::changeLocationClass(int newClassNum) {
 bool CPetRooms::hasRoomFlags(uint roomFlags) const {
 	for (CPetRoomsGlyphs::const_iterator i = _glyphs.begin(); i != _glyphs.end(); ++i) {
 		const CPetRoomsGlyph *glyph = static_cast<const CPetRoomsGlyph *>(*i);
-		if (glyph->isModeValid() && glyph->getRoomFlags() == roomFlags)
+		if (glyph->isAssigned() && glyph->getRoomFlags() == roomFlags)
 			return true;
 	}
 
 	return false;
 }
 
-int CPetRooms::getMode1RoomNum() const {
-	uint flags = mode1Flags();
+uint CPetRooms::getAssignedRoomFlags() const {
+	CPetRoomsGlyph *glyph = _glyphs.findAssignedRoom();
+	return glyph ? glyph->getRoomFlags() : 0;
+}
+
+int CPetRooms::getAssignedRoomNum() const {
+	uint flags = getAssignedRoomFlags();
 	if (!flags)
 		return 0;
 
 	return CRoomFlags(flags).getRoomNum();
 }
 
-int CPetRooms::getMode1FloorNum() const {
-	uint flags = mode1Flags();
+int CPetRooms::getAssignedFloorNum() const {
+	uint flags = getAssignedRoomFlags();
 	if (!flags)
 		return 0;
 
 	return CRoomFlags(flags).getFloorNum();
 }
 
-int CPetRooms::getMode1ElevatorNum() const {
-	uint flags = mode1Flags();
+int CPetRooms::getAssignedElevatorNum() const {
+	uint flags = getAssignedRoomFlags();
 	if (!flags)
 		return 0;
 

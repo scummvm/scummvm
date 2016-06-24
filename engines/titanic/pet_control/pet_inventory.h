@@ -127,7 +127,7 @@ public:
 	/**
 	 * Called when an item has been removed from the PET
 	 */
-	void itemRemoved(CCarry *item);
+	void itemRemoved(CGameObject *item);
 
 	/**
 	 * Called when the items under the PET have changed

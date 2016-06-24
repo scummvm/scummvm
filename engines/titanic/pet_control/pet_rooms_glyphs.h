@@ -28,7 +28,9 @@
 
 namespace Titanic {
 
-enum RoomGlyphMode { RGM_0 = 0, RGM_1 = 1, RGM_2 = 2 };
+enum RoomGlyphMode {
+	RGM_UNASSIGNED = 0, RGM_ASSIGNED_ROOM = 1, RGM_PREV_ASSIGNED_ROOM = 2
+};
 
 class CPetRoomsGlyph : public CPetGlyph {
 private:
@@ -75,6 +77,11 @@ public:
 
 	virtual int proc29(const Point &pt);
 
+	/**
+	 * Returns the tooltip text for when the glyph is selected
+	 */
+	virtual void getTooltip(CPetText *text);
+
 	virtual void save2(SimpleFile *file, int indent) const;
 	
 	virtual int proc33();
@@ -103,9 +110,20 @@ public:
 
 	void changeLocation(int newClassNum);
 
-	bool isModeValid() const { return _mode != RGM_0; }
-	bool isMode1() const { return _mode == RGM_1; }
-	bool isMode2() const { return _mode == RGM_2; }
+	/**
+	 * Returns true if the room is either currently or previously assigned
+	 */
+	bool isAssigned() const { return _mode != RGM_UNASSIGNED; }
+	
+	/**
+	 * Returns true if the room is the one currently assigned to the player
+	 */
+	bool isCurrentlyAssigned() const { return _mode == RGM_ASSIGNED_ROOM; }
+	
+	/**
+	 * Returns true if the room was previously assigned to the player
+	 */
+	bool isPreviouslyAssigned() const { return _mode == RGM_PREV_ASSIGNED_ROOM; }
 };
 
 class CPetRoomsGlyphs : public CPetGlyphs {
@@ -116,8 +134,10 @@ public:
 	 */
 	void save2(SimpleFile *file, int indent) const;
 
-	CPetRoomsGlyph *findMode1() const;
-
+	/**
+	 * Returns the glyph for hte player's assigned room
+	 */
+	CPetRoomsGlyph *findAssignedRoom() const;
 
 	/**
 	 * Finds a glyph in the list by it's room flags

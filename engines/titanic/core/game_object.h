@@ -271,11 +271,6 @@ protected:
 	void endTalking(CTrueTalkNPC *npc, uint id, CViewItem *view = nullptr);
 
 	/**
-	 * Load the surface
-	 */
-	void loadSurface();
-
-	/**
 	 * Change the view
 	 */
 	bool changeView(const CString &viewName, const CString &clipName);
@@ -529,6 +524,11 @@ public:
 	void loadFrame(int frameNumber);
 
 	/**
+	 * Load the surface
+	 */
+	void loadSurface();
+
+	/**
 	 * Marks the area occupied by the object as dirty, requiring re-rendering
 	 */
 	void makeDirty();
@@ -570,9 +570,9 @@ public:
 	int petGetRooms1D0() const;
 
 	/**
-	 * Adds a random room to the pET
+	 * Gives the player a new assigned room in the specified passenger class
 	 */
-	void petAddRandomRoom(int passClassNum);
+	void reassignRoom(int passClassNum);
 };
 
 } // End of namespace Titanic

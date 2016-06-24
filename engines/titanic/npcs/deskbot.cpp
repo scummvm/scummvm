@@ -178,16 +178,16 @@ bool CDeskbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 		case 1:
 			petDisplayMsg("You have been upgraded to 1st Class status. Enjoy hugely.");
 			setPassengerClass(_classNum);
-			petAddRandomRoom(_classNum);
+			reassignRoom(_classNum);
 			break;
 		case 2:
 			petDisplayMsg("You have been upgraded to 2nd Class status. Enjoy.");
 			setPassengerClass(_classNum);
-			petAddRandomRoom(_classNum);
+			reassignRoom(_classNum);
 			break;
 		case 3:
 			setPassengerClass(3);
-			petAddRandomRoom(_classNum);
+			reassignRoom(_classNum);
 			break;
 		default:
 			break;

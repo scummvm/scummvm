@@ -1062,11 +1062,10 @@ int CGameObject::petGetRooms1D0() const {
 	return petControl ? petControl->getRooms1D0() : 0;
 }
 
-void CGameObject::petAddRandomRoom(int passClassNum) {
+void CGameObject::reassignRoom(int passClassNum) {
 	CPetControl *petControl = getPetControl();
 	if (petControl)
-		petControl->addRandomRoom(passClassNum);
+		petControl->reassignRoom(passClassNum);
 }
-
 
 } // End of namespace Titanic

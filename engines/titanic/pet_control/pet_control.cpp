@@ -376,7 +376,7 @@ CGameObject *CPetControl::getNextObject(CGameObject *prior) const {
 	return static_cast<CGameObject *>(prior->getNextSibling());
 }
 
-void CPetControl::addToInventory(CCarry *item) {
+void CPetControl::addToInventory(CGameObject *item) {
 	item->detach();
 
 	if (item->getName() == "CarryParcel") {
@@ -403,7 +403,7 @@ void CPetControl::addToInventory(CCarry *item) {
 	msg.execute(item);
 }
 
-void CPetControl::removeFromInventory(CCarry *item, CTreeItem *newParent,
+void CPetControl::removeFromInventory(CGameObject *item, CTreeItem *newParent,
 		bool refreshUI, bool sendMsg) {
 	if (item && newParent) {
 		item->detach();

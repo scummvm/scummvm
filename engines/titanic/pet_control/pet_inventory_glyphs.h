@@ -61,9 +61,9 @@ public:
 
 class CInventoryGlyphAction : public CGlyphAction {
 public:
-	CCarry *_item;
+	CGameObject *_item;
 public:
-	CInventoryGlyphAction(CCarry *item, GlyphActionMode mode) : 
+	CInventoryGlyphAction(CGameObject *item, GlyphActionMode mode) : 
 		CGlyphAction(mode), _item(item) {}
 };
 

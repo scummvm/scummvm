@@ -128,7 +128,7 @@ void CPetInventory::change(CCarry *item) {
 	}
 }
 
-void CPetInventory::itemRemoved(CCarry *item) {
+void CPetInventory::itemRemoved(CGameObject *item) {
 	if (item) {
 		CInventoryGlyphAction action(item, ACTION_REMOVED);
 		_items.change(&action);

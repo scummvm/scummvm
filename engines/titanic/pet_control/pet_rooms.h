@@ -152,9 +152,9 @@ public:
 	void resetHighlight();
 
 	/**
-	 * Adds a random room to the glyph list
+	 * Gives the player a new assigned room in the specified passenger class
 	 */
-	void addRandomRoom(int passClassNum);
+	void reassignRoom(int passClassNum);
 
 	/**
 	 * Change the current location passenger class
@@ -166,16 +166,30 @@ public:
 	 */
 	bool hasRoomFlags(uint roomFlags) const;
 
-	int getMode1RoomNum() const;
-	int getMode1FloorNum() const;
-	int getMode1ElevatorNum() const;
+	/**
+	 * Returns the room flags for the player's currently assigned room
+	 */
+	uint getAssignedRoomFlags() const;
+
+	/**
+	 * Returns the room number for the player's currently assigned room
+	 */
+	int getAssignedRoomNum() const;
+
+	/**
+	 * Returns the floor number for the player's currently assigned room
+	 */
+	int getAssignedFloorNum() const;
+
+	/**
+	 * Returns the elevator number for the player's currently assigned room
+	 */
+	int getAssignedElevatorNum() const;
 
 	/**
 	 * Gets room flags to use for glyphs
 	 */
 	uint getRoomFlags() const;
-
-	uint mode1Flags() const;
 
 	void setFloorNum(int floorNum) { _floorNum = floorNum; }
 	int getFloorNum() const { return _floorNum; }

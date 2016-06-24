@@ -30,13 +30,13 @@
 namespace Titanic {
 
 CPetRoomsGlyph::CPetRoomsGlyph() : CPetGlyph(),
-	_roomFlags(0), _field38(0), _mode(RGM_0),
+	_roomFlags(0), _field38(0), _mode(RGM_UNASSIGNED),
 	_field40(nullptr), _field44(nullptr), _field48(nullptr), _field4C(nullptr),
 	_field50(nullptr), _field54(nullptr), _field58(nullptr), _field5C(nullptr) {
 }
 
 CPetRoomsGlyph::CPetRoomsGlyph(uint flags) : CPetGlyph(),
-	_roomFlags(flags), _field38(0), _mode(RGM_0),
+	_roomFlags(flags), _field38(0), _mode(RGM_UNASSIGNED),
 	_field40(nullptr), _field44(nullptr), _field48(nullptr), _field4C(nullptr),
 	_field50(nullptr), _field54(nullptr), _field58(nullptr), _field5C(nullptr) {
 }
@@ -66,7 +66,7 @@ void CPetRoomsGlyph::drawAt(CScreenManager *screenManager, const Point &pt) {
 }
 
 void CPetRoomsGlyph::proc28(const Point &topLeft, const Point &pt) {
-	if (isModeValid()) {
+	if (isAssigned()) {
 		bool isShiftPressed = g_vm->_events->getSpecialButtons() & MK_SHIFT;
 
 		if (isShiftPressed) {
@@ -89,13 +89,33 @@ int CPetRoomsGlyph::proc29(const Point &pt) {
 		if (chevron) {
 			chevron->_id = _roomFlags;
 			chevron->_isMail = _field38;
-//			petControl->removeFromInventory(chevon);
-//			chevron->loadSurface();
+			petControl->removeFromInventory(chevron, false, false);
+			chevron->loadSurface();
+
+			warning("TODO: CPetRoomsGlyph::proc29");
 			// TODO
 		}
 	}
 
 	return 0; 
+}
+
+void CPetRoomsGlyph::getTooltip(CPetText *text) {
+	CRoomFlags roomFlags(_roomFlags);
+	CPetSection *owner = getPetSection();
+
+	CString msg;
+	if (isCurrentlyAssigned()) {
+		msg = "Your assigned room: ";
+	} else if (isPreviouslyAssigned()) {
+		msg = "A previously assigned room: ";
+	} else if (!_field38) {
+		msg = "Saved Chevron: ";
+	} else if (_field38 == 1 && getRoomFlags() == _roomFlags) {
+		msg = "Current location: ";
+	}
+
+	// TODO: More stuff
 }
 
 void CPetRoomsGlyph::save2(SimpleFile *file, int indent) const {
@@ -150,10 +170,10 @@ void CPetRoomsGlyphs::save2(SimpleFile *file, int indent) const {
 		(*i)->save2(file, indent);
 }
 
-CPetRoomsGlyph *CPetRoomsGlyphs::findMode1() const {
+CPetRoomsGlyph *CPetRoomsGlyphs::findAssignedRoom() const {
 	for (const_iterator i = begin(); i != end(); ++i) {
 		CPetRoomsGlyph *glyph = static_cast<CPetRoomsGlyph *>(*i);
-		if (glyph->isMode1())
+		if (glyph->isCurrentlyAssigned())
 			return glyph;
 	}
 
