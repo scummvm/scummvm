@@ -70,7 +70,7 @@ private:
 	/**
 	 * Return a list of remote action glyph indexes for a given room
 	 */
-	void getRemoteData(int roomIndex, Common::Array<uint> &indexes);
+	bool getRemoteData(int roomIndex, Common::Array<uint> &indexes);
 
 	/**
 	 * Clear the list of rooms glyphs

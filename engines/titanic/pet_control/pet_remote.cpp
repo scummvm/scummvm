@@ -178,7 +178,19 @@ void CPetRemote::enter(PetArea oldArea) {
 }
 
 void CPetRemote::enterRoom(CRoomItem *room) {
-	// TODO
+	clearGlyphs();
+
+	if (room) {
+		CString roomName = room->getName();
+		int roomIndex = roomIndexOf(roomName);
+		if (roomIndex != -1) {
+			Common::Array<uint> indexes;
+			if (getRemoteData(roomIndex, indexes)) {
+				loadGlyphs(indexes);
+				_items.scrollToStart();
+			}
+		}
+	}
 }
 
 CPetText *CPetRemote::getText() {
@@ -298,17 +310,19 @@ int CPetRemote::roomIndexOf(const CString &name) {
 	return -1;
 }
 
-void CPetRemote::getRemoteData(int roomIndex, Common::Array<uint> &indexes) {
+bool CPetRemote::getRemoteData(int roomIndex, Common::Array<uint> &indexes) {
 	const byte *p = &REMOTE_DATA[0];
 	for (int idx = 0; idx < TOTAL_ROOMS; ++idx) {
 		if (*p == roomIndex) {
 			for (int ctr = 0; ctr < *p; ++ctr)
 				indexes.push_back(p[ctr + 1]);
-			return;
+			return true;
 		}
 
 		p += *(p + 1) + 2;
 	}
+
+	return false;
 }
 
 bool CPetRemote::loadGlyphs(const Common::Array<uint> &indexes) {
