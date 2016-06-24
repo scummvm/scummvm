@@ -529,11 +529,27 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 		}
 	}
 
-	if (champAttributes & kChampionAttributeLoad) {
-		warning("MISSING CODE: whole if branch, many F0052_TEXT_PrintToViewport-s");
+	if ((champAttributes & kChampionAttributeLoad) && isInventoryChamp) {
+		Color loadColor;
+		int16 champMaxLoad = getMaximumLoad(champ);
+		if (champ->_load > champMaxLoad) {
+			loadColor = kColorRed;
+		} else if (((int32)champ->_load) * 8 > ((int32)champMaxLoad) * 5) {
+			loadColor = kColorYellow;
+		} else {
+			loadColor = kColorLightestGray;
+		}
+		_vm->_textMan->printToViewport(104, 132, loadColor, "LOAD ");
 
-
-
+		int16 loadTmp = champ->_load / 10;
+		Common::String str = getStringFromInteger(loadTmp, true, 3);
+		str += '.';
+		loadTmp = champ->_load - (loadTmp * 10);
+		str += getStringFromInteger(loadTmp, false, 1);
+		str += '/';
+		loadTmp = (getMaximumLoad(champ) + 5) / 10;
+		str += "KG";
+		_vm->_textMan->printToViewport(148, 132, loadColor, str.c_str());
 		champAttributes |= kChampionAttributeViewport;
 	}
 
