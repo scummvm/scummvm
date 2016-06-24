@@ -513,6 +513,13 @@ CString CPetConversations::getActiveNPCName() const {
 		return CString();
 }
 
+void CPetConversations::setActiveNPC(const CString &name) {
+	_npcName = name;
+	_field418 = 1;
+	resetDials();
+	startNPCTimer();
+}
+
 void CPetConversations::copyColors(uint tableNum, uint colors[5]) {
 	const uint *src = getColorTable(tableNum);
 	Common::copy(src, src + 5, colors);
@@ -573,6 +580,11 @@ void CPetConversations::resetDials(const CString &name) {
 		npcDialChange(idx, oldLevel, newLevel);
 		_npcLevels[idx] = newLevel;
 	}
+}
+
+void CPetConversations::resetDials0() {
+	stopNPCTimer();
+	resetDials("0");
 }
 
 void CPetConversations::addLine(const CString &line) {

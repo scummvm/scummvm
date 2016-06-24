@@ -130,6 +130,11 @@ private:
 	CString getActiveNPCName() const;
 
 	/**
+	 * Set the active NPC
+	 */
+	void setActiveNPC(const CString &name);
+
+	/**
 	 * Create a color table
 	 */
 	void copyColors(uint tableNum, uint colors[5]);
@@ -246,6 +251,11 @@ public:
 	 * Reset the dials with those for a given NPC
 	 */
 	void resetDials(const CString &name);
+
+	/**
+	 * Reset the dials to the '0' position
+	 */
+	void resetDials0();
 
 	/**
 	 * Adds a line to the log
