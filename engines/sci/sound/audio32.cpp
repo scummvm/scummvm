@@ -107,6 +107,7 @@ Audio32::Audio32(ResourceManager *resMan) :
 	_mutex(),
 
 	_numActiveChannels(0),
+	_inAudioThread(false),
 
 	_maxAllowedSampleRate(44100),
 	_maxAllowedBitDepth(16),
@@ -236,9 +237,17 @@ int Audio32::writeAudioInternal(Audio::RewindableAudioStream *const sourceStream
 int Audio32::readBuffer(Audio::st_sample_t *buffer, const int numSamples) {
 	Common::StackLock lock(_mutex);
 
+	// ResourceManager is not thread-safe so we need to
+	// avoid calling into it from the audio thread, but at
+	// the same time we need to be able to clear out any
+	// finished channels on a regular basis
+	_inAudioThread = true;
+
 	// The system mixer should not try to get data when
 	// Audio32 is paused
 	assert(_pausedAtTick == 0 && _numActiveChannels > 0);
+
+	freeUnusedChannels();
 
 	// The caller of `readBuffer` is a rate converter,
 	// which reuses (without clearing) an intermediate
@@ -354,7 +363,7 @@ int Audio32::readBuffer(Audio::st_sample_t *buffer, const int numSamples) {
 		}
 	}
 
-	freeUnusedChannels();
+	_inAudioThread = false;
 
 	return maxSamplesWritten;
 }
@@ -440,6 +449,10 @@ void Audio32::freeUnusedChannels() {
 			}
 		}
 	}
+
+	if (!_inAudioThread) {
+		unlockResources();
+	}
 }
 
 void Audio32::freeChannel(const int16 channelIndex) {
@@ -450,7 +463,17 @@ void Audio32::freeChannel(const int16 channelIndex) {
 	// 4. Clear monitored memory buffer, if one existed
 	Common::StackLock lock(_mutex);
 	AudioChannel &channel = getChannel(channelIndex);
-	_resMan->unlockResource(channel.resource);
+
+	// We cannot unlock resources from the audio thread
+	// because ResourceManager is not thread-safe; instead,
+	// we just record that the resource needs unlocking and
+	// unlock it whenever we are on the main thread again
+	if (_inAudioThread) {
+		_resourcesToUnlock.push_back(channel.resource);
+	} else {
+		_resMan->unlockResource(channel.resource);
+	}
+
 	channel.resource = nullptr;
 	delete channel.stream;
 	channel.stream = nullptr;
@@ -462,6 +485,16 @@ void Audio32::freeChannel(const int16 channelIndex) {
 	if (_monitoredChannelIndex == channelIndex) {
 		_monitoredChannelIndex = -1;
 	}
+}
+
+void Audio32::unlockResources() {
+	Common::StackLock lock(_mutex);
+	assert(!_inAudioThread);
+
+	for (UnlockList::const_iterator it = _resourcesToUnlock.begin(); it != _resourcesToUnlock.end(); ++it) {
+		_resMan->unlockResource(*it);
+	}
+	_resourcesToUnlock.clear();
 }
 
 #pragma mark -
@@ -496,6 +529,8 @@ void Audio32::setNumOutputChannels(int16 numChannels) {
 
 uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool autoPlay, const bool loop, const int16 volume, const reg_t soundNode, const bool monitor) {
 	Common::StackLock lock(_mutex);
+
+	freeUnusedChannels();
 
 	if (channelIndex != kNoExistingChannel) {
 		AudioChannel &channel = getChannel(channelIndex);

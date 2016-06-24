@@ -225,6 +225,8 @@ public:
 	int16 findChannelById(const ResourceId resourceId, const reg_t soundNode = NULL_REG) const;
 
 private:
+	typedef Common::Array<Resource *> UnlockList;
+
 	/**
 	 * The audio channels.
 	 */
@@ -236,6 +238,23 @@ private:
 	 * channels may be paused.
 	 */
 	uint8 _numActiveChannels;
+
+	/**
+	 * Whether or not we are in the audio thread.
+	 *
+	 * This flag is used instead of passing a parameter to
+	 * `freeUnusedChannels` because a parameter would
+	 * require forwarding through the public method `stop`,
+	 * and there is not currently any reason for this
+	 * implementation detail to be exposed.
+	 */
+	bool _inAudioThread;
+
+	/**
+	 * The list of resources from freed channels that need
+	 * to be unlocked from the main thread.
+	 */
+	UnlockList _resourcesToUnlock;
 
 	/**
 	 * Gets the audio channel at the given index.
@@ -265,6 +284,12 @@ private:
 	 * Frees resources allocated to the given channel.
 	 */
 	void freeChannel(const int16 channelIndex);
+
+	/**
+	 * Unlocks all resources that were freed by the audio
+	 * thread.
+	 */
+	void unlockResources();
 
 #pragma mark -
 #pragma mark Script compatibility
