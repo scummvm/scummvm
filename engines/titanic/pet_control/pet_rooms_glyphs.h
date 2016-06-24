@@ -37,20 +37,25 @@ private:
 	uint _roomFlags;
 	int _field38;
 	RoomGlyphMode _mode;
-	CGameObject *_field40;
-	CGameObject *_field44;
-	CGameObject *_field48;
-	CGameObject *_field4C;
-	CGameObject *_field50;
-	CGameObject *_field54;
-	CGameObject *_field58;
-	CGameObject *_field5C;
+	CGameObject *_object0;
+	CGameObject *_object1;
+	CGameObject *_object2;
+	CGameObject *_object3;
+	CGameObject *_object4;
+	CGameObject *_object5;
+	CGameObject *_object6;
+	CGameObject *_object7;
 private:
 	/**
 	 * Find the selected button under the given point, based on the buttons
 	 * starting at a designated top/left position
 	 */
 	int getSelection(const Point &topLeft, const Point &pt);
+
+	/**
+	 * Draws the objects
+	 */
+	void drawObjects(uint flags, const Point &pt, CScreenManager *screenManager);
 public:
 	CPetRoomsGlyph();
 	CPetRoomsGlyph(uint flags);
@@ -63,7 +68,7 @@ public:
 	/**
 	 * Draw the glyph at a specified position
 	 */
-	virtual void drawAt(CScreenManager *screenManager, const Point &pt);
+	virtual void drawAt(CScreenManager *screenManager, const Point &pt, bool isHighlighted);
 
 	/**
 	 * Handles any secondary drawing of the glyph

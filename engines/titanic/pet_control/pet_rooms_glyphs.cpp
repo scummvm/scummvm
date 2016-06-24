@@ -31,14 +31,14 @@ namespace Titanic {
 
 CPetRoomsGlyph::CPetRoomsGlyph() : CPetGlyph(),
 	_roomFlags(0), _field38(0), _mode(RGM_UNASSIGNED),
-	_field40(nullptr), _field44(nullptr), _field48(nullptr), _field4C(nullptr),
-	_field50(nullptr), _field54(nullptr), _field58(nullptr), _field5C(nullptr) {
+	_object0(nullptr), _object1(nullptr), _object2(nullptr), _object3(nullptr),
+	_object4(nullptr), _object5(nullptr), _object6(nullptr), _object7(nullptr) {
 }
 
 CPetRoomsGlyph::CPetRoomsGlyph(uint flags) : CPetGlyph(),
 	_roomFlags(flags), _field38(0), _mode(RGM_UNASSIGNED),
-	_field40(nullptr), _field44(nullptr), _field48(nullptr), _field4C(nullptr),
-	_field50(nullptr), _field54(nullptr), _field58(nullptr), _field5C(nullptr) {
+	_object0(nullptr), _object1(nullptr), _object2(nullptr), _object3(nullptr),
+	_object4(nullptr), _object5(nullptr), _object6(nullptr), _object7(nullptr) {
 }
 
 bool CPetRoomsGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
@@ -46,23 +46,59 @@ bool CPetRoomsGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 		return false;
 
 	CPetSection *section = owner->getOwner();
-	_field40 = section->getBackground(9);
-	_field44 = section->getBackground(12);
-	_field50 = section->getBackground(13);
-	_field54 = section->getBackground(10);
-	_field48 = section->getBackground(11);
-	_field4C = section->getBackground(14);
-	_field58 = section->getBackground(15);
-	_field5C = _field58;
+	_object0 = section->getBackground(9);
+	_object1 = section->getBackground(12);
+	_object4 = section->getBackground(13);
+	_object5 = section->getBackground(10);
+	_object2 = section->getBackground(11);
+	_object3 = section->getBackground(14);
+	_object6 = section->getBackground(15);
+	_object7 = _object6;
 	return true;
 }
 
-void CPetRoomsGlyph::drawAt(CScreenManager *screenManager, const Point &pt) {
+void CPetRoomsGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool isHighlighted) {
 	// Clear background
 	Rect rect(pt.x, pt.y, pt.x + 52, pt.y + 52);
 	screenManager->fillRect(SURFACE_BACKBUFFER, &rect, 0, 0, 0);
 
-	warning("TODO: CPetRoomsGlyph::drawAt");
+	CRoomFlags roomFlags(_roomFlags);
+	uint elevBits = roomFlags.getElevatorBits();
+	uint classBits = roomFlags.getPassengerClassBits();
+	uint floorBits = roomFlags.getFloorBits();
+	uint roomBits = roomFlags.getRoomBits();
+
+	// Save a copy of object pointers that may be modified
+	CGameObject *obj0 = _object0;
+	CGameObject *obj1 = _object1;
+	CGameObject *obj4 = _object4;
+	CGameObject *obj5 = _object5;
+
+	if (_field38 == 1 || isHighlighted) {
+		_object0 = _object2;
+		_object1 = _object3;
+		_object4 = _object6;
+		_object5 = _object7;
+	}
+
+	// Draw the images
+	Point destPt = pt;
+	drawObjects(classBits + elevBits * 4, destPt, screenManager);
+	destPt.y += 10;
+	drawObjects((floorBits >> 4) & 15, destPt, screenManager);
+	destPt.y += 10;
+	drawObjects(floorBits & 15, destPt, screenManager);
+	destPt.y += 10;
+	drawObjects(roomBits >> 3, destPt, screenManager);
+	destPt.y += 7;
+	drawObjects(((roomBits & 7) << 1) + (roomFlags.getBit0() ? 1 : 0),
+		destPt, screenManager);
+
+	// Restore original object pointers
+	_object0 = obj0;
+	_object1 = obj1;
+	_object4 = obj4;
+	_object5 = obj5;
 }
 
 void CPetRoomsGlyph::proc28(const Point &topLeft, const Point &pt) {
@@ -102,7 +138,7 @@ int CPetRoomsGlyph::proc29(const Point &pt) {
 
 void CPetRoomsGlyph::getTooltip(CPetText *text) {
 	CRoomFlags roomFlags(_roomFlags);
-	CPetSection *owner = getPetSection();
+	CPetRooms *owner = static_cast<CPetRooms *>(getPetSection());
 
 	CString msg;
 	if (isCurrentlyAssigned()) {
@@ -111,11 +147,20 @@ void CPetRoomsGlyph::getTooltip(CPetText *text) {
 		msg = "A previously assigned room: ";
 	} else if (!_field38) {
 		msg = "Saved Chevron: ";
-	} else if (_field38 == 1 && getRoomFlags() == _roomFlags) {
+	} else if (_field38 == 1 && owner->getRoomFlags() == _roomFlags) {
 		msg = "Current location: ";
 	}
 
-	// TODO: More stuff
+	// Get the room description
+	CString roomStr = roomFlags.getRoomDesc();
+
+	if (roomStr == "The Elevator") {
+		int elevNum = owner->getElevatorNum();
+		roomStr = CString::format("Elevator %d", elevNum);
+	}
+
+	roomStr += " (shift-click edits)";
+	text->setText(roomStr);
 }
 
 void CPetRoomsGlyph::save2(SimpleFile *file, int indent) const {
@@ -160,6 +205,20 @@ int CPetRoomsGlyph::getSelection(const Point &topLeft, const Point &pt) {
 
 	return -1;
 }
+
+void CPetRoomsGlyph::drawObjects(uint flags, const Point &pt, CScreenManager *screenManager) {
+	if (_object0 && _object1 && _object4 && _object5) {
+		Point destPos = pt;
+		((flags & 8) ? _object0 : _object5)->draw(screenManager, destPos);
+		destPos.x += 13;
+		((flags & 4) ? _object4 : _object5)->draw(screenManager, destPos);
+		destPos.x += 13;
+		((flags & 2) ? _object0 : _object1)->draw(screenManager, destPos);
+		destPos.x += 13;
+		((flags & 1) ? _object4 : _object5)->draw(screenManager, destPos);
+	}
+}
+
 
 /*------------------------------------------------------------------------*/
 
