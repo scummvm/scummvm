@@ -48,7 +48,7 @@ private:
 	uint32 _priorMiddleDownTime;
 	uint32 _priorRightDownTime;
 	Common::Point _mousePos;
-	int _specialButtons;
+	uint _specialButtons;
 
 	/**
 	 * Check whether it's time to display the next screen frame
@@ -108,6 +108,8 @@ public:
 	 * Sleep for a specified period of time
 	 */
 	void sleep(uint time);
+
+	uint getSpecialButtons() const { return _specialButtons; }
 };
 
 } // End of namespace Titanic

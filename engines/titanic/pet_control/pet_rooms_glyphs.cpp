@@ -21,9 +21,11 @@
  */
 
 #include "titanic/pet_control/pet_rooms_glyphs.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/support/screen_manager.h"
 #include "titanic/room_flags.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -63,11 +65,36 @@ void CPetRoomsGlyph::drawAt(CScreenManager *screenManager, const Point &pt) {
 	warning("TODO: CPetRoomsGlyph::drawAt");
 }
 
-void CPetRoomsGlyph::proc28(const Point &pt) {
+void CPetRoomsGlyph::proc28(const Point &topLeft, const Point &pt) {
+	if (isModeValid()) {
+		bool isShiftPressed = g_vm->_events->getSpecialButtons() & MK_SHIFT;
 
+		if (isShiftPressed) {
+			int selection = getSelection(topLeft, pt);
+			if (selection >= 0)
+				_roomFlags |= 1 << selection;
+		}
+
+		updateTooltip();
+	}
 }
 
 int CPetRoomsGlyph::proc29(const Point &pt) {
+	bool isShiftPressed = g_vm->_events->getSpecialButtons() & MK_SHIFT;
+	CPetControl *petControl = getPetControl();
+
+	if (!isShiftPressed && petControl) {
+		CGameObject *chevron = petControl->getHiddenObject("3PetChevron");
+
+		if (chevron) {
+			chevron->_id = _roomFlags;
+			chevron->_isMail = _field38;
+//			petControl->removeFromInventory(chevon);
+//			chevron->loadSurface();
+			// TODO
+		}
+	}
+
 	return 0; 
 }
 
@@ -90,6 +117,28 @@ void CPetRoomsGlyph::changeLocation(int newClassNum) {
 	CRoomFlags roomFlags(_roomFlags);
 	roomFlags.changeLocation(newClassNum);
 	_roomFlags = roomFlags.get();
+}
+
+int CPetRoomsGlyph::getSelection(const Point &topLeft, const Point &pt) {
+	Rect rects[4] = {
+		Rect(topLeft.x, topLeft.y, topLeft.x + 13, topLeft.y + 10),
+		Rect(topLeft.x + 13, topLeft.y, topLeft.x + 26, topLeft.y + 10),
+		Rect(topLeft.x + 26, topLeft.y, topLeft.x + 39, topLeft.y + 10),
+		Rect(topLeft.x + 39, topLeft.y, topLeft.x + 52, topLeft.y + 10)
+	};
+
+	for (int idx = 0, btnIndex = 19; idx < 5; ++idx, btnIndex -= 4) {
+		// Iterate through each of the four rects, seeing if there's a match.
+		// If not, move it down to the next row for the next loop iteration
+		for (int i = 0; i < 4; ++i) {
+			if (rects[i].contains(pt))
+				return btnIndex - i;
+			
+			rects[i].translate(0, 10);
+		}
+	}
+
+	return -1;
 }
 
 /*------------------------------------------------------------------------*/

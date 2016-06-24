@@ -178,7 +178,7 @@ public:
 	/**
 	 *
 	 */
-	virtual void proc28(const Point &pt) {}
+	virtual void proc28(const Point &topLeft, const Point &pt) {}
 	
 	virtual int proc29(const Point &pt) { return 0; }
 

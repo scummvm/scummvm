@@ -31,7 +31,7 @@ namespace Titanic {
 enum RoomGlyphMode { RGM_0 = 0, RGM_1 = 1, RGM_2 = 2 };
 
 class CPetRoomsGlyph : public CPetGlyph {
-protected:
+private:
 	uint _roomFlags;
 	int _field38;
 	RoomGlyphMode _mode;
@@ -43,6 +43,12 @@ protected:
 	CGameObject *_field54;
 	CGameObject *_field58;
 	CGameObject *_field5C;
+private:
+	/**
+	 * Find the selected button under the given point, based on the buttons
+	 * starting at a designated top/left position
+	 */
+	int getSelection(const Point &topLeft, const Point &pt);
 public:
 	CPetRoomsGlyph();
 	CPetRoomsGlyph(uint flags);
@@ -65,7 +71,7 @@ public:
 	/**
 	 * 
 	 */
-	virtual void proc28(const Point &pt);
+	virtual void proc28(const Point &topLeft, const Point &pt);
 
 	virtual int proc29(const Point &pt);
 
