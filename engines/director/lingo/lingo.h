@@ -121,6 +121,7 @@ public:
 	void execute(int pc);
 	Symbol *lookupVar(const char *name);
 	void define(Common::String &s, int nargs);
+	void codeArg(Common::String &s);
 
 	static void c_xpop();
 	static void c_printtop();

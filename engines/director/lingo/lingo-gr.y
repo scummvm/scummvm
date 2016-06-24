@@ -268,12 +268,15 @@ gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
 // See also:
 //   on keyword
 defn: tMACRO VAR { g_lingo->_indef = true; }
-	    arglist stmtlist { g_lingo->code1(g_lingo->c_procret); g_lingo->define(*$2, $4); g_lingo->_indef = false; }
+	    arglist stmtlist {
+			g_lingo->code1(g_lingo->c_procret);
+			g_lingo->define(*$2, $4);
+			g_lingo->_indef = false; }
 	;
 arglist:  /* nothing */ 	{ $$ = 0; }
-	| VAR					{ $$ = 1; }
-	| arglist ',' VAR		{ $$ = $1 + 1; }
-	| arglist ',' '\n' VAR	{ $$ = $1 + 1; }
+	| VAR					{ g_lingo->codeArg(*$1); delete $1; $$ = 1; }
+	| arglist ',' VAR		{ g_lingo->codeArg(*$3); delete $3; $$ = $1 + 1; }
+	| arglist ',' '\n' VAR	{ g_lingo->codeArg(*$4); delete $4; $$ = $1 + 1; }
 	;
 
 

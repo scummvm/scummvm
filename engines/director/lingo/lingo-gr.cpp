@@ -526,8 +526,8 @@ static const yytype_uint16 yyrline[] =
      189,   190,   191,   194,   195,   196,   197,   198,   199,   200,
      201,   202,   203,   204,   205,   206,   207,   208,   211,   212,
      213,   214,   215,   226,   227,   228,   229,   230,   231,   234,
-     235,   236,   237,   240,   241,   242,   270,   270,   273,   274,
-     275,   276
+     235,   236,   237,   240,   241,   242,   270,   270,   276,   277,
+     278,   279
 };
 #endif
 
@@ -1848,32 +1848,35 @@ yyreduce:
 
   case 67:
 #line 271 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(g_lingo->c_procret); g_lingo->define(*(yyvsp[(2) - (5)].s), (yyvsp[(4) - (5)].narg)); g_lingo->_indef = false; ;}
+    {
+			g_lingo->code1(g_lingo->c_procret);
+			g_lingo->define(*(yyvsp[(2) - (5)].s), (yyvsp[(4) - (5)].narg));
+			g_lingo->_indef = false; ;}
     break;
 
   case 68:
-#line 273 "engines/director/lingo/lingo-gr.y"
+#line 276 "engines/director/lingo/lingo-gr.y"
     { (yyval.narg) = 0; ;}
     break;
 
   case 69:
-#line 274 "engines/director/lingo/lingo-gr.y"
-    { (yyval.narg) = 1; ;}
+#line 277 "engines/director/lingo/lingo-gr.y"
+    { g_lingo->codeArg(*(yyvsp[(1) - (1)].s)); delete (yyvsp[(1) - (1)].s); (yyval.narg) = 1; ;}
     break;
 
   case 70:
-#line 275 "engines/director/lingo/lingo-gr.y"
-    { (yyval.narg) = (yyvsp[(1) - (3)].narg) + 1; ;}
+#line 278 "engines/director/lingo/lingo-gr.y"
+    { g_lingo->codeArg(*(yyvsp[(3) - (3)].s)); delete (yyvsp[(3) - (3)].s); (yyval.narg) = (yyvsp[(1) - (3)].narg) + 1; ;}
     break;
 
   case 71:
-#line 276 "engines/director/lingo/lingo-gr.y"
-    { (yyval.narg) = (yyvsp[(1) - (4)].narg) + 1; ;}
+#line 279 "engines/director/lingo/lingo-gr.y"
+    { g_lingo->codeArg(*(yyvsp[(4) - (4)].s)); delete (yyvsp[(4) - (4)].s); (yyval.narg) = (yyvsp[(1) - (4)].narg) + 1; ;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1877 "engines/director/lingo/lingo-gr.cpp"
+#line 1880 "engines/director/lingo/lingo-gr.cpp"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2087,6 +2090,6 @@ yyreturn:
 }
 
 
-#line 280 "engines/director/lingo/lingo-gr.y"
+#line 283 "engines/director/lingo/lingo-gr.y"
 
 

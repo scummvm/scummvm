@@ -94,7 +94,19 @@ end if\n\
 if x >1 then\n\
 exit\n\
 end if\n\
+\n\
+--\n\
+macro check par1, par2\n\
+if par1 = 3 then\n\
+  put 8\n\
+else\n\
+  put 9\n\
+end if\n\
+\n\
 ", kMovieScript, 1);
+
+return Common::kNoError;
+
 
 	_lingo->addCode("mci \"open MM\\T005045a.wav type WaveAudio alias T005045a\"\n\
 	mci \"play T005045a from 22710 to 32872\"", kMovieScript, 1);
