@@ -43,7 +43,7 @@
      VOID = 259,
      INT = 260,
      FLOAT = 261,
-     VAR = 262,
+     ID = 262,
      STRING = 263,
      HANDLER = 264,
      tDOWN = 265,
@@ -82,7 +82,7 @@
 #define VOID 259
 #define INT 260
 #define FLOAT 261
-#define VAR 262
+#define ID 262
 #define STRING 263
 #define HANDLER 264
 #define tDOWN 265

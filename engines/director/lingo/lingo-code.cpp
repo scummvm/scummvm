@@ -123,18 +123,18 @@ void Lingo::c_assign() {
 	d1 = g_lingo->pop();
 	d2 = g_lingo->pop();
 
-	if (d1.sym->type != VAR && d1.sym->type != VOID) {
+	if (d1.sym->type != INT && d1.sym->type != VOID) {
 		warning("assignment to non-variable '%s'", d1.sym->name);
 		return;
 	}
 
 	d1.sym->u.val = d2.val;
-	d1.sym->type = VAR;
+	d1.sym->type = INT;
 	g_lingo->push(d2);
 }
 
 bool Lingo::verify(Symbol *s) {
-	if (s->type != VAR && s->type != VOID) {
+	if (s->type != INT && s->type != VOID) {
 		warning("attempt to evaluate non-variable '%s'", s->name);
 
 		return false;
@@ -290,7 +290,7 @@ void Lingo::c_repeatwithcode(void) {
 	g_lingo->execute(init);	/* condition */
 	d = g_lingo->pop();
 	counter->u.val = d.val;
-	counter->type = VAR;
+	counter->type = INT;
 
 	while (true) {
 		g_lingo->execute(body);	/* body */

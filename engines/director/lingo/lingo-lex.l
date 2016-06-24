@@ -34,7 +34,7 @@ int yyparse();
 
 %}
 
-variable [_[:alpha:]][_[:alnum:]]*
+identifier [_[:alpha:]][_[:alnum:]]*
 constfloat [[:digit:]]+\.[[:digit:]]*
 constinteger [[:digit:]]+
 conststring \"[^\"\n]*\"
@@ -76,7 +76,7 @@ while			{ return tWHILE; }
 [>][=]			{ return tGE; }
 [<][=]			{ return tLE; }
 
-{variable}		{ yylval.s = new Common::String(yytext);  return VAR; }
+{identifier}	{ yylval.s = new Common::String(yytext);  return ID; }
 {constfloat}	{ yylval.f = atof(yytext); return FLOAT; }
 {constinteger}	{ yylval.i = strtol(yytext, NULL, 10); return INT; }
 {operator}		{ return *yytext; }

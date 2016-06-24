@@ -73,7 +73,7 @@ using namespace Director;
 %token UNARY VOID
 %token<i> INT
 %token<f> FLOAT
-%token<s> VAR STRING HANDLER
+%token<s> ID STRING HANDLER
 %token tDOWN tELSE tEND tEXIT tFRAME tGO tIF tINTO tLOOP tMACRO tMCI tMCIWAIT
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWITH tWHILE
 %token tGE tLE tGT tLT tEQ tNEQ
@@ -104,9 +104,9 @@ programline:
 	| /* empty */
 	;
 
-asgn: tPUT expr tINTO VAR		{ g_lingo->code1(g_lingo->c_varpush); g_lingo->codeString($4->c_str()); g_lingo->code1(g_lingo->c_assign); $$ = $2; delete $4; }
-	| tSET VAR '=' expr			{ g_lingo->code1(g_lingo->c_varpush); g_lingo->codeString($2->c_str()); g_lingo->code1(g_lingo->c_assign); $$ = $4; delete $2; }
-	| tSET VAR tTO expr			{ g_lingo->code1(g_lingo->c_varpush); g_lingo->codeString($2->c_str()); g_lingo->code1(g_lingo->c_assign); $$ = $4; delete $2; }
+asgn: tPUT expr tINTO ID		{ g_lingo->code1(g_lingo->c_varpush); g_lingo->codeString($4->c_str()); g_lingo->code1(g_lingo->c_assign); $$ = $2; delete $4; }
+	| tSET ID '=' expr			{ g_lingo->code1(g_lingo->c_varpush); g_lingo->codeString($2->c_str()); g_lingo->code1(g_lingo->c_assign); $$ = $4; delete $2; }
+	| tSET ID tTO expr			{ g_lingo->code1(g_lingo->c_varpush); g_lingo->codeString($2->c_str()); g_lingo->code1(g_lingo->c_assign); $$ = $4; delete $2; }
 	;
 
 stmt: expr 				{ g_lingo->code1(g_lingo->c_xpop); }
@@ -176,7 +176,7 @@ cond:	   expr 				{ g_lingo->code1(STOP); }
 	;
 repeatwhile:	tREPEAT tWHILE		{ $$ = g_lingo->code3(g_lingo->c_repeatwhilecode, STOP, STOP); }
 	;
-repeatwith:		tREPEAT tWITH VAR	{
+repeatwith:		tREPEAT tWITH ID	{
 		$$ = g_lingo->code3(g_lingo->c_repeatwithcode, STOP, STOP);
 		g_lingo->code3(STOP, STOP, STOP);
 		g_lingo->codeString($3->c_str());
@@ -193,8 +193,16 @@ stmtlist: /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
 	| stmtlist stmt
 	;
 
-expr: INT						{ $$ = g_lingo->code1(g_lingo->c_constpush); inst i = 0; WRITE_LE_UINT32(&i, $1); g_lingo->code1(i); };
-	| VAR						{ $$ = g_lingo->code1(g_lingo->c_varpush); g_lingo->codeString($1->c_str()); g_lingo->code1(g_lingo->c_eval); delete $1; }
+expr: INT						{
+		$$ = g_lingo->code1(g_lingo->c_constpush);
+		inst i = 0;
+		WRITE_LE_UINT32(&i, $1);
+		g_lingo->code1(i); };
+	| ID						{
+		$$ = g_lingo->code1(g_lingo->c_varpush);
+		g_lingo->codeString($1->c_str());
+		g_lingo->code1(g_lingo->c_eval);
+		delete $1; }
 	| asgn
 	| expr '+' expr				{ g_lingo->code1(g_lingo->c_add); }
 	| expr '-' expr				{ g_lingo->code1(g_lingo->c_sub); }
@@ -211,7 +219,7 @@ expr: INT						{ $$ = g_lingo->code1(g_lingo->c_constpush); inst i = 0; WRITE_LE
 	;
 
 func: tMCI STRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c_str()); delete $2; }
-	| tMCIWAIT VAR			{ g_lingo->code1(g_lingo->c_mciwait); g_lingo->codeString($2->c_str()); delete $2; }
+	| tMCIWAIT ID			{ g_lingo->code1(g_lingo->c_mciwait); g_lingo->codeString($2->c_str()); delete $2; }
 	| tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| gotofunc
 	| tEXIT					{ g_lingo->code1(g_lingo->c_exit); }
@@ -269,16 +277,16 @@ gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
 //
 // See also:
 //   on keyword
-defn: tMACRO VAR { g_lingo->_indef = true; }
+defn: tMACRO ID { g_lingo->_indef = true; }
 	    begin argdef stmtlist end {
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$2, $4, $7, $5);
 			g_lingo->_indef = false; }
 	;
 argdef:  /* nothing */ 	{ $$ = 0; }
-	| VAR					{ g_lingo->codeArg(*$1); delete $1; $$ = 1; }
-	| argdef ',' VAR		{ g_lingo->codeArg(*$3); delete $3; $$ = $1 + 1; }
-	| argdef ',' '\n' VAR	{ g_lingo->codeArg(*$4); delete $4; $$ = $1 + 1; }
+	| ID					{ g_lingo->codeArg(*$1); delete $1; $$ = 1; }
+	| argdef ',' ID			{ g_lingo->codeArg(*$3); delete $3; $$ = $1 + 1; }
+	| argdef ',' '\n' ID	{ g_lingo->codeArg(*$4); delete $4; $$ = $1 + 1; }
 	;
 
 

@@ -975,7 +975,7 @@ YY_RULE_SETUP
 case 30:
 YY_RULE_SETUP
 #line 79 "engines/director/lingo/lingo-lex.l"
-{ yylval.s = new Common::String(yytext);  return VAR; }
+{ yylval.s = new Common::String(yytext);  return ID; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
