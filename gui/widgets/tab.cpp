@@ -80,6 +80,8 @@ TabWidget::~TabWidget() {
 }
 
 int16 TabWidget::getChildY() const {
+	// NOTE: if you change that, make sure to do the same
+	// changes in the ThemeLayoutTabWidget (gui/ThemeLayout.cpp)
 	return getAbsY() + _tabHeight;
 }
 
@@ -258,6 +260,8 @@ void TabWidget::adjustTabs(int value) {
 void TabWidget::reflowLayout() {
 	Widget::reflowLayout();
 
+	// NOTE: if you change that, make sure to do the same
+	// changes in the ThemeLayoutTabWidget (gui/ThemeLayout.cpp)
 	_tabHeight = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Height");
 	_tabWidth = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Width");
 	_titleVPad = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Padding.Top");
@@ -304,7 +308,7 @@ void TabWidget::drawWidget() {
 	for (int i = _firstVisibleTab; i < (int)_tabs.size(); ++i) {
 		tabs.push_back(_tabs[i].title);
 	}
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x + _bodyLP, _y + _bodyTP, _x+_w-_bodyRP, _y+_h-_bodyBP), _bodyBackgroundType);
+	g_gui.theme()->drawDialogBackground(Common::Rect(_x + _bodyLP, _y + _bodyTP, _x+_w-_bodyRP, _y+_h-_bodyBP+_tabHeight), _bodyBackgroundType);
 
 	g_gui.theme()->drawTab(Common::Rect(_x, _y, _x+_w, _y+_h), _tabHeight, _tabWidth, tabs, _activeTab - _firstVisibleTab, 0, _titleVPad);
 }
