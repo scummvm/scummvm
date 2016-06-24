@@ -73,14 +73,14 @@ using namespace Director;
 %token UNARY VOID
 %token<i> INT
 %token<f> FLOAT
-%token<s> VAR STRING
+%token<s> VAR STRING HANDLER
 %token tDOWN tELSE tEND tEXIT tFRAME tGO tIF tINTO tLOOP tMACRO tMCI tMCIWAIT
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWITH tWHILE
 %token tGE tLE tGT tLT tEQ tNEQ
 
-%type<code> asgn cond end expr if repeatwhile repeatwith stmtlist
+%type<code> asgn begin cond end expr if repeatwhile repeatwith stmtlist
 %type<s> gotoframe gotomovie
-%type<narg> arglist
+%type<narg> argdef
 
 %right '='
 %left '+' '-'
@@ -184,6 +184,8 @@ repeatwith:		tREPEAT tWITH VAR	{
 	;
 if:	  tIF	{ $$ = g_lingo->code1(g_lingo->c_ifcode); g_lingo->code3(STOP, STOP, STOP); }
 	;
+begin:	  /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
+	;
 end:	  /* nothing */		{ g_lingo->code1(STOP); $$ = g_lingo->_currentScript->size(); }
 	;
 stmtlist: /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
@@ -268,15 +270,15 @@ gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
 // See also:
 //   on keyword
 defn: tMACRO VAR { g_lingo->_indef = true; }
-	    arglist stmtlist end {
+	    begin argdef stmtlist end {
 			g_lingo->code1(g_lingo->c_procret);
-			g_lingo->define(*$2, $4);
+			g_lingo->define(*$2, $4, $7, $5);
 			g_lingo->_indef = false; }
 	;
-arglist:  /* nothing */ 	{ $$ = 0; }
+argdef:  /* nothing */ 	{ $$ = 0; }
 	| VAR					{ g_lingo->codeArg(*$1); delete $1; $$ = 1; }
-	| arglist ',' VAR		{ g_lingo->codeArg(*$3); delete $3; $$ = $1 + 1; }
-	| arglist ',' '\n' VAR	{ g_lingo->codeArg(*$4); delete $4; $$ = $1 + 1; }
+	| argdef ',' VAR		{ g_lingo->codeArg(*$3); delete $3; $$ = $1 + 1; }
+	| argdef ',' '\n' VAR	{ g_lingo->codeArg(*$4); delete $4; $$ = $1 + 1; }
 	;
 
 

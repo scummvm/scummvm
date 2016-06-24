@@ -376,8 +376,26 @@ void Lingo::c_gotoprevious() {
 	warning("STUB: c_gotoprevious()");
 }
 
-void Lingo::define(Common::String &s, int nargs) {
-	warning("STUB: define(\"%s\", %d)", s.c_str(), nargs);
+void Lingo::define(Common::String &name, int start, int end, int nargs) {
+	warning("STUB: define(\"%s\", %d, %d, %d)", name.c_str(), start, end, nargs);
+
+	Symbol *sym;
+
+	if (!_handlers.contains(name)) { // Create variable if it was not defined
+		sym = new Symbol;
+
+		delete sym->u.defn;
+
+		_handlers[name] = sym;
+	} else {
+		sym = g_lingo->_handlers[name];
+
+		sym->name = (char *)calloc(name.size() + 1, 1);
+		Common::strlcpy(sym->name, name.c_str(), name.size() + 1);
+		sym->type = HANDLER;
+	}
+
+	sym->u.defn = new ScriptData(&(*_currentScript)[start], end - start + 1);
 }
 
 void Lingo::codeArg(Common::String &s) {

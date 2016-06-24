@@ -73,13 +73,15 @@ enum LEvent {
 typedef void (*inst)(void);
 #define	STOP (inst)0
 
+typedef Common::Array<inst> ScriptData;
+
 typedef struct Symbol {	/* symbol table entry */
 	char	*name;
 	long	type;
 	union {
 		int		val;		/* VAR */
 		float	fval;		/* FLOAT */
-		inst	*defn;		/* FUNCTION, PROCEDURE */
+		ScriptData	*defn;		/* FUNCTION, PROCEDURE */
 		char	*str;		/* STRING */
 	} u;
 
@@ -93,9 +95,9 @@ typedef union Datum {	/* interpreter stack type */
 	Datum() { val = 0; sym = NULL; }
 } Datum;
 
-typedef Common::Array<inst> ScriptData;
 typedef Common::HashMap<int32, ScriptData *> ScriptHash;
 typedef Common::Array<Datum> StackData;
+typedef Common::HashMap<Common::String, Symbol *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SymbolHash;
 
 class Lingo {
 public:
@@ -120,7 +122,7 @@ public:
 public:
 	void execute(int pc);
 	Symbol *lookupVar(const char *name);
-	void define(Common::String &s, int nargs);
+	void define(Common::String &s, int start, int end, int nargs);
 	void codeArg(Common::String &s);
 
 	static void c_xpop();
@@ -173,7 +175,8 @@ private:
 
 	ScriptHash _scripts[kMaxScriptType + 1];
 
-	Common::HashMap<Common::String, Symbol *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _vars;
+	SymbolHash _vars;
+	SymbolHash _handlers;
 
 	int _pc;
 
