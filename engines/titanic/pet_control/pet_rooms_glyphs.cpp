@@ -168,8 +168,10 @@ void CPetRoomsGlyph::save2(SimpleFile *file, int indent) const {
 	file->writeNumberLine(_mode, indent);
 }
 
-int CPetRoomsGlyph::proc33() {
-	return 1;
+bool CPetRoomsGlyph::proc33(CPetGlyph *glyph) {
+	CPetRoomsGlyph *roomGlyph = static_cast<CPetRoomsGlyph *>(glyph);
+
+	return proc33(glyph) && _roomFlags == roomGlyph->_roomFlags;
 }
 
 void CPetRoomsGlyph::loadFlags(SimpleFile *file, int val) {

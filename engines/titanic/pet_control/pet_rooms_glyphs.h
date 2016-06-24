@@ -89,7 +89,7 @@ public:
 
 	virtual void save2(SimpleFile *file, int indent) const;
 	
-	virtual int proc33();
+	virtual bool proc33(CPetGlyph *glyph);
 
 	/**
 	 * Loads flags for the glyph

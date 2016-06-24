@@ -195,7 +195,7 @@ public:
 
 	virtual void save2(SimpleFile *file, int indent) {}
 
-	virtual int proc33() { return 1; }
+	virtual bool proc33(CPetGlyph *glyph) { return true; }
 	virtual int proc34() { return 1; }
 
 	/**
