@@ -141,7 +141,7 @@ bool Lingo::verify(Symbol *s) {
 	}
 
 	if (s->type == VOID) {
-		warning("undefined variable '%s'", s->name);
+		warning("Variable used before assigning a value '%s'", s->name);
 
 		return false;
 	}
