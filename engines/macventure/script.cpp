@@ -593,6 +593,7 @@ void ScriptEngine::op8eCOPYN(EngineState * state, EngineFrame * frame) {
 	while (n) {
 		val = state->peek(offs);
 		state->push(val);
+		n--;
 	}
 }
 
