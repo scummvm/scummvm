@@ -33,6 +33,7 @@
 #include "movesens.h"
 #include "objectman.h"
 #include "inventory.h"
+#include "menus.h"
 
 
 
@@ -674,7 +675,7 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 		commandSetLeader(kChampionFirst);
 		warning("MISSING CODE: F0394_MENUS_SetMagicCasterAndDrawSpellArea");
 	} else {
-		warning("MISSING CODE: F0393_MENUS_DrawSpellAreaControls");
+		_vm->_menuMan->drawSpellAreaControls(champMan._magicCasterChampionIndex);
 	}
 
 	warning("MISSING CODE: F0051_TEXT_MESSAGEAREA_PrintLineFeed");

@@ -440,6 +440,7 @@ public:
 	IconIndice _leaderHandObjectIconIndex; // @ G0413_i_LeaderHandObjectIconIndex
 	bool _leaderEmptyHanded; // @ G0415_B_LeaderEmptyHanded
 	Party _party; // @ G0407_s_Party
+	ChampionIndex _magicCasterChampionIndex; // @ G0514_i_MagicCasterChampionIndex
 
 	explicit ChampionMan(DMEngine *vm);
 	void resetDataToStartGame(); // @ F0278_CHAMPION_ResetDataToStartGame

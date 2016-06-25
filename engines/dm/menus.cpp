@@ -223,4 +223,75 @@ const char* MenuMan::getActionName(ChampionAction actionIndex) {
 	return (actionIndex == kChampionActionNone) ? "" : gChampionActionNames[actionIndex];
 }
 
+
+Box gBoxSpellAreaControls = Box(233, 319, 42, 49); // @ G0504_s_Graphic560_Box_SpellAreaControls 
+
+void MenuMan::drawSpellAreaControls(ChampionIndex champIndex) {
+	ChampionMan &champMan = *_vm->_championMan;
+	DisplayMan &dispMan = *_vm->_displayMan;
+	TextMan &textMan = *_vm->_textMan;
+
+	Champion &champ = champMan._champions[champIndex];
+	int16 champCurrHealth[4];
+	for (uint16 i = 0; i < 4; ++i)
+		champCurrHealth[i] = champMan._champions[i]._currHealth;
+	warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
+	dispMan.clearScreenBox(kColorBlack, gBoxSpellAreaControls);
+	int16 champCount = champMan._partyChampionCount;
+	switch (champIndex) {
+	case kChampionFirst:
+		warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+		textMan.printTextToScreen(235, 48, kColorBlack, kColorCyan, champ._name);
+		if (champCount) {
+			if (champCurrHealth[1]) {
+				warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+			}
+labelChamp2:
+			if (champCount > 2) {
+				if (champCurrHealth[2]) {
+					warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+				}
+labelChamp3:
+				if (champCount > 3) {
+					if (champCurrHealth[3]) {
+						warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+					}
+				}
+			}
+		}
+		break;
+	case kChampionSecond:
+		if (champCurrHealth[0]) {
+			warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+		}
+		warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+		textMan.printTextToScreen(249, 48, kColorBlack, kColorCyan, champ._name);
+		goto labelChamp2;
+	case kChampionThird:
+		if (champCurrHealth[0]) {
+			warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+		}
+		if (champCurrHealth[1]) {
+			warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+		}
+		warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+		textMan.printTextToScreen(263, 48, kColorBlack, kColorCyan, champ._name);
+		goto labelChamp3;
+	case kChampionFourth:
+		if (champCurrHealth[0]) {
+			warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+		}
+		if (champCurrHealth[1]) {
+			warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+		}
+		if (champCurrHealth[2]) {
+			warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+		}
+		warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+		textMan.printTextToScreen(277, 48, kColorBlack, kColorCyan, champ._name);
+		break;
+	}
+	warning("MISSING CODE: F0078_MOUSE_ShowPointer");
+}
+
 }

@@ -65,6 +65,7 @@ public:
 	void refreshActionAreaAndSetChampDirMaxDamageReceived(); // @ F0390_MENUS_RefreshActionAreaAndSetChampionDirectionMaximumDamageReceived
 	void drawActionArea(); // @ F0387_MENUS_DrawActionArea
 	const char* getActionName(ChampionAction actionIndex); // @ F0384_MENUS_GetActionName
+	void drawSpellAreaControls(ChampionIndex champIndex); // @ F0393_MENUS_DrawSpellAreaControls
 };
 
 }

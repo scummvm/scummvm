@@ -95,6 +95,7 @@ ChampionMan::ChampionMan(DMEngine *vm) : _vm(vm) {
 	_partyIsSleeping = false;
 	_leaderHandObjectIconIndex = kIconIndiceNone;
 	_leaderEmptyHanded = true;
+	_magicCasterChampionIndex = kChampionNone;
 }
 
 uint16 ChampionMan::getChampionPortraitX(uint16 index) {
