@@ -30,33 +30,30 @@ namespace Sci {
 
 class GfxScreen;
 
-enum ColorRemappingType {
-	kRemappingNone = 0,
-	kRemappingByRange = 1,
-	kRemappingByPercent = 2,
-	kRemappingToGray = 3,
-	kRemappingToPercentGray = 4
-};
-
 /**
- * Remap class, handles color remapping
+ * This class handles color remapping for the QFG4 demo.
  */
 class GfxRemap {
+private:
+	enum ColorRemappingType {
+		kRemapNone = 0,
+		kRemapByRange = 1,
+		kRemapByPercent = 2
+	};
+
 public:
 	GfxRemap(GfxPalette *_palette);
-	~GfxRemap();
 
 	void resetRemapping();
 	void setRemappingPercent(byte color, byte percent);
 	void setRemappingRange(byte color, byte from, byte to, byte base);
 	bool isRemapped(byte color) const {
-		return _remapOn && (_remappingType[color] != kRemappingNone);
+		return _remapOn && (_remappingType[color] != kRemapNone);
 	}
 	byte remapColor(byte remappedColor, byte screenColor);
 	void updateRemapping();
 
 private:
-	GfxScreen *_screen;
 	GfxPalette *_palette;
 
 	bool _remapOn;

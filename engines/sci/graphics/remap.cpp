@@ -21,16 +21,11 @@
  */
 
 #include "sci/sci.h"
-#include "sci/resource.h"
 #include "sci/graphics/palette.h"
-#include "sci/graphics/palette32.h"
 #include "sci/graphics/remap.h"
 #include "sci/graphics/screen.h"
 
 namespace Sci {
-
-#pragma mark -
-#pragma mark SCI16 remapping (QFG4 demo)
 
 GfxRemap::GfxRemap(GfxPalette *palette)
 	: _palette(palette) {
@@ -38,14 +33,11 @@ GfxRemap::GfxRemap(GfxPalette *palette)
 	resetRemapping();
 }
 
-GfxRemap::~GfxRemap() {
-}
-
 byte GfxRemap::remapColor(byte remappedColor, byte screenColor) {
 	assert(_remapOn);
-	if (_remappingType[remappedColor] == kRemappingByRange)
+	if (_remappingType[remappedColor] == kRemapByRange)
 		return _remappingByRange[screenColor];
-	else if (_remappingType[remappedColor] == kRemappingByPercent)
+	else if (_remappingType[remappedColor] == kRemapByPercent)
 		return _remappingByPercent[screenColor];
 	else
 		error("remapColor(): Color %d isn't remapped", remappedColor);
@@ -58,7 +50,7 @@ void GfxRemap::resetRemapping() {
 	_remappingPercentToSet = 0;
 
 	for (int i = 0; i < 256; i++) {
-		_remappingType[i] = kRemappingNone;
+		_remappingType[i] = kRemapNone;
 		_remappingByPercent[i] = i;
 		_remappingByRange[i] = i;
 	}
@@ -80,7 +72,7 @@ void GfxRemap::setRemappingPercent(byte color, byte percent) {
 		_remappingByPercent[i] = _palette->kernelFindColor(r, g, b);
 	}
 
-	_remappingType[color] = kRemappingByPercent;
+	_remappingType[color] = kRemapByPercent;
 }
 
 void GfxRemap::setRemappingRange(byte color, byte from, byte to, byte base) {
@@ -90,7 +82,7 @@ void GfxRemap::setRemappingRange(byte color, byte from, byte to, byte base) {
 		_remappingByRange[i] = i + base;
 	}
 
-	_remappingType[color] = kRemappingByRange;
+	_remappingType[color] = kRemapByRange;
 }
 
 void GfxRemap::updateRemapping() {

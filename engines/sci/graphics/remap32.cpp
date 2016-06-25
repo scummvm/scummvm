@@ -28,7 +28,7 @@ namespace Sci {
 
 GfxRemap32::GfxRemap32(GfxPalette32 *palette) : _palette(palette) {
 	for (int i = 0; i < REMAP_COLOR_COUNT; i++)
-		_remaps[i] = RemapParams(0, 0, 0, 0, 100, kRemappingNone);
+		_remaps[i] = RemapParams(0, 0, 0, 0, 100, kRemapNone);
 	_noMapStart = _noMapCount = 0;
 	_update = false;
 	_remapCount = 0;
@@ -41,13 +41,13 @@ GfxRemap32::GfxRemap32(GfxPalette32 *palette) : _palette(palette) {
 void GfxRemap32::remapOff(byte color) {
 	if (!color) {
 		for (int i = 0; i < REMAP_COLOR_COUNT; i++)
-			_remaps[i] = RemapParams(0, 0, 0, 0, 100, kRemappingNone);
+			_remaps[i] = RemapParams(0, 0, 0, 0, 100, kRemapNone);
 
 		_remapCount = 0;
 	} else {
 		assert(_remapEndColor - color >= 0 && _remapEndColor - color < REMAP_COLOR_COUNT);
 		const byte index = _remapEndColor - color;
-		_remaps[index] = RemapParams(0, 0, 0, 0, 100, kRemappingNone);
+		_remaps[index] = RemapParams(0, 0, 0, 0, 100, kRemapNone);
 		_remapCount--;
 	}
 
@@ -56,7 +56,7 @@ void GfxRemap32::remapOff(byte color) {
 
 void GfxRemap32::setRemappingRange(byte color, byte from, byte to, byte base) {
 	assert(_remapEndColor - color >= 0 && _remapEndColor - color < REMAP_COLOR_COUNT);
-	_remaps[_remapEndColor - color] = RemapParams(from, to, base, 0, 100, kRemappingByRange);
+	_remaps[_remapEndColor - color] = RemapParams(from, to, base, 0, 100, kRemapByRange);
 	initColorArrays(_remapEndColor - color);
 	_remapCount++;
 	_update = true;
@@ -64,7 +64,7 @@ void GfxRemap32::setRemappingRange(byte color, byte from, byte to, byte base) {
 
 void GfxRemap32::setRemappingPercent(byte color, byte percent) {
 	assert(_remapEndColor - color >= 0 && _remapEndColor - color < REMAP_COLOR_COUNT);
-	_remaps[_remapEndColor - color] = RemapParams(0, 0, 0, 0, percent, kRemappingByPercent);
+	_remaps[_remapEndColor - color] = RemapParams(0, 0, 0, 0, percent, kRemapByPercent);
 	initColorArrays(_remapEndColor - color);
 	_remapCount++;
 	_update = true;
@@ -72,7 +72,7 @@ void GfxRemap32::setRemappingPercent(byte color, byte percent) {
 
 void GfxRemap32::setRemappingToGray(byte color, byte gray) {
 	assert(_remapEndColor - color >= 0 && _remapEndColor - color < REMAP_COLOR_COUNT);
-	_remaps[_remapEndColor - color] = RemapParams(0, 0, 0, gray, 100, kRemappingToGray);
+	_remaps[_remapEndColor - color] = RemapParams(0, 0, 0, gray, 100, kRemapToGray);
 	initColorArrays(_remapEndColor - color);
 	_remapCount++;
 	_update = true;
@@ -80,7 +80,7 @@ void GfxRemap32::setRemappingToGray(byte color, byte gray) {
 
 void GfxRemap32::setRemappingToPercentGray(byte color, byte gray, byte percent) {
 	assert(_remapEndColor - color >= 0 && _remapEndColor - color < REMAP_COLOR_COUNT);
-	_remaps[_remapEndColor - color] = RemapParams(0, 0, 0, gray, percent, kRemappingToPercentGray);
+	_remaps[_remapEndColor - color] = RemapParams(0, 0, 0, gray, percent, kRemapToPercentGray);
 	initColorArrays(_remapEndColor - color);
 	_remapCount++;
 	_update = true;
@@ -94,13 +94,13 @@ void GfxRemap32::setNoMatchRange(byte from, byte count) {
 bool GfxRemap32::remapEnabled(byte color) const {
 	assert(_remapEndColor - color >= 0 && _remapEndColor - color < REMAP_COLOR_COUNT);
 	const byte index = _remapEndColor - color;
-	return (_remaps[index].type != kRemappingNone);
+	return (_remaps[index].type != kRemapNone);
 }
 
 byte GfxRemap32::remapColor(byte color, byte target) {
 	assert(_remapEndColor - color >= 0 && _remapEndColor - color < REMAP_COLOR_COUNT);
 	const byte index = _remapEndColor - color;
-	if (_remaps[index].type != kRemappingNone)
+	if (_remaps[index].type != kRemapNone)
 		return _remaps[index].remap[target];
 	else
 		return target;
@@ -127,9 +127,9 @@ bool GfxRemap32::updateRemap(byte index, bool palChanged) {
 	Common::fill(_targetChanged, _targetChanged + NON_REMAPPED_COLOR_COUNT, false);
 
 	switch (curRemap->type) {
-	case kRemappingNone:
+	case kRemapNone:
 		return false;
-	case kRemappingByRange:
+	case kRemapByRange:
 		for (int i = 0; i < NON_REMAPPED_COLOR_COUNT; i++)  {
 			if (curRemap->from <= i && i <= curRemap->to)
 				result = i + curRemap->base;
@@ -144,7 +144,7 @@ bool GfxRemap32::updateRemap(byte index, bool palChanged) {
 			curRemap->colorChanged[i] = true;
 		}
 		return changed;
-	case kRemappingByPercent:
+	case kRemapByPercent:
 		for (int i = 1; i < NON_REMAPPED_COLOR_COUNT; i++) {
 			// NOTE: This method uses nextPalette instead of curPalette
 			Color color = nextPalette->colors[i];
@@ -172,7 +172,7 @@ bool GfxRemap32::updateRemap(byte index, bool palChanged) {
 		Common::fill(curRemap->colorChanged, curRemap->colorChanged + NON_REMAPPED_COLOR_COUNT, false);
 		curRemap->oldPercent = curRemap->percent;
 		return changed;
-	case kRemappingToGray:
+	case kRemapToGray:
 		for (int i = 1; i < NON_REMAPPED_COLOR_COUNT; i++) {
 			Color color = curPalette->colors[i];
 
@@ -200,7 +200,7 @@ bool GfxRemap32::updateRemap(byte index, bool palChanged) {
 		Common::fill(curRemap->colorChanged, curRemap->colorChanged + NON_REMAPPED_COLOR_COUNT, false);
 		curRemap->oldGray = curRemap->gray;
 		return changed;
-	case kRemappingToPercentGray:
+	case kRemapToPercentGray:
 		for (int i = 1; i < NON_REMAPPED_COLOR_COUNT; i++) {
 			Color color = curPalette->colors[i];
 

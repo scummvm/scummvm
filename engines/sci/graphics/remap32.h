@@ -24,12 +24,19 @@
 #define SCI_GRAPHICS_REMAP32_H
 
 #include "common/array.h"
-#include "sci/graphics/remap.h"
 
 namespace Sci {
 
 #define REMAP_COLOR_COUNT 9
 #define NON_REMAPPED_COLOR_COUNT 236
+
+enum RemapType {
+	kRemapNone = 0,
+	kRemapByRange = 1,
+	kRemapByPercent = 2,
+	kRemapToGray = 3,
+	kRemapToPercentGray = 4
+};
 
 struct RemapParams {
 	byte from;
@@ -39,7 +46,7 @@ struct RemapParams {
 	byte oldGray;
 	byte percent;
 	byte oldPercent;
-	ColorRemappingType type;
+	RemapType type;
 	Color curColor[256];
 	Color targetColor[256];
 	byte distance[256];
@@ -48,7 +55,7 @@ struct RemapParams {
 
 	RemapParams() {
 		from = to = base = gray = oldGray = percent = oldPercent = 0;
-		type = kRemappingNone;
+		type = kRemapNone;
 
 		// curColor and targetColor are initialized in GfxRemap32::initColorArrays
 		memset(curColor, 0, 256 * sizeof(Color));
@@ -59,7 +66,7 @@ struct RemapParams {
 		Common::fill(colorChanged, colorChanged + ARRAYSIZE(colorChanged), true);
 	}
 
-	RemapParams(byte from_, byte to_, byte base_, byte gray_, byte percent_, ColorRemappingType type_) {
+	RemapParams(byte from_, byte to_, byte base_, byte gray_, byte percent_, RemapType type_) {
 		from = from_;
 		to = to_;
 		base = base_;
