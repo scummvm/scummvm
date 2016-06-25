@@ -103,7 +103,7 @@ void Lingo::c_printtop(void) {
 void Lingo::c_constpush() {
 	Datum d;
 	inst i = (*g_lingo->_currentScript)[g_lingo->_pc++];
-	d.val = READ_LE_UINT32(&i);
+	d.val = READ_UINT32(&i);
 	g_lingo->push(d);
 }
 
@@ -256,8 +256,8 @@ void Lingo::c_repeatwhilecode(void) {
 	Datum d;
 	int savepc = g_lingo->_pc;
 
-	int body = READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc]);
-	int end =  READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
+	int body = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
+	int end =  READ_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
 
 	g_lingo->execute(savepc + 2);	/* condition */
 	d = g_lingo->pop();
@@ -279,11 +279,11 @@ void Lingo::c_repeatwithcode(void) {
 	Datum d;
 	int savepc = g_lingo->_pc;
 
-	int init = READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc]);
-	int finish =  READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
-	int body = READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
-	int inc = (int32)READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 3]);
-	int end =  READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 4]);
+	int init = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
+	int finish =  READ_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
+	int body = READ_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
+	int inc = (int32)READ_UINT32(&(*g_lingo->_currentScript)[savepc + 3]);
+	int end =  READ_UINT32(&(*g_lingo->_currentScript)[savepc + 4]);
 	Common::String countername((char *)&(*g_lingo->_currentScript)[savepc + 5]);
 	Symbol *counter = g_lingo->lookupVar(countername.c_str());
 
@@ -313,9 +313,9 @@ void Lingo::c_ifcode() {
 	Datum d;
 	int savepc = g_lingo->_pc;	/* then part */
 
-	int then =  READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc]);
-	int elsep = READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
-	int end =   READ_LE_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
+	int then =  READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
+	int elsep = READ_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
+	int end =   READ_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
 
 	g_lingo->execute(savepc + 3);	/* condition */
 
