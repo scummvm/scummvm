@@ -31,6 +31,7 @@
 
 namespace Sci {
 #pragma mark CelScaler
+
 CelScaler *CelObj::_scaler = nullptr;
 
 void CelScaler::activateScaleTables(const Ratio &scaleX, const Ratio &scaleY) {
@@ -321,6 +322,10 @@ public:
 #pragma mark -
 #pragma mark CelObj - Remappers
 
+/**
+ * Pixel mapper for a CelObj with transparent pixels and no
+ * remapping data.
+ */
 struct MAPPER_NoMD {
 	inline void draw(byte *target, const byte pixel, const uint8 skipColor) const {
 		if (pixel != skipColor) {
@@ -328,21 +333,45 @@ struct MAPPER_NoMD {
 		}
 	}
 };
+
+/**
+ * Pixel mapper for a CelObj with no transparent pixels and
+ * no remapping data.
+ */
 struct MAPPER_NoMDNoSkip {
 	inline void draw(byte *target, const byte pixel, const uint8) const {
 		*target = pixel;
 	}
 };
 
+/**
+ * Pixel mapper for a CelObj with transparent pixels,
+ * remapping data, and remapping enabled.
+ */
 struct MAPPER_Map {
 	inline void draw(byte *target, const byte pixel, const uint8 skipColor) const {
 		if (pixel != skipColor) {
+			// NOTE: For some reason, SSCI never checks if the source
+			// pixel is *above* the range of remaps.
 			if (pixel < g_sci->_gfxRemap32->getStartColor()) {
 				*target = pixel;
-			} else {
-				if (g_sci->_gfxRemap32->remapEnabled(pixel))
-					*target = g_sci->_gfxRemap32->remapColor(pixel, *target);
+			} else if (g_sci->_gfxRemap32->remapEnabled(pixel)) {
+				*target = g_sci->_gfxRemap32->remapColor(pixel, *target);
 			}
+		}
+	}
+};
+
+/**
+ * Pixel mapper for a CelObj with transparent pixels,
+ * remapping data, and remapping disabled.
+ */
+struct MAPPER_NoMap {
+	inline void draw(byte *target, const byte pixel, const uint8 skipColor) const {
+		// NOTE: For some reason, SSCI never checks if the source
+		// pixel is *above* the range of remaps.
+		if (pixel != skipColor && pixel < g_sci->_gfxRemap32->getStartColor()) {
+			*target = pixel;
 		}
 	}
 };
@@ -521,6 +550,7 @@ void CelObj::submitPalette() const {
 
 #pragma mark -
 #pragma mark CelObj - Caching
+
 int CelObj::_nextCacheId = 1;
 CelCache *CelObj::_cache = nullptr;
 
@@ -622,33 +652,35 @@ void dummyFill(Buffer &target, const Common::Rect &targetRect) {
 }
 
 void CelObj::drawHzFlip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	debug("drawHzFlip");
-	dummyFill(target, targetRect);
+	render<MAPPER_NoMap, SCALER_NoScale<true, READER_Compressed> >(target, targetRect, scaledPosition);
 }
 
 void CelObj::drawNoFlip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	debug("drawNoFlip");
-	dummyFill(target, targetRect);
+	render<MAPPER_NoMap, SCALER_NoScale<false, READER_Compressed> >(target, targetRect, scaledPosition);
 }
 
 void CelObj::drawUncompNoFlip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	debug("drawUncompNoFlip");
-	dummyFill(target, targetRect);
+	render<MAPPER_NoMap, SCALER_NoScale<false, READER_Uncompressed> >(target, targetRect, scaledPosition);
 }
 
 void CelObj::drawUncompHzFlip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	debug("drawUncompHzFlip");
-	dummyFill(target, targetRect);
+	render<MAPPER_NoMap, SCALER_NoScale<true, READER_Uncompressed> >(target, targetRect, scaledPosition);
 }
 
 void CelObj::scaleDraw(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	debug("scaleDraw");
-	dummyFill(target, targetRect);
+	if (_drawMirrored) {
+		render<MAPPER_NoMap, SCALER_Scale<true, READER_Compressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+	} else {
+		render<MAPPER_NoMap, SCALER_Scale<false, READER_Compressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+	}
 }
 
 void CelObj::scaleDrawUncomp(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	debug("scaleDrawUncomp");
-	dummyFill(target, targetRect);
+	if (_drawMirrored) {
+		render<MAPPER_NoMap, SCALER_Scale<true, READER_Uncompressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+	} else {
+		render<MAPPER_NoMap, SCALER_Scale<false, READER_Uncompressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+	}
 }
 
 void CelObj::drawHzFlipMap(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
@@ -668,17 +700,19 @@ void CelObj::drawUncompHzFlipMap(Buffer &target, const Common::Rect &targetRect,
 }
 
 void CelObj::scaleDrawMap(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	if (_drawMirrored)
+	if (_drawMirrored) {
 		render<MAPPER_Map, SCALER_Scale<true, READER_Compressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
-	else
+	} else {
 		render<MAPPER_Map, SCALER_Scale<false, READER_Compressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+	}
 }
 
 void CelObj::scaleDrawUncompMap(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	if (_drawMirrored)
+	if (_drawMirrored) {
 		render<MAPPER_Map, SCALER_Scale<true, READER_Uncompressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
-	else
+	} else {
 		render<MAPPER_Map, SCALER_Scale<false, READER_Uncompressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+	}
 }
 
 void CelObj::drawNoFlipNoMD(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
@@ -713,14 +747,16 @@ void CelObj::scaleDrawNoMD(Buffer &target, const Ratio &scaleX, const Ratio &sca
 }
 
 void CelObj::scaleDrawUncompNoMD(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	if (_drawMirrored)
+	if (_drawMirrored) {
 		render<MAPPER_NoMD, SCALER_Scale<true, READER_Uncompressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
-	else
+	} else {
 		render<MAPPER_NoMD, SCALER_Scale<false, READER_Uncompressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+	}
 }
 
 #pragma mark -
 #pragma mark CelObjView
+
 CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int16 celNo) {
 	_info.type = kCelTypeView;
 	_info.resourceId = viewId;
@@ -838,8 +874,12 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 bool CelObjView::analyzeUncompressedForRemap() const {
 	byte *pixels = getResPointer() + READ_SCI11ENDIAN_UINT32(getResPointer() + _celHeaderOffset + 24);
 	for (int i = 0; i < _width * _height; ++i) {
-		byte pixel = pixels[i];
-		if (pixel >= g_sci->_gfxRemap32->getStartColor() && pixel <= g_sci->_gfxRemap32->getEndColor() && pixel != _transparentColor) {
+		const byte pixel = pixels[i];
+		if (
+			pixel >= g_sci->_gfxRemap32->getStartColor() &&
+			pixel <= g_sci->_gfxRemap32->getEndColor() &&
+			pixel != _transparentColor
+		) {
 			return true;
 		}
 	}
@@ -851,8 +891,12 @@ bool CelObjView::analyzeForRemap() const {
 	for (int y = 0; y < _height; y++) {
 		const byte *curRow = reader.getRow(y);
 		for (int x = 0; x < _width; x++) {
-			byte pixel = curRow[x];
-			if (pixel >= g_sci->_gfxRemap32->getStartColor() && pixel <= g_sci->_gfxRemap32->getEndColor() && pixel != _transparentColor) {
+			const byte pixel = curRow[x];
+			if (
+				pixel >= g_sci->_gfxRemap32->getStartColor() &&
+				pixel <= g_sci->_gfxRemap32->getEndColor() &&
+				pixel != _transparentColor
+			) {
 				return true;
 			}
 		}
@@ -879,6 +923,7 @@ byte *CelObjView::getResPointer() const {
 
 #pragma mark -
 #pragma mark CelObjPic
+
 CelObjPic::CelObjPic(const GuiResourceId picId, const int16 celNo) {
 	_info.type = kCelTypePic;
 	_info.resourceId = picId;
@@ -1000,6 +1045,7 @@ byte *CelObjPic::getResPointer() const {
 
 #pragma mark -
 #pragma mark CelObjMem
+
 CelObjMem::CelObjMem(const reg_t bitmapObject) {
 	_info.type = kCelTypeMem;
 	_info.bitmap = bitmapObject;
@@ -1029,6 +1075,7 @@ byte *CelObjMem::getResPointer() const {
 
 #pragma mark -
 #pragma mark CelObjColor
+
 CelObjColor::CelObjColor(const uint8 color, const int16 width, const int16 height) {
 	_info.type = kCelTypeColor;
 	_info.color = color;
