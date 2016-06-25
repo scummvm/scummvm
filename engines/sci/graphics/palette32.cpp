@@ -78,15 +78,6 @@ inline void mergePaletteInternal(Palette *const to, const Palette *const from) {
 	}
 }
 
-const Palette *GfxPalette32::getNextPalette() const {
-	return &_nextPalette;
-}
-
-const Palette *GfxPalette32::getCurrentPalette() const {
-	return &_sysPalette;
-}
-
-
 void GfxPalette32::submit(Palette &palette) {
 	// TODO: The resource manager in SCI32 retains raw data of palettes from
 	// the ResourceManager (ResourceMgr) through SegManager (MemoryMgr), and

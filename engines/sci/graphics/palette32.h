@@ -113,8 +113,8 @@ private:
 
 public:
 	virtual void saveLoadWithSerializer(Common::Serializer &s) override;
-	const Palette *getNextPalette() const;
-	const Palette *getCurrentPalette() const;
+	inline const Palette &getNextPalette() const { return _nextPalette; };
+	inline const Palette &getCurrentPalette() const { return _sysPalette; };
 
 	bool kernelSetFromResource(GuiResourceId resourceId, bool force) override;
 	int16 kernelFindColor(uint16 r, uint16 g, uint16 b) override;
@@ -240,6 +240,11 @@ private:
 	 * According to SCI engine code, when two cyclers overlap,
 	 * a fatal error has occurred and the engine will display
 	 * an error and then exit.
+	 *
+	 * The cycle map is also by the color remapping system to
+	 * avoid attempting to remap to palette entries that are
+	 * cycling (so won't be the expected color once the cycler
+	 * runs again).
 	 */
 	bool _cycleMap[256];
 	inline void clearCycleMap(uint16 fromColor, uint16 numColorsToClear);
@@ -257,7 +262,7 @@ public:
 	void cycleAllOff();
 	void applyAllCycles();
 	void applyCycles();
-	const bool *getCyclemap() { return _cycleMap; }
+	inline const bool *getCycleMap() const { return _cycleMap; }
 
 #pragma mark -
 #pragma mark Fading

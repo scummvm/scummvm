@@ -24,7 +24,7 @@
 #define SCI_GRAPHICS_REMAP_H
 
 #include "common/array.h"
-#include "sci/graphics/helpers.h"
+#include "common/serializer.h"
 
 namespace Sci {
 

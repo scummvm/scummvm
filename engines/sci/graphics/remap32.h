@@ -23,12 +23,13 @@
 #ifndef SCI_GRAPHICS_REMAP32_H
 #define SCI_GRAPHICS_REMAP32_H
 
+#include "common/algorithm.h"
 #include "common/array.h"
+#include "common/scummsys.h"
+#include "sci/graphics/helpers.h"
 
 namespace Sci {
-
-#define REMAP_COLOR_COUNT 9
-#define NON_REMAPPED_COLOR_COUNT 236
+class GfxPalette32;
 
 enum RemapType {
 	kRemapNone = 0,
@@ -38,84 +39,362 @@ enum RemapType {
 	kRemapToPercentGray = 4
 };
 
-struct RemapParams {
-	byte from;
-	byte to;
-	byte base;
-	byte gray;
-	byte oldGray;
-	byte percent;
-	byte oldPercent;
-	RemapType type;
-	Color curColor[256];
-	Color targetColor[256];
-	byte distance[256];
-	byte remap[256];
-	bool colorChanged[256];
+#pragma mark -
+#pragma mark SingleRemap
 
-	RemapParams() {
-		from = to = base = gray = oldGray = percent = oldPercent = 0;
-		type = kRemapNone;
-
-		// curColor and targetColor are initialized in GfxRemap32::initColorArrays
-		memset(curColor, 0, 256 * sizeof(Color));
-		memset(targetColor, 0, 256 * sizeof(Color));
-		memset(distance, 0, 256);
-		for (int i = 0; i < NON_REMAPPED_COLOR_COUNT; i++)
-			remap[i] = i;
-		Common::fill(colorChanged, colorChanged + ARRAYSIZE(colorChanged), true);
-	}
-
-	RemapParams(byte from_, byte to_, byte base_, byte gray_, byte percent_, RemapType type_) {
-		from = from_;
-		to = to_;
-		base = base_;
-		gray = oldGray = gray_;
-		percent = oldPercent = percent_;
-		type = type_;
-
-		// curColor and targetColor are initialized in GfxRemap32::initColorArrays
-		memset(curColor, 0, 256 * sizeof(Color));
-		memset(targetColor, 0, 256 * sizeof(Color));
-		memset(distance, 0, 256);
-		for (int i = 0; i < NON_REMAPPED_COLOR_COUNT; i++)
-			remap[i] = i;
-		Common::fill(colorChanged, colorChanged + ARRAYSIZE(colorChanged), true);
-	}
-};
-
-class GfxRemap32 {
+/**
+ * SingleRemap objects each manage one remapping operation.
+ */
+class SingleRemap {
 public:
-	GfxRemap32(GfxPalette32 *palette);
-	~GfxRemap32() {}
+	SingleRemap() : _type(kRemapNone) {}
 
-	void remapOff(byte color);
-	void setRemappingRange(byte color, byte from, byte to, byte base);
-	void setRemappingPercent(byte color, byte percent);
-	void setRemappingToGray(byte color, byte gray);
-	void setRemappingToPercentGray(byte color, byte gray, byte percent);
-	void setNoMatchRange(byte from, byte count);
-	bool remapEnabled(byte color) const;
-	byte remapColor(byte color, byte target);
-	bool remapAllTables(bool palChanged);
-	int getRemapCount() const { return _remapCount; }
-	int getStartColor() const { return _remapEndColor - REMAP_COLOR_COUNT + 1; }
-	int getEndColor() const { return _remapEndColor; }
+	/**
+	 * The type of remap.
+	 */
+	RemapType _type;
+
+	/**
+	 * The first color that should be shifted by a range
+	 * remap.
+	 */
+	uint8 _from;
+
+	/**
+	 * The last color that should be shifted a range remap.
+	 */
+	uint8 _to;
+
+	/**
+	 * The direction and amount that the colors should be
+	 * shifted in a range remap.
+	 */
+	int16 _delta;
+
+	/**
+	 * The difference in brightness that should be
+	 * applied by a brightness (percent) remap.
+	 *
+	 * This value may be be greater than 100, in
+	 * which case the color will be oversaturated.
+	 */
+	int16 _percent;
+
+	/**
+	 * The amount of desaturation that should be
+	 * applied by a saturation (gray) remap, where
+	 * 0 is full saturation and 100 is full
+	 * desaturation.
+	 */
+	uint8 _gray;
+
+	/**
+	 * The final array used by CelObj renderers to composite
+	 * remapped pixels to the screen buffer.
+	 *
+	 * Here is how it works:
+	 *
+	 * The source bitmap being rendered will have pixels
+	 * within the remap range (236-245 or 236-254), and the
+	 * target buffer will have colors in the non-remapped
+	 * range (0-235).
+	 *
+	 * To arrive at the correct color, first the source
+	 * pixel is used to look up the correct SingleRemap for
+	 * that pixel. Then, the final composited color is
+	 * looked up in this array using the target's pixel
+	 * color. In other words,
+	 * `target = _remaps[remapEndColor - source].remapColors[target]`.
+	 */
+	uint8 _remapColors[236];
+
+	/**
+	 * Resets this SingleRemap's color information to
+	 * default values.
+	 */
+	void reset();
+
+	/**
+	 * Recalculates and reapplies remap colors to the
+	 * `_remapColors` array.
+	 */
+	bool update();
+
 private:
-	GfxPalette32 *_palette;
-	RemapParams _remaps[REMAP_COLOR_COUNT];
-	bool _update;
-	byte _noMapStart, _noMapCount;
-	bool _targetChanged[NON_REMAPPED_COLOR_COUNT];
-	byte _remapEndColor;
-	int _remapCount;
+	/**
+	 * The previous brightness value. Used to
+	 * determine whether or not targetColors needs
+	 * to be updated.
+	 */
+	int16 _lastPercent;
 
-	void initColorArrays(byte index);
-	bool applyRemap(byte index);
-	bool updateRemap(byte index, bool palChanged);
-	int16 matchColor(const byte r, const byte g, const byte b, const int defaultDifference, int &lastCalculatedDifference, const bool *const matchTable) const;
+	/**
+	 * The previous saturation value. Used to
+	 * determine whether or not targetColors needs
+	 * to be updated.
+	 */
+	uint8 _lastGray;
+
+	/**
+	 * The colors from the current GfxPalette32 palette
+	 * before this SingleRemap is applied.
+	 */
+	Color _originalColors[236];
+
+	/**
+	 * Map of colors that changed in `_originalColors`
+	 * when this SingleRemap was updated. This map is
+	 * transient and gets reset to `false` after the
+	 * SingleRemap finishes updating.
+	 */
+	bool _originalColorsChanged[236];
+
+	/**
+	 * The ideal target RGB color values for each generated
+	 * remap color.
+	 */
+	Color _idealColors[236];
+
+	/**
+	 * Map of colors that changed in `_idealColors` when
+	 * this SingleRemap was updated. This map is transient
+	 * and gets reset to `false` after the SingleRemap
+	 * finishes applying.
+	 */
+	bool _idealColorsChanged[236];
+
+	/**
+	 * When applying a SingleRemap, finding an appropriate
+	 * color in the palette is the responsibility of a
+	 * distance function. Once a match is found, the
+	 * distance of that match is stored here so that the
+	 * next time the SingleRemap is applied, it can check
+	 * the distance from the previous application and avoid
+	 * triggering an expensive redraw of the entire screen
+	 * if the new palette value only changed slightly.
+	 */
+	int _matchDistances[236];
+
+	/**
+	 * Computes the final target values for a range remap
+	 * and applies them directly to the `_remaps` map.
+	 *
+	 * @note Was ByRange in SSCI.
+	 */
+	bool updateRange();
+
+	/**
+	 * Computes the intermediate target values for a
+	 * brightness remap and applies them indirectly via
+	 * the `apply` method.
+	 *
+	 * @note Was ByPercent in SSCI.
+	 */
+	bool updateBrightness();
+
+	/**
+	 * Computes the intermediate target values for a
+	 * saturation remap and applies them indirectly via
+	 * the `apply` method.
+	 *
+	 * @note Was ToGray in SSCI.
+	 */
+	bool updateSaturation();
+
+	/**
+	 * Computes the intermediate target values for a
+	 * saturation + brightness bitmap and applies them
+	 * indirectly via the `apply` method.
+	 *
+	 * @note Was ToPercentGray in SSCI.
+	 */
+	bool updateSaturationAndBrightness();
+
+	/**
+	 * Computes and applies the final values to the
+	 * `_remaps` map.
+	 *
+	 * @note In SSCI, a boolean array of changed values
+	 * was passed into this method, but this was done by
+	 * creating arrays on the stack in the caller. Instead
+	 * of doing this, we simply add another member property
+	 * `_idealColorsChanged` and use that instead.
+	 */
+	bool apply();
+
+	/**
+	 * Calculates the square distance of two colors.
+	 *
+	 * @note In SSCI this method is Rgb24::Dist, but it is
+	 * only used by SingleRemap.
+	 */
+	int colorDistance(const Color &a, const Color &b) const;
+
+	/**
+	 * Finds the closest index in the next palette matching
+	 * the given RGB color. Returns -1 if no match can be
+	 * found that is closer than `minimumDistance`.
+	 *
+	 * @note In SSCI, this method is SOLPalette::Match, but
+	 * this particular signature is only used by
+	 * SingleRemap.
+	 */
+	int16 matchColor(const Color &color, const int minimumDistance, int &outDistance, const bool *const blockedIndexes) const;
 };
 
-} // End of namespace Sci
+#pragma mark -
+#pragma mark GfxRemap32
 
+/**
+ * This class provides color remapping support for SCI32
+ * games.
+ */
+class GfxRemap32 : public Common::Serializable {
+public:
+	GfxRemap32();
+
+	void saveLoadWithSerializer(Common::Serializer &s);
+
+	inline uint8 getRemapCount() const { return _numActiveRemaps; }
+	inline uint8 getStartColor() const { return _remapStartColor; }
+	inline uint8 getEndColor() const { return _remapEndColor; }
+	inline uint8 getBlockedRangeStart() const { return _blockedRangeStart; }
+	inline int16 getBlockedRangeCount() const { return _blockedRangeCount; }
+
+	/**
+	 * Turns off remapping of the given color. If `color` is
+	 * 0, all remaps are turned off.
+	 */
+	void remapOff(const uint8 color);
+
+	/**
+	 * Turns off all color remaps.
+	 */
+	void remapAllOff();
+
+	/**
+	 * Configures a SingleRemap for the remap color `color`.
+	 * The SingleRemap will shift palette colors between
+	 * `from` and `to` (inclusive) by `delta` palette
+	 * entries when the remap is applied.
+	 */
+	void remapByRange(const uint8 color, const int16 from, const int16 to, const int16 delta);
+
+	/**
+	 * Configures a SingleRemap for the remap color `color`
+	 * to modify the brightness of remapped colors by
+	 * `percent`.
+	 */
+	void remapByPercent(const uint8 color, const int16 percent);
+
+	/**
+	 * Configures a SingleRemap for the remap color `color`
+	 * to modify the saturation of remapped colors by
+	 * `gray`.
+	 */
+	void remapToGray(const uint8 color, const int8 gray);
+
+	/**
+	 * Configures a SingleRemap for the remap color `color`
+	 * to modify the brightness of remapped colors by
+	 * `percent`, and saturation of remapped colors by
+	 * `gray`.
+	 */
+	void remapToPercentGray(const uint8 color, const int16 gray, const int16 percent);
+
+	/**
+	 * Prevents GfxRemap32 from using the given range of
+	 * palette entries as potential remap targets.
+	 *
+	 * @NOTE Was DontMapToRange in SSCI.
+	 */
+	void blockRange(const uint8 from, const int16 count);
+
+	/**
+	 * Determines whether or not the given color has an
+	 * active remapper. If it does not, it is treated as a
+	 * skip color and the pixel is not drawn.
+	 *
+	 * @note SSCI uses a boolean array to decide whether a
+	 * a pixel is remapped, but it is possible to get the
+	 * same information from `_remaps`, as this function
+	 * does.
+	 * Presumably, the separate array was created for
+	 * performance reasons, since this is called a lot in
+	 * the most critical section of the renderer.
+	 */
+	inline bool remapEnabled(uint8 color) const {
+		const uint8 index = _remapEndColor - color;
+		assert(index < _remaps.size());
+		return (_remaps[index]._type != kRemapNone);
+	}
+
+	/**
+	 * Calculates the correct color for a target by looking
+	 * up the target color in the SingleRemap that controls
+	 * the given sourceColor. If there is no remap for the
+	 * given color, it will be treated as a skip color.
+	 */
+	inline uint8 remapColor(const uint8 sourceColor, const uint8 targetColor) const {
+		const uint8 index = _remapEndColor - sourceColor;
+		assert(index < _remaps.size());
+		const SingleRemap &singleRemap = _remaps[index];
+		assert(singleRemap._type != kRemapNone);
+		return singleRemap._remapColors[targetColor];
+	}
+
+	/**
+	 * Updates all active remaps in response to a palette
+	 * change or a remap settings change.
+	 *
+	 * `paletteChanged` is true if the next palette in
+	 * GfxPalette32 has been previously modified by other
+	 * palette operations.
+	 */
+	bool remapAllTables(const bool paletteUpdated);
+
+private:
+	typedef Common::Array<SingleRemap> SingleRemapsList;
+
+	/**
+	 * The first index of the remap area in the system
+	 * palette.
+	 */
+	const uint8 _remapStartColor;
+
+	/**
+	 * The last index of the remap area in the system
+	 * palette.
+	 */
+	uint8 _remapEndColor;
+
+	/**
+	 * The number of currently active remaps.
+	 */
+	uint8 _numActiveRemaps;
+
+	/**
+	 * The list of SingleRemaps.
+	 */
+	SingleRemapsList _remaps;
+
+	/**
+	 * If true, indicates that one or more SingleRemaps were
+	 * reconfigured and all remaps need to be recalculated.
+	 */
+	bool _needsUpdate;
+
+	/**
+	 * The first color that is blocked from being used as a
+	 * remap target color.
+	 */
+	uint8 _blockedRangeStart;
+
+	/**
+	 * The size of the range of blocked colors. If zero,
+	 * all colors are potential targets for remapping.
+	 */
+	int16 _blockedRangeCount;
+};
+} // End of namespace Sci
 #endif

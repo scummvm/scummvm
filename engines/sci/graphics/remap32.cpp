@@ -26,313 +26,443 @@
 
 namespace Sci {
 
-GfxRemap32::GfxRemap32(GfxPalette32 *palette) : _palette(palette) {
-	for (int i = 0; i < REMAP_COLOR_COUNT; i++)
-		_remaps[i] = RemapParams(0, 0, 0, 0, 100, kRemapNone);
-	_noMapStart = _noMapCount = 0;
-	_update = false;
-	_remapCount = 0;
+#pragma mark SingleRemap
 
-	// The remap range was 245 - 254 in SCI2, but was changed to 235 - 244 in SCI21 middle.
-	// All versions of KQ7 are using the older remap range semantics.
-	_remapEndColor = (getSciVersion() >= SCI_VERSION_2_1_MIDDLE || g_sci->getGameId() == GID_KQ7) ? 244 : 254;
-}
+void SingleRemap::reset() {
+	_lastPercent = 100;
+	_lastGray = 0;
 
-void GfxRemap32::remapOff(byte color) {
-	if (!color) {
-		for (int i = 0; i < REMAP_COLOR_COUNT; i++)
-			_remaps[i] = RemapParams(0, 0, 0, 0, 100, kRemapNone);
-
-		_remapCount = 0;
-	} else {
-		assert(_remapEndColor - color >= 0 && _remapEndColor - color < REMAP_COLOR_COUNT);
-		const byte index = _remapEndColor - color;
-		_remaps[index] = RemapParams(0, 0, 0, 0, 100, kRemapNone);
-		_remapCount--;
+	const uint8 remapStartColor = g_sci->_gfxRemap32->getStartColor();
+	const Palette &currentPalette = g_sci->_gfxPalette32->getCurrentPalette();
+	for (uint i = 0; i < remapStartColor; ++i) {
+		const Color &color = currentPalette.colors[i];
+		_remapColors[i] = i;
+		_originalColors[i] = color;
+		_originalColorsChanged[i] = true;
+		_idealColors[i] = color;
+		_idealColorsChanged[i] = false;
+		_matchDistances[i] = 0;
 	}
-
-	_update = true;
 }
 
-void GfxRemap32::setRemappingRange(byte color, byte from, byte to, byte base) {
-	assert(_remapEndColor - color >= 0 && _remapEndColor - color < REMAP_COLOR_COUNT);
-	_remaps[_remapEndColor - color] = RemapParams(from, to, base, 0, 100, kRemapByRange);
-	initColorArrays(_remapEndColor - color);
-	_remapCount++;
-	_update = true;
-}
-
-void GfxRemap32::setRemappingPercent(byte color, byte percent) {
-	assert(_remapEndColor - color >= 0 && _remapEndColor - color < REMAP_COLOR_COUNT);
-	_remaps[_remapEndColor - color] = RemapParams(0, 0, 0, 0, percent, kRemapByPercent);
-	initColorArrays(_remapEndColor - color);
-	_remapCount++;
-	_update = true;
-}
-
-void GfxRemap32::setRemappingToGray(byte color, byte gray) {
-	assert(_remapEndColor - color >= 0 && _remapEndColor - color < REMAP_COLOR_COUNT);
-	_remaps[_remapEndColor - color] = RemapParams(0, 0, 0, gray, 100, kRemapToGray);
-	initColorArrays(_remapEndColor - color);
-	_remapCount++;
-	_update = true;
-}
-
-void GfxRemap32::setRemappingToPercentGray(byte color, byte gray, byte percent) {
-	assert(_remapEndColor - color >= 0 && _remapEndColor - color < REMAP_COLOR_COUNT);
-	_remaps[_remapEndColor - color] = RemapParams(0, 0, 0, gray, percent, kRemapToPercentGray);
-	initColorArrays(_remapEndColor - color);
-	_remapCount++;
-	_update = true;
-}
-
-void GfxRemap32::setNoMatchRange(byte from, byte count) {
-	_noMapStart = from;
-	_noMapCount = count;
-}
-
-bool GfxRemap32::remapEnabled(byte color) const {
-	assert(_remapEndColor - color >= 0 && _remapEndColor - color < REMAP_COLOR_COUNT);
-	const byte index = _remapEndColor - color;
-	return (_remaps[index].type != kRemapNone);
-}
-
-byte GfxRemap32::remapColor(byte color, byte target) {
-	assert(_remapEndColor - color >= 0 && _remapEndColor - color < REMAP_COLOR_COUNT);
-	const byte index = _remapEndColor - color;
-	if (_remaps[index].type != kRemapNone)
-		return _remaps[index].remap[target];
-	else
-		return target;
-}
-
-void GfxRemap32::initColorArrays(byte index) {
-	Palette *curPalette = &_palette->_sysPalette;
-	RemapParams *curRemap = &_remaps[index];
-
-	memcpy(curRemap->curColor, curPalette->colors, NON_REMAPPED_COLOR_COUNT * sizeof(Color));
-	memcpy(curRemap->targetColor, curPalette->colors, NON_REMAPPED_COLOR_COUNT * sizeof(Color));
-}
-
-bool GfxRemap32::updateRemap(byte index, bool palChanged) {
-	int result;
-	RemapParams *curRemap = &_remaps[index];
-	const Palette *curPalette = &_palette->_sysPalette;
-	const Palette *nextPalette = _palette->getNextPalette();
-	bool changed = false;
-
-	if (!_update && !palChanged)
-		return false;
-
-	Common::fill(_targetChanged, _targetChanged + NON_REMAPPED_COLOR_COUNT, false);
-
-	switch (curRemap->type) {
+bool SingleRemap::update() {
+	switch (_type) {
 	case kRemapNone:
-		return false;
+		break;
 	case kRemapByRange:
-		for (int i = 0; i < NON_REMAPPED_COLOR_COUNT; i++)  {
-			if (curRemap->from <= i && i <= curRemap->to)
-				result = i + curRemap->base;
-			else
-				result = i;
-
-			if (curRemap->remap[i] != result) {
-				changed = true;
-				curRemap->remap[i] = result;
-			}
-
-			curRemap->colorChanged[i] = true;
-		}
-		return changed;
+		return updateRange();
 	case kRemapByPercent:
-		for (int i = 1; i < NON_REMAPPED_COLOR_COUNT; i++) {
-			// NOTE: This method uses nextPalette instead of curPalette
-			Color color = nextPalette->colors[i];
-
-			if (curRemap->curColor[i] != color) {
-				curRemap->colorChanged[i] = true;
-				curRemap->curColor[i] = color;
-			}
-
-			if (curRemap->percent != curRemap->oldPercent || curRemap->colorChanged[i])  {
-				byte red = CLIP<byte>(color.r * curRemap->percent / 100, 0, 255);
-				byte green = CLIP<byte>(color.g * curRemap->percent / 100, 0, 255);
-				byte blue = CLIP<byte>(color.b * curRemap->percent / 100, 0, 255);
-				byte used = curRemap->targetColor[i].used;
-
-				Color newColor = { used, red, green, blue };
-				if (curRemap->targetColor[i] != newColor)  {
-					_targetChanged[i] = true;
-					curRemap->targetColor[i] = newColor;
-				}
-			}
-		}
-		
-		changed = applyRemap(index);
-		Common::fill(curRemap->colorChanged, curRemap->colorChanged + NON_REMAPPED_COLOR_COUNT, false);
-		curRemap->oldPercent = curRemap->percent;
-		return changed;
+		return updateBrightness();
 	case kRemapToGray:
-		for (int i = 1; i < NON_REMAPPED_COLOR_COUNT; i++) {
-			Color color = curPalette->colors[i];
-
-			if (curRemap->curColor[i] != color) {
-				curRemap->colorChanged[i] = true;
-				curRemap->curColor[i] = color;
-			}
-
-			if (curRemap->gray != curRemap->oldGray || curRemap->colorChanged[i])  {
-				byte lumosity = ((color.r * 77) + (color.g * 151) + (color.b * 28)) >> 8;
-				byte red = CLIP<byte>(color.r - ((color.r - lumosity) * curRemap->gray / 100), 0, 255);
-				byte green = CLIP<byte>(color.g - ((color.g - lumosity) * curRemap->gray / 100), 0, 255);
-				byte blue = CLIP<byte>(color.b - ((color.b - lumosity) * curRemap->gray / 100), 0, 255);
-				byte used = curRemap->targetColor[i].used;
-
-				Color newColor = { used, red, green, blue };
-				if (curRemap->targetColor[i] != newColor)  {
-					_targetChanged[i] = true;
-					curRemap->targetColor[i] = newColor;
-				}
-			}
-		}
-
-		changed = applyRemap(index);
-		Common::fill(curRemap->colorChanged, curRemap->colorChanged + NON_REMAPPED_COLOR_COUNT, false);
-		curRemap->oldGray = curRemap->gray;
-		return changed;
+		return updateSaturation();
 	case kRemapToPercentGray:
-		for (int i = 1; i < NON_REMAPPED_COLOR_COUNT; i++) {
-			Color color = curPalette->colors[i];
-
-			if (curRemap->curColor[i] != color) {
-				curRemap->colorChanged[i] = true;
-				curRemap->curColor[i] = color;
-			}
-
-			if (curRemap->percent != curRemap->oldPercent || curRemap->gray != curRemap->oldGray || curRemap->colorChanged[i])  {
-				byte lumosity = ((color.r * 77) + (color.g * 151) + (color.b * 28)) >> 8;
-				lumosity = lumosity * curRemap->percent / 100;
-				byte red = CLIP<byte>(color.r - ((color.r - lumosity) * curRemap->gray / 100), 0, 255);
-				byte green = CLIP<byte>(color.g - ((color.g - lumosity) * curRemap->gray / 100), 0, 255);
-				byte blue = CLIP<byte>(color.b - ((color.b - lumosity) * curRemap->gray / 100), 0, 255);
-				byte used = curRemap->targetColor[i].used;
-
-				Color newColor = { used, red, green, blue };
-				if (curRemap->targetColor[i] != newColor)  {
-					_targetChanged[i] = true;
-					curRemap->targetColor[i] = newColor;
-				}
-			}
-		}
-
-		changed = applyRemap(index);
-		Common::fill(curRemap->colorChanged, curRemap->colorChanged + NON_REMAPPED_COLOR_COUNT, false);
-		curRemap->oldPercent = curRemap->percent;
-		curRemap->oldGray = curRemap->gray;
-		return changed;
+		return updateSaturationAndBrightness();
 	default:
-		return false;
-	}
-}
-
-static int colorDistance(Color a, Color b) {
-	int rDiff = (a.r - b.r) * (a.r - b.r);
-	int gDiff = (a.g - b.g) * (a.g - b.g);
-	int bDiff = (a.b - b.b) * (a.b - b.b);
-	return rDiff + gDiff + bDiff;
-}
-
-bool GfxRemap32::applyRemap(byte index) {
-	RemapParams *curRemap = &_remaps[index];
-	const bool *cycleMap = _palette->getCyclemap();
-	bool unmappedColors[NON_REMAPPED_COLOR_COUNT];
-	bool changed = false;
-
-	Common::fill(unmappedColors, unmappedColors + NON_REMAPPED_COLOR_COUNT, false);
-	if (_noMapCount)
-		Common::fill(unmappedColors + _noMapStart, unmappedColors + _noMapStart + _noMapCount, true);
-
-	for (int i = 0; i < NON_REMAPPED_COLOR_COUNT; i++)  {
-		if (cycleMap[i])
-			unmappedColors[i] = true;
+		error("Illegal remap type %d", _type);
 	}
 
-	for (int i = 1; i < NON_REMAPPED_COLOR_COUNT; i++)  {
-		Color targetColor = curRemap->targetColor[i];
-		bool colorChanged = curRemap->colorChanged[curRemap->remap[i]];
+	return false;
+}
 
-		if (!_targetChanged[i] && !colorChanged)
-			continue;
+bool SingleRemap::updateRange() {
+	const uint8 remapStartColor = g_sci->_gfxRemap32->getStartColor();
+	bool updated = false;
 
-		if (_targetChanged[i] && colorChanged)
-			if (curRemap->distance[i] < 100 && colorDistance(targetColor, curRemap->curColor[curRemap->remap[i]]) <= curRemap->distance[i])
-				continue;
+	for (uint i = 0; i < remapStartColor; ++i) {
+		uint8 targetColor;
+		if (_from <= i && i <= _to) {
+			targetColor = i + _delta;
+		} else {
+			targetColor = i;
+		}
 
-		int diff = 0;
-		int16 result = matchColor(targetColor.r, targetColor.g, targetColor.b, curRemap->distance[i], diff, unmappedColors);
-		if (result != -1 && curRemap->remap[i] != result)  {
-			changed = true;
-			curRemap->remap[i] = result;
-			curRemap->distance[i] = diff;
+		if (_remapColors[i] != targetColor) {
+			updated = true;
+			_remapColors[i] = targetColor;
+		}
+
+		_originalColorsChanged[i] = true;
+	}
+
+	return updated;
+}
+
+bool SingleRemap::updateBrightness() {
+	const uint8 remapStartColor = g_sci->_gfxRemap32->getStartColor();
+	const Palette &nextPalette = g_sci->_gfxPalette32->getNextPalette();
+	for (uint i = 1; i < remapStartColor; ++i) {
+		Color color(nextPalette.colors[i]);
+
+		if (_originalColors[i] != color) {
+			_originalColorsChanged[i] = true;
+			_originalColors[i] = color;
+		}
+
+		if (_percent != _lastPercent || _originalColorsChanged[i]) {
+			// NOTE: SSCI checked if percent was over 100 and only
+			// then clipped values, but we always unconditionally
+			// ensure the result is in the correct range
+			color.r = MIN(255, (uint16)color.r * _percent / 100);
+			color.g = MIN(255, (uint16)color.g * _percent / 100);
+			color.b = MIN(255, (uint16)color.b * _percent / 100);
+
+			if (_idealColors[i] != color) {
+				_idealColorsChanged[i] = true;
+				_idealColors[i] = color;
+			}
 		}
 	}
 
-	return changed;
+	const bool updated = apply();
+	Common::fill(_originalColorsChanged, _originalColorsChanged + remapStartColor, false);
+	Common::fill(_idealColorsChanged, _idealColorsChanged + remapStartColor, false);
+	_lastPercent = _percent;
+	return updated;
 }
 
-bool GfxRemap32::remapAllTables(bool palChanged) {
-	bool changed = false;
+bool SingleRemap::updateSaturation() {
+	const uint8 remapStartColor = g_sci->_gfxRemap32->getStartColor();
+	const Palette &currentPalette = g_sci->_gfxPalette32->getCurrentPalette();
+	for (uint i = 1; i < remapStartColor; ++i) {
+		Color color(currentPalette.colors[i]);
+		if (_originalColors[i] != color) {
+			_originalColorsChanged[i] = true;
+			_originalColors[i] = color;
+		}
 
-	for (int i = 0; i < REMAP_COLOR_COUNT; i++) {
-		changed |= updateRemap(i, palChanged);
+		if (_gray != _lastGray || _originalColorsChanged[i]) {
+			const int luminosity = (((color.r * 77) + (color.g * 151) + (color.b * 28)) >> 8) * _percent / 100;
+
+			color.r = MIN(255, color.r - ((color.r - luminosity) * _gray / 100));
+			color.g = MIN(255, color.g - ((color.g - luminosity) * _gray / 100));
+			color.b = MIN(255, color.b - ((color.b - luminosity) * _gray / 100));
+
+			if (_idealColors[i] != color) {
+				_idealColorsChanged[i] = true;
+				_idealColors[i] = color;
+			}
+		}
 	}
 
-	_update = false;
-	return changed;
+	const bool updated = apply();
+	Common::fill(_originalColorsChanged, _originalColorsChanged + remapStartColor, false);
+	Common::fill(_idealColorsChanged, _idealColorsChanged + remapStartColor, false);
+	_lastGray = _gray;
+	return updated;
 }
 
-// In SCI32 engine this method is SOLPalette::Match(Rgb24 *, int, int *, int *)
-// and is used by Remap
-// TODO: Anything that calls GfxPalette::matchColor(int, int, int) is going to
-// match using an algorithm from SCI16 engine right now. This needs to be
-// corrected in the future so either nothing calls
-// GfxPalette::matchColor(int, int, int), or it is fixed to match the other
-// SCI32 algorithms.
-int16 GfxRemap32::matchColor(const byte r, const byte g, const byte b, const int defaultDifference, int &lastCalculatedDifference, const bool *const matchTable) const {
+bool SingleRemap::updateSaturationAndBrightness() {
+	const uint8 remapStartColor = g_sci->_gfxRemap32->getStartColor();
+	const Palette &currentPalette = g_sci->_gfxPalette32->getCurrentPalette();
+	for (uint i = 1; i < remapStartColor; i++) {
+		Color color(currentPalette.colors[i]);
+		if (_originalColors[i] != color) {
+			_originalColorsChanged[i] = true;
+			_originalColors[i] = color;
+		}
+
+		if (_percent != _lastPercent || _gray != _lastGray || _originalColorsChanged[i]) {
+			const int luminosity = (((color.r * 77) + (color.g * 151) + (color.b * 28)) >> 8) * _percent / 100;
+
+			color.r = MIN(255, color.r - ((color.r - luminosity) * _gray) / 100);
+			color.g = MIN(255, color.g - ((color.g - luminosity) * _gray) / 100);
+			color.b = MIN(255, color.b - ((color.b - luminosity) * _gray) / 100);
+
+			if (_idealColors[i] != color) {
+				_idealColorsChanged[i] = true;
+				_idealColors[i] = color;
+			}
+		}
+	}
+
+	const bool updated = apply();
+	Common::fill(_originalColorsChanged, _originalColorsChanged + remapStartColor, false);
+	Common::fill(_idealColorsChanged, _idealColorsChanged + remapStartColor, false);
+	_lastPercent = _percent;
+	_lastGray = _gray;
+	return updated;
+}
+
+bool SingleRemap::apply() {
+	const GfxRemap32 *const gfxRemap32 = g_sci->_gfxRemap32;
+	const uint8 remapStartColor = gfxRemap32->getStartColor();
+
+	// Blocked colors are not allowed to be used as target
+	// colors for the remap
+	bool blockedColors[236];
+	Common::fill(blockedColors, blockedColors + remapStartColor, false);
+
+	const bool *const paletteCycleMap = g_sci->_gfxPalette32->getCycleMap();
+
+	const int16 blockedRangeCount = gfxRemap32->getBlockedRangeCount();
+	if (blockedRangeCount) {
+		const uint8 blockedRangeStart = gfxRemap32->getBlockedRangeStart();
+		Common::fill(blockedColors + blockedRangeStart, blockedColors + blockedRangeStart + blockedRangeCount, true);
+	}
+
+	for (uint i = 0; i < remapStartColor; ++i) {
+		if (paletteCycleMap[i]) {
+			blockedColors[i] = true;
+		}
+	}
+
+	// NOTE: SSCI did a loop over colors here to create a
+	// new array of updated, unblocked colors, but then
+	// never used it
+
+	bool updated = false;
+	for (uint i = 1; i < remapStartColor; ++i) {
+		int distance;
+
+		if (!_idealColorsChanged[i] && !_originalColorsChanged[_remapColors[i]]) {
+			continue;
+		}
+
+		if (
+			_idealColorsChanged[i] &&
+			_originalColorsChanged[_remapColors[i]] &&
+			_matchDistances[i] < 100 &&
+			colorDistance(_idealColors[i], _originalColors[_remapColors[i]]) <= _matchDistances[i]
+		) {
+			continue;
+		}
+
+		const int16 bestColor = matchColor(_idealColors[i], _matchDistances[i], distance, blockedColors);
+
+		if (bestColor != -1 && _remapColors[i] != bestColor) {
+			updated = true;
+			_remapColors[i] = bestColor;
+			_matchDistances[i] = distance;
+		}
+	}
+
+	return updated;
+}
+
+int SingleRemap::colorDistance(const Color &a, const Color &b) const {
+	int channelDistance = a.r - b.r;
+	int distance = channelDistance * channelDistance;
+	channelDistance = a.g - b.g;
+	distance += channelDistance * channelDistance;
+	channelDistance = a.b - b.b;
+	distance += channelDistance * channelDistance;
+	return distance;
+}
+
+int16 SingleRemap::matchColor(const Color &color, const int minimumDistance, int &outDistance, const bool *const blockedIndexes) const {
 	int16 bestIndex = -1;
-	int bestDifference = 0xFFFFF;
-	int difference = defaultDifference;
-	const Palette &_sysPalette = *g_sci->_gfxPalette32->getCurrentPalette();
+	int bestDistance = 0xFFFFF;
+	int distance = minimumDistance;
+	const Palette &nextPalette = g_sci->_gfxPalette32->getNextPalette();
 
-	// SQ6 DOS really does check only the first 236 entries
-	for (int i = 0, channelDifference; i < 236; ++i) {
-		if (matchTable[i] == 0) {
+	for (uint i = 0, channelDistance; i < g_sci->_gfxRemap32->getStartColor(); ++i) {
+		if (blockedIndexes[i]) {
 			continue;
 		}
 
-		difference = _sysPalette.colors[i].r - r;
-		difference *= difference;
-		if (bestDifference <= difference) {
+		distance = nextPalette.colors[i].r - color.r;
+		distance *= distance;
+		if (bestDistance <= distance) {
 			continue;
 		}
-		channelDifference = _sysPalette.colors[i].g - g;
-		difference += channelDifference * channelDifference;
-		if (bestDifference <= difference) {
+		channelDistance = nextPalette.colors[i].g - color.g;
+		distance += channelDistance * channelDistance;
+		if (bestDistance <= distance) {
 			continue;
 		}
-		channelDifference = _sysPalette.colors[i].b - b;
-		difference += channelDifference * channelDifference;
-		if (bestDifference <= difference) {
+		channelDistance = nextPalette.colors[i].b - color.b;
+		distance += channelDistance * channelDistance;
+		if (bestDistance <= distance) {
 			continue;
 		}
-		bestDifference = difference;
+		bestDistance = distance;
 		bestIndex = i;
 	}
 
-	// NOTE: This value is only valid if the last index to
-	// perform a difference calculation was the best index
-	lastCalculatedDifference = difference;
+	// This value is only valid if the last index to
+	// perform a distance calculation was the best index
+	outDistance = distance;
 	return bestIndex;
 }
 
+#pragma mark -
+#pragma mark GfxRemap32
+
+GfxRemap32::GfxRemap32() :
+	_needsUpdate(false),
+	_blockedRangeStart(0),
+	_blockedRangeCount(0),
+	_remapStartColor(236),
+	_numActiveRemaps(0) {
+	// The `_remapStartColor` seems to always be 236 in SSCI,
+	// but if it is ever changed then the various C-style
+	// member arrays hard-coded to 236 need to be changed to
+	// match the highest possible value of `_remapStartColor`
+	assert(_remapStartColor == 236);
+
+	if (getSciVersion() >= SCI_VERSION_2_1_MIDDLE || g_sci->getGameId() == GID_KQ7) {
+		_remaps.resize(9);
+	} else {
+		_remaps.resize(19);
+	}
+
+	_remapEndColor = _remapStartColor + _remaps.size() - 1;
+}
+
+void GfxRemap32::remapOff(const uint8 color) {
+	if (color == 0) {
+		remapAllOff();
+		return;
+	}
+
+	// NOTE: SSCI simply ignored invalid input values, but
+	// we at least give a warning so games can be investigated
+	// for script bugs
+	if (color < _remapStartColor || color > _remapEndColor) {
+		warning("GfxRemap32::remapOff: %d out of remap range", color);
+		return;
+	}
+
+	const uint8 index = _remapEndColor - color;
+	SingleRemap &singleRemap = _remaps[index];
+	singleRemap._type = kRemapNone;
+	--_numActiveRemaps;
+	_needsUpdate = true;
+}
+
+void GfxRemap32::remapAllOff() {
+	for (uint i = 0, len = _remaps.size(); i < len; ++i) {
+		_remaps[i]._type = kRemapNone;
+	}
+
+	_numActiveRemaps = 0;
+	_needsUpdate = true;
+}
+
+void GfxRemap32::remapByRange(const uint8 color, const int16 from, const int16 to, const int16 delta) {
+	// NOTE: SSCI simply ignored invalid input values, but
+	// we at least give a warning so games can be investigated
+	// for script bugs
+	if (color < _remapStartColor || color > _remapEndColor) {
+		warning("GfxRemap32::remapByRange: %d out of remap range", color);
+		return;
+	}
+
+	if (from < 0) {
+		warning("GfxRemap32::remapByRange: attempt to remap negative color %d", from);
+		return;
+	}
+
+	if (to >= _remapStartColor) {
+		warning("GfxRemap32::remapByRange: attempt to remap into the remap zone at %d", to);
+		return;
+	}
+
+	const uint8 index = _remapEndColor - color;
+	SingleRemap &singleRemap = _remaps[index];
+
+	if (singleRemap._type == kRemapNone) {
+		++_numActiveRemaps;
+		singleRemap.reset();
+	}
+
+	singleRemap._from = from;
+	singleRemap._to = to;
+	singleRemap._delta = delta;
+	singleRemap._type = kRemapByRange;
+	_needsUpdate = true;
+}
+
+void GfxRemap32::remapByPercent(const uint8 color, const int16 percent) {
+	// NOTE: SSCI simply ignored invalid input values, but
+	// we at least give a warning so games can be investigated
+	// for script bugs
+	if (color < _remapStartColor || color > _remapEndColor) {
+		warning("GfxRemap32::remapByPercent: %d out of remap range", color);
+		return;
+	}
+
+	const uint8 index = _remapEndColor - color;
+	SingleRemap &singleRemap = _remaps[index];
+
+	if (singleRemap._type == kRemapNone) {
+		++_numActiveRemaps;
+		singleRemap.reset();
+	}
+
+	singleRemap._percent = percent;
+	singleRemap._type = kRemapByPercent;
+	_needsUpdate = true;
+}
+
+void GfxRemap32::remapToGray(const uint8 color, const int8 gray) {
+	// NOTE: SSCI simply ignored invalid input values, but
+	// we at least give a warning so games can be investigated
+	// for script bugs
+	if (color < _remapStartColor || color > _remapEndColor) {
+		warning("GfxRemap32::remapToGray: %d out of remap range", color);
+		return;
+	}
+
+	if (gray < 0 || gray > 100) {
+		error("RemapToGray percent out of range; gray = %d", gray);
+	}
+
+	const uint8 index = _remapEndColor - color;
+	SingleRemap &singleRemap = _remaps[index];
+
+	if (singleRemap._type == kRemapNone) {
+		++_numActiveRemaps;
+		singleRemap.reset();
+	}
+
+	singleRemap._gray = gray;
+	singleRemap._type = kRemapToGray;
+	_needsUpdate = true;
+}
+
+void GfxRemap32::remapToPercentGray(const uint8 color, const int16 gray, const int16 percent) {
+	// NOTE: SSCI simply ignored invalid input values, but
+	// we at least give a warning so games can be investigated
+	// for script bugs
+	if (color < _remapStartColor || color > _remapEndColor) {
+		warning("GfxRemap32::remapToPercentGray: %d out of remap range", color);
+		return;
+	}
+
+	const uint8 index = _remapEndColor - color;
+	SingleRemap &singleRemap = _remaps[index];
+
+	if (singleRemap._type == kRemapNone) {
+		++_numActiveRemaps;
+		singleRemap.reset();
+	}
+
+	singleRemap._percent = percent;
+	singleRemap._gray = gray;
+	singleRemap._type = kRemapToPercentGray;
+	_needsUpdate = true;
+}
+
+void GfxRemap32::blockRange(const uint8 from, const int16 count) {
+	_blockedRangeStart = from;
+	_blockedRangeCount = count;
+}
+
+bool GfxRemap32::remapAllTables(const bool paletteUpdated) {
+	if (!_needsUpdate && !paletteUpdated) {
+		return false;
+	}
+
+	bool updated = false;
+
+	for (SingleRemapsList::iterator it = _remaps.begin(); it != _remaps.end(); ++it) {
+		if (it->_type != kRemapNone) {
+			updated |= it->update();
+		}
+	}
+
+	_needsUpdate = false;
+	return updated;
+}
 } // End of namespace Sci

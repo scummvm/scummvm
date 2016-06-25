@@ -933,50 +933,62 @@ reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kRemapColorsOff(EngineState *s, int argc, reg_t *argv) {
-	byte color = (argc >= 1) ? argv[0].toUint16() : 0;
-	g_sci->_gfxRemap32->remapOff(color);
+	if (argc == 0) {
+		g_sci->_gfxRemap32->remapAllOff();
+	} else {
+		const uint8 color = argv[0].toUint16();
+		g_sci->_gfxRemap32->remapOff(color);
+	}
 	return s->r_acc;
 }
 
 reg_t kRemapColorsByRange(EngineState *s, int argc, reg_t *argv) {
-	byte color = argv[0].toUint16();
-	byte from = argv[1].toUint16();
-	byte to = argv[2].toUint16();
-	byte base = argv[3].toUint16();
-	// The last parameter, depth, is unused
-	g_sci->_gfxRemap32->setRemappingRange(color, from, to, base);
+	const uint8 color = argv[0].toUint16();
+	const int16 from = argv[1].toSint16();
+	const int16 to = argv[2].toSint16();
+	const int16 base = argv[3].toSint16();
+	// NOTE: There is an optional last parameter after `base`
+	// which was only used by the priority map debugger, which
+	// does not exist in release versions of SSCI
+	g_sci->_gfxRemap32->remapByRange(color, from, to, base);
 	return s->r_acc;
 }
 
 reg_t kRemapColorsByPercent(EngineState *s, int argc, reg_t *argv) {
-	byte color = argv[0].toUint16();
-	byte percent = argv[1].toUint16();
-	// The last parameter, depth, is unused
-	g_sci->_gfxRemap32->setRemappingPercent(color, percent);
+	const uint8 color = argv[0].toUint16();
+	const int16 percent = argv[1].toSint16();
+	// NOTE: There is an optional last parameter after `percent`
+	// which was only used by the priority map debugger, which
+	// does not exist in release versions of SSCI
+	g_sci->_gfxRemap32->remapByPercent(color, percent);
 	return s->r_acc;
 }
 
 reg_t kRemapColorsToGray(EngineState *s, int argc, reg_t *argv) {
-	byte color = argv[0].toUint16();
-	byte gray = argv[1].toUint16();
-	// The last parameter, depth, is unused
-	g_sci->_gfxRemap32->setRemappingToGray(color, gray);
+	const uint8 color = argv[0].toUint16();
+	const int16 gray = argv[1].toSint16();
+	// NOTE: There is an optional last parameter after `gray`
+	// which was only used by the priority map debugger, which
+	// does not exist in release versions of SSCI
+	g_sci->_gfxRemap32->remapToGray(color, gray);
 	return s->r_acc;
 }
 
 reg_t kRemapColorsToPercentGray(EngineState *s, int argc, reg_t *argv) {
-	byte color = argv[0].toUint16();
-	byte gray = argv[1].toUint16();
-	byte percent = argv[2].toUint16();
-	// The last parameter, depth, is unused
-	g_sci->_gfxRemap32->setRemappingToPercentGray(color, gray, percent);
+	const uint8 color = argv[0].toUint16();
+	const int16 gray = argv[1].toSint16();
+	const int16 percent = argv[2].toSint16();
+	// NOTE: There is an optional last parameter after `percent`
+	// which was only used by the priority map debugger, which
+	// does not exist in release versions of SSCI
+	g_sci->_gfxRemap32->remapToPercentGray(color, gray, percent);
 	return s->r_acc;
 }
 
 reg_t kRemapColorsBlockRange(EngineState *s, int argc, reg_t *argv) {
-	byte from = argv[0].toUint16();
-	byte count = argv[1].toUint16();
-	g_sci->_gfxRemap32->setNoMatchRange(from, count);
+	const uint8 from = argv[0].toUint16();
+	const uint8 count = argv[1].toUint16();
+	g_sci->_gfxRemap32->blockRange(from, count);
 	return s->r_acc;
 }
 
