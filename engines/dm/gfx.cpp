@@ -1578,8 +1578,8 @@ byte* DisplayMan::getBitmap(uint16 index) {
 
 void DisplayMan::clearScreenBox(Color color, Box &box, Viewport &viewport) {
 	uint16 width = box._x2 - box._x1;
-	for (int y = box._y1; y < box._y2; ++y)
-		memset(_vgaBuffer + y * _screenWidth + box._x1, color, sizeof(byte) * width);
+	for (int y = box._y1 + viewport._posY; y < box._y2 + viewport._posY; ++y)
+		memset(_vgaBuffer + y * _screenWidth + box._x1 + viewport._posX, color, sizeof(byte) * width);
 }
 
 void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
