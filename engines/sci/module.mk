@@ -88,6 +88,7 @@ MODULE_OBJS += \
 	graphics/paint32.o \
 	graphics/plane32.o \
 	graphics/palette32.o \
+	graphics/remap32.o \
 	graphics/screen_item32.o \
 	graphics/text32.o \
 	sound/audio32.o \

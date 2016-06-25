@@ -65,9 +65,10 @@
 
 #ifdef ENABLE_SCI32
 #include "sci/graphics/controls32.h"
-#include "sci/graphics/palette32.h"
-#include "sci/graphics/text32.h"
 #include "sci/graphics/frameout.h"
+#include "sci/graphics/palette32.h"
+#include "sci/graphics/remap32.h"
+#include "sci/graphics/text32.h"
 #include "sci/sound/audio32.h"
 #include "sci/video/robot_decoder.h"
 #endif
@@ -699,7 +700,7 @@ void SciEngine::initGraphics() {
 	if (getSciVersion() >= SCI_VERSION_2) {
 		_gfxPalette32 = new GfxPalette32(_resMan, _gfxScreen);
 		_gfxPalette16 = _gfxPalette32;
-		_gfxRemap32 = new GfxRemap32(_gfxPalette32);
+		_gfxRemap32 = new GfxRemap32();
 	} else {
 #endif
 		_gfxPalette16 = new GfxPalette(_resMan, _gfxScreen);

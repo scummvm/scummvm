@@ -414,12 +414,12 @@ static const SciKernelMapSubEntry kList_subops[] = {
 
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kRemapColors_subops[] = {
-	{ SIG_SCI32,           0, MAP_CALL(RemapOff),                 "(i)",                  NULL },
-	{ SIG_SCI32,           1, MAP_CALL(RemapByRange),             "iiii(i)",              NULL },
-	{ SIG_SCI32,           2, MAP_CALL(RemapByPercent),           "ii(i)",                NULL },
-	{ SIG_SCI32,           3, MAP_CALL(RemapToGray),              "ii(i)",                NULL },
-	{ SIG_SCI32,           4, MAP_CALL(RemapToPercentGray),       "iii(i)",               NULL },
-	{ SIG_SCI32,           5, MAP_CALL(RemapSetNoMatchRange),     "ii",                   NULL },
+	{ SIG_SCI32,           0, MAP_CALL(RemapColorsOff),            "(i)",                  NULL },
+	{ SIG_SCI32,           1, MAP_CALL(RemapColorsByRange),        "iiii(i)",              NULL },
+	{ SIG_SCI32,           2, MAP_CALL(RemapColorsByPercent),      "ii(i)",                NULL },
+	{ SIG_SCI32,           3, MAP_CALL(RemapColorsToGray),         "ii(i)",                NULL },
+	{ SIG_SCI32,           4, MAP_CALL(RemapColorsToPercentGray),  "iii(i)",               NULL },
+	{ SIG_SCI32,           5, MAP_CALL(RemapColorsBlockRange),     "ii",                   NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
@@ -634,9 +634,9 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(PriCoord),          SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(Random),            SIG_EVERYWHERE,           "i(i)(i)",               NULL,            NULL },
 	{ MAP_CALL(ReadNumber),        SIG_EVERYWHERE,           "r",                     NULL,            kReadNumber_workarounds },
-	{ "RemapColors", kRemapColors16,       SIG_SCI11, SIGFOR_ALL,    "i(i)(i)(i)(i)", NULL,            NULL },
+	{ MAP_CALL(RemapColors),       SIG_SCI11, SIGFOR_ALL,    "i(i)(i)(i)(i)",         NULL,            NULL },
 #ifdef ENABLE_SCI32
-	{ MAP_CALL(RemapColors),       SIG_SCI32, SIGFOR_ALL,    "i(i)(i)(i)(i)(i)",      kRemapColors_subops, NULL },
+	{ "RemapColors", kRemapColors32, SIG_SCI32, SIGFOR_ALL,  "i(i)(i)(i)(i)(i)",      kRemapColors_subops, NULL },
 #endif
 	{ MAP_CALL(ResCheck),          SIG_EVERYWHERE,           "ii(iiii)",              NULL,            NULL },
 	{ MAP_CALL(RespondsTo),        SIG_EVERYWHERE,           ".i",                    NULL,            NULL },

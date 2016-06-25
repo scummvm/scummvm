@@ -1258,7 +1258,7 @@ reg_t kShow(EngineState *s, int argc, reg_t *argv) {
 }
 
 // Early variant of the SCI32 kRemapColors kernel function, used in the demo of QFG4
-reg_t kRemapColors16(EngineState *s, int argc, reg_t *argv) {
+reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
 	uint16 operation = argv[0].toUint16();
 
 	switch (operation) {
