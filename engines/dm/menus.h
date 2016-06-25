@@ -33,7 +33,8 @@
 
 namespace DM {
 
-extern Box gBoxActionArea;
+extern Box gBoxActionArea; // @ G0001_s_Graphic562_Box_ActionArea
+extern Box gBoxSpellArea; // @ G0000_s_Graphic562_Box_SpellArea
 
 class ActionList {
 public:
@@ -69,6 +70,7 @@ public:
 	const char* getActionName(ChampionAction actionIndex); // @ F0384_MENUS_GetActionName
 	void drawSpellAreaControls(ChampionIndex champIndex); // @ F0393_MENUS_DrawSpellAreaControls
 	void buildSpellAreaLine(int16 spellAreaBitmapLine);// @ F0392_MENUS_BuildSpellAreaLine
+	void setMagicCasterAndDrawSpellArea(int16 champIndex); // @ F0394_MENUS_SetMagicCasterAndDrawSpellArea
 };
 
 }

@@ -673,7 +673,7 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 	if (champMan._partyChampionCount == 1) {
 		warning("MISSING CODE: setting time, G0362_l_LastPartyMovementTime , G0313_ul_GameTime");
 		commandSetLeader(kChampionFirst);
-		warning("MISSING CODE: F0394_MENUS_SetMagicCasterAndDrawSpellArea");
+		_vm->_menuMan->setMagicCasterAndDrawSpellArea(kChampionFirst);
 	} else {
 		_vm->_menuMan->drawSpellAreaControls(champMan._magicCasterChampionIndex);
 	}
