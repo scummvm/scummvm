@@ -269,7 +269,7 @@ bool GfxRemap32::applyRemap(byte index) {
 				continue;
 
 		int diff = 0;
-		int16 result = _palette->matchColor(targetColor.r, targetColor.g, targetColor.b, curRemap->distance[i], diff, unmappedColors);
+		int16 result = matchColor(targetColor.r, targetColor.g, targetColor.b, curRemap->distance[i], diff, unmappedColors);
 		if (result != -1 && curRemap->remap[i] != result)  {
 			changed = true;
 			curRemap->remap[i] = result;
@@ -289,6 +289,50 @@ bool GfxRemap32::remapAllTables(bool palChanged) {
 
 	_update = false;
 	return changed;
+}
+
+// In SCI32 engine this method is SOLPalette::Match(Rgb24 *, int, int *, int *)
+// and is used by Remap
+// TODO: Anything that calls GfxPalette::matchColor(int, int, int) is going to
+// match using an algorithm from SCI16 engine right now. This needs to be
+// corrected in the future so either nothing calls
+// GfxPalette::matchColor(int, int, int), or it is fixed to match the other
+// SCI32 algorithms.
+int16 GfxRemap32::matchColor(const byte r, const byte g, const byte b, const int defaultDifference, int &lastCalculatedDifference, const bool *const matchTable) const {
+	int16 bestIndex = -1;
+	int bestDifference = 0xFFFFF;
+	int difference = defaultDifference;
+	const Palette &_sysPalette = *g_sci->_gfxPalette32->getCurrentPalette();
+
+	// SQ6 DOS really does check only the first 236 entries
+	for (int i = 0, channelDifference; i < 236; ++i) {
+		if (matchTable[i] == 0) {
+			continue;
+		}
+
+		difference = _sysPalette.colors[i].r - r;
+		difference *= difference;
+		if (bestDifference <= difference) {
+			continue;
+		}
+		channelDifference = _sysPalette.colors[i].g - g;
+		difference += channelDifference * channelDifference;
+		if (bestDifference <= difference) {
+			continue;
+		}
+		channelDifference = _sysPalette.colors[i].b - b;
+		difference += channelDifference * channelDifference;
+		if (bestDifference <= difference) {
+			continue;
+		}
+		bestDifference = difference;
+		bestIndex = i;
+	}
+
+	// NOTE: This value is only valid if the last index to
+	// perform a difference calculation was the best index
+	lastCalculatedDifference = difference;
+	return bestIndex;
 }
 
 } // End of namespace Sci

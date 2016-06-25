@@ -114,11 +114,11 @@ private:
 public:
 	virtual void saveLoadWithSerializer(Common::Serializer &s) override;
 	const Palette *getNextPalette() const;
+	const Palette *getCurrentPalette() const;
 
 	bool kernelSetFromResource(GuiResourceId resourceId, bool force) override;
 	int16 kernelFindColor(uint16 r, uint16 g, uint16 b) override;
 	void set(Palette *newPalette, bool force, bool forceRealMerge = false) override;
-	int16 matchColor(const byte matchRed, const byte matchGreen, const byte matchBlue, const int defaultDifference, int &lastCalculatedDifference, const bool *const matchTable);
 
 	/**
 	 * Submits a palette to display. Entries marked as “used” in the

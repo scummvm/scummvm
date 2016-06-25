@@ -113,6 +113,7 @@ private:
 	void initColorArrays(byte index);
 	bool applyRemap(byte index);
 	bool updateRemap(byte index, bool palChanged);
+	int16 matchColor(const byte r, const byte g, const byte b, const int defaultDifference, int &lastCalculatedDifference, const bool *const matchTable) const;
 };
 
 } // End of namespace Sci
