@@ -37,6 +37,7 @@ enum BlitMode {
 	kBlitBIC = 1,
 	kBlitOR = 2,
 	kBlitXOR = 3
+	//kBlitNONE = 4,
 };
 
 enum GraphicsEncoding {

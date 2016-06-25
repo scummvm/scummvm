@@ -194,6 +194,10 @@ public:
 	const HuffmanLists *getDecodingHuffman() const;
 	uint32 randBetween(uint32 min, uint32 max);
 	uint32 getInvolvedObjects();
+	int findObjectInArray(ObjID objID, const Common::Array<ObjID> &list);
+	uint getPrefixNdx(ObjID obj);
+	Common::String getPrefixString(uint flag, ObjID obj);
+	Common::String getNoun(ObjID ndx);
 
 	// Attributes consult
 	Common::Point getObjPosition(ObjID objID);
@@ -224,7 +228,6 @@ private:
 	void unselectAll();
 	void selectObject(ObjID objID);
 	void unselectObject(ObjID objID);
-	int findObjectInArray(ObjID objID, const Common::Array<ObjID> &list);
 	void highlightExit(ObjID objID);
 	void selectPrimaryObject(ObjID objID);
 
@@ -261,7 +264,9 @@ private: // Attributes
 
 	// String tables
 	StringTable *_filenames;
-	StringTable *_decodingArticles;
+	StringTable *_decodingDirectArticles;
+	StringTable *_decodingNamingArticles;
+	StringTable *_decodingIndirectArticles;
 
 	// Engine state
 	GameState _gameState;

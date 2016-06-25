@@ -31,7 +31,7 @@ typedef uint32 ObjID;
 
 class TextAsset {
 public:
-	TextAsset(ObjID objid, Container *container, bool isOld, const HuffmanLists *huffman);
+	TextAsset(MacVentureEngine *engine, ObjID objid, ObjID source, ObjID target, Container *container, bool isOld, const HuffmanLists *huffman);
 	~TextAsset() {}
 
 	const Common::String *decode() {
@@ -42,9 +42,15 @@ private:
 	void decodeOld();
 	void decodeHuffman();
 
+	Common::String getNoun(ObjID id);
+
 private:
+	MacVentureEngine *_engine;
+
 	Container *_container;
 	ObjID _id;
+	ObjID _targetObj;
+	ObjID _sourceObj;
 	const HuffmanLists *_huffman;
 	bool _isOld;
 	

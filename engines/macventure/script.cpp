@@ -794,21 +794,21 @@ void ScriptEngine::opacEQ(EngineState * state, EngineFrame * frame) {
 }
 
 void ScriptEngine::opadEQS(EngineState * state, EngineFrame * frame) {
-	Common::String b = _world->getText(state->pop());
-	Common::String a = _world->getText(state->pop());
+	Common::String b = _world->getText(state->pop(), 0, 0); // HACK, these destinations might be wrong
+	Common::String a = _world->getText(state->pop(), 0, 0);
 	state->push((a == b) ? 1 : 0);
 }
 
 void ScriptEngine::opaeCONT(EngineState * state, EngineFrame * frame) {
-	Common::String needle = _world->getText(state->pop());
-	Common::String haystack = _world->getText(state->pop());
+	Common::String needle = _world->getText(state->pop(), 0, 0);
+	Common::String haystack = _world->getText(state->pop(), 0, 0);
 	haystack.toLowercase();
 	state->push(haystack.contains(needle) ? 1 : 0);
 }
 
 void ScriptEngine::opafCONTW(EngineState * state, EngineFrame * frame) {
-	Common::String needle = _world->getText(state->pop());
-	Common::String haystack = _world->getText(state->pop());
+	Common::String needle = _world->getText(state->pop(), 0, 0);
+	Common::String haystack = _world->getText(state->pop(), 0, 0);
 	haystack.toLowercase();
 	state->push(haystack.contains(needle) ? 1 : 0);
 }

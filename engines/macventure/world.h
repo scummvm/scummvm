@@ -99,7 +99,7 @@ public:
 
 	uint32 getObjAttr(ObjID objID, uint32 attrID);
 	Attribute getGlobal(uint32 attrID);
-	Common::String getText(ObjID objID);
+	Common::String getText(ObjID objID, ObjID source, ObjID target);
 
 	bool isObjActive(ObjID objID);
 

@@ -23,11 +23,14 @@
 #include "macventure/text.h"
 
 namespace MacVenture {
-TextAsset::TextAsset(ObjID objid, Container *container, bool isOld, const HuffmanLists *huffman) {
+TextAsset::TextAsset(MacVentureEngine *engine, ObjID objid, ObjID source, ObjID target, Container *container, bool isOld, const HuffmanLists *huffman) {
 	_id = objid;
+	_sourceObj = source;
+	_targetObj = target;
 	_container = container;
 	_huffman = huffman;
 	_isOld = isOld;
+	_engine = engine;
 
 	if (_isOld) {
 		decodeOld();
@@ -77,8 +80,20 @@ void TextAsset::decodeOld() {
 			lowercase = true;
 		}
 		else if (val == 0x1D) { // Composite
-			warning("Composite strings not implemented");
-			stream.getBits(16);
+			ObjID subval = stream.getBits(16);
+			Common::String child;
+			if (subval & 0x8000) {
+				// Composite object id
+				subval ^= 0xFFFF;
+				child = getNoun(subval);
+			} else {
+				// Just another id
+				// HACK, see below in getNoun()
+				child = *TextAsset(_engine, subval, _sourceObj, _targetObj, _container, _isOld, _huffman).decode();
+			}
+			if (child.size() > 0) {
+				c = '?'; // HACK Will fix later, should append
+			}
 			lowercase = true;
 		}
 		else if (val == 0x1E) {
@@ -102,7 +117,7 @@ void TextAsset::decodeOld() {
 void TextAsset::decodeHuffman() {
 	_decoded = Common::String("");
 	Common::SeekableReadStream *res = _container->getItem(_id);
-	Common::BitStream32BEMSB stream(res);
+	Common::BitStream8MSB stream(res);
 	uint16 strLen = 0;
 	if (stream.getBit()) {
 		strLen = stream.getBits(15);
@@ -110,12 +125,13 @@ void TextAsset::decodeHuffman() {
 	else {
 		strLen = stream.getBits(7);
 	}
-
+	// OK up to here
 	uint32 mask = 0;
 	uint32 symbol = 0;
 	char c;
 	for (uint16 i = 0; i < strLen; i++) {
-		mask = stream.peekBits(16); // The mask is OK, so it means that I don't know how to use the huffman
+		mask = stream.peekBits(16); // The mask is OK
+
 		uint32 entry;
 		// Find the length index
 		for (entry = 0; entry < _huffman->getNumEntries(); entry++) {
@@ -128,24 +144,63 @@ void TextAsset::decodeHuffman() {
 
 		if (symbol == 1) { // 7-bit ascii
 			c = stream.getBits(7);
-		}
-		else if (symbol == 2) { // Composite
-			warning("Composite huffman strings not tested");
+			_decoded += c;
+		} else if (symbol == 2) { // Composite
 			if (stream.getBit()) { // TextID
 				ObjID embedId = stream.getBits(15);
-				TextAsset embedded(embedId, _container, _isOld, _huffman);
-				_decoded += *embedded.decode();
-			} else { //Composite obj string
-				_decoded += Common::String("Unimplemented");
-			}
-		}
-		else { // Plain ascii
-			c = symbol & 0xFF;
-		}
+				uint pos = stream.pos(); // HACK, part 1
+				TextAsset embedded(_engine, embedId, _sourceObj, _targetObj, _container, _isOld, _huffman);
+				stream.rewind();// HACK, part 2
+				stream.skip(pos);
 
-		_decoded += c;
+				_decoded.replace(_decoded.end(), _decoded.end(), *embedded.decode());
+
+				// Another HACK, to get around that EOS char I insert at the end
+				_decoded.replace(_decoded.end() - 1, _decoded.end(), "");
+			} else { //Composite obj string
+				ObjID embedId = stream.getBits(8);
+				_decoded.replace(_decoded.end(), _decoded.end(), getNoun(embedId));
+				// Another HACK, to get around that EOS char I insert at the end
+				_decoded.replace(_decoded.end() - 1, _decoded.end(), "");
+			}
+		} else { // Plain ascii
+			c = symbol & 0xFF;
+			_decoded.replace(_decoded.end(), _decoded.end(), Common::String(c));
+		}		
 	}
 	_decoded += '\0';
 	debug(7, "Decoded %d'th string (new): %s", _id, _decoded.c_str());	
 }
+Common::String TextAsset::getNoun(ObjID subval) {
+	ObjID obj;
+	Common::String name;
+	if (subval & 8)
+		obj = _targetObj;
+	else
+		obj = _sourceObj;
+	if ((subval & 3) == 1)
+	{
+		uint idx = _engine->getPrefixNdx(obj);
+		idx = ((idx >> 4) & 3) + 1;
+		name = _engine->getNoun(idx);
+	}
+	else
+	{
+		// HACK, there should be a pool of assets or something like in the GUI
+		name = *TextAsset(_engine, obj, _sourceObj, _targetObj, _container, _isOld, _huffman).decode();
+		switch (subval & 3)
+		{
+		case 2:
+			name = _engine->getPrefixString(0, obj) + name;
+			break;
+		case 3:
+			name = _engine->getPrefixString(2, obj) + name;
+			break;
+		}
+	}
+	if (name.size() && (subval & 4))
+		name.toUppercase(); // HACK, should only capitalize first char?
+	return name;
+}
+
 } // End of namespace MacVenture

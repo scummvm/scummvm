@@ -25,9 +25,6 @@ World::World(MacVentureEngine *engine, Common::MacResManager *resMan)  {
 	
 	warning("Test functions about to happen");
 	_gameText = new Container("Shadowgate II/Shadow Text");	
-
-	ObjID tid = (ObjID)1;
-	TextAsset test = TextAsset(tid, _gameText, _engine->isOldText(), _engine->getDecodingHuffman());
 	
 	delete saveGameRes;
 	saveGameFile.close();		
@@ -153,8 +150,8 @@ void World::captureChildren(ObjID objID) {
 void World::releaseChildren(ObjID objID) {
 }
 
-Common::String World::getText(ObjID objID) {
-	TextAsset text = TextAsset(objID, _gameText, _engine->isOldText(), _engine->getDecodingHuffman());
+Common::String World::getText(ObjID objID, ObjID source, ObjID target) {
+	TextAsset text = TextAsset(_engine, objID, source, target, _gameText, _engine->isOldText(), _engine->getDecodingHuffman());
 	
 	return *text.decode();
 }

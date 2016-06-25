@@ -59,8 +59,14 @@ MacVentureEngine::~MacVentureEngine() {
 	if (_filenames)
 		delete _filenames;
 
-	if (_decodingArticles)
-		delete _decodingArticles;
+	if (_decodingDirectArticles)
+		delete _decodingDirectArticles;
+
+	if (_decodingNamingArticles)
+		delete _decodingNamingArticles;
+
+	if (_decodingIndirectArticles)
+		delete _decodingIndirectArticles;
 
 	if (_textHuffman)
 		delete _textHuffman;
@@ -88,7 +94,9 @@ Common::Error MacVentureEngine::run() {
 	_oldTextEncoding = !loadTextHuffman();
 
 	_filenames = new StringTable(this, _resourceManager, kFilenamesStringTableID);
-	_decodingArticles = new StringTable(this, _resourceManager, kCommonArticlesStringTableID);
+	_decodingDirectArticles = new StringTable(this, _resourceManager, kCommonArticlesStringTableID);
+	_decodingNamingArticles = new StringTable(this, _resourceManager, kNamingArticlesStringTableID);
+	_decodingDirectArticles = new StringTable(this, _resourceManager, kIndirectArticlesStringTableID);
 
 	// Big class instantiation
 	_gui = new Gui(this, _resourceManager);
@@ -251,7 +259,6 @@ void MacVentureEngine::enqueueText(TextQueueID type, ObjID target, ObjID source,
 }
 
 bool MacVentureEngine::printTexts() {
-	warning("printTexts: unimplemented");
 	for (uint i = 0; i < _textQueue.size(); i++) {
 		QueuedText text = _textQueue.front();
 		_textQueue.remove_at(0);
@@ -265,7 +272,7 @@ bool MacVentureEngine::printTexts() {
 			gameChanged();
 			break;
 		case kTextPlain:
-			debug("Print Plain Text: %s", _world->getText(text.asset).c_str());
+			debug("Print Plain Text: %s", _world->getText(text.asset, text.source, text.destination).c_str());
 			gameChanged();
 			break;
 		}
@@ -401,11 +408,7 @@ bool MacVenture::MacVentureEngine::runScriptEngine() {
 	if (_selectedControl == 1)
 		_gameChanged = false;
 
-<<<<<<< HEAD
-	else if (_gameState == kGameStateInit || _gameState == kGameStatePlaying){
-=======
 	else if (_gameState == kGameStateInit || _gameState == kGameStatePlaying) {
->>>>>>> 088fc4d... MACVENTURE: Script engine fixes
 		if (_scriptEngine->runControl(kTick, _selectedControl, _destObject, _deltaPoint)) {
 			_haltedAtEnd = true;
 			return true;
@@ -493,7 +496,6 @@ void MacVentureEngine::resetVars() {
 void MacVentureEngine::unselectAll() {
 	while (!_currentSelection.empty()) {
 		unselectObject(_currentSelection.front());
-		//_currentSelection.remove_at(0);
 	}
 }
 
@@ -532,6 +534,22 @@ int MacVentureEngine::findObjectInArray(ObjID objID, const Common::Array<ObjID> 
 	return found ? i : -1;
 }
 
+uint MacVentureEngine::getPrefixNdx(ObjID obj) {
+	return _world->getObjAttr(obj, kAttrPrefixes);
+}
+
+Common::String MacVentureEngine::getPrefixString(uint flag, ObjID obj) {
+	uint ndx = _world->getObjAttr(obj, kAttrPrefixes); // HACK should check the type of that one
+	ndx = ((ndx) >> flag) & 3;
+	if (ndx) {
+		return (*_decodingNamingArticles->getStrings())[ndx];
+	}
+}
+
+Common::String MacVentureEngine::getNoun(ObjID ndx) {
+	return (*_decodingIndirectArticles->getStrings())[ndx];
+}
+
 void MacVentureEngine::highlightExit(ObjID objID) {
 	warning("highlightExit: unimplemented");
 }
@@ -541,7 +559,7 @@ void MacVentureEngine::selectPrimaryObject(ObjID objID) {
 	int idx;
 	if (_destObject > 0 &&
 		(idx = findObjectInArray(_destObject, _selectedObjs)) != -1 &&
-		findObjectInArray(_destObject, _currentSelection) == -1) 
+		findObjectInArray(_destObject, _currentSelection) == -1)
 	{
 		_selectedObjs.remove_at(idx);
 		highlightExit(_destObject);
@@ -570,13 +588,13 @@ void MacVentureEngine::openObject(ObjID objID) {
 		_gui->updateWindowInfo(kMainGameWindow, objID, _world->getChildren(objID, true));
 		_gui->updateWindow(kMainGameWindow, _world->getObjAttr(objID, kAttrContainerOpen));
 		//_gui->drawExits();
-		_gui->setWindowTitle(kMainGameWindow, _world->getText(objID));
+		_gui->setWindowTitle(kMainGameWindow, _world->getText(objID, objID, objID)); // it ignores source and target in the original
 	} else { // Open inventory window
 		Common::Point p(_world->getObjAttr(objID, kAttrPosX), _world->getObjAttr(objID, kAttrPosY));
 		//getParentWin(obj).localToGlobal(p);
 		//globalToDesktop(p);
 		WindowReference invID = _gui->createInventoryWindow(objID);
-		_gui->setWindowTitle(invID, _world->getText(objID));
+		_gui->setWindowTitle(invID, _world->getText(objID, objID, objID));
 		_gui->updateWindowInfo(invID, objID, _world->getChildren(objID, true));
 		_gui->updateWindow(invID, _world->getObjAttr(objID, kAttrContainerOpen));
 	}
@@ -664,7 +682,7 @@ void MacVentureEngine::reflectSwap(ObjID fromID, ObjID toID) {
 		tmp = from;
 	}
 	if (tmp) {
-		Common::String newTitle = _world->getText(toID);
+		Common::String newTitle = _world->getText(toID, 0, 0); // Ignores src and targ in the original
 		_gui->setWindowTitle(tmp, newTitle);
 		_gui->updateWindowInfo(tmp, toID, _world->getChildren(toID, true));
 		updateWindow(tmp);
@@ -677,7 +695,7 @@ void MacVentureEngine::toggleExits() {
 		_selectedObjs.remove_at(0);
 		highlightExit(obj);
 		updateWindow(findParentWindow(obj));
-	}	
+	}
 }
 
 void MacVentureEngine::zoomObject(ObjID objID) {
@@ -775,13 +793,13 @@ Common::Rect MacVentureEngine::getObjBounds(ObjID objID) {
 uint MacVentureEngine::getOverlapPercent(ObjID one, ObjID other) {
 	//not the same parent? 0 overlap
 	if (_world->getObjAttr(one, kAttrParentObject) !=
-		_world->getObjAttr(other, kAttrParentObject)) 
+		_world->getObjAttr(other, kAttrParentObject))
 		return 0;
 
 	Common::Rect oneBounds = getObjBounds(one);
 	Common::Rect otherBounds = getObjBounds(other);
 	if (otherBounds.intersects(oneBounds) ||
-		oneBounds.intersects(otherBounds)) 
+		oneBounds.intersects(otherBounds))
 	{
 		uint areaOne = oneBounds.width() * oneBounds.height();
 		uint areaOther = otherBounds.width() * otherBounds.height();
@@ -805,7 +823,7 @@ WindowReference MacVentureEngine::findObjWindow(ObjID objID) {
 	// This is a bit of a hack, we take advantage of the consecutive nature of references
 	for (uint i = kCommandsWindow; i <= kDiplomaWindow; i++) {
 		const WindowData &data = _gui->getWindowData((WindowReference)i);
-		if (data.refcon == objID) { return data.refcon; }
+		if (data.objRef == objID) { return data.refcon; }
 	}
 	return kNoWindow;
 }
