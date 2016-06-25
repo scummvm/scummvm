@@ -972,10 +972,6 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, const ShowStyleEntry
 	_frameNowVisible = true;
 }
 
-// TODO: What does the bit masking for the show rects do,
-// and does it cause an off-by-one error in rect calculations
-// since SOL_Rect is BR inclusive and Common::Rect is BR
-// exclusive?
 void GfxFrameout::showBits() {
 	for (RectList::const_iterator rect = _showList.begin(); rect != _showList.end(); ++rect) {
 		Common::Rect rounded(**rect);
