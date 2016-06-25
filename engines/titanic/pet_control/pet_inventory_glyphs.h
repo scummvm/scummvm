@@ -37,21 +37,81 @@ private:
 	int populateItem(CGameObject *item, int val);
 
 	int subMode(CGameObject *item, int val);
+
+	/**
+	 * Start any movie for the background
+	 */
+	void startBackgroundMovie();
+
+	/**
+	 * Start any movie for the foreground item
+	 */
+	void startForegroundMovie();
+
+	/**
+	 * Stop any previously started foreground or background movie
+	 */
+	void stopMovie();
+
+	/**
+	 * Reposition the inventory item
+	 */
+	void reposition(const Point &pt);
 public:
 	CGameObject *_item;
 	int _field34;
 	CGameObject *_background;
 	CGameObject *_image;
 public:
-	CPetInventoryGlyph() : _item(nullptr), _field34(0), 
+	CPetInventoryGlyph() : _item(nullptr), _field34(1), 
 		_background(nullptr), _image(nullptr) {}
 	CPetInventoryGlyph(CCarry *item, int val) : _item(item),
 		_field34(val), _background(nullptr), _image(nullptr) {}
 
 	/**
-	 * Set the inventory item
+	 * Called when the PET area is entered
 	 */
-	void setItem(CGameObject *item, int val);
+	virtual void enter();
+	
+	/**
+	 * Called when the PET area is left
+	 */
+	virtual void leave();
+
+	/**
+	 * Draw the glyph at a specified position
+	 */
+	virtual void drawAt(CScreenManager *screenManager, const Point &pt, bool isHighlighted);
+
+	/**
+	 * Unhighlight any currently highlighted element
+	 */
+	virtual void unhighlightCurrent();
+
+	/**
+	 * Highlight any currently highlighted element
+	 */
+	virtual void highlightCurrent(const Point &pt);
+
+	/**
+	 * Glyph has been shifted to be first visible one
+	 */
+	virtual void glyphFocused(const Point &topLeft, bool flag);
+	
+	/**
+	 * Called when a glyph drag starts
+	 */
+	virtual bool dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg);
+
+	/**
+	 * Returns the tooltip text for when the glyph is selected
+	 */
+	virtual void getTooltip(CPetText *text);
+
+	/**
+	 * Return whether the glyph has an associated image
+	 */
+	virtual bool hasImage() const { return _item && _background; }
 
 	/**
 	 * Returns the object associated with the glyph
@@ -62,6 +122,11 @@ public:
 	 * Does a processing action on the glyph
 	 */
 	virtual bool doAction(CGlyphAction *action);
+
+	/**
+	 * Set the inventory item
+	 */
+	void setItem(CGameObject *item, int val);
 };
 
 class CInventoryGlyphAction : public CGlyphAction {

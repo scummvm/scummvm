@@ -20,9 +20,9 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "titanic/pet_control/pet_inventory_glyphs.h"
 #include "titanic/pet_control/pet_inventory.h"
+#include "titanic/messages/pet_messages.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -33,6 +33,129 @@ const uint ITEM_MODES[40] = {
 	21, 22, 23, 36, 39, 39, 31, 31, 32, 32,
 	33, 34, 35, 38, 41, 42, 43, 44, 45, 37
 };
+
+void CPetInventoryGlyph::enter() {
+	startBackgroundMovie();
+}
+
+void CPetInventoryGlyph::leave() {
+	stopMovie();
+}
+
+void CPetInventoryGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool isHighlighted) {
+	if (!_field34)
+		return;
+
+	if (_image) {
+		if (_image->hasActiveMovie()) {
+			if (isHighlighted)
+				_image->draw(screenManager);
+			else
+				_image->draw(screenManager, pt);
+			return;
+		}
+
+		_image = nullptr;
+		if (_background && isHighlighted) {
+			_background->setPosition(pt);
+			startBackgroundMovie();
+		}
+	}
+
+	if (_background) {
+		if (isHighlighted)
+			_background->draw(screenManager);
+		else
+			_background->draw(screenManager, pt);
+	} else if (_image) {
+		_image->draw(screenManager, pt, Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	}
+}
+
+
+void CPetInventoryGlyph::unhighlightCurrent() {
+	if (_image) {
+		_image->setPosition(Point(0, 0));
+		stopMovie();
+	} else if (_background) {
+		_background->setPosition(Point(0, 0));
+		_background->loadFrame(0);
+		stopMovie();
+	}
+}
+
+void CPetInventoryGlyph::highlightCurrent(const Point &pt) {
+	reposition(pt);
+	if (_item) {
+		CPETObjectSelectedMsg selectedMsg;
+		selectedMsg.execute(_item);
+	}
+}
+
+void CPetInventoryGlyph::glyphFocused(const Point &topLeft, bool flag) {
+	if (_background && flag)
+		_background->setPosition(topLeft);
+}
+
+bool CPetInventoryGlyph::dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg) {
+	warning("TODO");
+	return false;
+}
+
+void CPetInventoryGlyph::getTooltip(CPetText *text) {
+	if (text) {
+		text->setText("");
+
+		if (_field34 && _item) {
+			int itemIndex = populateItem(_item, 0);
+			if (itemIndex >= 14 && itemIndex <= 18) {
+				CPETObjectStateMsg stateMsg(0);
+				stateMsg.execute(_item);
+
+				text->setText(CString::format("%s %s",
+					stateMsg._value ? "A hot " : "A cold ",
+					g_vm->_itemDescriptions[itemIndex].c_str()
+				));
+
+			} else {
+				text->setText(g_vm->_itemDescriptions[itemIndex]);
+			}
+		}
+	}
+}
+
+bool CPetInventoryGlyph::doAction(CGlyphAction *action) {
+	CInventoryGlyphAction *invAction = static_cast<CInventoryGlyphAction *>(action);
+	CPetInventoryGlyphs *owner = static_cast<CPetInventoryGlyphs *>(_owner);
+	if (!invAction)
+		return false;
+
+	switch (invAction->getMode()) {
+	case ACTION_REMOVED:
+		if (invAction->_item == _item) {
+			_item = nullptr;
+			_background = nullptr;
+			_field34 = 0;
+		}
+		break;
+
+	case ACTION_REMOVE:
+		if (_item == invAction->_item && _owner) {
+			int v = populateItem(_item, 0);
+			_background = owner->getBackground(v);
+
+			if (isHighlighted()) {
+				warning("TODO");
+			}
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	return true;
+}
 
 void CPetInventoryGlyph::setItem(CGameObject *item, int val) {
 	_item = item;
@@ -127,37 +250,39 @@ int CPetInventoryGlyph::subMode(CGameObject *item, int val) {
 	return frameNum;
 }
 
-bool CPetInventoryGlyph::doAction(CGlyphAction *action) {
-	CInventoryGlyphAction *invAction = static_cast<CInventoryGlyphAction *>(action);
-	CPetInventoryGlyphs *owner = static_cast<CPetInventoryGlyphs *>(_owner);
-	if (!invAction)
-		return false; 
-
-	switch (invAction->getMode()) {
-	case ACTION_REMOVED:
-		if (invAction->_item == _item) {
-			_item = nullptr;
-			_background = nullptr;
-			_field34 = 0;
-		}
-		break;
-
-	case ACTION_REMOVE:
-		if (_item == invAction->_item && _owner) {
-			int v = populateItem(_item, 0);
-			_background = owner->getBackground(v);
-
-			if (isHighlighted()) {
-				warning("TODO");
-			}
-		}
-		break;
-
-	default:
-		break;
+void CPetInventoryGlyph::startBackgroundMovie() {
+	if (_owner) {
+		CPetInventory *section = static_cast<CPetInventory *>(_owner->getOwner());
+		if (section)
+			section->playMovie(_background, 1);
 	}
+}
 
-	return true;
+void CPetInventoryGlyph::startForegroundMovie() {
+	if (_owner) {
+		CPetInventory *section = static_cast<CPetInventory *>(_owner->getOwner());
+		if (section)
+			section->playMovie(_image, 1);
+	}
+}
+
+void CPetInventoryGlyph::stopMovie() {
+	if (_owner) {
+		CPetInventory *section = static_cast<CPetInventory *>(_owner->getOwner());
+		if (section)
+			section->playMovie(nullptr, 1);
+	}
+}
+
+void CPetInventoryGlyph::reposition(const Point &pt) {
+	if (_image) {
+		_image->setPosition(pt);
+		startForegroundMovie();
+	}
+	else if (_background) {
+		_background->setPosition(pt);
+		startBackgroundMovie();
+	}
 }
 
 /*------------------------------------------------------------------------*/

@@ -53,11 +53,6 @@ private:
 	 * Get the index of an item added to the PET
 	 */
 	int getItemIndex(CGameObject *item) const;
-
-	/**
-	 * Set the animated inventory item movie
-	 */
-	void setMovie(CGameObject *movie, int flag);
 public:
 	CPetInventory();
 
@@ -140,6 +135,11 @@ public:
 	void highlightItem(CGameObject *item);
 
 	CGameObject *getImage(int index);
+
+	/**
+	 * Play the animated movie for an object
+	 */
+	void playMovie(CGameObject *movie, int flag);
 };
 
 } // End of namespace Titanic

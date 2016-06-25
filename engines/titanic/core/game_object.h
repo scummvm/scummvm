@@ -280,11 +280,6 @@ protected:
 	 */
 	Point getControid() const;
 
-	/**
-	 * Set the position of the object
-	 */
-	void setPosition(const Point &newPos);
-
 	void sound8(bool flag) const;
 
 	/**
@@ -482,6 +477,11 @@ public:
 	 * with extra checking of object flags status
 	 */
 	bool checkPoint(const Point &pt, bool ignore40 = false, bool visibleOnly = false);
+
+	/**
+	 * Set the position of the object
+	 */
+	void setPosition(const Point &newPos);
 
 	/**
 	 * Change the object's status

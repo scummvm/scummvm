@@ -199,7 +199,7 @@ CGameObject *CPetInventory::getImage(int index) {
 	return nullptr;
 }
 
-void CPetInventory::setMovie(CGameObject *movie, int flag) {
+void CPetInventory::playMovie(CGameObject *movie, int flag) {
 	if (_movie)
 		_movie->stopMovie();
 	_movie = movie;

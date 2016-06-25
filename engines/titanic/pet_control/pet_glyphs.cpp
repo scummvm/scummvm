@@ -120,24 +120,20 @@ void CPetGlyphs::reset() {
 	}
 }
 
-bool CPetGlyphs::enter() {
+void CPetGlyphs::enter() {
 	if (_highlightIndex != -1) {
 		CPetGlyph *glyph = getGlyph(_highlightIndex);
-		if (glyph && glyph->enter())
-			return true;
+		if (glyph)
+			glyph->enter();
 	}
-
-	return false;
 }
 
-bool CPetGlyphs::leave() {
+void CPetGlyphs::leave() {
 	if (_highlightIndex != -1) {
 		CPetGlyph *glyph = getGlyph(_highlightIndex);
-		if (glyph && glyph->leave())
-			return true;
+		if (glyph)
+			glyph->leave();
 	}
-
-	return false;
 }
 
 void CPetGlyphs::draw(CScreenManager *screenManager) {
@@ -419,8 +415,6 @@ bool CPetGlyphs::KeyCharMsg(int key) {
 }
 
 bool CPetGlyphs::VirtualKeyCharMsg(int key) {
-	bool handled = false;
-
 	switch (key) {
 	case Common::KEYCODE_LEFT:
 		decSelection();

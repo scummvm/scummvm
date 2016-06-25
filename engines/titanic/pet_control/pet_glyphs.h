@@ -76,12 +76,12 @@ public:
 	/**
 	 * Called when the PET area is entered
 	 */
-	virtual bool enter() { return false; }
+	virtual void enter() {}
 	
 	/**
 	 * Called when the PET area is left
 	 */
-	virtual bool leave() { return false; }
+	virtual void leave() {}
 
 	/**
 	 * Draw the glyph at a specified position
@@ -151,7 +151,7 @@ public:
 	/**
 	 * Glyph has been shifted to be first visible one
 	 */
-	virtual void glyphFocused(const Point &pt, bool flag) {}
+	virtual void glyphFocused(const Point &topLeft, bool flag) {}
 
 	/**
 	 * Selects a glyph
@@ -180,7 +180,11 @@ public:
 	virtual void saveGlyph(SimpleFile *file, int indent) {}
 
 	virtual bool proc33(CPetGlyph *glyph) { return true; }
-	virtual int proc34() { return 1; }
+
+	/**
+	 * Return whether the glyph has an associated image
+	 */
+	virtual bool hasImage() const { return true; }
 
 	/**
 	 * Called on a highlighted item when PET area is entered
@@ -328,12 +332,12 @@ public:
 	/**
 	 * Called when PET area is entered
 	 */
-	virtual bool enter();
+	virtual void enter();
 
 	/**
 	 * Called when PET area is left
 	 */
-	virtual bool leave();
+	virtual void leave();
 
 	void setFlags(int flags) { _flags = flags; }
 
