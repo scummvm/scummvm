@@ -146,6 +146,7 @@ public:
 	static void c_lt();
 	static void c_ge();
 	static void c_le();
+	static void c_call();
 	static void c_procret();
 
 	static void c_exit();

@@ -80,7 +80,7 @@ using namespace Director;
 
 %type<code> asgn begin cond end expr if repeatwhile repeatwith stmtlist
 %type<s> gotoframe gotomovie
-%type<narg> argdef
+%type<narg> argdef arglist
 
 %right '='
 %left '+' '-'
@@ -233,7 +233,13 @@ expr: INT						{
 	| '(' expr ')'				{ $$ = $2; }
 	;
 
-func: tMCI STRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c_str()); delete $2; }
+func: ID begin '(' arglist ')' {
+		g_lingo->code1(g_lingo->c_call);
+		g_lingo->codeString($1->c_str());
+		inst numpar = 0;
+		WRITE_UINT32(&numpar, $4);
+		g_lingo->code1(numpar); };
+	| tMCI STRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c_str()); delete $2; }
 	| tMCIWAIT ID			{ g_lingo->code1(g_lingo->c_mciwait); g_lingo->codeString($2->c_str()); delete $2; }
 	| tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| gotofunc
@@ -311,11 +317,15 @@ defn: tMACRO ID { g_lingo->_indef = true; }
 			g_lingo->define(*$2, $4, $7, $5);
 			g_lingo->_indef = false; }
 	;
-argdef:  /* nothing */ 	{ $$ = 0; }
+argdef:  /* nothing */ 		{ $$ = 0; }
 	| ID					{ g_lingo->codeArg(*$1); delete $1; $$ = 1; }
 	| argdef ',' ID			{ g_lingo->codeArg(*$3); delete $3; $$ = $1 + 1; }
 	| argdef ',' '\n' ID	{ g_lingo->codeArg(*$4); delete $4; $$ = $1 + 1; }
 	;
 
+arglist:  /* nothing */ 	{ $$ = 0; }
+	| expr					{ $$ = 1; }
+	| arglist ',' expr		{ $$ = $1 + 1; }
+	;
 
 %%

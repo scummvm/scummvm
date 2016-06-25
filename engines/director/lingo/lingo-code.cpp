@@ -404,6 +404,10 @@ void Lingo::codeArg(Common::String &s) {
 	g_lingo->code1(g_lingo->c_assign);
 }
 
+void Lingo::c_call() {
+	warning("STUB: c_call()");
+}
+
 void Lingo::c_procret() {
 	warning("STUB: c_procret()");
 }
