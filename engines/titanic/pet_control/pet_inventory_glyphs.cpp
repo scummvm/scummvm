@@ -21,6 +21,7 @@
  */
 
 #include "titanic/pet_control/pet_inventory_glyphs.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/pet_control/pet_inventory.h"
 #include "titanic/messages/pet_messages.h"
 #include "titanic/titanic.h"
@@ -98,8 +99,46 @@ void CPetInventoryGlyph::glyphFocused(const Point &topLeft, bool flag) {
 }
 
 bool CPetInventoryGlyph::dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg) {
-	warning("TODO");
-	return false;
+	if (!_item)
+		return false;
+
+	if (_background) {
+		_field34 = 0;
+		stopMovie();
+	}
+
+	CPetControl *petControl = getPetControl();
+	if (!petControl)
+		return false;
+
+	CGameObject *carryParcel = petControl->getHiddenObject("CarryParcel");
+
+	if (petControl->isSuccUBusActive() && carryParcel) {
+		petControl->removeFromInventory(_item, carryParcel, false, true);
+		petControl->removeFromInventory(_item, false, false);
+
+		carryParcel->setPosition(Point(msg->_mousePos.x - carryParcel->getBounds().width() / 2,
+			msg->_mousePos.y - carryParcel->getBounds().height() / 2));
+		_item->setPosition(Point(SCREEN_WIDTH, SCREEN_HEIGHT));
+	} else {
+		petControl->removeFromInventory(_item, false, true);
+
+		_item->setPosition(Point(msg->_mousePos.x - carryParcel->getBounds().width() / 2,
+			msg->_mousePos.y - carryParcel->getBounds().height() / 2));
+		_item->setVisible(true);
+	}
+
+	msg->_handled = true;
+	if (msg->execute(carryParcel)) {
+		_item = nullptr;
+		_background = nullptr;
+		_field34 = 0;
+		petControl->setC8(1);
+		return true;
+	} else {
+		petControl->addToInventory(carryParcel);
+		return false;
+	}
 }
 
 void CPetInventoryGlyph::getTooltip(CPetText *text) {
@@ -145,7 +184,9 @@ bool CPetInventoryGlyph::doAction(CGlyphAction *action) {
 			_background = owner->getBackground(v);
 
 			if (isHighlighted()) {
-				warning("TODO");
+				Point glyphPos = _owner->getHighlightedGlyphPos();
+				reposition(glyphPos);
+				updateTooltip();
 			}
 		}
 		break;
@@ -278,8 +319,7 @@ void CPetInventoryGlyph::reposition(const Point &pt) {
 	if (_image) {
 		_image->setPosition(pt);
 		startForegroundMovie();
-	}
-	else if (_background) {
+	} else if (_background) {
 		_background->setPosition(pt);
 		startBackgroundMovie();
 	}

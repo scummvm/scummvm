@@ -521,6 +521,14 @@ CString CPetControl::getFullViewName() {
 	return gameManager ? gameManager->getFullViewName() : CString();
 }
 
+bool CPetControl::isSuccUBusActive() const {
+	if (!_activeNPC)
+		return false;
+
+	CString name = getName();
+	return name.contains("Succubus") || name.contains("Sub");
+}
+
 void CPetControl::convResetDials(int flag) {
 	if (flag == 1)
 		_conversations.resetDials(_activeNPCName);

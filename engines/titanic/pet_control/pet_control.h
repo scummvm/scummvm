@@ -316,6 +316,8 @@ public:
 	void incC0() { ++_fieldC0; }
 	void decC0() { --_fieldC0; }
 
+	bool isSuccUBusActive() const;
+
 	/*--- CPetConversations methods ---*/
 
 	/**
