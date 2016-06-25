@@ -180,7 +180,7 @@ void GfxText32::setFont(const GuiResourceId fontId) {
 void GfxText32::drawFrame(const Common::Rect &rect, const int16 size, const uint8 color, const bool doScaling) {
 	Common::Rect targetRect = doScaling ? scaleRect(rect) : rect;
 
-	byte *bitmap = _segMan->getHunkPointer(_bitmap);
+	byte *bitmap = _segMan->derefBulkPtr(_bitmap, 1);
 	byte *pixels = bitmap + READ_SCI11ENDIAN_UINT32(bitmap + 28) + rect.top * _width + rect.left;
 
 	// NOTE: Not fully disassembled, but this should be right
@@ -210,7 +210,7 @@ void GfxText32::drawFrame(const Common::Rect &rect, const int16 size, const uint
 }
 
 void GfxText32::drawChar(const char charIndex) {
-	byte *bitmap = _segMan->getHunkPointer(_bitmap);
+	byte *bitmap = _segMan->derefBulkPtr(_bitmap, 1);
 	byte *pixels = bitmap + READ_SCI11ENDIAN_UINT32(bitmap + 28);
 
 	_font->drawToBuffer(charIndex, _drawPosition.y, _drawPosition.x, _foreColor, _dimmed, pixels, _width, _height);
@@ -335,7 +335,7 @@ void GfxText32::invertRect(const reg_t bitmap, int16 bitmapStride, const Common:
 		targetRect = scaleRect(rect);
 	}
 
-	byte *bitmapData = _segMan->getHunkPointer(bitmap);
+	byte *bitmapData = _segMan->derefBulkPtr(bitmap, 1);
 
 	// NOTE: SCI code is super weird here; it seems to be trying to look at the
 	// entire size of the bitmap including the header, instead of just the pixel

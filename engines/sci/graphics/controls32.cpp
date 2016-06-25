@@ -318,7 +318,7 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 		g_sci->_gfxFrameout->frameOut(true);
 	}
 
-	_segMan->freeHunkEntry(editor.bitmap);
+	_segMan->freeDynmem(editor.bitmap);
 
 	if (textChanged) {
 		editor.text.trim();

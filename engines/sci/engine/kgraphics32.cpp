@@ -539,7 +539,7 @@ reg_t kBitmapCreate(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kBitmapDestroy(EngineState *s, int argc, reg_t *argv) {
-	s->_segMan->freeHunkEntry(argv[0]);
+	s->_segMan->freeDynmem(argv[0]);
 	return s->r_acc;
 }
 

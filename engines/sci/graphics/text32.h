@@ -100,7 +100,7 @@ public:
 	 * Ownership of the bitmap is retained by the caller.
 	 */
 	inline BitmapResource(reg_t bitmap) :
-		_bitmap(g_sci->getEngineState()->_segMan->getHunkPointer(bitmap)),
+		_bitmap(g_sci->getEngineState()->_segMan->derefBulkPtr(bitmap, 1)),
 		_object(bitmap) {
 			if (_bitmap == nullptr || getUncompressedDataOffset() != getBitmapHeaderSize()) {
 				error("Invalid Text bitmap %04x:%04x", PRINT_REG(bitmap));
@@ -114,8 +114,8 @@ public:
 	 * segment manager.
 	 */
 	inline BitmapResource(SegManager *segMan, const int16 width, const int16 height, const uint8 skipColor, const int16 displaceX, const int16 displaceY, const int16 scaledWidth, const int16 scaledHeight, const uint32 hunkPaletteOffset, const bool remap) {
-		_object = segMan->allocateHunkEntry("Bitmap()", getBitmapSize(width, height));
-		_bitmap = segMan->getHunkPointer(_object);
+		segMan->allocDynmem(getBitmapSize(width, height), "Bitmap()", &_object);
+		_bitmap = segMan->derefBulkPtr(_object, 1);
 
 		const uint16 bitmapHeaderSize = getBitmapHeaderSize();
 

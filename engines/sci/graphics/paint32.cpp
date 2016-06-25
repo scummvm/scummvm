@@ -61,7 +61,7 @@ void GfxPaint32::kernelUpdateLine(ScreenItem *screenItem, Plane *plane, const Co
 	Common::Rect gameRect;
 	BitmapResource bitmap = makeLineBitmap(startPoint, endPoint, priority, color, style, pattern, thickness, gameRect);
 
-	_segMan->freeHunkEntry(screenItem->_celInfo.bitmap);
+	_segMan->freeDynmem(screenItem->_celInfo.bitmap);
 	screenItem->_celInfo.bitmap = bitmap.getObject();
 	screenItem->_celInfo.color = color;
 	screenItem->_position = startPoint;
@@ -80,7 +80,7 @@ void GfxPaint32::kernelDeleteLine(const reg_t screenItemObject, const reg_t plan
 		return;
 	}
 
-	_segMan->freeHunkEntry(screenItem->_celInfo.bitmap);
+	_segMan->freeDynmem(screenItem->_celInfo.bitmap);
 	g_sci->_gfxFrameout->deleteScreenItem(screenItem, plane);
 }
 
