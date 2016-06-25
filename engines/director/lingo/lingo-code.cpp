@@ -384,6 +384,7 @@ void Lingo::define(Common::String &name, int start, int end, int nargs) {
 	if (!_handlers.contains(name)) { // Create variable if it was not defined
 		sym = new Symbol;
 
+		warning("Redefining handler '%s'", name.c_str());
 		delete sym->u.defn;
 
 		_handlers[name] = sym;
