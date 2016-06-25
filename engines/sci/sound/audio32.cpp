@@ -561,20 +561,11 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 	AudioChannel &channel = getChannel(channelIndex);
 	channel.id = resourceId;
 	channel.resource = resource;
-	channel.resourceStream = nullptr;
-	channel.stream = nullptr;
-	channel.converter = nullptr;
-	channel.duration = 0;
-	channel.startedAtTick = 0;
-	channel.pausedAtTick = 0;
 	channel.loop = loop;
-	channel.lastFadeTick = 0;
-	channel.fadeVolume = 0;
-	channel.fadeSpeed = 0;
-	channel.fadeStepsRemaining = 0;
-	channel.stopChannelOnFade = false;
 	channel.robot = false;
 	channel.vmd = false;
+	channel.lastFadeTick = 0;
+	channel.fadeStepsRemaining = 0;
 	channel.soundNode = soundNode;
 	channel.volume = volume < 0 || volume > kMaxVolume ? (int)kMaxVolume : volume;
 	// TODO: SCI3 introduces stereo audio
