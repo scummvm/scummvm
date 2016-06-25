@@ -33,6 +33,20 @@
 
 namespace DM {
 
+extern Box gBoxActionArea;
+
+class ActionList {
+public:
+	byte _minimumSkillLevel[3]; /* Bit 7: requires charge, Bit 6-0: minimum skill level. */
+	ChampionAction _actionIndices[3];
+	ActionList() {
+		for (uint16 i = 0; i < 3; ++i) {
+			_minimumSkillLevel[i] = 0;
+			_actionIndices[i] = kChampionActionNone;
+		}
+	}
+}; // @ ACTION_LIST
+
 class MenuMan {
 	DMEngine *_vm;
 public:
@@ -40,7 +54,8 @@ public:
 
 	bool _refreshActionArea; // @ G0508_B_RefreshActionArea
 	bool _actionAreaContainsIcons; // @ G0509_B_ActionAreaContainsIcons
-	int16 _actionDamage;
+	int16 _actionDamage; // @ G0513_i_ActionDamage
+	ActionList _actionList; // @ G0713_s_ActionList
 
 	void clearActingChampion(); // @ F0388_MENUS_ClearActingChampion
 	void drawActionIcon(ChampionIndex championIndex); // @ F0386_MENUS_DrawActionIcon
@@ -48,6 +63,8 @@ public:
 	void drawMovementArrows(); // @ F0395_MENUS_DrawMovementArrows
 	void drawDisabledMenu(); // @ F0456_START_DrawDisabledMenus
 	void refreshActionAreaAndSetChampDirMaxDamageReceived(); // @ F0390_MENUS_RefreshActionAreaAndSetChampionDirectionMaximumDamageReceived
+	void drawActionArea(); // @ F0387_MENUS_DrawActionArea
+	const char* getActionName(ChampionAction actionIndex); // @ F0384_MENUS_GetActionName
 };
 
 }

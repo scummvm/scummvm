@@ -31,10 +31,15 @@
 #include "dungeonman.h"
 #include "objectman.h"
 #include "inventory.h"
+#include "text.h"
 
 
 namespace DM {
 
+Box  gBoxActionArea3ActionMenu = Box(224, 319, 77, 121); // @ G0499_s_Graphic560_Box_ActionArea3ActionsMenu
+Box  gBoxActionArea2ActionMenu = Box(224, 319, 77, 109); // @ G0500_s_Graphic560_Box_ActionArea2ActionsMenu
+Box  gBoxActionArea1ActionMenu = Box(224, 319, 77, 97); // @ G0501_s_Graphic560_Box_ActionArea1ActionMenu
+Box gBoxActionArea = Box(224, 319, 77, 121); // @ G0001_s_Graphic562_Box_ActionArea 
 byte gPalChangesActionAreaObjectIcon[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0}; // @ G0498_auc_Graphic560_PaletteChanges_ActionAreaObjectIcon
 
 MenuMan::MenuMan(DMEngine *vm) : _vm(vm) {
@@ -160,7 +165,7 @@ void MenuMan::refreshActionAreaAndSetChampDirMaxDamageReceived() {
 				_actionDamage = 0;
 			} else {
 				_actionAreaContainsIcons = true;
-				warning("MISSING CODE: F0387_MENUS_DrawActionArea");
+				drawActionArea();
 			}
 		} else {
 			_actionAreaContainsIcons = false;
@@ -170,4 +175,52 @@ void MenuMan::refreshActionAreaAndSetChampDirMaxDamageReceived() {
 		}
 	}
 }
+
+#define kChampionNameMaximumLength 7 // @ C007_CHAMPION_NAME_MAXIMUM_LENGTH
+#define kActionNameMaximumLength 12 // @ C012_ACTION_NAME_MAXIMUM_LENGTH
+
+void MenuMan::drawActionArea() {
+	DisplayMan &dispMan = *_vm->_displayMan;
+	ChampionMan &champMan = *_vm->_championMan;
+	TextMan &textMan = *_vm->_textMan;
+
+	warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
+	dispMan._useByteBoxCoordinates = false;
+	dispMan.clearScreenBox(kColorBlack, gBoxActionArea);
+	if (_actionAreaContainsIcons) {
+		for (uint16 champIndex = kChampionFirst; champIndex < champMan._partyChampionCount; ++champIndex)
+			drawActionIcon((ChampionIndex)champIndex);
+	} else if (champMan._actingChampionOrdinal) {
+		Box box = gBoxActionArea3ActionMenu;
+		if (_actionList._actionIndices[2] == kChampionActionNone)
+			box = gBoxActionArea2ActionMenu;
+		if (_actionList._actionIndices[1] == kChampionActionNone)
+			box = gBoxActionArea1ActionMenu;
+		dispMan.blitToScreen(dispMan.getBitmap(kMenuActionAreaIndice), 96, 0, 0, box, kColorNoTransparency);
+		textMan.printWithTrailingSpacesToScreen(235, 83, kColorBlack, kColorCyan, champMan._champions[_vm->ordinalToIndex(champMan._actingChampionOrdinal)]._name,
+												kChampionNameMaximumLength);
+		for (uint16 actionListIndex = 0; actionListIndex < 3; actionListIndex++) {
+			textMan.printWithTrailingSpacesToScreen(241, 93 + actionListIndex * 12, kColorCyan, kColorBlack,
+													getActionName(_actionList._actionIndices[actionListIndex]),
+													kActionNameMaximumLength);
+		}
+	}
+	warning("MISSING CODE: F0078_MOUSE_ShowPointer");
+	_refreshActionArea = false;
+}
+
+const char *gChampionActionNames[44] = {
+	"N", "BLOCK", "CHOP", "X", "BLOW HORN", "FLIP", "PUNCH",
+	"KICK", "WAR CRY", "STAB", "CLIMB DOWN", "FREEZE LIFE",
+	"HIT", "SWING", "STAB", "THRUST", "JAB", "PARRY", "HACK",
+	"BERZERK", "FIREBALL", "DISPELL", "CONFUSE", "LIGHTNING",
+	"DISRUPT", "MELEE", "X", "INVOKE", "SLASH", "CLEAVE",
+	"BASH", "STUN", "SHOOT", "SPELLSHIELD", "FIRESHIELD",
+	"FLUXCAGE", "HEAL", "CALM", "LIGHT", "WINDOW", "SPIT",
+	"BRANDISH", "THROW", "FUSE"};
+
+const char* MenuMan::getActionName(ChampionAction actionIndex) {
+	return (actionIndex == kChampionActionNone) ? "" : gChampionActionNames[actionIndex];
+}
+
 }
