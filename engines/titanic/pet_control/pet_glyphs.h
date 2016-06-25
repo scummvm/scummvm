@@ -64,31 +64,6 @@ public:
 	CPetGlyph() : ListItem(), _owner(nullptr) {}
 
 	/**
-	 * Translate the glyph's position
-	 */
-	void translate(const Point &pt) { _element.translate(pt.x, pt.y); }
-
-	/**
-	 * Translate the glyph's position back
-	 */
-	void translateBack(const Point &pt) { _element.translate(-pt.x, -pt.y); }
-
-	/**
-	 * Get the parent RealLife area
-	 */
-	CPetGlyphs *getOwner() { return _owner; }
-
-	/**
-	 * Get the PET control
-	 */
-	CPetControl *getPetControl() const;
-
-	/**
-	 * Sets new name and default bounds for glyph
-	 */
-	void setName(const CString &name, CPetControl *petControl);
-
-	/**
 	 * Setup the glyph
 	 */
 	virtual bool setup(CPetControl *petControl, CPetGlyphs *owner);
@@ -199,7 +174,10 @@ public:
 	 */
 	virtual void getTooltip(CPetText *text) {}
 
-	virtual void save2(SimpleFile *file, int indent) {}
+	/**
+	 * Saves the data for the glyph
+	 */
+	virtual void saveGlyph(SimpleFile *file, int indent) {}
 
 	virtual bool proc33(CPetGlyph *glyph) { return true; }
 	virtual int proc34() { return 1; }
@@ -214,12 +192,45 @@ public:
 	 */
 	virtual void leaveHighlighted() {}
 
-	virtual int proc37() { return 0; }
+	/**
+	 * Returns the object associated with the glyph
+	 */
+	virtual CGameObject *getObjectAt() { return nullptr; }
 
 	/**
 	 * Does a processing action on the glyph
 	 */
 	virtual bool doAction(CGlyphAction *action) { return true; }
+
+	/**
+	 * Translate the glyph's position
+	 */
+	void translate(const Point &pt) { _element.translate(pt.x, pt.y); }
+
+	/**
+	 * Translate the glyph's position back
+	 */
+	void translateBack(const Point &pt) { _element.translate(-pt.x, -pt.y); }
+
+	/**
+	 * Get the parent RealLife area
+	 */
+	CPetGlyphs *getOwner() { return _owner; }
+
+	/**
+	 * Get the PET control
+	 */
+	CPetControl *getPetControl() const;
+
+	/**
+	 * Sets new name and default bounds for glyph
+	 */
+	void setName(const CString &name, CPetControl *petControl);
+
+	/**
+	 * Returns true if the specified glyph is the currently highlighted one
+	 */
+	bool isHighlighted() const;
 };
 		
 class CPetGlyphs : public List<CPetGlyph> {
@@ -227,7 +238,7 @@ private:
 	/**
 	 * Get a position for the glyph
 	 */
-	Point getPosition(int index);
+	Point getPosition(int index) const;
 
 	/**
 	 * Get a rect for the glyph
@@ -237,7 +248,7 @@ private:
 	/**
 	 * Returns the on-screen index for the highlight to be shown at
 	 */
-	int getHighlightedIndex(int index);
+	int getHighlightedIndex(int index) const;
 
 	/**
 	 * Returns the index of a glyph given the visible on-screen glyph number
@@ -434,6 +445,21 @@ public:
 	 * Decrement the currently selected index
 	 */
 	void decSelection();
+
+	/**
+	 * Returns the object associated the glyph under the specified position
+	 */
+	CGameObject *getObjectAt(const Point &pt);
+
+	/**
+	 * Returns true if the specified glyph is the currently highlighted one
+	 */
+	bool isGlyphHighlighted(const CPetGlyph *glyph) const;
+
+	/**
+	 * Get the top-left position of the currently highlighted glyph
+	 */
+	Point getHighlightedGlyphPos() const;
 };
 
 } // End of namespace Titanic

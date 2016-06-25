@@ -309,7 +309,7 @@ void CPetConversations::displayNPCName(CGameObject *npc) {
 	}
 }
 
-void CPetConversations::proc34(const CString &name) {
+void CPetConversations::setNPC(const CString &name) {
 	_field418 = 0;
 	resetDials(name);
 	startNPCTimer();

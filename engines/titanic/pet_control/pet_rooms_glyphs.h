@@ -90,7 +90,10 @@ public:
 	 */
 	virtual void getTooltip(CPetText *text);
 
-	virtual void save2(SimpleFile *file, int indent) const;
+	/**
+	 * Saves the data for the glyph
+	 */
+	virtual void saveGlyph(SimpleFile *file, int indent) const;
 	
 	virtual bool proc33(CPetGlyph *glyph);
 
@@ -140,7 +143,7 @@ public:
 	/**
 	 * Save the list
 	 */
-	void save2(SimpleFile *file, int indent) const;
+	void saveGlyphs(SimpleFile *file, int indent) const;
 
 	/**
 	 * Returns the glyph for hte player's assigned room

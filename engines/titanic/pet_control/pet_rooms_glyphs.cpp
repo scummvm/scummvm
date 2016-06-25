@@ -166,7 +166,7 @@ void CPetRoomsGlyph::getTooltip(CPetText *text) {
 	text->setText(roomStr);
 }
 
-void CPetRoomsGlyph::save2(SimpleFile *file, int indent) const {
+void CPetRoomsGlyph::saveGlyph(SimpleFile *file, int indent) const {
 	file->writeNumberLine(_roomFlags, indent);
 	file->writeNumberLine(_mode, indent);
 }
@@ -227,11 +227,11 @@ void CPetRoomsGlyph::drawObjects(uint flags, const Point &pt, CScreenManager *sc
 
 /*------------------------------------------------------------------------*/
 
-void CPetRoomsGlyphs::save2(SimpleFile *file, int indent) const {
+void CPetRoomsGlyphs::saveGlyphs(SimpleFile *file, int indent) const {
 	file->writeNumberLine(size(), indent);
 
 	for (const_iterator i = begin(); i != end(); ++i)
-		(*i)->save2(file, indent);
+		(*i)->saveGlyph(file, indent);
 }
 
 CPetRoomsGlyph *CPetRoomsGlyphs::findAssignedRoom() const {

@@ -71,6 +71,10 @@ void CPetGlyph::setName(const CString &name, CPetControl *petControl) {
 	_element.reset(name, petControl, MODE_UNSELECTED);
 }
 
+bool CPetGlyph::isHighlighted() const {
+	return _owner->isGlyphHighlighted(this);
+}
+
 /*------------------------------------------------------------------------*/
 
 CPetGlyphs::CPetGlyphs() : _firstVisibleIndex(0),  _numVisibleGlyphs(TOTAL_GLYPHS),
@@ -177,7 +181,7 @@ void CPetGlyphs::draw(CScreenManager *screenManager) {
 	}
 }
 
-Point CPetGlyphs::getPosition(int index) {
+Point CPetGlyphs::getPosition(int index) const {
 	Point tempPoint(37 + index * 70, 375);
 	return tempPoint;
 }
@@ -230,7 +234,7 @@ void CPetGlyphs::highlight(const CPetGlyph *glyph) {
 	highlight(indexOf(glyph));
 }
 
-int CPetGlyphs::getHighlightedIndex(int index) {
+int CPetGlyphs::getHighlightedIndex(int index) const {
 	int idx = index - _firstVisibleIndex;
 	return (idx >= 0 && idx < _numVisibleGlyphs) ? idx : -1;
 }
@@ -416,15 +420,27 @@ bool CPetGlyphs::KeyCharMsg(int key) {
 
 bool CPetGlyphs::VirtualKeyCharMsg(int key) {
 	bool handled = false;
-	warning("TODO: CPetGlyphs::virtualKeyCharMsg");
 
-	if (!handled && _highlightIndex >= 0) {
-		CPetGlyph *glyph = getGlyph(_highlightIndex);
-		if (glyph && glyph->VirtualKeyCharMsg(key))
-			handled = true;
+	switch (key) {
+	case Common::KEYCODE_LEFT:
+		decSelection();
+		return true;
+
+	case Common::KEYCODE_RIGHT:
+		incSelection();
+		return true;
+
+	default:
+		break;
 	}
 
-	return handled;
+	if (_highlightIndex >= 0) {
+		CPetGlyph *glyph = getGlyph(_highlightIndex);
+		if (glyph && glyph->VirtualKeyCharMsg(key))
+			return true;
+	}
+
+	return false;
 }
 
 bool CPetGlyphs::enterHighlighted() {
@@ -490,6 +506,36 @@ void CPetGlyphs::decSelection() {
 		changeHighlight(_highlightIndex - 1);
 		makePetDirty();
 	}
+}
+
+CGameObject *CPetGlyphs::getObjectAt(const Point &pt) {
+	for (int idx = 0; idx < _numVisibleGlyphs; ++idx) {
+		Rect glyphRect = getRect(idx);
+		if (glyphRect.contains(pt)) {
+			CPetGlyph *glyph = getGlyph(getItemIndex(idx));
+			if (glyph)
+				return glyph->getObjectAt();
+		}
+	}
+
+	return nullptr;
+}
+
+bool CPetGlyphs::isGlyphHighlighted(const CPetGlyph *glyph) const {
+	if (_highlightIndex == -1)
+		return false;
+
+	return indexOf(glyph) == _highlightIndex;
+}
+
+Point CPetGlyphs::getHighlightedGlyphPos() const {
+	if (_highlightIndex != -1) {
+		int idx = getHighlightedIndex(_highlightIndex);
+		if (idx >= 0)
+			return getPosition(idx);
+	}
+
+	return Point(0, 0);
 }
 
 } // End of namespace Titanic

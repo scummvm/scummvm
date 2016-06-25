@@ -54,6 +54,11 @@ public:
 	void setItem(CGameObject *item, int val);
 
 	/**
+	 * Returns the object associated with the glyph
+	 */
+	virtual CGameObject *getObjectAt() { return _item; }
+
+	/**
 	 * Does a processing action on the glyph
 	 */
 	virtual bool doAction(CGlyphAction *action);
@@ -73,9 +78,9 @@ private:
 	CGameObject *getBackground(int index);
 public:
 	/**
-	 * 
+	 * Do an action on the glyphs
 	 */
-	bool change(CInventoryGlyphAction *item);
+	bool doAction(CInventoryGlyphAction *item);
 };
 
 } // End of namespace Titanic

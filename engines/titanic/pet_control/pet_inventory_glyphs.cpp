@@ -146,7 +146,15 @@ bool CPetInventoryGlyph::doAction(CGlyphAction *action) {
 		if (_item == invAction->_item && _owner) {
 			int v = populateItem(_item, 0);
 			_background = owner->getBackground(v);
+
+			if (isHighlighted()) {
+				warning("TODO");
+			}
 		}
+		break;
+
+	default:
+		break;
 	}
 
 	return true;
@@ -154,7 +162,7 @@ bool CPetInventoryGlyph::doAction(CGlyphAction *action) {
 
 /*------------------------------------------------------------------------*/
 
-bool CPetInventoryGlyphs::change(CInventoryGlyphAction *action) {
+bool CPetInventoryGlyphs::doAction(CInventoryGlyphAction *action) {
 	for (iterator i = begin(); i != end(); ++i) {
 		(*i)->doAction(action);
 	}

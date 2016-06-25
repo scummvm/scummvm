@@ -124,14 +124,14 @@ bool CPetInventory::setPetControl(CPetControl *petControl) {
 void CPetInventory::change(CCarry *item) {
 	if (item) {
 		CInventoryGlyphAction action(item, ACTION_CHANGE);
-		_items.change(&action);
+		_items.doAction(&action);
 	}
 }
 
 void CPetInventory::itemRemoved(CGameObject *item) {
 	if (item) {
 		CInventoryGlyphAction action(item, ACTION_REMOVED);
-		_items.change(&action);
+		_items.doAction(&action);
 	}
 }
 
