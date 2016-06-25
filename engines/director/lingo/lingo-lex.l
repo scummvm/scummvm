@@ -82,6 +82,7 @@ while			{ return tWHILE; }
 {operator}		{ return *yytext; }
 {newline}		{ return '\n'; }
 {conststring}	{ yylval.s = new Common::String(&yytext[1]); yylval.s->deleteLastChar(); return STRING; }
+.
 
 %%
 
