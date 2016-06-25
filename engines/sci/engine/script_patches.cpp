@@ -2761,7 +2761,7 @@ static const uint16 qfg3PatchImportDialog[] = {
 // Teller::doChild. We jump to this call of hero::solvePuzzle to get that same
 // behaviour.
 // Applies to at least: English, German, Italian, French, Spanish Floppy
-// Responsible method: unknown
+// Responsible method: uhuraTell::doChild
 // Fixes bug: #5172
 static const uint16 qfg3SignatureWooDialog[] = {
 	SIG_MAGICDWORD,
@@ -3514,23 +3514,34 @@ static const uint16 sq1vgaSignatureSpiderDroidTiming[] = {
 	0x30, SIG_UINT16(0x0005),           // bnt [further method code]
 	0x35, 0x00,                         // ldi 00
 	0x32, SIG_UINT16(0x0052),           // jmp [super-call]
-	0x89, 0xa6,                         // lsg global[a6]
+	0x89, 0xa6,                         // lsg global[a6] <-- flag gets set to 1 when ego went up the skeleton tail, when going down it's set to 2
 	0x35, 0x01,                         // ldi 01
 	0x1a,                               // eq?
-	0x30, SIG_UINT16(0x0012),           // bnt [2nd code], in case global A6 <> 1
+	0x30, SIG_UINT16(0x0012),           // bnt [PChase set code], in case global A6 <> 1
 	0x81, 0xb5,                         // lag global[b5]
-	0x30, SIG_UINT16(0x000d),           // bnt [2nd code], in case global B5 == 0
+	0x30, SIG_UINT16(0x000d),           // bnt [PChase set code], in case global B5 == 0
 	0x38, SIG_UINT16(0x008c),           // pushi 008c
 	0x78,                               // push1
 	0x72, SIG_UINT16(0x1cb6),           // lofsa 1CB6 (moveToPath)
 	0x36,                               // push
 	0x54, 0x06,                         // self 06
 	0x32, SIG_UINT16(0x0038),           // jmp [super-call]
+	// PChase set call
 	0x81, 0xb5,                         // lag global[B5]
 	0x18,                               // not
 	0x30, SIG_UINT16(0x0032),           // bnt [super-call], in case global B5 <> 0
+	// followed by:
+	// is spider in current room
+	// is global A6h == 2? -> set PChase
 	SIG_END
 }; // 58 bytes)
+
+// Global A6h <> 1 (did NOT went up the skeleton)
+//  Global B5h = 0 -> set PChase
+//  Global B5h <> 0 -> do not do anything
+// Global A6h = 1 (did went up the skeleton)
+//  Global B5h = 0 -> set PChase
+//  Global B5h <> 0 -> set moveToPath
 
 static const uint16 sq1vgaPatchSpiderDroidTiming[] = {
 	0x63, 0x4e,                         // pToa script
@@ -3556,8 +3567,8 @@ static const uint16 sq1vgaPatchSpiderDroidTiming[] = {
 	0x65, 0x4c,                         // aTop cycleSpeed
 	0x65, 0x5e,                         // aTop moveSpeed
 	// new code end
-	0x89, 0xb5,                         // lsg global[B5]
-	0x31, 0x13,                         // bnt [2nd code chunk]
+	0x81, 0xb5,                         // lag global[B5]
+	0x31, 0x13,                         // bnt [PChase code chunk]
 	0x89, 0xa6,                         // lsg global[A6]
 	0x35, 0x01,                         // ldi 01
 	0x1a,                               // eq?
