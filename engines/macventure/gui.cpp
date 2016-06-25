@@ -26,9 +26,17 @@
 #include "macventure/macventure.h"
 #include "macventure/gui.h"
 
+// TBDeleted
+#include "common/system.h"
+
 namespace MacVenture {
 
 enum MenuAction;
+
+enum {
+	kCursorWidth = 4, // HACK Arbitrary width to test
+	kCursorHeight = 4
+};
 
 enum {
 	kMenuHighLevel = -1,
@@ -250,7 +258,7 @@ void Gui::initWindows() {
 	_mainGameWindow->setActive(false);
 	_mainGameWindow->setCallback(mainGameWindowCallback, this);
 	//loadBorder(_mainGameWindow, "border_no_scroll_inac.bmp", false);
-	//loadBorder(_mainGameWindow, "border_no_scroll_act.bmp", true);
+	loadBorder(_mainGameWindow, "border_no_scroll_act.bmp", true);
 
 	// In-game Output Console
 	_outConsoleWindow = _wm.addWindow(false, true, true);
@@ -558,6 +566,17 @@ void Gui::drawMainGameWindow() {
 		kBlitDirect);
 
 	drawObjectsInWindow(kMainGameWindow, _mainGameWindow->getSurface());
+
+	// To be deleted
+	/*
+	g_system->copyRectToScreen(
+		_mainGameWindow->getSurface()->getPixels(),
+		_mainGameWindow->getSurface()->pitch,
+		0, 0,
+		_mainGameWindow->getSurface()->w,
+		_mainGameWindow->getSurface()->h);
+		*/
+	g_system->updateScreen();
 }
 
 void Gui::drawSelfWindow() {
@@ -914,15 +933,19 @@ bool MacVenture::Gui::processMainGameEvents(WindowClick click, Common::Event & e
 		WindowData &data = findWindowData(kMainGameWindow);
 		ObjID child;
 		Common::Point pos;
+		// Click rect to local coordinates. We assume the click is inside the window ^
+		int left = event.mouse.x - _mainGameWindow->getDimensions().left;
+		int top = event.mouse.y - _mainGameWindow->getDimensions().top;
+		Common::Rect clickRect(left, top, left + kCursorWidth, top + kCursorHeight);
 		for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
 			child = (*it).obj;
-			pos = _engine->getObjPosition(child);
-			pos.x += _mainGameWindow->getDimensions().left;
-			pos.y += _mainGameWindow->getDimensions().top;
-			pos = event.mouse - pos;
-			if (_assets.contains(child) && _assets[child]->isPointInside(pos)) {
-				// select the first object clicked
-				_engine->handleObjectSelect(child, kMainGameWindow, event);
+			Common::Rect intersection = clickRect.findIntersectingRect(_engine->getObjBounds(child));
+			intersection = Common::Rect(0, 0, intersection.width(), intersection.height());
+			if (_assets.contains(child) && _engine->isObjClickable(child)) {
+				if (_assets[child]->isRectInside(intersection)) {
+					// select the first object clicked
+					_engine->handleObjectSelect(child, kMainGameWindow, event);
+				}
 			}
 		}
 	}

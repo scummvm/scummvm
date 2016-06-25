@@ -42,6 +42,8 @@ class Container {
 
 public:
 	Container(const char *filename) {
+		_filename = Common::String(filename);
+
 		if (!_file.open(filename))
 			error("Could not open %s", filename);
 
@@ -172,9 +174,11 @@ public:
 	* getItemByteSize should be called before this one
 	*/
 	Common::SeekableReadStream *getItem(uint32 id) {		
+		_res->seek(0);
+		Common::SeekableReadStream *res = _res->readStream(_res->size()); 
 		if (_simplified) {
-			_res->seek((id * _lenObjs) + sizeof(_header), SEEK_SET);
-			return _res;
+			res->seek((id * _lenObjs) + sizeof(_header), SEEK_SET);
+			return res;
 		} else {
 			uint32 groupID = (id >> 6);
 			uint32 objectIndex = id & 0x3f; // Index within the group		
@@ -184,9 +188,9 @@ public:
 				offset += _groups[groupID].lengths[i];
 			}
 
-			_res->seek(_groups[groupID].offset + offset + sizeof(_header), SEEK_SET);
+			res->seek(_groups[groupID].offset + offset + sizeof(_header), SEEK_SET);
 
-			return _res;
+			return res;
 		}
 	}
 	
@@ -202,27 +206,14 @@ protected:
 	uint16 _huff[15];   // huffman masks
 	uint8  _lens[16];   // huffman lengths
 	Common::Array<ItemGroup> _groups;
-
+	
+	Common::String _filename;
 	Common::File _file;
 	Common::SeekableReadStream *_res;
-
-	// To be moved
-	//byte _remainderOffset;
+	
 
 };
 
-/*
-template <typedef T>
-class PersistentContainer : public Container {
-public:
-	PersistentContainer(Common::String filename) :
-		Container(filename) {
-		// Load 
-	}
-
-private:
-
-};*/
 
 } // End of namespace MacVenture
 

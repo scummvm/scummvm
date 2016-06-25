@@ -350,6 +350,18 @@ bool ImageAsset::isPointInside(Common::Point point) {
 	return pix != 0;
 }
 
+bool ImageAsset::isRectInside(Common::Rect rect) {
+	for (uint y = rect.top; y < rect.top + rect.height(); y++) {
+		uint bmpofs = y * _rowBytes;
+		byte pix;
+		for (uint x = rect.left; x < rect.left + rect.width(); x++) {
+			pix = _maskData[bmpofs + (x >> 3)] & (1 << (7 - (x & 7)));
+			if (pix) return true;
+		}
+	}
+	return false;
+}
+
 uint ImageAsset::getWidth() {
 	return _bitWidth;
 }

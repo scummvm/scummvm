@@ -61,6 +61,7 @@ public:
 	void blitInto(Graphics::ManagedSurface *target, uint32 x, uint32 y, BlitMode mode);
 
 	bool isPointInside(Common::Point point);
+	bool isRectInside(Common::Rect rect);
 
 	uint getWidth();
 	uint getHeight();
