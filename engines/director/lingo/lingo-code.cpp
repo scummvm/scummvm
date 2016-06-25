@@ -397,6 +397,7 @@ void Lingo::define(Common::String &name, int start, int end, int nargs) {
 	}
 
 	sym->u.defn = new ScriptData(&(*_currentScript)[start], end - start + 1);
+	sym->nargs = nargs;
 }
 
 void Lingo::codeArg(Common::String &s) {
@@ -412,7 +413,7 @@ int Lingo::codeId(Common::String &s) {
 int Lingo::codeId_(Common::String &name) {
 	int ret;
 
-	if (!_handlers.contains(name)) { // This is a call
+	if (_handlers.contains(name)) { // This is a call
 		ret = code1(c_call);
 		codeString(name.c_str());
 		code1((inst)0);	// Zero arguments
@@ -428,7 +429,36 @@ int Lingo::codeId_(Common::String &name) {
 
 
 void Lingo::c_call() {
-	warning("STUB: c_call()");
+	Common::String name((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
+	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
+
+	if (!g_lingo->_handlers.contains(name)) {
+		error("Call to undefined handler '%s'", name.c_str());
+	}
+
+	Symbol *sym = g_lingo->_handlers[name];
+
+	int nargs = READ_UINT32(&(*g_lingo->_currentScript)[g_lingo->_pc++]);
+
+	for (int i = nargs; i < sym->nargs; i++) {
+		Datum d;
+
+		d.val = 0; // TODO, FIXME: Must be VOID
+		g_lingo->push(d);
+	}
+
+	CFrame *fp = new CFrame;
+
+	fp->sp = sym;
+	fp->retpc = g_lingo->_pc;
+	fp->retscript = g_lingo->_currentScript;
+
+	g_lingo->_callstack.push_back(fp);
+
+	g_lingo->_currentScript = sym->u.defn;
+	g_lingo->execute(0);
+
+	g_lingo->_returning = 0;
 }
 
 void Lingo::c_procret() {

@@ -81,9 +81,10 @@ typedef struct Symbol {	/* symbol table entry */
 	union {
 		int		val;		/* VAR */
 		float	fval;		/* FLOAT */
-		ScriptData	*defn;		/* FUNCTION, PROCEDURE */
+		ScriptData	*defn;	/* FUNCTION, PROCEDURE */
 		char	*str;		/* STRING */
 	} u;
+	int nargs;
 
 	Symbol();
 } Symbol;
@@ -94,6 +95,12 @@ typedef union Datum {	/* interpreter stack type */
 
 	Datum() { val = 0; sym = NULL; }
 } Datum;
+
+typedef struct CFrame {	/* proc/func call stack frame */
+	Symbol	*sp;	/* symbol table entry */
+	int		retpc;	/* where to resume after return */
+	ScriptData	*retscript;	 /* which script to resume after return */
+} CFrame;
 
 typedef Common::HashMap<int32, ScriptData *> ScriptHash;
 typedef Common::Array<Datum> StackData;
@@ -167,6 +174,8 @@ public:
 	ScriptData *_currentScript;
 	bool _returning;
 	bool _indef;
+
+	Common::Array<CFrame *> _callstack;
 
 private:
 	int parse(const char *code);
