@@ -379,12 +379,40 @@ static const SciScriptPatcherEntry ecoquest2Signatures[] = {
 };
 
 // ===========================================================================
+// Fan-made games
+// Attention: Try to make script patches as specific as possible
+
+// CascadeQuest::autosave in script 994 is called various times to auto-save the game.
+// The script use a fixed slot "999" for this purpose. This doesn't work in ScummVM, because we do not let
+//  scripts save directly into specific slots, but instead use virtual slots / detect scripts wanting to
+//  create a new slot.
+//
+// For this game we patch the code to use slot 99 instead. kSaveGame also checks for Cascade Quest,
+//  will then check, if slot 99 is asked for and will then use the actual slot 0, which is the official
+//  ScummVM auto-save slot.
+//
+// Responsible method: CascadeQuest::autosave
+// Fixes bug: #7007
+static const uint16 fanmadeSignatureCascadeQuestFixAutoSaving[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x03e7),        // pushi 3E7 (999d) -> save game slot 999
+	0x74, SIG_UINT16(0x06f8),        // lofss "AutoSave"
+	0x89, 0x1e,                      // lsg global[1E]
+	0x43, 0x2d, 0x08,                // callk SaveGame
+	SIG_END
+};
+
+static const uint16 fanmadePatchCascadeQuestFixAutoSaving[] = {
+	0x38, PATCH_UINT16((SAVEGAMEID_OFFICIALRANGE_START - 1)), // fix slot
+	PATCH_END
+};
+
 // EventHandler::handleEvent in Demo Quest has a bug, and it jumps to the
 // wrong address when an incorrect word is typed, therefore leading to an
 // infinite loop. This script bug was not apparent in SSCI, probably because
 // event handling was slightly different there, so it was never discovered.
 // Fixes bug: #5120
-static const uint16 fanmadeSignatureInfiniteLoop[] = {
+static const uint16 fanmadeSignatureDemoQuestInfiniteLoop[] = {
 	0x38, SIG_UINT16(0x004c),        // pushi 004c
 	0x39, 0x00,                      // pushi 00
 	0x87, 0x01,                      // lap 01
@@ -395,15 +423,16 @@ static const uint16 fanmadeSignatureInfiniteLoop[] = {
 	SIG_END
 };
 
-static const uint16 fanmadePatchInfiniteLoop[] = {
+static const uint16 fanmadePatchDemoQuestInfiniteLoop[] = {
 	PATCH_ADDTOOFFSET(+10),
-	0x30, SIG_UINT16(0x0032),        // bnt 0032  [06a8] --> pushi 004c
+	0x30, PATCH_UINT16(0x0032),      // bnt 0032  [06a8] --> pushi 004c
 	PATCH_END
 };
 
-//          script, description,                                      signature                     patch
+//          script, description,                                      signature                                  patch
 static const SciScriptPatcherEntry fanmadeSignatures[] = {
-	{  true,   999, "infinite loop on typo",                       1, fanmadeSignatureInfiniteLoop, fanmadePatchInfiniteLoop },
+	{  true,   994, "Cascade Quest: fix auto-saving",              1, fanmadeSignatureCascadeQuestFixAutoSaving, fanmadePatchCascadeQuestFixAutoSaving },
+	{  true,   999, "Demo Quest: infinite loop on typo",           1, fanmadeSignatureDemoQuestInfiniteLoop,     fanmadePatchDemoQuestInfiniteLoop },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 

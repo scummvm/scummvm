@@ -806,25 +806,47 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 				return NULL_REG;
 		} else if (virtualId < SAVEGAMEID_OFFICIALRANGE_START) {
 			// virtualId is low, we assume that scripts expect us to create new slot
-			if (g_sci->getGameId() == GID_JONES) {
+			switch (g_sci->getGameId()) {
+			case GID_JONES:
 				// Jones has one save slot only
 				savegameId = 0;
-			} else if (virtualId == s->_lastSaveVirtualId) {
-				// if last virtual id is the same as this one, we assume that caller wants to overwrite last save
-				savegameId = s->_lastSaveNewId;
-			} else {
-				uint savegameNr;
-				// savegameId is in lower range, scripts expect us to create a new slot
-				for (savegameId = SAVEGAMESLOT_FIRST; savegameId <= SAVEGAMESLOT_LAST; savegameId++) {
-					for (savegameNr = 0; savegameNr < saves.size(); savegameNr++) {
-						if (savegameId == saves[savegameNr].id)
+				break;
+			case GID_FANMADE: {
+				// Fanmade game, try to identify the game
+				const char *gameName = g_sci->getGameObjectName();
+
+				if (strcmp(gameName, "CascadeQuest") == 0) {
+					// Cascade Quest calls us directly to auto-save and uses slot 99,
+					//  put that save into slot 0 (ScummVM auto-save slot) see bug #7007
+					if (virtualId == (SAVEGAMEID_OFFICIALRANGE_START - 1)) {
+						savegameId = 0;
+					}
+				}
+				break;
+			}
+			default:
+				break;
+			}
+
+			if (savegameId < 0) {
+				// savegameId not set yet
+				if (virtualId == s->_lastSaveVirtualId) {
+					// if last virtual id is the same as this one, we assume that caller wants to overwrite last save
+					savegameId = s->_lastSaveNewId;
+				} else {
+					uint savegameNr;
+					// savegameId is in lower range, scripts expect us to create a new slot
+					for (savegameId = SAVEGAMESLOT_FIRST; savegameId <= SAVEGAMESLOT_LAST; savegameId++) {
+						for (savegameNr = 0; savegameNr < saves.size(); savegameNr++) {
+							if (savegameId == saves[savegameNr].id)
+								break;
+						}
+						if (savegameNr == saves.size()) // Slot not found, seems to be good to go
 							break;
 					}
-					if (savegameNr == saves.size()) // Slot not found, seems to be good to go
-						break;
+					if (savegameId > SAVEGAMESLOT_LAST)
+						error("kSavegame: no more savegame slots available");
 				}
-				if (savegameId > SAVEGAMESLOT_LAST)
-					error("kSavegame: no more savegame slots available");
 			}
 		} else {
 			error("kSaveGame: invalid savegameId used");
