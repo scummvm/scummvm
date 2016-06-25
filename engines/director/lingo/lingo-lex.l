@@ -48,29 +48,29 @@ whitespace [\t ]
 ^{whitespace}
 [\t]+			{ return ' '; }
 
-down			{ return tDOWN; }
-if				{ return tIF; }
-else			{ return tELSE; }
-end				{ return tEND; }
-exit			{ return tEXIT; }
-frame			{ return tFRAME; }
-go				{ return tGO; }
-into			{ return tINTO; }
-loop			{ return tLOOP; }
-macro			{ return tMACRO; }
-mci				{ return tMCI; }
-mciwait			{ return tMCIWAIT; }
-movie			{ return tMOVIE; }
-next			{ return tNEXT; }
-of				{ return tOF; }
-previous		{ return tPREVIOUS; }
-put				{ return tPUT; }
-repeat			{ return tREPEAT; }
-set				{ return tSET; }
-then			{ return tTHEN; }
-to				{ return tTO; }
-with			{ return tWITH; }
-while			{ return tWHILE; }
+(?i:down)			{ return tDOWN; }
+(?i:if)				{ return tIF; }
+(?i:else)			{ return tELSE; }
+(?i:end)			{ return tEND; }
+(?i:exit)			{ return tEXIT; }
+(?i:frame)			{ return tFRAME; }
+(?i:go)				{ return tGO; }
+(?i:into)			{ return tINTO; }
+(?i:loop)			{ return tLOOP; }
+(?i:macro)			{ return tMACRO; }
+(?i:mci)			{ return tMCI; }
+(?i:mciwait)		{ return tMCIWAIT; }
+(?i:movie)			{ return tMOVIE; }
+(?i:next)			{ return tNEXT; }
+(?i:of)				{ return tOF; }
+(?i:previous)		{ return tPREVIOUS; }
+(?i:put)			{ return tPUT; }
+(?i:repeat)			{ return tREPEAT; }
+(?i:set)			{ return tSET; }
+(?i:then)			{ return tTHEN; }
+(?i:to)				{ return tTO; }
+(?i:with)			{ return tWITH; }
+(?i:while)			{ return tWHILE; }
 
 [!][=]			{ return tNEQ; }
 [>][=]			{ return tGE; }
