@@ -36,6 +36,8 @@ namespace DM {
 #define kChampionStatusBoxSpacing 69 // @ C69_CHAMPION_STATUS_BOX_SPACING
 
 
+extern Box gBoxPanel; // @ G0032_s_Graphic562_Box_Panel
+
 enum PanelContent {
 	kPanelContentFoodWaterPoisoned = 0, // @ C00_PANEL_FOOD_WATER_POISONED
 	kPanelContentScroll = 2, // @ C02_PANEL_SCROLL

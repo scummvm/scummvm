@@ -37,7 +37,7 @@
 namespace DM {
 
 Box gBoxFloppyZzzCross = Box(174, 218, 2, 12); // @ G0041_s_Graphic562_Box_ViewportFloppyZzzCross
-Box gBoxPanel = Box(80, 223, 52, 124); // @ G0032_s_Graphic562_Box_Panel
+Box gBoxPanel = Box(80, 223, 52, 124);
 Box gBoxFood = Box(112, 159, 60, 68); // @ G0035_s_Graphic562_Box_Food
 Box gBoxWater = Box(112, 159, 83, 91); // @ G0036_s_Graphic562_Box_Water
 Box gBoxPoisoned = Box(112, 207, 105, 119); // @ G0037_s_Graphic562_Box_Poisoned

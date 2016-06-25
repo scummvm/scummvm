@@ -225,8 +225,8 @@ void DMEngine::gameloop() {
 		//} while (!_stopWaitingForPlayerInput || !_gameTimeTicking);
 
 		if (!_inventoryMan->_inventoryChampionOrdinal && !_championMan->_partyIsSleeping) {
-			Box box(0, 0 + 224 + 1, 33, 33 + 126 + 1);
-			_displayMan->clearScreenBox(kColorBlack, box); // dummy code
+			Box box(0, 224, 0, 126);
+			_displayMan->clearScreenBox(kColorBlack, box, gDungeonViewport); // dummy code
 			_displayMan->drawDungeon(_dungeonMan->_currMap._partyDir, _dungeonMan->_currMap._partyPosX, _dungeonMan->_currMap._partyPosY);
 		}
 		// DUMMY CODE: next line

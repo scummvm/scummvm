@@ -659,7 +659,7 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 	}
 
 	if (commandType == kCommandClickInPanelReincarnate) {
-		warning("MISSING CODE: F0281_CHAMPION_Rename");
+		champMan.renameChampion(champ);
 		champ->resetSkillsToZero();
 
 		for (uint16 i = 0; i < 12; i++) {
@@ -703,11 +703,17 @@ void EventManager::commandProcess81ClickInPanel(int16 x, int16 y) {
 	case kPanelContentResurrectReincarnate:
 		if (!champMan._leaderEmptyHanded)
 			break;
-		commandType = getCommandTypeFromMouseInput(gMouseInput_PanelChest, Common::Point(x, y), kLeftMouseButton);
+		commandType = getCommandTypeFromMouseInput(gMouseInput_PanelResurrectReincarnateCancel, Common::Point(x, y), kLeftMouseButton);
 		if (commandType != kCommandNone)
 			commandProcessCommands160To162ClickInResurrectReincarnatePanel(commandType);
 		break;
 	}
 }
 
+	bool EventManager::hasPendingClick(Common::Point& point, MouseButton button)
+	{
+		if (_pendingClickButton && button == _pendingClickButton)
+			point = _pendingClickPos;
+		return _pendingClickPresent;
+	}
 }; // end of namespace DM

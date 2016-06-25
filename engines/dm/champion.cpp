@@ -38,12 +38,12 @@ namespace DM {
 
 Box gBoxMouth = Box(55, 72, 12, 29); // @ G0048_s_Graphic562_Box_Mouth 
 Box gBoxEye = Box(11, 28, 12, 29); // @ G0049_s_Graphic562_Box_Eye 
-Box gBoxChampionIcons[4] = { 
+Box gBoxChampionIcons[4] = {
 	Box(281, 299,  0, 13),
 	Box(301, 319,  0, 13),
 	Box(301, 319, 15, 28),
 	Box(281, 299, 15, 28)};
-Color gChampionColor[4] = {(Color)7, (Color)11, (Color)8, (Color)14}; 
+Color gChampionColor[4] = {(Color)7, (Color)11, (Color)8, (Color)14};
 
 uint16 gSlotMasks[38] = {  // @ G0038_ai_Graphic562_SlotMasks
 	/* 30 for champion inventory, 8 for chest */
@@ -312,7 +312,7 @@ T0280046:
 					slotIndex_Green = AL_0_slotIndex_Red++;
 				}
 				break;
-			
+
 			default:
 				break;
 			}
@@ -690,7 +690,32 @@ void ChampionMan::drawSlot(uint16 champIndex, ChampionSlot slotIndex) {
 	}
 }
 
+void ChampionMan::renameChampion(Champion* champ) {
+	warning("STUB METHOD: Champion::renameChampion, F0281_CHAMPION_Rename");
 
+	DisplayMan &dispMan = *_vm->_displayMan;
+	TextMan &textMan = *_vm->_textMan;
+
+	Box box;
+	box._y1 = 3;
+	box._y2 = 8 + 1;
+	box._x1 = 3;
+	box._x2 = box._x1 + 167;
+
+	dispMan.clearScreenBox(kColorDarkestGray, box, gDungeonViewport);
+	dispMan.blitToScreen(dispMan.getBitmap(kPanelRenameChampionIndice), 144, 0, 0, gBoxPanel, kColorCyan, gDungeonViewport);
+	textMan.printToViewport(177, 58, kColorLightestGray, "_______");
+	textMan.printToViewport(105, 76, kColorLightestGray, "___________________");
+	Common::Point clickPos;
+	static Box okButtonBox(197, 215, 147, 155); // inclusive boundaries, constructor adds +1
+	for (;;) {
+		_vm->_eventMan->processInput();
+		if (_vm->_eventMan->hasPendingClick(clickPos, kLeftMouseButton) && okButtonBox.isPointInside(clickPos)) {
+			return;
+		}
+		dispMan.updateScreen();
+	}
+}
 }
 
 
