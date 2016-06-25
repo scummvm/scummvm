@@ -159,7 +159,12 @@ void TextAsset::decodeHuffman() {
 				_decoded.replace(_decoded.end() - 1, _decoded.end(), "");
 			} else { //Composite obj string
 				ObjID embedId = stream.getBits(8);
+				uint pos = stream.pos(); // HACK, part 1
+
 				_decoded.replace(_decoded.end(), _decoded.end(), getNoun(embedId));
+				stream.rewind();// HACK, part 2
+				stream.skip(pos);
+
 				// Another HACK, to get around that EOS char I insert at the end
 				_decoded.replace(_decoded.end() - 1, _decoded.end(), "");
 			}
