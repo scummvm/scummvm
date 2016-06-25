@@ -99,6 +99,11 @@ public:
 	virtual bool isLinkItem() const;
 
 	/**
+	 * Returns true if the item is a placeholder item
+	 */
+	virtual bool isPlaceHolderItem() const;
+
+	/**
 	 * Returns true if the item is a named item
 	 */
 	virtual bool isNamedItem() const;

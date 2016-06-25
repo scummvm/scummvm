@@ -245,7 +245,7 @@ MODULE_OBJS := \
 	game/pickup/pick_up_speech_centre.o \
 	game/pickup/pick_up_vis_centre.o \
 	game/placeholder/bar_shelf_vis_centre.o \
-	game/placeholder/place_holder.o \
+	game/placeholder/place_holder_item.o \
 	game/placeholder/lemon_on_bar.o \
 	game/placeholder/tv_on_bar.o \
 	game/transport/gondolier.o \

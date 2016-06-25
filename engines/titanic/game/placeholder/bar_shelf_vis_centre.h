@@ -23,16 +23,16 @@
 #ifndef TITANIC_BAR_SHELF_VIS_CENTRE_H
 #define TITANIC_BAR_SHELF_VIS_CENTRE_H
 
-#include "titanic/game/placeholder/place_holder.h"
+#include "titanic/game/placeholder/place_holder_item.h"
 
 namespace Titanic {
 
-class CBarShelfVisCentre : public CPlaceHolder {
+class CBarShelfVisCentre : public CPlaceHolderItem {
 private:
 	int _value;
 public:
 	CLASSDEF
-	CBarShelfVisCentre() : CPlaceHolder(), _value(0) {}
+	CBarShelfVisCentre() : CPlaceHolderItem(), _value(0) {}
 	
 	/**
 	 * Save the data for the class to file

@@ -23,11 +23,11 @@
 #ifndef TITANIC_TV_ON_BAR_H
 #define TITANIC_TV_ON_BAR_H
 
-#include "titanic/game/placeholder/place_holder.h"
+#include "titanic/game/placeholder/place_holder_item.h"
 
 namespace Titanic {
 
-class CTVOnBar : public CPlaceHolder {
+class CTVOnBar : public CPlaceHolderItem {
 private:
 	Point _pos1;
 public:

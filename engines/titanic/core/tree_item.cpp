@@ -34,6 +34,7 @@
 #include "titanic/core/room_item.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/game_manager.h"
+#include "titanic/game/placeholder/place_holder_item.h"
 
 namespace Titanic {
 
@@ -93,6 +94,10 @@ bool CTreeItem::isViewItem() const {
 
 bool CTreeItem::isLinkItem() const {
 	return isInstanceOf(CLinkItem::_type);
+}
+
+bool CTreeItem::isPlaceHolderItem() const {
+	return isInstanceOf(CPlaceHolderItem::_type);
 }
 
 bool CTreeItem::isNamedItem() const {

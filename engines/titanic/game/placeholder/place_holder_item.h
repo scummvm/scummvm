@@ -20,18 +20,28 @@
  *
  */
 
-#include "titanic/game/placeholder/place_holder.h"
+#ifndef TITANIC_PLACE_HOLDER_H
+#define TITANIC_PLACE_HOLDER_H
+
+#include "titanic/core/game_object.h"
 
 namespace Titanic {
 
-void CPlaceHolder::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	CGameObject::save(file, indent);
-}
+class CPlaceHolderItem : public CGameObject {
+public:
+	CLASSDEF
 
-void CPlaceHolder::load(SimpleFile *file) {
-	file->readNumber();
-	CGameObject::load(file);
-}
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_PLACE_HOLDER_H */
