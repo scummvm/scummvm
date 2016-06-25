@@ -913,6 +913,10 @@ Common::String SciEngine::unwrapFilename(const Common::String &name) const {
 	return name;
 }
 
+const char *SciEngine::getGameObjectName() {
+	return _gamestate->_segMan->getObjectName(_gameObjectAddress);
+}
+
 int SciEngine::inQfGImportRoom() const {
 	if (_gameId == GID_QFG2 && _gamestate->currentRoomNumber() == 805) {
 		// QFG2 character import screen

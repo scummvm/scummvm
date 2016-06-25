@@ -303,6 +303,8 @@ public:
 	/** Remove the 'TARGET-' prefix of the given filename, if present. */
 	Common::String unwrapFilename(const Common::String &name) const;
 
+	const char *getGameObjectName(); // Gets the name of the game object (should only be used for identifying fanmade games)
+
 	/**
 	 * Checks if we are in a QfG import screen, where special handling
 	 * of file-listings is performed.
