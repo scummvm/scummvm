@@ -1654,9 +1654,72 @@ static const uint16 laurabow1PatchEasterEggViewFix[] = {
 	PATCH_END
 };
 
+// When oiling the armor or opening the visor of the armor, the scripts
+//  first check if Laura/ego is near the armor and if she is not, they will move her
+//  to the armor. After that further code is executed.
+//
+// The current location is checked by a ego::inRect() call.
+//
+// The given rect for the inRect call inside openVisor::changeState was made larger for Atari ST/Amiga versions.
+//  We change the PC version to use the same rect.
+//
+// Additionally the coordinate, that Laura is moved to, is 152, 107 and may not be reachable depending on where
+//  Laura/ego was, when "use oil on helmet of armor" / "open visor of armor" got entered.
+//  Bad coordinates are for example 82, 110, which then cause collisions and effectively an endless loop.
+//  Game will effectively "freeze" and the user is only able to restore a previous game.
+//  This also happened, when using the original interpreter.
+//  We change the destination coordinate to 152, 110, which seems to be reachable all the time.
+//
+// The following patch fixes the rect for the PC version of the game.
+//
+// Applies to at least: English PC Floppy
+// Responsible method: openVisor::changeState (script 37)
+// Fixes bug: #7119
+static const uint16 laurabow1SignatureArmorOpenVisorFix[] = {
+	0x39, 0x04,                         // pushi 04
+	SIG_MAGICDWORD,
+	0x39, 0x6a,                         // pushi 6a (106d)
+	0x38, SIG_UINT16(0x96),             // pushi 0096 (150d)
+	0x39, 0x6c,                         // pushi 6c (108d)
+	0x38, SIG_UINT16(0x98),             // pushi 0098 (152d)
+	SIG_END
+};
+
+static const uint16 laurabow1PatchArmorOpenVisorFix[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x39, 0x68,                         // pushi 68 (104d)   (-2)
+	0x38, SIG_UINT16(0x94),             // pushi 0094 (148d) (-2)
+	0x39, 0x6f,                         // pushi 6f (111d)   (+3)
+	0x38, SIG_UINT16(0x9a),             // pushi 009a (154d) (+2)
+	PATCH_END
+};
+
+// This here fixes the destination coordinate (exact details are above).
+//
+// Applies to at least: English PC Floppy, English Atari ST Floppy, English Amiga Floppy
+// Responsible method: openVisor::changeState, oiling::changeState (script 37)
+// Fixes bug: #7119
+static const uint16 laurabow1SignatureArmorMoveToFix[] = {
+	SIG_MAGICDWORD,
+	0x36,                               // push
+	0x39, 0x6b,                         // pushi 6B (107d)
+	0x38, SIG_UINT16(0x0098),           // pushi 98 (152d)
+	0x7c,                               // pushSelf
+	0x81, 0x00,                         // lag global[0]
+	SIG_END
+};
+
+static const uint16 laurabow1PatchArmorMoveToFix[] = {
+	PATCH_ADDTOOFFSET(+1),
+	0x39, 0x6e,                         // pushi 6E (110d) - adjust x, so that no collision can occur anymore
+	PATCH_END
+};
+
 //          script, description,                                      signature                           patch
 static const SciScriptPatcherEntry laurabow1Signatures[] = {
-	{  true,     4, "easter egg view fix",                         1, laurabow1SignatureEasterEggViewFix, laurabow1PatchEasterEggViewFix },
+	{  true,     4, "easter egg view fix",                         1, laurabow1SignatureEasterEggViewFix,  laurabow1PatchEasterEggViewFix },
+	{  true,    37, "armor open visor fix",                        1, laurabow1SignatureArmorOpenVisorFix, laurabow1PatchArmorOpenVisorFix },
+	{  true,    37, "armor move to fix",                           2, laurabow1SignatureArmorMoveToFix,    laurabow1PatchArmorMoveToFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
