@@ -28,7 +28,7 @@
 #include "sci/event.h"
 #include "sci/resource.h"
 #include "sci/graphics/palette32.h"
-#include "sci/graphics/remap.h"
+#include "sci/graphics/remap32.h"
 #include "sci/graphics/screen.h"
 
 namespace Sci {

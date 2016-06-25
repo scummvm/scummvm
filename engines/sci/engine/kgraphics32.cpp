@@ -54,6 +54,7 @@
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette32.h"
+#include "sci/graphics/remap32.h"
 #include "sci/graphics/text32.h"
 #endif
 
