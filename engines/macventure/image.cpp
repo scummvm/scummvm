@@ -80,7 +80,7 @@ void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data) {
 	if (size == 2 || size == 0) {
 		realID = _container->getItem(id)->readUint16BE();
 	}
-	Common::BitStream32BEMSB stream(_container->getItem(realID));
+	Common::BitStream32BEMSB stream(_container->getItem(realID), true);
 
 	uint8 mode = stream.getBits(3);
 	int w, h;
@@ -367,7 +367,7 @@ uint ImageAsset::getWidth() {
 }
 
 uint ImageAsset::getHeight() {
-	return _bitWidth;
+	return _bitHeight;
 }
 
 void ImageAsset::blitDirect(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte>& data) {

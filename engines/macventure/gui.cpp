@@ -39,6 +39,11 @@ enum {
 };
 
 enum {
+	kExitButtonWidth = 10, // HACK Arbitrary width to test
+	kExitButtonHeight = 10
+};
+
+enum {
 	kMenuHighLevel = -1,
 	kMenuAbout = 0,
 	kMenuFile = 1,
@@ -212,7 +217,8 @@ void Gui::removeChild(WindowReference target, ObjID child) {
 		if (data.children[index].obj == child) break;
 	}
 
-	data.children.remove_at(index);
+	if (index < data.children.size())
+		data.children.remove_at(index);
 }
 
 void Gui::initGUI() {
@@ -249,15 +255,15 @@ void Gui::initWindows() {
 	_controlsWindow->setDimensions(getWindowData(kCommandsWindow).bounds);
 	_controlsWindow->setActive(false);
 	_controlsWindow->setCallback(commandsWindowCallback, this);
-	//loadBorder(_controlsWindow, "border_command.bmp", false);
-	//loadBorder(_controlsWindow, "border_command.bmp", true);
+	loadBorder(_controlsWindow, "border_command.bmp", false);
+	loadBorder(_controlsWindow, "border_command.bmp", true);
 
 	// Main Game Window
 	_mainGameWindow = _wm.addWindow(false, false, false);
 	_mainGameWindow->setDimensions(getWindowData(kMainGameWindow).bounds);
 	_mainGameWindow->setActive(false);
 	_mainGameWindow->setCallback(mainGameWindowCallback, this);
-	//loadBorder(_mainGameWindow, "border_no_scroll_inac.bmp", false);
+	loadBorder(_mainGameWindow, "border_no_scroll_inac.bmp", false);
 	loadBorder(_mainGameWindow, "border_no_scroll_act.bmp", true);
 
 	// In-game Output Console
@@ -265,24 +271,24 @@ void Gui::initWindows() {
 	_outConsoleWindow->setDimensions(Common::Rect(20, 20, 120, 120));
 	_outConsoleWindow->setActive(false);
 	_outConsoleWindow->setCallback(outConsoleWindowCallback, this);
-	//loadBorder(_outConsoleWindow, "border_left_scroll_inac.bmp", false);
-	//loadBorder(_outConsoleWindow, "border_left_scroll_inac.bmp", true);
+	loadBorder(_outConsoleWindow, "border_left_scroll_inac.bmp", false);
+	loadBorder(_outConsoleWindow, "border_left_scroll_inac.bmp", true);
 
 	// Self Window
 	_selfWindow = _wm.addWindow(false, true, true);
 	_selfWindow->setDimensions(getWindowData(kSelfWindow).bounds);
 	_selfWindow->setActive(false);
 	_selfWindow->setCallback(selfWindowCallback, this);
-	//loadBorder(_selfWindow, "border_no_scroll_inac.bmp", false);
-	//loadBorder(_selfWindow, "border_no_scroll_inac.bmp", true);
+	loadBorder(_selfWindow, "border_no_scroll_inac.bmp", false);
+	loadBorder(_selfWindow, "border_no_scroll_inac.bmp", true);
 
 	// Exits Window
 	_exitsWindow = _wm.addWindow(false, true, true);
 	_exitsWindow->setDimensions(getWindowData(kExitsWindow).bounds);
 	_exitsWindow->setActive(false);
 	_exitsWindow->setCallback(exitsWindowCallback, this);
-	//loadBorder(_exitsWindow, "border_no_scroll_inac.bmp", false);
-	//loadBorder(_exitsWindow, "border_no_scroll_act.bmp", true);
+	loadBorder(_exitsWindow, "border_no_scroll_inac.bmp", false);
+	loadBorder(_exitsWindow, "border_no_scroll_act.bmp", true);
 
 
 }
@@ -318,8 +324,8 @@ WindowReference Gui::createInventoryWindow(ObjID objRef) {
 
 	newWindow->setDimensions(newData.bounds);
 	newWindow->setCallback(inventoryWindowCallback, this);
-	//loadBorder(newWindow, "border_no_scroll_inac.bmp", false);
-	//loadBorder(newWindow, "border_no_scroll_act.bmp", true);
+	loadBorder(newWindow, "border_no_scroll_inac.bmp", false);
+	loadBorder(newWindow, "border_no_scroll_act.bmp", true);
 	_inventoryWindows.push_back(newWindow);
 
 	debug("Create new inventory window. Reference: %d", newData.refcon);
@@ -340,21 +346,12 @@ void Gui::loadBorder(Graphics::MacWindow * target, Common::String filename, bool
 	Graphics::TransparentSurface *surface = new Graphics::TransparentSurface();
 
 	if (stream) {
-		debug(4, "Loading %s border from %s", (active ? "active" : "inactive"), filename);
-		bmpDecoder.loadStream(*stream);
-		source = *(bmpDecoder.getSurface());
-
-		source.convertToInPlace(surface->getSupportedPixelFormat(), bmpDecoder.getPalette());
-		surface->create(source.w, source.h, source.format);
-		surface->copyFrom(source);
-		surface->applyColorKey(255, 0, 255, false);
-
-		target->setBorder(*surface, active);
-
-		borderfile.close();
+		debug(4, "Loading %s border from %s", (active ? "active" : "inactive"), filename.c_str());
+		target->loadBorder(*stream, active);
 
 		delete stream;
 	}
+	borderfile.close();
 }
 
 void Gui::loadGraphics() {
@@ -567,21 +564,13 @@ void Gui::drawMainGameWindow() {
 
 	drawObjectsInWindow(kMainGameWindow, _mainGameWindow->getSurface());
 
-	// To be deleted
-	/*
-	g_system->copyRectToScreen(
-		_mainGameWindow->getSurface()->getPixels(),
-		_mainGameWindow->getSurface()->pitch,
-		0, 0,
-		_mainGameWindow->getSurface()->w,
-		_mainGameWindow->getSurface()->h);
-		*/
-	g_system->updateScreen();
+	findWindow(kMainGameWindow)->setDirty(true);
 }
 
 void Gui::drawSelfWindow() {
 	drawObjectsInWindow(kSelfWindow, _selfWindow->getSurface());
 	if (_engine->isObjSelected(1)) invertWindowColors(kSelfWindow);
+	findWindow(kSelfWindow)->setDirty(true);
 }
 
 void Gui::drawInventories() {
@@ -600,7 +589,10 @@ void Gui::drawInventories() {
 			srf->h + border.bottomOffset), kColorWhite);
 		drawObjectsInWindow((*it).refcon, _inventoryWindows[(*it).refcon]->getSurface());
 		it++;
+
+		findWindow((*it).refcon)->setDirty(true);
 	}
+
 }
 
 void Gui::drawExitsWindow() {
@@ -613,7 +605,32 @@ void Gui::drawExitsWindow() {
 		srf->w + border.rightOffset,
 		srf->h + border.bottomOffset), kColorWhite);
 
-	drawObjectsInWindow(kMainGameWindow, _exitsWindow->getSurface());
+	// For each obj in the main window, if it is an exit, we draw it
+	WindowData &objData = findWindowData(kMainGameWindow);
+	Common::Point pos;
+	ObjID child;
+	BlitMode mode;
+	Common::Rect exit;
+	for (uint i = 0; i < objData.children.size(); i++) {
+		child = objData.children[i].obj;
+		mode = (BlitMode)objData.children[i].mode;
+		pos = _engine->getObjExitPosition(child);
+		pos.x += border.leftOffset;
+		pos.y += border.topOffset;
+		exit = Common::Rect(pos.x, pos.y, pos.x + kExitButtonWidth, pos.y + kExitButtonHeight);
+		if (_engine->isObjExit(child)) {
+			if (_engine->isObjSelected(child))
+				srf->fillRect(exit, kColorGreen);
+
+			srf->fillRect(exit, kColorGreen);
+		}
+	}
+
+	findWindow(kExitsWindow)->setDirty(true);
+
+	// To be deleted
+	//g_system->copyRectToScreen(srf->getPixels(), srf->pitch, 0, 0, srf->w, srf->h);
+	//g_system->updateScreen();
 }
 
 void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface * surface) {
@@ -652,7 +669,6 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 
 	}
 
-	findWindow(data.refcon)->setDirty(true);
 }
 
 void Gui::drawWindowTitle(WindowReference target, Graphics::ManagedSurface * surface) {
@@ -939,9 +955,19 @@ bool MacVenture::Gui::processMainGameEvents(WindowClick click, Common::Event & e
 		Common::Rect clickRect(left, top, left + kCursorWidth, top + kCursorHeight);
 		for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
 			child = (*it).obj;
-			Common::Rect intersection = clickRect.findIntersectingRect(_engine->getObjBounds(child));
-			intersection = Common::Rect(0, 0, intersection.width(), intersection.height());
-			if (_assets.contains(child) && _engine->isObjClickable(child)) {
+			if (_assets.contains(child) &&
+				_engine->isObjClickable(child) &&
+				_engine->isObjVisible(child)) {
+				Common::Rect bounds = _engine->getObjBounds(child);
+				Common::Rect intersection = bounds.findIntersectingRect(clickRect);
+				// We translate it to the image's coord system
+				intersection = Common::Rect(
+					intersection.left - bounds.left,
+					intersection.top - bounds.top,
+					intersection.left - bounds.left + intersection.width(),
+					intersection.top - bounds.top + intersection.height());
+
+
 				if (_assets[child]->isRectInside(intersection)) {
 					// select the first object clicked
 					_engine->handleObjectSelect(child, kMainGameWindow, event);

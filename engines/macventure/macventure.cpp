@@ -96,7 +96,7 @@ Common::Error MacVentureEngine::run() {
 	_filenames = new StringTable(this, _resourceManager, kFilenamesStringTableID);
 	_decodingDirectArticles = new StringTable(this, _resourceManager, kCommonArticlesStringTableID);
 	_decodingNamingArticles = new StringTable(this, _resourceManager, kNamingArticlesStringTableID);
-	_decodingDirectArticles = new StringTable(this, _resourceManager, kIndirectArticlesStringTableID);
+	_decodingIndirectArticles = new StringTable(this, _resourceManager, kIndirectArticlesStringTableID);
 
 	// Big class instantiation
 	_gui = new Gui(this, _resourceManager);
@@ -781,6 +781,16 @@ bool MacVentureEngine::isObjClickable(ObjID objID) {
 bool MacVentureEngine::isObjSelected(ObjID objID) {
 	int idx = findObjectInArray(objID, _currentSelection);
 	return idx != -1;
+}
+
+bool MacVentureEngine::isObjExit(ObjID objID) {
+	return _world->getObjAttr(objID, kAttrIsExit);
+}
+
+Common::Point MacVentureEngine::getObjExitPosition(ObjID objID) {
+	uint x = _world->getObjAttr(objID, kAttrExitX);
+	uint y = _world->getObjAttr(objID, kAttrExitY);
+	return Common::Point(x, y);
 }
 
 Common::Rect MacVentureEngine::getObjBounds(ObjID objID) {

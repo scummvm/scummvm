@@ -204,6 +204,8 @@ public:
 	bool isObjVisible(ObjID objID);
 	bool isObjClickable(ObjID objID);
 	bool isObjSelected(ObjID objID);
+	bool isObjExit(ObjID objID);
+	Common::Point getObjExitPosition(ObjID objID);
 
 	// Encapsulation HACK
 	Common::Rect getObjBounds(ObjID objID);
