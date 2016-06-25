@@ -817,7 +817,12 @@ void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uin
 		}
 }
 
-void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
+	void DisplayMan::blitToBitmap(byte* srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY, byte* destBitmap, uint16 destWidth, Box& box, Color transparent, Viewport& viewport)
+	{
+		blitToBitmap(srcBitmap, srcWidth, srcX, srcY, destBitmap, destWidth, box._x1, box._x2, box._y1, box._y2, transparent, viewport);
+	}
+
+	void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
 							  uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
 							  Color transparent, Viewport &viewport) {
 	blitToBitmap(srcBitmap, srcWidth, srcX, srcY,

@@ -72,7 +72,8 @@ enum GraphicIndice {
 	kFontGraphicIndice = 557, // @ C557_GRAPHIC_FONT 
 	kSlotBoxActingHandIndice = 35, // @ C035_GRAPHIC_SLOT_BOX_ACTING_HAND
 	kPanelRenameChampionIndice = 27, // @ C027_GRAPHIC_PANEL_RENAME_CHAMPION
-	kMenuActionAreaIndice = 10 // @ C010_GRAPHIC_MENU_ACTION_AREA
+	kMenuActionAreaIndice = 10, // @ C010_GRAPHIC_MENU_ACTION_AREA
+	kMenuSpellAreLinesIndice = 11 // @ C011_GRAPHIC_MENU_SPELL_AREA_LINES
 };
 
 extern uint16 gPalSwoosh[16];
@@ -336,6 +337,8 @@ public:
 					  byte *destBitmap, uint16 destWidth,
 					  uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
 					  Color transparent = kColorNoTransparency, Viewport &viewport = gDefultViewPort);
+	void blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
+					  byte *destBitmap, uint16 destWidth, Box &box, Color transparent = kColorNoTransparency, Viewport &viewport = gDefultViewPort);
 	void blitToBitmapShrinkWithPalChange(byte *srcBitmap, int16 srcWidth, int16 srcHight,
 										 byte *destBitmap, int16 destWidth, int16 destHeight, byte *palChange); // @ F0129_VIDEO_BlitShrinkWithPaletteChanges
 

@@ -42,10 +42,19 @@ Box  gBoxActionArea1ActionMenu = Box(224, 319, 77, 97); // @ G0501_s_Graphic560_
 Box gBoxActionArea = Box(224, 319, 77, 121); // @ G0001_s_Graphic562_Box_ActionArea 
 byte gPalChangesActionAreaObjectIcon[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0}; // @ G0498_auc_Graphic560_PaletteChanges_ActionAreaObjectIcon
 
+Box gBoxSpellAreaLine = Box(0, 95, 0, 11); // @ K0074_s_Box_SpellAreaLine 
+Box gBoxSpellAreaLine2 = Box(224, 319, 50, 61); // @ K0075_s_Box_SpellAreaLine2 
+Box gBoxSpellAreaLine3 = Box(224, 319, 62, 73); // @ K0076_s_Box_SpellAreaLine3 
+
 MenuMan::MenuMan(DMEngine *vm) : _vm(vm) {
 	_refreshActionArea = false;
 	_actionAreaContainsIcons = false;
 	_actionDamage = 0;
+	_bitmapSpellAreaLine = new byte[96 * 12];
+}
+
+MenuMan::~MenuMan() {
+	delete[] _bitmapSpellAreaLine;
 }
 
 void MenuMan::drawMovementArrows() {
@@ -292,6 +301,36 @@ labelChamp3:
 		break;
 	}
 	warning("MISSING CODE: F0078_MOUSE_ShowPointer");
+}
+
+#define kSpellAreaAvailableSymbols 2 // @ C2_SPELL_AREA_AVAILABLE_SYMBOLS
+#define kSpellAreaChampionSymbols 3 // @ C3_SPELL_AREA_CHAMPION_SYMBOLS
+
+void MenuMan::buildSpellAreaLine(int16 spellAreaBitmapLine) {
+	DisplayMan &dispMan = *_vm->_displayMan;
+
+	Champion &champ = _vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex];
+	if (spellAreaBitmapLine == kSpellAreaAvailableSymbols) {
+		dispMan._useByteBoxCoordinates = false;
+		dispMan.blitToBitmap(dispMan.getBitmap(kMenuSpellAreLinesIndice), 96, 0, 12, _bitmapSpellAreaLine, 96, gBoxSpellAreaLine, kColorNoTransparency);
+		int16 x = 1;
+		char c = 96 + (6 * champ._symbolStep);
+		char spellSymbolString[2] = {'\0', '\0'};
+		for (uint16 symbolIndex = 0; symbolIndex < 6; symbolIndex++) {
+			spellSymbolString[0] = c++;
+			_vm->_textMan->printTextToBitmap(_bitmapSpellAreaLine, 96, x += 14, 8, kColorCyan, kColorBlack, spellSymbolString, 12);
+		}
+	} else if (spellAreaBitmapLine == kSpellAreaChampionSymbols) {
+		dispMan._useByteBoxCoordinates = false;
+		dispMan.blitToBitmap(dispMan.getBitmap(kMenuSpellAreLinesIndice), 96, 0, 24, _bitmapSpellAreaLine, 96, gBoxSpellAreaLine, kColorNoTransparency);
+		int16 x = 8;
+		char spellSymbolString[2] = {'\0', '\0'};
+		for (uint16 symbolIndex = 0; symbolIndex < 4; symbolIndex++) {
+			if ((spellSymbolString[0] = champ._symbols[symbolIndex]) == '\0')
+				break;
+			_vm->_textMan->printTextToBitmap(_bitmapSpellAreaLine, 96, x += 9, 8, kColorCyan, kColorBlack, spellSymbolString, 12);
+		}
+	}
 }
 
 }
