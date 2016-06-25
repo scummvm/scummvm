@@ -408,11 +408,19 @@ int Lingo::codeId(Common::String &s) {
 	return g_lingo->codeId_(s);
 }
 
-int Lingo::codeId_(Common::String &s) {
-	int ret = code1(c_varpush);
+int Lingo::codeId_(Common::String &name) {
+	int ret;
 
-	codeString(s.c_str());
-	code1(c_eval);
+	if (!_handlers.contains(name)) { // This is a call
+		ret = code1(c_call);
+		codeString(name.c_str());
+		code1((inst)0);	// Zero arguments
+	} else {
+		ret = code1(c_varpush);
+
+		codeString(name.c_str());
+		code1(c_eval);
+	}
 
 	return ret;
 }

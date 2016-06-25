@@ -102,7 +102,7 @@ if par1 = 3 then\n\
 else\n\
   put 9\n\
 end if\n\
-\n\
+shipx\n\
 ", kMovieScript, 1);
 
 return Common::kNoError;
