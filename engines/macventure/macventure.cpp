@@ -291,16 +291,14 @@ void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, Comm
 
 	if (event.kbd.flags & Common::KBD_SHIFT) {
 		// Do shift ;)
-	}
-	else {
+	} else {
 		if (_selectedControl && _currentSelection.size() > 0 && getInvolvedObjects() > 1) {
 			if (objID == 0)
 				selectPrimaryObject(windata.objRef);
 			else
 				selectPrimaryObject(objID);
 			preparedToRun();
-		}
-		else {
+		} else {
 			if (objID == 0) {
 				unselectAll();
 				//if (windata.type == kAnimateBack) {

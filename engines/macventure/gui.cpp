@@ -726,6 +726,27 @@ Graphics::MacWindow * Gui::findWindow(WindowReference reference) {
 	return nullptr;
 }
 
+bool Gui::isRectInsideObject(Common::Rect target, ObjID obj) {
+	if (_assets.contains(obj) &&
+		_engine->isObjClickable(obj) &&
+		_engine->isObjVisible(obj)) {
+		Common::Rect bounds = _engine->getObjBounds(obj);
+		Common::Rect intersection = bounds.findIntersectingRect(target);
+		// We translate it to the image's coord system
+		intersection = Common::Rect(
+			intersection.left - bounds.left,
+			intersection.top - bounds.top,
+			intersection.left - bounds.left + intersection.width(),
+			intersection.top - bounds.top + intersection.height());
+
+
+		if (_assets[obj]->isRectInside(intersection)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 
 /* HANDLERS */
 void Gui::handleMenuAction(MenuAction action) {
@@ -955,23 +976,8 @@ bool MacVenture::Gui::processMainGameEvents(WindowClick click, Common::Event & e
 		Common::Rect clickRect(left, top, left + kCursorWidth, top + kCursorHeight);
 		for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
 			child = (*it).obj;
-			if (_assets.contains(child) &&
-				_engine->isObjClickable(child) &&
-				_engine->isObjVisible(child)) {
-				Common::Rect bounds = _engine->getObjBounds(child);
-				Common::Rect intersection = bounds.findIntersectingRect(clickRect);
-				// We translate it to the image's coord system
-				intersection = Common::Rect(
-					intersection.left - bounds.left,
-					intersection.top - bounds.top,
-					intersection.left - bounds.left + intersection.width(),
-					intersection.top - bounds.top + intersection.height());
-
-
-				if (_assets[child]->isRectInside(intersection)) {
-					// select the first object clicked
-					_engine->handleObjectSelect(child, kMainGameWindow, event);
-				}
+			if (isRectInsideObject(clickRect, child)) {
+				_engine->handleObjectSelect(child, kMainGameWindow, event);
 			}
 		}
 	}
@@ -1011,7 +1017,32 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event & event) {
 	if (_engine->needsClickToContinue())
 		return true;
 
-	return false;
+	if (click == kBorderInner && event.type == Common::EVENT_LBUTTONUP) {
+
+		// Find the appropriate window
+		uint ref = 0;
+		uint i;
+		for (uint i = 0; i < _inventoryWindows.size(); i++) {
+			if (_inventoryWindows[i]->hasAllFocus()) { // HACK
+				ref = i;
+			}
+		}
+
+		WindowData &data = findWindowData((WindowReference) ref);
+		ObjID child;
+		Common::Point pos;
+		// Click rect to local coordinates. We assume the click is inside the window ^
+		int left = event.mouse.x - _inventoryWindows[i]->getDimensions().left;
+		int top = event.mouse.y - _inventoryWindows[i]->getDimensions().top;
+		Common::Rect clickRect(left, top, left + kCursorWidth, top + kCursorHeight);
+		for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
+			child = (*it).obj;
+			if (isRectInsideObject(clickRect, child)) {
+				_engine->handleObjectSelect(child, (WindowReference)ref, event);
+			}
+		}
+	}
+	return true;
 }
 
 /* Ugly switches */

@@ -245,6 +245,9 @@ private: // Methods
 	WindowData& findWindowData(WindowReference reference);
 	Graphics::MacWindow *findWindow(WindowReference reference);
 
+	// Utils
+	bool isRectInsideObject(Common::Rect target, ObjID obj);
+
 };
 
 class CommandButton {
