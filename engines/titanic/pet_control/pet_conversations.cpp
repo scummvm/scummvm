@@ -506,23 +506,11 @@ void CPetConversations::textLineEntered(const CString &textLine) {
 	scrollToBottom();
 }
 
-CString CPetConversations::getActiveNPCName() const {
-	if (_petControl && _petControl->_activeNPC)
-		return _petControl->_activeNPC->getName();
-	else
-		return CString();
-}
-
 void CPetConversations::setActiveNPC(const CString &name) {
 	_npcName = name;
 	_field418 = 1;
 	resetDials();
 	startNPCTimer();
-}
-
-void CPetConversations::copyColors(uint tableNum, uint colors[5]) {
-	const uint *src = getColorTable(tableNum);
-	Common::copy(src, src + 5, colors);
 }
 
 void CPetConversations::updateDial(uint dialNum, const CString &npcName) {

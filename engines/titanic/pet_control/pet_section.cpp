@@ -39,30 +39,36 @@ static const uint PALETTE3[5] = {
 };
 
 void CPetSection::displayMessage(const CString &msg) {
-	error("TODO");
+	CPetText *text = getText();
+
+	if (text) {
+		text->setColor(getColor(1));
+		_petControl->makeDirty();
+		removeText(5000);
+	}
 }
 
 void CPetSection::proc25(int val) {
 	if (!val) {
-		proc28();
+		removeText();
 		_petControl->makeDirty();
 	}
 }
 
-void CPetSection::proc27(int duration) {
+void CPetSection::removeText(int duration) {
 	if (duration > 0)
 		_petControl->startPetTimer(0, duration, 0, this);
 	else
-		proc28();
+		removeText();
 }
 
-void CPetSection::proc28() {
+void CPetSection::removeText() {
 	CPetText *text = getText();
 	if (text)
 		text->setup();
 }
 
-void CPetSection::proc29() {
+void CPetSection::stopTextTimer() {
 	_petControl->stopPetTimer(0);
 }
 
@@ -81,6 +87,23 @@ const uint *CPetSection::getColorTable(int tableNum) {
 	case 2: return PALETTE2;
 	default: return PALETTE3;
 	}
+}
+
+void CPetSection::areaChanged(PetArea area) {
+	if (_petControl && _petControl->_currentArea == area)
+		_petControl->makeDirty();
+}
+
+CString CPetSection::getActiveNPCName() const {
+	if (_petControl && _petControl->_activeNPC)
+		return _petControl->_activeNPC->getName();
+	else
+		return CString();
+}
+
+void CPetSection::copyColors(uint tableNum, uint colors[5]) {
+	const uint *src = getColorTable(tableNum);
+	Common::copy(src, src + 5, colors);
 }
 
 } // End of namespace Titanic

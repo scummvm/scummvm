@@ -60,8 +60,6 @@ private:
 	 */
 	Point getGlyphPos() const { return Point(509, 388); }
 
-	void areaChanged(PetArea area);
-
 	/**
 	 * Adds a glyph to the list
 	 */

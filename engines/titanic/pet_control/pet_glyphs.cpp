@@ -45,7 +45,7 @@ void CPetGlyph::updateTooltip() {
 		getTooltip(petText);
 
 		if (_owner)
-			getPetSection()->proc29();
+			getPetSection()->stopTextTimer();
 	}
 }
 
@@ -214,7 +214,7 @@ void CPetGlyphs::changeHighlight(int index) {
 			glyph->updateTooltip();
 		}
 	} else if (_owner) {
-		_owner->proc28();
+		_owner->removeText();
 	}
 }
 

@@ -276,11 +276,6 @@ uint CPetRooms::getRoomFlags() const {
 	return roomFlags.get();
 }
 
-void CPetRooms::areaChanged(PetArea area) {
-	if (_petControl && _petControl->_currentArea == area)
-		_petControl->makeDirty();
-}
-
 void CPetRooms::reassignRoom(int passClassNum) {
 	CPetRoomsGlyph *glyph = _glyphs.findAssignedRoom();
 	if (glyph)

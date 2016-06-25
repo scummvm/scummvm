@@ -125,19 +125,9 @@ private:
 	void textLineEntered(const CString &textLine);
 
 	/**
-	 * Returns the name of the currently active NPC, if any
-	 */
-	CString getActiveNPCName() const;
-
-	/**
 	 * Set the active NPC
 	 */
 	void setActiveNPC(const CString &name);
-
-	/**
-	 * Create a color table
-	 */
-	void copyColors(uint tableNum, uint colors[5]);
 
 	/**
 	 * Updates one of the dials with data from a given NPC

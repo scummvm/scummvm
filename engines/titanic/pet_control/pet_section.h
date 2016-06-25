@@ -52,6 +52,21 @@ struct CPetSectionSubData {
 class CPetSection {
 public:
 	CPetControl *_petControl;
+protected:
+	/**
+	 * Called when the current area is changed
+	 */
+	void areaChanged(PetArea area);
+
+	/**
+	 * Returns the name of the currently active NPC, if any
+	 */
+	CString getActiveNPCName() const;
+
+	/**
+	 * Create a color table
+	 */
+	void copyColors(uint tableNum, uint colors[5]);
 public:
 	CPetSection() : _petControl(nullptr) {}
 	virtual ~CPetSection() {}
@@ -153,9 +168,20 @@ public:
 	 */
 	virtual CPetText *getText() { return nullptr; }
 
-	virtual void proc27(int duration);
-	virtual void proc28();
-	virtual void proc29();
+	/**
+	 * Removes text after a given duration
+	 */
+	virtual void removeText(int duration);
+	
+	/**
+	 * Removes text after a given duration
+	 */
+	virtual void removeText();
+
+	/**
+	 * Stops the text removal timer
+	 */
+	virtual void stopTextTimer();
 
 	/**
 	 * Get an element from the section by a designated Id
