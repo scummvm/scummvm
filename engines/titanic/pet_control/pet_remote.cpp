@@ -158,7 +158,7 @@ bool CPetRemote::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
 }
 
 bool CPetRemote::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
-	return _items.VirtualKeyCharMsg(msg->_keyState.keycode);
+	return _items.VirtualKeyCharMsg(msg);
 }
 
 bool CPetRemote::isValid(CPetControl *petControl) {

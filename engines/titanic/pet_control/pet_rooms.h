@@ -144,6 +144,9 @@ public:
 	 */
 	virtual CPetText *getText();
 
+	/**
+	 * Special retrieval of glyph background image
+	 */
 	virtual CGameObject *getBackground(int index);
 
 	/**

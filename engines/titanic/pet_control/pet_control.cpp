@@ -131,7 +131,7 @@ void CPetControl::draw(CScreenManager *screenManager) {
 
 	if (!bounds.isEmpty()) {
 		if (_fieldC8 >= 0) {
-			_inventory.proc5(_fieldC8);
+			_inventory.changed(_fieldC8);
 			_fieldC8 = -1;
 		}
 

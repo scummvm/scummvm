@@ -182,7 +182,7 @@ Point CPetGlyphs::getPosition(int index) const {
 	return tempPoint;
 }
 
-Rect CPetGlyphs::getRect(int index) {
+Rect CPetGlyphs::getRect(int index) const {
 	Point pt = getPosition(index);
 	return Rect(pt.x, pt.y, pt.x + 52, pt.y + 52);
 }
@@ -235,7 +235,7 @@ int CPetGlyphs::getHighlightedIndex(int index) const {
 	return (idx >= 0 && idx < _numVisibleGlyphs) ? idx : -1;
 }
 
-int CPetGlyphs::getItemIndex(int index) {
+int CPetGlyphs::getItemIndex(int index) const {
 	return _firstVisibleIndex + index;
 }
 
@@ -248,8 +248,8 @@ void CPetGlyphs::setSelectedIndex(int index) {
 	}
 }
 
-CPetGlyph *CPetGlyphs::getGlyph(int index) {
-	for (iterator i = begin(); i != end(); ++i) {
+CPetGlyph *CPetGlyphs::getGlyph(int index) const {
+	for (const_iterator i = begin(); i != end(); ++i) {
 		if (index-- == 0)
 			return *i;
 	}
@@ -414,7 +414,9 @@ bool CPetGlyphs::KeyCharMsg(int key) {
 	return false;
 }
 
-bool CPetGlyphs::VirtualKeyCharMsg(int key) {
+bool CPetGlyphs::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
+	Common::KeyCode key = msg->_keyState.keycode;
+
 	switch (key) {
 	case Common::KEYCODE_LEFT:
 		decSelection();
@@ -430,7 +432,7 @@ bool CPetGlyphs::VirtualKeyCharMsg(int key) {
 
 	if (_highlightIndex >= 0) {
 		CPetGlyph *glyph = getGlyph(_highlightIndex);
-		if (glyph && glyph->VirtualKeyCharMsg(key))
+		if (glyph && glyph->VirtualKeyCharMsg(msg))
 			return true;
 	}
 
@@ -502,7 +504,7 @@ void CPetGlyphs::decSelection() {
 	}
 }
 
-CGameObject *CPetGlyphs::getObjectAt(const Point &pt) {
+CGameObject *CPetGlyphs::getObjectAt(const Point &pt) const {
 	for (int idx = 0; idx < _numVisibleGlyphs; ++idx) {
 		Rect glyphRect = getRect(idx);
 		if (glyphRect.contains(pt)) {
@@ -530,6 +532,35 @@ Point CPetGlyphs::getHighlightedGlyphPos() const {
 	}
 
 	return Point(0, 0);
+}
+
+bool CPetGlyphs::areItemsValid() const {
+	for (const_iterator i = begin(); i != end(); ++i) {
+		if (!(*i)->isValid())
+			return false;
+	}
+
+	return true;
+}
+
+void CPetGlyphs::removeInvalid() {
+	if (!areItemsValid()) {
+		changeHighlight(-1);
+
+		for (iterator i = begin(); i != end(); ) {
+			CPetGlyph *glyph = *i;
+
+			if (!glyph->isValid()) {
+				i = erase(i);
+				delete glyph;
+			} else {
+				++i;
+			}
+		}
+
+		_firstVisibleIndex = CLIP(_firstVisibleIndex, 0,
+			(int)size() - _numVisibleGlyphs);
+	}
 }
 
 } // End of namespace Titanic

@@ -76,7 +76,7 @@ bool CPetRealLife::KeyCharMsg(CKeyCharMsg *msg) {
 }
 
 bool CPetRealLife::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
-	return _glyphs.VirtualKeyCharMsg(msg->_keyState.keycode);
+	return _glyphs.VirtualKeyCharMsg(msg);
 }
 
 void CPetRealLife::postLoad() {

@@ -76,7 +76,10 @@ public:
 	 */
 	virtual Rect getBounds() { return Rect(); }
 	
-	virtual void proc5(int val) {}
+	/**
+	 * Called when a general change occurs
+	 */
+	virtual void changed(int changeType) {}
 	
 	/**
 	 * Following are handlers for the various messages that the PET can
@@ -159,6 +162,9 @@ public:
 	 */
 	virtual CPetElement *getElement(uint id) { return nullptr; }
 
+	/**
+	 * Special retrieval of glyph background image
+	 */
 	virtual CGameObject *getBackground(int index) const { return nullptr; }
 
 	/**

@@ -127,16 +127,21 @@ public:
 	 * Handles mouse button up messages
 	 */
 	virtual bool MouseButtonUpMsg(const Point &pt) { return false; }
-	
-	virtual int proc21() { return 0; }
-	virtual int proc22() { return 0; }
 
 	/**
-	 * Handles keypresses when the glyph is focused
+	 * Handles mouse double-click messages
+	 */
+	virtual bool MouseDoubleClickMsg(const CMouseDoubleClickMsg *msg) { return false; }
+
+	/**
+	 * Handles keypresses
 	 */
 	virtual bool KeyCharMsg(int key) { return false; }
 	
-	virtual bool VirtualKeyCharMsg(int key) { return false; }
+	/**
+	 * Handles keypresses
+	 */
+	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) { return false; }
 
 	/**
 	 * Unhighlight any currently highlighted element
@@ -182,9 +187,9 @@ public:
 	virtual bool proc33(CPetGlyph *glyph) { return true; }
 
 	/**
-	 * Return whether the glyph has an associated image
+	 * Return whether the glyph is currently valid
 	 */
-	virtual bool hasImage() const { return true; }
+	virtual bool isValid() const { return true; }
 
 	/**
 	 * Called on a highlighted item when PET area is entered
@@ -247,7 +252,7 @@ private:
 	/**
 	 * Get a rect for the glyph
 	 */
-	Rect getRect(int index);
+	Rect getRect(int index) const;
 
 	/**
 	 * Returns the on-screen index for the highlight to be shown at
@@ -257,7 +262,7 @@ private:
 	/**
 	 * Returns the index of a glyph given the visible on-screen glyph number
 	 */
-	int getItemIndex(int index);
+	int getItemIndex(int index) const;
 
 	/**
 	 * Set the item index
@@ -267,7 +272,7 @@ private:
 	/**
 	 * Return a specified glyph
 	 */
-	CPetGlyph *getGlyph(int index);
+	CPetGlyph *getGlyph(int index) const;
 
 	/**
 	 * Scrolls the glyphs to the left
@@ -288,6 +293,11 @@ private:
 	 * Make the PET dirty
 	 */
 	void makePetDirty();
+
+	/**
+	 * Returns true if all the glyphs are in a valid state
+	 */
+	bool areItemsValid() const;
 protected:
 	int _firstVisibleIndex;
 	int _totalGlyphs;
@@ -377,6 +387,11 @@ public:
 	bool MouseButtonUpMsg(const Point &pt);
 
 	/**
+	 * Mouse double click message
+	 */
+	bool MouseDoubleClickMsg(const Point &pt) { return true; }
+
+	/**
 	 * Mouse drag start messagge
 	 */
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
@@ -399,7 +414,7 @@ public:
 	/**
 	 * Virtual key message
 	 */
-	bool VirtualKeyCharMsg(int key);
+	bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
 
 	/**
 	 * When the PET section is entered, passes onto the highlighted
@@ -453,7 +468,7 @@ public:
 	/**
 	 * Returns the object associated the glyph under the specified position
 	 */
-	CGameObject *getObjectAt(const Point &pt);
+	CGameObject *getObjectAt(const Point &pt) const;
 
 	/**
 	 * Returns true if the specified glyph is the currently highlighted one
@@ -464,6 +479,12 @@ public:
 	 * Get the top-left position of the currently highlighted glyph
 	 */
 	Point getHighlightedGlyphPos() const;
+
+	/**
+	 * Removes any glyphs from the list that no longer have any images
+	 * associated with them
+	 */
+	void removeInvalid();
 };
 
 } // End of namespace Titanic

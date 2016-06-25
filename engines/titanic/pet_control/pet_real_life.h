@@ -69,8 +69,6 @@ public:
 	 */
 	virtual Rect getBounds() { return Rect(); }
 	
-	virtual void proc5(int val) {}
-	
 	/**
 	 * Following are handlers for the various messages that the PET can
 	 * pass onto the currently active section/area

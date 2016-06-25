@@ -53,6 +53,11 @@ private:
 	 * Get the index of an item added to the PET
 	 */
 	int getItemIndex(CGameObject *item) const;
+
+	/**
+	 * Remove any invalid inventory glyphs
+	 */
+	void removeInvalid();
 public:
 	CPetInventory();
 
@@ -77,20 +82,24 @@ public:
 	virtual Rect getBounds();
 	
 	/**
-	 * Save the data for the class to file
+	 * Called when a general change occurs
 	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	virtual void changed(int changeType);
 
 	/**
-	 * Load the data for the class from file
+	 * Following are handlers for the various messages that the PET can
+	 * pass onto the currently active section/area
 	 */
-	virtual void load(SimpleFile *file, int param);
+	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	virtual bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
+	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
 
 	/**
 	 * Returns item a drag-drop operation has dropped on, if any
 	 */
 	virtual CGameObject *dragEnd(const Point &pt) const;
-
 
 	/**
 	 * Returns true if the object is in a valid state
@@ -98,20 +107,38 @@ public:
 	virtual bool isValid(CPetControl *petControl);
 
 	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file, int param);
+
+	/**
 	 * Called after a game has been loaded
 	 */
 	virtual void postLoad();
 
 	/**
-	 * Called when a section is switched to
+	 * Save the data for the class to file
 	 */
-	virtual void enter(PetArea oldArea);
-	
+	virtual void save(SimpleFile *file, int indent) const;
+
 	/**
-	 * Called when a section is being left, to switch to another area
-	 */
+	* Called when a section is switched to
+	*/
+	virtual void enter(PetArea oldArea);
+
+	/**
+	* Called when a section is being left, to switch to another area
+	*/
 	virtual void leave();
-	
+
+	/**
+	 * Get a reference to the tooltip text associated with the section
+	 */
+	virtual CPetText *getText() { return &_text; }
+
+	/**
+	 * Special retrieval of glyph background image
+	 */
 	virtual CGameObject *getBackground(int index) const;
 
 	/**

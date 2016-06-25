@@ -41,8 +41,9 @@ bool CPetInventory::setup(CPetControl *petControl) {
 bool CPetInventory::reset() {
 	_items.reset();
 	_text.setup();
+	_text.setColor(getColor(0));
+	_text.setLineColor(0, getColor(0));
 
-	// TODO
 	return true;
 }
 
@@ -56,9 +57,45 @@ Rect CPetInventory::getBounds() {
 	return _movie ? _movie->getBounds() : Rect();
 }
 
+void CPetInventory::changed(int changeType) {
+	switch (changeType) {
+	case 0:
+	case 2:
+		itemsChanged();
+		break;
+	case 1:
+		removeInvalid();
+		break;
+	default:
+		break;
+	}
+}
+
+bool CPetInventory::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	return _items.MouseButtonDownMsg(msg->_mousePos);
+}
+
+bool CPetInventory::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	bool result = _items.MouseDragStartMsg(msg);
+	if (result)
+		_petControl->makeDirty();
+	return result;
+}
+
+bool CPetInventory::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	return _items.MouseButtonUpMsg(msg->_mousePos);
+}
+
+bool CPetInventory::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
+	return _items.MouseDoubleClickMsg(msg->_mousePos);
+}
+
+bool CPetInventory::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
+	return _items.VirtualKeyCharMsg(msg);
+}
+
 CGameObject *CPetInventory::dragEnd(const Point &pt) const {
-	warning("TODO: CPetInventory::dragEnd");
-	return nullptr;
+	return _items.getObjectAt(pt);
 }
 
 bool CPetInventory::isValid(CPetControl *petControl) {
@@ -210,6 +247,10 @@ void CPetInventory::playMovie(CGameObject *movie, int flag) {
 		else
 			_movie->playMovie(0);
 	}
+}
+
+void CPetInventory::removeInvalid() {
+	_items.removeInvalid();
 }
 
 } // End of namespace Titanic

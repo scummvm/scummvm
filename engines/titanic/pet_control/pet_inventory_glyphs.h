@@ -109,9 +109,9 @@ public:
 	virtual void getTooltip(CPetText *text);
 
 	/**
-	 * Return whether the glyph has an associated image
+	 * Return whether the glyph is currently valid
 	 */
-	virtual bool hasImage() const { return _item && _background; }
+	virtual bool isValid() const { return _item && _background; }
 
 	/**
 	 * Returns the object associated with the glyph

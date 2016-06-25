@@ -92,7 +92,7 @@ bool CPetRooms::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
 }
 
 bool CPetRooms::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
-	return _glyphs.VirtualKeyCharMsg(msg->_keyState.keycode);
+	return _glyphs.VirtualKeyCharMsg(msg);
 }
 
 bool CPetRooms::checkDragEnd(CGameObject *item) {
