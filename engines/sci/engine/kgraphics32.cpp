@@ -925,19 +925,19 @@ reg_t kPalCycle(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
+reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
 	if (!s)
 		return make_reg(0, getSciVersion());
 	error("not supposed to call this");
 }
 
-reg_t kRemapOff(EngineState *s, int argc, reg_t *argv) {
+reg_t kRemapColorsOff(EngineState *s, int argc, reg_t *argv) {
 	byte color = (argc >= 1) ? argv[0].toUint16() : 0;
 	g_sci->_gfxRemap32->remapOff(color);
 	return s->r_acc;
 }
 
-reg_t kRemapByRange(EngineState *s, int argc, reg_t *argv) {
+reg_t kRemapColorsByRange(EngineState *s, int argc, reg_t *argv) {
 	byte color = argv[0].toUint16();
 	byte from = argv[1].toUint16();
 	byte to = argv[2].toUint16();
@@ -947,7 +947,7 @@ reg_t kRemapByRange(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kRemapByPercent(EngineState *s, int argc, reg_t *argv) {
+reg_t kRemapColorsByPercent(EngineState *s, int argc, reg_t *argv) {
 	byte color = argv[0].toUint16();
 	byte percent = argv[1].toUint16();
 	// The last parameter, depth, is unused
@@ -955,7 +955,7 @@ reg_t kRemapByPercent(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kRemapToGray(EngineState *s, int argc, reg_t *argv) {
+reg_t kRemapColorsToGray(EngineState *s, int argc, reg_t *argv) {
 	byte color = argv[0].toUint16();
 	byte gray = argv[1].toUint16();
 	// The last parameter, depth, is unused
@@ -963,7 +963,7 @@ reg_t kRemapToGray(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kRemapToPercentGray(EngineState *s, int argc, reg_t *argv) {
+reg_t kRemapColorsToPercentGray(EngineState *s, int argc, reg_t *argv) {
 	byte color = argv[0].toUint16();
 	byte gray = argv[1].toUint16();
 	byte percent = argv[2].toUint16();
@@ -972,7 +972,7 @@ reg_t kRemapToPercentGray(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kRemapSetNoMatchRange(EngineState *s, int argc, reg_t *argv) {
+reg_t kRemapColorsBlockRange(EngineState *s, int argc, reg_t *argv) {
 	byte from = argv[0].toUint16();
 	byte count = argv[1].toUint16();
 	g_sci->_gfxRemap32->setNoMatchRange(from, count);
