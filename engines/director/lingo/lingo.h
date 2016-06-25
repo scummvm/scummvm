@@ -124,6 +124,8 @@ public:
 	Symbol *lookupVar(const char *name);
 	void define(Common::String &s, int start, int end, int nargs);
 	void codeArg(Common::String &s);
+	int codeId(Common::String &s);
+	int codeId_(Common::String &s);
 
 	static void c_xpop();
 	static void c_printtop();

@@ -208,15 +208,13 @@ stmtlist: /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
 	| stmtlist stmt
 	;
 
-expr: INT						{
+expr: INT	{
 		$$ = g_lingo->code1(g_lingo->c_constpush);
 		inst i = 0;
 		WRITE_UINT32(&i, $1);
 		g_lingo->code1(i); };
-	| ID						{
-		$$ = g_lingo->code1(g_lingo->c_varpush);
-		g_lingo->codeString($1->c_str());
-		g_lingo->code1(g_lingo->c_eval);
+	| ID	{
+		$$ = g_lingo->codeId(*$1);
 		delete $1; }
 	| asgn
 	| expr '+' expr				{ g_lingo->code1(g_lingo->c_add); }

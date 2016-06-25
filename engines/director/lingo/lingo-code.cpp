@@ -404,6 +404,20 @@ void Lingo::codeArg(Common::String &s) {
 	g_lingo->code1(g_lingo->c_assign);
 }
 
+int Lingo::codeId(Common::String &s) {
+	return g_lingo->codeId_(s);
+}
+
+int Lingo::codeId_(Common::String &s) {
+	int ret = code1(c_varpush);
+
+	codeString(s.c_str());
+	code1(c_eval);
+
+	return ret;
+}
+
+
 void Lingo::c_call() {
 	warning("STUB: c_call()");
 }
