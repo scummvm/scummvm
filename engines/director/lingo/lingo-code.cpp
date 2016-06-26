@@ -376,27 +376,27 @@ void Lingo::c_gotoprevious() {
 	warning("STUB: c_gotoprevious()");
 }
 
-void Lingo::define(Common::String &name, int start, int end, int nargs) {
-	warning("STUB: define(\"%s\", %d, %d, %d)", name.c_str(), start, end, nargs);
+void Lingo::define(Common::String &name, int start, int nargs) {
+	debug(3, "define(\"%s\", %d, %d, %d)", name.c_str(), start, _currentScript->size() - 1, nargs);
 
 	Symbol *sym;
 
 	if (!_handlers.contains(name)) { // Create variable if it was not defined
 		sym = new Symbol;
 
-		warning("Redefining handler '%s'", name.c_str());
-		delete sym->u.defn;
+		sym->name = (char *)calloc(name.size() + 1, 1);
+		Common::strlcpy(sym->name, name.c_str(), name.size() + 1);
+		sym->type = HANDLER;
 
 		_handlers[name] = sym;
 	} else {
 		sym = g_lingo->_handlers[name];
 
-		sym->name = (char *)calloc(name.size() + 1, 1);
-		Common::strlcpy(sym->name, name.c_str(), name.size() + 1);
-		sym->type = HANDLER;
+		warning("Redefining handler '%s'", name.c_str());
+		delete sym->u.defn;
 	}
 
-	sym->u.defn = new ScriptData(&(*_currentScript)[start], end - start + 1);
+	sym->u.defn = new ScriptData(&(*_currentScript)[start], _currentScript->size() - start + 1);
 	sym->nargs = nargs;
 }
 
@@ -426,7 +426,6 @@ int Lingo::codeId_(Common::String &name) {
 
 	return ret;
 }
-
 
 void Lingo::c_call() {
 	Common::String name((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);

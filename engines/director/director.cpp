@@ -85,6 +85,7 @@ end if\n\
 if x >1 then\n\
 exit\n\
 end if\n\
+put 100\n\
 \n\
 --\n\
 macro ZIPX\n\
@@ -104,8 +105,13 @@ if par1 = 3 then\n\
 else\n\
   put 9\n\
 end if\n\
-shipx\n\
 ", kMovieScript, 1);
+
+_lingo->addCode("shipx\n\
+put x\n\
+", kMovieScript, 2);
+
+_lingo->executeScript(kMovieScript, 2);
 
 return Common::kNoError;
 

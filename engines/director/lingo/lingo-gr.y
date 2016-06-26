@@ -99,7 +99,7 @@ programline:
 	| func
 	| asgn				{ g_lingo->code1(g_lingo->c_xpop); }
 	| stmt
-	| expr  			{ g_lingo->code1(g_lingo->c_printtop); }
+	| expr
 	| error				{ yyerrok; }
 	| /* empty */
 	;
@@ -310,9 +310,9 @@ gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
 // See also:
 //   on keyword
 defn: tMACRO ID { g_lingo->_indef = true; }
-	    begin argdef stmtlist end {
+	    begin argdef stmtlist {
 			g_lingo->code1(g_lingo->c_procret);
-			g_lingo->define(*$2, $4, $7, $5);
+			g_lingo->define(*$2, $4, $5);
 			g_lingo->_indef = false; }
 	;
 argdef:  /* nothing */ 		{ $$ = 0; }

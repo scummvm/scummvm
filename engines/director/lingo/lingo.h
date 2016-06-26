@@ -129,7 +129,7 @@ public:
 public:
 	void execute(int pc);
 	Symbol *lookupVar(const char *name);
-	void define(Common::String &s, int start, int end, int nargs);
+	void define(Common::String &s, int start, int nargs);
 	void codeArg(Common::String &s);
 	int codeId(Common::String &s);
 	int codeId_(Common::String &s);
