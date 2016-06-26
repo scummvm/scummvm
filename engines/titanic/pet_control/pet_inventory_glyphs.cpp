@@ -133,7 +133,7 @@ bool CPetInventoryGlyph::dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg
 		_item = nullptr;
 		_background = nullptr;
 		_field34 = 0;
-		petControl->setC8(1);
+		petControl->setAreaChangeType(1);
 		return true;
 	} else {
 		petControl->addToInventory(carryParcel);

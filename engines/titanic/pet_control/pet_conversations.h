@@ -125,11 +125,6 @@ private:
 	void textLineEntered(const CString &textLine);
 
 	/**
-	 * Set the active NPC
-	 */
-	void setActiveNPC(const CString &name);
-
-	/**
 	 * Updates one of the dials with data from a given NPC
 	 */
 	void updateDial(uint dialNum, const CString &npcName);
@@ -211,7 +206,10 @@ public:
 	 */
 	virtual void leave();
 
-	virtual void proc25(int val);
+	/**
+	 * Called when a previously set up PET timer expires
+	 */
+	virtual void timerExpired(int val);
 
 	/**
 	 * Display a title for an NPC
@@ -223,7 +221,10 @@ public:
 	 */
 	virtual void setNPC(const CString &name);
 
-	virtual void proc35();
+	/**
+	 * Resets the active NPC
+	 */
+	virtual void resetNPC();
 
 	/**
 	 * Show the text cursor
@@ -234,6 +235,11 @@ public:
 	 * Hide the text cursor
 	 */
 	virtual void hideCursor();
+
+	/**
+	 * Set the active NPC
+	 */
+	void setActiveNPC(const CString &name);
 
 	/**
 	 * Resets the dials with the data for the currently active NPC

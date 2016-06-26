@@ -367,9 +367,6 @@ protected:
 	 */
 	int getClipDuration(const CString &name, int frameRate = 14) const;
 
-	void petIncC0();
-	void petDecC0();
-
 	void setState1C(bool flag);
 
 	/**
@@ -401,6 +398,16 @@ protected:
 	 * Resets the Mail Man value
 	 */
 	void resetMail();
+
+	/**
+	 * Locks the PET, disabling all input. Can be called multiple times
+	 */
+	void petLockInput();
+	
+	/**
+	 * Unlocks PET input
+	 */
+	void petUnlockInput();
 public:
 	bool _isMail;
 	int _id;

@@ -43,9 +43,9 @@ BEGIN_MESSAGE_MAP(CPetControl, CGameObject)
 END_MESSAGE_MAP()
 
 CPetControl::CPetControl() : CGameObject(), 
-		_currentArea(PET_CONVERSATION), _fieldC0(0), _locked(0), _fieldC8(0),
-		_activeNPC(nullptr), _remoteTarget(nullptr), _hiddenRoom(nullptr),
-		_drawBounds(20, 350, 620, 480) {
+		_currentArea(PET_CONVERSATION), _inputLockCount(0), _areaLockCount(0),
+		_areaChangeType(-1), _activeNPC(nullptr), _remoteTarget(nullptr),
+		_hiddenRoom(nullptr), _drawBounds(20, 350, 620, 480) {
 	_sections[PET_INVENTORY] = &_inventory;
 	_sections[PET_CONVERSATION] = &_conversations;
 	_sections[PET_REMOTE] = &_remote;
@@ -81,7 +81,7 @@ void CPetControl::load(SimpleFile *file) {
 }
 
 void CPetControl::setup() {
-	warning("TODO: CPetControl::setup");
+	_conversations.setup(this);
 	_rooms.setup(this);
 	_remote.setup(this);
 	_inventory.setup(this);
@@ -130,9 +130,9 @@ void CPetControl::draw(CScreenManager *screenManager) {
 	bounds.constrain(gameManager->_bounds);
 
 	if (!bounds.isEmpty()) {
-		if (_fieldC8 >= 0) {
-			_inventory.changed(_fieldC8);
-			_fieldC8 = -1;
+		if (_areaChangeType >= 0) {
+			_inventory.changed(_areaChangeType);
+			_areaChangeType = -1;
 		}
 
 		_frame.drawFrame(screenManager);
@@ -188,13 +188,8 @@ void CPetControl::resetActiveNPC() {
 	_activeNPCName = "";
 }
 
-bool CPetControl::fn1(int val) {
-	warning("TODO: CPetControl::fn1");
-	return false;
-}
-
 PetArea CPetControl::setArea(PetArea newArea) {
-	if (newArea == _currentArea || !isUnlocked())
+	if (newArea == _currentArea || !isAreaActive())
 		return _currentArea;
 
 	// Signal the currently active area that it's being left
@@ -249,11 +244,11 @@ bool CPetControl::containsPt(const Common::Point &pt) const {
 }
 
 bool CPetControl::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (!containsPt(msg->_mousePos) || getC0())
+	if (!containsPt(msg->_mousePos) || isInputLocked())
 		return false;
 
 	bool result = false;
-	if (isUnlocked())
+	if (isAreaActive())
 		result = _frame.MouseButtonDownMsg(msg);
 
 	if (!result) {
@@ -265,7 +260,7 @@ bool CPetControl::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CPetControl::MouseDragStartMsg(CMouseDragStartMsg *msg) {
-	if (!containsPt(msg->_mousePos) || getC0())
+	if (!containsPt(msg->_mousePos) || isInputLocked())
 		return false;
 
 	return _sections[_currentArea]->MouseDragStartMsg(msg);
@@ -280,11 +275,11 @@ bool CPetControl::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 }
 
 bool CPetControl::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
-	if (!containsPt(msg->_mousePos) || getC0())
+	if (!containsPt(msg->_mousePos) || isInputLocked())
 		return false;
 
 	bool result = false;
-	if (isUnlocked())
+	if (isAreaActive())
 		result = _frame.MouseButtonUpMsg(msg);
 
 	if (!result)
@@ -295,21 +290,21 @@ bool CPetControl::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 }
 
 bool CPetControl::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
-	if (!containsPt(msg->_mousePos) || getC0())
+	if (!containsPt(msg->_mousePos) || isInputLocked())
 		return false;
 
 	return _sections[_currentArea]->MouseDoubleClickMsg(msg);
 }
 
 bool CPetControl::KeyCharMsg(CKeyCharMsg *msg) {
-	if (getC0())
+	if (isInputLocked())
 		return false;
 
 	return _sections[_currentArea]->KeyCharMsg(msg);
 }
 
 bool CPetControl::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
-	if (getC0())
+	if (isInputLocked())
 		return false;
 
 	bool result = _sections[_currentArea]->VirtualKeyCharMsg(msg);
@@ -498,7 +493,7 @@ void CPetControl::summonNPC(const CString &name, int val) {
 	}
 }
 
-void CPetControl::startPetTimer(uint timerIndex, uint firstDuration, uint duration, void *target) {
+void CPetControl::startPetTimer(uint timerIndex, uint firstDuration, uint duration, CPetSection *target) {
 	stopPetTimer(timerIndex);
 	_timers[timerIndex]._id = addTimer(timerIndex, firstDuration, duration);
 	_timers[timerIndex]._target = target;

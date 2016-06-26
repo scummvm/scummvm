@@ -161,7 +161,10 @@ public:
 	 */
 	virtual void enterRoom(CRoomItem *room) {}
 
-	virtual void proc25(int val);
+	/**
+	 * Called when a previously set up PET timer expires
+	 */
+	virtual void timerExpired(int val);
 
 	/**
 	 * Get a reference to the tooltip text associated with the section
@@ -205,7 +208,10 @@ public:
 	 */
 	virtual void setNPC(const CString &name) {}
 
-	virtual void proc35() {}
+	/**
+	 * Resets the active NPC
+	 */
+	virtual void resetNPC() {}
 
 	/**
 	 * Show the text cursor

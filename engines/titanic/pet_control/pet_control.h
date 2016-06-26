@@ -46,13 +46,13 @@ class CPetControl : public CGameObject {
 	DECLARE_MESSAGE_MAP
 	struct PetEventInfo {
 		int _id;
-		void *_target;
+		CPetSection *_target;
 		PetEventInfo() : _id(0), _target(nullptr) {}
 	};
 private:
-	int _fieldC0;
-	int _locked;
-	int _fieldC8;
+	int _inputLockCount;
+	int _areaLockCount;
+	int _areaChangeType;
 	CPetSection *_sections[7];
 	CPetConversations _conversations;
 	CPetInventory _inventory;
@@ -163,13 +163,6 @@ public:
 	void resetRemoteTarget();
 
 	/**
-	 * Resets the Active NPC
-	 */
-	void resetActiveNPC();
-
-	bool fn1(int val);
-
-	/**
 	 * Set the remote target
 	 */
 	void setRemoteTarget(CGameObject *item);
@@ -194,10 +187,6 @@ public:
 	 */
 	void highlightGlyph(int id);
 
-	/**
-	 * Returns true if the PET is currently unlocked
-	 */
-	bool isUnlocked() const { return _locked == 0; }
 
 	/**
 	 * Returns a game object used by the PET by name from within the
@@ -274,7 +263,11 @@ public:
 	 */
 	void moveToHiddenRoom(CTreeItem *item);
 
-	void setC8(int val) { _fieldC8 = val; }
+	/**
+	 * Sets a change for the PET Area's glyphs. Only applicable when
+	 * the Inventory is the active tab
+	 */
+	void setAreaChangeType(int changeType) { _areaChangeType = changeType; }
 
 	/**
 	 * Play a sound
@@ -297,9 +290,9 @@ public:
 	void summonNPC(const CString &name, int val);
 
 	/**
-	 * Start a timer
+	 * Start a timer for a Pet Area
 	 */
-	void startPetTimer(uint timerIndex, uint firstDuration, uint duration, void *target);
+	void startPetTimer(uint timerIndex, uint firstDuration, uint duration, CPetSection *target);
 
 	/**
 	 * Stop a timer
@@ -312,13 +305,58 @@ public:
 	 */
 	CString getFullViewName();
 
-	bool getC0() const { return _fieldC0 > 0; }
-	void incC0() { ++_fieldC0; }
-	void decC0() { --_fieldC0; }
+	/**
+	 * Returns true if all input is currently locked (disabled)
+	 */
+	bool isInputLocked() const { return _inputLockCount > 0; }
+	
+	/**
+	 * Increments the input locked count
+	 */
+	void incInputLocks() { ++_inputLockCount; }
+	
+	/**
+	 * Decremenst the input locked count
+	 */
+	void decInputLocks() { --_inputLockCount; }
+
+	/**
+	 * Returns true if the PET is currently unlocked
+	 */
+	bool isAreaActive() const { return _areaLockCount == 0; }
+
+	/**
+	 * Increment the number of PET area (tab) locks
+	 */
+	void incAreaLocks() { ++_areaLockCount; }
+
+	/**
+	 * Decrement the number of PET area (tab) locks
+	 */
+	void decAreaLocks() { 
+		_areaLockCount = MAX(_areaLockCount - 1, 0);
+	}
 
 	bool isSuccUBusActive() const;
 
 	/*--- CPetConversations methods ---*/
+
+	/**
+	 * Sets the active NPC
+	 */
+	void setActiveNPC(const CString &name) {
+		_conversations.setActiveNPC(name);
+	}
+
+	/**
+	 * Resets the Active NPC
+	 */
+	void resetActiveNPC();
+
+	/**
+	 * Resets the conversation dials back to 0 position
+	 */
+	void resetDials0() { _conversations.resetDials0(); }
 
 	/**
 	 * Resets the dial display in the conversation tab to reflect new values

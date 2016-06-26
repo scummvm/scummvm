@@ -1002,12 +1002,12 @@ int CGameObject::getClipDuration(const CString &name, int frameRate) const {
 	return clip ? (clip->_endFrame - clip->_startFrame) * 1000 / frameRate : 0;
 }
 
-void CGameObject::petIncC0() {
-	getPetControl()->incC0();
+void CGameObject::petLockInput() {
+	getPetControl()->incInputLocks();
 }
 
-void CGameObject::petDecC0() {
-	getPetControl()->decC0();
+void CGameObject::petUnlockInput() {
+	getPetControl()->decInputLocks();
 }
 
 void CGameObject::setState1C(bool flag) {

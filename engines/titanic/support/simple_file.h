@@ -98,7 +98,6 @@ public:
 	 * Seek
 	 */
 	virtual void seek(int offset, int origin);
-
 	/**
 	 * Read a byte
 	 */

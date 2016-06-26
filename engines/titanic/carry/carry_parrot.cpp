@@ -222,7 +222,7 @@ bool CCarryParrot::ActMsg(CActMsg *msg) {
 			}
 
 			getPetControl()->removeFromInventory(this);
-			getPetControl()->setC8(true);
+			getPetControl()->setAreaChangeType(1);
 			moveUnder(getRoom());
 		}
 

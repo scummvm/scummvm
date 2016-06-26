@@ -48,7 +48,7 @@ void CPetSection::displayMessage(const CString &msg) {
 	}
 }
 
-void CPetSection::proc25(int val) {
+void CPetSection::timerExpired(int val) {
 	if (!val) {
 		removeText();
 		_petControl->makeDirty();

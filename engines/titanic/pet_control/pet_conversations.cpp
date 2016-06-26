@@ -254,9 +254,9 @@ void CPetConversations::leave() {
 	stopNPCTimer();
 }
 
-void CPetConversations::proc25(int val) {
+void CPetConversations::timerExpired(int val) {
 	if (val == 1) {
-		proc25(val);
+		CPetSection::timerExpired(val);
 	} else {
 		CString name = _field418 ? _npcName : getActiveNPCName();
 
@@ -315,7 +315,7 @@ void CPetConversations::setNPC(const CString &name) {
 	startNPCTimer();
 }
 
-void CPetConversations::proc35() {
+void CPetConversations::resetNPC() {
 	stopNPCTimer();
 	resetDials("0");
 }
