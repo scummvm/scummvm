@@ -328,6 +328,7 @@ void Score::loadScriptText(Common::SeekableReadStream &stream) {
 		}
 		script += ch;
 	}
+
 	if (script != "")
 		_lingo->addCode(script, kMovieScript, _movieScriptCount);
 
@@ -888,8 +889,8 @@ void Frame::readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16
 }
 
 void Frame::prepareFrame(Score *score) {
-	renderSprites(*score->_movieArchive, *score->_surface, score->_movieRect, false);
-	renderSprites(*score->_movieArchive, *score->_trailSurface, score->_movieRect, true);
+	renderSprites(*score->_surface, false);
+	renderSprites(*score->_trailSurface, true);
 
 	if (_transType != 0)
 		//TODO Handle changing area case
@@ -1051,20 +1052,26 @@ void Frame::playTransition(Score *score) {
 	}
 }
 
-void Frame::renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect movieRect, bool renderTrail) {
+void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 	for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
 		if (_sprites[i]->_enabled) {
 			if ((_sprites[i]->_trails == 0 && renderTrail) || (_sprites[i]->_trails == 1 && !renderTrail))
 				continue;
 
-			DIBDecoder img;
-			uint32 imgId = 1024 + _sprites[i]->_castId;
-
-			if (!_movie.hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
+			Cast *cast = _vm->_currentScore->_casts[_sprites[i]->_castId];
+			if (cast->type == kCastText) {
+				renderText(surface, i);
 				continue;
 			}
 
-			img.loadStream(*_movie.getResource(MKTAG('D', 'I', 'B', ' '), imgId));
+			DIBDecoder img;
+			uint32 imgId = 1024 + _sprites[i]->_castId;
+
+			if (!_vm->_currentScore->getArchive()->hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
+				continue;
+			}
+
+			img.loadStream(*_vm->_currentScore->getArchive()->getResource(MKTAG('D', 'I', 'B', ' '), imgId));
 
 			uint32 regX = static_cast<BitmapCast *>(_sprites[i]->_cast)->regX;
 			uint32 regY = static_cast<BitmapCast *>(_sprites[i]->_cast)->regY;
@@ -1102,6 +1109,10 @@ void Frame::renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Co
 			}
 		}
 	}
+}
+
+void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID) {
+	warning("STUB: renderText()");
 }
 
 void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {

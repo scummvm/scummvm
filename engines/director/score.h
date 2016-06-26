@@ -297,7 +297,8 @@ public:
 private:
 	void playTransition(Score *score);
 	void playSoundChannel();
-	void renderSprites(Archive &_movie, Graphics::ManagedSurface &surface, Common::Rect movieRect, bool renderTrail);
+	void renderSprites(Graphics::ManagedSurface &surface, bool renderTrail);
+	void renderText(Graphics::ManagedSurface &surface, uint16 spriteID);
 	void readPaletteInfo(Common::SeekableReadStream &stream);
 	void readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
 	void readMainChannels(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
@@ -336,6 +337,7 @@ public:
 	void setStartToLabel(Common::String label);
 	void startLoop();
 	void processEvents();
+	Archive *getArchive() const { return _movieArchive; };
 
 	Common::String getMacName() const { return _macName; }
 private:
