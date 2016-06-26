@@ -27,7 +27,7 @@ namespace Titanic {
 
 static const PetArea PET_AREAS[6] = {
 	PET_CONVERSATION, PET_INVENTORY, PET_REMOTE,
-	PET_ROOMS, PET_REAL_LIFE, PET_NAV_HELMET
+	PET_ROOMS, PET_REAL_LIFE, PET_STARFIELD
 };
 
 CPetFrame::CPetFrame() : CPetSection() {

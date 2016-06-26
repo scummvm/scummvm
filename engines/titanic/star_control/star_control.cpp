@@ -53,4 +53,8 @@ void CStarControl::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
+void CStarControl::fn3() {
+	warning("CStarControl::fn3");
+}
+
 } // End of namespace Titanic

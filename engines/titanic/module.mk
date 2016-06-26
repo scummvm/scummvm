@@ -364,7 +364,7 @@ MODULE_OBJS := \
 	pet_control/pet_inventory.o \
 	pet_control/pet_inventory_glyphs.o \
 	pet_control/pet_message.o \
-	pet_control/pet_nav_helmet.o \
+	pet_control/pet_starfield.o \
 	pet_control/pet_real_life.o \
 	pet_control/pet_remote.o \
 	pet_control/pet_remote_glyphs.o \

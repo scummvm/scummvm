@@ -51,7 +51,7 @@ CPetControl::CPetControl() : CGameObject(),
 	_sections[PET_REMOTE] = &_remote;
 	_sections[PET_ROOMS] = &_rooms;
 	_sections[PET_REAL_LIFE] = &_realLife;
-	_sections[PET_NAV_HELMET] = &_navHelmet;
+	_sections[PET_STARFIELD] = &_navHelmet;
 	_sections[PET_MESSAGE] = &_message;
 }
 

@@ -63,6 +63,11 @@ public:
 	 * Returns the tooltip text for when the glyph is selected
 	 */
 	virtual void getTooltip(CPetText *text);
+
+	/**
+	 * Get a reference to the tooltip text associated with the section
+	 */
+	virtual CPetText *getText() { return &_text; }
 };
 
 } // End of namespace Titanic

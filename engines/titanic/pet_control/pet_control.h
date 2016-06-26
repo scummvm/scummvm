@@ -32,7 +32,7 @@
 #include "titanic/pet_control/pet_frame.h"
 #include "titanic/pet_control/pet_inventory.h"
 #include "titanic/pet_control/pet_message.h"
-#include "titanic/pet_control/pet_nav_helmet.h"
+#include "titanic/pet_control/pet_starfield.h"
 #include "titanic/pet_control/pet_real_life.h"
 #include "titanic/pet_control/pet_remote.h"
 #include "titanic/pet_control/pet_rooms.h"
@@ -56,7 +56,7 @@ private:
 	CPetSection *_sections[7];
 	CPetConversations _conversations;
 	CPetInventory _inventory;
-	CPetNavHelmet _navHelmet;
+	CPetStarfield _navHelmet;
 	CPetRemote _remote;
 	CPetRooms _rooms;
 	CPetRealLife _realLife;

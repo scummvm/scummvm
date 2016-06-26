@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_PET_NAV_HELMET_H
-#define TITANIC_PET_NAV_HELMET_H
+#ifndef TITANIC_PET_STARFIELD_H
+#define TITANIC_PET_STARFIELD_H
 
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_text.h"
@@ -29,15 +29,13 @@
 
 namespace Titanic {
 
-class CPetNavHelmet : public CPetSection {
+class CPetStarfield : public CPetSection {
 private:
 	CPetGfxElement _val1;
 	CPetGfxElement _val2;
 	CPetGfxElement _setDestination;
 	CPetGfxElement _val4;
-	int _field98;
-	int _field9C;
-	int _fieldA0;
+	int _btnOffsets[3];
 	CPetGfxElement _leds[6];
 	Rect _rect1;
 	int _field18C;
@@ -54,8 +52,27 @@ private:
 	 * Draw a button
 	 */
 	void drawButton(int offset, int index, CScreenManager *screenManager);
+
+	void set210(int val) { _field210 = val; }
+
+	/**
+	 * Sets the offsets for each of the buttons
+	 */
+	void setButtons(int val1, int val2);
+
+	/**
+	 * Make the PET as dirty, requiring a redraw
+	 */
+	void makePetDirty();
+
+	/**
+	 * Mouse down handling for Nav elements
+	 */
+	bool elementsMouseDown(CMouseButtonDownMsg *msg);
+
+	bool elementMouseButton(int index, CMouseButtonDownMsg *msg, const Rect &rect);
 public:
-	CPetNavHelmet();
+	CPetStarfield();
 
 	/**
 	 * Sets up the section
@@ -102,4 +119,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_NAV_HELMET_H */
+#endif /* TITANIC_PET_STARFIELD_H */

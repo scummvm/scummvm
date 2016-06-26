@@ -285,11 +285,6 @@ protected:
 	CMailMan *getMailMan() const;
 
 	/**
-	 * Returns the star control
-	 */
-	CStarControl *getStarControl() const;
-
-	/**
 	 * Returns a child of the Dont Save area of the project of the given class
 	 */
 	CTreeItem *getDontSaveChild(ClassDef *classDef) const;
@@ -611,6 +606,13 @@ public:
 	 * Summon a bot
 	 */
 	void petOnSummonBot(const CString &name, int val);
+
+	/*--- CStarControl Methods ---*/
+
+	/**
+	 * Returns the star control
+	 */
+	CStarControl *getStarControl() const;
 
 	/*--- CTrueTalkManager Methods ---*/
 
