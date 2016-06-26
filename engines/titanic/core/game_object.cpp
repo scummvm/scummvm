@@ -1055,6 +1055,16 @@ CTreeItem *CGameObject::petContainerRemove(CGameObject *obj) {
 	return item;
 }
 
+bool CGameObject::petDismissBot(const CString &name) {
+	CPetControl *pet = getPetControl();
+	return pet ? pet->dismissBot(name) : false;
+}
+
+bool CGameObject::petDoorOrBellbotPresent() const {
+	CPetControl *pet = getPetControl();
+	return pet ? pet->isDoorOrBellbotPresent() : false;
+}
+
 void CGameObject::petDisplayMessage(int unused, const CString &msg) {
 	petDisplayMessage(msg);
 }

@@ -569,9 +569,9 @@ void CPetControl::summonBot(const CString &name, int val) {
 }
 
 void CPetControl::onSummonBot(const CString &name, int val) {
-	CGameObject *bot = findObject(name, getHiddenRoom());
+	CGameObject *bot = findBot(name, getHiddenRoom());
 	if (!bot) {
-		bot = findObject(name, getRoot());
+		bot = findBot(name, getRoot());
 	}
 
 	if (bot) {
@@ -580,6 +580,46 @@ void CPetControl::onSummonBot(const CString &name, int val) {
 		COnSummonBotMsg summonMsg(val);
 		summonMsg.execute(bot);
 	}
+}
+
+bool CPetControl::dismissBot(const CString &name) {
+	CGameManager *gameManager = getGameManager();
+	if (!gameManager)
+		return false;
+	CViewItem *view = gameManager->getView();
+	if (!view)
+		return false;
+
+	bool result = false;
+	CDismissBotMsg dismissMsg;
+	for (CTreeItem *treeItem = view->getFirstChild(); treeItem;
+			treeItem = treeItem->scan(view)) {
+		if (!treeItem->getName().compareToIgnoreCase(name))
+			dismissMsg.execute(treeItem);
+		else
+			result = true;
+	}
+
+	return result;
+}
+
+bool CPetControl::isDoorOrBellbotPresent() const {
+	CGameManager *gameManager = getGameManager();
+	if (!gameManager)
+		return false;
+	CViewItem *view = gameManager->getView();
+	if (!view)
+		return false;
+
+	for (CTreeItem *treeItem = view->getFirstChild(); treeItem;
+			treeItem = treeItem->scan(view)) {
+		CString name = treeItem->getName();
+		if (static_cast<CGameObject *>(treeItem) &&
+				(name.contains("Doorbot") || name.contains("BellBot")))
+			return true;
+	}
+
+	return false;
 }
 
 void CPetControl::startPetTimer(uint timerIndex, uint firstDuration, uint duration, CPetSection *target) {
@@ -600,7 +640,7 @@ void CPetControl::setTimer44(int id, int val) {
 	getGameManager()->setTimer44(id, val);
 }
 
-CGameObject *CPetControl::findObject(const CString &name, CTreeItem *root) {
+CGameObject *CPetControl::findBot(const CString &name, CTreeItem *root) {
 	for (CTreeItem *item = root; item; item = item->scan(root)) {
 		if (!item->getName().compareToIgnoreCase(name)) {
 			CGameObject *obj = static_cast<CGameObject *>(item);

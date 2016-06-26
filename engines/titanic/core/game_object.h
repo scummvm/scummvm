@@ -544,6 +544,16 @@ public:
 	CTreeItem *petContainerRemove(CGameObject *obj);
 
 	/**
+	 * Dismiss a bot
+	 */
+	bool petDismissBot(const CString &name);
+
+	/**
+	 * Is Doorbot or Bellbot present in the current view
+	 */
+	bool petDoorOrBellbotPresent() const;
+
+	/**
 	 * Display a message in the PET
 	 */
 	void petDisplayMessage(int unused, const CString &msg);

@@ -98,12 +98,12 @@ private:
 	 */
 	bool isBotInView(const CString &name) const;
 
-	void setTimer44(int id, int val);
-
 	/**
-	 * Find an object under a given root
+	 * Find a bot under a given root
 	 */
-	CGameObject *findObject(const CString &name, CTreeItem *root);
+	CGameObject *findBot(const CString &name, CTreeItem *root);
+
+	void setTimer44(int id, int val);
 protected:
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
@@ -300,6 +300,16 @@ public:
 	 * Summon a bot to the player
 	 */
 	void onSummonBot(const CString &name, int val);
+
+	/**
+	 * Dismiss an NPC
+	 */
+	bool dismissBot(const CString &name);
+
+	/**
+	 * Returns true if Doorbot or Bellbot present
+	 */
+	bool isDoorOrBellbotPresent() const;
 
 	/**
 	 * Start a timer for a Pet Area
