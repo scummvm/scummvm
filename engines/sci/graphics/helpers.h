@@ -237,7 +237,7 @@ struct Color {
 		return used == other.used && r == other.r && g == other.g && b == other.b;
 	}
 	inline bool operator!=(const Color &other) const {
-		return !(*this == other);
+		return !operator==(other);
 	}
 #endif
 };
