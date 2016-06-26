@@ -829,7 +829,6 @@ void GfxOpenGLS::drawShadowPlanes() {
 	glEnable(GL_STENCIL_TEST);
 	glStencilFunc(GL_ALWAYS, 1, (GLuint)~0);
 	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-	glDisable(GL_TEXTURE_2D);
 
 	if (!_currentShadowArray->userData) {
 		uint32 numVertices = 0;
