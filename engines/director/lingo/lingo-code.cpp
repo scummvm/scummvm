@@ -458,11 +458,18 @@ void Lingo::c_call() {
 	g_lingo->_currentScript = sym->u.defn;
 	g_lingo->execute(0);
 
-	g_lingo->_returning = 0;
+	g_lingo->_returning = false;
 }
 
 void Lingo::c_procret() {
-	warning("STUB: c_procret()");
+	CFrame *fp = g_lingo->_callstack.back();
+
+	g_lingo->_currentScript = fp->retscript;
+	g_lingo->_pc = fp->retpc;
+
+	delete fp;
+
+	g_lingo->_returning = true;
 }
 
 }

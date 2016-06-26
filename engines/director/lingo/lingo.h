@@ -172,6 +172,7 @@ public:
 
 public:
 	ScriptData *_currentScript;
+	ScriptType _currentScriptType;
 	bool _returning;
 	bool _indef;
 

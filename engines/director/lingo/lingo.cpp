@@ -81,6 +81,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 		_eventHandlerTypes[t->handler] = t->name;
 
 	_currentScript = 0;
+	_currentScriptType = kMovieScript;
 	_pc = 0;
 	_returning = false;
 	_indef = false;
@@ -118,6 +119,7 @@ void Lingo::addCode(Common::String code, ScriptType type, uint16 id) {
 	}
 
 	_currentScript = new ScriptData;
+	_currentScriptType = type;
 	_scripts[type][id] = _currentScript;
 
 	parse(code.c_str());
