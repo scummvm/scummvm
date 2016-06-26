@@ -80,7 +80,7 @@ bool CDeskbot::TurnOn(CTurnOn *msg) {
 		setVisible(true);
 		playClip("BellRinging", 4);
 		playSound("b#69.wav");
-		setPetArea(PET_CONVERSATION);
+		petSetArea(PET_CONVERSATION);
 
 		_npcFlags |= NPCFLAG_20000;
 		_deskbotActive = true;
@@ -110,7 +110,7 @@ bool CDeskbot::MovieEndMsg(CMovieEndMsg *msg) {
 	bool flag = false;
 	if (_npcFlags & NPCFLAG_10000) {
 		if (_classNum) {
-			setPetArea(PET_ROOMS);
+			petSetArea(PET_ROOMS);
 			dec54();
 			unlockMouse();
 			playSound("z#47.wav", 100, 0, 0);
@@ -169,25 +169,25 @@ bool CDeskbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 	case 19:
 		inc54();
 		lockMouse();
-		setPetArea(PET_CONVERSATION);
+		petSetArea(PET_CONVERSATION);
 		playClip("ReprogramPETInHand", 4);
 		_npcFlags |= NPCFLAG_10000;
 		_classNum = msg->_param1;
 
 		switch (_classNum) {
 		case 1:
-			petDisplayMsg("You have been upgraded to 1st Class status. Enjoy hugely.");
+			petDisplayMessage("You have been upgraded to 1st Class status. Enjoy hugely.");
 			setPassengerClass(_classNum);
-			reassignRoom(_classNum);
+			petReassignRoom(_classNum);
 			break;
 		case 2:
-			petDisplayMsg("You have been upgraded to 2nd Class status. Enjoy.");
+			petDisplayMessage("You have been upgraded to 2nd Class status. Enjoy.");
 			setPassengerClass(_classNum);
-			reassignRoom(_classNum);
+			petReassignRoom(_classNum);
 			break;
 		case 3:
 			setPassengerClass(3);
-			reassignRoom(_classNum);
+			petReassignRoom(_classNum);
 			break;
 		default:
 			break;

@@ -119,7 +119,7 @@ bool CArm::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		if (hookedMsg._result) {
 			_string7 = "GondolierLeftLever";
 		} else {
-			addToInventory();
+			petAddToInventory();
 		}
 	} else if (msg->_other->getName() == "GondolierRightLever") {
 		CIsHookedOnMsg hookedMsg(_hookedRect, 0, getName());
@@ -129,7 +129,7 @@ bool CArm::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		if (hookedMsg._result) {
 			_string7 = "GondolierRightLever";
 		} else {
-			addToInventory();
+			petAddToInventory();
 		}
 	}
 
@@ -166,13 +166,13 @@ bool CArm::MaitreDHappyMsg(CMaitreDHappyMsg *msg) {
 			CGameObject *child = static_cast<CGameObject *>(getFirstChild());
 			if (child) {
 				child->setVisible(true);
-				addToInventory();
+				petAddToInventory();
 			}
 
 			_visibleFrame = _field170;
 			loadFrame(_visibleFrame);
 			_string6 = "None";
-			invChange();
+			petInvChange();
 		}
 	}
 
@@ -189,7 +189,7 @@ bool CArm::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 				_visibleFrame = _field170;
 				loadFrame(_visibleFrame);
 				child->setVisible(true);
-				child->addToInventory();
+				child->petAddToInventory();
 			}
 
 			_string6 = "None";

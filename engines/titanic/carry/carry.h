@@ -61,11 +61,6 @@ protected:
 	int _enterFrame;
 	bool _enterFrameSet;
 	int _visibleFrame;
-protected:
-	/**
-	 *
-	 */
-	void invChange();
 public:
 	CLASSDEF
 	CCarry();
@@ -79,11 +74,6 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);
-
-	/**
-	 * Add the item to the inventory
-	 */
-	void addToInventory();
 };
 
 } // End of namespace Titanic

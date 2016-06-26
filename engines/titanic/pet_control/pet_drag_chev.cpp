@@ -63,7 +63,7 @@ bool CPetDragChev::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 			if (petControl && petControl->contains(msg->_mousePos)
 					&& msg->_mousePos.x < 528) {
 				if (petControl->checkDragEnd(this))
-					moveToHiddenRoom();
+					petMoveToHiddenRoom();
 			}
 		}
 	}

@@ -433,14 +433,17 @@ void CRoomFlags::changeLocation(int action) {
 	setRoomBits(roomNum);
 }
 
-bool CRoomFlags::compareFlags(CRoomFlags flags1, CRoomFlags flags2) const {
-	if (flags1.getFloorNum() != flags2.getFloorNum())
+bool CRoomFlags::compareClassElevator(uint flags1, uint flags2) {
+	CRoomFlags f1(flags1);
+	CRoomFlags f2(flags2);
+
+	if (f1.getFloorNum() != f2.getFloorNum())
 		return false;
 
-	uint elev1 = flags1.getElevatorNum();
-	uint elev2 = flags2.getElevatorNum();
-	uint class1 = getPassengerClassNum();
-	uint class2 = getPassengerClassNum();
+	uint elev1 = f1.getElevatorNum();
+	uint elev2 = f2.getElevatorNum();
+	uint class1 = f1.getPassengerClassNum();
+	uint class2 = f2.getPassengerClassNum();
 
 	if (class1 > 0 && class1 < 3) {
 		if (elev1 == 2)
@@ -458,12 +461,17 @@ bool CRoomFlags::compareFlags(CRoomFlags flags1, CRoomFlags flags2) const {
 	return elev1 == elev2;
 }
 
-bool CRoomFlags::compareLocation(uint roomFlags) {
-	CRoomFlags flags(roomFlags);
+bool CRoomFlags::compareLocation(uint flags1, uint flags2) {
+	CRoomFlags f1(flags1);
+	CRoomFlags f2(flags2);
 
-	return getElevatorNum() == flags.getElevatorBits() &&
-		getFloorNum() == flags.getFloorNum() &&
-		getRoomNum() == flags.getRoomNum();
+	return f1.getElevatorNum() == f2.getElevatorBits() &&
+		f1.getFloorNum() == f2.getFloorNum() &&
+		f1.getRoomNum() == f2.getRoomNum();
+}
+
+bool CRoomFlags::isTitania(uint flags1, uint flags2) {
+	return flags2 == 0x8A397;
 }
 
 void CRoomFlags::setRandomLocation(int classNum, bool flag) {

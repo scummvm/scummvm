@@ -59,13 +59,13 @@ bool CBrain::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 	if (slot) {
 		if (slot->getName() == "CentralCore") {
 			setVisible(false);
-			moveToHiddenRoom();
+			petMoveToHiddenRoom();
 			CAddHeadPieceMsg headpieceMsg(getName());
 			headpieceMsg.execute("CentralCoreSlot");
 		}
 		else if (!slot->_value1 && slot->getName() == "CentralCoreSlot") {
 			setVisible(false);
-			moveToHiddenRoom();
+			petMoveToHiddenRoom();
 			CAddHeadPieceMsg headpieceMsg(getName());
 			headpieceMsg.execute(msg->_other);
 			playSound("z#116.wav", 100, 0, 0);

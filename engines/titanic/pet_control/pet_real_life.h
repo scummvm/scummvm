@@ -81,8 +81,6 @@ public:
 	virtual bool KeyCharMsg(CKeyCharMsg *msg);
 	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
 
-	virtual int proc14() { return 0; }
-	
 	/**
 	 * Returns item a drag-drop operation has dropped on, if any
 	 */

@@ -111,11 +111,6 @@ protected:
 	bool checkStartDragging(CMouseDragStartMsg *msg);
 
 	/**
-	 * Sets a new area in the PET
-	 */
-	void setPetArea(PetArea newArea) const;
-
-	/**
 	 * Goto a new view
 	 */
 	void gotoView(const CString &viewName, const CString &clipName);
@@ -125,26 +120,6 @@ protected:
 	 * and locates the designated view
 	 */
 	CViewItem * parseView(const CString &viewString);
-
-	/**
-	 * Highlights a glyph in the currently active PET section
-	 */
-	void petHighlightGlyph(int id);
-
-	/**
-	 * Hides the text cursor in the current section, if applicable
-	 */
-	void petHideCursor();
-
-	/**
-	 * Shows the text cursor in the current section, if applicable
-	 */
-	void petShowCursor();
-
-	/**
-	 * Set the remote target in the PET to this object
-	 */
-	void petSetRemoteTarget();
 
 	void incState38();
 	void inc54();
@@ -221,11 +196,6 @@ protected:
 	int compareRoomNameTo(const CString &name);
 
 	/**
-	 * Display a message in the PET
-	 */
-	void petDisplayMsg(const CString &msg) const;
-
-	/**
 	 * Display a message
 	 */
 	void displayMessage(const CString &msg) const;
@@ -254,21 +224,6 @@ protected:
 	 * Moves the item from it's original position to be under the current view
 	 */
 	void moveToView();
-
-	/**
-	 * Start a conversation with the NPC
-	 */
-	void startTalking(const CString &name, uint id, CViewItem *view = nullptr);
-
-	/**
-	 * Start a conversation with the NPC
-	 */
-	void startTalking(CTrueTalkNPC *npc, uint id, CViewItem *view = nullptr);
-
-	/**
-	 * Stop a conversation with the NPC
-	 */
-	void endTalking(CTrueTalkNPC *npc, uint id, CViewItem *view = nullptr);
 
 	/**
 	 * Change the view
@@ -317,7 +272,12 @@ protected:
 	/**
 	 * Clear the PET display
 	 */
-	void clearPet() const;
+	void petClear() const;
+	
+	/**
+	 * Perform an action
+	 */
+	void performAction(int actionNum, CViewItem *view = nullptr);
 
 	/**
 	 * Returns the MailMan
@@ -463,21 +423,11 @@ public:
 	 * Returns true if the item is the PET control
 	 */
 	virtual bool isPet() const;
-	
-	/**
-	 * Returns the PET control
-	 */
-	CPetControl *getPetControl() const;
 
 	/**
 	 * Play the movie specified in _resource
 	 */
 	void playMovie(uint startFrame, uint endFrame, uint flags);
-
-	/**
-	 * Moves the item from it's original position to be under the hidden room
-	 */
-	void moveToHiddenRoom();
 
 	/**
 	 * Checks the passed point is validly in the object,
@@ -567,19 +517,108 @@ public:
 	 */
 	void createCredits();
 
-	void petSetRooms1D0(int val);
-
-	int petGetRooms1D0() const;
-
-	/**
-	 * Gives the player a new assigned room in the specified passenger class
-	 */
-	void reassignRoom(int passClassNum);
-
 	/**
 	 * Support function for drag moving
 	 */
 	void dragMove(const Point &pt);
+	
+	bool compareRoomFlags(int mode, uint flags1, uint flags2);
+
+	/*--- CPetControl Methods ---*/
+
+	/**
+	 * Returns the PET control
+	 */
+	CPetControl *getPetControl() const;
+
+	/**
+	 * Moves a specified item to the carry parcel
+	 */
+	void petAddToCarryParcel(CGameObject *obj);
+
+	/**
+	 * Add the item to the inventory
+	 */
+	void petAddToInventory();
+
+	CTreeItem *petContainerRemove(CGameObject *obj);
+
+	/**
+	 * Display a message in the PET
+	 */
+	void petDisplayMessage(int unused, const CString &msg);
+
+	/**
+	 * Display a message in the PET
+	 */
+	void petDisplayMessage(const CString &msg);
+
+	int petGetRooms1D0() const;
+
+	/**
+	 * Hides the text cursor in the current section, if applicable
+	 */
+	void petHideCursor();
+
+	/**
+	 * Highlights a glyph in the currently active PET section
+	 */
+	void petHighlightGlyph(int id);
+
+	/**
+	 * Called when the status of an item in the inventory has changed
+	 */
+	void petInvChange();
+
+	/**
+	 * Moves the item from it's original position to be under the hidden room
+	 */
+	void petMoveToHiddenRoom();
+
+	/**
+	 * Gives the player a new assigned room in the specified passenger class
+	 */
+	void petReassignRoom(int passClassNum);
+
+	/**
+	 * Sets a new area in the PET
+	 */
+	void petSetArea(PetArea newArea) const;
+
+	/**
+	 * Set the remote target in the PET to this object
+	 */
+	void petSetRemoteTarget();
+
+	void petSetRooms1D0(int val);
+
+	/**
+	 * Shows the text cursor in the current section, if applicable
+	 */
+	void petShowCursor();
+
+	/**
+	 * Summon a bot
+	 */
+	void petOnSummonBot(const CString &name, int val);
+
+	/*--- CTrueTalkManager Methods ---*/
+
+	/**
+	 * Stop a conversation with the NPC
+	 */
+	void endTalking(CTrueTalkNPC *npc, bool viewFlag, CViewItem *view = nullptr);
+
+	/**
+	 * Start a conversation with the NPC
+	 */
+	void startTalking(CTrueTalkNPC *npc, uint id, CViewItem *view = nullptr);
+
+	/**
+	 * Start a conversation with the NPC
+	 */
+	void startTalking(const CString &name, uint id, CViewItem *view = nullptr);
+
 };
 
 } // End of namespace Titanic

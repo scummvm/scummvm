@@ -123,7 +123,7 @@ bool CCarry::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
 bool CCarry::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 	if (msg->_dropTarget) {
 		if (msg->_dropTarget->isPet()) {
-			addToInventory();
+			petAddToInventory();
 			return true;
 		}
 
@@ -147,7 +147,7 @@ bool CCarry::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 	CString viewName = getViewFullName();
 	if (viewName.empty() || msg->_mousePos.y >= 360) {
 		sleep(250);
-		addToInventory();
+		petAddToInventory();
 	} else {
 		setPosition(_origPos);
 		loadFrame(_itemFrame);
@@ -165,7 +165,7 @@ bool CCarry::UseWithCharMsg(CUseWithCharMsg *msg) {
 	} else {
 		CShowTextMsg textMsg(_string4);
 		textMsg.execute("PET");
-		addToInventory();
+		petAddToInventory();
 	}
 
 	return true;
@@ -182,7 +182,7 @@ bool CCarry::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 	_fullViewName = getViewFullName();
 	if (_fullViewName.empty() || _bounds.top >= 360) {
 		sleep(250);
-		addToInventory();
+		petAddToInventory();
 	} else {
 		setPosition(_origPos);
 	}
@@ -236,20 +236,6 @@ bool CCarry::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 
 	setPosition(_tempPos - getMousePos());
 	return true;
-}
-
-void CCarry::addToInventory() {
-	CPetControl *pet = getPetControl();
-	if (pet) {
-		makeDirty();
-		pet->addToInventory(this);
-	}
-}
-
-void CCarry::invChange() {
-	CPetControl *pet = getPetControl();
-	if (pet)
-		pet->invChange(this);
 }
 
 } // End of namespace Titanic

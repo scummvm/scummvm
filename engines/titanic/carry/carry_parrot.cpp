@@ -105,7 +105,7 @@ bool CCarryParrot::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 	stopMovie();
 
 	if (msg->_mousePos.y >= 360) {
-		addToInventory();
+		petAddToInventory();
 		return true;
 	}
 
@@ -215,7 +215,7 @@ bool CCarryParrot::ActMsg(CActMsg *msg) {
 				CCarry *feathers = static_cast<CCarry *>(getRoot()->findByName("Feathers"));
 				if (feathers) {
 					feathers->setVisible(true);
-					feathers->addToInventory();
+					feathers->petAddToInventory();
 				}
 
 				_field140 = true;

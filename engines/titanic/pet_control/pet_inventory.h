@@ -144,7 +144,7 @@ public:
 	/**
 	 * 
 	 */
-	void change(CCarry *item);
+	void change(CGameObject *item);
 
 	/**
 	 * Called when an item has been removed from the PET

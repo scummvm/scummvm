@@ -101,7 +101,7 @@ void CTelevision::load(SimpleFile *file) {
 }
 
 bool CTelevision::LeaveViewMsg(CLeaveViewMsg *msg) {
-	clearPet();
+	petClear();
 	if (_isOn) {
 		if (soundFn1(_soundHandle))
 			stopSound(_soundHandle, 0);
@@ -139,7 +139,7 @@ bool CTelevision::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
 }
 
 bool CTelevision::EnterViewMsg(CEnterViewMsg *msg) {
-	setPetArea(PET_REMOTE);
+	petSetArea(PET_REMOTE);
 	petHighlightGlyph(GLYPH_TELEVISION_CONTROL);
 	petSetRemoteTarget();
 	setVisible(0);

@@ -162,12 +162,12 @@ bool CPetConversations::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 		return true;
 
 	if (_doorBot.MouseButtonUpMsg(msg->_mousePos)) {
-		switch (canSummonNPC("DoorBot")) {
+		switch (canSummonBot("DoorBot")) {
 		case SUMMON_CANT:
 			_log.addLine("Sadly, it is not possible to summon the DoorBot from this location.", getColor(1));
 			break;
 		case SUMMON_CAN:
-			summonNPC("DoorBot");
+			summonBot("DoorBot");
 			return true;
 		default:
 			break;
@@ -179,12 +179,12 @@ bool CPetConversations::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 	}
 
 	if (_bellBot.MouseButtonUpMsg(msg->_mousePos)) {
-		switch (canSummonNPC("BellBot")) {
+		switch (canSummonBot("BellBot")) {
 		case SUMMON_CANT:
 			_log.addLine("Sadly, it is not possible to summon the BellBot from this location.", getColor(1));
 			break;
 		case SUMMON_CAN:
-			summonNPC("BellBot");
+			summonBot("BellBot");
 			return true;
 		default:
 			break;
@@ -412,16 +412,16 @@ void CPetConversations::scrollToBottom() {
 	_logChanged = true;
 }
 
-int CPetConversations::canSummonNPC(const CString &name) {
-	return _petControl ? _petControl->canSummonNPC(name) : SUMMON_CANT;
+int CPetConversations::canSummonBot(const CString &name) {
+	return _petControl ? _petControl->canSummonBot(name) : SUMMON_CANT;
 }
 
-void CPetConversations::summonNPC(const CString &name) {
+void CPetConversations::summonBot(const CString &name) {
 	if (_petControl) {
 		if (_petControl->getPassengerClass() >= 4) {
 			_petControl->displayMessage("Sorry, you must be at least 3rd class before you can summon for help.");
 		} else {
-			_petControl->summonNPC(name, 0);
+			_petControl->summonBot(name, 0);
 		}
 	}
 }

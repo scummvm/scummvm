@@ -92,12 +92,12 @@ private:
 	/**
 	 * Check whether an NPC can be summoned
 	 */
-	int canSummonNPC(const CString &name);
+	int canSummonBot(const CString &name);
 
 	/**
 	 * Summon an NPC
 	 */
-	void summonNPC(const CString &name);
+	void summonBot(const CString &name);
 
 	/**
 	 * Starts the NPC timer

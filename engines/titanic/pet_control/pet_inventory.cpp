@@ -158,7 +158,7 @@ bool CPetInventory::setPetControl(CPetControl *petControl) {
 	return true;
 }
 
-void CPetInventory::change(CCarry *item) {
+void CPetInventory::change(CGameObject *item) {
 	if (item) {
 		CInventoryGlyphAction action(item, ACTION_CHANGE);
 		_items.doAction(&action);

@@ -56,14 +56,14 @@ bool CBridgePiece::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 	if (!shipSetting) {
 		return CCarry::UseWithOtherMsg(msg);
 	} else if (shipSetting->_string4 == "NULL") {
-		addToInventory();
+		petAddToInventory();
 		return true;
 	} else {
 		setVisible(false);
 		playSound("z#54.wav", 100, 0, 0);
 		setPosition(shipSetting->_pos1);
 		shipSetting->_string4 = getName();
-		moveToHiddenRoom();
+		petMoveToHiddenRoom();
 
 		CAddHeadPieceMsg headpieceMsg(shipSetting->getName() == _string6 ?
 			"Enable" : "Disable");

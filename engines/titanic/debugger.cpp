@@ -249,7 +249,7 @@ bool Debugger::cmdItem(int argc, const char **argv) {
 			// Ensure the PET is active and add the item to the inventory
 			gameState._petActive = true;
 			gameManager.initBounds();
-			item->addToInventory();
+			item->petAddToInventory();
 
 			return false;
 		} else {

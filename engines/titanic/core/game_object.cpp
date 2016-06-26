@@ -501,12 +501,6 @@ bool CGameObject::checkStartDragging(CMouseDragStartMsg *msg) {
 	}
 }
 
-void CGameObject::setPetArea(PetArea newArea) const {
-	CPetControl *pet = getPetControl();
-	if (pet)
-		pet->setArea(newArea);
-}
-
 bool CGameObject::hasActiveMovie() const {
 	if (_surface && _surface->_movie)
 		return _surface->_movie->isActive();
@@ -684,16 +678,6 @@ int CGameObject::compareRoomNameTo(const CString &name) {
 	return room->getName().compareToIgnoreCase(name);
 }
 
-void CGameObject::petDisplayMsg(const CString &msg) const {
-	CPetControl *pet = getPetControl();
-	if (pet)
-		pet->displayMessage(msg);
-}
-
-void CGameObject::displayMessage(const CString &msg) const {
-	petDisplayMsg(msg);
-}
-
 CGameObject *CGameObject::getMailManFirstObject() const {
 	CMailMan *mailMan = getMailMan();
 	return mailMan ? mailMan->getFirstObject() : nullptr;
@@ -764,14 +748,6 @@ Found CGameObject::find(const CString &name, CGameObject **item, int findAreas) 
 	return FOUND_NONE;
 }
 
-void CGameObject::moveToHiddenRoom() {
-	CPetControl *pet = getPetControl();
-	if (pet) {
-		makeDirty();
-		pet->moveToHiddenRoom(this);
-	}
-}
-
 void CGameObject::moveToView() {
 	CViewItem *view = getGameManager()->getView();
 	detach();
@@ -804,24 +780,6 @@ void CGameObject::unlockMouse() {
 
 	CGameManager *gameMan = getGameManager();
 	gameMan->unlockInputHandler();
-}
-
-void CGameObject::startTalking(const CString &npcName, uint id, CViewItem *view) {
-	CTrueTalkNPC *npc = static_cast<CTrueTalkNPC *>(getRoot()->findByName(npcName));
-	startTalking(npc, id, view);
-}
-
-void CGameObject::startTalking(CTrueTalkNPC *npc, uint id, CViewItem *view) {
-	CGameManager *gameManager = getGameManager();
-	if (gameManager) {
-		CTrueTalkManager *talkManager = gameManager->getTalkManager();
-		if (talkManager)
-			talkManager->start(npc, id, view);
-	}
-}
-
-void CGameObject::endTalking(CTrueTalkNPC *npc, uint id, CViewItem *view) {
-	warning("TODO: CGameObject::endTalking");
 }
 
 void CGameObject::loadSurface() {
@@ -869,6 +827,10 @@ Point CGameObject::getControid() const {
 		_bounds.top + _bounds.height() / 2);
 }
 
+void CGameObject::performAction(int actionNum, CViewItem *view) {
+	// TODO
+}
+
 bool CGameObject::clipExistsByStart(const CString &name, int startFrame) const {
 	return _clipList1.existsByStart(name, startFrame);
 }
@@ -888,7 +850,7 @@ void CGameObject::checkPlayMovie(const CString &name, int flags) {
 	}
 }
 
-void CGameObject::clearPet() const {
+void CGameObject::petClear() const {
 	CPetControl *petControl = getPetControl();
 	if (petControl)
 		petControl->resetActiveNPC();
@@ -1002,12 +964,20 @@ int CGameObject::getClipDuration(const CString &name, int frameRate) const {
 	return clip ? (clip->_endFrame - clip->_startFrame) * 1000 / frameRate : 0;
 }
 
-void CGameObject::petLockInput() {
-	getPetControl()->incInputLocks();
-}
+bool CGameObject::compareRoomFlags(int mode, uint flags1, uint flags2) {
+	switch (mode) {
+	case 1:
+		return CRoomFlags::compareLocation(flags1, flags2);
 
-void CGameObject::petUnlockInput() {
-	getPetControl()->decInputLocks();
+	case 2:
+		return CRoomFlags::compareClassElevator(flags1, flags2);
+
+	case 3:
+		return CRoomFlags::isTitania(flags1, flags2);
+
+	default:
+		return false;
+	}
 }
 
 void CGameObject::setState1C(bool flag) {
@@ -1051,10 +1021,48 @@ void CGameObject::resetMail() {
 		mailMan->resetValue();
 }
 
-void CGameObject::petSetRooms1D0(int val) {
-	CPetControl *petControl = getPetControl();
-	if (petControl)
-		petControl->setRooms1D0(val);
+void CGameObject::petAddToCarryParcel(CGameObject *obj) {
+	CPetControl *pet = getPetControl();
+	if (pet) {
+		CGameObject *parcel = pet->getHiddenObject("CarryParcel");
+		if (parcel)
+			parcel->moveUnder(obj);
+	}
+}
+
+void CGameObject::petAddToInventory() {
+	CPetControl *pet = getPetControl();
+	if (pet) {
+		makeDirty();
+		pet->addToInventory(this);
+	}
+}
+
+CTreeItem *CGameObject::petContainerRemove(CGameObject *obj) {
+	CPetControl *pet = getPetControl();
+	if (!obj || !pet)
+		return nullptr;
+	if (!obj->compareRoomNameTo("CarryParcel"))
+		return obj;
+
+	CGameObject *item = static_cast<CGameObject *>(pet->getLastChild());
+	if (item)
+		item->detach();
+
+	pet->moveToHiddenRoom(obj);
+	pet->removeFromInventory(item, false, false);
+
+	return item;
+}
+
+void CGameObject::petDisplayMessage(int unused, const CString &msg) {
+	petDisplayMessage(msg);
+}
+
+void CGameObject::petDisplayMessage(const CString &msg) {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->displayMessage(msg);
 }
 
 int CGameObject::petGetRooms1D0() const {
@@ -1062,10 +1070,78 @@ int CGameObject::petGetRooms1D0() const {
 	return petControl ? petControl->getRooms1D0() : 0;
 }
 
-void CGameObject::reassignRoom(int passClassNum) {
+void CGameObject::petInvChange() {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->invChange(this);
+}
+
+void CGameObject::petLockInput() {
+	getPetControl()->incInputLocks();
+}
+
+void CGameObject::petMoveToHiddenRoom() {
+	CPetControl *pet = getPetControl();
+	if (pet) {
+		makeDirty();
+		pet->moveToHiddenRoom(this);
+	}
+}
+
+void CGameObject::petReassignRoom(int passClassNum) {
 	CPetControl *petControl = getPetControl();
 	if (petControl)
 		petControl->reassignRoom(passClassNum);
+}
+
+void CGameObject::petSetArea(PetArea newArea) const {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->setArea(newArea);
+}
+
+void CGameObject::petSetRooms1D0(int val) {
+	CPetControl *petControl = getPetControl();
+	if (petControl)
+		petControl->setRooms1D0(val);
+}
+
+void CGameObject::petOnSummonBot(const CString &name, int val) {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->summonBot(name, val);
+}
+
+void CGameObject::petUnlockInput() {
+	getPetControl()->decInputLocks();
+}
+
+/*------------------------------------------------------------------------*/
+
+void CGameObject::startTalking(const CString &npcName, uint id, CViewItem *view) {
+	CTrueTalkNPC *npc = static_cast<CTrueTalkNPC *>(getRoot()->findByName(npcName));
+	startTalking(npc, id, view);
+}
+
+void CGameObject::startTalking(CTrueTalkNPC *npc, uint id, CViewItem *view) {
+	CGameManager *gameManager = getGameManager();
+	if (gameManager) {
+		CTrueTalkManager *talkManager = gameManager->getTalkManager();
+		if (talkManager)
+			talkManager->start(npc, id, view);
+	}
+}
+
+void CGameObject::endTalking(CTrueTalkNPC *npc, bool viewFlag, CViewItem *view) {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->setActiveNPC(npc);
+
+	if (viewFlag)
+		npc->setView(view);
+
+	if (pet)
+		pet->refreshNPC();
 }
 
 } // End of namespace Titanic

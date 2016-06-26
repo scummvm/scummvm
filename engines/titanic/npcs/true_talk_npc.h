@@ -64,11 +64,6 @@ protected:
 	void processInput(CTextInputMsg *msg, CViewItem *view);
 	
 	/**
-	 * Perform an action
-	 */
-	void performAction(int actionNum, CViewItem *view = nullptr);
-	
-	/**
 	 * Start an animation timer
 	 */
 	int startAnimTimer(const CString &action, uint firstDuration, uint duration);
@@ -85,6 +80,11 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);
+
+	/**
+	 * Set the view for the NPC
+	 */
+	void setView(CViewItem *view);
 };
 
 } // End of namespace Titanic

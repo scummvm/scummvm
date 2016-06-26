@@ -58,25 +58,25 @@ private:
 	 */
 	uint decodeFloorBits(uint bits) const;
 
-	/**
-	 * Compares two room flags together
-	 */
-	bool compareFlags(CRoomFlags flags1, CRoomFlags flags2) const;
-
+	static bool is2To19(uint v) { return v >= 2 && v <= 19; }
+	static bool is20To27(uint v) { return v >= 20 && v <= 27; }
+	static bool is28To38(uint v) { return v >= 28 && v <= 38; }
+public:
 	/**
 	 * Compares the current flags against the specified flags
 	 * for a matching elevator, floor, and room
 	 */
-	bool compareLocation(uint roomFlags);
+	static bool compareLocation(uint flags1, uint flags2);
+
+	/**
+	 * Compares two room flags together
+	 */
+	static bool compareClassElevator(uint flags1, uint flags2);
 
 	/**
 	 * Returns true if the current flags is for Titania's room
 	 */
-	bool isTitania() const { return _data == 0x8A397; }
-
-	static bool is2To19(uint v) { return v >= 2 && v <= 19; }
-	static bool is20To27(uint v) { return v >= 20 && v <= 27; }
-	static bool is28To38(uint v) { return v >= 28 && v <= 38; }
+	static bool isTitania(uint flags1, uint flags2);
 public:
 	CRoomFlags() : _data(0) {}
 	CRoomFlags(uint data) : _data(data) {}

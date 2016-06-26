@@ -183,6 +183,21 @@ void CPetControl::resetRemoteTarget() {
 	_remoteTargetName.clear();
 }
 
+void CPetControl::setActiveNPC(CTrueTalkNPC *npc) {
+	if (_activeNPC == npc) {
+		if (_activeNPC) {
+			_activeNPCName = npc->getName();
+			_conversations.displayNPCName(npc);
+		} else {
+			_activeNPCName = "";
+		}
+	}
+}
+
+void CPetControl::refreshNPC() {
+	_conversations.setNPC(_activeNPCName);
+}
+
 void CPetControl::resetActiveNPC() {
 	_activeNPC = nullptr;
 	_activeNPCName = "";
@@ -379,7 +394,7 @@ void CPetControl::addToInventory(CGameObject *item) {
 		if (child)
 			child->detach();
 
-		item->moveToHiddenRoom();
+		item->petMoveToHiddenRoom();
 		if (!child)
 			return;
 
@@ -413,12 +428,12 @@ void CPetControl::removeFromInventory(CGameObject *item, CTreeItem *newParent,
 	}
 }
 
-void CPetControl::removeFromInventory(CCarry *item, bool refreshUI, bool sendMsg) {
+void CPetControl::removeFromInventory(CGameObject *item, bool refreshUI, bool sendMsg) {
 	CViewItem *view = getGameManager()->getView();
 	removeFromInventory(item, view, refreshUI, sendMsg);
 }
 
-void CPetControl::invChange(CCarry *item) {
+void CPetControl::invChange(CGameObject *item) {
 	_inventory.change(item);
 }
 
@@ -428,6 +443,66 @@ void CPetControl::moveToHiddenRoom(CTreeItem *item) {
 		item->detach();
 		room->addUnder(item);
 	}
+}
+
+bool CPetControl::checkNode(const CString &name) {
+	CGameManager *gameManager = getGameManager();
+	if (!gameManager)
+		return true;
+	if (name == "NULL")
+		return false;
+	
+	CViewItem *view = gameManager->getView();
+	if (!view)
+		return true;
+
+	CNodeItem *node = view->findNode();
+	if (!node)
+		return true;
+
+	CString viewName = view->getName();
+	CString nodeName = node->getName();
+	CRoomItem *room = getGameManager()->getRoom();
+
+	if (room) {
+		CString roomName = room->getName();
+		CString newNode;
+
+		if (roomName == "1stClassRestaurant") {
+		} else if (nodeName == "Lobby Node") {
+			nodeName = "Node 1";
+		} else if (nodeName == "Entrance Node") {
+			nodeName = "Node 2";
+		} else if (nodeName == "MaitreD Node") {
+			nodeName = "Node 3";
+		} else if (nodeName == "Scraliontis Table Standing Node") {
+			nodeName = "Node 4";
+		} else if (nodeName == "Pellerator Node") {
+			nodeName = "Node 5";
+		} else if (nodeName == "SUB Node") {
+			nodeName = "Node 6";
+		} else if (nodeName == "Phonograph Node") {
+			nodeName = "Node 7";
+		} else if (nodeName == "Scraliontis Table Seated Node") {
+			nodeName = "Node 8";
+		}
+
+		if (roomName == "MusicRoom") {
+			if (nodeName == "Musical Instruments")
+				nodeName = "Node 1";
+			if (nodeName == "Phonograph Node")
+				nodeName = "Node 2";
+		}
+	}
+
+	CString str = CString::format("%s.%s", nodeName.c_str(), viewName.c_str());
+	str = str.right(5);
+	str.toLowercase();
+
+	CString nameLower = name;
+	nameLower.toLowercase();
+
+	return nameLower.contains(str);
 }
 
 void CPetControl::playSound(int soundNum) {
@@ -443,9 +518,9 @@ CString CPetControl::getRoomName() const {
 	return room ? room->getName() : CString();
 }
 
-int CPetControl::canSummonNPC(const CString &name) {
+int CPetControl::canSummonBot(const CString &name) {
 	// If player is the very same view as the NPC, then it's already present
-	if (isNPCInView(name))
+	if (isBotInView(name))
 		return SUMMON_CAN;
 
 	// Get the room
@@ -461,7 +536,7 @@ int CPetControl::canSummonNPC(const CString &name) {
 	return queryMsg.execute(room) ? SUMMON_CAN : SUMMON_CANT;
 }
 
-bool CPetControl::isNPCInView(const CString &name) const {
+bool CPetControl::isBotInView(const CString &name) const {
 	CGameManager *gameManager = getGameManager();
 	if (!gameManager)
 		return false;
@@ -481,7 +556,7 @@ bool CPetControl::isNPCInView(const CString &name) const {
 	return false;
 }
 
-void CPetControl::summonNPC(const CString &name, int val) {
+void CPetControl::summonBot(const CString &name, int val) {
 	CGameManager *gameManager = getGameManager();
 	if (gameManager) {
 		CRoomItem *room = gameManager->getRoom();
@@ -490,6 +565,20 @@ void CPetControl::summonNPC(const CString &name, int val) {
 			CSummonBotMsg summonMsg(name, val);
 			summonMsg.execute(room);
 		}
+	}
+}
+
+void CPetControl::onSummonBot(const CString &name, int val) {
+	CGameObject *bot = findObject(name, getHiddenRoom());
+	if (!bot) {
+		bot = findObject(name, getRoot());
+	}
+
+	if (bot) {
+		removeFromInventory(bot, false, false);
+
+		COnSummonBotMsg summonMsg(val);
+		summonMsg.execute(bot);
 	}
 }
 
@@ -509,6 +598,18 @@ void CPetControl::stopPetTimer(uint timerIndex) {
 
 void CPetControl::setTimer44(int id, int val) {
 	getGameManager()->setTimer44(id, val);
+}
+
+CGameObject *CPetControl::findObject(const CString &name, CTreeItem *root) {
+	for (CTreeItem *item = root; item; item = item->scan(root)) {
+		if (!item->getName().compareToIgnoreCase(name)) {
+			CGameObject *obj = static_cast<CGameObject *>(item);
+			if (obj)
+				return obj;
+		}
+	}
+
+	return nullptr;
 }
 
 CString CPetControl::getFullViewName() {

@@ -96,9 +96,14 @@ private:
 	/**
 	 * Checks whether a designated NPC in present in the current view
 	 */
-	bool isNPCInView(const CString &name) const;
+	bool isBotInView(const CString &name) const;
 
 	void setTimer44(int id, int val);
+
+	/**
+	 * Find an object under a given root
+	 */
+	CGameObject *findObject(const CString &name, CTreeItem *root);
 protected:
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
@@ -251,12 +256,12 @@ public:
 	/**
 	 * Remove an item from the inventory
 	 */
-	void removeFromInventory(CCarry *item, bool refreshUI = true, bool sendMsg = true);
+	void removeFromInventory(CGameObject *item, bool refreshUI = true, bool sendMsg = true);
 
 	/**
 	 * Called when the status of an item in the inventory has changed
 	 */
-	void invChange(CCarry *item);
+	void invChange(CGameObject *item);
 
 	/**
 	 * Moves a tree item from it's original position to be under the hidden room
@@ -268,6 +273,8 @@ public:
 	 * the Inventory is the active tab
 	 */
 	void setAreaChangeType(int changeType) { _areaChangeType = changeType; }
+
+	bool checkNode(const CString &name);
 
 	/**
 	 * Play a sound
@@ -282,12 +289,17 @@ public:
 	/**
 	 * Check whether an NPC can be summoned
 	 */
-	int canSummonNPC(const CString &name);
+	int canSummonBot(const CString &name);
 
 	/**
 	 * Summon an NPC to the player
 	 */
-	void summonNPC(const CString &name, int val);
+	void summonBot(const CString &name, int val);
+
+	/**
+	 * Summon a bot to the player
+	 */
+	void onSummonBot(const CString &name, int val);
 
 	/**
 	 * Start a timer for a Pet Area
@@ -347,6 +359,16 @@ public:
 	void setActiveNPC(const CString &name) {
 		_conversations.setActiveNPC(name);
 	}
+
+	/**
+	 * Sets the actie NPC
+	 */
+	void setActiveNPC(CTrueTalkNPC *npc);
+
+	/**
+	 * Refresh the currently active NPC
+	 */
+	void refreshNPC();
 
 	/**
 	 * Resets the Active NPC

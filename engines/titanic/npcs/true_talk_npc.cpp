@@ -197,16 +197,18 @@ void CTrueTalkNPC::processInput(CTextInputMsg *msg, CViewItem *view) {
 		talkManager->processInput(this, msg, view);
 }
 
-void CTrueTalkNPC::performAction(int actionNum, CViewItem *view) {
-	// TODO
-}
-
 int CTrueTalkNPC::startAnimTimer(const CString &action, uint firstDuration, uint duration) {
 	CTimeEventInfo *timer = new CTimeEventInfo(g_vm->_events->getTicksCount(),
 		duration > 0, firstDuration, duration, this, 0, action);
 	getGameManager()->addTimer(timer);
 
 	return timer->_id;
+}
+
+void CTrueTalkNPC::setView(CViewItem *view) {
+	CTrueTalkManager *talkManager = getGameManager()->getTalkManager();
+	if (talkManager)
+		talkManager->start3(this, view);
 }
 
 } // End of namespace Titanic
