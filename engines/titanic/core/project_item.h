@@ -24,6 +24,9 @@
 #define TITANIC_PROJECT_ITEM_H
 
 #include "common/scummsys.h"
+#include "common/str.h"
+#include "engines/savestate.h"
+#include "graphics/surface.h"
 #include "titanic/support/simple_file.h"
 #include "titanic/core/dont_save_file_item.h"
 #include "titanic/core/file_item.h"
@@ -31,6 +34,16 @@
 #include "titanic/core/room_item.h"
 
 namespace Titanic {
+
+struct TitanicSavegameHeader {
+	uint8 _version;
+	CString _saveName;
+	Graphics::Surface *_thumbnail;
+	int _year, _month, _day;
+	int _hour, _minute;
+	int _totalFrames;
+};
+
 
 class CGameManager;
 class CPetControl;
@@ -117,6 +130,26 @@ private:
 	 * Save project data to the passed file
 	 */
 	void saveData(SimpleFile *file, CTreeItem *item) const;
+
+	/**
+	 * Creates a thumbnail for the current on-screen contents
+	 */
+	static Graphics::Surface *createThumbnail();
+public:
+	/**
+	 * Load a list of savegames
+	 */
+	static SaveStateList getSavegameList(const Common::String &target);
+
+	/**
+	 * Write out the header information for a savegame
+	 */
+	static void writeSavegameHeader(SimpleFile *file, TitanicSavegameHeader &header);
+
+	/**
+	 * Read in the header information for a savegame
+	 */
+	static bool readSavegameHeader(SimpleFile *file, TitanicSavegameHeader &header);
 public:
 	CLASSDEF
 	CProjectItem();
@@ -159,7 +192,7 @@ public:
 	/**
 	 * Save the entire project data to a given savegame slot
 	 */
-	void saveGame(int slotId);
+	void saveGame(int slotId, const CString &desc);
 
 	/**
 	 * Clear any currently loaded project

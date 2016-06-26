@@ -157,4 +157,27 @@ void TitanicEngine::setRoomNames() {
 	delete r;
 }
 
+
+bool TitanicEngine::canLoadGameStateCurrently() {
+	return _window->_inputAllowed;
+}
+
+bool TitanicEngine::canSaveGameStateCurrently() {
+	return _window->_inputAllowed;
+}
+
+Common::Error TitanicEngine::loadGameState(int slot) {
+	_window->_project->loadGame(slot);
+	return Common::kNoError;
+}
+
+Common::Error TitanicEngine::saveGameState(int slot, const Common::String &desc) {
+	_window->_project->saveGame(slot, desc);
+	return Common::kNoError;
+}
+
+CString TitanicEngine::generateSaveName(int slot) {
+	return CString::format("%s.%03d", _targetName.c_str(), slot);
+}
+
 } // End of namespace Titanic

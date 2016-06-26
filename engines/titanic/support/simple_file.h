@@ -61,6 +61,9 @@ public:
 	SimpleFile();
 	virtual ~SimpleFile();
 
+	operator Common::SeekableReadStream &() { return *_inStream; }
+	operator Common::WriteStream &() { return *_outStream; }
+
 	/**
 	 * Set up a stream for read access
 	 */
@@ -92,9 +95,24 @@ public:
 	virtual size_t write(const void *src, size_t count) const;
 
 	/**
+	 * Seek
+	 */
+	virtual void seek(int offset, int origin);
+
+	/**
 	 * Read a byte
 	 */
 	byte readByte();
+
+	/**
+	 * Read a 16-bit LE number
+	 */
+	uint readUint16LE();
+
+	/**
+	 * Read a 32-bit LE number
+	 */
+	uint readUint32LE();
 
 	/**
 	 * Read a string from the file
@@ -135,6 +153,21 @@ public:
 	 * Scan in values from the file
 	 */
 	bool scanf(const char *format, ...);
+
+	/**
+	 * Write out a byte
+	 */
+	void writeByte(byte b) { write(&b, 1); }
+
+	/**
+	 * Write out a raw 16-bit LE number
+	 */
+	void writeUint16LE(uint val);
+
+	/**
+	 * Write out a raw 32-bit LE number
+	 */
+	void writeUint32LE(uint val);
 
 	/**
 	 * Write a string line

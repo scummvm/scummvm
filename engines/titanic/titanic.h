@@ -73,15 +73,6 @@ enum TitanicDebugChannels {
 struct TitanicGameDescription;
 class TitanicEngine;
 
-struct TitanicSavegameHeader {
-	uint8 _version;
-	Common::String _saveName;
-	Graphics::Surface *_thumbnail;
-	int _year, _month, _day;
-	int _hour, _minute;
-	int _totalFrames;
-};
-
 class TitanicEngine : public Engine {
 private:
 	/**
@@ -133,6 +124,27 @@ public:
 	TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc);
 	virtual ~TitanicEngine();
 
+
+	/**
+	 * Returns true if a savegame can be loaded
+	 */
+	virtual bool canLoadGameStateCurrently();
+
+	/**
+	 * Returns true if the game can be saved
+	 */
+	virtual bool canSaveGameStateCurrently();
+
+	/**
+	 * Called by the GMM to load a savegame
+	 */
+	virtual Common::Error loadGameState(int slot);
+
+	/**
+	 * Called by the GMM to save the game
+	 */
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+
 	uint32 getFeatures() const;
 	bool isDemo() const;
 	Common::Language getLanguage() const;
@@ -141,6 +153,12 @@ public:
 	 * Gets a random number
 	 */
 	uint getRandomNumber(uint max) { return _randomSource.getRandomNumber(max); }
+
+	/**
+	 * Support method that generates a savegame name
+	 * @param slot		Slot number
+	 */
+	CString generateSaveName(int slot);
 };
 
 extern TitanicEngine *g_vm;

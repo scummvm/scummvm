@@ -89,10 +89,27 @@ size_t SimpleFile::write(const void *src, size_t count) const {
 	return _outStream->write(src, count);
 }
 
+void SimpleFile::seek(int offset, int origin) {
+	assert(_inStream);
+	_inStream->seek(offset, origin);
+}
+
 byte SimpleFile::readByte() {
 	byte b;
 	safeRead(&b, 1);
 	return b;
+}
+
+uint SimpleFile::readUint16LE() {
+	uint val;
+	safeRead(&val, 2);
+	return READ_LE_UINT16(&val);
+}
+
+uint SimpleFile::readUint32LE() {
+	uint val;
+	safeRead(&val, 4);
+	return READ_LE_UINT32(&val);
 }
 
 CString SimpleFile::readString() {
@@ -246,6 +263,20 @@ void SimpleFile::readBuffer(char *buffer, size_t count) {
 		strncpy(buffer, tempString.c_str(), count);
 		buffer[count - 1] = '\0';
 	}
+}
+
+void SimpleFile::writeUint16LE(uint val) {
+	byte lo = val & 0xff;
+	byte hi = (val >> 8) & 0xff;
+	write(&lo, 1);
+	write(&hi, 1);
+}
+
+void SimpleFile::writeUint32LE(uint val) {
+	uint16 lo = val & 0xffff;
+	uint16 hi = (val >> 16) & 0xff;
+	writeUint16LE(lo);
+	writeUint16LE(hi);
 }
 
 void SimpleFile::writeLine(const CString &str) const {

@@ -22,6 +22,8 @@
 
 #include "common/file.h"
 #include "common/savefile.h"
+#include "graphics/scaler.h"
+#include "graphics/thumbnail.h"
 #include "titanic/game_manager.h"
 #include "titanic/titanic.h"
 #include "titanic/core/dont_save_file_item.h"
@@ -31,6 +33,13 @@
 #include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
+
+#define CURRENT_SAVEGAME_VERSION 1
+#define MAX_SAVEGAME_SLOTS 99
+#define MINIMUM_SAVEGAME_VERSION 1
+
+static const char *const SAVEGAME_STR = "TNIC";
+#define SAVEGAME_STR_SIZE 4
 
 void CFileListItem::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(0, indent);
@@ -158,6 +167,11 @@ void CProjectItem::loadGame(int slotId) {
 		file.open(newFile);
 	}
 
+	// Load the savegame header in
+	TitanicSavegameHeader header;
+	readSavegameHeader(&file, header);
+	delete header._thumbnail;
+
 	// Load the contents in
 	CProjectItem *newProject = loadData(&file);
 	file.IsClassStart();
@@ -183,7 +197,7 @@ void CProjectItem::loadGame(int slotId) {
 	postLoad();
 }
 
-void CProjectItem::saveGame(int slotId) {
+void CProjectItem::saveGame(int slotId, const CString &desc) {
 	CompressedFile file;
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(
 		Common::String::format("slot%d.gam", slotId));
@@ -191,6 +205,11 @@ void CProjectItem::saveGame(int slotId) {
 
 	// Signal the game is being saved
 	preSave();
+
+	// Write out the savegame header
+	TitanicSavegameHeader header;
+	header._saveName = desc;
+	writeSavegameHeader(&file, header);
 
 	// Save the contents out
 	saveData(&file, this);
@@ -409,6 +428,113 @@ CViewItem *CProjectItem::findView(int roomNumber, int nodeNumber, int viewNumber
 	}
 
 	return nullptr;
+}
+
+SaveStateList CProjectItem::getSavegameList(const Common::String &target) {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray filenames;
+	Common::String saveDesc;
+	Common::String pattern = Common::String::format("%s.0??", target.c_str());
+	TitanicSavegameHeader header;
+
+	filenames = saveFileMan->listSavefiles(pattern);
+	sort(filenames.begin(), filenames.end());   // Sort to get the files in numerical order
+
+	SaveStateList saveList;
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		const char *ext = strrchr(file->c_str(), '.');
+		int slot = ext ? atoi(ext + 1) : -1;
+
+		if (slot >= 0 && slot < MAX_SAVEGAME_SLOTS) {
+			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
+
+			if (in) {
+				SimpleFile f;
+				f.open(in);
+				if (!readSavegameHeader(&f, header))
+					continue;
+
+				saveList.push_back(SaveStateDescriptor(slot, header._saveName));
+
+				header._thumbnail->free();
+				delete header._thumbnail;
+				delete in;
+			}
+		}
+	}
+
+	return saveList;
+}
+
+bool CProjectItem::readSavegameHeader(SimpleFile *file, TitanicSavegameHeader &header) {
+	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
+	header._thumbnail = nullptr;
+
+	// Validate the header Id
+	file->unsafeRead(saveIdentBuffer, SAVEGAME_STR_SIZE + 1);
+	if (strncmp(saveIdentBuffer, SAVEGAME_STR, SAVEGAME_STR_SIZE)) {
+		file->seek(-SAVEGAME_STR_SIZE, SEEK_CUR);
+		header._saveName = "Unnamed";
+		return true;
+	}
+
+	header._version = file->readByte();
+	if (header._version < MINIMUM_SAVEGAME_VERSION || header._version > CURRENT_SAVEGAME_VERSION)
+		return false;
+
+	// Read in the string
+	header._saveName.clear();
+	char ch;
+	while ((ch = (char)file->readByte()) != '\0') header._saveName += ch;
+
+	// Get the thumbnail
+	header._thumbnail = Graphics::loadThumbnail(*file);
+	if (!header._thumbnail)
+		return false;
+
+	// Read in save date/time
+	header._year = file->readUint16LE();
+	header._month = file->readUint16LE();
+	header._day = file->readUint16LE();
+	header._hour = file->readUint16LE();
+	header._minute = file->readUint16LE();
+	header._totalFrames = file->readUint32LE();
+
+	return true;
+}
+
+void CProjectItem::writeSavegameHeader(SimpleFile *file, TitanicSavegameHeader &header) {
+	// Write out a savegame header
+	file->write(SAVEGAME_STR, SAVEGAME_STR_SIZE + 1);
+
+	file->writeByte(CURRENT_SAVEGAME_VERSION);
+
+	// Write savegame name
+	file->write(header._saveName.c_str(), header._saveName.size());
+	file->writeByte('\0');
+
+	// Create a thumbnail of the screen and save it out
+	Graphics::Surface *thumb = createThumbnail();
+	Graphics::saveThumbnail(*file, *thumb);
+	thumb->free();
+	delete thumb;
+
+	// Write out the save date/time
+	TimeDate td;
+	g_system->getTimeAndDate(td);
+	file->writeUint16LE(td.tm_year + 1900);
+	file->writeUint16LE(td.tm_mon + 1);
+	file->writeUint16LE(td.tm_mday);
+	file->writeUint16LE(td.tm_hour);
+	file->writeUint16LE(td.tm_min);
+	file->writeUint16LE(g_vm->_events->getFrameCounter());
+}
+
+Graphics::Surface *CProjectItem::createThumbnail() {
+	Graphics::Surface *thumb = new Graphics::Surface();
+
+	::createThumbnailFromScreen(thumb);
+	return thumb;
 }
 
 } // End of namespace Titanic
