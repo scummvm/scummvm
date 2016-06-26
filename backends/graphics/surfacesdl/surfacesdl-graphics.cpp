@@ -20,29 +20,15 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_putenv
-
 #include "common/scummsys.h"
 
 #if defined(SDL_BACKEND)
 
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
-#include "backends/events/sdl/sdl-events.h"
-#include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
-#include "common/mutex.h"
-#include "common/textconsole.h"
-#include "common/translation.h"
-#include "common/util.h"
-#ifdef USE_RGB_COLOR
-#include "common/list.h"
-#endif
-#include "graphics/font.h"
-#include "graphics/fontman.h"
-#include "graphics/scaler.h"
-#include "graphics/surface.h"
+#include "engines/engine.h"
 #include "graphics/pixelbuffer.h"
-#include "gui/EventRecorder.h"
+#include "graphics/surface.h"
 
 SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window, const Capabilities &capabilities)
 	:

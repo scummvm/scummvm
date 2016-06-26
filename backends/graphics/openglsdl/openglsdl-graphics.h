@@ -23,50 +23,43 @@
 #ifndef BACKENDS_GRAPHICS_OPENGLSDL_GRAPHICS_H
 #define BACKENDS_GRAPHICS_OPENGLSDL_GRAPHICS_H
 
-#include "graphics/opengl/system_headers.h"
-#include "graphics/opengl/framebuffer.h"
-#include "graphics/opengl/texture.h"
-#include "graphics/opengl/surfacerenderer.h"
-#include "graphics/opengl/tiledsurface.h"
-
-#include "backends/graphics/graphics.h"
 #include "backends/graphics/sdl/resvm-sdl-graphics.h"
-#include "graphics/pixelformat.h"
-#include "graphics/scaler.h"
-#include "common/array.h"
-#include "common/events.h"
-#include "common/system.h"
-#include "math/rect2d.h"
 
-#include "backends/events/sdl/sdl-events.h"
-
-#include "backends/platform/sdl/sdl-sys.h"
+namespace OpenGL {
+	class FrameBuffer;
+	class SurfaceRenderer;
+	class Texture;
+	class TiledSurface;
+}
 
 /**
- * SDL graphics manager
+ * SDL OpenGL based graphics manager
+ *
+ * Used when rendering games with OpenGL
  */
 class OpenGLSdlGraphicsManager : public ResVmSdlGraphicsManager {
 public:
 	OpenGLSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window, const Capabilities &capabilities);
 	virtual ~OpenGLSdlGraphicsManager();
 
-	virtual bool hasFeature(OSystem::Feature f);
+	// GraphicsManager API - Features
+	virtual bool hasFeature(OSystem::Feature f) override;
 
-	virtual void setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d); // ResidualVM specific method
-	virtual Graphics::PixelBuffer getScreenPixelBuffer(); // ResidualVM specific method
+	// GraphicsManager API - Graphics mode
+	virtual void setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d) override;
+	virtual Graphics::PixelBuffer getScreenPixelBuffer() override;
+	virtual int16 getHeight() override;
+	virtual int16 getWidth() override;
 
-	virtual int16 getHeight();
-	virtual int16 getWidth();
-
+	// GraphicsManager API - Draw methods
 	virtual void updateScreen();
 
+	// GraphicsManager API - Overlay
 	virtual void showOverlay() override;
 	virtual void hideOverlay() override;
-	virtual void clearOverlay();
-	virtual void grabOverlay(void *buf, int pitch);
-	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
-
-	void closeOverlay(); // ResidualVM specific method
+	virtual void clearOverlay() override;
+	virtual void grabOverlay(void *buf, int pitch) override;
+	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
 
 	/* Render the passed Surfaces besides the game texture.
 	 * This is used for widescreen support in the Grim engine.
@@ -74,20 +67,17 @@ public:
 	 */
 	virtual void suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) override;
 
-	virtual void warpMouse(int x, int y);
+	// GraphicsManager API - Mouse
+	virtual void warpMouse(int x, int y) override;
 
-	virtual void transformMouseCoordinates(Common::Point &point);
+	// SdlGraphicsManager API
+	virtual void transformMouseCoordinates(Common::Point &point) override;
 
 protected:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_GLContext _glContext;
 	void deinitializeRenderer();
-	SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags);
 #endif
-
-	// overlay
-	OpenGL::TiledSurface *_overlayScreen;
-	OpenGL::TiledSurface *_overlayBackground;
 
 	Math::Rect2d _gameRect;
 
@@ -110,19 +100,20 @@ protected:
 	 */
 	bool createScreen(uint effectiveWidth, uint effectiveHeight, GameRenderTarget gameRenderTarget);
 
-	// Antialiasing
 	int _antialiasing;
 
+	OpenGL::TiledSurface *_overlayScreen;
+	OpenGL::TiledSurface *_overlayBackground;
 	OpenGL::Texture *_sideTextures[2];
+	OpenGL::SurfaceRenderer *_surfaceRenderer;
 
 	void initializeOpenGLContext() const;
 	void drawOverlay();
 	void drawSideTextures();
+	void closeOverlay();
 
 	OpenGL::FrameBuffer *_frameBuffer;
 	OpenGL::FrameBuffer *createFramebuffer(uint width, uint height);
-
-	OpenGL::SurfaceRenderer *_surfaceRenderer;
 };
 
 #endif

@@ -33,14 +33,25 @@
 class SdlEventSource;
 
 /**
- * Base class for a SDL based graphics manager.
+ * Base class for a ResidualVM SDL based graphics manager.
  *
- * It features a few extra a few extra features required by SdlEventSource.
+ * Used to share reusable methods between SDL graphics managers
  */
 class ResVmSdlGraphicsManager : public SdlGraphicsManager, public Common::EventObserver {
 public:
+	/**
+	 * Capabilities of the current device
+	 */
 	struct Capabilities {
-		uint desktopWidth, desktopHeight;
+		/**
+		 * Desktop resolution
+		 */
+		uint desktopWidth;
+		uint desktopHeight;
+
+		/**
+		 * Is the device capable of rendering to OpenGL framebuffers
+		 */
 		bool openGLFrameBuffer;
 
 		Capabilities() :
@@ -57,53 +68,58 @@ public:
 	virtual void notifyVideoExpose() override;
 	virtual void notifyMousePos(Common::Point mouse) override;
 
-	virtual void setFeatureState(OSystem::Feature f, bool enable);
-	virtual bool getFeatureState(OSystem::Feature f);
+	// GraphicsManager API - Features
+	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
+	virtual bool getFeatureState(OSystem::Feature f) override;
 
-	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
-	virtual int getDefaultGraphicsMode() const;
-	virtual bool setGraphicsMode(int mode);
-	virtual int getGraphicsMode() const;
-	virtual void resetGraphicsScale();
+	// GraphicsManager API - Graphics mode
+	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
+	virtual int getDefaultGraphicsMode() const override;
+	virtual bool setGraphicsMode(int mode) override;
+	virtual int getGraphicsMode() const override;
+	virtual void resetGraphicsScale() override;
 #ifdef USE_RGB_COLOR
-	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
+	virtual Graphics::PixelFormat getScreenFormat() const override { return _screenFormat; }
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
 #endif
-	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL);
-	virtual int getScreenChangeID() const { return _screenChangeCount; }
-
-	virtual void beginGFXTransaction();
-	virtual OSystem::TransactionError endGFXTransaction();
+	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL) override;
+	virtual int getScreenChangeID() const override { return _screenChangeCount; }
+	virtual void beginGFXTransaction() override;
+	virtual OSystem::TransactionError endGFXTransaction() override;
 
 protected:
 	// PaletteManager API
-	virtual void setPalette(const byte *colors, uint start, uint num);
-	virtual void grabPalette(byte *colors, uint start, uint num);
+	virtual void setPalette(const byte *colors, uint start, uint num) override;
+	virtual void grabPalette(byte *colors, uint start, uint num) override;
 
 public:
-	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h);
-	virtual Graphics::Surface *lockScreen();
-	virtual void unlockScreen();
-	virtual void fillScreen(uint32 col);
-	virtual void setShakePos(int shakeOffset);
-	virtual void setFocusRectangle(const Common::Rect& rect);
-	virtual void clearFocusRectangle();
-	virtual void setCursorPalette(const byte *colors, uint start, uint num);
+	// GraphicsManager API - Draw methods
+	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override;
+	virtual Graphics::Surface *lockScreen() override;
+	virtual void unlockScreen() override;
+	virtual void fillScreen(uint32 col) override;
+	virtual void setShakePos(int shakeOffset) override;
 
-	//ResidualVM specific implementions:
-	virtual int16 getOverlayHeight() { return _overlayHeight; }
-	virtual int16 getOverlayWidth() { return _overlayWidth; }
-	virtual Graphics::PixelFormat getOverlayFormat() const { return _overlayFormat; }
+	// GraphicsManager API - Focus Rectangle
+	virtual void setFocusRectangle(const Common::Rect& rect) override;
+	virtual void clearFocusRectangle() override;
 
-	virtual bool showMouse(bool visible);
-	virtual bool lockMouse(bool lock); // ResidualVM specific method
-	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL);
+	// GraphicsManager API - Overlay
+	virtual int16 getOverlayHeight() override { return _overlayHeight; }
+	virtual int16 getOverlayWidth() override { return _overlayWidth; }
+	virtual Graphics::PixelFormat getOverlayFormat() const override { return _overlayFormat; }
+
+	// GraphicsManager API - Mouse
+	virtual bool showMouse(bool visible) override;
+	virtual bool lockMouse(bool lock) override; // ResidualVM specific method
+	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) override;
+	virtual void setCursorPalette(const byte *colors, uint start, uint num) override;
 
 #ifdef USE_OSD
-	virtual void displayMessageOnOSD(const char *msg);
+	virtual void displayMessageOnOSD(const char *msg) override;
 #endif
 
-	// Override from Common::EventObserver
+	// Common::EventObserver API
 	bool notifyEvent(const Common::Event &event) override;
 
 protected:
@@ -117,8 +133,6 @@ protected:
 	bool _overlayVisible;
 	Graphics::PixelFormat _overlayFormat;
 	int _overlayWidth, _overlayHeight;
-
-	virtual void closeOverlay() = 0;
 
 #ifdef USE_RGB_COLOR
 	Graphics::PixelFormat _screenFormat;

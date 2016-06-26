@@ -23,44 +23,36 @@
 #ifndef BACKENDS_GRAPHICS_SURFACESDL_GRAPHICS_H
 #define BACKENDS_GRAPHICS_SURFACESDL_GRAPHICS_H
 
-#include "backends/graphics/graphics.h"
 #include "backends/graphics/sdl/resvm-sdl-graphics.h"
-#include "graphics/pixelformat.h"
-#include "graphics/scaler.h"
-#include "common/array.h"
-#include "common/events.h"
-#include "common/system.h"
-#include "math/rect2d.h"
-
-#include "backends/events/sdl/sdl-events.h"
-
-#include "backends/platform/sdl/sdl-sys.h"
 
 /**
- * SDL graphics manager
+ * SDL Surface based graphics manager
+ *
+ * Used when rendering the launcher, or games with TinyGL
  */
 class SurfaceSdlGraphicsManager : public ResVmSdlGraphicsManager {
 public:
 	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window, const Capabilities &capabilities);
 	virtual ~SurfaceSdlGraphicsManager();
 
-	virtual bool hasFeature(OSystem::Feature f);
+	// GraphicsManager API - Features
+	virtual bool hasFeature(OSystem::Feature f) override;
 
-	virtual void setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d); // ResidualVM specific method
-	virtual Graphics::PixelBuffer getScreenPixelBuffer(); // ResidualVM specific method
+	// GraphicsManager API - Graphics mode
+	virtual void setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d) override;
+	virtual Graphics::PixelBuffer getScreenPixelBuffer() override;
+	virtual int16 getHeight() override;
+	virtual int16 getWidth() override;
 
-	virtual int16 getHeight();
-	virtual int16 getWidth();
+	// GraphicsManager API - Draw methods
+	virtual void updateScreen() override;
 
-	virtual void updateScreen();
-
-	virtual void showOverlay();
-	virtual void hideOverlay();
-	virtual void clearOverlay();
-	virtual void grabOverlay(void *buf, int pitch);
-	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
-
-	void closeOverlay(); // ResidualVM specific method
+	// GraphicsManager API - Overlay
+	virtual void showOverlay() override;
+	virtual void hideOverlay() override;
+	virtual void clearOverlay() override;
+	virtual void grabOverlay(void *buf, int pitch) override;
+	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
 
 	/* Render the passed Surfaces besides the game texture.
 	 * This is used for widescreen support in the Grim engine.
@@ -68,11 +60,11 @@ public:
 	 */
 	virtual void suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) override;
 
-	virtual void warpMouse(int x, int y);
+	// GraphicsManager API - Mouse
+	virtual void warpMouse(int x, int y) override;
 
-
-	// SdlGraphicsManager interface
-	virtual void transformMouseCoordinates(Common::Point &point);
+	// SdlGraphicsManager API
+	virtual void transformMouseCoordinates(Common::Point &point) override;
 
 protected:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -85,7 +77,6 @@ protected:
 	SDL_Surface *_screen;
 	SDL_Surface *_subScreen;
 
-	// overlay
 	SDL_Surface *_overlayscreen;
 	bool _overlayDirty;
 
@@ -95,6 +86,7 @@ protected:
 
 	void drawOverlay();
 	void drawSideTextures();
+	void closeOverlay();
 };
 
 #endif

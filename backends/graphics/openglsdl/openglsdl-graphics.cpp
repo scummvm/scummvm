@@ -20,31 +20,21 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_putenv
-
 #include "common/scummsys.h"
 
 #if defined(SDL_BACKEND)
 
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
-#include "backends/events/sdl/sdl-events.h"
-#include "backends/platform/sdl/sdl.h"
-#include "common/config-manager.h"
-#include "common/mutex.h"
-#include "common/textconsole.h"
-#include "common/translation.h"
-#include "common/util.h"
-#ifdef USE_RGB_COLOR
-#include "common/list.h"
-#endif
-#include "graphics/font.h"
-#include "graphics/fontman.h"
-#include "graphics/scaler.h"
-#include "graphics/surface.h"
-#include "graphics/pixelbuffer.h"
-#include "gui/EventRecorder.h"
 
+#include "common/config-manager.h"
+#include "engines/engine.h"
+#include "graphics/pixelbuffer.h"
 #include "graphics/opengl/context.h"
+#include "graphics/opengl/framebuffer.h"
+#include "graphics/opengl/surfacerenderer.h"
+#include "graphics/opengl/system_headers.h"
+#include "graphics/opengl/texture.h"
+#include "graphics/opengl/tiledsurface.h"
 
 OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window, const Capabilities &capabilities)
 	:
