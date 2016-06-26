@@ -39,8 +39,8 @@ void CPetRemoteGlyphs::generateMessage(RemoteMessage msgNum, const CString &name
 /*------------------------------------------------------------------------*/
 
 void CPetRemoteGlyph::setDefaults(const CString &name, CPetControl *petControl) {
-	_gfxElement->setBounds(Rect(0, 0, 52, 52));
-	_gfxElement->setup(MODE_UNSELECTED, name, petControl);
+	_element.setBounds(Rect(0, 0, 52, 52));
+	_element.setup(MODE_UNSELECTED, name, petControl);
 }
 
 CPetRemoteGlyphs *CPetRemoteGlyph::getOwner() const {
