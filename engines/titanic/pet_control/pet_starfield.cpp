@@ -40,11 +40,11 @@ bool CPetStarfield::setup(CPetControl *petControl) {
 
 bool CPetStarfield::reset() {
 	if (_petControl) {
-		_val1.setup(MODE_UNSELECTED, "3PetStarField", _petControl);
-		_val2.setup(MODE_UNSELECTED, "HomePhotoOnOff", _petControl);
-		_setDestination.setup(MODE_UNSELECTED, "3PetSetDestin", _petControl);
-		_setDestination.setup(MODE_SELECTED, "3PetSetDestin1", _petControl);
-		_val4.setup(MODE_UNSELECTED, "3PetStarCtrl", _petControl);
+		_imgStarfield.setup(MODE_UNSELECTED, "3PetStarField", _petControl);
+		_imgPhoto.setup(MODE_UNSELECTED, "HomePhotoOnOff", _petControl);
+		_btnSetDest.setup(MODE_UNSELECTED, "3PetSetDestin", _petControl);
+		_btnSetDest.setup(MODE_SELECTED, "3PetSetDestin1", _petControl);
+		_imgStarCtrl.setup(MODE_UNSELECTED, "3PetStarCtrl", _petControl);
 		
 		_leds[0].setup(MODE_UNSELECTED, "LEDOff1", _petControl);
 		_leds[1].setup(MODE_UNSELECTED, "LEDOn1", _petControl);
@@ -64,13 +64,14 @@ bool CPetStarfield::reset() {
 void CPetStarfield::draw(CScreenManager *screenManager) {
 	_petControl->drawSquares(screenManager, 2);
 
+	_imgStarfield.draw(screenManager);
 	if (_photoOn) {
-		_val2.draw(screenManager);
+		_imgPhoto.draw(screenManager);
 	} else {
-		_val4.draw(screenManager);
+		_imgStarCtrl.draw(screenManager);
 	}
 
-	_setDestination.draw(screenManager);
+	_btnSetDest.draw(screenManager);
 	drawButton(_btnOffsets[0], 0, screenManager);
 	drawButton(_btnOffsets[1], 2, screenManager);
 	drawButton(_btnOffsets[2], 4, screenManager);
@@ -81,10 +82,10 @@ bool CPetStarfield::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (!_petControl->_remoteTarget)
 		return false;
 
-	if (_val1.MouseButtonDownMsg(msg->_mousePos)) {
+	if (_imgStarfield.MouseButtonDownMsg(msg->_mousePos)) {
 		CPETHelmetOnOffMsg helmetMsg;
 		helmetMsg.execute(_petControl->_remoteTarget);
-	} else if (_val2.MouseButtonDownMsg(msg->_mousePos)) {
+	} else if (_imgPhoto.MouseButtonDownMsg(msg->_mousePos)) {
 		if (_field210) {
 			_photoOn = !_photoOn;
 			CPETPhotoOnOffMsg photoMsg;
@@ -92,7 +93,7 @@ bool CPetStarfield::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		} else {
 			_petControl->displayMessage("Please supply Galactic reference material.");
 		}
-	} else if (!_setDestination.MouseButtonDownMsg(msg->_mousePos)) {
+	} else if (!_btnSetDest.MouseButtonDownMsg(msg->_mousePos)) {
 		return elementsMouseDown(msg);
 	}
 
@@ -100,7 +101,7 @@ bool CPetStarfield::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CPetStarfield::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
-	if (!_petControl->_remoteTarget || !_setDestination.MouseButtonUpMsg(msg->_mousePos))
+	if (!_petControl->_remoteTarget || !_btnSetDest.MouseButtonUpMsg(msg->_mousePos))
 		return false;
 
 	if (_petControl) {
@@ -143,12 +144,12 @@ bool CPetStarfield::setupControl(CPetControl *petControl) {
 		Rect r(0, 0, 64, 64);
 		r.translate(_rect1.left, _rect1.top);
 
-		_val1.setBounds(r);
-		_val1.translate(15, 23);
-		_val2.setBounds(r);
-		_val2.translate(85, 23);
-		_val4.setBounds(r);
-		_val4.translate(85, 23);
+		_imgStarfield.setBounds(r);
+		_imgStarfield.translate(15, 23);
+		_imgPhoto.setBounds(r);
+		_imgPhoto.translate(85, 23);
+		_imgStarCtrl.setBounds(r);
+		_imgStarCtrl.translate(85, 23);
 
 		r = Rect(0, 0, 34, 34);
 		r.translate(468, 396);
@@ -166,7 +167,7 @@ bool CPetStarfield::setupControl(CPetControl *petControl) {
 		r = Rect(0, 0, 157, 51);
 		r.translate(224, 33);
 		r.translate(20, 350);
-		_setDestination.setBounds(r);
+		_btnSetDest.setBounds(r);
 
 		r = Rect(0, 0, 580, 15);
 		r.translate(32, 445);

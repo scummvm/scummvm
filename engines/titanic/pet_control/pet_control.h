@@ -56,7 +56,7 @@ private:
 	CPetSection *_sections[7];
 	CPetConversations _conversations;
 	CPetInventory _inventory;
-	CPetStarfield _navHelmet;
+	CPetStarfield _starfield;
 	CPetRemote _remote;
 	CPetRooms _rooms;
 	CPetRealLife _realLife;

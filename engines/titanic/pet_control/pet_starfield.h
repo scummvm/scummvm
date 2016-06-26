@@ -31,10 +31,10 @@ namespace Titanic {
 
 class CPetStarfield : public CPetSection {
 private:
-	CPetGfxElement _val1;
-	CPetGfxElement _val2;
-	CPetGfxElement _setDestination;
-	CPetGfxElement _val4;
+	CPetGfxElement _imgStarfield;
+	CPetGfxElement _imgPhoto;
+	CPetGfxElement _imgStarCtrl;
+	CPetGfxElement _btnSetDest;
 	int _btnOffsets[3];
 	CPetGfxElement _leds[6];
 	Rect _rect1;
