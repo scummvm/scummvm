@@ -79,6 +79,23 @@ typedef struct { int FAKE; } FAKE_FILE;
 
 #endif
 
+#ifdef MACOSX
+
+// ResidualVM specific undefs for SDL2 to allow compile with MacOS X:
+#undef asctime
+#undef time
+#undef ctime
+#undef mktime
+#undef difftime
+#undef getdate
+#undef localtime
+#undef gmtime
+#undef clock
+#undef longjmp
+#undef setjmp
+
+#endif
+
 #if defined(__SYMBIAN32__)
 #include <esdl\SDL.h>
 #else
