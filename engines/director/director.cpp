@@ -73,6 +73,8 @@ Common::Error DirectorEngine::run() {
 
 	_lingo = new Lingo(this);
 	_soundManager = new DirectorSound();
+
+#if 0
 	_lingo->addCode("--\n\
 macro SHIPX\n\
 set x = 5\n\
@@ -146,6 +148,7 @@ end repeat\n\
 	_lingo->executeScript(kMovieScript, 3);
 
 	return Common::kNoError;
+#endif
 
 	//FIXME
 	_mainArchive = new RIFFArchive();
