@@ -338,6 +338,19 @@ void Score::loadScriptText(Common::SeekableReadStream &stream) {
 	_movieScriptCount++;
 }
 
+void Score::setStartToLabel(Common::String label) {
+	Common::HashMap<uint16, Common::String>::iterator i;
+
+	for (i = _labels.begin(); i != _labels.end(); ++i) {
+		if (i->_value == label) {
+			_currentFrame = i->_key;
+			return;
+		}
+	}
+
+	warning("Label %s not found", label.c_str());
+}
+
 void Score::dumpScript(uint16 id, ScriptType type, Common::String script) {
 	Common::DumpFile out;
 	Common::String typeName;
@@ -556,7 +569,7 @@ void Score::startLoop() {
 	_trailSurface->create(_movieRect.width(), _movieRect.height());
 
 	if (_stageColor == 0)
-		_trailSurface->clear(15);
+		_trailSurface->clear(_vm->getPaletteColorCount() - 1);
 	else
 		_trailSurface->clear(_stageColor);
 

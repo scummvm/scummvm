@@ -66,6 +66,8 @@ public:
 	bool hasFeature(EngineFeature f) const;
 	const byte *getPalette() const { return _currentPalette; }
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
+	Common::HashMap<Common::String, Score *> *_movies;
+	Score *_currentScore;
 
 protected:
 	virtual Common::Error run();
@@ -90,7 +92,6 @@ private:
 	byte *_currentPalette;
 	uint16 _currentPaletteLength;
 	Lingo *_lingo;
-	Score *_currentScore;
 };
 
 } // End of namespace Director

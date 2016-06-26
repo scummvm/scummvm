@@ -56,7 +56,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_mainArchive = 0;
 	_macBinary = 0;
 	_currentPalette = 0;
-
+	_movies = new Common::HashMap<Common::String, Score *>();
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");

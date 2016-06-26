@@ -191,6 +191,14 @@ void Lingo::func_mciwait(Common::String &s) {
 
 void Lingo::func_goto(Common::String &frame, Common::String &movie) {
 	warning("STUB: go to %s movie %s", frame.c_str(), movie.c_str());
+	if (!_vm->_movies->contains(movie))
+		error("Movie %s does not exist", movie.c_str());
+
+	_vm->_currentScore = _vm->_movies->getVal(movie);
+	_vm->_currentScore->loadArchive();
+
+	if (frame.c_str() != "")
+		_vm->_currentScore->setStartToLabel(frame);
 }
 
 }

@@ -333,6 +333,7 @@ public:
 
 	static Common::Rect readRect(Common::SeekableReadStream &stream);
 	void loadArchive();
+	void setStartToLabel(Common::String label);
 	void startLoop();
 	void processEvents();
 
