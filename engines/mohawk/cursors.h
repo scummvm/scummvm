@@ -102,7 +102,6 @@ enum {
 };
 
 class MohawkEngine_Myst;
-class MystBitmap;
 
 // The cursor manager for Myst
 // Uses WDIB + CLRC resources
@@ -119,7 +118,6 @@ public:
 
 private:
 	MohawkEngine_Myst *_vm;
-	MystBitmap *_bmpDecoder;
 };
 
 #endif // ENABLE_MYST

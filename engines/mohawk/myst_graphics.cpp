@@ -47,8 +47,7 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 	} else {
 		// Paletted
 		initGraphics(_viewport.width(), _viewport.height(), true);
-		setBasePalette();
-		setPaletteToScreen();
+		clearScreenPalette();
 	}
 
 	_pixelFormat = _vm->_system->getScreenFormat();
@@ -86,7 +85,7 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 
 	bool isPict = false;
 
-	if (_vm->getFeatures() & GF_ME) {
+	if ((_vm->getFeatures() & GF_ME) && dataStream->size() > 512 + 10 + 4) {
 		// Here we detect whether it's really a PICT or a WDIB. Since a MystBitmap
 		// would be compressed, there's no way to detect for the BM without a hack.
 		// So, we search for the PICT version opcode for detection.
@@ -109,8 +108,11 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 	} else {
 		mhkSurface = _bmpDecoder->decodeImage(dataStream);
 
-		if (_vm->getFeatures() & GF_ME)
+		if (_vm->getFeatures() & GF_ME) {
 			mhkSurface->convertToTrueColor();
+		} else {
+			remapSurfaceToSystemPalette(mhkSurface);
+		}
 	}
 
 	assert(mhkSurface);
@@ -204,7 +206,7 @@ void MystGraphics::copyImageSectionToBackBuffer(uint16 image, Common::Rect src, 
 	if (!(_vm->getFeatures() & GF_ME)) {
 		// Make sure the palette is set
 		assert(mhkSurface->getPalette());
-		memcpy(_palette + 10 * 3, mhkSurface->getPalette() + 10 * 3, (256 - 10 * 2) * 3);
+		memcpy(_palette, mhkSurface->getPalette(), 256 * 3);
 		setPaletteToScreen();
 	}
 }
@@ -703,10 +705,10 @@ void MystGraphics::clearScreenPalette() {
 	_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
 }
 
-void MystGraphics::setBasePalette() {
+void MystGraphics::remapSurfaceToSystemPalette(MohawkSurface *mhkSurface) {
 	// Entries [0, 9] of the palette
 	static const byte lowPalette[] = {
-		0xFF, 0xFF, 0xFF,
+		0x00, 0x00, 0x00,
 		0x80, 0x00, 0x00,
 		0x00, 0x80, 0x00,
 		0x80, 0x80, 0x00,
@@ -729,15 +731,68 @@ void MystGraphics::setBasePalette() {
 		0x00, 0x00, 0xFF,
 		0xFF, 0x00, 0xFF,
 		0x00, 0xFF, 0xFF,
-		0x00, 0x00, 0x00
+		0xFF, 0xFF, 0xFF
 	};
 
-	// Note that 0 and 255 are different from normal Windows.
-	// Myst seems to hack that to white, resp. black (probably for Mac compat).
+	byte *originalPalette = mhkSurface->getPalette();
 
-	memcpy(_palette, lowPalette, sizeof(lowPalette));
-	memset(_palette + sizeof(lowPalette), 0, sizeof(_palette) - sizeof(lowPalette) - sizeof(highPalette));
-	memcpy(_palette + sizeof(_palette) - sizeof(highPalette), highPalette, sizeof(highPalette));
+	// The target palette is made of the Windows reserved palette, and colors 10 to 245
+	// of the bitmap palette. Entries 0 to 9 and 246 to 255 of the bitmap palette are
+	// discarded.
+	byte targetPalette[256 * 3];
+	memcpy(targetPalette, lowPalette, sizeof(lowPalette));
+	memcpy(targetPalette + sizeof(lowPalette), originalPalette + sizeof(lowPalette), sizeof(_palette) - sizeof(lowPalette) - sizeof(highPalette));
+	memcpy(targetPalette + sizeof(_palette) - sizeof(highPalette), highPalette, sizeof(highPalette));
+
+	// Remap the discarded entries from the bitmap palette using the target palette.
+	byte lowColorMap[ARRAYSIZE(lowPalette) / 3];
+	byte highColorMap[ARRAYSIZE(highPalette) / 3];
+
+	for (uint i = 0; i < ARRAYSIZE(lowColorMap); i++) {
+		uint colorIndex = 3 * i;
+		byte red = originalPalette[colorIndex + 0];
+		byte green = originalPalette[colorIndex + 1];
+		byte blue = originalPalette[colorIndex + 2];
+
+		lowColorMap[i] = getColorIndex(targetPalette, red, green, blue);
+	}
+
+	for (uint i = 0; i < ARRAYSIZE(highColorMap); i++) {
+		uint colorIndex = 3 * (i + 246);
+		byte red = originalPalette[colorIndex + 0];
+		byte green = originalPalette[colorIndex + 1];
+		byte blue = originalPalette[colorIndex + 2];
+
+		highColorMap[i] = getColorIndex(targetPalette, red, green, blue);
+	}
+
+	// Replace the original palette with the target palette
+	memcpy(originalPalette, targetPalette, sizeof(targetPalette));
+
+	// Remap the pixel data to the target palette
+	Graphics::Surface *surface = mhkSurface->getSurface();
+	byte *pixels = (byte *) surface->getPixels();
+
+	for (int i = 0; i < surface->w * surface->h; i++) {
+		if (pixels[i] < ARRAYSIZE(lowColorMap)) {
+			pixels[i] = lowColorMap[pixels[i]];
+		} else if (pixels[i] >= 246) {
+			pixels[i] = highColorMap[pixels[i] - 246];
+		}
+	}
+}
+
+byte MystGraphics::getColorIndex(const byte *palette, byte red, byte green, byte blue) {
+	for (uint i = 0; i < 256; i++) {
+		if (palette[(3 * i) + 0] == red && palette[(3 * i) + 1] == green && palette[(3 * i) + 2] == blue) {
+			return i;
+		}
+	}
+
+	// GDI actually chooses the nearest color if no exact match is found,
+	// but this should not happen in Myst
+	debug(1, "Color (%d, %d, %d) not in target palette", red, green, blue);
+	return 0;
 }
 
 void MystGraphics::setPaletteToScreen() {

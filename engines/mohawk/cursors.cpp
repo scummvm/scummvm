@@ -34,8 +34,8 @@
 #include "graphics/wincursor.h"
 
 #ifdef ENABLE_MYST
-#include "mohawk/bitmap.h"
 #include "mohawk/myst.h"
+#include "mohawk/myst_graphics.h"
 #endif
 
 namespace Mohawk {
@@ -86,11 +86,9 @@ void DefaultCursorManager::setCursor(uint16 id) {
 #ifdef ENABLE_MYST
 
 MystCursorManager::MystCursorManager(MohawkEngine_Myst *vm) : _vm(vm) {
-	_bmpDecoder = new MystBitmap();
 }
 
 MystCursorManager::~MystCursorManager() {
-	delete _bmpDecoder;
 }
 
 void MystCursorManager::showCursor() {
@@ -111,17 +109,18 @@ void MystCursorManager::setCursor(uint16 id) {
 		return;
 	}
 
-	// Both Myst and Myst ME use the "MystBitmap" format for cursor images.
-	MohawkSurface *mhkSurface = _bmpDecoder->decodeImage(_vm->getResource(ID_WDIB, id));
-	Graphics::Surface *surface = mhkSurface->getSurface();
 	Common::SeekableReadStream *clrcStream = _vm->getResource(ID_CLRC, id);
 	uint16 hotspotX = clrcStream->readUint16LE();
 	uint16 hotspotY = clrcStream->readUint16LE();
 	delete clrcStream;
 
+	// Both Myst and Myst ME use the "MystBitmap" format for cursor images.
+	MohawkSurface *mhkSurface = _vm->_gfx->findImage(id);
+	Graphics::Surface *surface = mhkSurface->getSurface();
+
 	// Myst ME stores some cursors as 24bpp images instead of 8bpp
 	if (surface->format.bytesPerPixel == 1) {
-		CursorMan.replaceCursor(surface->getPixels(), surface->w, surface->h, hotspotX, hotspotY, 0);
+		CursorMan.replaceCursor(surface->getPixels(), surface->w, surface->h, hotspotX, hotspotY, 255);
 
 		// We're using the screen palette for the original game, but we need
 		// to use this for any 8bpp cursor in ME.
@@ -133,7 +132,6 @@ void MystCursorManager::setCursor(uint16 id) {
 	}
 
 	_vm->_needsUpdate = true;
-	delete mhkSurface;
 }
 
 void MystCursorManager::setDefaultCursor() {
