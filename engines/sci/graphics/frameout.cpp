@@ -253,6 +253,28 @@ void GfxFrameout::syncWithScripts(bool addElements) {
 }
 
 #pragma mark -
+#pragma mark Benchmarking
+
+bool GfxFrameout::checkForFred(const reg_t object) {
+	const int16 viewId = readSelectorValue(_segMan, object, SELECTOR(view));
+	const SciGameId gameId = g_sci->getGameId();
+
+	if (gameId == GID_QFG4 && viewId == 9999) {
+		return true;
+	}
+
+	if (gameId != GID_QFG4 && viewId == -556) {
+		return true;
+	}
+
+	if (Common::String(_segMan->getObjectName(object)) == "fred") {
+		return true;
+	}
+
+	return false;
+}
+
+#pragma mark -
 #pragma mark Screen items
 
 void GfxFrameout::deleteScreenItem(ScreenItem *screenItem, Plane *plane) {
@@ -276,10 +298,7 @@ void GfxFrameout::kernelAddScreenItem(const reg_t object) {
 	// it is impacted by framerate throttling, so disable the
 	// throttling when this item is on the screen for the
 	// performance check to pass.
-	if (!_benchmarkingFinished && (
-		(int16)readSelectorValue(_segMan, object, SELECTOR(view)) == -556 ||
-		Common::String(_segMan->getObjectName(object)) == "fred"
-	)) {
+	if (!_benchmarkingFinished && _throttleFrameOut && checkForFred(object)) {
 		_throttleFrameOut = false;
 	}
 
@@ -326,10 +345,7 @@ void GfxFrameout::kernelDeleteScreenItem(const reg_t object) {
 	// it is impacted by framerate throttling, so disable the
 	// throttling when this item is on the screen for the
 	// performance check to pass.
-	if (!_benchmarkingFinished && (
-		(int16)readSelectorValue(_segMan, object, SELECTOR(view)) == -556 ||
-		Common::String(_segMan->getObjectName(object)) == "fred"
-	)) {
+	if (!_benchmarkingFinished && checkForFred(object)) {
 		_benchmarkingFinished = true;
 		_throttleFrameOut = true;
 	}

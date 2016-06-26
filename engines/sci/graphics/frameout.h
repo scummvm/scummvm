@@ -189,6 +189,12 @@ private:
 	 */
 	bool _throttleFrameOut;
 
+	/**
+	 * Determines whether or not a screen item is the "Fred"
+	 * object.
+	 */
+	bool checkForFred(const reg_t object);
+
 #pragma mark -
 #pragma mark Screen items
 private:
