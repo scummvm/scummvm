@@ -717,6 +717,68 @@ void ChampionMan::renameChampion(Champion* champ) {
 		dispMan.updateScreen();
 	}
 }
+
+uint16 ChampionMan::getSkillLevel(ChampionIndex champIndex, ChampionSkill skillIndex) {
+	if (_partyIsSleeping)
+		return 1;
+
+	bool ignoreTempExp = skillIndex & kIgnoreTemporaryExperience;
+	bool ignoreObjModifiers = skillIndex & kIgnoreObjectModifiers;
+	skillIndex = (ChampionSkill)(skillIndex & ~(ignoreTempExp | ignoreObjModifiers));
+	Champion *champ = &_champions[champIndex];
+	Skill *skill = &champ->getSkill(skillIndex);
+	int32 experience = skill->_experience;
+
+	if (!ignoreTempExp)
+		experience += skill->_temporaryExperience;
+
+	if (skillIndex > kChampionSkillWizard) { // hidden skill
+		skill = &champ->getSkill((ChampionSkill)((skillIndex - kChampionSkillSwing) / 4));
+		experience += skill->_experience; // add exp to the base skill
+		if (!ignoreTempExp)
+			experience += skill->_temporaryExperience;
+
+		experience /= 2; // halve the exp to get avarage of base skill + hidden skill exp
+	}
+
+	int16 skillLevel = 1;
+	while (experience >= 500) {
+		experience /= 2;
+		skillLevel++;
+	}
+
+	if (!ignoreObjModifiers) {
+		IconIndice actionHandIconIndex = _vm->_objectMan->getIconIndex(champ->getSlot(kChampionSlotActionHand));
+		if (actionHandIconIndex == kIconIndiceWeaponTheFirestaff) {
+			skillLevel++;
+		} else if (actionHandIconIndex == kIconIndiceWeaponTheFirestaffComplete) {
+			skillLevel += 2;
+		}
+
+		IconIndice neckIconIndice = _vm->_objectMan->getIconIndex(champ->getSlot(kChampionSlotNeck));
+		switch (skillIndex) {
+		case kChampionSkillWizard:
+			if (neckIconIndice == kIconIndiceJunkPendantFeral)
+				skillLevel++;
+			break;
+		case kChampionSkillDefend:
+			if (neckIconIndice == kIconIndiceJunkEkkhardCross)
+				skillLevel++;
+			break;
+		case kChampionSkillHeal:
+			// these two are not cummulative
+			if ((neckIconIndice == kIconIndiceJunkGemOfAges) || (neckIconIndice == kIconIndiceWeaponSceptreOfLyf))
+				skillLevel++;
+			break;
+		case kChampionSkillInfluence:
+			if (neckIconIndice == kIconIndiceJunkMoonstone)
+				skillLevel++;
+			break;
+		}
+	}
+	return skillLevel;
+}
+
 }
 
 

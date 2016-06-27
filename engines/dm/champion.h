@@ -35,6 +35,9 @@
 
 namespace DM {
 
+#define kIgnoreObjectModifiers 0x4000 // @ MASK0x4000_IGNORE_OBJECT_MODIFIERS     
+#define kIgnoreTemporaryExperience 0x8000 // @ MASK0x8000_IGNORE_TEMPORARY_EXPERIENCE 
+
 extern Box gBoxChampionIcons[4]; // @ G0054_ai_Graphic562_Box_ChampionIcons
 extern Color gChampionColor[4]; // @ G0046_auc_Graphic562_ChampionColor
 
@@ -365,7 +368,7 @@ public:
 	Thing getSlot(ChampionSlot slot) { return _slots[slot]; }
 	void setSlot(ChampionSlot slot, Thing val) { _slots[slot] = val; }
 
-	Skill getSkill(ChampionSkill skill) { return _skills[skill]; }
+	Skill &getSkill(ChampionSkill skill) { return _skills[skill]; }
 	void setSkillExp(ChampionSkill skill,  int32 val) { _skills[skill]._experience = val; }
 	void setSkillTempExp(ChampionSkill skill,  int16 val) { _skills[skill]._temporaryExperience= val; }
 
@@ -453,6 +456,7 @@ public:
 	void drawHealthStaminaManaValues(Champion *champ); // @ F0290_CHAMPION_DrawHealthStaminaManaValues
 	void drawSlot(uint16 champIndex, ChampionSlot slotIndex); // @ F0291_CHAMPION_DrawSlot
 	void renameChampion(Champion* champ); // @ F0281_CHAMPION_Rename
+	uint16 getSkillLevel(ChampionIndex champIndex, ChampionSkill skillIndex);// @ F0303_CHAMPION_GetSkillLevel
 };
 
 
