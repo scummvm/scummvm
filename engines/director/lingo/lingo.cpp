@@ -122,9 +122,32 @@ void Lingo::addCode(Common::String code, ScriptType type, uint16 id) {
 	_currentScriptType = type;
 	_scripts[type][id] = _currentScript;
 
-	parse(code.c_str());
+	// macros have conflicting grammar. Thus we ease life for the parser.
+	if (code.contains("\nmacro ")) {
+		const char *begin = strstr(code.c_str(), "\nmacro ") + 1;
+		char *end;
+		bool first = true;
 
-	code1(STOP);
+		while ((end = strstr(begin, "\nmacro "))) {
+			if (first) {
+				begin = code.c_str();
+				first = false;
+			}
+			Common::String chunk(begin, end);
+
+			parse(chunk.c_str());
+
+			_currentScript->clear();
+
+			begin = end + 1;
+		}
+
+		parse(begin);
+	} else {
+		parse(code.c_str());
+
+		code1(STOP);
+	}
 
 	Common::hexdump((byte *)&_currentScript->front(), _currentScript->size() * sizeof(inst));
 }
