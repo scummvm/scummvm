@@ -108,9 +108,9 @@ IconIndice ObjectMan::getIconIndex(Thing thing) {
 	IconIndice iconIndex = getObjectType(thing);
 
 	if ((iconIndex != kIconIndiceNone) &&
-		((iconIndex < kIconIndiceWeaponDagger) && (iconIndex >= kIconIndiceJunkCompassNorth)) || // < instead of <= is no error
-		((iconIndex >= kIconIndicePotionMaPotionMonPotion) && (iconIndex <= kIconIndicePotionWaterFlask)) ||
-		(iconIndex == kIconIndicePotionEmptyFlask)
+		(((iconIndex < kIconIndiceWeaponDagger) && (iconIndex >= kIconIndiceJunkCompassNorth)) || // < instead of <= is no error
+		 ((iconIndex >= kIconIndicePotionMaPotionMonPotion) && (iconIndex <= kIconIndicePotionWaterFlask)) ||
+		 (iconIndex == kIconIndicePotionEmptyFlask))
 		) {
 		uint16 *rawType = _vm->_dungeonMan->getThingData(thing);
 		switch (iconIndex) {
