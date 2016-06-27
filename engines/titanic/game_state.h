@@ -124,6 +124,11 @@ public:
 	 */
 	void addMovie(CMovie *movie);
 
+	void inc14() { _field14 = (_field14 + 1) & 3; }
+	void set24(int v) { _field24 = v; }
+	int get24() const { return _field24; }
+	int getNodeChangedCtr() const { return _nodeChangeCtr; }
+	uint32 getNodeEnterTicks() const { return _nodeEnterTicks; }
 	void inc38() { ++_field38; }
 };
 
