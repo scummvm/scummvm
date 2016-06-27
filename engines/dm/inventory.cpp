@@ -33,7 +33,6 @@
 #include "text.h"
 
 
-
 namespace DM {
 
 Box gBoxFloppyZzzCross = Box(174, 218, 2, 12); // @ G0041_s_Graphic562_Box_ViewportFloppyZzzCross
@@ -236,4 +235,15 @@ void InventoryMan::closeChest() {
 	}
 }
 
+void InventoryMan::drawPanelScrollTextLine(int16 yPos, char* text) {
+	warning("CHANGE5_03_IMPROVEMENT");
+	for (char* iter = text; *iter != '\0'; ++iter) {
+		if ((*iter >= 'A') && (*iter <= 'Z')) {
+			*iter -= 64;
+		} else if (*iter >= '{') { // this branch is CHANGE5_03_IMPROVEMENT
+			*iter -= 96;
+		}
+	}
+	_vm->_textMan->printToViewport(162 - (6 * strlen(text) / 2), yPos, kColorBlack, text, kColorWhite);
+}
 }

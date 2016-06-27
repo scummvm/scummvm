@@ -45,16 +45,27 @@ F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
 				G0035_s_Graphic562_Box_Food // done 
 				G0036_s_Graphic562_Box_Water // done 
 				G0037_s_Graphic562_Box_Poisoned // done
-
 			F0351_INVENTORY_DrawChampionSkillsAndStatistics // skip -----------------
 			F0347_INVENTORY_DrawPanel // done
-				F0342_INVENTORY_DrawPanel_Object // skip ---------------------
-				F0346_INVENTORY_DrawPanel_ResurrectReincarnate // done
+				F0342_INVENTORY_DrawPanel_Object
+					F0341_INVENTORY_DrawPanel_Scroll
+						F0340_INVENTORY_DrawPanel_ScrollTextLine // done
+					F0333_INVENTORY_OpenAndDrawChest
+					F0303_CHAMPION_GetSkillLevel
+					F0332_INVENTORY_DrawIconToViewport
+					F0336_INVENTORY_DrawPanel_BuildObjectAttributesString
+					F0335_INVENTORY_DrawPanel_ObjectDescriptionString
+					F0339_INVENTORY_DrawPanel_ArrowOrEye
+					G0430_apc_DirectionNames
+					G0034_s_Graphic562_Box_ObjectDescriptionCircle
+					G0032_s_Graphic562_Box_Panel
+					G0352_apc_ObjectNames
+					G0237_as_Graphic559_ObjectInfo
+					G0422_i_ObjectDescriptionTextY
 
+				F0346_INVENTORY_DrawPanel_ResurrectReincarnate // done
 			F0291_CHAMPION_DrawSlot // done
 				F0038_OBJECT_DrawIconInSlotBox // done
-
-
 		F0140_DUNGEON_GetObjectWeight // done
 			G0238_as_Graphic559_WeaponInfo // done
 				WEAPON_INFO // done
@@ -108,8 +119,6 @@ F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
 			F0163_DUNGEON_LinkThingToList // done
 			G0426_T_OpenChest // done
 			G0425_aT_ChestSlots // done
-
-
 		F0395_MENUS_DrawMovementArrows // done
 		F0357_COMMAND_DiscardAllInput // skip
 		F0098_DUNGEONVIEW_DrawFloorAndCeiling // wat
@@ -135,11 +144,11 @@ F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
 	G0234_ai_Graphic559_DirectionToStepNorthCount // done
 	G0237_as_Graphic559_ObjectInfo // done
 	G0038_ai_Graphic562_SlotMasks // done
-								
+						
+
 F0462_START_StartGame_CPSF
 	F0003_MAIN_ProcessNewPartyMap_CPSE // partially done
 	F0278_CHAMPION_ResetDataToStartGame // paritally done
-
 	G0331_B_PressingEye // dm // done
 	G0332_B_StopPressingEye // dm // done
 	G0333_B_PressingMouth // dm // done
@@ -150,6 +159,7 @@ F0462_START_StartGame_CPSF
 	G0506_ui_ActingChampionOrdinal // champion // done
 	G0509_B_ActionAreaContainsIcons // menus // done
 	G0599_ui_UseChampionIconOrdinalAsMousePointerBitmap // eventman // done
+
 
 F0463_START_InitializeGame_CPSADEF // partially done
 	F0267_MOVE_GetMoveResult_CPSCE // skip, really though

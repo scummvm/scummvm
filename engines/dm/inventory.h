@@ -65,6 +65,7 @@ public:
 	void drawPanelResurrectReincarnate(); // @ F0346_INVENTORY_DrawPanel_ResurrectReincarnate
 	void drawPanel(); // @ F0347_INVENTORY_DrawPanel
 	void closeChest(); // @ F0334_INVENTORY_CloseChest
+	void drawPanelScrollTextLine(int16 yPos, char *text); // @ F0340_INVENTORY_DrawPanel_ScrollTextLine
 
 };
 
