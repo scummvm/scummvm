@@ -26,7 +26,7 @@
 #include "macventure/macventure.h"
 #include "macventure/gui.h"
 
-// TBDeleted
+// For the dragged object
 #include "common/system.h"
 
 namespace MacVenture {
@@ -94,6 +94,11 @@ void menuCommandsCallback(int action, Common::String &text, void *data);
 Gui::Gui(MacVentureEngine *engine, Common::MacResManager *resman) {
 	_engine = engine;
 	_resourceManager = resman;
+	_windowData = nullptr;
+	_controlData = nullptr;
+	_draggedObj.id = 0;
+	_draggedObj.pos = Common::Point(0, 0);
+
 	initGUI();
 }
 
@@ -119,6 +124,8 @@ void Gui::draw() {
 	drawWindows();
 
 	_wm.draw();
+
+	drawDraggedObject();
 
 	//drawWindowTitle(kMainGameWindow, _mainGameWindow->getSurface());
 }
@@ -648,7 +655,7 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 		mode = (BlitMode)data.children[i].mode;
 		pos = _engine->getObjPosition(child);
 
-		if (pos != forbidden || child < 600) { // Small HACK until I figre out where the last garbage child in main game window comes from
+		if (pos != forbidden && child < 600 && child != _draggedObj.id) { // Small HACK until I figre out where the last garbage child in main game window comes from
 			if (!_assets.contains(child)) {
 				_assets[child] = new ImageAsset(child, _graphics);
 			}
@@ -687,6 +694,30 @@ void Gui::drawWindowTitle(WindowReference target, Graphics::ManagedSurface * sur
 		right - left,
 		kColorBlack,
 		Graphics::kTextAlignCenter);
+}
+
+void Gui::drawDraggedObject() {
+	if (_draggedObj.id != 0) {
+		if (!_assets.contains(_draggedObj.id))
+			_assets[_draggedObj.id] = new ImageAsset(_draggedObj.id, _graphics);
+
+		ImageAsset *asset = _assets[_draggedObj.id];
+
+		_draggedSurface.create(asset->getWidth(), asset->getHeight(), _screen.format);
+		_screen.copyRectToSurface(_draggedSurface, _draggedObj.pos.x, _draggedObj.pos.y,
+			Common::Rect(asset->getWidth() - 1, asset->getHeight() - 1));
+
+		asset->blitInto(&_draggedSurface, 0, 0, kBlitOR);
+
+		g_system->copyRectToScreen(
+			_draggedSurface.getPixels(),
+			_draggedSurface.pitch,
+			_draggedObj.pos.x,
+			_draggedObj.pos.y,
+			_draggedSurface.w,
+			_draggedSurface.h);
+
+	}
 }
 
 WindowData & Gui::findWindowData(WindowReference reference) {
@@ -745,6 +776,18 @@ bool Gui::isRectInsideObject(Common::Rect target, ObjID obj) {
 		}
 	}
 	return false;
+}
+
+void Gui::selectDraggable(ObjID child, Common::Point pos) {
+	if (_engine->isObjClickable(child)) {
+		_draggedObj.id = child;
+		_draggedObj.pos = pos;
+	}
+}
+
+void Gui::handleDragRelease(Common::Point pos) {
+	_draggedObj.id = 0;
+	_engine->updateDelta(pos);
 }
 
 
@@ -919,10 +962,19 @@ uint Gui::getObjHeight(ObjID obj) {
 
 bool Gui::processEvent(Common::Event &event) {
 	bool processed = false;
-	if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP) {
-		_engine->updateDelta(event.mouse);
+	if (event.type == Common::EVENT_MOUSEMOVE) {
+		if (_draggedObj.id != 0) {
+			_draggedObj.pos = event.mouse;
+		}
 		processed = true;
 	}
+	else if (event.type == Common::EVENT_LBUTTONUP) {
+		if (_draggedObj.id != 0) {
+			handleDragRelease(event.mouse);
+		}
+		processed = true;
+	}
+
 	processed |= _wm.processEvent(event);
 	return (processed);
 }
@@ -966,7 +1018,7 @@ bool MacVenture::Gui::processMainGameEvents(WindowClick click, Common::Event & e
 	if (_engine->needsClickToContinue())
 		return true;
 
-	if (click == kBorderInner && event.type == Common::EVENT_LBUTTONUP) {
+	if (click == kBorderInner && event.type == Common::EVENT_LBUTTONDOWN) {
 		WindowData &data = findWindowData(kMainGameWindow);
 		ObjID child;
 		Common::Point pos;
@@ -977,6 +1029,7 @@ bool MacVenture::Gui::processMainGameEvents(WindowClick click, Common::Event & e
 		for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
 			child = (*it).obj;
 			if (isRectInsideObject(clickRect, child)) {
+				selectDraggable(child, event.mouse);
 				_engine->handleObjectSelect(child, kMainGameWindow, event);
 			}
 		}
@@ -1017,7 +1070,7 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event & event) {
 	if (_engine->needsClickToContinue())
 		return true;
 
-	if (click == kBorderInner && event.type == Common::EVENT_LBUTTONUP) {
+	if (click == kBorderInner && event.type == Common::EVENT_LBUTTONDOWN) {
 
 		// Find the appropriate window
 		uint ref = 0;
@@ -1038,6 +1091,7 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event & event) {
 		for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
 			child = (*it).obj;
 			if (isRectInsideObject(clickRect, child)) {
+				selectDraggable(child, event.mouse);
 				_engine->handleObjectSelect(child, (WindowReference)ref, event);
 			}
 		}
