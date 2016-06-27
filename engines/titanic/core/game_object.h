@@ -290,11 +290,6 @@ protected:
 	CTreeItem *getDontSaveChild(ClassDef *classDef) const;
 
 	/**
-	 * Return the current room
-	 */
-	CRoomItem *getRoom() const;
-
-	/**
 	 * Returns the special hidden room container
 	 */
 	CRoomItem *getHiddenRoom() const;
@@ -529,6 +524,23 @@ public:
 	
 	bool compareRoomFlags(int mode, uint flags1, uint flags2);
 
+	/*--- CGameManager Methods ---*/
+
+	/**
+	 * Return the current room
+	 */
+	CRoomItem *getRoom() const;
+
+	/**
+	 * Return the current node
+	 */
+	CNodeItem *getNode() const;
+
+	/**
+	 * Return the current room
+	 */
+	CViewItem *getView() const;
+
 	/*--- CPetControl Methods ---*/
 
 	/**
@@ -623,6 +635,9 @@ public:
 	 * Returns the star control
 	 */
 	CStarControl *getStarControl() const;
+
+	void starFn1(int v);
+	void starFn2();
 
 	/*--- CTrueTalkManager Methods ---*/
 

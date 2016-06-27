@@ -53,7 +53,9 @@ public:
 	 */
 	virtual void load(SimpleFile *file);
 
+	void fn1(int v);
 	void fn3();
+	void fn4();
 };
 
 } // End of namespace Titanic

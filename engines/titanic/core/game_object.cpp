@@ -869,17 +869,6 @@ CMailMan *CGameObject::getMailMan() const {
 	return dynamic_cast<CMailMan *>(getDontSaveChild(CMailMan::_type));
 }
 
-CStarControl *CGameObject::getStarControl() const {
-	CStarControl *starControl = static_cast<CStarControl *>(getDontSaveChild(CStarControl::_type));
-	if (!starControl) {
-		CViewItem *view = getGameManager()->getView();
-		if (view)
-			starControl = starControl = static_cast<CStarControl *>(view->findChildInstanceOf(CStarControl::_type));
-	}
-
-	return starControl;
-}
-
 CTreeItem *CGameObject::getDontSaveChild(ClassDef *classDef) const {
 	CProjectItem *root = getRoot();
 	if (!root)
@@ -890,11 +879,6 @@ CTreeItem *CGameObject::getDontSaveChild(ClassDef *classDef) const {
 		return nullptr;
 
 	return dontSave->findChildInstanceOf(classDef);
-}
-
-CRoomItem *CGameObject::getRoom() const {
-	CGameManager *gameManager = getGameManager();
-	return gameManager ? gameManager->getRoom() : nullptr;
 }
 
 CRoomItem *CGameObject::getHiddenRoom() const {
@@ -1043,6 +1027,25 @@ void CGameObject::resetMail() {
 		mailMan->resetValue();
 }
 
+/*------------------------------------------------------------------------*/
+
+CRoomItem *CGameObject::getRoom() const {
+	CGameManager *gameManager = getGameManager();
+	return gameManager ? gameManager->getRoom() : nullptr;
+}
+
+CNodeItem *CGameObject::getNode() const {
+	CGameManager *gameManager = getGameManager();
+	return gameManager ? gameManager->getNode() : nullptr;
+}
+
+CViewItem *CGameObject::getView() const {
+	CGameManager *gameManager = getGameManager();
+	return gameManager ? gameManager->getView() : nullptr;
+}
+
+/*------------------------------------------------------------------------*/
+
 void CGameObject::petAddToCarryParcel(CGameObject *obj) {
 	CPetControl *pet = getPetControl();
 	if (pet) {
@@ -1146,6 +1149,31 @@ void CGameObject::petOnSummonBot(const CString &name, int val) {
 
 void CGameObject::petUnlockInput() {
 	getPetControl()->decInputLocks();
+}
+
+/*------------------------------------------------------------------------*/
+
+CStarControl *CGameObject::getStarControl() const {
+	CStarControl *starControl = static_cast<CStarControl *>(getDontSaveChild(CStarControl::_type));
+	if (!starControl) {
+		CViewItem *view = getGameManager()->getView();
+		if (view)
+			starControl = starControl = static_cast<CStarControl *>(view->findChildInstanceOf(CStarControl::_type));
+	}
+
+	return starControl;
+}
+
+void CGameObject::starFn1(int v) {
+	CStarControl *starControl = getStarControl();
+	if (starControl)
+		starControl->fn1(v);
+}
+
+void CGameObject::starFn2() {
+	CStarControl *starControl = getStarControl();
+	if (starControl)
+		starControl->fn4();
 }
 
 /*------------------------------------------------------------------------*/

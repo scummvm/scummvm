@@ -57,4 +57,12 @@ void CStarControl::fn3() {
 	warning("CStarControl::fn3");
 }
 
+void CStarControl::fn1(int v) {
+	warning("CStarControl::fn1");
+}
+
+void CStarControl::fn4() {
+	warning("CStarControl::fn4");
+}
+
 } // End of namespace Titanic
