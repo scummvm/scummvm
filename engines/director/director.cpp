@@ -75,6 +75,29 @@ Common::Error DirectorEngine::run() {
 	_soundManager = new DirectorSound();
 
 #if 0
+_lingo->addCode("--\n\
+macro check par1, par2\n\
+if par1 = 3 then\n\
+  put -3\n\
+else\n\
+  put 0\n\
+end if\n\
+if par2 = 2 then\n\
+  put 2\n\
+else\n\
+  put 0\n\
+end if\n\
+put par1\n\
+put par2\n\
+", kMovieScript, 5);
+
+_lingo->addCode("check(3, 2)\n\
+", kMovieScript, 2);
+
+_lingo->executeScript(kMovieScript, 2);
+
+return Common::kNoError;
+
 	_lingo->addCode("--\n\
 macro SHIPX\n\
 set x = 5\n\
@@ -107,7 +130,8 @@ else\n\
 end if\n\
 ", kMovieScript, 1);
 
-_lingo->addCode("shipx\n\
+_lingo->addCode("check(2, 3)\n\
+shipx\n\
 put x\n\
 ", kMovieScript, 2);
 

@@ -53,6 +53,12 @@ namespace Director {
 
 void Lingo::execute(int pc) {
 	for(_pc = pc; (*_currentScript)[_pc] != STOP && !_returning;) {
+
+		for (int i = 0; i < _stack.size(); i++) {
+			debugN(5, "%d ", _stack[i].val);
+		}
+		debug(5, "");
+
 		_pc++;
 		(*((*_currentScript)[_pc - 1]))();
 	}
@@ -404,6 +410,7 @@ void Lingo::codeArg(Common::String &s) {
 	g_lingo->code1(g_lingo->c_varpush);
 	g_lingo->codeString(s.c_str());
 	g_lingo->code1(g_lingo->c_assign);
+	g_lingo->code1(g_lingo->c_xpop);
 }
 
 int Lingo::codeId(Common::String &s) {
