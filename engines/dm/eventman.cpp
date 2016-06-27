@@ -706,4 +706,4 @@ bool EventManager::hasPendingClick(Common::Point& point, MouseButton button) {
 	return _pendingClickPresent;
 }
 
-}; // end of namespace DM
+} // end of namespace DM
