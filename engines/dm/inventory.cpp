@@ -31,6 +31,7 @@
 #include "menus.h"
 #include "gfx.h"
 #include "text.h"
+#include "objectman.h"
 
 
 namespace DM {
@@ -254,7 +255,7 @@ void InventoryMan::drawPanelScroll(Scroll* scroll) {
 	_vm->_dungeonMan->decodeText(stringFirstLine, Thing(scroll->getTextStringThingIndex()), (TextType)(kTextTypeScroll | kDecodeEvenIfInvisible));
 	char *charRed = stringFirstLine;
 	while (*charRed && (*charRed != '\n')) {
-		charRed++;									   
+		charRed++;
 	}
 	*charRed = '\0';
 	dispMan.blitToScreen(dispMan.getBitmap(kPanelOpenScrollIndice), 144, 0, 0, gBoxPanel, kColorRed, gDungeonViewport);
@@ -265,7 +266,7 @@ void InventoryMan::drawPanelScroll(Scroll* scroll) {
 		warning("BUG0_47");
 		/* BUG0_47 Graphical glitch when you open a scroll. If there is a single line of text in a scroll
 		(with no carriage return) then charGreen points to undefined data. This may result in a graphical
-		glitch and also corrupt other memory. This is not an issue in the original dungeons where all 
+		glitch and also corrupt other memory. This is not an issue in the original dungeons where all
 		scrolls contain at least one carriage return character */
 		if (*charGreen == '\n') {
 			lineCount++;
@@ -291,6 +292,41 @@ void InventoryMan::drawPanelScroll(Scroll* scroll) {
 		*charRed++ = '\0';
 		drawPanelScrollTextLine(yPos, charGreen);
 		charGreen = charRed;
+	}
+}
+
+void InventoryMan::openAndDrawChest(Thing thingToOpen, Container* chest, bool isPressingEye) {
+	DisplayMan &dispMan = *_vm->_displayMan;
+	ObjectMan &objMan = *_vm->_objectMan;
+
+	if (_openChest == thingToOpen)
+		return;
+
+	warning("CHANGE8_09_FIX");
+	if (_openChest != Thing::_thingNone)
+		closeChest(); // CHANGE8_09_FIX
+
+	_openChest = thingToOpen;
+	if (!isPressingEye) {
+		objMan.drawIconInSlotBox(kSlotBoxInventoryActionHand, kIconIndiceContainerChestOpen);
+	}
+	dispMan.blitToScreen(dispMan.getBitmap(kPanelOpenChestIndice), 144, 0, 0, gBoxPanel, kColorRed);
+	
+	int16 chestSlotIndex = 0;
+	Thing thing = chest->getSlot();
+	int16 thingCount = 0;
+	while (thing != Thing::_thingEndOfList) {
+		warning("CHANGE8_08_FIX");
+		if (++thingCount > 8)
+			break; // CHANGE8_08_FIX, make sure that no more than the first 8 objects in a chest are drawn
+
+		objMan.drawIconInSlotBox(chestSlotIndex + kSlotBoxChestFirstSlot, objMan.getIconIndex(thing));
+		_chestSlots[chestSlotIndex++] = thing;
+		thing = _vm->_dungeonMan->getNextThing(thing);
+	}
+	while (chestSlotIndex < 8) {
+		objMan.drawIconInSlotBox(chestSlotIndex + kSlotBoxChestFirstSlot, kIconIndiceNone);
+		_chestSlots[chestSlotIndex++] = Thing::_thingNone;
 	}
 }
 

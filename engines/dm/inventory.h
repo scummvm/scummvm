@@ -35,6 +35,7 @@
 namespace DM {
 
 #define kChampionStatusBoxSpacing 69 // @ C69_CHAMPION_STATUS_BOX_SPACING
+#define kSlotBoxChestFirstSlot 38 // @ C38_SLOT_BOX_CHEST_FIRST_SLOT
 
 
 extern Box gBoxPanel; // @ G0032_s_Graphic562_Box_Panel
@@ -68,6 +69,7 @@ public:
 	void closeChest(); // @ F0334_INVENTORY_CloseChest
 	void drawPanelScrollTextLine(int16 yPos, char *text); // @ F0340_INVENTORY_DrawPanel_ScrollTextLine
 	void drawPanelScroll(Scroll *scoll); // @ F0341_INVENTORY_DrawPanel_Scroll
+	void openAndDrawChest(Thing thingToOpen, Container *chest, bool isPressingEye); // @ F0333_INVENTORY_OpenAndDrawChest
 
 };
 
