@@ -1,0 +1,18 @@
+Bugs:
+	Display:
+		Broken colour palette
+		Portraits, alcoves etc. look broken from afar
+		Ornaments are not displayed if looked at from certain angles
+		Ornaments are displayed where they should not be, probably error in the pseudo RNG
+		Command gui is broken
+	Logic:
+		Game crashes when reincaranting a fourth champion and trying to copy his portrait
+
+
+Todo:
+	Add wiki entry for DM
+	Rename GraphicIndice enum entires and have their name include GraphicIndice
+	I forgot to add localization warnings
+	Attend to Arnaud's notes on github
+	Double check enums with hex literals, I think I screwed the regex when processing them
+	
