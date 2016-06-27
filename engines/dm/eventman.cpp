@@ -508,14 +508,9 @@ void EventManager::commandSetLeader(ChampionIndex champIndex) {
 void EventManager::commandProcessType80ClickInDungeonViewTouchFrontWall() {
 	DungeonMan &dunMan = *_vm->_dungeonMan;
 	CurrMapData &currMap = dunMan._currMap;
-	uint16 mapX = currMap._partyPosX;
-	uint16 mapY = currMap._partyPosY;
-	mapX += gDirIntoStepCountEast[currMap._partyDir];
-	mapY += gDirIntoStepCountNorth[currMap._partyDir];
-	if ((mapX >= 0)
-		&& (mapX < currMap._width)
-		&& (mapY >= 0)
-		&& (mapY < currMap._height)) {
+	int16 mapX = currMap._partyPosX + gDirIntoStepCountEast[currMap._partyDir];
+	int16 mapY = currMap._partyPosY + gDirIntoStepCountNorth[currMap._partyDir];
+	if ((mapX >= 0) && (mapX < currMap._width) && (mapY >= 0) && (mapY < currMap._height)) {
 		_vm->_stopWaitingForPlayerInput = _vm->_movsens->sensorIsTriggeredByClickOnWall(mapX, mapY, returnOppositeDir(currMap._partyDir));
 	}
 }
@@ -527,7 +522,6 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 
 	int16 mapX;
 	int16 mapY;
-
 
 	if (dunMan._squareAheadElement == kElementTypeDoorFront) {
 		if (champMan._leaderIndex == kChampionNone) {
