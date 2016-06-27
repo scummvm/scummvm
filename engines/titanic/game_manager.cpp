@@ -34,14 +34,26 @@ CGameManager::CGameManager(CProjectItem *project, CGameView *gameView):
 		_project(project), _gameView(gameView), _trueTalkManager(this),
 		_inputHandler(this), _inputTranslator(&_inputHandler),		
 		_gameState(this), _sound(this), _musicRoom(this),
-		_field30(0), _soundMaker(nullptr), _field4C(0),
+		_treeItem(nullptr), _soundMaker(nullptr), _movieRoom(nullptr),
 		_dragItem(nullptr), _field54(0), _lastDiskTicksCount(0), _tickCount2(0) {
 	
 	CTimeEventInfo::_nextId = 0;
-	_videoSurface1 = nullptr;
-	_videoSurface2 = CScreenManager::_screenManagerPtr->createSurface(600, 340);
+	_movie = nullptr;
+	_movieSurface = CScreenManager::_screenManagerPtr->createSurface(600, 340);
 	_project->setGameManager(this);
 	g_vm->_filesManager->setGameManager(this);
+}
+
+CGameManager::~CGameManager() {
+	delete _movie;
+	delete _movieSurface;
+
+	if (_treeItem) {
+		_treeItem->destroyAll();
+		_treeItem = nullptr;
+	}
+
+	_project->resetGameManager();
 }
 
 void CGameManager::load(SimpleFile *file) {
@@ -107,8 +119,33 @@ void CGameManager::initBounds() {
 	_bounds = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
+void CGameManager::roomTransition(CRoomItem *oldRoom, CRoomItem *newRoom) {
+	delete _movie;
+	_movie = nullptr;
+
+	CResourceKey movieKey = (oldRoom == newRoom) ? oldRoom->getTransitionMovieKey() :
+		oldRoom->getExitMovieKey();
+	CString filename = movieKey.exists();
+	if (g_vm->_filesManager->fileExists(filename)) {
+		_movieSurface->freeSurface();
+		_movie = new OSMovie(filename, _movieSurface);
+	}
+}
+
 void CGameManager::playClip(CMovieClip *clip, CRoomItem *oldRoom, CRoomItem *newRoom) {
-	warning("TODO: CGameManager::playClip");
+	if (oldRoom != newRoom || newRoom != _movieRoom || !_movie)
+		roomTransition(oldRoom, newRoom);
+
+	if (clip && clip->_startFrame != clip->_endFrame && _movie) {
+		// Clip details specifying a sub-section of movie to play
+		Rect tempRect(20, 10, SCREEN_WIDTH - 20, 350);
+
+		lockInputHandler();
+		CScreenManager::_screenManagerPtr->_mouseCursor->hide();
+		_movie->playClip(tempRect, clip->_startFrame, clip->_endFrame);
+		CScreenManager::_screenManagerPtr->_mouseCursor->show();
+		unlockInputHandler();
+	}
 }
 
 void CGameManager::update() {
@@ -191,11 +228,11 @@ void CGameManager::updateDiskTicksCount() {
 }
 
 void CGameManager::viewChange() {
-	delete _videoSurface1;
-	delete _videoSurface2;
+	delete _movie;
+	delete _movieSurface;
 
-	_videoSurface1 = nullptr;
-	_videoSurface2 = CScreenManager::_screenManagerPtr->createSurface(600, 340);
+	_movie = nullptr;
+	_movieSurface = CScreenManager::_screenManagerPtr->createSurface(600, 340);
 	_trueTalkManager.clear();
 
 	for (CTreeItem *treeItem = _project; treeItem; treeItem = treeItem->scan(_project))

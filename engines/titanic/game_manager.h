@@ -44,12 +44,12 @@ class CGameManager {
 private:
 	CTrueTalkManager _trueTalkManager;
 	CTimeEventInfoList _timers;
-	int _field30;
+	CTreeItem *_treeItem;
 	CBackgroundSoundMaker *_soundMaker;
-	CVideoSurface *_videoSurface1;
-	int _field4C;
+	CMovie *_movie;
+	CRoomItem *_movieRoom;
 	int _field54;
-	CVideoSurface *_videoSurface2;
+	CVideoSurface *_movieSurface;
 	uint _lastDiskTicksCount;
 	uint _tickCount2;
 private:
@@ -62,6 +62,11 @@ private:
 	 * Handles any ongoing movie playback
 	 */
 	void updateMovies();
+
+	/**
+	 * Handles a room transition
+	 */
+	void roomTransition(CRoomItem *oldRoom, CRoomItem *newRoom);
 public:
 	CProjectItem *_project;
 	CGameView *_gameView;

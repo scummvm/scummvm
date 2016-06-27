@@ -72,6 +72,10 @@ public:
 	 * Get the TrueTalk script Id associated with the room
 	 */
 	int getScriptId() const;
+
+	CResourceKey getTransitionMovieKey();
+
+	CResourceKey getExitMovieKey();
 };
 
 } // End of namespace Titanic

@@ -63,7 +63,7 @@ CGameObject::CGameObject(): CNamedItem() {
 	_field4C = 0xFF;
 	_isMail = false;
 	_id = 0;
-	_field58 = 0;
+	_roomFlags = 0;
 	_visible = true;
 	_field60 = 0;
 	_cursorId = CURSOR_ARROW;
@@ -126,7 +126,7 @@ void CGameObject::load(SimpleFile *file) {
 		_visible = file->readNumber() != 0;
 		_isMail = file->readNumber();
 		_id = file->readNumber();
-		_field58 = file->readNumber();
+		_roomFlags = file->readNumber();
 
 		resourceKey.load(file);		
 		_surface = nullptr;
@@ -688,22 +688,27 @@ CGameObject *CGameObject::getMailManNextObject(CGameObject *prior) const {
 	return mailMan ? mailMan->getNextObject(prior) : nullptr;
 }
 
-CGameObject *CGameObject::findRoomObject(const CString &name) const {
-	return static_cast<CGameObject *>(findRoom()->findByName(name));
-}
-
-CGameObject *CGameObject::findUnder(CTreeItem *parent, const CString &name) {
-	if (!parent)
+CGameObject *CGameObject::findMailByFlags(int mode, uint roomFlags) {
+	CMailMan *mailMan = getMailMan();
+	if (!mailMan)
 		return nullptr;
-
-	for (CTreeItem *treeItem = parent->getFirstChild(); treeItem;
-	treeItem = treeItem->scan(parent)) {
-		if (!treeItem->getName().compareTo(name)) {
-			return dynamic_cast<CGameObject *>(treeItem);
-		}
+	
+	for (CGameObject *obj = mailMan->getFirstObject(); obj;
+			obj = mailMan->getNextObject(obj)) {
+		if (compareRoomFlags(mode, roomFlags, obj->_roomFlags))
+			return obj;
 	}
 
 	return nullptr;
+}
+
+CGameObject *CGameObject::getNextMail(CGameObject *prior) {
+	CMailMan *mailMan = getMailMan();
+	return mailMan ? mailMan->getNextObject(prior) : nullptr;
+}
+
+CGameObject *CGameObject::findRoomObject(const CString &name) const {
+	return static_cast<CGameObject *>(findRoom()->findByName(name));
 }
 
 Found CGameObject::find(const CString &name, CGameObject **item, int findAreas) {
@@ -895,6 +900,23 @@ CRoomItem *CGameObject::getRoom() const {
 CRoomItem *CGameObject::getHiddenRoom() const {
 	CProjectItem *root = getRoot();
 	return root ? root->findHiddenRoom() : nullptr;
+}
+
+CGameObject *CGameObject::getHiddenObject(const CString &name) const {
+	CRoomItem *room = getHiddenRoom();
+	return room ? static_cast<CGameObject *>(findUnder(room, name)) : nullptr;
+}
+
+CTreeItem *CGameObject::findUnder(CTreeItem *parent, const CString &name) const {
+	if (!parent)
+		return nullptr;
+
+	for (CTreeItem *item = parent->getFirstChild(); item; item = item->scan(parent)) {
+		if (item->getName() == name)
+			return item;
+	}
+
+	return nullptr;
 }
 
 CMusicRoom *CGameObject::getMusicRoom() const {

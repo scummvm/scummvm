@@ -386,6 +386,13 @@ public:
 	void resetActiveNPC();
 
 	/**
+	 * Resets NPC in conversations
+	 */
+	void convResetNPC() {
+		_conversations.resetNPC();
+	}
+
+	/**
 	 * Resets the conversation dials back to 0 position
 	 */
 	void resetDials0() { _conversations.resetDials0(); }
@@ -543,6 +550,23 @@ public:
 	bool isSuccUBusRoom(const CRoomFlags &roomFlags) {
 		return roomFlags.isSuccUBusRoomFlags();
 	}
+
+	/**
+	 * Called with a phonograph action for Send, Receive, or Record
+	 */
+	void phonographAction(const CString &action) {
+		// Original had some code that had no effect
+	}
+
+	/**
+	 * Sets the status buttons for the starfield control
+	 */
+	void starsSetButtons(int val1, int val2);
+
+	/**
+	 * Set whether the user has the galactic reference material
+	 */
+	void starsSetReference(bool hasRef);
 };
 
 } // End of namespace Titanic

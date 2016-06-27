@@ -251,7 +251,7 @@ CRoomItem *CPetControl::getHiddenRoom() {
 
 CGameObject *CPetControl::getHiddenObject(const CString &name) {
 	CRoomItem *room = getHiddenRoom();
-	return room ? findUnder(room, name) : nullptr;
+	return room ? static_cast<CGameObject *>(findUnder(room, name)) : nullptr;
 }
 
 bool CPetControl::containsPt(const Common::Point &pt) const {
@@ -675,6 +675,16 @@ int CPetControl::getMailDest(const CRoomFlags &roomFlags) const {
 		return roomFlags.getPassengerClassNum();
 
 	return roomFlags.getSuccUBusNum(roomFlags.getSuccUBusRoomName());
+}
+
+void CPetControl::starsSetButtons(int val1, int val2) {
+	_starfield.setButtons(val1, val2);
+	if (_currentArea == PET_STARFIELD)
+		_starfield.makePetDirty();
+}
+
+void CPetControl::starsSetReference(bool hasRef) {
+	_starfield.setHasReference(hasRef);
 }
 
 } // End of namespace Titanic

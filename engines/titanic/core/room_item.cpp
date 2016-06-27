@@ -183,4 +183,13 @@ int CRoomItem::getScriptId() const {
 	return 0;
 }
 
+CResourceKey CRoomItem::getTransitionMovieKey() {
+	_transitionMovieKey.scanForFile();
+	return _transitionMovieKey;
+}
+
+CResourceKey CRoomItem::getExitMovieKey() {
+	return _exitMovieKey;
+}
+
 } // End of namespace Titanic

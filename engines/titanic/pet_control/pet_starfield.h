@@ -41,7 +41,7 @@ private:
 	int _field18C;
 	CPetText _text;
 	bool _photoOn;
-	int _field210;
+	bool _hasReference;
 private:
 	/**
 	 * Setup the control
@@ -52,18 +52,6 @@ private:
 	 * Draw a button
 	 */
 	void drawButton(int offset, int index, CScreenManager *screenManager);
-
-	void set210(int val) { _field210 = val; }
-
-	/**
-	 * Sets the offsets for each of the buttons
-	 */
-	void setButtons(int val1, int val2);
-
-	/**
-	 * Make the PET as dirty, requiring a redraw
-	 */
-	void makePetDirty();
 
 	/**
 	 * Mouse down handling for Nav elements
@@ -115,6 +103,21 @@ public:
 	 * Save the data for the class to file
 	 */
 	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Sets the offsets for each of the buttons
+	 */
+	void setButtons(int val1, int val2);
+
+	/**
+	 * Sets whether the player has the galactic reference material
+	 */
+	void setHasReference(bool hasRef) { _hasReference = hasRef; }
+
+	/**
+	 * Make the PET as dirty, requiring a redraw
+	 */
+	void makePetDirty();
 };
 
 } // End of namespace Titanic

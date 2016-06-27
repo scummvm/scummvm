@@ -61,7 +61,11 @@ public:
 	 */
 	virtual void play(uint startFrame, uint endFrame, int v3, bool v4) = 0;
 	
-	virtual void proc10() = 0;
+	/**
+	 * Plays a sub-section of a movie
+	 */
+	virtual void playClip(const Rect &rect, uint startFrame, uint endFrame) = 0;
+	
 	virtual void proc11() = 0;
 	virtual void proc12(const CString &name, int flags, CGameObject *obj) = 0;
 
@@ -119,7 +123,11 @@ public:
 	 */
 	virtual void play(uint startFrame, uint endFrame, int v3, bool v4);
 	
-	virtual void proc10();
+	/**
+	 * Plays a sub-section of a movie
+	 */
+	virtual void playClip(const Rect &rect, uint startFrame, uint endFrame);
+
 	virtual void proc11();
 	virtual void proc12(const CString &name, int flags, CGameObject *obj);
 

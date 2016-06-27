@@ -196,11 +196,6 @@ protected:
 	int compareRoomNameTo(const CString &name);
 
 	/**
-	 * Display a message
-	 */
-	void displayMessage(const CString &msg) const;
-
-	/**
 	 * Gets the first object under the system MailMan
 	 */
 	CGameObject *getMailManFirstObject() const;
@@ -211,14 +206,19 @@ protected:
 	CGameObject *getMailManNextObject(CGameObject *prior) const;
 
 	/**
+	 * Find mail by room flags
+	 */
+	CGameObject *findMailByFlags(int mode, uint roomFlags);
+
+	/**
+	 * Find next mail from a given prior one
+	 */
+	CGameObject *getNextMail(CGameObject *prior);
+
+	/**
 	 * Finds an object by name within the object's room
 	 */
 	CGameObject *findRoomObject(const CString &name) const;
-
-	/**
-	 * Scan the specified room for an item by name
-	 */
-	static CGameObject *findUnder(CTreeItem *parent, const CString &name);
 
 	/**
 	 * Moves the item from it's original position to be under the current view
@@ -300,6 +300,16 @@ protected:
 	CRoomItem *getHiddenRoom() const;
 
 	/**
+	 * Returns a hidden object
+	 */
+	CGameObject *getHiddenObject(const CString &name) const;
+	
+	/**
+	 * Scan the specified room for an item by name
+	 */
+	CTreeItem *findUnder(CTreeItem *parent, const CString &name) const;
+
+	/**
 	 * Returns the music room instance from the game manager
 	 */
 	CMusicRoom *getMusicRoom() const;
@@ -366,7 +376,7 @@ protected:
 public:
 	bool _isMail;
 	int _id;
-	int _field58;
+	uint _roomFlags;
 	int _field60;
 	CursorId _cursorId;
 	bool _visible;

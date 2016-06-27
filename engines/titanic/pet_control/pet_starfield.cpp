@@ -28,7 +28,7 @@
 namespace Titanic {
 
 CPetStarfield::CPetStarfield() : _field18C(0), _photoOn(true),
-		_field210(0), _rect1(22, 352, 598, 478) {
+		_hasReference(false), _rect1(22, 352, 598, 478) {
 	_btnOffsets[0] = _btnOffsets[1] = _btnOffsets[2] = 0;
 }
 
@@ -86,7 +86,7 @@ bool CPetStarfield::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		CPETHelmetOnOffMsg helmetMsg;
 		helmetMsg.execute(_petControl->_remoteTarget);
 	} else if (_imgPhoto.MouseButtonDownMsg(msg->_mousePos)) {
-		if (_field210) {
+		if (_hasReference) {
 			_photoOn = !_photoOn;
 			CPETPhotoOnOffMsg photoMsg;
 			photoMsg.execute(_petControl->_remoteTarget);
@@ -124,7 +124,7 @@ bool CPetStarfield::isValid(CPetControl *petControl) {
 void CPetStarfield::load(SimpleFile *file, int param) {
 	if (!param) {
 		_photoOn = file->readNumber();
-		_field210 = file->readNumber();
+		_hasReference = file->readNumber();
 	}
 }
 
@@ -134,7 +134,7 @@ void CPetStarfield::postLoad() {
 
 void CPetStarfield::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(_photoOn, indent);
-	file->writeNumberLine(_field210, indent);
+	file->writeNumberLine(_hasReference, indent);
 }
 
 bool CPetStarfield::setupControl(CPetControl *petControl) {

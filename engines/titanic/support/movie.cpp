@@ -87,8 +87,8 @@ void OSMovie::play(uint startFrame, uint endFrame, int v3, bool v4) {
 	_state = MOVIE_NONE;
 }
 
-void OSMovie::proc10() {
-	warning("TODO: OSMovie::proc10");
+void OSMovie::playClip(const Rect &rect, uint startFrame, uint endFrame) {
+	warning("TODO: OSMovie::playClip");
 }
 
 void OSMovie::proc11() {

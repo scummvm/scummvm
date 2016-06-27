@@ -55,7 +55,7 @@ void CMailMan::addMail(CGameObject *obj, int id) {
 
 void CMailMan::setMailId(CGameObject *obj, int id) {
 	obj->_id = id;
-	obj->_field58 = 0;
+	obj->_roomFlags = 0;
 	obj->_isMail = true;
 }
 
@@ -68,11 +68,11 @@ CGameObject *CMailMan::findMail(int id) const {
 	return nullptr;
 }
 
-void CMailMan::removeMail(int id, int v) {
+void CMailMan::removeMail(int id, int roomFlags) {
 	for (CGameObject *obj = getFirstObject(); obj; obj = getNextObject(obj)) {
 		if (obj->_isMail && obj->_id == id) {
 			obj->_isMail = false;
-			obj->_field58 = v;
+			obj->_roomFlags = roomFlags;
 			break;
 		}
 	}
