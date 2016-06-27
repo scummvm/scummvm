@@ -520,19 +520,14 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 	ChampionMan &champMan = *_vm->_championMan;
 	CurrMapData &currMap = _vm->_dungeonMan->_currMap;
 
-	int16 mapX;
-	int16 mapY;
-
 	if (dunMan._squareAheadElement == kElementTypeDoorFront) {
-		if (champMan._leaderIndex == kChampionNone) {
+		if (champMan._leaderIndex == kChampionNone)
 			return;
-		}
-		mapX = currMap._partyPosX;
-		mapY = currMap._partyPosY;
-		mapX += gDirIntoStepCountEast[currMap._partyDir];
-		mapY += gDirIntoStepCountNorth[currMap._partyDir];
 
 		if (champMan._leaderEmptyHanded) {
+			int16 mapX = currMap._partyPosX + gDirIntoStepCountEast[currMap._partyDir];
+			int16 mapY = currMap._partyPosY + gDirIntoStepCountNorth[currMap._partyDir];
+
 			if (Door(dunMan.getSquareFirstThingData(mapX, mapY)).hasButton() &&
 				dunMan._dungeonViewClickableBoxes[kViewCellDoorButtonOrWallOrn].isPointInside(Common::Point(posX, posY - 33))) {
 				_vm->_stopWaitingForPlayerInput = true;
@@ -590,7 +585,6 @@ T0377019:
 					commandProcessType80ClickInDungeonViewTouchFrontWall();
 				}
 			}
-
 		} else {
 			warning("MISSING CODE: F0375_COMMAND_ProcessType80_ClickInDungeonView_IsLeaderHandObjectThrown in if branch");
 			for (int16 viewCell = kViewCellFronLeft; viewCell <= kViewCellBackLeft; viewCell++) {
@@ -633,11 +627,9 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 	}
 
 	champMan._candidateChampionOrdinal = _vm->indexToOrdinal(kChampionNone);
-	int16 mapX = currMap._partyPosX;
-	int16 mapY = currMap._partyPosY;
+	int16 mapX = currMap._partyPosX + gDirIntoStepCountEast[currMap._partyDir];
+	int16 mapY = currMap._partyPosY + gDirIntoStepCountNorth[currMap._partyDir];
 
-	mapX += gDirIntoStepCountEast[currMap._partyDir];
-	mapY += gDirIntoStepCountNorth[currMap._partyDir];
 	for (uint16 slotIndex = kChampionSlotReadyHand; slotIndex < kChampionSlotChest_1; slotIndex++) {
 		Thing thing = champ->getSlot((ChampionSlot)slotIndex);
 		if (thing != Thing::_thingNone) {
