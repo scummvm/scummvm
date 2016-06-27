@@ -809,18 +809,6 @@ get_subengines_build_string() {
 }
 
 #
-# Greet user
-#
-echo "Running ScummVM configure..."
-echo "Configure run on" `date` > $TMPLOG
-cat >> $TMPLOG <<EOF
-Invocation command line was:
-$0 $@
-Saved environment variables:
-LDFLAGS="$SAVED_LDFLAGS" CXX="$SAVED_CXX" CXXFLAGS="$SAVED_CXXFLAGS" CPPFLAGS="$SAVED_CPPFLAGS" ASFLAGS="$SAVED_ASFLAGS" WINDRESFLAGS="$SAVED_WINDRESFLAGS" SDL_CONFIG="$SAVED_SDL_CONFIG"
-EOF
-
-#
 # Check any parameters we received
 #
 # TODO:
@@ -1030,6 +1018,20 @@ EOF
 		exit 0
 	fi
 done # for parm in ...
+
+
+#
+# If we're not showing help, greet the user and start the log file
+#
+echo "Running ScummVM configure..."
+echo "Configure run on" `date` > $TMPLOG
+cat >> $TMPLOG <<EOF
+Invocation command line was:
+$0 $@
+Saved environment variables:
+LDFLAGS="$SAVED_LDFLAGS" CXX="$SAVED_CXX" CXXFLAGS="$SAVED_CXXFLAGS" CPPFLAGS="$SAVED_CPPFLAGS" ASFLAGS="$SAVED_ASFLAGS" WINDRESFLAGS="$SAVED_WINDRESFLAGS" SDL_CONFIG="$SAVED_SDL_CONFIG"
+EOF
+
 
 for ac_option in $@; do
 	case "$ac_option" in
