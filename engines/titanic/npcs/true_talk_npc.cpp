@@ -211,4 +211,11 @@ void CTrueTalkNPC::setView(CViewItem *view) {
 		talkManager->start3(this, view);
 }
 
+void CTrueTalkNPC::startTalker(CViewItem *view) {
+	CGameManager *gameManager = getGameManager();
+	if (gameManager)
+		gameManager->getTalkManager()->start4(this, view);
+}
+
+
 } // End of namespace Titanic

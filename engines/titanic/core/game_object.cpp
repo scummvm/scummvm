@@ -678,6 +678,26 @@ int CGameObject::compareRoomNameTo(const CString &name) {
 	return room->getName().compareToIgnoreCase(name);
 }
 
+CString CGameObject::getRoomName() const {
+	CRoomItem *room = getRoom();
+	return room ? room->getName() : CString();
+}
+
+CString CGameObject::getRoomNodeName() const {
+	CNodeItem *node = getNode();
+	if (!node)
+		return CString();
+
+	CRoomItem *room = node->findRoom();
+
+	return CString::format("%s.%s", room->getName().c_str(), node->getName().c_str());
+}
+
+CString CGameObject::getFullViewName() {
+	CGameManager *gameManager = getGameManager();
+	return gameManager ? gameManager->getFullViewName() : CString();
+}
+
 CGameObject *CGameObject::getMailManFirstObject() const {
 	CMailMan *mailMan = getMailMan();
 	return mailMan ? mailMan->getFirstObject() : nullptr;
@@ -709,6 +729,11 @@ CGameObject *CGameObject::getNextMail(CGameObject *prior) {
 
 CGameObject *CGameObject::findRoomObject(const CString &name) const {
 	return static_cast<CGameObject *>(findRoom()->findByName(name));
+}
+
+CGameObject *CGameObject::findInRoom(const CString &name) {
+	CRoomItem *room = getRoom();
+	return room ? static_cast<CGameObject *>(room->findByName(name)) : nullptr;
 }
 
 Found CGameObject::find(const CString &name, CGameObject **item, int findAreas) {
@@ -898,6 +923,16 @@ CTreeItem *CGameObject::findUnder(CTreeItem *parent, const CString &name) const 
 	for (CTreeItem *item = parent->getFirstChild(); item; item = item->scan(parent)) {
 		if (item->getName() == name)
 			return item;
+	}
+
+	return nullptr;
+}
+
+CRoomItem *CGameObject::findRoomByName(const CString &name) {
+	CProjectItem *project = getRoot();
+	for (CRoomItem *room = project->findFirstRoom(); room; room = project->findNextRoom(room)) {
+		if (!room->getName().compareToIgnoreCase(name))
+			return room;
 	}
 
 	return nullptr;

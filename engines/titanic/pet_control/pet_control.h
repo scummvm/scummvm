@@ -282,11 +282,6 @@ public:
 	void playSound(int soundNum);
 
 	/**
-	 * Get the room name
-	 */
-	CString getRoomName() const;
-
-	/**
 	 * Check whether an NPC can be summoned
 	 */
 	int canSummonBot(const CString &name);
@@ -320,12 +315,6 @@ public:
 	 * Stop a timer
 	 */
 	void stopPetTimer(uint timerIndex);
-
-	/**
-	 * Return the full Id of the current view in a
-	 * room.node.view tuplet form
-	 */
-	CString getFullViewName();
 
 	/**
 	 * Returns true if all input is currently locked (disabled)

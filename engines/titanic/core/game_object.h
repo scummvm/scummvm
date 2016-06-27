@@ -221,6 +221,11 @@ protected:
 	CGameObject *findRoomObject(const CString &name) const;
 
 	/**
+	 * FInds an object under the current room
+	 */
+	CGameObject *findInRoom(const CString &name);
+
+	/**
 	 * Moves the item from it's original position to be under the current view
 	 */
 	void moveToView();
@@ -303,6 +308,11 @@ protected:
 	 * Scan the specified room for an item by name
 	 */
 	CTreeItem *findUnder(CTreeItem *parent, const CString &name) const;
+
+	/**
+	 * Finds a room by name
+	 */
+	CRoomItem *findRoomByName(const CString &name);
 
 	/**
 	 * Returns the music room instance from the game manager
@@ -541,6 +551,22 @@ public:
 	 */
 	CViewItem *getView() const;
 
+	/**
+	 * Get the current room name
+	 */
+	CString getRoomName() const;
+
+	/**
+	 * Get the current node and room in the form "room.node"
+	 */
+	CString getRoomNodeName() const;
+
+	/**
+	 * Return the full Id of the current view in a
+	 * room.node.view tuplet form
+	 */
+	CString getFullViewName();
+
 	/*--- CPetControl Methods ---*/
 
 	/**
@@ -655,7 +681,6 @@ public:
 	 * Start a conversation with the NPC
 	 */
 	void startTalking(const CString &name, uint id, CViewItem *view = nullptr);
-
 };
 
 } // End of namespace Titanic

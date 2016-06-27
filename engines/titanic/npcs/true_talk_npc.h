@@ -85,6 +85,11 @@ public:
 	 * Set the view for the NPC
 	 */
 	void setView(CViewItem *view);
+
+	/**
+	 * Start the talker in the given view
+	 */
+	void startTalker(CViewItem *view);
 };
 
 } // End of namespace Titanic

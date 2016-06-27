@@ -513,11 +513,6 @@ void CPetControl::playSound(int soundNum) {
 	}
 }
 
-CString CPetControl::getRoomName() const {
-	CRoomItem *room = getRoom();
-	return room ? room->getName() : CString();
-}
-
 int CPetControl::canSummonBot(const CString &name) {
 	// If player is the very same view as the NPC, then it's already present
 	if (isBotInView(name))
@@ -650,11 +645,6 @@ CGameObject *CPetControl::findBot(const CString &name, CTreeItem *root) {
 	}
 
 	return nullptr;
-}
-
-CString CPetControl::getFullViewName() {
-	CGameManager *gameManager = getGameManager();
-	return gameManager ? gameManager->getFullViewName() : CString();
 }
 
 bool CPetControl::isSuccUBusActive() const {
