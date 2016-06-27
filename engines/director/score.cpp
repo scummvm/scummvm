@@ -406,6 +406,63 @@ void Score::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 	_castsInfo[id] = ci;
 }
 
+void Score::goToLoop() {
+	//This command has the playback head contonuously return to the first marker to to the left and then loop back.
+	//If no marker are to the left of the playback head, the playback head continues to the right.
+	Common::HashMap<uint16, Common::String>::iterator i;
+
+	for (i = _labels.begin(); i != _labels.end(); ++i) {
+		if (i->_value == _currentLabel) {
+			_currentFrame = i->_key;
+			return;
+		}
+	}
+}
+
+void Score::goToNext() {
+	Common::HashMap<uint16, Common::String>::iterator i;
+
+	for (i = _labels.begin(); i != _labels.end(); ++i) {
+		if (i->_value == _currentLabel) {
+			if (i != _labels.end()) {
+				//return to the first marker to to the right
+				++i;
+				_currentFrame = i->_key;
+				return;
+			} else {
+				//if no markers are to the right of the playback head,
+				//the playback head goes to the first marker to the left
+				_currentFrame = i->_key;
+				return;
+			}
+		}
+	}
+	//If there are not markers to the left,
+	//the playback head goes to frame 1, (Director frame array start from 1, engine from 0)
+	_currentFrame = 0;
+}
+void Score::goToPrevious() {
+	//One label
+	if (_labels.begin() == _labels.end()) {
+		_currentFrame = _labels.begin()->_key;
+		return;
+	}
+
+	Common::HashMap<uint16, Common::String>::iterator previous = _labels.begin();
+	Common::HashMap<uint16, Common::String>::iterator i = previous++; //because iterator havent decrement operator
+
+	for (i = _labels.begin(); i != _labels.end(); ++i, ++previous) {
+		if (i->_value == _currentLabel) {
+			_currentFrame = previous->_key;
+			return;
+		} else {
+			_currentFrame = i->_key;
+			return;
+		}
+	}
+	_currentFrame = 0;
+}
+
 Common::String Score::getString(Common::String str) {
 	if (str.size() == 0) {
 		return str;
@@ -613,6 +670,9 @@ void Score::update() {
 	//TODO Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
 	//_lingo->processEvent(kEventPrepareFrame, _currentFrame);
 	_currentFrame++;
+	if (_labels.contains(_currentFrame)) {
+		_currentLabel = _labels[_currentFrame];
+	}
 	_frames[_currentFrame]->prepareFrame(this);
 	//Stage is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell)
 

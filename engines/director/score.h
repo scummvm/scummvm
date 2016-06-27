@@ -383,6 +383,7 @@ private:
 	byte _currentFrameRate;
 	uint16 _castArrayStart;
 	uint16 _currentFrame;
+	Common::String _currentLabel;
 	uint32 _nextFrameTime;
 	uint32 _flags;
 	bool _stopPlay;
