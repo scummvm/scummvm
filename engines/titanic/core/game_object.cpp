@@ -850,6 +850,14 @@ void CGameObject::lockMouse() {
 		CScreenManager::_screenManagerPtr->_mouseCursor->hide();
 }
 
+void CGameObject::hideMouse() {
+	CScreenManager::_screenManagerPtr->_mouseCursor->hide();
+}
+
+void CGameObject::showMouse() {
+	CScreenManager::_screenManagerPtr->_mouseCursor->show();
+}
+
 void CGameObject::unlockMouse() {
 	if (CScreenManager::_screenManagerPtr->_mouseCursor)
 		CScreenManager::_screenManagerPtr->_mouseCursor->show();
@@ -896,6 +904,11 @@ void CGameObject::dragMove(const Point &pt) {
 	}
 
 	setPosition(Point(pt.x - _bounds.width() / 2, pt.y - _bounds.height() / 2));
+}
+
+bool CGameObject::isObjectDragging() const {
+	CTreeItem *item = getGameManager()->_dragItem;
+	return item ? static_cast<CGameObject *>(item) != nullptr : false;
 }
 
 Point CGameObject::getControid() const {
@@ -1292,6 +1305,32 @@ void CGameObject::endTalking(CTrueTalkNPC *npc, bool viewFlag, CViewItem *view) 
 
 	if (pet)
 		pet->refreshNPC();
+}
+
+void CGameObject::talkSetDialRegion(const CString &name, int dialNum, int regionNum) {
+	CGameManager *gameManager = getGameManager();
+	if (gameManager) {
+		CTrueTalkManager *talkManager = gameManager->getTalkManager();
+		if (talkManager) {
+			TTnpcScript *npcScript = talkManager->getTalker(name);
+			if (npcScript)
+				npcScript->setDialRegion(dialNum, regionNum);
+		}
+	}
+}
+
+int CGameObject::talkGetDIalRegion(const CString &name, int dialNum) {
+	CGameManager *gameManager = getGameManager();
+	if (gameManager) {
+		CTrueTalkManager *talkManager = gameManager->getTalkManager();
+		if (talkManager) {
+			TTnpcScript *npcScript = talkManager->getTalker(name);
+			if (npcScript)
+				return npcScript->getDialRegion(dialNum);
+		}
+	}
+
+	return 0;
 }
 
 } // End of namespace Titanic

@@ -137,6 +137,16 @@ protected:
 	void unlockMouse();
 
 	/**
+	 * Hides the mouse cursor
+	 */
+	void hideMouse();
+
+	/**
+	 * Shows the mouse cursor
+	 */
+	void showMouse();
+
+	/**
 	 * Load a sound
 	 */
 	void loadSound(const CString &name);
@@ -564,6 +574,11 @@ public:
 	 */
 	void dragMove(const Point &pt);
 	
+	/**
+	 * Returns true if an item being dragged is a game object
+	 */
+	bool isObjectDragging() const;
+
 	bool compareRoomFlags(int mode, uint flags1, uint flags2);
 
 	/*--- CGameManager Methods ---*/
@@ -723,6 +738,16 @@ public:
 	 * Start a conversation with the NPC
 	 */
 	void startTalking(const CString &name, uint id, CViewItem *view = nullptr);
+
+	/**
+	 * Sets a dial region for a given NPC
+	 */
+	void talkSetDialRegion(const CString &name, int dialNum, int regionNum);
+
+	/**
+	 * Gets a dial region for a given NPC
+	 */
+	int talkGetDIalRegion(const CString &name, int dialNum);
 };
 
 } // End of namespace Titanic
