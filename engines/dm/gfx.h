@@ -74,7 +74,8 @@ enum GraphicIndice {
 	kPanelRenameChampionIndice = 27, // @ C027_GRAPHIC_PANEL_RENAME_CHAMPION
 	kMenuActionAreaIndice = 10, // @ C010_GRAPHIC_MENU_ACTION_AREA
 	kMenuSpellAreLinesIndice = 11, // @ C011_GRAPHIC_MENU_SPELL_AREA_LINES
-	kMenuSpellAreaBackground = 9 // @ C009_GRAPHIC_MENU_SPELL_AREA_BACKGROUND
+	kMenuSpellAreaBackground = 9, // @ C009_GRAPHIC_MENU_SPELL_AREA_BACKGROUND
+	kPanelOpenScrollIndice = 23 // @ C023_GRAPHIC_PANEL_OPEN_SCROLL
 };
 
 extern uint16 gPalSwoosh[16];

@@ -246,4 +246,52 @@ void InventoryMan::drawPanelScrollTextLine(int16 yPos, char* text) {
 	}
 	_vm->_textMan->printToViewport(162 - (6 * strlen(text) / 2), yPos, kColorBlack, text, kColorWhite);
 }
+
+void InventoryMan::drawPanelScroll(Scroll* scroll) {
+	DisplayMan &dispMan = *_vm->_displayMan;
+
+	char stringFirstLine[300];
+	_vm->_dungeonMan->decodeText(stringFirstLine, Thing(scroll->getTextStringThingIndex()), (TextType)(kTextTypeScroll | kDecodeEvenIfInvisible));
+	char *charRed = stringFirstLine;
+	while (*charRed && (*charRed != '\n')) {
+		charRed++;									   
+	}
+	*charRed = '\0';
+	dispMan.blitToScreen(dispMan.getBitmap(kPanelOpenScrollIndice), 144, 0, 0, gBoxPanel, kColorRed, gDungeonViewport);
+	int16 lineCount = 1;
+	charRed++;
+	char *charGreen = charRed; // first char of the second line
+	while (*charGreen) {
+		warning("BUG0_47");
+		/* BUG0_47 Graphical glitch when you open a scroll. If there is a single line of text in a scroll
+		(with no carriage return) then charGreen points to undefined data. This may result in a graphical
+		glitch and also corrupt other memory. This is not an issue in the original dungeons where all 
+		scrolls contain at least one carriage return character */
+		if (*charGreen == '\n') {
+			lineCount++;
+		}
+		charGreen++;
+	}
+	if (*(charGreen - 1) != '\n') {
+		lineCount++;
+	} else if (*(charGreen - 2) == '\n') {
+		lineCount--;
+	}
+	int16 yPos = 92 - (7 * lineCount) / 2; // center the text vertically
+	drawPanelScrollTextLine(yPos, stringFirstLine);
+	charGreen = charRed;
+	while (*charGreen) {
+		yPos += 7;
+		while (*charRed && (*charRed != '\n')) {
+			charRed++;
+		}
+		if (!(*charRed)) {
+			charRed[1] = '\0';
+		}
+		*charRed++ = '\0';
+		drawPanelScrollTextLine(yPos, charGreen);
+		charGreen = charRed;
+	}
+}
+
 }

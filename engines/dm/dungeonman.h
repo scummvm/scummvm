@@ -389,6 +389,7 @@ public:
 	}
 	Thing getNextThing() { return _nextThing; }
 	uint16 getClosed() { return (_attributes >> 10) & 0x3F; } // ??? dunno why, the original bitfield is 6 bits long
+	uint16 getTextStringThingIndex() { return _attributes & 0x3FF; }
 }; // @ SCROLL
 
 enum PotionType {

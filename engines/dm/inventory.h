@@ -28,6 +28,7 @@
 #include "dm.h"
 #include "gfx.h"
 #include "champion.h"
+#include "dungeonman.h"
 
 
 
@@ -66,6 +67,7 @@ public:
 	void drawPanel(); // @ F0347_INVENTORY_DrawPanel
 	void closeChest(); // @ F0334_INVENTORY_CloseChest
 	void drawPanelScrollTextLine(int16 yPos, char *text); // @ F0340_INVENTORY_DrawPanel_ScrollTextLine
+	void drawPanelScroll(Scroll *scoll); // @ F0341_INVENTORY_DrawPanel_Scroll
 
 };
 
