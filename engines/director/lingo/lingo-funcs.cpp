@@ -46,7 +46,7 @@
 #include "engines/director/lingo/lingo.h"
 #include "common/file.h"
 #include "audio/decoders/wave.h"
-
+#include "common/util.h"
 #include "director/lingo/lingo-gr.h"
 
 namespace Director {
@@ -196,8 +196,16 @@ void Lingo::func_goto(Common::String &frame, Common::String &movie) {
 	_vm->_currentScore = _vm->_movies->getVal(movie);
 	_vm->_currentScore->loadArchive();
 
-	if (!frame.empty())
-		_vm->_currentScore->setStartToLabel(frame);
+	if (frame.empty())
+		return;
+
+	for (uint16 i = 0; i < frame.size(); i++) {
+		if (!Common::isDigit(frame[i])) {
+			_vm->_currentScore->setStartToLabel(frame);
+			return;
+		}
+	}
+	_vm->_currentScore->setCurrentFrame(strtol(frame.c_str(), 0, 10));
 }
 
 }

@@ -342,6 +342,7 @@ public:
 	void processEvents();
 	Archive *getArchive() const { return _movieArchive; };
 	void loadCastData(Common::SeekableSubReadStreamEndian &stream);
+	void setCurrentFrame(uint16 frameId) { _currentFrame = frameId; }
 	Common::String getMacName() const { return _macName; }
 private:
 	void update();
