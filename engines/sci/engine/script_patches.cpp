@@ -1744,11 +1744,99 @@ static const uint16 laurabow1PatchArmorMoveToFix[] = {
 	PATCH_END
 };
 
+// In some cases like for example when the player oils the arm of the armor, command input stays
+// disabled, even when the player exits fast enough, so that Laura doesn't die.
+//
+// This is caused by the scripts only enabling control (directional movement), but do not enable command input as well.
+//
+// This bug also happens, when using the original interpreter.
+// And it was fixed for the Atari ST + Amiga versions of the game.
+//
+// Applies to at least: English PC Floppy
+// Responsible method: 2nd subroutine in script 37, called by oiling::changeState(7)
+// Fixes bug: #7154
+static const uint16 laurabow1SignatureArmorOilingArmFix[] = {
+	0x38, SIG_UINT16(0x0089),           // pushi 89h
+	0x76,                               // push0
+	SIG_MAGICDWORD,
+	0x72, SIG_UINT16(0x1a5c),           // lofsa "Can" - offsets are not skipped to make sure only the PC version gets patched
+	0x4a, 0x04,                         // send 04
+	0x38, SIG_UINT16(0x0089),           // pushi 89h
+	0x76,                               // push0
+	0x72, SIG_UINT16(0x19a1),           // lofsa "Visor"
+	0x4a, 0x04,                         // send 04
+	0x38, SIG_UINT16(0x0089),           // pushi 89h
+	0x76,                               // push0
+	0x72, SIG_UINT16(0x194a),           // lofsa "note"
+	0x4a, 0x04,                         // send 04
+	0x38, SIG_UINT16(0x0089),           // pushi 89h
+	0x76,                               // push0
+	0x72, SIG_UINT16(0x18f3),           // lofsa "valve"
+	0x4a, 0x04,                         // send 04
+	0x8b, 0x34,                         // lsl local[34h]
+	0x35, 0x02,                         // ldi 02
+	0x1c,                               // ne?
+	0x30, SIG_UINT16(0x0014),           // bnt [to ret]
+	0x8b, 0x34,                         // lsl local[34h]
+	0x35, 0x05,                         // ldi 05
+	0x1c,                               // ne?
+	0x30, SIG_UINT16(0x000c),           // bnt [to ret]
+	0x8b, 0x34,                         // lsl local[34h]
+	0x35, 0x06,                         // ldi 06
+	0x1c,                               // ne?
+	0x30, SIG_UINT16(0x0004),           // bnt [to ret]
+	// followed by code to call script 0 export to re-enable controls and call setMotion
+	SIG_END
+};
+
+static const uint16 laurabow1PatchArmorOilingArmFix[] = {
+	PATCH_ADDTOOFFSET(+3),              // skip over pushi 89h
+	0x3c,                               // dup
+	0x3c,                               // dup
+	0x3c,                               // dup
+	// saves a total of 6 bytes
+	0x76,                               // push0
+	0x72, SIG_UINT16(0x1a59),           // lofsa "Can"
+	0x4a, 0x04,                         // send 04
+	0x76,                               // push0
+	0x72, SIG_UINT16(0x19a1),           // lofsa "Visor"
+	0x4a, 0x04,                         // send 04
+	0x76,                               // push0
+	0x72, SIG_UINT16(0x194d),           // lofsa "note"
+	0x4a, 0x04,                         // send 04
+	0x76,                               // push0
+	0x72, SIG_UINT16(0x18f9),           // lofsa "valve" 18f3
+	0x4a, 0x04,                         // send 04
+	// new code to enable input as well, needs 9 spare bytes
+	0x38, SIG_UINT16(0x00e2),           // canInput
+	0x78,                               // push1
+	0x78,                               // push1
+	0x51, 0x2b,                         // class User
+	0x4a, 0x06,                         // send 06 -> call User::canInput(1)
+	// original code, but changed a bit to save some more bytes
+	0x8b, 0x34,                         // lsl local[34h]
+	0x35, 0x02,                         // ldi 02
+	0x04,                               // sub
+	0x31, 0x12,                         // bnt [to ret]
+	0x36,                               // push
+	0x35, 0x03,                         // ldi 03
+	0x04,                               // sub
+	0x31, 0x0c,                         // bnt [to ret]
+	0x78,                               // push1
+	0x1a,                               // eq?
+	0x2f, 0x08,                         // bt [to ret]
+	// saves 7 bytes, we only need 3, so waste 4 bytes
+	0x35, 0x00,                         // ldi 0
+	0x35, 0x00,                         // ldi 0
+	PATCH_END
+};
+
 //          script, description,                                      signature                           patch
 static const SciScriptPatcherEntry laurabow1Signatures[] = {
 	{  true,     4, "easter egg view fix",                         1, laurabow1SignatureEasterEggViewFix,  laurabow1PatchEasterEggViewFix },
 	{  true,    37, "armor open visor fix",                        1, laurabow1SignatureArmorOpenVisorFix, laurabow1PatchArmorOpenVisorFix },
 	{  true,    37, "armor move to fix",                           2, laurabow1SignatureArmorMoveToFix,    laurabow1PatchArmorMoveToFix },
+	{  true,    37, "allowing input, after oiling arm",            1, laurabow1SignatureArmorOilingArmFix, laurabow1PatchArmorOilingArmFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
