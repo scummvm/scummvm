@@ -694,13 +694,16 @@ void EventManager::commandProcess81ClickInPanel(int16 x, int16 y) {
 		if (commandType != kCommandNone)
 			commandProcessCommands160To162ClickInResurrectReincarnatePanel(commandType);
 		break;
+	default:
+		break;
 	}
 }
 
-	bool EventManager::hasPendingClick(Common::Point& point, MouseButton button)
-	{
-		if (_pendingClickButton && button == _pendingClickButton)
-			point = _pendingClickPos;
-		return _pendingClickPresent;
-	}
+bool EventManager::hasPendingClick(Common::Point& point, MouseButton button) {
+	if (_pendingClickButton && button == _pendingClickButton)
+		point = _pendingClickPos;
+
+	return _pendingClickPresent;
+}
+
 }; // end of namespace DM
