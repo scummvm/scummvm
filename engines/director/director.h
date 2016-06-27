@@ -44,7 +44,7 @@ class Archive;
 struct DirectorGameDescription;
 class Lingo;
 class Score;
-
+class Cast;
 
 class DirectorEngine : public ::Engine {
 public:
@@ -66,8 +66,11 @@ public:
 	bool hasFeature(EngineFeature f) const;
 	const byte *getPalette() const { return _currentPalette; }
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
+	Common::HashMap<int, Cast *> loadSharedCastsFrom(Common::String filename);
+
 	Common::HashMap<Common::String, Score *> *_movies;
 	Score *_currentScore;
+
 
 protected:
 	virtual Common::Error run();

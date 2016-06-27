@@ -67,7 +67,6 @@ void Score::loadArchive() {
 	if (clutList.size() == 0)
 		error("CLUT not found");
 
-
 	Common::SeekableSubReadStreamEndian *pal = _movieArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[0]);
 
 	loadPalette(*pal);
@@ -194,7 +193,6 @@ void Score::readVersion(uint32 rid) {
 void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream) {
 	for (uint16 id = _castArrayStart; id <= _castArrayEnd; id++) {
 		byte size = stream.readByte();
-
 		if (size == 0)
 			continue;
 
@@ -441,6 +439,7 @@ void Score::goToNext() {
 	//the playback head goes to frame 1, (Director frame array start from 1, engine from 0)
 	_currentFrame = 0;
 }
+
 void Score::goToPrevious() {
 	//One label
 	if (_labels.begin() == _labels.end()) {

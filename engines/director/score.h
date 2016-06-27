@@ -341,14 +341,13 @@ public:
 	void startLoop();
 	void processEvents();
 	Archive *getArchive() const { return _movieArchive; };
-
+	void loadCastData(Common::SeekableSubReadStreamEndian &stream);
 	Common::String getMacName() const { return _macName; }
 private:
 	void update();
 	void readVersion(uint32 rid);
 	void loadConfig(Common::SeekableSubReadStreamEndian &stream);
 	void loadPalette(Common::SeekableSubReadStreamEndian &stream);
-	void loadCastData(Common::SeekableSubReadStreamEndian &stream);
 	void loadFrames(Common::SeekableSubReadStreamEndian &stream);
 	void loadLabels(Common::SeekableSubReadStreamEndian &stream);
 	void loadActions(Common::SeekableSubReadStreamEndian &stream);

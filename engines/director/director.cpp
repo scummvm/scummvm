@@ -56,6 +56,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_mainArchive = 0;
 	_macBinary = 0;
 	_currentPalette = 0;
+
 	_movies = new Common::HashMap<Common::String, Score *>();
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
@@ -370,4 +371,17 @@ void DirectorEngine::setPalette(byte *palette, uint16 count) {
 	_currentPaletteLength = count;
 }
 
+Common::HashMap<int, Cast *> DirectorEngine::loadSharedCastsFrom(Common::String filename) {
+
+	//TODO d4 arch
+	RIFFArchive *shardcst = new RIFFArchive();
+	shardcst->openFile(filename);
+
+	Score *castScore = new Score(this);
+
+	Common::SeekableSubReadStreamEndian *castStream = shardcst->getResource(MKTAG('V','W','C','R'), 1024);
+
+	castScore->loadCastData(*castStream);
+	return castScore->_casts;
+}
 } // End of namespace Director
