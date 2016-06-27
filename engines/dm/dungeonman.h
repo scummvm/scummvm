@@ -641,6 +641,7 @@ public:
 
 	uint16 getObjectWeight(Thing thing); // @ F0140_DUNGEON_GetObjectWeight
 	int16 getObjectInfoIndex(Thing thing); // @ F0141_DUNGEON_GetObjectInfoIndex
+	void linkThingToList(Thing thingToLink, Thing thingInList, int16 mapX, int16 mapY); // @ F0163_DUNGEON_LinkThingToList
 
 	uint32 _rawDunFileDataSize;	 // @ probably NONE
 	byte *_rawDunFileData; // @ ???

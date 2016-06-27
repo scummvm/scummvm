@@ -9,10 +9,14 @@ Bugs:
 		Game crashes when reincaranting a fourth champion and trying to copy his portrait
 
 
+
 Todo:
 	Add wiki entry for DM
 	Rename GraphicIndice enum entires and have their name include GraphicIndice
 	I forgot to add localization warnings
 	Attend to Arnaud's notes on github
 	Double check enums with hex literals, I think I screwed the regex when processing them
+
+	Missing functions:
+		 Add missing  F0163_DUNGEON_LinkThingToList in MovesensMan::sensorIsTriggeredByClickOnWall (I don't think it's safe yet)
 	

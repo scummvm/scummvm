@@ -6,13 +6,13 @@ F0380_COMMAND_ProcessQueue_CPSC // in progress
 					F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
 	
 
-F0378_COMMAND_ProcessType81_ClickInPanel
+F0378_COMMAND_ProcessType81_ClickInPanel // done so-so
 	F0282_CHAMPION_ProcessCommands160To162_ClickInResurrectReincarnatePanel // done
 		F0368_COMMAND_SetLeader // done
-		F0457_START_DrawEnabledMenus_CPSF // wat skip
-		F0281_CHAMPION_Rename // skip
-		F0394_MENUS_SetMagicCasterAndDrawSpellArea // post skip	
-		F0393_MENUS_DrawSpellAreaControls // post skip
+		F0457_START_DrawEnabledMenus_CPSF // can't yet see it's purpose
+		F0281_CHAMPION_Rename // stub
+		F0394_MENUS_SetMagicCasterAndDrawSpellArea // done
+		F0393_MENUS_DrawSpellAreaControls // done
 		F0051_TEXT_MESSAGEAREA_PrintLineFeed // post skip
 		F0047_TEXT_MESSAGEAREA_PrintMessage // post skip
 		F0067_MOUSE_SetPointerToNormal // skip
@@ -104,7 +104,12 @@ F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
 		G0407_s_Party
 	F0355_INVENTORY_Toggle_CPSE // done
 		F0292_CHAMPION_DrawState // done
-		F0334_INVENTORY_CloseChest // skip
+		F0334_INVENTORY_CloseChest
+			F0163_DUNGEON_LinkThingToList
+			G0426_T_OpenChest
+			G0425_aT_ChestSlots
+
+
 		F0395_MENUS_DrawMovementArrows // done
 		F0357_COMMAND_DiscardAllInput // skip
 		F0098_DUNGEONVIEW_DrawFloorAndCeiling // wat

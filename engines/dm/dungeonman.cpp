@@ -1246,4 +1246,47 @@ int16 DungeonMan::getObjectInfoIndex(Thing thing) {
 	}
 }
 
+void DungeonMan::linkThingToList(Thing thingToLink, Thing thingInList, int16 mapX, int16 mapY) {
+	if (thingToLink == Thing::_thingEndOfList)
+		return;
+
+	uint16 *rawObjPtr = getThingData(thingToLink);
+	*rawObjPtr = Thing::_thingEndOfList.toUint16();
+
+	if (mapX >= 0) {
+		Square *squarePtr = (Square*)&_currMap._data[mapX][mapY];
+		if (squarePtr->get(kThingListPresent)) {
+			thingInList = getSquareFirstThing(mapX, mapY);
+		} else {
+			squarePtr->set(kThingListPresent);
+			uint16 *cumulativeCount = &_currMap._colCumulativeSquareFirstThingCount[mapX + 1];
+			uint16 column = _dunData._columCount - (_dunData._mapsFirstColumnIndex[_currMap._index] + mapX) - 1;
+			while (column--) {
+				(*cumulativeCount++)++;
+			}
+			uint16 mapYStep = 0;
+			squarePtr -= mapY;
+			uint16 squareFirstThingIndex = _currMap._colCumulativeSquareFirstThingCount[mapX];
+			while (mapYStep++ != mapY) {
+				if (squarePtr->get(kThingListPresent)) {
+					squareFirstThingIndex++;
+				}
+				squarePtr++;
+			}
+			Thing* thingPtr = &_dunData._squareFirstThings[squareFirstThingIndex];
+			memmove(thingPtr + 1, thingPtr, sizeof(Thing) * (_fileHeader._squareFirstThingCount - squareFirstThingIndex - 1));
+			*thingPtr = thingToLink;
+			return;
+		}
+	}
+
+	Thing thing = getNextThing(thingInList);
+	while (thing != Thing::_thingEndOfList) {
+		thing = getNextThing(thing);
+		thingInList = thing;
+	}
+	rawObjPtr = getThingData(thingInList);
+	*rawObjPtr = thingToLink.toUint16();
+}
+
 }
