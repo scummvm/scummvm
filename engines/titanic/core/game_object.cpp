@@ -143,6 +143,70 @@ void CGameObject::load(SimpleFile *file) {
 	CNamedItem::load(file);
 }
 
+void CGameObject::draw(CScreenManager *screenManager) {
+	if (!_visible)
+		return;
+	if (_credits) {
+		error("TODO: Block in CGameObject::draw");
+	}
+
+	if (_field40) {
+		if (_field90) {
+			if (_bounds.intersects(getGameManager()->_bounds))
+				warning("TODO: _field90(screenManager);");
+		}
+	}
+	else {
+		if (!_surface) {
+			if (!_resource.empty()) {
+				loadResource(_resource);
+				_resource = "";
+			}
+		}
+
+		if (_surface) {
+			_bounds.setWidth(_surface->getWidth());
+			_bounds.setHeight(_surface->getHeight());
+
+			if (!_bounds.width() || !_bounds.height())
+				return;
+
+			if (_frameNumber >= 0) {
+				loadFrame(_frameNumber);
+				_frameNumber = -1;
+			}
+
+			if (!_clipList2.empty())
+				processClipList2();
+
+			if (_bounds.intersects(getGameManager()->_bounds)) {
+				if (_surface) {
+					Point destPos(_bounds.left, _bounds.top);
+					screenManager->blitFrom(SURFACE_BACKBUFFER, _surface, &destPos);
+				}
+
+				if (_field90)
+					warning("TODO: sub_415f80(screenManager);");
+			}
+		}
+	}
+}
+
+Rect CGameObject::getBounds() const {
+	return (_surface && _surface->proc45()) ? _bounds : Rect();
+}
+
+void CGameObject::viewChange() {
+	// Handle freeing the surfaces of objects when their view is left
+	if (_surface) {
+		_resource = _surface->_resourceKey.getString();
+		_initialFrame = getMovieFrame();
+
+		delete _surface;
+		_surface = nullptr;
+	}
+}
+
 void CGameObject::stopMovie() {
 	if (_surface)
 		_surface->stopMovie();
@@ -212,54 +276,6 @@ void CGameObject::draw(CScreenManager *screenManager, const Point &destPos) {
 
 void CGameObject::draw(CScreenManager *screenManager, const Point &destPos, const Rect &srcRect) {
 	draw(screenManager, Rect(destPos.x, destPos.y, destPos.x + 52, destPos.y + 52), srcRect);
-}
-
-void CGameObject::draw(CScreenManager *screenManager) {
-	if (!_visible)
-		return;
-	if (_credits) {
-		error("TODO: Block in CGameObject::draw");
-	}
-
-	if (_field40) {
-		if (_field90) {
-			if (_bounds.intersects(getGameManager()->_bounds))
-				warning("TODO: _field90(screenManager);");
-		}
-	} else {
-		if (!_surface) {
-			if (!_resource.empty()) {
-				loadResource(_resource);
-				_resource = "";
-			}
-		}
-
-		if (_surface) {
-			_bounds.setWidth(_surface->getWidth());
-			_bounds.setHeight(_surface->getHeight());
-
-			if (!_bounds.width() || !_bounds.height())
-				return;
-
-			if (_frameNumber >= 0) {
-				loadFrame(_frameNumber);
-				_frameNumber = -1;
-			}
-
-			if (!_clipList2.empty())
-				processClipList2();
-
-			if (_bounds.intersects(getGameManager()->_bounds)) {
-				if (_surface) {
-					Point destPos(_bounds.left, _bounds.top);
-					screenManager->blitFrom(SURFACE_BACKBUFFER, _surface, &destPos);
-				}
-
-				if (_field90)
-					warning("TODO: sub_415f80(screenManager);");
-			}
-		}
-	}
 }
 
 bool CGameObject::isPet() const {
@@ -369,12 +385,24 @@ bool CGameObject::soundFn1(int handle) {
 	return false;
 }
 
+void CGameObject::soundFn2(const CString &resName, int v1, int v2, int v3, int handleIndex) {
+	warning("TODO: CGameObject::soundFn2");
+}
+
 void CGameObject::soundFn3(int handle, int val2, int val3) {
 	if (handle != 0 && handle != -1) {
 		CGameManager *gameManager = getGameManager();
 		if (gameManager)
 			return gameManager->_sound.fn3(handle, val2, val3);
 	}
+}
+
+void CGameObject::soundFn4(int v1, int v2, int v3) {
+	warning("CGameObject::soundFn4");
+}
+
+void CGameObject::soundFn5(int v1, int v2, int v3) {
+	warning("CGameObject::soundFn5");
 }
 
 void CGameObject::setVisible(bool val) {
@@ -400,6 +428,24 @@ void CGameObject::petShowCursor() {
 	CPetControl *pet = getPetControl();
 	if (pet)
 		pet->showCursor();
+}
+
+void CGameObject::petShow() {
+	CGameManager *gameManager = getGameManager();
+	if (gameManager) {
+		gameManager->_gameState._petActive = true;
+		gameManager->_gameState.setMode(GSMODE_SELECTED);
+		gameManager->initBounds();
+	}
+}
+
+void CGameObject::petHide() {
+	CGameManager *gameManager = getGameManager();
+	if (gameManager) {
+		gameManager->_gameState._petActive = false;
+		gameManager->_gameState.setMode(GSMODE_SELECTED);
+		gameManager->initBounds();
+	}
 }
 
 void CGameObject::petSetRemoteTarget() {
@@ -886,6 +932,11 @@ void CGameObject::petClear() const {
 		petControl->resetActiveNPC();
 }
 
+CDontSaveFileItem *CGameObject::getDontSave() const {
+	CProjectItem *project = getRoot();
+	return project ? project->getDontSaveFileItem() : nullptr;
+}
+
 CPetControl *CGameObject::getPetControl() const {
 	return static_cast<CPetControl *>(getDontSaveChild(CPetControl::_type));
 }
@@ -1003,6 +1054,10 @@ void CGameObject::movie38(int v1) {
 int CGameObject::getClipDuration(const CString &name, int frameRate) const {
 	CMovieClip *clip = _clipList1.findByName(name);
 	return clip ? (clip->_endFrame - clip->_startFrame) * 1000 / frameRate : 0;
+}
+
+uint32 CGameObject::getTickCount() {
+	return g_vm->_events->getTicksCount();
 }
 
 bool CGameObject::compareRoomFlags(int mode, uint flags1, uint flags2) {

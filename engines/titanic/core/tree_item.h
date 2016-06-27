@@ -29,6 +29,7 @@
 namespace Titanic {
 
 class CGameManager;
+class CMovieClipList;
 class CNamedItem;
 class CProjectItem;
 class CScreenManager;
@@ -128,6 +129,13 @@ public:
 	 */
 	virtual int compareTo(const CString &name, int maxLen) const { return false; }
 
+	virtual int proc23() const { return 0; }
+
+	/**
+	 * Returns the clip list, if any, associated with the item
+	 */
+	virtual const CMovieClipList *getClipList() const { return nullptr; }
+
 	/**
 	 * Returns true if the given item connects to another specified view
 	 */
@@ -141,7 +149,7 @@ public:
 	/**
 	 * Gets the bounds occupied by the item
 	 */
-	virtual Rect getBounds() { return Rect(); }
+	virtual Rect getBounds() const { return Rect(); }
 
 	/**
 	 * Called when the view changes

@@ -54,7 +54,6 @@ protected:
 	static int _videoSurfaceCounter;
 protected:
 	CScreenManager *_screenManager;
-	CResourceKey _resourceKey;
 	Graphics::ManagedSurface *_rawSurface;
 	bool _pendingLoad;
 	void *_field40;
@@ -68,6 +67,7 @@ public:
 	DirectDrawSurface *_ddSurface;
 	bool _blitFlag;
 	bool _blitStyleFlag;
+	CResourceKey _resourceKey;
 public:
 	CVideoSurface(CScreenManager *screenManager);
 	virtual ~CVideoSurface();

@@ -36,6 +36,7 @@ namespace Titanic {
 enum Find { FIND_GLOBAL = 1, FIND_ROOM = 2, FIND_PET = 4, FIND_MAILMAN = 8 };
 enum Found { FOUND_NONE = 0, FOUND_GLOBAL = 1, FOUND_ROOM = 2, FOUND_PET = 3, FOUND_MAILMAN = 4 };
 
+class CDontSaveFileItem;
 class CMailMan;
 class CMusicRoom;
 class CRoomItem;
@@ -157,7 +158,13 @@ protected:
 
 	bool soundFn1(int handle);
 
+	void soundFn2(const CString &resName, int v1, int v2, int v3, int handleIndex);
+
 	void soundFn3(int handle, int val2, int val3);
+
+	void soundFn4(int v1, int v2, int v3);
+
+	void soundFn5(int v1, int v2, int v3);
 
 	/**
 	 * Adds a timer
@@ -290,6 +297,11 @@ protected:
 	CMailMan *getMailMan() const;
 
 	/**
+	 * Gets the don't save container object
+	 */
+	CDontSaveFileItem *getDontSave() const;
+
+	/**
 	 * Returns a child of the Dont Save area of the project of the given class
 	 */
 	CTreeItem *getDontSaveChild(ClassDef *classDef) const;
@@ -336,6 +348,11 @@ protected:
 	 * Gets the duration of a specified clip in milliseconds
 	 */
 	int getClipDuration(const CString &name, int frameRate = 14) const;
+
+	/**
+	 * Returns the current system tick count
+	 */
+	uint32 getTickCount();
 
 	void setState1C(bool flag);
 
@@ -410,6 +427,26 @@ public:
 	virtual void load(SimpleFile *file);
 
 	/**
+	 * Returns the clip list, if any, associated with the item
+	 */
+	virtual const CMovieClipList *getClipList() const { return &_clipList1; }
+
+	/**
+	 * Allows the item to draw itself
+	 */
+	virtual void draw(CScreenManager *screenManager);
+
+	/**
+	 * Gets the bounds occupied by the item
+	 */
+	virtual Rect getBounds() const;
+
+	/**
+	 * Called when the view changes
+	 */
+	virtual void viewChange();
+
+	/**
 	 * Allows the item to draw itself
 	 */
 	void draw(CScreenManager *screenManager, const Rect &destRect, const Rect &srcRect);
@@ -423,11 +460,6 @@ public:
 	 * Allows the item to draw itself
 	 */
 	void draw(CScreenManager *screenManager, const Point &destPos, const Rect &srcRect);
-
-	/**
-	 * Allows the item to draw itself
-	 */
-	virtual void draw(CScreenManager *screenManager);
 
 	/**
 	 * Returns true if the item is the PET control
@@ -609,6 +641,11 @@ public:
 	int petGetRooms1D0() const;
 
 	/**
+	 * Hide the PET
+	 */
+	void petHide();
+
+	/**
 	 * Hides the text cursor in the current section, if applicable
 	 */
 	void petHideCursor();
@@ -644,6 +681,11 @@ public:
 	void petSetRemoteTarget();
 
 	void petSetRooms1D0(int val);
+
+	/**
+	 * Show the PET
+	 */
+	void petShow();
 
 	/**
 	 * Shows the text cursor in the current section, if applicable
