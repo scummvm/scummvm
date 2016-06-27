@@ -29,6 +29,7 @@
 #include "common/hashmap.h"
 #include "common/file.h"
 #include "common/str.h"
+#include "common/substream.h"
 
 namespace Common {
 class MacResManager;
@@ -51,25 +52,23 @@ public:
 
 	bool hasResource(uint32 tag, uint16 id) const;
 	bool hasResource(uint32 tag, const Common::String &resName) const;
-	virtual Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
+	virtual Common::SeekableSubReadStreamEndian *getResource(uint32 tag, uint16 id);
 	uint32 getOffset(uint32 tag, uint16 id) const;
 	uint16 findResourceID(uint32 tag, const Common::String &resName) const;
 	Common::String getName(uint32 tag, uint16 id) const;
 
 	Common::Array<uint32> getResourceTypeList() const;
 	Common::Array<uint16> getResourceIDList(uint32 type) const;
-
+	bool _isBigEndian;
 	static uint32 convertTagToUppercase(uint32 tag);
 
 protected:
 	Common::SeekableReadStream *_stream;
-
 	struct Resource {
 		uint32 offset;
 		uint32 size;
 		Common::String name;
 	};
-
 	typedef Common::HashMap<uint16, Resource> ResourceMap;
 	typedef Common::HashMap<uint32, ResourceMap> TypeMap;
 	TypeMap _types;
@@ -83,7 +82,7 @@ public:
 	void close();
 	bool openFile(const Common::String &fileName);
 	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0);
-	Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
+	Common::SeekableSubReadStreamEndian *getResource(uint32 tag, uint16 id);
 
 private:
 	Common::MacResManager *_resFork;
@@ -95,18 +94,15 @@ public:
 	~RIFFArchive() {}
 
 	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0);
-	Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
+	Common::SeekableSubReadStreamEndian *getResource(uint32 tag, uint16 id);
 };
 
 class RIFXArchive : public Archive {
 public:
-	RIFXArchive() : Archive(), _isBigEndian(true) {}
+	RIFXArchive() : Archive(){ _isBigEndian = true; }
 	~RIFXArchive() {}
 
 	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0);
-
-private:
-	bool _isBigEndian;
 };
 
 } // End of namespace Director

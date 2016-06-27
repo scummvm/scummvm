@@ -67,7 +67,8 @@ void Score::loadArchive() {
 	if (clutList.size() == 0)
 		error("CLUT not found");
 
-	Common::SeekableReadStream *pal = _movieArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[0]);
+
+	Common::SeekableSubReadStreamEndian *pal = _movieArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[0]);
 
 	loadPalette(*pal);
 	g_system->getPaletteManager()->setPalette(_vm->getPalette(), 0, _vm->getPaletteColorCount());
@@ -122,7 +123,7 @@ Score::~Score() {
 	delete _movieArchive;
 }
 
-void Score::loadPalette(Common::SeekableReadStream &stream) {
+void Score::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
 	uint16 steps = stream.size() / 6;
 	uint16 index = (steps * 3) - 1;
 	uint16 _paletteColorCount = steps;
@@ -142,8 +143,8 @@ void Score::loadPalette(Common::SeekableReadStream &stream) {
 	_vm->setPalette(_palette, _paletteColorCount);
 }
 
-void Score::loadFrames(Common::SeekableReadStream &stream) {
-	uint32 size = stream.readUint32BE();
+void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
+	uint32 size = stream.readUint32();
 	size -= 4;
 	uint16 channelSize;
 	uint16 channelOffset;
@@ -152,7 +153,7 @@ void Score::loadFrames(Common::SeekableReadStream &stream) {
 	_frames.push_back(initial);
 
 	while (size != 0) {
-		uint16 frameSize = stream.readUint16BE();
+		uint16 frameSize = stream.readUint16();
 		size -= frameSize;
 		frameSize -= 2;
 		Frame *frame = new Frame(*_frames.back());
@@ -171,16 +172,16 @@ void Score::loadFrames(Common::SeekableReadStream &stream) {
 	_frames.remove_at(0);
 }
 
-void Score::loadConfig(Common::SeekableReadStream &stream) {
-	/*uint16 unk1 = */ stream.readUint16BE();
-	/*ver1 = */ stream.readUint16BE();
+void Score::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
+	/*uint16 unk1 = */ stream.readUint16();
+	/*ver1 = */ stream.readUint16();
 	_movieRect = Score::readRect(stream);
 
-	_castArrayStart = stream.readUint16BE();
-	_castArrayEnd = stream.readUint16BE();
+	_castArrayStart = stream.readUint16();
+	_castArrayEnd = stream.readUint16();
 	_currentFrameRate = stream.readByte();
 	stream.skip(9);
-	_stageColor = stream.readUint16BE();
+	_stageColor = stream.readUint16();
 }
 
 void Score::readVersion(uint32 rid) {
@@ -190,7 +191,7 @@ void Score::readVersion(uint32 rid) {
 	debug("Version: %d.%d", _versionMajor, _versionMinor);
 }
 
-void Score::loadCastData(Common::SeekableReadStream &stream) {
+void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream) {
 	for (uint16 id = _castArrayStart; id <= _castArrayEnd; id++) {
 		byte size = stream.readByte();
 
@@ -234,16 +235,16 @@ void Score::loadCastData(Common::SeekableReadStream &stream) {
 	}
 }
 
-void Score::loadLabels(Common::SeekableReadStream &stream) {
-	uint16 count = stream.readUint16BE() + 1;
+void Score::loadLabels(Common::SeekableSubReadStreamEndian &stream) {
+	uint16 count = stream.readUint16() + 1;
 	uint16 offset = count * 4 + 2;
 
-	uint16 frame = stream.readUint16BE();
-	uint16 stringPos = stream.readUint16BE() + offset;
+	uint16 frame = stream.readUint16();
+	uint16 stringPos = stream.readUint16() + offset;
 
 	for (uint16 i = 0; i < count; i++) {
-		uint16 nextFrame = stream.readUint16BE();
-		uint16 nextStringPos = stream.readUint16BE() + offset;
+		uint16 nextFrame = stream.readUint16();
+		uint16 nextStringPos = stream.readUint16() + offset;
 		uint16 streamPos = stream.pos();
 
 		stream.seek(stringPos);
@@ -265,18 +266,18 @@ void Score::loadLabels(Common::SeekableReadStream &stream) {
 	}
 }
 
-void Score::loadActions(Common::SeekableReadStream &stream) {
-	uint16 count = stream.readUint16BE() + 1;
+void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
+	uint16 count = stream.readUint16() + 1;
 	uint16 offset = count * 4 + 2;
 
 	byte id = stream.readByte();
 	/*byte subId = */ stream.readByte(); //I couldn't find how it used in continuity (except print). Frame actionId = 1 byte.
-	uint16 stringPos = stream.readUint16BE() + offset;
+	uint16 stringPos = stream.readUint16() + offset;
 
 	for (uint16 i = 0; i < count; i++) {
 		uint16 nextId = stream.readByte();
 		/*byte subId = */ stream.readByte();
-		uint16 nextStringPos = stream.readUint16BE() + offset;
+		uint16 nextStringPos = stream.readUint16() + offset;
 		uint16 streamPos = stream.pos();
 
 		stream.seek(stringPos);
@@ -313,10 +314,10 @@ void Score::loadActions(Common::SeekableReadStream &stream) {
 	}
 }
 
-void Score::loadScriptText(Common::SeekableReadStream &stream) {
-	/*uint32 unk1 = */ stream.readUint32BE();
-	uint32 strLen = stream.readUint32BE();
-	/*uin32 dataLen = */ stream.readUint32BE();
+void Score::loadScriptText(Common::SeekableSubReadStreamEndian &stream) {
+	/*uint32 unk1 = */ stream.readUint32();
+	uint32 strLen = stream.readUint32();
+	/*uin32 dataLen = */ stream.readUint32();
 	Common::String script;
 
 	for (uint32 i = 0; i < strLen; i++) {
@@ -382,7 +383,7 @@ void Score::dumpScript(uint16 id, ScriptType type, Common::String script) {
 	out.close();
 }
 
-void Score::loadCastInfo(Common::SeekableReadStream &stream, uint16 id) {
+void Score::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id) {
 	uint32 entryType = 0;
 	Common::Array<Common::String> castStrings = loadStrings(stream, entryType);
 	CastInfo *ci = new CastInfo();
@@ -425,7 +426,7 @@ Common::String Score::getString(Common::String str) {
 	return str;
 }
 
-void Score::loadFileInfo(Common::SeekableReadStream &stream) {
+void Score::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
 	Common::Array<Common::String> fileInfoStrings = loadStrings(stream, _flags);
 	_script = fileInfoStrings[0];
 
@@ -443,25 +444,25 @@ void Score::loadFileInfo(Common::SeekableReadStream &stream) {
 	_directory = fileInfoStrings[3];
 }
 
-Common::Array<Common::String> Score::loadStrings(Common::SeekableReadStream &stream, uint32 &entryType, bool hasHeader) {
+Common::Array<Common::String> Score::loadStrings(Common::SeekableSubReadStreamEndian &stream, uint32 &entryType, bool hasHeader) {
 	Common::Array<Common::String> strings;
 	uint32 offset = 0;
 
 	if (hasHeader) {
-		offset = stream.readUint32BE();
-		/*uint32 unk1 = */ stream.readUint32BE();
-		/*uint32 unk2 = */ stream.readUint32BE();
-		entryType = stream.readUint32BE();
+		offset = stream.readUint32();
+		/*uint32 unk1 = */ stream.readUint32();
+		/*uint32 unk2 = */ stream.readUint32();
+		entryType = stream.readUint32();
 		stream.seek(offset);
 	}
 
-	uint16 count = stream.readUint16BE();
+	uint16 count = stream.readUint16();
 	offset += (count + 1) * 4 + 2; //positions info + uint16 count
-	uint32 startPos = stream.readUint32BE() + offset;
+	uint32 startPos = stream.readUint32() + offset;
 
 	for (uint16 i = 0; i < count; i++) {
 		Common::String entryString;
-		uint32 nextPos = stream.readUint32BE() + offset;
+		uint32 nextPos = stream.readUint32() + offset;
 		uint32 streamPos = stream.pos();
 
 		stream.seek(startPos);
@@ -480,13 +481,13 @@ Common::Array<Common::String> Score::loadStrings(Common::SeekableReadStream &str
 	return strings;
 }
 
-void Score::loadFontMap(Common::SeekableReadStream &stream) {
-	uint16 count = stream.readUint16BE();
+void Score::loadFontMap(Common::SeekableSubReadStreamEndian &stream) {
+	uint16 count = stream.readUint16();
 	uint32 offset = (count * 2) + 2;
 	uint16 currentRawPosition = offset;
 
 	for (uint16 i = 0; i < count; i++) {
-		uint16 id = stream.readUint16BE();
+		uint16 id = stream.readUint16();
 		uint32 positionInfo = stream.pos();
 
 		stream.seek(currentRawPosition);
@@ -504,29 +505,29 @@ void Score::loadFontMap(Common::SeekableReadStream &stream) {
 	}
 }
 
-BitmapCast::BitmapCast(Common::SeekableReadStream &stream) {
+BitmapCast::BitmapCast(Common::SeekableSubReadStreamEndian &stream) {
 	/*byte flags = */ stream.readByte();
-	uint16 someFlaggyThing = stream.readUint16BE();
+	uint16 someFlaggyThing = stream.readUint16();
 	initialRect = Score::readRect(stream);
 	boundingRect = Score::readRect(stream);
-	regY = stream.readUint16BE();
-	regX = stream.readUint16BE();
+	regY = stream.readUint16();
+	regX = stream.readUint16();
 
 	if (someFlaggyThing & 0x8000) {
-		/*uint16 unk1 =*/ stream.readUint16BE();
-		/*uint16 unk2 =*/ stream.readUint16BE();
+		/*uint16 unk1 =*/ stream.readUint16();
+		/*uint16 unk2 =*/ stream.readUint16();
 	}
 }
 
-TextCast::TextCast(Common::SeekableReadStream &stream) {
+TextCast::TextCast(Common::SeekableSubReadStreamEndian &stream) {
 	/*byte flags =*/ stream.readByte();
 	borderSize = static_cast<SizeType>(stream.readByte());
 	gutterSize = static_cast<SizeType>(stream.readByte());
 	boxShadow = static_cast<SizeType>(stream.readByte());
 	textType = static_cast<TextType>(stream.readByte());
-	textAlign = static_cast<TextAlignType>(stream.readUint16BE());
+	textAlign = static_cast<TextAlignType>(stream.readUint16());
 	stream.skip(6); //palinfo
-	/*uint32 unk1 = */ stream.readUint32BE();
+	/*uint32 unk1 = */ stream.readUint32();
 	initialRect = Score::readRect(stream);
 	textShadow = static_cast<SizeType>(stream.readByte());
 	byte flags = stream.readByte();
@@ -537,10 +538,10 @@ TextCast::TextCast(Common::SeekableReadStream &stream) {
 	if (flags & 0x4)
 		textFlags.push_back(kTextFlagDoNotWrap);
 
-	/*uint16 unk2 =*/ stream.readUint16BE();
+	/*uint16 unk2 =*/ stream.readUint16();
 }
 
-ShapeCast::ShapeCast(Common::SeekableReadStream &stream) {
+ShapeCast::ShapeCast(Common::SeekableSubReadStreamEndian &stream) {
 	/*byte flags = */ stream.readByte();
 	/*unk1 = */ stream.readByte();
 	shapeType = static_cast<ShapeType>(stream.readByte());
@@ -553,12 +554,12 @@ ShapeCast::ShapeCast(Common::SeekableReadStream &stream) {
 	lineDirection = stream.readByte();
 }
 
-Common::Rect Score::readRect(Common::SeekableReadStream &stream) {
+Common::Rect Score::readRect(Common::SeekableSubReadStreamEndian &stream) {
 	Common::Rect *rect = new Common::Rect();
-	rect->top = stream.readUint16BE();
-	rect->left = stream.readUint16BE();
-	rect->bottom = stream.readUint16BE();
-	rect->right = stream.readUint16BE();
+	rect->top = stream.readUint16();
+	rect->left = stream.readUint16();
+	rect->bottom = stream.readUint16();
+	rect->right = stream.readUint16();
 
 	return *rect;
 }
@@ -727,7 +728,7 @@ Frame::~Frame() {
 	}
 }
 
-void Frame::readChannel(Common::SeekableReadStream &stream, uint16 offset, uint16 size) {
+void Frame::readChannel(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size) {
 	if (offset >= 32) {
 		if (size <= 16)
 			readSprite(stream, offset, size);
@@ -748,7 +749,7 @@ void Frame::readChannel(Common::SeekableReadStream &stream, uint16 offset, uint1
 	}
 }
 
-void Frame::readMainChannels(Common::SeekableReadStream &stream, uint16 offset, uint16 size) {
+void Frame::readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size) {
 	uint16 finishPosition = offset + size;
 
 	while (offset < finishPosition) {
@@ -784,7 +785,7 @@ void Frame::readMainChannels(Common::SeekableReadStream &stream, uint16 offset, 
 			offset++;
 			break;
 		case kSound1Position:
-			_sound1 = stream.readUint16LE();
+			_sound1 = stream.readUint16();
 			offset+=2;
 			break;
 		case kSkipFrameFlagsPosition:
@@ -796,7 +797,7 @@ void Frame::readMainChannels(Common::SeekableReadStream &stream, uint16 offset, 
 			offset++;
 			break;
 		case kSound2Position:
-			_sound2 = stream.readUint16LE();
+			_sound2 = stream.readUint16();
 			offset += 2;
 			break;
 		case kSound2TypePosition:
@@ -804,7 +805,7 @@ void Frame::readMainChannels(Common::SeekableReadStream &stream, uint16 offset, 
 			offset += 1;
 			break;
 		case kPaletePosition:
-			if (stream.readUint16LE())
+			if (stream.readUint16())
 				readPaletteInfo(stream);
 			offset += 16;
 		default:
@@ -816,16 +817,16 @@ void Frame::readMainChannels(Common::SeekableReadStream &stream, uint16 offset, 
 	}
 }
 
-void Frame::readPaletteInfo(Common::SeekableReadStream &stream) {
+void Frame::readPaletteInfo(Common::SeekableSubReadStreamEndian &stream) {
 	_palette->firstColor = stream.readByte();
 	_palette->lastColor = stream.readByte();
 	_palette->flags = stream.readByte();
 	_palette->speed = stream.readByte();
-	_palette->frameCount = stream.readUint16LE();
+	_palette->frameCount = stream.readUint16();
 	stream.skip(8); //unknown
 }
 
-void Frame::readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16 size) {
+void Frame::readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size) {
 	uint16 spritePosition = (offset - 32) / 16;
 	uint16 spriteStart = spritePosition * 16 + 32;
 
@@ -845,11 +846,11 @@ void Frame::readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16
 			fieldPosition++;
 			break;
 		case kSpritePositionUnk2:
-			/*byte x2 = */ stream.readUint16BE();
+			/*byte x2 = */ stream.readUint16();
 			fieldPosition += 2;
 			break;
 		case kSpritePositionFlags:
-			sprite._flags = stream.readUint16BE();
+			sprite._flags = stream.readUint16();
 			sprite._ink = static_cast<InkType>(sprite._flags & 0x3f);
 
 			if (sprite._flags & 0x40)
@@ -860,23 +861,23 @@ void Frame::readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16
 			fieldPosition += 2;
 			break;
 		case kSpritePositionCastId:
-			sprite._castId = stream.readUint16BE();
+			sprite._castId = stream.readUint16();
 			fieldPosition += 2;
 			break;
 		case kSpritePositionY:
-			sprite._startPoint.y = stream.readUint16BE();
+			sprite._startPoint.y = stream.readUint16();
 			fieldPosition += 2;
 			break;
 		case kSpritePositionX:
-			sprite._startPoint.x = stream.readUint16BE();
+			sprite._startPoint.x = stream.readUint16();
 			fieldPosition += 2;
 			break;
 		case kSpritePositionWidth:
-			sprite._width = stream.readUint16BE();
+			sprite._width = stream.readUint16();
 			fieldPosition += 2;
 			break;
 		case kSpritePositionHeight:
-			sprite._height = stream.readUint16BE();
+			sprite._height = stream.readUint16();
 			fieldPosition += 2;
 			break;
 		default:

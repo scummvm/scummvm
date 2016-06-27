@@ -34,6 +34,7 @@ namespace Director {
 
 Archive::Archive() {
 	_stream = 0;
+	_isBigEndian = true;
 }
 
 Archive::~Archive() {
@@ -81,7 +82,7 @@ bool Archive::hasResource(uint32 tag, const Common::String &resName) const {
 	return false;
 }
 
-Common::SeekableReadStream *Archive::getResource(uint32 tag, uint16 id) {
+Common::SeekableSubReadStreamEndian *Archive::getResource(uint32 tag, uint16 id) {
 	if (!_types.contains(tag))
 		error("Archive does not contain '%s' %04x", tag2str(tag), id);
 
@@ -92,7 +93,7 @@ Common::SeekableReadStream *Archive::getResource(uint32 tag, uint16 id) {
 
 	const Resource &res = resMap[id];
 
-	return new Common::SeekableSubReadStream(_stream, res.offset, res.offset + res.size);
+	return new Common::SeekableSubReadStreamEndian(_stream, res.offset, res.offset + res.size, _isBigEndian, DisposeAfterUse::NO);
 }
 
 uint32 Archive::getOffset(uint32 tag, uint16 id) const {
@@ -211,9 +212,10 @@ bool MacArchive::openStream(Common::SeekableReadStream *stream, uint32 startOffs
 	return false;
 }
 
-Common::SeekableReadStream *MacArchive::getResource(uint32 tag, uint16 id) {
+Common::SeekableSubReadStreamEndian *MacArchive::getResource(uint32 tag, uint16 id) {
 	assert(_resFork);
-	return _resFork->getResource(tag, id);
+	Common::SeekableReadStream *stream = _resFork->getResource(tag, id);
+	return new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), DisposeAfterUse::NO);
 }
 
 // RIFF Archive code
@@ -275,7 +277,7 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	return true;
 }
 
-Common::SeekableReadStream *RIFFArchive::getResource(uint32 tag, uint16 id) {
+Common::SeekableSubReadStreamEndian *RIFFArchive::getResource(uint32 tag, uint16 id) {
 	if (!_types.contains(tag))
 		error("Archive does not contain '%s' %04x", tag2str(tag), id);
 
@@ -302,7 +304,7 @@ Common::SeekableReadStream *RIFFArchive::getResource(uint32 tag, uint16 id) {
 		size--;
 	}
 
-	return new Common::SeekableSubReadStream(_stream, offset, offset + size);
+	return new Common::SeekableSubReadStreamEndian(_stream, offset, offset + size, true, DisposeAfterUse::NO);
 }
 
 // RIFX Archive code

@@ -171,7 +171,7 @@ struct Cast {
 };
 
 struct BitmapCast : Cast {
-	BitmapCast(Common::SeekableReadStream &stream);
+	BitmapCast(Common::SeekableSubReadStreamEndian &stream);
 
 	Common::Rect boundingRect;
 	uint16 regX;
@@ -187,7 +187,7 @@ enum ShapeType {
 };
 
 struct ShapeCast : Cast {
-	ShapeCast(Common::SeekableReadStream &stream);
+	ShapeCast(Common::SeekableSubReadStreamEndian &stream);
 
 	ShapeType shapeType;
 	uint16 pattern;
@@ -226,7 +226,7 @@ enum SizeType {
 };
 
 struct TextCast : Cast {
-	TextCast(Common::SeekableReadStream &stream);
+	TextCast(Common::SeekableSubReadStreamEndian &stream);
 
 	SizeType borderSize;
 	SizeType gutterSize;
@@ -245,7 +245,7 @@ enum ButtonType {
 };
 
 struct ButtonCast : TextCast {
-	ButtonCast(Common::SeekableReadStream &stream) : TextCast(stream) {
+	ButtonCast(Common::SeekableSubReadStreamEndian &stream) : TextCast(stream) {
 		buttonType = static_cast<ButtonType>(stream.readUint16BE());
 	}
 
@@ -290,7 +290,7 @@ public:
 	Frame(const Frame &frame);
 	~Frame();
 
-	void readChannel(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
+	void readChannel(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
 	void prepareFrame(Score *score);
 	uint16 getSpriteIDFromPos(Common::Point pos);
 
@@ -299,9 +299,9 @@ private:
 	void playSoundChannel();
 	void renderSprites(Graphics::ManagedSurface &surface, bool renderTrail);
 	void renderText(Graphics::ManagedSurface &surface, uint16 spriteID);
-	void readPaletteInfo(Common::SeekableReadStream &stream);
-	void readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
-	void readMainChannels(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
+	void readPaletteInfo(Common::SeekableSubReadStreamEndian &stream);
+	void readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
+	void readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
 	void drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
 	void drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
 	void drawGhostSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
@@ -332,9 +332,12 @@ public:
 	Score(DirectorEngine *vm);
 	~Score();
 
-	static Common::Rect readRect(Common::SeekableReadStream &stream);
+	static Common::Rect readRect(Common::SeekableSubReadStreamEndian &stream);
 	void loadArchive();
 	void setStartToLabel(Common::String label);
+	void goToLoop();
+	void goToNext();
+	void goToPrevious();
 	void startLoop();
 	void processEvents();
 	Archive *getArchive() const { return _movieArchive; };
@@ -343,19 +346,19 @@ public:
 private:
 	void update();
 	void readVersion(uint32 rid);
-	void loadConfig(Common::SeekableReadStream &stream);
-	void loadPalette(Common::SeekableReadStream &stream);
-	void loadCastData(Common::SeekableReadStream &stream);
-	void loadFrames(Common::SeekableReadStream &stream);
-	void loadLabels(Common::SeekableReadStream &stream);
-	void loadActions(Common::SeekableReadStream &stream);
-	void loadCastInfo(Common::SeekableReadStream &stream, uint16 id);
-	void loadScriptText(Common::SeekableReadStream &stream);
-	void loadFileInfo(Common::SeekableReadStream &stream);
-	void loadFontMap(Common::SeekableReadStream &stream);
+	void loadConfig(Common::SeekableSubReadStreamEndian &stream);
+	void loadPalette(Common::SeekableSubReadStreamEndian &stream);
+	void loadCastData(Common::SeekableSubReadStreamEndian &stream);
+	void loadFrames(Common::SeekableSubReadStreamEndian &stream);
+	void loadLabels(Common::SeekableSubReadStreamEndian &stream);
+	void loadActions(Common::SeekableSubReadStreamEndian &stream);
+	void loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id);
+	void loadScriptText(Common::SeekableSubReadStreamEndian &stream);
+	void loadFileInfo(Common::SeekableSubReadStreamEndian &stream);
+	void loadFontMap(Common::SeekableSubReadStreamEndian &stream);
 	void dumpScript(uint16 id, ScriptType type, Common::String script);
 	Common::String getString(Common::String str);
-	Common::Array<Common::String> loadStrings(Common::SeekableReadStream &stream, uint32 &entryType, bool hasHeader = true);
+	Common::Array<Common::String> loadStrings(Common::SeekableSubReadStreamEndian &stream, uint32 &entryType, bool hasHeader = true);
 
 public:
 	Common::Array<Frame *> _frames;
