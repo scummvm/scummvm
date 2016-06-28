@@ -486,7 +486,7 @@ void EventManager::commandSetLeader(ChampionIndex champIndex) {
 		leaderIndex = cm._leaderIndex;
 		cm._champions[leaderIndex].setAttributeFlag(kChampionAttributeLoad, true);
 		cm._champions[leaderIndex].setAttributeFlag(kChampionAttributeNameTitle, true);
-		cm._champions[leaderIndex]._load -= _vm->_dungeonMan->getObjectWeight(cm._leaderHand);
+		cm._champions[leaderIndex]._load -= _vm->_dungeonMan->getObjectWeight(cm._leaderHandObject);
 		cm._leaderIndex = kChampionNone;
 		cm.drawChampionState(leaderIndex);
 	}
@@ -497,7 +497,7 @@ void EventManager::commandSetLeader(ChampionIndex champIndex) {
 	cm._leaderIndex = champIndex;
 	Champion *champion = &cm._champions[cm._leaderIndex];
 	champion->_dir = _vm->_dungeonMan->_currMap._partyDir;
-	cm._champions[champIndex]._load += _vm->_dungeonMan->getObjectWeight(cm._leaderHand);
+	cm._champions[champIndex]._load += _vm->_dungeonMan->getObjectWeight(cm._leaderHandObject);
 	if (_vm->indexToOrdinal(champIndex) != cm._candidateChampionOrdinal) {
 		champion->setAttributeFlag(kChampionAttributeIcon, true);
 		champion->setAttributeFlag(kChampionAttributeNameTitle, true);
@@ -554,7 +554,7 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 			}
 		}
 	} else {
-		Thing thing = champMan._leaderHand;
+		Thing thing = champMan._leaderHandObject;
 		uint16 *rawThingPointer = dunMan.getThingData(thing);
 		if (dunMan._squareAheadElement == kElementTypeWall) {
 			for (int16 viewCell = kViewCellFronLeft; viewCell <= kViewCellFrontRight; ++viewCell) {
@@ -578,7 +578,7 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 						} else {
 							goto T0377019;
 						}
-						warning("MISSING CODE: F0296_CHAMPION_DrawChangedObjectIcons");
+						champMan.drawChangedObjectIcons();
 						champMan._champions[champMan._leaderIndex]._load += dunMan.getObjectWeight(thing) - weight;
 					}
 T0377019:

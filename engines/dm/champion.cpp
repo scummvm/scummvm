@@ -122,6 +122,10 @@ void ChampionMan::drawHealthOrStaminaOrManaValue(int16 posY, int16 currVal, int1
 	_vm->_textMan->printToViewport(79, posY, kColorLightestGray, tmp.c_str());
 }
 
+uint16 ChampionMan::handSlotIndex(uint16 slotBoxIndex) {
+	return slotBoxIndex & 0x1;
+}
+
 Common::String ChampionMan::getStringFromInteger(uint16 val, bool padding, uint16 paddingCharCount) {
 	using namespace Common;
 	String valToStr = String::format("%d", val);
@@ -288,6 +292,74 @@ bool ChampionMan::hasObjectIconInSlotBoxChanged(int16 slotBoxIndex, Thing thing)
 	return false;
 }
 
+void ChampionMan::drawChangedObjectIcons() {
+	InventoryMan &invMan = *_vm->_inventoryMan;
+	ObjectMan &objMan = *_vm->_objectMan;
+	MenuMan &menuMan = *_vm->_menuMan;
+
+	uint16 invChampOrdinal = invMan._inventoryChampionOrdinal;
+	if (_candidateChampionOrdinal && !invChampOrdinal)
+		return;
+
+	_mousePointerHiddenToDrawChangedObjIconOnScreen = false;
+	IconIndice leaderHandObjIconIndex = _leaderHandObjectIconIndex;
+
+	if (((leaderHandObjIconIndex < kIconIndiceWeaponDagger) && (leaderHandObjIconIndex >= kIconIndiceJunkCompassNorth))	// < instead of <= is correct
+		|| ((leaderHandObjIconIndex >= kIconIndicePotionMaPotionMonPotion) && (leaderHandObjIconIndex <= kIconIndicePotionWaterFlask))
+			|| (leaderHandObjIconIndex == kIconIndicePotionEmptyFlask)) {
+		IconIndice iconIndex = objMan.getIconIndex(_leaderHandObject);
+		if (iconIndex != leaderHandObjIconIndex) {
+			_mousePointerHiddenToDrawChangedObjIconOnScreen = true;
+			warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
+			objMan.extractIconFromBitmap(iconIndex, objMan._objectIconForMousePointer);
+			warning("MISSING CODE: F0068_MOUSE_SetPointerToObject");
+			_leaderHandObjectIconIndex = iconIndex;
+			objMan.drawLeaderObjectName(_leaderHandObject);
+		}
+	}
+
+	for (uint16 slotBoxIndex = 0; slotBoxIndex < (_partyChampionCount * 2); ++slotBoxIndex) {
+		int16 champIndex = slotBoxIndex >> 1;
+		if(invChampOrdinal == _vm->indexToOrdinal(champIndex))
+			continue;
+
+		if (hasObjectIconInSlotBoxChanged(slotBoxIndex, _champions[champIndex].getSlot((ChampionSlot)handSlotIndex(slotBoxIndex)))
+			&& (handSlotIndex(slotBoxIndex) == kChampionSlotActionHand)) {
+
+			menuMan.drawActionIcon((ChampionIndex)champIndex);
+		}
+	}
+
+	if (invChampOrdinal) {
+		Champion *champ = &_champions[_vm->ordinalToIndex(invChampOrdinal)];
+		Thing *thing = &champ->getSlot(kChampionSlotReadyHand);
+		uint16 drawViewport = 0;
+
+		for (uint16 slotIndex = kChampionSlotReadyHand; slotIndex < kChampionSlotChest_1; slotIndex++, thing++) {
+			uint16 objIconChanged = hasObjectIconInSlotBoxChanged(slotIndex + kSlotBoxInventoryFirstSlot, *thing) ? 1 : 0;
+			drawViewport |= objIconChanged;
+			if (objIconChanged && (slotIndex == kChampionSlotActionHand)) {
+				menuMan.drawActionIcon((ChampionIndex)_vm->ordinalToIndex(invChampOrdinal));
+			}
+		}
+
+		if (invMan._panelContent = kPanelContentChest) {
+			thing = invMan._chestSlots;
+			for (int16 slotIndex = 0; slotIndex < 8; ++slotIndex, thing++) {
+				drawViewport |= (hasObjectIconInSlotBoxChanged(slotIndex + kSlotBoxChestFirstSlot, *thing) ? 1 : 0);
+			}
+		}
+
+		if (drawViewport) {
+			champ->setAttributeFlag(kChampionAttributeViewport, true);
+			drawChampionState((ChampionIndex)_vm->ordinalToIndex(invChampOrdinal));
+		}
+	}
+
+	if (_mousePointerHiddenToDrawChangedObjIconOnScreen)
+		warning("MISSING CODE: F0078_MOUSE_ShowPointer");
+}
+
 ChampionIndex ChampionMan::getIndexInCell(ViewCell cell) {
 	for (uint16 i = 0; i < _partyChampionCount; ++i) {
 		if ((_champions[i]._cell == cell) && _champions[i]._currHealth)
@@ -303,7 +375,7 @@ void ChampionMan::resetDataToStartGame() {
 		assert(false);
 	}
 
-	_leaderHand = Thing::_thingNone;
+	_leaderHandObject = Thing::_thingNone;
 	_leaderHandObjectIconIndex = kIconIndiceNone;
 	_leaderEmptyHanded = true;
 }

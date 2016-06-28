@@ -44,7 +44,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 
 
 	bool atLeastOneSensorWasTriggered = false;
-	Thing leaderHandObject = champMan._leaderHand;
+	Thing leaderHandObject = champMan._leaderHandObject;
 	int16 sensorCountToProcessPerCell[4];
 	uint16 cell;
 	for (cell = kCellNorthWest; cell < kCellSouthWest; ++cell) {

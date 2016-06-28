@@ -365,7 +365,7 @@ public:
 	int16 _shieldDefense;
 	byte _portrait[464]; // 32 x 29 pixel portrait
 
-	Thing getSlot(ChampionSlot slot) { return _slots[slot]; }
+	Thing &getSlot(ChampionSlot slot) { return _slots[slot]; }
 	void setSlot(ChampionSlot slot, Thing val) { _slots[slot] = val; }
 
 	Skill &getSkill(ChampionSkill skill) { return _skills[skill]; }
@@ -430,11 +430,12 @@ class ChampionMan {
 	ChampionIndex getIndexInCell(ViewCell cell); // @ F0285_CHAMPION_GetIndexInCell
 	int16 getDecodedValue(char *string, uint16 characterCount); // @ F0279_CHAMPION_GetDecodedValue
 	void drawHealthOrStaminaOrManaValue(int16 posy, int16 currVal, int16 maxVal); // @ F0289_CHAMPION_DrawHealthOrStaminaOrManaValue
+	uint16 handSlotIndex(uint16 slotBoxIndex);// @ M70_HAND_SLOT_INDEX
 public:
 	Champion _champions[4];
 	uint16 _partyChampionCount;	// @ G0305_ui_PartyChampionCount
 	bool _partyDead; // @ G0303_B_PartyDead
-	Thing _leaderHand; // @ G0414_T_LeaderHandObject
+	Thing _leaderHandObject; // @ G0414_T_LeaderHandObject
 	ChampionIndex _leaderIndex;	// @ G0411_i_LeaderIndex
 	uint16 _candidateChampionOrdinal; // @ G0299_ui_CandidateChampionOrdinal
 	bool _partyIsSleeping; // @ G0300_B_PartyIsSleeping
@@ -461,6 +462,7 @@ public:
 	void applyModifiersToStatistics(Champion *champ, ChampionSlot slotIndex, IconIndice iconIndex,
 									int16 modifierFactor, Thing thing); // @ F0299_CHAMPION_ApplyObjectModifiersToStatistics
 	bool hasObjectIconInSlotBoxChanged(int16 slotBoxIndex, Thing thing); // @ F0295_CHAMPION_HasObjectIconInSlotBoxChanged
+	void drawChangedObjectIcons(); // @ F0296_CHAMPION_DrawChangedObjectIcons
 };
 
 
