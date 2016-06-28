@@ -57,7 +57,7 @@ F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
 					F0335_INVENTORY_DrawPanel_ObjectDescriptionString // done 
 						G0421_i_ObjectDescriptionTextX // done
 						G0422_i_ObjectDescriptionTextY // done
-					F0339_INVENTORY_DrawPanel_ArrowOrEye
+					F0339_INVENTORY_DrawPanel_ArrowOrEye // done 
 					G0430_apc_DirectionNames
 					G0034_s_Graphic562_Box_ObjectDescriptionCircle
 					G0032_s_Graphic562_Box_Panel

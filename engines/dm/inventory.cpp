@@ -405,4 +405,13 @@ void InventoryMan::drawPanelObjectDescriptionString(char* descString) {
 		}
 	}
 }
+
+Box gBoxArrowOrEye = Box(83, 98, 57, 65); // @ G0033_s_Graphic562_Box_ArrowOrEye 
+
+void InventoryMan::drawPanelArrowOrEye(bool pressingEye) {
+	DisplayMan &dispMan = *_vm->_displayMan;
+	dispMan.blitToScreen(dispMan.getBitmap(pressingEye ? kEyeForObjectDescriptionIndice : kArrowForChestContentIndice),
+						 16, 0, 0, gBoxArrowOrEye, kColorRed, gDungeonViewport);
+}
+
 }
