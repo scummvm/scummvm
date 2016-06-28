@@ -45,6 +45,8 @@ Box gBoxChampionIcons[4] = {
 	Box(281, 299, 15, 28)};
 Color gChampionColor[4] = {(Color)7, (Color)11, (Color)8, (Color)14};
 
+int16 gLightPowerToLightAmount[16] = {0, 5, 12, 24, 33, 40, 46, 51, 59, 68, 76, 82, 89, 94, 97, 100};
+
 uint16 gSlotMasks[38] = {  // @ G0038_ai_Graphic562_SlotMasks
 	/* 30 for champion inventory, 8 for chest */
 	0xFFFF,   /* Ready Hand       Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
@@ -306,7 +308,7 @@ void ChampionMan::drawChangedObjectIcons() {
 
 	if (((leaderHandObjIconIndex < kIconIndiceWeaponDagger) && (leaderHandObjIconIndex >= kIconIndiceJunkCompassNorth))	// < instead of <= is correct
 		|| ((leaderHandObjIconIndex >= kIconIndicePotionMaPotionMonPotion) && (leaderHandObjIconIndex <= kIconIndicePotionWaterFlask))
-			|| (leaderHandObjIconIndex == kIconIndicePotionEmptyFlask)) {
+		|| (leaderHandObjIconIndex == kIconIndicePotionEmptyFlask)) {
 		IconIndice iconIndex = objMan.getIconIndex(_leaderHandObject);
 		if (iconIndex != leaderHandObjIconIndex) {
 			_mousePointerHiddenToDrawChangedObjIconOnScreen = true;
@@ -320,7 +322,7 @@ void ChampionMan::drawChangedObjectIcons() {
 
 	for (uint16 slotBoxIndex = 0; slotBoxIndex < (_partyChampionCount * 2); ++slotBoxIndex) {
 		int16 champIndex = slotBoxIndex >> 1;
-		if(invChampOrdinal == _vm->indexToOrdinal(champIndex))
+		if (invChampOrdinal == _vm->indexToOrdinal(champIndex))
 			continue;
 
 		if (hasObjectIconInSlotBoxChanged(slotBoxIndex, _champions[champIndex].getSlot((ChampionSlot)handSlotIndex(slotBoxIndex)))
@@ -358,6 +360,71 @@ void ChampionMan::drawChangedObjectIcons() {
 
 	if (_mousePointerHiddenToDrawChangedObjIconOnScreen)
 		warning("MISSING CODE: F0078_MOUSE_ShowPointer");
+}
+
+void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, ChampionSlot slotIndex) {
+	InventoryMan &invMan = *_vm->_inventoryMan;
+	DungeonMan &dunMan = *_vm->_dungeonMan;
+	ObjectMan &objMan = *_vm->_objectMan;
+	MenuMan &menuMan = *_vm->_menuMan;
+
+	if (thing == Thing::_thingNone)
+		return;
+
+	Champion *champ = &_champions[champIndex];
+
+	if (slotIndex >= kChampionSlotChest_1) {
+		invMan._chestSlots[slotIndex - kChampionSlotChest_1] = thing;
+	} else {
+		champ->setSlot(slotIndex, thing);
+	}
+
+	champ->_load += dunMan.getObjectWeight(thing);
+	champ->setAttributeFlag(kChampionAttributeLoad, true);
+	IconIndice iconIndex = objMan.getIconIndex(thing);
+	bool isInventoryChampion = (_vm->indexToOrdinal(champIndex) == invMan._inventoryChampionOrdinal);
+	applyModifiersToStatistics(champ, slotIndex, iconIndex, 1, thing);
+	uint16 *rawObjPtr = dunMan.getThingData(thing);
+
+	if (slotIndex < kChampionSlotHead) {
+
+		if (slotIndex == kChampionSlotActionHand) {
+			champ->setAttributeFlag(kChampionAttributeActionHand, true);
+			if (_actingChampionOrdinal == _vm->indexToOrdinal(champIndex))
+				menuMan.clearActingChampion();
+
+			if ((iconIndex >= kIconIndiceScrollOpen) && (iconIndex <= kIconIndiceScrollClosed)) {
+				((Scroll*)rawObjPtr)->setClosed(false);
+				drawChangedObjectIcons();
+			}
+		}
+
+		if (iconIndex = kIconIndiceWeaponTorchUnlit) {
+			((Weapon*)rawObjPtr)->setLit(true);
+			warning("MISSING CODE: F0337_INVENTORY_SetDungeonViewPalette");
+			drawChangedObjectIcons();
+		} else if (isInventoryChampion && (slotIndex == kChampionSlotActionHand) &&
+			((iconIndex == kIconIndiceContainerChestClosed) || ((iconIndex >= kIconIndiceScrollOpen) && (iconIndex <= kIconIndiceScrollClosed)))) {
+			champ->setAttributeFlag(kChampionAttributePanel, true);
+		}
+
+	} else if (slotIndex == kChampionSlotNeck) {
+
+		if ((iconIndex >= kIconIndiceJunkIllumuletUnequipped) && (iconIndex <= kIconIndiceJunkIllumuletEquipped)) {
+			((Junk*)rawObjPtr)->setChargeCount(1);
+			_party._magicalLightAmount += gLightPowerToLightAmount[2];
+			warning("MISSING CODE: F0337_INVENTORY_SetDungeonViewPalette");
+			iconIndex = (IconIndice) (iconIndex + 1);
+		} else if ((iconIndex >= kIconIndiceJunkJewelSymalUnequipped) && (iconIndex <= kIconIndiceJunkJewelSymalEquipped)) {
+			((Junk*)rawObjPtr)->setChargeCount(1);
+			iconIndex = (IconIndice) (iconIndex + 1);
+		}
+
+	}
+
+	drawSlot(champIndex, slotIndex);
+	if (isInventoryChampion)
+		champ->setAttributeFlag(kChampionAttributeViewport, true);
 }
 
 ChampionIndex ChampionMan::getIndexInCell(ViewCell cell) {
@@ -549,7 +616,7 @@ T0280048:
 			if (champ->getSlot((ChampionSlot)slotIndex_Green) != Thing::_thingNone) {
 				goto T0280046;
 			}
-			warning("MISSING CODE: F0301_CHAMPION_AddObjectInSlot");
+			addObjectInSlot((ChampionIndex)prevChampCount, thing, (ChampionSlot)slotIndex_Green);
 		}
 		thing = dunMan.getNextThing(thing);
 	}

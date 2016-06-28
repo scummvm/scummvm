@@ -365,6 +365,12 @@ public:
 
 	WeaponType getType() { return (WeaponType)(_desc & 0x7F); }
 	bool isLit() { return (_desc >> 15) & 1; }
+	void setLit(bool val) {
+		if (val)
+			_desc |= (1 << 15);
+		else
+			_desc &= (~(1 << 15));
+	}
 	uint16 getChargeCount() { return (_desc >> 10) & 0xF; }
 	Thing getNextThing() { return _nextThing; }
 	uint16 getCursed() { return (_desc >> 8) & 1; }
@@ -402,6 +408,12 @@ public:
 	}
 	Thing getNextThing() { return _nextThing; }
 	uint16 getClosed() { return (_attributes >> 10) & 0x3F; } // ??? dunno why, the original bitfield is 6 bits long
+	void setClosed(bool val) {
+		if (val)
+			_attributes |= (1 << 10);
+		else
+			_attributes &= (~(0x3F << 10));
+	}
 	uint16 getTextStringThingIndex() { return _attributes & 0x3FF; }
 }; // @ SCROLL
 

@@ -41,6 +41,8 @@ namespace DM {
 extern Box gBoxChampionIcons[4]; // @ G0054_ai_Graphic562_Box_ChampionIcons
 extern Color gChampionColor[4]; // @ G0046_auc_Graphic562_ChampionColor
 
+extern int16 gLightPowerToLightAmount[16]; // @ G0039_ai_Graphic562_LightPowerToLightAmount
+
 class Scent {
 	uint16 _scent;
 public:
@@ -463,6 +465,7 @@ public:
 									int16 modifierFactor, Thing thing); // @ F0299_CHAMPION_ApplyObjectModifiersToStatistics
 	bool hasObjectIconInSlotBoxChanged(int16 slotBoxIndex, Thing thing); // @ F0295_CHAMPION_HasObjectIconInSlotBoxChanged
 	void drawChangedObjectIcons(); // @ F0296_CHAMPION_DrawChangedObjectIcons
+	void addObjectInSlot(ChampionIndex champIndex, Thing thing, ChampionSlot slotIndex); // @ F0301_CHAMPION_AddObjectInSlot
 };
 
 

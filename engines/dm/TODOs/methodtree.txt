@@ -97,9 +97,9 @@ F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
 		G0498_auc_Graphic560_PaletteChanges_ActionAreaObjectIcon // done
 		G0237_as_Graphic559_ObjectInfo // done
 		G0509_B_ActionAreaContainsIcons // done
-	F0301_CHAMPION_AddObjectInSlot
+	F0301_CHAMPION_AddObjectInSlot // done
 		F0299_CHAMPION_ApplyObjectModifiersToStatistics // done
-		F0296_CHAMPION_DrawChangedObjectIcons
+		F0296_CHAMPION_DrawChangedObjectIcons // done 
 			F0068_MOUSE_SetPointerToObject // skip
 			F0077_MOUSE_HidePointer_CPSE // skip
 			F0078_MOUSE_ShowPointer // skip
@@ -107,14 +107,14 @@ F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
 			F0386_MENUS_DrawActionIcon // done
 			F0295_CHAMPION_HasObjectIconInSlotBoxChanged // done 	
 				F0039_OBJECT_GetIconIndexInSlotBox // done 
-			M70_HAND_SLOT_INDEX
+			M70_HAND_SLOT_INDEX // done
 			G0420_B_MousePointerHiddenToDrawChangedObjectIconOnScreen // done
-			G0412_puc_Bitmap_ObjectIconForMousePointer
-			G0413_i_LeaderHandObjectIconIndex
-			G0414_T_LeaderHandObject
-		F0337_INVENTORY_SetDungeonViewPalette
-		G0407_s_Party
-		G0039_ai_Graphic562_LightPowerToLightAmount
+			G0412_puc_Bitmap_ObjectIconForMousePointer // done
+			G0413_i_LeaderHandObjectIconIndex // done 
+			G0414_T_LeaderHandObject // done
+		F0337_INVENTORY_SetDungeonViewPalette // skip
+		G0407_s_Party // done
+		G0039_ai_Graphic562_LightPowerToLightAmount // skip
 
 	F0355_INVENTORY_Toggle_CPSE // done
 		F0292_CHAMPION_DrawState // done
