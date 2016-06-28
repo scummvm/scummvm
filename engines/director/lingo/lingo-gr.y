@@ -96,9 +96,9 @@ program: programline '\n' program
 programline:
 	| defn
 	| func
+	| macro
 	| asgn				{ g_lingo->code1(g_lingo->c_xpop); }
 	| stmt
-	| expr
 	| error				{ yyerrok; }
 	| /* empty */
 	;
@@ -230,17 +230,29 @@ expr: INT	{
 	| '(' expr ')'				{ $$ = $2; }
 	;
 
-func: ID begin '(' arglist ')' {
+func: ID '(' arglist ')' {
 		g_lingo->code1(g_lingo->c_call);
 		g_lingo->codeString($1->c_str());
 		inst numpar = 0;
-		WRITE_UINT32(&numpar, $4);
+		WRITE_UINT32(&numpar, $3);
 		g_lingo->code1(numpar); };
 	| tMCI STRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c_str()); delete $2; }
 	| tMCIWAIT ID			{ g_lingo->code1(g_lingo->c_mciwait); g_lingo->codeString($2->c_str()); delete $2; }
 	| tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| gotofunc
 	| tEXIT					{ g_lingo->code1(g_lingo->c_exit); }
+	;
+
+macro: ID begin arglist {
+		g_lingo->code1(g_lingo->c_call);
+		g_lingo->codeString($1->c_str());
+		inst numpar = 0;
+		WRITE_UINT32(&numpar, $3);
+		g_lingo->code1(numpar); };
+	| ID {
+		g_lingo->code1(g_lingo->c_call);
+		g_lingo->codeString($1->c_str());
+		g_lingo->code1(0); };
 	;
 
 // go {to} {frame} whichFrame {of movie whichMovie}
