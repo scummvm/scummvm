@@ -41,79 +41,81 @@
    enum yytokentype {
      UNARY = 258,
      VOID = 259,
-     INT = 260,
-     FLOAT = 261,
-     ID = 262,
-     STRING = 263,
-     HANDLER = 264,
-     tDOWN = 265,
-     tELSE = 266,
-     tEND = 267,
-     tEXIT = 268,
-     tFRAME = 269,
-     tGO = 270,
-     tIF = 271,
-     tINTO = 272,
-     tLOOP = 273,
-     tMACRO = 274,
-     tMCI = 275,
-     tMCIWAIT = 276,
-     tMOVIE = 277,
-     tNEXT = 278,
-     tOF = 279,
-     tPREVIOUS = 280,
-     tPUT = 281,
-     tREPEAT = 282,
-     tSET = 283,
-     tTHEN = 284,
-     tTO = 285,
-     tWITH = 286,
-     tWHILE = 287,
-     tGE = 288,
-     tLE = 289,
-     tGT = 290,
-     tLT = 291,
-     tEQ = 292,
-     tNEQ = 293
+     VAR = 260,
+     INT = 261,
+     FLOAT = 262,
+     ID = 263,
+     STRING = 264,
+     HANDLER = 265,
+     tDOWN = 266,
+     tELSE = 267,
+     tEND = 268,
+     tEXIT = 269,
+     tFRAME = 270,
+     tGO = 271,
+     tIF = 272,
+     tINTO = 273,
+     tLOOP = 274,
+     tMACRO = 275,
+     tMCI = 276,
+     tMCIWAIT = 277,
+     tMOVIE = 278,
+     tNEXT = 279,
+     tOF = 280,
+     tPREVIOUS = 281,
+     tPUT = 282,
+     tREPEAT = 283,
+     tSET = 284,
+     tTHEN = 285,
+     tTO = 286,
+     tWITH = 287,
+     tWHILE = 288,
+     tGE = 289,
+     tLE = 290,
+     tGT = 291,
+     tLT = 292,
+     tEQ = 293,
+     tNEQ = 294
    };
 #endif
 /* Tokens.  */
 #define UNARY 258
 #define VOID 259
-#define INT 260
-#define FLOAT 261
-#define ID 262
-#define STRING 263
-#define HANDLER 264
-#define tDOWN 265
-#define tELSE 266
-#define tEND 267
-#define tEXIT 268
-#define tFRAME 269
-#define tGO 270
-#define tIF 271
-#define tINTO 272
-#define tLOOP 273
-#define tMACRO 274
-#define tMCI 275
-#define tMCIWAIT 276
-#define tMOVIE 277
-#define tNEXT 278
-#define tOF 279
-#define tPREVIOUS 280
-#define tPUT 281
-#define tREPEAT 282
-#define tSET 283
-#define tTHEN 284
-#define tTO 285
-#define tWITH 286
-#define tWHILE 287
-#define tGE 288
-#define tLE 289
-#define tGT 290
-#define tLT 291
-#define tEQ 292
-#define tNEQ 293
+#define VAR 260
+#define INT 261
+#define FLOAT 262
+#define ID 263
+#define STRING 264
+#define HANDLER 265
+#define tDOWN 266
+#define tELSE 267
+#define tEND 268
+#define tEXIT 269
+#define tFRAME 270
+#define tGO 271
+#define tIF 272
+#define tINTO 273
+#define tLOOP 274
+#define tMACRO 275
+#define tMCI 276
+#define tMCIWAIT 277
+#define tMOVIE 278
+#define tNEXT 279
+#define tOF 280
+#define tPREVIOUS 281
+#define tPUT 282
+#define tREPEAT 283
+#define tSET 284
+#define tTHEN 285
+#define tTO 286
+#define tWITH 287
+#define tWHILE 288
+#define tGE 289
+#define tLE 290
+#define tGT 291
+#define tLT 292
+#define tEQ 293
+#define tNEQ 294
 
 
 
@@ -129,7 +131,7 @@ typedef union YYSTYPE
 	int	narg;	/* number of arguments */
 }
 /* Line 1529 of yacc.c.  */
-#line 133 "engines/director/lingo/lingo-gr.hpp"
+#line 135 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

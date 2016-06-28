@@ -30,6 +30,7 @@
 #include "common/str.h"
 #include "engines/director/director.h"
 #include "engines/director/score.h"
+#include "director/lingo/lingo-gr.h"
 
 namespace Director {
 
@@ -77,7 +78,7 @@ typedef Common::Array<inst> ScriptData;
 
 typedef struct Symbol {	/* symbol table entry */
 	char	*name;
-	long	type;
+	int		type;
 	union {
 		int		val;		/* VAR */
 		float	fval;		/* FLOAT */
@@ -89,11 +90,16 @@ typedef struct Symbol {	/* symbol table entry */
 	Symbol();
 } Symbol;
 
-typedef union Datum {	/* interpreter stack type */
-	int	val;
-	Symbol	*sym;
+typedef struct Datum {	/* interpreter stack type */
+	int type;
 
-	Datum() { val = 0; sym = NULL; }
+	union {
+		int	i;
+		float f;
+		Symbol	*sym;
+	} u;
+
+	Datum() { u.sym = NULL; type = VOID; }
 } Datum;
 
 typedef struct CFrame {	/* proc/func call stack frame */

@@ -70,7 +70,7 @@ using namespace Director;
 	int	narg;	/* number of arguments */
 }
 
-%token UNARY VOID
+%token UNARY VOID VAR
 %token<i> INT
 %token<f> FLOAT
 %token<s> ID STRING HANDLER

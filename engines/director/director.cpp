@@ -100,8 +100,6 @@ check 4, 5, 6\n\
 
 _lingo->executeScript(kMovieScript, 2);
 
-return Common::kNoError;
-
 	_lingo->addCode("--\n\
 macro SHIPX\n\
 set x = 5\n\
