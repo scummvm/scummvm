@@ -51,37 +51,6 @@
 
 namespace Director {
 
-void Lingo::execute(int pc) {
-	for(_pc = pc; (*_currentScript)[_pc] != STOP && !_returning;) {
-
-		for (int i = 0; i < _stack.size(); i++) {
-			debugN(5, "%d ", _stack[i].val);
-		}
-		debug(5, "");
-
-		_pc++;
-		(*((*_currentScript)[_pc - 1]))();
-	}
-}
-
-Symbol *Lingo::lookupVar(const char *name) {
-	Symbol *sym;
-
-	if (!_vars.contains(name)) { // Create variable if it was not defined
-		sym = new Symbol;
-		sym->name = (char *)calloc(strlen(name) + 1, 1);
-		Common::strlcpy(sym->name, name, strlen(name) + 1);
-		sym->type = VOID;
-		sym->u.val = 0;
-
-		_vars[name] = sym;
-	} else {
-		sym = g_lingo->_vars[name];
-	}
-
-	return sym;
-}
-
 void Lingo::push(Datum d) {
 	_stack.push_back(d);
 }
@@ -380,58 +349,6 @@ void Lingo::c_gotonext() {
 
 void Lingo::c_gotoprevious() {
 	warning("STUB: c_gotoprevious()");
-}
-
-void Lingo::define(Common::String &name, int start, int nargs) {
-	debug(3, "define(\"%s\", %d, %d, %d)", name.c_str(), start, _currentScript->size() - 1, nargs);
-
-	Symbol *sym;
-
-	if (!_handlers.contains(name)) { // Create variable if it was not defined
-		sym = new Symbol;
-
-		sym->name = (char *)calloc(name.size() + 1, 1);
-		Common::strlcpy(sym->name, name.c_str(), name.size() + 1);
-		sym->type = HANDLER;
-
-		_handlers[name] = sym;
-	} else {
-		sym = g_lingo->_handlers[name];
-
-		warning("Redefining handler '%s'", name.c_str());
-		delete sym->u.defn;
-	}
-
-	sym->u.defn = new ScriptData(&(*_currentScript)[start], _currentScript->size() - start + 1);
-	sym->nargs = nargs;
-}
-
-void Lingo::codeArg(Common::String &s) {
-	g_lingo->code1(g_lingo->c_varpush);
-	g_lingo->codeString(s.c_str());
-	g_lingo->code1(g_lingo->c_assign);
-	g_lingo->code1(g_lingo->c_xpop);
-}
-
-int Lingo::codeId(Common::String &s) {
-	return g_lingo->codeId_(s);
-}
-
-int Lingo::codeId_(Common::String &name) {
-	int ret;
-
-	if (_handlers.contains(name)) { // This is a call
-		ret = code1(c_call);
-		codeString(name.c_str());
-		code1((inst)0);	// Zero arguments
-	} else {
-		ret = code1(c_varpush);
-
-		codeString(name.c_str());
-		code1(c_eval);
-	}
-
-	return ret;
 }
 
 void Lingo::c_call() {

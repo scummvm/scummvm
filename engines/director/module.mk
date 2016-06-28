@@ -11,6 +11,7 @@ MODULE_OBJS = \
 	lingo/lingo-gr.o \
 	lingo/lingo.o \
 	lingo/lingo-code.o \
+	lingo/lingo-codegen.o \
 	lingo/lingo-funcs.o \
 	lingo/lingo-lex.o
 
