@@ -58,6 +58,8 @@ public:
 	PanelContent _panelContent; // @ G0424_i_PanelContent 
 	Thing _chestSlots[8]; // @ G0425_aT_ChestSlots
 	Thing _openChest; // @ G0426_T_OpenChest
+	int16 _objDescTextXpos; // @ G0421_i_ObjectDescriptionTextX
+	int16 _objDescTextYpos; // @ G0422_i_ObjectDescriptionTextY
 
 	void toggleInventory(ChampionIndex championIndex); // @ F0355_INVENTORY_Toggle_CPSE
 	void drawStatusBoxPortrait(ChampionIndex championIndex); // @ F0354_INVENTORY_DrawStatusBoxPortrait
@@ -73,6 +75,7 @@ public:
 	void drawIconToViewport(IconIndice iconIndex, int16 xPos, int16 yPos); // @ F0332_INVENTORY_DrawIconToViewport
 	void buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, char ** attribStrings,
 									char *destString, char *prefixString, char *suffixString); // @ F0336_INVENTORY_DrawPanel_BuildObjectAttributesString
+	void drawPanelObjectDescriptionString(char *descString); // @ F0335_INVENTORY_DrawPanel_ObjectDescriptionString
 
 };
 

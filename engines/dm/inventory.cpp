@@ -369,4 +369,40 @@ void InventoryMan::buildObjectAttributeString(int16 potentialAttribMask, int16 a
 
 	strcat(destString, suffixString);
 }
+
+void InventoryMan::drawPanelObjectDescriptionString(char* descString) {
+	if (descString[0] == '\f') { // form feed
+		descString++;
+		_objDescTextXpos = 108;
+		_objDescTextYpos = 59;
+	}
+
+	if (descString[0]) {
+		char stringTmpBuff[128];
+		strcpy(stringTmpBuff, descString);
+
+		char *stringLine = stringTmpBuff;
+		bool severalLines = false;
+		char *string = nullptr;
+		while (*stringLine) {
+			if (strlen(stringLine) > 18) { // if string is too long to fit on one line
+				string = &stringLine[17];
+				while (*string != ' ') // go back to the last space character
+					string--;
+
+				*string = '\0'; // and split the string there
+				severalLines = true;
+			}
+
+			_vm->_textMan->printToViewport(_objDescTextXpos, _objDescTextYpos, kColorLightestGray, stringLine);
+			_objDescTextYpos += 7;
+			if (severalLines) {
+				severalLines = false;
+				stringLine = ++string;
+			} else {
+				*stringLine = '\0';
+			}
+		}
+	}
+}
 }
