@@ -67,6 +67,9 @@ public:
 	const byte *getPalette() const { return _currentPalette; }
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
 	void loadSharedCastsFrom(Common::String filename);
+	Common::HashMap<int, Common::SeekableReadStream *> getSharedDIB() const { return _sharedDIB; }
+	Common::HashMap<int, Common::SeekableReadStream *> getSharedSTXT() const { return _sharedSTXT; }
+	Common::HashMap<int, Cast *> getSharedCasts() const { return _sharedCasts; }
 
 	Common::HashMap<Common::String, Score *> *_movies;
 	Score *_currentScore;
