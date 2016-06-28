@@ -422,6 +422,10 @@ void OSVideoSurface::proc38(int v1, int v2) {
 	warning("OSVideoSurface::proc38");
 }
 
+void OSVideoSurface::proc39(int v1, int v2) {
+	warning("OSVideoSurface::proc39");
+}
+
 bool OSVideoSurface::loadIfReady() {
 	_videoSurfaceNum = _videoSurfaceCounter;
 

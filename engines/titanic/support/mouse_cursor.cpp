@@ -51,7 +51,8 @@ static const int CURSOR_DATA[NUM_CURSORS][4] = {
 };
 
 CMouseCursor::CMouseCursor(CScreenManager *screenManager) : 
-		_screenManager(screenManager), _cursorId(CURSOR_HOURGLASS), _setCursorCount(0) {
+		_screenManager(screenManager), _cursorId(CURSOR_HOURGLASS),
+		_setCursorCount(0), _fieldE4(0), _fieldE8(0) {
 	loadCursorImages();
 	setCursor(CURSOR_ARROW);
 }
@@ -127,6 +128,21 @@ void CMouseCursor::setCursor(CursorId cursorId) {
 
 void CMouseCursor::update() {
 	// No implementation needed
+}
+
+void CMouseCursor::lockE4() {
+	_fieldE4 = 0;
+	CScreenManager::_screenManagerPtr->_inputHandler->incLockCount();
+}
+
+void CMouseCursor::unlockE4() {
+	_fieldE4 = 1;
+	_fieldE8 = 0;
+	CScreenManager::_screenManagerPtr->_inputHandler->decLockCount();
+}
+
+void CMouseCursor::saveState(int v1, int v2, int v3) {
+	// TODO
 }
 
 } // End of namespace Titanic

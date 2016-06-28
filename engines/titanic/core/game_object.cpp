@@ -830,8 +830,30 @@ void CGameObject::moveToView() {
 	view->addUnder(this);
 }
 
+void CGameObject::moveToView(const CString &name) {
+	CViewItem *view = parseView(name);
+	detach();
+	view->addUnder(this);
+}
+
 void CGameObject::incState38() {
 	getGameManager()->_gameState.inc38();
+}
+
+void CGameObject::stateInc14() {
+	getGameManager()->_gameState.inc14();
+}
+
+int CGameObject::stateGet14() {
+	return getGameManager()->_gameState._field14;
+}
+
+void CGameObject::stateSet24() {
+	getGameManager()->_gameState.set24(1);
+}
+
+int CGameObject::stateGet24() {
+	return getGameManager()->_gameState.get24();
 }
 
 void CGameObject::inc54() {
@@ -840,6 +862,11 @@ void CGameObject::inc54() {
 
 void CGameObject::dec54() {
 	getGameManager()->dec54();
+}
+
+void CGameObject::surface39(int v1, int v2) {
+	if (_surface)
+		_surface->proc39(v1, v2);
 }
 
 void CGameObject::lockMouse() {
@@ -856,6 +883,36 @@ void CGameObject::hideMouse() {
 
 void CGameObject::showMouse() {
 	CScreenManager::_screenManagerPtr->_mouseCursor->show();
+}
+
+void CGameObject::disableMouse() {
+	lockInputHandler();
+	hideMouse();
+}
+
+void CGameObject::enableMouse() {
+	unlockInputHandler();
+	showMouse();
+}
+
+void CGameObject::mouseLockE4() {
+	CScreenManager::_screenManagerPtr->_mouseCursor->lockE4();
+}
+
+void CGameObject::mouseUnlockE4() {
+	CScreenManager::_screenManagerPtr->_mouseCursor->unlockE4();
+}
+
+void CGameObject::mouseSaveState(int v1, int v2, int v3) {
+	CScreenManager::_screenManagerPtr->_mouseCursor->saveState(v1, v2, v3);
+}
+
+void CGameObject::lockInputHandler() {
+	getGameManager()->lockInputHandler();
+}
+
+void CGameObject::unlockInputHandler() {
+	getGameManager()->unlockInputHandler();
 }
 
 void CGameObject::unlockMouse() {
@@ -1242,6 +1299,12 @@ void CGameObject::petSetRooms1D0(int val) {
 	CPetControl *petControl = getPetControl();
 	if (petControl)
 		petControl->setRooms1D0(val);
+}
+
+void CGameObject::petSetRooms1D4(int v) {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->setRooms1D4(v);
 }
 
 void CGameObject::petOnSummonBot(const CString &name, int val) {

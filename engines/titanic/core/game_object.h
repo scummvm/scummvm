@@ -122,7 +122,6 @@ protected:
 	 */
 	CViewItem * parseView(const CString &viewString);
 
-	void incState38();
 	void inc54();
 	void dec54();
 
@@ -145,6 +144,31 @@ protected:
 	 * Shows the mouse cursor
 	 */
 	void showMouse();
+
+	/**
+	 * Disable the mouse
+	 */
+	void disableMouse();
+
+	/**
+	 * Enable the mouse
+	 */
+	void enableMouse();
+
+	void mouseLockE4();
+	void mouseUnlockE4();
+
+	void mouseSaveState(int v1, int v2, int v3);
+
+	/**
+	 * Lock the input handler
+	 */
+	void lockInputHandler();
+
+	/**
+	 * Unlock the input handler
+	 */
+	void unlockInputHandler();
 
 	/**
 	 * Load a sound
@@ -243,9 +267,14 @@ protected:
 	CGameObject *findInRoom(const CString &name);
 
 	/**
-	 * Moves the item from it's original position to be under the current view
+	 * Moves the object to be under the current view
 	 */
 	void moveToView();
+
+	/**
+	 * Moves the object to be under the specified view
+	 */
+	void moveToView(const CString &name);
 
 	/**
 	 * Change the view
@@ -364,8 +393,6 @@ protected:
 	 */
 	uint32 getTickCount();
 
-	void setState1C(bool flag);
-
 	/**
 	 * Adds an object to the mail list
 	 */
@@ -405,6 +432,15 @@ protected:
 	 * Unlocks PET input
 	 */
 	void petUnlockInput();
+
+	void setState1C(bool flag);
+	void incState38();
+	void stateInc14();
+	int stateGet14();
+	void stateSet24();
+	int stateGet24();
+
+	void surface39(int v1, int v2);
 public:
 	bool _isMail;
 	int _id;
@@ -696,6 +732,8 @@ public:
 	void petSetRemoteTarget();
 
 	void petSetRooms1D0(int val);
+	void petSetRooms1D4(int v);
+
 
 	/**
 	 * Show the PET

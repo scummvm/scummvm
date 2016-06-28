@@ -205,6 +205,10 @@ int CTrueTalkNPC::startAnimTimer(const CString &action, uint firstDuration, uint
 	return timer->_id;
 }
 
+void CTrueTalkNPC::stopAnimTimer(int id) {
+	getGameManager()->stopTimer(id);
+}
+
 void CTrueTalkNPC::setView(CViewItem *view) {
 	CTrueTalkManager *talkManager = getGameManager()->getTalkManager();
 	if (talkManager)

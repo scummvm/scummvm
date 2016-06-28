@@ -67,6 +67,11 @@ protected:
 	 * Start an animation timer
 	 */
 	int startAnimTimer(const CString &action, uint firstDuration, uint duration);
+
+	/**
+	 * Stop an animation timer
+	 */
+	void stopAnimTimer(int id);
 public:
 	CLASSDEF
 	CTrueTalkNPC();

@@ -62,6 +62,8 @@ private:
 	CursorId _cursorId;
 	CursorEntry _cursors[NUM_CURSORS];
 	uint _setCursorCount;
+	int _fieldE4;
+	int _fieldE8;
 
 	/**
 	 * Load the images for each cursor
@@ -95,6 +97,11 @@ public:
 	 * Returns the number of times the cursor has been set
 	 */
 	uint getChangeCount() const { return _setCursorCount; }
+
+	void lockE4();
+	void unlockE4();
+
+	void saveState(int v1, int v2, int v3);
 };
 
 

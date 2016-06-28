@@ -180,6 +180,8 @@ public:
 
 	virtual void proc38(int v1, int v2) = 0;
 
+	virtual void proc39(int v1, int v2) = 0;
+
 	/**
 	 * Loads the surface's resource if there's one pending
 	 */
@@ -346,6 +348,8 @@ public:
 	virtual void setMovieFrame(uint frameNumber);
 
 	virtual void proc38(int v1, int v2);
+
+	virtual void proc39(int v1, int v2);
 
 	/**
 	 * Loads the surface's resource if there's one pending
