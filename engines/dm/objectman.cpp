@@ -230,7 +230,7 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 									   box, kColorNoTransparency, gDefultViewPort);
 	}
 }
-	
+
 #define kObjectNameMaximumLength 14 // @ C014_OBJECT_NAME_MAXIMUM_LENGTH
 
 void ObjectMan::drawLeaderObjectName(Thing thing) {
@@ -246,5 +246,9 @@ void ObjectMan::drawLeaderObjectName(Thing thing) {
 		objName = _objectNames[iconIndex];
 	}
 	_vm->_textMan->printWithTrailingSpacesToScreen(233, 37, kColorCyan, kColorBlack, objName, kObjectNameMaximumLength);
+}
+
+IconIndice ObjectMan::getIconIndexInSlotBox(uint16 slotBoxIndex) {
+	return (IconIndice)_slotBoxes[slotBoxIndex]._iconIndex;
 }
 }

@@ -443,6 +443,7 @@ public:
 	bool _leaderEmptyHanded; // @ G0415_B_LeaderEmptyHanded
 	Party _party; // @ G0407_s_Party
 	ChampionIndex _magicCasterChampionIndex; // @ G0514_i_MagicCasterChampionIndex
+	bool _mousePointerHiddenToDrawChangedObjIconOnScreen; // @ G0420_B_MousePointerHiddenToDrawChangedObjectIconOnScreen
 
 	explicit ChampionMan(DMEngine *vm);
 	void resetDataToStartGame(); // @ F0278_CHAMPION_ResetDataToStartGame
@@ -459,6 +460,7 @@ public:
 	Common::String getStringFromInteger(uint16 val, bool padding, uint16 paddingCharCount); // @ F0288_CHAMPION_GetStringFromInteger
 	void applyModifiersToStatistics(Champion *champ, ChampionSlot slotIndex, IconIndice iconIndex,
 									int16 modifierFactor, Thing thing); // @ F0299_CHAMPION_ApplyObjectModifiersToStatistics
+	bool hasObjectIconInSlotBoxChanged(int16 slotBoxIndex, Thing thing); // @ F0295_CHAMPION_HasObjectIconInSlotBoxChanged
 };
 
 

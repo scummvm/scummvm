@@ -63,6 +63,9 @@ public:
 	void extractIconFromBitmap(uint16 iconIndex, byte *destBitmap); // F0036_OBJECT_ExtractIconFromBitmap
 	void drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex); // @ F0038_OBJECT_DrawIconInSlotBox
 	void drawLeaderObjectName(Thing thing); // @ F0034_OBJECT_DrawLeaderHandObjectName
+	IconIndice getIconIndexInSlotBox(uint16 slotBoxIndex); // @ F0039_OBJECT_GetIconIndexInSlotBox
+
+
 };
 
 }

@@ -267,6 +267,27 @@ T0299044_ApplyModifier:
 
 }
 
+bool ChampionMan::hasObjectIconInSlotBoxChanged(int16 slotBoxIndex, Thing thing) {
+	ObjectMan &objMan = *_vm->_objectMan;
+
+	IconIndice currIconIndex = objMan.getIconIndexInSlotBox(slotBoxIndex);
+	if (((currIconIndex < kIconIndiceWeaponDagger) && (currIconIndex >= kIconIndiceJunkCompassNorth))
+		|| ((currIconIndex >= kIconIndicePotionMaPotionMonPotion) && (currIconIndex <= kIconIndicePotionWaterFlask))
+		|| (currIconIndex == kIconIndicePotionEmptyFlask)) {
+		IconIndice newIconIndex = objMan.getIconIndex(thing);
+		if (newIconIndex != currIconIndex) {
+			if ((slotBoxIndex < kSlotBoxInventoryFirstSlot) && !_mousePointerHiddenToDrawChangedObjIconOnScreen) {
+				_mousePointerHiddenToDrawChangedObjIconOnScreen = true;
+				warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
+			}
+			objMan.drawIconInSlotBox(slotBoxIndex, newIconIndex);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 ChampionIndex ChampionMan::getIndexInCell(ViewCell cell) {
 	for (uint16 i = 0; i < _partyChampionCount; ++i) {
 		if ((_champions[i]._cell == cell) && _champions[i]._currHealth)
