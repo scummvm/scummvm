@@ -126,7 +126,7 @@ void Gui::draw() {
 	_wm.draw();
 
 	drawDraggedObject();
-		
+
 	//drawWindowTitle(kMainGameWindow, _mainGameWindow->getSurface());
 }
 
@@ -649,13 +649,12 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 
 	if (data.children.size() == 0) return;
 
-	Common::Point forbidden(0, 0);
 	for (uint i = 0; i < data.children.size(); i++) {
 		child = data.children[i].obj;
 		mode = (BlitMode)data.children[i].mode;
 		pos = _engine->getObjPosition(child);
 
-		if (pos != forbidden && child < 600 && child != _draggedObj.id) { // Small HACK until I figre out where the last garbage child in main game window comes from
+		if (child < 600 && child != _draggedObj.id) { // Small HACK until I figre out where the last garbage child in main game window comes from
 			if (!_assets.contains(child)) {
 				_assets[child] = new ImageAsset(child, _graphics);
 			}
