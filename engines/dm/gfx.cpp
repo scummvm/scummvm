@@ -731,8 +731,7 @@ void DisplayMan::unpackGraphics() {
 	loadFNT1intoBitmap(kFontGraphicIndice, _bitmaps[kFontGraphicIndice]);
 }
 
-void DisplayMan::loadFNT1intoBitmap(uint16 index, byte* destBitmap)
-{
+void DisplayMan::loadFNT1intoBitmap(uint16 index, byte* destBitmap) {
 	uint8 *data = _packedBitmaps + _packedItemPos[index];
 	for (uint16 i = 0; i < 6; i++) {
 		for (uint16 w = 0; w < 128; ++w) {
@@ -817,12 +816,11 @@ void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uin
 		}
 }
 
-	void DisplayMan::blitToBitmap(byte* srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY, byte* destBitmap, uint16 destWidth, Box& box, Color transparent, Viewport& viewport)
-	{
-		blitToBitmap(srcBitmap, srcWidth, srcX, srcY, destBitmap, destWidth, box._x1, box._x2, box._y1, box._y2, transparent, viewport);
-	}
+void DisplayMan::blitToBitmap(byte* srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY, byte* destBitmap, uint16 destWidth, Box& box, Color transparent, Viewport& viewport) {
+	blitToBitmap(srcBitmap, srcWidth, srcX, srcY, destBitmap, destWidth, box._x1, box._x2, box._y1, box._y2, transparent, viewport);
+}
 
-	void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
+void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
 							  uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
 							  Color transparent, Viewport &viewport) {
 	blitToBitmap(srcBitmap, srcWidth, srcX, srcY,
@@ -1581,6 +1579,14 @@ byte* DisplayMan::getBitmap(uint16 index) {
 	return _bitmaps[index];
 }
 
+Common::MemoryReadStream DisplayMan::getCompressedData(uint16 index) {
+	return Common::MemoryReadStream(_packedBitmaps + _packedItemPos[index], getCompressedDataSize(index), DisposeAfterUse::NO);
+}
+
+uint32 DisplayMan::getCompressedDataSize(uint16 index) {
+	return _packedItemPos[index + 1] - _packedItemPos[index];
+}
+
 void DisplayMan::clearScreenBox(Color color, Box &box, Viewport &viewport) {
 	uint16 width = box._x2 - box._x1;
 	for (int y = box._y1 + viewport._posY; y < box._y2 + viewport._posY; ++y)
@@ -1588,8 +1594,8 @@ void DisplayMan::clearScreenBox(Color color, Box &box, Viewport &viewport) {
 }
 
 void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
-				  Box &box,
-				  Color transparent, Viewport &viewport) {
+							  Box &box,
+							  Color transparent, Viewport &viewport) {
 	blitToScreen(srcBitmap, srcWidth, srcX, srcY, box._x1, box._x2, box._y1, box._y2, transparent, viewport);
 }
 

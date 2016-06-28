@@ -430,7 +430,6 @@ class ChampionMan {
 	ChampionIndex getIndexInCell(ViewCell cell); // @ F0285_CHAMPION_GetIndexInCell
 	int16 getDecodedValue(char *string, uint16 characterCount); // @ F0279_CHAMPION_GetDecodedValue
 	void drawHealthOrStaminaOrManaValue(int16 posy, int16 currVal, int16 maxVal); // @ F0289_CHAMPION_DrawHealthOrStaminaOrManaValue
-	Common::String getStringFromInteger(uint16 val, bool padding, uint16 paddingCharCount); // @ F0288_CHAMPION_GetStringFromInteger
 public:
 	Champion _champions[4];
 	uint16 _partyChampionCount;	// @ G0305_ui_PartyChampionCount
@@ -457,6 +456,7 @@ public:
 	void drawSlot(uint16 champIndex, ChampionSlot slotIndex); // @ F0291_CHAMPION_DrawSlot
 	void renameChampion(Champion* champ); // @ F0281_CHAMPION_Rename
 	uint16 getSkillLevel(ChampionIndex champIndex, ChampionSkill skillIndex);// @ F0303_CHAMPION_GetSkillLevel
+	Common::String getStringFromInteger(uint16 val, bool padding, uint16 paddingCharCount); // @ F0288_CHAMPION_GetStringFromInteger
 };
 
 

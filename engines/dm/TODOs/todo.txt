@@ -16,6 +16,7 @@ Todo:
 	I forgot to add localization warnings
 	Attend to Arnaud's notes on github
 	Double check enums with hex literals, I think I screwed the regex when processing them
+	Double check strcat, strstr usages, I might have messed them up in many places
 
 	Missing functions:
 		 Add missing  F0163_DUNGEON_LinkThingToList in MovesensMan::sensorIsTriggeredByClickOnWall (I don't think it's safe yet)

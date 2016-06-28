@@ -34,6 +34,14 @@
 
 namespace DM {
 
+/* Object info */
+#define kObjectInfoIndexFirstScroll 0 // @ C000_OBJECT_INFO_INDEX_FIRST_SCROLL
+#define kObjectInfoIndexFirstContainer 1 // @ C001_OBJECT_INFO_INDEX_FIRST_CONTAINER
+#define kObjectInfoIndexFirstPotion 2 // @ C002_OBJECT_INFO_INDEX_FIRST_POTION
+#define kObjectInfoIndexFirstWeapon 23 // @ C023_OBJECT_INFO_INDEX_FIRST_WEAPON
+#define kObjectInfoIndexFirstArmour 69 // @ C069_OBJECT_INFO_INDEX_FIRST_ARMOUR
+#define kObjectInfoIndexFirstJunk 127 // @ C127_OBJECT_INFO_INDEX_FIRST_JUNK
+
 #define kMapXNotOnASquare -1 // @ CM1_MAPX_NOT_ON_A_SQUARE
 
 enum ElementType {
@@ -89,7 +97,7 @@ public:
 }; // @ OBJECT_INFO
 
 extern ObjectInfo gObjectInfo[180];
-				
+
 enum ArmourAttribute {
 	kArmourAttributeIsAShield = 0x0080, // @ MASK0x0080_IS_A_SHIELD
 	kArmourAttributeSharpDefense = 0x0007 // @ MASK0x0007_SHARP_DEFENSE
@@ -129,18 +137,18 @@ extern ArmourInfo gArmourInfo[58];
 class WeaponInfo {
 
 public:
-        uint16 _weight;
-        uint16 _class;
-        uint16 _strength;
-        uint16 _kineticEnergy;
+	uint16 _weight;
+	uint16 _class;
+	uint16 _strength;
+	uint16 _kineticEnergy;
 private:
 	uint16 _attributes; /* Bits 15-13 Unreferenced */
 public:
-        WeaponInfo(uint16 weight, uint16 wClass, uint16 strength, uint16 kineticEnergy, uint16 attributes)
-        	: _weight(weight), _class(wClass), _strength(strength), _kineticEnergy(kineticEnergy), _attributes(attributes) {}
+	WeaponInfo(uint16 weight, uint16 wClass, uint16 strength, uint16 kineticEnergy, uint16 attributes)
+		: _weight(weight), _class(wClass), _strength(strength), _kineticEnergy(kineticEnergy), _attributes(attributes) {}
 
-        uint16 getShootAttack() {return _attributes & 0xFF;} // @ M65_SHOOT_ATTACK
-        uint16 getProjectileAspectOrdinal() {return (_attributes >> 8) & 0x1F;} // @ M66_PROJECTILE_ASPECT_ORDINAL
+	uint16 getShootAttack() { return _attributes & 0xFF; } // @ M65_SHOOT_ATTACK
+	uint16 getProjectileAspectOrdinal() { return (_attributes >> 8) & 0x1F; } // @ M66_PROJECTILE_ASPECT_ORDINAL
 }; // @ WEAPON_INFO
 
 extern WeaponInfo gWeaponInfo[46];
@@ -359,6 +367,9 @@ public:
 	bool isLit() { return (_desc >> 15) & 1; }
 	uint16 getChargeCount() { return (_desc >> 10) & 0xF; }
 	Thing getNextThing() { return _nextThing; }
+	uint16 getCursed() { return (_desc >> 8) & 1; }
+	uint16 getPoisoned() { return (_desc >> 9) & 1; }
+	uint16 getBroken() { return (_desc >> 14) & 1; }
 }; // @ WEAPON
 
 enum ArmourType {
@@ -376,6 +387,8 @@ public:
 
 	ArmourType getType() { return (ArmourType)(_attributes & 0x7F); }
 	Thing getNextThing() { return _nextThing; }
+	uint16 getCursed() { return (_attributes >> 8) & 1; }
+	uint16 getBroken() { return (_attributes >> 13) & 1; }
 }; // @ ARMOUR
 
 class Scroll {
@@ -416,6 +429,7 @@ public:
 	PotionType getType() { return (PotionType)((_attributes >> 8) & 0x7F); }
 	void setType(PotionType val) { _attributes = (_attributes & ~(0x7F << 8)) | ((val & 0x7F) << 8); }
 	Thing getNextThing() { return _nextThing; }
+	uint16 getPower() { return _attributes & 0xFF; }
 }; // @ POTION
 
 class Container {

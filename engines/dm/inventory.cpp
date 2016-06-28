@@ -205,7 +205,7 @@ void InventoryMan::drawPanel() {
 	if (thing == Thing::_thingNone) {
 		drawPanelFoodWaterPoisoned();
 	} else {
-		warning("MISSING CODE: F0342_INVENTORY_DrawPanel_Object(L1075_T_Thing, C0_FALSE);");
+		drawPanelObject(thing, false);
 	}
 }
 
@@ -414,4 +414,144 @@ void InventoryMan::drawPanelArrowOrEye(bool pressingEye) {
 						 16, 0, 0, gBoxArrowOrEye, kColorRed, gDungeonViewport);
 }
 
+
+Box gBoxObjectDescCircle = Box(105, 136, 53, 79); // @ G0034_s_Graphic562_Box_ObjectDescriptionCircle 
+
+#define kDescriptionMaskConsumable 0x0001 // @ MASK0x0001_DESCRIPTION_CONSUMABLE
+#define kDescriptionMaskPoisoned 0x0002 // @ MASK0x0002_DESCRIPTION_POISONED  
+#define kDescriptionMaskBroken 0x0004 // @ MASK0x0004_DESCRIPTION_BROKEN    
+#define kDescriptionMaskCursed 0x0008 // @ MASK0x0008_DESCRIPTION_CURSED    
+
+void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
+	DungeonMan &dunMan = *_vm->_dungeonMan;
+	ObjectMan &objMan = *_vm->_objectMan;
+	DisplayMan &dispMan = *_vm->_displayMan;
+	ChampionMan &champMan = *_vm->_championMan;
+	TextMan &textMan = *_vm->_textMan;
+
+	if (_vm->_pressingEye || _vm->_pressingMouth) {
+		warning("BUG0_48 The contents of a chest are reorganized when an object with a statistic modifier is placed or removed on a champion");
+		closeChest();
+	}
+
+	uint16 *rawThingPtr = dunMan.getThingData(thingToDraw);
+	drawPanelObjectDescriptionString("\f"); // form feed
+	ThingType thingType = thingToDraw.getType();
+	if (thingType == kScrollThingType) {
+		drawPanelScroll((Scroll*)rawThingPtr);
+	} else if (thingType == kContainerThingType) {
+		openAndDrawChest(thingToDraw, (Container*)rawThingPtr, pressingEye);
+	} else {
+		IconIndice iconIndex = objMan.getIconIndex(thingToDraw);
+		dispMan.blitToScreen(dispMan.getBitmap(kPanelEmptyIndice), 144, 0, 0, gBoxPanel, kColorRed, gDungeonViewport);
+		dispMan.blitToScreen(dispMan.getBitmap(kObjectDescCircleIndice), 32, 0, 0, gBoxObjectDescCircle, kColorDarkestGray, gDungeonViewport);
+
+		char *descString = nullptr;
+		char str[40];
+		if (iconIndex == kIconIndiceJunkChampionBones) {
+			strcpy(str, champMan._champions[((Junk*)rawThingPtr)->getChargeCount()]._name);  // TODO: localization
+			strcat(str, " "); // TODO: localization
+			strcat(str, objMan._objectNames[iconIndex]);  // TODO: localization
+
+			descString = str;
+		} else if ((thingType == kPotionThingType)
+				   && (iconIndex != kIconIndicePotionWaterFlask)
+				   && (champMan.getSkillLevel((ChampionIndex)_vm->ordinalToIndex(_inventoryChampionOrdinal), kChampionSkillPriest) > 1)) {
+			str[0] = '_' + ((Potion*)rawThingPtr)->getPower() / 40;
+			str[1] = ' ';
+			str[2] = '\0';
+			strcat(str, objMan._objectNames[iconIndex]);
+			descString = str;
+		} else {
+			descString = objMan._objectNames[iconIndex];
+		}
+
+		textMan.printToViewport(134, 68, kColorLightestGray, descString);
+		drawIconToViewport(iconIndex, 111, 59);
+
+		char *attribString[4] = {"CONSUMABLE", "POISONED", "BROKEN", "CURSED"}; // TODO: localization
+
+		_objDescTextYpos = 87;
+
+		uint16 potentialAttribMask;
+		uint16 actualAttribMask;
+		switch (thingType) {
+		case kWeaponThingType: {
+			potentialAttribMask = kDescriptionMaskCursed | kDescriptionMaskPoisoned | kDescriptionMaskBroken;
+			Weapon *weapon = (Weapon*)rawThingPtr;
+			actualAttribMask = (weapon->getCursed() << 3) | (weapon->getPoisoned() << 1) | (weapon->getBroken() << 2);
+			if ((iconIndex >= kIconIndiceWeaponTorchUnlit)
+				&& (iconIndex <= kIconIndiceWeaponTorchLit)
+				&& (weapon->getChargeCount() == 0)) {
+				drawPanelObjectDescriptionString("(BURNT OUT)"); // TODO: localization
+			}
+			break;
+		}
+		case kArmourThingType: {
+			potentialAttribMask = kDescriptionMaskCursed | kDescriptionMaskBroken;
+			Armour *armour = (Armour*)rawThingPtr;
+			actualAttribMask = (armour->getCursed() << 3) | (armour->getBroken() << 2);
+			break;
+		}
+		case kPotionThingType: {
+			actualAttribMask = kDescriptionMaskConsumable;
+			Potion *potion = (Potion*)rawThingPtr;
+			actualAttribMask = gObjectInfo[kObjectInfoIndexFirstPotion + potion->getType()].getAllowedSlots();
+			break;
+		}
+		case kJunkThingType: {
+			Junk *junk = (Junk*)rawThingPtr;
+			if ((iconIndex >= kIconIndiceJunkWater) && (iconIndex <= kIconIndiceJunkWaterSkin)) {
+				potentialAttribMask = 0;
+				switch (junk->getChargeCount()) {
+				case 0:
+					descString = "(EMPTY)"; // TODO: localization
+					break;
+				case 1:
+					descString = "(ALMOST EMPTY)"; // TODO: localization
+					break;
+				case 2:
+					descString = "(ALMOST FULL)"; // TODO: localization
+					break;
+				case 3:
+					descString = "(FULL)"; // TODO: localization
+					break;
+				}
+				drawPanelObjectDescriptionString(descString);
+			} else if ((iconIndex >= kIconIndiceJunkCompassNorth) && (iconIndex <= kIconIndiceJunkCompassWest)) {
+				potentialAttribMask = 0;
+				strcpy(str, "PARTY FACING "); // TODO: localization
+				static char* directionName[4] = {"NORTH", "EAST", "SOUTH", "WEST"}; // G0430_apc_DirectionNames // TODO: localization
+				strcat(str, directionName[iconIndex]);
+				drawPanelObjectDescriptionString(str);
+			} else {
+				potentialAttribMask = kDescriptionMaskConsumable;
+				actualAttribMask = gObjectInfo[kObjectInfoIndexFirstJunk + junk->getType()].getAllowedSlots();
+			}
+			break;
+		}
+		} // end of switch 
+
+		if (potentialAttribMask) {
+			buildObjectAttributeString(potentialAttribMask, actualAttribMask, attribString, str, "(", ")");
+			drawPanelObjectDescriptionString(str);
+		}
+
+		strcpy(str, "WEIGHS "); // TODO: localization
+
+		uint16 weight = dunMan.getObjectWeight(thingToDraw);
+		strcat(str, champMan.getStringFromInteger(weight / 10, false, 3).c_str());
+
+		strcat(str, "."); // TODO: localization
+
+		weight -= (weight / 10) * 10;
+		strcat(str, champMan.getStringFromInteger(weight, false, 1).c_str()); 
+
+		strcat(str, " KG."); // TODO: localization
+
+		drawPanelObjectDescriptionString(str);
+	}
+	drawPanelArrowOrEye(pressingEye);
+
+}
 }

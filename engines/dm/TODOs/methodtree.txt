@@ -47,7 +47,7 @@ F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
 				G0037_s_Graphic562_Box_Poisoned // done
 			F0351_INVENTORY_DrawChampionSkillsAndStatistics // skip -----------------
 			F0347_INVENTORY_DrawPanel // done
-				F0342_INVENTORY_DrawPanel_Object
+				F0342_INVENTORY_DrawPanel_Object // done
 					F0341_INVENTORY_DrawPanel_Scroll // done
 						F0340_INVENTORY_DrawPanel_ScrollTextLine // done
 					F0333_INVENTORY_OpenAndDrawChest // done
@@ -58,11 +58,11 @@ F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
 						G0421_i_ObjectDescriptionTextX // done
 						G0422_i_ObjectDescriptionTextY // done
 					F0339_INVENTORY_DrawPanel_ArrowOrEye // done 
-					G0430_apc_DirectionNames
-					G0034_s_Graphic562_Box_ObjectDescriptionCircle
-					G0032_s_Graphic562_Box_Panel
-					G0352_apc_ObjectNames
-					G0237_as_Graphic559_ObjectInfo
+					G0430_apc_DirectionNames // done
+					G0034_s_Graphic562_Box_ObjectDescriptionCircle // done
+					G0032_s_Graphic562_Box_Panel // done
+					G0352_apc_ObjectNames // done
+					G0237_as_Graphic559_ObjectInfo // done
 					G0422_i_ObjectDescriptionTextY // done
 
 				F0346_INVENTORY_DrawPanel_ResurrectReincarnate // done

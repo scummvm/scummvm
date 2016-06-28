@@ -132,6 +132,7 @@ void DMEngine::initializeGame() {
 
 	_displayMan->loadFloorSet(kFloorSetStone);
 	_displayMan->loadWallSet(kWallSetStone);
+	_objectMan->loadObjectNames();
 
 	startGame();
 	warning("MISSING CODE: F0267_MOVE_GetMoveResult_CPSCE (if newGame)");

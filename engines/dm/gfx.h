@@ -30,6 +30,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/memstream.h"
 #include "dm.h"
 
 namespace DM {
@@ -78,7 +79,8 @@ enum GraphicIndice {
 	kPanelOpenScrollIndice = 23, // @ C023_GRAPHIC_PANEL_OPEN_SCROLL
 	kPanelOpenChestIndice = 25, // @ C025_GRAPHIC_PANEL_OPEN_CHEST
 	kEyeForObjectDescriptionIndice = 19, // @ C019_GRAPHIC_EYE_FOR_OBJECT_DESCRIPTION
-	kArrowForChestContentIndice = 18 // @ C018_GRAPHIC_ARROW_FOR_CHEST_CONTENT
+	kArrowForChestContentIndice = 18, // @ C018_GRAPHIC_ARROW_FOR_CHEST_CONTENT
+	kObjectDescCircleIndice = 29 // @ C029_GRAPHIC_OBJECT_DESCRIPTION_CIRCLE
 };
 
 extern uint16 gPalSwoosh[16];
@@ -364,6 +366,8 @@ public:
 	void drawDungeon(direction dir, int16 posX, int16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
 	void updateScreen();
 	byte* getBitmap(uint16 index);
+	Common::MemoryReadStream getCompressedData(uint16 index);
+	uint32 getCompressedDataSize(uint16 index);
 
 	int16 _championPortraitOrdinal; // @ G0289_i_DungeonView_ChampionPortraitOrdinal
 	int16 _currMapAlcoveOrnIndices[kAlcoveOrnCount]; // @ G0267_ai_CurrentMapAlcoveOrnamentIndices

@@ -35,6 +35,8 @@ namespace DM {
 #define kSlotBoxInventoryActionHand 9 // @ C09_SLOT_BOX_INVENTORY_ACTION_HAND  
 #define kSlotBoxChestFirstSlot 38 // @ C38_SLOT_BOX_CHEST_FIRST_SLOT      
 
+#define kObjectNameCount 199 // @ C199_OBJECT_NAME_COUNT
+
 class SlotBox {
 public:
 	int16 _x;
@@ -49,8 +51,12 @@ class ObjectMan {
 
 public:
 	explicit ObjectMan(DMEngine *vm);
+	~ObjectMan();
+	void loadObjectNames();	// @ F0031_OBJECT_LoadNames
 
 	SlotBox _slotBoxes[46]; // @ G0030_as_Graphic562_SlotBoxes;
+	char *_objectNames[kObjectNameCount]; // @ G0352_apc_ObjectNames
+	byte *_objectIconForMousePointer; // @ G0412_puc_Bitmap_ObjectIconForMousePointer
 
 	IconIndice getObjectType(Thing thing); // @ F0032_OBJECT_GetType
 	IconIndice getIconIndex(Thing thing); // @ F0033_OBJECT_GetIconIndex
