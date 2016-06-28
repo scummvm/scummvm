@@ -537,15 +537,17 @@ uint MacVentureEngine::getPrefixNdx(ObjID obj) {
 }
 
 Common::String MacVentureEngine::getPrefixString(uint flag, ObjID obj) {
-	uint ndx = _world->getObjAttr(obj, kAttrPrefixes); // HACK should check the type of that one
+	uint ndx = getPrefixNdx(obj);
 	ndx = ((ndx) >> flag) & 3;
 	if (ndx) {
-		return (*_decodingNamingArticles->getStrings())[ndx];
+		return _decodingNamingArticles->getString(ndx);
+	} else {
+		return Common::String("missigno ");
 	}
 }
 
 Common::String MacVentureEngine::getNoun(ObjID ndx) {
-	return (*_decodingIndirectArticles->getStrings())[ndx];
+	return _decodingIndirectArticles->getString(ndx);
 }
 
 void MacVentureEngine::highlightExit(ObjID objID) {
@@ -740,11 +742,11 @@ Common::String MacVentureEngine::getCommandsPausedString() const {
 }
 
 Common::String MacVentureEngine::getFilePath(FilePathID id) const {
-	const Common::Array<Common::String> *names = _filenames->getStrings();
+	const Common::Array<Common::String> &names = _filenames->getStrings();
 	if (id <= 3) { // We don't want a file in the subdirectory
-		return Common::String((*names)[id]);
+		return Common::String(names[id]);
 	} else { // We want a game file
-		return Common::String((*names)[3] + "/" + (*names)[id]);
+		return Common::String(names[3] + "/" + names[id]);
 	}
 }
 

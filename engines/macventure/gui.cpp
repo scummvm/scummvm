@@ -34,8 +34,8 @@ namespace MacVenture {
 enum MenuAction;
 
 enum {
-	kCursorWidth = 10, // HACK Arbitrary width to test
-	kCursorHeight = 10
+	kCursorWidth = 2, // HACK Arbitrary width to test
+	kCursorHeight = 2
 };
 
 enum {
@@ -126,7 +126,7 @@ void Gui::draw() {
 	_wm.draw();
 
 	drawDraggedObject();
-
+		
 	//drawWindowTitle(kMainGameWindow, _mainGameWindow->getSurface());
 }
 
@@ -202,8 +202,8 @@ void Gui::updateWindowInfo(WindowReference ref, ObjID objID, const Common::Array
 			ObjID child = children[i];
 			if (ref != kMainGameWindow) {
 				Common::Point childPos = _engine->getObjPosition(child);
-				originx = originx > childPos.x ? childPos.x : originx;
-				originy = originy > childPos.y ? childPos.y : originy;
+				originx = originx > (uint)childPos.x ? (uint)childPos.x : originx;
+				originy = originy > (uint)childPos.y ? (uint)childPos.y : originy;
 			}
 			data.children.push_back(DrawableObject(child, kBlitBIC));
 		}
@@ -362,7 +362,7 @@ void Gui::loadBorder(Graphics::MacWindow * target, Common::String filename, bool
 }
 
 void Gui::loadGraphics() {
-	_graphics = new Container("Shadowgate II/Shadow Graphic");
+	_graphics = new Container(_engine->getFilePath(kGraphicPathID).c_str());
 }
 
 bool Gui::loadMenus() {
@@ -616,11 +616,11 @@ void Gui::drawExitsWindow() {
 	WindowData &objData = findWindowData(kMainGameWindow);
 	Common::Point pos;
 	ObjID child;
-	BlitMode mode;
+	//BlitMode mode;
 	Common::Rect exit;
 	for (uint i = 0; i < objData.children.size(); i++) {
 		child = objData.children[i].obj;
-		mode = (BlitMode)objData.children[i].mode;
+		//mode = (BlitMode)objData.children[i].mode;
 		pos = _engine->getObjExitPosition(child);
 		pos.x += border.leftOffset;
 		pos.y += border.topOffset;
@@ -788,6 +788,13 @@ void Gui::selectDraggable(ObjID child, Common::Point pos) {
 void Gui::handleDragRelease(Common::Point pos) {
 	_draggedObj.id = 0;
 	_engine->updateDelta(pos);
+	_engine->preparedToRun();
+}
+
+Common::Rect Gui::calculateClickRect(Common::Point clickPos, Common::Rect windowBounds) {
+	int left = clickPos.x - windowBounds.left;
+	int top = clickPos.y - windowBounds.top;
+	return Common::Rect(left - kCursorWidth, top - kCursorHeight, left + kCursorWidth, top + kCursorHeight);
 }
 
 
@@ -967,6 +974,12 @@ bool Gui::processEvent(Common::Event &event) {
 			_draggedObj.pos = event.mouse;
 		}
 		processed = true;
+
+		// TEST
+		Common::Rect mr = calculateClickRect(event.mouse, _screen.getBounds());
+		_screen.fillRect(mr, kColorGreen);
+		g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
+		g_system->updateScreen();
 	}
 	else if (event.type == Common::EVENT_LBUTTONUP) {
 		if (_draggedObj.id != 0) {
@@ -1023,9 +1036,7 @@ bool MacVenture::Gui::processMainGameEvents(WindowClick click, Common::Event & e
 		ObjID child;
 		Common::Point pos;
 		// Click rect to local coordinates. We assume the click is inside the window ^
-		int left = event.mouse.x - _mainGameWindow->getDimensions().left;
-		int top = event.mouse.y - _mainGameWindow->getDimensions().top;
-		Common::Rect clickRect(left, top, left + kCursorWidth, top + kCursorHeight);
+		Common::Rect clickRect = calculateClickRect(event.mouse, _mainGameWindow->getDimensions());
 		for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
 			child = (*it).obj;
 			if (isRectInsideObject(clickRect, child)) {
@@ -1085,9 +1096,7 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event & event) {
 		ObjID child;
 		Common::Point pos;
 		// Click rect to local coordinates. We assume the click is inside the window ^
-		int left = event.mouse.x - _inventoryWindows[i]->getDimensions().left;
-		int top = event.mouse.y - _inventoryWindows[i]->getDimensions().top;
-		Common::Rect clickRect(left, top, left + kCursorWidth, top + kCursorHeight);
+		Common::Rect clickRect = calculateClickRect(event.mouse, _inventoryWindows[i]->getDimensions());
 		for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
 			child = (*it).obj;
 			if (isRectInsideObject(clickRect, child)) {

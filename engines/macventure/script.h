@@ -240,7 +240,7 @@ private:
 	void opb9CHI(EngineState *state, EngineFrame *frame);	//cancel high priority
 	void opbaCRAN(EngineState *state, EngineFrame *frame);	//cancel priority range
 	void opbbFORK(EngineState *state, EngineFrame *frame);	//fork
-	void opbcCALL(EngineState *state, EngineFrame *frame, ScriptAsset &script);	//call
+	bool opbcCALL(EngineState *state, EngineFrame *frame, ScriptAsset &script);	//call
 	void opbdFOOB(EngineState *state, EngineFrame *frame);	//focus object
 	void opbeSWOB(EngineState *state, EngineFrame *frame);	//swap objects
 	void opbfSNOB(EngineState *state, EngineFrame *frame);	//snap object

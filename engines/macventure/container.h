@@ -173,12 +173,9 @@ public:
 	/**
 	* getItemByteSize should be called before this one
 	*/
-	Common::SeekableReadStream *getItem(uint32 id) {		
-		_res->seek(0);
-		Common::SeekableReadStream *res = _res->readStream(_res->size()); 
+	Common::SeekableReadStream *getItem(uint32 id) {	
 		if (_simplified) {
-			res->seek((id * _lenObjs) + sizeof(_header), SEEK_SET);
-			return res;
+			_res->seek((id * _lenObjs) + sizeof(_header), SEEK_SET);
 		} else {
 			uint32 groupID = (id >> 6);
 			uint32 objectIndex = id & 0x3f; // Index within the group		
@@ -188,10 +185,12 @@ public:
 				offset += _groups[groupID].lengths[i];
 			}
 
-			res->seek(_groups[groupID].offset + offset + sizeof(_header), SEEK_SET);
+			_res->seek(_groups[groupID].offset + offset + sizeof(_header), SEEK_SET);
 
-			return res;
 		}
+
+		Common::SeekableReadStream *res = _res->readStream(getItemByteSize(id) * 2);
+		return res;
 	}
 	
 protected:

@@ -84,6 +84,7 @@ bool ScriptEngine::execFrame(bool execAll) {
 		else { fail = resumeFunc(frame); }
 		if (fail) {
 			frame->haltedInFirst = true;
+			_engine->preparedToRun();
 			return true;
 		}
 		doFamily = true;
@@ -101,6 +102,7 @@ bool ScriptEngine::execFrame(bool execAll) {
 			if (fail) { // We are stuck, so we don't shift the frame
 				frame->haltedInFamily = true;
 				frame->familyIdx = i;
+				_engine->preparedToRun();
 				return true;
 			}
 			doFamily = true;
@@ -112,6 +114,7 @@ bool ScriptEngine::execFrame(bool execAll) {
 		frame->haltedInSaves = false;
 		if (resumeFunc(frame)) {
 			frame->haltedInSaves = true;
+			_engine->preparedToRun();
 			return true;
 		}
 	}
@@ -131,6 +134,7 @@ bool ScriptEngine::execFrame(bool execAll) {
 			frame->saves[localHigh].rank = 0;
 			if (loadScript(frame, frame->saves[localHigh].func)) {
 				frame->haltedInSaves = true;
+				_engine->preparedToRun();
 				return true;
 			}
 		}
@@ -352,7 +356,8 @@ bool ScriptEngine::runFunc(EngineFrame *frame) {
 				opbbFORK(state, frame);
 				break;
 			case 0xbc: //call
-				opbcCALL(state, frame, script);
+				if (opbcCALL(state, frame, script))
+					return true;
 				break;
 			case 0xbd: //focus object
 				opbdFOOB(state, frame);
@@ -907,11 +912,12 @@ void ScriptEngine::opbbFORK(EngineState * state, EngineFrame * frame) {
 	_frames.push_back(newframe);
 }
 
-void ScriptEngine::opbcCALL(EngineState * state, EngineFrame * frame, ScriptAsset &script) {
+bool ScriptEngine::opbcCALL(EngineState * state, EngineFrame * frame, ScriptAsset &script) {
 	word id = state->pop();
 	ScriptAsset newfun = ScriptAsset(id, _scripts);
 	ScriptAsset current = script;
-	loadScript(frame, id);
+	if (loadScript(frame, id))
+		return true;
 	frame->scripts.pop_front();
 	script = frame->scripts.front();
 	debug(3, "SCRIPT: Return from fuction %d", id);
@@ -987,12 +993,23 @@ void ScriptEngine::opc9WAIT(EngineState * state, EngineFrame * frame) {
 }
 
 void ScriptEngine::opcaTIME(EngineState * state, EngineFrame * frame) {
-	for (uint i = 0; i < 6; i++) // Dummy
+	for (uint i = 0; i < 3; i++) // We skip year, month and date
 		state->push(0x00);
-	op00NOOP(0xca);
+
+	uint32 totalPlayTime = _engine->getTotalPlayTime() / 1000; // In seconds
+	word hours = totalPlayTime / 3600;
+	totalPlayTime %= 3600;
+	state->push(hours);
+	word minutes = totalPlayTime / 60;
+	totalPlayTime %= 60;
+	state->push(minutes);
+	state->push(totalPlayTime);
+	debug("Saved time: h[%d] m[%d] s[%d]", hours, minutes, totalPlayTime);
+	
 }
 
 void ScriptEngine::opcbDAY(EngineState * state, EngineFrame * frame) {
+	// Probaby irrelevant, so we push Day [9]
 	state->push(9);
 }
 

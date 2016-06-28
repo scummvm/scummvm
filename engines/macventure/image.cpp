@@ -192,9 +192,9 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & st
 		blank = 2 - (blank >> 1);
 	}
 
-	uint pos = 0;
+	uint16 pos = 0;
 	for (uint y = 0; y < _bitHeight; y++) {
-		uint x = 0;
+		uint16 x = 0;
 		for (; x < _bitWidth >> 3; x++) {
 			byte hi = walkHuff(huff, stream) << 4;
 			data[pos++] = walkHuff(huff, stream) | hi;

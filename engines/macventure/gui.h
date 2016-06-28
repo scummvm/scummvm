@@ -258,6 +258,7 @@ private: // Methods
 	bool isRectInsideObject(Common::Rect target, ObjID obj);
 	void selectDraggable(ObjID child, Common::Point pos);
 	void handleDragRelease(Common::Point pos);
+	Common::Rect calculateClickRect(Common::Point clickPos, Common::Rect windowBounds);
 
 };
 

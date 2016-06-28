@@ -23,8 +23,7 @@ World::World(MacVentureEngine *engine, Common::MacResManager *resMan)  {
 	_objectConstants = new Container(_engine->getFilePath(kObjectPathID).c_str());
 	calculateObjectRelations();
 	
-	warning("Test functions about to happen");
-	_gameText = new Container("Shadowgate II/Shadow Text");	
+	_gameText = new Container(_engine->getFilePath(kTextPathID).c_str());	
 	
 	delete saveGameRes;
 	saveGameFile.close();		

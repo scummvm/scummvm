@@ -52,8 +52,13 @@ public:
 
 	}
 
-	const Common::Array<Common::String> *getStrings() {
-		return &_strings;
+	const Common::Array<Common::String> &getStrings() {
+		return _strings;
+	}
+
+	Common::String getString(uint ndx) {
+		assert(ndx < _strings.size());
+		return _strings[ndx];
 	}
 
 private:

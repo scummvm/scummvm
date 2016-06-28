@@ -175,7 +175,7 @@ public:
 
 	void enqueueObject(ObjectQueueID type, ObjID objID, ObjID target = 0);
 	void enqueueText(TextQueueID type, ObjID target, ObjID source, ObjID text);
-
+		
 	void runObjQueue();
 	bool printTexts();
 
