@@ -27,6 +27,7 @@
 
 #include "objectman.h"
 #include "dungeonman.h"
+#include "text.h"
 
 namespace DM {
 
@@ -229,5 +230,21 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 									   box, kColorNoTransparency, gDefultViewPort);
 	}
 }
+	
+#define kObjectNameMaximumLength 14 // @ C014_OBJECT_NAME_MAXIMUM_LENGTH
 
+void ObjectMan::drawLeaderObjectName(Thing thing) {
+	IconIndice iconIndex = getIconIndex(thing);
+	char *objName;
+	char objectNameBuffer[16];
+	if (iconIndex == kIconIndiceJunkChampionBones) {
+		Junk *junk = (Junk*)_vm->_dungeonMan->getThingData(thing);
+		strcpy(objectNameBuffer, _vm->_championMan->_champions[junk->getChargeCount()]._name);
+		strcat(objectNameBuffer, _objectNames[iconIndex]);
+		objName = objectNameBuffer;
+	} else {
+		objName = _objectNames[iconIndex];
+	}
+	_vm->_textMan->printWithTrailingSpacesToScreen(233, 37, kColorCyan, kColorBlack, objName, kObjectNameMaximumLength);
+}
 }

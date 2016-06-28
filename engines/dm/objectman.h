@@ -62,6 +62,7 @@ public:
 	IconIndice getIconIndex(Thing thing); // @ F0033_OBJECT_GetIconIndex
 	void extractIconFromBitmap(uint16 iconIndex, byte *destBitmap); // F0036_OBJECT_ExtractIconFromBitmap
 	void drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex); // @ F0038_OBJECT_DrawIconInSlotBox
+	void drawLeaderObjectName(Thing thing); // @ F0034_OBJECT_DrawLeaderHandObjectName
 };
 
 }
