@@ -243,18 +243,6 @@ func: ID '(' arglist ')' {
 	| tEXIT					{ g_lingo->code1(g_lingo->c_exit); }
 	;
 
-macro: ID begin arglist {
-		g_lingo->code1(g_lingo->c_call);
-		g_lingo->codeString($1->c_str());
-		inst numpar = 0;
-		WRITE_UINT32(&numpar, $3);
-		g_lingo->code1(numpar); };
-	| ID {
-		g_lingo->code1(g_lingo->c_call);
-		g_lingo->codeString($1->c_str());
-		g_lingo->code1(0); };
-	;
-
 // go {to} {frame} whichFrame {of movie whichMovie}
 // go {to} {frame "Open23" of} movie whichMovie
 // go loop
@@ -330,6 +318,18 @@ argdef:  /* nothing */ 		{ $$ = 0; }
 	| ID					{ g_lingo->codeArg(*$1); delete $1; $$ = 1; }
 	| argdef ',' ID			{ g_lingo->codeArg(*$3); delete $3; $$ = $1 + 1; }
 	| argdef '\n' ',' ID	{ g_lingo->codeArg(*$4); delete $4; $$ = $1 + 1; }
+	;
+
+macro: ID begin arglist {
+		g_lingo->code1(g_lingo->c_call);
+		g_lingo->codeString($1->c_str());
+		inst numpar = 0;
+		WRITE_UINT32(&numpar, $3);
+		g_lingo->code1(numpar); };
+	| ID {
+		g_lingo->code1(g_lingo->c_call);
+		g_lingo->codeString($1->c_str());
+		g_lingo->code1(0); };
 	;
 
 arglist:  /* nothing */ 	{ $$ = 0; }

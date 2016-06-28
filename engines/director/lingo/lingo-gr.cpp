@@ -485,16 +485,16 @@ static const yytype_uint16 yyprhs[] =
       70,    82,    95,    97,   101,   105,   108,   112,   114,   115,
      116,   117,   120,   123,   125,   127,   129,   133,   137,   141,
      145,   149,   153,   157,   161,   165,   168,   171,   175,   180,
-     183,   186,   189,   191,   193,   197,   199,   202,   205,   208,
-     211,   215,   218,   222,   225,   228,   230,   234,   237,   241,
-     242,   250,   251,   253,   257,   262,   263,   265
+     183,   186,   189,   191,   193,   196,   199,   202,   205,   209,
+     212,   216,   219,   222,   224,   228,   231,   235,   236,   244,
+     245,   247,   251,   256,   260,   262,   263,   265
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
       53,     0,    -1,    54,    46,    53,    -1,    54,    -1,    -1,
-      70,    -1,    65,    -1,    66,    -1,    55,    -1,    56,    -1,
+      69,    -1,    65,    -1,    72,    -1,    55,    -1,    56,    -1,
        1,    -1,    -1,    27,    64,    18,     8,    -1,    29,     8,
       40,    64,    -1,    29,     8,    31,    64,    -1,    64,    -1,
       65,    -1,    60,    57,    30,    63,    62,    13,    17,    -1,
@@ -511,14 +511,14 @@ static const yytype_int8 yyrhs[] =
       50,    64,    -1,    64,    39,    64,    -1,    64,    34,    64,
       -1,    64,    35,    64,    -1,    41,    64,    -1,    42,    64,
       -1,    47,    64,    48,    -1,     8,    47,    73,    48,    -1,
-      21,     9,    -1,    22,     8,    -1,    27,    64,    -1,    67,
-      -1,    14,    -1,     8,    61,    73,    -1,     8,    -1,    16,
-      19,    -1,    16,    24,    -1,    16,    26,    -1,    16,    68,
-      -1,    16,    68,    69,    -1,    16,    69,    -1,    31,    15,
-       9,    -1,    15,     9,    -1,    31,     9,    -1,     9,    -1,
-      25,    23,     9,    -1,    23,     9,    -1,    31,    23,     9,
-      -1,    -1,    20,     8,    71,    61,    72,    46,    63,    -1,
-      -1,     8,    -1,    72,    51,     8,    -1,    72,    46,    51,
+      21,     9,    -1,    22,     8,    -1,    27,    64,    -1,    66,
+      -1,    14,    -1,    16,    19,    -1,    16,    24,    -1,    16,
+      26,    -1,    16,    67,    -1,    16,    67,    68,    -1,    16,
+      68,    -1,    31,    15,     9,    -1,    15,     9,    -1,    31,
+       9,    -1,     9,    -1,    25,    23,     9,    -1,    23,     9,
+      -1,    31,    23,     9,    -1,    -1,    20,     8,    70,    61,
+      71,    46,    63,    -1,    -1,     8,    -1,    71,    51,     8,
+      -1,    71,    46,    51,     8,    -1,     8,    61,    73,    -1,
        8,    -1,    -1,    64,    -1,    73,    51,    64,    -1
 };
 
@@ -530,9 +530,9 @@ static const yytype_uint16 yyrline[] =
      157,   173,   187,   188,   189,   191,   193,   199,   201,   203,
      205,   206,   207,   210,   215,   218,   219,   220,   221,   222,
      223,   224,   225,   226,   227,   228,   229,   230,   233,   239,
-     240,   241,   242,   243,   246,   252,   266,   267,   268,   269,
-     274,   280,   287,   288,   289,   290,   293,   294,   295,   323,
-     323,   329,   330,   331,   332,   335,   336,   337
+     240,   241,   242,   243,   254,   255,   256,   257,   262,   268,
+     275,   276,   277,   278,   281,   282,   283,   311,   311,   317,
+     318,   319,   320,   323,   329,   335,   336,   337
 };
 #endif
 
@@ -549,8 +549,8 @@ static const char *const yytname[] =
   "'+'", "'-'", "'*'", "'/'", "'%'", "'\\n'", "'('", "')'", "'>'", "'<'",
   "','", "$accept", "program", "programline", "asgn", "stmt", "cond",
   "repeatwhile", "repeatwith", "if", "begin", "end", "stmtlist", "expr",
-  "func", "macro", "gotofunc", "gotoframe", "gotomovie", "defn", "@1",
-  "argdef", "arglist", 0
+  "func", "gotofunc", "gotoframe", "gotomovie", "defn", "@1", "argdef",
+  "macro", "arglist", 0
 };
 #endif
 
@@ -576,9 +576,9 @@ static const yytype_uint8 yyr1[] =
       56,    56,    57,    57,    57,    58,    59,    60,    61,    62,
       63,    63,    63,    64,    64,    64,    64,    64,    64,    64,
       64,    64,    64,    64,    64,    64,    64,    64,    65,    65,
-      65,    65,    65,    65,    66,    66,    67,    67,    67,    67,
-      67,    67,    68,    68,    68,    68,    69,    69,    69,    71,
-      70,    72,    72,    72,    72,    73,    73,    73
+      65,    65,    65,    65,    66,    66,    66,    66,    66,    66,
+      67,    67,    67,    67,    68,    68,    68,    70,    69,    71,
+      71,    71,    71,    72,    72,    73,    73,    73
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
@@ -589,9 +589,9 @@ static const yytype_uint8 yyr2[] =
       11,    12,     1,     3,     3,     2,     3,     1,     0,     0,
        0,     2,     2,     1,     1,     1,     3,     3,     3,     3,
        3,     3,     3,     3,     3,     2,     2,     3,     4,     2,
-       2,     2,     1,     1,     3,     1,     2,     2,     2,     2,
-       3,     2,     3,     2,     2,     1,     3,     2,     3,     0,
-       7,     0,     1,     3,     4,     0,     1,     3
+       2,     2,     1,     1,     2,     2,     2,     2,     3,     2,
+       3,     2,     2,     1,     3,     2,     3,     0,     7,     0,
+       1,     3,     4,     3,     1,     0,     1,     3
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -601,19 +601,19 @@ static const yytype_uint8 yydefact[] =
 {
        0,    10,    33,    28,    53,     0,    27,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     3,    35,     9,
-       0,     0,     0,    15,     6,     7,    52,     5,    75,    75,
-      65,     0,    56,     0,    57,     0,    58,     0,    59,    61,
-      69,    49,    50,    34,     0,    35,    51,     0,    25,     0,
+       0,     0,     0,    15,     6,    52,     5,     7,    75,    75,
+      63,     0,    54,     0,    55,     0,    56,     0,    57,    59,
+      67,    49,    50,    34,     0,    35,    51,     0,    25,     0,
       45,    46,     0,     1,     0,     0,     0,     0,     0,    22,
        0,     0,     0,     0,     0,     0,     0,     0,     0,    76,
-       0,    54,    63,    67,     0,    64,     0,     0,     0,    60,
+       0,    73,    61,    65,     0,    62,     0,     0,     0,    58,
       28,     0,     0,    26,     0,     0,    47,     2,     0,    29,
        0,     0,    30,     0,    43,    44,    42,    36,    37,    38,
-      39,    40,    41,    48,     0,    66,    62,    68,    71,    12,
-      14,    13,    30,     0,    24,    29,    23,    77,    72,     0,
+      39,    40,    41,    48,     0,    64,    60,    66,    69,    12,
+      14,    13,    30,     0,    24,    29,    23,    77,    70,     0,
       29,     0,     0,    34,    31,    32,     0,    16,    30,     0,
-       0,     0,    29,    30,     0,     0,    70,    73,     0,    29,
-      30,    29,    17,    74,    19,    30,    29,     0,    29,     0,
+       0,     0,    29,    30,     0,     0,    68,    71,     0,    29,
+      30,    29,    17,    72,    19,    30,    29,     0,    29,     0,
        0,     0,     0,    18,     0,    20,    21
 };
 
@@ -621,8 +621,8 @@ static const yytype_uint8 yydefact[] =
 static const yytype_int8 yydefgoto[] =
 {
       -1,    16,    17,    45,   125,    58,    20,    21,    22,    29,
-     113,   115,    23,   127,    25,    26,    38,    39,    27,    80,
-     119,    70
+     113,   115,    23,   127,    25,    38,    39,    26,    80,   119,
+      27,    70
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
@@ -652,7 +652,7 @@ static const yytype_int16 yypact[] =
 static const yytype_int8 yypgoto[] =
 {
     -107,    86,  -107,     6,     7,   -14,  -107,  -107,  -107,    65,
-    -106,  -101,   -10,     8,  -107,  -107,  -107,   127,  -107,  -107,
+    -106,  -101,   -10,     8,  -107,  -107,   127,  -107,  -107,  -107,
     -107,   122
 };
 
@@ -729,16 +729,16 @@ static const yytype_uint8 yystos[] =
 {
        0,     1,     6,     8,    14,    16,    17,    20,    21,    22,
       27,    28,    29,    41,    42,    47,    53,    54,    55,    56,
-      58,    59,    60,    64,    65,    66,    67,    70,    47,    61,
-       9,    15,    19,    23,    24,    25,    26,    31,    68,    69,
+      58,    59,    60,    64,    65,    66,    69,    72,    47,    61,
+       9,    15,    19,    23,    24,    25,    26,    31,    67,    68,
        8,     9,     8,     8,    27,    55,    64,    32,    33,     8,
       64,    64,    64,     0,    46,    47,    40,    47,    57,    64,
       34,    35,    39,    41,    42,    43,    44,    49,    50,    64,
-      73,    73,     9,     9,    23,     9,    15,    23,    31,    69,
-      71,    64,    18,     8,    31,    40,    48,    53,    57,    64,
+      73,    73,     9,     9,    23,     9,    15,    23,    31,    68,
+      70,    64,    18,     8,    31,    40,    48,    53,    57,    64,
       57,    64,    30,    40,    64,    64,    64,    64,    64,    64,
       64,    64,    64,    48,    51,     9,     9,     9,    61,     8,
-      64,    64,    48,    62,    48,    63,    64,    64,     8,    72,
+      64,    64,    48,    62,    48,    63,    64,    64,     8,    71,
       63,    11,    31,     8,    46,    56,    62,    65,    46,    51,
       62,    31,    64,    12,    13,    51,    63,     8,    13,    64,
       62,    63,    17,     8,    28,    62,    63,    62,    63,    62,
@@ -1816,40 +1816,22 @@ yyreduce:
     break;
 
   case 54:
-#line 246 "engines/director/lingo/lingo-gr.y"
-    {
-		g_lingo->code1(g_lingo->c_call);
-		g_lingo->codeString((yyvsp[(1) - (3)].s)->c_str());
-		inst numpar = 0;
-		WRITE_UINT32(&numpar, (yyvsp[(3) - (3)].narg));
-		g_lingo->code1(numpar); ;}
-    break;
-
-  case 55:
-#line 252 "engines/director/lingo/lingo-gr.y"
-    {
-		g_lingo->code1(g_lingo->c_call);
-		g_lingo->codeString((yyvsp[(1) - (1)].s)->c_str());
-		g_lingo->code1(0); ;}
-    break;
-
-  case 56:
-#line 266 "engines/director/lingo/lingo-gr.y"
+#line 254 "engines/director/lingo/lingo-gr.y"
     { g_lingo->code1(g_lingo->c_gotoloop); ;}
     break;
 
-  case 57:
-#line 267 "engines/director/lingo/lingo-gr.y"
+  case 55:
+#line 255 "engines/director/lingo/lingo-gr.y"
     { g_lingo->code1(g_lingo->c_gotonext); ;}
     break;
 
-  case 58:
-#line 268 "engines/director/lingo/lingo-gr.y"
+  case 56:
+#line 256 "engines/director/lingo/lingo-gr.y"
     { g_lingo->code1(g_lingo->c_gotoprevious); ;}
     break;
 
-  case 59:
-#line 269 "engines/director/lingo/lingo-gr.y"
+  case 57:
+#line 257 "engines/director/lingo/lingo-gr.y"
     {
 		g_lingo->code1(g_lingo->c_goto);
 		g_lingo->codeString((yyvsp[(2) - (2)].s)->c_str());
@@ -1857,8 +1839,8 @@ yyreduce:
 		delete (yyvsp[(2) - (2)].s); ;}
     break;
 
-  case 60:
-#line 274 "engines/director/lingo/lingo-gr.y"
+  case 58:
+#line 262 "engines/director/lingo/lingo-gr.y"
     {
 		g_lingo->code1(g_lingo->c_goto);
 		g_lingo->codeString((yyvsp[(2) - (3)].s)->c_str());
@@ -1867,8 +1849,8 @@ yyreduce:
 		delete (yyvsp[(3) - (3)].s); ;}
     break;
 
-  case 61:
-#line 280 "engines/director/lingo/lingo-gr.y"
+  case 59:
+#line 268 "engines/director/lingo/lingo-gr.y"
     {
 		g_lingo->code1(g_lingo->c_goto);
 		g_lingo->codeString("");
@@ -1876,72 +1858,90 @@ yyreduce:
 		delete (yyvsp[(2) - (2)].s); ;}
     break;
 
-  case 62:
-#line 287 "engines/director/lingo/lingo-gr.y"
+  case 60:
+#line 275 "engines/director/lingo/lingo-gr.y"
     { (yyval.s) = (yyvsp[(3) - (3)].s); ;}
     break;
 
+  case 61:
+#line 276 "engines/director/lingo/lingo-gr.y"
+    { (yyval.s) = (yyvsp[(2) - (2)].s); ;}
+    break;
+
+  case 62:
+#line 277 "engines/director/lingo/lingo-gr.y"
+    { (yyval.s) = (yyvsp[(2) - (2)].s); ;}
+    break;
+
   case 63:
-#line 288 "engines/director/lingo/lingo-gr.y"
-    { (yyval.s) = (yyvsp[(2) - (2)].s); ;}
-    break;
-
-  case 64:
-#line 289 "engines/director/lingo/lingo-gr.y"
-    { (yyval.s) = (yyvsp[(2) - (2)].s); ;}
-    break;
-
-  case 65:
-#line 290 "engines/director/lingo/lingo-gr.y"
+#line 278 "engines/director/lingo/lingo-gr.y"
     { (yyval.s) = (yyvsp[(1) - (1)].s); ;}
     break;
 
+  case 64:
+#line 281 "engines/director/lingo/lingo-gr.y"
+    { (yyval.s) = (yyvsp[(3) - (3)].s); ;}
+    break;
+
+  case 65:
+#line 282 "engines/director/lingo/lingo-gr.y"
+    { (yyval.s) = (yyvsp[(2) - (2)].s); ;}
+    break;
+
   case 66:
-#line 293 "engines/director/lingo/lingo-gr.y"
+#line 283 "engines/director/lingo/lingo-gr.y"
     { (yyval.s) = (yyvsp[(3) - (3)].s); ;}
     break;
 
   case 67:
-#line 294 "engines/director/lingo/lingo-gr.y"
-    { (yyval.s) = (yyvsp[(2) - (2)].s); ;}
-    break;
-
-  case 68:
-#line 295 "engines/director/lingo/lingo-gr.y"
-    { (yyval.s) = (yyvsp[(3) - (3)].s); ;}
-    break;
-
-  case 69:
-#line 323 "engines/director/lingo/lingo-gr.y"
+#line 311 "engines/director/lingo/lingo-gr.y"
     { g_lingo->_indef = true; ;}
     break;
 
-  case 70:
-#line 324 "engines/director/lingo/lingo-gr.y"
+  case 68:
+#line 312 "engines/director/lingo/lingo-gr.y"
     {
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*(yyvsp[(2) - (7)].s), (yyvsp[(4) - (7)].code), (yyvsp[(5) - (7)].narg));
 			g_lingo->_indef = false; ;}
     break;
 
-  case 71:
-#line 329 "engines/director/lingo/lingo-gr.y"
+  case 69:
+#line 317 "engines/director/lingo/lingo-gr.y"
     { (yyval.narg) = 0; ;}
     break;
 
-  case 72:
-#line 330 "engines/director/lingo/lingo-gr.y"
+  case 70:
+#line 318 "engines/director/lingo/lingo-gr.y"
     { g_lingo->codeArg(*(yyvsp[(1) - (1)].s)); delete (yyvsp[(1) - (1)].s); (yyval.narg) = 1; ;}
     break;
 
-  case 73:
-#line 331 "engines/director/lingo/lingo-gr.y"
+  case 71:
+#line 319 "engines/director/lingo/lingo-gr.y"
     { g_lingo->codeArg(*(yyvsp[(3) - (3)].s)); delete (yyvsp[(3) - (3)].s); (yyval.narg) = (yyvsp[(1) - (3)].narg) + 1; ;}
     break;
 
-  case 74:
-#line 332 "engines/director/lingo/lingo-gr.y"
+  case 72:
+#line 320 "engines/director/lingo/lingo-gr.y"
     { g_lingo->codeArg(*(yyvsp[(4) - (4)].s)); delete (yyvsp[(4) - (4)].s); (yyval.narg) = (yyvsp[(1) - (4)].narg) + 1; ;}
+    break;
+
+  case 73:
+#line 323 "engines/director/lingo/lingo-gr.y"
+    {
+		g_lingo->code1(g_lingo->c_call);
+		g_lingo->codeString((yyvsp[(1) - (3)].s)->c_str());
+		inst numpar = 0;
+		WRITE_UINT32(&numpar, (yyvsp[(3) - (3)].narg));
+		g_lingo->code1(numpar); ;}
+    break;
+
+  case 74:
+#line 329 "engines/director/lingo/lingo-gr.y"
+    {
+		g_lingo->code1(g_lingo->c_call);
+		g_lingo->codeString((yyvsp[(1) - (1)].s)->c_str());
+		g_lingo->code1(0); ;}
     break;
 
   case 75:
