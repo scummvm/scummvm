@@ -327,12 +327,19 @@ public:
 	DirectorEngine *_vm;
 };
 
+struct Label {
+	Common::String name;
+	uint16 number;
+	Label(Common::String _name, uint16 _number) { name = _name; number = _number; }
+};
+
 class Score {
 public:
 	Score(DirectorEngine *vm);
 	~Score();
 
 	static Common::Rect readRect(Common::SeekableSubReadStreamEndian &stream);
+	static int compareLabels(const void *a, const void *b);
 	void loadArchive();
 	void setStartToLabel(Common::String label);
 	void goToLoop();
@@ -364,7 +371,7 @@ public:
 	Common::Array<Frame *> _frames;
 	Common::HashMap<int, Cast *> _casts;
 	Common::HashMap<uint16, CastInfo *> _castsInfo;
-	Common::HashMap<uint16, Common::String> _labels;
+	Common::SortedArray<Label *> *_labels;
 	Common::HashMap<uint16, Common::String> _actions;
 	Common::HashMap<uint16, Common::String> _fontMap;
 	Graphics::ManagedSurface *_surface;

@@ -234,6 +234,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream) {
 }
 
 void Score::loadLabels(Common::SeekableSubReadStreamEndian &stream) {
+	_labels = new Common::SortedArray<Label *>(compareLabels);
 	uint16 count = stream.readUint16() + 1;
 	uint16 offset = count * 4 + 2;
 
@@ -246,22 +247,26 @@ void Score::loadLabels(Common::SeekableSubReadStreamEndian &stream) {
 		uint16 streamPos = stream.pos();
 
 		stream.seek(stringPos);
-
+		Common::String label;
 		for (uint16 j = stringPos; j < nextStringPos; j++) {
-			_labels[frame] += stream.readByte();
+			label += stream.readByte();
 		}
-
+		_labels->insert(new Label(label, frame));
 		stream.seek(streamPos);
 
 		frame = nextFrame;
 		stringPos = nextStringPos;
 	}
 
-	Common::HashMap<uint16, Common::String>::iterator j;
+	Common::SortedArray<Label *>::iterator j;
 
-	for (j = _labels.begin(); j != _labels.end(); ++j) {
-		debug("Frame %d, Label %s", j->_key, j->_value.c_str());
+	for (j = _labels->begin(); j != _labels->end(); ++j) {
+		debug("Frame %d, Label %s", (*j)->number, (*j)->name.c_str());
 	}
+}
+
+int Score::compareLabels(const void *a, const void *b) {
+	return ((Label *)a)->number - ((Label *)b)->number;
 }
 
 void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
@@ -339,15 +344,14 @@ void Score::loadScriptText(Common::SeekableSubReadStreamEndian &stream) {
 }
 
 void Score::setStartToLabel(Common::String label) {
-	Common::HashMap<uint16, Common::String>::iterator i;
+	Common::SortedArray<Label *>::iterator i;
 
-	for (i = _labels.begin(); i != _labels.end(); ++i) {
-		if (i->_value == label) {
-			_currentFrame = i->_key;
+	for (i = _labels->begin(); i != _labels->end(); ++i) {
+		if ((*i)->name == label) {
+			_currentFrame = (*i)->number;
 			return;
 		}
 	}
-
 	warning("Label %s not found", label.c_str());
 }
 
@@ -407,30 +411,30 @@ void Score::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 void Score::goToLoop() {
 	//This command has the playback head contonuously return to the first marker to to the left and then loop back.
 	//If no marker are to the left of the playback head, the playback head continues to the right.
-	Common::HashMap<uint16, Common::String>::iterator i;
+	Common::SortedArray<Label *>::iterator i;
 
-	for (i = _labels.begin(); i != _labels.end(); ++i) {
-		if (i->_value == _currentLabel) {
-			_currentFrame = i->_key;
+	for (i = _labels->begin(); i != _labels->end(); ++i) {
+		if ((*i)->name == _currentLabel) {
+			_currentFrame = (*i)->number;
 			return;
 		}
 	}
 }
 
 void Score::goToNext() {
-	Common::HashMap<uint16, Common::String>::iterator i;
+	Common::SortedArray<Label *>::iterator i;
 
-	for (i = _labels.begin(); i != _labels.end(); ++i) {
-		if (i->_value == _currentLabel) {
-			if (i != _labels.end()) {
+	for (i = _labels->begin(); i != _labels->end(); ++i) {
+		if ((*i)->name == _currentLabel) {
+			if (i != _labels->end()) {
 				//return to the first marker to to the right
 				++i;
-				_currentFrame = i->_key;
+				_currentFrame = (*i)->number;
 				return;
 			} else {
 				//if no markers are to the right of the playback head,
 				//the playback head goes to the first marker to the left
-				_currentFrame = i->_key;
+				_currentFrame = (*i)->number;
 				return;
 			}
 		}
@@ -442,20 +446,20 @@ void Score::goToNext() {
 
 void Score::goToPrevious() {
 	//One label
-	if (_labels.begin() == _labels.end()) {
-		_currentFrame = _labels.begin()->_key;
+	if (_labels->begin() == _labels->end()) {
+		_currentFrame = (*_labels->begin())->number;
 		return;
 	}
 
-	Common::HashMap<uint16, Common::String>::iterator previous = _labels.begin();
-	Common::HashMap<uint16, Common::String>::iterator i = previous++; //because iterator havent decrement operator
+	Common::SortedArray<Label *>::iterator previous = _labels->begin();
+	Common::SortedArray<Label *>::iterator i = previous++;
 
-	for (i = _labels.begin(); i != _labels.end(); ++i, ++previous) {
-		if (i->_value == _currentLabel) {
-			_currentFrame = previous->_key;
+	for (i = _labels->begin(); i != _labels->end(); ++i, ++previous) {
+		if ((*i)->name == _currentLabel) {
+			_currentFrame = (*previous)->number;
 			return;
 		} else {
-			_currentFrame = i->_key;
+			_currentFrame = (*i)->number;
 			return;
 		}
 	}
@@ -669,9 +673,14 @@ void Score::update() {
 	//TODO Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
 	//_lingo->processEvent(kEventPrepareFrame, _currentFrame);
 	_currentFrame++;
-	if (_labels.contains(_currentFrame)) {
-		_currentLabel = _labels[_currentFrame];
+
+	Common::SortedArray<Label *>::iterator i;
+	for (i = _labels->begin(); i != _labels->end(); ++i) {
+		if ((*i)->number = _currentFrame) {
+			_currentLabel = (*i)->name;
+		}
 	}
+
 	_frames[_currentFrame]->prepareFrame(this);
 	//Stage is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell)
 
