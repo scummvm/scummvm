@@ -96,6 +96,7 @@ put par3\n\
 
 _lingo->addCode("check(1, 2, 3)\n\
 check 4, 5, 6\n\
+check 7, 8\n\
 ", kMovieScript, 2);
 
 _lingo->executeScript(kMovieScript, 2);

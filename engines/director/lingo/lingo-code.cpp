@@ -145,11 +145,8 @@ bool Lingo::verify(Symbol *s) {
 		return false;
 	}
 
-	if (s->type == VOID) {
+	if (s->type == VOID)
 		warning("Variable used before assigning a value '%s'", s->name);
-
-		return false;
-	}
 
 	return true;
 }
