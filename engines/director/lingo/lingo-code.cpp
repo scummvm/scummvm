@@ -371,15 +371,15 @@ void Lingo::c_goto() {
 }
 
 void Lingo::c_gotoloop() {
-	warning("STUB: c_gotoloop()");
+	g_lingo->func_gotoLoop();
 }
 
 void Lingo::c_gotonext() {
-	warning("STUB: c_gotonext()");
+	g_lingo->func_gotoNext();
 }
 
 void Lingo::c_gotoprevious() {
-	warning("STUB: c_gotoprevious()");
+	g_lingo->func_gotoPrev();
 }
 
 void Lingo::c_call() {

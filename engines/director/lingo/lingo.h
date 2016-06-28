@@ -175,6 +175,9 @@ public:
 	void func_mci(Common::String &s);
 	void func_mciwait(Common::String &s);
 	void func_goto(Common::String &frame, Common::String &movie);
+	void func_gotoLoop();
+	void func_gotoNext();
+	void func_gotoPrev();
 
 public:
 	ScriptData *_currentScript;
