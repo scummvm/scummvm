@@ -273,7 +273,9 @@ void ScreenItem::calcRects(const Plane &plane) {
 		// Cel may use a coordinate system that is not the same size as the
 		// script coordinate system (usually this means high-resolution
 		// pictures with low-resolution scripts)
-		if (celObj._scaledWidth != scriptWidth || celObj._scaledHeight != scriptHeight) {
+		if (celObj._scaledWidth != kLowResX || celObj._scaledHeight != kLowResY) {
+			// high resolution coordinates
+
 			if (_useInsetRect) {
 				const Ratio scriptToCelX(celObj._scaledWidth, scriptWidth);
 				const Ratio scriptToCelY(celObj._scaledHeight, scriptHeight);
@@ -345,6 +347,8 @@ void ScreenItem::calcRects(const Plane &plane) {
 			_ratioX = scaleX * celToScreenX;
 			_ratioY = scaleY * celToScreenY;
 		} else {
+			// low resolution coordinates
+
 			int displaceX = celObj._displace.x;
 			if (_mirrorX != celObj._mirrorX && _celInfo.type != kCelTypePic) {
 				displaceX = celObj._width - celObj._displace.x - 1;
@@ -582,7 +586,9 @@ Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
 		displaceX = celObj._width - displaceX - 1;
 	}
 
-	if (celObj._scaledWidth != scriptWidth || celObj._scaledHeight != scriptHeight) {
+	if (celObj._scaledWidth != kLowResX || celObj._scaledHeight != kLowResY) {
+		// high resolution coordinates
+
 		if (_useInsetRect) {
 			Ratio scriptToCelX(celObj._scaledWidth, scriptWidth);
 			Ratio scriptToCelY(celObj._scaledHeight, scriptHeight);
@@ -616,6 +622,8 @@ Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
 		mulinc(nsRect, celToScriptX, celToScriptY);
 		nsRect.translate(_position.x - displaceX, _position.y - displaceY);
 	} else {
+		// low resolution coordinates
+
 		if (!scaleX.isOne() || !scaleY.isOne()) {
 			mulinc(nsRect, scaleX, scaleY);
 			// TODO: This was in the original code, baked into the

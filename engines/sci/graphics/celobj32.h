@@ -31,6 +31,20 @@
 namespace Sci {
 typedef Common::Rational Ratio;
 
+// SCI32 has four different coordinate systems:
+// 1. low resolution, 2. game/script resolution,
+// 3. text/bitmap resolution, 4. screen resolution
+//
+// In CelObj, these values are used when there is
+// no baked in resolution of cels.
+//
+// In ScreenItem, it is used when deciding which
+// path to take to calculate dimensions.
+enum {
+	kLowResX = 320,
+	kLowResY = 200
+};
+
 enum CelType {
 	kCelTypeView  = 0,
 	kCelTypePic   = 1,

@@ -799,8 +799,8 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 	if (_scaledWidth == 0 || _scaledHeight == 0) {
 		byte sizeFlag = data[5];
 		if (sizeFlag == 0) {
-			_scaledWidth = 320;
-			_scaledHeight = 200;
+			_scaledWidth = kLowResX;
+			_scaledHeight = kLowResY;
 		} else if (sizeFlag == 1) {
 			_scaledWidth = 640;
 			_scaledHeight = 480;
@@ -985,8 +985,8 @@ CelObjPic::CelObjPic(const GuiResourceId picId, const int16 celNo) {
 		_scaledWidth = sizeFlag1;
 		_scaledHeight = sizeFlag2;
 	} else if (sizeFlag1 == 0) {
-		_scaledWidth = 320;
-		_scaledHeight = 200;
+		_scaledWidth = kLowResX;
+		_scaledHeight = kLowResY;
 	} else if (sizeFlag1 == 1) {
 		_scaledWidth = 640;
 		_scaledHeight = 480;
