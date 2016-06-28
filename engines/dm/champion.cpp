@@ -132,6 +132,141 @@ Common::String ChampionMan::getStringFromInteger(uint16 val, bool padding, uint1
 	return result += valToStr;
 }
 
+void ChampionMan::applyModifiersToStatistics(Champion* champ, ChampionSlot slotIndex, IconIndice iconIndex, int16 modifierFactor, Thing thing) {
+	int16 statIndex;
+	int16 modifier = 0;
+	ThingType thingType = thing.getType();
+	if (((thingType == kWeaponThingType) || (thingType == kArmourThingType))
+		&& (slotIndex >= kChampionSlotReadyHand)
+		&& (slotIndex <= kChampionSlotQuiverLine_1_1)) {
+		Weapon *weapon = (Weapon*)_vm->_dungeonMan->getThingData(thing);
+		Armour *armour = (Armour*)_vm->_dungeonMan->getThingData(thing);
+		if (((thingType == kWeaponThingType) && weapon->getCursed())
+			|| ((thingType == kArmourThingType) && armour->getCursed())) {
+			statIndex = kChampionStatLuck;
+			modifier = -3;
+			goto T0299044_ApplyModifier;
+		}
+	}
+
+	statIndex = (ChampionStatisticType)thingType; // variable sharing
+
+	if ((iconIndex == kIconIndiceJunkRabbitsFoot) && (slotIndex < kChampionSlotChest_1)) {
+		statIndex = kChampionStatLuck;
+		modifier = 10;
+	} else if (slotIndex == kChampionSlotActionHand) {
+
+		if (iconIndex == kIconIndiceWeaponMaceOfOrder) {
+			statIndex = kChampionStatStrength;
+			modifier = 5;
+		} else {
+
+			statIndex = kChampionStatMana;
+			if ((iconIndex >= kIconIndiceWeaponStaffOfClawsEmpty) && (iconIndex <= kIconIndiceWeaponStaffOfClawsFull)) {
+				modifier = 4;
+			} else if ((iconIndex >= kIconIndiceWeaponStaff) && (iconIndex <= kIconIndiceWeaponSceptreOfLyf)) {
+				switch (iconIndex) {
+				case kIconIndiceWeaponStaff:
+					modifier = 2;
+					break;
+				case kIconIndiceWeaponWand:
+					modifier = 1;
+					break;
+				case kIconIndiceWeaponTeowand:
+					modifier = 6;
+					break;
+				case kIconIndiceWeaponYewStaff:
+					modifier = 4;
+					break;
+				case kIconIndiceWeaponStaffOfManarStaffOfIrra:
+					modifier = 10;
+					break;
+				case kIconIndiceWeaponSnakeStaffCrossOfNeta:
+					modifier = 8;
+					break;
+				case kIconIndiceWeaponTheConduitSerpentStaff:
+					modifier = 16;
+					break;
+				case kIconIndiceWeaponDragonSpit:
+					modifier = 7;
+					break;
+				case kIconIndiceWeaponSceptreOfLyf:
+					modifier = 5;
+					break;
+				}
+			} else {
+				switch (iconIndex) {
+				case kIconIndiceWeaponDeltaSideSplitter:
+					modifier = 1;
+					break;
+				case kIconIndiceWeaponTheInquisitorDragonFang:
+					modifier = 2;
+					break;
+				case kIconIndiceWeaponVorpalBlade:
+					modifier = 4;
+					break;
+				}
+			} // end of else
+
+		}
+
+	} else if (slotIndex == kChampionSlotLegs) {
+
+		if (iconIndex == kIconIndiceArmourPowertowers) {
+			statIndex = kChampionStatStrength;
+			modifier = 10;
+		}
+
+	} else if (slotIndex == kChampionSlotHead) {
+
+		if (iconIndex == kIconIndiceArmourCrownOfNerra) {
+			statIndex = kChampionStatWisdom;
+			modifier = 10;
+		} else if (iconIndex == kIconIndiceArmourDexhelm) {
+			statIndex = kChampionStatDexterity;
+			modifier = 10;
+		}
+
+	} else if (slotIndex == kChampionSlotTorso) {
+
+		if (iconIndex == kIconIndiceArmourFlamebain) {
+			statIndex = kChampionStatAntifire;
+			modifier = 12;
+		} else if (iconIndex == kIconIndiceArmourCloakOfNight) {
+			statIndex = kChampionStatDexterity;
+			modifier = 8;
+		}
+
+	} else if (slotIndex == kChampionSlotNeck) {
+
+		if ((iconIndex >= kIconIndiceJunkJewelSymalUnequipped) && (iconIndex <= kIconIndiceJunkJewelSymalEquipped)) {
+			statIndex = kChampionStatAntimagic;
+			modifier = 15;
+		} else if (iconIndex == kIconIndiceArmourCloakOfNight) {
+			statIndex = kChampionStatDexterity;
+			modifier = 8;
+		} else if (iconIndex == kIconIndiceJunkMoonstone) {
+			statIndex = kChampionStatMana;
+			modifier = 3;
+		}
+
+	}
+
+T0299044_ApplyModifier:
+	if (modifier) {
+		modifier *= modifierFactor;
+		if (statIndex == kChampionStatMana) {
+			champ->_maxMana += modifier;
+		} else if (statIndex < kChampionStatAntifire + 1) {
+			for (uint16 statValIndex = kChampionStatMaximum; statValIndex <= kChampionStatMinimum; ++statValIndex) {
+				champ->getStatistic((ChampionStatisticType)statIndex, (ChampionStatisticValue)statValIndex) += modifier;
+				warning("BUG0_38");
+			}
+		}
+	}
+
+}
+
 ChampionIndex ChampionMan::getIndexInCell(ViewCell cell) {
 	for (uint16 i = 0; i < _partyChampionCount; ++i) {
 		if ((_champions[i]._cell == cell) && _champions[i]._currHealth)

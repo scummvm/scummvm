@@ -15,6 +15,7 @@ Todo:
 	Rename GraphicIndice enum entires and have their name include GraphicIndice
 	I forgot to add localization warnings
 	Attend to Arnaud's notes on github
+	Attend to sev's notes on github
 	Double check enums with hex literals, I think I screwed the regex when processing them
 	Double check strcat, strstr usages, I might have messed them up in many places
 
