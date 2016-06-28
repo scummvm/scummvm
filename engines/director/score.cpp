@@ -676,7 +676,7 @@ void Score::update() {
 
 	Common::SortedArray<Label *>::iterator i;
 	for (i = _labels->begin(); i != _labels->end(); ++i) {
-		if ((*i)->number = _currentFrame) {
+		if ((*i)->number == _currentFrame) {
 			_currentLabel = (*i)->name;
 		}
 	}

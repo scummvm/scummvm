@@ -56,6 +56,8 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_mainArchive = 0;
 	_macBinary = 0;
 	_currentPalette = 0;
+	//FIXME
+	_sharedMMM = "SHARDCST.MMM";
 
 	_movies = new Common::HashMap<Common::String, Score *>();
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -210,6 +212,11 @@ Common::HashMap<Common::String, Score *> DirectorEngine::loadMMMNames(Common::St
 
 	if (!movies.empty()) {
 		for (Common::FSList::const_iterator i = movies.begin(); i != movies.end(); ++i) {
+			if (i->getName() == _sharedMMM) {
+				loadSharedCastsFrom(i->getPath());
+				continue;
+			}
+
 			RIFFArchive *arc = new RIFFArchive();
 			arc->openFile(i->getPath());
 			Score *sc = new Score(this);
@@ -400,6 +407,15 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 		Common::Array<uint16>::iterator iterator;
 		for (iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
 			_sharedSTXT[*iterator] = shardcst->getResource(MKTAG('S','T','X','T'), *iterator);
+		}
+	}
+
+	Common::Array<uint16> sound = shardcst->getResourceIDList(MKTAG('S','N','D',' '));
+
+	if (stxt.size() != 0) {
+		Common::Array<uint16>::iterator iterator;
+		for (iterator = sound.begin(); iterator != sound.end(); ++iterator) {
+			_sharedSTXT[*iterator] = shardcst->getResource(MKTAG('S','N','D',' '), *iterator);
 		}
 	}
 }

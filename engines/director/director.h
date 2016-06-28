@@ -91,9 +91,13 @@ private:
 	void loadMac();
 
 	Common::String readPascalString(Common::SeekableReadStream &stream);
+
+	Common::String _sharedMMM;
 	Common::HashMap<int, Cast *> _sharedCasts;
 	Common::HashMap<int, Common::SeekableReadStream *> _sharedDIB;
 	Common::HashMap<int, Common::SeekableReadStream *> _sharedSTXT;
+	Common::HashMap<int, Common::SeekableReadStream *> _sharedSound;
+
 	Archive *_mainArchive;
 	Common::MacResManager *_macBinary;
 	DirectorSound *_soundManager;
