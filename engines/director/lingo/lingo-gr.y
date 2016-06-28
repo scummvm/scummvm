@@ -78,7 +78,7 @@ using namespace Director;
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWITH tWHILE
 %token tGE tLE tGT tLT tEQ tNEQ
 
-%type<code> argbegin asgn begin cond end expr if repeatwhile repeatwith stmtlist
+%type<code> asgn begin cond end expr if repeatwhile repeatwith stmtlist
 %type<s> gotoframe gotomovie
 %type<narg> argdef arglist
 
@@ -308,7 +308,7 @@ gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
 // See also:
 //   on keyword
 defn: tMACRO ID { g_lingo->_indef = true; }
-	    argbegin argdef '\n' argstore stmtlist {
+	    begin argdef '\n' argstore stmtlist {
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$2, $4, $5);
 			g_lingo->_indef = false; }
@@ -317,8 +317,6 @@ argdef:  /* nothing */ 		{ $$ = 0; }
 	| ID					{ g_lingo->codeArg($1); $$ = 1; }
 	| argdef ',' ID			{ g_lingo->codeArg($3); $$ = $1 + 1; }
 	| argdef '\n' ',' ID	{ g_lingo->codeArg($4); $$ = $1 + 1; }
-	;
-argbegin:	  /* nothing */		{ g_lingo->codeArg(new Common::String("<args>")); $$ = g_lingo->_currentScript->size(); }
 	;
 argstore:	  /* nothing */		{ g_lingo->codeArgStore(); }
 	;

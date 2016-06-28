@@ -120,11 +120,6 @@ void Lingo::codeArgStore() {
 		Common::String *arg = _argstack.back();
 		_argstack.pop_back();
 
-		if (arg->equals("<args>")) {
-			delete arg;
-			break;
-		}
-
 		code1(c_varpush);
 		codeString(arg->c_str());
 		code1(c_assign);
