@@ -53,7 +53,7 @@ F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
 					F0333_INVENTORY_OpenAndDrawChest // done
 					F0303_CHAMPION_GetSkillLevel // done
 					F0332_INVENTORY_DrawIconToViewport // done 
-					F0336_INVENTORY_DrawPanel_BuildObjectAttributesString
+					F0336_INVENTORY_DrawPanel_BuildObjectAttributesString // done
 					F0335_INVENTORY_DrawPanel_ObjectDescriptionString
 					F0339_INVENTORY_DrawPanel_ArrowOrEye
 					G0430_apc_DirectionNames

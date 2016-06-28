@@ -338,4 +338,35 @@ void InventoryMan::drawIconToViewport(IconIndice iconIndex, int16 xPos, int16 yP
 	_vm->_objectMan->extractIconFromBitmap(iconIndex, iconBitmap);
 	_vm->_displayMan->blitToScreen(iconBitmap, 16, 0, 0, box, kColorNoTransparency, gDungeonViewport);
 }
+
+void InventoryMan::buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, char** attribStrings, char* destString, char* prefixString, char* suffixString) {
+	uint16 identicalBitCount = 0;
+	int16 attribMask = 1;
+	for (uint16 stringIndex = 0; stringIndex < 16; stringIndex++, attribMask <<= 1) {
+		if (attribMask & potentialAttribMask & actualAttribMask) {
+			identicalBitCount++;
+		}
+	}
+
+	if (identicalBitCount == 0) {
+		*destString = '\0';
+		return;
+	}
+
+	strcpy(destString, prefixString);
+
+	attribMask = 1;
+	for (uint16 stringIndex = 0; stringIndex < 16; stringIndex++, attribMask <<= 1) {
+		if (attribMask & potentialAttribMask & actualAttribMask) {
+			strcat(destString, attribStrings[stringIndex]);
+			if (identicalBitCount-- > 2) {
+				strcat(destString, ", ");
+			} else if (identicalBitCount == 1) {
+				strcat(destString, " AND "); // TODO: localization
+			}
+		}
+	}
+
+	strcat(destString, suffixString);
+}
 }
