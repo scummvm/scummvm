@@ -44,7 +44,7 @@ class Archive;
 struct DirectorGameDescription;
 class Lingo;
 class Score;
-class Cast;
+struct Cast;
 
 class DirectorEngine : public ::Engine {
 public:
