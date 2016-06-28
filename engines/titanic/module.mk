@@ -317,6 +317,7 @@ MODULE_OBJS := \
 	messages/bilge_dispensor_event.o \
 	messages/door_auto_sound_event.o \
 	messages/messages.o \
+	messages/mouse_messages.o \
 	messages/service_elevator_door.o \
 	moves/enter_bomb_room.o \
 	moves/enter_bridge.o \

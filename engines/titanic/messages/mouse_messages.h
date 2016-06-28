@@ -78,6 +78,11 @@ public:
 	static bool isSupportedBy(const CTreeItem *item) {
 		return supports(item, _type);
 	}
+
+	/**
+	 * Generate a dummy mouse down message at the current mouse position
+	 */
+	static void generate();
 };
 
 class CMouseButtonUpMsg : public CMouseButtonMsg {
@@ -89,6 +94,11 @@ public:
 	static bool isSupportedBy(const CTreeItem *item) {
 		return supports(item, _type);
 	}
+
+	/**
+	 * Generate a dummy mouse up message at the current mouse position
+	 */
+	static void generate();
 };
 
 class CMouseDoubleClickMsg : public CMouseButtonMsg {
