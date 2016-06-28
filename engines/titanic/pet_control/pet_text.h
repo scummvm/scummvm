@@ -79,11 +79,6 @@ private:
 	void updateStr3(int lineNum);
 
 	/**
-	 * Get the required height to draw the text
-	 */
-	int getTextHeight(CScreenManager *screenManager);
-
-	/**
 	 * Ensures the Y scrolling for the text is in the valid range
 	 */
 	void constrainScrollUp(CScreenManager *screenManager);
@@ -253,6 +248,21 @@ public:
 	 * first list with the entry at the same index in the dest list
 	 */
 	void remapColors(uint count, uint *srcColors, uint *destColors);
+
+	/**
+	 * Set the font number to use
+	 */
+	void setFontNumber(int fontNumber);
+
+	/**
+	 * Get the width of the text
+	 */
+	int getTextWidth(CScreenManager *screenManager);
+
+	/**
+	 * Get the required height to draw the text
+	 */
+	int getTextHeight(CScreenManager *screenManager);
 };
 
 } // End of namespace Titanic

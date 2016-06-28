@@ -60,6 +60,11 @@ public:
 	 * Plays the movie
 	 */
 	virtual void play(uint startFrame, uint endFrame, int v3, bool v4) = 0;
+
+	/**
+	 * Plays the movie
+	 */
+	virtual void play(const Rect &rect, int v1, int v2) = 0;
 	
 	/**
 	 * Plays a sub-section of a movie
@@ -122,6 +127,11 @@ public:
 	 * Plays the movie
 	 */
 	virtual void play(uint startFrame, uint endFrame, int v3, bool v4);
+	
+	/**
+	 * Plays the movie
+	 */
+	virtual void play(const Rect &rect, int v1, int v2);
 	
 	/**
 	 * Plays a sub-section of a movie

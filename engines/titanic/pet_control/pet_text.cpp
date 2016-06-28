@@ -277,6 +277,15 @@ void CPetText::updateStr3(int lineNum) {
 	}
 }
 
+int CPetText::getTextWidth(CScreenManager *screenManager) {
+	mergeStrings();
+	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
+	int textWidth = screenManager->stringWidth(_lines);
+	screenManager->setFontNumber(oldFontNumber);
+
+	return textWidth;
+}
+
 int CPetText::getTextHeight(CScreenManager *screenManager) {
 	mergeStrings();
 	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
@@ -457,6 +466,11 @@ int CPetText::getNPCNum(uint npcId, uint startIndex) {
 	}
 	
 	return - 1;
+}
+
+void CPetText::setFontNumber(int fontNumber) {
+	if (fontNumber >= 0 && fontNumber <= 2)
+		_fontNumber = fontNumber;
 }
 
 } // End of namespace Titanic

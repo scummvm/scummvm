@@ -30,6 +30,7 @@
 #include "titanic/core/movie_clip.h"
 #include "titanic/core/named_item.h"
 #include "titanic/pet_control/pet_section.h"
+#include "titanic/pet_control/pet_text.h"
 
 namespace Titanic {
 
@@ -87,9 +88,9 @@ protected:
 	int _initialFrame;
 	CMovieClipList _clipList2;
 	int _frameNumber;
-	int _field90;
-	int _field94;
-	int _field98;
+	CPetText *_text;
+	uint _textBorder;
+	uint _textBorderRight;
 	int _field9C;
 	Common::Point _savedPos;
 	CVideoSurface *_surface;
@@ -289,6 +290,11 @@ protected:
 	void sound8(bool flag) const;
 
 	/**
+	 * Plays a movie
+	 */
+	void playMovie(int v1, int v2);
+
+	/**
 	 * Play an arbitrary clip
 	 */
 	void playClip(const CString &name, uint flags);
@@ -441,6 +447,51 @@ protected:
 	int stateGet24();
 
 	void surface39(int v1, int v2);
+
+	/**
+	 * Set up the text borders for the object
+	 */
+	void setTextBorder(const CString &str, int border = 0, int borderRight = 0);
+
+	/**
+	 * Sets whether the text will use borders
+	 */
+	void setTextHasBorders(bool hasBorders);
+
+	/**
+	 * Sets the bounds for a previously defined text area
+	 */
+	void setTextBounds();
+
+	/**
+	 * Sets the color for the object's text
+	 */
+	void setTextColor(byte r, byte g, byte b);
+
+	/**
+	 * Sets the font number to use for text
+	 */
+	void setTextFontNumber(int fontNumber);
+
+	/**
+	 * Gets the width of the text contents
+	 */
+	int getTextWidth() const;
+
+	/**
+	 * Returns the text cursor
+	 */
+	CTextCursor *getTextCursor() const;
+
+	/**
+	 * Scroll text up
+	 */
+	void scrollTextUp();
+
+	/**
+	 * Scroll text down
+	 */
+	void scrollTextDown();
 public:
 	bool _isMail;
 	int _id;
@@ -461,6 +512,7 @@ public:
 public:
 	CLASSDEF
 	CGameObject();
+	~CGameObject();
 
 	/**
 	 * Save the data for the class to file

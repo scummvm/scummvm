@@ -69,12 +69,16 @@ CGameObject::CGameObject(): CNamedItem() {
 	_cursorId = CURSOR_ARROW;
 	_initialFrame = 0;
 	_frameNumber = -1;
-	_field90 = 0;
-	_field94 = 0;
-	_field98 = 0;
+	_text = nullptr;
+	_textBorder = _textBorderRight = 0;
 	_field9C = 0;
 	_surface = nullptr;
 	_fieldB8 = 0;
+}
+
+CGameObject::~CGameObject() {
+	delete _surface;
+	delete _text;
 }
 
 void CGameObject::save(SimpleFile *file, int indent) const {
@@ -151,12 +155,12 @@ void CGameObject::draw(CScreenManager *screenManager) {
 	}
 
 	if (_field40) {
-		if (_field90) {
-			if (_bounds.intersects(getGameManager()->_bounds))
-				warning("TODO: _field90(screenManager);");
-		}
-	}
-	else {
+		// If a text object is defined, handle drawing it
+		if (_text && _bounds.intersects(getGameManager()->_bounds))
+			_text->draw(screenManager);
+
+		return;
+	} else {
 		if (!_surface) {
 			if (!_resource.empty()) {
 				loadResource(_resource);
@@ -185,8 +189,8 @@ void CGameObject::draw(CScreenManager *screenManager) {
 					screenManager->blitFrom(SURFACE_BACKBUFFER, _surface, &destPos);
 				}
 
-				if (_field90)
-					warning("TODO: sub_415f80(screenManager);");
+				if (_text)
+					_text->draw(screenManager);
 			}
 		}
 	}
@@ -356,6 +360,21 @@ void CGameObject::loadFrame(int frameNumber) {
 		_surface->setMovieFrame(frameNumber);
 
 	makeDirty();
+}
+
+void CGameObject::playMovie(int v1, int v2) {
+	if (_surface && !_resource.empty()) {
+		loadResource(_resource);
+		_resource.clear();
+	}
+
+	if (_surface && _surface->loadIfReady()) {
+		if (_surface->_movie) {
+			disableMouse();
+			_surface->_movie->play(_bounds, v1, v2);
+			enableMouse();
+		}
+	}
 }
 
 void CGameObject::processClipList2() {
@@ -867,6 +886,66 @@ void CGameObject::dec54() {
 void CGameObject::surface39(int v1, int v2) {
 	if (_surface)
 		_surface->proc39(v1, v2);
+}
+
+void CGameObject::setTextBorder(const CString &str, int border, int borderRight) {
+	if (!_text)
+		_text = new CPetText();
+	_textBorder = border;
+	_textBorderRight = borderRight;
+	
+	_text->setText(str);
+	CScreenManager *screenManager = getGameManager()->setScreenManager();
+	_text->scrollToTop(screenManager);
+}
+
+void CGameObject::setTextHasBorders(bool hasBorders) {
+	if (!_text)
+		_text = new CPetText();
+
+	_text->setHasBorder(hasBorders);
+}
+
+void CGameObject::setTextBounds() {
+	Rect rect = _bounds;
+	rect.grow(_textBorder);
+	rect.right -= _textBorderRight;
+
+	_text->setBounds(rect);
+	makeDirty();
+}
+
+void CGameObject::setTextColor(byte r, byte g, byte b) {
+	if (!_text)
+		_text = new CPetText();
+
+	_text->setColor(r, g, b);
+}
+
+void CGameObject::setTextFontNumber(int fontNumber) {
+	if (!_text)
+		_text = new CPetText();
+
+	_text->setFontNumber(fontNumber);
+}
+
+int CGameObject::getTextWidth() const {
+	assert(_text);
+	return _text->getTextWidth(CScreenManager::_screenManagerPtr);
+}
+
+CTextCursor *CGameObject::getTextCursor() const {
+	return CScreenManager::_screenManagerPtr->_textCursor;
+}
+
+void CGameObject::scrollTextUp() {
+	if (_text)
+		_text->scrollUp(CScreenManager::_screenManagerPtr);
+}
+
+void CGameObject::scrollTextDown() {
+	if (_text)
+		_text->scrollDown(CScreenManager::_screenManagerPtr);
 }
 
 void CGameObject::lockMouse() {
