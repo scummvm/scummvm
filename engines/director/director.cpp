@@ -78,6 +78,7 @@ Common::Error DirectorEngine::run() {
 #if 0
 _lingo->addCode("--\n\
 macro check par1, par2\n\
+, par3\n\
 if par1 = 3 then\n\
   put -3\n\
 else\n\
@@ -90,9 +91,10 @@ else\n\
 end if\n\
 put par1\n\
 put par2\n\
+put par3\n\
 ", kMovieScript, 5);
 
-_lingo->addCode("check(3, 2)\n\
+_lingo->addCode("check(1, 2, 3)\n\
 ", kMovieScript, 2);
 
 _lingo->executeScript(kMovieScript, 2);

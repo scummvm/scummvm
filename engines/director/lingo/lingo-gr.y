@@ -317,7 +317,7 @@ defn: tMACRO ID { g_lingo->_indef = true; }
 argdef:  /* nothing */ 		{ $$ = 0; }
 	| ID					{ g_lingo->codeArg(*$1); delete $1; $$ = 1; }
 	| argdef ',' ID			{ g_lingo->codeArg(*$3); delete $3; $$ = $1 + 1; }
-	| argdef ',' '\n' ID	{ g_lingo->codeArg(*$4); delete $4; $$ = $1 + 1; }
+	| argdef '\n' ',' ID	{ g_lingo->codeArg(*$4); delete $4; $$ = $1 + 1; }
 	;
 
 arglist:  /* nothing */ 	{ $$ = 0; }
