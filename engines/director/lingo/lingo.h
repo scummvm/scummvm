@@ -136,7 +136,8 @@ public:
 	void execute(int pc);
 	Symbol *lookupVar(const char *name);
 	void define(Common::String &s, int start, int nargs);
-	void codeArg(Common::String &s);
+	void codeArg(Common::String *s);
+	void codeArgStore();
 	int codeId(Common::String &s);
 	int codeId_(Common::String &s);
 
@@ -186,6 +187,7 @@ public:
 	bool _indef;
 
 	Common::Array<CFrame *> _callstack;
+	Common::Array<Common::String *> _argstack;
 
 private:
 	int parse(const char *code);

@@ -106,15 +106,36 @@ void Lingo::define(Common::String &name, int start, int nargs) {
 	sym->nargs = nargs;
 }
 
-void Lingo::codeArg(Common::String &s) {
-	g_lingo->code1(g_lingo->c_varpush);
-	g_lingo->codeString(s.c_str());
-	g_lingo->code1(g_lingo->c_assign);
-	g_lingo->code1(g_lingo->c_xpop);
+void Lingo::codeArg(Common::String *s) {
+	_argstack.push_back(s);
+}
+
+void Lingo::codeArgStore() {
+	while (true) {
+		if (_argstack.empty()) {
+			warning("Arg stack underflow");
+			break;
+		}
+
+		Common::String *arg = _argstack.back();
+		_argstack.pop_back();
+
+		if (arg->equals("<args>")) {
+			delete arg;
+			break;
+		}
+
+		code1(c_varpush);
+		codeString(arg->c_str());
+		code1(c_assign);
+		code1(c_xpop);
+
+		delete arg;
+	}
 }
 
 int Lingo::codeId(Common::String &s) {
-	return g_lingo->codeId_(s);
+	return codeId_(s);
 }
 
 int Lingo::codeId_(Common::String &name) {

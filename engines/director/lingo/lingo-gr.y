@@ -78,7 +78,7 @@ using namespace Director;
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWITH tWHILE
 %token tGE tLE tGT tLT tEQ tNEQ
 
-%type<code> asgn begin cond end expr if repeatwhile repeatwith stmtlist
+%type<code> argbegin asgn begin cond end expr if repeatwhile repeatwith stmtlist
 %type<s> gotoframe gotomovie
 %type<narg> argdef arglist
 
@@ -100,7 +100,6 @@ programline:
 	| asgn				{ g_lingo->code1(g_lingo->c_xpop); }
 	| stmt
 	| error				{ yyerrok; }
-	| /* empty */
 	;
 
 asgn: tPUT expr tINTO ID		{
@@ -309,15 +308,19 @@ gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
 // See also:
 //   on keyword
 defn: tMACRO ID { g_lingo->_indef = true; }
-	    begin argdef '\n' stmtlist {
+	    argbegin argdef '\n' argstore stmtlist {
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$2, $4, $5);
 			g_lingo->_indef = false; }
 	;
 argdef:  /* nothing */ 		{ $$ = 0; }
-	| ID					{ g_lingo->codeArg(*$1); delete $1; $$ = 1; }
-	| argdef ',' ID			{ g_lingo->codeArg(*$3); delete $3; $$ = $1 + 1; }
-	| argdef '\n' ',' ID	{ g_lingo->codeArg(*$4); delete $4; $$ = $1 + 1; }
+	| ID					{ g_lingo->codeArg($1); $$ = 1; }
+	| argdef ',' ID			{ g_lingo->codeArg($3); $$ = $1 + 1; }
+	| argdef '\n' ',' ID	{ g_lingo->codeArg($4); $$ = $1 + 1; }
+	;
+argbegin:	  /* nothing */		{ g_lingo->codeArg(new Common::String("<args>")); $$ = g_lingo->_currentScript->size(); }
+	;
+argstore:	  /* nothing */		{ g_lingo->codeArgStore(); }
 	;
 
 macro: ID begin arglist {
@@ -326,10 +329,6 @@ macro: ID begin arglist {
 		inst numpar = 0;
 		WRITE_UINT32(&numpar, $3);
 		g_lingo->code1(numpar); };
-	| ID {
-		g_lingo->code1(g_lingo->c_call);
-		g_lingo->codeString($1->c_str());
-		g_lingo->code1(0); };
 	;
 
 arglist:  /* nothing */ 	{ $$ = 0; }
