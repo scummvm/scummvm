@@ -51,8 +51,8 @@ F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
 					F0341_INVENTORY_DrawPanel_Scroll // done
 						F0340_INVENTORY_DrawPanel_ScrollTextLine // done
 					F0333_INVENTORY_OpenAndDrawChest // done
-					F0303_CHAMPION_GetSkillLevel
-					F0332_INVENTORY_DrawIconToViewport
+					F0303_CHAMPION_GetSkillLevel // done
+					F0332_INVENTORY_DrawIconToViewport // done 
 					F0336_INVENTORY_DrawPanel_BuildObjectAttributesString
 					F0335_INVENTORY_DrawPanel_ObjectDescriptionString
 					F0339_INVENTORY_DrawPanel_ArrowOrEye
@@ -75,7 +75,7 @@ F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
 				JUNK_INFO // done
 		G0411_i_LeaderIndex // done
 		G0299_ui_CandidateChampionOrdinal // done
-	F0388_MENUS_ClearActingChampion // done.
+	F0388_MENUS_ClearActingChampion // done
 		F0292_CHAMPION_DrawState // done
 		G0508_B_RefreshActionArea // done
 		G0506_ui_ActingChampionOrdinal // done

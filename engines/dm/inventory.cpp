@@ -311,7 +311,7 @@ void InventoryMan::openAndDrawChest(Thing thingToOpen, Container* chest, bool is
 		objMan.drawIconInSlotBox(kSlotBoxInventoryActionHand, kIconIndiceContainerChestOpen);
 	}
 	dispMan.blitToScreen(dispMan.getBitmap(kPanelOpenChestIndice), 144, 0, 0, gBoxPanel, kColorRed);
-	
+
 	int16 chestSlotIndex = 0;
 	Thing thing = chest->getSlot();
 	int16 thingCount = 0;
@@ -330,4 +330,12 @@ void InventoryMan::openAndDrawChest(Thing thingToOpen, Container* chest, bool is
 	}
 }
 
+void InventoryMan::drawIconToViewport(IconIndice iconIndex, int16 xPos, int16 yPos) {
+	static byte iconBitmap[16 * 16];
+	Box box;
+	box._x2 = (box._x1 = xPos) + 15 + 1;
+	box._y2 = (box._y1 = yPos) + 15 + 1;
+	_vm->_objectMan->extractIconFromBitmap(iconIndex, iconBitmap);
+	_vm->_displayMan->blitToScreen(iconBitmap, 16, 0, 0, box, kColorNoTransparency, gDungeonViewport);
+}
 }
