@@ -125,7 +125,7 @@ void Lingo::addCode(Common::String code, ScriptType type, uint16 id) {
 	// macros have conflicting grammar. Thus we ease life for the parser.
 	if (code.contains("\nmacro ")) {
 		const char *begin = strstr(code.c_str(), "\nmacro ") + 1;
-		char *end;
+		const char *end;
 		bool first = true;
 
 		while ((end = strstr(begin, "\nmacro "))) {
