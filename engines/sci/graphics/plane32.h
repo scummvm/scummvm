@@ -32,19 +32,21 @@
 
 namespace Sci {
 enum PlaneType {
-	kPlaneTypeColored     = 0,
-	kPlaneTypePicture     = 1,
-	kPlaneTypeTransparent = 2,
-	kPlaneTypeOpaque      = 3
+	kPlaneTypeColored            = 0,
+	kPlaneTypePicture            = 1,
+	kPlaneTypeTransparent        = 2,
+	kPlaneTypeOpaque             = 3,
+	kPlaneTypeTransparentPicture = 4
 };
 
 enum PlanePictureCodes {
-	// NOTE: Any value at or below 65532 means the plane
+	// NOTE: Any value at or below 65531 means the plane
 	// is a kPlaneTypePicture.
-	kPlanePic            = 65532,
-	kPlanePicOpaque      = 65533,
-	kPlanePicTransparent = 65534,
-	kPlanePicColored     = 65535
+	kPlanePic                   = 65531,
+	kPlanePicTransparentPicture = 65532,
+	kPlanePicOpaque             = 65533,
+	kPlanePicTransparent        = 65534,
+	kPlanePicColored            = 65535
 };
 
 #pragma mark -

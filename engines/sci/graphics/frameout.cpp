@@ -700,6 +700,8 @@ void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseL
 		const Plane *outerPlane = _planes[outerPlaneIndex];
 		const Plane *visiblePlane = _visiblePlanes.findByObject(outerPlane->_object);
 
+		// NOTE: SSCI only ever checks for kPlaneTypeTransparent here, even
+		// though kPlaneTypeTransparentPicture is also a transparent plane
 		if (outerPlane->_type == kPlaneTypeTransparent) {
 			foundTransparentPlane = true;
 		}
@@ -890,6 +892,8 @@ void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseL
 		}
 	}
 
+	// NOTE: SSCI only looks for kPlaneTypeTransparent, not
+	// kPlaneTypeTransparentPicture
 	if (foundTransparentPlane) {
 		for (PlaneList::size_type planeIndex = 0; planeIndex < planeCount; ++planeIndex) {
 			for (PlaneList::size_type i = planeIndex + 1; i < planeCount; ++i) {

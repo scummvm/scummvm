@@ -163,10 +163,14 @@ void Plane::printDebugInfo(Console *con) const {
 void Plane::addPicInternal(const GuiResourceId pictureId, const Common::Point *position, const bool mirrorX) {
 
 	uint16 celCount = 1000;
+	bool transparent = true;
 	for (uint16 celNo = 0; celNo < celCount; ++celNo) {
 		CelObjPic *celObj = new CelObjPic(pictureId, celNo);
 		if (celCount == 1000) {
 			celCount = celObj->_celCount;
+		}
+		if (!celObj->_transparent) {
+			transparent = false;
 		}
 
 		ScreenItem *screenItem = new ScreenItem(_object, celObj->_info);
@@ -184,6 +188,7 @@ void Plane::addPicInternal(const GuiResourceId pictureId, const Common::Point *p
 		delete screenItem->_celObj;
 		screenItem->_celObj = celObj;
 	}
+	_type = transparent ? kPlaneTypeTransparentPicture : kPlaneTypePicture;
 }
 
 void Plane::addPic(const GuiResourceId pictureId, const Common::Point &position, const bool mirrorX) {
@@ -196,7 +201,7 @@ void Plane::addPic(const GuiResourceId pictureId, const Common::Point &position,
 void Plane::changePic() {
 	_pictureChanged = false;
 
-	if (_type != kPlaneTypePicture) {
+	if (_type != kPlaneTypePicture && _type != kPlaneTypeTransparentPicture) {
 		return;
 	}
 
@@ -245,7 +250,10 @@ void Plane::breakDrawListByPlanes(DrawList &drawList, const PlaneList &planeList
 
 	for (DrawList::size_type i = 0; i < drawList.size(); ++i) {
 		for (PlaneList::size_type j = nextPlaneIndex; j < planeCount; ++j) {
-			if (planeList[j]->_type != kPlaneTypeTransparent) {
+			if (
+				planeList[j]->_type != kPlaneTypeTransparent &&
+				planeList[j]->_type != kPlaneTypeTransparentPicture
+			) {
 				Common::Rect outRects[4];
 				int splitCount = splitRects(drawList[i]->rect, planeList[j]->_screenRect, outRects);
 				if (splitCount != -1) {
@@ -268,7 +276,10 @@ void Plane::breakEraseListByPlanes(RectList &eraseList, const PlaneList &planeLi
 
 	for (RectList::size_type i = 0; i < eraseList.size(); ++i) {
 		for (PlaneList::size_type j = nextPlaneIndex; j < planeCount; ++j) {
-			if (planeList[j]->_type != kPlaneTypeTransparent) {
+			if (
+				planeList[j]->_type != kPlaneTypeTransparent &&
+				planeList[j]->_type != kPlaneTypeTransparentPicture
+			) {
 				Common::Rect outRects[4];
 				int splitCount = splitRects(*eraseList[i], planeList[j]->_screenRect, outRects);
 				if (splitCount != -1) {
@@ -555,7 +566,7 @@ void Plane::decrementScreenItemArrayCounts(Plane *visiblePlane, const bool force
 void Plane::filterDownEraseRects(DrawList &drawList, RectList &eraseList, RectList &higherEraseList) const {
 	const RectList::size_type higherEraseCount = higherEraseList.size();
 
-	if (_type == kPlaneTypeTransparent) {
+	if (_type == kPlaneTypeTransparent || _type == kPlaneTypeTransparentPicture) {
 		for (RectList::size_type i = 0; i < higherEraseCount; ++i) {
 			const Common::Rect &r = *higherEraseList[i];
 			const ScreenItemList::size_type screenItemCount = _screenItemList.size();
@@ -727,14 +738,24 @@ void Plane::redrawAll(Plane *visiblePlane, const PlaneList &planeList, DrawList 
 }
 
 void Plane::setType() {
-	if (_pictureId == kPlanePicOpaque) {
-		_type = kPlaneTypeOpaque;
-	} else if (_pictureId == kPlanePicTransparent) {
-		_type = kPlaneTypeTransparent;
-	} else if (_pictureId == kPlanePicColored) {
+	switch (_pictureId) {
+	case kPlanePicColored:
 		_type = kPlaneTypeColored;
-	} else {
-		_type = kPlaneTypePicture;
+		break;
+	case kPlanePicTransparent:
+		_type = kPlaneTypeTransparent;
+		break;
+	case kPlanePicOpaque:
+		_type = kPlaneTypeOpaque;
+		break;
+	case kPlanePicTransparentPicture:
+		_type = kPlaneTypeTransparentPicture;
+		break;
+	default:
+		if (_type != kPlaneTypeTransparentPicture) {
+			_type = kPlaneTypePicture;
+		}
+		break;
 	}
 }
 
