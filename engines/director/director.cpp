@@ -77,16 +77,16 @@ Common::Error DirectorEngine::run() {
 
 #if 0
 _lingo->addCode("--\n\
-macro check par1, par2\n\
+macro check par1, par2		\n\
 , par3\n\
 if par1 = 3 then\n\
   put -3\n\
 else\n\
   put 0\n\
-end if\n\
-if par2 = 2 then\n\
-  put 2\n\
-else\n\
+end if  \n\
+if par2 = 2 then	\n\
+  put 2		\n\
+else	\n\
   put 0\n\
 end if\n\
 put par1\n\
