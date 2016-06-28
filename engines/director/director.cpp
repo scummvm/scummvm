@@ -372,7 +372,7 @@ void DirectorEngine::setPalette(byte *palette, uint16 count) {
 	_currentPaletteLength = count;
 }
 
-Common::HashMap<int, Cast *> DirectorEngine::loadSharedCastsFrom(Common::String filename) {
+void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 
 	//TODO d4 arch
 	RIFFArchive *shardcst = new RIFFArchive();
@@ -383,6 +383,24 @@ Common::HashMap<int, Cast *> DirectorEngine::loadSharedCastsFrom(Common::String 
 	Common::SeekableSubReadStreamEndian *castStream = shardcst->getResource(MKTAG('V','W','C','R'), 1024);
 
 	castScore->loadCastData(*castStream);
-	return castScore->_casts;
+	_sharedCasts = castScore->_casts;
+	Common::Array<uint16> dib = shardcst->getResourceIDList(MKTAG('D','I','B',' '));
+
+	if (dib.size() != 0) {
+		Common::Array<uint16>::iterator iterator;
+		for (iterator = dib.begin(); iterator != dib.end(); ++iterator) {
+			_sharedDIB[*iterator] = shardcst->getResource(MKTAG('D','I','B',' '), *iterator);
+		}
+	}
+
+	Common::Array<uint16> stxt = shardcst->getResourceIDList(MKTAG('D','I','B',' '));
+
+	if (stxt.size() != 0) {
+		Common::Array<uint16>::iterator iterator;
+		for (iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
+			_sharedSTXT[*iterator] = shardcst->getResource(MKTAG('S','T','X','T'), *iterator);
+		}
+	}
 }
+
 } // End of namespace Director

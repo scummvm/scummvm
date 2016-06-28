@@ -66,7 +66,7 @@ public:
 	bool hasFeature(EngineFeature f) const;
 	const byte *getPalette() const { return _currentPalette; }
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
-	Common::HashMap<int, Cast *> loadSharedCastsFrom(Common::String filename);
+	void loadSharedCastsFrom(Common::String filename);
 
 	Common::HashMap<Common::String, Score *> *_movies;
 	Score *_currentScore;
@@ -88,7 +88,9 @@ private:
 	void loadMac();
 
 	Common::String readPascalString(Common::SeekableReadStream &stream);
-
+	Common::HashMap<int, Cast *> _sharedCasts;
+	Common::HashMap<int, Common::SeekableReadStream *> _sharedDIB;
+	Common::HashMap<int, Common::SeekableReadStream *> _sharedSTXT;
 	Archive *_mainArchive;
 	Common::MacResManager *_macBinary;
 	DirectorSound *_soundManager;
