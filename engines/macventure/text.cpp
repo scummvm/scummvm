@@ -203,8 +203,12 @@ Common::String TextAsset::getNoun(ObjID subval) {
 			break;
 		}
 	}
-	if (name.size() && (subval & 4))
-		name.toUppercase(); // HACK, should only capitalize first char?
+	if (name.size() && (subval & 4)) {
+		Common::String tmp = name;
+		name.toUppercase();
+		name.replace(1, name.size() - 1, tmp, 1, tmp.size() - 1);
+	}
+		
 	return name;
 }
 
