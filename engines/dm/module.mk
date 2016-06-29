@@ -29,18 +29,18 @@
 MODULE := engines/dm
 
 MODULE_OBJS := \
+	champion.o \
 	detection.o \
 	dm.o \
-	gfx.o \
 	dungeonman.o \
 	eventman.o \
-	menus.o \
-	champion.o \
-	loadsave.o \
-	objectman.o \
+	gfx.o \
 	inventory.o \
-	text.o \
-	movesens.o
+	loadsave.o \
+	menus.o \
+	movesens.o \
+	objectman.o \
+	text.o
 
 MODULE_DIRS += \
 	engines/dm
