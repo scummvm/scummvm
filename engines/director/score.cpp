@@ -1204,7 +1204,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 
 Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 	uint16 imgId = spriteId + 1024;
-	Image::ImageDecoder *img;
+	Image::ImageDecoder *img = NULL;
 
 	if (!_vm->_currentScore->getArchive()->hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
 		img = new DIBDecoder();
