@@ -27,7 +27,7 @@ namespace Titanic {
 CEar::CEar() : CHeadPiece() {
 }
 
-void CEar::save(SimpleFile *file, int indent) const {
+void CEar::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CHeadPiece::save(file, indent);
 }

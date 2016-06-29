@@ -29,7 +29,7 @@ EMPTY_MESSAGE_MAP(CPetModeOff, CToggleSwitch)
 CPetModeOff::CPetModeOff() : CToggleSwitch() {
 }
 
-void CPetModeOff::save(SimpleFile *file, int indent) const {
+void CPetModeOff::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CToggleSwitch::save(file, indent);
 }

@@ -34,7 +34,7 @@ CDoorbot::CDoorbot() : CTrueTalkNPC() {
 	_field114 = 0;
 }
 
-void CDoorbot::save(SimpleFile *file, int indent) const {
+void CDoorbot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_v2, indent);

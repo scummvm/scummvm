@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CVisionCentre::save(SimpleFile *file, int indent) const {
+void CVisionCentre::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CBrain::save(file, indent);
 }

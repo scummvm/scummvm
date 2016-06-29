@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CBowlUnlocker::save(SimpleFile *file, int indent) const {
+void CBowlUnlocker::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value, indent);
 	CGameObject::save(file, indent);

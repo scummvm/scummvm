@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CGlassSmasher::save(SimpleFile *file, int indent) const {
+void CGlassSmasher::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CGameObject::save(file, indent);
 }

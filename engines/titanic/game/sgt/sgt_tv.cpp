@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CSGTTV::save(SimpleFile *file, int indent) const {
+void CSGTTV::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CSGTStateRoom::save(file, indent);
 }

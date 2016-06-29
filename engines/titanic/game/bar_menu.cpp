@@ -27,7 +27,7 @@ namespace Titanic {
 CBarMenu::CBarMenu() : CGameObject(), _fieldBC(0), _fieldC0(0), _fieldC4(6) {
 }
 
-void CBarMenu::save(SimpleFile *file, int indent) const {
+void CBarMenu::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	file->writeNumberLine(_fieldC0, indent);

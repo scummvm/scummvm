@@ -29,7 +29,7 @@ EMPTY_MESSAGE_MAP(CKeybrdButt, CToggleSwitch)
 CKeybrdButt::CKeybrdButt() : CToggleSwitch() {
 }
 
-void CKeybrdButt::save(SimpleFile *file, int indent) const {
+void CKeybrdButt::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CToggleSwitch::save(file, indent);
 }

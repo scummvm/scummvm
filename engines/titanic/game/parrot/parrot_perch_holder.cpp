@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CParrotPerchHolder::save(SimpleFile *file, int indent) const {
+void CParrotPerchHolder::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CMultiDropTarget::save(file, indent);
 }

@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CPlayerMeetsParrot::save(SimpleFile *file, int indent) const {
+void CPlayerMeetsParrot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CGameObject::save(file, indent);
 }

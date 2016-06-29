@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CPetDisabler::save(SimpleFile *file, int indent) const {
+void CPetDisabler::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_value, indent);
 	CGameObject::save(file, indent);

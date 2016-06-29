@@ -34,7 +34,7 @@ END_MESSAGE_MAP()
 CCrushedTV::CCrushedTV() : CCarry() {
 }
 
-void CCrushedTV::save(SimpleFile *file, int indent) const {
+void CCrushedTV::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CCarry::save(file, indent);
 }

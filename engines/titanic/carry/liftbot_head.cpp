@@ -27,7 +27,7 @@ namespace Titanic {
 CLiftbotHead::CLiftbotHead() : CCarry(), _field12C(0) {
 }
 
-void CLiftbotHead::save(SimpleFile *file, int indent) const {
+void CLiftbotHead::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_field12C, indent);
 	CCarry::save(file, indent);

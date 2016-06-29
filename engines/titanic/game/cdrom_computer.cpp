@@ -33,7 +33,7 @@ CCDROMComputer::CCDROMComputer() : CGameObject(),
 		_clickRect(0, 3, 55, 32) {
 }
 
-void CCDROMComputer::save(SimpleFile *file, int indent) const {
+void CCDROMComputer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_clickRect.left, indent);
 	file->writeNumberLine(_clickRect.top, indent);

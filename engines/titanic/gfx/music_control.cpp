@@ -28,7 +28,7 @@ CMusicControl::CMusicControl() : CBackground(),
 	_fieldE0(0), _fieldE4(0), _fieldE8(1), _fieldEC(1) {
 }
 
-void CMusicControl::save(SimpleFile *file, int indent) const {
+void CMusicControl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldE0, indent);
 	file->writeNumberLine(_fieldE4, indent);

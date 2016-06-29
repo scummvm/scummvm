@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CParrotLobbyViewObject::save(SimpleFile *file, int indent) const {
+void CParrotLobbyViewObject::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);	
 	CParrotLobbyObject::save(file, indent);

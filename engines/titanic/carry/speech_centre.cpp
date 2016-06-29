@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CSpeechCentre::save(SimpleFile *file, int indent) const {
+void CSpeechCentre::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_field13C, indent);
 	file->writeQuotedLine(_string1, indent);

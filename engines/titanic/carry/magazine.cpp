@@ -35,7 +35,7 @@ END_MESSAGE_MAP()
 CMagazine::CMagazine() : CCarry() {
 }
 
-void CMagazine::save(SimpleFile *file, int indent) const {
+void CMagazine::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_field12C, indent);
 	file->writeNumberLine(_field130, indent);

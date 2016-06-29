@@ -28,7 +28,7 @@ CShipSetting::CShipSetting() : CBackground(),
 	_string4("NULL"), _string5("NULL") {
 }
 
-void CShipSetting::save(SimpleFile *file, int indent) const {
+void CShipSetting::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string3, indent);
 	file->writePoint(_pos1, indent);

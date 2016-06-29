@@ -1614,7 +1614,7 @@ CSaveableObject *CSaveableObject::createInstance(const Common::String &name) {
 	return (*_classList)[name]();
 }
 
-void CSaveableObject::save(SimpleFile *file, int indent) const {
+void CSaveableObject::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(0, indent);
 }
 
@@ -1622,11 +1622,11 @@ void CSaveableObject::load(SimpleFile *file) {
 	file->readNumber();
 }
 
-void CSaveableObject::saveHeader(SimpleFile *file, int indent) const {
+void CSaveableObject::saveHeader(SimpleFile *file, int indent) {
 	file->writeClassStart(getType()->_className, indent);
 }
 
-void CSaveableObject::saveFooter(SimpleFile *file, int indent) const {
+void CSaveableObject::saveFooter(SimpleFile *file, int indent) {
 	file->writeClassEnd(indent);
 }
 

@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CPickUpBarGlass::save(SimpleFile *file, int indent) const {
+void CPickUpBarGlass::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CPickUp::save(file, indent);
 }

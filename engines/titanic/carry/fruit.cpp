@@ -28,7 +28,7 @@ CFruit::CFruit() : CCarry(), _field12C(0),
 		_field130(0), _field134(0), _field138(0) {
 }
 
-void CFruit::save(SimpleFile *file, int indent) const {
+void CFruit::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_field12C, indent);
 	file->writeNumberLine(_field130, indent);

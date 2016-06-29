@@ -36,7 +36,7 @@ CString CNamedItem::dumpItem(int indent) const {
 	return result;
 }
 
-void CNamedItem::save(SimpleFile *file, int indent) const {
+void CNamedItem::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(0, indent);
 	file->writeQuotedLine(_name, indent);
 

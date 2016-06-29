@@ -30,7 +30,7 @@ CIdleSummoner::CIdleSummoner() : CGameObject(), _fieldBC(0x57E40),
 	_fieldD8(0xEA60), _fieldDC(0xEA60) {
 }
 
-void CIdleSummoner::save(SimpleFile *file, int indent) const {
+void CIdleSummoner::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	file->writeNumberLine(_fieldC0, indent);

@@ -29,7 +29,7 @@ CFanNoises::CFanNoises() : CGameObject(), _fieldBC(-1),
 	_fieldD0(0), _fieldD4(-1) {
 }
 
-void CFanNoises::save(SimpleFile *file, int indent) const {
+void CFanNoises::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	file->writeNumberLine(_fieldC0, indent);

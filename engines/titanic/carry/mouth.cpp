@@ -27,7 +27,7 @@ namespace Titanic {
 CMouth::CMouth() : CHeadPiece() {
 }
 
-void CMouth::save(SimpleFile *file, int indent) const {
+void CMouth::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CHeadPiece::save(file, indent);
 }

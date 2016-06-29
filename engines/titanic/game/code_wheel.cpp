@@ -27,7 +27,7 @@ namespace Titanic {
 CodeWheel::CodeWheel() : CBomb(), _field108(0), _field10C(4), _field110(0) {
 }
 
-void CodeWheel::save(SimpleFile *file, int indent) const {
+void CodeWheel::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_field108, indent);
 	file->writeNumberLine(_field10C, indent);

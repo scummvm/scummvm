@@ -28,7 +28,7 @@ CExitTiania::CExitTiania() : CMovePlayerTo(), _fieldC8(0),
 		_string1("NULL"), _string2("NULL"), _string3("NULL") {
 }
 
-void CExitTiania::save(SimpleFile *file, int indent) const {
+void CExitTiania::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldC8, indent);
 	file->writeQuotedLine(_string1, indent);

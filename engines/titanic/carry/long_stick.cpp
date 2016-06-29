@@ -27,7 +27,7 @@ namespace Titanic {
 CLongStick::CLongStick() : CCarry() {
 }
 
-void CLongStick::save(SimpleFile *file, int indent) const {
+void CLongStick::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CCarry::save(file, indent);
 }

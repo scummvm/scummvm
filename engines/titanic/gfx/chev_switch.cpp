@@ -27,7 +27,7 @@ namespace Titanic {
 CChevSwitch::CChevSwitch() : CToggleSwitch() {
 }
 
-void CChevSwitch::save(SimpleFile *file, int indent) const {
+void CChevSwitch::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CToggleSwitch::save(file, indent);
 }

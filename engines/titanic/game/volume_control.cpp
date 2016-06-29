@@ -27,7 +27,7 @@ namespace Titanic {
 CVolumeControl::CVolumeControl() : CGameObject() {
 }
 
-void CVolumeControl::save(SimpleFile *file, int indent) const {
+void CVolumeControl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	file->writeQuotedLine(_string1, indent);

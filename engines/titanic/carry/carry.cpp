@@ -52,7 +52,7 @@ CCarry::CCarry() : CGameObject(), _fieldDC(0), _fieldE0(1),
 	_string4("It doesn't seem to want this.") {
 }
 
-void CCarry::save(SimpleFile *file, int indent) const {
+void CCarry::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string1, indent);
 	file->writePoint(_origPos, indent);

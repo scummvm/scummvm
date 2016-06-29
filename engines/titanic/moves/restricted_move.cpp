@@ -27,7 +27,7 @@ namespace Titanic {
 CRestrictedMove::CRestrictedMove() : CMovePlayerTo(), _fieldC8(0) {
 }
 
-void CRestrictedMove::save(SimpleFile *file, int indent) const {
+void CRestrictedMove::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldC8, indent);
 

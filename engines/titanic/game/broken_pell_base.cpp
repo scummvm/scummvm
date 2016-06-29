@@ -29,7 +29,7 @@ EMPTY_MESSAGE_MAP(CBrokenPellBase, CBackground)
 int CBrokenPellBase::_v1;
 int CBrokenPellBase::_v2;
 
-void CBrokenPellBase::save(SimpleFile *file, int indent) const {
+void CBrokenPellBase::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_v2, indent);

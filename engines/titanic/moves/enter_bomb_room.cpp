@@ -27,7 +27,7 @@ namespace Titanic {
 CEnterBombRoom::CEnterBombRoom() : CMovePlayerTo(), _fieldC8(0) {
 }
 
-void CEnterBombRoom::save(SimpleFile *file, int indent) const {
+void CEnterBombRoom::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CMovePlayerTo::save(file, indent);
 }

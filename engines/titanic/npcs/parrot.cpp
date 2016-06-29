@@ -92,7 +92,7 @@ CParrot::CParrot() : CTrueTalkNPC() {
 	_assetNumber = 0x13880;
 }
 
-void CParrot::save(SimpleFile *file, int indent) const {
+void CParrot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_assetNumber, indent);
 	

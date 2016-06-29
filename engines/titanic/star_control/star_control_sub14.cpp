@@ -42,7 +42,7 @@ void CStarControlSub14::load(SimpleFile *file, int param) {
 	_field20 = file->readFloat();
 }
 
-void CStarControlSub14::save(SimpleFile *file, int indent) const {
+void CStarControlSub14::save(SimpleFile *file, int indent) {
 
 }
 

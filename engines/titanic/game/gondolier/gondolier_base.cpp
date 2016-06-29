@@ -35,7 +35,7 @@ int CGondolierBase::_v8;
 int CGondolierBase::_v9;
 int CGondolierBase::_v10;
 
-void CGondolierBase::save(SimpleFile *file, int indent) const {
+void CGondolierBase::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_v2, indent);

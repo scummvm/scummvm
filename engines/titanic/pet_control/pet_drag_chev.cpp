@@ -31,7 +31,7 @@ BEGIN_MESSAGE_MAP(CPetDragChev, CPetGraphic2)
 
 END_MESSAGE_MAP()
 
-void CPetDragChev::save(SimpleFile *file, int indent) const {
+void CPetDragChev::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CPetGraphic2::save(file, indent);
 }

@@ -27,7 +27,7 @@ namespace Titanic {
 CTripDownCanal::CTripDownCanal() : CMovePlayerTo() {
 }
 
-void CTripDownCanal::save(SimpleFile *file, int indent) const {
+void CTripDownCanal::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CMovePlayerTo::save(file, indent);
 }

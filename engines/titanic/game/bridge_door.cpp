@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CBridgeDoor::save(SimpleFile *file, int indent) const {
+void CBridgeDoor::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CGameObject::save(file, indent);
 }

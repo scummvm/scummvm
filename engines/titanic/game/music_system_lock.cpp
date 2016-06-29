@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CMusicSystemLock::save(SimpleFile *file, int indent) const {
+void CMusicSystemLock::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value, indent);
 	CDropTarget::save(file, indent);

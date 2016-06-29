@@ -27,7 +27,7 @@ namespace Titanic {
 CRobotController::CRobotController() : CGameObject(), _string1("BellBot") {
 }
 
-void CRobotController::save(SimpleFile *file, int indent) const {
+void CRobotController::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string1, indent);
 

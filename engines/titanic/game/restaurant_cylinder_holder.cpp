@@ -29,7 +29,7 @@ CRestaurantCylinderHolder::CRestaurantCylinderHolder() : CDropTarget(),
 	_string6("z#61.wav"), _field140(1) {
 }
 
-void CRestaurantCylinderHolder::save(SimpleFile *file, int indent) const {
+void CRestaurantCylinderHolder::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_field118, indent);
 	file->writeNumberLine(_field11C, indent);

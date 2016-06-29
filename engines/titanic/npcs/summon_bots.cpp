@@ -28,7 +28,7 @@ CSummonBots::CSummonBots() : CRobotController(), _string2("NULL"),
 		_fieldC8(0), _fieldCC(0) {
 }
 
-void CSummonBots::save(SimpleFile *file, int indent) const {
+void CSummonBots::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldC8, indent);
 	file->writeNumberLine(_fieldCC, indent);

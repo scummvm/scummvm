@@ -28,7 +28,7 @@ CPET::CPET() : CGameObject(), _fieldBC(0), _fieldC0(3),
 	_fieldC4(0), _fieldC8(0), _fieldD8(0), _fieldDC(0) {
 }
 
-void CPET::save(SimpleFile *file, int indent) const {
+void CPET::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	file->writeNumberLine(_fieldC0, indent);

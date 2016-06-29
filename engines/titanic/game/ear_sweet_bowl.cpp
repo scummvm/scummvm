@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CEarSweetBowl::save(SimpleFile *file, int indent) const {
+void CEarSweetBowl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CSweetBowl::save(file, indent);
 }

@@ -28,7 +28,7 @@ CParrotSuccUBus::CParrotSuccUBus() : CSuccUBus(), _field1DC(0),
 	_field1EC(0), _field1F0(376), _field1F4(393) {
 }
 
-void CParrotSuccUBus::save(SimpleFile *file, int indent) const {
+void CParrotSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_field1DC, indent);
 	file->writeQuotedLine(_string3, indent);

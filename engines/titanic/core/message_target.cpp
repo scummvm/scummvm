@@ -37,7 +37,7 @@ const MSGMAP *CMessageTarget::getThisMessageMap() {
 	return &messageMap;
 }
 
-void CMessageTarget::save(SimpleFile *file, int indent) const {
+void CMessageTarget::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(0, indent);
 	CSaveableObject::save(file, indent);
 }

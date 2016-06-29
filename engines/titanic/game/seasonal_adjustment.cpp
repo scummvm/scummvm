@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CSeasonalAdjustment::save(SimpleFile *file, int indent) const {
+void CSeasonalAdjustment::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldE0, indent);
 	file->writeNumberLine(_fieldE4, indent);

@@ -27,7 +27,7 @@ namespace Titanic {
 CGameObjectDescItem::CGameObjectDescItem(): CTreeItem() {
 }
 
-void CGameObjectDescItem::save(SimpleFile *file, int indent) const {
+void CGameObjectDescItem::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	_clipList.save(file, indent);
 	file->writeQuotedLine(_string1, indent);

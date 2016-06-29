@@ -26,7 +26,7 @@ namespace Titanic {
 
 int CPickUpHose::_v1;
 
-void CPickUpHose::save(SimpleFile *file, int indent) const {
+void CPickUpHose::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string1, indent);
 	file->writeNumberLine(_v1, indent);

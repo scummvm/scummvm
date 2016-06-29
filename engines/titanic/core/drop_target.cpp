@@ -29,7 +29,7 @@ CDropTarget::CDropTarget() : CGameObject(), _fieldC4(0),
 	_fieldFC(0), _field10C(1), _field110(8), _field114(20) {
 }
 
-void CDropTarget::save(SimpleFile *file, int indent) const {
+void CDropTarget::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writePoint(_pos1, indent);
 	file->writeNumberLine(_fieldC4, indent);

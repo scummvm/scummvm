@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CPickUpSpeechCentre::save(SimpleFile *file, int indent) const {
+void CPickUpSpeechCentre::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CPickUp::save(file, indent);
 }

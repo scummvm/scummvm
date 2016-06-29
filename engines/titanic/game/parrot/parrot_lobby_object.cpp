@@ -38,7 +38,7 @@ void CParrotLobbyObject::init() {
 	_v4 = 7;
 }
 
-void CParrotLobbyObject::save(SimpleFile *file, int indent) const {
+void CParrotLobbyObject::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_v2, indent);

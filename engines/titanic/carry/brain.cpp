@@ -36,7 +36,7 @@ END_MESSAGE_MAP()
 CBrain::CBrain() : CCarry(), _field134(0), _field138(0) {
 }
 
-void CBrain::save(SimpleFile *file, int indent) const {
+void CBrain::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writePoint(_pos1, indent);
 	file->writeNumberLine(_field134, indent);

@@ -32,7 +32,7 @@ CServiceElevator::CServiceElevator() : CTransport(),
 	_fieldF8(0), _fieldFC(0), _field100(0), _field104(0) {
 }
 
-void CServiceElevator::save(SimpleFile *file, int indent) const {
+void CServiceElevator::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_v2, indent);

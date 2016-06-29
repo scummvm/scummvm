@@ -81,7 +81,7 @@ private:
 	/**
 	 * Saves data for the individual areas
 	 */
-	void saveAreas(SimpleFile *file, int indent) const;
+	void saveAreas(SimpleFile *file, int indent);
 
 	/**
 	 * Called at the end of the post game-load handling
@@ -125,7 +125,7 @@ public:
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	virtual void save(SimpleFile *file, int indent);
 
 	/**
 	 * Load the data for the class from file

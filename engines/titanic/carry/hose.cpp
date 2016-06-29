@@ -38,7 +38,7 @@ CHose::CHose() : CCarry(),
 	_string6("Succ-U-Bus auxiliary hose attachment incompatible with sliding glass cover.") {
 }
 
-void CHose::save(SimpleFile *file, int indent) const {
+void CHose::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_statics->_v1, indent);
 	file->writeQuotedLine(_statics->_v2, indent);

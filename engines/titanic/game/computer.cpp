@@ -30,7 +30,7 @@ BEGIN_MESSAGE_MAP(CComputer, CBackground)
 	ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
-void CComputer::save(SimpleFile *file, int indent) const {
+void CComputer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_currentCD, indent);
 	file->writeNumberLine(_state, indent);

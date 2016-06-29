@@ -27,7 +27,7 @@ namespace Titanic {
 CKey::CKey() : CCarry() {
 }
 
-void CKey::save(SimpleFile *file, int indent) const {
+void CKey::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CCarry::save(file, indent);
 }

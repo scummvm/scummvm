@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CPhonographEar::save(SimpleFile *file, int indent) const {
+void CPhonographEar::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_field140, indent);
 	CEar::save(file, indent);

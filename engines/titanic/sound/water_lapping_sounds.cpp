@@ -26,7 +26,7 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CWaterLappingSounds, CRoomAutoSoundPlayer)
 
-void CWaterLappingSounds::save(SimpleFile *file, int indent) const {
+void CWaterLappingSounds::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string1, indent);
 	file->writeNumberLine(_fieldD4, indent);

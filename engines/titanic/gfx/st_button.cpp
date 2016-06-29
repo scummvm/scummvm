@@ -40,7 +40,7 @@ CSTButton::CSTButton() : CBackground() {
 	_buttonFrame = 0;
 }
 
-void CSTButton::save(SimpleFile *file, int indent) const {
+void CSTButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_statusInc, indent);
 	file->writeQuotedLine(_statusTarget, indent);

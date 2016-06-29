@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CMusicRoomStopPhonographButton::save(SimpleFile *file, int indent) const {
+void CMusicRoomStopPhonographButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_field100, indent);
 	CEjectPhonographButton::save(file, indent);

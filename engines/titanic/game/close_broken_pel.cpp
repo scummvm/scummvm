@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CCloseBrokenPel::save(SimpleFile *file, int indent) const {
+void CCloseBrokenPel::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string3, indent);
 	CBackground::save(file, indent);

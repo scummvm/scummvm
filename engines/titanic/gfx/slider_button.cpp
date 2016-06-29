@@ -28,7 +28,7 @@ CSliderButton::CSliderButton() : CSTButton(), _field114(0),
 		_field118(0), _field11C(0) {
 }
 
-void CSliderButton::save(SimpleFile *file, int indent) const {
+void CSliderButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_field114, indent);
 	file->writeNumberLine(_field118, indent);

@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CWheelSpin::save(SimpleFile *file, int indent) const {
+void CWheelSpin::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value, indent);
 	CBackground::save(file, indent);

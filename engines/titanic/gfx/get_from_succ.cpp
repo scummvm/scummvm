@@ -29,7 +29,7 @@ EMPTY_MESSAGE_MAP(CGetFromSucc, CToggleSwitch)
 CGetFromSucc::CGetFromSucc() : CToggleSwitch() {
 }
 
-void CGetFromSucc::save(SimpleFile *file, int indent) const {
+void CGetFromSucc::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CToggleSwitch::save(file, indent);
 }

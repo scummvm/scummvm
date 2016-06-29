@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CPickUpLemon::save(SimpleFile *file, int indent) const {
+void CPickUpLemon::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CPickUp::save(file, indent);
 }

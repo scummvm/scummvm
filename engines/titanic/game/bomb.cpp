@@ -38,7 +38,7 @@ CBomb::CBomb() : CBackground() {
 	_field104 = 60;
 }
 
-void CBomb::save(SimpleFile *file, int indent) const {
+void CBomb::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldE0, indent);
 	file->writeNumberLine(_fieldE4, indent);

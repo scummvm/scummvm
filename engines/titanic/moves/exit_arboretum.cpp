@@ -28,7 +28,7 @@ CExitArboretum::CExitArboretum() : CMovePlayerTo(),
 		_fieldC8(0), _fieldCC(0), _fieldD0(1) {
 }
 
-void CExitArboretum::save(SimpleFile *file, int indent) const {
+void CExitArboretum::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldC8, indent);
 	file->writeNumberLine(_fieldCC, indent);

@@ -28,7 +28,7 @@ CMissiveOMat::CMissiveOMat() : CGameObject(), _fieldBC(1),
 	_fieldC0(0), _fieldC4(0), _fieldE0(-1) {
 }
 
-void CMissiveOMat::save(SimpleFile *file, int indent) const {
+void CMissiveOMat::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	file->writeNumberLine(_fieldC0, indent);

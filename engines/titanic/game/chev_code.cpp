@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CChevCode::save(SimpleFile *file, int indent) const {
+void CChevCode::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value, indent);
 	CGameObject::save(file, indent);

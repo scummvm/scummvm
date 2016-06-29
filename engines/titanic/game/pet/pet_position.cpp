@@ -28,7 +28,7 @@ BEGIN_MESSAGE_MAP(CPETPosition, CGameObject)
 	ON_MESSAGE(EnterRoomMsg)
 END_MESSAGE_MAP()
 
-void CPETPosition::save(SimpleFile *file, int indent) const {
+void CPETPosition::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CGameObject::save(file, indent);
 }

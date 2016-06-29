@@ -29,7 +29,7 @@ CHammerDispensorButton::CHammerDispensorButton() : CStartAction(),
 	_field108(6), _field10C(0), _field110(0) {
 }
 
-void CHammerDispensorButton::save(SimpleFile *file, int indent) const {
+void CHammerDispensorButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldF8, indent);
 	file->writeNumberLine(_fieldFC, indent);

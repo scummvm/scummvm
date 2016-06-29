@@ -36,7 +36,7 @@ END_MESSAGE_MAP()
 CCDROM::CCDROM() : CGameObject() {
 }
 
-void CCDROM::save(SimpleFile *file, int indent) const {
+void CCDROM::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writePoint(_tempPos, indent);
 	CGameObject::save(file, indent);

@@ -29,7 +29,7 @@ int CStarlings::_v1;
 CStarlings::CStarlings() : CCharacter() {
 }
 
-void CStarlings::save(SimpleFile *file, int indent) const {
+void CStarlings::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_v1, indent);
 

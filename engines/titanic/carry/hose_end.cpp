@@ -30,7 +30,7 @@ CHoseEnd::CHoseEnd() : CHose() {
 	_string6 = "Connection refused by remote hose.";
 }
 
-void CHoseEnd::save(SimpleFile *file, int indent) const {
+void CHoseEnd::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string6, indent);
 	CHose::save(file, indent);

@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CWheelSpinHorn::save(SimpleFile *file, int indent) const {
+void CWheelSpinHorn::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string1, indent);
 	file->writeQuotedLine(_string2, indent);

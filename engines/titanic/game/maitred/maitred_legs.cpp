@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CMaitreDBody::save(SimpleFile *file, int indent) const {
+void CMaitreDBody::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldC8, indent);
 	CMaitreDProdReceptor::save(file, indent);

@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CLongStickDispenser::save(SimpleFile *file, int indent) const {
+void CLongStickDispenser::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	file->writeNumberLine(_fieldC0, indent);

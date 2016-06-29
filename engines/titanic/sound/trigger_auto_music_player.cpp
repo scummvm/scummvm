@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CTriggerAutoMusicPlayer::save(SimpleFile *file, int indent) const {
+void CTriggerAutoMusicPlayer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_fieldBC, indent);
 	CGameObject::save(file, indent);

@@ -29,7 +29,7 @@ EMPTY_MESSAGE_MAP(CFeathers, CCarry)
 CFeathers::CFeathers() : CCarry() {
 }
 
-void CFeathers::save(SimpleFile *file, int indent) const {
+void CFeathers::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CCarry::save(file, indent);
 }

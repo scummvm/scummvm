@@ -31,7 +31,7 @@ END_MESSAGE_MAP()
 int CPellerator::_v1;
 int CPellerator::_v2;
 
-void CPellerator::save(SimpleFile *file, int indent) const {
+void CPellerator::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_v2, indent);

@@ -26,7 +26,7 @@ namespace Titanic {
 
 int CEmmaControl::_v1;
 
-void CEmmaControl::save(SimpleFile *file, int indent) const {
+void CEmmaControl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_v1, indent);
 	file->writeQuotedLine(_wavFile1, indent);

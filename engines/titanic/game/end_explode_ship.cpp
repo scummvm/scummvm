@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CEndExplodeShip::save(SimpleFile *file, int indent) const {
+void CEndExplodeShip::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value1, indent);
 	file->writeNumberLine(_value2, indent);

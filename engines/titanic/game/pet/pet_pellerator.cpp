@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CPETPellerator::save(SimpleFile *file, int indent) const {
+void CPETPellerator::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CPETTransport::save(file, indent);
 }

@@ -27,7 +27,7 @@ namespace Titanic {
 CBellBot::CBellBot() : CTrueTalkNPC(), _field108(0) {
 }
 
-void CBellBot::save(SimpleFile *file, int indent) const {
+void CBellBot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_field108, indent);
 

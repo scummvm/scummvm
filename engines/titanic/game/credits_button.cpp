@@ -27,7 +27,7 @@ namespace Titanic {
 CCreditsButton::CCreditsButton() : CBackground(), _fieldE0(1) {
 }
 
-void CCreditsButton::save(SimpleFile *file, int indent) const {
+void CCreditsButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldE0, indent);
 	CBackground::save(file, indent);

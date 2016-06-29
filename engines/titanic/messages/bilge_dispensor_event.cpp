@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CBilgeDispensorEvent::save(SimpleFile *file, int indent) const {
+void CBilgeDispensorEvent::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CAutoSoundEvent::save(file, indent);
 }

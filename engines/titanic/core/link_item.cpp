@@ -43,7 +43,7 @@ CString CLinkItem::formName() {
 	return "";
 }
 
-void CLinkItem::save(SimpleFile *file, int indent) const {
+void CLinkItem::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(2, indent);
 	file->writeQuotedLine("L", indent);
 	file->writeNumberLine(_cursorId, indent + 1);

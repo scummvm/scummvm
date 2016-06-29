@@ -26,7 +26,7 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CMusicSwitch, CMusicControl)
 
-void CMusicSwitch::save(SimpleFile *file, int indent) const {
+void CMusicSwitch::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CMusicControl::save(file, indent);
 }

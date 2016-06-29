@@ -29,7 +29,7 @@ EMPTY_MESSAGE_MAP(CElevatorButton, CSTButton)
 CElevatorButton::CElevatorButton() : CSTButton() {
 }
 
-void CElevatorButton::save(SimpleFile *file, int indent) const {
+void CElevatorButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CSTButton::save(file, indent);
 }

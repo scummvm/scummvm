@@ -28,7 +28,7 @@ CTurnOnTurnOff::CTurnOnTurnOff() : CBackground(), _fieldE0(0),
 	_fieldE4(0), _fieldE8(0), _fieldEC(0), _fieldF0(0) {
 }
 
-void CTurnOnTurnOff::save(SimpleFile *file, int indent) const {
+void CTurnOnTurnOff::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldE0, indent);
 	file->writeNumberLine(_fieldE4, indent);

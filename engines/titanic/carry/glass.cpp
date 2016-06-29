@@ -27,7 +27,7 @@ namespace Titanic {
 CGlass::CGlass() : CCarry(), _string6("None") {
 }
 
-void CGlass::save(SimpleFile *file, int indent) const {
+void CGlass::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string6, indent);
 	CCarry::save(file, indent);

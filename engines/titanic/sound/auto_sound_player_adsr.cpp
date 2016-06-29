@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CAutoSoundPlayerADSR::save(SimpleFile *file, int indent) const {
+void CAutoSoundPlayerADSR::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string2, indent);
 	file->writeQuotedLine(_string3, indent);

@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CBarShelfVisCentre::save(SimpleFile *file, int indent) const {
+void CBarShelfVisCentre::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value, indent);
 	CPlaceHolderItem::save(file, indent);

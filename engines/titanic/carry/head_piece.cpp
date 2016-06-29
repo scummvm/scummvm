@@ -28,7 +28,7 @@ CHeadPiece::CHeadPiece() : CCarry(), _string6("Not Working"),
 		_field12C(0), _field13C(0) {
 }
 
-void CHeadPiece::save(SimpleFile *file, int indent) const {
+void CHeadPiece::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_field12C, indent);
 	file->writeQuotedLine(_string6, indent);

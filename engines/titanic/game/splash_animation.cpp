@@ -26,7 +26,7 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CSplashAnimation, CGameObject)
 
-void CSplashAnimation::save(SimpleFile *file, int indent) const {
+void CSplashAnimation::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CGameObject::save(file, indent);
 }

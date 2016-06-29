@@ -32,7 +32,7 @@ CLemonDispensor::CLemonDispensor() : CBackground(),
 	_fieldE0(0), _fieldE4(9), _fieldE8(15), _fieldEC(0) {
 }
 
-void CLemonDispensor::save(SimpleFile *file, int indent) const {
+void CLemonDispensor::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_v2, indent);

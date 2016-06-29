@@ -29,7 +29,7 @@ CLight::CLight() : CBackground(), _fieldE0(0), _fieldE4(0),
 	_fieldF8(0), _fieldFC(0) {
 }
 
-void CLight::save(SimpleFile *file, int indent) const {
+void CLight::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldE0, indent);
 	file->writeNumberLine(_fieldE4, indent);

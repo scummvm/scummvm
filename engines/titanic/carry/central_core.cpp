@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CCentralCore::save(SimpleFile *file, int indent) const {
+void CCentralCore::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CBrain::save(file, indent);
 }

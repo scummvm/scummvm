@@ -27,7 +27,7 @@ namespace Titanic {
 CRestaurantPhonograph::CRestaurantPhonograph() : CPhonograph(),
 	_fieldF8(1), _field114(0) {}
 
-void CRestaurantPhonograph::save(SimpleFile *file, int indent) const {
+void CRestaurantPhonograph::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldF8, indent);
 	file->writeQuotedLine(_string2, indent);

@@ -27,7 +27,7 @@ namespace Titanic {
 CToggleSwitch::CToggleSwitch() : CGameObject(), _fieldBC(0) {
 }
 
-void CToggleSwitch::save(SimpleFile *file, int indent) const {
+void CToggleSwitch::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	file->writePoint(_pos1, indent);

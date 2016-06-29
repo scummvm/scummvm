@@ -65,7 +65,7 @@ CString CTreeItem::dumpItem(int indent) const {
 	return result;
 }
 
-void CTreeItem::save(SimpleFile *file, int indent) const {
+void CTreeItem::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(0, indent);
 	CMessageTarget::save(file, indent);
 }

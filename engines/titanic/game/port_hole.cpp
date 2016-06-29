@@ -28,7 +28,7 @@ CPortHole::CPortHole() : CGameObject(), _fieldBC(0),
 		_string1("b#47.wav"), _string2("b#46.wav") {
 }
 
-void CPortHole::save(SimpleFile *file, int indent) const {
+void CPortHole::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	file->writeQuotedLine(_string1, indent);

@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CHeadSmashEvent::save(SimpleFile *file, int indent) const {
+void CHeadSmashEvent::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CBackground::save(file, indent);
 }

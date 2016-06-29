@@ -53,7 +53,7 @@ void CViewItem::setData(double v) {
 	_field54 = sin(_field28) * -30.0;
 }
 
-void CViewItem::save(SimpleFile *file, int indent) const {
+void CViewItem::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	_resourceKey.save(file, indent);
 	file->writeQuotedLine("V", indent);

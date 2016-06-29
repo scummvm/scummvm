@@ -32,7 +32,7 @@ END_MESSAGE_MAP()
 CNapkin::CNapkin() : CCarry() {
 }
 
-void CNapkin::save(SimpleFile *file, int indent) const {
+void CNapkin::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CCarry::save(file, indent);
 }

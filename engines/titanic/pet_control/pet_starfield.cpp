@@ -132,7 +132,7 @@ void CPetStarfield::postLoad() {
 	reset();
 }
 
-void CPetStarfield::save(SimpleFile *file, int indent) const {
+void CPetStarfield::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_photoOn, indent);
 	file->writeNumberLine(_hasReference, indent);
 }

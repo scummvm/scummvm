@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CGondolierSong::save(SimpleFile *file, int indent) const {
+void CGondolierSong::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value, indent);
 	CRoomAutoSoundPlayer::save(file, indent);

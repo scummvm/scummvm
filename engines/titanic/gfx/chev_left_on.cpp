@@ -29,7 +29,7 @@ EMPTY_MESSAGE_MAP(CChevLeftOn, CToggleSwitch)
 CChevLeftOn::CChevLeftOn() : CToggleSwitch() {
 }
 
-void CChevLeftOn::save(SimpleFile *file, int indent) const {
+void CChevLeftOn::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CToggleSwitch::save(file, indent);
 }

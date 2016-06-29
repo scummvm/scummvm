@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CMaitreDArmHolder::save(SimpleFile *file, int indent) const {
+void CMaitreDArmHolder::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CDropTarget::save(file, indent);
 }

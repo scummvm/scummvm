@@ -27,7 +27,7 @@ namespace Titanic {
 int CBottomOfWellMonitor::_v1;
 int CBottomOfWellMonitor::_v2;
 
-void CBottomOfWellMonitor::save(SimpleFile *file, int indent) const {
+void CBottomOfWellMonitor::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_v2, indent);

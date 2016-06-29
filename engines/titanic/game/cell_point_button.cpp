@@ -38,7 +38,7 @@ CCellPointButton::CCellPointButton() : CBackground() {
 	_field108 = 1;
 }
 
-void CCellPointButton::save(SimpleFile *file, int indent) const {
+void CCellPointButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldE0, indent);
 	file->writeNumberLine(_fieldE4, indent);

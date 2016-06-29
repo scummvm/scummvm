@@ -27,7 +27,7 @@ namespace Titanic {
 CNose::CNose() : CHeadPiece() {
 }
 
-void CNose::save(SimpleFile *file, int indent) const {
+void CNose::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CHeadPiece::save(file, indent);
 }

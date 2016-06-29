@@ -31,7 +31,7 @@ CMaitreD::CMaitreD() : CTrueTalkNPC(),
 	_field11C(0), _field12C(0), _field130(1), _field134(0), _field138(0) {
 }
 
-void CMaitreD::save(SimpleFile *file, int indent) const {
+void CMaitreD::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_field108, indent);
 	file->writeQuotedLine(_string2, indent);

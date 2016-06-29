@@ -61,7 +61,7 @@ public:
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	virtual void save(SimpleFile *file, int indent);
 
 	/**
 	 * Load the data for the class from file
@@ -156,7 +156,7 @@ public:
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	virtual void save(SimpleFile *file, int indent);
 
 	/**
 	 * Load the data for the class from file

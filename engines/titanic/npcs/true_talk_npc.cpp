@@ -44,7 +44,7 @@ CTrueTalkNPC::CTrueTalkNPC() : _assetName("z451.dlg"),
 	_fieldF4(0), _fieldF8(0), _speechTimerId(0), _field100(0), _field104(0) {
 }
 
-void CTrueTalkNPC::save(SimpleFile *file, int indent) const {
+void CTrueTalkNPC::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_assetNumber, indent);
 	file->writeQuotedLine(_assetName, indent);

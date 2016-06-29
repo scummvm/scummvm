@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CReplacementEar::save(SimpleFile *file, int indent) const {
+void CReplacementEar::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CBackground::save(file, indent);
 }

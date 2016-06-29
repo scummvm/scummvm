@@ -36,7 +36,7 @@ END_MESSAGE_MAP()
 CCDROMTray::CCDROMTray() : CGameObject(), _state(0) {
 }
 
-void CCDROMTray::save(SimpleFile *file, int indent) const {
+void CCDROMTray::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_state, indent);
 	file->writeQuotedLine(_insertedCD, indent);

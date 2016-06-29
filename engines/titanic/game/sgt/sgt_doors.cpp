@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CSGTDoors::save(SimpleFile *file, int indent) const {
+void CSGTDoors::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value1, indent);
 	file->writeNumberLine(_value2, indent);

@@ -30,7 +30,7 @@ CRoomItem::CRoomItem() : CNamedItem(), _roomNumber(0),
 		_roomDimensionX(0.0), _roomDimensionY(0.0) {
 }
 
-void CRoomItem::save(SimpleFile *file, int indent) const {
+void CRoomItem::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(3, indent);
 	file->writeQuotedLine("Exit Movies", indent);
 	_exitMovieKey.save(file, indent);

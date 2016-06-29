@@ -26,7 +26,7 @@ namespace Titanic {
 
 int CRestaurantPanHandler::_v1;
 
-void CRestaurantPanHandler::save(SimpleFile *file, int indent) const {
+void CRestaurantPanHandler::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_v1, indent);
 	file->writeQuotedLine(_string1, indent);

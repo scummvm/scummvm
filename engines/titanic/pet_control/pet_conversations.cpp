@@ -230,7 +230,7 @@ void CPetConversations::postLoad() {
 	reset();
 }
 
-void CPetConversations::save(SimpleFile *file, int indent) const {
+void CPetConversations::save(SimpleFile *file, int indent) {
 	_textInput.save(file, indent);
 	_log.save(file, indent);
 

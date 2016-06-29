@@ -28,7 +28,7 @@ CParrotNutEater::CParrotNutEater() : CGameObject(), _fieldBC(0),
 		_fieldC0(69), _fieldC4(132), _fieldC8(0), _fieldCC(68) {
 }
 
-void CParrotNutEater::save(SimpleFile *file, int indent) const {
+void CParrotNutEater::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	

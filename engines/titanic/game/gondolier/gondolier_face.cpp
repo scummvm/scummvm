@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CGondolierFace::save(SimpleFile *file, int indent) const {
+void CGondolierFace::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	CGondolierBase::save(file, indent);

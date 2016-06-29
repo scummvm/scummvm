@@ -31,7 +31,7 @@ CHeadSlot::CHeadSlot() : CGameObject(), _string1("NotWorking"), _string2("NULL")
 	_fieldE4(82), _fieldE8(112), _fieldEC(0) {
 }
 
-void CHeadSlot::save(SimpleFile *file, int indent) const {
+void CHeadSlot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	file->writeQuotedLine(_string1, indent);

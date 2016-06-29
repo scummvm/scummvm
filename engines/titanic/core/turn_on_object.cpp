@@ -32,7 +32,7 @@ END_MESSAGE_MAP()
 CTurnOnObject::CTurnOnObject() : CBackground(), _msgName("NULL") {
 }
 
-void CTurnOnObject::save(SimpleFile *file, int indent) const {
+void CTurnOnObject::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_msgName, indent);
 

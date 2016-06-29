@@ -27,7 +27,7 @@ namespace Titanic {
 CMovePlayerTo::CMovePlayerTo() : CGameObject() {
 }
 
-void CMovePlayerTo::save(SimpleFile *file, int indent) const {
+void CMovePlayerTo::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_destination, indent);
 

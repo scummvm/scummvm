@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CGamesConsole::save(SimpleFile *file, int indent) const {
+void CGamesConsole::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldE0, indent);
 	CBackground::save(file, indent);

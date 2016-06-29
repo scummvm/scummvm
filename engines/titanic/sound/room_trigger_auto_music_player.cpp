@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CRoomTriggerAutoMusicPlayer::save(SimpleFile *file, int indent) const {
+void CRoomTriggerAutoMusicPlayer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CTriggerAutoMusicPlayer::save(file, indent);
 }

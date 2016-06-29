@@ -46,7 +46,7 @@ CPhonographCylinder::CPhonographCylinder() : CCarry(),
 		_bassInversionControl(false) {
 }
 
-void CPhonographCylinder::save(SimpleFile *file, int indent) const {
+void CPhonographCylinder::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_itemName, indent);
 	file->writeNumberLine(_bellsMuteControl, indent);

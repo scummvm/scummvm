@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CBowlEar::save(SimpleFile *file, int indent) const {
+void CBowlEar::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CEar::save(file, indent);
 }

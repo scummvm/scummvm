@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CTVOnBar::save(SimpleFile *file, int indent) const {
+void CTVOnBar::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writePoint(_pos1, indent);
 	CPlaceHolderItem::save(file, indent);

@@ -55,7 +55,7 @@ CPetControl::CPetControl() : CGameObject(),
 	_sections[PET_MESSAGE] = &_message;
 }
 
-void CPetControl::save(SimpleFile *file, int indent) const {
+void CPetControl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(0, indent);
 	file->writeNumberLine(_currentArea, indent);
 	file->writeQuotedLine(_activeNPCName, indent);
@@ -113,7 +113,7 @@ void CPetControl::loadAreas(SimpleFile *file, int param) {
 	_frame.load(file, param);
 }
 
-void CPetControl::saveAreas(SimpleFile *file, int indent) const {
+void CPetControl::saveAreas(SimpleFile *file, int indent) {
 	_conversations.save(file, indent);
 	_rooms.save(file, indent);
 	_remote.save(file, indent);

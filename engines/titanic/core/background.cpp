@@ -33,7 +33,7 @@ END_MESSAGE_MAP()
 CBackground::CBackground() : CGameObject(), _fieldBC(0), _fieldC0(0), _fieldDC(0) {
 }
 
-void CBackground::save(SimpleFile *file, int indent) const {
+void CBackground::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	file->writeNumberLine(_fieldC0, indent);

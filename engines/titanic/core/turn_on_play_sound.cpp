@@ -28,7 +28,7 @@ CTurnOnPlaySound::CTurnOnPlaySound() : CTurnOnObject(),
 		_string3("NULL"), _fieldF8(80), _fieldFC(0) {
 }
 
-void CTurnOnPlaySound::save(SimpleFile *file, int indent) const {
+void CTurnOnPlaySound::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string3, indent);
 	file->writeNumberLine(_fieldF8, indent);

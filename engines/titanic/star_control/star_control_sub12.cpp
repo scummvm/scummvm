@@ -33,7 +33,7 @@ void CStarControlSub12::load(SimpleFile *file, int param) {
 	_sub13.load(file, param);
 }
 
-void CStarControlSub12::save(SimpleFile *file, int indent) const {
+void CStarControlSub12::save(SimpleFile *file, int indent) {
 	_sub13.save(file, indent);
 }
 

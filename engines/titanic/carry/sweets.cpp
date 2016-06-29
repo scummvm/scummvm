@@ -31,7 +31,7 @@ END_MESSAGE_MAP()
 CSweets::CSweets() : CCarry() {
 }
 
-void CSweets::save(SimpleFile *file, int indent) const {
+void CSweets::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CCarry::save(file, indent);
 }

@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CLittleLiftButton::save(SimpleFile *file, int indent) const {
+void CLittleLiftButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value, indent);
 	CBackground::save(file, indent);

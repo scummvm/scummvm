@@ -29,7 +29,7 @@ EMPTY_MESSAGE_MAP(CHelmetOnOff, CToggleSwitch)
 CHelmetOnOff::CHelmetOnOff() : CToggleSwitch() {
 }
 
-void CHelmetOnOff::save(SimpleFile *file, int indent) const {
+void CHelmetOnOff::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CToggleSwitch::save(file, indent);
 }

@@ -80,7 +80,7 @@ CGameObject::~CGameObject() {
 	delete _text;
 }
 
-void CGameObject::save(SimpleFile *file, int indent) const {
+void CGameObject::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(7, indent);
 	error("TODO: CGameObject::save");
 

@@ -26,7 +26,7 @@ namespace Titanic {
 
 int CAnnoyBarbot::_v1;
 
-void CAnnoyBarbot::save(SimpleFile *file, int indent) const {
+void CAnnoyBarbot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_v1, indent);
 	CGameObject::save(file, indent);

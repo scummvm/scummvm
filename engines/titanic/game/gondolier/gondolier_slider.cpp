@@ -31,7 +31,7 @@ CGondolierSlider::CGondolierSlider() : CGondolierBase(),
 	_fieldEC(0), _string1("NULL"), _fieldFC(0), _field118(0) {
 }
 
-void CGondolierSlider::save(SimpleFile *file, int indent) const {
+void CGondolierSlider::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	file->writeNumberLine(_fieldC0, indent);

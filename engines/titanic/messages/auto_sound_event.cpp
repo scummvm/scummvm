@@ -27,7 +27,7 @@ namespace Titanic {
 CAutoSoundEvent::CAutoSoundEvent() : CGameObject(), _value1(0), _value2(70) {
 }
 
-void CAutoSoundEvent::save(SimpleFile *file, int indent) const {
+void CAutoSoundEvent::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value1, indent);
 	file->writeNumberLine(_value2, indent);

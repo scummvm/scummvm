@@ -69,7 +69,7 @@ CArboretumGate::CArboretumGate() : CBackground() {
 	_field150 = 424;
 }
 
-void CArboretumGate::save(SimpleFile *file, int indent) const {
+void CArboretumGate::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldE0, indent);
 	file->writeNumberLine(_v1, indent);

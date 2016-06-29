@@ -93,7 +93,7 @@ public:
 	/**
 	 * Saves the data for the glyph
 	 */
-	virtual void saveGlyph(SimpleFile *file, int indent) const;
+	virtual void saveGlyph(SimpleFile *file, int indent);
 	
 	virtual bool proc33(CPetGlyph *glyph);
 
@@ -143,7 +143,7 @@ public:
 	/**
 	 * Save the list
 	 */
-	void saveGlyphs(SimpleFile *file, int indent) const;
+	void saveGlyphs(SimpleFile *file, int indent);
 
 	/**
 	 * Returns the glyph for hte player's assigned room

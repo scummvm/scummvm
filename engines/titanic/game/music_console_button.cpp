@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CMusicConsoleButton::save(SimpleFile *file, int indent) const {
+void CMusicConsoleButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CMusicPlayer::save(file, indent);
 }

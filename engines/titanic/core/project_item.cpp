@@ -43,7 +43,7 @@ static const char *const SAVEGAME_STR = "TNIC";
 
 EMPTY_MESSAGE_MAP(CProjectItem, CFileItem)
 
-void CFileListItem::save(SimpleFile *file, int indent) const {
+void CFileListItem::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(0, indent);
 	file->writeQuotedLine(_name, indent);
 
@@ -63,7 +63,7 @@ CProjectItem::CProjectItem() : _nextRoomNumber(0), _nextMessageNumber(0),
 		_nextObjectNumber(0), _gameManager(nullptr) {
 }
 
-void CProjectItem::save(SimpleFile *file, int indent) const {
+void CProjectItem::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(6, indent);
 	file->writeQuotedLine("Next Avail. Object Number", indent);
 	file->writeNumberLine(_nextObjectNumber, indent);

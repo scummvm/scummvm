@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CSGTRestaurantDoors::save(SimpleFile *file, int indent) const {
+void CSGTRestaurantDoors::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	CGameObject::save(file, indent);

@@ -27,7 +27,7 @@ namespace Titanic {
 CSUBGlass::CSUBGlass() : _fieldBC(0), _fieldC0(0), _fieldC4(1), _fieldC8(0) {
 }
 
-void CSUBGlass::save(SimpleFile *file, int indent) const {
+void CSUBGlass::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	file->writeNumberLine(_fieldC0, indent);

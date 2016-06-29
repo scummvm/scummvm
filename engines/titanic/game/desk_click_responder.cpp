@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CDeskClickResponder::save(SimpleFile *file, int indent) const {
+void CDeskClickResponder::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldD4, indent);
 	file->writeNumberLine(_fieldD8, indent);

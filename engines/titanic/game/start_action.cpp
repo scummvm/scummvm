@@ -33,7 +33,7 @@ END_MESSAGE_MAP()
 CStartAction::CStartAction() : CBackground() {
 }
 
-void CStartAction::save(SimpleFile *file, int indent) const {
+void CStartAction::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_msgTarget, indent);
 	file->writeQuotedLine(_msgAction, indent);

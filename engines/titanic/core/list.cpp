@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void ListItem::save(SimpleFile *file, int indent) const {
+void ListItem::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(0, indent);
 }
 

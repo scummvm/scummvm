@@ -27,7 +27,7 @@ namespace Titanic {
 int CCage::_v1;
 int CCage::_v2;
 
-void CCage::save(SimpleFile *file, int indent) const {
+void CCage::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_v2, indent);

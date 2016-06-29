@@ -45,7 +45,7 @@ CChicken::CChicken() : CCarry(), _string6("None"),
 		_field12C(1), _field13C(0), _timerId(0) {
 }
 
-void CChicken::save(SimpleFile *file, int indent) const {
+void CChicken::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_field12C, indent);
 	file->writeQuotedLine(_string6, indent);

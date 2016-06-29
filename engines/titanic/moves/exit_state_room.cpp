@@ -27,7 +27,7 @@ namespace Titanic {
 CExitStateRoom::CExitStateRoom() : CMovePlayerTo(), _fieldC8(0) {
 }
 
-void CExitStateRoom::save(SimpleFile *file, int indent) const {
+void CExitStateRoom::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CMovePlayerTo::save(file, indent);
 }

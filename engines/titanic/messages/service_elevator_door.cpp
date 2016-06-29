@@ -29,7 +29,7 @@ CServiceElevatorDoor::CServiceElevatorDoor() : CDoorAutoSoundEvent() {
 	_string2 = "z#32.wav";
 }
 
-void CServiceElevatorDoor::save(SimpleFile *file, int indent) const {
+void CServiceElevatorDoor::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string2, indent);
 	file->writeQuotedLine(_string1, indent);

@@ -34,7 +34,7 @@ void CSGTNavigation::deinit() {
 	delete _statics;
 }
 
-void CSGTNavigation::save(SimpleFile *file, int indent) const {
+void CSGTNavigation::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_statics->_v1, indent);
 	file->writeQuotedLine(_statics->_v2, indent);

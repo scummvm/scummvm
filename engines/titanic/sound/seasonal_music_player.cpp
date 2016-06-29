@@ -35,7 +35,7 @@ CSeasonalMusicPlayer::CSeasonalMusicPlayer() : CAutoMusicPlayerBase() {
 	_fieldF4 = -4;
 }
 
-void CSeasonalMusicPlayer::save(SimpleFile *file, int indent) const {
+void CSeasonalMusicPlayer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldD8, indent);
 	file->writeNumberLine(_fieldDC, indent);

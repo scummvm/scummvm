@@ -27,7 +27,7 @@ namespace Titanic {
 CCredits::CCredits() : CGameObject(), _fieldBC(-1), _fieldC0(1) {
 }
 
-void CCredits::save(SimpleFile *file, int indent) const {
+void CCredits::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	file->writeNumberLine(_fieldC0, indent);

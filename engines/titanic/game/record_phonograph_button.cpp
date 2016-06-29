@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CRecordPhonographButton::save(SimpleFile *file, int indent) const {
+void CRecordPhonographButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value, indent);
 	CBackground::save(file, indent);

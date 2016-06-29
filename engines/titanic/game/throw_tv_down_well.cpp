@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CThrowTVDownWell::save(SimpleFile *file, int indent) const {
+void CThrowTVDownWell::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_strValue, indent);
 	file->writeNumberLine(_numValue, indent);

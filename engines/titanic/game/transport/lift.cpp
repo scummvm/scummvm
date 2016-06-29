@@ -35,7 +35,7 @@ int CLift::_v4;
 int CLift::_v5;
 int CLift::_v6;
 
-void CLift::save(SimpleFile *file, int indent) const {
+void CLift::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_v2, indent);

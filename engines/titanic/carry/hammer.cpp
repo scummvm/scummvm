@@ -27,7 +27,7 @@ namespace Titanic {
 CHammer::CHammer() : CCarry() {
 }
 
-void CHammer::save(SimpleFile *file, int indent) const {
+void CHammer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CCarry::save(file, indent);
 }

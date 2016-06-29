@@ -45,7 +45,7 @@ void CStarControlSub11::load(SimpleFile *file, int param) {
 	}
 }
 
-void CStarControlSub11::save(SimpleFile *file, int indent) const {
+void CStarControlSub11::save(SimpleFile *file, int indent) {
 }
 
 } // End of namespace Titanic

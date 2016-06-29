@@ -32,7 +32,7 @@ CLiftindicator::CLiftindicator() : CLift(),
 		_fieldFC(0), _field108(0), _field10C(0) {
 }
 
-void CLiftindicator::save(SimpleFile *file, int indent) const {
+void CLiftindicator::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldFC, indent);
 	file->writePoint(_pos2, indent);

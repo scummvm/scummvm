@@ -27,7 +27,7 @@ namespace Titanic {
 CDrawer::CDrawer() : CSGTStateRoom(), _fieldF4(0) {
 }
 
-void CDrawer::save(SimpleFile *file, int indent) const {
+void CDrawer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldF4, indent);
 	CSGTStateRoom::save(file, indent);

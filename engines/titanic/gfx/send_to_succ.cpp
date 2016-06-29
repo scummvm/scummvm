@@ -29,7 +29,7 @@ EMPTY_MESSAGE_MAP(CSendToSucc, CToggleSwitch)
 CSendToSucc::CSendToSucc() : CToggleSwitch() {
 }
 
-void CSendToSucc::save(SimpleFile *file, int indent) const {
+void CSendToSucc::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CToggleSwitch::save(file, indent);
 }

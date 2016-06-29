@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CThirdClassCanal::save(SimpleFile *file, int indent) const {
+void CThirdClassCanal::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CBackground::save(file, indent);
 }

@@ -33,7 +33,7 @@ END_MESSAGE_MAP()
 CBridgePiece::CBridgePiece() : CCarry(), _field140(0) {
 }
 
-void CBridgePiece::save(SimpleFile *file, int indent) const {
+void CBridgePiece::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string6, indent);
 	file->writePoint(_pos3, indent);

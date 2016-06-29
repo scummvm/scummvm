@@ -114,7 +114,7 @@ void CPetInventory::postLoad() {
 	_field290 = 0;
 }
 
-void CPetInventory::save(SimpleFile *file, int indent) const {
+void CPetInventory::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_field298, indent);
 }
 

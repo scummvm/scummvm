@@ -29,7 +29,7 @@ EMPTY_MESSAGE_MAP(CHomePhoto, CToggleSwitch)
 CHomePhoto::CHomePhoto() : CToggleSwitch() {
 }
 
-void CHomePhoto::save(SimpleFile *file, int indent) const {
+void CHomePhoto::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CToggleSwitch::save(file, indent);
 }

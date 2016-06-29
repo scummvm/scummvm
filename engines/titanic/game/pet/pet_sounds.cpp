@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CPETSounds::save(SimpleFile *file, int indent) const {
+void CPETSounds::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value, indent);
 	CGameObject::save(file, indent);

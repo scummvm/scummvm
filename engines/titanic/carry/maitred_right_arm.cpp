@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CMaitreDRightArm::save(SimpleFile *file, int indent) const {
+void CMaitreDRightArm::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CArm::save(file, indent);
 }

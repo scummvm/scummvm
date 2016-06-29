@@ -27,7 +27,7 @@ namespace Titanic {
 CPanFromPel::CPanFromPel() : CMovePlayerTo(), _fieldC8(0) {
 }
 
-void CPanFromPel::save(SimpleFile *file, int indent) const {
+void CPanFromPel::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldC8, indent);
 	file->writeQuotedLine(_string1, indent);

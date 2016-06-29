@@ -27,7 +27,7 @@ namespace Titanic {
 CChangesSeasonButton::CChangesSeasonButton() : CSTButton() {
 }
 
-void CChangesSeasonButton::save(SimpleFile *file, int indent) const {
+void CChangesSeasonButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CSTButton::save(file, indent);
 }

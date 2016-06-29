@@ -28,7 +28,7 @@ CSGTUpperDoorsSound::CSGTUpperDoorsSound() {
 	_string2 = "b#53.wav";
 }
 
-void CSGTUpperDoorsSound::save(SimpleFile *file, int indent) const {
+void CSGTUpperDoorsSound::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string2, indent);
 

@@ -27,7 +27,7 @@ namespace Titanic {
 CEnterViewTogglesOtherMusic::CEnterViewTogglesOtherMusic() : CTriggerAutoMusicPlayer(), _fieldC8(0) {
 }
 
-void CEnterViewTogglesOtherMusic::save(SimpleFile *file, int indent) const {
+void CEnterViewTogglesOtherMusic::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldC8, indent);
 

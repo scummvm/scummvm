@@ -27,7 +27,7 @@ namespace Titanic {
 CMoveObjectButton::CMoveObjectButton() : CSTButton(), _field11C(1) {
 }
 
-void CMoveObjectButton::save(SimpleFile *file, int indent) const {
+void CMoveObjectButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writePoint(_pos1, indent);
 	file->writeNumberLine(_field11C, indent);

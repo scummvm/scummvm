@@ -84,7 +84,7 @@ CSuccUBus::CSuccUBus() : CTrueTalkNPC() {
 	_field1D8 = 0;
 }
 
-void CSuccUBus::save(SimpleFile *file, int indent) const {
+void CSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 
 	file->writeNumberLine(_v0, indent);

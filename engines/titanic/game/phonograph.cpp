@@ -29,7 +29,7 @@ CPhonograph::CPhonograph() : CMusicPlayer(),
 	_fieldF0(0), _fieldF4(0) {
 }
 
-void CPhonograph::save(SimpleFile *file, int indent) const {
+void CPhonograph::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string2, indent);
 	file->writeNumberLine(_fieldE0, indent);

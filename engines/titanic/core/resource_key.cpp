@@ -27,7 +27,7 @@
 
 namespace Titanic {
 
-void CResourceKey::save(SimpleFile *file, int indent) const {
+void CResourceKey::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine("Resource Key...", indent);
 	file->writeQuotedLine(_key, indent);

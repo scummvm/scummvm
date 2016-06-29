@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CUselessLever::save(SimpleFile *file, int indent) const {
+void CUselessLever::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CToggleButton::save(file, indent);
 }

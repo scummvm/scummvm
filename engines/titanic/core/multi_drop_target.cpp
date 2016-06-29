@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CMultiDropTarget::save(SimpleFile *file, int indent) const {
+void CMultiDropTarget::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string5, indent);
 	file->writeQuotedLine(_string6, indent);

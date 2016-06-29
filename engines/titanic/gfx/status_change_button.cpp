@@ -27,7 +27,7 @@ namespace Titanic {
 CStatusChangeButton::CStatusChangeButton() : CSTButton() {
 }
 
-void CStatusChangeButton::save(SimpleFile *file, int indent) const {
+void CStatusChangeButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CSTButton::save(file, indent);
 }

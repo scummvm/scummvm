@@ -30,7 +30,7 @@ int CLiftBot::_v2;
 CLiftBot::CLiftBot() : CTrueTalkNPC(), _field108(1) {
 }
 
-void CLiftBot::save(SimpleFile *file, int indent) const {
+void CLiftBot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_field108, indent);

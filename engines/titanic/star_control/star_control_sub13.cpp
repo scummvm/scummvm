@@ -67,7 +67,7 @@ void CStarControlSub13::load(SimpleFile *file, int param) {
 	_fieldD4 = 0;
 }
 
-void CStarControlSub13::save(SimpleFile *file, int indent) const {
+void CStarControlSub13::save(SimpleFile *file, int indent) {
 	_sub14.save(file, indent);
 }
 

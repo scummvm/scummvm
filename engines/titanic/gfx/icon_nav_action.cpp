@@ -29,7 +29,7 @@ EMPTY_MESSAGE_MAP(CIconNavAction, CToggleSwitch)
 CIconNavAction::CIconNavAction() : CToggleSwitch() {
 }
 
-void CIconNavAction::save(SimpleFile *file, int indent) const {
+void CIconNavAction::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CToggleSwitch::save(file, indent);
 }

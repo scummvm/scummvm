@@ -28,7 +28,7 @@ CSeasonNoises::CSeasonNoises() : CViewAutoSoundPlayer(), _fieldF0(0),
 	_string2("NULL"), _string3("NULL"), _string4("NULL"), _string5("NULL") {
 }
 
-void CSeasonNoises::save(SimpleFile *file, int indent) const {
+void CSeasonNoises::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldF0, indent);
 	file->writeQuotedLine(_string2, indent);

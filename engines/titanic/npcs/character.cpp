@@ -33,7 +33,7 @@ END_MESSAGE_MAP()
 CCharacter::CCharacter() : CGameObject(), _fieldBC(0), _fieldC0(0), _fieldC4(1) {
 }
 
-void CCharacter::save(SimpleFile *file, int indent) const {
+void CCharacter::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	file->writeNumberLine(_fieldC0, indent);

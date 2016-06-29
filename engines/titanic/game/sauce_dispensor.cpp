@@ -28,7 +28,7 @@ CSauceDispensor::CSauceDispensor() : CBackground(),
 		_fieldEC(0), _fieldF0(0), _field104(0), _field108(0) {
 }
 
-void CSauceDispensor::save(SimpleFile *file, int indent) const {
+void CSauceDispensor::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string3, indent);
 	file->writeNumberLine(_fieldEC, indent);

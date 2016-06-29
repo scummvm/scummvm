@@ -29,7 +29,7 @@ EMPTY_MESSAGE_MAP(CMobile, CCharacter)
 CMobile::CMobile() : CCharacter(), _fieldDC(0) {
 }
 
-void CMobile::save(SimpleFile *file, int indent) const {
+void CMobile::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writePoint(_pos1, indent);
 	file->writeNumberLine(_fieldDC, indent);

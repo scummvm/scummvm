@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void CNoNutBowl::save(SimpleFile *file, int indent) const {
+void CNoNutBowl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CBackground::save(file, indent);
 }

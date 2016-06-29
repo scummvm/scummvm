@@ -29,7 +29,7 @@ CAutoSoundPlayer::CAutoSoundPlayer() : CGameObject(),
 	_fieldDC(0), _fieldE0(-1), _fieldE4(0), _fieldE8(0) {
 }
 
-void CAutoSoundPlayer::save(SimpleFile *file, int indent) const {
+void CAutoSoundPlayer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	file->writeQuotedLine(_string1, indent);

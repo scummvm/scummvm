@@ -31,7 +31,7 @@ CEditControl::CEditControl() : CGameObject(), _fieldBC(0),  _fieldC0(0),
 {
 }
 
-void CEditControl::save(SimpleFile *file, int indent) const {
+void CEditControl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	file->writeNumberLine(_fieldC0, indent);

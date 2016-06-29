@@ -34,7 +34,7 @@ void CGetLiftEye2::deinit() {
 	delete _v1;
 }
 
-void CGetLiftEye2::save(SimpleFile *file, int indent) const {
+void CGetLiftEye2::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(*_v1, indent);
 	CGameObject::save(file, indent);

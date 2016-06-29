@@ -32,7 +32,7 @@ namespace Titanic {
 CMessage::CMessage() : CSaveableObject() {
 }
 
-void CMessage::save(SimpleFile *file, int indent) const {
+void CMessage::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(0, indent);
 }
 

@@ -26,7 +26,7 @@ namespace Titanic {
 
 int CDoorbotElevatorHandler::_v1;
 
-void CDoorbotElevatorHandler::save(SimpleFile *file, int indent) const {
+void CDoorbotElevatorHandler::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value, indent);
 	file->writeNumberLine(_v1, indent);

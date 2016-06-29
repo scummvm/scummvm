@@ -45,7 +45,7 @@ CMovieRangeInfo::CMovieRangeInfo(const CMovieRangeInfo *src) : ListItem() {
 	}
 }
 
-void CMovieRangeInfo::save(SimpleFile *file, int indent) const {
+void CMovieRangeInfo::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(0, indent);
 	file->writeQuotedLine(_movieName, indent + 1);
 	file->writeNumberLine(_endFrame, indent + 1);

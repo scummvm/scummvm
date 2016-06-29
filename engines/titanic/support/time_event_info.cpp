@@ -106,7 +106,7 @@ CTimeEventInfo::CTimeEventInfo(uint ticks, uint f14, uint firstDuration,
 	_id = _nextId++;
 }
 
-void CTimeEventInfo::save(SimpleFile *file, int indent) const {
+void CTimeEventInfo::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(0, indent);
 
 	CString targetName;

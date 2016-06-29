@@ -42,7 +42,7 @@ CSGTStateRoom::CSGTStateRoom() : CBackground(), _fieldE0(1),
 	_fieldE4(1), _fieldE8(0), _fieldEC(1), _fieldF0(1) {
 }
 
-void CSGTStateRoom::save(SimpleFile *file, int indent) const {
+void CSGTStateRoom::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_statics->_v1, indent);
 	file->writeQuotedLine(_statics->_v2, indent);

@@ -29,7 +29,7 @@ CCaptainsWheel::CCaptainsWheel() : CBackground(),
 	_fieldF0(0), _fieldF4(0) {
 }
 
-void CCaptainsWheel::save(SimpleFile *file, int indent) const {
+void CCaptainsWheel::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldE0, indent);
 	file->writeNumberLine(_fieldE4, indent);

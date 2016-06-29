@@ -40,7 +40,7 @@ public:
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	virtual void save(SimpleFile *file, int indent);
 
 	/**
 	 * Load the data for the class from file
@@ -76,7 +76,7 @@ public:
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent) const {
+	virtual void save(SimpleFile *file, int indent) {
 		file->writeNumberLine(0, indent);
 
 		// Write out number of items
@@ -84,9 +84,9 @@ public:
 		file->writeNumberLine(Common::List<T *>::size(), indent);
 
 		// Iterate through writing entries
-		typename Common::List<T *>::const_iterator i;
+		typename Common::List<T *>::iterator i;
 		for (i = Common::List<T *>::begin(); i != Common::List<T *>::end(); ++i) {
-			const ListItem *item = *i;
+			ListItem *item = *i;
 			item->saveHeader(file, indent);
 			item->save(file, indent + 1);
 			item->saveFooter(file, indent);

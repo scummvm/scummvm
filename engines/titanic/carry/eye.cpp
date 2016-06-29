@@ -27,7 +27,7 @@ namespace Titanic {
 CEye::CEye() : CHeadPiece(), _eyeNum(0) {
 }
 
-void CEye::save(SimpleFile *file, int indent) const {
+void CEye::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_eyeNum, indent);
 	CHeadPiece::save(file, indent);

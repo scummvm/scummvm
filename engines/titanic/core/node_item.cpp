@@ -29,7 +29,7 @@ EMPTY_MESSAGE_MAP(CNodeItem, CNamedItem)
 CNodeItem::CNodeItem() : CNamedItem(), _nodeNumber(0) {
 }
 
-void CNodeItem::save(SimpleFile *file, int indent) const {
+void CNodeItem::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(0, indent);
 	file->writeQuotedLine("N", indent);
 	file->writeNumberLine(_nodePos.x, indent + 1);

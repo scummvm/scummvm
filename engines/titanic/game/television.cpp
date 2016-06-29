@@ -66,7 +66,7 @@ void CTelevision::init() {
 void CTelevision::deinit() {
 }
 
-void CTelevision::save(SimpleFile *file, int indent) const {
+void CTelevision::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldE0, indent);
 	file->writeNumberLine(_v1, indent);

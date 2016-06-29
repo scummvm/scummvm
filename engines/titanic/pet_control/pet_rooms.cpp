@@ -148,7 +148,7 @@ void CPetRooms::postLoad() {
 	reset();
 }
 
-void CPetRooms::save(SimpleFile *file, int indent) const {
+void CPetRooms::save(SimpleFile *file, int indent) {
 	_glyphs.saveGlyphs(file, indent);
 	_glyphItem.saveGlyph(file, indent);
 	file->writeNumberLine(_floorNum, indent);

@@ -108,7 +108,7 @@ void CPetText::load(SimpleFile *file, int param) {
 	}
 }
 
-void CPetText::save(SimpleFile *file, int indent) const {
+void CPetText::save(SimpleFile *file, int indent) {
 	int numLines = _lineCount + 1;
 
 	file->writeNumberLine(_array.size(), indent);

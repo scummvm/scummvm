@@ -49,7 +49,7 @@ public:
 	/**
 	 * Save the data for the class to file
 	 */
-	void save(SimpleFile *file, int indent) const;
+	void save(SimpleFile *file, int indent);
 
 };
 

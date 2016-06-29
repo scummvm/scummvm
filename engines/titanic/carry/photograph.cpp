@@ -37,7 +37,7 @@ int CPhotograph::_v1;
 CPhotograph::CPhotograph() : CCarry(), _field12C(0), _field130(0) {
 }
 
-void CPhotograph::save(SimpleFile *file, int indent) const {
+void CPhotograph::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_field12C, indent);
 	file->writeNumberLine(_v1, indent);

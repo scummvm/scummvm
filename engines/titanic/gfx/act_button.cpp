@@ -27,7 +27,7 @@ namespace Titanic {
 CActButton::CActButton() : CSTButton() {
 }
 
-void CActButton::save(SimpleFile *file, int indent) const {
+void CActButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CSTButton::save(file, indent);
 }

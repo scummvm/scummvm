@@ -27,7 +27,7 @@ namespace Titanic {
 CExitBridge::CExitBridge() : CMovePlayerTo() {
 }
 
-void CExitBridge::save(SimpleFile *file, int indent) const {
+void CExitBridge::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CMovePlayerTo::save(file, indent);
 }

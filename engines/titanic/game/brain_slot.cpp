@@ -27,7 +27,7 @@ namespace Titanic {
 int CBrainSlot::_v1;
 int CBrainSlot::_v2;
 
-void CBrainSlot::save(SimpleFile *file, int indent) const {
+void CBrainSlot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value1, indent);
 	file->writeQuotedLine(_value2, indent);

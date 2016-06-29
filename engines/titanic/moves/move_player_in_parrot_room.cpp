@@ -27,7 +27,7 @@ namespace Titanic {
 CMovePlayerInParrotRoom::CMovePlayerInParrotRoom() : CMovePlayerTo() {
 }
 
-void CMovePlayerInParrotRoom::save(SimpleFile *file, int indent) const {
+void CMovePlayerInParrotRoom::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CMovePlayerTo::save(file, indent);
 }

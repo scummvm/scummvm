@@ -108,7 +108,7 @@ public:
 	/**
 	 * Save the data for the control
 	 */
-	void save(SimpleFile *file, int indent) const;
+	void save(SimpleFile *file, int indent);
 
 	/**
 	 * Set the bounds for the control

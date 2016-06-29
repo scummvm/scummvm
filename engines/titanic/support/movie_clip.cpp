@@ -32,7 +32,7 @@ CMovieClip::CMovieClip(const CString &name, int startFrame, int endFrame):
 	ListItem(), _name(name), _startFrame(startFrame), _endFrame(endFrame) {
 }
 
-void CMovieClip::save(SimpleFile *file, int indent) const {
+void CMovieClip::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(2, indent);
 	file->writeQuotedLine("Clip", indent);
 	file->writeQuotedLine(_name, indent);

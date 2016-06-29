@@ -55,7 +55,7 @@ int CDeskbot::_v2;
 CDeskbot::CDeskbot() : CTrueTalkNPC(), _deskbotActive(false), _classNum(0) {
 }
 
-void CDeskbot::save(SimpleFile *file, int indent) const {
+void CDeskbot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_v2, indent);

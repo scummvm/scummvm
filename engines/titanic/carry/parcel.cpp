@@ -29,7 +29,7 @@ EMPTY_MESSAGE_MAP(CParcel, CCarry)
 CParcel::CParcel() : CCarry() {
 }
 
-void CParcel::save(SimpleFile *file, int indent) const {
+void CParcel::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CCarry::save(file, indent);
 }

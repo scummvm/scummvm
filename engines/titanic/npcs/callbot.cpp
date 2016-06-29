@@ -27,7 +27,7 @@ namespace Titanic {
 CCallBot::CCallBot() : CGameObject(), _fieldC8(0) {
 }
 
-void CCallBot::save(SimpleFile *file, int indent) const {
+void CCallBot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string1, indent);
 	file->writeNumberLine(_fieldC8, indent);

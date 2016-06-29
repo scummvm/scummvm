@@ -31,7 +31,7 @@ CNullPortHole::CNullPortHole() : CClickResponder() {
 	_string2 = "b#48.wav";
 }
 
-void CNullPortHole::save(SimpleFile *file, int indent) const {
+void CNullPortHole::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string2, indent);
 	file->writeQuotedLine(_string1, indent);

@@ -40,7 +40,7 @@ CArm::CArm() : CCarry(), _string6("Key"),
 	_armRect(220, 208, 409, 350) {
 }
 
-void CArm::save(SimpleFile *file, int indent) const {
+void CArm::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string6, indent);
 	file->writeNumberLine(_field138, indent);

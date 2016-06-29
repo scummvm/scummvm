@@ -171,7 +171,7 @@ CBarbot::CBarbot() : CTrueTalkNPC() {
 	_field340 = 95;
 }
 
-void CBarbot::save(SimpleFile *file, int indent) const {
+void CBarbot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_field108, indent);
 	file->writeNumberLine(_field10C, indent);

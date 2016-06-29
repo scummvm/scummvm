@@ -31,7 +31,7 @@ END_MESSAGE_MAP()
 CPlugIn::CPlugIn() : CCarry(), _field12C(0) {
 }
 
-void CPlugIn::save(SimpleFile *file, int indent) const {
+void CPlugIn::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CCarry::save(file, indent);
 }

@@ -36,7 +36,7 @@ CMovieEvent::CMovieEvent(const CMovieEvent *src) {
 	_field1C = src->_field1C;
 }
 
-void CMovieEvent::save(SimpleFile *file, int indent) const {
+void CMovieEvent::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(0, indent);
 	file->writeNumberLine(_fieldC, indent + 1);
 	file->writeNumberLine(_field10, indent + 1);

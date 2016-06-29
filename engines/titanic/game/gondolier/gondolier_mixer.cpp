@@ -31,7 +31,7 @@ CGondolierMixer::CGondolierMixer() : CGondolierBase(),
 	_fieldE4(0) {
 }
 
-void CGondolierMixer::save(SimpleFile *file, int indent) const {
+void CGondolierMixer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	file->writeNumberLine(_fieldC0, indent);

@@ -38,7 +38,7 @@ CTitania::CTitania() : CCharacter() {
 	_field100 = 1;
 }
 
-void CTitania::save(SimpleFile *file, int indent) const {
+void CTitania::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldD4, indent);
 	file->writeNumberLine(_fieldD8, indent);

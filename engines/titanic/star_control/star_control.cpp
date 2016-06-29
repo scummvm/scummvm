@@ -29,7 +29,7 @@ CStarControl::CStarControl() : _fieldBC(0), _field80A0(0),
 		_field80A4(0), _field80A8(0), _field80AC(0), _field80B0(0) {
 }
 
-void CStarControl::save(SimpleFile *file, int indent) const {
+void CStarControl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CGameObject::save(file, indent);
 }

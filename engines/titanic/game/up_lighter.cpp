@@ -28,7 +28,7 @@ CUpLighter::CUpLighter() : CDropTarget(), _field118(0),
 	_field11C(0), _field120(0), _field124(0) {
 }
 
-void CUpLighter::save(SimpleFile *file, int indent) const {
+void CUpLighter::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_field118, indent);
 	file->writeNumberLine(_field11C, indent);
