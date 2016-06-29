@@ -368,15 +368,15 @@ void Lingo::c_goto() {
 }
 
 void Lingo::c_gotoloop() {
-	g_lingo->func_gotoLoop();
+	g_lingo->func_gotoloop();
 }
 
 void Lingo::c_gotonext() {
-	g_lingo->func_gotoNext();
+	g_lingo->func_gotonext();
 }
 
 void Lingo::c_gotoprevious() {
-	g_lingo->func_gotoPrev();
+	g_lingo->func_gotoprevious();
 }
 
 void Lingo::c_call() {

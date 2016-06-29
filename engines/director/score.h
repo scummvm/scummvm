@@ -330,7 +330,7 @@ public:
 struct Label {
 	Common::String name;
 	uint16 number;
-	Label(Common::String _name, uint16 _number) { name = _name; number = _number; }
+	Label(Common::String name1, uint16 number1) { name = name1; number = number1; }
 };
 
 class Score {
@@ -342,9 +342,9 @@ public:
 	static int compareLabels(const void *a, const void *b);
 	void loadArchive();
 	void setStartToLabel(Common::String label);
-	void goToLoop();
-	void goToNext();
-	void goToPrevious();
+	void gotoloop();
+	void gotonext();
+	void gotoprevious();
 	void startLoop();
 	void processEvents();
 	Archive *getArchive() const { return _movieArchive; };

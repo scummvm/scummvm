@@ -208,16 +208,16 @@ void Lingo::func_goto(Common::String &frame, Common::String &movie) {
 	_vm->_currentScore->setCurrentFrame(strtol(frame.c_str(), 0, 10));
 }
 
-void Lingo::func_gotoLoop() {
-	_vm->_currentScore->goToLoop();
+void Lingo::func_gotoloop() {
+	_vm->_currentScore->gotoloop();
 }
 
-void Lingo::func_gotoNext() {
-	_vm->_currentScore->goToNext();
+void Lingo::func_gotonext() {
+	_vm->_currentScore->gotonext();
 }
 
-void Lingo::func_gotoPrev() {
-	_vm->_currentScore->goToPrevious();
+void Lingo::func_gotoprevious() {
+	_vm->_currentScore->gotoprevious();
 }
 
 }

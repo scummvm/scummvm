@@ -408,7 +408,7 @@ void Score::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 	_castsInfo[id] = ci;
 }
 
-void Score::goToLoop() {
+void Score::gotoloop() {
 	//This command has the playback head contonuously return to the first marker to to the left and then loop back.
 	//If no marker are to the left of the playback head, the playback head continues to the right.
 	Common::SortedArray<Label *>::iterator i;
@@ -421,7 +421,7 @@ void Score::goToLoop() {
 	}
 }
 
-void Score::goToNext() {
+void Score::gotonext() {
 	Common::SortedArray<Label *>::iterator i;
 
 	for (i = _labels->begin(); i != _labels->end(); ++i) {
@@ -444,7 +444,7 @@ void Score::goToNext() {
 	_currentFrame = 0;
 }
 
-void Score::goToPrevious() {
+void Score::gotoprevious() {
 	//One label
 	if (_labels->begin() == _labels->end()) {
 		_currentFrame = (*_labels->begin())->number;
