@@ -1030,6 +1030,77 @@ drawLine(int x1, int y1, int x2, int y2) {
 	}
 }
 
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+drawLineClip(int x1, int y1, int x2, int y2, Common::Rect clipping) {
+	x1 = CLIP(x1, 0, (int)Base::_activeSurface->w);
+	x2 = CLIP(x2, 0, (int)Base::_activeSurface->w);
+	y1 = CLIP(y1, 0, (int)Base::_activeSurface->h);
+	y2 = CLIP(y2, 0, (int)Base::_activeSurface->h);
+
+	// we draw from top to bottom
+	if (y2 < y1) {
+		SWAP(x1, x2);
+		SWAP(y1, y2);
+	}
+
+	uint dx = ABS(x2 - x1);
+	uint dy = ABS(y2 - y1);
+
+	// this is a point, not a line. stoopid.
+	if (dy == 0 && dx == 0)
+		return;
+
+	if (Base::_strokeWidth == 0)
+		return;
+
+	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
+	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
+	int st = Base::_strokeWidth >> 1;
+
+	Common::Rect backup = _clippingArea;
+	_clippingArea = clipping;
+	bool needsClipping = !_clippingArea.isEmpty() && (!_clippingArea.contains(x1, y1) || !_clippingArea.contains(x2, y2));
+	if (!needsClipping) {
+		drawLine(x1, y1, x2, y2);
+		_clippingArea = backup;
+		return;
+	}
+
+	int ptr_x = x1, ptr_y = y1;
+
+	if (dy == 0) { // horizontal lines
+		colorFillClip<PixelType>(ptr, ptr + dx + 1, (PixelType)_fgColor, x1, y1, _clippingArea);
+
+		for (int i = 0, p = pitch; i < st; ++i, p += pitch) {
+			colorFillClip<PixelType>(ptr + p, ptr + dx + 1 + p, (PixelType)_fgColor, x1, y1 + p/pitch, _clippingArea);
+			colorFillClip<PixelType>(ptr - p, ptr + dx + 1 - p, (PixelType)_fgColor, x1, y1 - p/pitch, _clippingArea);
+		}
+
+	} else if (dx == 0) { // vertical lines
+						  // these ones use a static pitch increase.
+		while (y1++ <= y2) {
+			colorFillClip<PixelType>(ptr - st, ptr + st, (PixelType)_fgColor, x1 - st, ptr_y, _clippingArea);
+			ptr += pitch;
+			++ptr_y;
+		}
+
+	} else if (dx == dy) { // diagonal lines
+						   // these ones also use a fixed pitch increase
+		pitch += (x2 > x1) ? 1 : -1;
+
+		while (dy--) {
+			colorFillClip<PixelType>(ptr - st, ptr + st, (PixelType)_fgColor, ptr_x - st, ptr_y, _clippingArea);
+			ptr += pitch;
+			++ptr_y;
+			if (x2 > x1) ++ptr_x; else --ptr_x;
+		}
+
+	} else { // generic lines, use the standard algorithm...
+		drawLineAlgClip(x1, y1, x2, y2, dx, dy, (PixelType)_fgColor);
+	}
+}
+
 /** CIRCLES **/
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
@@ -1870,6 +1941,59 @@ drawLineAlg(int x1, int y1, int x2, int y2, uint dx, uint dy, PixelType color) {
 
 	ptr = (PixelType *)_activeSurface->getBasePtr(x2, y2);
 	*ptr = (PixelType)color;
+}
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+drawLineAlgClip(int x1, int y1, int x2, int y2, uint dx, uint dy, PixelType color) {
+	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
+	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
+	int xdir = (x2 > x1) ? 1 : -1;
+	int ptr_x = x1, ptr_y = y1;
+
+	if (IS_IN_CLIP(ptr_x, ptr_y)) *ptr = (PixelType)color;
+
+	if (dx > dy) {
+		int ddy = dy * 2;
+		int dysub = ddy - (dx * 2);
+		int error_term = ddy - dx;
+
+		while (dx--) {
+			if (error_term >= 0) {
+				ptr += pitch;
+				++ptr_y;
+				error_term += dysub;
+			} else {
+				error_term += ddy;
+			}
+
+			ptr += xdir;
+			ptr_x += xdir;
+			if (IS_IN_CLIP(ptr_x, ptr_y)) *ptr = (PixelType)color;
+		}
+	} else {
+		int ddx = dx * 2;
+		int dxsub = ddx - (dy * 2);
+		int error_term = ddx - dy;
+
+		while (dy--) {
+			if (error_term >= 0) {
+				ptr += xdir;
+				ptr_x += xdir;
+				error_term += dxsub;
+			} else {
+				error_term += ddx;
+			}
+
+			ptr += pitch;
+			++ptr_y;
+			if (IS_IN_CLIP(ptr_x, ptr_y)) *ptr = (PixelType)color;
+		}
+	}
+
+	ptr = (PixelType *)_activeSurface->getBasePtr(x2, y2);
+	ptr_x = x2; ptr_y = y2;
+	if (IS_IN_CLIP(ptr_x, ptr_y)) *ptr = (PixelType)color;
 }
 
 /** VERTICAL TRIANGLE DRAWING ALGORITHM **/

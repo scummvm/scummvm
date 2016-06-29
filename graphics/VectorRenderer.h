@@ -142,6 +142,7 @@ public:
 	 * @param y2 Vertical (Y) coordinate for the line end
 	 */
 	virtual void drawLine(int x1, int y1, int x2, int y2) = 0;
+	virtual void drawLineClip(int x1, int y1, int x2, int y2, Common::Rect clipping) = 0;
 
 	/**
 	 * Draws a circle centered at (x,y) with radius r.
@@ -374,10 +375,10 @@ public:
 		drawSquareClip(x, y, w, h, clip);
 	}
 
-	void drawCallback_LINE(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO
+	void drawCallback_LINE(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		drawLine(x, y, x + w, y + w);
+		drawLineClip(x, y, x + w, y + w, clip);
 	}
 
 	void drawCallback_ROUNDSQ(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO
