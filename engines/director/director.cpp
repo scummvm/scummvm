@@ -395,14 +395,14 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	Common::SeekableSubReadStreamEndian *castStream = shardcst->getResource(MKTAG('V','W','C','R'), 1024);
 
 	castScore->loadCastData(*castStream);
-	_sharedCasts = castScore->_casts;
+	*_sharedCasts = castScore->_casts;
 
 	Common::Array<uint16> dib = shardcst->getResourceIDList(MKTAG('D','I','B',' '));
 
 	if (dib.size() != 0) {
 		Common::Array<uint16>::iterator iterator;
 		for (iterator = dib.begin(); iterator != dib.end(); ++iterator) {
-			_sharedDIB[*iterator] = shardcst->getResource(MKTAG('D','I','B',' '), *iterator);
+			_sharedDIB->setVal(*iterator, shardcst->getResource(MKTAG('D','I','B',' '), *iterator));
 		}
 	}
 
@@ -411,7 +411,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	if (stxt.size() != 0) {
 		Common::Array<uint16>::iterator iterator;
 		for (iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
-			_sharedSTXT[*iterator] = shardcst->getResource(MKTAG('S','T','X','T'), *iterator);
+			_sharedSTXT->setVal(*iterator, shardcst->getResource(MKTAG('S','T','X','T'), *iterator));
 		}
 	}
 
@@ -420,7 +420,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	if (stxt.size() != 0) {
 		Common::Array<uint16>::iterator iterator;
 		for (iterator = sound.begin(); iterator != sound.end(); ++iterator) {
-			_sharedSTXT[*iterator] = shardcst->getResource(MKTAG('S','N','D',' '), *iterator);
+			_sharedSound->setVal(*iterator, shardcst->getResource(MKTAG('S','N','D',' '), *iterator));
 		}
 	}
 }

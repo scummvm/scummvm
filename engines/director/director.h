@@ -24,6 +24,7 @@
 #define DIRECTOR_DIRECTOR_H
 
 #include "common/scummsys.h"
+#include "common/substream.h"
 
 #include "common/str.h"
 #include "common/hashmap.h"
@@ -67,9 +68,9 @@ public:
 	const byte *getPalette() const { return _currentPalette; }
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
 	void loadSharedCastsFrom(Common::String filename);
-	Common::HashMap<int, Common::SeekableReadStream *> getSharedDIB() const { return _sharedDIB; }
-	Common::HashMap<int, Common::SeekableReadStream *> getSharedSTXT() const { return _sharedSTXT; }
-	Common::HashMap<int, Cast *> getSharedCasts() const { return _sharedCasts; }
+	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedDIB() const { return _sharedDIB; }
+	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedSTXT() const { return _sharedSTXT; }
+	Common::HashMap<int, Cast *> *getSharedCasts() const { return _sharedCasts; }
 
 	Common::HashMap<Common::String, Score *> *_movies;
 	Score *_currentScore;
@@ -93,10 +94,10 @@ private:
 	Common::String readPascalString(Common::SeekableReadStream &stream);
 
 	Common::String _sharedMMM;
-	Common::HashMap<int, Cast *> _sharedCasts;
-	Common::HashMap<int, Common::SeekableReadStream *> _sharedDIB;
-	Common::HashMap<int, Common::SeekableReadStream *> _sharedSTXT;
-	Common::HashMap<int, Common::SeekableReadStream *> _sharedSound;
+	Common::HashMap<int, Cast *> *_sharedCasts;
+	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedDIB;
+	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedSTXT;
+	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedSound;
 
 	Archive *_mainArchive;
 	Common::MacResManager *_macBinary;

@@ -1129,11 +1129,11 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 
 			Cast *cast;
 			if (!_vm->_currentScore->_casts.contains(_sprites[i]->_castId)) {
-				if (!_vm->getSharedCasts().contains(_sprites[i]->_castId)) {
+				if (!_vm->getSharedCasts()->contains(_sprites[i]->_castId)) {
 					warning("Cast id %d not found", _sprites[i]->_castId);
 					continue;
 				} else {
-					cast = _vm->getSharedCasts().getVal(_sprites[i]->_castId);
+					cast = _vm->getSharedCasts()->getVal(_sprites[i]->_castId);
 				}
 			} else {
 				cast = _vm->_currentScore->_casts[_sprites[i]->_castId];
@@ -1148,11 +1148,11 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			uint32 imgId = 1024 + _sprites[i]->_castId;
 
 			if (!_vm->_currentScore->getArchive()->hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
-				if (!_vm->getSharedDIB().contains(imgId)) {
+				if (!_vm->getSharedDIB()->contains(imgId)) {
 					warning("DIB id %d not found", imgId);
 					continue;
 				} else {
-					img.loadStream(*_vm->getSharedDIB().getVal(imgId));
+					img.loadStream(*_vm->getSharedDIB()->getVal(imgId));
 				}
 			} else {
 				img.loadStream(*_vm->_currentScore->getArchive()->getResource(MKTAG('D', 'I', 'B', ' '), imgId));
