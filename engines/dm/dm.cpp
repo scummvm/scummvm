@@ -189,6 +189,8 @@ void DMEngine::processNewPartyMap(uint16 mapIndex) {
 }
 
 Common::Error DMEngine::run() {
+	initArrays();
+
 	// scummvm/engine specific
 	initGraphics(320, 200, false);
 	_console = new Console(this);
