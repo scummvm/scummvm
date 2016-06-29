@@ -76,7 +76,7 @@ typedef void (*inst)(void);
 
 typedef Common::Array<inst> ScriptData;
 
-typedef struct Symbol {	/* symbol table entry */
+struct Symbol {	/* symbol table entry */
 	char *name;
 	int type;
 	union {
@@ -89,9 +89,9 @@ typedef struct Symbol {	/* symbol table entry */
 	bool global;
 
 	Symbol();
-} Symbol;
+};
 
-typedef struct Datum {	/* interpreter stack type */
+struct Datum {	/* interpreter stack type */
 	int type;
 
 	union {
@@ -101,13 +101,13 @@ typedef struct Datum {	/* interpreter stack type */
 	} u;
 
 	Datum() { u.sym = NULL; type = VOID; }
-} Datum;
+};
 
-typedef struct CFrame {	/* proc/func call stack frame */
+struct CFrame {	/* proc/func call stack frame */
 	Symbol	*sp;	/* symbol table entry */
 	int		retpc;	/* where to resume after return */
 	ScriptData	*retscript;	 /* which script to resume after return */
-} CFrame;
+};
 
 typedef Common::HashMap<int32, ScriptData *> ScriptHash;
 typedef Common::Array<Datum> StackData;
