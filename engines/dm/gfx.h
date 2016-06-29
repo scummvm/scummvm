@@ -390,7 +390,8 @@ class DisplayMan {
 
 	bool isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex); // @ F0107_DUNGEONVIEW_IsDrawnWallOrnamentAnAlcove_CPSF
 
-	uint16 *_derivedBitmapByteCount;// @ G0639_pui_DerivedBitmapByteCount
+	uint16 *_derivedBitmapByteCount; // @ G0639_pui_DerivedBitmapByteCount
+	byte **_derivedBitmaps; // @ G0638_pui_DerivedBitmapBlockIndices
 
 public:
 	// some methods use this for a stratchpad, don't make assumptions about content between function calls

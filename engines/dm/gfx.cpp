@@ -617,6 +617,7 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_ceilingBitmap = nullptr;
 	_currMapAllowedCreatureTypes = nullptr;
 	_derivedBitmapByteCount = nullptr;
+	_derivedBitmaps = nullptr;
 
 	_screenWidth = _screenHeight = 0;
 	_championPortraitOrdinal = 0;
@@ -671,6 +672,13 @@ DisplayMan::~DisplayMan() {
 	delete[] _wallSetBitMaps[kDoorFrameRight_D1C]; // copy of another bitmap, but flipped
 	for (uint16 i = kWall_D0L_Flipped; i <= kWall_D3LCR_Flipped; ++i)
 		delete[] _wallSetBitMaps[i];
+
+	delete[] _derivedBitmapByteCount;
+	if (_derivedBitmaps) {
+		for (uint16 i = 0; i < kDerivedBitmapMaximumCount; ++i)
+			delete[] _derivedBitmaps;
+		delete[] _derivedBitmaps;
+	}
 }
 
 void DisplayMan::setUpScreens(uint16 width, uint16 height) {
@@ -712,6 +720,11 @@ void DisplayMan::loadGraphics() {
 
 	if (!_derivedBitmapByteCount)
 		_derivedBitmapByteCount = new uint16[kDerivedBitmapMaximumCount];
+	if (!_derivedBitmaps) {
+		_derivedBitmaps = new byte*[kDerivedBitmapMaximumCount];
+		for (uint16 i = 0; i < kDerivedBitmapMaximumCount; ++i)
+			_derivedBitmaps[i] = nullptr;
+	}
 
 	_derivedBitmapByteCount[kDerivedBitmapViewport] = 224 * 136;
 	_derivedBitmapByteCount[kDerivedBitmapThievesEyeVisibleArea] = 96 * 95;
@@ -791,16 +804,16 @@ void DisplayMan::loadGraphics() {
 	CreatureAspect *creatureAsp;
 	for (int16 creatureIndex = 0; creatureIndex < kCreatureTypeCount; creatureIndex++) {
 		creatureAsp = &gCreatureAspects[creatureIndex];
-		
+
 		int16 creatureGraphicInfo = gCreatureInfo[creatureIndex]._graphicInfo;
 		creatureAsp->_firstDerivedBitmapIndex = derivedBitmapIndex;
-		
+
 		int16 creatureFrontBitmapD3PixelCount;
 		_derivedBitmapByteCount[derivedBitmapIndex++] = creatureFrontBitmapD3PixelCount = getScaledBitmapPixelCount(creatureAsp->_byteWidthFront, creatureAsp->_heightFront, kScale16_D3);
-		
+
 		int16 creatureFrontBitmapD2PixelCount;
 		_derivedBitmapByteCount[derivedBitmapIndex++] = creatureFrontBitmapD2PixelCount = getScaledBitmapPixelCount(creatureAsp->_byteWidthFront, creatureAsp->_heightFront, kScale20_D2);
-		
+
 		if (getFlag(creatureGraphicInfo, kCreatureInfoMaskSide)) {
 			_derivedBitmapByteCount[derivedBitmapIndex++] = getScaledBitmapPixelCount(creatureAsp->_byteWidthSide, creatureAsp->_heightSide, kScale16_D3);
 			_derivedBitmapByteCount[derivedBitmapIndex++] = getScaledBitmapPixelCount(creatureAsp->_byteWidthSide, creatureAsp->_heightSide, kScale20_D2);
@@ -1717,6 +1730,18 @@ int16 DisplayMan::getScaledBitmapPixelCount(int16 pixelWidth, int16 pixelHeight,
 
 int16 DisplayMan::getScaledDimension(int16 dimension, int16 scale) {
 	return (dimension * scale + scale / 2) / 32;
+}
+
+bool DisplayMan::isDerivedBitmapInCache(int16 derivedBitmapIndex) {
+	if (_derivedBitmaps == nullptr) {
+		_derivedBitmaps[derivedBitmapIndex] = new byte[_derivedBitmapByteCount[derivedBitmapIndex]];
+		return false;
+	} else
+		return true;
+}
+
+byte* DisplayMan::getDerivedBitmap(int16 derivedBitmapIndex) {
+	return _derivedBitmaps[derivedBitmapIndex];
 }
 
 void DisplayMan::clearScreenBox(Color color, Box &box, Viewport &viewport) {
