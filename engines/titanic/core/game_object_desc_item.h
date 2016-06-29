@@ -23,7 +23,7 @@
 #ifndef TITANIC_GAME_OBJECT_DESK_ITEM_H
 #define TITANIC_GAME_OBJECT_DESK_ITEM_H
 
-#include "titanic/core/movie_clip.h"
+#include "titanic/support/movie_clip.h"
 #include "titanic/core/tree_item.h"
 #include "titanic/core/list.h"
 

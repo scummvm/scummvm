@@ -25,9 +25,10 @@
 
 #include "titanic/support/mouse_cursor.h"
 #include "titanic/support/credit_text.h"
+#include "titanic/support/movie_range_info.h"
 #include "titanic/support/proximity.h"
 #include "titanic/support/rect.h"
-#include "titanic/core/movie_clip.h"
+#include "titanic/support/movie_clip.h"
 #include "titanic/core/named_item.h"
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_text.h"
@@ -68,7 +69,10 @@ private:
 	 */
 	void loadImage(const CString &name, bool pendingFlag = true);
 
-	void processClipList2();
+	/**
+	 * Process and remove any registered movie range info
+	 */
+	void processMoveRangeInfo();
 
 	/**
 	 * Merges one rect into another, and returns true if there was
@@ -84,9 +88,9 @@ protected:
 	int _field44;
 	int _field48;
 	int _field4C;
-	CMovieClipList _clipList1;
+	CMovieClipList _movieClips;
 	int _initialFrame;
-	CMovieClipList _clipList2;
+	CMovieRangeInfoList _movieRangeInfo;
 	int _frameNumber;
 	CPetText *_text;
 	uint _textBorder;
@@ -533,7 +537,7 @@ public:
 	/**
 	 * Returns the clip list, if any, associated with the item
 	 */
-	virtual const CMovieClipList *getClipList() const { return &_clipList1; }
+	virtual const CMovieClipList *getClipList() const { return &_movieClips; }
 
 	/**
 	 * Allows the item to draw itself

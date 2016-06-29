@@ -30,6 +30,8 @@
 
 namespace Titanic {
 
+class CGameObject;
+
 class CMovieRangeInfo : public ListItem {
 public:
 	int _fieldC;
@@ -57,6 +59,11 @@ public:
 	 * Adds an event to the events list
 	 */
 	void add(CMovieEvent *movieEvent) { _events.push_back(movieEvent); }
+
+	void process(CGameObject *owner);
+};
+
+class CMovieRangeInfoList : public List<CMovieRangeInfo> {
 };
 
 } // End of namespace Titanic

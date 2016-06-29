@@ -63,7 +63,6 @@ MODULE_OBJS := \
 	core/list.o \
 	core/mail_man.o \
 	core/message_target.o \
-	core/movie_clip.o \
 	core/multi_drop_target.o \
 	core/named_item.o \
 	core/node_item.o \
@@ -442,6 +441,7 @@ MODULE_OBJS := \
 	support/image_decoders.o \
 	support/mouse_cursor.o \
 	support/movie.o \
+	support/movie_clip.o \
 	support/movie_event.o \
 	support/movie_range_info.o \
 	support/credit_text.o \

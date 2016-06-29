@@ -64,4 +64,18 @@ void CMovieRangeInfo::load(SimpleFile *file) {
 	}
 }
 
+void CMovieRangeInfo::process(CGameObject *owner) {
+/*
+	int flags = 0;
+	if (_endFrame)
+		flags |= CLIPFLAG_HAS_END_FRAME;
+	if (_startFrame)
+		flags |= CLIPFLAG_HAS_START_FRAME;
+
+	warning("TODO: CMovieClip::process");
+
+	owner->checkPlayMovie(_name, flags);
+	*/
+}
+
 } // End of namespace Titanic

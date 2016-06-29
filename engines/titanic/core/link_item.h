@@ -25,7 +25,7 @@
 
 #include "titanic/support/mouse_cursor.h"
 #include "titanic/core/named_item.h"
-#include "titanic/core/movie_clip.h"
+#include "titanic/support/movie_clip.h"
 
 namespace Titanic {
 

@@ -25,7 +25,7 @@
 
 #include "titanic/support/rect.h"
 #include "titanic/core/list.h"
-#include "titanic/core/movie_clip.h"
+#include "titanic/support/movie_clip.h"
 #include "titanic/core/named_item.h"
 #include "titanic/core/resource_key.h"
 

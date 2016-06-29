@@ -62,8 +62,6 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);
-
-	void process(CGameObject *owner);
 };
 
 /**

@@ -70,7 +70,7 @@
 #include "titanic/core/list.h"
 #include "titanic/core/mail_man.h"
 #include "titanic/core/message_target.h"
-#include "titanic/core/movie_clip.h"
+#include "titanic/support/movie_clip.h"
 #include "titanic/core/multi_drop_target.h"
 #include "titanic/core/node_item.h"
 #include "titanic/core/project_item.h"

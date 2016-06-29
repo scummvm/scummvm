@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/core/movie_clip.h"
+#include "titanic/support/movie_clip.h"
 #include "titanic/core/game_object.h"
 
 namespace Titanic {
@@ -63,20 +63,6 @@ void CMovieClip::load(SimpleFile *file) {
 	}
 
 	ListItem::load(file);
-}
-
-void CMovieClip::process(CGameObject *owner) {
-	int flags = 0;
-	if (_endFrame)
-		flags |= CLIPFLAG_HAS_END_FRAME;
-	if (_startFrame)
-		flags |= CLIPFLAG_HAS_START_FRAME;
-
-	warning("TODO: CMovieClip::process");
-
-	owner->checkPlayMovie(_name, flags);
-
-
 }
 
 CMovieClip *CMovieClipList::findByName(const Common::String &name) const {

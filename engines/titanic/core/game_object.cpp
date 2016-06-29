@@ -93,7 +93,7 @@ void CGameObject::load(SimpleFile *file) {
 
 	switch (val) {
 	case 7:
-		_clipList2.load(file);
+		_movieRangeInfo.load(file);
 		_frameNumber = file->readNumber();
 		// Deliberate fall-through
 
@@ -102,7 +102,7 @@ void CGameObject::load(SimpleFile *file) {
 		// Deliberate fall-through
 
 	case 5:
-		_clipList1.load(file);
+		_movieClips.load(file);
 		// Deliberate fall-through
 
 	case 4:
@@ -179,8 +179,8 @@ void CGameObject::draw(CScreenManager *screenManager) {
 				_frameNumber = -1;
 			}
 
-			if (!_clipList2.empty())
-				processClipList2();
+			if (!_movieRangeInfo.empty())
+				processMoveRangeInfo();
 
 			if (_bounds.intersects(getGameManager()->_bounds)) {
 				if (_surface) {
@@ -376,11 +376,11 @@ void CGameObject::playMovie(int v1, int v2) {
 	}
 }
 
-void CGameObject::processClipList2() {
-	for (CMovieClipList::iterator i = _clipList2.begin(); i != _clipList2.end(); ++i)
+void CGameObject::processMoveRangeInfo() {
+	for (CMovieRangeInfoList::iterator i = _movieRangeInfo.begin(); i != _movieRangeInfo.end(); ++i)
 		(*i)->process(this);
 
-	_clipList2.destroyContents();
+	_movieRangeInfo.destroyContents();
 }
 
 void CGameObject::makeDirty(const Rect &r) {
@@ -499,7 +499,7 @@ void CGameObject::playMovie(uint startFrame, uint endFrame, uint flags) {
 
 void CGameObject::playClip(const CString &name, uint flags) {
 	_frameNumber = -1;
-	CMovieClip *clip = _clipList1.findByName(name);
+	CMovieClip *clip = _movieClips.findByName(name);
 	if (clip)
 		playMovie(clip->_startFrame, clip->_endFrame, flags);
 }
@@ -1064,11 +1064,11 @@ void CGameObject::performAction(int actionNum, CViewItem *view) {
 }
 
 bool CGameObject::clipExistsByStart(const CString &name, int startFrame) const {
-	return _clipList1.existsByStart(name, startFrame);
+	return _movieClips.existsByStart(name, startFrame);
 }
 
 bool CGameObject::clipExistsByEnd(const CString &name, int endFrame) const {
-	return _clipList1.existsByEnd(name, endFrame);
+	return _movieClips.existsByEnd(name, endFrame);
 }
 
 void CGameObject::checkPlayMovie(const CString &name, int flags) {
@@ -1208,7 +1208,7 @@ void CGameObject::movie38(int v1) {
 }
 
 int CGameObject::getClipDuration(const CString &name, int frameRate) const {
-	CMovieClip *clip = _clipList1.findByName(name);
+	CMovieClip *clip = _movieClips.findByName(name);
 	return clip ? (clip->_endFrame - clip->_startFrame) * 1000 / frameRate : 0;
 }
 
