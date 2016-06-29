@@ -381,17 +381,22 @@ void DirectorEngine::setPalette(byte *palette, uint16 count) {
 }
 
 void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
+	Archive *shardcst;
 
-	//TODO d4 arch
-	RIFFArchive *shardcst = new RIFFArchive();
+	if (getVersion() < 4) {
+		shardcst = new RIFFArchive();
+	} else {
+		shardcst = new RIFXArchive();
+	}
+
 	shardcst->openFile(filename);
 
 	Score *castScore = new Score(this);
-
 	Common::SeekableSubReadStreamEndian *castStream = shardcst->getResource(MKTAG('V','W','C','R'), 1024);
 
 	castScore->loadCastData(*castStream);
 	_sharedCasts = castScore->_casts;
+
 	Common::Array<uint16> dib = shardcst->getResourceIDList(MKTAG('D','I','B',' '));
 
 	if (dib.size() != 0) {
