@@ -51,7 +51,8 @@ public:
 	VectorRendererSpec(PixelFormat format);
 
 	void drawLine(int x1, int y1, int x2, int y2); //TODO
-	void drawCircle(int x, int y, int r); //TODO
+	void drawCircle(int x, int y, int r);
+	void drawCircleClip(int x, int y, int r, Common::Rect clipping);
 	void drawSquare(int x, int y, int w, int h);
 	void drawSquareClip(int x, int y, int w, int h, Common::Rect clipping);
 	void drawRoundedSquare(int x, int y, int r, int w, int h);
@@ -160,6 +161,9 @@ protected:
 
 	virtual void drawCircleAlg(int x, int y, int r,
 	    PixelType color, FillMode fill_m);
+
+	virtual void drawCircleAlgClip(int x, int y, int r,
+		PixelType color, FillMode fill_m);
 
 	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h,
 	    PixelType color, FillMode fill_m);

@@ -1069,6 +1069,69 @@ drawCircle(int x, int y, int r) {
 	}
 }
 
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+drawCircleClip(int x, int y, int r, Common::Rect clipping) {
+	if (x + r > Base::_activeSurface->w || y + r > Base::_activeSurface->h ||
+		x - r < 0 || y - r < 0 || x == 0 || y == 0 || r <= 0)
+		return;
+
+	Common::Rect backup = _clippingArea;
+	_clippingArea = clipping;
+	bool useClippingVersions = !(_clippingArea.isEmpty() || _clippingArea.contains(Common::Rect(x - r, y - r, x + r, y + r)));
+
+	if (Base::_fillMode != kFillDisabled && Base::_shadowOffset
+		&& x + r + Base::_shadowOffset < Base::_activeSurface->w
+		&& y + r + Base::_shadowOffset < Base::_activeSurface->h) {
+		if (useClippingVersions)
+			drawCircleAlgClip(x + Base::_shadowOffset + 1, y + Base::_shadowOffset + 1, r, 0, kFillForeground);
+		else
+			drawCircleAlg(x + Base::_shadowOffset + 1, y + Base::_shadowOffset + 1, r, 0, kFillForeground);
+	}
+
+	switch (Base::_fillMode) {
+	case kFillDisabled:
+		if (Base::_strokeWidth)
+			if (useClippingVersions)
+				drawCircleAlgClip(x, y, r, _fgColor, kFillDisabled);
+			else
+				drawCircleAlg(x, y, r, _fgColor, kFillDisabled);
+		break;
+
+	case kFillForeground:
+		if (useClippingVersions)
+			drawCircleAlgClip(x, y, r, _fgColor, kFillForeground);
+		else
+			drawCircleAlg(x, y, r, _fgColor, kFillForeground);
+		break;
+
+	case kFillBackground:
+		if (Base::_strokeWidth > 1) {
+			if (useClippingVersions) {
+				drawCircleAlgClip(x, y, r, _fgColor, kFillForeground);
+				drawCircleAlgClip(x, y, r - Base::_strokeWidth, _bgColor, kFillBackground);
+			} else {
+				drawCircleAlg(x, y, r, _fgColor, kFillForeground);
+				drawCircleAlg(x, y, r - Base::_strokeWidth, _bgColor, kFillBackground);
+			}
+		} else {
+			if (useClippingVersions) {
+				drawCircleAlgClip(x, y, r, _bgColor, kFillBackground);
+				drawCircleAlgClip(x, y, r, _fgColor, kFillDisabled);
+			} else {
+				drawCircleAlg(x, y, r, _bgColor, kFillBackground);
+				drawCircleAlg(x, y, r, _fgColor, kFillDisabled);
+			}
+		}
+		break;
+
+	case kFillGradient:
+		break;
+	}
+
+	_clippingArea = backup;
+}
+
 /** SQUARES **/
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
@@ -2677,7 +2740,47 @@ drawCircleAlg(int x1, int y1, int r, PixelType color, VectorRenderer::FillMode f
 }
 
 
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+drawCircleAlgClip(int x1, int y1, int r, PixelType color, VectorRenderer::FillMode fill_m) {
+	int f, ddF_x, ddF_y;
+	int x, y, px, py, sw = 0;
+	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
+	PixelType *ptr = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
 
+	if (fill_m == kFillDisabled) {
+		while (sw++ < Base::_strokeWidth) {
+			BE_RESET();
+			r--;
+
+			if (IS_IN_CLIP(x1 + y, y1)) *(ptr + y) = color;
+			if (IS_IN_CLIP(x1 - y, y1)) *(ptr - y) = color;
+			if (IS_IN_CLIP(x1, y1 + y)) *(ptr + py) = color;
+			if (IS_IN_CLIP(x1, y1 - y)) *(ptr - py) = color;
+
+			while (x++ < y) {
+				BE_ALGORITHM();
+				BE_DRAWCIRCLE_CLIP(ptr, ptr, ptr, ptr, x, y, px, py, x1, y1, x1, y1, x1, y1, x1, y1);
+
+				if (Base::_strokeWidth > 1) {
+					BE_DRAWCIRCLE_CLIP(ptr, ptr, ptr, ptr, x - 1, y, px, py, x1, y1, x1, y1, x1, y1, x1, y1);
+					BE_DRAWCIRCLE_CLIP(ptr, ptr, ptr, ptr, x, y, px - pitch, py, x1, y1, x1, y1, x1, y1, x1, y1);
+				}
+			}
+		}
+	} else {
+		colorFillClip<PixelType>(ptr - r, ptr + r, color, x1 - r, y1 + r, _clippingArea);
+		BE_RESET();
+
+		while (x++ < y) {
+			BE_ALGORITHM();
+			colorFillClip<PixelType>(ptr - x + py, ptr + x + py, color, x1 - x, y1 + y, _clippingArea);
+			colorFillClip<PixelType>(ptr - x - py, ptr + x - py, color, x1 - x, y1 - y, _clippingArea);
+			colorFillClip<PixelType>(ptr - y + px, ptr + y + px, color, x1 - y, y1 + x, _clippingArea);
+			colorFillClip<PixelType>(ptr - y - px, ptr + y - px, color, x1 - y, y1 - x, _clippingArea);
+		}
+	}
+}
 
 
 /********************************************************************
