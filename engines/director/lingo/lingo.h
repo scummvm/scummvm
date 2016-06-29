@@ -113,6 +113,11 @@ typedef Common::HashMap<int32, ScriptData *> ScriptHash;
 typedef Common::Array<Datum> StackData;
 typedef Common::HashMap<Common::String, Symbol *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SymbolHash;
 
+struct Context {	/* execution context */
+	Symbol *handler;
+	SymbolHash *localvars;
+};
+
 class Lingo {
 public:
 	Lingo(DirectorEngine *vm);
@@ -135,6 +140,8 @@ public:
 
 public:
 	void execute(int pc);
+	void pushContext();
+	void popContext();
 	Symbol *lookupVar(const char *name, bool create = true, bool putInLocalList = true);
 	void define(Common::String &s, int start, int nargs);
 	void codeArg(Common::String *s);
@@ -204,6 +211,8 @@ private:
 	SymbolHash _vars;
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _localvars;
 	SymbolHash _handlers;
+
+	Common::Array<Context *> _contexts;
 
 	int _pc;
 

@@ -64,6 +64,16 @@ void Lingo::execute(int pc) {
 	}
 }
 
+void Lingo::pushContext() {
+	Context *con = new Context;
+
+	_contexts.push_back(con);
+}
+
+void Lingo::popContext() {
+	_contexts.pop_back();
+}
+
 Symbol *Lingo::lookupVar(const char *name, bool create, bool putInLocalList) {
 	Symbol *sym;
 
