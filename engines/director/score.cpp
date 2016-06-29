@@ -74,10 +74,14 @@ void Score::loadArchive() {
 
 	assert(_movieArchive->hasResource(MKTAG('V','W','S','C'), 1024));
 	assert(_movieArchive->hasResource(MKTAG('V','W','C','F'), 1024));
-	assert(_movieArchive->hasResource(MKTAG('V','W','C','R'), 1024));
+
 	loadFrames(*_movieArchive->getResource(MKTAG('V','W','S','C'), 1024));
 	loadConfig(*_movieArchive->getResource(MKTAG('V','W','C','F'), 1024));
-	loadCastData(*_movieArchive->getResource(MKTAG('V','W','C','R'), 1024));
+
+	if (_vm->getVersion() < 4) {
+		assert(_movieArchive->hasResource(MKTAG('V','W','C','R'), 1024));
+		loadCastData(*_movieArchive->getResource(MKTAG('V','W','C','R'), 1024));
+	}
 
 	if (_movieArchive->hasResource(MKTAG('V','W','A','C'), 1024)) {
 		loadActions(*_movieArchive->getResource(MKTAG('V','W','A','C'), 1024));
@@ -145,6 +149,12 @@ void Score::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
 void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 	uint32 size = stream.readUint32();
 	size -= 4;
+
+	if (_vm->getVersion() > 3) {
+		stream.skip(16);
+		//Unknown, some bytes - constant (refer to contuinity).
+	}
+
 	uint16 channelSize;
 	uint16 channelOffset;
 
@@ -158,10 +168,17 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 		Frame *frame = new Frame(*_frames.back());
 
 		while (frameSize != 0) {
-			channelSize = stream.readByte() * 2;
-			channelOffset = stream.readByte() * 2;
+			if (_vm->getVersion() < 4) {
+				channelSize = stream.readByte() * 2;
+				channelOffset = stream.readByte() * 2;
+				frameSize -= channelSize + 2;
+			} else {
+				channelSize = stream.readByte();
+				channelOffset = stream.readByte();
+				frameSize -= channelSize + 4;
+			}
 			frame->readChannel(stream, channelOffset, channelSize);
-			frameSize -= channelSize + 2;
+
 		}
 
 		_frames.push_back(frame);
