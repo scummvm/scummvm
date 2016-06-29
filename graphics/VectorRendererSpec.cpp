@@ -1106,6 +1106,65 @@ drawSquare(int x, int y, int w, int h) {
 	}
 }
 
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+drawSquareClip(int x, int y, int w, int h, Common::Rect clipping) {
+	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h ||
+		w <= 0 || h <= 0 || x < 0 || y < 0)
+		return;
+
+	Common::Rect backup = _clippingArea;
+	_clippingArea = clipping;
+	bool useClippingVersions = !(_clippingArea.isEmpty() || _clippingArea.contains(Common::Rect(x, y, x + w, y + h)));
+
+	if (Base::_fillMode != kFillDisabled && Base::_shadowOffset
+		&& x + w + Base::_shadowOffset < Base::_activeSurface->w
+		&& y + h + Base::_shadowOffset < Base::_activeSurface->h) {
+		if (useClippingVersions)
+			drawSquareShadowClip(x, y, w, h, Base::_shadowOffset);
+		else
+			drawSquareShadow(x, y, w, h, Base::_shadowOffset);
+	}
+
+	switch (Base::_fillMode) {
+	case kFillDisabled:
+		if (Base::_strokeWidth)
+			if (useClippingVersions)
+				drawSquareAlgClip(x, y, w, h, _fgColor, kFillDisabled);
+			else
+				drawSquareAlg(x, y, w, h, _fgColor, kFillDisabled);
+		break;
+
+	case kFillForeground:
+		if (useClippingVersions)
+			drawSquareAlgClip(x, y, w, h, _fgColor, kFillForeground);
+		else 
+			drawSquareAlg(x, y, w, h, _fgColor, kFillForeground);
+		break;
+
+	case kFillBackground:
+		if (useClippingVersions) {
+			drawSquareAlgClip(x, y, w, h, _bgColor, kFillBackground);
+			drawSquareAlgClip(x, y, w, h, _fgColor, kFillDisabled);
+		} else {
+			drawSquareAlg(x, y, w, h, _bgColor, kFillBackground);
+			drawSquareAlg(x, y, w, h, _fgColor, kFillDisabled);
+		}
+		break;
+
+	case kFillGradient:
+		VectorRendererSpec::drawSquareAlg(x, y, w, h, 0, kFillGradient);
+		if (Base::_strokeWidth)
+			if (useClippingVersions)
+				drawSquareAlgClip(x, y, w, h, _fgColor, kFillDisabled);
+			else
+				drawSquareAlg(x, y, w, h, _fgColor, kFillDisabled);
+		break;
+	}
+
+	_clippingArea = backup;
+}
+
 /** ROUNDED SQUARES **/
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
@@ -1602,6 +1661,46 @@ drawSquareAlg(int x, int y, int w, int h, PixelType color, VectorRenderer::FillM
 			colorFill<PixelType>(ptr, ptr + Base::_strokeWidth, color);
 			colorFill<PixelType>(ptr + w - Base::_strokeWidth, ptr + w, color);
 			ptr += pitch;
+		}
+	}
+}
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+drawSquareAlgClip(int x, int y, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
+	// Do not draw anything for empty rects.
+	if (w <= 0 || h <= 0) {
+		return;
+	}
+
+	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x, y);
+	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
+	int max_h = h;
+	int ptr_y = y;
+
+	if (fill_m != kFillDisabled) {
+		while (h--) {
+			if (fill_m == kFillGradient)
+				color = calcGradient(max_h - h, max_h);
+
+			colorFillClip<PixelType>(ptr, ptr + w, color, x, ptr_y, _clippingArea);
+			ptr += pitch;
+			++ptr_y;
+		}
+	} else {
+		int sw = Base::_strokeWidth, sp = 0, hp = pitch * (h - 1);
+
+		while (sw--) {
+			colorFillClip<PixelType>(ptr + sp, ptr + w + sp, color, x, ptr_y + sp/pitch, _clippingArea);
+			colorFillClip<PixelType>(ptr + hp - sp, ptr + w + hp - sp, color, x, ptr_y + h - sp/pitch, _clippingArea);
+			sp += pitch;
+		}
+
+		while (h--) {
+			colorFillClip<PixelType>(ptr, ptr + Base::_strokeWidth, color, x, ptr_y, _clippingArea);
+			colorFillClip<PixelType>(ptr + w - Base::_strokeWidth, ptr + w, color, x + w - Base::_strokeWidth, ptr_y, _clippingArea);
+			ptr += pitch;
+			ptr_y += 1;
 		}
 	}
 }
@@ -2624,6 +2723,54 @@ drawSquareShadow(int x, int y, int w, int h, int offset) {
 		while (j--)
 			blendPixelPtr(ptr + j, 0, (((offset - j) * (offset - i)) << 8) / (offset * offset));
 		ptr += pitch;
+	}
+}
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+drawSquareShadowClip(int x, int y, int w, int h, int offset) {
+	// Do nothing for empty rects or no shadow offset.
+	if (w <= 0 || h <= 0 || offset <= 0) {
+		return;
+	}
+
+	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x + w - 1, y + offset);
+	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
+	int i, j, ptr_x = x+w-1, ptr_y = y+offset;
+
+	i = h - offset;
+
+	while (i--) {
+		j = offset;
+		while (j--)
+			blendPixelPtrClip(ptr + j, 0, ((offset - j) << 8) / offset, ptr_x + j, ptr_y);
+		ptr += pitch;
+		++ptr_y;
+	}
+
+	ptr = (PixelType *)_activeSurface->getBasePtr(x + offset, y + h - 1);
+	ptr_x = x + offset;
+	ptr_y = y + h - 1;
+
+	while (i++ < offset) {
+		j = w - offset;
+		while (j--)
+			blendPixelPtrClip(ptr + j, 0, ((offset - i) << 8) / offset, ptr_x + j, ptr_y);
+		ptr += pitch;
+		++ptr_y;
+	}
+
+	ptr = (PixelType *)_activeSurface->getBasePtr(x + w, y + h);
+	ptr_x = x + w;
+	ptr_y = y + h;
+
+	i = 0;
+	while (i++ < offset) {
+		j = offset - 1;
+		while (j--)
+			blendPixelPtrClip(ptr + j, 0, (((offset - j) * (offset - i)) << 8) / (offset * offset), ptr_x + j, ptr_y);
+		ptr += pitch;
+		++ptr_y;
 	}
 }
 

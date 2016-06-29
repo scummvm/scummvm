@@ -379,9 +379,13 @@ public:
 	void drawCaret(const Common::Rect &r, bool erase,
 	               WidgetStateInfo state = kStateEnabled);
 
+	void drawCaretClip(const Common::Rect &r, const Common::Rect &clip, bool erase,
+		WidgetStateInfo state = kStateEnabled);
+
 	void drawLineSeparator(const Common::Rect &r, WidgetStateInfo state = kStateEnabled);
 
 	void drawDialogBackground(const Common::Rect &r, DialogBackground type, WidgetStateInfo state = kStateEnabled);
+	void drawDialogBackgroundClip(const Common::Rect &r, const Common::Rect &clip, DialogBackground type, WidgetStateInfo state = kStateEnabled);
 
 	void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, Graphics::TextAlign align = Graphics::kTextAlignCenter, TextInversionState inverted = kTextInversionNone, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold, FontColor color = kFontColorNormal, bool restore = true, const Common::Rect &drawableTextArea = Common::Rect(0, 0, 0, 0));
 

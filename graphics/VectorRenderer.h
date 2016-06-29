@@ -161,6 +161,7 @@ public:
 	 * @param h Height of the square
 	 */
 	virtual void drawSquare(int x, int y, int w, int h) = 0;
+	virtual void drawSquareClip(int x, int y, int w, int h, Common::Rect clipping) = 0;
 
 	/**
 	 * Draws a rounded square starting at (x,y) with the given width and height.
@@ -369,7 +370,7 @@ public:
 	void drawCallback_SQUARE(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		drawSquare(x, y, w, h);
+		drawSquareClip(x, y, w, h, clip);
 	}
 
 	void drawCallback_LINE(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO

@@ -52,10 +52,11 @@ public:
 
 	void drawLine(int x1, int y1, int x2, int y2); //TODO
 	void drawCircle(int x, int y, int r); //TODO
-	void drawSquare(int x, int y, int w, int h); //TODO
+	void drawSquare(int x, int y, int w, int h);
+	void drawSquareClip(int x, int y, int w, int h, Common::Rect clipping);
 	void drawRoundedSquare(int x, int y, int r, int w, int h);
 	void drawRoundedSquareClip(int x, int y, int r, int w, int h, int cx, int cy, int cw, int ch);
-	void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient); //TODO
+	void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient);
 	void drawTriangleClip(int x, int y, int base, int height, TriangleOrientation orient, Common::Rect clipping);
 	void drawTab(int x, int y, int r, int w, int h); //TODO
 	void drawBeveledSquare(int x, int y, int w, int h, int bevel) { //TODO
@@ -181,6 +182,9 @@ protected:
 	virtual void drawSquareAlg(int x, int y, int w, int h,
 	    PixelType color, FillMode fill_m);
 
+	virtual void drawSquareAlgClip(int x, int y, int w, int h,
+		PixelType color, FillMode fill_m);
+
 	virtual void drawTriangleVertAlg(int x, int y, int w, int h,
 	    bool inverted, PixelType color, FillMode fill_m);
 
@@ -214,6 +218,7 @@ protected:
 	 * @param offset Intensity/size of the shadow.
 	 */
 	virtual void drawSquareShadow(int x, int y, int w, int h, int offset);
+	virtual void drawSquareShadowClip(int x, int y, int w, int h, int offset);
 	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int offset);
 	virtual void drawRoundedSquareShadowClip(int x, int y, int r, int w, int h, int offset);
 
