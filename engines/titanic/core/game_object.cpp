@@ -1197,12 +1197,12 @@ void CGameObject::setMovie14(int v) {
 		_surface->_movie->_field14 = v;
 }
 
-void CGameObject::movie38(int v1, int v2) {
+void CGameObject::surface38(int v1, int v2) {
 	if (_surface)
 		_surface->proc38(v1, v2);
 }
 
-void CGameObject::movie38(int v1) {
+void CGameObject::surface38(int v1) {
 	if (_surface)
 		_surface->proc38(-1, v1);
 }

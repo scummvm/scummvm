@@ -34,16 +34,14 @@ class CGameObject;
 
 class CMovieRangeInfo : public ListItem {
 public:
-	int _fieldC;
-	int _field10;
-	int _field14;
-	int _field18;
-	int _field1C;
+	CString _movieName;
+	uint _startFrame;
+	uint _endFrame;
 	CMovieEventList _events;
 public:
 	CMovieRangeInfo();
 	CMovieRangeInfo(const CMovieRangeInfo *src);
-	virtual ~CMovieRangeInfo() {}
+	virtual ~CMovieRangeInfo();
 
 	/**
 	 * Save the data for the class to file
@@ -58,7 +56,11 @@ public:
 	/**
 	 * Adds an event to the events list
 	 */
-	void add(CMovieEvent *movieEvent) { _events.push_back(movieEvent); }
+	void addEvent(CMovieEvent *movieEvent) { _events.push_back(movieEvent); }
+
+	void get1(CMovieEventList &list);
+
+	void get2(CMovieEventList &list, int val);
 
 	void process(CGameObject *owner);
 };

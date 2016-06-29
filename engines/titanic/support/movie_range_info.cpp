@@ -21,19 +21,22 @@
  */
 
 #include "titanic/support/movie_range_info.h"
+#include "titanic/support/movie_clip.h"
+#include "titanic/core/game_object.h"
 
 namespace Titanic {
 
-CMovieRangeInfo::CMovieRangeInfo() : ListItem(), _fieldC(0),
-		_field10(0), _field14(0), _field18(0), _field1C(0) {
+CMovieRangeInfo::CMovieRangeInfo() : ListItem(), _startFrame(0), _endFrame(0) {
+}
+
+CMovieRangeInfo::~CMovieRangeInfo() {
+	_events.destroyContents();
 }
 
 CMovieRangeInfo::CMovieRangeInfo(const CMovieRangeInfo *src) : ListItem() {
-	_fieldC = src->_fieldC;
-	_field10 = src->_field10;
-	_field14 = src->_field14;
-	_field18 = src->_field18;
-	_field1C = src->_field1C;
+	_movieName = src->_movieName;
+	_startFrame = src->_startFrame;
+	_endFrame = src->_endFrame;
 
 	// Duplicate the events list
 	for (CMovieEventList::const_iterator i = _events.begin();
@@ -44,38 +47,60 @@ CMovieRangeInfo::CMovieRangeInfo(const CMovieRangeInfo *src) : ListItem() {
 
 void CMovieRangeInfo::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(0, indent);
-	file->writeNumberLine(_fieldC, indent + 1);
-	file->writeNumberLine(_field10, indent + 1);
-	file->writeNumberLine(_field14, indent + 1);
-	file->writeNumberLine(_field1C, indent + 1);
-	file->writeNumberLine(_field18, indent + 1);
+	file->writeQuotedLine(_movieName, indent + 1);
+	file->writeNumberLine(_endFrame, indent + 1);
+	file->writeNumberLine(_startFrame, indent + 1);
 	_events.save(file, indent + 1);
 }
 
 void CMovieRangeInfo::load(SimpleFile *file) {
 	int val = file->readNumber();
 	if (!val) {
-		_fieldC = file->readNumber();
-		_field10 = file->readNumber();
-		_field14 = file->readNumber();
-		_field1C = file->readNumber();
-		_field18 = file->readNumber();
+		_movieName = file->readString();
+		_endFrame = file->readNumber();
+		_startFrame = file->readNumber();
 		_events.load(file);
 	}
 }
 
+void CMovieRangeInfo::get1(CMovieEventList &list) {
+	for (CMovieEventList::iterator i = _events.begin(); i != _events.end(); ++i) {
+		CMovieEvent *movieEvent = *i;
+		if (movieEvent->_fieldC == 1)
+			list.push_back(new CMovieEvent(movieEvent));
+	}
+}
+
+void CMovieRangeInfo::get2(CMovieEventList &list, int val) {
+	for (CMovieEventList::iterator i = _events.begin(); i != _events.end(); ++i) {
+		CMovieEvent *movieEvent = *i;
+		if (movieEvent->_fieldC == 2 && movieEvent->_field1C == val)
+			list.push_back(new CMovieEvent(movieEvent));
+	}
+}
+
 void CMovieRangeInfo::process(CGameObject *owner) {
-/*
 	int flags = 0;
 	if (_endFrame)
 		flags |= CLIPFLAG_HAS_END_FRAME;
 	if (_startFrame)
 		flags |= CLIPFLAG_HAS_START_FRAME;
+	
+	for (CMovieEventList::iterator i = _events.begin(); i != _events.end(); ++i) {
+		CMovieEvent *movieEvent = *i;
+		if (!movieEvent->_fieldC) {
+			flags |= CLIPFLAG_PLAY;
+			break;
+		}
+	}
 
-	warning("TODO: CMovieClip::process");
+	owner->checkPlayMovie(_movieName, flags);
 
-	owner->checkPlayMovie(_name, flags);
-	*/
+	for (CMovieEventList::iterator i = _events.begin(); i != _events.end(); ++i) {
+		CMovieEvent *movieEvent = *i;
+		if (!movieEvent->_fieldC)
+			owner->surface38(movieEvent->_field1C);
+	}
 }
 
 } // End of namespace Titanic

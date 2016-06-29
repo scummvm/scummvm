@@ -387,10 +387,6 @@ protected:
 
 	void setMovie14(int v);
 
-	void movie38(int v1, int v2);
-
-	void movie38(int v1);
-
 	void fn10(int v1, int v2, int v3);
 
 	/**
@@ -848,6 +844,12 @@ public:
 	 * Gets a dial region for a given NPC
 	 */
 	int talkGetDIalRegion(const CString &name, int dialNum);
+
+	/*--- CVideoSurface Methods ---*/
+
+	void surface38(int v1, int v2);
+
+	void surface38(int v1);
 };
 
 } // End of namespace Titanic
