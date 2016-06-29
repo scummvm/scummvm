@@ -708,6 +708,44 @@ fillSurface() {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
+fillSurfaceClip(Common::Rect clipping) {
+	int w = _activeSurface->w;
+	int h = _activeSurface->h;
+	if (clipping.isEmpty() || (clipping.left == 0 && clipping.top == 0 && clipping.right == w && clipping.bottom == h)) {
+		fillSurface();
+		return;
+	}
+
+	byte *ptr = (byte *)_activeSurface->getPixels();
+	int pitch = _activeSurface->pitch;
+
+	if (Base::_fillMode == kFillBackground || Base::_fillMode == kFillForeground) {		
+		PixelType color = (Base::_fillMode == kFillBackground ? _bgColor : _fgColor);
+		byte *ptrLeft = (ptr + _clippingArea.left), *ptrRight = ptr + _clippingArea.right;
+		for (int i = 0; i < h; i++) {			
+			if (_clippingArea.top <= i && i < _clippingArea.bottom) {
+				colorFill<PixelType>((PixelType *)ptrLeft, (PixelType *)ptrRight, color);
+			}
+
+			ptrLeft += pitch;
+			ptrRight += pitch;
+		}
+
+	} else if (Base::_fillMode == kFillGradient) {
+		precalcGradient(h);
+
+		for (int i = 0; i < h; i++) {
+			if (_clippingArea.top <= i && i < _clippingArea.bottom) {
+				gradientFill((PixelType *)ptr + _clippingArea.left, _clippingArea.width(), 0, i);
+			}
+
+			ptr += pitch;
+		}
+	}
+}
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
 copyFrame(OSystem *sys, const Common::Rect &r) {
 
 	sys->copyRectToOverlay(

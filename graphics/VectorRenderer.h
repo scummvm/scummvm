@@ -290,6 +290,7 @@ public:
 	 * Defaults to using the active Foreground color for filling.
 	 */
 	virtual void fillSurface() = 0;
+	virtual void fillSurfaceClip(Common::Rect clipping) = 0;
 
 	/**
 	 * Clears the active surface.
@@ -394,8 +395,8 @@ public:
 		drawRoundedSquareClip(x, y, stepGetRadius(step, area), w, h, clip);
 	}
 
-	void drawCallback_FILLSURFACE(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO
-		fillSurface();
+	void drawCallback_FILLSURFACE(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
+		fillSurfaceClip(clip);
 	}
 
 	void drawCallback_TRIANGLE(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {

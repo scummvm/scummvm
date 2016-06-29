@@ -89,6 +89,7 @@ public:
 	void copyWholeFrame(OSystem *sys) { copyFrame(sys, Common::Rect(0, 0, _activeSurface->w, _activeSurface->h)); }
 
 	void fillSurface();
+	void fillSurfaceClip(Common::Rect clipping);
 	void blitSurface(const Graphics::Surface *source, const Common::Rect &r);
 	void blitSubSurface(const Graphics::Surface *source, const Common::Rect &r);
 	void blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r);
