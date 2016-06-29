@@ -74,7 +74,7 @@ using namespace Director;
 %token<i> INT
 %token<f> FLOAT
 %token<s> ID STRING HANDLER
-%token tDOWN tELSE tEND tEXIT tFRAME tGO tIF tINTO tLOOP tMACRO tMCI tMCIWAIT
+%token tDOWN tELSE tEND tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO tMCI tMCIWAIT
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWITH tWHILE
 %token tGE tLE tGT tLT tEQ tNEQ
 
@@ -240,6 +240,7 @@ func: ID '(' arglist ')' {
 	| tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| gotofunc
 	| tEXIT					{ g_lingo->code1(g_lingo->c_exit); }
+	| tGLOBAL ID			{ g_lingo->code1(g_lingo->c_global); g_lingo->codeString($2->c_str()); delete $2; }
 	;
 
 // go {to} {frame} whichFrame {of movie whichMovie}

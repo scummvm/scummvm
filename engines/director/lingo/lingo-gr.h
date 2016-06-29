@@ -52,30 +52,31 @@
      tEND = 268,
      tEXIT = 269,
      tFRAME = 270,
-     tGO = 271,
-     tIF = 272,
-     tINTO = 273,
-     tLOOP = 274,
-     tMACRO = 275,
-     tMCI = 276,
-     tMCIWAIT = 277,
-     tMOVIE = 278,
-     tNEXT = 279,
-     tOF = 280,
-     tPREVIOUS = 281,
-     tPUT = 282,
-     tREPEAT = 283,
-     tSET = 284,
-     tTHEN = 285,
-     tTO = 286,
-     tWITH = 287,
-     tWHILE = 288,
-     tGE = 289,
-     tLE = 290,
-     tGT = 291,
-     tLT = 292,
-     tEQ = 293,
-     tNEQ = 294
+     tGLOBAL = 271,
+     tGO = 272,
+     tIF = 273,
+     tINTO = 274,
+     tLOOP = 275,
+     tMACRO = 276,
+     tMCI = 277,
+     tMCIWAIT = 278,
+     tMOVIE = 279,
+     tNEXT = 280,
+     tOF = 281,
+     tPREVIOUS = 282,
+     tPUT = 283,
+     tREPEAT = 284,
+     tSET = 285,
+     tTHEN = 286,
+     tTO = 287,
+     tWITH = 288,
+     tWHILE = 289,
+     tGE = 290,
+     tLE = 291,
+     tGT = 292,
+     tLT = 293,
+     tEQ = 294,
+     tNEQ = 295
    };
 #endif
 /* Tokens.  */
@@ -92,30 +93,31 @@
 #define tEND 268
 #define tEXIT 269
 #define tFRAME 270
-#define tGO 271
-#define tIF 272
-#define tINTO 273
-#define tLOOP 274
-#define tMACRO 275
-#define tMCI 276
-#define tMCIWAIT 277
-#define tMOVIE 278
-#define tNEXT 279
-#define tOF 280
-#define tPREVIOUS 281
-#define tPUT 282
-#define tREPEAT 283
-#define tSET 284
-#define tTHEN 285
-#define tTO 286
-#define tWITH 287
-#define tWHILE 288
-#define tGE 289
-#define tLE 290
-#define tGT 291
-#define tLT 292
-#define tEQ 293
-#define tNEQ 294
+#define tGLOBAL 271
+#define tGO 272
+#define tIF 273
+#define tINTO 274
+#define tLOOP 275
+#define tMACRO 276
+#define tMCI 277
+#define tMCIWAIT 278
+#define tMOVIE 279
+#define tNEXT 280
+#define tOF 281
+#define tPREVIOUS 282
+#define tPUT 283
+#define tREPEAT 284
+#define tSET 285
+#define tTHEN 286
+#define tTO 287
+#define tWITH 288
+#define tWHILE 289
+#define tGE 290
+#define tLE 291
+#define tGT 292
+#define tLT 293
+#define tEQ 294
+#define tNEQ 295
 
 
 
@@ -131,7 +133,7 @@ typedef union YYSTYPE
 	int	narg;	/* number of arguments */
 }
 /* Line 1529 of yacc.c.  */
-#line 135 "engines/director/lingo/lingo-gr.hpp"
+#line 137 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

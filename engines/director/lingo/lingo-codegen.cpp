@@ -64,10 +64,13 @@ void Lingo::execute(int pc) {
 	}
 }
 
-Symbol *Lingo::lookupVar(const char *name) {
+Symbol *Lingo::lookupVar(const char *name, bool create, bool putInLocalList) {
 	Symbol *sym;
 
 	if (!_vars.contains(name)) { // Create variable if it was not defined
+		if (!create)
+			return NULL;
+
 		sym = new Symbol;
 		sym->name = (char *)calloc(strlen(name) + 1, 1);
 		Common::strlcpy(sym->name, name, strlen(name) + 1);
@@ -78,6 +81,9 @@ Symbol *Lingo::lookupVar(const char *name) {
 	} else {
 		sym = g_lingo->_vars[name];
 	}
+
+	if (putInLocalList)
+		_localvars[name] = true;
 
 	return sym;
 }

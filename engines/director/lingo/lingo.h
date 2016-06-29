@@ -77,8 +77,8 @@ typedef void (*inst)(void);
 typedef Common::Array<inst> ScriptData;
 
 typedef struct Symbol {	/* symbol table entry */
-	char	*name;
-	int		type;
+	char *name;
+	int type;
 	union {
 		int		val;		/* VAR */
 		float	fval;		/* FLOAT */
@@ -86,6 +86,7 @@ typedef struct Symbol {	/* symbol table entry */
 		char	*str;		/* STRING */
 	} u;
 	int nargs;
+	bool global;
 
 	Symbol();
 } Symbol;
@@ -134,7 +135,7 @@ public:
 
 public:
 	void execute(int pc);
-	Symbol *lookupVar(const char *name);
+	Symbol *lookupVar(const char *name, bool create = true, bool putInLocalList = true);
 	void define(Common::String &s, int start, int nargs);
 	void codeArg(Common::String *s);
 	void codeArgStore();
@@ -172,6 +173,7 @@ public:
 	static void c_gotoloop();
 	static void c_gotonext();
 	static void c_gotoprevious();
+	static void c_global();
 
 	void func_mci(Common::String &s);
 	void func_mciwait(Common::String &s);
@@ -200,6 +202,7 @@ private:
 	ScriptHash _scripts[kMaxScriptType + 1];
 
 	SymbolHash _vars;
+	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _localvars;
 	SymbolHash _handlers;
 
 	int _pc;

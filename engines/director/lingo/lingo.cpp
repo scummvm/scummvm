@@ -72,6 +72,7 @@ Symbol::Symbol() {
 	type = VOID;
 	u.str = NULL;
 	nargs = 0;
+	global = false;
 }
 
 Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {

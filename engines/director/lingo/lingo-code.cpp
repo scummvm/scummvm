@@ -424,4 +424,24 @@ void Lingo::c_procret() {
 	g_lingo->_returning = true;
 }
 
+void Lingo::c_global() {
+	Common::String name((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
+
+	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
+	if (s) {
+		if (s->global) {
+			warning("Redefinition of global variable %s", name.c_str());
+		} else {
+			warning("Local variable %s declared as global", name.c_str());
+		}
+
+		return;
+	}
+
+	s = g_lingo->lookupVar(name.c_str(), true, false);
+	s->global = true;
+
+	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
+}
+
 }

@@ -54,6 +54,7 @@ whitespace [\t ]
 (?i:end)			{ return tEND; }
 (?i:exit)			{ return tEXIT; }
 (?i:frame)			{ return tFRAME; }
+(?i:global)			{ return tGLOBAL; }
 (?i:go)				{ return tGO; }
 (?i:into)			{ return tINTO; }
 (?i:loop)			{ return tLOOP; }
