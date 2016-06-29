@@ -61,8 +61,19 @@ public:
 	void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient);
 	void drawTriangleClip(int x, int y, int base, int height, TriangleOrientation orient, Common::Rect clipping);
 	void drawTab(int x, int y, int r, int w, int h); //TODO
-	void drawBeveledSquare(int x, int y, int w, int h, int bevel) { //TODO
+	void drawBeveledSquare(int x, int y, int w, int h, int bevel) {
 		drawBevelSquareAlg(x, y, w, h, bevel, _bevelColor, _fgColor, Base::_fillMode != kFillDisabled);
+	}
+	void drawBeveledSquareClip(int x, int y, int w, int h, int bevel, Common::Rect clipping) {
+		bool useClippingVersions = !(clipping.isEmpty() || clipping.contains(Common::Rect(x, y, x + w, y + h)));
+		if (useClippingVersions) {
+			Common::Rect backup = _clippingArea;
+			_clippingArea = clipping;
+			drawBevelSquareAlgClip(x, y, w, h, bevel, _bevelColor, _fgColor, Base::_fillMode != kFillDisabled);
+			_clippingArea = backup;
+		} else {
+			drawBevelSquareAlg(x, y, w, h, bevel, _bevelColor, _fgColor, Base::_fillMode != kFillDisabled);
+		}
 	}
 	void drawString(const Graphics::Font *font, const Common::String &text,
 					const Common::Rect &area, Graphics::TextAlign alignH,
@@ -205,6 +216,9 @@ protected:
 	virtual void drawBevelSquareAlg(int x, int y, int w, int h,
 	    int bevel, PixelType top_color, PixelType bottom_color, bool fill);
 
+	virtual void drawBevelSquareAlgClip(int x, int y, int w, int h,
+		int bevel, PixelType top_color, PixelType bottom_color, bool fill);
+
 	virtual void drawTabAlg(int x, int y, int w, int h, int r,
 	    PixelType color, VectorRenderer::FillMode fill_m,
 	    int baseLeft = 0, int baseRight = 0);
@@ -272,6 +286,7 @@ protected:
 	}
 
 	void darkenFill(PixelType *first, PixelType *last);
+	void darkenFillClip(PixelType *first, PixelType *last, int x, int y);
 
 	const PixelFormat _format;
 	const PixelType _redMask, _greenMask, _blueMask, _alphaMask;

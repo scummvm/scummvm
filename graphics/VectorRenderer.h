@@ -204,6 +204,7 @@ public:
 	 * @param bevel Amount of bevel. Must be positive.
 	 */
 	virtual void drawBeveledSquare(int x, int y, int w, int h, int bevel) = 0;
+	virtual void drawBeveledSquareClip(int x, int y, int w, int h, int bevel, Common::Rect clipping) = 0;
 
 	/**
 	 * Draws a tab-like shape, specially thought for the Tab widget.
@@ -397,10 +398,10 @@ public:
 		drawTriangleClip(x, y, w, h, (TriangleOrientation)step.extraData, clip);
 	}
 
-	void drawCallback_BEVELSQ(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO
+	void drawCallback_BEVELSQ(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		drawBeveledSquare(x, y, w, h, _bevel);
+		drawBeveledSquareClip(x, y, w, h, _bevel, clip);
 	}
 
 	void drawCallback_TAB(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO

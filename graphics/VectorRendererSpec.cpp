@@ -922,6 +922,36 @@ darkenFill(PixelType *ptr, PixelType *end) {
 	}
 }
 
+template<typename PixelType>
+inline void VectorRendererSpec<PixelType>::
+darkenFillClip(PixelType *ptr, PixelType *end, int x, int y) {
+	PixelType mask = (PixelType)((3 << _format.rShift) | (3 << _format.gShift) | (3 << _format.bShift));
+
+	if (!g_system->hasFeature(OSystem::kFeatureOverlaySupportsAlpha)) {
+		// !kFeatureOverlaySupportsAlpha (but might have alpha bits)
+
+		while (ptr != end) {
+			if (IS_IN_CLIP(x, y)) *ptr = ((*ptr & ~mask) >> 2) | _alphaMask;
+			++ptr;
+			++x;
+		}
+	} else {
+		// kFeatureOverlaySupportsAlpha
+		// assuming at least 3 alpha bits
+
+		mask |= 3 << _format.aShift;
+		PixelType addA = (PixelType)(3 << (_format.aShift + 6 - _format.aLoss));
+
+		while (ptr != end) {
+			// Darken the color, and increase the alpha
+			// (0% -> 75%, 100% -> 100%)
+			if (IS_IN_CLIP(x, y)) *ptr = (PixelType)(((*ptr & ~mask) >> 2) + addA);
+			++ptr;
+			++x;
+		}
+	}
+}
+
 /********************************************************************
  ********************************************************************
  * Primitive shapes drawing - Public API calls - VectorRendererSpec *
@@ -1892,6 +1922,72 @@ drawBevelSquareAlg(int x, int y, int w, int h, int bevel, PixelType top_color, P
 		colorFill<PixelType>(ptr_left + j, ptr_left + bevel, bottom_color);
 		if (j > 0) j--;
 		ptr_left += pitch;
+	}
+}
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+drawBevelSquareAlgClip(int x, int y, int w, int h, int bevel, PixelType top_color, PixelType bottom_color, bool fill) {
+	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
+	int i, j;
+	PixelType *ptr_left;
+	int ptr_x, ptr_y;
+
+	// Fill Background
+	ptr_left = (PixelType *)_activeSurface->getBasePtr(x, y);
+	ptr_x = x; ptr_y = y;
+	i = h;
+	if (fill) {
+		assert((_bgColor & ~_alphaMask) == 0); // only support black
+		while (i--) {
+			darkenFillClip(ptr_left, ptr_left + w, ptr_x, ptr_y);
+			ptr_left += pitch;
+			++ptr_y;
+		}
+	}
+
+	x = MAX(x - bevel, 0);
+	y = MAX(y - bevel, 0);
+
+	w = MIN(w + (bevel * 2), (int)_activeSurface->w);
+	h = MIN(h + (bevel * 2), (int)_activeSurface->h);
+
+	ptr_left = (PixelType *)_activeSurface->getBasePtr(x, y);
+	ptr_x = x; ptr_y = y;
+	i = bevel;
+	while (i--) {
+		colorFillClip<PixelType>(ptr_left, ptr_left + w, top_color, ptr_x, ptr_y, _clippingArea);
+		ptr_left += pitch;
+		++ptr_y;
+	}
+
+	ptr_left = (PixelType *)_activeSurface->getBasePtr(x, y + bevel);
+	ptr_x = x; ptr_y = y + bevel;
+	i = h - bevel;
+	while (i--) {
+		colorFillClip<PixelType>(ptr_left, ptr_left + bevel, top_color, ptr_x, ptr_y, _clippingArea);
+		ptr_left += pitch;
+		++ptr_y;
+	}
+
+	ptr_left = (PixelType *)_activeSurface->getBasePtr(x, y + h - bevel);
+	ptr_x = x; ptr_y = y + h - bevel;
+	i = bevel;
+	while (i--) {
+		colorFillClip<PixelType>(ptr_left + i, ptr_left + w, bottom_color, ptr_x + i, ptr_y, _clippingArea);
+		ptr_left += pitch;
+		++ptr_y;
+	}
+
+	ptr_left = (PixelType *)_activeSurface->getBasePtr(x + w - bevel, y);
+	ptr_x = x + w - bevel; ptr_y = y;
+	i = h - bevel;
+	j = bevel - 1;
+	while (i--) {
+		colorFillClip<PixelType>(ptr_left + j, ptr_left + bevel, bottom_color, ptr_x + j, ptr_y, _clippingArea);
+		if (j > 0) j--;
+		ptr_left += pitch;
+		++ptr_y;
 	}
 }
 
