@@ -109,8 +109,11 @@ Audio32::Audio32(ResourceManager *resMan) :
 	_numActiveChannels(0),
 	_inAudioThread(false),
 
+	_globalSampleRate(44100),
 	_maxAllowedSampleRate(44100),
+	_globalBitDepth(16),
 	_maxAllowedBitDepth(16),
+	_globalNumOutputChannels(2),
 	_maxAllowedOutputChannels(2),
 	_preload(0),
 
