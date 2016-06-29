@@ -65,6 +65,11 @@ direction returnOppositeDir(direction dir);
 bool isOrientedWestEast(direction dir);
 
 
+uint16 getFlag(uint16 val, uint16 mask);
+void setFlag(uint16 &val, uint16 mask);
+void clearFlag(uint16 &val, uint16 mask);
+
+
 enum ThingType {
 	kPartyThingType = -1, // @ CM1_THING_TYPE_PARTY, special value
 	kDoorThingType = 0,

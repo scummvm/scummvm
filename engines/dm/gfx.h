@@ -32,9 +32,89 @@
 #include "common/rect.h"
 #include "common/memstream.h"
 #include "dm.h"
+#include "common/array.h"
 
 namespace DM {
+#define kFloorSetGraphicCount 2 // @ C002_FLOOR_SET_GRAPHIC_COUNT
+#define kWallSetGraphicCount 13 // @ C013_WALL_SET_GRAPHIC_COUNT
+#define kStairsGraphicCount 18 // @ C018_STAIRS_GRAPHIC_COUNT
+#define kDoorSetGraphicsCount 3 // @ C003_DOOR_SET_GRAPHIC_COUNT
+#define kDoorButtonCount 1 // @ C001_DOOR_BUTTON_COUNT
+#define kNativeBitmapIndex 0 // @ C0_NATIVE_BITMAP_INDEX
+#define kCoordinateSet 1 // @ C1_COORDINATE_SET
+#define kCreatureTypeCount 27 // @ C027_CREATURE_TYPE_COUNT
+#define kExplosionAspectCount 4 // @ C004_EXPLOSION_ASPECT_COUNT
+#define kObjAspectCount 85 // @ C085_OBJECT_ASPECT_COUNT
+#define kProjectileAspectCount 14 // @ C014_PROJECTILE_ASPECT_COUNT
 
+/* Explosion aspects */
+#define kExplosionAspectFire 0 // @ C0_EXPLOSION_ASPECT_FIRE  
+#define kExplosionAspectSpell 1 // @ C1_EXPLOSION_ASPECT_SPELL 
+#define kExplosionAspectPoison 2 // @ C2_EXPLOSION_ASPECT_POISON
+#define kExplosionAspectSmoke 3 // @ C3_EXPLOSION_ASPECT_SMOKE 
+
+/* Creature info GraphicInfo */
+#define kCreatureInfoMaskAdditional 0x0003 // @ MASK0x0003_ADDITIONAL                        
+#define kCreatureInfoMaskFlipNonAttack 0x0004 // @ MASK0x0004_FLIP_NON_ATTACK                  
+#define kCreatureInfoMaskSide 0x0008 // @ MASK0x0008_SIDE                             
+#define kCreatureInfoMaskBack 0x0010 // @ MASK0x0010_BACK                             
+#define kCreatureInfoMaskAttack 0x0020 // @ MASK0x0020_ATTACK                           
+#define kCreatureInfoMaskSpecialD2Front 0x0080 // @ MASK0x0080_SPECIAL_D2_FRONT                                                                               
+#define kCreatureInfoMaskSpecialD2FrontIsFlipped 0x0100 // @ MASK0x0100_SPECIAL_D2_FRONT_IS_FLIPPED_FRONT 
+#define kCreatureInfoMaskFlipAttack 0x0200 // @ MASK0x0200_FLIP_ATTACK                      
+#define kCreatureInfoMaskFlipDuringAttack 0x0400 // @ MASK0x0400_FLIP_DURING_ATTACK               
+
+class ExplosionAspect {
+public:
+	uint16 _pixelWidth;
+	uint16 _height;
+
+	ExplosionAspect(uint16 byteWidth, uint16 height) :_pixelWidth(byteWidth * 2), _height(height) {}
+}; // @ EXPLOSION_ASPECT
+
+extern ExplosionAspect gExplosionAspects[kExplosionAspectCount];
+
+extern byte gProjectileScales[7]; // @ G0215_auc_Graphic558_ProjectileScales
+
+
+#define kDerivedBitmapViewport 0 // @ C000_DERIVED_BITMAP_VIEWPORT                    
+#define kDerivedBitmapThievesEyeVisibleArea 1 // @ C001_DERIVED_BITMAP_THIEVES_EYE_VISIBLE_AREA    
+#define kDerivedBitmapDamageToCreatureMedium 2 // @ C002_DERIVED_BITMAP_DAMAGE_TO_CREATURE_MEDIUM   
+#define kDerivedBitmapDamageToCreatureSmall 3 // @ C003_DERIVED_BITMAP_DAMAGE_TO_CREATURE_SMALL    
+#define kDerivedBitmapFirstWallOrnament 4 // @ C004_DERIVED_BITMAP_FIRST_WALL_ORNAMENT         
+#define kDerivedBitmapFirstDoorOrnament_D3 68 // @ C068_DERIVED_BITMAP_FIRST_DOOR_ORNAMENT_D3     
+#define kDerivedBitmapFirstDoorOrnament_D2 69 // @ C069_DERIVED_BITMAP_FIRST_DOOR_ORNAMENT_D2    
+#define kDerivedBitmapFirstDoorButton 102 // @ C102_DERIVED_BITMAP_FIRST_DOOR_BUTTON         
+#define kDerivedBitmapFirstObject 104 // @ C104_DERIVED_BITMAP_FIRST_OBJECT              
+#define kDerivedBitmapFirstProjectile 282 // @ C282_DERIVED_BITMAP_FIRST_PROJECTILE          
+#define kDerivedBitmapFirstExplosion 438 // @ C438_DERIVED_BITMAP_FIRST_EXPLOSION           
+#define kDerivedBitmapFirstCreature 495 // @ C495_DERIVED_BITMAP_FIRST_CREATURE            
+
+
+#define kScale16_D3 16 // @ C16_SCALE_D3 
+#define kScale20_D2 20 // @ C20_SCALE_D2 
+
+/* Object aspect GraphicInfo */
+#define kObjectFlipOnRightMask 0x0001 // @ MASK0x0001_FLIP_ON_RIGHT 
+#define kObjectAlcoveMask 0x0010 // @ MASK0x0010_ALCOVE        
+
+/* Projectile aspect GraphicInfo */
+#define kProjectileSideMask 0x0010 // @ MASK0x0010_SIDE                      
+#define kProjectileScaleWithKineticEnergyMask 0x0100 // @ MASK0x0100_SCALE_WITH_KINETIC_ENERGY 
+#define kProjectileAspectTypeMask 0x0003 // @ MASK0x0003_ASPECT_TYPE               
+
+/* Projectile aspect type */
+#define kProjectileAspectHasBackGraphicRotation 0 // @ C0_PROJECTILE_ASPECT_TYPE_HAS_BACK_GRAPHIC_AND_ROTATION   
+#define kProjectileAspectBackGraphic 1 // @ C1_PROJECTILE_ASPECT_TYPE_HAS_BACK_GRAPHIC_AND_NO_ROTATION
+#define kProjectileAspectHasRotation 2 // @ C2_PROJECTILE_ASPECT_TYPE_NO_BACK_GRAPHIC_AND_ROTATION    
+#define kProjectileAspectHasNone 3 // @ C3_PROJECTILE_ASPECT_TYPE_NO_BACK_GRAPHIC_AND_NO_ROTATION 
+
+/* Projectile aspects */
+#define kProjectileAspectExplosionLightningBolt 3 // @ C03_PROJECTILE_ASPECT_EXPLOSION_LIGHTNING_BOLT           
+#define kProjectileAspectExplosionFireBall 10 // @ C10_PROJECTILE_ASPECT_EXPLOSION_FIREBALL                
+#define kProjectileAspectExplosionDefault 11 // @ C11_PROJECTILE_ASPECT_EXPLOSION_DEFAULT                 
+#define kProjectileAspectExplosionSlime 12 // @ C12_PROJECTILE_ASPECT_EXPLOSION_SLIME                   
+#define kProjectileAspectExplosionPoisonBoltCloud 13 // @ C13_PROJECTILE_ASPECT_EXPLOSION_POISON_BOLT_POISON_CLOUD
 
 enum ViewCell {
 	kViewCellFronLeft = 0, // @ C00_VIEW_CELL_FRONT_LEFT
@@ -80,7 +160,8 @@ enum GraphicIndice {
 	kPanelOpenChestIndice = 25, // @ C025_GRAPHIC_PANEL_OPEN_CHEST
 	kEyeForObjectDescriptionIndice = 19, // @ C019_GRAPHIC_EYE_FOR_OBJECT_DESCRIPTION
 	kArrowForChestContentIndice = 18, // @ C018_GRAPHIC_ARROW_FOR_CHEST_CONTENT
-	kObjectDescCircleIndice = 29 // @ C029_GRAPHIC_OBJECT_DESCRIPTION_CIRCLE
+	kObjectDescCircleIndice = 29, // @ C029_GRAPHIC_OBJECT_DESCRIPTION_CIRCLE
+	kFloorOrn_15_D3L_footprints = 241 // @ C241_GRAPHIC_FLOOR_ORNAMENT_15_D3L_FOOTPRINTS
 };
 
 extern uint16 gPalSwoosh[16];
@@ -248,17 +329,6 @@ extern Viewport gDungeonViewport;
 #define kAlcoveOrnCount 3
 #define kFountainOrnCount 1
 
-#define kFloorSetGraphicCount 2 // @ C002_FLOOR_SET_GRAPHIC_COUNT
-#define kWallSetGraphicCount 13 // @ C013_WALL_SET_GRAPHIC_COUNT
-#define kStairsGraphicCount 18 // @ C018_STAIRS_GRAPHIC_COUNT
-#define kDoorSetGraphicsCount 3 // @ C003_DOOR_SET_GRAPHIC_COUNT
-#define kDoorButtonCount 1 // @ C001_DOOR_BUTTON_COUNT
-#define kNativeBitmapIndex 0 // @ C0_NATIVE_BITMAP_INDEX
-#define kNativeCoordinateSet 1 // @ C1_COORDINATE_SET
-#define kCreatureTypeCount 27 // @ C027_CREATURE_TYPE_COUNT
-#define kExplosionAspectCount 4 // @ C004_EXPLOSION_ASPECT_COUNT
-#define kObjAspectCount 85 // @ C085_OBJECT_ASPECT_COUNT
-#define kProjectileAspectCount 14 // @ C014_PROJECTILE_ASPECT_COUNT
 
 #define kDoorButton 0 // @ C0_DOOR_BUTTON
 #define kWallOrnInscription 0 // @ C0_WALL_ORNAMENT_INSCRIPTION
@@ -320,6 +390,8 @@ class DisplayMan {
 
 	bool isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex); // @ F0107_DUNGEONVIEW_IsDrawnWallOrnamentAnAlcove_CPSF
 
+	uint16 *_derivedBitmapByteCount;// @ G0639_pui_DerivedBitmapByteCount
+
 public:
 	// some methods use this for a stratchpad, don't make assumptions about content between function calls
 	byte *_tmpBitmap;
@@ -332,7 +404,7 @@ public:
 
 	void setUpScreens(uint16 width, uint16 height);
 	void loadGraphics(); // @ F0479_MEMORY_ReadGraphicsDatHeader, F0460_START_InitializeGraphicData
-	void loadCurrentMapGraphics();
+	void loadCurrentMapGraphics(); // @ F0096_DUNGEONVIEW_LoadCurrentMapGraphics_CPSDF
 	void loadPalette(uint16 *palette);
 
 	/// Gives the width of an IMG0 type item
@@ -369,6 +441,9 @@ public:
 	Common::MemoryReadStream getCompressedData(uint16 index);
 	uint32 getCompressedDataSize(uint16 index);
 
+	int16 getScaledBitmapPixelCount(int16 pixelWidth, int16 pixelHeight, int16 scale); // @ F0459_START_GetScaledBitmapByteCount
+	int16 getScaledDimension(int16 dimension, int16 scale); // @ M78_SCALED_DIMENSION
+
 	int16 _championPortraitOrdinal; // @ G0289_i_DungeonView_ChampionPortraitOrdinal
 	int16 _currMapAlcoveOrnIndices[kAlcoveOrnCount]; // @ G0267_ai_CurrentMapAlcoveOrnamentIndices
 	int16 _currMapFountainOrnIndices[kFountainOrnCount]; // @ G0268_ai_CurrentMapFountainOrnamentIndices
@@ -385,6 +460,12 @@ public:
 	Thing _inscriptionThing; // @ G0290_T_DungeonView_InscriptionThing
 
 	bool _useByteBoxCoordinates; // @ G0578_B_UseByteBoxCoordinates
+
+	bool isDerivedBitmapInCache(int16 derivedBitmapIndex); // @  F0491_CACHE_IsDerivedBitmapInCache
+	byte *getDerivedBitmap(int16 derivedBitmapIndex); // @ F0492_CACHE_GetDerivedBitmap
+
+
+
 };
 
 }

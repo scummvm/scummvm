@@ -39,6 +39,24 @@ namespace DM {
 
 Box gBoxMovementArrows = Box(224, 319, 124, 168);
 
+ExplosionAspect gExplosionAspects[kExplosionAspectCount] = { // @ G0211_as_Graphic558_ExplosionAspects
+	/* { ByteWidth, Height } */
+	ExplosionAspect(80, 111),   /* Fire   */
+ExplosionAspect(64,  97),   /* Spell  */
+ExplosionAspect(80,  91),   /* Poison */
+ExplosionAspect(80,  91)}; /* Death  */
+
+#define kDerivedBitmapMaximumCount 730 // @ C730_DERIVED_BITMAP_MAXIMUM_COUNT
+
+byte gProjectileScales[7] = {
+	13,   /* D4 Back  */
+	16,   /* D4 Front */
+	19,   /* D3 Back  */
+	22,   /* D3 Front */
+	25,   /* D2 Back  */
+	28,   /* D2 Front */
+	32}; /* D1 Back  */
+
 enum StairFrameIndex {
 	kFrameStairsUpFront_D3L = 0, // @ G0110_s_Graphic558_Frame_StairsUpFront_D3L 
 	kFrameStairsUpFront_D3C = 1, // @ G0111_s_Graphic558_Frame_StairsUpFront_D3C 
@@ -598,6 +616,7 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_floorBitmap = nullptr;
 	_ceilingBitmap = nullptr;
 	_currMapAllowedCreatureTypes = nullptr;
+	_derivedBitmapByteCount = nullptr;
 
 	_screenWidth = _screenHeight = 0;
 	_championPortraitOrdinal = 0;
@@ -686,21 +705,126 @@ void DisplayMan::loadGraphics() {
 
 	unpackGraphics();
 
-	for (uint16 i = kDoorOrnDestroyedMask; i <= kDoorOrnThivesEyeMask; ++i) {
-		_currMapDoorOrnInfo[i][kNativeBitmapIndex] = i + (kDoorMaskDestroyedIndice - kDoorOrnDestroyedMask);
-		_currMapDoorOrnInfo[i][kNativeCoordinateSet] = 1;
+	loadFloorSet(kFloorSetStone);
+	loadWallSet(kWallSetStone);
+
+
+
+	if (!_derivedBitmapByteCount)
+		_derivedBitmapByteCount = new uint16[kDerivedBitmapMaximumCount];
+
+	_derivedBitmapByteCount[kDerivedBitmapViewport] = 224 * 136;
+	_derivedBitmapByteCount[kDerivedBitmapThievesEyeVisibleArea] = 96 * 95;
+	_derivedBitmapByteCount[kDerivedBitmapDamageToCreatureMedium] = 64 * 37;
+	_derivedBitmapByteCount[kDerivedBitmapDamageToCreatureSmall] = 48 * 37;
+
+	for (int16 doorOrnamentIndex = kDoorOrnDestroyedMask; doorOrnamentIndex <= kDoorOrnThivesEyeMask; doorOrnamentIndex++) {
+		_currMapDoorOrnInfo[doorOrnamentIndex][kNativeBitmapIndex] = doorOrnamentIndex + (kDoorMaskDestroyedIndice - kDoorOrnDestroyedMask);
+		_currMapDoorOrnInfo[doorOrnamentIndex][kCoordinateSet] = 1;
+
+		_derivedBitmapByteCount[doorOrnamentIndex * 2 + kDerivedBitmapFirstDoorOrnament_D3] = 48 * 41;
+		_derivedBitmapByteCount[doorOrnamentIndex * 2 + kDerivedBitmapFirstDoorOrnament_D2] = 64 * 61;
 	}
 
-	_currMapFloorOrnInfo[kFloorOrnFootprints][kNativeBitmapIndex] = 1;
-	_currMapFloorOrnInfo[kFloorOrnFootprints][kNativeCoordinateSet] = 1;
+	_currMapFloorOrnInfo[kFloorOrnFootprints][kNativeBitmapIndex] = kFloorOrn_15_D3L_footprints;
+	_currMapFloorOrnInfo[kFloorOrnFootprints][kCoordinateSet] = 1;
+
+	ObjectAspect *objectAspect = gObjectAspects;
+	int16 derivedBitmapIndex;
+	for (int16 objectAspectIndex = 0; objectAspectIndex < kObjAspectCount; ++objectAspectIndex, ++objectAspect) {
+		derivedBitmapIndex = kDerivedBitmapFirstObject + objectAspect->_firstDerivedBitmapRelativeIndex;
+
+		_derivedBitmapByteCount[derivedBitmapIndex++] = getScaledBitmapPixelCount(objectAspect->_width, objectAspect->_height, kScale16_D3);
+		_derivedBitmapByteCount[derivedBitmapIndex++] = getScaledBitmapPixelCount(objectAspect->_width, objectAspect->_height, kScale20_D2);
+
+		if (getFlag(objectAspect->_graphicInfo, kObjectFlipOnRightMask)) {
+			_derivedBitmapByteCount[derivedBitmapIndex] = _derivedBitmapByteCount[derivedBitmapIndex - 2];
+			derivedBitmapIndex++;
+			_derivedBitmapByteCount[derivedBitmapIndex] = _derivedBitmapByteCount[derivedBitmapIndex - 2];
+			derivedBitmapIndex++;
+		}
+
+		if (getFlag(objectAspect->_graphicInfo, kObjectAlcoveMask)) {
+			_derivedBitmapByteCount[derivedBitmapIndex] = _derivedBitmapByteCount[derivedBitmapIndex - 2];
+			derivedBitmapIndex++;
+			_derivedBitmapByteCount[derivedBitmapIndex] = _derivedBitmapByteCount[derivedBitmapIndex - 2];
+		}
+	}
+
+	ProjectileAspect *projectileAspect = gProjectileAspect;
+	for (int16 projectileAspectIndex = 0; projectileAspectIndex < kProjectileAspectCount; projectileAspectIndex++, projectileAspect++) {
+
+		if (!getFlag(projectileAspect->_graphicInfo, kProjectileScaleWithKineticEnergyMask)) {
+			derivedBitmapIndex = kDerivedBitmapFirstProjectile + projectileAspect->_firstDerivedBitmapRelativeIndex;
+
+			for (int16 projectileScaleIndex = 0; projectileScaleIndex < 6; projectileScaleIndex++) {
+				int16 bitmapPixelCount = getScaledBitmapPixelCount(projectileAspect->_width, projectileAspect->_height, gProjectileScales[projectileScaleIndex]);
+				_derivedBitmapByteCount[derivedBitmapIndex] = bitmapPixelCount;
+
+				if (getFlag(projectileAspect->_graphicInfo, kProjectileAspectTypeMask) != kProjectileAspectHasNone) {
+					_derivedBitmapByteCount[derivedBitmapIndex + 6] = bitmapPixelCount;
+
+					if (getFlag(projectileAspect->_graphicInfo, kProjectileAspectTypeMask) != kProjectileAspectHasRotation) {
+						_derivedBitmapByteCount[derivedBitmapIndex + 12] = bitmapPixelCount;
+					}
+				}
+			}
+		}
+	}
 
 	_palChangesProjectile[0] = gPalChangesFloorOrn_D3;
 	_palChangesProjectile[1] = gPalChangesFloorOrn_D2;
 	_palChangesProjectile[2] = _palChangesProjectile[3] = gPalChangesNoChanges;
 
-	loadFloorSet(kFloorSetStone);
-	loadWallSet(kWallSetStone);
+	derivedBitmapIndex = kDerivedBitmapFirstExplosion;
+	ExplosionAspect *expAsp = gExplosionAspects;
+	for (uint16 expAspIndex = 0; expAspIndex < kExplosionAspectCount; ++expAspIndex, expAsp++) {
+		for (int16 scale = 4; scale < 32; scale += 2)
+			_derivedBitmapByteCount[derivedBitmapIndex++] = getScaledBitmapPixelCount(expAsp->_pixelWidth, expAsp->_height, scale);
 
+		if (expAspIndex == kExplosionAspectSmoke) {
+			_derivedBitmapByteCount[derivedBitmapIndex++] = expAsp->_pixelWidth * expAsp->_height;
+		}
+	}
+
+	derivedBitmapIndex = kDerivedBitmapFirstCreature;
+	CreatureAspect *creatureAsp;
+	for (int16 creatureIndex = 0; creatureIndex < kCreatureTypeCount; creatureIndex++) {
+		creatureAsp = &gCreatureAspects[creatureIndex];
+		
+		int16 creatureGraphicInfo = gCreatureInfo[creatureIndex]._graphicInfo;
+		creatureAsp->_firstDerivedBitmapIndex = derivedBitmapIndex;
+		
+		int16 creatureFrontBitmapD3PixelCount;
+		_derivedBitmapByteCount[derivedBitmapIndex++] = creatureFrontBitmapD3PixelCount = getScaledBitmapPixelCount(creatureAsp->_byteWidthFront, creatureAsp->_heightFront, kScale16_D3);
+		
+		int16 creatureFrontBitmapD2PixelCount;
+		_derivedBitmapByteCount[derivedBitmapIndex++] = creatureFrontBitmapD2PixelCount = getScaledBitmapPixelCount(creatureAsp->_byteWidthFront, creatureAsp->_heightFront, kScale20_D2);
+		
+		if (getFlag(creatureGraphicInfo, kCreatureInfoMaskSide)) {
+			_derivedBitmapByteCount[derivedBitmapIndex++] = getScaledBitmapPixelCount(creatureAsp->_byteWidthSide, creatureAsp->_heightSide, kScale16_D3);
+			_derivedBitmapByteCount[derivedBitmapIndex++] = getScaledBitmapPixelCount(creatureAsp->_byteWidthSide, creatureAsp->_heightSide, kScale20_D2);
+		}
+
+		if (getFlag(creatureGraphicInfo, kCreatureInfoMaskBack)) {
+			_derivedBitmapByteCount[derivedBitmapIndex++] = creatureFrontBitmapD3PixelCount;
+			_derivedBitmapByteCount[derivedBitmapIndex++] = creatureFrontBitmapD2PixelCount;
+		}
+
+		if (getFlag(creatureGraphicInfo, kCreatureInfoMaskAttack)) {
+			_derivedBitmapByteCount[derivedBitmapIndex++] = getScaledBitmapPixelCount(creatureAsp->_byteWidthAttack, creatureAsp->_heightAttack, kScale16_D3);
+			_derivedBitmapByteCount[derivedBitmapIndex++] = getScaledBitmapPixelCount(creatureAsp->_byteWidthAttack, creatureAsp->_heightAttack, kScale20_D2);
+		}
+
+		int16 additionalFronGraphicCount;
+		if (additionalFronGraphicCount = getFlag(creatureGraphicInfo, kCreatureInfoMaskAdditional)) {
+			do {
+				_derivedBitmapByteCount[derivedBitmapIndex++] = creatureAsp->_byteWidthFront * creatureAsp->_heightFront;
+				_derivedBitmapByteCount[derivedBitmapIndex++] = getScaledBitmapPixelCount(creatureAsp->_byteWidthFront, creatureAsp->_heightFront, kScale16_D3);
+				_derivedBitmapByteCount[derivedBitmapIndex++] = getScaledBitmapPixelCount(creatureAsp->_byteWidthFront, creatureAsp->_heightFront, kScale20_D2);
+			} while (--additionalFronGraphicCount);
+		}
+	}
 }
 
 void DisplayMan::unpackGraphics() {
@@ -1329,21 +1453,21 @@ void DisplayMan::loadCurrentMapGraphics() {
 			if (ornIndice == gFountainOrnIndices[ornCounter])
 				_currMapFountainOrnIndices[fountainCount++] = i;
 
-		_currMapWallOrnInfo[i][kNativeCoordinateSet] = gWallOrnCoordSetIndices[ornIndice];
+		_currMapWallOrnInfo[i][kCoordinateSet] = gWallOrnCoordSetIndices[ornIndice];
 	}
 
 	for (uint16 i = 0; i < currMap._floorOrnCount; ++i) {
 		uint16 ornIndice = _currMapFloorOrnIndices[i];
 		uint16 nativeIndice = kFirstFloorOrn + ornIndice * 6;
 		_currMapFloorOrnInfo[i][kNativeBitmapIndex] = nativeIndice;
-		_currMapFloorOrnInfo[i][kNativeCoordinateSet] = gFloorOrnCoordSetIndices[ornIndice];
+		_currMapFloorOrnInfo[i][kCoordinateSet] = gFloorOrnCoordSetIndices[ornIndice];
 	}
 
 	for (uint16 i = 0; i < currMap._doorOrnCount; ++i) {
 		uint16 ornIndice = _currMapDoorOrnIndices[i];
 		uint16 nativeIndice = kFirstDoorOrn + ornIndice;
 		_currMapDoorOrnInfo[i][kNativeBitmapIndex] = nativeIndice;
-		_currMapDoorOrnInfo[i][kNativeCoordinateSet] = gDoorOrnCoordIndices[ornIndice];
+		_currMapDoorOrnInfo[i][kCoordinateSet] = gDoorOrnCoordIndices[ornIndice];
 	}
 
 	applyCreatureReplColors(9, 8);
@@ -1432,7 +1556,7 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 		int16 wallOrnIndex = wallOrnOrd - 1;
 		int16 nativeBitmapIndex = _currMapWallOrnInfo[wallOrnIndex][kNativeBitmapIndex];
 
-		uint16 *coordinateSetA = gWallOrnCoordSets[_currMapWallOrnInfo[wallOrnIndex][kNativeCoordinateSet]][viewWallIndex];
+		uint16 *coordinateSetA = gWallOrnCoordSets[_currMapWallOrnInfo[wallOrnIndex][kCoordinateSet]][viewWallIndex];
 		isAlcove = _vm->_dungeonMan->isWallOrnAnAlcove(wallOrnIndex);
 		isInscription = (wallOrnIndex == _vm->_dungeonMan->_currMapInscriptionWallOrnIndex);
 		if (isInscription) {
@@ -1492,7 +1616,7 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 		} else {
 			coordinateSetOffset = 0;
 			uint16 *coordSetB;
-			int16 wallOrnCoordSetIndex = _currMapWallOrnInfo[wallOrnIndex][kNativeCoordinateSet];
+			int16 wallOrnCoordSetIndex = _currMapWallOrnInfo[wallOrnIndex][kCoordinateSet];
 			flipHorizontal = (viewWallIndex == kViewWall_D2R_LEFT) || (viewWallIndex == kViewWall_D3R_LEFT);
 			if (flipHorizontal) {
 				coordSetB = gWallOrnCoordSets[wallOrnCoordSetIndex][kViewWall_D1R_LEFT];
@@ -1585,6 +1709,14 @@ Common::MemoryReadStream DisplayMan::getCompressedData(uint16 index) {
 
 uint32 DisplayMan::getCompressedDataSize(uint16 index) {
 	return _packedItemPos[index + 1] - _packedItemPos[index];
+}
+
+int16 DisplayMan::getScaledBitmapPixelCount(int16 pixelWidth, int16 pixelHeight, int16 scale) {
+	return getScaledDimension(pixelWidth, scale) * getScaledDimension(pixelHeight, scale);
+}
+
+int16 DisplayMan::getScaledDimension(int16 dimension, int16 scale) {
+	return (dimension * scale + scale / 2) / 32;
 }
 
 void DisplayMan::clearScreenBox(Color color, Box &box, Viewport &viewport) {

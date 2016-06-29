@@ -60,16 +60,27 @@ void turnDirLeft(direction &dir) { dir = (direction)((dir - 1) & 3); }
 direction returnOppositeDir(direction dir) { return (direction)((dir + 2) & 3); }
 bool isOrientedWestEast(direction dir) { return dir & 1; }
 
+uint16 getFlag(uint16 val, uint16 mask) {
+	return val & mask;
+}
+
+void setFlag(uint16 &val, uint16 mask) {
+	val |= mask;
+}
+
+void clearFlag(uint16 &val, uint16 mask) {
+	val &= ~mask;
+}
 
 DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
-	// Do not load data files
-	// Do not initialize graphics here
-	// Do not initialize audio devices here
-	// Do these from run
+// Do not load data files
+// Do not initialize graphics here
+// Do not initialize audio devices here
+// Do these from run
 
-	//Specify all default directories
-	//const Common::FSNode gameDataDir(ConfMan.get("example"));
-	//SearchMan.addSubDirectoryMatching(gameDataDir, "example2");
+//Specify all default directories
+//const Common::FSNode gameDataDir(ConfMan.get("example"));
+//SearchMan.addSubDirectoryMatching(gameDataDir, "example2");
 	DebugMan.addDebugChannel(kDMDebugExample, "example", "example desc");
 
 	// register random source
@@ -210,7 +221,7 @@ void DMEngine::gameloop() {
 	_dungeonMan->_currMap._partyPosX = 10;
 	_dungeonMan->_currMap._partyPosY = 4;
 	_dungeonMan->_currMap._partyDir = kDirNorth;
-	
+
 
 	warning("DUMMY CODE: setting InventoryMan::_inventoryChampionOrdinal to zero");
 	_inventoryMan->_inventoryChampionOrdinal = 0;
