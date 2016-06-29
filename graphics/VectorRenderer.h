@@ -176,7 +176,7 @@ public:
 	 * @param r Radius of the corners.
 	 */
 	virtual void drawRoundedSquare(int x, int y, int r, int w, int h) = 0;
-	virtual void drawRoundedSquareClip(int x, int y, int r, int w, int h, int cx, int cy, int cw, int ch) = 0;
+	virtual void drawRoundedSquareClip(int x, int y, int r, int w, int h, Common::Rect clipping) = 0;
 
 	/**
 	 * Draws a triangle starting at (x,y) with the given base and height.
@@ -386,7 +386,7 @@ public:
 	void drawCallback_ROUNDSQ(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		drawRoundedSquareClip(x, y, stepGetRadius(step, area), w, h, clip.left, clip.top, clip.right-clip.left, clip.bottom-clip.top);
+		drawRoundedSquareClip(x, y, stepGetRadius(step, area), w, h, clip);
 	}
 
 	void drawCallback_FILLSURFACE(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO

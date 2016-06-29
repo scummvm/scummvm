@@ -1355,7 +1355,7 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawRoundedSquareClip(int x, int y, int r, int w, int h, int cx, int cy, int cw, int ch) {
+drawRoundedSquareClip(int x, int y, int r, int w, int h, Common::Rect clipping) {
 	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h ||
 		w <= 0 || h <= 0 || x < 0 || y < 0 || r <= 0)
 		return;
@@ -1367,20 +1367,21 @@ drawRoundedSquareClip(int x, int y, int r, int w, int h, int cx, int cy, int cw,
 		return;
 
 	Common::Rect backup = _clippingArea;
-	_clippingArea = Common::Rect(cx, cy, cx + cw, cy + ch);	
+	_clippingArea = clipping;
+	bool useOriginal = (_clippingArea.isEmpty() || _clippingArea.contains(Common::Rect(x, y, x + w, y + h)));
 
 	if (Base::_fillMode != kFillDisabled && Base::_shadowOffset
 		&& x + w + Base::_shadowOffset + 1 < Base::_activeSurface->w
 		&& y + h + Base::_shadowOffset + 1 < Base::_activeSurface->h
 		&& h > (Base::_shadowOffset + 1) * 2) {
-		if (_clippingArea.isEmpty() || _clippingArea.contains(Common::Rect(x, y, x + w, y + h))) {
+		if (useOriginal) {
 			drawRoundedSquareShadow(x, y, r, w, h, Base::_shadowOffset);
 		} else {
 			drawRoundedSquareShadowClip(x, y, r, w, h, Base::_shadowOffset);
 		}
 	}
 
-	if (_clippingArea.isEmpty() || _clippingArea.contains(Common::Rect(x, y, x + w, y + h))) {
+	if (useOriginal) {
 		drawRoundedSquareAlg(x, y, r, w, h, _fgColor, Base::_fillMode);
 	} else {
 		drawRoundedSquareAlgClip(x, y, r, w, h, _fgColor, Base::_fillMode);
