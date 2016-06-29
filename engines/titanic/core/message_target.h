@@ -73,7 +73,6 @@ protected: \
 		{ return getThisMessageMap(); } \
 	const MSGMAP *theClass::getThisMessageMap() \
 	{ \
-		typedef theClass ThisClass;						   \
 		typedef baseClass TheBaseClass;					   \
 		static const MSGMAP_ENTRY _messageEntries[] = { \
 		{ (PMSG)nullptr, nullptr } \

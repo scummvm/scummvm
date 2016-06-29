@@ -1410,7 +1410,7 @@ CStarControl *CGameObject::getStarControl() const {
 	if (!starControl) {
 		CViewItem *view = getGameManager()->getView();
 		if (view)
-			starControl = starControl = static_cast<CStarControl *>(view->findChildInstanceOf(CStarControl::_type));
+			starControl = static_cast<CStarControl *>(view->findChildInstanceOf(CStarControl::_type));
 	}
 
 	return starControl;
