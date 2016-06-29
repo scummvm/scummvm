@@ -24,6 +24,8 @@
 
 namespace Titanic {
 
+EMPTY_MESSAGE_MAP(CMusicRoomPhonograph, CRestaurantPhonograph)
+
 void CMusicRoomPhonograph::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_field118, indent);

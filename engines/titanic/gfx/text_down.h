@@ -28,6 +28,7 @@
 namespace Titanic {
 
 class CTextDown : public CPetGraphic {
+	DECLARE_MESSAGE_MAP
 public:
 	CLASSDEF
 

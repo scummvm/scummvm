@@ -24,6 +24,8 @@
 
 namespace Titanic {
 
+EMPTY_MESSAGE_MAP(CToggleButton, CBackground)
+
 void CToggleButton::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldE0, indent);

@@ -28,6 +28,7 @@
 namespace Titanic {
 
 class CMusicRoomPhonograph : public CRestaurantPhonograph {
+	DECLARE_MESSAGE_MAP
 private:
 	int _field118;
 public:

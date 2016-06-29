@@ -73,11 +73,10 @@ public:
  * Filename list
  */
 class CFileList: public List<CFileListItem> {
-public:
 };
 
-
 class CProjectItem : public CFileItem {
+	DECLARE_MESSAGE_MAP
 private:
 	CString _filename;
 	CFileList _files;

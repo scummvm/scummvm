@@ -24,6 +24,8 @@
 
 namespace Titanic {
 
+EMPTY_MESSAGE_MAP(CMusicalInstrument, CBackground)
+
 void CMusicalInstrument::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
 	CBackground::save(file, indent);

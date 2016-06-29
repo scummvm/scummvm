@@ -28,6 +28,7 @@
 namespace Titanic {
 
 class CHelmetOnOff : public CToggleSwitch {
+	DECLARE_MESSAGE_MAP
 public:
 	CLASSDEF
 	CHelmetOnOff();

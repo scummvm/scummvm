@@ -24,8 +24,7 @@
 
 namespace Titanic {
 
-BEGIN_MESSAGE_MAP(CPetGraphic2, CGameObject)
-END_MESSAGE_MAP()
+EMPTY_MESSAGE_MAP(CPetGraphic2, CGameObject)
 
 void CPetGraphic2::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);

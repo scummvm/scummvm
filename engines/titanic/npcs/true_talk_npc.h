@@ -72,6 +72,11 @@ protected:
 	 * Stop an animation timer
 	 */
 	void stopAnimTimer(int id);
+
+	/**
+	 * Perform an action
+	 */
+	void performAction(bool startTalking, CViewItem *view);
 public:
 	CLASSDEF
 	CTrueTalkNPC();

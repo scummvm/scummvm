@@ -28,6 +28,7 @@
 namespace Titanic {
 
 class CBrokenPellBase : public CBackground {
+	DECLARE_MESSAGE_MAP
 private:
 	static int _v1;
 	static int _v2;

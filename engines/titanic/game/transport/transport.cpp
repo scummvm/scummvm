@@ -24,6 +24,8 @@
 
 namespace Titanic {
 
+EMPTY_MESSAGE_MAP(CTransport, CMobile)
+
 CTransport::CTransport() : CMobile(), _string1("*.*.*") {
 }
 

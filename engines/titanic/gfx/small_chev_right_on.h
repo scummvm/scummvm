@@ -28,6 +28,7 @@
 namespace Titanic {
 
 class CSmallChevRightOn : public CToggleSwitch {
+	DECLARE_MESSAGE_MAP
 public:
 	CLASSDEF
 	CSmallChevRightOn();

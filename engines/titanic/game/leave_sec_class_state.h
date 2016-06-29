@@ -28,6 +28,7 @@
 namespace Titanic {
 
 class CLeaveSecClassState : public CGameObject {
+	DECLARE_MESSAGE_MAP
 public:
 	CLASSDEF
 

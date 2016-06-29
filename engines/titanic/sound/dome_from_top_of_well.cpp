@@ -24,6 +24,8 @@
 
 namespace Titanic {
 
+EMPTY_MESSAGE_MAP(CDomeFromTopOfWell, CViewAutoSoundPlayer)
+
 void CDomeFromTopOfWell::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
 	CViewAutoSoundPlayer::save(file, indent);

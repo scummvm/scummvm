@@ -38,8 +38,7 @@
 
 namespace Titanic {
 
-BEGIN_MESSAGE_MAP(CTreeItem, CMessageTarget)
-END_MESSAGE_MAP()
+EMPTY_MESSAGE_MAP(CTreeItem, CMessageTarget)
 
 CTreeItem::CTreeItem() : _parent(nullptr), _firstChild(nullptr),
 	_nextSibling(nullptr), _priorSibling(nullptr), _field14(0) {

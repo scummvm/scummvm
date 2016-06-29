@@ -123,7 +123,7 @@ bool CBrain::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 bool CBrain::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 	if (!_field138) {
 		if (getName() == "Perch") {
-			incState38();
+			stateInc38();
 			_field138 = 1;
 		}
 	}

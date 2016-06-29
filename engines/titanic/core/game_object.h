@@ -201,6 +201,8 @@ protected:
 
 	void soundFn5(int v1, int v2, int v3);
 
+	void sound8(bool flag) const;
+
 	/**
 	 * Adds a timer
 	 */
@@ -286,8 +288,6 @@ protected:
 	 * Get the centre of the game object's bounds
 	 */
 	Point getControid() const;
-
-	void sound8(bool flag) const;
 
 	/**
 	 * Plays a movie
@@ -440,11 +440,17 @@ protected:
 	void petUnlockInput();
 
 	void setState1C(bool flag);
-	void incState38();
 	void stateInc14();
-	int stateGet14();
+	int stateGet14() const;
 	void stateSet24();
-	int stateGet24();
+	int stateGet24() const;
+	void stateInc38();
+	int stateGet38() const;
+
+	/**
+	 * Flag to quit the game
+	 */
+	void quitGame();
 
 	void surface39(int v1, int v2);
 

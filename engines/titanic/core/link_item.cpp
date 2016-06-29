@@ -27,6 +27,8 @@
 
 namespace Titanic {
 
+EMPTY_MESSAGE_MAP(CLinkItem, CNamedItem)
+
 CLinkItem::CLinkItem() : CNamedItem() {
 	_roomNumber = -1;
 	_nodeNumber = -1;

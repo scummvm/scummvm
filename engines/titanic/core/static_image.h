@@ -28,6 +28,7 @@
 namespace Titanic {
 
 class CStaticImage : public CGameObject {
+	DECLARE_MESSAGE_MAP
 public:
 	CLASSDEF
 

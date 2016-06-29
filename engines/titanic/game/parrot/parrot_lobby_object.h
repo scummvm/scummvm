@@ -28,6 +28,7 @@
 namespace Titanic {
 
 class CParrotLobbyObject : public CGameObject {
+	DECLARE_MESSAGE_MAP
 public:
 	static int _v1;
 	static int _v2;

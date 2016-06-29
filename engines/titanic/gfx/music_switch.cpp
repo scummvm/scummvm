@@ -20,18 +20,20 @@
  *
  */
 
-#include "titanic/core/dont_save_file_item.h"
+#include "titanic/gfx/music_switch.h"
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(CDontSaveFileItem, CFileItem)
+EMPTY_MESSAGE_MAP(CMusicSwitch, CMusicControl)
 
-void CDontSaveFileItem::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(0, indent);
+void CMusicSwitch::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	CMusicControl::save(file, indent);
 }
 
-void CDontSaveFileItem::load(SimpleFile *file) {
+void CMusicSwitch::load(SimpleFile *file) {
 	file->readNumber();
+	CMusicControl::load(file);
 }
 
 } // End of namespace Titanic

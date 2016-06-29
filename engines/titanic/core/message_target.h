@@ -68,6 +68,21 @@ protected: \
 		return &messageMap; \
 	}
 
+#define EMPTY_MESSAGE_MAP(theClass, baseClass) \
+	const MSGMAP *theClass::getMessageMap() const \
+		{ return getThisMessageMap(); } \
+	const MSGMAP *theClass::getThisMessageMap() \
+	{ \
+		typedef theClass ThisClass;						   \
+		typedef baseClass TheBaseClass;					   \
+		static const MSGMAP_ENTRY _messageEntries[] = { \
+		{ (PMSG)nullptr, nullptr } \
+	}; \
+		static const MSGMAP messageMap = \
+		{ &TheBaseClass::getThisMessageMap, &_messageEntries[0] }; \
+		return &messageMap; \
+	}
+
 class CMessageTarget: public CSaveableObject {
 	DECLARE_MESSAGE_MAP
 public:

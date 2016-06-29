@@ -28,6 +28,7 @@
 namespace Titanic {
 
 class CDomeFromTopOfWell : public CViewAutoSoundPlayer {
+	DECLARE_MESSAGE_MAP
 public:
 	CLASSDEF
 

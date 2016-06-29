@@ -28,6 +28,7 @@
 namespace Titanic {
 
 class CWaterLappingSounds : public CRoomAutoSoundPlayer {
+	DECLARE_MESSAGE_MAP
 public:
 	int _value;
 public:

@@ -298,6 +298,8 @@ MODULE_OBJS := \
 	gfx/keybrd_butt.o \
 	gfx/move_object_button.o \
 	gfx/music_control.o \
+	gfx/music_slider.o \
+	gfx/music_switch.o \
 	gfx/send_to_succ.o \
 	gfx/sgt_selector.o \
 	gfx/slider_button.o \

@@ -35,8 +35,7 @@
 
 namespace Titanic {
 
-BEGIN_MESSAGE_MAP(CGameObject, CNamedItem)
-END_MESSAGE_MAP()
+EMPTY_MESSAGE_MAP(CGameObject, CNamedItem)
 
 CCreditText *CGameObject::_credits;
 
@@ -424,6 +423,10 @@ void CGameObject::soundFn5(int v1, int v2, int v3) {
 	warning("CGameObject::soundFn5");
 }
 
+void CGameObject::sound8(bool flag) const {
+	getGameManager()->_sound.managerProc8(flag ? 3 : 0);
+}
+
 void CGameObject::setVisible(bool val) {
 	if (val != _visible) {
 		_visible = val;
@@ -580,10 +583,6 @@ int CGameObject::getMovieFrame() const {
 
 int CGameObject::getSurface45() const {
 	return _surface ? _surface->proc45() : 0;
-}
-
-void CGameObject::sound8(bool flag) const {
-	getGameManager()->_sound.managerProc8(flag ? 3 : 0);
 }
 
 void CGameObject::loadSound(const CString &name) {
@@ -855,15 +854,11 @@ void CGameObject::moveToView(const CString &name) {
 	view->addUnder(this);
 }
 
-void CGameObject::incState38() {
-	getGameManager()->_gameState.inc38();
-}
-
 void CGameObject::stateInc14() {
 	getGameManager()->_gameState.inc14();
 }
 
-int CGameObject::stateGet14() {
+int CGameObject::stateGet14() const {
 	return getGameManager()->_gameState._field14;
 }
 
@@ -871,8 +866,20 @@ void CGameObject::stateSet24() {
 	getGameManager()->_gameState.set24(1);
 }
 
-int CGameObject::stateGet24() {
+int CGameObject::stateGet24() const {
 	return getGameManager()->_gameState.get24();
+}
+
+void CGameObject::stateInc38() {
+	getGameManager()->_gameState.inc38();
+}
+
+int CGameObject::stateGet38() const {
+	return getGameManager()->_gameState._field38;
+}
+
+void CGameObject::quitGame() {
+	getGameManager()->_gameState._quitGame = true;
 }
 
 void CGameObject::inc54() {

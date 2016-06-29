@@ -22,6 +22,7 @@
 
 #include "titanic/npcs/true_talk_npc.h"
 #include "titanic/core/view_item.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -221,5 +222,16 @@ void CTrueTalkNPC::startTalker(CViewItem *view) {
 		gameManager->getTalkManager()->start4(this, view);
 }
 
+void CTrueTalkNPC::performAction(bool startTalking, CViewItem *view) {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->resetActiveNPC();
+
+	if (startTalking)
+		startTalker(view);
+
+	if (pet)
+		pet->convResetNPC();
+}
 
 } // End of namespace Titanic

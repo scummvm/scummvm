@@ -30,6 +30,7 @@
 namespace Titanic {
 
 class CFileItem: public CTreeItem {
+	DECLARE_MESSAGE_MAP
 private:
 	CString _filename;
 public:

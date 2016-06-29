@@ -24,6 +24,8 @@
 
 namespace Titanic {
 
+EMPTY_MESSAGE_MAP(CChevRightOn, CToggleSwitch)
+
 CChevRightOn::CChevRightOn() : CToggleSwitch() {
 }
 

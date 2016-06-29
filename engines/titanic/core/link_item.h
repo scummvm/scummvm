@@ -34,6 +34,7 @@ class CNodeItem;
 class CRoomItem;
 
 class CLinkItem : public CNamedItem {
+	DECLARE_MESSAGE_MAP
 private:
 	/**
 	 * Returns a new name for the link item, based on the
