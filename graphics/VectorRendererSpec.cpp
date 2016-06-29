@@ -1427,6 +1427,66 @@ drawTab(int x, int y, int r, int w, int h) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
+drawTabClip(int x, int y, int r, int w, int h, Common::Rect clipping) {
+	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h ||
+		w <= 0 || h <= 0 || x < 0 || y < 0 || r > w || r > h)
+		return;
+
+	Common::Rect backup = _clippingArea;
+	_clippingArea = clipping;
+	bool useClippingVersions = !(_clippingArea.isEmpty() || _clippingArea.contains(Common::Rect(x, y, x + w, y + h)));
+
+	if (r == 0 && Base::_bevel > 0) {
+		if (useClippingVersions)
+			drawBevelTabAlgClip(x, y, w, h, Base::_bevel, _bevelColor, _fgColor, (Base::_dynamicData >> 16), (Base::_dynamicData & 0xFFFF));
+		else
+			drawBevelTabAlg(x, y, w, h, Base::_bevel, _bevelColor, _fgColor, (Base::_dynamicData >> 16), (Base::_dynamicData & 0xFFFF));
+		_clippingArea = backup;
+		return;
+	}
+
+	if (r == 0) {
+		_clippingArea = backup;
+		return;
+	}
+
+	switch (Base::_fillMode) {
+	case kFillDisabled:
+		// FIXME: Implement this
+		_clippingArea = backup;
+		return;
+
+	case kFillGradient:
+	case kFillBackground:
+		// FIXME: This is broken for the AA renderer.
+		// See the rounded rect alg for how to fix it. (The border should
+		// be drawn before the interior, both inside drawTabAlg.)
+		if (useClippingVersions) {
+			drawTabShadowClip(x, y, w - 2, h, r);
+			drawTabAlgClip(x, y, w - 2, h, r, _bgColor, Base::_fillMode);
+			if (Base::_strokeWidth)
+				drawTabAlgClip(x, y, w, h, r, _fgColor, kFillDisabled, (Base::_dynamicData >> 16), (Base::_dynamicData & 0xFFFF));
+		} else {
+			drawTabShadow(x, y, w - 2, h, r);
+			drawTabAlg(x, y, w - 2, h, r, _bgColor, Base::_fillMode);
+			if (Base::_strokeWidth)
+				drawTabAlg(x, y, w, h, r, _fgColor, kFillDisabled, (Base::_dynamicData >> 16), (Base::_dynamicData & 0xFFFF));
+		}
+		break;
+
+	case kFillForeground:
+		if (useClippingVersions)
+			drawTabAlgClip(x, y, w, h, r, _fgColor, Base::_fillMode);
+		else
+			drawTabAlg(x, y, w, h, r, _fgColor, Base::_fillMode);
+		break;
+	}
+
+	_clippingArea = backup;
+}
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
 drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
 
 	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h)
@@ -1685,6 +1745,120 @@ drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer:
 	}
 }
 
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+drawTabAlgClip(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer::FillMode fill_m, int baseLeft, int baseRight) {
+	// Don't draw anything for empty rects.
+	if (w <= 0 || h <= 0) {
+		return;
+	}
+
+	int f, ddF_x, ddF_y;
+	int x, y, px, py;
+	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
+	int sw = 0, sp = 0, hp = 0;
+
+	PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
+	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
+	PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
+	int tl_x = x1 + r, tl_y = y1 + r;
+	int tr_x = x1 + w - r, tr_y = y1 + r;
+	int fill_x = x1, fill_y = y1;
+
+	int real_radius = r;
+	int short_h = h - r + 2;
+	int long_h = h;
+
+	if (fill_m == kFillDisabled) {
+		while (sw++ < Base::_strokeWidth) {
+			colorFillClip<PixelType>(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color, fill_x + r, fill_y + sp/pitch, _clippingArea);
+			colorFillClip<PixelType>(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color, fill_x + r, fill_y + hp / pitch - sp / pitch, _clippingArea);
+			sp += pitch;
+
+			BE_RESET();
+			r--;
+
+			while (x++ < y) {
+				BE_ALGORITHM();
+				BE_DRAWCIRCLE_TOP_CLIP(ptr_tr, ptr_tl, x, y, px, py, tr_x, tr_y, tl_x, tl_y);
+
+				if (Base::_strokeWidth > 1)
+					BE_DRAWCIRCLE_TOP_CLIP(ptr_tr, ptr_tl, x, y, px - pitch, py, tr_x, tr_y, tl_x, tl_y);
+			}
+		}
+
+		ptr_fill += pitch * real_radius;
+		fill_y += real_radius;
+		while (short_h--) {
+			colorFillClip<PixelType>(ptr_fill, ptr_fill + Base::_strokeWidth, color, fill_x, fill_y, _clippingArea);
+			colorFillClip<PixelType>(ptr_fill + w - Base::_strokeWidth + 1, ptr_fill + w + 1, color, fill_x + w - Base::_strokeWidth + 1, fill_y, _clippingArea);
+			ptr_fill += pitch;
+			++fill_y;
+		}
+
+		if (baseLeft) {
+			sw = 0;
+			ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1 + h + 1);
+			fill_x = x1;
+			fill_y = y1 + h + 1;
+			while (sw++ < Base::_strokeWidth) {
+				colorFillClip<PixelType>(ptr_fill - baseLeft, ptr_fill, color, fill_x - baseLeft, fill_y, _clippingArea);
+				ptr_fill += pitch;
+				++fill_y;
+			}
+		}
+
+		if (baseRight) {
+			sw = 0;
+			ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w, y1 + h + 1);
+			fill_x = x1 + w;
+			fill_y = y1 + h + 1;
+			while (sw++ < Base::_strokeWidth) {
+				colorFillClip<PixelType>(ptr_fill, ptr_fill + baseRight, color, fill_x, fill_y, _clippingArea);
+				ptr_fill += pitch;
+				++fill_y;
+			}
+		}
+	} else {
+		BE_RESET();
+
+		precalcGradient(long_h);
+
+		PixelType color1, color2;
+		color1 = color2 = color;
+
+		while (x++ < y) {
+			BE_ALGORITHM();
+
+			if (fill_m == kFillGradient) {
+				color1 = calcGradient(real_radius - x, long_h);
+				color2 = calcGradient(real_radius - y, long_h);
+
+				gradientFillClip(ptr_tl - x - py, w - 2 * r + 2 * x, x1 + r - x - y, real_radius - y, tl_x - x, tl_y - y);
+				gradientFillClip(ptr_tl - y - px, w - 2 * r + 2 * y, x1 + r - y - x, real_radius - x, tl_x - y, tl_y - x);
+
+				BE_DRAWCIRCLE_XCOLOR_TOP_CLIP(ptr_tr, ptr_tl, x, y, px, py, tr_x, tr_y, tl_x, tl_y);
+			} else {
+				colorFillClip<PixelType>(ptr_tl - x - py, ptr_tr + x - py, color, tl_x - x, tl_y - y, _clippingArea);
+				colorFillClip<PixelType>(ptr_tl - y - px, ptr_tr + y - px, color, tl_x - y, tl_y - x, _clippingArea);
+
+				BE_DRAWCIRCLE_TOP_CLIP(ptr_tr, ptr_tl, x, y, px, py, tr_x, tr_y, tl_x, tl_y);
+			}
+		}
+
+		ptr_fill += pitch * r;
+		fill_y += r;
+		while (short_h--) {
+			if (fill_m == kFillGradient) {
+				gradientFillClip(ptr_fill, w + 1, x1, real_radius++, fill_x, fill_y);
+			} else {
+				colorFillClip<PixelType>(ptr_fill, ptr_fill + w + 1, color, fill_x, fill_y, _clippingArea);
+			}
+			ptr_fill += pitch;
+			++fill_y;
+		}
+	}
+}
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
@@ -1747,6 +1921,72 @@ drawTabShadow(int x1, int y1, int w, int h, int r) {
 	}
 }
 
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+drawTabShadowClip(int x1, int y1, int w, int h, int r) {
+	int offset = 3;
+	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
+
+	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)
+	uint8 expFactor = 3;
+	uint16 alpha = (_activeSurface->format.bytesPerPixel > 2) ? 4 : 8;
+
+	int xstart = x1;
+	int ystart = y1;
+	int width = w;
+	int height = h + offset + 1;
+
+	for (int i = offset; i >= 0; i--) {
+		int f, ddF_x, ddF_y;
+		int x, y, px, py;
+
+		PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(xstart + r, ystart + r);
+		PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(xstart + width - r, ystart + r);
+		PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(xstart, ystart);
+
+		int tl_x = xstart + r, tl_y = ystart + r;
+		int fill_x = xstart, fill_y = ystart;
+
+		int short_h = height - (2 * r) + 2;
+		PixelType color = _format.RGBToColor(0, 0, 0);
+
+		BE_RESET();
+
+		// HACK: As we are drawing circles exploting 8-axis symmetry,
+		// there are 4 pixels on each circle which are drawn twice.
+		// this is ok on filled circles, but when blending on surfaces,
+		// we cannot let it blend twice. awful.
+		uint32 hb = 0;
+
+		while (x++ < y) {
+			BE_ALGORITHM();
+
+			if (((1 << x) & hb) == 0) {
+				blendFillClip(ptr_tl - y - px, ptr_tr + y - px, color, (uint8)alpha, tl_x - y, tl_y - x);
+				hb |= (1 << x);
+			}
+
+			if (((1 << y) & hb) == 0) {
+				blendFillClip(ptr_tl - x - py, ptr_tr + x - py, color, (uint8)alpha, tl_x - x, tl_y - y);
+				hb |= (1 << y);
+			}
+		}
+
+		ptr_fill += pitch * r;
+		fill_y += r;
+		while (short_h--) {
+			blendFillClip(ptr_fill, ptr_fill + width + 1, color, (uint8)alpha, fill_x, fill_y);
+			ptr_fill += pitch;
+			++fill_y;
+		}
+
+		// Move shadow one pixel upward each iteration
+		xstart += 1;
+		// Multiply with expfactor
+		alpha = (alpha * (expFactor << 8)) >> 9;
+	}
+}
+
 /** BEVELED TABS FOR CLASSIC THEME **/
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
@@ -1788,6 +2028,57 @@ drawBevelTabAlg(int x, int y, int w, int h, int bevel, PixelType top_color, Pixe
 		if (baseLeft)
 			colorFill<PixelType>(ptr_left - w - baseLeft + bevel, ptr_left - w + bevel + bevel, top_color);
 		ptr_left += pitch;
+	}
+}
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+drawBevelTabAlgClip(int x, int y, int w, int h, int bevel, PixelType top_color, PixelType bottom_color, int baseLeft, int baseRight) {
+	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
+	int i, j;
+
+	PixelType *ptr_left = (PixelType *)_activeSurface->getBasePtr(x, y);
+	int ptr_x = x, ptr_y = y;
+
+	i = bevel;
+	while (i--) {
+		colorFillClip<PixelType>(ptr_left, ptr_left + w, top_color, ptr_x, ptr_y, _clippingArea);
+		ptr_left += pitch;
+		++ptr_y;
+	}
+
+	if (baseLeft > 0) {
+		i = h - bevel;
+		ptr_left = (PixelType *)_activeSurface->getBasePtr(x, y);
+		ptr_x = x; ptr_y = y;
+		while (i--) {
+			colorFillClip<PixelType>(ptr_left, ptr_left + bevel, top_color, ptr_x, ptr_y, _clippingArea);
+			ptr_left += pitch;
+			++ptr_y;
+		}
+	}
+
+	i = h - bevel;
+	j = bevel - 1;
+	ptr_left = (PixelType *)_activeSurface->getBasePtr(x + w - bevel, y);
+	ptr_x = x + w - bevel; ptr_y = y;
+	while (i--) {
+		colorFillClip<PixelType>(ptr_left + j, ptr_left + bevel, bottom_color, ptr_x + j, ptr_y, _clippingArea);
+		if (j > 0) j--;
+		ptr_left += pitch;
+		++ptr_y;
+	}
+
+	i = bevel;
+	ptr_left = (PixelType *)_activeSurface->getBasePtr(x + w - bevel, y + h - bevel);
+	ptr_x = x + w - bevel; ptr_y = y + h - bevel;
+	while (i--) {
+		colorFillClip<PixelType>(ptr_left, ptr_left + baseRight + bevel, bottom_color, ptr_x, ptr_y, _clippingArea);
+
+		if (baseLeft)
+			colorFillClip<PixelType>(ptr_left - w - baseLeft + bevel, ptr_left - w + bevel + bevel, top_color, ptr_x - w - baseLeft + bevel, ptr_y, _clippingArea);
+		ptr_left += pitch;
+		++ptr_y;
 	}
 }
 

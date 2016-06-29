@@ -1351,6 +1351,34 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, co
 	}
 }
 
+void ThemeEngine::drawTabClip(const Common::Rect &r, const Common::Rect &clip, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, WidgetStateInfo state) {
+	if (!ready())
+		return;
+
+	queueDDClip(kDDTabBackground, Common::Rect(r.left, r.top, r.right, r.top + tabHeight), clip);
+
+	for (int i = 0; i < (int)tabs.size(); ++i) {
+		if (i == active)
+			continue;
+
+		if (r.left + i * tabWidth > r.right || r.left + (i + 1) * tabWidth > r.right)
+			continue;
+
+		Common::Rect tabRect(r.left + i * tabWidth, r.top, r.left + (i + 1) * tabWidth, r.top + tabHeight);
+		queueDDClip(kDDTabInactive, tabRect, clip);
+		queueDDTextClip(getTextData(kDDTabInactive), getTextColor(kDDTabInactive), tabRect, clip, tabs[i], false, false, _widgets[kDDTabInactive]->_textAlignH, _widgets[kDDTabInactive]->_textAlignV);
+	}
+
+	if (active >= 0 &&
+		(r.left + active * tabWidth < r.right) && (r.left + (active + 1) * tabWidth < r.right)) {
+		Common::Rect tabRect(r.left + active * tabWidth, r.top, r.left + (active + 1) * tabWidth, r.top + tabHeight);
+		const uint16 tabLeft = active * tabWidth;
+		const uint16 tabRight = MAX(r.right - tabRect.right, 0);
+		queueDDClip(kDDTabActive, tabRect, clip, (tabLeft << 16) | (tabRight & 0xFFFF));
+		queueDDTextClip(getTextData(kDDTabActive), getTextColor(kDDTabActive), tabRect, clip, tabs[active], false, false, _widgets[kDDTabActive]->_textAlignH, _widgets[kDDTabActive]->_textAlignV);
+	}
+}
+
 void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, Graphics::TextAlign align, TextInversionState inverted, int deltax, bool useEllipsis, FontStyle font, FontColor color, bool restore, const Common::Rect &drawableTextArea) {
 	if (!ready())
 		return;

@@ -60,7 +60,8 @@ public:
 	void drawRoundedSquareClip(int x, int y, int r, int w, int h, int cx, int cy, int cw, int ch);
 	void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient);
 	void drawTriangleClip(int x, int y, int base, int height, TriangleOrientation orient, Common::Rect clipping);
-	void drawTab(int x, int y, int r, int w, int h); //TODO
+	void drawTab(int x, int y, int r, int w, int h);
+	void drawTabClip(int x, int y, int r, int w, int h, Common::Rect clipping);
 	void drawBeveledSquare(int x, int y, int w, int h, int bevel) {
 		drawBevelSquareAlg(x, y, w, h, bevel, _bevelColor, _fgColor, Base::_fillMode != kFillDisabled);
 	}
@@ -223,11 +224,21 @@ protected:
 	    PixelType color, VectorRenderer::FillMode fill_m,
 	    int baseLeft = 0, int baseRight = 0);
 
+	virtual void drawTabAlgClip(int x, int y, int w, int h, int r,
+		PixelType color, VectorRenderer::FillMode fill_m,
+		int baseLeft = 0, int baseRight = 0);
+
 	virtual void drawTabShadow(int x, int y, int w, int h, int r);
+
+	virtual void drawTabShadowClip(int x, int y, int w, int h, int r);
 
 	virtual void drawBevelTabAlg(int x, int y, int w, int h,
 	    int bevel, PixelType topColor, PixelType bottomColor,
 	    int baseLeft = 0, int baseRight = 0);
+
+	virtual void drawBevelTabAlgClip(int x, int y, int w, int h,
+		int bevel, PixelType topColor, PixelType bottomColor,
+		int baseLeft = 0, int baseRight = 0);
 
 	/**
 	 * SHADOW DRAWING ALGORITHMS

@@ -218,6 +218,7 @@ public:
 	 * @param r Radius of the corners of the tab (0 for squared tabs).
 	 */
 	virtual void drawTab(int x, int y, int r, int w, int h) = 0;
+	virtual void drawTabClip(int x, int y, int r, int w, int h, Common::Rect clipping) = 0;
 
 
 	/**
@@ -404,10 +405,10 @@ public:
 		drawBeveledSquareClip(x, y, w, h, _bevel, clip);
 	}
 
-	void drawCallback_TAB(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO
+	void drawCallback_TAB(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		drawTab(x, y, stepGetRadius(step, area), w, h);
+		drawTabClip(x, y, stepGetRadius(step, area), w, h, clip);
 	}
 
 	void drawCallback_BITMAP(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO

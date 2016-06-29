@@ -365,6 +365,9 @@ public:
 	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth,
 	             const Common::Array<Common::String> &tabs, int active, uint16 hints,
 	             int titleVPad, WidgetStateInfo state = kStateEnabled);
+	void drawTabClip(const Common::Rect &r, const Common::Rect &clippingRect, int tabHeight, int tabWidth,
+				 const Common::Array<Common::String> &tabs, int active, uint16 hints,
+				 int titleVPad, WidgetStateInfo state = kStateEnabled);
 
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight,
 	                   ScrollbarState, WidgetStateInfo state = kStateEnabled);
