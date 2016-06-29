@@ -36,6 +36,7 @@
 #include "common/events.h"
 #include "engines/util.h"
 #include "graphics/managed_surface.h"
+#include "image/bmp.h"
 
 namespace Director {
 
@@ -1161,19 +1162,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				continue;
 			}
 
-			DIBDecoder img;
-			uint32 imgId = 1024 + _sprites[i]->_castId;
-
-			if (!_vm->_currentScore->getArchive()->hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
-				if (!_vm->getSharedDIB()->contains(imgId)) {
-					warning("DIB id %d not found", imgId);
-					continue;
-				} else {
-					img.loadStream(*_vm->getSharedDIB()->getVal(imgId));
-				}
-			} else {
-				img.loadStream(*_vm->_currentScore->getArchive()->getResource(MKTAG('D', 'I', 'B', ' '), imgId));
-			}
+			Image::ImageDecoder *img = getImageFrom(_sprites[i]->_castId);
 
 			uint32 regX = static_cast<BitmapCast *>(_sprites[i]->_cast)->regX;
 			uint32 regY = static_cast<BitmapCast *>(_sprites[i]->_cast)->regY;
@@ -1190,28 +1179,57 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 
 			switch (_sprites[i]->_ink) {
 			case kInkTypeCopy:
-				surface.blitFrom(*img.getSurface(), Common::Point(x, y));
+				surface.blitFrom(*img->getSurface(), Common::Point(x, y));
 				break;
 			case kInkTypeBackgndTrans:
-				drawBackgndTransSprite(surface, *img.getSurface(), drawRect);
+				drawBackgndTransSprite(surface, *img->getSurface(), drawRect);
 				break;
 			case kInkTypeMatte:
-				drawMatteSprite(surface, *img.getSurface(), drawRect);
+				drawMatteSprite(surface, *img->getSurface(), drawRect);
 				break;
 			case kInkTypeGhost:
-				drawGhostSprite(surface, *img.getSurface(), drawRect);
+				drawGhostSprite(surface, *img->getSurface(), drawRect);
 				break;
 			case kInkTypeReverse:
-				drawReverseSprite(surface, *img.getSurface(), drawRect);
+				drawReverseSprite(surface, *img->getSurface(), drawRect);
 				break;
 			default:
 				warning("Unhandled ink type %d", _sprites[i]->_ink);
-				surface.blitFrom(*img.getSurface(), Common::Point(x, y));
+				surface.blitFrom(*img->getSurface(), Common::Point(x, y));
 				break;
 			}
 		}
 	}
 }
+
+Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
+	uint16 imgId = spriteId + 1024;
+	Image::ImageDecoder *img;
+
+	if (!_vm->_currentScore->getArchive()->hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
+		img = new DIBDecoder();
+		img->loadStream(*_vm->_currentScore->getArchive()->getResource(MKTAG('D', 'I', 'B', ' '), imgId));
+		return img;
+	}
+
+	if (_vm->getSharedDIB()->contains(imgId)) {
+		img = new DIBDecoder();
+		img->loadStream(*_vm->getSharedDIB()->getVal(imgId));
+		return img;
+	}
+
+	if (!_vm->_currentScore->getArchive()->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
+		img = new Image::BitmapDecoder();
+		img->loadStream(*_vm->_currentScore->getArchive()->getResource(MKTAG('B', 'I', 'T', 'D'), imgId));
+		return img;
+	}
+
+	//TODO Shared bitmaps
+
+	warning("Image %d not found", spriteId);
+	return img;
+}
+
 
 void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID) {
 	warning("STUB: renderText()");

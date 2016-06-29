@@ -29,6 +29,7 @@
 #include "director/resource.h"
 #include "graphics/managed_surface.h"
 #include "common/str.h"
+#include "image/image_decoder.h"
 
 namespace Director {
 
@@ -302,6 +303,7 @@ private:
 	void readPaletteInfo(Common::SeekableSubReadStreamEndian &stream);
 	void readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
 	void readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
+	Image::ImageDecoder *getImageFrom(uint16 spriteID);
 	void drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
 	void drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
 	void drawGhostSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
