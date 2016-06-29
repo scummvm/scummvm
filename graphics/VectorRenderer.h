@@ -187,6 +187,7 @@ public:
 	 * @param orient Orientation of the triangle.
 	 */
 	virtual void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient) = 0;
+	virtual void drawTriangleClip(int x, int y, int base, int height, TriangleOrientation orient, Common::Rect clipping) = 0;
 
 	/**
 	 * Draws a beveled square like the ones in the Classic GUI themes.
@@ -390,7 +391,7 @@ public:
 	void drawCallback_TRIANGLE(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		drawTriangle(x, y, w, h, (TriangleOrientation)step.extraData);
+		drawTriangleClip(x, y, w, h, (TriangleOrientation)step.extraData, clip);
 	}
 
 	void drawCallback_BEVELSQ(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO

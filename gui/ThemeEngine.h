@@ -368,6 +368,8 @@ public:
 
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight,
 	                   ScrollbarState, WidgetStateInfo state = kStateEnabled);
+	void drawScrollbarClip(const Common::Rect &r, const Common::Rect &clippingRect, int sliderY, int sliderHeight,
+					   ScrollbarState scrollState, WidgetStateInfo state = kStateEnabled);
 
 	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel,
 	                     int deltax, WidgetStateInfo state = kStateEnabled, Graphics::TextAlign align = Graphics::kTextAlignLeft);

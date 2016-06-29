@@ -50,14 +50,15 @@ class VectorRendererSpec : public VectorRenderer {
 public:
 	VectorRendererSpec(PixelFormat format);
 
-	void drawLine(int x1, int y1, int x2, int y2);
-	void drawCircle(int x, int y, int r);
-	void drawSquare(int x, int y, int w, int h);
+	void drawLine(int x1, int y1, int x2, int y2); //TODO
+	void drawCircle(int x, int y, int r); //TODO
+	void drawSquare(int x, int y, int w, int h); //TODO
 	void drawRoundedSquare(int x, int y, int r, int w, int h);
 	void drawRoundedSquareClip(int x, int y, int r, int w, int h, int cx, int cy, int cw, int ch);
-	void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient);
-	void drawTab(int x, int y, int r, int w, int h);
-	void drawBeveledSquare(int x, int y, int w, int h, int bevel) {
+	void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient); //TODO
+	void drawTriangleClip(int x, int y, int base, int height, TriangleOrientation orient, Common::Rect clipping);
+	void drawTab(int x, int y, int r, int w, int h); //TODO
+	void drawBeveledSquare(int x, int y, int w, int h, int bevel) { //TODO
 		drawBevelSquareAlg(x, y, w, h, bevel, _bevelColor, _fgColor, Base::_fillMode != kFillDisabled);
 	}
 	void drawString(const Graphics::Font *font, const Common::String &text,
@@ -122,6 +123,7 @@ protected:
 	 * @param alpha Alpha intensity of the pixel (0-255)
 	 */
 	inline void blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha);
+	inline void blendPixelPtrClip(PixelType *ptr, PixelType color, uint8 alpha, int x, int y);
 
 	/**
 	 * Blends a single pixel on the surface in the given pixel pointer, using supplied color
@@ -181,6 +183,9 @@ protected:
 
 	virtual void drawTriangleVertAlg(int x, int y, int w, int h,
 	    bool inverted, PixelType color, FillMode fill_m);
+
+	virtual void drawTriangleVertAlgClip(int x, int y, int w, int h,
+		bool inverted, PixelType color, FillMode fill_m);
 
 	virtual void drawTriangleFast(int x, int y, int size,
 	    bool inverted, PixelType color, FillMode fill_m);

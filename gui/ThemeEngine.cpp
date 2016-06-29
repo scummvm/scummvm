@@ -1127,6 +1127,29 @@ void ThemeEngine::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHe
 	queueDD(scrollState == kScrollbarStateSlider ? kDDScrollbarHandleHover : kDDScrollbarHandleIdle, r2);
 }
 
+void ThemeEngine::drawScrollbarClip(const Common::Rect &r, const Common::Rect &clippingRect, int sliderY, int sliderHeight, ScrollbarState scrollState, WidgetStateInfo state) {
+	if (!ready())
+		return;
+
+	queueDDClip(kDDScrollbarBase, r, clippingRect);
+
+	Common::Rect r2 = r;
+	const int buttonExtra = (r.width() * 120) / 100;
+
+	r2.bottom = r2.top + buttonExtra;
+	queueDDClip(scrollState == kScrollbarStateUp ? kDDScrollbarButtonHover : kDDScrollbarButtonIdle, r2, clippingRect, Graphics::VectorRenderer::kTriangleUp);
+
+	r2.translate(0, r.height() - r2.height());
+	queueDDClip(scrollState == kScrollbarStateDown ? kDDScrollbarButtonHover : kDDScrollbarButtonIdle, r2, clippingRect, Graphics::VectorRenderer::kTriangleDown);
+
+	r2 = r;
+	r2.left += 1;
+	r2.right -= 1;
+	r2.top += sliderY;
+	r2.bottom = r2.top + sliderHeight;
+	queueDDClip(scrollState == kScrollbarStateSlider ? kDDScrollbarHandleHover : kDDScrollbarHandleIdle, r2, clippingRect);
+}
+
 void ThemeEngine::drawDialogBackground(const Common::Rect &r, DialogBackground bgtype, WidgetStateInfo state) {
 	if (!ready())
 		return;
@@ -1199,7 +1222,7 @@ void ThemeEngine::drawPopUpWidgetClip(const Common::Rect &r, const Common::Rect 
 	else if (state == kStateDisabled)
 		dd = kDDPopUpDisabled;
 
-	queueDDClip(dd, r, clip);
+	queueDDClip(dd, r, clip);	
 
 	if (!sel.empty()) {
 		Common::Rect text(r.left + 3, r.top + 1, r.right - 10, r.bottom);

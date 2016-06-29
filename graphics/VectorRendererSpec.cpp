@@ -872,6 +872,13 @@ blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha) {
 
 template<typename PixelType>
 inline void VectorRendererSpec<PixelType>::
+blendPixelPtrClip(PixelType *ptr, PixelType color, uint8 alpha, int x, int y) {
+	if (IS_IN_CLIP(x, y))
+		blendPixelPtr(ptr, color, alpha);
+}
+
+template<typename PixelType>
+inline void VectorRendererSpec<PixelType>::
 blendPixelDestAlphaPtr(PixelType *ptr, PixelType color, uint8 alpha) {
 	int idst = *ptr;
 	// This function is only used for corner pixels in rounded rectangles, so
@@ -1263,8 +1270,88 @@ drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
 	}
 }
 
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+drawTriangleClip(int x, int y, int w, int h, TriangleOrientation orient, Common::Rect clipping) {
+	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h)
+		return;
 
+	PixelType color = 0;
 
+	if (Base::_strokeWidth <= 1) {
+		if (Base::_fillMode == kFillForeground)
+			color = _fgColor;
+		else if (Base::_fillMode == kFillBackground)
+			color = _bgColor;
+	} else {
+		if (Base::_fillMode == kFillDisabled)
+			return;
+		color = _fgColor;
+	}
+
+	if (Base::_dynamicData != 0)
+		orient = (TriangleOrientation)Base::_dynamicData;
+
+	Common::Rect backup = _clippingArea;
+	_clippingArea = clipping;
+	bool useClippingVersions = !(_clippingArea.isEmpty() || _clippingArea.contains(Common::Rect(x, y, x + w, y + h)));
+
+	if (w == h) {
+		int newW = w;
+
+		switch (orient) {
+		case kTriangleUp:
+		case kTriangleDown:
+			if (useClippingVersions)
+				drawTriangleVertAlgClip(x, y, newW, newW, (orient == kTriangleDown), color, Base::_fillMode);
+			else
+				drawTriangleVertAlg(x, y, newW, newW, (orient == kTriangleDown), color, Base::_fillMode);
+			break;
+
+		case kTriangleLeft:
+		case kTriangleRight:
+		case kTriangleAuto:
+			break;
+		}
+
+		if (Base::_strokeWidth > 0)
+			if (Base::_fillMode == kFillBackground || Base::_fillMode == kFillGradient) {
+				if (useClippingVersions)
+					drawTriangleVertAlgClip(x, y, newW, newW, (orient == kTriangleDown), color, Base::_fillMode);
+				else
+					drawTriangleVertAlg(x, y, newW, newW, (orient == kTriangleDown), color, Base::_fillMode);
+			}
+	} else {
+		int newW = w;
+		int newH = h;
+
+		switch (orient) {
+		case kTriangleUp:
+		case kTriangleDown:
+			if (useClippingVersions)
+				drawTriangleVertAlgClip(x, y, newW, newH, (orient == kTriangleDown), color, Base::_fillMode);
+			else
+				drawTriangleVertAlg(x, y, newW, newH, (orient == kTriangleDown), color, Base::_fillMode);
+			break;
+
+		case kTriangleLeft:
+		case kTriangleRight:
+		case kTriangleAuto:
+			break;
+		}
+
+		if (Base::_strokeWidth > 0) {
+			if (Base::_fillMode == kFillBackground || Base::_fillMode == kFillGradient) {
+				if (useClippingVersions)
+					drawTriangleVertAlgClip(x, y, newW, newH, (orient == kTriangleDown), _fgColor, kFillDisabled);
+				else
+					drawTriangleVertAlg(x, y, newW, newH, (orient == kTriangleDown), _fgColor, kFillDisabled);
+			}
+		}
+	}
+
+	_clippingArea = backup;
+}
 
 
 /********************************************************************
@@ -1820,6 +1907,212 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 	}
 
 }
+
+/////////////
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+drawTriangleVertAlgClip(int x1, int y1, int w, int h, bool inverted, PixelType color, VectorRenderer::FillMode fill_m) {
+	// Don't draw anything for empty rects. This assures dy is always different
+	// from zero.
+	if (w <= 0 || h <= 0) {
+		return;
+	}
+
+	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
+	int gradient_h = 0;
+	int y_pitch_sign = 1;
+	if (!inverted) {
+		pitch = -pitch;
+		y1 += h;
+		y_pitch_sign = -1;
+	}
+
+	PixelType *ptr_right = (PixelType *)_activeSurface->getBasePtr(x1, y1);
+	PixelType *floor = ptr_right - 1;
+	PixelType *ptr_left = (PixelType *)_activeSurface->getBasePtr(x1 + w, y1);
+
+	int x2 = x1 + w / 2;
+	int y2 = y1 + h;
+	int x_right = x1;
+	int y_right = y1;
+	int x_left = x1 + w;
+	int y_left = y1;
+	int x_floor = x_right - 1;
+	int y_floor = y_right;
+
+#if FIXED_POINT
+	int dx = (x2 - x1) << 8;
+	int dy = (y2 - y1) << 8;
+
+	if (abs(dx) > abs(dy)) {
+#else
+	double dx = (double)x2 - (double)x1;
+	double dy = (double)y2 - (double)y1;
+
+	if (fabs(dx) > fabs(dy)) {
+#endif
+		while (floor++ != ptr_left)
+			blendPixelPtrClip(floor, color, 50, ++x_floor, y_floor);
+
+#if FIXED_POINT
+		// In this branch dx is always different from zero. This is because
+		// abs(dx) is strictly greater than abs(dy), and abs returns zero
+		// as minimal value.
+		int gradient = (dy << 8) / dx;
+		int intery = (y1 << 8) + gradient;
+#else
+		double gradient = dy / dx;
+		double intery = y1 + gradient;
+#endif
+
+		for (int x = x1 + 1; x < x2; x++) {
+#if FIXED_POINT
+			if (intery + gradient > ipart(intery) + 0x100) {
+#else
+			if (intery + gradient > ipart(intery) + 1) {
+#endif
+				ptr_right++;
+				ptr_left--;
+				++x_right;
+				--x_left;
+			}
+
+			ptr_left += pitch;
+			ptr_right += pitch;
+			y_right += y_pitch_sign;
+			y_left += y_pitch_sign;
+
+			intery += gradient;
+
+			switch (fill_m) {
+			case kFillDisabled:
+				if (IS_IN_CLIP(x_left, y_left)) *ptr_left = color;
+				if (IS_IN_CLIP(x_right, y_right)) *ptr_right = color;
+				break;
+			case kFillForeground:
+			case kFillBackground:
+				colorFillClip<PixelType>(ptr_right + 1, ptr_left, color, x_right+1, y_right, _clippingArea);
+				blendPixelPtrClip(ptr_right, color, rfpart(intery), x_right, y_right);
+				blendPixelPtrClip(ptr_left, color, rfpart(intery), x_left, y_left);
+				break;
+			case kFillGradient:
+				colorFillClip<PixelType>(ptr_right, ptr_left, calcGradient(gradient_h++, h), x_right, y_right, _clippingArea);
+				blendPixelPtrClip(ptr_right, color, rfpart(intery), x_right, y_right);
+				blendPixelPtrClip(ptr_left, color, rfpart(intery), x_left, y_left);
+				break;
+			}
+			}
+
+		return;
+		}
+
+#if FIXED_POINT
+	if (abs(dx) < abs(dy)) {
+#else
+	if (fabs(dx) < fabs(dy)) {
+#endif
+		ptr_left--;
+		--x_left;
+		while (floor++ != ptr_left)
+			blendPixelPtrClip(floor, color, 50, ++x_floor, y_floor);
+
+#if FIXED_POINT
+		int gradient = (dx << 8) / (dy + 0x100);
+		int interx = (x1 << 8) + gradient;
+#else
+		double gradient = dx / (dy + 1);
+		double interx = x1 + gradient;
+#endif
+
+		for (int y = y1 + 1; y < y2; y++) {
+#if FIXED_POINT
+			if (interx + gradient > ipart(interx) + 0x100) {
+#else
+			if (interx + gradient > ipart(interx) + 1) {
+#endif
+				ptr_right++;
+				ptr_left--;
+				++x_right;
+				--x_left;
+			}
+
+			ptr_left += pitch;
+			ptr_right += pitch;
+			y_right += y_pitch_sign;
+			y_left += y_pitch_sign;
+
+			interx += gradient;
+
+			switch (fill_m) {
+			case kFillDisabled:
+				if (IS_IN_CLIP(x_left, y_left)) *ptr_left = color;
+				if (IS_IN_CLIP(x_right, y_right)) *ptr_right = color;
+				break;
+			case kFillForeground:
+			case kFillBackground:
+				colorFillClip<PixelType>(ptr_right + 1, ptr_left, color, x_right+1, y_right, _clippingArea);
+				blendPixelPtrClip(ptr_right, color, rfpart(interx), x_right, y_right);
+				blendPixelPtrClip(ptr_left, color, rfpart(interx), x_left, y_left);
+				break;
+			case kFillGradient:
+				colorFillClip<PixelType>(ptr_right, ptr_left, calcGradient(gradient_h++, h), x_right, y_right, _clippingArea);
+				blendPixelPtrClip(ptr_right, color, rfpart(interx), x_right, y_right);
+				blendPixelPtrClip(ptr_left, color, rfpart(interx), x_left, y_left);
+				break;
+			}
+			}
+
+		return;
+		}
+
+	ptr_left--;
+	--x_left;
+	while (floor++ != ptr_left)
+		blendPixelPtrClip(floor, color, 50, ++x_floor, y_floor);
+
+#if FIXED_POINT
+	int gradient = (dx / dy) << 8;
+	int interx = (x1 << 8) + gradient;
+#else
+	double gradient = dx / dy;
+	double interx = x1 + gradient;
+#endif
+
+	for (int y = y1 + 1; y < y2; y++) {
+		ptr_right++;
+		ptr_left--;
+		++x_right;
+		--x_left;
+
+		ptr_left += pitch;
+		ptr_right += pitch;
+		y_right += y_pitch_sign;
+		y_left += y_pitch_sign;
+
+		interx += gradient;
+
+		switch (fill_m) {
+		case kFillDisabled:			
+			if (IS_IN_CLIP(x_left, y_left)) *ptr_left = color;
+			if (IS_IN_CLIP(x_right, y_right)) *ptr_right = color;
+			break;
+		case kFillForeground:
+		case kFillBackground:
+			colorFillClip<PixelType>(ptr_right + 1, ptr_left, color, x_right+1, y_right, _clippingArea);
+			blendPixelPtrClip(ptr_right, color, rfpart(interx), x_right, y_right);
+			blendPixelPtrClip(ptr_left, color, rfpart(interx), x_left, y_left);
+			break;
+		case kFillGradient:
+			colorFillClip<PixelType>(ptr_right, ptr_left, calcGradient(gradient_h++, h), x_right, y_right, _clippingArea);
+			blendPixelPtrClip(ptr_right, color, rfpart(interx), x_right, y_right);
+			blendPixelPtrClip(ptr_left, color, rfpart(interx), x_left, y_left);
+			break;
+		}
+	}
+}
+
+/////////////
 
 /** VERTICAL TRIANGLE DRAWING - FAST VERSION FOR SQUARED TRIANGLES */
 template<typename PixelType>
