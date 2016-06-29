@@ -561,8 +561,8 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	int16 mapY = _vm->_dungeonMan->_currMap._partyPosY;
 
 	uint16 championObjectsCell = returnOppositeDir((direction)(dunMan._currMap._partyDir));
-	mapX += gDirIntoStepCountEast[dunMan._currMap._partyDir];
-	mapY += gDirIntoStepCountNorth[dunMan._currMap._partyDir];
+	mapX += _vm->_dirIntoStepCountEast[dunMan._currMap._partyDir];
+	mapY += _vm->_dirIntoStepCountNorth[dunMan._currMap._partyDir];
 	thing = dunMan.getSquareFirstThing(mapX, mapY);
 	AL_0_slotIndex_Red = kChampionSlotBackpackLine_1_1;
 	uint16 slotIndex_Green;

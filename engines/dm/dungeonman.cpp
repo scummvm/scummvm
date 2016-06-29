@@ -360,11 +360,11 @@ CreatureInfo gCreatureInfo[kCreatureTypeCount] = { // @ G0243_as_Graphic559_Crea
 	{26,  0, 0x38AA, 0x0000,  12, 22, 255, 180, 210,   0, 130, 0x6369, 0xFF37, 0x0FBF, 0x0564, 0xFB52, 5}};
 
 void DungeonMan::mapCoordsAfterRelMovement(direction dir, int16 stepsForward, int16 stepsRight, int16 &posX, int16 &posY) {
-	posX += gDirIntoStepCountEast[dir] * stepsForward;
-	posY += gDirIntoStepCountNorth[dir] * stepsForward;
+	posX += _vm->_dirIntoStepCountEast[dir] * stepsForward;
+	posY += _vm->_dirIntoStepCountNorth[dir] * stepsForward;
 	turnDirRight(dir);
-	posX += gDirIntoStepCountEast[dir] * stepsRight;
-	posY += gDirIntoStepCountNorth[dir] * stepsRight;
+	posX += _vm->_dirIntoStepCountEast[dir] * stepsRight;
+	posY += _vm->_dirIntoStepCountNorth[dir] * stepsRight;
 }
 
 DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine), _rawDunFileData(NULL), _maps(NULL), _rawMapData(NULL) {

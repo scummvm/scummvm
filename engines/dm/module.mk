@@ -32,6 +32,7 @@ MODULE_OBJS := \
 	champion.o \
 	detection.o \
 	dm.o \
+	dmglobals.o \
 	dungeonman.o \
 	eventman.o \
 	gfx.o \

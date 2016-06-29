@@ -508,8 +508,8 @@ void EventManager::commandSetLeader(ChampionIndex champIndex) {
 void EventManager::commandProcessType80ClickInDungeonViewTouchFrontWall() {
 	DungeonMan &dunMan = *_vm->_dungeonMan;
 	CurrMapData &currMap = dunMan._currMap;
-	int16 mapX = currMap._partyPosX + gDirIntoStepCountEast[currMap._partyDir];
-	int16 mapY = currMap._partyPosY + gDirIntoStepCountNorth[currMap._partyDir];
+	int16 mapX = currMap._partyPosX + _vm->_dirIntoStepCountEast[currMap._partyDir];
+	int16 mapY = currMap._partyPosY + _vm->_dirIntoStepCountNorth[currMap._partyDir];
 	if ((mapX >= 0) && (mapX < currMap._width) && (mapY >= 0) && (mapY < currMap._height)) {
 		_vm->_stopWaitingForPlayerInput = _vm->_movsens->sensorIsTriggeredByClickOnWall(mapX, mapY, returnOppositeDir(currMap._partyDir));
 	}
@@ -525,8 +525,8 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 			return;
 
 		if (champMan._leaderEmptyHanded) {
-			int16 mapX = currMap._partyPosX + gDirIntoStepCountEast[currMap._partyDir];
-			int16 mapY = currMap._partyPosY + gDirIntoStepCountNorth[currMap._partyDir];
+			int16 mapX = currMap._partyPosX + _vm->_dirIntoStepCountEast[currMap._partyDir];
+			int16 mapY = currMap._partyPosY + _vm->_dirIntoStepCountNorth[currMap._partyDir];
 
 			if (Door(dunMan.getSquareFirstThingData(mapX, mapY)).hasButton() &&
 				dunMan._dungeonViewClickableBoxes[kViewCellDoorButtonOrWallOrn].isPointInside(Common::Point(posX, posY - 33))) {
@@ -627,8 +627,8 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 	}
 
 	champMan._candidateChampionOrdinal = _vm->indexToOrdinal(kChampionNone);
-	int16 mapX = currMap._partyPosX + gDirIntoStepCountEast[currMap._partyDir];
-	int16 mapY = currMap._partyPosY + gDirIntoStepCountNorth[currMap._partyDir];
+	int16 mapX = currMap._partyPosX + _vm->_dirIntoStepCountEast[currMap._partyDir];
+	int16 mapY = currMap._partyPosY + _vm->_dirIntoStepCountNorth[currMap._partyDir];
 
 	for (uint16 slotIndex = kChampionSlotReadyHand; slotIndex < kChampionSlotChest_1; slotIndex++) {
 		Thing thing = champ->getSlot((ChampionSlot)slotIndex);

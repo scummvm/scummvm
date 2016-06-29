@@ -55,10 +55,6 @@ enum direction {
 	kDirWest = 3
 };
 
-// TODO: refactor direction into a class
-extern int8 gDirIntoStepCountEast[4];
-extern int8 gDirIntoStepCountNorth[4];
-
 void turnDirRight(direction &dir);
 void turnDirLeft(direction &dir);
 direction returnOppositeDir(direction dir);
@@ -128,6 +124,8 @@ class DMEngine : public Engine {
 	void processNewPartyMap(uint16 mapIndex); // @ F0003_MAIN_ProcessNewPartyMap_CPSE
 	void initializeGame(); // @ F0463_START_InitializeGame_CPSADEF
 	void gameloop(); // @ F0002_MAIN_GameLoop_CPSDF
+	void initArrays();
+
 public:
 	explicit DMEngine(OSystem *syst);
 	~DMEngine();
@@ -160,6 +158,10 @@ public:
 	bool _pressingMouth; // @ G0333_B_PressingMouth
 	bool _stopPressingMouth; // @ G0334_B_StopPressingMouth
 	bool _highlightBoxInversionRequested; // @ G0340_B_HighlightBoxInversionRequested
+
+	// TODO: refactor direction into a class
+	int8 _dirIntoStepCountEast[4];
+	int8 _dirIntoStepCountNorth[4];
 };
 
 class Console : public GUI::Debugger {
