@@ -229,6 +229,11 @@ public:
 		drawLine(x + w, y, x, y + h);
 	}
 
+	virtual void drawCrossClip(int x, int y, int w, int h, Common::Rect clipping) {
+		drawLineClip(x, y, x + w, y + w, clipping);
+		drawLineClip(x + w, y, x, y + h, clipping);
+	}
+
 	/**
 	 * Set the active foreground painting color for the renderer.
 	 * All the foreground drawing from then on will be done with that color, unless
@@ -383,7 +388,7 @@ public:
 		drawLineClip(x, y, x + w, y + w, clip);
 	}
 
-	void drawCallback_ROUNDSQ(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO
+	void drawCallback_ROUNDSQ(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
 		drawRoundedSquareClip(x, y, stepGetRadius(step, area), w, h, clip);
@@ -417,10 +422,10 @@ public:
 		blitAlphaBitmap(step.blitSrc, Common::Rect(x, y, x + w, y + h));
 	}
 
-	void drawCallback_CROSS(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) { //TODO
+	void drawCallback_CROSS(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		drawCross(x, y, w, h);
+		drawCrossClip(x, y, w, h, clip);
 	}
 
 	void drawCallback_VOID(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {}
