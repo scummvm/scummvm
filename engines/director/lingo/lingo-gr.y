@@ -240,7 +240,11 @@ func: ID '(' arglist ')' {
 	| tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| gotofunc
 	| tEXIT					{ g_lingo->code1(g_lingo->c_exit); }
-	| tGLOBAL ID			{ g_lingo->code1(g_lingo->c_global); g_lingo->codeString($2->c_str()); delete $2; }
+	| tGLOBAL globallist
+	;
+
+globallist: ID				{ g_lingo->code1(g_lingo->c_global); g_lingo->codeString($1->c_str()); delete $1; }
+	| globallist ',' ID		{ g_lingo->code1(g_lingo->c_global); g_lingo->codeString($3->c_str()); delete $3; }
 	;
 
 // go {to} {frame} whichFrame {of movie whichMovie}
