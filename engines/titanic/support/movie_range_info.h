@@ -34,7 +34,9 @@ class CGameObject;
 
 class CMovieRangeInfo : public ListItem {
 public:
-	CString _movieName;
+	int _fieldC;
+	int _field10;
+	int _frameNumber;
 	uint _startFrame;
 	uint _endFrame;
 	CMovieEventList _events;

@@ -82,7 +82,49 @@ CGameObject::~CGameObject() {
 
 void CGameObject::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(7, indent);
-	error("TODO: CGameObject::save");
+	_movieRangeInfoList.destroyContents();
+
+	if (_surface) {
+		Common::List<CMovieRangeInfo *> rangeList = _surface->getMovieRangeInfo();
+		
+		for (Common::List<CMovieRangeInfo *>::const_iterator i = rangeList.begin();
+				i != rangeList.end(); ++i) {
+			CMovieRangeInfo *rangeInfo = new CMovieRangeInfo(*i);
+			rangeInfo->_frameNumber = (i == rangeList.begin()) ? getMovieFrame() : -1;
+		}
+	}
+
+	_movieRangeInfoList.save(file, indent);
+	_movieRangeInfoList.destroyContents();
+
+	file->writeNumberLine(getMovieFrame(), indent + 1);
+	file->writeNumberLine(_cursorId, indent + 1);
+	_movieClips.save(file, indent + 1);
+	file->writeNumberLine(_field60, indent + 1);
+	file->writeNumberLine(_field40, indent + 1);
+	file->writeQuotedLine(_resource, indent + 1);
+	file->writeBounds(_bounds, indent + 1);
+	
+	file->writeFloatLine(_field34, indent + 1);
+	file->writeFloatLine(_field38, indent + 1);
+	file->writeFloatLine(_field3C, indent + 1);
+
+	file->writeNumberLine(_field44, indent + 1);
+	file->writeNumberLine(_field48, indent + 1);
+	file->writeNumberLine(_field4C, indent + 1);
+	file->writeNumberLine(_fieldB8, indent + 1);
+	file->writeNumberLine(_visible, indent + 1);
+	file->writeNumberLine(_isMail, indent + 1);
+	file->writeNumberLine(_id, indent + 1);
+	file->writeNumberLine(_roomFlags, indent + 1);
+
+	if (_surface) {
+		_surface->_resourceKey.save(file, indent);
+	} else {
+		CResourceKey resourceKey;
+		resourceKey.save(file, indent);
+	}
+	file->writeNumberLine(_surface != nullptr, indent);
 
 	CNamedItem::save(file, indent);
 }
@@ -93,7 +135,7 @@ void CGameObject::load(SimpleFile *file) {
 
 	switch (val) {
 	case 7:
-		_movieRangeInfo.load(file);
+		_movieRangeInfoList.load(file);
 		_frameNumber = file->readNumber();
 		// Deliberate fall-through
 
@@ -179,7 +221,7 @@ void CGameObject::draw(CScreenManager *screenManager) {
 				_frameNumber = -1;
 			}
 
-			if (!_movieRangeInfo.empty())
+			if (!_movieRangeInfoList.empty())
 				processMoveRangeInfo();
 
 			if (_bounds.intersects(getGameManager()->_bounds)) {
@@ -377,10 +419,10 @@ void CGameObject::playMovie(int v1, int v2) {
 }
 
 void CGameObject::processMoveRangeInfo() {
-	for (CMovieRangeInfoList::iterator i = _movieRangeInfo.begin(); i != _movieRangeInfo.end(); ++i)
+	for (CMovieRangeInfoList::iterator i = _movieRangeInfoList.begin(); i != _movieRangeInfoList.end(); ++i)
 		(*i)->process(this);
 
-	_movieRangeInfo.destroyContents();
+	_movieRangeInfoList.destroyContents();
 }
 
 void CGameObject::makeDirty(const Rect &r) {
@@ -1071,12 +1113,12 @@ bool CGameObject::clipExistsByEnd(const CString &name, int endFrame) const {
 	return _movieClips.existsByEnd(name, endFrame);
 }
 
-void CGameObject::checkPlayMovie(const CString &name, int flags) {
+void CGameObject::checkPlayMovie(int fieldC, int field10, int frameNumber, int flags) {
 	if (!_surface && !_resource.empty())
 		loadResource(_resource);
 
 	if (_surface ) {
-		_surface->proc35(name, flags, (flags & CLIPFLAG_4) ? this : nullptr);
+		_surface->proc35(fieldC, field10, frameNumber, flags, (flags & CLIPFLAG_4) ? this : nullptr);
 		if (flags & CLIPFLAG_PLAY)
 			getGameManager()->_gameState.addMovie(_surface->_movie);
 	}

@@ -23,9 +23,11 @@
 #ifndef TITANIC_MOVIE_H
 #define TITANIC_MOVIE_H
 
+#include "common/list.h"
 #include "video/video_decoder.h"
 #include "titanic/core/list.h"
 #include "titanic/core/resource_key.h"
+#include "titanic/support/movie_range_info.h"
 
 namespace Titanic {
 
@@ -72,7 +74,7 @@ public:
 	virtual void playClip(const Rect &rect, uint startFrame, uint endFrame) = 0;
 	
 	virtual void proc11() = 0;
-	virtual void proc12(const CString &name, int flags, CGameObject *obj) = 0;
+	virtual void proc12(int v1, int v2, int frameNumber, int flags, CGameObject *obj) = 0;
 
 	/**
 	 * Stops the movie
@@ -82,7 +84,12 @@ public:
 	virtual void proc14() = 0;
 	virtual void setFrame(uint frameNumber) = 0;
 	virtual void proc16() = 0;
-	virtual void proc17() = 0;
+	
+	/**
+	 * Return any movie range info associated with the movie
+	 */
+	virtual const Common::List<CMovieRangeInfo *> getMovieRangeInfo() const = 0;
+
 	virtual void proc18() = 0;
 
 	/**
@@ -139,7 +146,7 @@ public:
 	virtual void playClip(const Rect &rect, uint startFrame, uint endFrame);
 
 	virtual void proc11();
-	virtual void proc12(const CString &name, int flags, CGameObject *obj);
+	virtual void proc12(int v1, int v2, int frameNumber, int flags, CGameObject *obj);
 
 	/**
 	 * Stops the movie
@@ -154,7 +161,12 @@ public:
 	virtual void setFrame(uint frameNumber);
 	
 	virtual void proc16();
-	virtual void proc17();
+
+	/**
+	 * Return any movie range info associated with the movie
+	 */
+	virtual const Common::List<CMovieRangeInfo *> getMovieRangeInfo() const;
+
 	virtual void proc18();
 
 	/**

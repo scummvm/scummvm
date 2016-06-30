@@ -134,7 +134,7 @@ public:
 	/**
 	 * Returns the clip list, if any, associated with the item
 	 */
-	virtual const CMovieClipList *getClipList() const { return nullptr; }
+	virtual const CMovieClipList *getMovieClips() const { return nullptr; }
 
 	/**
 	 * Returns true if the given item connects to another specified view

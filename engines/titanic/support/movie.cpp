@@ -99,7 +99,7 @@ void OSMovie::proc11() {
 	warning("TODO: OSMovie::proc11");
 }
 
-void OSMovie::proc12(const CString &name, int flags, CGameObject *obj) {
+void OSMovie::proc12(int v1, int v2, int frameNumber, int flags, CGameObject *obj) {
 	warning("TODO: OSMovie::proc12");
 }
 
@@ -121,8 +121,9 @@ void OSMovie::proc16() {
 	warning("TODO: OSMovie::proc16");
 }
 
-void OSMovie::proc17() {
-	warning("TODO: OSMovie::proc17");
+const Common::List<CMovieRangeInfo *> OSMovie::getMovieRangeInfo() const {
+	warning("TODO: OSMovie::getMovieRangeInfo");
+	return Common::List<CMovieRangeInfo *>();
 }
 
 void OSMovie::proc18() {

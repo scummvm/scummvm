@@ -28,6 +28,7 @@
 #include "titanic/support/font.h"
 #include "titanic/support/direct_draw.h"
 #include "titanic/support/movie.h"
+#include "titanic/support/movie_range_info.h"
 #include "titanic/support/rect.h"
 #include "titanic/core/list.h"
 #include "titanic/core/resource_key.h"
@@ -166,7 +167,7 @@ public:
 	 */
 	virtual void playMovie(uint startFrame, uint endFrame, int v3, bool v4) = 0;
 
-	virtual void proc35(const CString &name, int flags, CGameObject *owner) = 0;
+	virtual void proc35(int v1, int v2, int frameNumber, int flags, CGameObject *owner) = 0;
 
 	/**
 	 * Stops any movie currently attached to the surface
@@ -181,6 +182,11 @@ public:
 	virtual void proc38(int v1, int v2) = 0;
 
 	virtual void proc39(int v1, int v2) = 0;
+
+	/**
+	 * Return any movie range info associated with the surface's movie
+	 */
+	virtual const Common::List<CMovieRangeInfo *> getMovieRangeInfo() const = 0;
 
 	/**
 	 * Loads the surface's resource if there's one pending
@@ -335,7 +341,7 @@ public:
 	 */
 	virtual void playMovie(uint startFrame, uint endFrame, int v3, bool v4);
 
-	virtual void proc35(const CString &name, int flags, CGameObject *owner);
+	virtual void proc35(int v1, int v2, int frameNumber, int flags, CGameObject *owner);
 
 	/**
 	 * Stops any movie currently attached to the surface
@@ -350,6 +356,11 @@ public:
 	virtual void proc38(int v1, int v2);
 
 	virtual void proc39(int v1, int v2);
+
+	/**
+	 * Return any movie range info associated with the surface's movie
+	 */
+	virtual const Common::List<CMovieRangeInfo *> getMovieRangeInfo() const;
 
 	/**
 	 * Loads the surface's resource if there's one pending

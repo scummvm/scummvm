@@ -34,7 +34,9 @@ CMovieRangeInfo::~CMovieRangeInfo() {
 }
 
 CMovieRangeInfo::CMovieRangeInfo(const CMovieRangeInfo *src) : ListItem() {
-	_movieName = src->_movieName;
+	_fieldC = src->_fieldC;
+	_field10 = src->_field10;
+	_frameNumber = src->_frameNumber;
 	_startFrame = src->_startFrame;
 	_endFrame = src->_endFrame;
 
@@ -47,7 +49,9 @@ CMovieRangeInfo::CMovieRangeInfo(const CMovieRangeInfo *src) : ListItem() {
 
 void CMovieRangeInfo::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(0, indent);
-	file->writeQuotedLine(_movieName, indent + 1);
+	file->writeNumberLine(_fieldC, indent + 1);
+	file->writeNumberLine(_field10, indent + 1);
+	file->writeNumberLine(_frameNumber, indent + 1);
 	file->writeNumberLine(_endFrame, indent + 1);
 	file->writeNumberLine(_startFrame, indent + 1);
 	_events.save(file, indent + 1);
@@ -56,7 +60,9 @@ void CMovieRangeInfo::save(SimpleFile *file, int indent) {
 void CMovieRangeInfo::load(SimpleFile *file) {
 	int val = file->readNumber();
 	if (!val) {
-		_movieName = file->readString();
+		_fieldC = file->readNumber();
+		_field10 = file->readNumber();
+		_frameNumber = file->readNumber();
 		_endFrame = file->readNumber();
 		_startFrame = file->readNumber();
 		_events.load(file);
@@ -94,7 +100,7 @@ void CMovieRangeInfo::process(CGameObject *owner) {
 		}
 	}
 
-	owner->checkPlayMovie(_movieName, flags);
+	owner->checkPlayMovie(_fieldC, _field10, _frameNumber, flags);
 
 	for (CMovieEventList::iterator i = _events.begin(); i != _events.end(); ++i) {
 		CMovieEvent *movieEvent = *i;

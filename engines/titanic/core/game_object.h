@@ -90,7 +90,7 @@ protected:
 	int _field4C;
 	CMovieClipList _movieClips;
 	int _initialFrame;
-	CMovieRangeInfoList _movieRangeInfo;
+	CMovieRangeInfoList _movieRangeInfoList;
 	int _frameNumber;
 	CPetText *_text;
 	uint _textBorder;
@@ -533,7 +533,7 @@ public:
 	/**
 	 * Returns the clip list, if any, associated with the item
 	 */
-	virtual const CMovieClipList *getClipList() const { return &_movieClips; }
+	virtual const CMovieClipList *getMovieClips() const { return &_movieClips; }
 
 	/**
 	 * Allows the item to draw itself
@@ -594,7 +594,7 @@ public:
 	/**
 	 * Checks and plays a pending clip
 	 */
-	void checkPlayMovie(const CString &name, int flags);
+	void checkPlayMovie(int fieldC, int field10, int frameNumber, int flags);
 
 	/**
 	 * Returns true if the object has a currently active movie

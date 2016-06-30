@@ -65,6 +65,8 @@ void CMovieClip::load(SimpleFile *file) {
 	ListItem::load(file);
 }
 
+/*------------------------------------------------------------------------*/
+
 CMovieClip *CMovieClipList::findByName(const Common::String &name) const {
 	for (const_iterator i = begin(); i != end(); ++i) {
 		CMovieClip *clip = *i;

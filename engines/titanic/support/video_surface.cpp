@@ -402,9 +402,9 @@ void OSVideoSurface::playMovie(uint startFrame, uint endFrame, int v3, bool v4) 
 	}
 }
 
-void OSVideoSurface::proc35(const CString &name, int flags, CGameObject *owner) {
+void OSVideoSurface::proc35(int v1, int v2, int frameNumber, int flags, CGameObject *owner) {
 	if (loadIfReady() && _movie) {
-		_movie->proc12(name, flags, owner);
+		_movie->proc12(v1, v2, frameNumber, flags, owner);
 	}
 }
 
@@ -424,6 +424,10 @@ void OSVideoSurface::proc38(int v1, int v2) {
 
 void OSVideoSurface::proc39(int v1, int v2) {
 	warning("OSVideoSurface::proc39");
+}
+
+const Common::List<CMovieRangeInfo *> OSVideoSurface::getMovieRangeInfo() const {
+	return _movie ? _movie->getMovieRangeInfo() : Common::List<CMovieRangeInfo *>();
 }
 
 bool OSVideoSurface::loadIfReady() {
