@@ -632,7 +632,7 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 
 	for (uint16 slotIndex = kChampionSlotReadyHand; slotIndex < kChampionSlotChest_1; slotIndex++) {
 		Thing thing = champ->getSlot((ChampionSlot)slotIndex);
-		if (thing != Thing::_thingNone) {
+		if (thing != Thing::_none) {
 			warning("MISSING CODE: F0164_DUNGEON_UnlinkThingFromList");
 		}
 	}

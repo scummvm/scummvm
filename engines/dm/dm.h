@@ -95,8 +95,21 @@ enum Cell {
 class Thing {
 	uint16 _data;
 public:
-	static const Thing _thingNone;
-	static const Thing _thingEndOfList;
+	static const Thing _none; // @ C0xFFFF_THING_NONE
+	static const Thing _endOfList; // @ C0xFFFE_THING_ENDOFLIST
+	static const Thing _firstExplosion; // @ C0xFF80_THING_FIRST_EXPLOSION            
+	static const Thing _explFireBall; // @ C0xFF80_THING_EXPLOSION_FIREBALL         
+	static const Thing _explSlime; // @ C0xFF81_THING_EXPLOSION_SLIME            
+	static const Thing _explLightningBolt; // @ C0xFF82_THING_EXPLOSION_LIGHTNING_BOLT   
+	static const Thing _explHarmNonMaterial; // @ C0xFF83_THING_EXPLOSION_HARM_NON_MATERIAL
+	static const Thing _explOpenDoor; // @ C0xFF84_THING_EXPLOSION_OPEN_DOOR        
+	static const Thing _explPoisonBolt; // @ C0xFF86_THING_EXPLOSION_POISON_BOLT      
+	static const Thing _explPoisonCloud; // @ C0xFF87_THING_EXPLOSION_POISON_CLOUD     
+	static const Thing _explSmoke; // @ C0xFFA8_THING_EXPLOSION_SMOKE            
+	static const Thing _explFluxcage; // @ C0xFFB2_THING_EXPLOSION_FLUXCAGE         
+	static const Thing _explRebirthStep1; // @ C0xFFE4_THING_EXPLOSION_REBIRTH_STEP1    
+	static const Thing _explRebirthStep2; // @ C0xFFE5_THING_EXPLOSION_REBIRTH_STEP2    
+	static const Thing _party; // @ C0xFFFF_THING_PARTY  
 
 	Thing() : _data(0) {}
 	explicit Thing(uint16 d) { set(d); }

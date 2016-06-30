@@ -658,7 +658,7 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	for (int i = 0; i < 18; i++)
 		_currMapDoorOrnIndices[i] = 0;
 
-	_inscriptionThing = Thing::_thingNone;
+	_inscriptionThing = Thing::_none;
 	_useByteBoxCoordinates = false;
 }
 

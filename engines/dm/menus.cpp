@@ -96,7 +96,7 @@ void MenuMan::drawActionIcon(ChampionIndex championIndex) {
 	byte *bitmapIcon = dm._tmpBitmap;
 	Thing thing = champion.getSlot(kChampionSlotActionHand);
 	IconIndice iconIndex;
-	if (thing == Thing::_thingNone) {
+	if (thing == Thing::_none) {
 		iconIndex = kIconIndiceActionEmptyHand;
 	} else if (gObjectInfo[_vm->_dungeonMan->getObjectInfoIndex(thing)]._actionSetIndex) {
 		iconIndex = _vm->_objectMan->getIconIndex(thing);

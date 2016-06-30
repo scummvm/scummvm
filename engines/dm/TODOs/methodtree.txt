@@ -4,8 +4,10 @@ F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
 		FIELD_ASPECT // done
 	F0114_DUNGEONVIEW_GetExplosionBitmap // done
 	F0133_VIDEO_BlitBoxFilledWithMaskedBitmap // dummy
-	F0141_DUNGEON_GetObjectInfoIndex
-	F0142_DUNGEON_GetProjectileAspect
+	F0141_DUNGEON_GetObjectInfoIndex // done
+	F0142_DUNGEON_GetProjectileAspect // done 
+		F0158_DUNGEON_GetWeaponInfo // done
+		M66_PROJECTILE_ASPECT_ORDINAL // done
 	F0176_GROUP_GetCreatureOrdinalInCell
 	G0017_auc_Graphic562_PaletteChanges_NoChanges
 	G0075_apuc_PaletteChanges_Projectile

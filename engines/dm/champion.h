@@ -400,7 +400,7 @@ public:
 	void clearWounds() { _wounds = kChampionWoundNone; }
 	void resetToZero() { // oh boy > . <
 		for (int16 i = 0; i < 30; ++i)
-			_slots[i] = Thing::_thingNone;
+			_slots[i] = Thing::_none;
 		for (int16 i = 0; i < 20; ++i)
 			_skills[i].resetToZero();
 		_attributes = _wounds = 0;

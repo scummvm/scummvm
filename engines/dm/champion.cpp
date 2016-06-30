@@ -368,7 +368,7 @@ void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, Champio
 	ObjectMan &objMan = *_vm->_objectMan;
 	MenuMan &menuMan = *_vm->_menuMan;
 
-	if (thing == Thing::_thingNone)
+	if (thing == Thing::_none)
 		return;
 
 	Champion *champ = &_champions[champIndex];
@@ -442,7 +442,7 @@ void ChampionMan::resetDataToStartGame() {
 		assert(false);
 	}
 
-	_leaderHandObject = Thing::_thingNone;
+	_leaderHandObject = Thing::_none;
 	_leaderHandObjectIconIndex = kIconIndiceNone;
 	_leaderEmptyHanded = true;
 }
@@ -479,7 +479,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	champ->_water = 1500 + _vm->_rnd->getRandomNumber(256);
 	int16 AL_0_slotIndex_Red;
 	for (AL_0_slotIndex_Red = kChampionSlotReadyHand; AL_0_slotIndex_Red < kChampionSlotChest_1; ++AL_0_slotIndex_Red) {
-		champ->setSlot((ChampionSlot)AL_0_slotIndex_Red, Thing::_thingNone);
+		champ->setSlot((ChampionSlot)AL_0_slotIndex_Red, Thing::_none);
 	}
 	Thing thing = dunMan.getSquareFirstThing(dunMan._currMap._partyPosX, dunMan._currMap._partyPosY);
 	while (thing.getType() != kTextstringType) {
@@ -566,7 +566,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	thing = dunMan.getSquareFirstThing(mapX, mapY);
 	AL_0_slotIndex_Red = kChampionSlotBackpackLine_1_1;
 	uint16 slotIndex_Green;
-	while (thing != Thing::_thingEndOfList) {
+	while (thing != Thing::_endOfList) {
 		ThingType AL_2_thingType = thing.getType();
 		if ((AL_2_thingType > kSensorThingType) && (thing.getCell() == championObjectsCell)) {
 			int16 objectAllowedSlots = gObjectInfo[dunMan.getObjectInfoIndex(thing)].getAllowedSlots();
@@ -576,14 +576,14 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 					if (objectAllowedSlots & gSlotMasks[slotIndex_Green])
 						goto T0280048;
 				}
-				if ((objectAllowedSlots & gSlotMasks[kChampionSlotNeck]) && (champ->getSlot(kChampionSlotNeck) == Thing::_thingNone)) {
+				if ((objectAllowedSlots & gSlotMasks[kChampionSlotNeck]) && (champ->getSlot(kChampionSlotNeck) == Thing::_none)) {
 					slotIndex_Green = kChampionSlotNeck;
 				} else {
 					goto T0280046;
 				}
 				break;
 			case kWeaponThingType:
-				if (champ->getSlot(kChampionSlotActionHand) == Thing::_thingNone) {
+				if (champ->getSlot(kChampionSlotActionHand) == Thing::_none) {
 					slotIndex_Green = kChampionSlotActionHand;
 				} else {
 					goto T0280046;
@@ -591,9 +591,9 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 				break;
 			case kScrollThingType:
 			case kPotionThingType:
-				if (champ->getSlot(kChampionSlotPouch_1) == Thing::_thingNone) {
+				if (champ->getSlot(kChampionSlotPouch_1) == Thing::_none) {
 					slotIndex_Green = kChampionSlotPouch_1;
-				} else if (champ->getSlot(kChampionSlotPouch_2) == Thing::_thingNone) {
+				} else if (champ->getSlot(kChampionSlotPouch_2) == Thing::_none) {
 					slotIndex_Green = kChampionSlotPouch_2;
 				} else {
 					goto T0280046;
@@ -602,7 +602,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 			case kContainerThingType:
 			case kJunkThingType:
 T0280046:
-				if ((objectAllowedSlots & gSlotMasks[kChampionSlotNeck]) && (champ->getSlot(kChampionSlotNeck) == Thing::_thingNone)) {
+				if ((objectAllowedSlots & gSlotMasks[kChampionSlotNeck]) && (champ->getSlot(kChampionSlotNeck) == Thing::_none)) {
 					slotIndex_Green = kChampionSlotNeck;
 				} else {
 					slotIndex_Green = AL_0_slotIndex_Red++;
@@ -613,7 +613,7 @@ T0280046:
 				break;
 			}
 T0280048:
-			if (champ->getSlot((ChampionSlot)slotIndex_Green) != Thing::_thingNone) {
+			if (champ->getSlot((ChampionSlot)slotIndex_Green) != Thing::_none) {
 				goto T0280046;
 			}
 			addObjectInSlot((ChampionIndex)prevChampCount, thing, (ChampionSlot)slotIndex_Green);
@@ -937,7 +937,7 @@ void ChampionMan::drawSlot(uint16 champIndex, ChampionSlot slotIndex) {
 	}
 
 	int16 iconIndex;
-	if (thing == Thing::_thingNone) {
+	if (thing == Thing::_none) {
 		if (slotIndex <= kChampionSlotFeet) {
 			iconIndex = kIconIndiceReadyHand + (slotIndex << 1);
 			if (champ->getWoundsFlag((ChampionWound)(1 << slotIndex))) {
