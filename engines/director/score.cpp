@@ -37,6 +37,7 @@
 #include "engines/util.h"
 #include "graphics/managed_surface.h"
 #include "image/bmp.h"
+#include "graphics/fontman.h"
 
 namespace Director {
 
@@ -1268,7 +1269,9 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID) {
 	int y = _sprites[spriteID]->_startPoint.y + rectTop;
 	int height = _sprites[spriteID]->_height;
 	int width = _sprites[spriteID]->_width;
-	//TODO render text
+
+	//FIXME
+	FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont)->drawString(&surface, text, x, y, width, 0);
 }
 
 void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
