@@ -64,10 +64,10 @@ void Lingo::execute(int pc) {
 	}
 }
 
-Symbol *Lingo::lookupVar(const char *name, bool create, bool putInLocalList) {
+Symbol *Lingo::lookupVar(const char *name, bool create, bool putInGlobalList) {
 	Symbol *sym;
 
-	if (!_vars.contains(name)) { // Create variable if it was not defined
+	if (!_localvars->contains(name)) { // Create variable if it was not defined
 		if (!create)
 			return NULL;
 
@@ -77,15 +77,29 @@ Symbol *Lingo::lookupVar(const char *name, bool create, bool putInLocalList) {
 		sym->type = VOID;
 		sym->u.val = 0;
 
-		_vars[name] = sym;
-	} else {
-		sym = g_lingo->_vars[name];
-	}
-
-	if (putInLocalList)
 		(*_localvars)[name] = sym;
 
+		if (putInGlobalList) {
+			sym->global = true;
+			_globalvars[name] = sym;
+		}
+	} else {
+		sym = (*_localvars)[name];
+
+		if (sym->global)
+			sym = _globalvars[name];
+	}
+
 	return sym;
+}
+
+void Lingo::cleanLocalVars() {
+	// Clean up current scope local variables and clean up memory
+	for (SymbolHash::const_iterator h = _localvars->begin(); h != _localvars->end(); ++h) {
+		if (!h->_value->global)
+			delete h->_value;
+	}
+	delete g_lingo->_localvars;
 }
 
 void Lingo::define(Common::String &name, int start, int nargs) {

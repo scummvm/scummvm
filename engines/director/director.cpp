@@ -105,6 +105,7 @@ _lingo->executeScript(kMovieScript, 2);
 
 	_lingo->addCode("--\n\
 macro SHIPX\n\
+global x\n\
 set x = 5\n\
 if x = 1 then\n\
 go \"Zoom\"\n\
@@ -117,12 +118,13 @@ put 100\n\
 \n\
 --\n\
 macro ZIPX\n\
-set x = 5\n\
+set x = 7\n\
 if x = 1 then\n\
 go \"ZIP\"\n\
 exit\n\
 end if\n\
 if x >1 then\n\
+put x\n\
 exit\n\
 end if\n\
 \n\
@@ -136,7 +138,10 @@ end if\n\
 ", kMovieScript, 1);
 
 _lingo->addCode("check(2, 3)\n\
+global x\n\
 shipx\n\
+put x\n\
+zipx\n\
 put x\n\
 ", kMovieScript, 2);
 

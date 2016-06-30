@@ -406,10 +406,7 @@ void Lingo::c_call() {
 	fp->retscript = g_lingo->_currentScript;
 	fp->localvars = g_lingo->_localvars;
 
-	// Clean up current scope local variables
-	for (SymbolHash::const_iterator h = g_lingo->_localvars->begin(); h != g_lingo->_localvars->end(); ++h)
-		g_lingo->_vars.erase(h->_key);
-
+	// Create new set of local variables
 	g_lingo->_localvars = new SymbolHash;
 
 	g_lingo->_callstack.push_back(fp);
@@ -426,17 +423,10 @@ void Lingo::c_procret() {
 	g_lingo->_currentScript = fp->retscript;
 	g_lingo->_pc = fp->retpc;
 
-	// Clean up current scope local variables and clean up memory
-	for (SymbolHash::const_iterator h = g_lingo->_localvars->begin(); h != g_lingo->_localvars->end(); ++h) {
-		g_lingo->_vars.erase(h->_key);
-		delete h->_value;
-	}
-	delete g_lingo->_localvars;
+	g_lingo->cleanLocalVars();
 
 	// Restore local variables
 	g_lingo->_localvars = fp->localvars;
-	for (SymbolHash::const_iterator h = g_lingo->_localvars->begin(); h != g_lingo->_localvars->end(); ++h)
-		g_lingo->_vars[h->_key] = h->_value;
 
 	delete fp;
 
@@ -447,17 +437,11 @@ void Lingo::c_global() {
 	Common::String name((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
 
 	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
-	if (s) {
-		if (s->global) {
-			warning("Redefinition of global variable %s", name.c_str());
-		} else {
-			warning("Local variable %s declared as global", name.c_str());
-		}
-
-		return;
+	if (s && !s->global) {
+		warning("Local variable %s declared as global", name.c_str());
 	}
 
-	s = g_lingo->lookupVar(name.c_str(), true, false);
+	s = g_lingo->lookupVar(name.c_str(), true, true);
 	s->global = true;
 
 	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());

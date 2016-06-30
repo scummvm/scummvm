@@ -167,7 +167,7 @@ void Lingo::executeScript(ScriptType type, uint16 id) {
 
 	execute(_pc);
 
-	delete _localvars;
+	cleanLocalVars();
 }
 
 void Lingo::processEvent(LEvent event, int entityId) {

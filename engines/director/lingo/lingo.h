@@ -138,7 +138,8 @@ public:
 	void execute(int pc);
 	void pushContext();
 	void popContext();
-	Symbol *lookupVar(const char *name, bool create = true, bool putInLocalList = true);
+	Symbol *lookupVar(const char *name, bool create = true, bool putInGlobalList = false);
+	void cleanLocalVars();
 	void define(Common::String &s, int start, int nargs);
 	void codeArg(Common::String *s);
 	void codeArgStore();
@@ -204,7 +205,7 @@ private:
 
 	ScriptHash _scripts[kMaxScriptType + 1];
 
-	SymbolHash _vars;
+	SymbolHash _globalvars;
 	SymbolHash *_localvars;
 	SymbolHash _handlers;
 
