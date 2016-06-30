@@ -27,7 +27,7 @@
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/lists32.h"
 #include "sci/graphics/plane32.h"
-#include "sci/graphics/remap32.h"
+#include "sci/graphics/remap.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/screen_item32.h"
 

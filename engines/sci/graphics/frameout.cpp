@@ -42,13 +42,15 @@
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/font.h"
+#include "sci/graphics/view.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette32.h"
-#include "sci/graphics/plane32.h"
-#include "sci/graphics/remap32.h"
-#include "sci/graphics/screen_item32.h"
+#include "sci/graphics/picture.h"
+#include "sci/graphics/remap.h"
 #include "sci/graphics/text32.h"
+#include "sci/graphics/plane32.h"
+#include "sci/graphics/screen_item32.h"
 #include "sci/graphics/frameout.h"
 #include "sci/video/robot_decoder.h"
 
@@ -1005,7 +1007,7 @@ void GfxFrameout::mergeToShowList(const Common::Rect &drawRect, RectList &showLi
 }
 
 void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, const ShowStyleEntry *showStyle) {
-	Palette sourcePalette(_palette->getNextPalette());
+	Palette sourcePalette(*_palette->getNextPalette());
 	alterVmap(sourcePalette, sourcePalette, -1, styleRanges);
 
 	int16 prevRoom = g_sci->getEngineState()->variables[VAR_GLOBAL][12].toSint16();
@@ -1045,7 +1047,7 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, const ShowStyleEntry
 		drawScreenItemList(screenItemLists[i]);
 	}
 
-	Palette nextPalette(_palette->getNextPalette());
+	Palette nextPalette(*_palette->getNextPalette());
 
 	if (prevRoom < 1000) {
 		for (int i = 0; i < ARRAYSIZE(sourcePalette.colors); ++i) {

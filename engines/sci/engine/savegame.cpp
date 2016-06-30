@@ -48,9 +48,8 @@
 #include "sci/sound/music.h"
 
 #ifdef ENABLE_SCI32
-#include "sci/graphics/frameout.h"
 #include "sci/graphics/palette32.h"
-#include "sci/graphics/remap32.h"
+#include "sci/graphics/frameout.h"
 #endif
 
 namespace Sci {
@@ -806,33 +805,6 @@ void GfxPalette32::saveLoadWithSerializer(Common::Serializer &s) {
 			s.syncAsSint16LE(cycler->delay);
 			s.syncAsUint16LE(cycler->numTimesPaused);
 		}
-	}
-}
-
-void GfxRemap32::saveLoadWithSerializer(Common::Serializer &s) {
-	if (s.getVersion() < 35) {
-		return;
-	}
-
-	s.syncAsByte(_numActiveRemaps);
-	s.syncAsByte(_blockedRangeStart);
-	s.syncAsSint16LE(_blockedRangeCount);
-
-	for (uint i = 0; i < _remaps.size(); ++i) {
-		SingleRemap &singleRemap = _remaps[i];
-		s.syncAsByte(singleRemap._type);
-		if (s.isLoading() && singleRemap._type != kRemapNone) {
-			singleRemap.reset();
-		}
-		s.syncAsByte(singleRemap._from);
-		s.syncAsByte(singleRemap._to);
-		s.syncAsByte(singleRemap._delta);
-		s.syncAsByte(singleRemap._percent);
-		s.syncAsByte(singleRemap._gray);
-	}
-
-	if (s.isLoading()) {
-		_needsUpdate = true;
 	}
 }
 #endif

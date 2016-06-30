@@ -55,7 +55,6 @@ struct LoopInfo {
 
 class GfxScreen;
 class GfxPalette;
-class Resource;
 
 /**
  * View class, handles loading of view resources and drawing contained cels to screen
