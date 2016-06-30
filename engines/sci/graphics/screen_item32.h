@@ -236,6 +236,24 @@ public:
 		return false;
 	}
 
+	inline bool operator>(const ScreenItem &other) const {
+		if (_priority > other._priority) {
+			return true;
+		}
+
+		if (_priority == other._priority) {
+			if (_position.y + _z > other._position.y + other._z) {
+				return true;
+			}
+
+			if (_position.y + _z == other._position.y + other._z) {
+				return _object > other._object;
+			}
+		}
+
+		return false;
+	}
+
 	/**
 	 * Calculates the dimensions and scaling parameters for
 	 * the screen item, using the given plane as the parent
@@ -279,12 +297,10 @@ public:
 
 typedef StablePointerArray<ScreenItem, 250> ScreenItemListBase;
 class ScreenItemList : public ScreenItemListBase {
-	inline static bool sortHelper(const ScreenItem *a, const ScreenItem *b) {
-		return *a < *b;
-	}
-public:
-	ScreenItem *_unsorted[250];
+private:
+	size_type _unsorted[250];
 
+public:
 	ScreenItem *findByObject(const reg_t object) const;
 	void sort();
 	void unsort();

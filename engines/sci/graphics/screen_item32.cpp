@@ -657,23 +657,43 @@ ScreenItem *ScreenItemList::findByObject(const reg_t object) const {
 	return *screenItemIt;
 }
 void ScreenItemList::sort() {
-	// TODO: SCI engine used _unsorted as an array of indexes into the
-	// list itself and then performed the same swap operations on the
-	// _unsorted array as the _storage array during sorting, but the
-	// only reason to do this would be if some of the pointers in the
-	// list were replaced so the pointer values themselves couldn’t
-	// simply be recorded and then restored later. It is not yet
-	// verified whether this simplification of the sort/unsort is
-	// safe.
-	for (size_type i = 0; i < size(); ++i) {
-		_unsorted[i] = (*this)[i];
+	if (size() < 2) {
+		return;
 	}
 
-	Common::sort(begin(), end(), sortHelper);
+	for (size_type i = 0; i < size(); ++i) {
+		_unsorted[i] = i;
+	}
+
+	for (size_type i = size() - 1; i > 0; --i) {
+		bool swap = false;
+
+		for (size_type j = 0; j < i; ++j)  {
+			value_type &a = operator[](j);
+			value_type &b = operator[](j + 1);
+
+			if (a == nullptr || *a > *b) {
+				SWAP(a, b);
+				SWAP(_unsorted[j], _unsorted[j + 1]);
+				swap = true;
+			}
+		}
+
+		if (!swap) {
+			break;
+		}
+	}
 }
 void ScreenItemList::unsort() {
+	if (size() < 2) {
+		return;
+	}
+
 	for (size_type i = 0; i < size(); ++i) {
-		(*this)[i] = _unsorted[i];
+		while (_unsorted[i] != i) {
+			SWAP(operator[](_unsorted[i]), operator[](i));
+			SWAP(_unsorted[_unsorted[i]], _unsorted[i]);
+		}
 	}
 }
 
