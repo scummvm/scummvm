@@ -553,133 +553,219 @@ void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &eraseR
 //	}
 }
 
-// Determine the parts of 'r' that aren't overlapped by 'other'.
-// Returns -1 if r and other have no intersection.
-// Returns number of returned parts (in outRects) otherwise.
-// (In particular, this returns 0 if r is contained in other.)
+/**
+ * Determines the parts of `r` that aren't overlapped by `other`.
+ * Returns -1 if `r` and `other` have no intersection.
+ * Returns number of returned parts (in `outRects`) otherwise.
+ * (In particular, this returns 0 if `r` is contained in `other`.)
+ */
 int splitRects(Common::Rect r, const Common::Rect &other, Common::Rect(&outRects)[4]) {
 	if (!r.intersects(other)) {
 		return -1;
 	}
 
-	int count = 0;
+	int splitCount = 0;
 	if (r.top < other.top) {
-		Common::Rect &t = outRects[count++];
+		Common::Rect &t = outRects[splitCount++];
 		t = r;
 		t.bottom = other.top;
 		r.top = other.top;
 	}
 
 	if (r.bottom > other.bottom) {
-		Common::Rect &t = outRects[count++];
+		Common::Rect &t = outRects[splitCount++];
 		t = r;
 		t.top = other.bottom;
 		r.bottom = other.bottom;
 	}
 
 	if (r.left < other.left) {
-		Common::Rect &t = outRects[count++];
+		Common::Rect &t = outRects[splitCount++];
 		t = r;
 		t.right = other.left;
 		r.left = other.left;
 	}
 
 	if (r.right > other.right) {
-		Common::Rect &t = outRects[count++];
+		Common::Rect &t = outRects[splitCount++];
 		t = r;
 		t.left = other.right;
 	}
 
-	return count;
+	return splitCount;
 }
 
-void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseLists, const Common::Rect &calcRect) {
-	RectList rectlist;
-	Common::Rect outRects[4];
+/**
+ * Determines the parts of `middleRect` that aren't overlapped
+ * by `showRect`, optimised for contiguous memory writes.
+ * Returns -1 if `middleRect` and `showRect` have no intersection.
+ * Returns number of returned parts (in `outRects`) otherwise.
+ * (In particular, this returns 0 if `middleRect` is contained
+ * in `other`.)
+ *
+ * `middleRect` is modified directly to extend into the upper
+ * and lower rects.
+ */
+int splitRectsForRender(Common::Rect &middleRect, const Common::Rect &showRect, Common::Rect(&outRects)[2]) {
+	if (!middleRect.intersects(showRect)) {
+		return -1;
+	}
+
+	const int16 minLeft = MIN(middleRect.left, showRect.left);
+	const int16 maxRight = MAX(middleRect.right, showRect.right);
+
+	int16 upperLeft, upperTop, upperRight, upperMaxTop;
+	if (middleRect.top < showRect.top) {
+		upperLeft = middleRect.left;
+		upperTop = middleRect.top;
+		upperRight = middleRect.right;
+		upperMaxTop = showRect.top;
+	}
+	else {
+		upperLeft = showRect.left;
+		upperTop = showRect.top;
+		upperRight = showRect.right;
+		upperMaxTop = middleRect.top;
+	}
+
+	int16 lowerLeft, lowerRight, lowerBottom, lowerMinBottom;
+	if (middleRect.bottom > showRect.bottom) {
+		lowerLeft = middleRect.left;
+		lowerRight = middleRect.right;
+		lowerBottom = middleRect.bottom;
+		lowerMinBottom = showRect.bottom;
+	} else {
+		lowerLeft = showRect.left;
+		lowerRight = showRect.right;
+		lowerBottom = showRect.bottom;
+		lowerMinBottom = middleRect.bottom;
+	}
+
+	int splitCount = 0;
+	middleRect.left = minLeft;
+	middleRect.top = upperMaxTop;
+	middleRect.right = maxRight;
+	middleRect.bottom = lowerMinBottom;
+
+	if (upperTop != upperMaxTop) {
+		Common::Rect &upperRect = outRects[0];
+		upperRect.left = upperLeft;
+		upperRect.top = upperTop;
+		upperRect.right = upperRight;
+		upperRect.bottom = upperMaxTop;
+
+		// Merge upper rect into middle rect if possible
+		if (upperRect.left == middleRect.left && upperRect.right == middleRect.right) {
+			middleRect.top = upperRect.top;
+		} else {
+			++splitCount;
+		}
+	}
+
+	if (lowerBottom != lowerMinBottom) {
+		Common::Rect &lowerRect = outRects[splitCount];
+		lowerRect.left = lowerLeft;
+		lowerRect.top = lowerMinBottom;
+		lowerRect.right = lowerRight;
+		lowerRect.bottom = lowerBottom;
+
+		// Merge lower rect into middle rect if possible
+		if (lowerRect.left == middleRect.left && lowerRect.right == middleRect.right) {
+			middleRect.bottom = lowerRect.bottom;
+		} else {
+			++splitCount;
+		}
+	}
+
+	assert(splitCount <= 2);
+	return splitCount;
+}
 
 // NOTE: The third rectangle parameter is only ever given a non-empty rect
 // by VMD code, via `frameOut`
 void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseLists, const Common::Rect &eraseRect) {
+	RectList eraseList;
+	Common::Rect outRects[4];
 	int deletedPlaneCount = 0;
-	bool addedToRectList = false;
-	int planeCount = _planes.size();
+	bool addedToEraseList = false;
 	bool foundTransparentPlane = false;
 
 	if (!eraseRect.isEmpty()) {
 		addedToEraseList = true;
-		rectlist.add(eraseRect);
+		eraseList.add(eraseRect);
 	}
 
+	PlaneList::size_type planeCount = _planes.size();
 	for (int outerPlaneIndex = 0; outerPlaneIndex < planeCount; ++outerPlaneIndex) {
-		Plane *outerPlane = _planes[outerPlaneIndex];
+		const Plane *outerPlane = _planes[outerPlaneIndex];
+		const Plane *visiblePlane = _visiblePlanes.findByObject(outerPlane->_object);
 
 		if (outerPlane->_type == kPlaneTypeTransparent) {
 			foundTransparentPlane = true;
 		}
 
-		Plane *visiblePlane = _visiblePlanes.findByObject(outerPlane->_object);
-
 		if (outerPlane->_deleted) {
-			if (visiblePlane != nullptr) {
-				if (!visiblePlane->_screenRect.isEmpty()) {
-					addedToRectList = true;
-					rectlist.add(visiblePlane->_screenRect);
-				}
+			if (visiblePlane != nullptr && !visiblePlane->_screenRect.isEmpty()) {
+				eraseList.add(visiblePlane->_screenRect);
+				addedToEraseList = true;
 			}
 			++deletedPlaneCount;
-		} else if (visiblePlane != nullptr) {
-			if (outerPlane->_updated) {
-				--outerPlane->_updated;
+		} else if (visiblePlane != nullptr && outerPlane->_moved) {
+			// _moved will be decremented in the final loop through the planes,
+			// at the end of this function
 
-				int splitcount = splitRects(visiblePlane->_screenRect, outerPlane->_screenRect, outRects);
-				if (splitcount) {
-					if (splitcount == -1) {
-						if (!visiblePlane->_screenRect.isEmpty()) {
-							rectlist.add(visiblePlane->_screenRect);
-						}
+			{
+				const int splitCount = splitRects(visiblePlane->_screenRect, outerPlane->_screenRect, outRects);
+				if (splitCount) {
+					if (splitCount == -1 && !visiblePlane->_screenRect.isEmpty()) {
+						eraseList.add(visiblePlane->_screenRect);
 					} else {
-						for (int i = 0; i < splitcount; ++i) {
-							rectlist.add(outRects[i]);
-						}
-					}
-
-					addedToRectList = true;
-				}
-
-				if (!outerPlane->_redrawAllCount) {
-					int splitCount = splitRects(outerPlane->_screenRect, visiblePlane->_screenRect, outRects);
-					if (splitCount) {
 						for (int i = 0; i < splitCount; ++i) {
-							rectlist.add(outRects[i]);
+							eraseList.add(outRects[i]);
 						}
-						addedToRectList = true;
 					}
+					addedToEraseList = true;
+				}
+			}
+
+			if (!outerPlane->_redrawAllCount) {
+				const int splitCount = splitRects(outerPlane->_screenRect, visiblePlane->_screenRect, outRects);
+				if (splitCount) {
+					for (int i = 0; i < splitCount; ++i) {
+						eraseList.add(outRects[i]);
+					}
+					addedToEraseList = true;
 				}
 			}
 		}
 
-		if (addedToRectList) {
-			for (RectList::iterator rect = rectlist.begin(); rect != rectlist.end(); ++rect) {
-				for (int innerPlaneIndex = _planes.size() - 1; innerPlaneIndex >= 0; --innerPlaneIndex) {
-					Plane *innerPlane = _planes[innerPlaneIndex];
+		if (addedToEraseList) {
+			for (int rectIndex = 0; rectIndex < eraseList.size(); ++rectIndex) {
+				const Common::Rect &rect = *eraseList[rectIndex];
+				for (int innerPlaneIndex = planeCount - 1; innerPlaneIndex >= 0; --innerPlaneIndex) {
+					const Plane &innerPlane = *_planes[innerPlaneIndex];
 
-					if (!innerPlane->_deleted && innerPlane->_type != kPlaneTypeTransparent && innerPlane->_screenRect.intersects(**rect)) {
-						if (innerPlane->_redrawAllCount == 0) {
-							eraseLists[innerPlaneIndex].add(innerPlane->_screenRect.findIntersectingRect(**rect));
+					if (
+						!innerPlane._deleted &&
+						innerPlane._type != kPlaneTypeTransparent &&
+						innerPlane._screenRect.intersects(rect)
+					) {
+						if (!innerPlane._redrawAllCount) {
+							eraseLists[innerPlaneIndex].add(innerPlane._screenRect.findIntersectingRect(rect));
 						}
 
-						int splitCount = splitRects(**rect, innerPlane->_screenRect, outRects);
+						const int splitCount = splitRects(rect, innerPlane._screenRect, outRects);
 						for (int i = 0; i < splitCount; ++i) {
-							rectlist.add(outRects[i]);
+							eraseList.add(outRects[i]);
 						}
 
-						rectlist.erase(rect);
+						eraseList.erase_at(rectIndex);
 						break;
 					}
 				}
 			}
 
-			rectlist.pack();
+			eraseList.pack();
 		}
 	}
 
@@ -691,9 +777,9 @@ void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseL
 			if (plane->_deleted) {
 				--plane->_deleted;
 				if (plane->_deleted <= 0) {
-					PlaneList::iterator visiblePlaneIt = Common::find_if(_visiblePlanes.begin(), _visiblePlanes.end(), FindByObject<Plane *>(plane->_object));
-					if (visiblePlaneIt != _visiblePlanes.end()) {
-						_visiblePlanes.erase(visiblePlaneIt);
+					const int visiblePlaneIndex = _visiblePlanes.findIndexByObject(plane->_object);
+					if (visiblePlaneIndex != -1) {
+						_visiblePlanes.remove_at(visiblePlaneIndex);
 					}
 
 					_planes.remove_at(planeIndex);
@@ -708,107 +794,112 @@ void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseL
 		}
 	}
 
+	// Some planes may have been deleted, so re-retrieve count
 	planeCount = _planes.size();
-	for (int outerIndex = 0; outerIndex < planeCount; ++outerIndex) {
-		// "outer" just refers to the outer loop
-		Plane *outerPlane = _planes[outerIndex];
-		if (outerPlane->_priorityChanged) {
-			--outerPlane->_priorityChanged;
 
-			Plane *visibleOuterPlane = _visiblePlanes.findByObject(outerPlane->_object);
+	for (PlaneList::size_type outerIndex = 0; outerIndex < planeCount; ++outerIndex) {
+		// "outer" just refers to the outer loop
+		Plane &outerPlane = *_planes[outerIndex];
+		if (outerPlane._priorityChanged) {
+			--outerPlane._priorityChanged;
+
+			const Plane *visibleOuterPlane = _visiblePlanes.findByObject(outerPlane._object);
 			if (visibleOuterPlane == nullptr) {
-				warning("calcLists could not find visible plane for %04x:%04x", PRINT_REG(outerPlane->_object));
+				warning("calcLists could not find visible plane for %04x:%04x", PRINT_REG(outerPlane._object));
 				continue;
 			}
 
-			rectlist.add(outerPlane->_screenRect.findIntersectingRect(visibleOuterPlane->_screenRect));
+			eraseList.add(outerPlane._screenRect.findIntersectingRect(visibleOuterPlane->_screenRect));
 
-			for (int innerIndex = planeCount - 1; innerIndex >= 0; --innerIndex) {
+			for (PlaneList::size_type innerIndex = planeCount - 1; innerIndex >= 0; --innerIndex) {
 				// "inner" just refers to the inner loop
-				Plane *innerPlane = _planes[innerIndex];
-				Plane *visibleInnerPlane = _visiblePlanes.findByObject(innerPlane->_object);
+				const Plane &innerPlane = *_planes[innerIndex];
+				const Plane *visibleInnerPlane = _visiblePlanes.findByObject(innerPlane._object);
 
-				int rectCount = rectlist.size();
-				for (int rectIndex = 0; rectIndex < rectCount; ++rectIndex) {
-					int splitCount = splitRects(*rectlist[rectIndex], _planes[innerIndex]->_screenRect, outRects);
-
+				const RectList::size_type rectCount = eraseList.size();
+				for (RectList::size_type rectIndex = 0; rectIndex < rectCount; ++rectIndex) {
+					const int splitCount = splitRects(*eraseList[rectIndex], innerPlane._screenRect, outRects);
 					if (splitCount == 0) {
 						if (visibleInnerPlane != nullptr) {
 							// same priority, or relative priority between inner/outer changed
-							if ((visibleOuterPlane->_priority - visibleInnerPlane->_priority) * (outerPlane->_priority - innerPlane->_priority) <= 0) {
-								if (outerPlane->_priority <= innerPlane->_priority) {
-									eraseLists[innerIndex].add(*rectlist[rectIndex]);
+							if ((visibleOuterPlane->_priority - visibleInnerPlane->_priority) * (outerPlane._priority - innerPlane._priority) <= 0) {
+								if (outerPlane._priority <= innerPlane._priority) {
+									eraseLists[innerIndex].add(*eraseList[rectIndex]);
 								} else {
-									eraseLists[outerIndex].add(*rectlist[rectIndex]);
+									eraseLists[outerIndex].add(*eraseList[rectIndex]);
 								}
 							}
 						}
 
-						rectlist.erase_at(rectIndex);
+						eraseList.erase_at(rectIndex);
 					} else if (splitCount != -1) {
 						for (int i = 0; i < splitCount; ++i) {
-							rectlist.add(outRects[i]);
+							eraseList.add(outRects[i]);
 						}
 
 						if (visibleInnerPlane != nullptr) {
 							// same priority, or relative priority between inner/outer changed
-							if ((visibleOuterPlane->_priority - visibleInnerPlane->_priority) * (outerPlane->_priority - innerPlane->_priority) <= 0) {
-								*rectlist[rectIndex] = outerPlane->_screenRect.findIntersectingRect(innerPlane->_screenRect);
-								if (outerPlane->_priority <= innerPlane->_priority) {
-									eraseLists[innerIndex].add(*rectlist[rectIndex]);
-								}
-								else {
-									eraseLists[outerIndex].add(*rectlist[rectIndex]);
+							if ((visibleOuterPlane->_priority - visibleInnerPlane->_priority) * (outerPlane._priority - innerPlane._priority) <= 0) {
+								*eraseList[rectIndex] = outerPlane._screenRect.findIntersectingRect(innerPlane._screenRect);
+
+								if (outerPlane._priority <= innerPlane._priority) {
+									eraseLists[innerIndex].add(*eraseList[rectIndex]);
+								} else {
+									eraseLists[outerIndex].add(*eraseList[rectIndex]);
 								}
 							}
 						}
-						rectlist.erase_at(rectIndex);
+						eraseList.erase_at(rectIndex);
 					}
 				}
-				rectlist.pack();
+				eraseList.pack();
 			}
 		}
 	}
 
-	for (int planeIndex = 0; planeIndex < planeCount; ++planeIndex) {
-		Plane *plane = _planes[planeIndex];
-		Plane *visiblePlane = nullptr;
+	for (PlaneList::size_type planeIndex = 0; planeIndex < planeCount; ++planeIndex) {
+		Plane &plane = *_planes[planeIndex];
+		Plane *visiblePlane = _visiblePlanes.findByObject(plane._object);
 
-		PlaneList::iterator visiblePlaneIt = Common::find_if(_visiblePlanes.begin(), _visiblePlanes.end(), FindByObject<Plane *>(plane->_object));
-		if (visiblePlaneIt != _visiblePlanes.end()) {
-			visiblePlane = *visiblePlaneIt;
-		}
+		if (!plane._screenRect.isEmpty()) {
+			if (plane._redrawAllCount) {
+				plane.redrawAll(visiblePlane, _planes, drawLists[planeIndex], eraseLists[planeIndex]);
+			} else {
+				if (visiblePlane == nullptr) {
+					error("Missing visible plane for source plane %04x:%04x", PRINT_REG(plane._object));
+				}
 
-		if (plane->_redrawAllCount) {
-			plane->redrawAll(visiblePlane, _planes, drawLists[planeIndex], eraseLists[planeIndex]);
-		} else {
-			if (visiblePlane == nullptr) {
-				error("Missing visible plane for source plane %04x:%04x", PRINT_REG(plane->_object));
+				plane.calcLists(*visiblePlane, _planes, drawLists[planeIndex], eraseLists[planeIndex]);
 			}
-
-			plane->calcLists(*visiblePlane, _planes, drawLists[planeIndex], eraseLists[planeIndex]);
+		} else {
+			plane.decrementScreenItemArrayCounts(visiblePlane, false);
 		}
 
-		if (plane->_created) {
-			_visiblePlanes.add(new Plane(*plane));
-			--plane->_created;
-		} else if (plane->_moved) {
-			assert(visiblePlaneIt != _visiblePlanes.end());
-			**visiblePlaneIt = *plane;
-			--plane->_moved;
+		if (plane._moved) {
+			// the work for handling moved/resized planes was already done
+			// earlier in the function, we are just cleaning up now
+			--plane._moved;
+		}
+
+		if (plane._created) {
+			_visiblePlanes.add(new Plane(plane));
+			--plane._created;
+		} else if (plane._updated) {
+			*visiblePlane = plane;
+			--plane._updated;
 		}
 	}
 
 	if (foundTransparentPlane) {
-		for (int planeIndex = 0; planeIndex < planeCount; ++planeIndex) {
-			for (int i = planeIndex + 1; i < planeCount; ++i) {
+		for (PlaneList::size_type planeIndex = 0; planeIndex < planeCount; ++planeIndex) {
+			for (PlaneList::size_type i = planeIndex + 1; i < planeCount; ++i) {
 				if (_planes[i]->_type == kPlaneTypeTransparent) {
 					_planes[i]->filterUpEraseRects(drawLists[i], eraseLists[planeIndex]);
 				}
 			}
 
 			if (_planes[planeIndex]->_type == kPlaneTypeTransparent) {
-				for (int i = planeIndex - 1; i >= 0; --i) {
+				for (PlaneList::size_type i = planeIndex - 1; i >= 0; --i) {
 					_planes[i]->filterDownEraseRects(drawLists[i], eraseLists[i], eraseLists[planeIndex]);
 				}
 
@@ -817,7 +908,7 @@ void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseL
 				}
 			}
 
-			for (int i = planeIndex + 1; i < planeCount; ++i) {
+			for (PlaneList::size_type i = planeIndex + 1; i < planeCount; ++i) {
 				if (_planes[i]->_type == kPlaneTypeTransparent) {
 					_planes[i]->filterUpDrawRects(drawLists[i], drawLists[planeIndex]);
 				}
@@ -831,17 +922,19 @@ void GfxFrameout::drawEraseList(const RectList &eraseList, const Plane &plane) {
 		return;
 	}
 
-	for (RectList::const_iterator it = eraseList.begin(); it != eraseList.end(); ++it) {
-		mergeToShowList(**it, _showList, _overdrawThreshold);
-		_currentBuffer.fillRect(**it, plane._back);
+	const RectList::size_type eraseListSize = eraseList.size();
+	for (RectList::size_type i = 0; i < eraseListSize; ++i) {
+		mergeToShowList(*eraseList[i], _showList, _overdrawThreshold);
+		_currentBuffer.fillRect(*eraseList[i], plane._back);
 	}
 }
 
 void GfxFrameout::drawScreenItemList(const DrawList &screenItemList) {
-	for (DrawList::const_iterator it = screenItemList.begin(); it != screenItemList.end(); ++it) {
-		DrawItem &drawItem = **it;
+	const DrawList::size_type drawListSize = screenItemList.size();
+	for (DrawList::size_type i = 0; i < drawListSize; ++i) {
+		const DrawItem &drawItem = *screenItemList[i];
 		mergeToShowList(drawItem.rect, _showList, _overdrawThreshold);
-		ScreenItem &screenItem = *drawItem.screenItem;
+		const ScreenItem &screenItem = *drawItem.screenItem;
 		// TODO: Remove
 //		debug("Drawing item %04x:%04x to %d %d %d %d", PRINT_REG(screenItem._object), PRINT_RECT(drawItem.rect));
 		CelObj &celObj = *screenItem._celObj;
@@ -850,32 +943,61 @@ void GfxFrameout::drawScreenItemList(const DrawList &screenItemList) {
 }
 
 void GfxFrameout::mergeToShowList(const Common::Rect &drawRect, RectList &showList, const int overdrawThreshold) {
-	Common::Rect merged(drawRect);
+	RectList mergeList;
+	Common::Rect merged;
+	mergeList.add(drawRect);
 
-	bool didDelete = true;
-	RectList::size_type count = showList.size();
-	while (didDelete && count) {
-		didDelete = false;
+	for (RectList::size_type i = 0; i < mergeList.size(); ++i) {
+		bool didMerge = false;
+		const Common::Rect &r1 = *mergeList[i];
+		if (!r1.isEmpty()) {
+			for (RectList::size_type j = 0; j < showList.size(); ++j) {
+				const Common::Rect &r2 = *showList[j];
+				if (!r2.isEmpty()) {
+					merged = r1;
+					merged.extend(r2);
 
-		for (RectList::size_type i = 0; i < count; ++i) {
-			Common::Rect existing = *showList[i];
-			Common::Rect candidate;
-			candidate.left = MIN(merged.left, existing.left);
-			candidate.top = MIN(merged.top, existing.top);
-			candidate.right = MAX(merged.right, existing.right);
-			candidate.bottom = MAX(merged.bottom, existing.bottom);
+					int difference = merged.width() * merged.height();
+					difference -= r1.width() * r1.height();
+					difference -= r2.width() * r2.height();
+					if (r1.intersects(r2)) {
+						const Common::Rect overlap = r1.findIntersectingRect(r2);
+						difference += overlap.width() * overlap.height();
+					}
 
-			if (candidate.height() * candidate.width() - merged.width() * merged.height() - existing.width() * existing.height() <= overdrawThreshold) {
-				merged = candidate;
-				showList.erase_at(i);
-				didDelete = true;
+					if (difference <= overdrawThreshold) {
+						mergeList.erase_at(i);
+						showList.erase_at(j);
+						mergeList.add(merged);
+						didMerge = true;
+						break;
+					} else {
+						Common::Rect outRects[2];
+						int splitCount = splitRectsForRender(*mergeList[i], *showList[j], outRects);
+						if (splitCount != -1) {
+							mergeList.add(*mergeList[i]);
+							mergeList.erase_at(i);
+							showList.erase_at(j);
+							didMerge = true;
+							while (splitCount--) {
+								mergeList.add(outRects[splitCount]);
+							}
+							break;
+						}
+					}
+				}
+			}
+
+			if (didMerge) {
+				showList.pack();
 			}
 		}
-
-		count = showList.pack();
 	}
 
-	showList.add(merged);
+	mergeList.pack();
+	for (RectList::size_type i = 0; i < mergeList.size(); ++i) {
+		showList.add(*mergeList[i]);
+	}
 }
 
 void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, const ShowStyleEntry *showStyle) {
@@ -930,6 +1052,7 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, const ShowStyleEntry
 		}
 	} else {
 		for (int i = 0; i < ARRAYSIZE(sourcePalette.colors); ++i) {
+			// TODO: Limiting range 72 to 103 is NOT present in every game
 			if (styleRanges[i] == -1 || (styleRanges[i] == 0 && i > 71 && i < 104)) {
 				sourcePalette.colors[i] = nextPalette.colors[i];
 				sourcePalette.colors[i].used = true;

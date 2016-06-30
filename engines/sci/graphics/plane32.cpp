@@ -240,16 +240,17 @@ void Plane::deleteAllPics() {
 #pragma mark Plane - Rendering
 
 void Plane::breakDrawListByPlanes(DrawList &drawList, const PlaneList &planeList) const {
-	int index = planeList.findIndexByObject(_object);
+	const int nextPlaneIndex = planeList.findIndexByObject(_object) + 1;
+	const PlaneList::size_type planeCount = planeList.size();
 
 	for (DrawList::size_type i = 0; i < drawList.size(); ++i) {
-		for (PlaneList::size_type j = index + 1; j < planeList.size(); ++j) {
+		for (PlaneList::size_type j = nextPlaneIndex; j < planeCount; ++j) {
 			if (planeList[j]->_type != kPlaneTypeTransparent) {
-				Common::Rect ptr[4];
-				int count = splitRects(drawList[i]->rect, planeList[j]->_screenRect, ptr);
-				if (count != -1) {
-					for (int k = count - 1; k >= 0; --k) {
-						drawList.add(drawList[i]->screenItem, ptr[k]);
+				Common::Rect outRects[4];
+				int splitCount = splitRects(drawList[i]->rect, planeList[j]->_screenRect, outRects);
+				if (splitCount != -1) {
+					while (splitCount--) {
+						drawList.add(drawList[i]->screenItem, outRects[splitCount]);
 					}
 
 					drawList.erase_at(i);
@@ -262,17 +263,17 @@ void Plane::breakDrawListByPlanes(DrawList &drawList, const PlaneList &planeList
 }
 
 void Plane::breakEraseListByPlanes(RectList &eraseList, const PlaneList &planeList) const {
-	int index = planeList.findIndexByObject(_object);
+	const int nextPlaneIndex = planeList.findIndexByObject(_object) + 1;
+	const PlaneList::size_type planeCount = planeList.size();
 
 	for (RectList::size_type i = 0; i < eraseList.size(); ++i) {
-		for (PlaneList::size_type j = index + 1; j < planeList.size(); ++j) {
+		for (PlaneList::size_type j = nextPlaneIndex; j < planeCount; ++j) {
 			if (planeList[j]->_type != kPlaneTypeTransparent) {
-				Common::Rect ptr[4];
-
-				int count = splitRects(*eraseList[i], planeList[j]->_screenRect, ptr);
-				if (count != -1) {
-					for (int k = count - 1; k >= 0; --k) {
-						eraseList.add(ptr[k]);
+				Common::Rect outRects[4];
+				int splitCount = splitRects(*eraseList[i], planeList[j]->_screenRect, outRects);
+				if (splitCount != -1) {
+					while (splitCount--) {
+						eraseList.add(outRects[splitCount]);
 					}
 
 					eraseList.erase_at(i);
@@ -285,94 +286,109 @@ void Plane::breakEraseListByPlanes(RectList &eraseList, const PlaneList &planeLi
 }
 
 void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList &drawList, RectList &eraseList) {
-	ScreenItemList::size_type planeItemCount = _screenItemList.size();
-	ScreenItemList::size_type visiblePlaneItemCount = visiblePlane._screenItemList.size();
+	const ScreenItemList::size_type screenItemCount = _screenItemList.size();
+	const ScreenItemList::size_type visiblePlaneItemCount = visiblePlane._screenItemList.size();
 
-	for (ScreenItemList::size_type i = 0; i < planeItemCount; ++i) {
-		ScreenItem *vitem = nullptr;
+	for (ScreenItemList::size_type i = 0; i < screenItemCount; ++i) {
+		// Items can be added to ScreenItemList and we don't want to process
+		// those new items, but the list also can grow smaller, so we need
+		// to check that we are still within the upper bound of the list and
+		// quit if we aren't any more
+		if (i >= _screenItemList.size()) {
+			break;
+		}
+
+		ScreenItem *item = _screenItemList[i];
+		if (item == nullptr) {
+			continue;
+		}
+
 		// NOTE: The original engine used an array without bounds checking
 		// so could just get the visible screen item directly; we need to
 		// verify that the index is actually within the valid range for
 		// the visible plane before accessing the item to avoid a range
 		// error.
+		const ScreenItem *visibleItem = nullptr;
 		if (i < visiblePlaneItemCount) {
-			vitem = visiblePlane._screenItemList[i];
+			visibleItem = visiblePlane._screenItemList[i];
 		}
-		ScreenItem *item = _screenItemList[i];
 
-		if (i < _screenItemList.size() && item != nullptr) {
-			if (item->_deleted) {
-				// add item's rect to erase list
-				if (
-					i < visiblePlane._screenItemList.size() &&
-					vitem != nullptr &&
-					!vitem->_screenRect.isEmpty()
-				) {
-					if (g_sci->_gfxRemap32->getRemapCount()) {
-						mergeToRectList(vitem->_screenRect, eraseList);
-					} else {
-						eraseList.add(vitem->_screenRect);
-					}
-				}
-			} else if (item->_created) {
-				// add item to draw list
-				item->calcRects(*this);
+		// Keep erase rects for this screen item from drawing outside
+		// of its owner plane
+		Common::Rect visibleItemScreenRect;
+		if (visibleItem != nullptr) {
+			visibleItemScreenRect = visibleItem->_screenRect;
+			visibleItemScreenRect.clip(_screenRect);
+		}
 
-				if(!item->_screenRect.isEmpty()) {
-					if (g_sci->_gfxRemap32->getRemapCount()) {
-						drawList.add(item, item->_screenRect);
-						mergeToRectList(item->_screenRect, eraseList);
-					} else {
-						drawList.add(item, item->_screenRect);
-					}
-				}
-			} else if (item->_updated) {
-				// add old rect to erase list, new item to draw list
-				item->calcRects(*this);
+		if (item->_deleted) {
+			// Add item's rect to erase list
+			if (
+				visibleItem != nullptr &&
+				!visibleItemScreenRect.isEmpty()
+			) {
 				if (g_sci->_gfxRemap32->getRemapCount()) {
-					// if item and vitem don't overlap, ...
-					if (item->_screenRect.isEmpty() ||
-						i >= visiblePlaneItemCount ||
-						vitem == nullptr ||
-						vitem->_screenRect.isEmpty() ||
-						!vitem->_screenRect.intersects(item->_screenRect)
-					) {
-						// add item to draw list, and old rect to erase list
-						if (!item->_screenRect.isEmpty()) {
-							drawList.add(item, item->_screenRect);
-							mergeToRectList(item->_screenRect, eraseList);
-						}
-						if (
-							i < visiblePlaneItemCount &&
-							vitem != nullptr &&
-							!vitem->_screenRect.isEmpty()
-						) {
-							mergeToRectList(vitem->_screenRect, eraseList);
-						}
-					} else {
-						// otherwise, add bounding box of old+new to erase list,
-						// and item to draw list
+					mergeToRectList(visibleItemScreenRect, eraseList);
+				} else {
+					eraseList.add(visibleItemScreenRect);
+				}
+			}
+		}
 
-						// TODO: This was changed from disasm, verify please!
-						Common::Rect extendedScreenRect = vitem->_screenRect;
-						extendedScreenRect.extend(item->_screenRect);
+		if (!item->_created && !item->_updated) {
+			continue;
+		}
 
-						drawList.add(item, item->_screenRect);
-						mergeToRectList(extendedScreenRect, eraseList);
+		item->calcRects(*this);
+		const Common::Rect itemScreenRect(item->_screenRect);
+
+		if (item->_created) {
+			// Add item to draw list
+			if(!itemScreenRect.isEmpty()) {
+				if (g_sci->_gfxRemap32->getRemapCount()) {
+					drawList.add(item, itemScreenRect);
+					mergeToRectList(itemScreenRect, eraseList);
+				} else {
+					drawList.add(item, itemScreenRect);
+				}
+			}
+		} else {
+			// Add old rect to erase list, new item to draw list
+
+			if (g_sci->_gfxRemap32->getRemapCount()) {
+				// If item and visibleItem don't overlap...
+				if (itemScreenRect.isEmpty() ||
+					visibleItem == nullptr ||
+					visibleItemScreenRect.isEmpty() ||
+					!visibleItemScreenRect.intersects(itemScreenRect)
+				) {
+					// ...add item to draw list, and old rect to erase list...
+					if (!itemScreenRect.isEmpty()) {
+						drawList.add(item, itemScreenRect);
+						mergeToRectList(itemScreenRect, eraseList);
+					}
+					if (visibleItem != nullptr && !visibleItemScreenRect.isEmpty()) {
+						mergeToRectList(visibleItemScreenRect, eraseList);
 					}
 				} else {
-					// if no active remaps, just add item to draw list and old rect
-					// to erase list
-					if (!item->_screenRect.isEmpty()) {
-						drawList.add(item, item->_screenRect);
-					}
-					if (
-						i < visiblePlaneItemCount &&
-						vitem != nullptr &&
-						!vitem->_screenRect.isEmpty()
-					) {
-						eraseList.add(vitem->_screenRect);
-					}
+					// ...otherwise, add bounding box of old+new to erase list,
+					// and item to draw list
+					Common::Rect extendedScreenRect = visibleItemScreenRect;
+					extendedScreenRect.extend(itemScreenRect);
+
+					drawList.add(item, itemScreenRect);
+					mergeToRectList(extendedScreenRect, eraseList);
+				}
+			} else {
+				// If no active remaps, just add item to draw list and old rect
+				// to erase list
+
+				// TODO: SCI3 update rects for VMD?
+				if (!itemScreenRect.isEmpty()) {
+					drawList.add(item, itemScreenRect);
+				}
+				if (visibleItem != nullptr && !visibleItemScreenRect.isEmpty()) {
+					eraseList.add(visibleItemScreenRect);
 				}
 			}
 		}
@@ -385,40 +401,44 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 	// We store the current size of the drawlist, as we want to loop
 	// over the currently inserted entries later.
 	DrawList::size_type drawListSizePrimary = drawList.size();
+	const RectList::size_type eraseListCount = eraseList.size();
 
-	if (/* TODO: dword_C6288 */ false) {  // "high resolution pictures"????
+	// TODO: Figure out which games need which rendering method
+	if (/* TODO: dword_C6288 */ false) {  // "high resolution pictures"
 		_screenItemList.sort();
-		bool encounteredPic = false;
-		bool v81 = false;
+		bool pictureDrawn = false;
+		bool screenItemDrawn = false;
 
-		for (RectList::size_type i = 0; i < eraseList.size(); ++i) {
-			const Common::Rect *rect = eraseList[i];
+		for (RectList::size_type i = 0; i < eraseListCount; ++i) {
+			const Common::Rect &rect = *eraseList[i];
 
-			for (ScreenItemList::size_type j = 0; j < _screenItemList.size(); ++j) {
+			for (ScreenItemList::size_type j = 0; j < screenItemCount; ++j) {
 				ScreenItem *item = _screenItemList[j];
 
-				if (j < _screenItemList.size() && item != nullptr) {
-					if (rect->intersects(item->_screenRect)) {
-						const Common::Rect intersection = rect->findIntersectingRect(item->_screenRect);
-						if (!item->_deleted) {
-							if (encounteredPic) {
-								if (item->_celInfo.type == kCelTypePic) {
-									if (v81 || item->_celInfo.celNo == 0) {
-										drawList.add(item, intersection);
-									}
-								} else {
-									if (!item->_updated && !item->_created) {
-										drawList.add(item, intersection);
-									}
-									v81 = true;
+				if (item == nullptr) {
+					continue;
+				}
+
+				if (rect.intersects(item->_screenRect)) {
+					const Common::Rect intersection = rect.findIntersectingRect(item->_screenRect);
+					if (!item->_deleted) {
+						if (pictureDrawn) {
+							if (item->_celInfo.type == kCelTypePic) {
+								if (screenItemDrawn || item->_celInfo.celNo == 0) {
+									mergeToDrawList(j, intersection, drawList);
 								}
 							} else {
 								if (!item->_updated && !item->_created) {
-									drawList.add(item, intersection);
+									mergeToDrawList(j, intersection, drawList);
 								}
-								if (item->_celInfo.type == kCelTypePic) {
-									encounteredPic = true;
-								}
+								screenItemDrawn = true;
+							}
+						} else {
+							if (!item->_updated && !item->_created) {
+								mergeToDrawList(j, intersection, drawList);
+							}
+							if (item->_celInfo.type == kCelTypePic) {
+								pictureDrawn = true;
 							}
 						}
 					}
@@ -428,22 +448,23 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 
 		_screenItemList.unsort();
 	} else {
-		// add all items overlapping the erase list to the draw list
-		for (RectList::size_type i = 0; i < eraseList.size(); ++i) {
-			for (ScreenItemList::size_type j = 0; j < _screenItemList.size(); ++j) {
+		// Add all items overlapping the erase list to the draw list
+		for (RectList::size_type i = 0; i < eraseListCount; ++i) {
+			const Common::Rect &rect = *eraseList[i];
+			for (ScreenItemList::size_type j = 0; j < screenItemCount; ++j) {
 				ScreenItem *item = _screenItemList[j];
 				if (
 					item != nullptr &&
 					!item->_created && !item->_updated && !item->_deleted &&
-					eraseList[i]->intersects(item->_screenRect)
+					rect.intersects(item->_screenRect)
 				) {
-					drawList.add(item, eraseList[i]->findIntersectingRect(item->_screenRect));
+					drawList.add(item, rect.findIntersectingRect(item->_screenRect));
 				}
 			}
 		}
 	}
 
-	if (g_sci->_gfxRemap32->getRemapCount() == 0) { // no remaps active?
+	if (g_sci->_gfxRemap32->getRemapCount() == 0) {
 		// Add all items that overlap with items in the drawlist and have higher
 		// priority.
 
@@ -451,23 +472,28 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 		// those that were added because of the erase list in the previous loop,
 		// or those to be added in this loop.
 		for (DrawList::size_type i = 0; i < drawListSizePrimary; ++i) {
-			DrawItem *dli = drawList[i];
+			const DrawItem *drawListEntry = nullptr;
+			if (i < drawList.size()) {
+				drawListEntry = drawList[i];
+			}
 
-			for (ScreenItemList::size_type j = 0; j < planeItemCount; ++j) {
-				ScreenItem *sli = _screenItemList[j];
+			for (ScreenItemList::size_type j = 0; j < screenItemCount; ++j) {
+				ScreenItem *newItem = nullptr;
+				if (j < _screenItemList.size()) {
+					newItem = _screenItemList[j];
+				}
 
 				if (
-					i < drawList.size() && dli != nullptr &&
-					j < _screenItemList.size() && sli != nullptr &&
-					!sli->_created && !sli->_updated && !sli->_deleted
+					drawListEntry != nullptr && newItem != nullptr &&
+					!newItem->_created && !newItem->_updated && !newItem->_deleted
 				) {
-					ScreenItem *item = dli->screenItem;
+					const ScreenItem *drawnItem = drawListEntry->screenItem;
 
 					if (
-						(sli->_priority > item->_priority || (sli->_priority == item->_priority && sli->_object > item->_object)) &&
-						dli->rect.intersects(sli->_screenRect)
+						(newItem->_priority > drawnItem->_priority || (newItem->_priority == drawnItem->_priority && newItem->_object > drawnItem->_object)) &&
+						drawListEntry->rect.intersects(newItem->_screenRect)
 					) {
-						drawList.add(sli, dli->rect.findIntersectingRect(sli->_screenRect));
+						mergeToDrawList(j, drawListEntry->rect.findIntersectingRect(newItem->_screenRect), drawList);
 					}
 				}
 			}
@@ -475,14 +501,11 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 	}
 
 	decrementScreenItemArrayCounts(&visiblePlane, false);
-	_screenItemList.pack();
-	visiblePlane._screenItemList.pack();
 }
 
 void Plane::decrementScreenItemArrayCounts(Plane *visiblePlane, const bool forceUpdate) {
-	// The size of the screenItemList may change, so it is
-	// critical to re-check the size on each iteration
-	for (ScreenItemList::size_type i = 0; i < _screenItemList.size(); ++i) {
+	const ScreenItemList::size_type screenItemCount = _screenItemList.size();
+	for (ScreenItemList::size_type i = 0; i < screenItemCount; ++i) {
 		ScreenItem *item = _screenItemList[i];
 
 		if (item != nullptr) {
@@ -495,7 +518,7 @@ void Plane::decrementScreenItemArrayCounts(Plane *visiblePlane, const bool force
 					visiblePlane->_screenItemList.findByObject(item->_object) != nullptr
 				)
 			) {
-				*visiblePlane->_screenItemList[i] = *_screenItemList[i];
+				*visiblePlane->_screenItemList[i] = *item;
 			}
 
 			if (item->_updated) {
@@ -514,175 +537,180 @@ void Plane::decrementScreenItemArrayCounts(Plane *visiblePlane, const bool force
 			if (item->_deleted) {
 				item->_deleted--;
 				if (!item->_deleted) {
-					visiblePlane->_screenItemList.erase_at(i);
+					if (visiblePlane != nullptr && visiblePlane->_screenItemList.findByObject(item->_object) != nullptr) {
+						visiblePlane->_screenItemList.erase_at(i);
+					}
 					_screenItemList.erase_at(i);
 				}
 			}
 		}
 	}
+
+	_screenItemList.pack();
+	if (visiblePlane != nullptr) {
+		visiblePlane->_screenItemList.pack();
+	}
 }
 
-void Plane::filterDownEraseRects(DrawList &drawList, RectList &eraseList, RectList &transparentEraseList) const {
+void Plane::filterDownEraseRects(DrawList &drawList, RectList &eraseList, RectList &higherEraseList) const {
+	const RectList::size_type higherEraseCount = higherEraseList.size();
+
 	if (_type == kPlaneTypeTransparent) {
-		for (RectList::size_type i = 0; i < transparentEraseList.size(); ++i) {
-			const Common::Rect *r = transparentEraseList[i];
-			for (ScreenItemList::size_type j = 0; j < _screenItemList.size(); ++j) {
-				ScreenItem *item = _screenItemList[j];
-				if (item != nullptr) {
-					if (r->intersects(item->_screenRect)) {
-						mergeToDrawList(j, *r, drawList);
-					}
+		for (RectList::size_type i = 0; i < higherEraseCount; ++i) {
+			const Common::Rect &r = *higherEraseList[i];
+			const ScreenItemList::size_type screenItemCount = _screenItemList.size();
+			for (ScreenItemList::size_type j = 0; j < screenItemCount; ++j) {
+				const ScreenItem *item = _screenItemList[j];
+				if (item != nullptr && r.intersects(item->_screenRect)) {
+					mergeToDrawList(j, r, drawList);
 				}
 			}
 		}
 	} else {
-		for (RectList::size_type i = 0; i < transparentEraseList.size(); ++i) {
-			Common::Rect *r = transparentEraseList[i];
-			if (r->intersects(_screenRect)) {
-				r->clip(_screenRect);
-				mergeToRectList(*r, eraseList);
+		for (RectList::size_type i = 0; i < higherEraseCount; ++i) {
+			Common::Rect r = *higherEraseList[i];
+			if (r.intersects(_screenRect)) {
+				r.clip(_screenRect);
+				mergeToRectList(r, eraseList);
 
-				for (ScreenItemList::size_type j = 0; j < _screenItemList.size(); ++j) {
-					ScreenItem *item = _screenItemList[j];
-
-					if (item != nullptr) {
-						if (r->intersects(item->_screenRect)) {
-							mergeToDrawList(j, *r, drawList);
-						}
+				const ScreenItemList::size_type screenItemCount = _screenItemList.size();
+				for (ScreenItemList::size_type j = 0; j < screenItemCount; ++j) {
+					const ScreenItem *item = _screenItemList[j];
+					if (item != nullptr && r.intersects(item->_screenRect)) {
+						mergeToDrawList(j, r, drawList);
 					}
 				}
 
-				Common::Rect ptr[4];
-				const Common::Rect *r2 = transparentEraseList[i];
-				int count = splitRects(*r2, *r, ptr);
-				for (int k = count - 1; k >= 0; --k) {
-					transparentEraseList.add(ptr[k]);
+				Common::Rect outRects[4];
+				const Common::Rect &r2 = *higherEraseList[i];
+				int splitCount = splitRects(r2, r, outRects);
+				while (splitCount--) {
+					higherEraseList.add(outRects[splitCount]);
 				}
-				transparentEraseList.erase_at(i);
+				higherEraseList.erase_at(i);
 			}
 		}
 
-		transparentEraseList.pack();
+		higherEraseList.pack();
 	}
 }
 
-void Plane::filterUpDrawRects(DrawList &transparentDrawList, const DrawList &drawList) const {
-	for (DrawList::size_type i = 0; i < drawList.size(); ++i) {
-		const Common::Rect &r = drawList[i]->rect;
-
-		for (ScreenItemList::size_type j = 0; j < _screenItemList.size(); ++j) {
-			ScreenItem *item = _screenItemList[j];
-			if (item != nullptr) {
-				if (r.intersects(item->_screenRect)) {
-					mergeToDrawList(j, r, transparentDrawList);
-				}
+void Plane::filterUpDrawRects(DrawList &drawList, const DrawList &lowerDrawList) const {
+	const DrawList::size_type lowerDrawCount = lowerDrawList.size();
+	for (DrawList::size_type i = 0; i < lowerDrawCount; ++i) {
+		const Common::Rect &r = lowerDrawList[i]->rect;
+		const ScreenItemList::size_type screenItemCount = _screenItemList.size();
+		for (ScreenItemList::size_type j = 0; j < screenItemCount; ++j) {
+			const ScreenItem *item = _screenItemList[j];
+			if (item != nullptr && r.intersects(item->_screenRect)) {
+				mergeToDrawList(j, r, drawList);
 			}
 		}
 	}
 }
 
-void Plane::filterUpEraseRects(DrawList &drawList, RectList &eraseList) const {
-	for (RectList::size_type i = 0; i < eraseList.size(); ++i) {
-		const Common::Rect &r = *eraseList[i];
-		for (ScreenItemList::size_type j = 0; j < _screenItemList.size(); ++j) {
-			ScreenItem *item = _screenItemList[j];
-
-			if (item != nullptr) {
-				if (r.intersects(item->_screenRect)) {
-					mergeToDrawList(j, r, drawList);
-				}
+void Plane::filterUpEraseRects(DrawList &drawList, const RectList &lowerEraseList) const {
+	const RectList::size_type lowerEraseCount = lowerEraseList.size();
+	for (RectList::size_type i = 0; i < lowerEraseCount; ++i) {
+		const Common::Rect &r = *lowerEraseList[i];
+		const ScreenItemList::size_type screenItemCount = _screenItemList.size();
+		for (ScreenItemList::size_type j = 0; j < screenItemCount; ++j) {
+			const ScreenItem *item = _screenItemList[j];
+			if (item != nullptr && r.intersects(item->_screenRect)) {
+				mergeToDrawList(j, r, drawList);
 			}
 		}
 	}
 }
 
 void Plane::mergeToDrawList(const ScreenItemList::size_type index, const Common::Rect &rect, DrawList &drawList) const {
-	RectList rects;
-
-	ScreenItem *item = _screenItemList[index];
-	Common::Rect r = item->_screenRect;
+	RectList mergeList;
+	ScreenItem &item = *_screenItemList[index];
+	Common::Rect r = item._screenRect;
 	r.clip(rect);
-	rects.add(r);
+	mergeList.add(r);
 
-	for (RectList::size_type i = 0; i < rects.size(); ++i) {
-		r = *rects[i];
+	for (RectList::size_type i = 0; i < mergeList.size(); ++i) {
+		r = *mergeList[i];
 
-		for (DrawList::size_type j = 0; j < drawList.size(); ++j) {
-			const DrawItem *drawitem = drawList[j];
-			if (item->_object == drawitem->screenItem->_object) {
-				if (drawitem->rect.contains(r)) {
-					rects.erase_at(i);
+		const DrawList::size_type drawCount = drawList.size();
+		for (DrawList::size_type j = 0; j < drawCount; ++j) {
+			const DrawItem &drawItem = *drawList[j];
+			if (item._object == drawItem.screenItem->_object) {
+				if (drawItem.rect.contains(r)) {
+					mergeList.erase_at(i);
 					break;
 				}
 
 				Common::Rect outRects[4];
-				const int count = splitRects(r, drawitem->rect, outRects);
-				if (count != -1) {
-					for (int k = count - 1; k >= 0; --k) {
-						rects.add(outRects[k]);
+				int splitCount = splitRects(r, drawItem.rect, outRects);
+				if (splitCount != -1) {
+					while (splitCount--) {
+						mergeList.add(outRects[splitCount]);
 					}
 
-					rects.erase_at(i);
+					mergeList.erase_at(i);
 
 					// proceed to the next rect
-					r = *rects[++i];
+					r = *mergeList[++i];
 				}
 			}
 		}
 	}
 
-	rects.pack();
+	mergeList.pack();
 
-	for (RectList::size_type i = 0; i < rects.size(); ++i) {
-		drawList.add(item, *rects[i]);
+	for (RectList::size_type i = 0; i < mergeList.size(); ++i) {
+		drawList.add(&item, *mergeList[i]);
 	}
 }
 
-void Plane::mergeToRectList(const Common::Rect &rect, RectList &rectList) const {
-	RectList temp;
-	temp.add(rect);
+void Plane::mergeToRectList(const Common::Rect &rect, RectList &eraseList) const {
+	RectList mergeList;
+	Common::Rect r;
+	mergeList.add(rect);
 
-	for (RectList::size_type i = 0; i < temp.size(); ++i) {
-		Common::Rect r = *temp[i];
+	for (RectList::size_type i = 0; i < mergeList.size(); ++i) {
+		r = *mergeList[i];
 
-		for (RectList::size_type j = 0; j < rectList.size(); ++j) {
-			const Common::Rect *innerRect = rectList[j];
-			if (innerRect->contains(r)) {
-				temp.erase_at(i);
+		const RectList::size_type eraseCount = eraseList.size();
+		for (RectList::size_type j = 0; j < eraseCount; ++j) {
+			const Common::Rect &eraseRect = *eraseList[j];
+			if (eraseRect.contains(r)) {
+				mergeList.erase_at(i);
 				break;
 			}
 
-			Common::Rect out[4];
-			const int count = splitRects(r, *innerRect, out);
-			if (count != -1) {
-				for (int k = count - 1; k >= 0; --k) {
-					temp.add(out[k]);
+			Common::Rect outRects[4];
+			int splitCount = splitRects(r, eraseRect, outRects);
+			if (splitCount != -1) {
+				while (splitCount--) {
+					mergeList.add(outRects[splitCount]);
 				}
 
-				temp.erase_at(i);
+				mergeList.erase_at(i);
 
 				// proceed to the next rect
-				r = *temp[++i];
+				r = *mergeList[++i];
 			}
 		}
 	}
 
-	temp.pack();
+	mergeList.pack();
 
-	for (RectList::size_type i = 0; i < temp.size(); ++i) {
-		rectList.add(*temp[i]);
+	for (RectList::size_type i = 0; i < mergeList.size(); ++i) {
+		eraseList.add(*mergeList[i]);
 	}
 }
 
 void Plane::redrawAll(Plane *visiblePlane, const PlaneList &planeList, DrawList &drawList, RectList &eraseList) {
-	for (ScreenItemList::const_iterator screenItemPtr = _screenItemList.begin(); screenItemPtr != _screenItemList.end(); ++screenItemPtr) {
-		if (*screenItemPtr != nullptr) {
-			ScreenItem &screenItem = **screenItemPtr;
-			if (!screenItem._deleted) {
-				screenItem.calcRects(*this);
-				if (!screenItem._screenRect.isEmpty()) {
-					drawList.add(&screenItem, screenItem._screenRect);
-				}
+	const ScreenItemList::size_type screenItemCount = _screenItemList.size();
+	for (ScreenItemList::size_type i = 0; i < screenItemCount; ++i) {
+		ScreenItem *screenItem = _screenItemList[i];
+		if (screenItem != nullptr && !screenItem->_deleted) {
+			screenItem->calcRects(*this);
+			if (!screenItem->_screenRect.isEmpty()) {
+				mergeToDrawList(i, screenItem->_screenRect, drawList);
 			}
 		}
 	}
@@ -696,10 +724,6 @@ void Plane::redrawAll(Plane *visiblePlane, const PlaneList &planeList, DrawList 
 	breakDrawListByPlanes(drawList, planeList);
 	--_redrawAllCount;
 	decrementScreenItemArrayCounts(visiblePlane, true);
-	_screenItemList.pack();
-	if (visiblePlane != nullptr) {
-		visiblePlane->_screenItemList.pack();
-	}
 }
 
 void Plane::setType() {
@@ -731,10 +755,12 @@ void Plane::sync(const Plane *other, const Common::Rect &screenRect) {
 			_planeRect.right > other->_planeRect.right ||
 			_planeRect.bottom > other->_planeRect.bottom
 		) {
+			// the plane moved or got larger
 			_redrawAllCount = g_sci->_gfxFrameout->getScreenCount();
-			_updated = g_sci->_gfxFrameout->getScreenCount();
+			_moved = g_sci->_gfxFrameout->getScreenCount();
 		} else if (_planeRect != other->_planeRect) {
-			_updated = g_sci->_gfxFrameout->getScreenCount();
+			// the plane got smaller
+			_moved = g_sci->_gfxFrameout->getScreenCount();
 		}
 
 		if (_priority != other->_priority) {
@@ -755,7 +781,7 @@ void Plane::sync(const Plane *other, const Common::Rect &screenRect) {
 
 	_deleted = 0;
 	if (_created == 0) {
-		_moved = g_sci->_gfxFrameout->getScreenCount();
+		_updated = g_sci->_gfxFrameout->getScreenCount();
 	}
 
 	convertGameRectToPlaneRect();
@@ -801,18 +827,22 @@ void Plane::scrollScreenItems(const int16 deltaX, const int16 deltaY, const bool
 }
 
 void Plane::remapMarkRedraw() {
-	for (ScreenItemList::const_iterator screenItemPtr = _screenItemList.begin(); screenItemPtr != _screenItemList.end(); ++screenItemPtr) {
-		if (*screenItemPtr != nullptr) {
-			ScreenItem &screenItem = **screenItemPtr;
-			if (screenItem.getCelObj()._remap && !screenItem._deleted && !screenItem._created) {
-				screenItem._updated = g_sci->_gfxFrameout->getScreenCount();
-			}
+	ScreenItemList::size_type screenItemCount = _screenItemList.size();
+	for (ScreenItemList::size_type i = 0; i < screenItemCount; ++i) {
+		ScreenItem *screenItem = _screenItemList[i];
+		if (
+			screenItem != nullptr &&
+			!screenItem->_deleted && !screenItem->_created &&
+			screenItem->getCelObj()._remap
+		) {
+			screenItem->_updated = g_sci->_gfxFrameout->getScreenCount();
 		}
 	}
 }
 
 #pragma mark -
 #pragma mark PlaneList
+
 void PlaneList::add(Plane *plane) {
 	for (iterator it = begin(); it != end(); ++it) {
 		if ((*it)->_priority > plane->_priority) {

@@ -62,7 +62,14 @@ public:
 #pragma mark DrawList
 
 struct DrawItem {
+	/**
+	 * The screen item to draw.
+	 */
 	ScreenItem *screenItem;
+
+	/**
+	 * The target rectangle of the draw operation.
+	 */
 	Common::Rect rect;
 
 	inline bool operator<(const DrawItem &other) const {
@@ -189,16 +196,15 @@ public:
 	 *   not match
 	 * - `deleted` is set when the plane is deleted by a
 	 *   kernel call
-	 * - `moved` is set when the plane is synchronised from
-	 *   another plane and is not already in the "created"
-	 *   state
+	 * - `moved` is set when the plane has been moved or
+	 *   resized
 	 */
 	int _created, _updated, _deleted, _moved;
 
 	/**
 	 * The vanishing point for the plane. Used when
-	 * calculating the correct scaling of the plane's screen
-	 * items according to their position.
+	 * automatically calculating the correct scaling of the
+	 * plane's screen items according to their position.
 	 */
 	Common::Point _vanishingPoint;
 
@@ -358,42 +364,33 @@ public:
 private:
 	/**
 	 * Splits all rects in the given draw list at the edges
-	 * of all non-transparent planes above the current
-	 * plane.
+	 * of all higher-priority, non-transparent, intersecting
+	 * planes.
 	 */
 	void breakDrawListByPlanes(DrawList &drawList, const PlaneList &planeList) const;
 
 	/**
-	 * Splits all rects in the given erase list rects at the
-	 * edges of all non-transparent planes above the current
-	 * plane.
+	 * Splits all rects in the given erase list at the
+	 * edges of higher-priority, non-transparent,
+	 * intersecting planes.
 	 */
 	void breakEraseListByPlanes(RectList &eraseList, const PlaneList &planeList) const;
 
 	/**
-	 * Synchronises changes to screen items from the current
-	 * plane to the visible plane and deletes screen items
-	 * from the current plane that have been marked as
-	 * deleted. If `forceUpdate` is true, all screen items
-	 * on the visible plane will be updated, even if they
-	 * are not marked as having changed.
-	 */
-	void decrementScreenItemArrayCounts(Plane *visiblePlane, const bool forceUpdate);
-
-	/**
-	 * Merges the screen item from this plane at the given
-	 * index into the given draw list, clipped to the given
-	 * rect. TODO: Finish documenting
+	 * Adds the screen item at `index` into `drawList`,
+	 * ensuring it is only drawn within the bounds of
+	 * `rect`. If an existing draw list entry exists
+	 * for this screen item, it will be modified.
+	 * Otherwise, a new entry will be added.
 	 */
 	void mergeToDrawList(const DrawList::size_type index, const Common::Rect &rect, DrawList &drawList) const;
 
 	/**
-	 * Adds the given rect into the given rect list,
-	 * merging it with other rects already inside the list,
-	 * if possible, to avoid overdraw. TODO: Finish
-	 * documenting
+	 * Merges `rect` with an existing rect in `eraseList`,
+	 * if possible. Otherwise, adds the rect as a new entry
+	 * to `eraseList`.
 	 */
-	void mergeToRectList(const Common::Rect &rect, RectList &rectList) const;
+	void mergeToRectList(const Common::Rect &rect, RectList &eraseList) const;
 
 public:
 	/**
@@ -406,19 +403,73 @@ public:
 	void calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList &drawList, RectList &eraseList);
 
 	/**
-	 * TODO: Documentation
+	 * Synchronises changes to screen items from the current
+	 * plane to the visible plane and deletes screen items
+	 * from the current plane that have been marked as
+	 * deleted. If `forceUpdate` is true, all screen items
+	 * on the visible plane will be updated, even if they
+	 * are not marked as having changed.
 	 */
-	void filterDownEraseRects(DrawList &drawList, RectList &eraseList, RectList &transparentEraseList) const;
+	void decrementScreenItemArrayCounts(Plane *visiblePlane, const bool forceUpdate);
 
 	/**
-	 * TODO: Documentation
+	 * This method is called from the highest priority plane
+	 * to the lowest priority plane.
+	 *
+	 * Adds screen items from this plane to the draw list
+	 * that must be redrawn because they intersect entries
+	 * in the `higherEraseList`.
+	 *
+	 * If this plane is opaque, all intersecting erase rects
+	 * in `lowerEraseList` are removed, as they would be
+	 * completely overwritten by the contents of this plane.
+	 *
+	 * If this plane is transparent, erase rects from the
+	 * `lowerEraseList` are added to the erase list for this
+	 * plane, so that lower planes.
+	 *
+	 * @param drawList The draw list for this plane.
+	 * @param eraseList The erase list for this plane.
+	 * @param higherEraseList The erase list for a plane
+	 * above this plane.
 	 */
-	void filterUpEraseRects(DrawList &drawList, RectList &eraseList) const;
+	void filterDownEraseRects(DrawList &drawList, RectList &eraseList, RectList &higherEraseList) const;
 
 	/**
-	 * TODO: Documentation
+	 * This method is called from the lowest priority plane
+	 * to the highest priority plane.
+	 *
+	 * Adds screen items from this plane to the draw list
+	 * that must be drawn because the lower plane is being
+	 * redrawn and potentially transparent screen items
+	 * from this plane would draw over the lower priority
+	 * plane's screen items.
+	 *
+	 * This method applies only to transparent planes.
+	 *
+	 * @param drawList The draw list for this plane.
+	 * @param eraseList The erase list for a plane below
+	 * this plane.
 	 */
-	void filterUpDrawRects(DrawList &transparentDrawList, const DrawList &drawList) const;
+	void filterUpEraseRects(DrawList &drawList, const RectList &lowerEraseList) const;
+
+	/**
+	 * This method is called from the lowest priority plane
+	 * to the highest priority plane.
+	 *
+	 * Adds screen items from this plane to the draw list
+	 * that must be drawn because the lower plane is being
+	 * redrawn and potentially transparent screen items
+	 * from this plane would draw over the lower priority
+	 * plane's screen items.
+	 *
+	 * This method applies only to transparent planes.
+	 *
+	 * @param drawList The draw list for this plane.
+	 * @param lowerDrawList The draw list for a plane below
+	 * this plane.
+	 */
+	void filterUpDrawRects(DrawList &drawList, const DrawList &lowerDrawList) const;
 
 	/**
 	 * Updates all of the plane's non-deleted screen items
@@ -442,6 +493,8 @@ private:
 	using PlaneListBase::push_back;
 
 public:
+	typedef int size_type;
+
 	// A method for finding the index of a plane inside a
 	// PlaneList is used because entries in the main plane
 	// list and visible plane list of GfxFrameout are
