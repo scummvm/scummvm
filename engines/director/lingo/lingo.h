@@ -103,18 +103,14 @@ struct Datum {	/* interpreter stack type */
 	Datum() { u.sym = NULL; type = VOID; }
 };
 
-struct CFrame {	/* proc/func call stack frame */
-	Symbol	*sp;	/* symbol table entry */
-	int		retpc;	/* where to resume after return */
-	ScriptData	*retscript;	 /* which script to resume after return */
-};
-
 typedef Common::HashMap<int32, ScriptData *> ScriptHash;
 typedef Common::Array<Datum> StackData;
 typedef Common::HashMap<Common::String, Symbol *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SymbolHash;
 
-struct Context {	/* execution context */
-	Symbol *handler;
+struct CFrame {	/* proc/func call stack frame */
+	Symbol	*sp;	/* symbol table entry */
+	int		retpc;	/* where to resume after return */
+	ScriptData	*retscript;	 /* which script to resume after return */
 	SymbolHash *localvars;
 };
 
@@ -209,10 +205,8 @@ private:
 	ScriptHash _scripts[kMaxScriptType + 1];
 
 	SymbolHash _vars;
-	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _localvars;
+	SymbolHash *_localvars;
 	SymbolHash _handlers;
-
-	Common::Array<Context *> _contexts;
 
 	int _pc;
 

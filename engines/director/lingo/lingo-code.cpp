@@ -404,6 +404,13 @@ void Lingo::c_call() {
 	fp->sp = sym;
 	fp->retpc = g_lingo->_pc;
 	fp->retscript = g_lingo->_currentScript;
+	fp->localvars = g_lingo->_localvars;
+
+	// Clean up current scope local variables
+	for (SymbolHash::const_iterator h = g_lingo->_localvars->begin(); h != g_lingo->_localvars->end(); ++h)
+		g_lingo->_vars.erase(h->_key);
+
+	g_lingo->_localvars = new SymbolHash;
 
 	g_lingo->_callstack.push_back(fp);
 
@@ -418,6 +425,18 @@ void Lingo::c_procret() {
 
 	g_lingo->_currentScript = fp->retscript;
 	g_lingo->_pc = fp->retpc;
+
+	// Clean up current scope local variables and clean up memory
+	for (SymbolHash::const_iterator h = g_lingo->_localvars->begin(); h != g_lingo->_localvars->end(); ++h) {
+		g_lingo->_vars.erase(h->_key);
+		delete h->_value;
+	}
+	delete g_lingo->_localvars;
+
+	// Restore local variables
+	g_lingo->_localvars = fp->localvars;
+	for (SymbolHash::const_iterator h = g_lingo->_localvars->begin(); h != g_lingo->_localvars->end(); ++h)
+		g_lingo->_vars[h->_key] = h->_value;
 
 	delete fp;
 

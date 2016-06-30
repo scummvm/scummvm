@@ -163,7 +163,11 @@ void Lingo::executeScript(ScriptType type, uint16 id) {
 	_pc = 0;
 	_returning = false;
 
+	_localvars = new SymbolHash;
+
 	execute(_pc);
+
+	delete _localvars;
 }
 
 void Lingo::processEvent(LEvent event, int entityId) {
