@@ -168,8 +168,6 @@ protected:
 	bool _alpha;
 };
 
-
-
 /**********************************************************
  *  Data definitions for theme engine elements
  *********************************************************/
@@ -304,7 +302,6 @@ void ThemeItemBitmap::drawSelf(bool draw, bool restore) {
 
 	_engine->addDirtyRect(_area);
 }
-
 
 
 /**********************************************************
@@ -979,8 +976,6 @@ void ThemeEngine::queueBitmap(const Graphics::Surface *bitmap, const Common::Rec
 	}
 }
 
-
-
 /**********************************************************
  * Widget drawing functions
  *********************************************************/
@@ -1200,8 +1195,6 @@ void ThemeEngine::drawDialogBackgroundClip(const Common::Rect &r, const Common::
 
 	case kDialogBackgroundDefault:
 		queueDDClip(kDDDefaultBackground, r, clip);
-		break;
-	case kDialogBackgroundNone:
 		break;
 	}
 }
