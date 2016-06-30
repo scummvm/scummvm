@@ -177,6 +177,8 @@ enum SquareAspectIndice {
 	kFootprintsAspect = 0x8000 // @ MASK0x8000_FOOTPRINTS          
 };
 
+               
+
 
 struct CreatureInfo {
 	byte _creatureAspectIndex;

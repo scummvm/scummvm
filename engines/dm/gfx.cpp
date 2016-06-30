@@ -816,23 +816,23 @@ void DisplayMan::loadGraphics() {
 		int16 creatureFrontBitmapD2PixelCount;
 		_derivedBitmapByteCount[derivedBitmapIndex++] = creatureFrontBitmapD2PixelCount = getScaledBitmapPixelCount(creatureAsp->_byteWidthFront, creatureAsp->_heightFront, kScale20_D2);
 
-		if (getFlag(creatureGraphicInfo, kCreatureInfoMaskSide)) {
+		if (getFlag(creatureGraphicInfo, kCreatureInfoGraphicMaskSide)) {
 			_derivedBitmapByteCount[derivedBitmapIndex++] = getScaledBitmapPixelCount(creatureAsp->_byteWidthSide, creatureAsp->_heightSide, kScale16_D3);
 			_derivedBitmapByteCount[derivedBitmapIndex++] = getScaledBitmapPixelCount(creatureAsp->_byteWidthSide, creatureAsp->_heightSide, kScale20_D2);
 		}
 
-		if (getFlag(creatureGraphicInfo, kCreatureInfoMaskBack)) {
+		if (getFlag(creatureGraphicInfo, kCreatureInfoGraphicMaskBack)) {
 			_derivedBitmapByteCount[derivedBitmapIndex++] = creatureFrontBitmapD3PixelCount;
 			_derivedBitmapByteCount[derivedBitmapIndex++] = creatureFrontBitmapD2PixelCount;
 		}
 
-		if (getFlag(creatureGraphicInfo, kCreatureInfoMaskAttack)) {
+		if (getFlag(creatureGraphicInfo, kCreatureInfoGraphicMaskAttack)) {
 			_derivedBitmapByteCount[derivedBitmapIndex++] = getScaledBitmapPixelCount(creatureAsp->_byteWidthAttack, creatureAsp->_heightAttack, kScale16_D3);
 			_derivedBitmapByteCount[derivedBitmapIndex++] = getScaledBitmapPixelCount(creatureAsp->_byteWidthAttack, creatureAsp->_heightAttack, kScale20_D2);
 		}
 
 		int16 additionalFronGraphicCount;
-		if (additionalFronGraphicCount = getFlag(creatureGraphicInfo, kCreatureInfoMaskAdditional)) {
+		if (additionalFronGraphicCount = getFlag(creatureGraphicInfo, kCreatureInfoGraphicMaskAdditional)) {
 			do {
 				_derivedBitmapByteCount[derivedBitmapIndex++] = creatureAsp->_byteWidthFront * creatureAsp->_heightFront;
 				_derivedBitmapByteCount[derivedBitmapIndex++] = getScaledBitmapPixelCount(creatureAsp->_byteWidthFront, creatureAsp->_heightFront, kScale16_D3);

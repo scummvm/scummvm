@@ -57,15 +57,15 @@ namespace DM {
 #define kExplosionAspectSmoke 3 // @ C3_EXPLOSION_ASPECT_SMOKE 
 
 /* Creature info GraphicInfo */
-#define kCreatureInfoMaskAdditional 0x0003 // @ MASK0x0003_ADDITIONAL                        
-#define kCreatureInfoMaskFlipNonAttack 0x0004 // @ MASK0x0004_FLIP_NON_ATTACK                  
-#define kCreatureInfoMaskSide 0x0008 // @ MASK0x0008_SIDE                             
-#define kCreatureInfoMaskBack 0x0010 // @ MASK0x0010_BACK                             
-#define kCreatureInfoMaskAttack 0x0020 // @ MASK0x0020_ATTACK                           
-#define kCreatureInfoMaskSpecialD2Front 0x0080 // @ MASK0x0080_SPECIAL_D2_FRONT                                                                               
-#define kCreatureInfoMaskSpecialD2FrontIsFlipped 0x0100 // @ MASK0x0100_SPECIAL_D2_FRONT_IS_FLIPPED_FRONT 
-#define kCreatureInfoMaskFlipAttack 0x0200 // @ MASK0x0200_FLIP_ATTACK                      
-#define kCreatureInfoMaskFlipDuringAttack 0x0400 // @ MASK0x0400_FLIP_DURING_ATTACK               
+#define kCreatureInfoGraphicMaskAdditional 0x0003 // @ MASK0x0003_ADDITIONAL                        
+#define kCreatureInfoGraphicMaskFlipNonAttack 0x0004 // @ MASK0x0004_FLIP_NON_ATTACK                  
+#define kCreatureInfoGraphicMaskSide 0x0008 // @ MASK0x0008_SIDE                             
+#define kCreatureInfoGraphicMaskBack 0x0010 // @ MASK0x0010_BACK                             
+#define kCreatureInfoGraphicMaskAttack 0x0020 // @ MASK0x0020_ATTACK                           
+#define kCreatureInfoGraphicMaskSpecialD2Front 0x0080 // @ MASK0x0080_SPECIAL_D2_FRONT                                                                               
+#define kCreatureInfoGraphicMaskSpecialD2FrontIsFlipped 0x0100 // @ MASK0x0100_SPECIAL_D2_FRONT_IS_FLIPPED_FRONT 
+#define kCreatureInfoGraphicMaskFlipAttack 0x0200 // @ MASK0x0200_FLIP_ATTACK                      
+#define kCreatureInfoGraphicMaskFlipDuringAttack 0x0400 // @ MASK0x0400_FLIP_DURING_ATTACK               
 
 class ExplosionAspect {
 public:

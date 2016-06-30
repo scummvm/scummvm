@@ -68,4 +68,33 @@ uint16 GroupMan::getGroupDirections(Group* group, int16 mapIndex) {
 
 	return gGroupDirections[group->getDir()];
 }
+
+int16 GroupMan::getCreatureOrdinalInCell(Group* group, uint16 cell) {
+	uint16 currMapIndex = _vm->_dungeonMan->_currMap._index;
+	byte groupCells = getGroupCells(group, currMapIndex);
+	if (groupCells == kCreatureTypeSingleCenteredCreature)
+		return _vm->indexToOrdinal(0);
+
+	byte creatureIndex = group->getCount();
+	if (getFlag(gCreatureInfo[group->_type]._attributes, kMaskCreatureInfo_size) == kMaskCreatureSizeHalf) {
+		if ((getGroupDirections(group, currMapIndex) & 1) == (cell & 1))
+			cell = returnPrevVal(cell);
+
+		do {
+			byte creatureCell = getCreatureValue(groupCells, creatureIndex);
+			if (creatureCell == cell || creatureCell == returnNextVal(cell))
+				return _vm->indexToOrdinal(creatureIndex);
+		} while (creatureIndex--);
+	} else {
+		do {
+			if (getCreatureValue(groupCells, creatureIndex) == cell)
+				return _vm->indexToOrdinal(creatureIndex);
+		} while (creatureIndex--);
+	}
+	return 0;
+}
+
+uint16 GroupMan::getCreatureValue(uint16 groupVal, uint16 creatureIndex) {
+	return (groupVal >> (creatureIndex << 1)) & 0x3;
+}
 }

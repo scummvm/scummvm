@@ -56,6 +56,15 @@ namespace DM {
 void turnDirRight(direction &dir) { dir = (direction)((dir + 1) & 3); }
 void turnDirLeft(direction &dir) { dir = (direction)((dir - 1) & 3); }
 direction returnOppositeDir(direction dir) { return (direction)((dir + 2) & 3); }
+
+uint16 returnPrevVal(uint16 val) {
+	return (direction)((val + 3) & 3);
+}
+
+uint16 returnNextVal(uint16 val) {
+	return (val + 1) & 0x3;
+}
+
 bool isOrientedWestEast(direction dir) { return dir & 1; }
 
 uint16 getFlag(uint16 val, uint16 mask) {
@@ -205,7 +214,7 @@ Common::Error DMEngine::run() {
 	_objectMan = new ObjectMan(this);
 	_inventoryMan = new InventoryMan(this);
 	_textMan = new TextMan(this);
-	_movsens = new MovesensMan(this);		 
+	_movsens = new MovesensMan(this);
 	_groupMan = new GroupMan(this);
 	_displayMan->setUpScreens(320, 200);
 

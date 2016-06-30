@@ -58,8 +58,10 @@ enum direction {
 
 void turnDirRight(direction &dir);
 void turnDirLeft(direction &dir);
-direction returnOppositeDir(direction dir);
-bool isOrientedWestEast(direction dir);
+direction returnOppositeDir(direction dir);	// @ M18_OPPOSITE
+uint16 returnPrevVal(uint16 val); // @ M19_PREVIOUS
+uint16 returnNextVal(uint16 val); // @ M17_NEXT
+bool isOrientedWestEast(direction dir);	// @ M16_IS_ORIENTED_WEST_EAST
 
 
 uint16 getFlag(uint16 val, uint16 mask);

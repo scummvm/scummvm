@@ -8,11 +8,11 @@ F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
 	F0142_DUNGEON_GetProjectileAspect // done 
 		F0158_DUNGEON_GetWeaponInfo // done
 		M66_PROJECTILE_ASPECT_ORDINAL // done
-	F0176_GROUP_GetCreatureOrdinalInCell
+	F0176_GROUP_GetCreatureOrdinalInCell // done
 		F0145_DUNGEON_GetGroupCells // done
-		F0147_DUNGEON_GetGroupDirections
+		F0147_DUNGEON_GetGroupDirections // done
 		GROUP // done 
-		CreatureType
+		CreatureType // done
 	G0017_auc_Graphic562_PaletteChanges_NoChanges
 	G0075_apuc_PaletteChanges_Projectile
 	G0077_B_DoNotDrawFluxcagesDuringEndgame
@@ -46,8 +46,8 @@ F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
 	OBJECT_ASPECT
 	GROUP // done
 	ACTIVE_GROUP
-	CREATURE_INFO
-	CREATURE_ASPECT
+	CREATURE_INFO // done
+	CREATURE_ASPECT // done
 	PROJECTILE
 	EXPLOSION
 	FIELD_ASPECT // done

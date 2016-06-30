@@ -33,6 +33,55 @@
 
 namespace DM {
 
+/* Creature types */
+enum CreatureType {
+	kCreatureTypeGiantScorpionScorpion = 0, // @ C00_CREATURE_GIANT_SCORPION_SCORPION     
+	kCreatureTypeSwampSlimeSlime = 1, // @ C01_CREATURE_SWAMP_SLIME_SLIME_DEVIL     
+	kCreatureTypeGiggler = 2, // @ C02_CREATURE_GIGGLER                     
+	kCreatureTypeWizardEyeFlyingEye = 3, // @ C03_CREATURE_WIZARD_EYE_FLYING_EYE       
+	kCreatureTypePainRatHellHound = 4, // @ C04_CREATURE_PAIN_RAT_HELLHOUND          
+	kCreatureTypeRuster = 5, // @ C05_CREATURE_RUSTER                      
+	kCreatureTypeScreamer = 6, // @ C06_CREATURE_SCREAMER                    
+	kCreatureTypeRockpile = 7, // @ C07_CREATURE_ROCK_ROCKPILE               
+	kCreatureTypeGhostRive = 8, // @ C08_CREATURE_GHOST_RIVE                  
+	kCreatureTypeStoneGolem = 9, // @ C09_CREATURE_STONE_GOLEM                 
+	kCreatureTypeMummy = 10, // @ C10_CREATURE_MUMMY                      
+	kCreatureTypeBlackFlame = 11, // @ C11_CREATURE_BLACK_FLAME                
+	kCreatureTypeSkeleton = 12, // @ C12_CREATURE_SKELETON                   
+	kCreatureTypeCouatl = 13, // @ C13_CREATURE_COUATL                     
+	kCreatureTypeVexirk = 14, // @ C14_CREATURE_VEXIRK                     
+	kCreatureTypeMagnetaWormWorm = 15, // @ C15_CREATURE_MAGENTA_WORM_WORM          
+	kCreatureTypeTrolinAntman = 16, // @ C16_CREATURE_TROLIN_ANTMAN              
+	kCreatureTypeGiantWaspMuncher = 17, // @ C17_CREATURE_GIANT_WASP_MUNCHER         
+	kCreatureTypeAnimatedArmourDethKnight = 18, // @ C18_CREATURE_ANIMATED_ARMOUR_DETH_KNIGHT
+	kCreatureTypeMaterializerZytaz = 19, // @ C19_CREATURE_MATERIALIZER_ZYTAZ         
+	kCreatureTypeWaterElemental = 20, // @ C20_CREATURE_WATER_ELEMENTAL            
+	kCreatureTypeOitu = 21, // @ C21_CREATURE_OITU                       
+	kCreatureTypeDemon = 22, // @ C22_CREATURE_DEMON                      
+	kCreatureTypeLordChaos = 23, // @ C23_CREATURE_LORD_CHAOS                 
+	kCreatureTypeRedDragon = 24, // @ C24_CREATURE_RED_DRAGON                 
+	kCreatureTypeLordOrder = 25, // @ C25_CREATURE_LORD_ORDER                 
+	kCreatureTypeGreyLord = 26, // @ C26_CREATURE_GREY_LORD                  
+	kCreatureTypeSingleCenteredCreature = 255 // @ C255_SINGLE_CENTERED_CREATURE
+};
+
+#define kMaskCreatureSizeQuarter 0 // @ C0_SIZE_QUARTER_SQUARE
+#define kMaskCreatureSizeHalf 1 // @ C1_SIZE_HALF_SQUARE   
+#define kMaskCreatureSizeFull 2 // @ C2_SIZE_FULL_SQUARE   
+
+#define kMaskCreatureInfo_size 0x0003 // @ MASK0x0003_SIZE                     
+#define kMaskCreatureInfo_sideAttack 0x0004 // @ MASK0x0004_SIDE_ATTACK              
+#define kMaskCreatureInfo_preferBackRow 0x0008 // @ MASK0x0008_PREFER_BACK_ROW          
+#define kMaskCreatureInfo_attackAnyChamp 0x0010 // @ MASK0x0010_ATTACK_ANY_CHAMPION      
+#define kMaskCreatureInfo_levitation 0x0020 // @ MASK0x0020_LEVITATION               
+#define kMaskCreatureInfo_nonMaterial 0x0040 // @ MASK0x0040_NON_MATERIAL             
+#define kMaskCreatureInfo_dropFixedPoss 0x0200 // @ MASK0x0200_DROP_FIXED_POSSESSIONS   
+#define kMaskCreatureInfo_keepThrownSharpWeapon 0x0400 // @ MASK0x0400_KEEP_THROWN_SHARP_WEAPONS
+#define kMaskCreatureInfo_seeInvisible 0x0800 // @ MASK0x0800_SEE_INVISIBLE            
+#define kMaskCreatureInfo_nightVision 0x1000 // @ MASK0x1000_NIGHT_VISION             
+#define kMaskCreatureInfo_archenemy 0x2000 // @ MASK0x2000_ARCHENEMY                
+#define kMaskCreatureInfo_magicmap 0x4000 // @ MASK0x4000_MAGICMAP  
+
 class ActiveGroup {
 public:
 	int _groupThingIndex;
@@ -87,6 +136,8 @@ public:
 	void initActiveGroups(); // @ F0196_GROUP_InitializeActiveGroups
 	uint16 getGroupCells(Group *group, int16 mapIndex); // @ F0145_DUNGEON_GetGroupCells
 	uint16 getGroupDirections(Group *group, int16 mapIndex); // @ F0147_DUNGEON_GetGroupDirections
+	int16 getCreatureOrdinalInCell(Group *group, uint16 cell); // @ F0176_GROUP_GetCreatureOrdinalInCell
+	uint16 getCreatureValue(uint16 groupVal, uint16 creatureIndex); // @ M50_CREATURE_VALUE
 };
 
 
