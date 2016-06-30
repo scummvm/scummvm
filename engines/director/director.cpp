@@ -58,6 +58,11 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_currentPalette = 0;
 	//FIXME
 	_sharedMMM = "SHARDCST.MMM";
+	_sharedCasts = new Common::HashMap<int, Cast *>();
+	_sharedDIB = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>();
+	_sharedBMP = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>();
+	_sharedSTXT = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>();
+	_sharedSound = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>();
 
 	_movies = new Common::HashMap<Common::String, Score *>();
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -420,6 +425,15 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 		Common::Array<uint16>::iterator iterator;
 		for (iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
 			_sharedSTXT->setVal(*iterator, shardcst->getResource(MKTAG('S','T','X','T'), *iterator));
+		}
+	}
+
+	Common::Array<uint16> bmp = shardcst->getResourceIDList(MKTAG('B','I','T','D'));
+
+	if (bmp.size() != 0) {
+		Common::Array<uint16>::iterator iterator;
+		for (iterator = bmp.begin(); iterator != bmp.end(); ++iterator) {
+			_sharedBMP->setVal(*iterator, shardcst->getResource(MKTAG('B','I','T','D'), *iterator));
 		}
 	}
 

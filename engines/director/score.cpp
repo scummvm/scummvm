@@ -1164,6 +1164,10 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 
 			Image::ImageDecoder *img = getImageFrom(_sprites[i]->_castId);
 
+			if (!img) {
+				continue;
+			}
+
 			uint32 regX = static_cast<BitmapCast *>(_sprites[i]->_cast)->regX;
 			uint32 regY = static_cast<BitmapCast *>(_sprites[i]->_cast)->regY;
 			uint32 rectLeft = static_cast<BitmapCast *>(_sprites[i]->_cast)->initialRect.left;
@@ -1224,7 +1228,11 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 		return img;
 	}
 
-	//TODO Shared bitmaps
+	if (_vm->getSharedBMP()->contains(imgId)) {
+		img = new Image::BitmapDecoder();
+		img->loadStream(*_vm->getSharedBMP()->getVal(imgId));
+		return img;
+	}
 
 	warning("Image %d not found", spriteId);
 	return img;

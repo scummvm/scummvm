@@ -69,6 +69,7 @@ public:
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
 	void loadSharedCastsFrom(Common::String filename);
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedDIB() const { return _sharedDIB; }
+	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedBMP() const { return _sharedBMP; }
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedSTXT() const { return _sharedSTXT; }
 	Common::HashMap<int, Cast *> *getSharedCasts() const { return _sharedCasts; }
 
@@ -98,6 +99,7 @@ private:
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedDIB;
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedSTXT;
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedSound;
+	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedBMP;
 
 	Archive *_mainArchive;
 	Common::MacResManager *_macBinary;
