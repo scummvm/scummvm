@@ -35,6 +35,9 @@
 #include "common/array.h"
 
 namespace DM {
+
+
+
 #define kFloorSetGraphicCount 2 // @ C002_FLOOR_SET_GRAPHIC_COUNT
 #define kWallSetGraphicCount 13 // @ C013_WALL_SET_GRAPHIC_COUNT
 #define kStairsGraphicCount 18 // @ C018_STAIRS_GRAPHIC_COUNT
@@ -161,7 +164,9 @@ enum GraphicIndice {
 	kEyeForObjectDescriptionIndice = 19, // @ C019_GRAPHIC_EYE_FOR_OBJECT_DESCRIPTION
 	kArrowForChestContentIndice = 18, // @ C018_GRAPHIC_ARROW_FOR_CHEST_CONTENT
 	kObjectDescCircleIndice = 29, // @ C029_GRAPHIC_OBJECT_DESCRIPTION_CIRCLE
-	kFloorOrn_15_D3L_footprints = 241 // @ C241_GRAPHIC_FLOOR_ORNAMENT_15_D3L_FOOTPRINTS
+	kFloorOrn_15_D3L_footprints = 241, // @ C241_GRAPHIC_FLOOR_ORNAMENT_15_D3L_FOOTPRINTS
+	kFieldMask_D3R_GraphicIndice = 69, // @ C069_GRAPHIC_FIELD_MASK_D3R
+	kFieldTeleporterGraphicIndice = 73 // @ C073_GRAPHIC_FIELD_TELEPORTER
 };
 
 extern uint16 gPalSwoosh[16];
@@ -264,6 +269,20 @@ enum Color {
 	kColorBlue = 14,
 	kColorWhite = 15
 };
+
+class FieldAspect {
+public:
+	uint16 _nativeBitmapRelativeIndex;
+	uint16 _baseStartUnitIndex; /* Index of the unit (16 pixels = 8 bytes) in bitmap where blit will start from. A random value of 0 or 1 is added to this base index */
+	Color _transparentColor; /* Bit 7: Do not use mask if set, Bits 6-0: Transparent color index. 0xFF = no transparency */
+	byte _mask; /* Bit 7: Flip, Bits 6-0: Mask index. 0xFF = no mask */
+	uint16 _pixelWidth;
+	uint16 _height;
+	uint16 _xPos;
+	FieldAspect(uint16 native, uint16 base, Color transparent, byte mask, uint16 byteWidth, uint16 height, uint16 xPos)
+		: _nativeBitmapRelativeIndex(native), _baseStartUnitIndex(base), _transparentColor(transparent), _mask(mask),
+		_pixelWidth(byteWidth * 2), _height(height), _xPos(xPos) {}
+}; // @ FIELD_ASPECT
 
 
 class Viewport {
@@ -429,6 +448,12 @@ public:
 	void blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
 					  Box &box,
 					  Color transparent = kColorNoTransparency, Viewport &viewport = gDefultViewPort);
+	void blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask, byte *tmp, Box &box, int16 lastUnitIndex,
+									   int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
+									   int16 xPos, int16 yPos, int16 destHeight, int16 height2, Viewport &viewport = gDefultViewPort); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
+	void blitBoxFilledWithMaskedBitmapToScreen(byte *src, byte *mask, byte *tmp, Box &box, int16 lastUnitIndex,
+									   int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
+									   int16 xPos, int16 yPos, int16 height2, Viewport &viewport = gDungeonViewport); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
 
 	void flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height);
 	void flipBitmapVertical(byte *bitmap, uint16 width, uint16 height);
@@ -441,6 +466,7 @@ public:
 	byte* getBitmap(uint16 index);
 	Common::MemoryReadStream getCompressedData(uint16 index);
 	uint32 getCompressedDataSize(uint16 index);
+	void drawField(FieldAspect *fieldAspect, Box &box); // @ F0113_DUNGEONVIEW_DrawField
 
 	int16 getScaledBitmapPixelCount(int16 pixelWidth, int16 pixelHeight, int16 scale); // @ F0459_START_GetScaledBitmapByteCount
 	int16 getScaledDimension(int16 dimension, int16 scale); // @ M78_SCALED_DIMENSION

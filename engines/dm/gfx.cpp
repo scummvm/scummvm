@@ -969,6 +969,12 @@ void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcHeight
 		memcpy(destBitmap + destWidth*(y + destY) + destX, srcBitmap + y * srcWidth, sizeof(byte)* srcWidth);
 }
 
+void DisplayMan::blitBoxFilledWithMaskedBitmapToScreen(byte* src, byte* mask, byte* tmp, Box& box,
+													   int16 lastUnitIndex, int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
+													   int16 xPos, int16 yPos, int16 height2, Viewport& viewport) {
+	blitBoxFilledWithMaskedBitmap(src, _vgaBuffer, mask, tmp, box, lastUnitIndex, firstUnitIndex, _screenWidth, transparent, xPos, yPos, _screenHeight, height2, viewport);
+}
+
 void DisplayMan::flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height) {
 	for (uint16 y = 0; y < height; ++y) {
 		for (uint16 x = 0; x < width / 2; ++x) {
@@ -1724,6 +1730,32 @@ uint32 DisplayMan::getCompressedDataSize(uint16 index) {
 	return _packedItemPos[index + 1] - _packedItemPos[index];
 }
 
+/* Field Aspect Mask */
+#define kMaskFieldAspectFlipMask 0x0080 // @ MASK0x0080_FLIP_MASK 
+#define kMaskFieldAspectIndex 0x007F // @ MASK0x007F_MASK_INDEX
+#define kMaskFieldAspectNoMask 255 // @ C255_NO_MASK            
+
+void DisplayMan::drawField(FieldAspect* fieldAspect, Box& box) {
+	DisplayMan &dispMan = *_vm->_displayMan;
+
+	byte *bitmapMask;
+	if (fieldAspect->_mask == kMaskFieldAspectNoMask) {
+		bitmapMask = nullptr;
+	} else {
+		bitmapMask = dispMan._tmpBitmap;
+		memcpy(bitmapMask, dispMan.getBitmap(kFieldMask_D3R_GraphicIndice + getFlag(fieldAspect->_mask, kMaskFieldAspectIndex)),
+			   fieldAspect->_height * fieldAspect->_pixelWidth * sizeof(bitmapMask[0]));
+		if (getFlag(fieldAspect->_mask, kMaskFieldAspectFlipMask)) {
+			dispMan.flipBitmapHorizontal(bitmapMask, fieldAspect->_pixelWidth, fieldAspect->_height);
+		}
+	}
+
+	byte *bitmap = dispMan.getBitmap(kFieldTeleporterGraphicIndice + fieldAspect->_nativeBitmapRelativeIndex);
+	warning("MISSING CODE: F0133_VIDEO_BlitBoxFilledWithMaskedBitmap");
+
+	warning("IGNORED CODE: F0491_CACHE_IsDerivedBitmapInCache, F0493_CACHE_AddDerivedBitmap, F0480_CACHE_ReleaseBlock");
+}
+
 int16 DisplayMan::getScaledBitmapPixelCount(int16 pixelWidth, int16 pixelHeight, int16 scale) {
 	return getScaledDimension(pixelWidth, scale) * getScaledDimension(pixelHeight, scale);
 }
@@ -1754,6 +1786,12 @@ void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uin
 							  Box &box,
 							  Color transparent, Viewport &viewport) {
 	blitToScreen(srcBitmap, srcWidth, srcX, srcY, box._x1, box._x2, box._y1, box._y2, transparent, viewport);
+}
+
+void DisplayMan::blitBoxFilledWithMaskedBitmap(byte* src, byte* dest, byte* mask, byte* tmp, Box& box,
+											   int16 lastUnitIndex, int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
+											   int16 xPos, int16 yPos, int16 destHeight, int16 height2, Viewport &viewport) {
+	warning("STUB FUNCTION: does nothing at all");
 }
 
 }

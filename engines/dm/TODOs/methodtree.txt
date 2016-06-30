@@ -1,9 +1,9 @@
 F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
-	F0113_DUNGEONVIEW_DrawField // dummy
-		F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
-		FIELD_ASPECT
+	F0113_DUNGEONVIEW_DrawField // stub method
+		F0133_VIDEO_BlitBoxFilledWithMaskedBitmap // dummy
+		FIELD_ASPECT // done
 	F0114_DUNGEONVIEW_GetExplosionBitmap
-	F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
+	F0133_VIDEO_BlitBoxFilledWithMaskedBitmap // dummy
 	F0141_DUNGEON_GetObjectInfoIndex
 	F0142_DUNGEON_GetProjectileAspect
 	F0176_GROUP_GetCreatureOrdinalInCell
@@ -44,7 +44,7 @@ F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
 	CREATURE_ASPECT
 	PROJECTILE
 	EXPLOSION
-	FIELD_ASPECT
+	FIELD_ASPECT // done
 
 
 
