@@ -27,6 +27,7 @@
 
 #include "group.h"
 #include "dungeonman.h"
+#include "champion.h"
 
 
 
@@ -51,4 +52,11 @@ void GroupMan::initActiveGroups() {
 		_activeGroups[i]._groupThingIndex = -1;
 }
 
+uint16 GroupMan::getGroupCells(Group* group, int16 mapIndex) {
+	byte cells;
+	cells = group->_cells;
+	if (mapIndex == _vm->_dungeonMan->_currMap._currPartyMapIndex)
+		cells = _activeGroups[cells]._cells;
+	return cells;
+}
 }

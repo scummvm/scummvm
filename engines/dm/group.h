@@ -85,6 +85,7 @@ public:
 	GroupMan(DMEngine *vm);
 	~GroupMan();
 	void initActiveGroups(); // @ F0196_GROUP_InitializeActiveGroups
+	uint16 getGroupCells(Group *group, int16 mapIndex); // @ F0145_DUNGEON_GetGroupCells
 };
 
 
