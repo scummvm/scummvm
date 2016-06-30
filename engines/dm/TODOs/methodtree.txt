@@ -2,7 +2,7 @@ F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
 	F0113_DUNGEONVIEW_DrawField // stub method
 		F0133_VIDEO_BlitBoxFilledWithMaskedBitmap // dummy
 		FIELD_ASPECT // done
-	F0114_DUNGEONVIEW_GetExplosionBitmap
+	F0114_DUNGEONVIEW_GetExplosionBitmap // done
 	F0133_VIDEO_BlitBoxFilledWithMaskedBitmap // dummy
 	F0141_DUNGEON_GetObjectInfoIndex
 	F0142_DUNGEON_GetProjectileAspect

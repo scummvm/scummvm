@@ -166,7 +166,8 @@ enum GraphicIndice {
 	kObjectDescCircleIndice = 29, // @ C029_GRAPHIC_OBJECT_DESCRIPTION_CIRCLE
 	kFloorOrn_15_D3L_footprints = 241, // @ C241_GRAPHIC_FLOOR_ORNAMENT_15_D3L_FOOTPRINTS
 	kFieldMask_D3R_GraphicIndice = 69, // @ C069_GRAPHIC_FIELD_MASK_D3R
-	kFieldTeleporterGraphicIndice = 73 // @ C073_GRAPHIC_FIELD_TELEPORTER
+	kFieldTeleporterGraphicIndice = 73, // @ C073_GRAPHIC_FIELD_TELEPORTER
+	kFirstExplosionGraphicIndice = 348 // @ C348_GRAPHIC_FIRST_EXPLOSION
 };
 
 extern uint16 gPalSwoosh[16];
@@ -457,6 +458,7 @@ public:
 
 	void flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height);
 	void flipBitmapVertical(byte *bitmap, uint16 width, uint16 height);
+	byte *getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int16 &returnPixelWidth, int16 &returnHeight); // @ F0114_DUNGEONVIEW_GetExplosionBitmap
 
 	void clearBitmap(byte *bitmap, uint16 width, uint16 height, Color color);
 	void clearScreen(Color color);

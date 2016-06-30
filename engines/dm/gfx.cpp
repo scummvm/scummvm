@@ -39,6 +39,8 @@ namespace DM {
 
 Box gBoxMovementArrows = Box(224, 319, 124, 168);
 
+byte gPalChangeSmoke[16] = {0, 10, 20, 30, 40, 50, 120, 10, 80, 90, 100, 110, 120, 130, 140, 150}; // @ G0212_auc_Graphic558_PaletteChanges_Smoke
+
 ExplosionAspect gExplosionAspects[kExplosionAspectCount] = { // @ G0211_as_Graphic558_ExplosionAspects
 	/* { ByteWidth, Height } */
 	ExplosionAspect(80, 111),   /* Fire   */
@@ -998,6 +1000,30 @@ void DisplayMan::flipBitmapVertical(byte *bitmap, uint16 width, uint16 height) {
 	delete[] tmp;
 }
 
+byte* DisplayMan::getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int16& returnPixelWidth, int16& returnHeight) {
+	ExplosionAspect *explAsp = &gExplosionAspects[explosionAspIndex];
+	if (scale > 32)
+		scale = 32;
+	int16 pixelWidth = getScaledDimension(explAsp->_pixelWidth, scale);
+	int16 height = getScaledDimension(explAsp->_height, scale);
+	byte *bitmap;
+	int16 derBitmapIndex = (explosionAspIndex * 14) + scale / 2 + kDerivedBitmapFirstExplosion - 2;
+	if ((scale == 32) && (explosionAspIndex != kExplosionAspectSmoke)) {
+		bitmap = getBitmap(explosionAspIndex + kFirstExplosionGraphicIndice);
+	} else if (isDerivedBitmapInCache(derBitmapIndex)) {
+		bitmap = getDerivedBitmap(derBitmapIndex);
+	} else {
+		byte *nativeBitmap = getBitmap(MIN(explosionAspIndex, (uint16)kExplosionAspectPoison) + kFirstExplosionGraphicIndice);
+		bitmap = getDerivedBitmap(derBitmapIndex);
+		blitToBitmapShrinkWithPalChange(nativeBitmap, explAsp->_pixelWidth, explAsp->_height, bitmap, pixelWidth, height,
+			(explosionAspIndex == kExplosionAspectSmoke) ? gPalChangeSmoke : gPalChangesNoChanges);
+		warning("IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
+	}
+
+	returnPixelWidth = pixelWidth;
+	returnHeight = height;
+	return bitmap;
+}
 
 
 void DisplayMan::updateScreen() {
