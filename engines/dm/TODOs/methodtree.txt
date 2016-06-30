@@ -9,7 +9,7 @@ F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
 		F0158_DUNGEON_GetWeaponInfo // done
 		M66_PROJECTILE_ASPECT_ORDINAL // done
 	F0176_GROUP_GetCreatureOrdinalInCell
-		F0145_DUNGEON_GetGroupCells
+		F0145_DUNGEON_GetGroupCells // done
 		F0147_DUNGEON_GetGroupDirections
 		GROUP // done 
 		CreatureType

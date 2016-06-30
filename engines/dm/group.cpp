@@ -59,4 +59,13 @@ uint16 GroupMan::getGroupCells(Group* group, int16 mapIndex) {
 		cells = _activeGroups[cells]._cells;
 	return cells;
 }
+
+byte gGroupDirections[4] = {0x00, 0x55, 0xAA, 0xFF}; // @ G0258_auc_Graphic559_GroupDirections
+
+uint16 GroupMan::getGroupDirections(Group* group, int16 mapIndex) {
+	if (mapIndex == _vm->_dungeonMan->_currMap._currPartyMapIndex)
+		return _activeGroups[group->getActiveGroupIndex()]._directions;
+
+	return gGroupDirections[group->getDir()];
+}
 }

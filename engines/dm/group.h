@@ -36,7 +36,7 @@ namespace DM {
 class ActiveGroup {
 public:
 	int _groupThingIndex;
-	byte _directions;
+	direction _directions;
 	byte _cells;
 	byte _lastMoveTime;
 	byte _delayFleeingFromTarget;
@@ -86,6 +86,7 @@ public:
 	~GroupMan();
 	void initActiveGroups(); // @ F0196_GROUP_InitializeActiveGroups
 	uint16 getGroupCells(Group *group, int16 mapIndex); // @ F0145_DUNGEON_GetGroupCells
+	uint16 getGroupDirections(Group *group, int16 mapIndex); // @ F0147_DUNGEON_GetGroupDirections
 };
 
 
