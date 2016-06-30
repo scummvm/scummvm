@@ -41,6 +41,8 @@ private:
 	int _field2C;
 public:
 	CStarControlSub6();
+
+	void clear();
 };
 
 } // End of namespace Titanic

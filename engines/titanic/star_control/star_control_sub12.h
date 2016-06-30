@@ -41,7 +41,6 @@ private:
 	int _field2C;
 	CStarControlSub13 _sub13;
 	int _field108;
-	int _field21C;
 public:
 	CStarControlSub12(void *val1, void *val2);
 	virtual ~CStarControlSub12() {}
