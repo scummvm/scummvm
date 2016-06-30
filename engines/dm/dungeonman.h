@@ -589,9 +589,6 @@ struct DungeonData {
 	uint16 **_thingsData[16]; // @ G0284_apuc_ThingData
 
 	byte ***_mapData; // @ G0279_pppuc_DungeonMapData
-
-	// TODO: ??? is this doing here
-	uint16 _eventMaximumCount; // @ G0369_ui_EventMaximumCount
 }; // @ AGGREGATE
 
 struct CurrMapData {
@@ -676,6 +673,7 @@ public:
 	bool _isFacingViAltar; // @ G0287_B_FacingViAltar
 	bool _isFacingFountain; // @ G0288_B_FacingFountain
 	ElementType _squareAheadElement; // @ G0285_i_SquareAheadElement 
+	Thing _pileTopObject[5]; // @ G0292_aT_PileTopObject
 };
 
 }

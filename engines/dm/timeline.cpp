@@ -25,44 +25,31 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
-#include "loadsave.h"
-#include "dungeonman.h"
-#include "champion.h"
-#include "group.h"
 #include "timeline.h"
-
+#include "dungeonman.h"
 
 
 namespace DM {
 
-LoadsaveMan::LoadsaveMan(DMEngine *vm) : _vm(vm) {}
+Timeline::Timeline(DMEngine* vm) : _vm(vm) {
+	_events = nullptr;
+	_timeline = nullptr;
+}
 
+Timeline::~Timeline() {
+	delete[] _events;
+	delete[] _timeline;
+}
 
-LoadgameResponse LoadsaveMan::loadgame() {
-	bool newGame = _vm->_dungeonMan->_messages._newGame;
-	ChampionMan &cm = *_vm->_championMan;
-
-	if (newGame) {
-		_vm->_restartGameAllowed = false;
-		cm._partyChampionCount = 0;
-		cm._leaderHandObject = Thing::_none;
-		_vm->_gameId = _vm->_rnd->getRandomNumber(65536) * _vm->_rnd->getRandomNumber(65536);
-	} else {
-		assert(false);
-		// MISSING CODE: load game
+void Timeline::initTimeline() {
+	_events = new TimelineEvent[_eventMaxCount];
+	_timeline = new uint16[_eventMaxCount];
+	if (_vm->_dungeonMan->_messages._newGame) {
+		for (int16 i = 0; i < _eventMaxCount; ++i)
+			_events->_type = kTMEventTypeNone;
+		_eventCount = 0;
+		_firstUnusedEventIndex = 0;
 	}
-	_vm->_dungeonMan->loadDungeonFile();
-
-
-	if (newGame) {
-		_vm->_timeline->initTimeline();
-		_vm->_groupMan->initActiveGroups();
-	} else {
-		assert(false);
-		// MISSING CODE: load game
-	}
-	cm._partyDead = false;
-	return kLoadgameSuccess;
 }
 
 }

@@ -42,7 +42,8 @@ MODULE_OBJS := \
 	menus.o \
 	movesens.o \
 	objectman.o \
-	text.o
+	text.o \
+	timeline.o
 
 MODULE_DIRS += \
 	engines/dm

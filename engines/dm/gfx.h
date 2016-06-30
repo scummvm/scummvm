@@ -275,14 +275,15 @@ class FieldAspect {
 public:
 	uint16 _nativeBitmapRelativeIndex;
 	uint16 _baseStartUnitIndex; /* Index of the unit (16 pixels = 8 bytes) in bitmap where blit will start from. A random value of 0 or 1 is added to this base index */
-	Color _transparentColor; /* Bit 7: Do not use mask if set, Bits 6-0: Transparent color index. 0xFF = no transparency */
+	uint16 _transparentColor; /* Bit 7: Do not use mask if set, Bits 6-0: Transparent color index. 0xFF = no transparency */
 	byte _mask; /* Bit 7: Flip, Bits 6-0: Mask index. 0xFF = no mask */
 	uint16 _pixelWidth;
 	uint16 _height;
 	uint16 _xPos;
-	FieldAspect(uint16 native, uint16 base, Color transparent, byte mask, uint16 byteWidth, uint16 height, uint16 xPos)
+	uint16 _bitplaneWordCount;
+	FieldAspect(uint16 native, uint16 base, uint16 transparent, byte mask, uint16 byteWidth, uint16 height, uint16 xPos, uint16 bitplane)
 		: _nativeBitmapRelativeIndex(native), _baseStartUnitIndex(base), _transparentColor(transparent), _mask(mask),
-		_pixelWidth(byteWidth * 2), _height(height), _xPos(xPos) {}
+		_pixelWidth(byteWidth * 2), _height(height), _xPos(xPos), _bitplaneWordCount(bitplane) {}
 }; // @ FIELD_ASPECT
 
 
@@ -472,6 +473,9 @@ public:
 
 	int16 getScaledBitmapPixelCount(int16 pixelWidth, int16 pixelHeight, int16 scale); // @ F0459_START_GetScaledBitmapByteCount
 	int16 getScaledDimension(int16 dimension, int16 scale); // @ M78_SCALED_DIMENSION
+	void drawObjectsCreaturesProjectilesExplosions(Thing thingParam, direction directionParam,
+												   int16 mapXpos, int16 mapYpos, int16 viewSquareIndex,
+												   uint16 orderedViewCellOrdinals); // @ F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
 
 	int16 _championPortraitOrdinal; // @ G0289_i_DungeonView_ChampionPortraitOrdinal
 	int16 _currMapAlcoveOrnIndices[kAlcoveOrnCount]; // @ G0267_ai_CurrentMapAlcoveOrnamentIndices
@@ -489,6 +493,7 @@ public:
 	Thing _inscriptionThing; // @ G0290_T_DungeonView_InscriptionThing
 
 	bool _useByteBoxCoordinates; // @ G0578_B_UseByteBoxCoordinates
+	bool _doNotDrawFluxcagesDuringEndgame; // @ G0077_B_DoNotDrawFluxcagesDuringEndgame
 
 	bool isDerivedBitmapInCache(int16 derivedBitmapIndex); // @  F0491_CACHE_IsDerivedBitmapInCache
 	byte *getDerivedBitmap(int16 derivedBitmapIndex); // @ F0492_CACHE_GetDerivedBitmap

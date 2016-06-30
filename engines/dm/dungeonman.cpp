@@ -29,6 +29,7 @@
 #include "common/memstream.h"
 
 #include "dungeonman.h"
+#include "timeline.h"
 
 
 
@@ -369,7 +370,6 @@ void DungeonMan::mapCoordsAfterRelMovement(direction dir, int16 stepsForward, in
 
 DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine), _rawDunFileData(NULL), _maps(NULL), _rawMapData(NULL) {
 	_dunData._columCount = 0;
-	_dunData._eventMaximumCount = 0;
 
 	_dunData._mapsFirstColumnIndex = nullptr;
 	_dunData._columnsCumulativeSquareThingCount = nullptr;
@@ -652,7 +652,7 @@ void DungeonMan::loadDungeonFile() {
 
 	// TODO: ??? what this
 	if (_messages._newGame)
-		_dunData._eventMaximumCount = 100;
+		_vm->_timeline->_eventMaxCount = 100;
 
 	// load things
 	for (uint16 thingType = kDoorThingType; thingType < kThingTypeTotal; ++thingType) {
@@ -699,7 +699,7 @@ void DungeonMan::loadDungeonFile() {
 
 		if (_messages._newGame) {
 			if ((thingType == kGroupThingType) || thingType >= kProjectileThingType)
-				_dunData._eventMaximumCount += _fileHeader._thingCounts[thingType];
+				_vm->_timeline->_eventMaxCount += _fileHeader._thingCounts[thingType];
 			for (uint16 i = 0; i < gAdditionalThingCounts[thingType]; ++i) {
 				_dunData._thingsData[thingType][thingCount + i][0] = Thing::_none.toUint16();
 			}

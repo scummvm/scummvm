@@ -12,45 +12,22 @@ F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
 		F0145_DUNGEON_GetGroupCells // done
 		F0147_DUNGEON_GetGroupDirections // done
 		GROUP // done 
-		CreatureType // done
-	G0017_auc_Graphic562_PaletteChanges_NoChanges
-	G0075_apuc_PaletteChanges_Projectile
-	G0077_B_DoNotDrawFluxcagesDuringEndgame
-	G0105_s_Graphic558_Box_ExplosionPattern_D0C
-	G0163_as_Graphic558_Frame_Walls
-	G0188_as_Graphic558_FieldAspects
-	G0209_as_Graphic558_ObjectAspects
-	G0210_as_Graphic558_ProjectileAspects
-	G0212_auc_Graphic558_PaletteChanges_Smoke
-	G0213_auc_Graphic558_PaletteChanges_FloorOrnament_D3
-	G0214_auc_Graphic558_PaletteChanges_FloorOrnament_D2
-	G0215_auc_Graphic558_ProjectileScales
-	G0216_auc_Graphic558_ExplosionBaseScales
-	G0217_aauc_Graphic558_ObjectPileShiftSetIndices
-	G0218_aaaauc_Graphic558_ObjectCoordinateSets
-	G0219_as_Graphic558_CreatureAspects
-	G0221_auc_Graphic558_PaletteChanges_Creature_D3
-	G0222_auc_Graphic558_PaletteChanges_Creature_D2
-	G0223_aac_Graphic558_ShiftSets
-	G0224_aaaauc_Graphic558_CreatureCoordinateSets
-	G0225_aai_Graphic558_CenteredExplosionCoordinates
-	G0226_aaai_Graphic558_ExplosionCoordinates
-	G0227_aai_Graphic558_RebirthStep2ExplosionCoordinates
-	G0228_aai_Graphic558_RebirthStep1ExplosionCoordinates
-	G0237_as_Graphic559_ObjectInfo
-	G0243_as_Graphic559_CreatureInfo
-	G0291_aauc_DungeonViewClickableBoxes
-	G0292_aT_PileTopObject
-	G0370_ps_Events
-	G0375_ps_ActiveGroups
-	OBJECT_ASPECT
-	GROUP // done
-	ACTIVE_GROUP
-	CREATURE_INFO // done
-	CREATURE_ASPECT // done
-	PROJECTILE
-	EXPLOSION
-	FIELD_ASPECT // done
+		CreatureType // done 
+	G0077_B_DoNotDrawFluxcagesDuringEndgame // done
+	G0105_s_Graphic558_Box_ExplosionPattern_D0C // one
+	G0188_as_Graphic558_FieldAspects // done
+	G0216_auc_Graphic558_ExplosionBaseScales // done
+	G0217_aauc_Graphic558_ObjectPileShiftSetIndices // done 
+	G0218_aaaauc_Graphic558_ObjectCoordinateSets // done 
+	G0223_aac_Graphic558_ShiftSets // done
+	G0224_aaaauc_Graphic558_CreatureCoordinateSets // done 
+	G0225_aai_Graphic558_CenteredExplosionCoordinates // done
+	G0226_aaai_Graphic558_ExplosionCoordinates // done
+	G0227_aai_Graphic558_RebirthStep2ExplosionCoordinates // done
+	G0228_aai_Graphic558_RebirthStep1ExplosionCoordinates // done
+	G0292_aT_PileTopObject // done
+	G0370_ps_Events // done 
+
 
 
 

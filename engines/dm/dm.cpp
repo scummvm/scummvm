@@ -50,6 +50,7 @@
 #include "text.h"
 #include "movesens.h"
 #include "group.h"
+#include "timeline.h"
 
 namespace DM {
 
@@ -104,6 +105,7 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	_textMan = nullptr;
 	_movsens = nullptr;
 	_groupMan = nullptr;
+	_timeline = nullptr;
 	_stopWaitingForPlayerInput = false;
 	_gameTimeTicking = false;
 	_restartGameAllowed = false;
@@ -133,6 +135,7 @@ DMEngine::~DMEngine() {
 	delete _textMan;
 	delete _movsens;
 	delete _groupMan;
+	delete _timeline;
 
 	// clear debug channels
 	DebugMan.clearAllDebugChannels();
@@ -216,6 +219,7 @@ Common::Error DMEngine::run() {
 	_textMan = new TextMan(this);
 	_movsens = new MovesensMan(this);
 	_groupMan = new GroupMan(this);
+	_timeline = new Timeline(this);
 	_displayMan->setUpScreens(320, 200);
 
 	initializeGame(); // @ F0463_START_InitializeGame_CPSADEF
