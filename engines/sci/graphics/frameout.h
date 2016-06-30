@@ -376,8 +376,10 @@ private:
 	 * over the entire screen for rendering the next frame.
 	 * The draw and erase lists in `drawLists` and
 	 * `eraseLists` each represent one plane on the screen.
+	 * The optional `eraseRect` argument allows a specific
+	 * area of the screen to be erased.
 	 */
-	void calcLists(ScreenItemListList &drawLists, EraseListList &eraseLists, const Common::Rect &calcRect);
+	void calcLists(ScreenItemListList &drawLists, EraseListList &eraseLists, const Common::Rect &eraseRect = Common::Rect());
 
 	/**
 	 * Erases the areas in the given erase list from the
@@ -430,9 +432,10 @@ public:
 	/**
 	 * Updates the internal screen buffer for the next
 	 * frame. If `shouldShowBits` is true, also sends the
-	 * buffer to hardware.
+	 * buffer to hardware. If `eraseRect` is non-empty,
+	 * it is added to the erase list for this frame.
 	 */
-	void frameOut(const bool shouldShowBits, const Common::Rect &rect = Common::Rect());
+	void frameOut(const bool shouldShowBits, const Common::Rect &eraseRect = Common::Rect());
 
 	/**
 	 * Modifies the raw pixel data for the next frame with

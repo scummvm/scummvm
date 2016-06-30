@@ -492,7 +492,7 @@ void GfxFrameout::kernelAddPicAt(const reg_t planeObject, const GuiResourceId pi
 #pragma mark -
 #pragma mark Rendering
 
-void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &rect) {
+void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &eraseRect) {
 // TODO: Robot
 //	if (_robot != nullptr) {
 //		_robot.doRobot();
@@ -510,7 +510,7 @@ void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &rect) 
 		remapMarkRedraw();
 	}
 
-	calcLists(screenItemLists, eraseLists, rect);
+	calcLists(screenItemLists, eraseLists, eraseRect);
 
 	for (ScreenItemListList::iterator list = screenItemLists.begin(); list != screenItemLists.end(); ++list) {
 		list->sort();
@@ -597,14 +597,17 @@ void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseL
 	RectList rectlist;
 	Common::Rect outRects[4];
 
+// NOTE: The third rectangle parameter is only ever given a non-empty rect
+// by VMD code, via `frameOut`
+void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseLists, const Common::Rect &eraseRect) {
 	int deletedPlaneCount = 0;
 	bool addedToRectList = false;
 	int planeCount = _planes.size();
 	bool foundTransparentPlane = false;
 
-	if (!calcRect.isEmpty()) {
-		addedToRectList = true;
-		rectlist.add(calcRect);
+	if (!eraseRect.isEmpty()) {
+		addedToEraseList = true;
+		rectlist.add(eraseRect);
 	}
 
 	for (int outerPlaneIndex = 0; outerPlaneIndex < planeCount; ++outerPlaneIndex) {
@@ -885,8 +888,6 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, const ShowStyleEntry
 	_showList.add(rect);
 	showBits();
 
-	Common::Rect calcRect(0, 0);
-
 	// NOTE: The original engine allocated these as static arrays of 100
 	// pointers to ScreenItemList / RectList
 	ScreenItemListList screenItemLists;
@@ -899,7 +900,7 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, const ShowStyleEntry
 		remapMarkRedraw();
 	}
 
-	calcLists(screenItemLists, eraseLists, calcRect);
+	calcLists(screenItemLists, eraseLists);
 	for (ScreenItemListList::iterator list = screenItemLists.begin(); list != screenItemLists.end(); ++list) {
 		list->sort();
 	}
@@ -959,7 +960,7 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, const ShowStyleEntry
 		remapMarkRedraw();
 	}
 
-	calcLists(screenItemLists, eraseLists, calcRect);
+	calcLists(screenItemLists, eraseLists);
 	for (ScreenItemListList::iterator list = screenItemLists.begin(); list != screenItemLists.end(); ++list) {
 		list->sort();
 	}
