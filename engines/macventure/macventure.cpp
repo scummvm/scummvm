@@ -280,7 +280,7 @@ bool MacVentureEngine::printTexts() {
 	return false;
 }
 
-void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, Common::Event event) {
+void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, Common::Event event, bool isDoubleClick) {
 	if (win == kExitsWindow) {
 		win = kMainGameWindow;
 	}
@@ -826,7 +826,10 @@ ObjID MacVentureEngine::getParent(ObjID objID) {
 }
 
 Common::Rect MacVentureEngine::getObjBounds(ObjID objID) {
+	BorderBounds bounds = _gui->borderBounds(_gui->getWindowData(findParentWindow(objID)).type); // HACK
 	Common::Point pos = getObjPosition(objID);
+	pos.x += bounds.leftOffset;
+	pos.y += bounds.topOffset;
 	uint w = _gui->getObjWidth(objID); // This shouldn't go here
 	uint h = _gui->getObjHeight(objID);
 	return Common::Rect(pos.x, pos.y, pos.x + w, pos.y + h);

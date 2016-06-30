@@ -639,6 +639,7 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 		child = data.children[i].obj;
 		mode = (BlitMode)data.children[i].mode;
 		pos = _engine->getObjPosition(child);
+		pos += Common::Point(border.leftOffset, border.topOffset);
 
 		if (child < 600 && child != _draggedObj.id) { // Small HACK until I figre out where the last garbage child in main game window comes from
 			if (!_assets.contains(child)) {
@@ -647,16 +648,20 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 
 			_assets[child]->blitInto(
 				surface,
-				border.leftOffset + pos.x,
-				border.topOffset + pos.y,
+				pos.x,
+				pos.y,
 				mode);
 
 			if (_engine->isObjSelected(child))
 				_assets[child]->blitInto(
-					surface,
-					border.leftOffset + pos.x,
-					border.topOffset + pos.y,
-					kBlitOR);
+					surface, pos.x, pos.y, kBlitOR);
+
+			// For test
+			surface->frameRect(Common::Rect(
+				pos.x,
+				pos.y,
+				pos.x + _assets[child]->getWidth(),
+				pos.y + _assets[child]->getHeight()), kColorGreen);
 		}
 
 	}
@@ -791,6 +796,12 @@ void Gui::updateExit(ObjID obj) {
 }
 
 
+Common::Point Gui::getWindowSurfacePos(WindowReference reference) {
+	const WindowData &data = getWindowData(reference);
+	BorderBounds border = borderBounds(data.type);
+	return Common::Point(data.bounds.left + border.leftOffset, data.bounds.top + border.topOffset);
+}
+
 WindowData & Gui::findWindowData(WindowReference reference) {
 	assert(_windowData);
 
@@ -830,8 +841,9 @@ Graphics::MacWindow * Gui::findWindow(WindowReference reference) {
 
 bool Gui::isRectInsideObject(Common::Rect target, ObjID obj) {
 	if (_assets.contains(obj) &&
-		_engine->isObjClickable(obj) &&
-		_engine->isObjVisible(obj)) {
+		//_engine->isObjClickable(obj) &&
+		_engine->isObjVisible(obj))
+	{
 		Common::Rect bounds = _engine->getObjBounds(obj);
 		Common::Rect intersection = bounds.findIntersectingRect(target);
 		// We translate it to the image's coord system
@@ -849,16 +861,20 @@ bool Gui::isRectInsideObject(Common::Rect target, ObjID obj) {
 	return false;
 }
 
-void Gui::selectDraggable(ObjID child, Common::Point pos) {
+void Gui::selectDraggable(ObjID child, WindowReference origin, Common::Point startPos) {
 	if (_engine->isObjClickable(child)) {
 		_draggedObj.id = child;
-		_draggedObj.pos = pos;
+		_draggedObj.mouseOffset = (_engine->getObjPosition(child) + getWindowSurfacePos(origin)) - startPos;
+		_draggedObj.pos = startPos + _draggedObj.mouseOffset;
 	}
 }
 
 void Gui::handleDragRelease(Common::Point pos) {
 	_draggedObj.id = 0;
 	_engine->updateDelta(pos);
+	_engine->selectControl(kControlOperate);
+	_engine->activateCommand(kControlOperate);
+	_engine->refreshReady();
 	_engine->preparedToRun();
 }
 
@@ -1002,7 +1018,7 @@ bool Gui::processEvent(Common::Event &event) {
 	bool processed = false;
 	if (event.type == Common::EVENT_MOUSEMOVE) {
 		if (_draggedObj.id != 0) {
-			_draggedObj.pos = event.mouse;
+			_draggedObj.pos = event.mouse + _draggedObj.mouseOffset;
 		}
 		processed = true;
 
@@ -1071,8 +1087,8 @@ bool MacVenture::Gui::processMainGameEvents(WindowClick click, Common::Event & e
 		for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
 			child = (*it).obj;
 			if (isRectInsideObject(clickRect, child)) {
-				selectDraggable(child, event.mouse);
-				_engine->handleObjectSelect(child, kMainGameWindow, event);
+				selectDraggable(child, kMainGameWindow, event.mouse);
+				_engine->handleObjectSelect(child, kMainGameWindow, event, false);
 			}
 		}
 	}
@@ -1090,7 +1106,7 @@ bool MacVenture::Gui::processSelfEvents(WindowClick click, Common::Event & event
 		return true;
 
 	if (event.type == Common::EVENT_LBUTTONUP) {
-		_engine->handleObjectSelect(1, kSelfWindow, event);
+		_engine->handleObjectSelect(1, kSelfWindow, event, false);
 	}
 	return true;
 }
@@ -1120,7 +1136,7 @@ bool MacVenture::Gui::processExitsEvents(WindowClick click, Common::Event & even
 			}
 		}
 
-		_engine->handleObjectSelect(data.getData().refcon, kExitsWindow, event);
+		_engine->handleObjectSelect(data.getData().refcon, kExitsWindow, event, false);
 	}
 	return getWindowData(kExitsWindow).visible;
 }
@@ -1155,8 +1171,8 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event & event) {
 		for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
 			child = (*it).obj;
 			if (isRectInsideObject(clickRect, child)) {
-				selectDraggable(child, event.mouse);
-				_engine->handleObjectSelect(child, (WindowReference)ref, event);
+				selectDraggable(child, data.refcon, event.mouse);
+				_engine->handleObjectSelect(child, (WindowReference)ref, event, false);
 			}
 		}
 	}

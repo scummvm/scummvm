@@ -147,6 +147,8 @@ struct BorderBounds {
 struct DraggedObj {
 	ObjID id;
 	Common::Point pos;
+	Common::Point mouseOffset;
+	bool hasMoved;
 };
 
 
@@ -255,12 +257,13 @@ private: // Methods
 	void drawWindowTitle(WindowReference target, Graphics::ManagedSurface *surface);
 
 	// Finders
+	Common::Point getWindowSurfacePos(WindowReference reference);
 	WindowData& findWindowData(WindowReference reference);
 	Graphics::MacWindow *findWindow(WindowReference reference);
 
 	// Utils
 	bool isRectInsideObject(Common::Rect target, ObjID obj);
-	void selectDraggable(ObjID child, Common::Point pos);
+	void selectDraggable(ObjID child, WindowReference origin, Common::Point startPos);
 	void handleDragRelease(Common::Point pos);
 	Common::Rect calculateClickRect(Common::Point clickPos, Common::Rect windowBounds);
 

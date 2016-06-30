@@ -59,7 +59,7 @@ uint32 World::getObjAttr(ObjID objID, uint32 attrID) {
 	res >>= _engine->getGlobalSettings().attrShifts[attrID];
 	if (res & 0x8000)
 		res = -((res ^ 0xffff) + 1);
-	debug(3, "Attribute %x from object %x is %x", attrID, objID, res);
+	debug(6, "Attribute %x from object %x is %x", attrID, objID, res);
 	return res;
 }
 
