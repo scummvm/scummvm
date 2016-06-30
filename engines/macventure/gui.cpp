@@ -110,10 +110,40 @@ Gui::~Gui() {
 	if (_controlData)
 		delete _controlData;
 
+	if (_exitsData)
+		delete _exitsData;
+
 	Common::HashMap<ObjID, ImageAsset*>::const_iterator it = _assets.begin();
 	for (; it != _assets.end(); it++) {
 		delete it->_value;
 	}
+}
+
+void Gui::initGUI() {
+	_screen.create(kScreenWidth, kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
+	_wm.setScreen(&_screen);
+
+	// Menu
+	_menu = _wm.addMenu();
+	if (!loadMenus())
+		error("Could not load menus");
+	_menu->setCommandsCallback(menuCommandsCallback, this);
+	_menu->calcDimensions();
+
+	loadGraphics();
+
+	if (!loadWindows())
+		error("Could not load windows");
+
+	initWindows();
+
+	assignObjReferences();
+
+	if (!loadControls())
+		error("Could not load controls");
+
+	draw();
+
 }
 
 void Gui::draw() {
@@ -138,15 +168,11 @@ void Gui::drawTitle() {
 	warning("drawTitle hasn't been tested yet");
 }
 
-void Gui::drawExit(ObjID id) {
-	findWindowData(kExitsWindow).children.push_back(DrawableObject(id, kBlitDirect));
-}
-
 void Gui::clearControls() {
 	if (!_controlData)
 		return;
 
-	Common::List<CommandButton>::iterator it = _controlData->begin();
+	Common::Array<CommandButton>::iterator it = _controlData->begin();
 	for (; it != _controlData->end(); ++it) {
 		it->unselect();
 	}
@@ -228,33 +254,6 @@ void Gui::removeChild(WindowReference target, ObjID child) {
 		data.children.remove_at(index);
 }
 
-void Gui::initGUI() {
-	_screen.create(kScreenWidth, kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
-	_wm.setScreen(&_screen);
-
-	// Menu
-	_menu = _wm.addMenu();
-	if (!loadMenus())
-		error("Could not load menus");
-	_menu->setCommandsCallback(menuCommandsCallback, this);
-	_menu->calcDimensions();
-
-	loadGraphics();
-
-	if (!loadWindows())
-		error("Could not load windows");
-
-	initWindows();
-
-	assignObjReferences();
-
-	if (!loadControls())
-		error("Could not load controls");
-
-	draw();
-
-}
-
 void Gui::initWindows() {
 
 	// Game Controls Window
@@ -282,7 +281,7 @@ void Gui::initWindows() {
 	loadBorder(_outConsoleWindow, "border_left_scroll_inac.bmp", true);
 
 	// Self Window
-	_selfWindow = _wm.addWindow(false, true, true);
+	_selfWindow = _wm.addWindow(false, true, false);
 	_selfWindow->setDimensions(getWindowData(kSelfWindow).bounds);
 	_selfWindow->setActive(false);
 	_selfWindow->setCallback(selfWindowCallback, this);
@@ -290,7 +289,7 @@ void Gui::initWindows() {
 	loadBorder(_selfWindow, "border_no_scroll_inac.bmp", true);
 
 	// Exits Window
-	_exitsWindow = _wm.addWindow(false, true, true);
+	_exitsWindow = _wm.addWindow(false, false, false);
 	_exitsWindow->setDimensions(getWindowData(kExitsWindow).bounds);
 	_exitsWindow->setActive(false);
 	_exitsWindow->setCallback(exitsWindowCallback, this);
@@ -475,7 +474,8 @@ bool Gui::loadControls() {
 	Common::SeekableReadStream *res;
 	Common::MacResIDArray::const_iterator iter;
 
-	_controlData = new Common::List<CommandButton>();
+	_controlData = new Common::Array<CommandButton>();
+	_exitsData = new Common::Array<CommandButton>();
 
 	if ((resArray = _resourceManager->getResIDArray(MKTAG('C', 'N', 'T', 'L'))).size() == 0)
 		return false;
@@ -541,7 +541,7 @@ void Gui::drawCommandsWindow() {
 			kColorBlack,
 			Graphics::kTextAlignCenter);
 	} else {
-		Common::List<CommandButton>::const_iterator it = _controlData->begin();
+		Common::Array<CommandButton>::const_iterator it = _controlData->begin();
 		for (; it != _controlData->end(); ++it) {
 			CommandButton button = *it;
 			if (button.getData().refcon != kControlExitBox)
@@ -553,22 +553,22 @@ void Gui::drawCommandsWindow() {
 void Gui::drawMainGameWindow() {
 	const WindowData &data = getWindowData(kMainGameWindow);
 	BorderBounds border = borderBounds(data.type);
+	ObjID objRef = data.objRef;
 
 	_mainGameWindow->setDirty(true);
 
-	//if (data.titleLength > 0)
-	//	drawWindowTitle(kMainGameWindow, srf);
+	if (data.objRef > 0 && data.objRef < 2000) {
+		if (!_assets.contains(objRef)) {
+			_assets[objRef] = new ImageAsset(objRef, _graphics);
+		}
 
-	if (!_assets.contains(3)) {
-		_assets[3] = new ImageAsset(3, _graphics);
+		_assets[objRef]->blitInto(
+			_mainGameWindow->getSurface(),
+			border.leftOffset,
+			border.topOffset,
+			kBlitDirect);
+
 	}
-
-	_assets[3]->blitInto(
-		_mainGameWindow->getSurface(),
-		border.leftOffset,
-		border.topOffset,
-		kBlitDirect);
-
 	drawObjectsInWindow(kMainGameWindow, _mainGameWindow->getSurface());
 
 	findWindow(kMainGameWindow)->setDirty(true);
@@ -603,34 +603,20 @@ void Gui::drawInventories() {
 }
 
 void Gui::drawExitsWindow() {
-	WindowData &data = findWindowData(kExitsWindow);
-	BorderBounds border = borderBounds(data.type);
+
 	Graphics::ManagedSurface *srf = _exitsWindow->getSurface();
+	BorderBounds border = borderBounds(getWindowData(kExitsWindow).type);
+
 	srf->fillRect(Common::Rect(
 		border.leftOffset,
 		border.topOffset,
 		srf->w + border.rightOffset,
 		srf->h + border.bottomOffset), kColorWhite);
 
-	// For each obj in the main window, if it is an exit, we draw it
-	WindowData &objData = findWindowData(kMainGameWindow);
-	Common::Point pos;
-	ObjID child;
-	//BlitMode mode;
-	Common::Rect exit;
-	for (uint i = 0; i < objData.children.size(); i++) {
-		child = objData.children[i].obj;
-		//mode = (BlitMode)objData.children[i].mode;
-		pos = _engine->getObjExitPosition(child);
-		pos.x += border.leftOffset;
-		pos.y += border.topOffset;
-		exit = Common::Rect(pos.x, pos.y, pos.x + kExitButtonWidth, pos.y + kExitButtonHeight);
-		if (_engine->isObjExit(child)) {
-			if (_engine->isObjSelected(child))
-				srf->fillRect(exit, kColorGreen);
-
-			srf->fillRect(exit, kColorGreen);
-		}
+	Common::Array<CommandButton>::const_iterator it = _exitsData->begin();
+	for (; it != _exitsData->end(); ++it) {
+		CommandButton button = *it;
+		button.draw(*_exitsWindow->getSurface());
 	}
 
 	findWindow(kExitsWindow)->setDirty(true);
@@ -718,6 +704,92 @@ void Gui::drawDraggedObject() {
 
 	}
 }
+
+
+void Gui::updateWindow(WindowReference winID, bool containerOpen) {
+	if (winID == kSelfWindow || containerOpen) {
+		WindowData &data = findWindowData(winID);
+		if (winID == kCommandsWindow) {
+			Common::Array<CommandButton>::iterator it = _controlData->begin();
+			for (; it != _controlData->end(); ++it) {
+				it->unselect();
+			}
+		}
+		Common::Array<DrawableObject> &children = data.children;
+		for (uint i = 0; i < children.size(); i++) {
+			uint flag = 0;
+			ObjID child = children[i].obj;
+			BlitMode mode = kBlitDirect;
+			bool off = !_engine->isObjVisible(child);
+			if (flag || !off || !_engine->isObjClickable(child)) {
+				mode = kBlitBIC;
+				if (off || flag) {
+					mode = kBlitXOR;
+				}
+				else if (_engine->isObjSelected(child)) {
+					mode = kBlitOR;
+				}
+				children[i] = DrawableObject(child, mode);
+			}
+			else {
+				children[i] = DrawableObject(child, kBlitXOR);
+			}
+		}
+		if (winID == kMainGameWindow) {
+			drawMainGameWindow();
+		}
+		else {
+			Graphics::MacWindow *winRef = findWindow(winID);
+			winRef->getSurface()->fillRect(data.bounds, kColorGray);
+		}
+		if (data.type == kZoomDoc && data.updateScroll) {
+			warning("Unimplemented: update scroll");
+		}
+	}
+}
+
+void Gui::unselectExits() {
+	Common::Array<CommandButton>::const_iterator it = _exitsData->begin();
+	for (; it != _exitsData->end(); ++it) {
+		CommandButton button = *it;
+		button.unselect();
+	}
+}
+
+void Gui::updateExit(ObjID obj) {
+	if (!_engine->isObjExit(obj)) return;
+
+	BorderBounds border = borderBounds(getWindowData(kExitsWindow).type);
+
+	int ctl = -1;
+	int i = 0;
+	Common::Array<CommandButton>::const_iterator it = _exitsData->begin();
+	for (;it != _exitsData->end(); it++) {
+		if (it->getData().refcon == obj)
+			ctl = i;
+		else
+			i++;
+	}
+
+	if (ctl != -1)
+		_exitsData->remove_at(ctl);
+
+	if (!_engine->isHiddenExit(obj) &&
+		_engine->getParent(obj) == _engine->getParent(1))
+	{
+		ControlData data;
+		data.titleLength = 0;
+		data.refcon = obj;
+		Common::Point pos = _engine->getObjExitPosition(obj);
+		pos.x = border.leftOffset;
+		pos.y = border.topOffset;
+		data.bounds = Common::Rect(pos.x, pos.y, pos.x + kExitButtonWidth, pos.y + kExitButtonHeight);
+		data.visible = true;
+
+		_exitsData->push_back(CommandButton(data, this));
+	}
+}
+
 
 WindowData & Gui::findWindowData(WindowReference reference) {
 	assert(_windowData);
@@ -894,46 +966,6 @@ void menuCommandsCallback(int action, Common::String &text, void *data) {
 	g->handleMenuAction((MenuAction)action);
 }
 
-void Gui::updateWindow(WindowReference winID, bool containerOpen) {
-	if (winID == kNoWindow) return;
-	if (winID == kSelfWindow || containerOpen) {
-		WindowData &data = findWindowData(winID);
-		if (winID == kCommandsWindow) {
-			Common::List<CommandButton>::iterator it = _controlData->begin();
-			for (; it != _controlData->end(); ++it) {
-				it->unselect();
-			}
-		}
-		Common::Array<DrawableObject> &children = data.children;
-		for (uint i = 0; i < children.size(); i++) {
-			uint flag = 0;
-			ObjID child = children[i].obj;
-			BlitMode mode = kBlitDirect;
-			bool off = !_engine->isObjVisible(child);
-			if (flag || !off || !_engine->isObjClickable(child)) {
-				mode = kBlitBIC;
-				if (off || flag) {
-					mode = kBlitXOR;
-				} else if (_engine->isObjSelected(child)) {
-					mode = kBlitOR;
-				}
-				children[i] = DrawableObject(child, mode);
-			} else {
-				children[i] = DrawableObject(child, kBlitXOR);
-			}
-		}
-		if (winID == kMainGameWindow) {
-			drawMainGameWindow();
-		}
-		else {
-			Graphics::MacWindow *winRef = findWindow(winID);
-			winRef->getSurface()->fillRect(data.bounds, kColorGray);
-		}
-		if (data.type == kZoomDoc && data.updateScroll) {
-			warning("Unimplemented: update scroll");
-		}
-	}
-}
 
 void Gui::invertWindowColors(WindowReference winID) {
 	Graphics::ManagedSurface *srf = findWindow(winID)->getSurface();
@@ -1006,7 +1038,7 @@ bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 		if (!_controlData)
 			return false;
 
-		Common::List<CommandButton>::iterator it = _controlData->begin();
+		Common::Array<CommandButton>::iterator it = _controlData->begin();
 		for (; it != _controlData->end(); ++it) {
 			if (it->isInsideBounds(position)) {
 				it->select();
@@ -1064,8 +1096,32 @@ bool MacVenture::Gui::processSelfEvents(WindowClick click, Common::Event & event
 }
 
 bool MacVenture::Gui::processExitsEvents(WindowClick click, Common::Event & event) {
-	if (_engine->needsClickToContinue())
-		return true;
+	if (event.type == Common::EVENT_LBUTTONUP) {
+		if (_engine->needsClickToContinue()) {
+			return true;
+		}
+
+		Common::Point position(
+			event.mouse.x - _exitsWindow->getDimensions().left,
+			event.mouse.y - _exitsWindow->getDimensions().top);
+
+		CommandButton data;
+		if (!_exitsData)
+			return false;
+
+		Common::Array<CommandButton>::iterator it = _exitsData->begin();
+		for (; it != _exitsData->end(); ++it) {
+			if (it->isInsideBounds(position)) {
+				it->select();
+				data = *it;
+			}
+			else {
+				it->unselect();
+			}
+		}
+
+		_engine->handleObjectSelect(data.getData().refcon, kExitsWindow, event);
+	}
 	return getWindowData(kExitsWindow).visible;
 }
 
@@ -1118,7 +1174,7 @@ BorderBounds Gui::borderBounds(MVWindowType type) {
 	case MacVenture::kPlainDBox:
 		return BorderBounds(6, 6, 6, 6);
 	case MacVenture::kAltBox:
-		//return BorderBounds(8, 9, 11, 10); // For now, I'll stick to the original bmp, it's gorgeous
+		return BorderBounds(8, 9, 11, 10); // For now, I'll stick to the original bmp, it's gorgeous
 		break;
 	case MacVenture::kNoGrowDoc:
 		return BorderBounds(1, 17, 1, 1);

@@ -205,7 +205,10 @@ public:
 	bool isObjClickable(ObjID objID);
 	bool isObjSelected(ObjID objID);
 	bool isObjExit(ObjID objID);
+	bool isHiddenExit(ObjID objID);
 	Common::Point getObjExitPosition(ObjID objID);
+	ObjID getParent(ObjID objID);
+
 
 	// Encapsulation HACK
 	Common::Rect getObjBounds(ObjID objID);
@@ -232,7 +235,7 @@ private:
 	void unselectObject(ObjID objID);
 	void highlightExit(ObjID objID);
 	void selectPrimaryObject(ObjID objID);
-
+	void updateExits();
 
 	// Object queue methods
 	void focusObjectWindow(ObjID objID);

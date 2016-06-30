@@ -77,7 +77,13 @@ ImageAsset::~ImageAsset() {
 void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data) {
 	ObjID realID = id;
 	uint32 size = _container->getItemByteSize(id);
-	if (size == 2 || size == 0) {
+	if (size < 2) {
+		_rowBytes = 0;
+		_bitHeight = 0;
+		_bitHeight = 0;
+		return;
+	}
+	if (size == 2) {
 		realID = _container->getItem(id)->readUint16BE();
 	}
 	Common::BitStream32BEMSB stream(_container->getItem(realID), true);

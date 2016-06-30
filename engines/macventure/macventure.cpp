@@ -174,7 +174,7 @@ void MacVentureEngine::requestUnpause() {
 
 void MacVentureEngine::selectControl(ControlReference id) {
 	ControlAction action = referenceToAction(id);
-	debug(4, "Select control %x", action);
+	debug(2, "Select control %x", action);
 	_selectedControl = action;
 }
 
@@ -190,7 +190,7 @@ void MacVentureEngine::activateCommand(ControlReference id) {
 			_activeControl = kNoCommand;
 		_activeControl = action;
 	}
-	debug(4, "Activating Command %x... Command %x is active", action, _activeControl);
+	debug(2, "Activating Command %x... Command %x is active", action, _activeControl);
 	refreshReady();
 }
 
@@ -520,6 +520,17 @@ void MacVentureEngine::unselectObject(ObjID objID) {
 	}
 }
 
+
+void MacVentureEngine::updateExits() {
+	// exitWin.killControls();
+	_gui->unselectExits();	
+
+	Common::Array<ObjID> exits = _world->getChildren(_world->getObjAttr(1, kAttrParentObject), true);
+	for (uint i = 0; i < exits.size(); i++)
+		_gui->updateExit(exits[i]);
+
+}
+
 int MacVentureEngine::findObjectInArray(ObjID objID, const Common::Array<ObjID> &list) {
 	// Find the object in the current selection
 	bool found = false;
@@ -542,7 +553,7 @@ Common::String MacVentureEngine::getPrefixString(uint flag, ObjID obj) {
 	if (ndx) {
 		return _decodingNamingArticles->getString(ndx);
 	} else {
-		return Common::String("missigno ");
+		return Common::String("m1551gn0 ");
 	}
 }
 
@@ -551,7 +562,20 @@ Common::String MacVentureEngine::getNoun(ObjID ndx) {
 }
 
 void MacVentureEngine::highlightExit(ObjID objID) {
-	warning("highlightExit: unimplemented");
+	//ObjID ctl = _gui->getWinChild(obj);
+	/*if (ctl) {
+		if (findObjectInArray(obj, _selectedObjs) != -1)
+			_gui->selectExit(ctl);
+		else
+			_gui->unselectExit(ctl);
+	}
+	if (obj == _world->getObjAttr(1, kAttrParentObject)) {
+		if (findObjectInArray(obj, _selectedObjs) != -1)
+			_gui->selectExit(obj);
+		else
+			_gui->unselectExit(obj);
+	}*/
+	//updateWindow(findParentWindow(obj));
 }
 
 void MacVentureEngine::selectPrimaryObject(ObjID objID) {
@@ -587,7 +611,7 @@ void MacVentureEngine::openObject(ObjID objID) {
 	if (objID == _world->getObjAttr(1, kAttrParentObject)) {
 		_gui->updateWindowInfo(kMainGameWindow, objID, _world->getChildren(objID, true));
 		_gui->updateWindow(kMainGameWindow, _world->getObjAttr(objID, kAttrContainerOpen));
-		//_gui->drawExits();
+		updateExits();
 		_gui->setWindowTitle(kMainGameWindow, _world->getText(objID, objID, objID)); // it ignores source and target in the original
 	} else { // Open inventory window
 		Common::Point p(_world->getObjAttr(objID, kAttrPosX), _world->getObjAttr(objID, kAttrPosY));
@@ -649,7 +673,7 @@ void MacVentureEngine::checkObject(QueuedObject old) {
 			old.hidden != _world->getObjAttr(id, kAttrHiddenExit) ||
 			old.exitx != _world->getObjAttr(id, kAttrExitX) ||
 			old.exity != _world->getObjAttr(id, kAttrExitY))
-			_gui->drawExit(id);
+			_gui->updateExit(id);
 	}
 	WindowReference win = getObjWindow(id);
 	ObjID cur = id;
@@ -787,10 +811,18 @@ bool MacVentureEngine::isObjExit(ObjID objID) {
 	return _world->getObjAttr(objID, kAttrIsExit);
 }
 
+bool MacVentureEngine::isHiddenExit(ObjID objID) {
+	return _world->getObjAttr(objID, kAttrHiddenExit);
+}
+
 Common::Point MacVentureEngine::getObjExitPosition(ObjID objID) {
 	uint x = _world->getObjAttr(objID, kAttrExitX);
 	uint y = _world->getObjAttr(objID, kAttrExitY);
 	return Common::Point(x, y);
+}
+
+ObjID MacVentureEngine::getParent(ObjID objID) {
+	return _world->getObjAttr(objID, kAttrParentObject);
 }
 
 Common::Rect MacVentureEngine::getObjBounds(ObjID objID) {

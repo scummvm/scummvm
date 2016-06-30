@@ -43,17 +43,23 @@ World::~World()	{
 uint32 World::getObjAttr(ObjID objID, uint32 attrID) {
 	uint32 res;
 	uint32 index = _engine->getGlobalSettings().attrIndices[attrID];
+	// HACK, but if I try to initialize it in the else clause, it goes out of scope and segfaults
+	Common::SeekableReadStream *objStream = _objectConstants->getItem(objID);
 	if (!(index & 0x80)) { // It's not a constant
 		res = _saveGame->getAttr(objID, index);
 	} else {
-		Common::SeekableReadStream *objStream = _objectConstants->getItem(objID);
 		index &= 0x7F;
-		objStream->skip((index * 2) - 1);
-		res = objStream->readUint16BE();
+		if (objStream->size() == 0) return 0;
+		// Look for the right attribute inside the object
+		objStream->skip(index * 2);
+		res = objStream->readByte() << 8;
+		res |= objStream->readByte();
 	}
 	res &= _engine->getGlobalSettings().attrMasks[attrID];
 	res >>= _engine->getGlobalSettings().attrShifts[attrID];
-	debug(11, "Attribute %x from object %x is %x", attrID, objID, res);
+	if (res & 0x8000)
+		res = -((res ^ 0xffff) + 1);
+	debug(3, "Attribute %x from object %x is %x", attrID, objID, res);
 	return res;
 }
 
