@@ -1174,7 +1174,7 @@ BorderBounds Gui::borderBounds(MVWindowType type) {
 	case MacVenture::kPlainDBox:
 		return BorderBounds(6, 6, 6, 6);
 	case MacVenture::kAltBox:
-		return BorderBounds(8, 9, 11, 10); // For now, I'll stick to the original bmp, it's gorgeous
+		return BorderBounds(8, 9, 11, 10);
 		break;
 	case MacVenture::kNoGrowDoc:
 		return BorderBounds(1, 17, 1, 1);

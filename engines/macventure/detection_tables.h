@@ -22,12 +22,12 @@
 
 namespace MacVenture {
 
-#define ADGF_DEFAULT (ADGF_DROPLANGUAGE|ADGF_DROPPLATFORM)
+#define ADGF_DEFAULT (ADGF_DROPLANGUAGE|ADGF_DROPPLATFORM|ADGF_MACRESFORK)
 
 #define BASEGAME(n, v, f, md5, s) {n, v, AD_ENTRY1s(f, md5, s), Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEFAULT, GUIO0()}
 
 static const ADGameDescription gameDescriptions[] = {
-	BASEGAME("shadowgate", "Zojoi Rerelease", "Shadowgate.bin", "dea09e16829b99278feb84c121066576", 70528), // Zojoi Rerelease
+	BASEGAME("shadowgate", "Zojoi Rerelease", "Shadowgate.bin", "ebbfbcbf93938bd2900cb0c0213b19ad", 68974), // Zojoi Rerelease
 	AD_TABLE_END_MARKER
 };
 } // End of namespace MacVenture
