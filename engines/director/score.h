@@ -30,6 +30,7 @@
 #include "graphics/managed_surface.h"
 #include "common/str.h"
 #include "image/image_decoder.h"
+#include "graphics/font.h"
 
 namespace Director {
 
@@ -290,7 +291,6 @@ public:
 	Frame(DirectorEngine *vm);
 	Frame(const Frame &frame);
 	~Frame();
-
 	void readChannel(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
 	void prepareFrame(Score *score);
 	uint16 getSpriteIDFromPos(Common::Point pos);
@@ -378,6 +378,7 @@ public:
 	Common::HashMap<uint16, Common::String> _fontMap;
 	Graphics::ManagedSurface *_surface;
 	Graphics::ManagedSurface *_trailSurface;
+	Graphics::Font *_font;
 	Archive *_movieArchive;
 	Common::Rect _movieRect;
 

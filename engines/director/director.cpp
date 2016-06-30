@@ -201,7 +201,6 @@ end repeat\n\
 	//FIXME
 	_mainArchive = new RIFFArchive();
 	_mainArchive->openFile("bookshelf_example.mmm");
-
 	_currentScore = new Score(this);
 	debug(0, "Score name %s", _currentScore->getMacName().c_str());
 
@@ -415,15 +414,17 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	if (dib.size() != 0) {
 		Common::Array<uint16>::iterator iterator;
 		for (iterator = dib.begin(); iterator != dib.end(); ++iterator) {
+			debug(3, "Shared DIB %d", *iterator);
 			_sharedDIB->setVal(*iterator, shardcst->getResource(MKTAG('D','I','B',' '), *iterator));
 		}
 	}
 
-	Common::Array<uint16> stxt = shardcst->getResourceIDList(MKTAG('D','I','B',' '));
+	Common::Array<uint16> stxt = shardcst->getResourceIDList(MKTAG('S','T','X','T'));
 
 	if (stxt.size() != 0) {
 		Common::Array<uint16>::iterator iterator;
 		for (iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
+			debug(3, "Shared STXT %d", *iterator);
 			_sharedSTXT->setVal(*iterator, shardcst->getResource(MKTAG('S','T','X','T'), *iterator));
 		}
 	}

@@ -1240,7 +1240,35 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 
 
 void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID) {
-	warning("STUB: renderText()");
+	Cast *textCast = _vm->_currentScore->_casts[_sprites[spriteID]->_castId];
+	Common::SeekableSubReadStreamEndian *textStream;
+
+	if (_vm->_currentScore->_movieArchive->hasResource(MKTAG('S','T','X','T'), spriteID + 1024)) {
+		textStream = _vm->_currentScore->_movieArchive->getResource(MKTAG('S','T','X','T'), spriteID + 1024);
+	} else {
+		textStream = _vm->getSharedSTXT()->getVal(spriteID + 1024);
+	}
+	/*uint32 unk1 = */ textStream->readUint32();
+	uint32 strLen = textStream->readUint32();
+	/*uin32 dataLen = */ textStream->readUint32();
+	Common::String text;
+
+	for (uint32 i = 0; i < strLen; i++) {
+		byte ch = textStream->readByte();
+		if (ch == 0x0d) {
+			ch = '\n';
+		}
+		text += ch;
+	}
+
+	uint32 rectLeft = static_cast<TextCast *>(_sprites[spriteID]->_cast)->initialRect.left;
+	uint32 rectTop = static_cast<TextCast *>(_sprites[spriteID]->_cast)->initialRect.top;
+
+	int x = _sprites[spriteID]->_startPoint.x + rectLeft;
+	int y = _sprites[spriteID]->_startPoint.y + rectTop;
+	int height = _sprites[spriteID]->_height;
+	int width = _sprites[spriteID]->_width;
+	//TODO render text
 }
 
 void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
