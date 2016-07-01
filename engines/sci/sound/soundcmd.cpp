@@ -411,7 +411,7 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 
 #ifdef ENABLE_SCI32
 	if (_soundVersion >= SCI_VERSION_2_1_EARLY && musicSlot->isSample) {
-		g_sci->_audio32->fadeChannel(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj, argv[2].toSint16(), argv[3].toSint16(), argv[4].toSint16(), (bool)argv[5].toSint16());
+		g_sci->_audio32->fadeChannel(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj, argv[1].toSint16(), argv[2].toSint16(), argv[3].toSint16(), argc > 4 ? (bool)argv[4].toSint16() : false);
 		return acc;
 	}
 #endif
