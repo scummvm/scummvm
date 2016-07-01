@@ -176,34 +176,61 @@ struct SCALER_Scale {
 	// line of source data when scaling
 	_reader(celObj, celObj._width) {
 		// In order for scaling ratios to apply equally across objects that
-		// start at different positions on the screen, the pixels that are
-		// read from the source bitmap must all use the same pattern of
-		// division. In other words, cels must follow the same scaling pattern
-		// as if they were drawn starting at an even multiple of the scaling
-		// ratio, even if they were not.
+		// start at different positions on the screen (like the cels of a
+		// picture), the pixels that are read from the source bitmap must all
+		// use the same pattern of division. In other words, cels must follow
+		// a global scaling pattern as if they were always drawn starting at an
+		// even multiple of the scaling ratio, even if they are not.
 		//
 		// To get the correct source pixel when reading out through the scaler,
 		// the engine creates a lookup table for each axis that translates
 		// directly from target positions to the indexes of source pixels using
 		// the global cadence for the given scaling ratio.
+		//
+		// Note, however, that not all games use the global scaling mode.
+		//
+		// SQ6 definitely uses the global scaling mode (an easy visual
+		// comparison is to leave Implants N' Stuff and then look at Roger);
+		// Torin definitely does not (scaling subtitle backgrounds will cause it
+		// to attempt a read out of bounds and crash). They are both SCI
+		// "2.1mid" games, so currently the common denominator looks to be that
+		// games which use global scaling are the ones that use low-resolution
+		// script coordinates too.
 
 		const CelScalerTable *table = CelObj::_scaler->getScalerTable(scaleX, scaleY);
 
-		const int16 unscaledX = (scaledPosition.x / scaleX).toInt();
-		if (FLIP) {
-			int lastIndex = celObj._width - 1;
-			for (int16 x = targetRect.left; x < targetRect.right; ++x) {
-				_valuesX[x] = lastIndex - (table->valuesX[x] - unscaledX);
+		if (g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth == kLowResX) {
+			const int16 unscaledX = (scaledPosition.x / scaleX).toInt();
+			if (FLIP) {
+				int lastIndex = celObj._width - 1;
+				for (int16 x = targetRect.left; x < targetRect.right; ++x) {
+					_valuesX[x] = lastIndex - (table->valuesX[x] - unscaledX);
+				}
+			} else {
+				for (int16 x = targetRect.left; x < targetRect.right; ++x) {
+					_valuesX[x] = table->valuesX[x] - unscaledX;
+				}
+			}
+
+			const int16 unscaledY = (scaledPosition.y / scaleY).toInt();
+			for (int16 y = targetRect.top; y < targetRect.bottom; ++y) {
+				_valuesY[y] = table->valuesY[y] - unscaledY;
 			}
 		} else {
-			for (int16 x = targetRect.left; x < targetRect.right; ++x) {
-				_valuesX[x] = table->valuesX[x] - unscaledX;
+			if (FLIP) {
+				int lastIndex = celObj._width - 1;
+				for (int16 x = 0; x < targetRect.width(); ++x) {
+					_valuesX[targetRect.left + x] = lastIndex - table->valuesX[x];
+				}
+			} else {
+				for (int16 x = 0; x < targetRect.width(); ++x) {
+					_valuesX[targetRect.left + x] = table->valuesX[x];
+				}
 			}
-		}
 
-		const int16 unscaledY = (scaledPosition.y / scaleY).toInt();
-		for (int16 y = targetRect.top; y < targetRect.bottom; ++y) {
-			_valuesY[y] = table->valuesY[y] - unscaledY;
+			for (int16 y = 0; y < targetRect.height(); ++y) {
+				_valuesY[targetRect.top + y] = table->valuesY[y];
+			}
 		}
 	}
 

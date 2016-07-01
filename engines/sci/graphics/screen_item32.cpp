@@ -296,7 +296,30 @@ void ScreenItem::calcRects(const Plane &plane) {
 			}
 
 			if (!scaleX.isOne() || !scaleY.isOne()) {
-				mulinc(_screenItemRect, scaleX, scaleY);
+				// Different games use a different cel scaling mode, but the
+				// difference isn't consistent across SCI versions; instead,
+				// it seems to be related to an update that happened during
+				// SCI2.1mid where games started using hi-resolution game
+				// scripts
+				if (scriptWidth == kLowResX) {
+					mulinc(_screenItemRect, scaleX, scaleY);
+				} else {
+					_screenItemRect.left = (_screenItemRect.left * scaleX).toInt();
+					_screenItemRect.top = (_screenItemRect.top * scaleY).toInt();
+
+					if (scaleX.getNumerator() > scaleX.getDenominator()) {
+						_screenItemRect.right = (_screenItemRect.right * scaleX).toInt();
+					} else {
+						_screenItemRect.right = ((_screenItemRect.right - 1) * scaleX).toInt() + 1;
+					}
+
+					if (scaleY.getNumerator() > scaleY.getDenominator()) {
+						_screenItemRect.bottom = (_screenItemRect.bottom * scaleY).toInt();
+					} else {
+						_screenItemRect.bottom = ((_screenItemRect.bottom - 1) * scaleY).toInt() + 1;
+					}
+				}
+
 				displaceX = (displaceX * scaleX).toInt();
 				displaceY = (displaceY * scaleY).toInt();
 			}
@@ -538,8 +561,6 @@ void ScreenItem::update() {
 	_celObj = nullptr;
 }
 
-// TODO: This code is quite similar to calcRects, so try to deduplicate
-// if possible
 Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
 	CelObj &celObj = getCelObj();
 
@@ -547,10 +568,7 @@ Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
 	Common::Rect nsRect;
 
 	if (_useInsetRect) {
-		// TODO: This is weird. Checking to see if the inset rect is
-		// fully inside the bounds of the celObjRect, and then
-		// clipping to the celObjRect, is pretty useless.
-		if (_insetRect.right > 0 && _insetRect.bottom > 0 && _insetRect.left < celObj._width && _insetRect.top < celObj._height) {
+		if (_insetRect.intersects(celObjRect)) {
 			nsRect = _insetRect;
 			nsRect.clip(celObjRect);
 		} else {
@@ -594,10 +612,7 @@ Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
 			Ratio scriptToCelY(celObj._scaledHeight, scriptHeight);
 			mulru(nsRect, scriptToCelX, scriptToCelY, 0);
 
-			// TODO: This is weird. Checking to see if the inset rect is
-			// fully inside the bounds of the celObjRect, and then
-			// clipping to the celObjRect, is pretty useless.
-			if (nsRect.right > 0 && nsRect.bottom > 0 && nsRect.left < celObj._width && nsRect.top < celObj._height) {
+			if (nsRect.intersects(celObjRect)) {
 				nsRect.clip(celObjRect);
 			} else {
 				nsRect = Common::Rect();
@@ -605,12 +620,34 @@ Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
 		}
 
 		if (!scaleX.isOne() || !scaleY.isOne()) {
-			mulinc(nsRect, scaleX, scaleY);
-			// TODO: This was in the original code, baked into the
-			// multiplication though it is not immediately clear
-			// why this is the only one that reduces the BR corner
-			nsRect.right -= 1;
-			nsRect.bottom -= 1;
+			// Different games use a different cel scaling mode, but the
+			// difference isn't consistent across SCI versions; instead,
+			// it seems to be related to an update that happened during
+			// SCI2.1mid where games started using hi-resolution game
+			// scripts
+			if (scriptWidth == kLowResX) {
+				mulinc(nsRect, scaleX, scaleY);
+				// TODO: This was in the original code, baked into the
+				// multiplication though it is not immediately clear
+				// why this is the only one that reduces the BR corner
+				nsRect.right -= 1;
+				nsRect.bottom -= 1;
+			} else {
+				nsRect.left = (nsRect.left * scaleX).toInt();
+				nsRect.top = (nsRect.top * scaleY).toInt();
+
+				if (scaleX.getNumerator() > scaleX.getDenominator()) {
+					nsRect.right = (nsRect.right * scaleX).toInt();
+				} else {
+					nsRect.right = ((nsRect.right - 1) * scaleX).toInt() + 1;
+				}
+
+				if (scaleY.getNumerator() > scaleY.getDenominator()) {
+					nsRect.bottom = (nsRect.bottom * scaleY).toInt();
+				} else {
+					nsRect.bottom = ((nsRect.bottom - 1) * scaleY).toInt() + 1;
+				}
+			}
 		}
 
 		Ratio celToScriptX(scriptWidth, celObj._scaledWidth);
