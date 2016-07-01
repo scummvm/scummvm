@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	sound.o \
 	lingo/lingo-gr.o \
 	lingo/lingo.o \
+	lingo/lingo-builtins.o \
 	lingo/lingo-code.o \
 	lingo/lingo-codegen.o \
 	lingo/lingo-funcs.o \

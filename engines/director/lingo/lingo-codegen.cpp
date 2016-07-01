@@ -126,6 +126,23 @@ void Lingo::define(Common::String &name, int start, int nargs) {
 	sym->nargs = nargs;
 }
 
+int Lingo::codeString(const char *str) {
+	int numInsts = calcStringAlignment(str);
+
+	// Where we copy the string over
+	int pos = _currentScript->size();
+
+	// Allocate needed space in script
+	for (int i = 0; i < numInsts; i++)
+		_currentScript->push_back(0);
+
+	byte *dst = (byte *)&_currentScript->front() + pos * sizeof(inst);
+
+	memcpy(dst, str, strlen(str) + 1);
+
+	return _currentScript->size();
+}
+
 void Lingo::codeArg(Common::String *s) {
 	_argstack.push_back(s);
 }
@@ -160,6 +177,26 @@ int Lingo::codeId_(Common::String &name) {
 
 	codeString(name.c_str());
 	code1(c_eval);
+
+	return ret;
+}
+
+int Lingo::codeFunc(Common::String *name, int nargs) {
+	int ret;
+
+	if (!g_lingo->_builtins.contains(*name)) {
+		ret = g_lingo->code1(g_lingo->c_call);
+		g_lingo->codeString(name->c_str());
+
+		inst numpar = 0;
+		WRITE_UINT32(&numpar, nargs);
+		g_lingo->code1(numpar);
+	} else {
+		if (nargs != g_lingo->_builtins[*name]->nargs)
+			error("Built-in function %s expects %d arguments but got %d", name->c_str(), g_lingo->_builtins[*name]->nargs, nargs);
+
+		ret = g_lingo->code1(g_lingo->_builtins[*name]->func);
+	}
 
 	return ret;
 }

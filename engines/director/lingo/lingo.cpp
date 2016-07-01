@@ -81,6 +81,8 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	for (const EventHandlerType *t = &eventHanlerDescs[0]; t->handler != kEventNone; ++t)
 		_eventHandlerTypes[t->handler] = t->name;
 
+	initBuiltIns();
+
 	_currentScript = 0;
 	_currentScriptType = kMovieScript;
 	_pc = 0;
@@ -91,23 +93,6 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 }
 
 Lingo::~Lingo() {
-}
-
-int Lingo::codeString(const char *str) {
-	int numInsts = calcStringAlignment(str);
-
-	// Where we copy the string over
-	int pos = _currentScript->size();
-
-	// Allocate needed space in script
-	for (int i = 0; i < numInsts; i++)
-		_currentScript->push_back(0);
-
-	byte *dst = (byte *)&_currentScript->front() + pos * sizeof(inst);
-
-	memcpy(dst, str, strlen(str) + 1);
-
-	return _currentScript->size();
 }
 
 void Lingo::addCode(Common::String code, ScriptType type, uint16 id) {

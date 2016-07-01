@@ -103,9 +103,17 @@ struct Datum {	/* interpreter stack type */
 	Datum() { u.sym = NULL; type = VOID; }
 };
 
+struct Builtin {
+	void (*func)(void);
+	int nargs;
+
+	Builtin(void (*func1)(void), int nargs1) : func(func1), nargs(nargs1) {}
+};
+
 typedef Common::HashMap<int32, ScriptData *> ScriptHash;
 typedef Common::Array<Datum> StackData;
 typedef Common::HashMap<Common::String, Symbol *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SymbolHash;
+typedef Common::HashMap<Common::String, Builtin *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> BuiltinHash;
 
 struct CFrame {	/* proc/func call stack frame */
 	Symbol	*sp;	/* symbol table entry */
@@ -124,6 +132,16 @@ public:
 
 	void processEvent(LEvent event, int entityId);
 
+	void initBuiltIns();
+
+public:
+	void execute(int pc);
+	void pushContext();
+	void popContext();
+	Symbol *lookupVar(const char *name, bool create = true, bool putInGlobalList = false);
+	void cleanLocalVars();
+	void define(Common::String &s, int start, int nargs);
+
 	int code1(inst code) { _currentScript->push_back(code); return _currentScript->size() - 1; }
 	int code2(inst code_1, inst code_2) { int o = code1(code_1); code1(code_2); return o; }
 	int code3(inst code_1, inst code_2, inst code_3) { int o = code1(code_1); code1(code_2); code1(code_3); return o; }
@@ -134,13 +152,7 @@ public:
 		int l = strlen(s); return (l + 1 + instLen - 1) / instLen;
 	}
 
-public:
-	void execute(int pc);
-	void pushContext();
-	void popContext();
-	Symbol *lookupVar(const char *name, bool create = true, bool putInGlobalList = false);
-	void cleanLocalVars();
-	void define(Common::String &s, int start, int nargs);
+	int codeFunc(Common::String *name, int nargs);
 	void codeArg(Common::String *s);
 	void codeArgStore();
 	int codeId(Common::String &s);
@@ -179,6 +191,8 @@ public:
 	static void c_gotoprevious();
 	static void c_global();
 
+	static void b_random();
+
 	void func_mci(Common::String &s);
 	void func_mciwait(Common::String &s);
 	void func_goto(Common::String &frame, Common::String &movie);
@@ -194,6 +208,7 @@ public:
 
 	Common::Array<CFrame *> _callstack;
 	Common::Array<Common::String *> _argstack;
+	BuiltinHash _builtins;
 
 private:
 	int parse(const char *code);

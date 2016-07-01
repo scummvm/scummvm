@@ -230,11 +230,8 @@ expr: INT	{
 	;
 
 func: ID '(' arglist ')' {
-		g_lingo->code1(g_lingo->c_call);
-		g_lingo->codeString($1->c_str());
-		inst numpar = 0;
-		WRITE_UINT32(&numpar, $3);
-		g_lingo->code1(numpar); };
+		g_lingo->codeFunc($1, $3);
+		delete $1; }
 	| tMCI STRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c_str()); delete $2; }
 	| tMCIWAIT ID			{ g_lingo->code1(g_lingo->c_mciwait); g_lingo->codeString($2->c_str()); delete $2; }
 	| tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
