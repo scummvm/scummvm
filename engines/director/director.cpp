@@ -46,7 +46,8 @@
 
 namespace Director {
 
-DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc),
+		_rnd("director") {
 	if (!_mixer->isReady())
 		error("Sound initialization failed");
 

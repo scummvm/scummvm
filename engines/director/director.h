@@ -24,6 +24,7 @@
 #define DIRECTOR_DIRECTOR_H
 
 #include "common/scummsys.h"
+#include "common/random.h"
 #include "common/substream.h"
 
 #include "common/str.h"
@@ -76,6 +77,7 @@ public:
 	Common::HashMap<Common::String, Score *> *_movies;
 	Score *_currentScore;
 
+	Common::RandomSource _rnd;
 
 protected:
 	virtual Common::Error run();
