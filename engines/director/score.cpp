@@ -24,7 +24,9 @@
 #include "common/stream.h"
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/archive.h"
 #include "common/config-manager.h"
+#include "common/unzip.h"
 
 #include "common/system.h"
 #include "director/dib.h"
@@ -38,10 +40,12 @@
 #include "graphics/managed_surface.h"
 #include "image/bmp.h"
 #include "graphics/fontman.h"
+#include "graphics/fonts/bdf.h"
 
 namespace Director {
 
 Score::Score(DirectorEngine *vm) {
+	loadMacFonts();
 	_vm = vm;
 	_surface = new Graphics::ManagedSurface;
 	_trailSurface = new Graphics::ManagedSurface;
@@ -591,9 +595,51 @@ void Score::loadFontMap(Common::SeekableSubReadStreamEndian &stream) {
 		}
 
 		_fontMap[id] = font;
+		debug(3, "ID %d Font %s", id, font.c_str());
 		currentRawPosition = stream.pos();
 		stream.seek(positionInfo);
 	}
+}
+
+void Score::loadMacFonts() {
+	//Copy from Wage
+	Common::Archive *dat;
+
+	dat = Common::makeZipArchive("classicmacfonts.dat");
+
+	if (!dat) {
+		warning("Could not find classicmacfonts.dat. Falling back to built-in fonts");
+		return;
+	}
+
+	Common::ArchiveMemberList list;
+	dat->listMembers(list);
+
+	for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it) {
+		Common::SeekableReadStream *stream = dat->createReadStreamForMember((*it)->getName());
+
+		Graphics::BdfFont *font = Graphics::BdfFont::loadFont(*stream);
+
+		delete stream;
+
+		Common::String fontName = (*it)->getName();
+
+		// Trim the .bdf extension
+		for (int i = fontName.size() - 1; i >= 0; --i) {
+			if (fontName[i] == '.') {
+				while ((uint)i < fontName.size()) {
+					fontName.deleteLastChar();
+				}
+				break;
+			}
+		}
+
+		FontMan.assignFontToName(fontName, font);
+
+		debug(" %s", fontName.c_str());
+	}
+
+	delete dat;
 }
 
 BitmapCast::BitmapCast(Common::SeekableSubReadStreamEndian &stream) {

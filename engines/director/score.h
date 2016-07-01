@@ -357,6 +357,7 @@ private:
 	void update();
 	void readVersion(uint32 rid);
 	void loadConfig(Common::SeekableSubReadStreamEndian &stream);
+	void loadMacFonts();
 	void loadPalette(Common::SeekableSubReadStreamEndian &stream);
 	void loadFrames(Common::SeekableSubReadStreamEndian &stream);
 	void loadLabels(Common::SeekableSubReadStreamEndian &stream);
