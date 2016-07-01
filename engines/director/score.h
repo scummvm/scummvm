@@ -234,6 +234,8 @@ struct TextCast : Cast {
 	SizeType gutterSize;
 	SizeType boxShadow;
 
+	uint32 fontId;
+	uint16 fontSize;
 	TextType textType;
 	TextAlignType textAlign;
 	SizeType textShadow;
