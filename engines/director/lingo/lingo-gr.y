@@ -311,6 +311,7 @@ gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
 //   on keyword
 defn: tMACRO ID { g_lingo->_indef = true; }
 	    begin argdef '\n' argstore stmtlist {
+			g_lingo->code2(g_lingo->c_constpush, (inst)0); // Push fake value on stack
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$2, $4, $5);
 			g_lingo->_indef = false; }

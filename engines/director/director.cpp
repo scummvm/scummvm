@@ -119,7 +119,7 @@ exit\n\
 end if\n\
 \n\
 --\n\
-mmacro check par1, par2		\n\
+macro check par1, par2		\n\
 , par3\n\
 if par1 = 3 then\n\
   put -3\n\
