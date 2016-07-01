@@ -36,74 +36,78 @@
 
 namespace DM {
 
+#define k2_FloorSetGraphicCount 2 // @ C002_FLOOR_SET_GRAPHIC_COUNT
+#define k13_WallSetGraphicCount 13 // @ C013_WALL_SET_GRAPHIC_COUNT
+#define k18_StairsGraphicCount 18 // @ C018_STAIRS_GRAPHIC_COUNT
+#define k3_DoorSetGraphicsCount 3 // @ C003_DOOR_SET_GRAPHIC_COUNT
+#define k1_DoorButtonCount 1 // @ C001_DOOR_BUTTON_COUNT
+#define k3_AlcoveOrnCount 3 // @ C003_ALCOVE_ORNAMENT_COUNT
+#define k1_FountainOrnCount 1 // @ C001_FOUNTAIN_ORNAMENT_COUNT
+#define k27_CreatureTypeCount 27 // @ C027_CREATURE_TYPE_COUNT
+#define k4_ExplosionAspectCount 4 // @ C004_EXPLOSION_ASPECT_COUNT
+#define k14_ProjectileAspectCount 14 // @ C014_PROJECTILE_ASPECT_COUNT
+#define k85_ObjAspectCount 85 // @ C085_OBJECT_ASPECT_COUNT
+
+#define k0_NativeBitmapIndex 0 // @ C0_NATIVE_BITMAP_INDEX
+#define k1_CoordinateSet 1 // @ C1_COORDINATE_SET
 
 /* View lanes */
-#define kViewLaneCenter 0 // @ C0_VIEW_LANE_CENTER 
-#define kViewLaneLeft 1 // @ C1_VIEW_LANE_LEFT   
-#define kViewLaneRight 2 // @ C2_VIEW_LANE_RIGHT  
+#define k0_ViewLaneCenter 0 // @ C0_VIEW_LANE_CENTER 
+#define k1_ViewLaneLeft 1 // @ C1_VIEW_LANE_LEFT   
+#define k2_ViewLaneRight 2 // @ C2_VIEW_LANE_RIGHT  
 
-#define kHalfSizedViewCell_LeftColumn 0 // @ C00_VIEW_CELL_LEFT_COLUMN  
-#define kHalfSizedViewCell_RightColumn 1 // @ C01_VIEW_CELL_RIGHT_COLUMN 
-#define kHalfSizedViewCell_BackRow 2 // @ C02_VIEW_CELL_BACK_ROW     
-#define kHalfSizedViewCell_CenterColumn 3 // @ C03_VIEW_CELL_CENTER_COLUMN
-#define kHalfSizedViewCell_FrontRow 4 // @ C04_VIEW_CELL_FRONT_ROW    
+#define k0_HalfSizedViewCell_LeftColumn 0 // @ C00_VIEW_CELL_LEFT_COLUMN  
+#define k1_HalfSizedViewCell_RightColumn 1 // @ C01_VIEW_CELL_RIGHT_COLUMN 
+#define k2_HalfSizedViewCell_BackRow 2 // @ C02_VIEW_CELL_BACK_ROW     
+#define k3_HalfSizedViewCell_CenterColumn 3 // @ C03_VIEW_CELL_CENTER_COLUMN
+#define k4_HalfSizedViewCell_FrontRow 4 // @ C04_VIEW_CELL_FRONT_ROW    
 
 /* Shift sets */
-#define kShiftSet_D0BackD1Front 0 // @ C0_SHIFT_SET_D0_BACK_OR_D1_FRONT
-#define kShiftSet_D1BackD2Front 1 // @ C1_SHIFT_SET_D1_BACK_OR_D2_FRONT
-#define kShiftSet_D2BackD3Front 2 // @ C2_SHIFT_SET_D2_BACK_OR_D3_FRONT
+#define k0_ShiftSet_D0BackD1Front 0 // @ C0_SHIFT_SET_D0_BACK_OR_D1_FRONT
+#define k1_ShiftSet_D1BackD2Front 1 // @ C1_SHIFT_SET_D1_BACK_OR_D2_FRONT
+#define k2_ShiftSet_D2BackD3Front 2 // @ C2_SHIFT_SET_D2_BACK_OR_D3_FRONT
 
-#define kCellOrder_DoorFront 0x0008 // @ MASK0x0008_DOOR_FRONT                                   
-#define kCellOrder_Alcove 0x0000 // @ C0000_CELL_ORDER_ALCOVE                                 
-#define kCellOrder_BackLeft 0x0001 // @ C0001_CELL_ORDER_BACKLEFT                               
-#define kCellOrder_BackRight 0x0002 // @ C0002_CELL_ORDER_BACKRIGHT                              
-#define kCellOrder_DoorPass1_BackLeft 0x0018 // @ C0018_CELL_ORDER_DOORPASS1_BACKLEFT                     
-#define kCellOrder_BackLeft_BackRight 0x0021 // @ C0021_CELL_ORDER_BACKLEFT_BACKRIGHT                     
-#define kCellOrder_DoorPass1_BackRight 0x0028 // @ C0028_CELL_ORDER_DOORPASS1_BACKRIGHT                    
-#define kCellOrder_BackRight_FrontRight 0x0032 // @ C0032_CELL_ORDER_BACKRIGHT_FRONTRIGHT                   
-#define kCellOrder_DoorPass2_FrontRight 0x0039 // @ C0039_CELL_ORDER_DOORPASS2_FRONTRIGHT                   
-#define kCellOrder_BackLeft_FrontLeft 0x0041 // @ C0041_CELL_ORDER_BACKLEFT_FRONTLEFT                     
-#define kCellOrder_DoorPass2_FrontLeft 0x0049 // @ C0049_CELL_ORDER_DOORPASS2_FRONTLEFT                    
-#define kCellOrder_DoorPass1_BackRight_BackLeft 0x0128 // @ C0128_CELL_ORDER_DOORPASS1_BACKRIGHT_BACKLEFT           
-#define kCellOrder_DoorPass1_BackLeft_BackRight 0x0218 // @ C0218_CELL_ORDER_DOORPASS1_BACKLEFT_BACKRIGHT           
-#define kCellOrder_BackLeft_BackRight_FrontRight 0x0321 // @ C0321_CELL_ORDER_BACKLEFT_BACKRIGHT_FRONTRIGHT          
-#define kCellOrder_BackRight_FrontLeft_FrontRight 0x0342 // @ C0342_CELL_ORDER_BACKRIGHT_FRONTLEFT_FRONTRIGHT         
-#define kCellOrder_DoorPass2_FrontLeft_FrontRight 0x0349 // @ C0349_CELL_ORDER_DOORPASS2_FRONTLEFT_FRONTRIGHT         
-#define kCellOrder_BackRight_BackLeft_FrontLeft 0x0412 // @ C0412_CELL_ORDER_BACKRIGHT_BACKLEFT_FRONTLEFT           
-#define kCellOrder_BackLeft_FrontRight_FrontLeft 0x0431 // @ C0431_CELL_ORDER_BACKLEFT_FRONTRIGHT_FRONTLEFT          
-#define kCellOrder_DoorPass2_FrontRight_FrontLeft 0x0439 // @ C0439_CELL_ORDER_DOORPASS2_FRONTRIGHT_FRONTLEFT         
-#define kCellOrder_BackLeft_BackRight_FrontLeft_FrontRight 0x3421 // @ C3421_CELL_ORDER_BACKLEFT_BACKRIGHT_FRONTLEFT_FRONTRIGHT
-#define kCellOrder_BackRight_BackLeft_FrontRight_FrontLeft 0x4312 // @ C4312_CELL_ORDER_BACKRIGHT_BACKLEFT_FRONTRIGHT_FRONTLEFT
+#define k0x0008_CellOrder_DoorFront 0x0008 // @ MASK0x0008_DOOR_FRONT                                   
+#define k0x0000_CellOrder_Alcove 0x0000 // @ C0000_CELL_ORDER_ALCOVE                                 
+#define k0x0001_CellOrder_BackLeft 0x0001 // @ C0001_CELL_ORDER_BACKLEFT                               
+#define k0x0002_CellOrder_BackRight 0x0002 // @ C0002_CELL_ORDER_BACKRIGHT                              
+#define k0x0018_CellOrder_DoorPass1_BackLeft 0x0018 // @ C0018_CELL_ORDER_DOORPASS1_BACKLEFT                     
+#define k0x0021_CellOrder_BackLeft_BackRight 0x0021 // @ C0021_CELL_ORDER_BACKLEFT_BACKRIGHT                     
+#define k0x0028_CellOrder_DoorPass1_BackRight 0x0028 // @ C0028_CELL_ORDER_DOORPASS1_BACKRIGHT                    
+#define k0x0032_CellOrder_BackRight_FrontRight 0x0032 // @ C0032_CELL_ORDER_BACKRIGHT_FRONTRIGHT                   
+#define k0x0039_CellOrder_DoorPass2_FrontRight 0x0039 // @ C0039_CELL_ORDER_DOORPASS2_FRONTRIGHT                   
+#define k0x0041_CellOrder_BackLeft_FrontLeft 0x0041 // @ C0041_CELL_ORDER_BACKLEFT_FRONTLEFT                     
+#define k0x0049_CellOrder_DoorPass2_FrontLeft 0x0049 // @ C0049_CELL_ORDER_DOORPASS2_FRONTLEFT                    
+#define k0x0128_CellOrder_DoorPass1_BackRight_BackLeft 0x0128 // @ C0128_CELL_ORDER_DOORPASS1_BACKRIGHT_BACKLEFT           
+#define k0x0218_CellOrder_DoorPass1_BackLeft_BackRight 0x0218 // @ C0218_CELL_ORDER_DOORPASS1_BACKLEFT_BACKRIGHT           
+#define k0x0321_CellOrder_BackLeft_BackRight_FrontRight 0x0321 // @ C0321_CELL_ORDER_BACKLEFT_BACKRIGHT_FRONTRIGHT          
+#define k0x0342_CellOrder_BackRight_FrontLeft_FrontRight 0x0342 // @ C0342_CELL_ORDER_BACKRIGHT_FRONTLEFT_FRONTRIGHT         
+#define k0x0349_CellOrder_DoorPass2_FrontLeft_FrontRight 0x0349 // @ C0349_CELL_ORDER_DOORPASS2_FRONTLEFT_FRONTRIGHT         
+#define k0x0412_CellOrder_BackRight_BackLeft_FrontLeft 0x0412 // @ C0412_CELL_ORDER_BACKRIGHT_BACKLEFT_FRONTLEFT           
+#define k0x0431_CellOrder_BackLeft_FrontRight_FrontLeft 0x0431 // @ C0431_CELL_ORDER_BACKLEFT_FRONTRIGHT_FRONTLEFT          
+#define k0x0439_CellOrder_DoorPass2_FrontRight_FrontLeft 0x0439 // @ C0439_CELL_ORDER_DOORPASS2_FRONTRIGHT_FRONTLEFT         
+#define k0x3421_CellOrder_BackLeft_BackRight_FrontLeft_FrontRight 0x3421 // @ C3421_CELL_ORDER_BACKLEFT_BACKRIGHT_FRONTLEFT_FRONTRIGHT
+#define k0x4312_CellOrder_BackRight_BackLeft_FrontRight_FrontLeft 0x4312 // @ C4312_CELL_ORDER_BACKRIGHT_BACKLEFT_FRONTRIGHT_FRONTLEFT
 
 
-#define kFloorSetGraphicCount 2 // @ C002_FLOOR_SET_GRAPHIC_COUNT
-#define kWallSetGraphicCount 13 // @ C013_WALL_SET_GRAPHIC_COUNT
-#define kStairsGraphicCount 18 // @ C018_STAIRS_GRAPHIC_COUNT
-#define kDoorSetGraphicsCount 3 // @ C003_DOOR_SET_GRAPHIC_COUNT
-#define kDoorButtonCount 1 // @ C001_DOOR_BUTTON_COUNT
-#define kNativeBitmapIndex 0 // @ C0_NATIVE_BITMAP_INDEX
-#define kCoordinateSet 1 // @ C1_COORDINATE_SET
-#define kCreatureTypeCount 27 // @ C027_CREATURE_TYPE_COUNT
-#define kExplosionAspectCount 4 // @ C004_EXPLOSION_ASPECT_COUNT
-#define kObjAspectCount 85 // @ C085_OBJECT_ASPECT_COUNT
-#define kProjectileAspectCount 14 // @ C014_PROJECTILE_ASPECT_COUNT
+
 
 /* Explosion aspects */
-#define kExplosionAspectFire 0 // @ C0_EXPLOSION_ASPECT_FIRE  
-#define kExplosionAspectSpell 1 // @ C1_EXPLOSION_ASPECT_SPELL 
-#define kExplosionAspectPoison 2 // @ C2_EXPLOSION_ASPECT_POISON
-#define kExplosionAspectSmoke 3 // @ C3_EXPLOSION_ASPECT_SMOKE 
+#define k0_ExplosionAspectFire 0 // @ C0_EXPLOSION_ASPECT_FIRE  
+#define k1_ExplosionAspectSpell 1 // @ C1_EXPLOSION_ASPECT_SPELL 
+#define k2_ExplosionAspectPoison 2 // @ C2_EXPLOSION_ASPECT_POISON
+#define k3_ExplosionAspectSmoke 3 // @ C3_EXPLOSION_ASPECT_SMOKE 
 
 /* Creature info GraphicInfo */
-#define kCreatureInfoGraphicMaskAdditional 0x0003 // @ MASK0x0003_ADDITIONAL                        
-#define kCreatureInfoGraphicMaskFlipNonAttack 0x0004 // @ MASK0x0004_FLIP_NON_ATTACK                  
-#define kCreatureInfoGraphicMaskSide 0x0008 // @ MASK0x0008_SIDE                             
-#define kCreatureInfoGraphicMaskBack 0x0010 // @ MASK0x0010_BACK                             
-#define kCreatureInfoGraphicMaskAttack 0x0020 // @ MASK0x0020_ATTACK                           
-#define kCreatureInfoGraphicMaskSpecialD2Front 0x0080 // @ MASK0x0080_SPECIAL_D2_FRONT                                                                               
-#define kCreatureInfoGraphicMaskSpecialD2FrontIsFlipped 0x0100 // @ MASK0x0100_SPECIAL_D2_FRONT_IS_FLIPPED_FRONT 
-#define kCreatureInfoGraphicMaskFlipAttack 0x0200 // @ MASK0x0200_FLIP_ATTACK                      
-#define kCreatureInfoGraphicMaskFlipDuringAttack 0x0400 // @ MASK0x0400_FLIP_DURING_ATTACK               
+#define k0x0003_CreatureInfoGraphicMaskAdditional 0x0003 // @ MASK0x0003_ADDITIONAL                        
+#define k0x0004_CreatureInfoGraphicMaskFlipNonAttack 0x0004 // @ MASK0x0004_FLIP_NON_ATTACK                  
+#define k0x0008_CreatureInfoGraphicMaskSide 0x0008 // @ MASK0x0008_SIDE                             
+#define k0x0010_CreatureInfoGraphicMaskBack 0x0010 // @ MASK0x0010_BACK                             
+#define k0x0020_CreatureInfoGraphicMaskAttack 0x0020 // @ MASK0x0020_ATTACK                           
+#define k0x0080_CreatureInfoGraphicMaskSpecialD2Front 0x0080 // @ MASK0x0080_SPECIAL_D2_FRONT                                                                               
+#define k0x0100_CreatureInfoGraphicMaskSpecialD2FrontIsFlipped 0x0100 // @ MASK0x0100_SPECIAL_D2_FRONT_IS_FLIPPED_FRONT 
+#define k0x0200_CreatureInfoGraphicMaskFlipAttack 0x0200 // @ MASK0x0200_FLIP_ATTACK                      
+#define k0x0400_CreatureInfoGraphicMaskFlipDuringAttack 0x0400 // @ MASK0x0400_FLIP_DURING_ATTACK               
 
 class ExplosionAspect {
 public:
@@ -113,118 +117,118 @@ public:
 	ExplosionAspect(uint16 byteWidth, uint16 height) :_pixelWidth(byteWidth * 2), _height(height) {}
 }; // @ EXPLOSION_ASPECT
 
-extern ExplosionAspect gExplosionAspects[kExplosionAspectCount];
+extern ExplosionAspect g211_ExplosionAspects[k4_ExplosionAspectCount]; // @ G0211_as_Graphic558_ExplosionAspects
 
-extern byte gProjectileScales[7]; // @ G0215_auc_Graphic558_ProjectileScales
-
-
-#define kDerivedBitmapViewport 0 // @ C000_DERIVED_BITMAP_VIEWPORT                    
-#define kDerivedBitmapThievesEyeVisibleArea 1 // @ C001_DERIVED_BITMAP_THIEVES_EYE_VISIBLE_AREA    
-#define kDerivedBitmapDamageToCreatureMedium 2 // @ C002_DERIVED_BITMAP_DAMAGE_TO_CREATURE_MEDIUM   
-#define kDerivedBitmapDamageToCreatureSmall 3 // @ C003_DERIVED_BITMAP_DAMAGE_TO_CREATURE_SMALL    
-#define kDerivedBitmapFirstWallOrnament 4 // @ C004_DERIVED_BITMAP_FIRST_WALL_ORNAMENT         
-#define kDerivedBitmapFirstDoorOrnament_D3 68 // @ C068_DERIVED_BITMAP_FIRST_DOOR_ORNAMENT_D3     
-#define kDerivedBitmapFirstDoorOrnament_D2 69 // @ C069_DERIVED_BITMAP_FIRST_DOOR_ORNAMENT_D2    
-#define kDerivedBitmapFirstDoorButton 102 // @ C102_DERIVED_BITMAP_FIRST_DOOR_BUTTON         
-#define kDerivedBitmapFirstObject 104 // @ C104_DERIVED_BITMAP_FIRST_OBJECT              
-#define kDerivedBitmapFirstProjectile 282 // @ C282_DERIVED_BITMAP_FIRST_PROJECTILE          
-#define kDerivedBitmapFirstExplosion 438 // @ C438_DERIVED_BITMAP_FIRST_EXPLOSION           
-#define kDerivedBitmapFirstCreature 495 // @ C495_DERIVED_BITMAP_FIRST_CREATURE            
+extern byte g215_ProjectileScales[7]; // @ G0215_auc_Graphic558_ProjectileScales
 
 
-#define kScale16_D3 16 // @ C16_SCALE_D3 
-#define kScale20_D2 20 // @ C20_SCALE_D2 
+#define k0_DerivedBitmapViewport 0 // @ C000_DERIVED_BITMAP_VIEWPORT                    
+#define k1_DerivedBitmapThievesEyeVisibleArea 1 // @ C001_DERIVED_BITMAP_THIEVES_EYE_VISIBLE_AREA    
+#define k2_DerivedBitmapDamageToCreatureMedium 2 // @ C002_DERIVED_BITMAP_DAMAGE_TO_CREATURE_MEDIUM   
+#define k3_DerivedBitmapDamageToCreatureSmall 3 // @ C003_DERIVED_BITMAP_DAMAGE_TO_CREATURE_SMALL    
+#define k4_DerivedBitmapFirstWallOrnament 4 // @ C004_DERIVED_BITMAP_FIRST_WALL_ORNAMENT         
+#define k68_DerivedBitmapFirstDoorOrnament_D3 68 // @ C068_DERIVED_BITMAP_FIRST_DOOR_ORNAMENT_D3     
+#define k69_DerivedBitmapFirstDoorOrnament_D2 69 // @ C069_DERIVED_BITMAP_FIRST_DOOR_ORNAMENT_D2    
+#define k102_DerivedBitmapFirstDoorButton 102 // @ C102_DERIVED_BITMAP_FIRST_DOOR_BUTTON         
+#define k104_DerivedBitmapFirstObject 104 // @ C104_DERIVED_BITMAP_FIRST_OBJECT              
+#define k282_DerivedBitmapFirstProjectile 282 // @ C282_DERIVED_BITMAP_FIRST_PROJECTILE          
+#define k438_DerivedBitmapFirstExplosion 438 // @ C438_DERIVED_BITMAP_FIRST_EXPLOSION           
+#define k495_DerivedBitmapFirstCreature 495 // @ C495_DERIVED_BITMAP_FIRST_CREATURE            
+
+
+#define k16_Scale_D3 16 // @ C16_SCALE_D3 
+#define k20_Scale_D2 20 // @ C20_SCALE_D2 
 
 /* Object aspect GraphicInfo */
-#define kObjectFlipOnRightMask 0x0001 // @ MASK0x0001_FLIP_ON_RIGHT 
-#define kObjectAlcoveMask 0x0010 // @ MASK0x0010_ALCOVE        
+#define k0x0001_ObjectFlipOnRightMask 0x0001 // @ MASK0x0001_FLIP_ON_RIGHT 
+#define k0x0010_ObjectAlcoveMask 0x0010 // @ MASK0x0010_ALCOVE        
 
 /* Projectile aspect GraphicInfo */
-#define kProjectileSideMask 0x0010 // @ MASK0x0010_SIDE                      
-#define kProjectileScaleWithKineticEnergyMask 0x0100 // @ MASK0x0100_SCALE_WITH_KINETIC_ENERGY 
-#define kProjectileAspectTypeMask 0x0003 // @ MASK0x0003_ASPECT_TYPE               
+#define k0x0010_ProjectileSideMask 0x0010 // @ MASK0x0010_SIDE                      
+#define k0x0100_ProjectileScaleWithKineticEnergyMask 0x0100 // @ MASK0x0100_SCALE_WITH_KINETIC_ENERGY 
+#define k0x0003_ProjectileAspectTypeMask 0x0003 // @ MASK0x0003_ASPECT_TYPE               
 
 /* Projectile aspect type */
-#define kProjectileAspectHasBackGraphicRotation 0 // @ C0_PROJECTILE_ASPECT_TYPE_HAS_BACK_GRAPHIC_AND_ROTATION   
-#define kProjectileAspectBackGraphic 1 // @ C1_PROJECTILE_ASPECT_TYPE_HAS_BACK_GRAPHIC_AND_NO_ROTATION
-#define kProjectileAspectHasRotation 2 // @ C2_PROJECTILE_ASPECT_TYPE_NO_BACK_GRAPHIC_AND_ROTATION    
-#define kProjectileAspectHasNone 3 // @ C3_PROJECTILE_ASPECT_TYPE_NO_BACK_GRAPHIC_AND_NO_ROTATION 
+#define k0_ProjectileAspectHasBackGraphicRotation 0 // @ C0_PROJECTILE_ASPECT_TYPE_HAS_BACK_GRAPHIC_AND_ROTATION   
+#define k1_ProjectileAspectBackGraphic 1 // @ C1_PROJECTILE_ASPECT_TYPE_HAS_BACK_GRAPHIC_AND_NO_ROTATION
+#define k2_ProjectileAspectHasRotation 2 // @ C2_PROJECTILE_ASPECT_TYPE_NO_BACK_GRAPHIC_AND_ROTATION    
+#define k3_ProjectileAspectHasNone 3 // @ C3_PROJECTILE_ASPECT_TYPE_NO_BACK_GRAPHIC_AND_NO_ROTATION 
 
 /* Projectile aspects */
-#define kProjectileAspectExplosionLightningBolt 3 // @ C03_PROJECTILE_ASPECT_EXPLOSION_LIGHTNING_BOLT           
-#define kProjectileAspectExplosionFireBall 10 // @ C10_PROJECTILE_ASPECT_EXPLOSION_FIREBALL                
-#define kProjectileAspectExplosionDefault 11 // @ C11_PROJECTILE_ASPECT_EXPLOSION_DEFAULT                 
-#define kProjectileAspectExplosionSlime 12 // @ C12_PROJECTILE_ASPECT_EXPLOSION_SLIME                   
-#define kProjectileAspectExplosionPoisonBoltCloud 13 // @ C13_PROJECTILE_ASPECT_EXPLOSION_POISON_BOLT_POISON_CLOUD
+#define k3_ProjectileAspectExplosionLightningBolt 3 // @ C03_PROJECTILE_ASPECT_EXPLOSION_LIGHTNING_BOLT           
+#define k10_ProjectileAspectExplosionFireBall 10 // @ C10_PROJECTILE_ASPECT_EXPLOSION_FIREBALL                
+#define k11_ProjectileAspectExplosionDefault 11 // @ C11_PROJECTILE_ASPECT_EXPLOSION_DEFAULT                 
+#define k12_ProjectileAspectExplosionSlime 12 // @ C12_PROJECTILE_ASPECT_EXPLOSION_SLIME                   
+#define k13_ProjectileAspectExplosionPoisonBoltCloud 13 // @ C13_PROJECTILE_ASPECT_EXPLOSION_POISON_BOLT_POISON_CLOUD
 
 enum ViewCell {
-	kViewCellFronLeft = 0, // @ C00_VIEW_CELL_FRONT_LEFT
-	kViewCellFrontRight = 1, // @ C01_VIEW_CELL_FRONT_RIGHT
-	kViewCellBackRight = 2, // @ C02_VIEW_CELL_BACK_RIGHT
-	kViewCellBackLeft = 3, // @ C03_VIEW_CELL_BACK_LEFT
-	kViewCellAlcove = 4, // @ C04_VIEW_CELL_ALCOVE
-	kViewCellDoorButtonOrWallOrn = 5 // @ C05_VIEW_CELL_DOOR_BUTTON_OR_WALL_ORNAMENT
+	k0_ViewCellFronLeft = 0, // @ C00_VIEW_CELL_FRONT_LEFT
+	k1_ViewCellFrontRight = 1, // @ C01_VIEW_CELL_FRONT_RIGHT
+	k2_ViewCellBackRight = 2, // @ C02_VIEW_CELL_BACK_RIGHT
+	k3_ViewCellBackLeft = 3, // @ C03_VIEW_CELL_BACK_LEFT
+	k4_ViewCellAlcove = 4, // @ C04_VIEW_CELL_ALCOVE
+	k5_ViewCellDoorButtonOrWallOrn = 5 // @ C05_VIEW_CELL_DOOR_BUTTON_OR_WALL_ORNAMENT
 };
 
 enum GraphicIndice {
-	kInscriptionFontIndice = 120, // @ C120_GRAPHIC_INSCRIPTION_FONT
-	kDoorMaskDestroyedIndice = 301, // @ C301_GRAPHIC_DOOR_MASK_DESTROYED
-	kChampionPortraitsIndice = 26, // @ C026_GRAPHIC_CHAMPION_PORTRAITS
-	kMovementArrowsIndice = 13, // @ C013_GRAPHIC_MOVEMENT_ARROWS
-	kObjectIcons_000_TO_031 = 42, // @ C042_GRAPHIC_OBJECT_ICONS_000_TO_031
-	kObjectIcons_032_TO_063 = 43, // @ C043_GRAPHIC_OBJECT_ICONS_032_TO_063
-	kObjectIcons_064_TO_095 = 44, // @ C044_GRAPHIC_OBJECT_ICONS_064_TO_095
-	kObjectIcons_096_TO_127 = 45, // @ C045_GRAPHIC_OBJECT_ICONS_096_TO_127
-	kObjectIcons_128_TO_159 = 46, // @ C046_GRAPHIC_OBJECT_ICONS_128_TO_159
-	kObjectIcons_160_TO_191 = 47, // @ C047_GRAPHIC_OBJECT_ICONS_160_TO_191
-	kObjectIcons_192_TO_223 = 48, // @ C048_GRAPHIC_OBJECT_ICONS_192_TO_223
-	kInventoryGraphicIndice = 17, // @ C017_GRAPHIC_INVENTORY
-	kPanelEmptyIndice = 20, // @ C020_GRAPHIC_PANEL_EMPTY
-	kFoodLabelIndice = 30, // @ C030_GRAPHIC_FOOD_LABEL
-	kWaterLabelIndice = 31, // @ C031_GRAPHIC_WATER_LABEL
-	kPoisionedLabelIndice = 32, // @ C032_GRAPHIC_POISONED_LABEL
-	kPanelResurectReincaranteIndice = 40, // @ C040_GRAPHIC_PANEL_RESURRECT_REINCARNATE 
-	kBorderPartyShieldIndice = 37, // @ C037_GRAPHIC_BORDER_PARTY_SHIELD
-	kBorderPartyFireshieldIndice = 38, // @ C038_GRAPHIC_BORDER_PARTY_FIRESHIELD
-	kBorderPartySpellshieldIndice = 39, // @ C039_GRAPHIC_BORDER_PARTY_SPELLSHIELD
-	kStatusBoxDeadChampion = 8, // @ C008_GRAPHIC_STATUS_BOX_DEAD_CHAMPION
-	kSlotBoxNormalIndice = 33, // @ C033_GRAPHIC_SLOT_BOX_NORMAL                   
-	kSlotBoxWoundedIndice = 34, // @ C034_GRAPHIC_SLOT_BOX_WOUNDED                  
-	kChampionIcons = 28, // @ C028_GRAPHIC_CHAMPION_ICONS
-	kFontGraphicIndice = 557, // @ C557_GRAPHIC_FONT 
-	kSlotBoxActingHandIndice = 35, // @ C035_GRAPHIC_SLOT_BOX_ACTING_HAND
-	kPanelRenameChampionIndice = 27, // @ C027_GRAPHIC_PANEL_RENAME_CHAMPION
-	kMenuActionAreaIndice = 10, // @ C010_GRAPHIC_MENU_ACTION_AREA
-	kMenuSpellAreLinesIndice = 11, // @ C011_GRAPHIC_MENU_SPELL_AREA_LINES
-	kMenuSpellAreaBackground = 9, // @ C009_GRAPHIC_MENU_SPELL_AREA_BACKGROUND
-	kPanelOpenScrollIndice = 23, // @ C023_GRAPHIC_PANEL_OPEN_SCROLL
-	kPanelOpenChestIndice = 25, // @ C025_GRAPHIC_PANEL_OPEN_CHEST
-	kEyeForObjectDescriptionIndice = 19, // @ C019_GRAPHIC_EYE_FOR_OBJECT_DESCRIPTION
-	kArrowForChestContentIndice = 18, // @ C018_GRAPHIC_ARROW_FOR_CHEST_CONTENT
-	kObjectDescCircleIndice = 29, // @ C029_GRAPHIC_OBJECT_DESCRIPTION_CIRCLE
-	kFloorOrn_15_D3L_footprints = 241, // @ C241_GRAPHIC_FLOOR_ORNAMENT_15_D3L_FOOTPRINTS
-	kFieldMask_D3R_GraphicIndice = 69, // @ C069_GRAPHIC_FIELD_MASK_D3R
-	kFieldTeleporterGraphicIndice = 73, // @ C073_GRAPHIC_FIELD_TELEPORTER
-	kFirstExplosionGraphicIndice = 348, // @ C348_GRAPHIC_FIRST_EXPLOSION
-	kFirstObjectGraphicIndice = 360, // @ C360_GRAPHIC_FIRST_OBJECT
-	kFirstCreatureGraphicIndice = 446, // @ C446_GRAPHIC_FIRST_CREATURE
-	kFirstProjectileGraphicIndice = 316, // @ C316_GRAPHIC_FIRST_PROJECTILE 
-	kFirstExplosionPatternGraphicIndice = 351, // @ C351_GRAPHIC_FIRST_EXPLOSION_PATTERN 
-	k049FloorPit_D3L_GraphicIndice = 49, // @ C049_GRAPHIC_FLOOR_PIT_D3L
-	k050FloorPit_D3C_GraphicIndice = 50, // @ C050_GRAPHIC_FLOOR_PIT_D3C
-	k051FloorPit_D2L_GraphicIndice = 51, // @ C051_GRAPHIC_FLOOR_PIT_D2L
-	k052FloorPit_D2C_GraphicIndice = 52, // @ C052_GRAPHIC_FLOOR_PIT_D2C
-	k053FloorPit_D1L_GraphicIndice = 53, // @ C053_GRAPHIC_FLOOR_PIT_D1L
-	k054FloorPit_D1C_GraphicIndice = 54, // @ C054_GRAPHIC_FLOOR_PIT_D1C
-	k055FloorPit_D0L_GraphicIndice = 55, // @ C055_GRAPHIC_FLOOR_PIT_D0L
-	k056FloorPit_D0C_GraphicIndice = 56 // @ C056_GRAPHIC_FLOOR_PIT_D0C
+	k8_StatusBoxDeadChampion = 8, // @ C008_GRAPHIC_STATUS_BOX_DEAD_CHAMPION
+	k9_MenuSpellAreaBackground = 9, // @ C009_GRAPHIC_MENU_SPELL_AREA_BACKGROUND
+	k10_MenuActionAreaIndice = 10, // @ C010_GRAPHIC_MENU_ACTION_AREA
+	k11_MenuSpellAreLinesIndice = 11, // @ C011_GRAPHIC_MENU_SPELL_AREA_LINES
+	k13_MovementArrowsIndice = 13, // @ C013_GRAPHIC_MOVEMENT_ARROWS
+	k17_InventoryGraphicIndice = 17, // @ C017_GRAPHIC_INVENTORY
+	k18_ArrowForChestContentIndice = 18, // @ C018_GRAPHIC_ARROW_FOR_CHEST_CONTENT
+	k19_EyeForObjectDescriptionIndice = 19, // @ C019_GRAPHIC_EYE_FOR_OBJECT_DESCRIPTION
+	k20_PanelEmptyIndice = 20, // @ C020_GRAPHIC_PANEL_EMPTY
+	k23_PanelOpenScrollIndice = 23, // @ C023_GRAPHIC_PANEL_OPEN_SCROLL
+	k25_PanelOpenChestIndice = 25, // @ C025_GRAPHIC_PANEL_OPEN_CHEST
+	k26_ChampionPortraitsIndice = 26, // @ C026_GRAPHIC_CHAMPION_PORTRAITS
+	k27_PanelRenameChampionIndice = 27, // @ C027_GRAPHIC_PANEL_RENAME_CHAMPION
+	k28_ChampionIcons = 28, // @ C028_GRAPHIC_CHAMPION_ICONS
+	k29_ObjectDescCircleIndice = 29, // @ C029_GRAPHIC_OBJECT_DESCRIPTION_CIRCLE
+	k30_FoodLabelIndice = 30, // @ C030_GRAPHIC_FOOD_LABEL
+	k31_WaterLabelIndice = 31, // @ C031_GRAPHIC_WATER_LABEL
+	k32_PoisionedLabelIndice = 32, // @ C032_GRAPHIC_POISONED_LABEL
+	k33_SlotBoxNormalIndice = 33, // @ C033_GRAPHIC_SLOT_BOX_NORMAL                   
+	k34_SlotBoxWoundedIndice = 34, // @ C034_GRAPHIC_SLOT_BOX_WOUNDED                  
+	k35_SlotBoxActingHandIndice = 35, // @ C035_GRAPHIC_SLOT_BOX_ACTING_HAND
+	k37_BorderPartyShieldIndice = 37, // @ C037_GRAPHIC_BORDER_PARTY_SHIELD
+	k38_BorderPartyFireshieldIndice = 38, // @ C038_GRAPHIC_BORDER_PARTY_FIRESHIELD
+	k39_BorderPartySpellshieldIndice = 39, // @ C039_GRAPHIC_BORDER_PARTY_SPELLSHIELD
+	k40_PanelResurectReincaranteIndice = 40, // @ C040_GRAPHIC_PANEL_RESURRECT_REINCARNATE 
+	k42_ObjectIcons_000_TO_031 = 42, // @ C042_GRAPHIC_OBJECT_ICONS_000_TO_031
+	k43_ObjectIcons_032_TO_063 = 43, // @ C043_GRAPHIC_OBJECT_ICONS_032_TO_063
+	k44_ObjectIcons_064_TO_095 = 44, // @ C044_GRAPHIC_OBJECT_ICONS_064_TO_095
+	k45_ObjectIcons_096_TO_127 = 45, // @ C045_GRAPHIC_OBJECT_ICONS_096_TO_127
+	k46_ObjectIcons_128_TO_159 = 46, // @ C046_GRAPHIC_OBJECT_ICONS_128_TO_159
+	k47_ObjectIcons_160_TO_191 = 47, // @ C047_GRAPHIC_OBJECT_ICONS_160_TO_191
+	k48_ObjectIcons_192_TO_223 = 48, // @ C048_GRAPHIC_OBJECT_ICONS_192_TO_223
+	k49_FloorPit_D3L_GraphicIndice = 49, // @ C049_GRAPHIC_FLOOR_PIT_D3L
+	k50_FloorPit_D3C_GraphicIndice = 50, // @ C050_GRAPHIC_FLOOR_PIT_D3C
+	k51_FloorPit_D2L_GraphicIndice = 51, // @ C051_GRAPHIC_FLOOR_PIT_D2L
+	k52_FloorPit_D2C_GraphicIndice = 52, // @ C052_GRAPHIC_FLOOR_PIT_D2C
+	k53_FloorPit_D1L_GraphicIndice = 53, // @ C053_GRAPHIC_FLOOR_PIT_D1L
+	k54_FloorPit_D1C_GraphicIndice = 54, // @ C054_GRAPHIC_FLOOR_PIT_D1C
+	k55_FloorPit_D0L_GraphicIndice = 55, // @ C055_GRAPHIC_FLOOR_PIT_D0L
+	k56_FloorPit_D0C_GraphicIndice = 56, // @ C056_GRAPHIC_FLOOR_PIT_D0C
+	k69_FieldMask_D3R_GraphicIndice = 69, // @ C069_GRAPHIC_FIELD_MASK_D3R
+	k73_FieldTeleporterGraphicIndice = 73, // @ C073_GRAPHIC_FIELD_TELEPORTER
+	k120_InscriptionFontIndice = 120, // @ C120_GRAPHIC_INSCRIPTION_FONT
+	k241_FloorOrn_15_D3L_footprints = 241, // @ C241_GRAPHIC_FLOOR_ORNAMENT_15_D3L_FOOTPRINTS
+	k301_DoorMaskDestroyedIndice = 301, // @ C301_GRAPHIC_DOOR_MASK_DESTROYED
+	k316_FirstProjectileGraphicIndice = 316, // @ C316_GRAPHIC_FIRST_PROJECTILE 
+	k348_FirstExplosionGraphicIndice = 348, // @ C348_GRAPHIC_FIRST_EXPLOSION
+	k351_FirstExplosionPatternGraphicIndice = 351, // @ C351_GRAPHIC_FIRST_EXPLOSION_PATTERN 
+	k360_FirstObjectGraphicIndice = 360, // @ C360_GRAPHIC_FIRST_OBJECT
+	k446_FirstCreatureGraphicIndice = 446, // @ C446_GRAPHIC_FIRST_CREATURE
+	k557_FontGraphicIndice = 557 // @ C557_GRAPHIC_FONT 
 };
 
-extern uint16 gPalSwoosh[16];
-extern uint16 gPalMousePointer[16];
-extern uint16 gPalCredits[16];
-extern uint16 gPalEntrance[16];
-extern uint16 gPalDungeonView[6][16];
+extern uint16 gK57_PalSwoosh[16]; // @ K0057_aui_Palette_Swoosh
+extern uint16 gK150_PalMousePointer[16];	// @ K0150_aui_Palette_MousePointer
+extern uint16 g19_PalCredits[16];  // @ G0019_aui_Graphic562_Palette_Credits
+extern uint16 g20_PalEntrance[16]; // @ G0020_aui_Graphic562_Palette_Entrance
+extern uint16 g21_PalDungeonView[6][16]; // @ G0021_aaui_Graphic562_Palette_DungeonView
 
 class Box {
 public:
@@ -241,7 +245,7 @@ public:
 	void setToZero() { _x1 = _x2 = _y1 = _y2 = 0; }
 }; // @ BOX_BYTE, BOX_WORD
 
-extern Box gBoxMovementArrows; // G0002_s_Graphic562_Box_MovementArrows
+extern Box g2_BoxMovementArrows; // G0002_s_Graphic562_Box_MovementArrows
 
 class Frame {
 public:
@@ -257,47 +261,47 @@ public:
 };
 
 enum WallSet {
-	kWallSetStone = 0 // @ C0_WALL_SET_STONE
+	k0_WallSetStone = 0 // @ C0_WALL_SET_STONE
 };
 
 enum FloorSet {
-	kFloorSetStone = 0 // @ C0_FLOOR_SET_STONE
+	k0_FloorSetStone = 0 // @ C0_FLOOR_SET_STONE
 };
 
 enum ViewWall {
-	kViewWall_D3L_RIGHT = 0, // @ C00_VIEW_WALL_D3L_RIGHT 
-	kViewWall_D3R_LEFT = 1, // @ C01_VIEW_WALL_D3R_LEFT  
-	kViewWall_D3L_FRONT = 2, // @ C02_VIEW_WALL_D3L_FRONT 
-	kViewWall_D3C_FRONT = 3, // @ C03_VIEW_WALL_D3C_FRONT 
-	kViewWall_D3R_FRONT = 4, // @ C04_VIEW_WALL_D3R_FRONT 
-	kViewWall_D2L_RIGHT = 5, // @ C05_VIEW_WALL_D2L_RIGHT 
-	kViewWall_D2R_LEFT = 6, // @ C06_VIEW_WALL_D2R_LEFT  
-	kViewWall_D2L_FRONT = 7, // @ C07_VIEW_WALL_D2L_FRONT 
-	kViewWall_D2C_FRONT = 8, // @ C08_VIEW_WALL_D2C_FRONT 
-	kViewWall_D2R_FRONT = 9, // @ C09_VIEW_WALL_D2R_FRONT 
-	kViewWall_D1L_RIGHT = 10, // @ C10_VIEW_WALL_D1L_RIGHT
-	kViewWall_D1R_LEFT = 11, // @ C11_VIEW_WALL_D1R_LEFT 
-	kViewWall_D1C_FRONT = 12  // @ C12_VIEW_WALL_D1C_FRONT
+	k0_ViewWall_D3L_RIGHT = 0, // @ C00_VIEW_WALL_D3L_RIGHT 
+	k1_ViewWall_D3R_LEFT = 1, // @ C01_VIEW_WALL_D3R_LEFT  
+	k2_ViewWall_D3L_FRONT = 2, // @ C02_VIEW_WALL_D3L_FRONT 
+	k3_ViewWall_D3C_FRONT = 3, // @ C03_VIEW_WALL_D3C_FRONT 
+	k4_ViewWall_D3R_FRONT = 4, // @ C04_VIEW_WALL_D3R_FRONT 
+	k5_ViewWall_D2L_RIGHT = 5, // @ C05_VIEW_WALL_D2L_RIGHT 
+	k6_ViewWall_D2R_LEFT = 6, // @ C06_VIEW_WALL_D2R_LEFT  
+	k7_ViewWall_D2L_FRONT = 7, // @ C07_VIEW_WALL_D2L_FRONT 
+	k8_ViewWall_D2C_FRONT = 8, // @ C08_VIEW_WALL_D2C_FRONT 
+	k9_ViewWall_D2R_FRONT = 9, // @ C09_VIEW_WALL_D2R_FRONT 
+	k10_ViewWall_D1L_RIGHT = 10, // @ C10_VIEW_WALL_D1L_RIGHT
+	k11_ViewWall_D1R_LEFT = 11, // @ C11_VIEW_WALL_D1R_LEFT 
+	k12_ViewWall_D1C_FRONT = 12  // @ C12_VIEW_WALL_D1C_FRONT
 };
 
 enum Color {
-	kColorNoTransparency = 255,
-	kColorBlack = 0,
-	kColorDarkGary = 1,
-	kColorLightGray = 2,
-	kColorDarkBrown = 3,
-	kColorCyan = 4,
-	kColorLightBrown = 5,
-	kColorDarkGreen = 6,
-	kColorLightGreen = 7,
-	kColorRed = 8,
-	kColorGold = 9,
-	kColorFlesh = 10,
-	kColorYellow = 11,
-	kColorDarkestGray = 12,
-	kColorLightestGray = 13,
-	kColorBlue = 14,
-	kColorWhite = 15
+	k255_ColorNoTransparency = 255,
+	k0_ColorBlack = 0,
+	k1_ColorDarkGary = 1,
+	k2_ColorLightGray = 2,
+	k3_ColorDarkBrown = 3,
+	k4_ColorCyan = 4,
+	k5_ColorLightBrown = 5,
+	k6_ColorDarkGreen = 6,
+	k7_ColorLightGreen = 7,
+	k8_ColorRed = 8,
+	k9_ColorGold = 9,
+	k10_ColorFlesh = 10,
+	k11_ColorYellow = 11,
+	k12_ColorDarkestGray = 12,
+	k13_ColorLightestGray = 13,
+	k14_ColorBlue = 14,
+	k15_ColorWhite = 15
 };
 
 class FieldAspect {
@@ -326,7 +330,8 @@ public:
 		:_posX(posX), _posY(posY), _width(width), _height(height) {}
 };
 
-struct CreatureAspect {
+class CreatureAspect {
+public:
 	uint16 _firstNativeBitmapRelativeIndex;
 	uint16 _firstDerivedBitmapIndex;
 	byte _byteWidthFront;
@@ -335,16 +340,33 @@ struct CreatureAspect {
 	byte _heightSide;
 	byte _byteWidthAttack;
 	byte _heightAttack;
+private:
 	byte _coordinateSet_TransparentColor;
 	byte _replacementColorSetIndices;
+public:
+
+	CreatureAspect(uint16 uint161, uint16 uint162, byte byte0, byte byte1, byte byte2, byte byte3, byte byte4, byte byte5, byte byte6, byte byte7)
+		: _firstNativeBitmapRelativeIndex(uint161),
+		_firstDerivedBitmapIndex(uint162),
+		_byteWidthFront(byte0 * 2),
+		_heightFront(byte1),
+		_byteWidthSide(byte2 * 2),
+		_heightSide(byte3),
+		_byteWidthAttack(byte4 * 2),
+		_heightAttack(byte5),
+		_coordinateSet_TransparentColor(byte6),
+		_replacementColorSetIndices(byte7) {}
 
 	byte getCoordSet() { return (_coordinateSet_TransparentColor >> 4) & 0xF; } // @ M71_COORDINATE_SET
 	byte getTranspColour() { return  _coordinateSet_TransparentColor & 0xF; } // @ M72_TRANSPARENT_COLOR
 	byte getReplColour10() { return (_replacementColorSetIndices >> 4) & 0xF; } // @ M74_COLOR_10_REPLACEMENT_COLOR_SET
 	byte getReplColour9() { return _replacementColorSetIndices & 0xF; } // @ M73_COLOR_09_REPLACEMENT_COLOR_SET
+
+
 }; // @ CREATURE_ASPECT
 
-struct ObjectAspect {
+class ObjectAspect {
+public:
 	byte _firstNativeBitmapRelativeIndex;
 	byte _firstDerivedBitmapRelativeIndex;
 	byte _width;
@@ -356,7 +378,8 @@ struct ObjectAspect {
 		_width(byteWidth * 2), _height(h), _graphicInfo(grap), _coordinateSet(coord) {}
 }; // @ OBJECT_ASPECT
 
-struct ProjectileAspect {
+class ProjectileAspect {
+public:
 	byte _firstNativeBitmapRelativeIndex;
 	byte _firstDerivedBitmapRelativeIndex;
 	byte _width;
@@ -368,7 +391,8 @@ struct ProjectileAspect {
 		_width(byteWidth * 2), _height(h), _graphicInfo(grap) {}
 }; // @ PROJECTIL_ASPECT
 
-struct CreatureReplColorSet {
+class CreatureReplColorSet {
+public:
 	uint16 _RGBColor[6];
 	byte _D2ReplacementColor;
 	byte _D3ReplacementColor;
@@ -377,15 +401,12 @@ struct CreatureReplColorSet {
 extern Viewport gDefultViewPort;
 extern Viewport gDungeonViewport;
 
-#define kAlcoveOrnCount 3
-#define kFountainOrnCount 1
 
-
-#define kDoorButton 0 // @ C0_DOOR_BUTTON
-#define kWallOrnInscription 0 // @ C0_WALL_ORNAMENT_INSCRIPTION
-#define kFloorOrnFootprints 15 // @ C15_FLOOR_ORNAMENT_FOOTPRINTS
-#define kDoorOrnDestroyedMask 15 // @ C15_DOOR_ORNAMENT_DESTROYED_MASK
-#define kDoorOrnThivesEyeMask 16 // @ C16_DOOR_ORNAMENT_THIEVES_EYE_MASK
+#define k0_DoorButton 0 // @ C0_DOOR_BUTTON
+#define k0_WallOrnInscription 0 // @ C0_WALL_ORNAMENT_INSCRIPTION
+#define k15_FloorOrnFootprints 15 // @ C15_FLOOR_ORNAMENT_FOOTPRINTS
+#define k15_DoorOrnDestroyedMask 15 // @ C15_DOOR_ORNAMENT_DESTROYED_MASK
+#define k16_DoorOrnThivesEyeMask 16 // @ C16_DOOR_ORNAMENT_THIEVES_EYE_MASK
 
 class DisplayMan {
 	friend class DM::TextMan;
@@ -405,9 +426,9 @@ class DisplayMan {
 	byte *_wallSetBitMaps[25];	// @G[0696..0710]_puc_Bitmap_WallSet_...
 
 	// pointers are not owned by these fields
-	byte *_floorBitmap;
-	byte *_ceilingBitmap;
-	byte *_palChangesProjectile[4]; // @G0075_apuc_PaletteChanges_Projectile
+	byte *_g84_floorBitmap; // @ G0084_puc_Bitmap_Floor
+	byte *_g85_ceilingBitmap; // @ G0085_puc_Bitmap_Ceiling
+	byte *_g75_palChangesProjectile[4]; // @G0075_apuc_PaletteChanges_Projectile
 
 	DisplayMan(const DisplayMan &other); // no implementation on purpose
 	void operator=(const DisplayMan &rhs); // no implementation on purpose
@@ -440,30 +461,30 @@ class DisplayMan {
 
 	bool isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex); // @ F0107_DUNGEONVIEW_IsDrawnWallOrnamentAnAlcove_CPSF
 
-	uint16 *_derivedBitmapByteCount; // @ G0639_pui_DerivedBitmapByteCount
-	byte **_derivedBitmaps; // @ G0638_pui_DerivedBitmapBlockIndices
+	uint16 *_g639_derivedBitmapByteCount; // @ G0639_pui_DerivedBitmapByteCount
+	byte **_g638_derivedBitmaps; // @ G0638_pui_DerivedBitmapBlockIndices
 
-	int16 _g0675stairsNativeBitmapIndex_Up_Front_D3L; // @ G0675_i_StairsNativeBitmapIndex_Up_Front_D3L
-	int16 _g0676stairsNativeBitmapIndex_Up_Front_D3C; // @ G0676_i_StairsNativeBitmapIndex_Up_Front_D3C
-	int16 _g0677stairsNativeBitmapIndex_Up_Front_D2L; // @ G0677_i_StairsNativeBitmapIndex_Up_Front_D2L
-	int16 _g0678stairsNativeBitmapIndex_Up_Front_D2C; // @ G0678_i_StairsNativeBitmapIndex_Up_Front_D2C
-	int16 _g0679stairsNativeBitmapIndex_Up_Front_D1L; // @ G0679_i_StairsNativeBitmapIndex_Up_Front_D1L
-	int16 _g0680stairsNativeBitmapIndex_Up_Front_D1C; // @ G0680_i_StairsNativeBitmapIndex_Up_Front_D1C
-	int16 _g0681stairsNativeBitmapIndex_Up_Front_D0C_Left; // @ G0681_i_StairsNativeBitmapIndex_Up_Front_D0C_Left
-	int16 _g0682stairsNativeBitmapIndex_Down_Front_D3L; // @ G0682_i_StairsNativeBitmapIndex_Down_Front_D3L
-	int16 _g0683stairsNativeBitmapIndex_Down_Front_D3C; // @ G0683_i_StairsNativeBitmapIndex_Down_Front_D3C
-	int16 _g0684stairsNativeBitmapIndex_Down_Front_D2L; // @ G0684_i_StairsNativeBitmapIndex_Down_Front_D2L
-	int16 _g0685stairsNativeBitmapIndex_Down_Front_D2C; // @ G0685_i_StairsNativeBitmapIndex_Down_Front_D2C
-	int16 _g0686stairsNativeBitmapIndex_Down_Front_D1L; // @ G0686_i_StairsNativeBitmapIndex_Down_Front_D1L
-	int16 _g0687stairsNativeBitmapIndex_Down_Front_D1C; // @ G0687_i_StairsNativeBitmapIndex_Down_Front_D1C
-	int16 _g0688stairsNativeBitmapIndex_Down_Front_D0C_Left; // @ G0688_i_StairsNativeBitmapIndex_Down_Front_D0C_Left
-	int16 _g0689stairsNativeBitmapIndex_Side_D2L; // @ G0689_i_StairsNativeBitmapIndex_Side_D2L
-	int16 _g0690stairsNativeBitmapIndex_Up_Side_D1L; // @ G0690_i_StairsNativeBitmapIndex_Up_Side_D1L
-	int16 _g0691stairsNativeBitmapIndex_Down_Side_D1L; // @ G0691_i_StairsNativeBitmapIndex_Down_Side_D1L
-	int16 _g0692stairsNativeBitmapIndex_Side_D0L; // @ G0692_i_StairsNativeBitmapIndex_Side_D0L
+	int16 _g675_stairsNativeBitmapIndex_Up_Front_D3L; // @ G0675_i_StairsNativeBitmapIndex_Up_Front_D3L
+	int16 _g676_stairsNativeBitmapIndex_Up_Front_D3C; // @ G0676_i_StairsNativeBitmapIndex_Up_Front_D3C
+	int16 _g677_stairsNativeBitmapIndex_Up_Front_D2L; // @ G0677_i_StairsNativeBitmapIndex_Up_Front_D2L
+	int16 _g678_stairsNativeBitmapIndex_Up_Front_D2C; // @ G0678_i_StairsNativeBitmapIndex_Up_Front_D2C
+	int16 _g679_stairsNativeBitmapIndex_Up_Front_D1L; // @ G0679_i_StairsNativeBitmapIndex_Up_Front_D1L
+	int16 _g680_stairsNativeBitmapIndex_Up_Front_D1C; // @ G0680_i_StairsNativeBitmapIndex_Up_Front_D1C
+	int16 _g681_stairsNativeBitmapIndex_Up_Front_D0C_Left; // @ G0681_i_StairsNativeBitmapIndex_Up_Front_D0C_Left
+	int16 _g682_stairsNativeBitmapIndex_Down_Front_D3L; // @ G0682_i_StairsNativeBitmapIndex_Down_Front_D3L
+	int16 _g683_stairsNativeBitmapIndex_Down_Front_D3C; // @ G0683_i_StairsNativeBitmapIndex_Down_Front_D3C
+	int16 _g684_stairsNativeBitmapIndex_Down_Front_D2L; // @ G0684_i_StairsNativeBitmapIndex_Down_Front_D2L
+	int16 _g685_stairsNativeBitmapIndex_Down_Front_D2C; // @ G0685_i_StairsNativeBitmapIndex_Down_Front_D2C
+	int16 _g686_stairsNativeBitmapIndex_Down_Front_D1L; // @ G0686_i_StairsNativeBitmapIndex_Down_Front_D1L
+	int16 _g687_stairsNativeBitmapIndex_Down_Front_D1C; // @ G0687_i_StairsNativeBitmapIndex_Down_Front_D1C
+	int16 _g688_stairsNativeBitmapIndex_Down_Front_D0C_Left; // @ G0688_i_StairsNativeBitmapIndex_Down_Front_D0C_Left
+	int16 _g689_stairsNativeBitmapIndex_Side_D2L; // @ G0689_i_StairsNativeBitmapIndex_Side_D2L
+	int16 _g690_stairsNativeBitmapIndex_Up_Side_D1L; // @ G0690_i_StairsNativeBitmapIndex_Up_Side_D1L
+	int16 _g691_stairsNativeBitmapIndex_Down_Side_D1L; // @ G0691_i_StairsNativeBitmapIndex_Down_Side_D1L
+	int16 _g692_stairsNativeBitmapIndex_Side_D0L; // @ G0692_i_StairsNativeBitmapIndex_Side_D0L
 public:
 	// some methods use this for a stratchpad, don't make assumptions about content between function calls
-	byte *_tmpBitmap;
+	byte *_g74_tmpBitmap; // @ G0074_puc_Bitmap_Temporary
 
 	explicit DisplayMan(DMEngine *dmEngine);
 	~DisplayMan();
@@ -484,25 +505,25 @@ public:
 	void blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
 					  byte *destBitmap, uint16 destWidth,
 					  uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
-					  Color transparent = kColorNoTransparency, Viewport &viewport = gDefultViewPort);
+					  Color transparent = k255_ColorNoTransparency, Viewport &viewport = gDefultViewPort);
 	void blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
-					  byte *destBitmap, uint16 destWidth, Box &box, Color transparent = kColorNoTransparency, Viewport &viewport = gDefultViewPort);
+					  byte *destBitmap, uint16 destWidth, Box &box, Color transparent = k255_ColorNoTransparency, Viewport &viewport = gDefultViewPort);
 	void blitToBitmapShrinkWithPalChange(byte *srcBitmap, int16 srcWidth, int16 srcHight,
 										 byte *destBitmap, int16 destWidth, int16 destHeight, byte *palChange); // @ F0129_VIDEO_BlitShrinkWithPaletteChanges
 
 	void blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcHeight, byte *destBitmap, uint16 destWidth, uint16 destX = 0, uint16 destY = 0);
 	void blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
 					  uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
-					  Color transparent = kColorNoTransparency, Viewport &viewport = gDefultViewPort);
+					  Color transparent = k255_ColorNoTransparency, Viewport &viewport = gDefultViewPort);
 	void blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
 					  Box &box,
-					  Color transparent = kColorNoTransparency, Viewport &viewport = gDefultViewPort);
+					  Color transparent = k255_ColorNoTransparency, Viewport &viewport = gDefultViewPort);
 	void blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask, byte *tmp, Box &box, int16 lastUnitIndex,
 									   int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
 									   int16 xPos, int16 yPos, int16 destHeight, int16 height2, Viewport &viewport = gDefultViewPort); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
 	void blitBoxFilledWithMaskedBitmapToScreen(byte *src, byte *mask, byte *tmp, Box &box, int16 lastUnitIndex,
-									   int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
-									   int16 xPos, int16 yPos, int16 destHeight, int16 height2, Viewport &viewport = gDungeonViewport); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
+											   int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
+											   int16 xPos, int16 yPos, int16 destHeight, int16 height2, Viewport &viewport = gDungeonViewport); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
 
 	void flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height);
 	void flipBitmapVertical(byte *bitmap, uint16 width, uint16 height);
@@ -521,29 +542,29 @@ public:
 	int16 getScaledBitmapPixelCount(int16 pixelWidth, int16 pixelHeight, int16 scale); // @ F0459_START_GetScaledBitmapByteCount
 	int16 getScaledDimension(int16 dimension, int16 scale); // @ M78_SCALED_DIMENSION
 	void cthulhu(Thing thingParam, direction directionParam,
-												   int16 mapXpos, int16 mapYpos, int16 viewSquareIndex,
-												   uint16 orderedViewCellOrdinals); // @ F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
+				 int16 mapXpos, int16 mapYpos, int16 viewSquareIndex,
+				 uint16 orderedViewCellOrdinals); // @ F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
 	uint16 getNormalizedByteWidthM77(uint16 byteWidth); // @ M77_NORMALIZED_BYTE_WIDTH
 	uint16 getVerticalOffsetM23(uint16 val); // @ M23_VERTICAL_OFFSET
 	uint16 getHorizontalOffsetM22(uint16 val); // @ M22_HORIZONTAL_OFFSET
 
-	int16 _championPortraitOrdinal; // @ G0289_i_DungeonView_ChampionPortraitOrdinal
-	int16 _currMapAlcoveOrnIndices[kAlcoveOrnCount]; // @ G0267_ai_CurrentMapAlcoveOrnamentIndices
-	int16 _currMapFountainOrnIndices[kFountainOrnCount]; // @ G0268_ai_CurrentMapFountainOrnamentIndices
-	int16 _currMapWallOrnInfo[16][2]; // @ G0101_aai_CurrentMapWallOrnamentsInfo
-	int16 _currMapFloorOrnInfo[16][2]; // @ G0102_aai_CurrentMapFloorOrnamentsInfo
-	int16 _currMapDoorOrnInfo[17][2]; // @ G0103_aai_CurrentMapDoorOrnamentsInfo
-	byte *_currMapAllowedCreatureTypes; // @ G0264_puc_CurrentMapAllowedCreatureTypes
-	byte _currMapWallOrnIndices[16]; // @ G0261_auc_CurrentMapWallOrnamentIndices
-	byte _currMapFloorOrnIndices[16]; // @ G0262_auc_CurrentMapFloorOrnamentIndices
-	byte _currMapDoorOrnIndices[18]; // @ G0263_auc_CurrentMapDoorOrnamentIndices
+	int16 _g289_championPortraitOrdinal; // @ G0289_i_DungeonView_ChampionPortraitOrdinal
+	int16 _g267_currMapAlcoveOrnIndices[k3_AlcoveOrnCount]; // @ G0267_ai_CurrentMapAlcoveOrnamentIndices
+	int16 _g268_currMapFountainOrnIndices[k1_FountainOrnCount]; // @ G0268_ai_CurrentMapFountainOrnamentIndices
+	int16 _g101_currMapWallOrnInfo[16][2]; // @ G0101_aai_CurrentMapWallOrnamentsInfo
+	int16 _g102_currMapFloorOrnInfo[16][2]; // @ G0102_aai_CurrentMapFloorOrnamentsInfo
+	int16 _g103_currMapDoorOrnInfo[17][2]; // @ G0103_aai_CurrentMapDoorOrnamentsInfo
+	byte *_g264_currMapAllowedCreatureTypes; // @ G0264_puc_CurrentMapAllowedCreatureTypes
+	byte _g261_currMapWallOrnIndices[16]; // @ G0261_auc_CurrentMapWallOrnamentIndices
+	byte _g262_currMapFloorOrnIndices[16]; // @ G0262_auc_CurrentMapFloorOrnamentIndices
+	byte _g263_currMapDoorOrnIndices[18]; // @ G0263_auc_CurrentMapDoorOrnamentIndices
 
-	int16 _currMapViAltarIndex; // @ G0266_i_CurrentMapViAltarWallOrnamentIndex
+	int16 _g266_currMapViAltarIndex; // @ G0266_i_CurrentMapViAltarWallOrnamentIndex
 
-	Thing _inscriptionThing; // @ G0290_T_DungeonView_InscriptionThing
+	Thing _g290_inscriptionThing; // @ G0290_T_DungeonView_InscriptionThing
 
-	bool _useByteBoxCoordinates; // @ G0578_B_UseByteBoxCoordinates
-	bool _doNotDrawFluxcagesDuringEndgame; // @ G0077_B_DoNotDrawFluxcagesDuringEndgame
+	bool _g578_useByteBoxCoordinates; // @ G0578_B_UseByteBoxCoordinates
+	bool _g77_doNotDrawFluxcagesDuringEndgame; // @ G0077_B_DoNotDrawFluxcagesDuringEndgame
 
 	bool isDerivedBitmapInCache(int16 derivedBitmapIndex); // @  F0491_CACHE_IsDerivedBitmapInCache
 	byte *getDerivedBitmap(int16 derivedBitmapIndex); // @ F0492_CACHE_GetDerivedBitmap

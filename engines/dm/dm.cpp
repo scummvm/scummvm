@@ -144,7 +144,7 @@ DMEngine::~DMEngine() {
 void DMEngine::initializeGame() {
 	_displayMan->loadGraphics();
 	// DUMMY CODE: next line
-	_displayMan->loadPalette(gPalCredits);
+	_displayMan->loadPalette(g19_PalCredits);
 
 	_eventMan->initMouse();
 
@@ -152,8 +152,8 @@ void DMEngine::initializeGame() {
 		warning("TODO: F0441_STARTEND_ProcessEntrance");
 	}
 
-	_displayMan->loadFloorSet(kFloorSetStone);
-	_displayMan->loadWallSet(kWallSetStone);
+	_displayMan->loadFloorSet(k0_FloorSetStone);
+	_displayMan->loadWallSet(k0_WallSetStone);
 	_objectMan->loadObjectNames();
 
 	startGame();
@@ -184,7 +184,7 @@ void DMEngine::startGame() {
 	if (!_dungeonMan->_messages._newGame) {
 		warning("TODO: loading game");
 	} else {
-		_displayMan->_useByteBoxCoordinates = false;
+		_displayMan->_g578_useByteBoxCoordinates = false;
 		warning("TODO: clear screen");
 	}
 
@@ -253,7 +253,7 @@ void DMEngine::gameloop() {
 
 		if (!_inventoryMan->_inventoryChampionOrdinal && !_championMan->_partyIsSleeping) {
 			Box box(0, 224, 0, 126);
-			_displayMan->clearScreenBox(kColorBlack, box, gDungeonViewport); // dummy code
+			_displayMan->clearScreenBox(k0_ColorBlack, box, gDungeonViewport); // dummy code
 			_displayMan->drawDungeon(_dungeonMan->_currMap._partyDir, _dungeonMan->_currMap._partyPosX, _dungeonMan->_currMap._partyPosY);
 		}
 		// DUMMY CODE: next line

@@ -328,7 +328,7 @@ WeaponInfo gWeaponInfo[46] = { // @ G0238_as_Graphic559_WeaponInfo
 	WeaponInfo(30, 26,   1, 220, 0x207D),   /* SPEEDBOW */
 	WeaponInfo(36, 255, 100,  50, 0x20FF)}; /* THE FIRESTAFF */
 
-CreatureInfo gCreatureInfo[kCreatureTypeCount] = { // @ G0243_as_Graphic559_CreatureInfo
+CreatureInfo gCreatureInfo[k27_CreatureTypeCount] = { // @ G0243_as_Graphic559_CreatureInfo
 												   /* { CreatureAspectIndex, AttackSoundOrdinal, Attributes, GraphicInfo,
 												   MovementTicks, AttackTicks, Defense, BaseHealth, Attack, PoisonAttack,
 												   Dexterity, Ranges, Properties, Resistances, AnimationTicks, WoundProbabilities, AttackType } */
@@ -742,19 +742,19 @@ void DungeonMan::setCurrentMapAndPartyMap(uint16 mapIndex) {
 	setCurrentMap(mapIndex);
 
 	byte *metaMapData = _currMap._data[_currMap._width - 1] + _currMap._height;
-	_vm->_displayMan->_currMapAllowedCreatureTypes = metaMapData;
+	_vm->_displayMan->_g264_currMapAllowedCreatureTypes = metaMapData;
 
 	metaMapData += _currMap._map->_creatureTypeCount;
-	memcpy(_vm->_displayMan->_currMapWallOrnIndices, metaMapData, _currMap._map->_wallOrnCount);
+	memcpy(_vm->_displayMan->_g261_currMapWallOrnIndices, metaMapData, _currMap._map->_wallOrnCount);
 
 	metaMapData += _currMap._map->_wallOrnCount;
-	memcpy(_vm->_displayMan->_currMapFloorOrnIndices, metaMapData, _currMap._map->_floorOrnCount);
+	memcpy(_vm->_displayMan->_g262_currMapFloorOrnIndices, metaMapData, _currMap._map->_floorOrnCount);
 
 	metaMapData += _currMap._map->_wallOrnCount;
-	memcpy(_vm->_displayMan->_currMapDoorOrnIndices, metaMapData, _currMap._map->_doorOrnCount);
+	memcpy(_vm->_displayMan->_g263_currMapDoorOrnIndices, metaMapData, _currMap._map->_doorOrnCount);
 
 	_currMapInscriptionWallOrnIndex = _currMap._map->_wallOrnCount;
-	_vm->_displayMan->_currMapWallOrnIndices[_currMapInscriptionWallOrnIndex] = kWallOrnInscription;
+	_vm->_displayMan->_g261_currMapWallOrnIndices[_currMapInscriptionWallOrnIndex] = k0_WallOrnInscription;
 }
 
 
@@ -817,7 +817,7 @@ Thing DungeonMan::getSquareFirstThing(int16 mapX, int16 mapY) {
 
 // TODO: get rid of the GOTOs
 void DungeonMan::setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX, int16 mapY) {	// complete, except where marked
-	_vm->_displayMan->_championPortraitOrdinal = 0; // BUG0_75, possible fix
+	_vm->_displayMan->_g289_championPortraitOrdinal = 0; // BUG0_75, possible fix
 
 	for (uint16 i = 0; i < 5; ++i)
 		aspectArray[i] = 0;
@@ -868,13 +868,13 @@ T0172010_ClosedFakeWall:
 				if (thing.getType() == kTextstringType) {
 					if (TextString(getThingData(thing)).isVisible()) {
 						aspectArray[sideIndex + 1] = _currMapInscriptionWallOrnIndex + 1;
-						_vm->_displayMan->_inscriptionThing = thing; // BUG0_76
+						_vm->_displayMan->_g290_inscriptionThing = thing; // BUG0_76
 					}
 				} else {
 					Sensor sensor(getThingData(thing));
 					aspectArray[sideIndex + 1] = sensor.getOrnOrdinal();
 					if (sensor.getType() == kSensorWallChampionPortrait) {
-						_vm->_displayMan->_championPortraitOrdinal = _vm->indexToOrdinal(sensor.getData());
+						_vm->_displayMan->_g289_championPortraitOrdinal = _vm->indexToOrdinal(sensor.getData());
 					}
 				}
 			}
@@ -978,8 +978,8 @@ int16 DungeonMan::getRandomOrnOrdinal(bool allowed, int16 count, int16 mapX, int
 
 bool DungeonMan::isWallOrnAnAlcove(int16 wallOrnIndex) {
 	if (wallOrnIndex >= 0)
-		for (uint16 i = 0; i < kAlcoveOrnCount; ++i)
-			if (_vm->_displayMan->_currMapAlcoveOrnIndices[i] == wallOrnIndex)
+		for (uint16 i = 0; i < k3_AlcoveOrnCount; ++i)
+			if (_vm->_displayMan->_g267_currMapAlcoveOrnIndices[i] == wallOrnIndex)
 				return true;
 	return false;
 }
@@ -1307,15 +1307,15 @@ int16 DungeonMan::getProjectileAspect(Thing thing) {
 
 	if ((thingType = thing.getType()) == kExplosionThingType) {
 		if (thing == Thing::_explFireBall)
-			return -_vm->indexToOrdinal(kProjectileAspectExplosionFireBall);
+			return -_vm->indexToOrdinal(k10_ProjectileAspectExplosionFireBall);
 		if (thing == Thing::_explSlime)
-			return -_vm->indexToOrdinal(kProjectileAspectExplosionSlime);
+			return -_vm->indexToOrdinal(k12_ProjectileAspectExplosionSlime);
 		if (thing == Thing::_explLightningBolt)
-			return -_vm->indexToOrdinal(kProjectileAspectExplosionLightningBolt);
+			return -_vm->indexToOrdinal(k3_ProjectileAspectExplosionLightningBolt);
 		if ((thing == Thing::_explPoisonBolt) || (thing == Thing::_explPoisonCloud))
-			return -_vm->indexToOrdinal(kProjectileAspectExplosionPoisonBoltCloud);
+			return -_vm->indexToOrdinal(k13_ProjectileAspectExplosionPoisonBoltCloud);
 
-		return -_vm->indexToOrdinal(kProjectileAspectExplosionDefault);
+		return -_vm->indexToOrdinal(k11_ProjectileAspectExplosionDefault);
 	} else if (thingType == kWeaponThingType) {
 		weaponInfo = getWeaponInfo(thing);
 		if (projAspOrd = weaponInfo->getProjectileAspectOrdinal())

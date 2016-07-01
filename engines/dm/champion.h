@@ -408,7 +408,7 @@ public:
 		memset(_name, '\0', 8);
 		memset(_title, '\0', 20);
 		_dir = kDirNorth;
-		_cell = kViewCellFronLeft;
+		_cell = k0_ViewCellFronLeft;
 		_actionIndex = kChampionActionN;
 		_symbolStep = 0;
 		memset(_symbols, '\0', 5);

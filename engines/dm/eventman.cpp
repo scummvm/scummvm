@@ -529,7 +529,7 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 			int16 mapY = currMap._partyPosY + _vm->_dirIntoStepCountNorth[currMap._partyDir];
 
 			if (Door(dunMan.getSquareFirstThingData(mapX, mapY)).hasButton() &&
-				dunMan._dungeonViewClickableBoxes[kViewCellDoorButtonOrWallOrn].isPointInside(Common::Point(posX, posY - 33))) {
+				dunMan._dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn].isPointInside(Common::Point(posX, posY - 33))) {
 				_vm->_stopWaitingForPlayerInput = true;
 				warning("MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
 				warning("MISSING CODE: F0268_SENSOR_AddEvent");
@@ -541,9 +541,9 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 	}
 
 	if (champMan._leaderEmptyHanded) {
-		for (int16 viewCell = kViewCellFronLeft; viewCell <= kViewCellDoorButtonOrWallOrn; viewCell++) {
+		for (int16 viewCell = k0_ViewCellFronLeft; viewCell <= k5_ViewCellDoorButtonOrWallOrn; viewCell++) {
 			if (dunMan._dungeonViewClickableBoxes[viewCell].isPointInside(Common::Point(posX, posY - 33))) {
-				if (viewCell == kViewCellDoorButtonOrWallOrn) {
+				if (viewCell == k5_ViewCellDoorButtonOrWallOrn) {
 					if (!dunMan._isFacingAlcove) {
 						commandProcessType80ClickInDungeonViewTouchFrontWall();
 					}
@@ -557,14 +557,14 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 		Thing thing = champMan._leaderHandObject;
 		uint16 *rawThingPointer = dunMan.getThingData(thing);
 		if (dunMan._squareAheadElement == kElementTypeWall) {
-			for (int16 viewCell = kViewCellFronLeft; viewCell <= kViewCellFrontRight; ++viewCell) {
+			for (int16 viewCell = k0_ViewCellFronLeft; viewCell <= k1_ViewCellFrontRight; ++viewCell) {
 				if (gBoxObjectPiles[viewCell].isPointInside(Common::Point(posX, posY))) {
 					warning("F0374_COMMAND_ProcessType80_ClickInDungeonView_DropLeaderHandObject");
 					return;
 				}
 			}
 
-			if (dunMan._dungeonViewClickableBoxes[kViewCellDoorButtonOrWallOrn].isPointInside(Common::Point(posX, posY - 33))) {
+			if (dunMan._dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn].isPointInside(Common::Point(posX, posY - 33))) {
 				if (dunMan._isFacingAlcove) {
 					warning("MISSING CODE: F0374_COMMAND_ProcessType80_ClickInDungeonView_DropLeaderHandObject");
 				} else {
@@ -587,7 +587,7 @@ T0377019:
 			}
 		} else {
 			warning("MISSING CODE: F0375_COMMAND_ProcessType80_ClickInDungeonView_IsLeaderHandObjectThrown in if branch");
-			for (int16 viewCell = kViewCellFronLeft; viewCell <= kViewCellBackLeft; viewCell++) {
+			for (int16 viewCell = k0_ViewCellFronLeft; viewCell <= k3_ViewCellBackLeft; viewCell++) {
 				if (gBoxObjectPiles[viewCell].isPointInside(Common::Point(posX, posY))) {
 					warning("MISSING CODE: F0374_COMMAND_ProcessType80_ClickInDungeonView_DropLeaderHandObject");
 					return;
@@ -618,9 +618,9 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 		box._y2 = 28 + 1;
 		box._x1 = championIndex * kChampionStatusBoxSpacing;
 		box._x2 = box._x1 + 66 + 1;
-		dispMan._useByteBoxCoordinates = false;
-		dispMan.clearScreenBox(kColorBlack, box);
-		dispMan.clearScreenBox(kColorBlack, gBoxChampionIcons[champMan.championIconIndex(champ->_cell, currMap._partyDir) * 2]);
+		dispMan._g578_useByteBoxCoordinates = false;
+		dispMan.clearScreenBox(k0_ColorBlack, box);
+		dispMan.clearScreenBox(k0_ColorBlack, gBoxChampionIcons[champMan.championIconIndex(champ->_cell, currMap._partyDir) * 2]);
 		warning("F0457_START_DrawEnabledMenus_CPSF");
 		warning("F0078_MOUSE_ShowPointer");
 		return;

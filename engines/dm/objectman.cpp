@@ -192,10 +192,10 @@ void ObjectMan::extractIconFromBitmap(uint16 iconIndex, byte *destBitmap) {
 	}
 
 	--i;
-	byte *srcBitmap = _vm->_displayMan->getBitmap(kObjectIcons_000_TO_031 + i);
+	byte *srcBitmap = _vm->_displayMan->getBitmap(k42_ObjectIcons_000_TO_031 + i);
 	iconIndex -= gIconGraphicFirstIndex[i];
-	_vm->_displayMan->_useByteBoxCoordinates = true;
-	_vm->_displayMan->blitToBitmap(srcBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, destBitmap, 16, 0, 16, 0, 16, kColorNoTransparency);
+	_vm->_displayMan->_g578_useByteBoxCoordinates = true;
+	_vm->_displayMan->blitToBitmap(srcBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, destBitmap, 16, 0, 16, 0, 16, k255_ColorNoTransparency);
 }
 
 void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
@@ -218,16 +218,16 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 		}
 	}
 	iconGraphicIndex--;
-	byte *iconsBitmap = _vm->_displayMan->getBitmap(iconGraphicIndex + kObjectIcons_000_TO_031);
+	byte *iconsBitmap = _vm->_displayMan->getBitmap(iconGraphicIndex + k42_ObjectIcons_000_TO_031);
 	iconIndex -= gIconGraphicFirstIndex[iconGraphicIndex];
 
-	_vm->_displayMan->_useByteBoxCoordinates = false;
+	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 	if (slotBoxIndex >= kSlotBoxInventoryFirstSlot) {
 		_vm->_displayMan->blitToScreen(iconsBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0,
-									   box, kColorNoTransparency, gDungeonViewport);
+									   box, k255_ColorNoTransparency, gDungeonViewport);
 	} else {
 		_vm->_displayMan->blitToScreen(iconsBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0,
-									   box, kColorNoTransparency, gDefultViewPort);
+									   box, k255_ColorNoTransparency, gDefultViewPort);
 	}
 }
 
@@ -245,7 +245,7 @@ void ObjectMan::drawLeaderObjectName(Thing thing) {
 	} else {
 		objName = _objectNames[iconIndex];
 	}
-	_vm->_textMan->printWithTrailingSpacesToScreen(233, 37, kColorCyan, kColorBlack, objName, kObjectNameMaximumLength);
+	_vm->_textMan->printWithTrailingSpacesToScreen(233, 37, k4_ColorCyan, k0_ColorBlack, objName, kObjectNameMaximumLength);
 }
 
 IconIndice ObjectMan::getIconIndexInSlotBox(uint16 slotBoxIndex) {

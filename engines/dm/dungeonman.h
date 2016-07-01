@@ -202,7 +202,7 @@ struct CreatureInfo {
 }; // @ CREATURE_INFO
 
 
-extern CreatureInfo gCreatureInfo[kCreatureTypeCount];
+extern CreatureInfo gCreatureInfo[k27_CreatureTypeCount];
 
 class Door {
 	Thing _nextThing;

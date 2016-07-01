@@ -43,9 +43,9 @@ void TextMan::printTextToBitmap(byte* destBitmap, uint16 destPixelWidth, uint16 
 	uint16 textLength = strlen(text);
 	uint16 nextX = destX;
 	uint16 nextY = destY;
-	byte *srcBitmap = _vm->_displayMan->getBitmap(kFontGraphicIndice);
+	byte *srcBitmap = _vm->_displayMan->getBitmap(k557_FontGraphicIndice);
 
-	byte *tmp = _vm->_displayMan->_tmpBitmap;
+	byte *tmp = _vm->_displayMan->_g74_tmpBitmap;
 	for (uint16 i = 0; i < (kLetterWidth + 1) * kLetterHeight * 128; ++i) {
 		tmp[i] = srcBitmap[i] ? textColor : bgColor;
 	}
@@ -60,7 +60,7 @@ void TextMan::printTextToBitmap(byte* destBitmap, uint16 destPixelWidth, uint16 
 			break;
 		uint16 srcX = (1 + 5) * toupper(*begin); // 1 + 5 is not the letter width, arbitrary choice of the unpacking code
 		_vm->_displayMan->blitToBitmap(srcBitmap, 6 * 128, (nextX == destX) ? (srcX + 1) : srcX, 0, destBitmap, destPixelWidth,
-			(nextX == destX) ? (nextX + 1) : nextX, nextX + kLetterWidth + 1, nextY, nextY + kLetterHeight, kColorNoTransparency, viewport);
+			(nextX == destX) ? (nextX + 1) : nextX, nextX + kLetterWidth + 1, nextY, nextY + kLetterHeight, k255_ColorNoTransparency, viewport);
 		nextX += kLetterWidth + 1;
 	}
 }

@@ -118,10 +118,10 @@ int16 ChampionMan::getDecodedValue(char *string, uint16 characterCount) {
 
 void ChampionMan::drawHealthOrStaminaOrManaValue(int16 posY, int16 currVal, int16 maxVal) {
 	Common::String tmp = getStringFromInteger(currVal, true, 3).c_str();
-	_vm->_textMan->printToViewport(55, posY, kColorLightestGray, tmp.c_str());
-	_vm->_textMan->printToViewport(73, posY, kColorLightestGray, "/");
+	_vm->_textMan->printToViewport(55, posY, k13_ColorLightestGray, tmp.c_str());
+	_vm->_textMan->printToViewport(73, posY, k13_ColorLightestGray, "/");
 	tmp = getStringFromInteger(maxVal, true, 3);
-	_vm->_textMan->printToViewport(79, posY, kColorLightestGray, tmp.c_str());
+	_vm->_textMan->printToViewport(79, posY, k13_ColorLightestGray, tmp.c_str());
 }
 
 uint16 ChampionMan::handSlotIndex(uint16 slotBoxIndex) {
@@ -458,18 +458,18 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	uint16 prevChampCount = _partyChampionCount;
 	Champion *champ = &_champions[prevChampCount];
 	champ->resetToZero();
-	dispMan._useByteBoxCoordinates = true;
+	dispMan._g578_useByteBoxCoordinates = true;
 	{ // limit destBox scope
 		Box &destBox = gBoxChampionPortrait;
-		dispMan.blitToBitmap(dispMan.getBitmap(kChampionPortraitsIndice), 256, getChampionPortraitX(championPortraitIndex), getChampionPortraitY(championPortraitIndex),
-							 champ->_portrait, 32, destBox._x1, destBox._x2, destBox._y1, destBox._y2, kColorNoTransparency);
+		dispMan.blitToBitmap(dispMan.getBitmap(k26_ChampionPortraitsIndice), 256, getChampionPortraitX(championPortraitIndex), getChampionPortraitY(championPortraitIndex),
+							 champ->_portrait, 32, destBox._x1, destBox._x2, destBox._y1, destBox._y2, k255_ColorNoTransparency);
 	}
 
 	champ->_actionIndex = kChampionActionNone;
 	champ->_enableActionEventIndex = -1;
 	champ->_hideDamageReceivedIndex = -1;
 	champ->_dir = dunMan._currMap._partyDir;
-	ViewCell AL_0_viewCell = kViewCellFronLeft;
+	ViewCell AL_0_viewCell = k0_ViewCellFronLeft;
 	while (getIndexInCell((ViewCell)((AL_0_viewCell + dunMan._currMap._partyDir) & 3)) != kChampionNone)
 		AL_0_viewCell = (ViewCell)(AL_0_viewCell + 1);
 	champ->_cell = (ViewCell)((AL_0_viewCell + dunMan._currMap._partyDir) & 3);
@@ -732,26 +732,26 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 		return;
 	}
 	bool isInventoryChamp = (_vm->indexToOrdinal(champIndex) == invMan._inventoryChampionOrdinal);
-	dispMan._useByteBoxCoordinates = false;
+	dispMan._g578_useByteBoxCoordinates = false;
 	if (champAttributes & kChampionAttributeStatusBox) {
 		box._y1 = 0;
 		box._y2 = 28 + 1;
 		box._x1 = champStatusBoxX;
 		box._x2 = box._x1 + 66 + 1;
 		if (champ->_currHealth) {
-			dispMan.clearScreenBox(kColorDarkestGray, box);
+			dispMan.clearScreenBox(k12_ColorDarkestGray, box);
 			int16 nativeBitmapIndices[3];
 			for (int16 i = 0; i < 3; ++i)
 				nativeBitmapIndices[i] = 0;
 			int16 AL_0_borderCount = 0;
 			if (_party._fireShieldDefense > 0)
-				nativeBitmapIndices[AL_0_borderCount++] = kBorderPartyFireshieldIndice;
+				nativeBitmapIndices[AL_0_borderCount++] = k38_BorderPartyFireshieldIndice;
 			if (_party._spellShieldDefense > 0)
-				nativeBitmapIndices[AL_0_borderCount++] = kBorderPartySpellshieldIndice;
+				nativeBitmapIndices[AL_0_borderCount++] = k39_BorderPartySpellshieldIndice;
 			if (_party._shieldDefense > 0)
-				nativeBitmapIndices[AL_0_borderCount++] = kBorderPartyShieldIndice;
+				nativeBitmapIndices[AL_0_borderCount++] = k37_BorderPartyShieldIndice;
 			while (AL_0_borderCount--) {
-				dispMan.blitToScreen(dispMan.getBitmap(nativeBitmapIndices[AL_0_borderCount]), 80, 0, 0, box, kColorFlesh);
+				dispMan.blitToScreen(dispMan.getBitmap(nativeBitmapIndices[AL_0_borderCount]), 80, 0, 0, box, k10_ColorFlesh);
 			}
 			if (isInventoryChamp) {
 				invMan.drawStatusBoxPortrait(champIndex);
@@ -760,8 +760,8 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 				champAttributes |= (kChampionAttributeNameTitle | kChampionAttributeStatistics | kChampionAttributeWounds | kChampionAttributeActionHand);
 			}
 		} else {
-			dispMan.blitToScreen(dispMan.getBitmap(kStatusBoxDeadChampion), 80, 0, 0, box, kColorNoTransparency);
-			_vm->_textMan->printTextToScreen(champStatusBoxX + 1, 5, kColorLightestGray, kColorDarkGary, champ->_name);
+			dispMan.blitToScreen(dispMan.getBitmap(k8_StatusBoxDeadChampion), 80, 0, 0, box, k255_ColorNoTransparency);
+			_vm->_textMan->printTextToScreen(champStatusBoxX + 1, 5, k13_ColorLightestGray, k1_ColorDarkGary, champ->_name);
 			menuMan.drawActionIcon(champIndex);
 			goto T0292042_green;
 		}
@@ -771,7 +771,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 		goto T0292042_green;
 
 	if (champAttributes & kChampionAttributeNameTitle) {
-		Color AL_0_colorIndex = (champIndex == _leaderIndex) ? kColorGold : kColorLightestGray; // unused because of missing functions
+		Color AL_0_colorIndex = (champIndex == _leaderIndex) ? k9_ColorGold : k13_ColorLightestGray; // unused because of missing functions
 		if (isInventoryChamp) {
 			char *champName = champ->_name;
 			_vm->_textMan->printToViewport(3, 7, AL_0_colorIndex, champName);
@@ -787,8 +787,8 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 			box._y2 = 6 + 1;
 			box._x1 = champStatusBoxX;
 			box._x2 = box._x1 + 42 + 1;
-			dispMan.clearScreenBox(kColorDarkGary, box);
-			_vm->_textMan->printTextToScreen(champStatusBoxX + 1, 5, AL_0_colorIndex, kColorDarkGary, champ->_name);
+			dispMan.clearScreenBox(k1_ColorDarkGary, box);
+			_vm->_textMan->printTextToScreen(champStatusBoxX + 1, 5, AL_0_colorIndex, k1_ColorDarkGary, champ->_name);
 		}
 	}
 
@@ -798,20 +798,20 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 			drawHealthStaminaManaValues(champ);
 			int16 AL_2_nativeBitmapIndex;
 			if ((champ->_food < 0) || (champ->_water < 0) || (champ->_poisonEventCount)) {
-				AL_2_nativeBitmapIndex = kSlotBoxWoundedIndice;
+				AL_2_nativeBitmapIndex = k34_SlotBoxWoundedIndice;
 			} else {
-				AL_2_nativeBitmapIndex = kSlotBoxNormalIndice;
+				AL_2_nativeBitmapIndex = k33_SlotBoxNormalIndice;
 			}
-			dispMan.blitToScreen(dispMan.getBitmap(AL_2_nativeBitmapIndex), 32, 0, 0, gBoxMouth, kColorDarkestGray, gDungeonViewport);
-			AL_2_nativeBitmapIndex = kSlotBoxNormalIndice;
+			dispMan.blitToScreen(dispMan.getBitmap(AL_2_nativeBitmapIndex), 32, 0, 0, gBoxMouth, k12_ColorDarkestGray, gDungeonViewport);
+			AL_2_nativeBitmapIndex = k33_SlotBoxNormalIndice;
 			for (int16 AL_0_statisticIndex = kChampionStatStrength; AL_0_statisticIndex <= kChampionStatAntifire; AL_0_statisticIndex++) {
 				if (champ->getStatistic((ChampionStatisticType)AL_0_statisticIndex, kChampionStatCurrent)
 					< champ->getStatistic((ChampionStatisticType)AL_0_statisticIndex, kChampionStatMaximum)) {
-					AL_2_nativeBitmapIndex = kSlotBoxWoundedIndice;
+					AL_2_nativeBitmapIndex = k34_SlotBoxWoundedIndice;
 					break;
 				}
 			}
-			dispMan.blitToScreen(dispMan.getBitmap(AL_2_nativeBitmapIndex), 32, 0, 0, gBoxEye, kColorDarkestGray, gDungeonViewport);
+			dispMan.blitToScreen(dispMan.getBitmap(AL_2_nativeBitmapIndex), 32, 0, 0, gBoxEye, k12_ColorDarkestGray, gDungeonViewport);
 			champAttributes |= kChampionAttributeViewport;
 		}
 	}
@@ -829,11 +829,11 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 		Color loadColor;
 		int16 champMaxLoad = getMaximumLoad(champ);
 		if (champ->_load > champMaxLoad) {
-			loadColor = kColorRed;
+			loadColor = k8_ColorRed;
 		} else if (((int32)champ->_load) * 8 > ((int32)champMaxLoad) * 5) {
-			loadColor = kColorYellow;
+			loadColor = k11_ColorYellow;
 		} else {
-			loadColor = kColorLightestGray;
+			loadColor = k13_ColorLightestGray;
 		}
 		_vm->_textMan->printToViewport(104, 132, loadColor, "LOAD ");
 
@@ -852,10 +852,10 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 	{ // block so goto won't skip AL_0_championIconIndex initialization 
 		int16 AL_0_championIconIndex = championIconIndex(champ->_cell, _vm->_dungeonMan->_currMap._partyDir);
 
-		if ((champAttributes & kChampionIcons) && (eventMan._useChampionIconOrdinalAsMousePointerBitmap != _vm->indexToOrdinal(AL_0_championIconIndex))) {
+		if ((champAttributes & k28_ChampionIcons) && (eventMan._useChampionIconOrdinalAsMousePointerBitmap != _vm->indexToOrdinal(AL_0_championIconIndex))) {
 			dispMan.clearScreenBox(gChampionColor[champIndex], gBoxChampionIcons[AL_0_championIconIndex]);
-			dispMan.blitToScreen(dispMan.getBitmap(kChampionIcons), 80, championIconIndex(champ->_dir, _vm->_dungeonMan->_currMap._partyDir) * 19, 0,
-								 gBoxChampionIcons[AL_0_championIconIndex], kColorDarkestGray);
+			dispMan.blitToScreen(dispMan.getBitmap(k28_ChampionIcons), 80, championIconIndex(champ->_dir, _vm->_dungeonMan->_currMap._partyDir) * 19, 0,
+								 gBoxChampionIcons[AL_0_championIconIndex], k12_ColorDarkestGray);
 		}
 	}
 
@@ -942,9 +942,9 @@ void ChampionMan::drawSlot(uint16 champIndex, ChampionSlot slotIndex) {
 			iconIndex = kIconIndiceReadyHand + (slotIndex << 1);
 			if (champ->getWoundsFlag((ChampionWound)(1 << slotIndex))) {
 				iconIndex++;
-				nativeBitmapIndex = kSlotBoxWoundedIndice;
+				nativeBitmapIndex = k34_SlotBoxWoundedIndice;
 			} else {
-				nativeBitmapIndex = kSlotBoxNormalIndice;
+				nativeBitmapIndex = k33_SlotBoxNormalIndice;
 			}
 		} else {
 			if ((slotIndex >= kChampionSlotNeck) && (slotIndex <= kChampionSlotBackpackLine_1_1)) {
@@ -962,21 +962,21 @@ void ChampionMan::drawSlot(uint16 champIndex, ChampionSlot slotIndex) {
 		} // BUG2_00
 		if (slotIndex <= kChampionSlotFeet) {
 			if (champ->getWoundsFlag((ChampionWound)(1 << slotIndex))) {
-				nativeBitmapIndex = kSlotBoxWoundedIndice;
+				nativeBitmapIndex = k34_SlotBoxWoundedIndice;
 			} else {
-				nativeBitmapIndex = kSlotBoxNormalIndice;
+				nativeBitmapIndex = k33_SlotBoxNormalIndice;
 			}
 		}
 	}
 
 	if ((slotIndex == kChampionSlotActionHand) && (_vm->indexToOrdinal(champIndex) == _actingChampionOrdinal)) {
-		nativeBitmapIndex = kSlotBoxActingHandIndice;
+		nativeBitmapIndex = k35_SlotBoxActingHandIndice;
 	}
 
 	if (nativeBitmapIndex != -1) {
-		_vm->_displayMan->_useByteBoxCoordinates = false;
+		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 		_vm->_displayMan->blitToScreen(_vm->_displayMan->getBitmap(nativeBitmapIndex), 32, 0, 0,
-									   box, kColorDarkestGray, isInventoryChamp ? gDungeonViewport : gDefultViewPort);
+									   box, k12_ColorDarkestGray, isInventoryChamp ? gDungeonViewport : gDefultViewPort);
 	}
 
 	_vm->_objectMan->drawIconInSlotBox(slotBoxIndex, iconIndex);
@@ -998,10 +998,10 @@ void ChampionMan::renameChampion(Champion* champ) {
 	box._x1 = 3;
 	box._x2 = box._x1 + 167;
 
-	dispMan.clearScreenBox(kColorDarkestGray, box, gDungeonViewport);
-	dispMan.blitToScreen(dispMan.getBitmap(kPanelRenameChampionIndice), 144, 0, 0, gBoxPanel, kColorCyan, gDungeonViewport);
-	textMan.printToViewport(177, 58, kColorLightestGray, "_______");
-	textMan.printToViewport(105, 76, kColorLightestGray, "___________________");
+	dispMan.clearScreenBox(k12_ColorDarkestGray, box, gDungeonViewport);
+	dispMan.blitToScreen(dispMan.getBitmap(k27_PanelRenameChampionIndice), 144, 0, 0, gBoxPanel, k4_ColorCyan, gDungeonViewport);
+	textMan.printToViewport(177, 58, k13_ColorLightestGray, "_______");
+	textMan.printToViewport(105, 76, k13_ColorLightestGray, "___________________");
 	Common::Point clickPos;
 	static Box okButtonBox(197, 215, 147, 155); // inclusive boundaries, constructor adds +1
 	for (;;) {
