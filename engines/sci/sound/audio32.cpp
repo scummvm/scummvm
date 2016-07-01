@@ -305,7 +305,7 @@ int Audio32::readBuffer(Audio::st_sample_t *buffer, const int numSamples) {
 
 		// Channel finished fading and had the
 		// stopChannelOnFade flag set, so no longer exists
-		if (channel.fadeStepsRemaining && processFade(channelIndex)) {
+		if (channel.fadeStartTick && processFade(channelIndex)) {
 			--channelIndex;
 			continue;
 		}
@@ -602,8 +602,7 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 	channel.loop = loop;
 	channel.robot = false;
 	channel.vmd = false;
-	channel.lastFadeTick = 0;
-	channel.fadeStepsRemaining = 0;
+	channel.fadeStartTick = 0;
 	channel.soundNode = soundNode;
 	channel.volume = volume < 0 || volume > kMaxVolume ? (int)kMaxVolume : volume;
 	// TODO: SCI3 introduces stereo audio
@@ -927,12 +926,12 @@ bool Audio32::fadeChannel(const int16 channelIndex, const int16 targetVolume, co
 		return false;
 	}
 
-	if (steps) {
-		channel.fadeVolume = targetVolume;
-		channel.fadeSpeed = speed;
-		channel.fadeStepsRemaining = steps;
+	if (steps && speed) {
+		channel.fadeStartTick = g_sci->getTickCount();
+		channel.fadeStartVolume = channel.volume;
+		channel.fadeTargetVolume = targetVolume;
+		channel.fadeDuration = speed * steps;
 		channel.stopChannelOnFade = stopAfterFade;
-		channel.lastFadeTick = g_sci->getTickCount();
 	} else {
 		setVolume(channelIndex, targetVolume);
 	}
@@ -944,28 +943,28 @@ bool Audio32::processFade(const int16 channelIndex) {
 	Common::StackLock lock(_mutex);
 	AudioChannel &channel = getChannel(channelIndex);
 
-	uint32 now = g_sci->getTickCount();
-
-	if (channel.lastFadeTick + channel.fadeSpeed <= now) {
-		--channel.fadeStepsRemaining;
-
-		if (!channel.fadeStepsRemaining) {
+	if (channel.fadeStartTick) {
+		const uint32 fadeElapsed = g_sci->getTickCount() - channel.fadeStartTick;
+		if (fadeElapsed > channel.fadeDuration) {
+			channel.fadeStartTick = 0;
 			if (channel.stopChannelOnFade) {
 				stop(channelIndex);
 				return true;
 			} else {
-				setVolume(channelIndex, channel.fadeVolume);
+				setVolume(channelIndex, channel.fadeTargetVolume);
 			}
-		} else {
-			int volume = channel.volume - (channel.volume - channel.fadeVolume) / (channel.fadeStepsRemaining + 1);
-
-			if (volume == channel.fadeVolume) {
-				channel.fadeStepsRemaining = 1;
-			}
-
-			setVolume(channelIndex, volume);
-			channel.lastFadeTick = now;
+			return false;
 		}
+
+		int volume;
+		if (channel.fadeStartVolume > channel.fadeTargetVolume) {
+			volume = channel.fadeStartVolume - fadeElapsed * (channel.fadeStartVolume - channel.fadeTargetVolume) / channel.fadeDuration;
+		} else {
+			volume = channel.fadeStartVolume + fadeElapsed * (channel.fadeTargetVolume - channel.fadeStartVolume) / channel.fadeDuration;
+		}
+
+		setVolume(channelIndex, volume);
+		return false;
 	}
 
 	return false;

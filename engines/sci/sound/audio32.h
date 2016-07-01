@@ -90,27 +90,25 @@ struct AudioChannel {
 	bool loop;
 
 	/**
-	 * The time the last fade iteration occurred.
+	 * The time, in ticks, that the channel fade began.
+	 * If 0, the channel is not being faded.
 	 */
-	uint32 lastFadeTick;
+	uint32 fadeStartTick;
 
 	/**
-	 * The target volume of the fade.
+	 * The start volume of a fade.
 	 */
-	int fadeVolume;
+	int fadeStartVolume;
 
 	/**
-	 * The number of ticks that should elapse between
-	 * each change of volume.
+	 * The total length of the fade, in ticks.
 	 */
-	int fadeSpeed;
+	uint32 fadeDuration;
 
 	/**
-	 * The number of iterations the fade should take to
-	 * complete. If this value is 0, it indicates that the
-	 * channel is not fading.
+	 * The end volume of a fade.
 	 */
-	int fadeStepsRemaining;
+	uint32 fadeTargetVolume;
 
 	/**
 	 * Whether or not the channel should be stopped and
