@@ -399,7 +399,7 @@ public:
 }; // @ CREATURE_REPLACEMENT_COLOR_SET
 
 extern Viewport gDefultViewPort;
-extern Viewport gDungeonViewport;
+extern Viewport g296_DungeonViewport;
 
 
 #define k0_DoorButton 0 // @ C0_DOOR_BUTTON
@@ -523,7 +523,7 @@ public:
 									   int16 xPos, int16 yPos, int16 destHeight, int16 height2, Viewport &viewport = gDefultViewPort); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
 	void blitBoxFilledWithMaskedBitmapToScreen(byte *src, byte *mask, byte *tmp, Box &box, int16 lastUnitIndex,
 											   int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
-											   int16 xPos, int16 yPos, int16 destHeight, int16 height2, Viewport &viewport = gDungeonViewport); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
+											   int16 xPos, int16 yPos, int16 destHeight, int16 height2, Viewport &viewport = g296_DungeonViewport); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
 
 	void flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height);
 	void flipBitmapVertical(byte *bitmap, uint16 width, uint16 height);

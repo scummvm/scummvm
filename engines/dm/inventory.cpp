@@ -96,9 +96,9 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	champion = &cm._champions[championIndex];
 	int16 w = dm.getWidth(k17_InventoryGraphicIndice);
 	int16 h = dm.getHeight(k17_InventoryGraphicIndice);
-	dm.blitToScreen(dm.getBitmap(k17_InventoryGraphicIndice), w, 0, 0, 0, w, 0, h, k255_ColorNoTransparency, gDungeonViewport);
+	dm.blitToScreen(dm.getBitmap(k17_InventoryGraphicIndice), w, 0, 0, 0, w, 0, h, k255_ColorNoTransparency, g296_DungeonViewport);
 	if (cm._candidateChampionOrdinal) {
-		dm.clearScreenBox(k12_ColorDarkestGray, gBoxFloppyZzzCross, gDungeonViewport);
+		dm.clearScreenBox(k12_ColorDarkestGray, gBoxFloppyZzzCross, g296_DungeonViewport);
 	}
 	_vm->_textMan->printToViewport(5, 116, k13_ColorLightestGray, "HEALTH");
 	_vm->_textMan->printToViewport(5, 124, k13_ColorLightestGray, "STAMINA");
@@ -175,7 +175,7 @@ void InventoryMan::drawPanelFoodWaterPoisoned() {
 
 void InventoryMan::drawPanelResurrectReincarnate() {
 	_panelContent = kPanelContentResurrectReincarnate;
-	_vm->_displayMan->blitToScreen(_vm->_displayMan->getBitmap(k40_PanelResurectReincaranteIndice), 144, 0, 0, gBoxPanel, k6_ColorDarkGreen, gDungeonViewport);
+	_vm->_displayMan->blitToScreen(_vm->_displayMan->getBitmap(k40_PanelResurectReincaranteIndice), 144, 0, 0, gBoxPanel, k6_ColorDarkGreen, g296_DungeonViewport);
 }
 
 void InventoryMan::drawPanel() {
@@ -258,7 +258,7 @@ void InventoryMan::drawPanelScroll(Scroll* scroll) {
 		charRed++;
 	}
 	*charRed = '\0';
-	dispMan.blitToScreen(dispMan.getBitmap(k23_PanelOpenScrollIndice), 144, 0, 0, gBoxPanel, k8_ColorRed, gDungeonViewport);
+	dispMan.blitToScreen(dispMan.getBitmap(k23_PanelOpenScrollIndice), 144, 0, 0, gBoxPanel, k8_ColorRed, g296_DungeonViewport);
 	int16 lineCount = 1;
 	charRed++;
 	char *charGreen = charRed; // first char of the second line
@@ -336,7 +336,7 @@ void InventoryMan::drawIconToViewport(IconIndice iconIndex, int16 xPos, int16 yP
 	box._x2 = (box._x1 = xPos) + 15 + 1;
 	box._y2 = (box._y1 = yPos) + 15 + 1;
 	_vm->_objectMan->extractIconFromBitmap(iconIndex, iconBitmap);
-	_vm->_displayMan->blitToScreen(iconBitmap, 16, 0, 0, box, k255_ColorNoTransparency, gDungeonViewport);
+	_vm->_displayMan->blitToScreen(iconBitmap, 16, 0, 0, box, k255_ColorNoTransparency, g296_DungeonViewport);
 }
 
 void InventoryMan::buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, char** attribStrings, char* destString, char* prefixString, char* suffixString) {
@@ -411,7 +411,7 @@ Box gBoxArrowOrEye = Box(83, 98, 57, 65); // @ G0033_s_Graphic562_Box_ArrowOrEye
 void InventoryMan::drawPanelArrowOrEye(bool pressingEye) {
 	DisplayMan &dispMan = *_vm->_displayMan;
 	dispMan.blitToScreen(dispMan.getBitmap(pressingEye ? k19_EyeForObjectDescriptionIndice : k18_ArrowForChestContentIndice),
-						 16, 0, 0, gBoxArrowOrEye, k8_ColorRed, gDungeonViewport);
+						 16, 0, 0, gBoxArrowOrEye, k8_ColorRed, g296_DungeonViewport);
 }
 
 
@@ -443,8 +443,8 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		openAndDrawChest(thingToDraw, (Container*)rawThingPtr, pressingEye);
 	} else {
 		IconIndice iconIndex = objMan.getIconIndex(thingToDraw);
-		dispMan.blitToScreen(dispMan.getBitmap(k20_PanelEmptyIndice), 144, 0, 0, gBoxPanel, k8_ColorRed, gDungeonViewport);
-		dispMan.blitToScreen(dispMan.getBitmap(k29_ObjectDescCircleIndice), 32, 0, 0, gBoxObjectDescCircle, k12_ColorDarkestGray, gDungeonViewport);
+		dispMan.blitToScreen(dispMan.getBitmap(k20_PanelEmptyIndice), 144, 0, 0, gBoxPanel, k8_ColorRed, g296_DungeonViewport);
+		dispMan.blitToScreen(dispMan.getBitmap(k29_ObjectDescCircleIndice), 32, 0, 0, gBoxObjectDescCircle, k12_ColorDarkestGray, g296_DungeonViewport);
 
 		char *descString = nullptr;
 		char str[40];

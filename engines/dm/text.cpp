@@ -70,7 +70,7 @@ void TextMan::printTextToScreen(uint16 destX, uint16 destY, Color textColor, Col
 }
 
 void TextMan::printToViewport(int16 posX, int16 posY, Color textColor, const char* text, Color bgColor) {
-	printTextToScreen(posX, posY, textColor, bgColor, text, gDungeonViewport);
+	printTextToScreen(posX, posY, textColor, bgColor, text, g296_DungeonViewport);
 }
 
 void TextMan::printWithTrailingSpaces(byte* destBitmap, int16 destPixelWidth, int16 destX, int16 destY, Color textColor,

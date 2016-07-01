@@ -253,7 +253,7 @@ void DMEngine::gameloop() {
 
 		if (!_inventoryMan->_inventoryChampionOrdinal && !_championMan->_partyIsSleeping) {
 			Box box(0, 224, 0, 126);
-			_displayMan->clearScreenBox(k0_ColorBlack, box, gDungeonViewport); // dummy code
+			_displayMan->clearScreenBox(k0_ColorBlack, box, g296_DungeonViewport); // dummy code
 			_displayMan->drawDungeon(_dungeonMan->_currMap._partyDir, _dungeonMan->_currMap._partyPosX, _dungeonMan->_currMap._partyPosY);
 		}
 		// DUMMY CODE: next line

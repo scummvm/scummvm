@@ -224,7 +224,7 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 	if (slotBoxIndex >= kSlotBoxInventoryFirstSlot) {
 		_vm->_displayMan->blitToScreen(iconsBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0,
-									   box, k255_ColorNoTransparency, gDungeonViewport);
+									   box, k255_ColorNoTransparency, g296_DungeonViewport);
 	} else {
 		_vm->_displayMan->blitToScreen(iconsBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0,
 									   box, k255_ColorNoTransparency, gDefultViewPort);

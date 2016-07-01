@@ -802,7 +802,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 			} else {
 				AL_2_nativeBitmapIndex = k33_SlotBoxNormalIndice;
 			}
-			dispMan.blitToScreen(dispMan.getBitmap(AL_2_nativeBitmapIndex), 32, 0, 0, gBoxMouth, k12_ColorDarkestGray, gDungeonViewport);
+			dispMan.blitToScreen(dispMan.getBitmap(AL_2_nativeBitmapIndex), 32, 0, 0, gBoxMouth, k12_ColorDarkestGray, g296_DungeonViewport);
 			AL_2_nativeBitmapIndex = k33_SlotBoxNormalIndice;
 			for (int16 AL_0_statisticIndex = kChampionStatStrength; AL_0_statisticIndex <= kChampionStatAntifire; AL_0_statisticIndex++) {
 				if (champ->getStatistic((ChampionStatisticType)AL_0_statisticIndex, kChampionStatCurrent)
@@ -811,7 +811,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 					break;
 				}
 			}
-			dispMan.blitToScreen(dispMan.getBitmap(AL_2_nativeBitmapIndex), 32, 0, 0, gBoxEye, k12_ColorDarkestGray, gDungeonViewport);
+			dispMan.blitToScreen(dispMan.getBitmap(AL_2_nativeBitmapIndex), 32, 0, 0, gBoxEye, k12_ColorDarkestGray, g296_DungeonViewport);
 			champAttributes |= kChampionAttributeViewport;
 		}
 	}
@@ -976,7 +976,7 @@ void ChampionMan::drawSlot(uint16 champIndex, ChampionSlot slotIndex) {
 	if (nativeBitmapIndex != -1) {
 		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 		_vm->_displayMan->blitToScreen(_vm->_displayMan->getBitmap(nativeBitmapIndex), 32, 0, 0,
-									   box, k12_ColorDarkestGray, isInventoryChamp ? gDungeonViewport : gDefultViewPort);
+									   box, k12_ColorDarkestGray, isInventoryChamp ? g296_DungeonViewport : gDefultViewPort);
 	}
 
 	_vm->_objectMan->drawIconInSlotBox(slotBoxIndex, iconIndex);
@@ -998,8 +998,8 @@ void ChampionMan::renameChampion(Champion* champ) {
 	box._x1 = 3;
 	box._x2 = box._x1 + 167;
 
-	dispMan.clearScreenBox(k12_ColorDarkestGray, box, gDungeonViewport);
-	dispMan.blitToScreen(dispMan.getBitmap(k27_PanelRenameChampionIndice), 144, 0, 0, gBoxPanel, k4_ColorCyan, gDungeonViewport);
+	dispMan.clearScreenBox(k12_ColorDarkestGray, box, g296_DungeonViewport);
+	dispMan.blitToScreen(dispMan.getBitmap(k27_PanelRenameChampionIndice), 144, 0, 0, gBoxPanel, k4_ColorCyan, g296_DungeonViewport);
 	textMan.printToViewport(177, 58, k13_ColorLightestGray, "_______");
 	textMan.printToViewport(105, 76, k13_ColorLightestGray, "___________________");
 	Common::Point clickPos;
