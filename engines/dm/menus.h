@@ -43,7 +43,7 @@ public:
 	ActionList() {
 		for (uint16 i = 0; i < 3; ++i) {
 			_minimumSkillLevel[i] = 0;
-			_actionIndices[i] = kChampionActionNone;
+			_actionIndices[i] = k255_ChampionActionNone;
 		}
 	}
 }; // @ ACTION_LIST

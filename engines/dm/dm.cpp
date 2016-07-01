@@ -170,10 +170,10 @@ void DMEngine::startGame() {
 	_stopPressingMouth = false;
 	_highlightBoxInversionRequested = false;
 	_eventMan->_highlightBoxEnabled = false;
-	_championMan->_partyIsSleeping = false;
-	_championMan->_actingChampionOrdinal = indexToOrdinal(kChampionNone);
+	_championMan->_g300_partyIsSleeping = false;
+	_championMan->_g506_actingChampionOrdinal = indexToOrdinal(kM1_ChampionNone);
 	_menuMan->_actionAreaContainsIcons = true;
-	_eventMan->_useChampionIconOrdinalAsMousePointerBitmap = indexToOrdinal(kChampionNone);
+	_eventMan->_useChampionIconOrdinalAsMousePointerBitmap = indexToOrdinal(kM1_ChampionNone);
 
 	_eventMan->_primaryMouseInput = gPrimaryMouseInput_Interface;
 	_eventMan->_secondaryMouseInput = gSecondaryMouseInput_Movement;
@@ -251,7 +251,7 @@ void DMEngine::gameloop() {
 		_eventMan->processCommandQueue();
 		//} while (!_stopWaitingForPlayerInput || !_gameTimeTicking);
 
-		if (!_inventoryMan->_inventoryChampionOrdinal && !_championMan->_partyIsSleeping) {
+		if (!_inventoryMan->_inventoryChampionOrdinal && !_championMan->_g300_partyIsSleeping) {
 			Box box(0, 224, 0, 126);
 			_displayMan->clearScreenBox(k0_ColorBlack, box, g296_DungeonViewport); // dummy code
 			_displayMan->drawDungeon(_dungeonMan->_currMap._partyDir, _dungeonMan->_currMap._partyPosX, _dungeonMan->_currMap._partyPosY);

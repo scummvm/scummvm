@@ -479,28 +479,28 @@ void EventManager::commandSetLeader(ChampionIndex champIndex) {
 	ChampionMan &cm = *_vm->_championMan;
 	ChampionIndex leaderIndex;
 
-	if ((cm._leaderIndex == champIndex) || ((champIndex != kChampionNone) && !cm._champions[champIndex]._currHealth))
+	if ((cm._g411_leaderIndex == champIndex) || ((champIndex != kM1_ChampionNone) && !cm._champions[champIndex]._currHealth))
 		return;
 
-	if (cm._leaderIndex != kChampionNone) {
-		leaderIndex = cm._leaderIndex;
-		cm._champions[leaderIndex].setAttributeFlag(kChampionAttributeLoad, true);
-		cm._champions[leaderIndex].setAttributeFlag(kChampionAttributeNameTitle, true);
-		cm._champions[leaderIndex]._load -= _vm->_dungeonMan->getObjectWeight(cm._leaderHandObject);
-		cm._leaderIndex = kChampionNone;
+	if (cm._g411_leaderIndex != kM1_ChampionNone) {
+		leaderIndex = cm._g411_leaderIndex;
+		cm._champions[leaderIndex].setAttributeFlag(k0x0200_ChampionAttributeLoad, true);
+		cm._champions[leaderIndex].setAttributeFlag(k0x0080_ChampionAttributeNameTitle, true);
+		cm._champions[leaderIndex]._load -= _vm->_dungeonMan->getObjectWeight(cm._414_leaderHandObject);
+		cm._g411_leaderIndex = kM1_ChampionNone;
 		cm.drawChampionState(leaderIndex);
 	}
-	if (champIndex == kChampionNone) {
-		cm._leaderIndex = kChampionNone;
+	if (champIndex == kM1_ChampionNone) {
+		cm._g411_leaderIndex = kM1_ChampionNone;
 		return;
 	}
-	cm._leaderIndex = champIndex;
-	Champion *champion = &cm._champions[cm._leaderIndex];
+	cm._g411_leaderIndex = champIndex;
+	Champion *champion = &cm._champions[cm._g411_leaderIndex];
 	champion->_dir = _vm->_dungeonMan->_currMap._partyDir;
-	cm._champions[champIndex]._load += _vm->_dungeonMan->getObjectWeight(cm._leaderHandObject);
-	if (_vm->indexToOrdinal(champIndex) != cm._candidateChampionOrdinal) {
-		champion->setAttributeFlag(kChampionAttributeIcon, true);
-		champion->setAttributeFlag(kChampionAttributeNameTitle, true);
+	cm._champions[champIndex]._load += _vm->_dungeonMan->getObjectWeight(cm._414_leaderHandObject);
+	if (_vm->indexToOrdinal(champIndex) != cm._g299_candidateChampionOrdinal) {
+		champion->setAttributeFlag(k0x0400_ChampionAttributeIcon, true);
+		champion->setAttributeFlag(k0x0080_ChampionAttributeNameTitle, true);
 		cm.drawChampionState(champIndex);
 	}
 }
@@ -521,10 +521,10 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 	CurrMapData &currMap = _vm->_dungeonMan->_currMap;
 
 	if (dunMan._squareAheadElement == kElementTypeDoorFront) {
-		if (champMan._leaderIndex == kChampionNone)
+		if (champMan._g411_leaderIndex == kM1_ChampionNone)
 			return;
 
-		if (champMan._leaderEmptyHanded) {
+		if (champMan._g415_leaderEmptyHanded) {
 			int16 mapX = currMap._partyPosX + _vm->_dirIntoStepCountEast[currMap._partyDir];
 			int16 mapY = currMap._partyPosY + _vm->_dirIntoStepCountNorth[currMap._partyDir];
 
@@ -540,7 +540,7 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 		}
 	}
 
-	if (champMan._leaderEmptyHanded) {
+	if (champMan._g415_leaderEmptyHanded) {
 		for (int16 viewCell = k0_ViewCellFronLeft; viewCell <= k5_ViewCellDoorButtonOrWallOrn; viewCell++) {
 			if (dunMan._dungeonViewClickableBoxes[viewCell].isPointInside(Common::Point(posX, posY - 33))) {
 				if (viewCell == k5_ViewCellDoorButtonOrWallOrn) {
@@ -554,7 +554,7 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 			}
 		}
 	} else {
-		Thing thing = champMan._leaderHandObject;
+		Thing thing = champMan._414_leaderHandObject;
 		uint16 *rawThingPointer = dunMan.getThingData(thing);
 		if (dunMan._squareAheadElement == kElementTypeWall) {
 			for (int16 viewCell = k0_ViewCellFronLeft; viewCell <= k1_ViewCellFrontRight; ++viewCell) {
@@ -571,15 +571,15 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 					if (dunMan._isFacingFountain) {
 						uint16 iconIndex = _vm->_objectMan->getIconIndex(thing);
 						int16 weight = dunMan.getObjectWeight(thing);
-						if ((iconIndex >= kIconIndiceJunkWater) && (iconIndex <= kIconIndiceJunkWaterSkin)) {
+						if ((iconIndex >= k8_IconIndiceJunkWater) && (iconIndex <= k9_IconIndiceJunkWaterSkin)) {
 							((Junk*)rawThingPointer)->setChargeCount(3);
-						} else if (iconIndex == kIconIndicePotionEmptyFlask) {
+						} else if (iconIndex == k195_IconIndicePotionEmptyFlask) {
 							((Potion*)rawThingPointer)->setType(kPotionTypeWaterFlask);
 						} else {
 							goto T0377019;
 						}
 						champMan.drawChangedObjectIcons();
-						champMan._champions[champMan._leaderIndex]._load += dunMan.getObjectWeight(thing) - weight;
+						champMan._champions[champMan._g411_leaderIndex]._load += dunMan.getObjectWeight(thing) - weight;
 					}
 T0377019:
 					commandProcessType80ClickInDungeonViewTouchFrontWall();
@@ -604,15 +604,15 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 	CurrMapData &currMap = _vm->_dungeonMan->_currMap;
 	DungeonMan &dunMan = *_vm->_dungeonMan;
 
-	uint16 championIndex = champMan._partyChampionCount - 1;
+	uint16 championIndex = champMan._g305_partyChampionCount - 1;
 	Champion *champ = &champMan._champions[championIndex];
 	if (commandType == kCommandClickInPanelCancel) {
-		invMan.toggleInventory(kChampionCloseInventory);
-		champMan._candidateChampionOrdinal = _vm->indexToOrdinal(kChampionNone);
-		if (champMan._partyChampionCount == 1) {
-			commandSetLeader(kChampionNone);
+		invMan.toggleInventory(k4_ChampionCloseInventory);
+		champMan._g299_candidateChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
+		if (champMan._g305_partyChampionCount == 1) {
+			commandSetLeader(kM1_ChampionNone);
 		}
-		champMan._partyChampionCount--;
+		champMan._g305_partyChampionCount--;
 		Box box;
 		box._y1 = 0;
 		box._y2 = 28 + 1;
@@ -620,17 +620,17 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 		box._x2 = box._x1 + 66 + 1;
 		dispMan._g578_useByteBoxCoordinates = false;
 		dispMan.clearScreenBox(k0_ColorBlack, box);
-		dispMan.clearScreenBox(k0_ColorBlack, gBoxChampionIcons[champMan.championIconIndex(champ->_cell, currMap._partyDir) * 2]);
+		dispMan.clearScreenBox(k0_ColorBlack, g54_BoxChampionIcons[champMan.championIconIndex(champ->_cell, currMap._partyDir) * 2]);
 		warning("F0457_START_DrawEnabledMenus_CPSF");
 		warning("F0078_MOUSE_ShowPointer");
 		return;
 	}
 
-	champMan._candidateChampionOrdinal = _vm->indexToOrdinal(kChampionNone);
+	champMan._g299_candidateChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
 	int16 mapX = currMap._partyPosX + _vm->_dirIntoStepCountEast[currMap._partyDir];
 	int16 mapY = currMap._partyPosY + _vm->_dirIntoStepCountNorth[currMap._partyDir];
 
-	for (uint16 slotIndex = kChampionSlotReadyHand; slotIndex < kChampionSlotChest_1; slotIndex++) {
+	for (uint16 slotIndex = k0_ChampionSlotReadyHand; slotIndex < k30_ChampionSlotChest_1; slotIndex++) {
 		Thing thing = champ->getSlot((ChampionSlot)slotIndex);
 		if (thing != Thing::_none) {
 			warning("MISSING CODE: F0164_DUNGEON_UnlinkThingFromList");
@@ -651,25 +651,25 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 
 		for (uint16 i = 0; i < 12; i++) {
 			uint16 statIndex = _vm->_rnd->getRandomNumber(7);
-			champ->getStatistic((ChampionStatisticType)statIndex, kChampionStatCurrent)++; // returns reference
-			champ->getStatistic((ChampionStatisticType)statIndex, kChampionStatMaximum)++; // returns reference
+			champ->getStatistic((ChampionStatisticType)statIndex, k1_ChampionStatCurrent)++; // returns reference
+			champ->getStatistic((ChampionStatisticType)statIndex, k0_ChampionStatMaximum)++; // returns reference
 		}
 	}
 
-	if (champMan._partyChampionCount == 1) {
+	if (champMan._g305_partyChampionCount == 1) {
 		warning("MISSING CODE: setting time, G0362_l_LastPartyMovementTime , G0313_ul_GameTime");
-		commandSetLeader(kChampionFirst);
-		_vm->_menuMan->setMagicCasterAndDrawSpellArea(kChampionFirst);
+		commandSetLeader(k0_ChampionFirst);
+		_vm->_menuMan->setMagicCasterAndDrawSpellArea(k0_ChampionFirst);
 	} else {
-		_vm->_menuMan->drawSpellAreaControls(champMan._magicCasterChampionIndex);
+		_vm->_menuMan->drawSpellAreaControls(champMan._g514_magicCasterChampionIndex);
 	}
 
 	warning("MISSING CODE: F0051_TEXT_MESSAGEAREA_PrintLineFeed");
-	Color champColor = gChampionColor[championIndex]; // unreferenced because of missing code
+	Color champColor = g46_ChampionColor[championIndex]; // unreferenced because of missing code
 	warning("MISSING CODE: F0047_TEXT_MESSAGEAREA_PrintMessage");
 	warning("MISSING CODE: F0047_TEXT_MESSAGEAREA_PrintMessage");
 
-	invMan.toggleInventory(kChampionCloseInventory);
+	invMan.toggleInventory(k4_ChampionCloseInventory);
 	warning("MISSING CODE: F0457_START_DrawEnabledMenus_CPSF");
 	warning("MISSING CODE: F0067_MOUSE_SetPointerToNormal");
 }
@@ -681,14 +681,14 @@ void EventManager::commandProcess81ClickInPanel(int16 x, int16 y) {
 	CommandType commandType;
 	switch (invMan._panelContent) {
 	case kPanelContentChest:
-		if (champMan._leaderIndex == kChampionNone) // if no leader
+		if (champMan._g411_leaderIndex == kM1_ChampionNone) // if no leader
 			return;
 		commandType = getCommandTypeFromMouseInput(gMouseInput_PanelChest, Common::Point(x, y), kLeftMouseButton);
 		if (commandType != kCommandNone)
 			warning("MISSING CODE: F0302_CHAMPION_ProcessCommands28To65_ClickOnSlotBox");
 		break;
 	case kPanelContentResurrectReincarnate:
-		if (!champMan._leaderEmptyHanded)
+		if (!champMan._g415_leaderEmptyHanded)
 			break;
 		commandType = getCommandTypeFromMouseInput(gMouseInput_PanelResurrectReincarnateCancel, Common::Point(x, y), kLeftMouseButton);
 		if (commandType != kCommandNone)

@@ -44,7 +44,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 
 
 	bool atLeastOneSensorWasTriggered = false;
-	Thing leaderHandObject = champMan._leaderHandObject;
+	Thing leaderHandObject = champMan._414_leaderHandObject;
 	int16 sensorCountToProcessPerCell[4];
 	uint16 cell;
 	for (cell = kCellNorthWest; cell < kCellSouthWest; ++cell) {
@@ -73,7 +73,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 			SensorType sensorType = sensor->getType();
 			if (sensorType == kSensorDisabled)
 				goto T0275058_ProceedToNextThing;
-			if ((champMan._leaderIndex == kChampionNone) && (sensorType != kSensorWallChampionPortrait))
+			if ((champMan._g411_leaderIndex == kM1_ChampionNone) && (sensorType != kSensorWallChampionPortrait))
 				goto T0275058_ProceedToNextThing;
 			if (cell != cellParam)
 				goto T0275058_ProceedToNextThing;
@@ -88,7 +88,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 				}
 				break;
 			case kSensorWallOrnClickWithAnyObj:
-				doNotTriggerSensor = (champMan._leaderEmptyHanded != sensor->getRevertEffectA());
+				doNotTriggerSensor = (champMan._g415_leaderEmptyHanded != sensor->getRevertEffectA());
 				break;
 			case kSensorWallOrnClickWithSpecObjRemovedSensor:
 			case kSensorWallOrnClickWithSpecObjRemovedRotateSensors:
@@ -111,13 +111,13 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 			case kSensorWallObjGeneratorRotateSensors:
 				if (sensorCountToProcessPerCell[cell])
 					goto T0275058_ProceedToNextThing;
-				doNotTriggerSensor = !champMan._leaderEmptyHanded;
+				doNotTriggerSensor = !champMan._g415_leaderEmptyHanded;
 				if (!doNotTriggerSensor) {
 					warning("MISSING CODE: F0270_SENSOR_TriggerLocalEffect");
 				}
 				break;
 			case kSensorWallSingleObjStorageRotateSensors:
-				if (champMan._leaderEmptyHanded) {
+				if (champMan._g415_leaderEmptyHanded) {
 					warning("MISSING CODE: F0273_SENSOR_GetObjectOfTypeInCell");
 					warning("MISSING CODE: F0164_DUNGEON_UnlinkThingFromList");
 					warning("MISSING CODE: F0297_CHAMPION_PutObjectInLeaderHand");
@@ -128,7 +128,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 					leaderHandObject = Thing::_none;
 				}
 				warning("MISSING CODE: F0270_SENSOR_TriggerLocalEffect");
-				if ((sensorEffect == kSensorEffHold) && !champMan._leaderEmptyHanded) {
+				if ((sensorEffect == kSensorEffHold) && !champMan._g415_leaderEmptyHanded) {
 					doNotTriggerSensor = true;
 				} else {
 					doNotTriggerSensor = false;
@@ -164,7 +164,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 				if (sensor->getAudibleA()) {
 					warning("MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
 				}
-				if (!champMan._leaderEmptyHanded &&
+				if (!champMan._g415_leaderEmptyHanded &&
 					((sensorType == kSensorWallOrnClickWithSpecObjRemoved) ||
 					(sensorType == kSensorWallOrnClickWithSpecObjRemovedRotateSensors) ||
 					 (sensorType == kSensorWallOrnClickWithSpecObjRemovedSensor))) {
@@ -174,7 +174,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 					leaderHandObject = Thing::_none;
 				} else {
 					warning("MISSING CODE: (leaderHandObject = F0167_DUNGEON_GetObjectForProjectileLauncherOrObjectGenerator(sensorData)");
-					if (champMan._leaderEmptyHanded && (sensorType == kSensorWallObjGeneratorRotateSensors) && (leaderHandObject != Thing::_none)) {
+					if (champMan._g415_leaderEmptyHanded && (sensorType == kSensorWallObjGeneratorRotateSensors) && (leaderHandObject != Thing::_none)) {
 						warning("MISSING CODE: F0297_CHAMPION_PutObjectInLeaderHand");
 					}
 				}

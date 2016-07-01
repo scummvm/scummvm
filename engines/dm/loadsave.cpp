@@ -44,8 +44,8 @@ LoadgameResponse LoadsaveMan::loadgame() {
 
 	if (newGame) {
 		_vm->_restartGameAllowed = false;
-		cm._partyChampionCount = 0;
-		cm._leaderHandObject = Thing::_none;
+		cm._g305_partyChampionCount = 0;
+		cm._414_leaderHandObject = Thing::_none;
 		_vm->_gameId = _vm->_rnd->getRandomNumber(65536) * _vm->_rnd->getRandomNumber(65536);
 	} else {
 		assert(false);
@@ -61,7 +61,7 @@ LoadgameResponse LoadsaveMan::loadgame() {
 		assert(false);
 		// MISSING CODE: load game
 	}
-	cm._partyDead = false;
+	cm._303_partyDead = false;
 	return kLoadgameSuccess;
 }
 

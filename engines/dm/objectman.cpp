@@ -123,7 +123,7 @@ void ObjectMan::loadObjectNames() {
 
 IconIndice ObjectMan::getObjectType(Thing thing) {
 	if (thing == Thing::_none)
-		return kIconIndiceNone;
+		return kM1_IconIndiceNone;
 
 	int16 objectInfoIndex = _vm->_dungeonMan->getObjectInfoIndex(thing);
 	if (objectInfoIndex != -1) {
@@ -137,41 +137,41 @@ byte gChargeCountToTorchType[16] = {0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3,
 IconIndice ObjectMan::getIconIndex(Thing thing) {
 	IconIndice iconIndex = getObjectType(thing);
 
-	if ((iconIndex != kIconIndiceNone) &&
-		(((iconIndex < kIconIndiceWeaponDagger) && (iconIndex >= kIconIndiceJunkCompassNorth)) || // < instead of <= is no error
-		((iconIndex >= kIconIndicePotionMaPotionMonPotion) && (iconIndex <= kIconIndicePotionWaterFlask)) ||
-		 (iconIndex == kIconIndicePotionEmptyFlask))
+	if ((iconIndex != kM1_IconIndiceNone) &&
+		(((iconIndex < k32_IconIndiceWeaponDagger) && (iconIndex >= k0_IconIndiceJunkCompassNorth)) || // < instead of <= is no error
+		((iconIndex >= k148_IconIndicePotionMaPotionMonPotion) && (iconIndex <= k163_IconIndicePotionWaterFlask)) ||
+		 (iconIndex == k195_IconIndicePotionEmptyFlask))
 		) {
 		uint16 *rawType = _vm->_dungeonMan->getThingData(thing);
 		switch (iconIndex) {
-		case kIconIndiceJunkCompassNorth:
+		case k0_IconIndiceJunkCompassNorth:
 			iconIndex = (IconIndice)(iconIndex + _vm->_dungeonMan->_currMap._partyDir);
 			break;
-		case kIconIndiceWeaponTorchUnlit: {
+		case k4_IconIndiceWeaponTorchUnlit: {
 			Weapon weapon(rawType);
 			if (weapon.isLit()) {
 				iconIndex = (IconIndice)(iconIndex + gChargeCountToTorchType[weapon.getChargeCount()]);
 			}
 			break;
 		}
-		case kIconIndiceScrollOpen:
+		case k30_IconIndiceScrollOpen:
 			if (Scroll(rawType).getClosed()) {
 				iconIndex = (IconIndice)(iconIndex + 1);
 			}
 			break;
-		case kIconIndiceJunkWater:
-		case kIconIndiceJunkIllumuletUnequipped:
-		case kIconIndiceJunkJewelSymalUnequipped:
+		case k8_IconIndiceJunkWater:
+		case k12_IconIndiceJunkIllumuletUnequipped:
+		case k10_IconIndiceJunkJewelSymalUnequipped:
 			if (Junk(rawType).getChargeCount()) {
 				iconIndex = (IconIndice)(iconIndex + 1);
 			}
 			break;
-		case kIconIndiceWeaponBoltBladeStormEmpty:
-		case kIconIndiceWeaponFlamittEmpty:
-		case kIconIndiceWeaponStormringEmpty:
-		case kIconIndiceWeaponFuryRaBladeEmpty:
-		case kIconIndiceWeaponEyeOfTimeEmpty:
-		case kIconIndiceWeaponStaffOfClawsEmpty:
+		case k23_IconIndiceWeaponBoltBladeStormEmpty:
+		case k14_IconIndiceWeaponFlamittEmpty:
+		case k18_IconIndiceWeaponStormringEmpty:
+		case k25_IconIndiceWeaponFuryRaBladeEmpty:
+		case k16_IconIndiceWeaponEyeOfTimeEmpty:
+		case k20_IconIndiceWeaponStaffOfClawsEmpty:
 			if (Weapon(rawType).getChargeCount()) {
 				iconIndex = (IconIndice)(iconIndex + 1);
 			}
@@ -201,7 +201,7 @@ void ObjectMan::extractIconFromBitmap(uint16 iconIndex, byte *destBitmap) {
 void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 	SlotBox *slotBox = &_slotBoxes[slotBoxIndex];
 	slotBox->_iconIndex = iconIndex; // yes, this modifies the global array
-	if (slotBox->_iconIndex == kIconIndiceNone) {
+	if (slotBox->_iconIndex == kM1_IconIndiceNone) {
 		return;
 	}
 
@@ -237,7 +237,7 @@ void ObjectMan::drawLeaderObjectName(Thing thing) {
 	IconIndice iconIndex = getIconIndex(thing);
 	char *objName;
 	char objectNameBuffer[16];
-	if (iconIndex == kIconIndiceJunkChampionBones) {
+	if (iconIndex == k147_IconIndiceJunkChampionBones) {
 		Junk *junk = (Junk*)_vm->_dungeonMan->getThingData(thing);
 		strcpy(objectNameBuffer, _vm->_championMan->_champions[junk->getChargeCount()]._name);
 		strcat(objectNameBuffer, _objectNames[iconIndex]);

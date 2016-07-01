@@ -68,11 +68,11 @@ void MenuMan::drawMovementArrows() {
 }
 void MenuMan::clearActingChampion() {
 	ChampionMan &cm = *_vm->_championMan;
-	if (cm._actingChampionOrdinal) {
-		cm._actingChampionOrdinal--;
-		cm._champions[cm._actingChampionOrdinal].setAttributeFlag(kChampionAttributeActionHand, true);
-		cm.drawChampionState((ChampionIndex)cm._actingChampionOrdinal);
-		cm._actingChampionOrdinal = _vm->indexToOrdinal(kChampionNone);
+	if (cm._g506_actingChampionOrdinal) {
+		cm._g506_actingChampionOrdinal--;
+		cm._champions[cm._g506_actingChampionOrdinal].setAttributeFlag(k0x8000_ChampionAttributeActionHand, true);
+		cm.drawChampionState((ChampionIndex)cm._g506_actingChampionOrdinal);
+		cm._g506_actingChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
 		_refreshActionArea = true;
 	}
 }
@@ -94,10 +94,10 @@ void MenuMan::drawActionIcon(ChampionIndex championIndex) {
 		return;
 	}
 	byte *bitmapIcon = dm._g74_tmpBitmap;
-	Thing thing = champion.getSlot(kChampionSlotActionHand);
+	Thing thing = champion.getSlot(k1_ChampionSlotActionHand);
 	IconIndice iconIndex;
 	if (thing == Thing::_none) {
-		iconIndex = kIconIndiceActionEmptyHand;
+		iconIndex = k201_IconIndiceActionEmptyHand;
 	} else if (gObjectInfo[_vm->_dungeonMan->getObjectInfoIndex(thing)]._actionSetIndex) {
 		iconIndex = _vm->_objectMan->getIconIndex(thing);
 	} else {
@@ -114,13 +114,13 @@ T0386006:
 	box2._y1 = 95;
 	box2._y2 = 110 + 1;
 	dm.blitToScreen(bitmapIcon, 16, 0, 0, box2._x1, box2._x2, box2._y1, box2._y2);
-	if (champion.getAttributes(kChampionAttributeDisableAction) || _vm->_championMan->_candidateChampionOrdinal || _vm->_championMan->_partyIsSleeping) {
+	if (champion.getAttributes(k0x0008_ChampionAttributeDisableAction) || _vm->_championMan->_g299_candidateChampionOrdinal || _vm->_championMan->_g300_partyIsSleeping) {
 		warning("MISSING CODE: F0136_VIDEO_ShadeScreenBox");
 	}
 }
 
 void MenuMan::drawDisabledMenu() {
-	if (!_vm->_championMan->_partyIsSleeping) {
+	if (!_vm->_championMan->_g300_partyIsSleeping) {
 		warning("MISSING CODE: F0363_COMMAND_HighlightBoxDisable");
 		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 		if (_vm->_inventoryMan->_inventoryChampionOrdinal) {
@@ -139,39 +139,39 @@ void MenuMan::drawDisabledMenu() {
 void MenuMan::refreshActionAreaAndSetChampDirMaxDamageReceived() {
 	ChampionMan &champMan = *_vm->_championMan;
 
-	if (!champMan._partyChampionCount)
+	if (!champMan._g305_partyChampionCount)
 		return;
 
 	Champion *champ = nullptr;
-	if (champMan._partyIsSleeping || champMan._candidateChampionOrdinal) {
-		if (champMan._actingChampionOrdinal) {
+	if (champMan._g300_partyIsSleeping || champMan._g299_candidateChampionOrdinal) {
+		if (champMan._g506_actingChampionOrdinal) {
 			clearActingChampion();
 			return;
 		}
-		if (!champMan._candidateChampionOrdinal)
+		if (!champMan._g299_candidateChampionOrdinal)
 			return;
 	} else {
 		champ = champMan._champions;
-		int16 champIndex = kChampionFirst;
+		int16 champIndex = k0_ChampionFirst;
 
 		do {
-			if ((champIndex != champMan._leaderIndex)
-				&& (_vm->indexToOrdinal(champIndex) != champMan._actingChampionOrdinal)
+			if ((champIndex != champMan._g411_leaderIndex)
+				&& (_vm->indexToOrdinal(champIndex) != champMan._g506_actingChampionOrdinal)
 				&& (champ->_maximumDamageReceived)
 				&& (champ->_dir != champ->_directionMaximumDamageReceived)) {
 
 				champ->_dir = (direction)champ->_directionMaximumDamageReceived;
-				champ->setAttributeFlag(kChampionAttributeIcon, true);
+				champ->setAttributeFlag(k0x0400_ChampionAttributeIcon, true);
 				champMan.drawChampionState((ChampionIndex)champIndex);
 			}
 			champ->_maximumDamageReceived = 0;
 			champ++;
 			champIndex++;
-		} while (champIndex < champMan._partyChampionCount);
+		} while (champIndex < champMan._g305_partyChampionCount);
 	}
 
 	if (_refreshActionArea) {
-		if (!champMan._actingChampionOrdinal) {
+		if (!champMan._g506_actingChampionOrdinal) {
 			if (_actionDamage) {
 				warning("MISSING CODE: F0385_MENUS_DrawActionDamage");
 				_actionDamage = 0;
@@ -181,8 +181,8 @@ void MenuMan::refreshActionAreaAndSetChampDirMaxDamageReceived() {
 			}
 		} else {
 			_actionAreaContainsIcons = false;
-			champ->setAttributeFlag(kChampionAttributeActionHand, true);
-			champMan.drawChampionState((ChampionIndex)_vm->ordinalToIndex(champMan._actingChampionOrdinal));
+			champ->setAttributeFlag(k0x8000_ChampionAttributeActionHand, true);
+			champMan.drawChampionState((ChampionIndex)_vm->ordinalToIndex(champMan._g506_actingChampionOrdinal));
 			warning("MISSING CODE: F0387_MENUS_DrawActionArea");
 		}
 	}
@@ -200,16 +200,16 @@ void MenuMan::drawActionArea() {
 	dispMan._g578_useByteBoxCoordinates = false;
 	dispMan.clearScreenBox(k0_ColorBlack, gBoxActionArea);
 	if (_actionAreaContainsIcons) {
-		for (uint16 champIndex = kChampionFirst; champIndex < champMan._partyChampionCount; ++champIndex)
+		for (uint16 champIndex = k0_ChampionFirst; champIndex < champMan._g305_partyChampionCount; ++champIndex)
 			drawActionIcon((ChampionIndex)champIndex);
-	} else if (champMan._actingChampionOrdinal) {
+	} else if (champMan._g506_actingChampionOrdinal) {
 		Box box = gBoxActionArea3ActionMenu;
-		if (_actionList._actionIndices[2] == kChampionActionNone)
+		if (_actionList._actionIndices[2] == k255_ChampionActionNone)
 			box = gBoxActionArea2ActionMenu;
-		if (_actionList._actionIndices[1] == kChampionActionNone)
+		if (_actionList._actionIndices[1] == k255_ChampionActionNone)
 			box = gBoxActionArea1ActionMenu;
 		dispMan.blitToScreen(dispMan.getBitmap(k10_MenuActionAreaIndice), 96, 0, 0, box, k255_ColorNoTransparency);
-		textMan.printWithTrailingSpacesToScreen(235, 83, k0_ColorBlack, k4_ColorCyan, champMan._champions[_vm->ordinalToIndex(champMan._actingChampionOrdinal)]._name,
+		textMan.printWithTrailingSpacesToScreen(235, 83, k0_ColorBlack, k4_ColorCyan, champMan._champions[_vm->ordinalToIndex(champMan._g506_actingChampionOrdinal)]._name,
 												kChampionNameMaximumLength);
 		for (uint16 actionListIndex = 0; actionListIndex < 3; actionListIndex++) {
 			textMan.printWithTrailingSpacesToScreen(241, 93 + actionListIndex * 12, k4_ColorCyan, k0_ColorBlack,
@@ -232,7 +232,7 @@ const char *gChampionActionNames[44] = {
 	"BRANDISH", "THROW", "FUSE"};
 
 const char* MenuMan::getActionName(ChampionAction actionIndex) {
-	return (actionIndex == kChampionActionNone) ? "" : gChampionActionNames[actionIndex];
+	return (actionIndex == k255_ChampionActionNone) ? "" : gChampionActionNames[actionIndex];
 }
 
 
@@ -249,9 +249,9 @@ void MenuMan::drawSpellAreaControls(ChampionIndex champIndex) {
 		champCurrHealth[i] = champMan._champions[i]._currHealth;
 	warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
 	dispMan.clearScreenBox(k0_ColorBlack, gBoxSpellAreaControls);
-	int16 champCount = champMan._partyChampionCount;
+	int16 champCount = champMan._g305_partyChampionCount;
 	switch (champIndex) {
-	case kChampionFirst:
+	case k0_ChampionFirst:
 		warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
 		textMan.printTextToScreen(235, 48, k0_ColorBlack, k4_ColorCyan, champ._name);
 		if (champCount) {
@@ -272,14 +272,14 @@ labelChamp3:
 			}
 		}
 		break;
-	case kChampionSecond:
+	case k1_ChampionSecond:
 		if (champCurrHealth[0]) {
 			warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
 		}
 		warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
 		textMan.printTextToScreen(249, 48, k0_ColorBlack, k4_ColorCyan, champ._name);
 		goto labelChamp2;
-	case kChampionThird:
+	case k2_ChampionThird:
 		if (champCurrHealth[0]) {
 			warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
 		}
@@ -289,7 +289,7 @@ labelChamp3:
 		warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
 		textMan.printTextToScreen(263, 48, k0_ColorBlack, k4_ColorCyan, champ._name);
 		goto labelChamp3;
-	case kChampionFourth:
+	case k3_ChampionFourth:
 		if (champCurrHealth[0]) {
 			warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
 		}
@@ -312,7 +312,7 @@ labelChamp3:
 void MenuMan::buildSpellAreaLine(int16 spellAreaBitmapLine) {
 	DisplayMan &dispMan = *_vm->_displayMan;
 
-	Champion &champ = _vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex];
+	Champion &champ = _vm->_championMan->_champions[_vm->_championMan->_g514_magicCasterChampionIndex];
 	if (spellAreaBitmapLine == kSpellAreaAvailableSymbols) {
 		dispMan._g578_useByteBoxCoordinates = false;
 		dispMan.blitToBitmap(dispMan.getBitmap(k11_MenuSpellAreLinesIndice), 96, 0, 12, _bitmapSpellAreaLine, 96, gBoxSpellAreaLine, k255_ColorNoTransparency);
@@ -340,16 +340,16 @@ void MenuMan::setMagicCasterAndDrawSpellArea(int16 champIndex) {
 	ChampionMan &champMan = *_vm->_championMan;
 	DisplayMan &dispMan = *_vm->_displayMan;
 
-	if ((champIndex == champMan._magicCasterChampionIndex)
-		|| ((champIndex != kChampionNone) && !champMan._champions[champIndex]._currHealth))
+	if ((champIndex == champMan._g514_magicCasterChampionIndex)
+		|| ((champIndex != kM1_ChampionNone) && !champMan._champions[champIndex]._currHealth))
 		return;
-	if (champMan._magicCasterChampionIndex == kChampionNone) {
+	if (champMan._g514_magicCasterChampionIndex == kM1_ChampionNone) {
 		warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
 		dispMan.blitToScreen(dispMan.getBitmap(k9_MenuSpellAreaBackground), 96, 0, 0, gBoxSpellArea);
 		warning("MISSING CODE: F0078_MOUSE_ShowPointer");
 	}
-	if (champIndex == kChampionNone) {
-		champMan._magicCasterChampionIndex = kChampionNone;
+	if (champIndex == kM1_ChampionNone) {
+		champMan._g514_magicCasterChampionIndex = kM1_ChampionNone;
 		warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
 		dispMan._g578_useByteBoxCoordinates = false;
 		dispMan.clearScreenBox(k0_ColorBlack, gBoxSpellArea);
@@ -357,7 +357,7 @@ void MenuMan::setMagicCasterAndDrawSpellArea(int16 champIndex) {
 		return;
 	}
 
-	champMan._magicCasterChampionIndex = (ChampionIndex)champIndex;
+	champMan._g514_magicCasterChampionIndex = (ChampionIndex)champIndex;
 	buildSpellAreaLine(kSpellAreaAvailableSymbols);
 	warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
 	drawSpellAreaControls((ChampionIndex)champIndex);

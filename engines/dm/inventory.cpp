@@ -55,29 +55,29 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	EventManager &em = *_vm->_eventMan;
 	DisplayMan &dm = *_vm->_displayMan;
 
-	if ((championIndex != kChampionCloseInventory) && !cm._champions[championIndex]._currHealth)
+	if ((championIndex != k4_ChampionCloseInventory) && !cm._champions[championIndex]._currHealth)
 		return;
 	if (_vm->_pressingEye || _vm->_pressingMouth)
 		return;
 	_vm->_stopWaitingForPlayerInput = true;
 	int16 invChampOrdinal = _inventoryChampionOrdinal; // copy, as the original will be edited
 	if (_vm->indexToOrdinal(championIndex) == invChampOrdinal) {
-		championIndex = kChampionCloseInventory;
+		championIndex = k4_ChampionCloseInventory;
 	}
 
 	Champion *champion;
 	if (invChampOrdinal) {
-		_inventoryChampionOrdinal = _vm->indexToOrdinal(kChampionNone);
+		_inventoryChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
 		closeChest();
 		champion = &cm._champions[_vm->ordinalToIndex(invChampOrdinal)];
-		if (champion->_currHealth && !cm._candidateChampionOrdinal) {
-			champion->setAttributeFlag(kChampionAttributeStatusBox, true);
+		if (champion->_currHealth && !cm._g299_candidateChampionOrdinal) {
+			champion->setAttributeFlag(k0x1000_ChampionAttributeStatusBox, true);
 			cm.drawChampionState((ChampionIndex)_vm->ordinalToIndex(invChampOrdinal));
 		}
-		if (cm._partyIsSleeping) {
+		if (cm._g300_partyIsSleeping) {
 			return;
 		}
-		if (championIndex == kChampionCloseInventory) {
+		if (championIndex == k4_ChampionCloseInventory) {
 			em._refreshMousePointerInMainLoop = true;
 			_vm->_menuMan->drawMovementArrows();
 			em._secondaryMouseInput = gSecondaryMouseInput_Movement;
@@ -97,23 +97,23 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	int16 w = dm.getWidth(k17_InventoryGraphicIndice);
 	int16 h = dm.getHeight(k17_InventoryGraphicIndice);
 	dm.blitToScreen(dm.getBitmap(k17_InventoryGraphicIndice), w, 0, 0, 0, w, 0, h, k255_ColorNoTransparency, g296_DungeonViewport);
-	if (cm._candidateChampionOrdinal) {
+	if (cm._g299_candidateChampionOrdinal) {
 		dm.clearScreenBox(k12_ColorDarkestGray, gBoxFloppyZzzCross, g296_DungeonViewport);
 	}
 	_vm->_textMan->printToViewport(5, 116, k13_ColorLightestGray, "HEALTH");
 	_vm->_textMan->printToViewport(5, 124, k13_ColorLightestGray, "STAMINA");
 	_vm->_textMan->printToViewport(5, 132, k13_ColorLightestGray, "MANA");
 
-	for (uint16 slotIndex = kChampionSlotReadyHand; slotIndex < kChampionSlotChest_1; slotIndex++) {
+	for (uint16 slotIndex = k0_ChampionSlotReadyHand; slotIndex < k30_ChampionSlotChest_1; slotIndex++) {
 		_vm->_championMan->drawSlot(championIndex, (ChampionSlot)slotIndex);
 	}
 
-	champion->setAttributeFlag(kChampionAttributeViewport, true);
-	champion->setAttributeFlag(kChampionAttributeStatusBox, true);
-	champion->setAttributeFlag(kChampionAttributePanel, true);
-	champion->setAttributeFlag(kChampionAttributeLoad, true);
-	champion->setAttributeFlag(kChampionAttributeStatistics, true);
-	champion->setAttributeFlag(kChampionAttributeNameTitle, true);
+	champion->setAttributeFlag(k0x4000_ChampionAttributeViewport, true);
+	champion->setAttributeFlag(k0x1000_ChampionAttributeStatusBox, true);
+	champion->setAttributeFlag(k0x0800_ChampionAttributePanel, true);
+	champion->setAttributeFlag(k0x0200_ChampionAttributeLoad, true);
+	champion->setAttributeFlag(k0x0100_ChampionAttributeStatistics, true);
+	champion->setAttributeFlag(k0x0080_ChampionAttributeNameTitle, true);
 
 	cm.drawChampionState(championIndex);
 	em._mousePointerBitmapUpdated = true;
@@ -183,12 +183,12 @@ void InventoryMan::drawPanel() {
 	closeChest(); // possibility of BUG0_48
 
 	ChampionMan &cm = *_vm->_championMan;
-	if (cm._candidateChampionOrdinal) {
+	if (cm._g299_candidateChampionOrdinal) {
 		drawPanelResurrectReincarnate();
 		return;
 	}
 
-	Thing thing = cm._champions[_vm->ordinalToIndex(_inventoryChampionOrdinal)].getSlot(kChampionSlotActionHand);
+	Thing thing = cm._champions[_vm->ordinalToIndex(_inventoryChampionOrdinal)].getSlot(k1_ChampionSlotActionHand);
 
 	_panelContent = kPanelContentFoodWaterPoisoned;
 	switch (thing.getType()) {
@@ -308,7 +308,7 @@ void InventoryMan::openAndDrawChest(Thing thingToOpen, Container* chest, bool is
 
 	_openChest = thingToOpen;
 	if (!isPressingEye) {
-		objMan.drawIconInSlotBox(kSlotBoxInventoryActionHand, kIconIndiceContainerChestOpen);
+		objMan.drawIconInSlotBox(kSlotBoxInventoryActionHand, k145_IconIndiceContainerChestOpen);
 	}
 	dispMan.blitToScreen(dispMan.getBitmap(k25_PanelOpenChestIndice), 144, 0, 0, gBoxPanel, k8_ColorRed);
 
@@ -325,7 +325,7 @@ void InventoryMan::openAndDrawChest(Thing thingToOpen, Container* chest, bool is
 		thing = _vm->_dungeonMan->getNextThing(thing);
 	}
 	while (chestSlotIndex < 8) {
-		objMan.drawIconInSlotBox(chestSlotIndex + kSlotBoxChestFirstSlot, kIconIndiceNone);
+		objMan.drawIconInSlotBox(chestSlotIndex + kSlotBoxChestFirstSlot, kM1_IconIndiceNone);
 		_chestSlots[chestSlotIndex++] = Thing::_none;
 	}
 }
@@ -448,15 +448,15 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 
 		char *descString = nullptr;
 		char str[40];
-		if (iconIndex == kIconIndiceJunkChampionBones) {
+		if (iconIndex == k147_IconIndiceJunkChampionBones) {
 			strcpy(str, champMan._champions[((Junk*)rawThingPtr)->getChargeCount()]._name);  // TODO: localization
 			strcat(str, " "); // TODO: localization
 			strcat(str, objMan._objectNames[iconIndex]);  // TODO: localization
 
 			descString = str;
 		} else if ((thingType == kPotionThingType)
-				   && (iconIndex != kIconIndicePotionWaterFlask)
-				   && (champMan.getSkillLevel((ChampionIndex)_vm->ordinalToIndex(_inventoryChampionOrdinal), kChampionSkillPriest) > 1)) {
+				   && (iconIndex != k163_IconIndicePotionWaterFlask)
+				   && (champMan.getSkillLevel((ChampionIndex)_vm->ordinalToIndex(_inventoryChampionOrdinal), k2_ChampionSkillPriest) > 1)) {
 			str[0] = '_' + ((Potion*)rawThingPtr)->getPower() / 40;
 			str[1] = ' ';
 			str[2] = '\0';
@@ -480,8 +480,8 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			potentialAttribMask = kDescriptionMaskCursed | kDescriptionMaskPoisoned | kDescriptionMaskBroken;
 			Weapon *weapon = (Weapon*)rawThingPtr;
 			actualAttribMask = (weapon->getCursed() << 3) | (weapon->getPoisoned() << 1) | (weapon->getBroken() << 2);
-			if ((iconIndex >= kIconIndiceWeaponTorchUnlit)
-				&& (iconIndex <= kIconIndiceWeaponTorchLit)
+			if ((iconIndex >= k4_IconIndiceWeaponTorchUnlit)
+				&& (iconIndex <= k7_IconIndiceWeaponTorchLit)
 				&& (weapon->getChargeCount() == 0)) {
 				drawPanelObjectDescriptionString("(BURNT OUT)"); // TODO: localization
 			}
@@ -501,7 +501,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		}
 		case kJunkThingType: {
 			Junk *junk = (Junk*)rawThingPtr;
-			if ((iconIndex >= kIconIndiceJunkWater) && (iconIndex <= kIconIndiceJunkWaterSkin)) {
+			if ((iconIndex >= k8_IconIndiceJunkWater) && (iconIndex <= k9_IconIndiceJunkWaterSkin)) {
 				potentialAttribMask = 0;
 				switch (junk->getChargeCount()) {
 				case 0:
@@ -518,7 +518,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 					break;
 				}
 				drawPanelObjectDescriptionString(descString);
-			} else if ((iconIndex >= kIconIndiceJunkCompassNorth) && (iconIndex <= kIconIndiceJunkCompassWest)) {
+			} else if ((iconIndex >= k0_IconIndiceJunkCompassNorth) && (iconIndex <= k3_IconIndiceJunkCompassWest)) {
 				potentialAttribMask = 0;
 				strcpy(str, "PARTY FACING "); // TODO: localization
 				static char* directionName[4] = {"NORTH", "EAST", "SOUTH", "WEST"}; // G0430_apc_DirectionNames // TODO: localization
