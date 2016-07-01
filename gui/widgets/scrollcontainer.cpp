@@ -135,7 +135,7 @@ void ScrollContainerWidget::reflowLayout() {
 }
 
 void ScrollContainerWidget::drawWidget() {
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x + _w, _y + getHeight() - 1), ThemeEngine::kDialogBackgroundDefault);
+	g_gui.theme()->drawDialogBackgroundClip(Common::Rect(_x, _y, _x + _w, _y + getHeight() - 1), getBossClipRect(), ThemeEngine::kDialogBackgroundDefault);
 }
 
 Widget *ScrollContainerWidget::findWidget(int x, int y) {

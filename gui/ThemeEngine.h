@@ -340,30 +340,33 @@ public:
 
 	void drawWidgetBackground(const Common::Rect &r, uint16 hints,
 	                          WidgetBackground background = kWidgetBackgroundPlain, WidgetStateInfo state = kStateEnabled);
-
 	void drawWidgetBackgroundClip(const Common::Rect &r, const Common::Rect &clippingArea, uint16 hints,
 								WidgetBackground background = kWidgetBackgroundPlain, WidgetStateInfo state = kStateEnabled);
 
 	void drawButton(const Common::Rect &r, const Common::String &str,
 	                WidgetStateInfo state = kStateEnabled, uint16 hints = 0);
-
 	void drawButtonClip(const Common::Rect &r, const Common::Rect &clippingRect, const Common::String &str,
 		WidgetStateInfo state = kStateEnabled, uint16 hints = 0);
 
 	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface,
 	                 WidgetStateInfo state = kStateEnabled, int alpha = 255, bool themeTrans = false);
-
 	void drawSurfaceClip(const Common::Rect &r, const Common::Rect &clippingRect, const Graphics::Surface &surface,
 		WidgetStateInfo state = kStateEnabled, int alpha = 255, bool themeTrans = false);
 
 	void drawSlider(const Common::Rect &r, int width,
 	                WidgetStateInfo state = kStateEnabled);
+	void drawSliderClip(const Common::Rect &r, const Common::Rect &clippingRect, int width,
+					WidgetStateInfo state = kStateEnabled);
 
 	void drawCheckbox(const Common::Rect &r, const Common::String &str,
 	                  bool checked, WidgetStateInfo state = kStateEnabled);
+	void drawCheckboxClip(const Common::Rect &r, const Common::Rect &clippingRect, const Common::String &str,
+					  bool checked, WidgetStateInfo state = kStateEnabled);
 
 	void drawRadiobutton(const Common::Rect &r, const Common::String &str,
 	                     bool checked, WidgetStateInfo state = kStateEnabled);
+	void drawRadiobuttonClip(const Common::Rect &r, const Common::Rect &clippingRect, const Common::String &str,
+						 bool checked, WidgetStateInfo state = kStateEnabled);
 
 	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth,
 	             const Common::Array<Common::String> &tabs, int active, uint16 hints,
@@ -384,20 +387,20 @@ public:
 
 	void drawCaret(const Common::Rect &r, bool erase,
 	               WidgetStateInfo state = kStateEnabled);
-
 	void drawCaretClip(const Common::Rect &r, const Common::Rect &clip, bool erase,
 		WidgetStateInfo state = kStateEnabled);
 
 	void drawLineSeparator(const Common::Rect &r, WidgetStateInfo state = kStateEnabled);
+	void drawLineSeparatorClip(const Common::Rect &r, const Common::Rect &clippingArea, WidgetStateInfo state = kStateEnabled);
 
 	void drawDialogBackground(const Common::Rect &r, DialogBackground type, WidgetStateInfo state = kStateEnabled);
 	void drawDialogBackgroundClip(const Common::Rect &r, const Common::Rect &clip, DialogBackground type, WidgetStateInfo state = kStateEnabled);
 
 	void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, Graphics::TextAlign align = Graphics::kTextAlignCenter, TextInversionState inverted = kTextInversionNone, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold, FontColor color = kFontColorNormal, bool restore = true, const Common::Rect &drawableTextArea = Common::Rect(0, 0, 0, 0));
-
 	void drawTextClip(const Common::Rect &r, const Common::Rect &clippingArea, const Common::String &str, WidgetStateInfo state = kStateEnabled, Graphics::TextAlign align = Graphics::kTextAlignCenter, TextInversionState inverted = kTextInversionNone, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold, FontColor color = kFontColorNormal, bool restore = true, const Common::Rect &drawableTextArea = Common::Rect(0, 0, 0, 0));
 
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state = kStateEnabled, FontColor color = kFontColorNormal);
+	void drawCharClip(const Common::Rect &r, const Common::Rect &clippingArea, byte ch, const Graphics::Font *font, WidgetStateInfo state = kStateEnabled, FontColor color = kFontColorNormal);
 
 	//@}
 

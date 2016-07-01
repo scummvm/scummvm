@@ -1067,6 +1067,13 @@ void ThemeEngine::drawLineSeparator(const Common::Rect &r, WidgetStateInfo state
 	queueDD(kDDSeparator, r);
 }
 
+void ThemeEngine::drawLineSeparatorClip(const Common::Rect &r, const Common::Rect &clippingRect, WidgetStateInfo state) {
+	if (!ready())
+		return;
+
+	queueDDClip(kDDSeparator, r, clippingRect);
+}
+
 void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state) {
 	if (!ready())
 		return;
@@ -1091,6 +1098,32 @@ void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str,
 	r2.right = r.right;
 
 	queueDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, _widgets[kDDCheckboxDefault]->_textAlignH, _widgets[dd]->_textAlignV);
+}
+
+void ThemeEngine::drawCheckboxClip(const Common::Rect &r, const Common::Rect &clip, const Common::String &str, bool checked, WidgetStateInfo state) {
+	if (!ready())
+		return;
+
+	Common::Rect r2 = r;
+	DrawData dd = kDDCheckboxDefault;
+
+	if (checked)
+		dd = kDDCheckboxSelected;
+
+	if (state == kStateDisabled)
+		dd = kDDCheckboxDisabled;
+
+	const int checkBoxSize = MIN((int)r.height(), getFontHeight());
+
+	r2.bottom = r2.top + checkBoxSize;
+	r2.right = r2.left + checkBoxSize;
+
+	queueDDClip(dd, r2, clip);
+
+	r2.left = r2.right + checkBoxSize;
+	r2.right = r.right;
+
+	queueDDTextClip(getTextData(dd), getTextColor(dd), r2, clip, str, true, false, _widgets[kDDCheckboxDefault]->_textAlignH, _widgets[dd]->_textAlignV);
 }
 
 void ThemeEngine::drawRadiobutton(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state) {
@@ -1119,6 +1152,32 @@ void ThemeEngine::drawRadiobutton(const Common::Rect &r, const Common::String &s
 	queueDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, _widgets[kDDRadiobuttonDefault]->_textAlignH, _widgets[dd]->_textAlignV);
 }
 
+void ThemeEngine::drawRadiobuttonClip(const Common::Rect &r, const Common::Rect &clippingRect, const Common::String &str, bool checked, WidgetStateInfo state) {
+	if (!ready())
+		return;
+
+	Common::Rect r2 = r;
+	DrawData dd = kDDRadiobuttonDefault;
+
+	if (checked)
+		dd = kDDRadiobuttonSelected;
+
+	if (state == kStateDisabled)
+		dd = kDDRadiobuttonDisabled;
+
+	const int checkBoxSize = MIN((int)r.height(), getFontHeight());
+
+	r2.bottom = r2.top + checkBoxSize;
+	r2.right = r2.left + checkBoxSize;
+
+	queueDDClip(dd, r2, clippingRect);
+
+	r2.left = r2.right + checkBoxSize;
+	r2.right = r.right;
+
+	queueDDTextClip(getTextData(dd), getTextColor(dd), r2, clippingRect, str, true, false, _widgets[kDDRadiobuttonDefault]->_textAlignH, _widgets[dd]->_textAlignV);
+}
+
 void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state) {
 	if (!ready())
 		return;
@@ -1137,6 +1196,26 @@ void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo s
 	drawWidgetBackground(r, 0, kWidgetBackgroundSlider, kStateEnabled);
 
 	queueDD(dd, r2);
+}
+
+void ThemeEngine::drawSliderClip(const Common::Rect &r, const Common::Rect &clip, int width, WidgetStateInfo state) {
+	if (!ready())
+		return;
+
+	DrawData dd = kDDSliderFull;
+
+	if (state == kStateHighlight)
+		dd = kDDSliderHover;
+	else if (state == kStateDisabled)
+		dd = kDDSliderDisabled;
+
+	Common::Rect r2 = r;
+	r2.setWidth(MIN((int16)width, r.width()));
+	//	r2.top++; r2.bottom--; r2.left++; r2.right--;
+
+	drawWidgetBackgroundClip(r, clip, 0, kWidgetBackgroundSlider, kStateEnabled);
+
+	queueDDClip(dd, r2, clip);
 }
 
 void ThemeEngine::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState scrollState, WidgetStateInfo state) {
@@ -1574,6 +1653,21 @@ void ThemeEngine::drawChar(const Common::Rect &r, byte ch, const Graphics::Font 
 
 	Common::Rect charArea = r;
 	charArea.clip(_screen.w, _screen.h);
+
+	uint32 rgbColor = _overlayFormat.RGBToColor(_textColors[color]->r, _textColors[color]->g, _textColors[color]->b);
+
+	restoreBackground(charArea);
+	font->drawChar(&_screen, ch, charArea.left, charArea.top, rgbColor);
+	addDirtyRect(charArea);
+}
+
+void ThemeEngine::drawCharClip(const Common::Rect &r, const Common::Rect &clip, byte ch, const Graphics::Font *font, WidgetStateInfo state, FontColor color) {
+	if (!ready())
+		return;
+
+	Common::Rect charArea = r;
+	charArea.clip(_screen.w, _screen.h);
+	if (!clip.isEmpty()) charArea.clip(clip);
 
 	uint32 rgbColor = _overlayFormat.RGBToColor(_textColors[color]->r, _textColors[color]->g, _textColors[color]->b);
 
