@@ -33,6 +33,8 @@
 
 #include "gfx.h"
 #include "dungeonman.h"
+#include "group.h"
+#include "timeline.h"
 
 
 namespace DM {
@@ -988,7 +990,7 @@ void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcHeight
 
 void DisplayMan::blitBoxFilledWithMaskedBitmapToScreen(byte* src, byte* mask, byte* tmp, Box& box,
 													   int16 lastUnitIndex, int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
-													   int16 xPos, int16 yPos, int16 height2, Viewport& viewport) {
+													   int16 xPos, int16 yPos, int16 destHeight, int16 height2, Viewport& viewport) {
 	blitBoxFilledWithMaskedBitmap(src, _vgaBuffer, mask, tmp, box, lastUnitIndex, firstUnitIndex, _screenWidth, transparent, xPos, yPos, _screenHeight, height2, viewport);
 }
 
@@ -1959,12 +1961,852 @@ int16 gCenteredExplosionCoordinates[15][2] = { // @ G0225_aai_Graphic558_Centere
 	{-53, 60},   /* D0L */
 	{276, 60}}; /* D0R */
 
-void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, direction directionParam, int16 mapXpos,
+#define kBlitDoNotUseMask 0x0080 // @ MASK0x0080_DO_NOT_USE_MASK
+
+void DisplayMan::cthulhu(Thing thingParam, direction directionParam, int16 mapXpos,
 														   int16 mapYpos, int16 viewSquareIndex, uint16 orderedViewCellOrdinals) {
 
+	DungeonMan &dunMan = *_vm->_dungeonMan;
+
+	// AL_0 shared
+	uint16 &AL_0_creatureIndexRed = *(uint16*)&thingParam;
+	uint16 &AL_0_creatureGraphicInfoRed = *(uint16*)&thingParam;
+	uint16 &AL_0_creaturePosX = *(uint16*)&thingParam;
+	// AL_1 shared
+	int16 &AL_1_viewSquareExplosionIndex = viewSquareIndex;
+	// AL_2 shared
+	int16 L0126_i_Multiple;
+	int16 &AL_2_viewCell = L0126_i_Multiple;
+	int16 &AL_2_cellPurpleMan = L0126_i_Multiple;
+	int16 &AL_2_explosionSize = L0126_i_Multiple;
+	// AL_4 shared
+	int16 L0127_i_Multiple;
+	int16 &AL_4_thingType = L0127_i_Multiple;
+	int16 &AL_4_nativeBitmapIndex = L0127_i_Multiple;
+	int16 &AL_4_xPos = L0127_i_Multiple;
+	int16 &AL_4_groupCells = L0127_i_Multiple;
+	int16 &AL_4_normalizdByteWidth = L0127_i_Multiple;
+	int16 &AL_4_yPos = L0127_i_Multiple;
+	int16 &AL_4_projectileAspect = L0127_i_Multiple;
+	int16 &AL_4_explosionType = L0127_i_Multiple;
+	int16 &AL_4_explosionAspectIndex = L0127_i_Multiple;
+	// AL_6 shared
+	byte *L0128_puc_Multiple;
+	byte *&AL_6_bitmapRedBanana = L0128_puc_Multiple;
+
+	ObjectAspect *objectAspect;
+	uint32 remainingViewCellOrdinalsToProcess;
+	byte* paletteChanges;
+	byte* bitmapGreenAnt;
+	byte* coordinateSet;
+	int16 derivedBitmapIndex;
+
+	int16 byteWidth;
+	int16 heightRedEagle;
+	int16 viewLane; /* The lane (center/left/right) that the specified square is part of */
+	int16 cellYellowBear;
+	int16 paddingPixelCount;
+	int16 heightGreenGoat;
+	bool useAlcoveObjectImage; /* C1_TRUE for objects that have a special graphic when drawn in an alcove, like the Chest */
+	bool flipHorizontal;
+	bool drawingGrabbableObject;
+	Box boxByteGreen;
+	Thing firstThingToDraw; /* Initialized to thingParam and never changed afterwards. Used as a backup of the specified first object to draw */
+
+	int16 cellCounter;
+	uint16 objectShiftIndex;
+
+	uint16 L0150_ui_Multiple;
+	uint16 &AL_8_shiftSetIndex = L0150_ui_Multiple;
+	uint16 &AL_8_projectileScaleIndex = L0150_ui_Multiple;
+
+	Thing groupThing;
+	Group* group;
+	ActiveGroup* activeGroup;
+	CreatureInfo* creatureInfo;
+	CreatureAspect* creatureAspectStruct;
+	int16 creatureSize;
+	int16 creatureDirectionDelta;
+	int16 creatureGraphicInfoGreen;
+	int16 creatureAspectInt;
+	int16 creatureIndexGreen;
+	int16 transparentColor;
+	int16 sourceByteWidth;
+	int16 sourceHeight;
+	int16 creaturePaddingPixelCount;
+	bool twoHalfSquareCreaturesFrontView;
+	bool drawingLastBackRowCell;
+	bool useCreatureSideBitmap;
+	bool useCreatureBackBitmap;
+	bool useCreatureSpecialD2FrontBitmap;
+	bool useCreatureAttackBitmap;
+	bool useFlippedHorizontallyCreatureFrontImage;
+
+/* Set to C1_TRUE when the last creature that the function should draw is being drawn. This is used to avoid processing the code to draw creatures for the remaining square cells */
+	bool drawCreaturesCompleted;
+
+	int16 doorFrontViewDrawingPass; /* Value 0, 1 or 2 */
+	int16 scale;
+	bool derivedBitmapInCache;
+	Projectile* projectile;
+	byte projectileCoordinates[2];
+	int16 projectilePosX;
+	int16 projectileDirection;
+	int16 projectileAspectType;
+	int16 projectileBitmapIndexData;
+	bool doNotScaleWithKineticEnergy;
+
+/* When true, the code section to draw an object is called (with a goto) to draw the projectile, then the code section goes back to projectile processing with another goto */
+	bool drawProjectileAsObject;
+
+	bool sqaureHasProjectile;
+	uint16 currentViewCellToDraw;
+	bool projectileFlipVertical;
+	bool projectileAspectTypeHasBackGraphicAndRotation;
+	bool flipVertical;
+	Explosion* explosion;
+	Explosion* fluxcageExplosion;
+	int16* explosionCoordinates;
+	int16 explosionScale;
+	bool squareHasExplosion;
+	bool rebirthExplosion;
+	bool smoke;
+	FieldAspect fieldAspect;
+
+
+	if (thingParam == Thing::_endOfList)
+		return;
+
+	group = 0;
+	groupThing = Thing::_none;
+	drawCreaturesCompleted = sqaureHasProjectile = squareHasExplosion = false;
+	cellCounter = 0;
+	firstThingToDraw = thingParam;
+	if (getFlag(orderedViewCellOrdinals, kCellOrder_DoorFront)) { /* If the function call is to draw objects on a door square viewed from the front */
+/* Two function calls are made in that case to draw objects on both sides of the door frame.
+The door and its frame are drawn between the two calls. This value indicates the drawing pass so that
+creatures are drawn in the right order and so that Fluxcages are not drawn twice */
+		doorFrontViewDrawingPass = (orderedViewCellOrdinals & 0x1) + 1;
+		orderedViewCellOrdinals >>= 4;	/* Remove the first nibble that was used for the door front view pass */
+	} else {
+		doorFrontViewDrawingPass = 0;  /* The function call is not to draw objects on a door square viewed from the front */
+	}
+
+	bool drawAlcoveObjects = !(remainingViewCellOrdinalsToProcess = orderedViewCellOrdinals);
+	uint16 viewSquareIndexBackup = viewSquareIndex;
+	viewLane = (viewSquareIndex + 3) % 3;
+
+
+	do {
+/* Draw objects */
+		if (drawAlcoveObjects) {
+			AL_2_viewCell = kViewCellAlcove; /* Index of coordinates to draw objects in alcoves */
+			cellYellowBear = returnOppositeDir(directionParam); /* Alcove is on the opposite direction of the viewing direction */
+			objectShiftIndex = 2;
+		} else {
+			AL_2_viewCell = _vm->ordinalToIndex((int16)remainingViewCellOrdinalsToProcess & 0x000F); /* View cell is the index of coordinates to draw object */
+			currentViewCellToDraw = AL_2_viewCell;
+			remainingViewCellOrdinalsToProcess >>= 4; /* Proceed to the next cell ordinal */
+			cellCounter++;
+			cellYellowBear = (AL_2_viewCell + directionParam) % 3; /* Convert view cell to absolute cell */
+			thingParam = firstThingToDraw;
+			viewSquareIndex = viewSquareIndexBackup; /* Restore value as it may have been modified while drawing a creature */
+			objectShiftIndex = 0;
+		}
+
+		objectShiftIndex += (cellYellowBear & 0x0001) << 3;
+		drawProjectileAsObject = false;
+		do {
+			if ((AL_4_thingType = thingParam.getType()) == kGroupThingType) {
+				groupThing = thingParam;
+				continue;
+			}
+			if (AL_4_thingType == kProjectileThingType) {
+				sqaureHasProjectile = true;
+				continue;
+			}
+			if (AL_4_thingType == kExplosionThingType) {
+				squareHasExplosion = true;
+				continue;
+			}
+
+			/* Square where objects are visible and object is located on cell being processed */
+			if ((viewSquareIndex >= kViewSquare_D3C) && (viewSquareIndex <= kViewSquare_D0C) && (thingParam.getCell() == cellYellowBear)) {
+				objectAspect = &(gObjectAspects[gObjectInfo[dunMan.getObjectInfoIndex(thingParam)]._objectAspectIndex]);
+				AL_4_nativeBitmapIndex = kFirstObjectGraphicIndice + objectAspect->_firstNativeBitmapRelativeIndex;
+				if (useAlcoveObjectImage = (drawAlcoveObjects && getFlag(objectAspect->_graphicInfo, kObjectAlcoveMask) && !viewLane)) {
+					AL_4_nativeBitmapIndex++;
+				}
+				coordinateSet = gObjectCoordinateSets[objectAspect->_coordinateSet][viewSquareIndex][AL_2_viewCell];
+				if (!coordinateSet[1]) /* If object is not visible */
+					continue;
+T0115015_DrawProjectileAsObject:
+				flipHorizontal = getFlag(objectAspect->_graphicInfo, kObjectFlipOnRightMask) &&
+					!useAlcoveObjectImage &&
+					((viewLane == kViewLaneRight) || (!viewLane && ((AL_2_viewCell == kViewCellFrontRight) || (AL_2_viewCell == kViewCellBackRight))));
+				/* Flip horizontally if object graphic requires it and is not being drawn in an alcove and the object is
+				either on the right lane or on the right column of the center lane */
+				paddingPixelCount = 0;
+
+				if ((viewSquareIndex == kViewSquare_D0C) || ((viewSquareIndex >= kViewSquare_D1C) && (AL_2_viewCell >= kViewCellBackRight))) {
+					/* If object is in the center lane (only D0C or D1C with condition above) and is not a projectile */
+					drawingGrabbableObject = (!viewLane && !drawProjectileAsObject);
+					AL_8_shiftSetIndex = kShiftSet_D0BackD1Front;
+					AL_6_bitmapRedBanana = getBitmap(AL_4_nativeBitmapIndex); /* Use base graphic, no resizing */
+					byteWidth = objectAspect->_width;
+					heightRedEagle = objectAspect->_height;
+					if (flipHorizontal) {
+						memcpy(_tmpBitmap, AL_6_bitmapRedBanana, byteWidth * heightRedEagle * sizeof(byte));
+						flipBitmapHorizontal(_tmpBitmap, byteWidth, heightRedEagle);
+						AL_6_bitmapRedBanana = _tmpBitmap;
+					}
+				} else {
+					drawingGrabbableObject = false;
+					derivedBitmapIndex = kDerivedBitmapFirstObject + objectAspect->_firstDerivedBitmapRelativeIndex;
+					if ((viewSquareIndex >= kViewSquare_D1C) || ((viewSquareIndex >= kViewSquare_D2C) && (AL_2_viewCell >= kViewCellBackRight))) {
+						derivedBitmapIndex++;
+						AL_8_shiftSetIndex = kShiftSet_D1BackD2Front;
+						byteWidth = getScaledDimension(objectAspect->_width, kScale20_D2);
+						heightRedEagle = getScaledDimension(objectAspect->_height, kScale20_D2);
+						paletteChanges = gPalChangesFloorOrn_D2;
+					} else {
+						AL_8_shiftSetIndex = kShiftSet_D2BackD3Front;
+						byteWidth = getScaledDimension(objectAspect->_width, kScale16_D3);
+						heightRedEagle = getScaledDimension(objectAspect->_height, kScale16_D3);
+						paletteChanges = gPalChangesFloorOrn_D3;
+					}
+					if (flipHorizontal) {
+						derivedBitmapIndex += 2;
+						paddingPixelCount = (7 - ((byteWidth / 2 - 1) & 0x0007)) << 1;
+					} else if (useAlcoveObjectImage) {
+						derivedBitmapIndex += 4;
+					}
+
+					if (isDerivedBitmapInCache(derivedBitmapIndex)) {
+						AL_6_bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex);
+					} else {
+						bitmapGreenAnt = getBitmap(AL_4_nativeBitmapIndex);
+						blitToBitmapShrinkWithPalChange(bitmapGreenAnt, objectAspect->_width, objectAspect->_height, AL_6_bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex),
+														byteWidth, heightRedEagle, paletteChanges);
+						if (flipHorizontal) {
+							flipBitmapHorizontal(AL_6_bitmapRedBanana, byteWidth, heightRedEagle);
+						}
+						warning("IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
+					}
+				}
+				AL_4_xPos = coordinateSet[0];
+				boxByteGreen._y2 = coordinateSet[1] + 1;
+				if (!drawProjectileAsObject) { /* If drawing an object that is not a projectile */
+					AL_4_xPos += gShiftSets[AL_8_shiftSetIndex][gObjectPileShiftSetIndices[objectShiftIndex][0]];
+					boxByteGreen._y2 += gShiftSets[AL_8_shiftSetIndex][gObjectPileShiftSetIndices[objectShiftIndex][1]];
+					objectShiftIndex++; /* The next object drawn will use the next shift values */
+					if (drawAlcoveObjects) {
+						if (objectShiftIndex >= 14) {
+							objectShiftIndex = 2;
+						}
+					} else {
+						objectShiftIndex &= 0x000F;
+					}
+				}
+				boxByteGreen._y1 = boxByteGreen._y2 - (heightRedEagle - 1) - 1;
+				if (boxByteGreen._y2 > 136) {
+					boxByteGreen._y2 = 136;
+				}
+				boxByteGreen._x2 = MIN(224, AL_4_xPos + byteWidth);
+				if (boxByteGreen._x1 = MAX(0, AL_4_xPos - byteWidth + 1)) {
+					if (flipHorizontal) {
+						AL_4_xPos = paddingPixelCount;
+					} else {
+						AL_4_xPos = 0;
+					}
+				} else {
+					AL_4_xPos = byteWidth - AL_4_xPos - 1;
+				}
+
+				if (drawingGrabbableObject) {
+					bitmapGreenAnt = AL_6_bitmapRedBanana;
+					Box *AL_6_boxPtrRed = &dunMan._dungeonViewClickableBoxes[AL_2_viewCell];
+					if (AL_6_boxPtrRed->_x1 == 255) { /* If the grabbable object is the first */
+						*AL_6_boxPtrRed = boxByteGreen;
+
+						if ((heightGreenGoat = AL_6_boxPtrRed->_y2 - AL_6_boxPtrRed->_y1) < 15) { /* If the box is too small then enlarge it a little */
+							heightGreenGoat = heightGreenGoat >> 1;
+							AL_6_boxPtrRed->_y1 += heightGreenGoat - 7;
+							if (heightGreenGoat < 4) {
+								AL_6_boxPtrRed->_y2 -= heightGreenGoat - 3;
+							}
+						}
+					} else { /* If there are several grabbable objects then enlarge the box so it includes all objects */
+						AL_6_boxPtrRed->_x1 = MIN(AL_6_boxPtrRed->_x1, boxByteGreen._x1);
+						AL_6_boxPtrRed->_x2 = MIN(AL_6_boxPtrRed->_x2, boxByteGreen._x2);
+						AL_6_boxPtrRed->_y1 = MIN(AL_6_boxPtrRed->_y1, boxByteGreen._y1);
+						AL_6_boxPtrRed->_y2 = MIN(AL_6_boxPtrRed->_y2, boxByteGreen._y2);
+					}
+					AL_6_bitmapRedBanana = bitmapGreenAnt;
+					dunMan._pileTopObject[AL_2_viewCell] = thingParam; /* The object is at the top of the pile */
+				}
+				blitToScreen(AL_6_bitmapRedBanana, byteWidth, AL_4_xPos, 0, boxByteGreen, kColorFlesh, gDungeonViewport);
+
+				if (drawProjectileAsObject)
+					goto T0115171_BackFromT0115015_DrawProjectileAsObject;
+			}
+		} while ((thingParam = dunMan.getNextThing(thingParam)) != Thing::_endOfList);
+		if (AL_2_viewCell == kViewCellAlcove)
+			break; /* End of processing when drawing objects in an alcove */
+		if (viewSquareIndex < kViewSquare_D3C)
+			break; /* End of processing if square is too far away at D4 */
+				   /* Draw creatures */
+
+		/* If (draw cell on the back row or second cell being processed) and (no more cells to draw or next cell to draw is a cell on the front row) */
+		drawingLastBackRowCell = ((AL_2_viewCell <= kViewCellFrontRight) || (cellCounter == 1))
+			&& (!remainingViewCellOrdinalsToProcess || ((remainingViewCellOrdinalsToProcess & 0x0000000F) >= 3));
+
+		if ((groupThing == Thing::_none) || drawCreaturesCompleted)
+			goto T0115129_DrawProjectiles; /* Skip code to draw creatures */
+		if (group == nullptr) { /* If all creature data and info has not already been gathered */
+			group = (Group*)dunMan.getThingData(groupThing);
+			activeGroup = &_vm->_groupMan->_activeGroups[group->getActiveGroupIndex()];
+			creatureInfo = &gCreatureInfo[group->_type];
+			creatureAspectStruct = &gCreatureAspects[creatureInfo->_creatureAspectIndex];
+			creatureSize = getFlag(creatureInfo->_attributes, kMaskCreatureInfo_size);
+			creatureGraphicInfoGreen = creatureInfo->_graphicInfo;
+		}
+		objectAspect = (ObjectAspect*)creatureAspectStruct;
+		if (AL_0_creatureIndexRed = _vm->_groupMan->getCreatureOrdinalInCell(group, cellYellowBear)) { /* If there is a creature on the cell being processed */
+			AL_0_creatureIndexRed--; /* Convert ordinal to index */
+			creatureIndexGreen = AL_0_creatureIndexRed;
+		} else if (creatureSize == kMaskCreatureSizeHalf) {
+			AL_0_creatureIndexRed = 0;
+			creatureIndexGreen = -1;
+		} else {
+			goto T0115129_DrawProjectiles; /* No creature to draw at cell, skip to projectiles */
+		}
+
+		creatureDirectionDelta = (directionParam - _vm->_groupMan->getCreatureValue(activeGroup->_directions, AL_0_creatureIndexRed)) % 3;
+		twoHalfSquareCreaturesFrontView = false;
+		if ((AL_4_groupCells = activeGroup->_cells) == kCreatureTypeSingleCenteredCreature) { /* If there is a single centered creature in the group */
+			if (remainingViewCellOrdinalsToProcess || (doorFrontViewDrawingPass == 1))
+/* Do not draw a single centered creature now, wait until second pass (for a front view door)
+ or until all cells have been drawn so the creature is drawn over all the objects on the floor */
+				goto T0115129_DrawProjectiles; 
+			drawCreaturesCompleted = true;
+			if ((creatureSize == kMaskCreatureSizeHalf) && (creatureDirectionDelta & 0x0001)) { /* Side view of half square creature */
+				AL_2_viewCell = kHalfSizedViewCell_CenterColumn;
+			} else {
+				AL_2_viewCell = kHalfSizedViewCell_FrontRow;
+			}
+		} else if ((creatureSize == kMaskCreatureSizeHalf) && (drawingLastBackRowCell || !remainingViewCellOrdinalsToProcess || (creatureIndexGreen < 0))) {
+			if (drawingLastBackRowCell && (doorFrontViewDrawingPass != 2)) {
+				if ((creatureIndexGreen >= 0) && (creatureDirectionDelta & 0x0001)) {
+					AL_2_viewCell = kHalfSizedViewCell_BackRow; /* Side view of a half square creature on the back row. Drawn during pass 1 for a door square */
+				} else {
+					goto T0115129_DrawProjectiles;
+				}
+			} else if ((doorFrontViewDrawingPass != 1) && !remainingViewCellOrdinalsToProcess) {
+				if (creatureDirectionDelta & 0x0001) {
+					if (creatureIndexGreen >= 0) {
+						AL_2_viewCell = kHalfSizedViewCell_FrontRow; /* Side view of a half square creature on the front row. Drawn during pass 2 for a door square */
+					} else {
+						goto T0115129_DrawProjectiles;
+					}
+				} else {
+					drawCreaturesCompleted = true;
+					if (creatureIndexGreen < 0) {
+						creatureIndexGreen = 0;
+					}
+					twoHalfSquareCreaturesFrontView = group->getCount();
+					if (((AL_4_groupCells = _vm->_groupMan->getCreatureValue(AL_4_groupCells, AL_0_creatureIndexRed)) == directionParam)
+						|| (AL_4_groupCells == returnPrevVal(directionParam))) {
+						AL_2_viewCell = kHalfSizedViewCell_LeftColumn;
+					} else {
+						AL_2_viewCell = kHalfSizedViewCell_RightColumn;
+					}
+				}
+			} else {
+				goto T0115129_DrawProjectiles;
+			}
+
+		} else if (creatureSize != kMaskCreatureSizeQuarter)
+			goto T0115129_DrawProjectiles;
+
+
+		creatureAspectInt = activeGroup->_aspect[creatureIndexGreen];
+		if (viewSquareIndex > kViewSquare_D0C) {
+			viewSquareIndex--;
+		}
+T0115077_DrawSecondHalfSquareCreature:
+		coordinateSet = gCreatureCoordinateSets[((CreatureAspect*)objectAspect)->getCoordSet()][viewSquareIndex][AL_2_viewCell];
+		if (!coordinateSet[1])
+			goto T0115126_CreatureNotVisible;
+		AL_0_creatureGraphicInfoRed = creatureGraphicInfoGreen;
+		AL_4_nativeBitmapIndex = kFirstCreatureGraphicIndice + ((CreatureAspect*)objectAspect)->_firstNativeBitmapRelativeIndex; /* By default, assume using the front image */
+		derivedBitmapIndex = ((CreatureAspect*)objectAspect)->_firstDerivedBitmapIndex;
+		if (useCreatureSideBitmap = getFlag(AL_0_creatureGraphicInfoRed, kCreatureInfoGraphicMaskSide) && (creatureDirectionDelta & 0x0001)) {
+			useCreatureAttackBitmap = useFlippedHorizontallyCreatureFrontImage = useCreatureBackBitmap = false;
+			AL_4_nativeBitmapIndex++; /* Skip the front image. Side image is right after the front image */
+			derivedBitmapIndex += 2;
+			sourceByteWidth = byteWidth = ((CreatureAspect*)objectAspect)->_byteWidthSide;
+			sourceHeight = heightRedEagle = ((CreatureAspect*)objectAspect)->_heightSide;
+		} else {
+			useCreatureBackBitmap = getFlag(AL_0_creatureGraphicInfoRed, kCreatureInfoGraphicMaskBack) && (creatureDirectionDelta == 0);
+			if (useCreatureAttackBitmap = !useCreatureBackBitmap && getFlag(creatureAspectInt, kMaskActiveGroupIsAttacking)
+				&& getFlag(AL_0_creatureGraphicInfoRed, kCreatureInfoGraphicMaskAttack)) {
+
+				useFlippedHorizontallyCreatureFrontImage = false;
+				sourceByteWidth = byteWidth = ((CreatureAspect*)objectAspect)->_byteWidthAttack;
+				sourceHeight = heightRedEagle = ((CreatureAspect*)objectAspect)->_heightAttack;
+				AL_4_nativeBitmapIndex++; /* Skip the front image */
+				derivedBitmapIndex += 2;
+				if (getFlag(AL_0_creatureGraphicInfoRed, kCreatureInfoGraphicMaskSide)) {
+					AL_4_nativeBitmapIndex++; /* If the creature has a side image, it preceeds the attack image */
+					derivedBitmapIndex += 2;
+				}
+				if (getFlag(AL_0_creatureGraphicInfoRed, kCreatureInfoGraphicMaskBack)) {
+					AL_4_nativeBitmapIndex++; /* If the creature has a back image, it preceeds the attack image */
+					derivedBitmapIndex += 2;
+				}
+			} else {
+				sourceByteWidth = byteWidth = ((CreatureAspect*)objectAspect)->_byteWidthFront;
+				sourceHeight = heightRedEagle = ((CreatureAspect*)objectAspect)->_heightFront;
+				if (useCreatureBackBitmap) {
+					useFlippedHorizontallyCreatureFrontImage = false;
+					if (getFlag(AL_0_creatureGraphicInfoRed, kCreatureInfoGraphicMaskSide)) {
+						AL_4_nativeBitmapIndex += 2; /* If the creature has a side image, it preceeds the back image */
+						derivedBitmapIndex += 4;
+					} else {
+						AL_4_nativeBitmapIndex++; /* If the creature does not have a side image, the back image follows the front image */
+						derivedBitmapIndex += 2;
+					}
+				} else {
+					if (useFlippedHorizontallyCreatureFrontImage = getFlag(AL_0_creatureGraphicInfoRed, kCreatureInfoGraphicMaskFlipNonAttack)
+						&& getFlag(creatureAspectInt, kMaskActiveGroupFlipBitmap)) {
+						derivedBitmapIndex += 2;
+						if (getFlag(AL_0_creatureGraphicInfoRed, kCreatureInfoGraphicMaskSide)) {
+							derivedBitmapIndex += 2;
+						}
+						if (getFlag(AL_0_creatureGraphicInfoRed, kCreatureInfoGraphicMaskBack)) {
+							derivedBitmapIndex += 2;
+						}
+						if (getFlag(AL_0_creatureGraphicInfoRed, kCreatureInfoGraphicMaskAttack)) {
+							derivedBitmapIndex += 2;
+						}
+					}
+				}
+			}
+		}
+		if (viewSquareIndex >= kViewSquare_D1C) { /* Creature is on D1 */
+			creaturePaddingPixelCount = 0;
+			AL_8_shiftSetIndex = kShiftSet_D0BackD1Front;
+			transparentColor = ((CreatureAspect*)objectAspect)->getTranspColour();
+			if (useCreatureSideBitmap) {
+				AL_6_bitmapRedBanana = getBitmap(AL_4_nativeBitmapIndex);
+				if (creatureDirectionDelta == 1) {
+					memcpy(_tmpBitmap, AL_6_bitmapRedBanana, byteWidth * heightRedEagle * sizeof(byte));
+					flipBitmapHorizontal(_tmpBitmap, byteWidth, heightRedEagle);
+					AL_6_bitmapRedBanana = _tmpBitmap;
+				}
+			} else {
+				if (useCreatureBackBitmap || !useFlippedHorizontallyCreatureFrontImage) {
+					AL_6_bitmapRedBanana = getBitmap(AL_4_nativeBitmapIndex);
+					if (useCreatureAttackBitmap && getFlag(creatureAspectInt, kMaskActiveGroupFlipBitmap)) {
+						memcpy(_tmpBitmap, AL_6_bitmapRedBanana, byteWidth * heightRedEagle * sizeof(byte));
+						flipBitmapHorizontal(_tmpBitmap, byteWidth, heightRedEagle);
+						AL_6_bitmapRedBanana = _tmpBitmap;
+					}
+				} else { /* Use first additional derived graphic: front D1 */
+					if (isDerivedBitmapInCache(derivedBitmapIndex)) { /* If derived graphic is already in memory */
+						AL_6_bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex);
+					} else {
+						bitmapGreenAnt = getBitmap(AL_4_nativeBitmapIndex);
+						if (getFlag(AL_0_creatureGraphicInfoRed, kCreatureInfoGraphicMaskFlipNonAttack)) {
+							AL_6_bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex);
+							memcpy(AL_6_bitmapRedBanana, bitmapGreenAnt, byteWidth * heightRedEagle * sizeof(byte));
+							flipBitmapHorizontal(AL_6_bitmapRedBanana, byteWidth, heightRedEagle);
+						}
+						warning("IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
+					}
+				}
+			}
+		} else { /* Creature is on D2 or D3 */
+			if (useFlippedHorizontallyCreatureFrontImage) {
+				derivedBitmapIndex++; /* Skip front D1 image in additional graphics */
+			}
+			if (viewSquareIndex >= kViewSquare_D2C) { /* Creature is on D2 */
+				derivedBitmapIndex++; /* Skip front D3 image in additional graphics */
+				AL_8_shiftSetIndex = kShiftSet_D1BackD2Front;
+				useCreatureSpecialD2FrontBitmap = getFlag(AL_0_creatureGraphicInfoRed, kCreatureInfoGraphicMaskSpecialD2Front)
+					&& !useCreatureSideBitmap && !useCreatureBackBitmap && !useCreatureAttackBitmap;
+				paletteChanges = gPalChangesCreature_D2;
+				scale = kScale20_D2;
+			} else { /* Creature is on D3 */
+				AL_8_shiftSetIndex = kShiftSet_D2BackD3Front;
+				useCreatureSpecialD2FrontBitmap = false;
+				paletteChanges = gPalChangesCreature_D3;
+				scale = kScale16_D3;
+			}
+			byteWidth = getScaledDimension(sourceByteWidth, scale);
+			heightRedEagle = getScaledDimension(sourceHeight, scale);
+			transparentColor = paletteChanges[((CreatureAspect*)objectAspect)->getTranspColour()] / 10;
+			if (derivedBitmapInCache = isDerivedBitmapInCache(derivedBitmapIndex)) {
+				AL_6_bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex);
+			} else {
+				bitmapGreenAnt = getBitmap(AL_4_nativeBitmapIndex);
+				AL_6_bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex);
+				blitToBitmapShrinkWithPalChange(bitmapGreenAnt, sourceByteWidth, sourceHeight, AL_6_bitmapRedBanana, byteWidth, heightRedEagle, paletteChanges);
+				warning("IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
+			}
+			if ((useCreatureSideBitmap && (creatureDirectionDelta == 1)) || /* If creature is viewed from the right, the side view must be flipped */
+				(useCreatureAttackBitmap && getFlag(creatureAspectInt, kMaskActiveGroupFlipBitmap)) ||
+				(useCreatureSpecialD2FrontBitmap && getFlag(AL_0_creatureGraphicInfoRed, kCreatureInfoGraphicMaskSpecialD2FrontIsFlipped)) ||
+				(useFlippedHorizontallyCreatureFrontImage && getFlag(AL_0_creatureGraphicInfoRed, kCreatureInfoGraphicMaskFlipNonAttack))) { /* If the graphic should be flipped */
+				if (!useFlippedHorizontallyCreatureFrontImage || !derivedBitmapInCache) {
+					AL_4_normalizdByteWidth = byteWidth;
+					warning("SUPER WARNING: we might need getNormalizedByteWidthM77");
+					if (!useFlippedHorizontallyCreatureFrontImage) {
+						memcpy(_tmpBitmap, AL_6_bitmapRedBanana, AL_4_normalizdByteWidth * heightRedEagle * sizeof(byte));
+						AL_6_bitmapRedBanana = _tmpBitmap;
+					}
+					flipBitmapHorizontal(AL_6_bitmapRedBanana, AL_4_normalizdByteWidth, heightRedEagle);
+				}
+				creaturePaddingPixelCount = (7 - ((byteWidth / 2 - 1) & 0x0007)) << 1;
+			} else {
+				creaturePaddingPixelCount = 0;
+			}
+		}
+		AL_4_yPos = coordinateSet[1];
+		AL_4_yPos += gShiftSets[AL_8_shiftSetIndex][getVerticalOffsetM23(creatureAspectInt)];
+		boxByteGreen._y2 = MIN(AL_4_yPos, (int16)135) + 1;
+		boxByteGreen._y1 = MIN(0, AL_4_yPos - (heightRedEagle - 1));
+		AL_4_xPos = coordinateSet[0];
+		AL_4_xPos += gShiftSets[AL_8_shiftSetIndex][getHorizontalOffsetM22(creatureAspectInt)];
+		if (viewLane == kViewLaneLeft) {
+			AL_4_xPos -= 100;
+		} else {
+			if (viewLane) { /* Lane right */
+				AL_4_xPos += 100;
+			}
+		}
+		if (boxByteGreen._x2 = 1 + MIN(MAX(0, AL_4_xPos + byteWidth), 223) <= 1)
+			goto T0115126_CreatureNotVisible;
+		if (boxByteGreen._x1 = MIN(MAX(0, AL_4_xPos - byteWidth + 1), 223)) {
+			if (boxByteGreen._x1 == 223)
+				goto T0115126_CreatureNotVisible;
+			AL_0_creaturePosX = creaturePaddingPixelCount;
+		} else {
+			AL_0_creaturePosX = creaturePaddingPixelCount + (byteWidth - AL_4_xPos - 1);
+		}
+		warning("SUPER WARNINIG: we might nee noralized with on byteWidth");
+		blitToScreen(AL_6_bitmapRedBanana, byteWidth, AL_0_creaturePosX, 0, boxByteGreen, (Color)transparentColor, gDungeonViewport);
+
+T0115126_CreatureNotVisible:
+		if (twoHalfSquareCreaturesFrontView) {
+			twoHalfSquareCreaturesFrontView = false;
+			creatureAspectInt = activeGroup->_aspect[!creatureIndexGreen]; /* Aspect of the other creature in the pair */
+			if (AL_2_viewCell == kHalfSizedViewCell_RightColumn) {
+				AL_2_viewCell = kHalfSizedViewCell_LeftColumn;
+			} else {
+				AL_2_viewCell = kHalfSizedViewCell_RightColumn;
+			}
+			goto T0115077_DrawSecondHalfSquareCreature;
+		}
+		/* Draw projectiles */
+T0115129_DrawProjectiles:
+		if (!sqaureHasProjectile
+			|| ((viewSquareIndex = viewSquareIndexBackup) > kViewSquare_D0C)
+/* If there is no projectile to draw or if projectiles are not visible on the specified square or on the cell being drawn */
+			|| (!(projectilePosX = gObjectCoordinateSets[0][viewSquareIndex][AL_2_viewCell = currentViewCellToDraw][0]))) 
+			continue;
+		thingParam = firstThingToDraw; /* Restart processing list of objects from the beginning. The next loop draws only projectile objects among the list */
+
+		do {
+			if ((thingParam.getType() == kProjectileThingType) && (thingParam.getCell() == cellYellowBear)) {
+				projectile = (Projectile*)dunMan.getThingData(thingParam);
+				if ((AL_4_projectileAspect = dunMan.getProjectileAspect(projectile->_object)) < 0) { /* Negative value: projectile aspect is the ordinal of a PROJECTIL_ASPECT */
+					objectAspect = (ObjectAspect*)&gProjectileAspect[_vm->ordinalToIndex(-AL_4_projectileAspect)];
+					AL_4_nativeBitmapIndex = ((ProjectileAspect*)objectAspect)->_firstNativeBitmapRelativeIndex + kFirstProjectileGraphicIndice;
+					projectileAspectType = getFlag(((ProjectileAspect*)objectAspect)->_graphicInfo, kProjectileAspectTypeMask);
+					if (((doNotScaleWithKineticEnergy = !getFlag(((ProjectileAspect*)objectAspect)->_graphicInfo, kProjectileScaleWithKineticEnergyMask))
+						 || (projectile->_kineticEnergy == 255)) && (viewSquareIndex == kViewSquare_D0C)) {
+						scale = 0; /* Use native bitmap without resizing */
+						byteWidth = ((ProjectileAspect*)objectAspect)->_width;
+						heightRedEagle = ((ProjectileAspect*)objectAspect)->_height;
+					} else {
+						AL_8_projectileScaleIndex = ((viewSquareIndex / 3) << 1) + (AL_2_viewCell >> 1);
+						scale = gProjectileScales[AL_8_projectileScaleIndex];
+						if (!doNotScaleWithKineticEnergy) {
+							scale = (scale * MAX(96, projectile->_kineticEnergy + 1)) >> 8;
+						}
+						byteWidth = getScaledDimension(((ProjectileAspect*)objectAspect)->_width, scale);
+						heightRedEagle = getScaledDimension(((ProjectileAspect*)objectAspect)->_height, scale);
+					}
+					if (projectileAspectTypeHasBackGraphicAndRotation = (projectileAspectType == kProjectileAspectHasBackGraphicRotation)) {
+						projectileFlipVertical = ((mapXpos + mapYpos) & 0x0001);
+					}
+					if (projectileAspectType == kProjectileAspectHasNone) {
+						projectileBitmapIndexData = 0;
+						flipVertical = flipHorizontal = false;
+					} else {
+						if (isOrientedWestEast((direction)(projectileDirection = _vm->_timeline->_events[projectile->_timerIndex]._C._projectile.getDir()))
+							!= isOrientedWestEast(directionParam)) {
+							if (projectileAspectType == kProjectileAspectHasRotation) {
+								projectileBitmapIndexData = 1;
+							} else {
+								projectileBitmapIndexData = 2;
+							}
+							if (projectileAspectTypeHasBackGraphicAndRotation) {
+								flipHorizontal = !AL_2_viewCell || (AL_2_viewCell == kViewCellBackLeft);
+								if (!(flipVertical = projectileFlipVertical)) {
+									flipHorizontal = !flipHorizontal;
+								}
+							} else {
+								flipVertical = false;
+								flipHorizontal = (returnNextVal(directionParam) == projectileDirection);
+							}
+						} else {
+/* If the projectile does not have a back graphic or has one but is not seen from the back or if it has a back graphic and rotation and should be flipped vertically */
+							if ((projectileAspectType >= kProjectileAspectHasRotation)
+								|| ((projectileAspectType == kProjectileAspectBackGraphic)
+									&& (projectileDirection != directionParam)) || (projectileAspectTypeHasBackGraphicAndRotation && projectileFlipVertical)) {
+								projectileBitmapIndexData = 0;
+							} else {
+								projectileBitmapIndexData = 1;
+							}
+							flipVertical = projectileAspectTypeHasBackGraphicAndRotation && (AL_2_viewCell < kViewCellBackRight);
+							flipHorizontal = getFlag(((ProjectileAspect*)objectAspect)->_graphicInfo, kProjectileSideMask)
+								&& !((viewLane == kViewLaneRight) || (!viewLane && ((AL_2_viewCell == kViewCellFrontRight) || (AL_2_viewCell == kViewCellBackRight))));
+						}
+					}
+					AL_4_nativeBitmapIndex += projectileBitmapIndexData;
+					paddingPixelCount = 0;
+					if (!scale) {
+						AL_6_bitmapRedBanana = getBitmap(AL_4_nativeBitmapIndex);
+					} else {
+						if (flipHorizontal) {
+							paddingPixelCount = (7 - ((byteWidth / 2 - 1) & 0x0007)) << 1;
+						}
+						derivedBitmapIndex = kDerivedBitmapFirstProjectile + ((ProjectileAspect*)objectAspect)->_firstNativeBitmapRelativeIndex + (projectileBitmapIndexData * 6);
+						if (doNotScaleWithKineticEnergy && isDerivedBitmapInCache(derivedBitmapIndex) + AL_8_projectileScaleIndex) {
+							AL_6_bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex);
+						} else {
+							bitmapGreenAnt = getBitmap(AL_4_nativeBitmapIndex);
+							if (doNotScaleWithKineticEnergy) {
+								AL_6_bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex);
+							} else {
+								AL_6_bitmapRedBanana = _tmpBitmap;
+							}
+							blitToBitmapShrinkWithPalChange(bitmapGreenAnt, ((ProjectileAspect*)objectAspect)->_width, ((ProjectileAspect*)objectAspect)->_height,
+															AL_6_bitmapRedBanana, byteWidth, heightRedEagle, _palChangesProjectile[AL_8_projectileScaleIndex >> 1]);
+							if (doNotScaleWithKineticEnergy) {
+								warning("IGNORED CODE F0493_CACHE_AddDerivedBitmap");
+							}
+						}
+					}
+					if (flipHorizontal || flipVertical) {
+						warning("might need noralized bytewidth");
+						AL_4_normalizdByteWidth = byteWidth;
+						if (AL_6_bitmapRedBanana != _tmpBitmap) {
+							memcpy(_tmpBitmap, AL_6_bitmapRedBanana, AL_4_normalizdByteWidth * heightRedEagle * sizeof(byte));
+							AL_6_bitmapRedBanana = _tmpBitmap;
+						}
+						if (flipVertical) {
+							flipBitmapVertical(AL_6_bitmapRedBanana, AL_4_normalizdByteWidth, heightRedEagle);
+						}
+						if (flipHorizontal) {
+							flipBitmapHorizontal(AL_6_bitmapRedBanana, AL_4_normalizdByteWidth, heightRedEagle);
+						}
+					}
+					boxByteGreen._y2 = (heightRedEagle >> 1) + 47 + 1;
+					boxByteGreen._y1 = 47 - (heightRedEagle >> 1) + !(heightRedEagle & 0x0001);
+					boxByteGreen._x2 = MIN(223, projectilePosX + byteWidth) + 1;
+					if (boxByteGreen._x1 = MAX(0, projectilePosX - byteWidth + 1)) {
+						if (flipHorizontal) {
+							AL_4_xPos = paddingPixelCount;
+						} else {
+							AL_4_xPos = 0;
+						}
+					} else {
+/* BUG0_06 Graphical glitch when drawing projectiles or explosions. If a projectile or explosion bitmap
+is cropped because it is only partly visible on the left side of the viewport (boxByteGreen.X1 = 0) and
+the bitmap is flipped horizontally (flipHorizontal = C1_TRUE) then a wrong part of the bitmap is drawn on
+screen. To fix this bug, "+ paddingPixelCount" must be added to the second parameter of this function call */
+						AL_4_xPos = MAX(paddingPixelCount, (int16)(byteWidth - projectilePosX - 1));
+					}
+					blitToScreen(AL_6_bitmapRedBanana, byteWidth, AL_4_xPos, 0, boxByteGreen, kColorFlesh, gDungeonViewport);
+				} else { /* Positive value: projectile aspect is the index of a OBJECT_ASPECT */
+					useAlcoveObjectImage = false;
+					projectileCoordinates[0] = projectilePosX;
+					projectileCoordinates[1] = 47;
+					coordinateSet = projectileCoordinates;
+					objectAspect = &gObjectAspects[AL_4_projectileAspect];
+					AL_4_nativeBitmapIndex = objectAspect->_firstNativeBitmapRelativeIndex + kFirstObjectGraphicIndice;
+					drawProjectileAsObject = true;
+/* Go to code section to draw an object. Once completed, it jumps back to T0115171_BackFromT0115015_DrawProjectileAsObject below */
+					goto T0115015_DrawProjectileAsObject; 
+				}
+			}
+T0115171_BackFromT0115015_DrawProjectileAsObject:;
+		} while ((thingParam = dunMan.getNextThing(thingParam)) != Thing::_endOfList);
+
+	} while (remainingViewCellOrdinalsToProcess);
+
+
+	/* Draw explosions */
+	if (!squareHasExplosion)
+		return;
+	fluxcageExplosion = 0;
+	AL_1_viewSquareExplosionIndex = viewSquareIndexBackup + 3; /* Convert square index to square index for explosions */
+	uint16 explosionScaleIndex = AL_1_viewSquareExplosionIndex / 3;
+	thingParam = firstThingToDraw; /* Restart processing list of things from the beginning. The next loop draws only explosion things among the list */
+	do {
+		if (thingParam.getType() == kExplosionThingType) {
+			AL_2_cellPurpleMan = thingParam.getCell();
+			explosion = (Explosion*)dunMan.getThingData(thingParam);
+			if ((rebirthExplosion = ((unsigned int)(AL_4_explosionType = explosion->getType()) >= kExplosionType_RebirthStep1))
+				&& ((AL_1_viewSquareExplosionIndex < kViewSquare_D3C_Explosion) 
+					|| (AL_1_viewSquareExplosionIndex > kViewSquare_D1C_Explosion)
+					|| (AL_2_cellPurpleMan != cellYellowBear))) /* If explosion is rebirth and is not visible */
+				continue;
+			smoke = false;
+			if ((AL_4_explosionType == kExplosionType_Fireball) || (AL_4_explosionType == kExplosionType_LightningBolt) || (AL_4_explosionType == kExplosionType_RebirthStep2)) {
+				AL_4_explosionAspectIndex = kExplosionAspectFire;
+			} else {
+				if ((AL_4_explosionType == kExplosionType_PoisonBolt) || (AL_4_explosionType == kExplosionType_PoisonCloud)) {
+					AL_4_explosionAspectIndex = kExplosionAspectPoison;
+				} else {
+					if (AL_4_explosionType == kExplosionType_Smoke) {
+						smoke = true;
+						AL_4_explosionAspectIndex = kExplosionAspectSmoke;
+					} else {
+						if (AL_4_explosionType == kExplosionType_RebirthStep1) {
+							objectAspect = (ObjectAspect*)&gProjectileAspect[_vm->ordinalToIndex(-dunMan.getProjectileAspect(Thing::_explLightningBolt))];
+							AL_6_bitmapRedBanana = getBitmap(((ProjectileAspect*)objectAspect)->_firstNativeBitmapRelativeIndex + (kFirstProjectileGraphicIndice + 1));
+							explosionCoordinates = gRebirthStep1ExplosionCoordinates[AL_1_viewSquareExplosionIndex - 3];
+							byteWidth = getScaledDimension((((ProjectileAspect*)objectAspect)->_width), explosionCoordinates[2]);
+							heightRedEagle = getScaledDimension((((ProjectileAspect*)objectAspect)->_height), explosionCoordinates[2]);
+							if (AL_1_viewSquareExplosionIndex != kViewSquare_D1C_Explosion) {
+								blitToBitmapShrinkWithPalChange(AL_6_bitmapRedBanana,
+									((ProjectileAspect*)objectAspect)->_width, ((ProjectileAspect*)objectAspect)->_height, _tmpBitmap,
+																		 byteWidth, heightRedEagle, gPalChangesNoChanges);
+								AL_6_bitmapRedBanana = _tmpBitmap;
+							}
+							goto T0115200_DrawExplosion;
+						}
+						if (AL_4_explosionType == kExplosionType_Fluxcage) {
+							if (AL_1_viewSquareExplosionIndex >= kViewSquare_D3L_Explosion) {
+								fluxcageExplosion = explosion;
+							}
+							continue;
+						}
+						AL_4_explosionAspectIndex = kExplosionAspectSpell;
+					}
+				}
+			}
+			if (AL_1_viewSquareExplosionIndex == kViewSquare_D0C_Explosion) {
+				if (smoke) {
+					AL_4_explosionAspectIndex--; /* Smoke uses the same graphics as Poison Cloud, but with palette changes */
+				}
+				AL_4_explosionAspectIndex = AL_4_explosionAspectIndex * 3; /* 3 graphics per explosion pattern */
+				if (AL_2_explosionSize = (explosion->getAttack() >> 5)) {
+					AL_4_explosionAspectIndex++; /* Use second graphic in the pattern for medium explosion attack */
+					if (AL_2_explosionSize > 3) {
+						AL_4_explosionAspectIndex++; /* Use third graphic in the pattern for large explosion attack */
+					}
+				}
+				warning("IGNORED CODE: F0491_CACHE_IsDerivedBitmapInCache");
+				AL_6_bitmapRedBanana = getBitmap(AL_4_explosionAspectIndex + kFirstExplosionPatternGraphicIndice);
+				if (smoke) {
+					blitToBitmapShrinkWithPalChange(AL_6_bitmapRedBanana, 48, 32, _tmpBitmap, 48, 32, gPalChangeSmoke);
+					AL_6_bitmapRedBanana = _tmpBitmap;
+				}
+				blitBoxFilledWithMaskedBitmapToScreen(AL_6_bitmapRedBanana, nullptr, getDerivedBitmap(kDerivedBitmapViewport), gBoxExplosionPattern_D0C,
+													  _vm->_rnd->getRandomNumber(4) + 87, _vm->_rnd->getRandomNumber(64),
+													  224, (Color)(kBlitDoNotUseMask | kColorFlesh), 0, 0, 136, 93);
+				warning("IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
+				warning("IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
+			} else {
+				if (rebirthExplosion) {
+					explosionCoordinates = gRebirthStep2ExplosionCoordinates[AL_1_viewSquareExplosionIndex - 3];
+					explosionScale = explosionCoordinates[2];
+				} else {
+					if (explosion->getCentered()) {
+						explosionCoordinates = gCenteredExplosionCoordinates[AL_1_viewSquareExplosionIndex];
+					} else {
+						if ((AL_2_cellPurpleMan == directionParam) || (AL_2_cellPurpleMan == returnPrevVal(directionParam))) {
+							AL_2_viewCell = kViewCellFronLeft;
+						} else {
+							AL_2_viewCell = kViewCellFrontRight;
+						}
+						explosionCoordinates = gExplosionCoordinates[AL_1_viewSquareExplosionIndex][AL_2_viewCell];
+					}
+					explosionScale = MAX(4, (MAX(48, explosion->getAttack() + 1) * gExplosionBaseScales[explosionScaleIndex]) >> 8) & (int16)0xFFFE;
+				}
+				AL_6_bitmapRedBanana = getExplosionBitmap(AL_4_explosionAspectIndex, explosionScale, byteWidth, heightRedEagle);
+T0115200_DrawExplosion:
+				flipVertical = _vm->_rnd->getRandomNumber(2);
+				paddingPixelCount = 0;
+				if (flipHorizontal = _vm->_rnd->getRandomNumber(2)) {
+					paddingPixelCount = (7 - ((byteWidth / 2 - 1) & 0x0007)) << 1; /* Number of unused pixels in the units on the right of the bitmap */
+				}
+				boxByteGreen._y2 = MIN(135, explosionCoordinates[1] + (heightRedEagle >> 1)) + 1; 
+				AL_4_yPos = MAX(0, explosionCoordinates[1] - (heightRedEagle >> 1) + !(heightRedEagle & 0x0001));
+				if (AL_4_yPos >= 136)
+					continue;
+				boxByteGreen._y1 = AL_4_yPos;
+				if ((AL_4_xPos = MIN(223, explosionCoordinates[0] + byteWidth)) < 0)
+					continue;
+				boxByteGreen._x2 = AL_4_xPos + 1;
+				AL_4_xPos = explosionCoordinates[0];
+				if (boxByteGreen._x1 = MIN(MAX(0, AL_4_xPos - byteWidth + 1), 223)) {
+					AL_4_xPos = paddingPixelCount;
+				} else {
+/* BUG0_07 Graphical glitch when drawing explosions. If an explosion bitmap is cropped because it is only partly visible on the
+left side of the viewport (boxByteGreen.X1 = 0) and the bitmap is not flipped horizontally (flipHorizontal = C0_FALSE) then the
+variable paddingPixelCount is not set before being used here. Its previous value (defined while drawing something else) is used
+and may cause an incorrect bitmap to be drawn */
+					AL_4_xPos = MIN(paddingPixelCount,(int16)( byteWidth / 2 - AL_4_xPos - 1)); 
+
+/* BUG0_06 Graphical glitch when drawing projectiles or explosions. If a projectile or explosion bitmap is cropped because it is
+only partly visible on the left side of the viewport (boxByteGreen.X1 = 0) and the bitmap is flipped horizontally (flipHorizontal = C1_TRUE)
+then a wrong part of the bitmap is drawn on screen. To fix this bug, "+ paddingPixelCount" must be added to the second parameter of this function call */
+				}
+				if (boxByteGreen._x2 - 1 <= boxByteGreen._x1)
+					continue;
+				warning("might need M77_NORMALIZED_BYTE_WIDTH");
+				byteWidth = byteWidth;
+				if (flipHorizontal || flipVertical) {
+					memcpy(_tmpBitmap, AL_6_bitmapRedBanana, byteWidth * heightRedEagle);
+					AL_6_bitmapRedBanana = _tmpBitmap;
+				}
+				if (flipHorizontal) {
+					flipBitmapHorizontal(AL_6_bitmapRedBanana, byteWidth, heightRedEagle);
+				}
+				if (flipVertical) {
+					flipBitmapVertical(AL_6_bitmapRedBanana, byteWidth, heightRedEagle);
+				}
+				blitToScreen(AL_6_bitmapRedBanana, byteWidth, AL_4_xPos, 0, boxByteGreen, kColorFlesh, gDungeonViewport);
+			}
+		}
+	} while ((thingParam = dunMan.getNextThing(thingParam)) != Thing::_endOfList);
+/* Fluxcage is an explosion displayed as a field (like teleporters), above all other graphics */
+	if ((fluxcageExplosion != 0) && (doorFrontViewDrawingPass != 1) && !_doNotDrawFluxcagesDuringEndgame) { 
+		AL_1_viewSquareExplosionIndex -= 3; /* Convert square index for explosions back to square index */
+		fieldAspect = gFieldAspects[viewSquareIndex];
+		(fieldAspect._nativeBitmapRelativeIndex)++; /* NativeBitmapRelativeIndex is now the index of the Fluxcage field graphic */
+		drawField(&fieldAspect, *(Box*)&gFrameWalls[viewSquareIndex]);
+	}
 }
 
+uint16 DisplayMan::getNormalizedByteWidthM77(uint16 byteWidth) {
+	return (byteWidth + 7) & 0xFFF8;
+}
 
+uint16 DisplayMan::getVerticalOffsetM23(uint16 val) {
+	return (val >> 3) & 0x7;
+}
+
+uint16 DisplayMan::getHorizontalOffsetM22(uint16 val) {
+	return (val & 0x7);
+}
 
 bool DisplayMan::isDerivedBitmapInCache(int16 derivedBitmapIndex) {
 	if (_derivedBitmaps == nullptr) {

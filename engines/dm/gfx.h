@@ -37,6 +37,44 @@
 namespace DM {
 
 
+/* View lanes */
+#define kViewLaneCenter 0 // @ C0_VIEW_LANE_CENTER 
+#define kViewLaneLeft 1 // @ C1_VIEW_LANE_LEFT   
+#define kViewLaneRight 2 // @ C2_VIEW_LANE_RIGHT  
+
+#define kHalfSizedViewCell_LeftColumn 0 // @ C00_VIEW_CELL_LEFT_COLUMN  
+#define kHalfSizedViewCell_RightColumn 1 // @ C01_VIEW_CELL_RIGHT_COLUMN 
+#define kHalfSizedViewCell_BackRow 2 // @ C02_VIEW_CELL_BACK_ROW     
+#define kHalfSizedViewCell_CenterColumn 3 // @ C03_VIEW_CELL_CENTER_COLUMN
+#define kHalfSizedViewCell_FrontRow 4 // @ C04_VIEW_CELL_FRONT_ROW    
+
+/* Shift sets */
+#define kShiftSet_D0BackD1Front 0 // @ C0_SHIFT_SET_D0_BACK_OR_D1_FRONT
+#define kShiftSet_D1BackD2Front 1 // @ C1_SHIFT_SET_D1_BACK_OR_D2_FRONT
+#define kShiftSet_D2BackD3Front 2 // @ C2_SHIFT_SET_D2_BACK_OR_D3_FRONT
+
+#define kCellOrder_DoorFront 0x0008 // @ MASK0x0008_DOOR_FRONT                                   
+#define kCellOrder_Alcove 0x0000 // @ C0000_CELL_ORDER_ALCOVE                                 
+#define kCellOrder_BackLeft 0x0001 // @ C0001_CELL_ORDER_BACKLEFT                               
+#define kCellOrder_BackRight 0x0002 // @ C0002_CELL_ORDER_BACKRIGHT                              
+#define kCellOrder_DoorPass1_BackLeft 0x0018 // @ C0018_CELL_ORDER_DOORPASS1_BACKLEFT                     
+#define kCellOrder_BackLeft_BackRight 0x0021 // @ C0021_CELL_ORDER_BACKLEFT_BACKRIGHT                     
+#define kCellOrder_DoorPass1_BackRight 0x0028 // @ C0028_CELL_ORDER_DOORPASS1_BACKRIGHT                    
+#define kCellOrder_BackRight_FrontRight 0x0032 // @ C0032_CELL_ORDER_BACKRIGHT_FRONTRIGHT                   
+#define kCellOrder_DoorPass2_FrontRight 0x0039 // @ C0039_CELL_ORDER_DOORPASS2_FRONTRIGHT                   
+#define kCellOrder_BackLeft_FrontLeft 0x0041 // @ C0041_CELL_ORDER_BACKLEFT_FRONTLEFT                     
+#define kCellOrder_DoorPass2_FrontLeft 0x0049 // @ C0049_CELL_ORDER_DOORPASS2_FRONTLEFT                    
+#define kCellOrder_DoorPass1_BackRight_BackLeft 0x0128 // @ C0128_CELL_ORDER_DOORPASS1_BACKRIGHT_BACKLEFT           
+#define kCellOrder_DoorPass1_BackLeft_BackRight 0x0218 // @ C0218_CELL_ORDER_DOORPASS1_BACKLEFT_BACKRIGHT           
+#define kCellOrder_BackLeft_BackRight_FrontRight 0x0321 // @ C0321_CELL_ORDER_BACKLEFT_BACKRIGHT_FRONTRIGHT          
+#define kCellOrder_BackRight_FrontLeft_FrontRight 0x0342 // @ C0342_CELL_ORDER_BACKRIGHT_FRONTLEFT_FRONTRIGHT         
+#define kCellOrder_DoorPass2_FrontLeft_FrontRight 0x0349 // @ C0349_CELL_ORDER_DOORPASS2_FRONTLEFT_FRONTRIGHT         
+#define kCellOrder_BackRight_BackLeft_FrontLeft 0x0412 // @ C0412_CELL_ORDER_BACKRIGHT_BACKLEFT_FRONTLEFT           
+#define kCellOrder_BackLeft_FrontRight_FrontLeft 0x0431 // @ C0431_CELL_ORDER_BACKLEFT_FRONTRIGHT_FRONTLEFT          
+#define kCellOrder_DoorPass2_FrontRight_FrontLeft 0x0439 // @ C0439_CELL_ORDER_DOORPASS2_FRONTRIGHT_FRONTLEFT         
+#define kCellOrder_BackLeft_BackRight_FrontLeft_FrontRight 0x3421 // @ C3421_CELL_ORDER_BACKLEFT_BACKRIGHT_FRONTLEFT_FRONTRIGHT
+#define kCellOrder_BackRight_BackLeft_FrontRight_FrontLeft 0x4312 // @ C4312_CELL_ORDER_BACKRIGHT_BACKLEFT_FRONTRIGHT_FRONTLEFT
+
 
 #define kFloorSetGraphicCount 2 // @ C002_FLOOR_SET_GRAPHIC_COUNT
 #define kWallSetGraphicCount 13 // @ C013_WALL_SET_GRAPHIC_COUNT
@@ -167,7 +205,11 @@ enum GraphicIndice {
 	kFloorOrn_15_D3L_footprints = 241, // @ C241_GRAPHIC_FLOOR_ORNAMENT_15_D3L_FOOTPRINTS
 	kFieldMask_D3R_GraphicIndice = 69, // @ C069_GRAPHIC_FIELD_MASK_D3R
 	kFieldTeleporterGraphicIndice = 73, // @ C073_GRAPHIC_FIELD_TELEPORTER
-	kFirstExplosionGraphicIndice = 348 // @ C348_GRAPHIC_FIRST_EXPLOSION
+	kFirstExplosionGraphicIndice = 348, // @ C348_GRAPHIC_FIRST_EXPLOSION
+	kFirstObjectGraphicIndice = 360, // @ C360_GRAPHIC_FIRST_OBJECT
+	kFirstCreatureGraphicIndice = 446, // @ C446_GRAPHIC_FIRST_CREATURE
+	kFirstProjectileGraphicIndice = 316, // @ C316_GRAPHIC_FIRST_PROJECTILE 
+	kFirstExplosionPatternGraphicIndice = 351 // @ C351_GRAPHIC_FIRST_EXPLOSION_PATTERN 
 };
 
 extern uint16 gPalSwoosh[16];
@@ -284,6 +326,7 @@ public:
 	FieldAspect(uint16 native, uint16 base, uint16 transparent, byte mask, uint16 byteWidth, uint16 height, uint16 xPos, uint16 bitplane)
 		: _nativeBitmapRelativeIndex(native), _baseStartUnitIndex(base), _transparentColor(transparent), _mask(mask),
 		_pixelWidth(byteWidth * 2), _height(height), _xPos(xPos), _bitplaneWordCount(bitplane) {}
+	FieldAspect() {}
 }; // @ FIELD_ASPECT
 
 
@@ -455,7 +498,7 @@ public:
 									   int16 xPos, int16 yPos, int16 destHeight, int16 height2, Viewport &viewport = gDefultViewPort); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
 	void blitBoxFilledWithMaskedBitmapToScreen(byte *src, byte *mask, byte *tmp, Box &box, int16 lastUnitIndex,
 									   int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
-									   int16 xPos, int16 yPos, int16 height2, Viewport &viewport = gDungeonViewport); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
+									   int16 xPos, int16 yPos, int16 destHeight, int16 height2, Viewport &viewport = gDungeonViewport); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
 
 	void flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height);
 	void flipBitmapVertical(byte *bitmap, uint16 width, uint16 height);
@@ -473,9 +516,12 @@ public:
 
 	int16 getScaledBitmapPixelCount(int16 pixelWidth, int16 pixelHeight, int16 scale); // @ F0459_START_GetScaledBitmapByteCount
 	int16 getScaledDimension(int16 dimension, int16 scale); // @ M78_SCALED_DIMENSION
-	void drawObjectsCreaturesProjectilesExplosions(Thing thingParam, direction directionParam,
+	void cthulhu(Thing thingParam, direction directionParam,
 												   int16 mapXpos, int16 mapYpos, int16 viewSquareIndex,
 												   uint16 orderedViewCellOrdinals); // @ F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
+	uint16 getNormalizedByteWidthM77(uint16 byteWidth); // @ M77_NORMALIZED_BYTE_WIDTH
+	uint16 getVerticalOffsetM23(uint16 val); // @ M23_VERTICAL_OFFSET
+	uint16 getHorizontalOffsetM22(uint16 val); // @ M22_HORIZONTAL_OFFSET
 
 	int16 _championPortraitOrdinal; // @ G0289_i_DungeonView_ChampionPortraitOrdinal
 	int16 _currMapAlcoveOrnIndices[kAlcoveOrnCount]; // @ G0267_ai_CurrentMapAlcoveOrnamentIndices

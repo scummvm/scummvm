@@ -468,17 +468,29 @@ public:
 }; // @ JUNK
 
 class Projectile {
+public:
 	Thing _nextThing;
 	Thing _object;
 	byte _kineticEnergy;
 	byte _damageEnergy;
 	uint16 _timerIndex;
-public:
 	explicit Projectile(uint16 *rawDat) : _nextThing(rawDat[0]), _object(rawDat[1]), _kineticEnergy(rawDat[2]),
 		_damageEnergy(rawDat[3]), _timerIndex(rawDat[4]) {}
 
 	Thing getNextThing() { return _nextThing; }
 }; // @ PROJECTILE
+
+#define kExplosionType_Fireball 0 // @ C000_EXPLOSION_FIREBALL           
+#define kExplosionType_Slime 1 // @ C001_EXPLOSION_SLIME              
+#define kExplosionType_LightningBolt 2 // @ C002_EXPLOSION_LIGHTNING_BOLT     
+#define kExplosionType_HarmNonMaterial 3 // @ C003_EXPLOSION_HARM_NON_MATERIAL  
+#define kExplosionType_OpenDoor 4 // @ C004_EXPLOSION_OPEN_DOOR          
+#define kExplosionType_PoisonBolt 6 // @ C006_EXPLOSION_POISON_BOLT        
+#define kExplosionType_PoisonCloud 7 // @ C007_EXPLOSION_POISON_CLOUD       
+#define kExplosionType_Smoke 40 // @ C040_EXPLOSION_SMOKE             
+#define kExplosionType_Fluxcage 50 // @ C050_EXPLOSION_FLUXCAGE          
+#define kExplosionType_RebirthStep1 100 // @ C100_EXPLOSION_REBIRTH_STEP1    
+#define kExplosionType_RebirthStep2 101 // @ C101_EXPLOSION_REBIRTH_STEP2    
 
 class Explosion {
 	Thing _nextThing;
@@ -487,6 +499,9 @@ public:
 	explicit Explosion(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
 
 	Thing getNextThing() { return _nextThing; }
+	uint16 getType() { return _attributes & 0x7F; }
+	uint16 getAttack() { return (_attributes >> 8) & 0xFF; }
+	uint16 getCentered() { return (_attributes >> 7) & 0x1;  }
 }; // @ EXPLOSION
 
 

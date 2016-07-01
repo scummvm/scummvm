@@ -82,6 +82,10 @@ enum CreatureType {
 #define kMaskCreatureInfo_archenemy 0x2000 // @ MASK0x2000_ARCHENEMY                
 #define kMaskCreatureInfo_magicmap 0x4000 // @ MASK0x4000_MAGICMAP  
 
+
+#define kMaskActiveGroupFlipBitmap 0x0040 // @ MASK0x0040_FLIP_BITMAP  
+#define kMaskActiveGroupIsAttacking 0x0080 // @ MASK0x0080_IS_ATTACKING 
+
 class ActiveGroup {
 public:
 	int _groupThingIndex;
