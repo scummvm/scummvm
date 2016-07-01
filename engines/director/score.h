@@ -274,7 +274,7 @@ class Sprite {
 public:
 	Sprite();
 	Sprite(const Sprite &sprite);
-
+	~Sprite();
 	bool _enabled;
 	byte _castId;
 	InkType _ink;
@@ -299,7 +299,7 @@ private:
 	void playTransition(Score *score);
 	void playSoundChannel();
 	void renderSprites(Graphics::ManagedSurface &surface, bool renderTrail);
-	void renderText(Graphics::ManagedSurface &surface, uint16 spriteID);
+	void renderText(Graphics::ManagedSurface &surface, uint16 castId);
 	void readPaletteInfo(Common::SeekableSubReadStreamEndian &stream);
 	void readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
 	void readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);

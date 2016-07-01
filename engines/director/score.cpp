@@ -125,7 +125,19 @@ Score::~Score() {
 	delete _trailSurface;
 
 	_movieArchive->close();
+
+	delete _surface;
+	delete _trailSurface;
+
+	delete _font;
 	delete _movieArchive;
+
+	delete[] _labels;
+	delete[] &_frames;
+	delete[] &_casts;
+	delete[] &_castsInfo;
+	delete[] &_actions;
+	delete[] &_fontMap;
 }
 
 void Score::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
@@ -810,9 +822,9 @@ Frame::Frame(const Frame &frame) {
 }
 
 Frame::~Frame() {
-	for (uint16 i = 0; i < _sprites.size(); i++) {
-		delete _sprites[i];
-	}
+	delete[] &_sprites;
+	delete[] &_drawRects;
+	delete _palette;
 }
 
 void Frame::readChannel(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size) {
@@ -1166,6 +1178,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			Image::ImageDecoder *img = getImageFrom(_sprites[i]->_castId);
 
 			if (!img) {
+				warning("Image with id %d not found", _sprites[i]->_castId);
 				continue;
 			}
 
@@ -1241,11 +1254,12 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 
 
 void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID) {
-	Cast *textCast = _vm->_currentScore->_casts[_sprites[spriteID]->_castId];
+	uint16 castID = _sprites[spriteID]->_castId;
+	Cast *textCast = _vm->_currentScore->_casts[castID];
 	Common::SeekableSubReadStreamEndian *textStream;
 
-	if (_vm->_currentScore->_movieArchive->hasResource(MKTAG('S','T','X','T'), spriteID + 1024)) {
-		textStream = _vm->_currentScore->_movieArchive->getResource(MKTAG('S','T','X','T'), spriteID + 1024);
+	if (_vm->_currentScore->_movieArchive->hasResource(MKTAG('S','T','X','T'), castID + 1024)) {
+		textStream = _vm->_currentScore->_movieArchive->getResource(MKTAG('S','T','X','T'), castID + 1024);
 	} else {
 		textStream = _vm->getSharedSTXT()->getVal(spriteID + 1024);
 	}
@@ -1408,6 +1422,11 @@ Sprite::Sprite(const Sprite &sprite) {
 	_height = sprite._height;
 	_startPoint.x = sprite._startPoint.x;
 	_startPoint.y = sprite._startPoint.y;
+}
+
+Sprite::~Sprite() {
+	delete _cast;
+	delete &_startPoint;
 }
 
 } //End of namespace Director
