@@ -696,7 +696,7 @@ void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseL
 	}
 
 	PlaneList::size_type planeCount = _planes.size();
-	for (int outerPlaneIndex = 0; outerPlaneIndex < planeCount; ++outerPlaneIndex) {
+	for (PlaneList::size_type outerPlaneIndex = 0; outerPlaneIndex < planeCount; ++outerPlaneIndex) {
 		const Plane *outerPlane = _planes[outerPlaneIndex];
 		const Plane *visiblePlane = _visiblePlanes.findByObject(outerPlane->_object);
 
@@ -742,7 +742,7 @@ void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseL
 		}
 
 		if (addedToEraseList) {
-			for (int rectIndex = 0; rectIndex < eraseList.size(); ++rectIndex) {
+			for (RectList::size_type rectIndex = 0; rectIndex < eraseList.size(); ++rectIndex) {
 				const Common::Rect &rect = *eraseList[rectIndex];
 				for (int innerPlaneIndex = planeCount - 1; innerPlaneIndex >= 0; --innerPlaneIndex) {
 					const Plane &innerPlane = *_planes[innerPlaneIndex];
@@ -813,7 +813,7 @@ void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseL
 
 			eraseList.add(outerPlane._screenRect.findIntersectingRect(visibleOuterPlane->_screenRect));
 
-			for (PlaneList::size_type innerIndex = planeCount - 1; innerIndex >= 0; --innerIndex) {
+			for (int innerIndex = (int)planeCount - 1; innerIndex >= 0; --innerIndex) {
 				// "inner" just refers to the inner loop
 				const Plane &innerPlane = *_planes[innerIndex];
 				const Plane *visibleInnerPlane = _visiblePlanes.findByObject(innerPlane._object);
@@ -903,7 +903,7 @@ void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseL
 			}
 
 			if (_planes[planeIndex]->_type == kPlaneTypeTransparent) {
-				for (PlaneList::size_type i = planeIndex - 1; i >= 0; --i) {
+				for (int i = (int)planeIndex - 1; i >= 0; --i) {
 					_planes[i]->filterDownEraseRects(drawLists[i], eraseLists[i], eraseLists[planeIndex]);
 				}
 

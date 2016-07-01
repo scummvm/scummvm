@@ -495,8 +495,6 @@ private:
 	using PlaneListBase::push_back;
 
 public:
-	typedef int size_type;
-
 	// A method for finding the index of a plane inside a
 	// PlaneList is used because entries in the main plane
 	// list and visible plane list of GfxFrameout are
