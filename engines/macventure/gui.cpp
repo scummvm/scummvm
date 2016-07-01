@@ -641,7 +641,7 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 		pos = _engine->getObjPosition(child);
 		pos += Common::Point(border.leftOffset, border.topOffset);
 
-		if (child < 600 && child != _draggedObj.id) { // Small HACK until I figre out where the last garbage child in main game window comes from
+		if (child < 600) { // Small HACK until I figre out where the last garbage child in main game window comes from
 			if (!_assets.contains(child)) {
 				_assets[child] = new ImageAsset(child, _graphics);
 			}
@@ -654,7 +654,7 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 
 			if (_engine->isObjSelected(child))
 				_assets[child]->blitInto(
-					surface, pos.x, pos.y, kBlitOR);
+					surface, pos.x, pos.y, kBlitXOR);
 
 			// For test
 			surface->frameRect(Common::Rect(
@@ -697,7 +697,7 @@ void Gui::drawDraggedObject() {
 		_screen.copyRectToSurface(_draggedSurface, _draggedObj.pos.x, _draggedObj.pos.y,
 			Common::Rect(asset->getWidth() - 1, asset->getHeight() - 1));
 
-		asset->blitInto(&_draggedSurface, 0, 0, kBlitOR);
+		asset->blitInto(&_draggedSurface, 0, 0, kBlitBIC);
 
 		g_system->copyRectToScreen(
 			_draggedSurface.getPixels(),
@@ -837,6 +837,16 @@ Graphics::MacWindow * Gui::findWindow(WindowReference reference) {
 		return _diplomaWindow;
 	}
 	return nullptr;
+}
+
+void Gui::checkSelect(ObjID obj, const Common::Event &event, const Common::Rect & clickRect, WindowReference ref) {
+	if (_engine->isObjVisible(obj) &&
+		_engine->isObjClickable(obj) &&
+		isRectInsideObject(clickRect, obj))
+	{
+		selectDraggable(obj, ref, event.mouse);
+		_engine->handleObjectSelect(obj, (WindowReference)ref, event, false);
+	}
 }
 
 bool Gui::isRectInsideObject(Common::Rect target, ObjID obj) {
@@ -1086,10 +1096,7 @@ bool MacVenture::Gui::processMainGameEvents(WindowClick click, Common::Event & e
 		Common::Rect clickRect = calculateClickRect(event.mouse, _mainGameWindow->getDimensions());
 		for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
 			child = (*it).obj;
-			if (isRectInsideObject(clickRect, child)) {
-				selectDraggable(child, kMainGameWindow, event.mouse);
-				_engine->handleObjectSelect(child, kMainGameWindow, event, false);
-			}
+			checkSelect(child, event, clickRect, kMainGameWindow);
 		}
 	}
 	return false;
@@ -1170,10 +1177,7 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event & event) {
 		Common::Rect clickRect = calculateClickRect(event.mouse, _inventoryWindows[i]->getDimensions());
 		for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
 			child = (*it).obj;
-			if (isRectInsideObject(clickRect, child)) {
-				selectDraggable(child, data.refcon, event.mouse);
-				_engine->handleObjectSelect(child, (WindowReference)ref, event, false);
-			}
+			checkSelect(child, event, clickRect, (WindowReference)ref);
 		}
 	}
 	return true;

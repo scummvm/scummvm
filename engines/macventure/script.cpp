@@ -794,8 +794,8 @@ void ScriptEngine::opabLTS(EngineState * state, EngineFrame * frame) {
 }
 
 void ScriptEngine::opacEQ(EngineState * state, EngineFrame * frame) {
-	word b = neg16(state->pop());
-	word a = neg16(state->pop());
+	word b = state->pop();
+	word a = state->pop();
 	state->push((a == b) ? 0xFFFF : 0);
 }
 
