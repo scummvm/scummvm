@@ -2894,8 +2894,9 @@ uint16 DisplayMan::getHorizontalOffsetM22(uint16 val) {
 }
 
 bool DisplayMan::isDerivedBitmapInCache(int16 derivedBitmapIndex) {
-	if (_derivedBitmaps == nullptr) {
-		_derivedBitmaps[derivedBitmapIndex] = new byte[_derivedBitmapByteCount[derivedBitmapIndex]];
+	if (_derivedBitmaps[derivedBitmapIndex] == nullptr) {
+		// * 2, because the original uses 4 bits instead of 8 bits to store a pixel
+		_derivedBitmaps[derivedBitmapIndex] = new byte[_derivedBitmapByteCount[derivedBitmapIndex] * 2];
 		return false;
 	} else
 		return true;
