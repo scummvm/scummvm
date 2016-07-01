@@ -1303,7 +1303,8 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 
 void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID) {
 	uint16 castID = _sprites[spriteID]->_castId;
-	Cast *textCast = _vm->_currentScore->_casts[castID];
+
+	TextCast *textCast = static_cast<TextCast *>(_vm->_currentScore->_casts[castID]);
 	Common::SeekableSubReadStreamEndian *textStream;
 
 	if (_vm->_currentScore->_movieArchive->hasResource(MKTAG('S','T','X','T'), castID + 1024)) {
@@ -1332,8 +1333,13 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID) {
 	int height = _sprites[spriteID]->_height;
 	int width = _sprites[spriteID]->_width;
 
-	//FIXME
-	FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont)->drawString(&surface, text, x, y, width, 0);
+	const Graphics::Font *font = FontMan.getFontByName(_vm->_currentScore->_fontMap[textCast->fontId]);
+
+	if (!font) {
+		error("Cannot load font %s", _vm->_currentScore->_fontMap[textCast->fontId].c_str());
+	}
+
+	font->drawString(&surface, text, x, y, width, 0);
 }
 
 void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
