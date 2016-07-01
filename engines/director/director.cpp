@@ -147,6 +147,7 @@ put y\n\
 check(1, 2, 3)\n\
 check 4, 5, 6\n\
 check 7, 8\n\
+if random(4) > 2 then put 1000\n\
 ", kMovieScript, 2);
 
 _lingo->executeScript(kMovieScript, 2);

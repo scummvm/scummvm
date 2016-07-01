@@ -98,6 +98,7 @@ programline:
 	| func
 	| macro
 	| asgn				{ g_lingo->code1(g_lingo->c_xpop); }
+	| stmtoneliner
 	| stmt
 	| error				{ yyerrok; }
 	;
@@ -181,6 +182,14 @@ stmt: expr 				{ g_lingo->code1(g_lingo->c_xpop); }
 		(*g_lingo->_currentScript)[$1 + 3] = body;	/* body of loop */
 		(*g_lingo->_currentScript)[$1 + 4] = inc;	/* increment */
 		(*g_lingo->_currentScript)[$1 + 5] = end; }	/* end, if cond fails */
+	;
+
+stmtoneliner: 	if cond tTHEN begin stmt end {
+		inst then = 0, end = 0;
+		WRITE_UINT32(&then, $4);
+		WRITE_UINT32(&end, $6);
+		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
+		(*g_lingo->_currentScript)[$1 + 3] = end; }	/* end, if cond fails */
 	;
 
 cond:	   expr 				{ g_lingo->code1(STOP); }
