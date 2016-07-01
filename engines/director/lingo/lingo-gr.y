@@ -211,6 +211,9 @@ expr: INT	{
 		inst i = 0;
 		WRITE_UINT32(&i, $1);
 		g_lingo->code1(i); };
+	| ID '(' arglist ')' {
+			$$ = g_lingo->codeFunc($1, $3);
+			delete $1; }
 	| ID	{
 		$$ = g_lingo->codeId(*$1);
 		delete $1; }
@@ -229,10 +232,7 @@ expr: INT	{
 	| '(' expr ')'				{ $$ = $2; }
 	;
 
-func: ID '(' arglist ')' {
-		g_lingo->codeFunc($1, $3);
-		delete $1; }
-	| tMCI STRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c_str()); delete $2; }
+func: tMCI STRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c_str()); delete $2; }
 	| tMCIWAIT ID			{ g_lingo->code1(g_lingo->c_mciwait); g_lingo->codeString($2->c_str()); delete $2; }
 	| tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| gotofunc

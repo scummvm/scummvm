@@ -92,8 +92,34 @@ Common::Error DirectorEngine::run() {
 	_soundManager = new DirectorSound();
 
 #if 0
-_lingo->addCode("--\n\
-macro check par1, par2		\n\
+	_lingo->addCode("--\n\
+macro SHIPX\n\
+global x, y\n\
+set x = Random(5)\n\
+if x = 1 then\n\
+go \"Zoom\"\n\
+exit\n\
+end if\n\
+if x >1 then\n\
+set y = 10\n\
+exit\n\
+end if\n\
+put 100\n\
+\n\
+--\n\
+macro ZIPX\n\
+set x = Random(5)\n\
+if x = 1 then\n\
+go \"ZIP\"\n\
+exit\n\
+end if\n\
+if x >1 then\n\
+put x\n\
+exit\n\
+end if\n\
+\n\
+--\n\
+mmacro check par1, par2		\n\
 , par3\n\
 if par1 = 3 then\n\
   put -3\n\
@@ -108,48 +134,6 @@ end if\n\
 put par1\n\
 put par2\n\
 put par3\n\
-", kMovieScript, 5);
-
-_lingo->addCode("check(1, 2, 3)\n\
-check 4, 5, 6\n\
-check 7, 8\n\
-", kMovieScript, 2);
-
-_lingo->executeScript(kMovieScript, 2);
-
-	_lingo->addCode("--\n\
-macro SHIPX\n\
-global x, y\n\
-set x = 5\n\
-if x = 1 then\n\
-go \"Zoom\"\n\
-exit\n\
-end if\n\
-if x >1 then\n\
-set y = 10\n\
-exit\n\
-end if\n\
-put 100\n\
-\n\
---\n\
-macro ZIPX\n\
-set x = 7\n\
-if x = 1 then\n\
-go \"ZIP\"\n\
-exit\n\
-end if\n\
-if x >1 then\n\
-put x\n\
-exit\n\
-end if\n\
-\n\
---\n\
-macro check par1, par2\n\
-if par1 = 3 then\n\
-  put 8\n\
-else\n\
-  put 9\n\
-end if\n\
 ", kMovieScript, 1);
 
 _lingo->addCode("check(2, 3)\n\
@@ -160,6 +144,9 @@ put x\n\
 zipx\n\
 put x\n\
 put y\n\
+check(1, 2, 3)\n\
+check 4, 5, 6\n\
+check 7, 8\n\
 ", kMovieScript, 2);
 
 _lingo->executeScript(kMovieScript, 2);
