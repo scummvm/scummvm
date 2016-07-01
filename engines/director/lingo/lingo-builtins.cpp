@@ -43,10 +43,12 @@ void Lingo::b_random() {
 	Datum max = g_lingo->pop();
 	Datum res;
 
-	res.u.i = 5;
+	if (max.type != INT)
+		warning("Non-int type for rand: %d", max.type);
+
+	res.u.i = g_lingo->_vm->_rnd.getRandomNumber(max.u.i);
 	res.type = INT;
 
-	warning("b_random");
 	g_lingo->push(res);
 }
 
