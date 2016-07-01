@@ -29,19 +29,45 @@
 namespace Titanic {
 
 struct CBaseStarEntry {
-	int _field0;
+	byte _field0;
+	byte _field1;
+	byte _field2;
+	byte _field3;
 	double _value;
 	CBaseStarVal _val;
+	uint _data[5];
+
+	CBaseStarEntry();
+	void load(Common::SeekableReadStream &s);
 };
 
 class CBaseStar {
 protected:
 	Common::Array<CBaseStarEntry> _data;
-	int _fieldC;
 	CStarControlSub4 _sub4;
 	double _minVal;
 	double _maxVal;
 	double _range;
+protected:
+	/**
+	 * Get a pointer to a data entry
+	 */
+	CBaseStarEntry *getDataPtr(int index);
+
+	/**
+	 * Load entry data from a passed stream
+	 */
+	void loadData(Common::SeekableReadStream &s);
+
+	/**
+	 * Load entry data from a specified resource
+	 */
+	void loadData(const CString &resName);
+
+	/**
+	 * Reset the data for an entry
+	 */
+	void resetEntry(CBaseStarEntry &entry);
 public:
 	CBaseStar();
 	virtual ~CBaseStar() {}
@@ -69,11 +95,6 @@ public:
 	void clear();
 
 	void initialize();
-
-	/**
-	 * Get a pointer to a data entry
-	 */
-	CBaseStarEntry *getDataPtr(int index);
 };
 
 } // End of namespace Titanic

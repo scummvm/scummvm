@@ -35,7 +35,7 @@ bool CStarControlSub2::proc4(int v1, int v2, int v3, int v4, int v5) {
 	return true;
 }
 
-bool CStarControlSub2::proc6() {
+bool CStarControlSub2::loadStar() {
 	// TODO
 	return true;
 }
