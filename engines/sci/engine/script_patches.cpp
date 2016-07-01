@@ -4138,7 +4138,7 @@ int32 ScriptPatcher::findSignature(const SciScriptPatcherEntry *patchEntry, cons
 	return findSignature(runtimeEntry->magicDWord, runtimeEntry->magicOffset, patchEntry->signatureData, patchEntry->description, scriptData, scriptSize);
 }
 
-// Attention: Magic DWord is returns using platform specific byte order. This is done on purpose for performance.
+// Attention: Magic DWord is returned using platform specific byte order. This is done on purpose for performance.
 void ScriptPatcher::calculateMagicDWordAndVerify(const char *signatureDescription, const uint16 *signatureData, bool magicDWordIncluded, uint32 &calculatedMagicDWord, int &calculatedMagicDWordOffset) {
 	Selector curSelector = -1;
 	int magicOffset;
@@ -4219,7 +4219,7 @@ void ScriptPatcher::calculateMagicDWordAndVerify(const char *signatureDescriptio
 				}
 				if (!magicDWordLeft) {
 					// Magic DWORD is now known, convert to platform specific byte order
-					calculatedMagicDWord = READ_LE_UINT32(magicDWord);
+					calculatedMagicDWord = READ_UINT32(magicDWord);
 				}
 			}
 			break;
@@ -4244,7 +4244,8 @@ void ScriptPatcher::calculateMagicDWordAndVerify(const char *signatureDescriptio
 				magicDWord[4 - magicDWordLeft] = (byte)curValue;
 				magicDWordLeft--;
 				if (!magicDWordLeft) {
-					calculatedMagicDWord = READ_LE_UINT32(magicDWord);
+					// Magic DWORD is now known, convert to platform specific byte order
+					calculatedMagicDWord = READ_UINT32(magicDWord);
 				}
 			}
 			break;
