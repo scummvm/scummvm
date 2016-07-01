@@ -54,6 +54,36 @@ Frame g0175Frame_DoorFrameTop_D2R = Frame(164, 223, 22, 24, 48, 3, 16, 0); // @ 
 Frame g0176Frame_DoorFrameTop_D1L = Frame(0, 31, 14, 17, 64, 4, 16, 0); // @ G0176_s_Graphic558_Frame_DoorFrameTop_D1L
 Frame g0177Frame_DoorFrameTop_D1C = Frame(48, 175, 14, 17, 64, 4, 0, 0); // @ G0177_s_Graphic558_Frame_DoorFrameTop_D1C
 Frame g0178Frame_DoorFrameTop_D1R = Frame(192, 223, 14, 17, 64, 4, 16, 0); // @ G0178_s_Graphic558_Frame_DoorFrameTop_D1R
+Frame g0110FrameStairsUpFront_D3L = Frame(0, 79, 25, 70, 40, 46, 0, 0); // @ G0110_s_Graphic558_Frame_StairsUpFront_D3L
+Frame g0111FrameStairsUpFront_D3C = Frame(64, 159, 25, 70, 48, 46, 0, 0); // @ G0111_s_Graphic558_Frame_StairsUpFront_D3C
+Frame g0112FrameStairsUpFront_D3R = Frame(149, 223, 25, 70, 40, 46, 5, 0); // @ G0112_s_Graphic558_Frame_StairsUpFront_D3R
+Frame g0113FrameStairsUpFront_D2L = Frame(0, 63, 22, 83, 32, 62, 0, 0); // @ G0113_s_Graphic558_Frame_StairsUpFront_D2L
+Frame g0114FrameStairsUpFront_D2C = Frame(64, 159, 22, 83, 48, 62, 0, 0); // @ G0114_s_Graphic558_Frame_StairsUpFront_D2C
+Frame g0115FrameStairsUpFront_D2R = Frame(160, 223, 22, 83, 32, 62, 0, 0); // @ G0115_s_Graphic558_Frame_StairsUpFront_D2R
+Frame g0116FrameStairsUpFront_D1L = Frame(0, 31, 9, 108, 16, 100, 0, 0); // @ G0116_s_Graphic558_Frame_StairsUpFront_D1L
+Frame g0117FrameStairsUpFront_D1C = Frame(32, 191, 9, 108, 80, 100, 0, 0); // @ G0117_s_Graphic558_Frame_StairsUpFront_D1C
+Frame g0118FrameStairsUpFront_D1R = Frame(192, 223, 9, 108, 16, 100, 0, 0); // @ G0118_s_Graphic558_Frame_StairsUpFront_D1R
+Frame g0119FrameStairsUpFront_D0L = Frame(0, 31, 58, 101, 16, 44, 0, 0); // @ G0119_s_Graphic558_Frame_StairsUpFront_D0L
+Frame g0120FrameStairsUpFront_D0R = Frame(192, 223, 58, 101, 16, 44, 0, 0); // @ G0120_s_Graphic558_Frame_StairsUpFront_D0R
+Frame g0121FrameStairsDownFront_D3L = Frame(0, 79, 28, 68, 40, 41, 0, 0); // @ G0121_s_Graphic558_Frame_StairsDownFront_D3L
+Frame g0122FrameStairsDownFront_D3C = Frame(64, 159, 28, 70, 48, 43, 0, 0); // @ G0122_s_Graphic558_Frame_StairsDownFront_D3C
+Frame g0123FrameStairsDownFront_D3R = Frame(149, 223, 28, 68, 40, 41, 5, 0); // @ G0123_s_Graphic558_Frame_StairsDownFront_D3R
+Frame g0124FrameStairsDownFront_D2L = Frame(0, 63, 24, 85, 32, 62, 0, 0); // @ G0124_s_Graphic558_Frame_StairsDownFront_D2L
+Frame g0125FrameStairsDownFront_D2C = Frame(64, 159, 24, 85, 48, 62, 0, 0); // @ G0125_s_Graphic558_Frame_StairsDownFront_D2C
+Frame g0126FrameStairsDownFront_D2R = Frame(160, 223, 24, 85, 32, 62, 0, 0); // @ G0126_s_Graphic558_Frame_StairsDownFront_D2R
+Frame g0127FrameStairsDownFront_D1L = Frame(0, 31, 18, 108, 16, 91, 0, 0); // @ G0127_s_Graphic558_Frame_StairsDownFront_D1L
+Frame g0128FrameStairsDownFront_D1C = Frame(32, 191, 18, 108, 80, 91, 0, 0); // @ G0128_s_Graphic558_Frame_StairsDownFront_D1C
+Frame g0129FrameStairsDownFront_D1R = Frame(192, 223, 18, 108, 16, 91, 0, 0); // @ G0129_s_Graphic558_Frame_StairsDownFront_D1R
+Frame g0130FrameStairsDownFront_D0L = Frame(0, 31, 76, 135, 16, 60, 0, 0); // @ G0130_s_Graphic558_Frame_StairsDownFront_D0L
+Frame g0131FrameStairsDownFront_D0R = Frame(192, 223, 76, 135, 16, 60, 0, 0); // @ G0131_s_Graphic558_Frame_StairsDownFront_D0R
+Frame g0132FrameStairsSide_D2L = Frame(60, 75, 57, 61, 8, 5, 0, 0); // @ G0132_s_Graphic558_Frame_StairsSide_D2L
+Frame g0133FrameStairsSide_D2R = Frame(148, 163, 57, 61, 8, 5, 0, 0); // @ G0133_s_Graphic558_Frame_StairsSide_D2R
+Frame g0134FrameStairsUpSide_D1L = Frame(32, 63, 57, 99, 16, 43, 0, 0); // @ G0134_s_Graphic558_Frame_StairsUpSide_D1L
+Frame g0135FrameStairsUpSide_D1R = Frame(160, 191, 57, 99, 16, 43, 0, 0); // @ G0135_s_Graphic558_Frame_StairsUpSide_D1R
+Frame g0136FrameStairsDownSide_D1L = Frame(32, 63, 60, 98, 16, 39, 0, 0); // @ G0136_s_Graphic558_Frame_StairsDownSide_D1L
+Frame g0137FrameStairsDownSide_D1R = Frame(160, 191, 60, 98, 16, 39, 0, 0); // @ G0137_s_Graphic558_Frame_StairsDownSide_D1R
+Frame g0138FrameStairsSide_D0L = Frame(0, 15, 73, 85, 8, 13, 0, 0); // @ G0138_s_Graphic558_Frame_StairsSide_D0L
+Frame g0139FrameStairsSide_D0R = Frame(208, 223, 73, 85, 8, 13, 0, 0); // @ G0139_s_Graphic558_Frame_StairsSide_D0R
 Frame g0140FrameFloorPit_D3L = Frame(0, 79, 66, 73, 40, 8, 0, 0); // @ G0140_s_Graphic558_Frame_FloorPit_D3L
 Frame g0141FrameFloorPit_D3C = Frame(64, 159, 66, 73, 48, 8, 0, 0); // @ G0141_s_Graphic558_Frame_FloorPit_D3C
 Frame g0142FrameFloorPit_D3R = Frame(144, 223, 66, 73, 40, 8, 0, 0); // @ G0142_s_Graphic558_Frame_FloorPit_D3R
@@ -1161,27 +1191,62 @@ T0116017_orangeElk:
 	}
 }
 
+// NOTE: has been screened for missing code
 void DisplayMan::drawSquareD3R(direction dir, int16 posX, int16 posY) {
+	int16 order;
 	uint16 squareAspect[5];
+
+
 	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
-	switch (squareAspect[0]) {
-	case kStairsFrontElemType:
-		if (squareAspect[kStairsUpAspect])
-			drawFloorPitOrStairsBitmapFlippedHorizontally(_g0675stairsNativeBitmapIndex_Up_Front_D3L, gStairFrames[kFrameStairsUpFront_D3R]);
-		else
-			drawFloorPitOrStairsBitmapFlippedHorizontally(_g0682stairsNativeBitmapIndex_Down_Front_D3L, gStairFrames[kFrameStairsDownFront_D3R]);
-		break;
-	case kWallElemType:
+	switch (squareAspect[kElemAspect]) {
+	case kElementTypeStaisFront:
+		if (squareAspect[kStairsUpAspect]) {
+			drawFloorPitOrStairsBitmapFlippedHorizontally(_g0675stairsNativeBitmapIndex_Up_Front_D3L, g0112FrameStairsUpFront_D3R);
+		} else {
+			drawFloorPitOrStairsBitmapFlippedHorizontally(_g0682stairsNativeBitmapIndex_Down_Front_D3L, g0123FrameStairsDownFront_D3R);
+		}
+		goto T0117016;
+	case kElementTypeWall:
 		drawWallSetBitmap(_wallSetBitMaps[kWall_D3LCR], gFrameWalls[kViewSquare_D3R]);
 		isDrawnWallOrnAnAlcove(squareAspect[kLeftWallOrnOrdAspect], kViewWall_D3R_LEFT);
 		if (isDrawnWallOrnAnAlcove(squareAspect[kFrontWallOrnOrdAspect], kViewWall_D3R_FRONT)) {
-			// ... missing code
+			order = kCellOrder_Alcove;
+			goto T0117018;
 		}
-		break;
-	default:
-		break;
+		return;
+	case kElementTypeDoorSide:
+	case kElementTypeStairsSide:
+		order = kCellOrder_BackRight_BackLeft_FrontLeft;
+		goto T0117017;
+	case kElementTypeDoorFront:
+		warning("MISSING CODE: F0108_DUNGEONVIEW_DrawFloorOrnament");
+		cthulhu(Thing(squareAspect[kFirstGroupOrObjectAspect]), dir, posX, posY, kViewSquare_D3R, kCellOrder_DoorPass1_BackRight_BackLeft);
+		memcpy(_tmpBitmap, _wallSetBitMaps[kDoorFrameLeft_D3L], 32 * 44);
+		warning("MISSING CODE: F0103_DUNGEONVIEW_DrawDoorFrameBitmapFlippedHorizontally");
+		if (((Door*)_vm->_dungeonMan->_dunData._thingsData[kDoorThingType])[squareAspect[kDoorThingIndexAspect]].hasButton()) {
+			warning("MISSING CODE: F0110_DUNGEONVIEW_DrawDoorButton");
+		}
+		warning("MISSING CODE: F0111_DUNGEONVIEW_DrawDoor");
+		order = kCellOrder_DoorPass2_FrontRight_FrontLeft;
+		goto T0117018;
+	case kElementTypePit:
+		if (!squareAspect[kPitInvisibleAspect]) {
+		 drawFloorPitOrStairsBitmapFlippedHorizontally(k049FloorPit_D3L_GraphicIndice, g0142FrameFloorPit_D3R);
+		}
+	case kElementTypeTeleporter:
+	case kElementTypeCorridor:
+T0117016:
+		order = kCellOrder_BackRight_BackLeft_FrontRight_FrontLeft;
+T0117017:
+		warning("MISSING CODE: F0108_DUNGEONVIEW_DrawFloorOrnament"); 
+T0117018:
+		cthulhu(Thing(squareAspect[kFirstGroupOrObjectAspect]), dir, posX, posY, kViewSquare_D3R, order);
+	}
+	if ((squareAspect[kElemAspect] == kElementTypeTeleporter) && squareAspect[kTeleporterVisibleAspect]) {
+		drawField(&gFieldAspects[kViewSquare_D3R], gFrameWalls[kViewSquare_D3R]._box);
 	}
 }
+
 void DisplayMan::drawSquareD3C(direction dir, int16 posX, int16 posY) {
 	uint16 squareAspect[5];
 	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
