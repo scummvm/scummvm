@@ -209,7 +209,15 @@ enum GraphicIndice {
 	kFirstObjectGraphicIndice = 360, // @ C360_GRAPHIC_FIRST_OBJECT
 	kFirstCreatureGraphicIndice = 446, // @ C446_GRAPHIC_FIRST_CREATURE
 	kFirstProjectileGraphicIndice = 316, // @ C316_GRAPHIC_FIRST_PROJECTILE 
-	kFirstExplosionPatternGraphicIndice = 351 // @ C351_GRAPHIC_FIRST_EXPLOSION_PATTERN 
+	kFirstExplosionPatternGraphicIndice = 351, // @ C351_GRAPHIC_FIRST_EXPLOSION_PATTERN 
+	k049FloorPit_D3L_GraphicIndice = 49, // @ C049_GRAPHIC_FLOOR_PIT_D3L
+	k050FloorPit_D3C_GraphicIndice = 50, // @ C050_GRAPHIC_FLOOR_PIT_D3C
+	k051FloorPit_D2L_GraphicIndice = 51, // @ C051_GRAPHIC_FLOOR_PIT_D2L
+	k052FloorPit_D2C_GraphicIndice = 52, // @ C052_GRAPHIC_FLOOR_PIT_D2C
+	k053FloorPit_D1L_GraphicIndice = 53, // @ C053_GRAPHIC_FLOOR_PIT_D1L
+	k054FloorPit_D1C_GraphicIndice = 54, // @ C054_GRAPHIC_FLOOR_PIT_D1C
+	k055FloorPit_D0L_GraphicIndice = 55, // @ C055_GRAPHIC_FLOOR_PIT_D0L
+	k056FloorPit_D0C_GraphicIndice = 56 // @ C056_GRAPHIC_FLOOR_PIT_D0C
 };
 
 extern uint16 gPalSwoosh[16];
@@ -235,16 +243,16 @@ public:
 
 extern Box gBoxMovementArrows; // G0002_s_Graphic562_Box_MovementArrows
 
-// The frames in the original sources contain inclusive boundaries and byte widths, not pixel widths
-struct Frame {
-	uint16 _destFromX, _destToX, _destFromY, _destToY;
+class Frame {
+public:
+	Box _box;
 	uint16 _srcWidth, _srcHeight;
 	uint16 _srcX, _srcY;
 
 	Frame() {}
 	Frame(uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
 		  uint16 srcWidth, uint16 srcHeight, uint16 srcX, uint16 srcY) :
-		_destFromX(destFromX), _destToX(destToX + 1), _destFromY(destFromY), _destToY(destToY + 1),
+		_box(destFromX, destToX, destFromY, destToY),
 		_srcWidth(srcWidth * 2), _srcHeight(srcHeight), _srcX(srcX), _srcY(srcY) {}
 };
 
@@ -254,27 +262,6 @@ enum WallSet {
 
 enum FloorSet {
 	kFloorSetStone = 0 // @ C0_FLOOR_SET_STONE
-};
-
-enum StairIndex {
-	kStairsNativeIndex_Up_Front_D3L = 0, // @ G0675_i_StairsNativeBitmapIndex_Up_Front_D3L
-	kStairsNativeIndex_Up_Front_D3C = 1, // @ G0676_i_StairsNativeBitmapIndex_Up_Front_D3C
-	kStairsNativeIndex_Up_Front_D2L = 2, // @ G0677_i_StairsNativeBitmapIndex_Up_Front_D2L
-	kStairsNativeIndex_Up_Front_D2C = 3, // @ G0678_i_StairsNativeBitmapIndex_Up_Front_D2C
-	kStairsNativeIndex_Up_Front_D1L = 4, // @ G0679_i_StairsNativeBitmapIndex_Up_Front_D1L
-	kStairsNativeIndex_Up_Front_D1C = 5, // @ G0680_i_StairsNativeBitmapIndex_Up_Front_D1C
-	kStairsNativeIndex_Up_Front_D0C_Left = 6, // @ G0681_i_StairsNativeBitmapIndex_Up_Front_D0C_Left
-	kStairsNativeIndex_Down_Front_D3L = 7, // @ G0682_i_StairsNativeBitmapIndex_Down_Front_D3L
-	kStairsNativeIndex_Down_Front_D3C = 8, // @ G0683_i_StairsNativeBitmapIndex_Down_Front_D3C
-	kStairsNativeIndex_Down_Front_D2L = 9, // @ G0684_i_StairsNativeBitmapIndex_Down_Front_D2L
-	kStairsNativeIndex_Down_Front_D2C = 10, // @ G0685_i_StairsNativeBitmapIndex_Down_Front_D2C
-	kStairsNativeIndex_Down_Front_D1L = 11, // @ G0686_i_StairsNativeBitmapIndex_Down_Front_D1L
-	kStairsNativeIndex_Down_Front_D1C = 12, // @ G0687_i_StairsNativeBitmapIndex_Down_Front_D1C
-	kStairsNativeIndex_Down_Front_D0C_Left = 13, // @ G0688_i_StairsNativeBitmapIndex_Down_Front_D0C_Left
-	kStairsNativeIndex_Side_D2L = 14, // @ G0689_i_StairsNativeBitmapIndex_Side_D2L
-	kStairsNativeIndex_Up_Side_D1L = 15, // @ G0690_i_StairsNativeBitmapIndex_Up_Side_D1L
-	kStairsNativeIndex_Down_Side_D1L = 16, // @ G0691_i_StairsNativeBitmapIndex_Down_Side_D1L
-	kStairsNativeIndex_Side_D0L = 17 // @ G0692_i_StairsNativeBitmapIndex_Side_D0L
 };
 
 enum ViewWall {
@@ -416,7 +403,6 @@ class DisplayMan {
 
 	// pointers 13,14 and [15-19] are owned by this array
 	byte *_wallSetBitMaps[25];	// @G[0696..0710]_puc_Bitmap_WallSet_...
-	uint16 _stairIndices[kStairsGraphicCount];
 
 	// pointers are not owned by these fields
 	byte *_floorBitmap;
@@ -432,8 +418,8 @@ class DisplayMan {
 	void unpackGraphics();
 	void loadFNT1intoBitmap(uint16 index, byte *destBitmap);
 
-	void drawFloorPitOrStairsBitmapFlippedHorizontally(StairIndex relIndex, Frame &frame); // @ F0105_DUNGEONVIEW_DrawFloorPitOrStairsBitmapFlippedHorizontally
-	void drawFloorPitOrStairsBitmap(StairIndex relIndex, Frame &frame); // @ F0104_DUNGEONVIEW_DrawFloorPitOrStairsBitmap
+	void drawFloorPitOrStairsBitmapFlippedHorizontally(uint16 nativeIndex, Frame &frame); // @ F0105_DUNGEONVIEW_DrawFloorPitOrStairsBitmapFlippedHorizontally
+	void drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &frame); // @ F0104_DUNGEONVIEW_DrawFloorPitOrStairsBitmap
 	void drawWallSetBitmap(byte *bitmap, Frame &f); // @ F0100_DUNGEONVIEW_DrawWallSetBitmap
 	void drawWallSetBitmapWithoutTransparency(byte *bitmap, Frame &f); // @ F0101_DUNGEONVIEW_DrawWallSetBitmapWithoutTransparency
 	void drawSquareD3L(direction dir, int16 posX, int16 posY); // @ F0116_DUNGEONVIEW_DrawSquareD3L
@@ -457,6 +443,24 @@ class DisplayMan {
 	uint16 *_derivedBitmapByteCount; // @ G0639_pui_DerivedBitmapByteCount
 	byte **_derivedBitmaps; // @ G0638_pui_DerivedBitmapBlockIndices
 
+	int16 _g0675stairsNativeBitmapIndex_Up_Front_D3L; // @ G0675_i_StairsNativeBitmapIndex_Up_Front_D3L
+	int16 _g0676stairsNativeBitmapIndex_Up_Front_D3C; // @ G0676_i_StairsNativeBitmapIndex_Up_Front_D3C
+	int16 _g0677stairsNativeBitmapIndex_Up_Front_D2L; // @ G0677_i_StairsNativeBitmapIndex_Up_Front_D2L
+	int16 _g0678stairsNativeBitmapIndex_Up_Front_D2C; // @ G0678_i_StairsNativeBitmapIndex_Up_Front_D2C
+	int16 _g0679stairsNativeBitmapIndex_Up_Front_D1L; // @ G0679_i_StairsNativeBitmapIndex_Up_Front_D1L
+	int16 _g0680stairsNativeBitmapIndex_Up_Front_D1C; // @ G0680_i_StairsNativeBitmapIndex_Up_Front_D1C
+	int16 _g0681stairsNativeBitmapIndex_Up_Front_D0C_Left; // @ G0681_i_StairsNativeBitmapIndex_Up_Front_D0C_Left
+	int16 _g0682stairsNativeBitmapIndex_Down_Front_D3L; // @ G0682_i_StairsNativeBitmapIndex_Down_Front_D3L
+	int16 _g0683stairsNativeBitmapIndex_Down_Front_D3C; // @ G0683_i_StairsNativeBitmapIndex_Down_Front_D3C
+	int16 _g0684stairsNativeBitmapIndex_Down_Front_D2L; // @ G0684_i_StairsNativeBitmapIndex_Down_Front_D2L
+	int16 _g0685stairsNativeBitmapIndex_Down_Front_D2C; // @ G0685_i_StairsNativeBitmapIndex_Down_Front_D2C
+	int16 _g0686stairsNativeBitmapIndex_Down_Front_D1L; // @ G0686_i_StairsNativeBitmapIndex_Down_Front_D1L
+	int16 _g0687stairsNativeBitmapIndex_Down_Front_D1C; // @ G0687_i_StairsNativeBitmapIndex_Down_Front_D1C
+	int16 _g0688stairsNativeBitmapIndex_Down_Front_D0C_Left; // @ G0688_i_StairsNativeBitmapIndex_Down_Front_D0C_Left
+	int16 _g0689stairsNativeBitmapIndex_Side_D2L; // @ G0689_i_StairsNativeBitmapIndex_Side_D2L
+	int16 _g0690stairsNativeBitmapIndex_Up_Side_D1L; // @ G0690_i_StairsNativeBitmapIndex_Up_Side_D1L
+	int16 _g0691stairsNativeBitmapIndex_Down_Side_D1L; // @ G0691_i_StairsNativeBitmapIndex_Down_Side_D1L
+	int16 _g0692stairsNativeBitmapIndex_Side_D0L; // @ G0692_i_StairsNativeBitmapIndex_Side_D0L
 public:
 	// some methods use this for a stratchpad, don't make assumptions about content between function calls
 	byte *_tmpBitmap;

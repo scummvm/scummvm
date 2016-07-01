@@ -163,19 +163,20 @@ enum TextType {
 };
 
 enum SquareAspectIndice {
-	kElemAspect = 0,
-	kFirstGroupOrObjectAspect = 1,
-	kRightWallOrnOrdAspect = 2,
-	kFrontWallOrnOrdAspect = 3,
-	kLeftWallOrnOrdAspect = 4,
-	kPitInvisibleAspect = 2,
-	kTeleporterVisibleAspect = 2,
-	kStairsUpAspect = 2,
-	kDoorStateAspect = 2,
-	kDoorThingIndexAspect = 3,
-	kFloorOrnOrdAspect = 4,
-	kFootprintsAspect = 0x8000 // @ MASK0x8000_FOOTPRINTS          
+	kElemAspect = 0, // @ C0_ELEMENT
+	kFirstGroupOrObjectAspect = 1, // @ C1_FIRST_GROUP_OR_OBJECT 
+	kRightWallOrnOrdAspect = 2, // @ C2_RIGHT_WALL_ORNAMENT_ORDINAL 
+	kFrontWallOrnOrdAspect = 3, // @ C3_FRONT_WALL_ORNAMENT_ORDINAL 
+	kLeftWallOrnOrdAspect = 4, // @ C4_LEFT_WALL_ORNAMENT_ORDINAL 
+	kPitInvisibleAspect = 2, // @ C2_PIT_INVISIBLE 
+	kTeleporterVisibleAspect = 2, // @ C2_TELEPORTER_VISIBLE 
+	kStairsUpAspect = 2, // @ C2_STAIRS_UP 
+	kDoorStateAspect = 2, // @ C2_DOOR_STATE 
+	kDoorThingIndexAspect = 3, // @ C3_DOOR_THING_INDEX 
+	kFloorOrnOrdAspect = 4, // @ C4_FLOOR_ORNAMENT_ORDINAL 
+	kFootprintsAspect = 0x8000 // @ MASK0x8000_FOOTPRINTS             
 };
+;
 
                
 
