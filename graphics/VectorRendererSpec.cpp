@@ -797,6 +797,58 @@ blitSubSurface(const Graphics::Surface *source, const Common::Rect &r) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
+blitSubSurfaceClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping) {
+	if (clipping.isEmpty() || clipping.contains(r)) {
+		blitSubSurface(source, r);
+		return;
+	}
+
+	int16 x = r.left;
+	int16 y = r.top;
+
+	if (r.width() > source->w)
+		x = x + (r.width() >> 1) - (source->w >> 1);
+
+	if (r.height() > source->h)
+		y = y + (r.height() >> 1) - (source->h >> 1);
+
+	int w = source->w, h = source->h;
+	int usedW = w, usedH = h;
+	int offsetX = 0, offsetY = 0;
+
+	if (x > clipping.right || x + w < clipping.left) return;
+	if (y > clipping.bottom || y + h < clipping.top) return;
+	if (x < clipping.left) {
+		offsetX = clipping.left - x;
+		usedW -= offsetX;
+		x = clipping.left;
+	}
+	if (y < clipping.top) {
+		offsetY = clipping.top - y;
+		usedH -= offsetY;
+		y = clipping.top;
+	}
+	if (usedW > clipping.width()) usedW = clipping.width();
+	if (usedH > clipping.width()) usedH = clipping.height();
+
+	byte *dst_ptr = (byte *)_activeSurface->getBasePtr(x, y);
+	const byte *src_ptr = (const byte *)source->getBasePtr(offsetX, offsetY);
+
+	const int dst_pitch = _activeSurface->pitch;
+	const int src_pitch = source->pitch;
+
+	int lines = usedH;
+	const int sz = usedW * sizeof(PixelType);
+
+	while (lines--) {
+		memcpy(dst_ptr, src_ptr, sz);
+		dst_ptr += dst_pitch;
+		src_ptr += src_pitch;
+	}
+}
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
 blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r) {
 	int16 x = r.left;
 	int16 y = r.top;
@@ -886,7 +938,7 @@ blitAlphaBitmapClip(const Graphics::Surface *source, const Common::Rect &r, cons
 		}
 
 		dst_ptr = dst_ptr - usedW + dst_pitch;
-		src_ptr = src_ptr - usedH + src_pitch;
+		src_ptr = src_ptr - usedW + src_pitch;
 	}
 }
 

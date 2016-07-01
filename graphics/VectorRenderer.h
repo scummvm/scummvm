@@ -480,6 +480,7 @@ public:
 	 * blitted into the active surface, at the position specified by "r".
 	 */
 	virtual void blitSubSurface(const Graphics::Surface *source, const Common::Rect &r) = 0;
+	virtual void blitSubSurfaceClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping) = 0;
 
 	virtual void blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r) = 0;
 	virtual void blitAlphaBitmapClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping) = 0;

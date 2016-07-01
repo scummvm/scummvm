@@ -351,7 +351,10 @@ public:
 		WidgetStateInfo state = kStateEnabled, uint16 hints = 0);
 
 	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface,
-	                 WidgetStateInfo state = kStateEnabled, int alpha = 256, bool themeTrans = false);
+	                 WidgetStateInfo state = kStateEnabled, int alpha = 255, bool themeTrans = false);
+
+	void drawSurfaceClip(const Common::Rect &r, const Common::Rect &clippingRect, const Graphics::Surface &surface,
+		WidgetStateInfo state = kStateEnabled, int alpha = 255, bool themeTrans = false);
 
 	void drawSlider(const Common::Rect &r, int width,
 	                WidgetStateInfo state = kStateEnabled);
@@ -609,6 +612,7 @@ protected:
 	void queueDDTextClip(TextData type, TextColor color, const Common::Rect &r, const Common::Rect &clippingRect, const Common::String &text, bool restoreBg,
 					 bool elipsis, Graphics::TextAlign alignH = Graphics::kTextAlignLeft, TextAlignVertical alignV = kTextAlignVTop, int deltax = 0, const Common::Rect &drawableTextArea = Common::Rect(0, 0, 0, 0));
 	void queueBitmap(const Graphics::Surface *bitmap, const Common::Rect &r, bool alpha);
+	void queueBitmapClip(const Graphics::Surface *bitmap, const Common::Rect &clippingRect, const Common::Rect &r, bool alpha);
 
 	/**
 	 * DEBUG: Draws a white square and writes some text next to it.

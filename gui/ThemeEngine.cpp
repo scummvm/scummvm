@@ -168,6 +168,19 @@ protected:
 	bool _alpha;
 };
 
+class ThemeItemBitmapClip : public ThemeItem {
+public:
+	ThemeItemBitmapClip(ThemeEngine *engine, const Common::Rect &area, const Common::Rect &clip, const Graphics::Surface *bitmap, bool alpha) :
+		ThemeItem(engine, area), _bitmap(bitmap), _alpha(alpha), _clip(clip) {}
+
+	void drawSelf(bool draw, bool restore);
+
+protected:
+	const Graphics::Surface *_bitmap;
+	bool _alpha;
+	const Common::Rect _clip;
+};
+
 /**********************************************************
  *  Data definitions for theme engine elements
  *********************************************************/
@@ -303,6 +316,21 @@ void ThemeItemBitmap::drawSelf(bool draw, bool restore) {
 	_engine->addDirtyRect(_area);
 }
 
+void ThemeItemBitmapClip::drawSelf(bool draw, bool restore) {
+	if (restore)
+		_engine->restoreBackground(_area);
+
+	if (draw) {
+		if (_alpha)
+			_engine->renderer()->blitAlphaBitmapClip(_bitmap, _area, _clip);
+		else
+			_engine->renderer()->blitSubSurfaceClip(_bitmap, _area, _clip);
+	}
+
+	Common::Rect dirtyRect = _area;
+	dirtyRect.clip(_clip);
+	_engine->addDirtyRect(dirtyRect);
+}
 
 /**********************************************************
  * ThemeEngine class
@@ -976,6 +1004,21 @@ void ThemeEngine::queueBitmap(const Graphics::Surface *bitmap, const Common::Rec
 	}
 }
 
+void ThemeEngine::queueBitmapClip(const Graphics::Surface *bitmap, const Common::Rect &r, const Common::Rect &clip, bool alpha) {
+
+	Common::Rect area = r;
+	area.clip(_screen.w, _screen.h);
+
+	ThemeItemBitmapClip *q = new ThemeItemBitmapClip(this, area, clip, bitmap, alpha);
+
+	if (_buffering) {
+		_screenQueue.push_back(q);
+	} else {
+		q->drawSelf(true, false);
+		delete q;
+	}
+}
+
 /**********************************************************
  * Widget drawing functions
  *********************************************************/
@@ -1268,6 +1311,13 @@ void ThemeEngine::drawSurface(const Common::Rect &r, const Graphics::Surface &su
 		return;
 
 	queueBitmap(&surface, r, themeTrans);
+}
+
+void ThemeEngine::drawSurfaceClip(const Common::Rect &r, const Common::Rect &clip, const Graphics::Surface &surface, WidgetStateInfo state, int alpha, bool themeTrans) {
+	if (!ready())
+		return;
+
+	queueBitmapClip(&surface, r, clip, themeTrans);
 }
 
 void ThemeEngine::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, WidgetStateInfo state) {
