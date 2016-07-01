@@ -28,29 +28,52 @@
 
 namespace Titanic {
 
-class CStarControlSub3 {
+struct CBaseStarEntry {
+	int _field0;
+	double _value;
+	CBaseStarVal _val;
+};
+
+class CBaseStar {
 protected:
-	int _field4;
-	int _field8;
+	Common::Array<CBaseStarEntry> _data;
 	int _fieldC;
 	CStarControlSub4 _sub4;
-	int _field28;
-	int _field2C;
+	double _minVal;
+	double _maxVal;
+	double _range;
 public:
-	CStarControlSub3();
-	virtual ~CStarControlSub3() {}
+	CBaseStar();
+	virtual ~CBaseStar() {}
 
-	virtual void proc2();
-	virtual int proc3() { return 1; }
-	virtual int proc4() { return 0; }
-	virtual int proc5() { return 0; }
-	virtual int proc6() { return 0; }
-	virtual int proc7() { return 1; }
+	virtual void proc2(int v1, int v2, int v3);
+	virtual bool loadYale(int v1) { return true; }
+	virtual bool proc4(int v1, int v2, int v3, int v4, int v5) { return false; }
+	virtual bool proc5(int v1) { return false; }
+	virtual bool loadStar() { return false; }
+	virtual bool proc7(int v1, int v2) { return true; }
 
+	/**
+	 * Load the item's data
+	 */
 	virtual void load(SimpleFile *file) {}
 
-	virtual void proc9() {}
+	/**
+	 * Save the item's data
+	 */
+	virtual void save(SimpleFile *file, int indent) {}
 
+	/**
+	 * Clear allocated data
+	 */
+	void clear();
+
+	void initialize();
+
+	/**
+	 * Get a pointer to a data entry
+	 */
+	CBaseStarEntry *getDataPtr(int index);
 };
 
 } // End of namespace Titanic

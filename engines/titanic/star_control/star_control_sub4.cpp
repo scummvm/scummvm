@@ -20,12 +20,26 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "titanic/star_control/star_control_sub4.h"
 
 namespace Titanic {
 
-CStarControlSub4::CStarControlSub4() : _field0(0), 
-	_field4(0), _fieldC(0), _field10(0), _field14(0) {
+CStarControlSub4::CStarControlSub4() {
+}
+
+void CStarControlSub4::initialize() {
+	_min._v1 = _min._v2 = _min._v3 = 9.9999994e27;
+	_max._v1 = _max._v2 = _max._v3 = -9.9999994e27;
+}
+
+void CStarControlSub4::checkEntry(const CBaseStarVal &val) {
+	_min._v1 = MIN(_min._v1, val._v1);
+	_min._v2 = MIN(_min._v2, val._v2);
+	_min._v3 = MIN(_min._v3, val._v3);
+	_max._v1 = MAX(_max._v1, val._v1);
+	_max._v2 = MAX(_max._v2, val._v2);
+	_max._v3 = MAX(_max._v3, val._v3);
 }
 
 } // End of namespace Titanic

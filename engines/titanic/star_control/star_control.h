@@ -34,10 +34,7 @@ private:
 	int _fieldBC;
 	CStarControlSub1 _sub1;
 	CStarControlSub11 _sub11;
-	int _field80A0;
-	int _field80A4;
-	int _field80A8;
-	int _field80AC;
+	Rect _starRect;
 	int _field80B0;
 public:
 	CLASSDEF

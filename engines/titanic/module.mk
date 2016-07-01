@@ -419,7 +419,7 @@ MODULE_OBJS := \
 	star_control/star_control.o \
 	star_control/star_control_sub1.o \
 	star_control/star_control_sub2.o \
-	star_control/star_control_sub3.o \
+	star_control/base_star.o \
 	star_control/star_control_sub4.o \
 	star_control/star_control_sub5.o \
 	star_control/star_control_sub6.o \

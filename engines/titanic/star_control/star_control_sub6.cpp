@@ -32,11 +32,11 @@ void CStarControlSub6::clear() {
 	_field0 = 0x3F800000;
 	_field4 = 0;
 	_field8 = 0;
-	_fieldC = 0),
+	_fieldC = 0;
 	_field10 = 0x3F800000;
 	_field14 = 0;
 	_field18 = 0;
-	_field1C = 0),
+	_field1C = 0;
 	_field20 = 0x3F800000;
 	_field24 = 0;
 	_field28 = 0;

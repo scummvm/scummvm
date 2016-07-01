@@ -23,13 +23,18 @@
 #ifndef TITANIC_STAR_CONTROL_SUB2_H
 #define TITANIC_STAR_CONTROL_SUB2_H
 
-#include "titanic/star_control/star_control_sub3.h"
+#include "titanic/star_control/base_star.h"
 
 namespace Titanic {
 
-class CStarControlSub2: public CStarControlSub3 {
+class CStarControlSub2: public CBaseStar {
 public:
 	virtual ~CStarControlSub2() {}
+
+	virtual bool proc3(int v1);
+	virtual bool proc4(int v1, int v2, int v3, int v4, int v5);
+	virtual bool proc6();
+	virtual bool proc7(int v1, int v2);
 };
 
 } // End of namespace Titanic

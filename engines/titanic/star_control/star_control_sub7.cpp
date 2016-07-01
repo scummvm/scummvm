@@ -24,5 +24,13 @@
 
 namespace Titanic {
 
+void CStarControlSub7::proc2(int v1, int v2, int v3) {
+	// TODO
+}
+
+bool CStarControlSub7::proc5(int v1) {
+	// TODO
+	return true;
+}
 
 } // End of namespace Titanic

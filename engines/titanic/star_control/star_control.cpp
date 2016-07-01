@@ -25,8 +25,8 @@
 
 namespace Titanic {
 
-CStarControl::CStarControl() : _fieldBC(0), _field80A0(0),
-		_field80A4(0), _field80A8(0), _field80AC(0), _field80B0(0) {
+CStarControl::CStarControl() : _fieldBC(0), _field80B0(0),
+		_starRect(20, 10, 620, 350) {
 }
 
 void CStarControl::save(SimpleFile *file, int indent) {

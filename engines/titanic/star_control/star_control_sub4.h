@@ -25,17 +25,21 @@
 
 namespace Titanic {
 
+struct CBaseStarVal {
+	double _v1, _v2, _v3;
+	CBaseStarVal() : _v1(0), _v2(0), _v3(0) {}
+};
+
 class CStarControlSub4 {
 private:
-	int _field0;
-	int _field4;
-	int _field8;
-	int _fieldC;
-	int _field10;
-	int _field14;
+	CBaseStarVal _min;
+	CBaseStarVal _max;
 public:
 	CStarControlSub4();
 
+	void initialize();
+
+	void checkEntry(const CBaseStarVal &val);
 };
 
 } // End of namespace Titanic
