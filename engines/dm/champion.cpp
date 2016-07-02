@@ -751,7 +751,8 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 			if (_g407_party._shieldDefense > 0)
 				nativeBitmapIndices[AL_0_borderCount++] = k37_BorderPartyShieldIndice;
 			while (AL_0_borderCount--) {
-				dispMan.blitToScreen(dispMan.getBitmap(nativeBitmapIndices[AL_0_borderCount]), 80, 0, 0, box, k10_ColorFlesh);
+				dispMan.blitToBitmap(dispMan.getBitmap(nativeBitmapIndices[AL_0_borderCount]), 80, 0, 0,
+									 dispMan._g348_bitmapScreen, k160_byteWidthScreen * 2, box, k10_ColorFlesh);
 			}
 			if (isInventoryChamp) {
 				invMan.drawStatusBoxPortrait(champIndex);
@@ -760,8 +761,9 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 				champAttributes |= (k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x2000_ChampionAttributeWounds | k0x8000_ChampionAttributeActionHand);
 			}
 		} else {
-			dispMan.blitToScreen(dispMan.getBitmap(k8_StatusBoxDeadChampion), 80, 0, 0, box, k255_ColorNoTransparency);
-			_vm->_textMan->printTextToScreen(champStatusBoxX + 1, 5, k13_ColorLightestGray, k1_ColorDarkGary, champ->_name);
+			dispMan.blitToBitmap(dispMan.getBitmap(k8_StatusBoxDeadChampion), 80, 0, 0,
+								 dispMan._g348_bitmapScreen, k160_byteWidthScreen * 2, box, k255_ColorNoTransparency);
+			_vm->_textMan->f53_printToLogicalScreen(champStatusBoxX + 1, 5, k13_ColorLightestGray, k1_ColorDarkGary, champ->_name);
 			menuMan.drawActionIcon(champIndex);
 			goto T0292042_green;
 		}
@@ -788,7 +790,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 			box._x1 = champStatusBoxX;
 			box._x2 = box._x1 + 42 + 1;
 			dispMan.clearScreenBox(k1_ColorDarkGary, box);
-			_vm->_textMan->printTextToScreen(champStatusBoxX + 1, 5, AL_0_colorIndex, k1_ColorDarkGary, champ->_name);
+			_vm->_textMan->f53_printToLogicalScreen(champStatusBoxX + 1, 5, AL_0_colorIndex, k1_ColorDarkGary, champ->_name);
 		}
 	}
 
@@ -802,7 +804,8 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 			} else {
 				AL_2_nativeBitmapIndex = k33_SlotBoxNormalIndice;
 			}
-			dispMan.blitToScreen(dispMan.getBitmap(AL_2_nativeBitmapIndex), 32, 0, 0, gBoxMouth, k12_ColorDarkestGray, g296_DungeonViewport);
+			dispMan.blitToBitmap(dispMan.getBitmap(AL_2_nativeBitmapIndex), 32, 0, 0,
+								 dispMan._g296_bitmapViewport, k112_byteWidthViewport * 2, gBoxMouth, k12_ColorDarkestGray);
 			AL_2_nativeBitmapIndex = k33_SlotBoxNormalIndice;
 			for (int16 AL_0_statisticIndex = k1_ChampionStatStrength; AL_0_statisticIndex <= k6_ChampionStatAntifire; AL_0_statisticIndex++) {
 				if (champ->getStatistic((ChampionStatisticType)AL_0_statisticIndex, k1_ChampionStatCurrent)
@@ -811,7 +814,8 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 					break;
 				}
 			}
-			dispMan.blitToScreen(dispMan.getBitmap(AL_2_nativeBitmapIndex), 32, 0, 0, gBoxEye, k12_ColorDarkestGray, g296_DungeonViewport);
+			dispMan.blitToBitmap(dispMan.getBitmap(AL_2_nativeBitmapIndex), 32, 0, 0,
+								 dispMan._g296_bitmapViewport, k112_byteWidthViewport * 2, gBoxEye, k12_ColorDarkestGray);
 			champAttributes |= k0x4000_ChampionAttributeViewport;
 		}
 	}
@@ -854,8 +858,8 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 
 		if ((champAttributes & k28_ChampionIcons) && (eventMan._g599_useChampionIconOrdinalAsMousePointerBitmap != _vm->indexToOrdinal(AL_0_championIconIndex))) {
 			dispMan.clearScreenBox(g46_ChampionColor[champIndex], g54_BoxChampionIcons[AL_0_championIconIndex]);
-			dispMan.blitToScreen(dispMan.getBitmap(k28_ChampionIcons), 80, championIconIndex(champ->_dir, _vm->_dungeonMan->_g308_partyDir) * 19, 0,
-								 g54_BoxChampionIcons[AL_0_championIconIndex], k12_ColorDarkestGray);
+			dispMan.blitToBitmap(dispMan.getBitmap(k28_ChampionIcons), 80, championIconIndex(champ->_dir, _vm->_dungeonMan->_g308_partyDir) * 19, 0,
+								 dispMan._g348_bitmapScreen, k160_byteWidthScreen * 2, g54_BoxChampionIcons[AL_0_championIconIndex], k12_ColorDarkestGray);
 		}
 	}
 
@@ -881,7 +885,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 	}
 
 	if (champAttributes & k0x4000_ChampionAttributeViewport) {
-		warning("MISSGIN CODE: F0097_DUNGEONVIEW_DrawViewport");
+		dispMan.f97_drawViewport(k0_viewportNotDungeonView);
 	}
 
 
@@ -975,8 +979,13 @@ void ChampionMan::drawSlot(uint16 champIndex, ChampionSlot slotIndex) {
 
 	if (nativeBitmapIndex != -1) {
 		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
-		_vm->_displayMan->blitToScreen(_vm->_displayMan->getBitmap(nativeBitmapIndex), 32, 0, 0,
-									   box, k12_ColorDarkestGray, isInventoryChamp ? g296_DungeonViewport : gDefultViewPort);
+		if (isInventoryChamp) {
+		_vm->_displayMan->blitToBitmap(_vm->_displayMan->getBitmap(nativeBitmapIndex), 32, 0, 0,
+									   _vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport * 2, box, k12_ColorDarkestGray);
+		} else {
+		_vm->_displayMan->blitToBitmap(_vm->_displayMan->getBitmap(nativeBitmapIndex), 32, 0, 0,
+									   _vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen * 2, box, k12_ColorDarkestGray);
+		}
 	}
 
 	_vm->_objectMan->drawIconInSlotBox(slotBoxIndex, iconIndex);
@@ -998,8 +1007,9 @@ void ChampionMan::renameChampion(Champion* champ) {
 	box._x1 = 3;
 	box._x2 = box._x1 + 167;
 
-	dispMan.clearScreenBox(k12_ColorDarkestGray, box, g296_DungeonViewport);
-	dispMan.blitToScreen(dispMan.getBitmap(k27_PanelRenameChampionIndice), 144, 0, 0, g32_BoxPanel, k4_ColorCyan, g296_DungeonViewport);
+	dispMan.f135_fillBoxBitmap(dispMan._g296_bitmapViewport, box, k12_ColorDarkestGray, k112_byteWidthViewport * 2, k136_heightViewport);
+	dispMan.blitToBitmap(dispMan.getBitmap(k27_PanelRenameChampionIndice), 144, 0, 0,
+						 dispMan._g296_bitmapViewport, k112_byteWidthViewport * 2, g32_BoxPanel, k4_ColorCyan);
 	textMan.printToViewport(177, 58, k13_ColorLightestGray, "_______");
 	textMan.printToViewport(105, 76, k13_ColorLightestGray, "___________________");
 	Common::Point clickPos;
@@ -1009,6 +1019,7 @@ void ChampionMan::renameChampion(Champion* champ) {
 		if (_vm->_eventMan->hasPendingClick(clickPos, k1_LeftMouseButton) && okButtonBox.isPointInside(clickPos)) {
 			return;
 		}
+		dispMan.f97_drawViewport(k0_viewportNotDungeonView);
 		dispMan.updateScreen();
 	}
 }

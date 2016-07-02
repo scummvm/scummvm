@@ -577,8 +577,6 @@ byte g222_PalChangesCreature_D2[16] = {0, 10, 20, 30, 40, 30, 60, 70, 50, 0, 0, 
 
 
 
-Viewport gDefultViewPort(0, 0, 320, 200);
-Viewport g296_DungeonViewport(0, 33, 224, 136); // @ G0296_puc_Bitmap_Viewport
 
 byte g17_PalChangesNoChanges[16] = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150}; // @ G0017_auc_Graphic562_PaletteChanges_NoChanges
 
@@ -955,7 +953,7 @@ void DisplayMan::f565_viewportSetPalette(uint16* middleScreenPalette, uint16* to
 
 void DisplayMan::f566_viewportBlitToScreen() {
 	warning("MISSING FUNCTIONALITY: using correct colorpalette");
-	Box box(0, 33, 223, 135);
+	Box box(0, 223, 33, 33 + 135);
 
 	blitToBitmap(_g296_bitmapViewport, k112_byteWidthViewport * 2, 0, 0, _g348_bitmapScreen, k160_byteWidthScreen * 2, box, k255_ColorNoTransparency);
 }
@@ -1020,12 +1018,12 @@ void DisplayMan::loadIntoBitmap(uint16 index, byte *destBitmap) {
 }
 
 
-void DisplayMan::blitToBitmap(byte* srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY, byte* destBitmap, uint16 destWidth, Box& box, Color transparent, Viewport& viewport) {
+void DisplayMan::blitToBitmap(byte* srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY, byte* destBitmap, uint16 destWidth, Box& box, Color transparent) {
 	for (uint16 y = 0; y < box._y2 - box._y1; ++y)
 		for (uint16 x = 0; x < box._x2 - box._x1; ++x) {
 			byte srcPixel = srcBitmap[srcWidth * (y + srcY) + srcX + x];
 			if (srcPixel != transparent)
-				destBitmap[destWidth * (y + box._y1 + viewport._posY) + box._x1 + x + viewport._posX] = srcPixel;
+				destBitmap[destWidth * (y + box._y1) + box._x1 + x] = srcPixel;
 		}
 
 }
@@ -1035,30 +1033,24 @@ void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcHeight
 		memcpy(destBitmap + destWidth*(y + destY) + destX, srcBitmap + y * srcWidth, sizeof(byte)* srcWidth);
 }
 
-void DisplayMan::clearScreenBox(Color color, Box &box, Viewport &viewport) {
+void DisplayMan::clearScreenBox(Color color, Box &box) {
 	uint16 width = box._x2 - box._x1;
-	for (int y = box._y1 + viewport._posY; y < box._y2 + viewport._posY; ++y)
-		memset(_g348_bitmapScreen + y * _screenWidth + box._x1 + viewport._posX, color, sizeof(byte) * width);
+	for (int16 y = box._y1; y < box._y2; ++y)
+		memset(_g348_bitmapScreen + y * _screenWidth + box._x1, color, sizeof(byte) * width);
 }
 
-void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
-							  Box &box,
-							  Color transparent, Viewport &viewport) {
-	blitToBitmap(srcBitmap, srcWidth, srcX, srcY, _g348_bitmapScreen, k160_byteWidthScreen * 2, box, transparent, viewport);
+void DisplayMan::f135_fillBoxBitmap(byte* destBitmap, Box &box, Color color, int16 pixelWidth, int16 height) {
+	for (int16 y = box._y1; y < box._y2; ++y)
+		memset(destBitmap + y * pixelWidth + box._x1, color, sizeof(byte) * (box._x2 - box._x1));
 }
 
 void DisplayMan::blitBoxFilledWithMaskedBitmap(byte* src, byte* dest, byte* mask, byte* tmp, Box& box,
 											   int16 lastUnitIndex, int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
-											   int16 xPos, int16 yPos, int16 destHeight, int16 height2, Viewport &viewport) {
+											   int16 xPos, int16 yPos, int16 destHeight, int16 height2) {
 	warning("STUB FUNCTION: does nothing at all");
 }
 
 
-void DisplayMan::blitBoxFilledWithMaskedBitmapToScreen(byte* src, byte* mask, byte* tmp, Box& box,
-													   int16 lastUnitIndex, int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
-													   int16 xPos, int16 yPos, int16 destHeight, int16 height2, Viewport& viewport) {
-	blitBoxFilledWithMaskedBitmap(src, _g348_bitmapScreen, mask, tmp, box, lastUnitIndex, firstUnitIndex, _screenWidth, transparent, xPos, yPos, _screenHeight, height2, viewport);
-}
 
 void DisplayMan::flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height) {
 	for (uint16 y = 0; y < height; ++y) {
@@ -1166,12 +1158,12 @@ void DisplayMan::f99_copyBitmapAndFlipHorizontal(byte* srcBitmap, byte* destBitm
 
 void DisplayMan::drawWallSetBitmapWithoutTransparency(byte *bitmap, Frame &f) {
 	if (f._srcWidth)
-		blitToScreen(bitmap, f._srcWidth, f._srcX, f._srcY, f._box, k255_ColorNoTransparency, g296_DungeonViewport);
+		blitToBitmap(bitmap, f._srcWidth, f._srcX, f._srcY, _g296_bitmapViewport, k112_byteWidthViewport * 2, f._box, k255_ColorNoTransparency);
 }
 
 void DisplayMan::drawWallSetBitmap(byte *bitmap, Frame &f) {
 	if (f._srcWidth)
-		blitToScreen(bitmap, f._srcWidth, f._srcX, f._srcY, f._box, k10_ColorFlesh, g296_DungeonViewport);
+		blitToBitmap(bitmap, f._srcWidth, f._srcX, f._srcY, _g296_bitmapViewport, k112_byteWidthViewport * 2, f._box, k10_ColorFlesh);
 }
 
 
@@ -1578,6 +1570,7 @@ void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
 	}
 
 	delete[] tmpBitmap;
+	f97_drawViewport((_vm->_dungeonMan->_g309_partyMapIndex != k255_mapIndexEntrance) ? 1 : 0);
 }
 
 void DisplayMan::clearScreen(Color color) {
@@ -1752,16 +1745,15 @@ void DisplayMan::applyCreatureReplColors(int replacedColor, int replacementColor
 }
 
 void DisplayMan::drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &f) {
-	if (f._srcWidth) {
-		blitToScreen(_bitmaps[nativeIndex], f._srcWidth, f._srcX, f._srcY, f._box, k10_ColorFlesh, g296_DungeonViewport);
-	}
+	if (f._srcWidth)
+		blitToBitmap(_bitmaps[nativeIndex], f._srcWidth, f._srcX, f._srcY, _g296_bitmapViewport, k112_byteWidthViewport * 2, f._box, k10_ColorFlesh);
 }
 
 void DisplayMan::drawFloorPitOrStairsBitmapFlippedHorizontally(uint16 nativeIndex, Frame &f) {
 	if (f._srcWidth) {
 		blitToBitmap(_bitmaps[nativeIndex], f._srcWidth, f._srcHeight, _g74_tmpBitmap, f._srcWidth);
 		flipBitmapHorizontal(_g74_tmpBitmap, f._srcWidth, f._srcHeight);
-		blitToScreen(_g74_tmpBitmap, f._srcWidth, f._srcX, f._srcY, f._box, k10_ColorFlesh, g296_DungeonViewport);
+		blitToBitmap(_g74_tmpBitmap, f._srcWidth, f._srcX, f._srcY, _g296_bitmapViewport, k112_byteWidthViewport * 2, f._box, k10_ColorFlesh);
 	}
 }
 
@@ -1826,7 +1818,8 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 			if (viewWallIndex == k12_ViewWall_D1C_FRONT) {
 				if (isInscription) {
 					Frame &D1CFrame = g163_FrameWalls[k6_ViewSquare_D1C];
-					blitToScreen(_g700_bitmapWallSet_Wall_D1LCR, D1CFrame._srcWidth, 94, 28, g202_BoxWallPatchBehindInscription, k255_ColorNoTransparency, g296_DungeonViewport);
+					blitToBitmap(_g700_bitmapWallSet_Wall_D1LCR, D1CFrame._srcWidth, 94, 28, _g296_bitmapViewport, k112_byteWidthViewport * 2,
+								 g202_BoxWallPatchBehindInscription, k255_ColorNoTransparency);
 
 					unsigned char *string = inscriptionString;
 					bitmapRed = _bitmaps[k120_InscriptionFontIndice];
@@ -1840,7 +1833,7 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 						frame._box._x2 = (frame._box._x1 = 112 - (characterCount * 4)) + 7;
 						frame._box._y1 = (frame._box._y2 = g203_InscriptionLineY[textLineIndex++]) - 7;
 						while (characterCount--) {
-							blitToScreen(bitmapRed, 288, (*string++) * 8, 0, frame._box, k10_ColorFlesh, g296_DungeonViewport);
+							blitToBitmap(bitmapRed, 288, (*string++) * 8, 0, _g296_bitmapViewport, k112_byteWidthViewport * 2, frame._box, k10_ColorFlesh);
 							frame._box._x1 += 8;
 							frame._box._x2 += 8;
 						}
@@ -1929,12 +1922,12 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 				coordinateSetA[3] = g204_UnreadableInscriptionBoxY2[g190_WallOrnDerivedBitmapIndexIncrement[viewWallIndex] * 3 + unreadableTextLineCount - 1];
 			}
 		}
-		blitToScreen(bitmapGreen, coordinateSetA[4], var_X, 0, *(Box*)coordinateSetA, k10_ColorFlesh, g296_DungeonViewport);
+		blitToBitmap(bitmapGreen, coordinateSetA[4], var_X, 0, _g296_bitmapViewport, k112_byteWidthViewport * 2, *(Box*)coordinateSetA, k10_ColorFlesh);
 
 		if ((viewWallIndex == k12_ViewWall_D1C_FRONT) && _g289_championPortraitOrdinal--) {
 			Box &box = g109_BoxChampionPortraitOnWall;
-			blitToScreen(_bitmaps[k26_ChampionPortraitsIndice], 256, (_g289_championPortraitOrdinal & 0x7) << 5, (_g289_championPortraitOrdinal >> 3) * 29,
-						 box, k1_ColorDarkGary, g296_DungeonViewport);
+			blitToBitmap(_bitmaps[k26_ChampionPortraitsIndice], 256, (_g289_championPortraitOrdinal & 0x7) << 5, (_g289_championPortraitOrdinal >> 3) * 29,
+						 _g296_bitmapViewport, k112_byteWidthViewport * 2, box, k1_ColorDarkGary);
 		}
 		return isAlcove;
 	}
@@ -2441,7 +2434,7 @@ T0115015_DrawProjectileAsObject:
 					AL_6_bitmapRedBanana = bitmapGreenAnt;
 					dunMan._g292_pileTopObject[AL_2_viewCell] = thingParam; /* The object is at the top of the pile */
 				}
-				blitToScreen(AL_6_bitmapRedBanana, byteWidth, AL_4_xPos, 0, boxByteGreen, k10_ColorFlesh, g296_DungeonViewport);
+				blitToBitmap(AL_6_bitmapRedBanana, byteWidth, AL_4_xPos, 0, _g296_bitmapViewport, k112_byteWidthViewport * 2, boxByteGreen, k10_ColorFlesh);
 
 				if (drawProjectileAsObject)
 					goto T0115171_BackFromT0115015_DrawProjectileAsObject;
@@ -2692,7 +2685,7 @@ T0115077_DrawSecondHalfSquareCreature:
 			AL_0_creaturePosX = creaturePaddingPixelCount + (byteWidth - AL_4_xPos - 1);
 		}
 		warning("SUPER WARNINIG: we might nee noralized with on byteWidth");
-		blitToScreen(AL_6_bitmapRedBanana, byteWidth, AL_0_creaturePosX, 0, boxByteGreen, (Color)transparentColor, g296_DungeonViewport);
+		blitToBitmap(AL_6_bitmapRedBanana, byteWidth, AL_0_creaturePosX, 0, _g296_bitmapViewport, k112_byteWidthViewport * 2, boxByteGreen, (Color)transparentColor);
 
 T0115126_CreatureNotVisible:
 		if (twoHalfSquareCreaturesFrontView) {
@@ -2827,7 +2820,7 @@ the bitmap is flipped horizontally (flipHorizontal = C1_TRUE) then a wrong part 
 screen. To fix this bug, "+ paddingPixelCount" must be added to the second parameter of this function call */
 						AL_4_xPos = MAX(paddingPixelCount, (int16)(byteWidth - projectilePosX - 1));
 					}
-					blitToScreen(AL_6_bitmapRedBanana, byteWidth, AL_4_xPos, 0, boxByteGreen, k10_ColorFlesh, g296_DungeonViewport);
+					blitToBitmap(AL_6_bitmapRedBanana, byteWidth, AL_4_xPos, 0, _g296_bitmapViewport, k112_byteWidthViewport * 2, boxByteGreen, k10_ColorFlesh);
 				} else { /* Positive value: projectile aspect is the index of a OBJECT_ASPECT */
 					useAlcoveObjectImage = false;
 					projectileCoordinates[0] = projectilePosX;
@@ -2914,9 +2907,9 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 					blitToBitmapShrinkWithPalChange(AL_6_bitmapRedBanana, 48, 32, _g74_tmpBitmap, 48, 32, g212_PalChangeSmoke);
 					AL_6_bitmapRedBanana = _g74_tmpBitmap;
 				}
-				blitBoxFilledWithMaskedBitmapToScreen(AL_6_bitmapRedBanana, nullptr, getDerivedBitmap(k0_DerivedBitmapViewport), g105_BoxExplosionPattern_D0C,
-													  _vm->_rnd->getRandomNumber(4) + 87, _vm->_rnd->getRandomNumber(64),
-													  224, (Color)(k0x0080_BlitDoNotUseMask | k10_ColorFlesh), 0, 0, 136, 93);
+				blitBoxFilledWithMaskedBitmap(AL_6_bitmapRedBanana, _g296_bitmapViewport, nullptr, getDerivedBitmap(k0_DerivedBitmapViewport), g105_BoxExplosionPattern_D0C,
+											  _vm->_rnd->getRandomNumber(4) + 87, _vm->_rnd->getRandomNumber(64),
+											  224, (Color)(k0x0080_BlitDoNotUseMask | k10_ColorFlesh), 0, 0, 136, 93);
 				warning("IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
 				warning("IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
 			} else {
@@ -2979,7 +2972,7 @@ then a wrong part of the bitmap is drawn on screen. To fix this bug, "+ paddingP
 				if (flipVertical) {
 					flipBitmapVertical(AL_6_bitmapRedBanana, byteWidth, heightRedEagle);
 				}
-				blitToScreen(AL_6_bitmapRedBanana, byteWidth, AL_4_xPos, 0, boxByteGreen, k10_ColorFlesh, g296_DungeonViewport);
+				blitToBitmap(AL_6_bitmapRedBanana, byteWidth, AL_4_xPos, 0, _g296_bitmapViewport, k112_byteWidthViewport * 2, boxByteGreen, k10_ColorFlesh);
 			}
 		}
 	} while ((thingParam = dunMan.getNextThing(thingParam)) != Thing::_endOfList);

@@ -96,6 +96,9 @@ enum Cell {
 	k3_CellSouthWest = 3 // @ C03_CELL_SOUTHWEST 
 };
 
+#define kM1_mapIndexNone -1 // @ CM1_MAP_INDEX_NONE       
+#define k255_mapIndexEntrance 255 // @ C255_MAP_INDEX_ENTRANCE 
+
 class Thing {
 	uint16 _data;
 public:

@@ -321,14 +321,6 @@ public:
 }; // @ FIELD_ASPECT
 
 
-class Viewport {
-public:
-	uint16 _posX, _posY;
-	uint16 _width, _height;
-	Viewport() {}
-	Viewport(uint16 posX, uint16 posY, uint16 width, uint16 height)
-		:_posX(posX), _posY(posY), _width(width), _height(height) {}
-};
 
 class CreatureAspect {
 public:
@@ -397,9 +389,6 @@ public:
 	byte _D2ReplacementColor;
 	byte _D3ReplacementColor;
 }; // @ CREATURE_REPLACEMENT_COLOR_SET
-
-extern Viewport gDefultViewPort;
-extern Viewport g296_DungeonViewport;
 
 
 #define k0_DoorButton 0 // @ C0_DOOR_BUTTON
@@ -559,20 +548,14 @@ public:
 
 
 	void blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
-					  byte *destBitmap, uint16 destWidth, Box &box, Color transparent = k255_ColorNoTransparency, Viewport &viewport = gDefultViewPort);
+					  byte *destBitmap, uint16 destWidth, Box &box, Color transparent = k255_ColorNoTransparency);
 
 	void blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcHeight, byte *destBitmap, uint16 destWidth, uint16 destX = 0, uint16 destY = 0);
 	void blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask, byte *tmp, Box &box, int16 lastUnitIndex,
 									   int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
-									   int16 xPos, int16 yPos, int16 destHeight, int16 height2, Viewport &viewport = gDefultViewPort); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
+									   int16 xPos, int16 yPos, int16 destHeight, int16 height2); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
 	void blitToBitmapShrinkWithPalChange(byte *srcBitmap, int16 srcWidth, int16 srcHight,
 										 byte *destBitmap, int16 destWidth, int16 destHeight, byte *palChange); // @ F0129_VIDEO_BlitShrinkWithPaletteChanges
-	void blitBoxFilledWithMaskedBitmapToScreen(byte *src, byte *mask, byte *tmp, Box &box, int16 lastUnitIndex,
-											   int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
-											   int16 xPos, int16 yPos, int16 destHeight, int16 height2, Viewport &viewport = g296_DungeonViewport); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
-	void blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
-					  Box &box,
-					  Color transparent = k255_ColorNoTransparency, Viewport &viewport = gDefultViewPort);
 
 	void flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height); // @ F0103_DUNGEONVIEW_DrawDoorFrameBitmapFlippedHorizontally
 	void flipBitmapVertical(byte *bitmap, uint16 width, uint16 height);
@@ -580,7 +563,8 @@ public:
 
 	void f134_fillBitmap(byte *bitmap, uint16 width, uint16 height, Color color); // @ F0134_VIDEO_FillBitmap
 	void clearScreen(Color color);
-	void clearScreenBox(Color color, Box &box, Viewport &viewport = gDefultViewPort); // @ D24_FillScreenBox, F0550_VIDEO_FillScreenBox
+	void clearScreenBox(Color color, Box &box); // @ D24_FillScreenBox, F0550_VIDEO_FillScreenBox
+	void f135_fillBoxBitmap(byte *destBitmap, Box &box, Color color, int16 pixelWidth, int16 height);
 	void drawDungeon(direction dir, int16 posX, int16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
 	void updateScreen();
 	void f97_drawViewport(int16 palSwitchingRequestedState); // @ F0097_DUNGEONVIEW_DrawViewport

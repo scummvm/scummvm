@@ -224,11 +224,12 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 	if (slotBoxIndex >= k8_SlotBoxInventoryFirstSlot) {
-		_vm->_displayMan->blitToScreen(iconsBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0,
-									   box, k255_ColorNoTransparency, g296_DungeonViewport);
+		_vm->_displayMan->blitToBitmap(iconsBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0,
+									   _vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport * 2, box, k255_ColorNoTransparency);
+
 	} else {
-		_vm->_displayMan->blitToScreen(iconsBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0,
-									   box, k255_ColorNoTransparency, gDefultViewPort);
+		_vm->_displayMan->blitToBitmap(iconsBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0,
+									   _vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen * 2, box, k255_ColorNoTransparency);
 	}
 }
 
@@ -246,7 +247,8 @@ void ObjectMan::drawLeaderObjectName(Thing thing) {
 	} else {
 		objName = _g352_objectNames[iconIndex];
 	}
-	_vm->_textMan->printWithTrailingSpacesToScreen(233, 37, k4_ColorCyan, k0_ColorBlack, objName, k14_ObjectNameMaximumLength);
+	_vm->_textMan->printWithTrailingSpaces(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen * 2, 233, 37,
+										   k4_ColorCyan, k0_ColorBlack, objName, k14_ObjectNameMaximumLength, k200_heightScreen);
 }
 
 IconIndice ObjectMan::getIconIndexInSlotBox(uint16 slotBoxIndex) {
