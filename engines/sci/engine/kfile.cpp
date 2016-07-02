@@ -29,6 +29,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
+#include "common/memstream.h"
 
 #include "gui/saveload.h"
 
@@ -263,19 +264,6 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	}
 
 #ifdef ENABLE_SCI32
-	if (name == PHANTASMAGORIA_SAVEGAME_INDEX) {
-		if (s->_virtualIndexFile) {
-			return make_reg(0, VIRTUALFILE_HANDLE_SCI32SAVE);
-		} else {
-			Common::String englishName = g_sci->getSciLanguageString(name, K_LANG_ENGLISH);
-			Common::String wrappedName = g_sci->wrapFilename(englishName);
-			if (!g_sci->getSaveFileManager()->listSavefiles(wrappedName).empty()) {
-				s->_virtualIndexFile = new VirtualIndexFile(wrappedName);
-				return make_reg(0, VIRTUALFILE_HANDLE_SCI32SAVE);
-			}
-		}
-	}
-
 	// Shivers is trying to store savegame descriptions and current spots in
 	// separate .SG files, which are hardcoded in the scripts.
 	// Essentially, there is a normal save file, created by the executable
@@ -313,18 +301,18 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 			listSavegames(saves);
 			int savegameNr = findSavegame(saves, slotNumber - SAVEGAMEID_OFFICIALRANGE_START);
 
-			if (!s->_virtualIndexFile) {
-				// Make the virtual file buffer big enough to avoid having it grow dynamically.
-				// 50 bytes should be more than enough.
-				s->_virtualIndexFile = new VirtualIndexFile(50);
-			}
+			int size = strlen(saves[savegameNr].name) + 2;
+			char *buf = (char *)malloc(size);
+			strcpy(buf, saves[savegameNr].name);
+			buf[size - 1] = 0; // Spot description (empty)
 
-			s->_virtualIndexFile->seek(0, SEEK_SET);
-			s->_virtualIndexFile->write(saves[savegameNr].name, strlen(saves[savegameNr].name));
-			s->_virtualIndexFile->write("\0", 1);
-			s->_virtualIndexFile->write("\0", 1);	// Spot description (empty)
-			s->_virtualIndexFile->seek(0, SEEK_SET);
-			return make_reg(0, VIRTUALFILE_HANDLE_SCI32SAVE);
+			uint handle = findFreeFileHandle(s);
+
+			s->_fileHandles[handle]._in = new Common::MemoryReadStream((byte *)buf, size, DisposeAfterUse::YES);
+			s->_fileHandles[handle]._out = nullptr;
+			s->_fileHandles[handle]._name = "";
+
+			return make_reg(0, handle);
 		}
 	}
 #endif
@@ -348,13 +336,6 @@ reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv) {
 		return s->r_acc;
 
 	uint16 handle = argv[0].toUint16();
-
-#ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE_SCI32SAVE) {
-		s->_virtualIndexFile->close();
-		return SIGNAL_REG;
-	}
-#endif
 
 	if (handle >= VIRTUALFILE_HANDLE_START) {
 		// it's a virtual handle? ignore it
@@ -381,17 +362,9 @@ reg_t kFileIOReadRaw(EngineState *s, int argc, reg_t *argv) {
 	char *buf = new char[size];
 	debugC(kDebugLevelFile, "kFileIO(readRaw): %d, %d", handle, size);
 
-#ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE_SCI32SAVE) {
-		bytesRead = s->_virtualIndexFile->read(buf, size);
-	} else {
-#endif
-		FileHandle *f = getFileFromHandle(s, handle);
-		if (f)
-			bytesRead = f->_in->read(buf, size);
-#ifdef ENABLE_SCI32
-	}
-#endif
+	FileHandle *f = getFileFromHandle(s, handle);
+	if (f)
+		bytesRead = f->_in->read(buf, size);
 
 	// TODO: What happens if less bytes are read than what has
 	// been requested? (i.e. if bytesRead is non-zero, but still
@@ -411,20 +384,11 @@ reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv) {
 	s->_segMan->memcpy((byte *)buf, argv[1], size);
 	debugC(kDebugLevelFile, "kFileIO(writeRaw): %d, %d", handle, size);
 
-#ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE_SCI32SAVE) {
-		s->_virtualIndexFile->write(buf, size);
+	FileHandle *f = getFileFromHandle(s, handle);
+	if (f) {
+		f->_out->write(buf, size);
 		success = true;
-	} else {
-#endif
-		FileHandle *f = getFileFromHandle(s, handle);
-		if (f) {
-			f->_out->write(buf, size);
-			success = true;
-		}
-#ifdef ENABLE_SCI32
 	}
-#endif
 
 	delete[] buf;
 	if (success)
@@ -463,13 +427,6 @@ reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 			const Common::String wrappedName = g_sci->wrapFilename(name);
 			result = saveFileMan->removeSavefile(wrappedName);
 		}
-
-#ifdef ENABLE_SCI32
-		if (name == PHANTASMAGORIA_SAVEGAME_INDEX) {
-			delete s->_virtualIndexFile;
-			s->_virtualIndexFile = 0;
-		}
-#endif
 	} else {
 		const Common::String wrappedName = g_sci->wrapFilename(name);
 		result = saveFileMan->removeSavefile(wrappedName);
@@ -488,12 +445,7 @@ reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv) {
 	debugC(kDebugLevelFile, "kFileIO(readString): %d, %d", handle, maxsize);
 	uint32 bytesRead;
 
-#ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE_SCI32SAVE)
-		bytesRead = s->_virtualIndexFile->readLine(buf, maxsize);
-	else
-#endif
-		bytesRead = fgets_wrapper(s, buf, maxsize, handle);
+	bytesRead = fgets_wrapper(s, buf, maxsize, handle);
 
 	s->_segMan->memcpy(argv[0], (const byte*)buf, maxsize);
 	delete[] buf;
@@ -520,13 +472,6 @@ reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-#ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE_SCI32SAVE) {
-		s->_virtualIndexFile->write(str.c_str(), str.size());
-		return NULL_REG;
-	}
-#endif
-
 	FileHandle *f = getFileFromHandle(s, handle);
 
 	if (f) {
@@ -546,11 +491,6 @@ reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv) {
 	uint16 offset = ABS<int16>(argv[1].toSint16());	// can be negative
 	uint16 whence = argv[2].toUint16();
 	debugC(kDebugLevelFile, "kFileIO(seek): %d, %d, %d", handle, offset, whence);
-
-#ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE_SCI32SAVE)
-		return make_reg(0, s->_virtualIndexFile->seek(offset, whence));
-#endif
 
 	FileHandle *f = getFileFromHandle(s, handle);
 
@@ -591,14 +531,6 @@ reg_t kFileIOFindNext(EngineState *s, int argc, reg_t *argv) {
 reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 	Common::String name = s->_segMan->getString(argv[0]);
 
-#ifdef ENABLE_SCI32
-	// Cache the file existence result for the Phantasmagoria
-	// save index file, as the game scripts keep checking for
-	// its existence.
-	if (name == PHANTASMAGORIA_SAVEGAME_INDEX && s->_virtualIndexFile)
-		return TRUE_REG;
-#endif
-
 	bool exists = false;
 
 	if (g_sci->getGameId() == GID_PEPPER) {
@@ -610,6 +542,9 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 		if (name == "CDAUDIO")
 			return NULL_REG;
 	}
+
+	// TODO: It may apparently be worth caching the existence of
+	// phantsg.dir, and possibly even keeping it open persistently
 
 	// Check for regular file
 	exists = Common::File::exists(name);

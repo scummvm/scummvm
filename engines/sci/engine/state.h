@@ -131,10 +131,6 @@ public:
 	int16 _lastSaveVirtualId; // last virtual id fed to kSaveGame, if no kGetSaveFiles was called inbetween
 	int16 _lastSaveNewId;    // last newly created filename-id by kSaveGame
 
-#ifdef ENABLE_SCI32
-	VirtualIndexFile *_virtualIndexFile;
-#endif
-
 	// see detection.cpp / SciEngine::loadGameState()
 	bool _delayedRestoreGame;  // boolean, that triggers delayed restore (triggered by ScummVM menu)
 	int _delayedRestoreGameId; // the saved game id, that it supposed to get restored (triggered by ScummVM menu)
