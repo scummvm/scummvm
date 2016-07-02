@@ -54,6 +54,7 @@ Score::Score(DirectorEngine *vm) {
 	_soundManager = _vm->getSoundManager();
 	_lingo->processEvent(kEventPrepareMovie, 0);
 	_movieScriptCount = 0;
+	_labels = NULL;
 
 	if (_movieArchive->hasResource(MKTAG('M','C','N','M'), 0)) {
 		_macName = _movieArchive->getName(MKTAG('M','C','N','M'), 0).c_str();
@@ -122,13 +123,17 @@ void Score::loadArchive() {
 }
 
 Score::~Score() {
-	_surface->free();
-	_trailSurface->free();
+	if (_surface)
+		_surface->free();
+
+	if (_trailSurface)
+		_trailSurface->free();
 
 	delete _surface;
 	delete _trailSurface;
 
-	_movieArchive->close();
+	if (_movieArchive)
+		_movieArchive->close();
 
 	delete _surface;
 	delete _trailSurface;
@@ -136,12 +141,7 @@ Score::~Score() {
 	delete _font;
 	delete _movieArchive;
 
-	delete[] _labels;
-	delete[] &_frames;
-	delete[] &_casts;
-	delete[] &_castsInfo;
-	delete[] &_actions;
-	delete[] &_fontMap;
+	delete _labels;
 }
 
 void Score::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
