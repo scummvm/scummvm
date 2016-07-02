@@ -423,7 +423,7 @@ public:
 	 */
 	bool _palMorphIsOn;
 
-	inline Buffer &getCurrentBuffer() {
+	inline const Buffer &getCurrentBuffer() const {
 		return _currentBuffer;
 	}
 

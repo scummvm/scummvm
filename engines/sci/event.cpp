@@ -166,7 +166,7 @@ SciEvent EventManager::getScummVMEvent() {
 
 #if ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
-		Buffer &screen = g_sci->_gfxFrameout->getCurrentBuffer();
+		const Buffer &screen = g_sci->_gfxFrameout->getCurrentBuffer();
 
 		Common::Point mousePosSci = mousePos;
 		mulru(mousePosSci, Ratio(screen.scriptWidth, screen.screenWidth), Ratio(screen.scriptHeight, screen.screenHeight));
