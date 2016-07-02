@@ -76,6 +76,7 @@ GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAd
 	_benchmarkingFinished(false),
 	_throttleFrameOut(true),
 	_showStyles(nullptr),
+	_throttleState(0),
 	// TODO: Stop using _gfxScreen
 	_currentBuffer(screen->getDisplayWidth(), screen->getDisplayHeight(), nullptr),
 	_remapOccurred(false),
@@ -1567,7 +1568,16 @@ void GfxFrameout::kernelFrameOut(const bool shouldShowBits) {
 	}
 
 	if (_throttleFrameOut) {
-		g_sci->getEngineState()->speedThrottler(16);
+		uint8 throttleTime;
+		if (_throttleState == 2) {
+			throttleTime = 17;
+			_throttleState = 0;
+		} else {
+			throttleTime = 16;
+			++_throttleState;
+		}
+
+		g_sci->getEngineState()->speedThrottler(throttleTime);
 		g_sci->getEngineState()->_throttleTrigger = true;
 	}
 }

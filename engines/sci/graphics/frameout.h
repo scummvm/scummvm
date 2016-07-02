@@ -304,6 +304,12 @@ public:
 #pragma mark Rendering
 private:
 	/**
+	 * State tracker to provide more accurate 60fps
+	 * video throttling.
+	 */
+	uint8 _throttleState;
+
+	/**
 	 * TODO: Documentation
 	 */
 	int8 _styleRanges[256];
