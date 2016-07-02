@@ -112,11 +112,7 @@ public:
 
 	virtual int16	getAbsX() const	{ return _x + _boss->getChildX(); }
 	virtual int16	getAbsY() const	{ return _y + _boss->getChildY(); }
-	virtual Common::Rect getBossClipRect() const {
-		int px = _boss->getAbsX();
-		int py = _boss->getAbsY();
-		return Common::Rect(px, py, px + _boss->getWidth(), py + _boss->getHeight());
-	}
+	virtual Common::Rect getBossClipRect() const;
 
 	virtual void setPos(int x, int y) { _x = x; _y = y; }
 	virtual void setSize(int w, int h) { _w = w; _h = h; }

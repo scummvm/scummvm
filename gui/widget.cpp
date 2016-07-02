@@ -53,6 +53,31 @@ void Widget::init() {
 	_boss->_firstWidget = this;
 }
 
+Common::Rect Widget::getBossClipRect() const {
+	int bx = _boss->getAbsX();
+	int by = _boss->getAbsY();
+	Common::Rect result = Common::Rect(bx, by, bx + _boss->getWidth(), by + _boss->getHeight());
+	bool needsClipping = false;
+
+	//check whether clipping area is inside the screen
+	if (result.left < 0 && (needsClipping = true))
+		warning("Widget <%s> has clipping area x < 0 (%d)", _name.c_str(), result.left);
+	if (result.left >= g_gui.getWidth() && (needsClipping = true))
+		warning("Widget <%s> has clipping area x > %d (%d)", _name.c_str(), g_gui.getWidth(), result.left);
+	if (result.right > g_gui.getWidth() && (needsClipping = true))
+		warning("Widget <%s> has clipping area x + w > %d (%d)", _name.c_str(), g_gui.getWidth(), result.right);
+	if (result.top < 0 && (needsClipping = true))
+		warning("Widget <%s> has clipping area y < 0 (%d)", _name.c_str(), result.top);
+	if (result.top >= g_gui.getHeight() && (needsClipping = true))
+		warning("Widget <%s> has clipping area y > %d (%d)", _name.c_str(), g_gui.getHeight(), result.top);
+	if (result.bottom > g_gui.getHeight() && (needsClipping = true))
+		warning("Widget <%s> has clipping area y + h > %d (%d)", _name.c_str(), g_gui.getHeight(), result.bottom);
+
+	if (needsClipping)
+		result.clip(g_gui.getWidth(), g_gui.getHeight());
+	return result;
+}
+
 Widget::~Widget() {
 	delete _next;
 	_next = 0;
