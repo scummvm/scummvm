@@ -121,7 +121,16 @@ void Lingo::c_varpush() {
 	Datum d;
 
 	d.u.sym = g_lingo->lookupVar(name);
-	d.type = VAR;
+	if (d.u.sym->type == CASTREF) {
+		d.type = INT;
+		int val = d.u.sym->u.val;
+
+		delete d.u.sym;
+
+		d.u.i = val;
+	} else {
+		d.type = VAR;
+	}
 
 	g_lingo->_pc += g_lingo->calcStringAlignment(name);
 
@@ -165,6 +174,11 @@ bool Lingo::verify(Symbol *s) {
 void Lingo::c_eval() {
 	Datum d;
 	d = g_lingo->pop();
+
+	if (d.type != VAR) { // It could be cast ref
+		g_lingo->push(d);
+		return;
+	}
 
 	if (!g_lingo->verify(d.u.sym))
 		return;
@@ -353,6 +367,10 @@ void Lingo::c_repeatwithcode(void) {
 	int end =  READ_UINT32(&(*g_lingo->_currentScript)[savepc + 4]);
 	Common::String countername((char *)&(*g_lingo->_currentScript)[savepc + 5]);
 	Symbol *counter = g_lingo->lookupVar(countername.c_str());
+
+	if (counter->type == CASTREF) {
+		error("Cast ref used as index: %s", countername.c_str());
+	}
 
 	g_lingo->execute(init);	/* condition */
 	d = g_lingo->pop();

@@ -67,6 +67,27 @@ void Lingo::execute(int pc) {
 Symbol *Lingo::lookupVar(const char *name, bool create, bool putInGlobalList) {
 	Symbol *sym;
 
+	// Looking for the cast member constants
+	if (_vm->getVersion() < 4) { // TODO: There could be a flag 'Allow Outdated Lingo' in Movie Info in D4
+		if (strlen(name) == 3) {
+			if (name[0] >= 'A' && name[0] <= 'H' &&
+				name[1] >= '1' && name[1] <= '8' &&
+				name[2] >= '1' && name[2] <= '8') {
+
+				if (!create)
+					error("Cast reference used in wrong context: %s", name);
+
+				int val = (name[0] - 'A') * 64 + (name[1] - '1') * 8 + (name[2] - '1') + 1;
+				sym = new Symbol;
+
+				sym->type = CASTREF;
+				sym->u.val = val;
+
+				return sym;
+			}
+		}
+	}
+
 	if (!_localvars->contains(name)) { // Create variable if it was not defined
 		if (!create)
 			return NULL;
