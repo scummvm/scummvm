@@ -84,23 +84,15 @@ uint Kernel::getKernelNamesSize() const {
 }
 
 const Common::String &Kernel::getKernelName(uint number) const {
-	// FIXME: The following check is a temporary workaround for an issue
-	// leading to crashes when using the debugger's backtrace command.
-	if (number >= _kernelNames.size())
-		return _invalid;
+	assert(number < _kernelFuncs.size());
 	return _kernelNames[number];
 }
 
 Common::String Kernel::getKernelName(uint number, uint subFunction) const {
-	// FIXME: The following check is a temporary workaround for an issue
-	// leading to crashes when using the debugger's backtrace command.
-	if (number >= _kernelFuncs.size())
-		return _invalid;
+	assert(number < _kernelFuncs.size());
 	const KernelFunction &kernelCall = _kernelFuncs[number];
 
-	if (subFunction >= kernelCall.subFunctionCount)
-		return _invalid;
-
+	assert(subFunction < kernelCall.subFunctionCount);
 	return kernelCall.subFunctions[subFunction].name;
 }
 
