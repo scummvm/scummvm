@@ -324,7 +324,9 @@ private:
 	Buffer _currentBuffer;
 
 	/**
-	 * TODO: Documentation
+	 * When true, a change to the remap zone in the palette
+	 * has occurred and screen items with remap data need to
+	 * be redrawn.
 	 */
 	bool _remapOccurred;
 
