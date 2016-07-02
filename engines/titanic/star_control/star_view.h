@@ -27,7 +27,7 @@
 #include "titanic/support/video_surface.h"
 #include "titanic/star_control/star_control_sub12.h"
 #include "titanic/star_control/star_control_sub13.h"
-#include "titanic/star_control/star_control_sub15.h"
+#include "titanic/star_control/surface_fader.h"
 
 namespace Titanic {
 
@@ -39,7 +39,7 @@ private:
 	CStarControlSub12 _sub12;
 	int _field118;
 	CStarControlSub13 _sub13;
-	CStarControlSub15 _sub15;
+	CSurfaceFader _fader;
 	int _field20C;
 	int _field210;
 	int _field214;

@@ -20,24 +20,32 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB15_H
-#define TITANIC_STAR_CONTROL_SUB15_H
+#ifndef TITANIC_SURFACE_FADER_H
+#define TITANIC_SURFACE_FADER_H
 
-#include "titanic/support/simple_file.h"
+#include "titanic/star_control/surface_fader_base.h"
 
 namespace Titanic {
 
-class CStarControlSub15 {
+class CSurfaceFader: public CSurfaceFaderBase {
 private:
-	double _field4;
-	double _field8;
-	double _fieldC;
-	double _field10;
-	double _field14;
+	byte *_dataP;
+	bool _fadeIn;
+protected:
+	/**
+	 * Create a faded version of the source surface at the given dest
+	 */
+	virtual void copySurface(CSurfaceArea &srcSurface, CSurfaceArea &destSurface);
 public:
-	CStarControlSub15();
+	CSurfaceFader();
+	virtual ~CSurfaceFader();
+
+	/**
+	 * Sets whether a fade in (versus a fade out) should be done
+	 */
+	void setFadeIn(bool fadeIn);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CONTROL_SUB15_H */
+#endif /* TITANIC_SURFACE_SHADER_H */

@@ -20,38 +20,43 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB16_H
-#define TITANIC_STAR_CONTROL_SUB16_H
+#ifndef TITANIC_SURFACE_FADER_BASE_H
+#define TITANIC_SURFACE_FADER_BASE_H
 
 #include "titanic/support/video_surface.h"
 #include "titanic/support/screen_manager.h"
-#include "titanic/star_control/surface_obj.h"
+#include "titanic/star_control/surface_area.h"
 
 namespace Titanic {
 
-class CStarControlSub16 {
+class CSurfaceFaderBase {
 private:
 	/**
 	 * Sets up an internal surface to match the size of the specified one
 	 */
 	bool setupSurface(CScreenManager *screenManager, CVideoSurface *srcSurface);
 protected:
-	int _field4;
-	int _field8;
+	int _index;
+	int _count;
 	CVideoSurface *_videoSurface;
 protected:
-	virtual void proc4(CSurfaceObj &srcSurface, CSurfaceObj &destSurface) = 0;
+	/**
+	 * Create a faded version of the source surface at the given dest
+	 */
+	virtual void copySurface(CSurfaceArea &srcSurface, CSurfaceArea &destSurface) = 0;
 public:
-	CStarControlSub16();
+	CSurfaceFaderBase();
+	virtual ~CSurfaceFaderBase();
 
 	virtual void reset();
 
 	/**
-	 * Loads from a given source surface
+	 * Creates a faded version of the passed source surface, based on a percentage
+	 * visibility specified by _index of _count
 	 */
-	virtual CVideoSurface *loadSurface(CScreenManager *screenManager, CVideoSurface *srcSurface);
+	virtual CVideoSurface *fade(CScreenManager *screenManager, CVideoSurface *srcSurface);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CONTROL_SUB16_H */
+#endif /* TITANIC_SURFACE_FADER_BASE_H */

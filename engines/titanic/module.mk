@@ -433,7 +433,9 @@ MODULE_OBJS := \
 	star_control/star_control_sub14.o \
 	star_control/star_control_sub15.o \
 	star_control/star_control_sub16.o \
-	star_control/surface_obj.o \
+	star_control/surface_area.o \
+	star_control/surface_fader_base.o \
+	star_control/surface_fader.o \
 	support/direct_draw.o \
 	support/direct_draw_surface.o \
 	support/exe_resources.o \

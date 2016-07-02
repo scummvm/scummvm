@@ -20,19 +20,23 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub16.h"
+#include "titanic/star_control/surface_fader_base.h"
 
 namespace Titanic {
 
-CStarControlSub16::CStarControlSub16() : _field4(-1), _field8(32),
+CSurfaceFaderBase::CSurfaceFaderBase() : _index(-1), _count(32),
 		_videoSurface(nullptr) {
 }
 
-void CStarControlSub16::reset() {
-	_field4 = 0;
+CSurfaceFaderBase::~CSurfaceFaderBase() {
+	delete _videoSurface;
 }
 
-bool CStarControlSub16::setupSurface(CScreenManager *screenManager, CVideoSurface *srcSurface) {
+void CSurfaceFaderBase::reset() {
+	_index = 0;
+}
+
+bool CSurfaceFaderBase::setupSurface(CScreenManager *screenManager, CVideoSurface *srcSurface) {
 	int width = srcSurface->getWidth();
 	int height = srcSurface->getHeight();
 
@@ -49,26 +53,26 @@ bool CStarControlSub16::setupSurface(CScreenManager *screenManager, CVideoSurfac
 	return true;
 }
 
-CVideoSurface *CStarControlSub16::loadSurface(CScreenManager *screenManager, CVideoSurface *srcSurface) {
-	if (_field4 < 0 || _field4 >= _field8)
+CVideoSurface *CSurfaceFaderBase::fade(CScreenManager *screenManager, CVideoSurface *srcSurface) {
+	if (_index == -1 || _index >= _count)
 		return srcSurface;
 
-	if (!_field8 && !setupSurface(screenManager, srcSurface))
+	if (!_count && !setupSurface(screenManager, srcSurface))
 		return nullptr;
 
 	srcSurface->lock();
 	_videoSurface->lock();
-	CSurfaceObj srcSurfaceObj(srcSurface);
-	CSurfaceObj destSurfaceObj(_videoSurface);
+	CSurfaceArea srCSurfaceArea(srcSurface);
+	CSurfaceArea destSurfaceObj(_videoSurface);
 
-	proc4(srcSurfaceObj, destSurfaceObj);
+	// Copy the surface with fading
+	copySurface(srCSurfaceArea, destSurfaceObj);
 
 	srcSurface->unlock();
 	_videoSurface->unlock();
 	
-	++_field4;
+	++_index;
 	return _videoSurface;
 }
-
 
 } // End of namespace Titanic
