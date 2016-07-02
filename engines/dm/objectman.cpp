@@ -31,9 +31,9 @@
 
 namespace DM {
 
-int16 gIconGraphicHeight[7] = {32, 32, 32, 32, 32, 32, 32}; // @ K0077_ai_IconGraphicHeight
+int16 gK77_IconGraphicHeight[7] = {32, 32, 32, 32, 32, 32, 32}; // @ K0077_ai_IconGraphicHeight
 
-int16 gIconGraphicFirstIndex[7] = { // G0026_ai_Graphic562_IconGraphicFirstIconIndex
+int16 g26_IconGraphicFirstIndex[7] = { // G0026_ai_Graphic562_IconGraphicFirstIconIndex
 	0,     /* First icon index in graphic #42 */
 	32,    /* First icon index in graphic #43 */
 	64,    /* First icon index in graphic #44 */
@@ -44,73 +44,73 @@ int16 gIconGraphicFirstIndex[7] = { // G0026_ai_Graphic562_IconGraphicFirstIconI
 
 ObjectMan::ObjectMan(DMEngine *vm) : _vm(vm) {
 	/* 8 for champion hands in status boxes, 30 for champion inventory, 8 for chest */
-	_slotBoxes[0] = SlotBox(4, 10, 0);    /* Champion Status Box 0 Ready Hand */
-	_slotBoxes[1] = SlotBox(24, 10, 0);   /* Champion Status Box 0 Action Hand */
-	_slotBoxes[2] = SlotBox(73, 10, 0);   /* Champion Status Box 1 Ready Hand */
-	_slotBoxes[3] = SlotBox(93, 10, 0);   /* Champion Status Box 1 Action Hand */
-	_slotBoxes[4] = SlotBox(142, 10, 0);  /* Champion Status Box 2 Ready Hand */
-	_slotBoxes[5] = SlotBox(162, 10, 0);  /* Champion Status Box 2 Action Hand */
-	_slotBoxes[6] = SlotBox(211, 10, 0);  /* Champion Status Box 3 Ready Hand */
-	_slotBoxes[7] = SlotBox(231, 10, 0);  /* Champion Status Box 3 Action Hand */
-	_slotBoxes[8] = SlotBox(6, 53, 0);    /* Ready Hand */
-	_slotBoxes[9] = SlotBox(62, 53, 0);   /* Action Hand */
-	_slotBoxes[10] = SlotBox(34, 26, 0);  /* Head */
-	_slotBoxes[11] = SlotBox(34, 46, 0);  /* Torso */
-	_slotBoxes[12] = SlotBox(34, 66, 0);  /* Legs */
-	_slotBoxes[13] = SlotBox(34, 86, 0);  /* Feet */
-	_slotBoxes[14] = SlotBox(6, 90, 0);   /* Pouch 2 */
-	_slotBoxes[15] = SlotBox(79, 73, 0);  /* Quiver Line2 1 */
-	_slotBoxes[16] = SlotBox(62, 90, 0);  /* Quiver Line1 2 */
-	_slotBoxes[17] = SlotBox(79, 90, 0);  /* Quiver Line2 2 */
-	_slotBoxes[18] = SlotBox(6, 33, 0);   /* Neck */
-	_slotBoxes[19] = SlotBox(6, 73, 0);   /* Pouch 1 */
-	_slotBoxes[20] = SlotBox(62, 73, 0);  /* Quiver Line1 1 */
-	_slotBoxes[21] = SlotBox(66, 33, 0);  /* Backpack Line1 1 */
-	_slotBoxes[22] = SlotBox(83, 16, 0);  /* Backpack Line2 2 */
-	_slotBoxes[23] = SlotBox(100, 16, 0); /* Backpack Line2 3 */
-	_slotBoxes[24] = SlotBox(117, 16, 0); /* Backpack Line2 4 */
-	_slotBoxes[25] = SlotBox(134, 16, 0); /* Backpack Line2 5 */
-	_slotBoxes[26] = SlotBox(151, 16, 0); /* Backpack Line2 6 */
-	_slotBoxes[27] = SlotBox(168, 16, 0); /* Backpack Line2 7 */
-	_slotBoxes[28] = SlotBox(185, 16, 0); /* Backpack Line2 8 */
-	_slotBoxes[29] = SlotBox(202, 16, 0); /* Backpack Line2 9 */
-	_slotBoxes[30] = SlotBox(83, 33, 0);  /* Backpack Line1 2 */
-	_slotBoxes[31] = SlotBox(100, 33, 0); /* Backpack Line1 3 */
-	_slotBoxes[32] = SlotBox(117, 33, 0); /* Backpack Line1 4 */
-	_slotBoxes[33] = SlotBox(134, 33, 0); /* Backpack Line1 5 */
-	_slotBoxes[34] = SlotBox(151, 33, 0); /* Backpack Line1 6 */
-	_slotBoxes[35] = SlotBox(168, 33, 0); /* Backpack Line1 7 */
-	_slotBoxes[36] = SlotBox(185, 33, 0); /* Backpack Line1 8 */
-	_slotBoxes[37] = SlotBox(202, 33, 0); /* Backpack Line1 9 */
-	_slotBoxes[38] = SlotBox(117, 59, 0); /* Chest 1 */
-	_slotBoxes[39] = SlotBox(106, 76, 0); /* Chest 2 */
-	_slotBoxes[40] = SlotBox(111, 93, 0); /* Chest 3 */
-	_slotBoxes[41] = SlotBox(128, 98, 0); /* Chest 4 */
-	_slotBoxes[42] = SlotBox(145, 101, 0); /* Chest 5 */
-	_slotBoxes[43] = SlotBox(162, 103, 0); /* Chest 6 */
-	_slotBoxes[44] = SlotBox(179, 104, 0); /* Chest 7 */
-	_slotBoxes[45] = SlotBox(196, 105, 0); /* Chest 8 */
+	_g30_slotBoxes[0] = SlotBox(4, 10, 0);    /* Champion Status Box 0 Ready Hand */
+	_g30_slotBoxes[1] = SlotBox(24, 10, 0);   /* Champion Status Box 0 Action Hand */
+	_g30_slotBoxes[2] = SlotBox(73, 10, 0);   /* Champion Status Box 1 Ready Hand */
+	_g30_slotBoxes[3] = SlotBox(93, 10, 0);   /* Champion Status Box 1 Action Hand */
+	_g30_slotBoxes[4] = SlotBox(142, 10, 0);  /* Champion Status Box 2 Ready Hand */
+	_g30_slotBoxes[5] = SlotBox(162, 10, 0);  /* Champion Status Box 2 Action Hand */
+	_g30_slotBoxes[6] = SlotBox(211, 10, 0);  /* Champion Status Box 3 Ready Hand */
+	_g30_slotBoxes[7] = SlotBox(231, 10, 0);  /* Champion Status Box 3 Action Hand */
+	_g30_slotBoxes[8] = SlotBox(6, 53, 0);    /* Ready Hand */
+	_g30_slotBoxes[9] = SlotBox(62, 53, 0);   /* Action Hand */
+	_g30_slotBoxes[10] = SlotBox(34, 26, 0);  /* Head */
+	_g30_slotBoxes[11] = SlotBox(34, 46, 0);  /* Torso */
+	_g30_slotBoxes[12] = SlotBox(34, 66, 0);  /* Legs */
+	_g30_slotBoxes[13] = SlotBox(34, 86, 0);  /* Feet */
+	_g30_slotBoxes[14] = SlotBox(6, 90, 0);   /* Pouch 2 */
+	_g30_slotBoxes[15] = SlotBox(79, 73, 0);  /* Quiver Line2 1 */
+	_g30_slotBoxes[16] = SlotBox(62, 90, 0);  /* Quiver Line1 2 */
+	_g30_slotBoxes[17] = SlotBox(79, 90, 0);  /* Quiver Line2 2 */
+	_g30_slotBoxes[18] = SlotBox(6, 33, 0);   /* Neck */
+	_g30_slotBoxes[19] = SlotBox(6, 73, 0);   /* Pouch 1 */
+	_g30_slotBoxes[20] = SlotBox(62, 73, 0);  /* Quiver Line1 1 */
+	_g30_slotBoxes[21] = SlotBox(66, 33, 0);  /* Backpack Line1 1 */
+	_g30_slotBoxes[22] = SlotBox(83, 16, 0);  /* Backpack Line2 2 */
+	_g30_slotBoxes[23] = SlotBox(100, 16, 0); /* Backpack Line2 3 */
+	_g30_slotBoxes[24] = SlotBox(117, 16, 0); /* Backpack Line2 4 */
+	_g30_slotBoxes[25] = SlotBox(134, 16, 0); /* Backpack Line2 5 */
+	_g30_slotBoxes[26] = SlotBox(151, 16, 0); /* Backpack Line2 6 */
+	_g30_slotBoxes[27] = SlotBox(168, 16, 0); /* Backpack Line2 7 */
+	_g30_slotBoxes[28] = SlotBox(185, 16, 0); /* Backpack Line2 8 */
+	_g30_slotBoxes[29] = SlotBox(202, 16, 0); /* Backpack Line2 9 */
+	_g30_slotBoxes[30] = SlotBox(83, 33, 0);  /* Backpack Line1 2 */
+	_g30_slotBoxes[31] = SlotBox(100, 33, 0); /* Backpack Line1 3 */
+	_g30_slotBoxes[32] = SlotBox(117, 33, 0); /* Backpack Line1 4 */
+	_g30_slotBoxes[33] = SlotBox(134, 33, 0); /* Backpack Line1 5 */
+	_g30_slotBoxes[34] = SlotBox(151, 33, 0); /* Backpack Line1 6 */
+	_g30_slotBoxes[35] = SlotBox(168, 33, 0); /* Backpack Line1 7 */
+	_g30_slotBoxes[36] = SlotBox(185, 33, 0); /* Backpack Line1 8 */
+	_g30_slotBoxes[37] = SlotBox(202, 33, 0); /* Backpack Line1 9 */
+	_g30_slotBoxes[38] = SlotBox(117, 59, 0); /* Chest 1 */
+	_g30_slotBoxes[39] = SlotBox(106, 76, 0); /* Chest 2 */
+	_g30_slotBoxes[40] = SlotBox(111, 93, 0); /* Chest 3 */
+	_g30_slotBoxes[41] = SlotBox(128, 98, 0); /* Chest 4 */
+	_g30_slotBoxes[42] = SlotBox(145, 101, 0); /* Chest 5 */
+	_g30_slotBoxes[43] = SlotBox(162, 103, 0); /* Chest 6 */
+	_g30_slotBoxes[44] = SlotBox(179, 104, 0); /* Chest 7 */
+	_g30_slotBoxes[45] = SlotBox(196, 105, 0); /* Chest 8 */
 
-	_objectIconForMousePointer = nullptr;
+	_g412_objectIconForMousePointer = nullptr;
 }
 
 ObjectMan::~ObjectMan() {
-	delete[] _objectIconForMousePointer;
-	delete[] _objectNames[0];
+	delete[] _g412_objectIconForMousePointer;
+	delete[] _g352_objectNames[0];
 }
 
-#define kObjectNamesGraphicIndice 556 // @ C556_GRAPHIC_OBJECT_NAMES
+#define k556_ObjectNamesGraphicIndice 556 // @ C556_GRAPHIC_OBJECT_NAMES
 
 void ObjectMan::loadObjectNames() {
 	DisplayMan &dispMan = *_vm->_displayMan;
 
-	_objectIconForMousePointer = new byte[16 * 16];
+	_g412_objectIconForMousePointer = new byte[16 * 16];
 
-	char *objectNames = new char[dispMan.getCompressedDataSize(kObjectNamesGraphicIndice) + kObjectNameCount];
-	Common::MemoryReadStream stream = dispMan.getCompressedData(kObjectNamesGraphicIndice);
+	char *objectNames = new char[dispMan.getCompressedDataSize(k556_ObjectNamesGraphicIndice) + k199_ObjectNameCount];
+	Common::MemoryReadStream stream = dispMan.getCompressedData(k556_ObjectNamesGraphicIndice);
 
-	for (uint16 objNameIndex = 0; objNameIndex < kObjectNameCount; ++objNameIndex) {
-		_objectNames[objNameIndex] = objectNames;
+	for (uint16 objNameIndex = 0; objNameIndex < k199_ObjectNameCount; ++objNameIndex) {
+		_g352_objectNames[objNameIndex] = objectNames;
 
 		byte tmpByte;
 		for (tmpByte = stream.readByte(); !(tmpByte & 0x80); tmpByte = stream.readByte()) // last char of object name has 7th bit on
@@ -132,7 +132,7 @@ IconIndice ObjectMan::getObjectType(Thing thing) {
 	return (IconIndice)objectInfoIndex;
 }
 
-byte gChargeCountToTorchType[16] = {0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3}; // @ G0029_auc_Graphic562_ChargeCountToTorchType
+byte g29_ChargeCountToTorchType[16] = {0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3}; // @ G0029_auc_Graphic562_ChargeCountToTorchType
 
 IconIndice ObjectMan::getIconIndex(Thing thing) {
 	IconIndice iconIndex = getObjectType(thing);
@@ -150,7 +150,7 @@ IconIndice ObjectMan::getIconIndex(Thing thing) {
 		case k4_IconIndiceWeaponTorchUnlit: {
 			Weapon weapon(rawType);
 			if (weapon.isLit()) {
-				iconIndex = (IconIndice)(iconIndex + gChargeCountToTorchType[weapon.getChargeCount()]);
+				iconIndex = (IconIndice)(iconIndex + g29_ChargeCountToTorchType[weapon.getChargeCount()]);
 			}
 			break;
 		}
@@ -187,19 +187,19 @@ IconIndice ObjectMan::getIconIndex(Thing thing) {
 void ObjectMan::extractIconFromBitmap(uint16 iconIndex, byte *destBitmap) {
 	int16 i;
 	for (i = 0; i < 7; ++i) {
-		if (gIconGraphicFirstIndex[i] > iconIndex)
+		if (g26_IconGraphicFirstIndex[i] > iconIndex)
 			break;
 	}
 
 	--i;
 	byte *srcBitmap = _vm->_displayMan->getBitmap(k42_ObjectIcons_000_TO_031 + i);
-	iconIndex -= gIconGraphicFirstIndex[i];
+	iconIndex -= g26_IconGraphicFirstIndex[i];
 	_vm->_displayMan->_g578_useByteBoxCoordinates = true;
 	_vm->_displayMan->blitToBitmap(srcBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, destBitmap, 16, 0, 16, 0, 16, k255_ColorNoTransparency);
 }
 
 void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
-	SlotBox *slotBox = &_slotBoxes[slotBoxIndex];
+	SlotBox *slotBox = &_g30_slotBoxes[slotBoxIndex];
 	slotBox->_iconIndex = iconIndex; // yes, this modifies the global array
 	if (slotBox->_iconIndex == kM1_IconIndiceNone) {
 		return;
@@ -213,16 +213,16 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 
 	uint16 iconGraphicIndex;
 	for (iconGraphicIndex = 0; iconGraphicIndex < 7; ++iconGraphicIndex) {
-		if (gIconGraphicFirstIndex[iconGraphicIndex] > iconIndex) {
+		if (g26_IconGraphicFirstIndex[iconGraphicIndex] > iconIndex) {
 			break;
 		}
 	}
 	iconGraphicIndex--;
 	byte *iconsBitmap = _vm->_displayMan->getBitmap(iconGraphicIndex + k42_ObjectIcons_000_TO_031);
-	iconIndex -= gIconGraphicFirstIndex[iconGraphicIndex];
+	iconIndex -= g26_IconGraphicFirstIndex[iconGraphicIndex];
 
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
-	if (slotBoxIndex >= kSlotBoxInventoryFirstSlot) {
+	if (slotBoxIndex >= k8_SlotBoxInventoryFirstSlot) {
 		_vm->_displayMan->blitToScreen(iconsBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0,
 									   box, k255_ColorNoTransparency, g296_DungeonViewport);
 	} else {
@@ -231,7 +231,7 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 	}
 }
 
-#define kObjectNameMaximumLength 14 // @ C014_OBJECT_NAME_MAXIMUM_LENGTH
+#define k14_ObjectNameMaximumLength 14 // @ C014_OBJECT_NAME_MAXIMUM_LENGTH
 
 void ObjectMan::drawLeaderObjectName(Thing thing) {
 	IconIndice iconIndex = getIconIndex(thing);
@@ -240,15 +240,15 @@ void ObjectMan::drawLeaderObjectName(Thing thing) {
 	if (iconIndex == k147_IconIndiceJunkChampionBones) {
 		Junk *junk = (Junk*)_vm->_dungeonMan->getThingData(thing);
 		strcpy(objectNameBuffer, _vm->_championMan->_champions[junk->getChargeCount()]._name);
-		strcat(objectNameBuffer, _objectNames[iconIndex]);
+		strcat(objectNameBuffer, _g352_objectNames[iconIndex]);
 		objName = objectNameBuffer;
 	} else {
-		objName = _objectNames[iconIndex];
+		objName = _g352_objectNames[iconIndex];
 	}
-	_vm->_textMan->printWithTrailingSpacesToScreen(233, 37, k4_ColorCyan, k0_ColorBlack, objName, kObjectNameMaximumLength);
+	_vm->_textMan->printWithTrailingSpacesToScreen(233, 37, k4_ColorCyan, k0_ColorBlack, objName, k14_ObjectNameMaximumLength);
 }
 
 IconIndice ObjectMan::getIconIndexInSlotBox(uint16 slotBoxIndex) {
-	return (IconIndice)_slotBoxes[slotBoxIndex]._iconIndex;
+	return (IconIndice)_g30_slotBoxes[slotBoxIndex]._iconIndex;
 }
 }

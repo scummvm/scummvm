@@ -148,7 +148,7 @@ void DMEngine::initializeGame() {
 
 	_eventMan->initMouse();
 
-	while (_loadsaveMan->loadgame() != kLoadgameSuccess) {
+	while (_loadsaveMan->loadgame() != k1_LoadgameSuccess) {
 		warning("TODO: F0441_STARTEND_ProcessEntrance");
 	}
 
@@ -172,7 +172,7 @@ void DMEngine::startGame() {
 	_eventMan->_g341_highlightBoxEnabled = false;
 	_championMan->_g300_partyIsSleeping = false;
 	_championMan->_g506_actingChampionOrdinal = indexToOrdinal(kM1_ChampionNone);
-	_menuMan->_actionAreaContainsIcons = true;
+	_menuMan->_g509_actionAreaContainsIcons = true;
 	_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap = indexToOrdinal(kM1_ChampionNone);
 
 	_eventMan->_g441_primaryMouseInput = g447_PrimaryMouseInput_Interface;
@@ -238,8 +238,8 @@ void DMEngine::gameloop() {
 	_dungeonMan->_currMap._g308_partyDir = kDirNorth;
 
 
-	warning("DUMMY CODE: setting InventoryMan::_inventoryChampionOrdinal to zero");
-	_inventoryMan->_inventoryChampionOrdinal = 0;
+	warning("DUMMY CODE: setting InventoryMan::_g432_inventoryChampionOrdinal to zero");
+	_inventoryMan->_g432_inventoryChampionOrdinal = 0;
 	warning("DUMMY CODE: clearing screen to black"); // in loop below
 	while (true) {
 		_g321_stopWaitingForPlayerInput = false;
@@ -251,7 +251,7 @@ void DMEngine::gameloop() {
 		_eventMan->processCommandQueue();
 		//} while (!_g321_stopWaitingForPlayerInput || !_g301_gameTimeTicking);
 
-		if (!_inventoryMan->_inventoryChampionOrdinal && !_championMan->_g300_partyIsSleeping) {
+		if (!_inventoryMan->_g432_inventoryChampionOrdinal && !_championMan->_g300_partyIsSleeping) {
 			Box box(0, 224, 0, 126);
 			_displayMan->clearScreenBox(k0_ColorBlack, box, g296_DungeonViewport); // dummy code
 			_displayMan->drawDungeon(_dungeonMan->_currMap._g308_partyDir, _dungeonMan->_currMap._g306_partyPosX, _dungeonMan->_currMap._g307_partyPosY);

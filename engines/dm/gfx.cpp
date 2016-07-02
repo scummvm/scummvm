@@ -2327,17 +2327,17 @@ T0115015_DrawProjectileAsObject:
 			goto T0115129_DrawProjectiles; /* Skip code to draw creatures */
 		if (group == nullptr) { /* If all creature data and info has not already been gathered */
 			group = (Group*)dunMan.getThingData(groupThing);
-			activeGroup = &_vm->_groupMan->_activeGroups[group->getActiveGroupIndex()];
+			activeGroup = &_vm->_groupMan->_g375_activeGroups[group->getActiveGroupIndex()];
 			creatureInfo = &g243_CreatureInfo[group->_type];
 			creatureAspectStruct = &g219_CreatureAspects[creatureInfo->_creatureAspectIndex];
-			creatureSize = getFlag(creatureInfo->_attributes, kMaskCreatureInfo_size);
+			creatureSize = getFlag(creatureInfo->_attributes, k0x0003_MaskCreatureInfo_size);
 			creatureGraphicInfoGreen = creatureInfo->_graphicInfo;
 		}
 		objectAspect = (ObjectAspect*)creatureAspectStruct;
 		if (AL_0_creatureIndexRed = _vm->_groupMan->getCreatureOrdinalInCell(group, cellYellowBear)) { /* If there is a creature on the cell being processed */
 			AL_0_creatureIndexRed--; /* Convert ordinal to index */
 			creatureIndexGreen = AL_0_creatureIndexRed;
-		} else if (creatureSize == kMaskCreatureSizeHalf) {
+		} else if (creatureSize == k1_MaskCreatureSizeHalf) {
 			AL_0_creatureIndexRed = 0;
 			creatureIndexGreen = -1;
 		} else {
@@ -2346,18 +2346,18 @@ T0115015_DrawProjectileAsObject:
 
 		creatureDirectionDelta = (directionParam - _vm->_groupMan->getCreatureValue(activeGroup->_directions, AL_0_creatureIndexRed)) % 3;
 		twoHalfSquareCreaturesFrontView = false;
-		if ((AL_4_groupCells = activeGroup->_cells) == kCreatureTypeSingleCenteredCreature) { /* If there is a single centered creature in the group */
+		if ((AL_4_groupCells = activeGroup->_cells) == k255_CreatureTypeSingleCenteredCreature) { /* If there is a single centered creature in the group */
 			if (remainingViewCellOrdinalsToProcess || (doorFrontViewDrawingPass == 1))
 /* Do not draw a single centered creature now, wait until second pass (for a front view door)
  or until all cells have been drawn so the creature is drawn over all the objects on the floor */
 				goto T0115129_DrawProjectiles;
 			drawCreaturesCompleted = true;
-			if ((creatureSize == kMaskCreatureSizeHalf) && (creatureDirectionDelta & 0x0001)) { /* Side view of half square creature */
+			if ((creatureSize == k1_MaskCreatureSizeHalf) && (creatureDirectionDelta & 0x0001)) { /* Side view of half square creature */
 				AL_2_viewCell = k3_HalfSizedViewCell_CenterColumn;
 			} else {
 				AL_2_viewCell = k4_HalfSizedViewCell_FrontRow;
 			}
-		} else if ((creatureSize == kMaskCreatureSizeHalf) && (drawingLastBackRowCell || !remainingViewCellOrdinalsToProcess || (creatureIndexGreen < 0))) {
+		} else if ((creatureSize == k1_MaskCreatureSizeHalf) && (drawingLastBackRowCell || !remainingViewCellOrdinalsToProcess || (creatureIndexGreen < 0))) {
 			if (drawingLastBackRowCell && (doorFrontViewDrawingPass != 2)) {
 				if ((creatureIndexGreen >= 0) && (creatureDirectionDelta & 0x0001)) {
 					AL_2_viewCell = k2_HalfSizedViewCell_BackRow; /* Side view of a half square creature on the back row. Drawn during pass 1 for a door square */
@@ -2388,7 +2388,7 @@ T0115015_DrawProjectileAsObject:
 				goto T0115129_DrawProjectiles;
 			}
 
-		} else if (creatureSize != kMaskCreatureSizeQuarter)
+		} else if (creatureSize != k0_MaskCreatureSizeQuarter)
 			goto T0115129_DrawProjectiles;
 
 
@@ -2411,7 +2411,7 @@ T0115077_DrawSecondHalfSquareCreature:
 			sourceHeight = heightRedEagle = ((CreatureAspect*)objectAspect)->_heightSide;
 		} else {
 			useCreatureBackBitmap = getFlag(AL_0_creatureGraphicInfoRed, k0x0010_CreatureInfoGraphicMaskBack) && (creatureDirectionDelta == 0);
-			if (useCreatureAttackBitmap = !useCreatureBackBitmap && getFlag(creatureAspectInt, kMaskActiveGroupIsAttacking)
+			if (useCreatureAttackBitmap = !useCreatureBackBitmap && getFlag(creatureAspectInt, k0x0080_MaskActiveGroupIsAttacking)
 				&& getFlag(AL_0_creatureGraphicInfoRed, k0x0020_CreatureInfoGraphicMaskAttack)) {
 
 				useFlippedHorizontallyCreatureFrontImage = false;
@@ -2441,7 +2441,7 @@ T0115077_DrawSecondHalfSquareCreature:
 					}
 				} else {
 					if (useFlippedHorizontallyCreatureFrontImage = getFlag(AL_0_creatureGraphicInfoRed, k0x0004_CreatureInfoGraphicMaskFlipNonAttack)
-						&& getFlag(creatureAspectInt, kMaskActiveGroupFlipBitmap)) {
+						&& getFlag(creatureAspectInt, k0x0040_MaskActiveGroupFlipBitmap)) {
 						derivedBitmapIndex += 2;
 						if (getFlag(AL_0_creatureGraphicInfoRed, k0x0008_CreatureInfoGraphicMaskSide)) {
 							derivedBitmapIndex += 2;
@@ -2470,7 +2470,7 @@ T0115077_DrawSecondHalfSquareCreature:
 			} else {
 				if (useCreatureBackBitmap || !useFlippedHorizontallyCreatureFrontImage) {
 					AL_6_bitmapRedBanana = getBitmap(AL_4_nativeBitmapIndex);
-					if (useCreatureAttackBitmap && getFlag(creatureAspectInt, kMaskActiveGroupFlipBitmap)) {
+					if (useCreatureAttackBitmap && getFlag(creatureAspectInt, k0x0040_MaskActiveGroupFlipBitmap)) {
 						memcpy(_g74_tmpBitmap, AL_6_bitmapRedBanana, byteWidth * heightRedEagle * sizeof(byte));
 						flipBitmapHorizontal(_g74_tmpBitmap, byteWidth, heightRedEagle);
 						AL_6_bitmapRedBanana = _g74_tmpBitmap;
@@ -2518,7 +2518,7 @@ T0115077_DrawSecondHalfSquareCreature:
 				warning("IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
 			}
 			if ((useCreatureSideBitmap && (creatureDirectionDelta == 1)) || /* If creature is viewed from the right, the side view must be flipped */
-				(useCreatureAttackBitmap && getFlag(creatureAspectInt, kMaskActiveGroupFlipBitmap)) ||
+				(useCreatureAttackBitmap && getFlag(creatureAspectInt, k0x0040_MaskActiveGroupFlipBitmap)) ||
 				(useCreatureSpecialD2FrontBitmap && getFlag(AL_0_creatureGraphicInfoRed, k0x0100_CreatureInfoGraphicMaskSpecialD2FrontIsFlipped)) ||
 				(useFlippedHorizontallyCreatureFrontImage && getFlag(AL_0_creatureGraphicInfoRed, k0x0004_CreatureInfoGraphicMaskFlipNonAttack))) { /* If the graphic should be flipped */
 				if (!useFlippedHorizontallyCreatureFrontImage || !derivedBitmapInCache) {
@@ -2608,7 +2608,7 @@ continue;
 						projectileBitmapIndexData = 0;
 						flipVertical = flipHorizontal = false;
 					} else {
-						if (isOrientedWestEast((direction)(projectileDirection = _vm->_timeline->_events[projectile->_timerIndex]._C._projectile.getDir()))
+						if (isOrientedWestEast((direction)(projectileDirection = _vm->_timeline->_g370_events[projectile->_timerIndex]._C._projectile.getDir()))
 							!= isOrientedWestEast(directionParam)) {
 							if (projectileAspectType == k2_ProjectileAspectHasRotation) {
 								projectileBitmapIndexData = 1;

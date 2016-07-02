@@ -616,7 +616,7 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 		Box box;
 		box._y1 = 0;
 		box._y2 = 28 + 1;
-		box._x1 = championIndex * kChampionStatusBoxSpacing;
+		box._x1 = championIndex * k69_ChampionStatusBoxSpacing;
 		box._x2 = box._x1 + 66 + 1;
 		dispMan._g578_useByteBoxCoordinates = false;
 		dispMan.clearScreenBox(k0_ColorBlack, box);
@@ -679,15 +679,15 @@ void EventManager::commandProcess81ClickInPanel(int16 x, int16 y) {
 	InventoryMan &invMan = *_vm->_inventoryMan;
 
 	CommandType commandType;
-	switch (invMan._panelContent) {
-	case kPanelContentChest:
+	switch (invMan._g424_panelContent) {
+	case k4_PanelContentChest:
 		if (champMan._g411_leaderIndex == kM1_ChampionNone) // if no leader
 			return;
 		commandType = getCommandTypeFromMouseInput(g456_MouseInput_PanelChest, Common::Point(x, y), k1_LeftMouseButton);
 		if (commandType != k0_CommandNone)
 			warning("MISSING CODE: F0302_CHAMPION_ProcessCommands28To65_ClickOnSlotBox");
 		break;
-	case kPanelContentResurrectReincarnate:
+	case k5_PanelContentResurrectReincarnate:
 		if (!champMan._g415_leaderEmptyHanded)
 			break;
 		commandType = getCommandTypeFromMouseInput(g457_MouseInput_PanelResurrectReincarnateCancel, Common::Point(x, y), k1_LeftMouseButton);

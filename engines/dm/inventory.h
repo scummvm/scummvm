@@ -34,17 +34,17 @@
 
 namespace DM {
 
-#define kChampionStatusBoxSpacing 69 // @ C69_CHAMPION_STATUS_BOX_SPACING
-#define kSlotBoxChestFirstSlot 38 // @ C38_SLOT_BOX_CHEST_FIRST_SLOT
+#define k69_ChampionStatusBoxSpacing 69 // @ C69_CHAMPION_STATUS_BOX_SPACING
+#define k38_SlotBoxChestFirstSlot 38 // @ C38_SLOT_BOX_CHEST_FIRST_SLOT
 
 
-extern Box gBoxPanel; // @ G0032_s_Graphic562_Box_Panel
+extern Box g32_BoxPanel; // @ G0032_s_Graphic562_Box_Panel
 
 enum PanelContent {
-	kPanelContentFoodWaterPoisoned = 0, // @ C00_PANEL_FOOD_WATER_POISONED
-	kPanelContentScroll = 2, // @ C02_PANEL_SCROLL
-	kPanelContentChest = 4, // @ C04_PANEL_CHEST
-	kPanelContentResurrectReincarnate = 5 // @ C05_PANEL_RESURRECT_REINCARNATE
+	k0_PanelContentFoodWaterPoisoned = 0, // @ C00_PANEL_FOOD_WATER_POISONED
+	k2_PanelContentScroll = 2, // @ C02_PANEL_SCROLL
+	k4_PanelContentChest = 4, // @ C04_PANEL_CHEST
+	k5_PanelContentResurrectReincarnate = 5 // @ C05_PANEL_RESURRECT_REINCARNATE
 };
 
 
@@ -54,12 +54,12 @@ class InventoryMan {
 public:
 	explicit InventoryMan(DMEngine *vm);
 
-	int16 _inventoryChampionOrdinal; // @ G0423_i_InventoryChampionOrdinal
-	PanelContent _panelContent; // @ G0424_i_PanelContent 
-	Thing _chestSlots[8]; // @ G0425_aT_ChestSlots
-	Thing _openChest; // @ G0426_T_OpenChest
-	int16 _objDescTextXpos; // @ G0421_i_ObjectDescriptionTextX
-	int16 _objDescTextYpos; // @ G0422_i_ObjectDescriptionTextY
+	int16 _g432_inventoryChampionOrdinal; // @ G0423_i_InventoryChampionOrdinal
+	PanelContent _g424_panelContent; // @ G0424_i_PanelContent 
+	Thing _g425_chestSlots[8]; // @ G0425_aT_ChestSlots
+	Thing _g426_openChest; // @ G0426_T_OpenChest
+	int16 _g421_objDescTextXpos; // @ G0421_i_ObjectDescriptionTextX
+	int16 _g422_objDescTextYpos; // @ G0422_i_ObjectDescriptionTextY
 
 	void toggleInventory(ChampionIndex championIndex); // @ F0355_INVENTORY_Toggle_CPSE
 	void drawStatusBoxPortrait(ChampionIndex championIndex); // @ F0354_INVENTORY_DrawStatusBoxPortrait

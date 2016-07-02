@@ -33,8 +33,8 @@
 
 namespace DM {
 
-extern Box gBoxActionArea; // @ G0001_s_Graphic562_Box_ActionArea
-extern Box gBoxSpellArea; // @ G0000_s_Graphic562_Box_SpellArea
+extern Box g1_BoxActionArea; // @ G0001_s_Graphic562_Box_ActionArea
+extern Box g0_BoxSpellArea; // @ G0000_s_Graphic562_Box_SpellArea
 
 class ActionList {
 public:
@@ -54,11 +54,11 @@ public:
 	explicit MenuMan(DMEngine *vm);
 	~MenuMan();
 
-	bool _refreshActionArea; // @ G0508_B_RefreshActionArea
-	bool _actionAreaContainsIcons; // @ G0509_B_ActionAreaContainsIcons
-	int16 _actionDamage; // @ G0513_i_ActionDamage
-	ActionList _actionList; // @ G0713_s_ActionList
-	byte *_bitmapSpellAreaLine; // @ K0072_puc_Bitmap_SpellAreaLine
+	bool _g508_refreshActionArea; // @ G0508_B_RefreshActionArea
+	bool _g509_actionAreaContainsIcons; // @ G0509_B_ActionAreaContainsIcons
+	int16 _g513_actionDamage; // @ G0513_i_ActionDamage
+	ActionList _g713_actionList; // @ G0713_s_ActionList
+	byte *_gK72_bitmapSpellAreaLine; // @ K0072_puc_Bitmap_SpellAreaLine
 
 	void clearActingChampion(); // @ F0388_MENUS_ClearActingChampion
 	void drawActionIcon(ChampionIndex championIndex); // @ F0386_MENUS_DrawActionIcon

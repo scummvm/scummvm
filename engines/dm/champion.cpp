@@ -282,7 +282,7 @@ bool ChampionMan::hasObjectIconInSlotBoxChanged(int16 slotBoxIndex, Thing thing)
 		|| (currIconIndex == k195_IconIndicePotionEmptyFlask)) {
 		IconIndice newIconIndex = objMan.getIconIndex(thing);
 		if (newIconIndex != currIconIndex) {
-			if ((slotBoxIndex < kSlotBoxInventoryFirstSlot) && !_g420_mousePointerHiddenToDrawChangedObjIconOnScreen) {
+			if ((slotBoxIndex < k8_SlotBoxInventoryFirstSlot) && !_g420_mousePointerHiddenToDrawChangedObjIconOnScreen) {
 				_g420_mousePointerHiddenToDrawChangedObjIconOnScreen = true;
 				warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
 			}
@@ -299,7 +299,7 @@ void ChampionMan::drawChangedObjectIcons() {
 	ObjectMan &objMan = *_vm->_objectMan;
 	MenuMan &menuMan = *_vm->_menuMan;
 
-	uint16 invChampOrdinal = invMan._inventoryChampionOrdinal;
+	uint16 invChampOrdinal = invMan._g432_inventoryChampionOrdinal;
 	if (_g299_candidateChampionOrdinal && !invChampOrdinal)
 		return;
 
@@ -313,7 +313,7 @@ void ChampionMan::drawChangedObjectIcons() {
 		if (iconIndex != leaderHandObjIconIndex) {
 			_g420_mousePointerHiddenToDrawChangedObjIconOnScreen = true;
 			warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
-			objMan.extractIconFromBitmap(iconIndex, objMan._objectIconForMousePointer);
+			objMan.extractIconFromBitmap(iconIndex, objMan._g412_objectIconForMousePointer);
 			warning("MISSING CODE: F0068_MOUSE_SetPointerToObject");
 			_g413_leaderHandObjectIconIndex = iconIndex;
 			objMan.drawLeaderObjectName(_414_leaderHandObject);
@@ -338,17 +338,17 @@ void ChampionMan::drawChangedObjectIcons() {
 		uint16 drawViewport = 0;
 
 		for (uint16 slotIndex = k0_ChampionSlotReadyHand; slotIndex < k30_ChampionSlotChest_1; slotIndex++, thing++) {
-			uint16 objIconChanged = hasObjectIconInSlotBoxChanged(slotIndex + kSlotBoxInventoryFirstSlot, *thing) ? 1 : 0;
+			uint16 objIconChanged = hasObjectIconInSlotBoxChanged(slotIndex + k8_SlotBoxInventoryFirstSlot, *thing) ? 1 : 0;
 			drawViewport |= objIconChanged;
 			if (objIconChanged && (slotIndex == k1_ChampionSlotActionHand)) {
 				menuMan.drawActionIcon((ChampionIndex)_vm->ordinalToIndex(invChampOrdinal));
 			}
 		}
 
-		if (invMan._panelContent = kPanelContentChest) {
-			thing = invMan._chestSlots;
+		if (invMan._g424_panelContent = k4_PanelContentChest) {
+			thing = invMan._g425_chestSlots;
 			for (int16 slotIndex = 0; slotIndex < 8; ++slotIndex, thing++) {
-				drawViewport |= (hasObjectIconInSlotBoxChanged(slotIndex + kSlotBoxChestFirstSlot, *thing) ? 1 : 0);
+				drawViewport |= (hasObjectIconInSlotBoxChanged(slotIndex + k38_SlotBoxChestFirstSlot, *thing) ? 1 : 0);
 			}
 		}
 
@@ -374,7 +374,7 @@ void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, Champio
 	Champion *champ = &_champions[champIndex];
 
 	if (slotIndex >= k30_ChampionSlotChest_1) {
-		invMan._chestSlots[slotIndex - k30_ChampionSlotChest_1] = thing;
+		invMan._g425_chestSlots[slotIndex - k30_ChampionSlotChest_1] = thing;
 	} else {
 		champ->setSlot(slotIndex, thing);
 	}
@@ -382,7 +382,7 @@ void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, Champio
 	champ->_load += dunMan.getObjectWeight(thing);
 	champ->setAttributeFlag(k0x0200_ChampionAttributeLoad, true);
 	IconIndice iconIndex = objMan.getIconIndex(thing);
-	bool isInventoryChampion = (_vm->indexToOrdinal(champIndex) == invMan._inventoryChampionOrdinal);
+	bool isInventoryChampion = (_vm->indexToOrdinal(champIndex) == invMan._g432_inventoryChampionOrdinal);
 	applyModifiersToStatistics(champ, slotIndex, iconIndex, 1, thing);
 	uint16 *rawObjPtr = dunMan.getThingData(thing);
 
@@ -551,7 +551,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	_g299_candidateChampionOrdinal = prevChampCount + 1;
 	if (++_g305_partyChampionCount == 1) {
 		_vm->_eventMan->commandSetLeader(k0_ChampionFirst);
-		_vm->_menuMan->_refreshActionArea = true;
+		_vm->_menuMan->_g508_refreshActionArea = true;
 	} else {
 		_vm->_menuMan->clearActingChampion();
 		_vm->_menuMan->drawActionIcon((ChampionIndex)(_g305_partyChampionCount - 1));
@@ -666,7 +666,7 @@ void ChampionMan::drawChampionBarGraphs(ChampionIndex champIndex) {
 	warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
 
 	Box box;
-	box._x1 = champIndex * kChampionStatusBoxSpacing + 46;
+	box._x1 = champIndex * k69_ChampionStatusBoxSpacing + 46;
 	box._x2 = box._x1 + 3 + 1;
 	box._y1 = 2;
 	box._y2 = 26 + 1;
@@ -723,7 +723,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 	EventManager &eventMan = *_vm->_eventMan;
 
 	Box box;
-	int16 champStatusBoxX = champIndex * kChampionStatusBoxSpacing;
+	int16 champStatusBoxX = champIndex * k69_ChampionStatusBoxSpacing;
 	Champion *champ = &_champions[champIndex];
 	uint16 champAttributes = champ->getAttributes();
 	if (!((champAttributes) & (k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x0200_ChampionAttributeLoad | k0x0400_ChampionAttributeIcon |
@@ -731,7 +731,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 							   k0x8000_ChampionAttributeActionHand))) {
 		return;
 	}
-	bool isInventoryChamp = (_vm->indexToOrdinal(champIndex) == invMan._inventoryChampionOrdinal);
+	bool isInventoryChamp = (_vm->indexToOrdinal(champIndex) == invMan._g432_inventoryChampionOrdinal);
 	dispMan._g578_useByteBoxCoordinates = false;
 	if (champAttributes & k0x1000_ChampionAttributeStatusBox) {
 		box._y1 = 0;
@@ -905,7 +905,7 @@ void ChampionMan::drawHealthStaminaManaValues(Champion* champ) {
 void ChampionMan::drawSlot(uint16 champIndex, ChampionSlot slotIndex) {
 	int16 nativeBitmapIndex = -1;
 	Champion *champ = &_champions[champIndex];
-	bool isInventoryChamp = (_vm->_inventoryMan->_inventoryChampionOrdinal == _vm->indexToOrdinal(champIndex));
+	bool isInventoryChamp = (_vm->_inventoryMan->_g432_inventoryChampionOrdinal == _vm->indexToOrdinal(champIndex));
 
 	uint16 slotBoxIndex;
 	if (!isInventoryChamp) {  /* If drawing a slot for a champion other than the champion whose inventory is open */
@@ -914,17 +914,17 @@ void ChampionMan::drawSlot(uint16 champIndex, ChampionSlot slotIndex) {
 		}
 		slotBoxIndex = (champIndex << 1) + slotIndex;
 	} else {
-		slotBoxIndex = kSlotBoxInventoryFirstSlot + slotIndex;
+		slotBoxIndex = k8_SlotBoxInventoryFirstSlot + slotIndex;
 	}
 
 	Thing thing;
 	if (slotIndex >= k30_ChampionSlotChest_1) {
-		thing = _vm->_inventoryMan->_chestSlots[slotIndex - k30_ChampionSlotChest_1];
+		thing = _vm->_inventoryMan->_g425_chestSlots[slotIndex - k30_ChampionSlotChest_1];
 	} else {
 		thing = champ->getSlot(slotIndex);
 	}
 
-	SlotBox *slotBox = &_vm->_objectMan->_slotBoxes[slotBoxIndex];
+	SlotBox *slotBox = &_vm->_objectMan->_g30_slotBoxes[slotBoxIndex];
 	Box box;
 	box._x1 = slotBox->_x - 1;
 	box._y1 = slotBox->_y - 1;
@@ -999,7 +999,7 @@ void ChampionMan::renameChampion(Champion* champ) {
 	box._x2 = box._x1 + 167;
 
 	dispMan.clearScreenBox(k12_ColorDarkestGray, box, g296_DungeonViewport);
-	dispMan.blitToScreen(dispMan.getBitmap(k27_PanelRenameChampionIndice), 144, 0, 0, gBoxPanel, k4_ColorCyan, g296_DungeonViewport);
+	dispMan.blitToScreen(dispMan.getBitmap(k27_PanelRenameChampionIndice), 144, 0, 0, g32_BoxPanel, k4_ColorCyan, g296_DungeonViewport);
 	textMan.printToViewport(177, 58, k13_ColorLightestGray, "_______");
 	textMan.printToViewport(105, 76, k13_ColorLightestGray, "___________________");
 	Common::Point clickPos;

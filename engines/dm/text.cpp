@@ -32,8 +32,8 @@ namespace DM {
 
 TextMan::TextMan(DMEngine* vm) : _vm(vm) {}
 
-#define kLetterWidth 5
-#define kLetterHeight 6
+#define k5_LetterWidth 5
+#define k6_LetterHeight 6
 
 void TextMan::printTextToBitmap(byte* destBitmap, uint16 destPixelWidth, uint16 destX, uint16 destY,
 								Color textColor, Color bgColor, const char* text, uint16 destHeight, Viewport &viewport) {
@@ -46,22 +46,22 @@ void TextMan::printTextToBitmap(byte* destBitmap, uint16 destPixelWidth, uint16 
 	byte *srcBitmap = _vm->_displayMan->getBitmap(k557_FontGraphicIndice);
 
 	byte *tmp = _vm->_displayMan->_g74_tmpBitmap;
-	for (uint16 i = 0; i < (kLetterWidth + 1) * kLetterHeight * 128; ++i) {
+	for (uint16 i = 0; i < (k5_LetterWidth + 1) * k6_LetterHeight * 128; ++i) {
 		tmp[i] = srcBitmap[i] ? textColor : bgColor;
 	}
 	srcBitmap = tmp;
 
 	for (const char *begin = text, *end = text + textLength; begin != end; ++begin) {
-		if (nextX + kLetterWidth + 1 >= (viewport._posX + viewport._width) || (*begin == '\n')) {
+		if (nextX + k5_LetterWidth + 1 >= (viewport._posX + viewport._width) || (*begin == '\n')) {
 			nextX = destX;
-			nextY += kLetterHeight + 1;
+			nextY += k6_LetterHeight + 1;
 		}
-		if (nextY + kLetterHeight >= (viewport._posY + viewport._height))
+		if (nextY + k6_LetterHeight >= (viewport._posY + viewport._height))
 			break;
 		uint16 srcX = (1 + 5) * toupper(*begin); // 1 + 5 is not the letter width, arbitrary choice of the unpacking code
 		_vm->_displayMan->blitToBitmap(srcBitmap, 6 * 128, (nextX == destX) ? (srcX + 1) : srcX, 0, destBitmap, destPixelWidth,
-			(nextX == destX) ? (nextX + 1) : nextX, nextX + kLetterWidth + 1, nextY, nextY + kLetterHeight, k255_ColorNoTransparency, viewport);
-		nextX += kLetterWidth + 1;
+			(nextX == destX) ? (nextX + 1) : nextX, nextX + k5_LetterWidth + 1, nextY, nextY + k6_LetterHeight, k255_ColorNoTransparency, viewport);
+		nextX += k5_LetterWidth + 1;
 	}
 }
 

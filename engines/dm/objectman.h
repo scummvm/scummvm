@@ -31,11 +31,11 @@
 
 namespace DM {
 
-#define kSlotBoxInventoryFirstSlot 8 // @ C08_SLOT_BOX_INVENTORY_FIRST_SLOT   
-#define kSlotBoxInventoryActionHand 9 // @ C09_SLOT_BOX_INVENTORY_ACTION_HAND  
-#define kSlotBoxChestFirstSlot 38 // @ C38_SLOT_BOX_CHEST_FIRST_SLOT      
+#define k8_SlotBoxInventoryFirstSlot 8 // @ C08_SLOT_BOX_INVENTORY_FIRST_SLOT   
+#define k9_SlotBoxInventoryActionHand 9 // @ C09_SLOT_BOX_INVENTORY_ACTION_HAND  
+#define k38_SlotBoxChestFirstSlot 38 // @ C38_SLOT_BOX_CHEST_FIRST_SLOT      
 
-#define kObjectNameCount 199 // @ C199_OBJECT_NAME_COUNT
+#define k199_ObjectNameCount 199 // @ C199_OBJECT_NAME_COUNT
 
 class SlotBox {
 public:
@@ -54,9 +54,9 @@ public:
 	~ObjectMan();
 	void loadObjectNames();	// @ F0031_OBJECT_LoadNames
 
-	SlotBox _slotBoxes[46]; // @ G0030_as_Graphic562_SlotBoxes;
-	char *_objectNames[kObjectNameCount]; // @ G0352_apc_ObjectNames
-	byte *_objectIconForMousePointer; // @ G0412_puc_Bitmap_ObjectIconForMousePointer
+	SlotBox _g30_slotBoxes[46]; // @ G0030_as_Graphic562_SlotBoxes;
+	char *_g352_objectNames[k199_ObjectNameCount]; // @ G0352_apc_ObjectNames
+	byte *_g412_objectIconForMousePointer; // @ G0412_puc_Bitmap_ObjectIconForMousePointer
 
 	IconIndice getObjectType(Thing thing); // @ F0032_OBJECT_GetType
 	IconIndice getIconIndex(Thing thing); // @ F0033_OBJECT_GetIconIndex

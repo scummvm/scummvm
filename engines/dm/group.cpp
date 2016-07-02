@@ -35,28 +35,28 @@ namespace DM {
 
 
 GroupMan::GroupMan(DMEngine* vm) : _vm(vm) {
-	_activeGroups = nullptr;
+	_g375_activeGroups = nullptr;
 }
 
 GroupMan::~GroupMan() {
-	delete[] _activeGroups;
+	delete[] _g375_activeGroups;
 }
 
 void GroupMan::initActiveGroups() {
 	if (_vm->_dungeonMan->_messages._g298_newGame)
-		_maxActiveGroupCount = 60;
-	if (_activeGroups)
-		delete[] _activeGroups;
-	_activeGroups = new ActiveGroup[_maxActiveGroupCount];
-	for (uint16 i = 0; i < _maxActiveGroupCount; ++i)
-		_activeGroups[i]._groupThingIndex = -1;
+		_g376_maxActiveGroupCount = 60;
+	if (_g375_activeGroups)
+		delete[] _g375_activeGroups;
+	_g375_activeGroups = new ActiveGroup[_g376_maxActiveGroupCount];
+	for (uint16 i = 0; i < _g376_maxActiveGroupCount; ++i)
+		_g375_activeGroups[i]._groupThingIndex = -1;
 }
 
 uint16 GroupMan::getGroupCells(Group* group, int16 mapIndex) {
 	byte cells;
 	cells = group->_cells;
 	if (mapIndex == _vm->_dungeonMan->_currMap._g309_currPartyMapIndex)
-		cells = _activeGroups[cells]._cells;
+		cells = _g375_activeGroups[cells]._cells;
 	return cells;
 }
 
@@ -64,7 +64,7 @@ byte gGroupDirections[4] = {0x00, 0x55, 0xAA, 0xFF}; // @ G0258_auc_Graphic559_G
 
 uint16 GroupMan::getGroupDirections(Group* group, int16 mapIndex) {
 	if (mapIndex == _vm->_dungeonMan->_currMap._g309_currPartyMapIndex)
-		return _activeGroups[group->getActiveGroupIndex()]._directions;
+		return _g375_activeGroups[group->getActiveGroupIndex()]._directions;
 
 	return gGroupDirections[group->getDir()];
 }
@@ -72,11 +72,11 @@ uint16 GroupMan::getGroupDirections(Group* group, int16 mapIndex) {
 int16 GroupMan::getCreatureOrdinalInCell(Group* group, uint16 cell) {
 	uint16 currMapIndex = _vm->_dungeonMan->_currMap._g272_index;
 	byte groupCells = getGroupCells(group, currMapIndex);
-	if (groupCells == kCreatureTypeSingleCenteredCreature)
+	if (groupCells == k255_CreatureTypeSingleCenteredCreature)
 		return _vm->indexToOrdinal(0);
 
 	byte creatureIndex = group->getCount();
-	if (getFlag(g243_CreatureInfo[group->_type]._attributes, kMaskCreatureInfo_size) == kMaskCreatureSizeHalf) {
+	if (getFlag(g243_CreatureInfo[group->_type]._attributes, k0x0003_MaskCreatureInfo_size) == k1_MaskCreatureSizeHalf) {
 		if ((getGroupDirections(group, currMapIndex) & 1) == (cell & 1))
 			cell = returnPrevVal(cell);
 

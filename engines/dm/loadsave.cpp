@@ -62,7 +62,7 @@ LoadgameResponse LoadsaveMan::loadgame() {
 		// MISSING CODE: load game
 	}
 	cm._303_partyDead = false;
-	return kLoadgameSuccess;
+	return k1_LoadgameSuccess;
 }
 
 }

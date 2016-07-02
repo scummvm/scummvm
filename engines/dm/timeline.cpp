@@ -32,23 +32,23 @@
 namespace DM {
 
 Timeline::Timeline(DMEngine* vm) : _vm(vm) {
-	_events = nullptr;
-	_timeline = nullptr;
+	_g370_events = nullptr;
+	_g371_timeline = nullptr;
 }
 
 Timeline::~Timeline() {
-	delete[] _events;
-	delete[] _timeline;
+	delete[] _g370_events;
+	delete[] _g371_timeline;
 }
 
 void Timeline::initTimeline() {
-	_events = new TimelineEvent[_eventMaxCount];
-	_timeline = new uint16[_eventMaxCount];
+	_g370_events = new TimelineEvent[_g369_eventMaxCount];
+	_g371_timeline = new uint16[_g369_eventMaxCount];
 	if (_vm->_dungeonMan->_messages._g298_newGame) {
-		for (int16 i = 0; i < _eventMaxCount; ++i)
-			_events->_type = kTMEventTypeNone;
-		_eventCount = 0;
-		_firstUnusedEventIndex = 0;
+		for (int16 i = 0; i < _g369_eventMaxCount; ++i)
+			_g370_events->_type = k0_TMEventTypeNone;
+		_g372_eventCount = 0;
+		_g373_firstUnusedEventIndex = 0;
 	}
 }
 

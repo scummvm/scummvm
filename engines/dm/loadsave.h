@@ -33,8 +33,8 @@
 namespace DM {
 
 enum LoadgameResponse {
-	kLoadgameFailure = -1, // @ CM1_LOAD_GAME_FAILURE
-	kLoadgameSuccess = 1// @ C01_LOAD_GAME_SUCCESS
+	kM1_LoadgameFailure = -1, // @ CM1_LOAD_GAME_FAILURE
+	k1_LoadgameSuccess = 1// @ C01_LOAD_GAME_SUCCESS
 };
 
 class LoadsaveMan {

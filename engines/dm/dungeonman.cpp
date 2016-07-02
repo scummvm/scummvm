@@ -652,7 +652,7 @@ void DungeonMan::loadDungeonFile() {
 
 	// TODO: ??? what this
 	if (_messages._g298_newGame)
-		_vm->_timeline->_eventMaxCount = 100;
+		_vm->_timeline->_g369_eventMaxCount = 100;
 
 	// load things
 	for (uint16 thingType = k0_DoorThingType; thingType < k16_ThingTypeTotal; ++thingType) {
@@ -699,7 +699,7 @@ void DungeonMan::loadDungeonFile() {
 
 		if (_messages._g298_newGame) {
 			if ((thingType == k4_GroupThingType) || thingType >= k14_ProjectileThingType)
-				_vm->_timeline->_eventMaxCount += _g278_fileHeader._thingCounts[thingType];
+				_vm->_timeline->_g369_eventMaxCount += _g278_fileHeader._thingCounts[thingType];
 			for (uint16 i = 0; i < g236_AdditionalThingCounts[thingType]; ++i) {
 				_dunData._g284_thingsData[thingType][thingCount + i][0] = Thing::_none.toUint16();
 			}
