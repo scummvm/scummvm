@@ -537,7 +537,7 @@ VectorRendererSpec(PixelFormat format) :
 	_alphaMask((0xFF >> format.aLoss) << format.aShift) {
 
 	_bitmapAlphaColor = _format.RGBToColor(255, 0, 255);
-	_clippingArea = Common::Rect(0, 0, 64 * 1024, 64 * 1024);
+	_clippingArea = Common::Rect(0, 0, 32767, 32767);
 }
 
 /****************************
@@ -1341,11 +1341,12 @@ drawCircleClip(int x, int y, int r, Common::Rect clipping) {
 
 	switch (Base::_fillMode) {
 	case kFillDisabled:
-		if (Base::_strokeWidth)
+		if (Base::_strokeWidth) {
 			if (useClippingVersions)
 				drawCircleAlgClip(x, y, r, _fgColor, kFillDisabled);
 			else
 				drawCircleAlg(x, y, r, _fgColor, kFillDisabled);
+		}
 		break;
 
 	case kFillForeground:
@@ -1441,11 +1442,12 @@ drawSquareClip(int x, int y, int w, int h, Common::Rect clipping) {
 
 	switch (Base::_fillMode) {
 	case kFillDisabled:
-		if (Base::_strokeWidth)
+		if (Base::_strokeWidth) {
 			if (useClippingVersions)
 				drawSquareAlgClip(x, y, w, h, _fgColor, kFillDisabled);
 			else
 				drawSquareAlg(x, y, w, h, _fgColor, kFillDisabled);
+		}
 		break;
 
 	case kFillForeground:
@@ -1467,11 +1469,12 @@ drawSquareClip(int x, int y, int w, int h, Common::Rect clipping) {
 
 	case kFillGradient:
 		VectorRendererSpec::drawSquareAlg(x, y, w, h, 0, kFillGradient);
-		if (Base::_strokeWidth)
+		if (Base::_strokeWidth) {
 			if (useClippingVersions)
 				drawSquareAlgClip(x, y, w, h, _fgColor, kFillDisabled);
 			else
 				drawSquareAlg(x, y, w, h, _fgColor, kFillDisabled);
+		}
 		break;
 	}
 
