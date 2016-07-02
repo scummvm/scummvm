@@ -462,7 +462,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	{ // limit destBox scope
 		Box &destBox = gBoxChampionPortrait;
 		dispMan.blitToBitmap(dispMan.getBitmap(k26_ChampionPortraitsIndice), 256, getChampionPortraitX(championPortraitIndex), getChampionPortraitY(championPortraitIndex),
-							 champ->_portrait, 32, destBox._x1, destBox._x2, destBox._y1, destBox._y2, k255_ColorNoTransparency);
+							 champ->_portrait, 32, destBox, k255_ColorNoTransparency);
 	}
 
 	champ->_actionIndex = k255_ChampionActionNone;

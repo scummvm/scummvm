@@ -64,7 +64,7 @@ void MenuMan::drawMovementArrows() {
 	Box &dest = g2_BoxMovementArrows;
 	uint16 w = disp.getWidth(k13_MovementArrowsIndice);
 
-	disp.blitToScreen(arrowsBitmap, w, 0, 0, dest._x1, dest._x2, dest._y1, dest._y2, k255_ColorNoTransparency);
+	disp.blitToScreen(arrowsBitmap, w, 0, 0, dest, k255_ColorNoTransparency);
 }
 void MenuMan::clearActingChampion() {
 	ChampionMan &cm = *_vm->_championMan;
@@ -113,7 +113,7 @@ T0386006:
 	box2._x2 = box._x2 - 2; // no need to add +1 for exclusive boundaries, box already has that
 	box2._y1 = 95;
 	box2._y2 = 110 + 1;
-	dm.blitToScreen(bitmapIcon, 16, 0, 0, box2._x1, box2._x2, box2._y1, box2._y2);
+	dm.blitToScreen(bitmapIcon, 16, 0, 0, box2);
 	if (champion.getAttributes(k0x0008_ChampionAttributeDisableAction) || _vm->_championMan->_g299_candidateChampionOrdinal || _vm->_championMan->_g300_partyIsSleeping) {
 		warning("MISSING CODE: F0136_VIDEO_ShadeScreenBox");
 	}

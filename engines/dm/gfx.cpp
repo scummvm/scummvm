@@ -1019,33 +1019,40 @@ void DisplayMan::loadIntoBitmap(uint16 index, byte *destBitmap) {
 	}
 }
 
-void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
-							  byte *destBitmap, uint16 destWidth,
-							  uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
-							  Color transparent, Viewport &destViewport) {
-	for (uint16 y = 0; y < destToY - destFromY; ++y)
-		for (uint16 x = 0; x < destToX - destFromX; ++x) {
-			byte srcPixel = srcBitmap[srcWidth * (y + srcY) + srcX + x];
-			if (srcPixel != transparent)
-				destBitmap[destWidth * (y + destFromY + destViewport._posY) + destFromX + x + destViewport._posX] = srcPixel;
-		}
-}
 
 void DisplayMan::blitToBitmap(byte* srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY, byte* destBitmap, uint16 destWidth, Box& box, Color transparent, Viewport& viewport) {
-	blitToBitmap(srcBitmap, srcWidth, srcX, srcY, destBitmap, destWidth, box._x1, box._x2, box._y1, box._y2, transparent, viewport);
-}
+	for (uint16 y = 0; y < box._y2 - box._y1; ++y)
+		for (uint16 x = 0; x < box._x2 - box._x1; ++x) {
+			byte srcPixel = srcBitmap[srcWidth * (y + srcY) + srcX + x];
+			if (srcPixel != transparent)
+				destBitmap[destWidth * (y + box._y1 + viewport._posY) + box._x1 + x + viewport._posX] = srcPixel;
+		}
 
-void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
-							  uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
-							  Color transparent, Viewport &viewport) {
-	blitToBitmap(srcBitmap, srcWidth, srcX, srcY,
-				 getCurrentVgaBuffer(), _screenWidth, destFromX, destToX, destFromY, destToY, transparent, viewport);
 }
 
 void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcHeight, byte *destBitmap, uint16 destWidth, uint16 destX, uint16 destY) {
 	for (uint16 y = 0; y < srcHeight; ++y)
 		memcpy(destBitmap + destWidth*(y + destY) + destX, srcBitmap + y * srcWidth, sizeof(byte)* srcWidth);
 }
+
+void DisplayMan::clearScreenBox(Color color, Box &box, Viewport &viewport) {
+	uint16 width = box._x2 - box._x1;
+	for (int y = box._y1 + viewport._posY; y < box._y2 + viewport._posY; ++y)
+		memset(_g348_bitmapScreen + y * _screenWidth + box._x1 + viewport._posX, color, sizeof(byte) * width);
+}
+
+void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
+							  Box &box,
+							  Color transparent, Viewport &viewport) {
+	blitToBitmap(srcBitmap, srcWidth, srcX, srcY, _g348_bitmapScreen, k160_byteWidthScreen * 2, box, transparent, viewport);
+}
+
+void DisplayMan::blitBoxFilledWithMaskedBitmap(byte* src, byte* dest, byte* mask, byte* tmp, Box& box,
+											   int16 lastUnitIndex, int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
+											   int16 xPos, int16 yPos, int16 destHeight, int16 height2, Viewport &viewport) {
+	warning("STUB FUNCTION: does nothing at all");
+}
+
 
 void DisplayMan::blitBoxFilledWithMaskedBitmapToScreen(byte* src, byte* mask, byte* tmp, Box& box,
 													   int16 lastUnitIndex, int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
@@ -1819,8 +1826,7 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 			if (viewWallIndex == k12_ViewWall_D1C_FRONT) {
 				if (isInscription) {
 					Frame &D1CFrame = g163_FrameWalls[k6_ViewSquare_D1C];
-					blitToScreen(_g700_bitmapWallSet_Wall_D1LCR, D1CFrame._srcWidth, 94, 28, g202_BoxWallPatchBehindInscription._x1, g202_BoxWallPatchBehindInscription._x2,
-								 g202_BoxWallPatchBehindInscription._y1, g202_BoxWallPatchBehindInscription._y2, k255_ColorNoTransparency, g296_DungeonViewport);
+					blitToScreen(_g700_bitmapWallSet_Wall_D1LCR, D1CFrame._srcWidth, 94, 28, g202_BoxWallPatchBehindInscription, k255_ColorNoTransparency, g296_DungeonViewport);
 
 					unsigned char *string = inscriptionString;
 					bitmapRed = _bitmaps[k120_InscriptionFontIndice];
@@ -1923,12 +1929,12 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 				coordinateSetA[3] = g204_UnreadableInscriptionBoxY2[g190_WallOrnDerivedBitmapIndexIncrement[viewWallIndex] * 3 + unreadableTextLineCount - 1];
 			}
 		}
-		blitToScreen(bitmapGreen, coordinateSetA[4], var_X, 0, coordinateSetA[0], coordinateSetA[1], coordinateSetA[2], coordinateSetA[3], k10_ColorFlesh, g296_DungeonViewport);
+		blitToScreen(bitmapGreen, coordinateSetA[4], var_X, 0, *(Box*)coordinateSetA, k10_ColorFlesh, g296_DungeonViewport);
 
 		if ((viewWallIndex == k12_ViewWall_D1C_FRONT) && _g289_championPortraitOrdinal--) {
 			Box &box = g109_BoxChampionPortraitOnWall;
-			blitToScreen(_bitmaps[k26_ChampionPortraitsIndice], 256, (_g289_championPortraitOrdinal & 0x7) << 5, (_g289_championPortraitOrdinal >> 3) * 29, box._x1, box._x2, box._y1, box._y2,
-						 k1_ColorDarkGary, g296_DungeonViewport);
+			blitToScreen(_bitmaps[k26_ChampionPortraitsIndice], 256, (_g289_championPortraitOrdinal & 0x7) << 5, (_g289_championPortraitOrdinal >> 3) * 29,
+						 box, k1_ColorDarkGary, g296_DungeonViewport);
 		}
 		return isAlcove;
 	}
@@ -2250,8 +2256,8 @@ void DisplayMan::cthulhu(Thing thingParam, direction directionParam, int16 mapXp
 	bool drawProjectileAsObject;
 
 	bool sqaureHasProjectile;
-	uint16 currentViewCellToDraw;
-	bool projectileFlipVertical;
+	uint16 currentViewCellToDraw = 0;
+	bool projectileFlipVertical = false;
 	bool projectileAspectTypeHasBackGraphicAndRotation;
 	bool flipVertical;
 	Explosion* explosion;
@@ -3011,22 +3017,5 @@ byte* DisplayMan::getDerivedBitmap(int16 derivedBitmapIndex) {
 	return _g638_derivedBitmaps[derivedBitmapIndex];
 }
 
-void DisplayMan::clearScreenBox(Color color, Box &box, Viewport &viewport) {
-	uint16 width = box._x2 - box._x1;
-	for (int y = box._y1 + viewport._posY; y < box._y2 + viewport._posY; ++y)
-		memset(_g348_bitmapScreen + y * _screenWidth + box._x1 + viewport._posX, color, sizeof(byte) * width);
-}
-
-void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
-							  Box &box,
-							  Color transparent, Viewport &viewport) {
-	blitToScreen(srcBitmap, srcWidth, srcX, srcY, box._x1, box._x2, box._y1, box._y2, transparent, viewport);
-}
-
-void DisplayMan::blitBoxFilledWithMaskedBitmap(byte* src, byte* dest, byte* mask, byte* tmp, Box& box,
-											   int16 lastUnitIndex, int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
-											   int16 xPos, int16 yPos, int16 destHeight, int16 height2, Viewport &viewport) {
-	warning("STUB FUNCTION: does nothing at all");
-}
 
 }

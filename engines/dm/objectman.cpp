@@ -195,7 +195,8 @@ void ObjectMan::extractIconFromBitmap(uint16 iconIndex, byte *destBitmap) {
 	byte *srcBitmap = _vm->_displayMan->getBitmap(k42_ObjectIcons_000_TO_031 + i);
 	iconIndex -= g26_IconGraphicFirstIndex[i];
 	_vm->_displayMan->_g578_useByteBoxCoordinates = true;
-	_vm->_displayMan->blitToBitmap(srcBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, destBitmap, 16, 0, 16, 0, 16, k255_ColorNoTransparency);
+	Box box(0, 0, 15, 15);
+	_vm->_displayMan->blitToBitmap(srcBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, destBitmap, 16, box, k255_ColorNoTransparency);
 }
 
 void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {

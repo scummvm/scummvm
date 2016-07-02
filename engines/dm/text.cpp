@@ -59,8 +59,11 @@ void TextMan::printTextToBitmap(byte* destBitmap, uint16 destPixelWidth, uint16 
 		if (nextY + k6_LetterHeight >= (viewport._posY + viewport._height))
 			break;
 		uint16 srcX = (1 + 5) * toupper(*begin); // 1 + 5 is not the letter width, arbitrary choice of the unpacking code
+
+		Box box((nextX == destX) ? (nextX + 1) : nextX, nextX + k5_LetterWidth, nextY, nextY + k6_LetterHeight);
 		_vm->_displayMan->blitToBitmap(srcBitmap, 6 * 128, (nextX == destX) ? (srcX + 1) : srcX, 0, destBitmap, destPixelWidth,
-			(nextX == destX) ? (nextX + 1) : nextX, nextX + k5_LetterWidth + 1, nextY, nextY + k6_LetterHeight, k255_ColorNoTransparency, viewport);
+			box, k255_ColorNoTransparency, viewport);
+
 		nextX += k5_LetterWidth + 1;
 	}
 }

@@ -94,9 +94,7 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	}
 
 	champion = &cm._champions[championIndex];
-	int16 w = dm.getWidth(k17_InventoryGraphicIndice);
-	int16 h = dm.getHeight(k17_InventoryGraphicIndice);
-	dm.blitToScreen(dm.getBitmap(k17_InventoryGraphicIndice), w, 0, 0, 0, w, 0, h, k255_ColorNoTransparency, g296_DungeonViewport);
+	dm.loadIntoBitmap(k17_InventoryGraphicIndice, dm._g296_bitmapViewport);
 	if (cm._g299_candidateChampionOrdinal) {
 		dm.clearScreenBox(k12_ColorDarkestGray, g41_BoxFloppyZzzCross, g296_DungeonViewport);
 	}

@@ -438,7 +438,6 @@ class DisplayMan {
 
 	byte *getCurrentVgaBuffer();
 	// the original function has two position parameters, but they are always set to zero
-	void loadIntoBitmap(uint16 index, byte *destBitmap); // @ F0466_EXPAND_GraphicToBitmap
 	void unpackGraphics();
 	void loadFNT1intoBitmap(uint16 index, byte *destBitmap);
 
@@ -542,6 +541,7 @@ public:
 	void loadWallSet(WallSet set); // @ F0095_DUNGEONVIEW_LoadWallSet
 	void loadFloorSet(FloorSet set); // @ F0094_DUNGEONVIEW_LoadFloorSet
 
+	void loadIntoBitmap(uint16 index, byte *destBitmap); // @ F0466_EXPAND_GraphicToBitmap
 	void setUpScreens(uint16 width, uint16 height);
 	void loadGraphics(); // @ F0479_MEMORY_ReadGraphicsDatHeader, F0460_START_InitializeGraphicData
 	void initializeGraphicData(); // @ F0460_START_InitializeGraphicData
@@ -557,28 +557,22 @@ public:
 
 	void f99_copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height);
 
-	void blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
-					  byte *destBitmap, uint16 destWidth,
-					  uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
-					  Color transparent = k255_ColorNoTransparency, Viewport &viewport = gDefultViewPort);
+
 	void blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
 					  byte *destBitmap, uint16 destWidth, Box &box, Color transparent = k255_ColorNoTransparency, Viewport &viewport = gDefultViewPort);
-	void blitToBitmapShrinkWithPalChange(byte *srcBitmap, int16 srcWidth, int16 srcHight,
-										 byte *destBitmap, int16 destWidth, int16 destHeight, byte *palChange); // @ F0129_VIDEO_BlitShrinkWithPaletteChanges
 
 	void blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcHeight, byte *destBitmap, uint16 destWidth, uint16 destX = 0, uint16 destY = 0);
-	void blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
-					  uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
-					  Color transparent = k255_ColorNoTransparency, Viewport &viewport = gDefultViewPort);
-	void blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
-					  Box &box,
-					  Color transparent = k255_ColorNoTransparency, Viewport &viewport = gDefultViewPort);
 	void blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask, byte *tmp, Box &box, int16 lastUnitIndex,
 									   int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
 									   int16 xPos, int16 yPos, int16 destHeight, int16 height2, Viewport &viewport = gDefultViewPort); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
+	void blitToBitmapShrinkWithPalChange(byte *srcBitmap, int16 srcWidth, int16 srcHight,
+										 byte *destBitmap, int16 destWidth, int16 destHeight, byte *palChange); // @ F0129_VIDEO_BlitShrinkWithPaletteChanges
 	void blitBoxFilledWithMaskedBitmapToScreen(byte *src, byte *mask, byte *tmp, Box &box, int16 lastUnitIndex,
 											   int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
 											   int16 xPos, int16 yPos, int16 destHeight, int16 height2, Viewport &viewport = g296_DungeonViewport); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
+	void blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
+					  Box &box,
+					  Color transparent = k255_ColorNoTransparency, Viewport &viewport = gDefultViewPort);
 
 	void flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height); // @ F0103_DUNGEONVIEW_DrawDoorFrameBitmapFlippedHorizontally
 	void flipBitmapVertical(byte *bitmap, uint16 width, uint16 height);
