@@ -191,7 +191,8 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 
 		// Consume the event now that we know it is not one of the
 		// defocusing events above
-		eventManager->getSciEvent(SCI_EVENT_ANY);
+		if (event.type != SCI_EVENT_NONE)
+			eventManager->getSciEvent(SCI_EVENT_ANY);
 
 		// NOTE: In the original engine, the font and bitmap were
 		// reset here on each iteration through the loop, but it
