@@ -20,56 +20,32 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_H
-#define TITANIC_STAR_CONTROL_H
-
-#include "titanic/core/game_object.h"
-#include "titanic/star_control/star_control_sub1.h"
-#include "titanic/star_control/star_view.h"
+#ifndef TITANIC_ERROR_CODE_H
+#define TITANIC_ERROR_CODE_H
 
 namespace Titanic {
 
-class CStarControl : public CGameObject {
-	DECLARE_MESSAGE_MAP
-	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
-	bool MouseMoveMsg(CMouseMoveMsg *msg);
-	bool KeyCharMsg(CKeyCharMsg *msg);
-	bool FrameMsg(CFrameMsg *msg);
+class CErrorCode {
 private:
-	int _fieldBC;
-	CStarControlSub1 _sub1;
-	CStarView _view;
-	Rect _starRect;
-	int _field80B0;
-private:
-	/**
-	 * Called for ever new game frame
-	 */
-	void newFrame();
+	int _value;
 public:
-	CLASSDEF
-	CStarControl();
+	CErrorCode() : _value(0) {}
 
 	/**
-	 * Save the data for the class to file
+	 * Sets the error code
 	 */
-	virtual void save(SimpleFile *file, int indent);
+	void set() { _value = 1; }
 
 	/**
-	 * Load the data for the class from file
+	 * Gets the error code and resets it
 	 */
-	virtual void load(SimpleFile *file);
-
-	/**
-	 * Allows the item to draw itself
-	 */
-	virtual void draw(CScreenManager *screenManager);
-
-	void fn1(int v);
-	void fn3();
-	void fn4();
+	int get() {
+		int result = _value;
+		_value = 0;
+		return result;
+	}
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CONTROL_H */
+#endif /* TITANIC_ERROR_CODE_H */

@@ -22,8 +22,16 @@
 
 #include "titanic/support/screen_manager.h"
 #include "titanic/star_control/star_control.h"
+#include "titanic/star_control/error_code.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CStarControl, CGameObject)
+	ON_MESSAGE(MouseMoveMsg)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(KeyCharMsg)
+	ON_MESSAGE(FrameMsg)
+END_MESSAGE_MAP()
 
 CStarControl::CStarControl() : _fieldBC(0), _field80B0(0),
 		_starRect(20, 10, 620, 350) {
@@ -62,6 +70,53 @@ void CStarControl::draw(CScreenManager *screenManager) {
 	if (_visible)
 		_view.draw(screenManager);
 }
+
+bool CStarControl::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (_visible && _starRect.contains(msg->_mousePos)) {
+		_view.MouseButtonDownMsg(0, Point(msg->_mousePos.x - 20,
+			msg->_mousePos.y - 10));
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool CStarControl::MouseMoveMsg(CMouseMoveMsg *msg) {
+	if (_visible && _starRect.contains(msg->_mousePos)) {
+		_view.MouseMoveMsg(0, Point(msg->_mousePos.x - 20,
+			msg->_mousePos.y - 10));
+		makeDirty();
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool CStarControl::KeyCharMsg(CKeyCharMsg *msg) {
+	if (_visible)
+		_view.KeyCharMsg(msg->_key);
+
+	return false;
+}
+
+bool CStarControl::FrameMsg(CFrameMsg *msg) {
+	if (_visible) {
+		Point pt = getMousePos();
+		if (_starRect.contains(pt))
+			_view.MouseMoveMsg(0, pt);
+
+		newFrame();
+		makeDirty();
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void CStarControl::newFrame() {
+	// TODO
+}
+
 
 void CStarControl::fn3() {
 	warning("CStarControl::fn3");

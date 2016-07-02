@@ -28,6 +28,7 @@
 #include "titanic/star_control/star_control_sub12.h"
 #include "titanic/star_control/star_control_sub13.h"
 #include "titanic/star_control/surface_fader.h"
+#include "titanic/star_control/error_code.h"
 
 namespace Titanic {
 
@@ -72,6 +73,21 @@ public:
 	 * Allows the item to draw itself
 	 */
 	void draw(CScreenManager *screenManager);
+
+	/**
+	 * Handles mouse down messages
+	 */
+	void MouseButtonDownMsg(int unused, const Point &pt);
+
+	/**
+	 * Handles mouse move messages
+	 */
+	void MouseMoveMsg(int unused, const Point &pt);
+
+	/**
+	 * Handles keyboard messages
+	 */
+	CErrorCode KeyCharMsg(int key);
 };
 
 } // End of namespace Titanic

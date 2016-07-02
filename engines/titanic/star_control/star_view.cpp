@@ -93,4 +93,17 @@ void CStarView::draw(CScreenManager *screenManager) {
 	}
 }
 
+void CStarView::MouseButtonDownMsg(int unused, const Point &pt) {
+	// TODO
+}
+
+void CStarView::MouseMoveMsg(int unused, const Point &pt) {
+	// TODO
+}
+
+CErrorCode CStarView::KeyCharMsg(int key) {
+	// TODO
+	return CErrorCode();
+}
+
 } // End of namespace Titanic
