@@ -259,7 +259,8 @@ func: tMCI STRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c_
 	| tMCIWAIT ID			{ g_lingo->code1(g_lingo->c_mciwait); g_lingo->codeString($2->c_str()); delete $2; }
 	| tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| gotofunc
-	| tEXIT					{ g_lingo->code1(g_lingo->c_exit); }
+	| tEXIT					{ 	g_lingo->code2(g_lingo->c_constpush, (inst)0); // Push fake value on stack
+								g_lingo->code1(g_lingo->c_procret); }
 	| tGLOBAL globallist
 	;
 
