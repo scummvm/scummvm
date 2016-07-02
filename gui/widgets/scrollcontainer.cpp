@@ -95,7 +95,7 @@ uint16 ScrollContainerWidget::getHeight() const {
 }
 
 void ScrollContainerWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	Widget::handleCommand(sender, cmd, data);	
+	Widget::handleCommand(sender, cmd, data);
 	switch (cmd) {
 	case kSetPositionCmd:
 		_scrolledY = _verticalScroll->_currentPos;
@@ -103,7 +103,7 @@ void ScrollContainerWidget::handleCommand(CommandSender *sender, uint32 cmd, uin
 		draw();
 		g_gui.doFullRedraw();
 		break;
-	}	
+	}
 }
 
 void ScrollContainerWidget::reflowLayout() {

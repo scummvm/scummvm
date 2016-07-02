@@ -462,7 +462,7 @@ void colorFill(PixelType *first, PixelType *last, PixelType color) {
 template<typename PixelType>
 void colorFillClip(PixelType *first, PixelType *last, PixelType color, int realX, int realY, Common::Rect &clippingArea) {
 	if (realY < clippingArea.top || realY >= clippingArea.bottom)
-		return;	
+		return;
 
 	register int count = (last - first);
 
@@ -476,7 +476,7 @@ void colorFillClip(PixelType *first, PixelType *last, PixelType color, int realX
 	}
 
 	if (clippingArea.right <= realX + count) {
-		register int diff = (realX + count - clippingArea.right);		
+		register int diff = (realX + count - clippingArea.right);
 		count -= diff;
 	}
 
@@ -719,10 +719,10 @@ fillSurfaceClip(Common::Rect clipping) {
 	byte *ptr = (byte *)_activeSurface->getPixels();
 	int pitch = _activeSurface->pitch;
 
-	if (Base::_fillMode == kFillBackground || Base::_fillMode == kFillForeground) {		
+	if (Base::_fillMode == kFillBackground || Base::_fillMode == kFillForeground) {
 		PixelType color = (Base::_fillMode == kFillBackground ? _bgColor : _fgColor);
 		byte *ptrLeft = (ptr + _clippingArea.left), *ptrRight = ptr + _clippingArea.right;
-		for (int i = 0; i < h; i++) {			
+		for (int i = 0; i < h; i++) {
 			if (_clippingArea.top <= i && i < _clippingArea.bottom) {
 				colorFill<PixelType>((PixelType *)ptrLeft, (PixelType *)ptrRight, color);
 			}
@@ -1451,7 +1451,7 @@ drawSquareClip(int x, int y, int w, int h, Common::Rect clipping) {
 	case kFillForeground:
 		if (useClippingVersions)
 			drawSquareAlgClip(x, y, w, h, _fgColor, kFillForeground);
-		else 
+		else
 			drawSquareAlg(x, y, w, h, _fgColor, kFillForeground);
 		break;
 
@@ -2916,7 +2916,7 @@ drawTriangleVertAlgClip(int x1, int y1, int w, int h, bool inverted, PixelType c
 		interx += gradient;
 
 		switch (fill_m) {
-		case kFillDisabled:			
+		case kFillDisabled:
 			if (IS_IN_CLIP(x_left, y_left)) *ptr_left = color;
 			if (IS_IN_CLIP(x_right, y_right)) *ptr_right = color;
 			break;
@@ -3247,18 +3247,18 @@ drawInteriorRoundedSquareAlgClip(int x1, int y1, int r, int w, int h, PixelType 
 			color3 = calcGradient(long_h - r + x, long_h);
 			color4 = calcGradient(long_h - r + y, long_h);
 
-			//TL = (x1 + r, y1 + r)			
+			//TL = (x1 + r, y1 + r)
 			gradientFillClip(ptr_tl - x - py, w - 2 * r + 2 * x, x1 + r - x - y, real_radius - y,
 				x1 + r - x, y1 + r - y);
 			gradientFillClip(ptr_tl - y - px, w - 2 * r + 2 * y, x1 + r - y - x, real_radius - x,
 				x1 + r - y, y1 + r - x);
 
-			//BL = (x1 + r, y1 + h - r)	
+			//BL = (x1 + r, y1 + h - r)
 			gradientFillClip(ptr_bl - x + py, w - 2 * r + 2 * x, x1 + r - x - y, long_h - r + y,
 				x1 + r - x, y1 + h - r + y);
 			gradientFillClip(ptr_bl - y + px, w - 2 * r + 2 * y, x1 + r - y - x, long_h - r + x,
 				x1 + r - y, y1 + h - r + x);
-			
+	
 			BE_DRAWCIRCLE_XCOLOR_CLIP(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py,
 				x1 + w - r, y1 + r, x1 + r, y1 + r, x1 + r, y1 + h - r, x1 + w - r, y1 + h - r);
 		}
@@ -3287,7 +3287,7 @@ drawInteriorRoundedSquareAlgClip(int x1, int y1, int r, int w, int h, PixelType 
 	while (short_h--) {
 		if (fill_m == kFillGradient) {
 			gradientFillClip(ptr_fill, w + 1, x1, real_radius++, x1, y1 + r + short_h_orig - short_h -1);
-		} else {			
+		} else {
 			colorFillClip<PixelType>(ptr_fill, ptr_fill + w + 1, color1, x1, y1 + r + short_h_orig - short_h - 1, _clippingArea);
 		}
 		ptr_fill += pitch;
@@ -3338,13 +3338,13 @@ drawRoundedSquareAlgClip(int x1, int y1, int r, int w, int h, PixelType color, V
 	const uint8 bevelAlpha_b = 0;
 	const uint8 bevelAlpha_l = 127;
 
-	// If only border is visible	
-	if ((!(w <= 0 || h <= 0)) && (fill_m != Base::kFillDisabled)) {		
+	// If only border is visible
+	if ((!(w <= 0 || h <= 0)) && (fill_m != Base::kFillDisabled)) {
 		if (fill_m == Base::kFillBackground)
 			drawInteriorRoundedSquareAlgClip(x1, y1, r, w, h, _bgColor, fill_m);
 		else
 			drawInteriorRoundedSquareAlgClip(x1, y1, r, w, h, color, fill_m);
-	}	
+	}
 
 	//I expect these to work fine with clipping:
 	if (Base::_strokeWidth) {
@@ -3595,9 +3595,9 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 		}
 
 		ptr_fill += pitch * r;
-		while (short_h--) {			
+		while (short_h--) {
 			blendFill(ptr_fill, ptr_fill + width + 1, color, (uint8)alpha);
-			ptr_fill += pitch;			
+			ptr_fill += pitch;
 		}
 
 		// Make shadow smaller each iteration, and move it one pixel inward
@@ -3672,7 +3672,7 @@ drawRoundedSquareShadowClip(int x1, int y1, int r, int w, int h, int offset) {
 
 		ptr_fill += pitch * r;
 		int orig_short_h = short_h;
-		while (short_h--) {			
+		while (short_h--) {
 			blendFillClip(ptr_fill, ptr_fill + width + 1, color, (uint8)alpha,
 				xstart, ystart + r + orig_short_h - short_h - 1);
 			ptr_fill += pitch;

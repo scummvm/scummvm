@@ -233,7 +233,7 @@ public:
 		_tabHeight = tabHeight;
 	}
 
-	void reflowLayout() {		
+	void reflowLayout() {
 		for (uint i = 0; i < _children.size(); ++i) {
 			_children[i]->resetLayout();
 			_children[i]->reflowLayout();

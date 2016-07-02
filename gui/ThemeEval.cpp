@@ -89,7 +89,7 @@ void ThemeEval::addWidget(const Common::String &name, int w, int h, const Common
 		typeW = getVar("Globals." + type + ".Width", -1);
 		typeH = getVar("Globals." + type + ".Height", -1);
 		typeAlign = (Graphics::TextAlign)getVar("Globals." + type + ".Align", Graphics::kTextAlignInvalid);
-	}	
+	}
 
 	ThemeLayoutWidget *widget;
 	if (type == "TabWidget")

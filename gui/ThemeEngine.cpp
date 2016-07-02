@@ -1377,7 +1377,7 @@ void ThemeEngine::drawPopUpWidgetClip(const Common::Rect &r, const Common::Rect 
 	else if (state == kStateDisabled)
 		dd = kDDPopUpDisabled;
 
-	queueDDClip(dd, r, clip);	
+	queueDDClip(dd, r, clip);
 
 	if (!sel.empty()) {
 		Common::Rect text(r.left + 3, r.top + 1, r.right - 10, r.bottom);
