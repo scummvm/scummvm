@@ -105,6 +105,17 @@ void Lingo::c_constpush() {
 	g_lingo->push(d);
 }
 
+void Lingo::c_fconstpush() {
+	Datum d;
+	inst i = (*g_lingo->_currentScript)[g_lingo->_pc];
+	d.u.f = *((float *)&i);
+	d.type = FLOAT;
+
+	g_lingo->_pc += g_lingo->calcCodeAlignment(sizeof(float));
+
+	g_lingo->push(d);
+}
+
 void Lingo::c_varpush() {
 	char *name = (char *)&(*g_lingo->_currentScript)[g_lingo->_pc];
 	Datum d;
@@ -139,7 +150,7 @@ void Lingo::c_assign() {
 }
 
 bool Lingo::verify(Symbol *s) {
-	if (s->type != INT && s->type != VOID) {
+	if (s->type != INT && s->type != VOID && s->type != FLOAT) {
 		warning("attempt to evaluate non-variable '%s'", s->name);
 
 		return false;
@@ -168,7 +179,11 @@ void Lingo::c_add() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.u.i += d2.u.i;
+	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+		d1.u.f += d2.u.f;
+	} else {
+		d1.u.i += d2.u.i;
+	}
 	g_lingo->push(d1);
 }
 
@@ -176,7 +191,11 @@ void Lingo::c_sub() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.u.i -= d2.u.i;
+	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+		d1.u.f -= d2.u.f;
+	} else {
+		d1.u.i -= d2.u.i;
+	}
 	g_lingo->push(d1);
 }
 
@@ -184,26 +203,39 @@ void Lingo::c_mul() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.u.i *= d2.u.i;
+	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+		d1.u.f *= d2.u.f;
+	} else {
+		d1.u.i *= d2.u.i;
+	}
 	g_lingo->push(d1);
 }
 
 void Lingo::c_div() {
 	Datum d2 = g_lingo->pop();
 
-	if (d2.u.i == 0)
+	if ((d2.type == INT && d2.u.i == 0) ||
+			(d2.type == FLOAT && d2.u.f == 0.0))
 		error("division by zero");
 
 	Datum d1 = g_lingo->pop();
 
-	d1.u.i /= d2.u.i;
+	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+		d1.u.f /= d2.u.f;
+	} else {
+		d1.u.i /= d2.u.i;
+	}
 	g_lingo->push(d1);
 }
 
 void Lingo::c_negate() {
 	Datum d = g_lingo->pop();
 
-	d.u.i -= d.u.i;
+	if (d.type == INT)
+		d.u.i = -d.u.i;
+	else if (d.type == FLOAT)
+		d.u.f = -d.u.f;
+
 	g_lingo->push(d);
 }
 
@@ -211,7 +243,12 @@ void Lingo::c_eq() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.u.i = (d1.u.i == d2.u.i) ? 1 : 0;
+	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+		d1.u.i = (d1.u.f == d2.u.f) ? 1 : 0;
+		d1.type = INT;
+	} else {
+		d1.u.i = (d1.u.i == d2.u.i) ? 1 : 0;
+	}
 	g_lingo->push(d1);
 }
 
@@ -219,7 +256,12 @@ void Lingo::c_neq() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.u.i = (d1.u.i != d2.u.i) ? 1 : 0;
+	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+		d1.u.i = (d1.u.f != d2.u.f) ? 1 : 0;
+		d1.type = INT;
+	} else {
+		d1.u.i = (d1.u.i != d2.u.i) ? 1 : 0;
+	}
 	g_lingo->push(d1);
 }
 
@@ -227,7 +269,12 @@ void Lingo::c_gt() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.u.i = (d1.u.i > d2.u.i) ? 1 : 0;
+	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+		d1.u.i = (d1.u.f > d2.u.f) ? 1 : 0;
+		d1.type = INT;
+	} else {
+		d1.u.i = (d1.u.i > d2.u.i) ? 1 : 0;
+	}
 	g_lingo->push(d1);
 }
 
@@ -235,7 +282,12 @@ void Lingo::c_lt() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.u.i = (d1.u.i < d2.u.i) ? 1 : 0;
+	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+		d1.u.i = (d1.u.f < d2.u.f) ? 1 : 0;
+		d1.type = INT;
+	} else {
+		d1.u.i = (d1.u.i < d2.u.i) ? 1 : 0;
+	}
 	g_lingo->push(d1);
 }
 
@@ -243,7 +295,12 @@ void Lingo::c_ge() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.u.i = (d1.u.i >= d2.u.i) ? 1 : 0;
+	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+		d1.u.i = (d1.u.f >= d2.u.f) ? 1 : 0;
+		d1.type = INT;
+	} else {
+		d1.u.i = (d1.u.i >= d2.u.i) ? 1 : 0;
+	}
 	g_lingo->push(d1);
 }
 
@@ -251,7 +308,12 @@ void Lingo::c_le() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.u.i = (d1.u.i <= d2.u.i) ? 1 : 0;
+	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+		d1.u.i = (d1.u.f <= d2.u.f) ? 1 : 0;
+		d1.type = INT;
+	} else {
+		d1.u.i = (d1.u.i <= d2.u.i) ? 1 : 0;
+	}
 	g_lingo->push(d1);
 }
 
@@ -264,6 +326,7 @@ void Lingo::c_repeatwhilecode(void) {
 
 	g_lingo->execute(savepc + 2);	/* condition */
 	d = g_lingo->pop();
+	d.toInt();
 
 	while (d.u.i) {
 		g_lingo->execute(body);	/* body */
@@ -272,6 +335,7 @@ void Lingo::c_repeatwhilecode(void) {
 
 		g_lingo->execute(savepc + 2);	/* condition */
 		d = g_lingo->pop();
+		d.toInt();
 	}
 
 	if (!g_lingo->_returning)
@@ -292,6 +356,7 @@ void Lingo::c_repeatwithcode(void) {
 
 	g_lingo->execute(init);	/* condition */
 	d = g_lingo->pop();
+	d.toInt();
 	counter->u.val = d.u.i;
 	counter->type = INT;
 
@@ -303,6 +368,7 @@ void Lingo::c_repeatwithcode(void) {
 		counter->u.val += inc;
 		g_lingo->execute(finish);	/* condition */
 		d = g_lingo->pop();
+		d.toInt();
 
 		if (counter->u.val == d.u.i + inc)
 			break;
@@ -324,7 +390,7 @@ void Lingo::c_ifcode() {
 
 	d = g_lingo->pop();
 
-	if (d.u.i) {
+	if (d.toInt()) {
 		g_lingo->execute(then);
 	} else if (elsep) { /* else part? */
 		g_lingo->execute(elsep);

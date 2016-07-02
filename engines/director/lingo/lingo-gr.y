@@ -219,7 +219,10 @@ expr: INT	{
 		$$ = g_lingo->code1(g_lingo->c_constpush);
 		inst i = 0;
 		WRITE_UINT32(&i, $1);
-		g_lingo->code1(i); };
+		g_lingo->code1(i); }
+	| FLOAT	{
+		$$ = g_lingo->code1(g_lingo->c_fconstpush);
+		g_lingo->codeFloat($1); }
 	| ID '(' arglist ')' {
 			$$ = g_lingo->codeFunc($1, $3);
 			delete $1; }
@@ -338,7 +341,7 @@ macro: ID begin arglist {
 		g_lingo->codeString($1->c_str());
 		inst numpar = 0;
 		WRITE_UINT32(&numpar, $3);
-		g_lingo->code1(numpar); };
+		g_lingo->code1(numpar); }
 	;
 
 arglist:  /* nothing */ 	{ $$ = 0; }

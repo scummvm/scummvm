@@ -162,4 +162,48 @@ void Lingo::processEvent(LEvent event, int entityId) {
 	debug(2, "processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
 }
 
+int Lingo::alignTypes(Datum &d1, Datum &d2) {
+	int opType = INT;
+
+	if (d1.type == FLOAT || d2.type == FLOAT) {
+		opType = FLOAT;
+		d1.toFloat();
+		d2.toFloat();
+	}
+
+	return opType;
+}
+
+int Datum::toInt() {
+	switch (type) {
+	case INT:
+		// no-op
+		break;
+	case FLOAT:
+		u.i = (int)u.f;
+		type = FLOAT;
+		break;
+	default:
+		warning("Incorrect operation toInt() for type: %d", type);
+	}
+
+	return u.i;
+}
+
+float Datum::toFloat() {
+	switch (type) {
+	case INT:
+		u.f = (float)u.i;
+		type = FLOAT;
+		break;
+	case FLOAT:
+		// no-op
+		break;
+	default:
+		warning("Incorrect operation toFloat() for type: %d", type);
+	}
+
+	return u.f;
+}
+
 } // End of namespace Director

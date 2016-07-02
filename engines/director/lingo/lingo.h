@@ -101,6 +101,9 @@ struct Datum {	/* interpreter stack type */
 	} u;
 
 	Datum() { u.sym = NULL; type = VOID; }
+
+	float toFloat();
+	int toInt();
 };
 
 struct Builtin {
@@ -142,14 +145,19 @@ public:
 	void cleanLocalVars();
 	void define(Common::String &s, int start, int nargs);
 
+	int alignTypes(Datum &d1, Datum &d2);
+
 	int code1(inst code) { _currentScript->push_back(code); return _currentScript->size() - 1; }
 	int code2(inst code_1, inst code_2) { int o = code1(code_1); code1(code_2); return o; }
 	int code3(inst code_1, inst code_2, inst code_3) { int o = code1(code_1); code1(code_2); code1(code_3); return o; }
 	int codeString(const char *s);
 
 	int calcStringAlignment(const char *s) {
+		return calcCodeAlignment(strlen(s) + 1);
+	}
+	int calcCodeAlignment(int l) {
 		int instLen = sizeof(inst);
-		int l = strlen(s); return (l + 1 + instLen - 1) / instLen;
+		return (l + instLen - 1) / instLen;
 	}
 
 	int codeFunc(Common::String *name, int nargs);
@@ -157,6 +165,7 @@ public:
 	void codeArgStore();
 	int codeId(Common::String &s);
 	int codeId_(Common::String &s);
+	int codeFloat(float f);
 
 	static void c_xpop();
 	static void c_printtop();
@@ -166,6 +175,7 @@ public:
 	static void c_div();
 	static void c_negate();
 	static void c_constpush();
+	static void c_fconstpush();
 	static void c_varpush();
 	static void c_assign();
 	bool verify(Symbol *s);

@@ -143,6 +143,23 @@ int Lingo::codeString(const char *str) {
 	return _currentScript->size();
 }
 
+int Lingo::codeFloat(float f) {
+	int numInsts = calcCodeAlignment(sizeof(float));
+
+	// Where we copy the string over
+	int pos = _currentScript->size();
+
+	// Allocate needed space in script
+	for (int i = 0; i < numInsts; i++)
+		_currentScript->push_back(0);
+
+	float *dst = (float *)((byte *)&_currentScript->front() + pos * sizeof(inst));
+
+	*dst = f;
+
+	return _currentScript->size();
+}
+
 void Lingo::codeArg(Common::String *s) {
 	_argstack.push_back(s);
 }

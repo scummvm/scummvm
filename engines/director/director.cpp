@@ -149,6 +149,12 @@ check(1, 2, 3)\n\
 check 4, 5, 6\n\
 check 7, 8\n\
 if random(4) > 2 then put 1000\n\
+set z = 5.5\n\
+set z1 = 2\n\
+set z2 = z / z1\n\
+put z\n\
+put z1\n\
+put z2\n\
 ", kMovieScript, 2);
 
 _lingo->executeScript(kMovieScript, 2);
