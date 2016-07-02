@@ -198,24 +198,4 @@ int Lingo::codeId_(Common::String &name) {
 	return ret;
 }
 
-int Lingo::codeFunc(Common::String *name, int nargs) {
-	int ret;
-
-	if (!g_lingo->_builtins.contains(*name)) {
-		ret = g_lingo->code1(g_lingo->c_call);
-		g_lingo->codeString(name->c_str());
-
-		inst numpar = 0;
-		WRITE_UINT32(&numpar, nargs);
-		g_lingo->code1(numpar);
-	} else {
-		if (nargs != g_lingo->_builtins[*name]->nargs)
-			error("Built-in function %s expects %d arguments but got %d", name->c_str(), g_lingo->_builtins[*name]->nargs, nargs);
-
-		ret = g_lingo->code1(g_lingo->_builtins[*name]->func);
-	}
-
-	return ret;
-}
-
 }

@@ -73,7 +73,7 @@ using namespace Director;
 %token UNARY VOID VAR
 %token<i> INT
 %token<f> FLOAT
-%token<s> ID STRING HANDLER
+%token<s> BLTIN ID STRING HANDLER
 %token tDOWN tELSE tEND tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO tMCI tMCIWAIT
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWITH tWHILE
 %token tGE tLE tGT tLT tEQ tNEQ
@@ -223,9 +223,20 @@ expr: INT	{
 	| FLOAT	{
 		$$ = g_lingo->code1(g_lingo->c_fconstpush);
 		g_lingo->codeFloat($1); }
+	| BLTIN '(' arglist ')' {
+		if ($3 != g_lingo->_builtins[*$1]->nargs)
+			error("Built-in function %s expects %d arguments but got %d", $1->c_str(), g_lingo->_builtins[*$1]->nargs, $3);
+
+		$$ = g_lingo->code1(g_lingo->_builtins[*$1]->func);
+		delete $1; }
 	| ID '(' arglist ')' {
-			$$ = g_lingo->codeFunc($1, $3);
-			delete $1; }
+		$$ = g_lingo->code1(g_lingo->c_call);
+		g_lingo->codeString($1->c_str());
+
+		inst numpar = 0;
+		WRITE_UINT32(&numpar, $3);
+		g_lingo->code1(numpar);
+		delete $1; }
 	| ID	{
 		$$ = g_lingo->codeId(*$1);
 		delete $1; }

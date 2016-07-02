@@ -77,7 +77,14 @@ whitespace [\t ]
 [>][=]			{ return tGE; }
 [<][=]			{ return tLE; }
 
-{identifier}	{ yylval.s = new Common::String(yytext);  return ID; }
+{identifier}	{
+		yylval.s = new Common::String(yytext);
+
+		if (Director::g_lingo->_builtins.contains(yytext))
+			return BLTIN;
+
+		return ID;
+	}
 {constfloat}	{ yylval.f = atof(yytext); return FLOAT; }
 {constinteger}	{ yylval.i = strtol(yytext, NULL, 10); return INT; }
 {operator}		{ return *yytext; }

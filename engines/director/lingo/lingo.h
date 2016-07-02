@@ -160,7 +160,6 @@ public:
 		return (l + instLen - 1) / instLen;
 	}
 
-	int codeFunc(Common::String *name, int nargs);
 	void codeArg(Common::String *s);
 	void codeArgStore();
 	int codeId(Common::String &s);

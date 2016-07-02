@@ -1020,45 +1020,52 @@ YY_RULE_SETUP
 case 31:
 YY_RULE_SETUP
 #line 80 "engines/director/lingo/lingo-lex.l"
-{ yylval.s = new Common::String(yytext);  return ID; }
+{
+		yylval.s = new Common::String(yytext);
+
+		if (Director::g_lingo->_builtins.contains(yytext))
+			return BLTIN;
+
+		return ID;
+	}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 81 "engines/director/lingo/lingo-lex.l"
+#line 88 "engines/director/lingo/lingo-lex.l"
 { yylval.f = atof(yytext); return FLOAT; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 82 "engines/director/lingo/lingo-lex.l"
+#line 89 "engines/director/lingo/lingo-lex.l"
 { yylval.i = strtol(yytext, NULL, 10); return INT; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 83 "engines/director/lingo/lingo-lex.l"
+#line 90 "engines/director/lingo/lingo-lex.l"
 { return *yytext; }
 	YY_BREAK
 case 35:
 /* rule 35 can match eol */
 YY_RULE_SETUP
-#line 84 "engines/director/lingo/lingo-lex.l"
+#line 91 "engines/director/lingo/lingo-lex.l"
 { return '\n'; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 85 "engines/director/lingo/lingo-lex.l"
+#line 92 "engines/director/lingo/lingo-lex.l"
 { yylval.s = new Common::String(&yytext[1]); yylval.s->deleteLastChar(); return STRING; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 86 "engines/director/lingo/lingo-lex.l"
+#line 93 "engines/director/lingo/lingo-lex.l"
 
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 88 "engines/director/lingo/lingo-lex.l"
+#line 95 "engines/director/lingo/lingo-lex.l"
 ECHO;
 	YY_BREAK
-#line 1062 "engines/director/lingo/lingo-lex.cpp"
+#line 1069 "engines/director/lingo/lingo-lex.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2058,7 +2065,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 88 "engines/director/lingo/lingo-lex.l"
+#line 95 "engines/director/lingo/lingo-lex.l"
 
 
 

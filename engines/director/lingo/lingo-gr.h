@@ -44,39 +44,40 @@
      VAR = 260,
      INT = 261,
      FLOAT = 262,
-     ID = 263,
-     STRING = 264,
-     HANDLER = 265,
-     tDOWN = 266,
-     tELSE = 267,
-     tEND = 268,
-     tEXIT = 269,
-     tFRAME = 270,
-     tGLOBAL = 271,
-     tGO = 272,
-     tIF = 273,
-     tINTO = 274,
-     tLOOP = 275,
-     tMACRO = 276,
-     tMCI = 277,
-     tMCIWAIT = 278,
-     tMOVIE = 279,
-     tNEXT = 280,
-     tOF = 281,
-     tPREVIOUS = 282,
-     tPUT = 283,
-     tREPEAT = 284,
-     tSET = 285,
-     tTHEN = 286,
-     tTO = 287,
-     tWITH = 288,
-     tWHILE = 289,
-     tGE = 290,
-     tLE = 291,
-     tGT = 292,
-     tLT = 293,
-     tEQ = 294,
-     tNEQ = 295
+     BLTIN = 263,
+     ID = 264,
+     STRING = 265,
+     HANDLER = 266,
+     tDOWN = 267,
+     tELSE = 268,
+     tEND = 269,
+     tEXIT = 270,
+     tFRAME = 271,
+     tGLOBAL = 272,
+     tGO = 273,
+     tIF = 274,
+     tINTO = 275,
+     tLOOP = 276,
+     tMACRO = 277,
+     tMCI = 278,
+     tMCIWAIT = 279,
+     tMOVIE = 280,
+     tNEXT = 281,
+     tOF = 282,
+     tPREVIOUS = 283,
+     tPUT = 284,
+     tREPEAT = 285,
+     tSET = 286,
+     tTHEN = 287,
+     tTO = 288,
+     tWITH = 289,
+     tWHILE = 290,
+     tGE = 291,
+     tLE = 292,
+     tGT = 293,
+     tLT = 294,
+     tEQ = 295,
+     tNEQ = 296
    };
 #endif
 /* Tokens.  */
@@ -85,39 +86,40 @@
 #define VAR 260
 #define INT 261
 #define FLOAT 262
-#define ID 263
-#define STRING 264
-#define HANDLER 265
-#define tDOWN 266
-#define tELSE 267
-#define tEND 268
-#define tEXIT 269
-#define tFRAME 270
-#define tGLOBAL 271
-#define tGO 272
-#define tIF 273
-#define tINTO 274
-#define tLOOP 275
-#define tMACRO 276
-#define tMCI 277
-#define tMCIWAIT 278
-#define tMOVIE 279
-#define tNEXT 280
-#define tOF 281
-#define tPREVIOUS 282
-#define tPUT 283
-#define tREPEAT 284
-#define tSET 285
-#define tTHEN 286
-#define tTO 287
-#define tWITH 288
-#define tWHILE 289
-#define tGE 290
-#define tLE 291
-#define tGT 292
-#define tLT 293
-#define tEQ 294
-#define tNEQ 295
+#define BLTIN 263
+#define ID 264
+#define STRING 265
+#define HANDLER 266
+#define tDOWN 267
+#define tELSE 268
+#define tEND 269
+#define tEXIT 270
+#define tFRAME 271
+#define tGLOBAL 272
+#define tGO 273
+#define tIF 274
+#define tINTO 275
+#define tLOOP 276
+#define tMACRO 277
+#define tMCI 278
+#define tMCIWAIT 279
+#define tMOVIE 280
+#define tNEXT 281
+#define tOF 282
+#define tPREVIOUS 283
+#define tPUT 284
+#define tREPEAT 285
+#define tSET 286
+#define tTHEN 287
+#define tTO 288
+#define tWITH 289
+#define tWHILE 290
+#define tGE 291
+#define tLE 292
+#define tGT 293
+#define tLT 294
+#define tEQ 295
+#define tNEQ 296
 
 
 
@@ -133,7 +135,7 @@ typedef union YYSTYPE
 	int	narg;	/* number of arguments */
 }
 /* Line 1529 of yacc.c.  */
-#line 137 "engines/director/lingo/lingo-gr.hpp"
+#line 139 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
