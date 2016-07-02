@@ -53,17 +53,17 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 	// Setup mixer
 	syncSoundSettings();
-	_sharedCasts = new Common::HashMap<int, Cast *>();
-	_sharedDIB = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>();
-	_sharedBMP = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>();
-	_sharedSTXT = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>();
-	_sharedSound = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>();
+	_sharedCasts = new Common::HashMap<int, Cast *>;
+	_sharedDIB = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
+	_sharedBMP = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
+	_sharedSTXT = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
+	_sharedSound = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
 
 	_mainArchive = 0;
 	_macBinary = 0;
 	//FIXME
 	_sharedMMM = "SHARDCST.MMM";
-	_movies = new Common::HashMap<Common::String, Score *>();
+	_movies = new Common::HashMap<Common::String, Score *>;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
@@ -71,12 +71,12 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 }
 
 DirectorEngine::~DirectorEngine() {
-	delete[] _sharedCasts;
-	delete[] _sharedSound;
-	delete[] _sharedBMP;
-	delete[] _sharedSTXT;
-	delete[] _sharedDIB;
-	delete[] _movies;
+	delete _sharedCasts;
+	delete _sharedSound;
+	delete _sharedBMP;
+	delete _sharedSTXT;
+	delete _sharedDIB;
+	delete _movies;
 
 	delete _mainArchive;
 	delete _macBinary;
