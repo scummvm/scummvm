@@ -437,7 +437,7 @@ ChampionIndex ChampionMan::getIndexInCell(ViewCell cell) {
 }
 
 void ChampionMan::resetDataToStartGame() {
-	if (!_vm->_dungeonMan->_messages._g298_newGame) {
+	if (!_vm->_g298_newGame) {
 		warning("MISSING CODE: stuff for resetting for loaded games");
 		assert(false);
 	}
@@ -468,20 +468,20 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	champ->_actionIndex = k255_ChampionActionNone;
 	champ->_enableActionEventIndex = -1;
 	champ->_hideDamageReceivedIndex = -1;
-	champ->_dir = dunMan._currMap._g308_partyDir;
+	champ->_dir = dunMan._g308_partyDir;
 	ViewCell AL_0_viewCell = k0_ViewCellFronLeft;
-	while (getIndexInCell((ViewCell)((AL_0_viewCell + dunMan._currMap._g308_partyDir) & 3)) != kM1_ChampionNone)
+	while (getIndexInCell((ViewCell)((AL_0_viewCell + dunMan._g308_partyDir) & 3)) != kM1_ChampionNone)
 		AL_0_viewCell = (ViewCell)(AL_0_viewCell + 1);
-	champ->_cell = (ViewCell)((AL_0_viewCell + dunMan._currMap._g308_partyDir) & 3);
+	champ->_cell = (ViewCell)((AL_0_viewCell + dunMan._g308_partyDir) & 3);
 	champ->clearAttributes(k0x0400_ChampionAttributeIcon);
-	champ->_directionMaximumDamageReceived = dunMan._currMap._g308_partyDir;
+	champ->_directionMaximumDamageReceived = dunMan._g308_partyDir;
 	champ->_food = 1500 + _vm->_rnd->getRandomNumber(256);
 	champ->_water = 1500 + _vm->_rnd->getRandomNumber(256);
 	int16 AL_0_slotIndex_Red;
 	for (AL_0_slotIndex_Red = k0_ChampionSlotReadyHand; AL_0_slotIndex_Red < k30_ChampionSlotChest_1; ++AL_0_slotIndex_Red) {
 		champ->setSlot((ChampionSlot)AL_0_slotIndex_Red, Thing::_none);
 	}
-	Thing thing = dunMan.getSquareFirstThing(dunMan._currMap._g306_partyPosX, dunMan._currMap._g307_partyPosY);
+	Thing thing = dunMan.getSquareFirstThing(dunMan._g306_partyMapX, dunMan._g307_partyMapY);
 	while (thing.getType() != k2_TextstringType) {
 		thing = dunMan.getNextThing(thing);
 	}
@@ -557,12 +557,12 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 		_vm->_menuMan->drawActionIcon((ChampionIndex)(_g305_partyChampionCount - 1));
 	}
 
-	int16 mapX = _vm->_dungeonMan->_currMap._g306_partyPosX;
-	int16 mapY = _vm->_dungeonMan->_currMap._g307_partyPosY;
+	int16 mapX = _vm->_dungeonMan->_g306_partyMapX;
+	int16 mapY = _vm->_dungeonMan->_g307_partyMapY;
 
-	uint16 championObjectsCell = returnOppositeDir((direction)(dunMan._currMap._g308_partyDir));
-	mapX += _vm->_dirIntoStepCountEast[dunMan._currMap._g308_partyDir];
-	mapY += _vm->_dirIntoStepCountNorth[dunMan._currMap._g308_partyDir];
+	uint16 championObjectsCell = returnOppositeDir((direction)(dunMan._g308_partyDir));
+	mapX += _vm->_dirIntoStepCountEast[dunMan._g308_partyDir];
+	mapY += _vm->_dirIntoStepCountNorth[dunMan._g308_partyDir];
 	thing = dunMan.getSquareFirstThing(mapX, mapY);
 	AL_0_slotIndex_Red = k13_ChampionSlotBackpackLine_1_1;
 	uint16 slotIndex_Green;
@@ -850,11 +850,11 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 	}
 
 	{ // block so goto won't skip AL_0_championIconIndex initialization 
-		int16 AL_0_championIconIndex = championIconIndex(champ->_cell, _vm->_dungeonMan->_currMap._g308_partyDir);
+		int16 AL_0_championIconIndex = championIconIndex(champ->_cell, _vm->_dungeonMan->_g308_partyDir);
 
 		if ((champAttributes & k28_ChampionIcons) && (eventMan._g599_useChampionIconOrdinalAsMousePointerBitmap != _vm->indexToOrdinal(AL_0_championIconIndex))) {
 			dispMan.clearScreenBox(g46_ChampionColor[champIndex], g54_BoxChampionIcons[AL_0_championIconIndex]);
-			dispMan.blitToScreen(dispMan.getBitmap(k28_ChampionIcons), 80, championIconIndex(champ->_dir, _vm->_dungeonMan->_currMap._g308_partyDir) * 19, 0,
+			dispMan.blitToScreen(dispMan.getBitmap(k28_ChampionIcons), 80, championIconIndex(champ->_dir, _vm->_dungeonMan->_g308_partyDir) * 19, 0,
 								 g54_BoxChampionIcons[AL_0_championIconIndex], k12_ColorDarkestGray);
 		}
 	}

@@ -179,9 +179,9 @@ void DMEngine::startGame() {
 	_eventMan->_g442_secondaryMouseInput = g448_SecondaryMouseInput_Movement;
 	warning("MISSING CODE: set primary/secondary keyboard input");
 
-	processNewPartyMap(_dungeonMan->_currMap._g309_currPartyMapIndex);
+	processNewPartyMap(_dungeonMan->_g309_partyMapIndex);
 
-	if (!_dungeonMan->_messages._g298_newGame) {
+	if (!_g298_newGame) {
 		warning("TODO: loading game");
 	} else {
 		_displayMan->_g578_useByteBoxCoordinates = false;
@@ -233,9 +233,9 @@ Common::Error DMEngine::run() {
 
 void DMEngine::gameloop() {
 	warning("DUMMY CODE SETTING PARTY POS AND DIRECTION");
-	_dungeonMan->_currMap._g306_partyPosX = 10;
-	_dungeonMan->_currMap._g307_partyPosY = 4;
-	_dungeonMan->_currMap._g308_partyDir = kDirNorth;
+	_dungeonMan->_g306_partyMapX = 10;
+	_dungeonMan->_g307_partyMapY = 4;
+	_dungeonMan->_g308_partyDir = kDirNorth;
 
 
 	warning("DUMMY CODE: setting InventoryMan::_g432_inventoryChampionOrdinal to zero");
@@ -254,7 +254,7 @@ void DMEngine::gameloop() {
 		if (!_inventoryMan->_g432_inventoryChampionOrdinal && !_championMan->_g300_partyIsSleeping) {
 			Box box(0, 224, 0, 126);
 			_displayMan->clearScreenBox(k0_ColorBlack, box, g296_DungeonViewport); // dummy code
-			_displayMan->drawDungeon(_dungeonMan->_currMap._g308_partyDir, _dungeonMan->_currMap._g306_partyPosX, _dungeonMan->_currMap._g307_partyPosY);
+			_displayMan->drawDungeon(_dungeonMan->_g308_partyDir, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
 		}
 		// DUMMY CODE: next line
 		_menuMan->drawMovementArrows();

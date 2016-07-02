@@ -145,7 +145,7 @@ IconIndice ObjectMan::getIconIndex(Thing thing) {
 		uint16 *rawType = _vm->_dungeonMan->getThingData(thing);
 		switch (iconIndex) {
 		case k0_IconIndiceJunkCompassNorth:
-			iconIndex = (IconIndice)(iconIndex + _vm->_dungeonMan->_currMap._g308_partyDir);
+			iconIndex = (IconIndice)(iconIndex + _vm->_dungeonMan->_g308_partyDir);
 			break;
 		case k4_IconIndiceWeaponTorchUnlit: {
 			Weapon weapon(rawType);

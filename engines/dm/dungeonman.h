@@ -556,7 +556,7 @@ public:
 	SquareType getType() { return (SquareType)(_data >> 5); } // @ M34_SQUARE_TYPE
 	void setType(SquareType type) { _data = (_data & 0x1F) | type << 5; }
 	byte toByte() { return _data; } // I don't like 'em casts
-};
+}; // wrapper for bytes which are used as squares
 
 struct DungeonFileHeader {
 	uint16 _dungeonId; // @ G0526_ui_DungeonID
@@ -592,39 +592,7 @@ struct Map {
 	uint8 _doorSet0, _doorSet1;
 }; // @ MAP
 
-struct DungeonData {
-	// I have no idea the heck is this
-	uint16 *_g281_mapsFirstColumnIndex; // @ G0281_pui_DungeonMapsFirstColumnIndex
-	uint16 _g282_columCount; // @ G0282_ui_DungeonColumnCount
 
-	// I have no idea the heck is this
-	uint16 *_g280_columnsCumulativeSquareThingCount; // @ G0280_pui_DungeonColumnsCumulativeSquareThingCount
-	Thing *_g283_squareFirstThings; // @ G0283_pT_SquareFirstThings
-	uint16 *_g260_textData; // @ G0260_pui_DungeonTextData
-
-	uint16 **_g284_thingsData[16]; // @ G0284_apuc_ThingData
-
-	byte ***_g279_mapData; // @ G0279_pppuc_DungeonMapData
-}; // @ AGGREGATE
-
-struct CurrMapData {
-	direction _g308_partyDir; // @ G0308_i_PartyDirection
-	int16 _g306_partyPosX; // @ G0306_i_PartyMapX
-	int16 _g307_partyPosY; // @ G0307_i_PartyMapY
-	uint8 _g309_currPartyMapIndex; // @ G0309_i_PartyMapIndex
-
-	uint8 _g272_index; // @ G0272_i_CurrentMapIndex
-	byte **_g271_data; // @ G0271_ppuc_CurrentMapData
-	Map *_g269_map; // @ G0269_ps_CurrentMap
-	uint16 _g273_width; // @ G0273_i_CurrentMapWidth
-	uint16 _g274_height; // @ G0274_i_CurrentMapHeight
-	uint16 *_g270_colCumulativeSquareFirstThingCount; // @G0270_pui_CurrentMapColumnsCumulativeSquareFirstThingCount
-}; // @ AGGREGATE
-
-struct Messages {
-	bool _g298_newGame; // @ G0298_B_NewGame
-	bool _g523_restartGameRequest; // @ G0523_B_RestartGameRequested
-}; // @ AGGREGATE
 
 class DungeonMan {
 	DMEngine *_vm;
@@ -674,14 +642,33 @@ public:
 
 	uint32 _rawDunFileDataSize;	 // @ probably NONE
 	byte *_rawDunFileData; // @ ???
-	DungeonFileHeader _g278_fileHeader; // @ G0278_ps_DungeonHeader
+	DungeonFileHeader _g278_dungeonFileHeader; // @ G0278_ps_DungeonHeader
 
-	DungeonData _dunData; // @ NONE
-	CurrMapData _currMap; // @ NONE
-	Map *_g277_maps; // @ G0277_ps_DungeonMaps
+
+	uint16 *_g281_dungeonMapsFirstColumnIndex; // @ G0281_pui_DungeonMapsFirstColumnIndex
+	uint16 _g282_dungeonColumCount; // @ G0282_ui_DungeonColumnCount
+	uint16 *_g280_dungeonColumnsCumulativeSquareThingCount; // @ G0280_pui_DungeonColumnsCumulativeSquareThingCount
+	Thing *_g283_squareFirstThings; // @ G0283_pT_SquareFirstThings
+	uint16 *_g260_dungeonTextData; // @ G0260_pui_DungeonTextData
+	uint16 **_g284_thingData[16]; // @ G0284_apuc_ThingData
+	byte ***_g279_dungeonMapData; // @ G0279_pppuc_DungeonMapData
+
+
+	direction _g308_partyDir; // @ G0308_i_PartyDirection
+	int16 _g306_partyMapX; // @ G0306_i_PartyMapX
+	int16 _g307_partyMapY; // @ G0307_i_PartyMapY
+	uint8 _g309_partyMapIndex; // @ G0309_i_PartyMapIndex
+	uint8 _g272_currMapIndex; // @ G0272_i_CurrentMapIndex
+	byte **_g271_currMapData; // @ G0271_ppuc_CurrentMapData
+	Map *_g269_currMap; // @ G0269_ps_CurrentMap
+	uint16 _g273_currMapWidth; // @ G0273_i_CurrentMapWidth
+	uint16 _g274_currMapHeight; // @ G0274_i_CurrentMapHeight
+	uint16 *_g270_currMapColCumulativeSquareFirstThingCount; // @G0270_pui_CurrentMapColumnsCumulativeSquareFirstThingCount
+
+
+	Map *_g277_dungeonMaps; // @ G0277_ps_DungeonMaps
 	// does not have to be freed
-	byte *_g276_rawMapData; // @ G0276_puc_DungeonRawMapData
-	Messages _messages; // @ NONE;
+	byte *_g276_dungeonRawMapData; // @ G0276_puc_DungeonRawMapData
 
 	int16 _g265_currMapInscriptionWallOrnIndex; // @ G0265_i_CurrentMapInscriptionWallOrnamentIndex
 	Box _g291_dungeonViewClickableBoxes[6]; // G0291_aauc_DungeonViewClickableBoxes

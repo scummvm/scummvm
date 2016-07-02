@@ -168,6 +168,10 @@ public:
 	GroupMan *_groupMan;
 	Timeline *_timeline;
 
+
+	bool _g298_newGame; // @ G0298_B_NewGame
+	bool _g523_restartGameRequest; // @ G0523_B_RestartGameRequested
+
 	bool _g321_stopWaitingForPlayerInput; // G0321_B_StopWaitingForPlayerInput
 	bool _g301_gameTimeTicking; // @ G0301_B_GameTimeTicking
 	bool _g524_restartGameAllowed; // @ G0524_B_RestartGameAllowed

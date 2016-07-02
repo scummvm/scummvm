@@ -305,7 +305,6 @@ void EventManager::setMousePos(Common::Point pos) {
 
 void EventManager::processInput() {
 	DungeonMan &dungeonMan = *_vm->_dungeonMan;
-	CurrMapData &currMap = dungeonMan._currMap;
 
 	Common::Event event;
 	while (_vm->_system->getEventManager()->pollEvent(event)) {
@@ -317,22 +316,22 @@ void EventManager::processInput() {
 
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_w:
-				dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap._g308_partyDir, 1, 0, currMap._g306_partyPosX, currMap._g307_partyPosY);
+				dungeonMan.mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 1, 0, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
 				break;
 			case Common::KEYCODE_a:
-				dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap._g308_partyDir, 0, -1, currMap._g306_partyPosX, currMap._g307_partyPosY);
+				dungeonMan.mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 0, -1, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
 				break;
 			case Common::KEYCODE_s:
-				dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap._g308_partyDir, -1, 0, currMap._g306_partyPosX, currMap._g307_partyPosY);
+				dungeonMan.mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, -1, 0, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
 				break;
 			case Common::KEYCODE_d:
-				dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap._g308_partyDir, 0, 1, currMap._g306_partyPosX, currMap._g307_partyPosY);
+				dungeonMan.mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 0, 1, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
 				break;
 			case Common::KEYCODE_q:
-				turnDirLeft(currMap._g308_partyDir);
+				turnDirLeft(dungeonMan._g308_partyDir);
 				break;
 			case Common::KEYCODE_e:
-				turnDirRight(currMap._g308_partyDir);
+				turnDirRight(dungeonMan._g308_partyDir);
 				break;
 			case Common::KEYCODE_UP:
 				if (_dummyMapIndex < 13)
@@ -440,7 +439,7 @@ void EventManager::commandTurnParty(CommandType cmdType) {
 	// MISSING CODE: process sensors
 
 	// DUMMY CODE: should call F0284_CHAMPION_SetPartyDirection instead
-	direction &partyDir = _vm->_dungeonMan->_currMap._g308_partyDir;
+	direction &partyDir = _vm->_dungeonMan->_g308_partyDir;
 	(cmdType == k1_CommandTurnLeft) ? turnDirLeft(partyDir) : turnDirRight(partyDir);
 
 	// MISSING CODE: process sensors
@@ -453,20 +452,19 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 
 	// DUMMY CODE:
 	DungeonMan &dungeonMan = *_vm->_dungeonMan;
-	CurrMapData &currMap = dungeonMan._currMap;
 
 	switch (cmdType) {
 	case k3_CommandMoveForward:
-		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap._g308_partyDir, 1, 0, currMap._g306_partyPosX, currMap._g307_partyPosY);
+		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 1, 0, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
 		break;
 	case k6_CommandMoveLeft:
-		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap._g308_partyDir, 0, -1, currMap._g306_partyPosX, currMap._g307_partyPosY);
+		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 0, -1, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
 		break;
 	case k5_CommandMoveBackward:
-		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap._g308_partyDir, -1, 0, currMap._g306_partyPosX, currMap._g307_partyPosY);
+		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, -1, 0, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
 		break;
 	case k4_CommandMoveRight:
-		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._currMap._g308_partyDir, 0, 1, currMap._g306_partyPosX, currMap._g307_partyPosY);
+		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 0, 1, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
 		break;
 	default:
 		break;
@@ -496,7 +494,7 @@ void EventManager::commandSetLeader(ChampionIndex champIndex) {
 	}
 	cm._g411_leaderIndex = champIndex;
 	Champion *champion = &cm._champions[cm._g411_leaderIndex];
-	champion->_dir = _vm->_dungeonMan->_currMap._g308_partyDir;
+	champion->_dir = _vm->_dungeonMan->_g308_partyDir;
 	cm._champions[champIndex]._load += _vm->_dungeonMan->getObjectWeight(cm._414_leaderHandObject);
 	if (_vm->indexToOrdinal(champIndex) != cm._g299_candidateChampionOrdinal) {
 		champion->setAttributeFlag(k0x0400_ChampionAttributeIcon, true);
@@ -507,26 +505,24 @@ void EventManager::commandSetLeader(ChampionIndex champIndex) {
 
 void EventManager::commandProcessType80ClickInDungeonViewTouchFrontWall() {
 	DungeonMan &dunMan = *_vm->_dungeonMan;
-	CurrMapData &currMap = dunMan._currMap;
-	int16 mapX = currMap._g306_partyPosX + _vm->_dirIntoStepCountEast[currMap._g308_partyDir];
-	int16 mapY = currMap._g307_partyPosY + _vm->_dirIntoStepCountNorth[currMap._g308_partyDir];
-	if ((mapX >= 0) && (mapX < currMap._g273_width) && (mapY >= 0) && (mapY < currMap._g274_height)) {
-		_vm->_g321_stopWaitingForPlayerInput = _vm->_movsens->sensorIsTriggeredByClickOnWall(mapX, mapY, returnOppositeDir(currMap._g308_partyDir));
+	int16 mapX = dunMan._g306_partyMapX + _vm->_dirIntoStepCountEast[dunMan._g308_partyDir];
+	int16 mapY = dunMan._g307_partyMapY + _vm->_dirIntoStepCountNorth[dunMan._g308_partyDir];
+	if ((mapX >= 0) && (mapX < dunMan._g273_currMapWidth) && (mapY >= 0) && (mapY < dunMan._g274_currMapHeight)) {
+		_vm->_g321_stopWaitingForPlayerInput = _vm->_movsens->sensorIsTriggeredByClickOnWall(mapX, mapY, returnOppositeDir(dunMan._g308_partyDir));
 	}
 }
 
 void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY) {
 	DungeonMan &dunMan = *_vm->_dungeonMan;
 	ChampionMan &champMan = *_vm->_championMan;
-	CurrMapData &currMap = _vm->_dungeonMan->_currMap;
 
 	if (dunMan._g285_squareAheadElement == k17_ElementTypeDoorFront) {
 		if (champMan._g411_leaderIndex == kM1_ChampionNone)
 			return;
 
 		if (champMan._g415_leaderEmptyHanded) {
-			int16 mapX = currMap._g306_partyPosX + _vm->_dirIntoStepCountEast[currMap._g308_partyDir];
-			int16 mapY = currMap._g307_partyPosY + _vm->_dirIntoStepCountNorth[currMap._g308_partyDir];
+			int16 mapX = dunMan._g306_partyMapX + _vm->_dirIntoStepCountEast[dunMan._g308_partyDir];
+			int16 mapY = dunMan._g307_partyMapY + _vm->_dirIntoStepCountNorth[dunMan._g308_partyDir];
 
 			if (Door(dunMan.getSquareFirstThingData(mapX, mapY)).hasButton() &&
 				dunMan._g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn].isPointInside(Common::Point(posX, posY - 33))) {
@@ -601,7 +597,6 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 	ChampionMan &champMan = *_vm->_championMan;
 	InventoryMan &invMan = *_vm->_inventoryMan;
 	DisplayMan &dispMan = *_vm->_displayMan;
-	CurrMapData &currMap = _vm->_dungeonMan->_currMap;
 	DungeonMan &dunMan = *_vm->_dungeonMan;
 
 	uint16 championIndex = champMan._g305_partyChampionCount - 1;
@@ -620,15 +615,15 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 		box._x2 = box._x1 + 66 + 1;
 		dispMan._g578_useByteBoxCoordinates = false;
 		dispMan.clearScreenBox(k0_ColorBlack, box);
-		dispMan.clearScreenBox(k0_ColorBlack, g54_BoxChampionIcons[champMan.championIconIndex(champ->_cell, currMap._g308_partyDir) * 2]);
+		dispMan.clearScreenBox(k0_ColorBlack, g54_BoxChampionIcons[champMan.championIconIndex(champ->_cell, dunMan._g308_partyDir) * 2]);
 		warning("F0457_START_DrawEnabledMenus_CPSF");
 		warning("F0078_MOUSE_ShowPointer");
 		return;
 	}
 
 	champMan._g299_candidateChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
-	int16 mapX = currMap._g306_partyPosX + _vm->_dirIntoStepCountEast[currMap._g308_partyDir];
-	int16 mapY = currMap._g307_partyPosY + _vm->_dirIntoStepCountNorth[currMap._g308_partyDir];
+	int16 mapX = dunMan._g306_partyMapX + _vm->_dirIntoStepCountEast[dunMan._g308_partyDir];
+	int16 mapY = dunMan._g307_partyMapY + _vm->_dirIntoStepCountNorth[dunMan._g308_partyDir];
 
 	for (uint16 slotIndex = k0_ChampionSlotReadyHand; slotIndex < k30_ChampionSlotChest_1; slotIndex++) {
 		Thing thing = champ->getSlot((ChampionSlot)slotIndex);

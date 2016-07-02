@@ -1155,7 +1155,7 @@ void DisplayMan::drawSquareD3R(direction dir, int16 posX, int16 posY) {
 		cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k2_ViewSquare_D3R, k0x0128_CellOrder_DoorPass1_BackRight_BackLeft);
 		memcpy(_g74_tmpBitmap, _wallSetBitMaps[kG705_DoorFrameLeft_D3L], 32 * 44);
 		warning("MISSING CODE: F0103_DUNGEONVIEW_DrawDoorFrameBitmapFlippedHorizontally");
-		if (((Door*)_vm->_dungeonMan->_dunData._g284_thingsData[k0_DoorThingType])[squareAspect[k3_DoorThingIndexAspect]].hasButton()) {
+		if (((Door*)_vm->_dungeonMan->_g284_thingData[k0_DoorThingType])[squareAspect[k3_DoorThingIndexAspect]].hasButton()) {
 			warning("MISSING CODE: F0110_DUNGEONVIEW_DrawDoorButton");
 		}
 		warning("MISSING CODE: F0111_DUNGEONVIEW_DrawDoor");
@@ -1519,13 +1519,13 @@ void DisplayMan::loadWallSet(WallSet set) {
 
 
 void DisplayMan::loadCurrentMapGraphics() {
-	loadFloorSet(_vm->_dungeonMan->_currMap._g269_map->_floorSet);
-	loadWallSet(_vm->_dungeonMan->_currMap._g269_map->_wallSet);
+	loadFloorSet(_vm->_dungeonMan->_g269_currMap->_floorSet);
+	loadWallSet(_vm->_dungeonMan->_g269_currMap->_wallSet);
 
 	// the original loads some flipped walls here, I moved it to loadWallSet
 
 	{
-		int16 val = _vm->_dungeonMan->_currMap._g269_map->_wallSet * k18_StairsGraphicCount + k90_FirstStairs;
+		int16 val = _vm->_dungeonMan->_g269_currMap->_wallSet * k18_StairsGraphicCount + k90_FirstStairs;
 		_g675_stairsNativeBitmapIndex_Up_Front_D3L = val++;
 		_g676_stairsNativeBitmapIndex_Up_Front_D3C = val++;
 		_g677_stairsNativeBitmapIndex_Up_Front_D2L = val++;
@@ -1556,7 +1556,7 @@ void DisplayMan::loadCurrentMapGraphics() {
 
 	uint16 alcoveCount = 0;
 	uint16 fountainCount = 0;
-	Map &currMap = *_vm->_dungeonMan->_currMap._g269_map;
+	Map &currMap = *_vm->_dungeonMan->_g269_currMap;
 
 	_g266_currMapViAltarIndex = -1;
 
