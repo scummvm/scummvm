@@ -33,9 +33,15 @@ static struct BuiltinProto {
 	{ "atan",	Lingo::b_atan, 1},
 	{ "cos",	Lingo::b_cos, 1},
 	{ "exp",	Lingo::b_exp, 1},
+	{ "float",	Lingo::b_float, 1},
 	{ "integer",Lingo::b_integer, 1},
 	{ "log",	Lingo::b_log, 1},
+	{ "pi",		Lingo::b_pi, 0},
+	{ "power",	Lingo::b_power, 2},
 	{ "random",	Lingo::b_random, 1},
+	{ "sin",	Lingo::b_sin, 1},
+	{ "sqrt",	Lingo::b_sqrt, 1},
+	{ "tan",	Lingo::b_tan, 1},
 	{ 0, 0, 0 }
 };
 
@@ -78,6 +84,12 @@ void Lingo::b_exp() {
 	g_lingo->push(d);
 }
 
+void Lingo::b_float() {
+	Datum d = g_lingo->pop();
+	d.toFloat();
+	g_lingo->push(d);
+}
+
 void Lingo::b_integer() {
 	Datum d = g_lingo->pop();
 	d.toInt();
@@ -91,6 +103,22 @@ void Lingo::b_log() {
 	g_lingo->push(d);
 }
 
+void Lingo::b_pi() {
+	Datum d;
+	d.toFloat();
+	d.u.f = 3.14159265358;
+	g_lingo->push(d);
+}
+
+void Lingo::b_power() {
+	Datum d1 = g_lingo->pop();
+	Datum d2 = g_lingo->pop();
+	d1.toFloat();
+	d2.toFloat();
+	d1.u.f = powf(d2.u.f, d1.u.f);
+	g_lingo->push(d1);
+}
+
 void Lingo::b_random() {
 	Datum max = g_lingo->pop();
 	Datum res;
@@ -101,6 +129,27 @@ void Lingo::b_random() {
 	res.type = INT;
 
 	g_lingo->push(res);
+}
+
+void Lingo::b_sin() {
+	Datum d = g_lingo->pop();
+	d.toFloat();
+	d.u.f = sin(d.u.f);
+	g_lingo->push(d);
+}
+
+void Lingo::b_sqrt() {
+	Datum d = g_lingo->pop();
+	d.toFloat();
+	d.u.f = sqrt(d.u.f);
+	g_lingo->push(d);
+}
+
+void Lingo::b_tan() {
+	Datum d = g_lingo->pop();
+	d.toFloat();
+	d.u.f = tan(d.u.f);
+	g_lingo->push(d);
 }
 
 }

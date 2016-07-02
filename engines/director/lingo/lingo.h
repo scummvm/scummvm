@@ -203,9 +203,15 @@ public:
 	static void b_atan();
 	static void b_cos();
 	static void b_exp();
+	static void b_float();
 	static void b_integer();
 	static void b_log();
+	static void b_pi();
+	static void b_power();
 	static void b_random();
+	static void b_sin();
+	static void b_sqrt();
+	static void b_tan();
 
 	void func_mci(Common::String &s);
 	void func_mciwait(Common::String &s);
