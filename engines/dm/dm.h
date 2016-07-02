@@ -134,13 +134,15 @@ public:
 enum {
 	// engine debug channels
 	kDMDebugExample = 1 << 0,
-	kDMDebugUselessCode = 1 << 1
+	kDMDebugUselessCode = 1 << 1,
+	kDMDebugOftenCalledWarning = 2 << 2
 };
 
 class DMEngine : public Engine {
 	void startGame(); // @ F0462_START_StartGame_CPSF
 	void processNewPartyMap(uint16 mapIndex); // @ F0003_MAIN_ProcessNewPartyMap_CPSE
 	void initializeGame(); // @ F0463_START_InitializeGame_CPSADEF
+	void f448_initMemoryManager(); // @ F0448_STARTUP1_InitializeMemoryManager_CPSADEF
 	void gameloop(); // @ F0002_MAIN_GameLoop_CPSDF
 	void initArrays();
 

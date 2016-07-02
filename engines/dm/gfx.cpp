@@ -578,8 +578,7 @@ byte g222_PalChangesCreature_D2[16] = {0, 10, 20, 30, 40, 30, 60, 70, 50, 0, 0, 
 
 
 Viewport gDefultViewPort(0, 0, 320, 200);
-// TODO: I guessed the numbers
-Viewport g296_DungeonViewport(0, 33, 224, 126); // @ G0296_puc_Bitmap_Viewport
+Viewport g296_DungeonViewport(0, 33, 224, 136); // @ G0296_puc_Bitmap_Viewport
 
 byte g17_PalChangesNoChanges[16] = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150}; // @ G0017_auc_Graphic562_PaletteChanges_NoChanges
 
@@ -594,7 +593,7 @@ byte g192_AlcoveOrnIndices[k3_AlcoveOrnCount] = { // @ G0192_auc_Graphic558_Alco
 
 
 DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
-	_vgaBuffer = nullptr;
+	_g348_bitmapScreen = nullptr;
 	_bitmaps = nullptr;
 	_grapItemCount = 0;
 	_packedItemPos = nullptr;
@@ -674,12 +673,16 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_g97_bitmapWall_D1LCR_Native = nullptr;
 	_g98_bitmapWall_D0L_Native = nullptr;
 	_g99_bitmapWall_D0R_Native = nullptr;
+
+	_g322_paletteSwitchingEnabled = false;
+	warning("DUMMY CODE: setting _g304_dungeonViewPaletteIndex");
+	_g304_dungeonViewPaletteIndex = 0;
 }
 
 DisplayMan::~DisplayMan() {
 	delete[] _packedItemPos;
 	delete[] _packedBitmaps;
-	delete[] _vgaBuffer;
+	delete[] _g348_bitmapScreen;
 	if (_bitmaps) {
 		delete[] _bitmaps[0];
 		delete[] _bitmaps;
@@ -722,8 +725,8 @@ void DisplayMan::setUpScreens(uint16 width, uint16 height) {
 	_screenWidth = width;
 	_screenHeight = height;
 	delete[] _g74_tmpBitmap;
-	delete[] _vgaBuffer;
-	_vgaBuffer = new byte[_screenWidth * _screenHeight];
+	delete[] _g348_bitmapScreen;
+	_g348_bitmapScreen = new byte[_screenWidth * _screenHeight];
 	clearScreen(k0_ColorBlack);
 }
 
@@ -943,6 +946,20 @@ void DisplayMan::f461_allocateFlippedWallBitmaps() {
 	_g94_bitmapWall_D0R_Flipped = new byte[32 * 136];
 }
 
+void DisplayMan::f565_viewportSetPalette(uint16* middleScreenPalette, uint16* topAndBottomScreen) {
+	if (middleScreenPalette && topAndBottomScreen)
+		debugC(kDMDebugOftenCalledWarning, "MISSING CODE: F0508_AMIGA_BuildPaletteChangeCopperList");
+
+	f566_viewportBlitToScreen();
+}
+
+void DisplayMan::f566_viewportBlitToScreen() {
+	warning("MISSING FUNCTIONALITY: using correct colorpalette");
+	Box box(0, 33, 223, 135);
+
+	blitToBitmap(_g296_bitmapViewport, k112_byteWidthViewport * 2, 0, 0, _g348_bitmapScreen, k160_byteWidthScreen * 2, box, k255_ColorNoTransparency);
+}
+
 void DisplayMan::loadPalette(uint16 *palette) {
 	byte colorPalette[16 * 3];
 	for (int i = 0; i < 16; ++i) {
@@ -1033,7 +1050,7 @@ void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcHeight
 void DisplayMan::blitBoxFilledWithMaskedBitmapToScreen(byte* src, byte* mask, byte* tmp, Box& box,
 													   int16 lastUnitIndex, int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
 													   int16 xPos, int16 yPos, int16 destHeight, int16 height2, Viewport& viewport) {
-	blitBoxFilledWithMaskedBitmap(src, _vgaBuffer, mask, tmp, box, lastUnitIndex, firstUnitIndex, _screenWidth, transparent, xPos, yPos, _screenHeight, height2, viewport);
+	blitBoxFilledWithMaskedBitmap(src, _g348_bitmapScreen, mask, tmp, box, lastUnitIndex, firstUnitIndex, _screenWidth, transparent, xPos, yPos, _screenHeight, height2, viewport);
 }
 
 void DisplayMan::flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height) {
@@ -1086,12 +1103,42 @@ byte* DisplayMan::getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int
 
 
 void DisplayMan::updateScreen() {
-	_vm->_system->copyRectToScreen(_vgaBuffer, _screenWidth, 0, 0, _screenWidth, _screenHeight);
+	_vm->_system->copyRectToScreen(_g348_bitmapScreen, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 	_vm->_system->updateScreen();
 }
 
+void DisplayMan::f97_drawViewport(int16 palSwitchingRequestedState) {
+	static uint16 *gK10_dungeonViewCurrentPalette; // @ K0010_pui_DungeonViewCurrentPalette
+
+	// ignored code F0510_AMIGA_WaitBottomOfViewPort
+	if (palSwitchingRequestedState == k2_viewportAsBeforeSleepOrFreezeGame)
+		palSwitchingRequestedState = _g322_paletteSwitchingEnabled ? 1 : 0;
+
+	if (_g342_refreshDungeonViewPaleteRequested) {
+		gK10_dungeonViewCurrentPalette = g21_PalDungeonView[_g304_dungeonViewPaletteIndex];
+		_g342_refreshDungeonViewPaleteRequested = false;
+		if (palSwitchingRequestedState == k0_viewportNotDungeonView) {
+			_g322_paletteSwitchingEnabled = true;
+		} else {
+			_g322_paletteSwitchingEnabled = false;
+		}
+	}
+
+	if (palSwitchingRequestedState != (_g322_paletteSwitchingEnabled ? 1 : 0)) {
+		if (palSwitchingRequestedState) {
+			f565_viewportSetPalette(gK10_dungeonViewCurrentPalette, _g347_paletteTopAndBottomScreen);
+			_g322_paletteSwitchingEnabled = true;
+		} else {
+			f565_viewportSetPalette(_g347_paletteTopAndBottomScreen, _g347_paletteTopAndBottomScreen);
+			_g322_paletteSwitchingEnabled = false;
+		}
+	} else {
+		f565_viewportSetPalette(nullptr, nullptr);
+	}
+}
+
 byte *DisplayMan::getCurrentVgaBuffer() {
-	return _vgaBuffer;
+	return _g348_bitmapScreen;
 }
 
 uint16 DisplayMan::getWidth(uint16 index) {
@@ -1685,6 +1732,8 @@ void DisplayMan::loadCurrentMapGraphics() {
 		if (replColorOrdinal)
 			applyCreatureReplColors(10, _vm->ordinalToIndex(replColorOrdinal));
 	}
+
+	_g342_refreshDungeonViewPaleteRequested = true;
 }
 
 void DisplayMan::applyCreatureReplColors(int replacedColor, int replacementColor) {
@@ -2965,7 +3014,7 @@ byte* DisplayMan::getDerivedBitmap(int16 derivedBitmapIndex) {
 void DisplayMan::clearScreenBox(Color color, Box &box, Viewport &viewport) {
 	uint16 width = box._x2 - box._x1;
 	for (int y = box._y1 + viewport._posY; y < box._y2 + viewport._posY; ++y)
-		memset(_vgaBuffer + y * _screenWidth + box._x1 + viewport._posX, color, sizeof(byte) * width);
+		memset(_g348_bitmapScreen + y * _screenWidth + box._x1 + viewport._posX, color, sizeof(byte) * width);
 }
 
 void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,

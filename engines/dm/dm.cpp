@@ -166,8 +166,14 @@ void DMEngine::initializeGame() {
 	warning("MISSING CODE: F0357_COMMAND_DiscardAllInput");
 }
 
+	void DMEngine::f448_initMemoryManager()
+	{
+		warning("STUB FUNCTION");
+		for (uint16 i = 0; i < 16; ++i)
+			_displayMan->_g347_paletteTopAndBottomScreen[i] = g21_PalDungeonView[0][i];
+	}
 
-void DMEngine::startGame() {
+	void DMEngine::startGame() {
 	_g331_pressingEye = false;
 	_g332_stopPressingEye = false;
 	_g333_pressingMouth = false;

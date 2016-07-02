@@ -408,13 +408,21 @@ extern Viewport g296_DungeonViewport;
 #define k15_DoorOrnDestroyedMask 15 // @ C15_DOOR_ORNAMENT_DESTROYED_MASK
 #define k16_DoorOrnThivesEyeMask 16 // @ C16_DOOR_ORNAMENT_THIEVES_EYE_MASK
 
+#define k0_viewportNotDungeonView 0 // @ C0_VIEWPORT_NOT_DUNGEON_VIEW               
+#define k1_viewportDungeonView 1 // @ C1_VIEWPORT_DUNGEON_VIEW                   
+#define k2_viewportAsBeforeSleepOrFreezeGame 2 // @ C2_VIEWPORT_AS_BEFORE_SLEEP_OR_FREEZE_GAME 
+
+
+#define k112_byteWidthViewport 112 // @ C112_BYTE_WIDTH_VIEWPORT
+#define k136_heightViewport 136 // @ C136_HEIGHT_VIEWPORT 
+
+#define k160_byteWidthScreen 160 // @ C160_BYTE_WIDTH_SCREEN
+#define k200_heightScreen 200 // @ C200_HEIGHT_SCREEN   
+
 class DisplayMan {
 	friend class DM::TextMan;
 
 	DMEngine *_vm;
-	uint16 _screenWidth;
-	uint16 _screenHeight;
-	byte *_vgaBuffer;
 
 	/// Related to graphics.dat file
 	uint16 _grapItemCount; // @ G0632_ui_GraphicCount
@@ -433,6 +441,9 @@ class DisplayMan {
 	void loadIntoBitmap(uint16 index, byte *destBitmap); // @ F0466_EXPAND_GraphicToBitmap
 	void unpackGraphics();
 	void loadFNT1intoBitmap(uint16 index, byte *destBitmap);
+
+	void f565_viewportSetPalette(uint16 * middleScreenPalette, uint16 * topAndBottomScreen); // @ F0565_VIEWPORT_SetPalette
+	void f566_viewportBlitToScreen(); // @ F0566_VIEWPORT_BlitToScreen
 
 	void drawFloorPitOrStairsBitmapFlippedHorizontally(uint16 nativeIndex, Frame &frame); // @ F0105_DUNGEONVIEW_DrawFloorPitOrStairsBitmapFlippedHorizontally
 	void drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &frame); // @ F0104_DUNGEONVIEW_DrawFloorPitOrStairsBitmap
@@ -513,9 +524,17 @@ class DisplayMan {
 
 	bool _g76_useFlippedWallAndFootprintsBitmap; // @ G0076_B_UseFlippedWallAndFootprintsBitmaps
 public:
+	uint16 _screenWidth;
+	uint16 _screenHeight;
+	byte *_g348_bitmapScreen; // @ G0348_pl_Bitmap_Screen
 	byte* _g296_bitmapViewport; // @ G0296_puc_Bitmap_Viewport
+
 	// some methods use this for a stratchpad, don't make assumptions about content between function calls
 	byte *_g74_tmpBitmap; // @ G0074_puc_Bitmap_Temporary
+	bool _g322_paletteSwitchingEnabled; // @ G0322_B_PaletteSwitchingEnabled
+	bool _g342_refreshDungeonViewPaleteRequested; // @ G0342_B_RefreshDungeonViewPaletteRequested
+	int16 _g304_dungeonViewPaletteIndex; // @ G0304_i_DungeonViewPaletteIndex
+	uint16 _g347_paletteTopAndBottomScreen[16]; // @ G0347_aui_Palette_TopAndBottomScreen
 
 	explicit DisplayMan(DMEngine *dmEngine);
 	~DisplayMan();
@@ -561,7 +580,7 @@ public:
 											   int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
 											   int16 xPos, int16 yPos, int16 destHeight, int16 height2, Viewport &viewport = g296_DungeonViewport); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
 
-	void flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height);
+	void flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height); // @ F0103_DUNGEONVIEW_DrawDoorFrameBitmapFlippedHorizontally
 	void flipBitmapVertical(byte *bitmap, uint16 width, uint16 height);
 	byte *getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int16 &returnPixelWidth, int16 &returnHeight); // @ F0114_DUNGEONVIEW_GetExplosionBitmap
 
@@ -570,6 +589,7 @@ public:
 	void clearScreenBox(Color color, Box &box, Viewport &viewport = gDefultViewPort); // @ D24_FillScreenBox, F0550_VIDEO_FillScreenBox
 	void drawDungeon(direction dir, int16 posX, int16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
 	void updateScreen();
+	void f97_drawViewport(int16 palSwitchingRequestedState); // @ F0097_DUNGEONVIEW_DrawViewport
 
 	byte* getBitmap(uint16 index);
 	Common::MemoryReadStream getCompressedData(uint16 index);

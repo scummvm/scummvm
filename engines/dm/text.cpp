@@ -66,7 +66,7 @@ void TextMan::printTextToBitmap(byte* destBitmap, uint16 destPixelWidth, uint16 
 }
 
 void TextMan::printTextToScreen(uint16 destX, uint16 destY, Color textColor, Color bgColor, const char* text, Viewport &viewport) {
-	printTextToBitmap(_vm->_displayMan->_vgaBuffer, _vm->_displayMan->_screenWidth, destX, destY, textColor, bgColor, text, _vm->_displayMan->_screenHeight, viewport);
+	printTextToBitmap(_vm->_displayMan->_g348_bitmapScreen, _vm->_displayMan->_screenWidth, destX, destY, textColor, bgColor, text, _vm->_displayMan->_screenHeight, viewport);
 }
 
 void TextMan::printToViewport(int16 posX, int16 posY, Color textColor, const char* text, Color bgColor) {
@@ -82,7 +82,7 @@ void TextMan::printWithTrailingSpaces(byte* destBitmap, int16 destPixelWidth, in
 }
 
 void TextMan::printWithTrailingSpacesToScreen(int16 destX, int16 destY, Color textColor, Color bgColor, const char* text, int16 strLenght, Viewport& viewport) {
-	printWithTrailingSpaces(_vm->_displayMan->_vgaBuffer, _vm->_displayMan->_screenWidth, destX, destY,
+	printWithTrailingSpaces(_vm->_displayMan->_g348_bitmapScreen, _vm->_displayMan->_screenWidth, destX, destY,
 							textColor, bgColor, text, strLenght, _vm->_displayMan->_screenHeight, viewport);
 }
 
