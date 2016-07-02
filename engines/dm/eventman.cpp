@@ -614,8 +614,8 @@ void EventManager::f282_commandProcessCommands160To162ClickInResurrectReincarnat
 		box._x1 = championIndex * k69_ChampionStatusBoxSpacing;
 		box._x2 = box._x1 + 66 + 1;
 		dispMan._g578_useByteBoxCoordinates = false;
-		dispMan.D24_clearScreenBox(k0_ColorBlack, box);
-		dispMan.D24_clearScreenBox(k0_ColorBlack, g54_BoxChampionIcons[champMan.M26_championIconIndex(champ->_cell, dunMan._g308_partyDir) * 2]);
+		dispMan.D24_fillScreenBox(box, k0_ColorBlack);
+		dispMan.D24_fillScreenBox(g54_BoxChampionIcons[champMan.M26_championIconIndex(champ->_cell, dunMan._g308_partyDir) * 2], k0_ColorBlack);
 		warning("F0457_START_DrawEnabledMenus_CPSF");
 		warning("F0078_MOUSE_ShowPointer");
 		return;

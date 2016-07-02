@@ -90,7 +90,7 @@ void MenuMan::f386_drawActionIcon(ChampionIndex championIndex) {
 	box._y2 = 120 + 1;
 	dm._g578_useByteBoxCoordinates = false;
 	if (!champion._currHealth) {
-		dm.D24_clearScreenBox(k0_ColorBlack, box);
+		dm.D24_fillScreenBox(box, k0_ColorBlack);
 		return;
 	}
 	byte *bitmapIcon = dm._g74_tmpBitmap;
@@ -107,7 +107,7 @@ void MenuMan::f386_drawActionIcon(ChampionIndex championIndex) {
 	_vm->_objectMan->f36_extractIconFromBitmap(iconIndex, bitmapIcon);
 	dm.f129_blitToBitmapShrinkWithPalChange(bitmapIcon, 16, 16, bitmapIcon, 16, 16, g498_PalChangesActionAreaObjectIcon);
 T0386006:
-	dm.D24_clearScreenBox(k4_ColorCyan, box);
+	dm.D24_fillScreenBox(box, k4_ColorCyan);
 	Box box2;
 	box2._x1 = box._x1 + 2;
 	box2._x2 = box._x2 - 2; // no need to add +1 for exclusive boundaries, box already has that
@@ -198,7 +198,7 @@ void MenuMan::f387_drawActionArea() {
 
 	warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
 	dispMan._g578_useByteBoxCoordinates = false;
-	dispMan.D24_clearScreenBox(k0_ColorBlack, g1_BoxActionArea);
+	dispMan.D24_fillScreenBox(g1_BoxActionArea, k0_ColorBlack);
 	if (_g509_actionAreaContainsIcons) {
 		for (uint16 champIndex = k0_ChampionFirst; champIndex < champMan._g305_partyChampionCount; ++champIndex)
 			f386_drawActionIcon((ChampionIndex)champIndex);
@@ -248,7 +248,7 @@ void MenuMan::f393_drawSpellAreaControls(ChampionIndex champIndex) {
 	for (uint16 i = 0; i < 4; ++i)
 		champCurrHealth[i] = champMan._gK71_champions[i]._currHealth;
 	warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
-	dispMan.D24_clearScreenBox(k0_ColorBlack, g504_BoxSpellAreaControls);
+	dispMan.D24_fillScreenBox(g504_BoxSpellAreaControls, k0_ColorBlack);
 	int16 champCount = champMan._g305_partyChampionCount;
 	switch (champIndex) {
 	case k0_ChampionFirst:
@@ -352,7 +352,7 @@ void MenuMan::f394_setMagicCasterAndDrawSpellArea(int16 champIndex) {
 		champMan._g514_magicCasterChampionIndex = kM1_ChampionNone;
 		warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
 		dispMan._g578_useByteBoxCoordinates = false;
-		dispMan.D24_clearScreenBox(k0_ColorBlack, g0_BoxSpellArea);
+		dispMan.D24_fillScreenBox(g0_BoxSpellArea, k0_ColorBlack);
 		warning("MISSING CODE: F0078_MOUSE_ShowPointer");
 		return;
 	}

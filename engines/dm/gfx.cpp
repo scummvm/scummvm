@@ -725,7 +725,7 @@ void DisplayMan::setUpScreens(uint16 width, uint16 height) {
 	delete[] _g74_tmpBitmap;
 	delete[] _g348_bitmapScreen;
 	_g348_bitmapScreen = new byte[_screenWidth * _screenHeight];
-	clearScreen(k0_ColorBlack);
+	fillScreen(k0_ColorBlack);
 }
 
 void DisplayMan::f479_loadGraphics() {
@@ -1027,7 +1027,7 @@ void DisplayMan::f132_blitToBitmap(byte *srcBitmap, byte *destBitmap, Box &box, 
 		}
 }
 
-void DisplayMan::D24_clearScreenBox(Color color, Box &box) {
+void DisplayMan::D24_fillScreenBox(Box &box, Color color) {
 	uint16 width = box._x2 - box._x1;
 	for (int16 y = box._y1; y < box._y2; ++y)
 		memset(_g348_bitmapScreen + y * _screenWidth + box._x1, color, sizeof(byte) * width);
@@ -1559,7 +1559,7 @@ void DisplayMan::f128_drawDungeon(direction dir, int16 posX, int16 posY) {
 	f97_drawViewport((_vm->_dungeonMan->_g309_partyMapIndex != k255_mapIndexEntrance) ? 1 : 0);
 }
 
-void DisplayMan::clearScreen(Color color) {
+void DisplayMan::fillScreen(Color color) {
 	memset(getCurrentVgaBuffer(), color, sizeof(byte) * _screenWidth * _screenHeight);
 }
 

@@ -561,9 +561,9 @@ public:
 	byte *f114_getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int16 &returnPixelWidth, int16 &returnHeight); // @ F0114_DUNGEONVIEW_GetExplosionBitmap
 
 	void f134_fillBitmap(byte *bitmap, uint16 width, uint16 height, Color color); // @ F0134_VIDEO_FillBitmap
-	void clearScreen(Color color);
-	void D24_clearScreenBox(Color color, Box &box); // @ D24_FillScreenBox, F0550_VIDEO_FillScreenBox
-	void f135_fillBoxBitmap(byte *destBitmap, Box &box, Color color, int16 pixelWidth, int16 height);
+	void fillScreen(Color color);
+	void D24_fillScreenBox(Box &box, Color color); // @ D24_FillScreenBox, F0550_VIDEO_FillScreenBox
+	void f135_fillBoxBitmap(byte *destBitmap, Box &box, Color color, int16 pixelWidth, int16 height); // @ F0135_VIDEO_FillBox
 	void f128_drawDungeon(direction dir, int16 posX, int16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
 	void updateScreen();
 	void f97_drawViewport(int16 palSwitchingRequestedState); // @ F0097_DUNGEONVIEW_DrawViewport

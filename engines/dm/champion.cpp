@@ -675,12 +675,12 @@ void ChampionMan::f287_drawChampionBarGraphs(ChampionIndex champIndex) {
 		if (barGraphHeight < 25) {
 			box._y1 = 2;
 			box._y1 = 27 - barGraphHeight + 1;
-			_vm->_displayMan->D24_clearScreenBox(g46_ChampionColor[champIndex], box);
+			_vm->_displayMan->D24_fillScreenBox(box, g46_ChampionColor[champIndex]);
 		}
 		if (barGraphHeight) {
 			box._y1 = 27 - barGraphHeight;
 			box._y2 = 26 + 1;
-			_vm->_displayMan->D24_clearScreenBox(g46_ChampionColor[champIndex], box);
+			_vm->_displayMan->D24_fillScreenBox(box, g46_ChampionColor[champIndex]);
 		}
 		box._x1 += 7;
 		box._x2 += 7;
@@ -738,7 +738,7 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 		box._x1 = champStatusBoxX;
 		box._x2 = box._x1 + 66 + 1;
 		if (champ->_currHealth) {
-			dispMan.D24_clearScreenBox(k12_ColorDarkestGray, box);
+			dispMan.D24_fillScreenBox(box, k12_ColorDarkestGray);
 			int16 nativeBitmapIndices[3];
 			for (int16 i = 0; i < 3; ++i)
 				nativeBitmapIndices[i] = 0;
@@ -786,7 +786,7 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 			box._y2 = 6 + 1;
 			box._x1 = champStatusBoxX;
 			box._x2 = box._x1 + 42 + 1;
-			dispMan.D24_clearScreenBox(k1_ColorDarkGary, box);
+			dispMan.D24_fillScreenBox(box, k1_ColorDarkGary);
 			_vm->_textMan->f53_printToLogicalScreen(champStatusBoxX + 1, 5, AL_0_colorIndex, k1_ColorDarkGary, champ->_name);
 		}
 	}
@@ -852,7 +852,7 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 		int16 AL_0_championIconIndex = M26_championIconIndex(champ->_cell, _vm->_dungeonMan->_g308_partyDir);
 
 		if ((champAttributes & k28_ChampionIcons) && (eventMan._g599_useChampionIconOrdinalAsMousePointerBitmap != _vm->M0_indexToOrdinal(AL_0_championIconIndex))) {
-			dispMan.D24_clearScreenBox(g46_ChampionColor[champIndex], g54_BoxChampionIcons[AL_0_championIconIndex]);
+			dispMan.D24_fillScreenBox(g54_BoxChampionIcons[AL_0_championIconIndex], g46_ChampionColor[champIndex]);
 			dispMan.f132_blitToBitmap(dispMan.f489_getBitmap(k28_ChampionIcons),
 									  dispMan._g348_bitmapScreen,
 									  g54_BoxChampionIcons[AL_0_championIconIndex << 2],

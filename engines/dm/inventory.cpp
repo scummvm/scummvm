@@ -138,7 +138,7 @@ void InventoryMan::f343_drawPanelHorizontalBar(int16 x, int16 y, int16 pixelWidt
 	box._y1 = y;
 	box._y2 = box._y1 + 6 + 1;
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
-	_vm->_displayMan->D24_clearScreenBox(color, box);
+	_vm->_displayMan->D24_fillScreenBox(box, color);
 }
 
 void InventoryMan::f344_drawPanelFoodOrWaterBar(int16 amount, int16 y, Color color) {
