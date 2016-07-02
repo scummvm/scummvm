@@ -1444,7 +1444,7 @@ void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
 
 	// NOTE: this can hold every bitmap, width and height is "flexible"
 	byte  *tmpBitmap = new byte[305 * 111];
-	clearBitmap(tmpBitmap, 305, 111, k10_ColorFlesh);
+	f134_fillBitmap(tmpBitmap, 305, 111, k10_ColorFlesh);
 
 	for (int16 i = 0; i < 6; ++i)
 		_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[i].setToZero();
@@ -1530,7 +1530,7 @@ void DisplayMan::clearScreen(Color color) {
 	memset(getCurrentVgaBuffer(), color, sizeof(byte) * _screenWidth * _screenHeight);
 }
 
-void DisplayMan::clearBitmap(byte *bitmap, uint16 width, uint16 height, Color color) {
+void DisplayMan::f134_fillBitmap(byte *bitmap, uint16 width, uint16 height, Color color) {
 	memset(bitmap, color, sizeof(byte) * width * height);
 }
 
@@ -1586,12 +1586,12 @@ void DisplayMan::loadCurrentMapGraphics() {
 
 		f99_copyBitmapAndFlipHorizontal(_g95_bitmapWall_D3LCR_Native = _g698_bitmapWallSet_Wall_D3LCR, _g74_tmpBitmap,
 										g163_FrameWalls[k0_ViewSquare_D3C]._srcWidth, g163_FrameWalls[k0_ViewSquare_D3C]._srcHeight);
-		clearBitmap(_g90_bitmapWall_D3LCR_Flipped, 128, 51, k10_ColorFlesh);
+		f134_fillBitmap(_g90_bitmapWall_D3LCR_Flipped, 128, 51, k10_ColorFlesh);
 		blitToBitmap(_g74_tmpBitmap, 128, 11, 0, _g90_bitmapWall_D3LCR_Flipped, 128, g161_BoxWallBitmap_D3LCR, k255_ColorNoTransparency);
 
 		f99_copyBitmapAndFlipHorizontal(_g96_bitmapWall_D2LCR_Native = _g699_bitmapWallSet_Wall_D2LCR, _g74_tmpBitmap,
 										g163_FrameWalls[k3_ViewSquare_D2C]._srcWidth, g163_FrameWalls[k3_ViewSquare_D2C]._srcHeight);
-		clearBitmap(_g91_bitmapWall_D2LCR_Flipped, 144, 71, k10_ColorFlesh);
+		f134_fillBitmap(_g91_bitmapWall_D2LCR_Flipped, 144, 71, k10_ColorFlesh);
 		blitToBitmap(_g74_tmpBitmap, 144, 8, 0, _g91_bitmapWall_D2LCR_Flipped, 144, g162_BoxWallBitmap_D2LCR, k255_ColorNoTransparency);
 
 		f99_copyBitmapAndFlipHorizontal(_g97_bitmapWall_D1LCR_Native = _g700_bitmapWallSet_Wall_D1LCR, _g92_bitmapWall_D1LCR_Flipped,

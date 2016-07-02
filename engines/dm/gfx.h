@@ -565,11 +565,12 @@ public:
 	void flipBitmapVertical(byte *bitmap, uint16 width, uint16 height);
 	byte *getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int16 &returnPixelWidth, int16 &returnHeight); // @ F0114_DUNGEONVIEW_GetExplosionBitmap
 
-	void clearBitmap(byte *bitmap, uint16 width, uint16 height, Color color);
+	void f134_fillBitmap(byte *bitmap, uint16 width, uint16 height, Color color); // @ F0134_VIDEO_FillBitmap
 	void clearScreen(Color color);
-	void clearScreenBox(Color color, Box &box, Viewport &viewport = gDefultViewPort); // @ D24_FillScreenBox
+	void clearScreenBox(Color color, Box &box, Viewport &viewport = gDefultViewPort); // @ D24_FillScreenBox, F0550_VIDEO_FillScreenBox
 	void drawDungeon(direction dir, int16 posX, int16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
 	void updateScreen();
+
 	byte* getBitmap(uint16 index);
 	Common::MemoryReadStream getCompressedData(uint16 index);
 	uint32 getCompressedDataSize(uint16 index);
