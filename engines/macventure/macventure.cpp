@@ -280,7 +280,7 @@ bool MacVentureEngine::printTexts() {
 	return false;
 }
 
-void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, Common::Event event, bool isDoubleClick) {
+void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, bool shiftPressed, bool isDoubleClick) {
 	if (win == kExitsWindow) {
 		win = kMainGameWindow;
 	}
@@ -289,7 +289,7 @@ void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, Comm
 
 	const WindowData &windata = _gui->getWindowData(win);
 
-	if (event.kbd.flags & Common::KBD_SHIFT) {
+	if (shiftPressed) {
 		// Do shift ;)
 	} else {
 		if (_selectedControl && _currentSelection.size() > 0 && getInvolvedObjects() > 1) {
@@ -311,23 +311,45 @@ void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, Comm
 			if (objID > 0) {
 				int i = findObjectInArray(objID, _currentSelection);
 
-				/*if (event.type == Common::EVENT  isDoubleClick(event)) { // no double click for now
-					if (!found)
-						unSelectAll();
-					selectObj(obj);
-					doubleClickObject(obj, win, event, canDrag);
-				} else {*/
-				if (i >= 0)
-					unselectAll();
-				selectObject(objID);
-				if (getInvolvedObjects() == 1)
-					_cmdReady = true;
-				preparedToRun();
-				//singleClickObject(objID, win, event, canDrag);
-				//}
+				if (isDoubleClick) { // no double click for now
+					if (i >= 0)
+						unselectAll();
+					selectObject(objID);
+					if (!_cmdReady)
+					{
+						selectPrimaryObject(objID);
+						if (_selectedControl == kNoCommand)	{
+							_selectedControl = kActivateObject;							
+							if (_activeControl)
+								_activeControl = kNoCommand;
+							_activeControl = kActivateObject;							
+							_cmdReady = true;
+						}
+					}
+					preparedToRun();
+					//doubleClickObject(objID, win, event, canDrag);
+					debug("Double click");
+				} else {
+					if (i >= 0)
+						unselectAll();
+					selectObject(objID);
+					if (getInvolvedObjects() == 1)
+						_cmdReady = true;
+					preparedToRun();
+					//singleClickObject(objID, win, event, canDrag);
+				}
 			}
 		}
 	}
+}
+
+void MacVentureEngine::handleObjectDrop(ObjID objID, Common::Point delta, ObjID newParent) {
+	_destObject = newParent;
+	updateDelta(delta);
+	selectControl(kControlOperate);
+	activateCommand(kControlOperate);
+	refreshReady();
+	preparedToRun();
 }
 
 void MacVentureEngine::updateDelta(Common::Point newPos) {
@@ -508,6 +530,7 @@ void MacVentureEngine::selectObject(ObjID objID) {
 		_selectedObjs.push_back(objID);
 		highlightExit(objID);
 	}
+	_deltaPoint = getObjPosition(objID);
 }
 
 void MacVentureEngine::unselectObject(ObjID objID) {

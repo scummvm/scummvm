@@ -179,7 +179,8 @@ public:
 	void runObjQueue();
 	bool printTexts();
 
-	void handleObjectSelect(ObjID objID, WindowReference win, Common::Event event, bool isDoubleClick);
+	void handleObjectSelect(ObjID objID, WindowReference win, bool shiftPressed, bool isDoubleClick);
+	void handleObjectDrop(ObjID objID, Common::Point delta, ObjID newParent);
 	void updateDelta(Common::Point newPos);
 	void focusObjWin(ObjID objID);
 	void updateWindow(WindowReference winID);

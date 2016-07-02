@@ -39,6 +39,7 @@ using namespace Graphics::MacWindowConstants;
 class MacVentureEngine;
 typedef uint32 ObjID;
 
+class Cursor;
 class CommandButton;
 class ImageAsset;
 
@@ -151,6 +152,14 @@ struct DraggedObj {
 	bool hasMoved;
 };
 
+enum CursorState {
+	// HACK, I should define a proper FSM for this
+	kCursorIdle,
+	kCursorSingleClick, // Triggered when mouse goes up
+	kCursorSingleClickAwait, // Triggered when we are in single click and mouse goes down
+	kCursorSingleClickTrap, // Trap state, for when we are in await, and the timer goes off
+	kCursorDoubleClick
+};
 
 class Gui {
 
@@ -183,11 +192,17 @@ public:
 	bool processDiplomaEvents(WindowClick click, Common::Event &event);
 	bool processInventoryEvents(WindowClick click, Common::Event &event);
 
+	void processCursorTick();
+
 	//bool processClickObject(ObjID obj, WindowReference win, Common::Event event, bool canDrag);
 
 	const WindowData& getWindowData(WindowReference reference);
 
 	const Graphics::Font& getCurrentFont();
+
+	// Clicks
+	void handleSingleClick(Common::Point pos);
+	void handleDoubleClick(Common::Point pos);
 
 	// Modifiers
 	void bringToFront(WindowReference window);
@@ -230,6 +245,8 @@ private: // Attributes
 	Graphics::ManagedSurface _draggedSurface;
 	DraggedObj _draggedObj;
 
+	Cursor *_cursor;
+
 private: // Methods
 
 	// Initializers
@@ -257,6 +274,7 @@ private: // Methods
 	void drawWindowTitle(WindowReference target, Graphics::ManagedSurface *surface);
 
 	// Finders
+	WindowReference findWindowAtPoint(Common::Point point);
 	Common::Point getWindowSurfacePos(WindowReference reference);
 	WindowData& findWindowData(WindowReference reference);
 	Graphics::MacWindow *findWindow(WindowReference reference);
@@ -265,8 +283,98 @@ private: // Methods
 	void checkSelect(ObjID obj, const Common::Event &event, const Common::Rect &clickRect, WindowReference ref);
 	bool isRectInsideObject(Common::Rect target, ObjID obj);
 	void selectDraggable(ObjID child, WindowReference origin, Common::Point startPos);
-	void handleDragRelease(Common::Point pos);
+	void handleDragRelease(Common::Point pos, bool shiftPressed, bool isDoubleClick);
 	Common::Rect calculateClickRect(Common::Point clickPos, Common::Rect windowBounds);
+
+};
+
+class Cursor {
+enum ClickState {
+	kCursorIdle = 0,
+	kCursorSC = 1,
+	kCursorNoTick = 2,
+	kCursorSCTrans = 3,
+	kCursorExecSC = 4,
+	kCursorExecDC = 5,
+	kCursorStateCount
+};
+
+enum CursorInput { // Columns for the FSM transition table
+	kTickCol = 0,
+	kButtonDownCol = 1,
+	kButtonUpCol = 2,
+	kCursorInputCount
+};
+
+
+ClickState _transitionTable[kCursorStateCount][kCursorInputCount] = {
+	/* kCursorIdle */	{kCursorIdle,	kCursorIdle,	kCursorSC		},
+	/* kCursorSC */		{kCursorExecSC,	kCursorSCTrans,	kCursorExecDC	},
+	/* IgnoreTick */	{kCursorNoTick, kCursorNoTick,	kCursorExecSC	},
+	/* SC Transition */	{kCursorNoTick,	kCursorNoTick,	kCursorExecDC	},
+	/* Exec SC */		{kCursorIdle,	kCursorExecSC,	kCursorExecSC	},	// Trap state
+	/* Exec DC */		{kCursorIdle,	kCursorExecDC,	kCursorExecDC	}	// Trap state
+};
+
+public:
+	Cursor(Gui *gui) {
+		_gui = gui;
+		_state = kCursorIdle;
+	}
+
+	~Cursor() {}
+
+	void tick() {
+		executeState();
+		changeState(kTickCol);
+	}
+
+	bool processEvent(const Common::Event &event) {
+		executeState();
+
+		if (event.type == Common::EVENT_MOUSEMOVE) {
+			_pos = event.mouse;
+			return true;
+		}
+		if (event.type == Common::EVENT_LBUTTONDOWN) {
+			changeState(kButtonDownCol);
+			return true;
+		}
+		if (event.type == Common::EVENT_LBUTTONUP) {
+			changeState(kButtonUpCol);
+			return true;
+		}
+
+		return false;
+	}
+
+	Common::Point getPos() {
+		return _pos;
+	}
+
+private:
+
+	void changeState(CursorInput input) {
+		debug("Change cursor state: [%d] -> [%d]", _state, _transitionTable[_state][input]);
+		_state = _transitionTable[_state][input];
+	}
+
+	void executeState() {
+		if (_state == kCursorExecSC) {
+			_gui->handleSingleClick(_pos);
+			changeState(kTickCol);
+		} else if (_state == kCursorExecDC) {
+			_gui->handleDoubleClick(_pos);
+			changeState(kTickCol);
+		}
+	}
+
+
+private:
+	Gui *_gui;
+
+	Common::Point _pos;
+	ClickState _state;
 
 };
 
