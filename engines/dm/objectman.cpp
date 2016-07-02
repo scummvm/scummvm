@@ -196,7 +196,7 @@ void ObjectMan::f36_extractIconFromBitmap(uint16 iconIndex, byte *destBitmap) {
 	iconIndex -= g26_IconGraphicFirstIndex[i];
 	_vm->_displayMan->_g578_useByteBoxCoordinates = true;
 	Box box(0, 0, 15, 15);
-	_vm->_displayMan->f132_blitToBitmap(srcBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, destBitmap, 16, box, k255_ColorNoTransparency);
+	_vm->_displayMan->f132_blitToBitmap(srcBitmap, destBitmap, box, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, 256, 16, k255_ColorNoTransparency);
 }
 
 void ObjectMan::f38_drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
@@ -224,12 +224,10 @@ void ObjectMan::f38_drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 	if (slotBoxIndex >= k8_SlotBoxInventoryFirstSlot) {
-		_vm->_displayMan->f132_blitToBitmap(iconsBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0,
-									   _vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport * 2, box, k255_ColorNoTransparency);
+		_vm->_displayMan->f132_blitToBitmap(iconsBitmap, _vm->_displayMan->_g296_bitmapViewport, box, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, 256, k112_byteWidthViewport * 2, k255_ColorNoTransparency);
 
 	} else {
-		_vm->_displayMan->f132_blitToBitmap(iconsBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0,
-									   _vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen * 2, box, k255_ColorNoTransparency);
+		_vm->_displayMan->f132_blitToBitmap(iconsBitmap, _vm->_displayMan->_g348_bitmapScreen, box, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, 256, k160_byteWidthScreen * 2, k255_ColorNoTransparency);
 	}
 }
 
@@ -248,7 +246,7 @@ void ObjectMan::f34_drawLeaderObjectName(Thing thing) {
 		objName = _g352_objectNames[iconIndex];
 	}
 	_vm->_textMan->f41_printWithTrailingSpaces(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen * 2, 233, 37,
-										   k4_ColorCyan, k0_ColorBlack, objName, k14_ObjectNameMaximumLength, k200_heightScreen);
+											   k4_ColorCyan, k0_ColorBlack, objName, k14_ObjectNameMaximumLength, k200_heightScreen);
 }
 
 IconIndice ObjectMan::f39_getIconIndexInSlotBox(uint16 slotBoxIndex) {

@@ -547,8 +547,8 @@ public:
 	void f99_copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height);
 
 
-	void f132_blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
-					  byte *destBitmap, uint16 destWidth, Box &box, Color transparent = k255_ColorNoTransparency); // @ F0132_VIDEO_Blit
+	void f132_blitToBitmap(byte *srcBitmap, byte *destBitmap, Box &box, uint16 srcX, uint16 srcY, uint16 srcWidth,
+					  uint16 destWidth, Color transparent = k255_ColorNoTransparency); // @ F0132_VIDEO_Blit
 
 	void f133_blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask, byte *tmp, Box &box, int16 lastUnitIndex,
 									   int16 firstUnitIndex, int16 destPixelWidth, Color transparent,

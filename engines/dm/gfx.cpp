@@ -955,7 +955,7 @@ void DisplayMan::f566_viewportBlitToScreen() {
 	warning("MISSING FUNCTIONALITY: using correct colorpalette");
 	Box box(0, 223, 33, 33 + 135);
 
-	f132_blitToBitmap(_g296_bitmapViewport, k112_byteWidthViewport * 2, 0, 0, _g348_bitmapScreen, k160_byteWidthScreen * 2, box, k255_ColorNoTransparency);
+	f132_blitToBitmap(_g296_bitmapViewport, _g348_bitmapScreen, box, 0, 0, k112_byteWidthViewport * 2, k160_byteWidthScreen * 2, k255_ColorNoTransparency);
 }
 
 void DisplayMan::loadPalette(uint16 *palette) {
@@ -1017,15 +1017,14 @@ void DisplayMan::f466_loadIntoBitmap(uint16 index, byte *destBitmap) {
 	}
 }
 
-
-void DisplayMan::f132_blitToBitmap(byte* srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY, byte* destBitmap, uint16 destWidth, Box& box, Color transparent) {
+void DisplayMan::f132_blitToBitmap(byte *srcBitmap, byte *destBitmap, Box &box, uint16 srcX, uint16 srcY, uint16 srcWidth,
+					   uint16 destWidth, Color transparent) {
 	for (uint16 y = 0; y < box._y2 - box._y1; ++y)
 		for (uint16 x = 0; x < box._x2 - box._x1; ++x) {
 			byte srcPixel = srcBitmap[srcWidth * (y + srcY) + srcX + x];
 			if (srcPixel != transparent)
 				destBitmap[destWidth * (y + box._y1) + box._x1 + x] = srcPixel;
 		}
-
 }
 
 void DisplayMan::D24_clearScreenBox(Color color, Box &box) {
@@ -1153,12 +1152,12 @@ void DisplayMan::f99_copyBitmapAndFlipHorizontal(byte* srcBitmap, byte* destBitm
 
 void DisplayMan::f101_drawWallSetBitmapWithoutTransparency(byte *bitmap, Frame &f) {
 	if (f._srcWidth)
-		f132_blitToBitmap(bitmap, f._srcWidth, f._srcX, f._srcY, _g296_bitmapViewport, k112_byteWidthViewport * 2, f._box, k255_ColorNoTransparency);
+		f132_blitToBitmap(bitmap, _g296_bitmapViewport, f._box, f._srcX, f._srcY, f._srcWidth, k112_byteWidthViewport * 2, k255_ColorNoTransparency);
 }
 
 void DisplayMan::f100_drawWallSetBitmap(byte *bitmap, Frame &f) {
 	if (f._srcWidth)
-		f132_blitToBitmap(bitmap, f._srcWidth, f._srcX, f._srcY, _g296_bitmapViewport, k112_byteWidthViewport * 2, f._box, k10_ColorFlesh);
+		f132_blitToBitmap(bitmap, _g296_bitmapViewport, f._box, f._srcX, f._srcY, f._srcWidth, k112_byteWidthViewport * 2, k10_ColorFlesh);
 }
 
 
@@ -1621,12 +1620,12 @@ void DisplayMan::f96_loadCurrentMapGraphics() {
 		f99_copyBitmapAndFlipHorizontal(_g95_bitmapWall_D3LCR_Native = _g698_bitmapWallSet_Wall_D3LCR, _g74_tmpBitmap,
 										g163_FrameWalls[k0_ViewSquare_D3C]._srcWidth, g163_FrameWalls[k0_ViewSquare_D3C]._srcHeight);
 		f134_fillBitmap(_g90_bitmapWall_D3LCR_Flipped, 128, 51, k10_ColorFlesh);
-		f132_blitToBitmap(_g74_tmpBitmap, 128, 11, 0, _g90_bitmapWall_D3LCR_Flipped, 128, g161_BoxWallBitmap_D3LCR, k255_ColorNoTransparency);
+		f132_blitToBitmap(_g74_tmpBitmap, _g90_bitmapWall_D3LCR_Flipped, g161_BoxWallBitmap_D3LCR, 11, 0, 128, 128, k255_ColorNoTransparency);
 
 		f99_copyBitmapAndFlipHorizontal(_g96_bitmapWall_D2LCR_Native = _g699_bitmapWallSet_Wall_D2LCR, _g74_tmpBitmap,
 										g163_FrameWalls[k3_ViewSquare_D2C]._srcWidth, g163_FrameWalls[k3_ViewSquare_D2C]._srcHeight);
 		f134_fillBitmap(_g91_bitmapWall_D2LCR_Flipped, 144, 71, k10_ColorFlesh);
-		f132_blitToBitmap(_g74_tmpBitmap, 144, 8, 0, _g91_bitmapWall_D2LCR_Flipped, 144, g162_BoxWallBitmap_D2LCR, k255_ColorNoTransparency);
+		f132_blitToBitmap(_g74_tmpBitmap, _g91_bitmapWall_D2LCR_Flipped, g162_BoxWallBitmap_D2LCR, 8, 0, 144, 144, k255_ColorNoTransparency);
 
 		f99_copyBitmapAndFlipHorizontal(_g97_bitmapWall_D1LCR_Native = _g700_bitmapWallSet_Wall_D1LCR, _g92_bitmapWall_D1LCR_Flipped,
 										g163_FrameWalls[k6_ViewSquare_D1C]._srcWidth, g163_FrameWalls[k6_ViewSquare_D1C]._srcHeight);
@@ -1733,13 +1732,13 @@ void DisplayMan::f93_applyCreatureReplColors(int replacedColor, int replacementC
 
 void DisplayMan::f104_drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &f) {
 	if (f._srcWidth)
-		f132_blitToBitmap(_bitmaps[nativeIndex], f._srcWidth, f._srcX, f._srcY, _g296_bitmapViewport, k112_byteWidthViewport * 2, f._box, k10_ColorFlesh);
+		f132_blitToBitmap(_bitmaps[nativeIndex], _g296_bitmapViewport, f._box, f._srcX, f._srcY, f._srcWidth, k112_byteWidthViewport * 2, k10_ColorFlesh);
 }
 
 void DisplayMan::f105_drawFloorPitOrStairsBitmapFlippedHorizontally(uint16 nativeIndex, Frame &f) {
 	if (f._srcWidth) {
 		f99_copyBitmapAndFlipHorizontal(f489_getBitmap(nativeIndex), _g74_tmpBitmap, f._srcWidth, f._srcHeight);
-		f132_blitToBitmap(_g74_tmpBitmap, f._srcWidth, f._srcX, f._srcY, _g296_bitmapViewport, k112_byteWidthViewport * 2, f._box, k10_ColorFlesh);
+		f132_blitToBitmap(_g74_tmpBitmap, _g296_bitmapViewport, f._box, f._srcX, f._srcY, f._srcWidth, k112_byteWidthViewport * 2, k10_ColorFlesh);
 	}
 }
 
@@ -1804,8 +1803,8 @@ bool DisplayMan::f107_isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWall
 			if (viewWallIndex == k12_ViewWall_D1C_FRONT) {
 				if (isInscription) {
 					Frame &D1CFrame = g163_FrameWalls[k6_ViewSquare_D1C];
-					f132_blitToBitmap(_g700_bitmapWallSet_Wall_D1LCR, D1CFrame._srcWidth, 94, 28, _g296_bitmapViewport, k112_byteWidthViewport * 2,
-								 g202_BoxWallPatchBehindInscription, k255_ColorNoTransparency);
+					f132_blitToBitmap(_g700_bitmapWallSet_Wall_D1LCR, _g296_bitmapViewport, g202_BoxWallPatchBehindInscription, 94, 28,
+									  D1CFrame._srcWidth, k112_byteWidthViewport * 2, k255_ColorNoTransparency);
 
 					unsigned char *string = inscriptionString;
 					bitmapRed = _bitmaps[k120_InscriptionFontIndice];
@@ -1819,7 +1818,7 @@ bool DisplayMan::f107_isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWall
 						frame._box._x2 = (frame._box._x1 = 112 - (characterCount * 4)) + 7;
 						frame._box._y1 = (frame._box._y2 = g203_InscriptionLineY[textLineIndex++]) - 7;
 						while (characterCount--) {
-							f132_blitToBitmap(bitmapRed, 288, (*string++) * 8, 0, _g296_bitmapViewport, k112_byteWidthViewport * 2, frame._box, k10_ColorFlesh);
+							f132_blitToBitmap(bitmapRed, _g296_bitmapViewport, frame._box, (*string++) * 8, 0, 288, k112_byteWidthViewport * 2, k10_ColorFlesh);
 							frame._box._x1 += 8;
 							frame._box._x2 += 8;
 						}
@@ -1905,12 +1904,12 @@ bool DisplayMan::f107_isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWall
 				coordinateSetA[3] = g204_UnreadableInscriptionBoxY2[g190_WallOrnDerivedBitmapIndexIncrement[viewWallIndex] * 3 + unreadableTextLineCount - 1];
 			}
 		}
-		f132_blitToBitmap(bitmapGreen, coordinateSetA[4], var_X, 0, _g296_bitmapViewport, k112_byteWidthViewport * 2, *(Box*)coordinateSetA, k10_ColorFlesh);
+		f132_blitToBitmap(bitmapGreen, _g296_bitmapViewport, *(Box*)coordinateSetA, var_X, 0, coordinateSetA[4], k112_byteWidthViewport * 2, k10_ColorFlesh);
 
 		if ((viewWallIndex == k12_ViewWall_D1C_FRONT) && _g289_championPortraitOrdinal--) {
 			Box &box = g109_BoxChampionPortraitOnWall;
-			f132_blitToBitmap(_bitmaps[k26_ChampionPortraitsIndice], 256, (_g289_championPortraitOrdinal & 0x7) << 5, (_g289_championPortraitOrdinal >> 3) * 29,
-						 _g296_bitmapViewport, k112_byteWidthViewport * 2, box, k1_ColorDarkGary);
+			f132_blitToBitmap(_bitmaps[k26_ChampionPortraitsIndice], _g296_bitmapViewport, box, (_g289_championPortraitOrdinal & 0x7) << 5,
+				(_g289_championPortraitOrdinal >> 3) * 29, 256, k112_byteWidthViewport * 2, k1_ColorDarkGary);
 		}
 		return isAlcove;
 	}
@@ -2417,7 +2416,7 @@ T0115015_DrawProjectileAsObject:
 					AL_6_bitmapRedBanana = bitmapGreenAnt;
 					dunMan._g292_pileTopObject[AL_2_viewCell] = thingParam; /* The object is at the top of the pile */
 				}
-				f132_blitToBitmap(AL_6_bitmapRedBanana, byteWidth, AL_4_xPos, 0, _g296_bitmapViewport, k112_byteWidthViewport * 2, boxByteGreen, k10_ColorFlesh);
+				f132_blitToBitmap(AL_6_bitmapRedBanana, _g296_bitmapViewport, boxByteGreen, AL_4_xPos, 0, byteWidth, k112_byteWidthViewport * 2, k10_ColorFlesh);
 
 				if (drawProjectileAsObject)
 					goto T0115171_BackFromT0115015_DrawProjectileAsObject;
@@ -2668,7 +2667,7 @@ T0115077_DrawSecondHalfSquareCreature:
 			AL_0_creaturePosX = creaturePaddingPixelCount + (byteWidth - AL_4_xPos - 1);
 		}
 		warning("SUPER WARNINIG: we might nee noralized with on byteWidth");
-		f132_blitToBitmap(AL_6_bitmapRedBanana, byteWidth, AL_0_creaturePosX, 0, _g296_bitmapViewport, k112_byteWidthViewport * 2, boxByteGreen, (Color)transparentColor);
+		f132_blitToBitmap(AL_6_bitmapRedBanana, _g296_bitmapViewport, boxByteGreen, AL_0_creaturePosX, 0, byteWidth, k112_byteWidthViewport * 2, (Color)transparentColor);
 
 T0115126_CreatureNotVisible:
 		if (twoHalfSquareCreaturesFrontView) {
@@ -2803,7 +2802,7 @@ the bitmap is flipped horizontally (flipHorizontal = C1_TRUE) then a wrong part 
 screen. To fix this bug, "+ paddingPixelCount" must be added to the second parameter of this function call */
 						AL_4_xPos = MAX(paddingPixelCount, (int16)(byteWidth - projectilePosX - 1));
 					}
-					f132_blitToBitmap(AL_6_bitmapRedBanana, byteWidth, AL_4_xPos, 0, _g296_bitmapViewport, k112_byteWidthViewport * 2, boxByteGreen, k10_ColorFlesh);
+					f132_blitToBitmap(AL_6_bitmapRedBanana, _g296_bitmapViewport, boxByteGreen, AL_4_xPos, 0, byteWidth, k112_byteWidthViewport * 2, k10_ColorFlesh);
 				} else { /* Positive value: projectile aspect is the index of a OBJECT_ASPECT */
 					useAlcoveObjectImage = false;
 					projectileCoordinates[0] = projectilePosX;
@@ -2955,7 +2954,7 @@ then a wrong part of the bitmap is drawn on screen. To fix this bug, "+ paddingP
 				if (flipVertical) {
 					flipBitmapVertical(AL_6_bitmapRedBanana, byteWidth, heightRedEagle);
 				}
-				f132_blitToBitmap(AL_6_bitmapRedBanana, byteWidth, AL_4_xPos, 0, _g296_bitmapViewport, k112_byteWidthViewport * 2, boxByteGreen, k10_ColorFlesh);
+				f132_blitToBitmap(AL_6_bitmapRedBanana, _g296_bitmapViewport, boxByteGreen, AL_4_xPos, 0, byteWidth, k112_byteWidthViewport * 2, k10_ColorFlesh);
 			}
 		}
 	} while ((thingParam = dunMan.f159_getNextThing(thingParam)) != Thing::_endOfList);
