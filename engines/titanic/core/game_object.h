@@ -336,11 +336,6 @@ protected:
 	void petClear() const;
 	
 	/**
-	 * Perform an action
-	 */
-	void performAction(int actionNum, CViewItem *view = nullptr);
-
-	/**
 	 * Returns the MailMan
 	 */
 	CMailMan *getMailMan() const;
@@ -360,11 +355,6 @@ protected:
 	 */
 	CRoomItem *getHiddenRoom() const;
 
-	/**
-	 * Returns a hidden object
-	 */
-	CGameObject *getHiddenObject(const CString &name) const;
-	
 	/**
 	 * Scan the specified room for an item by name
 	 */
@@ -658,6 +648,11 @@ public:
 	 */
 	Found find(const CString &name, CGameObject **item, int findAreas);
 
+	/**
+	 * Returns a hidden object
+	 */
+	CGameObject *getHiddenObject(const CString &name) const;
+	
 	/**
 	 * Sets up credits text
 	 */

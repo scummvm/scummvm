@@ -1101,10 +1101,6 @@ Point CGameObject::getControid() const {
 		_bounds.top + _bounds.height() / 2);
 }
 
-void CGameObject::performAction(int actionNum, CViewItem *view) {
-	// TODO
-}
-
 bool CGameObject::clipExistsByStart(const CString &name, int startFrame) const {
 	return _movieClips.existsByStart(name, startFrame);
 }

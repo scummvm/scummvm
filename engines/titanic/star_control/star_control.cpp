@@ -49,7 +49,10 @@ void CStarControl::load(SimpleFile *file) {
 		if (!screenManager)
 			error("There's no screen  manager during loading");
 
-		warning("TODO");
+		_view.setup(screenManager, &_sub1, this);
+		_view.reset();
+
+		_fieldBC = 1;
 	}
 	
 	CGameObject::load(file);

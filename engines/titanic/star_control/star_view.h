@@ -31,18 +31,21 @@
 
 namespace Titanic {
 
+class CStarControl;
+class CStarControlSub1;
+
 class CStarView {
 private:
-	int _field0;
-	int _field4;
+	CStarControl *_owner;
+	CStarControlSub1 *_sub1;
 	CVideoSurface *_videoSurface;
 	CStarControlSub12 _sub12;
 	int _field118;
 	CStarControlSub13 _sub13;
 	CSurfaceFader _fader;
-	int _field20C;
+	CVideoSurface *_videoSurface2;
 	int _field210;
-	int _field214;
+	CGameObject *_homePhotoMask;
 	int _field218;
 	int _field21C;
 public:
@@ -57,6 +60,13 @@ public:
 	 * Save the data for the class to file
 	 */
 	void save(SimpleFile *file, int indent);
+
+	/**
+	 * Sets references used by the view
+	 */
+	void setup(CScreenManager *screenManager, CStarControlSub1 *sub1, CStarControl *starControl);
+
+	void reset();
 
 	/**
 	 * Allows the item to draw itself

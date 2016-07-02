@@ -36,18 +36,21 @@ private:
 	 */
 	bool setupSurface(CScreenManager *screenManager, CVideoSurface *srcSurface);
 protected:
-	int _index;
-	int _count;
-	CVideoSurface *_videoSurface;
-protected:
 	/**
 	 * Create a faded version of the source surface at the given dest
 	 */
 	virtual void copySurface(CSurfaceArea &srcSurface, CSurfaceArea &destSurface) = 0;
 public:
+	int _index;
+	int _count;
+	CVideoSurface *_videoSurface;
+public:
 	CSurfaceFaderBase();
 	virtual ~CSurfaceFaderBase();
 
+	/**
+	 * Reset fading back to the start
+	 */
 	virtual void reset();
 
 	/**
@@ -55,6 +58,11 @@ public:
 	 * visibility specified by _index of _count
 	 */
 	virtual CVideoSurface *fade(CScreenManager *screenManager, CVideoSurface *srcSurface);
+
+	/**
+	 * Returns true if a fade is in progress
+	 */
+	bool isActive() const { return _index != -1 && _index < _count; }
 };
 
 } // End of namespace Titanic
