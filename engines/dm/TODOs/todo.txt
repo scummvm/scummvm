@@ -23,3 +23,6 @@ Todo:
 	Missing functions:
 		 Add missing  F0163_DUNGEON_LinkThingToList in MovesensMan::sensorIsTriggeredByClickOnWall (I don't think it's safe yet)
 	
+Refactoring
+	Add constructor to CreatureInfo
+	

@@ -422,12 +422,7 @@ class DisplayMan {
 	byte *_packedBitmaps;
 	byte **_bitmaps;
 
-	// pointers 13,14 and [15-19] are owned by this array
-	byte *_wallSetBitMaps[25];	// @G[0696..0710]_puc_Bitmap_WallSet_...
-
 	// pointers are not owned by these fields
-	byte *_g84_floorBitmap; // @ G0084_puc_Bitmap_Floor
-	byte *_g85_ceilingBitmap; // @ G0085_puc_Bitmap_Ceiling
 	byte *_g75_palChangesProjectile[4]; // @G0075_apuc_PaletteChanges_Projectile
 
 	DisplayMan(const DisplayMan &other); // no implementation on purpose
@@ -482,7 +477,43 @@ class DisplayMan {
 	int16 _g690_stairsNativeBitmapIndex_Up_Side_D1L; // @ G0690_i_StairsNativeBitmapIndex_Up_Side_D1L
 	int16 _g691_stairsNativeBitmapIndex_Down_Side_D1L; // @ G0691_i_StairsNativeBitmapIndex_Down_Side_D1L
 	int16 _g692_stairsNativeBitmapIndex_Side_D0L; // @ G0692_i_StairsNativeBitmapIndex_Side_D0L
+
+
+	byte *_g84_bitmapFloor; // @ G0084_puc_Bitmap_Floor
+	byte *_g85_bitmapCeiling; // @ G0085_puc_Bitmap_Ceiling
+	byte *_g697_bitmapWallSet_Wall_D3L2; // @ G0697_puc_Bitmap_WallSet_Wall_D3L2
+	byte *_g696_bitmapWallSet_Wall_D3R2; // @ G0696_puc_Bitmap_WallSet_Wall_D3R2
+	byte *_g698_bitmapWallSet_Wall_D3LCR; // @ G0698_puc_Bitmap_WallSet_Wall_D3LCR
+	byte *_g699_bitmapWallSet_Wall_D2LCR; // @ G0699_puc_Bitmap_WallSet_Wall_D2LCR
+	byte *_g700_bitmapWallSet_Wall_D1LCR; // @ G0700_puc_Bitmap_WallSet_Wall_D1LCR
+	byte *_g701_bitmapWallSet_Wall_D0L; // @ G0701_puc_Bitmap_WallSet_Wall_D0L
+	byte *_g702_bitmapWallSet_Wall_D0R; // @ G0702_puc_Bitmap_WallSet_Wall_D0R
+	byte *_g703_bitmapWallSet_DoorFrameTop_D2LCR; // @ G0703_puc_Bitmap_WallSet_DoorFrameTop_D2LCR
+	byte *_g704_bitmapWallSet_DoorFrameTop_D1LCR; // @ G0704_puc_Bitmap_WallSet_DoorFrameTop_D1LCR
+	byte *_g705_bitmapWallSet_DoorFrameLeft_D3L; // @ G0705_puc_Bitmap_WallSet_DoorFrameLeft_D3L
+	byte *_g706_bitmapWallSet_DoorFrameLeft_D3C; // @ G0706_puc_Bitmap_WallSet_DoorFrameLeft_D3C
+	byte *_g707_bitmapWallSet_DoorFrameLeft_D2C; // @ G0707_puc_Bitmap_WallSet_DoorFrameLeft_D2C
+	byte *_g708_bitmapWallSet_DoorFrameLeft_D1C; // @ G0708_puc_Bitmap_WallSet_DoorFrameLeft_D1C
+	byte *_g710_bitmapWallSet_DoorFrameRight_D1C; // @ G0710_puc_Bitmap_WallSet_DoorFrameRight_D1C
+	byte *_g709_bitmapWallSet_DoorFrameFront; // @ G0709_puc_Bitmap_WallSet_DoorFrameFront
+
+	byte *_g90_bitmapWall_D3LCR_Flipped; // @ G0090_puc_Bitmap_WallD3LCR_Flipped;
+	byte *_g91_bitmapWall_D2LCR_Flipped; // @ G0091_puc_Bitmap_WallD2LCR_Flipped;
+	byte *_g92_bitmapWall_D1LCR_Flipped; // @ G0092_puc_Bitmap_WallD1LCR_Flipped;
+	byte *_g93_bitmapWall_D0L_Flipped; // @ G0093_puc_Bitmap_WallD0L_Flipped;
+	byte *_g94_bitmapWall_D0R_Flipped; // @ G0094_puc_Bitmap_WallD0R_Flipped;
+	byte *_g95_bitmapWall_D3LCR_Native; // @ G0095_puc_Bitmap_WallD3LCR_Native;
+	byte *_g96_bitmapWall_D2LCR_Native; // @ G0096_puc_Bitmap_WallD2LCR_Native;
+	byte *_g97_bitmapWall_D1LCR_Native; // @ G0097_puc_Bitmap_WallD1LCR_Native;
+	byte *_g98_bitmapWall_D0L_Native; // @ G0098_puc_Bitmap_WallD0L_Native;
+	byte *_g99_bitmapWall_D0R_Native; // @ G0099_puc_Bitmap_WallD0R_Native;
+
+	int16 _g231_currentWallSet; // @ G0231_i_CurrentWallSet
+	int16 _g230_currentFloorSet;// @ G0230_i_CurrentFloorSet
+
+	bool _g76_useFlippedWallAndFootprintsBitmap; // @ G0076_B_UseFlippedWallAndFootprintsBitmaps
 public:
+	byte* _g296_bitmapViewport; // @ G0296_puc_Bitmap_Viewport
 	// some methods use this for a stratchpad, don't make assumptions about content between function calls
 	byte *_g74_tmpBitmap; // @ G0074_puc_Bitmap_Temporary
 
@@ -494,13 +525,18 @@ public:
 
 	void setUpScreens(uint16 width, uint16 height);
 	void loadGraphics(); // @ F0479_MEMORY_ReadGraphicsDatHeader, F0460_START_InitializeGraphicData
+	void initializeGraphicData(); // @ F0460_START_InitializeGraphicData
 	void loadCurrentMapGraphics(); // @ F0096_DUNGEONVIEW_LoadCurrentMapGraphics_CPSDF
 	void loadPalette(uint16 *palette);
+	void f461_allocateFlippedWallBitmaps(); // @ F0461_START_AllocateFlippedWallBitmaps
 
 	/// Gives the width of an IMG0 type item
 	uint16 getWidth(uint16 index);
 	/// Gives the height of an IMG1 type item
 	uint16 getHeight(uint16 index);
+
+
+	void f99_copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height);
 
 	void blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
 					  byte *destBitmap, uint16 destWidth,
@@ -563,11 +599,14 @@ public:
 
 	Thing _g290_inscriptionThing; // @ G0290_T_DungeonView_InscriptionThing
 
+	// This tells blitting functions wther to assume a BYTE_BOX or a WORD_BOX has been passed to them,
+	// I only use WORD_BOX, so this will probably deem useless
 	bool _g578_useByteBoxCoordinates; // @ G0578_B_UseByteBoxCoordinates
 	bool _g77_doNotDrawFluxcagesDuringEndgame; // @ G0077_B_DoNotDrawFluxcagesDuringEndgame
 
 	bool isDerivedBitmapInCache(int16 derivedBitmapIndex); // @  F0491_CACHE_IsDerivedBitmapInCache
 	byte *getDerivedBitmap(int16 derivedBitmapIndex); // @ F0492_CACHE_GetDerivedBitmap
+
 
 
 

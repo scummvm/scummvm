@@ -198,39 +198,6 @@ Frame g163_FrameWalls[12] = { // @ G0163_as_Graphic558_Frame_Walls
 }; /* D0R */
 
 
-// these denote the corresponding global in DisplayMan::_wallsetbitmaps
-enum WallSetIndices {
-	kG709_DoorFrameFront = 0, // @  G0709_puc_Bitmap_WallSet_DoorFrameFront
-	kG708_DoorFrameLeft_D1C = 1, // @  G0708_puc_Bitmap_WallSet_DoorFrameLeft_D1C
-	kG707_DoorFameLeft_D2C = 2, // @  G0707_puc_Bitmap_WallSet_DoorFrameLeft_D2C
-	kG706_DoorFrameLeft_D3C = 3, // @  G0706_puc_Bitmap_WallSet_DoorFrameLeft_D3C
-	kG705_DoorFrameLeft_D3L = 4, // @  G0705_puc_Bitmap_WallSet_DoorFrameLeft_D3L
-	kG704_DoorFrameTop_D1LCR = 5, // @  G0704_puc_Bitmap_WallSet_DoorFrameTop_D1LCR
-	kG703_DoorFrameTop_D2LCR = 6, // @  G0703_puc_Bitmap_WallSet_DoorFrameTop_D2LCR
-	kG702_Wall_D0R = 7, // @  G0702_puc_Bitmap_WallSet_Wall_D0R
-	kG701_Wall_D0L = 8, // @  G0701_puc_Bitmap_WallSet_Wall_D0L
-	kG700_Wall_D1LCR = 9, // @  G0700_puc_Bitmap_WallSet_Wall_D1LCR
-	kG699_Wall_D2LCR = 10, // @  G0699_puc_Bitmap_WallSet_Wall_D2LCR
-	kG698_Wall_D3LCR = 11, // @  G0698_puc_Bitmap_WallSet_Wall_D3LCR
-	kG697_Wall_D3L2 = 12, // @  G0697_puc_Bitmap_WallSet_Wall_D3L2
-
-	kG696_Wall_D3R2 = 13, // @  G0696_puc_Bitmap_WallSet_Wall_D3R2
-	kG710_DoorFrameRight_D1C = 14, // @  G0710_puc_Bitmap_WallSet_DoorFrameRight_D1C
-
-	kG94_Wall_D0R_Flipped = 15, // @ G0094_puc_Bitmap_WallD0R_Flipped
-	kG93_Wall_D0L_Flipped = 16, // @ G0093_puc_Bitmap_WallD0L_Flipped
-	kG92_Wall_D1LCR_Flipped = 17, // @ G0092_puc_Bitmap_WallD1LCR_Flipped
-	kG91_Wall_D2LCR_Flipped = 18, // @ G0091_puc_Bitmap_WallD2LCR_Flipped
-	kG90_Wall_D3LCR_Flipped = 19, // @ G0090_puc_Bitmap_WallD3LCR_Flipped
-
-	kG99_Wall_D0R_Native = 20, // @ G0099_puc_Bitmap_WallD0R_Native
-	kG98_Wall_D0L_Native = 21, // @ G0098_puc_Bitmap_WallD0L_Native
-	kG97_Wall_D1LCR_Native = 22, // @ G0097_puc_Bitmap_WallD1LCR_Native 
-	kG96_Wall_D2LCR_Native = 23, // @ G0096_puc_Bitmap_WallD2LCR_Native
-	kG95_Wall_D3LCR_Native = 24 // @ G0095_puc_Bitmap_WallD3LCR_Native
-};
-
-
 byte g196_DoorOrnCoordIndices[12] = { // @ G0196_auc_Graphic558_DoorOrnamentCoordinateSetIndices
 	0,   /* Door Ornament #00 Square Grid */
 	1,   /* Door Ornament #01 Iron Bars */
@@ -634,8 +601,8 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_packedBitmaps = nullptr;
 	_bitmaps = nullptr;
 	_g74_tmpBitmap = nullptr;
-	_g84_floorBitmap = nullptr;
-	_g85_ceilingBitmap = nullptr;
+	_g84_bitmapFloor = nullptr;
+	_g85_bitmapCeiling = nullptr;
 	_g264_currMapAllowedCreatureTypes = nullptr;
 	_g639_derivedBitmapByteCount = nullptr;
 	_g638_derivedBitmaps = nullptr;
@@ -644,8 +611,6 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_g289_championPortraitOrdinal = 0;
 	_g266_currMapViAltarIndex = 0;
 
-	for (int i = 0; i < 25; i++)
-		_wallSetBitMaps[i] = nullptr;
 
 	for (int i = 0; i < 4; i++)
 		_g75_palChangesProjectile[i] = nullptr;
@@ -676,6 +641,39 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 
 	_g290_inscriptionThing = Thing::_none;
 	_g578_useByteBoxCoordinates = false;
+
+	_g85_bitmapCeiling = nullptr;
+	_g84_bitmapFloor = nullptr;
+	_g697_bitmapWallSet_Wall_D3L2 = nullptr;
+	_g696_bitmapWallSet_Wall_D3R2 = nullptr;
+	_g698_bitmapWallSet_Wall_D3LCR = nullptr;
+	_g699_bitmapWallSet_Wall_D2LCR = nullptr;
+	_g700_bitmapWallSet_Wall_D1LCR = nullptr;
+	_g701_bitmapWallSet_Wall_D0L = nullptr;
+	_g702_bitmapWallSet_Wall_D0R = nullptr;
+	_g703_bitmapWallSet_DoorFrameTop_D2LCR = nullptr;
+	_g704_bitmapWallSet_DoorFrameTop_D1LCR = nullptr;
+	_g705_bitmapWallSet_DoorFrameLeft_D3L = nullptr;
+	_g706_bitmapWallSet_DoorFrameLeft_D3C = nullptr;
+	_g707_bitmapWallSet_DoorFrameLeft_D2C = nullptr;
+	_g708_bitmapWallSet_DoorFrameLeft_D1C = nullptr;
+	_g710_bitmapWallSet_DoorFrameRight_D1C = nullptr;
+	_g709_bitmapWallSet_DoorFrameFront = nullptr;
+	_g296_bitmapViewport = nullptr;
+
+	_g231_currentWallSet = -1;
+	_g230_currentFloorSet = -1;
+
+	_g90_bitmapWall_D3LCR_Flipped = nullptr;
+	_g91_bitmapWall_D2LCR_Flipped = nullptr;
+	_g92_bitmapWall_D1LCR_Flipped = nullptr;
+	_g93_bitmapWall_D0L_Flipped = nullptr;
+	_g94_bitmapWall_D0R_Flipped = nullptr;
+	_g95_bitmapWall_D3LCR_Native = nullptr;
+	_g96_bitmapWall_D2LCR_Native = nullptr;
+	_g97_bitmapWall_D1LCR_Native = nullptr;
+	_g98_bitmapWall_D0L_Native = nullptr;
+	_g99_bitmapWall_D0R_Native = nullptr;
 }
 
 DisplayMan::~DisplayMan() {
@@ -686,10 +684,6 @@ DisplayMan::~DisplayMan() {
 		delete[] _bitmaps[0];
 		delete[] _bitmaps;
 	}
-	delete[] _wallSetBitMaps[kG696_Wall_D3R2]; // copy of another bitmap, but flipped
-	delete[] _wallSetBitMaps[kG710_DoorFrameRight_D1C]; // copy of another bitmap, but flipped
-	for (uint16 i = kG93_Wall_D0L_Flipped; i <= kG90_Wall_D3LCR_Flipped; ++i)
-		delete[] _wallSetBitMaps[i];
 
 	delete[] _g639_derivedBitmapByteCount;
 	if (_g638_derivedBitmaps) {
@@ -697,13 +691,37 @@ DisplayMan::~DisplayMan() {
 			delete[] _g638_derivedBitmaps;
 		delete[] _g638_derivedBitmaps;
 	}
+
+	delete[] _g85_bitmapCeiling;
+	delete[] _g84_bitmapFloor;
+	delete[] _g697_bitmapWallSet_Wall_D3L2;
+	delete[] _g696_bitmapWallSet_Wall_D3R2;
+	delete[] _g698_bitmapWallSet_Wall_D3LCR;
+	delete[] _g699_bitmapWallSet_Wall_D2LCR;
+	delete[] _g700_bitmapWallSet_Wall_D1LCR;
+	delete[] _g701_bitmapWallSet_Wall_D0L;
+	delete[] _g702_bitmapWallSet_Wall_D0R;
+	delete[] _g703_bitmapWallSet_DoorFrameTop_D2LCR;
+	delete[] _g704_bitmapWallSet_DoorFrameTop_D1LCR;
+	delete[] _g705_bitmapWallSet_DoorFrameLeft_D3L;
+	delete[] _g706_bitmapWallSet_DoorFrameLeft_D3C;
+	delete[] _g707_bitmapWallSet_DoorFrameLeft_D2C;
+	delete[] _g708_bitmapWallSet_DoorFrameLeft_D1C;
+	delete[] _g710_bitmapWallSet_DoorFrameRight_D1C;
+	delete[] _g709_bitmapWallSet_DoorFrameFront;
+	delete[] _g296_bitmapViewport;
+
+	delete[] _g90_bitmapWall_D3LCR_Flipped;
+	delete[] _g91_bitmapWall_D2LCR_Flipped;
+	delete[] _g92_bitmapWall_D1LCR_Flipped;
+	delete[] _g93_bitmapWall_D0L_Flipped;
+	delete[] _g94_bitmapWall_D0R_Flipped;
 }
 
 void DisplayMan::setUpScreens(uint16 width, uint16 height) {
 	_screenWidth = width;
 	_screenHeight = height;
 	delete[] _g74_tmpBitmap;
-	_g74_tmpBitmap = new byte[_screenWidth * _screenHeight];
 	delete[] _vgaBuffer;
 	_vgaBuffer = new byte[_screenWidth * _screenHeight];
 	clearScreen(k0_ColorBlack);
@@ -712,7 +730,6 @@ void DisplayMan::setUpScreens(uint16 width, uint16 height) {
 void DisplayMan::loadGraphics() {
 	Common::File f;
 	f.open("graphics.dat");
-
 	_grapItemCount = f.readUint16BE();
 	delete[] _packedItemPos;
 	_packedItemPos = new uint32[_grapItemCount + 1];
@@ -728,13 +745,31 @@ void DisplayMan::loadGraphics() {
 		_packedBitmaps[i] = f.readByte();
 
 	f.close();
-
 	unpackGraphics();
+}
 
-	loadFloorSet(k0_FloorSetStone);
-	loadWallSet(k0_WallSetStone);
+void DisplayMan::initializeGraphicData() {
+	_g85_bitmapCeiling = new byte[224 * 29];
+	_g84_bitmapFloor = new byte[224 * 70];
+	_g697_bitmapWallSet_Wall_D3L2 = new byte[16 * 49];
+	_g696_bitmapWallSet_Wall_D3R2 = new byte[16 * 49];
+	_g698_bitmapWallSet_Wall_D3LCR = new byte[128 * 51];
+	_g699_bitmapWallSet_Wall_D2LCR = new byte[144 * 71];
+	_g700_bitmapWallSet_Wall_D1LCR = new byte[256 * 111];
+	_g701_bitmapWallSet_Wall_D0L = new byte[32 * 136];
+	_g702_bitmapWallSet_Wall_D0R = new byte[32 * 136];
+	_g703_bitmapWallSet_DoorFrameTop_D2LCR = new byte[96 * 3];
+	_g704_bitmapWallSet_DoorFrameTop_D1LCR = new byte[128 * 4];
+	_g705_bitmapWallSet_DoorFrameLeft_D3L = new byte[32 * 43];
+	_g706_bitmapWallSet_DoorFrameLeft_D3C = new byte[32 * 44];
+	_g707_bitmapWallSet_DoorFrameLeft_D2C = new byte[48 * 65];
+	_g708_bitmapWallSet_DoorFrameLeft_D1C = new byte[32 * 94];
+	_g710_bitmapWallSet_DoorFrameRight_D1C = new byte[32 * 94];
+	_g709_bitmapWallSet_DoorFrameFront = new byte[32 * 123];
+	_g296_bitmapViewport = new byte[224 * 136];
 
-
+	warning("SKIPPED CODE: G0086_puc_Bitmap_ViewportBlackArea it is useless");
+	warning("SKIPPED CODE: G0087_puc_Bitmap_ViewportFloorArea it is useless");
 
 	if (!_g639_derivedBitmapByteCount)
 		_g639_derivedBitmapByteCount = new uint16[k730_DerivedBitmapMaximumCount];
@@ -900,6 +935,14 @@ void DisplayMan::loadFNT1intoBitmap(uint16 index, byte* destBitmap) {
 	}
 }
 
+void DisplayMan::f461_allocateFlippedWallBitmaps() {
+	_g90_bitmapWall_D3LCR_Flipped = new byte[128 * 51];
+	_g91_bitmapWall_D2LCR_Flipped = new byte[144 * 71];
+	_g92_bitmapWall_D1LCR_Flipped = new byte[256 * 111];
+	_g93_bitmapWall_D0L_Flipped = new byte[32 * 136];
+	_g94_bitmapWall_D0R_Flipped = new byte[32 * 136];
+}
+
 void DisplayMan::loadPalette(uint16 *palette) {
 	byte colorPalette[16 * 3];
 	for (int i = 0; i < 16; ++i) {
@@ -1061,6 +1104,11 @@ uint16 DisplayMan::getHeight(uint16 index) {
 	return READ_BE_UINT16(data + 2);
 }
 
+// Note: has been screened for missing code
+void DisplayMan::f99_copyBitmapAndFlipHorizontal(byte* srcBitmap, byte* destBitmap, uint16 pixelWidth, uint16 height) {
+	memcpy(destBitmap, srcBitmap, pixelWidth * height * sizeof(byte));
+	flipBitmapHorizontal(destBitmap, pixelWidth, height);
+}
 
 void DisplayMan::drawWallSetBitmapWithoutTransparency(byte *bitmap, Frame &f) {
 	if (f._srcWidth)
@@ -1087,7 +1135,7 @@ void DisplayMan::drawSquareD3L(direction dir, int16 posX, int16 posY) {
 			drawFloorPitOrStairsBitmap(_g682_stairsNativeBitmapIndex_Down_Front_D3L, g121_FrameStairsDownFront_D3L);
 		goto T0116015_redEagle;
 	case k0_WallElemType:
-		drawWallSetBitmap(_wallSetBitMaps[kG698_Wall_D3LCR], g163_FrameWalls[k1_ViewSquare_D3L]);
+		drawWallSetBitmap(_g698_bitmapWallSet_Wall_D3LCR, g163_FrameWalls[k1_ViewSquare_D3L]);
 		isDrawnWallOrnAnAlcove(squareAspect[k2_RightWallOrnOrdAspect], k0_ViewWall_D3L_RIGHT);
 		if (isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k2_ViewWall_D3L_FRONT)) {
 			order = k0x0000_CellOrder_Alcove;
@@ -1101,7 +1149,7 @@ void DisplayMan::drawSquareD3L(direction dir, int16 posX, int16 posY) {
 	case k17_ElementTypeDoorFront:
 		warning("MISSING CODE: F0108_DUNGEONVIEW_DrawFloorOrnament");
 		cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k1_ViewSquare_D3L, k0x0218_CellOrder_DoorPass1_BackLeft_BackRight);
-		drawWallSetBitmap(_wallSetBitMaps[kG705_DoorFrameLeft_D3L], g164_Frame_DoorFrameLeft_D3L);
+		drawWallSetBitmap(_g705_bitmapWallSet_DoorFrameLeft_D3L, g164_Frame_DoorFrameLeft_D3L);
 		warning("MISSING CODE: F0111_DUNGEONVIEW_DrawDoor");
 		order = k0x0349_CellOrder_DoorPass2_FrontLeft_FrontRight;
 		goto T0116017_orangeElk;
@@ -1139,7 +1187,7 @@ void DisplayMan::drawSquareD3R(direction dir, int16 posX, int16 posY) {
 		}
 		goto T0117016;
 	case k0_ElementTypeWall:
-		drawWallSetBitmap(_wallSetBitMaps[kG698_Wall_D3LCR], g163_FrameWalls[k2_ViewSquare_D3R]);
+		drawWallSetBitmap(_g698_bitmapWallSet_Wall_D3LCR, g163_FrameWalls[k2_ViewSquare_D3R]);
 		isDrawnWallOrnAnAlcove(squareAspect[k4_LeftWallOrnOrdAspect], k1_ViewWall_D3R_LEFT);
 		if (isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k4_ViewWall_D3R_FRONT)) {
 			order = k0x0000_CellOrder_Alcove;
@@ -1153,7 +1201,7 @@ void DisplayMan::drawSquareD3R(direction dir, int16 posX, int16 posY) {
 	case k17_ElementTypeDoorFront:
 		warning("MISSING CODE: F0108_DUNGEONVIEW_DrawFloorOrnament");
 		cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k2_ViewSquare_D3R, k0x0128_CellOrder_DoorPass1_BackRight_BackLeft);
-		memcpy(_g74_tmpBitmap, _wallSetBitMaps[kG705_DoorFrameLeft_D3L], 32 * 44);
+		memcpy(_g74_tmpBitmap, _g705_bitmapWallSet_DoorFrameLeft_D3L, 32 * 44);
 		warning("MISSING CODE: F0103_DUNGEONVIEW_DrawDoorFrameBitmapFlippedHorizontally");
 		if (((Door*)_vm->_dungeonMan->_g284_thingData[k0_DoorThingType])[squareAspect[k3_DoorThingIndexAspect]].hasButton()) {
 			warning("MISSING CODE: F0110_DUNGEONVIEW_DrawDoorButton");
@@ -1190,7 +1238,7 @@ void DisplayMan::drawSquareD3C(direction dir, int16 posX, int16 posY) {
 			drawFloorPitOrStairsBitmap(_g683_stairsNativeBitmapIndex_Down_Front_D3C, g122_FrameStairsDownFront_D3C);
 		break;
 	case k0_WallElemType:
-		drawWallSetBitmapWithoutTransparency(_wallSetBitMaps[kG698_Wall_D3LCR], g163_FrameWalls[k0_ViewSquare_D3C]);
+		drawWallSetBitmapWithoutTransparency(_g698_bitmapWallSet_Wall_D3LCR, g163_FrameWalls[k0_ViewSquare_D3C]);
 		if (isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k3_ViewWall_D3C_FRONT)) {
 			//... missing code
 		}
@@ -1210,7 +1258,7 @@ void DisplayMan::drawSquareD2L(direction dir, int16 posX, int16 posY) {
 			drawFloorPitOrStairsBitmap(_g684_stairsNativeBitmapIndex_Down_Front_D2L, g124_FrameStairsDownFront_D2L);
 		break;
 	case k0_WallElemType:
-		drawWallSetBitmap(_wallSetBitMaps[kG699_Wall_D2LCR], g163_FrameWalls[k4_ViewSquare_D2L]);
+		drawWallSetBitmap(_g699_bitmapWallSet_Wall_D2LCR, g163_FrameWalls[k4_ViewSquare_D2L]);
 		isDrawnWallOrnAnAlcove(squareAspect[k2_RightWallOrnOrdAspect], k5_ViewWall_D2L_RIGHT);
 		if (isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k7_ViewWall_D2L_FRONT)) {
 			// ... missing code
@@ -1234,7 +1282,7 @@ void DisplayMan::drawSquareD2R(direction dir, int16 posX, int16 posY) {
 			drawFloorPitOrStairsBitmapFlippedHorizontally(_g684_stairsNativeBitmapIndex_Down_Front_D2L, g126_FrameStairsDownFront_D2R);
 		break;
 	case k0_WallElemType:
-		drawWallSetBitmap(_wallSetBitMaps[kG699_Wall_D2LCR], g163_FrameWalls[k5_ViewSquare_D2R]);
+		drawWallSetBitmap(_g699_bitmapWallSet_Wall_D2LCR, g163_FrameWalls[k5_ViewSquare_D2R]);
 		isDrawnWallOrnAnAlcove(squareAspect[k4_LeftWallOrnOrdAspect], k6_ViewWall_D2R_LEFT);
 		if (isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k9_ViewWall_D2R_FRONT)) {
 			// ... missing code
@@ -1258,7 +1306,7 @@ void DisplayMan::drawSquareD2C(direction dir, int16 posX, int16 posY) {
 			drawFloorPitOrStairsBitmap(_g685_stairsNativeBitmapIndex_Down_Front_D2C, g125_FrameStairsDownFront_D2C);
 		break;
 	case k0_WallElemType:
-		drawWallSetBitmapWithoutTransparency(_wallSetBitMaps[kG699_Wall_D2LCR], g163_FrameWalls[k3_ViewSquare_D2C]);
+		drawWallSetBitmapWithoutTransparency(_g699_bitmapWallSet_Wall_D2LCR, g163_FrameWalls[k3_ViewSquare_D2C]);
 		if (isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k8_ViewWall_D2C_FRONT)) {
 			// ... missing code
 		}
@@ -1278,7 +1326,7 @@ void DisplayMan::drawSquareD1L(direction dir, int16 posX, int16 posY) {
 			drawFloorPitOrStairsBitmap(_g686_stairsNativeBitmapIndex_Down_Front_D1L, g127_FrameStairsDownFront_D1L);
 		break;
 	case k0_WallElemType:
-		drawWallSetBitmap(_wallSetBitMaps[kG700_Wall_D1LCR], g163_FrameWalls[k7_ViewSquare_D1L]);
+		drawWallSetBitmap(_g700_bitmapWallSet_Wall_D1LCR, g163_FrameWalls[k7_ViewSquare_D1L]);
 		isDrawnWallOrnAnAlcove(squareAspect[k2_RightWallOrnOrdAspect], k10_ViewWall_D1L_RIGHT);
 		break;
 	case k18_StairsSideElemType:
@@ -1302,7 +1350,7 @@ void DisplayMan::drawSquareD1R(direction dir, int16 posX, int16 posY) {
 			drawFloorPitOrStairsBitmapFlippedHorizontally(_g686_stairsNativeBitmapIndex_Down_Front_D1L, g129_FrameStairsDownFront_D1R);
 		break;
 	case k0_WallElemType:
-		drawWallSetBitmap(_wallSetBitMaps[kG700_Wall_D1LCR], g163_FrameWalls[k8_ViewSquare_D1R]);
+		drawWallSetBitmap(_g700_bitmapWallSet_Wall_D1LCR, g163_FrameWalls[k8_ViewSquare_D1R]);
 		isDrawnWallOrnAnAlcove(squareAspect[k4_LeftWallOrnOrdAspect], k11_ViewWall_D1R_LEFT);
 		break;
 	case k18_StairsSideElemType:
@@ -1329,7 +1377,7 @@ void DisplayMan::drawSquareD1C(direction dir, int16 posX, int16 posY) {
 		_vm->_dungeonMan->_g286_isFacingAlcove = false;
 		_vm->_dungeonMan->_g287_isFacingViAltar = false;
 		_vm->_dungeonMan->_g288_isFacingFountain = false;
-		drawWallSetBitmapWithoutTransparency(_wallSetBitMaps[kG700_Wall_D1LCR], g163_FrameWalls[k6_ViewSquare_D1C]);
+		drawWallSetBitmapWithoutTransparency(_g700_bitmapWallSet_Wall_D1LCR, g163_FrameWalls[k6_ViewSquare_D1C]);
 		if (isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k12_ViewWall_D1C_FRONT)) {
 			// .... code not yet implemneted
 		}
@@ -1348,7 +1396,7 @@ void DisplayMan::drawSquareD0L(direction dir, int16 posX, int16 posY) {
 			drawFloorPitOrStairsBitmap(_g692_stairsNativeBitmapIndex_Side_D0L, g138_FrameStairsSide_D0L);
 		break;
 	case k0_WallElemType:
-		drawWallSetBitmap(_wallSetBitMaps[kG701_Wall_D0L], g163_FrameWalls[k10_ViewSquare_D0L]);
+		drawWallSetBitmap(_g701_bitmapWallSet_Wall_D0L, g163_FrameWalls[k10_ViewSquare_D0L]);
 		break;
 	default:
 		break;
@@ -1364,7 +1412,7 @@ void DisplayMan::drawSquareD0R(direction dir, int16 posX, int16 posY) {
 			drawFloorPitOrStairsBitmapFlippedHorizontally(_g692_stairsNativeBitmapIndex_Side_D0L, g139_FrameStairsSide_D0R);
 		return;
 	case k0_WallElemType:
-		drawWallSetBitmap(_wallSetBitMaps[kG702_Wall_D0R], g163_FrameWalls[k11_ViewSquare_D0R]);
+		drawWallSetBitmap(_g702_bitmapWallSet_Wall_D0R, g163_FrameWalls[k11_ViewSquare_D0R]);
 		break;
 	default:
 		break;
@@ -1392,7 +1440,7 @@ void DisplayMan::drawSquareD0C(direction dir, int16 posX, int16 posY) {
 void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
 	loadPalette(g20_PalEntrance);
 	// TODO: this is a global variable, set from here
-	bool flippedFloorCeiling = (posX + posY + dir) & 1;
+	bool flippedFloorCeiling = true;
 
 	// NOTE: this can hold every bitmap, width and height is "flexible"
 	byte  *tmpBitmap = new byte[305 * 111];
@@ -1405,27 +1453,32 @@ void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
 		_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[i]._x1 = 255 + 1;
 	}
 
-	if (flippedFloorCeiling) {
+	if (_g76_useFlippedWallAndFootprintsBitmap = (posX + posY + dir) & 1) {
 		uint16 w = gK13_FloorFrame._srcWidth, h = gK13_FloorFrame._srcHeight;
-		blitToBitmap(_g84_floorBitmap, w, h, tmpBitmap, w);
+		blitToBitmap(_g84_bitmapFloor, w, h, tmpBitmap, w);
 		flipBitmapHorizontal(tmpBitmap, w, h);
 		drawWallSetBitmap(tmpBitmap, gK13_FloorFrame);
-		drawWallSetBitmap(_g85_ceilingBitmap, gK12_CeilingFrame);
+		drawWallSetBitmap(_g85_bitmapCeiling, gK12_CeilingFrame);
 
-		for (uint16 i = 0; i <= kG698_Wall_D3LCR - kG702_Wall_D0R; ++i)
-			_wallSetBitMaps[i + kG702_Wall_D0R] = _wallSetBitMaps[i + kG94_Wall_D0R_Flipped];
+		if (flippedFloorCeiling) {
+			_g698_bitmapWallSet_Wall_D3LCR = _g90_bitmapWall_D3LCR_Flipped;
+			_g699_bitmapWallSet_Wall_D2LCR = _g91_bitmapWall_D2LCR_Flipped;
+			_g700_bitmapWallSet_Wall_D1LCR = _g92_bitmapWall_D1LCR_Flipped;
+			_g701_bitmapWallSet_Wall_D0L = _g93_bitmapWall_D0L_Flipped;
+			_g702_bitmapWallSet_Wall_D0R = _g94_bitmapWall_D0R_Flipped;
+		}
 	} else {
 		uint16 w = gK12_CeilingFrame._srcWidth, h = gK12_CeilingFrame._srcHeight;
-		blitToBitmap(_g85_ceilingBitmap, w, h, tmpBitmap, w);
+		blitToBitmap(_g85_bitmapCeiling, w, h, tmpBitmap, w);
 		flipBitmapHorizontal(tmpBitmap, w, h);
 		drawWallSetBitmap(tmpBitmap, gK12_CeilingFrame);
-		drawWallSetBitmap(_g84_floorBitmap, gK13_FloorFrame);
+		drawWallSetBitmap(_g84_bitmapFloor, gK13_FloorFrame);
 	}
 
 	if (_vm->_dungeonMan->getRelSquareType(dir, 3, -2, posX, posY) == k0_WallElemType)
-		drawWallSetBitmap(_wallSetBitMaps[kG697_Wall_D3L2], g711_FrameWall_D3L2);
+		drawWallSetBitmap(_g697_bitmapWallSet_Wall_D3L2, g711_FrameWall_D3L2);
 	if (_vm->_dungeonMan->getRelSquareType(dir, 3, 2, posX, posY) == k0_WallElemType)
-		drawWallSetBitmap(_wallSetBitMaps[kG696_Wall_D3R2], g712_FrameWall_D3R2);
+		drawWallSetBitmap(_g696_bitmapWallSet_Wall_D3R2, g712_FrameWall_D3R2);
 
 	int16 tmpPosX = posX, tmpPosY = posY;
 	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 3, -1, tmpPosX, tmpPosY);
@@ -1462,9 +1515,13 @@ void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
 	drawSquareD0R(dir, tmpPosX, tmpPosY);
 	drawSquareD0C(dir, posX, posY);
 
-
-	for (uint16 i = 0; i <= kG698_Wall_D3LCR - kG702_Wall_D0R; ++i)
-		_wallSetBitMaps[i + kG702_Wall_D0R] = _wallSetBitMaps[i + kG99_Wall_D0R_Native];
+	if (flippedFloorCeiling) {
+		_g698_bitmapWallSet_Wall_D3LCR = _g95_bitmapWall_D3LCR_Native;
+		_g699_bitmapWallSet_Wall_D2LCR = _g96_bitmapWall_D2LCR_Native;
+		_g700_bitmapWallSet_Wall_D1LCR = _g97_bitmapWall_D1LCR_Native;
+		_g701_bitmapWallSet_Wall_D0L = _g98_bitmapWall_D0L_Native;
+		_g702_bitmapWallSet_Wall_D0R = _g99_bitmapWall_D0R_Native;
+	}
 
 	delete[] tmpBitmap;
 }
@@ -1477,43 +1534,44 @@ void DisplayMan::clearBitmap(byte *bitmap, uint16 width, uint16 height, Color co
 	memset(bitmap, color, sizeof(byte) * width * height);
 }
 
-
+// NOTE: has been screened for missing code
 void DisplayMan::loadFloorSet(FloorSet set) {
-	// there are 2 bitmaps per set, first one is at 75
-	GraphicIndice indice = (GraphicIndice)(k75_FirstFloorSet + (k2_FloorSetGraphicCount * set));
-	_g84_floorBitmap = _bitmaps[indice];
-	_g85_ceilingBitmap = _bitmaps[indice + 1];
+	if (_g230_currentFloorSet != set) {
+		_g230_currentFloorSet = set;
+		int16 index = (set * k2_FloorSetGraphicCount) + k75_FirstFloorSet;
+		loadIntoBitmap(index, _g84_bitmapFloor);
+		loadIntoBitmap(index + 1, _g85_bitmapCeiling);
+	}
 }
-
 
 Box g161_BoxWallBitmap_D3LCR = Box(0, 115, 0, 50); // @ G0161_s_Graphic558_Box_WallBitmap_D3LCR
 Box g162_BoxWallBitmap_D2LCR = Box(0, 135, 0, 70); // @ G0162_s_Graphic558_Box_WallBitmap_D2LCR
 
+// Note: has been screened for missing code
 void DisplayMan::loadWallSet(WallSet set) {
-	uint16 firstIndice = (set * k13_WallSetGraphicCount) + k77_FirstWallSet;
-	for (uint16 i = 0; i < k13_WallSetGraphicCount; ++i) {
-		_wallSetBitMaps[i] = _bitmaps[i + firstIndice];
-	}
 
-	for (uint16 i = 0; i <= kG698_Wall_D3LCR - kG702_Wall_D0R; ++i)
-		_wallSetBitMaps[i + kG99_Wall_D0R_Native] = _wallSetBitMaps[i + kG702_Wall_D0R];
-
-	uint16 srcIndex[7] = {kG708_DoorFrameLeft_D1C,  kG697_Wall_D3L2, kG700_Wall_D1LCR,         kG701_Wall_D0L,         kG702_Wall_D0R,
-	kG699_Wall_D2LCR,         kG698_Wall_D3LCR};
-
-	uint16 destIndex[7] = {kG710_DoorFrameRight_D1C, kG696_Wall_D3R2, kG92_Wall_D1LCR_Flipped, kG94_Wall_D0R_Flipped, kG93_Wall_D0L_Flipped,
-	kG91_Wall_D2LCR_Flipped, kG90_Wall_D3LCR_Flipped};
-
-	// the original loads these flipped walls in loadCurrentMapGraphics
-
-	for (uint16 i = 0; i < 7; ++i) {
-		uint16 srcGraphicIndice = firstIndice + srcIndex[i];
-		uint16 w = getWidth(srcGraphicIndice), h = getHeight(srcGraphicIndice);
-		delete[] _wallSetBitMaps[destIndex[i]];
-		_wallSetBitMaps[destIndex[i]] = new byte[w * h];
-		blitToBitmap(_wallSetBitMaps[srcIndex[i]], w, h, _wallSetBitMaps[destIndex[i]], w);
-		if (srcIndex[i] != kG699_Wall_D2LCR && srcIndex[i] != kG698_Wall_D3LCR) // TODO: implement flipping of these two bitmaps, disabled with if
-			flipBitmapHorizontal(_wallSetBitMaps[destIndex[i]], w, h);
+	if ((_g231_currentWallSet != set) || _vm->_g523_restartGameRequest) {
+		_g231_currentWallSet = set;
+		{
+			int16 graphicIndice = (set * k13_WallSetGraphicCount) + k77_FirstWallSet;
+			loadIntoBitmap(graphicIndice++, _g709_bitmapWallSet_DoorFrameFront);
+			loadIntoBitmap(graphicIndice++, _g708_bitmapWallSet_DoorFrameLeft_D1C);
+			loadIntoBitmap(graphicIndice++, _g707_bitmapWallSet_DoorFrameLeft_D2C);
+			loadIntoBitmap(graphicIndice++, _g706_bitmapWallSet_DoorFrameLeft_D3C);
+			loadIntoBitmap(graphicIndice++, _g705_bitmapWallSet_DoorFrameLeft_D3L);
+			loadIntoBitmap(graphicIndice++, _g704_bitmapWallSet_DoorFrameTop_D1LCR);
+			loadIntoBitmap(graphicIndice++, _g703_bitmapWallSet_DoorFrameTop_D2LCR);
+			loadIntoBitmap(graphicIndice++, _g702_bitmapWallSet_Wall_D0R);
+			loadIntoBitmap(graphicIndice++, _g701_bitmapWallSet_Wall_D0L);
+			loadIntoBitmap(graphicIndice++, _g700_bitmapWallSet_Wall_D1LCR);
+			loadIntoBitmap(graphicIndice++, _g699_bitmapWallSet_Wall_D2LCR);
+			loadIntoBitmap(graphicIndice++, _g698_bitmapWallSet_Wall_D3LCR);
+			loadIntoBitmap(graphicIndice++, _g697_bitmapWallSet_Wall_D3L2);
+		}
+		f99_copyBitmapAndFlipHorizontal(_g708_bitmapWallSet_DoorFrameLeft_D1C, _g710_bitmapWallSet_DoorFrameRight_D1C,
+										g171_Frame_DoorFrameRight_D1C._srcWidth, g171_Frame_DoorFrameRight_D1C._srcHeight);
+		f99_copyBitmapAndFlipHorizontal(_g697_bitmapWallSet_Wall_D3L2, _g696_bitmapWallSet_Wall_D3R2,
+										g712_FrameWall_D3R2._srcWidth, g712_FrameWall_D3R2._srcHeight);
 	}
 }
 
@@ -1522,7 +1580,28 @@ void DisplayMan::loadCurrentMapGraphics() {
 	loadFloorSet(_vm->_dungeonMan->_g269_currMap->_floorSet);
 	loadWallSet(_vm->_dungeonMan->_g269_currMap->_wallSet);
 
-	// the original loads some flipped walls here, I moved it to loadWallSet
+	{
+		_g74_tmpBitmap = new byte[_screenWidth * _screenHeight];
+		_g578_useByteBoxCoordinates = true;
+
+		f99_copyBitmapAndFlipHorizontal(_g95_bitmapWall_D3LCR_Native = _g698_bitmapWallSet_Wall_D3LCR, _g74_tmpBitmap,
+										g163_FrameWalls[k0_ViewSquare_D3C]._srcWidth, g163_FrameWalls[k0_ViewSquare_D3C]._srcHeight);
+		clearBitmap(_g90_bitmapWall_D3LCR_Flipped, 128, 51, k10_ColorFlesh);
+		blitToBitmap(_g74_tmpBitmap, 128, 11, 0, _g90_bitmapWall_D3LCR_Flipped, 128, g161_BoxWallBitmap_D3LCR, k255_ColorNoTransparency);
+
+		f99_copyBitmapAndFlipHorizontal(_g96_bitmapWall_D2LCR_Native = _g699_bitmapWallSet_Wall_D2LCR, _g74_tmpBitmap,
+										g163_FrameWalls[k3_ViewSquare_D2C]._srcWidth, g163_FrameWalls[k3_ViewSquare_D2C]._srcHeight);
+		clearBitmap(_g91_bitmapWall_D2LCR_Flipped, 144, 71, k10_ColorFlesh);
+		blitToBitmap(_g74_tmpBitmap, 144, 8, 0, _g91_bitmapWall_D2LCR_Flipped, 144, g162_BoxWallBitmap_D2LCR, k255_ColorNoTransparency);
+
+		f99_copyBitmapAndFlipHorizontal(_g97_bitmapWall_D1LCR_Native = _g700_bitmapWallSet_Wall_D1LCR, _g92_bitmapWall_D1LCR_Flipped,
+										g163_FrameWalls[k6_ViewSquare_D1C]._srcWidth, g163_FrameWalls[k6_ViewSquare_D1C]._srcHeight);
+		f99_copyBitmapAndFlipHorizontal(_g98_bitmapWall_D0L_Native = _g701_bitmapWallSet_Wall_D0L, _g94_bitmapWall_D0R_Flipped,
+										g163_FrameWalls[k10_ViewSquare_D0L]._srcWidth, g163_FrameWalls[k10_ViewSquare_D0L]._srcHeight);
+		f99_copyBitmapAndFlipHorizontal(_g99_bitmapWall_D0R_Native = _g702_bitmapWallSet_Wall_D0R, _g93_bitmapWall_D0L_Flipped,
+										g163_FrameWalls[k10_ViewSquare_D0L]._srcWidth, g163_FrameWalls[k10_ViewSquare_D0L]._srcHeight);
+	}
+
 
 	{
 		int16 val = _vm->_dungeonMan->_g269_currMap->_wallSet * k18_StairsGraphicCount + k90_FirstStairs;
@@ -1691,7 +1770,7 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 			if (viewWallIndex == k12_ViewWall_D1C_FRONT) {
 				if (isInscription) {
 					Frame &D1CFrame = g163_FrameWalls[k6_ViewSquare_D1C];
-					blitToScreen(_wallSetBitMaps[kG700_Wall_D1LCR], D1CFrame._srcWidth, 94, 28, g202_BoxWallPatchBehindInscription._x1, g202_BoxWallPatchBehindInscription._x2,
+					blitToScreen(_g700_bitmapWallSet_Wall_D1LCR, D1CFrame._srcWidth, 94, 28, g202_BoxWallPatchBehindInscription._x1, g202_BoxWallPatchBehindInscription._x2,
 								 g202_BoxWallPatchBehindInscription._y1, g202_BoxWallPatchBehindInscription._y2, k255_ColorNoTransparency, g296_DungeonViewport);
 
 					unsigned char *string = inscriptionString;

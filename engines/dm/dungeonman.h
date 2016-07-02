@@ -181,7 +181,8 @@ enum SquareAspectIndice {
                
 
 
-struct CreatureInfo {
+class CreatureInfo {
+public:
 	byte _creatureAspectIndex;
 	byte _attackSoundOrdinal;
 	uint16 _attributes; /* Bits 15-14 Unreferenced */

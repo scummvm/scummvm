@@ -133,7 +133,8 @@ public:
 
 enum {
 	// engine debug channels
-	kDMDebugExample = 1 << 0
+	kDMDebugExample = 1 << 0,
+	kDMDebugUselessCode = 1 << 1
 };
 
 class DMEngine : public Engine {

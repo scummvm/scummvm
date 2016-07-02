@@ -143,9 +143,10 @@ DMEngine::~DMEngine() {
 
 void DMEngine::initializeGame() {
 	_displayMan->loadGraphics();
+	_displayMan->initializeGraphicData();
 	// DUMMY CODE: next line
 	_displayMan->loadPalette(g19_PalCredits);
-
+	
 	_eventMan->initMouse();
 
 	while (_loadsaveMan->loadgame() != k1_LoadgameSuccess) {
@@ -155,6 +156,9 @@ void DMEngine::initializeGame() {
 	_displayMan->loadFloorSet(k0_FloorSetStone);
 	_displayMan->loadWallSet(k0_WallSetStone);
 	_objectMan->loadObjectNames();
+
+	// There was some memory wizardy for the Amiga platform, I skipped that part
+	_displayMan->f461_allocateFlippedWallBitmaps();
 
 	startGame();
 	warning("MISSING CODE: F0267_MOVE_GetMoveResult_CPSCE (if newGame)");
