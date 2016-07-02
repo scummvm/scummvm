@@ -169,14 +169,14 @@ void DMEngine::startGame() {
 	_g333_pressingMouth = false;
 	_g334_stopPressingMouth = false;
 	_g340_highlightBoxInversionRequested = false;
-	_eventMan->_highlightBoxEnabled = false;
+	_eventMan->_g341_highlightBoxEnabled = false;
 	_championMan->_g300_partyIsSleeping = false;
 	_championMan->_g506_actingChampionOrdinal = indexToOrdinal(kM1_ChampionNone);
 	_menuMan->_actionAreaContainsIcons = true;
-	_eventMan->_useChampionIconOrdinalAsMousePointerBitmap = indexToOrdinal(kM1_ChampionNone);
+	_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap = indexToOrdinal(kM1_ChampionNone);
 
-	_eventMan->_primaryMouseInput = gPrimaryMouseInput_Interface;
-	_eventMan->_secondaryMouseInput = gSecondaryMouseInput_Movement;
+	_eventMan->_g441_primaryMouseInput = g447_PrimaryMouseInput_Interface;
+	_eventMan->_g442_secondaryMouseInput = g448_SecondaryMouseInput_Movement;
 	warning("MISSING CODE: set primary/secondary keyboard input");
 
 	processNewPartyMap(_dungeonMan->_currMap._g309_currPartyMapIndex);

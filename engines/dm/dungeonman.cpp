@@ -495,7 +495,7 @@ void DungeonMan::decompressDungeonFile() {
 	f.close();
 }
 
-uint8 gAdditionalThingCounts[16] = {
+byte g236_AdditionalThingCounts[16] = { // @ G0236_auc_Graphic559_AdditionalThingCounts{
 	0,    /* Door */
 	0,    /* Teleporter */
 	0,    /* Text String */
@@ -512,10 +512,10 @@ uint8 gAdditionalThingCounts[16] = {
 	0,    /* Unused */
 	60,   /* Projectile */
 	50    /* Explosion */
-}; // @ G0236_auc_Graphic559_AdditionalThingCounts
+}; 
 
 // this is the number of uint16s the data has to be stored, not the length of the data in dungeon.dat!
-unsigned char gThingDataWordCount[16] = {
+byte g235_ThingDataWordCount[16] = { // @ G0235_auc_Graphic559_ThingDataByteCount
 	2,   /* Door */
 	3,   /* Teleporter */
 	2,   /* Text String */
@@ -532,7 +532,7 @@ unsigned char gThingDataWordCount[16] = {
 	0,   /* Unused */
 	5,   /* Projectile */
 	2    /* Explosion */
-}; // @ G0235_auc_Graphic559_ThingDataByteCount
+}; 
 
 const Thing Thing::_none(0); // @ C0xFFFF_THING_NONE
 const Thing Thing::_endOfList(0xFFFE); // @ C0xFFFE_THING_ENDOFLIST
@@ -658,9 +658,9 @@ void DungeonMan::loadDungeonFile() {
 	for (uint16 thingType = k0_DoorThingType; thingType < k16_ThingTypeTotal; ++thingType) {
 		uint16 thingCount = _g278_fileHeader._thingCounts[thingType];
 		if (_messages._g298_newGame) {
-			_g278_fileHeader._thingCounts[thingType] = MIN((thingType == k15_ExplosionThingType) ? 768 : 1024, thingCount + gAdditionalThingCounts[thingType]);
+			_g278_fileHeader._thingCounts[thingType] = MIN((thingType == k15_ExplosionThingType) ? 768 : 1024, thingCount + g236_AdditionalThingCounts[thingType]);
 		}
-		uint16 thingStoreWordCount = gThingDataWordCount[thingType];
+		uint16 thingStoreWordCount = g235_ThingDataWordCount[thingType];
 
 		if (thingStoreWordCount == 0)
 			continue;
@@ -700,7 +700,7 @@ void DungeonMan::loadDungeonFile() {
 		if (_messages._g298_newGame) {
 			if ((thingType == k4_GroupThingType) || thingType >= k14_ProjectileThingType)
 				_vm->_timeline->_eventMaxCount += _g278_fileHeader._thingCounts[thingType];
-			for (uint16 i = 0; i < gAdditionalThingCounts[thingType]; ++i) {
+			for (uint16 i = 0; i < g236_AdditionalThingCounts[thingType]; ++i) {
 				_dunData._g284_thingsData[thingType][thingCount + i][0] = Thing::_none.toUint16();
 			}
 		}
@@ -996,7 +996,7 @@ Thing DungeonMan::getNextThing(Thing thing) {
 	return getThingData(thing)[0]; // :)
 }
 
-char gMessageAndScrollEscReplacementStrings[32][8] = { // @ G0255_aac_Graphic559_MessageAndScrollEscapeReplacementStrings
+char g255_MessageAndScrollEscReplacementStrings[32][8] = { // @ G0255_aac_Graphic559_MessageAndScrollEscapeReplacementStrings
 	{'x',  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { '?',  0,  0,  0, 0, 0, 0, 0 }, */
 	{'y',  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { '!',  0,  0,  0, 0, 0, 0, 0 }, */
 	{'T','H','E',' ', 0, 0, 0, 0},
@@ -1029,7 +1029,7 @@ char gMessageAndScrollEscReplacementStrings[32][8] = { // @ G0255_aac_Graphic559
 	{0,  0,  0,  0, 0, 0, 0, 0},
 	{0,  0,  0,  0, 0, 0, 0, 0},
 	{0,  0,  0,  0, 0, 0, 0, 0}};
-char gEscReplacementCharacters[32][2] = { // @ G0256_aac_Graphic559_EscapeReplacementCharacters
+char g256_EscReplacementCharacters[32][2] = { // @ G0256_aac_Graphic559_EscapeReplacementCharacters
 	{'a', 0},
 	{'b', 0},
 	{'c', 0},
@@ -1062,7 +1062,7 @@ char gEscReplacementCharacters[32][2] = { // @ G0256_aac_Graphic559_EscapeReplac
 	{'5', 0},
 	{'6', 0},
 	{'7', 0}};
-char gInscriptionEscReplacementStrings[32][8] = { // @ G0257_aac_Graphic559_InscriptionEscapeReplacementStrings
+char g257_InscriptionEscReplacementStrings[32][8] = { // @ G0257_aac_Graphic559_InscriptionEscapeReplacementStrings
 	{28,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
 	{29,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
 	{19,  7,  4, 26, 0, 0, 0, 0},
@@ -1131,12 +1131,12 @@ void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 				*destString = '\0';
 				if (escChar == 30) {
 					if (type != k0_TextTypeInscription) {
-						escReplString = gMessageAndScrollEscReplacementStrings[code];
+						escReplString = g255_MessageAndScrollEscReplacementStrings[code];
 					} else {
-						escReplString = gInscriptionEscReplacementStrings[code];
+						escReplString = g257_InscriptionEscReplacementStrings[code];
 					}
 				} else {
-					escReplString = gEscReplacementCharacters[code];
+					escReplString = g256_EscReplacementCharacters[code];
 				}
 				strcat(destString, escReplString);
 				destString += strlen(escReplString);
@@ -1166,7 +1166,7 @@ void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 
 
 uint16 DungeonMan::getObjectWeight(Thing thing) {
-	static const uint16 junkInfo[] = { // @ G0241_auc_Graphic559_JunkInfo
+	static const uint16 g241_junkInfo[] = { // @ G0241_auc_Graphic559_JunkInfo
 		// COMPASS - WATERSKIN - JEWEL SYMAL - ILLUMULET - ASHES
 		1, 3, 2, 2, 4,
 		// BONES - COPPER COIN - SILVER COIN - GOLD COIN - IRON KEY
@@ -1200,7 +1200,7 @@ uint16 DungeonMan::getObjectWeight(Thing thing) {
 		return g239_ArmourInfo[Armour(getThingData(thing)).getType()]._weight;
 	case k10_JunkThingType: {
 		Junk junk(getThingData(thing));
-		uint16 weight = junkInfo[junk.getType()];
+		uint16 weight = g241_junkInfo[junk.getType()];
 		if (junk.getType() == k1_JunkTypeWaterskin)
 			weight += junk.getChargeCount() * 2;
 		return weight;

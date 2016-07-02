@@ -32,7 +32,7 @@
 #include "dm.h"
 
 namespace DM {
-
+// this doesn't seem to be used anywhere at all
 /* Creature types */
 enum CreatureType {
 	kCreatureTypeGiantScorpionScorpion = 0, // @ C00_CREATURE_GIANT_SCORPION_SCORPION     

@@ -852,7 +852,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 	{ // block so goto won't skip AL_0_championIconIndex initialization 
 		int16 AL_0_championIconIndex = championIconIndex(champ->_cell, _vm->_dungeonMan->_currMap._g308_partyDir);
 
-		if ((champAttributes & k28_ChampionIcons) && (eventMan._useChampionIconOrdinalAsMousePointerBitmap != _vm->indexToOrdinal(AL_0_championIconIndex))) {
+		if ((champAttributes & k28_ChampionIcons) && (eventMan._g599_useChampionIconOrdinalAsMousePointerBitmap != _vm->indexToOrdinal(AL_0_championIconIndex))) {
 			dispMan.clearScreenBox(g46_ChampionColor[champIndex], g54_BoxChampionIcons[AL_0_championIconIndex]);
 			dispMan.blitToScreen(dispMan.getBitmap(k28_ChampionIcons), 80, championIconIndex(champ->_dir, _vm->_dungeonMan->_currMap._g308_partyDir) * 19, 0,
 								 g54_BoxChampionIcons[AL_0_championIconIndex], k12_ColorDarkestGray);
@@ -1006,7 +1006,7 @@ void ChampionMan::renameChampion(Champion* champ) {
 	static Box okButtonBox(197, 215, 147, 155); // inclusive boundaries, constructor adds +1
 	for (;;) {
 		_vm->_eventMan->processInput();
-		if (_vm->_eventMan->hasPendingClick(clickPos, kLeftMouseButton) && okButtonBox.isPointInside(clickPos)) {
+		if (_vm->_eventMan->hasPendingClick(clickPos, k1_LeftMouseButton) && okButtonBox.isPointInside(clickPos)) {
 			return;
 		}
 		dispMan.updateScreen();

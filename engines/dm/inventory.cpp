@@ -78,9 +78,9 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 			return;
 		}
 		if (championIndex == k4_ChampionCloseInventory) {
-			em._refreshMousePointerInMainLoop = true;
+			em._g326_refreshMousePointerInMainLoop = true;
 			_vm->_menuMan->drawMovementArrows();
-			em._secondaryMouseInput = gSecondaryMouseInput_Movement;
+			em._g442_secondaryMouseInput = g448_SecondaryMouseInput_Movement;
 			warning("MISSING CODE: set G0444_ps_SecondaryKeyboardInput");
 			warning("MISSING CODE: F0357_COMMAND_DiscardAllInput");
 			return;
@@ -116,8 +116,8 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	champion->setAttributeFlag(k0x0080_ChampionAttributeNameTitle, true);
 
 	cm.drawChampionState(championIndex);
-	em._mousePointerBitmapUpdated = true;
-	em._secondaryMouseInput = gSecondaryMouseInput_ChampionInventory;
+	em._g598_mousePointerBitmapUpdated = true;
+	em._g442_secondaryMouseInput = g449_SecondaryMouseInput_ChampionInventory;
 	warning("MISSING CODE: set G0444_ps_SecondaryKeyboardInput");
 	warning("MISSING CODE: F0357_COMMAND_DiscardAllInput");
 }
