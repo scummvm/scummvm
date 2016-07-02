@@ -21,55 +21,47 @@
  */
 
 #include "titanic/support/screen_manager.h"
-#include "titanic/star_control/star_control.h"
+#include "titanic/star_control/star_view.h"
 
 namespace Titanic {
 
-CStarControl::CStarControl() : _fieldBC(0), _field80B0(0),
-		_starRect(20, 10, 620, 350) {
+CStarView::CStarView() : 
+		_sub12(nullptr, nullptr), _sub13(nullptr),
+		_field4(0), _videoSurface(nullptr), _field118(0), _field20C(0),
+		_field210(0), _field214(0), _field218(0), _field21C(0) {
+	_sub12.proc3();
 }
 
-void CStarControl::save(SimpleFile *file, int indent) {
-	file->writeNumberLine(1, indent);
-	_sub1.save(file, indent);
-	_view.save(file, indent);
-	CGameObject::save(file, indent);
-}
+void CStarView::load(SimpleFile *file, int param) {
+	if (!param) {
+		_sub12.load(file, param);
 
-void CStarControl::load(SimpleFile *file) {
-	int val = file->readNumber();
-	
-	if (!val) {
-		_sub1.load(file, 0);
-		if (!_sub1.initDocument())
-			error("Couldn't initialise the StarField document");
+		_field118 = file->readNumber();
+		if (_field118)
+			_sub13.load(file, 0);
 
-		_view.load(file, 0);
-		CScreenManager *screenManager = CScreenManager::setCurrent();
-		if (!screenManager)
-			error("There's no screen  manager during loading");
-
-		warning("TODO");
+		_field218 = file->readNumber();
+		_field21C = file->readNumber();
 	}
+}
+
+void CStarView::save(SimpleFile *file, int indent) {
+	_sub12.save(file, indent);
 	
-	CGameObject::load(file);
+	file->writeNumberLine(_field118, indent);
+	if (_field118)
+		_sub13.save(file, indent);
+
+	file->writeNumberLine(_field218, indent);
+	file->writeNumberLine(_field21C, indent);
 }
 
-void CStarControl::draw(CScreenManager *screenManager) {
-	if (_visible)
-		_view.draw(screenManager);
-}
+void CStarView::draw(CScreenManager *screenManager) {
+	if (!screenManager)
+		return;
 
-void CStarControl::fn3() {
-	warning("CStarControl::fn3");
-}
 
-void CStarControl::fn1(int v) {
-	warning("CStarControl::fn1");
-}
-
-void CStarControl::fn4() {
-	warning("CStarControl::fn4");
+	// TODO
 }
 
 } // End of namespace Titanic

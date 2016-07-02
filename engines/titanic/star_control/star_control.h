@@ -25,7 +25,7 @@
 
 #include "titanic/core/game_object.h"
 #include "titanic/star_control/star_control_sub1.h"
-#include "titanic/star_control/star_control_sub11.h"
+#include "titanic/star_control/star_view.h"
 
 namespace Titanic {
 
@@ -33,7 +33,7 @@ class CStarControl : public CGameObject {
 private:
 	int _fieldBC;
 	CStarControlSub1 _sub1;
-	CStarControlSub11 _sub11;
+	CStarView _view;
 	Rect _starRect;
 	int _field80B0;
 public:
@@ -49,6 +49,11 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);
+
+	/**
+	 * Allows the item to draw itself
+	 */
+	virtual void draw(CScreenManager *screenManager);
 
 	void fn1(int v);
 	void fn3();

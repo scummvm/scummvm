@@ -20,44 +20,38 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB11_H
-#define TITANIC_STAR_CONTROL_SUB11_H
+#ifndef TITANIC_STAR_CONTROL_SUB16_H
+#define TITANIC_STAR_CONTROL_SUB16_H
 
-#include "titanic/support/simple_file.h"
-#include "titanic/star_control/star_control_sub12.h"
-#include "titanic/star_control/star_control_sub13.h"
-#include "titanic/star_control/star_control_sub15.h"
+#include "titanic/support/video_surface.h"
+#include "titanic/support/screen_manager.h"
+#include "titanic/star_control/surface_obj.h"
 
 namespace Titanic {
 
-class CStarControlSub11 {
+class CStarControlSub16 {
 private:
-	int _field0;
+	/**
+	 * Sets up an internal surface to match the size of the specified one
+	 */
+	bool setupSurface(CScreenManager *screenManager, CVideoSurface *srcSurface);
+protected:
 	int _field4;
 	int _field8;
-	CStarControlSub12 _sub12;
-	int _field118;
-	CStarControlSub13 _sub13;
-	CStarControlSub15 _sub15;
-	int _field20C;
-	int _field210;
-	int _field214;
-	int _field218;
-	int _field21C;
+	CVideoSurface *_videoSurface;
+protected:
+	virtual void proc4(CSurfaceObj &srcSurface, CSurfaceObj &destSurface) = 0;
 public:
-	CStarControlSub11();
+	CStarControlSub16();
+
+	virtual void reset();
 
 	/**
-	 * Load the data for the class from file
+	 * Loads from a given source surface
 	 */
-	void load(SimpleFile *file, int param);
-
-	/**
-	 * Save the data for the class to file
-	 */
-	void save(SimpleFile *file, int indent);
+	virtual CVideoSurface *loadSurface(CScreenManager *screenManager, CVideoSurface *srcSurface);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CONTROL_SUB11_H */
+#endif /* TITANIC_STAR_CONTROL_SUB16_H */

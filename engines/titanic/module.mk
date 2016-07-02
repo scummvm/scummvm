@@ -427,11 +427,13 @@ MODULE_OBJS := \
 	star_control/star_control_sub8.o \
 	star_control/star_control_sub9.o \
 	star_control/star_control_sub10.o \
-	star_control/star_control_sub11.o \
+	star_control/star_view.o \
 	star_control/star_control_sub12.o \
 	star_control/star_control_sub13.o \
 	star_control/star_control_sub14.o \
 	star_control/star_control_sub15.o \
+	star_control/star_control_sub16.o \
+	star_control/surface_obj.o \
 	support/direct_draw.o \
 	support/direct_draw_surface.o \
 	support/exe_resources.o \

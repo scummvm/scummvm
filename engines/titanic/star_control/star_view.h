@@ -20,32 +20,50 @@
  *
  */
 
-#include "titanic/support/screen_manager.h"
-#include "titanic/star_control/star_control_sub11.h"
+#ifndef TITANIC_STAR_VIEW_H
+#define TITANIC_STAR_VIEW_H
+
+#include "titanic/support/simple_file.h"
+#include "titanic/support/video_surface.h"
+#include "titanic/star_control/star_control_sub12.h"
+#include "titanic/star_control/star_control_sub13.h"
+#include "titanic/star_control/star_control_sub15.h"
 
 namespace Titanic {
 
-CStarControlSub11::CStarControlSub11() : 
-		_sub12(nullptr, nullptr), _sub13(nullptr),
-		_field4(0), _field8(0), _field118(0), _field20C(0),
-		_field210(0), _field214(0), _field218(0), _field21C(0) {
-	_sub12.proc3();
-}
+class CStarView {
+private:
+	int _field0;
+	int _field4;
+	CVideoSurface *_videoSurface;
+	CStarControlSub12 _sub12;
+	int _field118;
+	CStarControlSub13 _sub13;
+	CStarControlSub15 _sub15;
+	int _field20C;
+	int _field210;
+	int _field214;
+	int _field218;
+	int _field21C;
+public:
+	CStarView();
 
-void CStarControlSub11::load(SimpleFile *file, int param) {
-	if (!param) {
-		_sub12.load(file, param);
+	/**
+	 * Load the data for the class from file
+	 */
+	void load(SimpleFile *file, int param);
 
-		_field118 = file->readNumber();
-		if (_field118)
-			_sub13.load(file, 0);
+	/**
+	 * Save the data for the class to file
+	 */
+	void save(SimpleFile *file, int indent);
 
-		_field218 = file->readNumber();
-		_field21C = file->readNumber();
-	}
-}
-
-void CStarControlSub11::save(SimpleFile *file, int indent) {
-}
+	/**
+	 * Allows the item to draw itself
+	 */
+	void draw(CScreenManager *screenManager);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_STAR_RENDERER_H */
