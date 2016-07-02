@@ -1028,11 +1028,6 @@ void DisplayMan::blitToBitmap(byte* srcBitmap, uint16 srcWidth, uint16 srcX, uin
 
 }
 
-void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcHeight, byte *destBitmap, uint16 destWidth, uint16 destX, uint16 destY) {
-	for (uint16 y = 0; y < srcHeight; ++y)
-		memcpy(destBitmap + destWidth*(y + destY) + destX, srcBitmap + y * srcWidth, sizeof(byte)* srcWidth);
-}
-
 void DisplayMan::clearScreenBox(Color color, Box &box) {
 	uint16 width = box._x2 - box._x1;
 	for (int16 y = box._y1; y < box._y2; ++y)
@@ -1067,9 +1062,9 @@ void DisplayMan::flipBitmapVertical(byte *bitmap, uint16 width, uint16 height) {
 	byte *tmp = new byte[width];
 
 	for (uint16 y = 0; y < height / 2; ++y) {
-		memcpy(tmp, bitmap + y * width, width);
-		memcpy(bitmap + y * width, bitmap + (height - 1 - y) * width, width);
-		memcpy(bitmap + (height - 1 - y) * width, tmp, width);
+		memmove(tmp, bitmap + y * width, width);
+		memmove(bitmap + y * width, bitmap + (height - 1 - y) * width, width);
+		memmove(bitmap + (height - 1 - y) * width, tmp, width);
 	}
 
 	delete[] tmp;
@@ -1152,7 +1147,7 @@ uint16 DisplayMan::getHeight(uint16 index) {
 
 // Note: has been screened for missing code
 void DisplayMan::f99_copyBitmapAndFlipHorizontal(byte* srcBitmap, byte* destBitmap, uint16 pixelWidth, uint16 height) {
-	memcpy(destBitmap, srcBitmap, pixelWidth * height * sizeof(byte));
+	memmove(destBitmap, srcBitmap, pixelWidth * height * sizeof(byte));
 	flipBitmapHorizontal(destBitmap, pixelWidth, height);
 }
 
@@ -1247,7 +1242,7 @@ void DisplayMan::drawSquareD3R(direction dir, int16 posX, int16 posY) {
 	case k17_ElementTypeDoorFront:
 		warning("MISSING CODE: F0108_DUNGEONVIEW_DrawFloorOrnament");
 		cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k2_ViewSquare_D3R, k0x0128_CellOrder_DoorPass1_BackRight_BackLeft);
-		memcpy(_g74_tmpBitmap, _g705_bitmapWallSet_DoorFrameLeft_D3L, 32 * 44);
+		memmove(_g74_tmpBitmap, _g705_bitmapWallSet_DoorFrameLeft_D3L, 32 * 44);
 		warning("MISSING CODE: F0103_DUNGEONVIEW_DrawDoorFrameBitmapFlippedHorizontally");
 		if (((Door*)_vm->_dungeonMan->_g284_thingData[k0_DoorThingType])[squareAspect[k3_DoorThingIndexAspect]].hasButton()) {
 			warning("MISSING CODE: F0110_DUNGEONVIEW_DrawDoorButton");
@@ -1488,9 +1483,6 @@ void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
 	// TODO: this is a global variable, set from here
 	bool flippedFloorCeiling = true;
 
-	// NOTE: this can hold every bitmap, width and height is "flexible"
-	byte  *tmpBitmap = new byte[305 * 111];
-	f134_fillBitmap(tmpBitmap, 305, 111, k10_ColorFlesh);
 
 	for (int16 i = 0; i < 6; ++i)
 		_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[i].setToZero();
@@ -1500,11 +1492,9 @@ void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
 	}
 
 	if (_g76_useFlippedWallAndFootprintsBitmap = (posX + posY + dir) & 1) {
-		uint16 w = gK13_FloorFrame._srcWidth, h = gK13_FloorFrame._srcHeight;
-		blitToBitmap(_g84_bitmapFloor, w, h, tmpBitmap, w);
-		flipBitmapHorizontal(tmpBitmap, w, h);
-		drawWallSetBitmap(tmpBitmap, gK13_FloorFrame);
 		drawWallSetBitmap(_g85_bitmapCeiling, gK12_CeilingFrame);
+		f99_copyBitmapAndFlipHorizontal(_g84_bitmapFloor, _g74_tmpBitmap, k112_byteWidthViewport * 2, 70);
+		drawWallSetBitmap(_g74_tmpBitmap, gK13_FloorFrame);
 
 		if (flippedFloorCeiling) {
 			_g698_bitmapWallSet_Wall_D3LCR = _g90_bitmapWall_D3LCR_Flipped;
@@ -1514,10 +1504,8 @@ void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
 			_g702_bitmapWallSet_Wall_D0R = _g94_bitmapWall_D0R_Flipped;
 		}
 	} else {
-		uint16 w = gK12_CeilingFrame._srcWidth, h = gK12_CeilingFrame._srcHeight;
-		blitToBitmap(_g85_bitmapCeiling, w, h, tmpBitmap, w);
-		flipBitmapHorizontal(tmpBitmap, w, h);
-		drawWallSetBitmap(tmpBitmap, gK12_CeilingFrame);
+		f99_copyBitmapAndFlipHorizontal(_g85_bitmapCeiling, _g74_tmpBitmap, k112_byteWidthViewport * 2, 29);
+		drawWallSetBitmap(_g74_tmpBitmap, gK12_CeilingFrame);
 		drawWallSetBitmap(_g84_bitmapFloor, gK13_FloorFrame);
 	}
 
@@ -1569,7 +1557,6 @@ void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
 		_g702_bitmapWallSet_Wall_D0R = _g99_bitmapWall_D0R_Native;
 	}
 
-	delete[] tmpBitmap;
 	f97_drawViewport((_vm->_dungeonMan->_g309_partyMapIndex != k255_mapIndexEntrance) ? 1 : 0);
 }
 
@@ -1751,8 +1738,7 @@ void DisplayMan::drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &f) {
 
 void DisplayMan::drawFloorPitOrStairsBitmapFlippedHorizontally(uint16 nativeIndex, Frame &f) {
 	if (f._srcWidth) {
-		blitToBitmap(_bitmaps[nativeIndex], f._srcWidth, f._srcHeight, _g74_tmpBitmap, f._srcWidth);
-		flipBitmapHorizontal(_g74_tmpBitmap, f._srcWidth, f._srcHeight);
+		f99_copyBitmapAndFlipHorizontal(getBitmap(nativeIndex), _g74_tmpBitmap, f._srcWidth, f._srcHeight);
 		blitToBitmap(_g74_tmpBitmap, f._srcWidth, f._srcX, f._srcY, _g296_bitmapViewport, k112_byteWidthViewport * 2, f._box, k10_ColorFlesh);
 	}
 }
@@ -1859,8 +1845,7 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 			}
 			bitmapGreen = _bitmaps[nativeBitmapIndex];
 			if (viewWallIndex == k11_ViewWall_D1R_LEFT) {
-				blitToBitmap(bitmapGreen, coordinateSetA[4], coordinateSetA[5], _g74_tmpBitmap, coordinateSetA[4]);
-				flipBitmapHorizontal(_g74_tmpBitmap, coordinateSetA[4], coordinateSetA[5]);
+				f99_copyBitmapAndFlipHorizontal(bitmapGreen, _g74_tmpBitmap, coordinateSetA[4], coordinateSetA[5]);
 				bitmapGreen = _g74_tmpBitmap;
 			}
 			var_X = 0;
@@ -1888,9 +1873,7 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 			bitmapGreen = _bitmaps[nativeBitmapIndex];
 			var_X = pixelWidth;
 			if (flipHorizontal) {
-				if (bitmapGreen != _g74_tmpBitmap)
-					blitToBitmap(bitmapGreen, coordSetB[4], coordSetB[5], _g74_tmpBitmap, coordSetB[4]);
-				flipBitmapHorizontal(_g74_tmpBitmap, coordSetB[4], coordSetB[5]);
+				f99_copyBitmapAndFlipHorizontal(bitmapGreen, _g74_tmpBitmap, coordSetB[4], coordSetB[5]);
 				bitmapGreen = _g74_tmpBitmap;
 				var_X = 15 - (var_X & 0xF);
 			} else if (viewWallIndex == k7_ViewWall_D2L_FRONT) {
@@ -1975,7 +1958,7 @@ void DisplayMan::drawField(FieldAspect* fieldAspect, Box& box) {
 		bitmapMask = nullptr;
 	} else {
 		bitmapMask = dispMan._g74_tmpBitmap;
-		memcpy(bitmapMask, dispMan.getBitmap(k69_FieldMask_D3R_GraphicIndice + getFlag(fieldAspect->_mask, kMaskFieldAspectIndex)),
+		memmove(bitmapMask, dispMan.getBitmap(k69_FieldMask_D3R_GraphicIndice + getFlag(fieldAspect->_mask, kMaskFieldAspectIndex)),
 			   fieldAspect->_height * fieldAspect->_pixelWidth * sizeof(bitmapMask[0]));
 		if (getFlag(fieldAspect->_mask, kMaskFieldAspectFlipMask)) {
 			dispMan.flipBitmapHorizontal(bitmapMask, fieldAspect->_pixelWidth, fieldAspect->_height);
@@ -2345,7 +2328,7 @@ T0115015_DrawProjectileAsObject:
 					byteWidth = objectAspect->_width;
 					heightRedEagle = objectAspect->_height;
 					if (flipHorizontal) {
-						memcpy(_g74_tmpBitmap, AL_6_bitmapRedBanana, byteWidth * heightRedEagle * sizeof(byte));
+						memmove(_g74_tmpBitmap, AL_6_bitmapRedBanana, byteWidth * heightRedEagle * sizeof(byte));
 						flipBitmapHorizontal(_g74_tmpBitmap, byteWidth, heightRedEagle);
 						AL_6_bitmapRedBanana = _g74_tmpBitmap;
 					}
@@ -2590,7 +2573,7 @@ T0115077_DrawSecondHalfSquareCreature:
 			if (useCreatureSideBitmap) {
 				AL_6_bitmapRedBanana = getBitmap(AL_4_nativeBitmapIndex);
 				if (creatureDirectionDelta == 1) {
-					memcpy(_g74_tmpBitmap, AL_6_bitmapRedBanana, byteWidth * heightRedEagle * sizeof(byte));
+					memmove(_g74_tmpBitmap, AL_6_bitmapRedBanana, byteWidth * heightRedEagle * sizeof(byte));
 					flipBitmapHorizontal(_g74_tmpBitmap, byteWidth, heightRedEagle);
 					AL_6_bitmapRedBanana = _g74_tmpBitmap;
 				}
@@ -2598,7 +2581,7 @@ T0115077_DrawSecondHalfSquareCreature:
 				if (useCreatureBackBitmap || !useFlippedHorizontallyCreatureFrontImage) {
 					AL_6_bitmapRedBanana = getBitmap(AL_4_nativeBitmapIndex);
 					if (useCreatureAttackBitmap && getFlag(creatureAspectInt, k0x0040_MaskActiveGroupFlipBitmap)) {
-						memcpy(_g74_tmpBitmap, AL_6_bitmapRedBanana, byteWidth * heightRedEagle * sizeof(byte));
+						memmove(_g74_tmpBitmap, AL_6_bitmapRedBanana, byteWidth * heightRedEagle * sizeof(byte));
 						flipBitmapHorizontal(_g74_tmpBitmap, byteWidth, heightRedEagle);
 						AL_6_bitmapRedBanana = _g74_tmpBitmap;
 					}
@@ -2609,7 +2592,7 @@ T0115077_DrawSecondHalfSquareCreature:
 						bitmapGreenAnt = getBitmap(AL_4_nativeBitmapIndex);
 						if (getFlag(AL_0_creatureGraphicInfoRed, k0x0004_CreatureInfoGraphicMaskFlipNonAttack)) {
 							AL_6_bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex);
-							memcpy(AL_6_bitmapRedBanana, bitmapGreenAnt, byteWidth * heightRedEagle * sizeof(byte));
+							memmove(AL_6_bitmapRedBanana, bitmapGreenAnt, byteWidth * heightRedEagle * sizeof(byte));
 							flipBitmapHorizontal(AL_6_bitmapRedBanana, byteWidth, heightRedEagle);
 						}
 						warning("IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
@@ -2652,7 +2635,7 @@ T0115077_DrawSecondHalfSquareCreature:
 					AL_4_normalizdByteWidth = byteWidth;
 					warning("SUPER WARNING: we might need getNormalizedByteWidthM77");
 					if (!useFlippedHorizontallyCreatureFrontImage) {
-						memcpy(_g74_tmpBitmap, AL_6_bitmapRedBanana, AL_4_normalizdByteWidth * heightRedEagle * sizeof(byte));
+						memmove(_g74_tmpBitmap, AL_6_bitmapRedBanana, AL_4_normalizdByteWidth * heightRedEagle * sizeof(byte));
 						AL_6_bitmapRedBanana = _g74_tmpBitmap;
 					}
 					flipBitmapHorizontal(AL_6_bitmapRedBanana, AL_4_normalizdByteWidth, heightRedEagle);
@@ -2794,7 +2777,7 @@ continue;
 						warning("might need noralized bytewidth");
 						AL_4_normalizdByteWidth = byteWidth;
 						if (AL_6_bitmapRedBanana != _g74_tmpBitmap) {
-							memcpy(_g74_tmpBitmap, AL_6_bitmapRedBanana, AL_4_normalizdByteWidth * heightRedEagle * sizeof(byte));
+							memmove(_g74_tmpBitmap, AL_6_bitmapRedBanana, AL_4_normalizdByteWidth * heightRedEagle * sizeof(byte));
 							AL_6_bitmapRedBanana = _g74_tmpBitmap;
 						}
 						if (flipVertical) {
@@ -2963,7 +2946,7 @@ then a wrong part of the bitmap is drawn on screen. To fix this bug, "+ paddingP
 				warning("might need M77_NORMALIZED_BYTE_WIDTH");
 				byteWidth = byteWidth;
 				if (flipHorizontal || flipVertical) {
-					memcpy(_g74_tmpBitmap, AL_6_bitmapRedBanana, byteWidth * heightRedEagle);
+					memmove(_g74_tmpBitmap, AL_6_bitmapRedBanana, byteWidth * heightRedEagle);
 					AL_6_bitmapRedBanana = _g74_tmpBitmap;
 				}
 				if (flipHorizontal) {
