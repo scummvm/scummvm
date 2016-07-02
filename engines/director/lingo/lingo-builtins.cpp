@@ -29,6 +29,12 @@ static struct BuiltinProto {
 	void (*func)(void);
 	int nparams;
 } builtins[] = {
+	{ "abs",	Lingo::b_abs, 1},
+	{ "atan",	Lingo::b_atan, 1},
+	{ "cos",	Lingo::b_cos, 1},
+	{ "exp",	Lingo::b_exp, 1},
+	{ "integer",Lingo::b_integer, 1},
+	{ "log",	Lingo::b_log, 1},
 	{ "random",	Lingo::b_random, 1},
 	{ 0, 0, 0 }
 };
@@ -39,12 +45,57 @@ void Lingo::initBuiltIns() {
 	}
 }
 
+void Lingo::b_abs() {
+	Datum d = g_lingo->pop();
+
+	if (d.type == INT)
+		d.u.i = ABS(d.u.i);
+	else if (d.type == FLOAT)
+		d.u.f = ABS(d.u.f);
+
+	g_lingo->push(d);
+}
+
+void Lingo::b_atan() {
+	Datum d = g_lingo->pop();
+	d.toFloat();
+	d.u.f = atanf(d.u.f);
+	g_lingo->push(d);
+}
+
+void Lingo::b_cos() {
+	Datum d = g_lingo->pop();
+	d.toFloat();
+	d.u.f = cos(d.u.f);
+	g_lingo->push(d);
+}
+
+void Lingo::b_exp() {
+	Datum d = g_lingo->pop();
+	d.toInt(); // Lingo uses int, so we're enforcing it
+	d.toFloat();
+	d.u.f = expf(d.u.f);
+	g_lingo->push(d);
+}
+
+void Lingo::b_integer() {
+	Datum d = g_lingo->pop();
+	d.toInt();
+	g_lingo->push(d);
+}
+
+void Lingo::b_log() {
+	Datum d = g_lingo->pop();
+	d.toFloat();
+	d.u.f = logf(d.u.f);
+	g_lingo->push(d);
+}
+
 void Lingo::b_random() {
 	Datum max = g_lingo->pop();
 	Datum res;
 
-	if (max.type != INT)
-		warning("Non-int type for rand: %d", max.type);
+	max.toInt();
 
 	res.u.i = g_lingo->_vm->_rnd.getRandomNumber(max.u.i);
 	res.type = INT;

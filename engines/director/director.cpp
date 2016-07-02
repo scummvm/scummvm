@@ -155,6 +155,8 @@ set z2 = z / z1\n\
 put z\n\
 put z1\n\
 put z2\n\
+put integer(z2)\n\
+put cos(z2)\n\
 ", kMovieScript, 2);
 
 _lingo->executeScript(kMovieScript, 2);

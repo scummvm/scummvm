@@ -199,6 +199,12 @@ public:
 	static void c_gotoprevious();
 	static void c_global();
 
+	static void b_abs();
+	static void b_atan();
+	static void b_cos();
+	static void b_exp();
+	static void b_integer();
+	static void b_log();
 	static void b_random();
 
 	void func_mci(Common::String &s);
