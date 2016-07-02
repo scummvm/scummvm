@@ -20,9 +20,30 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub10.h"
+#ifndef TITANIC_STAR_ARRAY_H
+#define TITANIC_STAR_ARRAY_H
+
+#include "common/array.h"
 
 namespace Titanic {
 
+class CStarArray {
+	struct CStarArrayEntry {
+		double _v1;
+		double _v2;
+		double _v3;
+	};
+private:
+	Common::Array<CStarArrayEntry> _data;
+public:
+	CStarArray();
+
+	/**
+	 * Initialize the array
+	 */
+	void initialize();
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_STAR_ARRAY_H */

@@ -20,19 +20,31 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB10_H
-#define TITANIC_STAR_CONTROL_SUB10_H
+#include "titanic/star_control/star_array.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
-class CStarControlSub10 {
-private:
-	int _field0;
-	int _field4;
-public:
-	CStarControlSub10() : _field0(0), _field4(0) {}
-};
+#define ARRAY_COUNT 876
+
+CStarArray::CStarArray() {
+}
+
+void CStarArray::initialize() {
+	// Get a reference to the starfield points resource
+	Common::SeekableReadStream *stream = g_vm->_filesManager->getResource("STARFIELD/POINTS");
+	assert(stream && stream->size() == (12 * ARRAY_COUNT));
+
+	_data.resize(ARRAY_COUNT);
+	for (int idx = 0; idx < ARRAY_COUNT; ++idx) {
+		// Get the next set of values
+		int v1 = stream->readUint32LE();
+		int v2 = stream->readUint32LE();
+		stream->readUint32LE();
+
+		// Pre-process them
+		// TODO
+	}
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_STAR_CONTROL_SUB10_H */

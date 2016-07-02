@@ -43,6 +43,7 @@ void CStarControlSub1::load(SimpleFile *file, int param) {
 
 bool CStarControlSub1::initDocument() {
 	warning("CStarControlSub1::initDocument");
+	_starArray.initialize();
 	return true;
 }
 

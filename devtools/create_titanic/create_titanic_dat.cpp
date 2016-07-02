@@ -52,7 +52,7 @@
  */
 
 #define VERSION_NUMBER 1
-#define HEADER_SIZE 0x640
+#define HEADER_SIZE 0x680
 
 Common::File inputFile, outputFile;
 Common::PEResources res;
@@ -422,6 +422,18 @@ void writeSentenceMappings(const char *name, uint offset, int numValues) {
 	dataOffset += size;
 }
 
+
+void writeStarfieldPoints() {
+	outputFile.seek(dataOffset);
+
+	inputFile.seek(0x59DE4C - FILE_DIFF);
+	uint size = 876 * 12;
+
+	outputFile.write(inputFile, size);
+	writeEntryHeader("STARFIELD/POINTS", dataOffset, size);
+	dataOffset += size;
+}
+
 void writeHeader() {
 	// Write out magic string
 	const char *MAGIC_STR = "SVTN";
@@ -451,6 +463,7 @@ void writeData() {
 	writeResource("STFONT", 153);
 
 	writeResource("STARFIELD", 132);
+	writeStarfieldPoints();
 
 	writeResource("TEXT", "STVOCAB.TXT");
 	writeResource("TEXT", "JRQUOTES.TXT");
