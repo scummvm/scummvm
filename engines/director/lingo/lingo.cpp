@@ -181,7 +181,7 @@ int Datum::toInt() {
 		break;
 	case FLOAT:
 		u.i = (int)u.f;
-		type = FLOAT;
+		type = INT;
 		break;
 	default:
 		warning("Incorrect operation toInt() for type: %d", type);
