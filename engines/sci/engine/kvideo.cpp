@@ -342,17 +342,7 @@ reg_t kPlayVMDShowCursor(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kPlayVMDStartBlob(EngineState *s, int argc, reg_t *argv) {
-	debug("kPlayVMDStartBlob");
-	return s->r_acc;
-}
-
-reg_t kPlayVMDStopBlobs(EngineState *s, int argc, reg_t *argv) {
-	debug("kPlayVMDStopBlobs");
-	return s->r_acc;
-}
-
-reg_t kPlayVMDBlack(EngineState *s, int argc, reg_t *argv) {
+reg_t kPlayVMDSetBlackoutArea(EngineState *s, int argc, reg_t *argv) {
 	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
 	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
 

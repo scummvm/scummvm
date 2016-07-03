@@ -29,6 +29,11 @@ class Plane;
 class ScreenItem;
 class SegManager;
 
+#pragma mark VMDPlayer
+
+/**
+ * VMDPlayer is used to play VMD videos.
+ */
 class VMDPlayer {
 public:
 	enum OpenFlags {
@@ -44,7 +49,6 @@ public:
 	enum PlayFlags {
 		kPlayFlagNone             = 0,
 		kPlayFlagDoublePixels     = 1,
-		kPlayFlagNoFrameskip      = 2, // NOTE: the current VMD decoder does not allow this
 		kPlayFlagBlackLines       = 4,
 		kPlayFlagBoost            = 0x10,
 		kPlayFlagLeaveScreenBlack = 0x20,
@@ -67,6 +71,14 @@ public:
 	VMDPlayer(SegManager *segMan, EventManager *eventMan);
 	~VMDPlayer();
 
+private:
+	SegManager *_segMan;
+	EventManager *_eventMan;
+	Video::AdvancedVMDDecoder *_decoder;
+
+#pragma mark -
+#pragma mark VMDPlayer - Playback
+public:
 	/**
 	 * Opens a stream to a VMD resource.
 	 */
@@ -83,52 +95,10 @@ public:
 	 */
 	IOStatus close();
 
-	/**
-	 * Restricts use of the system palette by VMD playback to
-	 * the given range of palette indexes.
-	 */
-	void restrictPalette(const uint8 startColor, const uint8 endColor);
-
 	// NOTE: Was WaitForEvent in SSCI
 	EventFlags kernelPlayUntilEvent(const EventFlags flags, const int16 lastFrameNo, const int16 yieldInterval);
 
-	/**
-	 * Sets the area of the screen that should be blacked out
-	 * during VMD playback.
-	 */
-	void setBlackoutArea(const Common::Rect &rect) { _blackoutRect = rect; }
-
-	/**
-	 * Sets whether or not the mouse cursor should be drawn.
-	 * This does not have any effect during playback, but can
-	 * be used to prevent the mouse cursor from being shown
-	 * after the video has finished.
-	 */
-	void setShowCursor(const bool shouldShow) { _showCursor = shouldShow; }
-
 private:
-	SegManager *_segMan;
-	EventManager *_eventMan;
-	Video::AdvancedVMDDecoder *_decoder;
-
-	/**
-	 * Plays the VMD until an event occurs (e.g. user
-	 * presses escape, clicks, etc.).
-	 */
-	EventFlags playUntilEvent(const EventFlags flags);
-
-	/**
-	 * Renders a frame of video to the output bitmap.
-	 */
-	void renderFrame() const;
-
-	/**
-	 * Fills the given palette with RGB values from
-	 * the VMD palette, applying brightness boost if
-	 * it is enabled.
-	 */
-	void fillPalette(Palette &palette) const;
-
 	/**
 	 * Whether or not a VMD stream has been opened with
 	 * `open`.
@@ -142,16 +112,57 @@ private:
 	bool _isInitialized;
 
 	/**
-	 * Whether or not the playback area of the VMD
-	 * should be left black at the end of playback.
+	 * For VMDs played with the `kEventFlagYieldToVM` flag,
+	 * the number of frames that should be rendered until
+	 * yielding back to the SCI VM.
 	 */
-	bool _leaveScreenBlack;
+	int32 _yieldInterval;
 
 	/**
-	 * Whether or not the area of the VMD should be left
-	 * displaying the final frame of the video.
+	 * For VMDs played with the `kEventFlagYieldToVM` flag,
+	 * the last frame when control of the main thread was
+	 * yielded back to the SCI VM.
 	 */
-	bool _leaveLastFrame;
+	int _lastYieldedFrameNo;
+
+	/**
+	 * Plays the VMD until an event occurs (e.g. user
+	 * presses escape, clicks, etc.).
+	 */
+	EventFlags playUntilEvent(const EventFlags flags);
+
+#pragma mark -
+#pragma mark VMDPlayer - Rendering
+private:
+	/**
+	 * The location of the VMD plane, in game script
+	 * coordinates.
+	 */
+	int16 _x, _y;
+
+	/**
+	 * The plane where the VMD will be drawn.
+	 */
+	Plane *_plane;
+
+	/**
+	 * The screen item representing the VMD surface.
+	 */
+	ScreenItem *_screenItem;
+
+	// TODO: planeIsOwned and priority are used in SCI3+ only
+
+	/**
+	 * If true, the plane for this VMD was set
+	 * externally and is not owned by this VMDPlayer.
+	 */
+	bool _planeIsOwned;
+
+	/**
+	 * The screen priority of the video.
+	 * @see ScreenItem::_priority
+	 */
+	int _priority;
 
 	/**
 	 * Whether or not the video should be pixel doubled.
@@ -171,24 +182,60 @@ private:
 	bool _blackLines;
 
 	/**
-	 * The amount of brightness boost for the video.
-	 * Values above 100 increase brightness; values below
-	 * 100 reduce it.
+	 * Whether or not the playback area of the VMD
+	 * should be left black at the end of playback.
 	 */
-	int16 _boostPercent;
+	bool _leaveScreenBlack;
 
 	/**
-	 * The first color in the palette that should be
-	 * brightness boosted.
+	 * Whether or not the area of the VMD should be left
+	 * displaying the final frame of the video.
 	 */
-	uint8 _boostStartColor;
+	bool _leaveLastFrame;
 
 	/**
-	 * The last color in the palette that should be
-	 * brightness boosted.
+	 * Renders a frame of video to the output bitmap.
 	 */
-	uint8 _boostEndColor;
+	void renderFrame() const;
 
+	/**
+	 * Fills the given palette with RGB values from
+	 * the VMD palette, applying brightness boost if
+	 * it is enabled.
+	 */
+	void fillPalette(Palette &palette) const;
+
+#pragma mark -
+#pragma mark VMDPlayer - Blackout
+public:
+	/**
+	 * Sets the area of the screen that should be blacked out
+	 * during VMD playback.
+	 */
+	void setBlackoutArea(const Common::Rect &rect) { _blackoutRect = rect; }
+
+private:
+	/**
+	 * The dimensions of the blackout plane.
+	 */
+	Common::Rect _blackoutRect;
+
+	/**
+	 * An optional plane that will be used to black out
+	 * areas of the screen outside of the VMD surface.
+	 */
+	Plane *_blackoutPlane;
+
+#pragma mark -
+#pragma mark VMDPlayer - Palette
+public:
+	/**
+	 * Restricts use of the system palette by VMD playback to
+	 * the given range of palette indexes.
+	 */
+	void restrictPalette(const uint8 startColor, const uint8 endColor);
+
+private:
 	/**
 	 * The first color in the system palette that the VMD
 	 * can write to.
@@ -209,62 +256,45 @@ private:
 	 */
 	bool _blackPalette;
 
-	// TODO: planeSet and priority are used in SCI3+ only
-	bool _planeSet;
+#pragma mark -
+#pragma mark VMDPlayer - Brightness boost
+private:
+	/**
+	 * The amount of brightness boost for the video.
+	 * Values above 100 increase brightness; values below
+	 * 100 reduce it.
+	 */
+	int16 _boostPercent;
 
 	/**
-	 * The screen priority of the video.
-	 * @see ScreenItem::_priority
+	 * The first color in the palette that should be
+	 * brightness boosted.
 	 */
-	int _priority;
+	uint8 _boostStartColor;
 
 	/**
-	 * The plane where the VMD will be drawn.
+	 * The last color in the palette that should be
+	 * brightness boosted.
 	 */
-	Plane *_plane;
+	uint8 _boostEndColor;
 
+#pragma mark -
+#pragma mark VMDPlayer - Mouse cursor
+public:
 	/**
-	 * The screen item representing the VMD surface.
+	 * Sets whether or not the mouse cursor should be drawn.
+	 * This does not have any effect during playback, but can
+	 * be used to prevent the mouse cursor from being shown
+	 * again after the video has finished.
 	 */
-	ScreenItem *_screenItem;
+	void setShowCursor(const bool shouldShow) { _showCursor = shouldShow; }
 
-	/**
-	 * An optional plane that will be used to black out
-	 * areas of the screen outside the area of the VMD
-	 * surface.
-	 */
-	Plane *_blackoutPlane;
-
-	/**
-	 * The dimensions of the blackout plane.
-	 */
-	Common::Rect _blackoutRect;
-
+private:
 	/**
 	 * Whether or not the mouse cursor should be shown
 	 * during playback.
 	 */
 	bool _showCursor;
-
-	/**
-	 * The location of the VMD plane, in game script
-	 * coordinates.
-	 */
-	int16 _x, _y;
-
-	/**
-	 * For VMDs played with the `kEventFlagYieldToVM` flag,
-	 * the number of frames that should be drawn until
-	 * yielding back to the SCI VM.
-	 */
-	int32 _yieldInterval;
-
-	/**
-	 * For VMDs played with the `kEventFlagYieldToVM` flag,
-	 * the last frame when control of the main thread was
-	 * yielded back to the SCI VM.
-	 */
-	int _lastYieldedFrameNo;
 };
 
 class Video32 {

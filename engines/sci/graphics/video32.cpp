@@ -33,36 +33,48 @@
 #include "video/coktel_decoder.h"
 
 namespace Sci {
+
+#pragma mark VMDPlayer
+
 VMDPlayer::VMDPlayer(SegManager *segMan, EventManager *eventMan) :
 	_segMan(segMan),
 	_eventMan(eventMan),
 	_decoder(new Video::AdvancedVMDDecoder(Audio::Mixer::kSFXSoundType)),
+
 	_isOpen(false),
 	_isInitialized(false),
-	_startColor(0),
-	_planeSet(false),
-	_endColor(255),
-	_blackLines(false),
-	_doublePixels(false),
+	_yieldInterval(0),
 	_lastYieldedFrameNo(0),
-	_blackoutRect(),
+
+	_plane(nullptr),
+	_screenItem(nullptr),
+	_planeIsOwned(true),
+	_priority(0),
+	_doublePixels(false),
+	_stretchVertical(false),
+	_blackLines(false),
+	_leaveScreenBlack(false),
+	_leaveLastFrame(false),
+
+	_blackoutPlane(nullptr),
+
+	_startColor(0),
+	_endColor(255),
 	_blackPalette(false),
+
 	_boostPercent(100),
 	_boostStartColor(0),
 	_boostEndColor(255),
-	_leaveLastFrame(false),
-	_leaveScreenBlack(false),
-	_plane(nullptr),
-	_screenItem(nullptr),
-	_stretchVertical(false),
-	_priority(0),
-	_blackoutPlane(nullptr),
-	_yieldInterval(0) {}
+
+	_showCursor(false) {}
 
 VMDPlayer::~VMDPlayer() {
 	close();
 	delete _decoder;
 }
+
+#pragma mark -
+#pragma mark VMDPlayer - Playback
 
 VMDPlayer::IOStatus VMDPlayer::open(const Common::String &fileName, const OpenFlags flags) {
 	if (_isOpen) {
@@ -83,20 +95,57 @@ VMDPlayer::IOStatus VMDPlayer::open(const Common::String &fileName, const OpenFl
 void VMDPlayer::init(const int16 x, const int16 y, const PlayFlags flags, const int16 boostPercent, const int16 boostStartColor, const int16 boostEndColor) {
 	_x = getSciVersion() >= SCI_VERSION_3 ? x : (x & ~1);
 	_y = y;
-	_leaveScreenBlack = flags & kPlayFlagLeaveScreenBlack;
-	_leaveLastFrame = flags & kPlayFlagLeaveLastFrame;
 	_doublePixels = flags & kPlayFlagDoublePixels;
 	_blackLines = ConfMan.getBool("enable_black_lined_video") && (flags & kPlayFlagBlackLines);
 	_boostPercent = 100 + (flags & kPlayFlagBoost ? boostPercent : 0);
-	_blackPalette = flags & kPlayFlagBlackPalette;
-	_stretchVertical = flags & kPlayFlagStretchVertical;
 	_boostStartColor = CLIP<int16>(boostStartColor, 0, 255);
 	_boostEndColor = CLIP<int16>(boostEndColor, 0, 255);
+	_leaveScreenBlack = flags & kPlayFlagLeaveScreenBlack;
+	_leaveLastFrame = flags & kPlayFlagLeaveLastFrame;
+	_blackPalette = flags & kPlayFlagBlackPalette;
+	_stretchVertical = flags & kPlayFlagStretchVertical;
 }
 
-void VMDPlayer::restrictPalette(const uint8 startColor, const uint8 endColor) {
-	_startColor = startColor;
-	_endColor = endColor;
+VMDPlayer::IOStatus VMDPlayer::close() {
+	if (!_isOpen) {
+		return kIOSuccess;
+	}
+
+	_decoder->close();
+	_isOpen = false;
+	_isInitialized = false;
+
+	if (!_planeIsOwned && _screenItem != nullptr) {
+		g_sci->_gfxFrameout->deleteScreenItem(*_screenItem);
+		_screenItem = nullptr;
+	} else if (_plane != nullptr) {
+		g_sci->_gfxFrameout->deletePlane(*_plane);
+		_plane = nullptr;
+	}
+
+	if (!_leaveLastFrame && _leaveScreenBlack) {
+		// This call *actually* deletes the plane/screen item
+		g_sci->_gfxFrameout->frameOut(true);
+	}
+
+	if (_blackoutPlane != nullptr) {
+		g_sci->_gfxFrameout->deletePlane(*_blackoutPlane);
+		_blackoutPlane = nullptr;
+	}
+
+	if (!_leaveLastFrame && !_leaveScreenBlack) {
+		// This call *actually* deletes the blackout plane
+		g_sci->_gfxFrameout->frameOut(true);
+	}
+
+	if (!_showCursor) {
+		g_sci->_gfxCursor->kernelShow();
+	}
+
+	_lastYieldedFrameNo = 0;
+	_planeIsOwned = true;
+	_priority = 0;
+	return kIOSuccess;
 }
 
 VMDPlayer::EventFlags VMDPlayer::kernelPlayUntilEvent(const EventFlags flags, const int16 lastFrameNo, const int16 yieldInterval) {
@@ -154,20 +203,13 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 			g_sci->_gfxCursor->kernelHide();
 		}
 
-		const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-		const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
-		const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-		const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
-
-		Common::Rect vmdRect(
-			_x,
-			_y,
-			_x + _decoder->getWidth(),
-			_y + _decoder->getHeight()
-		);
+		Common::Rect vmdRect(_x,
+							 _y,
+							 _x + _decoder->getWidth(),
+							 _y + _decoder->getHeight());
 		ScaleInfo vmdScaleInfo;
 
-		if (!_blackoutRect.isEmpty() && !_planeSet) {
+		if (!_blackoutRect.isEmpty() && _planeIsOwned) {
 			_blackoutPlane = new Plane(_blackoutRect);
 			g_sci->_gfxFrameout->addPlane(*_blackoutPlane);
 		}
@@ -184,6 +226,11 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 			vmdRect.bottom += vmdRect.height();
 		}
 
+		const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
+		const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
+		const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+		const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+
 		BitmapResource vmdBitmap(_segMan, vmdRect.width(), vmdRect.height(), 255, 0, 0, screenWidth, screenHeight, 0, false);
 
 		if (screenWidth != scriptWidth || screenHeight != scriptHeight) {
@@ -194,7 +241,7 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 		vmdCelInfo.bitmap = vmdBitmap.getObject();
 		_decoder->setSurfaceMemory(vmdBitmap.getPixels(), vmdBitmap.getWidth(), vmdBitmap.getHeight(), 1);
 
-		if (!_planeSet) {
+		if (_planeIsOwned) {
 			_x = 0;
 			_y = 0;
 			_plane = new Plane(vmdRect, kPlanePicColored);
@@ -237,8 +284,7 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 
 		const int currentFrameNo = _decoder->getCurFrame();
 
-		if (
-			_yieldInterval > 0 &&
+		if (_yieldInterval > 0 &&
 			currentFrameNo != _lastYieldedFrameNo &&
 			(currentFrameNo % _yieldInterval) == 0
 		) {
@@ -247,21 +293,35 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 			break;
 		}
 
-		if (flags & kEventFlagMouseDown && _eventMan->getSciEvent(SCI_EVENT_MOUSE_PRESS | SCI_EVENT_PEEK).type != SCI_EVENT_NONE) {
+		SciEvent event = _eventMan->getSciEvent(SCI_EVENT_MOUSE_PRESS | SCI_EVENT_PEEK);
+		if ((flags & kEventFlagMouseDown) && event.type == SCI_EVENT_MOUSE_PRESS) {
 			stopFlag = kEventFlagMouseDown;
 			break;
 		}
 
-		if (flags & kEventFlagEscapeKey) {
-			const SciEvent event = _eventMan->getSciEvent(SCI_EVENT_KEYBOARD | SCI_EVENT_PEEK);
-			if (event.type != SCI_EVENT_NONE && event.character == SCI_KEY_ESC) {
+		event = _eventMan->getSciEvent(SCI_EVENT_KEYBOARD | SCI_EVENT_PEEK);
+		if ((flags & kEventFlagEscapeKey) && event.type == SCI_EVENT_KEYBOARD) {
+			bool stop = false;
+			if (getSciVersion() < SCI_VERSION_3) {
+				while ((event = _eventMan->getSciEvent(SCI_EVENT_KEYBOARD)),
+					   event.type != SCI_EVENT_NONE) {
+					if (event.character == SCI_KEY_ESC) {
+						stop = true;
+						break;
+					}
+				}
+			} else {
+				stop = (event.character == SCI_KEY_ESC);
+			}
+
+			if (stop) {
 				stopFlag = kEventFlagEscapeKey;
 				break;
 			}
 		}
 
-		if (flags & kEventFlagHotRectangle) {
-			// TODO: Hot rectangles
+		// TODO: Hot rectangles
+		if ((flags & kEventFlagHotRectangle) /* && event.type == SCI_EVENT_HOT_RECTANGLE */) {
 			warning("Hot rectangles not implemented in VMD player");
 			stopFlag = kEventFlagHotRectangle;
 			break;
@@ -272,25 +332,8 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 	return stopFlag;
 }
 
-void VMDPlayer::fillPalette(Palette &palette) const {
-	const byte *vmdPalette = _decoder->getPalette() + _startColor * 3;
-	for (uint16 i = _startColor; i <= _endColor; ++i) {
-		int16 r = *vmdPalette++;
-		int16 g = *vmdPalette++;
-		int16 b = *vmdPalette++;
-
-		if (_boostPercent != 100 && i >= _boostStartColor && i <= _boostEndColor) {
-			r = CLIP<int16>(r * _boostPercent / 100, 0, 255);
-			g = CLIP<int16>(g * _boostPercent / 100, 0, 255);
-			b = CLIP<int16>(b * _boostPercent / 100, 0, 255);
-		}
-
-		palette.colors[i].r = r;
-		palette.colors[i].g = g;
-		palette.colors[i].b = b;
-		palette.colors[i].used = true;
-	}
-}
+#pragma mark -
+#pragma mark VMDPlayer - Rendering
 
 void VMDPlayer::renderFrame() const {
 	// This writes directly to the CelObjMem we already created,
@@ -304,6 +347,7 @@ void VMDPlayer::renderFrame() const {
 	const bool dirtyPalette = _decoder->hasDirtyPalette();
 	if (dirtyPalette) {
 		Palette palette;
+		palette.timestamp = g_sci->getTickCount();
 		if (_blackPalette) {
 			for (uint16 i = _startColor; i <= _endColor; ++i) {
 				palette.colors[i].r = palette.colors[i].g = palette.colors[i].b = 0;
@@ -331,45 +375,32 @@ void VMDPlayer::renderFrame() const {
 	}
 }
 
-VMDPlayer::IOStatus VMDPlayer::close() {
-	if (!_isOpen) {
-		return kIOSuccess;
+void VMDPlayer::fillPalette(Palette &palette) const {
+	const byte *vmdPalette = _decoder->getPalette() + _startColor * 3;
+	for (uint16 i = _startColor; i <= _endColor; ++i) {
+		int16 r = *vmdPalette++;
+		int16 g = *vmdPalette++;
+		int16 b = *vmdPalette++;
+
+		if (_boostPercent != 100 && i >= _boostStartColor && i <= _boostEndColor) {
+			r = CLIP<int16>(r * _boostPercent / 100, 0, 255);
+			g = CLIP<int16>(g * _boostPercent / 100, 0, 255);
+			b = CLIP<int16>(b * _boostPercent / 100, 0, 255);
+		}
+
+		palette.colors[i].r = r;
+		palette.colors[i].g = g;
+		palette.colors[i].b = b;
+		palette.colors[i].used = true;
 	}
+}
 
-	_decoder->close();
-	_isOpen = false;
-	_isInitialized = false;
+#pragma mark -
+#pragma mark VMDPlayer - Palette
 
-	if (_planeSet && _screenItem != nullptr) {
-		g_sci->_gfxFrameout->deleteScreenItem(*_screenItem);
-		_screenItem = nullptr;
-	} else if (_plane != nullptr) {
-		g_sci->_gfxFrameout->deletePlane(*_plane);
-		_plane = nullptr;
-	}
-
-	if (!_leaveLastFrame && _leaveScreenBlack) {
-		// This call *actually* deletes the plane/screen item
-		g_sci->_gfxFrameout->frameOut(true);
-	}
-
-	if (_blackoutPlane != nullptr) {
-		g_sci->_gfxFrameout->deletePlane(*_blackoutPlane);
-		_blackoutPlane = nullptr;
-	}
-
-	if (!_leaveLastFrame && !_leaveScreenBlack) {
-		// This call *actually* deletes the blackout plane
-		g_sci->_gfxFrameout->frameOut(true);
-	}
-
-	if (!_showCursor) {
-		g_sci->_gfxCursor->kernelShow();
-	}
-
-	_planeSet = false;
-	_priority = 0;
-	return kIOSuccess;
+void VMDPlayer::restrictPalette(const uint8 startColor, const uint8 endColor) {
+	_startColor = startColor;
+	_endColor = endColor;
 }
 
 } // End of namespace Sci

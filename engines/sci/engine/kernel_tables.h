@@ -423,7 +423,7 @@ static const SciKernelMapSubEntry kPlayVMD_subops[] = {
 	{ SIG_SINCE_SCI21,    16, MAP_CALL(PlayVMDShowCursor),         "i",                    NULL },
 	{ SIG_SINCE_SCI21,    17, MAP_DUMMY(PlayVMDStartBlob),         "",                     NULL },
 	{ SIG_SINCE_SCI21,    18, MAP_DUMMY(PlayVMDStopBlobs),         "",                     NULL },
-	{ SIG_SINCE_SCI21,    21, MAP_CALL(PlayVMDBlack),              "iiii",                 NULL },
+	{ SIG_SINCE_SCI21,    21, MAP_CALL(PlayVMDSetBlackoutArea),    "iiii",                 NULL },
 	{ SIG_SINCE_SCI21,    23, MAP_CALL(PlayVMDRestrictPalette),    "ii",                   NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };

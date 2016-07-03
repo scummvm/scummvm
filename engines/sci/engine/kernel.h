@@ -447,9 +447,7 @@ reg_t kPlayVMDInit(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDClose(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDPlayUntilEvent(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDShowCursor(EngineState *s, int argc, reg_t *argv);
-reg_t kPlayVMDStartBlob(EngineState *s, int argc, reg_t *argv);
-reg_t kPlayVMDStopBlobs(EngineState *s, int argc, reg_t *argv);
-reg_t kPlayVMDBlack(EngineState *s, int argc, reg_t *argv);
+reg_t kPlayVMDSetBlackoutArea(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDRestrictPalette(EngineState *s, int argc, reg_t *argv);
 
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv);
