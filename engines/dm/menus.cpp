@@ -101,16 +101,16 @@ void MenuMan::f386_drawActionIcon(ChampionIndex championIndex) {
 	} else if (g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(thing)]._actionSetIndex) {
 		iconIndex = _vm->_objectMan->f33_getIconIndex(thing);
 	} else {
-		dm.f134_fillBitmap(bitmapIcon, 16, 16, k4_ColorCyan);
+		dm.f134_fillBitmap(bitmapIcon, k4_ColorCyan, 16, 16);
 		goto T0386006;
 	}
 	_vm->_objectMan->f36_extractIconFromBitmap(iconIndex, bitmapIcon);
-	dm.f129_blitToBitmapShrinkWithPalChange(bitmapIcon, bitmapIcon, 16, 16,  16, 16, g498_PalChangesActionAreaObjectIcon);
+	dm.f129_blitToBitmapShrinkWithPalChange(bitmapIcon, bitmapIcon, 16, 16, 16, 16, g498_PalChangesActionAreaObjectIcon);
 T0386006:
 	dm.D24_fillScreenBox(box, k4_ColorCyan);
 	Box box2;
 	box2._x1 = box._x1 + 2;
-	box2._x2 = box._x2 - 2; 
+	box2._x2 = box._x2 - 2;
 	box2._y1 = 95;
 	box2._y2 = 110;
 	dm.f132_blitToBitmap(bitmapIcon, dm._g348_bitmapScreen, box2, 0, 0, 16, k160_byteWidthScreen * 2, k255_ColorNoTransparency);

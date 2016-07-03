@@ -561,11 +561,11 @@ public:
 									   int16 xPos, int16 yPos, int16 destHeight, int16 height2); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
 	void f129_blitToBitmapShrinkWithPalChange(byte *srcBitmap, byte *destBitmap,
 											  int16 srcWidth, int16 srcHight, int16 destWidth, int16 destHeight, byte *palChange); // @ F0129_VIDEO_BlitShrinkWithPaletteChanges
-	void f103_flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height); // @ F0103_DUNGEONVIEW_DrawDoorFrameBitmapFlippedHorizontally
+	void f130_flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height); // @ F0130_VIDEO_FlipHorizontal
 	void flipBitmapVertical(byte *bitmap, uint16 width, uint16 height);
 	byte *f114_getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int16 &returnPixelWidth, int16 &returnHeight); // @ F0114_DUNGEONVIEW_GetExplosionBitmap
 
-	void f134_fillBitmap(byte *bitmap, uint16 width, uint16 height, Color color); // @ F0134_VIDEO_FillBitmap
+	void f134_fillBitmap(byte *bitmap, Color color, uint16 width, uint16 height); // @ F0134_VIDEO_FillBitmap
 	void fillScreen(Color color);
 	/* Expects inclusive boundaries in box */
 	void D24_fillScreenBox(Box &box, Color color); // @ D24_FillScreenBox, F0550_VIDEO_FillScreenBox

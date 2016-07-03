@@ -1018,9 +1018,9 @@ void DisplayMan::f466_loadIntoBitmap(uint16 index, byte *destBitmap) {
 }
 
 void DisplayMan::f132_blitToBitmap(byte *srcBitmap, byte *destBitmap, Box &box, uint16 srcX, uint16 srcY, uint16 srcWidth,
-					   uint16 destWidth, Color transparent, int16 srcHeight, int16 destHight) {
-	// Note: if you want to use srcHeight and destHight parameters, remove the defaults values and 
-	// and complete the function calls at the callsites, otherwise their value can be the default -1
+								   uint16 destWidth, Color transparent, int16 srcHeight, int16 destHight) {
+				// Note: if you want to use srcHeight and destHight parameters, remove the defaults values and 
+				// and complete the function calls at the callsites, otherwise their value can be the default -1
 	for (uint16 y = 0; y < box._y2 + 1 - box._y1; ++y) // + 1 for inclusive boundaries
 		for (uint16 x = 0; x < box._x2 + 1 - box._x1; ++x) { // + 1 for inclusive boundaries
 			byte srcPixel = srcBitmap[srcWidth * (y + srcY) + srcX + x];
@@ -1041,15 +1041,15 @@ void DisplayMan::f135_fillBoxBitmap(byte* destBitmap, Box &box, Color color, int
 }
 
 void DisplayMan::f133_blitBoxFilledWithMaskedBitmap(byte* src, byte* dest, byte* mask, byte* tmp, Box& box,
-											   int16 lastUnitIndex, int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
-											   int16 xPos, int16 yPos, int16 destHeight, int16 height2) {
-	// make sure to take care of inclusive boundaries
+													int16 lastUnitIndex, int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
+													int16 xPos, int16 yPos, int16 destHeight, int16 height2) {
+		 // make sure to take care of inclusive boundaries
 	warning("STUB FUNCTION: does nothing at all");
 }
 
 
 
-void DisplayMan::f103_flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height) {
+void DisplayMan::f130_flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height) {
 	for (uint16 y = 0; y < height; ++y) {
 		for (uint16 x = 0; x < width / 2; ++x) {
 			byte tmp;
@@ -1150,7 +1150,7 @@ uint16 DisplayMan::getHeight(uint16 index) {
 // Note: has been screened for missing code
 void DisplayMan::f99_copyBitmapAndFlipHorizontal(byte* srcBitmap, byte* destBitmap, uint16 pixelWidth, uint16 height) {
 	memmove(destBitmap, srcBitmap, pixelWidth * height * sizeof(byte));
-	f103_flipBitmapHorizontal(destBitmap, pixelWidth, height);
+	f130_flipBitmapHorizontal(destBitmap, pixelWidth, height);
 }
 
 void DisplayMan::f101_drawWallSetBitmapWithoutTransparency(byte *bitmap, Frame &f) {
@@ -1566,7 +1566,7 @@ void DisplayMan::fillScreen(Color color) {
 	memset(getCurrentVgaBuffer(), color, sizeof(byte) * _screenWidth * _screenHeight);
 }
 
-void DisplayMan::f134_fillBitmap(byte *bitmap, uint16 width, uint16 height, Color color) {
+void DisplayMan::f134_fillBitmap(byte *bitmap, Color color, uint16 width, uint16 height) {
 	memset(bitmap, color, sizeof(byte) * width * height);
 }
 
@@ -1622,12 +1622,12 @@ void DisplayMan::f96_loadCurrentMapGraphics() {
 
 		f99_copyBitmapAndFlipHorizontal(_g95_bitmapWall_D3LCR_Native = _g698_bitmapWallSet_Wall_D3LCR, _g74_tmpBitmap,
 										g163_FrameWalls[k0_ViewSquare_D3C]._srcWidth, g163_FrameWalls[k0_ViewSquare_D3C]._srcHeight);
-		f134_fillBitmap(_g90_bitmapWall_D3LCR_Flipped, 128, 51, k10_ColorFlesh);
+		f134_fillBitmap(_g90_bitmapWall_D3LCR_Flipped, k10_ColorFlesh, 128, 51);
 		f132_blitToBitmap(_g74_tmpBitmap, _g90_bitmapWall_D3LCR_Flipped, g161_BoxWallBitmap_D3LCR, 11, 0, 128, 128, k255_ColorNoTransparency);
 
 		f99_copyBitmapAndFlipHorizontal(_g96_bitmapWall_D2LCR_Native = _g699_bitmapWallSet_Wall_D2LCR, _g74_tmpBitmap,
 										g163_FrameWalls[k3_ViewSquare_D2C]._srcWidth, g163_FrameWalls[k3_ViewSquare_D2C]._srcHeight);
-		f134_fillBitmap(_g91_bitmapWall_D2LCR_Flipped, 144, 71, k10_ColorFlesh);
+		f134_fillBitmap(_g91_bitmapWall_D2LCR_Flipped, k10_ColorFlesh, 144, 71);
 		f132_blitToBitmap(_g74_tmpBitmap, _g91_bitmapWall_D2LCR_Flipped, g162_BoxWallBitmap_D2LCR, 8, 0, 144, 144, k255_ColorNoTransparency);
 
 		f99_copyBitmapAndFlipHorizontal(_g97_bitmapWall_D1LCR_Native = _g700_bitmapWallSet_Wall_D1LCR, _g92_bitmapWall_D1LCR_Flipped,
@@ -1870,7 +1870,7 @@ bool DisplayMan::f107_isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWall
 				}
 			}
 			int16 pixelWidth = (coordinateSetA + coordinateSetOffset)[1] - (coordinateSetA + coordinateSetOffset)[0];
-			f129_blitToBitmapShrinkWithPalChange(_bitmaps[nativeBitmapIndex], _g74_tmpBitmap, coordSetB[4] << 1, coordSetB[5],pixelWidth + 1, coordinateSetA[5],
+			f129_blitToBitmapShrinkWithPalChange(_bitmaps[nativeBitmapIndex], _g74_tmpBitmap, coordSetB[4] << 1, coordSetB[5], pixelWidth + 1, coordinateSetA[5],
 				(viewWallIndex <= k4_ViewWall_D3R_FRONT) ? g198_PalChangesDoorButtonAndWallOrn_D3 : g199_PalChangesDoorButtonAndWallOrn_D2);
 			bitmapGreen = _bitmaps[nativeBitmapIndex];
 			var_X = pixelWidth;
@@ -1961,9 +1961,9 @@ void DisplayMan::f113_drawField(FieldAspect* fieldAspect, Box& box) {
 	} else {
 		bitmapMask = dispMan._g74_tmpBitmap;
 		memmove(bitmapMask, dispMan.f489_getBitmap(k69_FieldMask_D3R_GraphicIndice + getFlag(fieldAspect->_mask, kMaskFieldAspectIndex)),
-			   fieldAspect->_height * fieldAspect->_pixelWidth * sizeof(bitmapMask[0]));
+				fieldAspect->_height * fieldAspect->_pixelWidth * sizeof(bitmapMask[0]));
 		if (getFlag(fieldAspect->_mask, kMaskFieldAspectFlipMask)) {
-			dispMan.f103_flipBitmapHorizontal(bitmapMask, fieldAspect->_pixelWidth, fieldAspect->_height);
+			dispMan.f130_flipBitmapHorizontal(bitmapMask, fieldAspect->_pixelWidth, fieldAspect->_height);
 		}
 	}
 
@@ -2138,7 +2138,7 @@ int16 g225_CenteredExplosionCoordinates[15][2] = { // @ G0225_aai_Graphic558_Cen
 #define k0x0080_BlitDoNotUseMask 0x0080 // @ MASK0x0080_DO_NOT_USE_MASK
 
 void DisplayMan::f115_cthulhu(Thing thingParam, direction directionParam, int16 mapXpos,
-						 int16 mapYpos, int16 viewSquareIndex, uint16 orderedViewCellOrdinals) {
+							  int16 mapYpos, int16 viewSquareIndex, uint16 orderedViewCellOrdinals) {
 
 	DungeonMan &dunMan = *_vm->_dungeonMan;
 
@@ -2331,7 +2331,7 @@ T0115015_DrawProjectileAsObject:
 					heightRedEagle = objectAspect->_height;
 					if (flipHorizontal) {
 						memmove(_g74_tmpBitmap, AL_6_bitmapRedBanana, byteWidth * heightRedEagle * sizeof(byte));
-						f103_flipBitmapHorizontal(_g74_tmpBitmap, byteWidth, heightRedEagle);
+						f130_flipBitmapHorizontal(_g74_tmpBitmap, byteWidth, heightRedEagle);
 						AL_6_bitmapRedBanana = _g74_tmpBitmap;
 					}
 				} else {
@@ -2364,7 +2364,7 @@ T0115015_DrawProjectileAsObject:
 															 objectAspect->_width, objectAspect->_height,
 															 byteWidth, heightRedEagle, paletteChanges);
 						if (flipHorizontal) {
-							f103_flipBitmapHorizontal(AL_6_bitmapRedBanana, byteWidth, heightRedEagle);
+							f130_flipBitmapHorizontal(AL_6_bitmapRedBanana, byteWidth, heightRedEagle);
 						}
 						warning("IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
 					}
@@ -2577,7 +2577,7 @@ T0115077_DrawSecondHalfSquareCreature:
 				AL_6_bitmapRedBanana = f489_getBitmap(AL_4_nativeBitmapIndex);
 				if (creatureDirectionDelta == 1) {
 					memmove(_g74_tmpBitmap, AL_6_bitmapRedBanana, byteWidth * heightRedEagle * sizeof(byte));
-					f103_flipBitmapHorizontal(_g74_tmpBitmap, byteWidth, heightRedEagle);
+					f130_flipBitmapHorizontal(_g74_tmpBitmap, byteWidth, heightRedEagle);
 					AL_6_bitmapRedBanana = _g74_tmpBitmap;
 				}
 			} else {
@@ -2585,7 +2585,7 @@ T0115077_DrawSecondHalfSquareCreature:
 					AL_6_bitmapRedBanana = f489_getBitmap(AL_4_nativeBitmapIndex);
 					if (useCreatureAttackBitmap && getFlag(creatureAspectInt, k0x0040_MaskActiveGroupFlipBitmap)) {
 						memmove(_g74_tmpBitmap, AL_6_bitmapRedBanana, byteWidth * heightRedEagle * sizeof(byte));
-						f103_flipBitmapHorizontal(_g74_tmpBitmap, byteWidth, heightRedEagle);
+						f130_flipBitmapHorizontal(_g74_tmpBitmap, byteWidth, heightRedEagle);
 						AL_6_bitmapRedBanana = _g74_tmpBitmap;
 					}
 				} else { /* Use first additional derived graphic: front D1 */
@@ -2596,7 +2596,7 @@ T0115077_DrawSecondHalfSquareCreature:
 						if (getFlag(AL_0_creatureGraphicInfoRed, k0x0004_CreatureInfoGraphicMaskFlipNonAttack)) {
 							AL_6_bitmapRedBanana = f492_getDerivedBitmap(derivedBitmapIndex);
 							memmove(AL_6_bitmapRedBanana, bitmapGreenAnt, byteWidth * heightRedEagle * sizeof(byte));
-							f103_flipBitmapHorizontal(AL_6_bitmapRedBanana, byteWidth, heightRedEagle);
+							f130_flipBitmapHorizontal(AL_6_bitmapRedBanana, byteWidth, heightRedEagle);
 						}
 						warning("IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
 					}
@@ -2641,7 +2641,7 @@ T0115077_DrawSecondHalfSquareCreature:
 						memmove(_g74_tmpBitmap, AL_6_bitmapRedBanana, AL_4_normalizdByteWidth * heightRedEagle * sizeof(byte));
 						AL_6_bitmapRedBanana = _g74_tmpBitmap;
 					}
-					f103_flipBitmapHorizontal(AL_6_bitmapRedBanana, AL_4_normalizdByteWidth, heightRedEagle);
+					f130_flipBitmapHorizontal(AL_6_bitmapRedBanana, AL_4_normalizdByteWidth, heightRedEagle);
 				}
 				creaturePaddingPixelCount = (7 - ((byteWidth / 2 - 1) & 0x0007)) << 1;
 			} else {
@@ -2770,7 +2770,7 @@ continue;
 								AL_6_bitmapRedBanana = _g74_tmpBitmap;
 							}
 							f129_blitToBitmapShrinkWithPalChange(bitmapGreenAnt, AL_6_bitmapRedBanana, ((ProjectileAspect*)objectAspect)->_width, ((ProjectileAspect*)objectAspect)->_height,
-															 byteWidth, heightRedEagle, _g75_palChangesProjectile[AL_8_projectileScaleIndex >> 1]);
+																 byteWidth, heightRedEagle, _g75_palChangesProjectile[AL_8_projectileScaleIndex >> 1]);
 							if (doNotScaleWithKineticEnergy) {
 								warning("IGNORED CODE F0493_CACHE_AddDerivedBitmap");
 							}
@@ -2787,7 +2787,7 @@ continue;
 							flipBitmapVertical(AL_6_bitmapRedBanana, AL_4_normalizdByteWidth, heightRedEagle);
 						}
 						if (flipHorizontal) {
-							f103_flipBitmapHorizontal(AL_6_bitmapRedBanana, AL_4_normalizdByteWidth, heightRedEagle);
+							f130_flipBitmapHorizontal(AL_6_bitmapRedBanana, AL_4_normalizdByteWidth, heightRedEagle);
 						}
 					}
 					boxByteGreen._y2 = (heightRedEagle >> 1) + 47;
@@ -2861,7 +2861,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 							if (AL_1_viewSquareExplosionIndex != k9_ViewSquare_D1C_Explosion) {
 								f129_blitToBitmapShrinkWithPalChange(AL_6_bitmapRedBanana, _g74_tmpBitmap,
 									((ProjectileAspect*)objectAspect)->_width, ((ProjectileAspect*)objectAspect)->_height,
-																byteWidth, heightRedEagle, g17_PalChangesNoChanges);
+																	 byteWidth, heightRedEagle, g17_PalChangesNoChanges);
 								AL_6_bitmapRedBanana = _g74_tmpBitmap;
 							}
 							goto T0115200_DrawExplosion;
@@ -2894,8 +2894,8 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 					AL_6_bitmapRedBanana = _g74_tmpBitmap;
 				}
 				f133_blitBoxFilledWithMaskedBitmap(AL_6_bitmapRedBanana, _g296_bitmapViewport, nullptr, f492_getDerivedBitmap(k0_DerivedBitmapViewport), g105_BoxExplosionPattern_D0C,
-											  _vm->_rnd->getRandomNumber(4) + 87, _vm->_rnd->getRandomNumber(64),
-											  224, (Color)(k0x0080_BlitDoNotUseMask | k10_ColorFlesh), 0, 0, 136, 93);
+												   _vm->_rnd->getRandomNumber(4) + 87, _vm->_rnd->getRandomNumber(64),
+												   224, (Color)(k0x0080_BlitDoNotUseMask | k10_ColorFlesh), 0, 0, 136, 93);
 				warning("IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
 				warning("IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
 			} else {
@@ -2953,7 +2953,7 @@ then a wrong part of the bitmap is drawn on screen. To fix this bug, "+ paddingP
 					AL_6_bitmapRedBanana = _g74_tmpBitmap;
 				}
 				if (flipHorizontal) {
-					f103_flipBitmapHorizontal(AL_6_bitmapRedBanana, byteWidth, heightRedEagle);
+					f130_flipBitmapHorizontal(AL_6_bitmapRedBanana, byteWidth, heightRedEagle);
 				}
 				if (flipVertical) {
 					flipBitmapVertical(AL_6_bitmapRedBanana, byteWidth, heightRedEagle);
