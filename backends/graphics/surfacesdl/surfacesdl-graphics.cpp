@@ -2047,7 +2047,7 @@ void SurfaceSdlGraphicsManager::undrawMouse() {
 		return;
 
 	if (_mouseBackup.w != 0 && _mouseBackup.h != 0)
-		addDirtyRect(x, y - _currentShakePos, _mouseBackup.w, _mouseBackup.h);
+		addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h);
 }
 
 void SurfaceSdlGraphicsManager::drawMouse() {
@@ -2088,9 +2088,7 @@ void SurfaceSdlGraphicsManager::drawMouse() {
 	// We draw the pre-scaled cursor image, so now we need to adjust for
 	// scaling, shake position and aspect ratio correction manually.
 
-	if (!_overlayVisible) {
-		dst.y += _currentShakePos;
-	}
+	dst.y += _currentShakePos;
 
 	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 		dst.y = real2Aspect(dst.y);

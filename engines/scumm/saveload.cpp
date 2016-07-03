@@ -1137,6 +1137,10 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	if (s->isLoading() && s->getVersion() < VER(14))
 		upgradeGfxUsageBits();
 
+	// When loading, reset the ShakePos. Fixes one part of bug #7141
+	if (s->isLoading() && s->getVersion() >= VER(10))
+		_system->setShakePos(0);
+
 	// When loading, move the mouse to the saved mouse position.
 	if (s->isLoading() && s->getVersion() >= VER(20)) {
 		updateCursor();

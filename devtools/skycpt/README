@@ -16,8 +16,8 @@ This program was only included in ScummVM's source tree because the Debian licen
 forces us to.
 Instead download the file from http://www.scummvm.org/
 Also, please be aware that if you create your own CPT file (if it isn't exactly the same as the
-one we offer for download at www.scummvm.org), it will be incompatible and the savegames produced
-using the file will be incompatible with ScummVM using the normal CPT file.
+one we offer for download at www.scummvm.org), it will be incompatible and the saved games
+produced using the file will be incompatible with ScummVM using the normal CPT file.
 The incompatibility will not be detected by ScummVM, it will most probably simply crash.
 
 If you still want to waste your time by creating this file:
