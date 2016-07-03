@@ -224,6 +224,12 @@ public:
 	 */
 	virtual bool load() = 0;
 
+	/**
+	 * Does a replacement of transparent pixels on certain lines at regular
+	 * intervals. This is totally weird
+	 */
+	virtual void transPixelate() = 0;
+
 	virtual bool proc45();
 
 	/**
@@ -422,6 +428,12 @@ public:
 	 * Loads the surface data based on the currently set resource key
 	 */
 	virtual bool load();
+
+	/**
+	 * Does a replacement of transparent pixels on certain lines at regular
+	 * intervals. This is totally weird
+	 */
+	virtual void transPixelate();
 
 	/**
 	 * Frees the underlying surface

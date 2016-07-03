@@ -476,6 +476,34 @@ bool OSVideoSurface::loadIfReady() {
 	}
 }
 
+void OSVideoSurface::transPixelate() {
+	if (!loadIfReady())
+		return;
+
+	lock();
+	Graphics::ManagedSurface *surface = _rawSurface;
+	uint transColor = getTransparencyColor();
+	// TODO: Check whether color is correct
+	uint pixelColor = surface->format.RGBToColor(0x50, 0, 0);
+
+	for (int yp = 0; yp < surface->h; ++yp) {
+		uint16 *pixelsP = (uint16 *)surface->getBasePtr(0, yp);
+		bool bitFlag = (yp % 2) == 0;
+		int replaceCtr = yp & 3;
+
+		for (int xp = 0; xp < surface->w; ++xp, ++pixelsP) {
+			if (bitFlag && *pixelsP == transColor && replaceCtr == 0)
+				*pixelsP = pixelColor;
+
+			bitFlag = !bitFlag;
+			replaceCtr = (replaceCtr + 1) & 3;
+		}
+	}
+
+	surface->markAllDirty();
+	unlock();
+}
+
 int OSVideoSurface::freeSurface() {
 	if (!_ddSurface)
 		return 0;
