@@ -40,7 +40,8 @@
 #include "video/qt_decoder.h"
 #include "sci/video/seq_decoder.h"
 #ifdef ENABLE_SCI32
-#include "video/coktel_decoder.h"
+#include "sci/graphics/frameout.h"
+#include "sci/graphics/video32.h"
 #include "sci/video/robot_decoder.h"
 #endif
 
@@ -289,113 +290,83 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
-	uint16 operation = argv[0].toUint16();
-	Video::VideoDecoder *videoDecoder = 0;
-	bool reshowCursor = g_sci->_gfxCursor->isVisible();
-	Common::String warningMsg;
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
 
-	switch (operation) {
-	case 0:	// init
-		s->_videoState.reset();
-		s->_videoState.fileName = s->_segMan->derefString(argv[1]);
+reg_t kPlayVMDOpen(EngineState *s, int argc, reg_t *argv) {
+	const Common::String fileName = s->_segMan->getString(argv[0]);
+	// argv[1] is an optional cache size argument which we do not use
+	// const uint16 cacheSize = argc > 1 ? CLIP<int16>(argv[1].toSint16(), 16, 1024) : 0;
+	const VMDPlayer::OpenFlags flags = argc > 2 ? (VMDPlayer::OpenFlags)argv[2].toUint16() : VMDPlayer::kOpenFlagNone;
 
-		if (argc > 2 && argv[2] != NULL_REG)
-			warning("kPlayVMD: third parameter isn't 0 (it's %04x:%04x - %s)", PRINT_REG(argv[2]), s->_segMan->getObjectName(argv[2]));
-		break;
-	case 1:
-	{
-		// Set VMD parameters. Called with a maximum of 6 parameters:
-		//
-		// x, y, flags, gammaBoost, gammaFirst, gammaLast
-		//
-		// gammaBoost boosts palette colors in the range gammaFirst to
-		// gammaLast, but only if bit 4 in flags is set. Percent value such that
-		// 0% = no amplification These three parameters are optional if bit 4 is
-		// clear. Also note that the x, y parameters play subtle games if used
-		// with subfx 21. The subtleness has to do with creation of temporary
-		// planes and positioning relative to such planes.
+	return make_reg(0, g_sci->_video32->getVMDPlayer().open(fileName, flags));
+}
 
-		uint16 flags = argv[3].getOffset();
-		Common::String flagspec;
-
-		if (argc > 3) {
-			if (flags & kDoubled)
-				flagspec += "doubled ";
-			if (flags & kDropFrames)
-				flagspec += "dropframes ";
-			if (flags & kBlackLines)
-				flagspec += "blacklines ";
-			if (flags & kUnkBit3)
-				flagspec += "bit3 ";
-			if (flags & kGammaBoost)
-				flagspec += "gammaboost ";
-			if (flags & kHoldBlackFrame)
-				flagspec += "holdblack ";
-			if (flags & kHoldLastFrame)
-				flagspec += "holdlast ";
-			if (flags & kUnkBit7)
-				flagspec += "bit7 ";
-			if (flags & kStretch)
-				flagspec += "stretch";
-
-			warning("VMDFlags: %s", flagspec.c_str());
-
-			s->_videoState.flags = flags;
-		}
-
-		warning("x, y: %d, %d", argv[1].getOffset(), argv[2].getOffset());
-		s->_videoState.x = argv[1].getOffset();
-		s->_videoState.y = argv[2].getOffset();
-
-		if (argc > 4 && flags & 16)
-			warning("gammaBoost: %d%% between palette entries %d and %d", argv[4].getOffset(), argv[5].getOffset(), argv[6].getOffset());
-		break;
-	}
-	case 6:	// Play
-		videoDecoder = new Video::AdvancedVMDDecoder();
-
-		if (s->_videoState.fileName.empty()) {
-			// Happens in Lighthouse
-			warning("kPlayVMD: Empty filename passed");
-			return s->r_acc;
-		}
-
-		if (!videoDecoder->loadFile(s->_videoState.fileName)) {
-			warning("Could not open VMD %s", s->_videoState.fileName.c_str());
-			break;
-		}
-
-		if (reshowCursor)
-			g_sci->_gfxCursor->kernelHide();
-
-		playVideo(videoDecoder, s->_videoState);
-
-		if (reshowCursor)
-			g_sci->_gfxCursor->kernelShow();
-		break;
-	case 23:	// set video palette range
-		s->_vmdPalStart = argv[1].toUint16();
-		s->_vmdPalEnd = argv[2].toUint16();
-		break;
-	case 14:
-		// Takes an additional integer parameter (e.g. 3)
-	case 16:
-		// Takes an additional parameter, usually 0
-	case 21:
-		// Looks to be setting the video size and position. Called with 4 extra integer
-		// parameters (e.g. 86, 41, 235, 106)
-	default:
-		warningMsg = Common::String::format("PlayVMD - unsupported subop %d. Params: %d (", operation, argc);
-
-		for (int i = 0; i < argc; i++) {
-			warningMsg +=  Common::String::format("%04x:%04x", PRINT_REG(argv[i]));
-			warningMsg += (i == argc - 1 ? ")" : ", ");
-		}
-
-		warning("%s", warningMsg.c_str());
-		break;
+reg_t kPlayVMDInit(EngineState *s, int argc, reg_t *argv) {
+	const int16 x = argv[0].toSint16();
+	const int16 y = argv[1].toSint16();
+	const VMDPlayer::PlayFlags flags = argc > 2 ? (VMDPlayer::PlayFlags)argv[2].toUint16() : VMDPlayer::kPlayFlagNone;
+	int16 boostPercent;
+	int16 boostStartColor;
+	int16 boostEndColor;
+	if (argc > 5 && (flags & VMDPlayer::kPlayFlagBoost)) {
+		boostPercent = argv[3].toSint16();
+		boostStartColor = argv[4].toSint16();
+		boostEndColor = argv[5].toSint16();
+	} else {
+		boostPercent = 0;
+		boostStartColor = -1;
+		boostEndColor = -1;
 	}
 
+	g_sci->_video32->getVMDPlayer().init(x, y, flags, boostPercent, boostStartColor, boostEndColor);
+
+	return make_reg(0, 0);
+}
+
+reg_t kPlayVMDClose(EngineState *s, int argc, reg_t *argv) {
+	return make_reg(0, g_sci->_video32->getVMDPlayer().close());
+}
+
+reg_t kPlayVMDPlayUntilEvent(EngineState *s, int argc, reg_t *argv) {
+	const VMDPlayer::EventFlags flags = (VMDPlayer::EventFlags)argv[0].toUint16();
+	const int16 lastFrameNo = argc > 1 ? argv[1].toSint16() : -1;
+	const int16 yieldInterval = argc > 2 ? argv[2].toSint16() : -1;
+	return make_reg(0, g_sci->_video32->getVMDPlayer().kernelPlayUntilEvent(flags, lastFrameNo, yieldInterval));
+}
+
+reg_t kPlayVMDShowCursor(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_video32->getVMDPlayer().setShowCursor((bool)argv[0].toUint16());
+	return s->r_acc;
+}
+
+reg_t kPlayVMDStartBlob(EngineState *s, int argc, reg_t *argv) {
+	debug("kPlayVMDStartBlob");
+	return s->r_acc;
+}
+
+reg_t kPlayVMDStopBlobs(EngineState *s, int argc, reg_t *argv) {
+	debug("kPlayVMDStopBlobs");
+	return s->r_acc;
+}
+
+reg_t kPlayVMDBlack(EngineState *s, int argc, reg_t *argv) {
+	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+
+	Common::Rect blackoutArea;
+	blackoutArea.left = MAX((int16)0, argv[0].toSint16());
+	blackoutArea.top = MAX((int16)0, argv[1].toSint16());
+	blackoutArea.right = MIN(scriptWidth, (int16)(argv[2].toSint16() + 1));
+	blackoutArea.bottom = MIN(scriptHeight, (int16)(argv[3].toSint16() + 1));
+	g_sci->_video32->getVMDPlayer().setBlackoutArea(blackoutArea);
+	return s->r_acc;
+}
+
+reg_t kPlayVMDRestrictPalette(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_video32->getVMDPlayer().restrictPalette(argv[0].toUint16(), argv[1].toUint16());
 	return s->r_acc;
 }
 

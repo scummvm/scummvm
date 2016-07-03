@@ -69,7 +69,9 @@
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/remap32.h"
 #include "sci/graphics/text32.h"
+#include "sci/graphics/video32.h"
 #include "sci/sound/audio32.h"
+// TODO: Move this to video32
 #include "sci/video/robot_decoder.h"
 #endif
 
@@ -92,6 +94,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	_sync = nullptr;
 #ifdef ENABLE_SCI32
 	_audio32 = nullptr;
+	_video32 = nullptr;
 #endif
 	_features = 0;
 	_resMan = 0;
@@ -277,15 +280,20 @@ Common::Error SciEngine::run() {
 	if (getGameId() == GID_CHRISTMAS1990)
 		_vocabulary = new Vocabulary(_resMan, false);
 
+	_gamestate = new EngineState(segMan);
+	_eventMan = new EventManager(_resMan->detectFontExtended());
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2_1_EARLY) {
 		_audio32 = new Audio32(_resMan);
 	} else
 #endif
 		_audio = new AudioPlayer(_resMan);
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		_video32 = new Video32(segMan, _eventMan);
+	}
+#endif
 	_sync = new Sync(_resMan, segMan);
-	_gamestate = new EngineState(segMan);
-	_eventMan = new EventManager(_resMan->detectFontExtended());
 
 	// Create debugger console. It requires GFX and _gamestate to be initialized
 	_console = new Console(this);

@@ -81,7 +81,7 @@ void GfxPaint32::kernelDeleteLine(const reg_t screenItemObject, const reg_t plan
 	}
 
 	_segMan->freeHunkEntry(screenItem->_celInfo.bitmap);
-	g_sci->_gfxFrameout->deleteScreenItem(screenItem, plane);
+	g_sci->_gfxFrameout->deleteScreenItem(*screenItem, *plane);
 }
 
 void GfxPaint32::plotter(int x, int y, int color, void *data) {

@@ -64,12 +64,12 @@ private:
 	 */
 	static uint16 _nextObjectId;
 
+public:
 	/**
 	 * The parent plane of this screen item.
 	 */
 	reg_t _plane;
 
-public:
 	/**
 	 * Scaling data used to calculate the final screen
 	 * dimensions of the screen item as well as the scaling

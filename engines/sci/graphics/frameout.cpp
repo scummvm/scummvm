@@ -278,20 +278,52 @@ bool GfxFrameout::checkForFred(const reg_t object) {
 #pragma mark -
 #pragma mark Screen items
 
-void GfxFrameout::deleteScreenItem(ScreenItem *screenItem, Plane *plane) {
-	if (screenItem->_created == 0) {
-		screenItem->_created = 0;
-		screenItem->_updated = 0;
-		screenItem->_deleted = getScreenCount();
+void GfxFrameout::addScreenItem(ScreenItem &screenItem) const {
+	Plane *plane = _planes.findByObject(screenItem._plane);
+	if (plane == nullptr) {
+		error("GfxFrameout::addScreenItem: Could not find plane %04x:%04x for screen item %04x:%04x", PRINT_REG(screenItem._plane), PRINT_REG(screenItem._object));
+	}
+	plane->_screenItemList.add(&screenItem);
+}
+
+void GfxFrameout::updateScreenItem(ScreenItem &screenItem) const {
+	// TODO: In SCI3+ this will need to go through Plane
+//	Plane *plane = _planes.findByObject(screenItem._plane);
+//	if (plane == nullptr) {
+//		error("GfxFrameout::updateScreenItem: Could not find plane %04x:%04x for screen item %04x:%04x", PRINT_REG(screenItem._plane), PRINT_REG(screenItem._object));
+//	}
+
+	screenItem.update();
+}
+
+void GfxFrameout::deleteScreenItem(ScreenItem &screenItem) {
+	Plane *plane = _planes.findByObject(screenItem._plane);
+	if (plane == nullptr) {
+		error("GfxFrameout::deleteScreenItem: Could not find plane %04x:%04x for screen item %04x:%04x", PRINT_REG(screenItem._plane), PRINT_REG(screenItem._object));
+	}
+	if (plane->_screenItemList.findByObject(screenItem._object) == nullptr) {
+		error("GfxFrameout::deleteScreenItem: Screen item %04x:%04x not found in plane %04x:%04x", PRINT_REG(screenItem._object), PRINT_REG(screenItem._plane));
+	}
+	deleteScreenItem(screenItem, *plane);
+}
+
+void GfxFrameout::deleteScreenItem(ScreenItem &screenItem, Plane &plane) {
+	if (screenItem._created == 0) {
+		screenItem._created = 0;
+		screenItem._updated = 0;
+		screenItem._deleted = getScreenCount();
 	} else {
-		plane->_screenItemList.erase(screenItem);
-		plane->_screenItemList.pack();
+		plane._screenItemList.erase(&screenItem);
+		plane._screenItemList.pack();
 	}
 }
 
-void GfxFrameout::deleteScreenItem(ScreenItem *screenItem, const reg_t planeObject) {
+void GfxFrameout::deleteScreenItem(ScreenItem &screenItem, const reg_t planeObject) {
 	Plane *plane = _planes.findByObject(planeObject);
-	deleteScreenItem(screenItem, plane);
+	if (plane == nullptr) {
+		error("GfxFrameout::deleteScreenItem: Could not find plane %04x:%04x for screen item %04x:%04x", PRINT_REG(planeObject), PRINT_REG(screenItem._object));
+	}
+	deleteScreenItem(screenItem, *plane);
 }
 
 void GfxFrameout::kernelAddScreenItem(const reg_t object) {
@@ -364,7 +396,7 @@ void GfxFrameout::kernelDeleteScreenItem(const reg_t object) {
 		return;
 	}
 
-	deleteScreenItem(screenItem, plane);
+	deleteScreenItem(*screenItem, *plane);
 }
 
 #pragma mark -

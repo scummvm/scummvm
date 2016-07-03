@@ -202,14 +202,29 @@ private:
 
 public:
 	/**
-	 * Deletes a screen item from the given plane.
+	 * Adds a screen item.
 	 */
-	void deleteScreenItem(ScreenItem *screenItem, Plane *plane);
+	void addScreenItem(ScreenItem &screenItem) const;
+
+	/**
+	 * Updates a screen item.
+	 */
+	void updateScreenItem(ScreenItem &screenItem) const;
+
+	/**
+	 * Deletes a screen item.
+	 */
+	void deleteScreenItem(ScreenItem &screenItem);
 
 	/**
 	 * Deletes a screen item from the given plane.
 	 */
-	void deleteScreenItem(ScreenItem *screenItem, const reg_t plane);
+	void deleteScreenItem(ScreenItem &screenItem, Plane &plane);
+
+	/**
+	 * Deletes a screen item from the given plane.
+	 */
+	void deleteScreenItem(ScreenItem &screenItem, const reg_t plane);
 
 	void kernelAddScreenItem(const reg_t object);
 	void kernelUpdateScreenItem(const reg_t object);

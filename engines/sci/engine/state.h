@@ -201,6 +201,7 @@ public:
 	uint16 _memorySegmentSize;
 	byte _memorySegment[kMemorySegmentMax];
 
+	// TODO: Excise video code from the state manager
 	VideoState _videoState;
 	uint16 _vmdPalStart, _vmdPalEnd;
 	bool _syncedAudioOptions;

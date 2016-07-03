@@ -25,6 +25,8 @@
 
 #include "common/array.h"
 #include "common/hashmap.h"
+#include "sci/sci.h"
+#include "sci/graphics/helpers.h"
 
 namespace Sci {
 

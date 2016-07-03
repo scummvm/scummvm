@@ -441,6 +441,17 @@ reg_t kDoAudioFade(EngineState *s, int argc, reg_t *argv);
 reg_t kDoAudioHasSignal(EngineState *s, int argc, reg_t *argv);
 reg_t kDoAudioSetLoop(EngineState *s, int argc, reg_t *argv);
 
+reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv);
+reg_t kPlayVMDOpen(EngineState *s, int argc, reg_t *argv);
+reg_t kPlayVMDInit(EngineState *s, int argc, reg_t *argv);
+reg_t kPlayVMDClose(EngineState *s, int argc, reg_t *argv);
+reg_t kPlayVMDPlayUntilEvent(EngineState *s, int argc, reg_t *argv);
+reg_t kPlayVMDShowCursor(EngineState *s, int argc, reg_t *argv);
+reg_t kPlayVMDStartBlob(EngineState *s, int argc, reg_t *argv);
+reg_t kPlayVMDStopBlobs(EngineState *s, int argc, reg_t *argv);
+reg_t kPlayVMDBlack(EngineState *s, int argc, reg_t *argv);
+reg_t kPlayVMDRestrictPalette(EngineState *s, int argc, reg_t *argv);
+
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv);
 reg_t kArray(EngineState *s, int argc, reg_t *argv);
 reg_t kListAt(EngineState *s, int argc, reg_t *argv);

@@ -459,7 +459,7 @@ void ScrollWindow::hide() {
 		return;
 	}
 
-	g_sci->_gfxFrameout->deleteScreenItem(_screenItem, _plane);
+	g_sci->_gfxFrameout->deleteScreenItem(*_screenItem, _plane);
 	_screenItem = nullptr;
 	g_sci->_gfxFrameout->frameOut(true);
 
