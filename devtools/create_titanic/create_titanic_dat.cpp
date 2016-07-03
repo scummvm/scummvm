@@ -422,7 +422,6 @@ void writeSentenceMappings(const char *name, uint offset, int numValues) {
 	dataOffset += size;
 }
 
-
 void writeStarfieldPoints() {
 	outputFile.seek(dataOffset);
 
@@ -431,6 +430,25 @@ void writeStarfieldPoints() {
 
 	outputFile.write(inputFile, size);
 	writeEntryHeader("STARFIELD/POINTS", dataOffset, size);
+	dataOffset += size;
+}
+
+void writeStarfieldPoints2() {
+	outputFile.seek(dataOffset);
+
+	for (int rootCtr = 0; rootCtr < 80; ++rootCtr) {
+		inputFile.seek(0x5A2F28 - FILE_DIFF + rootCtr * 8);
+		uint offset = inputFile.readUint32LE();
+		uint count = inputFile.readUint32LE();
+
+		outputFile.writeLong(count);
+		inputFile.seek(offset - FILE_DIFF);
+		outputFile.write(inputFile, count * 4 * 4);
+	}
+
+	uint size = outputFile.size() - dataOffset;
+	outputFile.write(inputFile, size);
+	writeEntryHeader("STARFIELD/POINTS2", dataOffset, size);
 	dataOffset += size;
 }
 
@@ -464,6 +482,7 @@ void writeData() {
 
 	writeResource("STARFIELD", 132);
 	writeStarfieldPoints();
+	writeStarfieldPoints2();
 
 	writeResource("TEXT", "STVOCAB.TXT");
 	writeResource("TEXT", "JRQUOTES.TXT");
