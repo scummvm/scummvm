@@ -1272,7 +1272,7 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 	uint16 imgId = spriteId + 1024;
 	Image::ImageDecoder *img = NULL;
 
-	if (!_vm->_currentScore->getArchive()->hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
+	if (_vm->_currentScore->getArchive()->hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
 		img = new DIBDecoder();
 		img->loadStream(*_vm->_currentScore->getArchive()->getResource(MKTAG('D', 'I', 'B', ' '), imgId));
 		return img;
@@ -1284,7 +1284,7 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 		return img;
 	}
 
-	if (!_vm->_currentScore->getArchive()->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
+	if (_vm->_currentScore->getArchive()->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
 		img = new Image::BitmapDecoder();
 		img->loadStream(*_vm->_currentScore->getArchive()->getResource(MKTAG('B', 'I', 'T', 'D'), imgId));
 		return img;
