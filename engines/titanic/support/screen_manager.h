@@ -89,8 +89,19 @@ public:
 	 */
 	virtual void drawCursors() = 0;
 	
-	virtual void proc6() = 0;
-	virtual void proc7() = 0;
+	/**
+	 * Locks a specified surface number for access and returns a pointer to it
+	 */
+	virtual CVideoSurface *lockSurface(SurfaceNum surfaceNum) = 0;
+	
+	/**
+	 * Unlocks a previously locked surface
+	 */
+	virtual void unlockSurface(CVideoSurface *surface) = 0;
+	
+	/**
+	 * Gets a specified surface number
+	 */
 	virtual CVideoSurface *getSurface(SurfaceNum surfaceNum) const = 0;
 
 	/**
@@ -126,7 +137,16 @@ public:
 	virtual int writeString(int surfaceNum, const Rect &destRect,
 		int yOffset, const CString &str, CTextCursor *textCursor) = 0;
 
-	virtual void proc14() = 0;
+	/**
+	 * Write a string
+	 * @param surfaceNum	Destination surface
+	 * @param srcRect		Drawing area
+	 * @param destRect		Bounds of dest surface
+	 * @param str			Line or lines to write
+	 * @param textCursor	Optional text cursor pointer
+	 */
+	virtual int writeString(int surfaceNum, const Rect &srcRect,
+		const Rect &destRect, const CString &str, CTextCursor *textCursor) = 0;
 
 	/**
 	 * Set the font color
@@ -152,7 +172,10 @@ public:
 	 */
 	virtual int stringWidth(const CString &str) = 0;
 
-	virtual void proc19() = 0;
+	/**
+	 * Draws a frame enclosing the specified area
+	 */
+	virtual void frameRect(SurfaceNum surfaceNum, const Rect &rect, byte r, byte g, byte b) = 0;
 
 	/**
 	 * Clear a portion of a specified surface
@@ -173,10 +196,27 @@ public:
 	 * Creates a surface from a specified resource
 	 */
 	virtual CVideoSurface *createSurface(const CResourceKey &key) = 0;
-	
-	virtual void proc24() = 0;
-	virtual void proc25() = 0;
+
+	/**
+	* Get the top-left corner of the screen in global screen co-ordinates
+	* For ScummVM, this is always (0, 0), even in Windowed mode
+	*/
+	virtual Point getScreenTopLeft() { return Point(0, 0); }
+
+	/**
+	 * Waits for a vertical screen sync
+	 * For ScummVM, this can be safely ignored
+	 */
+	virtual void waitForVSync() {}
+
+	/**
+	 * Show the mouse cursor
+	 */
 	virtual void showCursor() = 0;
+	
+	/**
+	 * Hide the mouse cursor
+	 */
 	virtual void hideCursor() = 0;
 
 	/**
@@ -228,8 +268,19 @@ public:
 	 */
 	virtual void drawCursors();
 
-	virtual void proc6();
-	virtual void proc7();
+	/**
+	 * Locks a specified surface number for access and returns a pointer to it
+	 */
+	virtual CVideoSurface *lockSurface(SurfaceNum surfaceNum);
+	
+	/**
+	 * Unlocks a previously locked surface
+	 */
+	virtual void unlockSurface(CVideoSurface *surface);
+	
+	/**
+	 * Gets a specified surface number
+	 */
 	virtual CVideoSurface *getSurface(SurfaceNum surfaceNum) const;
 
 	/**
@@ -268,7 +319,16 @@ public:
 	virtual int writeString(int surfaceNum, const Rect &destRect,
 		int yOffset, const CString &str, CTextCursor *textCursor);
 
-	virtual void proc14();
+	/**
+	 * Write a string
+	 * @param surfaceNum	Destination surface
+	 * @param srcRect		Drawing area
+	 * @param destRect		Bounds of dest surface
+	 * @param str			Line or lines to write
+	 * @param textCursor	Optional text cursor pointer
+	 */
+	virtual int writeString(int surfaceNum, const Rect &srcRect,
+		const Rect &destRect, const CString &str, CTextCursor *textCursor);
 
 	/**
 	 * Set the font color
@@ -294,7 +354,10 @@ public:
 	 */
 	virtual int stringWidth(const CString &str);
 
-	virtual void proc19();
+	/**
+	 * Draws a frame enclosing the specified area
+	 */
+	virtual void frameRect(SurfaceNum surfaceNum, const Rect &rect, byte r, byte g, byte b);
 
 	/**
 	 * Clear a portion of the screen surface
@@ -316,10 +379,14 @@ public:
 	 */
 	virtual CVideoSurface *createSurface(const CResourceKey &key);
 
-	virtual void proc23();
-	virtual void proc24();
-	virtual void proc25();
+	/**
+	 * Show the mouse cursor
+	 */
 	virtual void showCursor();
+	
+	/**
+	 * Hide the mouse cursor
+	 */
 	virtual void hideCursor();
 };
 

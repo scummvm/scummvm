@@ -130,8 +130,15 @@ DirectDrawSurface *OSScreenManager::getDDSurface(SurfaceNum surfaceNum) {
 		return nullptr;
 }
 
-void OSScreenManager::proc6() {}
-void OSScreenManager::proc7() {}
+CVideoSurface *OSScreenManager::lockSurface(SurfaceNum surfaceNum) {
+	CVideoSurface *surface = getSurface(surfaceNum);
+	surface->lock();
+	return surface;
+}
+
+void OSScreenManager::unlockSurface(CVideoSurface *surface) {
+	surface->unlock();
+}
 
 CVideoSurface *OSScreenManager::getSurface(SurfaceNum surfaceNum) const {
 	if (surfaceNum == SURFACE_PRIMARY)
@@ -233,7 +240,11 @@ int OSScreenManager::writeString(int surfaceNum, const Rect &destRect,
 		yOffset, str, textCursor);
 }
 
-void OSScreenManager::proc14() {}
+int OSScreenManager::writeString(int surfaceNum, const Rect &srcRect,
+		const Rect &destRect, const CString &str, CTextCursor *textCursor) {
+	// TODO
+	return 0;
+}
 
 void OSScreenManager::setFontColor(byte r, byte g, byte b) {
 	_fonts[_fontNumber].setColor(r, g, b);
@@ -251,7 +262,15 @@ int OSScreenManager::stringWidth(const CString &str) {
 	return _fonts[_fontNumber].stringWidth(str);
 }
 
-void OSScreenManager::proc19() {}
+void OSScreenManager::frameRect(SurfaceNum surfaceNum, const Rect &rect, byte r, byte g, byte b) {
+	Rect top(rect.left, rect.top, rect.right, rect.top + 1);
+	fillRect(surfaceNum, &top, r, g, b);
+	Rect bottom(rect.left, rect.bottom - 1, rect.right, rect.bottom);
+	fillRect(surfaceNum, &bottom, r, g, b);
+	Rect left(rect.left, rect.top, rect.left + 1, rect.bottom);
+	fillRect(surfaceNum, &left, r, g, b);
+	Rect right(rect.right - 1, rect.top, rect.right, rect.bottom);
+}
 
 void OSScreenManager::clearSurface(SurfaceNum surfaceNum, Rect *bounds) {
 	if (surfaceNum == SURFACE_PRIMARY)
@@ -274,16 +293,12 @@ CVideoSurface *OSScreenManager::createSurface(const CResourceKey &key) {
 	return new OSVideoSurface(this, key);
 }
 
-void OSScreenManager::proc23() {}
-void OSScreenManager::proc24() {}
-void OSScreenManager::proc25() {}
-
 void OSScreenManager::showCursor() {
-
+	CScreenManager::_screenManagerPtr->_mouseCursor->show();
 }
 
 void OSScreenManager::hideCursor() {
-
+	CScreenManager::_screenManagerPtr->_mouseCursor->hide();
 }
 
 void OSScreenManager::destroyFrontAndBackBuffers() {
