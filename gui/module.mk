@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	console.o \
 	debugger.o \
 	dialog.o \
+	downloaddialog.o \
 	error.o \
 	EventRecorder.o \
 	filebrowser-dialog.o \

@@ -42,6 +42,7 @@
 #include "audio/musicplugin.h"
 #include "audio/mixer.h"
 #include "audio/fmopl.h"
+#include "downloaddialog.h"
 
 #ifdef USE_CLOUD
 #include "backends/cloud/cloudmanager.h"
@@ -92,7 +93,8 @@ enum {
 #ifdef USE_CLOUD
 enum {
 	kConfigureStorageCmd = 'cfst',
-	kRefreshStorageCmd = 'rfst'
+	kRefreshStorageCmd = 'rfst',
+	kDownloadStorageCmd = 'dlst'
 };
 #endif
 
@@ -1292,6 +1294,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 	_storageConnectButton = new ButtonWidget(tab, "GlobalOptions_Cloud.ConnectButton", _("Connect"), _("Open wizard dialog to connect your cloud storage account"), kConfigureStorageCmd);
 	_storageRefreshButton = new ButtonWidget(tab, "GlobalOptions_Cloud.RefreshButton", _("Refresh"), _("Refresh current cloud storage information (username and usage)"), kRefreshStorageCmd);
+	_storageDownloadButton = new ButtonWidget(tab, "GlobalOptions_Cloud.DownloadButton", _("Downloads"), _("Open downloads manager dialog"), kDownloadStorageCmd);
 
 	setupCloudTab();
 	_redrawCloudTab = false;
@@ -1598,6 +1601,12 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		CloudMan.listDirectory(dir, new Common::Callback<GlobalOptionsDialog, Cloud::Storage::ListDirectoryResponse>(this, &GlobalOptionsDialog::storageListDirectoryCallback), nullptr);
 		break;
 	}
+	case kDownloadStorageCmd:
+	{
+		DownloadDialog dialog(_selectedStorageIndex);
+		dialog.runModal();
+		break;
+	}
 #endif
 #ifdef GUI_ENABLE_KEYSDIALOG
 	case kChooseKeyMappingCmd:
@@ -1696,6 +1705,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 	}
 	if (_storageConnectButton) _storageConnectButton->setVisible(shown);
 	if (_storageRefreshButton) _storageRefreshButton->setVisible(shown && _selectedStorageIndex == CloudMan.getStorageIndex());
+	if (_storageDownloadButton) _storageDownloadButton->setVisible(shown && _selectedStorageIndex == CloudMan.getStorageIndex());
 }
 
 void GlobalOptionsDialog::storageInfoCallback(Cloud::Storage::StorageInfoResponse response) {

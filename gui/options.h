@@ -262,6 +262,7 @@ protected:
 	StaticTextWidget *_storageLastSync;
 	ButtonWidget	 *_storageConnectButton;
 	ButtonWidget	 *_storageRefreshButton;
+	ButtonWidget	 *_storageDownloadButton;
 	bool _redrawCloudTab;
 
 	void setupCloudTab();

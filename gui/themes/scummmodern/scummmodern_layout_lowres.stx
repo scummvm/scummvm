@@ -576,6 +576,27 @@
 				<widget name = 'RefreshButton'
 						type = 'Button'
 				/>
+				<widget name = 'DownloadButton'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GlobalOptions_Cloud_DownloadDialog' overlays = 'Dialog.GlobalOptions'>
+		<layout type = 'vertical' padding = '8, 8, 8, 4' spacing = '8'>
+			<widget name = 'DialogDesc'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'MainButton'
+					type = 'Button'
+			/>
+			<space/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6'>
+				<space/>
+				<widget name = 'CloseButton'
+						type = 'Button'
+				/>
 			</layout>
 		</layout>
 	</dialog>
