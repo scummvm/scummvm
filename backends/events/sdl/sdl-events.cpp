@@ -109,14 +109,34 @@ SdlEventSource::~SdlEventSource() {
 
 int SdlEventSource::mapKey(SDLKey sdlKey, SDLMod mod, Uint16 unicode) {
 	Common::KeyCode key = SDLToOSystemKeycode(sdlKey);
+	
+	// Attention:
+	// When using SDL1.x, we will get scancodes via sdlKey, that are raw scancodes, so NOT adjusted to keyboard layout/
+	// mapping. So for example for certain locales, we will get KEYCODE_y, when 'z' is pressed and so on.
+	// When using SDL2.x however, we will get scancodes based on the keyboard layout.
 
 	if (key >= Common::KEYCODE_F1 && key <= Common::KEYCODE_F9) {
 		return key - Common::KEYCODE_F1 + Common::ASCII_F1;
 	} else if (key >= Common::KEYCODE_KP0 && key <= Common::KEYCODE_KP9) {
+		if ((mod & KMOD_NUM) == 0)
+			return 0; // In case Num-Lock is NOT enabled, return 0 for ascii, so that directional keys on numpad work
 		return key - Common::KEYCODE_KP0 + '0';
 	} else if (key >= Common::KEYCODE_UP && key <= Common::KEYCODE_PAGEDOWN) {
 		return key;
-	} else if (unicode) {
+	} else if ((unicode >= 0x20) && ((unicode <= 0x7E) || (key == Common::KEYCODE_INVALID))) {
+		// Return unicode in case it's regular ASCII text or in case we didn't get a valid keycode
+		//
+		// We need to use unicode in those cases, simply because SDL1.x passes us non-layout-adjusted keycodes.
+		// So unicode is the only way to get layout-adjusted keys.
+		//
+		// We need to restrict unicode to only up to 0x7E, because on macOS the option/alt key will switch to
+		// an alternate keyboard, which will cause us to receive Unicode characters for some keys, which are outside
+		// of the ASCII range (e.g. alt-x will get us U+2248). We need to return 'x' for alt-x, so using unicode
+		// in that case would break alt-shortcuts.
+		// The latter check for KEYCODE_INVALID is needed for special characters like umlauts, otherwise
+		// we wouldn't pass such characters anymore.
+		//
+		// TODO: Maybe never return unicode in case it's > 255? Does any engine need such?
 		return unicode;
 	} else if (key >= 'a' && key <= 'z' && (mod & KMOD_SHIFT)) {
 		return key & ~0x20;
