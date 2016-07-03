@@ -241,9 +241,12 @@ void PrinceEngine::init() {
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "all");
 
-	SearchMan.add("all", all);
-	SearchMan.add("voices", voices);
-	SearchMan.add("sound", sound);
+	// Prefix the archive names, so that "all" doesn't conflict with the
+	// "all" directory, if that happens to be named in all lower case.
+	// It isn't on the CD, but we should try to stay case-insensitive.
+	SearchMan.add("_all", all);
+	SearchMan.add("_voices", voices);
+	SearchMan.add("_sound", sound);
 	if (getLanguage() != Common::PL_POL && getLanguage() != Common::DE_DEU) {
 		SearchMan.add("translation", translation);
 	}
