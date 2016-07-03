@@ -1063,7 +1063,7 @@ void SciEngine::syncIngameAudioOptions() {
 				case GID_KQ6:
 #ifdef ENABLE_SCI32
 				// Unsure about Gabriel Knight 2
-				case GID_KQ7: // SCI2.1
+				// KQ7 has broken subtitles
 				case GID_GK1: // SCI2
 				case GID_SQ6: // SCI2.1, SQ6 seems to always use subtitles anyway
 				case GID_TORIN: // SCI2.1
