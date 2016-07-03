@@ -610,9 +610,9 @@ void EventManager::f282_commandProcessCommands160To162ClickInResurrectReincarnat
 		champMan._g305_partyChampionCount--;
 		Box box;
 		box._y1 = 0;
-		box._y2 = 28 + 1;
+		box._y2 = 28;
 		box._x1 = championIndex * k69_ChampionStatusBoxSpacing;
-		box._x2 = box._x1 + 66 + 1;
+		box._x2 = box._x1 + 66;
 		dispMan._g578_useByteBoxCoordinates = false;
 		dispMan.D24_fillScreenBox(box, k0_ColorBlack);
 		dispMan.D24_fillScreenBox(g54_BoxChampionIcons[champMan.M26_championIconIndex(champ->_cell, dunMan._g308_partyDir) * 2], k0_ColorBlack);

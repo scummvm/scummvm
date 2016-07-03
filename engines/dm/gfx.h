@@ -230,6 +230,8 @@ extern uint16 g19_PalCredits[16];  // @ G0019_aui_Graphic562_Palette_Credits
 extern uint16 g20_PalEntrance[16]; // @ G0020_aui_Graphic562_Palette_Entrance
 extern uint16 g21_PalDungeonView[6][16]; // @ G0021_aaui_Graphic562_Palette_DungeonView
 
+
+// in all cases, where a function takes a Box, it expects it to contain inclusive boundaries
 class Box {
 public:
 	uint16 _x1;
@@ -237,15 +239,15 @@ public:
 	uint16 _y1;
 	uint16 _y2;
 
-	Box(uint16 x1, uint16 x2, uint16 y1, uint16 y2) : _x1(x1), _x2(x2 + 1), _y1(y1), _y2(y2 + 1) {}
+	Box(uint16 x1, uint16 x2, uint16 y1, uint16 y2) : _x1(x1), _x2(x2), _y1(y1), _y2(y2) {}
 	Box() {}
 	bool isPointInside(Common::Point point) {
-		return (_x1 <= point.x) && (point.x < _x2) && (_y1 <= point.y) && (point.y < _y2);
+		return (_x1 <= point.x) && (point.x <= _x2) && (_y1 <= point.y) && (point.y <= _y2); // <= because incluseive boundaries
 	}
 	void setToZero() { _x1 = _x2 = _y1 = _y2 = 0; }
 }; // @ BOX_BYTE, BOX_WORD
 
-extern Box g2_BoxMovementArrows; // G0002_s_Graphic562_Box_MovementArrows
+extern Box g2_BoxMovementArrows; // @ G0002_s_Graphic562_Box_MovementArrows
 
 class Frame {
 public:
@@ -550,22 +552,24 @@ public:
 	/* srcHeight and destHeight are not necessary for blitting, only error checking, thus they are defaulted for existing code which 
 	does not pass anything, newly imported calls do pass srcHeght and srcWidth, so this is a ceonvenience change so the the parameters
 	match the original exatcly, if need arises for heights then we'll have to retrospectively add them in old function calls*/
+	/* Expects inclusive boundaries in box */
 	void f132_blitToBitmap(byte *srcBitmap, byte *destBitmap, Box &box, uint16 srcX, uint16 srcY, uint16 srcWidth,
 					  uint16 destWidth, Color transparent = k255_ColorNoTransparency, int16 srcHeight = -1, int16 destHight = -1); // @ F0132_VIDEO_Blit
-
+/* Expects inclusive boundaries in box */
 	void f133_blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask, byte *tmp, Box &box, int16 lastUnitIndex,
 									   int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
 									   int16 xPos, int16 yPos, int16 destHeight, int16 height2); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
 	void f129_blitToBitmapShrinkWithPalChange(byte *srcBitmap, int16 srcWidth, int16 srcHight,
 										 byte *destBitmap, int16 destWidth, int16 destHeight, byte *palChange); // @ F0129_VIDEO_BlitShrinkWithPaletteChanges
-
 	void f103_flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height); // @ F0103_DUNGEONVIEW_DrawDoorFrameBitmapFlippedHorizontally
 	void flipBitmapVertical(byte *bitmap, uint16 width, uint16 height);
 	byte *f114_getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int16 &returnPixelWidth, int16 &returnHeight); // @ F0114_DUNGEONVIEW_GetExplosionBitmap
 
 	void f134_fillBitmap(byte *bitmap, uint16 width, uint16 height, Color color); // @ F0134_VIDEO_FillBitmap
 	void fillScreen(Color color);
+	/* Expects inclusive boundaries in box */
 	void D24_fillScreenBox(Box &box, Color color); // @ D24_FillScreenBox, F0550_VIDEO_FillScreenBox
+/* Expects inclusive boundaries in box */
 	void f135_fillBoxBitmap(byte *destBitmap, Box &box, Color color, int16 pixelWidth, int16 height); // @ F0135_VIDEO_FillBox
 	void f128_drawDungeon(direction dir, int16 posX, int16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
 	void updateScreen();

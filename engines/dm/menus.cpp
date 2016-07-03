@@ -85,9 +85,9 @@ void MenuMan::f386_drawActionIcon(ChampionIndex championIndex) {
 
 	Box box;
 	box._x1 = championIndex * 22 + 233;
-	box._x2 = box._x1 + 19 + 1;
+	box._x2 = box._x1 + 19;
 	box._y1 = 86;
-	box._y2 = 120 + 1;
+	box._y2 = 120;
 	dm._g578_useByteBoxCoordinates = false;
 	if (!champion._currHealth) {
 		dm.D24_fillScreenBox(box, k0_ColorBlack);
@@ -110,9 +110,9 @@ T0386006:
 	dm.D24_fillScreenBox(box, k4_ColorCyan);
 	Box box2;
 	box2._x1 = box._x1 + 2;
-	box2._x2 = box._x2 - 2; // no need to add +1 for exclusive boundaries, box already has that
+	box2._x2 = box._x2 - 2; 
 	box2._y1 = 95;
-	box2._y2 = 110 + 1;
+	box2._y2 = 110;
 	dm.f132_blitToBitmap(bitmapIcon, dm._g348_bitmapScreen, box2, 0, 0, 16, k160_byteWidthScreen * 2, k255_ColorNoTransparency);
 	if (champion.getAttributes(k0x0008_ChampionAttributeDisableAction) || _vm->_championMan->_g299_candidateChampionOrdinal || _vm->_championMan->_g300_partyIsSleeping) {
 		warning("MISSING CODE: F0136_VIDEO_ShadeScreenBox");

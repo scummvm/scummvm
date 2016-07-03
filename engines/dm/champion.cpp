@@ -666,20 +666,20 @@ void ChampionMan::f287_drawChampionBarGraphs(ChampionIndex champIndex) {
 
 	Box box;
 	box._x1 = champIndex * k69_ChampionStatusBoxSpacing + 46;
-	box._x2 = box._x1 + 3 + 1;
+	box._x2 = box._x1 + 3;
 	box._y1 = 2;
-	box._y2 = 26 + 1;
+	box._y2 = 26;
 
 	for (int16 AL_0_barGraphIndex = 0; AL_0_barGraphIndex < 3; AL_0_barGraphIndex++) {
 		int16 barGraphHeight = barGraphHeightArray[AL_0_barGraphIndex];
 		if (barGraphHeight < 25) {
 			box._y1 = 2;
-			box._y1 = 27 - barGraphHeight + 1;
+			box._y1 = 27 - barGraphHeight;
 			_vm->_displayMan->D24_fillScreenBox(box, g46_ChampionColor[champIndex]);
 		}
 		if (barGraphHeight) {
 			box._y1 = 27 - barGraphHeight;
-			box._y2 = 26 + 1;
+			box._y2 = 26;
 			_vm->_displayMan->D24_fillScreenBox(box, g46_ChampionColor[champIndex]);
 		}
 		box._x1 += 7;
@@ -734,9 +734,9 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 	dispMan._g578_useByteBoxCoordinates = false;
 	if (champAttributes & k0x1000_ChampionAttributeStatusBox) {
 		box._y1 = 0;
-		box._y2 = 28 + 1;
+		box._y2 = 28;
 		box._x1 = champStatusBoxX;
-		box._x2 = box._x1 + 66 + 1;
+		box._x2 = box._x1 + 66;
 		if (champ->_currHealth) {
 			dispMan.D24_fillScreenBox(box, k12_ColorDarkestGray);
 			int16 nativeBitmapIndices[3];
@@ -783,9 +783,9 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 			champAttributes |= k0x4000_ChampionAttributeViewport;
 		} else {
 			box._y1 = 0;
-			box._y2 = 6 + 1;
+			box._y2 = 6;
 			box._x1 = champStatusBoxX;
-			box._x2 = box._x1 + 42 + 1;
+			box._x2 = box._x1 + 42;
 			dispMan.D24_fillScreenBox(box, k1_ColorDarkGary);
 			_vm->_textMan->f53_printToLogicalScreen(champStatusBoxX + 1, 5, AL_0_colorIndex, k1_ColorDarkGary, champ->_name);
 		}
@@ -930,8 +930,8 @@ void ChampionMan::f291_drawSlot(uint16 champIndex, ChampionSlot slotIndex) {
 	Box box;
 	box._x1 = slotBox->_x - 1;
 	box._y1 = slotBox->_y - 1;
-	box._x2 = box._x1 + 17 + 1;
-	box._y2 = box._y1 + 17 + 1;
+	box._x2 = box._x1 + 17;
+	box._y2 = box._y1 + 17;
 
 
 	if (!isInventoryChamp) {
@@ -999,7 +999,7 @@ void ChampionMan::f281_renameChampion(Champion* champ) {
 
 	Box box;
 	box._y1 = 3;
-	box._y2 = 8 + 1;
+	box._y2 = 8;
 	box._x1 = 3;
 	box._x2 = box._x1 + 167;
 
@@ -1008,7 +1008,7 @@ void ChampionMan::f281_renameChampion(Champion* champ) {
 	textMan.f52_printToViewport(177, 58, k13_ColorLightestGray, "_______");
 	textMan.f52_printToViewport(105, 76, k13_ColorLightestGray, "___________________");
 	Common::Point clickPos;
-	static Box okButtonBox(197, 215, 147, 155); // inclusive boundaries, constructor adds +1
+	static Box okButtonBox(197, 215, 147, 155);
 	for (;;) {
 		_vm->_eventMan->processInput();
 		if (_vm->_eventMan->f360_hasPendingClick(clickPos, k1_LeftMouseButton) && okButtonBox.isPointInside(clickPos)) {

@@ -209,8 +209,8 @@ void ObjectMan::f38_drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 	Box box;
 	box._x1 = slotBox->_x;
 	box._y1 = slotBox->_y;
-	box._x2 = box._x1 + 15 + 1;
-	box._y2 = box._y1 + 15 + 1;
+	box._x2 = box._x1 + 15;
+	box._y2 = box._y1 + 15;
 
 	uint16 iconGraphicIndex;
 	for (iconGraphicIndex = 0; iconGraphicIndex < 7; ++iconGraphicIndex) {

@@ -125,18 +125,18 @@ void InventoryMan::f354_drawStatusBoxPortrait(ChampionIndex championIndex) {
 	dispMan._g578_useByteBoxCoordinates = false;
 	Box box;
 	box._y1 = 0;
-	box._y2 = 28 + 1;
+	box._y2 = 28;
 	box._x1 = championIndex * k69_ChampionStatusBoxSpacing + 7;
-	box._x2 = box._x1 + 31 + 1;
+	box._x2 = box._x1 + 31;
 	dispMan.f132_blitToBitmap(_vm->_championMan->_gK71_champions[championIndex]._portrait, dispMan._g348_bitmapScreen, box, 0, 0, 32, k160_byteWidthScreen * 2, k255_ColorNoTransparency);
 }
 
 void InventoryMan::f343_drawPanelHorizontalBar(int16 x, int16 y, int16 pixelWidth, Color color) {
 	Box box;
 	box._x1 = x;
-	box._x2 = box._x1 + pixelWidth + 1;
+	box._x2 = box._x1 + pixelWidth;
 	box._y1 = y;
-	box._y2 = box._y1 + 6 + 1;
+	box._y2 = box._y1 + 6;
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 	_vm->_displayMan->D24_fillScreenBox(box, color);
 }
@@ -331,8 +331,8 @@ void InventoryMan::f333_openAndDrawChest(Thing thingToOpen, Container* chest, bo
 void InventoryMan::f332_drawIconToViewport(IconIndice iconIndex, int16 xPos, int16 yPos) {
 	static byte iconBitmap[16 * 16];
 	Box box;
-	box._x2 = (box._x1 = xPos) + 15 + 1;
-	box._y2 = (box._y1 = yPos) + 15 + 1;
+	box._x2 = (box._x1 = xPos) + 15;
+	box._y2 = (box._y1 = yPos) + 15;
 	_vm->_objectMan->f36_extractIconFromBitmap(iconIndex, iconBitmap);
 	_vm->_displayMan->f132_blitToBitmap(iconBitmap, _vm->_displayMan->_g296_bitmapViewport, box, 0, 0, 16, k112_byteWidthViewport * 2, k255_ColorNoTransparency);
 }

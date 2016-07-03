@@ -120,7 +120,7 @@ FieldAspect g188_FieldAspects[12] = { // @ G0188_as_Graphic558_FieldAspects
 	FieldAspect(0, 63, 0x0A, 0x83, 16, 136,  0, 64),   /* D0L */
 	FieldAspect(0, 63, 0x0A, 0x03, 16, 136,  0, 64)}; /* D0R */
 
-Box g2_BoxMovementArrows = Box(224, 319, 124, 168);
+Box g2_BoxMovementArrows = Box(224, 319, 124, 168); // @ G0002_s_Graphic562_Box_MovementArrows
 
 byte g212_PalChangeSmoke[16] = {0, 10, 20, 30, 40, 50, 120, 10, 80, 90, 100, 110, 120, 130, 140, 150}; // @ G0212_auc_Graphic558_PaletteChanges_Smoke
 
@@ -1021,8 +1021,8 @@ void DisplayMan::f132_blitToBitmap(byte *srcBitmap, byte *destBitmap, Box &box, 
 					   uint16 destWidth, Color transparent, int16 srcHeight, int16 destHight) {
 	// Note: if you want to use srcHeight and destHight parameters, remove the defaults values and 
 	// and complete the function calls at the callsites, otherwise their value can be the default -1
-	for (uint16 y = 0; y < box._y2 - box._y1; ++y)
-		for (uint16 x = 0; x < box._x2 - box._x1; ++x) {
+	for (uint16 y = 0; y < box._y2 + 1 - box._y1; ++y) // + 1 for inclusive boundaries
+		for (uint16 x = 0; x < box._x2 + 1 - box._x1; ++x) { // + 1 for inclusive boundaries
 			byte srcPixel = srcBitmap[srcWidth * (y + srcY) + srcX + x];
 			if (srcPixel != transparent)
 				destBitmap[destWidth * (y + box._y1) + box._x1 + x] = srcPixel;
@@ -1030,19 +1030,20 @@ void DisplayMan::f132_blitToBitmap(byte *srcBitmap, byte *destBitmap, Box &box, 
 }
 
 void DisplayMan::D24_fillScreenBox(Box &box, Color color) {
-	uint16 width = box._x2 - box._x1;
-	for (int16 y = box._y1; y < box._y2; ++y)
+	uint16 width = box._x2 + 1 - box._x1; // + 1 for inclusive boundaries
+	for (int16 y = box._y1; y < box._y2 + 1; ++y) // + 1 for inclusive boundaries
 		memset(_g348_bitmapScreen + y * _screenWidth + box._x1, color, sizeof(byte) * width);
 }
 
 void DisplayMan::f135_fillBoxBitmap(byte* destBitmap, Box &box, Color color, int16 pixelWidth, int16 height) {
-	for (int16 y = box._y1; y < box._y2; ++y)
-		memset(destBitmap + y * pixelWidth + box._x1, color, sizeof(byte) * (box._x2 - box._x1));
+	for (int16 y = box._y1; y < box._y2 + 1; ++y) // + 1 for inclusive boundaries
+		memset(destBitmap + y * pixelWidth + box._x1, color, sizeof(byte) * (box._x2 - box._x1 + 1)); // + 1 for inclusive boundaries
 }
 
 void DisplayMan::f133_blitBoxFilledWithMaskedBitmap(byte* src, byte* dest, byte* mask, byte* tmp, Box& box,
 											   int16 lastUnitIndex, int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
 											   int16 xPos, int16 yPos, int16 destHeight, int16 height2) {
+	// make sure to take care of inclusive boundaries
 	warning("STUB FUNCTION: does nothing at all");
 }
 
@@ -2368,7 +2369,7 @@ T0115015_DrawProjectileAsObject:
 					}
 				}
 				AL_4_xPos = coordinateSet[0];
-				boxByteGreen._y2 = coordinateSet[1] + 1;
+				boxByteGreen._y2 = coordinateSet[1];
 				if (!drawProjectileAsObject) { /* If drawing an object that is not a projectile */
 					AL_4_xPos += g223_ShiftSets[AL_8_shiftSetIndex][g217_ObjectPileShiftSetIndices[objectShiftIndex][0]];
 					boxByteGreen._y2 += g223_ShiftSets[AL_8_shiftSetIndex][g217_ObjectPileShiftSetIndices[objectShiftIndex][1]];
@@ -2381,12 +2382,12 @@ T0115015_DrawProjectileAsObject:
 						objectShiftIndex &= 0x000F;
 					}
 				}
-				boxByteGreen._y1 = boxByteGreen._y2 - (heightRedEagle - 1) - 1;
-				if (boxByteGreen._y2 > 136) {
-					boxByteGreen._y2 = 136;
+				boxByteGreen._y1 = boxByteGreen._y2 - (heightRedEagle - 1);
+				if (boxByteGreen._y2 > 135) {
+					boxByteGreen._y2 = 135;
 				}
-				boxByteGreen._x2 = MIN(224, AL_4_xPos + byteWidth);
-				if (boxByteGreen._x1 = MAX(0, AL_4_xPos - byteWidth + 1)) {
+				boxByteGreen._x2 = MIN(223, AL_4_xPos + byteWidth);
+				if (boxByteGreen._x1 = MAX(0, AL_4_xPos - byteWidth)) {
 					if (flipHorizontal) {
 						AL_4_xPos = paddingPixelCount;
 					} else {
@@ -2402,7 +2403,7 @@ T0115015_DrawProjectileAsObject:
 					if (AL_6_boxPtrRed->_x1 == 255) { /* If the grabbable object is the first */
 						*AL_6_boxPtrRed = boxByteGreen;
 
-						if ((heightGreenGoat = AL_6_boxPtrRed->_y2 - AL_6_boxPtrRed->_y1) < 15) { /* If the box is too small then enlarge it a little */
+						if ((heightGreenGoat = AL_6_boxPtrRed->_y2 - AL_6_boxPtrRed->_y1) < 14) { /* If the box is too small then enlarge it a little */
 							heightGreenGoat = heightGreenGoat >> 1;
 							AL_6_boxPtrRed->_y1 += heightGreenGoat - 7;
 							if (heightGreenGoat < 4) {
@@ -2648,7 +2649,7 @@ T0115077_DrawSecondHalfSquareCreature:
 		}
 		AL_4_yPos = coordinateSet[1];
 		AL_4_yPos += g223_ShiftSets[AL_8_shiftSetIndex][M23_getVerticalOffsetM23(creatureAspectInt)];
-		boxByteGreen._y2 = MIN(AL_4_yPos, (int16)135) + 1;
+		boxByteGreen._y2 = MIN(AL_4_yPos, (int16)135);
 		boxByteGreen._y1 = MIN(0, AL_4_yPos - (heightRedEagle - 1));
 		AL_4_xPos = coordinateSet[0];
 		AL_4_xPos += g223_ShiftSets[AL_8_shiftSetIndex][M22_getHorizontalOffsetM22(creatureAspectInt)];
@@ -2659,7 +2660,7 @@ T0115077_DrawSecondHalfSquareCreature:
 				AL_4_xPos += 100;
 			}
 		}
-		if (boxByteGreen._x2 = 1 + MIN(MAX(0, AL_4_xPos + byteWidth), 223) <= 1)
+		if (!(boxByteGreen._x2 = MIN(MAX(0, AL_4_xPos + byteWidth), 223)))
 			goto T0115126_CreatureNotVisible;
 		if (boxByteGreen._x1 = MIN(MAX(0, AL_4_xPos - byteWidth + 1), 223)) {
 			if (boxByteGreen._x1 == 223)
@@ -2788,9 +2789,9 @@ continue;
 							f103_flipBitmapHorizontal(AL_6_bitmapRedBanana, AL_4_normalizdByteWidth, heightRedEagle);
 						}
 					}
-					boxByteGreen._y2 = (heightRedEagle >> 1) + 47 + 1;
+					boxByteGreen._y2 = (heightRedEagle >> 1) + 47;
 					boxByteGreen._y1 = 47 - (heightRedEagle >> 1) + !(heightRedEagle & 0x0001);
-					boxByteGreen._x2 = MIN(223, projectilePosX + byteWidth) + 1;
+					boxByteGreen._x2 = MIN(223, projectilePosX + byteWidth);
 					if (boxByteGreen._x1 = MAX(0, projectilePosX - byteWidth + 1)) {
 						if (flipHorizontal) {
 							AL_4_xPos = paddingPixelCount;
@@ -2920,14 +2921,14 @@ T0115200_DrawExplosion:
 				if (flipHorizontal = _vm->_rnd->getRandomNumber(2)) {
 					paddingPixelCount = (7 - ((byteWidth / 2 - 1) & 0x0007)) << 1; /* Number of unused pixels in the units on the right of the bitmap */
 				}
-				boxByteGreen._y2 = MIN(135, explosionCoordinates[1] + (heightRedEagle >> 1)) + 1;
+				boxByteGreen._y2 = MIN(135, explosionCoordinates[1] + (heightRedEagle >> 1));
 				AL_4_yPos = MAX(0, explosionCoordinates[1] - (heightRedEagle >> 1) + !(heightRedEagle & 0x0001));
 				if (AL_4_yPos >= 136)
 					continue;
 				boxByteGreen._y1 = AL_4_yPos;
 				if ((AL_4_xPos = MIN(223, explosionCoordinates[0] + byteWidth)) < 0)
 					continue;
-				boxByteGreen._x2 = AL_4_xPos + 1;
+				boxByteGreen._x2 = AL_4_xPos;
 				AL_4_xPos = explosionCoordinates[0];
 				if (boxByteGreen._x1 = MIN(MAX(0, AL_4_xPos - byteWidth + 1), 223)) {
 					AL_4_xPos = paddingPixelCount;
@@ -2942,7 +2943,7 @@ and may cause an incorrect bitmap to be drawn */
 only partly visible on the left side of the viewport (boxByteGreen.X1 = 0) and the bitmap is flipped horizontally (flipHorizontal = C1_TRUE)
 then a wrong part of the bitmap is drawn on screen. To fix this bug, "+ paddingPixelCount" must be added to the second parameter of this function call */
 				}
-				if (boxByteGreen._x2 - 1 <= boxByteGreen._x1)
+				if (boxByteGreen._x2 <= boxByteGreen._x1)
 					continue;
 				warning("might need M77_NORMALIZED_BYTE_WIDTH");
 				byteWidth = byteWidth;
@@ -2965,7 +2966,7 @@ then a wrong part of the bitmap is drawn on screen. To fix this bug, "+ paddingP
 		AL_1_viewSquareExplosionIndex -= 3; /* Convert square index for explosions back to square index */
 		fieldAspect = g188_FieldAspects[viewSquareIndex];
 		(fieldAspect._nativeBitmapRelativeIndex)++; /* NativeBitmapRelativeIndex is now the index of the Fluxcage field graphic */
-		f113_drawField(&fieldAspect, *(Box*)&g163_FrameWalls[viewSquareIndex]);
+		f113_drawField(&fieldAspect, g163_FrameWalls[viewSquareIndex]._box);
 	}
 }
 
