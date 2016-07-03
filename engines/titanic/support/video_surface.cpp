@@ -296,7 +296,14 @@ int OSVideoSurface::getPitch() {
 	return _ddSurface->getPitch();
 }
 
-void OSVideoSurface::resize(int width, int height) {
+int OSVideoSurface::getBpp() {
+	if (!loadIfReady())
+		error("Could not load resource");
+
+	return getPixelDepth();
+}
+
+void OSVideoSurface::recreate(int width, int height) {
 	freeSurface();
 
 	_screenManager->resizeSurface(this, width, height);
@@ -304,9 +311,19 @@ void OSVideoSurface::resize(int width, int height) {
 		_videoSurfaceCounter += _ddSurface->getSize();
 }
 
+void OSVideoSurface::resize(int width, int height) {
+	if (!_ddSurface || _ddSurface->getWidth() != width || 
+			_ddSurface->getHeight() != height)
+		recreate(width, height);
+}
+
+void OSVideoSurface::detachSurface() {
+	_ddSurface = nullptr;
+}
+
 int OSVideoSurface::getPixelDepth() {
 	if (!loadIfReady())
-		assert(0);
+		error("Could not load resource");
 
 	lock();
 	
@@ -360,6 +377,13 @@ uint16 OSVideoSurface::getPixel(const Common::Point &pt) {
 	}
 }
 
+void OSVideoSurface::setPixel(const Point &pt, uint pixel) {
+	assert(getPixelDepth() == 2);
+
+	uint16 *pixelP = (uint16 *)_rawSurface->getBasePtr(pt.x, pt.y);
+	*pixelP = pixel;
+}
+
 void OSVideoSurface::changePixel(uint16 *pixelP, uint16 *color, byte srcVal, bool remapFlag) {
 	assert(getPixelDepth() == 2);
 	const Graphics::PixelFormat &destFormat = _ddSurface->getFormat();
@@ -391,9 +415,17 @@ void OSVideoSurface::shiftColors() {
 	// we already convert 16-bit surfaces as soon as they're loaded
 }
 
+void OSVideoSurface::clear() {
+	if (!loadIfReady())
+		error("Could not load resource");
+
+}
+
 void OSVideoSurface::playMovie(uint flags, CVideoSurface *surface) {
 	if (loadIfReady() && _movie)
 		_movie->play(flags, surface);
+
+	_ddSurface->fill(nullptr, 0);
 }
 
 void OSVideoSurface::playMovie(uint startFrame, uint endFrame, int v3, bool v4) {

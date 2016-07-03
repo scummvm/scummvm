@@ -129,11 +129,26 @@ public:
 	 * Returns the pitch of the surface in bytes
 	 */
 	virtual int getPitch() = 0;
-	
+
 	/**
-	 * Reiszes the surface
+	 * Returns the bytes per pixel of the surface
+	 */
+	virtual int getBpp() = 0;
+
+	/**
+	 * Recreates the surface
+	 */
+	virtual void recreate(int width, int height) = 0;
+
+	/**
+	 * Resizes the surface
 	 */
 	virtual void resize(int width, int height) = 0;
+
+	/**
+	 * Detachs the underlying raw surface
+	 */
+	virtual void detachSurface() = 0;
 
 	/**
 	 * Returns the number of bytes per pixel in the surface
@@ -145,6 +160,12 @@ public:
 	 */
 	virtual uint16 getPixel(const Common::Point &pt) = 0;
 
+
+	/**
+	 * Sets a pixel at a specified position within the surface
+	 */
+	virtual void setPixel(const Point &pt, uint pixel) = 0;
+
 	/**
 	 * Change a pixel
 	 */
@@ -154,6 +175,11 @@ public:
 	 * Shifts the colors of the surface.. maybe greys it out?
 	 */
 	virtual void shiftColors() = 0;
+
+	/**
+	 * Clears the entire surface to black
+	 */
+	virtual void clear() = 0;
 
 	/**
 	 * Plays a movie, loading it from the specified _resource
@@ -305,9 +331,24 @@ public:
 	virtual int getPitch();
 
 	/**
-	 * Reiszes the surface
+	 * Returns the bytes per pixel of the surface
+	 */
+	virtual int getBpp();
+
+	/**
+	 * Recreates the surface with the designated size
+	 */
+	virtual void recreate(int width, int height);
+
+	/**
+	 * Resizes the surface
 	 */
 	virtual void resize(int width, int height);
+
+	/**
+	 * Detachs the underlying raw surface
+	 */
+	virtual void detachSurface();
 
 	/**
 	 * Returns the number of bytes per pixel in the surface
@@ -317,7 +358,12 @@ public:
 	/**
 	 * Gets the pixel at the specified position within the surface
 	 */
-	virtual uint16 getPixel(const Common::Point &pt);
+	virtual uint16 getPixel(const Point &pt);
+
+	/**
+	 * Sets a pixel at a specified position within the surface
+	 */
+	virtual void setPixel(const Point &pt, uint pixel);
 
 	/**
 	 * Change a pixel
@@ -328,6 +374,11 @@ public:
 	 * Shifts the colors of the surface.. maybe greys it out?
 	 */
 	virtual void shiftColors();
+
+	/**
+	 * Clears the entire surface to black
+	 */
+	virtual void clear();
 
 	/**
 	 * Plays a movie, loading it from the specified _resource

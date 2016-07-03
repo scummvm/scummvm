@@ -175,7 +175,7 @@ void OSMovie::decodeFrame() {
 
 	// If the video surface doesn't yet have an underlying surface, create it
 	if (!videoSurface->hasSurface())
-		videoSurface->resize(frame->w, frame->h);
+		videoSurface->recreate(frame->w, frame->h);
 
 	// Lock access to the surface
 	videoSurface->lock();
