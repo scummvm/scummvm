@@ -448,6 +448,7 @@ MODULE_OBJS := \
 	support/movie_clip.o \
 	support/movie_event.o \
 	support/movie_range_info.o \
+	support/movie_manager.o \
 	support/credit_text.o \
 	support/proximity.o \
 	support/rect.o \

@@ -47,8 +47,30 @@ class CMovie : public ListItem {
 protected:
 	MovieState _state;
 	int _field10;
+protected:
+	/**
+	 * Adds the movie to the active movies list
+	 */
+	void addToActiveMovies();
+
+	/**
+	 * Removes the movie from the active movies list
+	 */
+	void removeFromActiveMovies();
 public:
 	int _field14;
+public:
+	static CMovieList *_activeMovies;
+
+	/**
+	 * Initializes statics
+	 */
+	static void init();
+
+	/**
+	 * Deinitializes statics
+	 */
+	static void deinit();
 public:
 	CMovie();
 	virtual ~CMovie();
@@ -90,7 +112,7 @@ public:
 	 */
 	virtual const Common::List<CMovieRangeInfo *> getMovieRangeInfo() const = 0;
 
-	virtual void proc18() = 0;
+	virtual void proc18(int v) = 0;
 
 	/**
 	 * Get the current movie frame
@@ -167,7 +189,7 @@ public:
 	 */
 	virtual const Common::List<CMovieRangeInfo *> getMovieRangeInfo() const;
 
-	virtual void proc18();
+	virtual void proc18(int v);
 
 	/**
 	 * Get the current movie frame

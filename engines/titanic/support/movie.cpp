@@ -26,16 +26,35 @@
 
 namespace Titanic {
 
+CMovieList *CMovie::_activeMovies;
+
 CMovie::CMovie() : ListItem(), _state(MOVIE_STOPPED), _field10(0),
 		_field14(0) {
 }
 
 CMovie::~CMovie() {
-	g_vm->_activeMovies.remove(this);
+	removeFromActiveMovies();
+}
+
+void CMovie::init() {
+	_activeMovies = new CMovieList();
+}
+
+void CMovie::deinit() {
+	delete _activeMovies;
+}
+
+void CMovie::addToActiveMovies() {
+	if (!isActive())
+		_activeMovies->push_back(this);
+}
+
+void CMovie::removeFromActiveMovies() {
+	_activeMovies->remove(this);
 }
 
 bool CMovie::isActive() const {
-	return g_vm->_activeMovies.contains(this);
+	return _activeMovies->contains(this);
 }
 
 bool CMovie::get10() {
@@ -67,7 +86,6 @@ OSMovie::OSMovie(Common::SeekableReadStream *stream, CVideoSurface *surface) :
 }
 
 OSMovie::~OSMovie() {
-	g_vm->_activeMovies.remove(this);
 	delete _video;
 }
 
@@ -83,7 +101,7 @@ void OSMovie::play(uint startFrame, uint endFrame, int v3, bool v4) {
 	_video->seekToFrame(startFrame);
 	_endFrame = endFrame;
 
-	g_vm->_activeMovies.push_back(this);
+	addToActiveMovies();
 	_state = MOVIE_NONE;
 }
 
@@ -126,7 +144,10 @@ const Common::List<CMovieRangeInfo *> OSMovie::getMovieRangeInfo() const {
 	return Common::List<CMovieRangeInfo *>();
 }
 
-void OSMovie::proc18() {
+void OSMovie::proc18(int v) {
+//	if (_aviSurface)
+//		_aviSurface->_field3C = 0;
+
 	warning("TODO: OSMovie::proc18");
 }
 

@@ -94,6 +94,11 @@ public:
 	virtual void loadJPEG(const CResourceKey &key) = 0;
 
 	/**
+	 * Loads a Targa image file specified by the given name
+	 */
+	virtual void loadTarga(const CString &name) = 0;
+
+	/**
 	 * Loads a movie file specified by the resource key.
 	 * @param key			Resource key for movie to load
 	 * @param destroyFlag	Immediately destroy movie after decoding first frame
@@ -298,6 +303,11 @@ public:
 	 * Loads a JPEG image file specified by the resource key
 	 */
 	virtual void loadJPEG(const CResourceKey &key);
+
+	/**
+	 * Loads a Targa image file specified by the given name
+	 */
+	virtual void loadTarga(const CString &name);
 
 	/**
 	 * Loads a movie file specified by the resource key.

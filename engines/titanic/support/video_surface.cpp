@@ -23,6 +23,7 @@
 #include "titanic/support/video_surface.h"
 #include "titanic/support/image_decoders.h"
 #include "titanic/support/screen_manager.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -234,6 +235,11 @@ void OSVideoSurface::loadJPEG(const CResourceKey &key) {
 	_resourceKey = key;
 }
 
+void OSVideoSurface::loadTarga(const CString &name) {
+	CResourceKey key(name);
+	loadTarga(key);
+}
+
 void OSVideoSurface::loadMovie(const CResourceKey &key, bool destroyFlag) {
 	// Delete any prior movie
 	if (_movie) {
@@ -242,7 +248,7 @@ void OSVideoSurface::loadMovie(const CResourceKey &key, bool destroyFlag) {
 	}
 
 	// Create the new movie and load the first frame to the video surface
-	_movie = new OSMovie(key, this);
+	_movie = g_vm->_movieManager.createMovie(key, this);
 	_movie->setFrame(0);
 
 	// If flagged to destroy, then immediately destroy movie instance

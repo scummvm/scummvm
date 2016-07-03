@@ -128,7 +128,7 @@ void CGameManager::roomTransition(CRoomItem *oldRoom, CRoomItem *newRoom) {
 	CString filename = movieKey.exists();
 	if (g_vm->_filesManager->fileExists(filename)) {
 		_movieSurface->freeSurface();
-		_movie = new OSMovie(filename, _movieSurface);
+		_movie = g_vm->_movieManager.createMovie(filename, _movieSurface);
 	}
 }
 
@@ -194,8 +194,8 @@ void CGameManager::update() {
 void CGameManager::updateMovies() {
 	// TODO: Make this more like the original, if I can figuring out
 	// what's it doing with temporary lists and the OSMovie methods
-	for (CMovieList::iterator i = g_vm->_activeMovies.begin();
-			i != g_vm->_activeMovies.end(); ) {
+	for (CMovieList::iterator i = CMovie::_activeMovies->begin();
+			i != CMovie::_activeMovies->end(); ) {
 		OSMovie *movie = static_cast<OSMovie *>(*i);
 		assert(movie && movie->_gameObject);
 
@@ -205,7 +205,8 @@ void CGameManager::updateMovies() {
 			CMovieEndMsg endMsg;
 			endMsg.execute(movie->_gameObject);
 
-			i = g_vm->_activeMovies.erase(i);
+			i = CMovie::_activeMovies->erase(i);
+			delete movie;
 			continue;
 		}
 

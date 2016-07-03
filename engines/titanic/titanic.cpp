@@ -67,7 +67,6 @@ TitanicEngine::~TitanicEngine() {
 	delete _screenManager;
 	delete _filesManager;
 	CSaveableObject::freeClassList();
-	_activeMovies.clear();
 }
 
 void TitanicEngine::initializePath(const Common::FSNode &gamePath) {
@@ -87,6 +86,7 @@ void TitanicEngine::initialize() {
 	CGameObject::init();
 	CGetLiftEye2::init();
 	CHose::init();
+	CMovie::init();
 	CParrotLobbyObject::init();
 	CSGTNavigation::init();
 	CSGTStateRoom::init();
@@ -112,6 +112,7 @@ void TitanicEngine::deinitialize() {
 	CEnterExitFirstClassState::deinit();
 	CGetLiftEye2::deinit();
 	CHose::deinit();
+	CMovie::deinit();
 	CSGTNavigation::deinit();
 	CSGTStateRoom::deinit();
 	CExitPellerator::deinit();

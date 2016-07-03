@@ -36,7 +36,7 @@
 #include "titanic/support/files_manager.h"
 #include "titanic/main_game_window.h"
 #include "titanic/support/exe_resources.h"
-#include "titanic/support/movie.h"
+#include "titanic/support/movie_manager.h"
 #include "titanic/support/screen_manager.h"
 #include "titanic/support/string.h"
 #include "titanic/true_talk/tt_script_base.h"
@@ -106,6 +106,7 @@ public:
 	Debugger *_debugger;
 	Events *_events;
 	CFilesManager *_filesManager;
+	CMovieManager _movieManager;
 	Graphics::Screen *_screen;
 	OSScreenManager *_screenManager;
 	CMainGameWindow *_window;
@@ -114,7 +115,6 @@ public:
 	TTscriptBase *_script;
 	CTrueTalkManager *_trueTalkManager;
 	CExeResources _exeResources;
-	CMovieList _activeMovies;
 	StringArray _itemNames;
 	StringArray _itemDescriptions;
 	CString _itemObjects[TOTAL_ITEMS];
