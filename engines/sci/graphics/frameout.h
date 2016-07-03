@@ -185,7 +185,7 @@ private:
 
 	/**
 	 * Whether or not calls to kFrameOut should be framerate
-	 * limited to ~60fps.
+	 * limited to 60fps.
 	 */
 	bool _throttleFrameOut;
 
@@ -436,6 +436,12 @@ public:
 	}
 
 	void kernelFrameOut(const bool showBits);
+
+	/**
+	 * Throttles the engine as necessary to maintain
+	 * 60fps output.
+	 */
+	void throttle();
 
 	/**
 	 * Updates the internal screen buffer for the next

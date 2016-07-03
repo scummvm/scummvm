@@ -310,8 +310,7 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 
 		g_sci->_gfxFrameout->frameOut(true);
 		g_sci->getSciDebugger()->onFrame();
-		g_sci->getEngineState()->speedThrottler(16);
-		g_sci->getEngineState()->_throttleTrigger = true;
+		g_sci->_gfxFrameout->throttle();
 	}
 
 	g_sci->_gfxFrameout->deletePlane(*plane);

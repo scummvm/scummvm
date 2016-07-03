@@ -1567,6 +1567,10 @@ void GfxFrameout::kernelFrameOut(const bool shouldShowBits) {
 		frameOut(shouldShowBits);
 	}
 
+	throttle();
+}
+
+void GfxFrameout::throttle() {
 	if (_throttleFrameOut) {
 		uint8 throttleTime;
 		if (_throttleState == 2) {
