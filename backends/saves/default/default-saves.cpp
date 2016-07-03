@@ -359,7 +359,8 @@ void DefaultSaveFileManager::saveTimestamps(Common::HashMap<Common::String, uint
 }
 
 Common::String DefaultSaveFileManager::concatWithSavesPath(Common::String name) {
-	Common::String path = ConfMan.get("savepath");
+	DefaultSaveFileManager *manager = dynamic_cast<DefaultSaveFileManager *>(g_system->getSavefileManager());
+	Common::String path = (manager ? manager->getSavePath() : ConfMan.get("savepath"));
 	if (path.size() > 0 && (path.lastChar() == '/' || path.lastChar() == '\\'))
 		return path + name;
 
@@ -369,8 +370,8 @@ Common::String DefaultSaveFileManager::concatWithSavesPath(Common::String name) 
 		if (path[i] == '/') --backslashes;
 		else if (path[i] == '\\') ++backslashes;
 
-		if (backslashes) return path + '\\' + name;
-		return path + '/' + name;
+	if (backslashes > 0) return path + '\\' + name;
+	return path + '/' + name;
 }
 
 #endif // ifdef USE_CLOUD

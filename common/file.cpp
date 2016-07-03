@@ -160,6 +160,7 @@ bool DumpFile::open(const String &filename, bool createPath) {
 			if (filename[i] == '/' || filename[i] == '\\') {
 				Common::String subpath = filename;
 				subpath.erase(i);
+				if (subpath.empty()) continue;
 				AbstractFSNode *node = g_system->getFilesystemFactory()->makeFileNodePath(subpath);				
 				if (node->exists()) continue;				
 				if (!node->create(true)) warning("DumpFile: unable to create directories from path prefix");
