@@ -24,8 +24,11 @@
 #define TITANIC_STAR_ARRAY_H
 
 #include "common/array.h"
+#include "titanic/star_control/surface_area.h"
 
 namespace Titanic {
+
+class CStarControlSub12;
 
 class CStarArray {
 	struct CStarArrayEntry {
@@ -42,6 +45,11 @@ public:
 	 * Initialize the array
 	 */
 	void initialize();
+
+	/**
+	 * Draw the starfield points
+	 */
+	void draw(CSurfaceArea *surface, CStarControlSub12 *img);
 };
 
 } // End of namespace Titanic

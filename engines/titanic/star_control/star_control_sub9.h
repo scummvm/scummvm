@@ -23,18 +23,30 @@
 #ifndef TITANIC_STAR_CONTROL_SUB9_H
 #define TITANIC_STAR_CONTROL_SUB9_H
 
+#include "common/array.h"
+
 namespace Titanic {
 
 class CStarControlSub9 {
-	struct ArrayEntry {
+	struct DataEntry {
+		int _v1;
+		int _v2;
+		int _v3;
+		int _v4;
+	};
+
+	class RootEntry : public Common::Array<DataEntry> {
+	public:
 		int _field0;
-		int _field4;
-		int _field8;
-		ArrayEntry() : _field0(0), _field4(0), _field8(0) {}
+		RootEntry() : _field0(0) {}
 	};
 private:
-	ArrayEntry _array[80];
+	Common::Array<RootEntry> _data;
 public:
+	/**
+	 * Initializes the data
+	 */
+	void initialize();
 };
 
 } // End of namespace Titanic

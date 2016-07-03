@@ -21,6 +21,7 @@
  */
 
 #include "titanic/star_control/star_array.h"
+#include "titanic/star_control/star_control_sub12.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -45,6 +46,10 @@ void CStarArray::initialize() {
 		// Pre-process them
 		// TODO
 	}
+}
+
+void CStarArray::draw(CSurfaceArea *surface, CStarControlSub12 *img) {
+	// TODO
 }
 
 } // End of namespace Titanic
