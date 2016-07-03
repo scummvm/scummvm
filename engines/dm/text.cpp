@@ -35,15 +35,17 @@ TextMan::TextMan(DMEngine* vm) : _vm(vm) {}
 #define k5_LetterWidth 5
 #define k6_LetterHeight 6
 
-void TextMan::f40_printTextToBitmap(byte* destBitmap, uint16 destPixelWidth, uint16 destX, uint16 destY,
+void TextMan::f40_printTextToBitmap(byte* destBitmap, uint16 destByteWidth, uint16 destX, uint16 destY,
 								Color textColor, Color bgColor, const char* text, uint16 destHeight) {
 	destX -= 1; // fixes missalignment, to be checked
 	destY -= 4; // fixes missalignment, to be checked
 
+	uint16 destPixelWidth = destByteWidth * 2;
+
 	uint16 textLength = strlen(text);
 	uint16 nextX = destX;
 	uint16 nextY = destY;
-	byte *srcBitmap = _vm->_displayMan->f489_getBitmap(k557_FontGraphicIndice);
+	byte *srcBitmap = _vm->_displayMan->f489_getNativeBitmapOrGraphic(k557_FontGraphicIndice);
 
 	byte *tmp = _vm->_displayMan->_g74_tmpBitmap;
 	for (uint16 i = 0; i < (k5_LetterWidth + 1) * k6_LetterHeight * 128; ++i) {
@@ -61,26 +63,26 @@ void TextMan::f40_printTextToBitmap(byte* destBitmap, uint16 destPixelWidth, uin
 		uint16 srcX = (1 + 5) * toupper(*begin); // 1 + 5 is not the letter width, arbitrary choice of the unpacking code
 
 		Box box((nextX == destX) ? (nextX + 1) : nextX, nextX + k5_LetterWidth + 1, nextY, nextY + k6_LetterHeight - 1);
-		_vm->_displayMan->f132_blitToBitmap(srcBitmap, destBitmap, box, (nextX == destX) ? (srcX + 1) : srcX, 0, 6 * 128, destPixelWidth, k255_ColorNoTransparency);
+		_vm->_displayMan->f132_blitToBitmap(srcBitmap, destBitmap, box, (nextX == destX) ? (srcX + 1) : srcX, 0, 6 * 128 / 2, destByteWidth, k255_ColorNoTransparency);
 
 		nextX += k5_LetterWidth + 1;
 	}
 }
 
 void TextMan::f53_printToLogicalScreen(uint16 destX, uint16 destY, Color textColor, Color bgColor, const char* text) {
-	f40_printTextToBitmap(_vm->_displayMan->_g348_bitmapScreen, _vm->_displayMan->_screenWidth, destX, destY, textColor, bgColor, text, _vm->_displayMan->_screenHeight);
+	f40_printTextToBitmap(_vm->_displayMan->_g348_bitmapScreen, _vm->_displayMan->_screenWidth / 2, destX, destY, textColor, bgColor, text, _vm->_displayMan->_screenHeight);
 }
 
 void TextMan::f52_printToViewport(int16 posX, int16 posY, Color textColor, const char* text, Color bgColor) {
-	f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport * 2, posX, posY, textColor, bgColor, text, k200_heightScreen);
+	f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, posX, posY, textColor, bgColor, text, k200_heightScreen);
 }
 
-void TextMan::f41_printWithTrailingSpaces(byte* destBitmap, int16 destPixelWidth, int16 destX, int16 destY, Color textColor,
+void TextMan::f41_printWithTrailingSpaces(byte* destBitmap, int16 destByteWidth, int16 destX, int16 destY, Color textColor,
 									  Color bgColor, const char* text, int16 requiredTextLength, int16 destHeight) {
 	Common::String str = text;
 	for (int16 i = str.size(); i < requiredTextLength; ++i)
 		str += ' ';
-	f40_printTextToBitmap(destBitmap, destPixelWidth, destX, destY, textColor, bgColor, str.c_str(), destHeight);
+	f40_printTextToBitmap(destBitmap, destByteWidth, destX, destY, textColor, bgColor, str.c_str(), destHeight);
 }
 
 }

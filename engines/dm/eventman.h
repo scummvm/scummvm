@@ -243,7 +243,7 @@ public:
 	void setMousePos(Common::Point pos);
 	void processInput(); // acknowledges mouse and keyboard input
 	void f360_processPendingClick(); // @ F0360_COMMAND_ProcessPendingClick
-	void f359_processClick(Common::Point mousePos, MouseButton button); // @	F0359_COMMAND_ProcessClick_CPSC
+	void f359_processClick(Common::Point mousePos, MouseButton button); // @ F0359_COMMAND_ProcessClick_CPSC
 	CommandType f358_getCommandTypeFromMouseInput(MouseInput *input, Common::Point mousePos, MouseButton button); // @ F0358_COMMAND_GetCommandFromMouseInput_CPSC
 	void f380_processCommandQueue(); // @ F0380_COMMAND_ProcessQueue_CPSC
 

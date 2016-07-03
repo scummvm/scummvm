@@ -461,7 +461,7 @@ public:
 	void f281_renameChampion(Champion* champ); // @ F0281_CHAMPION_Rename
 	uint16 f303_getSkillLevel(ChampionIndex champIndex, ChampionSkill skillIndex);// @ F0303_CHAMPION_GetSkillLevel
 	Common::String f288_getStringFromInteger(uint16 val, bool padding, uint16 paddingCharCount); // @ F0288_CHAMPION_GetStringFromInteger
-	void f299_pplyModifiersToStatistics(Champion *champ, ChampionSlot slotIndex, IconIndice iconIndex,
+	void f299_applyModifiersToStatistics(Champion *champ, ChampionSlot slotIndex, IconIndice iconIndex,
 									int16 modifierFactor, Thing thing); // @ F0299_CHAMPION_ApplyObjectModifiersToStatistics
 	bool f295_hasObjectIconInSlotBoxChanged(int16 slotBoxIndex, Thing thing); // @ F0295_CHAMPION_HasObjectIconInSlotBoxChanged
 	void f296_drawChangedObjectIcons(); // @ F0296_CHAMPION_DrawChangedObjectIcons

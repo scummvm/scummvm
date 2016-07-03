@@ -111,10 +111,10 @@ namespace DM {
 
 class ExplosionAspect {
 public:
-	uint16 _pixelWidth;
+	uint16 _byteWidth;
 	uint16 _height;
 
-	ExplosionAspect(uint16 byteWidth, uint16 height) :_pixelWidth(byteWidth * 2), _height(height) {}
+	ExplosionAspect(uint16 byteWidth, uint16 height) :_byteWidth(byteWidth), _height(height) {}
 }; // @ EXPLOSION_ASPECT
 
 extern ExplosionAspect g211_ExplosionAspects[k4_ExplosionAspectCount]; // @ G0211_as_Graphic558_ExplosionAspects
@@ -252,14 +252,14 @@ extern Box g2_BoxMovementArrows; // @ G0002_s_Graphic562_Box_MovementArrows
 class Frame {
 public:
 	Box _box;
-	uint16 _srcWidth, _srcHeight;
+	uint16 _srcByteWidth, _srcHeight;
 	uint16 _srcX, _srcY;
 
 	Frame() {}
 	Frame(uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
 		  uint16 srcWidth, uint16 srcHeight, uint16 srcX, uint16 srcY) :
 		_box(destFromX, destToX, destFromY, destToY),
-		_srcWidth(srcWidth * 2), _srcHeight(srcHeight), _srcX(srcX), _srcY(srcY) {}
+		_srcByteWidth(srcWidth), _srcHeight(srcHeight), _srcX(srcX), _srcY(srcY) {}
 };
 
 enum WallSet {
@@ -312,13 +312,13 @@ public:
 	uint16 _baseStartUnitIndex; /* Index of the unit (16 pixels = 8 bytes) in bitmap where blit will start from. A random value of 0 or 1 is added to this base index */
 	uint16 _transparentColor; /* Bit 7: Do not use mask if set, Bits 6-0: Transparent color index. 0xFF = no transparency */
 	byte _mask; /* Bit 7: Flip, Bits 6-0: Mask index. 0xFF = no mask */
-	uint16 _pixelWidth;
+	uint16 _byteWidth;
 	uint16 _height;
 	uint16 _xPos;
 	uint16 _bitplaneWordCount;
 	FieldAspect(uint16 native, uint16 base, uint16 transparent, byte mask, uint16 byteWidth, uint16 height, uint16 xPos, uint16 bitplane)
 		: _nativeBitmapRelativeIndex(native), _baseStartUnitIndex(base), _transparentColor(transparent), _mask(mask),
-		_pixelWidth(byteWidth * 2), _height(height), _xPos(xPos), _bitplaneWordCount(bitplane) {}
+		_byteWidth(byteWidth), _height(height), _xPos(xPos), _bitplaneWordCount(bitplane) {}
 	FieldAspect() {}
 }; // @ FIELD_ASPECT
 
@@ -342,11 +342,11 @@ public:
 	CreatureAspect(uint16 uint161, uint16 uint162, byte byte0, byte byte1, byte byte2, byte byte3, byte byte4, byte byte5, byte byte6, byte byte7)
 		: _firstNativeBitmapRelativeIndex(uint161),
 		_firstDerivedBitmapIndex(uint162),
-		_byteWidthFront(byte0 * 2),
+		_byteWidthFront(byte0),
 		_heightFront(byte1),
-		_byteWidthSide(byte2 * 2),
+		_byteWidthSide(byte2),
 		_heightSide(byte3),
-		_byteWidthAttack(byte4 * 2),
+		_byteWidthAttack(byte4),
 		_heightAttack(byte5),
 		_coordinateSet_TransparentColor(byte6),
 		_replacementColorSetIndices(byte7) {}
@@ -355,34 +355,32 @@ public:
 	byte getTranspColour() { return  _coordinateSet_TransparentColor & 0xF; } // @ M72_TRANSPARENT_COLOR
 	byte getReplColour10() { return (_replacementColorSetIndices >> 4) & 0xF; } // @ M74_COLOR_10_REPLACEMENT_COLOR_SET
 	byte getReplColour9() { return _replacementColorSetIndices & 0xF; } // @ M73_COLOR_09_REPLACEMENT_COLOR_SET
-
-
 }; // @ CREATURE_ASPECT
 
 class ObjectAspect {
 public:
 	byte _firstNativeBitmapRelativeIndex;
 	byte _firstDerivedBitmapRelativeIndex;
-	byte _width;
+	byte _byteWidth;
 	byte _height;
 	byte _graphicInfo; /* Bits 7-5 and 3-1 Unreferenced */
 	byte _coordinateSet;
 	ObjectAspect(byte firstN, byte firstD, byte byteWidth, byte h, byte grap, byte coord) :
 		_firstNativeBitmapRelativeIndex(firstN), _firstDerivedBitmapRelativeIndex(firstD),
-		_width(byteWidth * 2), _height(h), _graphicInfo(grap), _coordinateSet(coord) {}
+		_byteWidth(byteWidth), _height(h), _graphicInfo(grap), _coordinateSet(coord) {}
 }; // @ OBJECT_ASPECT
 
 class ProjectileAspect {
 public:
 	byte _firstNativeBitmapRelativeIndex;
 	byte _firstDerivedBitmapRelativeIndex;
-	byte _width;
+	byte _byteWidth;
 	byte _height;
 	uint16 _graphicInfo; /* Bits 15-9, 7-5 and 3-2 Unreferenced */
 
 	ProjectileAspect(byte firstN, byte firstD, byte byteWidth, byte h, uint16 grap) :
 		_firstNativeBitmapRelativeIndex(firstN), _firstDerivedBitmapRelativeIndex(firstD),
-		_width(byteWidth * 2), _height(h), _graphicInfo(grap) {}
+		_byteWidth(byteWidth), _height(h), _graphicInfo(grap) {}
 }; // @ PROJECTIL_ASPECT
 
 class CreatureReplColorSet {
@@ -541,9 +539,9 @@ public:
 	void f461_allocateFlippedWallBitmaps(); // @ F0461_START_AllocateFlippedWallBitmaps
 
 	/// Gives the width of an IMG0 type item
-	uint16 getWidth(uint16 index);
+	uint16 getPixelWidth(uint16 index);
 	/// Gives the height of an IMG1 type item
-	uint16 getHeight(uint16 index);
+	uint16 getPixelHeight(uint16 index);
 
 
 	void f99_copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height);
@@ -553,34 +551,35 @@ public:
 	does not pass anything, newly imported calls do pass srcHeght and srcWidth, so this is a ceonvenience change so the the parameters
 	match the original exatcly, if need arises for heights then we'll have to retrospectively add them in old function calls*/
 	/* Expects inclusive boundaries in box */
-	void f132_blitToBitmap(byte *srcBitmap, byte *destBitmap, Box &box, uint16 srcX, uint16 srcY, uint16 srcWidth,
-					  uint16 destWidth, Color transparent = k255_ColorNoTransparency, int16 srcHeight = -1, int16 destHight = -1); // @ F0132_VIDEO_Blit
+	void f132_blitToBitmap(byte *srcBitmap, byte *destBitmap, Box &box, uint16 srcX, uint16 srcY, uint16 srcByteWidth,
+					  uint16 destByteWidth, Color transparent = k255_ColorNoTransparency, int16 srcHeight = -1, int16 destHight = -1); // @ F0132_VIDEO_Blit
 /* Expects inclusive boundaries in box */
 	void f133_blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask, byte *tmp, Box &box, int16 lastUnitIndex,
-									   int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
+									   int16 firstUnitIndex, int16 destByteWidth, Color transparent,
 									   int16 xPos, int16 yPos, int16 destHeight, int16 height2); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
+	// this function takes pixel widths
 	void f129_blitToBitmapShrinkWithPalChange(byte *srcBitmap, byte *destBitmap,
-											  int16 srcWidth, int16 srcHight, int16 destWidth, int16 destHeight, byte *palChange); // @ F0129_VIDEO_BlitShrinkWithPaletteChanges
-	void f130_flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height); // @ F0130_VIDEO_FlipHorizontal
-	void flipBitmapVertical(byte *bitmap, uint16 width, uint16 height);
-	byte *f114_getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int16 &returnPixelWidth, int16 &returnHeight); // @ F0114_DUNGEONVIEW_GetExplosionBitmap
+											  int16 srcPixelWidth, int16 srcHight, int16 destPixelWidth, int16 destHeight, byte *palChange); // @ F0129_VIDEO_BlitShrinkWithPaletteChanges
+	void f130_flipBitmapHorizontal(byte *bitmap, uint16 byteWidth, uint16 height); // @ F0130_VIDEO_FlipHorizontal
+	void flipBitmapVertical(byte *bitmap, uint16 byteWidth, uint16 height);
+	byte *f114_getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int16 &returnByteWidth, int16 &returnHeight); // @ F0114_DUNGEONVIEW_GetExplosionBitmap
 
-	void f134_fillBitmap(byte *bitmap, Color color, uint16 width, uint16 height); // @ F0134_VIDEO_FillBitmap
+	void f134_fillBitmap(byte *bitmap, Color color, uint16 byteWidth, uint16 height); // @ F0134_VIDEO_FillBitmap
 	void fillScreen(Color color);
 	/* Expects inclusive boundaries in box */
 	void D24_fillScreenBox(Box &box, Color color); // @ D24_FillScreenBox, F0550_VIDEO_FillScreenBox
 /* Expects inclusive boundaries in box */
-	void f135_fillBoxBitmap(byte *destBitmap, Box &box, Color color, int16 pixelWidth, int16 height); // @ F0135_VIDEO_FillBox
+	void f135_fillBoxBitmap(byte *destBitmap, Box &box, Color color, int16 byteWidth, int16 height); // @ F0135_VIDEO_FillBox
 	void f128_drawDungeon(direction dir, int16 posX, int16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
 	void updateScreen();
 	void f97_drawViewport(int16 palSwitchingRequestedState); // @ F0097_DUNGEONVIEW_DrawViewport
 
-	byte* f489_getBitmap(uint16 index); // @ F0489_MEMORY_GetNativeBitmapOrGraphic
+	byte* f489_getNativeBitmapOrGraphic(uint16 index); // @ F0489_MEMORY_GetNativeBitmapOrGraphic
 	Common::MemoryReadStream getCompressedData(uint16 index);
 	uint32 getCompressedDataSize(uint16 index);
 	void f113_drawField(FieldAspect *fieldAspect, Box &box); // @ F0113_DUNGEONVIEW_DrawField
 
-	int16 f459_getScaledBitmapPixelCount(int16 pixelWidth, int16 pixelHeight, int16 scale); // @ F0459_START_GetScaledBitmapByteCount
+	int16 f459_getScaledBitmapByteCount(int16 byteWidth, int16 height, int16 scale); // @ F0459_START_GetScaledBitmapByteCount
 	int16 M78_getScaledDimension(int16 dimension, int16 scale); // @ M78_SCALED_DIMENSION
 	void f115_cthulhu(Thing thingParam, direction directionParam,
 				 int16 mapXpos, int16 mapYpos, int16 viewSquareIndex,
@@ -611,6 +610,7 @@ public:
 
 	bool f491_isDerivedBitmapInCache(int16 derivedBitmapIndex); // @  F0491_CACHE_IsDerivedBitmapInCache
 	byte *f492_getDerivedBitmap(int16 derivedBitmapIndex); // @ F0492_CACHE_GetDerivedBitmap
+	void f493_addDerivedBitmap(int16 derivedBitmapIndex); // @ F0493_CACHE_AddDerivedBitmap
 
 
 

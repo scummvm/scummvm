@@ -96,7 +96,7 @@ void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
 	champion = &cm._gK71_champions[championIndex];
 	dm.f466_loadIntoBitmap(k17_InventoryGraphicIndice, dm._g296_bitmapViewport);
 	if (cm._g299_candidateChampionOrdinal) {
-		dm.f135_fillBoxBitmap(dm._g296_bitmapViewport, g41_BoxFloppyZzzCross, k12_ColorDarkestGray, k112_byteWidthViewport * 2, k136_heightViewport);
+		dm.f135_fillBoxBitmap(dm._g296_bitmapViewport, g41_BoxFloppyZzzCross, k12_ColorDarkestGray, k112_byteWidthViewport, k136_heightViewport);
 	}
 	_vm->_textMan->f52_printToViewport(5, 116, k13_ColorLightestGray, "HEALTH");
 	_vm->_textMan->f52_printToViewport(5, 124, k13_ColorLightestGray, "STAMINA");
@@ -128,7 +128,7 @@ void InventoryMan::f354_drawStatusBoxPortrait(ChampionIndex championIndex) {
 	box._y2 = 28;
 	box._x1 = championIndex * k69_ChampionStatusBoxSpacing + 7;
 	box._x2 = box._x1 + 31;
-	dispMan.f132_blitToBitmap(_vm->_championMan->_gK71_champions[championIndex]._portrait, dispMan._g348_bitmapScreen, box, 0, 0, 32, k160_byteWidthScreen * 2, k255_ColorNoTransparency);
+	dispMan.f132_blitToBitmap(_vm->_championMan->_gK71_champions[championIndex]._portrait, dispMan._g348_bitmapScreen, box, 0, 0, 16, k160_byteWidthScreen, k255_ColorNoTransparency);
 }
 
 void InventoryMan::f343_drawPanelHorizontalBar(int16 x, int16 y, int16 pixelWidth, Color color) {
@@ -161,11 +161,11 @@ void InventoryMan::f345_drawPanelFoodWaterPoisoned() {
 	Champion &champ = _vm->_championMan->_gK71_champions[_g432_inventoryChampionOrdinal];
 	f334_closeChest();
 	DisplayMan &dispMan = *_vm->_displayMan;
-	dispMan.f132_blitToBitmap(dispMan.f489_getBitmap(k20_PanelEmptyIndice), dispMan._g348_bitmapScreen, g32_BoxPanel, 0, 0, 144, k160_byteWidthScreen * 2, k8_ColorRed);
-	dispMan.f132_blitToBitmap(dispMan.f489_getBitmap(k30_FoodLabelIndice), dispMan._g348_bitmapScreen, g35_BoxFood, 0, 0, 48, k160_byteWidthScreen * 2, k12_ColorDarkestGray);
-	dispMan.f132_blitToBitmap(dispMan.f489_getBitmap(k31_WaterLabelIndice), dispMan._g348_bitmapScreen, g36_BoxWater, 0, 0, 48, k160_byteWidthScreen * 2, k12_ColorDarkestGray);
+	dispMan.f132_blitToBitmap(dispMan.f489_getNativeBitmapOrGraphic(k20_PanelEmptyIndice), dispMan._g348_bitmapScreen, g32_BoxPanel, 0, 0, 72, k160_byteWidthScreen, k8_ColorRed);
+	dispMan.f132_blitToBitmap(dispMan.f489_getNativeBitmapOrGraphic(k30_FoodLabelIndice), dispMan._g348_bitmapScreen, g35_BoxFood, 0, 0, 24, k160_byteWidthScreen, k12_ColorDarkestGray);
+	dispMan.f132_blitToBitmap(dispMan.f489_getNativeBitmapOrGraphic(k31_WaterLabelIndice), dispMan._g348_bitmapScreen, g36_BoxWater, 0, 0, 24, k160_byteWidthScreen, k12_ColorDarkestGray);
 	if (champ._poisonEventCount) {
-		dispMan.f132_blitToBitmap(dispMan.f489_getBitmap(k32_PoisionedLabelIndice), dispMan._g348_bitmapScreen, g37_BoxPoisoned, 0, 0, 96, k160_byteWidthScreen * 2, k12_ColorDarkestGray);
+		dispMan.f132_blitToBitmap(dispMan.f489_getNativeBitmapOrGraphic(k32_PoisionedLabelIndice), dispMan._g348_bitmapScreen, g37_BoxPoisoned, 0, 0, 48, k160_byteWidthScreen, k12_ColorDarkestGray);
 	}
 	f344_drawPanelFoodOrWaterBar(champ._food, 69, k5_ColorLightBrown);
 	f344_drawPanelFoodOrWaterBar(champ._water, 92, k14_ColorBlue);
@@ -173,7 +173,8 @@ void InventoryMan::f345_drawPanelFoodWaterPoisoned() {
 
 void InventoryMan::f346_drawPanelResurrectReincarnate() {
 	_g424_panelContent = k5_PanelContentResurrectReincarnate;
-	_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getBitmap(k40_PanelResurectReincaranteIndice), _vm->_displayMan->_g296_bitmapViewport, g32_BoxPanel, 0, 0, 144, k112_byteWidthViewport * 2, k6_ColorDarkGreen);
+	_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k40_PanelResurectReincaranteIndice),
+										_vm->_displayMan->_g296_bitmapViewport, g32_BoxPanel, 0, 0, 72, k112_byteWidthViewport, k6_ColorDarkGreen);
 }
 
 void InventoryMan::f347_drawPanel() {
@@ -256,7 +257,7 @@ void InventoryMan::f341_drawPanelScroll(Scroll* scroll) {
 		charRed++;
 	}
 	*charRed = '\0';
-	dispMan.f132_blitToBitmap(dispMan.f489_getBitmap(k23_PanelOpenScrollIndice), dispMan._g296_bitmapViewport, g32_BoxPanel, 0, 0, 144, k112_byteWidthViewport * 2, k8_ColorRed);
+	dispMan.f132_blitToBitmap(dispMan.f489_getNativeBitmapOrGraphic(k23_PanelOpenScrollIndice), dispMan._g296_bitmapViewport, g32_BoxPanel, 0, 0, 72, k112_byteWidthViewport, k8_ColorRed);
 	int16 lineCount = 1;
 	charRed++;
 	char *charGreen = charRed; // first char of the second line
@@ -308,7 +309,7 @@ void InventoryMan::f333_openAndDrawChest(Thing thingToOpen, Container* chest, bo
 	if (!isPressingEye) {
 		objMan.f38_drawIconInSlotBox(k9_SlotBoxInventoryActionHand, k145_IconIndiceContainerChestOpen);
 	}
-	dispMan.f132_blitToBitmap(dispMan.f489_getBitmap(k25_PanelOpenChestIndice), dispMan._g348_bitmapScreen, g32_BoxPanel, 0, 0, 144, k160_byteWidthScreen * 2, k8_ColorRed);
+	dispMan.f132_blitToBitmap(dispMan.f489_getNativeBitmapOrGraphic(k25_PanelOpenChestIndice), dispMan._g348_bitmapScreen, g32_BoxPanel, 0, 0, 72, k160_byteWidthScreen, k8_ColorRed);
 
 	int16 chestSlotIndex = 0;
 	Thing thing = chest->getSlot();
@@ -334,7 +335,7 @@ void InventoryMan::f332_drawIconToViewport(IconIndice iconIndex, int16 xPos, int
 	box._x2 = (box._x1 = xPos) + 15;
 	box._y2 = (box._y1 = yPos) + 15;
 	_vm->_objectMan->f36_extractIconFromBitmap(iconIndex, iconBitmap);
-	_vm->_displayMan->f132_blitToBitmap(iconBitmap, _vm->_displayMan->_g296_bitmapViewport, box, 0, 0, 16, k112_byteWidthViewport * 2, k255_ColorNoTransparency);
+	_vm->_displayMan->f132_blitToBitmap(iconBitmap, _vm->_displayMan->_g296_bitmapViewport, box, 0, 0, 8, k112_byteWidthViewport, k255_ColorNoTransparency);
 }
 
 void InventoryMan::f336_buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, char** attribStrings, char* destString, char* prefixString, char* suffixString) {
@@ -408,7 +409,8 @@ Box g33_BoxArrowOrEye = Box(83, 98, 57, 65); // @ G0033_s_Graphic562_Box_ArrowOr
 
 void InventoryMan::f339_drawPanelArrowOrEye(bool pressingEye) {
 	DisplayMan &dispMan = *_vm->_displayMan;
-	dispMan.f132_blitToBitmap(dispMan.f489_getBitmap(pressingEye ? k19_EyeForObjectDescriptionIndice : k18_ArrowForChestContentIndice), dispMan._g296_bitmapViewport, g33_BoxArrowOrEye, 0, 0, 16, k112_byteWidthViewport * 2, k8_ColorRed);
+	dispMan.f132_blitToBitmap(dispMan.f489_getNativeBitmapOrGraphic(pressingEye ? k19_EyeForObjectDescriptionIndice : k18_ArrowForChestContentIndice),
+							  dispMan._g296_bitmapViewport, g33_BoxArrowOrEye, 0, 0, 8, k112_byteWidthViewport, k8_ColorRed);
 }
 
 
@@ -440,8 +442,10 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		f333_openAndDrawChest(thingToDraw, (Container*)rawThingPtr, pressingEye);
 	} else {
 		IconIndice iconIndex = objMan.f33_getIconIndex(thingToDraw);
-		dispMan.f132_blitToBitmap(dispMan.f489_getBitmap(k20_PanelEmptyIndice), dispMan._g296_bitmapViewport, g32_BoxPanel, 0, 0, 144, k112_byteWidthViewport * 2, k8_ColorRed);
-		dispMan.f132_blitToBitmap(dispMan.f489_getBitmap(k29_ObjectDescCircleIndice), dispMan._g296_bitmapViewport, g34_BoxObjectDescCircle, 0, 0, 32, k112_byteWidthViewport * 2, k12_ColorDarkestGray);
+		dispMan.f132_blitToBitmap(dispMan.f489_getNativeBitmapOrGraphic(k20_PanelEmptyIndice), dispMan._g296_bitmapViewport,
+								  g32_BoxPanel, 0, 0, 72, k112_byteWidthViewport, k8_ColorRed);
+		dispMan.f132_blitToBitmap(dispMan.f489_getNativeBitmapOrGraphic(k29_ObjectDescCircleIndice), dispMan._g296_bitmapViewport,
+								  g34_BoxObjectDescCircle, 0, 0, 16, k112_byteWidthViewport, k12_ColorDarkestGray);
 
 		char *descString = nullptr;
 		char str[40];
