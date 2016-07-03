@@ -35,9 +35,10 @@ enum MovieState {
 	MOVIE_STOPPED = -1, MOVIE_NONE = 0, MOVIE_FINISHED = 1, MOVIE_FRAME = 2
 };
 
-class CVideoSurface;
-class CMovie;
 class CGameObject;
+class CMovie;
+class CSoundManager;
+class CVideoSurface;
 
 class CMovieList : public List<CMovie> {
 public:
@@ -112,7 +113,10 @@ public:
 	 */
 	virtual const Common::List<CMovieRangeInfo *> getMovieRangeInfo() const = 0;
 
-	virtual void proc18(int v) = 0;
+	/**
+	 * Set the sound manager reference
+	 */
+	virtual void setSoundManager(CSoundManager *soundManager) = 0;
 
 	/**
 	 * Get the current movie frame
@@ -189,7 +193,10 @@ public:
 	 */
 	virtual const Common::List<CMovieRangeInfo *> getMovieRangeInfo() const;
 
-	virtual void proc18(int v);
+	/**
+	 * Set the sound manager reference
+	 */
+	virtual void setSoundManager(CSoundManager *soundManager);
 
 	/**
 	 * Get the current movie frame

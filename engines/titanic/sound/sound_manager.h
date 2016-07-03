@@ -27,7 +27,7 @@
 
 namespace Titanic {
 
-class SoundManager {
+class CSoundManager {
 protected:
 	double _musicPercent;
 	double _speechPercent;
@@ -35,8 +35,8 @@ protected:
 	double _parrotPercent;
 	int _field14;
 public:
-	SoundManager();
-	virtual ~SoundManager() {}
+	CSoundManager();
+	virtual ~CSoundManager() {}
 	
 	/**
 	 * Loads a sound
@@ -98,7 +98,7 @@ public:
 	virtual void proc29() {}
 };
 
-class QSoundManager : public SoundManager {
+class QSoundManager : public CSoundManager {
 public:
 	int _field18;
 	int _field1C;

@@ -21,6 +21,7 @@
  */
 
 #include "video/avi_decoder.h"
+#include "titanic/sound/sound_manager.h"
 #include "titanic/support/movie.h"
 #include "titanic/titanic.h"
 
@@ -144,9 +145,9 @@ const Common::List<CMovieRangeInfo *> OSMovie::getMovieRangeInfo() const {
 	return Common::List<CMovieRangeInfo *>();
 }
 
-void OSMovie::proc18(int v) {
+void OSMovie::setSoundManager(CSoundManager *soundManager) {
 //	if (_aviSurface)
-//		_aviSurface->_field3C = 0;
+//		_aviSurface->_field3C = soundManager;
 
 	warning("TODO: OSMovie::proc18");
 }

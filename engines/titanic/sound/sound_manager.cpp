@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-SoundManager::SoundManager() : _musicPercent(75.0), _speechPercent(75.0),
+CSoundManager::CSoundManager() : _musicPercent(75.0), _speechPercent(75.0),
 	_masterPercent(75.0), _parrotPercent(75.0), _field14(1) {
 }
 

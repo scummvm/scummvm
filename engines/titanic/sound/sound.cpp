@@ -22,6 +22,7 @@
 
 #include "titanic/sound/sound.h"
 #include "titanic/game_manager.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -31,6 +32,7 @@ int CSoundItem::fn1() {
 }
 
 CSound::CSound(CGameManager *owner) : _gameManager(owner) {
+	g_vm->_movieManager.setSoundManager(&_soundManager);
 }
 
 void CSound::save(SimpleFile *file) const {

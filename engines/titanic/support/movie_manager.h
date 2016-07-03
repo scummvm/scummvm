@@ -25,6 +25,7 @@
 
 #include "titanic/core/list.h"
 #include "titanic/core/resource_key.h"
+#include "titanic/sound/sound_manager.h"
 
 namespace Titanic {
 
@@ -35,17 +36,28 @@ class CMovieManagerBase {
 public:
 	virtual ~CMovieManagerBase() {}
 
+	/**
+	 * Create a new movie and return it
+	 */
 	virtual CMovie *createMovie(const CResourceKey &key, CVideoSurface *surface) = 0;
 };
 
 class CMovieManager : public CMovieManagerBase {
 private:
-	int _field4;
+	CSoundManager *_soundManager;
 public:
-	CMovieManager() : CMovieManagerBase(), _field4(0) {}
+	CMovieManager() : CMovieManagerBase(), _soundManager(nullptr) {}
 	virtual ~CMovieManager() {}
 
+	/**
+	 * Create a new movie and return it
+	 */
 	virtual CMovie *createMovie(const CResourceKey &key, CVideoSurface *surface);
+
+	/**
+	 * Sets the sound manager that will be attached to all created movies
+	 */
+	void setSoundManager(CSoundManager *soundManager) { _soundManager = soundManager; }
 };
 
 } // End of namespace Titanic

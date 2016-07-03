@@ -28,7 +28,7 @@ namespace Titanic {
 
 CMovie *CMovieManager::createMovie(const CResourceKey &key, CVideoSurface *surface) {
 	CMovie *movie = new OSMovie(key, surface);
-	movie->proc18(_field4);
+	movie->setSoundManager(_soundManager);
 	return movie;
 }
 
