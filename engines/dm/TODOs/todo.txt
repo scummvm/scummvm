@@ -25,4 +25,7 @@ Todo:
 	
 Refactoring
 	Add constructor to CreatureInfo
-	
+
+Forgot to add number to name:
+	gBoxChampionPortrait, gBoxEye, gBoxMouth, gSlotMasks
+		

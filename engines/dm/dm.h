@@ -178,7 +178,7 @@ public:
 	bool _g298_newGame; // @ G0298_B_NewGame
 	bool _g523_restartGameRequest; // @ G0523_B_RestartGameRequested
 
-	bool _g321_stopWaitingForPlayerInput; // G0321_B_StopWaitingForPlayerInput
+	bool _g321_stopWaitingForPlayerInput; // @ G0321_B_StopWaitingForPlayerInput
 	bool _g301_gameTimeTicking; // @ G0301_B_GameTimeTicking
 	bool _g524_restartGameAllowed; // @ G0524_B_RestartGameAllowed
 	uint32 _g525_gameId; // @ G0525_l_GameID, probably useless here
@@ -189,8 +189,8 @@ public:
 	bool _g340_highlightBoxInversionRequested; // @ G0340_B_HighlightBoxInversionRequested
 
 	// TODO: refactor direction into a class
-	int8 _dirIntoStepCountEast[4];
-	int8 _dirIntoStepCountNorth[4];
+	int8 _dirIntoStepCountEast[4]; // @ G0233_ai_Graphic559_DirectionToStepEastCount
+	int8 _dirIntoStepCountNorth[4]; // @ G0234_ai_Graphic559_DirectionToStepNorthCount
 };
 
 class Console : public GUI::Debugger {

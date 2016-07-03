@@ -544,7 +544,7 @@ public:
 	uint16 getPixelHeight(uint16 index);
 
 
-	void f99_copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height);
+	void f99_copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height); // @ F0099_DUNGEONVIEW_CopyBitmapAndFlipHorizontal
 
 
 	/* srcHeight and destHeight are not necessary for blitting, only error checking, thus they are defaulted for existing code which 
