@@ -120,7 +120,14 @@ private:
 	/**
 	 * Renders a frame of video to the output bitmap.
 	 */
-	void renderFrame();
+	void renderFrame() const;
+
+	/**
+	 * Fills the given palette with RGB values from
+	 * the VMD palette, applying brightness boost if
+	 * it is enabled.
+	 */
+	void fillPalette(Palette &palette) const;
 
 	/**
 	 * Whether or not a VMD stream has been opened with

@@ -180,7 +180,7 @@ public:
 	 *   plane is a pic type and its picture resource ID has
 	 *   changed
 	 */
-	int _created, _updated, _deleted; // ?
+	int _created, _updated, _deleted;
 
 	/**
 	 * For screen items that represent picture cels, this
@@ -212,6 +212,14 @@ public:
 	 * the parent plane and is clipped to the screen.
 	 */
 	Common::Rect _screenRect;
+
+	/**
+	 * Whether or not the screen item should be drawn
+	 * with black lines drawn every second line. This is
+	 * used when pixel doubling videos to improve apparent
+	 * sharpness at the cost of your eyesight.
+	 */
+	bool _drawBlackLines;
 
 	/**
 	 * Initialises static Plane members.

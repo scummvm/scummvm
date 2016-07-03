@@ -83,9 +83,11 @@ const CelScalerTable *CelScaler::getScalerTable(const Ratio &scaleX, const Ratio
 
 #pragma mark -
 #pragma mark CelObj
+bool CelObj::_drawBlackLines = false;
 
 void CelObj::init() {
 	CelObj::deinit();
+	_drawBlackLines = false;
 	_nextCacheId = 1;
 	_scaler = new CelScaler();
 	_cache = new CelCache;
@@ -407,6 +409,7 @@ void CelObj::draw(Buffer &target, const ScreenItem &screenItem, const Common::Re
 	const Common::Point &scaledPosition = screenItem._scaledPosition;
 	const Ratio &scaleX = screenItem._ratioX;
 	const Ratio &scaleY = screenItem._ratioY;
+	_drawBlackLines = screenItem._drawBlackLines;
 
 	if (_remap) {
 		// NOTE: In the original code this check was `g_Remap_numActiveRemaps && _remap`,
@@ -488,6 +491,8 @@ void CelObj::draw(Buffer &target, const ScreenItem &screenItem, const Common::Re
 			}
 		}
 	}
+
+	_drawBlackLines = false;
 }
 
 void CelObj::draw(Buffer &target, const ScreenItem &screenItem, const Common::Rect &targetRect, bool mirrorX) {
@@ -627,7 +632,7 @@ void CelObj::putCopyInCache(const int cacheIndex) const {
 #pragma mark -
 #pragma mark CelObj - Drawing
 
-template<typename MAPPER, typename SCALER>
+template<typename MAPPER, typename SCALER, bool DRAW_BLACK_LINES>
 struct RENDERER {
 	MAPPER &_mapper;
 	SCALER &_scaler;
@@ -645,6 +650,12 @@ struct RENDERER {
 		const int16 targetWidth = targetRect.width();
 		const int16 targetHeight = targetRect.height();
 		for (int16 y = 0; y < targetHeight; ++y) {
+			if (DRAW_BLACK_LINES && (y % 2) == 0) {
+				memset(targetPixel, 0, targetWidth);
+				targetPixel += targetWidth + skipStride;
+				continue;
+			}
+
 			_scaler.setTarget(targetRect.left, targetRect.top + y);
 
 			for (int16 x = 0; x < targetWidth; ++x) {
@@ -661,7 +672,7 @@ void CelObj::render(Buffer &target, const Common::Rect &targetRect, const Common
 
 	MAPPER mapper;
 	SCALER scaler(*this, targetRect.left - scaledPosition.x + targetRect.width(), scaledPosition);
-	RENDERER<MAPPER, SCALER> renderer(mapper, scaler, _transparentColor);
+	RENDERER<MAPPER, SCALER, false> renderer(mapper, scaler, _transparentColor);
 	renderer.draw(target, targetRect, scaledPosition);
 }
 
@@ -670,8 +681,13 @@ void CelObj::render(Buffer &target, const Common::Rect &targetRect, const Common
 
 	MAPPER mapper;
 	SCALER scaler(*this, targetRect, scaledPosition, scaleX, scaleY);
-	RENDERER<MAPPER, SCALER> renderer(mapper, scaler, _transparentColor);
-	renderer.draw(target, targetRect, scaledPosition);
+	if (_drawBlackLines) {
+		RENDERER<MAPPER, SCALER, true> renderer(mapper, scaler, _transparentColor);
+		renderer.draw(target, targetRect, scaledPosition);
+	} else {
+		RENDERER<MAPPER, SCALER, false> renderer(mapper, scaler, _transparentColor);
+		renderer.draw(target, targetRect, scaledPosition);
+	}
 }
 
 void dummyFill(Buffer &target, const Common::Rect &targetRect) {

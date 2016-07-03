@@ -21,6 +21,7 @@
  */
 
 #include "audio/mixer.h"
+#include "common/config-manager.h"
 #include "sci/console.h"
 #include "sci/event.h"
 #include "sci/graphics/cursor.h"
@@ -85,7 +86,7 @@ void VMDPlayer::init(const int16 x, const int16 y, const PlayFlags flags, const 
 	_leaveScreenBlack = flags & kPlayFlagLeaveScreenBlack;
 	_leaveLastFrame = flags & kPlayFlagLeaveLastFrame;
 	_doublePixels = flags & kPlayFlagDoublePixels;
-	_blackLines = flags & kPlayFlagBlackLines;
+	_blackLines = ConfMan.getBool("enable_black_lined_video") && (flags & kPlayFlagBlackLines);
 	_boostPercent = 100 + (flags & kPlayFlagBoost ? boostPercent : 0);
 	_blackPalette = flags & kPlayFlagBlackPalette;
 	_stretchVertical = flags & kPlayFlagStretchVertical;
@@ -209,6 +210,10 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 			}
 		}
 
+		if (_blackLines) {
+			_screenItem->_drawBlackLines = true;
+		}
+
 		// NOTE: There was code for positioning the screen item using insetRect
 		// here, but none of the game scripts seem to use this functionality.
 
@@ -267,11 +272,29 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 	return stopFlag;
 }
 
-void VMDPlayer::renderFrame() {
-	// TODO: This is kind of different from the original implementation
-	// which has access to dirty rects from the decoder; we probably do
-	// not need to care to limit output this way
+void VMDPlayer::fillPalette(Palette &palette) const {
+	const byte *vmdPalette = _decoder->getPalette() + _startColor * 3;
+	for (uint16 i = _startColor; i <= _endColor; ++i) {
+		int16 r = *vmdPalette++;
+		int16 g = *vmdPalette++;
+		int16 b = *vmdPalette++;
 
+		if (_boostPercent != 100 && i >= _boostStartColor && i <= _boostEndColor) {
+			r = CLIP<int16>(r * _boostPercent / 100, 0, 255);
+			g = CLIP<int16>(g * _boostPercent / 100, 0, 255);
+			b = CLIP<int16>(b * _boostPercent / 100, 0, 255);
+		}
+
+		palette.colors[i].r = r;
+		palette.colors[i].g = g;
+		palette.colors[i].b = b;
+		palette.colors[i].used = true;
+	}
+}
+
+void VMDPlayer::renderFrame() const {
+	// This writes directly to the CelObjMem we already created,
+	// so no need to take its return value
 	_decoder->decodeNextFrame();
 
 	// NOTE: Normally this would write a hunk palette at the end of the
@@ -287,13 +310,7 @@ void VMDPlayer::renderFrame() {
 				palette.colors[i].used = true;
 			}
 		} else {
-			const byte *vmdPalette = _decoder->getPalette() + _startColor * 3;
-			for (uint16 i = _startColor; i <= _endColor; ++i) {
-				palette.colors[i].r = *vmdPalette++;
-				palette.colors[i].g = *vmdPalette++;
-				palette.colors[i].b = *vmdPalette++;
-				palette.colors[i].used = true;
-			}
+			fillPalette(palette);
 		}
 
 		g_sci->_gfxPalette32->submit(palette);
@@ -301,14 +318,7 @@ void VMDPlayer::renderFrame() {
 		g_sci->_gfxFrameout->frameOut(true);
 
 		if (_blackPalette) {
-			const byte *vmdPalette = _decoder->getPalette() + _startColor * 3;
-			for (uint16 i = _startColor; i <= _endColor; ++i) {
-				palette.colors[i].r = *vmdPalette++;
-				palette.colors[i].g = *vmdPalette++;
-				palette.colors[i].b = *vmdPalette++;
-				palette.colors[i].used = true;
-			}
-
+			fillPalette(palette);
 			g_sci->_gfxPalette32->submit(palette);
 			g_sci->_gfxPalette32->updateForFrame();
 			g_sci->_gfxPalette32->updateHardware();

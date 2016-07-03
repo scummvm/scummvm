@@ -42,7 +42,8 @@ _pictureId(-1),
 _created(g_sci->_gfxFrameout->getScreenCount()),
 _updated(0),
 _deleted(0),
-_mirrorX(false) {
+_mirrorX(false),
+_drawBlackLines(false) {
 	SegManager *segMan = g_sci->getEngineState()->_segMan;
 
 	setFromObject(segMan, object, true, true);
@@ -62,7 +63,8 @@ _pictureId(-1),
 _created(g_sci->_gfxFrameout->getScreenCount()),
 _updated(0),
 _deleted(0),
-_mirrorX(false) {}
+_mirrorX(false),
+_drawBlackLines(false) {}
 
 ScreenItem::ScreenItem(const reg_t plane, const CelInfo32 &celInfo, const Common::Rect &rect) :
 _plane(plane),
@@ -77,7 +79,8 @@ _pictureId(-1),
 _created(g_sci->_gfxFrameout->getScreenCount()),
 _updated(0),
 _deleted(0),
-_mirrorX(false) {
+_mirrorX(false),
+_drawBlackLines(false) {
 	if (celInfo.type == kCelTypeColor) {
 		_insetRect = rect;
 	}
@@ -97,7 +100,8 @@ _pictureId(-1),
 _created(g_sci->_gfxFrameout->getScreenCount()),
 _updated(0),
 _deleted(0),
-_mirrorX(false) {}
+_mirrorX(false),
+_drawBlackLines(false) {}
 
 ScreenItem::ScreenItem(const ScreenItem &other) :
 _plane(other._plane),
@@ -108,7 +112,8 @@ _celObj(nullptr),
 _object(other._object),
 _mirrorX(other._mirrorX),
 _scaledPosition(other._scaledPosition),
-_screenRect(other._screenRect) {
+_screenRect(other._screenRect),
+_drawBlackLines(other._drawBlackLines) {
 	if (other._useInsetRect) {
 		_insetRect = other._insetRect;
 	}
@@ -134,6 +139,7 @@ void ScreenItem::operator=(const ScreenItem &other) {
 	}
 	_scale = other._scale;
 	_scaledPosition = other._scaledPosition;
+	_drawBlackLines = other._drawBlackLines;
 }
 
 ScreenItem::~ScreenItem() {

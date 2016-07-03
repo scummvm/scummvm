@@ -397,6 +397,16 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	},
 
 	{
+		GAMEOPTION_ENABLE_BLACK_LINED_VIDEO,
+		{
+			_s("Enable black-lined video"),
+			_s("Draw black lines over videos to increase their apparent sharpness"),
+			"enable_black_lined_video",
+			false
+		}
+	},
+
+	{
 		GAMEOPTION_PREFER_DIGITAL_SFX,
 		{
 			_s("Prefer digital sound effects"),

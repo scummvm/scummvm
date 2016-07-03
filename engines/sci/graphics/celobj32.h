@@ -228,6 +228,18 @@ class ScreenItem;
 class CelObj {
 protected:
 	/**
+	 * When true, every second line of the cel will be
+	 * rendered as a black line.
+	 *
+	 * @see ScreenItem::_drawBlackLines
+	 * @note Using a static member because otherwise this
+	 * would otherwise need to be copied down through
+	 * several calls. (SSCI did similar, using a global
+	 * variable.)
+	 */
+	static bool _drawBlackLines;
+
+	/**
 	 * When true, this cel will be horizontally mirrored
 	 * when it is drawn. This is an internal flag that is
 	 * set by draw methods based on the combination of the
