@@ -73,16 +73,11 @@
 #include "sci/graphics/transitions32.h"
 #include "sci/graphics/video32.h"
 #include "sci/sound/audio32.h"
-// TODO: Move this to video32
-#include "sci/video/robot_decoder.h"
 #endif
 
 namespace Sci {
 
 SciEngine *g_sci = 0;
-
-
-class GfxDriver;
 
 SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gameId)
 		: Engine(syst), _gameDescription(desc), _gameId(gameId), _rng("sci") {
@@ -132,6 +127,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	DebugMan.addDebugChannel(kDebugLevelScripts, "Scripts", "Notifies when scripts are unloaded");
 	DebugMan.addDebugChannel(kDebugLevelScriptPatcher, "ScriptPatcher", "Notifies when scripts are patched");
 	DebugMan.addDebugChannel(kDebugLevelWorkarounds, "Workarounds", "Notifies when workarounds are triggered");
+	DebugMan.addDebugChannel(kDebugLevelVideo, "Video", "Video (SEQ, VMD, RBT) debugging");
 	DebugMan.addDebugChannel(kDebugLevelGC, "GC", "Garbage Collector debugging");
 	DebugMan.addDebugChannel(kDebugLevelResMan, "ResMan", "Resource manager debugging");
 	DebugMan.addDebugChannel(kDebugLevelOnStartup, "OnStartup", "Enter debugger at start of game");
@@ -173,7 +169,6 @@ SciEngine::~SciEngine() {
 	delete _gfxControls32;
 	delete _gfxPaint32;
 	delete _gfxText32;
-	delete _robotDecoder;
 	// GfxFrameout and GfxPalette32 must be deleted after Video32 since
 	// destruction of screen items in the Video32 destructor relies on these
 	// components
@@ -708,7 +703,6 @@ void SciEngine::initGraphics() {
 #ifdef ENABLE_SCI32
 	_gfxControls32 = 0;
 	_gfxText32 = 0;
-	_robotDecoder = 0;
 	_gfxFrameout = 0;
 	_gfxPaint32 = 0;
 	_gfxPalette32 = 0;
@@ -742,7 +736,6 @@ void SciEngine::initGraphics() {
 		_gfxCursor32 = new GfxCursor32();
 		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, nullptr, _gfxCoordAdjuster);
 		_gfxPaint32 = new GfxPaint32(_gamestate->_segMan);
-		_robotDecoder = new RobotDecoder(getPlatform() == Common::kPlatformMacintosh);
 		_gfxTransitions32 = new GfxTransitions32(_gamestate->_segMan);
 		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxPalette32, _gfxTransitions32, _gfxCursor32);
 		_gfxCursor32->init(_gfxFrameout->getCurrentBuffer());

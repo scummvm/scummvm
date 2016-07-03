@@ -54,7 +54,6 @@
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/paint32.h"
 #include "video/coktel_decoder.h"
-#include "sci/video/robot_decoder.h"
 #endif
 
 #include "common/file.h"
@@ -266,8 +265,6 @@ void Console::postEnter() {
 #ifdef ENABLE_SCI32
 		} else if (_videoFile.hasSuffix(".vmd")) {
 			videoDecoder = new Video::AdvancedVMDDecoder();
-		} else if (_videoFile.hasSuffix(".rbt")) {
-			videoDecoder = new RobotDecoder(_engine->getPlatform() == Common::kPlatformMacintosh);
 		} else if (_videoFile.hasSuffix(".duk")) {
 			duckMode = true;
 			videoDecoder = new Video::AVIDecoder();

@@ -44,16 +44,17 @@
 #include "sci/graphics/compare.h"
 #include "sci/graphics/cursor32.h"
 #include "sci/graphics/font.h"
-#include "sci/graphics/screen.h"
+#include "sci/graphics/frameout.h"
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/plane32.h"
 #include "sci/graphics/remap32.h"
+#include "sci/graphics/screen.h"
 #include "sci/graphics/screen_item32.h"
 #include "sci/graphics/text32.h"
 #include "sci/graphics/frameout.h"
-#include "sci/video/robot_decoder.h"
 #include "sci/graphics/transitions32.h"
+#include "sci/graphics/video32.h"
 
 namespace Sci {
 
@@ -501,10 +502,12 @@ void GfxFrameout::kernelAddPicAt(const reg_t planeObject, const GuiResourceId pi
 #pragma mark Rendering
 
 void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &eraseRect) {
-// TODO: Robot
-//	if (_robot != nullptr) {
-//		_robot.doRobot();
-//	}
+	RobotDecoder &robotPlayer = g_sci->_video32->getRobotPlayer();
+	const bool robotIsActive = robotPlayer.getStatus() != RobotDecoder::kRobotStatusUninitialized;
+
+	if (robotIsActive) {
+		robotPlayer.doRobot();
+	}
 
 	// NOTE: The original engine allocated these as static arrays of 100
 	// pointers to ScreenItemList / RectList
@@ -542,10 +545,9 @@ void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &eraseR
 		drawScreenItemList(screenItemLists[i]);
 	}
 
-// TODO: Robot
-//	if (_robot != nullptr) {
-//		_robot->frameAlmostVisible();
-//	}
+	if (robotIsActive) {
+		robotPlayer.frameAlmostVisible();
+	}
 
 	_palette->updateHardware(!shouldShowBits);
 
@@ -555,10 +557,9 @@ void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &eraseR
 
 	_frameNowVisible = true;
 
-// TODO: Robot
-//	if (_robot != nullptr) {
-//		robot->frameNowVisible();
-//	}
+	if (robotIsActive) {
+		robotPlayer.frameNowVisible();
+	}
 }
 
 void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, PlaneShowStyle *showStyle) {

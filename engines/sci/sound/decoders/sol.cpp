@@ -21,6 +21,7 @@
  */
 
 #include "audio/audiostream.h"
+#include "audio/rate.h"
 #include "audio/decoders/raw.h"
 #include "common/substream.h"
 #include "common/util.h"
@@ -52,9 +53,22 @@ static const byte tableDPCM8[8] = { 0, 1, 2, 3, 6, 10, 15, 21 };
  * Decompresses 16-bit DPCM compressed audio. Each byte read
  * outputs one sample into the decompression buffer.
  */
-static void deDPCM16(int16 *out, Common::ReadStream &audioStream, uint32 numBytes, int16 &sample) {
+static void deDPCM16(int16 *out, Common::ReadStream &audioStream, const uint32 numBytes, int16 &sample) {
 	for (uint32 i = 0; i < numBytes; ++i) {
 		const uint8 delta = audioStream.readByte();
+		if (delta & 0x80) {
+			sample -= tableDPCM16[delta & 0x7f];
+		} else {
+			sample += tableDPCM16[delta];
+		}
+		sample = CLIP<int16>(sample, -32768, 32767);
+		*out++ = TO_LE_16(sample);
+	}
+}
+
+void deDPCM16(int16 *out, const byte *in, const uint32 numBytes, int16 &sample) {
+	for (uint32 i = 0; i < numBytes; ++i) {
+		const uint8 delta = *in++;
 		if (delta & 0x80) {
 			sample -= tableDPCM16[delta & 0x7f];
 		} else {
@@ -178,7 +192,7 @@ int SOLStream<STEREO, S16BIT>::getRate() const {
 
 template <bool STEREO, bool S16BIT>
 bool SOLStream<STEREO, S16BIT>::endOfData() const {
-	return _stream->eos() || _stream->pos() >= _dataOffset + _rawDataSize;
+	return _stream->eos() || _stream->pos() >= _rawDataSize;
 }
 
 template <bool STEREO, bool S16BIT>
@@ -269,5 +283,4 @@ Audio::SeekableAudioStream *makeSOLStream(Common::SeekableReadStream *headerStre
 
 	return Audio::makeRawStream(dataStream, sampleRate, rawFlags, disposeAfterUse);
 }
-
 }
