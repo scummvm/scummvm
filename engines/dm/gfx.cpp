@@ -1018,7 +1018,9 @@ void DisplayMan::f466_loadIntoBitmap(uint16 index, byte *destBitmap) {
 }
 
 void DisplayMan::f132_blitToBitmap(byte *srcBitmap, byte *destBitmap, Box &box, uint16 srcX, uint16 srcY, uint16 srcWidth,
-					   uint16 destWidth, Color transparent) {
+					   uint16 destWidth, Color transparent, int16 srcHeight, int16 destHight) {
+	// Note: if you want to use srcHeight and destHight parameters, remove the defaults values and 
+	// and complete the function calls at the callsites, otherwise their value can be the default -1
 	for (uint16 y = 0; y < box._y2 - box._y1; ++y)
 		for (uint16 x = 0; x < box._x2 - box._x1; ++x) {
 			byte srcPixel = srcBitmap[srcWidth * (y + srcY) + srcX + x];

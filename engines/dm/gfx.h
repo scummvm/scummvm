@@ -547,8 +547,11 @@ public:
 	void f99_copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height);
 
 
+	/* srcHeight and destHeight are not necessary for blitting, only error checking, thus they are defaulted for existing code which 
+	does not pass anything, newly imported calls do pass srcHeght and srcWidth, so this is a ceonvenience change so the the parameters
+	match the original exatcly, if need arises for heights then we'll have to retrospectively add them in old function calls*/
 	void f132_blitToBitmap(byte *srcBitmap, byte *destBitmap, Box &box, uint16 srcX, uint16 srcY, uint16 srcWidth,
-					  uint16 destWidth, Color transparent = k255_ColorNoTransparency); // @ F0132_VIDEO_Blit
+					  uint16 destWidth, Color transparent = k255_ColorNoTransparency, int16 srcHeight = -1, int16 destHight = -1); // @ F0132_VIDEO_Blit
 
 	void f133_blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask, byte *tmp, Box &box, int16 lastUnitIndex,
 									   int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
