@@ -447,6 +447,7 @@ Common::Error PrinceEngine::run() {
 	int startGameSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 	init();
 	if (startGameSlot == -1) {
+		playVideo("topware.avi");
 		showLogo();
 	} else {
 		loadLocation(59); // load intro location - easiest way to set everything up

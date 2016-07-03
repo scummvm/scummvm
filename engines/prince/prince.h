@@ -262,6 +262,8 @@ public:
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual Common::Error loadGameState(int slot);
 
+	void playVideo(Common::String videoFilename);
+
 	static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header);
 	Common::String generateSaveName(int slot);
 	void writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header);
