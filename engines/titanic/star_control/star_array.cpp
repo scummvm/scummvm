@@ -43,6 +43,7 @@ void CStarArray::initialize() {
 		int v2 = stream->readUint32LE();
 		stream->readUint32LE();
 
+		warning("TODO: %d %d", v1, v2);
 		// Pre-process them
 		// TODO
 	}

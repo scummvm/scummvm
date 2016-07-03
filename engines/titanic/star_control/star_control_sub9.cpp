@@ -40,11 +40,14 @@ void CStarControlSub9::initialize() {
 		RootEntry &rootEntry = _data[rootCtr];
 		rootEntry.resize(count);
 		for (int idx = 0; idx < count; ++idx) {
+			DataEntry &entry = rootEntry[idx];
 			int v1 = stream->readSint32LE();
 			int v2 = stream->readSint32LE();
 			int v3 = stream->readSint32LE();
 			int v4 = stream->readSint32LE();
 
+			warning("TODO: %d %d %d %d", v1, v2, v3, v4);
+			entry._v1 = 0;
 			// TODO: Processing here
 		}
 	}

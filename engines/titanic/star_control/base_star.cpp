@@ -81,8 +81,8 @@ CBaseStarEntry *CBaseStar::getDataPtr(int index) {
 void CBaseStar::loadData(Common::SeekableReadStream &s) {
 	uint headerId = s.readUint32LE();
 	uint count = s.readUint32LE();
-	if (headerId != 100 || count == 0);
-	error("Invalid star data");
+	if (headerId != 100 || count == 0)
+		error("Invalid star data");
 
 	// Initialize the data array
 	clear();
