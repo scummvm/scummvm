@@ -27,6 +27,7 @@
 #include "common/scummsys.h"      // for int16, uint8, uint16, int32
 #include "common/str.h"           // for String
 #include "sci/engine/vm_types.h"  // for reg_t
+#include "sci/video/robot_decoder.h" // for RobotDecoder
 
 namespace Video {
 class AdvancedVMDDecoder;
@@ -505,16 +506,19 @@ public:
 	Video32(SegManager *segMan, EventManager *eventMan) :
 	_SEQPlayer(segMan),
 	_AVIPlayer(segMan, eventMan),
-	_VMDPlayer(segMan, eventMan) {}
+	_VMDPlayer(segMan, eventMan),
+	_robotPlayer(segMan) {}
 
 	SEQPlayer &getSEQPlayer() { return _SEQPlayer; }
 	AVIPlayer &getAVIPlayer() { return _AVIPlayer; }
 	VMDPlayer &getVMDPlayer() { return _VMDPlayer; }
+	RobotDecoder &getRobotPlayer() { return _robotPlayer; }
 
 private:
 	SEQPlayer _SEQPlayer;
 	AVIPlayer _AVIPlayer;
 	VMDPlayer _VMDPlayer;
+	RobotDecoder _robotPlayer;
 };
 } // End of namespace Sci
 

@@ -461,6 +461,22 @@ static const SciKernelMapSubEntry kPlayVMD_subops[] = {
 };
 
 //    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kRobot_subops[] = {
+	{ SIG_SINCE_SCI21,     0, MAP_CALL(RobotOpen),                 "ioiii(i)",             NULL },
+	{ SIG_SINCE_SCI21,     1, MAP_CALL(RobotShowFrame),            "i(ii)",                NULL },
+	{ SIG_SINCE_SCI21,     2, MAP_CALL(RobotGetFrameSize),         "r",                    NULL },
+	{ SIG_SINCE_SCI21,     4, MAP_CALL(RobotPlay),                 "",                     NULL },
+	{ SIG_SINCE_SCI21,     5, MAP_CALL(RobotGetIsFinished),        "",                     NULL },
+	{ SIG_SINCE_SCI21,     6, MAP_CALL(RobotGetIsPlaying),         "",                     NULL },
+	{ SIG_SINCE_SCI21,     7, MAP_CALL(RobotClose),                "",                     NULL },
+	{ SIG_SINCE_SCI21,     8, MAP_CALL(RobotGetCue),               "o",                    NULL },
+	{ SIG_SINCE_SCI21,    10, MAP_CALL(RobotPause),                "",                     NULL },
+	{ SIG_SINCE_SCI21,    11, MAP_CALL(RobotGetFrameNo),           "",                     NULL },
+	{ SIG_SINCE_SCI21,    12, MAP_CALL(RobotSetPriority),          "i",                    NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kRemapColors_subops[] = {
 	{ SIG_SCI32,           0, MAP_CALL(RemapColorsOff),            "(i)",                  NULL },
 	{ SIG_SCI32,           1, MAP_CALL(RemapColorsByRange),        "iiii(i)",              NULL },
@@ -845,7 +861,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(List),              SIG_SINCE_SCI21, SIGFOR_ALL, "(.*)",               kList_subops,    NULL },
 	{ MAP_CALL(MulDiv),            SIG_EVERYWHERE,           "iii",                   NULL,            NULL },
 	{ MAP_CALL(PlayVMD),           SIG_EVERYWHERE,           "(.*)",                  kPlayVMD_subops, NULL },
-	{ MAP_EMPTY(Robot),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(Robot),             SIG_EVERYWHERE,           "(.*)",                  kRobot_subops,   NULL },
 	{ MAP_CALL(Save),              SIG_EVERYWHERE,           "i(.*)",                 kSave_subops,    NULL },
 	{ MAP_CALL(Text),              SIG_SINCE_SCI21MID, SIGFOR_ALL, "i(.*)",           kText_subops,    NULL },
 	{ MAP_CALL(AddPicAt),          SIG_EVERYWHERE,           "oiii(i)(i)",            NULL,            NULL },

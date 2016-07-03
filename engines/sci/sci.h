@@ -80,8 +80,6 @@ class GfxText32;
 class GfxTransitions;
 
 #ifdef ENABLE_SCI32
-// TODO: Move RobotDecoder to Video32
-class RobotDecoder;
 class GfxFrameout;
 class Audio32;
 class Video32;
@@ -113,7 +111,8 @@ enum kDebugLevels {
 	kDebugLevelOnStartup     = 1 << 20,
 	kDebugLevelDebugMode     = 1 << 21,
 	kDebugLevelScriptPatcher = 1 << 22,
-	kDebugLevelWorkarounds   = 1 << 23
+	kDebugLevelWorkarounds   = 1 << 23,
+	kDebugLevelVideo         = 1 << 24
 };
 
 enum SciGameId {
@@ -376,7 +375,6 @@ public:
 #ifdef ENABLE_SCI32
 	Audio32 *_audio32;
 	Video32 *_video32;
-	RobotDecoder *_robotDecoder;
 	GfxFrameout *_gfxFrameout; // kFrameout and the like for 32-bit gfx
 	GfxTransitions32 *_gfxTransitions32;
 #endif

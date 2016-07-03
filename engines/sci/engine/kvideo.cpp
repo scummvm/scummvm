@@ -226,6 +226,80 @@ reg_t kShowMovie32(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
+
+reg_t kRobotOpen(EngineState *s, int argc, reg_t *argv) {
+	const GuiResourceId robotId = argv[0].toUint16();
+	const reg_t plane = argv[1];
+	const int16 priority = argv[2].toSint16();
+	const int16 x = argv[3].toSint16();
+	const int16 y = argv[4].toSint16();
+	const int16 scale = argc > 5 ? argv[5].toSint16() : 128;
+	g_sci->_video32->getRobotPlayer().open(robotId, plane, priority, x, y, scale);
+	return make_reg(0, 0);
+}
+reg_t kRobotShowFrame(EngineState *s, int argc, reg_t *argv) {
+	const uint16 frameNo = argv[0].toUint16();
+	const uint16 newX = argc > 1 ? argv[1].toUint16() : (uint16)RobotDecoder::kUnspecified;
+	const uint16 newY = argc > 1 ? argv[2].toUint16() : (uint16)RobotDecoder::kUnspecified;
+	g_sci->_video32->getRobotPlayer().showFrame(frameNo, newX, newY, RobotDecoder::kUnspecified);
+	return s->r_acc;
+}
+
+reg_t kRobotGetFrameSize(EngineState *s, int argc, reg_t *argv) {
+	Common::Rect frameRect;
+	const uint16 numFramesTotal = g_sci->_video32->getRobotPlayer().getFrameSize(frameRect);
+
+	reg_t *outRect = s->_segMan->derefRegPtr(argv[0], 4);
+	outRect[0] = make_reg(0, frameRect.left);
+	outRect[1] = make_reg(0, frameRect.top);
+	outRect[2] = make_reg(0, frameRect.right - 1);
+	outRect[3] = make_reg(0, frameRect.bottom - 1);
+
+	return make_reg(0, numFramesTotal);
+}
+
+reg_t kRobotPlay(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_video32->getRobotPlayer().resume();
+	return s->r_acc;
+}
+
+reg_t kRobotGetIsFinished(EngineState *s, int argc, reg_t *argv) {
+	return make_reg(0, g_sci->_video32->getRobotPlayer().getStatus() == RobotDecoder::kRobotStatusEnd);
+}
+
+reg_t kRobotGetIsPlaying(EngineState *s, int argc, reg_t *argv) {
+	return make_reg(0, g_sci->_video32->getRobotPlayer().getStatus() == RobotDecoder::kRobotStatusPlaying);
+}
+
+reg_t kRobotClose(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_video32->getRobotPlayer().close();
+	return s->r_acc;
+}
+
+reg_t kRobotGetCue(EngineState *s, int argc, reg_t *argv) {
+	writeSelectorValue(s->_segMan, argv[0], SELECTOR(signal), g_sci->_video32->getRobotPlayer().getCue());
+	return s->r_acc;
+}
+
+reg_t kRobotPause(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_video32->getRobotPlayer().pause();
+	return s->r_acc;
+}
+
+reg_t kRobotGetFrameNo(EngineState *s, int argc, reg_t *argv) {
+	return make_reg(0, g_sci->_video32->getRobotPlayer().getFrameNo());
+}
+
+reg_t kRobotSetPriority(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_video32->getRobotPlayer().setPriority(argv[0].toSint16());
+	return s->r_acc;
+}
+
 reg_t kShowMovieWin(EngineState *s, int argc, reg_t *argv) {
 	if (!s)
 		return make_reg(0, getSciVersion());

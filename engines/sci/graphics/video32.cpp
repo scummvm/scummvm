@@ -20,6 +20,7 @@
  *
  */
 
+#include "audio/mixer.h"                 // for Audio::Mixer::kSFXSoundType
 #include "common/config-manager.h"       // for ConfMan
 #include "common/textconsole.h"          // for warning, error
 #include "common/util.h"                 // for ARRAYSIZE

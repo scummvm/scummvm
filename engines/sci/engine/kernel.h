@@ -441,6 +441,19 @@ reg_t kDoAudioFade(EngineState *s, int argc, reg_t *argv);
 reg_t kDoAudioHasSignal(EngineState *s, int argc, reg_t *argv);
 reg_t kDoAudioSetLoop(EngineState *s, int argc, reg_t *argv);
 
+reg_t kRobot(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotOpen(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotShowFrame(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotGetFrameSize(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotPlay(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotGetIsFinished(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotGetIsPlaying(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotClose(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotGetCue(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotPause(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotGetFrameNo(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotSetPriority(EngineState *s, int argc, reg_t *argv);
+
 reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDOpen(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDInit(EngineState *s, int argc, reg_t *argv);
@@ -587,8 +600,6 @@ reg_t kTextWidth(EngineState *s, int argc, reg_t *argv);
 reg_t kSave(EngineState *s, int argc, reg_t *argv);
 reg_t kAutoSave(EngineState *s, int argc, reg_t *argv);
 reg_t kList(EngineState *s, int argc, reg_t *argv);
-reg_t kRobot(EngineState *s, int argc, reg_t *argv);
-reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv);
 reg_t kCD(EngineState *s, int argc, reg_t *argv);
 reg_t kAddPicAt(EngineState *s, int argc, reg_t *argv);
 reg_t kAddBefore(EngineState *s, int argc, reg_t *argv);
