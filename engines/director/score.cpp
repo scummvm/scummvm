@@ -1340,6 +1340,45 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID) {
 	}
 
 	font->drawString(&surface, text, x, y, width, 0);
+
+	if (textCast->borderSize != kSizeNone) {
+		uint16 size = textCast->borderSize;
+
+		//Indent from borders, measured in d4
+		x -= 1;
+		y -= 4;
+
+		height += 4;
+		width += 1;
+
+		while (size) {
+			surface.frameRect(Common::Rect(x, y, x + height, y + width), 0);
+			x--;
+			y--;
+			height += 2;
+			width += 2;
+			size--;
+		}
+	}
+
+	if (textCast->gutterSize != kSizeNone) {
+		x -= 1;
+		y -= 4;
+
+		height += 4;
+		width += 1;
+		uint16 size = textCast->gutterSize;
+
+		surface.frameRect(Common::Rect(x, y, x + height, y + width), 0);
+
+		while (size) {
+			surface.drawLine(x + width, y, x + width, y + height, 0);
+			surface.drawLine(x, y + height, x + width, y + height, 0);
+			x++;
+			y++;
+			size--;
+		}
+	}
 }
 
 void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
