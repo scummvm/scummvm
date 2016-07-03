@@ -93,16 +93,19 @@ struct ExecStack {
 
 	SegmentId local_segment; // local variables etc
 
-	Selector debugSelector;   // The selector which was used to call or -1 if not applicable
-	int debugExportId;        // The exportId which was called or -1 if not applicable
-	int debugLocalCallOffset; // Local call offset or -1 if not applicable
-	int debugOrigin;          // The stack frame position the call was made from, or -1 if it was the initial call
+	Selector debugSelector;     // The selector which was used to call or -1 if not applicable
+	int debugExportId;          // The exportId which was called or -1 if not applicable
+	int debugLocalCallOffset;   // Local call offset or -1 if not applicable
+	int debugOrigin;            // The stack frame position the call was made from, or -1 if it was the initial call
+	int debugKernelFunction;    // The kernel function called, or -1 if not applicable
+	int debugKernelSubFunction; // The kernel subfunction called, or -1 if not applicable
 	ExecStackType type;
 
 	reg_t* getVarPointer(SegManager *segMan) const;
 
 	ExecStack(reg_t objp_, reg_t sendp_, StackPtr sp_, int argc_, StackPtr argp_,
 				SegmentId localsSegment_, reg32_t pc_, Selector debugSelector_,
+				int debugKernelFunction_, int debugKernelSubFunction_,
 				int debugExportId_, int debugLocalCallOffset_, int debugOrigin_,
 				ExecStackType type_) {
 		objp = objp_;
@@ -112,12 +115,13 @@ struct ExecStack {
 		fp = sp = sp_;
 		argc = argc_;
 		variables_argp = argp_;
-		*variables_argp = make_reg(0, argc);  // The first argument is argc
 		if (localsSegment_ != 0xFFFF)
 			local_segment = localsSegment_;
 		else
 			local_segment = pc_.getSegment();
 		debugSelector = debugSelector_;
+		debugKernelFunction = debugKernelFunction_;
+		debugKernelSubFunction = debugKernelSubFunction_;
 		debugExportId = debugExportId_;
 		debugLocalCallOffset = debugLocalCallOffset_;
 		debugOrigin = debugOrigin_;

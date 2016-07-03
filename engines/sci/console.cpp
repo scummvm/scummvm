@@ -3094,7 +3094,10 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 			break;
 
 		case EXEC_STACK_TYPE_KERNEL: // Kernel function
-			debugPrintf(" %x:[%x]  k%s(", i, call.debugOrigin, _engine->getKernel()->getKernelName(call.debugSelector).c_str());
+			if (call.debugKernelSubFunction == -1)
+				debugPrintf(" %x:[%x]  k%s(", i, call.debugOrigin, _engine->getKernel()->getKernelName(call.debugKernelFunction).c_str());
+			else
+				debugPrintf(" %x:[%x]  k%s(", i, call.debugOrigin, _engine->getKernel()->getKernelName(call.debugKernelFunction, call.debugKernelSubFunction).c_str());
 			break;
 
 		case EXEC_STACK_TYPE_VARSELECTOR:

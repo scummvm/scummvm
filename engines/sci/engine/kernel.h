@@ -158,6 +158,7 @@ public:
 
 	uint getKernelNamesSize() const;
 	const Common::String &getKernelName(uint number) const;
+	Common::String getKernelName(uint number, uint subFunction) const;
 
 	/**
 	 * Determines the selector ID of a selector by its name.

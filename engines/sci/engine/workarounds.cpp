@@ -780,7 +780,7 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 		Common::List<ExecStack>::const_iterator callIterator = state->_executionStack.end();
 		while (callIterator != state->_executionStack.begin()) {
 			callIterator--;
-			ExecStack loopCall = *callIterator;
+			const ExecStack &loopCall = *callIterator;
 			if ((loopCall.debugSelector != -1) || (loopCall.debugExportId != -1)) {
 				lastCall->debugSelector = loopCall.debugSelector;
 				lastCall->debugExportId = loopCall.debugExportId;
