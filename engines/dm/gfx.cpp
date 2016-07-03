@@ -1087,7 +1087,7 @@ byte* DisplayMan::f114_getExplosionBitmap(uint16 explosionAspIndex, uint16 scale
 	} else {
 		byte *nativeBitmap = f489_getBitmap(MIN(explosionAspIndex, (uint16)k2_ExplosionAspectPoison) + k348_FirstExplosionGraphicIndice);
 		bitmap = f492_getDerivedBitmap(derBitmapIndex);
-		f129_blitToBitmapShrinkWithPalChange(nativeBitmap, explAsp->_pixelWidth, explAsp->_height, bitmap, pixelWidth, height,
+		f129_blitToBitmapShrinkWithPalChange(nativeBitmap, bitmap, explAsp->_pixelWidth, explAsp->_height, pixelWidth, height,
 			(explosionAspIndex == k3_ExplosionAspectSmoke) ? g212_PalChangeSmoke : g17_PalChangesNoChanges);
 		warning("IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
 	}
@@ -1870,7 +1870,7 @@ bool DisplayMan::f107_isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWall
 				}
 			}
 			int16 pixelWidth = (coordinateSetA + coordinateSetOffset)[1] - (coordinateSetA + coordinateSetOffset)[0];
-			f129_blitToBitmapShrinkWithPalChange(_bitmaps[nativeBitmapIndex], coordSetB[4] << 1, coordSetB[5], _g74_tmpBitmap, pixelWidth + 1, coordinateSetA[5],
+			f129_blitToBitmapShrinkWithPalChange(_bitmaps[nativeBitmapIndex], _g74_tmpBitmap, coordSetB[4] << 1, coordSetB[5],pixelWidth + 1, coordinateSetA[5],
 				(viewWallIndex <= k4_ViewWall_D3R_FRONT) ? g198_PalChangesDoorButtonAndWallOrn_D3 : g199_PalChangesDoorButtonAndWallOrn_D2);
 			bitmapGreen = _bitmaps[nativeBitmapIndex];
 			var_X = pixelWidth;
@@ -1920,7 +1920,7 @@ bool DisplayMan::f107_isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWall
 }
 
 
-void DisplayMan::f129_blitToBitmapShrinkWithPalChange(byte *srcBitmap, int16 srcWidth, int16 srcHeight, byte *destBitmap, int16 destWidth, int16 destHeight, byte *palChange) {
+void DisplayMan::f129_blitToBitmapShrinkWithPalChange(byte *srcBitmap, byte *destBitmap, int16 srcWidth, int16 srcHeight, int16 destWidth, int16 destHeight, byte *palChange) {
 	double rateW = srcWidth / destWidth;
 	double rateH = srcHeight / destHeight;
 
@@ -2360,8 +2360,9 @@ T0115015_DrawProjectileAsObject:
 						AL_6_bitmapRedBanana = f492_getDerivedBitmap(derivedBitmapIndex);
 					} else {
 						bitmapGreenAnt = f489_getBitmap(AL_4_nativeBitmapIndex);
-						f129_blitToBitmapShrinkWithPalChange(bitmapGreenAnt, objectAspect->_width, objectAspect->_height, AL_6_bitmapRedBanana = f492_getDerivedBitmap(derivedBitmapIndex),
-														byteWidth, heightRedEagle, paletteChanges);
+						f129_blitToBitmapShrinkWithPalChange(bitmapGreenAnt, AL_6_bitmapRedBanana = f492_getDerivedBitmap(derivedBitmapIndex),
+															 objectAspect->_width, objectAspect->_height,
+															 byteWidth, heightRedEagle, paletteChanges);
 						if (flipHorizontal) {
 							f103_flipBitmapHorizontal(AL_6_bitmapRedBanana, byteWidth, heightRedEagle);
 						}
@@ -2626,7 +2627,7 @@ T0115077_DrawSecondHalfSquareCreature:
 			} else {
 				bitmapGreenAnt = f489_getBitmap(AL_4_nativeBitmapIndex);
 				AL_6_bitmapRedBanana = f492_getDerivedBitmap(derivedBitmapIndex);
-				f129_blitToBitmapShrinkWithPalChange(bitmapGreenAnt, sourceByteWidth, sourceHeight, AL_6_bitmapRedBanana, byteWidth, heightRedEagle, paletteChanges);
+				f129_blitToBitmapShrinkWithPalChange(bitmapGreenAnt, AL_6_bitmapRedBanana, sourceByteWidth, sourceHeight, byteWidth, heightRedEagle, paletteChanges);
 				warning("IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
 			}
 			if ((useCreatureSideBitmap && (creatureDirectionDelta == 1)) || /* If creature is viewed from the right, the side view must be flipped */
@@ -2768,8 +2769,8 @@ continue;
 							} else {
 								AL_6_bitmapRedBanana = _g74_tmpBitmap;
 							}
-							f129_blitToBitmapShrinkWithPalChange(bitmapGreenAnt, ((ProjectileAspect*)objectAspect)->_width, ((ProjectileAspect*)objectAspect)->_height,
-															AL_6_bitmapRedBanana, byteWidth, heightRedEagle, _g75_palChangesProjectile[AL_8_projectileScaleIndex >> 1]);
+							f129_blitToBitmapShrinkWithPalChange(bitmapGreenAnt, AL_6_bitmapRedBanana, ((ProjectileAspect*)objectAspect)->_width, ((ProjectileAspect*)objectAspect)->_height,
+															 byteWidth, heightRedEagle, _g75_palChangesProjectile[AL_8_projectileScaleIndex >> 1]);
 							if (doNotScaleWithKineticEnergy) {
 								warning("IGNORED CODE F0493_CACHE_AddDerivedBitmap");
 							}
@@ -2858,8 +2859,8 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 							byteWidth = M78_getScaledDimension((((ProjectileAspect*)objectAspect)->_width), explosionCoordinates[2]);
 							heightRedEagle = M78_getScaledDimension((((ProjectileAspect*)objectAspect)->_height), explosionCoordinates[2]);
 							if (AL_1_viewSquareExplosionIndex != k9_ViewSquare_D1C_Explosion) {
-								f129_blitToBitmapShrinkWithPalChange(AL_6_bitmapRedBanana,
-									((ProjectileAspect*)objectAspect)->_width, ((ProjectileAspect*)objectAspect)->_height, _g74_tmpBitmap,
+								f129_blitToBitmapShrinkWithPalChange(AL_6_bitmapRedBanana, _g74_tmpBitmap,
+									((ProjectileAspect*)objectAspect)->_width, ((ProjectileAspect*)objectAspect)->_height,
 																byteWidth, heightRedEagle, g17_PalChangesNoChanges);
 								AL_6_bitmapRedBanana = _g74_tmpBitmap;
 							}
@@ -2889,7 +2890,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 				warning("IGNORED CODE: F0491_CACHE_IsDerivedBitmapInCache");
 				AL_6_bitmapRedBanana = f489_getBitmap(AL_4_explosionAspectIndex + k351_FirstExplosionPatternGraphicIndice);
 				if (smoke) {
-					f129_blitToBitmapShrinkWithPalChange(AL_6_bitmapRedBanana, 48, 32, _g74_tmpBitmap, 48, 32, g212_PalChangeSmoke);
+					f129_blitToBitmapShrinkWithPalChange(AL_6_bitmapRedBanana, _g74_tmpBitmap, 48, 32, 48, 32, g212_PalChangeSmoke);
 					AL_6_bitmapRedBanana = _g74_tmpBitmap;
 				}
 				f133_blitBoxFilledWithMaskedBitmap(AL_6_bitmapRedBanana, _g296_bitmapViewport, nullptr, f492_getDerivedBitmap(k0_DerivedBitmapViewport), g105_BoxExplosionPattern_D0C,

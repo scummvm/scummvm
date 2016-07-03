@@ -105,7 +105,7 @@ void MenuMan::f386_drawActionIcon(ChampionIndex championIndex) {
 		goto T0386006;
 	}
 	_vm->_objectMan->f36_extractIconFromBitmap(iconIndex, bitmapIcon);
-	dm.f129_blitToBitmapShrinkWithPalChange(bitmapIcon, 16, 16, bitmapIcon, 16, 16, g498_PalChangesActionAreaObjectIcon);
+	dm.f129_blitToBitmapShrinkWithPalChange(bitmapIcon, bitmapIcon, 16, 16,  16, 16, g498_PalChangesActionAreaObjectIcon);
 T0386006:
 	dm.D24_fillScreenBox(box, k4_ColorCyan);
 	Box box2;
