@@ -88,15 +88,23 @@ private:
 	Common::Rect _screenItemRect;
 
 	/**
-	 * TODO: Document
+	 * If true, the `_insetRect` rectangle will be used
+	 * when calculating the dimensions of the screen item
+	 * instead of the cel's intrinsic width and height.
+	 *
+	 * In other words, using an inset rect means that
+	 * the cel is cropped to the dimensions given in
+	 * `_insetRect`.
 	 */
 	bool _useInsetRect;
 
 	/**
-	 * TODO: Documentation
-	 * The insetRect is also used to describe the fill
-	 * rectangle of a screen item that is drawn using
-	 * CelObjColor.
+	 * The cropping rectangle used when `_useInsetRect`
+	 * is true.
+	 *
+	 * `_insetRect` is also used to describe the fill
+	 * rectangle of a screen item with a CelObjColor
+	 * cel.
 	 */
 	Common::Rect _insetRect;
 
