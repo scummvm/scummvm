@@ -226,8 +226,8 @@ void PrinceEngine::init() {
 		error("Can't open all/databank.ptc");
 
 	PtcArchive *voices = new PtcArchive();
-	if (!voices->open("data/voices/databank.ptc"))
-		error("Can't open data/voices/databank.ptc");
+	if (!voices->open("voices/databank.ptc"))
+		error("Can't open voices/databank.ptc");
 
 	PtcArchive *sound = new PtcArchive();
 	if (!sound->open("sound/databank.ptc"))
