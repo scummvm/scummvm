@@ -94,6 +94,20 @@ Common::Error DirectorEngine::run() {
 
 #if 0
 	_lingo->addCode("--\n\
+	if y = 5 then\n\
+	  set x = 5\n\
+	else if y = 6 then\n\
+	  set x = 6\n\
+	else\n\
+	  set x = 7\n\
+	endif\n\
+", kMovieScript, 2);
+
+_lingo->executeScript(kMovieScript, 2);
+
+return Common::kNoError;
+
+	_lingo->addCode("--\n\
 macro SHIPX\n\
 global x, y\n\
 set x = Random(5)\n\
