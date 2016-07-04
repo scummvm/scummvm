@@ -98,8 +98,7 @@ Common::Error DirectorEngine::run() {
 	  exit\n\
 	else if 6 then\n\
 	  exit\n\
-    else if 7 then\n\
-	  exit\n\
+    else if 7 then exit\n\
 	end if\n\
 ", kMovieScript, 2);
 

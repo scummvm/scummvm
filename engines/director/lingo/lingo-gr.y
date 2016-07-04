@@ -207,7 +207,7 @@ elseifstmt:	elseifstmt1 elseifstmt
 	|	elseifstmt1
 	;
 
-elseifstmt1:	elseif cond tTHEN stmtlist {
+elseifstmt1:	elseif cond tTHEN begin stmt '\n' {
 		inst then = 0, else1 = 0, end = 0;
 		WRITE_UINT32(&then, $4);
 		WRITE_UINT32(&else1, 0);
@@ -215,6 +215,15 @@ elseifstmt1:	elseif cond tTHEN stmtlist {
 		(*g_lingo->_currentScript)[$2 + 1] = then;      /* thenpart */
 		(*g_lingo->_currentScript)[$2 + 2] = else1;     /* elsepart */
 		(*g_lingo->_currentScript)[$2 + 3] = end; }     /* end, if cond fails */
+	| elseif cond tTHEN stmtlist {
+		inst then = 0, else1 = 0, end = 0;
+		WRITE_UINT32(&then, $4);
+		WRITE_UINT32(&else1, 0);
+		WRITE_UINT32(&end, 0);
+		(*g_lingo->_currentScript)[$2 + 1] = then;      /* thenpart */
+		(*g_lingo->_currentScript)[$2 + 2] = else1;     /* elsepart */
+		(*g_lingo->_currentScript)[$2 + 3] = end; }     /* end, if cond fails */
+
 	;
 
 cond:	   expr 				{ g_lingo->code1(STOP); }
