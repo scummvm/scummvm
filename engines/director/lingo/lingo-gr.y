@@ -219,7 +219,7 @@ ifstmt:	if cond tTHEN stmtlist end tEND tIF		{
 		g_lingo->processIf(0, $8); }
 	;
 
-elseifstmt:	elseifstmt1 elseifstmt
+elseifstmt:	elseifstmt elseifstmt1
 	|	elseifstmt1
 	;
 
