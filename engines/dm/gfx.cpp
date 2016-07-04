@@ -53,19 +53,6 @@ uint16 g208_doorButtonCoordSets[1][4][6] = { // @ G0208_aaauc_Graphic558_DoorBut
 	{144, 155, 42, 47, 8, 6},     /* D2C */
 	{160, 175, 44, 52, 8, 9}}}; /* D1C */
 
-DoorFrames g186_doorFrame_D1C = { // @ G0186_s_Graphic558_Frames_Door_D1C
-								   /* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-	Frame(64, 159, 17, 102, 48, 88,  0,  0),     /* Closed Or Destroyed */
-	Frame(64, 159, 17,  38, 48, 88,  0, 66),     /* Vertical Closed one fourth */
-	Frame(64, 159, 17,  60, 48, 88,  0, 44),     /* Vertical Closed half */
-	Frame(64, 159, 17,  82, 48, 88,  0, 22),   /* Vertical Closed three fourth */
-	Frame(64,  75, 17, 102, 48, 88, 36,  0),     /* Left Horizontal Closed one fourth */
-	Frame(64,  87, 17, 102, 48, 88, 24,  0),     /* Left Horizontal Closed half */
-	Frame(64,  99, 17, 102, 48, 88, 12,  0),   /* Left Horizontal Closed three fourth */
-	Frame(148, 159, 17, 102, 48, 88, 48,  0),     /* Right Horizontal Closed one fourth */
-	Frame(136, 159, 17, 102, 48, 88, 48,  0),     /* Right Horizontal Closed half */
-	Frame(124, 159, 17, 102, 48, 88, 48,  0)}; /* Right Horizontal Closed three fourth */
-
 uint16 g207_doorOrnCoordSets[4][3][6] = { // @ G0207_aaauc_Graphic558_DoorOrnamentCoordinateSets
 	/* { X1, X2, Y1, Y2, ByteWidth, Height } */
 	{{17, 31,  8, 17,  8, 10},     /* D3LCR */
@@ -718,6 +705,20 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_g322_paletteSwitchingEnabled = false;
 	warning("DUMMY CODE: setting _g304_dungeonViewPaletteIndex");
 	_g304_dungeonViewPaletteIndex = 0;
+
+	g186_doorFrame_D1C = new DoorFrames( // @ G0186_s_Graphic558_Frames_Door_D1C
+		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
+		Frame(64, 159, 17, 102, 48, 88,  0,  0),	/* Closed Or Destroyed */
+		Frame(64, 159, 17,  38, 48, 88,  0, 66),	/* Vertical Closed one fourth */
+		Frame(64, 159, 17,  60, 48, 88,  0, 44),	/* Vertical Closed half */
+		Frame(64, 159, 17,  82, 48, 88,  0, 22),	/* Vertical Closed three fourth */
+		Frame(64,  75, 17, 102, 48, 88, 36,  0),	/* Left Horizontal Closed one fourth */
+		Frame(64,  87, 17, 102, 48, 88, 24,  0),	/* Left Horizontal Closed half */
+		Frame(64,  99, 17, 102, 48, 88, 12,  0),	/* Left Horizontal Closed three fourth */
+		Frame(148, 159, 17, 102, 48, 88, 48,  0),	/* Right Horizontal Closed one fourth */
+		Frame(136, 159, 17, 102, 48, 88, 48,  0),	/* Right Horizontal Closed half */
+		Frame(124, 159, 17, 102, 48, 88, 48,  0)	/* Right Horizontal Closed three fourth */
+	);
 }
 
 DisplayMan::~DisplayMan() {
@@ -760,6 +761,8 @@ DisplayMan::~DisplayMan() {
 	delete[] _g92_bitmapWall_D1LCR_Flipped;
 	delete[] _g93_bitmapWall_D0L_Flipped;
 	delete[] _g94_bitmapWall_D0R_Flipped;
+
+	delete g186_doorFrame_D1C;
 }
 
 void DisplayMan::setUpScreens(uint16 width, uint16 height) {
@@ -1351,7 +1354,7 @@ void DisplayMan::f111_drawDoor(uint16 doorThingIndex, uint16 doorState, int16* d
 				f131_flipVertical(_g74_tmpBitmap, doorFramesTemp->_closedOrDestroyed._srcByteWidth, doorFramesTemp->_closedOrDestroyed._srcHeight);
 			}
 		}
-		if ((doorFramesTemp == &g186_doorFrame_D1C) && _vm->_championMan->_g407_party._event73Count_ThievesEye) {
+		if ((doorFramesTemp == g186_doorFrame_D1C) && _vm->_championMan->_g407_party._event73Count_ThievesEye) {
 			f109_drawDoorOrnament(_vm->M0_indexToOrdinal(k16_DoorOrnThivesEyeMask), k2_ViewDoorOrnament_D1LCR);
 		}
 		if (doorState == k4_doorState_CLOSED) {
@@ -2054,7 +2057,7 @@ void DisplayMan::f124_drawSquareD1C(direction dir, int16 posX, int16 posY) {
 			f110_drawDoorButton(_vm->M0_indexToOrdinal(k0_DoorButton), k3_viewDoorButton_D1C);
 		}
 		f111_drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
-					  _g695_doorNativeBitmapIndex_Front_D1LCR, M75_bitmapByteCount(96, 88), k2_ViewDoorOrnament_D1LCR, &g186_doorFrame_D1C);
+					  _g695_doorNativeBitmapIndex_Front_D1LCR, M75_bitmapByteCount(96, 88), k2_ViewDoorOrnament_D1LCR, g186_doorFrame_D1C);
 		order = k0x0349_CellOrder_DoorPass2_FrontLeft_FrontRight;
 		goto T0124018;
 	case k2_ElementTypePit:

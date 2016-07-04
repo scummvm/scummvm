@@ -504,7 +504,7 @@ class DisplayMan {
 	uint32 *_packedItemPos;
 	byte *_packedBitmaps;
 	byte **_bitmaps;
-
+	DoorFrames *g186_doorFrame_D1C;
 	// pointers are not owned by these fields
 	byte *_g75_palChangesProjectile[4]; // @G0075_apuc_PaletteChanges_Projectile
 
