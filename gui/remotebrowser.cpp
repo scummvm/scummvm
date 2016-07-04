@@ -36,40 +36,20 @@ namespace GUI {
 
 enum {
 	kChooseCmd = 'Chos',
-	kGoUpCmd = 'GoUp',
-	kHiddenCmd = 'Hidd'
+	kGoUpCmd = 'GoUp'
 };
 
-/* We want to use this as a general directory selector at some point... possible uses
- * - to select the data dir for a game
- * - to select the place where save games are stored
- * - others???
- */
-
-RemoteBrowserDialog::RemoteBrowserDialog(const char *title, bool dirRemoteBrowser)
+RemoteBrowserDialog::RemoteBrowserDialog(const char *title)
 	: Dialog("Browser"), _navigationLocked(false), _updateList(false) {
+	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
-	_isDirRemoteBrowser = dirRemoteBrowser;
-	_fileList = NULL;
-	_currentPath = NULL;
-
-	// Headline - TODO: should be customizable during creation time
 	new StaticTextWidget(this, "Browser.Headline", title);
-
-	// Current path - TODO: handle long paths ?
 	_currentPath = new StaticTextWidget(this, "Browser.Path", "DUMMY");
 
-	// Add file list
 	_fileList = new ListWidget(this, "Browser.List");
 	_fileList->setNumberingMode(kListNumberingOff);
 	_fileList->setEditable(false);
 
-	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
-
-	// hide checkbox for the "show hidden files" state.
-	//_showHiddenWidget = new CheckboxWidget(this, "Browser.Hidden", _("Show hidden files"), _("Show files marked with the hidden attribute"), kHiddenCmd);
-
-	// Buttons
 	if (g_system->getOverlayWidth() > 320)
 		new ButtonWidget(this, "Browser.Up", _("Go up"), _("Go to previous directory level"), kGoUpCmd);
 	else
@@ -85,50 +65,32 @@ void RemoteBrowserDialog::open() {
 
 void RemoteBrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-	case kChooseCmd:
-		if (_isDirRemoteBrowser) {
-			// If nothing is selected in the list widget, choose the current dir.
-			// Else, choose the dir that is selected.
-			int selection = _fileList->getSelected();
-			if (selection >= 0)
-				_choice = _nodeContent[selection];
-			else
-				_choice = _node;
-			setResult(1);
-			close();
-		} else {
-			int selection = _fileList->getSelected();
-			if (selection < 0)
-				break;
-			if (_nodeContent[selection].isDirectory()) {
-				_node = _nodeContent[selection];
-				updateListing();
-			} else {
-				_choice = _nodeContent[selection];
-				setResult(1);
-				close();
-			}
-		}
+	case kChooseCmd: {
+		// If nothing is selected in the list widget, choose the current dir.
+		// Else, choose the dir that is selected.
+		int selection = _fileList->getSelected();
+		if (selection >= 0)
+			_choice = _nodeContent[selection];
+		else
+			_choice = _node;
+		setResult(1);
+		close();
 		break;
+	}
 	case kGoUpCmd:
 		goUp();
 		break;
 	case kListItemActivatedCmd:
 	case kListItemDoubleClickedCmd:
-		if (_nodeContent[data].isDirectory()) {
-			_node = _nodeContent[data];
-			listDirectory(_node);
-		} else if (!_isDirRemoteBrowser) { //TODO: ????
-			_choice = _nodeContent[data];
-			setResult(1);
-			close();
+		if (_nodeContent[data].isDirectory()) {			
+			listDirectory(_nodeContent[data]);
 		}
 		break;
 	case kListSelectionChangedCmd:
-		// We do not allow selecting directories in directory
-		// RemoteBrowser mode, thus we will invalidate the selection
-		// when the user selects an directory over here.
-		if (data != (uint32)-1 && _isDirRemoteBrowser && !_nodeContent[data].isDirectory())
+		// We do not allow selecting directories,
+		// thus we will invalidate the selection
+		// when the user selects a directory over here.
+		if (data != (uint32)-1 && !_nodeContent[data].isDirectory())
 			_fileList->setSelected(-1);
 		break;
 	default:
@@ -202,19 +164,21 @@ void RemoteBrowserDialog::listDirectory(Cloud::StorageFile node) {
 		false
 	);
 
+	_backupNode = _node;
 	_node = node;
 	updateListing();
 }
 
 void RemoteBrowserDialog::directoryListedCallback(Cloud::Storage::ListDirectoryResponse response) {
 	_navigationLocked = false;
-	//TODO: list files from response
 	_nodeContent = response.value;
 	_updateList = true;
 }
 
 void RemoteBrowserDialog::directoryListedErrorCallback(Networking::ErrorResponse error) {
 	_navigationLocked = false;
+	_node = _backupNode;
+	_updateList = true;
 	//TODO: show error message
 }
 

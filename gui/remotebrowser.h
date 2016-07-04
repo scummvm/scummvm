@@ -38,7 +38,7 @@ class CommandSender;
 
 class RemoteBrowserDialog : public Dialog {
 public:
-	RemoteBrowserDialog(const char *title, bool dirRemoteBrowser);
+	RemoteBrowserDialog(const char *title);
 
 	virtual void open();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
@@ -49,10 +49,9 @@ public:
 protected:
 	ListWidget		*_fileList;
 	StaticTextWidget	*_currentPath;
-	Cloud::StorageFile _node;
+	Cloud::StorageFile _node, _backupNode;
 	Common::Array<Cloud::StorageFile> _nodeContent;
 	Cloud::StorageFile _choice;
-	bool _isDirRemoteBrowser;
 	bool _navigationLocked;
 	bool _updateList;
 

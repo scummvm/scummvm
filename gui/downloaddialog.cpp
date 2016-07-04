@@ -42,7 +42,7 @@ DownloadDialog::DownloadDialog(uint32 storageId):
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	_browser = new BrowserDialog(_("Select directory where to download game data"), true);
-	_remoteBrowser = new RemoteBrowserDialog(_("Select directory with game data"), true);
+	_remoteBrowser = new RemoteBrowserDialog(_("Select directory with game data"));
 
 	_messageText = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.DialogDesc", _("Press the button to download a directory"));
 	_mainButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", _("Start download"), 0, kDownloadDialogButtonCmd);
