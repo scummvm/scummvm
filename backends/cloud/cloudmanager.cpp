@@ -217,7 +217,7 @@ void CloudManager::printBool(Storage::BoolResponse response) const {
 
 Networking::Request *CloudManager::listDirectory(Common::String path, Storage::ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
 	Storage *storage = getCurrentStorage();
-	if (storage) storage->listDirectory(path, callback, errorCallback, recursive);
+	if (storage) return storage->listDirectory(path, callback, errorCallback, recursive);
 	else {
 		delete callback;
 		delete errorCallback;
@@ -228,7 +228,7 @@ Networking::Request *CloudManager::listDirectory(Common::String path, Storage::L
 
 Networking::Request *CloudManager::downloadFolder(Common::String remotePath, Common::String localPath, Storage::FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
 	Storage *storage = getCurrentStorage();
-	if (storage) storage->downloadFolder(remotePath, localPath, callback, errorCallback, recursive);
+	if (storage) return storage->downloadFolder(remotePath, localPath, callback, errorCallback, recursive);
 	else {
 		delete callback;
 		delete errorCallback;
