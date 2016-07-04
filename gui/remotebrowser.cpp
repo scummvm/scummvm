@@ -183,7 +183,7 @@ void RemoteBrowserDialog::goUp() {
 		return;
 	}
 	for (int i = path.size()-1; i >= 0; --i)
-		if (path[i] == '/' || path[i] == '\\') {
+		if (i == 0 || path[i] == '/' || path[i] == '\\') {
 			path.erase(i);
 			break;
 		}
