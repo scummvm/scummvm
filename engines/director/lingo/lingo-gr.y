@@ -177,6 +177,14 @@ stmtoneliner: 	if cond tTHEN begin stmt end {
 		WRITE_UINT32(&end, $6);
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
 		(*g_lingo->_currentScript)[$1 + 3] = end; }	/* end, if cond fails */
+	| if cond tTHEN begin stmt end  '\n' tELSE begin stmt end '\n' {
+			inst then = 0, else1 = 0, end = 0;
+			WRITE_UINT32(&then, $4);
+			WRITE_UINT32(&else1, $9);
+			WRITE_UINT32(&end, $11);
+			(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
+			(*g_lingo->_currentScript)[$1 + 2] = else1;     /* elsepart */
+			(*g_lingo->_currentScript)[$1 + 3] = end; }	/* end, if cond fails */
 	;
 
 ifstmt:	if cond tTHEN stmtlist end tEND tIF {

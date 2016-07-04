@@ -102,7 +102,7 @@ namespace Director {
 int Lingo::parse(const char *code) {
 	YY_BUFFER_STATE bp;
 
-	yydebug = 1;
+	yydebug = 0;
 
 	yy_delete_buffer(YY_CURRENT_BUFFER);
 

@@ -97,9 +97,12 @@ Common::Error DirectorEngine::run() {
 	if 5 then\n\
 	  exit\n\
 	else if 6 then\n\
+	  put x\n\
 	  exit\n\
     else if 7 then exit\n\
 	end if\n\
+	if 5 then exit\n\
+	else exit\n\
 ", kMovieScript, 2);
 
 //_lingo->executeScript(kMovieScript, 2);
