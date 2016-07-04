@@ -110,7 +110,7 @@ private:
 
 class MohawkEngine_Riven;
 
-class RivenOptionsDialog : public GUI::OptionsDialog {
+class RivenOptionsDialog : public GUI::Dialog {
 public:
 	RivenOptionsDialog(MohawkEngine_Riven *vm);
 	~RivenOptionsDialog();

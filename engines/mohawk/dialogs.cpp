@@ -235,7 +235,7 @@ void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 
 #ifdef ENABLE_RIVEN
 
-RivenOptionsDialog::RivenOptionsDialog(MohawkEngine_Riven* vm) : GUI::OptionsDialog("", 120, 120, 360, 200), _vm(vm) {
+RivenOptionsDialog::RivenOptionsDialog(MohawkEngine_Riven* vm) : GUI::Dialog(120, 120, 360, 200), _vm(vm) {
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 300, 15, _("~Z~ip Mode Activated"), 0, kZipCmd);
 	_waterEffectCheckbox = new GUI::CheckboxWidget(this, 15, 30, 300, 15, _("~W~ater Effect Enabled"), 0, kWaterCmd);
 
@@ -261,11 +261,15 @@ void RivenOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, u
 	case kWaterCmd:
 		_vm->_vars["waterenabled"] = _waterEffectCheckbox->getState() ? 1 : 0;
 		break;
+	case GUI::kOKCmd:
+		setResult(1);
+		close();
+		break;
 	case GUI::kCloseCmd:
 		close();
 		break;
 	default:
-		GUI::OptionsDialog::handleCommand(sender, cmd, data);
+		GUI::Dialog::handleCommand(sender, cmd, data);
 	}
 }
 
