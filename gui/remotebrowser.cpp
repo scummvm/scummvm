@@ -149,6 +149,7 @@ void RemoteBrowserDialog::updateListing() {
 	// Update the path display
 	Common::String path = _node.path();
 	if (path.empty()) path = "/"; //root
+	if (_navigationLocked) path = "Loading... " + path;
 	_currentPath->setLabel(path);
 
 	if (!_navigationLocked) {
