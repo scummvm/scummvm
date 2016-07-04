@@ -84,6 +84,10 @@ uint16 toggleFlag(uint16& val, uint16 mask) {
 	return val ^= mask;
 }
 
+uint16 M75_bitmapByteCount(uint16 pixelWidth, uint16 height) {
+	return pixelWidth / 2 * height;
+}
+
 DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 // Do not load data files
 // Do not initialize graphics here

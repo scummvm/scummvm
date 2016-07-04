@@ -594,6 +594,14 @@ struct Map {
 }; // @ MAP
 
 
+class DoorInfo {
+public:
+	byte _attributes;
+	byte _defense;
+	DoorInfo(byte b1, byte b2): _attributes(b1), _defense(b2){}
+	DoorInfo() {}
+}; // @ DOOR_INFO
+
 
 class DungeonMan {
 	DMEngine *_vm;
@@ -659,7 +667,7 @@ public:
 	int16 _g306_partyMapX; // @ G0306_i_PartyMapX
 	int16 _g307_partyMapY; // @ G0307_i_PartyMapY
 	uint8 _g309_partyMapIndex; // @ G0309_i_PartyMapIndex
-	uint8 _g272_currMapIndex; // @ G0272_i_CurrentMapIndex
+	int16 _g272_currMapIndex; // @ G0272_i_CurrentMapIndex
 	byte **_g271_currMapData; // @ G0271_ppuc_CurrentMapData
 	Map *_g269_currMap; // @ G0269_ps_CurrentMap
 	uint16 _g273_currMapWidth; // @ G0273_i_CurrentMapWidth
@@ -678,6 +686,7 @@ public:
 	bool _g288_isFacingFountain; // @ G0288_B_FacingFountain
 	ElementType _g285_squareAheadElement; // @ G0285_i_SquareAheadElement 
 	Thing _g292_pileTopObject[5]; // @ G0292_aT_PileTopObject
+	DoorInfo _g275_currMapDoorInfo[2]; // @ G0275_as_CurrentMapDoorInfo
 };
 
 }

@@ -69,6 +69,7 @@ uint16 getFlag(uint16 val, uint16 mask); // @ M07_GET
 uint16 setFlag(uint16 &val, uint16 mask); // @ M08_SET
 uint16 clearFlag(uint16 &val, uint16 mask);	// @ M09_CLEAR
 uint16 toggleFlag(uint16 &val, uint16 mask); // @ M10_TOGGLE
+uint16 M75_bitmapByteCount(uint16 pixelWidth, uint16 height);  // @ M75_BITMAP_BYTE_COUNT
 
 
 enum ThingType {

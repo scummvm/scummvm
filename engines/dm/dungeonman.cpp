@@ -384,7 +384,7 @@ DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine), _rawDunFileData(NULL
 	_g306_partyMapX = 0;
 	_g307_partyMapY = 0;
 	_g309_partyMapIndex = 0;
-	_g272_currMapIndex = 0;
+	_g272_currMapIndex = kM1_mapIndexNone;
 	_g273_currMapWidth = 0;
 	_g274_currMapHeight = 0;
 
@@ -729,11 +729,22 @@ void DungeonMan::f434_loadDungeonFile() {
 }
 
 void DungeonMan::f173_setCurrentMap(uint16 mapIndex) {
+	static DoorInfo g254_doorInfo[4] = { // @ G0254_as_Graphic559_DoorInfo
+		/* { Attributes, Defense } */
+		DoorInfo(3, 110),   /* Door type 0 Portcullis */
+		DoorInfo(0,  42),   /* Door type 1 Wooden door */
+		DoorInfo(0, 230),   /* Door type 2 Iron door */
+		DoorInfo(5, 255)}; /* Door type 3 Ra door */
+
+	if (_g272_currMapIndex == mapIndex)
+		return;
 	_g272_currMapIndex = mapIndex;
 	_g271_currMapData = _g279_dungeonMapData[mapIndex];
 	_g269_currMap = _g277_dungeonMaps + mapIndex;
 	_g273_currMapWidth = _g277_dungeonMaps[mapIndex]._width + 1;
 	_g274_currMapHeight = _g277_dungeonMaps[mapIndex]._height + 1;
+	_g275_currMapDoorInfo[0] = g254_doorInfo[_g269_currMap->_doorSet0];
+	_g275_currMapDoorInfo[1] = g254_doorInfo[_g269_currMap->_doorSet1];
 	_g270_currMapColCumulativeSquareFirstThingCount
 		= &_g280_dungeonColumnsCumulativeSquareThingCount[_g281_dungeonMapsFirstColumnIndex[mapIndex]];
 }

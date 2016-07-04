@@ -46,6 +46,22 @@ namespace DM {
 #define k7_viewFloor_D1C 7 // @ C7_VIEW_FLOOR_D1C
 #define k8_viewFloor_D1R 8 // @ C8_VIEW_FLOOR_D1R
 
+#define k0_doorState_OPEN 0 // @ C0_DOOR_STATE_OPEN 
+#define k1_doorState_FOURTH 1 // @ C1_DOOR_STATE_CLOSED_ONE_FOURTH 
+#define k2_doorState_HALF 2 // @ k2_DoorStateAspect_CLOSED_HALF 
+#define k3_doorState_FOURTH 3 // @ C3_DOOR_STATE_CLOSED_THREE_FOURTH
+#define k4_doorState_CLOSED 4 // @ C4_DOOR_STATE_CLOSED 
+#define k5_doorState_DESTROYED 5 // @ C5_DOOR_STATE_DESTROYED 
+
+#define k0_ViewDoorOrnament_D3LCR 0 // @ C0_VIEW_DOOR_ORNAMENT_D3LCR
+#define k1_ViewDoorOrnament_D2LCR 1 // @ C1_VIEW_DOOR_ORNAMENT_D2LCR
+#define k2_ViewDoorOrnament_D1LCR 2 // @ C2_VIEW_DOOR_ORNAMENT_D1LCR
+
+#define k0x0001_MaskDoorInfo_CraturesCanSeeThrough 0x0001 // @ MASK0x0001_CREATURES_CAN_SEE_THROUGH   
+#define k0x0002_MaskDoorInfo_ProjectilesCanPassThrough 0x0002 // @ MASK0x0002_PROJECTILES_CAN_PASS_THROUGH
+#define k0x0004_MaskDoorInfo_Animated 0x0004 // @ MASK0x0004_ANIMATED                    
+
+
 #define k2_FloorSetGraphicCount 2 // @ C002_FLOOR_SET_GRAPHIC_COUNT
 #define k13_WallSetGraphicCount 13 // @ C013_WALL_SET_GRAPHIC_COUNT
 #define k18_StairsGraphicCount 18 // @ C018_STAIRS_GRAPHIC_COUNT
@@ -418,6 +434,28 @@ public:
 #define k160_byteWidthScreen 160 // @ C160_BYTE_WIDTH_SCREEN
 #define k200_heightScreen 200 // @ C200_HEIGHT_SCREEN   
 
+class DoorFrames {
+public:
+	Frame _closedOrDestroyed;
+	Frame _vertical[3];
+	Frame _leftHorizontal[3];
+	Frame _rightHorizontal[3];
+	DoorFrames(Frame f1, Frame f2_1, Frame f2_2, Frame f2_3,
+			   Frame f3_1, Frame f3_2, Frame f3_3,
+			   Frame f4_1, Frame f4_2, Frame f4_3) {
+		_closedOrDestroyed = f1;
+		_vertical[0] = f2_1;
+		_vertical[1] = f2_2;
+		_vertical[2] = f2_3;
+		_leftHorizontal[0] = f3_1;
+		_leftHorizontal[1] = f3_2;
+		_leftHorizontal[2] = f3_3;
+		_rightHorizontal[0] = f4_1;
+		_rightHorizontal[1] = f4_2;
+		_rightHorizontal[2] = f4_3;
+	}
+}; // @ DOOR_FRAMES
+
 class DisplayMan {
 	friend class DM::TextMan;
 
@@ -521,6 +559,10 @@ class DisplayMan {
 	int16 _g230_currentFloorSet;// @ G0230_i_CurrentFloorSet
 
 	bool _g76_useFlippedWallAndFootprintsBitmap; // @ G0076_B_UseFlippedWallAndFootprintsBitmaps
+
+	int16 _g693_doorNativeBitmapIndex_Front_D3LCR[2]; // @ G0693_ai_DoorNativeBitmapIndex_Front_D3LCR
+	int16 _g694_doorNativeBitmapIndex_Front_D2LCR[2]; // @ G0694_ai_DoorNativeBitmapIndex_Front_D2LCR
+	int16 _g695_doorNativeBitmapIndex_Front_D1LCR[2]; // @ G0695_ai_DoorNativeBitmapIndex_Front_D1LCR
 public:
 	uint16 _screenWidth;
 	uint16 _screenHeight;
@@ -547,6 +589,7 @@ public:
 	void f96_loadCurrentMapGraphics(); // @ F0096_DUNGEONVIEW_LoadCurrentMapGraphics_CPSDF
 	void loadPalette(uint16 *palette);
 	void f461_allocateFlippedWallBitmaps(); // @ F0461_START_AllocateFlippedWallBitmaps
+	void f102_drawDoorBitmap(Frame *frame);// @ F0102_DUNGEONVIEW_DrawDoorBitmap
 
 	/// Gives the width of an IMG0 type item
 	uint16 getPixelWidth(uint16 index);
@@ -556,6 +599,9 @@ public:
 
 	void f99_copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height); // @ F0099_DUNGEONVIEW_CopyBitmapAndFlipHorizontal
 	void f108_drawFloorOrnament(uint16 floorOrnOrdinal, uint16 viewFloorIndex); // @ F0108_DUNGEONVIEW_DrawFloorOrnament
+	void f111_drawDoor(uint16 doorThingIndex, uint16 doorState, int16 *doorNativeBitmapIndices, int16 byteCount,
+					   int16 viewDoorOrnIndex, DoorFrames *doorFrames); // @ F0111_DUNGEONVIEW_DrawDoor
+	void f109_drawDoorOrnament(int16 doorOrnOdinal, int16 viewDoorOrnIndex); // @ F0109_DUNGEONVIEW_DrawDoorOrnament
 
 
 	/* srcHeight and destHeight are not necessary for blitting, only error checking, thus they are defaulted for existing code which 
@@ -572,7 +618,7 @@ public:
 	void f129_blitToBitmapShrinkWithPalChange(byte *srcBitmap, byte *destBitmap,
 											  int16 srcPixelWidth, int16 srcHight, int16 destPixelWidth, int16 destHeight, byte *palChange); // @ F0129_VIDEO_BlitShrinkWithPaletteChanges
 	void f130_flipBitmapHorizontal(byte *bitmap, uint16 byteWidth, uint16 height); // @ F0130_VIDEO_FlipHorizontal
-	void flipBitmapVertical(byte *bitmap, uint16 byteWidth, uint16 height);
+	void f131_flipVertical(byte *bitmap, uint16 byteWidth, uint16 height);
 	byte *f114_getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int16 &returnByteWidth, int16 &returnHeight); // @ F0114_DUNGEONVIEW_GetExplosionBitmap
 
 	void f134_fillBitmap(byte *bitmap, Color color, uint16 byteWidth, uint16 height); // @ F0134_VIDEO_FillBitmap
