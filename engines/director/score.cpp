@@ -1268,6 +1268,31 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 	}
 }
 
+void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
+	renderText(surface, spriteId);
+
+	uint16 castID = _sprites[spriteId]->_castId;
+	ButtonCast *button = static_cast<ButtonCast *>(_vm->_currentScore->_casts[castID]);
+
+	uint32 rectLeft = button->initialRect.left;
+	uint32 rectTop = button->initialRect.top;
+
+	int x = _sprites[spriteId]->_startPoint.x + rectLeft;
+	int y = _sprites[spriteId]->_startPoint.y + rectTop;
+	int height = _sprites[spriteId]->_height;
+	int width = _sprites[spriteId]->_width;
+
+	switch (button->buttonType) {
+	case kTypeCheckBox:
+		//Magic numbers: checkbox square need to move left about 5px from text and 12px side size (d4)
+		surface.frameRect(Common::Rect(x - 17, y, x + 12, y + 12), 0);
+		break;
+	case kTypeButton:
+		surface.frameRect(Common::Rect(x, y, x + width, y + height), 0);
+		break;
+	}
+}
+
 Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 	uint16 imgId = spriteId + 1024;
 	Image::ImageDecoder *img = NULL;
