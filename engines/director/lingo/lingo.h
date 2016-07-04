@@ -145,7 +145,7 @@ public:
 	Symbol *lookupVar(const char *name, bool create = true, bool putInGlobalList = false);
 	void cleanLocalVars();
 	void define(Common::String &s, int start, int nargs);
-	void processIf(int endLabel);
+	void processIf(int elselabel, int endlabel);
 
 	int alignTypes(Datum &d1, Datum &d2);
 

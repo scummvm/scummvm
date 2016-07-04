@@ -400,22 +400,29 @@ void Lingo::c_ifcode() {
 	Datum d;
 	int savepc = g_lingo->_pc;	/* then part */
 
-	int then =  READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
-	int elsep = READ_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
-	int end =   READ_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
+	int then =    READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
+	int elsep =   READ_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
+	int end =     READ_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
+	int skipEnd = READ_UINT32(&(*g_lingo->_currentScript)[savepc + 3]);
 
-	g_lingo->execute(savepc + 3);	/* condition */
+	debug(8, "executing cond (have to %s end)", skipEnd ? "skip" : "execute");
+	g_lingo->execute(savepc + 4);	/* condition */
 
 	d = g_lingo->pop();
 
 	if (d.toInt()) {
+		debug(8, "executing then");
 		g_lingo->execute(then);
 	} else if (elsep) { /* else part? */
+		debug(8, "executing else");
 		g_lingo->execute(elsep);
 	}
 
-	if (!g_lingo->_returning)
+	if (!g_lingo->_returning && !skipEnd) {
 		g_lingo->_pc = end; /* next stmt */
+		debug(8, "executing end");
+	} else
+		debug(8, "Skipped end");
 }
 
 //************************

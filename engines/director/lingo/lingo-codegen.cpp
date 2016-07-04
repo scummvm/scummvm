@@ -222,9 +222,9 @@ void Lingo::codeLabel(int label) {
 	_labelstack.push_back(label);
 }
 
-void Lingo::processIf(int endlabel) {
+void Lingo::processIf(int elselabel, int endlabel) {
 	inst ielse1, iend;
-	int  else1 = endlabel;
+	int  else1 = elselabel;
 
 	WRITE_UINT32(&iend, endlabel);
 
