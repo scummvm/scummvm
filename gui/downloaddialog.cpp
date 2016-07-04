@@ -137,13 +137,15 @@ void DownloadDialog::selectDirectories() {
 	Common::String localPath = dir.getPath();
 
 	//simple heuristic to determine which path separator to use
-	int backslashes = 0;
-	for (uint32 i = 0; i < localPath.size(); ++i)
-		if (localPath[i] == '/') --backslashes;
-		else if (localPath[i] == '\\') ++backslashes;
+	if (localPath.size() && localPath.lastChar() != '/' && localPath.lastChar() != '\\') {
+		int backslashes = 0;
+		for (uint32 i = 0; i < localPath.size(); ++i)
+			if (localPath[i] == '/') --backslashes;
+			else if (localPath[i] == '\\') ++backslashes;
 
-	if (backslashes > 0) localPath += '\\' + remoteDirectory.name();
-	else localPath += '/' + remoteDirectory.name();
+			if (backslashes > 0) localPath += '\\' + remoteDirectory.name();
+			else localPath += '/' + remoteDirectory.name();
+	} else localPath += remoteDirectory.name();
 
 	CloudMan.startDownload(remoteDirectory.path(), localPath);
 	CloudMan.setDownloadTarget(this);
