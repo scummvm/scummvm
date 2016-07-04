@@ -145,6 +145,7 @@ public:
 	Symbol *lookupVar(const char *name, bool create = true, bool putInGlobalList = false);
 	void cleanLocalVars();
 	void define(Common::String &s, int start, int nargs);
+	void processIf(int endLabel);
 
 	int alignTypes(Datum &d1, Datum &d2);
 
@@ -152,6 +153,7 @@ public:
 	int code2(inst code_1, inst code_2) { int o = code1(code_1); code1(code_2); return o; }
 	int code3(inst code_1, inst code_2, inst code_3) { int o = code1(code_1); code1(code_2); code1(code_3); return o; }
 	int codeString(const char *s);
+	void codeLabel(int label);
 
 	int calcStringAlignment(const char *s) {
 		return calcCodeAlignment(strlen(s) + 1);
@@ -236,6 +238,7 @@ public:
 	Common::Array<CFrame *> _callstack;
 	Common::Array<Common::String *> _argstack;
 	BuiltinHash _builtins;
+	Common::Array<int> _labelstack;
 
 private:
 	int parse(const char *code);

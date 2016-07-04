@@ -219,4 +219,11 @@ int Lingo::codeId_(Common::String &name) {
 	return ret;
 }
 
+void Lingo::codeLabel(int label) {
+	_labelstack.push_back(label);
+}
+
+void Lingo::processIf(int endlabel) {
+}
+
 }
