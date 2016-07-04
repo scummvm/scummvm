@@ -29,19 +29,39 @@ static struct TheEntityProto {
 	const char *name;
 	bool hasID;
 } entities[] = {
-	{ kTheFrame,		"frame",		false },
-	{ kThePathName,		"pathname",		false },
-	{ kTheMovie,		"movie",		false },
-	{ kTheMouseH,		"mouseh",		false },
-	{ kTheMouseV,		"mousev",		false },
-	{ kTheSprite,		"sprite",		true  },
-	{ kTheCast,			"cast",			true  },
-	{ kThePerFrameHook,	"perframehook",	false },
-	{ kTheTicks,		"ticks",		false },
-	{ kTheTimer,		"timer",		false },
-	{ kTheTimeoutLength,"timeoutlength",false },
-	{ kTheWindow,		"window",		false },
-
+	{ kTheFrame,			"frame",			false },
+	{ kThePathName,			"pathname",			false },
+	{ kTheMovie,			"movie",			false },
+	{ kTheMouseH,			"mouseh",			false },
+	{ kTheMouseV,			"mousev",			false },
+	{ kTheMouseDownScript,  "mouseDownScript",	false },
+	{ kTheMouseUpScript,  	"mouseUpScript",	false },
+	{ kTheClickOn,			"clickOn",			false },
+	{ kTheDoubleClick,		"doubleClick",		false },
+	{ kTheLastClick,		"lastClick",		false },
+	{ kTheLastFrame,		"lastFrame",		false },
+	{ kTheLastEvent,		"lastEvent",		false },
+	{ kTheMouseUp,			"mouseUp",			false },
+	{ kTheMouseDown,		"mouseDown",		false },
+	{ kTheRightMouseUp,		"rightMouseUp",		false },
+	{ kTheRightMouseDown,	"rightMouseDown",	false },
+	{ kTheStillDown,		"stillDown",		false },
+	{ kTheKey,				"key",				false },
+	{ kTheControlDown,		"controlDown",		false },
+	{ kTheCommandDown,		"commandDown",		false },
+	{ kTheShiftDown,		"shiftDown",		false },
+	{ kTheOptionDown,		"optionDown",		false },
+	{ kTheMenu,				"menu",				true  },
+	{ kTheMenus,			"menus",			false },
+	{ kTheMenuItem,			"menuitem",			true  },
+	{ kTheMenuItems,		"menuitems",		true  },
+	{ kTheSprite,			"sprite",			true  },
+	{ kTheCast,				"cast",				true  },
+	{ kThePerFrameHook,		"perframehook",		false },
+	{ kTheTicks,			"ticks",			false },
+	{ kTheTimer,			"timer",			false },
+	{ kTheTimeoutLength,	"timeoutlength",	false },
+	{ kTheWindow,			"window",			false },
 	{ kTheNOEntity, NULL, false }
 };
 
@@ -111,6 +131,16 @@ static struct TheEntityFieldProto {
 	{ kTheWindow,	"filename",		kTheFilename },
 	{ kTheWindow,	"sourceRect",	kTheSourceRect },
 	{ kTheWindow,	"visible",		kTheVisible },
+
+	{ kTheMenuItem,	"checkmark",	kTheCheckMark },
+	{ kTheMenuItem, "enabled",		kTheEnabled },
+	{ kTheMenuItem, "name",			kTheName },
+	{ kTheMenuItem, "name",			kTheScript },
+
+	{ kTheMenu,		"name",			kTheName },
+
+	{ kTheMenuItems,"number",		kTheNumber },
+	{ kTheMenus,	"number",		kTheNumber },
 
 	{ kTheNOEntity, NULL, kTheNOField }
 };
