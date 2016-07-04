@@ -51,6 +51,14 @@ enum {
 	kMenuSpecial = 3
 };
 
+enum {
+	kCommandNum = 8
+};
+
+enum {
+	kDragThreshold = 5
+};
+
 static const Graphics::MenuData menuSubItems[] = {
 	{ kMenuHighLevel,	"File",				0, 0, false },
 	{ kMenuHighLevel,	"Edit",				0, 0, false },
@@ -106,7 +114,9 @@ Gui::Gui(MacVentureEngine *engine, Common::MacResManager *resman) {
 	_draggedObj.pos = Common::Point(0, 0);
 
 	_cursor = new Cursor(this);
-	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 1000000, this, "macVentureCursor");
+	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 500000, this, "macVentureCursor");
+
+	_consoleText = new ConsoleText(this);
 
 	initGUI();
 }
@@ -124,6 +134,9 @@ Gui::~Gui() {
 
 	if (_cursor)
 		delete _cursor;
+
+	if (_consoleText)
+		delete _consoleText;
 
 	Common::HashMap<ObjID, ImageAsset*>::const_iterator it = _assets.begin();
 	for (; it != _assets.end(); it++) {
@@ -297,8 +310,8 @@ void Gui::initWindows() {
 	_selfWindow->setDimensions(getWindowData(kSelfWindow).bounds);
 	_selfWindow->setActive(false);
 	_selfWindow->setCallback(selfWindowCallback, this);
-	loadBorder(_selfWindow, "border_no_scroll_inac.bmp", false);
-	loadBorder(_selfWindow, "border_no_scroll_inac.bmp", true);
+	loadBorder(_selfWindow, "border_none.bmp", false);
+	loadBorder(_selfWindow, "border_none.bmp", true);
 
 	// Exits Window
 	_exitsWindow = _wm.addWindow(false, false, false);
@@ -508,7 +521,7 @@ bool Gui::loadControls() {
 		data.scrollMax = res->readUint16BE();
 		data.scrollMin = res->readUint16BE();
 		data.cdef = res->readUint16BE();
-		data.refcon = (ControlReference)id; id++;
+		data.refcon = (ControlType)id; id++;
 		res->readUint32BE();
 		data.titleLength = res->readByte();
 		if (data.titleLength) {
@@ -535,6 +548,7 @@ void Gui::drawWindows() {
 	drawSelfWindow();
 	drawInventories();
 	drawExitsWindow();
+	drawConsoleWindow();
 
 }
 
@@ -579,7 +593,6 @@ void Gui::drawMainGameWindow() {
 			border.leftOffset,
 			border.topOffset,
 			kBlitDirect);
-
 	}
 	drawObjectsInWindow(kMainGameWindow, _mainGameWindow->getSurface());
 
@@ -636,6 +649,13 @@ void Gui::drawExitsWindow() {
 	// To be deleted
 	//g_system->copyRectToScreen(srf->getPixels(), srf->pitch, 0, 0, srf->w, srf->h);
 	//g_system->updateScreen();
+}
+
+void Gui::drawConsoleWindow() {
+
+	Graphics::ManagedSurface *srf = _outConsoleWindow->getSurface();
+	BorderBounds bounds = borderBounds(getWindowData(kOutConsoleWindow).type);
+	_consoleText->renderInto(srf, bounds.leftOffset);
 }
 
 void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface * surface) {
@@ -796,7 +816,7 @@ void Gui::updateExit(ObjID obj) {
 	{
 		ControlData data;
 		data.titleLength = 0;
-		data.refcon = obj;
+		data.objref = obj;
 		Common::Point pos = _engine->getObjExitPosition(obj);
 		pos.x = border.leftOffset;
 		pos.y = border.topOffset;
@@ -805,6 +825,11 @@ void Gui::updateExit(ObjID obj) {
 
 		_exitsData->push_back(CommandButton(data, this));
 	}
+}
+
+void Gui::printText(const Common::String & text) {
+	debug("Print Text: %s", text);
+	_consoleText->printLine(text, _outConsoleWindow->getDimensions().width());
 }
 
 
@@ -893,7 +918,7 @@ bool Gui::isRectInsideObject(Common::Rect target, ObjID obj) {
 }
 
 void Gui::selectDraggable(ObjID child, WindowReference origin, Common::Point startPos) {
-	if (_engine->isObjClickable(child)) {
+	if (_engine->isObjClickable(child) && _draggedObj.id == 0) {
 		_draggedObj.hasMoved = false;
 		_draggedObj.id = child;
 		_draggedObj.mouseOffset = (_engine->getObjPosition(child) + getWindowSurfacePos(origin)) - startPos;
@@ -903,12 +928,14 @@ void Gui::selectDraggable(ObjID child, WindowReference origin, Common::Point sta
 
 void Gui::handleDragRelease(Common::Point pos, bool shiftPressed, bool isDoubleClick) {
 	WindowReference destinationWindow = findWindowAtPoint(pos);
-	if (_draggedObj.hasMoved) {
+	if (_draggedObj.id != 0 && _draggedObj.hasMoved) {
 		ObjID destObject = getWindowData(destinationWindow).objRef;
-		_engine->handleObjectDrop(_draggedObj.id, pos, destObject); //change pos to validate
-	} else {
-		_engine->handleObjectSelect(_draggedObj.id, destinationWindow, shiftPressed, isDoubleClick);
+		debug("drop the object at obj %d", destObject);
+		_engine->handleObjectDrop(_draggedObj.id, pos, destObject);
 	}
+	_engine->handleObjectSelect(_draggedObj.id, destinationWindow, shiftPressed, isDoubleClick);
+
+
 	_draggedObj.id = 0;
 }
 
@@ -1055,16 +1082,17 @@ bool Gui::processEvent(Common::Event &event) {
 
 	if (event.type == Common::EVENT_MOUSEMOVE) {
 		if (_draggedObj.id != 0) {
-			_draggedObj.pos = event.mouse + _draggedObj.mouseOffset;
-			_draggedObj.hasMoved = true;
+			Common::Point newPos = event.mouse + _draggedObj.mouseOffset;
+			_draggedObj.hasMoved = newPos.sqrDist(_draggedObj.pos) >= kDragThreshold;
+			_draggedObj.pos = newPos;
 		}
 		processed = true;
 
 		// TEST
-		Common::Rect mr = calculateClickRect(event.mouse, _screen.getBounds());
-		_screen.fillRect(mr, kColorGreen);
-		g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
-		g_system->updateScreen();
+		//Common::Rect mr = calculateClickRect(event.mouse, _screen.getBounds());
+		//_screen.fillRect(mr, kColorGreen);
+		//g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
+		//g_system->updateScreen();
 	}
 
 	processed |= _wm.processEvent(event);
@@ -1098,8 +1126,8 @@ bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 		}
 
 
-		_engine->selectControl((ControlReference)data.getData().refcon);
-		_engine->activateCommand((ControlReference)data.getData().refcon);
+		_engine->selectControl(_engine->referenceToAction(data.getData().refcon));
+		_engine->activateCommand(data.getData().refcon);
 		_engine->refreshReady();
 		_engine->preparedToRun();
 	}
@@ -1207,22 +1235,16 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event & event) {
 
 void Gui::processCursorTick() {
 	_cursor->tick();
-
-
-
-
-
-	handleDragRelease(_draggedObj.pos, false, true);
-
 }
 
 void Gui::handleSingleClick(Common::Point pos) {
-	//handleDragRelease(_draggedObj.pos, false, false);
 	debug("Single Click");
+	handleDragRelease(_draggedObj.pos, false, false);
 }
 
 void Gui::handleDoubleClick(Common::Point pos) {
 	debug("Double Click");
+	handleDragRelease(_draggedObj.pos, false, true);
 }
 
 /* Ugly switches */
@@ -1236,7 +1258,7 @@ BorderBounds Gui::borderBounds(MVWindowType type) {
 	case MacVenture::kPlainDBox:
 		return BorderBounds(6, 6, 6, 6);
 	case MacVenture::kAltBox:
-		return BorderBounds(8, 9, 11, 10);
+		return BorderBounds(4, 4, 4, 4); // Hand-tested
 		break;
 	case MacVenture::kNoGrowDoc:
 		return BorderBounds(1, 17, 1, 1);
@@ -1249,7 +1271,7 @@ BorderBounds Gui::borderBounds(MVWindowType type) {
 	case MacVenture::kRDoc16:
 		break;
 	case MacVenture::kRDoc4:
-		return BorderBounds(1, 19, 1, 1);
+		return BorderBounds(0, 19, 1, 1);
 	case MacVenture::kRDoc6:
 		break;
 	case MacVenture::kRDoc10:

@@ -161,8 +161,8 @@ public:
 
 	void requestQuit();
 	void requestUnpause();
-	void selectControl(ControlReference id);
-	void activateCommand(ControlReference id);
+	void selectControl(ControlAction action);
+	void activateCommand(ControlType id);
 	void refreshReady();
 	void preparedToRun();
 	void gameChanged();
@@ -210,6 +210,8 @@ public:
 	Common::Point getObjExitPosition(ObjID objID);
 	ObjID getParent(ObjID objID);
 
+	// Utils
+	ControlAction referenceToAction(ControlType id);
 
 	// Encapsulation HACK
 	Common::Rect getObjBounds(ObjID objID);
@@ -250,10 +252,7 @@ private:
 	// Data loading
 	bool loadGlobalSettings();
 	bool loadTextHuffman();
-
-	// Utils
-	ControlAction referenceToAction(ControlReference id);
-
+	
 	const char* getGameFileName() const;
 
 private: // Attributes

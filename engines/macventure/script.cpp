@@ -1071,7 +1071,7 @@ void ScriptEngine::opd5DLOG(EngineState * state, EngineFrame * frame) {
 }
 
 void ScriptEngine::opd6ACMD(EngineState * state, EngineFrame * frame) {
-	_engine->activateCommand((ControlReference)state->pop());
+	_engine->activateCommand((ControlType)state->pop());
 }
 
 void ScriptEngine::opd7LOSE(EngineState * state, EngineFrame * frame) {

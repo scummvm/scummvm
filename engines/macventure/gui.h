@@ -40,6 +40,7 @@ class MacVentureEngine;
 typedef uint32 ObjID;
 
 class Cursor;
+class ConsoleText;
 class CommandButton;
 class ImageAsset;
 
@@ -110,7 +111,7 @@ struct WindowData {
 	bool updateScroll;
 };
 
-enum ControlReference {
+enum ControlType {
 	kControlExitBox = 0,
 	kControlExamine = 1,
 	kControlOpen = 2,
@@ -130,7 +131,8 @@ struct ControlData {
 	uint16 scrollMax;
 	uint16 scrollMin;
 	uint16 cdef;
-	uint32 refcon; // If exits window, then the obj id. Otherwise, the control type
+	ObjID objref;
+	ControlType refcon; // If exits window, then the obj id. Otherwise, the control type
 	uint8 titleLength;
 	char* title;
 	uint16 border;
@@ -215,6 +217,8 @@ public:
 	void unselectExits();
 	void updateExit(ObjID id);
 
+	void printText(const Common::String &text);
+
 	// Ugly switches
 	BorderBounds borderBounds(MVWindowType type);
 
@@ -244,8 +248,10 @@ private: // Attributes
 
 	Graphics::ManagedSurface _draggedSurface;
 	DraggedObj _draggedObj;
-
+	
 	Cursor *_cursor;
+
+	ConsoleText *_consoleText;
 
 private: // Methods
 
@@ -268,6 +274,7 @@ private: // Methods
 	void drawSelfWindow();
 	void drawInventories();
 	void drawExitsWindow();
+	void drawConsoleWindow();
 
 	void drawDraggedObject();
 	void drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *surface);
@@ -444,6 +451,58 @@ private:
 	bool _selected;
 	ControlData _data;
 	Gui *_gui;
+};
+
+class ConsoleText {
+
+public:
+
+	ConsoleText(Gui *gui) {
+		_gui = gui;
+		_lines.push_back("");
+	}
+
+	~ConsoleText() {
+
+	}
+
+	void printLine(const Common::String &str, int maxW) {
+		Common::StringArray wrappedLines;
+		int textW = maxW;
+		const Graphics::Font *font = &_gui->getCurrentFont();
+
+		font->wordWrapText(str, textW, wrappedLines);
+
+		if (wrappedLines.empty()) // Sometimes we have empty lines
+			_lines.push_back("");
+
+		for (Common::StringArray::const_iterator j = wrappedLines.begin(); j != wrappedLines.end(); ++j)
+			_lines.push_back(*j);
+
+		updateScroll();
+	}
+
+	void renderInto(Graphics::ManagedSurface *target, uint leftOffset) {
+		target->fillRect(target->getBounds(), kColorWhite);
+		const Graphics::Font *font = &_gui->getCurrentFont();
+		// HACK print the last lines visible (no scroll)
+		uint y = target->h - font->getFontHeight();
+		for (uint i = _lines.size() - 1; i != 0; i--) {
+			font->drawString(target, _lines[i], leftOffset, y, font->getStringWidth(_lines[i]), kColorBlack);
+			y -= font->getFontHeight();
+		}
+	}
+
+	void updateScroll() {
+		// TODO implemebt
+	}
+
+private:
+
+	Gui *_gui;
+
+	Common::StringArray _lines;
+
 };
 
 } // End of namespace MacVenture
