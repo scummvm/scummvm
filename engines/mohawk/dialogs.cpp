@@ -25,7 +25,6 @@
 
 #include "gui/gui-manager.h"
 #include "gui/saveload.h"
-#include "gui/ThemeEngine.h"
 #include "gui/widget.h"
 #include "common/system.h"
 #include "common/translation.h"
@@ -89,9 +88,92 @@ enum {
 	kQuitCmd = 'QUIT'
 };
 
+#if defined(ENABLE_MYST) || defined(ENABLE_RIVEN)
+
+MohawkOptionsDialog::MohawkOptionsDialog(MohawkEngine *vm) :
+		GUI::Dialog(0, 0, 360, 200),
+		_vm(vm) {
+	_loadButton = new GUI::ButtonWidget(this, 245, 25, 100, 25, _("~L~oad"), 0, kLoadCmd);
+	_saveButton = new GUI::ButtonWidget(this, 245, 60, 100, 25, _("~S~ave"), 0, kSaveCmd);
+	new GUI::ButtonWidget(this, 245, 95, 100, 25, _("~Q~uit"), 0, kQuitCmd);
+
+	new GUI::ButtonWidget(this, 95, 160, 120, 25, _("~O~K"), 0, GUI::kOKCmd);
+	new GUI::ButtonWidget(this, 225, 160, 120, 25, _("~C~ancel"), 0, GUI::kCloseCmd);
+
+	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+	_saveDialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+}
+
+MohawkOptionsDialog::~MohawkOptionsDialog() {
+	delete _loadDialog;
+	delete _saveDialog;
+}
+
+void MohawkOptionsDialog::open() {
+	GUI::Dialog::open();
+
+	_loadButton->setEnabled(_vm->canLoadGameStateCurrently());
+	_saveButton->setEnabled(_vm->canSaveGameStateCurrently());
+}
+
+
+void MohawkOptionsDialog::save() {
+	int slot = _saveDialog->runModalWithCurrentTarget();
+
+	if (slot >= 0) {
+		Common::String result(_saveDialog->getResultString());
+		if (result.empty()) {
+			// If the user was lazy and entered no save name, come up with a default name.
+			result = _saveDialog->createDefaultSaveDescription(slot);
+		}
+
+		_vm->saveGameState(slot, result);
+		close();
+	}
+}
+
+void MohawkOptionsDialog::load() {
+	int slot = _loadDialog->runModalWithCurrentTarget();
+
+	if (slot >= 0) {
+		_vm->loadGameState(slot);
+		close();
+	}
+}
+
+void MohawkOptionsDialog::reflowLayout() {
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+
+	// Center the dialog
+	_x = (screenW - getWidth()) / 2;
+	_y = (screenH - getHeight()) / 2;
+
+	GUI::Dialog::reflowLayout();
+}
+
+
+void MohawkOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd) {
+		case kLoadCmd:
+			load();
+			break;
+		case kSaveCmd:
+			save();
+			break;
+		case GUI::kCloseCmd:
+			close();
+			break;
+		default:
+			GUI::Dialog::handleCommand(sender, cmd, data);
+	}
+}
+
+#endif
+
 #ifdef ENABLE_MYST
 
-MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) : GUI::Dialog(0, 0, 360, 200), _vm(vm) {
+MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) : MohawkOptionsDialog(vm), _vm(vm) {
 	// I18N: Option for fast scene switching
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 220, 15, _("~Z~ip Mode Activated"), 0, kZipCmd);
 	_transitionsCheckbox = new GUI::CheckboxWidget(this, 15, 30, 220, 15, _("~T~ransitions Enabled"), 0, kTransCmd);
@@ -109,25 +191,13 @@ MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) : GUI::Dialog(0, 0, 
 		_returnToMenuButton = new GUI::ButtonWidget(this, 15, 95, 100, 25, _("Main Men~u~"), 0, kMenuCmd);
 	else
 		_returnToMenuButton = 0;
-
-	_loadButton = new GUI::ButtonWidget(this, 245, 25, 100, 25, _("~L~oad"), 0, kLoadCmd);
-	_saveButton = new GUI::ButtonWidget(this, 245, 60, 100, 25, _("~S~ave"), 0, kSaveCmd);
-	new GUI::ButtonWidget(this, 245, 95, 100, 25, _("~Q~uit"), 0, kQuitCmd);
-
-	new GUI::ButtonWidget(this, 95, 160, 120, 25, _("~O~K"), 0, GUI::kOKCmd);
-	new GUI::ButtonWidget(this, 225, 160, 120, 25, _("~C~ancel"), 0, GUI::kCloseCmd);
-
-	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
-	_saveDialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 }
 
 MystOptionsDialog::~MystOptionsDialog() {
-	delete _loadDialog;
-	delete _saveDialog;
 }
 
 void MystOptionsDialog::open() {
-	Dialog::open();
+	MohawkOptionsDialog::open();
 
 	_dropPageButton->setEnabled(_vm->_gameState->_globals.heldPage != 0);
 
@@ -146,44 +216,6 @@ void MystOptionsDialog::open() {
 
 	_zipModeCheckbox->setState(_vm->_gameState->_globals.zipMode);
 	_transitionsCheckbox->setState(_vm->_gameState->_globals.transitions);
-
-	_loadButton->setEnabled(_vm->canLoadGameStateCurrently());
-	_saveButton->setEnabled(_vm->canSaveGameStateCurrently());
-}
-
-void MystOptionsDialog::save() {
-	int slot = _saveDialog->runModalWithCurrentTarget();
-
-	if (slot >= 0) {
-		Common::String result(_saveDialog->getResultString());
-		if (result.empty()) {
-			// If the user was lazy and entered no save name, come up with a default name.
-			result = _saveDialog->createDefaultSaveDescription(slot);
-		}
-
-		_vm->saveGameState(slot, result);
-		close();
-	}
-}
-
-void MystOptionsDialog::load() {
-	int slot = _loadDialog->runModalWithCurrentTarget();
-
-	if (slot >= 0) {
-		_vm->loadGameState(slot);
-		close();
-	}
-}
-
-void MystOptionsDialog::reflowLayout() {
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
-
-	// Center the dialog
-	_x = (screenW - getWidth()) / 2;
-	_y = (screenH - getHeight()) / 2;
-
-	Dialog::reflowLayout();
 }
 
 void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
@@ -199,12 +231,6 @@ void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 	case kMenuCmd:
 		_vm->_needsShowDemoMenu = true;
 		close();
-		break;
-	case kLoadCmd:
-		load();
-		break;
-	case kSaveCmd:
-		save();
 		break;
 	case kQuitCmd: {
 		if (_vm->getGameType() != GType_MAKINGOF) {
@@ -223,11 +249,8 @@ void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 		setResult(1);
 		close();
 		break;
-	case GUI::kCloseCmd:
-		close();
-		break;
 	default:
-		GUI::Dialog::handleCommand(sender, cmd, data);
+		MohawkOptionsDialog::handleCommand(sender, cmd, data);
 	}
 }
 
@@ -235,19 +258,18 @@ void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 
 #ifdef ENABLE_RIVEN
 
-RivenOptionsDialog::RivenOptionsDialog(MohawkEngine_Riven* vm) : GUI::Dialog(120, 120, 360, 200), _vm(vm) {
-	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 300, 15, _("~Z~ip Mode Activated"), 0, kZipCmd);
-	_waterEffectCheckbox = new GUI::CheckboxWidget(this, 15, 30, 300, 15, _("~W~ater Effect Enabled"), 0, kWaterCmd);
-
-	new GUI::ButtonWidget(this, 95, 160, 120, 25, _("~O~K"), 0, GUI::kOKCmd);
-	new GUI::ButtonWidget(this, 225, 160, 120, 25, _("~C~ancel"), 0, GUI::kCloseCmd);
+RivenOptionsDialog::RivenOptionsDialog(MohawkEngine_Riven* vm) :
+		MohawkOptionsDialog(vm),
+		_vm(vm) {
+	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 220, 15, _("~Z~ip Mode Activated"), 0, kZipCmd);
+	_waterEffectCheckbox = new GUI::CheckboxWidget(this, 15, 30, 220, 15, _("~W~ater Effect Enabled"), 0, kWaterCmd);
 }
 
 RivenOptionsDialog::~RivenOptionsDialog() {
 }
 
 void RivenOptionsDialog::open() {
-	Dialog::open();
+	MohawkOptionsDialog::open();
 
 	_zipModeCheckbox->setState(_vm->_vars["azip"] != 0);
 	_waterEffectCheckbox->setState(_vm->_vars["waterenabled"] != 0);
@@ -261,11 +283,15 @@ void RivenOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, u
 		setResult(1);
 		close();
 		break;
-	case GUI::kCloseCmd:
+	case kQuitCmd: {
+		Common::Event eventQ;
+		eventQ.type = Common::EVENT_QUIT;
+		g_system->getEventManager()->pushEvent(eventQ);
 		close();
 		break;
+	}
 	default:
-		GUI::Dialog::handleCommand(sender, cmd, data);
+		MohawkOptionsDialog::handleCommand(sender, cmd, data);
 	}
 }
 

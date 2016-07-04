@@ -28,7 +28,6 @@
 #include "common/events.h"
 #include "common/str.h"
 #include "gui/dialog.h"
-#include "gui/options.h"
 
 namespace GUI {
 class SaveLoadChooser;
@@ -72,27 +71,19 @@ public:
 	virtual void handleKeyDown(Common::KeyState state);
 };
 
-#ifdef ENABLE_MYST
+#if defined(ENABLE_MYST) || defined(ENABLE_RIVEN)
 
-class MohawkEngine_Myst;
-
-class MystOptionsDialog : public GUI::Dialog {
+class MohawkOptionsDialog : public GUI::Dialog {
 public:
-	MystOptionsDialog(MohawkEngine_Myst *vm);
-	~MystOptionsDialog();
-	void open();
+	MohawkOptionsDialog(MohawkEngine *_vm);
+	virtual ~MohawkOptionsDialog();
 
+	virtual void open() override;
 	virtual void reflowLayout() override;
-	virtual void handleCommand(GUI::CommandSender*, uint32, uint32);
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+
 private:
-	MohawkEngine_Myst *_vm;
-
-	GUI::CheckboxWidget *_zipModeCheckbox;
-	GUI::CheckboxWidget *_transitionsCheckbox;
-
-	GUI::ButtonWidget *_dropPageButton;
-	GUI::ButtonWidget *_showMapButton;
-	GUI::ButtonWidget *_returnToMenuButton;
+	MohawkEngine *_vm;
 
 	GUI::ButtonWidget    *_loadButton;
 	GUI::ButtonWidget    *_saveButton;
@@ -106,19 +97,46 @@ private:
 
 #endif
 
+#ifdef ENABLE_MYST
+
+class MohawkEngine_Myst;
+
+class MystOptionsDialog : public MohawkOptionsDialog {
+public:
+	MystOptionsDialog(MohawkEngine_Myst *vm);
+	virtual ~MystOptionsDialog();
+
+	virtual void open() override;
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+
+private:
+	MohawkEngine_Myst *_vm;
+
+	GUI::CheckboxWidget *_zipModeCheckbox;
+	GUI::CheckboxWidget *_transitionsCheckbox;
+
+	GUI::ButtonWidget *_dropPageButton;
+	GUI::ButtonWidget *_showMapButton;
+	GUI::ButtonWidget *_returnToMenuButton;
+};
+
+#endif
+
 #ifdef ENABLE_RIVEN
 
 class MohawkEngine_Riven;
 
-class RivenOptionsDialog : public GUI::Dialog {
+class RivenOptionsDialog : public MohawkOptionsDialog {
 public:
 	RivenOptionsDialog(MohawkEngine_Riven *vm);
-	~RivenOptionsDialog();
-	void open();
+	virtual ~RivenOptionsDialog();
 
-	virtual void handleCommand(GUI::CommandSender*, uint32, uint32);
+	virtual void open() override;
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+
 private:
 	MohawkEngine_Riven *_vm;
+
 	GUI::CheckboxWidget *_zipModeCheckbox;
 	GUI::CheckboxWidget *_waterEffectCheckbox;
 };
