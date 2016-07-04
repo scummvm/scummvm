@@ -39,8 +39,10 @@ class CommandSender;
 class RemoteBrowserDialog : public Dialog {
 public:
 	RemoteBrowserDialog(const char *title);
+	virtual ~RemoteBrowserDialog();
 
 	virtual void open();
+	virtual void close();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void handleTickle();
 
@@ -56,7 +58,7 @@ protected:
 	bool _updateList;
 
 	Networking::Request *_workingRequest;
-	bool _ignoreCallback; //?
+	bool _ignoreCallback;
 
 	void updateListing();
 	void goUp();

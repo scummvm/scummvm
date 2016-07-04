@@ -40,7 +40,7 @@ enum {
 };
 
 RemoteBrowserDialog::RemoteBrowserDialog(const char *title)
-	: Dialog("Browser"), _navigationLocked(false), _updateList(false) {
+	: Dialog("Browser"), _navigationLocked(false), _updateList(false), _workingRequest(nullptr), _ignoreCallback(false) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	new StaticTextWidget(this, "Browser.Headline", title);
@@ -58,9 +58,25 @@ RemoteBrowserDialog::RemoteBrowserDialog(const char *title)
 	new ButtonWidget(this, "Browser.Choose", _("Choose"), 0, kChooseCmd);
 }
 
+RemoteBrowserDialog::~RemoteBrowserDialog() {
+	if (_workingRequest) {
+		_ignoreCallback = true;
+		_workingRequest->finish();
+	}
+}
+
 void RemoteBrowserDialog::open() {	
 	Dialog::open();
 	listDirectory(Cloud::StorageFile());
+}
+
+void RemoteBrowserDialog::close() {
+	Dialog::close();
+	if (_workingRequest) {
+		_ignoreCallback = true;
+		_workingRequest->finish();
+		_ignoreCallback = false;
+	}
 }
 
 void RemoteBrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -154,7 +170,7 @@ void RemoteBrowserDialog::goUp() {
 }
 
 void RemoteBrowserDialog::listDirectory(Cloud::StorageFile node) {
-	if (_navigationLocked) return;
+	if (_navigationLocked || _workingRequest) return;
 	_navigationLocked = true;
 
 	_workingRequest = CloudMan.listDirectory(
@@ -170,12 +186,18 @@ void RemoteBrowserDialog::listDirectory(Cloud::StorageFile node) {
 }
 
 void RemoteBrowserDialog::directoryListedCallback(Cloud::Storage::ListDirectoryResponse response) {
+	_workingRequest = nullptr;
+	if (_ignoreCallback) return;
+
 	_navigationLocked = false;
 	_nodeContent = response.value;
 	_updateList = true;
 }
 
 void RemoteBrowserDialog::directoryListedErrorCallback(Networking::ErrorResponse error) {
+	_workingRequest = nullptr;
+	if (_ignoreCallback) return;
+
 	_navigationLocked = false;
 	_node = _backupNode;
 	_updateList = true;
