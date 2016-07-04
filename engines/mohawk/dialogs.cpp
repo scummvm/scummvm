@@ -255,13 +255,9 @@ void RivenOptionsDialog::open() {
 
 void RivenOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-	case kZipCmd:
-		_vm->_vars["azip"] = _zipModeCheckbox->getState() ? 1 : 0;
-		break;
-	case kWaterCmd:
-		_vm->_vars["waterenabled"] = _waterEffectCheckbox->getState() ? 1 : 0;
-		break;
 	case GUI::kOKCmd:
+		_vm->_vars["azip"] = _zipModeCheckbox->getState() ? 1 : 0;
+		_vm->_vars["waterenabled"] = _waterEffectCheckbox->getState() ? 1 : 0;
 		setResult(1);
 		close();
 		break;
