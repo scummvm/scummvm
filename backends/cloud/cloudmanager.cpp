@@ -226,6 +226,17 @@ Networking::Request *CloudManager::listDirectory(Common::String path, Storage::L
 	return nullptr;
 }
 
+Networking::Request *CloudManager::downloadFolder(Common::String remotePath, Common::String localPath, Storage::FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
+	Storage *storage = getCurrentStorage();
+	if (storage) storage->downloadFolder(remotePath, localPath, callback, errorCallback, recursive);
+	else {
+		delete callback;
+		delete errorCallback;
+		//TODO: should we call errorCallback?
+	}
+	return nullptr;
+}
+
 Networking::Request *CloudManager::info(Storage::StorageInfoCallback callback, Networking::ErrorCallback errorCallback) {
 	Storage *storage = getCurrentStorage();
 	if (storage) storage->info(callback, errorCallback);

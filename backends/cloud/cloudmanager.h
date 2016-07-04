@@ -184,6 +184,9 @@ public:
 	/** Returns ListDirectoryResponse with list of files. */
 	Networking::Request *listDirectory(Common::String path, Storage::ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
 
+	/** Returns Common::Array<StorageFile> with list of files, which were not downloaded. */
+	Networking::Request *downloadFolder(Common::String remotePath, Common::String localPath, Storage::FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
+
 	/** Return the StorageInfo struct. */
 	Networking::Request *info(Storage::StorageInfoCallback callback, Networking::ErrorCallback errorCallback);
 
