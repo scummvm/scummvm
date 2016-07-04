@@ -238,7 +238,7 @@ void Lingo::processIf(int endlabel) {
 		_labelstack.pop_back();
 
 		// This is beginning of our if()
-		if (label)
+		if (!label)
 			break;
 
 		WRITE_UINT32(&ielse1, else1);
