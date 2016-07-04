@@ -165,6 +165,11 @@ void SaveLoadChooserDialog::open() {
 	_dialogWasShown = false;
 }
 
+void SaveLoadChooserDialog::close() {
+	CloudMan.setSyncTarget(nullptr); //not that dialog, at least
+	Dialog::close();
+}
+
 int SaveLoadChooserDialog::run(const Common::String &target, const MetaEngine *metaEngine) {
 	_metaEngine = metaEngine;
 	_target = target;

@@ -73,6 +73,7 @@ public:
 	virtual ~SaveLoadChooserDialog();
 
 	virtual void open();
+	virtual void close();
 
 	virtual void reflowLayout();
 
