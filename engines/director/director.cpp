@@ -89,12 +89,28 @@ DirectorEngine::~DirectorEngine() {
 Common::Error DirectorEngine::run() {
 	debug("Starting v%d Director game", getVersion());
 
+	_sharedCasts = nullptr;
+	_sharedSound = nullptr;
+	_sharedBMP = nullptr;
+	_sharedSTXT = nullptr;
+	_sharedDIB = nullptr;
+
+	_movies = nullptr;
+	_currentPalette = nullptr;
+
+	_macBinary = nullptr;
+	_soundManager = nullptr;
+
 	_lingo = new Lingo(this);
 	_soundManager = new DirectorSound();
 
-#if 1
+#if 0
+	_mainArchive = nullptr;
+	_currentScore = nullptr;
+
 	_lingo->addCode("--\n\
-	-- repeat with x = 1 to 5\n\
+	--repeat with x = 1 to 5\n\
+	set x = 4\n\
 		if x = 1 then\n\
 		  put 1\n\
 		else if x = 2 then\n\
@@ -104,7 +120,7 @@ Common::Error DirectorEngine::run() {
 		end if\n\
 		if x = 4 then put 4\n\
 		else put 5\n\
-	-- end repeat\n\
+	--end repeat\n\
 ", kMovieScript, 2);
 
 _lingo->executeScript(kMovieScript, 2);
