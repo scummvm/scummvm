@@ -25,6 +25,7 @@
 
 #include "gui/dialog.h"
 #include "common/str.h"
+#include <backends/cloud/storage.h>
 
 namespace GUI {
 
@@ -43,15 +44,21 @@ class DownloadDialog : public Dialog {
 	ButtonWidget *_mainButton;
 	ButtonWidget *_closeButton;
 
-	bool _wasInProgress, _inProgress;
 	bool _close;
+
+	Networking::Request *_workingRequest;
+	bool _ignoreCallback;
 
 	void updateButtons();
 	void selectDirectories();
+	void directoryDownloadedCallback(Cloud::Storage::FileArrayResponse response);
+	void directoryDownloadedErrorCallback(Networking::ErrorResponse error);
 
 public:
 	DownloadDialog(uint32 storageId);
+	virtual ~DownloadDialog();
 
+	virtual void close();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void handleTickle();
 	virtual void reflowLayout();

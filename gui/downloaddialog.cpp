@@ -38,7 +38,8 @@ enum {
 };
 
 DownloadDialog::DownloadDialog(uint32 storageId):
-	Dialog("GlobalOptions_Cloud_DownloadDialog"), _wasInProgress(true), _inProgress(false), _close(false) {
+	Dialog("GlobalOptions_Cloud_DownloadDialog"), _close(false),
+	_workingRequest(nullptr), _ignoreCallback(false) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	_browser = new BrowserDialog(_("Select directory where to download game data"), true);
@@ -50,15 +51,35 @@ DownloadDialog::DownloadDialog(uint32 storageId):
 	updateButtons();
 }
 
+DownloadDialog::~DownloadDialog() {
+	if (_workingRequest) {
+		_ignoreCallback = true;
+		_workingRequest->finish();
+	}
+}
+
+void DownloadDialog::close() {
+	if (_workingRequest) {
+		_ignoreCallback = true;
+		_workingRequest->finish();
+		_ignoreCallback = false;
+	}
+	Dialog::close();
+}
+
 void DownloadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kDownloadDialogButtonCmd: {
-		if (!_inProgress) {
+		if (_workingRequest == nullptr) {
 			selectDirectories();
+		} else {
+			_ignoreCallback = true;
+			_workingRequest->finish();
+			_ignoreCallback = false;
 		}
 
-		_inProgress = !_inProgress;
 		reflowLayout();
+		draw();
 		break;
 	}
 	default:
@@ -102,7 +123,38 @@ void DownloadDialog::selectDirectories() {
 		}
 	}
 
-	//TODO: initiate download
+	//make a local path
+	Common::String localPath = dir.getPath();
+
+	//simple heuristic to determine which path separator to use
+	int backslashes = 0;
+	for (uint32 i = 0; i < localPath.size(); ++i)
+		if (localPath[i] == '/') --backslashes;
+		else if (localPath[i] == '\\') ++backslashes;
+
+	if (backslashes > 0) localPath += '\\' + remoteDirectory.name();
+	else localPath += '/' + remoteDirectory.name();
+
+	_workingRequest = CloudMan.downloadFolder(
+		remoteDirectory.path(), localPath,
+		new Common::Callback<DownloadDialog, Cloud::Storage::FileArrayResponse>(this, &DownloadDialog::directoryDownloadedCallback),
+		new Common::Callback<DownloadDialog, Networking::ErrorResponse>(this, &DownloadDialog::directoryDownloadedErrorCallback),
+		true
+	);
+}
+
+void DownloadDialog::directoryDownloadedCallback(Cloud::Storage::FileArrayResponse response) {
+	_workingRequest = nullptr;
+	if (_ignoreCallback) return;
+
+	//TODO: show response.value (if not empty), show message on OSD
+}
+
+void DownloadDialog::directoryDownloadedErrorCallback(Networking::ErrorResponse error) {
+	_workingRequest = nullptr;
+	if (_ignoreCallback) return;
+
+	//TODO: _showError = true;
 }
 
 void DownloadDialog::handleTickle() {
@@ -119,19 +171,14 @@ void DownloadDialog::reflowLayout() {
 	updateButtons();
 }
 
-void DownloadDialog::updateButtons() {
-	if (_wasInProgress == _inProgress) return;
-
-	if (_inProgress) {		
+void DownloadDialog::updateButtons() {	
+	if (_workingRequest != nullptr) {		
 		_messageText->setLabel(_("Press the button to cancel the download"));
 		_mainButton->setLabel(_("Cancel the download"));
 	} else {
 		_messageText->setLabel(_("Press the button to download a directory"));
 		_mainButton->setLabel(_("Start download"));
-	}	
-	
-	_wasInProgress = _inProgress;	
+	}
 }
-
 
 } // End of namespace GUI
