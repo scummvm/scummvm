@@ -20,41 +20,50 @@
  *
  */
 
-#ifndef GUI_DOWNLOADDIALOG_H
-#define GUI_DOWNLOADDIALOG_H
+#ifndef GUI_REMOTEBROWSER_DIALOG_H
+#define GUI_REMOTEBROWSER_DIALOG_H
 
 #include "gui/dialog.h"
-#include "common/str.h"
+#include "common/fs.h"
+#include <backends/cloud/storagefile.h>
+#include <backends/networking/curl/request.h>
+#include <backends/cloud/storage.h>
 
 namespace GUI {
 
-class CommandSender;
-class EditTextWidget;
+class ListWidget;
 class StaticTextWidget;
-class ButtonWidget;
-class BrowserDialog;
-class RemoteBrowserDialog;
+class CheckboxWidget;
+class CommandSender;
 
-class DownloadDialog : public Dialog {
-	BrowserDialog *_browser;
-	RemoteBrowserDialog *_remoteBrowser;
-
-	StaticTextWidget *_messageText;
-	ButtonWidget *_mainButton;
-	ButtonWidget *_closeButton;
-
-	bool _wasInProgress, _inProgress;
-	bool _close;
-
-	void updateButtons();
-	void selectDirectories();
-
+class RemoteBrowserDialog : public Dialog {
 public:
-	DownloadDialog(uint32 storageId);
+	RemoteBrowserDialog(const char *title, bool dirRemoteBrowser);
 
+	virtual void open();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void handleTickle();
-	virtual void reflowLayout();
+
+	const Cloud::StorageFile	&getResult() { return _choice; }
+
+protected:
+	ListWidget		*_fileList;
+	StaticTextWidget	*_currentPath;
+	Cloud::StorageFile _node;
+	Common::Array<Cloud::StorageFile> _nodeContent;
+	Cloud::StorageFile _choice;
+	bool _isDirRemoteBrowser;
+	bool _navigationLocked;
+	bool _updateList;
+
+	Networking::Request *_workingRequest;
+	bool _ignoreCallback; //?
+
+	void updateListing();
+	void goUp();
+	void listDirectory(Cloud::StorageFile node);
+	void directoryListedCallback(Cloud::Storage::ListDirectoryResponse response);
+	void directoryListedErrorCallback(Networking::ErrorResponse error);
 };
 
 } // End of namespace GUI

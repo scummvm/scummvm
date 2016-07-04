@@ -27,6 +27,9 @@
 #include "backends/cloud/cloudmanager.h"
 #include "common/translation.h"
 #include "widgets/edittext.h"
+#include "message.h"
+#include "browser.h"
+#include "remotebrowser.h"
 
 namespace GUI {
 
@@ -38,6 +41,9 @@ DownloadDialog::DownloadDialog(uint32 storageId):
 	Dialog("GlobalOptions_Cloud_DownloadDialog"), _wasInProgress(true), _inProgress(false), _close(false) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
+	_browser = new BrowserDialog(_("Select directory where to download game data"), true);
+	_remoteBrowser = new RemoteBrowserDialog(_("Select directory with game data"), true);
+
 	_messageText = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.DialogDesc", _("Press the button to download a directory"));
 	_mainButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", _("Start download"), 0, kDownloadDialogButtonCmd);
 	_closeButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.CloseButton", _("OK"), 0, kCloseCmd);
@@ -47,6 +53,10 @@ DownloadDialog::DownloadDialog(uint32 storageId):
 void DownloadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kDownloadDialogButtonCmd: {
+		if (!_inProgress) {
+			selectDirectories();
+		}
+
 		_inProgress = !_inProgress;
 		reflowLayout();
 		break;
@@ -54,6 +64,36 @@ void DownloadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	default:
 		Dialog::handleCommand(sender, cmd, data);
 	}
+}
+
+void DownloadDialog::selectDirectories() {
+	//first user should select remote directory to download	
+	if (_remoteBrowser->runModal() <= 0) return;
+
+	/*
+	Common::FSNode dir(_browser->getResult());
+	Common::FSList files;
+	if (!dir.getChildren(files, Common::FSNode::kListAll)) {
+		MessageDialog alert(_("ScummVM couldn't open the specified directory!"));
+		alert.runModal();
+		return;
+	}
+	*/
+
+	//now user should select local directory to download into
+	if (_browser->runModal() <= 0) return;
+
+	Common::FSNode dir(_browser->getResult());
+	Common::FSList files;
+	if (!dir.getChildren(files, Common::FSNode::kListAll)) {
+		MessageDialog alert(_("ScummVM couldn't open the specified directory!"));
+		alert.runModal();
+		return;
+	}
+
+	//TODO: require empty directory?
+
+	//TODO: initiate download
 }
 
 void DownloadDialog::handleTickle() {

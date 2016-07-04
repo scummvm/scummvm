@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	object.o \
 	options.o \
 	predictivedialog.o \
+	remotebrowser.o \
 	saveload.o \
 	saveload-dialog.o \
 	storagewizarddialog.o \
