@@ -45,8 +45,8 @@ whitespace [\t ]
 %%
 
 --[^\r\n]*
-^{whitespace}
-[\t]+			{ return ' '; }
+^{whitespace}+
+[\t]+				{ return ' '; }
 
 (?i:down)			{ return tDOWN; }
 (?i:if)				{ return tIF; }

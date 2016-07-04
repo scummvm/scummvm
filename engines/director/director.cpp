@@ -92,20 +92,22 @@ Common::Error DirectorEngine::run() {
 	_lingo = new Lingo(this);
 	_soundManager = new DirectorSound();
 
-#if 0
+#if 1
 	_lingo->addCode("--\n\
-	if 5 then\n\
-	  exit\n\
-	else if 6 then\n\
-	  put x\n\
-	  exit\n\
-    else if 7 then exit\n\
-	end if\n\
-	if 5 then exit\n\
-	else exit\n\
+	-- repeat with x = 1 to 5\n\
+		if x = 1 then\n\
+		  put 1\n\
+		else if x = 2 then\n\
+		  put 2.1\n\
+		  put 2.2\n\
+	    else if x = 3 then put 3\n\
+		end if\n\
+		if x = 4 then put 4\n\
+		else put 5\n\
+	-- end repeat\n\
 ", kMovieScript, 2);
 
-//_lingo->executeScript(kMovieScript, 2);
+_lingo->executeScript(kMovieScript, 2);
 
 return Common::kNoError;
 
