@@ -31,6 +31,7 @@
 #include "engines/director/director.h"
 #include "engines/director/score.h"
 #include "director/lingo/lingo-gr.h"
+#include "director/lingo/lingo-the.h"
 
 namespace Director {
 
@@ -219,6 +220,12 @@ public:
 	void func_gotoloop();
 	void func_gotonext();
 	void func_gotoprevious();
+
+public:
+	void setTheEntity(TheEntity entity, int id, TheField field, Datum &d);
+	void setTheSprite(int id, TheField field, Datum &d);
+	Datum getTheEntity(TheEntity entity, int id, TheField field);
+	Datum getTheSprite(int id, TheField field);
 
 public:
 	ScriptData *_currentScript;

@@ -14,7 +14,8 @@ MODULE_OBJS = \
 	lingo/lingo-code.o \
 	lingo/lingo-codegen.o \
 	lingo/lingo-funcs.o \
-	lingo/lingo-lex.o
+	lingo/lingo-lex.o \
+	lingo/lingo-the.o
 
 engines/director/lingo/lingo-lex.cpp: engines/director/lingo/lingo-lex.l
 	flex -o engines/director/lingo/lingo-lex.cpp engines/director/lingo/lingo-lex.l
