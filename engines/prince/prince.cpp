@@ -107,8 +107,6 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	DebugMan.enableDebugChannel("script");
 
 	memset(_audioStream, 0, sizeof(_audioStream));
-
-	gDebugLevel = 10;
 }
 
 PrinceEngine::~PrinceEngine() {
