@@ -188,7 +188,6 @@ void Lingo::codeArg(Common::String *s) {
 void Lingo::codeArgStore() {
 	while (true) {
 		if (_argstack.empty()) {
-			warning("Arg stack underflow");
 			break;
 		}
 
@@ -224,6 +223,30 @@ void Lingo::codeLabel(int label) {
 }
 
 void Lingo::processIf(int endlabel) {
+	inst ielse1, iend;
+	int  else1 = endlabel;
+
+	WRITE_UINT32(&iend, endlabel);
+
+	while (true) {
+		if (_labelstack.empty()) {
+			warning("Label stack underflow");
+			break;
+		}
+
+		int label = _labelstack.back();
+		_labelstack.pop_back();
+
+		// This is beginning of our if()
+		if (label)
+			break;
+
+		WRITE_UINT32(&ielse1, else1);
+		(*_currentScript)[label + 2] = ielse1;     /* elsepart */
+		(*_currentScript)[label + 3] = iend;      /* end, if cond fails */
+
+		else1 = label;
+	}
 }
 
 }
