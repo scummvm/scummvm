@@ -53,90 +53,6 @@ uint16 g208_doorButtonCoordSets[1][4][6] = { // @ G0208_aaauc_Graphic558_DoorBut
 	{144, 155, 42, 47, 8, 6},     /* D2C */
 	{160, 175, 44, 52, 8, 9}}}; /* D1C */
 
-DoorFrames g179_doorFrame_D3L = { // @ G0179_s_Graphic558_Frames_Door_D3L
-								   /* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-	Frame(24, 71, 28, 67, 24, 41,  0,  0),     /* Closed Or Destroyed */
-	Frame(24, 71, 28, 38, 24, 41,  0, 30),     /* Vertical Closed one fourth */
-	Frame(24, 71, 28, 48, 24, 41,  0, 20),     /* Vertical Closed half */
-	Frame(24, 71, 28, 58, 24, 41,  0, 10),   /* Vertical Closed three fourth */
-	Frame(24, 29, 28, 67, 24, 41, 18,  0),     /* Left Horizontal Closed one fourth */
-	Frame(24, 35, 28, 67, 24, 41, 12,  0),     /* Left Horizontal Closed half */
-	Frame(24, 41, 28, 67, 24, 41,  6,  0),   /* Left Horizontal Closed three fourth */
-	Frame(66, 71, 28, 67, 24, 41, 24,  0),     /* Right Horizontal Closed one fourth */
-	Frame(60, 71, 28, 67, 24, 41, 24,  0),     /* Right Horizontal Closed half */
-	Frame(54, 71, 28, 67, 24, 41, 24,  0)}; /* Right Horizontal Closed three fourth */
-DoorFrames g180_doorFrame_D3C = { // @ G0180_s_Graphic558_Frames_Door_D3C
-								   /* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-	Frame(88, 135, 28, 67, 24, 41,  0,  0),     /* Closed Or Destroyed */
-	Frame(88, 135, 28, 38, 24, 41,  0, 30),     /* Vertical Closed one fourth */
-	Frame(88, 135, 28, 48, 24, 41,  0, 20),     /* Vertical Closed half */
-	Frame(88, 135, 28, 58, 24, 41,  0, 10),   /* Vertical Closed three fourth */
-	Frame(88,  93, 28, 67, 24, 41, 18,  0),     /* Left Horizontal Closed one fourth */
-	Frame(88,  99, 28, 67, 24, 41, 12,  0),     /* Left Horizontal Closed half */
-	Frame(88, 105, 28, 67, 24, 41,  6,  0),   /* Left Horizontal Closed three fourth */
-	Frame(130, 135, 28, 67, 24, 41, 24,  0),     /* Right Horizontal Closed one fourth */
-	Frame(124, 135, 28, 67, 24, 41, 24,  0),     /* Right Horizontal Closed half */
-	Frame(118, 135, 28, 67, 24, 41, 24,  0)}; /* Right Horizontal Closed three fourth */
-DoorFrames g181_doorFrame_D3R = { // @ G0181_s_Graphic558_Frames_Door_D3R
-								   /* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-	Frame(150, 197, 28, 67, 24, 41,  0,  0),     /* Closed Or Destroyed */
-	Frame(150, 197, 28, 38, 24, 41,  0, 30),     /* Vertical Closed one fourth */
-	Frame(150, 197, 28, 48, 24, 41,  0, 20),     /* Vertical Closed half */
-	Frame(150, 197, 28, 58, 24, 41,  0, 10),   /* Vertical Closed three fourth */
-	Frame(150, 153, 28, 67, 24, 41, 18,  0),     /* Left Horizontal Closed one fourth */
-	Frame(150, 161, 28, 67, 24, 41, 12,  0),     /* Left Horizontal Closed half */
-	Frame(150, 167, 28, 67, 24, 41,  6,  0),   /* Left Horizontal Closed three fourth */
-	Frame(192, 197, 28, 67, 24, 41, 24,  0),     /* Right Horizontal Closed one fourth */
-	Frame(186, 197, 28, 67, 24, 41, 24,  0),     /* Right Horizontal Closed half */
-	Frame(180, 197, 28, 67, 24, 41, 24,  0)}; /* Right Horizontal Closed three fourth */
-DoorFrames g182_doorFrame_D2L = { // @ G0182_s_Graphic558_Frames_Door_D2L
-								   /* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-	Frame(0, 63, 24, 82, 32, 61,  0,  0),     /* Closed Or Destroyed */
-	Frame(0, 63, 24, 39, 32, 61,  0, 45),     /* Vertical Closed one fourth */
-	Frame(0, 63, 24, 54, 32, 61,  0, 30),     /* Vertical Closed half */
-	Frame(0, 63, 24, 69, 32, 61,  0, 15),   /* Vertical Closed three fourth */
-	Frame(0,  7, 24, 82, 32, 61, 24,  0),     /* Left Horizontal Closed one fourth */
-	Frame(0, 15, 24, 82, 32, 61, 16,  0),     /* Left Horizontal Closed half */
-	Frame(0, 23, 24, 82, 32, 61,  8,  0),   /* Left Horizontal Closed three fourth */
-	Frame(56, 63, 24, 82, 32, 61, 32,  0),     /* Right Horizontal Closed one fourth */
-	Frame(48, 63, 24, 82, 32, 61, 32,  0),     /* Right Horizontal Closed half */
-	Frame(40, 63, 24, 82, 32, 61, 32,  0)}; /* Right Horizontal Closed three fourth */
-DoorFrames g183_doorFrame_D2C = { // @ G0183_s_Graphic558_Frames_Door_D2C
-								   /* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-	Frame(80, 143, 24, 82, 32, 61,  0,  0),     /* Closed Or Destroyed */
-	Frame(80, 143, 24, 39, 32, 61,  0, 45),     /* Vertical Closed one fourth */
-	Frame(80, 143, 24, 54, 32, 61,  0, 30),     /* Vertical Closed half */
-	Frame(80, 143, 24, 69, 32, 61,  0, 15),   /* Vertical Closed three fourth */
-	Frame(80,  87, 24, 82, 32, 61, 24,  0),     /* Left Horizontal Closed one fourth */
-	Frame(80,  95, 24, 82, 32, 61, 16,  0),     /* Left Horizontal Closed half */
-	Frame(80, 103, 24, 82, 32, 61,  8,  0),   /* Left Horizontal Closed three fourth */
-	Frame(136, 143, 24, 82, 32, 61, 32,  0),     /* Right Horizontal Closed one fourth */
-	Frame(128, 143, 24, 82, 32, 61, 32,  0),     /* Right Horizontal Closed half */
-	Frame(120, 143, 24, 82, 32, 61, 32,  0)}; /* Right Horizontal Closed three fourth */
-DoorFrames g184_doorFrame_D2R = { // @ G0184_s_Graphic558_Frames_Door_D2R
-								   /* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-	Frame(160, 223, 24, 82, 32, 61,  0,  0),     /* Closed Or Destroyed */
-	Frame(160, 223, 24, 39, 32, 61,  0, 45),     /* Vertical Closed one fourth */
-	Frame(160, 223, 24, 54, 32, 61,  0, 30),     /* Vertical Closed half */
-	Frame(160, 223, 24, 69, 32, 61,  0, 15),   /* Vertical Closed three fourth */
-	Frame(160, 167, 24, 82, 32, 61, 24,  0),     /* Left Horizontal Closed one fourth */
-	Frame(160, 175, 24, 82, 32, 61, 16,  0),     /* Left Horizontal Closed half */
-	Frame(160, 183, 24, 82, 32, 61,  8,  0),   /* Left Horizontal Closed three fourth */
-	Frame(216, 223, 24, 82, 32, 61, 32,  0),     /* Right Horizontal Closed one fourth */
-	Frame(208, 223, 24, 82, 32, 61, 32,  0),     /* Right Horizontal Closed half */
-	Frame(200, 223, 24, 82, 32, 61, 32,  0)}; /* Right Horizontal Closed three fourth */
-DoorFrames g185_doorFrame_D1L = { // @ G0185_s_Graphic558_Frames_Door_D1L
-								   /* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-	Frame(0, 31, 17, 102, 48, 88, 64,  0),     /* Closed Or Destroyed */
-	Frame(0, 31, 17,  38, 48, 88, 64, 66),     /* Vertical Closed one fourth */
-	Frame(0, 31, 17,  60, 48, 88, 64, 44),     /* Vertical Closed half */
-	Frame(0, 31, 17,  82, 48, 88, 64, 22),   /* Vertical Closed three fourth */
-	Frame(0,  0,  0,   0,  0,  0,  0,  0),     /* Left Horizontal Closed one fourth */
-	Frame(0,  0,  0,   0,  0,  0,  0,  0),     /* Left Horizontal Closed half */
-	Frame(0,  0,  0,   0,  0,  0,  0,  0),   /* Left Horizontal Closed three fourth */
-	Frame(20, 31, 17, 102, 48, 88, 48,  0),     /* Right Horizontal Closed one fourth */
-	Frame(8, 31, 17, 102, 48, 88, 48,  0),     /* Right Horizontal Closed half */
-	Frame(0, 31, 17, 102, 48, 88, 52,  0)}; /* Right Horizontal Closed three fourth */
 DoorFrames g186_doorFrame_D1C = { // @ G0186_s_Graphic558_Frames_Door_D1C
 								   /* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
 	Frame(64, 159, 17, 102, 48, 88,  0,  0),     /* Closed Or Destroyed */
@@ -149,18 +65,6 @@ DoorFrames g186_doorFrame_D1C = { // @ G0186_s_Graphic558_Frames_Door_D1C
 	Frame(148, 159, 17, 102, 48, 88, 48,  0),     /* Right Horizontal Closed one fourth */
 	Frame(136, 159, 17, 102, 48, 88, 48,  0),     /* Right Horizontal Closed half */
 	Frame(124, 159, 17, 102, 48, 88, 48,  0)}; /* Right Horizontal Closed three fourth */
-DoorFrames g187_doorFrame_D1R = { // @ G0187_s_Graphic558_Frames_Door_D1R
-								   /* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-	Frame(192, 223, 17, 102, 48, 88,  0,  0),     /* Closed Or Destroyed */
-	Frame(192, 223, 17,  38, 48, 88,  0, 66),     /* Vertical Closed one fourth */
-	Frame(192, 223, 17,  60, 48, 88,  0, 44),     /* Vertical Closed half */
-	Frame(192, 223, 17,  82, 48, 88,  0, 22),   /* Vertical Closed three fourth */
-	Frame(192, 203, 17, 102, 48, 88, 36,  0),     /* Left Horizontal Closed one fourth */
-	Frame(192, 215, 17, 102, 48, 88, 24,  0),     /* Left Horizontal Closed half */
-	Frame(192, 223, 17, 102, 48, 88, 12,  0),   /* Left Horizontal Closed three fourth */
-	Frame(0,   0,  0,   0,  0,  0,  0,  0),     /* Right Horizontal Closed one fourth */
-	Frame(0,   0,  0,   0,  0,  0,  0,  0),     /* Right Horizontal Closed half */
-	Frame(0,   0,  0,   0,  0,  0,  0,  0)}; /* Right Horizontal Closed three fourth */
 
 uint16 g207_doorOrnCoordSets[4][3][6] = { // @ G0207_aaauc_Graphic558_DoorOrnamentCoordinateSets
 	/* { X1, X2, Y1, Y2, ByteWidth, Height } */
@@ -1558,6 +1462,20 @@ void DisplayMan::f100_drawWallSetBitmap(byte *bitmap, Frame &f) {
 
 // NOTE: has been screened for missing code
 void DisplayMan::f116_drawSquareD3L(direction dir, int16 posX, int16 posY) {
+	static DoorFrames g179_doorFrame_D3L = DoorFrames( // @ G0179_s_Graphic558_Frames_Door_D3L
+		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
+		Frame(24, 71, 28, 67, 24, 41,  0,  0),     /* Closed Or Destroyed */
+		Frame(24, 71, 28, 38, 24, 41,  0, 30),     /* Vertical Closed one fourth */
+		Frame(24, 71, 28, 48, 24, 41,  0, 20),     /* Vertical Closed half */
+		Frame(24, 71, 28, 58, 24, 41,  0, 10),   /* Vertical Closed three fourth */
+		Frame(24, 29, 28, 67, 24, 41, 18,  0),     /* Left Horizontal Closed one fourth */
+		Frame(24, 35, 28, 67, 24, 41, 12,  0),     /* Left Horizontal Closed half */
+		Frame(24, 41, 28, 67, 24, 41,  6,  0),   /* Left Horizontal Closed three fourth */
+		Frame(66, 71, 28, 67, 24, 41, 24,  0),     /* Right Horizontal Closed one fourth */
+		Frame(60, 71, 28, 67, 24, 41, 24,  0),     /* Right Horizontal Closed half */
+		Frame(54, 71, 28, 67, 24, 41, 24,  0)
+	); /* Right Horizontal Closed three fourth */
+
 	uint16 squareAspect[5];
 	int16 order;
 
@@ -1609,6 +1527,20 @@ T0116017_orangeElk:
 }
 
 void DisplayMan::f117_drawSquareD3R(direction dir, int16 posX, int16 posY) {
+	static DoorFrames g181_doorFrame_D3R = DoorFrames( // @ G0181_s_Graphic558_Frames_Door_D3R
+		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
+		Frame(150, 197, 28, 67, 24, 41,  0,  0),	/* Closed Or Destroyed */
+		Frame(150, 197, 28, 38, 24, 41,  0, 30),	/* Vertical Closed one fourth */
+		Frame(150, 197, 28, 48, 24, 41,  0, 20),	/* Vertical Closed half */
+		Frame(150, 197, 28, 58, 24, 41,  0, 10),	/* Vertical Closed three fourth */
+		Frame(150, 153, 28, 67, 24, 41, 18,  0),	/* Left Horizontal Closed one fourth */
+		Frame(150, 161, 28, 67, 24, 41, 12,  0),	/* Left Horizontal Closed half */
+		Frame(150, 167, 28, 67, 24, 41,  6,  0),	/* Left Horizontal Closed three fourth */
+		Frame(192, 197, 28, 67, 24, 41, 24,  0),	/* Right Horizontal Closed one fourth */
+		Frame(186, 197, 28, 67, 24, 41, 24,  0),	/* Right Horizontal Closed half */
+		Frame(180, 197, 28, 67, 24, 41, 24,  0)		/* Right Horizontal Closed three fourth */
+	);
+
 	int16 order;
 	uint16 squareAspect[5];
 
@@ -1666,6 +1598,19 @@ T0117018:
 }
 
 void DisplayMan::f118_drawSquareD3C(direction dir, int16 posX, int16 posY) {
+	static DoorFrames g180_doorFrame_D3C = DoorFrames( // @ G0180_s_Graphic558_Frames_Door_D3C
+		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
+		Frame(88, 135, 28, 67, 24, 41,  0,  0),		/* Closed Or Destroyed */
+		Frame(88, 135, 28, 38, 24, 41,  0, 30),		/* Vertical Closed one fourth */
+		Frame(88, 135, 28, 48, 24, 41,  0, 20),		/* Vertical Closed half */
+		Frame(88, 135, 28, 58, 24, 41,  0, 10),		/* Vertical Closed three fourth */
+		Frame(88,  93, 28, 67, 24, 41, 18,  0),		/* Left Horizontal Closed one fourth */
+		Frame(88,  99, 28, 67, 24, 41, 12,  0),		/* Left Horizontal Closed half */
+		Frame(88, 105, 28, 67, 24, 41,  6,  0),		/* Left Horizontal Closed three fourth */
+		Frame(130, 135, 28, 67, 24, 41, 24, 0),		/* Right Horizontal Closed one fourth */
+		Frame(124, 135, 28, 67, 24, 41, 24, 0),		/* Right Horizontal Closed half */
+		Frame(118, 135, 28, 67, 24, 41, 24, 0)		/* Right Horizontal Closed three fourth */
+	);
 	int16 order;
 	int16 squareAspect[5];
 
@@ -1715,10 +1660,24 @@ T0118028:
 		f113_drawField(&g188_FieldAspects[k0_ViewSquare_D3C], g163_FrameWalls[k0_ViewSquare_D3C]._box);
 	}
 }
+
 void DisplayMan::f119_drawSquareD2L(direction dir, int16 posX, int16 posY) {
+	static DoorFrames g182_doorFrame_D2L = DoorFrames( // @ G0182_s_Graphic558_Frames_Door_D2L
+		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
+		Frame(0, 63, 24, 82, 32, 61,  0,  0),	/* Closed Or Destroyed */
+		Frame(0, 63, 24, 39, 32, 61,  0, 45),	/* Vertical Closed one fourth */
+		Frame(0, 63, 24, 54, 32, 61,  0, 30),	/* Vertical Closed half */
+		Frame(0, 63, 24, 69, 32, 61,  0, 15),	/* Vertical Closed three fourth */
+		Frame(0,  7, 24, 82, 32, 61, 24,  0),	/* Left Horizontal Closed one fourth */
+		Frame(0, 15, 24, 82, 32, 61, 16,  0),	/* Left Horizontal Closed half */
+		Frame(0, 23, 24, 82, 32, 61,  8,  0),	/* Left Horizontal Closed three fourth */
+		Frame(56, 63, 24, 82, 32, 61, 32,  0),	/* Right Horizontal Closed one fourth */
+		Frame(48, 63, 24, 82, 32, 61, 32,  0),	/* Right Horizontal Closed half */
+		Frame(40, 63, 24, 82, 32, 61, 32,  0)	/* Right Horizontal Closed three fourth */
+	);
+
 	int16 order;
 	int16 squareAspect[5];
-
 
 	_vm->_dungeonMan->f172_setSquareAspect((uint16*)squareAspect, dir, posX, posY);
 	switch (squareAspect[k0_ElemAspect]) {
@@ -1767,7 +1726,22 @@ T0119020:
 		_vm->_displayMan->f113_drawField(&g188_FieldAspects[k4_ViewSquare_D2L], g163_FrameWalls[k4_ViewSquare_D2L]._box);
 	}
 }
+
 void DisplayMan::f120_drawSquareD2R(direction dir, int16 posX, int16 posY) {
+	static DoorFrames g184_doorFrame_D2R = DoorFrames( // @ G0184_s_Graphic558_Frames_Door_D2R
+		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
+		Frame(160, 223, 24, 82, 32, 61,  0,  0),	/* Closed Or Destroyed */
+		Frame(160, 223, 24, 39, 32, 61,  0, 45),	/* Vertical Closed one fourth */
+		Frame(160, 223, 24, 54, 32, 61,  0, 30),	/* Vertical Closed half */
+		Frame(160, 223, 24, 69, 32, 61,  0, 15),	/* Vertical Closed three fourth */
+		Frame(160, 167, 24, 82, 32, 61, 24,  0),	/* Left Horizontal Closed one fourth */
+		Frame(160, 175, 24, 82, 32, 61, 16,  0),	/* Left Horizontal Closed half */
+		Frame(160, 183, 24, 82, 32, 61,  8,  0),	/* Left Horizontal Closed three fourth */
+		Frame(216, 223, 24, 82, 32, 61, 32,  0),	/* Right Horizontal Closed one fourth */
+		Frame(208, 223, 24, 82, 32, 61, 32,  0),	/* Right Horizontal Closed half */
+		Frame(200, 223, 24, 82, 32, 61, 32,  0)		/* Right Horizontal Closed three fourth */
+	);
+
 	int16 order;
 	int16 squareAspect[5];
 
@@ -1820,7 +1794,22 @@ T0120029:
 		_vm->_displayMan->f113_drawField(&g188_FieldAspects[k5_ViewSquare_D2R], g163_FrameWalls[k5_ViewSquare_D2R]._box);
 	}
 }
+
 void DisplayMan::f121_drawSquareD2C(direction dir, int16 posX, int16 posY) {
+	static DoorFrames g183_doorFrame_D2C = DoorFrames( // @ G0183_s_Graphic558_Frames_Door_D2C
+		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
+		Frame(80, 143, 24, 82, 32, 61,  0,  0),		/* Closed Or Destroyed */
+		Frame(80, 143, 24, 39, 32, 61,  0, 45),		/* Vertical Closed one fourth */
+		Frame(80, 143, 24, 54, 32, 61,  0, 30),		/* Vertical Closed half */
+		Frame(80, 143, 24, 69, 32, 61,  0, 15),		/* Vertical Closed three fourth */
+		Frame(80,  87, 24, 82, 32, 61, 24,  0),		/* Left Horizontal Closed one fourth */
+		Frame(80,  95, 24, 82, 32, 61, 16,  0),		/* Left Horizontal Closed half */
+		Frame(80, 103, 24, 82, 32, 61,  8,  0),		/* Left Horizontal Closed three fourth */
+		Frame(136, 143, 24, 82, 32, 61, 32,  0),	/* Right Horizontal Closed one fourth */
+		Frame(128, 143, 24, 82, 32, 61, 32,  0),	/* Right Horizontal Closed half */
+		Frame(120, 143, 24, 82, 32, 61, 32,  0)		/* Right Horizontal Closed three fourth */
+	);
+
 	int16 order;
 	int16 squareAspect[5];
 
@@ -1873,6 +1862,20 @@ T0121016:
 }
 
 void DisplayMan::f122_drawSquareD1L(direction dir, int16 posX, int16 posY) {
+	static DoorFrames g185_doorFrame_D1L = DoorFrames( // @ G0185_s_Graphic558_Frames_Door_D1L
+		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
+		Frame(0, 31, 17, 102, 48, 88, 64,  0),	/* Closed Or Destroyed */
+		Frame(0, 31, 17,  38, 48, 88, 64, 66),	/* Vertical Closed one fourth */
+		Frame(0, 31, 17,  60, 48, 88, 64, 44),	/* Vertical Closed half */
+		Frame(0, 31, 17,  82, 48, 88, 64, 22),	/* Vertical Closed three fourth */
+		Frame(0,  0,  0,   0,  0,  0,  0,  0),	/* Left Horizontal Closed one fourth */
+		Frame(0,  0,  0,   0,  0,  0,  0,  0),	/* Left Horizontal Closed half */
+		Frame(0,  0,  0,   0,  0,  0,  0,  0),	/* Left Horizontal Closed three fourth */
+		Frame(20, 31, 17, 102, 48, 88, 48,  0),	/* Right Horizontal Closed one fourth */
+		Frame(8, 31, 17, 102, 48, 88, 48,  0),	/* Right Horizontal Closed half */
+		Frame(0, 31, 17, 102, 48, 88, 52,  0)	/* Right Horizontal Closed three fourth */
+	);
+
 	int16 order;
 	int16 squareAspect[5];
 
@@ -1924,7 +1927,22 @@ T0122021:
 		f113_drawField(&g188_FieldAspects[k7_ViewSquare_D1L], g163_FrameWalls[k7_ViewSquare_D1L]._box);
 	}
 }
+
 void DisplayMan::f123_drawSquareD1R(direction dir, int16 posX, int16 posY) {
+	static DoorFrames g187_doorFrame_D1R = DoorFrames( // @ G0187_s_Graphic558_Frames_Door_D1R
+		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
+		Frame(192, 223, 17, 102, 48, 88,  0,  0),     /* Closed Or Destroyed */
+		Frame(192, 223, 17,  38, 48, 88,  0, 66),     /* Vertical Closed one fourth */
+		Frame(192, 223, 17,  60, 48, 88,  0, 44),     /* Vertical Closed half */
+		Frame(192, 223, 17,  82, 48, 88,  0, 22),   /* Vertical Closed three fourth */
+		Frame(192, 203, 17, 102, 48, 88, 36,  0),     /* Left Horizontal Closed one fourth */
+		Frame(192, 215, 17, 102, 48, 88, 24,  0),     /* Left Horizontal Closed half */
+		Frame(192, 223, 17, 102, 48, 88, 12,  0),   /* Left Horizontal Closed three fourth */
+		Frame(0,   0,  0,   0,  0,  0,  0,  0),     /* Right Horizontal Closed one fourth */
+		Frame(0,   0,  0,   0,  0,  0,  0,  0),     /* Right Horizontal Closed half */
+		Frame(0,   0,  0,   0,  0,  0,  0,  0)
+	); /* Right Horizontal Closed three fourth */
+
 	int16 order;
 	int16 squareAspect[5];
 
