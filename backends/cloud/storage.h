@@ -42,6 +42,7 @@ class CommandReceiver;
 namespace Cloud {
 
 class SavesSyncRequest;
+class FolderDownloadRequest;
 
 class Storage {
 public:
@@ -63,6 +64,7 @@ protected:
 	Common::Mutex _runningRequestsMutex;
 	SavesSyncRequest *_savesSyncRequest;
 	bool _syncRestartRequestsed;
+	FolderDownloadRequest *_downloadFolderRequest;
 
 	/** Returns default error callback (printErrorResponse). */
 	virtual Networking::ErrorCallback getErrorPrintingCallback();
@@ -159,6 +161,8 @@ public:
 	/** Returns whether there are any requests running. */
 	virtual bool isWorking();
 
+	///// SavesSyncRequest-related /////
+
 	/** Returns whether there is a SavesSyncRequest running. */
 	virtual bool isSyncing();
 
@@ -176,6 +180,30 @@ public:
 
 	/** Sets SavesSyncRequest's target to given CommandReceiver. */
 	virtual void setSyncTarget(GUI::CommandReceiver *target);
+
+	///// DownloadFolderRequest-related /////
+
+	/** Starts a folder download. */
+	virtual bool startDownload(Common::String remotePath, Common::String localPath);
+
+	/** Cancels running download. */
+	virtual void cancelDownload();
+
+	/** Sets FolderDownloadRequest's target to given CommandReceiver. */
+	virtual void setDownloadTarget(GUI::CommandReceiver *target);
+
+	/** Returns whether there is a FolderDownloadRequest running. */
+	virtual bool isDownloading();
+
+	/** Returns a number in [0, 1] range which represents current download progress (1 = complete). */
+	virtual double getDownloadingProgress();
+
+protected:
+	/** Finishes the download. Shows an OSD message. */
+	virtual void directoryDownloadedCallback(FileArrayResponse response);
+
+	/** Finishes the download. Shows an OSD message. */
+	virtual void directoryDownloadedErrorCallback(Networking::ErrorResponse error);
 };
 
 } // End of namespace Cloud

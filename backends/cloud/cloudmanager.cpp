@@ -274,6 +274,8 @@ bool CloudManager::isWorking() {
 	return false;
 }
 
+///// SavesSyncRequest-related /////
+
 bool CloudManager::isSyncing() {
 	Storage *storage = getCurrentStorage();
 	if (storage) return storage->isSyncing();
@@ -306,6 +308,36 @@ void CloudManager::cancelSync() {
 void CloudManager::setSyncTarget(GUI::CommandReceiver *target) {
 	Storage *storage = getCurrentStorage();
 	if (storage) storage->setSyncTarget(target);
+}
+
+///// DownloadFolderRequest-related /////
+
+bool CloudManager::startDownload(Common::String remotePath, Common::String localPath) {
+	Storage *storage = getCurrentStorage();
+	if (storage) return storage->startDownload(remotePath, localPath);
+	return false;
+}
+
+void CloudManager::cancelDownload() {
+	Storage *storage = getCurrentStorage();
+	if (storage) storage->cancelDownload();
+}
+
+void CloudManager::setDownloadTarget(GUI::CommandReceiver *target) {
+	Storage *storage = getCurrentStorage();
+	if (storage) storage->setDownloadTarget(target);
+}
+
+bool CloudManager::isDownloading() {
+	Storage *storage = getCurrentStorage();
+	if (storage) return storage->isDownloading();
+	return false;
+}
+
+double CloudManager::getDownloadingProgress() {
+	Storage *storage = getCurrentStorage();
+	if (storage) return storage->getDownloadingProgress();
+	return 1;
 }
 
 } // End of namespace Cloud

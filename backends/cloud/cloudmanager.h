@@ -206,6 +206,8 @@ public:
 	/** Returns whether there are any requests running. */
 	bool isWorking();
 
+	///// SavesSyncRequest-related /////
+
 	/** Returns whether there is a SavesSyncRequest running. */
 	bool isSyncing();
 
@@ -223,6 +225,23 @@ public:
 
 	/** Sets SavesSyncRequest's target to given CommandReceiver. */
 	void setSyncTarget(GUI::CommandReceiver *target);
+
+	///// DownloadFolderRequest-related /////
+
+	/** Starts a folder download. */
+	bool startDownload(Common::String remotePath, Common::String localPath);
+
+	/** Cancels running download. */
+	void cancelDownload();
+
+	/** Sets FolderDownloadRequest's target to given CommandReceiver. */
+	void setDownloadTarget(GUI::CommandReceiver *target);
+
+	/** Returns whether there is a FolderDownloadRequest running. */
+	bool isDownloading();
+
+	/** Returns a number in [0, 1] range which represents current download progress (1 = complete). */
+	double getDownloadingProgress();
 };
 
 /** Shortcut for accessing the connection manager. */

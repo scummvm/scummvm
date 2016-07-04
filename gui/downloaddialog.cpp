@@ -38,8 +38,7 @@ enum {
 };
 
 DownloadDialog::DownloadDialog(uint32 storageId):
-	Dialog("GlobalOptions_Cloud_DownloadDialog"), _close(false),
-	_workingRequest(nullptr), _ignoreCallback(false) {
+	Dialog("GlobalOptions_Cloud_DownloadDialog"), _close(false) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	_browser = new BrowserDialog(_("Select directory where to download game data"), true);
@@ -51,31 +50,13 @@ DownloadDialog::DownloadDialog(uint32 storageId):
 	updateButtons();
 }
 
-DownloadDialog::~DownloadDialog() {
-	if (_workingRequest) {
-		_ignoreCallback = true;
-		_workingRequest->finish();
-	}
-}
-
-void DownloadDialog::close() {
-	if (_workingRequest) {
-		_ignoreCallback = true;
-		_workingRequest->finish();
-		_ignoreCallback = false;
-	}
-	Dialog::close();
-}
-
 void DownloadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kDownloadDialogButtonCmd: {
-		if (_workingRequest == nullptr) {
-			selectDirectories();
+		if (CloudMan.isDownloading()) {
+			CloudMan.cancelDownload();
 		} else {
-			_ignoreCallback = true;
-			_workingRequest->finish();
-			_ignoreCallback = false;
+			selectDirectories();
 		}
 
 		reflowLayout();
@@ -135,26 +116,7 @@ void DownloadDialog::selectDirectories() {
 	if (backslashes > 0) localPath += '\\' + remoteDirectory.name();
 	else localPath += '/' + remoteDirectory.name();
 
-	_workingRequest = CloudMan.downloadFolder(
-		remoteDirectory.path(), localPath,
-		new Common::Callback<DownloadDialog, Cloud::Storage::FileArrayResponse>(this, &DownloadDialog::directoryDownloadedCallback),
-		new Common::Callback<DownloadDialog, Networking::ErrorResponse>(this, &DownloadDialog::directoryDownloadedErrorCallback),
-		true
-	);
-}
-
-void DownloadDialog::directoryDownloadedCallback(Cloud::Storage::FileArrayResponse response) {
-	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
-
-	//TODO: show response.value (if not empty), show message on OSD
-}
-
-void DownloadDialog::directoryDownloadedErrorCallback(Networking::ErrorResponse error) {
-	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
-
-	//TODO: _showError = true;
+	CloudMan.startDownload(remoteDirectory.path(), localPath);
 }
 
 void DownloadDialog::handleTickle() {
@@ -172,7 +134,7 @@ void DownloadDialog::reflowLayout() {
 }
 
 void DownloadDialog::updateButtons() {	
-	if (_workingRequest != nullptr) {		
+	if (CloudMan.isDownloading()) {
 		_messageText->setLabel(_("Press the button to cancel the download"));
 		_mainButton->setLabel(_("Cancel the download"));
 	} else {

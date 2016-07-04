@@ -30,7 +30,9 @@
 
 namespace Cloud {
 
-Storage::Storage(): _runningRequestsCount(0), _savesSyncRequest(nullptr) {}
+Storage::Storage():
+	_runningRequestsCount(0), _savesSyncRequest(nullptr), _syncRestartRequestsed(false),
+	_downloadFolderRequest(nullptr) {}
 
 Storage::~Storage() {}
 
@@ -135,6 +137,8 @@ bool Storage::isWorking() {
 	return working;
 }
 
+///// SavesSyncRequest-related /////
+
 bool Storage::isSyncing() {
 	_runningRequestsMutex.lock();
 	bool syncing = _savesSyncRequest != nullptr;
@@ -181,6 +185,71 @@ void Storage::setSyncTarget(GUI::CommandReceiver *target) {
 	if (_savesSyncRequest)
 		_savesSyncRequest->setTarget(target);
 	_runningRequestsMutex.unlock();
+}
+
+///// DownloadFolderRequest-related /////
+
+bool Storage::startDownload(Common::String remotePath, Common::String localPath) {
+	_runningRequestsMutex.lock();
+	if (_downloadFolderRequest) {
+		warning("Storage::startDownload: there is a download in progress already");
+		_runningRequestsMutex.unlock();
+		return false;
+	}
+	_downloadFolderRequest = (FolderDownloadRequest *)downloadFolder(
+		remotePath, localPath,
+		new Common::Callback<Storage, Cloud::Storage::FileArrayResponse>(this, &Storage::directoryDownloadedCallback),
+		new Common::Callback<Storage, Networking::ErrorResponse>(this, &Storage::directoryDownloadedErrorCallback),
+		true
+	);
+	_runningRequestsMutex.unlock();
+	return true;
+}
+
+void Storage::cancelDownload() {
+	_runningRequestsMutex.lock();
+	if (_downloadFolderRequest)
+		_downloadFolderRequest->finish();
+	_runningRequestsMutex.unlock();
+}
+
+void Storage::setDownloadTarget(GUI::CommandReceiver *target) {
+	_runningRequestsMutex.lock();
+	if (_downloadFolderRequest)
+		_downloadFolderRequest->setTarget(target);
+	_runningRequestsMutex.unlock();
+}
+
+bool Storage::isDownloading() {
+	_runningRequestsMutex.lock();
+	bool syncing = _downloadFolderRequest != nullptr;
+	_runningRequestsMutex.unlock();
+	return syncing;
+}
+
+double Storage::getDownloadingProgress() {
+	double result = 1;
+	_runningRequestsMutex.lock();
+	if (_downloadFolderRequest)
+		result = _downloadFolderRequest->getProgress();
+	_runningRequestsMutex.unlock();
+	return result;
+}
+
+void Storage::directoryDownloadedCallback(Cloud::Storage::FileArrayResponse response) {
+	_runningRequestsMutex.lock();
+	_downloadFolderRequest = nullptr;
+	_runningRequestsMutex.unlock();
+
+	//TODO: show response.value (if not empty), show message on OSD
+}
+
+void Storage::directoryDownloadedErrorCallback(Networking::ErrorResponse error) {
+	_runningRequestsMutex.lock();
+	_downloadFolderRequest = nullptr;
+	_runningRequestsMutex.unlock();
+
+	//TODO: _showError = true;
 }
 
 } // End of namespace Cloud

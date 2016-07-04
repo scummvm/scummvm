@@ -46,19 +46,12 @@ class DownloadDialog : public Dialog {
 
 	bool _close;
 
-	Networking::Request *_workingRequest;
-	bool _ignoreCallback;
-
 	void updateButtons();
 	void selectDirectories();
-	void directoryDownloadedCallback(Cloud::Storage::FileArrayResponse response);
-	void directoryDownloadedErrorCallback(Networking::ErrorResponse error);
 
 public:
 	DownloadDialog(uint32 storageId);
-	virtual ~DownloadDialog();
 
-	virtual void close();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void handleTickle();
 	virtual void reflowLayout();

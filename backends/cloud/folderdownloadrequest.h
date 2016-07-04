@@ -26,10 +26,11 @@
 #include "backends/networking/curl/request.h"
 #include "backends/networking/curl/networkreadstream.h"
 #include "backends/cloud/storage.h"
+#include "gui/object.h"
 
 namespace Cloud {
 
-class FolderDownloadRequest: public Networking::Request {
+class FolderDownloadRequest: public Networking::Request, public GUI::CommandSender {
 	Storage *_storage;
 	Storage::FileArrayCallback _fileArrayCallback;
 	Common::String _remoteDirectoryPath, _localDirectoryPath;
@@ -51,7 +52,10 @@ public:
 	virtual ~FolderDownloadRequest();
 
 	virtual void handle();
-	virtual void restart();	
+	virtual void restart();
+
+	/** Returns a number in range [0, 1], where 1 is "complete". */
+	double getProgress();
 };
 
 } // End of namespace Cloud

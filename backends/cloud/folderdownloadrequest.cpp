@@ -26,7 +26,7 @@
 namespace Cloud {
 
 FolderDownloadRequest::FolderDownloadRequest(Storage *storage, Storage::FileArrayCallback callback, Networking::ErrorCallback ecb, Common::String remoteDirectoryPath, Common::String localDirectoryPath, bool recursive):
-	Request(nullptr, ecb), _storage(storage), _fileArrayCallback(callback),
+	Request(nullptr, ecb), CommandSender(nullptr), _storage(storage), _fileArrayCallback(callback),
 	_remoteDirectoryPath(remoteDirectoryPath), _localDirectoryPath(localDirectoryPath), _recursive(recursive),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
@@ -124,5 +124,7 @@ void FolderDownloadRequest::finishDownload(Common::Array<StorageFile> &files) {
 	Request::finishSuccess();
 	if (_fileArrayCallback) (*_fileArrayCallback)(Storage::FileArrayResponse(this, files));
 }
+
+double FolderDownloadRequest::getProgress() { return 0; } //TODO
 
 } // End of namespace Cloud
