@@ -40,6 +40,19 @@
 
 namespace DM {
 
+Box g106_BoxThievesEye_ViewPortVisibleArea(64, 159, 19, 113); // @ G0106_s_Graphic558_Box_ThievesEye_ViewportVisibleArea 
+byte g198_PalChangesDoorButtonAndWallOrn_D3[16] = {0, 0, 120, 30, 40, 30, 0, 60, 30, 90, 100, 110, 0, 10, 0, 20}; // @ G0198_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D3
+byte g199_PalChangesDoorButtonAndWallOrn_D2[16] = {0, 120, 10, 30, 40, 30, 60, 70, 50, 90, 100, 110, 0, 20, 140, 130}; // @ G0199_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D2
+
+byte g197_doorButtonCoordSet[1] = {0}; // @ G0197_auc_Graphic558_DoorButtonCoordinateSet
+
+uint16 g208_doorButtonCoordSets[1][4][6] = { // @ G0208_aaauc_Graphic558_DoorButtonCoordinateSets
+	/* X1, X2, Y1, Y2, ByteWidth, Height */
+	{{199, 204, 41, 44, 8, 4},     /* D3R */
+	{136, 141, 41, 44, 8, 4},     /* D3C */
+	{144, 155, 42, 47, 8, 6},     /* D2C */
+	{160, 175, 44, 52, 8, 9}}}; /* D1C */
+
 DoorFrames g179_doorFrame_D3L = { // @ G0179_s_Graphic558_Frames_Door_D3L
 								   /* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
 	Frame(24, 71, 28, 67, 24, 41,  0,  0),     /* Closed Or Destroyed */
@@ -1073,9 +1086,54 @@ void DisplayMan::f461_allocateFlippedWallBitmaps() {
 
 void DisplayMan::f102_drawDoorBitmap(Frame* frame) {
 	if (frame->_srcByteWidth) {
-		f132_blitToBitmap(_vm->_displayMan->_g74_tmpBitmap,
-						  _vm->_displayMan->_g296_bitmapViewport,
+		f132_blitToBitmap(_g74_tmpBitmap,
+						  _g296_bitmapViewport,
 						  frame->_box, frame->_srcX, frame->_srcY, frame->_srcByteWidth, k112_byteWidthViewport, k10_ColorFlesh, frame->_srcHeight, k136_heightViewport);
+	}
+}
+
+void DisplayMan::f103_drawDoorFrameBitmapFlippedHorizontally(byte* bitmap, Frame* frame) {
+	if (frame->_srcByteWidth) {
+		f130_flipBitmapHorizontal(bitmap, frame->_srcByteWidth, frame->_srcHeight);
+		f132_blitToBitmap(bitmap, _g296_bitmapViewport, frame->_box, frame->_srcX, frame->_srcY,
+						  frame->_srcByteWidth, k112_byteWidthViewport, k10_ColorFlesh, frame->_srcHeight, k136_heightViewport);
+	}
+}
+
+void DisplayMan::f110_drawDoorButton(int16 doorButtonOrdinal, int16 viewDoorButtonIndex) {
+	int16 nativeBitmapIndex;
+	int coordSet;
+	uint16* coordSetRedEagle;
+	byte* bitmap;
+	byte* bitmapNative;
+
+	if (doorButtonOrdinal) {
+		doorButtonOrdinal--;
+		nativeBitmapIndex = doorButtonOrdinal + k315_firstDoorButton_GraphicIndice;
+		coordSetRedEagle = g208_doorButtonCoordSets[coordSet = g197_doorButtonCoordSet[doorButtonOrdinal]][viewDoorButtonIndex];
+		if (viewDoorButtonIndex == k3_viewDoorButton_D1C) {
+			bitmap = f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
+
+			_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._x1 = coordSetRedEagle[0];
+			_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._x2 = coordSetRedEagle[1];
+			_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._y1 = coordSetRedEagle[2];
+			_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._y2 = coordSetRedEagle[3];
+		} else {
+			if (!f491_isDerivedBitmapInCache(doorButtonOrdinal = k102_DerivedBitmapFirstDoorButton + (doorButtonOrdinal * 2) + ((!viewDoorButtonIndex) ? 0 : viewDoorButtonIndex - 1))) {
+				uint16* coordSetBlueGoat = g208_doorButtonCoordSets[coordSet][k3_viewDoorButton_D1C];
+				bitmapNative = f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
+				f129_blitToBitmapShrinkWithPalChange(bitmapNative, f492_getDerivedBitmap(doorButtonOrdinal),
+													 coordSetBlueGoat[4] << 1, coordSetBlueGoat[5],
+													 coordSetRedEagle[1] - coordSetRedEagle[0] + 1,
+													 coordSetRedEagle[5],
+													 (viewDoorButtonIndex == k2_viewDoorButton_D2C) ? g199_PalChangesDoorButtonAndWallOrn_D2 : g198_PalChangesDoorButtonAndWallOrn_D3);
+
+				f493_addDerivedBitmap(doorButtonOrdinal);
+			}
+			bitmap = f492_getDerivedBitmap(doorButtonOrdinal);
+		}
+		f132_blitToBitmap(bitmap, _g296_bitmapViewport, *(Box*)coordSetRedEagle, 0, 0,
+						  coordSetRedEagle[4], k112_byteWidthViewport, k10_ColorFlesh, coordSetRedEagle[5], k136_heightViewport);
 	}
 }
 
@@ -1348,20 +1406,20 @@ void DisplayMan::f108_drawFloorOrnament(uint16 floorOrnOrdinal, uint16 viewFloor
 		}
 		floorOrnOrdinal--;
 		floorOrnIndex = floorOrnOrdinal;
-		nativeBitmapIndex = _vm->_displayMan->_g102_currMapFloorOrnInfo[floorOrnIndex][k0_NativeBitmapIndex]
+		nativeBitmapIndex = _g102_currMapFloorOrnInfo[floorOrnIndex][k0_NativeBitmapIndex]
 			+ g191_floorOrnNativeBitmapndexInc[viewFloorIndex];
-		coordSets = g206_floorOrnCoordSets[_vm->_displayMan->_g102_currMapFloorOrnInfo[floorOrnIndex][k1_CoordinateSet]][viewFloorIndex];
+		coordSets = g206_floorOrnCoordSets[_g102_currMapFloorOrnInfo[floorOrnIndex][k1_CoordinateSet]][viewFloorIndex];
 		if ((viewFloorIndex == k8_viewFloor_D1R) || (viewFloorIndex == k5_viewFloor_D2R)
 			|| (viewFloorIndex == k2_viewFloor_D3R)
-			|| ((floorOrnIndex == k15_FloorOrnFootprints) && _vm->_displayMan->_g76_useFlippedWallAndFootprintsBitmap &&
+			|| ((floorOrnIndex == k15_FloorOrnFootprints) && _g76_useFlippedWallAndFootprintsBitmap &&
 			((viewFloorIndex == k7_viewFloor_D1C) || (viewFloorIndex == k4_viewFloor_D2C) || (viewFloorIndex == k1_viewFloor_D3C)))) {
-			_vm->_displayMan->f99_copyBitmapAndFlipHorizontal(_vm->_displayMan->f489_getNativeBitmapOrGraphic(nativeBitmapIndex),
-															  bitmap = _vm->_displayMan->_g74_tmpBitmap, coordSets[4], coordSets[5]);
+			f99_copyBitmapAndFlipHorizontal(f489_getNativeBitmapOrGraphic(nativeBitmapIndex),
+											bitmap = _g74_tmpBitmap, coordSets[4], coordSets[5]);
 		} else {
-			bitmap = _vm->_displayMan->f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
+			bitmap = f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
 		}
-		_vm->_displayMan->f132_blitToBitmap(bitmap, _vm->_displayMan->_g296_bitmapViewport,
-											*(Box*)coordSets, 0, 0, coordSets[4], k112_byteWidthViewport, k10_ColorFlesh, coordSets[5], k136_heightViewport);
+		f132_blitToBitmap(bitmap, _g296_bitmapViewport,
+						  *(Box*)coordSets, 0, 0, coordSets[4], k112_byteWidthViewport, k10_ColorFlesh, coordSets[5], k136_heightViewport);
 T0108005:
 		if (drawFootprints) {
 			f108_drawFloorOrnament(_vm->M0_indexToOrdinal(k15_FloorOrnFootprints), viewFloorIndex);
@@ -1382,10 +1440,10 @@ void DisplayMan::f111_drawDoor(uint16 doorThingIndex, uint16 doorState, int16* d
 		f109_drawDoorOrnament(door->getOrnOrdinal(), viewDoorOrnIndex);
 		if (getFlag(_vm->_dungeonMan->_g275_currMapDoorInfo[doorType]._attributes, k0x0004_MaskDoorInfo_Animated)) {
 			if (_vm->_rnd->getRandomNumber(1)) {
-				_vm->_displayMan->f130_flipBitmapHorizontal(_vm->_displayMan->_g74_tmpBitmap, doorFramesTemp->_closedOrDestroyed._srcByteWidth, doorFramesTemp->_closedOrDestroyed._srcHeight);
+				f130_flipBitmapHorizontal(_g74_tmpBitmap, doorFramesTemp->_closedOrDestroyed._srcByteWidth, doorFramesTemp->_closedOrDestroyed._srcHeight);
 			}
 			if (_vm->_rnd->getRandomNumber(1)) {
-				f131_flipVertical(_vm->_displayMan->_g74_tmpBitmap, doorFramesTemp->_closedOrDestroyed._srcByteWidth, doorFramesTemp->_closedOrDestroyed._srcHeight);
+				f131_flipVertical(_g74_tmpBitmap, doorFramesTemp->_closedOrDestroyed._srcByteWidth, doorFramesTemp->_closedOrDestroyed._srcHeight);
 			}
 		}
 		if ((doorFramesTemp == &g186_doorFrame_D1C) && _vm->_championMan->_g407_party._event73Count_ThievesEye) {
@@ -1427,25 +1485,25 @@ void DisplayMan::f109_drawDoorOrnament(int16 doorOrnOrdinal, int16 viewDoorOrnIn
 
 	if (doorOrnOrdinal) {
 		doorOrnOrdinal--;
-		nativeBitmapIndex = _vm->_displayMan->_g103_currMapDoorOrnInfo[doorOrnOrdinal][k0_NativeBitmapIndex];
-		coordSetOrangeElk = g207_doorOrnCoordSets[coordSetGreenToad = _vm->_displayMan->_g103_currMapDoorOrnInfo[doorOrnOrdinal][k1_CoordinateSet]][viewDoorOrnIndex];
+		nativeBitmapIndex = _g103_currMapDoorOrnInfo[doorOrnOrdinal][k0_NativeBitmapIndex];
+		coordSetOrangeElk = g207_doorOrnCoordSets[coordSetGreenToad = _g103_currMapDoorOrnInfo[doorOrnOrdinal][k1_CoordinateSet]][viewDoorOrnIndex];
 		if (viewDoorOrnIndex == k2_ViewDoorOrnament_D1LCR) {
-			bitmap = _vm->_displayMan->f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
+			bitmap = f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
 			byteWidth = 48;
 			height = 88;
 		} else {
-			if (!_vm->_displayMan->f491_isDerivedBitmapInCache(doorOrnOrdinal = k68_DerivedBitmapFirstDoorOrnament_D3 + (doorOrnOrdinal * 2) + viewDoorOrnIndex)) {
+			if (!f491_isDerivedBitmapInCache(doorOrnOrdinal = k68_DerivedBitmapFirstDoorOrnament_D3 + (doorOrnOrdinal * 2) + viewDoorOrnIndex)) {
 				uint16 *coordSetRedEagle = g207_doorOrnCoordSets[coordSetGreenToad][k2_ViewDoorOrnament_D1LCR];
-				bitmapNative = _vm->_displayMan->f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
-				_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(bitmapNative,
-																	   f492_getDerivedBitmap(doorOrnOrdinal),
-																	   coordSetRedEagle[4] << 1, coordSetRedEagle[5],
-																	   coordSetOrangeElk[2] - coordSetOrangeElk[0] + 1,
-																	   coordSetOrangeElk[5],
-																	   (viewDoorOrnIndex == k0_ViewDoorOrnament_D3LCR) ? g200_palChangesDoorOrn_D3 : g201PalChangesDoorOrn_D2);
-				_vm->_displayMan->f493_addDerivedBitmap(doorOrnOrdinal);
+				bitmapNative = f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
+				f129_blitToBitmapShrinkWithPalChange(bitmapNative,
+													 f492_getDerivedBitmap(doorOrnOrdinal),
+													 coordSetRedEagle[4] << 1, coordSetRedEagle[5],
+													 coordSetOrangeElk[2] - coordSetOrangeElk[0] + 1,
+													 coordSetOrangeElk[5],
+													 (viewDoorOrnIndex == k0_ViewDoorOrnament_D3LCR) ? g200_palChangesDoorOrn_D3 : g201PalChangesDoorOrn_D2);
+				f493_addDerivedBitmap(doorOrnOrdinal);
 			}
-			bitmap = _vm->_displayMan->f492_getDerivedBitmap(doorOrnOrdinal);
+			bitmap = f492_getDerivedBitmap(doorOrnOrdinal);
 			if (viewDoorOrnIndex == k0_ViewDoorOrnament_D3LCR) {
 				byteWidth = 24;
 				height = 41;
@@ -1454,8 +1512,25 @@ void DisplayMan::f109_drawDoorOrnament(int16 doorOrnOrdinal, int16 viewDoorOrnIn
 				height = 61;
 			}
 		}
-		_vm->_displayMan->f132_blitToBitmap(bitmap, _vm->_displayMan->_g74_tmpBitmap,
-											*(Box*)coordSetOrangeElk, 0, 0, coordSetOrangeElk[4], byteWidth, k9_ColorGold, coordSetOrangeElk[5], height);
+		f132_blitToBitmap(bitmap, _g74_tmpBitmap,
+						  *(Box*)coordSetOrangeElk, 0, 0, coordSetOrangeElk[4], byteWidth, k9_ColorGold, coordSetOrangeElk[5], height);
+	}
+}
+
+void DisplayMan::f112_drawCeilingPit(int16 nativeBitmapIndex, Frame* frame, int16 mapX, int16 mapY, bool flipHorizontal) {
+	int16 L0117_i_Multiple;
+#define AL0117_i_MapIndex L0117_i_Multiple
+#define AL0117_i_Square   L0117_i_Multiple
+
+
+	if (((AL0117_i_MapIndex = _vm->_dungeonMan->f154_getLocationAfterLevelChange(_vm->_dungeonMan->_g272_currMapIndex, -1, &mapX, &mapY)) >= 0) &&
+		(Square(AL0117_i_Square = _vm->_dungeonMan->_g279_dungeonMapData[AL0117_i_MapIndex][mapX][mapY]).getType() == k2_ElementTypePit) &&
+		getFlag(AL0117_i_Square, k0x0008_PitOpen)) {
+		if (flipHorizontal) {
+			_vm->_displayMan->f105_drawFloorPitOrStairsBitmapFlippedHorizontally(nativeBitmapIndex, *frame);
+		} else {
+			_vm->_displayMan->f104_drawFloorPitOrStairsBitmap(nativeBitmapIndex, *frame);
+		}
 	}
 }
 
@@ -1553,9 +1628,9 @@ void DisplayMan::f117_drawSquareD3R(direction dir, int16 posX, int16 posY) {
 		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k2_viewFloor_D3R);
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k2_ViewSquare_D3R, k0x0128_CellOrder_DoorPass1_BackRight_BackLeft);
 		memmove(_g74_tmpBitmap, _g705_bitmapWallSet_DoorFrameLeft_D3L, 32 * 44);
-		warning("MISSING CODE: F0103_DUNGEONVIEW_DrawDoorFrameBitmapFlippedHorizontally");
+		f103_drawDoorFrameBitmapFlippedHorizontally(_g74_tmpBitmap, &g165_Frame_DoorFrameRight_D3R);
 		if (((Door*)_vm->_dungeonMan->_g284_thingData[k0_DoorThingType])[squareAspect[k3_DoorThingIndexAspect]].hasButton()) {
-			warning("MISSING CODE: F0110_DUNGEONVIEW_DrawDoorButton");
+			f110_drawDoorButton(_vm->M0_indexToOrdinal(k0_DoorButton), k0_viewDoorButton_D3R);
 		}
 		f111_drawDoor(squareAspect[k3_DoorThingIndexAspect],
 					  squareAspect[k2_DoorStateAspect], _g693_doorNativeBitmapIndex_Front_D3LCR,
@@ -1581,162 +1656,393 @@ T0117018:
 }
 
 void DisplayMan::f118_drawSquareD3C(direction dir, int16 posX, int16 posY) {
-	uint16 squareAspect[5];
-	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
-	switch (squareAspect[0]) {
-	case k19_StairsFrontElemType:
-		if (squareAspect[k2_StairsUpAspect])
+	int16 order;
+	int16 squareAspect[5];
+
+
+	_vm->_dungeonMan->f172_setSquareAspect((uint16*)squareAspect, dir, posX, posY);
+	switch (squareAspect[k0_ElemAspect]) {
+	case k19_ElementTypeStaisFront:
+		if (squareAspect[k2_StairsUpAspect]) {
 			f104_drawFloorPitOrStairsBitmap(_g676_stairsNativeBitmapIndex_Up_Front_D3C, g111_FrameStairsUpFront_D3C);
-		else
+		} else {
 			f104_drawFloorPitOrStairsBitmap(_g683_stairsNativeBitmapIndex_Down_Front_D3C, g122_FrameStairsDownFront_D3C);
-		break;
-	case k0_WallElemType:
+		}
+		goto T0118027;
+	case k0_ElementTypeWall:
 		f101_drawWallSetBitmapWithoutTransparency(_g698_bitmapWallSet_Wall_D3LCR, g163_FrameWalls[k0_ViewSquare_D3C]);
 		if (f107_isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k3_ViewWall_D3C_FRONT)) {
-			//... missing code
+			order = k0x0000_CellOrder_Alcove;
+			goto T0118028;
 		}
-		break;
-	default:
-		break;
+		return;
+	case k17_DoorFrontElemType:
+		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k1_viewFloor_D3C);
+		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k0_ViewSquare_D3C, k0x0218_CellOrder_DoorPass1_BackLeft_BackRight);
+		f100_drawWallSetBitmap(_g706_bitmapWallSet_DoorFrameLeft_D3C, g166_Frame_DoorFrameLeft_D3C);
+		memmove(_g74_tmpBitmap, _g706_bitmapWallSet_DoorFrameLeft_D3C, 32 * 44);
+		f103_drawDoorFrameBitmapFlippedHorizontally(_g74_tmpBitmap, &g167_Frame_DoorFrameRight_D3C);
+		if (((Door*)_vm->_dungeonMan->_g284_thingData[k0_DoorThingType])[squareAspect[k3_DoorThingIndexAspect]].hasButton()) {
+			f110_drawDoorButton(_vm->M0_indexToOrdinal(k0_DoorButton), k1_ViewDoorOrnament_D2LCR);
+		}
+		f111_drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
+					  _g693_doorNativeBitmapIndex_Front_D3LCR, M75_bitmapByteCount(48, 41), k0_ViewDoorOrnament_D3LCR, &g180_doorFrame_D3C);
+		order = k0x0349_CellOrder_DoorPass2_FrontLeft_FrontRight;
+		goto T0118028;
+	case k2_ElementTypePit:
+		if (!squareAspect[k2_PitInvisibleAspect]) {
+			f104_drawFloorPitOrStairsBitmap(k50_FloorPit_D3C_GraphicIndice, g141_FrameFloorPit_D3C);
+		}
+	case k5_ElementTypeTeleporter:
+	case k1_CorridorElemType:
+T0118027:
+		order = k0x3421_CellOrder_BackLeft_BackRight_FrontLeft_FrontRight;
+		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k1_viewFloor_D3C); /* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
+T0118028:
+		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k0_ViewSquare_D3C, order);
+	}
+	if ((squareAspect[k0_ElemAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
+		f113_drawField(&g188_FieldAspects[k0_ViewSquare_D3C], g163_FrameWalls[k0_ViewSquare_D3C]._box);
 	}
 }
 void DisplayMan::f119_drawSquareD2L(direction dir, int16 posX, int16 posY) {
-	uint16 squareAspect[5];
-	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
-	switch (squareAspect[0]) {
-	case k19_StairsFrontElemType:
-		if (squareAspect[k2_StairsUpAspect])
-			f104_drawFloorPitOrStairsBitmap(_g677_stairsNativeBitmapIndex_Up_Front_D2L, g113_FrameStairsUpFront_D2L);
-		else
-			f104_drawFloorPitOrStairsBitmap(_g684_stairsNativeBitmapIndex_Down_Front_D2L, g124_FrameStairsDownFront_D2L);
-		break;
-	case k0_WallElemType:
-		f100_drawWallSetBitmap(_g699_bitmapWallSet_Wall_D2LCR, g163_FrameWalls[k4_ViewSquare_D2L]);
-		f107_isDrawnWallOrnAnAlcove(squareAspect[k2_RightWallOrnOrdAspect], k5_ViewWall_D2L_RIGHT);
-		if (f107_isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k7_ViewWall_D2L_FRONT)) {
-			// ... missing code
+	int16 order;
+	int16 squareAspect[5];
+
+
+	_vm->_dungeonMan->f172_setSquareAspect((uint16*)squareAspect, dir, posX, posY);
+	switch (squareAspect[k0_ElemAspect]) {
+	case k19_ElementTypeStaisFront:
+		if (squareAspect[k2_StairsUpAspect]) {
+			_vm->_displayMan->f104_drawFloorPitOrStairsBitmap(_vm->_displayMan->_g677_stairsNativeBitmapIndex_Up_Front_D2L, g113_FrameStairsUpFront_D2L);
+		} else {
+			_vm->_displayMan->f104_drawFloorPitOrStairsBitmap(_vm->_displayMan->_g684_stairsNativeBitmapIndex_Down_Front_D2L, g124_FrameStairsDownFront_D2L);
 		}
-		break;
-	case k18_StairsSideElemType:
-		f104_drawFloorPitOrStairsBitmap(_g689_stairsNativeBitmapIndex_Side_D2L, g132_FrameStairsSide_D2L);
-		break;
-	default:
-		break;
+		goto T0119018;
+	case k0_ElementTypeWall:
+		_vm->_displayMan->f100_drawWallSetBitmap(_vm->_displayMan->_g699_bitmapWallSet_Wall_D2LCR, g163_FrameWalls[k4_ViewSquare_D2L]);
+		_vm->_displayMan->f107_isDrawnWallOrnAnAlcove(squareAspect[k2_RightWallOrnOrdAspect], k5_ViewWall_D2L_RIGHT);
+		if (_vm->_displayMan->f107_isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k7_ViewWall_D2L_FRONT)) {
+			order = k0x0000_CellOrder_Alcove;
+			goto T0119020;
+		}
+		return;
+	case k18_ElementTypeStairsSide:
+		_vm->_displayMan->f104_drawFloorPitOrStairsBitmap(_vm->_displayMan->_g689_stairsNativeBitmapIndex_Side_D2L, g132_FrameStairsSide_D2L);
+	case k16_DoorSideElemType:
+		order = k0x0342_CellOrder_BackRight_FrontLeft_FrontRight;
+		goto T0119019;
+	case k17_DoorFrontElemType:
+		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k3_viewFloor_D2L);
+		_vm->_displayMan->f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k4_ViewSquare_D2L, k0x0218_CellOrder_DoorPass1_BackLeft_BackRight);
+		_vm->_displayMan->f100_drawWallSetBitmap(_vm->_displayMan->_g703_bitmapWallSet_DoorFrameTop_D2LCR, g173_Frame_DoorFrameTop_D2L);
+		f111_drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect], _g694_doorNativeBitmapIndex_Front_D2LCR,
+					  M75_bitmapByteCount(64, 61), k1_ViewDoorOrnament_D2LCR, &g182_doorFrame_D2L);
+		order = k0x0349_CellOrder_DoorPass2_FrontLeft_FrontRight;
+		goto T0119020;
+	case k2_ElementTypePit:
+		_vm->_displayMan->f104_drawFloorPitOrStairsBitmap(squareAspect[k2_PitInvisibleAspect] ? k57_FloorPir_Invisible_D2L_GraphicIndice : k51_FloorPit_D2L_GraphicIndice,
+														  g143_FrameFloorPit_D2L);
+	case k5_ElementTypeTeleporter:
+	case k1_CorridorElemType:
+T0119018:
+		order = k0x3421_CellOrder_BackLeft_BackRight_FrontLeft_FrontRight;
+T0119019:
+		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k3_viewFloor_D2L); /* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
+T0119020:
+		f112_drawCeilingPit(k63_ceilingPit_D2L_GraphicIndice, &g152_FrameFloorPit_D2L, posX, posY, false);
+		_vm->_displayMan->f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k4_ViewSquare_D2L, order);
+	}
+	if ((squareAspect[k0_ElemAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
+		_vm->_displayMan->f113_drawField(&g188_FieldAspects[k4_ViewSquare_D2L], g163_FrameWalls[k4_ViewSquare_D2L]._box);
 	}
 }
 void DisplayMan::f120_drawSquareD2R(direction dir, int16 posX, int16 posY) {
-	uint16 squareAspect[5];
-	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
-	switch (squareAspect[0]) {
-	case k19_StairsFrontElemType:
-		if (squareAspect[k2_StairsUpAspect])
-			f105_drawFloorPitOrStairsBitmapFlippedHorizontally(_g677_stairsNativeBitmapIndex_Up_Front_D2L, g115_FrameStairsUpFront_D2R);
-		else
-			f105_drawFloorPitOrStairsBitmapFlippedHorizontally(_g684_stairsNativeBitmapIndex_Down_Front_D2L, g126_FrameStairsDownFront_D2R);
-		break;
-	case k0_WallElemType:
-		f100_drawWallSetBitmap(_g699_bitmapWallSet_Wall_D2LCR, g163_FrameWalls[k5_ViewSquare_D2R]);
-		f107_isDrawnWallOrnAnAlcove(squareAspect[k4_LeftWallOrnOrdAspect], k6_ViewWall_D2R_LEFT);
-		if (f107_isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k9_ViewWall_D2R_FRONT)) {
-			// ... missing code
+	int16 order;
+	int16 squareAspect[5];
+
+
+	_vm->_dungeonMan->f172_setSquareAspect((uint16*)squareAspect, dir, posX, posY);
+	switch (squareAspect[k0_ElemAspect]) {
+	case k19_ElementTypeStaisFront:
+		if (squareAspect[k2_StairsUpAspect]) {
+			_vm->_displayMan->f105_drawFloorPitOrStairsBitmapFlippedHorizontally(_vm->_displayMan->_g677_stairsNativeBitmapIndex_Up_Front_D2L, g115_FrameStairsUpFront_D2R);
+		} else {
+			_vm->_displayMan->f105_drawFloorPitOrStairsBitmapFlippedHorizontally(_vm->_displayMan->_g684_stairsNativeBitmapIndex_Down_Front_D2L, g126_FrameStairsDownFront_D2R);
 		}
-		break;
-	case k18_StairsSideElemType:
-		f105_drawFloorPitOrStairsBitmapFlippedHorizontally(_g689_stairsNativeBitmapIndex_Side_D2L, g133_FrameStairsSide_D2R);
-		break;
-	default:
-		break;
+		goto T0120027;
+	case k0_ElementTypeWall:
+		_vm->_displayMan->f100_drawWallSetBitmap(_vm->_displayMan->_g699_bitmapWallSet_Wall_D2LCR, g163_FrameWalls[k5_ViewSquare_D2R]);
+		_vm->_displayMan->f107_isDrawnWallOrnAnAlcove(squareAspect[k4_LeftWallOrnOrdAspect], k6_ViewWall_D2R_LEFT);
+		if (_vm->_displayMan->f107_isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k9_ViewWall_D2R_FRONT)) {
+			order = k0x0000_CellOrder_Alcove;
+			goto T0120029;
+		}
+		return;
+	case k18_ElementTypeStairsSide:
+		_vm->_displayMan->f105_drawFloorPitOrStairsBitmapFlippedHorizontally(_vm->_displayMan->_g689_stairsNativeBitmapIndex_Side_D2L, g133_FrameStairsSide_D2R);
+	case k16_DoorSideElemType:
+		order = k0x0431_CellOrder_BackLeft_FrontRight_FrontLeft;
+		goto T0120028;
+	case k17_DoorFrontElemType:
+		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k5_ViewSquare_D2R);
+		_vm->_displayMan->f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k5_ViewSquare_D2R, k0x0128_CellOrder_DoorPass1_BackRight_BackLeft);
+		_vm->_displayMan->f100_drawWallSetBitmap(_vm->_displayMan->_g703_bitmapWallSet_DoorFrameTop_D2LCR, g175_Frame_DoorFrameTop_D2R);
+		f111_drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
+					  _g694_doorNativeBitmapIndex_Front_D2LCR, M75_bitmapByteCount(64, 61), k1_ViewDoorOrnament_D2LCR, &g184_doorFrame_D2R);
+		order = k0x0439_CellOrder_DoorPass2_FrontRight_FrontLeft;
+		goto T0120029;
+	case k2_ElementTypePit:
+		_vm->_displayMan->f105_drawFloorPitOrStairsBitmapFlippedHorizontally(squareAspect[k2_PitInvisibleAspect]
+																			 ? k57_FloorPir_Invisible_D2L_GraphicIndice : k51_FloorPit_D2L_GraphicIndice, g145_FrameFloorPit_D2R);
+	case k5_ElementTypeTeleporter:
+	case k1_CorridorElemType:
+T0120027:
+		order = k0x4312_CellOrder_BackRight_BackLeft_FrontRight_FrontLeft;
+T0120028:
+/* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
+		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k5_viewFloor_D2R);
+		f112_drawCeilingPit(k63_ceilingPit_D2L_GraphicIndice, &g154_FrameFloorPit_D2R, posX, posY, true);
+T0120029:
+		_vm->_displayMan->f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k5_ViewSquare_D2R, order);
+	}
+	if ((squareAspect[k0_ElemAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
+		_vm->_displayMan->f113_drawField(&g188_FieldAspects[k5_ViewSquare_D2R], g163_FrameWalls[k5_ViewSquare_D2R]._box);
 	}
 }
 void DisplayMan::f121_drawSquareD2C(direction dir, int16 posX, int16 posY) {
-	uint16 squareAspect[5];
-	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
-	switch (squareAspect[0]) {
-	case k19_StairsFrontElemType:
-		if (squareAspect[k2_StairsUpAspect])
+	int16 order;
+	int16 squareAspect[5];
+
+
+	_vm->_dungeonMan->f172_setSquareAspect((uint16*)squareAspect, dir, posX, posY);
+	switch (squareAspect[k0_ElemAspect]) {
+	case k19_ElementTypeStaisFront:
+		if (squareAspect[k2_StairsUpAspect]) {
 			f104_drawFloorPitOrStairsBitmap(_g678_stairsNativeBitmapIndex_Up_Front_D2C, g114_FrameStairsUpFront_D2C);
-		else
+		} else {
 			f104_drawFloorPitOrStairsBitmap(_g685_stairsNativeBitmapIndex_Down_Front_D2C, g125_FrameStairsDownFront_D2C);
-		break;
-	case k0_WallElemType:
+		}
+		goto T0121015;
+	case k0_ElementTypeWall:
 		f101_drawWallSetBitmapWithoutTransparency(_g699_bitmapWallSet_Wall_D2LCR, g163_FrameWalls[k3_ViewSquare_D2C]);
 		if (f107_isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k8_ViewWall_D2C_FRONT)) {
-			// ... missing code
+			order = k0x0000_CellOrder_Alcove;
+			goto T0121016;
 		}
-		break;
-	default:
-		break;
+		return;
+	case k17_DoorFrontElemType:
+		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k4_viewFloor_D2C);
+		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k3_ViewSquare_D2C, k0x0218_CellOrder_DoorPass1_BackLeft_BackRight);
+		f100_drawWallSetBitmap(_g703_bitmapWallSet_DoorFrameTop_D2LCR, g174_Frame_DoorFrameTop_D2C);
+		f100_drawWallSetBitmap(_g707_bitmapWallSet_DoorFrameLeft_D2C, g168_Frame_DoorFrameLeft_D2C);
+		memcpy(_g74_tmpBitmap, _g707_bitmapWallSet_DoorFrameLeft_D2C, 48 * 65);
+		f103_drawDoorFrameBitmapFlippedHorizontally(_g74_tmpBitmap, &g169_Frame_DoorFrameRight_D2C);
+		if (((Door*)_vm->_dungeonMan->_g284_thingData[k0_DoorThingType])[squareAspect[k3_DoorThingIndexAspect]].hasButton()) {
+			f110_drawDoorButton(_vm->M0_indexToOrdinal(k0_DoorButton), k2_viewDoorButton_D2C);
+		}
+		f111_drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
+					  _g694_doorNativeBitmapIndex_Front_D2LCR, M75_bitmapByteCount(64, 61), k1_ViewDoorOrnament_D2LCR, &g183_doorFrame_D2C);
+		order = k0x0349_CellOrder_DoorPass2_FrontLeft_FrontRight;
+		goto T0121016;
+	case k2_ElementTypePit:
+		f104_drawFloorPitOrStairsBitmap(squareAspect[k2_PitInvisibleAspect] ? k58_FloorPit_invisible_D2C_GraphicIndice : k52_FloorPit_D2C_GraphicIndice, g144_FrameFloorPit_D2C);
+	case k5_ElementTypeTeleporter:
+	case k1_CorridorElemType:
+T0121015:
+		order = k0x3421_CellOrder_BackLeft_BackRight_FrontLeft_FrontRight;
+ /* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
+		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k4_viewFloor_D2C);
+		f112_drawCeilingPit(k64_ceilingPitD2C_GraphicIndice, &g153_FrameFloorPit_D2C, posX, posY, false);
+T0121016:
+		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k3_ViewSquare_D2C, order);
+	}
+	if ((squareAspect[k0_ElemAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
+		f113_drawField(&g188_FieldAspects[k3_ViewSquare_D2C], g163_FrameWalls[k3_ViewSquare_D2C]._box);
 	}
 }
+
 void DisplayMan::f122_drawSquareD1L(direction dir, int16 posX, int16 posY) {
-	uint16 squareAspect[5];
-	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
-	switch (squareAspect[0]) {
-	case k19_StairsFrontElemType:
-		if (squareAspect[k2_StairsUpAspect])
+	int16 order;
+	int16 squareAspect[5];
+
+
+	_vm->_dungeonMan->f172_setSquareAspect((uint16*)squareAspect, dir, posX, posY);
+	switch (squareAspect[k0_ElemAspect]) {
+	case k19_ElementTypeStaisFront:
+		if (squareAspect[k2_StairsUpAspect]) {
 			f104_drawFloorPitOrStairsBitmap(_g679_stairsNativeBitmapIndex_Up_Front_D1L, g116_FrameStairsUpFront_D1L);
-		else
+		} else {
 			f104_drawFloorPitOrStairsBitmap(_g686_stairsNativeBitmapIndex_Down_Front_D1L, g127_FrameStairsDownFront_D1L);
-		break;
-	case k0_WallElemType:
+		}
+		goto T0122019;
+	case k0_ElementTypeWall:
 		f100_drawWallSetBitmap(_g700_bitmapWallSet_Wall_D1LCR, g163_FrameWalls[k7_ViewSquare_D1L]);
 		f107_isDrawnWallOrnAnAlcove(squareAspect[k2_RightWallOrnOrdAspect], k10_ViewWall_D1L_RIGHT);
-		break;
-	case k18_StairsSideElemType:
-		if (squareAspect[k2_StairsUpAspect])
+		return;
+	case k18_ElementTypeStairsSide:
+		if (squareAspect[k2_StairsUpAspect]) {
 			f104_drawFloorPitOrStairsBitmap(_g690_stairsNativeBitmapIndex_Up_Side_D1L, g134_FrameStairsUpSide_D1L);
-		else
+		} else {
 			f104_drawFloorPitOrStairsBitmap(_g691_stairsNativeBitmapIndex_Down_Side_D1L, g136_FrameStairsDownSide_D1L);
-		break;
-	default:
-		break;
+		}
+	case k16_DoorSideElemType:
+		order = k0x0032_CellOrder_BackRight_FrontRight;
+		goto T0122020;
+	case k17_DoorFrontElemType:
+		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k6_viewFloor_D1L);
+		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k7_ViewSquare_D1L, k0x0028_CellOrder_DoorPass1_BackRight);
+		f100_drawWallSetBitmap(_g704_bitmapWallSet_DoorFrameTop_D1LCR, g176_Frame_DoorFrameTop_D1L);
+		f111_drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
+					  _g695_doorNativeBitmapIndex_Front_D1LCR, M75_bitmapByteCount(96, 88), k2_ViewDoorOrnament_D1LCR, &g185_doorFrame_D1L);
+		order = k0x0039_CellOrder_DoorPass2_FrontRight;
+		goto T0122021;
+	case k2_ElementTypePit:
+		f104_drawFloorPitOrStairsBitmap(squareAspect[k2_PitInvisibleAspect] ? k59_floorPit_invisible_D1L_GraphicIndice : k53_FloorPit_D1L_GraphicIndice, g146_FrameFloorPit_D1L);
+	case k5_ElementTypeTeleporter:
+	case k1_CorridorElemType:
+T0122019:
+		order = k0x0032_CellOrder_BackRight_FrontRight;
+T0122020:
+		 /* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
+		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k6_viewFloor_D1L);
+		f112_drawCeilingPit(k65_ceilingPitD1L_GraphicIndice, &g155_FrameFloorPit_D1L, posX, posY, false);
+T0122021:
+		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k7_ViewSquare_D1L, order);
+	}
+	if ((squareAspect[k0_ElemAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
+		f113_drawField(&g188_FieldAspects[k7_ViewSquare_D1L], g163_FrameWalls[k7_ViewSquare_D1L]._box);
 	}
 }
 void DisplayMan::f123_drawSquareD1R(direction dir, int16 posX, int16 posY) {
-	uint16 squareAspect[5];
-	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
-	switch (squareAspect[0]) {
-	case k19_StairsFrontElemType:
-		if (squareAspect[k2_StairsUpAspect])
+	int16 order;
+	int16 squareAspect[5];
+
+
+	_vm->_dungeonMan->f172_setSquareAspect((uint16 *)squareAspect, dir, posX, posY);
+	switch (squareAspect[k0_ElemAspect]) {
+	case k19_ElementTypeStaisFront:
+		if (squareAspect[k2_StairsUpAspect]) {
 			f105_drawFloorPitOrStairsBitmapFlippedHorizontally(_g679_stairsNativeBitmapIndex_Up_Front_D1L, g118_FrameStairsUpFront_D1R);
-		else
+		} else {
 			f105_drawFloorPitOrStairsBitmapFlippedHorizontally(_g686_stairsNativeBitmapIndex_Down_Front_D1L, g129_FrameStairsDownFront_D1R);
-		break;
-	case k0_WallElemType:
+		}
+		goto T0123019;
+	case k0_ElementTypeWall:
 		f100_drawWallSetBitmap(_g700_bitmapWallSet_Wall_D1LCR, g163_FrameWalls[k8_ViewSquare_D1R]);
 		f107_isDrawnWallOrnAnAlcove(squareAspect[k4_LeftWallOrnOrdAspect], k11_ViewWall_D1R_LEFT);
-		break;
-	case k18_StairsSideElemType:
-		if (squareAspect[k2_StairsUpAspect])
+		return;
+	case k18_ElementTypeStairsSide:
+		if (squareAspect[k2_StairsUpAspect]) {
 			f105_drawFloorPitOrStairsBitmapFlippedHorizontally(_g690_stairsNativeBitmapIndex_Up_Side_D1L, g135_FrameStairsUpSide_D1R);
-		else
+		} else {
 			f105_drawFloorPitOrStairsBitmapFlippedHorizontally(_g691_stairsNativeBitmapIndex_Down_Side_D1L, g137_FrameStairsDownSide_D1R);
-		break;
-	default:
-		break;
+		}
+	case k16_DoorSideElemType:
+		order = k0x0041_CellOrder_BackLeft_FrontLeft;
+		goto T0123020;
+	case k17_DoorFrontElemType:
+		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k8_viewFloor_D1R);
+		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k8_ViewSquare_D1R, k0x0018_CellOrder_DoorPass1_BackLeft);
+		f100_drawWallSetBitmap(_g704_bitmapWallSet_DoorFrameTop_D1LCR, g178_Frame_DoorFrameTop_D1R);
+		f111_drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
+					  _g695_doorNativeBitmapIndex_Front_D1LCR, M75_bitmapByteCount(96, 88), k2_ViewDoorOrnament_D1LCR, &g187_doorFrame_D1R);
+		order = k0x0049_CellOrder_DoorPass2_FrontLeft;
+		goto T0123021;
+	case k2_ElementTypePit:
+		f105_drawFloorPitOrStairsBitmapFlippedHorizontally(squareAspect[k2_PitInvisibleAspect] ? k59_floorPit_invisible_D1L_GraphicIndice
+														   : k53_FloorPit_D1L_GraphicIndice, g148_FrameFloorPit_D1R);
+	case k5_ElementTypeTeleporter:
+	case k1_CorridorElemType:
+T0123019:
+		order = k0x0041_CellOrder_BackLeft_FrontLeft;
+T0123020:
+		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k8_viewFloor_D1R); /* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
+		f112_drawCeilingPit(k65_ceilingPitD1L_GraphicIndice, &g157_FrameFloorPit_D1R, posX, posY, true);
+T0123021:
+		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k8_ViewSquare_D1R, order);
+	}
+	if ((squareAspect[k0_ElemAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
+		f113_drawField(&g188_FieldAspects[k8_ViewSquare_D1R], g163_FrameWalls[k8_ViewSquare_D1R]._box);
 	}
 }
 void DisplayMan::f124_drawSquareD1C(direction dir, int16 posX, int16 posY) {
-	uint16 squareAspect[5];
-	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
-	switch (squareAspect[0]) {
-	case k19_StairsFrontElemType:
-		if (squareAspect[k2_StairsUpAspect])
+	static Box g107_BoxThievesEyeVisibleArea(0, 95, 0, 94); // @ G0107_s_Graphic558_Box_ThievesEye_VisibleArea 
+	int16 order;
+	int16 squareAspect[5];
+	byte* bitmap;
+
+
+	_vm->_dungeonMan->f172_setSquareAspect((uint16*)squareAspect, dir, posX, posY);
+	switch (_vm->_dungeonMan->_g285_squareAheadElement = (ElementType)squareAspect[k0_ElemAspect]) {
+	case k19_ElementTypeStaisFront:
+		if (squareAspect[k2_StairsUpAspect]) {
 			f104_drawFloorPitOrStairsBitmap(_g680_stairsNativeBitmapIndex_Up_Front_D1C, g117_FrameStairsUpFront_D1C);
-		else
+		} else {
 			f104_drawFloorPitOrStairsBitmap(_g687_stairsNativeBitmapIndex_Down_Front_D1C, g128_FrameStairsDownFront_D1C);
-		break;
-	case k0_WallElemType:
+		}
+		goto T0124017;
+	case k0_ElementTypeWall:
 		_vm->_dungeonMan->_g286_isFacingAlcove = false;
 		_vm->_dungeonMan->_g287_isFacingViAltar = false;
 		_vm->_dungeonMan->_g288_isFacingFountain = false;
+		if (_vm->_championMan->_g407_party._event73Count_ThievesEye) {
+			f491_isDerivedBitmapInCache(k1_DerivedBitmapThievesEyeVisibleArea);
+			f132_blitToBitmap(_g296_bitmapViewport, f492_getDerivedBitmap(k1_DerivedBitmapThievesEyeVisibleArea),
+							  g107_BoxThievesEyeVisibleArea,
+							  g106_BoxThievesEye_ViewPortVisibleArea._x1,
+							  g106_BoxThievesEye_ViewPortVisibleArea._y1,
+							  k112_byteWidthViewport, 48, k255_ColorNoTransparency, 136, 95);
+			bitmap = f489_getNativeBitmapOrGraphic(k41_holeInWall_GraphicIndice);
+ /* BUG0_74 Creatures are drawn with wrong colors when viewed through a wall with the 'Thieve's Eye' spell. The 'hole in wall'
+ graphic is applied to the visible area with transparency on color 10. However the visible area may contain creature graphics
+ that use color 9. When the bitmap is drawn below with transparency on color 9 then the creature graphic is alterated: pixels
+ using color 9 are transparent and the background wall is visible through the creature graphic (grey/white pixels).
+ To fix this bug, the 'hole in wall' graphic should be applied to the wall graphic first (in a temporary buffer) and
+ then the wall with the hole should be drawn over the visible area */
+			f132_blitToBitmap(bitmap, f492_getDerivedBitmap(k1_DerivedBitmapThievesEyeVisibleArea),
+							  g107_BoxThievesEyeVisibleArea,
+							  0, 0, 48, 48, k10_ColorFlesh, 95, 95);
+		}
 		f101_drawWallSetBitmapWithoutTransparency(_g700_bitmapWallSet_Wall_D1LCR, g163_FrameWalls[k6_ViewSquare_D1C]);
 		if (f107_isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k12_ViewWall_D1C_FRONT)) {
-			// .... code not yet implemneted
+			f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k6_ViewSquare_D1C, k0x0000_CellOrder_Alcove);
 		}
-		break;
-	default:
-		break;
+		if (_vm->_championMan->_g407_party._event73Count_ThievesEye) {
+			f132_blitToBitmap(f492_getDerivedBitmap(k1_DerivedBitmapThievesEyeVisibleArea),
+				_g296_bitmapViewport, g106_BoxThievesEye_ViewPortVisibleArea, 0, 0,
+							  48, k112_byteWidthViewport, k9_ColorGold, 95, k136_heightViewport); /* BUG0_74 */
+			f493_addDerivedBitmap(k1_DerivedBitmapThievesEyeVisibleArea);
+			warning("MISSING CODE: F0480_CACHE_ReleaseBlock");
+		}
+		return;
+	case k17_DoorFrontElemType:
+		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k7_viewFloor_D1C);
+		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k6_ViewSquare_D1C, k0x0218_CellOrder_DoorPass1_BackLeft_BackRight);
+		f100_drawWallSetBitmap(_g704_bitmapWallSet_DoorFrameTop_D1LCR, g177_Frame_DoorFrameTop_D1C);
+		f100_drawWallSetBitmap(_g708_bitmapWallSet_DoorFrameLeft_D1C, g170_Frame_DoorFrameLeft_D1C);
+		f100_drawWallSetBitmap(_g710_bitmapWallSet_DoorFrameRight_D1C, g171_Frame_DoorFrameRight_D1C);
+		if (((Door*)_vm->_dungeonMan->_g284_thingData[k0_DoorThingType])[squareAspect[k3_DoorThingIndexAspect]].hasButton()) {
+			f110_drawDoorButton(_vm->M0_indexToOrdinal(k0_DoorButton), k3_viewDoorButton_D1C);
+		}
+		f111_drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
+					  _g695_doorNativeBitmapIndex_Front_D1LCR, M75_bitmapByteCount(96, 88), k2_ViewDoorOrnament_D1LCR, &g186_doorFrame_D1C);
+		order = k0x0349_CellOrder_DoorPass2_FrontLeft_FrontRight;
+		goto T0124018;
+	case k2_ElementTypePit:
+		f104_drawFloorPitOrStairsBitmap(squareAspect[k2_PitInvisibleAspect] ? k60_floorPitInvisibleD1C_GraphicIndice : k54_FloorPit_D1C_GraphicIndice, g147_FrameFloorPit_D1C);
+	case k5_ElementTypeTeleporter:
+	case k1_CorridorElemType:
+T0124017:
+		order = k0x3421_CellOrder_BackLeft_BackRight_FrontLeft_FrontRight;
+/* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
+		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k7_viewFloor_D1C); 
+		f112_drawCeilingPit(k66_ceilingPitD1C_GraphicIndice, &g156_FrameFloorPit_D1C, posX, posY, false);
+T0124018:
+		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k6_ViewSquare_D1C, order);
+	}
+	if ((squareAspect[k0_ElemAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
+		f113_drawField(&g188_FieldAspects[k6_ViewSquare_D1C], g163_FrameWalls[k6_ViewSquare_D1C]._box);
 	}
 }
 
@@ -1757,26 +2063,51 @@ void DisplayMan::f125_drawSquareD0L(direction dir, int16 posX, int16 posY) {
 }
 
 void DisplayMan::f126_drawSquareD0R(direction dir, int16 posX, int16 posY) {
-	uint16 squareAspect[5];
-	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
-	switch (squareAspect[0]) {
-	case k18_StairsSideElemType:
-		if (squareAspect[k2_StairsUpAspect])
-			f105_drawFloorPitOrStairsBitmapFlippedHorizontally(_g692_stairsNativeBitmapIndex_Side_D0L, g139_FrameStairsSide_D0R);
+	int16 squareAspect[5];
+
+
+	_vm->_dungeonMan->f172_setSquareAspect((uint16 *)squareAspect, dir, posX, posY);
+	switch (squareAspect[k0_ElemAspect]) {
+	case k18_ElementTypeStairsSide:
+		f105_drawFloorPitOrStairsBitmapFlippedHorizontally(_g692_stairsNativeBitmapIndex_Side_D0L, g139_FrameStairsSide_D0R);
 		return;
-	case k0_WallElemType:
+	case k2_ElementTypePit:
+		f105_drawFloorPitOrStairsBitmapFlippedHorizontally(squareAspect[k2_PitInvisibleAspect] ? k61_floorPitInvisibleD0L_GraphicIndice
+														   : k55_FloorPit_D0L_GraphicIndice, g151_FrameFloorPit_D0R);
+	case k1_CorridorElemType:
+	case k16_DoorSideElemType:
+	case k5_ElementTypeTeleporter:
+		f112_drawCeilingPit(k67_ceilingPitD0L_grahicIndice, &g160_FrameFloorPit_D0R, posX, posY, true);
+		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k11_ViewSquare_D0R, k0x0001_CellOrder_BackLeft);
+		break;
+	case k0_ElementTypeWall:
 		f100_drawWallSetBitmap(_g702_bitmapWallSet_Wall_D0R, g163_FrameWalls[k11_ViewSquare_D0R]);
-		break;
-	default:
-		break;
+		return;
+	}
+	if ((squareAspect[k0_ElemAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
+		f113_drawField(&g188_FieldAspects[k11_ViewSquare_D0R], g163_FrameWalls[k11_ViewSquare_D0R]._box);
 	}
 }
 
 void DisplayMan::f127_drawSquareD0C(direction dir, int16 posX, int16 posY) {
-	uint16 squareAspect[5];
-	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
-	switch (squareAspect[0]) {
-	case k19_StairsFrontElemType:
+	static Box g108_BoxThievesEyeHoleInDoorFrame(0, 31, 19, 113); // @ G0108_s_Graphic558_Box_ThievesEye_HoleInDoorFrame 
+
+	int16 squareAspect[5];
+
+	_vm->_dungeonMan->f172_setSquareAspect((uint16*) squareAspect, dir, posX, posY);
+	switch (squareAspect[k0_ElemAspect]) {
+	case k16_DoorSideElemType:
+		if (_vm->_championMan->_g407_party._event73Count_ThievesEye) {
+			memmove(_g74_tmpBitmap, _g709_bitmapWallSet_DoorFrameFront, 32 * 123);
+			f132_blitToBitmap(f489_getNativeBitmapOrGraphic(k41_holeInWall_GraphicIndice),
+				_g74_tmpBitmap, g108_BoxThievesEyeHoleInDoorFrame, g172_Frame_DoorFrame_D0C._box._x1 - g106_BoxThievesEye_ViewPortVisibleArea._x1,
+							  0, 48, 16, k9_ColorGold, 95, 123);
+			f100_drawWallSetBitmap(_g74_tmpBitmap, g172_Frame_DoorFrame_D0C);
+		} else {
+			f100_drawWallSetBitmap(_g709_bitmapWallSet_DoorFrameFront, g172_Frame_DoorFrame_D0C);
+		}
+		break;
+	case k19_ElementTypeStaisFront:
 		if (squareAspect[k2_StairsUpAspect]) {
 			f104_drawFloorPitOrStairsBitmap(_g681_stairsNativeBitmapIndex_Up_Front_D0C_Left, g119_FrameStairsUpFront_D0L);
 			f105_drawFloorPitOrStairsBitmapFlippedHorizontally(_g681_stairsNativeBitmapIndex_Up_Front_D0C_Left, g120_FrameStairsUpFront_D0R);
@@ -1785,8 +2116,13 @@ void DisplayMan::f127_drawSquareD0C(direction dir, int16 posX, int16 posY) {
 			f105_drawFloorPitOrStairsBitmapFlippedHorizontally(_g688_stairsNativeBitmapIndex_Down_Front_D0C_Left, g131_FrameStairsDownFront_D0R);
 		}
 		break;
-	default:
-		break;
+	case k2_ElementTypePit:
+		f104_drawFloorPitOrStairsBitmap(squareAspect[k2_PitInvisibleAspect] ? k62_flootPitInvisibleD0C_graphicIndice : k56_FloorPit_D0C_GraphicIndice, g150_FrameFloorPit_D0C);
+	}
+	f112_drawCeilingPit(k68_ceilingPitD0C_graphicIndice, &g159_FrameFloorPit_D0C, posX, posY, false);
+	f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k9_ViewSquare_D0C, k0x0021_CellOrder_BackLeft_BackRight);
+	if ((squareAspect[k0_ElemAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
+		f113_drawField(&g188_FieldAspects[k9_ViewSquare_D0C], g163_FrameWalls[k9_ViewSquare_D0C]._box);
 	}
 }
 
@@ -2086,8 +2422,6 @@ byte g190_WallOrnDerivedBitmapIndexIncrement[12] = { // @ G0190_auc_Graphic558_W
 	4,   /* D1L Right */
 	4}; /* D1R Left */
 
-byte g198_PalChangesDoorButtonAndWallOrn_D3[16] = {0, 0, 120, 30, 40, 30, 0, 60, 30, 90, 100, 110, 0, 10, 0, 20}; // @ G0198_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D3
-byte g199_PalChangesDoorButtonAndWallOrn_D2[16] = {0, 120, 10, 30, 40, 30, 60, 70, 50, 90, 100, 110, 0, 20, 140, 130}; // @ G0199_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D2
 
 byte g204_UnreadableInscriptionBoxY2[15] = { // @ G0204_auc_Graphic558_UnreadableInscriptionBoxY2
 	/* { Y for 1 line, Y for 2 lines, Y for 3 lines } */
@@ -2100,141 +2434,168 @@ byte g204_UnreadableInscriptionBoxY2[15] = { // @ G0204_auc_Graphic558_Unreadabl
 Box g109_BoxChampionPortraitOnWall = Box(96, 127, 35, 63); // G0109_s_Graphic558_Box_ChampionPortraitOnWall
 
 bool DisplayMan::f107_isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex) {
-	byte *bitmapGreen;
-	byte *bitmapRed;
-	int16 coordinateSetOffset;
-	bool flipHorizontal;
-	bool isInscription;
-	bool isAlcove;
-	Frame frame;
-	unsigned char inscriptionString[70];
+#define AP0116_i_CharacterCount    wallOrnOrd
+#define AP0116_i_WallOrnamentIndex wallOrnOrd
+	int16 L0088_i_Multiple;
+#define AL0088_i_NativeBitmapIndex       L0088_i_Multiple
+#define AL0088_i_UnreadableTextLineCount L0088_i_Multiple
+	int16 L0089_i_Multiple;
+#define AL0089_i_WallOrnamentCoordinateSetIndex L0089_i_Multiple
+#define AL0089_i_FountainOrnamentIndex          L0089_i_Multiple
+#define AL0089_i_PixelWidth                     L0089_i_Multiple
+#define AL0089_i_X                              L0089_i_Multiple
+
+	uint16 *AL0090_puc_CoordinateSet = nullptr;
+
+	byte* L0091_puc_Multiple;
+#define AL0091_puc_Character     L0091_puc_Multiple
+#define AL0091_puc_Bitmap        L0091_puc_Multiple
+	byte* L0092_puc_Bitmap;
+	int16 L0093_i_CoordinateSetOffset;
+	bool L0094_B_FlipHorizontal;
+	bool L0095_B_IsInscription;
+	bool L0096_B_IsAlcove;
+	int16 L0097_i_TextLineIndex;
+	uint16 tmp[6];
+	byte L0099_auc_InscriptionString[70];
 
 
 	if (wallOrnOrd) {
-		int16 var_X;
-		int16 wallOrnIndex = wallOrnOrd - 1;
-		int16 nativeBitmapIndex = _g101_currMapWallOrnInfo[wallOrnIndex][k0_NativeBitmapIndex];
+		wallOrnOrd--;
+		AL0088_i_NativeBitmapIndex = _g101_currMapWallOrnInfo[AP0116_i_WallOrnamentIndex][k0_NativeBitmapIndex];
 
-		uint16 *coordinateSetA = g205_WallOrnCoordSets[_g101_currMapWallOrnInfo[wallOrnIndex][k1_CoordinateSet]][viewWallIndex];
-		isAlcove = _vm->_dungeonMan->f149_isWallOrnAnAlcove(wallOrnIndex);
-		isInscription = (wallOrnIndex == _vm->_dungeonMan->_g265_currMapInscriptionWallOrnIndex);
-		if (isInscription) {
-			_vm->_dungeonMan->f168_decodeText((char*)inscriptionString, _g290_inscriptionThing, k0_TextTypeInscription);
+		AL0090_puc_CoordinateSet = g205_WallOrnCoordSets[AL0089_i_WallOrnamentCoordinateSetIndex = 
+			_g101_currMapWallOrnInfo[AP0116_i_WallOrnamentIndex][k1_CoordinateSet]][viewWallIndex];
+
+		L0096_B_IsAlcove = _vm->_dungeonMan->f149_isWallOrnAnAlcove(AP0116_i_WallOrnamentIndex);
+		if (L0095_B_IsInscription = (AP0116_i_WallOrnamentIndex == _vm->_dungeonMan->_g265_currMapInscriptionWallOrnIndex)) {
+			_vm->_dungeonMan->f168_decodeText((char *)L0099_auc_InscriptionString, _g290_inscriptionThing, k0_TextTypeInscription);
 		}
-
 		if (viewWallIndex >= k10_ViewWall_D1L_RIGHT) {
 			if (viewWallIndex == k12_ViewWall_D1C_FRONT) {
-				if (isInscription) {
-					Frame &D1CFrame = g163_FrameWalls[k6_ViewSquare_D1C];
-					f132_blitToBitmap(_g700_bitmapWallSet_Wall_D1LCR, _g296_bitmapViewport, g202_BoxWallPatchBehindInscription, 94, 28,
-									  D1CFrame._srcByteWidth, k112_byteWidthViewport, k255_ColorNoTransparency);
-
-					unsigned char *string = inscriptionString;
-					bitmapRed = _bitmaps[k120_InscriptionFontIndice];
-					int16 textLineIndex = 0;
+				if (L0095_B_IsInscription) {
+					f132_blitToBitmap(_g700_bitmapWallSet_Wall_D1LCR,_g296_bitmapViewport,
+									  g202_BoxWallPatchBehindInscription, 94, 28,
+									  g163_FrameWalls[k6_ViewSquare_D1C]._srcByteWidth,
+									  k112_byteWidthViewport, k255_ColorNoTransparency, g163_FrameWalls[k6_ViewSquare_D1C]._srcHeight, k136_heightViewport);
+					byte *AL0090_puc_String = L0099_auc_InscriptionString;
+					L0092_puc_Bitmap = f489_getNativeBitmapOrGraphic(k120_InscriptionFont);
+					L0097_i_TextLineIndex = 0;
 					do {
-						int16 characterCount = 0;
-						unsigned char *character = string;
-						while (*character++ < 0x80) {
-							characterCount++;
+						AP0116_i_CharacterCount = 0;
+						AL0091_puc_Character = AL0090_puc_String;
+						while (*AL0091_puc_Character++ < 128) { /* Hexadecimal: 0x80 (Megamax C does not support hexadecimal character constants) */
+							AP0116_i_CharacterCount++;
 						}
-						frame._box._x2 = (frame._box._x1 = 112 - (characterCount * 4)) + 7;
-						frame._box._y1 = (frame._box._y2 = g203_InscriptionLineY[textLineIndex++]) - 7;
-						while (characterCount--) {
-							f132_blitToBitmap(bitmapRed, _g296_bitmapViewport, frame._box, (*string++) * 8, 0, 144, k112_byteWidthViewport, k10_ColorFlesh);
-							frame._box._x1 += 8;
-							frame._box._x2 += 8;
+						Frame L0098_s_Frame;
+						L0098_s_Frame._box._x2 = (L0098_s_Frame._box._x1 = 112 - (AP0116_i_CharacterCount << 2)) + 7;
+						L0098_s_Frame._box._y1 = (L0098_s_Frame._box._y2 = g203_InscriptionLineY[L0097_i_TextLineIndex++]) - 7;
+						while (AP0116_i_CharacterCount--) {
+							f132_blitToBitmap(L0092_puc_Bitmap, _g296_bitmapViewport, L0098_s_Frame._box,
+											  *AL0090_puc_String++ << 3, 0, 144, k112_byteWidthViewport, k10_ColorFlesh, 8, k136_heightViewport);
+							L0098_s_Frame._box._x1 += 8;
+							L0098_s_Frame._box._x2 += 8;
 						}
-					} while (*string++ != 0x81);
-					return isAlcove;
+					} while (*AL0090_puc_String++ != 129); /* Hexadecimal: 0x81 (Megamax C does not support hexadecimal character constants) */
+					goto T0107031;
 				}
-				nativeBitmapIndex++;
+				AL0088_i_NativeBitmapIndex++;
+				_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._x1 = AL0090_puc_CoordinateSet[0];
+				_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._x2 = AL0090_puc_CoordinateSet[1];
+				_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._y1 = AL0090_puc_CoordinateSet[2];
+				_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._y2 = AL0090_puc_CoordinateSet[3];
 
-				_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._x1 = coordinateSetA[0];
-				_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._x2 = coordinateSetA[1];
-				_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._y1 = coordinateSetA[2];
-				_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._y2 = coordinateSetA[3];
-
-				_vm->_dungeonMan->_g286_isFacingAlcove = isAlcove;
-				_vm->_dungeonMan->_g287_isFacingViAltar = (wallOrnIndex == _g266_currMapViAltarIndex);
+				_vm->_dungeonMan->_g286_isFacingAlcove = L0096_B_IsAlcove;
+				_vm->_dungeonMan->_g287_isFacingViAltar =
+					(AP0116_i_WallOrnamentIndex == _g266_currMapViAltarIndex);
 				_vm->_dungeonMan->_g288_isFacingFountain = false;
-				for (int16 fountainOrnIndex = 0; fountainOrnIndex < k1_FountainOrnCount; ++fountainOrnIndex) {
-					if (_g268_currMapFountainOrnIndices[fountainOrnIndex] == wallOrnIndex) {
+				for (AL0089_i_FountainOrnamentIndex = 0; AL0089_i_FountainOrnamentIndex < k1_FountainOrnCount; AL0089_i_FountainOrnamentIndex++) {
+					if (_g268_currMapFountainOrnIndices[AL0089_i_FountainOrnamentIndex] == AP0116_i_WallOrnamentIndex) {
 						_vm->_dungeonMan->_g288_isFacingFountain = true;
 						break;
 					}
 				}
 			}
-			bitmapGreen = _bitmaps[nativeBitmapIndex];
+			AL0091_puc_Bitmap = f489_getNativeBitmapOrGraphic(AL0088_i_NativeBitmapIndex);
 			if (viewWallIndex == k11_ViewWall_D1R_LEFT) {
-				f99_copyBitmapAndFlipHorizontal(bitmapGreen, _g74_tmpBitmap, coordinateSetA[4], coordinateSetA[5]);
-				bitmapGreen = _g74_tmpBitmap;
+				f99_copyBitmapAndFlipHorizontal(AL0091_puc_Bitmap, _g74_tmpBitmap, AL0090_puc_CoordinateSet[4], AL0090_puc_CoordinateSet[5]);
+				AL0091_puc_Bitmap = _g74_tmpBitmap;
 			}
-			var_X = 0;
+			AL0089_i_X = 0;
 		} else {
-			coordinateSetOffset = 0;
-			uint16 *coordSetB;
-			int16 wallOrnCoordSetIndex = _g101_currMapWallOrnInfo[wallOrnIndex][k1_CoordinateSet];
-			flipHorizontal = (viewWallIndex == k6_ViewWall_D2R_LEFT) || (viewWallIndex == k1_ViewWall_D3R_LEFT);
-			if (flipHorizontal) {
-				coordSetB = g205_WallOrnCoordSets[wallOrnCoordSetIndex][k11_ViewWall_D1R_LEFT];
-			} else if ((viewWallIndex == k5_ViewWall_D2L_RIGHT) || (viewWallIndex == k0_ViewWall_D3L_RIGHT)) {
-				coordSetB = g205_WallOrnCoordSets[wallOrnCoordSetIndex][k10_ViewWall_D1L_RIGHT];
+			uint16 *AL0091_puc_CoordinateSet;
+			L0093_i_CoordinateSetOffset = 0;
+			if (L0094_B_FlipHorizontal = (viewWallIndex == k6_ViewWall_D2R_LEFT) || (viewWallIndex == k1_ViewWall_D3R_LEFT)) {
+				AL0091_puc_CoordinateSet = g205_WallOrnCoordSets[AL0089_i_WallOrnamentCoordinateSetIndex][k11_ViewWall_D1R_LEFT];
 			} else {
-				nativeBitmapIndex++;
-				coordSetB = g205_WallOrnCoordSets[wallOrnCoordSetIndex][k12_ViewWall_D1C_FRONT];
+				if ((viewWallIndex == k5_ViewWall_D2L_RIGHT) || (viewWallIndex == k0_ViewWall_D3L_RIGHT)) {
+					AL0091_puc_CoordinateSet = g205_WallOrnCoordSets[AL0089_i_WallOrnamentCoordinateSetIndex][k10_ViewWall_D1L_RIGHT];
+				} else {
+					AL0088_i_NativeBitmapIndex++;
+					AL0091_puc_CoordinateSet = g205_WallOrnCoordSets[AL0089_i_WallOrnamentCoordinateSetIndex][k12_ViewWall_D1C_FRONT];
+					if (viewWallIndex == k7_ViewWall_D2L_FRONT) {
+						L0093_i_CoordinateSetOffset = 6;
+					} else {
+						if (viewWallIndex == k9_ViewWall_D2R_FRONT) {
+							L0093_i_CoordinateSetOffset = -6;
+						}
+					}
+				}
+			}
+			AL0089_i_PixelWidth = (AL0090_puc_CoordinateSet + L0093_i_CoordinateSetOffset)[1] - (AL0090_puc_CoordinateSet + L0093_i_CoordinateSetOffset)[0];
+			if (!f491_isDerivedBitmapInCache(AP0116_i_WallOrnamentIndex = k4_DerivedBitmapFirstWallOrnament + 
+				(AP0116_i_WallOrnamentIndex << 2) + g190_WallOrnDerivedBitmapIndexIncrement[viewWallIndex])) {
+				L0092_puc_Bitmap = f489_getNativeBitmapOrGraphic(AL0088_i_NativeBitmapIndex);
+				f129_blitToBitmapShrinkWithPalChange(L0092_puc_Bitmap, f492_getDerivedBitmap(AP0116_i_WallOrnamentIndex),
+													 AL0091_puc_CoordinateSet[4] << 1,
+													 AL0091_puc_CoordinateSet[5], AL0089_i_PixelWidth + 1,
+													 AL0090_puc_CoordinateSet[5],
+													 (viewWallIndex <= k4_ViewWall_D3R_FRONT) ? g198_PalChangesDoorButtonAndWallOrn_D3 : g199_PalChangesDoorButtonAndWallOrn_D2);
+				f493_addDerivedBitmap(AP0116_i_WallOrnamentIndex);
+			}
+			AL0091_puc_Bitmap = f492_getDerivedBitmap(AP0116_i_WallOrnamentIndex);
+			if (L0094_B_FlipHorizontal) {
+				f99_copyBitmapAndFlipHorizontal(AL0091_puc_Bitmap, _g74_tmpBitmap, AL0090_puc_CoordinateSet[4], AL0090_puc_CoordinateSet[5]);
+				AL0091_puc_Bitmap = _g74_tmpBitmap;
+				AL0089_i_X = 15 - (AL0089_i_X & 0x000F);
+			} else {
 				if (viewWallIndex == k7_ViewWall_D2L_FRONT) {
-					coordinateSetOffset = 6;
-				} else if (viewWallIndex == k9_ViewWall_D2R_FRONT) {
-					coordinateSetOffset = -6;
+					AL0089_i_X -= AL0090_puc_CoordinateSet[1] - AL0090_puc_CoordinateSet[0];
+				} else {
+					AL0089_i_X = 0;
 				}
 			}
-			int16 pixelWidth = (coordinateSetA + coordinateSetOffset)[1] - (coordinateSetA + coordinateSetOffset)[0];
-			f129_blitToBitmapShrinkWithPalChange(_bitmaps[nativeBitmapIndex], _g74_tmpBitmap, coordSetB[4] << 1, coordSetB[5], pixelWidth + 1, coordinateSetA[5],
-				(viewWallIndex <= k4_ViewWall_D3R_FRONT) ? g198_PalChangesDoorButtonAndWallOrn_D3 : g199_PalChangesDoorButtonAndWallOrn_D2);
-			bitmapGreen = _bitmaps[nativeBitmapIndex];
-			var_X = pixelWidth;
-			if (flipHorizontal) {
-				f99_copyBitmapAndFlipHorizontal(bitmapGreen, _g74_tmpBitmap, coordSetB[4], coordSetB[5]);
-				bitmapGreen = _g74_tmpBitmap;
-				var_X = 15 - (var_X & 0xF);
-			} else if (viewWallIndex == k7_ViewWall_D2L_FRONT) {
-				var_X -= coordinateSetA[1] - coordinateSetA[0];
-			} else {
-				var_X = 0;
-			}
 		}
-		if (isInscription) {
-			unsigned char *string = inscriptionString;
-			int16 unreadableTextLineCount = 0;
+		if (L0095_B_IsInscription) {
+			byte *AL0090_puc_String = L0099_auc_InscriptionString;
+			AL0088_i_UnreadableTextLineCount = 0;
 			do {
-				while (*string < 0x80) {
-					string++;
+				while (*AL0090_puc_String < 128) { /* Hexadecimal: 0x80 (Megamax C does not support hexadecimal character constants) */
+					AL0090_puc_String++;
 				}
-				unreadableTextLineCount++;
-			} while (*string++ != 0x81);
-
-			if (unreadableTextLineCount < 4) {
-				frame._box._x1 = coordinateSetA[0];
-				frame._box._x2 = coordinateSetA[1];
-				frame._box._y1 = coordinateSetA[2];
-				frame._box._y2 = coordinateSetA[3];
-				frame._srcByteWidth = coordinateSetA[4];
-				frame._srcHeight = coordinateSetA[5];
-
-				coordinateSetA = (uint16*)&frame._box;
-
-				coordinateSetA[3] = g204_UnreadableInscriptionBoxY2[g190_WallOrnDerivedBitmapIndexIncrement[viewWallIndex] * 3 + unreadableTextLineCount - 1];
+				AL0088_i_UnreadableTextLineCount++;
+			} while (*AL0090_puc_String++ != 129); /* Hexadecimal: 0x81 (Megamax C does not support hexadecimal character constants) */
+			if (AL0088_i_UnreadableTextLineCount < 4) {
+				for (uint16 i = 0; i < 6; ++i)
+					tmp[i] = AL0090_puc_CoordinateSet[i];
+				AL0090_puc_CoordinateSet = tmp;
+				AL0090_puc_CoordinateSet[3] = g204_UnreadableInscriptionBoxY2[g190_WallOrnDerivedBitmapIndexIncrement[viewWallIndex] * 3 + AL0088_i_UnreadableTextLineCount - 1];
 			}
 		}
-		f132_blitToBitmap(bitmapGreen, _g296_bitmapViewport, *(Box*)coordinateSetA, var_X, 0, coordinateSetA[4], k112_byteWidthViewport, k10_ColorFlesh);
-
-		if ((viewWallIndex == k12_ViewWall_D1C_FRONT) && _g289_championPortraitOrdinal--) {
-			Box &box = g109_BoxChampionPortraitOnWall;
-			f132_blitToBitmap(_bitmaps[k26_ChampionPortraitsIndice], _g296_bitmapViewport, box, (_g289_championPortraitOrdinal & 0x7) << 5,
-				(_g289_championPortraitOrdinal >> 3) * 29, 128, k112_byteWidthViewport, k1_ColorDarkGary);
+		f132_blitToBitmap(AL0091_puc_Bitmap, _g296_bitmapViewport,
+			*(Box*)AL0090_puc_CoordinateSet, AL0089_i_X, 0,
+						  AL0090_puc_CoordinateSet[4], k112_byteWidthViewport, k10_ColorFlesh, AL0090_puc_CoordinateSet[5], k136_heightViewport);
+/* BUG0_05 A champion portrait sensor on a wall square is visible on all sides of the wall. 
+If there is another sensor with a wall ornament on one side of the wall then the champion portrait is drawn over that wall ornament */
+		if ((viewWallIndex == k12_ViewWall_D1C_FRONT) && _g289_championPortraitOrdinal--) { 
+/* A portrait is 32x29 pixels */
+			f132_blitToBitmap(f489_getNativeBitmapOrGraphic(k26_ChampionPortraitsIndice),
+				_g296_bitmapViewport, g109_BoxChampionPortraitOnWall,
+							  (_g289_championPortraitOrdinal & 0x0007) << 5,
+							  (_g289_championPortraitOrdinal >> 3) * 29, 128, k112_byteWidthViewport, k1_ColorDarkGary, 87, k136_heightViewport); 
 		}
-		return isAlcove;
+T0107031:
+		return L0096_B_IsAlcove;
 	}
 	return false;
 }

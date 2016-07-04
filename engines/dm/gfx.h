@@ -57,6 +57,11 @@ namespace DM {
 #define k1_ViewDoorOrnament_D2LCR 1 // @ C1_VIEW_DOOR_ORNAMENT_D2LCR
 #define k2_ViewDoorOrnament_D1LCR 2 // @ C2_VIEW_DOOR_ORNAMENT_D1LCR
 
+#define k0_viewDoorButton_D3R 0 // @ C0_VIEW_DOOR_BUTTON_D3R
+#define k1_viewDoorButton_D3C 1 // @ C1_VIEW_DOOR_BUTTON_D3C
+#define k2_viewDoorButton_D2C 2 // @ C2_VIEW_DOOR_BUTTON_D2C
+#define k3_viewDoorButton_D1C 3 // @ C3_VIEW_DOOR_BUTTON_D1C
+
 #define k0x0001_MaskDoorInfo_CraturesCanSeeThrough 0x0001 // @ MASK0x0001_CREATURES_CAN_SEE_THROUGH   
 #define k0x0002_MaskDoorInfo_ProjectilesCanPassThrough 0x0002 // @ MASK0x0002_PROJECTILES_CAN_PASS_THROUGH
 #define k0x0004_MaskDoorInfo_Animated 0x0004 // @ MASK0x0004_ANIMATED                    
@@ -222,6 +227,7 @@ enum GraphicIndice {
 	k38_BorderPartyFireshieldIndice = 38, // @ C038_GRAPHIC_BORDER_PARTY_FIRESHIELD
 	k39_BorderPartySpellshieldIndice = 39, // @ C039_GRAPHIC_BORDER_PARTY_SPELLSHIELD
 	k40_PanelResurectReincaranteIndice = 40, // @ C040_GRAPHIC_PANEL_RESURRECT_REINCARNATE 
+	k41_holeInWall_GraphicIndice = 41, // @ C041_GRAPHIC_HOLE_IN_WALL
 	k42_ObjectIcons_000_TO_031 = 42, // @ C042_GRAPHIC_OBJECT_ICONS_000_TO_031
 	k43_ObjectIcons_032_TO_063 = 43, // @ C043_GRAPHIC_OBJECT_ICONS_032_TO_063
 	k44_ObjectIcons_064_TO_095 = 44, // @ C044_GRAPHIC_OBJECT_ICONS_064_TO_095
@@ -237,11 +243,24 @@ enum GraphicIndice {
 	k54_FloorPit_D1C_GraphicIndice = 54, // @ C054_GRAPHIC_FLOOR_PIT_D1C
 	k55_FloorPit_D0L_GraphicIndice = 55, // @ C055_GRAPHIC_FLOOR_PIT_D0L
 	k56_FloorPit_D0C_GraphicIndice = 56, // @ C056_GRAPHIC_FLOOR_PIT_D0C
+	k57_FloorPir_Invisible_D2L_GraphicIndice = 57, // @ C057_GRAPHIC_FLOOR_PIT_INVISIBLE_D2L
+	k58_FloorPit_invisible_D2C_GraphicIndice = 58, // @ C058_GRAPHIC_FLOOR_PIT_INVISIBLE_D2C
+	k59_floorPit_invisible_D1L_GraphicIndice = 59, // @ C059_GRAPHIC_FLOOR_PIT_INVISIBLE_D1L
+	k60_floorPitInvisibleD1C_GraphicIndice = 60, // @ C060_GRAPHIC_FLOOR_PIT_INVISIBLE_D1C
+	k61_floorPitInvisibleD0L_GraphicIndice = 61, // @ C061_GRAPHIC_FLOOR_PIT_INVISIBLE_D0L
+	k62_flootPitInvisibleD0C_graphicIndice = 62, // @ C062_GRAPHIC_FLOOR_PIT_INVISIBLE_D0C
+	k63_ceilingPit_D2L_GraphicIndice = 63, // @ C063_GRAPHIC_CEILING_PIT_D2L
+	k64_ceilingPitD2C_GraphicIndice = 64, // @ C064_GRAPHIC_CEILING_PIT_D2C
+	k65_ceilingPitD1L_GraphicIndice = 65, // @ C065_GRAPHIC_CEILING_PIT_D1L
+	k66_ceilingPitD1C_GraphicIndice = 66, // @ C066_GRAPHIC_CEILING_PIT_D1C
+	k67_ceilingPitD0L_grahicIndice = 67, // @ C067_GRAPHIC_CEILING_PIT_D0L
+	k68_ceilingPitD0C_graphicIndice = 68, // @ C068_GRAPHIC_CEILING_PIT_D0C
 	k69_FieldMask_D3R_GraphicIndice = 69, // @ C069_GRAPHIC_FIELD_MASK_D3R
 	k73_FieldTeleporterGraphicIndice = 73, // @ C073_GRAPHIC_FIELD_TELEPORTER
 	k120_InscriptionFontIndice = 120, // @ C120_GRAPHIC_INSCRIPTION_FONT
 	k241_FloorOrn_15_D3L_footprints = 241, // @ C241_GRAPHIC_FLOOR_ORNAMENT_15_D3L_FOOTPRINTS
 	k301_DoorMaskDestroyedIndice = 301, // @ C301_GRAPHIC_DOOR_MASK_DESTROYED
+	k315_firstDoorButton_GraphicIndice = 315, // @ C315_GRAPHIC_FIRST_DOOR_BUTTON
 	k316_FirstProjectileGraphicIndice = 316, // @ C316_GRAPHIC_FIRST_PROJECTILE 
 	k348_FirstExplosionGraphicIndice = 348, // @ C348_GRAPHIC_FIRST_EXPLOSION
 	k351_FirstExplosionPatternGraphicIndice = 351, // @ C351_GRAPHIC_FIRST_EXPLOSION_PATTERN 
@@ -590,6 +609,8 @@ public:
 	void loadPalette(uint16 *palette);
 	void f461_allocateFlippedWallBitmaps(); // @ F0461_START_AllocateFlippedWallBitmaps
 	void f102_drawDoorBitmap(Frame *frame);// @ F0102_DUNGEONVIEW_DrawDoorBitmap
+	void f103_drawDoorFrameBitmapFlippedHorizontally(byte *bitmap, Frame *frame); // @ F0103_DUNGEONVIEW_DrawDoorFrameBitmapFlippedHorizontally
+	void f110_drawDoorButton(int16 doorButtonOrdinal, int16 viewDoorButtonIndex); // @ F0110_DUNGEONVIEW_DrawDoorButton
 
 	/// Gives the width of an IMG0 type item
 	uint16 getPixelWidth(uint16 index);
@@ -602,6 +623,8 @@ public:
 	void f111_drawDoor(uint16 doorThingIndex, uint16 doorState, int16 *doorNativeBitmapIndices, int16 byteCount,
 					   int16 viewDoorOrnIndex, DoorFrames *doorFrames); // @ F0111_DUNGEONVIEW_DrawDoor
 	void f109_drawDoorOrnament(int16 doorOrnOdinal, int16 viewDoorOrnIndex); // @ F0109_DUNGEONVIEW_DrawDoorOrnament
+	void f112_drawCeilingPit(int16 nativeBitmapIndex, Frame *frame, int16 mapX, int16 mapY, bool flipHorizontal); // @ F0112_DUNGEONVIEW_DrawCeilingPit
+
 
 
 	/* srcHeight and destHeight are not necessary for blitting, only error checking, thus they are defaulted for existing code which 

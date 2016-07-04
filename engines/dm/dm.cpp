@@ -88,6 +88,10 @@ uint16 M75_bitmapByteCount(uint16 pixelWidth, uint16 height) {
 	return pixelWidth / 2 * height;
 }
 
+uint16 M21_normalizeModulo4(uint16 val) {
+	return val & 3;
+}
+
 DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 // Do not load data files
 // Do not initialize graphics here

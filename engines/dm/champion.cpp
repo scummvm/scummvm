@@ -427,6 +427,28 @@ void ChampionMan::f301_addObjectInSlot(ChampionIndex champIndex, Thing thing, Ch
 		champ->setAttributeFlag(k0x4000_ChampionAttributeViewport, true);
 }
 
+int16 ChampionMan::f315_getScentOrdinal(int16 mapX, int16 mapY) {
+	uint16 searchedScentRedEagle;
+	int16 scentIndex;
+	Scent* scent;
+	Scent searchedScent;
+
+
+	if (scentIndex = _g407_party._scentCount) {
+		searchedScent.setMapX(mapX);
+		searchedScent.setMapY(mapY);
+		searchedScent.setMapIndex(_vm->_dungeonMan->_g272_currMapIndex);
+		searchedScentRedEagle = searchedScent.toUint16();
+		scent = &_g407_party._scents[scentIndex--];
+		do {
+			if ((*(--scent)).toUint16() == searchedScentRedEagle) {
+				return _vm->M0_indexToOrdinal(scentIndex);
+			}
+		} while (scentIndex--);
+	}
+	return 0;
+}
+
 ChampionIndex ChampionMan::f285_getIndexInCell(ViewCell cell) {
 	for (uint16 i = 0; i < _g305_partyChampionCount; ++i) {
 		if ((_gK71_champions[i]._cell == cell) && _gK71_champions[i]._currHealth)

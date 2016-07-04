@@ -55,6 +55,8 @@ public:
 	void setMapX(uint16 val) { _scent = (_scent & ~0x1F) & (val & 0x1F); }
 	void setMapY(uint16 val) { _scent = (_scent & ~(0x1F << 5)) & (val & 0x1F); }
 	void setMapIndex(uint16 val) { _scent = (_scent & ~(0x1F << 10)) & (val & 0x3F); }
+
+	uint16 toUint16() { return _scent; }
 }; // @ SCENT
 
 class Party {
@@ -466,6 +468,8 @@ public:
 	bool f295_hasObjectIconInSlotBoxChanged(int16 slotBoxIndex, Thing thing); // @ F0295_CHAMPION_HasObjectIconInSlotBoxChanged
 	void f296_drawChangedObjectIcons(); // @ F0296_CHAMPION_DrawChangedObjectIcons
 	void f301_addObjectInSlot(ChampionIndex champIndex, Thing thing, ChampionSlot slotIndex); // @ F0301_CHAMPION_AddObjectInSlot
+	int16 f315_getScentOrdinal(int16 mapX, int16 mapY); // @ F0315_CHAMPION_GetScentOrdinal
+
 };
 
 

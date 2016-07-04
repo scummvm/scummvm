@@ -30,6 +30,7 @@
 
 #include "dungeonman.h"
 #include "timeline.h"
+#include "champion.h"
 
 
 
@@ -512,7 +513,7 @@ byte g236_AdditionalThingCounts[16] = { // @ G0236_auc_Graphic559_AdditionalThin
 	0,    /* Unused */
 	60,   /* Projectile */
 	50    /* Explosion */
-}; 
+};
 
 // this is the number of uint16s the data has to be stored, not the length of the data in dungeon.dat!
 byte g235_ThingDataWordCount[16] = { // @ G0235_auc_Graphic559_ThingDataByteCount
@@ -532,7 +533,7 @@ byte g235_ThingDataWordCount[16] = { // @ G0235_auc_Graphic559_ThingDataByteCoun
 	0,   /* Unused */
 	5,   /* Projectile */
 	2    /* Explosion */
-}; 
+};
 
 const Thing Thing::_none(0); // @ C0xFFFF_THING_NONE
 const Thing Thing::_endOfList(0xFFFE); // @ C0xFFFE_THING_ENDOFLIST
@@ -826,140 +827,154 @@ Thing DungeonMan::f161_getSquareFirstThing(int16 mapX, int16 mapY) {
 }
 
 
-// TODO: get rid of the GOTOs
+// TODO: produce more GOTOs
 void DungeonMan::f172_setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX, int16 mapY) {	// complete, except where marked
-	_vm->_displayMan->_g289_championPortraitOrdinal = 0; // BUG0_75, possible fix
+#define thingType dir
+	byte L0307_uc_Multiple;
+#define square            L0307_uc_Multiple
+#define footprintsAllowed L0307_uc_Multiple
+#define scentOrdinal      L0307_uc_Multiple
+	Sensor* sensor;
+	bool leftRandWallOrnAllowed;
+	int16 L0310_i_Multiple;
+#define frontRandWallOrnAllowed L0310_i_Multiple
+#define sideIndex                      L0310_i_Multiple
+	bool rightRandWallOrnAllowed;
+	int16 thingTypeRedEagle;
+	bool squreIsFakeWall;
+	Thing thing;
+
 
 	for (uint16 i = 0; i < 5; ++i)
 		aspectArray[i] = 0;
 
-	Thing thing = f161_getSquareFirstThing(mapX, mapY);
-	Square square = f151_getSquare(mapX, mapY);
-
-	aspectArray[k0_ElemAspect] = square.getType();
-
-	bool leftOrnAllowed = false;
-	bool rightOrnAllowed = false;
-	bool frontOrnAllowed = false;
-	bool squareIsFakeWall = false;
-	bool footPrintsAllowed = false;
-	switch (square.getType()) {
-	case k0_WallElemType:
+	thing = _vm->_dungeonMan->f161_getSquareFirstThing(mapX, mapY);
+	square = _vm->_dungeonMan->f151_getSquare(mapX, mapY).toByte();
+	switch (aspectArray[k0_ElemAspect] = Square(square).getType()) {
+	case k0_ElementTypeWall:
 		switch (dir) {
 		case kDirNorth:
-			leftOrnAllowed = square.get(k0x0004_WallEastRandOrnAllowed);
-			frontOrnAllowed = square.get(k0x0002_WallSouthRandOrnAllowed);
-			rightOrnAllowed = square.get(k0x0001_WallWestRandOrnAllowed);
+			leftRandWallOrnAllowed = getFlag(square, k0x0004_WallEastRandOrnAllowed);
+			frontRandWallOrnAllowed = getFlag(square, k0x0002_WallSouthRandOrnAllowed);
+			rightRandWallOrnAllowed = getFlag(square, k0x0001_WallWestRandOrnAllowed);
 			break;
 		case kDirEast:
-			leftOrnAllowed = square.get(k0x0002_WallSouthRandOrnAllowed);
-			frontOrnAllowed = square.get(k0x0001_WallWestRandOrnAllowed);
-			rightOrnAllowed = square.get(k0x0008_WallNorthRandOrnAllowed);
+			leftRandWallOrnAllowed = getFlag(square, k0x0002_WallSouthRandOrnAllowed);
+			frontRandWallOrnAllowed = getFlag(square, k0x0001_WallWestRandOrnAllowed);
+			rightRandWallOrnAllowed = getFlag(square, k0x0008_WallNorthRandOrnAllowed);
 			break;
 		case kDirSouth:
-			leftOrnAllowed = square.get(k0x0001_WallWestRandOrnAllowed);
-			frontOrnAllowed = square.get(k0x0008_WallNorthRandOrnAllowed);
-			rightOrnAllowed = square.get(k0x0004_WallEastRandOrnAllowed);
+			leftRandWallOrnAllowed = getFlag(square, k0x0001_WallWestRandOrnAllowed);
+			frontRandWallOrnAllowed = getFlag(square, k0x0008_WallNorthRandOrnAllowed);
+			rightRandWallOrnAllowed = getFlag(square, k0x0004_WallEastRandOrnAllowed);
 			break;
 		case kDirWest:
-			leftOrnAllowed = square.get(k0x0008_WallNorthRandOrnAllowed);
-			frontOrnAllowed = square.get(k0x0004_WallEastRandOrnAllowed);
-			rightOrnAllowed = square.get(k0x0002_WallSouthRandOrnAllowed);
-			break;
-		default:
-			break;
+			leftRandWallOrnAllowed = getFlag(square, k0x0008_WallNorthRandOrnAllowed);
+			frontRandWallOrnAllowed = getFlag(square, k0x0004_WallEastRandOrnAllowed);
+			rightRandWallOrnAllowed = getFlag(square, k0x0002_WallSouthRandOrnAllowed);
 		}
-
+ /* BUG0_75 Multiple champion portraits are drawn (one at a time) then the game crashes. This variable is only
+ reset to 0 when at least one square in the dungeon view is a wall. If the party is in front of a wall with a
+ champion portrait and the next time the dungeon view is drawn there is no wall square in the view and the
+ square in front of the party is a fake wall with a random ornament then the same champion portrait will be
+ drawn again because the variable was not reset to 0. Each time _vm->_displayMan->f107_isDrawnWallOrnAnAlcove
+ draws the portrait, _vm->_displayMan->_g289_championPortraitOrdinal is decremented so that the portait is
+ different each time the dungeon view is drawn until the game crashes */
+		_vm->_displayMan->_g289_championPortraitOrdinal = 0;
+		squreIsFakeWall = false;
 T0172010_ClosedFakeWall:
-		f171_setSquareAspectOrnOrdinals(aspectArray, leftOrnAllowed, frontOrnAllowed, rightOrnAllowed, dir, mapX, mapY, squareIsFakeWall);
-
-		while ((thing != Thing::_endOfList) && (thing.getType() <= k3_SensorThingType)) {
-			int16 sideIndex = (thing.getCell() - dir) & 3;
-			if (sideIndex) {
-				if (thing.getType() == k2_TextstringType) {
-					if (TextString(f156_getThingData(thing)).isVisible()) {
-						aspectArray[sideIndex + 1] = _g265_currMapInscriptionWallOrnIndex + 1;
-						_vm->_displayMan->_g290_inscriptionThing = thing; // BUG0_76
+		_vm->_dungeonMan->f171_setSquareAspectOrnOrdinals(aspectArray,
+														  leftRandWallOrnAllowed, frontRandWallOrnAllowed, rightRandWallOrnAllowed, dir, mapX, mapY, squreIsFakeWall);
+		while ((thing != Thing::_endOfList) && ((thingTypeRedEagle = thing.getType()) <= k3_SensorThingType)) {
+			if (sideIndex = M21_normalizeModulo4(thing.getCell() - dir)) { /* Invisible on the back wall if 0 */
+				sensor = (Sensor*)_vm->_dungeonMan->f156_getThingData(thing);
+				if (thingTypeRedEagle == k2_TextstringType) {
+					if (((TextString*)sensor)->isVisible()) {
+						aspectArray[sideIndex + 1] = _vm->_dungeonMan->_g265_currMapInscriptionWallOrnIndex + 1;
+/* BUG0_76 The same text is drawn on multiple sides of a wall square. The engine stores only a
+single text to draw on a wall in a global variable. Even if different texts are placed on
+differents sides of the wall, the same text is drawn on each affected side */
+						_vm->_displayMan->_g290_inscriptionThing = thing;
 					}
 				} else {
-					Sensor sensor(f156_getThingData(thing));
-					aspectArray[sideIndex + 1] = sensor.getOrnOrdinal();
-					if (sensor.getType() == k127_SensorWallChampionPortrait) {
-						_vm->_displayMan->_g289_championPortraitOrdinal = _vm->M0_indexToOrdinal(sensor.getData());
+					aspectArray[sideIndex + 1] = sensor->getOrnOrdinal();
+					if (sensor->getType() == k127_SensorWallChampionPortrait) {
+						_vm->_displayMan->_g289_championPortraitOrdinal = _vm->M0_indexToOrdinal(sensor->getData());
 					}
 				}
 			}
-			thing = f159_getNextThing(thing);
+			thing = _vm->_dungeonMan->f159_getNextThing(thing);
 		}
-		if (squareIsFakeWall && (_g306_partyMapX != mapX) && (_g307_partyMapY != mapY)) {
+		if (squreIsFakeWall && (_vm->_dungeonMan->_g306_partyMapX != mapX) && (_vm->_dungeonMan->_g307_partyMapY != mapY)) {
 			aspectArray[k1_FirstGroupOrObjectAspect] = Thing::_endOfList.toUint16();
 			return;
 		}
 		break;
-	case k2_PitElemType:
-		if (square.get(k0x0008_PitOpen)) {
-			aspectArray[k2_PitInvisibleAspect] = square.get(k0x0004_PitInvisible);
-			footPrintsAllowed = square.toByte() & 1;
+	case k2_ElementTypePit:
+		if (getFlag(square, k0x0008_PitOpen)) {
+			aspectArray[k2_PitInvisibleAspect] = getFlag(square, k0x0004_PitInvisible);
+			footprintsAllowed &= 0x0001;
 		} else {
 			aspectArray[k0_ElemAspect] = k1_CorridorElemType;
-			footPrintsAllowed = true;
+			footprintsAllowed = true;
 		}
 		goto T0172030_Pit;
-	case k6_FakeWallElemType:
-		if (!square.get(k0x0004_FakeWallOpen)) {
-			aspectArray[k0_ElemAspect] = k0_WallElemType;
-			leftOrnAllowed = rightOrnAllowed = frontOrnAllowed = square.get(k0x0008_FakeWallRandOrnOrFootPAllowed);
-			squareIsFakeWall = true;
+	case k6_ElementTypeFakeWall:
+		if (!getFlag(square, k0x0004_FakeWallOpen)) {
+			aspectArray[k0_ElemAspect] = k0_ElementTypeWall;
+			leftRandWallOrnAllowed = rightRandWallOrnAllowed = frontRandWallOrnAllowed = getFlag(square, k0x0008_FakeWallRandOrnOrFootPAllowed);
+			squreIsFakeWall = true;
 			goto T0172010_ClosedFakeWall;
 		}
-		aspectArray[k0_WallElemType] = k1_CorridorElemType;
-		footPrintsAllowed = square.get(k0x0008_FakeWallRandOrnOrFootPAllowed);
-		square = Square(footPrintsAllowed ? 8 : 0);
-		// intentional fallthrough
+		aspectArray[k0_ElemAspect] = k1_CorridorElemType;
+		footprintsAllowed = getFlag(square, k0x0008_FakeWallRandOrnOrFootPAllowed) ? 8 : 0;
 	case k1_CorridorElemType:
-		aspectArray[k4_FloorOrnOrdAspect] = f170_getRandomOrnOrdinal(square.get(k0x0008_CorridorRandOrnAllowed), _g269_currMap->_randFloorOrnCount, mapX, mapY, 30);
+		aspectArray[k4_FloorOrnOrdAspect] = _vm->_dungeonMan->f170_getRandomOrnOrdinal(getFlag(square, k0x0008_CorridorRandOrnAllowed),
+																					   _vm->_dungeonMan->_g269_currMap->_randFloorOrnCount, mapX, mapY, 30);
 T0172029_Teleporter:
-		footPrintsAllowed = true;
+		footprintsAllowed = true;
 T0172030_Pit:
-		while ((thing != Thing::_endOfList) && (thing.getType() <= k3_SensorThingType)) {
-			if (thing.getType() == k3_SensorThingType)
-				aspectArray[k4_FloorOrnOrdAspect] = Sensor(f156_getThingData(thing)).getOrnOrdinal();
-			thing = f159_getNextThing(thing);
+		while ((thing != Thing::_endOfList) && ((thingType = (direction)thing.getType()) <= k3_SensorThingType)) {
+			if (thingType == k3_SensorThingType) {
+				sensor = (Sensor*)_vm->_dungeonMan->f156_getThingData(thing);
+				aspectArray[k4_FloorOrnOrdAspect] = sensor->getOrnOrdinal();
+			}
+			thing = _vm->_dungeonMan->f159_getNextThing(thing);
 		}
 		goto T0172049_Footprints;
-	case k5_TeleporterElemType:
-		aspectArray[k2_TeleporterVisibleAspect] = square.get(k0x0008_TeleporterOpen) && square.get(k0x0004_TeleporterVisible);
+	case k5_ElementTypeTeleporter:
+		aspectArray[k2_TeleporterVisibleAspect] = getFlag(square, k0x0008_TeleporterOpen) && getFlag(square, k0x0004_TeleporterVisible);
 		goto T0172029_Teleporter;
-	case k3_StairsElemType:
-		aspectArray[k0_ElemAspect] = ((square.get(k0x0008_StairsNorthSouthOrient) >> 3) == (isOrientedWestEast(dir) ? 1 : 0)) ? k18_StairsSideElemType : k19_StairsFrontElemType;
-		aspectArray[k2_StairsUpAspect] = square.get(k0x0004_StairsUp);
-		footPrintsAllowed = false;
+	case k3_ElementTypeStairs:
+		aspectArray[k0_ElemAspect] = ((getFlag(square, k0x0008_StairsNorthSouthOrient) >> 3) == isOrientedWestEast(dir)) ? k18_ElementTypeStairsSide : k19_ElementTypeStaisFront;
+		aspectArray[k2_StairsUpAspect] = getFlag(square, k0x0004_StairsUp);
+		footprintsAllowed = false;
 		goto T0172046_Stairs;
 	case k4_DoorElemType:
-		if ((square.get(k0x0008_DoorNorthSouthOrient) >> 3) == (isOrientedWestEast(dir) ? 1 : 0)) {
+		if ((getFlag(square, k0x0008_DoorNorthSouthOrient) >> 3) == isOrientedWestEast(dir)) {
 			aspectArray[k0_ElemAspect] = k16_DoorSideElemType;
 		} else {
 			aspectArray[k0_ElemAspect] = k17_DoorFrontElemType;
-			aspectArray[k2_DoorStateAspect] = square.getDoorState();
-			aspectArray[k3_DoorThingIndexAspect] = f161_getSquareFirstThing(mapX, mapY).getIndex();
+			aspectArray[k2_DoorStateAspect] = Square(square).getDoorState();
+			aspectArray[k3_DoorThingIndexAspect] = _vm->_dungeonMan->f161_getSquareFirstThing(mapX, mapY).getIndex();
 		}
-		footPrintsAllowed = true;
+		footprintsAllowed = true;
 T0172046_Stairs:
-		while ((thing != Thing::_endOfList) && (thing.getType() <= k3_SensorThingType))
-			thing = f159_getNextThing(thing);
+		while ((thing != Thing::_endOfList) && (thing.getType() <= k3_SensorThingType)) {
+			thing = _vm->_dungeonMan->f159_getNextThing(thing);
+		}
 T0172049_Footprints:
-		unsigned char scentOrdinal; // see next line comment
-		if (footPrintsAllowed) // TODO: I skipped some party query code, must come back later and complete
-			aspectArray[k4_FloorOrnOrdAspect] &= k0x8000_FootprintsAspect;
-		break;
-	default:
-		break;
+		if (footprintsAllowed && (scentOrdinal = _vm->_championMan->f315_getScentOrdinal(mapX, mapY))
+			&& (--scentOrdinal >= _vm->_championMan->_g407_party._firstScentIndex)
+			&& (scentOrdinal < _vm->_championMan->_g407_party._lastScentIndex)) {
+			setFlag(aspectArray[k4_FloorOrnOrdAspect], k0x8000_FootprintsAspect);
+		}
 	}
 	aspectArray[k1_FirstGroupOrObjectAspect] = thing.toUint16();
 }
 
 void DungeonMan::f171_setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowed, bool frontAllowed, bool rightAllowed, direction dir,
-											int16 mapX, int16 mapY, bool isFakeWall) {
+												 int16 mapX, int16 mapY, bool isFakeWall) {
 	int16 ornCount = _g269_currMap->_randWallOrnCount;
 
 	turnDirRight(dir);
@@ -1336,4 +1351,34 @@ int16 DungeonMan::f142_getProjectileAspect(Thing thing) {
 	return g237_ObjectInfo[f141_getObjectInfoIndex(thing)]._objectAspectIndex;
 }
 
+int16 DungeonMan::f154_getLocationAfterLevelChange(int16 mapIndex, int16 levelDelta, int16* mapX, int16* mapY) {
+	int16 newMapX;
+	int16 newMapY;
+	int16 newLevel;
+	int16 offset;
+	Map* map;
+	int16 targetMapIndex;
+
+
+	if (_vm->_dungeonMan->_g309_partyMapIndex == k255_mapIndexEntrance) {
+		return kM1_mapIndexNone;
+	}
+	map = _vm->_dungeonMan->_g277_dungeonMaps + mapIndex;
+	newMapX = map->_offsetMapX + *mapX;
+	newMapY = map->_offsetMapY + *mapY;
+	newLevel = map->_level + levelDelta;
+	map = _vm->_dungeonMan->_g277_dungeonMaps;
+	for (targetMapIndex = 0; targetMapIndex < _vm->_dungeonMan->_g278_dungeonFileHeader._mapCount; targetMapIndex++) {
+		if ((map->_level == newLevel)
+			&& (newMapX >= (offset = map->_offsetMapX))
+			&& (newMapX <= (offset + map->_width))
+			&& (newMapY >= (offset = map->_offsetMapY)) && (newMapY <= (offset + map->_height))) {
+			*mapY = newMapY - offset;
+			*mapX = newMapX - map->_offsetMapX;
+			return targetMapIndex;
+		}
+		map++;
+	}
+	return kM1_mapIndexNone;
+}
 }

@@ -648,6 +648,7 @@ public:
 	void f163_linkThingToList(Thing thingToLink, Thing thingInList, int16 mapX, int16 mapY); // @ F0163_DUNGEON_LinkThingToList
 	WeaponInfo *f158_getWeaponInfo(Thing thing); // @ F0158_DUNGEON_GetWeaponInfo
 	int16 f142_getProjectileAspect(Thing thing); // @ F0142_DUNGEON_GetProjectileAspect
+	int16 f154_getLocationAfterLevelChange(int16 mapIndex, int16 levelDelta, int16 *mapX, int16 *mapY); // @ F0154_DUNGEON_GetLocationAfterLevelChange
 
 	uint32 _rawDunFileDataSize;	 // @ probably NONE
 	byte *_rawDunFileData; // @ ???
