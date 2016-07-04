@@ -36,6 +36,16 @@
 
 namespace DM {
 
+#define k0_viewFloor_D3L 0 // @ C0_VIEW_FLOOR_D3L
+#define k1_viewFloor_D3C 1 // @ C1_VIEW_FLOOR_D3C
+#define k2_viewFloor_D3R 2 // @ C2_VIEW_FLOOR_D3R
+#define k3_viewFloor_D2L 3 // @ C3_VIEW_FLOOR_D2L
+#define k4_viewFloor_D2C 4 // @ C4_VIEW_FLOOR_D2C
+#define k5_viewFloor_D2R 5 // @ C5_VIEW_FLOOR_D2R
+#define k6_viewFloor_D1L 6 // @ C6_VIEW_FLOOR_D1L
+#define k7_viewFloor_D1C 7 // @ C7_VIEW_FLOOR_D1C
+#define k8_viewFloor_D1R 8 // @ C8_VIEW_FLOOR_D1R
+
 #define k2_FloorSetGraphicCount 2 // @ C002_FLOOR_SET_GRAPHIC_COUNT
 #define k13_WallSetGraphicCount 13 // @ C013_WALL_SET_GRAPHIC_COUNT
 #define k18_StairsGraphicCount 18 // @ C018_STAIRS_GRAPHIC_COUNT
@@ -545,6 +555,7 @@ public:
 
 
 	void f99_copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height); // @ F0099_DUNGEONVIEW_CopyBitmapAndFlipHorizontal
+	void f108_drawFloorOrnament(uint16 floorOrnOrdinal, uint16 viewFloorIndex); // @ F0108_DUNGEONVIEW_DrawFloorOrnament
 
 
 	/* srcHeight and destHeight are not necessary for blitting, only error checking, thus they are defaulted for existing code which 

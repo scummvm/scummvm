@@ -65,9 +65,10 @@ uint16 returnNextVal(uint16 val); // @ M17_NEXT
 bool isOrientedWestEast(direction dir);	// @ M16_IS_ORIENTED_WEST_EAST
 
 
-uint16 getFlag(uint16 val, uint16 mask);
-void setFlag(uint16 &val, uint16 mask);
-void clearFlag(uint16 &val, uint16 mask);
+uint16 getFlag(uint16 val, uint16 mask); // @ M07_GET
+uint16 setFlag(uint16 &val, uint16 mask); // @ M08_SET
+uint16 clearFlag(uint16 &val, uint16 mask);	// @ M09_CLEAR
+uint16 toggleFlag(uint16 &val, uint16 mask); // @ M10_TOGGLE
 
 
 enum ThingType {

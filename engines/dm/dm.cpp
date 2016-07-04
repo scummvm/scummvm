@@ -72,12 +72,16 @@ uint16 getFlag(uint16 val, uint16 mask) {
 	return val & mask;
 }
 
-void setFlag(uint16 &val, uint16 mask) {
-	val |= mask;
+uint16 setFlag(uint16 &val, uint16 mask) {
+	return val |= mask;
 }
 
-void clearFlag(uint16 &val, uint16 mask) {
-	val &= ~mask;
+uint16 clearFlag(uint16 &val, uint16 mask) {
+	return val &= ~mask;
+}
+
+uint16 toggleFlag(uint16& val, uint16 mask) {
+	return val ^= mask;
 }
 
 DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
@@ -146,7 +150,7 @@ void DMEngine::f463_initializeGame() {
 	_displayMan->f460_initializeGraphicData();
 	// DUMMY CODE: next line
 	_displayMan->loadPalette(g19_PalCredits);
-	
+
 	_eventMan->initMouse();
 
 	while (_loadsaveMan->f435_loadgame() != k1_LoadgameSuccess) {
@@ -166,14 +170,13 @@ void DMEngine::f463_initializeGame() {
 	warning("MISSING CODE: F0357_COMMAND_DiscardAllInput");
 }
 
-	void DMEngine::f448_initMemoryManager()
-	{
-		warning("STUB FUNCTION");
-		for (uint16 i = 0; i < 16; ++i)
-			_displayMan->_g347_paletteTopAndBottomScreen[i] = g21_PalDungeonView[0][i];
-	}
+void DMEngine::f448_initMemoryManager() {
+	warning("STUB FUNCTION");
+	for (uint16 i = 0; i < 16; ++i)
+		_displayMan->_g347_paletteTopAndBottomScreen[i] = g21_PalDungeonView[0][i];
+}
 
-	void DMEngine::f462_startGame() {
+void DMEngine::f462_startGame() {
 	_g331_pressingEye = false;
 	_g332_stopPressingEye = false;
 	_g333_pressingMouth = false;

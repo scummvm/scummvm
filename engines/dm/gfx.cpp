@@ -1158,6 +1158,82 @@ void DisplayMan::f99_copyBitmapAndFlipHorizontal(byte* srcBitmap, byte* destBitm
 	f130_flipBitmapHorizontal(destBitmap, byteWidth, height);
 }
 
+void DisplayMan::f108_drawFloorOrnament(uint16 floorOrnOrdinal, uint16 viewFloorIndex) {
+#define AP0118_ui_FloorOrnamentIndex floorOrnOrdinal
+	int16 nativeBitmapIndex;
+	bool drawFootprints;
+	byte* bitmap;
+	uint16* coordSets;
+
+
+	static byte g191_floorOrnNativeBitmapndexInc[9] = { // @ G0191_auc_Graphic558_FloorOrnamentNativeBitmapIndexIncrements
+		0,   /* D3L */
+		1,   /* D3C */
+		0,   /* D3R */
+		2,   /* D2L */
+		3,   /* D2C */
+		2,   /* D2R */
+		4,   /* D1L */
+		5,   /* D1C */
+		4}; /* D1R */
+
+	static uint16 g206_floorOrnCoordSets[3][9][6] = { // @ G0206_aaauc_Graphic558_FloorOrnamentCoordinateSets
+		/* { X1, X2, Y1, Y2, ByteWidth, Height } */
+		{{32,  79, 66,  71, 24,  6},     /* D3L */
+		{96, 127, 66,  71, 16,  6},     /* D3C */
+		{144, 191, 66,  71, 24,  6},     /* D3R */
+		{0,  63, 77,  87, 32, 11},     /* D2L */
+		{80, 143, 77,  87, 32, 11},     /* D2C */
+		{160, 223, 77,  87, 32, 11},     /* D2R */
+		{0,  31, 92, 116, 16, 25},     /* D1L */
+		{80, 143, 92, 116, 32, 25},     /* D1C */
+		{192, 223, 92, 116, 16, 25}},   /* D1R */
+		{{0,  95, 66,  74, 48,  9},     /* D3L */
+		{64, 159, 66,  74, 48,  9},     /* D3C */
+		{128, 223, 66,  74, 48,  9},     /* D3R */
+		{0,  79, 75,  89, 40, 15},     /* D2L */
+		{56, 167, 75,  89, 56, 15},     /* D2C */
+		{144, 223, 75,  89, 40, 15},     /* D2R */
+		{0,  63, 90, 118, 32, 29},     /* D1L */
+		{32, 191, 90, 118, 80, 29},     /* D1C */
+		{160, 223, 90, 118, 32, 29}},   /* D1R */
+		{{42,  57, 68,  72,  8,  5},     /* D3L */
+		{104, 119, 68,  72,  8,  5},     /* D3C */
+		{166, 181, 68,  72,  8,  5},     /* D3R */
+		{9,  40, 80,  85, 16,  6},     /* D2L */
+		{96, 127, 80,  85, 16,  6},     /* D2C */
+		{183, 214, 80,  85, 16,  6},     /* D2R */
+		{0,  15, 97, 108,  8, 12},     /* D1L */
+		{96, 127, 97, 108, 16, 12},     /* D1C	*/
+		{208, 223, 97, 108,  8, 12}}}; /* D1R */
+
+	if (floorOrnOrdinal) {
+		if (drawFootprints = getFlag(floorOrnOrdinal, k0x8000_FootprintsAspect)) {
+			if (!clearFlag(floorOrnOrdinal, k0x8000_FootprintsAspect))
+				goto T0108005;
+		}
+		floorOrnOrdinal--;
+		nativeBitmapIndex = _vm->_displayMan->_g102_currMapFloorOrnInfo[AP0118_ui_FloorOrnamentIndex][k0_NativeBitmapIndex]
+			+ g191_floorOrnNativeBitmapndexInc[viewFloorIndex];
+		coordSets = g206_floorOrnCoordSets[_vm->_displayMan->_g102_currMapFloorOrnInfo[AP0118_ui_FloorOrnamentIndex][k1_CoordinateSet]][viewFloorIndex];
+		if ((viewFloorIndex == k8_viewFloor_D1R) || (viewFloorIndex == k5_viewFloor_D2R)
+			|| (viewFloorIndex == k2_viewFloor_D3R)
+			|| ((AP0118_ui_FloorOrnamentIndex == k15_FloorOrnFootprints) && _vm->_displayMan->_g76_useFlippedWallAndFootprintsBitmap &&
+			((viewFloorIndex == k7_viewFloor_D1C) || (viewFloorIndex == k4_viewFloor_D2C) || (viewFloorIndex == k1_viewFloor_D3C)))) {
+			_vm->_displayMan->f99_copyBitmapAndFlipHorizontal(_vm->_displayMan->f489_getNativeBitmapOrGraphic(nativeBitmapIndex),
+															  bitmap = _vm->_displayMan->_g74_tmpBitmap, coordSets[4], coordSets[5]);
+		} else {
+			bitmap = _vm->_displayMan->f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
+		}
+		_vm->_displayMan->f132_blitToBitmap(bitmap, _vm->_displayMan->_g296_bitmapViewport,
+			*(Box*)coordSets, 0, 0, coordSets[4], k112_byteWidthViewport, k10_ColorFlesh, coordSets[5], k136_heightViewport);
+T0108005:
+		if (drawFootprints) {
+			f108_drawFloorOrnament(_vm->M0_indexToOrdinal(k15_FloorOrnFootprints), viewFloorIndex);
+		}
+	}
+}
+
 void DisplayMan::f101_drawWallSetBitmapWithoutTransparency(byte *bitmap, Frame &f) {
 	if (f._srcByteWidth)
 		f132_blitToBitmap(bitmap, _g296_bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth, k112_byteWidthViewport, k255_ColorNoTransparency);
@@ -1195,7 +1271,7 @@ void DisplayMan::f116_drawSquareD3L(direction dir, int16 posX, int16 posY) {
 		order = k0x0321_CellOrder_BackLeft_BackRight_FrontRight;
 		goto T0116016_blueToad;
 	case k17_ElementTypeDoorFront:
-		warning("MISSING CODE: F0108_DUNGEONVIEW_DrawFloorOrnament");
+		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k0_viewFloor_D3L);
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k1_ViewSquare_D3L, k0x0218_CellOrder_DoorPass1_BackLeft_BackRight);
 		f100_drawWallSetBitmap(_g705_bitmapWallSet_DoorFrameLeft_D3L, g164_Frame_DoorFrameLeft_D3L);
 		warning("MISSING CODE: F0111_DUNGEONVIEW_DrawDoor");
@@ -1210,7 +1286,8 @@ void DisplayMan::f116_drawSquareD3L(direction dir, int16 posX, int16 posY) {
 T0116015_redEagle:
 		order = k0x3421_CellOrder_BackLeft_BackRight_FrontLeft_FrontRight;
 T0116016_blueToad:
-		warning("MISSING CODE: F0108_DUNGEONVIEW_DrawFloorOrnament");
+/* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
+		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k0_viewFloor_D3L); 
 T0116017_orangeElk:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k1_ViewSquare_D3L, order);
 	}
@@ -1247,7 +1324,7 @@ void DisplayMan::f117_drawSquareD3R(direction dir, int16 posX, int16 posY) {
 		order = k0x0412_CellOrder_BackRight_BackLeft_FrontLeft;
 		goto T0117017;
 	case k17_ElementTypeDoorFront:
-		warning("MISSING CODE: F0108_DUNGEONVIEW_DrawFloorOrnament");
+		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k2_viewFloor_D3R);
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k2_ViewSquare_D3R, k0x0128_CellOrder_DoorPass1_BackRight_BackLeft);
 		memmove(_g74_tmpBitmap, _g705_bitmapWallSet_DoorFrameLeft_D3L, 32 * 44);
 		warning("MISSING CODE: F0103_DUNGEONVIEW_DrawDoorFrameBitmapFlippedHorizontally");
@@ -1266,7 +1343,8 @@ void DisplayMan::f117_drawSquareD3R(direction dir, int16 posX, int16 posY) {
 T0117016:
 		order = k0x4312_CellOrder_BackRight_BackLeft_FrontRight_FrontLeft;
 T0117017:
-		warning("MISSING CODE: F0108_DUNGEONVIEW_DrawFloorOrnament");
+ /* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
+		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k2_viewFloor_D3R);
 T0117018:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k2_ViewSquare_D3R, order);
 	}
