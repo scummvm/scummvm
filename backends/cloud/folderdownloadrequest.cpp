@@ -81,6 +81,8 @@ void FolderDownloadRequest::fileDownloadedCallback(Storage::BoolResponse respons
 }
 
 void FolderDownloadRequest::fileDownloadedErrorCallback(Networking::ErrorResponse error) {
+	_workingRequest = nullptr;
+	if (_ignoreCallback) return;
 	fileDownloadedCallback(Storage::BoolResponse(error.request, false));
 }
 
