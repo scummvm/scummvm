@@ -55,7 +55,7 @@ void GoogleDriveListDirectoryByIdRequest::start() {
 }
 
 void GoogleDriveListDirectoryByIdRequest::makeRequest(Common::String pageToken) {
-	Common::String url = "https://www.googleapis.com/drive/v3/files?spaces=drive&fields=files%28id,mimeType,modifiedTime,name,size%29,nextPageToken";
+	Common::String url = "https://www.googleapis.com/drive/v3/files?spaces=drive&fields=files%28id,mimeType,modifiedTime,name,size%29,nextPageToken&orderBy=folder,name";
 	//files(id,mimeType,modifiedTime,name,size),nextPageToken
 	if (pageToken != "") url += "&pageToken=" + pageToken;
 	url += "&q=%27" + _requestedId + "%27+in+parents";
