@@ -59,13 +59,13 @@ BbvsEngine::kReadSaveHeaderError BbvsEngine::readSaveHeader(Common::SeekableRead
 void BbvsEngine::savegame(const char *filename, const char *description) {
 
 	Common::OutSaveFile *out;
-	if (!(out = g_system->getSavefileManager()->openForSaving(filename))) {
+	if (!(out = _system->getSavefileManager()->openForSaving(filename))) {
 		warning("Can't create file '%s', game not saved", filename);
 		return;
 	}
 
 	TimeDate curTime;
-	g_system->getTimeAndDate(curTime);
+	_system->getTimeAndDate(curTime);
 
 	// Header start
 	out->writeUint32LE(BBVS_SAVEGAME_VERSION);
@@ -95,7 +95,7 @@ void BbvsEngine::savegame(const char *filename, const char *description) {
 
 void BbvsEngine::loadgame(const char *filename) {
 	Common::InSaveFile *in;
-	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
+	if (!(in = _system->getSavefileManager()->openForLoading(filename))) {
 		warning("Can't open file '%s', game not loaded", filename);
 		return;
 	}

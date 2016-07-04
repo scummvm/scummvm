@@ -95,8 +95,8 @@ void MainMenu::init() {
 }
 
 void MainMenu::reflowLayout() {
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
+	const int screenW = _vm->_system->getOverlayWidth();
+	const int screenH = _vm->_system->getOverlayHeight();
 
 	const int buttonWidth = screenW * 70 / 320;
 	const int buttonHeight = screenH * 14 / 240;
