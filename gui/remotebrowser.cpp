@@ -98,7 +98,8 @@ void RemoteBrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	case kListItemActivatedCmd:
 	case kListItemDoubleClickedCmd:
-		if (_nodeContent[data].isDirectory()) {			
+		if (_nodeContent[data].isDirectory()) {
+			_rememberedNodeContents[_node.path()] = _nodeContent;
 			listDirectory(_nodeContent[data]);
 		}
 		break;
@@ -155,30 +156,39 @@ void RemoteBrowserDialog::updateListing() {
 }
 
 void RemoteBrowserDialog::goUp() {
+	if (_rememberedNodeContents.contains(_node.path()))
+		_rememberedNodeContents.erase(_node.path());
+
 	Common::String path = _node.path();
 	if (path.size() && (path.lastChar() == '/' || path.lastChar() == '\\')) path.deleteLastChar();
 	if (path.empty()) {
-		draw();
-		return;
+		_rememberedNodeContents.erase("");
+	} else {
+		for (int i = path.size() - 1; i >= 0; --i)
+			if (i == 0 || path[i] == '/' || path[i] == '\\') {
+				path.erase(i);
+				break;
+			}		
 	}
-	for (int i = path.size()-1; i >= 0; --i)
-		if (i == 0 || path[i] == '/' || path[i] == '\\') {
-			path.erase(i);
-			break;
-		}
+
 	listDirectory(Cloud::StorageFile(path, 0, 0, true));
 }
 
 void RemoteBrowserDialog::listDirectory(Cloud::StorageFile node) {
 	if (_navigationLocked || _workingRequest) return;
-	_navigationLocked = true;
 
-	_workingRequest = CloudMan.listDirectory(
-		node.path(),
-		new Common::Callback<RemoteBrowserDialog, Cloud::Storage::ListDirectoryResponse>(this, &RemoteBrowserDialog::directoryListedCallback),
-		new Common::Callback<RemoteBrowserDialog, Networking::ErrorResponse>(this, &RemoteBrowserDialog::directoryListedErrorCallback),
-		false
-	);
+	if (_rememberedNodeContents.contains(node.path())) {
+		_nodeContent = _rememberedNodeContents[node.path()];
+	} else {
+		_navigationLocked = true;
+
+		_workingRequest = CloudMan.listDirectory(
+			node.path(),
+			new Common::Callback<RemoteBrowserDialog, Cloud::Storage::ListDirectoryResponse>(this, &RemoteBrowserDialog::directoryListedCallback),
+			new Common::Callback<RemoteBrowserDialog, Networking::ErrorResponse>(this, &RemoteBrowserDialog::directoryListedErrorCallback),
+			false
+		);
+	}
 
 	_backupNode = _node;
 	_node = node;

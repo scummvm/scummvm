@@ -53,6 +53,7 @@ protected:
 	StaticTextWidget	*_currentPath;
 	Cloud::StorageFile _node, _backupNode;
 	Common::Array<Cloud::StorageFile> _nodeContent;
+	Common::HashMap<Common::String, Common::Array<Cloud::StorageFile> > _rememberedNodeContents;
 	Cloud::StorageFile _choice;
 	bool _navigationLocked;
 	bool _updateList;
