@@ -201,6 +201,7 @@ void RemoteBrowserDialog::directoryListedCallback(Cloud::Storage::ListDirectoryR
 
 	_navigationLocked = false;
 	_nodeContent = response.value;
+	Common::sort(_nodeContent.begin(), _nodeContent.end(), FileListOrder());
 	_updateList = true;
 }
 

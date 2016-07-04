@@ -66,6 +66,16 @@ protected:
 	void listDirectory(Cloud::StorageFile node);
 	void directoryListedCallback(Cloud::Storage::ListDirectoryResponse response);
 	void directoryListedErrorCallback(Networking::ErrorResponse error);
+
+	struct FileListOrder : public Common::BinaryFunction<Cloud::StorageFile, Cloud::StorageFile, bool> {
+		bool operator()(const Cloud::StorageFile &x, const Cloud::StorageFile &y) const {
+			if (x.isDirectory() != y.isDirectory()) {
+				return x.isDirectory(); //x < y (directory < not directory) or x > y (not directory > directory)
+			}
+
+			return x.name() < y.name();
+		}
+	};
 };
 
 } // End of namespace GUI
