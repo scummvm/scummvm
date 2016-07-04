@@ -51,6 +51,9 @@
 #include "gui/ThemeEval.h"
 
 #include "graphics/cursorman.h"
+#ifdef USE_CLOUD
+#include "backends/cloud/cloudmanager.h"
+#endif
 
 using Common::ConfigManager;
 
@@ -844,6 +847,20 @@ void LauncherDialog::addGame() {
 		if (_browser->runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(_browser->getResult());
+#ifdef USE_CLOUD
+			String selectedDirectory = dir.getPath();
+			String bannedDirectory = CloudMan.getDownloadLocalDirectory();
+			if (selectedDirectory.size() && selectedDirectory.lastChar() != '/' && selectedDirectory.lastChar() != '\\')
+				selectedDirectory += '/';
+			if (bannedDirectory.size() && bannedDirectory.lastChar() != '/' && bannedDirectory.lastChar() != '\\')
+				if (selectedDirectory.size()) bannedDirectory += selectedDirectory.lastChar();
+				else bannedDirectory += '/';
+			if (selectedDirectory.equalsIgnoreCase(bannedDirectory)) {
+				MessageDialog alert(_("This directory cannot be used yet, it is being downloaded into!"));
+				alert.runModal();
+				return;
+			}
+#endif
 			Common::FSList files;
 			if (!dir.getChildren(files, Common::FSNode::kListAll)) {
 				MessageDialog alert(_("ScummVM couldn't open the specified directory!"));
