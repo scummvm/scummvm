@@ -163,6 +163,8 @@ void Lingo::setTheEntity(TheEntity entity, int id, TheField field, Datum &d) {
 void Lingo::setTheSprite(int id, TheField field, Datum &d) {
 	Sprite *sprite = _vm->_currentScore->getSpriteById(id);
 
+	d.toInt(); // Enforce Integer
+
 	switch (field) {
 	case kTheCastNum:
 		if (_vm->_currentScore->_casts.contains(d.u.i)) {
@@ -208,25 +210,23 @@ Datum Lingo::getTheEntity(TheEntity entity, int id, TheField field) {
 Datum Lingo::getTheSprite(int id, TheField field) {
 	Datum d;
 	Sprite *sprite = _vm->_currentScore->getSpriteById(id);
+
+	d.type = INT;
+
 	switch (field) {
 	case kTheCastNum:
-		d.type = INT;
 		d.u.i = sprite->_castId;
 		break;
 	case kTheWidth:
-		d.type = INT;
 		d.u.i = sprite->_width;
 		break;
 	case kTheHeight:
-		d.type = INT;
 		d.u.i = sprite->_height;
 		break;
 	case kTheTrails:
-		d.type = INT;
 		d.u.i = sprite->_trails;
 		break;
 	case kTheInk:
-		d.type = INT;
 		d.u.i = sprite->_ink;
 		break;
 	default:
