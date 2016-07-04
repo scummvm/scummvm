@@ -104,7 +104,7 @@ programline:
 	| error				{ yyerrok; }
 	;
 
-asgn: tPUT expr tINTO ID		{
+asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(g_lingo->c_varpush);
 		g_lingo->codeString($4->c_str());
 		g_lingo->code1(g_lingo->c_assign);
@@ -131,7 +131,7 @@ stmt: expr 				{ g_lingo->code1(g_lingo->c_xpop); }
 	//   statements
 	// end repeat
 	//
-	| repeatwhile '(' cond ')' stmtlist end tEND tREPEAT {
+	| repeatwhile '(' cond ')' stmtlist end tEND tREPEAT	{
 		inst body = 0, end = 0;
 		WRITE_UINT32(&body, $5);
 		WRITE_UINT32(&end, $6);
@@ -172,7 +172,7 @@ stmt: expr 				{ g_lingo->code1(g_lingo->c_xpop); }
 		(*g_lingo->_currentScript)[$1 + 5] = end; }	/* end, if cond fails */
 	;
 
-stmtoneliner: 	if cond tTHEN begin stmt end {
+stmtoneliner: 	if cond tTHEN begin stmt end	{
 		inst then = 0, end = 0;
 		WRITE_UINT32(&then, $4);
 		WRITE_UINT32(&end, $6);
@@ -186,36 +186,36 @@ stmtoneliner: 	if cond tTHEN begin stmt end {
 		WRITE_UINT32(&else1, $9);
 		WRITE_UINT32(&end, $11);
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
-		(*g_lingo->_currentScript)[$1 + 2] = else1;     /* elsepart */
+		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
 		(*g_lingo->_currentScript)[$1 + 3] = end; 	/* end, if cond fails */
 
 		g_lingo->processIf($11); }
 	;
 
-ifstmt:	if cond tTHEN stmtlist end tEND tIF {
+ifstmt:	if cond tTHEN stmtlist end tEND tIF		{
 		inst then = 0, end = 0;
 		WRITE_UINT32(&then, $4);
 		WRITE_UINT32(&end, $5);
-		(*g_lingo->_currentScript)[$1 + 1] = then;      /* thenpart */
-		(*g_lingo->_currentScript)[$1 + 3] = end;      /* end, if cond fails */
+		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
+		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
 		g_lingo->processIf($5); }
 	| if cond tTHEN stmtlist end tELSE stmtlist end tEND tIF {
 		inst then = 0, else1 = 0, end = 0;
 		WRITE_UINT32(&then, $4);
 		WRITE_UINT32(&else1, $7);
 		WRITE_UINT32(&end, $8);
-		(*g_lingo->_currentScript)[$1 + 1] = then;      /* thenpart */
-		(*g_lingo->_currentScript)[$1 + 2] = else1;     /* elsepart */
-		(*g_lingo->_currentScript)[$1 + 3] = end;      /* end, if cond fails */
+		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
+		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
+		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
 		g_lingo->processIf($8); }
 	| if cond tTHEN stmtlist end begin elseifstmt end tEND tIF {
 		inst then = 0, else1 = 0, end = 0;
 		WRITE_UINT32(&then, $4);
 		WRITE_UINT32(&else1, $6);
 		WRITE_UINT32(&end, $8);
-		(*g_lingo->_currentScript)[$1 + 1] = then;      /* thenpart */
-		(*g_lingo->_currentScript)[$1 + 2] = else1;     /* elsepart */
-		(*g_lingo->_currentScript)[$1 + 3] = end;      /* end, if cond fails */
+		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
+		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
+		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
 		g_lingo->processIf($8); }
 	;
 
@@ -223,16 +223,16 @@ elseifstmt:	elseifstmt1 elseifstmt
 	|	elseifstmt1
 	;
 
-elseifstmt1:	elseif cond tTHEN begin stmt '\n' {
+elseifstmt1:	elseif cond tTHEN begin stmt '\n'	{
 		inst then = 0;
 		WRITE_UINT32(&then, $4);
-		(*g_lingo->_currentScript)[$1 + 1] = then;      /* thenpart */
+		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
 
 		g_lingo->codeLabel($1); }
 	| elseif cond tTHEN stmtlist {
 		inst then = 0;
 		WRITE_UINT32(&then, $4);
-		(*g_lingo->_currentScript)[$1 + 1] = then;      /* thenpart */
+		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
 
 		g_lingo->codeLabel($1); }
 	;
@@ -265,21 +265,21 @@ stmtlist: /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
 	| stmtlist stmt
 	;
 
-expr: INT	{
+expr: INT		{
 		$$ = g_lingo->code1(g_lingo->c_constpush);
 		inst i = 0;
 		WRITE_UINT32(&i, $1);
 		g_lingo->code1(i); }
-	| FLOAT	{
+	| FLOAT		{
 		$$ = g_lingo->code1(g_lingo->c_fconstpush);
 		g_lingo->codeFloat($1); }
-	| BLTIN '(' arglist ')' {
+	| BLTIN '(' arglist ')' 	{
 		if ($3 != g_lingo->_builtins[*$1]->nargs)
 			error("Built-in function %s expects %d arguments but got %d", $1->c_str(), g_lingo->_builtins[*$1]->nargs, $3);
 
 		$$ = g_lingo->code1(g_lingo->_builtins[*$1]->func);
 		delete $1; }
-	| ID '(' arglist ')' {
+	| ID '(' arglist ')'	{
 		$$ = g_lingo->code1(g_lingo->c_call);
 		g_lingo->codeString($1->c_str());
 
@@ -287,7 +287,7 @@ expr: INT	{
 		WRITE_UINT32(&numpar, $3);
 		g_lingo->code1(numpar);
 		delete $1; }
-	| ID	{
+	| ID		{
 		$$ = g_lingo->codeId(*$1);
 		delete $1; }
 	| asgn
@@ -384,7 +384,7 @@ gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
 // See also:
 //   on keyword
 defn: tMACRO ID { g_lingo->_indef = true; }
-	    begin argdef '\n' argstore stmtlist {
+	    begin argdef '\n' argstore stmtlist		{
 			g_lingo->code2(g_lingo->c_constpush, (inst)0); // Push fake value on stack
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$2, $4, $5);
@@ -398,7 +398,7 @@ argdef:  /* nothing */ 		{ $$ = 0; }
 argstore:	  /* nothing */		{ g_lingo->codeArgStore(); }
 	;
 
-macro: ID begin arglist {
+macro: ID begin arglist		{
 		g_lingo->code1(g_lingo->c_call);
 		g_lingo->codeString($1->c_str());
 		inst numpar = 0;
