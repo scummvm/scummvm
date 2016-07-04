@@ -1492,9 +1492,109 @@ static const uint16 longbowPatchShowHandCode[] = {
 	PATCH_END
 };
 
+// When walking through the forest, arithmetic errors may occur at "random".
+// The scripts try to add a value and a pointer to the object "berryBush".
+//
+// This is caused by a local variable overflow.
+//
+// The scripts create berry bush objects dynamically. The array storage for
+// those bushes may hold a total of 8 bushes. But sometimes 10 bushes
+// are created. This overwrites 2 additional locals in script 225 and
+// those locals are used normally for value lookups.
+//
+// Changing the total of bushes could cause all sorts of other issues,
+// that's why I rather patched the code, that uses the locals for a lookup.
+// Which means it doesn't matter anymore when those locals are overwritten.
+//
+// Applies to at least: English PC floppy, German PC floppy (not tested), English Amiga floppy
+// Responsible method: export 2 of script 225
+// Fixes bug: #6571
+static const uint16 longbowSignatureBerryBushFix[] = {
+	0x89, 0x70,                      // lsg global[70h]
+	0x35, 0x03,                      // ldi 03h
+	0x1a,                            // eq?
+	0x2e, SIG_UINT16(0x002d),        // bt [process code]
+	0x89, 0x70,                      // lsg global[70h]
+	0x35, 0x04,                      // ldi 04h
+	0x1a,                            // eq?
+	0x2e, SIG_UINT16(0x0025),        // bt [process code]
+	0x89, 0x70,                      // lsg global[70h]
+	0x35, 0x05,                      // ldi 05h
+	0x1a,                            // eq?
+	0x2e, SIG_UINT16(0x001d),        // bt [process code]
+	0x89, 0x70,                      // lsg global[70h]
+	0x35, 0x06,                      // ldi 06h
+	0x1a,                            // eq?
+	0x2e, SIG_UINT16(0x0015),        // bt [process code]
+	0x89, 0x70,                      // lsg global[70h]
+	0x35, 0x18,                      // ldi 18h
+	0x1a,                            // eq?
+	0x2e, SIG_UINT16(0x000d),        // bt [process code]
+	0x89, 0x70,                      // lsg global[70h]
+	0x35, 0x19,                      // ldi 19h
+	0x1a,                            // eq?
+	0x2e, SIG_UINT16(0x0005),        // bt [process code]
+	0x89, 0x70,                      // lsg global[70h]
+	0x35, 0x1a,                      // ldi 1Ah
+	0x1a,                            // eq?
+	// jump location for the "bt" instructions
+	0x30, SIG_UINT16(0x0011),        // bnt [skip over follow up code, to offset 0c35]
+	// 55 bytes until here
+	0x85, 00,                        // lat temp[0]
+	SIG_MAGICDWORD,
+	0x9a, SIG_UINT16(0x0110),        // lsli local[110h] -> 110h points normally to 110h / 2Bh
+	// 5 bytes
+	0x7a,                            // push2
+	SIG_END
+};
+
+static const uint16 longbowPatchBerryBushFix[] = {
+	PATCH_ADDTOOFFSET(+4),           // keep: lsg global[70h], ldi 03h
+	0x22,                            // lt? (global < 03h)
+	0x2f, 0x42,                      // bt [skip over all the code directly]
+	0x89, 0x70,                      // lsg global[70h]
+	0x35, 0x06,                      // ldi 06h
+	0x24,                            // le? (global <= 06h)
+	0x2f, 0x0e,                      // bt [to kRandom code]
+	0x89, 0x70,                      // lsg global[70h]
+	0x35, 0x18,                      // ldi 18h
+	0x22,                            // lt? (global < 18h)
+	0x2f, 0x34,                      // bt [skip over all the code directly]
+	0x89, 0x70,                      // lsg global[70h]
+	0x35, 0x1a,                      // ldi 1Ah
+	0x24,                            // le? (global <= 1Ah)
+	0x31, 0x2d,                      // bnt [skip over all the code directly]
+	// 28 bytes, 27 bytes saved
+	// kRandom code
+	0x85, 0x00,                      // lat temp[0]
+	0x2f, 0x05,                      // bt [skip over case 0]
+	// temp[0] == 0
+	0x38, SIG_UINT16(0x0110),        // pushi 0110h - that's what's normally at local[110h]
+	0x33, 0x18,                      // jmp [kRandom call]
+	// check temp[0] further
+	0x78,                            // push1
+	0x1a,                            // eq?
+	0x31, 0x05,                      // bt [skip over case 1]
+	// temp[0] == 1
+	0x38, SIG_UINT16(0x002b),        // pushi 002Bh - that's what's normally at local[111h]
+	0x33, 0x0F,                      // jmp [kRandom call]
+	// temp[0] >= 2
+	0x8d, 00,                        // lst temp[0]
+	0x35, 0x02,                      // ldi 02
+	0x04,                            // sub
+	0x9a, SIG_UINT16(0x0112),        // lsli local[112h] -> look up value in 2nd table
+	                                 // this may not be needed at all and was just added for safety reasons
+	// waste 9 spare bytes
+	0x35, 0x00,                      // ldi 00
+	0x35, 0x00,                      // ldi 00
+	0x34, PATCH_UINT16(0x0000),      // ldi 0000
+	PATCH_END
+};
+
 //          script, description,                                      signature                     patch
 static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,   210, "hand code crash",                             5, longbowSignatureShowHandCode, longbowPatchShowHandCode },
+	{  true,   225, "arithmetic berry bush fix",                   1, longbowSignatureBerryBushFix, longbowPatchBerryBushFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
