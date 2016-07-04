@@ -24,6 +24,8 @@
 
 namespace Director {
 
+class Sprite;
+
 static struct TheEntityProto {
 	TheEntity entity;
 	const char *name;
@@ -159,10 +161,28 @@ void Lingo::setTheEntity(TheEntity entity, int id, TheField field, Datum &d) {
 }
 
 void Lingo::setTheSprite(int id, TheField field, Datum &d) {
+	Sprite *sprite = _vm->_currentScore->getSpriteById(id);
+
 	switch (field) {
 	case kTheCastNum:
-		warning("STUB: setting thecastnum of sprite %d", id);
+		if (_vm->_currentScore->_casts.contains(d.u.i)) {
+			sprite->_cast = _vm->_currentScore->_casts[d.u.i];
+			sprite->_castId = d.u.i;
+		}
 		break;
+	case kTheWidth:
+		sprite->_width = d.u.i;
+		break;
+	case kTheHeight:
+		sprite->_height = d.u.i;
+		break;
+	case kTheTrails:
+		sprite->_trails = d.u.i;
+		break;
+	case kTheInk:
+		sprite->_ink = static_cast<InkType>(d.u.i);
+		break;
+
 	default:
 		error("Unprocessed setting field %d of sprite", field);
 	}
@@ -187,10 +207,27 @@ Datum Lingo::getTheEntity(TheEntity entity, int id, TheField field) {
 
 Datum Lingo::getTheSprite(int id, TheField field) {
 	Datum d;
-
+	Sprite *sprite = _vm->_currentScore->getSpriteById(id);
 	switch (field) {
 	case kTheCastNum:
-		warning("STUB: getting thecastnum of sprite %d", id);
+		d.type = INT;
+		d.u.i = sprite->_castId;
+		break;
+	case kTheWidth:
+		d.type = INT;
+		d.u.i = sprite->_width;
+		break;
+	case kTheHeight:
+		d.type = INT;
+		d.u.i = sprite->_height;
+		break;
+	case kTheTrails:
+		d.type = INT;
+		d.u.i = sprite->_trails;
+		break;
+	case kTheInk:
+		d.type = INT;
+		d.u.i = sprite->_ink;
 		break;
 	default:
 		error("Unprocessed getting field %d of sprite", field);
@@ -198,5 +235,6 @@ Datum Lingo::getTheSprite(int id, TheField field) {
 
 	return d;
 }
+
 
 } // End of namespace Director
