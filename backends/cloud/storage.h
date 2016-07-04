@@ -198,6 +198,12 @@ public:
 	/** Returns a number in [0, 1] range which represents current download progress (1 = complete). */
 	virtual double getDownloadingProgress();
 
+	/** Returns remote directory path. */
+	virtual Common::String getDownloadRemoteDirectory();
+
+	/** Returns local directory path. */
+	virtual Common::String getDownloadLocalDirectory();
+
 protected:
 	/** Finishes the download. Shows an OSD message. */
 	virtual void directoryDownloadedCallback(FileArrayResponse response);

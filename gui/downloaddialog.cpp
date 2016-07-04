@@ -38,7 +38,7 @@ enum {
 };
 
 DownloadDialog::DownloadDialog(uint32 storageId):
-	Dialog("GlobalOptions_Cloud_DownloadDialog"), _close(false) {
+	Dialog("GlobalOptions_Cloud_DownloadDialog"), _reflow(false) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	_browser = new BrowserDialog(_("Select directory where to download game data"), true);
@@ -46,14 +46,35 @@ DownloadDialog::DownloadDialog(uint32 storageId):
 
 	_messageText = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.DialogDesc", _("Press the button to download a directory"));
 	_mainButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", _("Start download"), 0, kDownloadDialogButtonCmd);
+	_remoteDirectoryLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.RemoteDirectory", _("From: "));
+	_localDirectoryLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.LocalDirectory", _("To: "));
+	uint32 progress = (uint32)(100 * CloudMan.getDownloadingProgress());
+	_progressBar = new SliderWidget(this, "GlobalOptions_Cloud_DownloadDialog.ProgressBar");
+	_progressBar->setMinValue(0);
+	_progressBar->setMaxValue(100);
+	_progressBar->setValue(progress);
+	_progressBar->setEnabled(false);
+	_percentLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.PercentText", Common::String::format("%u %%", progress));
 	_closeButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.CloseButton", _("OK"), 0, kCloseCmd);
 	updateButtons();
+
+	CloudMan.setDownloadTarget(this);
+}
+
+DownloadDialog::~DownloadDialog() {
+	CloudMan.setDownloadTarget(nullptr);
+}
+
+void DownloadDialog::close() {
+	CloudMan.setDownloadTarget(nullptr);
+	Dialog::close();
 }
 
 void DownloadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kDownloadDialogButtonCmd: {
 		if (CloudMan.isDownloading()) {
+			CloudMan.setDownloadTarget(nullptr);
 			CloudMan.cancelDownload();
 		} else {
 			selectDirectories();
@@ -63,6 +84,14 @@ void DownloadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		draw();
 		break;
 	}
+	case kDownloadProgressCmd:		
+		_percentLabel->setLabel(Common::String::format("%u %%", data));
+		_progressBar->setValue(data);
+		_reflow = true;
+		break;
+	case kDownloadEndedCmd:
+		_reflow = true;
+		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
 	}
@@ -117,12 +146,14 @@ void DownloadDialog::selectDirectories() {
 	else localPath += '/' + remoteDirectory.name();
 
 	CloudMan.startDownload(remoteDirectory.path(), localPath);
+	CloudMan.setDownloadTarget(this);
 }
 
 void DownloadDialog::handleTickle() {
-	if (_close) {
-		setResult(1);
-		close();
+	if (_reflow) {
+		reflowLayout();
+		draw();
+		_reflow = false;
 	}
 
 	Dialog::handleTickle();
@@ -133,14 +164,24 @@ void DownloadDialog::reflowLayout() {
 	updateButtons();
 }
 
-void DownloadDialog::updateButtons() {	
-	if (CloudMan.isDownloading()) {
+void DownloadDialog::updateButtons() {
+	bool downloading = CloudMan.isDownloading();
+	if (downloading) {
 		_messageText->setLabel(_("Press the button to cancel the download"));
 		_mainButton->setLabel(_("Cancel the download"));
+		_remoteDirectoryLabel->setLabel(_("From: ") + CloudMan.getDownloadRemoteDirectory());
+		_localDirectoryLabel->setLabel(_("To: ") + CloudMan.getDownloadLocalDirectory());
+		uint32 progress = (uint32)(100 * CloudMan.getDownloadingProgress());
+		_percentLabel->setLabel(Common::String::format("%u %%", progress));
+		_progressBar->setValue(progress);
 	} else {
 		_messageText->setLabel(_("Press the button to download a directory"));
 		_mainButton->setLabel(_("Start download"));
 	}
+	_remoteDirectoryLabel->setVisible(downloading);
+	_localDirectoryLabel->setVisible(downloading);
+	_percentLabel->setVisible(downloading);
+	_progressBar->setVisible(downloading);	
 }
 
 } // End of namespace GUI

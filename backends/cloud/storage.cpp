@@ -27,6 +27,7 @@
 #include "backends/networking/curl/connectionmanager.h"
 #include "common/debug.h"
 #include "common/file.h"
+#include <common/translation.h>
 
 namespace Cloud {
 
@@ -198,7 +199,7 @@ bool Storage::startDownload(Common::String remotePath, Common::String localPath)
 	}
 	_downloadFolderRequest = (FolderDownloadRequest *)downloadFolder(
 		remotePath, localPath,
-		new Common::Callback<Storage, Cloud::Storage::FileArrayResponse>(this, &Storage::directoryDownloadedCallback),
+		new Common::Callback<Storage, FileArrayResponse>(this, &Storage::directoryDownloadedCallback),
 		new Common::Callback<Storage, Networking::ErrorResponse>(this, &Storage::directoryDownloadedErrorCallback),
 		true
 	);
@@ -236,12 +237,36 @@ double Storage::getDownloadingProgress() {
 	return result;
 }
 
-void Storage::directoryDownloadedCallback(Cloud::Storage::FileArrayResponse response) {
+Common::String Storage::getDownloadRemoteDirectory() {
+	Common::String result = "";
+	_runningRequestsMutex.lock();
+	if (_downloadFolderRequest)
+		result = _downloadFolderRequest->getRemotePath();
+	_runningRequestsMutex.unlock();
+	return result;
+}
+
+Common::String Storage::getDownloadLocalDirectory() {
+	Common::String result = "";
+	_runningRequestsMutex.lock();
+	if (_downloadFolderRequest)
+		result = _downloadFolderRequest->getLocalPath();
+	_runningRequestsMutex.unlock();
+	return result;
+}
+
+void Storage::directoryDownloadedCallback(FileArrayResponse response) {
 	_runningRequestsMutex.lock();
 	_downloadFolderRequest = nullptr;
 	_runningRequestsMutex.unlock();
 
-	//TODO: show response.value (if not empty), show message on OSD
+	Common::String message;
+	if (response.value.size()) {
+		message = Common::String::format(_("Download complete.\nFailed to download %u files."), response.value.size());
+	} else {
+		message = _("Download complete.");
+	}
+	g_system->displayMessageOnOSD(message.c_str());
 }
 
 void Storage::directoryDownloadedErrorCallback(Networking::ErrorResponse error) {
@@ -249,7 +274,7 @@ void Storage::directoryDownloadedErrorCallback(Networking::ErrorResponse error) 
 	_downloadFolderRequest = nullptr;
 	_runningRequestsMutex.unlock();
 
-	//TODO: _showError = true;
+	g_system->displayMessageOnOSD(_("Download failed."));
 }
 
 } // End of namespace Cloud

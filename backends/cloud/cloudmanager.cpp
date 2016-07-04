@@ -340,4 +340,16 @@ double CloudManager::getDownloadingProgress() {
 	return 1;
 }
 
+Common::String CloudManager::getDownloadRemoteDirectory() {
+	Storage *storage = getCurrentStorage();
+	if (storage) return storage->getDownloadRemoteDirectory();
+	return "";
+}
+
+Common::String CloudManager::getDownloadLocalDirectory() {
+	Storage *storage = getCurrentStorage();
+	if (storage) return storage->getDownloadLocalDirectory();
+	return "";
+}
+
 } // End of namespace Cloud

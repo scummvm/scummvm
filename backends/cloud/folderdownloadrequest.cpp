@@ -22,17 +22,19 @@
 
 #include "backends/cloud/folderdownloadrequest.h"
 #include "common/debug.h"
+#include "gui/downloaddialog.h"
 
 namespace Cloud {
 
 FolderDownloadRequest::FolderDownloadRequest(Storage *storage, Storage::FileArrayCallback callback, Networking::ErrorCallback ecb, Common::String remoteDirectoryPath, Common::String localDirectoryPath, bool recursive):
 	Request(nullptr, ecb), CommandSender(nullptr), _storage(storage), _fileArrayCallback(callback),
 	_remoteDirectoryPath(remoteDirectoryPath), _localDirectoryPath(localDirectoryPath), _recursive(recursive),
-	_workingRequest(nullptr), _ignoreCallback(false) {
+	_workingRequest(nullptr), _ignoreCallback(false), _totalFiles(0) {
 	start();
 }
 
 FolderDownloadRequest::~FolderDownloadRequest() {
+	sendCommand(GUI::kDownloadEndedCmd, 0);
 	_ignoreCallback = true;
 	if (_workingRequest) _workingRequest->finish();
 	delete _fileArrayCallback;
@@ -46,6 +48,7 @@ void FolderDownloadRequest::start() {
 	_files.clear();
 	_failedFiles.clear();
 	_ignoreCallback = false;
+	_totalFiles = 0;
 
 	//list directory first
 	_workingRequest = _storage->listDirectory(
@@ -60,6 +63,7 @@ void FolderDownloadRequest::directoryListedCallback(Storage::ListDirectoryRespon
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 	_files = response.value;
+	_totalFiles = _files.size();
 	downloadNextFile();
 }
 
@@ -90,6 +94,8 @@ void FolderDownloadRequest::downloadNextFile() {
 		_currentFile = _files.back();
 		_files.pop_back();
 	} while (_currentFile.isDirectory()); //TODO: may be create these directories (in case those are empty)
+
+	sendCommand(GUI::kDownloadProgressCmd, (int)(getProgress() * 100));
 
 	Common::String remotePath = _currentFile.path();
 	Common::String localPath = remotePath;
@@ -125,6 +131,9 @@ void FolderDownloadRequest::finishDownload(Common::Array<StorageFile> &files) {
 	if (_fileArrayCallback) (*_fileArrayCallback)(Storage::FileArrayResponse(this, files));
 }
 
-double FolderDownloadRequest::getProgress() { return 0; } //TODO
+double FolderDownloadRequest::getProgress() {
+	if (_totalFiles == 0) return 0;	
+	return (double)(_totalFiles - _files.size()) / (double)(_totalFiles);
+}
 
 } // End of namespace Cloud

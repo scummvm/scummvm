@@ -39,6 +39,7 @@ class FolderDownloadRequest: public Networking::Request, public GUI::CommandSend
 	StorageFile _currentFile;
 	Request *_workingRequest;
 	bool _ignoreCallback;
+	uint32 _totalFiles;
 
 	void start();
 	void directoryListedCallback(Storage::ListDirectoryResponse response);
@@ -56,6 +57,12 @@ public:
 
 	/** Returns a number in range [0, 1], where 1 is "complete". */
 	double getProgress();
+
+	/** Returns remote directory path. */
+	Common::String getRemotePath() { return _remoteDirectoryPath; }
+
+	/** Returns local directory path. */
+	Common::String getLocalPath() { return _localDirectoryPath; }
 };
 
 } // End of namespace Cloud

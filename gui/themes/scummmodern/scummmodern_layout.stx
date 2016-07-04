@@ -594,6 +594,20 @@
 			<widget name = 'MainButton'
 					type = 'Button'
 			/>
+			<widget name = 'RemoteDirectory'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'LocalDirectory'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'ProgressBar'
+					height = 'Globals.Button.Height'
+			/>
+			<space size = '1'/>	
+			<widget name = 'PercentText'
+					height = 'Globals.Line.Height'
+					textalign = 'center'
+			/>
 			<space/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 				<space/>
