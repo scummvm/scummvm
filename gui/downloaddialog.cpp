@@ -70,15 +70,7 @@ void DownloadDialog::selectDirectories() {
 	//first user should select remote directory to download	
 	if (_remoteBrowser->runModal() <= 0) return;
 
-	/*
-	Common::FSNode dir(_browser->getResult());
-	Common::FSList files;
-	if (!dir.getChildren(files, Common::FSNode::kListAll)) {
-		MessageDialog alert(_("ScummVM couldn't open the specified directory!"));
-		alert.runModal();
-		return;
-	}
-	*/
+	Cloud::StorageFile remoteDirectory = _remoteBrowser->getResult();
 
 	//now user should select local directory to download into
 	if (_browser->runModal() <= 0) return;
@@ -91,7 +83,24 @@ void DownloadDialog::selectDirectories() {
 		return;
 	}
 
-	//TODO: require empty directory?
+	//check that there is no file with the remote directory's name in the local one
+	for (Common::FSList::iterator i = files.begin(); i != files.end(); ++i) {
+		if (i->getName().equalsIgnoreCase(remoteDirectory.name())) {
+			//if there is, ask user whether it's OK
+			if (!i->isDirectory()) {
+				GUI::MessageDialog alert(_("Cannot create a directory to download - the specified directory has a file with the same name."), _("OK"));
+				alert.runModal();
+				return;
+			}
+			GUI::MessageDialog alert(
+				Common::String::format(_("The \"%s\" already exists in the specified directory.\nDo you really want to download files into that directory?"), remoteDirectory.name().c_str()),
+				_("Yes"),
+				_("No")
+			);
+			if (alert.runModal() != GUI::kMessageOK) return;
+			break;
+		}
+	}
 
 	//TODO: initiate download
 }
