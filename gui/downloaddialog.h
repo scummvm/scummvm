@@ -45,24 +45,24 @@ enum DownloadProgress {
 class DownloadDialog : public Dialog {
 	BrowserDialog *_browser;
 	RemoteBrowserDialog *_remoteBrowser;
-
-	StaticTextWidget *_messageText;
-	ButtonWidget *_mainButton;
+	
 	StaticTextWidget *_remoteDirectoryLabel;
 	StaticTextWidget *_localDirectoryLabel;
 	StaticTextWidget *_percentLabel;
 	SliderWidget *_progressBar;
+	ButtonWidget *_cancelButton;
 	ButtonWidget *_closeButton;
 
-	bool _reflow;
+	bool _close, _reflow;
 
-	void updateButtons();
-	void selectDirectories();
+	void refreshWidgets();
+	bool selectDirectories();
 
 public:
 	DownloadDialog(uint32 storageId);
 	virtual ~DownloadDialog();
 
+	virtual void open();
 	virtual void close();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void handleTickle();

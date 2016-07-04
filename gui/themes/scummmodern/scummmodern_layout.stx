@@ -588,12 +588,6 @@
 
 	<dialog name = 'GlobalOptions_Cloud_DownloadDialog' overlays = 'Dialog.GlobalOptions'>
 		<layout type = 'vertical' padding = '16, 16, 16, 8' spacing = '8'>
-			<widget name = 'DialogDesc'
-					height = 'Globals.Line.Height'
-			/>
-			<widget name = 'MainButton'
-					type = 'Button'
-			/>
 			<widget name = 'RemoteDirectory'
 					height = 'Globals.Line.Height'
 			/>
@@ -610,6 +604,9 @@
 			/>
 			<space/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
+				<widget name = 'MainButton'
+						type = 'Button'
+				/>
 				<space/>
 				<widget name = 'CloseButton'
 						type = 'Button'
