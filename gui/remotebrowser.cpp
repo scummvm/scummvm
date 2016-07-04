@@ -31,6 +31,7 @@
 #include <backends/networking/curl/request.h>
 #include <backends/cloud/storage.h>
 #include <backends/cloud/cloudmanager.h>
+#include "message.h"
 
 namespace GUI {
 
@@ -39,8 +40,9 @@ enum {
 	kGoUpCmd = 'GoUp'
 };
 
-RemoteBrowserDialog::RemoteBrowserDialog(const char *title)
-	: Dialog("Browser"), _navigationLocked(false), _updateList(false), _workingRequest(nullptr), _ignoreCallback(false) {
+RemoteBrowserDialog::RemoteBrowserDialog(const char *title):
+	Dialog("Browser"), _navigationLocked(false), _updateList(false), _showError(false),
+	_workingRequest(nullptr), _ignoreCallback(false) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	new StaticTextWidget(this, "Browser.Headline", title);
@@ -119,6 +121,12 @@ void RemoteBrowserDialog::handleTickle() {
 	if (_updateList) {
 		updateListing();
 		_updateList = false;
+	}
+
+	if (_showError) {
+		_showError = false;
+		MessageDialog alert(_("ScummVM couldn't list the directory!"));
+		alert.runModal();
 	}
 
 	Dialog::handleTickle();
@@ -212,7 +220,7 @@ void RemoteBrowserDialog::directoryListedErrorCallback(Networking::ErrorResponse
 	_navigationLocked = false;
 	_node = _backupNode;
 	_updateList = true;
-	//TODO: show error message
+	_showError = true;
 }
 
 } // End of namespace GUI

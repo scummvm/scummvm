@@ -57,6 +57,7 @@ protected:
 	Cloud::StorageFile _choice;
 	bool _navigationLocked;
 	bool _updateList;
+	bool _showError;
 
 	Networking::Request *_workingRequest;
 	bool _ignoreCallback;
