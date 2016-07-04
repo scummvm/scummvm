@@ -51,34 +51,35 @@
      HANDLER = 267,
      tDOWN = 268,
      tELSE = 269,
-     tEND = 270,
-     tEXIT = 271,
-     tFRAME = 272,
-     tGLOBAL = 273,
-     tGO = 274,
-     tIF = 275,
-     tINTO = 276,
-     tLOOP = 277,
-     tMACRO = 278,
-     tMCI = 279,
-     tMCIWAIT = 280,
-     tMOVIE = 281,
-     tNEXT = 282,
-     tOF = 283,
-     tPREVIOUS = 284,
-     tPUT = 285,
-     tREPEAT = 286,
-     tSET = 287,
-     tTHEN = 288,
-     tTO = 289,
-     tWITH = 290,
-     tWHILE = 291,
-     tGE = 292,
-     tLE = 293,
-     tGT = 294,
-     tLT = 295,
-     tEQ = 296,
-     tNEQ = 297
+     tELSIF = 270,
+     tEND = 271,
+     tEXIT = 272,
+     tFRAME = 273,
+     tGLOBAL = 274,
+     tGO = 275,
+     tIF = 276,
+     tINTO = 277,
+     tLOOP = 278,
+     tMACRO = 279,
+     tMCI = 280,
+     tMCIWAIT = 281,
+     tMOVIE = 282,
+     tNEXT = 283,
+     tOF = 284,
+     tPREVIOUS = 285,
+     tPUT = 286,
+     tREPEAT = 287,
+     tSET = 288,
+     tTHEN = 289,
+     tTO = 290,
+     tWITH = 291,
+     tWHILE = 292,
+     tGE = 293,
+     tLE = 294,
+     tGT = 295,
+     tLT = 296,
+     tEQ = 297,
+     tNEQ = 298
    };
 #endif
 /* Tokens.  */
@@ -94,34 +95,35 @@
 #define HANDLER 267
 #define tDOWN 268
 #define tELSE 269
-#define tEND 270
-#define tEXIT 271
-#define tFRAME 272
-#define tGLOBAL 273
-#define tGO 274
-#define tIF 275
-#define tINTO 276
-#define tLOOP 277
-#define tMACRO 278
-#define tMCI 279
-#define tMCIWAIT 280
-#define tMOVIE 281
-#define tNEXT 282
-#define tOF 283
-#define tPREVIOUS 284
-#define tPUT 285
-#define tREPEAT 286
-#define tSET 287
-#define tTHEN 288
-#define tTO 289
-#define tWITH 290
-#define tWHILE 291
-#define tGE 292
-#define tLE 293
-#define tGT 294
-#define tLT 295
-#define tEQ 296
-#define tNEQ 297
+#define tELSIF 270
+#define tEND 271
+#define tEXIT 272
+#define tFRAME 273
+#define tGLOBAL 274
+#define tGO 275
+#define tIF 276
+#define tINTO 277
+#define tLOOP 278
+#define tMACRO 279
+#define tMCI 280
+#define tMCIWAIT 281
+#define tMOVIE 282
+#define tNEXT 283
+#define tOF 284
+#define tPREVIOUS 285
+#define tPUT 286
+#define tREPEAT 287
+#define tSET 288
+#define tTHEN 289
+#define tTO 290
+#define tWITH 291
+#define tWHILE 292
+#define tGE 293
+#define tLE 294
+#define tGT 295
+#define tLT 296
+#define tEQ 297
+#define tNEQ 298
 
 
 
@@ -137,7 +139,7 @@ typedef union YYSTYPE
 	int	narg;	/* number of arguments */
 }
 /* Line 1529 of yacc.c.  */
-#line 141 "engines/director/lingo/lingo-gr.hpp"
+#line 143 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

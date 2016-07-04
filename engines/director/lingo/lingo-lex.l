@@ -50,6 +50,7 @@ whitespace [\t ]
 
 (?i:down)			{ return tDOWN; }
 (?i:if)				{ return tIF; }
+(?i:else[\t ]+if)	{ return tELSIF; }
 (?i:else)			{ return tELSE; }
 (?i:end)			{ return tEND; }
 (?i:exit)			{ return tEXIT; }

@@ -74,11 +74,11 @@ using namespace Director;
 %token<i> INT
 %token<f> FLOAT
 %token<s> BLTIN ID STRING HANDLER
-%token tDOWN tELSE tEND tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO tMCI tMCIWAIT
+%token tDOWN tELSE tELSIF tEND tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO tMCI tMCIWAIT
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWITH tWHILE
 %token tGE tLE tGT tLT tEQ tNEQ
 
-%type<code> asgn begin cond end expr if repeatwhile repeatwith stmtlist
+%type<code> asgn begin cond elseif end expr if repeatwhile repeatwith stmtlist
 %type<s> gotoframe gotomovie
 %type<narg> argdef arglist
 
@@ -193,7 +193,7 @@ ifstmt:	if cond tTHEN stmtlist end tEND tIF {
 		(*g_lingo->_currentScript)[$1 + 1] = then;      /* thenpart */
 		(*g_lingo->_currentScript)[$1 + 2] = else1;     /* elsepart */
 		(*g_lingo->_currentScript)[$1 + 3] = end; }     /* end, if cond fails */
-	| if cond tTHEN stmtlist end begin elseif end tEND tIF {
+	| if cond tTHEN stmtlist end begin elseifstmt end tEND tIF {
 		inst then = 0, else1 = 0, end = 0;
 		WRITE_UINT32(&then, $4);
 		WRITE_UINT32(&else1, $6);
@@ -203,14 +203,14 @@ ifstmt:	if cond tTHEN stmtlist end tEND tIF {
 		(*g_lingo->_currentScript)[$1 + 3] = end; }     /* end, if cond fails */
 	;
 
-elseif:	elseif1
-	|	elseif1 '\n' elseif
+elseifstmt:	elseifstmt1 elseifstmt
+	|	elseifstmt1
 	;
 
-elseif1:	tELSE if cond tTHEN stmtlist end {
+elseifstmt1:	elseif cond tTHEN stmtlist {
 		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, $5);
-		WRITE_UINT32(&else1, $6);
+		WRITE_UINT32(&then, $4);
+		WRITE_UINT32(&else1, 0);
 		WRITE_UINT32(&end, 0);
 		(*g_lingo->_currentScript)[$2 + 1] = then;      /* thenpart */
 		(*g_lingo->_currentScript)[$2 + 2] = else1;     /* elsepart */
@@ -229,7 +229,9 @@ repeatwith:		tREPEAT tWITH ID	{
 		g_lingo->codeString($3->c_str());
 		delete $3; }
 	;
-if:	  tIF	{ $$ = g_lingo->code1(g_lingo->c_ifcode); g_lingo->code3(STOP, STOP, STOP); }
+if:	  tIF					{ $$ = g_lingo->code1(g_lingo->c_ifcode); g_lingo->code3(STOP, STOP, STOP); }
+	;
+elseif:	  tELSIF			{ $$ = g_lingo->code1(g_lingo->c_ifcode); g_lingo->code3(STOP, STOP, STOP); }
 	;
 begin:	  /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
 	;

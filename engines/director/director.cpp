@@ -94,16 +94,16 @@ Common::Error DirectorEngine::run() {
 
 #if 0
 	_lingo->addCode("--\n\
-	if y = 5 then\n\
-	  set x = 5\n\
-	else if y = 6 then\n\
-	  set x = 6\n\
-	else\n\
-	  set x = 7\n\
-	endif\n\
+	if 5 then\n\
+	  exit\n\
+	else if 6 then\n\
+	  exit\n\
+    else if 7 then\n\
+	  exit\n\
+	end if\n\
 ", kMovieScript, 2);
 
-_lingo->executeScript(kMovieScript, 2);
+//_lingo->executeScript(kMovieScript, 2);
 
 return Common::kNoError;
 
