@@ -90,7 +90,7 @@ using namespace Director;
 
 %%
 
-program: programline '\n' program
+program: program '\n' programline
 	| programline
 	;
 
