@@ -654,6 +654,7 @@ BitmapCast::BitmapCast(Common::SeekableSubReadStreamEndian &stream) {
 		/*uint16 unk1 =*/ stream.readUint16();
 		/*uint16 unk2 =*/ stream.readUint16();
 	}
+	modified = 0;
 }
 
 TextCast::TextCast(Common::SeekableSubReadStreamEndian &stream) {
@@ -678,6 +679,7 @@ TextCast::TextCast(Common::SeekableSubReadStreamEndian &stream) {
 		textFlags.push_back(kTextFlagDoNotWrap);
 	//again supposition
 	fontSize = stream.readUint16();
+	modified = 0;
 }
 
 ShapeCast::ShapeCast(Common::SeekableSubReadStreamEndian &stream) {
@@ -691,6 +693,7 @@ ShapeCast::ShapeCast(Common::SeekableSubReadStreamEndian &stream) {
 	fillType = stream.readByte();
 	lineThickness = stream.readByte();
 	lineDirection = stream.readByte();
+	modified = 0;
 }
 
 Common::Rect Score::readRect(Common::SeekableSubReadStreamEndian &stream) {

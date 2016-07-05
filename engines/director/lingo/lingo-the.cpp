@@ -101,33 +101,42 @@ static struct TheEntityFieldProto {
 	{ kTheSprite,		"volume",		kTheVolume },
 	{ kTheSprite,		"width",		kTheWidth },
 
-	{ kTheCast,		"backColor",	kTheBackColor },
-	{ kTheCast,		"castType",		kTheCastType },
-	{ kTheCast,		"controller",	kTheController },
-	{ kTheCast,		"depth",		kTheDepth },
-	{ kTheCast,		"directToStage",kTheDirectToStage },
-	{ kTheCast,		"filename",		kTheFilename },
-	{ kTheCast,		"foreColor",	kTheForeColor },
-	{ kTheCast,		"frameRate",	kTheFrameRate },
-	{ kTheCast,		"hilite",		kTheHilite },
-	{ kTheCast,		"height",		kTheHeight },
-	{ kTheCast,		"loop",			kTheLoop },
-	{ kTheCast,		"loaded",		kTheLoaded },
-	{ kTheCast,		"modified",		kTheModified },
-	{ kTheCast,		"number",		kTheNumber },
-	{ kTheCast,		"name",			kTheName },
-	{ kTheCast,		"palette",		kThePalette },
-	{ kTheCast,		"pausedAtStart",kThePausedAtStart },
-	{ kTheCast,		"picture",		kThePicture },
-	{ kTheCast,		"preload",		kThePreload },
-	{ kTheCast,		"purgePriority",kThePurgePriority },
-	{ kTheCast,		"rect",			kTheRect },
-	{ kTheCast,		"regPoint",		kTheRegPoint },
-	{ kTheCast,		"scriptText",	kTheScriptText },
-	{ kTheCast,		"size",			kTheSize },
-	{ kTheCast,		"sound",		kTheSound },
-	{ kTheCast,		"text",			kTheText },
+	//Common cast fields
 	{ kTheCast,		"width",		kTheWidth },
+	{ kTheCast,		"height",		kTheHeight },
+	{ kTheCast,		"filename",		kTheFilename },
+	{ kTheCast,		"scriptText",	kTheScriptText },
+	{ kTheCast,		"castType",		kTheCastType },
+	{ kTheCast,		"name",			kTheName },
+	{ kTheCast,		"rect",			kTheRect },
+	{ kTheCast,		"number",		kTheNumber },
+	{ kTheCast,		"modified",		kTheModified },
+	{ kTheCast,		"loaded",		kTheLoaded },
+	{ kTheCast,		"purgePriority",kThePurgePriority }, //0 Never purge, 1 Purge Last, 2 Purge next, 2 Purge normal
+
+	//Shape fields
+	{ kTheCast,		"backColor",	kTheBackColor },
+	{ kTheCast,		"foreColor",	kTheForeColor },
+
+	//Digital video fields
+	{ kTheCast,		"controller",	kTheController },
+	{ kTheCast,		"directToStage",kTheDirectToStage },
+	{ kTheCast,		"frameRate",	kTheFrameRate },
+	{ kTheCast,		"loop",			kTheLoop },
+	{ kTheCast,		"pausedAtStart",kThePausedAtStart },
+	{ kTheCast,		"preload",		kThePreload },
+	{ kTheCast,		"sound",		kTheSound }, // 0-1 off-on
+
+	//Bitmap fields
+	{ kTheCast,		"depth",		kTheDepth },
+	{ kTheCast,		"regPoint",		kTheRegPoint },
+	{ kTheCast,		"palette",		kThePalette },
+	{ kTheCast,		"picture",		kThePicture },
+
+	//TextCast fields
+	{ kTheCast,		"size",			kTheSize },
+	{ kTheCast,		"hilite",		kTheHilite },
+	{ kTheCast,		"text",			kTheText },
 
 	{ kTheWindow,	"drawRect",		kTheDrawRect },
 	{ kTheWindow,	"filename",		kTheFilename },
@@ -206,6 +215,8 @@ Datum Lingo::getTheEntity(TheEntity entity, int id, TheField field) {
 	case kTheSprite:
 		d = getTheSprite(id, field);
 		break;
+	case kTheCast:
+		d = getTheCast(id, field);
 	case kThePerFrameHook:
 		warning("STUB: getting the perframehook");
 		break;
@@ -254,5 +265,94 @@ Datum Lingo::getTheSprite(int id, TheField field) {
 	return d;
 }
 
+Datum Lingo::getTheCast(int id, TheField field) {
+	Datum d;
+	d.type = INT;
+
+	Cast *cast;
+	if (!_vm->_currentScore->_casts.contains(id)) {
+
+		if (field == kTheLoaded) {
+			d.u.i = 0;
+		}
+
+		return d;
+	} else {
+		error ("Not cast %d found", id);
+	}
+	cast = _vm->_currentScore->_casts[id];
+
+	switch (field) {
+	case kTheCastType:
+		d.u.i = cast->type;
+		break;
+	case kTheWidth:
+		d.u.i = cast->initialRect.width();
+		break;
+	case kTheHeight:
+		d.u.i = cast->initialRect.height();
+		break;
+	case kTheBackColor:
+		{
+			if (cast->type != kCastShape)
+				error("Field %d of cast %d not found", field, id);
+			ShapeCast *shape = static_cast<ShapeCast *>(_vm->_currentScore->_casts[id]);
+			d.u.i = shape->bgCol;
+		}
+		break;
+	case kTheForeColor:
+		{
+			if (cast->type != kCastShape)
+				error("Field %d of cast %d not found", field, id);
+			ShapeCast *shape = static_cast<ShapeCast *>(_vm->_currentScore->_casts[id]);
+			d.u.i = shape->fgCol;
+		}
+		break;
+	case kTheLoaded:
+		d.u.i = 1; //Not loaded handled above
+		break;
+	default:
+		error("Unprocessed getting field %d of cast %d", field, id);
+	//TODO find out about String fields
+	}
+}
+
+void Lingo::setTheCast(int id, TheField field, Datum &d) {
+	Cast *cast = _vm->_currentScore->_casts[id];
+	switch (field) {
+	case kTheCastType:
+		cast->type = static_cast<CastType>(d.u.i);
+		cast->modified = 1;
+		break;
+	case kTheWidth:
+		cast->initialRect.setWidth(d.u.i);
+		cast->modified = 1;
+		break;
+	case kTheHeight:
+		cast->initialRect.setHeight(d.u.i);
+		cast->modified = 1;
+		break;
+	case kTheBackColor:
+		{
+			if (cast->type != kCastShape)
+				error("Field %d of cast %d not found", field, id);
+			ShapeCast *shape = static_cast<ShapeCast *>(_vm->_currentScore->_casts[id]);
+			shape->bgCol = d.u.i;
+			shape->modified = 1;
+		}
+		break;
+	case kTheForeColor:
+		{
+			if (cast->type != kCastShape)
+				error("Field %d of cast %d not found", field, id);
+			ShapeCast *shape = static_cast<ShapeCast *>(_vm->_currentScore->_casts[id]);
+			shape->fgCol = d.u.i;
+			shape->modified = 1;
+		}
+		break;
+	default:
+		error("Unprocessed getting field %d of cast %d", field, id);
+	}
+}
 
 } // End of namespace Director

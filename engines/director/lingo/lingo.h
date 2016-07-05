@@ -226,8 +226,10 @@ public:
 public:
 	void setTheEntity(TheEntity entity, int id, TheField field, Datum &d);
 	void setTheSprite(int id, TheField field, Datum &d);
+	void setTheCast(int id, TheField field, Datum &d);
 	Datum getTheEntity(TheEntity entity, int id, TheField field);
 	Datum getTheSprite(int id, TheField field);
+	Datum getTheCast(int id, TheField field);
 
 public:
 	ScriptData *_currentScript;

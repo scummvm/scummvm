@@ -170,6 +170,7 @@ enum TransitionType {
 struct Cast {
 	CastType type;
 	Common::Rect initialRect;
+	byte modified;
 };
 
 struct BitmapCast : Cast {
