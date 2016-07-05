@@ -39,7 +39,7 @@ enum {
 };
 
 StorageWizardDialog::StorageWizardDialog(uint32 storageId):
-	Dialog("GlobalOptions_Cloud_ConnectionWizard"), _storageId(storageId), _close(false) {
+	Dialog("GlobalOptions_Cloud_ConnectionWizard"), _storageId(storageId), _close(false), _stopServerOnClose(false) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	Common::String headline = Common::String::format(_("%s Storage Connection Wizard"), CloudMan.listStorages()[_storageId].c_str());
@@ -83,6 +83,7 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 void StorageWizardDialog::open() {
 	Dialog::open();
 #ifdef USE_SDL_NET
+	_stopServerOnClose = !LocalServer.isRunning();
 	LocalServer.start();
 	LocalServer.indexPageHandler().setTarget(this);
 #endif
@@ -90,7 +91,7 @@ void StorageWizardDialog::open() {
 
 void StorageWizardDialog::close() {
 #ifdef USE_SDL_NET
-	LocalServer.stopOnIdle();
+	if (_stopServerOnClose) LocalServer.stopOnIdle();
 	LocalServer.indexPageHandler().setTarget(nullptr);
 #endif
 	Dialog::close();

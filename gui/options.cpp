@@ -49,6 +49,10 @@
 #include "gui/storagewizarddialog.h"
 #endif
 
+#ifdef USE_SDL_NET
+#include "backends/networking/sdl_net/localwebserver.h"
+#endif
+
 namespace GUI {
 
 enum {
@@ -1306,10 +1310,13 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	_storageDownloadButton = new ButtonWidget(tab, "GlobalOptions_Cloud.DownloadButton", _("Downloads"), _("Open downloads manager dialog"), kDownloadStorageCmd);
 
 	_runServerButton = new ButtonWidget(tab, "GlobalOptions_Cloud.RunServerButton", _("Run server"), _("Run local webserver"), kRunServerCmd);
-	_serverInfoLabel = new StaticTextWidget(tab, "GlobalOptions_Cloud.ServerInfoLabel", "Not running");
+	_serverInfoLabel = new StaticTextWidget(tab, "GlobalOptions_Cloud.ServerInfoLabel", _("Not running"));
 
 	setupCloudTab();
 	_redrawCloudTab = false;
+#ifdef USE_SDL_NET
+	_serverWasRunning = false;
+#endif
 #endif
 
 	// Activate the first tab
@@ -1623,9 +1630,8 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 #ifdef USE_SDL_NET
 	case kRunServerCmd:
 	{
-		//TODO
-		//DownloadDialog dialog(_selectedStorageIndex);
-		//dialog.runModal();
+		if (LocalServer.isRunning()) LocalServer.stopOnIdle();
+		else LocalServer.start();
 		break;
 	}
 #endif
@@ -1653,6 +1659,12 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 void GlobalOptionsDialog::handleTickle() {
 	OptionsDialog::handleTickle();
 #ifdef USE_CLOUD
+#ifdef USE_SDL_NET
+	if (LocalServer.isRunning() != _serverWasRunning) {
+		_serverWasRunning = !_serverWasRunning;
+		_redrawCloudTab = true;
+	}
+#endif
 	if (_redrawCloudTab) {
 		setupCloudTab();
 		draw();
@@ -1762,10 +1774,19 @@ void GlobalOptionsDialog::setupCloudTab() {
 	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud.ServerInfoLabel", x, y, w, h))
 		warning("GlobalOptions_Cloud.ServerInfoLabel's position is undefined");
 	serverInfoY = y;
+
+	bool serverIsRunning = LocalServer.isRunning();
 		
 	if (serverLabelPosition < 0) serverLabelPosition = serverInfoY;
-	if (_runServerButton) _runServerButton->setPos(_runServerButton->getRelX(), serverLabelPosition + serverButtonY - serverInfoY);
-	if (_serverInfoLabel) _serverInfoLabel->setPos(_serverInfoLabel->getRelX(), serverLabelPosition);
+	if (_runServerButton) {
+		_runServerButton->setPos(_runServerButton->getRelX(), serverLabelPosition + serverButtonY - serverInfoY);
+		_runServerButton->setLabel(_(serverIsRunning ? "Stop server" : "Run server"));
+	}
+	if (_serverInfoLabel) {
+		_serverInfoLabel->setPos(_serverInfoLabel->getRelX(), serverLabelPosition);
+		if (serverIsRunning) _serverInfoLabel->setLabel(LocalServer.getAddress());
+		else _serverInfoLabel->setLabel(_("Not running"));
+	}
 #else
 	if (_runServerButton) _runServerButton->setVisible(false);
 	if (_serverInfoLabel) _serverInfoLabel->setVisible(false);

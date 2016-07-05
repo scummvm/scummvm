@@ -71,7 +71,10 @@ void LocalWebserver::stopTimer() {
 void LocalWebserver::start() {
 	_handleMutex.lock();
 	_stopOnIdle = false;
-	if (_timerStarted) return;
+	if (_timerStarted) {
+		_handleMutex.unlock();
+		return;
+	}
 	startTimer();
 
 	// Create a listening TCP socket
@@ -79,6 +82,11 @@ void LocalWebserver::start() {
 	if (SDLNet_ResolveHost(&ip, NULL, SERVER_PORT) == -1) {
 		error("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
 	}
+	_address = Common::String::format(
+		"http://%u.%u.%u.%u:%u/",
+		(ip.host>>24)&0xFF, (ip.host >> 16) & 0xFF, (ip.host >> 8) & 0xFF, ip.host & 0xFF,
+		SERVER_PORT
+	);
 	_serverSocket = SDLNet_TCP_Open(&ip);
 	if (!_serverSocket) {
 		error("SDLNet_TCP_Open: %s\n", SDLNet_GetError());		
@@ -130,7 +138,17 @@ void LocalWebserver::removePathHandler(Common::String path) {
 	_pathHandlers.erase(path);
 }
 
+Common::String LocalWebserver::getAddress() { return _address;  }
+
 IndexPageHandler &LocalWebserver::indexPageHandler() { return _indexPageHandler; }
+
+bool LocalWebserver::isRunning() {
+	bool result = false;
+	_handleMutex.lock();
+	result = _timerStarted;
+	_handleMutex.unlock();
+	return result;
+}
 
 void LocalWebserver::handle() {
 	_handleMutex.lock();

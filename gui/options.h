@@ -266,6 +266,9 @@ protected:
 	ButtonWidget	 *_runServerButton;
 	StaticTextWidget *_serverInfoLabel;
 	bool _redrawCloudTab;
+#ifdef USE_SDL_NET
+	bool _serverWasRunning;
+#endif
 
 	void setupCloudTab();
 #endif

@@ -46,6 +46,7 @@ class StorageWizardDialog : public Dialog {
 	StaticTextWidget *_messageWidget;
 	ButtonWidget *_connectWidget;
 	bool _close;
+	bool _stopServerOnClose;
 
 	/**
 	 * Return the value corresponding to the given character.

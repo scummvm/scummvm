@@ -59,6 +59,7 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	IndexPageHandler _indexPageHandler;
 	uint32 _idlingFrames;
 	Common::Mutex _handleMutex;
+	Common::String _address;
 
 	void startTimer(int interval = TIMER_INTERVAL);
 	void stopTimer();
@@ -76,7 +77,9 @@ public:
 	void addPathHandler(Common::String path, ClientHandler handler);
 	void removePathHandler(Common::String path);
 
+	Common::String getAddress();
 	IndexPageHandler &indexPageHandler();
+	bool isRunning();
 
 	static void setClientGetHandler(Client &client, Common::String response, long code = 200, const char *mimeType = nullptr);
 	static void setClientGetHandler(Client &client, Common::SeekableReadStream *responseStream, long code = 200, const char *mimeType = nullptr);
