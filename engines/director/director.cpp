@@ -109,8 +109,15 @@ Common::Error DirectorEngine::run() {
 	_currentScore = nullptr;
 
 	_lingo->addCode("--\n\
-	--repeat with x = 1 to 5\n\
-	set x = 4\n\
+	if x = 10 then put 10\n\
+--	elseif x = 11 then put 11\n\
+--	elseif x = 12 then put 12\n\
+", kMovieScript, 2);
+
+_lingo->executeScript(kMovieScript, 2);
+
+	_lingo->addCode("--\n\
+--	repeat with x = 1 to 5\n\
 		if x = 1 then\n\
 		  put 1\n\
 		else if x = 2 then\n\
@@ -118,9 +125,12 @@ Common::Error DirectorEngine::run() {
 		  put 2.2\n\
 	    else if x = 3 then put 3\n\
 		end if\n\
-		if x = 4 then put 4\n\
-		else put 5\n\
-	--end repeat\n\
+--	end repeat\n\
+	if x = 6 then put 6\n\
+	else put 0\n\
+--	if x = 10 then put 10\n\
+--	elseif x = 11 then put 11\n\
+--	elseif x = 12 then put 12\n\
 ", kMovieScript, 2);
 
 _lingo->executeScript(kMovieScript, 2);
