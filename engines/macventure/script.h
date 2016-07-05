@@ -31,24 +31,6 @@ namespace MacVenture {
 class Container;
 class World;
 
-enum ControlAction {
-	kNoCommand = 0,
-	kStartOrResume = 1,
-	kClose = 2,
-	kTick = 3,
-	kActivateObject = 4,
-	kMoveObject = 5,
-	kConsume = 6,
-	kExamine = 7,
-	kGo = 8,
-	kHit = 9,
-	kOpen = 10,
-	kOperate = 11,
-	kSpeak = 12,
-	kBabble = 13,
-	kTargetName = 14,
-	kDebugObject = 15
-};
 
 typedef uint32 ObjID;
 typedef int16 word;
@@ -239,7 +221,7 @@ private:
 	void opb8CLOW(EngineState *state, EngineFrame *frame);	//cancel low priority
 	void opb9CHI(EngineState *state, EngineFrame *frame);	//cancel high priority
 	void opbaCRAN(EngineState *state, EngineFrame *frame);	//cancel priority range
-	void opbbFORK(EngineState *state, EngineFrame *frame);	//fork
+	bool opbbFORK(EngineState *state, EngineFrame *frame);	//fork
 	bool opbcCALL(EngineState *state, EngineFrame *frame, ScriptAsset &script);	//call
 	void opbdFOOB(EngineState *state, EngineFrame *frame);	//focus object
 	void opbeSWOB(EngineState *state, EngineFrame *frame);	//swap objects

@@ -177,19 +177,18 @@ void MacVentureEngine::selectControl(ControlAction id) {
 	_selectedControl = id;
 }
 
-void MacVentureEngine::activateCommand(ControlType id) {
-	if (id == kControlClickToContinue) {
+void MacVentureEngine::activateCommand(ControlAction id) {
+	if (id == kClickToContinue) {
 		_clickToContinue = false;
 		_paused = true;
 		return;
-	}
-	ControlAction action = referenceToAction(id);
-	if (action != _activeControl) {
+	}	
+	if (id != _activeControl) {
 		if (_activeControl)
 			_activeControl = kNoCommand;
-		_activeControl = action;
+		_activeControl = id;
 	}
-	debug(2, "Activating Command %x... Command %x is active", action, _activeControl);
+	debug(2, "Activating Command %x... Command %x is active", id, _activeControl);
 	refreshReady();
 }
 
@@ -267,7 +266,7 @@ bool MacVentureEngine::printTexts() {
 			gameChanged();
 			break;
 		case kTextNewLine:
-			_gui->printText(Common::String("\n"));
+			_gui->printText(Common::String(""));
 			gameChanged();
 			break;
 		case kTextPlain:
@@ -314,10 +313,9 @@ void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, bool
 					if (i >= 0)
 						unselectAll();
 					selectObject(objID);
-					if (!_cmdReady)
-					{
-						selectObject(objID);
-						
+					_destObject = objID;
+					_deltaPoint = Common::Point(0, 0);
+					if (!_cmdReady) {						
 						selectControl(kActivateObject);
 						_activeControl = kActivateObject;
 						_cmdReady = true;						
@@ -340,7 +338,7 @@ void MacVentureEngine::handleObjectDrop(ObjID objID, Common::Point delta, ObjID 
 	_destObject = newParent;
 	updateDelta(delta);
 	selectControl(kOperate);
-	activateCommand(kControlOperate);
+	activateCommand(kOperate);
 	refreshReady();
 	preparedToRun();
 }

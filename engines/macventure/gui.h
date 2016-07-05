@@ -111,7 +111,7 @@ struct WindowData {
 	bool updateScroll;
 };
 
-enum ControlType {
+enum ControlType { // HACK, should correspond exactly with the types of controls (sliders etc) 
 	kControlExitBox = 0,
 	kControlExamine = 1,
 	kControlOpen = 2,
@@ -124,6 +124,26 @@ enum ControlType {
 	kControlClickToContinue = 9
 };
 
+enum ControlAction { // HACK, figure out a way to put it in engine
+	kNoCommand = 0,
+	kStartOrResume = 1,
+	kClose = 2,
+	kTick = 3,
+	kActivateObject = 4,
+	kMoveObject = 5,
+	kConsume = 6,
+	kExamine = 7,
+	kGo = 8,
+	kHit = 9,
+	kOpen = 10,
+	kOperate = 11,
+	kSpeak = 12,
+	kBabble = 13,
+	kTargetName = 14,
+	kDebugObject = 15,
+	kClickToContinue = 16
+};
+
 struct ControlData {
 	Common::Rect bounds;
 	uint16 scrollValue;
@@ -131,8 +151,8 @@ struct ControlData {
 	uint16 scrollMax;
 	uint16 scrollMin;
 	uint16 cdef;
-	ObjID objref;
-	ControlType refcon; // If exits window, then the obj id. Otherwise, the control type
+	ControlAction refcon; 
+	ControlType type;
 	uint8 titleLength;
 	char* title;
 	uint16 border;
@@ -362,7 +382,7 @@ public:
 private:
 
 	void changeState(CursorInput input) {
-		debug("Change cursor state: [%d] -> [%d]", _state, _transitionTable[_state][input]);
+		debug(4, "Change cursor state: [%d] -> [%d]", _state, _transitionTable[_state][input]);
 		_state = _transitionTable[_state][input];
 	}
 

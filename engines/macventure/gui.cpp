@@ -521,15 +521,15 @@ bool Gui::loadControls() {
 		data.scrollMax = res->readUint16BE();
 		data.scrollMin = res->readUint16BE();
 		data.cdef = res->readUint16BE();
-		data.refcon = (ControlType)id; id++;
-		res->readUint32BE();
+		data.refcon = (ControlAction)res->readUint32BE();//(ControlType)id; id++;
+		data.type = (ControlType)id; id++;
 		data.titleLength = res->readByte();
 		if (data.titleLength) {
 			data.title = new char[data.titleLength + 1];
 			res->read(data.title, data.titleLength);
 			data.title[data.titleLength] = '\0';
 		}
-		if (data.refcon != kControlExitBox)
+		if (data.type != kControlExitBox)
 			data.border = commandsBorder;
 
 		Common::Rect bounds(left, top, right, bottom); // For some reason, if I remove this it segfaults
@@ -570,7 +570,7 @@ void Gui::drawCommandsWindow() {
 		Common::Array<CommandButton>::const_iterator it = _controlData->begin();
 		for (; it != _controlData->end(); ++it) {
 			CommandButton button = *it;
-			if (button.getData().refcon != kControlExitBox)
+			if (button.getData().type != kControlExitBox)
 				button.draw(*_controlsWindow->getSurface());
 		}
 	}
@@ -816,7 +816,7 @@ void Gui::updateExit(ObjID obj) {
 	{
 		ControlData data;
 		data.titleLength = 0;
-		data.objref = obj;
+		data.refcon = (ControlAction)obj; // Objects can be exits (actions)
 		Common::Point pos = _engine->getObjExitPosition(obj);
 		pos.x = border.leftOffset;
 		pos.y = border.topOffset;
@@ -934,7 +934,6 @@ void Gui::handleDragRelease(Common::Point pos, bool shiftPressed, bool isDoubleC
 		_engine->handleObjectDrop(_draggedObj.id, pos, destObject);
 	}
 	_engine->handleObjectSelect(_draggedObj.id, destinationWindow, shiftPressed, isDoubleClick);
-
 
 	_draggedObj.id = 0;
 }
@@ -1102,7 +1101,7 @@ bool Gui::processEvent(Common::Event &event) {
 bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 	if (event.type == Common::EVENT_LBUTTONUP) {
 		if (_engine->needsClickToContinue()) {
-			_engine->activateCommand(kControlClickToContinue);
+			_engine->activateCommand(kClickToContinue);
 			return true;
 		}
 
@@ -1126,7 +1125,7 @@ bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 		}
 
 
-		_engine->selectControl(_engine->referenceToAction(data.getData().refcon));
+		_engine->selectControl(data.getData().refcon);
 		_engine->activateCommand(data.getData().refcon);
 		_engine->refreshReady();
 		_engine->preparedToRun();
@@ -1240,11 +1239,21 @@ void Gui::processCursorTick() {
 void Gui::handleSingleClick(Common::Point pos) {
 	debug("Single Click");
 	handleDragRelease(_draggedObj.pos, false, false);
+
+	// HACK For test, please delete me
+	//WindowReference destinationWindow = findWindowAtPoint(pos);
+	//_engine->handleObjectSelect(_draggedObj.id, destinationWindow, false, false);
+	//_draggedObj.id = 0;
 }
 
 void Gui::handleDoubleClick(Common::Point pos) {
 	debug("Double Click");
 	handleDragRelease(_draggedObj.pos, false, true);
+
+	// HACK For test, please delete me
+	//WindowReference destinationWindow = findWindowAtPoint(pos);
+	//_engine->handleObjectSelect(_draggedObj.id, destinationWindow, false, true);
+	//_draggedObj.id = 0;
 }
 
 /* Ugly switches */

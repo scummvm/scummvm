@@ -353,7 +353,8 @@ bool ScriptEngine::runFunc(EngineFrame *frame) {
 				opbaCRAN(state, frame);
 				break;
 			case 0xbb: //fork				
-				opbbFORK(state, frame);
+				if (opbbFORK(state, frame))
+					return true;
 				break;
 			case 0xbc: //call
 				if (opbcCALL(state, frame, script))
@@ -902,14 +903,20 @@ void ScriptEngine::opbaCRAN(EngineState * state, EngineFrame * frame) {
 			frame->saves[i].rank = 0;
 }
 
-void ScriptEngine::opbbFORK(EngineState * state, EngineFrame * frame) {
+bool ScriptEngine::opbbFORK(EngineState * state, EngineFrame * frame) {
 	EngineFrame newframe;
 	newframe.action = (ControlAction)state->pop();
 	newframe.src = state->pop();
 	newframe.dest = state->pop();
 	newframe.x = state->pop();
 	newframe.y = state->pop();
-	_frames.push_back(newframe);
+	newframe.haltedInFamily = false;
+	newframe.haltedInFirst = false;
+	newframe.haltedInSaves = false;
+	_frames.push_front(newframe);
+	if (execFrame(true)) {
+		return true;
+	}
 }
 
 bool ScriptEngine::opbcCALL(EngineState * state, EngineFrame * frame, ScriptAsset &script) {
@@ -1071,7 +1078,7 @@ void ScriptEngine::opd5DLOG(EngineState * state, EngineFrame * frame) {
 }
 
 void ScriptEngine::opd6ACMD(EngineState * state, EngineFrame * frame) {
-	_engine->activateCommand((ControlType)state->pop());
+	_engine->activateCommand((ControlAction)state->pop());
 }
 
 void ScriptEngine::opd7LOSE(EngineState * state, EngineFrame * frame) {
