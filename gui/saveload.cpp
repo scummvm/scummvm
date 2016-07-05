@@ -87,7 +87,9 @@ int SaveLoadChooser::runModalWithPluginAndTarget(const EnginePlugin *plugin, con
 	if (!_impl)
 		return -1;
 
+#ifdef USE_CLOUD
 	_impl->runSaveSync(ConfMan.hasKey("savepath", target));
+#endif
 
 	// Set up the game domain as newly active domain, so
 	// target specific savepath will be checked

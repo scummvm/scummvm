@@ -30,6 +30,7 @@
 
 namespace GUI {
 
+#ifdef USE_CLOUD
 enum SaveLoadCloudSyncProgress {
 	kSavesSyncProgressCmd = 'SSPR',
 	kSavesSyncEndedCmd = 'SSEN'
@@ -46,6 +47,7 @@ public:
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void handleTickle();
 };
+#endif
 
 #define kSwitchSaveLoadDialog -2
 
@@ -79,7 +81,9 @@ public:
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
+#ifdef USE_CLOUD
 	virtual void runSaveSync(bool hasSavepathOverride);
+#endif
 	
 	virtual void handleTickle();
 
