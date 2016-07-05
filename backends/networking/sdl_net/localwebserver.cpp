@@ -82,11 +82,25 @@ void LocalWebserver::start() {
 	if (SDLNet_ResolveHost(&ip, NULL, SERVER_PORT) == -1) {
 		error("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
 	}
-	_address = Common::String::format(
-		"http://%u.%u.%u.%u:%u/",
-		(ip.host>>24)&0xFF, (ip.host >> 16) & 0xFF, (ip.host >> 8) & 0xFF, ip.host & 0xFF,
-		SERVER_PORT
-	);
+
+	_address = Common::String::format("http://127.0.0.1:%u/ (unresolved)", SERVER_PORT);
+
+	const char *name = SDLNet_ResolveIP(&ip);
+	if (name == NULL) {
+		warning("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
+	} else {
+		IPaddress localIp;
+		if (SDLNet_ResolveHost(&localIp, name, SERVER_PORT) == -1) {
+			warning("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
+		} else {
+			_address = Common::String::format(
+				"http://%u.%u.%u.%u:%u/",
+				localIp.host & 0xFF, (localIp.host >> 8) & 0xFF, (localIp.host >> 16) & 0xFF, (localIp.host >> 24) & 0xFF,
+				SERVER_PORT
+			);
+		}
+	}
+
 	_serverSocket = SDLNet_TCP_Open(&ip);
 	if (!_serverSocket) {
 		error("SDLNet_TCP_Open: %s\n", SDLNet_GetError());		
