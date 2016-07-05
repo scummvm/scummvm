@@ -44,7 +44,7 @@
 #include "audio/fmopl.h"
 #include "downloaddialog.h"
 
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 #include "backends/cloud/cloudmanager.h"
 #include "gui/storagewizarddialog.h"
 #endif
@@ -90,7 +90,7 @@ enum {
 };
 #endif
 
-#if defined USE_CLOUD || defined USE_SDL_NET
+#ifdef USE_CLOUD
 enum {
 	kConfigureStorageCmd = 'cfst',
 	kRefreshStorageCmd = 'rfst',
@@ -1266,7 +1266,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	new ButtonWidget(tab, "GlobalOptions_Misc.UpdatesCheckManuallyButton", _("Check now"), 0, kUpdatesCheckCmd);
 #endif
 
-#if defined USE_CLOUD || defined USE_SDL_NET
+#ifdef USE_CLOUD
 	//
 	// 7) The cloud tab
 	//
@@ -1275,7 +1275,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	else
 		tab->addTab(_c("Cloud", "lowres"));
 
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 	_selectedStorageIndex = CloudMan.getStorageIndex();
 #else
 	_selectedStorageIndex = 0;
@@ -1283,7 +1283,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 	_storagePopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Cloud.StoragePopupDesc", _("Storage:"), _("Active cloud storage"));
 	_storagePopUp = new PopUpWidget(tab, "GlobalOptions_Cloud.StoragePopup");
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 	Common::StringArray list = CloudMan.listStorages();
 	for (uint32 i = 0; i < list.size(); ++i)
 		_storagePopUp->appendEntry(list[i], i);
@@ -1463,7 +1463,7 @@ void GlobalOptionsDialog::close() {
 		}
 #endif
 
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 		if (CloudMan.getStorageIndex() != _selectedStorageIndex) {
 			if (!CloudMan.switchStorage(_selectedStorageIndex)) {
 				bool anotherStorageIsWorking = CloudMan.isWorking();
@@ -1590,7 +1590,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		}
 		break;
 	}
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 	case kPopUpItemSelectedCmd:
 	{
 		setupCloudTab();
@@ -1694,13 +1694,15 @@ void GlobalOptionsDialog::reflowLayout() {
 
 	_tabWidget->setActiveTab(activeTab);
 	OptionsDialog::reflowLayout();
+#ifdef USE_CLOUD
 	setupCloudTab();
+#endif
 }
 
-#if defined USE_CLOUD || defined USE_SDL_NET
+#ifdef USE_CLOUD
 void GlobalOptionsDialog::setupCloudTab() {
 	int serverLabelPosition = -1; //no override
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 	_selectedStorageIndex = _storagePopUp->getSelectedTag();
 
 	bool shown = (_selectedStorageIndex != Cloud::kStorageNoneId);
@@ -1770,7 +1772,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 #endif
 }
 #endif
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 void GlobalOptionsDialog::storageInfoCallback(Cloud::Storage::StorageInfoResponse response) {
 	//we could've used response.value.email()
 	//but Storage already notified CloudMan

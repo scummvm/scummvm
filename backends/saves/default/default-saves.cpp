@@ -27,7 +27,7 @@
 
 #include "common/scummsys.h"
 
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 #include "backends/cloud/cloudmanager.h"
 #include "common/file.h"
 #endif
@@ -47,7 +47,7 @@
 #include <errno.h>	// for removeSavefile()
 #endif
 
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 const char *DefaultSaveFileManager::TIMESTAMPS_FILENAME = "timestamps";
 #endif
 
@@ -147,7 +147,7 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const Common::String 
 		}
 	}
 
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 	// Update file's timestamp
 	Common::HashMap<Common::String, uint32> timestamps = loadTimestamps();
 	timestamps[filename] = INVALID_TIMESTAMP;
@@ -237,7 +237,7 @@ void DefaultSaveFileManager::assureCached(const Common::String &savePathName) {
 	// Check that path exists and is usable.
 	checkPath(Common::FSNode(savePathName));
 
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 	Common::Array<Common::String> files = CloudMan.getSyncingFiles(); //returns empty array if not syncing	
 	if (!files.empty()) updateSavefilesList(files); //makes this cache invalid
 	else _lockedFiles = files;
@@ -278,7 +278,7 @@ void DefaultSaveFileManager::assureCached(const Common::String &savePathName) {
 	_cachedDirectory = savePathName;
 }
 
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 
 Common::HashMap<Common::String, uint32> DefaultSaveFileManager::loadTimestamps() {
 	Common::HashMap<Common::String, uint32> timestamps;
@@ -374,6 +374,6 @@ Common::String DefaultSaveFileManager::concatWithSavesPath(Common::String name) 
 	return path + '/' + name;
 }
 
-#endif // ifdef USE_CLOUD
+#endif // ifdef USE_LIBCURL
 
 #endif // !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)

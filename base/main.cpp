@@ -66,10 +66,8 @@
 #endif
 
 #include "backends/keymapper/keymapper.h"
-#ifdef USE_CLOUD
-#include "backends/cloud/cloudmanager.h"
-#endif
 #ifdef USE_LIBCURL
+#include "backends/cloud/cloudmanager.h"
 #include "backends/networking/curl/connectionmanager.h"
 #endif
 #ifdef USE_SDL_NET
@@ -485,7 +483,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	}
 #endif
 		
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 	CloudMan.init();
 	CloudMan.syncSaves();
 	CloudMan.testFeature(); //TODO: remove later
@@ -604,8 +602,6 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 #endif
 #ifdef USE_LIBCURL
 	Networking::ConnectionManager::destroy();
-#endif
-#ifdef USE_CLOUD
 	//I think it's important to destroy it after ConnectionManager
 	Cloud::CloudManager::destroy();
 #endif

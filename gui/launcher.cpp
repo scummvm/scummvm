@@ -51,7 +51,7 @@
 #include "gui/ThemeEval.h"
 
 #include "graphics/cursorman.h"
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 #include "backends/cloud/cloudmanager.h"
 #endif
 
@@ -566,7 +566,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
 			_savePathWidget->setLabel(dir.getPath());
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 			MessageDialog warningMessage(_("Saves sync feature doesn't work with non-default directories. If you want your saves to sync, use default directory."));
 			warningMessage.runModal();
 #endif
@@ -847,7 +847,7 @@ void LauncherDialog::addGame() {
 		if (_browser->runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(_browser->getResult());
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 			String selectedDirectory = dir.getPath();
 			String bannedDirectory = CloudMan.getDownloadLocalDirectory();
 			if (selectedDirectory.size() && selectedDirectory.lastChar() != '/' && selectedDirectory.lastChar() != '\\')

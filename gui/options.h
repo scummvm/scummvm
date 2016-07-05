@@ -37,7 +37,7 @@
 #include "gui/fluidsynth-dialog.h"
 #endif
 
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 #include "backends/cloud/storage.h"
 #endif
 
@@ -247,7 +247,7 @@ protected:
 	PopUpWidget *_updatesPopUp;
 #endif
 
-#if defined USE_CLOUD || defined USE_SDL_NET
+#ifdef USE_CLOUD
 	//
 	// Cloud controls
 	//
@@ -269,7 +269,7 @@ protected:
 
 	void setupCloudTab();
 #endif
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 	void storageInfoCallback(Cloud::Storage::StorageInfoResponse response);
 	void storageListDirectoryCallback(Cloud::Storage::ListDirectoryResponse response);
 #endif

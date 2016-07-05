@@ -45,7 +45,7 @@ public:
 	virtual Common::OutSaveFile *openForSaving(const Common::String &filename, bool compress = true);
 	virtual bool removeSavefile(const Common::String &filename);
 
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 
 	static const uint32 INVALID_TIMESTAMP = UINT_MAX;
 	static const char *TIMESTAMPS_FILENAME;

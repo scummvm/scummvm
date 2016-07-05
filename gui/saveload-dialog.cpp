@@ -22,7 +22,7 @@
 
 #include "gui/saveload-dialog.h"
 
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 #include "backends/cloud/cloudmanager.h"
 #include "backends/cloud/savessyncrequest.h"
 #include "backends/networking/curl/connectionmanager.h"
@@ -41,7 +41,7 @@
 
 namespace GUI {
 
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 
 enum {
 	kCancelSyncCmd = 'PDCS',
@@ -157,7 +157,7 @@ SaveLoadChooserDialog::SaveLoadChooserDialog(int x, int y, int w, int h, const b
 }
 
 SaveLoadChooserDialog::~SaveLoadChooserDialog() {
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 	CloudMan.setSyncTarget(nullptr); //not that dialog, at least
 #endif
 }
@@ -173,7 +173,7 @@ void SaveLoadChooserDialog::open() {
 }
 
 void SaveLoadChooserDialog::close() {
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 	CloudMan.setSyncTarget(nullptr); //not that dialog, at least
 #endif
 	Dialog::close();
@@ -215,7 +215,7 @@ void SaveLoadChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uin
 	}
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 	if (cmd == kSavesSyncProgressCmd || cmd == kSavesSyncEndedCmd) {
 		//this dialog only gets these commands if the progress dialog was shown and user clicked "run in background"
 		return updateSaveList();
@@ -225,7 +225,7 @@ void SaveLoadChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uin
 	return Dialog::handleCommand(sender, cmd, data);
 }
 
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 void SaveLoadChooserDialog::runSaveSync(bool hasSavepathOverride) {
 	if (!CloudMan.isSyncing()) {
 		if (hasSavepathOverride) {
@@ -239,7 +239,7 @@ void SaveLoadChooserDialog::runSaveSync(bool hasSavepathOverride) {
 #endif
 
 void SaveLoadChooserDialog::handleTickle() {
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 	if (!_dialogWasShown && CloudMan.isSyncing()) {
 		Common::Array<Common::String> files = CloudMan.getSyncingFiles();
 		if (!files.empty()) {
@@ -279,7 +279,7 @@ void SaveLoadChooserDialog::reflowLayout() {
 }
 
 void SaveLoadChooserDialog::updateSaveList() {
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 	Common::Array<Common::String> files = CloudMan.getSyncingFiles(); //returns empty array if not syncing	
 	g_system->getSavefileManager()->updateSavefilesList(files);
 #endif
@@ -290,7 +290,7 @@ void SaveLoadChooserDialog::listSaves() {
 	if (!_metaEngine) return; //very strange
 	_saveList = _metaEngine->listSaves(_target.c_str());
 
-#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
 	//if there is Cloud support, add currently synced files as "locked" saves in the list
 	if (_metaEngine->simpleSaveNames()) {
 		Common::String pattern = _target + ".###";
