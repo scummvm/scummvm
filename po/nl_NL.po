@@ -5,17 +5,17 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ScummVM 1.8.0git\n"
+"Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-06-07 19:20+0200\n"
-"PO-Revision-Date: 2016-02-21 13:05+0100\n"
+"PO-Revision-Date: 2016-07-05 10:07+0200\n"
 "Last-Translator: Ben Castricum <scummvm@bencastricum.nl>\n"
 "Language-Team: Ben Castricum <scummvm@bencastricum.nl>\n"
 "Language: Nederlands\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Poedit 1.8.8\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
@@ -547,7 +547,7 @@ msgstr "Laad een eerder opgeslagen spel voor het geselecteerde spel."
 
 #: gui/launcher.cpp:640
 msgid "~A~dd Game..."
-msgstr "Spel ~T~oevoegen"
+msgstr "Spel ~T~oevoegen..."
 
 #: gui/launcher.cpp:640 gui/launcher.cpp:647
 msgid "Hold Shift for Mass Add"
@@ -556,7 +556,7 @@ msgstr ""
 
 #: gui/launcher.cpp:642
 msgid "~E~dit Game..."
-msgstr "Spel ~B~ewerken"
+msgstr "Spel ~B~ewerken..."
 
 #: gui/launcher.cpp:642 gui/launcher.cpp:649
 msgid "Change game options"
@@ -674,7 +674,7 @@ msgstr ""
 #: gui/massadd.cpp:266
 #, c-format
 msgid "Scanned %d directories ..."
-msgstr "%d directories doorgezocht..."
+msgstr "%d directories doorgezocht ..."
 
 #: gui/massadd.cpp:269
 #, c-format
@@ -1062,15 +1062,15 @@ msgstr "Taal van de ScummVM GUI"
 
 #: gui/options.cpp:1239
 msgid "Update check:"
-msgstr ""
+msgstr "Update controle:"
 
 #: gui/options.cpp:1239
 msgid "How often to check ScummVM updates"
-msgstr ""
+msgstr "Hoe vaak checken op ScummVM updates"
 
 #: gui/options.cpp:1251
 msgid "Check now"
-msgstr ""
+msgstr "Controleer nu"
 
 #: gui/options.cpp:1386
 msgid "You have to restart ScummVM before your changes will take effect."
@@ -1273,19 +1273,22 @@ msgid ""
 "\n"
 "Would you like to enable this feature?"
 msgstr ""
+"ScummVM ondersteund nu automatische updates.\n"
+"Hiervoor is wel internet toegang nodig.\n"
+"\n"
+"Wilt u deze functie inschakelen?"
 
 #: gui/updates-dialog.cpp:55
 msgid "(You can always enable it in the options dialog on the Misc tab)"
-msgstr ""
+msgstr "(U kunt dit altijd inschakelen in de opties dialoog van de Misc tab)"
 
 #: gui/updates-dialog.cpp:92
-#, fuzzy
 msgid "Check for updates automatically"
-msgstr "Controleren op updates..."
+msgstr "Automatisch controleren op updates"
 
 #: gui/updates-dialog.cpp:111
 msgid "Proceed"
-msgstr ""
+msgstr "Ga verder"
 
 #: gui/widget.cpp:335 gui/widget.cpp:337 gui/widget.cpp:343 gui/widget.cpp:345
 msgid "Clear value"
@@ -1417,20 +1420,19 @@ msgstr "Hercules Amber"
 
 #: common/updates.cpp:58
 msgid "Daily"
-msgstr ""
+msgstr "Dagelijks"
 
 #: common/updates.cpp:60
 msgid "Weekly"
-msgstr ""
+msgstr "Wekelijks"
 
 #: common/updates.cpp:62
 msgid "Monthly"
-msgstr ""
+msgstr "Maandelijks"
 
 #: common/updates.cpp:64
-#, fuzzy
 msgid "<Bad value>"
-msgstr "Veld leegmaken"
+msgstr "<Ongeldige waarde>"
 
 #: engines/advancedDetector.cpp:334
 #, c-format
@@ -2377,22 +2379,20 @@ msgid "Check for Updates..."
 msgstr "Controleren op updates..."
 
 #: engines/adl/detection.cpp:43 engines/adl/detection.cpp:53
-#, fuzzy
 msgid "Color mode"
-msgstr "Kleurenblind Modus"
+msgstr "Kleurenmodus"
 
 #: engines/adl/detection.cpp:44 engines/adl/detection.cpp:54
 msgid "Use color graphics"
-msgstr ""
+msgstr "Gebruik kleurenafbeeldingen"
 
 #: engines/adl/detection.cpp:63
 msgid "Scanlines"
-msgstr ""
+msgstr "scanlines"
 
 #: engines/adl/detection.cpp:64
-#, fuzzy
 msgid "Show scanlines"
-msgstr "Toon objectnamen"
+msgstr "Toon scanlines"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:48
@@ -2433,23 +2433,26 @@ msgstr ""
 "bewegen en in spelmenus."
 
 #: engines/agi/detection.cpp:177
-#, fuzzy
 msgid "Use Hercules hires font"
-msgstr "Hercules Groen"
+msgstr "Gebruik Hercules hires lettertype"
 
 #: engines/agi/detection.cpp:178
 msgid "Uses Hercules hires font, when font file is available."
 msgstr ""
+"Gebruikt het Hercules hires lettertype wanneer het lettertype bestand "
+"beschikbaar is."
 
 #: engines/agi/detection.cpp:187
 msgid "Pause when entering commands"
-msgstr ""
+msgstr "Pauzeer tijdens invoeren van opdrachten"
 
 #: engines/agi/detection.cpp:188
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr ""
+"Toont een opdrachtpromptscherm en pauzeert het spel (zoals in SCI) in plaats "
+"van een real-time prompt."
 
 #: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
@@ -2735,17 +2738,17 @@ msgstr ""
 "%d origneel opgeslagen spellen zijn succesvol geimporteerd in ScummVM.\n"
 "Als u later handmatig origineel opgeslagen spellen wilt importeren dan zult "
 "u de\n"
-"ScummVM debug console moeten openen en het commando 'import_savefile' "
+"ScummVM debug console moeten openen en de opdracht 'import_savefile' "
 "gebruiken.\n"
 "\n"
 
 #: engines/mohawk/detection.cpp:168
 msgid "Play the Myst fly by movie"
-msgstr ""
+msgstr "Speel de Myst fly by film"
 
 #: engines/mohawk/detection.cpp:169
 msgid "The Myst fly by movie was not played by the original engine."
-msgstr ""
+msgstr "De Myst fly by file werd niet door de originele engine afgespeeld."
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:96 engines/mohawk/dialogs.cpp:239
@@ -2762,12 +2765,10 @@ msgid "~D~rop Page"
 msgstr "Laat Pagina ~V~allen"
 
 #: engines/mohawk/dialogs.cpp:103
-#, fuzzy
 msgid "Show ~M~ap"
 msgstr "~T~oon Map"
 
 #: engines/mohawk/dialogs.cpp:109
-#, fuzzy
 msgid "Main Men~u~"
 msgstr "~H~oofdmenu"
 
@@ -2965,13 +2966,12 @@ msgstr ""
 "gouden"
 
 #: engines/scumm/detection.cpp:1340
-#, fuzzy
 msgid "Show Object Line"
-msgstr "Toon objectnamen"
+msgstr "Toon Object Regel"
 
 #: engines/scumm/detection.cpp:1341
 msgid "Show the names of objects at the bottom of the screen"
-msgstr ""
+msgstr "Toon de namen van de objecten onderaan het scherm."
 
 #: engines/scumm/dialogs.cpp:172
 #, c-format
@@ -3830,12 +3830,12 @@ msgstr "Toon labels voor objecten als de muis er over zweeft"
 
 #: engines/sword25/detection.cpp:46
 msgid "Use English speech"
-msgstr ""
+msgstr "Gebruik Engels"
 
 #: engines/sword25/detection.cpp:47
 msgid ""
 "Use English speech instead of German for every language other than German"
-msgstr ""
+msgstr "Gebruik Engels in plaats van Duits voor elke taal anders dan Duits"
 
 #: engines/teenagent/resources.cpp:96
 msgid ""
