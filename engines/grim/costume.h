@@ -83,7 +83,6 @@ public:
 
 	virtual int update(uint frameTime);
 	void animate();
-	void setupTextures();
 	virtual void draw();
 	void getBoundingBox(int *x1, int *y1, int *x2, int *y2);
 	void setPosRotate(const Math::Vector3d &pos, const Math::Angle &pitch,
