@@ -603,8 +603,9 @@ applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) {
 
 	if (shadingStyle == GUI::ThemeEngine::kShadingDim) {
 
+		// TODO: Check how this interacts with kFeatureOverlaySupportsAlpha
 		for (int i = 0; i < pixels; ++i) {
-			*ptr = (((*ptr | _alphaMask) & colorMask) >> 1);
+			*ptr = ((*ptr & colorMask) >> 1) | _alphaMask;
 			++ptr;
 		}
 
