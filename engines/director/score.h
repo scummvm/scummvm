@@ -286,6 +286,10 @@ public:
 	Common::Point _startPoint;
 	uint16 _width;
 	uint16 _height;
+	//TODO: default constraint = 0, if turned on, sprite is constrainted to the bounding rect
+	//As i know, constrainted != 0 only if sprite moveable
+	byte _constraint;
+	byte _moveable;
 };
 
 class Frame {

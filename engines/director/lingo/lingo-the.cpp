@@ -184,6 +184,15 @@ void Lingo::setTheSprite(int id, TheField field, Datum &d) {
 	case kTheInk:
 		sprite->_ink = static_cast<InkType>(d.u.i);
 		break;
+	case kTheLocH:
+		sprite->_startPoint.x = d.u.i;
+		break;
+	case kTheLocV:
+		sprite->_startPoint.y = d.u.i;
+		break;
+	case kTheConstraint:
+		sprite->_constraint = d.u.i;
+		break;
 
 	default:
 		error("Unprocessed setting field %d of sprite", field);
@@ -228,6 +237,18 @@ Datum Lingo::getTheSprite(int id, TheField field) {
 		break;
 	case kTheInk:
 		d.u.i = sprite->_ink;
+		break;
+	case kTheInk:
+		sprite->_ink = static_cast<InkType>(d.u.i);
+		break;
+	case kTheLocH:
+		d.u.i = sprite->_startPoint.x;
+		break;
+	case kTheLocV:
+		d.u.i = sprite->_startPoint.y;
+		break;
+	case kTheConstraint:
+		d.u.i = sprite->_constraint;
 		break;
 	default:
 		error("Unprocessed getting field %d of sprite", field);

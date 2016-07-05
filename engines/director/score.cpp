@@ -1535,6 +1535,8 @@ Sprite::Sprite() {
 	_flags = 0;
 	_height = 0;
 	_castId = 0;
+	_constraint = 0;
+	_moveable = 0;
 	_castId = 0;
 }
 
