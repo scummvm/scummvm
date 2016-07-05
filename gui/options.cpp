@@ -1694,6 +1694,7 @@ void GlobalOptionsDialog::reflowLayout() {
 
 	_tabWidget->setActiveTab(activeTab);
 	OptionsDialog::reflowLayout();
+	setupCloudTab();
 }
 
 #if defined USE_CLOUD || defined USE_SDL_NET
@@ -1746,7 +1747,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 	if (_storageRefreshButton) _storageRefreshButton->setVisible(false);
 	if (_storageDownloadButton) _storageDownloadButton->setVisible(false);
 
-	serverButtonPosition = (_storagePopUpDesc ? _storagePopUpDesc->getRelY() : 0);
+	serverLabelPosition = (_storagePopUpDesc ? _storagePopUpDesc->getRelY() : 0);
 #endif
 #ifdef USE_SDL_NET
 	//determine original widget's positions
