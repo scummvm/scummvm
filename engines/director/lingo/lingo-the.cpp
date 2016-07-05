@@ -29,41 +29,41 @@ class Sprite;
 static struct TheEntityProto {
 	TheEntity entity;
 	const char *name;
-	bool hasID;
+	int hasID;
 } entities[] = {
-	{ kTheFrame,			"frame",			false },
-	{ kThePathName,			"pathname",			false },
-	{ kTheMovie,			"movie",			false },
-	{ kTheMouseH,			"mouseh",			false },
-	{ kTheMouseV,			"mousev",			false },
-	{ kTheMouseDownScript,  "mouseDownScript",	false },
-	{ kTheMouseUpScript,  	"mouseUpScript",	false },
-	{ kTheClickOn,			"clickOn",			false },
-	{ kTheDoubleClick,		"doubleClick",		false },
-	{ kTheLastClick,		"lastClick",		false },
-	{ kTheLastFrame,		"lastFrame",		false },
-	{ kTheLastEvent,		"lastEvent",		false },
-	{ kTheMouseUp,			"mouseUp",			false },
-	{ kTheMouseDown,		"mouseDown",		false },
-	{ kTheRightMouseUp,		"rightMouseUp",		false },
-	{ kTheRightMouseDown,	"rightMouseDown",	false },
-	{ kTheStillDown,		"stillDown",		false },
-	{ kTheKey,				"key",				false },
-	{ kTheControlDown,		"controlDown",		false },
-	{ kTheCommandDown,		"commandDown",		false },
-	{ kTheShiftDown,		"shiftDown",		false },
-	{ kTheOptionDown,		"optionDown",		false },
-	{ kTheMenu,				"menu",				true  },
-	{ kTheMenus,			"menus",			false },
-	{ kTheMenuItem,			"menuitem",			true  },
-	{ kTheMenuItems,		"menuitems",		true  },
-	{ kTheSprite,			"sprite",			true  },
-	{ kTheCast,				"cast",				true  },
-	{ kThePerFrameHook,		"perframehook",		false },
-	{ kTheTicks,			"ticks",			false },
-	{ kTheTimer,			"timer",			false },
-	{ kTheTimeoutLength,	"timeoutlength",	false },
-	{ kTheWindow,			"window",			false },
+	{ kTheFrame,			"frame",			VOID },
+	{ kThePathName,			"pathname",			VOID },
+	{ kTheMovie,			"movie",			VOID },
+	{ kTheMouseH,			"mouseh",			VOID },
+	{ kTheMouseV,			"mousev",			VOID },
+	{ kTheMouseDownScript,  "mouseDownScript",	VOID },
+	{ kTheMouseUpScript,  	"mouseUpScript",	VOID },
+	{ kTheClickOn,			"clickOn",			VOID },
+	{ kTheDoubleClick,		"doubleClick",		VOID },
+	{ kTheLastClick,		"lastClick",		VOID },
+	{ kTheLastFrame,		"lastFrame",		VOID },
+	{ kTheLastEvent,		"lastEvent",		VOID },
+	{ kTheMouseUp,			"mouseUp",			VOID },
+	{ kTheMouseDown,		"mouseDown",		VOID },
+	{ kTheRightMouseUp,		"rightMouseUp",		VOID },
+	{ kTheRightMouseDown,	"rightMouseDown",	VOID },
+	{ kTheStillDown,		"stillDown",		VOID },
+	{ kTheKey,				"key",				VOID },
+	{ kTheControlDown,		"controlDown",		VOID },
+	{ kTheCommandDown,		"commandDown",		VOID },
+	{ kTheShiftDown,		"shiftDown",		VOID },
+	{ kTheOptionDown,		"optionDown",		VOID },
+	{ kTheMenu,				"menu",				INT  },
+	{ kTheMenus,			"menus",			VOID },
+	{ kTheMenuItem,			"menuitem",			STRING  }, // int?
+	{ kTheMenuItems,		"menuitems",		VOID  },
+	{ kTheSprite,			"sprite",			INT  },
+	{ kTheCast,				"cast",				INT  }, // string?
+	{ kThePerFrameHook,		"perframehook",		VOID },
+	{ kTheTicks,			"ticks",			VOID },
+	{ kTheTimer,			"timer",			VOID },
+	{ kTheTimeoutLength,	"timeoutlength",	VOID },
+	{ kTheWindow,			"window",			VOID },
 	{ kTheNOEntity, NULL, false }
 };
 
@@ -237,9 +237,6 @@ Datum Lingo::getTheSprite(int id, TheField field) {
 		break;
 	case kTheInk:
 		d.u.i = sprite->_ink;
-		break;
-	case kTheInk:
-		sprite->_ink = static_cast<InkType>(d.u.i);
 		break;
 	case kTheLocH:
 		d.u.i = sprite->_startPoint.x;
