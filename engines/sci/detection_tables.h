@@ -1110,6 +1110,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// ImagiNation Network (INN) Demo
+	// SCI interpreter version 1.001.097
+	{"inndemo", "", {
+		{"resource.000", 0, "535b1b920441ec73f42eaa4ccfd47b89", 514578},
+		{"resource.map", 0, "333daf27c3e8a6d274a3e0061ed7cd5c", 1545},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Jones in the Fast Lane EGA - English DOS
 	// SCI interpreter version 1.000.172 (not 100% sure FIXME)
 	{"jones", "EGA", {

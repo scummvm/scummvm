@@ -89,6 +89,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"ecoquest2",       "EcoQuest II: Lost Secret of the Rainforest"},
 	{"freddypharkas",   "Freddy Pharkas: Frontier Pharmacist"},
 	{"hoyle4",          "Hoyle Classic Card Games"},
+	{"inndemo",         "ImagiNation Network (INN) Demo"},
 	{"kq6",             "King's Quest VI: Heir Today, Gone Tomorrow"},
 	{"laurabow2",       "Laura Bow 2: The Dagger of Amon Ra"},
 	{"qfg1vga",         "Quest for Glory I: So You Want to Be a Hero"},	// Note: There was also a SCI0 version of this (further up)
@@ -157,6 +158,7 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "hoyle3",          GID_HOYLE3 },
 	{ "hoyle4",          GID_HOYLE4 },
 	{ "iceman",          GID_ICEMAN },
+	{ "inndemo",         GID_INNDEMO },
 	{ "islandbrain",     GID_ISLANDBRAIN },
 	{ "jones",           GID_JONES },
 	{ "kq1sci",          GID_KQ1 },
