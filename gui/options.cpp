@@ -90,11 +90,12 @@ enum {
 };
 #endif
 
-#ifdef USE_CLOUD
+#if defined USE_CLOUD || defined USE_SDL_NET
 enum {
 	kConfigureStorageCmd = 'cfst',
 	kRefreshStorageCmd = 'rfst',
-	kDownloadStorageCmd = 'dlst'
+	kDownloadStorageCmd = 'dlst',
+	kRunServerCmd = 'rnsv'
 };
 #endif
 
@@ -1265,7 +1266,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	new ButtonWidget(tab, "GlobalOptions_Misc.UpdatesCheckManuallyButton", _("Check now"), 0, kUpdatesCheckCmd);
 #endif
 
-#ifdef USE_CLOUD
+#if defined USE_CLOUD || defined USE_SDL_NET
 	//
 	// 7) The cloud tab
 	//
@@ -1274,13 +1275,21 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	else
 		tab->addTab(_c("Cloud", "lowres"));
 
+#ifdef USE_CLOUD
 	_selectedStorageIndex = CloudMan.getStorageIndex();
+#else
+	_selectedStorageIndex = 0;
+#endif
 
 	_storagePopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Cloud.StoragePopupDesc", _("Storage:"), _("Active cloud storage"));
 	_storagePopUp = new PopUpWidget(tab, "GlobalOptions_Cloud.StoragePopup");
+#ifdef USE_CLOUD
 	Common::StringArray list = CloudMan.listStorages();
 	for (uint32 i = 0; i < list.size(); ++i)
 		_storagePopUp->appendEntry(list[i], i);
+#else
+	_storagePopUp->appendEntry(_("<none>"), 0);
+#endif
 	_storagePopUp->setSelected(_selectedStorageIndex);
 
 	_storageUsernameDesc = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageUsernameDesc", _("Username:"), _("Username used by this storage"));
@@ -1295,6 +1304,9 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	_storageConnectButton = new ButtonWidget(tab, "GlobalOptions_Cloud.ConnectButton", _("Connect"), _("Open wizard dialog to connect your cloud storage account"), kConfigureStorageCmd);
 	_storageRefreshButton = new ButtonWidget(tab, "GlobalOptions_Cloud.RefreshButton", _("Refresh"), _("Refresh current cloud storage information (username and usage)"), kRefreshStorageCmd);
 	_storageDownloadButton = new ButtonWidget(tab, "GlobalOptions_Cloud.DownloadButton", _("Downloads"), _("Open downloads manager dialog"), kDownloadStorageCmd);
+
+	_runServerButton = new ButtonWidget(tab, "GlobalOptions_Cloud.RunServerButton", _("Run server"), _("Run local webserver"), kRunServerCmd);
+	_serverInfoLabel = new StaticTextWidget(tab, "GlobalOptions_Cloud.ServerInfoLabel", "Not running");
 
 	setupCloudTab();
 	_redrawCloudTab = false;
@@ -1608,6 +1620,15 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 #endif
+#ifdef USE_SDL_NET
+	case kRunServerCmd:
+	{
+		//TODO
+		//DownloadDialog dialog(_selectedStorageIndex);
+		//dialog.runModal();
+		break;
+	}
+#endif
 #ifdef GUI_ENABLE_KEYSDIALOG
 	case kChooseKeyMappingCmd:
 		_keysDialog->runModal();
@@ -1675,8 +1696,10 @@ void GlobalOptionsDialog::reflowLayout() {
 	OptionsDialog::reflowLayout();
 }
 
-#ifdef USE_CLOUD
+#if defined USE_CLOUD || defined USE_SDL_NET
 void GlobalOptionsDialog::setupCloudTab() {
+	int serverLabelPosition = -1; //no override
+#ifdef USE_CLOUD
 	_selectedStorageIndex = _storagePopUp->getSelectedTag();
 
 	bool shown = (_selectedStorageIndex != Cloud::kStorageNoneId);
@@ -1706,8 +1729,47 @@ void GlobalOptionsDialog::setupCloudTab() {
 	if (_storageConnectButton) _storageConnectButton->setVisible(shown);
 	if (_storageRefreshButton) _storageRefreshButton->setVisible(shown && _selectedStorageIndex == CloudMan.getStorageIndex());
 	if (_storageDownloadButton) _storageDownloadButton->setVisible(shown && _selectedStorageIndex == CloudMan.getStorageIndex());
-}
+	if (!shown) serverLabelPosition = (_storageUsernameDesc ? _storageUsernameDesc->getRelY() : 0);
+#else
+	_selectedStorageIndex = 0;
+	
+	if (_storagePopUpDesc) _storagePopUpDesc->setVisible(false);
+	if (_storagePopUp) _storagePopUp->setVisible(false);
+	if (_storageUsernameDesc) _storageUsernameDesc->setVisible(false);
+	if (_storageUsernameDesc) _storageUsernameDesc->setVisible(false);
+	if (_storageUsername) _storageUsername->setVisible(false);
+	if (_storageUsedSpaceDesc) _storageUsedSpaceDesc->setVisible(false);
+	if (_storageUsedSpace) _storageUsedSpace->setVisible(false);
+	if (_storageLastSyncDesc) _storageLastSyncDesc->setVisible(false);
+	if (_storageLastSync) _storageLastSync->setVisible(false);	
+	if (_storageConnectButton) _storageConnectButton->setVisible(false);
+	if (_storageRefreshButton) _storageRefreshButton->setVisible(false);
+	if (_storageDownloadButton) _storageDownloadButton->setVisible(false);
 
+	serverButtonPosition = (_storagePopUpDesc ? _storagePopUpDesc->getRelY() : 0);
+#endif
+#ifdef USE_SDL_NET
+	//determine original widget's positions
+	int16 x, y;
+	uint16 w, h;
+	int serverButtonY, serverInfoY;
+	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud.RunServerButton", x, y, w, h))
+		warning("GlobalOptions_Cloud.RunServerButton's position is undefined");
+	serverButtonY = y;
+	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud.ServerInfoLabel", x, y, w, h))
+		warning("GlobalOptions_Cloud.ServerInfoLabel's position is undefined");
+	serverInfoY = y;
+		
+	if (serverLabelPosition < 0) serverLabelPosition = serverInfoY;
+	if (_runServerButton) _runServerButton->setPos(_runServerButton->getRelX(), serverLabelPosition + serverButtonY - serverInfoY);
+	if (_serverInfoLabel) _serverInfoLabel->setPos(_serverInfoLabel->getRelX(), serverLabelPosition);
+#else
+	if (_runServerButton) _runServerButton->setVisible(false);
+	if (_serverInfoLabel) _serverInfoLabel->setVisible(false);
+#endif
+}
+#endif
+#ifdef USE_CLOUD
 void GlobalOptionsDialog::storageInfoCallback(Cloud::Storage::StorageInfoResponse response) {
 	//we could've used response.value.email()
 	//but Storage already notified CloudMan

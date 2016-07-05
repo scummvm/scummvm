@@ -247,7 +247,7 @@ protected:
 	PopUpWidget *_updatesPopUp;
 #endif
 
-#ifdef USE_CLOUD
+#if defined USE_CLOUD || defined USE_SDL_NET
 	//
 	// Cloud controls
 	//
@@ -263,9 +263,13 @@ protected:
 	ButtonWidget	 *_storageConnectButton;
 	ButtonWidget	 *_storageRefreshButton;
 	ButtonWidget	 *_storageDownloadButton;
+	ButtonWidget	 *_runServerButton;
+	StaticTextWidget *_serverInfoLabel;
 	bool _redrawCloudTab;
 
 	void setupCloudTab();
+#endif
+#ifdef USE_CLOUD
 	void storageInfoCallback(Cloud::Storage::StorageInfoResponse response);
 	void storageListDirectoryCallback(Cloud::Storage::ListDirectoryResponse response);
 #endif

@@ -580,6 +580,14 @@
 						type = 'Button'
 				/>
 			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
+				<widget name = 'RunServerButton'
+						type = 'Button'
+				/>
+				<widget name = 'ServerInfoLabel'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
 		</layout>
 	</dialog>
 

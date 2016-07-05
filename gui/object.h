@@ -76,6 +76,8 @@ public:
 
 	virtual void setTextDrawableArea(const Common::Rect &r) { _textDrawableArea = r; }
 
+	virtual int16	getRelX() const		{ return _x; }
+	virtual int16	getRelY() const		{ return _y; }
 	virtual int16	getAbsX() const		{ return _x; }
 	virtual int16	getAbsY() const		{ return _y; }
 	virtual int16	getChildX() const	{ return getAbsX(); }
