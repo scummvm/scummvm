@@ -33,11 +33,13 @@ namespace Networking {
 
 #define ARCHIVE_NAME "wwwroot.zip"
 #define INDEX_PAGE_NAME "index.html"
+#define FILES_PAGE_NAME "files.html"
 
 IndexPageHandler::IndexPageHandler(): CommandSender(nullptr) {}
 
 IndexPageHandler::~IndexPageHandler() {
 	LocalServer.removePathHandler("/");
+	LocalServer.removePathHandler("/files/");
 
 	Common::ArchiveMemberList fileList = listArchive();
 	for (Common::ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
@@ -68,6 +70,28 @@ void IndexPageHandler::handle(Client &client) {
 	LocalWebserver::setClientGetHandler(client, response);
 }
 
+void IndexPageHandler::handleFiles(Client &client) {
+	Common::String response = "<html><head><title>ScummVM</title></head><body>{content}</body></html>"; //TODO
+
+	// load stylish response page from the archive
+	Common::SeekableReadStream *const stream = getArchiveFile(FILES_PAGE_NAME);
+	if (stream) response = readEverythingFromStream(stream);
+
+	// TODO: list specified directory
+	Common::String path = client.queryParameter("path");
+	Common::String content = "";
+
+	//these occur twice:
+	replace(response, "{create_directory_button}", _("Create directory"));
+	replace(response, "{create_directory_button}", _("Create directory"));
+	replace(response, "{upload_files_button}", _("Upload files")); //tab
+	replace(response, "{upload_file_button}", _("Upload files")); //button in the tab
+	replace(response, "{create_directory_desc}", _("Type new directory name:"));
+	replace(response, "{upload_file_desc}", _("Select a file to upload:"));
+	replace(response, "{content}", content);	
+	LocalWebserver::setClientGetHandler(client, response);
+}
+
 void IndexPageHandler::handleResource(Client &client) {
 	Common::String filename = client.path();
 	filename.deleteChar(0);
@@ -80,11 +104,13 @@ void IndexPageHandler::addPathHandler(LocalWebserver &server) {
 	// we can't use LocalServer yet, because IndexPageHandler is created while LocalWebserver is created
 	// (thus no _instance is available and it causes stack overflow)
 	server.addPathHandler("/", new Common::Callback<IndexPageHandler, Client &>(this, &IndexPageHandler::handle));
+	server.addPathHandler("/files", new Common::Callback<IndexPageHandler, Client &>(this, &IndexPageHandler::handleFiles));
 
 	Common::ArchiveMemberList fileList = listArchive();
 	for (Common::ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
 		Common::ArchiveMember const &m = **it;
-		if (m.getName() == INDEX_PAGE_NAME) continue;		
+		if (m.getName() == INDEX_PAGE_NAME) continue;
+		if (m.getName() == FILES_PAGE_NAME) continue;
 		server.addPathHandler("/" + m.getName(), new Common::Callback<IndexPageHandler, Client &>(this, &IndexPageHandler::handleResource));		
 	}
 }

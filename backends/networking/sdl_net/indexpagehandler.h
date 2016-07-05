@@ -34,6 +34,7 @@ class IndexPageHandler: public GUI::CommandSender {
 	Common::String _code;
 
 	void handle(Client &client);
+	void handleFiles(Client &client);
 	void handleResource(Client &client);
 
 	void replace(Common::String &source, const Common::String &what, const Common::String &with);

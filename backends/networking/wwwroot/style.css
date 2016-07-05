@@ -22,3 +22,67 @@ html {
 }
 
 .content p { margin: 0 0 6pt 0; }
+
+.controls {
+	padding: 8pt;
+	background: #FFF;
+	font-family: Tahoma;
+	font-size: 16pt;
+}
+
+.controls .buttons {
+	width: 100%;
+	max-width: 500pt;
+	margin: -8pt auto;
+	border: 0;
+	border-spacing: 0;
+}
+
+.controls .buttons td {
+	width: 50%;
+	text-align: center;
+	margin: 0;
+	padding: 0;
+}
+
+.controls .buttons a {
+	display: block;
+	height: 40pt;
+	line-height: 38pt;
+	vertical-align: middle;
+	color: #000;
+	text-decoration: none;
+}
+
+.controls .buttons a:hover {
+	background: #F3F3F3;
+}
+
+.modal {
+	margin-top: 10pt;
+	display: none;
+}
+
+.modal p { margin: 0 0 6pt 0; }
+
+#create_directory input[type="text"], #upload_file input[type="file"] {
+	width: calc(100% - 2 * 5pt);
+}
+
+.modal input {
+	border: 1px solid #EEE;
+	padding: 5pt;
+	font-size: 12pt;
+}
+
+.modal input[type="submit"] {
+	display: block;
+	margin: 6pt auto;
+	background: #DDD;
+	border: 0;
+}
+
+.modal input[type="submit"]:hover {
+	background: #F3F3F3;
+	cursor: pointer;
+}

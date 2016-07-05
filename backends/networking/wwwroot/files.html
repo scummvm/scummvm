@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+	<head>
+		<title>ScummVM</title>
+		<meta charset="utf-8"/>
+		<link rel="stylesheet" type="text/css" href="style.css"/>
+	</head>
+	<body>
+		<div class="container">
+			<div class='header'>
+				<center><img src="logo.png"/></center>
+			</div>
+			<div class="controls">
+				<table class="buttons"><tr>
+					<td><a href="javascript:show('create_directory');">{create_directory_button}</a></td>
+					<td><a href="javascript:show('upload_file');">{upload_files_button}</a></td>
+				</tr></table>
+				<div id="create_directory" class="modal">
+					<p>{create_directory_desc}</p>
+					<form action="create">
+						<input type="text" name="directory_name" value=""/>
+						<input type="submit" value="{create_directory_button}"/>
+					</form>
+				</div>
+				<div id="upload_file" class="modal">
+					<p>{upload_file_desc}</p>
+					<form action="upload" method="post">
+						<input type="file" name="upload_file"/>
+						<input type="submit" value="{upload_file_button}"/>
+					</form>
+				</div>
+			</div>
+			<div class="content">
+				{content}
+			</div>
+		</div>
+		<script>
+			function show(id) {
+				var e = document.getElementById(id);
+				var visible = (e.style.display == "block");
+				if (visible) id = ""; //hide
+
+				e = document.getElementById("create_directory");
+				e.style.display = (e.id == id ? "block" : "none");
+				e = document.getElementById("upload_file");
+				e.style.display = (e.id == id ? "block" : "none");
+			}
+		</script>
+	</body>
+</html>
