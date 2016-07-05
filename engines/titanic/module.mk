@@ -436,6 +436,7 @@ MODULE_OBJS := \
 	star_control/surface_area.o \
 	star_control/surface_fader_base.o \
 	star_control/surface_fader.o \
+	support/avi_surface.o \
 	support/direct_draw.o \
 	support/direct_draw_surface.o \
 	support/exe_resources.o \
