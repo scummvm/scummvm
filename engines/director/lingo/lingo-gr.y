@@ -99,7 +99,6 @@ programline:
 	| func
 	| macro
 	| asgn				{ g_lingo->code1(g_lingo->c_xpop); }
-	| stmtoneliner
 	| stmt
 	| error				{ yyerrok; }
 	;
@@ -172,13 +171,29 @@ stmt: expr 				{ g_lingo->code1(g_lingo->c_xpop); }
 		(*g_lingo->_currentScript)[$1 + 5] = end; }	/* end, if cond fails */
 	;
 
-stmtoneliner: 	if cond tTHEN begin stmt end	{
+ifstmt:	if cond tTHEN '\n' stmtlist end tEND tIF		{
 		inst then = 0, end = 0;
-		WRITE_UINT32(&then, $4);
+		WRITE_UINT32(&then, $5);
 		WRITE_UINT32(&end, $6);
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
-		(*g_lingo->_currentScript)[$1 + 3] = end; 	/* end, if cond fails */
+		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
+		g_lingo->processIf(0, 0); }
+	| if cond tTHEN begin stmt end	{
+			inst then = 0, end = 0;
+			WRITE_UINT32(&then, $4);
+			WRITE_UINT32(&end, $6);
+			(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
+			(*g_lingo->_currentScript)[$1 + 3] = end; 	/* end, if cond fails */
 
+			g_lingo->processIf(0, 0); }
+	| if cond tTHEN '\n' stmtlist end tELSE stmtlist end tEND tIF {
+		inst then = 0, else1 = 0, end = 0;
+		WRITE_UINT32(&then, $5);
+		WRITE_UINT32(&else1, $8);
+		WRITE_UINT32(&end, $9);
+		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
+		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
+		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
 		g_lingo->processIf(0, 0); }
 	| if cond tTHEN begin stmt end  '\n' tELSE begin stmt end '\n' {
 		inst then = 0, else1 = 0, end = 0;
@@ -190,33 +205,15 @@ stmtoneliner: 	if cond tTHEN begin stmt end	{
 		(*g_lingo->_currentScript)[$1 + 3] = end; 	/* end, if cond fails */
 
 		g_lingo->processIf(0, 0); }
-	;
-
-ifstmt:	if cond tTHEN stmtlist end tEND tIF		{
-		inst then = 0, end = 0;
-		WRITE_UINT32(&then, $4);
-		WRITE_UINT32(&end, $5);
-		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
-		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
-		g_lingo->processIf(0, 0); }
-	| if cond tTHEN stmtlist end tELSE stmtlist end tEND tIF {
+	| if cond tTHEN '\n' stmtlist end begin elseifstmt end tEND tIF {
 		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, $4);
+		WRITE_UINT32(&then, $5);
 		WRITE_UINT32(&else1, $7);
-		WRITE_UINT32(&end, $8);
+		WRITE_UINT32(&end, $9);
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
 		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
 		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
-		g_lingo->processIf(0, 0); }
-	| if cond tTHEN stmtlist end begin elseifstmt end tEND tIF {
-		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, $4);
-		WRITE_UINT32(&else1, $6);
-		WRITE_UINT32(&end, $8);
-		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
-		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
-		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
-		g_lingo->processIf(0, $8); }
+		g_lingo->processIf(0, $9); }
 	;
 
 elseifstmt:	elseifstmt elseifstmt1
