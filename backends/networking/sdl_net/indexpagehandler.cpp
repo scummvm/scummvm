@@ -249,15 +249,6 @@ Common::String IndexPageHandler::code() { return _code; }
 
 /// utils
 
-void IndexPageHandler::replace(Common::String &source, const Common::String &what, const Common::String &with) {
-	const char *cstr = source.c_str();
-	const char *position = strstr(cstr, what.c_str());
-	if (position) {
-		uint32 index = position - cstr;
-		source.replace(index, what.size(), with);
-	}
-}
-
 Common::Archive *IndexPageHandler::getZipArchive() {
 	// first search in themepath
 	if (ConfMan.hasKey("themepath")) {

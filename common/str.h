@@ -390,6 +390,15 @@ String normalizePath(const String &path, const char sep);
  */
 bool matchString(const char *str, const char *pat, bool ignoreCase = false, bool pathMode = false);
 
+/**
+ * Function which replaces substring with the other. It happens in place.
+ * If there is no substring found, original string is not changed.
+ *
+ * @param source String to search and replace substring in.
+ * @param what Substring to replace.
+ * @param with String to replace with.
+ */
+void replace(Common::String &source, const Common::String &what, const Common::String &with);
 
 /**
  * Take a 32 bit value and turn it into a four character string, where each of

@@ -838,6 +838,15 @@ bool matchString(const char *str, const char *pat, bool ignoreCase, bool pathMod
 	}
 }
 
+void replace(Common::String &source, const Common::String &what, const Common::String &with) {
+	const char *cstr = source.c_str();
+	const char *position = strstr(cstr, what.c_str());
+	if (position) {
+		uint32 index = position - cstr;
+		source.replace(index, what.size(), with);
+	}
+}
+
 String tag2string(uint32 tag) {
 	char str[5];
 	str[0] = (char)(tag >> 24);
