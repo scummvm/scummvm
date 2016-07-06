@@ -79,7 +79,7 @@ using namespace Director;
 %token tWITH tWHILE tNLELSE
 %token tGE tLE tGT tLT tEQ tNEQ
 
-%type<code> asgn begin elseif elsestmt end expr if repeatwhile repeatwith stmtlist
+%type<code> asgn begin elseif elsestmtoneliner end expr if repeatwhile repeatwith stmtlist
 %type<s> gotoframe gotomovie
 %type<narg> argdef arglist
 
@@ -197,18 +197,38 @@ ifstmt:	if cond tTHEN '\n' stmtlist end tEND tIF		{
 		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
 		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
 		g_lingo->processIf(0, $9); }
-	| if cond tTHEN begin stmtoneliner end elsestmt end {
+	| if cond tTHEN begin stmtoneliner end {
 		inst then = 0, else1 = 0, end = 0;
 		WRITE_UINT32(&then, $4);
-		WRITE_UINT32(&else1, $7);
-		WRITE_UINT32(&end, $8);
+		WRITE_UINT32(&else1, 0);
+		WRITE_UINT32(&end, $6);
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
 		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
 		(*g_lingo->_currentScript)[$1 + 3] = end; 	/* end, if cond fails */
 
 		g_lingo->processIf(0, 0); }
+	| if cond tTHEN begin stmtoneliner end tNLELSE begin stmtoneliner end {
+		inst then = 0, else1 = 0, end = 0;
+		WRITE_UINT32(&then, $4);
+		WRITE_UINT32(&else1, $8);
+		WRITE_UINT32(&end, $10);
+		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
+		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
+		(*g_lingo->_currentScript)[$1 + 3] = end; 	/* end, if cond fails */
+
+		g_lingo->processIf(0, 0); }
+	| if cond tTHEN begin stmtoneliner end elseifstmtoneliner end elsestmtoneliner end {
+		inst then = 0, else1 = 0, end = 0;
+		WRITE_UINT32(&then, $4);
+		WRITE_UINT32(&else1, $6);
+		WRITE_UINT32(&end, $10);
+		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
+		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
+		(*g_lingo->_currentScript)[$1 + 3] = end; 	/* end, if cond fails */
+
+		g_lingo->processIf(0, $10); }
 	;
-elsestmt: /* nothing */				{ $$ = 0; }
+elsestmtoneliner: /* nothing */		{ $$ = 0; }
 	| tNLELSE begin stmtoneliner	{ $$ = $2; }
 	;
 
@@ -216,12 +236,14 @@ elseifstmt:	elseifstmt elseifstmt1
 	|	elseifstmt1
 	;
 
-elseifstmt1:	elseif cond tTHEN begin stmt end '\n'	{
+elseifstmtoneliner:	elseif cond tTHEN begin stmt end {
 		inst then = 0;
 		WRITE_UINT32(&then, $4);
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
 
 		g_lingo->codeLabel($1); }
+
+elseifstmt1: elseifstmtoneliner
 	| elseif cond tTHEN stmtlist end {
 		inst then = 0;
 		WRITE_UINT32(&then, $4);
