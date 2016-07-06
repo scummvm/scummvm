@@ -209,6 +209,7 @@ public:
 			error("MS_ADPCMStream(): blockAlign isn't specified for MS ADPCM");
 		memset(&_status, 0, sizeof(_status));
 		_decodedSampleCount = 0;
+		_decodedSampleIndex = 0;
 	}
 
 	virtual bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos) && (_decodedSampleCount == 0); }
@@ -220,6 +221,7 @@ protected:
 
 private:
 	uint8 _decodedSampleCount;
+	uint8 _decodedSampleIndex;
 	int16 _decodedSamples[4];
 };
 
