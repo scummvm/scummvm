@@ -22,9 +22,11 @@
 
 #include "backends/networking/sdl_net/indexpagehandler.h"
 #include "backends/networking/sdl_net/localwebserver.h"
+#include "backends/saves/default/default-saves.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/savefile.h"
 #include "common/translation.h"
 #include "common/unzip.h"
 #include "gui/storagewizarddialog.h"
@@ -71,15 +73,28 @@ void IndexPageHandler::handle(Client &client) {
 }
 
 void IndexPageHandler::handleFiles(Client &client) {
-	Common::String response = "<html><head><title>ScummVM</title></head><body>{content}</body></html>"; //TODO
+	Common::String response = "<html><head><title>ScummVM</title></head><body><table>{content}</table></body></html>"; //TODO: add controls
+	Common::String itemTemplate = "<tr><td><a href=\"{link}\">{name}</a></td><td>{size}</td></tr>\n"; //TODO: load this template too?
 
 	// load stylish response page from the archive
 	Common::SeekableReadStream *const stream = getArchiveFile(FILES_PAGE_NAME);
 	if (stream) response = readEverythingFromStream(stream);
 
-	// TODO: list specified directory
 	Common::String path = client.queryParameter("path");
 	Common::String content = "";
+	
+	// show an error message if failed to list directory
+	if (!listDirectory(path, content, itemTemplate)) {
+		handleErrorMessage(
+			client,
+			Common::String::format(
+				"%s<br/><a href=\"files?path=/\">%s</a>",
+				_("ScummVM couldn't list the directory you specified."),
+				_("Back to the files manager")
+			)
+		);
+		return;
+	}
 
 	//these occur twice:
 	replace(response, "{create_directory_button}", _("Create directory"));
@@ -96,6 +111,121 @@ void IndexPageHandler::handleResource(Client &client) {
 	Common::String filename = client.path();
 	filename.deleteChar(0);
 	LocalWebserver::setClientGetHandler(client, getArchiveFile(filename), 200, LocalWebserver::determineMimeType(filename));
+}
+
+void IndexPageHandler::handleErrorMessage(Client &client, Common::String message) {
+	Common::String response = "<html><head><title>ScummVM</title></head><body>{message}</body></html>";
+
+	// load stylish response page from the archive
+	Common::SeekableReadStream *const stream = getArchiveFile(INDEX_PAGE_NAME);
+	if (stream) response = readEverythingFromStream(stream);
+
+	replace(response, "{message}", message);
+	LocalWebserver::setClientGetHandler(client, response);
+}
+
+/// "files/"-related
+
+Common::String IndexPageHandler::parentPath(Common::String path) {
+	if (path.size() && (path.lastChar() == '/' || path.lastChar() == '\\')) path.deleteLastChar();
+	if (!path.empty()) {
+		for (int i = path.size() - 1; i >= 0; --i)
+			if (i == 0 || path[i] == '/' || path[i] == '\\') {
+				path.erase(i);
+				break;
+			}
+	}
+	if (path.size() && path.lastChar() != '/' && path.lastChar() != '\\') path += '/';
+	return path;
+}
+
+void IndexPageHandler::addItem(Common::String &content, const Common::String &itemTemplate, bool isDirectory, Common::String path, Common::String name, Common::String size) {
+	Common::String item = itemTemplate;
+	replace(item, "{link}", (isDirectory ? "files?path=" : "download?path=") + path);
+	replace(item, "{name}", name);
+	replace(item, "{size}", size);
+	content += item;
+}
+
+bool IndexPageHandler::listDirectory(Common::String path, Common::String &content, const Common::String &itemTemplate) {
+	if (path == "" || path == "/") {
+		addItem(content, itemTemplate, true, "/root/", _("File system root"));
+		addItem(content, itemTemplate, true, "/saves/", _("Saved games"));
+		return true;
+	}
+
+	Common::String prefixToRemove = "", prefixToAdd = "";
+	if (!transformPath(path, prefixToRemove, prefixToAdd)) return false;
+
+	Common::FSNode node = Common::FSNode(path);
+	if (path == "/") node = node.getParent(); // absolute root
+	if (!node.isDirectory()) return false;
+
+	// list directory
+	Common::FSList _nodeContent;
+	if (!node.getChildren(_nodeContent, Common::FSNode::kListAll, false)) // do not show hidden files
+		_nodeContent.clear();
+	else
+		Common::sort(_nodeContent.begin(), _nodeContent.end());
+
+	// add parent directory link
+	{
+		Common::String filePath = path;
+		if (filePath.hasPrefix(prefixToRemove))
+			filePath.erase(0, prefixToRemove.size());
+		if (filePath == "" || filePath == "/" || filePath == "\\")
+			filePath = "/";
+		else
+			filePath = parentPath(prefixToAdd + filePath);
+		addItem(content, itemTemplate, true, filePath, _("Parent directory"));
+	}
+
+	// fill the content
+	for (Common::FSList::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
+		Common::String name = i->getDisplayName();
+		if (i->isDirectory()) name += "/";
+
+		Common::String filePath = i->getPath();
+		if (filePath.hasPrefix(prefixToRemove))
+			filePath.erase(0, prefixToRemove.size());
+		filePath = prefixToAdd + filePath;
+
+		addItem(content, itemTemplate, i->isDirectory(), filePath, name);
+	}
+
+	return true;
+}
+
+bool IndexPageHandler::transformPath(Common::String &path, Common::String &prefixToRemove, Common::String &prefixToAdd) {
+	// <path> is not empty, but could lack the trailing slash	
+	if (path.lastChar() != '/' && path.lastChar() != '\\') path += '/';
+
+	if (path.hasPrefix("/root")) {
+		prefixToAdd = "/root/";
+		prefixToRemove = "";
+		path.erase(0, 5);
+		if (path == "") path = "/"; // absolute root is '/'
+		if (path != "/") path.deleteChar(0); // if that was "/root/ab/c", it becomes "/ab/c", but we need "ab/c"
+		return true;
+	}
+
+	if (path.hasPrefix("/saves")) {
+		prefixToAdd = "/saves/";
+
+		// determine savepath (prefix to remove)
+		DefaultSaveFileManager *manager = dynamic_cast<DefaultSaveFileManager *>(g_system->getSavefileManager());
+		prefixToRemove = (manager ? manager->concatWithSavesPath("") : ConfMan.get("savepath"));
+		if (prefixToRemove.size() && prefixToRemove.lastChar() != '/' && prefixToRemove.lastChar() != '\\')
+			prefixToRemove += '/';
+
+		path.erase(0, 6);
+		if (path.size() && (path[0] == '/' || path[0] == '\\'))
+			path.deleteChar(0);
+		path = prefixToRemove + path;
+		return true;
+	}
+
+	return false;
 }
 
 /// public

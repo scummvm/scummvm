@@ -36,6 +36,30 @@ class IndexPageHandler: public GUI::CommandSender {
 	void handle(Client &client);
 	void handleFiles(Client &client);
 	void handleResource(Client &client);
+	void handleErrorMessage(Client &client, Common::String message);
+
+	// "files/"-related
+	Common::String parentPath(Common::String path);
+
+	/** Helper method for adding items into the files list. */
+	void addItem(Common::String &content, const Common::String &itemTemplate, bool isDirectory, Common::String path, Common::String name, Common::String size = "");
+
+	/**
+	 * Lists the directory <path>.
+	 *
+	 * Returns true on success.
+	 */
+	bool listDirectory(Common::String path, Common::String &content, const Common::String &itemTemplate);
+
+	/**
+	 * Transforms virtual <path> into actual file system path.
+	 *
+	 * Fills prefixes with actual file system prefix ("to remove")
+	 * and virtual path prefix ("to add").
+	 *
+	 * Returns true on success.
+	 */
+	bool transformPath(Common::String &path, Common::String &prefixToRemove, Common::String &prefixToAdd);
 
 	void replace(Common::String &source, const Common::String &what, const Common::String &with);
 	Common::Archive *getZipArchive();
