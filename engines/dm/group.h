@@ -32,7 +32,10 @@
 #include "dm.h"
 
 namespace DM {
-// this doesn't seem to be used anywhere at all
+	class TimelineEvent;
+	class CreatureInfo;
+
+	// this doesn't seem to be used anywhere at all
 /* Creature types */
 enum CreatureType {
 	k0_CreatureTypeGiantScorpionScorpion = 0, // @ C00_CREATURE_GIANT_SCORPION_SCORPION     
@@ -107,8 +110,8 @@ class Group {
 public:
 	Thing _nextThing;
 	Thing _slot;
-	byte _type;
-	byte _cells;
+	uint16 _type;
+	uint16 _cells;
 	uint16 _health[4];
 private:
 	uint16 _flags;
@@ -121,20 +124,57 @@ public:
 		_health[3] = rawDat[7];
 	}
 
-	byte &getActiveGroupIndex() { return _cells; }
+	byte &getActiveGroupIndex() { return *(byte*)&_cells; }
 
 	uint16 getBehaviour() { return _flags & 0xF; }
+	uint16 setBehaviour(uint16 val) { _flags = (_flags & ~0xF) | (val & 0xF); return (val & 0xF); }
 	uint16 getCount() { return (_flags >> 5) & 0x3; }
+	void setCount(uint16 val) { _flags = (_flags & ~(0x3 << 5)) | ((val & 0x3) << 5); }
 	direction getDir() { return (direction)((_flags >> 8) & 0x3); }
+	void setDir(uint16 val) { _flags = (_flags & ~(0x3 << 8)) | ((val & 0x3) << 8); }
 	uint16 getDoNotDiscard() { return (_flags >> 10) & 0x1; }
 }; // @ GROUP
+
+#define k0_behavior_WANDER 0 // @ C0_BEHAVIOR_WANDER
+#define k2_behavior_USELESS 2 // @ C2_BEHAVIOR_USELESS
+#define k3_behavior_USELESS 3 // @ C3_BEHAVIOR_USELESS
+#define k4_behavior_USELESS 4 // @ C4_BEHAVIOR_USELESS
+#define k5_behavior_FLEE 5 // @ C5_BEHAVIOR_FLEE
+#define k6_behavior_ATTACK 6 // @ C6_BEHAVIOR_ATTACK
+#define k7_behavior_APPROACH 7 // @ C7_BEHAVIOR_APPROACH
+
+#define k15_immuneToFear 15 // @ C15_IMMUNE_TO_FEAR
+
+#define k255_immobile 255 // @ C255_IMMOBILE
+#define kM1_wholeCreatureGroup -1 // @ CM1_WHOLE_CREATURE_GROUP 
+
+#define k34_D13_soundCount 34 // @ D13_SOUND_COUNT
+
+int32 M32_setTime(int32 &map_time, int32 time); // @ M32_SET_TIME
 
 
 class GroupMan {
 	DMEngine *_vm;
+	byte _g392_dropMovingCreatureFixedPossessionsCell[4]; // @ G0392_auc_DropMovingCreatureFixedPossessionsCells
+	uint16 _g391_dropMovingCreatureFixedPossCellCount; // @ G0391_ui_DropMovingCreatureFixedPossessionsCellCount
+	uint16 _g386_fluxCageCount; // @ G0386_ui_FluxCageCount
+	int16 _g385_fluxCages[4]; // @ G0385_ac_FluxCages
+	int16 _g378_currentGroupMapX; // @ G0378_i_CurrentGroupMapX
+	int16 _g379_currentGroupMapY; // @ G0379_i_CurrentGroupMapY
+	Thing _g380_currGroupThing; // @ G0380_T_CurrentGroupThing
+	int16 _g384_groupMovementTestedDirections[4]; // @ G0384_auc_GroupMovementTestedDirections
+	uint16 _g381_currGroupDistanceToParty; // @ G0381_ui_CurrentGroupDistanceToParty
+	int16 _g382_currGroupPrimaryDirToParty; // @ G0382_i_CurrentGroupPrimaryDirectionToParty
+	int16 _g383_currGroupSecondaryDirToParty; // @ G0383_i_CurrentGroupSecondaryDirectionToParty
+
+	Thing _g388_groupMovementBlockedByGroupThing; // @ G0388_T_GroupMovementBlockedByGroupThing
+	bool _g389_groupMovementBlockedByDoor; // @ G0389_B_GroupMovementBlockedByDoor
+	bool _g390_groupMovementBlockedByParty; // @ G0390_B_GroupMovementBlockedByParty
+	bool _g387_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter; // @ G0387_B_GroupMovementBlockedByWallStairsPitFakeWallFluxcageTeleporter
 public:
 	uint16 _g376_maxActiveGroupCount = 60; // @ G0376_ui_MaximumActiveGroupCount
 	ActiveGroup *_g375_activeGroups; // @ G0375_ps_ActiveGroups
+	uint16 _g377_currActiveGroupCount; // @ G0377_ui_CurrentActiveGroupCount
 	GroupMan(DMEngine *vm);
 	~GroupMan();
 	void f196_initActiveGroups(); // @ F0196_GROUP_InitializeActiveGroups
@@ -142,6 +182,61 @@ public:
 	uint16 f147_getGroupDirections(Group *group, int16 mapIndex); // @ F0147_DUNGEON_GetGroupDirections
 	int16 f176_getCreatureOrdinalInCell(Group *group, uint16 cell); // @ F0176_GROUP_GetCreatureOrdinalInCell
 	uint16 M50_getCreatureValue(uint16 groupVal, uint16 creatureIndex); // @ M50_CREATURE_VALUE
+	void f188_dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, int16 mode); // @ F0188_GROUP_DropGroupPossessions
+	void f186_dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int16 mapY, uint16 cell,
+										   int16 mode); // @ F0186_GROUP_DropCreatureFixedPossessions
+	int16 f228_getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 srcMapY,
+												   int16 destMapX, int16 destMapY); // @ F0228_GROUP_GetDirectionsWhereDestinationIsVisibleFromSource
+	bool f227_isDestVisibleFromSource(uint16 dir, int16 srcMapX, int16 srcMapY, int16 destMapX,
+									  int16 destMapY); // @ F0227_GROUP_IsDestinationVisibleFromSource
+	bool f232_groupIsDoorDestoryedByAttack(uint16 mapX, uint16 mapY, int16 attack,
+										   bool magicAttack, int16 ticks); // @ F0232_GROUP_IsDoorDestroyedByAttack
+	Thing f175_groupGetThing(int16 mapX, int16 mapY); // @ F0175_GROUP_GetThing
+	int16 f190_groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex,
+											 int16 mapX, int16 mapY, int16 damage, bool notMoving); // @ F0190_GROUP_GetDamageCreatureOutcome
+	void f189_delete(int16 mapX, int16 mapY); // @ F0189_GROUP_Delete
+	void f181_groupDeleteEvents(int16 mapX, int16 mapY); // @ F0181_GROUP_DeleteEvents
+	uint16 f178_getGroupValueUpdatedWithCreatureValue(uint16 groupVal, uint16 creatureIndex, uint16 creatreVal); // @ F0178_GROUP_GetGroupValueUpdatedWithCreatureValue
+	int16 f191_getDamageAllCreaturesOutcome(Group *group, int16 mapX, int16 mapY, int16 attack, bool notMoving); // @ F0191_GROUP_GetDamageAllCreaturesOutcome
+	int16 f192_groupGetResistanceAdjustedPoisonAttack(uint16 creatreType, int16 poisonAttack); // @ F0192_GROUP_GetResistanceAdjustedPoisonAttack
+	void f209_processEvents29to41(int16 eventMapX, int16 eventMapY, int16 eventType, uint16 ticks); // @ F0209_GROUP_ProcessEvents29to41
+	bool f202_isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 mapY,
+								 uint16 dir, bool allowMovementOverImaginaryPitsAndFakeWalls); // @ F0202_GROUP_IsMovementPossible
+	int16 f226_getDistanceBetweenSquares(int16 srcMapX, int16 srcMapY, int16 destMapX,
+										 int16 destMapY); // @ F0226_GROUP_GetDistanceBetweenSquares
+
+	int16 f200_groupGetDistanceToVisibleParty(Group *group, int16 creatureIndex, int16 mapX, int16 mapY); // @ F0200_GROUP_GetDistanceToVisibleParty
+	int16 f199_getDistanceBetweenUnblockedSquares(int16 srcMapX, int16 srcMapY,
+												  int16 destMapX, int16 destMapY, bool (GroupMan::*isBlocked)(uint16, uint16)); // @ F0199_GROUP_GetDistanceBetweenUnblockedSquares
+	bool f197_isViewPartyBlocked(uint16 mapX, uint16 mapY); // @ F0197_GROUP_IsViewPartyBlocked
+	int32 f179_getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 creatureIndex,
+										   bool isAttacking); // @ F0179_GROUP_GetCreatureAspectUpdateTime
+	void f205_setDirection(ActiveGroup *activeGroup, int16 dir, int16 creatureIndex, bool twoHalfSquareSizedCreatures); // @ F0205_GROUP_SetDirection
+	void f208_groupAddEvent(TimelineEvent *event, uint32 time); // @ F0208_GROUP_AddEvent
+	int16 f201_getSmelledPartyPrimaryDirOrdinal(CreatureInfo *creatureInfo, int16 mapY, int16 mapX); // @ F0201_GROUP_GetSmelledPartyPrimaryDirectionOrdinal
+	bool f198_isSmellPartyBlocked(uint16 mapX, uint16 mapY); // @ F0198_GROUP_IsSmellPartyBlocked
+	int16 f203_getFirstPossibleMovementDirOrdinal(CreatureInfo *info, int16 mapX, int16 mapY,
+												  bool allowMovementOverImaginaryPitsAndFakeWalls); // @ F0203_GROUP_GetFirstPossibleMovementDirectionOrdinal
+	void f206_groupSetDirGroup(ActiveGroup *activeGroup, int16 dir, int16 creatureIndex,
+							   int16 creatureSize); // @ F0206_GROUP_SetDirectionGroup
+	void f182_stopAttacking(ActiveGroup *group, int16 mapX, int16 mapY);// @ F0182_GROUP_StopAttacking
+	bool f204_isArchenemyDoubleMovementPossible(CreatureInfo *info, int16 mapX, int16 mapY, uint16 dir); // @ F0204_GROUP_IsArchenemyDoubleMovementPossible
+	bool f207_isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 creatureIndex); // @ F0207_GROUP_IsCreatureAttacking
+	void f229_setOrderedCellsToAttack(signed char * orderedCellsToAttack, int16 targetMapX,
+	                                  int16 targetMapY, int16 attackerMapX, int16 attackerMapY, uint16 cellSource); // @ F0229_GROUP_SetOrderedCellsToAttack
+	void f193_stealFromChampion(Group *group, uint16 championIndex); // @ F0193_GROUP_StealFromChampion
+	int16 f230_getChampionDamage(Group *group, uint16 champIndex); // @ F0230_GROUP_GetChampionDamage
+	void f187_dropMovingCreatureFixedPossession(Thing thing, int16 mapX, int16 mapY); // @ F0187_GROUP_DropMovingCreatureFixedPossessions
+	void f180_startWanedring(int16 mapX, int16 mapY); // @ F0180_GROUP_StartWandering
+	void f183_addActiveGroup(Thing thing, int16 mapX, int16 mapY); // @ F0183_GROUP_AddActiveGroup
+	void f184_removeActiveGroup(uint16 activeGroupIndex); // @ F0184_GROUP_RemoveActiveGroup
+
+
+
+
+
+
+
 };
 
 

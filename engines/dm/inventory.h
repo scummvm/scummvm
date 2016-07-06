@@ -78,6 +78,7 @@ public:
 	void f335_drawPanelObjectDescriptionString(char *descString); // @ F0335_INVENTORY_DrawPanel_ObjectDescriptionString
 	void f339_drawPanelArrowOrEye(bool pressingEye); // @ F0339_INVENTORY_DrawPanel_ArrowOrEye
 	void f342_drawPanelObject(Thing thingToDraw, bool pressingEye); // @ F0342_INVENTORY_DrawPanel_Object
+	void f337_setDungeonViewPalette(); // @ F0337_INVENTORY_SetDungeonViewPalette
 
 };
 

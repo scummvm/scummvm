@@ -42,6 +42,7 @@ MODULE_OBJS := \
 	menus.o \
 	movesens.o \
 	objectman.o \
+	projexpl.o \
 	text.o \
 	timeline.o
 

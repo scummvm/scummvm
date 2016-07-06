@@ -211,6 +211,16 @@ public:
 
 class DMEngine;
 
+#define k0_pointerArrow 0 // @ C0_POINTER_ARROW 
+#define k1_pointerHand 1 // @ C1_POINTER_HAND  
+
+#define k0_pointerTypeArrow 0 // @ C0_POINTER_TYPE_ARROW         
+#define k1_pointerTypeObjectIcon 1 // @ C1_POINTER_TYPE_OBJECT_ICON   
+#define k2_pointerTypeChampionIcon 2 // @ C2_POINTER_TYPE_CHAMPION_ICON 
+#define k3_pointerTypeHand 3 // @ C3_POINTER_TYPE_HAND          
+#define k4_pointerTypeAutoselect 4 // @ C4_POINTER_TYPE_AUTOSELECT    
+
+
 class EventManager {
 	DMEngine *_vm;
 
@@ -220,6 +230,14 @@ class EventManager {
 	bool _g436_pendingClickPresent; // G0436_B_PendingClickPresent
 	Common::Point _g437_pendingClickPos; // @ G0437_i_PendingClickX, G0438_i_PendingClickY
 	MouseButton _g439_pendingClickButton; // @ G0439_i_PendingClickButtonsStatus
+	bool _g600_useObjectAsMousePointerBitmap; // @ G0600_B_UseObjectAsMousePointerBitmap
+	bool _g601_useHandAsMousePointerBitmap; // @ G0601_B_UseHandAsMousePointerBitmap
+	bool _gK100_preventBuildPointerScreenArea; // @ K0100_B_PreventBuildPointerScreenArea
+	byte *_g615_mousePointerOriginalColorsObject; // @ G0615_puc_Bitmap_MousePointerOriginalColorsObject
+	byte *_g613_mousePointerOriginalColorsChampionIcon; // @ G0613_puc_Bitmap_MousePointerOriginalColorsChampionIcon
+	byte *_gK190_mousePointerTempBuffer; // @ K0190_puc_Bitmap_MousePointerTemporaryBuffer
+	int16 _gK104_mousePointerType; // @ K0104_i_MousePointerType
+	int16 _gK105_previousMousePointerType; // @ K0105_i_PreviousMousePointerType
 
 // this doesn't seem to be used anywhere at all
 	bool _g435_isCommandQueueLocked; // @ G0435_B_CommandQueueLocked
@@ -227,8 +245,12 @@ class EventManager {
 
 	void f365_commandTurnParty(CommandType cmdType); // @ F0365_COMMAND_ProcessTypes1To2_TurnParty
 	void f366_commandMoveParty(CommandType cmdType); // @ F0366_COMMAND_ProcessTypes3To6_MoveParty
+	bool f375_processType80_clickDungeonView_isLeaderHandObjThrown(int16 posX, int16 posY); // @ F0375_COMMAND_ProcessType80_ClickInDungeonView_IsLeaderHandObjectThrown
+
+
 public:
 	explicit EventManager(DMEngine *vm);
+	~EventManager();
 
 	MouseInput* _g441_primaryMouseInput;// @ G0441_ps_PrimaryMouseInput
 	MouseInput* _g442_secondaryMouseInput;// @ G0442_ps_SecondaryMouseInput
@@ -238,7 +260,13 @@ public:
 	uint16 _g599_useChampionIconOrdinalAsMousePointerBitmap; // @ G0599_ui_UseChampionIconOrdinalAsMousePointerBitmap
 
 	void initMouse();
-	void showMouse(bool visibility);
+	void f67_setMousePointerToNormal(int16 mousePointer); // @ F0067_MOUSE_SetPointerToNormal
+	void f68_setPointerToObject(byte *bitmap); // @ F0068_MOUSE_SetPointerToObject
+	void f71_mouseDropChampionIcon(); // @ F0071_MOUSE_DropChampionIcon
+	void f73_buildpointerScreenArea(int16 mousePosX, int16 mousePosY); // @ F0073_MOUSE_BuildPointerScreenArea
+	void f69_setMousePointer(); // @ F0069_MOUSE_SetPointer
+	void f78_showMouse(); // @ F0077_MOUSE_HidePointer_CPSE
+	void f77_hideMouse(); // @ F0078_MOUSE_ShowPointer
 
 	void setMousePos(Common::Point pos);
 	void processInput(); // acknowledges mouse and keyboard input
@@ -252,8 +280,12 @@ public:
 	void f377_commandProcessType80ClickInDungeonView(int16 posX, int16 posY); // @ F0377_COMMAND_ProcessType80_ClickInDungeonView
 	void f282_commandProcessCommands160To162ClickInResurrectReincarnatePanel(CommandType commandType); // @ F0282_CHAMPION_ProcessCommands160To162_ClickInResurrectReincarnatePanel
 	void f378_commandProcess81ClickInPanel(int16 x, int16 y); // @ F0378_COMMAND_ProcessType81_ClickInPanel
+	void f373_processType80_clickInDungeonView_grabLeaderHandObject(uint16 viewCell); // @ F0373_COMMAND_ProcessType80_ClickInDungeonView_GrabLeaderHandObject
+	void f374_processType80_clickInDungeonViewDropLeaderHandObject(uint16 viewCell); // @ F0374_COMMAND_ProcessType80_ClickInDungeonView_DropLeaderHandObject
 
 	bool f360_hasPendingClick(Common::Point &point, MouseButton button); // @ F0360_COMMAND_ProcessPendingClick
+	void f379_drawSleepScreen(); // @ F0379_COMMAND_DrawSleepScreen
+	void f357_discardAllInput(); // @ F0357_COMMAND_DiscardAllInput
 };
 
 }

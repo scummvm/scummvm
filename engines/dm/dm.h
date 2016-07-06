@@ -48,6 +48,8 @@ class TextMan;
 class MovesensMan;
 class GroupMan;
 class Timeline;
+class ProjExpl;
+
 
 
 enum direction {
@@ -57,50 +59,26 @@ enum direction {
 	kDirWest = 3
 };
 
-void turnDirRight(direction &dir);
-void turnDirLeft(direction &dir);
-direction returnOppositeDir(direction dir);	// @ M18_OPPOSITE
-uint16 returnPrevVal(uint16 val); // @ M19_PREVIOUS
-uint16 returnNextVal(uint16 val); // @ M17_NEXT
-bool isOrientedWestEast(direction dir);	// @ M16_IS_ORIENTED_WEST_EAST
-
-
-uint16 getFlag(uint16 val, uint16 mask); // @ M07_GET
-uint16 setFlag(uint16 &val, uint16 mask); // @ M08_SET
-uint16 clearFlag(uint16 &val, uint16 mask);	// @ M09_CLEAR
-uint16 toggleFlag(uint16 &val, uint16 mask); // @ M10_TOGGLE
-uint16 M75_bitmapByteCount(uint16 pixelWidth, uint16 height);  // @ M75_BITMAP_BYTE_COUNT
-uint16 M21_normalizeModulo4(uint16 val); // @ M21_NORMALIZE
 
 
 enum ThingType {
-	kM1_PartyThingType = -1, // @ CM1_THING_TYPE_PARTY, special value
-	k0_DoorThingType = 0,
-	k1_TeleporterThingType = 1,
-	k2_TextstringType = 2,
-	k3_SensorThingType = 3,
-	k4_GroupThingType = 4,
-	k5_WeaponThingType = 5,
-	k6_ArmourThingType = 6,
-	k7_ScrollThingType = 7,
-	k8_PotionThingType = 8,
-	k9_ContainerThingType = 9,
-	k10_JunkThingType = 10,
-	k14_ProjectileThingType = 14,
-	k15_ExplosionThingType = 15,
+	kM1_PartyThingType = -1,  // @ CM1_THING_TYPE_PARTY
+	k0_DoorThingType = 0, // @ C00_THING_TYPE_DOOR       
+	k1_TeleporterThingType = 1, // @ C01_THING_TYPE_TELEPORTER 
+	k2_TextstringType = 2, // @ C02_THING_TYPE_TEXTSTRING 
+	k3_SensorThingType = 3,  // @ C03_THING_TYPE_SENSOR     
+	k4_GroupThingType = 4, // @ C04_THING_TYPE_GROUP 
+	k5_WeaponThingType = 5, // @ C05_THING_TYPE_WEAPON
+	k6_ArmourThingType = 6, // @ C06_THING_TYPE_ARMOUR
+	k7_ScrollThingType = 7,  // @ C07_THING_TYPE_SCROLL     
+	k8_PotionThingType = 8,  // @ C08_THING_TYPE_POTION     
+	k9_ContainerThingType = 9,  // @ C09_THING_TYPE_CONTAINER  
+	k10_JunkThingType = 10,  // @ C10_THING_TYPE_JUNK      
+	k14_ProjectileThingType = 14,  // @ C14_THING_TYPE_PROJECTILE
+	k15_ExplosionThingType = 15,  // @ C15_THING_TYPE_EXPLOSION 
 	k16_ThingTypeTotal = 16 // +1 than the last (explosionThingType)
 }; // @ C[00..15]_THING_TYPE_...
 
-enum Cell {
-	kM1_CellAny = -1, // @ CM1_CELL_ANY      
-	k0_CellNorthWest = 0, // @ C00_CELL_NORTHWEST 
-	k1_CellNorthEast = 1, // @ C01_CELL_NORTHEAST 
-	k2_CellSouthEast = 2, // @ C02_CELL_SOUTHEAST 
-	k3_CellSouthWest = 3 // @ C03_CELL_SOUTHWEST 
-};
-
-#define kM1_mapIndexNone -1 // @ CM1_MAP_INDEX_NONE       
-#define k255_mapIndexEntrance 255 // @ C255_MAP_INDEX_ENTRANCE 
 
 class Thing {
 	uint16 _data;
@@ -131,10 +109,50 @@ public:
 	byte getCell() const { return _data >> 14; }
 	ThingType getType() const { return (ThingType)((_data >> 10) & 0xF); }
 	uint16 getIndex() const { return _data & 0x3FF; }
+	uint16 getTypeAndIndex() { return _data & 0x3FFF; }
 	uint16 toUint16() const { return _data; } // I don't like 'em cast operators
 	bool operator==(const Thing &rhs) const { return _data == rhs._data; }
 	bool operator!=(const Thing &rhs) const { return _data != rhs._data; }
 }; // @ THING
+
+
+
+void turnDirRight(direction &dir);
+void turnDirLeft(direction &dir);
+direction returnOppositeDir(direction dir);	// @ M18_OPPOSITE
+uint16 returnPrevVal(uint16 val); // @ M19_PREVIOUS
+uint16 returnNextVal(uint16 val); // @ M17_NEXT
+bool isOrientedWestEast(direction dir);	// @ M16_IS_ORIENTED_WEST_EAST
+
+
+uint16 setFlag(uint16 &val, uint16 mask); // @ M08_SET
+
+
+#define getFlag(val, mask) ((val) & (mask))
+
+
+#define clearFlag(val, mask) ((val) &= (~(mask))) // @ M09_CLEAR
+
+uint16 toggleFlag(uint16 &val, uint16 mask); // @ M10_TOGGLE
+uint16 M75_bitmapByteCount(uint16 pixelWidth, uint16 height);  // @ M75_BITMAP_BYTE_COUNT
+uint16 M21_normalizeModulo4(uint16 val); // @ M21_NORMALIZE
+int32 M30_time(int32 map_time); // @ M30_TIME
+int32 M33_setMapAndTime(int32 &map_time, uint32 map, uint32 time); // @ M33_SET_MAP_AND_TIME
+uint16 M29_map(int32 map_time); // @ M29_MAP
+Thing M15_thingWithNewCell(Thing thing, int16 cell); // @ M15_THING_WITH_NEW_CELL
+int16 M38_distance(int16 mapx1, int16 mapy1, int16 mapx2, int16 mapy2);// @ M38_DISTANCE
+
+
+enum Cell {
+	kM1_CellAny = -1, // @ CM1_CELL_ANY      
+	k0_CellNorthWest = 0, // @ C00_CELL_NORTHWEST 
+	k1_CellNorthEast = 1, // @ C01_CELL_NORTHEAST 
+	k2_CellSouthEast = 2, // @ C02_CELL_SOUTHEAST 
+	k3_CellSouthWest = 3 // @ C03_CELL_SOUTHWEST 
+};
+
+#define kM1_mapIndexNone -1 // @ CM1_MAP_INDEX_NONE       
+#define k255_mapIndexEntrance 255 // @ C255_MAP_INDEX_ENTRANCE 
 
 
 enum {
@@ -143,6 +161,17 @@ enum {
 	kDMDebugUselessCode = 1 << 1,
 	kDMDebugOftenCalledWarning = 2 << 2
 };
+
+
+
+
+template<typename T>
+inline T f26_getBoundedValue(T min, T val, T max) {
+	return MIN(MAX(min, val), max);
+} // @ F0026_MAIN_GetBoundedValue
+
+#define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
+
 
 class DMEngine : public Engine {
 	void f462_startGame(); // @ F0462_START_StartGame_CPSF
@@ -156,8 +185,12 @@ public:
 	explicit DMEngine(OSystem *syst);
 	~DMEngine();
 
+	void waitMs(uint16 ms);
+	uint16 f30_getScaledProduct(uint16 val, uint16 scale, uint16 vale2); // @ F0030_MAIN_GetScaledProduct
+	uint16 getRandomNumber(uint32 max) { return _rnd->getRandomNumber(max - 1); }
 	int16 M1_ordinalToIndex(int16 val); // @ M01_ORDINAL_TO_INDEX
 	int16 M0_indexToOrdinal(int16 val); // @ M00_INDEX_TO_ORDINAL
+	void f19_displayErrorAndStop(int16 errorIndex); // @ F0019_MAIN_DisplayErrorAndStop
 	virtual Common::Error run(); // @ main
 
 private:
@@ -176,6 +209,7 @@ public:
 	MovesensMan *_movsens;
 	GroupMan *_groupMan;
 	Timeline *_timeline;
+	ProjExpl *_projexpl;
 
 
 	bool _g298_newGame; // @ G0298_B_NewGame
@@ -190,10 +224,17 @@ public:
 	bool _g333_pressingMouth; // @ G0333_B_PressingMouth
 	bool _g334_stopPressingMouth; // @ G0334_B_StopPressingMouth
 	bool _g340_highlightBoxInversionRequested; // @ G0340_B_HighlightBoxInversionRequested
+	int16 _g311_projectileDisableMovementTicks; // @ G0311_i_ProjectileDisabledMovementTicks
+	int16 _g312_lastProjectileDisabledMovementDirection; // @ G0312_i_LastProjectileDisabledMovementDirection
+	bool _g302_gameWon; // @ G0302_B_GameWon
+	int16 _g327_newPartyMapIndex; // @ G0327_i_NewPartyMapIndex
+	bool _g325_setMousePointerToObjectInMainLoop; // @ G0325_B_SetMousePointerToObjectInMainLoop
 
 	// TODO: refactor direction into a class
 	int8 _dirIntoStepCountEast[4]; // @ G0233_ai_Graphic559_DirectionToStepEastCount
 	int8 _dirIntoStepCountNorth[4]; // @ G0234_ai_Graphic559_DirectionToStepNorthCount
+	uint32 _g313_gameTime; // @ G0313_ul_GameTime
+	char _g353_stringBuildBuffer[128]; // @ G0353_ac_StringBuildBuffer
 };
 
 class Console : public GUI::Debugger {

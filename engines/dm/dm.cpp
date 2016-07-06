@@ -51,6 +51,7 @@
 #include "movesens.h"
 #include "group.h"
 #include "timeline.h"
+#include "projexpl.h"
 
 namespace DM {
 
@@ -68,16 +69,9 @@ uint16 returnNextVal(uint16 val) {
 
 bool isOrientedWestEast(direction dir) { return dir & 1; }
 
-uint16 getFlag(uint16 val, uint16 mask) {
-	return val & mask;
-}
 
 uint16 setFlag(uint16 &val, uint16 mask) {
 	return val |= mask;
-}
-
-uint16 clearFlag(uint16 &val, uint16 mask) {
-	return val &= ~mask;
 }
 
 uint16 toggleFlag(uint16& val, uint16 mask) {
@@ -90,6 +84,26 @@ uint16 M75_bitmapByteCount(uint16 pixelWidth, uint16 height) {
 
 uint16 M21_normalizeModulo4(uint16 val) {
 	return val & 3;
+}
+
+int32 M30_time(int32 map_time) {
+	return map_time & 0x00FFFFFF;
+}
+
+int32 M33_setMapAndTime(int32 &map_time, uint32 map, uint32 time) {
+	return (map_time) = ((time) | (((long)(map)) << 24));
+}
+
+uint16 M29_map(int32 map_time) {
+	return ((uint16)((map_time) >> 24));
+}
+
+Thing M15_thingWithNewCell(Thing thing, int16 cell) {
+	return Thing(((thing.toUint16()) & 0x3FFF) | ((cell) << 14));
+}
+
+int16 M38_distance(int16 mapx1, int16 mapy1, int16 mapx2, int16 mapy2) {
+	return ABS(mapx1 - mapx2) + ABS(mapy1 - mapy2);
 }
 
 DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
@@ -118,6 +132,7 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	_movsens = nullptr;
 	_groupMan = nullptr;
 	_timeline = nullptr;
+	_projexpl = nullptr;
 	_g321_stopWaitingForPlayerInput = false;
 	_g301_gameTimeTicking = false;
 	_g524_restartGameAllowed = false;
@@ -126,6 +141,9 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	_g332_stopPressingEye = false;
 	_g334_stopPressingMouth = false;
 	_g340_highlightBoxInversionRequested = false;
+	_g313_gameTime = 0;
+	_g302_gameWon = false;
+	_g327_newPartyMapIndex = kM1_mapIndexNone;
 
 	debug("DMEngine::DMEngine");
 }
@@ -148,9 +166,18 @@ DMEngine::~DMEngine() {
 	delete _movsens;
 	delete _groupMan;
 	delete _timeline;
+	delete _projexpl;
 
 	// clear debug channels
 	DebugMan.clearAllDebugChannels();
+}
+
+void DMEngine::waitMs(uint16 ms) {
+	_system->delayMillis(ms * 20);
+}
+
+uint16 DMEngine::f30_getScaledProduct(uint16 val, uint16 scale, uint16 vale2) {
+	return ((uint32)val * vale2) >> scale;
 }
 
 void DMEngine::f463_initializeGame() {
@@ -174,8 +201,8 @@ void DMEngine::f463_initializeGame() {
 
 	f462_startGame();
 	warning("MISSING CODE: F0267_MOVE_GetMoveResult_CPSCE (if newGame)");
-	_eventMan->showMouse(true);
-	warning("MISSING CODE: F0357_COMMAND_DiscardAllInput");
+	_eventMan->f78_showMouse();
+	_eventMan->f357_discardAllInput();
 }
 
 void DMEngine::f448_initMemoryManager() {
@@ -220,7 +247,7 @@ void DMEngine::f3_processNewPartyMap(uint16 mapIndex) {
 	_dungeonMan->f174_setCurrentMapAndPartyMap(mapIndex);
 	_displayMan->f96_loadCurrentMapGraphics();
 	warning("MISSING CODE: F0195_GROUP_AddAllActiveGroups");
-	warning("MISSING CODE: F0337_INVENTORY_SetDungeonViewPalette");
+	_inventoryMan->f337_setDungeonViewPalette();
 }
 
 Common::Error DMEngine::run() {
@@ -241,6 +268,7 @@ Common::Error DMEngine::run() {
 	_movsens = new MovesensMan(this);
 	_groupMan = new GroupMan(this);
 	_timeline = new Timeline(this);
+	_projexpl = new ProjExpl(this);
 	_displayMan->setUpScreens(320, 200);
 
 	f463_initializeGame(); // @ F0463_START_InitializeGame_CPSADEF
@@ -257,16 +285,19 @@ void DMEngine::f2_gameloop() {
 	_dungeonMan->_g306_partyMapX = 10;
 	_dungeonMan->_g307_partyMapY = 4;
 	_dungeonMan->_g308_partyDir = kDirNorth;
-
-
 	warning("DUMMY CODE: setting InventoryMan::_g432_inventoryChampionOrdinal to zero");
 	_inventoryMan->_g432_inventoryChampionOrdinal = 0;
 	warning("DUMMY CODE: clearing screen to black"); // in loop below
-	while (true) {
-		_g321_stopWaitingForPlayerInput = false;
 
+	while (true) {
+
+		_g313_gameTime++;
 		_menuMan->f390_refreshActionAreaAndSetChampDirMaxDamageReceived();
 
+		if (_g311_projectileDisableMovementTicks)
+			_g311_projectileDisableMovementTicks--;
+
+		_g321_stopWaitingForPlayerInput = false;
 		//do {
 		_eventMan->processInput();
 		_eventMan->f380_processCommandQueue();
@@ -278,12 +309,8 @@ void DMEngine::f2_gameloop() {
 			_displayMan->f128_drawDungeon(_dungeonMan->_g308_partyDir, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
 		}
 
-		// DUMMY CODE: next 2 lines
-		_menuMan->f395_drawMovementArrows();
-		_displayMan->f97_drawViewport(k1_viewportDungeonView);
-
 		_displayMan->updateScreen();
-		_system->delayMillis(10);
+		_system->delayMillis(18);
 	}
 }
 

@@ -328,6 +328,14 @@ enum ChampionAction {
 	k255_ChampionActionNone = 255 // @ C255_ACTION_NONE
 };
 
+#define k0_attackType_NORMAL 0 // @ C0_ATTACK_NORMAL
+#define k1_attackType_FIRE 1 // @ C1_ATTACK_FIRE
+#define k2_attackType_SELF 2 // @ C2_ATTACK_SELF
+#define k3_attackType_BLUNT 3 // @ C3_ATTACK_BLUNT
+#define k4_attackType_SHARP 4 // @ C4_ATTACK_SHARP
+#define k5_attackType_MAGIC 5 // @ C5_ATTACK_MAGIC
+#define k6_attackType_PSYCHIC 6 // @ C6_ATTACK_PSYCHIC
+#define k7_attackType_LIGHTNING 7 // @ C7_ATTACK_LIGHTNING
 
 class Skill {
 public:
@@ -338,12 +346,12 @@ public:
 }; // @ SKILL
 
 class Champion {
+public:
+	uint16 _attributes;
+	uint16 _wounds;
+	byte _statistics[7][3];
 	Thing _slots[30];
 	Skill _skills[20];
-	uint16 _attributes;
-	byte _statistics[7][3];
-	uint16 _wounds;
-public:
 	char _name[8];
 	char _title[20];
 	direction _dir;
@@ -425,16 +433,23 @@ public:
 	}
 }; // @ CHAMPION_INCLUDING_PORTRAIT
 
+#define k0x0000_maskDoNotUseSharpDefense 0x0000 // @ MASK0x0000_DO_NOT_USE_SHARP_DEFENSE 
+#define k0x8000_maskUseSharpDefense 0x8000 // @ MASK0x8000_USE_SHARP_DEFENSE        
+
+#define k0x8000_mergeCycles 0x8000 // @ MASK0x8000_MERGE_CYCLES
+extern const char *g417_baseSkillName[4];
+
 class ChampionMan {
 	DMEngine *_vm;
 
 	uint16 M27_getChampionPortraitX(uint16 index); // @ M27_PORTRAIT_X
 	uint16 M28_getChampionPortraitY(uint16 index); // @ M28_PORTRAIT_Y
 
-	ChampionIndex f285_getIndexInCell(ViewCell cell); // @ F0285_CHAMPION_GetIndexInCell
 	int16 f279_getDecodedValue(char *string, uint16 characterCount); // @ F0279_CHAMPION_GetDecodedValue
 	void f289_drawHealthOrStaminaOrManaValue(int16 posy, int16 currVal, int16 maxVal); // @ F0289_CHAMPION_DrawHealthOrStaminaOrManaValue
 	uint16 M70_handSlotIndex(uint16 slotBoxIndex);// @ M70_HAND_SLOT_INDEX
+	int16 _g410_championPendingWounds[4]; // @ G0410_ai_ChampionPendingWounds
+	int16 _g409_championPendingDamage[4]; // @ G0409_ai_ChampionPendingDamage
 public:
 	Champion _gK71_champions[4]; // @ K0071_as_Champions
 	uint16 _g305_partyChampionCount;	// @ G0305_ui_PartyChampionCount
@@ -451,6 +466,9 @@ public:
 	bool _g420_mousePointerHiddenToDrawChangedObjIconOnScreen; // @ G0420_B_MousePointerHiddenToDrawChangedObjectIconOnScreen
 
 	explicit ChampionMan(DMEngine *vm);
+	ChampionIndex f285_getIndexInCell(int16 cell); // @ F0285_CHAMPION_GetIndexInCell
+	bool f329_isLeaderHandObjectThrown(int16 side); // @ F0329_CHAMPION_IsLeaderHandObjectThrown
+	bool f328_isObjectThrown(uint16 champIndex, int16 slotIndex, int16 side); // @ F0328_CHAMPION_IsObjectThrown
 	void f278_resetDataToStartGame(); // @ F0278_CHAMPION_ResetDataToStartGame
 	void f280_addCandidateChampionToParty(uint16 championPortraitIndex); // @ F0280_CHAMPION_AddCandidateChampionToParty
 	void f287_drawChampionBarGraphs(ChampionIndex champIndex); // @ F0287_CHAMPION_DrawBarGraphs
@@ -459,16 +477,42 @@ public:
 	void f292_drawChampionState(ChampionIndex champIndex); // @ F0292_CHAMPION_DrawState
 	uint16 M26_championIconIndex(int16 val, direction dir); // @ M26_CHAMPION_ICON_INDEX
 	void f290_drawHealthStaminaManaValues(Champion *champ); // @ F0290_CHAMPION_DrawHealthStaminaManaValues
-	void f291_drawSlot(uint16 champIndex, ChampionSlot slotIndex); // @ F0291_CHAMPION_DrawSlot
+	void f291_drawSlot(uint16 champIndex, int16 slotIndex); // @ F0291_CHAMPION_DrawSlot
 	void f281_renameChampion(Champion* champ); // @ F0281_CHAMPION_Rename
-	uint16 f303_getSkillLevel(ChampionIndex champIndex, ChampionSkill skillIndex);// @ F0303_CHAMPION_GetSkillLevel
+	uint16 f303_getSkillLevel(int16 champIndex, int16 skillIndex);// @ F0303_CHAMPION_GetSkillLevel
 	Common::String f288_getStringFromInteger(uint16 val, bool padding, uint16 paddingCharCount); // @ F0288_CHAMPION_GetStringFromInteger
-	void f299_applyModifiersToStatistics(Champion *champ, ChampionSlot slotIndex, IconIndice iconIndex,
+	void f299_applyModifiersToStatistics(Champion *champ, int16 slotIndex, int16 iconIndex,
 									int16 modifierFactor, Thing thing); // @ F0299_CHAMPION_ApplyObjectModifiersToStatistics
 	bool f295_hasObjectIconInSlotBoxChanged(int16 slotBoxIndex, Thing thing); // @ F0295_CHAMPION_HasObjectIconInSlotBoxChanged
 	void f296_drawChangedObjectIcons(); // @ F0296_CHAMPION_DrawChangedObjectIcons
 	void f301_addObjectInSlot(ChampionIndex champIndex, Thing thing, ChampionSlot slotIndex); // @ F0301_CHAMPION_AddObjectInSlot
 	int16 f315_getScentOrdinal(int16 mapX, int16 mapY); // @ F0315_CHAMPION_GetScentOrdinal
+	Thing f298_getObjectRemovedFromLeaderHand(); // @ F0298_CHAMPION_GetObjectRemovedFromLeaderHand
+	uint16 f312_getStrength(int16 champIndex, int16 slotIndex); // @ F0312_CHAMPION_GetStrength 
+	Thing f300_getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex); // @ F0300_CHAMPION_GetObjectRemovedFromSlot
+	void f325_decrementStamine(int16 championIndex, int16 decrement); // @ F0325_CHAMPION_DecrementStamina
+	int16 f321_addPendingDamageAndWounds_getDamage(int16 champIndex, int16 attack, int16 allowedWounds,
+												   uint16 attackType); // @ F0321_CHAMPION_AddPendingDamageAndWounds_GetDamage
+	int16 f313_getWoundDefense(int16 champIndex, uint16 woundIndex); // @ F0313_CHAMPION_GetWoundDefense
+	uint16 f307_getStatisticAdjustedAttack(Champion *champ, uint16 statIndex, uint16 attack); // @ F0307_CHAMPION_GetStatisticAdjustedAttack
+	void f314_wakeUp(); // @ F0314_CHAMPION_WakeUp
+	int16 f305_getThrowingStaminaCost(Thing thing);// @ F0305_CHAMPION_GetThrowingStaminaCost
+	void f330_disableAction(uint16 champIndex, uint16 ticks); // @ F0330_CHAMPION_DisableAction
+	void f304_addSkillExperience(uint16 champIndex, uint16 skillIndex, uint16 exp);// @ F0304_CHAMPION_AddSkillExperience
+	int16 f324_damageAll_getDamagedChampionCount(uint16 attack, int16 wounds,
+												 int16 attackType); // @ F0324_CHAMPION_DamageAll_GetDamagedChampionCount
+	int16 f286_getTargetChampionIndex(int16 mapX, int16 mapY, uint16 cell); // @ F0286_CHAMPION_GetTargetChampionIndex
+	int16 f311_getDexterity(Champion *champ); // @ F0311_CHAMPION_GetDexterity
+	bool f308_isLucky(Champion *champ, uint16 percentage); // @ F0308_CHAMPION_IsLucky
+	void f322_championPoison(int16 championIndex, uint16 attack); // @ F0322_CHAMPION_Poison
+	void f284_setPartyDirection(int16 dir); // @ F0284_CHAMPION_SetPartyDirection
+	void f316_deleteScent(uint16 scentIndex); // @ F0316_CHAMPION_DeleteScent
+	void f317_addScentStrength(int16 mapX, int16 mapY, int32 cycleCount); // @ F0317_CHAMPION_AddScentStrength
+	void f297_putObjectInLeaderHand(Thing thing, bool setMousePointer); // @ F0297_CHAMPION_PutObjectInLeaderHand
+
+
+
+
 
 };
 

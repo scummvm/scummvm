@@ -32,6 +32,7 @@
 #include "objectman.h"
 #include "inventory.h"
 #include "text.h"
+#include "eventman.h"
 
 
 namespace DM {
@@ -371,4 +372,33 @@ void MenuMan::f394_setMagicCasterAndDrawSpellArea(int16 champIndex) {
 	dispMan.f132_blitToBitmap(_gK72_bitmapSpellAreaLine, dispMan._g348_bitmapScreen, gK76_BoxSpellAreaLine3, 0, 0, 48, k160_byteWidthScreen, k255_ColorNoTransparency);
 	warning("MISSING CODE: F0078_MOUSE_ShowPointer");
 }
+
+void MenuMan::f457_drawEnabledMenus() {
+	int16 L1462_i_Multiple;
+#define AL1462_i_MagicCasterChampionIndex L1462_i_Multiple
+#define AL1462_i_InventoryChampionOrdinal L1462_i_Multiple
+
+
+	if (_vm->_championMan->_g300_partyIsSleeping) {
+		_vm->_eventMan->f379_drawSleepScreen();
+		_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
+	} else {
+		AL1462_i_MagicCasterChampionIndex = _vm->_championMan->_g514_magicCasterChampionIndex;
+		_vm->_championMan->_g514_magicCasterChampionIndex = kM1_ChampionNone; /* Force next function to draw the spell area */
+		_vm->_menuMan->f394_setMagicCasterAndDrawSpellArea(AL1462_i_MagicCasterChampionIndex);
+		if (!_vm->_championMan->_g506_actingChampionOrdinal) {
+			_vm->_menuMan->_g509_actionAreaContainsIcons = true;
+		}
+		_vm->_menuMan->f387_drawActionArea();
+		if (AL1462_i_InventoryChampionOrdinal = _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
+			_vm->_inventoryMan->_g432_inventoryChampionOrdinal = _vm->M0_indexToOrdinal(kM1_ChampionNone);
+			_vm->_inventoryMan->f355_toggleInventory((ChampionIndex)_vm->M1_ordinalToIndex(AL1462_i_InventoryChampionOrdinal));
+		} else {
+			_vm->_displayMan->f98_drawFloorAndCeiling();
+			_vm->_menuMan->f395_drawMovementArrows();
+		}
+		_vm->_eventMan->f69_setMousePointer();
+	}
+}
+
 }

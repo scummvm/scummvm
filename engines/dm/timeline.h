@@ -154,6 +154,12 @@ public:
 	Timeline(DMEngine *vm);
 	~Timeline();
 	void f233_initTimeline(); // @ F0233_TIMELINE_Initialize
+	void f237_deleteEvent(uint16 eventIndex);// @ F0237_TIMELINE_DeleteEvent
+	void f236_fixChronology(uint16 timelineIndex); // @ F0236_TIMELINE_FixChronology
+	bool f234_isEventABeforeB(TimelineEvent *eventA, TimelineEvent *eventB); // @ F0234_TIMELINE_IsEventABeforeEventB
+	uint16 f235_getIndex(uint16 eventIndex); // @ F0235_TIMELINE_GetIndex
+	uint16 f238_addEventGetEventIndex(TimelineEvent *event); // @ F0238_TIMELINE_AddEvent_GetEventIndex_CPSE
+
 };
 
 

@@ -30,13 +30,19 @@
 
 namespace DM {
 
-TextMan::TextMan(DMEngine* vm) : _vm(vm) {}
+TextMan::TextMan(DMEngine* vm) : _vm(vm) {
+	_g356_bitmapMessageAreaNewRow = new byte[320 * 7];
+}
+
+TextMan::~TextMan() {
+	delete[] _g356_bitmapMessageAreaNewRow;
+}
 
 #define k5_LetterWidth 5
 #define k6_LetterHeight 6
 
 void TextMan::f40_printTextToBitmap(byte* destBitmap, uint16 destByteWidth, uint16 destX, uint16 destY,
-								Color textColor, Color bgColor, const char* text, uint16 destHeight) {
+									Color textColor, Color bgColor, const char* text, uint16 destHeight) {
 	destX -= 1; // fixes missalignment, to be checked
 	destY -= 4; // fixes missalignment, to be checked
 
@@ -78,11 +84,81 @@ void TextMan::f52_printToViewport(int16 posX, int16 posY, Color textColor, const
 }
 
 void TextMan::f41_printWithTrailingSpaces(byte* destBitmap, int16 destByteWidth, int16 destX, int16 destY, Color textColor,
-									  Color bgColor, const char* text, int16 requiredTextLength, int16 destHeight) {
+										  Color bgColor, const char* text, int16 requiredTextLength, int16 destHeight) {
 	Common::String str = text;
 	for (int16 i = str.size(); i < requiredTextLength; ++i)
 		str += ' ';
 	f40_printTextToBitmap(destBitmap, destByteWidth, destX, destY, textColor, bgColor, str.c_str(), destHeight);
+}
+
+void TextMan::f51_messageAreaPrintLineFeed() {
+	f47_messageAreaPrintMessage(k0_ColorBlack, "\n");
+}
+
+void TextMan::f47_messageAreaPrintMessage(Color color, const char* string) {
+	uint16 L0031_ui_CharacterIndex;
+	char L0033_ac_String[54];
+
+
+	while (*string) {
+		if (*string == '\n') { /* New line */
+			string++;
+			if ((_g359_messageAreaCursorColumn != 0) || (_g358_messageAreaCursorRow != 0)) {
+				_g359_messageAreaCursorColumn = 0;
+				f45_messageAreaCreateNewRow();
+			}
+		} else {
+			if (*string == ' ') {
+				string++;
+				if (_g359_messageAreaCursorColumn != 53) {
+					f46_messageAreaPrintString(color, " "); // TODO: I'm not sure this is like the original
+				}
+			} else {
+				L0031_ui_CharacterIndex = 0;
+				do {
+					L0033_ac_String[L0031_ui_CharacterIndex++] = *string++;
+				} while (*string && (*string != ' ') && (*string != '\n')); /* End of string, space or New line */
+				L0033_ac_String[L0031_ui_CharacterIndex] = '\0';
+				if (_g359_messageAreaCursorColumn + L0031_ui_CharacterIndex > 53) {
+					_g359_messageAreaCursorColumn = 2;
+					f45_messageAreaCreateNewRow();
+				}
+				f46_messageAreaPrintString(color, L0033_ac_String);
+			}
+		}
+	}
+}
+
+void TextMan::f45_messageAreaCreateNewRow() {
+	uint16 L0029_ui_RowIndex;
+
+	if (_g358_messageAreaCursorRow == 3) {
+		warning("MISSING CODE: F0561_SCROLLER_IsTextScrolling");
+		memset(_g356_bitmapMessageAreaNewRow, k0_ColorBlack, 320 * 7);
+		warning("MISSING CODE: F0560_SCROLLER_SetCommand");
+		for (L0029_ui_RowIndex = 0; L0029_ui_RowIndex < 3; L0029_ui_RowIndex++) {
+			_g360_messageAreaRowExpirationTime[L0029_ui_RowIndex] = _g360_messageAreaRowExpirationTime[L0029_ui_RowIndex + 1];
+		}
+		_g360_messageAreaRowExpirationTime[3] = -1;
+	} else {
+		_g358_messageAreaCursorRow++;
+	}
+}
+
+void TextMan::f46_messageAreaPrintString(Color color, const char* string) {
+	int16 L0030_i_StringLength;
+
+	L0030_i_StringLength = strlen(string);
+	warning("MISSING CODE: F0561_SCROLLER_IsTextScrolling");
+	if (true) { // there is a test here with F0561_SCROLLER_IsTextScrolling
+		_vm->_textMan->f53_printToLogicalScreen(_g359_messageAreaCursorColumn * 6, (_g358_messageAreaCursorRow * 7) + 177, color, k0_ColorBlack, string);
+	} else {
+		f40_printTextToBitmap(_g356_bitmapMessageAreaNewRow, k160_byteWidthScreen, _g359_messageAreaCursorColumn * 6, 5, color, k0_ColorBlack, string, 7);
+		warning("MISSING CODE: F0561_SCROLLER_IsTextScrolling");
+		warning("MISSING CODE: F0560_SCROLLER_SetCommand");
+	}
+	_g359_messageAreaCursorColumn += L0030_i_StringLength;
+	_g360_messageAreaRowExpirationTime[_g358_messageAreaCursorRow] = _vm->_g313_gameTime + 200;
 }
 
 }

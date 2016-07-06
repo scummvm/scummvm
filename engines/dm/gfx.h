@@ -286,9 +286,16 @@ public:
 
 	Box(uint16 x1, uint16 x2, uint16 y1, uint16 y2) : _x1(x1), _x2(x2), _y1(y1), _y2(y2) {}
 	Box() {}
+	explicit Box(uint16 *ptr) {
+		_x1 = *ptr++;
+		_x2 = *ptr++;
+		_y1 = *ptr++;
+		_y2 = *ptr++;
+	}
 	bool isPointInside(Common::Point point) {
 		return (_x1 <= point.x) && (point.x <= _x2) && (_y1 <= point.y) && (point.y <= _y2); // <= because incluseive boundaries
 	}
+	bool isPointInside(int16 x, int16 y) { return isPointInside(Common::Point(x, y));  }
 	void setToZero() { _x1 = _x2 = _y1 = _y2 = 0; }
 }; // @ BOX_BYTE, BOX_WORD
 
@@ -452,6 +459,18 @@ public:
 
 #define k160_byteWidthScreen 160 // @ C160_BYTE_WIDTH_SCREEN
 #define k200_heightScreen 200 // @ C200_HEIGHT_SCREEN   
+
+#define k8_byteWidth 8 // @ C008_BYTE_WIDTH
+#define k16_byteWidth 16 // @ C016_BYTE_WIDTH
+#define k24_byteWidth 24 // @ C024_BYTE_WIDTH
+#define k32_byteWidth 32 // @ C032_BYTE_WIDTH
+#define k40_byteWidth 40 // @ C040_BYTE_WIDTH
+#define k48_byteWidth 48 // @ C048_BYTE_WIDTH
+#define k64_byteWidth 64 // @ C064_BYTE_WIDTH
+#define k72_byteWidth 72 // @ C072_BYTE_WIDTH
+#define k128_byteWidth 128 // @ C128_BYTE_WIDTH
+#define k144_byteWidth 144 // @ C144_BYTE_WIDTH
+
 
 class DoorFrames {
 public:
@@ -626,6 +645,9 @@ public:
 	void f112_drawCeilingPit(int16 nativeBitmapIndex, Frame *frame, int16 mapX, int16 mapY, bool flipHorizontal); // @ F0112_DUNGEONVIEW_DrawCeilingPit
 
 
+	void f21_blitToScreen(byte* bitmap, int16 *box, int16 viewDoorOrnIndex, Color transparent, int16 doorOrnOrdinal); // @ F0021_MAIN_BlitToScreen
+	void f21_blitToScreen(byte* bitmap, Box *box, int16 viewDoorOrnIndex, Color transparent, int16 doorOrnOrdinal); // @ F0021_MAIN_BlitToScreen
+	
 
 	/* srcHeight and destHeight are not necessary for blitting, only error checking, thus they are defaulted for existing code which 
 	does not pass anything, newly imported calls do pass srcHeght and srcWidth, so this is a ceonvenience change so the the parameters
@@ -651,6 +673,7 @@ public:
 /* Expects inclusive boundaries in box */
 	void f135_fillBoxBitmap(byte *destBitmap, Box &box, Color color, int16 byteWidth, int16 height); // @ F0135_VIDEO_FillBox
 	void f128_drawDungeon(direction dir, int16 posX, int16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
+	void f98_drawFloorAndCeiling(); // @ F0098_DUNGEONVIEW_DrawFloorAndCeiling
 	void updateScreen();
 	void f97_drawViewport(int16 palSwitchingRequestedState); // @ F0097_DUNGEONVIEW_DrawViewport
 
@@ -682,6 +705,8 @@ public:
 	int16 _g266_currMapViAltarIndex; // @ G0266_i_CurrentMapViAltarWallOrnamentIndex
 
 	Thing _g290_inscriptionThing; // @ G0290_T_DungeonView_InscriptionThing
+
+	bool _g297_drawFloorAndCeilingRequested; // @ G0297_B_DrawFloorAndCeilingRequested
 
 	// This tells blitting functions wther to assume a BYTE_BOX or a WORD_BOX has been passed to them,
 	// I only use WORD_BOX, so this will probably deem useless

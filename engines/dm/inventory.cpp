@@ -82,7 +82,7 @@ void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
 			_vm->_menuMan->f395_drawMovementArrows();
 			em._g442_secondaryMouseInput = g448_SecondaryMouseInput_Movement;
 			warning("MISSING CODE: set G0444_ps_SecondaryKeyboardInput");
-			warning("MISSING CODE: F0357_COMMAND_DiscardAllInput");
+			_vm->_eventMan->f357_discardAllInput();
 			return;
 		}
 	}
@@ -117,7 +117,7 @@ void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
 	em._g598_mousePointerBitmapUpdated = true;
 	em._g442_secondaryMouseInput = g449_SecondaryMouseInput_ChampionInventory;
 	warning("MISSING CODE: set G0444_ps_SecondaryKeyboardInput");
-	warning("MISSING CODE: F0357_COMMAND_DiscardAllInput");
+	_vm->_eventMan->f357_discardAllInput();
 }
 
 void InventoryMan::f354_drawStatusBoxPortrait(ChampionIndex championIndex) {
@@ -554,5 +554,93 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 	}
 	f339_drawPanelArrowOrEye(pressingEye);
 
+}
+
+void InventoryMan::f337_setDungeonViewPalette() {
+	int16 L1036_i_TotalLightAmount;
+	uint16 L1037_ui_TorchLightAmountMultiplier;
+	int16 L1038_i_Counter;
+	uint16 L1039_ui_Multiple;
+#define AL1039_ui_SlotIndex    L1039_ui_Multiple
+#define AL1039_ui_PaletteIndex L1039_ui_Multiple
+#define AL1039_ui_Counter      L1039_ui_Multiple
+	int16* L1040_pi_Multiple;
+#define AL1040_pi_TorchLightPower L1040_pi_Multiple
+#define AL1040_pi_LightAmount     L1040_pi_Multiple
+	int16* L1041_pi_TorchLightPower;
+	Weapon* L1042_ps_Weapon;
+	Champion* L1043_ps_Champion;
+	uint16 L1044_ui_Multiple;
+#define AL1044_T_Thing            L1044_ui_Multiple
+#define AL1044_ui_TorchLightPower L1044_ui_Multiple
+	int16 L1045_ai_TorchesLightPower[8];
+
+	int16 g40_palIndexToLightAmmount[6] = {99, 75, 50, 25, 1, 0}; // @ G0040_ai_Graphic562_PaletteIndexToLightAmount
+
+	if (_vm->_dungeonMan->_g269_currMap->_difficulty == 0) {
+		_vm->_displayMan->_g304_dungeonViewPaletteIndex = 0; /* Brightest color palette index */
+	} else {
+		/* Get torch light power from both hands of each champion in the party */
+		L1038_i_Counter = 4; /* BUG0_01 Coding error without consequence. The hands of four champions are inspected even if there are less champions in the party. No consequence as the data in unused champions is set to 0 and _vm->_objectMan->f32_getObjectType then returns -1 */
+		L1043_ps_Champion = _vm->_championMan->_gK71_champions;
+		AL1040_pi_TorchLightPower = L1045_ai_TorchesLightPower;
+		while (L1038_i_Counter--) {
+			AL1039_ui_SlotIndex = k1_ChampionSlotActionHand + 1;
+			while (AL1039_ui_SlotIndex--) {
+				if ((_vm->_objectMan->f32_getObjectType(Thing(AL1044_T_Thing = L1043_ps_Champion->_slots[AL1039_ui_SlotIndex].toUint16())) >= k4_IconIndiceWeaponTorchUnlit) &&
+					(_vm->_objectMan->f32_getObjectType(Thing(AL1044_T_Thing = L1043_ps_Champion->_slots[AL1039_ui_SlotIndex].toUint16())) <= k7_IconIndiceWeaponTorchLit)) {
+					L1042_ps_Weapon = (Weapon*)_vm->_dungeonMan->f156_getThingData(Thing(AL1044_T_Thing));
+					*AL1040_pi_TorchLightPower = L1042_ps_Weapon->getChargeCount();
+				} else {
+					*AL1040_pi_TorchLightPower = 0;
+				}
+				AL1040_pi_TorchLightPower++;
+			}
+			L1043_ps_Champion++;
+		}
+		/* Sort torch light power values so that the four highest values are in the first four entries in the array L1045_ai_TorchesLightPower in decreasing order. The last four entries contain the smallest values but they are not sorted */
+		AL1040_pi_TorchLightPower = L1045_ai_TorchesLightPower;
+		AL1039_ui_Counter = 0;
+		while (AL1039_ui_Counter != 4) {
+			L1038_i_Counter = 7 - AL1039_ui_Counter;
+			L1041_pi_TorchLightPower = &L1045_ai_TorchesLightPower[AL1039_ui_Counter + 1];
+			while (L1038_i_Counter--) {
+				if (*L1041_pi_TorchLightPower > *AL1040_pi_TorchLightPower) {
+					AL1044_ui_TorchLightPower = *L1041_pi_TorchLightPower;
+					*L1041_pi_TorchLightPower = *AL1040_pi_TorchLightPower;
+					*AL1040_pi_TorchLightPower = AL1044_ui_TorchLightPower;
+				}
+				L1041_pi_TorchLightPower++;
+			}
+			AL1040_pi_TorchLightPower++;
+			AL1039_ui_Counter++;
+		}
+		/* Get total light amount provided by the four torches with the highest light power values and by the fifth torch in the array which may be any one of the four torches with the smallest ligh power values */
+		L1037_ui_TorchLightAmountMultiplier = 6;
+		AL1039_ui_Counter = 5;
+		L1036_i_TotalLightAmount = 0;
+		AL1040_pi_TorchLightPower = L1045_ai_TorchesLightPower;
+		while (AL1039_ui_Counter--) {
+			if (*AL1040_pi_TorchLightPower) {
+				L1036_i_TotalLightAmount += (g39_LightPowerToLightAmount[*AL1040_pi_TorchLightPower] << L1037_ui_TorchLightAmountMultiplier) >> 6;
+				L1037_ui_TorchLightAmountMultiplier = MAX(0, L1037_ui_TorchLightAmountMultiplier - 1);
+			}
+			AL1040_pi_TorchLightPower++;
+		}
+		L1036_i_TotalLightAmount += _vm->_championMan->_g407_party._magicalLightAmount;
+		/* Select palette corresponding to the total light amount */
+		AL1040_pi_LightAmount = g40_palIndexToLightAmmount;
+		if (L1036_i_TotalLightAmount > 0) {
+			AL1039_ui_PaletteIndex = 0; /* Brightest color palette index */
+			while (*AL1040_pi_LightAmount++ > L1036_i_TotalLightAmount) {
+				AL1039_ui_PaletteIndex++;
+			}
+		} else {
+			AL1039_ui_PaletteIndex = 5; /* Darkest color palette index */
+		}
+		_vm->_displayMan->_g304_dungeonViewPaletteIndex = AL1039_ui_PaletteIndex;
+	}
+
+	_vm->_displayMan->_g342_refreshDungeonViewPaleteRequested = true;
 }
 }

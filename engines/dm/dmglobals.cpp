@@ -25,6 +25,7 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
+#include "common/system.h"
 #include "dm/dm.h"
 #include "gfx.h"
 #include "dungeonman.h"
@@ -36,6 +37,8 @@
 #include "inventory.h"
 #include "text.h"
 #include "movesens.h"
+#include "string.h"
+
 
 namespace DM {
 
@@ -51,5 +54,13 @@ void DMEngine::initArrays() {
 	_dirIntoStepCountNorth[1] = 0;  // East
 	_dirIntoStepCountNorth[2] = 1;  // West
 	_dirIntoStepCountNorth[3] = 0;  // South
+}
+
+void DMEngine::f19_displayErrorAndStop(int16 errorIndex) {
+	debug("Stuff hit the fun: ");
+	debug(Common::String::format("%d", errorIndex).c_str());
+	Common::Event event;
+	while (_system->getEventManager()->pollEvent(event) || true)
+		;
 }
 } // End of namespace DM

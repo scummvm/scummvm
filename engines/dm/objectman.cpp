@@ -252,4 +252,10 @@ void ObjectMan::f34_drawLeaderObjectName(Thing thing) {
 IconIndice ObjectMan::f39_getIconIndexInSlotBox(uint16 slotBoxIndex) {
 	return (IconIndice)_g30_slotBoxes[slotBoxIndex]._iconIndex;
 }
+
+void ObjectMan::f35_clearLeaderObjectName() {
+	static Box g28_BoxLeaderHandObjectName(233, 319, 33, 38); // @ G0028_s_Graphic562_Box_LeaderHandObjectName 
+	_vm->_displayMan->D24_fillScreenBox(g28_BoxLeaderHandObjectName, k0_ColorBlack);
+}
+
 }

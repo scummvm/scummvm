@@ -34,11 +34,52 @@
 #include "objectman.h"
 #include "inventory.h"
 #include "menus.h"
-
-
+#include "timeline.h"
+#include "projexpl.h"
+#include "text.h"
+#include "group.h"
 
 
 namespace DM {
+
+byte g42_bitmapArrowPointer[576] = { // @ G0042_auc_Graphic562_Bitmap_ArrowPointer
+	0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x4, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x6, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x7, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0x7, 0x8, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x7, 0xC, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x7, 0xE, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x7, 0xF, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0x7, 0xF, 0x8, 0x0, 0x0, 0x0, 0x0, 0x0, 0x7, 0xC, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x6, 0xC, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x4, 0x6, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0x0, 0x6, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x3, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x3, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x4, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0x6, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x7, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x7, 0x8, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x7, 0xC, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0x7, 0xE, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x7, 0xF, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x7, 0xF, 0x8, 0x0, 0x0, 0x0, 0x0, 0x0, 0x7, 0xC, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0x6, 0xC, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x4, 0x6, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x6, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x3, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0x0, 0x3, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0xC, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xA, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x9, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x8, 0x8, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0x8, 0x4, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x8, 0x2, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x8, 0x1, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x8, 0x0, 0x8, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0x8, 0x0, 0x4, 0x0, 0x0, 0x0, 0x0, 0x0, 0x8, 0x3, 0xC, 0x0, 0x0, 0x0, 0x0, 0x0, 0x9, 0x2, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xA, 0x9, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0xC, 0x9, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x4, 0x8, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x4, 0x8, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x3, 0x8, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xC, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xE, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0xF, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xF, 0x8, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xF, 0xC, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xF, 0xE, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0xF, 0xF, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xF, 0xF, 0x8, 0x0, 0x0, 0x0, 0x0, 0x0, 0xF, 0xF, 0xC, 0x0, 0x0, 0x0, 0x0, 0x0, 0xF, 0xF, 0xC, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0xF, 0xE, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xE, 0xF, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xC, 0xF, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x7, 0x8, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0x0, 0x7, 0x8, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x3, 0x8, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
+byte g43_bitmapHanPointer[576] = { // @ G0043_auc_Graphic562_Bitmap_HandPointer
+	0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xC, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x6, 0xA, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0x3, 0x5, 0x4, 0x0, 0x0, 0x0, 0x0, 0x0, 0x1, 0xA, 0xA, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xD, 0x5, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xE, 0xA, 0x8, 0x0, 0x0, 0x0, 0x0,
+	0x0, 0x7, 0xF, 0x8, 0x0, 0x0, 0x0, 0x0, 0xC, 0x7, 0xF, 0xC, 0x0, 0x0, 0x0, 0x0, 0x6, 0x7, 0xF, 0xC, 0x0, 0x0, 0x0, 0x0, 0x7, 0x7, 0xF, 0xC, 0x0, 0x0, 0x0, 0x0,
+	0x3, 0xF, 0xF, 0xC, 0x0, 0x0, 0x0, 0x0, 0x3, 0xF, 0xF, 0xC, 0x0, 0x0, 0x0, 0x0, 0x1, 0xF, 0xF, 0xE, 0x0, 0x0, 0x0, 0x0, 0x0, 0x7, 0xF, 0xF, 0x0, 0x0, 0x0, 0x0,
+	0x0, 0x1, 0xF, 0xF, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xF, 0xF, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0x2, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x9, 0x5, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x4, 0xA, 0xA, 0x0, 0x0, 0x0, 0x0, 0x0, 0x2, 0x5, 0x5, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0x1, 0x2, 0xA, 0x8, 0x0, 0x0, 0x0, 0x0, 0x1, 0x1, 0x5, 0x4, 0x0, 0x0, 0x0, 0x0, 0xC, 0x8, 0x0, 0x4, 0x0, 0x0, 0x0, 0x0, 0x2, 0x8, 0x0, 0x2, 0x0, 0x0, 0x0, 0x0,
+	0x9, 0x8, 0x0, 0x2, 0x0, 0x0, 0x0, 0x0, 0x8, 0x8, 0x0, 0x2, 0x0, 0x0, 0x0, 0x0, 0x4, 0x0, 0x0, 0x2, 0x0, 0x0, 0x0, 0x0, 0x4, 0x0, 0x0, 0x2, 0x0, 0x0, 0x0, 0x0,
+	0x2, 0x0, 0x0, 0x1, 0x0, 0x0, 0x0, 0x0, 0x1, 0x8, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x6, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x1, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xE, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xF, 0xF, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+	0x7, 0xF, 0xE, 0x0, 0x0, 0x0, 0x0, 0x0, 0x3, 0xF, 0xF, 0x0, 0x0, 0x0, 0x0, 0x0, 0x1, 0xF, 0xF, 0x8, 0x0, 0x0, 0x0, 0x0, 0x1, 0xF, 0xF, 0xC, 0x0, 0x0, 0x0, 0x0,
+	0xC, 0xF, 0xF, 0xC, 0x0, 0x0, 0x0, 0x0, 0xE, 0xF, 0xF, 0xE, 0x0, 0x0, 0x0, 0x0, 0xF, 0xF, 0xF, 0xE, 0x0, 0x0, 0x0, 0x0, 0xF, 0xF, 0xF, 0xE, 0x0, 0x0, 0x0, 0x0,
+	0x7, 0xF, 0xF, 0xE, 0x0, 0x0, 0x0, 0x0, 0x7, 0xF, 0xF, 0xE, 0x0, 0x0, 0x0, 0x0, 0x3, 0xF, 0xF, 0xF, 0x0, 0x0, 0x0, 0x0, 0x1, 0xF, 0xF, 0xF, 0x0, 0x0, 0x0, 0x0,
+	0x0, 0x7, 0xF, 0xF, 0x0, 0x0, 0x0, 0x0, 0x0, 0x1, 0xF, 0xF, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
 
 Box g462_BoxObjectPiles[4] = { // @ G0462_as_Graphic561_Box_ObjectPiles
 	/* { X1, X2, Y1, Y2 } */
@@ -260,43 +301,178 @@ EventManager::EventManager(DMEngine *vm) : _vm(vm) {
 
 	_dummyMapIndex = 0;
 	_g439_pendingClickButton = k0_NoneMouseButton;
+	_g615_mousePointerOriginalColorsObject = nullptr;
+	_g613_mousePointerOriginalColorsChampionIcon = nullptr;
+	_gK190_mousePointerTempBuffer = nullptr;
 }
 
-
-// dummy data
-static const byte mouseData[] = {
-	1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-	1, 7, 1, 0, 0, 0, 0, 0, 0, 0,
-	1, 7, 7, 1, 0, 0, 0, 0, 0, 0,
-	1, 7, 7, 7, 1, 0, 0, 0, 0, 0,
-	1, 7, 7, 7, 7, 1, 0, 0, 0, 0,
-	1, 7, 7, 7, 7, 7, 1, 0, 0, 0,
-	1, 7, 7, 7, 7, 7, 7, 1, 0, 0,
-	1, 7, 7, 7, 7, 7, 7, 7, 1, 0,
-	1, 7, 7, 7, 7, 7, 1, 1, 1, 1,
-	1, 7, 7, 1, 7, 7, 1, 0, 0, 0,
-	1, 7, 1, 0, 1, 7, 7, 1, 0, 0,
-	1, 1, 0, 0, 1, 7, 7, 1, 0, 0,
-	0, 0, 0, 0, 0, 1, 7, 7, 1, 0,
-	0, 0, 0, 0, 0, 1, 7, 7, 1, 0,
-	0, 0, 0, 0, 0, 0, 1, 1, 0, 0
-};
-#define MOUSE_WIDTH 10
-#define MOUSE_HEIGHT 15
-
+EventManager::~EventManager() {
+	delete[] _g615_mousePointerOriginalColorsObject;
+	delete[] _gK190_mousePointerTempBuffer;
+	delete[] _g613_mousePointerOriginalColorsChampionIcon;
+}
 
 void EventManager::initMouse() {
+	if (!_g615_mousePointerOriginalColorsObject)
+		_g615_mousePointerOriginalColorsObject = new byte[32 * 18];
+	if (!_gK190_mousePointerTempBuffer)
+		_gK190_mousePointerTempBuffer = new byte[32 * 18];
+	if (!_g613_mousePointerOriginalColorsChampionIcon)
+		_g613_mousePointerOriginalColorsChampionIcon = new byte[32 * 18];
+
+	_gK104_mousePointerType = k0_pointerArrow;
+	_gK105_previousMousePointerType = k1_pointerHand;
+
 	_mousePos = Common::Point(0, 0);
-	CursorMan.pushCursor(mouseData, MOUSE_WIDTH, MOUSE_HEIGHT, 0, 0, 0);
+	CursorMan.pushCursor(g42_bitmapArrowPointer, 32, 18, 0, 0, 0);
 	CursorMan.showMouse(false);
 
+
 	setMousePos(Common::Point(320 / 2, 200 / 2));
-	// TODO: add cursor creatin, set to hidden
 }
 
-void EventManager::showMouse(bool visibility) {
-	CursorMan.showMouse(visibility);
+void EventManager::f67_setMousePointerToNormal(int16 mousePointer) {
+	_gK100_preventBuildPointerScreenArea = true;
+	_g600_useObjectAsMousePointerBitmap = false;
+	_g601_useHandAsMousePointerBitmap = (mousePointer == k1_pointerHand);
+	_g598_mousePointerBitmapUpdated = true;
+	_gK100_preventBuildPointerScreenArea = false;
+	f73_buildpointerScreenArea(_mousePos.x, _mousePos.y);
 }
+
+void EventManager::f68_setPointerToObject(byte* bitmap) {
+	static byte gK27_palChangesMousepointerOjbectIconShadow[16] = {120, 120, 120, 120, 120, 120, 120, 120,
+		120, 120, 120, 120, 0, 120, 120, 120}; // @ K0027_auc_PaletteChanges_MousePointerObjectIconShadow
+	static byte g44_palChangesMousePointerIcon[16] = {120, 10, 20, 30, 40, 50, 60, 70, 80, 90,
+		100, 110, 0, 130, 140, 150}; // @ G0044_auc_Graphic562_PaletteChanges_MousePointerIcon
+	static Box g619_BoxMousePointerObjectShadow(2, 17, 2, 17); // @ G0619_s_Box_MousePointer_ObjectShadow 
+	static Box g620_BoxMousePointerObject(0, 15, 0, 15); // @ G0620_s_Box_MousePointer_Object 
+	byte* L0051_puc_Bitmap;
+
+	_gK100_preventBuildPointerScreenArea = true;
+	_g600_useObjectAsMousePointerBitmap = true;
+	_g601_useHandAsMousePointerBitmap = false;
+	_g598_mousePointerBitmapUpdated = true;
+	_vm->_displayMan->_g578_useByteBoxCoordinates = true;
+	L0051_puc_Bitmap = _g615_mousePointerOriginalColorsObject;
+	memset(L0051_puc_Bitmap, 0, 32 * 18);
+	_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(bitmap, _gK190_mousePointerTempBuffer, 16, 16, 16, 16, gK27_palChangesMousepointerOjbectIconShadow);
+	_vm->_displayMan->f132_blitToBitmap(_gK190_mousePointerTempBuffer, L0051_puc_Bitmap, g619_BoxMousePointerObjectShadow, 0, 0, 8, 16, k255_ColorNoTransparency, 16, 18);
+	_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(bitmap, _gK190_mousePointerTempBuffer, 16, 16, 16, 16, g44_palChangesMousePointerIcon);
+	_vm->_displayMan->f132_blitToBitmap(_gK190_mousePointerTempBuffer, L0051_puc_Bitmap, g620_BoxMousePointerObject, 0, 0, 8, 16, k0_ColorBlack, 16, 18);
+	_gK100_preventBuildPointerScreenArea = false;
+	f73_buildpointerScreenArea(_mousePos.x, _mousePos.y);
+}
+
+void EventManager::f71_mouseDropChampionIcon() {
+	bool L0057_B_UseByteBoxCoordinatesBackup;
+	uint16 L0058_ui_ChampionIconIndex;
+
+
+	_gK100_preventBuildPointerScreenArea = true;
+	L0058_ui_ChampionIconIndex = _vm->M1_ordinalToIndex(_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap);
+	_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->M0_indexToOrdinal(kM1_ChampionNone);
+	_vm->_eventMan->_g598_mousePointerBitmapUpdated = true;
+	L0057_B_UseByteBoxCoordinatesBackup = _vm->_displayMan->_g578_useByteBoxCoordinates;
+	_vm->_displayMan->f21_blitToScreen(_g613_mousePointerOriginalColorsChampionIcon, &g54_BoxChampionIcons[L0058_ui_ChampionIconIndex << 2], 16, k12_ColorDarkestGray, 18);
+	_vm->_displayMan->_g578_useByteBoxCoordinates = L0057_B_UseByteBoxCoordinatesBackup;
+	_gK100_preventBuildPointerScreenArea = false;
+}
+
+void EventManager::f73_buildpointerScreenArea(int16 mousePosX, int16 mousePosY) {
+	uint16 L1577_i_ChampionIndex;
+	int16 L1578_i_XOverChampionStatusBox;
+
+
+	if (_gK100_preventBuildPointerScreenArea)
+		return;
+
+	_gK100_preventBuildPointerScreenArea = true;
+	if (_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap) {
+		if ((mousePosY > 28) || (mousePosX < 274)) {
+			_gK104_mousePointerType = k4_pointerTypeAutoselect;
+			f71_mouseDropChampionIcon();
+		} else {
+			_gK104_mousePointerType = k2_pointerTypeChampionIcon;
+		}
+	} else {
+		if (mousePosY >= 169) {
+			_gK104_mousePointerType = k0_pointerTypeArrow;
+		} else {
+			if (mousePosX >= 274) {
+				_gK104_mousePointerType = k0_pointerTypeArrow;
+			} else {
+				if (mousePosY <= 28) {
+					L1577_i_ChampionIndex = mousePosX / 69;
+					L1578_i_XOverChampionStatusBox = mousePosX % 69;
+					if (L1577_i_ChampionIndex >= _vm->_championMan->_g305_partyChampionCount) {
+						_gK104_mousePointerType = k4_pointerTypeAutoselect;
+					} else {
+						if (L1578_i_XOverChampionStatusBox > 42) {
+							_gK104_mousePointerType = k4_pointerTypeAutoselect;
+						} else {
+							L1577_i_ChampionIndex++;
+							if (L1577_i_ChampionIndex == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
+								_gK104_mousePointerType = k0_pointerTypeArrow;
+							} else {
+								if (mousePosY <= 6) {
+									_gK104_mousePointerType = k0_pointerTypeArrow;
+								} else {
+									_gK104_mousePointerType = k4_pointerTypeAutoselect;
+								}
+							}
+						}
+					}
+				} else {
+					if (mousePosX >= 224) {
+						_gK104_mousePointerType = k0_pointerTypeArrow;
+					} else {
+						_gK104_mousePointerType = k4_pointerTypeAutoselect;
+					}
+				}
+			}
+		}
+	}
+	if (_gK104_mousePointerType == k4_pointerTypeAutoselect) {
+		_gK104_mousePointerType = (_g600_useObjectAsMousePointerBitmap) ? k1_pointerTypeObjectIcon : (_g601_useHandAsMousePointerBitmap) ? k3_pointerTypeHand : k0_pointerTypeArrow;
+	}
+	if (_vm->_eventMan->_g598_mousePointerBitmapUpdated || (_gK104_mousePointerType != _gK105_previousMousePointerType)) {
+		_vm->_eventMan->_g598_mousePointerBitmapUpdated = false;
+		switch (_gK104_mousePointerType) {
+		case k0_pointerTypeArrow:
+			CursorMan.pushCursor(g42_bitmapArrowPointer, 32, 18, 0, 0, 0);
+			break;
+		case k1_pointerTypeObjectIcon:
+			CursorMan.pushCursor(_g615_mousePointerOriginalColorsObject, 32, 18, 0, 0, 0);
+			break;
+		case k2_pointerTypeChampionIcon:
+			CursorMan.pushCursor(_g613_mousePointerOriginalColorsChampionIcon, 32, 18, 0, 0, 0);
+			break;
+		case k3_pointerTypeHand:
+			CursorMan.pushCursor(g43_bitmapHanPointer, 32, 18, 0, 0, 0);
+			break;
+		}
+	}
+	_gK105_previousMousePointerType = _gK104_mousePointerType;
+	_gK100_preventBuildPointerScreenArea = false;
+}
+
+void EventManager::f69_setMousePointer() {
+	if (_vm->_championMan->_g415_leaderEmptyHanded) {
+		f67_setMousePointerToNormal((_vm->_championMan->_g411_leaderIndex == kM1_ChampionNone) ? k0_pointerArrow : k1_pointerHand);
+	} else {
+		f68_setPointerToObject(_vm->_objectMan->_g412_objectIconForMousePointer);
+	}
+}
+
+void EventManager::f78_showMouse() {
+	CursorMan.showMouse(true);
+}
+
+void EventManager::f77_hideMouse() {
+	CursorMan.showMouse(false);
+}
+
 
 void EventManager::setMousePos(Common::Point pos) {
 	_vm->_system->warpMouse(pos.x, pos.y);
@@ -473,6 +649,48 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 	// MISSING CODE: Lots of code
 }
 
+bool EventManager::f375_processType80_clickDungeonView_isLeaderHandObjThrown(int16 posX, int16 posY) {
+	bool L1149_B_ObjectThrown;
+
+
+#define k0_sideLeft 0 // @ C0_SIDE_LEFT 
+#define k1_sideRight 1 // @ C0_SIDE_LEFT 
+
+	if ((posY < 47) || (posY > 102)) {
+		return false;
+	}
+	if (posX <= 111) {
+		if (_vm->_dungeonMan->_g285_squareAheadElement == k17_DoorFrontElemType) {
+			if (posX < 64) {
+				return false;
+			}
+		} else {
+			if (posX < 32) {
+				return false;
+			}
+		}
+		// Strangerke: Only poresent in CSB2.1... But it fixes a bug so we keep it
+		L1149_B_ObjectThrown = _vm->_championMan->f329_isLeaderHandObjectThrown(k0_sideLeft);
+	} else {
+		if (_vm->_dungeonMan->_g285_squareAheadElement == k17_DoorFrontElemType) {
+			if (posX > 163) {
+				return false;
+			}
+		} else {
+			if (posX > 191) {
+				return false;
+			}
+		}
+		L1149_B_ObjectThrown = _vm->_championMan->f329_isLeaderHandObjectThrown(k1_sideRight);
+	}
+	if (L1149_B_ObjectThrown) {
+		_vm->_g321_stopWaitingForPlayerInput = true;
+	}
+	return L1149_B_ObjectThrown;
+}
+
+
+
 void EventManager::f368_commandSetLeader(ChampionIndex champIndex) {
 	ChampionMan &cm = *_vm->_championMan;
 	ChampionIndex leaderIndex;
@@ -513,79 +731,88 @@ void EventManager::f372_commandProcessType80ClickInDungeonViewTouchFrontWall() {
 }
 
 void EventManager::f377_commandProcessType80ClickInDungeonView(int16 posX, int16 posY) {
-	DungeonMan &dunMan = *_vm->_dungeonMan;
-	ChampionMan &champMan = *_vm->_championMan;
+	uint16 L1150_ui_ViewCell;
+	Junk* L1151_ps_Junk;
+	Thing L1152_T_Thing;
+	uint16 L1153_ui_IconIndex;
+	uint16 L1154_ui_Weight;
+	int16 L1155_i_MapX;
+	int16 L1156_i_MapY;
 
-	if (dunMan._g285_squareAheadElement == k17_ElementTypeDoorFront) {
-		if (champMan._g411_leaderIndex == kM1_ChampionNone)
+	if (_vm->_dungeonMan->_g285_squareAheadElement == k17_DoorFrontElemType) {
+		if (_vm->_championMan->_g411_leaderIndex == kM1_ChampionNone) {
 			return;
-
-		if (champMan._g415_leaderEmptyHanded) {
-			int16 mapX = dunMan._g306_partyMapX + _vm->_dirIntoStepCountEast[dunMan._g308_partyDir];
-			int16 mapY = dunMan._g307_partyMapY + _vm->_dirIntoStepCountNorth[dunMan._g308_partyDir];
-
-			if (Door(dunMan.f157_getSquareFirstThingData(mapX, mapY)).hasButton() &&
-				dunMan._g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn].isPointInside(Common::Point(posX, posY - 33))) {
+		}
+		L1155_i_MapX = _vm->_dungeonMan->_g306_partyMapX;
+		L1156_i_MapY = _vm->_dungeonMan->_g307_partyMapY;
+		L1155_i_MapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir], L1156_i_MapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
+		if (_vm->_championMan->_g415_leaderEmptyHanded) {
+			L1151_ps_Junk = (Junk*)_vm->_dungeonMan->f157_getSquareFirstThingData(L1155_i_MapX, L1156_i_MapY);
+			if ((((Door*)L1151_ps_Junk)->hasButton()) && _vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn].isPointInside(posX, posY - 33)) {
 				_vm->_g321_stopWaitingForPlayerInput = true;
 				warning("MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
-				warning("MISSING CODE: F0268_SENSOR_AddEvent");
+				_vm->_movsens->f268_addEvent(k10_TMEventTypeDoor, L1155_i_MapX, L1156_i_MapY, 0, k2_SensorEffToggle, _vm->_g313_gameTime + 1);
 				return;
 			}
-
-			warning("MISSING CODE: F0375_COMMAND_ProcessType80_ClickInDungeonView_IsLeaderHandObjectThrown in elseif condition");
+		} else {
+			if (f375_processType80_clickDungeonView_isLeaderHandObjThrown(posX, posY)) {
+				return;
+			}
 		}
 	}
-
-	if (champMan._g415_leaderEmptyHanded) {
-		for (int16 viewCell = k0_ViewCellFronLeft; viewCell <= k5_ViewCellDoorButtonOrWallOrn; viewCell++) {
-			if (dunMan._g291_dungeonViewClickableBoxes[viewCell].isPointInside(Common::Point(posX, posY - 33))) {
-				if (viewCell == k5_ViewCellDoorButtonOrWallOrn) {
-					if (!dunMan._g286_isFacingAlcove) {
+	if (_vm->_championMan->_g415_leaderEmptyHanded) {
+		for (L1150_ui_ViewCell = k0_ViewCellFronLeft; L1150_ui_ViewCell < k5_ViewCellDoorButtonOrWallOrn + 1; L1150_ui_ViewCell++) {
+			if (_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[L1150_ui_ViewCell].isPointInside(posX, posY - 33)) {
+				if (L1150_ui_ViewCell == k5_ViewCellDoorButtonOrWallOrn) {
+					if (!_vm->_dungeonMan->_g286_isFacingAlcove) {
 						f372_commandProcessType80ClickInDungeonViewTouchFrontWall();
 					}
 				} else {
-					warning("MISSING CODE: F0373_COMMAND_ProcessType80_ClickInDungeonView_GrabLeaderHandObject");
+					f373_processType80_clickInDungeonView_grabLeaderHandObject(L1150_ui_ViewCell);
 				}
 				return;
 			}
 		}
 	} else {
-		Thing thing = champMan._g414_leaderHandObject;
-		uint16 *rawThingPointer = dunMan.f156_getThingData(thing);
-		if (dunMan._g285_squareAheadElement == k0_ElementTypeWall) {
-			for (int16 viewCell = k0_ViewCellFronLeft; viewCell <= k1_ViewCellFrontRight; ++viewCell) {
-				if (g462_BoxObjectPiles[viewCell].isPointInside(Common::Point(posX, posY))) {
-					warning("F0374_COMMAND_ProcessType80_ClickInDungeonView_DropLeaderHandObject");
+		L1152_T_Thing = _vm->_championMan->_g414_leaderHandObject;
+		L1151_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(L1152_T_Thing);
+		if (_vm->_dungeonMan->_g285_squareAheadElement == k0_ElementTypeWall) {
+			for (L1150_ui_ViewCell = k0_ViewCellFronLeft; L1150_ui_ViewCell < k1_ViewCellFrontRight + 1; L1150_ui_ViewCell++) {
+				if (g462_BoxObjectPiles[L1150_ui_ViewCell].isPointInside(posX, posY)) {
+					f374_processType80_clickInDungeonViewDropLeaderHandObject(L1150_ui_ViewCell);
 					return;
 				}
 			}
-
-			if (dunMan._g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn].isPointInside(Common::Point(posX, posY - 33))) {
-				if (dunMan._g286_isFacingAlcove) {
-					warning("MISSING CODE: F0374_COMMAND_ProcessType80_ClickInDungeonView_DropLeaderHandObject");
+			if (_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn].isPointInside(posX, posY - 33)) {
+				if (_vm->_dungeonMan->_g286_isFacingAlcove) {
+					f374_processType80_clickInDungeonViewDropLeaderHandObject(k4_ViewCellAlcove);
 				} else {
-					if (dunMan._g288_isFacingFountain) {
-						uint16 iconIndex = _vm->_objectMan->f33_getIconIndex(thing);
-						int16 weight = dunMan.f140_getObjectWeight(thing);
-						if ((iconIndex >= k8_IconIndiceJunkWater) && (iconIndex <= k9_IconIndiceJunkWaterSkin)) {
-							((Junk*)rawThingPointer)->setChargeCount(3);
-						} else if (iconIndex == k195_IconIndicePotionEmptyFlask) {
-							((Potion*)rawThingPointer)->setType(k15_PotionTypeWaterFlask);
+					if (_vm->_dungeonMan->_g288_isFacingFountain) {
+						L1153_ui_IconIndex = _vm->_objectMan->f33_getIconIndex(L1152_T_Thing);
+						L1154_ui_Weight = _vm->_dungeonMan->f140_getObjectWeight(L1152_T_Thing);
+						if ((L1153_ui_IconIndex >= k8_IconIndiceJunkWater) && (L1153_ui_IconIndex <= k9_IconIndiceJunkWaterSkin)) {
+							L1151_ps_Junk->setChargeCount(3); /* Full */
 						} else {
-							goto T0377019;
+							if (L1153_ui_IconIndex == k195_IconIndicePotionEmptyFlask) {
+								((Potion*)L1151_ps_Junk)->setType(k15_PotionTypeWaterFlask);
+							} else {
+								goto T0377019;
+							}
 						}
-						champMan.f296_drawChangedObjectIcons();
-						champMan._gK71_champions[champMan._g411_leaderIndex]._load += dunMan.f140_getObjectWeight(thing) - weight;
+						_vm->_championMan->f296_drawChangedObjectIcons();
+						_vm->_championMan->_gK71_champions[_vm->_championMan->_g411_leaderIndex]._load += _vm->_dungeonMan->f140_getObjectWeight(L1152_T_Thing) - L1154_ui_Weight;
 					}
 T0377019:
 					f372_commandProcessType80ClickInDungeonViewTouchFrontWall();
 				}
 			}
 		} else {
-			warning("MISSING CODE: F0375_COMMAND_ProcessType80_ClickInDungeonView_IsLeaderHandObjectThrown in if branch");
-			for (int16 viewCell = k0_ViewCellFronLeft; viewCell <= k3_ViewCellBackLeft; viewCell++) {
-				if (g462_BoxObjectPiles[viewCell].isPointInside(Common::Point(posX, posY))) {
-					warning("MISSING CODE: F0374_COMMAND_ProcessType80_ClickInDungeonView_DropLeaderHandObject");
+			if (f375_processType80_clickDungeonView_isLeaderHandObjThrown(posX, posY)) {
+				return;
+			}
+			for (L1150_ui_ViewCell = k0_ViewCellFronLeft; L1150_ui_ViewCell < k3_ViewCellBackLeft + 1; L1150_ui_ViewCell++) {
+				if (g462_BoxObjectPiles[L1150_ui_ViewCell].isPointInside(posX, posY)) {
+					f374_processType80_clickInDungeonViewDropLeaderHandObject(L1150_ui_ViewCell);
 					return;
 				}
 			}
@@ -616,8 +843,8 @@ void EventManager::f282_commandProcessCommands160To162ClickInResurrectReincarnat
 		dispMan._g578_useByteBoxCoordinates = false;
 		dispMan.D24_fillScreenBox(box, k0_ColorBlack);
 		dispMan.D24_fillScreenBox(g54_BoxChampionIcons[champMan.M26_championIconIndex(champ->_cell, dunMan._g308_partyDir) * 2], k0_ColorBlack);
-		warning("F0457_START_DrawEnabledMenus_CPSF");
-		warning("F0078_MOUSE_ShowPointer");
+		_vm->_menuMan->f457_drawEnabledMenus();
+		_vm->_eventMan->f78_showMouse();
 		return;
 	}
 
@@ -628,7 +855,7 @@ void EventManager::f282_commandProcessCommands160To162ClickInResurrectReincarnat
 	for (uint16 slotIndex = k0_ChampionSlotReadyHand; slotIndex < k30_ChampionSlotChest_1; slotIndex++) {
 		Thing thing = champ->getSlot((ChampionSlot)slotIndex);
 		if (thing != Thing::_none) {
-			warning("MISSING CODE: F0164_DUNGEON_UnlinkThingFromList");
+			_vm->_dungeonMan->f164_unlinkThingFromList(thing, Thing(0), mapX, mapY);
 		}
 	}
 	Thing thing = dunMan.f161_getSquareFirstThing(mapX, mapY);
@@ -652,21 +879,21 @@ void EventManager::f282_commandProcessCommands160To162ClickInResurrectReincarnat
 	}
 
 	if (champMan._g305_partyChampionCount == 1) {
-		warning("MISSING CODE: setting time, G0362_l_LastPartyMovementTime , G0313_ul_GameTime");
+		_vm->_projexpl->_g362_lastPartyMovementTime = _vm->_g313_gameTime;
 		f368_commandSetLeader(k0_ChampionFirst);
 		_vm->_menuMan->f394_setMagicCasterAndDrawSpellArea(k0_ChampionFirst);
 	} else {
 		_vm->_menuMan->f393_drawSpellAreaControls(champMan._g514_magicCasterChampionIndex);
 	}
 
-	warning("MISSING CODE: F0051_TEXT_MESSAGEAREA_PrintLineFeed");
-	Color champColor = g46_ChampionColor[championIndex]; // unreferenced because of missing code
-	warning("MISSING CODE: F0047_TEXT_MESSAGEAREA_PrintMessage");
-	warning("MISSING CODE: F0047_TEXT_MESSAGEAREA_PrintMessage");
+	_vm->_textMan->f51_messageAreaPrintLineFeed();
+	Color champColor = g46_ChampionColor[championIndex];
+	_vm->_textMan->f47_messageAreaPrintMessage(champColor, champ->_name);
+	_vm->_textMan->f47_messageAreaPrintMessage(champColor, (commandType == k160_CommandClickInPanelResurrect) ? " RESURRECTED." : " REINCARNATED."); // TODO: localization
 
 	invMan.f355_toggleInventory(k4_ChampionCloseInventory);
-	warning("MISSING CODE: F0457_START_DrawEnabledMenus_CPSF");
-	warning("MISSING CODE: F0067_MOUSE_SetPointerToNormal");
+	_vm->_menuMan->f457_drawEnabledMenus();
+	_vm->_eventMan->f67_setMousePointerToNormal((_vm->_championMan->_g411_leaderIndex == kM1_ChampionNone) ? k0_pointerArrow : k1_pointerHand);
 }
 
 void EventManager::f378_commandProcess81ClickInPanel(int16 x, int16 y) {
@@ -694,11 +921,88 @@ void EventManager::f378_commandProcess81ClickInPanel(int16 x, int16 y) {
 	}
 }
 
+void EventManager::f373_processType80_clickInDungeonView_grabLeaderHandObject(uint16 viewCell) {
+	int16 L1137_i_MapX;
+	int16 L1138_i_MapY;
+	Thing L1139_T_Thing;
+
+
+	if (_vm->_championMan->_g411_leaderIndex == kM1_ChampionNone) {
+		return;
+	}
+	L1137_i_MapX = _vm->_dungeonMan->_g306_partyMapX;
+	L1138_i_MapY = _vm->_dungeonMan->_g307_partyMapY;
+	if (viewCell >= k2_ViewCellBackRight) {
+		L1137_i_MapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir], L1138_i_MapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
+		if (((L1139_T_Thing = _vm->_groupMan->f175_groupGetThing(L1137_i_MapX, L1138_i_MapY)) != Thing::_endOfList) &&
+			!_vm->_movsens->f264_isLevitating(L1139_T_Thing) &&
+			_vm->_groupMan->f176_getCreatureOrdinalInCell((Group*)_vm->_dungeonMan->f156_getThingData(L1139_T_Thing), M21_normalizeModulo4(viewCell + _vm->_dungeonMan->_g308_partyDir))) {
+			return; /* It is not possible to grab an object on floor if there is a non levitating creature on its cell */
+		}
+	}
+	L1139_T_Thing = _vm->_dungeonMan->_g292_pileTopObject[viewCell];
+	if (_vm->_objectMan->f33_getIconIndex(L1139_T_Thing) != kM1_IconIndiceNone) {
+		_vm->_movsens->f267_getMoveResult(L1139_T_Thing, L1137_i_MapX, L1138_i_MapY, kM1_MapXNotOnASquare, 0);
+		_vm->_championMan->f297_putObjectInLeaderHand(L1139_T_Thing, true);
+	}
+	_vm->_g321_stopWaitingForPlayerInput = true;
+}
+
+void EventManager::f374_processType80_clickInDungeonViewDropLeaderHandObject(uint16 viewCell) {
+	int16 L1140_i_MapX;
+	int16 L1141_i_MapY;
+	Thing L1142_T_Thing;
+	Junk* L1143_ps_Junk;
+	int16 L1144_i_IconIndex;
+	uint16 L1145_ui_Cell;
+	bool L1146_B_DroppingIntoAnAlcove;
+	TimelineEvent L1147_s_Event;
+
+
+	if (_vm->_championMan->_g411_leaderIndex == kM1_ChampionNone) {
+		return;
+	}
+	L1140_i_MapX = _vm->_dungeonMan->_g306_partyMapX;
+	L1141_i_MapY = _vm->_dungeonMan->_g307_partyMapY;
+	if (L1146_B_DroppingIntoAnAlcove = (viewCell == k4_ViewCellAlcove)) {
+		viewCell = k2_ViewCellBackRight;
+	}
+	if (viewCell > k1_ViewCellFrontRight) {
+		L1140_i_MapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir], L1141_i_MapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
+	}
+	L1145_ui_Cell = M21_normalizeModulo4(_vm->_dungeonMan->_g308_partyDir + viewCell);
+	L1142_T_Thing = _vm->_championMan->f298_getObjectRemovedFromLeaderHand();
+	_vm->_movsens->f267_getMoveResult(M15_thingWithNewCell(L1142_T_Thing, L1145_ui_Cell), kM1_MapXNotOnASquare, 0, L1140_i_MapX, L1141_i_MapY);
+	if (L1146_B_DroppingIntoAnAlcove && _vm->_dungeonMan->_g287_isFacingViAltar && ((L1144_i_IconIndex = _vm->_objectMan->f33_getIconIndex(L1142_T_Thing)) == k147_IconIndiceJunkChampionBones)) {
+		L1143_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(L1142_T_Thing);
+		M33_setMapAndTime(L1147_s_Event._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + 1);
+		L1147_s_Event._type = k13_TMEventTypeViAltarRebirth;
+		L1147_s_Event._priority = L1143_ps_Junk->getChargeCount();
+		L1147_s_Event._B._location._mapX = L1140_i_MapX;
+		L1147_s_Event._B._location._mapY = L1141_i_MapY;
+		L1147_s_Event._C.A._cell = L1145_ui_Cell;
+		L1147_s_Event._C.A._effect = k2_SensorEffToggle;
+		_vm->_timeline->f238_addEventGetEventIndex(&L1147_s_Event);
+	}
+	_vm->_g321_stopWaitingForPlayerInput = true;
+}
+
 bool EventManager::f360_hasPendingClick(Common::Point& point, MouseButton button) {
 	if (_g439_pendingClickButton && button == _g439_pendingClickButton)
 		point = _g437_pendingClickPos;
 
 	return _g436_pendingClickPresent;
+}
+
+void EventManager::f379_drawSleepScreen() {
+	_vm->_displayMan->f134_fillBitmap(_vm->_displayMan->_g296_bitmapViewport, k0_ColorBlack, 224, 136); // TODO: localization
+}
+
+void EventManager::f357_discardAllInput() {
+	Common::Event event;
+	while (_vm->_system->getEventManager()->pollEvent(event))
+		;
+	_commandQueue.clear();
 }
 
 } // end of namespace DM

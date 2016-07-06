@@ -107,9 +107,7 @@ class ArmourInfo {
 public:
 	uint16 _weight;
 	uint16 _defense;
-private:
 	uint16 _attributes;
-public:
 	ArmourInfo(uint16 weight, uint16 defense, uint16 attributes)
 		:_weight(weight), _defense(defense), _attributes(attributes) {}
 
@@ -178,8 +176,9 @@ enum SquareAspectIndice {
 };
 
 
-               
 
+#define k15_immuneToFire 15 // @ C15_IMMUNE_TO_FIRE   
+#define k15_immuneToPoison 15 // @ C15_IMMUNE_TO_POISON 
 
 class CreatureInfo {
 public:
@@ -200,6 +199,17 @@ public:
 	uint16 _animationTicks; /* Bits 15-12 Unreferenced */
 	uint16 _woundProbabilities; /* Contains 4 probabilities to wound a champion's Head (Bits 15-12), Legs (Bits 11-8), Torso (Bits 7-4) and Feet (Bits 3-0) */
 	byte _attackType;
+
+	uint16 M57_getFearResistance() { return (_properties >> 4) & 0xF; }
+	uint16 M58_getExperience() { return (_properties >> 8) & 0xF; }
+	uint16 M59_getWariness() { return (_properties >> 12) & 0xF; }
+	uint16 M60_getFireResistance() { return (_resistances >> 4) & 0xF; }
+	uint16 M61_poisonResistance() { return (_resistances >> 8) & 0xF; }
+	uint16 M51_height() { return (_attributes >> 7) & 0x3; }
+
+	uint16 M54_getSightRange() { return (_ranges) & 0xF; }
+	uint16 M55_getSmellRange() { return  (_ranges >> 8) & 0xF; }
+	uint16 M56_getAttackRange() { return (_ranges >> 12) & 0xF; }
 }; // @ CREATURE_INFO
 
 
@@ -232,13 +242,13 @@ class Teleporter {
 public:
 	explicit Teleporter(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]), _destMapIndex(rawDat[2]) {}
 	Thing getNextThing() { return _nextThing; }
-	bool makesSound() { return (_attributes >> 15) & 1; }
+	bool isAudible() { return (_attributes >> 15) & 1; }
 	TeleporterScope getScope() { return (TeleporterScope)((_attributes >> 13) & 1); }
-	bool absRotation() { return (_attributes >> 12) & 1; }
-	direction getRotationDir() { return (direction)((_attributes >> 10) & 1); }
-	byte getDestY() { return (_attributes >> 5) & 0xF; }
-	byte getDestX() { return _attributes & 0xF; }
-	uint16 getDestMapIndex() { return _destMapIndex >> 8; }
+	bool getAbsoluteRotation() { return (_attributes >> 12) & 1; }
+	direction getRotation() { return (direction)((_attributes >> 10) & 1); }
+	byte getTargetMapY() { return (_attributes >> 5) & 0xF; }
+	byte getTargetMapX() { return _attributes & 0xF; }
+	uint16 getTargetMapIndex() { return _destMapIndex >> 8; }
 }; // @ TELEPORTER
 
 
@@ -311,24 +321,28 @@ public:
 	uint16 getDataMask2() { return (_datAndType >> 11) & 0xF; } // @ M43_MASK2
 	void setData(int16 dat) { _datAndType = (_datAndType & 0x7F) | (dat << 7); } // @ M41_SET_DATA
 	void setTypeDisabled() { _datAndType &= 0xFF80; } // @ M44_SET_TYPE_DISABLED
-	uint16 getOrnOrdinal() { return _attributes >> 12; }
-	bool isLocalAction() { return (_attributes >> 11) & 1; }
-	uint16 getDelay() { return (_attributes >> 7) & 0xF; }
-	bool hasSound() { return (_attributes >> 6) & 1; }
-	bool shouldRevert() { return (_attributes >> 5) & 1; }
-	SensorActionType getActionType() { return (SensorActionType)((_attributes >> 3) & 3); }
-	bool isSingleUse() { return (_attributes >> 2) & 1; }
-	uint16 getRemoteMapY() { return (_action >> 11); }
-	uint16 getRemoteMapX() { return (_action >> 6) & 0x1F; }
-	direction getRemoteDir() { return (direction)((_action >> 4) & 3); }
-	uint16 getLocalAction() { return (_action >> 4); }
+
+
+
+	bool getOnlyOnce() { return (_attributes >> 2) & 1; }
 	uint16 getEffectA() { return (_attributes >> 3) & 0x3; }
 	bool getRevertEffectA() { return (_attributes >> 5) & 0x1; }
 	bool getAudibleA() { return (_attributes >> 6) & 0x1; }
+	uint16 getValue() { return (_attributes >> 7) & 0xF; }
+	bool getLocalEffect() { return (_attributes >> 11) & 1; }
+	uint16 getOrnOrdinal() { return _attributes >> 12; }
+
+	uint16 getTargetMapY() { return (_action >> 11); }
+	uint16 getTargetMapX() { return (_action >> 6) & 0x1F; }
+	direction getTargetCell() { return (direction)((_action >> 4) & 3); }
+	uint16 M49_localEffect() { return (_action >> 4); }
 
 
 	// some macros missing, i got bored
 }; // @ SENSOR
+
+
+#define k0x8000_randomDrop 0x8000 // @ MASK0x8000_RANDOM_DROP 
 
 
 enum WeaponType {
@@ -351,6 +365,7 @@ public:
 	explicit Weapon(uint16 *rawDat) : _nextThing(rawDat[0]), _desc(rawDat[1]) {}
 
 	WeaponType getType() { return (WeaponType)(_desc & 0x7F); }
+	void setType(uint16 val) { _desc = (_desc & ~0x7F) | (val & 0x7F); }
 	bool isLit() { return (_desc >> 15) & 1; }
 	void setLit(bool val) {
 		if (val)
@@ -359,10 +374,13 @@ public:
 			_desc &= (~(1 << 15));
 	}
 	uint16 getChargeCount() { return (_desc >> 10) & 0xF; }
+	void setChargeCount(uint16 val) { _desc = (_desc & ~(0xF << 10)) | ((val & 0xF) << 10); }
 	Thing getNextThing() { return _nextThing; }
 	uint16 getCursed() { return (_desc >> 8) & 1; }
+	void setCursed(uint16 val) { _desc = (_desc & ~(1 << 8)) | ((val & 1) << 8); }
 	uint16 getPoisoned() { return (_desc >> 9) & 1; }
 	uint16 getBroken() { return (_desc >> 14) & 1; }
+	uint16 getDoNotDiscard() { return (_desc >> 7) & 1; }
 }; // @ WEAPON
 
 enum ArmourType {
@@ -382,6 +400,7 @@ public:
 	Thing getNextThing() { return _nextThing; }
 	uint16 getCursed() { return (_attributes >> 8) & 1; }
 	uint16 getBroken() { return (_attributes >> 13) & 1; }
+	uint16 getDoNotDiscard() { return (_attributes >> 7) & 1; }
 }; // @ ARMOUR
 
 class Scroll {
@@ -420,15 +439,16 @@ enum PotionType {
 	k20_PotionTypeEmptyFlask = 20 // @ C20_POTION_EMPTY_FLASK,
 };
 class Potion {
+public:
 	Thing _nextThing;
 	uint16 _attributes;
-public:
 	explicit Potion(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
 
 	PotionType getType() { return (PotionType)((_attributes >> 8) & 0x7F); }
 	void setType(PotionType val) { _attributes = (_attributes & ~(0x7F << 8)) | ((val & 0x7F) << 8); }
 	Thing getNextThing() { return _nextThing; }
 	uint16 getPower() { return _attributes & 0xFF; }
+	uint16 getDoNotDiscard() { return (_attributes >> 15) & 1; }
 }; // @ POTION
 
 class Container {
@@ -463,23 +483,29 @@ public:
 	explicit Junk(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
 
 	JunkType getType() { return (JunkType)(_attributes & 0x7F); }
+	void setType(uint16 val) { _attributes = (_attributes & ~0x7F) | (val & 0x7F); }
 	uint16 getChargeCount() { return (_attributes >> 14) & 0x3; }
 	void setChargeCount(uint16 val) { _attributes = (_attributes & ~(0x3 << 14)) | ((val & 0x3) << 14); }
+	uint16 getDoNotDiscard() { return (_attributes >> 7) & 1; }
 
 	Thing getNextThing() { return _nextThing; }
 }; // @ JUNK
 
+#define kM1_soundModeDoNotPlaySound -1 // @ CM1_MODE_DO_NOT_PLAY_SOUND  
+#define k0_soundModePlayImmediately 0 // @ C00_MODE_PLAY_IMMEDIATELY    
+#define k1_soundModePlayIfPrioritized 1 // @ C01_MODE_PLAY_IF_PRIORITIZED 
+#define k2_soundModePlayOneTickLater 2 // @ C02_MODE_PLAY_ONE_TICK_LATER 
+
 class Projectile {
 public:
 	Thing _nextThing;
-	Thing _object;
-	byte _kineticEnergy;
-	byte _damageEnergy;
-	uint16 _timerIndex;
-	explicit Projectile(uint16 *rawDat) : _nextThing(rawDat[0]), _object(rawDat[1]), _kineticEnergy(rawDat[2]),
-		_damageEnergy(rawDat[3]), _timerIndex(rawDat[4]) {}
+	Thing _slot;
+	uint16 _kineticEnergy;
+	uint16 _attack;
+	uint16 _eventIndex;
+	explicit Projectile(uint16 *rawDat) : _nextThing(rawDat[0]), _slot(rawDat[1]), _kineticEnergy(rawDat[2]),
+		_attack(rawDat[3]), _eventIndex(rawDat[4]) {}
 
-	Thing getNextThing() { return _nextThing; }
 }; // @ PROJECTILE
 
 #define k0_ExplosionType_Fireball 0 // @ C000_EXPLOSION_FIREBALL           
@@ -502,8 +528,11 @@ public:
 
 	Thing getNextThing() { return _nextThing; }
 	uint16 getType() { return _attributes & 0x7F; }
+	uint16 setType(uint16 val) { _attributes = (_attributes & ~0x7F) | (val & 0x7F); return (val & 0x7F); }
 	uint16 getAttack() { return (_attributes >> 8) & 0xFF; }
-	uint16 getCentered() { return (_attributes >> 7) & 0x1;  }
+	void setAttack(uint16 val) { _attributes = (_attributes & ~(0xFF << 8)) | ((val & 0xFF) << 8); }
+	uint16 getCentered() { return (_attributes >> 7) & 0x1; }
+	void setCentered(uint16 val) { _attributes = (_attributes & ~(1 << 7)) | ((val & 1) << 7); }
 }; // @ EXPLOSION
 
 
@@ -543,6 +572,9 @@ enum SquareType {
 	k18_StairsSideElemType = 18, // @ C18_ELEMENT_STAIRS_SIDE 
 	k19_StairsFrontElemType = 19 // @ C19_ELEMENT_STAIRS_FRONT 
 }; // @ C[-2..19]_ELEMENT_...
+
+#define k0x8000_championBones 0x8000 // @ MASK0x8000_CHAMPION_BONES 
+#define k0x7FFF_thingType 0x7FFF // @ MASK0x7FFF_THING_TYPE     
 
 class Square {
 	byte _data;
@@ -598,10 +630,11 @@ class DoorInfo {
 public:
 	byte _attributes;
 	byte _defense;
-	DoorInfo(byte b1, byte b2): _attributes(b1), _defense(b2){}
+	DoorInfo(byte b1, byte b2) : _attributes(b1), _defense(b2) {}
 	DoorInfo() {}
 }; // @ DOOR_INFO
 
+class Group;
 
 class DungeonMan {
 	DMEngine *_vm;
@@ -618,14 +651,14 @@ class DungeonMan {
 
 	int16 f170_getRandomOrnOrdinal(bool allowed, int16 count, int16 mapX, int16 mapY, int16 modulo); // @ F0170_DUNGEON_GetRandomOrnamentOrdinal
 	void f171_setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowed, bool frontAllowed, bool rightAllowed, direction dir,
-									int16 mapX, int16 mapY, bool isFakeWall); // @ F0171_DUNGEON_SetSquareAspectRandomWallOrnamentOrdinals
+										 int16 mapX, int16 mapY, bool isFakeWall); // @ F0171_DUNGEON_SetSquareAspectRandomWallOrnamentOrdinals
 
-	void f173_setCurrentMap(uint16 mapIndex); // @ F0173_DUNGEON_SetCurrentMap
 
 public:
 	explicit DungeonMan(DMEngine *dmEngine);
 	~DungeonMan();
 
+	void f173_setCurrentMap(uint16 mapIndex); // @ F0173_DUNGEON_SetCurrentMap
 	Thing f161_getSquareFirstThing(int16 mapX, int16 mapY); // @ F0161_DUNGEON_GetSquareFirstThing
 	Thing f159_getNextThing(Thing thing); // @ F0159_DUNGEON_GetNextThing(THING P0280_T_Thing)
 	uint16 *f156_getThingData(Thing thing); // @ F0156_DUNGEON_GetThingData
@@ -642,6 +675,8 @@ public:
 	} // @ F0153_DUNGEON_GetRelativeSquareType
 	void f172_setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX, int16 mapY); // @ F0172_DUNGEON_SetSquareAspect
 	void f168_decodeText(char *destString, Thing thing, TextType type); // F0168_DUNGEON_DecodeText
+	Thing f166_getUnusedThing(uint16 thingType); // @ F0166_DUNGEON_GetUnusedThing
+
 
 	uint16 f140_getObjectWeight(Thing thing); // @ F0140_DUNGEON_GetObjectWeight
 	int16 f141_getObjectInfoIndex(Thing thing); // @ F0141_DUNGEON_GetObjectInfoIndex
@@ -649,6 +684,17 @@ public:
 	WeaponInfo *f158_getWeaponInfo(Thing thing); // @ F0158_DUNGEON_GetWeaponInfo
 	int16 f142_getProjectileAspect(Thing thing); // @ F0142_DUNGEON_GetProjectileAspect
 	int16 f154_getLocationAfterLevelChange(int16 mapIndex, int16 levelDelta, int16 *mapX, int16 *mapY); // @ F0154_DUNGEON_GetLocationAfterLevelChange
+	Thing f162_getSquareFirstObject(int16 mapX, int16 mapY); // @ F0162_DUNGEON_GetSquareFirstObject
+	uint16 f143_getArmourDefense(ArmourInfo *armourInfo, bool useSharpDefense); // @ F0143_DUNGEON_GetArmourDefense
+	Thing f165_getDiscardTHing(uint16 thingType); // @ F0165_DUNGEON_GetDiscardedThing
+	uint16 f144_getCreatureAttributes(Thing thing); // @ F0144_DUNGEON_GetCreatureAttributes
+	void f146_setGroupCells(Group *group, uint16 cells, uint16 mapIndex); // @ F0146_DUNGEON_SetGroupCells
+	void f148_setGroupDirections(Group *group, int16 dir, uint16 mapIndex); // @ F0148_DUNGEON_SetGroupDirections
+	bool f139_isCreatureAllowedOnMap(Thing thing, uint16 mapIndex); // @ F0139_DUNGEON_IsCreatureAllowedOnMap
+	void f164_unlinkThingFromList(Thing thingToUnlink, Thing thingInList, int16 mapX, int16 mapY); // @ F0164_DUNGEON_UnlinkThingFromList
+	int16 f155_getStairsExitDirection(int16 mapX, int16 mapY); // @ F0155_DUNGEON_GetStairsExitDirection
+	Thing f167_getObjForProjectileLaucherOrObjGen(uint16 iconIndex); // @ F0167_DUNGEON_GetObjectForProjectileLauncherOrObjectGenerator
+
 
 	uint32 _rawDunFileDataSize;	 // @ probably NONE
 	byte *_rawDunFileData; // @ ???

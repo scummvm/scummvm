@@ -7,7 +7,7 @@ Bugs:
 		Command gui is broken
 	Logic:
 		Game crashes when reincaranting a fourth champion and trying to copy his portrait
-
+e
 
 
 Todo:
@@ -18,7 +18,7 @@ Todo:
 	Attend to sev's notes on github
 	Double check enums with hex literals, I think I screwed the regex when processing them
 	Double check strcat, strstr usages, I might have messed them up in many places
-	I forgot to add a bunch of warning for show/hide mouse pointer
+	I forgot to add a bunch of warning for show/hide mouse pointer and other mouse functions
 
 	Missing functions:
 		 Add missing  F0163_DUNGEON_LinkThingToList in MovesensMan::sensorIsTriggeredByClickOnWall (I don't think it's safe yet)
@@ -26,6 +26,3 @@ Todo:
 Refactoring
 	Add constructor to CreatureInfo
 
-Forgot to add number to name:
-	gBoxChampionPortrait, gBoxEye, gBoxMouth, gSlotMasks
-		

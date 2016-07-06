@@ -71,6 +71,7 @@ public:
 	void f393_drawSpellAreaControls(ChampionIndex champIndex); // @ F0393_MENUS_DrawSpellAreaControls
 	void f392_buildSpellAreaLine(int16 spellAreaBitmapLine);// @ F0392_MENUS_BuildSpellAreaLine
 	void f394_setMagicCasterAndDrawSpellArea(int16 champIndex); // @ F0394_MENUS_SetMagicCasterAndDrawSpellArea
+	void f457_drawEnabledMenus(); // @ F0457_START_DrawEnabledMenus_CPSF
 };
 
 }

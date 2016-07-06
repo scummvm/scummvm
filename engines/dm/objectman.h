@@ -64,6 +64,7 @@ public:
 	void f38_drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex); // @ F0038_OBJECT_DrawIconInSlotBox
 	void f34_drawLeaderObjectName(Thing thing); // @ F0034_OBJECT_DrawLeaderHandObjectName
 	IconIndice f39_getIconIndexInSlotBox(uint16 slotBoxIndex); // @ F0039_OBJECT_GetIconIndexInSlotBox
+	void f35_clearLeaderObjectName(); // @ F0035_OBJECT_ClearLeaderHandObjectName
 
 
 };
