@@ -20,7 +20,7 @@ def buildArchive(archiveName):
 	filenames = os.listdir('.')
 	filenames.sort()
 	for filename in filenames:
-		if os.path.isfile(filename) and not filename[0] == '.' and filename.endswith(ARCHIVE_FILE_EXTENSIONS):
+		if os.path.isfile(filename) and filename.endswith(ARCHIVE_FILE_EXTENSIONS):
 			zf.write(filename, './' + filename)
 			print ("    Adding file: " + filename)
 

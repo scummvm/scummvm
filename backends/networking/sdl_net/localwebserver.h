@@ -24,8 +24,10 @@
 #define BACKENDS_NETWORKING_SDL_NET_LOCALWEBSERVER_H
 
 #include "backends/networking/sdl_net/client.h"
-#include "backends/networking/sdl_net/indexpagehandler.h"
-#include "common/callback.h"
+#include "backends/networking/sdl_net/handlers/basehandler.h"
+#include "backends/networking/sdl_net/handlers/filespagehandler.h"
+#include "backends/networking/sdl_net/handlers/indexpagehandler.h"
+#include "backends/networking/sdl_net/handlers/resourcehandler.h"
 #include "common/hash-str.h"
 #include "common/mutex.h"
 #include "common/singleton.h"
@@ -46,8 +48,6 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	static const uint32 SERVER_PORT = 12345;
 	static const uint32 MAX_CONNECTIONS = 10;
 
-	typedef Common::BaseCallback<Client &> *ClientHandler;
-
 	friend void localWebserverTimer(void *); //calls handle()
 
 	SDLNet_SocketSet _set;
@@ -55,8 +55,11 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	Client _client[MAX_CONNECTIONS];
 	int _clients;
 	bool _timerStarted, _stopOnIdle;
-	Common::HashMap<Common::String, ClientHandler> _pathHandlers;
+	Common::HashMap<Common::String, ClientHandlerCallback> _pathHandlers;
+	ClientHandlerCallback _defaultHandler;
 	IndexPageHandler _indexPageHandler;
+	FilesPageHandler _filesPageHandler;
+	ResourceHandler _resourceHandler;
 	uint32 _idlingFrames;
 	Common::Mutex _handleMutex;
 	Common::String _address;
@@ -74,7 +77,7 @@ public:
 	void start();
 	void stop();
 	void stopOnIdle();
-	void addPathHandler(Common::String path, ClientHandler handler);
+	void addPathHandler(Common::String path, ClientHandlerCallback handler);
 	void removePathHandler(Common::String path);
 
 	Common::String getAddress();
