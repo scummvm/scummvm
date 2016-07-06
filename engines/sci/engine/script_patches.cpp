@@ -1508,7 +1508,7 @@ static const uint16 longbowPatchShowHandCode[] = {
 //
 // Applies to at least: English PC floppy, German PC floppy (not tested), English Amiga floppy
 // Responsible method: export 2 of script 225
-// Fixes bug: #6571
+// Fixes bug: #6751
 static const uint16 longbowSignatureBerryBushFix[] = {
 	0x89, 0x70,                      // lsg global[70h]
 	0x35, 0x03,                      // ldi 03h
