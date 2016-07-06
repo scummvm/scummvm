@@ -178,7 +178,7 @@ ifstmt:	if cond tTHEN '\n' stmtlist end tEND tIF		{
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
 		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
 		g_lingo->processIf(0, 0); }
-	| if cond tTHEN begin stmt end	{
+	| if cond tTHEN begin stmt end	'\n' {
 			inst then = 0, end = 0;
 			WRITE_UINT32(&then, $4);
 			WRITE_UINT32(&end, $6);
@@ -195,7 +195,7 @@ ifstmt:	if cond tTHEN '\n' stmtlist end tEND tIF		{
 		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
 		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
 		g_lingo->processIf(0, 0); }
-	| if cond tTHEN begin stmt end  '\n' tELSE begin stmt end '\n' {
+	| if cond tTHEN begin stmt end '\n' tELSE begin stmt end '\n' {
 		inst then = 0, else1 = 0, end = 0;
 		WRITE_UINT32(&then, $4);
 		WRITE_UINT32(&else1, $9);
