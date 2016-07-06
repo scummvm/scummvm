@@ -25,9 +25,14 @@
 
 namespace Networking {
 
-GetClientHandler::GetClientHandler(Common::SeekableReadStream *stream): _responseCode(200), _headersPrepared(false), _stream(stream) {}
+GetClientHandler::GetClientHandler(Common::SeekableReadStream *stream):
+	_responseCode(200), _headersPrepared(false),
+	_stream(stream), _buffer(new byte[CLIENT_HANDLER_BUFFER_SIZE]) {}
 
-GetClientHandler::~GetClientHandler() { delete _stream; }
+GetClientHandler::~GetClientHandler() {
+	delete _stream;
+	delete[] _buffer;
+}
 
 const char *GetClientHandler::responseMessage(long responseCode) {
 	switch (responseCode) {
@@ -118,16 +123,14 @@ void GetClientHandler::prepareHeaders() {
 void GetClientHandler::handle(Client *client) {
 	if (!client) return;
 	if (!_headersPrepared) prepareHeaders();
-	
-	const int kBufSize = 16 * 1024;
-	char buf[kBufSize];
+
 	uint32 readBytes;
 
 	// send headers first
 	if (_headers.size() > 0) {
 		readBytes = _headers.size();
-		if (readBytes > kBufSize) readBytes = kBufSize;
-		memcpy(buf, _headers.c_str(), readBytes);
+		if (readBytes > CLIENT_HANDLER_BUFFER_SIZE) readBytes = CLIENT_HANDLER_BUFFER_SIZE;
+		memcpy(_buffer, _headers.c_str(), readBytes);
 		_headers.erase(0, readBytes);
 	} else {
 		if (!_stream) {
@@ -135,11 +138,11 @@ void GetClientHandler::handle(Client *client) {
 			return;
 		}
 
-		readBytes = _stream->read(buf, kBufSize);
+		readBytes = _stream->read(_buffer, CLIENT_HANDLER_BUFFER_SIZE);
 	}
 
 	if (readBytes != 0)
-		if (client->send(buf, readBytes) != readBytes) {
+		if (client->send(_buffer, readBytes) != readBytes) {
 			warning("GetClientHandler: unable to send all bytes to the client");
 			client->close();
 			return;

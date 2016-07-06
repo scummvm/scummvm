@@ -30,12 +30,15 @@
 
 namespace Networking {
 
+#define CLIENT_HANDLER_BUFFER_SIZE 1 * 1024 * 1024
+
 class GetClientHandler: public ClientHandler {
 	Common::HashMap<Common::String, Common::String> _specialHeaders;
 	long _responseCode;
 	bool _headersPrepared;
 	Common::String _headers;
 	Common::SeekableReadStream *_stream;
+	byte *_buffer;
 
 	static const char *responseMessage(long responseCode);
 	void prepareHeaders();
