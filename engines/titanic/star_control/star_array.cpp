@@ -27,6 +27,7 @@
 namespace Titanic {
 
 #define ARRAY_COUNT 876
+const double FACTOR = 3.1415927 * 0.0055555557;
 
 CStarArray::CStarArray() {
 }
@@ -35,8 +36,6 @@ void CStarArray::initialize() {
 	// Get a reference to the starfield points resource
 	Common::SeekableReadStream *stream = g_vm->_filesManager->getResource("STARFIELD/POINTS");
 	assert(stream && stream->size() == (12 * ARRAY_COUNT));
-
-	double factor = 3.1415927 * 0.0055555557;
 
 	_data.resize(ARRAY_COUNT);
 	for (int idx = 0; idx < ARRAY_COUNT; ++idx) {
@@ -47,8 +46,8 @@ void CStarArray::initialize() {
 		double v2 = stream->readUint32LE();
 		stream->readUint32LE();
 
-		v1 *= 0.0099999998 * factor;
-		v2 *= 0.015 * factor;
+		v1 *= 0.0099999998 * FACTOR;
+		v2 *= 0.015 * FACTOR;
 
 		entry._v1 = cos(v2) * 3000000.0 * cos(v1);
 		entry._v2 = sin(v2) * 3000000.0 * cos(v1);

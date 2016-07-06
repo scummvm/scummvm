@@ -26,6 +26,7 @@
 namespace Titanic {
 
 #define ARRAY_COUNT 80
+const double FACTOR = 3.1415927 * 0.0055555557;
 
 void CStarControlSub9::initialize() {
 	// Get a reference to the starfield points resource
@@ -35,20 +36,20 @@ void CStarControlSub9::initialize() {
 	for (int rootCtr = 0; rootCtr < ARRAY_COUNT; ++rootCtr) {
 		// Get the number of sub-entries for this entry
 		int count = stream->readUint32LE();
+		double v1, v2;
 
 		// Read in the sub-entries
 		RootEntry &rootEntry = _data[rootCtr];
-		rootEntry.resize(count);
-		for (int idx = 0; idx < count; ++idx) {
-			DataEntry &entry = rootEntry[idx];
-			int v1 = stream->readSint32LE();
-			int v2 = stream->readSint32LE();
-			int v3 = stream->readSint32LE();
-			int v4 = stream->readSint32LE();
-
-			warning("TODO: %d %d %d %d", v1, v2, v3, v4);
-			entry._v1 = 0;
-			// TODO: Processing here
+		rootEntry.resize(count * 2);
+		for (int idx = 0; idx < count * 2; ++idx) {
+			DataEntry &entry = rootEntry[idx * 2];
+			v1 = stream->readSint32LE();
+			v2 = stream->readSint32LE();
+			v1 *= 0.015 * FACTOR;
+			v2 *= 0.0099999998 * FACTOR;
+			entry._v1 = cos(v1) * 3000000.0 * cos(v2);
+			entry._v2 = sin(v1) * 3000000.0 * cos(v2);
+			entry._v3 = sin(v2) * 3000000.0;
 		}
 	}
 }

@@ -32,7 +32,6 @@ class CStarControlSub9 {
 		int _v1;
 		int _v2;
 		int _v3;
-		int _v4;
 	};
 
 	class RootEntry : public Common::Array<DataEntry> {
