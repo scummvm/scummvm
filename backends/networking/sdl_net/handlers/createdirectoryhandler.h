@@ -20,30 +20,28 @@
 *
 */
 
-#ifndef BACKENDS_NETWORKING_SDL_NET_FILESPAGEHANDLER_H
-#define BACKENDS_NETWORKING_SDL_NET_FILESPAGEHANDLER_H
+#ifndef BACKENDS_NETWORKING_SDL_NET_CREATEDIRECTORYHANDLER_H
+#define BACKENDS_NETWORKING_SDL_NET_CREATEDIRECTORYHANDLER_H
 
 #include "backends/networking/sdl_net/handlers/filesbasehandler.h"
 
 namespace Networking {
 
-class FilesPageHandler: public FilesBaseHandler {
+class CreateDirectoryHandler: public FilesBaseHandler {
 	void handle(Client &client);
 	void handleErrorMessage(Client &client, Common::String message);
 
 	/**
-	 * Lists the directory <path>.
+	 * Creates the directory <name> in <path>.
+	 *
+	 * Fills <errorMessage> on failure.
 	 *
 	 * Returns true on success.
 	 */
-	bool listDirectory(Common::String path, Common::String &content, const Common::String &itemTemplate);
-
-	/** Helper method for adding items into the files list. */
-	void addItem(Common::String &content, const Common::String &itemTemplate, bool isDirectory, Common::String path, Common::String name, Common::String size = "");
-
+	bool createDirectory(Common::String path, Common::String name, Common::String &errorMessage);
 public:
-	FilesPageHandler();
-	virtual ~FilesPageHandler();
+	CreateDirectoryHandler();
+	virtual ~CreateDirectoryHandler();
 
 	virtual ClientHandlerCallback getHandler();
 };

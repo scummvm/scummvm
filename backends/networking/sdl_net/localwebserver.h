@@ -25,6 +25,7 @@
 
 #include "backends/networking/sdl_net/client.h"
 #include "backends/networking/sdl_net/handlers/basehandler.h"
+#include "backends/networking/sdl_net/handlers/createdirectoryhandler.h"
 #include "backends/networking/sdl_net/handlers/filespagehandler.h"
 #include "backends/networking/sdl_net/handlers/indexpagehandler.h"
 #include "backends/networking/sdl_net/handlers/resourcehandler.h"
@@ -59,6 +60,7 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	ClientHandlerCallback _defaultHandler;
 	IndexPageHandler _indexPageHandler;
 	FilesPageHandler _filesPageHandler;
+	CreateDirectoryHandler _createDirectoryHandler;
 	ResourceHandler _resourceHandler;
 	uint32 _idlingFrames;
 	Common::Mutex _handleMutex;
@@ -86,6 +88,8 @@ public:
 
 	static void setClientGetHandler(Client &client, Common::String response, long code = 200, const char *mimeType = nullptr);
 	static void setClientGetHandler(Client &client, Common::SeekableReadStream *responseStream, long code = 200, const char *mimeType = nullptr);
+	static void setClientRedirectHandler(Client &client, Common::String response, Common::String location, const char *mimeType = nullptr);
+	static void setClientRedirectHandler(Client &client, Common::SeekableReadStream *responseStream, Common::String location, const char *mimeType = nullptr);
 	static const char *determineMimeType(Common::String &filename);
 	static Common::String urlDecode(Common::String value);
 };

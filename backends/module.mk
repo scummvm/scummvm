@@ -59,6 +59,7 @@ MODULE_OBJS += \
 	networking/sdl_net/client.o \
 	networking/sdl_net/getclienthandler.o \
 	networking/sdl_net/handlers/basehandler.o \
+	networking/sdl_net/handlers/createdirectoryhandler.o \
 	networking/sdl_net/handlers/filesbasehandler.o \
 	networking/sdl_net/handlers/filespagehandler.o \
 	networking/sdl_net/handlers/indexpagehandler.o \

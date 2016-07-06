@@ -44,7 +44,7 @@ LocalWebserver::LocalWebserver(): _set(nullptr), _serverSocket(nullptr), _timerS
 	_stopOnIdle(false), _clients(0), _idlingFrames(0) {
 	addPathHandler("/", _indexPageHandler.getHandler());
 	addPathHandler("/files", _filesPageHandler.getHandler());
-	addPathHandler("/create", _filesPageHandler.getHandler()); //"Create directory" feature
+	addPathHandler("/create", _createDirectoryHandler.getHandler());
 	_defaultHandler = _resourceHandler.getHandler();
 }
 
@@ -248,6 +248,21 @@ void LocalWebserver::setClientGetHandler(Client &client, Common::String response
 void LocalWebserver::setClientGetHandler(Client &client, Common::SeekableReadStream *responseStream, long code, const char *mimeType) {
 	GetClientHandler *handler = new GetClientHandler(responseStream);
 	handler->setResponseCode(code);
+	if (mimeType) handler->setHeader("Content-Type", mimeType);
+	client.setHandler(handler);
+}
+
+void LocalWebserver::setClientRedirectHandler(Client &client, Common::String response, Common::String location, const char *mimeType) {
+	byte *data = new byte[response.size()];
+	memcpy(data, response.c_str(), response.size());
+	Common::MemoryReadStream *stream = new Common::MemoryReadStream(data, response.size(), DisposeAfterUse::YES);
+	setClientRedirectHandler(client, stream, location, mimeType);
+}
+
+void LocalWebserver::setClientRedirectHandler(Client &client, Common::SeekableReadStream *responseStream, Common::String location, const char *mimeType) {
+	GetClientHandler *handler = new GetClientHandler(responseStream);
+	handler->setResponseCode(302); //redirect
+	handler->setHeader("Location", location);
 	if (mimeType) handler->setHeader("Content-Type", mimeType);
 	client.setHandler(handler);
 }
