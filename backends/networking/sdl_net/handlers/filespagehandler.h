@@ -29,7 +29,18 @@ namespace Networking {
 
 class FilesPageHandler: public FilesBaseHandler {
 	void handle(Client &client);
+	void handleFiles(Client &client);
+	void handleCreateDirectory(Client &client);
 	void handleErrorMessage(Client &client, Common::String message);
+
+	/**
+	 * Creates the directory <name> in <path>.
+	 *
+	 * Fills <errorMessage> on failure.
+	 *
+	 * Returns true on success.
+	 */
+	bool createDirectory(Common::String path, Common::String name, Common::String &errorMessage);
 
 	/**
 	 * Lists the directory <path>.

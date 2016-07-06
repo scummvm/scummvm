@@ -87,6 +87,7 @@ public:
 	static void setClientGetHandler(Client &client, Common::String response, long code = 200, const char *mimeType = nullptr);
 	static void setClientGetHandler(Client &client, Common::SeekableReadStream *responseStream, long code = 200, const char *mimeType = nullptr);
 	static const char *determineMimeType(Common::String &filename);
+	static Common::String urlDecode(Common::String value);
 };
 
 /** Shortcut for accessing the local webserver. */

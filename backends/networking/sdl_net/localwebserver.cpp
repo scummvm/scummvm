@@ -44,6 +44,7 @@ LocalWebserver::LocalWebserver(): _set(nullptr), _serverSocket(nullptr), _timerS
 	_stopOnIdle(false), _clients(0), _idlingFrames(0) {
 	addPathHandler("/", _indexPageHandler.getHandler());
 	addPathHandler("/files", _filesPageHandler.getHandler());
+	addPathHandler("/create", _filesPageHandler.getHandler()); //"Create directory" feature
 	_defaultHandler = _resourceHandler.getHandler();
 }
 
@@ -269,6 +270,34 @@ const char *LocalWebserver::determineMimeType(Common::String &filename) {
 
 	if (filename.hasSuffix(".zip")) return "application/zip";
 	return "application/octet-stream";
+}
+
+namespace {
+int hexDigit(char c) {
+	if ('0' <= c && c <= '9') return c - '0';
+	if ('A' <= c && c <= 'F') return c - 'A' + 10;
+	if ('a' <= c && c <= 'f') return c - 'a' + 10;
+	return -1;
+}
+}
+
+Common::String LocalWebserver::urlDecode(Common::String value) {
+	Common::String result = "";
+	uint32 size = value.size();
+	for (uint32 i = 0; i < size; ++i) {
+		if (value[i] == '%' && i+2 < size) {
+			int d1 = hexDigit(value[i+1]);
+			int d2 = hexDigit(value[i+2]);
+			if (0 <= d1 && d1 < 16 && 0 <= d2 && d2 < 16) {
+				result += (char)(d1 * 16 + d2);
+				i = i + 2;
+				continue;
+			}
+		}
+
+		result += value[i];
+	}
+	return result;
 }
 
 } // End of namespace Networking

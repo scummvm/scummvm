@@ -23,6 +23,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/networking/sdl_net/client.h"
+#include "backends/networking/sdl_net/localwebserver.h"
 #include "common/textconsole.h"
 #include <SDL/SDL_net.h>
 
@@ -201,13 +202,13 @@ Common::String Client::queryParameter(Common::String name) const {
 			} else key += _query[i];
 		} else {
 			if (_query[i] == '&') {
-				if (key == name) return value;
+				if (key == name) return LocalWebserver::urlDecode(value);
 				readingKey = true;
 				key = "";
 			} else value += _query[i];
 		}
 	}
-	if (key == name) return value; //the last key doesn't have an '&' in the end of the query
+	if (key == name) return LocalWebserver::urlDecode(value); //the last key doesn't have an '&' in the end of the query
 	return "";
 }
 
