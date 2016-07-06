@@ -70,9 +70,6 @@ static const uint16 s_halfWidthSJISMap[256] = {
 
 EngineState::EngineState(SegManager *segMan)
 : _segMan(segMan),
-#ifdef ENABLE_SCI32
-	_virtualIndexFile(0),
-#endif
 	_dirseeker() {
 
 	reset(false);
@@ -80,9 +77,6 @@ EngineState::EngineState(SegManager *segMan)
 
 EngineState::~EngineState() {
 	delete _msgState;
-#ifdef ENABLE_SCI32
-	delete _virtualIndexFile;
-#endif
 }
 
 void EngineState::reset(bool isRestoring) {

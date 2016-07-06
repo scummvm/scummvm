@@ -157,7 +157,7 @@ public:
  * that grows as it's written to.
  */
 class MemoryWriteStreamDynamic : public WriteStream {
-private:
+protected:
 	uint32 _capacity;
 	uint32 _size;
 	byte *_ptr;

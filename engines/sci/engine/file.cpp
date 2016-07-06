@@ -22,6 +22,7 @@
 
 #include "common/savefile.h"
 #include "common/stream.h"
+#include "common/memstream.h"
 
 #include "sci/sci.h"
 #include "sci/engine/file.h"
@@ -31,6 +32,112 @@
 #include "sci/engine/state.h"
 
 namespace Sci {
+
+#ifdef ENABLE_SCI32
+/**
+ * A MemoryWriteStreamDynamic with additional read functionality.
+ * The read and write functions share a single stream position.
+ */
+class MemoryDynamicRWStream : public Common::MemoryWriteStreamDynamic, public Common::SeekableReadStream {
+protected:
+	bool _eos;
+public:
+	MemoryDynamicRWStream(DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO) : MemoryWriteStreamDynamic(disposeMemory), _eos(false) { }
+
+	uint32 read(void *dataPtr, uint32 dataSize);
+
+	bool eos() const { return _eos; }
+	int32 pos() const { return _pos; }
+	int32 size() const { return _size; }
+	void clearErr() { _eos = false; Common::MemoryWriteStreamDynamic::clearErr(); }
+	bool seek(int32 offs, int whence = SEEK_SET) { return Common::MemoryWriteStreamDynamic::seek(offs, whence); }
+
+};
+
+uint32 MemoryDynamicRWStream::read(void *dataPtr, uint32 dataSize)
+{
+	// Read at most as many bytes as are still available...
+	if (dataSize > _size - _pos) {
+		dataSize = _size - _pos;
+		_eos = true;
+	}
+	memcpy(dataPtr, _ptr, dataSize);
+
+	_ptr += dataSize;
+	_pos += dataSize;
+
+	return dataSize;
+}
+
+/**
+ * A MemoryDynamicRWStream intended to re-write a file.
+ * It reads the contents of `inFile` in the constructor, and writes back
+ * the changes to `fileName` in the destructor (and when calling commit() ).
+ */
+class SaveFileRewriteStream : public MemoryDynamicRWStream {
+public:
+	SaveFileRewriteStream(Common::String fileName,
+	                      Common::SeekableReadStream *inFile,
+	                      bool truncate, bool compress);
+	virtual ~SaveFileRewriteStream();
+
+	virtual uint32 write(const void *dataPtr, uint32 dataSize) { _changed = true; return MemoryDynamicRWStream::write(dataPtr, dataSize); }
+
+	void commit(); //< Save back to disk
+
+protected:
+	Common::String _fileName;
+	bool _compress;
+	bool _changed;
+};
+
+SaveFileRewriteStream::SaveFileRewriteStream(Common::String fileName,
+                                             Common::SeekableReadStream *inFile,
+                                             bool truncate,
+                                             bool compress)
+: MemoryDynamicRWStream(DisposeAfterUse::YES),
+  _fileName(fileName), _compress(compress)
+{
+	if (!truncate && inFile) {
+		unsigned int s = inFile->size();
+		ensureCapacity(s);
+		inFile->read(_data, s);
+		_changed = false;
+	} else {
+		_changed = true;
+	}
+}
+
+SaveFileRewriteStream::~SaveFileRewriteStream() {
+	commit();
+}
+
+void SaveFileRewriteStream::commit() {
+	// Write contents of buffer back to file
+
+	if (_changed) {
+		Common::WriteStream *outFile = g_sci->getSaveFileManager()->openForSaving(_fileName, _compress);
+		outFile->write(_data, _size);
+		delete outFile;
+		_changed = false;
+	}
+}
+
+#endif
+
+uint findFreeFileHandle(EngineState *s) {
+	// Find a free file handle
+	uint handle = 1; // Ignore _fileHandles[0]
+	while ((handle < s->_fileHandles.size()) && s->_fileHandles[handle].isOpen())
+		handle++;
+
+	if (handle == s->_fileHandles.size()) {
+		// Hit size limit => Allocate more space
+		s->_fileHandles.resize(s->_fileHandles.size() + 1);
+	}
+
+	return handle;
+}
 
 /*
  * Note on how file I/O is implemented: In ScummVM, one can not create/write
@@ -91,6 +198,27 @@ reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool u
 		break;
 	}
 
+#ifdef ENABLE_SCI32
+	if (mode != _K_FILE_MODE_OPEN_OR_FAIL && (
+	    (g_sci->getGameId() == GID_PHANTASMAGORIA && filename == "phantsg.dir") ||
+	    (g_sci->getGameId() == GID_PQSWAT && filename == "swat.dat"))) {
+		debugC(kDebugLevelFile, "  -> file_open opening %s for rewriting", wrappedName.c_str());
+
+		inFile = saveFileMan->openForLoading(wrappedName);
+		// If no matching savestate exists: fall back to reading from a regular
+		// file
+		if (!inFile)
+			inFile = SearchMan.createReadStreamForMember(englishName);
+
+		SaveFileRewriteStream *stream;
+		stream = new SaveFileRewriteStream(wrappedName, inFile, mode == _K_FILE_MODE_CREATE, isCompressed);
+
+		delete inFile;
+
+		inFile = stream;
+		outFile = stream;
+	} else
+#endif
 	if (mode == _K_FILE_MODE_OPEN_OR_FAIL) {
 		// Try to open file, abort if not possible
 		inFile = saveFileMan->openForLoading(wrappedName);
@@ -126,15 +254,7 @@ reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool u
 		return SIGNAL_REG;
 	}
 
-	// Find a free file handle
-	uint handle = 1; // Ignore _fileHandles[0]
-	while ((handle < s->_fileHandles.size()) && s->_fileHandles[handle].isOpen())
-		handle++;
-
-	if (handle == s->_fileHandles.size()) {
-		// Hit size limit => Allocate more space
-		s->_fileHandles.resize(s->_fileHandles.size() + 1);
-	}
+	uint handle = findFreeFileHandle(s);
 
 	s->_fileHandles[handle]._in = inFile;
 	s->_fileHandles[handle]._out = outFile;
@@ -252,8 +372,12 @@ FileHandle::~FileHandle() {
 }
 
 void FileHandle::close() {
-	delete _in;
-	delete _out;
+	// NB: It is possible _in and _out are both non-null, but
+	// then they point to the same object.
+	if (_in)
+		delete _in;
+	else
+		delete _out;
 	_in = 0;
 	_out = 0;
 	_name.clear();
@@ -364,120 +488,5 @@ reg_t DirSeeker::nextFile(SegManager *segMan) {
 	++_iter;
 	return _outbuffer;
 }
-
-
-#ifdef ENABLE_SCI32
-
-VirtualIndexFile::VirtualIndexFile(Common::String fileName) : _fileName(fileName), _changed(false) {
-	Common::SeekableReadStream *inFile = g_sci->getSaveFileManager()->openForLoading(fileName);
-
-	_bufferSize = inFile->size();
-	_buffer = new char[_bufferSize];
-	inFile->read(_buffer, _bufferSize);
-	_ptr = _buffer;
-	delete inFile;
-}
-
-VirtualIndexFile::VirtualIndexFile(uint32 initialSize) : _changed(false) {
-	_bufferSize = initialSize;
-	_buffer = new char[_bufferSize];
-	_ptr = _buffer;
-}
-
-VirtualIndexFile::~VirtualIndexFile() {
-	close();
-
-	_bufferSize = 0;
-	delete[] _buffer;
-	_buffer = 0;
-}
-
-uint32 VirtualIndexFile::read(char *buffer, uint32 size) {
-	uint32 curPos = _ptr - _buffer;
-	uint32 finalSize = MIN<uint32>(size, _bufferSize - curPos);
-	char *localPtr = buffer;
-
-	for (uint32 i = 0; i < finalSize; i++)
-		*localPtr++ = *_ptr++;
-
-	return finalSize;
-}
-
-uint32 VirtualIndexFile::write(const char *buffer, uint32 size) {
-	_changed = true;
-	uint32 curPos = _ptr - _buffer;
-
-	// Check if the buffer needs to be resized
-	if (curPos + size >= _bufferSize) {
-		_bufferSize = curPos + size + 1;
-		char *tmp = _buffer;
-		_buffer = new char[_bufferSize];
-		_ptr = _buffer + curPos;
-		memcpy(_buffer, tmp, _bufferSize);
-		delete[] tmp;
-	}
-
-	for (uint32 i = 0; i < size; i++)
-		*_ptr++ = *buffer++;
-
-	return size;
-}
-
-uint32 VirtualIndexFile::readLine(char *buffer, uint32 size) {
-	uint32 startPos = _ptr - _buffer;
-	uint32 bytesRead = 0;
-	char *localPtr = buffer;
-
-	// This is not a full-blown implementation of readLine, but it
-	// suffices for Phantasmagoria
-	while (startPos + bytesRead < size) {
-		bytesRead++;
-
-		if (*_ptr == 0 || *_ptr == 0x0A) {
-			_ptr++;
-			*localPtr = 0;
-			return bytesRead;
-		} else {
-			*localPtr++ = *_ptr++;
-		}
-	}
-
-	return bytesRead;
-}
-
-bool VirtualIndexFile::seek(int32 offset, int whence) {
-	uint32 startPos = _ptr - _buffer;
-	assert(offset >= 0);
-
-	switch (whence) {
-	case SEEK_CUR:
-		assert(startPos + offset < _bufferSize);
-		_ptr += offset;
-		break;
-	case SEEK_SET:
-		assert(offset < (int32)_bufferSize);
-		_ptr = _buffer + offset;
-		break;
-	case SEEK_END:
-		assert((int32)_bufferSize - offset >= 0);
-		_ptr = _buffer + (_bufferSize - offset);
-		break;
-	}
-
-	return true;
-}
-
-void VirtualIndexFile::close() {
-	if (_changed && !_fileName.empty()) {
-		Common::WriteStream *outFile = g_sci->getSaveFileManager()->openForSaving(_fileName);
-		outFile->write(_buffer, _bufferSize);
-		delete outFile;
-	}
-
-	// Maintain the buffer, and seek to the beginning of it
-	_ptr = _buffer;
-}
-
-#endif
 
 } // End of namespace Sci

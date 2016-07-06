@@ -43,7 +43,6 @@ enum {
 
 #define VIRTUALFILE_HANDLE_START 32000
 #define VIRTUALFILE_HANDLE_SCI32SAVE 32100
-#define PHANTASMAGORIA_SAVEGAME_INDEX "phantsg.dir"
 #define VIRTUALFILE_HANDLE_SCIAUDIO 32300
 #define VIRTUALFILE_HANDLE_END 32300
 
@@ -93,50 +92,7 @@ private:
 	void addAsVirtualFiles(Common::String title, Common::String fileMask);
 };
 
-
-#ifdef ENABLE_SCI32
-
-/**
- * An implementation of a virtual file that supports basic read and write
- * operations simultaneously.
- *
- * This class has been initially implemented for Phantasmagoria, which has its
- * own custom save/load code. The load code keeps checking for the existence
- * of the save index file and keeps closing and reopening it for each save
- * slot. This is notoriously slow and clumsy, and introduces noticeable delays,
- * especially for non-desktop systems. Also, its game scripts request to open
- * the index file for reading and writing with the same parameters
- * (SaveManager::setCurrentSave and SaveManager::getCurrentSave). Moreover,
- * the game scripts reopen the index file for writing in order to update it
- * and seek within it. We do not support seeking in writeable streams, and the
- * fact that our saved games are ZIP files makes this operation even more
- * expensive. Finally, the savegame index file is supposed to be expanded when
- * a new save slot is added.
- * For the aforementioned reasons, this class has been implemented, which offers
- * the basic functionality needed by the game scripts in Phantasmagoria.
- */
-class VirtualIndexFile {
-public:
-	VirtualIndexFile(Common::String fileName);
-	VirtualIndexFile(uint32 initialSize);
-	~VirtualIndexFile();
-
-	uint32 read(char *buffer, uint32 size);
-	uint32 readLine(char *buffer, uint32 size);
-	uint32 write(const char *buffer, uint32 size);
-	bool seek(int32 offset, int whence);
-	void close();
-
-private:
-	char *_buffer;
-	uint32 _bufferSize;
-	char *_ptr;
-
-	Common::String _fileName;
-	bool _changed;
-};
-
-#endif
+uint findFreeFileHandle(EngineState *s);
 
 } // End of namespace Sci
 
