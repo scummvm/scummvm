@@ -44,9 +44,9 @@ Common::String FilesBaseHandler::parentPath(Common::String path) {
 	return path;
 }
 
-bool FilesBaseHandler::transformPath(Common::String &path, Common::String &prefixToRemove, Common::String &prefixToAdd) {
+bool FilesBaseHandler::transformPath(Common::String &path, Common::String &prefixToRemove, Common::String &prefixToAdd, bool isDirectory) {
 	// <path> is not empty, but could lack the trailing slash	
-	if (path.lastChar() != '/' && path.lastChar() != '\\') path += '/';
+	if (isDirectory && path.lastChar() != '/' && path.lastChar() != '\\') path += '/';
 
 	if (path.hasPrefix("/root")) {
 		prefixToAdd = "/root/";

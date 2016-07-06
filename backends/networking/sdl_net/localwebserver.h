@@ -26,6 +26,7 @@
 #include "backends/networking/sdl_net/client.h"
 #include "backends/networking/sdl_net/handlers/basehandler.h"
 #include "backends/networking/sdl_net/handlers/createdirectoryhandler.h"
+#include "backends/networking/sdl_net/handlers/downloadfilehandler.h"
 #include "backends/networking/sdl_net/handlers/filespagehandler.h"
 #include "backends/networking/sdl_net/handlers/indexpagehandler.h"
 #include "backends/networking/sdl_net/handlers/resourcehandler.h"
@@ -61,6 +62,7 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	IndexPageHandler _indexPageHandler;
 	FilesPageHandler _filesPageHandler;
 	CreateDirectoryHandler _createDirectoryHandler;
+	DownloadFileHandler _downloadFileHandler;
 	ResourceHandler _resourceHandler;
 	uint32 _idlingFrames;
 	Common::Mutex _handleMutex;

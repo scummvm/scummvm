@@ -20,29 +20,30 @@
 *
 */
 
-#ifndef BACKENDS_NETWORKING_SDL_NET_FILESBASEHANDLER_H
-#define BACKENDS_NETWORKING_SDL_NET_FILESBASEHANDLER_H
+#ifndef BACKENDS_NETWORKING_SDL_NET_DOWNLOADFILEHANDLER_H
+#define BACKENDS_NETWORKING_SDL_NET_DOWNLOADFILEHANDLER_H
 
-#include "backends/networking/sdl_net/handlers/basehandler.h"
+#include "backends/networking/sdl_net/handlers/filesbasehandler.h"
 
 namespace Networking {
 
-class FilesBaseHandler: public BaseHandler {
-protected:
-	Common::String parentPath(Common::String path);
+class DownloadFileHandler: public FilesBaseHandler {
+	void handle(Client &client);
+	void handleErrorMessage(Client &client, Common::String message);
 
 	/**
-	* Transforms virtual <path> into actual file system path.
-	*
-	* Fills prefixes with actual file system prefix ("to remove")
-	* and virtual path prefix ("to add").
-	*
-	* Returns true on success.
-	*/
-	bool transformPath(Common::String &path, Common::String &prefixToRemove, Common::String &prefixToAdd, bool isDirectory = true);
+	 * Creates a client handler for downloading file <path>.
+	 *
+	 * Fills <errorMessage> on failure.
+	 *
+	 * Returns true on success.
+	 */
+	bool downloadFile(Client &client, Common::String path, Common::String &errorMessage);
 public:
-	FilesBaseHandler();
-	virtual ~FilesBaseHandler();
+	DownloadFileHandler();
+	virtual ~DownloadFileHandler();
+
+	virtual ClientHandlerCallback getHandler();
 };
 
 } // End of namespace Networking
