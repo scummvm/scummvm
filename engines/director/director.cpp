@@ -110,7 +110,8 @@ Common::Error DirectorEngine::run() {
 
 	_lingo->addCode("--\n\
 	set x = 1\n\
-	if 5 then exit\n\
+	if x = 5 then exit\n\
+	else put 10.0\n\
 	repeat with x = 1 to 5\n\
 		if x = 1 then\n\
 		  put 1\n\

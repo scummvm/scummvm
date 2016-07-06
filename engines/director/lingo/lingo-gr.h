@@ -51,7 +51,7 @@
      HANDLER = 267,
      tDOWN = 268,
      tELSE = 269,
-     tELSIF = 270,
+     tNLELSIF = 270,
      tEND = 271,
      tEXIT = 272,
      tFRAME = 273,
@@ -74,12 +74,13 @@
      tTO = 290,
      tWITH = 291,
      tWHILE = 292,
-     tGE = 293,
-     tLE = 294,
-     tGT = 295,
-     tLT = 296,
-     tEQ = 297,
-     tNEQ = 298
+     tNLELSE = 293,
+     tGE = 294,
+     tLE = 295,
+     tGT = 296,
+     tLT = 297,
+     tEQ = 298,
+     tNEQ = 299
    };
 #endif
 /* Tokens.  */
@@ -95,7 +96,7 @@
 #define HANDLER 267
 #define tDOWN 268
 #define tELSE 269
-#define tELSIF 270
+#define tNLELSIF 270
 #define tEND 271
 #define tEXIT 272
 #define tFRAME 273
@@ -118,12 +119,13 @@
 #define tTO 290
 #define tWITH 291
 #define tWHILE 292
-#define tGE 293
-#define tLE 294
-#define tGT 295
-#define tLT 296
-#define tEQ 297
-#define tNEQ 298
+#define tNLELSE 293
+#define tGE 294
+#define tLE 295
+#define tGT 296
+#define tLT 297
+#define tEQ 298
+#define tNEQ 299
 
 
 
@@ -139,7 +141,7 @@ typedef union YYSTYPE
 	int	narg;	/* number of arguments */
 }
 /* Line 1529 of yacc.c.  */
-#line 143 "engines/director/lingo/lingo-gr.hpp"
+#line 145 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
