@@ -50,7 +50,8 @@ LocalWebserver::LocalWebserver(): _set(nullptr), _serverSocket(nullptr), _timerS
 	_defaultHandler = _resourceHandler.getHandler();
 
 	Reader reader;
-	reader.readResponse();
+	reader.setBytesLeft(128);
+	while (!reader.readResponse()) reader.setBytesLeft(20);
 }
 
 LocalWebserver::~LocalWebserver() {

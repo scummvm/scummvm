@@ -30,14 +30,25 @@
 
 namespace Networking {
 
+enum ReaderState {
+	RS_NONE,
+	RS_READING_HEADERS,
+	RS_READING_CONTENT
+};
+
 class Reader {
 	///Common::String _headers;
 	///Common::String _method, _path, _query, _anchor;
+	ReaderState _state;
 	Common::String _content;
+	uint32 _bytesLeft;
 
 	Common::String _boundary;
 	uint32 _contentLength;
 	uint32 _availableBytes;
+
+	Common::String _headers;
+	Common::String _buffer;
 
 	Common::String _currentFieldName;
 	Common::HashMap<Common::String, Common::String> _fields;
@@ -46,23 +57,26 @@ class Reader {
 	byte *_window;
 	uint32 _windowUsed, _windowSize;
 
-	void readHeaders();
-	void readContent();
+	bool readHeaders(); //true when ended reading
+	bool readContent(); //true when ended reading
 	void handleHeaders(Common::String headers);
 	void handleFileContent(Common::String filename);
 	void handleValueContent(Common::String value);
 
 	void makeWindow(uint32 size);
+	void freeWindow();
 	///bool Reader::readOneByteInStream(stream);
 	bool Reader::readOneByteInString(Common::String &buffer, const Common::String &boundary);
 
 	byte readOne();
+	uint32 bytesLeft();
 
 public:
 	Reader();
 	~Reader();
 
-	void readResponse();
+	bool readResponse(); //true when ended reading
+	void setBytesLeft(uint32 b);
 };
 
 } // End of namespace Networking

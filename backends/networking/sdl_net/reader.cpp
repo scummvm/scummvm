@@ -28,12 +28,18 @@
 namespace Networking {
 
 Reader::Reader() {
+	_state = RS_NONE;
+	_bytesLeft = 0;
+
 	_contentLength = 0;
 	_availableBytes = 0;
 
 	_window = nullptr;
 	_windowUsed = 0;
 	_windowSize = 0;
+
+	_headers = "";
+	_buffer = "";
 
 	_content =
 		"POST /upload HTTP/1.1\r\n" \
@@ -61,10 +67,20 @@ Reader::Reader() {
 
 Reader::~Reader() {}
 
-void Reader::readResponse() {
+bool Reader::readResponse() {
+	if (_state == RS_NONE) _state = RS_READING_HEADERS;
+
 	while (true) {
-		readHeaders(); //til "\r\n\r\n"
-		readContent(); //til "--" + _boundary
+		if (!bytesLeft()) return false;
+
+		if (_state == RS_READING_HEADERS)
+			if (!readHeaders())
+				return false;
+
+		if (_state == RS_READING_CONTENT)
+			if (!readContent())
+				return false;
+
 		if (_availableBytes >= 2) {
 			Common::String bts;
 			bts += readOne();
@@ -79,15 +95,25 @@ void Reader::readResponse() {
 	}	
 	if (_availableBytes > 0) debug("STRANGE END: %llu bytes left", _availableBytes);
 	else debug("END");
+
+	return true;
 }
 
-void Reader::readHeaders() {
+bool Reader::readHeaders() {
 	Common::String boundary = "\r\n\r\n";
-	makeWindow(boundary.size());
+	if (_window == nullptr) {
+		makeWindow(boundary.size());
+		_headers = "";
+	}
 
-	Common::String headers = "";
-	while (readOneByteInString(headers, boundary));
-	handleHeaders(headers);
+	while (readOneByteInString(_headers, boundary)) {
+		if (!bytesLeft()) return false;
+	}
+	handleHeaders(_headers);
+
+	freeWindow();
+	_state = RS_READING_CONTENT;
+	return true;
 }
 
 namespace {
@@ -136,9 +162,12 @@ void Reader::handleHeaders(Common::String headers) {
 	}
 }
 
-void Reader::readContent() {
+bool Reader::readContent() {
 	Common::String boundary = "--" + _boundary;
-	makeWindow(boundary.size());
+	if (_window == nullptr) {
+		makeWindow(boundary.size());
+		_buffer = "";
+	}
 
 	/*
 	if (_fieldIsFile) {
@@ -150,10 +179,15 @@ void Reader::readContent() {
 		handleFileContent(tempFileName);
 	} else {
 	*/
-		Common::String buffer = "";
-		while (readOneByteInString(buffer, boundary)) ;
-		handleValueContent(buffer);
+		while (readOneByteInString(_buffer, boundary)) {		
+			if (!bytesLeft()) return false;
+		}
+		handleValueContent(_buffer);
 	//}
+
+	freeWindow();
+	_state = RS_READING_HEADERS;
+	return true;
 }
 
 void Reader::handleFileContent(Common::String filename) {
@@ -166,12 +200,17 @@ void Reader::handleValueContent(Common::String value) {
 }
 
 void Reader::makeWindow(uint32 size) {
-	delete[] _window;
-	_window = nullptr;
+	freeWindow();
 
 	_window = new byte[size];
 	_windowUsed = 0;
 	_windowSize = size;
+}
+
+void Reader::freeWindow() {
+	delete[] _window;
+	_window = nullptr;
+	_windowUsed = _windowSize = 0;
 }
 
 /*
@@ -214,7 +253,12 @@ byte Reader::readOne() {
 	byte b = _content[0];
 	_content.deleteChar(0);
 	--_availableBytes;
+	--_bytesLeft;
 	return b;
 }
+
+uint32 Reader::bytesLeft() { return _bytesLeft; }
+
+void Reader::setBytesLeft(uint32 b) { _bytesLeft = b; }
 
 } // End of namespace Networking
