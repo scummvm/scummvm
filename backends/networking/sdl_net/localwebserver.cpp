@@ -301,6 +301,11 @@ Common::String LocalWebserver::urlDecode(Common::String value) {
 	Common::String result = "";
 	uint32 size = value.size();
 	for (uint32 i = 0; i < size; ++i) {
+		if (value[i] == '+') {
+			result += ' ';
+			continue;
+		}
+
 		if (value[i] == '%' && i+2 < size) {
 			int d1 = hexDigit(value[i+1]);
 			int d2 = hexDigit(value[i+2]);
@@ -315,5 +320,37 @@ Common::String LocalWebserver::urlDecode(Common::String value) {
 	}
 	return result;
 }
+
+namespace {
+bool isQueryUnreserved(char c) {
+	return (
+		('0' <= c && c <= '9') ||
+		('A' <= c && c <= 'Z') ||
+		('a' <= c && c <= 'z') ||
+		c == '-' || c == '_' || c == '.' || c == '!' ||
+		c == '~' || c == '*' || c == '\'' || c == '(' || c == ')'
+	);
+}
+}
+
+Common::String LocalWebserver::urlEncodeQueryParameterValue(Common::String value) {
+	//OK chars = alphanum | "-" | "_" | "." | "!" | "~" | "*" | "'" | "(" | ")"
+	//reserved for query are ";", "/", "?", ":", "@", "&", "=", "+", ","
+	//that means these must be encoded too or otherwise they could malform the query
+	Common::String result = "";
+	char hexChar[16] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+	for (uint32 i = 0; i < value.size(); ++i) {
+		char c = value[i];
+		if (isQueryUnreserved(c))
+			result += c;
+		else {
+			result += '%';
+			result += hexChar[(c >> 4) & 0xF];
+			result += hexChar[c & 0xF];
+		}
+	}
+	return result;
+}
+
 
 } // End of namespace Networking

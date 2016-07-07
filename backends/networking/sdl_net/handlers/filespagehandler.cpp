@@ -50,8 +50,9 @@ void FilesPageHandler::handle(Client &client) {
 		handleErrorMessage(
 			client,
 			Common::String::format(
-				"%s<br/><a href=\"files?path=/\">%s</a>",
+				"%s<br/><a href=\"files?path=%s\">%s</a>",
 				_("ScummVM couldn't list the directory you specified."),
+				"%2F", //that's encoded "/"
 				_("Back to the files manager")
 			)
 		);
@@ -133,7 +134,7 @@ bool FilesPageHandler::listDirectory(Common::String path, Common::String &conten
 
 void FilesPageHandler::addItem(Common::String &content, const Common::String &itemTemplate, bool isDirectory, Common::String path, Common::String name, Common::String size) {
 	Common::String item = itemTemplate;
-	replace(item, "{link}", (isDirectory ? "files?path=" : "download?path=") + path);
+	replace(item, "{link}", (isDirectory ? "files?path=" : "download?path=") + LocalWebserver::urlEncodeQueryParameterValue(path));
 	replace(item, "{name}", name);
 	replace(item, "{size}", size);
 	content += item;

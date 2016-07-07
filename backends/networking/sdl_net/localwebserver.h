@@ -94,6 +94,7 @@ public:
 	static void setClientRedirectHandler(Client &client, Common::SeekableReadStream *responseStream, Common::String location, const char *mimeType = nullptr);
 	static const char *determineMimeType(Common::String &filename);
 	static Common::String urlDecode(Common::String value);
+	static Common::String urlEncodeQueryParameterValue(Common::String value);
 };
 
 /** Shortcut for accessing the local webserver. */

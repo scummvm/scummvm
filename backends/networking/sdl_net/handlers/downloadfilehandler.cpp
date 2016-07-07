@@ -44,8 +44,9 @@ void DownloadFileHandler::handle(Client &client) {
 		handleErrorMessage(
 			client,
 			Common::String::format(
-				"%s<br/><a href=\"files?path=/\">%s</a>",
+				"%s<br/><a href=\"files?path=%s\">%s</a>",
 				errorMessage.c_str(),
+				"%2F", //that's encoded "/"
 				_("Back to the files manager")
 				)
 			);
