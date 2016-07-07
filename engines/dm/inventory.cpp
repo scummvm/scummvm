@@ -53,71 +53,68 @@ InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {
 }
 
 void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
-	ChampionMan &cm = *_vm->_championMan;
-	EventManager &em = *_vm->_eventMan;
-	DisplayMan &dm = *_vm->_displayMan;
+	uint16 L1102_ui_Multiple;
+#define AL1102_ui_InventoryChampionOrdinal L1102_ui_Multiple
+#define AL1102_ui_SlotIndex                L1102_ui_Multiple
+	Champion* L1103_ps_Champion;
 
-	if ((championIndex != k4_ChampionCloseInventory) && !cm._gK71_champions[championIndex]._currHealth)
+
+	if ((championIndex != k4_ChampionCloseInventory) && !_vm->_championMan->_gK71_champions[championIndex]._currHealth) {
 		return;
-	if (_vm->_g331_pressingEye || _vm->_g333_pressingMouth)
+	}
+	if (_vm->_g333_pressingMouth || _vm->_g331_pressingEye) {
 		return;
+	}
 	_vm->_g321_stopWaitingForPlayerInput = true;
-	int16 invChampOrdinal = _g432_inventoryChampionOrdinal; // copy, as the original will be edited
-	if (_vm->M0_indexToOrdinal(championIndex) == invChampOrdinal) {
+	AL1102_ui_InventoryChampionOrdinal = _vm->_inventoryMan->_g432_inventoryChampionOrdinal;
+	if (_vm->M0_indexToOrdinal(championIndex) == AL1102_ui_InventoryChampionOrdinal) {
 		championIndex = k4_ChampionCloseInventory;
 	}
-
-	Champion *champion;
-	if (invChampOrdinal) {
-		_g432_inventoryChampionOrdinal = _vm->M0_indexToOrdinal(kM1_ChampionNone);
-		f334_closeChest();
-		champion = &cm._gK71_champions[_vm->M1_ordinalToIndex(invChampOrdinal)];
-		if (champion->_currHealth && !cm._g299_candidateChampionOrdinal) {
-			champion->setAttributeFlag(k0x1000_ChampionAttributeStatusBox, true);
-			cm.f292_drawChampionState((ChampionIndex)_vm->M1_ordinalToIndex(invChampOrdinal));
+	_vm->_eventMan->f78_showMouse();
+	if (AL1102_ui_InventoryChampionOrdinal) {
+		_vm->_inventoryMan->_g432_inventoryChampionOrdinal = _vm->M0_indexToOrdinal(kM1_ChampionNone);
+		_vm->_inventoryMan->f334_closeChest();
+		L1103_ps_Champion = &_vm->_championMan->_gK71_champions[_vm->M1_ordinalToIndex(AL1102_ui_InventoryChampionOrdinal)];
+		if (L1103_ps_Champion->_currHealth && !_vm->_championMan->_g299_candidateChampionOrdinal) {
+			setFlag(L1103_ps_Champion->_attributes, k0x1000_ChampionAttributeStatusBox);
+			_vm->_championMan->f292_drawChampionState((ChampionIndex)_vm->M1_ordinalToIndex(AL1102_ui_InventoryChampionOrdinal));
 		}
-		if (cm._g300_partyIsSleeping) {
+		if (_vm->_championMan->_g300_partyIsSleeping) {
+			_vm->_eventMan->f77_hideMouse();
 			return;
 		}
 		if (championIndex == k4_ChampionCloseInventory) {
-			em._g326_refreshMousePointerInMainLoop = true;
+			_vm->_eventMan->_g326_refreshMousePointerInMainLoop = true;
 			_vm->_menuMan->f395_drawMovementArrows();
-			em._g442_secondaryMouseInput = g448_SecondaryMouseInput_Movement;
-			warning("MISSING CODE: set G0444_ps_SecondaryKeyboardInput");
+			_vm->_eventMan->f77_hideMouse();
+			_vm->_eventMan->_g442_secondaryMouseInput = g448_SecondaryMouseInput_Movement;
+			warning("MISSING CODE: setting G0444_ps_SecondaryKeyboardInput");
 			_vm->_eventMan->f357_discardAllInput();
+			_vm->_displayMan->f98_drawFloorAndCeiling();
 			return;
 		}
 	}
-
-	dm._g578_useByteBoxCoordinates = false;
-	_g432_inventoryChampionOrdinal = _vm->M0_indexToOrdinal(championIndex);
-	if (!invChampOrdinal) {
+	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
+	_vm->_inventoryMan->_g432_inventoryChampionOrdinal = _vm->M0_indexToOrdinal(championIndex);
+	if (!AL1102_ui_InventoryChampionOrdinal) {
 		warning("MISSING CODE: F0136_VIDEO_ShadeScreenBox");
 	}
-
-	champion = &cm._gK71_champions[championIndex];
-	dm.f466_loadIntoBitmap(k17_InventoryGraphicIndice, dm._g296_bitmapViewport);
-	if (cm._g299_candidateChampionOrdinal) {
-		dm.f135_fillBoxBitmap(dm._g296_bitmapViewport, g41_BoxFloppyZzzCross, k12_ColorDarkestGray, k112_byteWidthViewport, k136_heightViewport);
+	L1103_ps_Champion = &_vm->_championMan->_gK71_champions[championIndex];
+	_vm->_displayMan->f466_loadIntoBitmap(k17_InventoryGraphicIndice, _vm->_displayMan->_g296_bitmapViewport);
+	if (_vm->_championMan->_g299_candidateChampionOrdinal) {
+		_vm->_displayMan->f135_fillBoxBitmap(_vm->_displayMan->_g296_bitmapViewport, g41_BoxFloppyZzzCross, k12_ColorDarkestGray, k112_byteWidthViewport, k136_heightViewport);
 	}
 	_vm->_textMan->f52_printToViewport(5, 116, k13_ColorLightestGray, "HEALTH");
 	_vm->_textMan->f52_printToViewport(5, 124, k13_ColorLightestGray, "STAMINA");
 	_vm->_textMan->f52_printToViewport(5, 132, k13_ColorLightestGray, "MANA");
-
-	for (uint16 slotIndex = k0_ChampionSlotReadyHand; slotIndex < k30_ChampionSlotChest_1; slotIndex++) {
-		_vm->_championMan->f291_drawSlot(championIndex, (ChampionSlot)slotIndex);
+	for (AL1102_ui_SlotIndex = k0_ChampionSlotReadyHand; AL1102_ui_SlotIndex < k30_ChampionSlotChest_1; AL1102_ui_SlotIndex++) {
+		_vm->_championMan->f291_drawSlot(championIndex, AL1102_ui_SlotIndex);
 	}
-
-	champion->setAttributeFlag(k0x4000_ChampionAttributeViewport, true);
-	champion->setAttributeFlag(k0x1000_ChampionAttributeStatusBox, true);
-	champion->setAttributeFlag(k0x0800_ChampionAttributePanel, true);
-	champion->setAttributeFlag(k0x0200_ChampionAttributeLoad, true);
-	champion->setAttributeFlag(k0x0100_ChampionAttributeStatistics, true);
-	champion->setAttributeFlag(k0x0080_ChampionAttributeNameTitle, true);
-
-	cm.f292_drawChampionState(championIndex);
-	em._g598_mousePointerBitmapUpdated = true;
-	em._g442_secondaryMouseInput = g449_SecondaryMouseInput_ChampionInventory;
+	setFlag(L1103_ps_Champion->_attributes, k0x4000_ChampionAttributeViewport | k0x1000_ChampionAttributeStatusBox | k0x0800_ChampionAttributePanel | k0x0200_ChampionAttributeLoad | k0x0100_ChampionAttributeStatistics | k0x0080_ChampionAttributeNameTitle);
+	_vm->_championMan->f292_drawChampionState(championIndex);
+	_vm->_eventMan->_g598_mousePointerBitmapUpdated = true;
+	_vm->_eventMan->f77_hideMouse();
+	_vm->_eventMan->_g442_secondaryMouseInput = g449_SecondaryMouseInput_ChampionInventory;
 	warning("MISSING CODE: set G0444_ps_SecondaryKeyboardInput");
 	_vm->_eventMan->f357_discardAllInput();
 }
