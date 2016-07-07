@@ -30,6 +30,7 @@
 #include "common/timer.h"
 #include "common/textconsole.h"
 #include <SDL/SDL_net.h>
+#include "reader.h"
 
 namespace Common {
 class MemoryReadWriteStream;
@@ -47,6 +48,9 @@ LocalWebserver::LocalWebserver(): _set(nullptr), _serverSocket(nullptr), _timerS
 	addPathHandler("/create", _createDirectoryHandler.getHandler());
 	addPathHandler("/download", _downloadFileHandler.getHandler());
 	_defaultHandler = _resourceHandler.getHandler();
+
+	Reader reader;
+	reader.readResponse();
 }
 
 LocalWebserver::~LocalWebserver() {
