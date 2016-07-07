@@ -1072,7 +1072,7 @@ void MovesensMan::f265_createEvent60to61_moveGroup(Thing groupThing, int16 mapX,
 	L0696_s_Event._priority = 0;
 	L0696_s_Event._B._location._mapX = mapX;
 	L0696_s_Event._B._location._mapY = mapY;
-	L0696_s_Event._C._slot = groupThing;
+	L0696_s_Event._C._slot = groupThing.toUint16();
 	_vm->_timeline->f238_addEventGetEventIndex(&L0696_s_Event);
 }
 

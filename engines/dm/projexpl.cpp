@@ -67,7 +67,7 @@ void ProjExpl::f212_projectileCreate(Thing thing, int16 mapX, int16 mapY, uint16
 		L0468_s_Event._type = k48_TMEventTypeMoveProjectileIgnoreImpacts; /* Projectiles created by champions or creatures ignore impacts on their first movement */
 	}
 	L0468_s_Event._priority = 0;
-	L0468_s_Event._B._slot = L0466_T_ProjectileThing;
+	L0468_s_Event._B._slot = L0466_T_ProjectileThing.toUint16();
 	L0468_s_Event._C._projectile.setMapX(mapX);
 	L0468_s_Event._C._projectile.setMapY(mapY);
 	L0468_s_Event._C._projectile.setStepEnergy(stepEnergy);
@@ -337,7 +337,7 @@ void ProjExpl::f213_explosionCreate(Thing explThing, uint16 attack, uint16 mapXC
 	M33_setMapAndTime(L0476_s_Event._mapTime, _vm->_dungeonMan->_g272_currMapIndex, _vm->_g313_gameTime + ((explThing == Thing::_explRebirthStep1) ? 5 : 1));
 	L0476_s_Event._type = k25_TMEventTypeExplosion;
 	L0476_s_Event._priority = 0;
-	L0476_s_Event._C._slot = L0473_T_Thing;
+	L0476_s_Event._C._slot = L0473_T_Thing.toUint16();
 	L0476_s_Event._B._location._mapX = AP0443_ui_ProjectileMapX;
 	L0476_s_Event._B._location._mapY = AP0444_ui_ProjectileMapY;
 	_vm->_timeline->f238_addEventGetEventIndex(&L0476_s_Event);

@@ -109,7 +109,7 @@ public:
 		int16 _attack;
 		int16 _defense;
 		int16 _lightPower;
-		Thing _slot;
+		uint16 _slot; // Thing
 		int16 _slotOrdinal;
 		B_unionTimelineEvent() {}
 	} _B;
@@ -135,7 +135,7 @@ public:
 			void setStepEnergy(uint16 val) { _backing = (_backing & ~(0xF << 12)) | ((val & 0xF) << 12); }
 		} _projectile;
 
-		Thing _slot;
+		uint16 _slot;
 		int16 _soundIndex;
 		byte _ticks;
 		C_uionTimelineEvent() {}
