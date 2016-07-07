@@ -31,6 +31,19 @@
 #include "director/lingo/lingo-gr.h"
 
 int yyparse();
+static void count() {
+	Director::g_lingo->_colnumber += strlen(yytext);
+}
+
+static void countnl() {
+	char *p = yytext;
+
+	while(*p == '\n' || *p == '\r')
+		p++;
+
+	Director::g_lingo->_linenumber++;
+	Director::g_lingo->_colnumber = strlen(p);
+}
 
 %}
 
@@ -45,41 +58,42 @@ whitespace [\t ]
 %%
 
 --[^\r\n]*
-^{whitespace}+
-[\t]+				{ return ' '; }
+^{whitespace}+		{ count(); }
+[\t]+				{ count(); return ' '; }
 
-(?i:down)			{ return tDOWN; }
-(?i:if)				{ return tIF; }
-(?i:[\n\r]+[\t ]+else[\t ]+if)	{ return tNLELSIF; }
-(?i:[\n\r]+[\t ]+else)	{ return tNLELSE; }
-(?i:else)			{ return tELSE; }
-(?i:end)			{ return tEND; }
-(?i:exit)			{ return tEXIT; }
-(?i:frame)			{ return tFRAME; }
-(?i:global)			{ return tGLOBAL; }
-(?i:go)				{ return tGO; }
-(?i:into)			{ return tINTO; }
-(?i:loop)			{ return tLOOP; }
-(?i:macro)			{ return tMACRO; }
-(?i:mci)			{ return tMCI; }
-(?i:mciwait)		{ return tMCIWAIT; }
-(?i:movie)			{ return tMOVIE; }
-(?i:next)			{ return tNEXT; }
-(?i:of)				{ return tOF; }
-(?i:previous)		{ return tPREVIOUS; }
-(?i:put)			{ return tPUT; }
-(?i:repeat)			{ return tREPEAT; }
-(?i:set)			{ return tSET; }
-(?i:then)			{ return tTHEN; }
-(?i:to)				{ return tTO; }
-(?i:with)			{ return tWITH; }
-(?i:while)			{ return tWHILE; }
+(?i:down)			{ count(); return tDOWN; }
+(?i:if)				{ count(); return tIF; }
+(?i:[\n\r]+[\t ]+else[\t ]+if)	{ countnl(); return tNLELSIF; }
+(?i:[\n\r]+[\t ]+else)	{ countnl(); return tNLELSE; }
+(?i:else)			{ count(); return tELSE; }
+(?i:end)			{ count(); return tEND; }
+(?i:exit)			{ count(); return tEXIT; }
+(?i:frame)			{ count(); return tFRAME; }
+(?i:global)			{ count(); return tGLOBAL; }
+(?i:go)				{ count(); return tGO; }
+(?i:into)			{ count(); return tINTO; }
+(?i:loop)			{ count(); return tLOOP; }
+(?i:macro)			{ count(); return tMACRO; }
+(?i:mci)			{ count(); return tMCI; }
+(?i:mciwait)		{ count(); return tMCIWAIT; }
+(?i:movie)			{ count(); return tMOVIE; }
+(?i:next)			{ count(); return tNEXT; }
+(?i:of)				{ count(); return tOF; }
+(?i:previous)		{ count(); return tPREVIOUS; }
+(?i:put)			{ count(); return tPUT; }
+(?i:repeat)			{ count(); return tREPEAT; }
+(?i:set)			{ count(); return tSET; }
+(?i:then)			{ count(); return tTHEN; }
+(?i:to)				{ count(); return tTO; }
+(?i:with)			{ count(); return tWITH; }
+(?i:while)			{ count(); return tWHILE; }
 
-[!][=]			{ return tNEQ; }
-[>][=]			{ return tGE; }
-[<][=]			{ return tLE; }
+[!][=]			{ count(); return tNEQ; }
+[>][=]			{ count(); return tGE; }
+[<][=]			{ count(); return tLE; }
 
 {identifier}	{
+		count();
 		yylval.s = new Common::String(yytext);
 
 		if (Director::g_lingo->_builtins.contains(yytext))
@@ -87,11 +101,11 @@ whitespace [\t ]
 
 		return ID;
 	}
-{constfloat}	{ yylval.f = atof(yytext); return FLOAT; }
-{constinteger}	{ yylval.i = strtol(yytext, NULL, 10); return INT; }
-{operator}		{ return *yytext; }
+{constfloat}	{ count(); yylval.f = atof(yytext); return FLOAT; }
+{constinteger}	{ count(); yylval.i = strtol(yytext, NULL, 10); return INT; }
+{operator}		{ count(); return *yytext; }
 {newline}		{ return '\n'; }
-{conststring}	{ yylval.s = new Common::String(&yytext[1]); yylval.s->deleteLastChar(); return STRING; }
+{conststring}	{ count(); yylval.s = new Common::String(&yytext[1]); yylval.s->deleteLastChar(); return STRING; }
 .
 
 %%

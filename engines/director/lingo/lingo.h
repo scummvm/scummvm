@@ -242,6 +242,9 @@ public:
 	BuiltinHash _builtins;
 	Common::Array<int> _labelstack;
 
+	int _linenumber;
+	int _colnumber;
+
 private:
 	int parse(const char *code);
 	void push(Datum d);

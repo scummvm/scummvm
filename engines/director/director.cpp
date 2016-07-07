@@ -121,7 +121,7 @@ Common::Error DirectorEngine::run() {
 		else if x = 2 then\n\
 		  put 2.1\n\
 		  put 2.2\n\
-	    else if x = 3 then put 3\n\
+		  else if x = 3 then put 3\n\
 		end if\n\
 		if x = 4 then put 4\n\
 		else put 5\n\

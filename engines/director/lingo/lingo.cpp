@@ -89,6 +89,8 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_returning = false;
 	_indef = false;
 
+	_linenumber = _colnumber = 0;
+
 	warning("Lingo Inited");
 }
 
@@ -107,6 +109,8 @@ void Lingo::addCode(Common::String code, ScriptType type, uint16 id) {
 	_currentScript = new ScriptData;
 	_currentScriptType = type;
 	_scripts[type][id] = _currentScript;
+
+	_linenumber = _colnumber = 1;
 
 	// macros have conflicting grammar. Thus we ease life for the parser.
 	if (code.contains("\nmacro ")) {
