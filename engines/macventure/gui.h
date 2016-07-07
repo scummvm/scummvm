@@ -208,6 +208,9 @@ public:
 	uint getObjWidth(ObjID obj);
 	uint getObjHeight(ObjID obj);
 
+	WindowReference getObjWindow(ObjID objID);
+	WindowReference findObjWindow(ObjID objID);
+
 	// Event processors
 	bool processCommandEvents(WindowClick click, Common::Event &event);
 	bool processMainGameEvents(WindowClick click, Common::Event &event);

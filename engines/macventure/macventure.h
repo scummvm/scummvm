@@ -196,7 +196,7 @@ public:
 
 	void enqueueObject(ObjectQueueID type, ObjID objID, ObjID target = 0);
 	void enqueueText(TextQueueID type, ObjID target, ObjID source, ObjID text);
-		
+
 	void runObjQueue();
 	bool printTexts();
 
@@ -239,7 +239,6 @@ public:
 	uint getOverlapPercent(ObjID one, ObjID other);
 
 	WindowReference getObjWindow(ObjID objID);
-	WindowReference findObjWindow(ObjID objID);
 	WindowReference findParentWindow(ObjID objID);
 
 	Common::Point getDeltaPoint();
@@ -275,7 +274,7 @@ private:
 	// Data loading
 	bool loadGlobalSettings();
 	bool loadTextHuffman();
-	
+
 	const char* getGameFileName() const;
 
 private: // Attributes

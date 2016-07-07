@@ -665,11 +665,9 @@ void MacVentureEngine::checkObject(QueuedObject old) {
 	bool hasChanged = false;
 	debug("Check Object[%d] parent[%d] x[%d] y[%d]",
 		old.object,
-		_world->getObjAttr(old.object, kAttrParentObject),
-		_world->getObjAttr(old.object, kAttrPosX),
-		_world->getObjAttr(old.object, kAttrPosY));
-	//bool incoming = isIncomingObj(objID);
-	//if (incoming) removeIncoming(objID);
+		old.parent,
+		old.x,
+		old.y);
 	ObjID id = old.object;
 	if (id == 1) {
 		if (old.parent != _world->getObjAttr(id, kAttrParentObject)) {
@@ -688,7 +686,7 @@ void MacVentureEngine::checkObject(QueuedObject old) {
 			hasChanged = true;
 		}
 
-		WindowReference newWin = getObjWindow(id);
+		WindowReference newWin = findParentWindow(id);
 		if (newWin) {
 			_gui->addChild(newWin, id);
 			hasChanged = true;
@@ -887,28 +885,13 @@ uint MacVentureEngine::getOverlapPercent(ObjID one, ObjID other) {
 }
 
 WindowReference MacVentureEngine::getObjWindow(ObjID objID) {
-	switch (objID) {
-	case 0xfffc: return kExitsWindow;
-	case 0xfffd: return kSelfWindow;
-	case 0xfffe: return kOutConsoleWindow;
-	case 0xffff: return kCommandsWindow;
-	}
-
-	return findObjWindow(objID);
-}
-
-WindowReference MacVentureEngine::findObjWindow(ObjID objID) {
-	// This is a bit of a hack, we take advantage of the consecutive nature of references
-	for (uint i = kCommandsWindow; i <= kDiplomaWindow; i++) {
-		const WindowData &data = _gui->getWindowData((WindowReference)i);
-		if (data.objRef == objID) { return data.refcon; }
-	}
-	return kNoWindow;
+	return _gui->getObjWindow(objID);
 }
 
 WindowReference MacVentureEngine::findParentWindow(ObjID objID) {
 	if (objID == 1) return kSelfWindow;
 	ObjID parent = _world->getObjAttr(objID, kAttrParentObject);
+	if (parent == 0) return kNoWindow;
 	return getObjWindow(parent);
 }
 

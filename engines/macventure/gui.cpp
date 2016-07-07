@@ -243,6 +243,7 @@ void Gui::setWindowTitle(WindowReference winID, Common::String string) {
 }
 
 void Gui::updateWindowInfo(WindowReference ref, ObjID objID, const Common::Array<ObjID> &children) {
+	if (ref == kNoWindow) return;
 	WindowData &data = findWindowData(ref);
 	data.children.clear();
 	data.objRef = objID;
@@ -603,7 +604,6 @@ void Gui::drawSelfWindow() {
 
 void Gui::drawInventories() {
 
-
 	Graphics::ManagedSurface *srf;
 	for (uint i = 0; i < _inventoryWindows.size(); i++) {
 		const WindowData &data = getWindowData((WindowReference)(kInventoryStart + i));
@@ -667,7 +667,7 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 		pos = _engine->getObjPosition(child);
 		pos += Common::Point(border.leftOffset, border.topOffset);
 
-		if (child < 600) { // Small HACK until I figre out where the last garbage child in main game window comes from
+		if (child < 650) { // Small HACK until I figre out where the last garbage child in main game window comes from
 			if (!_assets.contains(child)) {
 				_assets[child] = new ImageAsset(child, _graphics);
 			}
@@ -738,6 +738,7 @@ void Gui::drawDraggedObject() {
 
 
 void Gui::updateWindow(WindowReference winID, bool containerOpen) {
+	if (winID == kNoWindow) return;
 	if (winID == kSelfWindow || containerOpen) {
 		WindowData &data = findWindowData(winID);
 		if (winID == kCommandsWindow) {
@@ -878,6 +879,32 @@ Graphics::MacWindow * Gui::findWindow(WindowReference reference) {
 		return _diplomaWindow;
 	}
 	return nullptr;
+}
+
+WindowReference Gui::getObjWindow(ObjID objID) {
+	switch (objID) {
+	case 0xfffc: return kExitsWindow;
+	case 0xfffd: return kSelfWindow;
+	case 0xfffe: return kOutConsoleWindow;
+	case 0xffff: return kCommandsWindow;
+	}
+
+	return findObjWindow(objID);
+}
+
+WindowReference Gui::findObjWindow(ObjID objID) {
+	// This is a bit of a HACK, we take advantage of the consecutive nature of references
+	for (uint i = kCommandsWindow; i <= kDiplomaWindow; i++) {
+		const WindowData &data = getWindowData((WindowReference)i);
+		if (data.objRef == objID) { return data.refcon; }
+	}
+
+	for (uint i = kInventoryStart; i < _inventoryWindows.size() + kInventoryStart; i++) {
+		const WindowData &data = getWindowData((WindowReference)i);
+		if (data.objRef == objID) { return data.refcon; }
+	}
+
+	return kNoWindow;
 }
 
 void Gui::checkSelect(ObjID obj, const Common::Event &event, const Common::Rect & clickRect, WindowReference ref) {
