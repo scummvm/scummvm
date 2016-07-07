@@ -29,10 +29,8 @@ namespace Networking {
 
 Reader::Reader() {
 	_state = RS_NONE;
+	_content = nullptr;
 	_bytesLeft = 0;
-
-	_contentLength = 0;
-	_availableBytes = 0;
 
 	_window = nullptr;
 	_windowUsed = 0;
@@ -41,28 +39,9 @@ Reader::Reader() {
 	_headers = "";
 	_buffer = "";
 
-	_content =
-		"POST /upload HTTP/1.1\r\n" \
-		"Host: 127.0.0.1:12345\r\n" \
-		"User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:47.0) Gecko/20100101 Firefox/47.0\r\n" \
-		"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n" \
-		"Accept-Language: ru,en-US;q=0.7,en;q=0.3\r\n" \
-		"Accept-Encoding: gzip, deflate\r\n" \
-		"Referer: http://127.0.0.1:12345/files\r\n" \
-		"Connection: keep-alive\r\n" \
-		"Content-Type: multipart/form-data; boundary=---------------------------93411339527546\r\n" \
-		"Content-Length: 319\r\n" \
-		"\r\n" \
-		"-----------------------------93411339527546\r\n" \
-		"Content-Disposition: form-data; name=\"path\"\r\n" \
-		"\r\n" \
-		"/root\r\n" \
-		"-----------------------------93411339527546\r\n" \
-		"Content-Disposition: form-data; name=\"upload_file\"; filename=\"irc.txt\"\r\n" \
-		"Content-Type: text/plain\r\n" \
-		"\r\n" \
-		"shells.fnordserver.eu/1400\r\n" \
-		"-----------------------------93411339527546--";
+	_contentLength = 0;
+	_availableBytes = 0;
+	_isBadRequest = false;
 }
 
 Reader::~Reader() {}
@@ -76,6 +55,10 @@ bool Reader::readResponse() {
 		if (_state == RS_READING_HEADERS)
 			if (!readHeaders())
 				return false;
+
+		if (_boundary.empty()) return true; //not POST multipart
+
+		if (!bytesLeft()) return false;
 
 		if (_state == RS_READING_CONTENT)
 			if (!readContent())
@@ -133,7 +116,8 @@ void readFromThatUntilLineEnd(const char *cstr, Common::String needle, Common::S
 void Reader::handleHeaders(Common::String headers) {
 	debug("\nHANDLE HEADERS:\n>>%s<<", headers.c_str());
 	if (_boundary.empty()) {
-		//TODO: parse method, path, query, fragment
+		//parse method, path, query, fragment
+		parseFirstLine(headers);
 
 		//find boundary
 		_boundary = "";
@@ -159,6 +143,72 @@ void Reader::handleHeaders(Common::String headers) {
 
 		//find out field type
 		//_fieldIsFile = true;
+	}
+}
+
+void Reader::parseFirstLine(const Common::String &headers) {
+	uint32 headersSize = headers.size();
+	bool bad = false;
+
+	const uint32 SUSPICIOUS_HEADERS_SIZE = 128 * 1024;
+	if (headersSize > SUSPICIOUS_HEADERS_SIZE) bad = true;
+
+	if (!bad) {
+		if (headersSize > 0) {
+			const char *cstr = headers.c_str();
+			const char *position = strstr(cstr, "\r\n");
+			if (position) { //we have at least one line - and we want the first one
+							//"<METHOD> <path> HTTP/<VERSION>\r\n"
+				Common::String method, path, http, buf;
+				uint32 length = position - cstr;
+				if (headersSize > length) headersSize = length;
+				for (uint32 i = 0; i < headersSize; ++i) {
+					if (headers[i] != ' ') buf += headers[i];
+					if (headers[i] == ' ' || i == headersSize - 1) {
+						if (method == "") method = buf;
+						else if (path == "") path = buf;
+						else if (http == "") http = buf;
+						else {
+							bad = true;
+							break;
+						}
+						buf = "";
+					}
+				}
+
+				//check that method is supported
+				if (method != "GET" && method != "PUT" && method != "POST") bad = true;
+
+				//check that HTTP/<VERSION> is OK
+				if (!http.hasPrefix("HTTP/")) bad = true;
+
+				_method = method;
+				parsePathQueryAndAnchor(path);
+			}
+		}
+	}
+
+	if (bad) _isBadRequest = true;
+}
+
+void Reader::parsePathQueryAndAnchor(Common::String path) {
+	//<path>[?query][#anchor]
+	bool readingPath = true;
+	bool readingQuery = false;
+	_path = "";
+	_query = "";
+	_anchor = "";
+	for (uint32 i = 0; i < path.size(); ++i) {
+		if (readingPath) {
+			if (path[i] == '?') {
+				readingPath = false;
+				readingQuery = true;
+			} else _path += path[i];
+		} else if (readingQuery) {
+			if (path[i] == '#') {
+				readingQuery = false;
+			} else _query += path[i];
+		} else _anchor += path[i];
 	}
 }
 
@@ -251,7 +301,7 @@ bool Reader::readOneByteInString(Common::String &buffer, const Common::String &b
 
 byte Reader::readOne() {
 	byte b = _content[0];
-	_content.deleteChar(0);
+	++_content;
 	--_availableBytes;
 	--_bytesLeft;
 	return b;
@@ -259,6 +309,19 @@ byte Reader::readOne() {
 
 uint32 Reader::bytesLeft() { return _bytesLeft; }
 
-void Reader::setBytesLeft(uint32 b) { _bytesLeft = b; }
+void Reader::setContent(byte *buffer, uint32 size) {
+	_content = buffer;
+	_bytesLeft = size;
+}
+
+bool Reader::badRequest() { return _isBadRequest; }
+
+Common::String Reader::method() const { return _method; }
+
+Common::String Reader::path() const { return _path; }
+
+Common::String Reader::query() const { return _query; }
+
+Common::String Reader::anchor() const { return _anchor; }
 
 } // End of namespace Networking

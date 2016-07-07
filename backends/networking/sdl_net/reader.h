@@ -37,31 +37,34 @@ enum ReaderState {
 };
 
 class Reader {
-	///Common::String _headers;
-	///Common::String _method, _path, _query, _anchor;
 	ReaderState _state;
-	Common::String _content;
+	byte *_content;
 	uint32 _bytesLeft;
 
-	Common::String _boundary;
-	uint32 _contentLength;
-	uint32 _availableBytes;
+	byte *_window;
+	uint32 _windowUsed, _windowSize;
 
 	Common::String _headers;
 	Common::String _buffer;
 
-	Common::String _currentFieldName;
+	///Common::String _headers;
+	Common::String _method, _path, _query, _anchor;
 	Common::HashMap<Common::String, Common::String> _fields;
 	Common::HashMap<Common::String, Common::String> _attachedFiles;
-
-	byte *_window;
-	uint32 _windowUsed, _windowSize;
+	uint32 _contentLength;
+	Common::String _boundary;
+	uint32 _availableBytes;
+	Common::String _currentFieldName;
+	bool _isBadRequest;
 
 	bool readHeaders(); //true when ended reading
 	bool readContent(); //true when ended reading
 	void handleHeaders(Common::String headers);
 	void handleFileContent(Common::String filename);
 	void handleValueContent(Common::String value);
+
+	void parseFirstLine(const Common::String &headers);
+	void parsePathQueryAndAnchor(Common::String path);
 
 	void makeWindow(uint32 size);
 	void freeWindow();
@@ -76,7 +79,13 @@ public:
 	~Reader();
 
 	bool readResponse(); //true when ended reading
-	void setBytesLeft(uint32 b);
+	void setContent(byte *buffer, uint32 size);
+	bool badRequest();
+
+	Common::String method() const;
+	Common::String path() const;
+	Common::String query() const;
+	Common::String anchor() const;
 };
 
 } // End of namespace Networking

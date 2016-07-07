@@ -45,6 +45,7 @@ void Client::open(SDLNet_SocketSet set, TCPsocket socket) {
 	_socket = socket;
 	_set = set;
 	_headers = "";
+	_reader = Reader();
 	_method = "";
 	_path = "";
 	_query = "";
@@ -63,87 +64,24 @@ void Client::readHeaders() {
 	if (!SDLNet_SocketReady(_socket)) return;
 
 	const uint32 BUFFER_SIZE = 16 * 1024;
-	char buffer[BUFFER_SIZE];
+	byte buffer[BUFFER_SIZE];
 	int bytes = SDLNet_TCP_Recv(_socket, buffer, BUFFER_SIZE);
 	if (bytes <= 0) {
 		warning("Client::readHeaders recv fail");
 		close();
 		return;
 	}
-	_headers += Common::String(buffer, bytes);
-	checkIfHeadersEnded();
-	checkIfBadRequest();
-}
-
-void Client::checkIfHeadersEnded() {
-	const char *cstr = _headers.c_str();
-	const char *position = strstr(cstr, "\r\n\r\n");
-	if (position) _state = READ_HEADERS;
-}
-
-void Client::checkIfBadRequest() {
-	uint32 headersSize = _headers.size();
-	bool bad = false;
-
-	const uint32 SUSPICIOUS_HEADERS_SIZE = 128 * 1024;
-	if (headersSize > SUSPICIOUS_HEADERS_SIZE) bad = true;
-
-	if (!bad) {
-		if (headersSize > 0) {
-			const char *cstr = _headers.c_str();
-			const char *position = strstr(cstr, "\r\n");
-			if (position) { //we have at least one line - and we want the first one
-				//"<METHOD> <path> HTTP/<VERSION>\r\n"
-				Common::String method, path, http, buf;
-				uint32 length = position - cstr;
-				if (headersSize > length) headersSize = length;
-				for (uint32 i = 0; i < headersSize; ++i) {
-					if (_headers[i] != ' ') buf += _headers[i];
-					if (_headers[i] == ' ' || i == headersSize - 1) {
-						if (method == "") method = buf;
-						else if (path == "") path = buf;
-						else if (http == "") http = buf;
-						else {
-							bad = true;
-							break;
-						}
-						buf = "";
-					}
-				}
-
-				//check that method is supported
-				if (method != "GET" && method != "PUT" && method != "POST") bad = true;
-
-				//check that HTTP/<VERSION> is OK
-				if (!http.hasPrefix("HTTP/")) bad = true;
-
-				_method = method;
-				parsePathQueryAndAnchor(path);
-			}
+	
+	_reader.setContent(buffer, bytes);
+	if (_reader.readResponse()) {
+		if (_reader.badRequest()) _state = BAD_REQUEST;
+		else {
+			_state = READ_HEADERS;
+			_method = _reader.method();
+			_path = _reader.path();
+			_query = _reader.query();
+			_anchor = _reader.anchor();
 		}
-	}
-
-	if (bad) _state = BAD_REQUEST;
-}
-
-void Client::parsePathQueryAndAnchor(Common::String path) {
-	//<path>[?query][#anchor]
-	bool readingPath = true;
-	bool readingQuery = false;
-	_path = "";
-	_query = "";
-	_anchor = "";
-	for (uint32 i = 0; i < path.size(); ++i) {
-		if (readingPath) {
-			if (path[i] == '?') {
-				readingPath = false;
-				readingQuery = true;
-			} else _path += path[i];
-		} else if(readingQuery) {
-			if (path[i] == '#') {
-				readingQuery = false;
-			} else _query += path[i];
-		} else _anchor += path[i];
 	}
 }
 

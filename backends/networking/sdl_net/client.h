@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "reader.h"
 
 typedef struct _SDLNet_SocketSet *SDLNet_SocketSet;
 typedef struct _TCPsocket *TCPsocket;
@@ -51,13 +52,10 @@ class Client {
 	ClientState _state;
 	SDLNet_SocketSet _set;
 	TCPsocket _socket;
+	Reader _reader;
 	Common::String _headers;
 	Common::String _method, _path, _query, _anchor;
 	ClientHandler *_handler;
-
-	void checkIfHeadersEnded();
-	void checkIfBadRequest();
-	void parsePathQueryAndAnchor(Common::String path);
 
 public:
 	Client();

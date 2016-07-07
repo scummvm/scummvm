@@ -48,10 +48,6 @@ LocalWebserver::LocalWebserver(): _set(nullptr), _serverSocket(nullptr), _timerS
 	addPathHandler("/create", _createDirectoryHandler.getHandler());
 	addPathHandler("/download", _downloadFileHandler.getHandler());
 	_defaultHandler = _resourceHandler.getHandler();
-
-	Reader reader;
-	reader.setBytesLeft(128);
-	while (!reader.readResponse()) reader.setBytesLeft(20);
 }
 
 LocalWebserver::~LocalWebserver() {
