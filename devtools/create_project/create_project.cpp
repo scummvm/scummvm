@@ -54,7 +54,7 @@
 #define USE_WIN32_API
 #endif
 
-#ifdef USE_WIN32_API
+#if (defined(_WIN32) || defined(WIN32))
 #include <windows.h>
 #else
 #include <sstream>
@@ -1212,7 +1212,7 @@ bool compareNodes(const FileNode *l, const FileNode *r) {
 
 FileList listDirectory(const std::string &dir) {
 	FileList result;
-#ifdef USE_WIN32_API
+#if defined(_WIN32) || defined(WIN32)
 	WIN32_FIND_DATA fileInformation;
 	HANDLE fileHandle = FindFirstFile((dir + "/*").c_str(), &fileInformation);
 
