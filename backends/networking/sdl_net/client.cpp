@@ -44,12 +44,7 @@ void Client::open(SDLNet_SocketSet set, TCPsocket socket) {
 	_state = READING_HEADERS;
 	_socket = socket;
 	_set = set;
-	_headers = "";
 	_reader = Reader();
-	_method = "";
-	_path = "";
-	_query = "";
-	_anchor = "";
 	_handler = nullptr;
 	if (set) {
 		int numused = SDLNet_TCP_AddSocket(set, socket);
@@ -73,16 +68,8 @@ void Client::readHeaders() {
 	}
 	
 	_reader.setContent(buffer, bytes);
-	if (_reader.readResponse()) {
-		if (_reader.badRequest()) _state = BAD_REQUEST;
-		else {
-			_state = READ_HEADERS;
-			_method = _reader.method();
-			_path = _reader.path();
-			_query = _reader.query();
-			_anchor = _reader.anchor();
-		}
-	}
+	if (_reader.readRequest())
+		_state = (_reader.badRequest() ? BAD_REQUEST : READ_HEADERS);
 }
 
 void Client::setHandler(ClientHandler *handler) {	
@@ -118,39 +105,17 @@ void Client::close() {
 
 ClientState Client::state() const { return _state; }
 
-Common::String Client::headers() const { return _headers; }
+//Common::String Client::headers() const { return _headers; }
 
-Common::String Client::method() const { return _method; }
+Common::String Client::method() const { return _reader.method(); }
 
-Common::String Client::path() const { return _path; }
+Common::String Client::path() const { return _reader.path(); }
 
-Common::String Client::query() const { return _query; }
+Common::String Client::query() const { return _reader.query(); }
 
-Common::String Client::queryParameter(Common::String name) const {
-	// this approach is a bit slower than searching for the <name>
-	// yet I believe it to be the right one, because we probably can have "<name>=" in the value of other key
-	Common::String key = "";
-	Common::String value = "";
-	bool readingKey = true;
-	for (uint32 i = 0; i < _query.size(); ++i) {
-		if (readingKey) {
-			if (_query[i] == '=') {
-				readingKey = false;
-				value = "";
-			} else key += _query[i];
-		} else {
-			if (_query[i] == '&') {
-				if (key == name) return LocalWebserver::urlDecode(value);
-				readingKey = true;
-				key = "";
-			} else value += _query[i];
-		}
-	}
-	if (key == name) return LocalWebserver::urlDecode(value); //the last key doesn't have an '&' in the end of the query
-	return "";
-}
+Common::String Client::queryParameter(Common::String name) const { return _reader.queryParameter(name); }
 
-Common::String Client::anchor() const { return _anchor; }
+Common::String Client::anchor() const { return _reader.anchor(); }
 
 bool Client::socketIsReady() { return SDLNet_SocketReady(_socket); }
 

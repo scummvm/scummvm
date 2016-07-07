@@ -23,7 +23,8 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/networking/sdl_net/reader.h"
-#include <common/debug.h>
+#include "backends/networking/sdl_net/localwebserver.h"
+#include "common/debug.h"
 
 namespace Networking {
 
@@ -46,7 +47,7 @@ Reader::Reader() {
 
 Reader::~Reader() {}
 
-bool Reader::readResponse() {
+bool Reader::readRequest() {
 	if (_state == RS_NONE) _state = RS_READING_HEADERS;
 
 	while (true) {
@@ -210,6 +211,34 @@ void Reader::parsePathQueryAndAnchor(Common::String path) {
 			} else _query += path[i];
 		} else _anchor += path[i];
 	}
+
+	parseQueryParameters();
+}
+
+void Reader::parseQueryParameters() {
+	Common::String key = "";
+	Common::String value = "";
+	bool readingKey = true;
+	for (uint32 i = 0; i < _query.size(); ++i) {
+		if (readingKey) {
+			if (_query[i] == '=') {
+				readingKey = false;
+				value = "";
+			} else key += _query[i];
+		} else {
+			if (_query[i] == '&') {				
+				if (_queryParameters.contains(key)) warning("Query parameter \"%s\" is already set!");
+				else _queryParameters[key] = LocalWebserver::urlDecode(value);
+				readingKey = true;
+				key = "";
+			} else value += _query[i];
+		}
+	}
+
+	if (!key.empty()) {
+		if (_queryParameters.contains(key)) warning("Query parameter \"%s\" is already set!");
+		else _queryParameters[key] = LocalWebserver::urlDecode(value);
+	}
 }
 
 bool Reader::readContent() {
@@ -246,7 +275,7 @@ void Reader::handleFileContent(Common::String filename) {
 
 void Reader::handleValueContent(Common::String value) {
 	debug("\nHANDLE CONTENT:\n>>%s<<", value.c_str());
-	_fields[_currentFieldName] = value;
+	_queryParameters[_currentFieldName] = value;
 }
 
 void Reader::makeWindow(uint32 size) {
@@ -321,6 +350,8 @@ Common::String Reader::method() const { return _method; }
 Common::String Reader::path() const { return _path; }
 
 Common::String Reader::query() const { return _query; }
+
+Common::String Reader::queryParameter(Common::String name) const { return _queryParameters[name]; }
 
 Common::String Reader::anchor() const { return _anchor; }
 

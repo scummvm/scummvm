@@ -49,7 +49,7 @@ class Reader {
 
 	///Common::String _headers;
 	Common::String _method, _path, _query, _anchor;
-	Common::HashMap<Common::String, Common::String> _fields;
+	Common::HashMap<Common::String, Common::String> _queryParameters;
 	Common::HashMap<Common::String, Common::String> _attachedFiles;
 	uint32 _contentLength;
 	Common::String _boundary;
@@ -65,6 +65,7 @@ class Reader {
 
 	void parseFirstLine(const Common::String &headers);
 	void parsePathQueryAndAnchor(Common::String path);
+	void parseQueryParameters();
 
 	void makeWindow(uint32 size);
 	void freeWindow();
@@ -78,13 +79,14 @@ public:
 	Reader();
 	~Reader();
 
-	bool readResponse(); //true when ended reading
+	bool readRequest(); //true when ended reading
 	void setContent(byte *buffer, uint32 size);
 	bool badRequest();
 
 	Common::String method() const;
 	Common::String path() const;
 	Common::String query() const;
+	Common::String queryParameter(Common::String name) const;
 	Common::String anchor() const;
 };
 

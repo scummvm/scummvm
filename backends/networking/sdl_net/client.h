@@ -53,8 +53,6 @@ class Client {
 	SDLNet_SocketSet _set;
 	TCPsocket _socket;
 	Reader _reader;
-	Common::String _headers;
-	Common::String _method, _path, _query, _anchor;
 	ClientHandler *_handler;
 
 public:
@@ -69,7 +67,7 @@ public:
 	void close();
 
 	ClientState state() const;
-	Common::String headers() const;
+	//Common::String headers() const;
 	Common::String method() const;
 	Common::String path() const;
 	Common::String query() const;
