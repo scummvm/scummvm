@@ -229,8 +229,8 @@ void ChampionMan::f299_applyModifiersToStatistics(Champion* champ, int16 slotInd
 	if (((thingType == k5_WeaponThingType) || (thingType == k6_ArmourThingType))
 		&& (slotIndex >= k0_ChampionSlotReadyHand)
 		&& (slotIndex <= k12_ChampionSlotQuiverLine_1_1)) {
-		Weapon *weapon = (Weapon*)_vm->_dungeonMan->f156_getThingData(thing);
-		Armour *armour = (Armour*)_vm->_dungeonMan->f156_getThingData(thing);
+		Weapon *weapon = (Weapon *)_vm->_dungeonMan->f156_getThingData(thing);
+		Armour *armour = (Armour *)_vm->_dungeonMan->f156_getThingData(thing);
 		if (((thingType == k5_WeaponThingType) && weapon->getCursed())
 			|| ((thingType == k6_ArmourThingType) && armour->getCursed())) {
 			statIndex = k0_ChampionStatLuck;
@@ -477,13 +477,13 @@ void ChampionMan::f301_addObjectInSlot(ChampionIndex champIndex, Thing thing, Ch
 				menuMan.f388_clearActingChampion();
 
 			if ((iconIndex >= k30_IconIndiceScrollOpen) && (iconIndex <= k31_IconIndiceScrollClosed)) {
-				((Scroll*)rawObjPtr)->setClosed(false);
+				((Scroll *)rawObjPtr)->setClosed(false);
 				f296_drawChangedObjectIcons();
 			}
 		}
 
 		if (iconIndex = k4_IconIndiceWeaponTorchUnlit) {
-			((Weapon*)rawObjPtr)->setLit(true);
+			((Weapon *)rawObjPtr)->setLit(true);
 			_vm->_inventoryMan->f337_setDungeonViewPalette();
 			f296_drawChangedObjectIcons();
 		} else if (isInventoryChampion && (slotIndex == k1_ChampionSlotActionHand) &&
@@ -494,12 +494,12 @@ void ChampionMan::f301_addObjectInSlot(ChampionIndex champIndex, Thing thing, Ch
 	} else if (slotIndex == k10_ChampionSlotNeck) {
 
 		if ((iconIndex >= k12_IconIndiceJunkIllumuletUnequipped) && (iconIndex <= k13_IconIndiceJunkIllumuletEquipped)) {
-			((Junk*)rawObjPtr)->setChargeCount(1);
+			((Junk *)rawObjPtr)->setChargeCount(1);
 			_g407_party._magicalLightAmount += g39_LightPowerToLightAmount[2];
 			_vm->_inventoryMan->f337_setDungeonViewPalette();
 			iconIndex = (IconIndice)(iconIndex + 1);
 		} else if ((iconIndex >= k10_IconIndiceJunkJewelSymalUnequipped) && (iconIndex <= k11_IconIndiceJunkJewelSymalEquipped)) {
-			((Junk*)rawObjPtr)->setChargeCount(1);
+			((Junk *)rawObjPtr)->setChargeCount(1);
 			iconIndex = (IconIndice)(iconIndex + 1);
 		}
 
@@ -625,15 +625,15 @@ Thing ChampionMan::f300_getObjectRemovedFromSlot(uint16 champIndex, uint16 slotI
 	L0898_B_IsInventoryChampion = (_vm->M0_indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal);
 	L0895_i_IconIndex = _vm->_objectMan->f33_getIconIndex(L0894_T_Thing);
 	f299_applyModifiersToStatistics(L0896_ps_Champion, slotIndex, L0895_i_IconIndex, -1, L0894_T_Thing); /* Remove objet modifiers */
-	L0897_ps_Weapon = (Weapon*)_vm->_dungeonMan->f156_getThingData(L0894_T_Thing);
+	L0897_ps_Weapon = (Weapon *)_vm->_dungeonMan->f156_getThingData(L0894_T_Thing);
 	if (slotIndex == k10_ChampionSlotNeck) {
 		if ((L0895_i_IconIndex >= k12_IconIndiceJunkIllumuletUnequipped) && (L0895_i_IconIndex <= k13_IconIndiceJunkIllumuletEquipped)) {
-			((Junk*)L0897_ps_Weapon)->setChargeCount(0);
+			((Junk *)L0897_ps_Weapon)->setChargeCount(0);
 			_g407_party._magicalLightAmount -= g39_LightPowerToLightAmount[2];
 			_vm->_inventoryMan->f337_setDungeonViewPalette();
 		} else {
 			if ((L0895_i_IconIndex >= k10_IconIndiceJunkJewelSymalUnequipped) && (L0895_i_IconIndex <= k11_IconIndiceJunkJewelSymalEquipped)) {
-				((Junk*)L0897_ps_Weapon)->setChargeCount(0);
+				((Junk *)L0897_ps_Weapon)->setChargeCount(0);
 			}
 		}
 	}
@@ -648,7 +648,7 @@ Thing ChampionMan::f300_getObjectRemovedFromSlot(uint16 champIndex, uint16 slotI
 				_vm->_menuMan->f388_clearActingChampion();
 			}
 			if ((L0895_i_IconIndex >= k30_IconIndiceScrollOpen) && (L0895_i_IconIndex <= k31_IconIndiceScrollClosed)) {
-				((Scroll*)L0897_ps_Weapon)->setClosed(true);
+				((Scroll *)L0897_ps_Weapon)->setClosed(true);
 				f296_drawChangedObjectIcons();
 			}
 		}
@@ -755,7 +755,7 @@ T0321024:
 			goto T0321004;
 		if (attack > (AL0976_i_AdjustedAttack = f307_getStatisticAdjustedAttack(L0979_ps_Champion, k4_ChampionStatVitality, _vm->_rnd->getRandomNumber(127) + 10))) { /* BUG0_45 This bug is not perceptible because of BUG0_41 that ignores Vitality while determining the probability of being wounded. However if it was fixed, the behavior would be the opposite of what it should: the higher the vitality of a champion, the lower the result of F0307_CHAMPION_GetStatisticAdjustedAttack and the more likely the champion could get wounded (because of more iterations in the loop below) */
 			do {
-				setFlag(*(uint16*)&_g410_championPendingWounds[champIndex], (1 << _vm->_rnd->getRandomNumber(7)) & allowedWounds);
+				setFlag(*(uint16 *)&_g410_championPendingWounds[champIndex], (1 << _vm->_rnd->getRandomNumber(7)) & allowedWounds);
 			} while ((attack > (AL0976_i_AdjustedAttack <<= 1)) && AL0976_i_AdjustedAttack);
 		}
 		if (_g300_partyIsSleeping) {
@@ -785,8 +785,8 @@ int16 ChampionMan::f313_getWoundDefense(int16 champIndex, uint16 woundIndex) {
 	}
 	for (L0943_ui_ArmourShieldDefense = 0, AL0942_i_SlotIndex = k0_ChampionSlotReadyHand; AL0942_i_SlotIndex <= k1_ChampionSlotActionHand; AL0942_i_SlotIndex++) {
 		if ((L0945_T_Thing = L0946_ps_Champion->_slots[AL0942_i_SlotIndex]).getType() == k6_ArmourThingType) {
-			L0947_ps_ArmourInfo = (ArmourInfo*)_vm->_dungeonMan->f156_getThingData(L0945_T_Thing);
-			L0947_ps_ArmourInfo = &g239_ArmourInfo[((Armour*)L0947_ps_ArmourInfo)->getType()];
+			L0947_ps_ArmourInfo = (ArmourInfo *)_vm->_dungeonMan->f156_getThingData(L0945_T_Thing);
+			L0947_ps_ArmourInfo = &g239_ArmourInfo[((Armour *)L0947_ps_ArmourInfo)->getType()];
 			if (getFlag(L0947_ps_ArmourInfo->_attributes, k0x0080_ArmourAttributeIsAShield)) {
 				L0943_ui_ArmourShieldDefense += ((f312_getStrength(champIndex, AL0942_i_SlotIndex) + _vm->_dungeonMan->f143_getArmourDefense(L0947_ps_ArmourInfo, L0944_B_UseSharpDefense)) * g50_woundDefenseFactor[woundIndex]) >> ((AL0942_i_SlotIndex == woundIndex) ? 4 : 5);
 			}
@@ -798,8 +798,8 @@ int16 ChampionMan::f313_getWoundDefense(int16 champIndex, uint16 woundIndex) {
 	}
 	AL0942_i_WoundDefense += L0946_ps_Champion->_actionDefense + L0946_ps_Champion->_shieldDefense + _g407_party._shieldDefense + L0943_ui_ArmourShieldDefense;
 	if ((woundIndex > k1_ChampionSlotActionHand) && ((L0945_T_Thing = L0946_ps_Champion->_slots[woundIndex]).getType() == k6_ArmourThingType)) {
-		L0947_ps_ArmourInfo = (ArmourInfo*)_vm->_dungeonMan->f156_getThingData(L0945_T_Thing);
-		AL0942_i_WoundDefense += _vm->_dungeonMan->f143_getArmourDefense(&g239_ArmourInfo[((Armour*)L0947_ps_ArmourInfo)->getType()], L0944_B_UseSharpDefense);
+		L0947_ps_ArmourInfo = (ArmourInfo *)_vm->_dungeonMan->f156_getThingData(L0945_T_Thing);
+		AL0942_i_WoundDefense += _vm->_dungeonMan->f143_getArmourDefense(&g239_ArmourInfo[((Armour *)L0947_ps_ArmourInfo)->getType()], L0944_B_UseSharpDefense);
 	}
 	if (getFlag(L0946_ps_Champion->_wounds, 1 << woundIndex)) {
 		AL0942_i_WoundDefense -= 8 + _vm->getRandomNumber(4);
