@@ -270,6 +270,8 @@ private:
 	void toggleExits();
 	void zoomObject(ObjID objID);
 
+	bool isObjEnqueued(ObjID obj);
+
 	// Data loading
 	bool loadGlobalSettings();
 	bool loadTextHuffman();

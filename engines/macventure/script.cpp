@@ -51,14 +51,14 @@ bool ScriptEngine::runControl(ControlAction action, ObjID source, ObjID destinat
 	frame.haltedInFirst = false;
 	frame.haltedInFamily = false;
 	_frames.push_back(frame);
-	debug(3, "SCRIPT: Stored frame %d, action: %d src: %d dest: %d point: (%d, %d)",
+	debug(2, "SCRIPT: Stored frame %d, action: %d src: %d dest: %d point: (%d, %d)",
 		_frames.size() - 1, frame.action, frame.src, frame.dest, frame.x, frame.y);
 
 	return resume(true);
 }
 
 bool ScriptEngine::resume(bool execAll) {	
-	debug(3, "SCRIPT: Resume");
+	debug(2, "SCRIPT: Resume");
 	while (_frames.size()) {
 		bool fail = execFrame(execAll);
 		if (fail) return true;
@@ -146,7 +146,7 @@ bool ScriptEngine::execFrame(bool execAll) {
 
 bool ScriptEngine::loadScript(EngineFrame * frame, uint32 scriptID) {
 	if (_scripts->getItemByteSize(scriptID) > 0) {
-		debug(3, "SCRIPT: Loading function %d", scriptID);
+		debug(2, "SCRIPT: Loading function %d", scriptID);
 		// Insert the new script at the front
 		frame->scripts.push_front(ScriptAsset(scriptID, _scripts));
 		return runFunc(frame);
@@ -165,7 +165,7 @@ bool ScriptEngine::resumeFunc(EngineFrame * frame) {
 
 bool ScriptEngine::runFunc(EngineFrame *frame) {
 	ScriptAsset &script = frame->scripts.front();
-	debug(3, "SCRIPT: Executing function %d", script.getId());
+	debug(2, "SCRIPT: Executing function %d", script.getId());
 	EngineState *state = &frame->state;
 	byte op;	
 	while (script.hasNext()) {
@@ -927,7 +927,7 @@ bool ScriptEngine::opbcCALL(EngineState * state, EngineFrame * frame, ScriptAsse
 		return true;
 	frame->scripts.pop_front();
 	script = frame->scripts.front();
-	debug(3, "SCRIPT: Return from fuction %d", id);
+	debug(2, "SCRIPT: Return from fuction %d", id);
 }
 
 void ScriptEngine::opbdFOOB(EngineState * state, EngineFrame * frame) {
@@ -1203,7 +1203,7 @@ void ScriptAsset::loadInstructions() {
 	for (uint i = 0; i < amount; i++) {
 		_instructions.push_back(res->readByte());
 	}
-	debug(3, "SCRIPT: Load %d instructions for script %d", amount, _id);
+	debug(2, "SCRIPT: Load %d instructions for script %d", amount, _id);
 }
 
 } // End of namespace MacVenture

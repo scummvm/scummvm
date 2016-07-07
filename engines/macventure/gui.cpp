@@ -56,7 +56,7 @@ enum {
 };
 
 enum {
-	kDragThreshold = 5
+	kDragThreshold = 1
 };
 
 static const Graphics::MenuData menuSubItems[] = {
@@ -320,21 +320,17 @@ void Gui::initWindows() {
 	_exitsWindow->setCallback(exitsWindowCallback, this);
 	loadBorder(_exitsWindow, "border_no_scroll_inac.bmp", false);
 	loadBorder(_exitsWindow, "border_no_scroll_act.bmp", true);
-
-
 }
 
 void Gui::assignObjReferences() {
-
 	findWindowData(kSelfWindow).objRef = 0;
-
 }
 
 WindowReference Gui::createInventoryWindow(ObjID objRef) {
 	Graphics::MacWindow *newWindow = _wm.addWindow(true, true, true);
 	WindowData newData;
 	GlobalSettings settings = _engine->getGlobalSettings();
-	newData.refcon = (WindowReference)ABS(_inventoryWindows.size()); // This is a HACK
+	newData.refcon = (WindowReference)ABS(_inventoryWindows.size() + kInventoryStart); // This is a HACK
 
 	if (_windowData->back().refcon < 0x80) { // There is already another inventory window
 		newData.bounds = _windowData->back().bounds; // Inventory windows are always last
@@ -606,23 +602,21 @@ void Gui::drawSelfWindow() {
 }
 
 void Gui::drawInventories() {
-	Common::List<WindowData>::const_iterator it = _windowData->begin();
-	while (it != _windowData->end() && (*it).refcon >= 0x80) {
-		it++;
-	}
+
+
 	Graphics::ManagedSurface *srf;
-	while (it != _windowData->end()) {
-		srf = _inventoryWindows[(*it).refcon]->getSurface();
-		BorderBounds border = borderBounds((*it).type);
+	for (uint i = 0; i < _inventoryWindows.size(); i++) {
+		const WindowData &data = getWindowData((WindowReference)(kInventoryStart + i));
+		srf = findWindow(data.refcon)->getSurface(); // HACK
+		BorderBounds border = borderBounds(data.type);
 		srf->fillRect(Common::Rect(
 			border.leftOffset,
 			border.topOffset,
 			srf->w + border.rightOffset,
 			srf->h + border.bottomOffset), kColorWhite);
-		drawObjectsInWindow((*it).refcon, _inventoryWindows[(*it).refcon]->getSurface());
-		it++;
+		drawObjectsInWindow(data.refcon, srf);
 
-		findWindow((*it).refcon)->setDirty(true);
+		findWindow(data.refcon)->setDirty(true);
 	}
 
 }
@@ -864,8 +858,8 @@ WindowData & Gui::findWindowData(WindowReference reference) {
 }
 
 Graphics::MacWindow * Gui::findWindow(WindowReference reference) {
-	if (reference < 0x80) { // It's an inventory window
-		return _inventoryWindows[reference];
+	if (reference < 0x80 && reference >= kInventoryStart) { // It's an inventory window
+		return _inventoryWindows[reference - kInventoryStart];
 	}
 	switch (reference) {
 	case MacVenture::kNoWindow:
@@ -921,6 +915,8 @@ void Gui::selectDraggable(ObjID child, WindowReference origin, Common::Point sta
 	if (_engine->isObjClickable(child) && _draggedObj.id == 0) {
 		_draggedObj.hasMoved = false;
 		_draggedObj.id = child;
+		_draggedObj.startPos = startPos;
+		_draggedObj.startWin = origin;
 		_draggedObj.mouseOffset = (_engine->getObjPosition(child) + getWindowSurfacePos(origin)) - startPos;
 		_draggedObj.pos = startPos + _draggedObj.mouseOffset;
 	}
@@ -928,20 +924,41 @@ void Gui::selectDraggable(ObjID child, WindowReference origin, Common::Point sta
 
 void Gui::handleDragRelease(Common::Point pos, bool shiftPressed, bool isDoubleClick) {
 	WindowReference destinationWindow = findWindowAtPoint(pos);
-	if (_draggedObj.id != 0 && _draggedObj.hasMoved) {
-		ObjID destObject = getWindowData(destinationWindow).objRef;
-		debug("drop the object at obj %d", destObject);
-		_engine->handleObjectDrop(_draggedObj.id, pos, destObject);
-	}
-	_engine->handleObjectSelect(_draggedObj.id, destinationWindow, shiftPressed, isDoubleClick);
+	if (_draggedObj.id != 0) {
+		if (_draggedObj.hasMoved) {
+			ObjID destObject = getWindowData(destinationWindow).objRef;
+			pos -= _draggedObj.startPos;
+			pos = localize(pos, _draggedObj.startWin, destinationWindow);
+			debug("drop the object at obj %d, pos (%d, %d)", destObject, pos.x, pos.y);
 
-	_draggedObj.id = 0;
+			_engine->handleObjectDrop(_draggedObj.id, pos, destObject);
+		}
+		_engine->handleObjectSelect(_draggedObj.id, destinationWindow, shiftPressed, isDoubleClick);
+		_draggedObj.id = 0;
+		_draggedObj.hasMoved = false;
+	}
 }
 
 Common::Rect Gui::calculateClickRect(Common::Point clickPos, Common::Rect windowBounds) {
 	int left = clickPos.x - windowBounds.left;
 	int top = clickPos.y - windowBounds.top;
 	return Common::Rect(left - kCursorWidth, top - kCursorHeight, left + kCursorWidth, top + kCursorHeight);
+}
+
+Common::Point Gui::localize(Common::Point point, WindowReference origin, WindowReference target) {
+	Graphics::MacWindow *oriWin = findWindow(origin);
+	Graphics::MacWindow *destWin = findWindow(target);
+	if (origin != target) {
+		// ori.local to global
+		point.x += oriWin->getDimensions().left;
+		point.y += oriWin->getDimensions().top;
+		if (destWin) {
+			// dest.globalToLocal
+			point.x -= destWin->getDimensions().left;
+			point.y -= destWin->getDimensions().top;
+		}
+	}
+	return point;
 }
 
 
@@ -1177,7 +1194,7 @@ bool MacVenture::Gui::processExitsEvents(WindowClick click, Common::Event & even
 			event.mouse.x - _exitsWindow->getDimensions().left,
 			event.mouse.y - _exitsWindow->getDimensions().top);
 
-		CommandButton data;
+		CommandButton button;
 		if (!_exitsData)
 			return false;
 
@@ -1185,14 +1202,15 @@ bool MacVenture::Gui::processExitsEvents(WindowClick click, Common::Event & even
 		for (; it != _exitsData->end(); ++it) {
 			if (it->isInsideBounds(position)) {
 				it->select();
-				data = *it;
+				button = *it;
+				_engine->handleObjectSelect(button.getData().refcon, kExitsWindow, false, false);
+				return true;
 			}
 			else {
 				it->unselect();
 			}
 		}
 
-		_engine->handleObjectSelect(data.getData().refcon, kExitsWindow, false, false);
 	}
 	return getWindowData(kExitsWindow).visible;
 }
@@ -1238,7 +1256,7 @@ void Gui::processCursorTick() {
 
 void Gui::handleSingleClick(Common::Point pos) {
 	debug("Single Click");
-	handleDragRelease(_draggedObj.pos, false, false);
+	handleDragRelease(pos, false, false);
 
 	// HACK For test, please delete me
 	//WindowReference destinationWindow = findWindowAtPoint(pos);
@@ -1248,7 +1266,7 @@ void Gui::handleSingleClick(Common::Point pos) {
 
 void Gui::handleDoubleClick(Common::Point pos) {
 	debug("Double Click");
-	handleDragRelease(_draggedObj.pos, false, true);
+	handleDragRelease(pos, false, true);
 
 	// HACK For test, please delete me
 	//WindowReference destinationWindow = findWindowAtPoint(pos);

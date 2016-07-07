@@ -231,6 +231,10 @@ void MacVentureEngine::enqueueObject(ObjectQueueID type, ObjID objID, ObjID targ
 	QueuedObject obj;
 	obj.id = type;
 
+	if (type == kUpdateObject && isObjEnqueued(objID)) {
+		return;
+	}
+
 	if (type == kUpdateWindow) { obj.target = target; }
 
 	if (type != kHightlightExits) {
@@ -245,6 +249,14 @@ void MacVentureEngine::enqueueObject(ObjectQueueID type, ObjID objID, ObjID targ
 		obj.invisible = _world->getObjAttr(objID, kAttrUnclickable);
 	}
 	_objQueue.push_back(obj);
+}
+
+bool MacVentureEngine::isObjEnqueued(ObjID objID) {
+	Common::Array<QueuedObject>::const_iterator it;
+	for (it = _objQueue.begin(); it != _objQueue.end(); it++) {
+		if ((*it).object == objID) return true;
+	}
+	return false;
 }
 
 void MacVentureEngine::enqueueText(TextQueueID type, ObjID target, ObjID source, ObjID text) {
@@ -337,18 +349,17 @@ void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, bool
 void MacVentureEngine::handleObjectDrop(ObjID objID, Common::Point delta, ObjID newParent) {
 	_destObject = newParent;
 	updateDelta(delta);
-	selectControl(kOperate);
-	activateCommand(kOperate);
+	selectControl(kMoveObject);
+	activateCommand(kMoveObject);
 	refreshReady();
 	preparedToRun();
 }
 
 void MacVentureEngine::updateDelta(Common::Point newPos) {
-	Common::Point newDelta = newPos - _deltaPoint;
 	debug("Update delta: Old(%d, %d), New(%d, %d)",
 		_deltaPoint.x, _deltaPoint.y,
-		newDelta.x, newDelta.y);
-	_deltaPoint = newDelta;
+		newPos.x, newPos.y);
+	_deltaPoint = newPos;
 }
 
 void MacVentureEngine::focusObjWin(ObjID objID) {
@@ -620,7 +631,12 @@ void MacVentureEngine::focusObjectWindow(ObjID objID) {
 
 void MacVentureEngine::openObject(ObjID objID) {
 
-	debug("openObject: %d", objID);
+	debug("Open Object[%d] parent[%d] x[%d] y[%d]",
+		objID,
+		_world->getObjAttr(objID, kAttrParentObject),
+		_world->getObjAttr(objID, kAttrPosX),
+		_world->getObjAttr(objID, kAttrPosY));
+
 	if (getObjWindow(objID)) return;
 	if (objID == _world->getObjAttr(1, kAttrParentObject)) {
 		_gui->updateWindowInfo(kMainGameWindow, objID, _world->getChildren(objID, true));
@@ -712,10 +728,13 @@ void MacVentureEngine::checkObject(QueuedObject old) {
 }
 
 void MacVentureEngine::reflectSwap(ObjID fromID, ObjID toID) {
-	warning("reflectSwap: untested");
+	//warning("reflectSwap: untested");
 	WindowReference from = getObjWindow(fromID);
 	WindowReference to = getObjWindow(toID);
 	WindowReference tmp = to;
+	debug("Swap Object[%d] to Object[%d], from win[%d] to win[%d] ",
+		fromID, toID, from, to);
+
 	if (!to) {
 		tmp = from;
 	}
