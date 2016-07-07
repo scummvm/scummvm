@@ -42,6 +42,7 @@ Reader::Reader() {
 
 	_contentLength = 0;
 	_availableBytes = 0;
+	_isFileField = false;
 	_isBadRequest = false;
 }
 
@@ -143,7 +144,21 @@ void Reader::handleHeaders(Common::String headers) {
 		debug("FIELD NAME: >>%s<<", _currentFieldName.c_str());
 
 		//find out field type
-		//_fieldIsFile = true;
+		_currentFileName = "";
+		readFromThatUntilLineEnd(headers.c_str(), "filename=\"", _currentFileName);
+		for (uint32 i = 0; i < _currentFileName.size(); ++i)
+			if (_currentFileName[i] == '\"') {
+				_currentFileName.erase(i);
+				break;
+			}
+
+		if (!_currentFileName.empty()) {
+			_isFileField = true;
+			_queryParameters[_currentFieldName] = _currentFileName;
+			debug("FILE NAME: >>%s<<", _currentFileName.c_str());
+		} else {
+			_isFileField = false;
+		}
 	}
 }
 
@@ -270,7 +285,7 @@ bool Reader::readContent() {
 }
 
 void Reader::handleFileContent(Common::String filename) {
-	_attachedFiles[_currentFieldName] = filename;
+	_attachedFiles[_currentFileName] = filename;
 }
 
 void Reader::handleValueContent(Common::String value) {

@@ -54,7 +54,8 @@ class Reader {
 	uint32 _contentLength;
 	Common::String _boundary;
 	uint32 _availableBytes;
-	Common::String _currentFieldName;
+	Common::String _currentFieldName, _currentFileName;
+	bool _isFileField;
 	bool _isBadRequest;
 
 	bool readHeaders(); //true when ended reading
