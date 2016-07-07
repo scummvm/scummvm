@@ -109,19 +109,19 @@ Common::Error DirectorEngine::run() {
 	_currentScore = nullptr;
 
 	_lingo->addCode("--\n\
-	if x = 3 then exit\n\
-	else if x = 4 then put 4\n\
-	else put 10.0\n\
 	set x = 1\n\
 	if x = 5 then exit\n\
 	else put 10.0\n\
 	repeat with x = 1 to 5\n\
+		if x = 3 then put 30\n\
+		else if x = 4 then put 40\n\
+		else put 10.0\n\
 		if x = 1 then\n\
 		  put 1\n\
 		else if x = 2 then\n\
 		  put 2.1\n\
 		  put 2.2\n\
-		  else if x = 3 then put 3\n\
+		else if x = 3 then put 3\n\
 		end if\n\
 		if x = 4 then put 4\n\
 		else put 5\n\
