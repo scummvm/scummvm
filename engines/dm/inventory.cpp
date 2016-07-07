@@ -130,7 +130,7 @@ void InventoryMan::f354_drawStatusBoxPortrait(ChampionIndex championIndex) {
 	box._y2 = 28;
 	box._x1 = championIndex * k69_ChampionStatusBoxSpacing + 7;
 	box._x2 = box._x1 + 31;
-	dispMan.f132_blitToBitmap(_vm->_championMan->_gK71_champions[championIndex]._portrait, dispMan._g348_bitmapScreen, box, 0, 0, 16, k160_byteWidthScreen, k255_ColorNoTransparency);
+	dispMan.f132_blitToBitmap(_vm->_championMan->_gK71_champions[championIndex]._portrait, dispMan._g348_bitmapScreen, box, 0, 0, 16, k160_byteWidthScreen, kM1_ColorNoTransparency);
 }
 
 void InventoryMan::f343_drawPanelHorizontalBar(int16 x, int16 y, int16 pixelWidth, Color color) {
@@ -337,7 +337,7 @@ void InventoryMan::f332_drawIconToViewport(IconIndice iconIndex, int16 xPos, int
 	box._x2 = (box._x1 = xPos) + 15;
 	box._y2 = (box._y1 = yPos) + 15;
 	_vm->_objectMan->f36_extractIconFromBitmap(iconIndex, iconBitmap);
-	_vm->_displayMan->f132_blitToBitmap(iconBitmap, _vm->_displayMan->_g296_bitmapViewport, box, 0, 0, 8, k112_byteWidthViewport, k255_ColorNoTransparency);
+	_vm->_displayMan->f132_blitToBitmap(iconBitmap, _vm->_displayMan->_g296_bitmapViewport, box, 0, 0, 8, k112_byteWidthViewport, kM1_ColorNoTransparency);
 }
 
 void InventoryMan::f336_buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, char** attribStrings, char* destString, char* prefixString, char* suffixString) {
@@ -680,6 +680,66 @@ void InventoryMan::f338_decreaseTorchesLightPower() {
 	if (L1048_B_TorchChargeCountChanged) {
 		f337_setDungeonViewPalette();
 		_vm->_championMan->f296_drawChangedObjectIcons();
+	}
+}
+
+void InventoryMan::f351_drawChampionSkillsAndStatistics() {
+	uint16 L1090_ui_Multiple;
+#define AL1090_ui_SkillIndex     L1090_ui_Multiple
+#define AL1090_ui_StatisticIndex L1090_ui_Multiple
+	int16 L1091_i_Y;
+	int16 L1092_i_Multiple;
+#define AL1092_i_SkillLevel            L1092_i_Multiple
+#define AL1092_i_StatisticCurrentValue L1092_i_Multiple
+	uint16 L1093_ui_ChampionIndex;
+	Champion* L1094_ps_Champion;
+	int16 L1095_i_StatisticColor;
+	uint16 L1096_ui_StatisticMaximumValue;
+	char L1097_ac_String[20];
+	// TODO: localization
+	static char* G0431_apc_StatisticNames[7] = {"L", "STRENGTH", "DEXTERITY", "WISDOM", "VITALITY", "ANTI-MAGIC", "ANTI-FIRE"};
+
+
+	_vm->_inventoryMan->f334_closeChest();
+	L1094_ps_Champion = &_vm->_championMan->_gK71_champions[L1093_ui_ChampionIndex = _vm->M1_ordinalToIndex(_vm->_inventoryMan->_g432_inventoryChampionOrdinal)];
+	_vm->_displayMan->f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k20_PanelEmptyIndice), g32_BoxPanel, k72_byteWidth, k8_ColorRed, 73);
+	L1091_i_Y = 58;
+	for (AL1090_ui_SkillIndex = k0_ChampionSkillFighter; AL1090_ui_SkillIndex <= k3_ChampionSkillWizard; AL1090_ui_SkillIndex++) {
+		AL1092_i_SkillLevel = MIN((uint16)16, _vm->_championMan->f303_getSkillLevel(L1093_ui_ChampionIndex, AL1090_ui_SkillIndex | k0x8000_IgnoreTemporaryExperience));
+		if (AL1092_i_SkillLevel == 1)
+			continue;
+#ifdef COMPILE17_DM10aEN_DM10bEN_DM11EN_DM12EN_CSB20EN_CSB21EN_DMDEMO20EN_DM20EN_DM21EN_DM22EN /* CHANGE4_00_LOCALIZATION Translation to German language */
+		strcpy(L1097_ac_String, G0428_apc_SkillLevelNames[AL1092_i_SkillLevel - 2]);
+		strcat(L1097_ac_String, " ");
+		strcat(L1097_ac_String, G0417_apc_BaseSkillNames[AL1090_ui_SkillIndex]);
+#endif
+#ifdef COMPILE36_DM12GE_DM13aFR_DM13bFR_DM20GE_DM20FR_DM22GE /* CHANGE4_00_LOCALIZATION Translation to German language */
+		strcpy(L1097_ac_String, G0417_apc_BaseSkillNames[AL1090_ui_SkillIndex]);
+		strcat(L1097_ac_String, " ");
+		strcat(L1097_ac_String, G0428_apc_SkillLevelNames[AL1092_i_SkillLevel - 2]);
+#endif
+		_vm->_textMan->f52_printToViewport(108, L1091_i_Y, k13_ColorLightestGray, L1097_ac_String);
+		L1091_i_Y += 7;
+	}
+	L1091_i_Y = 86;
+	for (AL1090_ui_StatisticIndex = k1_ChampionStatStrength; AL1090_ui_StatisticIndex <= k6_ChampionStatAntifire; AL1090_ui_StatisticIndex++) {
+		_vm->_textMan->f52_printToViewport(108, L1091_i_Y, k13_ColorLightestGray, G0431_apc_StatisticNames[AL1090_ui_StatisticIndex]);
+		AL1092_i_StatisticCurrentValue = L1094_ps_Champion->_statistics[AL1090_ui_StatisticIndex][k1_ChampionStatCurrent];
+		L1096_ui_StatisticMaximumValue = L1094_ps_Champion->_statistics[AL1090_ui_StatisticIndex][k0_ChampionStatMaximum];
+		if (AL1092_i_StatisticCurrentValue < L1096_ui_StatisticMaximumValue) {
+			L1095_i_StatisticColor = k8_ColorRed;
+		} else {
+			if (AL1092_i_StatisticCurrentValue > L1096_ui_StatisticMaximumValue) {
+				L1095_i_StatisticColor = k7_ColorLightGreen;
+			} else {
+				L1095_i_StatisticColor = k13_ColorLightestGray;
+			}
+		}
+		_vm->_textMan->f52_printToViewport(174, L1091_i_Y, (Color)L1095_i_StatisticColor, _vm->_championMan->f288_getStringFromInteger(AL1092_i_StatisticCurrentValue, true, 3).c_str());
+		strcpy(L1097_ac_String, "/");
+		strcat(L1097_ac_String, _vm->_championMan->f288_getStringFromInteger(L1096_ui_StatisticMaximumValue, true, 3).c_str());
+		_vm->_textMan->f52_printToViewport(192, L1091_i_Y, k13_ColorLightestGray, L1097_ac_String);
+		L1091_i_Y += 7;
 	}
 }
 }

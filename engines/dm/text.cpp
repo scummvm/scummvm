@@ -73,7 +73,7 @@ void TextMan::f40_printTextToBitmap(byte* destBitmap, uint16 destByteWidth, uint
 		uint16 srcX = (1 + 5) * toupper(*begin); // 1 + 5 is not the letter width, arbitrary choice of the unpacking code
 
 		Box box((nextX == destX) ? (nextX + 1) : nextX, nextX + k5_LetterWidth + 1, nextY, nextY + k6_LetterHeight - 1);
-		_vm->_displayMan->f132_blitToBitmap(srcBitmap, destBitmap, box, (nextX == destX) ? (srcX + 1) : srcX, 0, 6 * 128 / 2, destByteWidth, k255_ColorNoTransparency);
+		_vm->_displayMan->f132_blitToBitmap(srcBitmap, destBitmap, box, (nextX == destX) ? (srcX + 1) : srcX, 0, 6 * 128 / 2, destByteWidth, kM1_ColorNoTransparency);
 
 		nextX += k5_LetterWidth + 1;
 	}

@@ -339,7 +339,7 @@ enum ViewWall {
 };
 
 enum Color {
-	k255_ColorNoTransparency = 255,
+	kM1_ColorNoTransparency = -1,
 	k0_ColorBlack = 0,
 	k1_ColorDarkGary = 1,
 	k2_ColorLightGray = 2,
@@ -644,7 +644,8 @@ public:
 	void f109_drawDoorOrnament(int16 doorOrnOdinal, int16 viewDoorOrnIndex); // @ F0109_DUNGEONVIEW_DrawDoorOrnament
 	void f112_drawCeilingPit(int16 nativeBitmapIndex, Frame *frame, int16 mapX, int16 mapY, bool flipHorizontal); // @ F0112_DUNGEONVIEW_DrawCeilingPit
 
-
+	void f20_blitToViewport(byte *bitmap, Box &box, int16 byteWidth, Color transparent, int16 height); // @ F0020_MAIN_BlitToViewport
+	void f20_blitToViewport(byte *bitmap, int16 *box, int16 byteWidth, Color transparent, int16 height); // @ F0020_MAIN_BlitToViewport
 	void f21_blitToScreen(byte* bitmap, int16 *box, int16 viewDoorOrnIndex, Color transparent, int16 doorOrnOrdinal); // @ F0021_MAIN_BlitToScreen
 	void f21_blitToScreen(byte* bitmap, Box *box, int16 viewDoorOrnIndex, Color transparent, int16 doorOrnOrdinal); // @ F0021_MAIN_BlitToScreen
 	
@@ -654,7 +655,7 @@ public:
 	match the original exatcly, if need arises for heights then we'll have to retrospectively add them in old function calls*/
 	/* Expects inclusive boundaries in box */
 	void f132_blitToBitmap(byte *srcBitmap, byte *destBitmap, Box &box, uint16 srcX, uint16 srcY, uint16 srcByteWidth,
-					  uint16 destByteWidth, Color transparent = k255_ColorNoTransparency, int16 srcHeight = -1, int16 destHight = -1); // @ F0132_VIDEO_Blit
+					  uint16 destByteWidth, Color transparent = kM1_ColorNoTransparency, int16 srcHeight = -1, int16 destHight = -1); // @ F0132_VIDEO_Blit
 /* Expects inclusive boundaries in box */
 	void f133_blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask, byte *tmp, Box &box, int16 lastUnitIndex,
 									   int16 firstUnitIndex, int16 destByteWidth, Color transparent,

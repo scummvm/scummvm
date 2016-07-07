@@ -359,7 +359,7 @@ void EventManager::f68_setPointerToObject(byte* bitmap) {
 	L0051_puc_Bitmap = _g615_mousePointerOriginalColorsObject;
 	memset(L0051_puc_Bitmap, 0, 32 * 18);
 	_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(bitmap, _gK190_mousePointerTempBuffer, 16, 16, 16, 16, gK27_palChangesMousepointerOjbectIconShadow);
-	_vm->_displayMan->f132_blitToBitmap(_gK190_mousePointerTempBuffer, L0051_puc_Bitmap, g619_BoxMousePointerObjectShadow, 0, 0, 8, 16, k255_ColorNoTransparency, 16, 18);
+	_vm->_displayMan->f132_blitToBitmap(_gK190_mousePointerTempBuffer, L0051_puc_Bitmap, g619_BoxMousePointerObjectShadow, 0, 0, 8, 16, kM1_ColorNoTransparency, 16, 18);
 	_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(bitmap, _gK190_mousePointerTempBuffer, 16, 16, 16, 16, g44_palChangesMousePointerIcon);
 	_vm->_displayMan->f132_blitToBitmap(_gK190_mousePointerTempBuffer, L0051_puc_Bitmap, g620_BoxMousePointerObject, 0, 0, 8, 16, k0_ColorBlack, 16, 18);
 	_gK100_preventBuildPointerScreenArea = false;
@@ -472,7 +472,7 @@ void EventManager::f78_showMouse() {
 }
 
 void EventManager::f77_hideMouse() {
-	CursorMan.showMouse(false);
+	// CursorMan.showMouse(false);
 }
 
 
