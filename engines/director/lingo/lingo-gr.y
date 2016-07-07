@@ -241,12 +241,17 @@ elseifstmt:	elseifstmt elseifstmt1
 	|	elseifstmt1
 	;
 
-elseifstmtoneliner:	elseif cond tTHEN begin stmt end {
+elseifstmtoneliner: elseifstmtoneliner elseifstmtoneliner1
+	| elseifstmtoneliner1
+	;
+
+elseifstmtoneliner1:	elseif cond tTHEN begin stmt end {
 		inst then = 0;
 		WRITE_UINT32(&then, $4);
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
 
 		g_lingo->codeLabel($1); }
+	;
 
 elseifstmt1: elseifstmtoneliner
 	| elseif cond tTHEN stmtlist end {

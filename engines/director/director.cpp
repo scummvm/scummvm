@@ -115,6 +115,7 @@ Common::Error DirectorEngine::run() {
 	repeat with x = 1 to 5\n\
 		if x = 3 then put 30\n\
 		else if x = 4 then put 40\n\
+		else if x = 5 then put 50\n\
 		else put 10.0\n\
 		if x = 1 then\n\
 		  put 1\n\

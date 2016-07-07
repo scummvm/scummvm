@@ -88,9 +88,9 @@ whitespace [\t ]
 (?i:with)			{ count(); return tWITH; }
 (?i:while)			{ count(); return tWHILE; }
 
-[!][=]			{ count(); return tNEQ; }
-[>][=]			{ count(); return tGE; }
-[<][=]			{ count(); return tLE; }
+[!][=]				{ count(); return tNEQ; }
+[>][=]				{ count(); return tGE; }
+[<][=]				{ count(); return tLE; }
 
 {identifier}	{
 		count();
