@@ -1097,7 +1097,7 @@ CelObjMem *CelObjMem::duplicate() const {
 }
 
 byte *CelObjMem::getResPointer() const {
-	return g_sci->getEngineState()->_segMan->getHunkPointer(_info.bitmap);
+	return g_sci->getEngineState()->_segMan->derefBulkPtr(_info.bitmap, 1);
 }
 
 #pragma mark -
