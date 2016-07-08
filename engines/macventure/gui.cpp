@@ -683,18 +683,14 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 					surface, pos.x, pos.y, kBlitOR);
 
 			// For test
-			/*
-			surface->frameRect(Common::Rect(
+			/*surface->frameRect(Common::Rect(
 				pos.x,
 				pos.y,
 				pos.x + _assets[child]->getWidth() + 1,
 				pos.y + _assets[child]->getHeight() + 1), kColorGreen);
 				*/
-				
 		}
-
 	}
-
 }
 
 void Gui::drawWindowTitle(WindowReference target, Graphics::ManagedSurface * surface) {
@@ -1258,19 +1254,13 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event & event) {
 	if (click == kBorderInner && event.type == Common::EVENT_LBUTTONDOWN) {
 
 		// Find the appropriate window
-		uint ref = 0;
-		uint i;
-		for (uint i = 0; i < _inventoryWindows.size(); i++) {
-			if (_inventoryWindows[i]->hasAllFocus()) { // HACK
-				ref = i;
-			}
-		}
-
+		WindowReference ref = findWindowAtPoint(event.mouse);
+		Graphics::MacWindow *win = findWindow(ref);
 		WindowData &data = findWindowData((WindowReference) ref);
 		ObjID child;
 		Common::Point pos;
 		// Click rect to local coordinates. We assume the click is inside the window ^
-		Common::Rect clickRect = calculateClickRect(event.mouse, _inventoryWindows[i]->getDimensions());
+		Common::Rect clickRect = calculateClickRect(event.mouse, win->getDimensions());
 		for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
 			child = (*it).obj;
 			checkSelect(child, event, clickRect, (WindowReference)ref);
