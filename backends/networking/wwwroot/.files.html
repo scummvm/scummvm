@@ -25,8 +25,7 @@
 				</div>
 				<div id="upload_file" class="modal">
 					<p>{upload_file_desc}</p>
-					<form action="upload" method="post" enctype="multipart/form-data">
-						<input type="hidden" name="path" value="{path}"/>
+					<form action="upload?path={path}" method="post" enctype="multipart/form-data">
 						<input type="file" name="upload_file"/>
 						<input type="submit" value="{upload_file_button}"/>
 					</form>

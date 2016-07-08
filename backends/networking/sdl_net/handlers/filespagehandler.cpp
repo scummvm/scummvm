@@ -34,6 +34,17 @@ FilesPageHandler::FilesPageHandler() {}
 
 FilesPageHandler::~FilesPageHandler() {}
 
+namespace {
+Common::String encodeDoubleQuotes(Common::String s) {
+	Common::String result = "";
+	for (uint32 i = 0; i < s.size(); ++i)
+		if (s[i] == '"') {
+			result += "\\\"";
+		} else result += s[i];
+	return result;
+}
+}
+
 void FilesPageHandler::handle(Client &client) {
 	Common::String response = "<html><head><title>ScummVM</title></head><body><table>{content}</table></body></html>"; //TODO: add controls
 	Common::String itemTemplate = "<tr><td><a href=\"{link}\">{name}</a></td><td>{size}</td></tr>\n"; //TODO: load this template too?
@@ -62,8 +73,8 @@ void FilesPageHandler::handle(Client &client) {
 	//these occur twice:
 	replace(response, "{create_directory_button}", _("Create directory"));
 	replace(response, "{create_directory_button}", _("Create directory"));
-	replace(response, "{path}", client.queryParameter("path"));
-	replace(response, "{path}", client.queryParameter("path"));
+	replace(response, "{path}", encodeDoubleQuotes(client.queryParameter("path")));
+	replace(response, "{path}", encodeDoubleQuotes(client.queryParameter("path")));
 	replace(response, "{upload_files_button}", _("Upload files")); //tab
 	replace(response, "{upload_file_button}", _("Upload files")); //button in the tab
 	replace(response, "{create_directory_desc}", _("Type new directory name:"));
