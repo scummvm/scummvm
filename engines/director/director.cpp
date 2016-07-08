@@ -127,7 +127,8 @@ Common::Error DirectorEngine::run() {
 		if x = 4 then put 4\n\
 		else put 5\n\
 	end repeat\n\
-	set z = \"foo\"\n\
+	set z = \"foo bar baz\"\n\
+	put z\n\
 ", kMovieScript, 2);
 
 _lingo->executeScript(kMovieScript, 2);

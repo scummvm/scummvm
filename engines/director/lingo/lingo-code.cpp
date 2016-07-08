@@ -92,6 +92,9 @@ void Lingo::c_printtop(void) {
 				warning("Nameless var. val: %d", d.u.sym->u.val);
 		}
 		break;
+	case STRING:
+		warning("%s", d.u.s->c_str());
+		break;
 	default:
 		warning("--unknown--");
 	}
@@ -169,7 +172,7 @@ void Lingo::c_assign() {
 }
 
 bool Lingo::verify(Symbol *s) {
-	if (s->type != INT && s->type != VOID && s->type != FLOAT) {
+	if (s->type != INT && s->type != VOID && s->type != FLOAT && s->type != STRING) {
 		warning("attempt to evaluate non-variable '%s'", s->name);
 
 		return false;
