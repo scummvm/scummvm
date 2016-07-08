@@ -40,6 +40,8 @@ Common::String encodeDoubleQuotes(Common::String s) {
 	for (uint32 i = 0; i < s.size(); ++i)
 		if (s[i] == '"') {
 			result += "\\\"";
+		} else if (s[i] == '\\') {
+			result += "\\\\";
 		} else result += s[i];
 	return result;
 }
