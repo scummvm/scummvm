@@ -827,6 +827,7 @@ void Gui::printText(const Common::String & text) {
 
 
 WindowReference Gui::findWindowAtPoint(Common::Point point) {
+	// HACK, MIGHT NEED TO LOOK INTO THE Graphcis::MacWindow dimensions to account for window movement
 	Common::List<WindowData>::iterator it;
 	for (it = _windowData->begin(); it != _windowData->end(); it++) {
 		if (it->bounds.contains(point) && it->refcon != kDiplomaWindow) { //HACK, diploma should be cosnidered
@@ -839,7 +840,8 @@ WindowReference Gui::findWindowAtPoint(Common::Point point) {
 Common::Point Gui::getWindowSurfacePos(WindowReference reference) {
 	const WindowData &data = getWindowData(reference);
 	BorderBounds border = borderBounds(data.type);
-	return Common::Point(data.bounds.left + border.leftOffset, data.bounds.top + border.topOffset);
+	Graphics::MacWindow *win = findWindow(reference);
+	return Common::Point(win->getDimensions().left + border.leftOffset, win->getDimensions().top + border.topOffset);
 }
 
 WindowData & Gui::findWindowData(WindowReference reference) {
@@ -1251,7 +1253,7 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event & event) {
 	if (_engine->needsClickToContinue())
 		return true;
 
-	if (click == kBorderInner && event.type == Common::EVENT_LBUTTONDOWN) {
+	if (event.type == Common::EVENT_LBUTTONDOWN) {
 
 		// Find the appropriate window
 		WindowReference ref = findWindowAtPoint(event.mouse);
