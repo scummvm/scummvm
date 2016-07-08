@@ -98,6 +98,7 @@ struct Datum {	/* interpreter stack type */
 	union {
 		int	i;
 		float f;
+		Common::String *s;
 		Symbol	*sym;
 	} u;
 
@@ -178,6 +179,7 @@ public:
 	static void c_negate();
 	static void c_constpush();
 	static void c_fconstpush();
+	static void c_stringpush();
 	static void c_varpush();
 	static void c_assign();
 	bool verify(Symbol *s);

@@ -304,6 +304,9 @@ expr: INT		{
 	| FLOAT		{
 		$$ = g_lingo->code1(g_lingo->c_fconstpush);
 		g_lingo->codeFloat($1); }
+	| STRING		{
+		$$ = g_lingo->code1(g_lingo->c_stringpush);
+		g_lingo->codeString($1->c_str()); }
 	| BLTIN '(' arglist ')' 	{
 		if ($3 != g_lingo->_builtins[*$1]->nargs)
 			error("Built-in function %s expects %d arguments but got %d", $1->c_str(), g_lingo->_builtins[*$1]->nargs, $3);
