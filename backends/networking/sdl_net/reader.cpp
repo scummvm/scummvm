@@ -27,6 +27,7 @@
 #include "common/debug.h"
 #include "common/stream.h"
 #include "common/memstream.h"
+#include "backends/fs/fs-factory.h"
 
 namespace Networking {
 
@@ -40,7 +41,6 @@ Reader::Reader() {
 	_windowSize = 0;
 
 	_headers = "";
-	_buffer = "";
 	_stream = nullptr;
 
 	_contentLength = 0;
@@ -263,29 +263,78 @@ void Reader::parseQueryParameters() {
 	}
 }
 
+namespace {
+char generateRandomChar() {
+	int r = rand() % 36;
+	char c = '0' + r;
+	if (r > 9) c = 'a' + r - 10;
+	return c;
+}
+
+Common::String generateTempFileName(Common::String originalFilename) {
+	//generates "./<originalFilename>-<uniqueSequence>.scummtmp"
+	//normalize <originalFilename>
+	Common::String prefix = "./";
+	for (uint32 i = 0; i < originalFilename.size(); ++i) {
+		char c = originalFilename[i];
+		if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9') || c == '.' || c == '_' || c == '-') {
+			prefix += c;
+		} else {
+			prefix += '_';
+		}
+	}
+	prefix += '-';
+
+	//generate initial sequence
+	Common::String uniqueSequence;
+	for (uint32 i = 0; i < 5; ++i)
+		uniqueSequence += generateRandomChar();
+
+	//update sequence while generate path exists
+	AbstractFSNode *node;
+	Common::String path;
+	do {
+		uniqueSequence += generateRandomChar();
+		path = prefix + uniqueSequence + ".scummtmp";
+		node = g_system->getFilesystemFactory()->makeFileNodePath(path);
+	} while (node->exists());
+
+	return path;
+}
+}
+
 bool Reader::readContent() {
 	Common::String boundary = "--" + _boundary;
 	if (_window == nullptr) {
 		makeWindow(boundary.size());
-		_buffer = "";
 
 		if (_stream) delete _stream;
-		_stream = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
+		if (_isFileField) {
+			//create temporary file
+			_currentTempFileName = generateTempFileName(_currentFileName);
+			AbstractFSNode *node = g_system->getFilesystemFactory()->makeFileNodePath(_currentTempFileName);
+			_stream = node->createWriteStream();
+			if (_stream == nullptr)
+				error("Unable to open temp file to write into!");
+		} else {
+			_stream = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
+		}
 	}
 
-	/*
-	if (_fieldIsFile) {
-		//create temporary file
-		tempFileName = generateTempFileName();
-		stream = openFileStream(tempFileName);
-		//read till "--" + _boundary
-		while (readOneByteInStream(stream));
-		handleFileContent(tempFileName);
-	} else {
-	*/
-		while (readOneByteInStream(_stream, boundary)) {
-			if (!bytesLeft()) return false;
+	while (readOneByteInStream(_stream, boundary)) {
+		if (!bytesLeft()) return false;
+	}
+
+	if (_isFileField) {
+		if (_stream != nullptr) {
+			_stream->flush();
+			delete _stream;
+			_stream = nullptr;
+		} else {
+			warning("No stream was created!");
 		}
+		handleFileContent(_currentTempFileName);
+	} else {
 		Common::MemoryReadWriteStream *dynamicStream = dynamic_cast<Common::MemoryReadWriteStream *>(_stream);
 		if (dynamicStream != nullptr)
 			if (dynamicStream->size() == 0)
@@ -297,7 +346,7 @@ bool Reader::readContent() {
 				warning("Stream somehow changed its type from MemoryReadWriteStream!");
 			else
 				warning("No stream was created!");
-	//}
+	}
 
 	freeWindow();
 	_state = RS_READING_HEADERS;
@@ -305,6 +354,7 @@ bool Reader::readContent() {
 }
 
 void Reader::handleFileContent(Common::String filename) {
+	debug("\nHANDLE FILE CONTENT:\nFILE >>%s<< SAVED INTO >>%s<<", _currentFileName.c_str(), filename.c_str());
 	_attachedFiles[_currentFileName] = filename;
 }
 

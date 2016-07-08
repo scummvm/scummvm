@@ -49,7 +49,6 @@ class Reader {
 	uint32 _windowUsed, _windowSize;
 
 	Common::String _headers;
-	Common::String _buffer;
 	Common::WriteStream *_stream;
 
 	///Common::String _headers;
@@ -59,7 +58,7 @@ class Reader {
 	uint32 _contentLength;
 	Common::String _boundary;
 	uint32 _availableBytes;
-	Common::String _currentFieldName, _currentFileName;
+	Common::String _currentFieldName, _currentFileName, _currentTempFileName;
 	bool _isFileField;
 	bool _isBadRequest;
 
