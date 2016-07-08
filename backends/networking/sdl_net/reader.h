@@ -27,6 +27,7 @@
 #include "common/str.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/random.h"
 
 namespace Common {
 class WriteStream;
@@ -41,6 +42,8 @@ enum ReaderState {
 };
 
 class Reader {
+	Common::RandomSource _randomSource; //for temp file names
+
 	ReaderState _state;
 	byte *_content;
 	uint32 _bytesLeft;
@@ -61,6 +64,8 @@ class Reader {
 	Common::String _currentFieldName, _currentFileName, _currentTempFileName;
 	bool _isFileField;
 	bool _isBadRequest;
+
+	void cleanup();
 
 	bool readHeaders(); //true when ended reading
 	bool readContent(); //true when ended reading
@@ -83,6 +88,8 @@ class Reader {
 public:
 	Reader();
 	~Reader();
+
+	Reader &operator=(Reader &r);
 
 	bool readRequest(); //true when ended reading
 	void setContent(byte *buffer, uint32 size);

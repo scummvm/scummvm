@@ -29,9 +29,18 @@
 #include "common/memstream.h"
 #include "backends/fs/fs-factory.h"
 
+// This define lets us use the system function remove() on Symbian, which
+// is disabled by default due to a macro conflict.
+// See backends/platform/symbian/src/portdefs.h .
+#define SYMBIAN_USE_SYSTEM_REMOVE
+
+#ifndef _WIN32_WCE
+#include <errno.h>	// for removeFile()
+#endif
+
 namespace Networking {
 
-Reader::Reader() {
+Reader::Reader(): _randomSource("Networking::Reader") {
 	_state = RS_NONE;
 	_content = nullptr;
 	_bytesLeft = 0;
@@ -49,10 +58,79 @@ Reader::Reader() {
 	_isBadRequest = false;
 }
 
+namespace {
+bool removeFile(const char *filename) {
+	// FIXME: remove does not exist on all systems. If your port fails to
+	// compile because of this, please let us know (scummvm-devel).
+	// There is a nicely portable workaround, too: Make this method overloadable.
+	if (remove(filename) != 0) {
+#ifndef _WIN32_WCE
+		if (errno == EACCES)
+			error("Reader: removeFile(): Search or write permission denied: %s", filename);
+
+		if (errno == ENOENT)
+			error("Reader: removeFile(): '%s' does not exist or path is invalid", filename);
+#endif
+		return false;
+	} else {
+		return true;
+	}
+}
+}
+
 Reader::~Reader() {
-	//TODO: free everything
+	cleanup();
+}
+
+Reader &Reader::operator=(Reader &r) {
+	if (this == &r) return *this;
+	cleanup();
+
+	_state = r._state;
+	_content = r._content;
+	_bytesLeft = r._bytesLeft;
+	r._state = RS_NONE;
+
+	_window = r._window;
+	_windowUsed = r._windowUsed;
+	_windowSize = r._windowSize;
+	r._window = nullptr;
+
+	_headers = r._headers;
+	_stream = r._stream;
+	r._stream = nullptr;
+
+	_headers = r._headers;
+	_method = r._method;
+	_path = r._path;
+	_query = r._query;
+	_anchor = r._anchor;
+	_queryParameters = r._queryParameters;
+	_attachedFiles = r._attachedFiles;
+	r._attachedFiles.clear();
+	_contentLength = r._contentLength;
+	_boundary = r._boundary;
+	_availableBytes = r._availableBytes;
+	_currentFieldName = r._currentFieldName;
+	_currentFileName = r._currentFileName;
+	_currentTempFileName = r._currentTempFileName;
+	_isFileField = r._isFileField;
+	_isBadRequest = r._isBadRequest;
+
+	return *this;
+}
+
+void Reader::cleanup() {
+	//_content is not to be freed, it's not owned by Reader
+
 	if (_window != nullptr) freeWindow();
 	delete _stream;
+
+	//delete temp files (by the time Reader is destucted those must be renamed or read)
+	for (Common::HashMap<Common::String, Common::String>::iterator i = _attachedFiles.begin(); i != _attachedFiles.end(); ++i) {
+		AbstractFSNode *node = g_system->getFilesystemFactory()->makeFileNodePath(i->_value);
+		if (node->exists()) removeFile(node->getPath().c_str());
+	}
 }
 
 bool Reader::readRequest() {
@@ -264,14 +342,14 @@ void Reader::parseQueryParameters() {
 }
 
 namespace {
-char generateRandomChar() {
-	int r = rand() % 36;
+char generateRandomChar(Common::RandomSource &random) {
+	int r = random.getRandomNumber(36);
 	char c = '0' + r;
 	if (r > 9) c = 'a' + r - 10;
 	return c;
 }
 
-Common::String generateTempFileName(Common::String originalFilename) {
+Common::String generateTempFileName(Common::String originalFilename, Common::RandomSource &random) {
 	//generates "./<originalFilename>-<uniqueSequence>.scummtmp"
 	//normalize <originalFilename>
 	Common::String prefix = "./";
@@ -288,13 +366,13 @@ Common::String generateTempFileName(Common::String originalFilename) {
 	//generate initial sequence
 	Common::String uniqueSequence;
 	for (uint32 i = 0; i < 5; ++i)
-		uniqueSequence += generateRandomChar();
+		uniqueSequence += generateRandomChar(random);
 
 	//update sequence while generate path exists
 	AbstractFSNode *node;
 	Common::String path;
 	do {
-		uniqueSequence += generateRandomChar();
+		uniqueSequence += generateRandomChar(random);
 		path = prefix + uniqueSequence + ".scummtmp";
 		node = g_system->getFilesystemFactory()->makeFileNodePath(path);
 	} while (node->exists());
@@ -311,7 +389,7 @@ bool Reader::readContent() {
 		if (_stream) delete _stream;
 		if (_isFileField) {
 			//create temporary file
-			_currentTempFileName = generateTempFileName(_currentFileName);
+			_currentTempFileName = generateTempFileName(_currentFileName, _randomSource);
 			AbstractFSNode *node = g_system->getFilesystemFactory()->makeFileNodePath(_currentTempFileName);
 			_stream = node->createWriteStream();
 			if (_stream == nullptr)
