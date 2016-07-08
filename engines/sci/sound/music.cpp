@@ -354,12 +354,14 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			pSnd->pStreamAud = Audio::makeRawStream(channelData + track->digitalSampleStart,
 								track->digitalSampleSize - track->digitalSampleStart - endPart,
 								track->digitalSampleRate, flags, DisposeAfterUse::NO);
+			assert(pSnd->pStreamAud);
 			delete pSnd->pLoopStream;
 			pSnd->pLoopStream = 0;
 			pSnd->soundType = Audio::Mixer::kSFXSoundType;
 			pSnd->hCurrentAud = Audio::SoundHandle();
 			pSnd->playBed = false;
 			pSnd->overridePriority = false;
+			pSnd->isSample = true;
 		} else {
 			// play MIDI track
 			Common::StackLock lock(_mutex);
@@ -659,6 +661,7 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 		pSnd->pStreamAud = NULL;
 		delete pSnd->pLoopStream;
 		pSnd->pLoopStream = 0;
+		pSnd->isSample = false;
 	}
 
 	_mutex.lock();
