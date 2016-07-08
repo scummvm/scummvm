@@ -116,6 +116,8 @@ Common::String Client::query() const { return _reader.query(); }
 
 Common::String Client::queryParameter(Common::String name) const { return _reader.queryParameter(name); }
 
+Common::String Client::attachedFile(Common::String name) const { return _reader.attachedFile(name); }
+
 Common::String Client::anchor() const { return _reader.anchor(); }
 
 bool Client::socketIsReady() { return SDLNet_SocketReady(_socket); }

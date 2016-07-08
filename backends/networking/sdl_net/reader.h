@@ -53,6 +53,7 @@ class Reader {
 
 	Common::String _headers;
 	Common::WriteStream *_stream;
+	bool _firstBlock;
 
 	///Common::String _headers;
 	Common::String _method, _path, _query, _anchor;
@@ -99,6 +100,7 @@ public:
 	Common::String path() const;
 	Common::String query() const;
 	Common::String queryParameter(Common::String name) const;
+	Common::String attachedFile(Common::String name) const;
 	Common::String anchor() const;
 };
 

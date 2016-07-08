@@ -30,6 +30,7 @@
 #include "backends/networking/sdl_net/handlers/filespagehandler.h"
 #include "backends/networking/sdl_net/handlers/indexpagehandler.h"
 #include "backends/networking/sdl_net/handlers/resourcehandler.h"
+#include "backends/networking/sdl_net/handlers/uploadfilehandler.h"
 #include "common/hash-str.h"
 #include "common/mutex.h"
 #include "common/singleton.h"
@@ -63,6 +64,7 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	FilesPageHandler _filesPageHandler;
 	CreateDirectoryHandler _createDirectoryHandler;
 	DownloadFileHandler _downloadFileHandler;
+	UploadFileHandler _uploadFileHandler;
 	ResourceHandler _resourceHandler;
 	uint32 _idlingFrames;
 	Common::Mutex _handleMutex;

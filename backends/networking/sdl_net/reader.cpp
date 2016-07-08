@@ -51,6 +51,7 @@ Reader::Reader(): _randomSource("Networking::Reader") {
 
 	_headers = "";
 	_stream = nullptr;
+	_firstBlock = true;
 
 	_contentLength = 0;
 	_availableBytes = 0;
@@ -98,6 +99,7 @@ Reader &Reader::operator=(Reader &r) {
 
 	_headers = r._headers;
 	_stream = r._stream;
+	_firstBlock = r._firstBlock;
 	r._stream = nullptr;
 
 	_headers = r._headers;
@@ -383,6 +385,7 @@ Common::String generateTempFileName(Common::String originalFilename, Common::Ran
 
 bool Reader::readContent() {
 	Common::String boundary = "--" + _boundary;
+	if (!_firstBlock) boundary = "\r\n" + boundary;
 	if (_window == nullptr) {
 		makeWindow(boundary.size());
 
@@ -403,6 +406,7 @@ bool Reader::readContent() {
 		if (!bytesLeft()) return false;
 	}
 
+	_firstBlock = false;
 	if (_isFileField) {
 		if (_stream != nullptr) {
 			_stream->flush();
@@ -513,6 +517,8 @@ Common::String Reader::path() const { return _path; }
 Common::String Reader::query() const { return _query; }
 
 Common::String Reader::queryParameter(Common::String name) const { return _queryParameters[name]; }
+
+Common::String Reader::attachedFile(Common::String name) const { return _attachedFiles[name]; }
 
 Common::String Reader::anchor() const { return _anchor; }
 

@@ -47,6 +47,7 @@ LocalWebserver::LocalWebserver(): _set(nullptr), _serverSocket(nullptr), _timerS
 	addPathHandler("/files", _filesPageHandler.getHandler());
 	addPathHandler("/create", _createDirectoryHandler.getHandler());
 	addPathHandler("/download", _downloadFileHandler.getHandler());
+	addPathHandler("/upload", _uploadFileHandler.getHandler());
 	_defaultHandler = _resourceHandler.getHandler();
 }
 

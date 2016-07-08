@@ -72,6 +72,7 @@ public:
 	Common::String path() const;
 	Common::String query() const;
 	Common::String queryParameter(Common::String name) const;
+	Common::String attachedFile(Common::String name) const;
 	Common::String anchor() const;
 
 	/**
