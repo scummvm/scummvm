@@ -28,6 +28,10 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 
+namespace Common {
+class WriteStream;
+}
+
 namespace Networking {
 
 enum ReaderState {
@@ -46,6 +50,7 @@ class Reader {
 
 	Common::String _headers;
 	Common::String _buffer;
+	Common::WriteStream *_stream;
 
 	///Common::String _headers;
 	Common::String _method, _path, _query, _anchor;
@@ -70,7 +75,7 @@ class Reader {
 
 	void makeWindow(uint32 size);
 	void freeWindow();
-	///bool Reader::readOneByteInStream(stream);
+	bool Reader::readOneByteInStream(Common::WriteStream *stream, const Common::String &boundary);
 	bool Reader::readOneByteInString(Common::String &buffer, const Common::String &boundary);
 
 	byte readOne();

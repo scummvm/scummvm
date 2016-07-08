@@ -25,6 +25,8 @@
 #include "backends/networking/sdl_net/reader.h"
 #include "backends/networking/sdl_net/localwebserver.h"
 #include "common/debug.h"
+#include "common/stream.h"
+#include "common/memstream.h"
 
 namespace Networking {
 
@@ -39,6 +41,7 @@ Reader::Reader() {
 
 	_headers = "";
 	_buffer = "";
+	_stream = nullptr;
 
 	_contentLength = 0;
 	_availableBytes = 0;
@@ -46,7 +49,11 @@ Reader::Reader() {
 	_isBadRequest = false;
 }
 
-Reader::~Reader() {}
+Reader::~Reader() {
+	//TODO: free everything
+	if (_window != nullptr) freeWindow();
+	delete _stream;
+}
 
 bool Reader::readRequest() {
 	if (_state == RS_NONE) _state = RS_READING_HEADERS;
@@ -261,6 +268,9 @@ bool Reader::readContent() {
 	if (_window == nullptr) {
 		makeWindow(boundary.size());
 		_buffer = "";
+
+		if (_stream) delete _stream;
+		_stream = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
 	}
 
 	/*
@@ -273,10 +283,20 @@ bool Reader::readContent() {
 		handleFileContent(tempFileName);
 	} else {
 	*/
-		while (readOneByteInString(_buffer, boundary)) {		
+		while (readOneByteInStream(_stream, boundary)) {
 			if (!bytesLeft()) return false;
 		}
-		handleValueContent(_buffer);
+		Common::MemoryReadWriteStream *dynamicStream = dynamic_cast<Common::MemoryReadWriteStream *>(_stream);
+		if (dynamicStream != nullptr)
+			if (dynamicStream->size() == 0)
+				handleValueContent("");
+			else
+				handleValueContent(Common::String((char *)dynamicStream->getData(), dynamicStream->size()));
+		else
+			if (_stream != nullptr)
+				warning("Stream somehow changed its type from MemoryReadWriteStream!");
+			else
+				warning("No stream was created!");
 	//}
 
 	freeWindow();
@@ -307,24 +327,22 @@ void Reader::freeWindow() {
 	_windowUsed = _windowSize = 0;
 }
 
-/*
-bool Reader::readOneByteInStream(stream) {
-	b = read(1);
+bool Reader::readOneByteInStream(Common::WriteStream *stream, const Common::String &boundary) {
+	byte b = readOne();
 	_window[_windowUsed++] = b;
 	if (_windowUsed < _windowSize) return true;
 
 	//when window is filled, check whether that's the boundary
-	if (_window == "--" + _boundary)
+	if (Common::String((char *)_window, _windowSize) == boundary)
 		return false;
 
-	//if not, write the first byte of the window to the stream
-	stream.write(_window[0]);
+	//if not, add the first byte of the window to the string
+	stream->writeByte(_window[0]);
 	for (uint32 i = 1; i < _windowSize; ++i)
 		_window[i - 1] = _window[i];
 	--_windowUsed;
 	return true;
 }
-*/
 
 bool Reader::readOneByteInString(Common::String &buffer, const Common::String &boundary) {
 	byte b = readOne();
