@@ -65,7 +65,8 @@ MODULE_OBJS += \
 	networking/sdl_net/handlers/filespagehandler.o \
 	networking/sdl_net/handlers/indexpagehandler.o \
 	networking/sdl_net/handlers/resourcehandler.o \
-	networking/sdl_net/localwebserver.o
+	networking/sdl_net/localwebserver.o \
+	networking/sdl_net/reader.o
 endif
 
 ifdef USE_ELF_LOADER

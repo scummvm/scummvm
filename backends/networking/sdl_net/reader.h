@@ -79,8 +79,8 @@ class Reader {
 
 	void makeWindow(uint32 size);
 	void freeWindow();
-	bool Reader::readOneByteInStream(Common::WriteStream *stream, const Common::String &boundary);
-	bool Reader::readOneByteInString(Common::String &buffer, const Common::String &boundary);
+	bool readOneByteInStream(Common::WriteStream *stream, const Common::String &boundary);
+	bool readOneByteInString(Common::String &buffer, const Common::String &boundary);
 
 	byte readOne();
 	uint32 bytesLeft();

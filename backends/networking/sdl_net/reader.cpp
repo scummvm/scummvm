@@ -157,7 +157,7 @@ bool Reader::readRequest() {
 			bts += readOne();
 			if (bts == "--") break;
 			if (bts == "\r\n") continue;
-			warning("strange bytes: \"%s\"", bts);
+			warning("strange bytes: \"%s\"", bts.c_str());
 		} else {
 			warning("strange ending");
 			break;
@@ -327,7 +327,7 @@ void Reader::parseQueryParameters() {
 			} else key += _query[i];
 		} else {
 			if (_query[i] == '&') {				
-				if (_queryParameters.contains(key)) warning("Query parameter \"%s\" is already set!");
+				if (_queryParameters.contains(key)) warning("Query parameter \"%s\" is already set!", key.c_str());
 				else _queryParameters[key] = LocalWebserver::urlDecode(value);
 				readingKey = true;
 				key = "";
@@ -336,7 +336,7 @@ void Reader::parseQueryParameters() {
 	}
 
 	if (!key.empty()) {
-		if (_queryParameters.contains(key)) warning("Query parameter \"%s\" is already set!");
+		if (_queryParameters.contains(key)) warning("Query parameter \"%s\" is already set!", key.c_str());
 		else _queryParameters[key] = LocalWebserver::urlDecode(value);
 	}
 }
