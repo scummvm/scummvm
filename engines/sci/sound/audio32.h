@@ -108,7 +108,7 @@ struct AudioChannel {
 	/**
 	 * The end volume of a fade.
 	 */
-	uint32 fadeTargetVolume;
+	int fadeTargetVolume;
 
 	/**
 	 * Whether or not the channel should be stopped and
