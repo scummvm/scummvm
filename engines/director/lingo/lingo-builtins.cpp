@@ -35,6 +35,7 @@ static struct BuiltinProto {
 	{ "exp",	Lingo::b_exp, 1},
 	{ "float",	Lingo::b_float, 1},
 	{ "integer",Lingo::b_integer, 1},
+	{ "length",	Lingo::b_length, 1},
 	{ "log",	Lingo::b_log, 1},
 	{ "pi",		Lingo::b_pi, 0},
 	{ "power",	Lingo::b_power, 2},
@@ -94,6 +95,20 @@ void Lingo::b_float() {
 void Lingo::b_integer() {
 	Datum d = g_lingo->pop();
 	d.toInt();
+	g_lingo->push(d);
+}
+
+void Lingo::b_length() {
+	Datum d = g_lingo->pop();
+
+	if (d.type != STRING)
+		error("Incorrect type for 'length' function: %d", d.type);
+
+	int len = strlen(d.u.s->c_str());
+	delete d.u.s;
+
+	d.u.i = len;
+	d.type = INT;
 	g_lingo->push(d);
 }
 

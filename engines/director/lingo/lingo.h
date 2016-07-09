@@ -220,6 +220,7 @@ public:
 	static void b_exp();
 	static void b_float();
 	static void b_integer();
+	static void b_length();
 	static void b_log();
 	static void b_pi();
 	static void b_power();
