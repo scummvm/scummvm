@@ -235,6 +235,8 @@ const ADGameDescription *DirectorMetaEngine::fallbackDetect(const FileMap &allFi
 		s_fallbackFileNameBuffer[50] = '\0';
 		desc->desc.filesDescriptions[0].fileName = s_fallbackFileNameBuffer;
 
+		warning("Director fallback detection D%d", desc->version);
+
 		return (ADGameDescription *)desc;
 	}
 

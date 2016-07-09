@@ -158,6 +158,34 @@ static const DirectorGameDescription gameDescriptions[] = {
 		{
 			"jman",
 			"",
+			AD_ENTRY1s("JMAN.EXE", "7c8230a804abf9353b05627a675b5ffb", 375282),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		3
+	},
+
+	{
+		{
+			"jman",
+			"",
+			AD_ENTRY1s("JMDEMO.EXE", "7c8230a804abf9353b05627a675b5ffb", 375305),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		3
+	},
+
+	{
+		{
+			"jman",
+			"",
 			AD_ENTRY1("JOURNEY.EXE", "65d06b5fef155a2473434571aff5bc29"),
 			Common::JA_JPN,
 			Common::kPlatformWindows,
