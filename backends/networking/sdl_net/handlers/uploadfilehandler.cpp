@@ -22,10 +22,9 @@
 
 #include "backends/networking/sdl_net/handlers/uploadfilehandler.h"
 #include "backends/networking/sdl_net/handlerutils.h"
-#include "backends/networking/sdl_net/localwebserver.h"
 #include "backends/networking/sdl_net/uploadfileclienthandler.h"
 #include "backends/fs/fs-factory.h"
-#include "common/file.h"
+#include "common/system.h"
 #include "common/translation.h"
 
 namespace Networking {
@@ -36,7 +35,6 @@ UploadFileHandler::~UploadFileHandler() {}
 
 void UploadFileHandler::handle(Client &client) {
 	Common::String path = client.queryParameter("path");
-	debug("path = <%s>", path.c_str());
 
 	// check that <path> is not an absolute root
 	if (path == "" || path == "/" || path == "\\") {
