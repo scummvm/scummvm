@@ -148,7 +148,7 @@ typedef union YYSTYPE
 {
 	Common::String *s;
 	int	i;
-	float f;
+	double f;
 	int code;
 	int	narg;	/* number of arguments */
 }

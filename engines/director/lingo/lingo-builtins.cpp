@@ -73,7 +73,7 @@ void Lingo::b_abs() {
 void Lingo::b_atan() {
 	Datum d = g_lingo->pop();
 	d.toFloat();
-	d.u.f = atanf(d.u.f);
+	d.u.f = atan(d.u.f);
 	g_lingo->push(d);
 }
 
@@ -88,7 +88,7 @@ void Lingo::b_exp() {
 	Datum d = g_lingo->pop();
 	d.toInt(); // Lingo uses int, so we're enforcing it
 	d.toFloat();
-	d.u.f = expf(d.u.f);
+	d.u.f = exp(d.u.f);
 	g_lingo->push(d);
 }
 
@@ -107,14 +107,14 @@ void Lingo::b_integer() {
 void Lingo::b_log() {
 	Datum d = g_lingo->pop();
 	d.toFloat();
-	d.u.f = logf(d.u.f);
+	d.u.f = log(d.u.f);
 	g_lingo->push(d);
 }
 
 void Lingo::b_pi() {
 	Datum d;
 	d.toFloat();
-	d.u.f = 3.14159265358;
+	d.u.f = 3.14159265358979;
 	g_lingo->push(d);
 }
 
@@ -123,7 +123,7 @@ void Lingo::b_power() {
 	Datum d2 = g_lingo->pop();
 	d1.toFloat();
 	d2.toFloat();
-	d1.u.f = powf(d2.u.f, d1.u.f);
+	d1.u.f = pow(d2.u.f, d1.u.f);
 	g_lingo->push(d1);
 }
 

@@ -82,7 +82,7 @@ struct Symbol {	/* symbol table entry */
 	int type;
 	union {
 		int		i;			/* VAR */
-		float	f;			/* FLOAT */
+		double	f;			/* FLOAT */
 		ScriptData	*defn;	/* FUNCTION, PROCEDURE */
 		Common::String	*s;	/* STRING */
 	} u;
@@ -97,14 +97,14 @@ struct Datum {	/* interpreter stack type */
 
 	union {
 		int	i;
-		float f;
+		double f;
 		Common::String *s;
 		Symbol	*sym;
 	} u;
 
 	Datum() { u.sym = NULL; type = VOID; }
 
-	float toFloat();
+	double toFloat();
 	int toInt();
 	Common::String *toString();
 
@@ -173,7 +173,7 @@ public:
 	void codeArgStore();
 	int codeId(Common::String &s);
 	int codeId_(Common::String &s);
-	int codeFloat(float f);
+	int codeFloat(double f);
 
 	static void c_xpop();
 	static void c_printtop();

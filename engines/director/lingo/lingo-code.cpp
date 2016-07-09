@@ -111,10 +111,10 @@ void Lingo::c_constpush() {
 void Lingo::c_fconstpush() {
 	Datum d;
 	inst i = (*g_lingo->_currentScript)[g_lingo->_pc];
-	d.u.f = *((float *)&i);
+	d.u.f = *((double *)&i);
 	d.type = FLOAT;
 
-	g_lingo->_pc += g_lingo->calcCodeAlignment(sizeof(float));
+	g_lingo->_pc += g_lingo->calcCodeAlignment(sizeof(double));
 
 	g_lingo->push(d);
 }

@@ -65,7 +65,7 @@ using namespace Director;
 %union {
 	Common::String *s;
 	int	i;
-	float f;
+	double f;
 	int code;
 	int	narg;	/* number of arguments */
 }

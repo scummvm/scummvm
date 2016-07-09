@@ -164,8 +164,8 @@ int Lingo::codeString(const char *str) {
 	return _currentScript->size();
 }
 
-int Lingo::codeFloat(float f) {
-	int numInsts = calcCodeAlignment(sizeof(float));
+int Lingo::codeFloat(double f) {
+	int numInsts = calcCodeAlignment(sizeof(double));
 
 	// Where we copy the string over
 	int pos = _currentScript->size();
@@ -174,7 +174,7 @@ int Lingo::codeFloat(float f) {
 	for (int i = 0; i < numInsts; i++)
 		_currentScript->push_back(0);
 
-	float *dst = (float *)((byte *)&_currentScript->front() + pos * sizeof(inst));
+	double *dst = (double *)((byte *)&_currentScript->front() + pos * sizeof(inst));
 
 	*dst = f;
 

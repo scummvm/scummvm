@@ -197,10 +197,10 @@ int Datum::toInt() {
 	return u.i;
 }
 
-float Datum::toFloat() {
+double Datum::toFloat() {
 	switch (type) {
 	case INT:
-		u.f = (float)u.i;
+		u.f = (double)u.i;
 		type = FLOAT;
 		break;
 	case FLOAT:
@@ -220,7 +220,7 @@ Common::String *Datum::toString() {
 		s->format("%d", u.i);
 		break;
 	case FLOAT:
-		s->format("%f", u.f);
+		s->format(g_lingo->_floatPrecisionFormat.c_str(), u.f);
 		break;
 	case STRING:
 		delete s;
