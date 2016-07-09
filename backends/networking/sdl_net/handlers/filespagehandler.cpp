@@ -21,8 +21,8 @@
 */
 
 #include "backends/networking/sdl_net/handlers/filespagehandler.h"
+#include "backends/networking/sdl_net/handlerutils.h"
 #include "backends/networking/sdl_net/localwebserver.h"
-#include "common/file.h"
 #include "common/translation.h"
 
 namespace Networking {
@@ -52,23 +52,15 @@ void FilesPageHandler::handle(Client &client) {
 	Common::String itemTemplate = "<tr><td><a href=\"{link}\">{name}</a></td><td>{size}</td></tr>\n"; //TODO: load this template too?
 
 	// load stylish response page from the archive
-	Common::SeekableReadStream *const stream = getArchiveFile(FILES_PAGE_NAME);
-	if (stream) response = readEverythingFromStream(stream);
+	Common::SeekableReadStream *const stream = HandlerUtils::getArchiveFile(FILES_PAGE_NAME);
+	if (stream) response = HandlerUtils::readEverythingFromStream(stream);
 
 	Common::String path = client.queryParameter("path");
 	Common::String content = "";
 	
 	// show an error message if failed to list directory
 	if (!listDirectory(path, content, itemTemplate)) {
-		handleErrorMessage(
-			client,
-			Common::String::format(
-				"%s<br/><a href=\"files?path=%s\">%s</a>",
-				_("ScummVM couldn't list the directory you specified."),
-				"%2F", //that's encoded "/"
-				_("Back to the files manager")
-			)
-		);
+		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("ScummVM couldn't list the directory you specified."));
 		return;
 	}
 
@@ -82,17 +74,6 @@ void FilesPageHandler::handle(Client &client) {
 	replace(response, "{create_directory_desc}", _("Type new directory name:"));
 	replace(response, "{upload_file_desc}", _("Select a file to upload:"));
 	replace(response, "{content}", content);	
-	LocalWebserver::setClientGetHandler(client, response);
-}
-
-void FilesPageHandler::handleErrorMessage(Client &client, Common::String message) {
-	Common::String response = "<html><head><title>ScummVM</title></head><body>{message}</body></html>";
-
-	// load stylish response page from the archive
-	Common::SeekableReadStream *const stream = getArchiveFile(INDEX_PAGE_NAME);
-	if (stream) response = readEverythingFromStream(stream);
-
-	replace(response, "{message}", message);
 	LocalWebserver::setClientGetHandler(client, response);
 }
 

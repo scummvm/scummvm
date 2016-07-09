@@ -37,7 +37,7 @@ public:
 	IndexPageHandler();
 	virtual ~IndexPageHandler();
 
-	Common::String code();
+	Common::String code() const;
 	virtual ClientHandlerCallback getHandler();
 };
 

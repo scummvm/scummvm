@@ -21,15 +21,13 @@
 */
 
 #include "backends/networking/sdl_net/handlers/downloadfilehandler.h"
-#include "backends/networking/sdl_net/localwebserver.h"
 #include "backends/fs/fs-factory.h"
-#include "common/file.h"
+#include "backends/networking/sdl_net/getclienthandler.h"
+#include "backends/networking/sdl_net/handlerutils.h"
+#include "backends/networking/sdl_net/localwebserver.h"
 #include "common/translation.h"
-#include "../getclienthandler.h"
 
 namespace Networking {
-
-#define INDEX_PAGE_NAME ".index.html"
 
 DownloadFileHandler::DownloadFileHandler() {}
 
@@ -37,61 +35,34 @@ DownloadFileHandler::~DownloadFileHandler() {}
 
 void DownloadFileHandler::handle(Client &client) {
 	Common::String path = client.queryParameter("path");
-	Common::String errorMessage = "";
 
-	// show an error message if failed to download the file
-	if (!downloadFile(client, path, errorMessage)) {
-		handleErrorMessage(
-			client,
-			Common::String::format(
-				"%s<br/><a href=\"files?path=%s\">%s</a>",
-				errorMessage.c_str(),
-				"%2F", //that's encoded "/"
-				_("Back to the files manager")
-				)
-			);
-	}
-}
-
-void DownloadFileHandler::handleErrorMessage(Client &client, Common::String message) {
-	Common::String response = "<html><head><title>ScummVM</title></head><body>{message}</body></html>";
-
-	// load stylish response page from the archive
-	Common::SeekableReadStream *const stream = getArchiveFile(INDEX_PAGE_NAME);
-	if (stream) response = readEverythingFromStream(stream);
-
-	replace(response, "{message}", message);
-	LocalWebserver::setClientGetHandler(client, response);
-}
-
-bool DownloadFileHandler::downloadFile(Client &client, Common::String path, Common::String &errorMessage) {
 	// check that <path> is not an absolute root
 	if (path == "" || path == "/") {
-		errorMessage = _("Invalid path!");
-		return false;
+		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("Invalid path!"));
+		return;
 	}
 
 	// transform virtual path to actual file system one
 	Common::String prefixToRemove = "", prefixToAdd = "";
 	if (!transformPath(path, prefixToRemove, prefixToAdd, false) || path.empty()) {
-		errorMessage = _("Invalid path!");
-		return false;
+		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("Invalid path!"));
+		return;
 	}
 
 	// check that <path> exists and is directory
 	AbstractFSNode *node = g_system->getFilesystemFactory()->makeFileNodePath(path);
 	if (!node->exists()) {
-		errorMessage = _("The file doesn't exist!");
-		return false;
+		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("The file doesn't exist!"));
+		return;
 	}
 	if (node->isDirectory()) {
-		errorMessage = _("Can't download a directory!");
-		return false;
+		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("Can't download a directory!"));
+		return;
 	}
 	Common::SeekableReadStream *stream = node->createReadStream();
 	if (stream == nullptr) {
-		errorMessage = _("Failed to read the file!");
-		return false;
+		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("Failed to read the file!"));
+		return;
 	}
 
 	GetClientHandler *handler = new GetClientHandler(stream);
@@ -100,7 +71,6 @@ bool DownloadFileHandler::downloadFile(Client &client, Common::String path, Comm
 	handler->setHeader("Content-Disposition", "attachment; filename=\"" + node->getDisplayName() + "\"");
 	handler->setHeader("Content-Transfer-Encoding", "binary");	
 	client.setHandler(handler);
-	return true;
 }
 
 /// public

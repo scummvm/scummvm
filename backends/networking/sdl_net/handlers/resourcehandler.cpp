@@ -21,6 +21,7 @@
 */
 
 #include "backends/networking/sdl_net/handlers/resourcehandler.h"
+#include "backends/networking/sdl_net/handlerutils.h"
 #include "backends/networking/sdl_net/localwebserver.h"
 
 namespace Networking {
@@ -37,7 +38,7 @@ void ResourceHandler::handle(Client &client) {
 	if (filename.size() && filename[0] == '.') return;
 
 	// if file not found, don't set handler either
-	Common::SeekableReadStream *file = getArchiveFile(filename);
+	Common::SeekableReadStream *file = HandlerUtils::getArchiveFile(filename);
 	if (file == nullptr) return;
 
 	LocalWebserver::setClientGetHandler(client, file, 200, LocalWebserver::determineMimeType(filename));

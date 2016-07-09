@@ -29,16 +29,6 @@ namespace Networking {
 
 class CreateDirectoryHandler: public FilesBaseHandler {
 	void handle(Client &client);
-	void handleErrorMessage(Client &client, Common::String message);
-
-	/**
-	 * Creates the directory <name> in <path>.
-	 *
-	 * Fills <errorMessage> on failure.
-	 *
-	 * Returns true on success.
-	 */
-	bool createDirectory(Common::String path, Common::String name, Common::String &errorMessage);
 public:
 	CreateDirectoryHandler();
 	virtual ~CreateDirectoryHandler();

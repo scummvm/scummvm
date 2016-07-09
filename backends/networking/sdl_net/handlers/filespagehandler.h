@@ -29,7 +29,6 @@ namespace Networking {
 
 class FilesPageHandler: public FilesBaseHandler {
 	void handle(Client &client);
-	void handleErrorMessage(Client &client, Common::String message);
 
 	/**
 	 * Lists the directory <path>.

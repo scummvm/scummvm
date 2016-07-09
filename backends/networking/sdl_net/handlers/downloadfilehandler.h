@@ -29,16 +29,6 @@ namespace Networking {
 
 class DownloadFileHandler: public FilesBaseHandler {
 	void handle(Client &client);
-	void handleErrorMessage(Client &client, Common::String message);
-
-	/**
-	 * Creates a client handler for downloading file <path>.
-	 *
-	 * Fills <errorMessage> on failure.
-	 *
-	 * Returns true on success.
-	 */
-	bool downloadFile(Client &client, Common::String path, Common::String &errorMessage);
 public:
 	DownloadFileHandler();
 	virtual ~DownloadFileHandler();

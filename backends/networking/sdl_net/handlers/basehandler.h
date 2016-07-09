@@ -24,7 +24,6 @@
 #define BACKENDS_NETWORKING_SDL_NET_BASEHANDLER_H
 
 #include "backends/networking/sdl_net/client.h"
-#include "common/archive.h"
 #include "common/callback.h"
 
 namespace Networking {
@@ -32,15 +31,9 @@ namespace Networking {
 typedef Common::BaseCallback<Client &> *ClientHandlerCallback;
 
 class BaseHandler {
-protected:
-	Common::Archive *getZipArchive() const;
-	Common::ArchiveMemberList listArchive() const;
-	Common::SeekableReadStream *getArchiveFile(Common::String name) const;
-	static Common::String readEverythingFromStream(Common::SeekableReadStream *const stream);
-
 public:
-	BaseHandler();
-	virtual ~BaseHandler();
+	BaseHandler() {}
+	virtual ~BaseHandler() {}
 
 	virtual ClientHandlerCallback getHandler() = 0;
 };

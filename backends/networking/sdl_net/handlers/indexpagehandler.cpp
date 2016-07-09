@@ -21,47 +21,33 @@
 */
 
 #include "backends/networking/sdl_net/handlers/indexpagehandler.h"
+#include "backends/networking/sdl_net/handlerutils.h"
 #include "backends/networking/sdl_net/localwebserver.h"
-#include "backends/saves/default/default-saves.h"
-#include "common/archive.h"
-#include "common/config-manager.h"
-#include "common/file.h"
-#include "common/savefile.h"
 #include "common/translation.h"
 #include "gui/storagewizarddialog.h"
 
 namespace Networking {
-
-#define INDEX_PAGE_NAME ".index.html"
 
 IndexPageHandler::IndexPageHandler(): CommandSender(nullptr) {}
 
 IndexPageHandler::~IndexPageHandler() {}
 
 void IndexPageHandler::handle(Client &client) {
-	Common::String response = "<html><head><title>ScummVM</title></head><body>{message}</body></html>";
-
-	// load stylish response page from the archive
-	Common::SeekableReadStream *const stream = getArchiveFile(INDEX_PAGE_NAME);
-	if (stream) response = readEverythingFromStream(stream);
-
 	Common::String code = client.queryParameter("code");
 
 	if (code == "") {		
-		replace(response, "{message}", _("This is a local webserver index page."));
-		LocalWebserver::setClientGetHandler(client, response);
+		HandlerUtils::setMessageHandler(client, _("This is a local webserver index page."));
 		return;
 	}
 
 	_code = code;
 	sendCommand(GUI::kStorageCodePassedCmd, 0);
-	replace(response, "{message}", _("ScummVM got the code and already connects to your cloud storage!"));
-	LocalWebserver::setClientGetHandler(client, response);
+	HandlerUtils::setMessageHandler(client, _("ScummVM got the code and already connects to your cloud storage!"));
 }
 
 /// public
 
-Common::String IndexPageHandler::code() { return _code; }
+Common::String IndexPageHandler::code() const { return _code; }
 
 ClientHandlerCallback IndexPageHandler::getHandler() {
 	return new Common::Callback<IndexPageHandler, Client &>(this, &IndexPageHandler::handle);
