@@ -66,16 +66,17 @@ bool DirectorEngine::hasFeature(EngineFeature f) const {
 } // End of Namespace Director
 
 static const PlainGameDescriptor directorGames[] = {
-	{ "director",   "Macromedia Director Game" },
-	{ "gundam0079", "Gundam 0079: The War for Earth" },
-	{ "jewels",     "Jewels of the Oracle" },
-	{ "jman",       "The Journeyman Project" },
-	{ "majestic",   "Majestic Part I: Alien Encounter" },
-	{ "melements",  "Masters of the Elements" },
-	{ "spyclub",    "Spy Club" },
-	{ "amber",      "AMBER: Journeys Beyond"},
-	{ "vvvampire",  "Victor Vector & Yondo: The Vampire's Coffin"},
-	{ "vvdinosaur",  "Victor Vector & Yondo: The Last Dinosaur Egg"},
+	{ "director",	"Macromedia Director Game" },
+	{ "gundam0079",	"Gundam 0079: The War for Earth" },
+	{ "jewels",		"Jewels of the Oracle" },
+	{ "jman",		"The Journeyman Project" },
+	{ "majestic",	"Majestic Part I: Alien Encounter" },
+	{ "melements",	"Masters of the Elements" },
+	{ "spyclub",	"Spy Club" },
+	{ "amber",		"AMBER: Journeys Beyond"},
+	{ "vvvampire",	"Victor Vector & Yondo: The Vampire's Coffin"},
+	{ "vvdinosaur",	"Victor Vector & Yondo: The Last Dinosaur Egg"},
+	{ "warlock", 	"Spaceship Warlock"},
 	{ 0, 0 }
 };
 

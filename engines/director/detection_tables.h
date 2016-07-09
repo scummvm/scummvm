@@ -363,6 +363,48 @@ static const DirectorGameDescription gameDescriptions[] = {
 		3
 	},
 
+	{
+		{
+			"warlock",
+			"",
+			AD_ENTRY1s("Spaceship Warlock.bin", "cfa68a1bc49251497ebde18e5fc9c217", 271107),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		2
+	},
+
+	{
+		{
+			"warlock",
+			"",
+			AD_ENTRY1s("SSWARLCK.EXE", "65d06b5fef155a2473434571aff5bc29", 370867),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		2
+	},
+
+	{
+		{
+			"warlock",
+			"",
+			AD_ENTRY1s("SSWDEMO.EXE", "65d06b5fef155a2473434571aff5bc29", 370934),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		2
+	},
+
 	{ AD_TABLE_END_MARKER, GID_GENERIC, 0 }
 };
 
