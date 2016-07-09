@@ -286,9 +286,8 @@ void Lingo::c_ampersand() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	if (d1.type != STRING || d2.type != STRING) {
-		error("Wrong operands for & operation: %d %d", d1.type, d2.type);
-	}
+	d1.toString();
+	d2.toString();
 
 	*d1.u.s += *d2.u.s;
 
@@ -301,9 +300,8 @@ void Lingo::c_concat() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	if (d1.type != STRING || d2.type != STRING) {
-		error("Wrong operands for & operation: %d %d", d1.type, d2.type);
-	}
+	d1.toString();
+	d2.toString();
 
 	*d1.u.s += " ";
 	*d1.u.s += *d2.u.s;

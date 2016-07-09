@@ -106,6 +106,7 @@ struct Datum {	/* interpreter stack type */
 
 	float toFloat();
 	int toInt();
+	Common::String *toString();
 };
 
 struct Builtin {

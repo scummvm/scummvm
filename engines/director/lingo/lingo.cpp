@@ -210,4 +210,26 @@ float Datum::toFloat() {
 	return u.f;
 }
 
+Common::String *Datum::toString() {
+	Common::String *s = new Common::String;
+	switch (type) {
+	case INT:
+		s->format("%d", u.i);
+		break;
+	case FLOAT:
+		s->format("%f", u.f);
+		break;
+	case STRING:
+		delete s;
+		s = u.s;
+	default:
+		warning("Incorrect operation toInt() for type: %d", type);
+	}
+
+	u.s = s;
+	type = STRING;
+
+	return u.s;
+}
+
 } // End of namespace Director
