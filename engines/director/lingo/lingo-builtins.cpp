@@ -41,6 +41,7 @@ static struct BuiltinProto {
 	{ "random",	Lingo::b_random, 1},
 	{ "sin",	Lingo::b_sin, 1},
 	{ "sqrt",	Lingo::b_sqrt, 1},
+	{ "string",	Lingo::b_string, 1},
 	{ "tan",	Lingo::b_tan, 1},
 	{ 0, 0, 0 }
 };
@@ -142,6 +143,12 @@ void Lingo::b_sqrt() {
 	Datum d = g_lingo->pop();
 	d.toFloat();
 	d.u.f = sqrt(d.u.f);
+	g_lingo->push(d);
+}
+
+void Lingo::b_string() {
+	Datum d = g_lingo->pop();
+	d.toString();
 	g_lingo->push(d);
 }
 

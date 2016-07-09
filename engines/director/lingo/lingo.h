@@ -226,6 +226,7 @@ public:
 	static void b_random();
 	static void b_sin();
 	static void b_sqrt();
+	static void b_string();
 	static void b_tan();
 
 	void func_mci(Common::String &s);
