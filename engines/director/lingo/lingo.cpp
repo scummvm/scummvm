@@ -248,6 +248,8 @@ const char *Datum::type2str() {
 		return "STRING";
 	case CASTREF:
 		return "CASTREF";
+	case VOID:
+		return "VOID";
 	default:
 		snprintf(res, 20, "-- (%d) --", type);
 		return res;
