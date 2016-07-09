@@ -32,7 +32,7 @@ int CVideoSurface::_videoSurfaceCounter = 0;
 CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
 		_screenManager(screenManager), _rawSurface(nullptr), _movie(nullptr),
 		_pendingLoad(false), _blitStyleFlag(false), _blitFlag(false),
-		_field40(nullptr), _field44(4), _field48(0), _field50(1) {
+		_movieFrameInfo(nullptr), _transparencyMode(TRANS_DEFAULT), _field48(0), _field50(1) {
 	_videoSurfaceNum = _videoSurfaceCounter++;
 }
 
@@ -427,22 +427,22 @@ void OSVideoSurface::clear() {
 
 }
 
-void OSVideoSurface::playMovie(uint flags, CVideoSurface *surface) {
+void OSVideoSurface::playMovie(uint flags, CGameObject *obj) {
 	if (loadIfReady() && _movie)
-		_movie->play(flags, surface);
+		_movie->play(flags, obj);
 
 	_ddSurface->fill(nullptr, 0);
 }
 
-void OSVideoSurface::playMovie(uint startFrame, uint endFrame, int v3, bool v4) {
+void OSVideoSurface::playMovie(uint startFrame, uint endFrame, uint flags, CGameObject *obj) {
 	if (loadIfReady() && _movie) {
-		_movie->play(startFrame, endFrame, v3, v4);
+		_movie->play(startFrame, endFrame, flags, obj);
 	}
 }
 
-void OSVideoSurface::proc35(int v1, int v2, int frameNumber, int flags, CGameObject *owner) {
+void OSVideoSurface::playMovie(uint startFrame, uint endFrame, uint initialFrame, uint flags, CGameObject *obj) {
 	if (loadIfReady() && _movie) {
-		_movie->proc12(v1, v2, frameNumber, flags, owner);
+		_movie->play(startFrame, endFrame, initialFrame, flags, obj);
 	}
 }
 
@@ -456,16 +456,17 @@ void OSVideoSurface::setMovieFrame(uint frameNumber) {
 		_movie->setFrame(frameNumber);
 }
 
-void OSVideoSurface::proc38(int v1, int v2) {
-	warning("OSVideoSurface::proc38");
+void OSVideoSurface::addMovieEvent(int frameNumber, CGameObject *obj) {
+	if (_movie)
+		_movie->addEvent(frameNumber, obj);
 }
 
 void OSVideoSurface::proc39(int v1, int v2) {
 	warning("OSVideoSurface::proc39");
 }
 
-const Common::List<CMovieRangeInfo *> OSVideoSurface::getMovieRangeInfo() const {
-	return _movie ? _movie->getMovieRangeInfo() : Common::List<CMovieRangeInfo *>();
+const CMovieRangeInfoList *OSVideoSurface::getMovieRangeInfo() const {
+	return _movie ? _movie->getMovieRangeInfo() : nullptr;
 }
 
 bool OSVideoSurface::loadIfReady() {

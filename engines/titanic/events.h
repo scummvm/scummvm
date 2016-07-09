@@ -104,12 +104,17 @@ public:
 	 */
 	bool isSpecialPressed(SpecialButtons btn) const { return _specialButtons; }
 
+	uint getSpecialButtons() const { return _specialButtons; }
+
 	/**
 	 * Sleep for a specified period of time
 	 */
 	void sleep(uint time);
 
-	uint getSpecialButtons() const { return _specialButtons; }
+	/**
+	 * Wait for a mouse or keypress
+	 */
+	bool waitForPress(uint expiry);
 };
 
 } // End of namespace Titanic

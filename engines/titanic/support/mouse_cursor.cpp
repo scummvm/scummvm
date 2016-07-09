@@ -91,15 +91,17 @@ void CMouseCursor::loadCursorImages() {
 		// Create the surface
 		CVideoSurface *surface = _screenManager->createSurface(64, 64);
 		_cursors[idx]._videoSurface = surface;
-
+/*
 		Common::SeekableReadStream *stream = new Common::MemoryReadStream(
 			movieData, f.size(), DisposeAfterUse::NO);
 		OSMovie movie(stream, surface);
 		movie.setFrame(idx);
-
-		_cursors[idx]._ptrUnknown = movie.proc21();
-		surface->set40(_cursors[idx]._ptrUnknown);
-	}
+		
+		int frameNum = movie.proc21();
+		_cursors[idx]._frameNumber = frameNum;
+		surface->setMovieFrame(frameNum);
+*/
+		}
 }
 
 void CMouseCursor::show() {

@@ -100,8 +100,8 @@ void QSoundManager::WaveMixPump() {
 	warning("TODO");
 }
 
-int QSoundManager::proc18() const {
-	warning("TODO");
+bool QSoundManager::movieStarted() const {
+	// TODO
 	return 0;
 }
 

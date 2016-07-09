@@ -20,42 +20,51 @@
  *
  */
 
-#include "video/avi_decoder.h"
-#include "titanic/sound/sound_manager.h"
 #include "titanic/support/movie.h"
+#include "titanic/support/avi_surface.h"
+#include "titanic/sound/sound_manager.h"
+#include "titanic/messages/messages.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
 
-CMovieList *CMovie::_activeMovies;
+#define CLIP_WIDTH 600
+#define CLIP_WIDTH_REDUCED (CLIP_WIDTH / 2)
+#define CLIP_HEIGHT 340
+#define CLIP_HEIGHT_REDUCED (CLIP_HEIGHT / 2)
 
-CMovie::CMovie() : ListItem(), _state(MOVIE_STOPPED), _field10(0),
+CMovieList *CMovie::_playingMovies;
+CVideoSurface *CMovie::_movieSurface;
+
+CMovie::CMovie() : ListItem(), _state(MSTATE_0), _field10(0),
 		_field14(0) {
 }
 
 CMovie::~CMovie() {
-	removeFromActiveMovies();
+	removeFromPlayingMovies();
 }
 
 void CMovie::init() {
-	_activeMovies = new CMovieList();
+	_playingMovies = new CMovieList();
+	_movieSurface = nullptr;
 }
 
 void CMovie::deinit() {
-	delete _activeMovies;
+	delete _playingMovies;
+	delete _movieSurface;
 }
 
-void CMovie::addToActiveMovies() {
+void CMovie::addToPlayingMovies() {
 	if (!isActive())
-		_activeMovies->push_back(this);
+		_playingMovies->push_back(this);
 }
 
-void CMovie::removeFromActiveMovies() {
-	_activeMovies->remove(this);
+void CMovie::removeFromPlayingMovies() {
+	_playingMovies->remove(this);
 }
 
 bool CMovie::isActive() const {
-	return _activeMovies->contains(this);
+	return _playingMovies->contains(this);
 }
 
 bool CMovie::get10() {
@@ -70,156 +79,148 @@ bool CMovie::get10() {
 /*------------------------------------------------------------------------*/
 
 OSMovie::OSMovie(const CResourceKey &name, CVideoSurface *surface) :
-		_videoSurface(surface), _gameObject(nullptr), _endFrame(-1) {
-	Video::AVIDecoder *decoder = new Video::AVIDecoder();
-	_video = decoder;
-	_field14 = 1;
+		_aviSurface(name), _videoSurface(surface) {
+	_field18 = 0;
+	_field24 = 0;
+	_field28 = 0;
+	_field2C = 0;
+	_ticksStart = 0;
+	_frameTime1 = 0;
+	_frameTime2 = 17066;
 
-	if (!_video->loadFile(name.getString()))
-		error("Could not open video - %s", name.getString().c_str());
-}
-
-OSMovie::OSMovie(Common::SeekableReadStream *stream, CVideoSurface *surface) :
-		_videoSurface(surface), _gameObject(nullptr), _endFrame(-1) {
-	_video = new Video::AVIDecoder();
-	if (!_video->loadStream(stream))
-		error("Could not parse movie stream");
+	surface->resize(_aviSurface.getWidth(), _aviSurface.getHeight());
+	_aviSurface.setVideoSurface(surface);
 }
 
 OSMovie::~OSMovie() {
-	delete _video;
 }
 
-void OSMovie::play(uint flags, CVideoSurface *surface) {
-	uint endFrame = _video->getFrameCount();
-	play(0, endFrame, 0, 0);
+void OSMovie::play(uint flags, CGameObject *obj) {
+	_aviSurface.play(flags, obj);
+
+	if (_aviSurface._isPlaying)
+		movieStarted();
 }
 
-void OSMovie::play(uint startFrame, uint endFrame, int v3, bool v4) {
-	warning("TODO: OSMovie::play properly");
+void OSMovie::play(uint startFrame, uint endFrame, uint flags, CGameObject *obj) {
+	_aviSurface.play(startFrame, endFrame, flags, obj);
 
-	_video->start();
-	_video->seekToFrame(startFrame);
-	_endFrame = endFrame;
-
-	addToActiveMovies();
-	_state = MOVIE_NONE;
+	if (_aviSurface._isPlaying)
+		movieStarted();
 }
 
-void OSMovie::play(const Rect &rect, int v1, int v2) {
-	warning("TODO: OSMovie::play 3");
+void OSMovie::play(uint startFrame, uint endFrame, uint initialFrame, uint flags, CGameObject *obj) {
+	_aviSurface.play(startFrame, endFrame, initialFrame, flags, obj);
+
+	if (_aviSurface._isPlaying)
+		movieStarted();
 }
 
-void OSMovie::playClip(const Rect &rect, uint startFrame, uint endFrame) {
-	warning("TODO: OSMovie::playClip");
-}
+void OSMovie::playClip(const Point &drawPos, uint startFrame, uint endFrame) {
+	if (!_movieSurface)
+		_movieSurface = CScreenManager::_screenManagerPtr->createSurface(600, 340);
+	
+	bool widthLess = _videoSurface->getWidth() < 600;
+	bool heightLess = _videoSurface->getHeight() < 340;
+	Rect r(drawPos.x, drawPos.y,
+		drawPos.x + widthLess ? CLIP_WIDTH_REDUCED : CLIP_WIDTH,
+		drawPos.y + heightLess ? CLIP_HEIGHT_REDUCED : CLIP_HEIGHT
+	);
 
-void OSMovie::proc11() {
-	warning("TODO: OSMovie::proc11");
-}
+	uint timePerFrame = 1000 / _aviSurface._frameRate;
 
-void OSMovie::proc12(int v1, int v2, int frameNumber, int flags, CGameObject *obj) {
-	warning("TODO: OSMovie::proc12");
+	for (; endFrame >= startFrame; ++startFrame) {
+		// Set the frame
+		_aviSurface.setFrame(startFrame);
+
+		// TODO: See if we need to do anything further here. The original had a bunch
+		// of calls and using of the _movieSurface; perhaps to allow scaling down
+		// videos to half-size
+		if (widthLess || heightLess)
+			warning("Not properly reducing clip size: %d %d", r.width(), r.height());
+
+		// Wait for the next frame, unless the user interrupts the clip
+		if (g_vm->_events->waitForPress(timePerFrame))
+			break;
+	}
 }
 
 void OSMovie::stop() {
-	_video->stop();
-	_state = MOVIE_STOPPED;
+	_aviSurface.stop();
+	removeFromPlayingMovies();
 }
 
-void OSMovie::proc14() {
-	warning("TODO: OSMovie::proc14");
+void OSMovie::addEvent(int frameNumber, CGameObject *obj) {
+	if (_aviSurface.addEvent(frameNumber, obj)) {
+		CMovieFrameMsg frameMsg(frameNumber, 0);
+		frameMsg.execute(obj);
+	}
 }
 
 void OSMovie::setFrame(uint frameNumber) {
-	_video->seekToFrame(frameNumber);
-	decodeFrame();
+	_aviSurface.setFrame(frameNumber);
+	_videoSurface->setMovieFrame(frameNumber);
 }
 
-void OSMovie::proc16() {
-	warning("TODO: OSMovie::proc16");
+bool OSMovie::handleEvents(CMovieEventList &events) {
+	if (!_aviSurface._isPlaying)
+		return false;
+
+	int time = (g_vm->_events->getTicksCount() + ((_ticksStart << 24) - _ticksStart)) << 8;
+	if (time < _frameTime1)
+		return _aviSurface._isPlaying;
+
+	if (!_field14 && (time - _frameTime1) > (_frameTime2 * 2))
+		_frameTime1 = time;
+
+	_frameTime1 += _frameTime2;
+	_aviSurface.handleEvents(events);
+	_videoSurface->setMovieFrameInfo(_aviSurface.getFrameInfo());
+
+	if (_field14) {
+		while (_frameTime1 >= time && events.empty()) {
+			_aviSurface.handleEvents(events);
+			_videoSurface->setMovieFrameInfo(_aviSurface.getFrameInfo());
+
+			_frameTime1 += _frameTime2;
+		}
+	}
+
+	return _aviSurface._isPlaying;
 }
 
-const Common::List<CMovieRangeInfo *> OSMovie::getMovieRangeInfo() const {
-	warning("TODO: OSMovie::getMovieRangeInfo");
-	return Common::List<CMovieRangeInfo *>();
+const CMovieRangeInfoList *OSMovie::getMovieRangeInfo() const {
+	return _aviSurface.getMovieRangeInfo();
 }
 
 void OSMovie::setSoundManager(CSoundManager *soundManager) {
-//	if (_aviSurface)
-//		_aviSurface->_field3C = soundManager;
-
-	warning("TODO: OSMovie::proc18");
+	_aviSurface._soundManager = soundManager;
 }
 
-int OSMovie::getFrame() {
-	assert(_video);
-	return _video->getCurFrame();
+int OSMovie::getFrame() const {
+	return _aviSurface.getFrame();
+}
+
+void OSMovie::movieStarted() {
+	_frameTime1 = _frameTime2 = 256000.0 / _aviSurface._frameRate;
+	_ticksStart = g_vm->_events->getTicksCount();
+
+	if (_aviSurface._hasAudio)
+		_aviSurface._soundManager->movieStarted();
+
+	// Register the movie in the playing list
+	addToPlayingMovies();
+	_field10 = 1;
 }
 
 void OSMovie::proc20() {
-	warning("TODO: OSMovie::proc20");
+	// TODO
 }
 
-void *OSMovie::proc21() {
-	warning("TODO: OSMovie::proc21");
-	return nullptr;
+int OSMovie::proc21() {
+	// TODO
+	return 0;
 }
 
-MovieState OSMovie::getState() {
-	if (!_video)
-		_state = MOVIE_STOPPED;
-	return _state;
-}
-
-void OSMovie::update() {
-	if (_state != MOVIE_STOPPED) {
-		if (_video->isPlaying()) {
-			if (_video->getCurFrame() >= _endFrame) {
-				_video->stop();
-				_state = MOVIE_FINISHED;
-			} else if (_video->needsUpdate()) {
-				decodeFrame();
-				_state = MOVIE_FRAME;
-			} else {
-				_state = MOVIE_NONE;
-			}
-		} else {
-			_state = MOVIE_STOPPED;
-		}
-	}
-}
-
-void OSMovie::decodeFrame() {
-	const Graphics::Surface *frame = _video->decodeNextFrame();
-	OSVideoSurface *videoSurface = static_cast<OSVideoSurface *>(_videoSurface);
-	assert(videoSurface);
-
-	// If the video surface doesn't yet have an underlying surface, create it
-	if (!videoSurface->hasSurface())
-		videoSurface->recreate(frame->w, frame->h);
-
-	// Lock access to the surface
-	videoSurface->lock();
-	assert(videoSurface->_rawSurface);
-
-	if (frame->format == videoSurface->_rawSurface->format) {
-		// Matching format, so we can copy straight from the video frame
-		videoSurface->_rawSurface->blitFrom(*frame);
-	} else {
-		// Different formats so we have to convert it first
-		Graphics::Surface *s = frame->convertTo(videoSurface->_rawSurface->format);
-		videoSurface->_rawSurface->blitFrom(*s);
-
-		s->free();
-		delete s;
-	}
-
-	// Unlock the surface
-	videoSurface->unlock();
-
-	if (_gameObject)
-		_gameObject->makeDirty();
-}
 
 } // End of namespace Titanic

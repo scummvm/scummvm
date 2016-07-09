@@ -54,7 +54,7 @@ class CVideoSurface;
 class CMouseCursor {
 	struct CursorEntry {
 		CVideoSurface *_videoSurface;
-		void *_ptrUnknown;
+		int _frameNumber;
 		Common::Point _centroid;
 	};
 private:

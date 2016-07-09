@@ -23,33 +23,121 @@
 #ifndef TITANIC_AVI_SURFACE_H
 #define TITANIC_AVI_SURFACE_H
 
-#include "video/video_decoder.h"
+#include "video/avi_decoder.h"
 #include "titanic/core/resource_key.h"
 #include "titanic/support/movie_range_info.h"
 
 namespace Titanic {
 
 class CSoundManager;
+class CVideoSurface;
+
+enum MovieFlag {
+	MOVIE_1 = 1, MOVIE_STOP_PREVIOUS = 2, MOVIE_NO_OBJECT = 4,
+	MOVIE_REVERSE = 8, MOVIE_GAMESTATE = 0x10
+};
 
 class AVISurface {
 private:
+	Video::AVIDecoder *_decoder;
+	CVideoSurface *_videoSurface;
 	int _field4;
 	int _field8;
-	int _fieldC;
-	int _field10;
-	int _frame;
+	int _currentPos;
+	int _priorFrame;
 	CMovieRangeInfoList _movieRangeInfo;
-	int _field28;
-	int _field2C;
-	int _field30;
-	int _field34;
-	int _field38;
+	int _streamCount;
+	void *_frameInfo;
+private:
+	/**
+	 * Render a frame to the video surface
+	 */
+	bool renderFrame();
+protected:
+	/**
+	 * Change the frame with ??? checking
+	 */
+	virtual bool changeFrame(int frameNumber);
+
+	/**
+	 * Seeks to a given frame number in the video
+	 */
+	virtual void seekToFrame(uint frameNumber);
+public:
 	CSoundManager *_soundManager;
-	// TODO: Lots more fields
+	bool _hasAudio;
+	bool _isPlaying;
+	double _frameRate;
 public:
 	AVISurface(const CResourceKey &key);
+	~AVISurface();
 
-	
+	/**
+	 * Start playing the loaded AVI video
+	 */
+	virtual bool play(uint flags, CGameObject *obj);
+
+	/**
+	 * Start playing the loaded AVI video
+	 */
+	virtual bool play(int startFrame, int endFrame, uint flags, CGameObject *obj);
+
+	/**
+	 * Start playing the loaded AVI video
+	 */
+	virtual bool play(int startFrame, int endFrame, int initialFrame, uint flags, CGameObject *obj);
+
+	/**
+	 * Stop the currently playing video
+	 */
+	virtual void stop();
+
+	/**
+	 * Handle any movie events relevent for the frame
+	 */
+	virtual bool handleEvents(CMovieEventList &events);
+
+	/**
+	 * Set the video surface the AVI Surface will render on
+	 */
+	void setVideoSurface(CVideoSurface *surface);
+
+	/**
+	 * Get the width of the video
+	 */
+	uint getWidth() const;
+
+	/**
+	 * Get the height of the video
+	 */
+	uint getHeight() const;
+
+	/**
+	 * Set the current frame
+	 */
+	void setFrame(int frameNumber);
+
+	/**
+	 * Gets the current frame
+	 */
+	int getFrame() const;
+
+	/**
+	 * Add a movie event
+	 */
+	bool addEvent(int frameNumber, CGameObject *obj);
+
+	const void *getFrameInfo() const {
+		return _streamCount <= 1 ? nullptr : _frameInfo;
+	}
+
+	/**
+	 * Get a reference to the movie range info list
+	 */
+	const CMovieRangeInfoList *getMovieRangeInfo() const {
+		return &_movieRangeInfo;
+	}
+
 };
 
 } // End of namespace Titanic

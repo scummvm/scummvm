@@ -21,27 +21,29 @@
  */
 
 #include "titanic/support/movie_event.h"
+#include "titanic/core/game_object.h"
 
 namespace Titanic {
 
-CMovieEvent::CMovieEvent() : ListItem(), _fieldC(0), _field10(0),
-	_field14(0), _field1C(0) {
+CMovieEvent::CMovieEvent() : ListItem(), _type(MET_PLAY), _startFrame(0),
+	_endFrame(0), _initialFrame(0), _gameObject(nullptr) {
 }
 
 CMovieEvent::CMovieEvent(const CMovieEvent *src) {
-	_fieldC = src->_fieldC;
-	_field10 = src->_field10;
-	_field14 = src->_field14;
-	_field18 = src->_field18;
-	_field1C = src->_field1C;
+	_type = src->_type;
+	_startFrame = src->_startFrame;
+	_endFrame = src->_endFrame;
+	_initialFrame = src->_initialFrame;
+	_gameObject = src->_gameObject;
 }
 
 void CMovieEvent::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(0, indent);
-	file->writeNumberLine(_fieldC, indent + 1);
-	file->writeNumberLine(_field10, indent + 1);
-	file->writeNumberLine(_field14, indent + 1);
-	file->writeNumberLine(_field1C, indent + 1);
+	file->writeNumberLine(_startFrame, indent + 1);
+	file->writeNumberLine(_endFrame, indent + 1);
+	error("FIXME: Original save/loaded object pointer");
+	//	file->writeNumberLine(_gameObject, indent + 1);
+	file->writeNumberLine(_initialFrame, indent + 1);
 
 	ListItem::save(file, indent);
 }
@@ -49,10 +51,11 @@ void CMovieEvent::save(SimpleFile *file, int indent) {
 void CMovieEvent::load(SimpleFile *file) {
 	int val = file->readNumber();
 	if (!val) {
-		_fieldC = file->readNumber();
-		_field10 = file->readNumber();
-		_field14 = file->readNumber();
-		_field1C = file->readNumber();
+		_startFrame = file->readNumber();
+		_endFrame = file->readNumber();
+		file->readNumber();
+		error("FIXME: Original save/loaded object pointer");
+		_initialFrame = file->readNumber();
 	}
 
 	ListItem::load(file);

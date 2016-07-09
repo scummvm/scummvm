@@ -35,6 +35,11 @@
 
 namespace Titanic {
 
+enum TransparencyMode {
+	TRANS_MASK0 = 0, TRANS_MASK255 = 1, TRANS_ALPHA0 = 2,
+	TRANS_ALPHA255 = 3, TRANS_DEFAULT = 4
+};
+
 class CScreenManager;
 class CJPEGDecode;
 class CTargaDecode;
@@ -57,8 +62,7 @@ protected:
 	CScreenManager *_screenManager;
 	Graphics::ManagedSurface *_rawSurface;
 	bool _pendingLoad;
-	void *_field40;
-	int _field44;
+	const void *_movieFrameInfo;
 	int _field48;
 	int _videoSurfaceNum;
 	int _field50;
@@ -69,6 +73,7 @@ public:
 	bool _blitFlag;
 	bool _blitStyleFlag;
 	CResourceKey _resourceKey;
+	TransparencyMode _transparencyMode;
 public:
 	CVideoSurface(CScreenManager *screenManager);
 	virtual ~CVideoSurface();
@@ -190,15 +195,19 @@ public:
 	 * Plays a movie, loading it from the specified _resource
 	 * if not already loaded
 	 */
-	virtual void playMovie(uint flags, CVideoSurface *surface) = 0;
+	virtual void playMovie(uint flags, CGameObject *obj) = 0;
 
 	/**
 	 * Plays a movie, loading it from the specified _resource
 	 * if not already loaded
 	 */
-	virtual void playMovie(uint startFrame, uint endFrame, int v3, bool v4) = 0;
+	virtual void playMovie(uint startFrame, uint endFrame, uint flags, CGameObject *obj) = 0;
 
-	virtual void proc35(int v1, int v2, int frameNumber, int flags, CGameObject *owner) = 0;
+	/**
+	 * Plays a movie, loading it from the specified _resource
+	 * if not already loaded
+	 */
+	virtual void playMovie(uint startFrame, uint endFrame, uint initialFrame, uint flags, CGameObject *obj) = 0;
 
 	/**
 	 * Stops any movie currently attached to the surface
@@ -206,18 +215,21 @@ public:
 	virtual void stopMovie() = 0;
 
 	/**
-	 * Sets the movie to the specified frame number
+	 * Set the current movie frame number
 	 */
 	virtual void setMovieFrame(uint frameNumber) = 0;
 
-	virtual void proc38(int v1, int v2) = 0;
+	/**
+	 * Adds a movie playback event
+	 */
+	virtual void addMovieEvent(int eventId, CGameObject *obj) = 0;
 
 	virtual void proc39(int v1, int v2) = 0;
 
 	/**
 	 * Return any movie range info associated with the surface's movie
 	 */
-	virtual const Common::List<CMovieRangeInfo *> getMovieRangeInfo() const = 0;
+	virtual const CMovieRangeInfoList *getMovieRangeInfo() const = 0;
 
 	/**
 	 * Loads the surface's resource if there's one pending
@@ -257,8 +269,19 @@ public:
 	 */
 	void blitFrom(const Point &destPos, const Graphics::Surface *src);
 
-	void set40(void *v) { _field40 = v; }
+	/**
+	 *
+	 */
+	void setMovieFrameInfo(const void *frameInfo) { _movieFrameInfo = frameInfo; }
 
+	/**
+	 */
+	const void *getMovieFrameInfo() const { return _movieFrameInfo; }
+
+	/**
+	 * Get the pixels associated with the surface. Only valid when the
+	 * surface has been locked for access
+	 */
 	uint16 *getPixels() { return (uint16 *)_rawSurface->getPixels(); }
 
 	/**
@@ -400,15 +423,19 @@ public:
 	 * Plays a movie, loading it from the specified _resource
 	 * if not already loaded
 	 */
-	virtual void playMovie(uint flags, CVideoSurface *surface);
+	virtual void playMovie(uint flags, CGameObject *obj);
 
 	/**
 	 * Plays a movie, loading it from the specified _resource
 	 * if not already loaded
 	 */
-	virtual void playMovie(uint startFrame, uint endFrame, int v3, bool v4);
+	virtual void playMovie(uint startFrame, uint endFrame, uint flags, CGameObject *obj);
 
-	virtual void proc35(int v1, int v2, int frameNumber, int flags, CGameObject *owner);
+	/**
+	 * Plays a movie, loading it from the specified _resource
+	 * if not already loaded
+	 */
+	virtual void playMovie(uint startFrame, uint endFrame, uint initialFrame, uint flags, CGameObject *obj);
 
 	/**
 	 * Stops any movie currently attached to the surface
@@ -420,14 +447,17 @@ public:
 	 */
 	virtual void setMovieFrame(uint frameNumber);
 
-	virtual void proc38(int v1, int v2);
+	/**
+	 * Adds a movie playback event
+	 */
+	virtual void addMovieEvent(int frameNumber, CGameObject *obj);
 
 	virtual void proc39(int v1, int v2);
 
 	/**
 	 * Return any movie range info associated with the surface's movie
 	 */
-	virtual const Common::List<CMovieRangeInfo *> getMovieRangeInfo() const;
+	virtual const CMovieRangeInfoList *getMovieRangeInfo() const;
 
 	/**
 	 * Loads the surface's resource if there's one pending

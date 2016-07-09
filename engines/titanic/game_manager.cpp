@@ -192,36 +192,48 @@ void CGameManager::update() {
 }
 
 void CGameManager::updateMovies() {
-	// TODO: Make this more like the original, if I can figuring out
-	// what's it doing with temporary lists and the OSMovie methods
-	for (CMovieList::iterator i = CMovie::_activeMovies->begin();
-			i != CMovie::_activeMovies->end(); ) {
-		OSMovie *movie = static_cast<OSMovie *>(*i);
-		assert(movie && movie->_gameObject);
+	bool repeatFlag;
+	do {
+		repeatFlag = false;
 
-		movie->update();
-		switch (movie->getState()) {
-		case MOVIE_FINISHED: {
-			CMovieEndMsg endMsg;
-			endMsg.execute(movie->_gameObject);
+		for (CMovieList::iterator i = CMovie::_playingMovies->begin();
+				i != CMovie::_playingMovies->end(); ) {
+			CMovie *movie = *i;
+			if (movie->_state)
+				continue;
 
-			i = CMovie::_activeMovies->erase(i);
-			delete movie;
-			continue;
-		}
+			CMovieEventList eventsList;
+			if (!movie->handleEvents(eventsList))
+				movie->removeFromPlayingMovies();
 
-		case MOVIE_FRAME: {
-			CMovieFrameMsg frameMsg;
-			frameMsg.execute(movie->_gameObject);
+			while (!eventsList.empty()) {
+				CMovieEvent *movieEvent = eventsList.front();
+
+				switch (movieEvent->_type) {
+				case MET_MOVIE_END: {
+					CMovieEndMsg endMsg(movieEvent->_startFrame, movieEvent->_endFrame);
+					endMsg.execute(movieEvent->_gameObject);
+					break;
+				}
+
+				case MET_FRAME: {
+					CMovieFrameMsg frameMsg(movieEvent->_initialFrame, 0);
+					frameMsg.execute(movieEvent->_gameObject);
+					break;
+				}
+
+				default:
+					break;
+				}
+
+				eventsList.remove(movieEvent);
+			}
+
+			repeatFlag = true;
+			movie->_state = MSTATE_1;
 			break;
 		}
-
-		default:
-			break;
-		}
-
-		++i;
-	}
+	} while (repeatFlag);
 }
 
 void CGameManager::updateDiskTicksCount() {

@@ -27,12 +27,13 @@
 #include "video/video_decoder.h"
 #include "titanic/core/list.h"
 #include "titanic/core/resource_key.h"
+#include "titanic/support/avi_surface.h"
 #include "titanic/support/movie_range_info.h"
 
 namespace Titanic {
 
 enum MovieState { 
-	MOVIE_STOPPED = -1, MOVIE_NONE = 0, MOVIE_FINISHED = 1, MOVIE_FRAME = 2
+	MSTATE_0 = 0, MSTATE_1 = 1
 };
 
 class CGameObject;
@@ -46,22 +47,17 @@ public:
 
 class CMovie : public ListItem {
 protected:
+	/**
+	 * Adds the movie to the list of currently playing movies
+	 */
+	void addToPlayingMovies();
+public:
 	MovieState _state;
 	int _field10;
-protected:
-	/**
-	 * Adds the movie to the active movies list
-	 */
-	void addToActiveMovies();
-
-	/**
-	 * Removes the movie from the active movies list
-	 */
-	void removeFromActiveMovies();
-public:
 	int _field14;
 public:
-	static CMovieList *_activeMovies;
+	static CMovieList *_playingMovies;
+	static CVideoSurface *_movieSurface;
 
 	/**
 	 * Initializes statics
@@ -77,41 +73,49 @@ public:
 	virtual ~CMovie();
 
 	/**
-	 * Plays the movie
+	 * Starts playing the movie
 	 */
-	virtual void play(uint flags, CVideoSurface *surface) = 0;
+	virtual void play(uint flags, CGameObject *obj) = 0;
 	
 	/**
-	 * Plays the movie
+	 * Starts playing the movie
 	 */
-	virtual void play(uint startFrame, uint endFrame, int v3, bool v4) = 0;
+	virtual void play(uint startFrame, uint endFrame, uint flags, CGameObject *obj) = 0;
 
 	/**
-	 * Plays the movie
+	 * Starts playing the movie
 	 */
-	virtual void play(const Rect &rect, int v1, int v2) = 0;
+	virtual void play(uint startFrame, uint endFrame, uint initialFrame, uint flags, CGameObject *obj) = 0;
 	
 	/**
 	 * Plays a sub-section of a movie
 	 */
-	virtual void playClip(const Rect &rect, uint startFrame, uint endFrame) = 0;
+	virtual void playClip(const Point &drawPos, uint startFrame, uint endFrame) = 0;
 	
-	virtual void proc11() = 0;
-	virtual void proc12(int v1, int v2, int frameNumber, int flags, CGameObject *obj) = 0;
-
 	/**
 	 * Stops the movie
 	 */
 	virtual void stop() = 0;
 
-	virtual void proc14() = 0;
+	/**
+	 * Add a playback event
+	 */
+	virtual void addEvent(int frameNumber, CGameObject *obj) = 0;
+
+	/**
+	 * Set the current frame number
+	 */
 	virtual void setFrame(uint frameNumber) = 0;
-	virtual void proc16() = 0;
+	
+	/**
+	 * Handle any pending movie events
+	 */
+	virtual bool handleEvents(CMovieEventList &events) = 0;
 	
 	/**
 	 * Return any movie range info associated with the movie
 	 */
-	virtual const Common::List<CMovieRangeInfo *> getMovieRangeInfo() const = 0;
+	virtual const CMovieRangeInfoList *getMovieRangeInfo() const = 0;
 
 	/**
 	 * Set the sound manager reference
@@ -121,94 +125,102 @@ public:
 	/**
 	 * Get the current movie frame
 	 */
-	virtual int getFrame() = 0;
+	virtual int getFrame() const = 0;
 	
 	virtual void proc20() = 0;
-	virtual void *proc21() = 0;
+	virtual int proc21() = 0;
 
+	/**
+	 * Removes the movie from the list of currently playing movies
+	 */
+	void removeFromPlayingMovies();
+
+	/**
+	 * Returns true if the movie is currently active
+	 */
 	bool isActive() const;
 
 	bool get10();
-
-	virtual MovieState getState() = 0;
-	virtual void update() = 0;
 };
 
 class OSMovie : public CMovie {
 private:
-	Video::VideoDecoder *_video;
+	AVISurface _aviSurface;
 	CVideoSurface *_videoSurface;
-	int _endFrame;
-
+	int _field18;
+	int _field24;
+	int _field28;
+	int _field2C;
+	int _ticksStart;
+	int _frameTime1;
+	int _frameTime2;
+private:
 	/**
-	 * Decodes the next frame
+	 * Called when a movie is started playing
 	 */
-	void decodeFrame();
-public:
-	CGameObject *_gameObject;
+	void movieStarted();
 public:
 	OSMovie(const CResourceKey &name, CVideoSurface *surface);
-	OSMovie(Common::SeekableReadStream *stream, CVideoSurface *surface);
 	virtual ~OSMovie();
 
 	/**
-	 * Plays the movie
+	 * Starts playing the movie
 	 */
-	virtual void play(uint flags, CVideoSurface *surface);
+	virtual void play(uint flags, CGameObject *obj);
 	
 	/**
-	 * Plays the movie
+	 * Starts playing the movie
 	 */
-	virtual void play(uint startFrame, uint endFrame, int v3, bool v4);
+	virtual void play(uint startFrame, uint endFrame, uint flags, CGameObject *obj);
 	
 	/**
-	 * Plays the movie
+	 * Starts playing the movie
 	 */
-	virtual void play(const Rect &rect, int v1, int v2);
+	virtual void play(uint startFrame, uint endFrame, uint initialFrame, uint flags, CGameObject *obj);
 	
 	/**
 	 * Plays a sub-section of a movie
 	 */
-	virtual void playClip(const Rect &rect, uint startFrame, uint endFrame);
-
-	virtual void proc11();
-	virtual void proc12(int v1, int v2, int frameNumber, int flags, CGameObject *obj);
+	virtual void playClip(const Point &drawPos, uint startFrame, uint endFrame);
 
 	/**
 	 * Stops the movie
 	 */
 	virtual void stop();
 	
-	virtual void proc14();
+	/**
+	 * Add a playback event
+	 */
+	virtual void addEvent(int eventId, CGameObject *obj);
 
 	/**
 	 * Set the current frame number
 	 */
 	virtual void setFrame(uint frameNumber);
 	
-	virtual void proc16();
+	/**
+	 * Handle any pending movie events
+	 */
+	virtual bool handleEvents(CMovieEventList &events);
+
+	/**
+	 * Get the current frame number
+	 */
+	virtual int getFrame() const;
 
 	/**
 	 * Return any movie range info associated with the movie
 	 */
-	virtual const Common::List<CMovieRangeInfo *> getMovieRangeInfo() const;
+	virtual const CMovieRangeInfoList *getMovieRangeInfo() const;
 
 	/**
 	 * Set the sound manager reference
 	 */
 	virtual void setSoundManager(CSoundManager *soundManager);
 
-	/**
-	 * Get the current movie frame
-	 */
-	virtual int getFrame();
-
 	virtual void proc20();
-	virtual void *proc21();
+	virtual int proc21();
 
-
-	virtual MovieState getState();
-	virtual void update();
 };
 
 } // End of namespace Titanic

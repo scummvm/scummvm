@@ -235,4 +235,27 @@ void Events::sleep(uint time) {
 	}
 }
 
+bool Events::waitForPress(uint expiry) {
+	uint32 delayEnd = g_system->getMillis() + expiry;
+
+	while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd) {
+		g_system->delayMillis(10);
+		checkForNextFrameCounter();
+
+		Common::Event event;
+		if (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_LBUTTONDOWN:
+			case Common::EVENT_MBUTTONDOWN:
+			case Common::EVENT_KEYDOWN:
+				return true;
+			default:
+				break;
+			}
+		}
+	}
+
+	return false;
+}
+
 } // End of namespace Titanic

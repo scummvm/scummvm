@@ -59,7 +59,12 @@ public:
 	virtual bool isActive(int handle) const { return false; }
 	virtual int proc16() const { return 0; }
 	virtual void WaveMixPump() {}
-	virtual int proc18() const { return 0; }
+	
+	/**
+	 * Called when a movie with audio is started
+	 */
+	virtual bool movieStarted() const { return false; }
+
 	virtual void setMusicPercent(double percent) { _musicPercent = percent; }
 	virtual void setSpeechPercent(double percent) { _speechPercent = percent; }
 	virtual void setMasterPercent(double percent) { _masterPercent = percent; }
@@ -128,7 +133,13 @@ public:
 	virtual bool isActive(int handle) const;
 	virtual int proc16();
 	virtual void WaveMixPump();
-	virtual int proc18() const;
+
+	
+	/**
+	 * Called when a movie with audio is started
+	 */
+	virtual bool movieStarted() const;
+
 	virtual void proc19(int v);
 	virtual void proc20(int v);
 	virtual void proc21(int v);

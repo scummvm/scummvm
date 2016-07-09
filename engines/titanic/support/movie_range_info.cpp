@@ -34,11 +34,11 @@ CMovieRangeInfo::~CMovieRangeInfo() {
 }
 
 CMovieRangeInfo::CMovieRangeInfo(const CMovieRangeInfo *src) : ListItem() {
-	_fieldC = src->_fieldC;
-	_field10 = src->_field10;
-	_frameNumber = src->_frameNumber;
 	_startFrame = src->_startFrame;
 	_endFrame = src->_endFrame;
+	_initialFrame = src->_initialFrame;
+	_isReversed = src->_isReversed;
+	_isFlag1 = src->_isFlag1;
 
 	// Duplicate the events list
 	for (CMovieEventList::const_iterator i = _events.begin();
@@ -49,38 +49,38 @@ CMovieRangeInfo::CMovieRangeInfo(const CMovieRangeInfo *src) : ListItem() {
 
 void CMovieRangeInfo::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(0, indent);
-	file->writeNumberLine(_fieldC, indent + 1);
-	file->writeNumberLine(_field10, indent + 1);
-	file->writeNumberLine(_frameNumber, indent + 1);
-	file->writeNumberLine(_endFrame, indent + 1);
 	file->writeNumberLine(_startFrame, indent + 1);
+	file->writeNumberLine(_endFrame, indent + 1);
+	file->writeNumberLine(_initialFrame, indent + 1);
+	file->writeNumberLine(_isFlag1, indent + 1);
+	file->writeNumberLine(_isReversed, indent + 1);
 	_events.save(file, indent + 1);
 }
 
 void CMovieRangeInfo::load(SimpleFile *file) {
 	int val = file->readNumber();
 	if (!val) {
-		_fieldC = file->readNumber();
-		_field10 = file->readNumber();
-		_frameNumber = file->readNumber();
-		_endFrame = file->readNumber();
 		_startFrame = file->readNumber();
+		_endFrame = file->readNumber();
+		_initialFrame = file->readNumber();
+		_isFlag1 = file->readNumber();
+		_isReversed = file->readNumber();
 		_events.load(file);
 	}
 }
 
-void CMovieRangeInfo::get1(CMovieEventList &list) {
+void CMovieRangeInfo::getMovieEnd(CMovieEventList &list) {
 	for (CMovieEventList::iterator i = _events.begin(); i != _events.end(); ++i) {
 		CMovieEvent *movieEvent = *i;
-		if (movieEvent->_fieldC == 1)
+		if (movieEvent->_type == MET_MOVIE_END)
 			list.push_back(new CMovieEvent(movieEvent));
 	}
 }
 
-void CMovieRangeInfo::get2(CMovieEventList &list, int val) {
+void CMovieRangeInfo::getMovieFrame(CMovieEventList &list, int frameNumber) {
 	for (CMovieEventList::iterator i = _events.begin(); i != _events.end(); ++i) {
 		CMovieEvent *movieEvent = *i;
-		if (movieEvent->_fieldC == 2 && movieEvent->_field1C == val)
+		if (movieEvent->_type == MET_FRAME && movieEvent->_initialFrame == frameNumber)
 			list.push_back(new CMovieEvent(movieEvent));
 	}
 }
@@ -88,24 +88,24 @@ void CMovieRangeInfo::get2(CMovieEventList &list, int val) {
 void CMovieRangeInfo::process(CGameObject *owner) {
 	int flags = 0;
 	if (_endFrame)
-		flags |= CLIPFLAG_HAS_END_FRAME;
+		flags |= MOVIE_1;
 	if (_startFrame)
-		flags |= CLIPFLAG_HAS_START_FRAME;
+		flags |= MOVIE_REVERSE;
 	
 	for (CMovieEventList::iterator i = _events.begin(); i != _events.end(); ++i) {
 		CMovieEvent *movieEvent = *i;
-		if (!movieEvent->_fieldC) {
+		if (!movieEvent->_type == MET_PLAY) {
 			flags |= CLIPFLAG_PLAY;
 			break;
 		}
 	}
 
-	owner->checkPlayMovie(_fieldC, _field10, _frameNumber, flags);
+	owner->playMovie(_startFrame, _endFrame, _initialFrame, flags);
 
 	for (CMovieEventList::iterator i = _events.begin(); i != _events.end(); ++i) {
 		CMovieEvent *movieEvent = *i;
-		if (!movieEvent->_fieldC)
-			owner->surface38(movieEvent->_field1C);
+		if (movieEvent->_type == MET_PLAY)
+			owner->movieEvent(movieEvent->_initialFrame);
 	}
 }
 

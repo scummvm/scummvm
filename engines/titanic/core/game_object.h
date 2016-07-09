@@ -294,11 +294,6 @@ protected:
 	Point getControid() const;
 
 	/**
-	 * Plays a movie
-	 */
-	void playMovie(int v1, int v2);
-
-	/**
 	 * Play an arbitrary clip
 	 */
 	void playClip(const CString &name, uint flags);
@@ -561,11 +556,6 @@ public:
 	virtual bool isPet() const;
 
 	/**
-	 * Play the movie specified in _resource
-	 */
-	void playMovie(uint startFrame, uint endFrame, uint flags);
-
-	/**
 	 * Checks the passed point is validly in the object,
 	 * with extra checking of object flags status
 	 */
@@ -582,9 +572,14 @@ public:
 	void playMovie(uint flags);
 	
 	/**
-	 * Checks and plays a pending clip
+	 * Play the movie specified in _resource
 	 */
-	void checkPlayMovie(int fieldC, int field10, int frameNumber, int flags);
+	void playMovie(int startFrame, int endFrame, uint flags);
+
+	/**
+	 * Play the movie specified in _resource
+	 */
+	void playMovie(int startFrame, int endFrame, int initialFrame, uint flags);
 
 	/**
 	 * Returns true if the object has a currently active movie
@@ -842,9 +837,16 @@ public:
 
 	/*--- CVideoSurface Methods ---*/
 
-	void surface38(int v1, int v2);
+	/**
+	 * Signal a movie event for the given frame
+	 */
+	void movieEvent(int frameNumber);
 
-	void surface38(int v1);
+	/**
+	 * Signal a movie event at the end of all currently
+	 * playing ranges
+	 */
+	void movieEvent();
 };
 
 } // End of namespace Titanic

@@ -91,7 +91,7 @@ bool CComputer::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CComputer::MovieEndMsg(CMovieEndMsg *msg) {
-	if (msg->_value2 == 90) {
+	if (msg->_endFrame == 90) {
 		playSound("a#32.wav", 100, 0, 0);
 		playSound("a#33.wav", 100, 0, 0);
 		playSound("a#31.wav", 100, 0, 0);

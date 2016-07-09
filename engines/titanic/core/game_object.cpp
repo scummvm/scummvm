@@ -85,12 +85,14 @@ void CGameObject::save(SimpleFile *file, int indent) {
 	_movieRangeInfoList.destroyContents();
 
 	if (_surface) {
-		Common::List<CMovieRangeInfo *> rangeList = _surface->getMovieRangeInfo();
+		const CMovieRangeInfoList *rangeList = _surface->getMovieRangeInfo();
 		
-		for (Common::List<CMovieRangeInfo *>::const_iterator i = rangeList.begin();
-				i != rangeList.end(); ++i) {
-			CMovieRangeInfo *rangeInfo = new CMovieRangeInfo(*i);
-			rangeInfo->_frameNumber = (i == rangeList.begin()) ? getMovieFrame() : -1;
+		if (rangeList) {
+			for (CMovieRangeInfoList::const_iterator i = rangeList->begin();
+				i != rangeList->end(); ++i) {
+				CMovieRangeInfo *rangeInfo = new CMovieRangeInfo(*i);
+				rangeInfo->_initialFrame = (i == rangeList->begin()) ? getMovieFrame() : -1;
+			}
 		}
 	}
 
@@ -403,21 +405,6 @@ void CGameObject::loadFrame(int frameNumber) {
 	makeDirty();
 }
 
-void CGameObject::playMovie(int v1, int v2) {
-	if (_surface && !_resource.empty()) {
-		loadResource(_resource);
-		_resource.clear();
-	}
-
-	if (_surface && _surface->loadIfReady()) {
-		if (_surface->_movie) {
-			disableMouse();
-			_surface->_movie->play(_bounds, v1, v2);
-			enableMouse();
-		}
-	}
-}
-
 void CGameObject::processMoveRangeInfo() {
 	for (CMovieRangeInfoList::iterator i = _movieRangeInfoList.begin(); i != _movieRangeInfoList.end(); ++i)
 		(*i)->process(this);
@@ -518,23 +505,53 @@ void CGameObject::petSetRemoteTarget() {
 		pet->setRemoteTarget(this);
 }
 
-void CGameObject::playMovie(uint startFrame, uint endFrame, uint flags) {
+void CGameObject::playMovie(uint flags) {
 	_frameNumber = -1;
+
+	if (_surface && !_resource.empty()) {
+		loadResource(_resource);
+		_resource.clear();
+	}
+
+	CGameObject *obj = (flags & MOVIE_NO_OBJECT) ? nullptr : this;
+	if (_surface) {
+		_surface->playMovie(flags, obj);
+		if (flags & MOVIE_GAMESTATE)
+			getGameManager()->_gameState.addMovie(_surface->_movie);
+	}
+}
+
+void CGameObject::playMovie(int startFrame, int endFrame, uint flags) {
+	_frameNumber = -1;
+
 	if (!_surface) {
 		if (!_resource.empty())
 			loadResource(_resource);
 		_resource.clear();
 	}
 
+	CGameObject *obj = (flags & MOVIE_NO_OBJECT) ? nullptr : this;
 	if (_surface) {
-		// TODO: Figure out where to do this legitimately
-		OSMovie *movie = static_cast<OSMovie *>(_surface->_movie);
-		if (movie)
-			movie->_gameObject = this;
+		_surface->playMovie(startFrame, endFrame, flags, obj);
+		if (flags & MOVIE_GAMESTATE)
+			getGameManager()->_gameState.addMovie(_surface->_movie);
+	}
+}
 
-		_surface->playMovie(startFrame, endFrame, flags, flags != 0);
 
-		if (flags & 0x10)
+void CGameObject::playMovie(int startFrame, int endFrame, int initialFrame, uint flags) {
+	_frameNumber = -1;
+
+	if (!_surface) {
+		if (!_resource.empty())
+			loadResource(_resource);
+		_resource.clear();
+	}
+
+	CGameObject *obj = (flags & MOVIE_NO_OBJECT) ? nullptr : this;
+	if (_surface) {
+		_surface->playMovie(startFrame, endFrame, initialFrame, flags, obj);
+		if (flags & MOVIE_GAMESTATE)
 			getGameManager()->_gameState.addMovie(_surface->_movie);
 	}
 }
@@ -563,28 +580,6 @@ void CGameObject::playRandomClip(const char **names, uint flags) {
 	// Play clip
 	const char *name = names[g_vm->getRandomNumber(count - 1)];
 	playClip(name, flags);
-}
-
-void CGameObject::playMovie(uint flags) {
-	_frameNumber = -1;
-	if (!_surface && !_resource.empty()) {
-		loadResource(_resource);
-		_resource.clear();
-	}
-
-	CVideoSurface *surface = (flags & 4) ? _surface : nullptr;
-	if (_surface) {
-		_surface->playMovie(flags, surface);
-		
-		// TODO: Figure out where to do this legitimately
-		OSMovie *movie = static_cast<OSMovie *>(_surface->_movie);
-		if (movie)
-			movie->_gameObject = this;
-
-		if (flags & 0x10) {
-			getGameManager()->_gameState.addMovie(_surface->_movie);
-		}
-	}
 }
 
 void CGameObject::savePosition() {
@@ -1109,17 +1104,6 @@ bool CGameObject::clipExistsByEnd(const CString &name, int endFrame) const {
 	return _movieClips.existsByEnd(name, endFrame);
 }
 
-void CGameObject::checkPlayMovie(int fieldC, int field10, int frameNumber, int flags) {
-	if (!_surface && !_resource.empty())
-		loadResource(_resource);
-
-	if (_surface ) {
-		_surface->proc35(fieldC, field10, frameNumber, flags, (flags & CLIPFLAG_4) ? this : nullptr);
-		if (flags & CLIPFLAG_PLAY)
-			getGameManager()->_gameState.addMovie(_surface->_movie);
-	}
-}
-
 void CGameObject::petClear() const {
 	CPetControl *petControl = getPetControl();
 	if (petControl)
@@ -1235,14 +1219,14 @@ void CGameObject::setMovie14(int v) {
 		_surface->_movie->_field14 = v;
 }
 
-void CGameObject::surface38(int v1, int v2) {
+void CGameObject::movieEvent(int frameNumber) {
 	if (_surface)
-		_surface->proc38(v1, v2);
+		_surface->addMovieEvent(frameNumber, this);
 }
 
-void CGameObject::surface38(int v1) {
+void CGameObject::movieEvent() {
 	if (_surface)
-		_surface->proc38(-1, v1);
+		_surface->addMovieEvent(-1, this);
 }
 
 int CGameObject::getClipDuration(const CString &name, int frameRate) const {

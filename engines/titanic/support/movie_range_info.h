@@ -34,11 +34,11 @@ class CGameObject;
 
 class CMovieRangeInfo : public ListItem {
 public:
-	int _fieldC;
-	int _field10;
-	int _frameNumber;
-	uint _startFrame;
-	uint _endFrame;
+	int _startFrame;
+	int _endFrame;
+	int _initialFrame;
+	bool _isReversed;
+	bool _isFlag1;
 	CMovieEventList _events;
 public:
 	CMovieRangeInfo();
@@ -60,9 +60,15 @@ public:
 	 */
 	void addEvent(CMovieEvent *movieEvent) { _events.push_back(movieEvent); }
 
-	void get1(CMovieEventList &list);
+	/**
+	 * Get any movie end events for the range
+	 */
+	void getMovieEnd(CMovieEventList &list);
 
-	void get2(CMovieEventList &list, int val);
+	/**
+	 * Get any movie frame events for a specified frame number
+	 */
+	void getMovieFrame(CMovieEventList &list, int frameNumber);
 
 	void process(CGameObject *owner);
 };

@@ -27,13 +27,17 @@
 
 namespace Titanic {
 
+enum MovieEventType { MET_PLAY = 0, MET_MOVIE_END = 1, MET_FRAME = 2 };
+
+class CGameObject;
+
 class CMovieEvent : public ListItem {
 public:
-	int _fieldC;
-	int _field10;
-	int _field14;
-	int _field18;
-	int _field1C;
+	MovieEventType _type;
+	int _startFrame;
+	int _endFrame;
+	CGameObject *_gameObject;
+	int _initialFrame;
 public:
 	CMovieEvent();
 	CMovieEvent(const CMovieEvent *src);
@@ -52,6 +56,10 @@ public:
 
 class CMovieEventList : public List<CMovieEvent> {
 };
+
+class CSharedMovieEventList : public Common::List<CMovieEvent> {
+};
+
 
 } // End of namespace Titanic
 
