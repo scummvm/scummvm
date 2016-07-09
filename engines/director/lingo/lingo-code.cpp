@@ -297,6 +297,56 @@ void Lingo::c_ampersand() {
 	g_lingo->push(d1);
 }
 
+void Lingo::c_concat() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	if (d1.type != STRING || d2.type != STRING) {
+		error("Wrong operands for & operation: %d %d", d1.type, d2.type);
+	}
+
+	*d1.u.s += " ";
+	*d1.u.s += *d2.u.s;
+
+	delete d2.u.s;
+
+	g_lingo->push(d1);
+}
+
+void Lingo::c_and() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	d1.toInt();
+	d2.toInt();
+
+	d1.u.i = (d1.u.i && d2.u.i) ? 1 : 0;
+
+	g_lingo->push(d1);
+}
+
+void Lingo::c_or() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	d1.toInt();
+	d2.toInt();
+
+	d1.u.i = (d1.u.i || d2.u.i) ? 1 : 0;
+
+	g_lingo->push(d1);
+}
+
+void Lingo::c_not() {
+	Datum d = g_lingo->pop();
+
+	d.toInt();
+
+	d.u.i = ~d.u.i ? 1 : 0;
+
+	g_lingo->push(d);
+}
+
 void Lingo::c_eq() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();

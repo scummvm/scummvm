@@ -80,7 +80,11 @@
      tGT = 296,
      tLT = 297,
      tEQ = 298,
-     tNEQ = 299
+     tNEQ = 299,
+     tAND = 300,
+     tOR = 301,
+     tNOT = 302,
+     tCONCAT = 303
    };
 #endif
 /* Tokens.  */
@@ -126,6 +130,10 @@
 #define tLT 297
 #define tEQ 298
 #define tNEQ 299
+#define tAND 300
+#define tOR 301
+#define tNOT 302
+#define tCONCAT 303
 
 
 
@@ -141,7 +149,7 @@ typedef union YYSTYPE
 	int	narg;	/* number of arguments */
 }
 /* Line 1529 of yacc.c.  */
-#line 145 "engines/director/lingo/lingo-gr.hpp"
+#line 153 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

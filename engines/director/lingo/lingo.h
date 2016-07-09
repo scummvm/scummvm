@@ -178,7 +178,13 @@ public:
 	static void c_mul();
 	static void c_div();
 	static void c_negate();
+
+	static void c_and();
+	static void c_or();
+	static void c_not();
+
 	static void c_ampersand();
+	static void c_concat();
 
 	static void c_constpush();
 	static void c_fconstpush();

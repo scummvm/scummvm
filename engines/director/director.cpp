@@ -129,6 +129,7 @@ Common::Error DirectorEngine::run() {
 	end repeat\n\
 	set z = \"foo bar baz\"\n\
 	set z1 = z & \" meow\"\n\
+	set z1 = z1 && \"woof\"\n\
 	put z\n\
 	put z1\n\
 ", kMovieScript, 2);

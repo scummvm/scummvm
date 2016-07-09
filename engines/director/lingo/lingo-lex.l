@@ -61,6 +61,7 @@ whitespace [\t ]
 ^{whitespace}+		{ count(); }
 [\t]+				{ count(); return ' '; }
 
+(?i:and)			{ count(); return tAND; }
 (?i:down)			{ count(); return tDOWN; }
 (?i:if)				{ count(); return tIF; }
 (?i:[\n\r]+[\t ]+else[\t ]+if)	{ countnl(); return tNLELSIF; }
@@ -78,7 +79,9 @@ whitespace [\t ]
 (?i:mciwait)		{ count(); return tMCIWAIT; }
 (?i:movie)			{ count(); return tMOVIE; }
 (?i:next)			{ count(); return tNEXT; }
+(?i:not)			{ count(); return tNOT; }
 (?i:of)				{ count(); return tOF; }
+(?i:or)				{ count(); return tOR; }
 (?i:previous)		{ count(); return tPREVIOUS; }
 (?i:put)			{ count(); return tPUT; }
 (?i:repeat)			{ count(); return tREPEAT; }
@@ -88,9 +91,10 @@ whitespace [\t ]
 (?i:with)			{ count(); return tWITH; }
 (?i:while)			{ count(); return tWHILE; }
 
-[!][=]				{ count(); return tNEQ; }
+[<][>]				{ count(); return tNEQ; }
 [>][=]				{ count(); return tGE; }
 [<][=]				{ count(); return tLE; }
+[&][&]				{ count(); return tCONCAT; }
 
 {identifier}	{
 		count();

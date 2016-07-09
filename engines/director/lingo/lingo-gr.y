@@ -77,7 +77,7 @@ using namespace Director;
 %token tDOWN tELSE tNLELSIF tEND tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
 %token tMCI tMCIWAIT tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO
 %token tWITH tWHILE tNLELSE
-%token tGE tLE tGT tLT tEQ tNEQ
+%token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT tCONCAT
 
 %type<code> asgn begin elseif elsestmtoneliner end expr if repeatwhile repeatwith stmtlist
 %type<s> gotoframe gotomovie
@@ -334,7 +334,11 @@ expr: INT		{
 	| expr tNEQ expr			{ g_lingo->code1(g_lingo->c_neq); }
 	| expr tGE expr				{ g_lingo->code1(g_lingo->c_ge); }
 	| expr tLE expr				{ g_lingo->code1(g_lingo->c_le); }
+	| expr tAND expr			{ g_lingo->code1(g_lingo->c_and); }
+	| expr tOR expr				{ g_lingo->code1(g_lingo->c_or); }
+	| tNOT expr  %prec UNARY	{ g_lingo->code1(g_lingo->c_not); }
 	| expr '&' expr				{ g_lingo->code1(g_lingo->c_ampersand); }
+	| expr tCONCAT expr			{ g_lingo->code1(g_lingo->c_concat); }
 	| '+' expr  %prec UNARY		{ $$ = $2; }
 	| '-' expr  %prec UNARY		{ $$ = $2; g_lingo->code1(g_lingo->c_negate); }
 	| '(' expr ')'				{ $$ = $2; }
