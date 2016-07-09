@@ -270,7 +270,7 @@ void Gui::addChild(WindowReference target, ObjID child) {
 }
 
 void Gui::removeChild(WindowReference target, ObjID child) {
-	WindowData data = findWindowData(target);
+	WindowData &data = findWindowData(target);
 	uint index = 0;
 	for (;index < data.children.size(); index++) {
 		if (data.children[index].obj == child) break;
@@ -388,8 +388,8 @@ void Gui::loadGraphics() {
 
 bool Gui::loadMenus() {
 
-	// We assume that, if there are static menus, we don't need dynamic ones
-	if (menuSubItems) {
+	if (kLoadStaticMenus) {
+		// We assume that, if there are static menus, we don't need dynamic ones
 		_menu->addStaticMenus(menuSubItems);
 		return true;
 	}
@@ -667,29 +667,27 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 		pos = _engine->getObjPosition(child);
 		pos += Common::Point(border.leftOffset, border.topOffset);
 
-		if (child < 650) { // Small HACK until I figre out where the last garbage child in main game window comes from
-			if (!_assets.contains(child)) {
-				_assets[child] = new ImageAsset(child, _graphics);
-			}
-
-			_assets[child]->blitInto(
-				surface,
-				pos.x,
-				pos.y,
-				mode);
-
-			if (_engine->isObjSelected(child))
-				_assets[child]->blitInto(
-					surface, pos.x, pos.y, kBlitOR);
-
-			// For test
-			/*surface->frameRect(Common::Rect(
-				pos.x,
-				pos.y,
-				pos.x + _assets[child]->getWidth() + 1,
-				pos.y + _assets[child]->getHeight() + 1), kColorGreen);
-				*/
+		if (!_assets.contains(child)) {
+			_assets[child] = new ImageAsset(child, _graphics);
 		}
+
+		_assets[child]->blitInto(
+			surface,
+			pos.x,
+			pos.y,
+			mode);
+
+		if (_engine->isObjSelected(child))
+			_assets[child]->blitInto(
+				surface, pos.x, pos.y, kBlitOR);
+
+		// For test
+		/*surface->frameRect(Common::Rect(
+			pos.x,
+			pos.y,
+			pos.x + _assets[child]->getWidth() + 1,
+			pos.y + _assets[child]->getHeight() + 1), kColorGreen);
+			*/
 	}
 }
 
@@ -755,20 +753,17 @@ void Gui::updateWindow(WindowReference winID, bool containerOpen) {
 				mode = kBlitBIC;
 				if (off || flag) {
 					mode = kBlitXOR;
-				}
-				else if (_engine->isObjSelected(child)) {
+				} else if (!off && _engine->isObjSelected(child)) {
 					mode = kBlitOR;
 				}
 				children[i] = DrawableObject(child, mode);
-			}
-			else {
+			} else {
 				children[i] = DrawableObject(child, kBlitXOR);
 			}
 		}
 		if (winID == kMainGameWindow) {
 			drawMainGameWindow();
-		}
-		else {
+		} else {
 			Graphics::MacWindow *winRef = findWindow(winID);
 			winRef->getSurface()->fillRect(data.bounds, kColorGray);
 		}
