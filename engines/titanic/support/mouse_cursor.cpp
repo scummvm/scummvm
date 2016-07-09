@@ -97,11 +97,11 @@ void CMouseCursor::loadCursorImages() {
 		OSMovie movie(stream, surface);
 		movie.setFrame(idx);
 		
-		int frameNum = movie.proc21();
-		_cursors[idx]._frameNumber = frameNum;
-		surface->setMovieFrame(frameNum);
-*/
-		}
+		void *frameInfo = movie.duplicateFrameInfo();
+		_cursors[idx]._frameInfo = frameInfo;
+		surface->setMovieFrameInfo(frameInfo);
+		*/
+	}
 }
 
 void CMouseCursor::show() {

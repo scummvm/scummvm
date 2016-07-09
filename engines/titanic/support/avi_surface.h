@@ -127,6 +127,11 @@ public:
 	 */
 	bool addEvent(int frameNumber, CGameObject *obj);
 
+	/**
+	 * Set the frame rate
+	 */
+	void setFrameRate(double rate);
+
 	const void *getFrameInfo() const {
 		return _streamCount <= 1 ? nullptr : _frameInfo;
 	}
@@ -138,6 +143,10 @@ public:
 		return &_movieRangeInfo;
 	}
 
+	/**
+	 * Duplicate the frame info
+	 */
+	void *duplicateFrameInfo() const;
 };
 
 } // End of namespace Titanic

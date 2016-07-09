@@ -214,4 +214,16 @@ bool AVISurface::addEvent(int frameNumber, CGameObject *obj) {
 	return false;
 }
 
+void AVISurface::setFrameRate(double rate) {
+	if (rate >= 0.0 && rate <= 100.0) {
+		_frameRate = rate;
+		warning("TODO: Frame rate set to %d yet to be implemented", (int)rate);
+	}
+}
+
+void *AVISurface::duplicateFrameInfo() const {
+	// TODO
+	return nullptr;
+}
+
 } // End of namespace Titanic

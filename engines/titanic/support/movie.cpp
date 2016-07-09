@@ -213,14 +213,12 @@ void OSMovie::movieStarted() {
 	_field10 = 1;
 }
 
-void OSMovie::proc20() {
-	// TODO
+void OSMovie::setFrameRate(double rate) {
+	_aviSurface.setFrameRate(rate);
 }
 
-int OSMovie::proc21() {
-	// TODO
-	return 0;
+void *OSMovie::duplicateFrameInfo() const {
+	return _aviSurface.duplicateFrameInfo();
 }
-
 
 } // End of namespace Titanic

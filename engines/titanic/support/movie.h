@@ -126,9 +126,16 @@ public:
 	 * Get the current movie frame
 	 */
 	virtual int getFrame() const = 0;
-	
-	virtual void proc20() = 0;
-	virtual int proc21() = 0;
+
+	/**
+	 * Set the frame rate for the movie
+	 */
+	virtual void setFrameRate(double rate) = 0;
+
+	/**
+	* Creates a duplicate of the frame info
+	*/
+	virtual void *duplicateFrameInfo() const = 0;
 
 	/**
 	 * Removes the movie from the list of currently playing movies
@@ -218,9 +225,15 @@ public:
 	 */
 	virtual void setSoundManager(CSoundManager *soundManager);
 
-	virtual void proc20();
-	virtual int proc21();
+	/**
+	 * Set the frame rate for the movie
+	 */
+	virtual void setFrameRate(double rate);
 
+	/**
+	 * Creates a duplicate of the frame info
+	 */
+	virtual void *duplicateFrameInfo() const;
 };
 
 } // End of namespace Titanic
