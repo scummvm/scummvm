@@ -546,7 +546,7 @@ void MacVentureEngine::unselectObject(ObjID objID) {
 
 
 void MacVentureEngine::updateExits() {
-	// exitWin.killControls();
+	_gui->clearExits();
 	_gui->unselectExits();
 
 	Common::Array<ObjID> exits = _world->getChildren(_world->getObjAttr(1, kAttrParentObject), true);

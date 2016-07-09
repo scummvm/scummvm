@@ -112,7 +112,7 @@ struct WindowData {
 	bool updateScroll;
 };
 
-enum ControlType { // HACK, should correspond exactly with the types of controls (sliders etc) 
+enum ControlType { // HACK, should correspond exactly with the types of controls (sliders etc)
 	kControlExitBox = 0,
 	kControlExamine = 1,
 	kControlOpen = 2,
@@ -152,7 +152,7 @@ struct ControlData {
 	uint16 scrollMax;
 	uint16 scrollMin;
 	uint16 cdef;
-	ControlAction refcon; 
+	ControlAction refcon;
 	ControlType type;
 	uint8 titleLength;
 	char* title;
@@ -240,6 +240,7 @@ public:
 	void addChild(WindowReference target, ObjID child);
 	void removeChild(WindowReference target, ObjID child);
 
+	void clearExits();
 	void unselectExits();
 	void updateExit(ObjID id);
 
@@ -274,7 +275,7 @@ private: // Attributes
 
 	Graphics::ManagedSurface _draggedSurface;
 	DraggedObj _draggedObj;
-	
+
 	Cursor *_cursor;
 
 	ConsoleText *_consoleText;
@@ -359,7 +360,7 @@ public:
 	~Cursor() {}
 
 	void tick() {
-		executeState(); 
+		executeState();
 		changeState(kTickCol);
 	}
 
