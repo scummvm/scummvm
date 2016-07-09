@@ -28,9 +28,7 @@
 #include "common/str.h"
 #include "common/system.h"
 #include "common/timer.h"
-#include "common/textconsole.h"
 #include <SDL/SDL_net.h>
-#include "reader.h"
 
 namespace Common {
 class MemoryReadWriteStream;
