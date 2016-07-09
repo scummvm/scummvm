@@ -134,7 +134,9 @@ Common::Error DirectorEngine::run() {
 	put z1\n\
 	put chars(\"Macromedia\", 6, 6)\n\
 	put chars(\"Macromedia\", 6, 10)\n\
-	put chars(\"Macromedia\", 6, 15)\n\
+	put chars(\"Macromedia\", -1, 15)\n\
+	if z1 contains \"Me\xafW\" then put \"Contains\"\n\
+	else put \"Doesn't contain\"\n\
 ", kMovieScript, 2);
 
 _lingo->executeScript(kMovieScript, 2);

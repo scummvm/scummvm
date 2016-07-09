@@ -84,7 +84,9 @@
      tAND = 300,
      tOR = 301,
      tNOT = 302,
-     tCONCAT = 303
+     tCONCAT = 303,
+     tCONTAINS = 304,
+     tSTARTS = 305
    };
 #endif
 /* Tokens.  */
@@ -134,6 +136,8 @@
 #define tOR 301
 #define tNOT 302
 #define tCONCAT 303
+#define tCONTAINS 304
+#define tSTARTS 305
 
 
 
@@ -149,7 +153,7 @@ typedef union YYSTYPE
 	int	narg;	/* number of arguments */
 }
 /* Line 1529 of yacc.c.  */
-#line 153 "engines/director/lingo/lingo-gr.hpp"
+#line 157 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

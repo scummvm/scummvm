@@ -311,6 +311,52 @@ void Lingo::c_concat() {
 	g_lingo->push(d1);
 }
 
+void Lingo::c_contains() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	d1.toString();
+	d2.toString();
+
+	Common::String *s1 = g_lingo->toLowercaseMac(d1.u.s);
+	Common::String *s2 = g_lingo->toLowercaseMac(d2.u.s);
+
+	int res = s1->contains(*s2) ? 1 : 0;
+
+	delete d1.u.s;
+	delete d2.u.s;
+	delete s1;
+	delete s2;
+
+	d1.type = INT;
+	d1.u.i = res;
+
+	g_lingo->push(d1);
+}
+
+void Lingo::c_starts() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	d1.toString();
+	d2.toString();
+
+	Common::String *s1 = g_lingo->toLowercaseMac(d1.u.s);
+	Common::String *s2 = g_lingo->toLowercaseMac(d2.u.s);
+
+	int res = s1->hasPrefix(*s2) ? 1 : 0;
+
+	delete d1.u.s;
+	delete d2.u.s;
+	delete s1;
+	delete s2;
+
+	d1.type = INT;
+	d1.u.i = res;
+
+	g_lingo->push(d1);
+}
+
 void Lingo::c_and() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();

@@ -142,6 +142,8 @@ public:
 
 	void initBuiltIns();
 
+	Common::String *toLowercaseMac(Common::String *s);
+
 public:
 	void execute(int pc);
 	void pushContext();
@@ -188,6 +190,8 @@ public:
 
 	static void c_ampersand();
 	static void c_concat();
+	static void c_contains();
+	static void c_starts();
 
 	static void c_constpush();
 	static void c_fconstpush();

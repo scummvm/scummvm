@@ -62,6 +62,7 @@ whitespace [\t ]
 [\t]+				{ count(); return ' '; }
 
 (?i:and)			{ count(); return tAND; }
+(?i:contains)		{ count(); return tCONTAINS; }
 (?i:down)			{ count(); return tDOWN; }
 (?i:if)				{ count(); return tIF; }
 (?i:[\n\r]+[\t ]+else[\t ]+if)	{ countnl(); return tNLELSIF; }
@@ -86,6 +87,7 @@ whitespace [\t ]
 (?i:put)			{ count(); return tPUT; }
 (?i:repeat)			{ count(); return tREPEAT; }
 (?i:set)			{ count(); return tSET; }
+(?i:starts)			{ count(); return tSTARTS; }
 (?i:then)			{ count(); return tTHEN; }
 (?i:to)				{ count(); return tTO; }
 (?i:with)			{ count(); return tWITH; }
