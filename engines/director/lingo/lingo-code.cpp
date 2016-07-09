@@ -160,15 +160,25 @@ void Lingo::c_assign() {
 		return;
 	}
 
-	if (d1.u.sym->type != INT && d1.u.sym->type != VOID) {
+	if (d1.u.sym->type != INT && d1.u.sym->type != VOID &&
+			d1.u.sym->type != FLOAT && d1.u.sym->type != STRING) {
 		warning("assignment to non-variable '%s'", d1.u.sym->name);
 		return;
 	}
 
-	d1.u.sym->u.val = d2.u.i;
+	if (d1.u.sym->type == STRING) // Free memory if needed
+		delete d1.u.sym->u.str;
+
+	if (d2.type == INT)
+		d1.u.sym->u.val = d2.u.i;
+	else if (d2.type == FLOAT)
+		d1.u.sym->u.fval = d2.u.f;
+	else if (d2.type == STRING)
+		d1.u.sym->u.str = new Common::String(*d2.u.s);
+
 	d1.u.sym->type  = d2.type;
 
-	g_lingo->push(d2);
+	g_lingo->push(d1);
 }
 
 bool Lingo::verify(Symbol *s) {
@@ -264,6 +274,21 @@ void Lingo::c_negate() {
 		d.u.f = -d.u.f;
 
 	g_lingo->push(d);
+}
+
+void Lingo::c_ampersand() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	if (d1.type != STRING || d2.type != STRING) {
+		error("Wrong operands for & operation: %d %d", d1.type, d2.type);
+	}
+
+	*d1.u.s += *d2.u.s;
+
+	delete d2.u.s;
+
+	g_lingo->push(d1);
 }
 
 void Lingo::c_eq() {

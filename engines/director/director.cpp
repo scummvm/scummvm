@@ -128,7 +128,9 @@ Common::Error DirectorEngine::run() {
 		else put 5\n\
 	end repeat\n\
 	set z = \"foo bar baz\"\n\
+	set z1 = z & \" meow\"\n\
 	put z\n\
+	put z1\n\
 ", kMovieScript, 2);
 
 _lingo->executeScript(kMovieScript, 2);

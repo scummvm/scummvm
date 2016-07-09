@@ -81,10 +81,10 @@ struct Symbol {	/* symbol table entry */
 	char *name;
 	int type;
 	union {
-		int		val;		/* VAR */
-		float	fval;		/* FLOAT */
-		ScriptData	*defn;	/* FUNCTION, PROCEDURE */
-		char	*str;		/* STRING */
+		int		val;			/* VAR */
+		float	fval;			/* FLOAT */
+		ScriptData	*defn;		/* FUNCTION, PROCEDURE */
+		Common::String	*str;	/* STRING */
 	} u;
 	int nargs;
 	bool global;
@@ -172,11 +172,14 @@ public:
 
 	static void c_xpop();
 	static void c_printtop();
+
 	static void c_add();
 	static void c_sub();
 	static void c_mul();
 	static void c_div();
 	static void c_negate();
+	static void c_ampersand();
+
 	static void c_constpush();
 	static void c_fconstpush();
 	static void c_stringpush();

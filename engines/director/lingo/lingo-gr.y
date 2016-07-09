@@ -334,6 +334,7 @@ expr: INT		{
 	| expr tNEQ expr			{ g_lingo->code1(g_lingo->c_neq); }
 	| expr tGE expr				{ g_lingo->code1(g_lingo->c_ge); }
 	| expr tLE expr				{ g_lingo->code1(g_lingo->c_le); }
+	| expr '&' expr				{ g_lingo->code1(g_lingo->c_ampersand); }
 	| '+' expr  %prec UNARY		{ $$ = $2; }
 	| '-' expr  %prec UNARY		{ $$ = $2; g_lingo->code1(g_lingo->c_negate); }
 	| '(' expr ')'				{ $$ = $2; }
