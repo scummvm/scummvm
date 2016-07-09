@@ -975,6 +975,7 @@ void GfxOpenGLS::drawMesh(const Mesh *mesh) {
 
 	actorShader->use();
 	actorShader->setUniform("extraMatrix", _matrixStack.top());
+	actorShader->setUniform("lightsEnabled", _lightsEnabled && !isShadowModeActive());
 
 	const Material *curMaterial = NULL;
 	for (int i = 0; i < mesh->_numFaces;) {

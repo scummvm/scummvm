@@ -93,5 +93,7 @@ void main()
 			light += lights[i]._color.xyz * intensity;
 		}
 		Color = clamp(vec4(color.xyz * light, color.w), 0.0, 1.0);
+	} else {
+		Color = color;
 	}
 }
