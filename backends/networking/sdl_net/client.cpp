@@ -26,12 +26,13 @@
 #include "backends/networking/sdl_net/localwebserver.h"
 #include "common/textconsole.h"
 #include <SDL/SDL_net.h>
+#include <common/memstream.h>
 
 namespace Networking {
 
-Client::Client() : _state(INVALID), _set(nullptr), _socket(nullptr), _handler(nullptr) {}
+Client::Client() : _state(INVALID), _set(nullptr), _socket(nullptr), _handler(nullptr), _previousHandler(nullptr), _stream(nullptr) {}
 
-Client::Client(SDLNet_SocketSet set, TCPsocket socket) : _state(INVALID), _set(nullptr), _socket(nullptr), _handler(nullptr) {
+Client::Client(SDLNet_SocketSet set, TCPsocket socket) : _state(INVALID), _set(nullptr), _socket(nullptr), _handler(nullptr), _previousHandler(nullptr), _stream(nullptr) {
 	open(set, socket);
 }
 
@@ -46,7 +47,11 @@ void Client::open(SDLNet_SocketSet set, TCPsocket socket) {
 	_set = set;
 	Reader cleanReader;
 	_reader = cleanReader;
+	if (_handler) delete _handler;
 	_handler = nullptr;
+	if (_previousHandler) delete _previousHandler;
+	_previousHandler = nullptr;
+	_stream = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
 	if (set) {
 		int numused = SDLNet_TCP_AddSocket(set, socket);
 		if (numused == -1) {
@@ -55,9 +60,11 @@ void Client::open(SDLNet_SocketSet set, TCPsocket socket) {
 	}
 }
 
-void Client::readHeaders() {
-	if (!_socket) return;
-	if (!SDLNet_SocketReady(_socket)) return;
+bool Client::readMoreIfNeeded() {
+	if (_stream == nullptr) return false; //nothing to read into
+	if (_stream->size() - _stream->pos() > 0) return true; //not needed, some data left in the stream
+	if (!_socket) return false;
+	if (!SDLNet_SocketReady(_socket)) return false;
 
 	const uint32 BUFFER_SIZE = 16 * 1024;
 	byte buffer[BUFFER_SIZE];
@@ -65,16 +72,48 @@ void Client::readHeaders() {
 	if (bytes <= 0) {
 		warning("Client::readHeaders recv fail");
 		close();
-		return;
+		return false;
 	}
-	
-	_reader.setContent(buffer, bytes);
-	if (_reader.readRequest())
+
+	if (_stream->write(buffer, bytes) != bytes) {
+		warning("failed to write() into MemoryReadWriteStream");
+		close();
+		return false;
+	}
+
+	return true;
+}
+
+void Client::readHeaders() {
+	if (!readMoreIfNeeded()) return;
+	_reader.setContent(_stream);
+	if (_reader.readFirstHeaders())
 		_state = (_reader.badRequest() ? BAD_REQUEST : READ_HEADERS);
 }
 
+bool Client::readContent(Common::WriteStream *stream) {
+	if (!readMoreIfNeeded()) return false;
+	_reader.setContent(_stream);
+	return _reader.readFirstContent(stream);
+}
+
+bool Client::readBlockHeaders(Common::WriteStream *stream) {
+	if (!readMoreIfNeeded()) return false;
+	_reader.setContent(_stream);
+	return _reader.readBlockHeaders(stream);
+}
+
+bool Client::readBlockContent(Common::WriteStream *stream) {
+	if (!readMoreIfNeeded()) return false;
+	_reader.setContent(_stream);
+	return _reader.readBlockContent(stream);
+}
+
 void Client::setHandler(ClientHandler *handler) {	
-	if (_handler) delete _handler;
+	if (_handler) {
+		if (_previousHandler) delete _previousHandler;
+		_previousHandler = _handler; //can't just delete it, as setHandler() could've been called by handler itself
+	}
 	_state = BEING_HANDLED;
 	_handler = handler;
 }
@@ -98,6 +137,11 @@ void Client::close() {
 	if (_socket) {
 		SDLNet_TCP_Close(_socket);
 		_socket = nullptr;
+	}
+
+	if (_stream) {
+		delete _stream;
+		_stream = nullptr;
 	}
 
 	_state = INVALID;

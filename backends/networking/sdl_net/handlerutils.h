@@ -20,21 +20,23 @@
 *
 */
 
-#ifndef BACKENDS_NETWORKING_SDL_NET_UPLOADFILEHANDLER_H
-#define BACKENDS_NETWORKING_SDL_NET_UPLOADFILEHANDLER_H
+#ifndef BACKENDS_NETWORKING_SDL_NET_HANDLERUTILS_H
+#define BACKENDS_NETWORKING_SDL_NET_HANDLERUTILS_H
 
-#include "backends/networking/sdl_net/handlers/filesbasehandler.h"
+#include "backends/networking/sdl_net/client.h"
+#include "common/archive.h"
 
 namespace Networking {
 
-class UploadFileHandler: public FilesBaseHandler {
-	void handle(Client &client);
-	
+class HandlerUtils {
 public:
-	UploadFileHandler();
-	virtual ~UploadFileHandler();
+	static Common::Archive *getZipArchive();
+	static Common::ArchiveMemberList listArchive();
+	static Common::SeekableReadStream *getArchiveFile(Common::String name);
+	static Common::String readEverythingFromStream(Common::SeekableReadStream *const stream);
 
-	virtual ClientHandlerCallback getHandler();
+	static void setMessageHandler(Client &client, Common::String message, Common::String redirectTo = "");
+	static void setFilesManagerErrorMessageHandler(Client &client, Common::String message, Common::String redirectTo = "");
 };
 
 } // End of namespace Networking

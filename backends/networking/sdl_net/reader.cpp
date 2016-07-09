@@ -135,14 +135,14 @@ void Reader::cleanup() {
 	}
 }
 
-bool Reader::readRequest() {
+bool Reader::readWholeRequest() {
 	if (_state == RS_NONE) _state = RS_READING_HEADERS;
 
 	while (true) {
 		if (!bytesLeft()) return false;
 
 		if (_state == RS_READING_HEADERS)
-			if (!readHeaders())
+			if (!readWholeHeaders())
 				return false;
 
 		if (_boundary.empty()) return true; //not POST multipart
@@ -150,7 +150,7 @@ bool Reader::readRequest() {
 		if (!bytesLeft()) return false;
 
 		if (_state == RS_READING_CONTENT)
-			if (!readContent())
+			if (!readWholeContent())
 				return false;
 
 		if (_availableBytes >= 2) {
@@ -171,7 +171,69 @@ bool Reader::readRequest() {
 	return true;
 }
 
-bool Reader::readHeaders() {
+bool Reader::readFirstHeaders() {
+	if (_state == RS_NONE) _state = RS_READING_HEADERS;
+
+	if (!bytesLeft()) return false;
+
+	if (_state == RS_READING_HEADERS)
+		return readWholeHeaders();
+
+	warning("Reader::readFirstHeaders(): bad state");
+	return false;
+}
+
+bool Reader::readFirstContent(Common::WriteStream *stream) {
+	if (_state != RS_READING_CONTENT) {
+		warning("Reader::readFirstContent(): bad state");
+		return false;
+	}
+
+	if (!bytesLeft()) return false;
+
+	return readWholeContentIntoStream(stream);
+}
+
+bool Reader::readBlockHeaders(Common::WriteStream *stream) {
+	if (_state != RS_READING_HEADERS) {
+		warning("Reader::readBlockHeaders(): bad state");
+		return false;
+	}
+
+	if (!bytesLeft()) return false;
+
+	return readWholeHeadersIntoStream(stream);
+}
+
+bool Reader::readBlockContent(Common::WriteStream *stream) {
+	if (_state != RS_READING_CONTENT) {
+		warning("Reader::readBlockContent(): bad state");
+		return false;
+	}
+
+	if (!bytesLeft()) return false;
+
+	if (!readWholeContentIntoStream(stream))
+		return false;
+
+	/*
+	if (_availableBytes >= 2) {
+		Common::String bts;
+		bts += readOne();
+		bts += readOne();
+		if (bts == "--") _isOver = true;
+		else if (bts != "\r\n")
+			warning("strange bytes: \"%s\"", bts.c_str());
+	} else {
+		warning("strange ending");
+		_isOver = true;
+	}
+	*/
+
+	return true;
+}
+
+bool Reader::readWholeHeaders() {
 	Common::String boundary = "\r\n\r\n";
 	if (_window == nullptr) {
 		makeWindow(boundary.size());
@@ -182,6 +244,20 @@ bool Reader::readHeaders() {
 		if (!bytesLeft()) return false;
 	}
 	handleHeaders(_headers);
+
+	freeWindow();
+	_state = RS_READING_CONTENT;
+	return true;
+}
+
+bool Reader::readWholeHeadersIntoStream(Common::WriteStream *stream) {
+	Common::String boundary = "\r\n\r\n";
+	if (_window == nullptr) makeWindow(boundary.size());
+
+	while (readOneByteInStream(stream, boundary)) {
+		if (!bytesLeft()) return false;
+	}
+	if (stream) stream->flush();
 
 	freeWindow();
 	_state = RS_READING_CONTENT;
@@ -383,7 +459,7 @@ Common::String generateTempFileName(Common::String originalFilename, Common::Ran
 }
 }
 
-bool Reader::readContent() {
+bool Reader::readWholeContent() {
 	Common::String boundary = "--" + _boundary;
 	if (!_firstBlock) boundary = "\r\n" + boundary;
 	if (_window == nullptr) {
@@ -435,6 +511,23 @@ bool Reader::readContent() {
 	return true;
 }
 
+bool Reader::readWholeContentIntoStream(Common::WriteStream *stream) {
+	Common::String boundary = "--" + _boundary;
+	if (!_firstBlock) boundary = "\r\n" + boundary;
+	if (_window == nullptr) makeWindow(boundary.size());
+
+	while (readOneByteInStream(stream, boundary)) {
+		if (!bytesLeft()) return false;
+	}
+
+	_firstBlock = false;
+	if (stream) stream->flush();
+
+	freeWindow();
+	_state = RS_READING_HEADERS;
+	return true;
+}
+
 void Reader::handleFileContent(Common::String filename) {
 	debug("\nHANDLE FILE CONTENT:\nFILE >>%s<< SAVED INTO >>%s<<", _currentFileName.c_str(), filename.c_str());
 	_attachedFiles[_currentFileName] = filename;
@@ -469,7 +562,7 @@ bool Reader::readOneByteInStream(Common::WriteStream *stream, const Common::Stri
 		return false;
 
 	//if not, add the first byte of the window to the string
-	stream->writeByte(_window[0]);
+	if (stream) stream->writeByte(_window[0]);
 	for (uint32 i = 1; i < _windowSize; ++i)
 		_window[i - 1] = _window[i];
 	--_windowUsed;
@@ -494,8 +587,8 @@ bool Reader::readOneByteInString(Common::String &buffer, const Common::String &b
 }
 
 byte Reader::readOne() {
-	byte b = _content[0];
-	++_content;
+	byte b;
+	_content->read(&b, 1);
 	--_availableBytes;
 	--_bytesLeft;
 	return b;
@@ -503,9 +596,9 @@ byte Reader::readOne() {
 
 uint32 Reader::bytesLeft() { return _bytesLeft; }
 
-void Reader::setContent(byte *buffer, uint32 size) {
-	_content = buffer;
-	_bytesLeft = size;
+void Reader::setContent(Common::MemoryReadWriteStream *stream) {
+	_content = stream;
+	_bytesLeft = stream->size() - stream->pos();
 }
 
 bool Reader::badRequest() { return _isBadRequest; }

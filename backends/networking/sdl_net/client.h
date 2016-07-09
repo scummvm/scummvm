@@ -27,6 +27,10 @@
 #include "common/str.h"
 #include "reader.h"
 
+namespace Common {
+class MemoryReadWriteStream;
+}
+
 typedef struct _SDLNet_SocketSet *SDLNet_SocketSet;
 typedef struct _TCPsocket *TCPsocket;
 
@@ -53,7 +57,10 @@ class Client {
 	SDLNet_SocketSet _set;
 	TCPsocket _socket;
 	Reader _reader;
-	ClientHandler *_handler;
+	ClientHandler *_handler, *_previousHandler;
+	Common::MemoryReadWriteStream *_stream;
+
+	bool readMoreIfNeeded();
 
 public:
 	Client();
@@ -62,7 +69,11 @@ public:
 
 	void open(SDLNet_SocketSet set, TCPsocket socket);
 	void readHeaders();
+	bool readContent(Common::WriteStream *stream);
+	bool readBlockHeaders(Common::WriteStream *stream);
+	bool readBlockContent(Common::WriteStream *stream);
 	void setHandler(ClientHandler *handler);
+	void dropHandler();
 	void handle();
 	void close();
 

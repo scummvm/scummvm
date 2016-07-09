@@ -30,6 +30,7 @@
 #include "common/random.h"
 
 namespace Common {
+class MemoryReadWriteStream;
 class WriteStream;
 }
 
@@ -45,7 +46,7 @@ class Reader {
 	Common::RandomSource _randomSource; //for temp file names
 
 	ReaderState _state;
-	byte *_content;
+	Common::MemoryReadWriteStream *_content;
 	uint32 _bytesLeft;
 
 	byte *_window;
@@ -68,8 +69,10 @@ class Reader {
 
 	void cleanup();
 
-	bool readHeaders(); //true when ended reading
-	bool readContent(); //true when ended reading
+	bool readWholeHeaders(); //true when ended reading
+	bool readWholeContent(); //true when ended reading
+	bool readWholeHeadersIntoStream(Common::WriteStream *stream); //true when ended reading
+	bool readWholeContentIntoStream(Common::WriteStream *stream); //true when ended reading
 	void handleHeaders(Common::String headers);
 	void handleFileContent(Common::String filename);
 	void handleValueContent(Common::String value);
@@ -92,8 +95,12 @@ public:
 
 	Reader &operator=(Reader &r);
 
-	bool readRequest(); //true when ended reading
-	void setContent(byte *buffer, uint32 size);
+	bool readWholeRequest(); //true when ended reading
+	bool readFirstHeaders(); //true when ended reading
+	bool readFirstContent(Common::WriteStream *stream); //true when ended reading
+	bool readBlockHeaders(Common::WriteStream *stream); //true when ended reading
+	bool readBlockContent(Common::WriteStream *stream); //true when ended reading
+	void setContent(Common::MemoryReadWriteStream *stream);
 	bool badRequest();
 
 	Common::String method() const;
