@@ -207,7 +207,13 @@ void Lingo::c_eval() {
 		return;
 
 	d.type = d.u.sym->type;
-	d.u.i  = d.u.sym->u.val;
+
+	if (d.u.sym->type == INT)
+		d.u.i = d.u.sym->u.val;
+	else if (d.u.sym->type == FLOAT)
+		d.u.f = d.u.sym->u.fval;
+	else if (d.u.sym->type == STRING)
+		d.u.s = new Common::String(*d.u.sym->u.str);
 
 	g_lingo->push(d);
 }
