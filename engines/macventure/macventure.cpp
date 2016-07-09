@@ -182,7 +182,7 @@ void MacVentureEngine::activateCommand(ControlAction id) {
 		_clickToContinue = false;
 		_paused = true;
 		return;
-	}	
+	}
 	if (id != _activeControl) {
 		if (_activeControl)
 			_activeControl = kNoCommand;
@@ -327,10 +327,10 @@ void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, bool
 					selectObject(objID);
 					_destObject = objID;
 					_deltaPoint = Common::Point(0, 0);
-					if (!_cmdReady) {						
+					if (!_cmdReady) {
 						selectControl(kActivateObject);
 						_activeControl = kActivateObject;
-						_cmdReady = true;						
+						_cmdReady = true;
 					}
 					preparedToRun();
 				} else {
@@ -532,7 +532,6 @@ void MacVentureEngine::selectObject(ObjID objID) {
 		_selectedObjs.push_back(objID);
 		highlightExit(objID);
 	}
-	_deltaPoint = getObjPosition(objID);
 }
 
 void MacVentureEngine::unselectObject(ObjID objID) {
@@ -548,7 +547,7 @@ void MacVentureEngine::unselectObject(ObjID objID) {
 
 void MacVentureEngine::updateExits() {
 	// exitWin.killControls();
-	_gui->unselectExits();	
+	_gui->unselectExits();
 
 	Common::Array<ObjID> exits = _world->getChildren(_world->getObjAttr(1, kAttrParentObject), true);
 	for (uint i = 0; i < exits.size(); i++)

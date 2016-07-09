@@ -6,32 +6,32 @@
 namespace MacVenture {
 
 World::World(MacVentureEngine *engine, Common::MacResManager *resMan)  {
-	_resourceManager = resMan;	
+	_resourceManager = resMan;
 	_engine = engine;
 
 	if (!loadStartGameFileName())
 		error("Could not load initial game configuration");
 
 	Common::File saveGameFile;
-	if (!saveGameFile.open(_startGameFileName)) 
+	if (!saveGameFile.open(_startGameFileName))
 		error("Could not load initial game configuration");
 
 	debug("Loading save game state from %s", _startGameFileName.c_str());
 	Common::SeekableReadStream *saveGameRes = saveGameFile.readStream(saveGameFile.size());
 
-	_saveGame = new SaveGame(_engine, saveGameRes);	
+	_saveGame = new SaveGame(_engine, saveGameRes);
 	_objectConstants = new Container(_engine->getFilePath(kObjectPathID).c_str());
 	calculateObjectRelations();
-	
-	_gameText = new Container(_engine->getFilePath(kTextPathID).c_str());	
-	
+
+	_gameText = new Container(_engine->getFilePath(kTextPathID).c_str());
+
 	delete saveGameRes;
-	saveGameFile.close();		
+	saveGameFile.close();
 }
 
 
 World::~World()	{
-	
+
 	if (_saveGame)
 		delete _saveGame;
 
@@ -66,10 +66,10 @@ uint32 World::getObjAttr(ObjID objID, uint32 attrID) {
 void World::setObjAttr(ObjID objID, uint32 attrID, Attribute value) {
 	if (attrID == kAttrPosX || attrID == kAttrPosY) {}
 		// Round to scale
-	
-	if (attrID == kAttrParentObject) 
+
+	if (attrID == kAttrParentObject)
 		setParent(objID, value);
-	
+
 	if (attrID < kAttrOtherDoor)
 		_engine->enqueueObject(kUpdateObject, objID);
 
@@ -87,17 +87,17 @@ bool MacVenture::World::isObjActive(ObjID obj) {
 	Common::Point p = _engine->getDeltaPoint();
 	ControlAction selectedControl = _engine->getSelectedControl();
 	if (!getAncestor(obj)) return false; // If our ancestor is the garbage (obj 0), we're inactive
-	if (_engine->getInvolvedObjects() >= 2 &&	// If (we need > 1 objs for the command) && 
+	if (_engine->getInvolvedObjects() >= 2 &&	// If (we need > 1 objs for the command) &&
 		destObj > 0 &&			// we have a destination object &&
 		!getAncestor(destObj))  // but that destination object is in the garbage
 		return false;
-	if (selectedControl != kMoveObject) return true; // We only need one 
+	if (selectedControl != kMoveObject) return true; // We only need one
 	// Handle move object
 	if (!isObjDraggable(obj)) return false; // We can't move it
 	if (getObjAttr(1, kAttrParentObject) != destObj) return true; // if the target is not the player's parent, we can go
 	Common::Rect rect(kScreenWidth, kScreenHeight);
 	rect.top -= getObjAttr(obj, kAttrPosY) + p.y;
-	rect.left -= getObjAttr(obj, kAttrPosX) + p.x;	
+	rect.left -= getObjAttr(obj, kAttrPosX) + p.x;
 	return intersects(obj, rect);
 }
 
@@ -157,7 +157,7 @@ void World::releaseChildren(ObjID objID) {
 
 Common::String World::getText(ObjID objID, ObjID source, ObjID target) {
 	TextAsset text = TextAsset(_engine, objID, source, target, _gameText, _engine->isOldText(), _engine->getDecodingHuffman());
-	
+
 	return *text.decode();
 }
 
@@ -169,8 +169,7 @@ bool World::isObjDraggable(ObjID objID) {
 }
 
 bool World::intersects(ObjID objID, Common::Rect rect) {
-	warning("Intersects: unimplemented");
-	return true;
+	return _engine->getObjBounds(objID).intersects(rect);	
 }
 
 bool World::loadStartGameFileName() {
@@ -275,7 +274,7 @@ void SaveGame::loadGroups(MacVentureEngine *engine, Common::SeekableReadStream *
 		AttributeGroup g;
 		for (int j = 0; j < settings.numObjects; ++j)
 			g.push_back(res->readUint16BE());
-		
+
 		_groups.push_back(g);
 	}
 }
