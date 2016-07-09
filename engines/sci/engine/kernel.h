@@ -549,6 +549,14 @@ reg_t kSetScroll(EngineState *s, int argc, reg_t *argv);
 
 reg_t kPalCycle(EngineState *s, int argc, reg_t *argv);
 reg_t kPaletteSetFade(EngineState *s, int argc, reg_t *argv);
+
+reg_t kPalCycle(EngineState *s, int argc, reg_t *argv);
+reg_t kPalCycleSetCycle(EngineState *s, int argc, reg_t *argv);
+reg_t kPalCycleDoCycle(EngineState *s, int argc, reg_t *argv);
+reg_t kPalCyclePause(EngineState *s, int argc, reg_t *argv);
+reg_t kPalCycleOn(EngineState *s, int argc, reg_t *argv);
+reg_t kPalCycleOff(EngineState *s, int argc, reg_t *argv);
+
 reg_t kPalVarySetVary(EngineState *s, int argc, reg_t *argv);
 reg_t kPalVarySetPercent(EngineState *s, int argc, reg_t *argv);
 reg_t kPalVaryGetPercent(EngineState *s, int argc, reg_t *argv);

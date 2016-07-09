@@ -335,6 +335,16 @@ static const SciKernelMapSubEntry kFileIO_subops[] = {
 #ifdef ENABLE_SCI32
 
 //    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kPalCycle_subops[] = {
+	{ SIG_SCI32,           0, MAP_CALL(PalCycleSetCycle),          "iii(i)",               NULL },
+	{ SIG_SCI32,           1, MAP_CALL(PalCycleDoCycle),           "i(i)",                 NULL },
+	{ SIG_SCI32,           2, MAP_CALL(PalCyclePause),             "(i)",                  NULL },
+	{ SIG_SCI32,           3, MAP_CALL(PalCycleOn),                "(i)",                  NULL },
+	{ SIG_SCI32,           4, MAP_CALL(PalCycleOff),               "(i)",                  NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kSave_subops[] = {
 	{ SIG_SCI32,           0, MAP_CALL(SaveGame),                  "[r0]i[r0](r0)",        NULL },
 	{ SIG_SCI32,           1, MAP_CALL(RestoreGame),               "[r0]i[r0]",            NULL },
@@ -762,7 +772,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(MakeSaveCatName),   SIG_EVERYWHERE,           "rr",                    NULL,            NULL },
 	{ MAP_CALL(MakeSaveFileName),  SIG_EVERYWHERE,           "rri",                   NULL,            NULL },
 	{ MAP_CALL(SetScroll),         SIG_EVERYWHERE,           "oiiiii(i)",             NULL,            NULL },
-	{ MAP_CALL(PalCycle),          SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
+	{ MAP_CALL(PalCycle),          SIG_EVERYWHERE,           "(.*)",                  kPalCycle_subops, NULL },
 
 	// SCI2 Empty functions
 

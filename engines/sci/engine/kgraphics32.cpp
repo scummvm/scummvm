@@ -862,67 +862,57 @@ reg_t kPalVaryMergeStart(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, g_sci->_gfxPalette32->getVaryPercent());
 }
 
-enum {
-	kSetCycle = 0,
-	kDoCycle = 1,
-	kCyclePause = 2,
-	kCycleOn = 3,
-	kCycleOff = 4
-};
-
 reg_t kPalCycle(EngineState *s, int argc, reg_t *argv) {
-	// Examples: GK1 room 480 (Bayou ritual), LSL6 room 100 (title screen)
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
 
-	switch (argv[0].toUint16()) {
-	case kSetCycle: {
-		uint16 fromColor = argv[1].toUint16();
-		uint16 toColor = argv[2].toUint16();
-		int16 direction = argv[3].toSint16();
-		uint16 delay = (argc == 4 ? 0 : argv[4].toUint16());
+reg_t kPalCycleSetCycle(EngineState *s, int argc, reg_t *argv) {
+	const uint16 fromColor = argv[0].toUint16();
+	const uint16 toColor = argv[1].toUint16();
+	const int16 direction = argv[2].toSint16();
+	const uint16 delay = argc > 3 ? argv[3].toUint16() : 0;
 
-		g_sci->_gfxPalette32->setCycle(fromColor, toColor, direction, delay);
-		}
-		break;
-	case kDoCycle: {
-		uint16 fromColor = argv[1].toUint16();
-		int16 speed = (argc == 2) ? 1 : argv[2].toSint16();
-		g_sci->_gfxPalette32->doCycle(fromColor, speed);
-		}
-		break;
-	case kCyclePause: {
-		if (argc == 1) {
-			g_sci->_gfxPalette32->cycleAllPause();
-		} else {
-			uint16 fromColor = argv[1].toUint16();
-			g_sci->_gfxPalette32->cyclePause(fromColor);
-		}
-		}
-		break;
-	case kCycleOn: {
-		if (argc == 1) {
-			g_sci->_gfxPalette32->cycleAllOn();
-		} else {
-			uint16 fromColor = argv[1].toUint16();
-			g_sci->_gfxPalette32->cycleOn(fromColor);
-		}
-		}
-		break;
-	case kCycleOff: {
-		if (argc == 1) {
-			g_sci->_gfxPalette32->cycleAllOff();
-		} else {
-			uint16 fromColor = argv[1].toUint16();
-			g_sci->_gfxPalette32->cycleOff(fromColor);
-		}
-		break;
-		}
-	default:
-		// In SCI2.1 there are no values above 4, so should never get here;
-		// SCI just returns early if this ever happens.
-		assert(false);
-		break;
+	g_sci->_gfxPalette32->setCycle(fromColor, toColor, direction, delay);
+	return s->r_acc;
+}
+
+reg_t kPalCycleDoCycle(EngineState *s, int argc, reg_t *argv) {
+	const uint16 fromColor = argv[0].toUint16();
+	const int16 speed = argc > 1 ? argv[1].toSint16() : 1;
+
+	g_sci->_gfxPalette32->doCycle(fromColor, speed);
+	return s->r_acc;
+}
+
+reg_t kPalCyclePause(EngineState *s, int argc, reg_t *argv) {
+	if (argc == 0) {
+		g_sci->_gfxPalette32->cycleAllPause();
+	} else {
+		const uint16 fromColor = argv[0].toUint16();
+		g_sci->_gfxPalette32->cyclePause(fromColor);
 	}
+	return s->r_acc;
+}
 
+reg_t kPalCycleOn(EngineState *s, int argc, reg_t *argv) {
+	if (argc == 0) {
+		g_sci->_gfxPalette32->cycleAllOn();
+	} else {
+		const uint16 fromColor = argv[0].toUint16();
+		g_sci->_gfxPalette32->cycleOn(fromColor);
+	}
+	return s->r_acc;
+}
+
+reg_t kPalCycleOff(EngineState *s, int argc, reg_t *argv) {
+	if (argc == 0) {
+		g_sci->_gfxPalette32->cycleAllOff();
+	} else {
+		const uint16 fromColor = argv[0].toUint16();
+		g_sci->_gfxPalette32->cycleOff(fromColor);
+	}
 	return s->r_acc;
 }
 
