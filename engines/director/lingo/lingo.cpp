@@ -188,7 +188,7 @@ int Datum::toInt() {
 		type = INT;
 		break;
 	default:
-		warning("Incorrect operation toInt() for type: %d", type);
+		warning("Incorrect operation toInt() for type: %s", type2str());
 	}
 
 	return u.i;
@@ -204,7 +204,7 @@ float Datum::toFloat() {
 		// no-op
 		break;
 	default:
-		warning("Incorrect operation toFloat() for type: %d", type);
+		warning("Incorrect operation toFloat() for type: %s", type2str());
 	}
 
 	return u.f;
@@ -223,13 +223,31 @@ Common::String *Datum::toString() {
 		delete s;
 		s = u.s;
 	default:
-		warning("Incorrect operation toInt() for type: %d", type);
+		warning("Incorrect operation toInt() for type: %s", type2str());
 	}
 
 	u.s = s;
 	type = STRING;
 
 	return u.s;
+}
+
+const char *Datum::type2str() {
+	static char res[20];
+
+	switch (type) {
+	case INT:
+		return "INT";
+	case FLOAT:
+		return "FLOAT";
+	case STRING:
+		return "STRING";
+	case CASTREF:
+		return "CASTREF";
+	default:
+		snprintf(res, 20, "-- (%d) --", type);
+		return res;
+	}
 }
 
 } // End of namespace Director

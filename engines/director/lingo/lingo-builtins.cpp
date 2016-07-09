@@ -29,21 +29,24 @@ static struct BuiltinProto {
 	void (*func)(void);
 	int nparams;
 } builtins[] = {
+	// Math
 	{ "abs",	Lingo::b_abs, 1},
 	{ "atan",	Lingo::b_atan, 1},
 	{ "cos",	Lingo::b_cos, 1},
 	{ "exp",	Lingo::b_exp, 1},
 	{ "float",	Lingo::b_float, 1},
 	{ "integer",Lingo::b_integer, 1},
-	{ "length",	Lingo::b_length, 1},
 	{ "log",	Lingo::b_log, 1},
 	{ "pi",		Lingo::b_pi, 0},
 	{ "power",	Lingo::b_power, 2},
 	{ "random",	Lingo::b_random, 1},
 	{ "sin",	Lingo::b_sin, 1},
 	{ "sqrt",	Lingo::b_sqrt, 1},
-	{ "string",	Lingo::b_string, 1},
 	{ "tan",	Lingo::b_tan, 1},
+	// String
+	{ "chars",	Lingo::b_chars, 3},
+	{ "length",	Lingo::b_length, 1},
+	{ "string",	Lingo::b_string, 1},
 	{ 0, 0, 0 }
 };
 
@@ -53,6 +56,9 @@ void Lingo::initBuiltIns() {
 	}
 }
 
+///////////////////
+// Math
+///////////////////
 void Lingo::b_abs() {
 	Datum d = g_lingo->pop();
 
@@ -95,20 +101,6 @@ void Lingo::b_float() {
 void Lingo::b_integer() {
 	Datum d = g_lingo->pop();
 	d.toInt();
-	g_lingo->push(d);
-}
-
-void Lingo::b_length() {
-	Datum d = g_lingo->pop();
-
-	if (d.type != STRING)
-		error("Incorrect type for 'length' function: %d", d.type);
-
-	int len = strlen(d.u.s->c_str());
-	delete d.u.s;
-
-	d.u.i = len;
-	d.type = INT;
 	g_lingo->push(d);
 }
 
@@ -161,17 +153,59 @@ void Lingo::b_sqrt() {
 	g_lingo->push(d);
 }
 
-void Lingo::b_string() {
-	Datum d = g_lingo->pop();
-	d.toString();
-	g_lingo->push(d);
-}
-
 void Lingo::b_tan() {
 	Datum d = g_lingo->pop();
 	d.toFloat();
 	d.u.f = tan(d.u.f);
 	g_lingo->push(d);
 }
+
+///////////////////
+// String
+///////////////////
+void Lingo::b_chars() {
+	Datum to = g_lingo->pop();
+	Datum from = g_lingo->pop();
+	Datum s = g_lingo->pop();
+
+	if (s.type != STRING)
+		error("Incorrect type for 'chars' function: %s", s.type2str());
+
+	to.toInt();
+	from.toInt();
+
+	int len = strlen(s.u.s->c_str());
+	int f = MAX(0, MIN(len, from.u.i - 1));
+	int t = MAX(0, MIN(len, to.u.i));
+
+	Common::String *res = new Common::String(&(s.u.s->c_str()[f]), &(s.u.s->c_str()[t]));
+
+	delete s.u.s;
+
+	s.u.s = res;
+	s.type = STRING;
+	g_lingo->push(s);
+}
+
+void Lingo::b_length() {
+	Datum d = g_lingo->pop();
+
+	if (d.type != STRING)
+		error("Incorrect type for 'length' function: %s", d.type2str());
+
+	int len = strlen(d.u.s->c_str());
+	delete d.u.s;
+
+	d.u.i = len;
+	d.type = INT;
+	g_lingo->push(d);
+}
+
+void Lingo::b_string() {
+	Datum d = g_lingo->pop();
+	d.toString();
+	g_lingo->push(d);
+}
+
 
 }

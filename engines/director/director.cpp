@@ -132,6 +132,9 @@ Common::Error DirectorEngine::run() {
 	set z1 = z1 && \"woof\"\n\
 	put z\n\
 	put z1\n\
+	put chars(\"Macromedia\", 6, 6)\n\
+	put chars(\"Macromedia\", 6, 10)\n\
+	put chars(\"Macromedia\", 6, 15)\n\
 ", kMovieScript, 2);
 
 _lingo->executeScript(kMovieScript, 2);

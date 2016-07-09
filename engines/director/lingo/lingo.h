@@ -107,6 +107,8 @@ struct Datum {	/* interpreter stack type */
 	float toFloat();
 	int toInt();
 	Common::String *toString();
+
+	const char *type2str();
 };
 
 struct Builtin {
@@ -216,6 +218,7 @@ public:
 
 	static void b_abs();
 	static void b_atan();
+	static void b_chars();
 	static void b_cos();
 	static void b_exp();
 	static void b_float();
