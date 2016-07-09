@@ -856,10 +856,14 @@ ObjID MacVentureEngine::getParent(ObjID objID) {
 }
 
 Common::Rect MacVentureEngine::getObjBounds(ObjID objID) {
-	BorderBounds bounds = _gui->borderBounds(_gui->getWindowData(findParentWindow(objID)).type); // HACK
 	Common::Point pos = getObjPosition(objID);
-	pos.x += bounds.leftOffset;
-	pos.y += bounds.topOffset;
+
+	WindowReference win  = findParentWindow(objID);
+	if (win != kNoWindow) { // If it's not in a window YET, we don't really care about the border
+		BorderBounds bounds = _gui->borderBounds(_gui->getWindowData(win).type); // HACK
+		pos.x += bounds.leftOffset;
+		pos.y += bounds.topOffset;
+	}
 	uint w = _gui->getObjWidth(objID); // This shouldn't go here
 	uint h = _gui->getObjHeight(objID);
 	return Common::Rect(pos.x, pos.y, pos.x + w, pos.y + h);
