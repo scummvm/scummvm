@@ -202,7 +202,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 			// Developed by IJsfontein, published by Tivola
 			// File version of MVM.EXE is 6.0.2.32
 			// The game disc is a hybrid CD-ROM containing both the Windows and the Macintosh release.
-			
+
 			"melements", "",
 			{
 				{"CHECK.DXR", 0, "c31ee30eebd24a8cf31691fc9926daa4", 901820},
@@ -221,7 +221,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			// Masters of the Elements - English (from rootfather)
-			
+
 			"melements", "",
 			{
 				{"check.dxr", 0, "36f42340e819d1532c850880afe16581", 898206},
@@ -244,7 +244,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 			// Developed by IJsfontein, published by Tivola
 			// File version of MVM.EXE is 6.0.2.32
 			// The game disc is a hybrid CD-ROM containing both the Windows and the Macintosh release.
-			
+
 			"melements", "",
 			{
 				{"CHECK.DXR", 0, "d1cd0ed95b0e30597e0089bf3e5caf0f", 575414},
@@ -263,7 +263,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			// Masters of the Elements - German (from rootfather)
-			
+
 			"melements", "",
 			{
 				{"check.dxr", 0, "9c81934b7616ab077f44825b8afaa83e", 575426},
