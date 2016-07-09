@@ -164,6 +164,8 @@ Common::String Client::attachedFile(Common::String name) const { return _reader.
 
 Common::String Client::anchor() const { return _reader.anchor(); }
 
+bool Client::noMoreContent() const { return _reader.noMoreContent(); }
+
 bool Client::socketIsReady() { return SDLNet_SocketReady(_socket); }
 
 int Client::recv(void *data, int maxlen) { return SDLNet_TCP_Recv(_socket, data, maxlen); }

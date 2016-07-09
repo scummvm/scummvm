@@ -57,6 +57,7 @@ Reader::Reader(): _randomSource("Networking::Reader") {
 	_availableBytes = 0;
 	_isFileField = false;
 	_isBadRequest = false;
+	_allContentRead = false;
 }
 
 namespace {
@@ -118,6 +119,7 @@ Reader &Reader::operator=(Reader &r) {
 	_currentTempFileName = r._currentTempFileName;
 	_isFileField = r._isFileField;
 	_isBadRequest = r._isBadRequest;
+	_allContentRead = r._allContentRead;
 
 	return *this;
 }
@@ -216,19 +218,17 @@ bool Reader::readBlockContent(Common::WriteStream *stream) {
 	if (!readWholeContentIntoStream(stream))
 		return false;
 
-	/*
 	if (_availableBytes >= 2) {
 		Common::String bts;
 		bts += readOne();
 		bts += readOne();
-		if (bts == "--") _isOver = true;
+		if (bts == "--") _allContentRead = true;
 		else if (bts != "\r\n")
 			warning("strange bytes: \"%s\"", bts.c_str());
 	} else {
 		warning("strange ending");
-		_isOver = true;
+		_allContentRead = true;
 	}
-	*/
 
 	return true;
 }
@@ -601,7 +601,9 @@ void Reader::setContent(Common::MemoryReadWriteStream *stream) {
 	_bytesLeft = stream->size() - stream->pos();
 }
 
-bool Reader::badRequest() { return _isBadRequest; }
+bool Reader::badRequest() const { return _isBadRequest; }
+
+bool Reader::noMoreContent() const { return _allContentRead; }
 
 Common::String Reader::method() const { return _method; }
 

@@ -32,7 +32,8 @@ enum UploadFileHandlerState {
 	UFH_READING_CONTENT,
 	UFH_READING_BLOCK_HEADERS,
 	UFH_READING_BLOCK_CONTENT,
-	UFH_ERROR
+	UFH_ERROR,
+	UFH_STOP
 };
 
 class UploadFileClientHandler: public ClientHandler {
@@ -42,7 +43,7 @@ class UploadFileClientHandler: public ClientHandler {
 	Common::String _parentDirectoryPath;
 
 	void handleBlockHeaders(Client *client);
-	bool validFilename(Client &client, Common::String filename, Common::String &errorMessage);
+	void handleBlockContent(Client *client);
 	void setErrorMessageHandler(Client &client, Common::String message);
 
 public:

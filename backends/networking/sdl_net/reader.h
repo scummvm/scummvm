@@ -66,6 +66,7 @@ class Reader {
 	Common::String _currentFieldName, _currentFileName, _currentTempFileName;
 	bool _isFileField;
 	bool _isBadRequest;
+	bool _allContentRead;
 
 	void cleanup();
 
@@ -101,7 +102,8 @@ public:
 	bool readBlockHeaders(Common::WriteStream *stream); //true when ended reading
 	bool readBlockContent(Common::WriteStream *stream); //true when ended reading
 	void setContent(Common::MemoryReadWriteStream *stream);
-	bool badRequest();
+	bool badRequest() const;
+	bool noMoreContent() const;
 
 	Common::String method() const;
 	Common::String path() const;

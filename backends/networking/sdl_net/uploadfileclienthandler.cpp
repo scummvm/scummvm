@@ -21,14 +21,11 @@
 */
 
 #include "backends/networking/sdl_net/uploadfileclienthandler.h"
-#include "common/textconsole.h"
-#include <common/memstream.h>
-#include <common/translation.h>
-#include <common/system.h>
-#include <backends/fs/fs-factory.h>
-#include <common/debug.h>
-#include "handlerutils.h"
-#include "localwebserver.h"
+#include "backends/fs/fs-factory.h"
+#include "backends/networking/sdl_net/handlerutils.h"
+#include "backends/networking/sdl_net/localwebserver.h"
+#include "common/memstream.h"
+#include "common/translation.h"
 
 namespace Networking {
 
@@ -41,19 +38,50 @@ UploadFileClientHandler::~UploadFileClientHandler() {
 	delete _contentStream;
 }
 
-namespace {
-void readFromThatUntilLineEnd(const char *cstr, Common::String needle, Common::String &result) {
-	const char *position = strstr(cstr, needle.c_str());
+void UploadFileClientHandler::handle(Client *client) {
+	if (client == nullptr) {
+		warning("UploadFileClientHandler::handle(): empty client pointer");
+		return;
+	}
 
-	if (position) {
-		char c;
-		for (const char *i = position + needle.size(); c = *i, c != 0; ++i) {
-			if (c == '\n' || c == '\r') break;
-			result += c;
+	while (true) {
+		switch (_state) {
+		case UFH_READING_CONTENT:
+			if (client->readContent(nullptr)) {
+				_state = UFH_READING_BLOCK_HEADERS;
+				continue;
+			}
+			break;
+
+		case UFH_READING_BLOCK_HEADERS:
+			if (_headersStream == nullptr)
+				_headersStream = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
+
+			if (client->readBlockHeaders(_headersStream)) {
+				handleBlockHeaders(client);
+				continue;
+			}
+			break;
+
+		case UFH_READING_BLOCK_CONTENT:
+			// _contentStream is created by handleBlockHeaders() if needed
+
+			if (client->readBlockContent(_contentStream)) {
+				handleBlockContent(client);
+				continue;
+			}
+			break;
+
+		case UFH_ERROR:
+		case UFH_STOP:
+			return;
 		}
+
+		break;
 	}
 }
 
+namespace {
 void readFromThatUntilDoubleQuote(const char *cstr, Common::String needle, Common::String &result) {
 	const char *position = strstr(cstr, needle.c_str());
 
@@ -80,6 +108,8 @@ Common::String readEverythingFromMemoryStream(Common::MemoryReadWriteStream *str
 }
 
 void UploadFileClientHandler::handleBlockHeaders(Client *client) {
+	_state = UFH_READING_BLOCK_CONTENT;
+
 	// search for "upload_file" field
 	Common::String headers = readEverythingFromMemoryStream(_headersStream);
 	Common::String fieldName = "";
@@ -112,61 +142,32 @@ void UploadFileClientHandler::handleBlockHeaders(Client *client) {
 	}
 }
 
-void UploadFileClientHandler::handle(Client *client) {
-	if (client == nullptr) {
-		warning("UploadFileClientHandler::handle(): empty client pointer");
+void UploadFileClientHandler::handleBlockContent(Client *client) {
+	_state = UFH_READING_BLOCK_HEADERS;
+
+	// if previous block headers were file-related and created a stream
+	if (_contentStream) {
+		_contentStream->flush();
+		// success - redirect back to directory listing
+		HandlerUtils::setMessageHandler(*client,
+			Common::String::format(
+				"%s<br/><a href=\"files?path=%s\">%s</a>",
+				_("Uploaded successfully!"),
+				client->queryParameter("path").c_str(),
+				_("Back to parent directory")
+				),
+			"/files?path=" + LocalWebserver::urlEncodeQueryParameterValue(client->queryParameter("path"))
+			);
+		_state = UFH_STOP;
 		return;
 	}
-
-	while (true) {
-		switch (_state) {
-		case UFH_READING_CONTENT:
-			if (client->readContent(nullptr)) {
-				_state = UFH_READING_BLOCK_HEADERS;
-				continue;
-			}
-			break;
-
-		case UFH_READING_BLOCK_HEADERS:
-			if (_headersStream == nullptr)
-				_headersStream = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
-
-			if (client->readBlockHeaders(_headersStream)) {
-				handleBlockHeaders(client);
-				_state = UFH_READING_BLOCK_CONTENT;
-				continue;
-			}
-			break;
-
-		case UFH_READING_BLOCK_CONTENT:
-			if (client->readBlockContent(_contentStream)) {
-				if (_contentStream) {
-					_contentStream->flush();
-					// success - redirect back to directory listing
-					HandlerUtils::setMessageHandler(*client,
-						Common::String::format(
-							"%s<br/><a href=\"files?path=%s\">%s</a>",
-							_("Uploaded successfully!"),
-							client->queryParameter("path").c_str(),
-							_("Back to parent directory")
-						),
-						"/files?path=" + LocalWebserver::urlEncodeQueryParameterValue(client->queryParameter("path"))
-					);
-					return;
-				}
-				_state = UFH_READING_BLOCK_HEADERS;
-				continue;
-			}
-			break;
-
-		case UFH_ERROR:
-			return;
-		}
-
-		break;
+	
+	// if no file field was found, but no more content avaiable - failure
+	if (client->noMoreContent()) {
+		setErrorMessageHandler(*client, _("No file was passed!"));
+		return;
 	}
 }
-
 
 void UploadFileClientHandler::setErrorMessageHandler(Client &client, Common::String message) {
 	HandlerUtils::setFilesManagerErrorMessageHandler(client, message);

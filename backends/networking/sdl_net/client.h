@@ -85,6 +85,7 @@ public:
 	Common::String queryParameter(Common::String name) const;
 	Common::String attachedFile(Common::String name) const;
 	Common::String anchor() const;
+	bool noMoreContent() const;
 
 	/**
 	 * Return SDLNet_SocketReady(_socket).
