@@ -497,8 +497,10 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	if (getSciVersion() <= SCI_VERSION_1_1) {
 		debugPrintf("kAnimate fastCast enabled: %s\n", g_sci->_gfxAnimate->isFastCastEnabled() ? "yes" : "no");
 	}
-	debugPrintf("Uses palette merging: %s\n", g_sci->_gfxPalette16->isMerging() ? "yes" : "no");
-	debugPrintf("Uses 16 bit color matching: %s\n", g_sci->_gfxPalette16->isUsing16bitColorMatch() ? "yes" : "no");
+	if (getSciVersion() < SCI_VERSION_2) {
+		debugPrintf("Uses palette merging: %s\n", g_sci->_gfxPalette16->isMerging() ? "yes" : "no");
+		debugPrintf("Uses 16 bit color matching: %s\n", g_sci->_gfxPalette16->isUsing16bitColorMatch() ? "yes" : "no");
+	}
 	debugPrintf("Resource volume version: %s\n", g_sci->getResMan()->getVolVersionDesc());
 	debugPrintf("Resource map version: %s\n", g_sci->getResMan()->getMapVersionDesc());
 	debugPrintf("Contains selector vocabulary (vocab.997): %s\n", hasVocab997 ? "yes" : "no");
@@ -1620,13 +1622,20 @@ bool Console::cmdParserNodes(int argc, const char **argv) {
 
 bool Console::cmdSetPalette(int argc, const char **argv) {
 	if (argc < 2) {
-		debugPrintf("Sets a palette resource\n");
+		debugPrintf("Sets a palette resource (SCI16)\n");
 		debugPrintf("Usage: %s <resourceId>\n", argv[0]);
 		debugPrintf("where <resourceId> is the number of the palette resource to set\n");
 		return true;
 	}
 
 	uint16 resourceId = atoi(argv[1]);
+
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		debugPrintf("This SCI version does not support this command\n");
+		return true;
+	}
+#endif
 
 	_engine->_gfxPalette16->kernelSetFromResource(resourceId, true);
 	return true;

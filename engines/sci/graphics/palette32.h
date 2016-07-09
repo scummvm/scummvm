@@ -26,6 +26,118 @@
 #include "sci/graphics/palette.h"
 
 namespace Sci {
+
+/**
+ * HunkPalette represents a raw palette resource
+ * read from disk.
+ */
+class HunkPalette {
+public:
+	HunkPalette(byte *rawPalette);
+
+	/**
+	 * Gets the version of the palette.
+	 */
+	uint32 getVersion() const { return _version; }
+
+	/**
+	 * Sets the version of the palette.
+	 */
+	void setVersion(const uint32 version);
+
+	/**
+	 * Converts the hunk palette to a standard
+	 * palette.
+	 */
+	const Palette toPalette() const;
+
+private:
+	enum {
+		/**
+		 * The size of the HunkPalette header.
+		 */
+		kHunkPaletteHeaderSize = 13,
+
+		/**
+		 * The size of a palette entry header.
+		 */
+		kEntryHeaderSize = 22,
+
+		/**
+		 * The offset of the hunk palette version
+		 * within the palette entry header.
+		 */
+		kEntryVersionOffset = 18
+	};
+
+	/**
+	 * The header for a palette inside the
+	 * HunkPalette.
+	 */
+	struct EntryHeader {
+		/**
+		 * The start color.
+		 */
+		uint8 startColor;
+
+		/**
+		 * The number of palette colors in this
+		 * entry.
+		 */
+		uint16 numColors;
+
+		/**
+		 * The default `used` flag.
+		 */
+		bool used;
+
+		/**
+		 * Whether or not all palette entries
+		 * share the same `used` value in
+		 * `defaultFlag`.
+		 */
+		bool sharedUsed;
+
+		/**
+		 * The palette version.
+		 */
+		uint32 version;
+	};
+
+	/**
+	 * The version number from the last time this
+	 * palette was submitted to GfxPalette32.
+	 */
+	uint32 _version;
+
+	/**
+	 * The number of palettes stored in the hunk
+	 * palette. In SCI32 games this is always 1.
+	 */
+	uint8 _numPalettes;
+
+	/**
+	 * The raw palette data for this hunk palette.
+	 */
+	byte *_data;
+
+	/**
+	 * Returns a struct that describes the palette
+	 * held by this HunkPalette. The entry header
+	 * is reconstructed on every call from the raw
+	 * palette data.
+	 */
+	const EntryHeader getEntryHeader() const;
+
+	/**
+	 * Returns a pointer to the palette data within
+	 * the hunk palette.
+	 */
+	byte *getPalPointer() const {
+		return _data + kHunkPaletteHeaderSize + (2 * _numPalettes);
+	}
+};
+
 enum PalCyclerDirection {
 	PalCycleBackward = 0,
 	PalCycleForward = 1
@@ -72,28 +184,29 @@ struct PalCycler {
 	uint16 numTimesPaused;
 };
 
-class GfxPalette32 : public GfxPalette {
+class GfxPalette32 {
 public:
-	GfxPalette32(ResourceManager *resMan, GfxScreen *screen);
+	GfxPalette32(ResourceManager *resMan);
 	~GfxPalette32();
 
 private:
-	// NOTE: currentPalette in SCI engine is called _sysPalette
-	// here.
+	ResourceManager *_resMan;
+
+	/**
+	 * The currently displayed palette.
+	 */
+	Palette _currentPalette;
 
 	/**
 	 * The palette revision version. Increments once per game
-	 * loop that changes the source palette. TODO: Possibly
-	 * other areas also change _version, double-check once it
-	 * is all implemented.
+	 * loop that changes the source palette.
 	 */
 	uint32 _version;
 
 	/**
-	 * Whether or not the palette manager version was updated
-	 * during this loop.
+	 * Whether or not the hardware palette needs updating.
 	 */
-	bool _versionUpdated;
+	bool _needsUpdate;
 
 	/**
 	 * The unmodified source palette loaded by kPalette. Additional
@@ -104,7 +217,7 @@ private:
 
 	/**
 	 * The palette to be used when the hardware is next updated.
-	 * On update, _nextPalette is transferred to _sysPalette.
+	 * On update, _nextPalette is transferred to _currentPalette.
 	 */
 	Palette _nextPalette;
 
@@ -112,20 +225,29 @@ private:
 	Palette getPaletteFromResourceInternal(const GuiResourceId paletteId) const;
 
 public:
-	virtual void saveLoadWithSerializer(Common::Serializer &s) override;
+	void saveLoadWithSerializer(Common::Serializer &s);
 	inline const Palette &getNextPalette() const { return _nextPalette; };
-	inline const Palette &getCurrentPalette() const { return _sysPalette; };
+	inline const Palette &getCurrentPalette() const { return _currentPalette; };
 
-	bool kernelSetFromResource(GuiResourceId resourceId, bool force) override;
-	int16 kernelFindColor(uint16 r, uint16 g, uint16 b) override;
-	void set(Palette *newPalette, bool force, bool forceRealMerge = false) override;
+	/**
+	 * Loads a palette into GfxPalette32 with the given resource
+	 * ID.
+	 */
+	bool loadPalette(const GuiResourceId resourceId);
+
+	/**
+	 * Finds the nearest color in the current palette matching the
+	 * given RGB value.
+	 */
+	int16 matchColor(const uint8 r, const uint8 g, const uint8 b);
 
 	/**
 	 * Submits a palette to display. Entries marked as “used” in the
 	 * submitted palette are merged into the existing entries of
 	 * _sourcePalette.
 	 */
-	void submit(Palette &palette);
+	void submit(const Palette &palette);
+	void submit(HunkPalette &palette);
 
 	bool updateForFrame();
 	void updateFFrame();
@@ -213,7 +335,7 @@ public:
 	void kernelPalVarySetTarget(const GuiResourceId paletteId);
 	void kernelPalVarySetStart(const GuiResourceId paletteId);
 	void kernelPalVaryMergeStart(const GuiResourceId paletteId);
-	virtual void kernelPalVaryPause(bool pause) override;
+	void kernelPalVaryPause(bool pause);
 
 	void setVary(const Palette *const targetPalette, const int16 percent, const int time, const int16 fromColor, const int16 toColor);
 	void setVaryPercent(const int16 percent, const int time, const int16 fromColor, const int16 fromColorAlternate);

@@ -51,7 +51,7 @@ public:
 	bool setAmiga();
 	void modifyAmigaPalette(byte *data);
 	void setEGA();
-	virtual void set(Palette *sciPal, bool force, bool forceRealMerge = false);
+	void set(Palette *sciPal, bool force, bool forceRealMerge = false);
 	bool insert(Palette *newPalette, Palette *destPalette);
 	bool merge(Palette *pFrom, bool force, bool forceRealMerge);
 	uint16 matchColor(byte r, byte g, byte b);
@@ -63,11 +63,11 @@ public:
 
 	void drewPicture(GuiResourceId pictureId);
 
-	virtual bool kernelSetFromResource(GuiResourceId resourceId, bool force);
+	bool kernelSetFromResource(GuiResourceId resourceId, bool force);
 	void kernelSetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
 	void kernelUnsetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
 	void kernelSetIntensity(uint16 fromColor, uint16 toColor, uint16 intensity, bool setPalette);
-	virtual int16 kernelFindColor(uint16 r, uint16 g, uint16 b);
+	int16 kernelFindColor(uint16 r, uint16 g, uint16 b);
 	bool kernelAnimate(byte fromColor, byte toColor, int speed);
 	void kernelAnimateSet();
 	reg_t kernelSave();
@@ -81,7 +81,7 @@ public:
 	int16 kernelPalVaryGetCurrentStep();
 	int16 kernelPalVaryChangeTarget(GuiResourceId resourceId);
 	void kernelPalVaryChangeTicks(uint16 ticks);
-	virtual void kernelPalVaryPause(bool pause);
+	void kernelPalVaryPause(bool pause);
 	void kernelPalVaryDeinit();
 	void palVaryUpdate();
 	void palVaryPrepareForTransition();
@@ -89,7 +89,7 @@ public:
 
 	Palette _sysPalette;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &s);
+	void saveLoadWithSerializer(Common::Serializer &s);
 	void palVarySaveLoadPalette(Common::Serializer &s, Palette *palette);
 
 	byte findMacIconBarColor(byte r, byte g, byte b);

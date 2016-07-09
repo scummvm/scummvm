@@ -790,6 +790,19 @@ reg_t kMorphOn(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kPaletteSetFromResource32(EngineState *s, int argc, reg_t *argv) {
+	const GuiResourceId paletteId = argv[0].toUint16();
+	g_sci->_gfxPalette32->loadPalette(paletteId);
+	return s->r_acc;
+}
+
+reg_t kPaletteFindColor32(EngineState *s, int argc, reg_t *argv) {
+	const uint8 r = argv[0].toUint16();
+	const uint8 g = argv[1].toUint16();
+	const uint8 b = argv[2].toUint16();
+	return make_reg(0, g_sci->_gfxPalette32->matchColor(r, g, b));
+}
+
 reg_t kPaletteSetFade(EngineState *s, int argc, reg_t *argv) {
 	uint16 fromColor = argv[0].toUint16();
 	uint16 toColor = argv[1].toUint16();

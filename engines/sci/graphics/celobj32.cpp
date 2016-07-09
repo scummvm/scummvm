@@ -570,12 +570,7 @@ uint8 CelObj::readPixel(uint16 x, const uint16 y, bool mirrorX) const {
 
 void CelObj::submitPalette() const {
 	if (_hunkPaletteOffset) {
-		Palette palette;
-
-		byte *res = getResPointer();
-		// NOTE: In SCI engine this uses HunkPalette::Init.
-		// TODO: Use a better size value
-		g_sci->_gfxPalette32->createFromData(res + _hunkPaletteOffset, 999999, &palette);
+		HunkPalette palette(getResPointer() + _hunkPaletteOffset);
 		g_sci->_gfxPalette32->submit(palette);
 	}
 }

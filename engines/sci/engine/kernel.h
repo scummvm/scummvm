@@ -547,7 +547,8 @@ reg_t kMakeSaveCatName(EngineState *s, int argc, reg_t *argv);
 reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv);
 reg_t kSetScroll(EngineState *s, int argc, reg_t *argv);
 
-reg_t kPalCycle(EngineState *s, int argc, reg_t *argv);
+reg_t kPaletteSetFromResource32(EngineState *s, int argc, reg_t *argv);
+reg_t kPaletteFindColor32(EngineState *s, int argc, reg_t *argv);
 reg_t kPaletteSetFade(EngineState *s, int argc, reg_t *argv);
 
 reg_t kPalCycle(EngineState *s, int argc, reg_t *argv);

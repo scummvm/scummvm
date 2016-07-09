@@ -398,8 +398,13 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	_segMan->saveLoadWithSerializer(s);
 
 	g_sci->_soundCmd->syncPlayList(s);
-	// NOTE: This will be GfxPalette32 for SCI32 engine games
-	g_sci->_gfxPalette16->saveLoadWithSerializer(s);
+
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		g_sci->_gfxPalette32->saveLoadWithSerializer(s);
+	} else
+#endif
+		g_sci->_gfxPalette16->saveLoadWithSerializer(s);
 }
 
 void Vocabulary::saveLoadWithSerializer(Common::Serializer &s) {
@@ -767,7 +772,7 @@ void GfxPalette32::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint16LE(_varyFromColor);
 	s.syncAsSint16LE(_varyToColor);
 	s.syncAsUint16LE(_varyNumTimesPaused);
-	s.syncAsByte(_versionUpdated);
+	s.syncAsByte(_needsUpdate);
 	s.syncAsSint32LE(_varyTime);
 	s.syncAsUint32LE(_varyLastTick);
 

@@ -291,12 +291,13 @@ static const SciKernelMapSubEntry kPalVary_subops[] = {
 
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kPalette_subops[] = {
-	{ SIG_SCIALL,         1, MAP_CALL(PaletteSetFromResource),    "i(i)",                 NULL },
+	{ SIG_SCI16,          1, MAP_CALL(PaletteSetFromResource),    "i(i)",                 NULL },
 	{ SIG_SCI16,          2, MAP_CALL(PaletteSetFlag),            "iii",                  NULL },
 	{ SIG_SCI16,          3, MAP_CALL(PaletteUnsetFlag),          "iii",                  kPaletteUnsetFlag_workarounds },
 #ifdef ENABLE_SCI32
+	{ SIG_SCI32,          1, MAP_CALL(PaletteSetFromResource32),  "i(i)",                 NULL },
 	{ SIG_SCI32,          2, MAP_CALL(PaletteSetFade),            "iii",                  NULL },
-	{ SIG_SCI32,          3, MAP_CALL(PaletteFindColor),          "iii",                  NULL },
+	{ SIG_SCI32,          3, MAP_CALL(PaletteFindColor32),        "iii",                  NULL },
 #endif
 	{ SIG_SCI16,          4, MAP_CALL(PaletteSetIntensity),       "iii(i)",               NULL },
 	{ SIG_SCI16,          5, MAP_CALL(PaletteFindColor),          "iii",                  NULL },

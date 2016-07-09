@@ -167,9 +167,7 @@ SciEngine::~SciEngine() {
 	DebugMan.clearAllDebugChannels();
 
 #ifdef ENABLE_SCI32
-	// _gfxPalette32 is the same as _gfxPalette16
-	// and will be destroyed when _gfxPalette16 is
-	// destroyed
+	delete _gfxPalette32;
 	delete _gfxControls32;
 	delete _gfxPaint32;
 	delete _gfxText32;
@@ -717,8 +715,7 @@ void SciEngine::initGraphics() {
 
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
-		_gfxPalette32 = new GfxPalette32(_resMan, _gfxScreen);
-		_gfxPalette16 = _gfxPalette32;
+		_gfxPalette32 = new GfxPalette32(_resMan);
 		_gfxRemap32 = new GfxRemap32();
 	} else {
 #endif
@@ -767,8 +764,10 @@ void SciEngine::initGraphics() {
 	}
 #endif
 
-	// Set default (EGA, amiga or resource 999) palette
-	_gfxPalette16->setDefault();
+	if (getSciVersion() < SCI_VERSION_2) {
+		// Set default (EGA, amiga or resource 999) palette
+		_gfxPalette16->setDefault();
+	}
 }
 
 void SciEngine::initStackBaseWithSelector(Selector selector) {

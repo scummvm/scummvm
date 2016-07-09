@@ -27,19 +27,109 @@
 #include "sci/sci.h"
 #include "sci/event.h"
 #include "sci/resource.h"
+#include "sci/util.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/remap32.h"
 #include "sci/graphics/screen.h"
 
 namespace Sci {
 
-GfxPalette32::GfxPalette32(ResourceManager *resMan, GfxScreen *screen)
-	: GfxPalette(resMan, screen),
+#pragma mark HunkPalette
+
+HunkPalette::HunkPalette(byte *rawPalette) :
+	_version(0),
+	// NOTE: The header size in palettes is garbage. In at least KQ7 2.00b and
+	// Phant1, the 999.pal sets this value to 0. In most other palettes it is
+	// set to 14, but the *actual* size of the header structure used in SSCI is
+	// 13, which is reflected by `kHunkPaletteHeaderSize`.
+	// _headerSize(rawPalette[0]),
+	_numPalettes(rawPalette[10]),
+	_data(nullptr) {
+	assert(_numPalettes == 0 || _numPalettes == 1);
+	if (_numPalettes) {
+		_data = rawPalette;
+		_version = getEntryHeader().version;
+	}
+}
+
+void HunkPalette::setVersion(const uint32 version) {
+	if (_numPalettes != _data[10]) {
+		error("Invalid HunkPalette");
+	}
+
+	if (_numPalettes) {
+		const EntryHeader header = getEntryHeader();
+		if (header.version != _version) {
+			error("Invalid HunkPalette");
+		}
+
+		WRITE_SCI11ENDIAN_UINT32(getPalPointer() + kEntryVersionOffset, version);
+		_version = version;
+	}
+}
+
+const HunkPalette::EntryHeader HunkPalette::getEntryHeader() const {
+	const byte *const data = getPalPointer();
+
+	EntryHeader header;
+	header.startColor = data[10];
+	header.numColors = READ_SCI11ENDIAN_UINT16(data + 14);
+	header.used = data[16];
+	header.sharedUsed = data[17];
+	header.version = READ_SCI11ENDIAN_UINT32(data + kEntryVersionOffset);
+
+	return header;
+}
+
+const Palette HunkPalette::toPalette() const {
+	Palette outPalette;
+
+	for (int16 i = 0; i < ARRAYSIZE(outPalette.colors); ++i) {
+		outPalette.colors[i].used = false;
+		outPalette.colors[i].r = 0;
+		outPalette.colors[i].g = 0;
+		outPalette.colors[i].b = 0;
+	}
+
+	if (_numPalettes) {
+		const EntryHeader header = getEntryHeader();
+		byte *data = getPalPointer() + kEntryHeaderSize;
+
+		int16 end = header.startColor + header.numColors;
+		assert(end <= 256);
+
+		if (header.sharedUsed) {
+			for (int16 i = header.startColor; i < end; ++i) {
+				outPalette.colors[i].used = header.used;
+				outPalette.colors[i].r = *data++;
+				outPalette.colors[i].g = *data++;
+				outPalette.colors[i].b = *data++;
+			}
+		} else {
+			for (int16 i = header.startColor; i < end; ++i) {
+				outPalette.colors[i].used = *data++;
+				outPalette.colors[i].r = *data++;
+				outPalette.colors[i].g = *data++;
+				outPalette.colors[i].b = *data++;
+			}
+		}
+	}
+
+	return outPalette;
+}
+
+
+#pragma mark -
+#pragma mark GfxPalette32
+
+GfxPalette32::GfxPalette32(ResourceManager *resMan)
+	: _resMan(resMan),
 	// Palette versioning
 	_version(1),
-	_versionUpdated(false),
-	_sourcePalette(_sysPalette),
-	_nextPalette(_sysPalette),
+	_needsUpdate(false),
+	_currentPalette(),
+	_sourcePalette(_currentPalette),
+	_nextPalette(_currentPalette),
 	// Clut
 	_clutTable(nullptr),
 	// Palette varying
@@ -59,13 +149,14 @@ GfxPalette32::GfxPalette32(ResourceManager *resMan, GfxScreen *screen)
 		for (int i = 0, len = ARRAYSIZE(_fadeTable); i < len; ++i) {
 			_fadeTable[i] = 100;
 		}
-		// NOTE: In SCI engine, the palette manager constructor loads
-		// the default palette, but in ScummVM this initialisation
-		// is performed by SciEngine::run; see r49523 for details
+
+		loadPalette(999);
 }
 
 GfxPalette32::~GfxPalette32() {
+#ifdef ENABLE_SCI3_GAMES
 	unloadClut();
+#endif
 	varyOff();
 	cycleAllOff();
 }
@@ -78,79 +169,64 @@ inline void mergePaletteInternal(Palette *const to, const Palette *const from) {
 	}
 }
 
-void GfxPalette32::submit(Palette &palette) {
-	// TODO: The resource manager in SCI32 retains raw data of palettes from
-	// the ResourceManager (ResourceMgr) through SegManager (MemoryMgr), and
-	// the version number for submitted palettes is set in the raw palette
-	// data in memory as an int at an offset
-	// `rawData + *rawData[0x0a] * 2 + 31`. However, ScummVM does not retain
-	// resource data like this, so this versioning code, while accurate to
-	// the original engine, does not do much.
-	// (Hopefully this was an optimisation mechanism in SCI engine and not a
-	// clever thing to keep the same palette submitted many times from
-	// overwriting other palette entries.)
-	if (palette.timestamp == _version) {
+void GfxPalette32::submit(const Palette &palette) {
+	const Palette oldSourcePalette(_sourcePalette);
+	mergePaletteInternal(&_sourcePalette, &palette);
+
+	if (!_needsUpdate && _sourcePalette != oldSourcePalette) {
+		++_version;
+		_needsUpdate = true;
+	}
+}
+
+void GfxPalette32::submit(HunkPalette &hunkPalette) {
+	if (hunkPalette.getVersion() == _version) {
 		return;
 	}
 
-	Palette oldSourcePalette(_sourcePalette);
+	const Palette oldSourcePalette(_sourcePalette);
+	const Palette palette = hunkPalette.toPalette();
 	mergePaletteInternal(&_sourcePalette, &palette);
 
-	if (!_versionUpdated && _sourcePalette != oldSourcePalette) {
+	if (!_needsUpdate && oldSourcePalette != _sourcePalette) {
 		++_version;
-		_versionUpdated = true;
+		_needsUpdate = true;
 	}
 
-	// Technically this information is supposed to be persisted through a
-	// HunkPalette object; right now it would just be lost once the temporary
-	// palette was destroyed.
-	palette.timestamp = _version;
+	hunkPalette.setVersion(_version);
 }
 
-bool GfxPalette32::kernelSetFromResource(GuiResourceId resourceId, bool force) {
-	// TODO: In SCI32, palettes that come from resources come in as
-	// HunkPalette objects, not SOLPalette objects. The HunkPalettes
-	// have some extra persistence stuff associated with them, such that
-	// when they are passed to GfxPalette32::submit, they would get the
-	// version number of GfxPalette32 assigned to them.
-	Palette palette;
+bool GfxPalette32::loadPalette(const GuiResourceId resourceId) {
+	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), false);
 
-	if (createPaletteFromResourceInternal(resourceId, &palette)) {
-		submit(palette);
-		return true;
+	if (!palResource) {
+		return false;
 	}
 
-	return false;
+	HunkPalette palette(palResource->data);
+	submit(palette);
+	return true;
 }
 
-// In SCI32 engine this method is SOLPalette::Match(Rgb24 *)
-// and is called as PaletteMgr.Current().Match(color)
-int16 GfxPalette32::kernelFindColor(uint16 r, uint16 g, uint16 b) {
-	// SQ6 SCI32 engine takes the 16-bit r, g, b arguments from the
-	// VM and puts them into al, ah, dl. For compatibility, make sure
-	// to discard any high bits here too
-	r = r & 0xFF;
-	g = g & 0xFF;
-	b = b & 0xFF;
+int16 GfxPalette32::matchColor(const uint8 r, const uint8 g, const uint8 b) {
 	int16 bestIndex = 0;
 	int bestDifference = 0xFFFFF;
 	int difference;
 
-	// SQ6 DOS really does check only the first 236 entries
-	for (int i = 0, channelDifference; i < 236; ++i) {
-		difference = _sysPalette.colors[i].r - r;
+	for (int i = 0, channelDifference; i < g_sci->_gfxRemap32->getStartColor(); ++i) {
+		difference = _currentPalette.colors[i].r - r;
 		difference *= difference;
 		if (bestDifference <= difference) {
 			continue;
 		}
 
-		channelDifference = _sysPalette.colors[i].g - g;
+		channelDifference = _currentPalette.colors[i].g - g;
 		difference += channelDifference * channelDifference;
 		if (bestDifference <= difference) {
 			continue;
 		}
 
-		channelDifference = _sysPalette.colors[i].b - b;
+		channelDifference = _currentPalette.colors[i].b - b;
 		difference += channelDifference * channelDifference;
 		if (bestDifference <= difference) {
 			continue;
@@ -162,51 +238,39 @@ int16 GfxPalette32::kernelFindColor(uint16 r, uint16 g, uint16 b) {
 	return bestIndex;
 }
 
-// TODO: set is overridden for the time being to send palettes coming from
-// various draw methods like GfxPicture::drawSci32Vga and GfxView::draw to
-// _nextPalette instead of _sysPalette. In the SCI32 engine, CelObj palettes
-// (which are stored as Hunk palettes) are submitted by GraphicsMgr::FrameOut
-// to PaletteMgr::Submit by way of calls to CelObj::SubmitPalette.
-// GfxPalette::set is very similar to GfxPalette32::submit, except that SCI32
-// does not do any fancy best-fit merging and so does not accept arguments
-// like `force` and `forceRealMerge`.
-void GfxPalette32::set(Palette *newPalette, bool force, bool forceRealMerge) {
-	submit(*newPalette);
-}
-
 bool GfxPalette32::updateForFrame() {
 	applyAll();
-	_versionUpdated = false;
-	return g_sci->_gfxRemap32->remapAllTables(_nextPalette != _sysPalette);
+	_needsUpdate = false;
+	return g_sci->_gfxRemap32->remapAllTables(_nextPalette != _currentPalette);
 }
 
 void GfxPalette32::updateFFrame() {
 	for (int i = 0; i < ARRAYSIZE(_nextPalette.colors); ++i) {
 		_nextPalette.colors[i] = _sourcePalette.colors[i];
 	}
-	_versionUpdated = false;
-	g_sci->_gfxRemap32->remapAllTables(_nextPalette != _sysPalette);
+	_needsUpdate = false;
+	g_sci->_gfxRemap32->remapAllTables(_nextPalette != _currentPalette);
 }
 
 void GfxPalette32::updateHardware() {
-	if (_sysPalette == _nextPalette) {
+	if (_currentPalette == _nextPalette) {
 		return;
 	}
 
 	byte bpal[3 * 256];
 
-	for (int i = 0; i < ARRAYSIZE(_sysPalette.colors); ++i) {
-		_sysPalette.colors[i] = _nextPalette.colors[i];
+	for (int i = 0; i < ARRAYSIZE(_currentPalette.colors); ++i) {
+		_currentPalette.colors[i] = _nextPalette.colors[i];
 
 		// NOTE: If the brightness option in the user configuration file is set,
 		// SCI engine adjusts palette brightnesses here by mapping RGB values to values
 		// in some hard-coded brightness tables. There is no reason on modern hardware
 		// to implement this, unless it is discovered that some game uses a non-standard
 		// brightness setting by default
-		if (_sysPalette.colors[i].used) {
-			bpal[i * 3    ] = _sysPalette.colors[i].r;
-			bpal[i * 3 + 1] = _sysPalette.colors[i].g;
-			bpal[i * 3 + 2] = _sysPalette.colors[i].b;
+		if (_currentPalette.colors[i].used) {
+			bpal[i * 3    ] = _currentPalette.colors[i].r;
+			bpal[i * 3 + 1] = _currentPalette.colors[i].g;
+			bpal[i * 3 + 2] = _currentPalette.colors[i].b;
 		}
 	}
 
@@ -223,6 +287,7 @@ void GfxPalette32::applyAll() {
 #pragma mark -
 #pragma mark Colour look-up
 
+#ifdef ENABLE_SCI3_GAMES
 bool GfxPalette32::loadClut(uint16 clutId) {
 	// loadClut() will load a color lookup table from a clu file and set
 	// the palette found in the file. This is to be used with Phantasmagoria 2.
@@ -272,27 +337,20 @@ void GfxPalette32::unloadClut() {
 	delete[] _clutTable;
 	_clutTable = nullptr;
 }
+#endif
 
 #pragma mark -
 #pragma mark Varying
 
-inline bool GfxPalette32::createPaletteFromResourceInternal(const GuiResourceId paletteId, Palette *const out) const {
-	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, paletteId), false);
+inline Palette GfxPalette32::getPaletteFromResourceInternal(const GuiResourceId resourceId) const {
+	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), false);
 
 	if (!palResource) {
-		return false;
+		error("Could not load vary target %d", resourceId);
 	}
 
-	createFromData(palResource->data, palResource->size, out);
-	return true;
-}
-
-inline Palette GfxPalette32::getPaletteFromResourceInternal(const GuiResourceId paletteId) const {
-	Palette palette;
-	if (!createPaletteFromResourceInternal(paletteId, &palette)) {
-		error("Could not load vary target %d", paletteId);
-	}
-	return palette;
+	HunkPalette rawPalette(palResource->data);
+	return rawPalette.toPalette();
 }
 
 inline void GfxPalette32::setVaryTimeInternal(const int16 percent, const int time) {
