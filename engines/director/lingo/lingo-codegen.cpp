@@ -81,7 +81,7 @@ Symbol *Lingo::lookupVar(const char *name, bool create, bool putInGlobalList) {
 				sym = new Symbol;
 
 				sym->type = CASTREF;
-				sym->u.val = val;
+				sym->u.i = val;
 
 				return sym;
 			}
@@ -96,7 +96,7 @@ Symbol *Lingo::lookupVar(const char *name, bool create, bool putInGlobalList) {
 		sym->name = (char *)calloc(strlen(name) + 1, 1);
 		Common::strlcpy(sym->name, name, strlen(name) + 1);
 		sym->type = VOID;
-		sym->u.val = 0;
+		sym->u.i = 0;
 
 		(*_localvars)[name] = sym;
 

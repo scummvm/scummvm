@@ -70,7 +70,7 @@ struct EventHandlerType {
 Symbol::Symbol() {
 	name = NULL;
 	type = VOID;
-	u.str = NULL;
+	u.s = NULL;
 	nargs = 0;
 	global = false;
 }

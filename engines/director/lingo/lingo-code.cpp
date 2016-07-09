@@ -89,7 +89,7 @@ void Lingo::c_printtop(void) {
 			if (d.u.sym->name)
 				warning("var: %s", d.u.sym->name);
 			else
-				warning("Nameless var. val: %d", d.u.sym->u.val);
+				warning("Nameless var. val: %d", d.u.sym->u.i);
 		}
 		break;
 	case STRING:
@@ -136,7 +136,7 @@ void Lingo::c_varpush() {
 	d.u.sym = g_lingo->lookupVar(name);
 	if (d.u.sym->type == CASTREF) {
 		d.type = INT;
-		int val = d.u.sym->u.val;
+		int val = d.u.sym->u.i;
 
 		delete d.u.sym;
 
@@ -167,16 +167,16 @@ void Lingo::c_assign() {
 	}
 
 	if (d1.u.sym->type == STRING) // Free memory if needed
-		delete d1.u.sym->u.str;
+		delete d1.u.sym->u.s;
 
 	if (d2.type == INT)
-		d1.u.sym->u.val = d2.u.i;
+		d1.u.sym->u.i = d2.u.i;
 	else if (d2.type == FLOAT)
-		d1.u.sym->u.fval = d2.u.f;
+		d1.u.sym->u.f = d2.u.f;
 	else if (d2.type == STRING)
-		d1.u.sym->u.str = new Common::String(*d2.u.s);
+		d1.u.sym->u.s = new Common::String(*d2.u.s);
 
-	d1.u.sym->type  = d2.type;
+	d1.u.sym->type = d2.type;
 
 	g_lingo->push(d1);
 }
@@ -209,11 +209,11 @@ void Lingo::c_eval() {
 	d.type = d.u.sym->type;
 
 	if (d.u.sym->type == INT)
-		d.u.i = d.u.sym->u.val;
+		d.u.i = d.u.sym->u.i;
 	else if (d.u.sym->type == FLOAT)
-		d.u.f = d.u.sym->u.fval;
+		d.u.f = d.u.sym->u.f;
 	else if (d.u.sym->type == STRING)
-		d.u.s = new Common::String(*d.u.sym->u.str);
+		d.u.s = new Common::String(*d.u.sym->u.s);
 
 	g_lingo->push(d);
 }
@@ -419,7 +419,7 @@ void Lingo::c_repeatwithcode(void) {
 	g_lingo->execute(init);	/* condition */
 	d = g_lingo->pop();
 	d.toInt();
-	counter->u.val = d.u.i;
+	counter->u.i = d.u.i;
 	counter->type = INT;
 
 	while (true) {
@@ -427,12 +427,12 @@ void Lingo::c_repeatwithcode(void) {
 		if (g_lingo->_returning)
 			break;
 
-		counter->u.val += inc;
+		counter->u.i += inc;
 		g_lingo->execute(finish);	/* condition */
 		d = g_lingo->pop();
 		d.toInt();
 
-		if (counter->u.val == d.u.i + inc)
+		if (counter->u.i == d.u.i + inc)
 			break;
 	}
 

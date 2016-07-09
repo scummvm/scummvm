@@ -81,10 +81,10 @@ struct Symbol {	/* symbol table entry */
 	char *name;
 	int type;
 	union {
-		int		val;			/* VAR */
-		float	fval;			/* FLOAT */
-		ScriptData	*defn;		/* FUNCTION, PROCEDURE */
-		Common::String	*str;	/* STRING */
+		int		i;			/* VAR */
+		float	f;			/* FLOAT */
+		ScriptData	*defn;	/* FUNCTION, PROCEDURE */
+		Common::String	*s;	/* STRING */
 	} u;
 	int nargs;
 	bool global;
