@@ -23,7 +23,6 @@
 #ifndef BACKENDS_NETWORKING_SDL_NET_CLIENT_H
 #define BACKENDS_NETWORKING_SDL_NET_CLIENT_H
 
-#include "common/scummsys.h"
 #include "common/str.h"
 #include "reader.h"
 
@@ -73,18 +72,17 @@ public:
 	bool readBlockHeaders(Common::WriteStream *stream);
 	bool readBlockContent(Common::WriteStream *stream);
 	void setHandler(ClientHandler *handler);
-	void dropHandler();
 	void handle();
 	void close();
 
 	ClientState state() const;
-	//Common::String headers() const;
+	Common::String headers() const;
 	Common::String method() const;
 	Common::String path() const;
 	Common::String query() const;
 	Common::String queryParameter(Common::String name) const;
-	Common::String attachedFile(Common::String name) const;
 	Common::String anchor() const;
+
 	bool noMoreContent() const;
 
 	/**

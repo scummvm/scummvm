@@ -150,7 +150,7 @@ void Client::close() {
 
 ClientState Client::state() const { return _state; }
 
-//Common::String Client::headers() const { return _headers; }
+Common::String Client::headers() const { return _reader.headers(); }
 
 Common::String Client::method() const { return _reader.method(); }
 
@@ -159,8 +159,6 @@ Common::String Client::path() const { return _reader.path(); }
 Common::String Client::query() const { return _reader.query(); }
 
 Common::String Client::queryParameter(Common::String name) const { return _reader.queryParameter(name); }
-
-Common::String Client::attachedFile(Common::String name) const { return _reader.attachedFile(name); }
 
 Common::String Client::anchor() const { return _reader.anchor(); }
 

@@ -20,27 +20,15 @@
 *
 */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "backends/networking/sdl_net/reader.h"
-#include "backends/networking/sdl_net/localwebserver.h"
-#include "common/debug.h"
-#include "common/stream.h"
-#include "common/memstream.h"
 #include "backends/fs/fs-factory.h"
-
-// This define lets us use the system function remove() on Symbian, which
-// is disabled by default due to a macro conflict.
-// See backends/platform/symbian/src/portdefs.h .
-#define SYMBIAN_USE_SYSTEM_REMOVE
-
-#ifndef _WIN32_WCE
-#include <errno.h>	// for removeFile()
-#endif
+#include "backends/networking/sdl_net/localwebserver.h"
+#include "common/memstream.h"
+#include "common/stream.h"
 
 namespace Networking {
 
-Reader::Reader(): _randomSource("Networking::Reader") {
+Reader::Reader() {
 	_state = RS_NONE;
 	_content = nullptr;
 	_bytesLeft = 0;
@@ -50,34 +38,12 @@ Reader::Reader(): _randomSource("Networking::Reader") {
 	_windowSize = 0;
 
 	_headers = "";
-	_stream = nullptr;
 	_firstBlock = true;
 
 	_contentLength = 0;
 	_availableBytes = 0;
-	_isFileField = false;
 	_isBadRequest = false;
 	_allContentRead = false;
-}
-
-namespace {
-bool removeFile(const char *filename) {
-	// FIXME: remove does not exist on all systems. If your port fails to
-	// compile because of this, please let us know (scummvm-devel).
-	// There is a nicely portable workaround, too: Make this method overloadable.
-	if (remove(filename) != 0) {
-#ifndef _WIN32_WCE
-		if (errno == EACCES)
-			error("Reader: removeFile(): Search or write permission denied: %s", filename);
-
-		if (errno == ENOENT)
-			error("Reader: removeFile(): '%s' does not exist or path is invalid", filename);
-#endif
-		return false;
-	} else {
-		return true;
-	}
-}
 }
 
 Reader::~Reader() {
@@ -99,25 +65,15 @@ Reader &Reader::operator=(Reader &r) {
 	r._window = nullptr;
 
 	_headers = r._headers;
-	_stream = r._stream;
-	_firstBlock = r._firstBlock;
-	r._stream = nullptr;
-
-	_headers = r._headers;
 	_method = r._method;
 	_path = r._path;
 	_query = r._query;
 	_anchor = r._anchor;
 	_queryParameters = r._queryParameters;
-	_attachedFiles = r._attachedFiles;
-	r._attachedFiles.clear();
 	_contentLength = r._contentLength;
 	_boundary = r._boundary;
 	_availableBytes = r._availableBytes;
-	_currentFieldName = r._currentFieldName;
-	_currentFileName = r._currentFileName;
-	_currentTempFileName = r._currentTempFileName;
-	_isFileField = r._isFileField;
+	_firstBlock = r._firstBlock;
 	_isBadRequest = r._isBadRequest;
 	_allContentRead = r._allContentRead;
 
@@ -128,112 +84,9 @@ void Reader::cleanup() {
 	//_content is not to be freed, it's not owned by Reader
 
 	if (_window != nullptr) freeWindow();
-	delete _stream;
-
-	//delete temp files (by the time Reader is destucted those must be renamed or read)
-	for (Common::HashMap<Common::String, Common::String>::iterator i = _attachedFiles.begin(); i != _attachedFiles.end(); ++i) {
-		AbstractFSNode *node = g_system->getFilesystemFactory()->makeFileNodePath(i->_value);
-		if (node->exists()) removeFile(node->getPath().c_str());
-	}
 }
 
-bool Reader::readWholeRequest() {
-	if (_state == RS_NONE) _state = RS_READING_HEADERS;
-
-	while (true) {
-		if (!bytesLeft()) return false;
-
-		if (_state == RS_READING_HEADERS)
-			if (!readWholeHeaders())
-				return false;
-
-		if (_boundary.empty()) return true; //not POST multipart
-
-		if (!bytesLeft()) return false;
-
-		if (_state == RS_READING_CONTENT)
-			if (!readWholeContent())
-				return false;
-
-		if (_availableBytes >= 2) {
-			Common::String bts;
-			bts += readOne();
-			bts += readOne();
-			if (bts == "--") break;
-			if (bts == "\r\n") continue;
-			warning("strange bytes: \"%s\"", bts.c_str());
-		} else {
-			warning("strange ending");
-			break;
-		}
-	}	
-	if (_availableBytes > 0) debug("STRANGE END: %llu bytes left", _availableBytes);
-	else debug("END");
-
-	return true;
-}
-
-bool Reader::readFirstHeaders() {
-	if (_state == RS_NONE) _state = RS_READING_HEADERS;
-
-	if (!bytesLeft()) return false;
-
-	if (_state == RS_READING_HEADERS)
-		return readWholeHeaders();
-
-	warning("Reader::readFirstHeaders(): bad state");
-	return false;
-}
-
-bool Reader::readFirstContent(Common::WriteStream *stream) {
-	if (_state != RS_READING_CONTENT) {
-		warning("Reader::readFirstContent(): bad state");
-		return false;
-	}
-
-	if (!bytesLeft()) return false;
-
-	return readWholeContentIntoStream(stream);
-}
-
-bool Reader::readBlockHeaders(Common::WriteStream *stream) {
-	if (_state != RS_READING_HEADERS) {
-		warning("Reader::readBlockHeaders(): bad state");
-		return false;
-	}
-
-	if (!bytesLeft()) return false;
-
-	return readWholeHeadersIntoStream(stream);
-}
-
-bool Reader::readBlockContent(Common::WriteStream *stream) {
-	if (_state != RS_READING_CONTENT) {
-		warning("Reader::readBlockContent(): bad state");
-		return false;
-	}
-
-	if (!bytesLeft()) return false;
-
-	if (!readWholeContentIntoStream(stream))
-		return false;
-
-	if (_availableBytes >= 2) {
-		Common::String bts;
-		bts += readOne();
-		bts += readOne();
-		if (bts == "--") _allContentRead = true;
-		else if (bts != "\r\n")
-			warning("strange bytes: \"%s\"", bts.c_str());
-	} else {
-		warning("strange ending");
-		_allContentRead = true;
-	}
-
-	return true;
-}
-
-bool Reader::readWholeHeaders() {
+bool Reader::readAndHandleFirstHeaders() {
 	Common::String boundary = "\r\n\r\n";
 	if (_window == nullptr) {
 		makeWindow(boundary.size());
@@ -243,14 +96,14 @@ bool Reader::readWholeHeaders() {
 	while (readOneByteInString(_headers, boundary)) {
 		if (!bytesLeft()) return false;
 	}
-	handleHeaders(_headers);
+	handleFirstHeaders(_headers);
 
 	freeWindow();
 	_state = RS_READING_CONTENT;
 	return true;
 }
 
-bool Reader::readWholeHeadersIntoStream(Common::WriteStream *stream) {
+bool Reader::readBlockHeadersIntoStream(Common::WriteStream *stream) {
 	Common::String boundary = "\r\n\r\n";
 	if (_window == nullptr) makeWindow(boundary.size());
 
@@ -278,51 +131,24 @@ void readFromThatUntilLineEnd(const char *cstr, Common::String needle, Common::S
 }
 }
 
-void Reader::handleHeaders(Common::String headers) {
-	debug("\nHANDLE HEADERS:\n>>%s<<", headers.c_str());
-	if (_boundary.empty()) {
-		//parse method, path, query, fragment
-		parseFirstLine(headers);
-
-		//find boundary
-		_boundary = "";
-		readFromThatUntilLineEnd(headers.c_str(), "boundary=", _boundary);
-
-		//find content length
-		Common::String contentLength = "";
-		readFromThatUntilLineEnd(headers.c_str(), "Content-Length: ", contentLength);
-		_contentLength = contentLength.asUint64();
-		_availableBytes = _contentLength;
-		debug("BOUNDARY: %s", _boundary.c_str());
-		debug("LENGTH: %llu", _contentLength);
-	} else {
-		//find field name
-		_currentFieldName = "";
-		readFromThatUntilLineEnd(headers.c_str(), "name=\"", _currentFieldName);
-		for (uint32 i = 0; i < _currentFieldName.size(); ++i)
-			if (_currentFieldName[i] == '\"') {
-				_currentFieldName.erase(i);
-				break;
-			}
-		debug("FIELD NAME: >>%s<<", _currentFieldName.c_str());
-
-		//find out field type
-		_currentFileName = "";
-		readFromThatUntilLineEnd(headers.c_str(), "filename=\"", _currentFileName);
-		for (uint32 i = 0; i < _currentFileName.size(); ++i)
-			if (_currentFileName[i] == '\"') {
-				_currentFileName.erase(i);
-				break;
-			}
-
-		if (!_currentFileName.empty()) {
-			_isFileField = true;
-			_queryParameters[_currentFieldName] = _currentFileName;
-			debug("FILE NAME: >>%s<<", _currentFileName.c_str());
-		} else {
-			_isFileField = false;
-		}
+void Reader::handleFirstHeaders(Common::String headers) {
+	if (!_boundary.empty()) {
+		warning("handleFirstHeaders() called when first headers were already handled");
+		return;
 	}
+
+	//parse method, path, query, fragment
+	parseFirstLine(headers);
+
+	//find boundary
+	_boundary = "";
+	readFromThatUntilLineEnd(headers.c_str(), "boundary=", _boundary);
+
+	//find content length
+	Common::String contentLength = "";
+	readFromThatUntilLineEnd(headers.c_str(), "Content-Length: ", contentLength);
+	_contentLength = contentLength.asUint64();
+	_availableBytes = _contentLength;
 }
 
 void Reader::parseFirstLine(const Common::String &headers) {
@@ -419,101 +245,10 @@ void Reader::parseQueryParameters() {
 	}
 }
 
-namespace {
-char generateRandomChar(Common::RandomSource &random) {
-	int r = random.getRandomNumber(36);
-	char c = '0' + r;
-	if (r > 9) c = 'a' + r - 10;
-	return c;
-}
-
-Common::String generateTempFileName(Common::String originalFilename, Common::RandomSource &random) {
-	//generates "./<originalFilename>-<uniqueSequence>.scummtmp"
-	//normalize <originalFilename>
-	Common::String prefix = "./";
-	for (uint32 i = 0; i < originalFilename.size(); ++i) {
-		char c = originalFilename[i];
-		if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9') || c == '.' || c == '_' || c == '-') {
-			prefix += c;
-		} else {
-			prefix += '_';
-		}
-	}
-	prefix += '-';
-
-	//generate initial sequence
-	Common::String uniqueSequence;
-	for (uint32 i = 0; i < 5; ++i)
-		uniqueSequence += generateRandomChar(random);
-
-	//update sequence while generate path exists
-	AbstractFSNode *node;
-	Common::String path;
-	do {
-		uniqueSequence += generateRandomChar(random);
-		path = prefix + uniqueSequence + ".scummtmp";
-		node = g_system->getFilesystemFactory()->makeFileNodePath(path);
-	} while (node->exists());
-
-	return path;
-}
-}
-
-bool Reader::readWholeContent() {
+bool Reader::readContentIntoStream(Common::WriteStream *stream) {
 	Common::String boundary = "--" + _boundary;
 	if (!_firstBlock) boundary = "\r\n" + boundary;
-	if (_window == nullptr) {
-		makeWindow(boundary.size());
-
-		if (_stream) delete _stream;
-		if (_isFileField) {
-			//create temporary file
-			_currentTempFileName = generateTempFileName(_currentFileName, _randomSource);
-			AbstractFSNode *node = g_system->getFilesystemFactory()->makeFileNodePath(_currentTempFileName);
-			_stream = node->createWriteStream();
-			if (_stream == nullptr)
-				error("Unable to open temp file to write into!");
-		} else {
-			_stream = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
-		}
-	}
-
-	while (readOneByteInStream(_stream, boundary)) {
-		if (!bytesLeft()) return false;
-	}
-
-	_firstBlock = false;
-	if (_isFileField) {
-		if (_stream != nullptr) {
-			_stream->flush();
-			delete _stream;
-			_stream = nullptr;
-		} else {
-			warning("No stream was created!");
-		}
-		handleFileContent(_currentTempFileName);
-	} else {
-		Common::MemoryReadWriteStream *dynamicStream = dynamic_cast<Common::MemoryReadWriteStream *>(_stream);
-		if (dynamicStream != nullptr)
-			if (dynamicStream->size() == 0)
-				handleValueContent("");
-			else
-				handleValueContent(Common::String((char *)dynamicStream->getData(), dynamicStream->size()));
-		else
-			if (_stream != nullptr)
-				warning("Stream somehow changed its type from MemoryReadWriteStream!");
-			else
-				warning("No stream was created!");
-	}
-
-	freeWindow();
-	_state = RS_READING_HEADERS;
-	return true;
-}
-
-bool Reader::readWholeContentIntoStream(Common::WriteStream *stream) {
-	Common::String boundary = "--" + _boundary;
-	if (!_firstBlock) boundary = "\r\n" + boundary;
+	if (_boundary.empty()) boundary = "\r\n";
 	if (_window == nullptr) makeWindow(boundary.size());
 
 	while (readOneByteInStream(stream, boundary)) {
@@ -526,16 +261,6 @@ bool Reader::readWholeContentIntoStream(Common::WriteStream *stream) {
 	freeWindow();
 	_state = RS_READING_HEADERS;
 	return true;
-}
-
-void Reader::handleFileContent(Common::String filename) {
-	debug("\nHANDLE FILE CONTENT:\nFILE >>%s<< SAVED INTO >>%s<<", _currentFileName.c_str(), filename.c_str());
-	_attachedFiles[_currentFileName] = filename;
-}
-
-void Reader::handleValueContent(Common::String value) {
-	debug("\nHANDLE CONTENT:\n>>%s<<", value.c_str());
-	_queryParameters[_currentFieldName] = value;
 }
 
 void Reader::makeWindow(uint32 size) {
@@ -594,6 +319,67 @@ byte Reader::readOne() {
 	return b;
 }
 
+/// public
+
+bool Reader::readFirstHeaders() {
+	if (_state == RS_NONE) _state = RS_READING_HEADERS;
+
+	if (!bytesLeft()) return false;
+
+	if (_state == RS_READING_HEADERS)
+		return readAndHandleFirstHeaders();
+
+	warning("Reader::readFirstHeaders(): bad state");
+	return false;
+}
+
+bool Reader::readFirstContent(Common::WriteStream *stream) {
+	if (_state != RS_READING_CONTENT) {
+		warning("Reader::readFirstContent(): bad state");
+		return false;
+	}
+
+	// no difference, actually
+	return readBlockContent(stream);
+}
+
+bool Reader::readBlockHeaders(Common::WriteStream *stream) {
+	if (_state != RS_READING_HEADERS) {
+		warning("Reader::readBlockHeaders(): bad state");
+		return false;
+	}
+
+	if (!bytesLeft()) return false;
+
+	return readBlockHeadersIntoStream(stream);
+}
+
+bool Reader::readBlockContent(Common::WriteStream *stream) {
+	if (_state != RS_READING_CONTENT) {
+		warning("Reader::readBlockContent(): bad state");
+		return false;
+	}
+
+	if (!bytesLeft()) return false;
+
+	if (!readContentIntoStream(stream))
+		return false;
+
+	if (_availableBytes >= 2) {
+		Common::String bts;
+		bts += readOne();
+		bts += readOne();
+		if (bts == "--") _allContentRead = true;
+		else if (bts != "\r\n")
+			warning("strange bytes: \"%s\"", bts.c_str());
+	} else {
+		warning("strange ending");
+		_allContentRead = true;
+	}
+
+	return true;
+}
+
 uint32 Reader::bytesLeft() { return _bytesLeft; }
 
 void Reader::setContent(Common::MemoryReadWriteStream *stream) {
@@ -605,6 +391,8 @@ bool Reader::badRequest() const { return _isBadRequest; }
 
 bool Reader::noMoreContent() const { return _allContentRead; }
 
+Common::String Reader::headers() const { return _headers; }
+
 Common::String Reader::method() const { return _method; }
 
 Common::String Reader::path() const { return _path; }
@@ -612,8 +400,6 @@ Common::String Reader::path() const { return _path; }
 Common::String Reader::query() const { return _query; }
 
 Common::String Reader::queryParameter(Common::String name) const { return _queryParameters[name]; }
-
-Common::String Reader::attachedFile(Common::String name) const { return _attachedFiles[name]; }
 
 Common::String Reader::anchor() const { return _anchor; }
 

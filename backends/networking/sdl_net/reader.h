@@ -23,11 +23,9 @@
 #ifndef BACKENDS_NETWORKING_SDL_NET_READER_H
 #define BACKENDS_NETWORKING_SDL_NET_READER_H
 
-#include "common/scummsys.h"
 #include "common/str.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
-#include "common/random.h"
 
 namespace Common {
 class MemoryReadWriteStream;
@@ -43,8 +41,6 @@ enum ReaderState {
 };
 
 class Reader {
-	Common::RandomSource _randomSource; //for temp file names
-
 	ReaderState _state;
 	Common::MemoryReadWriteStream *_content;
 	uint32 _bytesLeft;
@@ -53,31 +49,22 @@ class Reader {
 	uint32 _windowUsed, _windowSize;
 
 	Common::String _headers;
-	Common::WriteStream *_stream;
-	bool _firstBlock;
-
-	///Common::String _headers;
 	Common::String _method, _path, _query, _anchor;
 	Common::HashMap<Common::String, Common::String> _queryParameters;
-	Common::HashMap<Common::String, Common::String> _attachedFiles;
 	uint32 _contentLength;
 	Common::String _boundary;
 	uint32 _availableBytes;
-	Common::String _currentFieldName, _currentFileName, _currentTempFileName;
-	bool _isFileField;
+	bool _firstBlock;
 	bool _isBadRequest;
 	bool _allContentRead;
 
 	void cleanup();
 
-	bool readWholeHeaders(); //true when ended reading
-	bool readWholeContent(); //true when ended reading
-	bool readWholeHeadersIntoStream(Common::WriteStream *stream); //true when ended reading
-	bool readWholeContentIntoStream(Common::WriteStream *stream); //true when ended reading
-	void handleHeaders(Common::String headers);
-	void handleFileContent(Common::String filename);
-	void handleValueContent(Common::String value);
+	bool readAndHandleFirstHeaders(); //true when ended reading
+	bool readBlockHeadersIntoStream(Common::WriteStream *stream); //true when ended reading
+	bool readContentIntoStream(Common::WriteStream *stream); //true when ended reading
 
+	void handleFirstHeaders(Common::String headers);
 	void parseFirstLine(const Common::String &headers);
 	void parsePathQueryAndAnchor(Common::String path);
 	void parseQueryParameters();
@@ -96,20 +83,21 @@ public:
 
 	Reader &operator=(Reader &r);
 
-	bool readWholeRequest(); //true when ended reading
 	bool readFirstHeaders(); //true when ended reading
 	bool readFirstContent(Common::WriteStream *stream); //true when ended reading
 	bool readBlockHeaders(Common::WriteStream *stream); //true when ended reading
 	bool readBlockContent(Common::WriteStream *stream); //true when ended reading
+
 	void setContent(Common::MemoryReadWriteStream *stream);
+
 	bool badRequest() const;
 	bool noMoreContent() const;
 
+	Common::String headers() const;
 	Common::String method() const;
 	Common::String path() const;
 	Common::String query() const;
 	Common::String queryParameter(Common::String name) const;
-	Common::String attachedFile(Common::String name) const;
 	Common::String anchor() const;
 };
 
