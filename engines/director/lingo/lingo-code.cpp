@@ -80,7 +80,7 @@ void Lingo::c_printtop(void) {
 		warning("%d", d.u.i);
 		break;
 	case FLOAT:
-		warning("%f", d.u.f);
+		warning(g_lingo->_floatPrecisionFormat.c_str(), d.u.f);
 		break;
 	case VAR:
 		if (!d.u.sym) {

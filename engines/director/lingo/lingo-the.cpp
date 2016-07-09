@@ -31,38 +31,47 @@ static struct TheEntityProto {
 	const char *name;
 	int hasID;
 } entities[] = {
-	{ kTheFrame,			"frame",			VOID },
-	{ kThePathName,			"pathname",			VOID },
-	{ kTheMovie,			"movie",			VOID },
-	{ kTheMouseH,			"mouseh",			VOID },
-	{ kTheMouseV,			"mousev",			VOID },
-	{ kTheMouseDownScript,  "mouseDownScript",	VOID },
-	{ kTheMouseUpScript,  	"mouseUpScript",	VOID },
+	{ kTheCast,				"cast",				INT  }, // string?
 	{ kTheClickOn,			"clickOn",			VOID },
-	{ kTheDoubleClick,		"doubleClick",		VOID },
-	{ kTheLastClick,		"lastClick",		VOID },
-	{ kTheLastFrame,		"lastFrame",		VOID },
-	{ kTheLastEvent,		"lastEvent",		VOID },
-	{ kTheMouseUp,			"mouseUp",			VOID },
-	{ kTheMouseDown,		"mouseDown",		VOID },
-	{ kTheRightMouseUp,		"rightMouseUp",		VOID },
-	{ kTheRightMouseDown,	"rightMouseDown",	VOID },
-	{ kTheStillDown,		"stillDown",		VOID },
-	{ kTheKey,				"key",				VOID },
-	{ kTheControlDown,		"controlDown",		VOID },
+	{ kTheColorDepth,		"colorDepth",		VOID },
+	{ kTheColorQD,			"colorQD",			VOID },
 	{ kTheCommandDown,		"commandDown",		VOID },
-	{ kTheShiftDown,		"shiftDown",		VOID },
-	{ kTheOptionDown,		"optionDown",		VOID },
+	{ kTheControlDown,		"controlDown",		VOID },
+	{ kTheDoubleClick,		"doubleClick",		VOID },
+	{ kTheExitLock,			"exitlock",			VOID },
+	{ kTheFloatPrecision,	"floatPrecision",	VOID },
+	{ kTheFrame,			"frame",			VOID },
+	{ kTheItemDelimiter,	"itemDelimiter",	VOID },
+	{ kTheKey,				"key",				VOID },
+	{ kTheLastClick,		"lastClick",		VOID },
+	{ kTheLastEvent,		"lastEvent",		VOID },
+	{ kTheLastFrame,		"lastFrame",		VOID },
 	{ kTheMenu,				"menu",				INT  },
 	{ kTheMenus,			"menus",			VOID },
 	{ kTheMenuItem,			"menuitem",			STRING  }, // int?
 	{ kTheMenuItems,		"menuitems",		VOID  },
-	{ kTheSprite,			"sprite",			INT  },
-	{ kTheCast,				"cast",				INT  }, // string?
+	{ kTheMouseDown,		"mouseDown",		VOID },
+	{ kTheMouseDownScript,  "mouseDownScript",	VOID },
+	{ kTheMouseH,			"mouseh",			VOID },
+	{ kTheMouseUp,			"mouseUp",			VOID },
+	{ kTheMouseUpScript,  	"mouseUpScript",	VOID },
+	{ kTheMouseV,			"mousev",			VOID },
+	{ kTheMovie,			"movie",			VOID },
+	{ kTheMultiSound,		"multiSound",		VOID },
+	{ kTheOptionDown,		"optionDown",		VOID },
+	{ kThePathName,			"pathname",			VOID },
 	{ kThePerFrameHook,		"perframehook",		VOID },
+	{ kThePreloadEventAbort,"preloadEventAbort",VOID },
+	{ kTheRightMouseDown,	"rightMouseDown",	VOID },
+	{ kTheRightMouseUp,		"rightMouseUp",		VOID },
+	{ kTheRomanLingo,		"romanLingo",		VOID },
+	{ kTheShiftDown,		"shiftDown",		VOID },
+	{ kTheSprite,			"sprite",			INT  },
+	{ kTheStage,			"stage",			VOID },
+	{ kTheStillDown,		"stillDown",		VOID },
 	{ kTheTicks,			"ticks",			VOID },
-	{ kTheTimer,			"timer",			VOID },
 	{ kTheTimeoutLength,	"timeoutlength",	VOID },
+	{ kTheTimer,			"timer",			VOID },
 	{ kTheWindow,			"window",			VOID },
 	{ kTheNOEntity, NULL, false }
 };
@@ -72,47 +81,47 @@ static struct TheEntityFieldProto {
 	const char *name;
 	TheField field;
 } fields[] = {
-	{ kTheSprite,		"castnum",		kTheCastNum },
-	{ kTheSprite,		"cursor",		kTheCursor },
-	{ kTheSprite,		"loch",			kTheLocH },
-	{ kTheSprite,		"locv",			kTheLocV },
-	{ kTheSprite,		"backColor",	kTheBackColor },
-	{ kTheSprite,		"blend",		kTheBlend },
-	{ kTheSprite,		"bottom",		kTheBottom },
-	{ kTheSprite,		"constraint",	kTheConstraint },
-	{ kTheSprite,		"editableText", kTheEditableText },
-	{ kTheSprite,		"foreColor",	kTheForeColor },
-	{ kTheSprite,		"height",		kTheHeight },
-	{ kTheSprite,		"ink",			kTheInk },
-	{ kTheSprite,		"left",			kTheLeft },
-	{ kTheSprite,		"lineSize",		kTheLineSize },
-	{ kTheSprite,		"moveable",		kTheMoveable },
-	{ kTheSprite,		"movieRate",	kTheMovieRate },
-	{ kTheSprite,		"movieTime",	kTheMovieTime },
-	{ kTheSprite,		"right",		kTheRight },
-	{ kTheSprite,		"stopTime",		kTheStopTime },
-	{ kTheSprite,		"stretch",		kTheStrech },
-	{ kTheSprite,		"startTime",	kTheStartTime },
-	{ kTheSprite,		"scriptNum",	kTheScriptNum },
-	{ kTheSprite,		"top",			kTheTop },
-	{ kTheSprite,		"trails",		kTheTrails },
-	{ kTheSprite,		"type",			kTheType },
-	{ kTheSprite,		"visible",		kTheVisible },
-	{ kTheSprite,		"volume",		kTheVolume },
-	{ kTheSprite,		"width",		kTheWidth },
+	{ kTheSprite,	"backColor",	kTheBackColor },
+	{ kTheSprite,	"blend",		kTheBlend },
+	{ kTheSprite,	"bottom",		kTheBottom },
+	{ kTheSprite,	"castnum",		kTheCastNum },
+	{ kTheSprite,	"constraint",	kTheConstraint },
+	{ kTheSprite,	"cursor",		kTheCursor },
+	{ kTheSprite,	"editableText", kTheEditableText },
+	{ kTheSprite,	"foreColor",	kTheForeColor },
+	{ kTheSprite,	"height",		kTheHeight },
+	{ kTheSprite,	"ink",			kTheInk },
+	{ kTheSprite,	"left",			kTheLeft },
+	{ kTheSprite,	"lineSize",		kTheLineSize },
+	{ kTheSprite,	"loch",			kTheLocH },
+	{ kTheSprite,	"locv",			kTheLocV },
+	{ kTheSprite,	"moveable",		kTheMoveable },
+	{ kTheSprite,	"movieRate",	kTheMovieRate },
+	{ kTheSprite,	"movieTime",	kTheMovieTime },
+	{ kTheSprite,	"right",		kTheRight },
+	{ kTheSprite,	"scriptNum",	kTheScriptNum },
+	{ kTheSprite,	"startTime",	kTheStartTime },
+	{ kTheSprite,	"stretch",		kTheStrech },
+	{ kTheSprite,	"stopTime",		kTheStopTime },
+	{ kTheSprite,	"top",			kTheTop },
+	{ kTheSprite,	"trails",		kTheTrails },
+	{ kTheSprite,	"type",			kTheType },
+	{ kTheSprite,	"visible",		kTheVisible },
+	{ kTheSprite,	"volume",		kTheVolume },
+	{ kTheSprite,	"width",		kTheWidth },
 
 	//Common cast fields
-	{ kTheCast,		"width",		kTheWidth },
-	{ kTheCast,		"height",		kTheHeight },
-	{ kTheCast,		"filename",		kTheFilename },
-	{ kTheCast,		"scriptText",	kTheScriptText },
 	{ kTheCast,		"castType",		kTheCastType },
-	{ kTheCast,		"name",			kTheName },
-	{ kTheCast,		"rect",			kTheRect },
-	{ kTheCast,		"number",		kTheNumber },
-	{ kTheCast,		"modified",		kTheModified },
+	{ kTheCast,		"filename",		kTheFilename },
+	{ kTheCast,		"height",		kTheHeight },
 	{ kTheCast,		"loaded",		kTheLoaded },
-	{ kTheCast,		"purgePriority",kThePurgePriority }, //0 Never purge, 1 Purge Last, 2 Purge next, 2 Purge normal
+	{ kTheCast,		"modified",		kTheModified },
+	{ kTheCast,		"name",			kTheName },
+	{ kTheCast,		"number",		kTheNumber },
+	{ kTheCast,		"rect",			kTheRect },
+	{ kTheCast,		"purgePriority",kThePurgePriority }, // 0 Never purge, 1 Purge Last, 2 Purge next, 2 Purge normal
+	{ kTheCast,		"scriptText",	kTheScriptText },
+	{ kTheCast,		"width",		kTheWidth },
 
 	//Shape fields
 	{ kTheCast,		"backColor",	kTheBackColor },
@@ -134,8 +143,8 @@ static struct TheEntityFieldProto {
 	{ kTheCast,		"picture",		kThePicture },
 
 	//TextCast fields
-	{ kTheCast,		"size",			kTheSize },
 	{ kTheCast,		"hilite",		kTheHilite },
+	{ kTheCast,		"size",			kTheSize },
 	{ kTheCast,		"text",			kTheText },
 
 	{ kTheWindow,	"drawRect",		kTheDrawRect },
@@ -146,7 +155,7 @@ static struct TheEntityFieldProto {
 	{ kTheMenuItem,	"checkmark",	kTheCheckMark },
 	{ kTheMenuItem, "enabled",		kTheEnabled },
 	{ kTheMenuItem, "name",			kTheName },
-	{ kTheMenuItem, "name",			kTheScript },
+	{ kTheMenuItem, "script",		kTheScript },
 
 	{ kTheMenu,		"name",			kTheName },
 
@@ -163,6 +172,11 @@ void Lingo::setTheEntity(TheEntity entity, int id, TheField field, Datum &d) {
 		break;
 	case kThePerFrameHook:
 		warning("STUB: setting the perframehook");
+		break;
+	case kTheFloatPrecision:
+		_floatPrecision = d.toInt();
+		_floatPrecision = MAX(0, MIN(_floatPrecision, 19)); // 0 to 19
+		_floatPrecisionFormat.format("%%.%df", _floatPrecision);
 		break;
 	default:
 		error("Unprocessed setting field %d of entity %d", field, entity);
@@ -219,6 +233,10 @@ Datum Lingo::getTheEntity(TheEntity entity, int id, TheField field) {
 		d = getTheCast(id, field);
 	case kThePerFrameHook:
 		warning("STUB: getting the perframehook");
+		break;
+	case kTheFloatPrecision:
+		d.type = INT;
+		d.u.i = _floatPrecision;
 		break;
 	default:
 		error("Unprocessed getting field %d of entity %d", field, entity);

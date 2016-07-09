@@ -266,6 +266,8 @@ public:
 	int _linenumber;
 	int _colnumber;
 
+	Common::String _floatPrecisionFormat;
+
 private:
 	int parse(const char *code);
 	void push(Datum d);
@@ -285,6 +287,8 @@ private:
 	StackData _stack;
 
 	DirectorEngine *_vm;
+
+	int _floatPrecision;
 };
 
 extern Lingo *g_lingo;

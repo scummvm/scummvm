@@ -120,7 +120,7 @@ Common::Error DirectorEngine::run() {
 		if x = 1 then\n\
 		  put 1\n\
 		else if x = 2 then\n\
-		  put 2.1\n\
+		  put 1232.12345678901234\n\
 		  put 2.2\n\
 		else if x = 3 then put 3\n\
 		end if\n\

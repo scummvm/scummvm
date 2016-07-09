@@ -91,6 +91,9 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_linenumber = _colnumber = 0;
 
+	_floatPrecision = 4;
+	_floatPrecisionFormat = "%.4f";
+
 	warning("Lingo Inited");
 }
 

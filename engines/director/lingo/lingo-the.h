@@ -61,7 +61,17 @@ enum TheEntity {
 	kTheControlDown,
 	kTheCommandDown,
 	kTheShiftDown,
-	kTheOptionDown
+	kTheOptionDown,
+
+	kTheColorDepth,
+	kTheColorQD,
+	kTheExitLock,
+	kTheFloatPrecision,
+	kTheItemDelimiter,
+	kTheMultiSound,
+	kThePreloadEventAbort,
+	kTheRomanLingo,
+	kTheStage
 };
 
 enum TheField {
