@@ -23,8 +23,8 @@
 #ifndef BACKENDS_NETWORKING_SDL_NET_CLIENT_H
 #define BACKENDS_NETWORKING_SDL_NET_CLIENT_H
 
+#include "backends/networking/sdl_net/reader.h"
 #include "common/str.h"
-#include "reader.h"
 
 namespace Common {
 class MemoryReadWriteStream;
