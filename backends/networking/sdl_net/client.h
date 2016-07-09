@@ -45,6 +45,8 @@ enum ClientState {
 
 class Client;
 
+#define CLIENT_BUFFER_SIZE 1 * 1024 * 1024
+
 class ClientHandler {
 public:
 	virtual ~ClientHandler() {};
@@ -58,6 +60,7 @@ class Client {
 	Reader _reader;
 	ClientHandler *_handler, *_previousHandler;
 	Common::MemoryReadWriteStream *_stream;
+	byte *_buffer;
 
 	bool readMoreIfNeeded();
 

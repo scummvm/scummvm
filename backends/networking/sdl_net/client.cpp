@@ -29,14 +29,19 @@
 
 namespace Networking {
 
-Client::Client() : _state(INVALID), _set(nullptr), _socket(nullptr), _handler(nullptr), _previousHandler(nullptr), _stream(nullptr) {}
+Client::Client():
+	_state(INVALID), _set(nullptr), _socket(nullptr), _handler(nullptr),
+	_previousHandler(nullptr), _stream(nullptr), _buffer(new byte[CLIENT_BUFFER_SIZE]) {}
 
-Client::Client(SDLNet_SocketSet set, TCPsocket socket) : _state(INVALID), _set(nullptr), _socket(nullptr), _handler(nullptr), _previousHandler(nullptr), _stream(nullptr) {
+Client::Client(SDLNet_SocketSet set, TCPsocket socket):
+	_state(INVALID), _set(nullptr), _socket(nullptr), _handler(nullptr),
+	_previousHandler(nullptr), _stream(nullptr), _buffer(new byte[CLIENT_BUFFER_SIZE]) {
 	open(set, socket);
 }
 
 Client::~Client() {
 	close();
+	delete[] _buffer;
 }
 
 void Client::open(SDLNet_SocketSet set, TCPsocket socket) {
@@ -65,16 +70,14 @@ bool Client::readMoreIfNeeded() {
 	if (!_socket) return false;
 	if (!SDLNet_SocketReady(_socket)) return false;
 
-	const uint32 BUFFER_SIZE = 16 * 1024;
-	byte buffer[BUFFER_SIZE];
-	int bytes = SDLNet_TCP_Recv(_socket, buffer, BUFFER_SIZE);
+	int bytes = SDLNet_TCP_Recv(_socket, _buffer, CLIENT_BUFFER_SIZE);
 	if (bytes <= 0) {
 		warning("Client::readHeaders recv fail");
 		close();
 		return false;
 	}
 
-	if (_stream->write(buffer, bytes) != bytes) {
+	if (_stream->write(_buffer, bytes) != bytes) {
 		warning("failed to write() into MemoryReadWriteStream");
 		close();
 		return false;
