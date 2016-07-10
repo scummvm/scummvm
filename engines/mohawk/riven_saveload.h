@@ -23,9 +23,12 @@
 #ifndef MOHAWK_SAVELOAD_H
 #define MOHAWK_SAVELOAD_H
 
+#include "common/serializer.h"
 #include "common/savefile.h"
 #include "common/str.h"
 #include "common/memstream.h"
+
+#include "engines/savestate.h"
 
 namespace Mohawk {
 
@@ -34,6 +37,22 @@ class MohawkEngine_Riven;
 enum {
 	kCDSaveGameVersion = 0x00010000,
 	kDVDSaveGameVersion = 0x00010100
+};
+
+struct RivenSaveMetadata {
+	uint8 saveDay;
+	uint8 saveMonth;
+	uint16 saveYear;
+
+	uint8 saveHour;
+	uint8 saveMinute;
+
+	uint32 totalPlayTime;
+
+	Common::String saveDescription;
+
+	RivenSaveMetadata();
+	bool sync(Common::Serializer &s);
 };
 
 class RivenSaveLoad {
@@ -46,13 +65,18 @@ public:
 	Common::Error saveGame(Common::String);
 	void deleteSave(Common::String);
 
+	static SaveStateDescriptor querySaveMetaInfos(const Common::String &filename);
+	static Common::String querySaveDescription(const Common::String &filename);
+
 private:
 	MohawkEngine_Riven *_vm;
 	Common::SaveFileManager *_saveFileMan;
 
-	Common::MemoryWriteStreamDynamic *genVERSSection();
 	Common::MemoryWriteStreamDynamic *genNAMESection();
+	Common::MemoryWriteStreamDynamic *genMETASection(const Common::String &desc) const;
+	Common::MemoryWriteStreamDynamic *genTHMBSection() const;
 	Common::MemoryWriteStreamDynamic *genVARSSection();
+	Common::MemoryWriteStreamDynamic *genVERSSection();
 	Common::MemoryWriteStreamDynamic *genZIPSSection();
 };
 

@@ -41,6 +41,7 @@
 
 #ifdef ENABLE_RIVEN
 #include "mohawk/riven.h"
+#include "mohawk/riven_saveload.h"
 #endif
 
 namespace Mohawk {
@@ -240,14 +241,18 @@ SaveStateList MohawkMetaEngine::listSaves(const char *target) const {
 		}
 
 		Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	} else
+	}
 #endif
+#ifdef ENABLE_RIVEN
 	if (strstr(target, "riven")) {
 		filenames = g_system->getSavefileManager()->listSavefiles("*.rvn");
 
-		for (uint32 i = 0; i < filenames.size(); i++)
-			saveList.push_back(SaveStateDescriptor(i, filenames[i]));
+		for (uint32 i = 0; i < filenames.size(); i++) {
+			Common::String description = Mohawk::RivenSaveLoad::querySaveDescription(filenames[i]);
+			saveList.push_back(SaveStateDescriptor(i, description));
+		}
 	}
+#endif
 
 	return saveList;
 }
@@ -270,6 +275,12 @@ SaveStateDescriptor MohawkMetaEngine::querySaveMetaInfos(const char *target, int
 #ifdef ENABLE_MYST
 	if (strstr(target, "myst")) {
 		return Mohawk::MystGameState::querySaveMetaInfos(slot);
+	}
+#endif
+#ifdef ENABLE_RIVEN
+	if (strstr(target, "riven")) {
+		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("*.rvn");
+		return Mohawk::RivenSaveLoad::querySaveMetaInfos(filenames[slot].c_str());
 	} else
 #endif
 	{
