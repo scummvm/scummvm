@@ -1,0 +1,12 @@
+if random(4) > 2 then put 1000
+set z = 5.5
+set z1 = 2
+set z2 = z / z1
+put z
+put z1
+put z2
+put integer(z2)
+put cos(z2)
+
+set x = 2 + 3 * (4 / 2)
+put x

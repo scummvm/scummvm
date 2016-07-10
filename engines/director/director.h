@@ -39,7 +39,8 @@ class MacResManager;
 namespace Director {
 
 enum DirectorGameID {
-	GID_GENERIC
+	GID_GENERIC,
+	GID_TEST
 };
 
 class Archive;

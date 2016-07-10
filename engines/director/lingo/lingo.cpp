@@ -296,4 +296,24 @@ Common::String *Lingo::toLowercaseMac(Common::String *s) {
 	return res;
 }
 
+void Lingo::runTests() {
+	Common::File inFile;
+	Common::ArchiveMemberList fileList;
+	SearchMan.listMatchingMembers(fileList, "*.lingo");
+
+	int counter = 1;
+
+	for (Common::ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
+		Common::ArchiveMember       const &m      = **it;
+		Common::SeekableReadStream *const  stream = m.createReadStream();
+		if (stream) {
+			uint size = stream->size();
+
+			warning("Executing file %s of size %d", m.getName().c_str(), size);
+		}
+
+		inFile.close();
+	}
+}
+
 } // End of namespace Director

@@ -144,6 +144,8 @@ public:
 
 	Common::String *toLowercaseMac(Common::String *s);
 
+	void runTests();
+
 public:
 	void execute(int pc);
 	void pushContext();

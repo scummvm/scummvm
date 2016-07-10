@@ -28,6 +28,20 @@ namespace Director {
 static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
+			"directortest",
+			"",
+			AD_ENTRY1("lingotests.lingo", 0),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_TEST,
+		3
+	},
+
+	{
+		{
 			"gundam0079",
 			"",
 			AD_ENTRY1("Gundam0079.exe", "1a7acbba10a7246ba58c1d53fc7203f5"),
