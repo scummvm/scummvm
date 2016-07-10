@@ -100,10 +100,10 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 Lingo::~Lingo() {
 }
 
-void Lingo::addCode(Common::String code, ScriptType type, uint16 id) {
+void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	code += '\n';
 
-	debug(2, "Add code \"%s\" for type %d with id %d", code.c_str(), type, id);
+	debug(2, "Add code \"%s\" for type %d with id %d", code, type, id);
 
 	if (_scripts[type].contains(id)) {
 		delete _scripts[type][id];
@@ -115,15 +115,17 @@ void Lingo::addCode(Common::String code, ScriptType type, uint16 id) {
 
 	_linenumber = _colnumber = 1;
 
+	const char *begin, *end;
+
 	// macros have conflicting grammar. Thus we ease life for the parser.
-	if (code.contains("\nmacro ")) {
-		const char *begin = strstr(code.c_str(), "\nmacro ") + 1;
-		const char *end;
+	if ((begin = strstr(code, "\nmacro "))) {
 		bool first = true;
+
+		begin += 1;
 
 		while ((end = strstr(begin, "\nmacro "))) {
 			if (first) {
-				begin = code.c_str();
+				begin = code;
 				first = false;
 			}
 			Common::String chunk(begin, end);
@@ -137,7 +139,7 @@ void Lingo::addCode(Common::String code, ScriptType type, uint16 id) {
 
 		parse(begin);
 	} else {
-		parse(code.c_str());
+		parse(code);
 
 		code1(STOP);
 	}

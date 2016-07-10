@@ -340,8 +340,8 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 	Common::HashMap<uint16, Common::String>::iterator j;
 
 	for (j = _actions.begin(); j != _actions.end(); ++j)
-		if (j->_value != "")
-			_lingo->addCode(j->_value, kFrameScript, j->_key);
+		if (!j->_value.empty())
+			_lingo->addCode(j->_value.c_str(), kFrameScript, j->_key);
 
 	if (!ConfMan.getBool("dump_scripts"))
 		return;
@@ -368,10 +368,10 @@ void Score::loadScriptText(Common::SeekableSubReadStreamEndian &stream) {
 		script += ch;
 	}
 
-	if (script != "")
-		_lingo->addCode(script, kMovieScript, _movieScriptCount);
+	if (!script.empty())
+		_lingo->addCode(script.c_str(), kMovieScript, _movieScriptCount);
 
-	if (ConfMan.getBool("dump_scripts") && (script != "")) {
+	if (ConfMan.getBool("dump_scripts") && (!script.empty())) {
 		dumpScript(_movieScriptCount, kMovieScript, script);
 	}
 
@@ -427,8 +427,8 @@ void Score::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 
 	ci->script = castStrings[0];
 
-	if (ci->script != "") {
-		_lingo->addCode(ci->script, kSpriteScript, id);
+	if (!ci->script.empty()) {
+		_lingo->addCode(ci->script.c_str(), kSpriteScript, id);
 	}
 
 	if (!ConfMan.getBool("dump_scripts")) {
@@ -525,8 +525,8 @@ void Score::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
 	Common::Array<Common::String> fileInfoStrings = loadStrings(stream, _flags);
 	_script = fileInfoStrings[0];
 
-	if (_script != "") {
-		_lingo->addCode(_script, kMovieScript, _movieScriptCount);
+	if (!_script.empty()) {
+		_lingo->addCode(_script.c_str(), kMovieScript, _movieScriptCount);
 	}
 
 	if (!ConfMan.getBool("dump_scripts")) {
