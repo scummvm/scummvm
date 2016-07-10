@@ -236,6 +236,41 @@ void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, in
 	}
 }
 
+void NinePatchBitmap::blitClip(Graphics::Surface &target, Common::Rect clip, int dx, int dy, int dw, int dh) {
+	/* don't draw bitmaps that are smaller than the fixed area */
+	if (dw < _h._fix || dh < _v._fix)
+		return;
+
+	/* if the bitmap is the same size as the origin, then draw it as-is */
+	if (dw == _width && dh == _height) {
+		Common::Rect r(1, 1, dw, dh);
+
+		_bmp->blitClip(target, clip, dx, dy, Graphics::FLIP_NONE, &r);
+		return;
+	}
+
+	/* only recalculate the offsets if they have changed since the last draw */
+	if (_cached_dw != dw || _cached_dh != dh) {
+		_h.calcOffsets(dw);
+		_v.calcOffsets(dh);
+
+		_cached_dw = dw;
+		_cached_dh = dh;
+	}
+
+	/* draw each region */
+	for (uint i = 0; i < _v._m.size(); ++i) {
+		for (uint j = 0; j < _h._m.size(); ++j) {
+			Common::Rect r(_h._m[j]->offset, _v._m[i]->offset,
+				_h._m[j]->offset + _h._m[j]->length, _v._m[i]->offset + _v._m[i]->length);
+
+			_bmp->blitClip(target, clip, dx + _h._m[j]->dest_offset, dy + _v._m[i]->dest_offset,
+				Graphics::FLIP_NONE, &r, TS_ARGB(255, 255, 255, 255),
+				_h._m[j]->dest_length, _v._m[i]->dest_length);
+		}
+	}
+}
+
 NinePatchBitmap::~NinePatchBitmap() {
 	if (_destroy_bmp)
 		delete _bmp;

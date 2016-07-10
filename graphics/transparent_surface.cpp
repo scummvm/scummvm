@@ -462,6 +462,139 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	return retSize;
 }
 
+Common::Rect TransparentSurface::blitClip(Graphics::Surface &target, Common::Rect clippingArea, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height, TSpriteBlendMode blendMode) {
+	Common::Rect retSize;
+	retSize.top = 0;
+	retSize.left = 0;
+	retSize.setWidth(0);
+	retSize.setHeight(0);
+	// Check if we need to draw anything at all
+	int ca = (color >> kAModShift) & 0xff;
+
+	if (ca == 0) {
+		return retSize;
+	}
+
+	// Create an encapsulating surface for the data
+	TransparentSurface srcImage(*this, false);
+	// TODO: Is the data really in the screen format?
+	if (format.bytesPerPixel != 4) {
+		warning("TransparentSurface can only blit 32bpp images, but got %d", format.bytesPerPixel * 8);
+		return retSize;
+	}
+
+	if (pPartRect) {
+
+		int xOffset = pPartRect->left;
+		int yOffset = pPartRect->top;
+
+		if (flipping & FLIP_V) {
+			yOffset = srcImage.h - pPartRect->bottom;
+		}
+
+		if (flipping & FLIP_H) {
+			xOffset = srcImage.w - pPartRect->right;
+		}
+
+		srcImage.pixels = getBasePtr(xOffset, yOffset);
+		srcImage.w = pPartRect->width();
+		srcImage.h = pPartRect->height();
+
+		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping,
+			pPartRect->left, pPartRect->top, pPartRect->width(), pPartRect->height(), color, width, height);
+	} else {
+
+		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping, 0, 0,
+			srcImage.w, srcImage.h, color, width, height);
+	}
+
+	if (width == -1) {
+		width = srcImage.w;
+	}
+	if (height == -1) {
+		height = srcImage.h;
+	}
+
+#ifdef SCALING_TESTING
+	// Hardcode scaling to 66% to test scaling
+	width = width * 2 / 3;
+	height = height * 2 / 3;
+#endif
+
+	Graphics::Surface *img = nullptr;
+	Graphics::Surface *imgScaled = nullptr;
+	byte *savedPixels = nullptr;
+	if ((width != srcImage.w) || (height != srcImage.h)) {
+		// Scale the image
+		img = imgScaled = srcImage.scale(width, height);
+		savedPixels = (byte *)img->getPixels();
+	} else {
+		img = &srcImage;
+	}
+
+	// Handle off-screen clipping
+	if (posY < clippingArea.top) {
+		img->h = MAX(0, (int)img->h - (clippingArea.top - posY));
+		img->setPixels((byte *)img->getBasePtr(0, clippingArea.top - posY));
+		posY = clippingArea.top;
+	}
+
+	if (posX < clippingArea.left) {
+		img->w = MAX(0, (int)img->w - (clippingArea.left - posX));
+		img->setPixels((byte *)img->getBasePtr(clippingArea.left - posX, 0));
+		posX = clippingArea.left;
+	}
+
+	img->w = CLIP((int)img->w, 0, (int)MAX((int)clippingArea.right - posX, 0));
+	img->h = CLIP((int)img->h, 0, (int)MAX((int)clippingArea.bottom - posY, 0));
+
+	if ((img->w > 0) && (img->h > 0)) {
+		int xp = 0, yp = 0;
+
+		int inStep = 4;
+		int inoStep = img->pitch;
+		if (flipping & FLIP_H) {
+			inStep = -inStep;
+			xp = img->w - 1;
+		}
+
+		if (flipping & FLIP_V) {
+			inoStep = -inoStep;
+			yp = img->h - 1;
+		}
+
+		byte *ino = (byte *)img->getBasePtr(xp, yp);
+		byte *outo = (byte *)target.getBasePtr(posX, posY);
+
+		if (color == 0xFFFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_OPAQUE) {
+			doBlitOpaqueFast(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
+		} else if (color == 0xFFFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_BINARY) {
+			doBlitBinaryFast(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
+		} else {
+			if (blendMode == BLEND_ADDITIVE) {
+				doBlitAdditiveBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+			} else if (blendMode == BLEND_SUBTRACTIVE) {
+				doBlitSubtractiveBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+			} else {
+				assert(blendMode == BLEND_NORMAL);
+				doBlitAlphaBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+			}
+		}
+
+	}
+
+	retSize.setWidth(img->w);
+	retSize.setHeight(img->h);
+
+	if (imgScaled) {
+		imgScaled->setPixels(savedPixels);
+		imgScaled->free();
+		delete imgScaled;
+	}
+
+	return retSize;
+}
+
 /**
  * Writes a color key to the alpha channel of the surface
  * @param rKey  the red component of the color key

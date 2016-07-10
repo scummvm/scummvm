@@ -83,6 +83,7 @@ public:
 	~NinePatchBitmap();
 
 	void blit(Graphics::Surface &target, int dx, int dy, int dw, int dh);
+	void blitClip(Graphics::Surface &target, Common::Rect clip, int dx, int dy, int dw, int dh);
 
 	int getWidth() { return _width; }
 	int getHeight() { return _height; }

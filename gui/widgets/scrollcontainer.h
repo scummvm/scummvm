@@ -20,51 +20,44 @@
  *
  */
 
-#include "common/textconsole.h"
+#ifndef GUI_WIDGETS_SCROLLCONTAINER_H
+#define GUI_WIDGETS_SCROLLCONTAINER_H
 
-#include "gui/object.h"
 #include "gui/widget.h"
-#include "gui/gui-manager.h"
-#include "gui/ThemeEval.h"
+#include "common/str.h"
+#include "scrollbar.h"
 
 namespace GUI {
 
-GuiObject::GuiObject(const Common::String &name)
-	: _x(-1000), _y(-1000), _w(0), _h(0), _name(name), _firstWidget(0), _textDrawableArea(Common::Rect(0, 0, 0, 0)) {
-	reflowLayout();
-}
+class ScrollContainerWidget: public Widget {
+	ScrollBarWidget *_verticalScroll;
+	int16 _scrolledX, _scrolledY;
+	uint16 _limitH;
 
-GuiObject::~GuiObject() {
-	delete _firstWidget;
-	_firstWidget = 0;
-}
+	void recalc();
 
-void GuiObject::reflowLayout() {
-	if (!_name.empty()) {
-		if (!g_gui.xmlEval()->getWidgetData(_name, _x, _y, _w, _h)) {
-			error("Could not load widget position for '%s'", _name.c_str());
-		}
-	}
-}
+public:
+	ScrollContainerWidget(GuiObject *boss, int x, int y, int w, int h);
+	ScrollContainerWidget(GuiObject *boss, const Common::String &name);
+	~ScrollContainerWidget();
 
-void GuiObject::removeWidget(Widget *del) {
-	if (del == _firstWidget) {
-		Widget *del_next = del->next();
-		del->setNext(0);
-		_firstWidget = del_next;
-		return;
-	}
+	void init();
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void reflowLayout();
 
-	Widget *w = _firstWidget;
-	while (w) {
-		if (w->next() == del) {
-			Widget *del_next = del->next();
-			del->setNext(0);
-			w->setNext(del_next);
-			return;
-		}
-		w = w->next();
-	}
-}
+protected:
+	// We overload getChildY to make sure child widgets are positioned correctly.
+	// Essentially this compensates for the space taken up by the tab title header.
+	virtual int16	getChildX() const;
+	virtual int16	getChildY() const;
+	virtual uint16	getWidth() const;
+	virtual uint16	getHeight() const;
+
+	virtual void drawWidget();
+
+	virtual Widget *findWidget(int x, int y);
+};
 
 } // End of namespace GUI
+
+#endif

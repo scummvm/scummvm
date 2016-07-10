@@ -364,8 +364,11 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 		// Draw a separator
 		g_gui.theme()->drawLineSeparator(Common::Rect(x, y, x+w, y+kLineHeight));
 	} else {
-		g_gui.theme()->drawText(Common::Rect(x+1, y+2, x+w, y+2+kLineHeight), name,	hilite ? ThemeEngine::kStateHighlight : ThemeEngine::kStateEnabled,
-								Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone, _leftPadding);
+		g_gui.theme()->drawText(
+			Common::Rect(x+1, y+2, x+w, y+2+kLineHeight),
+			name, hilite ? ThemeEngine::kStateHighlight : ThemeEngine::kStateEnabled,
+			Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone, _leftPadding
+		);
 	}
 }
 
@@ -470,7 +473,10 @@ void PopUpWidget::drawWidget() {
 	Common::String sel;
 	if (_selectedItem >= 0)
 		sel = _entries[_selectedItem].name;
-	g_gui.theme()->drawPopUpWidget(Common::Rect(_x, _y, _x + _w, _y + _h), sel, _leftPadding, _state, Graphics::kTextAlignLeft);
+	g_gui.theme()->drawPopUpWidgetClip(
+		Common::Rect(_x, _y, _x + _w, _y + _h), getBossClipRect(),
+		sel, _leftPadding, _state, Graphics::kTextAlignLeft
+	);
 }
 
 } // End of namespace GUI

@@ -73,6 +73,7 @@ public:
 	void runLoop();
 
 	void processEvent(const Common::Event &event, Dialog *const activeDialog);
+	void doFullRedraw();
 
 	bool isActive() const	{ return ! _dialogStack.empty(); }
 
