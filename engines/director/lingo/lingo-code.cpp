@@ -608,13 +608,24 @@ void Lingo::c_call() {
 	Common::String name((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
 	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
 
+	int nargs = READ_UINT32(&(*g_lingo->_currentScript)[g_lingo->_pc++]);
+
 	if (!g_lingo->_handlers.contains(name)) {
-		error("Call to undefined handler '%s'", name.c_str());
+		warning("Call to undefined handler '%s'. Dropping %d stack items", name.c_str(), nargs);
+
+		for (int i = 0; i < nargs; i++)
+			g_lingo->pop();
+
+		// Push dummy value
+		Datum d;
+		d.u.i = 0;
+		d.type = VOID;
+		g_lingo->push(d);
+
+		return;
 	}
 
 	Symbol *sym = g_lingo->_handlers[name];
-
-	int nargs = READ_UINT32(&(*g_lingo->_currentScript)[g_lingo->_pc++]);
 
 	for (int i = nargs; i < sym->nargs; i++) {
 		Datum d;
@@ -643,6 +654,12 @@ void Lingo::c_call() {
 }
 
 void Lingo::c_procret() {
+	if (!g_lingo->_callstack.size()) {
+		warning("Call stack underflow");
+		g_lingo->_returning = true;
+		return;
+	}
+
 	CFrame *fp = g_lingo->_callstack.back();
 
 	g_lingo->_currentScript = fp->retscript;
