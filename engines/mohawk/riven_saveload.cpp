@@ -72,8 +72,11 @@ Common::Error RivenSaveLoad::loadGame(Common::String filename) {
 	Common::Array<uint32> rawVariables;
 
 	while (!vars->eos()) {
-		vars->readUint32BE();	// Unknown (Stack?)
-		vars->readUint32BE();	// Unknown (0 or 1)
+		// The original engine stores the variables values in an array. All the slots in
+		// the array may not be in use, which is why it needs a reference counter and
+		// a flag to tell if the value has been set.
+		vars->readUint32BE();	// Reference counter
+		vars->readUint32BE();	// Variable initialized flag
 		rawVariables.push_back(vars->readUint32BE());
 	}
 
@@ -162,12 +165,16 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genVARSSection() {
 	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
 
 	for (RivenVariableMap::const_iterator it = _vm->_vars.begin(); it != _vm->_vars.end(); it++) {
-		stream->writeUint32BE(0); // Unknown
-		stream->writeUint32BE(0); // Unknown
+		stream->writeUint32BE(1); // Reference counter
+		stream->writeUint32BE(1); // Variable initialized flag
 		stream->writeUint32BE(it->_value);
 	}
 
 	return stream;
+}
+
+static int stringCompareToIgnoreCase(const Common::String &s1, const Common::String &s2) {
+	return s1.compareToIgnoreCase(s2) < 0;
 }
 
 Common::MemoryWriteStreamDynamic *RivenSaveLoad::genNAMESection() {
@@ -181,8 +188,28 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genNAMESection() {
 		curPos += it->_key.size() + 1;
 	}
 
-	for (uint16 i = 0; i < _vm->_vars.size(); i++)
-		stream->writeUint16BE(i);
+	// The original engine does not store the variables in a HashMap, but in a "NameList"
+	// for the keys and an array for the values. The NameList data structure maintains an array
+	// of indices in the string table sorted by case insensitive key alphabetical order.
+	// It is used to perform fast key -> index lookups.
+	// ScummVM does not need the sorted array, but has to write it anyway for the saved games
+	// to be compatible with original engine.
+	Common::Array<Common::String> sortedKeys;
+	for (RivenVariableMap::const_iterator it = _vm->_vars.begin(); it != _vm->_vars.end(); it++) {
+		sortedKeys.push_back(it->_key);
+	}
+	Common::sort(sortedKeys.begin(), sortedKeys.end(), stringCompareToIgnoreCase);
+
+	for (uint i = 0; i < sortedKeys.size(); i++) {
+		uint16 varIndex = 0;
+		for (RivenVariableMap::const_iterator it = _vm->_vars.begin(); it != _vm->_vars.end(); it++) {
+			if (it->_key == sortedKeys[i]) {
+				stream->writeUint16BE(varIndex);
+				break;
+			}
+			varIndex++;
+		}
+	}
 
 	for (RivenVariableMap::const_iterator it = _vm->_vars.begin(); it != _vm->_vars.end(); it++) {
 		stream->write(it->_key.c_str(), it->_key.size());
@@ -213,10 +240,6 @@ Common::Error RivenSaveLoad::saveGame(Common::String filename) {
 	// that requires this feature. If the time comes when other
 	// games need this, we should think about coming up with some
 	// more common way of outputting resources to an archive.
-
-	// TODO: Make these saves work with the original interpreter.
-	// Not sure why they don't work yet (they still can be loaded
-	// by ScummVM).
 
 	// Make sure we have the right extension
 	if (!filename.matchString("*.rvn", true))
@@ -262,15 +285,17 @@ Common::Error RivenSaveLoad::saveGame(Common::String filename) {
 	saveFile->writeUint16BE(4); // 4 Type Table Entries
 
 	// Hardcode Entries (32 bytes - total: 64)
-	saveFile->writeUint32BE(ID_VERS);
+	// The original engine relies on the entries being sorted by tag alphabetical order
+	// to optimize its lookup algorithm.
+	saveFile->writeUint32BE(ID_NAME);
 	saveFile->writeUint16BE(46); // Resource table offset
 	saveFile->writeUint16BE(38); // String table offset
 
-	saveFile->writeUint32BE(ID_NAME);
+	saveFile->writeUint32BE(ID_VARS);
 	saveFile->writeUint16BE(52);
 	saveFile->writeUint16BE(40);
 
-	saveFile->writeUint32BE(ID_VARS);
+	saveFile->writeUint32BE(ID_VERS);
 	saveFile->writeUint16BE(58);
 	saveFile->writeUint16BE(42);
 
@@ -281,23 +306,23 @@ Common::Error RivenSaveLoad::saveGame(Common::String filename) {
 	// Pseudo-String Table (2 bytes - total: 66)
 	saveFile->writeUint16BE(0); // We don't need a name list
 
-	// Psuedo-Name Tables (8 bytes - total: 74)
+	// Pseudo-Name Tables (8 bytes - total: 74)
 	saveFile->writeUint16BE(0);
 	saveFile->writeUint16BE(0);
 	saveFile->writeUint16BE(0);
 	saveFile->writeUint16BE(0);
 
-	// VERS Section (Resource Table) (6 bytes - total: 80)
+	// NAME Section (Resource Table) (6 bytes - total: 80)
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(1);
 
-	// NAME Section (Resource Table) (6 bytes - total: 86)
+	// VARS Section (Resource Table) (6 bytes - total: 86)
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(2);
 
-	// VARS Section (Resource Table) (6 bytes - total: 92)
+	// VERS Section (Resource Table) (6 bytes - total: 92)
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(3);
@@ -310,37 +335,37 @@ Common::Error RivenSaveLoad::saveGame(Common::String filename) {
 	// File Table (4 bytes - total: 102)
 	saveFile->writeUint32BE(4);
 
-	// VERS Section (File Table) (10 bytes - total: 112)
+	// NAME Section (File Table) (10 bytes - total: 112)
 	saveFile->writeUint32BE(142);
-	saveFile->writeUint16BE(versSection->size() & 0xFFFF);
-	saveFile->writeByte((versSection->size() & 0xFF0000) >> 16);
-	saveFile->writeByte(0);
-	saveFile->writeUint16BE(0);
-
-	// NAME Section (File Table) (10 bytes - total: 122)
-	saveFile->writeUint32BE(142 + versSection->size());
 	saveFile->writeUint16BE(nameSection->size() & 0xFFFF);
 	saveFile->writeByte((nameSection->size() & 0xFF0000) >> 16);
 	saveFile->writeByte(0);
 	saveFile->writeUint16BE(0);
 
-	// VARS Section (File Table) (10 bytes - total: 132)
-	saveFile->writeUint32BE(142 + versSection->size() + nameSection->size());
+	// VARS Section (File Table) (10 bytes - total: 122)
+	saveFile->writeUint32BE(142 + nameSection->size());
 	saveFile->writeUint16BE(varsSection->size() & 0xFFFF);
 	saveFile->writeByte((varsSection->size() & 0xFF0000) >> 16);
 	saveFile->writeByte(0);
 	saveFile->writeUint16BE(0);
 
+	// VERS Section (File Table) (10 bytes - total: 132)
+	saveFile->writeUint32BE(142 + nameSection->size() + varsSection->size());
+	saveFile->writeUint16BE(versSection->size() & 0xFFFF);
+	saveFile->writeByte((versSection->size() & 0xFF0000) >> 16);
+	saveFile->writeByte(0);
+	saveFile->writeUint16BE(0);
+
 	// ZIPS Section (File Table) (10 bytes - total: 142)
-	saveFile->writeUint32BE(142 + versSection->size() + nameSection->size() + varsSection->size());
+	saveFile->writeUint32BE(142 + nameSection->size() + varsSection->size() + versSection->size());
 	saveFile->writeUint16BE(zipsSection->size() & 0xFFFF);
 	saveFile->writeByte((zipsSection->size() & 0xFF0000) >> 16);
 	saveFile->writeByte(0);
 	saveFile->writeUint16BE(0);
 
-	saveFile->write(versSection->getData(), versSection->size());
 	saveFile->write(nameSection->getData(), nameSection->size());
 	saveFile->write(varsSection->getData(), varsSection->size());
+	saveFile->write(versSection->getData(), versSection->size());
 	saveFile->write(zipsSection->getData(), zipsSection->size());
 
 	saveFile->finalize();
