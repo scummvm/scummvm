@@ -238,10 +238,10 @@ void glopOrtho(GLContext *context, GLParam *p) {
 	float tz = -(zFar + zNear) / (zFar - zNear);
 
 	r = &m._m[0][0];
-	r[0] = a; r[1] = 0; r[2] = 0; r[3] = 0;
-	r[4] = 0; r[5] = b; r[6] = 0; r[7] = 0;
-	r[8] = 0; r[9] = 0; r[10] = c; r[11] = 0;
-	r[12] = tx; r[13] = ty; r[14] = tz; r[15] = 0;
+	r[0] = a; r[1] = 0; r[2] = 0; r[3] = tx;
+	r[4] = 0; r[5] = b; r[6] = 0; r[7] = ty;
+	r[8] = 0; r[9] = 0; r[10] = c; r[11] = tz;
+	r[12] = 0; r[13] = 0; r[14] = 0; r[15] = 1;
 
 	*context->matrix_stack_ptr[context->matrix_mode] *= m;
 	gl_matrix_update(context);
