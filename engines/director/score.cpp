@@ -339,17 +339,15 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 
 	Common::HashMap<uint16, Common::String>::iterator j;
 
+	if (ConfMan.getBool("dump_scripts"))
+		for (j = _actions.begin(); j != _actions.end(); ++j) {
+			if (!j->_value.empty())
+				dumpScript(j->_key, kFrameScript, j->_value);
+		}
+
 	for (j = _actions.begin(); j != _actions.end(); ++j)
 		if (!j->_value.empty())
 			_lingo->addCode(j->_value.c_str(), kFrameScript, j->_key);
-
-	if (!ConfMan.getBool("dump_scripts"))
-		return;
-
-	for (j = _actions.begin(); j != _actions.end(); ++j) {
-		if (j->_value != "")
-			dumpScript(j->_key, kFrameScript, j->_value);
-	}
 }
 
 void Score::loadScriptText(Common::SeekableSubReadStreamEndian &stream) {
@@ -368,12 +366,11 @@ void Score::loadScriptText(Common::SeekableSubReadStreamEndian &stream) {
 		script += ch;
 	}
 
+	if (!script.empty() && ConfMan.getBool("dump_scripts"))
+		dumpScript(_movieScriptCount, kMovieScript, script);
+
 	if (!script.empty())
 		_lingo->addCode(script.c_str(), kMovieScript, _movieScriptCount);
-
-	if (ConfMan.getBool("dump_scripts") && (!script.empty())) {
-		dumpScript(_movieScriptCount, kMovieScript, script);
-	}
 
 	_movieScriptCount++;
 }
@@ -427,13 +424,11 @@ void Score::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 
 	ci->script = castStrings[0];
 
-	if (!ci->script.empty()) {
-		_lingo->addCode(ci->script.c_str(), kSpriteScript, id);
-	}
-
-	if (!ConfMan.getBool("dump_scripts")) {
+	if (!ci->script.empty() && ConfMan.getBool("dump_scripts"))
 		dumpScript(id, kSpriteScript, ci->script);
-	}
+
+	if (!ci->script.empty())
+		_lingo->addCode(ci->script.c_str(), kSpriteScript, id);
 
 	ci->name = getString(castStrings[1]);
 	ci->directory = getString(castStrings[2]);
@@ -525,13 +520,11 @@ void Score::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
 	Common::Array<Common::String> fileInfoStrings = loadStrings(stream, _flags);
 	_script = fileInfoStrings[0];
 
-	if (!_script.empty()) {
-		_lingo->addCode(_script.c_str(), kMovieScript, _movieScriptCount);
-	}
-
-	if (!ConfMan.getBool("dump_scripts")) {
+	if (!_script.empty() && ConfMan.getBool("dump_scripts"))
 		dumpScript(_movieScriptCount, kMovieScript, _script);
-	}
+
+	if (!_script.empty())
+		_lingo->addCode(_script.c_str(), kMovieScript, _movieScriptCount);
 
 	_movieScriptCount++;
 	_changedBy = fileInfoStrings[1];
