@@ -53,10 +53,12 @@ class DownloadDialog : public Dialog {
 	ButtonWidget *_cancelButton;
 	ButtonWidget *_closeButton;
 
-	bool _close, _reflow;
+	Common::String _localDirectory;
+	bool _close, _redraw;
 
 	void refreshWidgets();
 	bool selectDirectories();
+	void addGame();
 
 public:
 	DownloadDialog(uint32 storageId);

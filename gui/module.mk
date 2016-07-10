@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	debugger.o \
 	dialog.o \
 	downloaddialog.o \
+	editgamedialog.o \
 	error.o \
 	EventRecorder.o \
 	filebrowser-dialog.o \

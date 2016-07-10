@@ -21,15 +21,17 @@
  */
 
 #include "gui/downloaddialog.h"
-#include "gui/widgets/list.h"
-#include "gui/widget.h"
-#include "gui/gui-manager.h"
 #include "backends/cloud/cloudmanager.h"
+#include "common/config-manager.h"
 #include "common/translation.h"
-#include "widgets/edittext.h"
-#include "message.h"
-#include "browser.h"
-#include "remotebrowser.h"
+#include "engines/metaengine.h"
+#include "gui/browser.h"
+#include "gui/chooser.h"
+#include "gui/editgamedialog.h"
+#include "gui/message.h"
+#include "gui/remotebrowser.h"
+#include "gui/widgets/edittext.h"
+#include "gui/widgets/list.h"
 
 namespace GUI {
 
@@ -38,7 +40,7 @@ enum {
 };
 
 DownloadDialog::DownloadDialog(uint32 storageId):
-	Dialog("GlobalOptions_Cloud_DownloadDialog"), _close(false), _reflow(false) {
+	Dialog("GlobalOptions_Cloud_DownloadDialog"), _close(false), _redraw(false) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	_browser = new BrowserDialog(_("Select directory where to download game data"), true);
@@ -93,7 +95,7 @@ void DownloadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kDownloadProgressCmd:		
 		_percentLabel->setLabel(Common::String::format("%u %%", data));
 		_progressBar->setValue(data);
-		_reflow = true;
+		_redraw = true;
 		break;
 	case kDownloadEndedCmd:
 		_close = true;
@@ -155,23 +157,94 @@ bool DownloadDialog::selectDirectories() {
 
 	CloudMan.startDownload(remoteDirectory.path(), localPath);
 	CloudMan.setDownloadTarget(this);
+	_localDirectory = localPath;
 	return true;
 }
 
 void DownloadDialog::handleTickle() {
 	if (_close) {
+		addGame();
 		close();
 		_close = false;
 		return;
 	}
 
-	if (_reflow) {
-		reflowLayout();
+	if (_redraw) {
+		refreshWidgets();
 		draw();
-		_reflow = false;
+		_redraw = false;
 	}
 
 	Dialog::handleTickle();
+}
+
+void DownloadDialog::addGame() {
+	// Allow user to add a new game to the list.
+	// 2) try to auto detect which game is in the directory, if we cannot
+	//    determine it uniquely present a list of candidates to the user
+	//    to pick from
+	// 3) Display the 'Edit' dialog for that item, letting the user specify
+	//    an alternate description (to distinguish multiple versions of the
+	//    game, e.g. 'Monkey German' and 'Monkey English') and set default
+	//    options for that game
+	// 4) If no game is found in the specified directory, return to the
+	//    dialog.
+
+	// User made his choice...
+	Common::FSNode dir(_localDirectory);
+	Common::FSList files;
+	if (!dir.getChildren(files, Common::FSNode::kListAll)) {
+		MessageDialog alert(_("ScummVM couldn't open the specified directory!"));
+		alert.runModal();
+		return;
+	}
+
+	// ...so let's determine a list of candidates, games that
+	// could be contained in the specified directory.
+	GameList candidates(EngineMan.detectGames(files));
+
+	int idx;
+	if (candidates.empty()) {
+		// No game was found in the specified directory
+		MessageDialog alert(_("ScummVM could not find any game in the specified directory!"));
+		alert.runModal();
+		return;
+	}
+				
+	if (candidates.size() == 1) {
+		// Exact match
+		idx = 0;
+	} else {
+		// Display the candidates to the user and let her/him pick one
+		Common::StringArray list;
+		for (idx = 0; idx < (int)candidates.size(); idx++)
+			list.push_back(candidates[idx].description());
+
+		ChooserDialog dialog(_("Pick the game:"));
+		dialog.setList(list);
+		idx = dialog.runModal();
+	}
+	if (0 <= idx && idx < (int)candidates.size()) {
+		GameDescriptor result = candidates[idx];
+
+		// TODO: Change the detectors to set "path" !
+		result["path"] = dir.getPath();
+
+		Common::String domain = addGameToConf(result);
+
+		// Display edit dialog for the new entry
+		EditGameDialog editDialog(domain, result.description());
+		if (editDialog.runModal() > 0) {
+			// User pressed OK, so make changes permanent
+
+			// Write config to disk
+			ConfMan.flushToDisk();
+		} else {
+			// User aborted, remove the the new domain again
+			ConfMan.removeGameDomain(domain);
+		}
+
+	}
 }
 
 void DownloadDialog::reflowLayout() {
@@ -180,8 +253,9 @@ void DownloadDialog::reflowLayout() {
 }
 
 void DownloadDialog::refreshWidgets() {	
+	_localDirectory = CloudMan.getDownloadLocalDirectory();
 	_remoteDirectoryLabel->setLabel(_("From: ") + CloudMan.getDownloadRemoteDirectory());
-	_localDirectoryLabel->setLabel(_("To: ") + CloudMan.getDownloadLocalDirectory());
+	_localDirectoryLabel->setLabel(_("To: ") + _localDirectory);
 	uint32 progress = (uint32)(100 * CloudMan.getDownloadingProgress());
 	_percentLabel->setLabel(Common::String::format("%u %%", progress));
 	_progressBar->setValue(progress);
