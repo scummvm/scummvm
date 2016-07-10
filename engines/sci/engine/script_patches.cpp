@@ -1453,6 +1453,89 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 };
 
 // ===========================================================================
+
+// King's Quest 7 has really weird subtitles. It seems as if the subtitles were
+// not fully finished.
+//
+// Method kqMessager::findTalker in script 0 tries to figure out, which class to use for
+// displaying subtitles. It uses the "talker" data of the given message to do that.
+// Strangely this "talker" data seems to be quite broken.
+// For example chapter 2 starts with a cutscene.
+// Troll king: "Welcome, most beautiful of princesses!" - talker 6
+// Which is followed by the princess going
+// "Hmm?" - which is set to talker 99, normally the princess is talker 7.
+//
+// Talker 99 is seen as unknown and thus treated as "narrator", which makes
+// the scripts put the text at the top of the game screen and even use a
+// different font.
+//
+// In other cases, when the player character thinks to himself talker 99
+// is also used. In such situations it may make somewhat sense to do so,
+// but putting the text at the top of the screen is also irritating to the player.
+// It's really weird.
+//
+// The scripts also put the regular text in the middle of the screen, blocking
+// animations.
+//
+// We fix all of that (hopefully - lots of testing is required).
+// We put the text at the bottom of the play screen.
+// And we also make the scripts use the regular KQTalker instead of KQNarrator.
+//
+//
+// Applies to at least: PC CD 1.51 English, 1.51 German, 2.00 English
+// Patched method: KQNarrator::init (script 31)
+static const uint16 kq7SignatureSubtitleFix1[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x25,                         // pushi 25h (fore)
+	0x78,                               // push1
+	0x39, 0x06,                         // pushi 06 - sets back to 6
+	0x39, 0x26,                         // pushi 26 (back)
+	0x78,                               // push1
+	0x78,                               // push1 - sets back to 1
+	0x39, 0x2a,                         // pushi 2Ah (font)
+	0x78,                               // push1
+	0x89, 0x16,                         // lsg global[16h] - sets font to global[16h]
+	0x7a,                               // push2 (y)
+	0x78,                               // push1
+	0x76,                               // push0 - sets y to 0
+	0x54, SIG_UINT16(0x0018),           // self 18h
+	SIG_END
+};
+
+static const uint16 kq7PatchSubtitleFix1[] = {
+	0x33, 0x12,                         // jmp [skip special init code]
+	PATCH_END
+};
+
+// Applies to at least: PC CD 1.51 English, 1.51 German, 2.00 English
+// Patched method: Narrator::init (script 64928)
+static const uint16 kq7SignatureSubtitleFix2[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x02,                         // ldi 02
+	0x12,                               // and
+	0x31, 0x1e,                         // bnt [skip audio volume code]
+	0x38, SIG_ADDTOOFFSET(2),           // pushi masterVolume (0212h for 2.00, 0219h for 1.51)
+	0x76,                               // push0
+	0x81, 0x01,                         // lag global[1]
+	SIG_END
+};
+
+static const uint16 kq7PatchSubtitleFix2[] = {
+	0x34, PATCH_UINT16(118),            // ldi 118d
+	0x65, 0x16,                         // aTop y
+	0x35, 0x00,                         // -waste 2 bytes-
+	PATCH_END
+};
+
+//          script, description,                                      signature                                 patch
+static const SciScriptPatcherEntry kq7Signatures[] = {
+	{  true,    31, "subtitle fix 1/2",                            1, kq7SignatureSubtitleFix1,                 kq7PatchSubtitleFix1 },
+	{  true, 64928, "subtitle fix 2/2",                            1, kq7SignatureSubtitleFix2,                 kq7PatchSubtitleFix2 },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 // Script 210 in the German version of Longbow handles the case where Robin
 // hands out the scroll to Marion and then types his name using the hand code.
 // The German version script contains a typo (probably a copy/paste error),
@@ -4452,6 +4535,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 		break;
 	case GID_KQ6:
 		signatureTable = kq6Signatures;
+		break;
+	case GID_KQ7:
+		signatureTable = kq7Signatures;
 		break;
 	case GID_LAURABOW:
 		signatureTable = laurabow1Signatures;
