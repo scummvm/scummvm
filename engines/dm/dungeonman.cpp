@@ -1513,7 +1513,7 @@ T0165026:
 								}
 								_vm->_dungeonMan->f173_setCurrentMap(L0284_i_CurrentMapIndex);
 								G0294_auc_LastDiscardedThingMapIndex[thingType] = L0279_ui_MapIndex;
-								return Thing((L0278_T_Thing).getTypeAndIndex());
+								return Thing(L0278_T_Thing.getTypeAndIndex());
 							}
 						}
 					} while ((L0278_T_Thing = _vm->_dungeonMan->f159_getNextThing(L0278_T_Thing)) != Thing::_endOfList);

@@ -201,7 +201,7 @@ int16 ChampionMan::f279_getDecodedValue(char *string, uint16 characterCount) {
 }
 
 void ChampionMan::f289_drawHealthOrStaminaOrManaValue(int16 posY, int16 currVal, int16 maxVal) {
-	Common::String tmp = f288_getStringFromInteger(currVal, true, 3).c_str();
+	Common::String tmp = f288_getStringFromInteger(currVal, true, 3);
 	_vm->_textMan->f52_printToViewport(55, posY, k13_ColorLightestGray, tmp.c_str());
 	_vm->_textMan->f52_printToViewport(73, posY, k13_ColorLightestGray, "/");
 	tmp = f288_getStringFromInteger(maxVal, true, 3);
@@ -781,7 +781,8 @@ int16 ChampionMan::f313_getWoundDefense(int16 champIndex, uint16 woundIndex) {
 		clearFlag(woundIndex, k0x8000_maskUseSharpDefense);
 	}
 	for (L0943_ui_ArmourShieldDefense = 0, AL0942_i_SlotIndex = k0_ChampionSlotReadyHand; AL0942_i_SlotIndex <= k1_ChampionSlotActionHand; AL0942_i_SlotIndex++) {
-		if ((L0945_T_Thing = L0946_ps_Champion->_slots[AL0942_i_SlotIndex]).getType() == k6_ArmourThingType) {
+		L0945_T_Thing = L0946_ps_Champion->_slots[AL0942_i_SlotIndex];
+		if (L0945_T_Thing.getType() == k6_ArmourThingType) {
 			L0947_ps_ArmourInfo = (ArmourInfo *)_vm->_dungeonMan->f156_getThingData(L0945_T_Thing);
 			L0947_ps_ArmourInfo = &g239_ArmourInfo[((Armour *)L0947_ps_ArmourInfo)->getType()];
 			if (getFlag(L0947_ps_ArmourInfo->_attributes, k0x0080_ArmourAttributeIsAShield)) {
