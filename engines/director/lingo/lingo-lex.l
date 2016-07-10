@@ -65,8 +65,8 @@ whitespace [\t ]
 (?i:contains)		{ count(); return tCONTAINS; }
 (?i:down)			{ count(); return tDOWN; }
 (?i:if)				{ count(); return tIF; }
-(?i:[\n\r]+[\t ]+else[\t ]+if)	{ countnl(); return tNLELSIF; }
-(?i:[\n\r]+[\t ]+else)	{ countnl(); return tNLELSE; }
+(?i:[\n\r]+[\t ]*else[\t ]+if)	{ countnl(); return tNLELSIF; }
+(?i:[\n\r]+[\t ]*else)	{ countnl(); return tNLELSE; }
 (?i:else)			{ count(); return tELSE; }
 (?i:end)			{ count(); return tEND; }
 (?i:exit)			{ count(); return tEXIT; }
