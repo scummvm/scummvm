@@ -1,0 +1,11 @@
+check(2, 3)
+global x, y
+set y = 8
+shipx
+put x
+zipx
+put x
+put y
+check(1, 2, 3)
+check 4, 5, 6
+check 7, 8

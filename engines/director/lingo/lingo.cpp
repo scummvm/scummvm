@@ -309,7 +309,18 @@ void Lingo::runTests() {
 		if (stream) {
 			uint size = stream->size();
 
+			char *script = (char *)calloc(size + 1, 1);
+
+			stream->read(script, size);
+
 			warning("Executing file %s of size %d", m.getName().c_str(), size);
+
+			addCode(script, kMovieScript, counter);
+			executeScript(kMovieScript, counter);
+
+			free(script);
+
+			counter++;
 		}
 
 		inFile.close();
