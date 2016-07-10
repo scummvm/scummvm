@@ -101,8 +101,6 @@ Lingo::~Lingo() {
 }
 
 void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
-	code += '\n';
-
 	debug(2, "Add code \"%s\" for type %d with id %d", code, type, id);
 
 	if (_scripts[type].contains(id)) {

@@ -342,7 +342,7 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 	if (ConfMan.getBool("dump_scripts"))
 		for (j = _actions.begin(); j != _actions.end(); ++j) {
 			if (!j->_value.empty())
-				dumpScript(j->_key, kFrameScript, j->_value);
+				dumpScript(j->_value.c_str(), kFrameScript, j->_key);
 		}
 
 	for (j = _actions.begin(); j != _actions.end(); ++j)
@@ -367,7 +367,7 @@ void Score::loadScriptText(Common::SeekableSubReadStreamEndian &stream) {
 	}
 
 	if (!script.empty() && ConfMan.getBool("dump_scripts"))
-		dumpScript(_movieScriptCount, kMovieScript, script);
+		dumpScript(script.c_str(), kMovieScript, _movieScriptCount);
 
 	if (!script.empty())
 		_lingo->addCode(script.c_str(), kMovieScript, _movieScriptCount);
@@ -387,7 +387,7 @@ void Score::setStartToLabel(Common::String label) {
 	warning("Label %s not found", label.c_str());
 }
 
-void Score::dumpScript(uint16 id, ScriptType type, Common::String script) {
+void Score::dumpScript(const char *script, ScriptType type, uint16 id) {
 	Common::DumpFile out;
 	Common::String typeName;
 	char buf[256];
@@ -411,7 +411,7 @@ void Score::dumpScript(uint16 id, ScriptType type, Common::String script) {
 		return;
 	}
 
-	out.writeString(script);
+	out.write(script, strlen(script));
 
 	out.flush();
 	out.close();
@@ -425,7 +425,7 @@ void Score::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 	ci->script = castStrings[0];
 
 	if (!ci->script.empty() && ConfMan.getBool("dump_scripts"))
-		dumpScript(id, kSpriteScript, ci->script);
+		dumpScript(ci->script.c_str(), kSpriteScript, id);
 
 	if (!ci->script.empty())
 		_lingo->addCode(ci->script.c_str(), kSpriteScript, id);
@@ -521,7 +521,7 @@ void Score::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
 	_script = fileInfoStrings[0];
 
 	if (!_script.empty() && ConfMan.getBool("dump_scripts"))
-		dumpScript(_movieScriptCount, kMovieScript, _script);
+		dumpScript(_script.c_str(), kMovieScript, _movieScriptCount);
 
 	if (!_script.empty())
 		_lingo->addCode(_script.c_str(), kMovieScript, _movieScriptCount);
