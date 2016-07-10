@@ -337,6 +337,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Riven: The Sequel to Myst
+	// Version 1.0 (5CD), 1.02 (DVD, From "Myst: La Trilogie")
+	// From gamin
+	{
+			{
+					"riven",
+					"",
+					AD_ENTRY1("a_Data.MHK", "aff2a384aaa9a0e0ec51010f708c5c04"),
+					Common::FR_FRA,
+					Common::kPlatformWindows,
+					ADGF_UNSTABLE,
+					GUIO1(GUIO_NOASPECT)
+			},
+			GType_RIVEN,
+			0,
+			0,
+	},
+
+	// Riven: The Sequel to Myst
 	// Version 1.0 (5CD) - Italian
 	// From dodomorandi on bug #6629
 	{
@@ -415,24 +433,6 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1("a_Data.MHK", "a5fe1c91a6033eb6ee54b287578b74b9"),
 			Common::DE_DEU,
-			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_RIVEN,
-		GF_DVD,
-		0,
-	},
-
-	// Riven: The Sequel to Myst
-	// Version ? (DVD, From "Myst: La Trilogie")
-	// From gamin
-	{
-		{
-			"riven",
-			"",
-			AD_ENTRY1("a_Data.MHK", "aff2a384aaa9a0e0ec51010f708c5c04"),
-			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOASPECT)
