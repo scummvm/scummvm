@@ -148,7 +148,8 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 		code1(STOP);
 	}
 
-	Common::hexdump((byte *)&_currentScript->front(), _currentScript->size() * sizeof(inst));
+	if (_currentScript->size())
+		Common::hexdump((byte *)&_currentScript->front(), _currentScript->size() * sizeof(inst));
 }
 
 void Lingo::executeScript(ScriptType type, uint16 id) {
