@@ -877,7 +877,7 @@ void GfxTinyGL::rotateViewpoint(const Math::Matrix4 &rot) {
 }
 
 void GfxTinyGL::translateViewpointFinish() {
-	//glMatrixMode(GL_MODELVIEW); // exist in opengl but doesn't work properly here
+	tglMatrixMode(TGL_MODELVIEW);
 	tglPopMatrix();
 }
 
@@ -1247,12 +1247,9 @@ void GfxTinyGL::selectTexture(const Texture *texture) {
 
 	// Grim has inverted tex-coords, EMI doesn't
 	if (g_grim->getGameType() != GType_MONKEY4) {
-		tglPushMatrix(); // removed in opengl but here doesn't work properly after remove
 		tglMatrixMode(TGL_TEXTURE);
 		tglLoadIdentity();
 		tglScalef(1.0f / texture->_width, 1.0f / texture->_height, 1);
-		tglMatrixMode(TGL_MODELVIEW); // removed in opengl but here doesn't work properly after remove
-		tglPopMatrix(); // removed in opengl but here doesn't work properly after remove
 	}
 }
 
