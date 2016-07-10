@@ -1515,16 +1515,45 @@ static const uint16 kq7SignatureSubtitleFix2[] = {
 	0x35, 0x02,                         // ldi 02
 	0x12,                               // and
 	0x31, 0x1e,                         // bnt [skip audio volume code]
-	0x38, SIG_ADDTOOFFSET(2),           // pushi masterVolume (0212h for 2.00, 0219h for 1.51)
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi masterVolume (0212h for 2.00, 0219h for 1.51)
 	0x76,                               // push0
 	0x81, 0x01,                         // lag global[1]
+	0x4a, 0x04, 0x00,                   // send 04
+	0x65, 0x32,                         // aTop curVolume
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi masterVolume (0212h for 2.00, 0219h for 1.51)
+	0x78,                               // push1
+	0x67, 0x32,                         // pTos curVolume
+	0x35, 0x02,                         // ldi 02
+	0x06,                               // mul
+	0x36,                               // push
+	0x35, 0x03,                         // ldi 03
+	0x08,                               // div
+	0x36,                               // push
+	0x81, 0x01,                         // lag global[1]
+	0x4a, 0x06, 0x00,                   // send 06
+	// end of volume code
+	0x35, 0x01,                         // ldi 01
+	0x65, 0x28,                         // aTop initialized
 	SIG_END
 };
 
 static const uint16 kq7PatchSubtitleFix2[] = {
-	0x34, PATCH_UINT16(118),            // ldi 118d
+	PATCH_ADDTOOFFSET(+5),              // skip to bnt
+	0x31, 0x1b,                         // bnt [skip audio volume code]
+	PATCH_ADDTOOFFSET(+15),             // right after "aTop curVolume / pushi masterVolume / push1"
+	0x7a,                               // push2
+	0x06,                               // mul (saves 3 bytes in total)
+	0x36,                               // push
+	0x35, 0x03,                         // ldi 03
+	0x08,                               // div
+	0x36,                               // push
+	0x81, 0x01,                         // lag global[1]
+	0x4a, 0x06, 0x00,                   // send 06
+	// end of volume code
+	0x35, 118,                          // ldi 118d
 	0x65, 0x16,                         // aTop y
-	0x35, 0x00,                         // -waste 2 bytes-
+	0x78,                               // push1 (saves 1 byte)
+	0x69, 0x28,                         // sTop initialized
 	PATCH_END
 };
 
