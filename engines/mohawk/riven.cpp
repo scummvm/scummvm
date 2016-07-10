@@ -176,13 +176,10 @@ Common::Error MohawkEngine_Riven::run() {
 		changeToCard(6);
 	} else if (ConfMan.hasKey("save_slot")) {
 		// Load game from launcher/command line if requested
-		uint32 gameToLoad = ConfMan.getInt("save_slot");
-		Common::StringArray savedGamesList = _saveLoad->generateSaveGameList();
-		if (gameToLoad > savedGamesList.size())
-			error ("Could not find saved game");
+		int gameToLoad = ConfMan.getInt("save_slot");
 
 		// Attempt to load the game. On failure, just send us to the main menu.
-		if (_saveLoad->loadGame(savedGamesList[gameToLoad]).getCode() != Common::kNoError) {
+		if (_saveLoad->loadGame(gameToLoad).getCode() != Common::kNoError) {
 			changeToStack(kStackAspit);
 			changeToCard(1);
 		}
@@ -734,16 +731,11 @@ void MohawkEngine_Riven::runLoadDialog() {
 }
 
 Common::Error MohawkEngine_Riven::loadGameState(int slot) {
-	return _saveLoad->loadGame(_saveLoad->generateSaveGameList()[slot]);
+	return _saveLoad->loadGame(slot);
 }
 
 Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc) {
-	Common::StringArray saveList = _saveLoad->generateSaveGameList();
-
-	if ((uint)slot < saveList.size())
-		_saveLoad->deleteSave(saveList[slot]);
-
-	return _saveLoad->saveGame(desc);
+	return _saveLoad->saveGame(slot, desc);
 }
 
 Common::String MohawkEngine_Riven::getStackName(uint16 stack) const {

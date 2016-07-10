@@ -60,17 +60,18 @@ public:
 	RivenSaveLoad(MohawkEngine_Riven*, Common::SaveFileManager*);
 	~RivenSaveLoad();
 
-	Common::StringArray generateSaveGameList();
-	Common::Error loadGame(Common::String);
-	Common::Error saveGame(Common::String);
-	void deleteSave(Common::String);
+	Common::Error loadGame(const int slot);
+	Common::Error saveGame(const int slot, const Common::String &description);
+	static void deleteSave(const int slot);
 
-	static SaveStateDescriptor querySaveMetaInfos(const Common::String &filename);
-	static Common::String querySaveDescription(const Common::String &filename);
+	static SaveStateDescriptor querySaveMetaInfos(const int slot);
+	static Common::String querySaveDescription(const int slot);
 
 private:
 	MohawkEngine_Riven *_vm;
 	Common::SaveFileManager *_saveFileMan;
+
+	static Common::String buildSaveFilename(const int slot);
 
 	Common::MemoryWriteStreamDynamic *genNAMESection();
 	Common::MemoryWriteStreamDynamic *genMETASection(const Common::String &desc) const;

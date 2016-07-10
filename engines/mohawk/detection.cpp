@@ -199,6 +199,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
+	SaveStateList listSavesForPrefix(const char *prefix, const char *extension) const;
 	virtual int getMaximumSaveSlot() const { return 999; }
 	virtual void removeSaveState(const char *target, int slot) const;
 	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
@@ -215,41 +216,55 @@ bool MohawkMetaEngine::hasFeature(MetaEngineFeature f) const {
 		|| (f == kSavesSupportPlayTime);
 }
 
+SaveStateList MohawkMetaEngine::listSavesForPrefix(const char *prefix, const char *extension) const {
+	Common::String pattern = Common::String::format("%s-###.%s", prefix, extension);
+	Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(pattern);
+	size_t prefixLen = strlen(prefix);
+
+	SaveStateList saveList;
+	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
+		// Extract the slot number from the filename
+		char slot[4];
+		slot[0] = (*filename)[prefixLen + 1];
+		slot[1] = (*filename)[prefixLen + 2];
+		slot[2] = (*filename)[prefixLen + 3];
+		slot[3] = '\0';
+
+		int slotNum = atoi(slot);
+
+		saveList.push_back(SaveStateDescriptor(slotNum, ""));
+	}
+
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
+
+	return saveList;
+}
+
 SaveStateList MohawkMetaEngine::listSaves(const char *target) const {
-	Common::StringArray filenames;
 	SaveStateList saveList;
 
 	// Loading games is only supported in Myst/Riven currently.
 #ifdef ENABLE_MYST
 	if (strstr(target, "myst")) {
-		filenames = g_system->getSavefileManager()->listSavefiles("myst-###.mys");
-		size_t prefixLen = sizeof("myst") - 1;
+		saveList = listSavesForPrefix("myst", "mys");
 
-		for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
-			// Extract the slot number from the filename
-			char slot[4];
-			slot[0] = (*filename)[prefixLen + 1];
-			slot[1] = (*filename)[prefixLen + 2];
-			slot[2] = (*filename)[prefixLen + 3];
-			slot[3] = '\0';
-
-			int slotNum = atoi(slot);
-
+		for (SaveStateList::iterator save = saveList.begin(); save != saveList.end(); ++save) {
 			// Read the description from the save
-			Common::String description = Mohawk::MystGameState::querySaveDescription(slotNum);
-			saveList.push_back(SaveStateDescriptor(slotNum, description));
+			int slot = save->getSaveSlot();
+			Common::String description = Mohawk::MystGameState::querySaveDescription(slot);
+			save->setDescription(description);
 		}
-
-		Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	}
 #endif
 #ifdef ENABLE_RIVEN
 	if (strstr(target, "riven")) {
-		filenames = g_system->getSavefileManager()->listSavefiles("*.rvn");
+		saveList = listSavesForPrefix("riven", "rvn");
 
-		for (uint32 i = 0; i < filenames.size(); i++) {
-			Common::String description = Mohawk::RivenSaveLoad::querySaveDescription(filenames[i]);
-			saveList.push_back(SaveStateDescriptor(i, description));
+		for (SaveStateList::iterator save = saveList.begin(); save != saveList.end(); ++save) {
+			// Read the description from the save
+			int slot = save->getSaveSlot();
+			Common::String description = Mohawk::RivenSaveLoad::querySaveDescription(slot);
+			save->setDescription(description);
 		}
 	}
 #endif
@@ -263,12 +278,13 @@ void MohawkMetaEngine::removeSaveState(const char *target, int slot) const {
 #ifdef ENABLE_MYST
 	if (strstr(target, "myst")) {
 		Mohawk::MystGameState::deleteSave(slot);
-	} else
-#endif
-	if (strstr(target, "riven")) {
-		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("*.rvn");
-		g_system->getSavefileManager()->removeSavefile(filenames[slot].c_str());
 	}
+#endif
+#ifdef ENABLE_RIVEN
+	if (strstr(target, "riven")) {
+		Mohawk::RivenSaveLoad::deleteSave(slot);
+	}
+#endif
 }
 
 SaveStateDescriptor MohawkMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
@@ -279,8 +295,7 @@ SaveStateDescriptor MohawkMetaEngine::querySaveMetaInfos(const char *target, int
 #endif
 #ifdef ENABLE_RIVEN
 	if (strstr(target, "riven")) {
-		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("*.rvn");
-		return Mohawk::RivenSaveLoad::querySaveMetaInfos(filenames[slot].c_str());
+		return Mohawk::RivenSaveLoad::querySaveMetaInfos(slot);
 	} else
 #endif
 	{

@@ -62,11 +62,12 @@ RivenSaveLoad::RivenSaveLoad(MohawkEngine_Riven *vm, Common::SaveFileManager *sa
 RivenSaveLoad::~RivenSaveLoad() {
 }
 
-Common::StringArray RivenSaveLoad::generateSaveGameList() {
-	return _saveFileMan->listSavefiles("*.rvn");
+Common::String RivenSaveLoad::buildSaveFilename(const int slot) {
+	return Common::String::format("riven-%03d.rvn", slot);
 }
 
-Common::String RivenSaveLoad::querySaveDescription(const Common::String &filename) {
+Common::String RivenSaveLoad::querySaveDescription(const int slot) {
+	Common::String filename = buildSaveFilename(slot);
 	Common::InSaveFile *loadFile = g_system->getSavefileManager()->openForLoading(filename);
 	if (!loadFile) {
 		return "";
@@ -99,7 +100,8 @@ Common::String RivenSaveLoad::querySaveDescription(const Common::String &filenam
 	return metadata.saveDescription;
 }
 
-SaveStateDescriptor RivenSaveLoad::querySaveMetaInfos(const Common::String &filename) {
+SaveStateDescriptor RivenSaveLoad::querySaveMetaInfos(const int slot) {
+	Common::String filename = buildSaveFilename(slot);
 	Common::InSaveFile *loadFile = g_system->getSavefileManager()->openForLoading(filename);
 	if (!loadFile) {
 		return SaveStateDescriptor();
@@ -151,10 +153,11 @@ SaveStateDescriptor RivenSaveLoad::querySaveMetaInfos(const Common::String &file
 	return descriptor;
 }
 
-Common::Error RivenSaveLoad::loadGame(Common::String filename) {
+Common::Error RivenSaveLoad::loadGame(const int slot) {
 	if (_vm->getFeatures() & GF_DEMO) // Don't load games in the demo
 		return Common::kNoError;
 
+	Common::String filename = buildSaveFilename(slot);
 	Common::InSaveFile *loadFile = _saveFileMan->openForLoading(filename);
 	if (!loadFile)
 		return Common::kReadingFailed;
@@ -388,7 +391,7 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genMETASection(const Common::St
 	return stream;
 }
 
-Common::Error RivenSaveLoad::saveGame(Common::String filename) {
+Common::Error RivenSaveLoad::saveGame(const int slot, const Common::String &description) {
 	// NOTE: This code is designed to only output a Mohawk archive
 	// for a Riven saved game. It's hardcoded to do this because
 	// (as of right now) this is the only place in the engine
@@ -396,9 +399,7 @@ Common::Error RivenSaveLoad::saveGame(Common::String filename) {
 	// games need this, we should think about coming up with some
 	// more common way of outputting resources to an archive.
 
-	// Make sure we have the right extension
-	if (!filename.matchString("*.rvn", true))
-		filename += ".rvn";
+	Common::String filename = buildSaveFilename(slot);
 
 	// Convert class variables to variable numbers
 	_vm->_vars["currentstackid"] = _vm->getCurStack();
@@ -410,7 +411,7 @@ Common::Error RivenSaveLoad::saveGame(Common::String filename) {
 
 	debug (0, "Saving game to \'%s\'", filename.c_str());
 
-	Common::MemoryWriteStreamDynamic *metaSection = genMETASection(filename);
+	Common::MemoryWriteStreamDynamic *metaSection = genMETASection(description);
 	Common::MemoryWriteStreamDynamic *nameSection = genNAMESection();
 	Common::MemoryWriteStreamDynamic *thmbSection = genTHMBSection();
 	Common::MemoryWriteStreamDynamic *varsSection = genVARSSection();
@@ -576,9 +577,11 @@ Common::Error RivenSaveLoad::saveGame(Common::String filename) {
 	return Common::kNoError;
 }
 
-void RivenSaveLoad::deleteSave(Common::String saveName) {
-	debug (0, "Deleting save file \'%s\'", saveName.c_str());
-	_saveFileMan->removeSavefile(saveName);
+void RivenSaveLoad::deleteSave(const int slot) {
+	Common::String filename = buildSaveFilename(slot);
+
+	debug (0, "Deleting save file \'%s\'", filename.c_str());
+	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 } // End of namespace Mohawk
