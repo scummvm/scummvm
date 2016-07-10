@@ -906,13 +906,20 @@ WindowReference Gui::findObjWindow(ObjID objID) {
 	return kNoWindow;
 }
 
-void Gui::checkSelect(ObjID obj, const Common::Event &event, const Common::Rect & clickRect, WindowReference ref) {
-	if (_engine->isObjVisible(obj) &&
-		_engine->isObjClickable(obj) &&
-		isRectInsideObject(clickRect, obj))
-	{
-		selectDraggable(obj, ref, event.mouse);
+bool Gui::canBeSelected(ObjID obj, const Common::Event &event, const Common::Rect &clickRect, WindowReference ref) {
+	return (_engine->isObjVisible(obj) &&
+					_engine->isObjClickable(obj) &&
+					isRectInsideObject(clickRect, obj));
+}
+
+void Gui::checkSelect(const WindowData &data, const Common::Event &event, const Common::Rect &clickRect, WindowReference ref) {
+	ObjID child;
+	for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
+		if (canBeSelected((*it).obj, event, clickRect, ref)) {
+			child = (*it).obj;
+		}
 	}
+	if (child != 0) selectDraggable(child, ref, event.mouse);
 }
 
 bool Gui::isRectInsideObject(Common::Rect target, ObjID obj) {
@@ -1182,14 +1189,11 @@ bool MacVenture::Gui::processMainGameEvents(WindowClick click, Common::Event & e
 
 	if (click == kBorderInner && event.type == Common::EVENT_LBUTTONDOWN) {
 		WindowData &data = findWindowData(kMainGameWindow);
-		ObjID child;
+		ObjID child = 0;
 		Common::Point pos;
 		// Click rect to local coordinates. We assume the click is inside the window ^
 		Common::Rect clickRect = calculateClickRect(event.mouse, _mainGameWindow->getDimensions());
-		for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
-			child = (*it).obj;
-			checkSelect(child, event, clickRect, kMainGameWindow);
-		}
+		checkSelect(data, event, clickRect, kMainGameWindow);
 	}
 	return false;
 }
@@ -1262,10 +1266,8 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event & event) {
 		Common::Point pos;
 		// Click rect to local coordinates. We assume the click is inside the window ^
 		Common::Rect clickRect = calculateClickRect(event.mouse, win->getDimensions());
-		for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
-			child = (*it).obj;
-			checkSelect(child, event, clickRect, (WindowReference)ref);
-		}
+		checkSelect(data, event, clickRect, (WindowReference)ref);
+
 	}
 	return true;
 }

@@ -314,7 +314,8 @@ private: // Methods
 	Graphics::MacWindow *findWindow(WindowReference reference);
 
 	// Utils
-	void checkSelect(ObjID obj, const Common::Event &event, const Common::Rect &clickRect, WindowReference ref);
+	bool canBeSelected(ObjID obj, const Common::Event &event, const Common::Rect &clickRect, WindowReference ref);
+	void checkSelect(const WindowData &data, const Common::Event &event, const Common::Rect &clickRect, WindowReference ref);
 	bool isRectInsideObject(Common::Rect target, ObjID obj);
 	void selectDraggable(ObjID child, WindowReference origin, Common::Point startPos);
 	void handleDragRelease(Common::Point pos, bool shiftPressed, bool isDoubleClick);
