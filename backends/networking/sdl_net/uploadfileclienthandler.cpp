@@ -114,7 +114,7 @@ void UploadFileClientHandler::handleBlockHeaders(Client *client) {
 	Common::String headers = readEverythingFromMemoryStream(_headersStream);
 	Common::String fieldName = "";
 	readFromThatUntilDoubleQuote(headers.c_str(), "name=\"", fieldName);
-	if (fieldName != "upload_file") return;
+	if (!fieldName.hasPrefix("upload_file[")) return;
 
 	Common::String filename = "";
 	readFromThatUntilDoubleQuote(headers.c_str(), "filename=\"", filename);
@@ -148,18 +148,21 @@ void UploadFileClientHandler::handleBlockContent(Client *client) {
 	// if previous block headers were file-related and created a stream
 	if (_contentStream) {
 		_contentStream->flush();
-		// success - redirect back to directory listing
-		HandlerUtils::setMessageHandler(*client,
-			Common::String::format(
-				"%s<br/><a href=\"files?path=%s\">%s</a>",
-				_("Uploaded successfully!"),
-				client->queryParameter("path").c_str(),
-				_("Back to parent directory")
-				),
-			"/files?path=" + LocalWebserver::urlEncodeQueryParameterValue(client->queryParameter("path"))
-			);
-		_state = UFH_STOP;
-		return;
+
+		if (client->noMoreContent()) {
+			// success - redirect back to directory listing
+			HandlerUtils::setMessageHandler(*client,
+				Common::String::format(
+					"%s<br/><a href=\"files?path=%s\">%s</a>",
+					_("Uploaded successfully!"),
+					client->queryParameter("path").c_str(),
+					_("Back to parent directory")
+					),
+				"/files?path=" + LocalWebserver::urlEncodeQueryParameterValue(client->queryParameter("path"))
+				);
+			_state = UFH_STOP;		
+			return;
+		}
 	}
 	
 	// if no file field was found, but no more content avaiable - failure

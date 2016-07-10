@@ -26,7 +26,7 @@
 				<div id="upload_file" class="modal">
 					<p>{upload_file_desc}</p>
 					<form action="upload?path={path}" method="post" enctype="multipart/form-data">
-						<input type="file" name="upload_file"/>
+						<input type="file" name="upload_file[]" multiple/>
 						<input type="submit" value="{upload_file_button}"/>
 					</form>
 				</div>
