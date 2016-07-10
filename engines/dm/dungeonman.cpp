@@ -886,7 +886,7 @@ T0172010_ClosedFakeWall:
 						aspectArray[sideIndex + 1] = _vm->_dungeonMan->_g265_currMapInscriptionWallOrnIndex + 1;
 /* BUG0_76 The same text is drawn on multiple sides of a wall square. The engine stores only a
 single text to draw on a wall in a global variable. Even if different texts are placed on
-differents sides of the wall, the same text is drawn on each affected side */
+different sides of the wall, the same text is drawn on each affected side */
 						_vm->_displayMan->_g290_inscriptionThing = thing;
 					}
 				} else {
