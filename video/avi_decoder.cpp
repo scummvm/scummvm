@@ -296,7 +296,7 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 		return false;
 	}
 
-	/* uint32 fileSize = */ stream->readUint32LE();
+	uint32 fileSize = stream->readUint32LE();
 	uint32 riffType = stream->readUint32BE();
 
 	if (riffType != ID_AVI) {
@@ -307,7 +307,7 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 	_fileStream = stream;
 
 	// Go through all chunks in the file
-	while (parseNextChunk())
+	while (_fileStream->pos() < fileSize && parseNextChunk())
 		;
 
 	if (!_decodedHeader) {
