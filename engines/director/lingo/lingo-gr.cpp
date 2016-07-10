@@ -1948,6 +1948,11 @@ yyreduce:
     { g_lingo->code1(STOP); (yyval.code) = g_lingo->_currentScript->size(); ;}
     break;
 
+  case 46:
+#line 296 "engines/director/lingo/lingo-gr.y"
+    { (yyval.code) = g_lingo->_currentScript->size(); ;}
+    break;
+
   case 49:
 #line 301 "engines/director/lingo/lingo-gr.y"
     {
@@ -2270,7 +2275,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 2274 "engines/director/lingo/lingo-gr.cpp"
+#line 2279 "engines/director/lingo/lingo-gr.cpp"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
