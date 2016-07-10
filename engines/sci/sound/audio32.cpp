@@ -353,6 +353,16 @@ int Audio32::readBuffer(Audio::st_sample_t *buffer, const int numSamples) {
 				maxSamplesWritten = _numMonitoredSamples;
 			}
 		} else if (!channel.stream->endOfStream() || channel.loop) {
+			if (_monitoredChannelIndex != -1) {
+				// Audio that is not on the monitored channel is silent
+				// when the monitored channel is active, but the stream still
+				// needs to be read in order to ensure that sound effects sync
+				// up once the monitored channel is turned off. The easiest
+				// way to guarantee this is to just do the normal channel read,
+				// but set the channel volume to zero so nothing is mixed in
+				leftVolume = rightVolume = 0;
+			}
+
 			const int channelSamplesWritten = writeAudioInternal(channel.stream, channel.converter, buffer, numSamples, leftVolume, rightVolume, channel.loop);
 			if (channelSamplesWritten > maxSamplesWritten) {
 				maxSamplesWritten = channelSamplesWritten;
