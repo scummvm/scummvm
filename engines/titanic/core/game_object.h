@@ -437,7 +437,10 @@ protected:
 	 */
 	void quitGame();
 
-	void surface39(int v1, int v2);
+	/**
+	 * Set the frame rate for the currently loaded movie
+	 */
+	void setMovieFrameRate(double rate);
 
 	/**
 	 * Set up the text borders for the object

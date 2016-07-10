@@ -224,12 +224,20 @@ public:
 	 */
 	virtual void addMovieEvent(int eventId, CGameObject *obj) = 0;
 
-	virtual void proc39(int v1, int v2) = 0;
+	/**
+	 * Set the movie frame rate
+	 */
+	virtual void setMovieFrameRate(double rate) = 0;
 
 	/**
 	 * Return any movie range info associated with the surface's movie
 	 */
 	virtual const CMovieRangeInfoList *getMovieRangeInfo() const = 0;
+
+	/**
+	 *
+	 */
+	virtual void flipVertically(bool needsLock = true) = 0;
 
 	/**
 	 * Loads the surface's resource if there's one pending
@@ -248,6 +256,11 @@ public:
 	virtual void transPixelate() = 0;
 
 	virtual bool proc45();
+
+	/**
+	* Duplicates movie frame info
+	*/
+	virtual void *dupMovieFrameInfo() const = 0;
 
 	/**
 	 * Frees the underlying surface
@@ -452,12 +465,20 @@ public:
 	 */
 	virtual void addMovieEvent(int frameNumber, CGameObject *obj);
 
-	virtual void proc39(int v1, int v2);
+	/**
+	 * Set the movie frame rate
+	 */
+	virtual void setMovieFrameRate(double rate);
 
 	/**
 	 * Return any movie range info associated with the surface's movie
 	 */
 	virtual const CMovieRangeInfoList *getMovieRangeInfo() const;
+
+	/**
+	 *
+	 */
+	virtual void flipVertically(bool needsLock = true);
 
 	/**
 	 * Loads the surface's resource if there's one pending
@@ -474,6 +495,12 @@ public:
 	 * intervals. This is totally weird
 	 */
 	virtual void transPixelate();
+
+	/**
+	 * Duplicates movie frame info
+	 */
+	virtual void *dupMovieFrameInfo() const;
+
 
 	/**
 	 * Frees the underlying surface

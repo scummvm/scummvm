@@ -27,23 +27,24 @@
 namespace Titanic {
 
 AVISurface::AVISurface(const CResourceKey &key) {
+	_videoSurface = nullptr;
+	_field4 = 0;
+	_field8 = 0;
+	_currentPos = 0;
+	_priorFrame = 0;
+	_streamCount = 0;
+	_frameInfo = nullptr;
 
-	// TODO
-/*
-Video::AVIDecoder *decoder = new Video::AVIDecoder();
-decoder->ignoreSecondaryVideoTracks();
-_video = decoder;
-_field14 = 1;
-
-if (!_video->loadFile(name.getString()))
-error("Could not open video - %s", name.getString().c_str());
-*/
+	_decoder = new Video::AVIDecoder();
+	if (!_decoder->loadFile(key.getString()))
+		error("Could not open video - %s", key.getString().c_str());
 }
 
 AVISurface::~AVISurface() {
 	if (_videoSurface)
 		_videoSurface->_blitStyleFlag = false;
 	delete _frameInfo;
+	delete _decoder;
 }
 
 bool AVISurface::play(uint flags, CGameObject *obj) {

@@ -927,9 +927,9 @@ void CGameObject::dec54() {
 	getGameManager()->dec54();
 }
 
-void CGameObject::surface39(int v1, int v2) {
+void CGameObject::setMovieFrameRate(double rate) {
 	if (_surface)
-		_surface->proc39(v1, v2);
+		_surface->setMovieFrameRate(rate);
 }
 
 void CGameObject::setTextBorder(const CString &str, int border, int borderRight) {

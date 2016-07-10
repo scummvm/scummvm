@@ -461,12 +461,38 @@ void OSVideoSurface::addMovieEvent(int frameNumber, CGameObject *obj) {
 		_movie->addEvent(frameNumber, obj);
 }
 
-void OSVideoSurface::proc39(int v1, int v2) {
-	warning("OSVideoSurface::proc39");
+void OSVideoSurface::setMovieFrameRate(double rate) {
+	if (_movie)
+		_movie->setFrameRate(rate);
 }
 
 const CMovieRangeInfoList *OSVideoSurface::getMovieRangeInfo() const {
 	return _movie ? _movie->getMovieRangeInfo() : nullptr;
+}
+
+void OSVideoSurface::flipVertically(bool needsLock) {
+	if (!loadIfReady() || !_blitStyleFlag)
+		return;
+
+	if (needsLock)
+		lock();
+
+	byte lineBuffer[SCREEN_WIDTH * 2];
+	int pitch = getBpp() * getWidth();
+	assert(pitch < (SCREEN_WIDTH * 2));
+
+	for (int yp = 0; yp < (_rawSurface->h / 2); ++yp) {
+		byte *line1P = (byte *)_rawSurface->getBasePtr(0, yp);
+		byte *line2P = (byte *)_rawSurface->getBasePtr(0, _rawSurface->h - yp - 1);
+
+		Common::copy(line1P, line1P + pitch, lineBuffer);
+		Common::copy(line2P, line2P + pitch, line1P);
+		Common::copy(lineBuffer, lineBuffer + pitch, line1P);
+	}
+
+	_blitStyleFlag = false;
+	if (needsLock)
+		unlock();
 }
 
 bool OSVideoSurface::loadIfReady() {
@@ -509,6 +535,10 @@ void OSVideoSurface::transPixelate() {
 
 	surface->markAllDirty();
 	unlock();
+}
+
+void *OSVideoSurface::dupMovieFrameInfo() const {
+	return _movie ? _movie->duplicateFrameInfo() : nullptr;
 }
 
 int OSVideoSurface::freeSurface() {
