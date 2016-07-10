@@ -366,6 +366,17 @@ Common::Error SciEngine::run() {
 		}
 	}
 
+	if (getGameId() == GID_KQ7 && ConfMan.getBool("subtitles")) {
+		showScummVMDialog("Subtitles are enabled, but subtitling in King's"
+						  " Quest 7 was unfinished and disabled in the release"
+						  " version of the game. ScummVM allows the subtitles"
+						  " to be re-enabled, but because they were removed from"
+						  " the original game, they do not always render"
+						  " properly or reflect the actual game speech."
+						  " This is not a ScummVM bug -- it is a problem with"
+						  " the game's assets.");
+	}
+
 	// Show a warning if the user has selected a General MIDI device, no GM patch exists
 	// (i.e. patch 4) and the game is one of the known 8 SCI1 games that Sierra has provided
 	// after market patches for in their "General MIDI Utility".
@@ -1063,7 +1074,7 @@ void SciEngine::syncIngameAudioOptions() {
 				case GID_KQ6:
 #ifdef ENABLE_SCI32
 				// Unsure about Gabriel Knight 2
-				// KQ7 has broken subtitles
+				case GID_KQ7: // SCI2.1
 				case GID_GK1: // SCI2
 				case GID_SQ6: // SCI2.1, SQ6 seems to always use subtitles anyway
 				case GID_TORIN: // SCI2.1
