@@ -63,26 +63,10 @@ CMouseCursor::~CMouseCursor() {
 }
 
 void CMouseCursor::loadCursorImages() {
-	const CString name("ycursors.avi");
-	g_vm->_filesManager->fn4(name);
+	const CResourceKey key("ycursors.avi");
+	g_vm->_filesManager->fn4(key.getString());
 
-	// WORKAROUND: We need to manipulate ycursors.avi file so it can be read
-	// by the ScummVM AVIDecoder, by removing the redundant second video track
-	Common::File f;
-	if (!f.open(name))
-		error("Could not open cursors file");
-
-	// Read in the entire file
-	byte *movieData = (byte *)malloc(f.size());
-	f.read(movieData, f.size());
-
-	if (READ_BE_UINT32(movieData + 254) == MKTAG('s', 't', 'r', 'h')) {
-		// Change the second video chunk to junk data so it gets ignored
-		WRITE_BE_UINT32(movieData + 254, MKTAG('J', 'U', 'N', 'K'));
-		WRITE_LE_UINT32(movieData + 258, 1128);
-	}
-
-	// Iterate through each cursor
+	// Iterate through getting each cursor
 	for (int idx = 0; idx < NUM_CURSORS; ++idx) {
 		assert(CURSOR_DATA[idx][0] == (idx + 1));
 		_cursors[idx]._centroid = Common::Point(CURSOR_DATA[idx][2],
@@ -91,16 +75,14 @@ void CMouseCursor::loadCursorImages() {
 		// Create the surface
 		CVideoSurface *surface = _screenManager->createSurface(64, 64);
 		_cursors[idx]._videoSurface = surface;
-/*
-		Common::SeekableReadStream *stream = new Common::MemoryReadStream(
-			movieData, f.size(), DisposeAfterUse::NO);
-		OSMovie movie(stream, surface);
+
+		// Open the cursors video and move to the given frame
+		OSMovie movie(key, surface);
 		movie.setFrame(idx);
 		
 		void *frameInfo = movie.duplicateFrameInfo();
 		_cursors[idx]._frameInfo = frameInfo;
 		surface->setMovieFrameInfo(frameInfo);
-		*/
 	}
 }
 
