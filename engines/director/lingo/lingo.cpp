@@ -91,6 +91,8 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_linenumber = _colnumber = 0;
 
+	_hadError = false;
+
 	_floatPrecision = 4;
 	_floatPrecisionFormat = "%.4f";
 
@@ -112,6 +114,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	_scripts[type][id] = _currentScript;
 
 	_linenumber = _colnumber = 1;
+	_hadError = false;
 
 	const char *begin, *end;
 
@@ -126,7 +129,9 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 				begin = code;
 				first = false;
 			}
-			Common::String chunk(begin, end);
+			Common::String chunk(begin, end + 1);
+
+			debug(2, "Code chunk\n#####\n%s#####", chunk.c_str());
 
 			parse(chunk.c_str());
 
@@ -135,6 +140,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 			begin = end + 1;
 		}
 
+		_hadError = false;
 		parse(begin);
 	} else {
 		parse(code);
@@ -315,8 +321,13 @@ void Lingo::runTests() {
 
 			warning("Executing file %s of size %d", m.getName().c_str(), size);
 
+			_hadError = false;
 			addCode(script, kMovieScript, counter);
-			executeScript(kMovieScript, counter);
+
+			if (!_hadError)
+				executeScript(kMovieScript, counter);
+			else
+				warning("Skipping execution");
 
 			free(script);
 

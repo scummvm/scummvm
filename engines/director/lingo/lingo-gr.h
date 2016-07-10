@@ -52,41 +52,42 @@
      tDOWN = 268,
      tELSE = 269,
      tNLELSIF = 270,
-     tEND = 271,
-     tEXIT = 272,
-     tFRAME = 273,
-     tGLOBAL = 274,
-     tGO = 275,
-     tIF = 276,
-     tINTO = 277,
-     tLOOP = 278,
-     tMACRO = 279,
-     tMCI = 280,
-     tMCIWAIT = 281,
-     tMOVIE = 282,
-     tNEXT = 283,
-     tOF = 284,
-     tPREVIOUS = 285,
-     tPUT = 286,
-     tREPEAT = 287,
-     tSET = 288,
-     tTHEN = 289,
-     tTO = 290,
-     tWITH = 291,
-     tWHILE = 292,
-     tNLELSE = 293,
-     tGE = 294,
-     tLE = 295,
-     tGT = 296,
-     tLT = 297,
-     tEQ = 298,
-     tNEQ = 299,
-     tAND = 300,
-     tOR = 301,
-     tNOT = 302,
-     tCONCAT = 303,
-     tCONTAINS = 304,
-     tSTARTS = 305
+     tENDIF = 271,
+     tENDREPEAT = 272,
+     tEXIT = 273,
+     tFRAME = 274,
+     tGLOBAL = 275,
+     tGO = 276,
+     tIF = 277,
+     tINTO = 278,
+     tLOOP = 279,
+     tMACRO = 280,
+     tMCI = 281,
+     tMCIWAIT = 282,
+     tMOVIE = 283,
+     tNEXT = 284,
+     tOF = 285,
+     tPREVIOUS = 286,
+     tPUT = 287,
+     tREPEAT = 288,
+     tSET = 289,
+     tTHEN = 290,
+     tTO = 291,
+     tWITH = 292,
+     tWHILE = 293,
+     tNLELSE = 294,
+     tGE = 295,
+     tLE = 296,
+     tGT = 297,
+     tLT = 298,
+     tEQ = 299,
+     tNEQ = 300,
+     tAND = 301,
+     tOR = 302,
+     tNOT = 303,
+     tCONCAT = 304,
+     tCONTAINS = 305,
+     tSTARTS = 306
    };
 #endif
 /* Tokens.  */
@@ -103,48 +104,49 @@
 #define tDOWN 268
 #define tELSE 269
 #define tNLELSIF 270
-#define tEND 271
-#define tEXIT 272
-#define tFRAME 273
-#define tGLOBAL 274
-#define tGO 275
-#define tIF 276
-#define tINTO 277
-#define tLOOP 278
-#define tMACRO 279
-#define tMCI 280
-#define tMCIWAIT 281
-#define tMOVIE 282
-#define tNEXT 283
-#define tOF 284
-#define tPREVIOUS 285
-#define tPUT 286
-#define tREPEAT 287
-#define tSET 288
-#define tTHEN 289
-#define tTO 290
-#define tWITH 291
-#define tWHILE 292
-#define tNLELSE 293
-#define tGE 294
-#define tLE 295
-#define tGT 296
-#define tLT 297
-#define tEQ 298
-#define tNEQ 299
-#define tAND 300
-#define tOR 301
-#define tNOT 302
-#define tCONCAT 303
-#define tCONTAINS 304
-#define tSTARTS 305
+#define tENDIF 271
+#define tENDREPEAT 272
+#define tEXIT 273
+#define tFRAME 274
+#define tGLOBAL 275
+#define tGO 276
+#define tIF 277
+#define tINTO 278
+#define tLOOP 279
+#define tMACRO 280
+#define tMCI 281
+#define tMCIWAIT 282
+#define tMOVIE 283
+#define tNEXT 284
+#define tOF 285
+#define tPREVIOUS 286
+#define tPUT 287
+#define tREPEAT 288
+#define tSET 289
+#define tTHEN 290
+#define tTO 291
+#define tWITH 292
+#define tWHILE 293
+#define tNLELSE 294
+#define tGE 295
+#define tLE 296
+#define tGT 297
+#define tLT 298
+#define tEQ 299
+#define tNEQ 300
+#define tAND 301
+#define tOR 302
+#define tNOT 303
+#define tCONCAT 304
+#define tCONTAINS 305
+#define tSTARTS 306
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 65 "engines/director/lingo/lingo-gr.y"
+#line 66 "engines/director/lingo/lingo-gr.y"
 {
 	Common::String *s;
 	int	i;
@@ -153,7 +155,7 @@ typedef union YYSTYPE
 	int	narg;	/* number of arguments */
 }
 /* Line 1529 of yacc.c.  */
-#line 157 "engines/director/lingo/lingo-gr.hpp"
+#line 159 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

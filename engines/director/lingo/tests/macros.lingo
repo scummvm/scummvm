@@ -3,7 +3,7 @@ macro SHIPX
 global x, y
 set x = Random(5)
 if x = 1 then
-go \"Zoom\"
+go "Zoom"
 exit
 end if
 if x >1 then
@@ -16,7 +16,7 @@ put 100
 macro ZIPX
 set x = Random(5)
 if x = 1 then
-go \"ZIP\"
+go "ZIP"
 exit
 end if
 if x >1 then

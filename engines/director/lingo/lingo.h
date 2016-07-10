@@ -270,6 +270,8 @@ public:
 
 	Common::String _floatPrecisionFormat;
 
+	bool _hadError;
+
 private:
 	int parse(const char *code);
 	void push(Datum d);

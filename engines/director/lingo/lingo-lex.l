@@ -68,7 +68,8 @@ whitespace [\t ]
 (?i:[\n\r]+[\t ]+else[\t ]+if)	{ countnl(); return tNLELSIF; }
 (?i:[\n\r]+[\t ]+else)	{ countnl(); return tNLELSE; }
 (?i:else)			{ count(); return tELSE; }
-(?i:end)			{ count(); return tEND; }
+(?i:end[\t ]+if)	{ count(); return tENDIF; }
+(?i:end[\t ]+repeat) { count(); return tENDREPEAT; }
 (?i:exit)			{ count(); return tEXIT; }
 (?i:frame)			{ count(); return tFRAME; }
 (?i:global)			{ count(); return tGLOBAL; }

@@ -56,9 +56,10 @@
 
 extern int yylex();
 extern int yyparse();
-void yyerror(char *s) { error("%s at line %d col %d", s, Director::g_lingo->_linenumber, Director::g_lingo->_colnumber); }
 
 using namespace Director;
+void yyerror(char *s) { g_lingo->_hadError = true; warning("%s at line %d col %d", s, Director::g_lingo->_linenumber, Director::g_lingo->_colnumber); }
+
 
 %}
 
@@ -74,7 +75,7 @@ using namespace Director;
 %token<i> INT
 %token<f> FLOAT
 %token<s> BLTIN ID STRING HANDLER
-%token tDOWN tELSE tNLELSIF tEND tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
+%token tDOWN tELSE tNLELSIF tENDIF tENDREPEAT tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
 %token tMCI tMCIWAIT tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO
 %token tWITH tWHILE tNLELSE
 %token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT
@@ -93,6 +94,7 @@ using namespace Director;
 
 program: program nl programline
 	| programline
+	| error	'\n'		{ yyerrok; }
 	;
 
 nl:	'\n' {
@@ -100,13 +102,12 @@ nl:	'\n' {
 		g_lingo->_colnumber = 1;
 	}
 
-programline:
+programline: /* empty */
 	| defn
 	| func
 	| macro
 	| asgn				{ g_lingo->code1(g_lingo->c_xpop); }
 	| stmt
-	| error				{ yyerrok; }
 	;
 
 asgn: tPUT expr tINTO ID 		{
@@ -137,7 +138,7 @@ stmt: stmtoneliner
 	//   statements
 	// end repeat
 	//
-	| repeatwhile '(' cond ')' stmtlist end tEND tREPEAT	{
+	| repeatwhile '(' cond ')' stmtlist end tENDREPEAT	{
 		inst body = 0, end = 0;
 		WRITE_UINT32(&body, $5);
 		WRITE_UINT32(&end, $6);
@@ -148,7 +149,7 @@ stmt: stmtoneliner
 	//   statements
 	// end repeat
 	//
-	| repeatwith '=' expr end tTO expr end stmtlist end tEND tREPEAT {
+	| repeatwith '=' expr end tTO expr end stmtlist end tENDREPEAT {
 		inst init = 0, finish = 0, body = 0, end = 0, inc = 0;
 		WRITE_UINT32(&init, $3);
 		WRITE_UINT32(&finish, $6);
@@ -164,7 +165,7 @@ stmt: stmtoneliner
 	//   statements
 	// end repeat
 	//
-	| repeatwith '=' expr end tDOWN tTO expr end stmtlist end tEND tREPEAT {
+	| repeatwith '=' expr end tDOWN tTO expr end stmtlist end tENDREPEAT {
 		inst init = 0, finish = 0, body = 0, end = 0, inc = 0;
 		WRITE_UINT32(&init, $3);
 		WRITE_UINT32(&finish, $7);
@@ -178,14 +179,14 @@ stmt: stmtoneliner
 		(*g_lingo->_currentScript)[$1 + 5] = end; }	/* end, if cond fails */
 	;
 
-ifstmt:	if cond tTHEN nl stmtlist end tEND tIF		{
+ifstmt:	if cond tTHEN nl stmtlist end tENDIF		{
 		inst then = 0, end = 0;
 		WRITE_UINT32(&then, $5);
 		WRITE_UINT32(&end, $6);
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
 		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
 		g_lingo->processIf(0, 0); }
-	| if cond tTHEN nl stmtlist end tNLELSE stmtlist end tEND tIF {
+	| if cond tTHEN nl stmtlist end tNLELSE stmtlist end nl tENDIF {
 		inst then = 0, else1 = 0, end = 0;
 		WRITE_UINT32(&then, $5);
 		WRITE_UINT32(&else1, $8);
@@ -194,7 +195,7 @@ ifstmt:	if cond tTHEN nl stmtlist end tEND tIF		{
 		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
 		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
 		g_lingo->processIf(0, 0); }
-	| if cond tTHEN nl stmtlist end begin elseifstmt end nl tEND tIF {
+	| if cond tTHEN nl stmtlist end begin elseifstmt end nl tENDIF {
 		inst then = 0, else1 = 0, end = 0;
 		WRITE_UINT32(&then, $5);
 		WRITE_UINT32(&else1, $7);
@@ -292,9 +293,8 @@ begin:	  /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
 	;
 end:	  /* nothing */		{ g_lingo->code1(STOP); $$ = g_lingo->_currentScript->size(); }
 	;
-stmtlist: /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
-	| stmtlist nl
-	| stmtlist stmt
+stmtlist: stmtlist nl stmt
+	| stmt
 	;
 
 expr: INT		{
@@ -426,7 +426,7 @@ gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
 // See also:
 //   on keyword
 defn: tMACRO ID { g_lingo->_indef = true; }
-	    begin argdef nl argstore stmtlist		{
+	    begin argdef nl argstore stmtlist nl		{
 			g_lingo->code2(g_lingo->c_constpush, (inst)0); // Push fake value on stack
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$2, $4, $5);
@@ -435,7 +435,7 @@ defn: tMACRO ID { g_lingo->_indef = true; }
 argdef:  /* nothing */ 		{ $$ = 0; }
 	| ID					{ g_lingo->codeArg($1); $$ = 1; }
 	| argdef ',' ID			{ g_lingo->codeArg($3); $$ = $1 + 1; }
-	| argdef nl ',' ID	{ g_lingo->codeArg($4); $$ = $1 + 1; }
+	| argdef nl ',' ID		{ g_lingo->codeArg($4); $$ = $1 + 1; }
 	;
 argstore:	  /* nothing */		{ g_lingo->codeArgStore(); }
 	;
