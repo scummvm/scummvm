@@ -138,15 +138,12 @@ IconIndice ObjectMan::f32_getObjectType(Thing thing) {
 byte g29_ChargeCountToTorchType[16] = {0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3}; // @ G0029_auc_Graphic562_ChargeCountToTorchType
 
 IconIndice ObjectMan::f33_getIconIndex(Thing thing) {
-	int16 L0005_i_IconIndex;
-	Junk* L0006_ps_Junk;
-
-
-	if ((L0005_i_IconIndex = _vm->_objectMan->f32_getObjectType(thing)) != kM1_IconIndiceNone) {
+	int16 L0005_i_IconIndex = _vm->_objectMan->f32_getObjectType(thing);
+	if (L0005_i_IconIndex != kM1_IconIndiceNone) {
 		if (((L0005_i_IconIndex < k32_IconIndiceWeaponDagger) && (L0005_i_IconIndex >= k0_IconIndiceJunkCompassNorth)) ||
 			((L0005_i_IconIndex >= k148_IconIndicePotionMaPotionMonPotion) && (L0005_i_IconIndex <= k163_IconIndicePotionWaterFlask)) ||
 			(L0005_i_IconIndex == k195_IconIndicePotionEmptyFlask)) {
-			L0006_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(thing);
+			Junk *L0006_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(thing);
 			switch (L0005_i_IconIndex) {
 			case k0_IconIndiceJunkCompassNorth:
 				L0005_i_IconIndex += _vm->_dungeonMan->_g308_partyDir;

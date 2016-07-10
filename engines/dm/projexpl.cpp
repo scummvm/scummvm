@@ -294,20 +294,14 @@ uint16 ProjExpl::f216_projectileGetImpactAttack(Projectile* projectile, Thing th
 void ProjExpl::f213_explosionCreate(Thing explThing, uint16 attack, uint16 mapXCombo, uint16 mapYCombo, uint16 cell) {
 #define AP0443_ui_ProjectileMapX mapXCombo
 #define AP0444_ui_ProjectileMapY mapYCombo
-	Explosion* L0470_ps_Explosion;
-	CreatureInfo* L0471_ps_CreatureInfo;
-	Group* L0472_ps_Group;
-	Thing L0473_T_Thing;
-	int16 L0474_i_ProjectileTargetMapX;
-	int16 L0475_i_ProjectileTargetMapY;
-	int16 L0469_i_CreatureFireResistance;
-	TimelineEvent L0476_s_Event;
-
-
-	if ((L0473_T_Thing = _vm->_dungeonMan->f166_getUnusedThing(k15_ExplosionThingType)) == Thing::_none) {
+	Thing L0473_T_Thing = _vm->_dungeonMan->f166_getUnusedThing(k15_ExplosionThingType);
+	if (L0473_T_Thing == Thing::_none) {
 		return;
 	}
-	L0470_ps_Explosion = &((Explosion *)_vm->_dungeonMan->_g284_thingData[k15_ExplosionThingType])[(L0473_T_Thing).getIndex()];
+
+	Explosion *L0470_ps_Explosion = &((Explosion *)_vm->_dungeonMan->_g284_thingData[k15_ExplosionThingType])[(L0473_T_Thing).getIndex()];
+	int16 L0474_i_ProjectileTargetMapX;
+	int16 L0475_i_ProjectileTargetMapY;
 	if (mapXCombo <= 255) {
 		L0474_i_ProjectileTargetMapX = mapXCombo;
 		L0475_i_ProjectileTargetMapY = mapYCombo;
@@ -334,6 +328,7 @@ void ProjExpl::f213_explosionCreate(Thing explThing, uint16 attack, uint16 mapXC
 		}
 	}
 	_vm->_dungeonMan->f163_linkThingToList(L0473_T_Thing, Thing(0), AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY);
+	TimelineEvent L0476_s_Event;
 	M33_setMapAndTime(L0476_s_Event._mapTime, _vm->_dungeonMan->_g272_currMapIndex, _vm->_g313_gameTime + ((explThing == Thing::_explRebirthStep1) ? 5 : 1));
 	L0476_s_Event._type = k25_TMEventTypeExplosion;
 	L0476_s_Event._priority = 0;
@@ -351,9 +346,10 @@ void ProjExpl::f213_explosionCreate(Thing explThing, uint16 attack, uint16 mapXC
 				_vm->_championMan->f324_damageAll_getDamagedChampionCount(attack, k0x0001_ChampionWoundReadHand | k0x0002_ChampionWoundActionHand | k0x0004_ChampionWoundHead | k0x0008_ChampionWoundTorso | k0x0010_ChampionWoundLegs | k0x0020_ChampionWoundFeet, k1_attackType_FIRE);
 			} else {
 				if ((L0473_T_Thing = _vm->_groupMan->f175_groupGetThing(AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY)) != Thing::_endOfList) { /* ASSEMBLY_COMPILATION_DIFFERENCE jmp */
-					L0472_ps_Group = (Group *)_vm->_dungeonMan->f156_getThingData(L0473_T_Thing);
-					L0471_ps_CreatureInfo = &g243_CreatureInfo[L0472_ps_Group->_type];
-					if ((L0469_i_CreatureFireResistance = (L0471_ps_CreatureInfo->M60_getFireResistance())) != k15_immuneToFire) {
+					Group *L0472_ps_Group = (Group *)_vm->_dungeonMan->f156_getThingData(L0473_T_Thing);
+					CreatureInfo *L0471_ps_CreatureInfo = &g243_CreatureInfo[L0472_ps_Group->_type];
+					int16 L0469_i_CreatureFireResistance = L0471_ps_CreatureInfo->M60_getFireResistance();
+					if (L0469_i_CreatureFireResistance != k15_immuneToFire) {
 						if (getFlag(L0471_ps_CreatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial)) {
 							attack >>= 2;
 						}
@@ -400,16 +396,13 @@ void ProjExpl::f214_projectileDeleteEvent(Thing thing) {
 }
 
 void ProjExpl::f215_projectileDelete(Thing projectileThing, Thing* groupSlot, int16 mapX, int16 mapY) {
-	Thing L0478_T_PreviousThing;
-	Thing L0479_T_Thing;
-	Projectile* L0480_ps_Projectile;
-	Thing* L0481_ps_Generic;
-
-	L0480_ps_Projectile = (Projectile *)_vm->_dungeonMan->f156_getThingData(projectileThing);
-	if ((L0479_T_Thing = L0480_ps_Projectile->_slot).getType() != k15_ExplosionThingType) {
+	Projectile *L0480_ps_Projectile = (Projectile *)_vm->_dungeonMan->f156_getThingData(projectileThing);
+	Thing L0479_T_Thing = L0480_ps_Projectile->_slot;
+	if (L0479_T_Thing.getType() != k15_ExplosionThingType) {
 		if (groupSlot != NULL) {
-			if ((L0478_T_PreviousThing = *groupSlot) == Thing::_endOfList) {
-				L0481_ps_Generic = (Thing *)_vm->_dungeonMan->f156_getThingData(L0479_T_Thing);
+			Thing L0478_T_PreviousThing = *groupSlot;
+			if (L0478_T_PreviousThing == Thing::_endOfList) {
+				Thing *L0481_ps_Generic = (Thing *)_vm->_dungeonMan->f156_getThingData(L0479_T_Thing);
 				*L0481_ps_Generic = Thing::_endOfList;
 				*groupSlot = L0479_T_Thing;
 			} else {
