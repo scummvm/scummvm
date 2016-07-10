@@ -651,18 +651,15 @@ void GfxPalette32::setCycle(const uint8 fromColor, const uint8 toColor, const in
 	// SCI engine overrides the first oldest cycler that it finds where
 	// “oldest” is determined by the difference between the tick and now
 	if (cycler == nullptr) {
-		int maxUpdateDelta = -1;
-		// Optimization: Unlike actual SCI (SQ6) engine, we call
-		// getTickCount only once and store it, instead of calling it
-		// twice on each iteration through the loop
 		const uint32 now = g_sci->getTickCount();
+		uint32 minUpdateDelta = 0xFFFFFFFF;
 
 		for (cyclerIndex = 0; cyclerIndex < numCyclers; ++cyclerIndex) {
 			PalCycler *candidate = _cyclers[cyclerIndex];
 
-			const int32 updateDelta = now - candidate->lastUpdateTick;
-			if (updateDelta >= maxUpdateDelta) {
-				maxUpdateDelta = updateDelta;
+			const uint32 updateDelta = now - candidate->lastUpdateTick;
+			if (updateDelta < minUpdateDelta) {
+				minUpdateDelta = updateDelta;
 				cycler = candidate;
 			}
 		}
