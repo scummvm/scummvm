@@ -259,7 +259,7 @@ void GfxPalette32::updateHardware() {
 
 	byte bpal[3 * 256];
 
-	for (int i = 0; i < ARRAYSIZE(_currentPalette.colors); ++i) {
+	for (int i = 0; i < ARRAYSIZE(_currentPalette.colors) - 1; ++i) {
 		_currentPalette.colors[i] = _nextPalette.colors[i];
 
 		// NOTE: If the brightness option in the user configuration file is set,
@@ -267,12 +267,22 @@ void GfxPalette32::updateHardware() {
 		// in some hard-coded brightness tables. There is no reason on modern hardware
 		// to implement this, unless it is discovered that some game uses a non-standard
 		// brightness setting by default
-		if (_currentPalette.colors[i].used) {
-			bpal[i * 3    ] = _currentPalette.colors[i].r;
-			bpal[i * 3 + 1] = _currentPalette.colors[i].g;
-			bpal[i * 3 + 2] = _currentPalette.colors[i].b;
-		}
+
+		// All color entries MUST be copied, not just "used" entries, otherwise
+		// uninitialised memory from bpal makes its way into the system palette.
+		// This would not normally be a problem, except that games sometimes use
+		// unused palette entries. e.g. Phant1 title screen references palette
+		// entries outside its own palette, so will render garbage colors where
+		// the game expects them to be black
+		bpal[i * 3    ] = _currentPalette.colors[i].r;
+		bpal[i * 3 + 1] = _currentPalette.colors[i].g;
+		bpal[i * 3 + 2] = _currentPalette.colors[i].b;
 	}
+
+	// The last color must always be white
+	bpal[255 * 3    ] = 255;
+	bpal[255 * 3 + 1] = 255;
+	bpal[255 * 3 + 2] = 255;
 
 	g_system->getPaletteManager()->setPalette(bpal, 0, 256);
 	g_sci->getEventManager()->updateScreen();
