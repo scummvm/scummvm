@@ -190,8 +190,10 @@ void Lingo::func_mciwait(Common::String &s) {
 }
 
 void Lingo::func_goto(Common::String &frame, Common::String &movie) {
-	if (!_vm->_movies || !_vm->_movies->contains(movie))
-		error("Movie %s does not exist", movie.c_str());
+	if (!_vm->_movies || !_vm->_movies->contains(movie)) {
+		warning("Movie %s does not exist", movie.c_str());
+		return;
+	}
 
 	_vm->_currentScore = _vm->_movies->getVal(movie);
 	_vm->_currentScore->loadArchive();
