@@ -145,12 +145,12 @@ GfxPalette32::GfxPalette32(ResourceManager *resMan)
 	// Palette cycling
 	_cyclers(),
 	_cycleMap() {
-		_varyPercent = _varyTargetPercent;
-		for (int i = 0, len = ARRAYSIZE(_fadeTable); i < len; ++i) {
-			_fadeTable[i] = 100;
-		}
+	_varyPercent = _varyTargetPercent;
+	for (int i = 0, len = ARRAYSIZE(_fadeTable); i < len; ++i) {
+		_fadeTable[i] = 100;
+	}
 
-		loadPalette(999);
+	loadPalette(999);
 }
 
 GfxPalette32::~GfxPalette32() {
@@ -356,7 +356,7 @@ inline Palette GfxPalette32::getPaletteFromResourceInternal(const GuiResourceId 
 	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), false);
 
 	if (!palResource) {
-		error("Could not load vary target %d", resourceId);
+		error("Could not load vary palette %d", resourceId);
 	}
 
 	HunkPalette rawPalette(palResource->data);
@@ -384,8 +384,6 @@ inline void GfxPalette32::setVaryTimeInternal(const int16 percent, const int tim
 	}
 }
 
-// TODO: This gets called *a lot* in at least the first scene
-// of SQ6. Optimisation would not be the worst idea in the world.
 void GfxPalette32::kernelPalVarySet(const GuiResourceId paletteId, const int16 percent, const int time, const int16 fromColor, const int16 toColor) {
 	Palette palette = getPaletteFromResourceInternal(paletteId);
 	setVary(&palette, percent, time, fromColor, toColor);

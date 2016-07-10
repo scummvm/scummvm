@@ -193,11 +193,6 @@ private:
 	ResourceManager *_resMan;
 
 	/**
-	 * The currently displayed palette.
-	 */
-	Palette _currentPalette;
-
-	/**
 	 * The palette revision version. Increments once per game
 	 * loop that changes the source palette.
 	 */
@@ -207,6 +202,11 @@ private:
 	 * Whether or not the hardware palette needs updating.
 	 */
 	bool _needsUpdate;
+
+	/**
+	 * The currently displayed palette.
+	 */
+	Palette _currentPalette;
 
 	/**
 	 * The unmodified source palette loaded by kPalette. Additional
