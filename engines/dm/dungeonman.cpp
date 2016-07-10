@@ -1470,7 +1470,7 @@ Thing DungeonMan::f165_getDiscardTHing(uint16 thingType) {
 					if ((L0279_ui_MapIndex == _vm->_dungeonMan->_g309_partyMapIndex) && ((L0276_ui_MapX - _vm->_dungeonMan->_g306_partyMapX + 5) <= 10) && ((L0277_ui_MapY - _vm->_dungeonMan->_g307_partyMapY + 5) <= 10)) /* If square is too close to the party */
 						goto T0165029;
 					do {
-						if ((L0287_i_ThingType = (L0278_T_Thing).getType()) == k3_SensorThingType) {
+						if ((L0287_i_ThingType = L0278_T_Thing.getType()) == k3_SensorThingType) {
 							L0282_ps_Generic = (Thing*)_vm->_dungeonMan->f156_getThingData(L0278_T_Thing);
 							if (((Sensor*)L0282_ps_Generic)->getType()) /* If sensor is not disabled */
 								break;

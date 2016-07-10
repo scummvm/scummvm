@@ -220,21 +220,10 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 	int16 L0710_i_ThingType;
 	Champion* L0711_ps_Champion;
 	Teleporter* L0712_ps_Teleporter;
-	bool L0713_B_ThingLevitates;
-	uint16 L0714_ui_MapIndexSource = 0;
-	uint16 L0715_ui_MapIndexDestination = 0;
-	uint16 L0716_ui_Direction = 0;
-	uint16 L0717_ui_ThingCell = 0;
 	int16 L0718_i_RequiredTeleporterScope;
 	// Strangerke: Only present in v2.1, but it fixes a bug, so I propose to keep it
 	int16 L0719_i_TraversedPitCount;
 	uint16 L0720_ui_MoveGroupResult;
-	bool L0721_B_GroupOnPartyMap;
-	bool L0722_B_FallKilledGroup;
-	bool L0723_B_DrawDungeonViewWhileFalling;
-	bool L0724_B_DestinationIsTeleporterTarget;
-	bool L0725_B_PartySquare;
-	bool L0726_B_Audible;
 	uint16 L0727_ui_Multiple;
 #define AL0727_ui_ThingCell L0727_ui_Multiple
 #define AL0727_ui_Outcome   L0727_ui_Multiple
@@ -243,18 +232,20 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 	uint16 L1638_ui_MovementSoundIndex;
 
 	L0710_i_ThingType = kM1_PartyThingType;
-	L0713_B_ThingLevitates = false;
+	bool L0713_B_ThingLevitates = false;
 	L0719_i_TraversedPitCount = 0;
 	L0720_ui_MoveGroupResult = 0;
-	L0721_B_GroupOnPartyMap = false;
-	L0722_B_FallKilledGroup = false;
-	L0723_B_DrawDungeonViewWhileFalling = false;
-	L0724_B_DestinationIsTeleporterTarget = false;
-	L0725_B_PartySquare = false;
-	L0726_B_Audible = false;
+	bool L0721_B_GroupOnPartyMap = false;
+	bool L0722_B_FallKilledGroup = false;
+	bool L0723_B_DrawDungeonViewWhileFalling = false;
+	bool L0724_B_DestinationIsTeleporterTarget = false;
+	bool L0725_B_PartySquare = false;
+	bool L0726_B_Audible = false;
+
+	uint16 L0717_ui_ThingCell = 0;
 	if (thing != Thing::_party) {
-		L0710_i_ThingType = (thing).getType();
-		L0717_ui_ThingCell = (thing).getCell();
+		L0710_i_ThingType = thing.getType();
+		L0717_ui_ThingCell = thing.getCell();
 		L0713_B_ThingLevitates = f264_isLevitating(thing);
 	}
 	/* If moving the party or a creature on the party map from a dungeon square then check for a projectile impact */
@@ -263,9 +254,12 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 			return true; /* The specified group thing cannot be moved because it was killed by a projectile impact */
 		}
 	}
+	uint16 L0714_ui_MapIndexSource = 0;
+	uint16 L0715_ui_MapIndexDestination = 0;
 	if (destMapX >= 0) {
 		L0714_ui_MapIndexSource = L0715_ui_MapIndexDestination = _vm->_dungeonMan->_g272_currMapIndex;
 		L0721_B_GroupOnPartyMap = (L0714_ui_MapIndexSource == _vm->_dungeonMan->_g309_partyMapIndex) && (mapX >= 0);
+		uint16 L0716_ui_Direction = 0;
 		if (thing == Thing::_party) {
 			_vm->_dungeonMan->_g306_partyMapX = destMapX;
 			_vm->_dungeonMan->_g307_partyMapY = destMapY;
@@ -321,7 +315,7 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 							thing = f263_getTeleporterRotatedProjectileThing(L0712_ps_Teleporter, thing);
 						} else {
 							if (!(L0712_ps_Teleporter->getAbsoluteRotation()) && (mapX != -2)) {
-								thing = M15_thingWithNewCell(thing, M21_normalizeModulo4((thing).getCell() + L0712_ps_Teleporter->getRotation()));
+								thing = M15_thingWithNewCell(thing, M21_normalizeModulo4(thing.getCell() + L0712_ps_Teleporter->getRotation()));
 							}
 						}
 					}
@@ -381,7 +375,7 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 						L0716_ui_Direction = _vm->_dungeonMan->f155_getStairsExitDirection(destMapX, destMapY);
 						destMapX += _vm->_dirIntoStepCountEast[L0716_ui_Direction], destMapY += _vm->_dirIntoStepCountNorth[L0716_ui_Direction];
 						L0716_ui_Direction = returnOppositeDir((direction)L0716_ui_Direction);
-						AL0727_ui_ThingCell = (thing).getCell();
+						AL0727_ui_ThingCell = thing.getCell();
 						AL0727_ui_ThingCell = M21_normalizeModulo4((((AL0727_ui_ThingCell - L0716_ui_Direction + 1) & 0x0002) >> 1) + L0716_ui_Direction);
 						thing = M15_thingWithNewCell(thing, AL0727_ui_ThingCell);
 					} else
@@ -401,7 +395,7 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 		_g397_moveResultMapX = destMapX;
 		_g398_moveResultMapY = destMapY;
 		_g399_moveResultMapIndex = L0715_ui_MapIndexDestination;
-		_g401_moveResultCell = (thing).getCell();
+		_g401_moveResultCell = thing.getCell();
 		L0725_B_PartySquare = (L0715_ui_MapIndexDestination == L0714_ui_MapIndexSource) && (destMapX == mapX) && (destMapY == mapY);
 		if (L0725_B_PartySquare) {
 			if (thing == Thing::_party) {
@@ -481,7 +475,7 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 					f265_createEvent60to61_moveGroup(thing, destMapX, destMapY, L0715_ui_MapIndexDestination, L0726_B_Audible);
 					return true; /* The specified group thing cannot be moved because the party or another group is on the destination square */
 				}
-				L1638_ui_MovementSoundIndex = f514_getSound(((Group *)_vm->_dungeonMan->_g284_thingData[k4_GroupThingType])[(thing).getIndex()]._type);
+				L1638_ui_MovementSoundIndex = f514_getSound(((Group *)_vm->_dungeonMan->_g284_thingData[k4_GroupThingType])[thing.getIndex()]._type);
 				if (L1638_ui_MovementSoundIndex < k34_D13_soundCount) {
 					warning("MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
 				}
@@ -530,7 +524,7 @@ bool MovesensMan::f264_isLevitating(Thing thing) {
 	int16 L0695_i_ThingType;
 
 
-	if ((L0695_i_ThingType = (thing).getType()) == k4_GroupThingType) {
+	if ((L0695_i_ThingType = thing.getType()) == k4_GroupThingType) {
 		return getFlag(_vm->_dungeonMan->f144_getCreatureAttributes(thing), k0x0020_MaskCreatureInfo_levitation);
 	}
 	if (L0695_i_ThingType == k14_ProjectileThingType) { /* BUG0_26 An explosion may fall in a pit. If a pit is opened while there is an explosion above then the explosion falls into the pit in F0267_MOVE_GetMoveResult_CPSCE. Explosions are not considered as levitating so they are moved when the pit is opened. This function should return true for explosions */
@@ -767,7 +761,7 @@ void MovesensMan::f276_sensorProcessThingAdditionOrRemoval(uint16 mapX, uint16 m
 
 
 	if (thing != Thing::_party) {
-		L0767_i_ThingType = (thing).getType();
+		L0767_i_ThingType = thing.getType();
 		L0774_i_ObjectType = _vm->_objectMan->f32_getObjectType(thing);
 	} else {
 		L0767_i_ThingType = kM1_PartyThingType;
@@ -777,7 +771,7 @@ void MovesensMan::f276_sensorProcessThingAdditionOrRemoval(uint16 mapX, uint16 m
 		_vm->_dungeonMan->f164_unlinkThingFromList(thing, Thing(0), mapX, mapY);
 	}
 	if (Square(L0777_ui_Square = _vm->_dungeonMan->_g271_currMapData[mapX][mapY]).getType() == k0_ElementTypeWall) {
-		L0770_ui_SensorTriggeredCell = (thing).getCell();
+		L0770_ui_SensorTriggeredCell = thing.getCell();
 	} else {
 		L0770_ui_SensorTriggeredCell = (uint16)kM1_CellAny; // this will wrap around
 	}

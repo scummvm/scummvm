@@ -254,7 +254,7 @@ uint16 ProjExpl::f216_projectileGetImpactAttack(Projectile* projectile, Thing th
 	_g367_projectileAttackType = k3_attackType_BLUNT;
 
 	L0484_ui_KineticEnergy = projectile->_kineticEnergy;
-	if ((AL0483_ui_ThingType = (thing).getType()) != k15_ExplosionThingType) {
+	if ((AL0483_ui_ThingType = thing.getType()) != k15_ExplosionThingType) {
 		if (AL0483_ui_ThingType == k5_WeaponThingType) {
 			L0485_ps_WeaponInfo = _vm->_dungeonMan->f158_getWeaponInfo(thing);
 			AL0483_ui_Attack = L0485_ps_WeaponInfo->_kineticEnergy;
