@@ -113,11 +113,11 @@ void glopBegin(GLContext *c, GLParam *p) {
 				c->matrix_model_projection_no_w_transform = 1;
 		}
 
-		// test if the texture matrix is not Identity
-		c->apply_texture_matrix = !c->matrix_stack_ptr[2]->isIdentity();
-
 		c->matrix_model_projection_updated = 0;
 	}
+	// test if the texture matrix is not Identity
+	c->apply_texture_matrix = !c->matrix_stack_ptr[2]->isIdentity();
+
 	// viewport
 	if (c->viewport.updated) {
 		gl_eval_viewport(c);
