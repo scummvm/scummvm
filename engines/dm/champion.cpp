@@ -1592,8 +1592,8 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 	}
 	AL0864_i_ChampionIconIndex = M26_championIconIndex(L0865_ps_Champion->_cell, _vm->_dungeonMan->_g308_partyDir);
 	if (getFlag(L0862_ui_ChampionAttributes, k0x0400_ChampionAttributeIcon) && (_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap != _vm->M0_indexToOrdinal(AL0864_i_ChampionIconIndex))) {
-		_vm->_displayMan->D24_fillScreenBox(g54_BoxChampionIcons[AL0864_i_ChampionIconIndex << 2], g46_ChampionColor[champIndex]);
-		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k28_ChampionIcons), _vm->_displayMan->_g348_bitmapScreen, g54_BoxChampionIcons[AL0864_i_ChampionIconIndex << 2], M26_championIconIndex(L0865_ps_Champion->_dir, _vm->_dungeonMan->_g308_partyDir) * 19, 0, k40_byteWidth, k160_byteWidthScreen, k12_ColorDarkestGray, 14, k200_heightScreen);
+		_vm->_displayMan->D24_fillScreenBox(g54_BoxChampionIcons[AL0864_i_ChampionIconIndex], g46_ChampionColor[champIndex]);
+		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k28_ChampionIcons), _vm->_displayMan->_g348_bitmapScreen, g54_BoxChampionIcons[AL0864_i_ChampionIconIndex], _vm->_championMan->M26_championIconIndex(L0865_ps_Champion->_dir, _vm->_dungeonMan->_g308_partyDir) * 19, 0, k40_byteWidth, k160_byteWidthScreen, k12_ColorDarkestGray, 14, k200_heightScreen);
 	}
 	if (getFlag(L0862_ui_ChampionAttributes, k0x0800_ChampionAttributePanel) && L0863_B_IsInventoryChampion) {
 		if (_vm->_g333_pressingMouth) {
