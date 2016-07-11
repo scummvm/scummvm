@@ -31,6 +31,7 @@
 #include "inventory.h"
 #include "group.h"
 #include "projexpl.h"
+#include "movesens.h"
 
 
 namespace DM {
@@ -249,7 +250,7 @@ void Timeline::f261_processTimeline() {
 				f244_timelineProcessEvent10_squareDoor(L0681_ps_Event);
 				break;
 			case k9_TMEventTypePit:
-				//F0251_TIMELINE_ProcessEvent9_Square_Pit(L0681_ps_Event);
+				f251_timelineProcessEvent9_squarePit(L0681_ps_Event);
 				break;
 			case k8_TMEventTypeTeleporter:
 				//F0250_TIMELINE_ProcessEvent8_Square_Teleporter(L0681_ps_Event);
@@ -417,13 +418,13 @@ void Timeline::f242_timelineProcessEvent7_squareFakewall(TimelineEvent* event) {
 	uint16 L0604_ui_MapY;
 	int16 L0605_i_Effect;
 	Thing L0606_T_Thing;
-	Square* L0607_puc_Square;
+	byte* L0607_puc_Square;
 
 
-	L0607_puc_Square = (Square*)&_vm->_dungeonMan->_g271_currMapData[L0603_ui_MapX = event->_B._location._mapX][L0604_ui_MapY = event->_B._location._mapY];
+	L0607_puc_Square = &_vm->_dungeonMan->_g271_currMapData[L0603_ui_MapX = event->_B._location._mapX][L0604_ui_MapY = event->_B._location._mapY];
 	L0605_i_Effect = event->_C.A._effect;
 	if (L0605_i_Effect == k2_SensorEffToggle) {
-		L0605_i_Effect = L0607_puc_Square->get(k0x0004_FakeWallOpen) ? k1_SensorEffClear : k0_SensorEffSet;
+		L0605_i_Effect = getFlag(*L0607_puc_Square, k0x0004_FakeWallOpen) ? k1_SensorEffClear : k0_SensorEffSet;
 	}
 	if (L0605_i_Effect == k1_SensorEffClear) {
 		if ((_vm->_dungeonMan->_g272_currMapIndex == _vm->_dungeonMan->_g309_partyMapIndex) && (L0603_ui_MapX == _vm->_dungeonMan->_g306_partyMapX) && (L0604_ui_MapY == _vm->_dungeonMan->_g307_partyMapY)) {
@@ -434,11 +435,11 @@ void Timeline::f242_timelineProcessEvent7_squareFakewall(TimelineEvent* event) {
 				event->_mapTime++;
 				_vm->_timeline->f238_addEventGetEventIndex(event);
 			} else {
-				L0607_puc_Square->set(k0x0004_FakeWallOpen);
+				clearFlag(*L0607_puc_Square, k0x0004_FakeWallOpen);
 			}
 		}
 	} else {
-		L0607_puc_Square->set(k0x0004_FakeWallOpen);
+		setFlag(*L0607_puc_Square, k0x0004_FakeWallOpen);
 	}
 }
 
@@ -446,7 +447,7 @@ void Timeline::f243_timelineProcessEvent2_doorDestruction(TimelineEvent* event) 
 	Square* L0608_puc_Square;
 
 	L0608_puc_Square = (Square*)&_vm->_dungeonMan->_g271_currMapData[event->_B._location._mapX][event->_B._location._mapY];
-	L0608_puc_Square->set(k5_doorState_DESTROYED);
+	L0608_puc_Square->setDoorState(k5_doorState_DESTROYED);
 }
 
 void Timeline::f244_timelineProcessEvent10_squareDoor(TimelineEvent* event) {
@@ -471,5 +472,82 @@ void Timeline::f244_timelineProcessEvent10_squareDoor(TimelineEvent* event) {
 	}
 	event->_type = k1_TMEventTypeDoorAnimation;
 	_vm->_timeline->f238_addEventGetEventIndex(event);
+}
+
+void Timeline::f251_timelineProcessEvent9_squarePit(TimelineEvent* event) {
+	uint16 L0653_ui_MapX;
+	uint16 L0654_ui_MapY;
+	byte* L0655_puc_Square;
+
+
+	L0655_puc_Square = &_vm->_dungeonMan->_g271_currMapData[L0653_ui_MapX = event->_B._location._mapX][L0654_ui_MapY = event->_B._location._mapY];
+	if (event->_C.A._effect == k2_SensorEffToggle) {
+		event->_C.A._effect = getFlag(*L0655_puc_Square, k0x0008_PitOpen) ? k1_SensorEffClear : k0_SensorEffSet;
+	}
+	if (event->_C.A._effect == k0_SensorEffSet) {
+		setFlag(*L0655_puc_Square, k0x0008_PitOpen);
+		f249_moveTeleporterOrPitSquareThings(L0653_ui_MapX, L0654_ui_MapY);
+	} else {
+		clearFlag(*L0655_puc_Square, k0x0008_PitOpen);
+	}
+}
+
+void Timeline::f249_moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
+	uint16 L0644_ui_Multiple;
+#define AL0644_ui_ThingType  L0644_ui_Multiple
+#define AL0644_ui_EventIndex L0644_ui_Multiple
+	Thing L0645_T_Thing;
+	Projectile* L0646_ps_Projectile;
+	TimelineEvent* L0647_ps_Event;
+	Thing L0648_T_NextThing;
+	int16 L0649_i_ThingsToMoveCount;
+
+
+	if ((_vm->_dungeonMan->_g272_currMapIndex == _vm->_dungeonMan->_g309_partyMapIndex) && (mapX == _vm->_dungeonMan->_g306_partyMapX) && (mapY == _vm->_dungeonMan->_g307_partyMapY)) {
+		_vm->_movsens->f267_getMoveResult(Thing::_party, mapX, mapY, mapX, mapY);
+		_vm->_championMan->f296_drawChangedObjectIcons();
+	}
+	if ((L0645_T_Thing = _vm->_groupMan->f175_groupGetThing(mapX, mapY)) != Thing::_endOfList) {
+		_vm->_movsens->f267_getMoveResult(L0645_T_Thing, mapX, mapY, mapX, mapY);
+	}
+	L0645_T_Thing = _vm->_dungeonMan->f162_getSquareFirstObject(mapX, mapY);
+	L0648_T_NextThing = L0645_T_Thing;
+	L0649_i_ThingsToMoveCount = 0;
+	while (L0645_T_Thing != Thing::_endOfList) {
+		if (L0645_T_Thing.getType() > k4_GroupThingType) {
+			L0649_i_ThingsToMoveCount++;
+		}
+		L0645_T_Thing = _vm->_dungeonMan->f159_getNextThing(L0645_T_Thing);
+	}
+	L0645_T_Thing = L0648_T_NextThing;
+	while ((L0645_T_Thing != Thing::_endOfList) && L0649_i_ThingsToMoveCount) {
+		L0649_i_ThingsToMoveCount--;
+		L0648_T_NextThing = _vm->_dungeonMan->f159_getNextThing(L0645_T_Thing);
+		AL0644_ui_ThingType = L0645_T_Thing.getType();
+		if (AL0644_ui_ThingType > k4_GroupThingType) {
+			_vm->_movsens->f267_getMoveResult(L0645_T_Thing, mapX, mapY, mapX, mapY);
+		}
+		if (AL0644_ui_ThingType == k14_ProjectileThingType) {
+			L0646_ps_Projectile = (Projectile*)_vm->_dungeonMan->f156_getThingData(L0645_T_Thing);
+			L0647_ps_Event = &_vm->_timeline->_g370_events[L0646_ps_Projectile->_eventIndex];
+			L0647_ps_Event->_C._projectile.setMapX(_vm->_movsens->_g397_moveResultMapX);
+			L0647_ps_Event->_C._projectile.setMapY(_vm->_movsens->_g398_moveResultMapY);
+			L0647_ps_Event->_C._projectile.setDir((direction)_vm->_movsens->_g400_moveResultDir);
+			L0647_ps_Event->_B._slot = M15_thingWithNewCell(L0645_T_Thing, _vm->_movsens->_g401_moveResultCell).toUint16();
+			M31_setMap(L0647_ps_Event->_mapTime, _vm->_movsens->_g399_moveResultMapIndex);
+		} else {
+			if (AL0644_ui_ThingType == k15_ExplosionThingType) {
+				for (AL0644_ui_EventIndex = 0, L0647_ps_Event = _vm->_timeline->_g370_events; AL0644_ui_EventIndex < _vm->_timeline->_g369_eventMaxCount; L0647_ps_Event++, AL0644_ui_EventIndex++) {
+					if ((L0647_ps_Event->_type== k25_TMEventTypeExplosion) && (L0647_ps_Event->_C._slot == L0645_T_Thing.toUint16())) { /* BUG0_23 A Fluxcage explosion remains on a square forever. If you open a pit or teleporter on a square where there is a Fluxcage explosion, the Fluxcage explosion is moved but the associated event is not updated (because Fluxcage explosions do not use k25_TMEventTypeExplosion but rather k24_TMEventTypeRemoveFluxcage) causing the Fluxcage explosion to remain in the dungeon forever on its destination square. When the k24_TMEventTypeRemoveFluxcage expires the explosion thing is not removed, but it is marked as unused. Consequently, any objects placed on the Fluxcage square after it was moved but before it expires become orphans upon expiration. After expiration, any object placed on the fluxcage square is cloned when picked up */
+						L0647_ps_Event->_B._location._mapX = _vm->_movsens->_g397_moveResultMapX;
+						L0647_ps_Event->_B._location._mapY = _vm->_movsens->_g398_moveResultMapY;
+						L0647_ps_Event->_C._slot = M15_thingWithNewCell(L0645_T_Thing, _vm->_movsens->_g401_moveResultCell).toUint16();
+						M31_setMap(L0647_ps_Event->_mapTime, _vm->_movsens->_g399_moveResultMapIndex);
+					}
+				}
+			}
+		}
+		L0645_T_Thing = L0648_T_NextThing;
+	}
 }
 }

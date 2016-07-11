@@ -166,6 +166,8 @@ public:
 	void f242_timelineProcessEvent7_squareFakewall(TimelineEvent *event); // @ F0242_TIMELINE_ProcessEvent7_Square_FakeWall
 	void f243_timelineProcessEvent2_doorDestruction(TimelineEvent *event); // @ F0243_TIMELINE_ProcessEvent2_DoorDestruction
 	void f244_timelineProcessEvent10_squareDoor(TimelineEvent *event); // @ F0244_TIMELINE_ProcessEvent10_Square_Door
+	void f251_timelineProcessEvent9_squarePit(TimelineEvent *event); // @ F0251_TIMELINE_ProcessEvent9_Square_Pit
+	void f249_moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY); // @ F0249_TIMELINE_MoveTeleporterOrPitSquareThings
 
 };
 
