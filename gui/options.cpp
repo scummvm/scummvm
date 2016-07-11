@@ -43,6 +43,7 @@
 #include "audio/mixer.h"
 #include "audio/fmopl.h"
 #include "downloaddialog.h"
+#include "widgets/scrollcontainer.h"
 
 #ifdef USE_LIBCURL
 #include "backends/cloud/cloudmanager.h"
@@ -1279,14 +1280,16 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	else
 		tab->addTab(_c("Cloud", "lowres"));
 
+	ScrollContainerWidget *container = new ScrollContainerWidget(tab, "GlobalOptions_Cloud.Container");
+
 #ifdef USE_LIBCURL
 	_selectedStorageIndex = CloudMan.getStorageIndex();
 #else
 	_selectedStorageIndex = 0;
 #endif
 
-	_storagePopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Cloud.StoragePopupDesc", _("Storage:"), _("Active cloud storage"));
-	_storagePopUp = new PopUpWidget(tab, "GlobalOptions_Cloud.StoragePopup");
+	_storagePopUpDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StoragePopupDesc", _("Storage:"), _("Active cloud storage"));
+	_storagePopUp = new PopUpWidget(container, "GlobalOptions_Cloud_Container.StoragePopup");
 #ifdef USE_LIBCURL
 	Common::StringArray list = CloudMan.listStorages();
 	for (uint32 i = 0; i < list.size(); ++i)
@@ -1296,21 +1299,21 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 #endif
 	_storagePopUp->setSelected(_selectedStorageIndex);
 
-	_storageUsernameDesc = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageUsernameDesc", _("Username:"), _("Username used by this storage"));
-	_storageUsername = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageUsernameLabel", "<none>");
+	_storageUsernameDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageUsernameDesc", _("Username:"), _("Username used by this storage"));
+	_storageUsername = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageUsernameLabel", "<none>");
 
-	_storageUsedSpaceDesc = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageUsedSpaceDesc", _("Used space:"), _("Space used by ScummVM's saves on this storage"));
-	_storageUsedSpace = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageUsedSpaceLabel", "0 bytes");
+	_storageUsedSpaceDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageUsedSpaceDesc", _("Used space:"), _("Space used by ScummVM's saves on this storage"));
+	_storageUsedSpace = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageUsedSpaceLabel", "0 bytes");
 
-	_storageLastSyncDesc = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageLastSyncDesc", _("Last sync time:"), _("When this storage did saves sync last time"));
-	_storageLastSync = new StaticTextWidget(tab, "GlobalOptions_Cloud.StorageLastSyncLabel", "<never>");
+	_storageLastSyncDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageLastSyncDesc", _("Last sync time:"), _("When this storage did saves sync last time"));
+	_storageLastSync = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageLastSyncLabel", "<never>");
 
-	_storageConnectButton = new ButtonWidget(tab, "GlobalOptions_Cloud.ConnectButton", _("Connect"), _("Open wizard dialog to connect your cloud storage account"), kConfigureStorageCmd);
-	_storageRefreshButton = new ButtonWidget(tab, "GlobalOptions_Cloud.RefreshButton", _("Refresh"), _("Refresh current cloud storage information (username and usage)"), kRefreshStorageCmd);
-	_storageDownloadButton = new ButtonWidget(tab, "GlobalOptions_Cloud.DownloadButton", _("Downloads"), _("Open downloads manager dialog"), kDownloadStorageCmd);
+	_storageConnectButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.ConnectButton", _("Connect"), _("Open wizard dialog to connect your cloud storage account"), kConfigureStorageCmd);
+	_storageRefreshButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.RefreshButton", _("Refresh"), _("Refresh current cloud storage information (username and usage)"), kRefreshStorageCmd);
+	_storageDownloadButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.DownloadButton", _("Downloads"), _("Open downloads manager dialog"), kDownloadStorageCmd);
 
-	_runServerButton = new ButtonWidget(tab, "GlobalOptions_Cloud.RunServerButton", _("Run server"), _("Run local webserver"), kRunServerCmd);
-	_serverInfoLabel = new StaticTextWidget(tab, "GlobalOptions_Cloud.ServerInfoLabel", _("Not running"));
+	_runServerButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.RunServerButton", _("Run server"), _("Run local webserver"), kRunServerCmd);
+	_serverInfoLabel = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.ServerInfoLabel", _("Not running"));
 
 	setupCloudTab();
 	_redrawCloudTab = false;
@@ -1768,11 +1771,11 @@ void GlobalOptionsDialog::setupCloudTab() {
 	int16 x, y;
 	uint16 w, h;
 	int serverButtonY, serverInfoY;
-	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud.RunServerButton", x, y, w, h))
-		warning("GlobalOptions_Cloud.RunServerButton's position is undefined");
+	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.RunServerButton", x, y, w, h))
+		warning("GlobalOptions_Cloud_Container.RunServerButton's position is undefined");
 	serverButtonY = y;
-	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud.ServerInfoLabel", x, y, w, h))
-		warning("GlobalOptions_Cloud.ServerInfoLabel's position is undefined");
+	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.ServerInfoLabel", x, y, w, h))
+		warning("GlobalOptions_Cloud_Container.ServerInfoLabel's position is undefined");
 	serverInfoY = y;
 
 	bool serverIsRunning = LocalServer.isRunning();
