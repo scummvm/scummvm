@@ -30,9 +30,11 @@
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-gr.h"
 
+using namespace Director;
+
 int yyparse();
 static void count() {
-	Director::g_lingo->_colnumber += strlen(yytext);
+	g_lingo->_colnumber += strlen(yytext);
 }
 
 static void countnl() {
@@ -41,8 +43,8 @@ static void countnl() {
 	while(*p == '\n' || *p == '\r')
 		p++;
 
-	Director::g_lingo->_linenumber++;
-	Director::g_lingo->_colnumber = strlen(p);
+	g_lingo->_linenumber++;
+	g_lingo->_colnumber = strlen(p);
 }
 
 %}
@@ -111,7 +113,7 @@ whitespace [\t ]
 		count();
 		yylval.s = new Common::String(yytext);
 
-		if (Director::g_lingo->_builtins.contains(yytext))
+		if (g_lingo->_builtins.contains(yytext))
 			return BLTIN;
 
 		return ID;
