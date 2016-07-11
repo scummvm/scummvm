@@ -140,7 +140,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 			begin = end + 1;
 		}
 
-		_hadError = false;
+		_hadError = true; // HACK: This is for preventing test execution
 		parse(begin);
 	} else {
 		parse(code);
@@ -148,7 +148,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 		code1(STOP);
 	}
 
-	if (_currentScript->size())
+	if (_currentScript->size() && !_hadError)
 		Common::hexdump((byte *)&_currentScript->front(), _currentScript->size() * sizeof(inst));
 }
 
@@ -157,6 +157,8 @@ void Lingo::executeScript(ScriptType type, uint16 id) {
 		warning("Request to execute non-existant script type %d id %d", type, id);
 		return;
 	}
+
+	debug(2, "Executing script type: %d, id: %d", type, id);
 
 	_currentScript = _scripts[type][id];
 	_pc = 0;
@@ -322,7 +324,7 @@ void Lingo::runTests() {
 
 			stream->read(script, size);
 
-			warning("Executing file %s of size %d", m.getName().c_str(), size);
+			warning("Compiling file %s of size %d, id: %d", m.getName().c_str(), size, counter);
 
 			_hadError = false;
 			addCode(script, kMovieScript, counter);
