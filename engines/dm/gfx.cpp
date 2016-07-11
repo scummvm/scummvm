@@ -1376,33 +1376,30 @@ void DisplayMan::f111_drawDoor(uint16 doorThingIndex, uint16 doorState, int16* d
 void DisplayMan::f109_drawDoorOrnament(int16 doorOrnOrdinal, int16 viewDoorOrnIndex) {
 	static byte g200_palChangesDoorOrn_D3[16] = {0, 120, 10, 30, 40, 30, 0, 60, 30, 90, 100, 110, 0, 20, 0, 130}; // @ G0200_auc_Graphic558_PaletteChanges_DoorOrnament_D3
 	static byte g201PalChangesDoorOrn_D2[16] = {0, 10, 20, 30, 40, 30, 60, 70, 50, 90, 100, 110, 120, 130, 140, 150}; // @ G0201_auc_Graphic558_PaletteChanges_DoorOrnament_D2
-#define AP0120_i_Height doorOrnOrdinal
-#define AP0121_i_ByteWidth viewDoorOrnIndex
-	int16 L0104_i_NativeBitmapIndex;
-	int16 coordSetGreenToad;
-	uint16* coordSetOrangeElk;
-	byte* L0107_puc_Multiple;
-#define AL0107_puc_Bitmap        L0107_puc_Multiple
-	byte* L0108_puc_Bitmap_Native;
 
+	int16 AP0120_i_Height = doorOrnOrdinal;
+	int16 AP0121_i_ByteWidth = viewDoorOrnIndex;
 
-	if (doorOrnOrdinal) {
-		doorOrnOrdinal--;
-		L0104_i_NativeBitmapIndex = _g103_currMapDoorOrnInfo[doorOrnOrdinal][k0_NativeBitmapIndex];
-		coordSetOrangeElk = &g207_doorOrnCoordSets[coordSetGreenToad = _g103_currMapDoorOrnInfo[doorOrnOrdinal][k1_CoordinateSet]][viewDoorOrnIndex][0];
-		if (viewDoorOrnIndex == k2_ViewDoorOrnament_D1LCR) {
+	if (AP0120_i_Height) {
+		AP0120_i_Height--;
+		int16 L0104_i_NativeBitmapIndex = _g103_currMapDoorOrnInfo[AP0120_i_Height][k0_NativeBitmapIndex];
+		int16 coordSetGreenToad = _g103_currMapDoorOrnInfo[AP0120_i_Height][k1_CoordinateSet];
+		uint16 *coordSetOrangeElk = &g207_doorOrnCoordSets[coordSetGreenToad][AP0121_i_ByteWidth][0];
+		byte *AL0107_puc_Bitmap;
+		if (AP0121_i_ByteWidth == k2_ViewDoorOrnament_D1LCR) {
 			AL0107_puc_Bitmap = f489_getNativeBitmapOrGraphic(L0104_i_NativeBitmapIndex);
 			AP0121_i_ByteWidth = k48_byteWidth;
 			AP0120_i_Height = 88;
 		} else {
-			if (!f491_isDerivedBitmapInCache(doorOrnOrdinal = k68_DerivedBitmapFirstDoorOrnament_D3 + (doorOrnOrdinal * 2) + viewDoorOrnIndex)) {
+			AP0120_i_Height = k68_DerivedBitmapFirstDoorOrnament_D3 + (AP0120_i_Height * 2) + AP0121_i_ByteWidth;
+			if (!f491_isDerivedBitmapInCache(AP0120_i_Height)) {
 				uint16 *coordSetRedEagle = &g207_doorOrnCoordSets[coordSetGreenToad][k2_ViewDoorOrnament_D1LCR][0];
-				L0108_puc_Bitmap_Native = f489_getNativeBitmapOrGraphic(L0104_i_NativeBitmapIndex);
-				f129_blitToBitmapShrinkWithPalChange(L0108_puc_Bitmap_Native, f492_getDerivedBitmap(doorOrnOrdinal), coordSetRedEagle[4] << 1, coordSetRedEagle[5], coordSetOrangeElk[1] - coordSetOrangeElk[0] + 1, coordSetOrangeElk[5], (viewDoorOrnIndex == k0_ViewDoorOrnament_D3LCR) ? g200_palChangesDoorOrn_D3 : g201PalChangesDoorOrn_D2);
-				f493_addDerivedBitmap(doorOrnOrdinal);
+				byte *L0108_puc_Bitmap_Native = f489_getNativeBitmapOrGraphic(L0104_i_NativeBitmapIndex);
+				f129_blitToBitmapShrinkWithPalChange(L0108_puc_Bitmap_Native, f492_getDerivedBitmap(AP0120_i_Height), coordSetRedEagle[4] << 1, coordSetRedEagle[5], coordSetOrangeElk[1] - coordSetOrangeElk[0] + 1, coordSetOrangeElk[5], (AP0121_i_ByteWidth == k0_ViewDoorOrnament_D3LCR) ? g200_palChangesDoorOrn_D3 : g201PalChangesDoorOrn_D2);
+				f493_addDerivedBitmap(AP0120_i_Height);
 			}
-			AL0107_puc_Bitmap = f492_getDerivedBitmap(doorOrnOrdinal);
-			if (viewDoorOrnIndex == k0_ViewDoorOrnament_D3LCR) {
+			AL0107_puc_Bitmap = f492_getDerivedBitmap(AP0120_i_Height);
+			if (AP0121_i_ByteWidth == k0_ViewDoorOrnament_D3LCR) {
 				AP0121_i_ByteWidth = k24_byteWidth;
 				AP0120_i_Height = 41;
 			} else {
@@ -1410,22 +1407,20 @@ void DisplayMan::f109_drawDoorOrnament(int16 doorOrnOrdinal, int16 viewDoorOrnIn
 				AP0120_i_Height = 61;
 			}
 		}
-		{
-			Box box(coordSetOrangeElk[0], coordSetOrangeElk[1], coordSetOrangeElk[2], coordSetOrangeElk[3]);
-			f132_blitToBitmap(AL0107_puc_Bitmap, _g74_tmpBitmap, box, 0, 0, coordSetOrangeElk[4], AP0121_i_ByteWidth, k9_ColorGold, coordSetOrangeElk[5], AP0120_i_Height);
-		}
+
+		Box box(coordSetOrangeElk[0], coordSetOrangeElk[1], coordSetOrangeElk[2], coordSetOrangeElk[3]);
+		f132_blitToBitmap(AL0107_puc_Bitmap, _g74_tmpBitmap, box, 0, 0, coordSetOrangeElk[4], AP0121_i_ByteWidth, k9_ColorGold, coordSetOrangeElk[5], AP0120_i_Height);
 	}
 }
 
 void DisplayMan::f112_drawCeilingPit(int16 nativeBitmapIndex, Frame* frame, int16 mapX, int16 mapY, bool flipHorizontal) {
-	int16 L0117_i_Multiple;
-#define AL0117_i_MapIndex L0117_i_Multiple
-#define AL0117_i_Square   L0117_i_Multiple
+	int16 AL0117_i_MapIndex = _vm->_dungeonMan->f154_getLocationAfterLevelChange(_vm->_dungeonMan->_g272_currMapIndex, -1, &mapX, &mapY);
 
+	if (AL0117_i_MapIndex < 0)
+		return;
 
-	if (((AL0117_i_MapIndex = _vm->_dungeonMan->f154_getLocationAfterLevelChange(_vm->_dungeonMan->_g272_currMapIndex, -1, &mapX, &mapY)) >= 0) &&
-		(Square(AL0117_i_Square = _vm->_dungeonMan->_g279_dungeonMapData[AL0117_i_MapIndex][mapX][mapY]).getType() == k2_ElementTypePit) &&
-		getFlag(AL0117_i_Square, k0x0008_PitOpen)) {
+	int16 AL0117_i_Square = _vm->_dungeonMan->_g279_dungeonMapData[AL0117_i_MapIndex][mapX][mapY];
+	if ((Square(AL0117_i_Square).getType() == k2_ElementTypePit) && getFlag(AL0117_i_Square, k0x0008_PitOpen)) {
 		if (flipHorizontal) {
 			_vm->_displayMan->f105_drawFloorPitOrStairsBitmapFlippedHorizontally(nativeBitmapIndex, *frame);
 		} else {
