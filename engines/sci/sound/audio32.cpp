@@ -153,7 +153,6 @@ Audio32::Audio32(ResourceManager *resMan) :
 	}
 
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
-	_mixer->pauseHandle(_handle, true);
 }
 
 Audio32::~Audio32() {
@@ -235,15 +234,15 @@ int Audio32::writeAudioInternal(Audio::RewindableAudioStream *const sourceStream
 int Audio32::readBuffer(Audio::st_sample_t *buffer, const int numSamples) {
 	Common::StackLock lock(_mutex);
 
+	if (_pausedAtTick != 0 || _numActiveChannels == 0) {
+		return 0;
+	}
+
 	// ResourceManager is not thread-safe so we need to
 	// avoid calling into it from the audio thread, but at
 	// the same time we need to be able to clear out any
 	// finished channels on a regular basis
 	_inAudioThread = true;
-
-	// The system mixer should not try to get data when
-	// Audio32 is paused
-	assert(_pausedAtTick == 0 && _numActiveChannels > 0);
 
 	freeUnusedChannels();
 
@@ -647,7 +646,6 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 
 	if (_numActiveChannels == 1) {
 		_startedAtTick = now;
-		_mixer->pauseHandle(_handle, false);
 	}
 
 	return channel.duration;
@@ -678,7 +676,6 @@ bool Audio32::resume(const int16 channelIndex) {
 
 		_startedAtTick += now - _pausedAtTick;
 		_pausedAtTick = 0;
-		_mixer->pauseHandle(_handle, false);
 		return true;
 	} else if (channelIndex == kRobotChannel) {
 		for (int i = 0; i < _numActiveChannels; ++i) {
@@ -715,7 +712,6 @@ bool Audio32::pause(const int16 channelIndex) {
 	if (channelIndex == kAllChannels) {
 		if (_pausedAtTick == 0) {
 			_pausedAtTick = now;
-			_mixer->pauseHandle(_handle, true);
 			didPause = true;
 		}
 	} else if (channelIndex == kRobotChannel) {
@@ -768,9 +764,6 @@ int16 Audio32::stop(const int16 channelIndex) {
 	// NOTE: SSCI stops the DSP interrupt and frees the
 	// global decompression buffer here if there are no
 	// more active channels
-	if (_numActiveChannels == 0) {
-		_mixer->pauseHandle(_handle, true);
-	}
 
 	return oldNumChannels;
 }
@@ -886,17 +879,15 @@ reg_t Audio32::kernelPlay(const bool autoPlay, const int argc, const reg_t *cons
 #pragma mark Effects
 
 int16 Audio32::getVolume(const int16 channelIndex) const {
-	Common::StackLock lock(_mutex);
 	if (channelIndex < 0 || channelIndex >= _numActiveChannels) {
 		return _mixer->getChannelVolume(_handle) * kMaxVolume / Audio::Mixer::kMaxChannelVolume;
 	}
 
+	Common::StackLock lock(_mutex);
 	return getChannel(channelIndex).volume;
 }
 
 void Audio32::setVolume(const int16 channelIndex, int16 volume) {
-	Common::StackLock lock(_mutex);
-
 	volume = MIN((int16)kMaxVolume, volume);
 	if (channelIndex == kAllChannels) {
 		ConfMan.setInt("sfx_volume", volume * Audio::Mixer::kMaxChannelVolume / kMaxVolume);
@@ -904,6 +895,7 @@ void Audio32::setVolume(const int16 channelIndex, int16 volume) {
 		_mixer->setChannelVolume(_handle, volume * Audio::Mixer::kMaxChannelVolume / kMaxVolume);
 		g_engine->syncSoundSettings();
 	} else if (channelIndex != kNoExistingChannel) {
+		Common::StackLock lock(_mutex);
 		getChannel(channelIndex).volume = volume;
 	}
 }
