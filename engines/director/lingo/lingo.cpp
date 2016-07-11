@@ -295,7 +295,9 @@ Common::String *Lingo::toLowercaseMac(Common::String *s) {
 		} else if (*p < 0x80) {
 			*res += tolower(*p);
 		} else {
-			error("Unacceptable symbol in toLowercaseMac: %c", *p);
+			warning("Unacceptable symbol in toLowercaseMac: %c", *p);
+
+			*res += *p;
 		}
 		p++;
 	}
