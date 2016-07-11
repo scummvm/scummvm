@@ -1394,33 +1394,11 @@ void GfxTinyGL::drawRectangle(const PrimitiveObject *primitive) {
 		tglVertex2f(x1, y2 + 1);
 		tglEnd();
 	} else {
-		tglBegin(TGL_QUADS);
-
-		// top line
+		tglBegin(TGL_LINE_LOOP);
 		tglVertex2f(x1, y1);
 		tglVertex2f(x2 + 1, y1);
-		tglVertex2f(x2 + 1, y1 + 1);
-		tglVertex2f(x1, y1 + 1);
-
-
-		// right line
-		tglVertex2f(x2, y1);
-		tglVertex2f(x2 + 1, y1);
-		tglVertex2f(x2 + 1, y2 + 1);
-		tglVertex2f(x2, y2);
-
-		// bottom line
-		tglVertex2f(x1, y2);
-		tglVertex2f(x2 + 1, y2);
 		tglVertex2f(x2 + 1, y2 + 1);
 		tglVertex2f(x1, y2 + 1);
-
-		// left line
-		tglVertex2f(x1, y1);
-		tglVertex2f(x1 + 1, y1);
-		tglVertex2f(x1 + 1, y2 + 1);
-		tglVertex2f(x1, y2);
-
 		tglEnd();
 	}
 
