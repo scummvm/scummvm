@@ -28,13 +28,13 @@
 
 namespace GUI {
 
-ScrollContainerWidget::ScrollContainerWidget(GuiObject *boss, int x, int y, int w, int h)
-	: Widget(boss, x, y, w, h) {
+ScrollContainerWidget::ScrollContainerWidget(GuiObject *boss, int x, int y, int w, int h, uint32 reflowCmd)
+	: Widget(boss, x, y, w, h), CommandSender(nullptr), _reflowCmd(reflowCmd) {
 	init();
 }
 
-ScrollContainerWidget::ScrollContainerWidget(GuiObject *boss, const Common::String &name)
-	: Widget(boss, name) {
+ScrollContainerWidget::ScrollContainerWidget(GuiObject *boss, const Common::String &name, uint32 reflowCmd)
+	: Widget(boss, name), CommandSender(nullptr), _reflowCmd(reflowCmd) {
 	init();
 }
 
@@ -59,7 +59,7 @@ void ScrollContainerWidget::recalc() {
 	int min = spacing, max = 0;
 	Widget *ptr = _firstWidget;
 	while (ptr) {
-		if (ptr != _verticalScroll) {
+		if (ptr != _verticalScroll && ptr->isVisible()) {
 			int y = ptr->getAbsY() - getChildY();
 			min = MIN(min, y - spacing);
 			max = MAX(max, y + ptr->getHeight() + spacing);
@@ -115,6 +115,9 @@ void ScrollContainerWidget::reflowLayout() {
 		ptr->reflowLayout();
 		ptr = ptr->next();
 	}
+
+	//hide and move widgets, if needed
+	sendCommand(_reflowCmd, 0);
 	
 	//recalculate height
 	recalc();
@@ -124,7 +127,7 @@ void ScrollContainerWidget::reflowLayout() {
 	while (ptr) {
 		int y = ptr->getAbsY() - getChildY();
 		int h = ptr->getHeight();
-		bool visible = true;
+		bool visible = ptr->isVisible();
 		if (y + h - _scrolledY < 0) visible = false;
 		if (y - _scrolledY > _limitH) visible = false;
 		ptr->setVisible(visible);

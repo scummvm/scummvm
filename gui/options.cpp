@@ -100,7 +100,8 @@ enum {
 	kConfigureStorageCmd = 'cfst',
 	kRefreshStorageCmd = 'rfst',
 	kDownloadStorageCmd = 'dlst',
-	kRunServerCmd = 'rnsv'
+	kRunServerCmd = 'rnsv',
+	kCloudTabContainerReflowCmd = 'ctcr'
 };
 #endif
 
@@ -1280,7 +1281,8 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	else
 		tab->addTab(_c("Cloud", "lowres"));
 
-	ScrollContainerWidget *container = new ScrollContainerWidget(tab, "GlobalOptions_Cloud.Container");
+	ScrollContainerWidget *container = new ScrollContainerWidget(tab, "GlobalOptions_Cloud.Container", kCloudTabContainerReflowCmd);
+	container->setTarget(this);
 
 #ifdef USE_LIBCURL
 	_selectedStorageIndex = CloudMan.getStorageIndex();
@@ -1600,19 +1602,24 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		}
 		break;
 	}
+#ifdef USE_CLOUD
+	case kCloudTabContainerReflowCmd:
+		setupCloudTab();
+		break;
+#endif
 #ifdef USE_LIBCURL
 	case kPopUpItemSelectedCmd:
 	{
-		setupCloudTab();
-		draw();
+		//update container's scrollbar
+		reflowLayout();
 		break;
 	}
 	case kConfigureStorageCmd:
 	{
 		StorageWizardDialog dialog(_selectedStorageIndex);
 		dialog.runModal();
-		setupCloudTab();
-		draw();
+		//update container's scrollbar
+		reflowLayout();
 		break;
 	}
 	case kRefreshStorageCmd:
