@@ -29,6 +29,8 @@
 #include "dungeonman.h"
 #include "champion.h"
 #include "inventory.h"
+#include "group.h"
+#include "projexpl.h"
 
 
 namespace DM {
@@ -224,12 +226,12 @@ void Timeline::f261_processTimeline() {
 		_vm->_dungeonMan->f173_setCurrentMap(M29_map(L0682_s_Event._mapTime));
 		AL0680_ui_EventType = L0682_s_Event._type;
 		if ((AL0680_ui_EventType > (k29_TMEventTypeGroupReactionDangerOnSquare - 1)) && (AL0680_ui_EventType < (k41_TMEventTypeUpdateBehaviour_3 + 1))) {
-			//F0209_GROUP_ProcessEvents29to41(L0682_s_Event._B._location._mapX, L0682_s_Event._B._location._mapY, AL0680_ui_EventType, L0682_s_Event._C._ticks);
+			_vm->_groupMan->f209_processEvents29to41(L0682_s_Event._B._location._mapX, L0682_s_Event._B._location._mapY, AL0680_ui_EventType, L0682_s_Event._C._ticks);
 		} else {
 			switch (AL0680_ui_EventType) {
 			case k48_TMEventTypeMoveProjectileIgnoreImpacts:
 			case k49_TMEventTypeMoveProjectile:
-				//F0219_PROJECTILE_ProcessEvents48To49_Projectile(L0681_ps_Event);
+				_vm->_projexpl->f219_processEvents48To49_projectile(L0681_ps_Event);
 				break;
 			case k1_TMEventTypeDoorAnimation:
 				//F0241_TIMELINE_ProcessEvent1_DoorAnimation(L0681_ps_Event);

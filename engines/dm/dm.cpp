@@ -365,7 +365,7 @@ T0002002:
 		_g313_gameTime++;
 
 		if (!(_g313_gameTime & 511))
-			//_inventoryMan->f338_decreaseTorchesLightPower();
+			_inventoryMan->f338_decreaseTorchesLightPower();
 			if (_g310_disabledMovementTicks) {
 				_g310_disabledMovementTicks--;
 			}

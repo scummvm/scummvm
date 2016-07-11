@@ -30,6 +30,8 @@
 #include "dm.h"
 
 
+namespace DM {
+
 #define k0_outcomeKilledNoCreaturesInGroup 0 // @ C0_OUTCOME_KILLED_NO_CREATURES_IN_GROUP   
 #define k1_outcomeKilledSomeCreaturesInGroup 1 // @ C1_OUTCOME_KILLED_SOME_CREATURES_IN_GROUP 
 #define k2_outcomeKilledAllCreaturesInGroup 2 // @ C2_OUTCOME_KILLED_ALL_CREATURES_IN_GROUP  
@@ -70,10 +72,12 @@
 #define k33_soundMOVE_SKELETON 33 // @ C33_SOUND_MOVE_SKELETON
 
 
-namespace DM {
-	class Projectile;
+#define M31_setMap(map_time, map) ((map_time) = (((map_time) & 0x00FFFFFF) | (((int32)(map)) << 24)))
 
-	class ProjExpl {
+class TimelineEvent;
+class Projectile;
+
+class ProjExpl {
 	DMEngine *_vm;
 public:
 	int16 _g364_creatureDamageOutcome; // @ G0364_i_CreatureDamageOutcome
@@ -94,6 +98,8 @@ public:
 	int16 f218_projectileGetImpactCount(int16 impactType, int16 mapX, int16 mapY, int16 cell); // @ F0218_PROJECTILE_GetImpactCount
 	void f214_projectileDeleteEvent(Thing thing); // @ F0214_PROJECTILE_DeleteEvent
 	void f215_projectileDelete(Thing projectileThing, Thing *groupSlot, int16 mapX, int16 mapY); // @ F0215_PROJECTILE_Delete
+	void f219_processEvents48To49_projectile(TimelineEvent *event); // @ F0219_PROJECTILE_ProcessEvents48To49_Projectile
+
 };
 
 }

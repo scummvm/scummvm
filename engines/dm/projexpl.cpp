@@ -414,4 +414,90 @@ void ProjExpl::f215_projectileDelete(Thing projectileThing, Thing* groupSlot, in
 	}
 	L0480_ps_Projectile->_nextThing = Thing::_none;
 }
+
+void ProjExpl::f219_processEvents48To49_projectile(TimelineEvent* event) {
+	TimelineEvent* L0519_ps_Event;
+	Projectile* L0520_ps_Projectile;
+	Thing L0515_T_ProjectileThingNewCell;
+	uint16 L0516_ui_Multiple;
+#define AL0516_ui_StepEnergy L0516_ui_Multiple
+#define AL0516_ui_Square     L0516_ui_Multiple
+	Thing L0521_T_ProjectileThing;
+	uint16 L0517_ui_ProjectileDirection;
+	bool L0522_B_ProjectileMovesToOtherSquare;
+	int16 L0523_i_DestinationMapX;
+	int16 L0524_i_DestinationMapY;
+	uint16 L0518_ui_Cell;
+	int16 L0525_i_SourceMapX;
+	int16 L0526_i_SourceMapY;
+	TimelineEvent L0527_s_Event;
+
+
+	L0527_s_Event = *event;
+	L0519_ps_Event = &L0527_s_Event;
+	L0520_ps_Projectile = (Projectile*)_vm->_dungeonMan->f156_getThingData(L0521_T_ProjectileThing = L0515_T_ProjectileThingNewCell = Thing(L0519_ps_Event->_B._slot));
+	L0523_i_DestinationMapX = L0519_ps_Event->_C._projectile.getMapX();
+	L0524_i_DestinationMapY = L0519_ps_Event->_C._projectile.getMapY();
+	if (L0519_ps_Event->_type == k48_TMEventTypeMoveProjectileIgnoreImpacts) {
+		L0519_ps_Event->_type = k49_TMEventTypeMoveProjectile;
+	} else {
+		L0518_ui_Cell = (L0515_T_ProjectileThingNewCell).getCell();
+		if ((_vm->_dungeonMan->_g272_currMapIndex == _vm->_dungeonMan->_g309_partyMapIndex) && (L0523_i_DestinationMapX == _vm->_dungeonMan->_g306_partyMapX) && (L0524_i_DestinationMapY == _vm->_dungeonMan->_g307_partyMapY) && f217_projectileHasImpactOccurred(kM2_ChampionElemType, L0523_i_DestinationMapX, L0524_i_DestinationMapY, L0518_ui_Cell, L0515_T_ProjectileThingNewCell)) {
+			return;
+		}
+		if ((_vm->_groupMan->f175_groupGetThing(L0523_i_DestinationMapX, L0524_i_DestinationMapY) != Thing::_endOfList) && f217_projectileHasImpactOccurred(kM1_CreatureElemType, L0523_i_DestinationMapX, L0524_i_DestinationMapY, L0518_ui_Cell, L0521_T_ProjectileThing)) {
+			return;
+		}
+		if (L0520_ps_Projectile->_kineticEnergy <= (AL0516_ui_StepEnergy = L0519_ps_Event->_C._projectile.getStepEnergy())) {
+			_vm->_dungeonMan->f164_unlinkThingFromList(L0515_T_ProjectileThingNewCell = L0521_T_ProjectileThing, Thing(0), L0523_i_DestinationMapX, L0524_i_DestinationMapY);
+			f215_projectileDelete(L0515_T_ProjectileThingNewCell, NULL, L0523_i_DestinationMapX, L0524_i_DestinationMapY);
+			return;
+		}
+		L0520_ps_Projectile->_kineticEnergy -= AL0516_ui_StepEnergy;
+		if (L0520_ps_Projectile->_attack < AL0516_ui_StepEnergy) {
+			L0520_ps_Projectile->_attack = 0;
+		} else {
+			L0520_ps_Projectile->_attack -= AL0516_ui_StepEnergy;
+		}
+	}
+	if (L0522_B_ProjectileMovesToOtherSquare = ((L0517_ui_ProjectileDirection = L0519_ps_Event->_C._projectile.getDir()) == (L0518_ui_Cell = (L0515_T_ProjectileThingNewCell = Thing(L0519_ps_Event->_B._slot)).getCell())) || (returnNextVal(L0517_ui_ProjectileDirection) == L0518_ui_Cell)) {
+		L0525_i_SourceMapX = L0523_i_DestinationMapX;
+		L0526_i_SourceMapY = L0524_i_DestinationMapY;
+		L0523_i_DestinationMapX += _vm->_dirIntoStepCountEast[L0517_ui_ProjectileDirection], L0524_i_DestinationMapY += _vm->_dirIntoStepCountNorth[L0517_ui_ProjectileDirection];
+		if ((Square(AL0516_ui_Square = _vm->_dungeonMan->f151_getSquare(L0523_i_DestinationMapX, L0524_i_DestinationMapY).toByte()).getType() == k0_ElementTypeWall) ||
+			((Square(AL0516_ui_Square).getType() == k6_ElementTypeFakeWall) && !getFlag(AL0516_ui_Square, (k0x0001_FakeWallImaginary | k0x0004_FakeWallOpen))) ||
+			((Square(AL0516_ui_Square).getType() == k3_ElementTypeStairs) && (Square(_vm->_dungeonMan->_g271_currMapData[L0525_i_SourceMapX][L0526_i_SourceMapY]).getType() == k3_ElementTypeStairs))) {
+			if (f217_projectileHasImpactOccurred(Square(AL0516_ui_Square).getType(), L0525_i_SourceMapX, L0526_i_SourceMapY, L0518_ui_Cell, L0515_T_ProjectileThingNewCell)) {
+				return;
+			}
+		}
+	}
+	if ((L0517_ui_ProjectileDirection & 0x0001) == (L0518_ui_Cell & 0x0001)) {
+		L0518_ui_Cell--;
+	} else {
+		L0518_ui_Cell++;
+	}
+	L0515_T_ProjectileThingNewCell = M15_thingWithNewCell(L0515_T_ProjectileThingNewCell, L0518_ui_Cell &= 0x0003);
+	if (L0522_B_ProjectileMovesToOtherSquare) {
+		_vm->_movsens->f267_getMoveResult(L0515_T_ProjectileThingNewCell, L0525_i_SourceMapX, L0526_i_SourceMapY, L0523_i_DestinationMapX, L0524_i_DestinationMapY);
+		L0519_ps_Event->_C._projectile.setMapX(_vm->_movsens->_g397_moveResultMapX);
+		L0519_ps_Event->_C._projectile.setMapY(_vm->_movsens->_g398_moveResultMapY);
+		L0519_ps_Event->_C._projectile.setDir((direction)_vm->_movsens->_g400_moveResultDir);
+		L0515_T_ProjectileThingNewCell = M15_thingWithNewCell(L0515_T_ProjectileThingNewCell, _vm->_movsens->_g401_moveResultCell);
+		M31_setMap(L0519_ps_Event->_mapTime, _vm->_movsens->_g399_moveResultMapIndex);
+	} else {
+		if ((Square(_vm->_dungeonMan->f151_getSquare(L0523_i_DestinationMapX, L0524_i_DestinationMapY)).getType() == k4_DoorElemType) && f217_projectileHasImpactOccurred(k4_DoorElemType, L0523_i_DestinationMapX, L0524_i_DestinationMapY, L0518_ui_Cell, L0521_T_ProjectileThing)) {
+			return;
+		}
+		_vm->_dungeonMan->f164_unlinkThingFromList(L0515_T_ProjectileThingNewCell, Thing(0), L0523_i_DestinationMapX, L0524_i_DestinationMapY);
+		_vm->_dungeonMan->f163_linkThingToList(L0515_T_ProjectileThingNewCell, Thing(0), L0523_i_DestinationMapX, L0524_i_DestinationMapY);
+	}
+	L0519_ps_Event->_mapTime += (_vm->_dungeonMan->_g272_currMapIndex == _vm->_dungeonMan->_g309_partyMapIndex) ? 1 : 3;
+	//Strangerke: CHECKME: Maybe we should keep that piece of code too as it sounds like it's fixing a weird behavior of projectiles on different maps
+#ifdef COMPILE42_CSB20EN_CSB21EN /* CHANGE7_20_IMPROVEMENT Projectiles now move at the same speed on all maps instead of moving slower on maps other than the party map */
+	L0519_ps_Event->Map_Time++;
+#endif
+	L0519_ps_Event->_B._slot = L0515_T_ProjectileThingNewCell.toUint16();
+	L0520_ps_Projectile->_eventIndex = _vm->_timeline->f238_addEventGetEventIndex(L0519_ps_Event);
+}
 }
