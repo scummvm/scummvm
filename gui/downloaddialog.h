@@ -54,7 +54,7 @@ class DownloadDialog : public Dialog {
 	ButtonWidget *_closeButton;
 
 	Common::String _localDirectory;
-	bool _close, _redraw;
+	bool _close;
 
 	void refreshWidgets();
 	bool selectDirectories();

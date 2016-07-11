@@ -40,7 +40,7 @@ enum {
 };
 
 DownloadDialog::DownloadDialog(uint32 storageId):
-	Dialog("GlobalOptions_Cloud_DownloadDialog"), _close(false), _redraw(false) {
+	Dialog("GlobalOptions_Cloud_DownloadDialog"), _close(false) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	_browser = new BrowserDialog(_("Select directory where to download game data"), true);
@@ -72,6 +72,7 @@ DownloadDialog::~DownloadDialog() {
 
 void DownloadDialog::open() {
 	Dialog::open();
+	CloudMan.setDownloadTarget(this);
 	if (!CloudMan.isDownloading())
 		if (!selectDirectories())
 			close();
@@ -92,10 +93,11 @@ void DownloadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		close();
 		break;
 	}
-	case kDownloadProgressCmd:		
-		_percentLabel->setLabel(Common::String::format("%u %%", data));
-		_progressBar->setValue(data);
-		_redraw = true;
+	case kDownloadProgressCmd:
+		if (!_close) {
+			refreshWidgets();
+			draw();
+		}
 		break;
 	case kDownloadEndedCmd:
 		_close = true;
@@ -167,12 +169,6 @@ void DownloadDialog::handleTickle() {
 		close();
 		_close = false;
 		return;
-	}
-
-	if (_redraw) {
-		refreshWidgets();
-		draw();
-		_redraw = false;
 	}
 
 	Dialog::handleTickle();
