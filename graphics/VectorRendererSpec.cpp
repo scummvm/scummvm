@@ -917,7 +917,7 @@ blitAlphaBitmapClip(const Graphics::Surface *source, const Common::Rect &r, cons
 		y = clipping.top;
 	}
 	if (usedW > clipping.width()) usedW = clipping.width();
-	if (usedH > clipping.width()) usedH = clipping.height();
+	if (usedH > clipping.height()) usedH = clipping.height();
 
 	PixelType *dst_ptr = (PixelType *)_activeSurface->getBasePtr(x, y);
 	const PixelType *src_ptr = (const PixelType *)source->getBasePtr(offsetX, offsetY);
