@@ -1485,7 +1485,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 // We also make the scripts use the regular KQTalker instead of KQNarrator.
 // And we also make the subtitle box use color 255, which is fixed white.
 //
-// Applies to at least: PC CD 1.51 English, 1.51 German, 2.00 English
+// Applies to at least: PC CD 1.4 English, 1.51 English, 1.51 German, 2.00 English
 // Patched method: KQNarrator::init (script 31)
 static const uint16 kq7SignatureSubtitleFix1[] = {
 	SIG_MAGICDWORD,
@@ -1667,7 +1667,7 @@ static const uint16 longbowPatchShowHandCode[] = {
 // that's why I rather patched the code, that uses the locals for a lookup.
 // Which means it doesn't matter anymore when those locals are overwritten.
 //
-// Applies to at least: English PC floppy, German PC floppy (not tested), English Amiga floppy
+// Applies to at least: English PC floppy, German PC floppy, English Amiga floppy
 // Responsible method: export 2 of script 225
 // Fixes bug: #6751
 static const uint16 longbowSignatureBerryBushFix[] = {
