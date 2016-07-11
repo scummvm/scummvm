@@ -424,7 +424,7 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 		}
 		break;
 	case TGL_QUADS:
-		for(int i = 0; i < cnt / 4; i++) {
+		for(int i = 0; i < cnt; i += 4) {
 			c->vertex[i + 2].edge_flag = 0;
 			gl_draw_triangle(c, &c->vertex[i], &c->vertex[i + 1], &c->vertex[i + 2]);
 			c->vertex[i + 2].edge_flag = 1;
