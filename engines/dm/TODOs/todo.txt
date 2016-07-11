@@ -6,6 +6,7 @@ Bugs:
 
 	Logic:
 		When object are put on the right side of the current square, they disappear
+		Drawing door ornaments segfaults when going back to the start 
 
 
 
@@ -19,4 +20,6 @@ Todo:
 	Double check strcat, strstr usages, I might have messed them up in many places
 	I forgot to add a bunch of warning for show/hide mouse pointer and other mouse functions
 
+Finish stuff:
+	f261_processTimeline
 

@@ -81,8 +81,8 @@ enum ThingType {
 
 
 class Thing {
-	uint16 _data;
 public:
+	uint16 _data;
 	static const Thing _none; // @ C0xFFFF_THING_NONE
 	static const Thing _endOfList; // @ C0xFFFE_THING_ENDOFLIST
 	static const Thing _firstExplosion; // @ C0xFF80_THING_FIRST_EXPLOSION            

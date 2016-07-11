@@ -237,7 +237,7 @@ void Timeline::f261_processTimeline() {
 				f241_timelineProcessEvent1_doorAnimation(L0681_ps_Event);
 				break;
 			case k25_TMEventTypeExplosion:
-				//F0220_EXPLOSION_ProcessEvent25_Explosion(L0681_ps_Event);
+				_vm->_projexpl->f220_explosionProcessEvent25_explosion(L0681_ps_Event);
 				break;
 			case k7_TMEventTypeFakeWall:
 				//F0242_TIMELINE_ProcessEvent7_Square_FakeWall(L0681_ps_Event);

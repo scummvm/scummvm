@@ -99,7 +99,7 @@ public:
 	void f214_projectileDeleteEvent(Thing thing); // @ F0214_PROJECTILE_DeleteEvent
 	void f215_projectileDelete(Thing projectileThing, Thing *groupSlot, int16 mapX, int16 mapY); // @ F0215_PROJECTILE_Delete
 	void f219_processEvents48To49_projectile(TimelineEvent *event); // @ F0219_PROJECTILE_ProcessEvents48To49_Projectile
-
+	void f220_explosionProcessEvent25_explosion(TimelineEvent *event); // @ F0220_EXPLOSION_ProcessEvent25_Explosion
 };
 
 }
