@@ -722,7 +722,7 @@ reg_t SoundCommandParser::kDoSoundSetVolume(int argc, reg_t *argv, reg_t acc) {
 	// SSCI unconditionally sets volume if it is digital audio
 	if (_soundVersion >= SCI_VERSION_2_1_EARLY && musicSlot->isSample) {
 		_music->soundSetVolume(musicSlot, value);
-	} else
+	}
 #endif
 	if (musicSlot->volume != value) {
 		musicSlot->volume = value;
