@@ -124,10 +124,10 @@ Audio32::Audio32(ResourceManager *resMan) :
 
 	_attenuatedMixing(true),
 
-	 _monitoredChannelIndex(-1),
-	 _monitoredBuffer(nullptr),
-	 _monitoredBufferSize(0),
-	 _numMonitoredSamples(0) {
+	_monitoredChannelIndex(-1),
+	_monitoredBuffer(nullptr),
+	_monitoredBufferSize(0),
+	_numMonitoredSamples(0) {
 
 	if (getSciVersion() < SCI_VERSION_3) {
 		_channels.resize(5);
@@ -146,15 +146,10 @@ Audio32::Audio32(ResourceManager *resMan) :
 		default:
 			break;
 		}
-	} else if (getSciVersion() == SCI_VERSION_2_1_EARLY) {
-		switch (g_sci->getGameId()) {
-		// 1.51 uses the non-standard attenuation, but 2.00b
+	} else if (getSciVersion() == SCI_VERSION_2_1_EARLY && g_sci->getGameId() == GID_KQ7) {
+		// KQ7 1.51 uses the non-standard attenuation, but 2.00b
 		// does not, which is strange.
-		case GID_KQ7:
-			_useModifiedAttenuation = true;
-		default:
-			break;
-		}
+		_useModifiedAttenuation = true;
 	}
 
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
