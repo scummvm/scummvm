@@ -234,7 +234,7 @@ void Timeline::f261_processTimeline() {
 				_vm->_projexpl->f219_processEvents48To49_projectile(L0681_ps_Event);
 				break;
 			case k1_TMEventTypeDoorAnimation:
-				//F0241_TIMELINE_ProcessEvent1_DoorAnimation(L0681_ps_Event);
+				f241_timelineProcessEvent1_doorAnimation(L0681_ps_Event);
 				break;
 			case k25_TMEventTypeExplosion:
 				//F0220_EXPLOSION_ProcessEvent25_Explosion(L0681_ps_Event);
@@ -330,7 +330,8 @@ T0261053:
 }
 
 bool Timeline::f240_isFirstEventExpiered() {
-	return (_vm->_timeline->_g372_eventCount && (M30_time(_vm->_timeline->_g370_events[_vm->_timeline->_g371_timeline[0]]._mapTime) <= _vm->_g313_gameTime));
+	warning(false, "possibly dangerous cast to int32");
+	return (_vm->_timeline->_g372_eventCount && ((int32)M30_time(_vm->_timeline->_g370_events[_vm->_timeline->_g371_timeline[0]]._mapTime) <= _vm->_g313_gameTime));
 }
 
 void Timeline::f239_timelineExtractFirstEvent(TimelineEvent* event) {
@@ -340,4 +341,74 @@ void Timeline::f239_timelineExtractFirstEvent(TimelineEvent* event) {
 	f237_deleteEvent(L0592_ui_EventIndex);
 }
 
+void Timeline::f241_timelineProcessEvent1_doorAnimation(TimelineEvent* event) {
+	uint16 L0593_ui_MapX;
+	uint16 L0594_ui_MapY;
+	int16 L0595_i_Effect;
+	int16 L0596_i_DoorState;
+	Square* L0597_puc_Square;
+	Door* L0598_ps_Door;
+	Thing L0599_T_GroupThing;
+	uint16 L0600_ui_CreatureAttributes;
+	uint16 L0602_ui_Multiple;
+#define AL0602_ui_VerticalDoor L0602_ui_Multiple
+#define AL0602_ui_Height       L0602_ui_Multiple
+
+	L0597_puc_Square = (Square*)&_vm->_dungeonMan->_g271_currMapData[L0593_ui_MapX = event->_B._location._mapX][L0594_ui_MapY = event->_B._location._mapY];
+	if ((L0596_i_DoorState = Square(*L0597_puc_Square).getDoorState()) == k5_doorState_DESTROYED) {
+		return;
+	}
+	event->_mapTime++;
+	L0595_i_Effect = event->_C.A._effect;
+	if (L0595_i_Effect == k1_SensorEffClear) {
+		L0598_ps_Door = (Door*)_vm->_dungeonMan->f157_getSquareFirstThingData(L0593_ui_MapX, L0594_ui_MapY);
+		AL0602_ui_VerticalDoor = L0598_ps_Door->opensVertically();
+		if ((_vm->_dungeonMan->_g272_currMapIndex == _vm->_dungeonMan->_g309_partyMapIndex) && (L0593_ui_MapX == _vm->_dungeonMan->_g306_partyMapX) && (L0594_ui_MapY == _vm->_dungeonMan->_g307_partyMapY) && (L0596_i_DoorState != k0_doorState_OPEN)) {
+			if (_vm->_championMan->_g305_partyChampionCount > 0) {
+				L0597_puc_Square->setDoorState(k0_doorState_OPEN);
+
+				// Strangerke
+				// Original bug fixed - A closing horizontal door wounds champions to the head instead of to the hands. Missing parenthesis in the condition cause all doors to wound the head in addition to the torso
+				// See BUG0_78
+				if (_vm->_championMan->f324_damageAll_getDamagedChampionCount(5, k0x0008_ChampionWoundTorso | (AL0602_ui_VerticalDoor ? k0x0004_ChampionWoundHead : k0x0001_ChampionWoundReadHand | k0x0002_ChampionWoundActionHand), k2_attackType_SELF)) {
+					warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+				}
+			}
+			event->_mapTime++;
+			_vm->_timeline->f238_addEventGetEventIndex(event);
+			return;
+		}
+		if (((L0599_T_GroupThing = _vm->_groupMan->f175_groupGetThing(L0593_ui_MapX, L0594_ui_MapY)) != Thing::_endOfList) && !getFlag(L0600_ui_CreatureAttributes = _vm->_dungeonMan->f144_getCreatureAttributes(L0599_T_GroupThing), k0x0040_MaskCreatureInfo_nonMaterial)) {
+			if (L0596_i_DoorState >= (AL0602_ui_Height ? CreatureInfo::M51_height(L0600_ui_CreatureAttributes) : 1)) { /* Creature height or 1 */
+				if (_vm->_groupMan->f191_getDamageAllCreaturesOutcome((Group*)_vm->_dungeonMan->f156_getThingData(L0599_T_GroupThing), L0593_ui_MapX, L0594_ui_MapY, 5, true) != k2_outcomeKilledAllCreaturesInGroup) {
+					_vm->_groupMan->f209_processEvents29to41(L0593_ui_MapX, L0594_ui_MapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
+				}
+				L0596_i_DoorState = (L0596_i_DoorState == k0_doorState_OPEN) ? k0_doorState_OPEN : (L0596_i_DoorState - 1);
+				L0597_puc_Square->setDoorState(L0596_i_DoorState);
+				warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+				event->_mapTime++;
+				_vm->_timeline->f238_addEventGetEventIndex(event);
+				return;
+			}
+		}
+	}
+	if (((L0595_i_Effect == k0_SensorEffSet) && (L0596_i_DoorState == k0_doorState_OPEN)) || ((L0595_i_Effect == k1_SensorEffClear) && (L0596_i_DoorState == k4_doorState_CLOSED))) {
+		goto T0241020_Return;
+	}
+	L0596_i_DoorState += (L0595_i_Effect == k0_SensorEffSet) ? -1 : 1;
+	L0597_puc_Square->setDoorState(L0596_i_DoorState);
+	warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+	if (L0595_i_Effect == k0_SensorEffSet) {
+		if (L0596_i_DoorState == k0_doorState_OPEN) {
+			return;
+		}
+	} else {
+		if (L0596_i_DoorState == k4_doorState_CLOSED) {
+			return;
+		}
+	}
+	_vm->_timeline->f238_addEventGetEventIndex(event);
+T0241020_Return:
+	;
+}
 }

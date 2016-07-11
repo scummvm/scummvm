@@ -204,8 +204,7 @@ public:
 	uint16 M59_getWariness() { return (_properties >> 12) & 0xF; }
 	uint16 M60_getFireResistance() { return (_resistances >> 4) & 0xF; }
 	uint16 M61_poisonResistance() { return (_resistances >> 8) & 0xF; }
-	uint16 M51_height() { return (_attributes >> 7) & 0x3; }
-
+	static uint16 M51_height(uint16 attrib) { return (attrib >> 7) & 0x3; }
 	uint16 M54_getSightRange() { return (_ranges) & 0xF; }
 	uint16 M55_getSmellRange() { return  (_ranges >> 8) & 0xF; }
 	uint16 M56_getAttackRange() { return (_ranges >> 12) & 0xF; }

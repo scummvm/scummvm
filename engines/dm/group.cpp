@@ -1109,7 +1109,7 @@ bool GroupMan::f202_isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, i
 	}
 	if (L0431_i_SquareType == k4_DoorElemType) {
 		L0432_ps_Teleporter = (Teleporter *)_vm->_dungeonMan->f157_getSquareFirstThingData(L0428_i_MapX, L0429_i_MapY);
-		if (((Square(L0430_ui_Square).getDoorState()) > (((Door *)L0432_ps_Teleporter)->opensVertically() ? creatureInfo->M51_height() : 1)) && ((Square(L0430_ui_Square).getDoorState()) != k5_doorState_DESTROYED) && !getFlag(creatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial)) {
+		if (((Square(L0430_ui_Square).getDoorState()) > (((Door *)L0432_ps_Teleporter)->opensVertically() ? CreatureInfo::M51_height(creatureInfo->_attributes) : 1)) && ((Square(L0430_ui_Square).getDoorState()) != k5_doorState_DESTROYED) && !getFlag(creatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial)) {
 			_g389_groupMovementBlockedByDoor = true;
 			return false;
 		}
