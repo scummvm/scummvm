@@ -186,7 +186,7 @@ ifstmt:	if cond tTHEN nl stmtlist end tEND tIF		{
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
 		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
 		g_lingo->processIf(0, 0); }
-	| if cond tTHEN nl stmtlist end tNLELSE stmtlist end nl tEND tIF {
+	| if cond tTHEN nl stmtlist end tNLELSE stmtlist end tEND tIF {
 		inst then = 0, else1 = 0, end = 0;
 		WRITE_UINT32(&then, $5);
 		WRITE_UINT32(&else1, $8);
