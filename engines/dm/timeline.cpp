@@ -240,7 +240,7 @@ void Timeline::f261_processTimeline() {
 				_vm->_projexpl->f220_explosionProcessEvent25_explosion(L0681_ps_Event);
 				break;
 			case k7_TMEventTypeFakeWall:
-				//F0242_TIMELINE_ProcessEvent7_Square_FakeWall(L0681_ps_Event);
+				f242_timelineProcessEvent7_squareFakewall(L0681_ps_Event);
 				break;
 			case k2_TMEventTypeDoorDestruction:
 				//F0243_TIMELINE_ProcessEvent2_DoorDestruction(L0681_ps_Event);
@@ -410,5 +410,35 @@ void Timeline::f241_timelineProcessEvent1_doorAnimation(TimelineEvent* event) {
 	_vm->_timeline->f238_addEventGetEventIndex(event);
 T0241020_Return:
 	;
+}
+
+void Timeline::f242_timelineProcessEvent7_squareFakewall(TimelineEvent* event) {
+	uint16 L0603_ui_MapX;
+	uint16 L0604_ui_MapY;
+	int16 L0605_i_Effect;
+	Thing L0606_T_Thing;
+	Square* L0607_puc_Square;
+
+
+	L0607_puc_Square = (Square*)&_vm->_dungeonMan->_g271_currMapData[L0603_ui_MapX = event->_B._location._mapX][L0604_ui_MapY = event->_B._location._mapY];
+	L0605_i_Effect = event->_C.A._effect;
+	if (L0605_i_Effect == k2_SensorEffToggle) {
+		L0605_i_Effect = L0607_puc_Square->get(k0x0004_FakeWallOpen) ? k1_SensorEffClear : k0_SensorEffSet;
+	}
+	if (L0605_i_Effect == k1_SensorEffClear) {
+		if ((_vm->_dungeonMan->_g272_currMapIndex == _vm->_dungeonMan->_g309_partyMapIndex) && (L0603_ui_MapX == _vm->_dungeonMan->_g306_partyMapX) && (L0604_ui_MapY == _vm->_dungeonMan->_g307_partyMapY)) {
+			event->_mapTime++;
+			_vm->_timeline->f238_addEventGetEventIndex(event);
+		} else {
+			if (((L0606_T_Thing = _vm->_groupMan->f175_groupGetThing(L0603_ui_MapX, L0604_ui_MapY)) != Thing::_endOfList) && !getFlag(_vm->_dungeonMan->f144_getCreatureAttributes(L0606_T_Thing), k0x0040_MaskCreatureInfo_nonMaterial)) {
+				event->_mapTime++;
+				_vm->_timeline->f238_addEventGetEventIndex(event);
+			} else {
+				L0607_puc_Square->set(k0x0004_FakeWallOpen);
+			}
+		}
+	} else {
+		L0607_puc_Square->set(k0x0004_FakeWallOpen);
+	}
 }
 }

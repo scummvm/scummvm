@@ -163,6 +163,7 @@ public:
 	bool f240_isFirstEventExpiered(); // @ F0240_TIMELINE_IsFirstEventExpired_CPSE
 	void f239_timelineExtractFirstEvent(TimelineEvent *event); // @ F0239_TIMELINE_ExtractFirstEvent
 	void f241_timelineProcessEvent1_doorAnimation(TimelineEvent *event); // @ F0241_TIMELINE_ProcessEvent1_DoorAnimation
+	void f242_timelineProcessEvent7_squareFakewall(TimelineEvent *event); // @ F0242_TIMELINE_ProcessEvent7_Square_FakeWall
 
 };
 
