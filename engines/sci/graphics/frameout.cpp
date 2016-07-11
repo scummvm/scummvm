@@ -115,6 +115,7 @@ GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAd
 	}
 
 	switch (g_sci->getGameId()) {
+	case GID_HOYLE5:
 	case GID_GK2:
 	case GID_LIGHTHOUSE:
 	case GID_LSL7:

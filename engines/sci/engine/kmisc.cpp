@@ -409,6 +409,9 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 	} else if (setting == "startroom") {
 		// Debug setting in LSL7, specifies the room to start from.
 		s->_segMan->strcpy(data, "");
+	} else if (setting == "game") {
+		// Hoyle 5 Demo startup.
+		s->_segMan->strcpy(data, "");
 	} else {
 		error("GetConfig: Unknown configuration setting %s", setting.c_str());
 	}

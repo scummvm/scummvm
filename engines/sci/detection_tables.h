@@ -1132,6 +1132,20 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+#ifdef ENABLE_SCI32
+#define GUIO_HOYLE5_DEMO GUIO3(GUIO_NOSPEECH, \
+                               GUIO_NOASPECT, \
+                               GAMEOPTION_ORIGINAL_SAVELOAD)
+
+	// Hoyle 5 (Hoyle Classic Games) - Windows demo
+	{"hoyle5", "Demo", {
+		{"ressci.000", 0, "98a39ae535dd01714ac313f8ba925045", 7260363},
+		{"resmap.000", 0, "10267a1542a73d527e50f0340549088b", 4900},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_HOYLE5_DEMO },
+
+#endif // ENABLE_SCI32
+
 	// ImagiNation Network (INN) Demo
 	// SCI interpreter version 1.001.097
 	{"inndemo", "", {

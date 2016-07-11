@@ -107,6 +107,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"pq4",             "Police Quest IV: Open Season"}, // floppy is SCI2, CD SCI2.1
 	{"qfg4",            "Quest for Glory IV: Shadows of Darkness"},	// floppy is SCI2, CD SCI2.1
 	// === SCI2.1 games ========================================================
+	{"hoyle5",          "Hoyle Classic Games"},
 	{"chest",           "Inside the Chest"},	// aka Behind the Developer's Shield
 	{"gk2",             "The Beast Within: A Gabriel Knight Mystery"},
 	{"kq7",             "King's Quest VII: The Princeless Bride"},
@@ -157,6 +158,7 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "hoyle2",          GID_HOYLE2 },
 	{ "hoyle3",          GID_HOYLE3 },
 	{ "hoyle4",          GID_HOYLE4 },
+	{ "hoyle5",          GID_HOYLE5 },
 	{ "iceman",          GID_ICEMAN },
 	{ "inndemo",         GID_INNDEMO },
 	{ "islandbrain",     GID_ISLANDBRAIN },
