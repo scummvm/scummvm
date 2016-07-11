@@ -159,6 +159,9 @@ public:
 	bool f234_isEventABeforeB(TimelineEvent *eventA, TimelineEvent *eventB); // @ F0234_TIMELINE_IsEventABeforeEventB
 	uint16 f235_getIndex(uint16 eventIndex); // @ F0235_TIMELINE_GetIndex
 	uint16 f238_addEventGetEventIndex(TimelineEvent *event); // @ F0238_TIMELINE_AddEvent_GetEventIndex_CPSE
+	void f261_processTimeline(); // @ F0261_TIMELINE_Process_CPSEF
+	bool f240_isFirstEventExpiered(); // @ F0240_TIMELINE_IsFirstEventExpired_CPSE
+	void f239_timelineExtractFirstEvent(TimelineEvent *event); // @ F0239_TIMELINE_ExtractFirstEvent
 
 };
 

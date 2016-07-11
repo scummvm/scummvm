@@ -27,6 +27,8 @@
 
 #include "timeline.h"
 #include "dungeonman.h"
+#include "champion.h"
+#include "inventory.h"
 
 
 namespace DM {
@@ -206,6 +208,134 @@ uint16 Timeline::f238_addEventGetEventIndex(TimelineEvent* event) {
 	_vm->_timeline->_g371_timeline[_vm->_timeline->_g372_eventCount] = L0590_ui_NewEventIndex;
 	f236_fixChronology(_vm->_timeline->_g372_eventCount++);
 	return L0590_ui_NewEventIndex;
+}
+
+void Timeline::f261_processTimeline() {
+	uint16 L0680_ui_Multiple;
+#define AL0680_ui_EventType     L0680_ui_Multiple
+#define AL0680_ui_ChampionIndex L0680_ui_Multiple
+	TimelineEvent* L0681_ps_Event;
+	TimelineEvent L0682_s_Event;
+
+
+	while (f240_isFirstEventExpiered()) {
+		L0681_ps_Event = &L0682_s_Event;
+		f239_timelineExtractFirstEvent(L0681_ps_Event);
+		_vm->_dungeonMan->f173_setCurrentMap(M29_map(L0682_s_Event._mapTime));
+		AL0680_ui_EventType = L0682_s_Event._type;
+		if ((AL0680_ui_EventType > (k29_TMEventTypeGroupReactionDangerOnSquare - 1)) && (AL0680_ui_EventType < (k41_TMEventTypeUpdateBehaviour_3 + 1))) {
+			//F0209_GROUP_ProcessEvents29to41(L0682_s_Event._B._location._mapX, L0682_s_Event._B._location._mapY, AL0680_ui_EventType, L0682_s_Event._C._ticks);
+		} else {
+			switch (AL0680_ui_EventType) {
+			case k48_TMEventTypeMoveProjectileIgnoreImpacts:
+			case k49_TMEventTypeMoveProjectile:
+				//F0219_PROJECTILE_ProcessEvents48To49_Projectile(L0681_ps_Event);
+				break;
+			case k1_TMEventTypeDoorAnimation:
+				//F0241_TIMELINE_ProcessEvent1_DoorAnimation(L0681_ps_Event);
+				break;
+			case k25_TMEventTypeExplosion:
+				//F0220_EXPLOSION_ProcessEvent25_Explosion(L0681_ps_Event);
+				break;
+			case k7_TMEventTypeFakeWall:
+				//F0242_TIMELINE_ProcessEvent7_Square_FakeWall(L0681_ps_Event);
+				break;
+			case k2_TMEventTypeDoorDestruction:
+				//F0243_TIMELINE_ProcessEvent2_DoorDestruction(L0681_ps_Event);
+				break;
+			case k10_TMEventTypeDoor:
+				//F0244_TIMELINE_ProcessEvent10_Square_Door(L0681_ps_Event);
+				break;
+			case k9_TMEventTypePit:
+				//F0251_TIMELINE_ProcessEvent9_Square_Pit(L0681_ps_Event);
+				break;
+			case k8_TMEventTypeTeleporter:
+				//F0250_TIMELINE_ProcessEvent8_Square_Teleporter(L0681_ps_Event);
+				break;
+			case k6_TMEventTypeWall:
+				//F0248_TIMELINE_ProcessEvent6_Square_Wall(L0681_ps_Event);
+				break;
+			case k5_TMEventTypeCorridor:
+				//F0245_TIMELINE_ProcessEvent5_Square_Corridor(L0681_ps_Event);
+				break;
+			case k60_TMEventTypeMoveGroupSilent:
+			case k61_TMEventTypeMoveGroupAudible:
+				//F0252_TIMELINE_ProcessEvents60to61_MoveGroup(L0681_ps_Event);
+				break;
+			case k65_TMEventTypeEnableGroupGenerator:
+				//F0246_TIMELINE_ProcessEvent65_EnableGroupGenerator(L0681_ps_Event);
+				break;
+			case k20_TMEventTypePlaySound:
+				warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+				break;
+			case k24_TMEventTypeRemoveFluxcage:
+				if (!_vm->_g302_gameWon) {
+					_vm->_dungeonMan->f164_unlinkThingFromList(Thing(L0682_s_Event._C._slot), Thing(0), L0682_s_Event._B._location._mapX, L0682_s_Event._B._location._mapY);
+					L0681_ps_Event = (TimelineEvent*)_vm->_dungeonMan->f156_getThingData(Thing(L0682_s_Event._C._slot));
+					((Explosion*)L0681_ps_Event)->setNextThing(Thing::_none);
+				}
+				break;
+			case k11_TMEventTypeEnableChampionAction:
+				//F0253_TIMELINE_ProcessEvent11Part1_EnableChampionAction(L0682_s_Event._priority);
+				if (L0682_s_Event._B._slotOrdinal) {
+					//F0259_TIMELINE_ProcessEvent11Part2_MoveWeaponFromQuiverToSlot(L0682_s_Event._priority, _vm->M1_ordinalToIndex(L0682_s_Event._B._slotOrdinal));
+				}
+				goto T0261048;
+			case k12_TMEventTypeHideDamageReceived:
+				//F0254_TIMELINE_ProcessEvent12_HideDamageReceived(L0682_s_Event._priority);
+				break;
+			case k70_TMEventTypeLight:
+				_vm->_dungeonMan->f173_setCurrentMap(_vm->_dungeonMan->_g309_partyMapIndex);
+				//F0257_TIMELINE_ProcessEvent70_Light(L0681_ps_Event);
+				_vm->_inventoryMan->f337_setDungeonViewPalette();
+				break;
+			case k71_TMEventTypeInvisibility:
+				_vm->_championMan->_g407_party._event71Count_Invisibility--;
+				break;
+			case k72_TMEventTypeChampionShield:
+				_vm->_championMan->_gK71_champions[L0682_s_Event._priority]._shieldDefense -= L0682_s_Event._B._defense;
+				setFlag(_vm->_championMan->_gK71_champions[L0682_s_Event._priority]._attributes, k0x1000_ChampionAttributeStatusBox);
+T0261048:
+				_vm->_championMan->f292_drawChampionState((ChampionIndex)L0682_s_Event._priority);
+				break;
+			case k73_TMEventTypeThievesEye:
+				_vm->_championMan->_g407_party._event73Count_ThievesEye--;
+				break;
+			case k74_TMEventTypePartyShield:
+				_vm->_championMan->_g407_party._shieldDefense -= L0682_s_Event._B._defense;
+T0261053:
+				//F0260_TIMELINE_RefreshAllChampionStatusBoxes();
+				break;
+			case k77_TMEventTypeSpellShield:
+				_vm->_championMan->_g407_party._spellShieldDefense -= L0682_s_Event._B._defense;
+				goto T0261053;
+			case k78_TMEventTypeFireShield:
+				_vm->_championMan->_g407_party._fireShieldDefense -= L0682_s_Event._B._defense;
+				goto T0261053;
+			case k75_TMEventTypePoisonChampion:
+				_vm->_championMan->_gK71_champions[AL0680_ui_ChampionIndex = L0682_s_Event._priority]._poisonEventCount--;
+				_vm->_championMan->f322_championPoison(AL0680_ui_ChampionIndex, L0682_s_Event._B._attack);
+				break;
+			case k13_TMEventTypeViAltarRebirth:
+				//F0255_TIMELINE_ProcessEvent13_ViAltarRebirth(L0681_ps_Event);
+				break;
+			case k79_TMEventTypeFootprints:
+				_vm->_championMan->_g407_party._event79Count_Footprints--;
+			}
+		}
+		_vm->_dungeonMan->f173_setCurrentMap(_vm->_dungeonMan->_g309_partyMapIndex);
+	}
+}
+
+bool Timeline::f240_isFirstEventExpiered() {
+	return (_vm->_timeline->_g372_eventCount && (M30_time(_vm->_timeline->_g370_events[_vm->_timeline->_g371_timeline[0]]._mapTime) <= _vm->_g313_gameTime));
+}
+
+void Timeline::f239_timelineExtractFirstEvent(TimelineEvent* event) {
+	uint16 L0592_ui_EventIndex;
+
+	*event = _vm->_timeline->_g370_events[L0592_ui_EventIndex = _vm->_timeline->_g371_timeline[0]];
+	f237_deleteEvent(L0592_ui_EventIndex);
 }
 
 }

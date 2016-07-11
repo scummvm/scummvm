@@ -335,8 +335,7 @@ T0002002:
 			_g327_newPartyMapIndex = kM1_mapIndexNone;
 			_eventMan->f357_discardAllInput();
 		}
-
-		warning(false, "MISSING CODE: F0261_TIMELINE_Process_CPSEF");
+		_timeline->f261_processTimeline();
 
 		if (_g327_newPartyMapIndex != kM1_mapIndexNone)
 			goto T0002002;

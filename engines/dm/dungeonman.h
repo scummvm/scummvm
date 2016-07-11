@@ -527,6 +527,7 @@ public:
 	explicit Explosion(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
 
 	Thing getNextThing() { return _nextThing; }
+	Thing setNextThing(Thing val) { return _nextThing = val; }
 	uint16 getType() { return _attributes & 0x7F; }
 	uint16 setType(uint16 val) { _attributes = (_attributes & ~0x7F) | (val & 0x7F); return (val & 0x7F); }
 	uint16 getAttack() { return (_attributes >> 8) & 0xFF; }
