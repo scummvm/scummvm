@@ -649,19 +649,20 @@ void EventManager::f380_processCommandQueue() {
 }
 
 void EventManager::f365_commandTurnParty(CommandType cmdType) {
+	uint16 L1114_ui_Square;
+
 	_vm->_g321_stopWaitingForPlayerInput = true;
-
-	// MISSING CODE: highlight turn left/right buttons
-
-	// MISSING CODE: processing stairs
-
-	// MISSING CODE: process sensors
-
-	// DUMMY CODE: should call F0284_CHAMPION_SetPartyDirection instead
-	direction &partyDir = _vm->_dungeonMan->_g308_partyDir;
-	(cmdType == k1_CommandTurnLeft) ? turnDirLeft(partyDir) : turnDirRight(partyDir);
-
-	// MISSING CODE: process sensors
+	if (cmdType == k1_CommandTurnLeft) {
+		warning(false, "MISSING CODE: F0362_COMMAND_HighlightBoxEnable");
+	} else {
+	}
+	if (Square(L1114_ui_Square = _vm->_dungeonMan->f151_getSquare(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY).toByte()).getType() == k3_ElementTypeStairs) {
+		f364_commandTakeStairs(getFlag(L1114_ui_Square, k0x0004_StairsUp));
+		return;
+	}
+	_vm->_movsens->f276_sensorProcessThingAdditionOrRemoval(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, Thing::_party, true, false);
+	_vm->_championMan->f284_setPartyDirection(M21_normalizeModulo4(_vm->_dungeonMan->_g308_partyDir + ((cmdType == k2_CommandTurnRight) ? 1 : 3)));
+	_vm->_movsens->f276_sensorProcessThingAdditionOrRemoval(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, Thing::_party, true, true);
 }
 
 void EventManager::f366_commandMoveParty(CommandType cmdType) {
