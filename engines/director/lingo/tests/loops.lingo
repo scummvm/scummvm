@@ -1,5 +1,5 @@
 set x = 5
-if x <= 5 then set x = 6 end if
+if x <= 5 then set x = 6
 if (x = 5) then
 set x = 7 -- this is comment
 else
