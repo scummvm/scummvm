@@ -168,6 +168,7 @@ public:
 	void f244_timelineProcessEvent10_squareDoor(TimelineEvent *event); // @ F0244_TIMELINE_ProcessEvent10_Square_Door
 	void f251_timelineProcessEvent9_squarePit(TimelineEvent *event); // @ F0251_TIMELINE_ProcessEvent9_Square_Pit
 	void f249_moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY); // @ F0249_TIMELINE_MoveTeleporterOrPitSquareThings
+	void f250_timelineProcessEvent8_squareTeleporter(TimelineEvent *event); // @ F0250_TIMELINE_ProcessEvent8_Square_Teleporter
 
 };
 

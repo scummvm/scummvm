@@ -253,7 +253,7 @@ void Timeline::f261_processTimeline() {
 				f251_timelineProcessEvent9_squarePit(L0681_ps_Event);
 				break;
 			case k8_TMEventTypeTeleporter:
-				//F0250_TIMELINE_ProcessEvent8_Square_Teleporter(L0681_ps_Event);
+				f250_timelineProcessEvent8_squareTeleporter(L0681_ps_Event);
 				break;
 			case k6_TMEventTypeWall:
 				//F0248_TIMELINE_ProcessEvent6_Square_Wall(L0681_ps_Event);
@@ -538,7 +538,7 @@ void Timeline::f249_moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 		} else {
 			if (AL0644_ui_ThingType == k15_ExplosionThingType) {
 				for (AL0644_ui_EventIndex = 0, L0647_ps_Event = _vm->_timeline->_g370_events; AL0644_ui_EventIndex < _vm->_timeline->_g369_eventMaxCount; L0647_ps_Event++, AL0644_ui_EventIndex++) {
-					if ((L0647_ps_Event->_type== k25_TMEventTypeExplosion) && (L0647_ps_Event->_C._slot == L0645_T_Thing.toUint16())) { /* BUG0_23 A Fluxcage explosion remains on a square forever. If you open a pit or teleporter on a square where there is a Fluxcage explosion, the Fluxcage explosion is moved but the associated event is not updated (because Fluxcage explosions do not use k25_TMEventTypeExplosion but rather k24_TMEventTypeRemoveFluxcage) causing the Fluxcage explosion to remain in the dungeon forever on its destination square. When the k24_TMEventTypeRemoveFluxcage expires the explosion thing is not removed, but it is marked as unused. Consequently, any objects placed on the Fluxcage square after it was moved but before it expires become orphans upon expiration. After expiration, any object placed on the fluxcage square is cloned when picked up */
+					if ((L0647_ps_Event->_type == k25_TMEventTypeExplosion) && (L0647_ps_Event->_C._slot == L0645_T_Thing.toUint16())) { /* BUG0_23 A Fluxcage explosion remains on a square forever. If you open a pit or teleporter on a square where there is a Fluxcage explosion, the Fluxcage explosion is moved but the associated event is not updated (because Fluxcage explosions do not use k25_TMEventTypeExplosion but rather k24_TMEventTypeRemoveFluxcage) causing the Fluxcage explosion to remain in the dungeon forever on its destination square. When the k24_TMEventTypeRemoveFluxcage expires the explosion thing is not removed, but it is marked as unused. Consequently, any objects placed on the Fluxcage square after it was moved but before it expires become orphans upon expiration. After expiration, any object placed on the fluxcage square is cloned when picked up */
 						L0647_ps_Event->_B._location._mapX = _vm->_movsens->_g397_moveResultMapX;
 						L0647_ps_Event->_B._location._mapY = _vm->_movsens->_g398_moveResultMapY;
 						L0647_ps_Event->_C._slot = M15_thingWithNewCell(L0645_T_Thing, _vm->_movsens->_g401_moveResultCell).toUint16();
@@ -548,6 +548,24 @@ void Timeline::f249_moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 			}
 		}
 		L0645_T_Thing = L0648_T_NextThing;
+	}
+}
+
+void Timeline::f250_timelineProcessEvent8_squareTeleporter(TimelineEvent* event) {
+	uint16 L0650_ui_MapX;
+	uint16 L0651_ui_MapY;
+	byte* L0652_puc_Square;
+
+
+	L0652_puc_Square = &_vm->_dungeonMan->_g271_currMapData[L0650_ui_MapX = event->_B._location._mapX][L0651_ui_MapY = event->_B._location._mapY];
+	if (event->_C.A._effect == k2_SensorEffToggle) {
+		event->_C.A._effect = getFlag(*L0652_puc_Square, k0x0008_TeleporterOpen) ? k1_SensorEffClear : k0_SensorEffSet;
+	}
+	if (event->_C.A._effect == k0_SensorEffSet) {
+		setFlag(*L0652_puc_Square, k0x0008_TeleporterOpen);
+		f249_moveTeleporterOrPitSquareThings(L0650_ui_MapX, L0651_ui_MapY);
+	} else {
+		clearFlag(*L0652_puc_Square, k0x0008_TeleporterOpen);
 	}
 }
 }
