@@ -393,10 +393,10 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 		break;
 	case TGL_LINE_STRIP:
 	case TGL_LINE_LOOP:
-		for(int i = 0; i < cnt; i++) {
+		for(int i = 0; i < cnt - 1; i++) {
 			gl_draw_line(c, &c->vertex[i], &c->vertex[i + 1]);
 		}
-		gl_draw_line(c, &c->vertex[0], &c->vertex[cnt - 1]);
+		gl_draw_line(c, &c->vertex[cnt - 1], &c->vertex[0]);
 		break;
 	case TGL_TRIANGLES:
 		for(int i = 0; i < cnt / 3; i++) {
