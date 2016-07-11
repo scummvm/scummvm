@@ -428,8 +428,8 @@ void ProjExpl::f219_processEvents48To49_projectile(TimelineEvent* event) {
 	int16 L0523_i_DestinationMapX;
 	int16 L0524_i_DestinationMapY;
 	uint16 L0518_ui_Cell;
-	int16 L0525_i_SourceMapX;
-	int16 L0526_i_SourceMapY;
+	int16 L0525_i_SourceMapX = -1;
+	int16 L0526_i_SourceMapY = -1;
 	TimelineEvent L0527_s_Event;
 
 
@@ -503,8 +503,8 @@ void ProjExpl::f219_processEvents48To49_projectile(TimelineEvent* event) {
 
 void ProjExpl::f220_explosionProcessEvent25_explosion(TimelineEvent* event) {
 	Explosion* L0532_ps_Explosion;
-	Group* L0533_ps_Group;
-	CreatureInfo* L0534_ps_CreatureInfo;
+	Group* L0533_ps_Group = nullptr;
+	CreatureInfo* L0534_ps_CreatureInfo = nullptr;
 	uint16 L0528_ui_MapX;
 	uint16 L0529_ui_MapY;
 	int16 L0530_i_Attack;
@@ -513,7 +513,7 @@ void ProjExpl::f220_explosionProcessEvent25_explosion(TimelineEvent* event) {
 #define AL0531_i_CreatureCount L0531_i_Multiple
 	Thing L0535_T_GroupThing;
 	Thing L0536_T_ExplosionThing;
-	uint16 L0537_ui_Multiple;
+	uint16 L0537_ui_Multiple = 0;
 #define AL0537_ui_CreatureType                L0537_ui_Multiple
 #define AL0537_ui_NonMaterialAdditionalAttack L0537_ui_Multiple
 	bool L0538_B_ExplosionOnPartySquare;

@@ -330,8 +330,8 @@ T0261053:
 }
 
 bool Timeline::f240_isFirstEventExpiered() {
-	warning(false, "possibly dangerous cast to int32");
-	return (_vm->_timeline->_g372_eventCount && ((int32)M30_time(_vm->_timeline->_g370_events[_vm->_timeline->_g371_timeline[0]]._mapTime) <= _vm->_g313_gameTime));
+	warning(false, "possibly dangerous cast to uint32");
+	return (_vm->_timeline->_g372_eventCount && ((uint32)M30_time(_vm->_timeline->_g370_events[_vm->_timeline->_g371_timeline[0]]._mapTime) <= _vm->_g313_gameTime));
 }
 
 void Timeline::f239_timelineExtractFirstEvent(TimelineEvent* event) {
