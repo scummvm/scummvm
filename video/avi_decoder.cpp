@@ -76,12 +76,13 @@ enum {
 };
 
 
-AVIDecoder::AVIDecoder(Audio::Mixer::SoundType soundType) : _frameRateOverride(0), _soundType(soundType) {
+AVIDecoder::AVIDecoder(Audio::Mixer::SoundType soundType, SelectTrackFn trackFn) : 
+		_frameRateOverride(0), _soundType(soundType), _selectTrackFn(trackFn) {
 	initCommon();
 }
 
-AVIDecoder::AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType)
-		: _frameRateOverride(frameRateOverride), _soundType(soundType) {
+AVIDecoder::AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType,
+		SelectTrackFn trackFn) : _frameRateOverride(frameRateOverride), _soundType(soundType), _selectTrackFn(trackFn) {
 	initCommon();
 }
 
@@ -99,6 +100,7 @@ void AVIDecoder::initCommon() {
 	_movieListStart = 0;
 	_movieListEnd = 0;
 	_fileStream = 0;
+	_videoTrackCounter = _audioTrackCounter = 0;
 	memset(&_header, 0, sizeof(_header));
 }
 
@@ -263,7 +265,8 @@ void AVIDecoder::handleStreamHeader(uint32 size) {
 			}
 		}
 
-		addTrack(new AVIVideoTrack(_header.totalFrames, sHeader, bmInfo, initialPalette));
+		if (!_selectTrackFn || _selectTrackFn(true, _videoTrackCounter++))
+			addTrack(new AVIVideoTrack(_header.totalFrames, sHeader, bmInfo, initialPalette));
 	} else if (sHeader.streamType == ID_AUDS) {
 		PCMWaveFormat wvInfo;
 		wvInfo.tag = _fileStream->readUint16LE();
@@ -278,9 +281,11 @@ void AVIDecoder::handleStreamHeader(uint32 size) {
 		if (wvInfo.channels == 2)
 			sHeader.sampleSize /= 2;
 
-		AVIAudioTrack *track = createAudioTrack(sHeader, wvInfo);
-		track->createAudioStream();
-		addTrack(track);
+		if (!_selectTrackFn || _selectTrackFn(false, _audioTrackCounter++)) {
+			AVIAudioTrack *track = createAudioTrack(sHeader, wvInfo);
+			track->createAudioStream();
+			addTrack(track);
+		}
 	}
 
 	// Ensure that we're at the end of the chunk
@@ -337,7 +342,6 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 	}
 
 	if (_videoTracks.size() != 1) {
-		warning("Unhandled AVI video track count: %d", _videoTracks.size());
 		close();
 		return false;
 	}

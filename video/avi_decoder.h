@@ -61,8 +61,10 @@ namespace Video {
  */
 class AVIDecoder : public VideoDecoder {
 public:
-	AVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
-	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
+	typedef bool(*SelectTrackFn)(bool isVideo, int trackNumber);
+	AVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType, SelectTrackFn trackFn = nullptr);
+	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType,
+		SelectTrackFn trackFn = nullptr);
 	virtual ~AVIDecoder();
 
 	bool loadStream(Common::SeekableReadStream *stream);
@@ -268,6 +270,10 @@ protected:
 
 	Audio::Mixer::SoundType _soundType;
 	Common::Rational _frameRateOverride;
+
+	int _videoTrackCounter, _audioTrackCounter;
+	SelectTrackFn _selectTrackFn;
+
 	void initCommon();
 
 	bool parseNextChunk();
