@@ -87,6 +87,50 @@ Box g462_BoxObjectPiles[4] = { // @ G0462_as_Graphic561_Box_ObjectPiles
 	Box(112, 183, 122, 147),   /* Back right */
 	Box(40, 111, 122, 147)}; /* Back left */
 
+
+KeyboardInput g458_primaryKeyboardInput_interface[7] = { // @ G0458_as_Graphic561_PrimaryKeyboardInput_Interface
+														 /* { Command, Code } */
+	KeyboardInput(k7_CommandToggleInventoryChampion_0, Common::KEYCODE_F1, 0), /* F1 (<CSI>1~) Atari ST: Code = 0x3B00 */
+	KeyboardInput(k8_CommandToggleInventoryChampion_1, Common::KEYCODE_F2, 0), /* F2 (<CSI>2~) Atari ST: Code = 0x3C00 */
+	KeyboardInput(k9_CommandToggleInventoryChampion_2, Common::KEYCODE_F3, 0), /* F3 (<CSI>3~) Atari ST: Code = 0x3D00 */
+	KeyboardInput(k10_CommandToggleInventoryChampion_3, Common::KEYCODE_F4, 0), /* F4 (<CSI>4~) Atari ST: Code = 0x3E00 */
+	KeyboardInput(k140_CommandSaveGame, Common::KEYCODE_s, Common::KBD_CTRL), /* CTRL-S       Atari ST: Code = 0x0013 */
+	KeyboardInput(k147_CommandFreezeGame, Common::KEYCODE_ESCAPE, 0), /* Esc (0x1B)   Atari ST: Code = 0x001B */
+	KeyboardInput(k0_CommandNone, Common::KEYCODE_INVALID, 0)};
+
+
+KeyboardInput g459_secondaryKeyboardInput_movement[19] = { // @ G0459_as_Graphic561_SecondaryKeyboardInput_Movement
+														   /* { Command, Code } */
+	KeyboardInput(k1_CommandTurnLeft, Common::KEYCODE_KP4, 0), /* Numeric pad 4 Atari ST: Code = 0x5200 */
+	KeyboardInput(k3_CommandMoveForward, Common::KEYCODE_KP5, 0), /* Numeric pad 5 Atari ST: Code = 0x4800 */
+	KeyboardInput(k2_CommandTurnRight, Common::KEYCODE_KP6, 0), /* Numeric pad 6 Atari ST: Code = 0x4700 */
+	KeyboardInput(k6_CommandMoveLeft, Common::KEYCODE_KP1, 0), /* Numeric pad 1 Atari ST: Code = 0x4B00 */
+	KeyboardInput(k5_CommandMoveBackward, Common::KEYCODE_KP2, 0), /* Numeric pad 2 Atari ST: Code = 0x5000 */
+	KeyboardInput(k4_CommandMoveRight, Common::KEYCODE_KP3, 0), /* Numeric pad 3 Atari ST: Code = 0x4D00. Remaining entries below not present */
+	KeyboardInput(k3_CommandMoveForward, Common::KEYCODE_w, 0), /* Up Arrow (<CSI>A) */ /*Differs for testing convenience*/
+	KeyboardInput(k3_CommandMoveForward, Common::KEYCODE_w, Common::KBD_SHIFT), /* Shift Up Arrow (<CSI>T) */ /*Differs for testing convenience*/
+	KeyboardInput(k6_CommandMoveLeft, Common::KEYCODE_a, 0), /* Backward Arrow (<CSI>D) */ /*Differs for testing convenience*/
+	KeyboardInput(k6_CommandMoveLeft, Common::KEYCODE_a, Common::KBD_SHIFT), /* Shift Forward Arrow (<CSI> A) */ /*Differs for testing convenience*/
+	KeyboardInput(k4_CommandMoveRight, Common::KEYCODE_d, 0), /* Forward Arrow (<CSI>C) */ /*Differs for testing convenience*/
+	KeyboardInput(k4_CommandMoveRight, Common::KEYCODE_d, Common::KBD_SHIFT), /* Shift Backward Arrow (<CSI> @) */ /*Differs for testing convenience*/
+	KeyboardInput(k5_CommandMoveBackward, Common::KEYCODE_s, 0), /* Down arrow (<CSI>B) */ /*Differs for testing convenience*/
+	KeyboardInput(k5_CommandMoveBackward, Common::KEYCODE_s, Common::KBD_SHIFT), /* Shift Down arrow (<CSI>S) */ /*Differs for testing convenience*/
+	KeyboardInput(k1_CommandTurnLeft, Common::KEYCODE_q, 0), /* Del (0x7F) */ /*Differs for testing convenience*/
+	KeyboardInput(k1_CommandTurnLeft, Common::KEYCODE_q, Common::KBD_SHIFT), /* Shift Del (0x7F) */ /*Differs for testing convenience*/
+	KeyboardInput(k2_CommandTurnRight, Common::KEYCODE_e, 0), /* Help (<CSI>?~) */ /*Differs for testing convenience*/
+	KeyboardInput(k2_CommandTurnRight, Common::KEYCODE_e, Common::KBD_SHIFT), /* Shift Help (<CSI>?~) */ /*Differs for testing convenience*/
+	KeyboardInput(k0_CommandNone, Common::KEYCODE_INVALID, 0)};
+KeyboardInput g460_primaryKeyboardInput_partySleeping[3] = { // @ G0460_as_Graphic561_PrimaryKeyboardInput_PartySleeping
+															 /* { Command, Code } */
+	KeyboardInput(k146_CommandWakeUp, Common::KEYCODE_RETURN, 0), /* Return */
+	KeyboardInput(k147_CommandFreezeGame, Common::KEYCODE_ESCAPE, 0), /* Esc */
+	KeyboardInput(k0_CommandNone, Common::KEYCODE_INVALID, 0)};
+KeyboardInput g461_primaryKeyboardInput_frozenGame[2] = { // @ G0461_as_Graphic561_PrimaryKeyboardInput_FrozenGame
+														  /* { Command, Code } */
+	KeyboardInput(k148_CommandUnfreezeGame, Common::KEYCODE_ESCAPE, 0), /* Esc */
+	KeyboardInput(k0_CommandNone, Common::KEYCODE_INVALID, 0)};
+
+
 MouseInput g445_PrimaryMouseInput_Entrance[4] = { // @ G0445_as_Graphic561_PrimaryMouseInput_Entrance[4]
 												  /* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
 	MouseInput(k200_CommandEntranceEnterDungeon, 244, 298,  45,  58, k1_LeftMouseButton),
@@ -309,6 +353,8 @@ EventManager::EventManager(DMEngine *vm) : _vm(vm) {
 	_g600_useObjectAsMousePointerBitmap = false;
 	_g601_useHandAsMousePointerBitmap = false;
 	_gK100_preventBuildPointerScreenArea = false;
+	_g443_primaryKeyboardInput = nullptr;
+	_g444_secondaryKeyboardInput = nullptr;
 }
 
 EventManager::~EventManager() {
@@ -486,45 +532,36 @@ void EventManager::setMousePos(Common::Point pos) {
 
 
 void EventManager::processInput() {
-	DungeonMan &dungeonMan = *_vm->_dungeonMan;
-
 	Common::Event event;
 	while (_vm->_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
-		// DUMMY CODE: case EVENT_KEYDOWN, only for testing
-		case Common::EVENT_KEYDOWN:
+		case Common::EVENT_KEYDOWN: {
 			if (event.synthetic)
 				break;
-
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_w:
-				dungeonMan.f150_mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 1, 0, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
-				break;
-			case Common::KEYCODE_a:
-				dungeonMan.f150_mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 0, -1, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
-				break;
-			case Common::KEYCODE_s:
-				dungeonMan.f150_mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, -1, 0, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
-				break;
-			case Common::KEYCODE_d:
-				dungeonMan.f150_mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 0, 1, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
-				break;
-			case Common::KEYCODE_q:
-				turnDirLeft(dungeonMan._g308_partyDir);
-				break;
-			case Common::KEYCODE_e:
-				turnDirRight(dungeonMan._g308_partyDir);
-				break;
-			case Common::KEYCODE_UP:
-				if (_dummyMapIndex < 13)
-					dungeonMan.f174_setCurrentMapAndPartyMap(++_dummyMapIndex);
-				break;
-			case Common::KEYCODE_DOWN:
-				if (_dummyMapIndex > 0)
-					dungeonMan.f174_setCurrentMapAndPartyMap(--_dummyMapIndex);
-				break;
-			default:
-				break;
+			if (_g443_primaryKeyboardInput) {
+				KeyboardInput *input = _g443_primaryKeyboardInput;
+				while (input->_commandToIssue != k0_CommandNone) {
+					if ((input->_key == event.kbd.keycode) && (input->_modifiers == (event.kbd.flags & input->_modifiers))) {
+						f360_processPendingClick(); // possible fix to BUG0_73
+						_commandQueue.push(Command(Common::Point(-1, -1), input->_commandToIssue));
+						break;
+					}
+					input++;
+				}
+			}
+			
+			if (_g444_secondaryKeyboardInput) {
+				KeyboardInput *input = _g444_secondaryKeyboardInput;
+				while (input->_commandToIssue != k0_CommandNone) {
+					if ((input->_key == event.kbd.keycode) && (input->_modifiers == (event.kbd.flags & input->_modifiers))) {
+						f360_processPendingClick(); // possible fix to BUG0_73
+						_commandQueue.push(Command(Common::Point(-1, -1), input->_commandToIssue));
+						break;
+					}
+					input++;
+				}
+			}
+			
 			}
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;

@@ -240,7 +240,8 @@ void DMEngine::f462_startGame() {
 
 	_eventMan->_g441_primaryMouseInput = g447_PrimaryMouseInput_Interface;
 	_eventMan->_g442_secondaryMouseInput = g448_SecondaryMouseInput_Movement;
-	warning("MISSING CODE: set primary/secondary keyboard input");
+	_eventMan->_g443_primaryKeyboardInput = g458_primaryKeyboardInput_interface;
+	_eventMan->_g444_secondaryKeyboardInput = g459_secondaryKeyboardInput_movement;
 
 	f3_processNewPartyMap(_dungeonMan->_g309_partyMapIndex);
 

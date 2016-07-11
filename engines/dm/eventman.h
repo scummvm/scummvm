@@ -202,12 +202,20 @@ extern MouseInput* g480_PrimaryMouseInput_DialogSets[2][4]; // @ G0480_aaps_Prim
 
 class KeyboardInput {
 public:
-	Command _commandToIssue;
+	CommandType _commandToIssue;
 	Common::KeyCode _key;
 	byte _modifiers;
 
-	KeyboardInput(Command command, Common::KeyCode keycode, byte modifierFlags) : _commandToIssue(command), _key(keycode), _modifiers(modifierFlags) {}
+	KeyboardInput(CommandType command, Common::KeyCode keycode, byte modifierFlags) : _commandToIssue(command), _key(keycode), _modifiers(modifierFlags) {}
 }; // @ KEYBOARD_INPUT
+
+
+
+extern KeyboardInput g458_primaryKeyboardInput_interface[7];
+extern KeyboardInput g459_secondaryKeyboardInput_movement[19];
+extern KeyboardInput g460_primaryKeyboardInput_partySleeping[3];
+extern KeyboardInput g461_primaryKeyboardInput_frozenGame[2];
+
 
 class DMEngine;
 
@@ -258,6 +266,8 @@ public:
 	bool _g326_refreshMousePointerInMainLoop; // @ G0326_B_RefreshMousePointerInMainLoop
 	bool _g341_highlightBoxEnabled; // @ G0341_B_HighlightBoxEnabled
 	uint16 _g599_useChampionIconOrdinalAsMousePointerBitmap; // @ G0599_ui_UseChampionIconOrdinalAsMousePointerBitmap
+	KeyboardInput *_g443_primaryKeyboardInput; // @ G0443_ps_PrimaryKeyboardInput
+	KeyboardInput *_g444_secondaryKeyboardInput; // @ G0444_ps_SecondaryKeyboardInput
 
 	void initMouse();
 	void f67_setMousePointerToNormal(int16 mousePointer); // @ F0067_MOUSE_SetPointerToNormal

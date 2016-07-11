@@ -824,8 +824,8 @@ void ChampionMan::f314_wakeUp() {
 	_vm->_displayMan->f98_drawFloorAndCeiling();
 	_vm->_eventMan->_g441_primaryMouseInput = g447_PrimaryMouseInput_Interface;
 	_vm->_eventMan->_g442_secondaryMouseInput = g448_SecondaryMouseInput_Movement;
-	warning("MISSING CODE: set G0443_ps_PrimaryKeyboardInput");
-	warning("MISSING CODE: G0444_ps_SecondaryKeyboardInput");
+	_vm->_eventMan->_g443_primaryKeyboardInput = g458_primaryKeyboardInput_interface;
+	_vm->_eventMan->_g444_secondaryKeyboardInput = g459_secondaryKeyboardInput_movement;
 	_vm->_eventMan->f357_discardAllInput();
 	_vm->_menuMan->f457_drawEnabledMenus();
 }
