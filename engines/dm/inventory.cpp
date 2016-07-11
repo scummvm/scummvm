@@ -733,4 +733,23 @@ void InventoryMan::f351_drawChampionSkillsAndStatistics() {
 		L1091_i_Y += 7;
 	}
 }
+
+void InventoryMan::f350_drawStopPressingMouth() {
+	_vm->_inventoryMan->f347_drawPanel();
+	_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
+	warning(false, "Ignored code: G0587_i_HideMousePointerRequestCount");
+	_vm->_eventMan->f77_hideMouse();
+}
+
+void InventoryMan::f353_drawStopPressingEye() {
+	Thing L1100_T_LeaderHandObject;
+
+	_vm->_inventoryMan->f332_drawIconToViewport(k202_IconIndiceEyeNotLooking, 12, 13);
+	_vm->_inventoryMan->f347_drawPanel();
+	_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
+	if ((L1100_T_LeaderHandObject = _vm->_championMan->_g414_leaderHandObject) != Thing::_none) {
+		_vm->_objectMan->f34_drawLeaderObjectName(L1100_T_LeaderHandObject);
+	}
+	_vm->_eventMan->f77_hideMouse();
+}
 }

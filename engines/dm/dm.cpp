@@ -378,13 +378,27 @@ T0002002:
 			_g311_projectileDisableMovementTicks--;
 
 		_g321_stopWaitingForPlayerInput = false;
-		//do {
-		_eventMan->processInput();
-		_eventMan->f380_processCommandQueue();
-	//} while (!_g321_stopWaitingForPlayerInput /*|| !_g301_gameTimeTicking */);
 
+		do {
+			_eventMan->processInput();
 
-		_displayMan->updateScreen();
+			if (_g332_stopPressingEye) {
+				_g331_pressingEye = false;
+				_g332_stopPressingEye = false;
+				_inventoryMan->f353_drawStopPressingEye();
+			} else if (_g334_stopPressingMouth) {
+				_g333_pressingMouth = false;
+				_g334_stopPressingMouth = false;
+				_inventoryMan->f350_drawStopPressingMouth();
+			}
+
+			_eventMan->f380_processCommandQueue();
+			_displayMan->updateScreen();
+			// if (!_vm->_g321_stopWaitingForPlayerInput) {
+			warning(false, "MISSING CODE: F0363_COMMAND_HighlightBoxDisable");
+			// }
+		} while (!_g321_stopWaitingForPlayerInput || !_g301_gameTimeTicking);
+
 		_system->delayMillis(18);
 	}
 }

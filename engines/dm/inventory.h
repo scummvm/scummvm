@@ -81,6 +81,8 @@ public:
 	void f337_setDungeonViewPalette(); // @ F0337_INVENTORY_SetDungeonViewPalette
 	void f338_decreaseTorchesLightPower(); // @ F0338_INVENTORY_DecreaseTorchesLightPower_CPSE
 	void f351_drawChampionSkillsAndStatistics(); // @ F0351_INVENTORY_DrawChampionSkillsAndStatistics
+	void f350_drawStopPressingMouth(); // @ F0350_INVENTORY_DrawStopPressingMouth
+	void f353_drawStopPressingEye();// @ F0353_INVENTORY_DrawStopPressingEye
 
 };
 
