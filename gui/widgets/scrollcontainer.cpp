@@ -68,6 +68,8 @@ void ScrollContainerWidget::recalc() {
 	}
 	h = max - min;
 
+	if (h <= _limitH) _scrolledY = 0;
+
 	_verticalScroll->_numEntries = h;
 	_verticalScroll->_currentPos = _scrolledY;
 	_verticalScroll->_entriesPerPage = _limitH;
@@ -135,6 +137,7 @@ void ScrollContainerWidget::reflowLayout() {
 	}
 
 	_verticalScroll->setVisible(_verticalScroll->_numEntries > _limitH); //show when there is something to scroll
+	_verticalScroll->recalc();
 }
 
 void ScrollContainerWidget::drawWidget() {
