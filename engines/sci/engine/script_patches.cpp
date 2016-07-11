@@ -1477,10 +1477,13 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 // The scripts also put the regular text in the middle of the screen, blocking
 // animations.
 //
+// And for certain rooms, the subtitle box may use another color
+// like for example pink/purple at the start of chapter 5.
+//
 // We fix all of that (hopefully - lots of testing is required).
 // We put the text at the bottom of the play screen.
-// And we also make the scripts use the regular KQTalker instead of KQNarrator.
-//
+// We also make the scripts use the regular KQTalker instead of KQNarrator.
+// And we also make the subtitle box use color 255, which is fixed white.
 //
 // Applies to at least: PC CD 1.51 English, 1.51 German, 2.00 English
 // Patched method: KQNarrator::init (script 31)
@@ -1557,10 +1560,56 @@ static const uint16 kq7PatchSubtitleFix2[] = {
 	PATCH_END
 };
 
+// Applies to at least: PC CD 1.51 English, 1.51 German, 2.00 English
+// Patched method: Narrator::say (script 64928)
+static const uint16 kq7SignatureSubtitleFix3[] = {
+	SIG_MAGICDWORD,
+	0x63, 0x28,                         // pToa initialized
+	0x18,                               // not
+	0x31, 0x07,                         // bnt [skip init code]
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi init (008Eh for 2.00, 0093h for 1.51)
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04
+	// end of init code
+	0x8f, 0x00,                         // lsp param[0]
+	0x35, 0x01,                         // ldi 01
+	0x1e,                               // gt?
+	0x31, 0x08,                         // bnt [set acc to 0]
+	0x87, 0x02,                         // lap param[2]
+	0x31, 0x04,                         // bnt [set acc to 0]
+	0x87, 0x02,                         // lap param[2]
+	0x33, 0x02,                         // jmp [over set acc to 0 code]
+	0x35, 0x00,                         // ldi 00
+	0x65, 0x18,                         // aTop caller
+	SIG_END
+};
+
+static const uint16 kq7PatchSubtitleFix3[] = {
+	PATCH_ADDTOOFFSET(+2),              // skip over "pToa initialized code"
+	0x2f, 0x0c,                         // bt [skip init code] - saved 1 byte
+	0x38, 
+	PATCH_GETORIGINALBYTE(+6),
+	PATCH_GETORIGINALBYTE(+7),          // pushi (init)
+	0x76,                               // push0
+	0x54, PATCH_UINT16(0x0004),           // self 04
+	// additionally set background color here (5 bytes)
+	0x34, PATCH_UINT16(255),            // pushi 255d
+	0x65, 0x2e,                         // aTop back
+	// end of init code
+	0x8f, 0x00,                         // lsp param[0]
+	0x35, 0x01,                         // ldi 01 - this may get optimized to get another byte
+	0x1e,                               // gt?
+	0x31, 0x04,                         // bnt [set acc to 0]
+	0x87, 0x02,                         // lap param[2]
+	0x2f, 0x02,                         // bt [over set acc to 0 code]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq7Signatures[] = {
-	{  true,    31, "subtitle fix 1/2",                            1, kq7SignatureSubtitleFix1,                 kq7PatchSubtitleFix1 },
-	{  true, 64928, "subtitle fix 2/2",                            1, kq7SignatureSubtitleFix2,                 kq7PatchSubtitleFix2 },
+	{  true,    31, "subtitle fix 1/3",                            1, kq7SignatureSubtitleFix1,                 kq7PatchSubtitleFix1 },
+	{  true, 64928, "subtitle fix 2/3",                            1, kq7SignatureSubtitleFix2,                 kq7PatchSubtitleFix2 },
+	{  true, 64928, "subtitle fix 3/3",                            1, kq7SignatureSubtitleFix3,                 kq7PatchSubtitleFix3 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
