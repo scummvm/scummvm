@@ -243,7 +243,7 @@ void Timeline::f261_processTimeline() {
 				f242_timelineProcessEvent7_squareFakewall(L0681_ps_Event);
 				break;
 			case k2_TMEventTypeDoorDestruction:
-				//F0243_TIMELINE_ProcessEvent2_DoorDestruction(L0681_ps_Event);
+				f243_timelineProcessEvent2_doorDestruction(L0681_ps_Event);
 				break;
 			case k10_TMEventTypeDoor:
 				//F0244_TIMELINE_ProcessEvent10_Square_Door(L0681_ps_Event);
@@ -440,5 +440,12 @@ void Timeline::f242_timelineProcessEvent7_squareFakewall(TimelineEvent* event) {
 	} else {
 		L0607_puc_Square->set(k0x0004_FakeWallOpen);
 	}
+}
+
+void Timeline::f243_timelineProcessEvent2_doorDestruction(TimelineEvent* event) {
+	Square* L0608_puc_Square;
+
+	L0608_puc_Square = (Square*)&_vm->_dungeonMan->_g271_currMapData[event->_B._location._mapX][event->_B._location._mapY];
+	L0608_puc_Square->set(k5_doorState_DESTROYED);
 }
 }
