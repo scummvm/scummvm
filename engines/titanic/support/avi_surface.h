@@ -39,7 +39,7 @@ enum MovieFlag {
 
 class AVISurface {
 private:
-	Video::AVIDecoder *_decoder;
+	Video::AVIDecoder *_decoders[2];
 	CVideoSurface *_videoSurface;
 	int _field4;
 	int _field8;

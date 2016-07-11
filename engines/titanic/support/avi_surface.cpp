@@ -26,6 +26,21 @@
 
 namespace Titanic {
 
+/**
+ * Track filter for AVIDecoder that filters out any secondary video track
+ */
+static bool primaryTrackSelect(bool isVideo, int trackCounter) {
+	return !isVideo || trackCounter == 0;
+}
+
+/**
+ * Track filter for AVIDecoder that only accepts the secondary video track
+ * for a video, if present
+ */
+static bool secondaryTrackSelect(bool isVideo, int trackCounter) {
+	return isVideo && trackCounter > 0;
+}
+
 AVISurface::AVISurface(const CResourceKey &key) {
 	_videoSurface = nullptr;
 	_field4 = 0;
@@ -34,24 +49,35 @@ AVISurface::AVISurface(const CResourceKey &key) {
 	_priorFrame = 0;
 	_streamCount = 0;
 	_frameInfo = nullptr;
+	_isPlaying = false;
 
-	_decoder = new Video::AVIDecoder();
-	if (!_decoder->loadFile(key.getString()))
+	// Create a decoder for the audio (if any) and primary video track
+	_decoders[0] = new Video::AVIDecoder(Audio::Mixer::kPlainSoundType, primaryTrackSelect);
+	if (!_decoders[0]->loadFile(key.getString()))
 		error("Could not open video - %s", key.getString().c_str());
+
+	// Create a decoder for any secondary video track
+	Video::AVIDecoder *decoder2 = new Video::AVIDecoder(Audio::Mixer::kPlainSoundType, secondaryTrackSelect);
+	if (decoder2->loadFile(key.getString())) {
+		_decoders[1] = decoder2;
+	} else {
+		delete decoder2;
+	}
 }
 
 AVISurface::~AVISurface() {
 	if (_videoSurface)
 		_videoSurface->_blitStyleFlag = false;
 	delete _frameInfo;
-	delete _decoder;
+	delete _decoders[0];
+	delete _decoders[1];
 }
 
 bool AVISurface::play(uint flags, CGameObject *obj) {
 	if (flags & MOVIE_REVERSE)
-		return play(_decoder->getFrameCount() - 1, 0, flags, obj);
+		return play(_decoders[0]->getFrameCount() - 1, 0, flags, obj);
 	else
-		return play(0, _decoder->getFrameCount() - 1, flags, obj);
+		return play(0, _decoders[0]->getFrameCount() - 1, flags, obj);
 }
 
 bool AVISurface::play(int startFrame, int endFrame, uint flags, CGameObject *obj) {
@@ -90,7 +116,10 @@ bool AVISurface::play(int startFrame, int endFrame, int initialFrame, uint flags
 
 void AVISurface::stop() {
 	_isPlaying = false;
-	_decoder->stop();
+	_decoders[0]->stop();
+	if (_decoders[1])
+		_decoders[1]->stop();
+
 	_movieRangeInfo.destroyContents();
 }
 
@@ -110,7 +139,10 @@ bool AVISurface::changeFrame(int frameNumber) {
 }
 
 void AVISurface::seekToFrame(uint frameNumber) {
-	_decoder->seekToFrame(frameNumber);
+	_decoders[0]->seekToFrame(frameNumber);
+	if (_decoders[1])
+		_decoders[1]->seekToFrame(frameNumber);
+
 	_priorFrame = frameNumber;
 }
 
@@ -159,11 +191,11 @@ void AVISurface::setVideoSurface(CVideoSurface *surface) {
 }
 
 uint AVISurface::getWidth() const {
-	return _decoder->getWidth();
+	return _decoders[0]->getWidth();
 }
 
 uint AVISurface::getHeight() const {
-	return _decoder->getHeight();
+	return _decoders[0]->getHeight();
 }
 
 void AVISurface::setFrame(int frameNumber) {
@@ -172,26 +204,32 @@ void AVISurface::setFrame(int frameNumber) {
 		stop();
 
 	// Ensure the frame number is valid
-	if (frameNumber >= _decoder->getFrameCount())
-		frameNumber = _decoder->getFrameCount() - 1;
+	if (frameNumber >= _decoders[0]->getFrameCount())
+		frameNumber = _decoders[0]->getFrameCount() - 1;
 
 	seekToFrame(frameNumber);
 	renderFrame();
 }
 
 int AVISurface::getFrame() const {
-	return _decoder->getCurFrame();
+	return _decoders[0]->getCurFrame();
 }
 
 bool AVISurface::renderFrame() {
-	// Check there's a frame ready for 
+	// Check there's a frame ready for display
 	assert(_videoSurface);
-	if (!_decoder->needsUpdate())
+	if (!_decoders[0]->needsUpdate() || (_decoders[1] && !_decoders[1]->needsUpdate()))
 		return false;
 
 	// Get the frame to render, and draw it on the surface
-	const Graphics::Surface *frame = _decoder->decodeNextFrame();
-	_videoSurface->blitFrom(Point(0, 0), frame);
+	// TODO: Handle transparency
+	for (int idx = 0; idx < 2; ++idx) {
+		if (_decoders[idx]) {
+			const Graphics::Surface *frame = _decoders[idx]->decodeNextFrame();
+			_videoSurface->blitFrom(Point(0, 0), frame);
+		}
+	}
+
 	return false;
 }
 
