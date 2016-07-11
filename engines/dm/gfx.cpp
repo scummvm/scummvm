@@ -703,7 +703,7 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_g99_bitmapWall_D0R_Native = nullptr;
 
 	_g322_paletteSwitchingEnabled = false;
-	warning("DUMMY CODE: setting _g304_dungeonViewPaletteIndex");
+	warning(false, "DUMMY CODE: setting _g304_dungeonViewPaletteIndex");
 	_g304_dungeonViewPaletteIndex = 0;
 
 	g186_doorFrame_D1C = new DoorFrames( // @ G0186_s_Graphic558_Frames_Door_D1C
@@ -815,8 +815,8 @@ void DisplayMan::f460_initializeGraphicData() {
 	_g709_bitmapWallSet_DoorFrameFront = new byte[32 * 123];
 	_g296_bitmapViewport = new byte[224 * 136];
 
-	warning("SKIPPED CODE: G0086_puc_Bitmap_ViewportBlackArea it is useless");
-	warning("SKIPPED CODE: G0087_puc_Bitmap_ViewportFloorArea it is useless");
+	warning(false, "SKIPPED CODE: G0086_puc_Bitmap_ViewportBlackArea it is useless");
+	warning(false, "SKIPPED CODE: G0087_puc_Bitmap_ViewportFloorArea it is useless");
 
 	if (!_g639_derivedBitmapByteCount)
 		_g639_derivedBitmapByteCount = new uint16[k730_DerivedBitmapMaximumCount];
@@ -1050,7 +1050,7 @@ void DisplayMan::f565_viewportSetPalette(uint16* middleScreenPalette, uint16* to
 }
 
 void DisplayMan::f566_viewportBlitToScreen() {
-	warning("MISSING FUNCTIONALITY: using correct colorpalette");
+	warning(false, "MISSING FUNCTIONALITY: using correct colorpalette");
 	Box box(0, 223, 33, 33 + 135);
 
 	f132_blitToBitmap(_g296_bitmapViewport, _g348_bitmapScreen, box, 0, 0, k112_byteWidthViewport, k160_byteWidthScreen, kM1_ColorNoTransparency);
@@ -1144,7 +1144,7 @@ void DisplayMan::f133_blitBoxFilledWithMaskedBitmap(byte* src, byte* dest, byte*
 													int16 lastUnitIndex, int16 firstUnitIndex, int16 destByteWidth, Color transparent,
 													int16 xPos, int16 yPos, int16 destHeight, int16 height2) {
 		 // make sure to take care of inclusive boundaries
-	warning("STUB FUNCTION: does nothing at all");
+	warning(false, "STUB FUNCTION: does nothing at all");
 }
 
 
@@ -2045,7 +2045,7 @@ void DisplayMan::f124_drawSquareD1C(direction dir, int16 posX, int16 posY) {
 							  _g296_bitmapViewport, g106_BoxThievesEye_ViewPortVisibleArea, 0, 0,
 							  48, k112_byteWidthViewport, k9_ColorGold, 95, k136_heightViewport); /* BUG0_74 */
 			f493_addDerivedBitmap(k1_DerivedBitmapThievesEyeVisibleArea);
-			warning("MISSING CODE: F0480_CACHE_ReleaseBlock");
+			warning(false, "MISSING CODE: F0480_CACHE_ReleaseBlock");
 		}
 		return;
 	case k17_DoorFrontElemType:
@@ -2265,7 +2265,7 @@ void DisplayMan::f128_drawDungeon(direction dir, int16 posX, int16 posY) {
 }
 
 void DisplayMan::f98_drawFloorAndCeiling() {
-	warning("f98_drawFloorAndCeiling doesn't do anything");
+	warning(false, "f98_drawFloorAndCeiling doesn't do anything");
 	_g297_drawFloorAndCeilingRequested = false;
 }
 
@@ -2711,9 +2711,9 @@ void DisplayMan::f113_drawField(FieldAspect* fieldAspect, Box& box) {
 	}
 
 	// byte *bitmap = dispMan.f489_getNativeBitmapOrGraphic(k73_FieldTeleporterGraphicIndice + fieldAspect->_nativeBitmapRelativeIndex);
-	warning("MISSING CODE: F0133_VIDEO_BlitBoxFilledWithMaskedBitmap");
+	warning(false, "MISSING CODE: F0133_VIDEO_BlitBoxFilledWithMaskedBitmap");
 
-	warning("IGNORED CODE: F0491_CACHE_IsDerivedBitmapInCache, F0493_CACHE_AddDerivedBitmap, F0480_CACHE_ReleaseBlock");
+	warning(false, "IGNORED CODE: F0491_CACHE_IsDerivedBitmapInCache, F0493_CACHE_AddDerivedBitmap, F0480_CACHE_ReleaseBlock");
 }
 
 int16 DisplayMan::f459_getScaledBitmapByteCount(int16 byteWidth, int16 height, int16 scale) {
@@ -3109,7 +3109,7 @@ T0115015_DrawProjectileAsObject:
 						if (flipHorizontal) {
 							f130_flipBitmapHorizontal(AL_6_bitmapRedBanana, M77_getNormalizedByteWidth(byteWidth), heightRedEagle);
 						}
-						warning("IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
+						warning(false, "IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
 					}
 				}
 				AL_4_xPos = coordinateSet[0];
@@ -3341,7 +3341,7 @@ T0115077_DrawSecondHalfSquareCreature:
 							memmove(AL_6_bitmapRedBanana, bitmapGreenAnt, byteWidth * 2 * heightRedEagle * sizeof(byte));
 							f130_flipBitmapHorizontal(AL_6_bitmapRedBanana, byteWidth, heightRedEagle);
 						}
-						warning("IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
+						warning(false, "IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
 					}
 				}
 			}
@@ -3371,7 +3371,7 @@ T0115077_DrawSecondHalfSquareCreature:
 				bitmapGreenAnt = f489_getNativeBitmapOrGraphic(AL_4_nativeBitmapIndex);
 				AL_6_bitmapRedBanana = f492_getDerivedBitmap(derivedBitmapIndex);
 				f129_blitToBitmapShrinkWithPalChange(bitmapGreenAnt, AL_6_bitmapRedBanana, sourceByteWidth * 2, sourceHeight, byteWidth * 2, heightRedEagle, paletteChanges);
-				warning("IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
+				warning(false, "IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
 			}
 			if ((useCreatureSideBitmap && (creatureDirectionDelta == 1)) || /* If creature is viewed from the right, the side view must be flipped */
 				(useCreatureAttackBitmap && getFlag(creatureAspectInt, k0x0040_MaskActiveGroupFlipBitmap)) ||
@@ -3513,7 +3513,7 @@ continue;
 							f129_blitToBitmapShrinkWithPalChange(bitmapGreenAnt, AL_6_bitmapRedBanana, ((ProjectileAspect *)objectAspect)->_byteWidth * 2, ((ProjectileAspect *)objectAspect)->_height,
 																 byteWidth * 2, heightRedEagle, _g75_palChangesProjectile[AL_8_projectileScaleIndex >> 1]);
 							if (doNotScaleWithKineticEnergy) {
-								warning("IGNORED CODE F0493_CACHE_AddDerivedBitmap");
+								warning(false, "IGNORED CODE F0493_CACHE_AddDerivedBitmap");
 							}
 						}
 					}
@@ -3627,7 +3627,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 						AL_4_explosionAspectIndex++; /* Use third graphic in the pattern for large explosion attack */
 					}
 				}
-				warning("IGNORED CODE: F0491_CACHE_IsDerivedBitmapInCache");
+				warning(false, "IGNORED CODE: F0491_CACHE_IsDerivedBitmapInCache");
 				AL_6_bitmapRedBanana = f489_getNativeBitmapOrGraphic(AL_4_explosionAspectIndex + k351_FirstExplosionPatternGraphicIndice);
 				if (smoke) {
 					f129_blitToBitmapShrinkWithPalChange(AL_6_bitmapRedBanana, _g74_tmpBitmap, 48, 32, 48, 32, g212_PalChangeSmoke);
@@ -3636,8 +3636,8 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 				f133_blitBoxFilledWithMaskedBitmap(AL_6_bitmapRedBanana, _g296_bitmapViewport, nullptr, f492_getDerivedBitmap(k0_DerivedBitmapViewport), g105_BoxExplosionPattern_D0C,
 												   _vm->_rnd->getRandomNumber(4) + 87, _vm->_rnd->getRandomNumber(64),
 												   224, (Color)(k0x0080_BlitDoNotUseMask | k10_ColorFlesh), 0, 0, 136, 93);
-				warning("IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
-				warning("IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
+				warning(false, "IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
+				warning(false, "IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
 			} else {
 				if (rebirthExplosion) {
 					explosionCoordinates = g227_RebirthStep2ExplosionCoordinates[AL_1_viewSquareExplosionIndex - 3];
@@ -3736,7 +3736,7 @@ byte* DisplayMan::f492_getDerivedBitmap(int16 derivedBitmapIndex) {
 }
 
 void DisplayMan::f493_addDerivedBitmap(int16 derivedBitmapIndex) {
-	warning("f493_addDerivedBitmap DOES NOTHING");
+	warning(false, "f493_addDerivedBitmap DOES NOTHING");
 }
 
 }

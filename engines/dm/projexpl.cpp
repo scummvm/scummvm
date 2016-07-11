@@ -230,7 +230,7 @@ T0217004:
 				AL0507_ui_SoundIndex = k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM;
 			}
 		}
-		warning("MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+		warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
 	}
 T0217044:
 	if (L0509_B_RemovePotion) {
@@ -321,10 +321,10 @@ void ProjExpl::f213_explosionCreate(Thing explThing, uint16 attack, uint16 mapXC
 	L0470_ps_Explosion->setType(explThing.toUint16() - Thing::_firstExplosion.toUint16());
 	L0470_ps_Explosion->setAttack(attack);
 	if (explThing.toUint16() < Thing::_explHarmNonMaterial.toUint16()) {
-		warning("MISING CODE: F0064_SOUND_RequestPlay_CPSD");
+		warning(false, "MISING CODE: F0064_SOUND_RequestPlay_CPSD");
 	} else {
 		if (explThing != Thing::_explSmoke) {
-			warning("MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+			warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
 		}
 	}
 	_vm->_dungeonMan->f163_linkThingToList(L0473_T_Thing, Thing(0), AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY);

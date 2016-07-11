@@ -117,24 +117,24 @@ T0386006:
 	box2._y2 = 110;
 	dm.f132_blitToBitmap(bitmapIcon, dm._g348_bitmapScreen, box2, 0, 0, 8, k160_byteWidthScreen, kM1_ColorNoTransparency);
 	if (champion.getAttributes(k0x0008_ChampionAttributeDisableAction) || _vm->_championMan->_g299_candidateChampionOrdinal || _vm->_championMan->_g300_partyIsSleeping) {
-		warning("MISSING CODE: F0136_VIDEO_ShadeScreenBox");
+		warning(false, "MISSING CODE: F0136_VIDEO_ShadeScreenBox");
 	}
 }
 
 void MenuMan::f456_drawDisabledMenu() {
 	if (!_vm->_championMan->_g300_partyIsSleeping) {
-		warning("MISSING CODE: F0363_COMMAND_HighlightBoxDisable");
+		warning(false, "MISSING CODE: F0363_COMMAND_HighlightBoxDisable");
 		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 		if (_vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
 			if (_vm->_inventoryMan->_g424_panelContent == k4_PanelContentChest) {
 				_vm->_inventoryMan->f334_closeChest();
 			}
 		} else {
-			warning("MISSING CODE: F0136_VIDEO_ShadeScreenBox");
+			warning(false, "MISSING CODE: F0136_VIDEO_ShadeScreenBox");
 		}
-		warning("MISSING CODE: F0136_VIDEO_ShadeScreenBox");
-		warning("MISSING CODE: F0136_VIDEO_ShadeScreenBox");
-		warning("MISSING CODE: F0067_MOUSE_SetPointerToNormal");
+		warning(false, "MISSING CODE: F0136_VIDEO_ShadeScreenBox");
+		warning(false, "MISSING CODE: F0136_VIDEO_ShadeScreenBox");
+		warning(false, "MISSING CODE: F0067_MOUSE_SetPointerToNormal");
 	}
 }
 
@@ -175,7 +175,7 @@ void MenuMan::f390_refreshActionAreaAndSetChampDirMaxDamageReceived() {
 	if (_g508_refreshActionArea) {
 		if (!champMan._g506_actingChampionOrdinal) {
 			if (_g513_actionDamage) {
-				warning("MISSING CODE: F0385_MENUS_DrawActionDamage");
+				warning(false, "MISSING CODE: F0385_MENUS_DrawActionDamage");
 				_g513_actionDamage = 0;
 			} else {
 				_g509_actionAreaContainsIcons = true;
@@ -185,7 +185,7 @@ void MenuMan::f390_refreshActionAreaAndSetChampDirMaxDamageReceived() {
 			_g509_actionAreaContainsIcons = false;
 			champ->setAttributeFlag(k0x8000_ChampionAttributeActionHand, true);
 			champMan.f292_drawChampionState((ChampionIndex)_vm->M1_ordinalToIndex(champMan._g506_actingChampionOrdinal));
-			warning("MISSING CODE: F0387_MENUS_DrawActionArea");
+			warning(false, "MISSING CODE: F0387_MENUS_DrawActionArea");
 		}
 	}
 }
@@ -198,7 +198,7 @@ void MenuMan::f387_drawActionArea() {
 	ChampionMan &champMan = *_vm->_championMan;
 	TextMan &textMan = *_vm->_textMan;
 
-	warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
+	warning(false, "MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
 	dispMan._g578_useByteBoxCoordinates = false;
 	dispMan.D24_fillScreenBox(g1_BoxActionArea, k0_ColorBlack);
 	if (_g509_actionAreaContainsIcons) {
@@ -221,7 +221,7 @@ void MenuMan::f387_drawActionArea() {
 												k12_ActionNameMaximumLength, k200_heightScreen);
 		}
 	}
-	warning("MISSING CODE: F0078_MOUSE_ShowPointer");
+	warning(false, "MISSING CODE: F0078_MOUSE_ShowPointer");
 	_g508_refreshActionArea = false;
 }
 
@@ -251,26 +251,26 @@ void MenuMan::f393_drawSpellAreaControls(ChampionIndex champIndex) {
 	int16 champCurrHealth[4];
 	for (uint16 i = 0; i < 4; ++i)
 		champCurrHealth[i] = champMan._gK71_champions[i]._currHealth;
-	warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
+	warning(false, "MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
 	dispMan.D24_fillScreenBox(g504_BoxSpellAreaControls, k0_ColorBlack);
 	int16 champCount = champMan._g305_partyChampionCount;
 	switch (champIndex) {
 	case k0_ChampionFirst:
-		warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+		warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
 		textMan.f53_printToLogicalScreen(235, 48, k0_ColorBlack, k4_ColorCyan, champ._name);
 		if (champCount) {
 			if (champCurrHealth[1]) {
-				warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+				warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
 			}
 labelChamp2:
 			if (champCount > 2) {
 				if (champCurrHealth[2]) {
-					warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+					warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
 				}
 labelChamp3:
 				if (champCount > 3) {
 					if (champCurrHealth[3]) {
-						warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+						warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
 					}
 				}
 			}
@@ -278,36 +278,36 @@ labelChamp3:
 		break;
 	case k1_ChampionSecond:
 		if (champCurrHealth[0]) {
-			warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+			warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
 		}
-		warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+		warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
 		textMan.f53_printToLogicalScreen(249, 48, k0_ColorBlack, k4_ColorCyan, champ._name);
 		goto labelChamp2;
 	case k2_ChampionThird:
 		if (champCurrHealth[0]) {
-			warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+			warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
 		}
 		if (champCurrHealth[1]) {
-			warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+			warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
 		}
-		warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+		warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
 		textMan.f53_printToLogicalScreen(263, 48, k0_ColorBlack, k4_ColorCyan, champ._name);
 		goto labelChamp3;
 	case k3_ChampionFourth:
 		if (champCurrHealth[0]) {
-			warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+			warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
 		}
 		if (champCurrHealth[1]) {
-			warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+			warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
 		}
 		if (champCurrHealth[2]) {
-			warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+			warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
 		}
-		warning("MISSING CODE: F0006_MAIN_HighlightScreenBox");
+		warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
 		textMan.f53_printToLogicalScreen(277, 48, k0_ColorBlack, k4_ColorCyan, champ._name);
 		break;
 	}
-	warning("MISSING CODE: F0078_MOUSE_ShowPointer");
+	warning(false, "MISSING CODE: F0078_MOUSE_ShowPointer");
 }
 
 #define k2_SpellAreaAvailableSymbols 2 // @ C2_SPELL_AREA_AVAILABLE_SYMBOLS
@@ -350,28 +350,28 @@ void MenuMan::f394_setMagicCasterAndDrawSpellArea(int16 champIndex) {
 		|| ((champIndex != kM1_ChampionNone) && !champMan._gK71_champions[champIndex]._currHealth))
 		return;
 	if (champMan._g514_magicCasterChampionIndex == kM1_ChampionNone) {
-		warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
+		warning(false, "MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
 		dispMan.f132_blitToBitmap(dispMan.f489_getNativeBitmapOrGraphic(k9_MenuSpellAreaBackground), dispMan._g348_bitmapScreen, g0_BoxSpellArea, 0, 0,
 								  48, k160_byteWidthScreen, kM1_ColorNoTransparency);
-		warning("MISSING CODE: F0078_MOUSE_ShowPointer");
+		warning(false, "MISSING CODE: F0078_MOUSE_ShowPointer");
 	}
 	if (champIndex == kM1_ChampionNone) {
 		champMan._g514_magicCasterChampionIndex = kM1_ChampionNone;
-		warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
+		warning(false, "MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
 		dispMan._g578_useByteBoxCoordinates = false;
 		dispMan.D24_fillScreenBox(g0_BoxSpellArea, k0_ColorBlack);
-		warning("MISSING CODE: F0078_MOUSE_ShowPointer");
+		warning(false, "MISSING CODE: F0078_MOUSE_ShowPointer");
 		return;
 	}
 
 	champMan._g514_magicCasterChampionIndex = (ChampionIndex)champIndex;
 	f392_buildSpellAreaLine(k2_SpellAreaAvailableSymbols);
-	warning("MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
+	warning(false, "MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
 	f393_drawSpellAreaControls((ChampionIndex)champIndex);
 	dispMan.f132_blitToBitmap(_gK72_bitmapSpellAreaLine, dispMan._g348_bitmapScreen, gK75_BoxSpellAreaLine2, 0, 0, 48, k160_byteWidthScreen, kM1_ColorNoTransparency);
 	f392_buildSpellAreaLine(k3_SpellAreaChampionSymbols);
 	dispMan.f132_blitToBitmap(_gK72_bitmapSpellAreaLine, dispMan._g348_bitmapScreen, gK76_BoxSpellAreaLine3, 0, 0, 48, k160_byteWidthScreen, kM1_ColorNoTransparency);
-	warning("MISSING CODE: F0078_MOUSE_ShowPointer");
+	warning(false, "MISSING CODE: F0078_MOUSE_ShowPointer");
 }
 
 void MenuMan::f457_drawEnabledMenus() {

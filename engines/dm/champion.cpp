@@ -157,7 +157,7 @@ bool ChampionMan::f328_isObjectThrown(uint16 champIndex, int16 slotIndex, int16 
 			return false;
 		}
 	}
-	warning("MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+	warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
 	f325_decrementStamine(champIndex, f305_getThrowingStaminaCost(L0996_T_Thing));
 	f330_disableAction(champIndex, 4);
 	AL0994_i_Experience = 8;
@@ -887,7 +887,7 @@ void ChampionMan::f304_addSkillExperience(uint16 champIndex, uint16 skillIndex, 
 	int16 L0922_i_BaseSkillLevel;
 
 
-	warning("potaneitally dangerous cast of uint32 below");
+	warning(false, "potaneitally dangerous cast of uint32 below");
 	if ((skillIndex >= k4_ChampionSkillSwing) && (skillIndex <= k11_ChampionSkillShoot) && ((uint32)_vm->_projexpl->_g361_lastCreatureAttackTime < (_vm->_g313_gameTime - 150))) {
 		exp >>= 1;
 	}
@@ -902,7 +902,7 @@ void ChampionMan::f304_addSkillExperience(uint16 champIndex, uint16 skillIndex, 
 			L0916_ui_BaseSkillIndex = skillIndex;
 		}
 		AL0915_ui_SkillLevelBefore = f303_getSkillLevel(champIndex, L0916_ui_BaseSkillIndex | (k0x4000_IgnoreObjectModifiers | k0x8000_IgnoreTemporaryExperience));
-		warning("potentially dangerous cast of uint32 below");
+		warning(false, "potentially dangerous cast of uint32 below");
 		if ((skillIndex >= k4_ChampionSkillSwing) && ((uint32)_vm->_projexpl->_g361_lastCreatureAttackTime > (_vm->_g313_gameTime - 25))) {
 			exp <<= 1;
 		}
@@ -1145,7 +1145,7 @@ ChampionIndex ChampionMan::f285_getIndexInCell(int16 cell) {
 
 void ChampionMan::f278_resetDataToStartGame() {
 	if (!_vm->_g298_newGame) {
-		warning("MISSING CODE: stuff for resetting for loaded games");
+		warning(false, "MISSING CODE: stuff for resetting for loaded games");
 		assert(false);
 	}
 
@@ -1401,7 +1401,7 @@ uint16 ChampionMan::f306_getStaminaAdjustedValue(Champion *champ, int16 val) {
 	int16 currStamina = champ->_currStamina;
 	int16 halfMaxStamina = champ->_maxStamina / 2;
 	if (currStamina < halfMaxStamina) {
-		warning("Possible undefined behavior in the original code");
+		warning(false, "Possible undefined behavior in the original code");
 		val /= 2;
 		return val + ((uint32)val * (uint32)currStamina) / halfMaxStamina;
 	}
@@ -1693,7 +1693,7 @@ void ChampionMan::f291_drawSlot(uint16 champIndex, int16 slotIndex) {
 }
 
 void ChampionMan::f281_renameChampion(Champion* champ) {
-	warning("STUB METHOD: Champion::renameChampion, F0281_CHAMPION_Rename");
+	warning(false, "STUB METHOD: Champion::renameChampion, F0281_CHAMPION_Rename");
 
 	DisplayMan &dispMan = *_vm->_displayMan;
 	TextMan &textMan = *_vm->_textMan;

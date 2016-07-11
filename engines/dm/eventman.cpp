@@ -412,7 +412,7 @@ void EventManager::f68_setPointerToObject(byte* bitmap) {
 	_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(bitmap, _gK190_mousePointerTempBuffer, 16, 16, 16, 16, g44_palChangesMousePointerIcon);
 	_vm->_displayMan->f132_blitToBitmap(_gK190_mousePointerTempBuffer, L0051_puc_Bitmap, g620_BoxMousePointerObject, 0, 0, 8, 16, k0_ColorBlack, 16, 18);
 	*/
-	warning("TODO - Call f129_blitToBitmapShrinkWithPalChange");
+	warning(false, "TODO - Call f129_blitToBitmapShrinkWithPalChange");
 	// dummy code
 	_vm->_displayMan->f132_blitToBitmap(bitmap, L0051_puc_Bitmap, g619_BoxMousePointerObjectShadow, 0, 0, 8, 16, kM1_ColorNoTransparency, 16, 18);
 	_vm->_displayMan->f132_blitToBitmap(bitmap, L0051_puc_Bitmap, g620_BoxMousePointerObject, 0, 0, 8, 16, k0_ColorBlack, 16, 18);
@@ -797,7 +797,7 @@ void EventManager::f377_commandProcessType80ClickInDungeonView(int16 posX, int16
 			L1151_ps_Junk = (Junk*)_vm->_dungeonMan->f157_getSquareFirstThingData(L1155_i_MapX, L1156_i_MapY);
 			if ((((Door*)L1151_ps_Junk)->hasButton()) && _vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn].isPointInside(posX, posY - 33)) {
 				_vm->_g321_stopWaitingForPlayerInput = true;
-				warning("MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+				warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
 				_vm->_movsens->f268_addEvent(k10_TMEventTypeDoor, L1155_i_MapX, L1156_i_MapY, 0, k2_SensorEffToggle, _vm->_g313_gameTime + 1);
 				return;
 			}
@@ -954,7 +954,7 @@ void EventManager::f378_commandProcess81ClickInPanel(int16 x, int16 y) {
 			return;
 		commandType = f358_getCommandTypeFromMouseInput(g456_MouseInput_PanelChest, Common::Point(x, y), k1_LeftMouseButton);
 		if (commandType != k0_CommandNone)
-			warning("MISSING CODE: F0302_CHAMPION_ProcessCommands28To65_ClickOnSlotBox");
+			warning(false, "MISSING CODE: F0302_CHAMPION_ProcessCommands28To65_ClickOnSlotBox");
 		break;
 	case k5_PanelContentResurrectReincarnate:
 		if (!champMan._g415_leaderEmptyHanded)

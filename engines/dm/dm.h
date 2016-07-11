@@ -50,7 +50,7 @@ class GroupMan;
 class Timeline;
 class ProjExpl;
 
-
+void warning(bool repeat, const char *s, ...);
 
 enum direction {
 	kDirNorth = 0,

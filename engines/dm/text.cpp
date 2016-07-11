@@ -137,9 +137,9 @@ void TextMan::f45_messageAreaCreateNewRow() {
 	uint16 L0029_ui_RowIndex;
 
 	if (_g358_messageAreaCursorRow == 3) {
-		warning("MISSING CODE: F0561_SCROLLER_IsTextScrolling");
+		warning(false, "MISSING CODE: F0561_SCROLLER_IsTextScrolling");
 		memset(_g356_bitmapMessageAreaNewRow, k0_ColorBlack, 320 * 7);
-		warning("MISSING CODE: F0560_SCROLLER_SetCommand");
+		warning(false, "MISSING CODE: F0560_SCROLLER_SetCommand");
 		for (L0029_ui_RowIndex = 0; L0029_ui_RowIndex < 3; L0029_ui_RowIndex++) {
 			_g360_messageAreaRowExpirationTime[L0029_ui_RowIndex] = _g360_messageAreaRowExpirationTime[L0029_ui_RowIndex + 1];
 		}
@@ -153,13 +153,13 @@ void TextMan::f46_messageAreaPrintString(Color color, const char* string) {
 	int16 L0030_i_StringLength;
 
 	L0030_i_StringLength = strlen(string);
-	warning("MISSING CODE: F0561_SCROLLER_IsTextScrolling");
+	warning(false, "MISSING CODE: F0561_SCROLLER_IsTextScrolling");
 	if (true) { // there is a test here with F0561_SCROLLER_IsTextScrolling
 		_vm->_textMan->f53_printToLogicalScreen(_g359_messageAreaCursorColumn * 6, (_g358_messageAreaCursorRow * 7) + 177, color, k0_ColorBlack, string);
 	} else {
 		f40_printTextToBitmap(_g356_bitmapMessageAreaNewRow, k160_byteWidthScreen, _g359_messageAreaCursorColumn * 6, 5, color, k0_ColorBlack, string, 7);
-		warning("MISSING CODE: F0561_SCROLLER_IsTextScrolling");
-		warning("MISSING CODE: F0560_SCROLLER_SetCommand");
+		warning(false, "MISSING CODE: F0561_SCROLLER_IsTextScrolling");
+		warning(false, "MISSING CODE: F0560_SCROLLER_SetCommand");
 	}
 	_g359_messageAreaCursorColumn += L0030_i_StringLength;
 	_g360_messageAreaRowExpirationTime[_g358_messageAreaCursorRow] = _vm->_g313_gameTime + 200;

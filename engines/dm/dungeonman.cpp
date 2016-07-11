@@ -475,7 +475,7 @@ void DungeonMan::f455_decompressDungeonFile() {
 			}
 		}
 	} else {
-		warning("TODO: if the dungeon is uncompressed, read it here");
+		warning(false, "TODO: if the dungeon is uncompressed, read it here");
 	}
 	f.close();
 }

@@ -37,6 +37,8 @@
 #include "graphics/palette.h"
 #include "common/file.h"
 #include "common/events.h"
+#include "common/array.h"
+#include "common/algorithm.h"
 
 #include "dm/dm.h"
 #include "gfx.h"
@@ -54,6 +56,24 @@
 #include "projexpl.h"
 
 namespace DM {
+void warning(bool repeat, const char* s, ...) {
+	va_list va;
+
+	va_start(va, s);
+	Common::String output = Common::String::vformat(s, va);
+	va_end(va);
+
+	if (repeat) {
+		::warning(output.c_str());
+	} else {
+		static Common::Array<Common::String> stringsPrinted;
+
+		if (Common::find(stringsPrinted.begin(), stringsPrinted.end(), s) == stringsPrinted.end()) {
+			stringsPrinted.push_back(output);
+			::warning(output.c_str());
+		}
+	}
+}
 
 void turnDirRight(direction &dir) { dir = (direction)((dir + 1) & 3); }
 void turnDirLeft(direction &dir) { dir = (direction)((dir - 1) & 3); }
@@ -151,7 +171,7 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	debug("DMEngine::DMEngine");
 
 
-	warning("DUMMY CODE: setting _g298_newGame to true, should be in processEntrance");
+	warning(false, "DUMMY CODE: setting _g298_newGame to true, should be in processEntrance");
 	_g298_newGame = true;
 }
 
@@ -200,7 +220,7 @@ void DMEngine::f463_initializeGame() {
 	_eventMan->initMouse();
 	//F0441_STARTEND_ProcessEntrance();
 	while (_loadsaveMan->f435_loadgame() != k1_LoadgameSuccess) {
-		warning("TODO: F0441_STARTEND_ProcessEntrance");
+		warning(false, "TODO: F0441_STARTEND_ProcessEntrance");
 	}
 	//F0396_MENUS_LoadSpellAreaLinesBitmap() is not needed, every bitmap has been loaded
 
@@ -216,7 +236,7 @@ void DMEngine::f463_initializeGame() {
 }
 
 void DMEngine::f448_initMemoryManager() {
-	warning("STUB FUNCTION");
+	warning(false, "STUB FUNCTION");
 	for (uint16 i = 0; i < 16; ++i)
 		_displayMan->_g347_paletteTopAndBottomScreen[i] = g21_PalDungeonView[0][i];
 }
@@ -246,7 +266,7 @@ void DMEngine::f462_startGame() {
 	f3_processNewPartyMap(_dungeonMan->_g309_partyMapIndex);
 
 	if (!_g298_newGame) {
-		warning("TODO: loading game");
+		warning(false, "TODO: loading game");
 		assert(false);
 	} else {
 		_displayMan->_g578_useByteBoxCoordinates = false;
@@ -255,7 +275,7 @@ void DMEngine::f462_startGame() {
 		_displayMan->D24_fillScreenBox(g63_boxScreenBottom, k0_ColorBlack);
 	}
 
-	warning("TODO: build copper");
+	warning(false, "TODO: build copper");
 	_menuMan->f395_drawMovementArrows();
 	_championMan->f278_resetDataToStartGame();
 	_g301_gameTimeTicking = true;
@@ -293,20 +313,20 @@ Common::Error DMEngine::run() {
 	f463_initializeGame(); // @ F0463_START_InitializeGame_CPSADEF
 	while (true) {
 		f2_gameloop();
-		warning("TODO: F0444_STARTEND_Endgame(G0303_B_PartyDead);");
+		warning(false, "TODO: F0444_STARTEND_Endgame(G0303_B_PartyDead);");
 	}
 
 	return Common::kNoError;
 }
 
 void DMEngine::f2_gameloop() {
-	warning("DUMMY CODE SETTING PARTY POS AND DIRECTION");
+	warning(false, "DUMMY CODE SETTING PARTY POS AND DIRECTION");
 	_dungeonMan->_g306_partyMapX = 10;
 	_dungeonMan->_g307_partyMapY = 4;
 	_dungeonMan->_g308_partyDir = kDirNorth;
-	warning("DUMMY CODE: setting InventoryMan::_g432_inventoryChampionOrdinal to zero");
+	warning(false, "DUMMY CODE: setting InventoryMan::_g432_inventoryChampionOrdinal to zero");
 	_inventoryMan->_g432_inventoryChampionOrdinal = 0;
-	warning("DUMMY CODE: clearing screen to black"); // in loop below
+	warning(false, "DUMMY CODE: clearing screen to black"); // in loop below
 
 	while (true) {
 		if (_g327_newPartyMapIndex != kM1_mapIndexNone) {
@@ -331,7 +351,7 @@ T0002002:
 				_eventMan->f78_showMouse();
 				_eventMan->f68_setPointerToObject(_objectMan->_g412_objectIconForMousePointer);
 				_eventMan->f77_hideMouse();
-				
+
 			}
 			if (_eventMan->_g326_refreshMousePointerInMainLoop) {
 				_eventMan->_g326_refreshMousePointerInMainLoop = false;

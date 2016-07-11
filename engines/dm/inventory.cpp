@@ -97,7 +97,7 @@ void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 	_vm->_inventoryMan->_g432_inventoryChampionOrdinal = _vm->M0_indexToOrdinal(championIndex);
 	if (!AL1102_ui_InventoryChampionOrdinal) {
-		warning("MISSING CODE: F0136_VIDEO_ShadeScreenBox");
+		warning(false, "MISSING CODE: F0136_VIDEO_ShadeScreenBox");
 	}
 	L1103_ps_Champion = &_vm->_championMan->_gK71_champions[championIndex];
 	_vm->_displayMan->f466_loadIntoBitmap(k17_InventoryGraphicIndice, _vm->_displayMan->_g296_bitmapViewport);
@@ -177,7 +177,7 @@ void InventoryMan::f346_drawPanelResurrectReincarnate() {
 }
 
 void InventoryMan::f347_drawPanel() {
-	warning("possible reintroduction of BUG0_48");
+	warning(false, "possible reintroduction of BUG0_48");
 	f334_closeChest(); // possibility of BUG0_48
 
 	ChampionMan &cm = *_vm->_championMan;
@@ -235,7 +235,7 @@ void InventoryMan::f334_closeChest() {
 }
 
 void InventoryMan::f340_drawPanelScrollTextLine(int16 yPos, char* text) {
-	warning("CHANGE5_03_IMPROVEMENT");
+	warning(false, "CHANGE5_03_IMPROVEMENT");
 	for (char* iter = text; *iter != '\0'; ++iter) {
 		if ((*iter >= 'A') && (*iter <= 'Z')) {
 			*iter -= 64;
@@ -261,7 +261,7 @@ void InventoryMan::f341_drawPanelScroll(Scroll* scroll) {
 	charRed++;
 	char *charGreen = charRed; // first char of the second line
 	while (*charGreen) {
-		warning("BUG0_47");
+		warning(false, "BUG0_47");
 		/* BUG0_47 Graphical glitch when you open a scroll. If there is a single line of text in a scroll
 		(with no carriage return) then charGreen points to undefined data. This may result in a graphical
 		glitch and also corrupt other memory. This is not an issue in the original dungeons where all
@@ -300,7 +300,7 @@ void InventoryMan::f333_openAndDrawChest(Thing thingToOpen, Container* chest, bo
 	if (_g426_openChest == thingToOpen)
 		return;
 
-	warning("CHANGE8_09_FIX");
+	warning(false, "CHANGE8_09_FIX");
 	if (_g426_openChest != Thing::_none)
 		f334_closeChest(); // CHANGE8_09_FIX
 
@@ -314,7 +314,7 @@ void InventoryMan::f333_openAndDrawChest(Thing thingToOpen, Container* chest, bo
 	Thing thing = chest->getSlot();
 	int16 thingCount = 0;
 	while (thing != Thing::_endOfList) {
-		warning("CHANGE8_08_FIX");
+		warning(false, "CHANGE8_08_FIX");
 		if (++thingCount > 8)
 			break; // CHANGE8_08_FIX, make sure that no more than the first 8 objects in a chest are drawn
 
@@ -428,7 +428,7 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 	TextMan &textMan = *_vm->_textMan;
 
 	if (_vm->_g331_pressingEye || _vm->_g333_pressingMouth) {
-		warning("BUG0_48 The contents of a chest are reorganized when an object with a statistic modifier is placed or removed on a champion");
+		warning(false, "BUG0_48 The contents of a chest are reorganized when an object with a statistic modifier is placed or removed on a champion");
 		f334_closeChest();
 	}
 
