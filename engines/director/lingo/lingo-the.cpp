@@ -27,48 +27,48 @@ namespace Director {
 class Sprite;
 
 TheEntity entities[] = {
-	{ kTheCast,				"cast",				INT  }, // string?
-	{ kTheClickOn,			"clickOn",			VOID },
-	{ kTheColorDepth,		"colorDepth",		VOID },
-	{ kTheColorQD,			"colorQD",			VOID },
-	{ kTheCommandDown,		"commandDown",		VOID },
-	{ kTheControlDown,		"controlDown",		VOID },
-	{ kTheDoubleClick,		"doubleClick",		VOID },
-	{ kTheExitLock,			"exitlock",			VOID },
-	{ kTheFloatPrecision,	"floatPrecision",	VOID },
-	{ kTheFrame,			"frame",			VOID },
-	{ kTheItemDelimiter,	"itemDelimiter",	VOID },
-	{ kTheKey,				"key",				VOID },
-	{ kTheLastClick,		"lastClick",		VOID },
-	{ kTheLastEvent,		"lastEvent",		VOID },
-	{ kTheLastFrame,		"lastFrame",		VOID },
-	{ kTheMenu,				"menu",				INT  },
-	{ kTheMenus,			"menus",			VOID },
-	{ kTheMenuItem,			"menuitem",			STRING  }, // int?
-	{ kTheMenuItems,		"menuitems",		VOID  },
-	{ kTheMouseDown,		"mouseDown",		VOID },
-	{ kTheMouseDownScript,  "mouseDownScript",	VOID },
-	{ kTheMouseH,			"mouseh",			VOID },
-	{ kTheMouseUp,			"mouseUp",			VOID },
-	{ kTheMouseUpScript,  	"mouseUpScript",	VOID },
-	{ kTheMouseV,			"mousev",			VOID },
-	{ kTheMovie,			"movie",			VOID },
-	{ kTheMultiSound,		"multiSound",		VOID },
-	{ kTheOptionDown,		"optionDown",		VOID },
-	{ kThePathName,			"pathname",			VOID },
-	{ kThePerFrameHook,		"perframehook",		VOID },
-	{ kThePreloadEventAbort,"preloadEventAbort",VOID },
-	{ kTheRightMouseDown,	"rightMouseDown",	VOID },
-	{ kTheRightMouseUp,		"rightMouseUp",		VOID },
-	{ kTheRomanLingo,		"romanLingo",		VOID },
-	{ kTheShiftDown,		"shiftDown",		VOID },
-	{ kTheSprite,			"sprite",			INT  },
-	{ kTheStage,			"stage",			VOID },
-	{ kTheStillDown,		"stillDown",		VOID },
-	{ kTheTicks,			"ticks",			VOID },
-	{ kTheTimeoutLength,	"timeoutlength",	VOID },
-	{ kTheTimer,			"timer",			VOID },
-	{ kTheWindow,			"window",			VOID },
+	{ kTheCast,				"cast",				true  },
+	{ kTheClickOn,			"clickOn",			false },
+	{ kTheColorDepth,		"colorDepth",		false },
+	{ kTheColorQD,			"colorQD",			false },
+	{ kTheCommandDown,		"commandDown",		false },
+	{ kTheControlDown,		"controlDown",		false },
+	{ kTheDoubleClick,		"doubleClick",		false },
+	{ kTheExitLock,			"exitlock",			false },
+	{ kTheFloatPrecision,	"floatPrecision",	false },
+	{ kTheFrame,			"frame",			false },
+	{ kTheItemDelimiter,	"itemDelimiter",	false },
+	{ kTheKey,				"key",				false },
+	{ kTheLastClick,		"lastClick",		false },
+	{ kTheLastEvent,		"lastEvent",		false },
+	{ kTheLastFrame,		"lastFrame",		false },
+	{ kTheMenu,				"menu",				true  },
+	{ kTheMenus,			"menus",			false },
+	{ kTheMenuItem,			"menuitem",			true  },
+	{ kTheMenuItems,		"menuitems",		false },
+	{ kTheMouseDown,		"mouseDown",		false },
+	{ kTheMouseDownScript,  "mouseDownScript",	false },
+	{ kTheMouseH,			"mouseh",			false },
+	{ kTheMouseUp,			"mouseUp",			false },
+	{ kTheMouseUpScript,  	"mouseUpScript",	false },
+	{ kTheMouseV,			"mousev",			false },
+	{ kTheMovie,			"movie",			false },
+	{ kTheMultiSound,		"multiSound",		false },
+	{ kTheOptionDown,		"optionDown",		false },
+	{ kThePathName,			"pathname",			false },
+	{ kThePerFrameHook,		"perframehook",		false },
+	{ kThePreloadEventAbort,"preloadEventAbort",false },
+	{ kTheRightMouseDown,	"rightMouseDown",	false },
+	{ kTheRightMouseUp,		"rightMouseUp",		false },
+	{ kTheRomanLingo,		"romanLingo",		false },
+	{ kTheShiftDown,		"shiftDown",		false },
+	{ kTheSprite,			"sprite",			true  },
+	{ kTheStage,			"stage",			false },
+	{ kTheStillDown,		"stillDown",		false },
+	{ kTheTicks,			"ticks",			false },
+	{ kTheTimeoutLength,	"timeoutlength",	false },
+	{ kTheTimer,			"timer",			false },
+	{ kTheWindow,			"window",			false },
 	{ kTheNOEntity, NULL, false }
 };
 
@@ -173,7 +173,7 @@ void Lingo::initTheEntities() {
 	}
 }
 
-void Lingo::setTheEntity(TheEntityType entity, int id, TheFieldType field, Datum &d) {
+void Lingo::setTheEntity(int entity, int id, int field, Datum &d) {
 	switch (entity) {
 	case kTheSprite:
 		setTheSprite(id, field, d);
@@ -184,14 +184,15 @@ void Lingo::setTheEntity(TheEntityType entity, int id, TheFieldType field, Datum
 	case kTheFloatPrecision:
 		_floatPrecision = d.toInt();
 		_floatPrecision = MAX(0, MIN(_floatPrecision, 19)); // 0 to 19
-		_floatPrecisionFormat.format("%%.%df", _floatPrecision);
+		_floatPrecisionFormat = Common::String::format("%%.%df", _floatPrecision);
+		warning("set to %d: %s", _floatPrecision, _floatPrecisionFormat.c_str());
 		break;
 	default:
 		error("Unprocessed setting field %d of entity %d", field, entity);
 	}
 }
 
-void Lingo::setTheSprite(int id, TheFieldType field, Datum &d) {
+void Lingo::setTheSprite(int id, int field, Datum &d) {
 	Sprite *sprite = _vm->_currentScore->getSpriteById(id);
 
 	d.toInt(); // Enforce Integer
@@ -230,7 +231,7 @@ void Lingo::setTheSprite(int id, TheFieldType field, Datum &d) {
 	}
 }
 
-Datum Lingo::getTheEntity(TheEntityType entity, int id, TheFieldType field) {
+Datum Lingo::getTheEntity(int entity, int id, int field) {
 	Datum d;
 
 	switch (entity) {
@@ -253,7 +254,7 @@ Datum Lingo::getTheEntity(TheEntityType entity, int id, TheFieldType field) {
 	return d;
 }
 
-Datum Lingo::getTheSprite(int id, TheFieldType field) {
+Datum Lingo::getTheSprite(int id, int field) {
 	Datum d;
 	Sprite *sprite = _vm->_currentScore->getSpriteById(id);
 
@@ -291,7 +292,7 @@ Datum Lingo::getTheSprite(int id, TheFieldType field) {
 	return d;
 }
 
-Datum Lingo::getTheCast(int id, TheFieldType field) {
+Datum Lingo::getTheCast(int id, int field) {
 	Datum d;
 	d.type = INT;
 
@@ -343,7 +344,7 @@ Datum Lingo::getTheCast(int id, TheFieldType field) {
 	}
 }
 
-void Lingo::setTheCast(int id, TheFieldType field, Datum &d) {
+void Lingo::setTheCast(int id, int field, Datum &d) {
 	Cast *cast = _vm->_currentScore->_casts[id];
 	switch (field) {
 	case kTheCastType:

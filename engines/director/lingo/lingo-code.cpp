@@ -218,6 +218,32 @@ void Lingo::c_eval() {
 	g_lingo->push(d);
 }
 
+void Lingo::c_theentitypush() {
+	inst e = (*g_lingo->_currentScript)[g_lingo->_pc++];
+	inst f = (*g_lingo->_currentScript)[g_lingo->_pc++];
+	inst i = (*g_lingo->_currentScript)[g_lingo->_pc++];
+
+	int entity = READ_UINT32(&e);
+	int field  = READ_UINT32(&f);
+	int id     = READ_UINT32(&i);
+
+	Datum d = g_lingo->getTheEntity(entity, id, field);
+	g_lingo->push(d);
+}
+
+void Lingo::c_theentityassign() {
+	inst e = (*g_lingo->_currentScript)[g_lingo->_pc++];
+	inst f = (*g_lingo->_currentScript)[g_lingo->_pc++];
+	inst i = (*g_lingo->_currentScript)[g_lingo->_pc++];
+
+	int entity = READ_UINT32(&e);
+	int field  = READ_UINT32(&f);
+	int id     = READ_UINT32(&i);
+
+	Datum d = g_lingo->pop();
+	g_lingo->setTheEntity(entity, id, field, d);
+}
+
 void Lingo::c_add() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();

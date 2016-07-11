@@ -75,7 +75,7 @@ void yyerror(char *s) {
 }
 
 %token CASTREF UNARY VOID VAR
-%token<i> INT
+%token<i> INT THEENTITY THEENTITYWITHID THEFIELD
 %token<f> FLOAT
 %token<s> BLTIN ID STRING HANDLER
 %token tDOWN tELSE tNLELSIF tEND tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
@@ -125,12 +125,27 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(g_lingo->c_assign);
 		$$ = $4;
 		delete $2; }
+	| tSET THEENTITY '=' expr	{
+		g_lingo->code1(g_lingo->c_theentityassign);
+		inst e = 0, f = 0, i = 0;
+		WRITE_UINT32(&e, $2);
+		WRITE_UINT32(&f, 0);
+		WRITE_UINT32(&i, 0);
+		g_lingo->code3(e, f, i);
+		$$ = $4; }
 	| tSET ID tTO expr			{
 		g_lingo->code1(g_lingo->c_varpush);
 		g_lingo->codeString($2->c_str());
 		g_lingo->code1(g_lingo->c_assign);
 		$$ = $4;
 		delete $2; }
+	| tSET THEENTITY tTO expr	{
+		g_lingo->code1(g_lingo->c_theentityassign);
+		inst e = 0, f = 0;
+		WRITE_UINT32(&e, $2);
+		WRITE_UINT32(&f, 0);
+		g_lingo->code2(e, f);
+		$$ = $4; }
 	;
 stmtoneliner: expr 				{ g_lingo->code1(g_lingo->c_xpop); }
 	| func
@@ -329,6 +344,13 @@ expr: INT		{
 	| ID		{
 		$$ = g_lingo->codeId(*$1);
 		delete $1; }
+	| THEENTITY	{
+		$$ = g_lingo->code1(g_lingo->c_theentitypush);
+		inst e = 0, f = 0, i = 0;
+		WRITE_UINT32(&e, $1);
+		WRITE_UINT32(&f, 0);
+		WRITE_UINT32(&i, 0);
+		g_lingo->code3(e, f, i); }
 	| asgn
 	| expr '+' expr				{ g_lingo->code1(g_lingo->c_add); }
 	| expr '-' expr				{ g_lingo->code1(g_lingo->c_sub); }

@@ -1,0 +1,3 @@
+put 1.0 / 3
+set the floatPrecision to 6
+put 1.0 / 3

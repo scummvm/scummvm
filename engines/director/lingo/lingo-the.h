@@ -138,7 +138,7 @@ enum TheFieldType {
 struct TheEntity {
 	TheEntityType entity;
 	const char *name;
-	int idType;
+	bool hasId;
 };
 
 struct TheEntityField {

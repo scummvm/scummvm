@@ -82,6 +82,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 		_eventHandlerTypes[t->handler] = t->name;
 
 	initBuiltIns();
+	initTheEntities();
 
 	_currentScript = 0;
 	_currentScriptType = kMovieScript;

@@ -90,14 +90,26 @@ whitespace [\t ]
 (?i:repeat)			{ count(); return tREPEAT; }
 (?i:set)			{ count(); return tSET; }
 (?i:starts)			{ count(); return tSTARTS; }
-(?i:the[ \t]+[:alpha:]+)		{
+(?i:the[ \t]+[[:alpha:]]+)		{
 		count();
 
 		const char *ptr = &yytext[4]; // Skip 'the '
 		while (*ptr == ' ' || *ptr == '\t')
 			ptr++;
 
-		return tTHEN;
+		if (g_lingo->_theEntities.contains(ptr)) {
+			yylval.i = g_lingo->_theEntities[ptr]->entity;
+
+			if (g_lingo->_theEntities[ptr]->hasId)
+				return THEENTITYWITHID;
+			else
+				return THEENTITY;
+		} else if (g_lingo->_theEntityFields.contains(ptr)) {
+			yylval.i = g_lingo->_theEntityFields[ptr]->field;
+			return THEFIELD;
+		}
+
+		error("Unhandled the entity %s", ptr);
 	}
 (?i:then)			{ count(); return tTHEN; }
 (?i:to)				{ count(); return tTO; }

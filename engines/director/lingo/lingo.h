@@ -206,6 +206,10 @@ public:
 	static void c_assign();
 	bool verify(Symbol *s);
 	static void c_eval();
+
+	static void c_theentitypush();
+	static void c_theentityassign();
+
 	static void c_repeatwhilecode();
 	static void c_repeatwithcode();
 	static void c_ifcode();
@@ -251,12 +255,12 @@ public:
 	void func_gotoprevious();
 
 public:
-	void setTheEntity(TheEntityType entity, int id, TheFieldType field, Datum &d);
-	void setTheSprite(int id, TheFieldType field, Datum &d);
-	void setTheCast(int id, TheFieldType field, Datum &d);
-	Datum getTheEntity(TheEntityType entity, int id, TheFieldType field);
-	Datum getTheSprite(int id, TheFieldType field);
-	Datum getTheCast(int id, TheFieldType field);
+	void setTheEntity(int entity, int id, int field, Datum &d);
+	void setTheSprite(int id, int field, Datum &d);
+	void setTheCast(int id, int field, Datum &d);
+	Datum getTheEntity(int entity, int id, int field);
+	Datum getTheSprite(int id, int field);
+	Datum getTheCast(int id, int field);
 
 public:
 	ScriptData *_currentScript;
