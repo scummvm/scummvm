@@ -256,7 +256,7 @@ void Timeline::f261_processTimeline() {
 				f250_timelineProcessEvent8_squareTeleporter(L0681_ps_Event);
 				break;
 			case k6_TMEventTypeWall:
-				//F0248_TIMELINE_ProcessEvent6_Square_Wall(L0681_ps_Event);
+				f248_timelineProcessEvent6_squareWall(L0681_ps_Event);
 				break;
 			case k5_TMEventTypeCorridor:
 				//F0245_TIMELINE_ProcessEvent5_Square_Corridor(L0681_ps_Event);
@@ -567,5 +567,178 @@ void Timeline::f250_timelineProcessEvent8_squareTeleporter(TimelineEvent* event)
 	} else {
 		clearFlag(*L0652_puc_Square, k0x0008_TeleporterOpen);
 	}
+}
+
+void Timeline::f248_timelineProcessEvent6_squareWall(TimelineEvent* event) {
+	Thing L0634_T_Thing;
+	int16 L0635_i_ThingType;
+	int16 L0636_i_Multiple;
+#define AL0636_B_TriggerSetEffect L0636_i_Multiple
+#define AL0636_i_BitMask          L0636_i_Multiple
+	uint16 L0637_ui_SensorData;
+	Sensor* L0638_ps_Sensor;
+	TextString* L0639_ps_TextString;
+	uint16 L0640_ui_SensorType;
+	int16 L0641_i_MapX;
+	int16 L0642_i_MapY;
+	uint16 L0643_ui_Cell;
+
+
+	L0634_T_Thing = _vm->_dungeonMan->f161_getSquareFirstThing(L0641_i_MapX = event->_B._location._mapX, L0642_i_MapY = event->_B._location._mapY);
+	L0643_ui_Cell = event->_C.A._cell;
+	while (L0634_T_Thing != Thing::_endOfList) {
+		if (((L0635_i_ThingType = L0634_T_Thing.getType()) == k2_TextstringType) && (L0634_T_Thing.getCell() == event->_C.A._cell)) {
+			L0639_ps_TextString = (TextString*)_vm->_dungeonMan->f156_getThingData(L0634_T_Thing);
+			if (event->_C.A._effect == k2_SensorEffToggle) {
+				L0639_ps_TextString->setVisible(!L0639_ps_TextString->isVisible());
+			} else {
+				L0639_ps_TextString->setVisible(event->_C.A._effect == k0_SensorEffSet);
+			}
+		} else {
+			if (L0635_i_ThingType == k3_SensorThingType) {
+				L0638_ps_Sensor = (Sensor*)_vm->_dungeonMan->f156_getThingData(L0634_T_Thing);
+				L0640_ui_SensorType = L0638_ps_Sensor->getType();
+				L0637_ui_SensorData = L0638_ps_Sensor->getData();
+				if (L0640_ui_SensorType == k6_SensorWallCountdown) {
+					if (L0637_ui_SensorData > 0) {
+						if (event->_C.A._effect == k0_SensorEffSet) {
+							if (L0637_ui_SensorData < 511) {
+								L0637_ui_SensorData++;
+							}
+						} else {
+							L0637_ui_SensorData--;
+						}
+						L0638_ps_Sensor->setData(L0637_ui_SensorData);
+						if (L0638_ps_Sensor->getEffectA() == k3_SensorEffHold) {
+							AL0636_B_TriggerSetEffect = ((L0637_ui_SensorData == 0) != L0638_ps_Sensor->getRevertEffectA());
+							_vm->_movsens->f272_sensorTriggerEffect(L0638_ps_Sensor, AL0636_B_TriggerSetEffect ? k0_SensorEffSet : k1_SensorEffClear, L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
+						} else {
+							if (L0637_ui_SensorData == 0) {
+								_vm->_movsens->f272_sensorTriggerEffect(L0638_ps_Sensor, L0638_ps_Sensor->getEffectA(), L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
+							}
+						}
+					}
+				} else {
+					if (L0640_ui_SensorType == k5_SensorWallAndOrGate) {
+						AL0636_i_BitMask = 1 << (event->_C.A._cell);
+						if (event->_C.A._effect == k2_SensorEffToggle) {
+							if (getFlag(L0637_ui_SensorData, AL0636_i_BitMask)) {
+								clearFlag(L0637_ui_SensorData, AL0636_i_BitMask);
+							} else {
+								setFlag(L0637_ui_SensorData, AL0636_i_BitMask);
+							}
+						} else {
+							if (event->_C.A._effect) {
+								clearFlag(L0637_ui_SensorData, AL0636_i_BitMask);
+							} else {
+								setFlag(L0637_ui_SensorData, AL0636_i_BitMask);
+							}
+						}
+						L0638_ps_Sensor->setData(L0637_ui_SensorData);
+						AL0636_B_TriggerSetEffect = (Sensor::getDataMask1(L0637_ui_SensorData) == Sensor::getDataMask2(L0637_ui_SensorData)) != L0638_ps_Sensor->getRevertEffectA();
+						if (L0638_ps_Sensor->getEffectA() == k3_SensorEffHold) {
+							_vm->_movsens->f272_sensorTriggerEffect(L0638_ps_Sensor, AL0636_B_TriggerSetEffect ? k0_SensorEffSet : k1_SensorEffClear, L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
+						} else {
+							if (AL0636_B_TriggerSetEffect) {
+								_vm->_movsens->f272_sensorTriggerEffect(L0638_ps_Sensor, L0638_ps_Sensor->getEffectA(), L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
+							}
+						}
+					} else {
+						if ((((L0640_ui_SensorType >= k7_SensorWallSingleProjLauncherNewObj) && (L0640_ui_SensorType <= k10_SensorWallDoubleProjLauncherExplosion)) || (L0640_ui_SensorType == k14_SensorWallSingleProjLauncherSquareObj) || (L0640_ui_SensorType == k15_SensorWallDoubleProjLauncherSquareObj)) && (L0634_T_Thing.getCell() == event->_C.A._cell)) {
+							f247_triggerProjectileLauncher(L0638_ps_Sensor, event);
+							if (L0638_ps_Sensor->getOnlyOnce()) {
+								L0638_ps_Sensor->setTypeDisabled();
+							}
+						} else {
+							if (L0640_ui_SensorType == k18_SensorWallEndGame) {
+								_vm->f22_delay(60 * L0638_ps_Sensor->getValue());
+								_vm->_g524_restartGameAllowed = false;
+								_vm->_g302_gameWon = true;
+								warning(false, "MISSING CODE: F0444_STARTEND_Endgame");
+							}
+						}
+					}
+				}
+			}
+		}
+		L0634_T_Thing = _vm->_dungeonMan->f159_getNextThing(L0634_T_Thing);
+	}
+	_vm->_movsens->f271_processRotationEffect();
+}
+
+void Timeline::f247_triggerProjectileLauncher(Sensor* sensor, TimelineEvent* event) {
+	Thing L0622_T_FirstProjectileAssociatedThing;
+	Thing L0623_T_SecondProjectileAssociatedThing;
+	uint16 L0624_ui_Cell;
+	int16 L0625_i_SensorType;
+	int16 L0626_i_MapX;
+	int16 L0627_i_MapY;
+	uint16 L0628_ui_ProjectileCell;
+	int16 L0629_i_SensorData;
+	int16 L0630_i_KineticEnergy;
+	int16 L0631_i_StepEnergy;
+	bool L0632_B_LaunchSingleProjectile;
+	uint16 L0633_ui_ThingCell;
+
+
+	L0626_i_MapX = event->_B._location._mapX;
+	L0627_i_MapY = event->_B._location._mapY;
+	L0624_ui_Cell = event->_C.A._cell;
+	L0628_ui_ProjectileCell = returnOppositeDir((direction)L0624_ui_Cell);
+	L0625_i_SensorType = sensor->getType();
+	L0629_i_SensorData = sensor->getData();
+	L0630_i_KineticEnergy = sensor->M47_kineticEnergy();
+	L0631_i_StepEnergy = sensor->M48_stepEnergy();
+	L0632_B_LaunchSingleProjectile = (L0625_i_SensorType == k7_SensorWallSingleProjLauncherNewObj) ||
+		(L0625_i_SensorType == k8_SensorWallSingleProjLauncherExplosion) ||
+		(L0625_i_SensorType == k14_SensorWallSingleProjLauncherSquareObj);
+	if ((L0625_i_SensorType == k8_SensorWallSingleProjLauncherExplosion) || (L0625_i_SensorType == k10_SensorWallDoubleProjLauncherExplosion)) {
+		L0622_T_FirstProjectileAssociatedThing = L0623_T_SecondProjectileAssociatedThing = Thing(L0629_i_SensorData + Thing::_firstExplosion.toUint16());
+	} else {
+		if ((L0625_i_SensorType == k14_SensorWallSingleProjLauncherSquareObj) || (L0625_i_SensorType == k15_SensorWallDoubleProjLauncherSquareObj)) {
+			L0622_T_FirstProjectileAssociatedThing = _vm->_dungeonMan->f161_getSquareFirstThing(L0626_i_MapX, L0627_i_MapY);
+			while (L0622_T_FirstProjectileAssociatedThing != Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList. If there are no more objects on the square then this loop may return an undefined value, this can crash the game. In the original DM and CSB dungeons, the number of times that these sensors are triggered is always controlled to be equal to the number of available objects (with a countdown sensor or a number of once only sensors) */
+				L0633_ui_ThingCell = L0622_T_FirstProjectileAssociatedThing.getCell();
+				if ((L0622_T_FirstProjectileAssociatedThing.getType() > k3_SensorThingType) && ((L0633_ui_ThingCell == L0624_ui_Cell) || (L0633_ui_ThingCell == returnNextVal(L0624_ui_Cell))))
+					break;
+				L0622_T_FirstProjectileAssociatedThing = _vm->_dungeonMan->f159_getNextThing(L0622_T_FirstProjectileAssociatedThing);
+			}
+			if (L0622_T_FirstProjectileAssociatedThing == Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList */
+				return;
+			}
+			_vm->_dungeonMan->f164_unlinkThingFromList(L0622_T_FirstProjectileAssociatedThing, Thing(0), L0626_i_MapX, L0627_i_MapY); /* The object is removed without triggering any sensor effects */
+			if (!L0632_B_LaunchSingleProjectile) {
+				L0623_T_SecondProjectileAssociatedThing = _vm->_dungeonMan->f161_getSquareFirstThing(L0626_i_MapX, L0627_i_MapY);
+				while (L0623_T_SecondProjectileAssociatedThing != Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList. If there are no more objects on the square then this loop may return an undefined value, this can crash the game */
+					L0633_ui_ThingCell = L0623_T_SecondProjectileAssociatedThing.getCell();
+					if ((L0623_T_SecondProjectileAssociatedThing.getType() > k3_SensorThingType) && ((L0633_ui_ThingCell == L0624_ui_Cell) || (L0633_ui_ThingCell == returnNextVal(L0624_ui_Cell))))
+						break;
+					L0623_T_SecondProjectileAssociatedThing = _vm->_dungeonMan->f159_getNextThing(L0623_T_SecondProjectileAssociatedThing);
+				}
+				if (L0623_T_SecondProjectileAssociatedThing == Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList */
+					L0632_B_LaunchSingleProjectile = true;
+				} else {
+					_vm->_dungeonMan->f164_unlinkThingFromList(L0623_T_SecondProjectileAssociatedThing, Thing(0), L0626_i_MapX, L0627_i_MapY); /* The object is removed without triggering any sensor effects */
+				}
+			}
+		} else {
+			if ((L0622_T_FirstProjectileAssociatedThing = _vm->_dungeonMan->f167_getObjForProjectileLaucherOrObjGen(L0629_i_SensorData)) == Thing::_none) {
+				return;
+			}
+			if (!L0632_B_LaunchSingleProjectile && ((L0623_T_SecondProjectileAssociatedThing = _vm->_dungeonMan->f167_getObjForProjectileLaucherOrObjGen(L0629_i_SensorData)) == Thing::_none)) {
+				L0632_B_LaunchSingleProjectile = true;
+			}
+		}
+	}
+	if (L0632_B_LaunchSingleProjectile) {
+		L0628_ui_ProjectileCell = M21_normalizeModulo4(L0628_ui_ProjectileCell + _vm->getRandomNumber(2));
+	}
+	L0626_i_MapX += _vm->_dirIntoStepCountEast[L0624_ui_Cell], L0627_i_MapY += _vm->_dirIntoStepCountNorth[L0624_ui_Cell]; /* BUG0_20 The game crashes if the launcher sensor is on a map boundary and shoots in a direction outside the map */
+	_vm->_projexpl->_g365_createLanucherProjectile = true;
+	_vm->_projexpl->f212_projectileCreate(L0622_T_FirstProjectileAssociatedThing, L0626_i_MapX, L0627_i_MapY, L0628_ui_ProjectileCell, (direction)L0624_ui_Cell, L0630_i_KineticEnergy, 100, L0631_i_StepEnergy);
+	if (!L0632_B_LaunchSingleProjectile) {
+		_vm->_projexpl->f212_projectileCreate(L0623_T_SecondProjectileAssociatedThing, L0626_i_MapX, L0627_i_MapY, returnNextVal(L0628_ui_ProjectileCell), (direction)L0624_ui_Cell, L0630_i_KineticEnergy, 100, L0631_i_StepEnergy);
+	}
+	_vm->_projexpl->_g365_createLanucherProjectile = false;
 }
 }

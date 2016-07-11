@@ -184,7 +184,7 @@ public:
 	explicit DMEngine(OSystem *syst);
 	~DMEngine();
 
-	void waitMs(uint16 ms);
+	void f22_delay(uint16 ms); // @ F0022_MAIN_Delay
 	uint16 f30_getScaledProduct(uint16 val, uint16 scale, uint16 vale2); // @ F0030_MAIN_GetScaledProduct
 	uint16 getRandomNumber(uint32 max) { return _rnd->getRandomNumber(max - 1); }
 	int16 M1_ordinalToIndex(int16 val); // @ M01_ORDINAL_TO_INDEX

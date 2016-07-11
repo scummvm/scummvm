@@ -260,6 +260,7 @@ public:
 	Thing getNextThing() { return _nextThing; }
 	uint16 getWordOffset() { return _textDataRef >> 3; }
 	bool isVisible() { return _textDataRef & 1; }
+	void setVisible(bool visible) { _textDataRef = (_textDataRef & ~1) | (visible ? 1 : 0); }
 }; // @ TEXTSTRING
 
 enum SensorActionType {
@@ -306,8 +307,8 @@ enum SensorType {
 class Sensor {
 	Thing _nextThing;
 	uint16 _datAndType;
-	uint16 _attributes;
-	uint16 _action;
+	uint16 _attributes; // A
+	uint16 _action; // B
 public:
 	explicit Sensor(uint16 *rawDat) : _nextThing(rawDat[0]), _datAndType(rawDat[1]), _attributes(rawDat[2]), _action(rawDat[3]) {}
 
@@ -315,8 +316,8 @@ public:
 	void setNextThing(Thing thing) { _nextThing = thing; }
 	SensorType getType() { return (SensorType)(_datAndType & 0x7F); } // @ M39_TYPE
 	uint16 getData() { return _datAndType >> 7; } // @ M40_DATA
-	uint16 getDataMask1() { return (_datAndType >> 7) & 0xF; } // @ M42_MASK1
-	uint16 getDataMask2() { return (_datAndType >> 11) & 0xF; } // @ M43_MASK2
+	static uint16 getDataMask1(uint16 data) { return (data >> 7) & 0xF; } // @ M42_MASK1
+	static uint16 getDataMask2(uint16 data) { return (data >> 11) & 0xF; } // @ M43_MASK2
 	void setData(int16 dat) { _datAndType = (_datAndType & 0x7F) | (dat << 7); } // @ M41_SET_DATA
 	void setTypeDisabled() { _datAndType &= 0xFF80; } // @ M44_SET_TYPE_DISABLED
 
@@ -333,6 +334,8 @@ public:
 	uint16 getTargetMapY() { return (_action >> 11); }
 	uint16 getTargetMapX() { return (_action >> 6) & 0x1F; }
 	direction getTargetCell() { return (direction)((_action >> 4) & 3); }
+	uint16 M47_kineticEnergy() { return (_action & 0xFF); }// @ M47_KINETIC_ENERGY
+	uint16 M48_stepEnergy() { return (_action >> 8) & 0xFF; }// @ M48_STEP_ENERGY
 	uint16 M49_localEffect() { return (_action >> 4); }
 
 
@@ -652,7 +655,7 @@ class DungeonMan {
 
 	int16 f170_getRandomOrnOrdinal(bool allowed, int16 count, int16 mapX, int16 mapY, int16 modulo); // @ F0170_DUNGEON_GetRandomOrnamentOrdinal
 	void f171_setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowed, bool frontAllowed, bool rightAllowed, int16 dir,
-	                                     int16 mapX, int16 mapY, bool isFakeWall); // @ F0171_DUNGEON_SetSquareAspectRandomWallOrnamentOrdinals
+										 int16 mapX, int16 mapY, bool isFakeWall); // @ F0171_DUNGEON_SetSquareAspectRandomWallOrnamentOrdinals
 
 
 public:

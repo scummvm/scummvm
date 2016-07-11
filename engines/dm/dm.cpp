@@ -199,8 +199,8 @@ DMEngine::~DMEngine() {
 	DebugMan.clearAllDebugChannels();
 }
 
-void DMEngine::waitMs(uint16 ms) {
-	_system->delayMillis(ms * 20);
+void DMEngine::f22_delay(uint16 verticalBlank) {
+	_system->delayMillis(verticalBlank * 20); // Google says most Amiga games had a refreshrate of 50 hz
 }
 
 uint16 DMEngine::f30_getScaledProduct(uint16 val, uint16 scale, uint16 vale2) {

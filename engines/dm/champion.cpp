@@ -820,7 +820,7 @@ uint16 ChampionMan::f307_getStatisticAdjustedAttack(Champion* champ, uint16 stat
 void ChampionMan::f314_wakeUp() {
 	_vm->_g321_stopWaitingForPlayerInput = true;
 	_g300_partyIsSleeping = false;
-	_vm->waitMs(10);
+	_vm->f22_delay(10);
 	_vm->_displayMan->f98_drawFloorAndCeiling();
 	_vm->_eventMan->_g441_primaryMouseInput = g447_PrimaryMouseInput_Interface;
 	_vm->_eventMan->_g442_secondaryMouseInput = g448_SecondaryMouseInput_Movement;

@@ -31,8 +31,9 @@
 #include "dm.h"
 
 namespace DM {
+	class Sensor;
 
-/* Event types */
+	/* Event types */
 enum TimelineEventType {
 /* Used when a creature in a group was damaged or killed by a Poison Cloud or by a closing door or if Lord Chaos is surrounded by = 3, Fluxcages */
 kM3_TMEventTypeCreateReactionEvent29DangerOnSquare = -3, // @ CM3_EVENT_CREATE_REACTION_EVENT_29_DANGER_ON_SQUARE 
@@ -169,7 +170,8 @@ public:
 	void f251_timelineProcessEvent9_squarePit(TimelineEvent *event); // @ F0251_TIMELINE_ProcessEvent9_Square_Pit
 	void f249_moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY); // @ F0249_TIMELINE_MoveTeleporterOrPitSquareThings
 	void f250_timelineProcessEvent8_squareTeleporter(TimelineEvent *event); // @ F0250_TIMELINE_ProcessEvent8_Square_Teleporter
-
+	void f248_timelineProcessEvent6_squareWall(TimelineEvent *event); // @ F0248_TIMELINE_ProcessEvent6_Square_Wall
+	void f247_triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event); // @ F0247_TIMELINE_TriggerProjectileLauncher
 };
 
 
