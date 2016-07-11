@@ -1142,7 +1142,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "98a39ae535dd01714ac313f8ba925045", 7260363},
 		{"resmap.000", 0, "10267a1542a73d527e50f0340549088b", 4900},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_HOYLE5_DEMO },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE, GUIO_HOYLE5_DEMO },
 
 #endif // ENABLE_SCI32
 
