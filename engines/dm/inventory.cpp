@@ -438,7 +438,7 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 	if (thingType == k7_ScrollThingType) {
 		f341_drawPanelScroll((Scroll*)rawThingPtr);
 	} else if (thingType == k9_ContainerThingType) {
-		f333_openAndDrawChest(thingToDraw, (Container*)rawThingPtr, pressingEye);
+		f333_openAndDrawChest(thingToDraw, (Container *)rawThingPtr, pressingEye);
 	} else {
 		IconIndice iconIndex = objMan.f33_getIconIndex(thingToDraw);
 		dispMan.f132_blitToBitmap(dispMan.f489_getNativeBitmapOrGraphic(k20_PanelEmptyIndice), dispMan._g296_bitmapViewport,
@@ -449,7 +449,7 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		char *descString = nullptr;
 		char str[40];
 		if (iconIndex == k147_IconIndiceJunkChampionBones) {
-			strcpy(str, champMan._gK71_champions[((Junk*)rawThingPtr)->getChargeCount()]._name);  // TODO: localization
+			strcpy(str, champMan._gK71_champions[((Junk *)rawThingPtr)->getChargeCount()]._name);  // TODO: localization
 			strcat(str, " "); // TODO: localization
 			strcat(str, objMan._g352_objectNames[iconIndex]);  // TODO: localization
 
@@ -457,7 +457,7 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		} else if ((thingType == k8_PotionThingType)
 				   && (iconIndex != k163_IconIndicePotionWaterFlask)
 				   && (champMan.f303_getSkillLevel((ChampionIndex)_vm->M1_ordinalToIndex(_g432_inventoryChampionOrdinal), k2_ChampionSkillPriest) > 1)) {
-			str[0] = '_' + ((Potion*)rawThingPtr)->getPower() / 40;
+			str[0] = '_' + ((Potion *)rawThingPtr)->getPower() / 40;
 			str[1] = ' ';
 			str[2] = '\0';
 			strcat(str, objMan._g352_objectNames[iconIndex]);
@@ -478,7 +478,7 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		switch (thingType) {
 		case k5_WeaponThingType: {
 			potentialAttribMask = k0x0008_DescriptionMaskCursed | k0x0002_DescriptionMaskPoisoned | k0x0004_DescriptionMaskBroken;
-			Weapon *weapon = (Weapon*)rawThingPtr;
+			Weapon *weapon = (Weapon *)rawThingPtr;
 			actualAttribMask = (weapon->getCursed() << 3) | (weapon->getPoisoned() << 1) | (weapon->getBroken() << 2);
 			if ((iconIndex >= k4_IconIndiceWeaponTorchUnlit)
 				&& (iconIndex <= k7_IconIndiceWeaponTorchLit)
@@ -489,18 +489,18 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		}
 		case k6_ArmourThingType: {
 			potentialAttribMask = k0x0008_DescriptionMaskCursed | k0x0004_DescriptionMaskBroken;
-			Armour *armour = (Armour*)rawThingPtr;
+			Armour *armour = (Armour *)rawThingPtr;
 			actualAttribMask = (armour->getCursed() << 3) | (armour->getBroken() << 2);
 			break;
 		}
 		case k8_PotionThingType: {
-			actualAttribMask = k0x0001_DescriptionMaskConsumable;
-			Potion *potion = (Potion*)rawThingPtr;
+			potentialAttribMask = k0x0001_DescriptionMaskConsumable;
+			Potion *potion = (Potion *)rawThingPtr;
 			actualAttribMask = g237_ObjectInfo[k2_ObjectInfoIndexFirstPotion + potion->getType()].getAllowedSlots();
 			break;
 		}
 		case k10_JunkThingType: {
-			Junk *junk = (Junk*)rawThingPtr;
+			Junk *junk = (Junk *)rawThingPtr;
 			if ((iconIndex >= k8_IconIndiceJunkWater) && (iconIndex <= k9_IconIndiceJunkWaterSkin)) {
 				potentialAttribMask = 0;
 				switch (junk->getChargeCount()) {
