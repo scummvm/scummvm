@@ -47,6 +47,7 @@ uint16 Plane::_nextObjectId = 20000;
 Plane::Plane(const Common::Rect &gameRect, PlanePictureCodes pictureId) :
 _pictureId(pictureId),
 _mirrored(false),
+_type(kPlaneTypeColored),
 _back(0),
 _priorityChanged(0),
 _object(make_reg(0, _nextObjectId++)),
@@ -63,6 +64,7 @@ _gameRect(gameRect) {
 }
 
 Plane::Plane(reg_t object) :
+_type(kPlaneTypeColored),
 _priorityChanged(false),
 _object(object),
 _redrawAllCount(g_sci->_gfxFrameout->getScreenCount()),
@@ -93,6 +95,7 @@ _moved(0) {
 Plane::Plane(const Plane &other) :
 _pictureId(other._pictureId),
 _mirrored(other._mirrored),
+_type(other._type),
 _back(other._back),
 _object(other._object),
 _priority(other._priority),

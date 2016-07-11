@@ -150,6 +150,11 @@ private:
 
 public:
 	/**
+	 * The type of the plane.
+	 */
+	PlaneType _type;
+
+	/**
 	 * The color to use when erasing the plane. Only
 	 * applies to planes of type kPlaneTypeColored.
 	 */
@@ -185,8 +190,6 @@ public:
 	 * once those changes are rendered by `redrawAll`.
 	 */
 	int _redrawAllCount;
-
-	PlaneType _type;
 
 	/**
 	 * Flags indicating the state of the plane.
