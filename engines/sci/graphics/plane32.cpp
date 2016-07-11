@@ -595,8 +595,10 @@ void Plane::filterDownEraseRects(DrawList &drawList, RectList &eraseList, RectLi
 				Common::Rect outRects[4];
 				const Common::Rect &r2 = *higherEraseList[i];
 				int splitCount = splitRects(r2, r, outRects);
-				while (splitCount--) {
-					higherEraseList.add(outRects[splitCount]);
+				if (splitCount > 0) {
+					while (splitCount--) {
+						higherEraseList.add(outRects[splitCount]);
+					}
 				}
 				higherEraseList.erase_at(i);
 			}
