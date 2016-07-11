@@ -46,7 +46,26 @@ Common::String encodeDoubleQuotes(Common::String s) {
 }
 
 void FilesPageHandler::handle(Client &client) {
-	Common::String response = "<html><head><title>ScummVM</title></head><body><table>{content}</table></body></html>"; //TODO: add controls
+	Common::String response = 
+		"<html>" \
+			"<head><title>ScummVM</title></head>" \
+			"<body>" \
+				"<p>{create_directory_desc}</p>" \
+				"<form action=\"create\">" \
+					"<input type=\"hidden\" name=\"path\" value=\"{path}\"/>" \
+					"<input type=\"text\" name=\"directory_name\" value=\"\"/>" \
+					"<input type=\"submit\" value=\"{create_directory_button}\"/>" \
+				"</form>" \
+				"<hr/>" \
+				"<p>{upload_file_desc}</p>" \
+				"<form action=\"upload?path={path}\" method=\"post\" enctype=\"multipart/form-data\">" \
+					"<input type=\"file\" name=\"upload_file[]\" multiple/>" \
+					"<input type=\"submit\" value=\"{upload_file_button}\"/>" \
+				"</form>"
+				"<hr/>" \
+				"<table>{content}</table>" \
+			"</body>" \
+		"</html>";
 	Common::String itemTemplate = "<tr><td><a href=\"{link}\">{name}</a></td><td>{size}</td></tr>\n"; //TODO: load this template too?
 
 	// load stylish response page from the archive
