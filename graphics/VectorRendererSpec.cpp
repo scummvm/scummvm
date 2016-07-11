@@ -829,7 +829,7 @@ blitSubSurfaceClip(const Graphics::Surface *source, const Common::Rect &r, const
 		y = clipping.top;
 	}
 	if (usedW > clipping.width()) usedW = clipping.width();
-	if (usedH > clipping.width()) usedH = clipping.height();
+	if (usedH > clipping.height()) usedH = clipping.height();
 
 	byte *dst_ptr = (byte *)_activeSurface->getBasePtr(x, y);
 	const byte *src_ptr = (const byte *)source->getBasePtr(offsetX, offsetY);
