@@ -26,11 +26,7 @@ namespace Director {
 
 class Sprite;
 
-static struct TheEntityProto {
-	TheEntity entity;
-	const char *name;
-	int hasID;
-} entities[] = {
+TheEntity entities[] = {
 	{ kTheCast,				"cast",				INT  }, // string?
 	{ kTheClickOn,			"clickOn",			VOID },
 	{ kTheColorDepth,		"colorDepth",		VOID },
@@ -76,11 +72,7 @@ static struct TheEntityProto {
 	{ kTheNOEntity, NULL, false }
 };
 
-static struct TheEntityFieldProto {
-	TheEntity entity;
-	const char *name;
-	TheField field;
-} fields[] = {
+TheEntityField fields[] = {
 	{ kTheSprite,	"backColor",	kTheBackColor },
 	{ kTheSprite,	"blend",		kTheBlend },
 	{ kTheSprite,	"bottom",		kTheBottom },
@@ -110,7 +102,7 @@ static struct TheEntityFieldProto {
 	{ kTheSprite,	"volume",		kTheVolume },
 	{ kTheSprite,	"width",		kTheWidth },
 
-	//Common cast fields
+	// Common cast fields
 	{ kTheCast,		"castType",		kTheCastType },
 	{ kTheCast,		"filename",		kTheFilename },
 	{ kTheCast,		"height",		kTheHeight },
@@ -123,11 +115,11 @@ static struct TheEntityFieldProto {
 	{ kTheCast,		"scriptText",	kTheScriptText },
 	{ kTheCast,		"width",		kTheWidth },
 
-	//Shape fields
+	// Shape fields
 	{ kTheCast,		"backColor",	kTheBackColor },
 	{ kTheCast,		"foreColor",	kTheForeColor },
 
-	//Digital video fields
+	// Digital video fields
 	{ kTheCast,		"controller",	kTheController },
 	{ kTheCast,		"directToStage",kTheDirectToStage },
 	{ kTheCast,		"frameRate",	kTheFrameRate },
@@ -136,13 +128,13 @@ static struct TheEntityFieldProto {
 	{ kTheCast,		"preload",		kThePreload },
 	{ kTheCast,		"sound",		kTheSound }, // 0-1 off-on
 
-	//Bitmap fields
+	// Bitmap fields
 	{ kTheCast,		"depth",		kTheDepth },
 	{ kTheCast,		"regPoint",		kTheRegPoint },
 	{ kTheCast,		"palette",		kThePalette },
 	{ kTheCast,		"picture",		kThePicture },
 
-	//TextCast fields
+	// TextCast fields
 	{ kTheCast,		"hilite",		kTheHilite },
 	{ kTheCast,		"size",			kTheSize },
 	{ kTheCast,		"text",			kTheText },
@@ -165,7 +157,23 @@ static struct TheEntityFieldProto {
 	{ kTheNOEntity, NULL, kTheNOField }
 };
 
-void Lingo::setTheEntity(TheEntity entity, int id, TheField field, Datum &d) {
+void Lingo::initTheEntities() {
+	TheEntity *e = entities;
+
+	while (e->entity != kTheNOEntity) {
+		_theEntities[e->name] = e;
+		e++;
+	}
+
+	TheEntityField *f = fields;
+
+	while (f->entity != kTheNOEntity) {
+		_theEntityFields[f->name] = f;
+		f++;
+	}
+}
+
+void Lingo::setTheEntity(TheEntityType entity, int id, TheFieldType field, Datum &d) {
 	switch (entity) {
 	case kTheSprite:
 		setTheSprite(id, field, d);
@@ -183,7 +191,7 @@ void Lingo::setTheEntity(TheEntity entity, int id, TheField field, Datum &d) {
 	}
 }
 
-void Lingo::setTheSprite(int id, TheField field, Datum &d) {
+void Lingo::setTheSprite(int id, TheFieldType field, Datum &d) {
 	Sprite *sprite = _vm->_currentScore->getSpriteById(id);
 
 	d.toInt(); // Enforce Integer
@@ -222,7 +230,7 @@ void Lingo::setTheSprite(int id, TheField field, Datum &d) {
 	}
 }
 
-Datum Lingo::getTheEntity(TheEntity entity, int id, TheField field) {
+Datum Lingo::getTheEntity(TheEntityType entity, int id, TheFieldType field) {
 	Datum d;
 
 	switch (entity) {
@@ -245,7 +253,7 @@ Datum Lingo::getTheEntity(TheEntity entity, int id, TheField field) {
 	return d;
 }
 
-Datum Lingo::getTheSprite(int id, TheField field) {
+Datum Lingo::getTheSprite(int id, TheFieldType field) {
 	Datum d;
 	Sprite *sprite = _vm->_currentScore->getSpriteById(id);
 
@@ -283,7 +291,7 @@ Datum Lingo::getTheSprite(int id, TheField field) {
 	return d;
 }
 
-Datum Lingo::getTheCast(int id, TheField field) {
+Datum Lingo::getTheCast(int id, TheFieldType field) {
 	Datum d;
 	d.type = INT;
 
@@ -335,7 +343,7 @@ Datum Lingo::getTheCast(int id, TheField field) {
 	}
 }
 
-void Lingo::setTheCast(int id, TheField field, Datum &d) {
+void Lingo::setTheCast(int id, TheFieldType field, Datum &d) {
 	Cast *cast = _vm->_currentScore->_casts[id];
 	switch (field) {
 	case kTheCastType:

@@ -123,6 +123,9 @@ typedef Common::Array<Datum> StackData;
 typedef Common::HashMap<Common::String, Symbol *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SymbolHash;
 typedef Common::HashMap<Common::String, Builtin *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> BuiltinHash;
 
+typedef Common::HashMap<Common::String, TheEntity *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityHash;
+typedef Common::HashMap<Common::String, TheEntityField *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityFieldHash;
+
 struct CFrame {	/* proc/func call stack frame */
 	Symbol	*sp;	/* symbol table entry */
 	int		retpc;	/* where to resume after return */
@@ -141,6 +144,7 @@ public:
 	void processEvent(LEvent event, int entityId);
 
 	void initBuiltIns();
+	void initTheEntities();
 
 	Common::String *toLowercaseMac(Common::String *s);
 
@@ -247,12 +251,12 @@ public:
 	void func_gotoprevious();
 
 public:
-	void setTheEntity(TheEntity entity, int id, TheField field, Datum &d);
-	void setTheSprite(int id, TheField field, Datum &d);
-	void setTheCast(int id, TheField field, Datum &d);
-	Datum getTheEntity(TheEntity entity, int id, TheField field);
-	Datum getTheSprite(int id, TheField field);
-	Datum getTheCast(int id, TheField field);
+	void setTheEntity(TheEntityType entity, int id, TheFieldType field, Datum &d);
+	void setTheSprite(int id, TheFieldType field, Datum &d);
+	void setTheCast(int id, TheFieldType field, Datum &d);
+	Datum getTheEntity(TheEntityType entity, int id, TheFieldType field);
+	Datum getTheSprite(int id, TheFieldType field);
+	Datum getTheCast(int id, TheFieldType field);
 
 public:
 	ScriptData *_currentScript;
@@ -263,6 +267,8 @@ public:
 	Common::Array<CFrame *> _callstack;
 	Common::Array<Common::String *> _argstack;
 	BuiltinHash _builtins;
+	TheEntityHash _theEntities;
+	TheEntityFieldHash _theEntityFields;
 	Common::Array<int> _labelstack;
 
 	int _linenumber;

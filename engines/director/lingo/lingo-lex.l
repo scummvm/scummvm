@@ -88,6 +88,15 @@ whitespace [\t ]
 (?i:repeat)			{ count(); return tREPEAT; }
 (?i:set)			{ count(); return tSET; }
 (?i:starts)			{ count(); return tSTARTS; }
+(?i:the[ \t]+[:alpha:]+)		{
+		count();
+
+		const char *ptr = &yytext[4]; // Skip 'the '
+		while (*ptr == ' ' || *ptr == '\t')
+			ptr++;
+
+		return tTHEN;
+	}
 (?i:then)			{ count(); return tTHEN; }
 (?i:to)				{ count(); return tTO; }
 (?i:with)			{ count(); return tWITH; }

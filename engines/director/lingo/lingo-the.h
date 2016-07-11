@@ -25,7 +25,7 @@
 
 namespace Director {
 
-enum TheEntity {
+enum TheEntityType {
 	kTheNOEntity = 0,
 	kTheFrame = 1,
 	kThePathName,
@@ -74,7 +74,7 @@ enum TheEntity {
 	kTheStage
 };
 
-enum TheField {
+enum TheFieldType {
 	kTheNOField = 0,
 	kTheCastNum = 1,
 	kTheCastType,
@@ -133,6 +133,18 @@ enum TheField {
 	kTheVisible,
 	kTheVolume,
 	kTheWidth
+};
+
+struct TheEntity {
+	TheEntityType entity;
+	const char *name;
+	int idType;
+};
+
+struct TheEntityField {
+	TheEntityType entity;
+	const char *name;
+	TheFieldType field;
 };
 
 } // End of namespace Director
