@@ -165,6 +165,7 @@ public:
 	void f241_timelineProcessEvent1_doorAnimation(TimelineEvent *event); // @ F0241_TIMELINE_ProcessEvent1_DoorAnimation
 	void f242_timelineProcessEvent7_squareFakewall(TimelineEvent *event); // @ F0242_TIMELINE_ProcessEvent7_Square_FakeWall
 	void f243_timelineProcessEvent2_doorDestruction(TimelineEvent *event); // @ F0243_TIMELINE_ProcessEvent2_DoorDestruction
+	void f244_timelineProcessEvent10_squareDoor(TimelineEvent *event); // @ F0244_TIMELINE_ProcessEvent10_Square_Door
 
 };
 

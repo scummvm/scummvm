@@ -246,7 +246,7 @@ void Timeline::f261_processTimeline() {
 				f243_timelineProcessEvent2_doorDestruction(L0681_ps_Event);
 				break;
 			case k10_TMEventTypeDoor:
-				//F0244_TIMELINE_ProcessEvent10_Square_Door(L0681_ps_Event);
+				f244_timelineProcessEvent10_squareDoor(L0681_ps_Event);
 				break;
 			case k9_TMEventTypePit:
 				//F0251_TIMELINE_ProcessEvent9_Square_Pit(L0681_ps_Event);
@@ -447,5 +447,29 @@ void Timeline::f243_timelineProcessEvent2_doorDestruction(TimelineEvent* event) 
 
 	L0608_puc_Square = (Square*)&_vm->_dungeonMan->_g271_currMapData[event->_B._location._mapX][event->_B._location._mapY];
 	L0608_puc_Square->set(k5_doorState_DESTROYED);
+}
+
+void Timeline::f244_timelineProcessEvent10_squareDoor(TimelineEvent* event) {
+	int16 L0609_i_DoorState;
+
+
+	if ((L0609_i_DoorState = Square(_vm->_dungeonMan->_g271_currMapData[event->_B._location._mapX][event->_B._location._mapY]).getDoorState()) == k5_doorState_DESTROYED) {
+		return;
+	}
+	if (event->_C.A._effect == k2_SensorEffToggle) {
+		event->_C.A._effect = (L0609_i_DoorState == k0_doorState_OPEN) ? k1_SensorEffClear : k0_SensorEffSet;
+	} else {
+		if (event->_C.A._effect == k0_SensorEffSet) {
+			if (L0609_i_DoorState == k0_doorState_OPEN) {
+				return;
+			}
+		} else {
+			if (L0609_i_DoorState == k4_doorState_CLOSED) {
+				return;
+			}
+		}
+	}
+	event->_type = k1_TMEventTypeDoorAnimation;
+	_vm->_timeline->f238_addEventGetEventIndex(event);
 }
 }
