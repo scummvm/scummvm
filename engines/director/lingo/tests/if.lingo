@@ -3,7 +3,7 @@ set x = 1
 if x = 5 then exit
 else put 10.0
 
-repeat with x = 1 to 5
+repeat with x = 1 to 6
 	if x = 3 then put 30
 	else if x = 4 then put 40
 	else if x = 5 then put 50
@@ -13,8 +13,15 @@ repeat with x = 1 to 5
 	else if x = 2 then
 	  put 1232.12345678901234
 	  put 2.2
-	else if x = 3 then put 3
+	else if x = 3 then
+		put 3
+	else if x = 4 then
+	  put 4
+	else if x = 5 then
+	  put 5
+  	else if x = 6 then
+	  put 6
 	end if
-	if x = 4 then put 4
-	else put 5
+	if x = 4 then put 40
+	else put 50
 end repeat

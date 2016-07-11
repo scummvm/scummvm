@@ -144,7 +144,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 66 "engines/director/lingo/lingo-gr.y"
+#line 69 "engines/director/lingo/lingo-gr.y"
 {
 	Common::String *s;
 	int	i;
