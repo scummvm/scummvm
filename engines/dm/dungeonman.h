@@ -340,8 +340,8 @@ public:
 	uint16 M45_healthMultiplier() { return (_action & 0xF); } // @ M45_HEALTH_MULTIPLIER
 	uint16 M46_ticks() { return (_action >> 4) & 0xFFF; } // @ M46_TICKS
 
+	void setDatAndTypeWithOr(uint16 val) { _datAndType |= val;  }
 
-	// some macros missing, i got bored
 }; // @ SENSOR
 
 

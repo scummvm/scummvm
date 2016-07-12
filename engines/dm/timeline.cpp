@@ -267,7 +267,7 @@ void Timeline::f261_processTimeline() {
 				f252_timelineProcessEvents60to61_moveGroup(L0681_ps_Event);
 				break;
 			case k65_TMEventTypeEnableGroupGenerator:
-				//F0246_TIMELINE_ProcessEvent65_EnableGroupGenerator(L0681_ps_Event);
+				f246_timelineProcesEvent65_enableGroupGenerator(L0681_ps_Event);
 				break;
 			case k20_TMEventTypePlaySound:
 				warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
@@ -857,6 +857,24 @@ T0252001:
 		}
 		event->_mapTime += 5;
 		_vm->_timeline->f238_addEventGetEventIndex(event);
+	}
+}
+
+void Timeline::f246_timelineProcesEvent65_enableGroupGenerator(TimelineEvent* event) {
+	Thing L0620_T_Thing;
+	Sensor* L0621_ps_Sensor;
+
+	L0620_T_Thing = _vm->_dungeonMan->f161_getSquareFirstThing(event->_B._location._mapX, event->_B._location._mapY);
+	L0620_T_Thing = _vm->_dungeonMan->f161_getSquareFirstThing(event->_B._location._mapX, event->_B._location._mapY);
+	while (L0620_T_Thing != Thing::_none) {
+		if ((L0620_T_Thing.getType()) == k3_SensorThingType) {
+			L0621_ps_Sensor = (Sensor*)_vm->_dungeonMan->f156_getThingData(L0620_T_Thing);
+			if (L0621_ps_Sensor->getType() == k0_SensorDisabled) {
+				L0621_ps_Sensor->setDatAndTypeWithOr(k6_SensorFloorGroupGenerator);
+				return;
+			}
+		}
+		L0620_T_Thing = _vm->_dungeonMan->f159_getNextThing(L0620_T_Thing);
 	}
 }
 }

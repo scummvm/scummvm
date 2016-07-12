@@ -174,6 +174,7 @@ public:
 	void f247_triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event); // @ F0247_TIMELINE_TriggerProjectileLauncher
 	void f245_timlineProcessEvent5_squareCorridor(TimelineEvent *event); // @ F0245_TIMELINE_ProcessEvent5_Square_Corridor
 	void f252_timelineProcessEvents60to61_moveGroup(TimelineEvent *event); // @ F0252_TIMELINE_ProcessEvents60to61_MoveGroup
+	void f246_timelineProcesEvent65_enableGroupGenerator(TimelineEvent *event); // @ F0246_TIMELINE_ProcessEvent65_EnableGroupGenerator
 };
 
 
