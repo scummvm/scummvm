@@ -26,7 +26,13 @@
 				<div id="upload_file" class="modal">
 					<p>{upload_file_desc}</p>
 					<form action="upload?path={path}" method="post" enctype="multipart/form-data">
-						<input type="file" name="upload_file[]" multiple/>
+						<!-- we don't need "[]" in the name, as our webserver is not using PHP -->
+						<!-- "allowdirs" is a proposal, not implemented yet -->
+						<input type="file" name="upload_file-f" allowdirs multiple/>
+						<br/><br/>
+						<p>{or_upload_directory_desc}</p>
+						<!-- "directory"/"webkitdirectory" works in Chrome only yet, "multiple" is just in case here -->
+						<input type="file" name="upload_file-d" directory webkitdirectory multiple/>
 						<input type="submit" value="{upload_file_button}"/>
 					</form>
 				</div>

@@ -59,7 +59,9 @@ void FilesPageHandler::handle(Client &client) {
 				"<hr/>" \
 				"<p>{upload_file_desc}</p>" \
 				"<form action=\"upload?path={path}\" method=\"post\" enctype=\"multipart/form-data\">" \
-					"<input type=\"file\" name=\"upload_file[]\" multiple/>" \
+					"<input type=\"file\" name=\"upload_file-f\" allowdirs multiple/>" \
+					"<span>{or_upload_directory_desc}</span>" \
+					"<input type=\"file\" name=\"upload_file-d\" directory webkitdirectory multiple/>" \
 					"<input type=\"submit\" value=\"{upload_file_button}\"/>" \
 				"</form>"
 				"<hr/>" \
@@ -90,6 +92,7 @@ void FilesPageHandler::handle(Client &client) {
 	replace(response, "{upload_file_button}", _("Upload files")); //button in the tab
 	replace(response, "{create_directory_desc}", _("Type new directory name:"));
 	replace(response, "{upload_file_desc}", _("Select a file to upload:"));
+	replace(response, "{or_upload_directory_desc}", _("Or select a directory (works in Chrome only):"));
 	replace(response, "{content}", content);	
 	LocalWebserver::setClientGetHandler(client, response);
 }

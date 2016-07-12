@@ -41,6 +41,7 @@ class UploadFileClientHandler: public ClientHandler {
 	Common::MemoryReadWriteStream *_headersStream;
 	Common::WriteStream *_contentStream;
 	Common::String _parentDirectoryPath;
+	uint32 _uploadedFiles;
 
 	void handleBlockHeaders(Client *client);
 	void handleBlockContent(Client *client);

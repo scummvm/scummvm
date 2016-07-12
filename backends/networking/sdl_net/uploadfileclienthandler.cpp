@@ -24,6 +24,7 @@
 #include "backends/fs/fs-factory.h"
 #include "backends/networking/sdl_net/handlerutils.h"
 #include "backends/networking/sdl_net/localwebserver.h"
+#include "common/file.h"
 #include "common/memstream.h"
 #include "common/translation.h"
 
@@ -31,7 +32,7 @@ namespace Networking {
 
 UploadFileClientHandler::UploadFileClientHandler(Common::String parentDirectoryPath):
 	_state(UFH_READING_CONTENT), _headersStream(nullptr), _contentStream(nullptr),
-	_parentDirectoryPath(parentDirectoryPath) {}
+	_parentDirectoryPath(parentDirectoryPath), _uploadedFiles(0) {}
 
 UploadFileClientHandler::~UploadFileClientHandler() {
 	delete _headersStream;
@@ -114,16 +115,13 @@ void UploadFileClientHandler::handleBlockHeaders(Client *client) {
 	Common::String headers = readEverythingFromMemoryStream(_headersStream);
 	Common::String fieldName = "";
 	readFromThatUntilDoubleQuote(headers.c_str(), "name=\"", fieldName);
-	if (!fieldName.hasPrefix("upload_file[")) return;
+	if (!fieldName.hasPrefix("upload_file")) return;
 
 	Common::String filename = "";
 	readFromThatUntilDoubleQuote(headers.c_str(), "filename=\"", filename);
 
-	// check that <filename> is not empty
-	if (filename.empty()) {
-		setErrorMessageHandler(*client, _("Invalid filename!"));
-		return;
-	}
+	// skip block if <filename> is empty
+	if (filename.empty()) return;
 
 	// check that <path>/<filename> doesn't exist
 	Common::String path = _parentDirectoryPath;
@@ -134,12 +132,15 @@ void UploadFileClientHandler::handleBlockHeaders(Client *client) {
 		return;
 	}
 
-	// create file stream
-	_contentStream = originalNode->createWriteStream();
-	if (_contentStream == nullptr) {
+	// create file stream (and necessary subdirectories)
+	Common::DumpFile *f = new Common::DumpFile();
+	if (!f->open(originalNode->getPath(), true)) {
+		delete f;
 		setErrorMessageHandler(*client, _("Failed to upload the file!"));
 		return;
 	}
+
+	_contentStream = f;
 }
 
 void UploadFileClientHandler::handleBlockContent(Client *client) {
@@ -148,6 +149,7 @@ void UploadFileClientHandler::handleBlockContent(Client *client) {
 	// if previous block headers were file-related and created a stream
 	if (_contentStream) {
 		_contentStream->flush();
+		++_uploadedFiles;
 
 		if (client->noMoreContent()) {
 			// success - redirect back to directory listing
@@ -165,9 +167,12 @@ void UploadFileClientHandler::handleBlockContent(Client *client) {
 		}
 	}
 	
-	// if no file field was found, but no more content avaiable - failure
+	// no more content avaiable
 	if (client->noMoreContent()) {
-		setErrorMessageHandler(*client, _("No file was passed!"));
+		// if no file field was found - failure
+		if (_uploadedFiles == 0) {
+			setErrorMessageHandler(*client, _("No file was passed!"));
+		} else _state = UFH_STOP;
 		return;
 	}
 }
