@@ -890,7 +890,8 @@ Sprite *Score::getSpriteById(uint16 id) {
 	if (_frames[_currentFrame]->_sprites[id]) {
 		return _frames[_currentFrame]->_sprites[id];
 	} else {
-		error("Sprite on frame %d width id %d not found", _currentFrame, id);
+		warning("Sprite on frame %d width id %d not found", _currentFrame, id);
+		return nullptr;
 	}
 }
 
