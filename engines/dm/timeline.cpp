@@ -355,7 +355,7 @@ T0261048:
 			case k74_TMEventTypePartyShield:
 				_vm->_championMan->_g407_party._shieldDefense -= L0682_s_Event._B._defense;
 T0261053:
-				//F0260_TIMELINE_RefreshAllChampionStatusBoxes();
+				f260_timelineRefreshAllChampionStatusBoxes();
 				break;
 			case k77_TMEventTypeSpellShield:
 				_vm->_championMan->_g407_party._spellShieldDefense -= L0682_s_Event._B._defense;
@@ -1028,5 +1028,14 @@ void Timeline::f257_timelineProcessEvent70_light(TimelineEvent* event) {
 		L0676_s_Event._priority = 0;
 		_vm->_timeline->f238_addEventGetEventIndex(&L0676_s_Event);
 	}
+}
+
+void Timeline::f260_timelineRefreshAllChampionStatusBoxes() {
+	uint16 L0679_ui_ChampionIndex;
+
+	for (L0679_ui_ChampionIndex = k0_ChampionFirst; L0679_ui_ChampionIndex < _vm->_championMan->_g305_partyChampionCount; L0679_ui_ChampionIndex++) {
+		setFlag(_vm->_championMan->_gK71_champions[L0679_ui_ChampionIndex]._attributes, k0x1000_ChampionAttributeStatusBox);
+	}
+	_vm->_championMan->f293_drawAllChampionStates();
 }
 }

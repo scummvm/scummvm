@@ -1189,6 +1189,13 @@ bool ChampionMan::f294_isAmmunitionCompatibleWithWeapon(uint16 champIndex, uint1
 	return ((L0878_T_Thing.getType() == k5_WeaponThingType) && (L0875_ps_WeaponInfo->_class == L0879_i_WeaponClass));
 }
 
+void ChampionMan::f293_drawAllChampionStates() {
+	int16 L0873_i_ChampionIndex;
+	for (L0873_i_ChampionIndex = k0_ChampionFirst; L0873_i_ChampionIndex < _vm->_championMan->_g305_partyChampionCount; L0873_i_ChampionIndex++) {
+		_vm->_championMan->f292_drawChampionState((ChampionIndex)L0873_i_ChampionIndex);
+	}
+}
+
 ChampionIndex ChampionMan::f285_getIndexInCell(int16 cell) {
 	for (uint16 i = 0; i < _g305_partyChampionCount; ++i) {
 		if ((_gK71_champions[i]._cell == cell) && _gK71_champions[i]._currHealth)

@@ -523,6 +523,7 @@ public:
 	int16 f310_getMovementTicks(Champion *champ); // @ F0310_CHAMPION_GetMovementTicks
 	bool f294_isAmmunitionCompatibleWithWeapon(uint16 champIndex, uint16 weaponSlotIndex,
 											   uint16 ammunitionSlotIndex); // @ F0294_CHAMPION_IsAmmunitionCompatibleWithWeapon
+	void f293_drawAllChampionStates(); // @ F0293_CHAMPION_DrawAllChampionStates
 
 
 
