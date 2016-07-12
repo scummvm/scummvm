@@ -183,6 +183,7 @@ public:
 																	 uint16 slotIndex);// @ F0259_TIMELINE_ProcessEvent11Part2_MoveWeaponFromQuiverToSlot
 	bool f258_timelineHasWeaponMovedSlot(int16 champIndex, Champion *champ,
 										 uint16 sourceSlotIndex, int16 destSlotIndex); // @ F0258_TIMELINE_HasWeaponMovedToSlot
+	void f254_timelineProcessEvent12_hideDamageReceived(uint16 champIndex); // @ F0254_TIMELINE_ProcessEvent12_HideDamageReceived
 };
 
 

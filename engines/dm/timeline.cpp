@@ -33,6 +33,7 @@
 #include "projexpl.h"
 #include "movesens.h"
 #include "text.h"
+#include "eventman.h"
 
 
 namespace DM {
@@ -332,7 +333,7 @@ void Timeline::f261_processTimeline() {
 				}
 				goto T0261048;
 			case k12_TMEventTypeHideDamageReceived:
-				//F0254_TIMELINE_ProcessEvent12_HideDamageReceived(L0682_s_Event._priority);
+				f254_timelineProcessEvent12_hideDamageReceived(L0682_s_Event._priority);
 				break;
 			case k70_TMEventTypeLight:
 				_vm->_dungeonMan->f173_setCurrentMap(_vm->_dungeonMan->_g309_partyMapIndex);
@@ -973,9 +974,28 @@ void Timeline::f259_timelineProcessEvent11Part2_moveWeaponFromQuiverToSlot(uint1
 bool Timeline::f258_timelineHasWeaponMovedSlot(int16 champIndex, Champion* champ, uint16 sourceSlotIndex, int16 destSlotIndex) {
 	if (Thing(champ->_slots[sourceSlotIndex]).getType() == k5_WeaponThingType) {
 		_vm->_championMan->f301_addObjectInSlot((ChampionIndex)champIndex, _vm->_championMan->f300_getObjectRemovedFromSlot(champIndex, sourceSlotIndex),
-												(ChampionSlot)destSlotIndex);
+			(ChampionSlot)destSlotIndex);
 		return true;
 	}
 	return false;
+}
+
+void Timeline::f254_timelineProcessEvent12_hideDamageReceived(uint16 champIndex) {
+	Champion* L0663_ps_Champion;
+
+
+	L0663_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
+	L0663_ps_Champion->_hideDamageReceivedIndex = -1;
+	if (!L0663_ps_Champion->_currHealth) {
+		return;
+	}
+	if (_vm->M0_indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
+		_vm->_eventMan->f78_showMouse();
+		_vm->_inventoryMan->f354_drawStatusBoxPortrait((ChampionIndex)champIndex);
+		_vm->_eventMan->f77_hideMouse();
+	} else {
+		setFlag(L0663_ps_Champion->_attributes, k0x0080_ChampionAttributeNameTitle);
+		_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
+	}
 }
 }
