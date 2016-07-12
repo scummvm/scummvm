@@ -205,8 +205,7 @@ public:
 	WindowReference createInventoryWindow(ObjID objRef);
 	bool tryCloseWindow(WindowReference winID);
 
-	uint getObjWidth(ObjID obj);
-	uint getObjHeight(ObjID obj);
+	Common::Point getObjMeasures(ObjID obj);
 
 	WindowReference getObjWindow(ObjID objID);
 	WindowReference findObjWindow(ObjID objID);

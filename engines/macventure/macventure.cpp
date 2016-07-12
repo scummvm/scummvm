@@ -864,8 +864,9 @@ Common::Rect MacVentureEngine::getObjBounds(ObjID objID) {
 		pos.x += bounds.leftOffset;
 		pos.y += bounds.topOffset;
 	}
-	uint w = _gui->getObjWidth(objID); // This shouldn't go here
-	uint h = _gui->getObjHeight(objID);
+	Common::Point measures = _gui->getObjMeasures(objID);
+	uint w = measures.x;
+	uint h = measures.y;
 	return Common::Rect(pos.x, pos.y, pos.x + w, pos.y + h);
 }
 

@@ -1116,14 +1116,13 @@ bool Gui::tryCloseWindow(WindowReference winID) {
 	return true;
 }
 
-uint Gui::getObjWidth(ObjID obj) {
-	if (!_assets.contains(obj)) return 0;
-	return _assets[obj]->getWidth();
-}
-
-uint Gui::getObjHeight(ObjID obj) {
-	if (!_assets.contains(obj)) return 0;
-	return _assets[obj]->getHeight();
+Common::Point Gui::getObjMeasures(ObjID obj) {
+	if (!_assets.contains(obj)) {
+		_assets[obj] = new ImageAsset(obj, _graphics);
+	}
+	uint w = _assets[obj]->getWidth();
+	uint h = _assets[obj]->getHeight();
+	return Common::Point(w, h);
 }
 
 bool Gui::processEvent(Common::Event &event) {

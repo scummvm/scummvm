@@ -27,8 +27,8 @@
 #include "macventure/world.h"
 #include "macventure/container.h"
 
-namespace MacVenture {	
-	
+namespace MacVenture {
+
 ScriptEngine::ScriptEngine(MacVentureEngine * engine, World * world) {
 	_engine = engine;
 	_world = world;
@@ -57,13 +57,13 @@ bool ScriptEngine::runControl(ControlAction action, ObjID source, ObjID destinat
 	return resume(true);
 }
 
-bool ScriptEngine::resume(bool execAll) {	
+bool ScriptEngine::resume(bool execAll) {
 	debug(2, "SCRIPT: Resume");
 	while (_frames.size()) {
 		bool fail = execFrame(execAll);
 		if (fail) return true;
 	}
-	return false;	
+	return false;
 }
 
 void ScriptEngine::reset() {
@@ -107,7 +107,7 @@ bool ScriptEngine::execFrame(bool execAll) {
 			}
 			doFamily = true;
 		}
-	}	
+	}
 
 	// Halted in saves
 	if (frame->haltedInSaves) {
@@ -139,7 +139,7 @@ bool ScriptEngine::execFrame(bool execAll) {
 			}
 		}
 	} while (highest);
-	
+
 	_frames.pop_front();
 	return false;
 }
@@ -167,7 +167,7 @@ bool ScriptEngine::runFunc(EngineFrame *frame) {
 	ScriptAsset &script = frame->scripts.front();
 	debug(2, "SCRIPT: Executing function %d", script.getId());
 	EngineState *state = &frame->state;
-	byte op;	
+	byte op;
 	while (script.hasNext()) {
 		op = script.fetch();
 		debug(3, "SCRIPT: I'm running operation %d", op);
@@ -352,7 +352,7 @@ bool ScriptEngine::runFunc(EngineFrame *frame) {
 			case 0xba: //cancel priority range
 				opbaCRAN(state, frame);
 				break;
-			case 0xbb: //fork				
+			case 0xbb: //fork
 				if (opbbFORK(state, frame))
 					return true;
 				break;
@@ -1012,7 +1012,6 @@ void ScriptEngine::opcaTIME(EngineState * state, EngineFrame * frame) {
 	state->push(minutes);
 	state->push(totalPlayTime);
 	debug("Saved time: h[%d] m[%d] s[%d]", hours, minutes, totalPlayTime);
-	
 }
 
 void ScriptEngine::opcbDAY(EngineState * state, EngineFrame * frame) {
@@ -1056,7 +1055,7 @@ void ScriptEngine::opd1GOBD(EngineState * state, EngineFrame * frame) {
 	state->push(bounds.height());
 }
 
-void ScriptEngine::opd2GOVP(EngineState * state, EngineFrame * frame) { 
+void ScriptEngine::opd2GOVP(EngineState * state, EngineFrame * frame) {
 	word b = state->pop();
 	word a = state->pop();
 	state->push(_engine->getOverlapPercent(b, a));
@@ -1168,10 +1167,10 @@ void ScriptEngine::op00NOOP(byte op) {
 
 
 
-ScriptAsset::ScriptAsset(ObjID id, Container * container) {	
+ScriptAsset::ScriptAsset(ObjID id, Container * container) {
 	_id = id;
 	_container = container;
-	_ip = 0x0;	
+	_ip = 0x0;
 	loadInstructions();
 }
 
