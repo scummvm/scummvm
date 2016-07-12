@@ -108,7 +108,7 @@ bool AVISurface::play(int startFrame, int endFrame, int initialFrame, uint flags
 	_movieRangeInfo.push_back(info);
 	
 	if (_movieRangeInfo.size() == 1) {
-		changeFrame(initialFrame);
+		return changeFrame(initialFrame);
 	} else {
 		return true;
 	}	
@@ -204,7 +204,7 @@ void AVISurface::setFrame(int frameNumber) {
 		stop();
 
 	// Ensure the frame number is valid
-	if (frameNumber >= _decoders[0]->getFrameCount())
+	if (frameNumber >= (int)_decoders[0]->getFrameCount())
 		frameNumber = _decoders[0]->getFrameCount() - 1;
 
 	seekToFrame(frameNumber);
