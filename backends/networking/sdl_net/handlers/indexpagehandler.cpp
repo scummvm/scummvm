@@ -35,8 +35,18 @@ IndexPageHandler::~IndexPageHandler() {}
 void IndexPageHandler::handle(Client &client) {
 	Common::String code = client.queryParameter("code");
 
-	if (code == "") {		
-		HandlerUtils::setMessageHandler(client, _("This is a local webserver index page."));
+	if (code == "") {
+		// redirect to "/files"
+		HandlerUtils::setMessageHandler(
+			client,
+			Common::String::format(
+				"%s<br/><a href=\"files\">%s</a>",
+				_("This is a local webserver index page."),
+				client.queryParameter("path").c_str(),
+				_("Open Files manager")
+			),
+			"/files"
+		);
 		return;
 	}
 
