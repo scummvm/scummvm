@@ -235,11 +235,7 @@ public:
 	void f194_removeAllActiveGroups(); // @ F0194_GROUP_RemoveAllActiveGroups
 	void f195_addAllActiveGroups(); // @ F0195_GROUP_AddAllActiveGroups
 	Thing f185_groupGetGenerated(int16 creatureType, int16 healthMultiplier, uint16 creatureCount, direction dir, int16 mapX, int16 mapY); // @ F0185_GROUP_GetGenerated
-
-
-
-
-
+	bool f223_isSquareACorridorTeleporterPitOrDoor(int16 mapX, int16 mapY); // @ F0223_GROUP_IsSquareACorridorTeleporterPitOrDoor
 
 };
 

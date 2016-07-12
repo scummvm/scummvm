@@ -264,7 +264,7 @@ void Timeline::f261_processTimeline() {
 				break;
 			case k60_TMEventTypeMoveGroupSilent:
 			case k61_TMEventTypeMoveGroupAudible:
-				//F0252_TIMELINE_ProcessEvents60to61_MoveGroup(L0681_ps_Event);
+				f252_timelineProcessEvents60to61_moveGroup(L0681_ps_Event);
 				break;
 			case k65_TMEventTypeEnableGroupGenerator:
 				//F0246_TIMELINE_ProcessEvent65_EnableGroupGenerator(L0681_ps_Event);
@@ -813,6 +813,50 @@ void Timeline::f245_timlineProcessEvent5_squareCorridor(TimelineEvent* event) {
 			}
 		}
 		L0613_T_Thing = _vm->_dungeonMan->f159_getNextThing(L0613_T_Thing);
+	}
+}
+
+void Timeline::f252_timelineProcessEvents60to61_moveGroup(TimelineEvent* event) {
+	uint16 L0656_ui_MapX;
+	uint16 L0657_ui_MapY;
+	Group* L0658_ps_Group;
+	bool L0659_B_RandomDirectionMoveRetried;
+
+
+	L0659_B_RandomDirectionMoveRetried = false;
+	L0656_ui_MapX = event->_B._location._mapX;
+	L0657_ui_MapY = event->_B._location._mapY;
+	L0657_ui_MapY = event->_B._location._mapY;
+T0252001:
+	if (((_vm->_dungeonMan->_g272_currMapIndex != _vm->_dungeonMan->_g309_partyMapIndex) || (L0656_ui_MapX != _vm->_dungeonMan->_g306_partyMapX) || (L0657_ui_MapY != _vm->_dungeonMan->_g307_partyMapY)) && (_vm->_groupMan->f175_groupGetThing(L0656_ui_MapX, L0657_ui_MapY) == Thing::_endOfList)) { /* BUG0_24 Lord Chaos may teleport into one of the Black Flames and become invisible until the Black Flame is killed. In this case, _vm->_groupMan->f175_groupGetThing returns the Black Flame thing and the Lord Chaos thing is not moved into the dungeon until the Black Flame is killed */
+		if (event->_type == k61_TMEventTypeMoveGroupAudible) {
+			warning(false, "F0064_SOUND_RequestPlay_CPSD");
+		}
+		_vm->_movsens->f267_getMoveResult(Thing(event->_C._slot), kM1_MapXNotOnASquare, 0, L0656_ui_MapX, L0657_ui_MapY);
+	} else {
+		if (!L0659_B_RandomDirectionMoveRetried) {
+			L0659_B_RandomDirectionMoveRetried = true;
+			L0658_ps_Group = (Group*)_vm->_dungeonMan->f156_getThingData(Thing(event->_C._slot));
+			if ((L0658_ps_Group->_type == k23_CreatureTypeLordChaos) && !_vm->getRandomNumber(4)) {
+				switch (_vm->getRandomNumber(4)) {
+				case 0:
+					L0656_ui_MapX--;
+					break;
+				case 1:
+					L0656_ui_MapX++;
+					break;
+				case 2:
+					L0657_ui_MapY--;
+					break;
+				case 3:
+					L0657_ui_MapY++;
+				}
+				if (_vm->_groupMan->f223_isSquareACorridorTeleporterPitOrDoor(L0656_ui_MapX, L0657_ui_MapY))
+					goto T0252001;
+			}
+		}
+		event->_mapTime += 5;
+		_vm->_timeline->f238_addEventGetEventIndex(event);
 	}
 }
 }

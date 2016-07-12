@@ -1809,4 +1809,12 @@ Thing GroupMan::f185_groupGetGenerated(int16 creatureType, int16 healthMultiplie
 	warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
 	return L0349_T_GroupThing;
 }
+
+bool GroupMan::f223_isSquareACorridorTeleporterPitOrDoor(int16 mapX, int16 mapY) {
+	int16 L0544_i_SquareType;
+
+	return (((L0544_i_SquareType = Square(_vm->_dungeonMan->f151_getSquare(mapX, mapY)).getType()) == k1_CorridorElemType)
+			|| (L0544_i_SquareType == k5_ElementTypeTeleporter) || (L0544_i_SquareType == k2_ElementTypePit) || (L0544_i_SquareType == k4_DoorElemType));
+}
+
 }

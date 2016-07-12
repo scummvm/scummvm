@@ -173,6 +173,7 @@ public:
 	void f248_timelineProcessEvent6_squareWall(TimelineEvent *event); // @ F0248_TIMELINE_ProcessEvent6_Square_Wall
 	void f247_triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event); // @ F0247_TIMELINE_TriggerProjectileLauncher
 	void f245_timlineProcessEvent5_squareCorridor(TimelineEvent *event); // @ F0245_TIMELINE_ProcessEvent5_Square_Corridor
+	void f252_timelineProcessEvents60to61_moveGroup(TimelineEvent *event); // @ F0252_TIMELINE_ProcessEvents60to61_MoveGroup
 };
 
 
