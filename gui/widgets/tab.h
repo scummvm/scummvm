@@ -110,6 +110,7 @@ protected:
 	// We overload getChildY to make sure child widgets are positioned correctly.
 	// Essentially this compensates for the space taken up by the tab title header.
 	virtual int16	getChildY() const;
+	virtual uint16	getHeight() const;
 
 	virtual void drawWidget();
 

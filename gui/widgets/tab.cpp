@@ -85,6 +85,14 @@ int16 TabWidget::getChildY() const {
 	return getAbsY() + _tabHeight;
 }
 
+uint16 TabWidget::getHeight() const {
+	// NOTE: if you change that, make sure to do the same
+	// changes in the ThemeLayoutTabWidget (gui/ThemeLayout.cpp)
+	// NOTE: this height is used for clipping, so it *includes*
+	// tabs, because it starts from getAbsY(), not getChildY()
+	return _h + _tabHeight;
+}
+
 int TabWidget::addTab(const String &title) {
 	// Add a new tab page
 	Tab newTab;

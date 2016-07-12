@@ -156,7 +156,7 @@ void Widget::draw() {
 Widget *Widget::findWidgetInChain(Widget *w, int x, int y) {
 	while (w) {
 		// Stop as soon as we find a widget that contains the point (x,y)
-		if (x >= w->_x && x < w->_x + w->_w && y >= w->_y && y < w->_y + w->_h)
+		if (x >= w->_x && x < w->_x + w->_w && y >= w->_y && y < w->_y + w->getHeight())
 			break;
 		w = w->_next;
 	}
