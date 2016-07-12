@@ -252,7 +252,7 @@ void GfxPalette32::updateFFrame() {
 	g_sci->_gfxRemap32->remapAllTables(_nextPalette != _currentPalette);
 }
 
-void GfxPalette32::updateHardware() {
+void GfxPalette32::updateHardware(const bool updateScreen) {
 	if (_currentPalette == _nextPalette) {
 		return;
 	}
@@ -285,7 +285,9 @@ void GfxPalette32::updateHardware() {
 	bpal[255 * 3 + 2] = 255;
 
 	g_system->getPaletteManager()->setPalette(bpal, 0, 256);
-	g_sci->getEventManager()->updateScreen();
+	if (updateScreen) {
+		g_sci->getEventManager()->updateScreen();
+	}
 }
 
 void GfxPalette32::applyAll() {

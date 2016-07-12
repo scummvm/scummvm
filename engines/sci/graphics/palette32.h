@@ -251,7 +251,7 @@ public:
 
 	bool updateForFrame();
 	void updateFFrame();
-	void updateHardware();
+	void updateHardware(const bool updateScreen = true);
 	void applyAll();
 
 #pragma mark -

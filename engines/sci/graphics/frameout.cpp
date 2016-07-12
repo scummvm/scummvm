@@ -573,7 +573,7 @@ void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &eraseR
 //		_robot->frameAlmostVisible();
 //	}
 
-	_palette->updateHardware();
+	_palette->updateHardware(!shouldShowBits);
 
 	if (shouldShowBits) {
 		showBits();
@@ -1144,7 +1144,7 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, const ShowStyleEntry
 
 	_palette->submit(nextPalette);
 	_palette->updateFFrame();
-	_palette->updateHardware();
+	_palette->updateHardware(false);
 	showBits();
 
 	_frameNowVisible = true;
