@@ -244,6 +244,13 @@ void Lingo::c_theentityassign() {
 	g_lingo->push(d); // Dummy value
 }
 
+void Lingo::c_swap() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+	g_lingo->push(d2);
+	g_lingo->push(d1);
+}
+
 void Lingo::c_add() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();

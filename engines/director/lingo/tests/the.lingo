@@ -2,3 +2,4 @@ put 1.0 / 3
 set the floatPrecision to 6
 put 1.0 / 3
 put the loch of sprite 4
+set the loch of sprite 5 to 10

@@ -200,9 +200,9 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	else
 		warning("Unknown the sprite id type: %s", id1.type2str());
 
-	Sprite *sprite = _vm->_currentScore->getSpriteById(id);
-
 	d.toInt(); // Enforce Integer
+
+	Sprite *sprite = _vm->_currentScore->getSpriteById(id);
 
 	switch (field) {
 	case kTheCastNum:

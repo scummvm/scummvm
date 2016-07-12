@@ -135,6 +135,14 @@ asgn: tPUT expr tINTO ID 		{
 		WRITE_UINT32(&f, $2[1]);
 		g_lingo->code2(e, f);
 		$$ = $4; }
+	| tSET THEENTITYWITHID expr '=' expr	{
+		g_lingo->code1(g_lingo->c_swap);
+		g_lingo->code1(g_lingo->c_theentityassign);
+		inst e = 0, f = 0;
+		WRITE_UINT32(&e, $2[0]);
+		WRITE_UINT32(&f, $2[1]);
+		g_lingo->code2(e, f);
+		$$ = $5; }
 	| tSET ID tTO expr			{
 		g_lingo->code1(g_lingo->c_varpush);
 		g_lingo->codeString($2->c_str());
@@ -149,6 +157,14 @@ asgn: tPUT expr tINTO ID 		{
 		WRITE_UINT32(&f, $2[1]);
 		g_lingo->code2(e, f);
 		$$ = $4; }
+	| tSET THEENTITYWITHID expr tTO expr	{
+		g_lingo->code1(g_lingo->c_swap);
+		g_lingo->code1(g_lingo->c_theentityassign);
+		inst e = 0, f = 0;
+		WRITE_UINT32(&e, $2[0]);
+		WRITE_UINT32(&f, $2[1]);
+		g_lingo->code2(e, f);
+		$$ = $5; }
 	;
 stmtoneliner: expr 				{ g_lingo->code1(g_lingo->c_xpop); }
 	| func

@@ -207,6 +207,8 @@ public:
 	bool verify(Symbol *s);
 	static void c_eval();
 
+	static void c_swap();
+
 	static void c_theentitypush();
 	static void c_theentityassign();
 
