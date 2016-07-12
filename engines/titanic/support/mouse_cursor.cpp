@@ -63,8 +63,6 @@ CMouseCursor::CMouseCursor(CScreenManager *screenManager) :
 }
 
 CMouseCursor::~CMouseCursor() {
-	for (int idx = 0; idx < NUM_CURSORS; ++idx)
-		delete _cursors[idx]._videoSurface;
 }
 
 void CMouseCursor::loadCursorImages() {

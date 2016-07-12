@@ -65,10 +65,13 @@ AVISurface::AVISurface(const CResourceKey &key) {
 	if (!_decoders[0]->loadFile(key.getString()))
 		error("Could not open video - %s", key.getString().c_str());
 
+	_streamCount = 1;
+
 	// Create a decoder for any secondary video track
 	AVIDecoder *decoder2 = new AVIDecoder(Audio::Mixer::kPlainSoundType, secondaryTrackSelect);
 	if (decoder2->loadFile(key.getString())) {
 		_decoders[1] = decoder2;
+		++_streamCount;
 	} else {
 		delete decoder2;
 	}
@@ -263,20 +266,18 @@ bool AVISurface::renderFrame() {
 		return false;
 
 	// Decode each decoder's video stream into the appropriate surface
-	for (int idx = 0; idx < 2; ++idx) {
-		if (_decoders[idx]) {
-			const Graphics::Surface *frame = _decoders[idx]->decodeNextFrame();
+	for (int idx = 0; idx < _streamCount; ++idx) {
+		const Graphics::Surface *frame = _decoders[idx]->decodeNextFrame();
 			
-			if (_movieFrameSurface[idx]->format == frame->format) {
-				_movieFrameSurface[idx]->blitFrom(*frame);
-			} else {
-				// Format mis-match, so we need to convert the frame
-				Graphics::Surface *s = frame->convertTo(_movieFrameSurface[idx]->format,
-					_decoders[idx]->getPalette());
-				_movieFrameSurface[idx]->blitFrom(*s);
-				s->free();
-				delete s;
-			}
+		if (_movieFrameSurface[idx]->format == frame->format) {
+			_movieFrameSurface[idx]->blitFrom(*frame);
+		} else {
+			// Format mis-match, so we need to convert the frame
+			Graphics::Surface *s = frame->convertTo(_movieFrameSurface[idx]->format,
+				_decoders[idx]->getPalette());
+			_movieFrameSurface[idx]->blitFrom(*s);
+			s->free();
+			delete s;
 		}
 	}
 
