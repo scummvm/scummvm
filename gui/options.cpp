@@ -1726,6 +1726,9 @@ void GlobalOptionsDialog::setupCloudTab() {
 	int serverLabelPosition = -1; //no override
 #ifdef USE_LIBCURL
 	_selectedStorageIndex = _storagePopUp->getSelectedTag();
+	
+	if (_storagePopUpDesc) _storagePopUpDesc->setVisible(true);
+	if (_storagePopUp) _storagePopUp->setVisible(true);
 
 	bool shown = (_selectedStorageIndex != Cloud::kStorageNoneId);
 	if (_storageUsernameDesc) _storageUsernameDesc->setVisible(shown);
@@ -1789,10 +1792,12 @@ void GlobalOptionsDialog::setupCloudTab() {
 		
 	if (serverLabelPosition < 0) serverLabelPosition = serverInfoY;
 	if (_runServerButton) {
+		_runServerButton->setVisible(true);
 		_runServerButton->setPos(_runServerButton->getRelX(), serverLabelPosition + serverButtonY - serverInfoY);
 		_runServerButton->setLabel(_(serverIsRunning ? "Stop server" : "Run server"));
 	}
 	if (_serverInfoLabel) {
+		_serverInfoLabel->setVisible(true);
 		_serverInfoLabel->setPos(_serverInfoLabel->getRelX(), serverLabelPosition);
 		if (serverIsRunning) _serverInfoLabel->setLabel(LocalServer.getAddress());
 		else _serverInfoLabel->setLabel(_("Not running"));
