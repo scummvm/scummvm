@@ -31,6 +31,7 @@
 #include "dm.h"
 
 namespace DM {
+	class Champion;
 	class Sensor;
 
 	/* Event types */
@@ -178,6 +179,10 @@ public:
 	void f252_timelineProcessEvents60to61_moveGroup(TimelineEvent *event); // @ F0252_TIMELINE_ProcessEvents60to61_MoveGroup
 	void f246_timelineProcesEvent65_enableGroupGenerator(TimelineEvent *event); // @ F0246_TIMELINE_ProcessEvent65_EnableGroupGenerator
 	void f253_timelineProcessEvent11Part1_enableChampionAction(uint16 champIndex); // @ F0253_TIMELINE_ProcessEvent11Part1_EnableChampionAction
+	void f259_timelineProcessEvent11Part2_moveWeaponFromQuiverToSlot(uint16 champIndex,
+																	 uint16 slotIndex);// @ F0259_TIMELINE_ProcessEvent11Part2_MoveWeaponFromQuiverToSlot
+	bool f258_timelineHasWeaponMovedSlot(int16 champIndex, Champion *champ,
+										 uint16 sourceSlotIndex, int16 destSlotIndex); // @ F0258_TIMELINE_HasWeaponMovedToSlot
 };
 
 

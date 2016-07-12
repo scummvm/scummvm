@@ -328,7 +328,7 @@ void Timeline::f261_processTimeline() {
 			case k11_TMEventTypeEnableChampionAction:
 				f253_timelineProcessEvent11Part1_enableChampionAction(L0682_s_Event._priority);
 				if (L0682_s_Event._B._slotOrdinal) {
-					//F0259_TIMELINE_ProcessEvent11Part2_MoveWeaponFromQuiverToSlot(L0682_s_Event._priority, _vm->M1_ordinalToIndex(L0682_s_Event._B._slotOrdinal));
+					f259_timelineProcessEvent11Part2_moveWeaponFromQuiverToSlot(L0682_s_Event._priority, _vm->M1_ordinalToIndex(L0682_s_Event._B._slotOrdinal));
 				}
 				goto T0261048;
 			case k12_TMEventTypeHideDamageReceived:
@@ -951,5 +951,31 @@ T0253002:
 		_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
 	}
 	L0662_ps_Champion->_actionIndex = k255_ChampionActionNone;
+}
+
+void Timeline::f259_timelineProcessEvent11Part2_moveWeaponFromQuiverToSlot(uint16 champIndex, uint16 slotIndex) {
+	uint16 L0677_ui_SlotIndex;
+	Champion* L0678_ps_Champion;
+
+	L0678_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
+	if (L0678_ps_Champion->_slots[slotIndex] != Thing::_none) {
+		return;
+	}
+	if (f258_timelineHasWeaponMovedSlot(champIndex, L0678_ps_Champion, k12_ChampionSlotQuiverLine_1_1, slotIndex)) {
+		return;
+	}
+	for (L0677_ui_SlotIndex = k7_ChampionSlotQuiverLine_2_1; L0677_ui_SlotIndex <= k9_ChampionSlotQuiverLine_2_2; L0677_ui_SlotIndex++) {
+		if (f258_timelineHasWeaponMovedSlot(champIndex, L0678_ps_Champion, L0677_ui_SlotIndex, slotIndex))
+			break;
+	}
+}
+
+bool Timeline::f258_timelineHasWeaponMovedSlot(int16 champIndex, Champion* champ, uint16 sourceSlotIndex, int16 destSlotIndex) {
+	if (Thing(champ->_slots[sourceSlotIndex]).getType() == k5_WeaponThingType) {
+		_vm->_championMan->f301_addObjectInSlot((ChampionIndex)champIndex, _vm->_championMan->f300_getObjectRemovedFromSlot(champIndex, sourceSlotIndex),
+												(ChampionSlot)destSlotIndex);
+		return true;
+	}
+	return false;
 }
 }
