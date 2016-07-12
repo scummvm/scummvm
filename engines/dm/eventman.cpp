@@ -661,7 +661,7 @@ void EventManager::f380_processCommandQueue() {
 	}
 	if ((cmdType >= k28_CommandClickOnSlotBoxInventoryReadyHand) && (cmdType < (k65_CommandClickOnSlotBoxChest_8 + 1))) {
 		if (_vm->_championMan->_g411_leaderIndex != kM1_ChampionNone) {
-			warning(false, "MISSING CODE: F0302_CHAMPION_ProcessCommands28To65_ClickOnSlotBox(cmdType - k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand);");
+			_vm->_championMan->f302_processCommands28to65_clickOnSlotBox(cmdType - k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand);
 		}
 		return;
 	}
@@ -679,7 +679,7 @@ void EventManager::f380_processCommandQueue() {
 	}
 	if (cmdType == k100_CommandClickInSpellArea) {
 		if ((!_vm->_championMan->_g299_candidateChampionOrdinal) && (_vm->_championMan->_g514_magicCasterChampionIndex != kM1_ChampionNone)) {
-			warning(false, "MISSING CODE: F0370_COMMAND_ProcessType100_ClickInSpellArea(L1161_i_CommandX, L1162_i_CommandY);");
+			f370_commandProcessType100_clickInSpellArea(L1161_i_CommandX, L1162_i_CommandY);
 		}
 		return;
 	}
@@ -1304,7 +1304,7 @@ void EventManager::f367_commandProcessTypes12to27_clickInChampionStatusBox(uint1
 void EventManager::f70_mouseProcessCommands125To128_clickOnChampionIcon(uint16 champIconIndex) {
 	static Box G0621_s_Box_MousePointer_ChampionIconShadow = Box(2, 20, 2, 15);
 	static Box G0622_s_Box_MousePointer_ChampionIcon = Box(0, 18, 0, 13);
-	static byte G0045_auc_Graphic562_PaletteChanges_MousePointerIconShadow[16] = {0, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 0, 120, 120, 120}; 
+	static byte G0045_auc_Graphic562_PaletteChanges_MousePointerIconShadow[16] = {0, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 0, 120, 120, 120};
 
 	uint16 L0052_ui_ChampionIconIndex;
 	int16 L0053_i_ChampionIndex;
@@ -1358,5 +1358,111 @@ void EventManager::f70_mouseProcessCommands125To128_clickOnChampionIcon(uint16 c
 	}
 	_gK100_preventBuildPointerScreenArea = false;
 	f73_buildpointerScreenArea(_mousePos.x, _mousePos.y);
+}
+
+void EventManager::f370_commandProcessType100_clickInSpellArea(uint16 posX, uint16 posY) {
+	int16 L1132_i_Command;
+	int16 L1133_i_ChampionIndex;
+
+
+	L1133_i_ChampionIndex = kM1_ChampionNone;
+	if (posY <= 48) {
+		switch (_vm->_championMan->_g514_magicCasterChampionIndex) {
+		case 0:
+			if ((posX >= 280) && (posX <= 291)) {
+				L1133_i_ChampionIndex = 1;
+			} else {
+				if ((posX >= 294) && (posX <= 305)) {
+					L1133_i_ChampionIndex = 2;
+				} else {
+					if (posX >= 308) {
+						L1133_i_ChampionIndex = 3;
+					}
+				}
+			}
+			break;
+		case 1:
+			if ((posX >= 233) && (posX <= 244)) {
+				L1133_i_ChampionIndex = 0;
+			} else {
+				if ((posX >= 294) && (posX <= 305)) {
+					L1133_i_ChampionIndex = 2;
+				} else {
+					if (posX >= 308) {
+						L1133_i_ChampionIndex = 3;
+					}
+				}
+			}
+			break;
+		case 2:
+			if ((posX >= 233) && (posX <= 244)) {
+				L1133_i_ChampionIndex = 0;
+			} else {
+				if ((posX >= 247) && (posX <= 258)) {
+					L1133_i_ChampionIndex = 1;
+				} else {
+					if (posX >= 308) {
+						L1133_i_ChampionIndex = 3;
+					}
+				}
+			}
+			break;
+		case 3:
+			if ((posX >= 247) && (posX <= 258)) {
+				L1133_i_ChampionIndex = 1;
+			} else {
+				if ((posX >= 261) && (posX <= 272)) {
+					L1133_i_ChampionIndex = 2;
+				} else {
+					if (posX <= 244) {
+						L1133_i_ChampionIndex = 0;
+					}
+				}
+			}
+		}
+		if ((L1133_i_ChampionIndex != kM1_ChampionNone) && (L1133_i_ChampionIndex < _vm->_championMan->_g305_partyChampionCount)) {
+			_vm->_menuMan->f394_setMagicCasterAndDrawSpellArea(L1133_i_ChampionIndex);
+		}
+		return;
+	}
+	L1132_i_Command = _vm->_eventMan->f358_getCommandTypeFromMouseInput(g454_MouseInput_SpellArea, Common::Point(posX, posY), k1_LeftMouseButton);
+	if (L1132_i_Command != k0_CommandNone) {
+		f369_commandProcessTypes101To108_clickInSpellSymbolsArea((CommandType)L1132_i_Command);
+	}
+}
+
+void EventManager::f369_commandProcessTypes101To108_clickInSpellSymbolsArea(CommandType cmdType) {
+	static Box G0464_as_Graphic561_Box_SpellSymbolsAndDelete[7] = {
+		/* { X1, X2, Y1, Y2 } */
+		Box(235, 247, 51, 61),   /* Symbol 1 */
+		Box(249, 261, 51, 61),   /* Symbol 2 */
+		Box(263, 275, 51, 61),   /* Symbol 3 */
+		Box(277, 289, 51, 61),   /* Symbol 4 */
+		Box(291, 303, 51, 61),   /* Symbol 5 */
+		Box(305, 317, 51, 61),   /* Symbol 6 */
+		Box(305, 318, 63, 73)}; /* Delete */
+
+	uint16 L1130_ui_SymbolIndex;
+	Box* L1131_ps_Box;
+
+
+	if (cmdType == k108_CommandClickInSpeallAreaCastSpell) {
+		if (_vm->_championMan->_gK71_champions[_vm->_championMan->_g514_magicCasterChampionIndex]._symbols[0] == '\0') {
+			return;
+		}
+		warning(false, "MISSING CODE: F0362_COMMAND_HighlightBoxEnable");
+		_vm->_g321_stopWaitingForPlayerInput = _vm->_menuMan->f408_getClickOnSpellCastResult();
+		return;
+	}
+	L1130_ui_SymbolIndex = cmdType - k101_CommandClickInSpellAreaSymbol_1;
+	L1131_ps_Box = &G0464_as_Graphic561_Box_SpellSymbolsAndDelete[L1130_ui_SymbolIndex];
+	warning(false, "MISSING CODE: F0362_COMMAND_HighlightBoxEnable");
+	_vm->f22_delay(1);
+	warning(false, "MISSING CODE: F0363_COMMAND_HighlightBoxDisable");
+	if (L1130_ui_SymbolIndex < 6) {
+		_vm->_menuMan->f399_addChampionSymbol(L1130_ui_SymbolIndex);
+	} else {
+		_vm->_menuMan->f400_deleteChampionSymbol();
+	}
 }
 } // end of namespace DM

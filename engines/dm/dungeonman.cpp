@@ -1252,7 +1252,7 @@ uint16 DungeonMan::f140_getObjectWeight(Thing thing) {
 	};
 
 	Junk* junk;
-	uint16 weight;
+	uint16 weight = (uint16)-1; // initialization is not present in original
 
 	if (thing == Thing::_none)
 		return 0;

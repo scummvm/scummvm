@@ -448,7 +448,53 @@ public:
 #define k0x8000_maskUseSharpDefense 0x8000 // @ MASK0x8000_USE_SHARP_DEFENSE        
 
 #define k0x8000_mergeCycles 0x8000 // @ MASK0x8000_MERGE_CYCLES
-extern const char *g417_baseSkillName[4];
+// TODO: localization
+extern const char *g417_baseSkillName[4]; // @ G0417_apc_BaseSkillNames
+
+#define k0_spellCastFailure 0 // @ C0_SPELL_CAST_FAILURE             
+#define k1_spellCastSuccess 1 // @ C1_SPELL_CAST_SUCCESS             
+#define k3_spellCastFailureNeedsFlask 3 // @ C3_SPELL_CAST_FAILURE_NEEDS_FLASK 
+
+#define k0_failureNeedsMorePractice 0 // @ C00_FAILURE_NEEDS_MORE_PRACTICE      
+#define k1_failureMeaninglessSpell 1 // @ C01_FAILURE_MEANINGLESS_SPELL        
+#define k10_failureNeedsFlaskInHand 10 // @ C10_FAILURE_NEEDS_FLASK_IN_HAND     
+#define k11_failureNeedsMagicMapInHand 11 // @ C11_FAILURE_NEEDS_MAGIC_MAP_IN_HAND 
+
+#define k1_spellKindPotion 1 // @ C1_SPELL_KIND_POTION    
+#define k2_spellKindProjectile 2 // @ C2_SPELL_KIND_PROJECTILE
+#define k3_spellKindOther 3 // @ C3_SPELL_KIND_OTHER     
+#define k4_spellKindMagicMap 4 // @ C4_SPELL_KIND_MAGIC_MAP 
+
+#define k4_spellType_projectileOpenDoor 4 // @ C4_SPELL_TYPE_PROJECTILE_OPEN_DOOR
+#define k0_spellType_otherLight 0 // @ C0_SPELL_TYPE_OTHER_LIGHT         
+#define k1_spellType_otherDarkness 1 // @ C1_SPELL_TYPE_OTHER_DARKNESS      
+#define k2_spellType_otherThievesEye 2 // @ C2_SPELL_TYPE_OTHER_THIEVES_EYE   
+#define k3_spellType_otherInvisibility 3 // @ C3_SPELL_TYPE_OTHER_INVISIBILITY  
+#define k4_spellType_otherPartyShield 4 // @ C4_SPELL_TYPE_OTHER_PARTY_SHIELD  
+#define k5_spellType_otherMagicTorch 5 // @ C5_SPELL_TYPE_OTHER_MAGIC_TORCH   
+#define k6_spellType_otherFootprints 6 // @ C6_SPELL_TYPE_OTHER_FOOTPRINTS    
+#define k7_spellType_otherZokathra 7 // @ C7_SPELL_TYPE_OTHER_ZOKATHRA      
+#define k8_spellType_otherFireshield 8 // @ C8_SPELL_TYPE_OTHER_FIRESHIELD    
+#define k0_spellType_magicMap0 0 // @ C0_SPELL_TYPE_MAGIC_MAP           
+#define k1_spellType_magicMap1 1 // @ C1_SPELL_TYPE_MAGIC_MAP           
+#define k2_spellType_magicMap2 2 // @ C2_SPELL_TYPE_MAGIC_MAP           
+#define k3_spellType_magicMap3 3 // @ C3_SPELL_TYPE_MAGIC_MAP           
+
+class Spell {
+public:
+	Spell() {}
+	Spell(int32 symbols, byte baseSkillReq, byte skillIndex, uint16 attributes)
+	: _symbols(symbols), _baseRequiredSkillLevel(baseSkillReq), _skillIndex(skillIndex), _attributes(attributes) {}
+
+	int32 _symbols; /* Most significant byte: 0 (spell definition does not include power symbol) / not 0 (spell definition includes power symbol) */
+	byte _baseRequiredSkillLevel;
+	byte _skillIndex;
+	uint16 _attributes; /* Bits 15-10: Duration, Bits 9-4: Type, Bits 3-0: Kind */
+
+	uint16 M67_spellKind() { return _attributes & 0xF; } // @ M67_SPELL_KIND
+	uint16 M68_spellType() { return (_attributes >> 4) & 0x3F; } // @ M68_SPELL_TYPE
+	uint16 M69_spellDurration() { return (_attributes >> 10) & 0x3F; } // @ M69_SPELL_DURATION
+}; // @ SPELL
 
 class ChampionMan {
 	DMEngine *_vm;
@@ -526,8 +572,9 @@ public:
 	void f293_drawAllChampionStates(); // @ F0293_CHAMPION_DrawAllChampionStates
 	void f283_viAltarRebirth(uint16 champIndex); // @ F0283_CHAMPION_ViAltarRebirth
 	void f302_processCommands28to65_clickOnSlotBox(uint16 slotBoxIndex); // @ F0302_CHAMPION_ProcessCommands28To65_ClickOnSlotBox
-
-
+	bool f327_isProjectileSpellCast(uint16 champIndex, Thing thing, int16 kineticEnergy, uint16 requiredManaAmount); // @ F0327_CHAMPION_IsProjectileSpellCast
+	void f326_championShootProjectile(Champion *champ, Thing thing, int16 kineticEnergy,
+									  int16 attack, int16 stepEnergy); // @ F0326_CHAMPION_ShootProjectile
 
 };
 

@@ -33,6 +33,8 @@
 #include "inventory.h"
 #include "text.h"
 #include "eventman.h"
+#include "timeline.h"
+#include "movesens.h"
 
 
 namespace DM {
@@ -402,4 +404,413 @@ void MenuMan::f457_drawEnabledMenus() {
 	}
 }
 
+int16 MenuMan::f408_getClickOnSpellCastResult() {
+	int16 L1259_i_SpellCastResult;
+	Champion* L1260_ps_Champion;
+
+
+	L1260_ps_Champion = &_vm->_championMan->_gK71_champions[_vm->_championMan->_g514_magicCasterChampionIndex];
+	_vm->_eventMan->f78_showMouse();
+	warning(false, "MISSING CODE: F0363_COMMAND_HighlightBoxDisable");
+	if ((L1259_i_SpellCastResult = f412_getChampionSpellCastResult(_vm->_championMan->_g514_magicCasterChampionIndex)) != k3_spellCastFailureNeedsFlask) {
+		L1260_ps_Champion->_symbols[0] = '\0';
+		f397_drawAvailableSymbols(L1260_ps_Champion->_symbolStep = 0);
+		f398_drawChampionSymbols(L1260_ps_Champion);
+	} else {
+		L1259_i_SpellCastResult = k0_spellCastFailure;
+	}
+	_vm->_eventMan->f77_hideMouse();
+	return L1259_i_SpellCastResult;
+}
+
+int16 MenuMan::f412_getChampionSpellCastResult(uint16 champIndex) {
+	uint16 L1267_ui_Multiple;
+#define AL1267_ui_SkillLevel L1267_ui_Multiple
+#define AL1267_ui_LightPower L1267_ui_Multiple
+#define AL1267_ui_SpellPower L1267_ui_Multiple
+#define AL1267_ui_Ticks      L1267_ui_Multiple
+	int16 L1268_i_PowerSymbolOrdinal;
+	uint16 L1269_ui_Multiple;
+#define AL1269_ui_RequiredSkillLevel L1269_ui_Multiple
+#define AL1269_ui_EmptyFlaskWeight   L1269_ui_Multiple
+#define AL1269_ui_Ticks              L1269_ui_Multiple
+	Champion* L1270_ps_Champion;
+	Spell* L1271_ps_Spell;
+	Thing L1272_T_Object;
+	uint16 L1273_ui_Experience;
+	int16 L1274_i_MissingSkillLevelCount;
+	Potion* L1275_ps_Potion;
+	TimelineEvent L1276_s_Event;
+	Junk* L1277_ps_Junk;
+
+
+	if (champIndex >= _vm->_championMan->_g305_partyChampionCount) {
+		return k0_spellCastFailure;
+	}
+	L1270_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
+	if (!(L1270_ps_Champion->_currHealth)) {
+		return k0_spellCastFailure;
+	}
+	if ((L1271_ps_Spell = f409_getSpellFromSymbols((unsigned char *)L1270_ps_Champion->_symbols)) == 0) {
+		f410_menusPrintSpellFailureMessage(L1270_ps_Champion, k1_spellCastSuccess, 0);
+		return k0_spellCastFailure;
+	}
+	L1268_i_PowerSymbolOrdinal = L1270_ps_Champion->_symbols[0] - '_'; /* Values 1 to 6 */
+	L1273_ui_Experience = _vm->getRandomNumber(8) + ((AL1269_ui_RequiredSkillLevel = L1271_ps_Spell->_baseRequiredSkillLevel + L1268_i_PowerSymbolOrdinal) << 4) + ((_vm->M1_ordinalToIndex(L1268_i_PowerSymbolOrdinal) * L1271_ps_Spell->_baseRequiredSkillLevel) << 3) + (AL1269_ui_RequiredSkillLevel * AL1269_ui_RequiredSkillLevel);
+	AL1267_ui_SkillLevel = _vm->_championMan->f303_getSkillLevel(champIndex, L1271_ps_Spell->_skillIndex);
+	if (AL1267_ui_SkillLevel < AL1269_ui_RequiredSkillLevel) {
+		L1274_i_MissingSkillLevelCount = AL1269_ui_RequiredSkillLevel - AL1267_ui_SkillLevel;
+		while (L1274_i_MissingSkillLevelCount--) {
+			if (_vm->getRandomNumber(128) > MIN(L1270_ps_Champion->_statistics[k3_ChampionStatWisdom][k1_ChampionStatCurrent] + 15, 115)) {
+				_vm->_championMan->f304_addSkillExperience(champIndex, L1271_ps_Spell->_skillIndex, L1273_ui_Experience >> (AL1269_ui_RequiredSkillLevel - AL1267_ui_SkillLevel));
+				f410_menusPrintSpellFailureMessage(L1270_ps_Champion, k0_failureNeedsMorePractice, L1271_ps_Spell->_skillIndex);
+				return k0_spellCastFailure;
+			}
+		}
+	}
+	switch (L1271_ps_Spell->M67_spellKind()) {
+	case k1_spellKindPotion:
+		if ((L1275_ps_Potion = f411_getEmptyFlaskInHand(L1270_ps_Champion, &L1272_T_Object)) == NULL) {
+			f410_menusPrintSpellFailureMessage(L1270_ps_Champion, k10_failureNeedsFlaskInHand, 0);
+			return k3_spellCastFailureNeedsFlask;
+		}
+		AL1269_ui_EmptyFlaskWeight = _vm->_dungeonMan->f140_getObjectWeight(L1272_T_Object);
+		L1275_ps_Potion->setType((PotionType)L1271_ps_Spell->M68_spellType());
+		L1275_ps_Potion->setPower(_vm->getRandomNumber(16) + (L1268_i_PowerSymbolOrdinal * 40));
+		L1270_ps_Champion->_load += _vm->_dungeonMan->f140_getObjectWeight(L1272_T_Object) - AL1269_ui_EmptyFlaskWeight;
+		_vm->_championMan->f296_drawChangedObjectIcons();
+		if (_vm->_inventoryMan->_g432_inventoryChampionOrdinal == _vm->M0_indexToOrdinal(champIndex)) {
+			setFlag(L1270_ps_Champion->_attributes, k0x0200_ChampionAttributeLoad);
+			_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
+		}
+		break;
+	case k2_spellKindProjectile:
+		if (L1270_ps_Champion->_dir != _vm->_dungeonMan->_g308_partyDir) {
+			L1270_ps_Champion->_dir = _vm->_dungeonMan->_g308_partyDir;
+			setFlag(L1270_ps_Champion->_attributes, k0x0400_ChampionAttributeIcon);
+			_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
+		}
+		if (L1271_ps_Spell->M68_spellType() == k4_spellType_projectileOpenDoor) {
+			AL1267_ui_SkillLevel <<= 1;
+		}
+		_vm->_championMan->f327_isProjectileSpellCast(champIndex, Thing(L1271_ps_Spell->M68_spellType() + Thing::_firstExplosion.toUint16()), f26_getBoundedValue(21, (L1268_i_PowerSymbolOrdinal + 2) * (4 + (AL1267_ui_SkillLevel << 1)), 255), 0);
+		break;
+	case k3_spellKindOther:
+		L1276_s_Event._priority = 0;
+		AL1267_ui_SpellPower = (L1268_i_PowerSymbolOrdinal + 1) << 2;
+		switch (L1271_ps_Spell->M68_spellType()) {
+		case k0_spellType_otherLight:
+			AL1269_ui_Ticks = 10000 + ((AL1267_ui_SpellPower - 8) << 9);
+			AL1267_ui_LightPower = (AL1267_ui_SpellPower >> 1);
+			AL1267_ui_LightPower--;
+			goto T0412019;
+		case k5_spellType_otherMagicTorch:
+			AL1269_ui_Ticks = 2000 + ((AL1267_ui_SpellPower - 3) << 7);
+			AL1267_ui_LightPower = (AL1267_ui_SpellPower >> 2);
+			AL1267_ui_LightPower++;
+T0412019:
+			_vm->_championMan->_g407_party._magicalLightAmount += g39_LightPowerToLightAmount[AL1267_ui_LightPower];
+			f404_createEvent70_light(-AL1267_ui_LightPower, AL1269_ui_Ticks);
+			break;
+		case k1_spellType_otherDarkness:
+			AL1267_ui_LightPower = (AL1267_ui_SpellPower >> 2);
+			_vm->_championMan->_g407_party._magicalLightAmount -= g39_LightPowerToLightAmount[AL1267_ui_LightPower];
+			f404_createEvent70_light(AL1267_ui_LightPower, 98);
+			break;
+		case k2_spellType_otherThievesEye:
+			L1276_s_Event._type = k73_TMEventTypeThievesEye;
+			_vm->_championMan->_g407_party._event73Count_ThievesEye++;
+			AL1267_ui_SpellPower = (AL1267_ui_SpellPower >> 1);
+			goto T0412032;
+		case k3_spellType_otherInvisibility:
+			L1276_s_Event._type = k71_TMEventTypeInvisibility;
+			_vm->_championMan->_g407_party._event71Count_Invisibility++;
+			goto T0412033;
+		case k4_spellType_otherPartyShield:
+			L1276_s_Event._type = k74_TMEventTypePartyShield;
+			L1276_s_Event._B._defense = AL1267_ui_SpellPower;
+			if (_vm->_championMan->_g407_party._shieldDefense > 50) {
+				L1276_s_Event._B._defense >>= 2;
+			}
+			_vm->_championMan->_g407_party._shieldDefense += L1276_s_Event._B._defense;
+			_vm->_timeline->f260_timelineRefreshAllChampionStatusBoxes();
+			goto T0412032;
+		case k6_spellType_otherFootprints:
+			L1276_s_Event._type = k79_TMEventTypeFootprints;
+			_vm->_championMan->_g407_party._event79Count_Footprints++;
+			_vm->_championMan->_g407_party._firstScentIndex = _vm->_championMan->_g407_party._scentCount;
+			if (L1268_i_PowerSymbolOrdinal < 3) {
+				_vm->_championMan->_g407_party._lastScentIndex = _vm->_championMan->_g407_party._firstScentIndex;
+			} else {
+				_vm->_championMan->_g407_party._lastScentIndex = 0;
+			}
+T0412032:
+			AL1267_ui_Ticks = AL1267_ui_SpellPower * AL1267_ui_SpellPower;
+T0412033:
+			M33_setMapAndTime(L1276_s_Event._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + AL1267_ui_Ticks);
+			_vm->_timeline->f238_addEventGetEventIndex(&L1276_s_Event);
+			break;
+		case k7_spellType_otherZokathra:
+			if ((L1272_T_Object = _vm->_dungeonMan->f166_getUnusedThing(k10_JunkThingType)) == Thing::_none)
+				break;
+			L1277_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(L1272_T_Object);
+			L1277_ps_Junk->setType(k51_JunkTypeZokathra);
+			ChampionSlot AL1267_ui_SlotIndex;
+			if (L1270_ps_Champion->_slots[k0_ChampionSlotReadyHand] == Thing::_none) {
+				AL1267_ui_SlotIndex = k0_ChampionSlotReadyHand;
+			} else {
+				if (L1270_ps_Champion->_slots[k1_ChampionSlotActionHand] == Thing::_none) {
+					AL1267_ui_SlotIndex = k1_ChampionSlotActionHand;
+				} else {
+					AL1267_ui_SlotIndex = kM1_ChampionSlotLeaderHand;
+				}
+			}
+			if ((AL1267_ui_SlotIndex == k0_ChampionSlotReadyHand) || (AL1267_ui_SlotIndex == k1_ChampionSlotActionHand)) {
+				_vm->_championMan->f301_addObjectInSlot((ChampionIndex)champIndex, L1272_T_Object, AL1267_ui_SlotIndex);
+				_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
+			} else {
+				_vm->_movsens->f267_getMoveResult(L1272_T_Object, kM1_MapXNotOnASquare, 0, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY);
+			}
+			break;
+		case k8_spellType_otherFireshield:
+			f403_isPartySpellOrFireShieldSuccessful(L1270_ps_Champion, false, (AL1267_ui_SpellPower * AL1267_ui_SpellPower) + 100, false);
+		}
+	}
+	_vm->_championMan->f304_addSkillExperience(champIndex, L1271_ps_Spell->_skillIndex, L1273_ui_Experience);
+	_vm->_championMan->f330_disableAction(champIndex, L1271_ps_Spell->M69_spellDurration());
+	return k1_spellCastSuccess;
+}
+
+Spell* MenuMan::f409_getSpellFromSymbols(byte* symbols) {
+	static Spell G0487_as_Graphic560_Spells[25] = {
+		/* { Symbols, BaseRequiredSkillLevel, SkillIndex, Attributes } */
+		Spell(0x00666F00, 2, 15, 0x7843),
+		Spell(0x00667073, 1, 18, 0x4863),
+		Spell(0x00686D77, 3, 17, 0xB433),
+		Spell(0x00686C00, 3, 19, 0x6C72),
+		Spell(0x00686D76, 3, 18, 0x8423),
+		Spell(0x00686E76, 4, 17, 0x7822),
+		Spell(0x00686F76, 4, 17, 0x5803),
+		Spell(0x00690000, 1, 16, 0x3C53),
+		Spell(0x00696F00, 3, 16, 0xA802),
+		Spell(0x00697072, 4, 13, 0x3C71),
+		Spell(0x00697075, 4, 15, 0x7083),
+		Spell(0x006A6D00, 1, 18, 0x5032),
+		Spell(0x006A6C00, 1, 19, 0x4062),
+		Spell(0x006A6F77, 1, 15, 0x3013),
+		Spell(0x006B0000, 1, 17, 0x3C42),
+		Spell(0x00667000, 2, 15, 0x64C1),
+		Spell(0x00660000, 2, 13, 0x3CB1),
+		Spell(0x00667074, 4, 13, 0x3C81),
+		Spell(0x00667075, 4, 13, 0x3C91),
+		Spell(0x00670000, 1, 13, 0x80E1),
+		Spell(0x00677000, 1, 13, 0x68A1),
+		Spell(0x00687073, 4, 13, 0x3C61),
+		Spell(0x006B7076, 3,  2, 0xFCD1),
+		Spell(0x006B6C00, 2, 19, 0x7831),
+		Spell(0x006B6E76, 0,  3, 0x3C73)};
+
+
+	int32 L1261_l_Symbols;
+	int16 L1262_i_Multiple;
+#define AL1262_i_BitShiftCount L1262_i_Multiple
+#define AL1262_i_SpellIndex    L1262_i_Multiple
+	Spell* L1263_ps_Spell;
+
+
+	if (*(symbols + 1)) {
+		AL1262_i_BitShiftCount = 24;
+		L1261_l_Symbols = 0;
+		do {
+			L1261_l_Symbols |= (long)*symbols++ << AL1262_i_BitShiftCount;
+		} while (*symbols && ((AL1262_i_BitShiftCount -= 8) >= 0));
+		L1263_ps_Spell = G0487_as_Graphic560_Spells;
+		AL1262_i_SpellIndex = 25;
+		while (AL1262_i_SpellIndex--) {
+			if (L1263_ps_Spell->_symbols & 0xFF000000) { /* If byte 1 of spell is not 0 then the spell includes the power symbol */
+				if (L1261_l_Symbols == L1263_ps_Spell->_symbols) { /* Compare champion symbols, including power symbol, with spell (never used with actual spells) */
+					return L1263_ps_Spell;
+				}
+			} else {
+				if ((L1261_l_Symbols & 0x00FFFFFF) == L1263_ps_Spell->_symbols) { /* Compare champion symbols, except power symbol, with spell */
+					return L1263_ps_Spell;
+				}
+			}
+			L1263_ps_Spell++;
+		}
+	}
+	return NULL;
+}
+
+void MenuMan::f410_menusPrintSpellFailureMessage(Champion* champ, uint16 failureType, uint16 skillIndex) {
+	char* L1264_pc_Message = nullptr;
+
+	if (skillIndex > k3_ChampionSkillWizard) {
+		skillIndex = (skillIndex - 4) / 4;
+	}
+	_vm->_textMan->f51_messageAreaPrintLineFeed();
+	_vm->_textMan->f47_messageAreaPrintMessage(k4_ColorCyan, champ->_name);
+	switch (failureType) {
+	case k0_failureNeedsMorePractice:
+		// TODO: localization
+		_vm->_textMan->f47_messageAreaPrintMessage(k4_ColorCyan, " NEEDS MORE PRACTICE WITH THIS ");
+		_vm->_textMan->f47_messageAreaPrintMessage(k4_ColorCyan, g417_baseSkillName[skillIndex]);
+		L1264_pc_Message = " SPELL.";
+		break;
+	case k1_failureMeaninglessSpell:
+		L1264_pc_Message = " MUMBLES A MEANINGLESS SPELL."; // TODO: localization
+		break;
+	case k10_failureNeedsFlaskInHand:
+		L1264_pc_Message = " NEEDS AN EMPTY FLASK IN HAND FOR POTION."; // TODO: localization
+		break;
+	}
+	_vm->_textMan->f47_messageAreaPrintMessage(k4_ColorCyan, L1264_pc_Message);
+}
+
+Potion* MenuMan::f411_getEmptyFlaskInHand(Champion* champ, Thing* potionThing) {
+	Thing L1265_T_Thing;
+	int16 L1266_i_SlotIndex;
+
+	for (L1266_i_SlotIndex = k2_ChampionSlotHead; --L1266_i_SlotIndex >= k0_ChampionSlotReadyHand; ) {
+		if (((L1265_T_Thing = champ->_slots[L1266_i_SlotIndex]) != Thing::_none) && (_vm->_objectMan->f33_getIconIndex(L1265_T_Thing) == k195_IconIndicePotionEmptyFlask)) {
+			*potionThing = L1265_T_Thing;
+			return (Potion*)_vm->_dungeonMan->f156_getThingData(L1265_T_Thing);
+		}
+	}
+	return nullptr;
+}
+
+void MenuMan::f404_createEvent70_light(int16 lightPower, int16 ticks) {
+	TimelineEvent L1241_s_Event;
+
+	L1241_s_Event._type = k70_TMEventTypeLight;
+	L1241_s_Event._B._lightPower = lightPower;
+	M33_setMapAndTime(L1241_s_Event._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + ticks);
+	L1241_s_Event._priority = 0;
+	_vm->_timeline->f238_addEventGetEventIndex(&L1241_s_Event);
+	_vm->_inventoryMan->f337_setDungeonViewPalette();
+}
+
+bool MenuMan::f403_isPartySpellOrFireShieldSuccessful(Champion* champ, bool spellShield, uint16 ticks, bool useMana) {
+	bool L1239_B_IsPartySpellOrFireShieldSuccessful;
+	TimelineEvent L1240_s_Event;
+
+
+	L1239_B_IsPartySpellOrFireShieldSuccessful = true;
+	if (useMana) {
+		if (champ->_currMana == 0) {
+			return false;
+		}
+		if (champ->_currMana < 4) {
+			ticks >>= 1;
+			champ->_currMana = 0;
+			L1239_B_IsPartySpellOrFireShieldSuccessful = false;
+		} else {
+			champ->_currMana -= 4;
+		}
+	}
+	L1240_s_Event._B._defense = ticks >> 5;
+	if (spellShield) {
+		L1240_s_Event._type = k77_TMEventTypeSpellShield;
+		if (_vm->_championMan->_g407_party._spellShieldDefense > 50) {
+			L1240_s_Event._B._defense >>= 2;
+		}
+		_vm->_championMan->_g407_party._spellShieldDefense += L1240_s_Event._B._defense;
+	} else {
+		L1240_s_Event._type = k78_TMEventTypeFireShield;
+		if (_vm->_championMan->_g407_party._fireShieldDefense > 50) {
+			L1240_s_Event._B._defense >>= 2;
+		}
+		_vm->_championMan->_g407_party._fireShieldDefense += L1240_s_Event._B._defense;
+	}
+	L1240_s_Event._priority = 0;
+	M33_setMapAndTime(L1240_s_Event._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + ticks);
+	_vm->_timeline->f238_addEventGetEventIndex(&L1240_s_Event);
+	_vm->_timeline->f260_timelineRefreshAllChampionStatusBoxes();
+	return L1239_B_IsPartySpellOrFireShieldSuccessful;
+}
+
+void MenuMan::f397_drawAvailableSymbols(uint16 symbolStep) {
+	uint16 L1214_ui_Counter;
+	int16 L1215_i_X;
+	char L1216_c_Character;
+	char L1217_ac_String[2];
+
+	L1217_ac_String[1] = '\0';
+	L1216_c_Character = 96 + 6 * symbolStep;
+	L1215_i_X = 225;
+	for (L1214_ui_Counter = 0; L1214_ui_Counter < 6; L1214_ui_Counter++) {
+		L1217_ac_String[0] = L1216_c_Character++;
+		_vm->_textMan->f53_printToLogicalScreen(L1215_i_X += 14, 58, k4_ColorCyan, k0_ColorBlack, L1217_ac_String);
+	}
+}
+
+void MenuMan::f398_drawChampionSymbols(Champion* champ) {
+	uint16 L1218_ui_SymbolIndex;
+	int16 L1219_i_X;
+	uint16 L1220_ui_SymbolCount;
+	char L1221_ac_String[2];
+
+
+	L1220_ui_SymbolCount = strlen(champ->_symbols);
+	L1219_i_X = 232;
+	L1221_ac_String[1] = '\0';
+	for (L1218_ui_SymbolIndex = 0; L1218_ui_SymbolIndex < 4; L1218_ui_SymbolIndex++) {
+		if (L1218_ui_SymbolIndex >= L1220_ui_SymbolCount) {
+			L1221_ac_String[0] = ' ';
+		} else {
+			L1221_ac_String[0] = champ->_symbols[L1218_ui_SymbolIndex];
+		}
+		_vm->_textMan->f53_printToLogicalScreen(L1219_i_X += 9, 70, k4_ColorCyan, k0_ColorBlack, L1221_ac_String);
+	}
+}
+
+void MenuMan::f399_addChampionSymbol(int16 symbolIndex) {
+	static byte G0485_aauc_Graphic560_SymbolBaseManaCost[4][6] = {
+		{1, 2, 3, 4, 5, 6},   /* Power 1 */
+		{2, 3, 4, 5, 6, 7},   /* Power 2 */
+		{4, 5, 6, 7, 7, 9},   /* Power 3 */
+		{2, 2, 3, 4, 6, 7}}; /* Power 4 */
+	static byte G0486_auc_Graphic560_SymbolManaCostMultiplier[6] = {8, 12, 16, 20, 24, 28};
+
+	uint16 L1222_ui_SymbolStep;
+	uint16 L1223_ui_ManaCost;
+	uint16 L1224_ui_SymbolIndex;
+	Champion* L1225_ps_Champion;
+
+	L1225_ps_Champion = &_vm->_championMan->_gK71_champions[_vm->_championMan->_g514_magicCasterChampionIndex];
+	L1222_ui_SymbolStep = L1225_ps_Champion->_symbolStep;
+	L1223_ui_ManaCost = G0485_aauc_Graphic560_SymbolBaseManaCost[L1222_ui_SymbolStep][symbolIndex];
+	if (L1222_ui_SymbolStep) {
+		L1223_ui_ManaCost = (L1223_ui_ManaCost * G0486_auc_Graphic560_SymbolManaCostMultiplier[L1224_ui_SymbolIndex = L1225_ps_Champion->_symbols[0] - 96]) >> 3;
+	}
+	if (L1223_ui_ManaCost <= L1225_ps_Champion->_currMana) {
+		L1225_ps_Champion->_currMana -= L1223_ui_ManaCost;
+		setFlag(L1225_ps_Champion->_attributes, k0x0100_ChampionAttributeStatistics);
+		L1225_ps_Champion->_symbols[L1222_ui_SymbolStep] = 96 + (L1222_ui_SymbolStep * 6) + symbolIndex;
+		L1225_ps_Champion->_symbols[L1222_ui_SymbolStep + 1] = '\0';
+		L1225_ps_Champion->_symbolStep = L1222_ui_SymbolStep = returnNextVal(L1222_ui_SymbolStep);
+		_vm->_eventMan->f78_showMouse();
+		f397_drawAvailableSymbols(L1222_ui_SymbolStep);
+		f398_drawChampionSymbols(L1225_ps_Champion);
+		_vm->_championMan->f292_drawChampionState(_vm->_championMan->_g514_magicCasterChampionIndex);
+		_vm->_eventMan->f77_hideMouse();
+	}
+}
+
+void MenuMan::f400_deleteChampionSymbol() {
+	int16 L1226_ui_SymbolStep;
+	Champion* L1228_ps_Champion;
+
+	L1228_ps_Champion = &_vm->_championMan->_gK71_champions[_vm->_championMan->_g514_magicCasterChampionIndex];
+	if (!strlen(L1228_ps_Champion->_symbols)) {
+		return;
+	}
+	L1228_ps_Champion->_symbolStep = L1226_ui_SymbolStep = returnPrevVal(L1228_ps_Champion->_symbolStep);
+	L1228_ps_Champion->_symbols[L1226_ui_SymbolStep] = '\0';
+	_vm->_eventMan->f78_showMouse();
+	f397_drawAvailableSymbols(L1226_ui_SymbolStep);
+	f398_drawChampionSymbols(L1228_ps_Champion);
+	_vm->_eventMan->f77_hideMouse();
+}
 }

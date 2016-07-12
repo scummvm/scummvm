@@ -452,6 +452,7 @@ public:
 	void setType(PotionType val) { _attributes = (_attributes & ~(0x7F << 8)) | ((val & 0x7F) << 8); }
 	Thing getNextThing() { return _nextThing; }
 	uint16 getPower() { return _attributes & 0xFF; }
+	void setPower(uint16 val) { _attributes = (_attributes & ~0xFF) | (val & 0xFF); }
 	uint16 getDoNotDiscard() { return (_attributes >> 15) & 1; }
 }; // @ POTION
 

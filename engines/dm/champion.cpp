@@ -1298,13 +1298,41 @@ void ChampionMan::f302_processCommands28to65_clickOnSlotBox(uint16 slotBoxIndex)
 	}
 	if (L0906_T_SlotThing != Thing::_none) {
 		f300_getObjectRemovedFromSlot(L0903_ui_ChampionIndex, L0904_ui_SlotIndex);
-		f297_putObjectInLeaderHand(L0906_T_SlotThing, false); 
+		f297_putObjectInLeaderHand(L0906_T_SlotThing, false);
 	}
 	if (L0905_T_LeaderHandObject != Thing::_none) {
 		_vm->_championMan->f301_addObjectInSlot((ChampionIndex)L0903_ui_ChampionIndex, L0905_T_LeaderHandObject, (ChampionSlot)L0904_ui_SlotIndex);
 	}
 	_vm->_championMan->f292_drawChampionState((ChampionIndex)L0903_ui_ChampionIndex);
 	_vm->_eventMan->f77_hideMouse();
+}
+
+bool ChampionMan::f327_isProjectileSpellCast(uint16 champIndex, Thing thing, int16 kineticEnergy, uint16 requiredManaAmount) {
+	int16 L0991_i_StepEnergy;
+	Champion* L0992_ps_Champion;
+
+	L0992_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
+	if (L0992_ps_Champion->_currMana < requiredManaAmount) {
+		return false;
+	}
+	L0992_ps_Champion->_currMana -= requiredManaAmount;
+	setFlag(L0992_ps_Champion->_attributes, k0x0100_ChampionAttributeStatistics);
+	L0991_i_StepEnergy = 10 - MIN(8, L0992_ps_Champion->_maxMana >> 3);
+	if (kineticEnergy < (L0991_i_StepEnergy << 2)) {
+		kineticEnergy += 3;
+		L0991_i_StepEnergy--;
+	}
+	f326_championShootProjectile(L0992_ps_Champion, thing, kineticEnergy, 90, L0991_i_StepEnergy);
+	return true; // fix BUG_01
+}
+
+void ChampionMan::f326_championShootProjectile(Champion* champ, Thing thing, int16 kineticEnergy, int16 attack, int16 stepEnergy) {
+	uint16 L0990_ui_Direction;
+
+	L0990_ui_Direction = champ->_dir;
+	_vm->_projexpl->f212_projectileCreate(thing, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, M21_normalizeModulo4((((champ->_cell - L0990_ui_Direction + 1) & 0x0002) >> 1) + L0990_ui_Direction), (direction)L0990_ui_Direction, kineticEnergy, attack, stepEnergy);
+	_vm->_g311_projectileDisableMovementTicks = 4;
+	_vm->_g312_lastProjectileDisabledMovementDirection = L0990_ui_Direction;
 }
 
 ChampionIndex ChampionMan::f285_getIndexInCell(int16 cell) {

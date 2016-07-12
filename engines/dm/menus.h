@@ -30,6 +30,7 @@
 
 #include "dm.h"
 #include "champion.h"
+#include "dungeonman.h"
 
 namespace DM {
 
@@ -73,6 +74,17 @@ public:
 	void f392_buildSpellAreaLine(int16 spellAreaBitmapLine);// @ F0392_MENUS_BuildSpellAreaLine
 	void f394_setMagicCasterAndDrawSpellArea(int16 champIndex); // @ F0394_MENUS_SetMagicCasterAndDrawSpellArea
 	void f457_drawEnabledMenus(); // @ F0457_START_DrawEnabledMenus_CPSF
+	int16 f408_getClickOnSpellCastResult(); // @ F0408_MENUS_GetClickOnSpellCastResult
+	int16 f412_getChampionSpellCastResult(uint16 champIndex); // @ F0412_MENUS_GetChampionSpellCastResult
+	Spell *f409_getSpellFromSymbols(byte *symbols); // @ F0409_MENUS_GetSpellFromSymbols
+	void f410_menusPrintSpellFailureMessage(Champion *champ, uint16 failureType, uint16 skillIndex); // @ F0410_MENUS_PrintSpellFailureMessage
+	Potion *f411_getEmptyFlaskInHand(Champion *champ, Thing *potionThing); // @ F0411_MENUS_GetEmptyFlaskInHand
+	void f404_createEvent70_light(int16 lightPower, int16 ticks); // @ F0404_MENUS_CreateEvent70_Light
+	bool f403_isPartySpellOrFireShieldSuccessful(Champion *champ, bool spellShield, uint16 ticks, bool useMana); // @ F0403_MENUS_IsPartySpellOrFireShieldSuccessful
+	void f397_drawAvailableSymbols(uint16 symbolStep); // @ F0397_MENUS_DrawAvailableSymbols
+	void f398_drawChampionSymbols(Champion *champ); // @ F0398_MENUS_DrawChampionSymbols
+	void f399_addChampionSymbol(int16 symbolIndex); // @ F0399_MENUS_AddChampionSymbol
+	void f400_deleteChampionSymbol(); // @ F0400_MENUS_DeleteChampionSymbol
 };
 
 }

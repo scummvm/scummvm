@@ -675,6 +675,24 @@ void InventoryMan::f338_decreaseTorchesLightPower() {
 }
 
 void InventoryMan::f351_drawChampionSkillsAndStatistics() {
+	// TODO: localization
+	static char* G0428_apc_SkillLevelNames[15] = {
+		"NEOPHYTE",
+		"NOVICE",
+		"APPRENTICE",
+		"JOURNEYMAN",
+		"CRAFTSMAN",
+		"ARTISAN",
+		"ADEPT",
+		"EXPERT",
+		"` MASTER",
+		"a MASTER",
+		"b MASTER",
+		"c MASTER",
+		"d MASTER",
+		"e MASTER",
+		"ARCHMASTER"};
+
 	uint16 L1090_ui_Multiple;
 #define AL1090_ui_SkillIndex     L1090_ui_Multiple
 #define AL1090_ui_StatisticIndex L1090_ui_Multiple
@@ -699,16 +717,9 @@ void InventoryMan::f351_drawChampionSkillsAndStatistics() {
 		AL1092_i_SkillLevel = MIN((uint16)16, _vm->_championMan->f303_getSkillLevel(L1093_ui_ChampionIndex, AL1090_ui_SkillIndex | k0x8000_IgnoreTemporaryExperience));
 		if (AL1092_i_SkillLevel == 1)
 			continue;
-#ifdef COMPILE17_DM10aEN_DM10bEN_DM11EN_DM12EN_CSB20EN_CSB21EN_DMDEMO20EN_DM20EN_DM21EN_DM22EN /* CHANGE4_00_LOCALIZATION Translation to German language */
 		strcpy(L1097_ac_String, G0428_apc_SkillLevelNames[AL1092_i_SkillLevel - 2]);
 		strcat(L1097_ac_String, " ");
-		strcat(L1097_ac_String, G0417_apc_BaseSkillNames[AL1090_ui_SkillIndex]);
-#endif
-#ifdef COMPILE36_DM12GE_DM13aFR_DM13bFR_DM20GE_DM20FR_DM22GE /* CHANGE4_00_LOCALIZATION Translation to German language */
-		strcpy(L1097_ac_String, G0417_apc_BaseSkillNames[AL1090_ui_SkillIndex]);
-		strcat(L1097_ac_String, " ");
-		strcat(L1097_ac_String, G0428_apc_SkillLevelNames[AL1092_i_SkillLevel - 2]);
-#endif
+		strcat(L1097_ac_String, g417_baseSkillName[AL1090_ui_SkillIndex]);
 		_vm->_textMan->f52_printToViewport(108, L1091_i_Y, k13_ColorLightestGray, L1097_ac_String);
 		L1091_i_Y += 7;
 	}

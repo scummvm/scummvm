@@ -845,10 +845,7 @@ void MovesensMan::f276_sensorProcessThingAdditionOrRemoval(uint16 mapX, uint16 m
 						goto T0276079;
 					break;
 				case k5_SensorFloorPartyOnStairs:
-					// Strangerke: Only present in v2.1, but it fixes a bug so we'll keep it.
-#ifdef COMPILE52_CSB21EN /* CHANGE8_05_FIX The wrong variable is replaced by the correct variable in the condition. The test should not be on L0771_ui_ThingType but on L0767_i_ThingType */
-					if ((L0767_i_ThingType != kM1_PartyThingType) || (M34_SQUARE_TYPE(L0777_ui_Square) != k3_ElementTypeStairs))
-#endif
+					if ((L0767_i_ThingType != kM1_PartyThingType) || (Square(L0777_ui_Square).getType() != k3_ElementTypeStairs))
 						goto T0276079;
 					break;
 				case k6_SensorFloorGroupGenerator:
