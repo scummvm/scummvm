@@ -32,6 +32,7 @@
 #include "group.h"
 #include "projexpl.h"
 #include "movesens.h"
+#include "text.h"
 
 
 namespace DM {
@@ -259,7 +260,7 @@ void Timeline::f261_processTimeline() {
 				f248_timelineProcessEvent6_squareWall(L0681_ps_Event);
 				break;
 			case k5_TMEventTypeCorridor:
-				//F0245_TIMELINE_ProcessEvent5_Square_Corridor(L0681_ps_Event);
+				f245_timlineProcessEvent5_squareCorridor(L0681_ps_Event);
 				break;
 			case k60_TMEventTypeMoveGroupSilent:
 			case k61_TMEventTypeMoveGroupAudible:
@@ -740,5 +741,78 @@ void Timeline::f247_triggerProjectileLauncher(Sensor* sensor, TimelineEvent* eve
 		_vm->_projexpl->f212_projectileCreate(L0623_T_SecondProjectileAssociatedThing, L0626_i_MapX, L0627_i_MapY, returnNextVal(L0628_ui_ProjectileCell), (direction)L0624_ui_Cell, L0630_i_KineticEnergy, 100, L0631_i_StepEnergy);
 	}
 	_vm->_projexpl->_g365_createLanucherProjectile = false;
+}
+
+void Timeline::f245_timlineProcessEvent5_squareCorridor(TimelineEvent* event) {
+#define k0x0008_randomizeGeneratedCreatureCount 0x0008 // @ MASK0x0008_RANDOMIZE_GENERATED_CREATURE_COUNT
+#define k0x0007_generatedCreatureCount 0x0007	// @ MASK0x0007_GENERATED_CREATURE_COUNT
+
+	int16 L0610_i_ThingType;
+	bool L0611_B_TextCurrentlyVisible;
+	int16 L0612_i_CreatureCount;
+	Thing L0613_T_Thing;
+	Sensor* L0614_ps_Sensor;
+	TextString* L0615_ps_TextString;
+	uint16 L0616_ui_MapX;
+	uint16 L0617_ui_MapY;
+	uint16 L0618_ui_Multiple;
+#define AL0618_ui_HealthMultiplier L0618_ui_Multiple
+#define AL0618_ui_Ticks            L0618_ui_Multiple
+	TimelineEvent L0619_s_Event;
+
+
+	L0613_T_Thing = _vm->_dungeonMan->f161_getSquareFirstThing(L0616_ui_MapX = event->_B._location._mapX, L0617_ui_MapY = event->_B._location._mapY);
+	while (L0613_T_Thing != Thing::_endOfList) {
+		if ((L0610_i_ThingType = L0613_T_Thing.getType()) == k2_TextstringType) {
+			L0615_ps_TextString = (TextString*)_vm->_dungeonMan->f156_getThingData(L0613_T_Thing);
+			L0611_B_TextCurrentlyVisible = L0615_ps_TextString->isVisible();
+			if (event->_C.A._effect == k2_SensorEffToggle) {
+				L0615_ps_TextString->setVisible(!L0611_B_TextCurrentlyVisible);
+			} else {
+				L0615_ps_TextString->setVisible((event->_C.A._effect == k0_SensorEffSet));
+			}
+			if (!L0611_B_TextCurrentlyVisible && L0615_ps_TextString->isVisible() && (_vm->_dungeonMan->_g272_currMapIndex == _vm->_dungeonMan->_g309_partyMapIndex) && (L0616_ui_MapX == _vm->_dungeonMan->_g306_partyMapX) && (L0617_ui_MapY == _vm->_dungeonMan->_g307_partyMapY)) {
+				_vm->_dungeonMan->f168_decodeText(_vm->_g353_stringBuildBuffer, L0613_T_Thing, k1_TextTypeMessage);
+				_vm->_textMan->f47_messageAreaPrintMessage(k15_ColorWhite, _vm->_g353_stringBuildBuffer);
+			}
+		} else {
+			if (L0610_i_ThingType == k3_SensorThingType) {
+				L0614_ps_Sensor = (Sensor*)_vm->_dungeonMan->f156_getThingData(L0613_T_Thing);
+				if (L0614_ps_Sensor->getType() == k6_SensorFloorGroupGenerator) {
+					L0612_i_CreatureCount = L0614_ps_Sensor->getValue();
+					if (getFlag(L0612_i_CreatureCount, k0x0008_randomizeGeneratedCreatureCount)) {
+						L0612_i_CreatureCount = _vm->getRandomNumber(getFlag(L0612_i_CreatureCount, k0x0007_generatedCreatureCount));
+					} else {
+						L0612_i_CreatureCount--;
+					}
+					if ((AL0618_ui_HealthMultiplier = L0614_ps_Sensor->M45_healthMultiplier()) == 0) {
+						AL0618_ui_HealthMultiplier = _vm->_dungeonMan->_g269_currMap->_difficulty;
+					}
+					_vm->_groupMan->f185_groupGetGenerated(L0614_ps_Sensor->getData(), AL0618_ui_HealthMultiplier, L0612_i_CreatureCount, (direction)_vm->getRandomNumber(4), L0616_ui_MapX, L0617_ui_MapY);
+					if (L0614_ps_Sensor->getAudibleA()) {
+						warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+					}
+					if (L0614_ps_Sensor->getOnlyOnce()) {
+						L0614_ps_Sensor->setTypeDisabled();
+					} else {
+						if ((AL0618_ui_Ticks = L0614_ps_Sensor->M46_ticks()) != 0) {
+							L0614_ps_Sensor->setTypeDisabled();
+							if (AL0618_ui_Ticks > 127) {
+								AL0618_ui_Ticks = (AL0618_ui_Ticks - 126) << 6;
+							}
+							L0619_s_Event._type = k65_TMEventTypeEnableGroupGenerator;
+							M33_setMapAndTime(L0619_s_Event._mapTime, _vm->_dungeonMan->_g272_currMapIndex, _vm->_g313_gameTime + AL0618_ui_Ticks);
+							L0619_s_Event._priority = 0;
+							L0619_s_Event._B._location._mapX = L0616_ui_MapX;
+							L0619_s_Event._B._location._mapY = L0617_ui_MapY;
+							L0619_s_Event._B._location._mapY = L0617_ui_MapY;
+							_vm->_timeline->f238_addEventGetEventIndex(&L0619_s_Event);
+						}
+					}
+				}
+			}
+		}
+		L0613_T_Thing = _vm->_dungeonMan->f159_getNextThing(L0613_T_Thing);
+	}
 }
 }

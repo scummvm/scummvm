@@ -336,7 +336,9 @@ public:
 	direction getTargetCell() { return (direction)((_action >> 4) & 3); }
 	uint16 M47_kineticEnergy() { return (_action & 0xFF); }// @ M47_KINETIC_ENERGY
 	uint16 M48_stepEnergy() { return (_action >> 8) & 0xFF; }// @ M48_STEP_ENERGY
-	uint16 M49_localEffect() { return (_action >> 4); }
+	uint16 M49_localEffect() { return _action; } // @ M49_LOCAL_EFFECT
+	uint16 M45_healthMultiplier() { return (_action & 0xF); } // @ M45_HEALTH_MULTIPLIER
+	uint16 M46_ticks() { return (_action >> 4) & 0xFFF; } // @ M46_TICKS
 
 
 	// some macros missing, i got bored

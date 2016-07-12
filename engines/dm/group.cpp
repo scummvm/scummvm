@@ -1766,4 +1766,47 @@ void GroupMan::f195_addAllActiveGroups() {
 		}
 	}
 }
+
+Thing GroupMan::f185_groupGetGenerated(int16 creatureType, int16 healthMultiplier, uint16 creatureCount, direction dir, int16 mapX, int16 mapY) {
+	Thing L0349_T_GroupThing;
+	uint16 L0350_ui_BaseHealth;
+	uint16 L0351_ui_Cell = 0;
+	uint16 L0352_ui_GroupCells = 0;
+	Group* L0353_ps_Group;
+	CreatureInfo* L0354_ps_CreatureInfo;
+	bool L0355_B_SeveralCreaturesInGroup;
+
+
+	if (((_g377_currActiveGroupCount >= (_vm->_groupMan->_g376_maxActiveGroupCount - 5)) && (_vm->_dungeonMan->_g272_currMapIndex == _vm->_dungeonMan->_g309_partyMapIndex)) || ((L0349_T_GroupThing = _vm->_dungeonMan->f166_getUnusedThing(k4_GroupThingType)) == Thing::_none)) {
+		return Thing::_none;
+	}
+	L0353_ps_Group = (Group*)_vm->_dungeonMan->f156_getThingData(L0349_T_GroupThing);
+	L0353_ps_Group->_slot = Thing::_endOfList;
+	L0353_ps_Group->setDoNotDiscard(false);
+	L0353_ps_Group->setDir(dir);
+	L0353_ps_Group->setCount(creatureCount);
+	if (L0355_B_SeveralCreaturesInGroup = creatureCount) {
+		L0351_ui_Cell = _vm->getRandomNumber(4);
+	} else {
+		L0352_ui_GroupCells = k255_CreatureTypeSingleCenteredCreature;
+	}
+	L0354_ps_CreatureInfo = &g243_CreatureInfo[L0353_ps_Group->_type = creatureType];
+	L0350_ui_BaseHealth = L0354_ps_CreatureInfo->_baseHealth;
+	do {
+		L0353_ps_Group->_health[creatureCount] = (L0350_ui_BaseHealth * healthMultiplier) + _vm->getRandomNumber((L0350_ui_BaseHealth >> 2) + 1);
+		if (L0355_B_SeveralCreaturesInGroup) {
+			L0352_ui_GroupCells = f178_getGroupValueUpdatedWithCreatureValue(L0352_ui_GroupCells, creatureCount, L0351_ui_Cell++);
+			if (getFlag(L0354_ps_CreatureInfo->_attributes, k0x0003_MaskCreatureInfo_size) == k1_MaskCreatureSizeHalf) {
+				L0351_ui_Cell++;
+			}
+			L0351_ui_Cell &= 0x0003;
+		}
+	} while (creatureCount--);
+	L0353_ps_Group->_cells = L0352_ui_GroupCells;
+	if (_vm->_movsens->f267_getMoveResult(L0349_T_GroupThing, kM1_MapXNotOnASquare, 0, mapX, mapY)) { /* If F0267_MOVE_GetMoveResult_CPSCE returns true then the group was either killed by a projectile impact (in which case the thing data was marked as unused) or the party is on the destination square and an event is created to move the creature into the dungeon later (in which case the thing is referenced in the event) */
+		return Thing::_none;
+	}
+	warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+	return L0349_T_GroupThing;
+}
 }

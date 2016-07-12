@@ -133,6 +133,7 @@ public:
 	direction getDir() { return (direction)((_flags >> 8) & 0x3); }
 	void setDir(uint16 val) { _flags = (_flags & ~(0x3 << 8)) | ((val & 0x3) << 8); }
 	uint16 getDoNotDiscard() { return (_flags >> 10) & 0x1; }
+	void setDoNotDiscard(bool val) { _flags = (_flags & ~(1 << 10)) | ((val & 1) << 10); }
 }; // @ GROUP
 
 #define k0_behavior_WANDER 0 // @ C0_BEHAVIOR_WANDER
@@ -233,6 +234,7 @@ public:
 	void f184_removeActiveGroup(uint16 activeGroupIndex); // @ F0184_GROUP_RemoveActiveGroup
 	void f194_removeAllActiveGroups(); // @ F0194_GROUP_RemoveAllActiveGroups
 	void f195_addAllActiveGroups(); // @ F0195_GROUP_AddAllActiveGroups
+	Thing f185_groupGetGenerated(int16 creatureType, int16 healthMultiplier, uint16 creatureCount, direction dir, int16 mapX, int16 mapY); // @ F0185_GROUP_GetGenerated
 
 
 

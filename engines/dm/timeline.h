@@ -172,6 +172,7 @@ public:
 	void f250_timelineProcessEvent8_squareTeleporter(TimelineEvent *event); // @ F0250_TIMELINE_ProcessEvent8_Square_Teleporter
 	void f248_timelineProcessEvent6_squareWall(TimelineEvent *event); // @ F0248_TIMELINE_ProcessEvent6_Square_Wall
 	void f247_triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event); // @ F0247_TIMELINE_TriggerProjectileLauncher
+	void f245_timlineProcessEvent5_squareCorridor(TimelineEvent *event); // @ F0245_TIMELINE_ProcessEvent5_Square_Corridor
 };
 
 
