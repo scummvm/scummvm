@@ -37,22 +37,35 @@ enum MovieFlag {
 	MOVIE_REVERSE = 8, MOVIE_GAMESTATE = 0x10
 };
 
+class AVIDecoder : public Video::AVIDecoder {
+public:
+	AVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType, SelectTrackFn trackFn = nullptr) :
+		Video::AVIDecoder(soundType, trackFn) {}
+	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType,
+		SelectTrackFn trackFn = nullptr) : Video::AVIDecoder(frameRateOverride, soundType, trackFn) {}
+	
+	Video::AVIDecoder::AVIVideoTrack &getVideoTrack();
+};
+
 class AVISurface {
 private:
-	Video::AVIDecoder *_decoders[2];
+	AVIDecoder *_decoders[2];
 	CVideoSurface *_videoSurface;
-	int _field4;
-	int _field8;
 	int _currentPos;
 	int _priorFrame;
 	CMovieRangeInfoList _movieRangeInfo;
 	int _streamCount;
-	void *_frameInfo;
+	CVideoSurface *_movieFrameSurface[2];
 private:
 	/**
 	 * Render a frame to the video surface
 	 */
 	bool renderFrame();
+
+	/**
+	 * Sets up for video decompression
+	 */
+	void setupDecompressor();
 protected:
 	/**
 	 * Change the frame with ??? checking
@@ -132,9 +145,10 @@ public:
 	 */
 	void setFrameRate(double rate);
 
-	const void *getFrameInfo() const {
-		return _streamCount <= 1 ? nullptr : _frameInfo;
-	}
+	/**
+	 * Returns the surface for the secondary video track frame, if present
+	 */
+	CVideoSurface *getSecondarySurface();
 
 	/**
 	 * Get a reference to the movie range info list
@@ -144,9 +158,9 @@ public:
 	}
 
 	/**
-	 * Duplicate the frame info
+	 * Duplicates the secondary frame, if the movie has a second video track
 	 */
-	void *duplicateFrameInfo() const;
+	CVideoSurface *duplicateSecondaryFrame() const;
 };
 
 } // End of namespace Titanic

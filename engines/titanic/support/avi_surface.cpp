@@ -21,10 +21,19 @@
  */
 
 #include "titanic/support/avi_surface.h"
+#include "titanic/support/screen_manager.h"
 #include "titanic/support/video_surface.h"
 #include "video/avi_decoder.h"
 
 namespace Titanic {
+
+Video::AVIDecoder::AVIVideoTrack &AVIDecoder::getVideoTrack() {
+	for (TrackListIterator it = getTrackListBegin(); it != getTrackListEnd(); it++)
+		if ((*it)->getTrackType() == Track::kTrackTypeVideo)
+			return *static_cast<AVIVideoTrack *>(*it);
+			
+	error("Could not find video track");
+}
 
 /**
  * Track filter for AVIDecoder that filters out any secondary video track
@@ -43,21 +52,19 @@ static bool secondaryTrackSelect(bool isVideo, int trackCounter) {
 
 AVISurface::AVISurface(const CResourceKey &key) {
 	_videoSurface = nullptr;
-	_field4 = 0;
-	_field8 = 0;
 	_currentPos = 0;
 	_priorFrame = 0;
 	_streamCount = 0;
-	_frameInfo = nullptr;
+	_movieFrameSurface[0] = _movieFrameSurface[1] = nullptr;
 	_isPlaying = false;
 
 	// Create a decoder for the audio (if any) and primary video track
-	_decoders[0] = new Video::AVIDecoder(Audio::Mixer::kPlainSoundType, primaryTrackSelect);
+	_decoders[0] = new AVIDecoder(Audio::Mixer::kPlainSoundType, primaryTrackSelect);
 	if (!_decoders[0]->loadFile(key.getString()))
 		error("Could not open video - %s", key.getString().c_str());
 
 	// Create a decoder for any secondary video track
-	Video::AVIDecoder *decoder2 = new Video::AVIDecoder(Audio::Mixer::kPlainSoundType, secondaryTrackSelect);
+	AVIDecoder *decoder2 = new AVIDecoder(Audio::Mixer::kPlainSoundType, secondaryTrackSelect);
 	if (decoder2->loadFile(key.getString())) {
 		_decoders[1] = decoder2;
 	} else {
@@ -67,8 +74,9 @@ AVISurface::AVISurface(const CResourceKey &key) {
 
 AVISurface::~AVISurface() {
 	if (_videoSurface)
-		_videoSurface->_blitStyleFlag = false;
-	delete _frameInfo;
+		_videoSurface->_transBlitFlag = false;
+	delete _movieFrameSurface[0];
+	delete _movieFrameSurface[1];
 	delete _decoders[0];
 	delete _decoders[1];
 }
@@ -187,7 +195,37 @@ bool AVISurface::handleEvents(CMovieEventList &events) {
 void AVISurface::setVideoSurface(CVideoSurface *surface) {
 	_videoSurface = surface;
 
-	warning("TODO: Get video track list from video decoder");
+	// Handling for secondary video stream
+	if (_decoders[1]) {
+		const Common::String &streamName = _decoders[1]->getVideoTrack().getName();
+
+		if (streamName == "mask0") {
+			_videoSurface->_transparencyMode = TRANS_MASK0;
+		} else if (streamName == "mask255") {
+			_videoSurface->_transparencyMode = TRANS_MASK255;
+		} else if (streamName == "alpha0") {
+			_videoSurface->_transparencyMode = TRANS_ALPHA0;
+		} else if (streamName == "alpha255") {
+			_videoSurface->_transparencyMode = TRANS_ALPHA255;
+		}
+	}
+
+	setupDecompressor();
+}
+
+void AVISurface::setupDecompressor() {
+	for (int idx = 0; idx < 2; ++idx) {
+		if (!_decoders[idx])
+			continue;
+		AVIDecoder &decoder = *_decoders[idx];
+
+		// Setup frame surface
+		_movieFrameSurface[idx] = CScreenManager::_screenManagerPtr->createSurface(decoder.getWidth(), decoder.getHeight());
+
+		// TODO: See whether this simplified form of original works
+		if (idx == 2)
+			_videoSurface->_transBlitFlag = true;
+	}
 }
 
 uint AVISurface::getWidth() const {
@@ -260,9 +298,14 @@ void AVISurface::setFrameRate(double rate) {
 	}
 }
 
-void *AVISurface::duplicateFrameInfo() const {
-	// TODO
-	return nullptr;
+CVideoSurface *AVISurface::getSecondarySurface() {
+	return _streamCount <= 1 ? nullptr : _movieFrameSurface[1];
+}
+
+CVideoSurface *AVISurface::duplicateSecondaryFrame() const {
+	// TODO: Make this cleaner
+	OSVideoSurface *src = dynamic_cast<OSVideoSurface *>(_movieFrameSurface[1]);
+	return new OSVideoSurface(*src);
 }
 
 } // End of namespace Titanic

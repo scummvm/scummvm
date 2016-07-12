@@ -133,9 +133,9 @@ public:
 	virtual void setFrameRate(double rate) = 0;
 
 	/**
-	* Creates a duplicate of the frame info
+	* Creates a duplicate of the movie's frame
 	*/
-	virtual void *duplicateFrameInfo() const = 0;
+	virtual CVideoSurface *duplicateFrame() const = 0;
 
 	/**
 	 * Removes the movie from the list of currently playing movies
@@ -233,7 +233,7 @@ public:
 	/**
 	 * Creates a duplicate of the frame info
 	 */
-	virtual void *duplicateFrameInfo() const;
+	virtual CVideoSurface *duplicateFrame() const;
 };
 
 } // End of namespace Titanic

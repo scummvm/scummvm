@@ -54,11 +54,11 @@ class CVideoSurface;
 class CMouseCursor {
 	struct CursorEntry {
 		CVideoSurface *_videoSurface;
-		void *_frameInfo;
+		CVideoSurface *_frameSurface;
 		Common::Point _centroid;
 
-		CursorEntry() : _videoSurface(nullptr), _frameInfo(nullptr) {}
-		~CursorEntry() { delete _frameInfo; }
+		CursorEntry() : _videoSurface(nullptr), _frameSurface(nullptr) {}
+		~CursorEntry();
 	};
 private:
 	CScreenManager *_screenManager;

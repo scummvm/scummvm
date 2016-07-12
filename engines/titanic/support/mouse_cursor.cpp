@@ -50,6 +50,11 @@ static const int CURSOR_DATA[NUM_CURSORS][4] = {
 	{ 15, 138, 20, 28 }
 };
 
+CMouseCursor::CursorEntry::~CursorEntry() {
+	delete _videoSurface;
+	delete _frameSurface;
+}
+
 CMouseCursor::CMouseCursor(CScreenManager *screenManager) : 
 		_screenManager(screenManager), _cursorId(CURSOR_HOURGLASS),
 		_setCursorCount(0), _fieldE4(0), _fieldE8(0) {
@@ -80,9 +85,9 @@ void CMouseCursor::loadCursorImages() {
 		OSMovie movie(key, surface);
 		movie.setFrame(idx);
 		
-		void *frameInfo = movie.duplicateFrameInfo();
-		_cursors[idx]._frameInfo = frameInfo;
-		surface->setMovieFrameInfo(frameInfo);
+		CVideoSurface *frameSurface = movie.duplicateFrame();
+		_cursors[idx]._frameSurface = frameSurface;
+		surface->setMovieFrameSurface(frameSurface);
 	}
 }
 

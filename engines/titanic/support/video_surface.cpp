@@ -31,8 +31,8 @@ int CVideoSurface::_videoSurfaceCounter = 0;
 
 CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
 		_screenManager(screenManager), _rawSurface(nullptr), _movie(nullptr),
-		_pendingLoad(false), _blitStyleFlag(false), _blitFlag(false),
-		_movieFrameInfo(nullptr), _transparencyMode(TRANS_DEFAULT), _field48(0), _field50(1) {
+		_pendingLoad(false), _transBlitFlag(false), _fastBlitFlag(false),
+		_movieFrameSurface(nullptr), _transparencyMode(TRANS_DEFAULT), _field48(0), _field50(1) {
 	_videoSurfaceNum = _videoSurfaceCounter++;
 }
 
@@ -52,10 +52,10 @@ void CVideoSurface::blitFrom(const Point &destPos, CVideoSurface *src, const Rec
 		Rect srcBounds, destBounds;
 		clipBounds(srcBounds, destBounds, src, srcRect, &destPos);
 
-		if (_blitStyleFlag)
-			blitRect2(srcBounds, destBounds, src);
+		if (_transBlitFlag)
+			transBlitRect(srcBounds, destBounds, src);
 		else
-			blitRect1(srcBounds, destBounds, src);
+			blitRect(srcBounds, destBounds, src);
 	}
 }
 
@@ -128,21 +128,25 @@ void CVideoSurface::clipBounds(Rect &srcRect, Rect &destRect,
 		error("Invalid rect");
 }
 
-void CVideoSurface::blitRect1(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
+void CVideoSurface::blitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
 	src->lock();
 	lock();
 
-	// TODO: Do it like the original does it
-	_rawSurface->transBlitFrom(*src->_rawSurface, srcRect, destRect,
-		getTransparencyColor());
+	if (_fastBlitFlag) {
+		_rawSurface->transBlitFrom(*src->_rawSurface, srcRect, destRect,
+			getTransparencyColor());
+		return;
+	}
+
+	// TODO
 
 	src->unlock();
 	unlock();
 }
 
-void CVideoSurface::blitRect2(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
+void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
 	// TODO: Do it like the original does it
-	blitRect1(srcRect, destRect, src);
+	blitRect(srcRect, destRect, src);
 }
 
 uint CVideoSurface::getTransparencyColor() {
@@ -471,7 +475,7 @@ const CMovieRangeInfoList *OSVideoSurface::getMovieRangeInfo() const {
 }
 
 void OSVideoSurface::flipVertically(bool needsLock) {
-	if (!loadIfReady() || !_blitStyleFlag)
+	if (!loadIfReady() || !_transBlitFlag)
 		return;
 
 	if (needsLock)
@@ -490,7 +494,7 @@ void OSVideoSurface::flipVertically(bool needsLock) {
 		Common::copy(lineBuffer, lineBuffer + pitch, line1P);
 	}
 
-	_blitStyleFlag = false;
+	_transBlitFlag = false;
 	if (needsLock)
 		unlock();
 }
@@ -537,8 +541,8 @@ void OSVideoSurface::transPixelate() {
 	unlock();
 }
 
-void *OSVideoSurface::dupMovieFrameInfo() const {
-	return _movie ? _movie->duplicateFrameInfo() : nullptr;
+CVideoSurface *OSVideoSurface::dupMovieFrame() const {
+	return _movie ? _movie->duplicateFrame() : nullptr;
 }
 
 int OSVideoSurface::freeSurface() {

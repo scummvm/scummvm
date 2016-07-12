@@ -54,15 +54,15 @@ private:
 	void clipBounds(Rect &srcRect, Rect &destRect, CVideoSurface *srcSurface,
 		const Rect *subRect = nullptr, const Point *destPos = nullptr);
 
-	void blitRect1(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
-	void blitRect2(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
+	void blitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
+	void transBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
 protected:
 	static int _videoSurfaceCounter;
 protected:
 	CScreenManager *_screenManager;
 	Graphics::ManagedSurface *_rawSurface;
 	bool _pendingLoad;
-	const void *_movieFrameInfo;
+	CVideoSurface *_movieFrameSurface;
 	int _field48;
 	int _videoSurfaceNum;
 	int _field50;
@@ -70,8 +70,8 @@ protected:
 public:
 	CMovie *_movie;
 	DirectDrawSurface *_ddSurface;
-	bool _blitFlag;
-	bool _blitStyleFlag;
+	bool _fastBlitFlag;
+	bool _transBlitFlag;
 	CResourceKey _resourceKey;
 	TransparencyMode _transparencyMode;
 public:
@@ -258,9 +258,9 @@ public:
 	virtual bool proc45();
 
 	/**
-	* Duplicates movie frame info
-	*/
-	virtual void *dupMovieFrameInfo() const = 0;
+	 * Duplicates movie frame surface
+	 */
+	virtual CVideoSurface *dupMovieFrame() const = 0;
 
 	/**
 	 * Frees the underlying surface
@@ -285,11 +285,11 @@ public:
 	/**
 	 *
 	 */
-	void setMovieFrameInfo(const void *frameInfo) { _movieFrameInfo = frameInfo; }
+	void setMovieFrameSurface(CVideoSurface *frameSurface) { _movieFrameSurface = frameSurface; }
 
 	/**
 	 */
-	const void *getMovieFrameInfo() const { return _movieFrameInfo; }
+	CVideoSurface *getMovieFrameSurface() const { return _movieFrameSurface; }
 
 	/**
 	 * Get the pixels associated with the surface. Only valid when the
@@ -497,9 +497,9 @@ public:
 	virtual void transPixelate();
 
 	/**
-	 * Duplicates movie frame info
+	 * Duplicates movie frame surface
 	 */
-	virtual void *dupMovieFrameInfo() const;
+	virtual CVideoSurface *dupMovieFrame() const;
 
 
 	/**

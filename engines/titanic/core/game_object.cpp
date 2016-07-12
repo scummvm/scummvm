@@ -275,7 +275,7 @@ bool CGameObject::checkPoint(const Point &pt, bool ignore40, bool visibleOnly) {
 	}
 
 	Common::Point pixelPos = pt - _bounds;
-	if (_surface->_blitStyleFlag) {
+	if (_surface->_transBlitFlag) {
 		pixelPos.y = ((_bounds.height() - _bounds.top) / 2) * 2 - pixelPos.y;
 	}
 
