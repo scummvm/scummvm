@@ -42,6 +42,7 @@ enum StorageID {
 	kStorageDropboxId = 1,
 	kStorageOneDriveId = 2,
 	kStorageGoogleDriveId = 3,
+	kStorageBoxId = 4,
 
 	kStorageTotal
 };

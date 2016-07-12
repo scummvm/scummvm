@@ -21,6 +21,7 @@
 */
 
 #include "backends/cloud/cloudmanager.h"
+#include "backends/cloud/box/boxstorage.h"
 #include "backends/cloud/dropbox/dropboxstorage.h"
 #include "backends/cloud/onedrive/onedrivestorage.h"
 #include "backends/cloud/googledrive/googledrivestorage.h"
@@ -52,6 +53,7 @@ Common::String CloudManager::getStorageConfigName(uint32 index) const {
 	case kStorageDropboxId: return "Dropbox";
 	case kStorageOneDriveId: return "OneDrive";
 	case kStorageGoogleDriveId: return "GoogleDrive";
+	case kStorageBoxId: return "Box";
 	}
 	assert(false); // Unhandled StorageID value
 	return "";
@@ -67,6 +69,9 @@ void CloudManager::loadStorage() {
 		break;
 	case kStorageGoogleDriveId:
 		_activeStorage = GoogleDrive::GoogleDriveStorage::loadFromConfig(kStoragePrefix + getStorageConfigName(_currentStorageIndex) + "_");
+		break;
+	case kStorageBoxId:
+		_activeStorage = Box::BoxStorage::loadFromConfig(kStoragePrefix + getStorageConfigName(_currentStorageIndex) + "_");
 		break;
 	default:
 		_activeStorage = nullptr;
@@ -207,6 +212,7 @@ void CloudManager::connectStorage(uint32 index, Common::String code) {
 	case kStorageDropboxId: storage = new Dropbox::DropboxStorage(code); break;
 	case kStorageOneDriveId: storage = new OneDrive::OneDriveStorage(code); break;
 	case kStorageGoogleDriveId: storage = new GoogleDrive::GoogleDriveStorage(code); break;
+	case kStorageBoxId: storage = new Box::BoxStorage(code); break;
 	}
 	//these would automatically request replaceStorage() when they receive the token
 }

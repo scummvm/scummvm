@@ -52,6 +52,7 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 	case Cloud::kStorageDropboxId: url += "db"; break;
 	case Cloud::kStorageOneDriveId: url += "od"; break;
 	case Cloud::kStorageGoogleDriveId: url += "gd"; break;
+	case Cloud::kStorageBoxId: url += "bx"; break;
 	}
 #ifdef USE_SDL_NET
 	url += "s";
