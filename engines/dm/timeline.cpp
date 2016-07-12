@@ -34,6 +34,7 @@
 #include "movesens.h"
 #include "text.h"
 #include "eventman.h"
+#include "objectman.h"
 
 
 namespace DM {
@@ -368,7 +369,7 @@ T0261053:
 				_vm->_championMan->f322_championPoison(AL0680_ui_ChampionIndex, L0682_s_Event._B._attack);
 				break;
 			case k13_TMEventTypeViAltarRebirth:
-				//F0255_TIMELINE_ProcessEvent13_ViAltarRebirth(L0681_ps_Event);
+				f255_timelineProcessEvent13_ViAltarRebirth(L0681_ps_Event);
 				break;
 			case k79_TMEventTypeFootprints:
 				_vm->_championMan->_g407_party._event79Count_Footprints--;
@@ -1037,5 +1038,53 @@ void Timeline::f260_timelineRefreshAllChampionStatusBoxes() {
 		setFlag(_vm->_championMan->_gK71_champions[L0679_ui_ChampionIndex]._attributes, k0x1000_ChampionAttributeStatusBox);
 	}
 	_vm->_championMan->f293_drawAllChampionStates();
+}
+
+void Timeline::f255_timelineProcessEvent13_ViAltarRebirth(TimelineEvent* event) {
+	int16 L0664_i_MapX;
+	int16 L0665_i_MapY;
+	uint16 L0666_ui_Cell;
+	Thing L0667_T_Thing;
+	Junk* L0668_ps_Junk;
+	int16 L0669_i_IconIndex;
+	uint16 L0670_ui_Step;
+	uint16 L0671_ui_ChampionIndex;
+
+
+	L0664_i_MapX = event->_B._location._mapX;
+	L0665_i_MapY = event->_B._location._mapY;
+	L0665_i_MapY = event->_B._location._mapY;
+	L0666_ui_Cell = event->_C.A._cell;
+	L0671_ui_ChampionIndex = event->_priority;
+	switch (L0670_ui_Step = event->_C.A._effect) { /* Rebirth is a 3 steps process (Step 2 -> Step 1 -> Step 0). Step is stored in the Effect value of the event */
+	case 2:
+		_vm->_projexpl->f213_explosionCreate(Thing::_explRebirthStep1, 0, L0664_i_MapX, L0665_i_MapY, L0666_ui_Cell);
+		event->_mapTime += 5;
+T0255002:
+		L0670_ui_Step--;
+		event->_C.A._effect = L0670_ui_Step;
+		_vm->_timeline->f238_addEventGetEventIndex(event);
+		break;
+	case 1:
+		L0667_T_Thing = _vm->_dungeonMan->f161_getSquareFirstThing(L0664_i_MapX, L0665_i_MapY);
+		while (L0667_T_Thing != Thing::_endOfList) {
+			if ((L0667_T_Thing.getCell() == L0666_ui_Cell) && (L0667_T_Thing.getType() == k10_JunkThingType)) {
+				L0669_i_IconIndex = _vm->_objectMan->f33_getIconIndex(L0667_T_Thing);
+				if (L0669_i_IconIndex == k147_IconIndiceJunkChampionBones) {
+					L0668_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(L0667_T_Thing);
+					if (L0668_ps_Junk->getChargeCount() == L0671_ui_ChampionIndex) {
+						_vm->_dungeonMan->f164_unlinkThingFromList(L0667_T_Thing, Thing(0), L0664_i_MapX, L0665_i_MapY); /* BUG0_25 When a champion dies, no bones object is created so it is not possible to bring the champion back to life at an altar of Vi. Each time a champion is brought back to life, the bones object is removed from the dungeon but it is not marked as unused and thus becomes an orphan. After a large number of champion deaths, all JUNK things are exhausted and the game cannot create any more. This also affects the creation of JUNK things dropped by some creatures when they die (Screamer, Rockpile, Magenta Worm, Pain Rat, Red Dragon) */
+						L0668_ps_Junk->setNextThing(Thing::_none);
+						event->_mapTime += 1;
+						goto T0255002;
+					}
+				}
+			}
+			L0667_T_Thing = _vm->_dungeonMan->f159_getNextThing(L0667_T_Thing);
+		}
+		break;
+	case 0:
+		_vm->_championMan->f283_viAltarRebirth(event->_priority);
+	}
 }
 }

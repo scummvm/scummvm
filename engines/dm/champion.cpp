@@ -1196,6 +1196,28 @@ void ChampionMan::f293_drawAllChampionStates() {
 	}
 }
 
+void ChampionMan::f283_viAltarRebirth(uint16 champIndex) {
+	uint16 L0831_ui_Multiple;
+#define AL0831_ui_Cell          L0831_ui_Multiple
+#define AL0831_ui_MaximumHealth L0831_ui_Multiple
+	Champion* L0832_ps_Champion;
+
+	L0832_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
+	if (_vm->_championMan->f285_getIndexInCell(L0832_ps_Champion->_cell) != kM1_ChampionNone) {
+		AL0831_ui_Cell = k0_CellNorthWest;
+		while (_vm->_championMan->f285_getIndexInCell(AL0831_ui_Cell) != kM1_ChampionNone) {
+			AL0831_ui_Cell++;
+		}
+		L0832_ps_Champion->_cell = (ViewCell)AL0831_ui_Cell;
+	}
+	AL0831_ui_MaximumHealth = L0832_ps_Champion->_maxHealth;
+	L0832_ps_Champion->_currHealth = (L0832_ps_Champion->_maxHealth = MAX(25, AL0831_ui_MaximumHealth - (AL0831_ui_MaximumHealth >> 6) - 1)) >> 1;
+	_vm->_menuMan->f393_drawSpellAreaControls(_vm->_championMan->_g514_magicCasterChampionIndex);
+	L0832_ps_Champion->_dir = _vm->_dungeonMan->_g308_partyDir;
+	setFlag(L0832_ps_Champion->_attributes, k0x8000_ChampionAttributeActionHand | k0x1000_ChampionAttributeStatusBox | k0x0400_ChampionAttributeIcon);
+	_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
+}
+
 ChampionIndex ChampionMan::f285_getIndexInCell(int16 cell) {
 	for (uint16 i = 0; i < _g305_partyChampionCount; ++i) {
 		if ((_gK71_champions[i]._cell == cell) && _gK71_champions[i]._currHealth)

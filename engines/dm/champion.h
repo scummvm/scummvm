@@ -524,6 +524,7 @@ public:
 	bool f294_isAmmunitionCompatibleWithWeapon(uint16 champIndex, uint16 weaponSlotIndex,
 											   uint16 ammunitionSlotIndex); // @ F0294_CHAMPION_IsAmmunitionCompatibleWithWeapon
 	void f293_drawAllChampionStates(); // @ F0293_CHAMPION_DrawAllChampionStates
+	void f283_viAltarRebirth(uint16 champIndex); // @ F0283_CHAMPION_ViAltarRebirth
 
 
 

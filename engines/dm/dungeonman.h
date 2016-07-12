@@ -493,6 +493,7 @@ public:
 	uint16 getDoNotDiscard() { return (_attributes >> 7) & 1; }
 
 	Thing getNextThing() { return _nextThing; }
+	void setNextThing(Thing thing) { _nextThing = thing; }
 }; // @ JUNK
 
 #define kM1_soundModeDoNotPlaySound -1 // @ CM1_MODE_DO_NOT_PLAY_SOUND  

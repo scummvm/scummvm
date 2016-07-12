@@ -186,6 +186,7 @@ public:
 	void f254_timelineProcessEvent12_hideDamageReceived(uint16 champIndex); // @ F0254_TIMELINE_ProcessEvent12_HideDamageReceived
 	void f257_timelineProcessEvent70_light(TimelineEvent *event); // @ F0257_TIMELINE_ProcessEvent70_Light
 	void f260_timelineRefreshAllChampionStatusBoxes(); // @ F0260_TIMELINE_RefreshAllChampionStatusBoxes
+	void f255_timelineProcessEvent13_ViAltarRebirth(TimelineEvent *event); // @ F0255_TIMELINE_ProcessEvent13_ViAltarRebirth
 };
 
 
