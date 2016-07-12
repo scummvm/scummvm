@@ -42,7 +42,7 @@ void CStarControlSub9::initialize() {
 		RootEntry &rootEntry = _data[rootCtr];
 		rootEntry.resize(count * 2);
 		for (int idx = 0; idx < count * 2; ++idx) {
-			DataEntry &entry = rootEntry[idx * 2];
+			DataEntry &entry = rootEntry[idx];
 			v1 = stream->readSint32LE();
 			v2 = stream->readSint32LE();
 			v1 *= 0.015 * FACTOR;
