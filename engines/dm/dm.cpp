@@ -324,8 +324,6 @@ void DMEngine::f2_gameloop() {
 	_dungeonMan->_g306_partyMapX = 10;
 	_dungeonMan->_g307_partyMapY = 4;
 	_dungeonMan->_g308_partyDir = kDirNorth;
-	warning(false, "DUMMY CODE: setting InventoryMan::_g432_inventoryChampionOrdinal to zero");
-	_inventoryMan->_g432_inventoryChampionOrdinal = 0;
 
 	while (true) {
 		if (_g327_newPartyMapIndex != kM1_mapIndexNone) {
@@ -359,23 +357,32 @@ T0002002:
 				_eventMan->f77_hideMouse();
 			}
 		}
-
+		// F0363_COMMAND_HighlightBoxDisable();
+		// F0065_SOUND_PlayPendingSound_CPSD();
+		// F0320_CHAMPION_ApplyAndDrawPendingDamageAndWounds
 		if (_championMan->_g303_partyDead)
 			break;
 		_g313_gameTime++;
 
 		if (!(_g313_gameTime & 511))
 			_inventoryMan->f338_decreaseTorchesLightPower();
-			if (_g310_disabledMovementTicks) {
-				_g310_disabledMovementTicks--;
-			}
-		if (_championMan->_g407_party._freezeLifeTicks) {
+
+		if (_g310_disabledMovementTicks)
+			_g310_disabledMovementTicks--;
+
+		if (_championMan->_g407_party._freezeLifeTicks)
 			_championMan->_g407_party._freezeLifeTicks -= 1;
-		}
+
 		_menuMan->f390_refreshActionAreaAndSetChampDirMaxDamageReceived();
 
-		if (_g311_projectileDisableMovementTicks)
-			_g311_projectileDisableMovementTicks--;
+		// if (!((int)_vm->_g313_gameTime & (_vm->_championMan->_g300_partyIsSleeping ? 15 : 63))) {
+		//		F0331_CHAMPION_ApplyTimeEffects_CPSF();
+		// }
+
+		if (_g310_disabledMovementTicks)
+			_g310_disabledMovementTicks--;
+
+		// F0044_TEXT_MESSAGEAREA_ClearExpiredRows();
 
 		_g321_stopWaitingForPlayerInput = false;
 
@@ -395,7 +402,7 @@ T0002002:
 			_eventMan->f380_processCommandQueue();
 			_displayMan->updateScreen();
 			// if (!_vm->_g321_stopWaitingForPlayerInput) {
-			warning(false, "MISSING CODE: F0363_COMMAND_HighlightBoxDisable");
+			//		F0363_COMMAND_HighlightBoxDisable();
 			// }
 		} while (!_g321_stopWaitingForPlayerInput || !_g301_gameTimeTicking);
 
