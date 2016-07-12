@@ -128,8 +128,8 @@ GfxPalette32::GfxPalette32(ResourceManager *resMan)
 	_version(1),
 	_needsUpdate(false),
 	_currentPalette(),
-	_sourcePalette(_currentPalette),
-	_nextPalette(_currentPalette),
+	_sourcePalette(),
+	_nextPalette(),
 	// Clut
 	_clutTable(nullptr),
 	// Palette varying
@@ -162,7 +162,10 @@ GfxPalette32::~GfxPalette32() {
 }
 
 inline void mergePaletteInternal(Palette *const to, const Palette *const from) {
-	for (int i = 0, len = ARRAYSIZE(to->colors); i < len; ++i) {
+	// The last color is always white, so it is not copied.
+	// (Some palettes try to set the last color, which causes
+	// churning in the palettes when they are merged)
+	for (int i = 0, len = ARRAYSIZE(to->colors) - 1; i < len; ++i) {
 		if (from->colors[i].used) {
 			to->colors[i] = from->colors[i];
 		}
