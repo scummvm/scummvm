@@ -195,10 +195,12 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	int id = 0;
 
-	if (id1.type == INT)
+	if (id1.type == INT) {
 		id = id1.u.i;
-	else
+	} else {
 		warning("Unknown the sprite id type: %s", id1.type2str());
+		return;
+	}
 
 	d.toInt(); // Enforce Integer
 
@@ -264,6 +266,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	default:
 		warning("Unprocessed getting field %d of entity %d", field, entity);
+		d.type = VOID;
 	}
 
 	return d;
@@ -273,10 +276,12 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 	Datum d;
 	int id = 0;
 
-	if (id1.type == INT)
+	if (id1.type == INT) {
 		id = id1.u.i;
-	else
+	} else {
 		warning("Unknown the sprite id type: %s", id1.type2str());
+		return d;
+	}
 
 	if (!_vm->_currentScore) {
 		warning("The sprite %d field %d setting over non-active score", id, field);
@@ -317,6 +322,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		break;
 	default:
 		warning("Unprocessed getting field %d of sprite", field);
+		d.type = VOID;
 	}
 
 	return d;
@@ -326,10 +332,12 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	Datum d;
 	int id = 0;
 
-	if (id1.type == INT)
+	if (id1.type == INT) {
 		id = id1.u.i;
-	else
+	} else {
 		warning("Unknown the cast id type: %s", id1.type2str());
+		return d;
+	}
 
 	if (!_vm->_currentScore) {
 		warning("The cast %d field %d setting over non-active score", id, field);
@@ -391,17 +399,22 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		break;
 	default:
 		warning("Unprocessed getting field %d of cast %d", field, id);
+		d.type = VOID;
 	//TODO find out about String fields
 	}
+
+	return d;
 }
 
 void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	int id = 0;
 
-	if (id1.type == INT)
+	if (id1.type == INT) {
 		id = id1.u.i;
-	else
+	} else {
 		warning("Unknown the cast id type: %s", id1.type2str());
+		return;
+	}
 
 	if (!_vm->_currentScore) {
 		warning("The cast %d field %d setting over non-active score", id, field);
