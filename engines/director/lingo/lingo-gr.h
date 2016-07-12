@@ -46,50 +46,49 @@
      INT = 262,
      THEENTITY = 263,
      THEENTITYWITHID = 264,
-     THEFIELD = 265,
-     FLOAT = 266,
-     BLTIN = 267,
-     ID = 268,
-     STRING = 269,
-     HANDLER = 270,
-     tDOWN = 271,
-     tELSE = 272,
-     tNLELSIF = 273,
-     tEND = 274,
-     tEXIT = 275,
-     tFRAME = 276,
-     tGLOBAL = 277,
-     tGO = 278,
-     tIF = 279,
-     tINTO = 280,
-     tLOOP = 281,
-     tMACRO = 282,
-     tMCI = 283,
-     tMCIWAIT = 284,
-     tMOVIE = 285,
-     tNEXT = 286,
-     tOF = 287,
-     tPREVIOUS = 288,
-     tPUT = 289,
-     tREPEAT = 290,
-     tSET = 291,
-     tTHEN = 292,
-     tTO = 293,
-     tWITH = 294,
-     tWHILE = 295,
-     tNLELSE = 296,
-     tGE = 297,
-     tLE = 298,
-     tGT = 299,
-     tLT = 300,
-     tEQ = 301,
-     tNEQ = 302,
-     tAND = 303,
-     tOR = 304,
-     tNOT = 305,
-     tCONCAT = 306,
-     tCONTAINS = 307,
-     tSTARTS = 308
+     FLOAT = 265,
+     BLTIN = 266,
+     ID = 267,
+     STRING = 268,
+     HANDLER = 269,
+     tDOWN = 270,
+     tELSE = 271,
+     tNLELSIF = 272,
+     tEND = 273,
+     tEXIT = 274,
+     tFRAME = 275,
+     tGLOBAL = 276,
+     tGO = 277,
+     tIF = 278,
+     tINTO = 279,
+     tLOOP = 280,
+     tMACRO = 281,
+     tMCI = 282,
+     tMCIWAIT = 283,
+     tMOVIE = 284,
+     tNEXT = 285,
+     tOF = 286,
+     tPREVIOUS = 287,
+     tPUT = 288,
+     tREPEAT = 289,
+     tSET = 290,
+     tTHEN = 291,
+     tTO = 292,
+     tWITH = 293,
+     tWHILE = 294,
+     tNLELSE = 295,
+     tGE = 296,
+     tLE = 297,
+     tGT = 298,
+     tLT = 299,
+     tEQ = 300,
+     tNEQ = 301,
+     tAND = 302,
+     tOR = 303,
+     tNOT = 304,
+     tCONCAT = 305,
+     tCONTAINS = 306,
+     tSTARTS = 307
    };
 #endif
 /* Tokens.  */
@@ -100,50 +99,49 @@
 #define INT 262
 #define THEENTITY 263
 #define THEENTITYWITHID 264
-#define THEFIELD 265
-#define FLOAT 266
-#define BLTIN 267
-#define ID 268
-#define STRING 269
-#define HANDLER 270
-#define tDOWN 271
-#define tELSE 272
-#define tNLELSIF 273
-#define tEND 274
-#define tEXIT 275
-#define tFRAME 276
-#define tGLOBAL 277
-#define tGO 278
-#define tIF 279
-#define tINTO 280
-#define tLOOP 281
-#define tMACRO 282
-#define tMCI 283
-#define tMCIWAIT 284
-#define tMOVIE 285
-#define tNEXT 286
-#define tOF 287
-#define tPREVIOUS 288
-#define tPUT 289
-#define tREPEAT 290
-#define tSET 291
-#define tTHEN 292
-#define tTO 293
-#define tWITH 294
-#define tWHILE 295
-#define tNLELSE 296
-#define tGE 297
-#define tLE 298
-#define tGT 299
-#define tLT 300
-#define tEQ 301
-#define tNEQ 302
-#define tAND 303
-#define tOR 304
-#define tNOT 305
-#define tCONCAT 306
-#define tCONTAINS 307
-#define tSTARTS 308
+#define FLOAT 265
+#define BLTIN 266
+#define ID 267
+#define STRING 268
+#define HANDLER 269
+#define tDOWN 270
+#define tELSE 271
+#define tNLELSIF 272
+#define tEND 273
+#define tEXIT 274
+#define tFRAME 275
+#define tGLOBAL 276
+#define tGO 277
+#define tIF 278
+#define tINTO 279
+#define tLOOP 280
+#define tMACRO 281
+#define tMCI 282
+#define tMCIWAIT 283
+#define tMOVIE 284
+#define tNEXT 285
+#define tOF 286
+#define tPREVIOUS 287
+#define tPUT 288
+#define tREPEAT 289
+#define tSET 290
+#define tTHEN 291
+#define tTO 292
+#define tWITH 293
+#define tWHILE 294
+#define tNLELSE 295
+#define tGE 296
+#define tLE 297
+#define tGT 298
+#define tLT 299
+#define tEQ 300
+#define tNEQ 301
+#define tAND 302
+#define tOR 303
+#define tNOT 304
+#define tCONCAT 305
+#define tCONTAINS 306
+#define tSTARTS 307
 
 
 
@@ -155,11 +153,12 @@ typedef union YYSTYPE
 	Common::String *s;
 	int	i;
 	double f;
+	int e[2];	// Entity + field
 	int code;
 	int	narg;	/* number of arguments */
 }
 /* Line 1529 of yacc.c.  */
-#line 163 "engines/director/lingo/lingo-gr.hpp"
+#line 162 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

@@ -255,12 +255,12 @@ public:
 	void func_gotoprevious();
 
 public:
-	void setTheEntity(int entity, int id, int field, Datum &d);
-	void setTheSprite(int id, int field, Datum &d);
-	void setTheCast(int id, int field, Datum &d);
-	Datum getTheEntity(int entity, int id, int field);
-	Datum getTheSprite(int id, int field);
-	Datum getTheCast(int id, int field);
+	void setTheEntity(int entity, Datum &id, int field, Datum &d);
+	void setTheSprite(Datum &id, int field, Datum &d);
+	void setTheCast(Datum &id, int field, Datum &d);
+	Datum getTheEntity(int entity, Datum &id, int field);
+	Datum getTheSprite(Datum &id, int field);
+	Datum getTheCast(Datum &id, int field);
 
 public:
 	ScriptData *_currentScript;

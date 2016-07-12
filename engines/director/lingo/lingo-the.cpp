@@ -173,7 +173,7 @@ void Lingo::initTheEntities() {
 	}
 }
 
-void Lingo::setTheEntity(int entity, int id, int field, Datum &d) {
+void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	switch (entity) {
 	case kTheSprite:
 		setTheSprite(id, field, d);
@@ -192,7 +192,14 @@ void Lingo::setTheEntity(int entity, int id, int field, Datum &d) {
 	}
 }
 
-void Lingo::setTheSprite(int id, int field, Datum &d) {
+void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
+	int id = 0;
+
+	if (id1.type == INT)
+		id = id1.u.i;
+	else
+		warning("Unknown the sprite id type: %s", id1.type2str());
+
 	Sprite *sprite = _vm->_currentScore->getSpriteById(id);
 
 	d.toInt(); // Enforce Integer
@@ -231,7 +238,7 @@ void Lingo::setTheSprite(int id, int field, Datum &d) {
 	}
 }
 
-Datum Lingo::getTheEntity(int entity, int id, int field) {
+Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	Datum d;
 
 	switch (entity) {
@@ -254,8 +261,15 @@ Datum Lingo::getTheEntity(int entity, int id, int field) {
 	return d;
 }
 
-Datum Lingo::getTheSprite(int id, int field) {
+Datum Lingo::getTheSprite(Datum &id1, int field) {
 	Datum d;
+	int id = 0;
+
+	if (id1.type == INT)
+		id = id1.u.i;
+	else
+		warning("Unknown the sprite id type: %s", id1.type2str());
+
 	Sprite *sprite = _vm->_currentScore->getSpriteById(id);
 
 	d.type = INT;
@@ -292,13 +306,19 @@ Datum Lingo::getTheSprite(int id, int field) {
 	return d;
 }
 
-Datum Lingo::getTheCast(int id, int field) {
+Datum Lingo::getTheCast(Datum &id1, int field) {
 	Datum d;
 	d.type = INT;
 
+	int id = 0;
+
+	if (id1.type == INT)
+		id = id1.u.i;
+	else
+		warning("Unknown the cast id type: %s", id1.type2str());
+
 	Cast *cast;
 	if (!_vm->_currentScore->_casts.contains(id)) {
-
 		if (field == kTheLoaded) {
 			d.u.i = 0;
 		}
@@ -344,7 +364,14 @@ Datum Lingo::getTheCast(int id, int field) {
 	}
 }
 
-void Lingo::setTheCast(int id, int field, Datum &d) {
+void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
+	int id = 0;
+
+	if (id1.type == INT)
+		id = id1.u.i;
+	else
+		warning("Unknown the sprite id type: %s", id1.type2str());
+
 	Cast *cast = _vm->_currentScore->_casts[id];
 	switch (field) {
 	case kTheCastType:

@@ -90,6 +90,44 @@ whitespace [\t ]
 (?i:repeat)			{ count(); return tREPEAT; }
 (?i:set)			{ count(); return tSET; }
 (?i:starts)			{ count(); return tSTARTS; }
+(?i:the[ \t]+[[:alpha:]]+[\t ]+of[\t ]+[[:alpha:]]+)	{
+		count();
+
+		const char *ptr = &yytext[4]; // Skip 'the '
+		while (*ptr == ' ' || *ptr == '\t')
+			ptr++;
+
+		Common::String field;
+		while (*ptr != ' ' && *ptr != '\t')
+			field += *ptr++;
+
+		if (!g_lingo->_theEntityFields.contains(field)) {
+			error("Unhandled the field %s", ptr);
+		}
+
+		while (*ptr == ' ' || *ptr == '\t')
+			ptr++;
+
+		ptr += 3; // Skip 'of '
+
+		while (*ptr == ' ' || *ptr == '\t')
+			ptr++;
+
+		if (g_lingo->_theEntities.contains(ptr)) {
+			if (g_lingo->_theEntityFields[field]->entity != g_lingo->_theEntities[ptr]->entity)
+				error("Unsupported field '%s' for entity '%s'", field.c_str(), ptr);
+
+			yylval.e[0] = g_lingo->_theEntities[ptr]->entity;
+			yylval.e[1] = g_lingo->_theEntityFields[field]->field;
+
+			if (g_lingo->_theEntities[ptr]->hasId)
+				return THEENTITYWITHID;
+			else
+				return THEENTITY;
+		}
+
+		error("Unhandled the entity %s", ptr);
+	}
 (?i:the[ \t]+[[:alpha:]]+)		{
 		count();
 
@@ -98,15 +136,15 @@ whitespace [\t ]
 			ptr++;
 
 		if (g_lingo->_theEntities.contains(ptr)) {
-			yylval.i = g_lingo->_theEntities[ptr]->entity;
+			yylval.e[0] = g_lingo->_theEntities[ptr]->entity;
+			yylval.e[1] = 0;	// No field
 
 			if (g_lingo->_theEntities[ptr]->hasId)
 				return THEENTITYWITHID;
 			else
 				return THEENTITY;
 		} else if (g_lingo->_theEntityFields.contains(ptr)) {
-			yylval.i = g_lingo->_theEntityFields[ptr]->field;
-			return THEFIELD;
+			error("the field without entity: %s", ptr);
 		}
 
 		error("Unhandled the entity %s", ptr);
