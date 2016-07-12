@@ -135,7 +135,7 @@ public:
 	/**
 	* Creates a duplicate of the movie's frame
 	*/
-	virtual CVideoSurface *duplicateFrame() const = 0;
+	virtual Graphics::ManagedSurface *duplicateFrame() const = 0;
 
 	/**
 	 * Removes the movie from the list of currently playing movies
@@ -233,7 +233,7 @@ public:
 	/**
 	 * Creates a duplicate of the frame info
 	 */
-	virtual CVideoSurface *duplicateFrame() const;
+	virtual Graphics::ManagedSurface *duplicateFrame() const;
 };
 
 } // End of namespace Titanic

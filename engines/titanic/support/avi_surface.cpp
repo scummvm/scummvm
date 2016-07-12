@@ -23,6 +23,8 @@
 #include "titanic/support/avi_surface.h"
 #include "titanic/support/screen_manager.h"
 #include "titanic/support/video_surface.h"
+#include "common/system.h"
+#include "graphics/pixelformat.h"
 #include "video/avi_decoder.h"
 
 namespace Titanic {
@@ -220,7 +222,8 @@ void AVISurface::setupDecompressor() {
 		AVIDecoder &decoder = *_decoders[idx];
 
 		// Setup frame surface
-		_movieFrameSurface[idx] = CScreenManager::_screenManagerPtr->createSurface(decoder.getWidth(), decoder.getHeight());
+		_movieFrameSurface[idx] = new Graphics::ManagedSurface(decoder.getWidth(), decoder.getHeight(),
+			g_system->getScreenFormat());
 
 		// TODO: See whether this simplified form of original works
 		if (idx == 2)
@@ -259,14 +262,28 @@ bool AVISurface::renderFrame() {
 	if (!_decoders[0]->needsUpdate() || (_decoders[1] && !_decoders[1]->needsUpdate()))
 		return false;
 
-	// Get the frame to render, and draw it on the surface
-	// TODO: Handle transparency
+	// Decode each decoder's video stream into the appropriate surface
 	for (int idx = 0; idx < 2; ++idx) {
 		if (_decoders[idx]) {
 			const Graphics::Surface *frame = _decoders[idx]->decodeNextFrame();
-			_videoSurface->blitFrom(Point(0, 0), frame);
+			
+			if (_movieFrameSurface[idx]->format == frame->format) {
+				_movieFrameSurface[idx]->blitFrom(*frame);
+			} else {
+				// Format mis-match, so we need to convert the frame
+				Graphics::Surface *s = frame->convertTo(_movieFrameSurface[idx]->format,
+					_decoders[idx]->getPalette());
+				_movieFrameSurface[idx]->blitFrom(*s);
+				s->free();
+				delete s;
+			}
 		}
 	}
+
+	// Blit the primary video frame onto the main overall surface
+	_videoSurface->lock();
+	_videoSurface->getRawSurface()->blitFrom(*_movieFrameSurface[0]);
+	_videoSurface->unlock();
 
 	return false;
 }
@@ -298,14 +315,19 @@ void AVISurface::setFrameRate(double rate) {
 	}
 }
 
-CVideoSurface *AVISurface::getSecondarySurface() {
+Graphics::ManagedSurface *AVISurface::getSecondarySurface() {
 	return _streamCount <= 1 ? nullptr : _movieFrameSurface[1];
 }
 
-CVideoSurface *AVISurface::duplicateSecondaryFrame() const {
-	// TODO: Make this cleaner
-	OSVideoSurface *src = dynamic_cast<OSVideoSurface *>(_movieFrameSurface[1]);
-	return new OSVideoSurface(*src);
+Graphics::ManagedSurface *AVISurface::duplicateSecondaryFrame() const {
+	if (_streamCount <= 1) {
+		return nullptr;
+	} else {
+		Graphics::ManagedSurface *dest = new Graphics::ManagedSurface(_movieFrameSurface[1]->w,
+			_movieFrameSurface[1]->h, _movieFrameSurface[1]->format);
+		dest->blitFrom(*_movieFrameSurface[1]);
+		return dest;
+	}
 }
 
 } // End of namespace Titanic

@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "graphics/managed_surface.h"
 #include "titanic/support/font.h"
 #include "titanic/support/direct_draw.h"
 #include "titanic/support/movie.h"
@@ -62,7 +63,7 @@ protected:
 	CScreenManager *_screenManager;
 	Graphics::ManagedSurface *_rawSurface;
 	bool _pendingLoad;
-	CVideoSurface *_movieFrameSurface;
+	Graphics::ManagedSurface *_movieFrameSurface;
 	int _field48;
 	int _videoSurfaceNum;
 	int _field50;
@@ -260,7 +261,7 @@ public:
 	/**
 	 * Duplicates movie frame surface
 	 */
-	virtual CVideoSurface *dupMovieFrame() const = 0;
+	virtual Graphics::ManagedSurface *dupMovieFrame() const = 0;
 
 	/**
 	 * Frees the underlying surface
@@ -283,19 +284,26 @@ public:
 	void blitFrom(const Point &destPos, const Graphics::Surface *src);
 
 	/**
-	 *
+	 * Sets the movie frame surface containing frame data from an active movie
 	 */
-	void setMovieFrameSurface(CVideoSurface *frameSurface) { _movieFrameSurface = frameSurface; }
+	void setMovieFrameSurface(Graphics::ManagedSurface *frameSurface) { _movieFrameSurface = frameSurface; }
 
 	/**
+	 * Get the previously set movie frame surface
 	 */
-	CVideoSurface *getMovieFrameSurface() const { return _movieFrameSurface; }
+	Graphics::ManagedSurface *getMovieFrameSurface() const { return _movieFrameSurface; }
 
 	/**
 	 * Get the pixels associated with the surface. Only valid when the
 	 * surface has been locked for access
 	 */
 	uint16 *getPixels() { return (uint16 *)_rawSurface->getPixels(); }
+
+	/**
+	 * Get a reference to the underlying surface. Only valid when the surface
+	 * has been locked for access
+	 */
+	Graphics::ManagedSurface *getRawSurface() { return _rawSurface; }
 
 	/**
 	 * Returns the transparent color
@@ -499,7 +507,7 @@ public:
 	/**
 	 * Duplicates movie frame surface
 	 */
-	virtual CVideoSurface *dupMovieFrame() const;
+	virtual Graphics::ManagedSurface *dupMovieFrame() const;
 
 
 	/**

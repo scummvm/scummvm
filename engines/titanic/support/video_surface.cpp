@@ -541,7 +541,7 @@ void OSVideoSurface::transPixelate() {
 	unlock();
 }
 
-CVideoSurface *OSVideoSurface::dupMovieFrame() const {
+Graphics::ManagedSurface *OSVideoSurface::dupMovieFrame() const {
 	return _movie ? _movie->duplicateFrame() : nullptr;
 }
 

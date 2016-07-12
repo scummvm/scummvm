@@ -24,6 +24,7 @@
 #define TITANIC_AVI_SURFACE_H
 
 #include "video/avi_decoder.h"
+#include "graphics/managed_surface.h"
 #include "titanic/core/resource_key.h"
 #include "titanic/support/movie_range_info.h"
 
@@ -55,7 +56,7 @@ private:
 	int _priorFrame;
 	CMovieRangeInfoList _movieRangeInfo;
 	int _streamCount;
-	CVideoSurface *_movieFrameSurface[2];
+	Graphics::ManagedSurface *_movieFrameSurface[2];
 private:
 	/**
 	 * Render a frame to the video surface
@@ -148,7 +149,7 @@ public:
 	/**
 	 * Returns the surface for the secondary video track frame, if present
 	 */
-	CVideoSurface *getSecondarySurface();
+	Graphics::ManagedSurface *getSecondarySurface();
 
 	/**
 	 * Get a reference to the movie range info list
@@ -160,7 +161,7 @@ public:
 	/**
 	 * Duplicates the secondary frame, if the movie has a second video track
 	 */
-	CVideoSurface *duplicateSecondaryFrame() const;
+	Graphics::ManagedSurface *duplicateSecondaryFrame() const;
 };
 
 } // End of namespace Titanic

@@ -85,7 +85,7 @@ void CMouseCursor::loadCursorImages() {
 		OSMovie movie(key, surface);
 		movie.setFrame(idx);
 		
-		CVideoSurface *frameSurface = movie.duplicateFrame();
+		Graphics::ManagedSurface *frameSurface = movie.duplicateFrame();
 		_cursors[idx]._frameSurface = frameSurface;
 		surface->setMovieFrameSurface(frameSurface);
 	}

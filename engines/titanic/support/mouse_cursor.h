@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
+#include "graphics/managed_surface.h"
 
 namespace Titanic {
 
@@ -54,7 +55,7 @@ class CVideoSurface;
 class CMouseCursor {
 	struct CursorEntry {
 		CVideoSurface *_videoSurface;
-		CVideoSurface *_frameSurface;
+		Graphics::ManagedSurface *_frameSurface;
 		Common::Point _centroid;
 
 		CursorEntry() : _videoSurface(nullptr), _frameSurface(nullptr) {}
