@@ -1163,6 +1163,32 @@ int16 ChampionMan::f310_getMovementTicks(Champion* champ) {
 	return L0933_i_Ticks;
 }
 
+bool ChampionMan::f294_isAmmunitionCompatibleWithWeapon(uint16 champIndex, uint16 weaponSlotIndex, uint16 ammunitionSlotIndex) {
+	Champion* L0874_ps_Champion;
+	WeaponInfo* L0875_ps_WeaponInfo;
+	Thing L0878_T_Thing;
+	int16 L0879_i_WeaponClass;
+
+	L0874_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
+	L0878_T_Thing = L0874_ps_Champion->_slots[weaponSlotIndex];
+	if (L0878_T_Thing.getType() != k5_WeaponThingType) {
+		return false;
+	}
+	L0875_ps_WeaponInfo = _vm->_dungeonMan->f158_getWeaponInfo(L0878_T_Thing);
+	if ((L0875_ps_WeaponInfo->_class >= k16_WeaponClassFirstBow) && (L0875_ps_WeaponInfo->_class <= k31_WeaponClassLastBow)) {
+		L0879_i_WeaponClass = k10_WeaponClassBowAmmunition;
+	} else {
+		if ((L0875_ps_WeaponInfo->_class >= k32_WeaponClassFirstSling) && (L0875_ps_WeaponInfo->_class <= k47_WeaponClassLastSling)) {
+			L0879_i_WeaponClass = k11_WeaponClassSlingAmmunition;
+		} else {
+			return false;
+		}
+	}
+	L0878_T_Thing = L0874_ps_Champion->_slots[ammunitionSlotIndex];
+	L0875_ps_WeaponInfo = _vm->_dungeonMan->f158_getWeaponInfo(L0878_T_Thing);
+	return ((L0878_T_Thing.getType() == k5_WeaponThingType) && (L0875_ps_WeaponInfo->_class == L0879_i_WeaponClass));
+}
+
 ChampionIndex ChampionMan::f285_getIndexInCell(int16 cell) {
 	for (uint16 i = 0; i < _g305_partyChampionCount; ++i) {
 		if ((_gK71_champions[i]._cell == cell) && _gK71_champions[i]._currHealth)

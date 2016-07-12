@@ -521,7 +521,8 @@ public:
 	void f317_addScentStrength(int16 mapX, int16 mapY, int32 cycleCount); // @ F0317_CHAMPION_AddScentStrength
 	void f297_putObjectInLeaderHand(Thing thing, bool setMousePointer); // @ F0297_CHAMPION_PutObjectInLeaderHand
 	int16 f310_getMovementTicks(Champion *champ); // @ F0310_CHAMPION_GetMovementTicks
-
+	bool f294_isAmmunitionCompatibleWithWeapon(uint16 champIndex, uint16 weaponSlotIndex,
+											   uint16 ammunitionSlotIndex); // @ F0294_CHAMPION_IsAmmunitionCompatibleWithWeapon
 
 
 

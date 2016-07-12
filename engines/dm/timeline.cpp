@@ -37,6 +37,52 @@
 
 namespace DM {
 
+signed char g495_actionDefense[44] = { // @ G0495_ac_Graphic560_ActionDefense
+	0,   /* N */
+	36,  /* BLOCK */
+	0,   /* CHOP */
+	0,   /* X */
+	-4,  /* BLOW HORN */
+	-10, /* FLIP */
+	-10, /* PUNCH */
+	-5,  /* KICK */
+	4,   /* WAR CRY */
+	-20, /* STAB */
+	-15, /* CLIMB DOWN */
+	-10, /* FREEZE LIFE */
+	16,  /* HIT */
+	5,   /* SWING */
+	-15, /* STAB */
+	-17, /* THRUST */
+	-5,  /* JAB */
+	29,  /* PARRY */
+	10,  /* HACK */
+	-10, /* BERZERK */
+	-7,  /* FIREBALL */
+	-7,  /* DISPELL */
+	-7,  /* CONFUSE */
+	-7,  /* LIGHTNING */
+	-7,  /* DISRUPT */
+	-5,  /* MELEE */
+	-15, /* X */
+	-9,  /* INVOKE */
+	4,   /* SLASH */
+	0,   /* CLEAVE */
+	0,   /* BASH */
+	5,   /* STUN */
+	-15, /* SHOOT */
+	-7,  /* SPELLSHIELD */
+	-7,  /* FIRESHIELD */
+	8,   /* FLUXCAGE */
+	-20, /* HEAL */
+	-5,  /* CALM */
+	0,   /* LIGHT */
+	-15, /* WINDOW */
+	-7,  /* SPIT */
+	-4,  /* BRANDISH */
+	0,   /* THROW */
+	8};  /* FUSE */
+
 Timeline::Timeline(DMEngine* vm) : _vm(vm) {
 	_g369_eventMaxCount = 0;
 	_g370_events = nullptr;
@@ -280,7 +326,7 @@ void Timeline::f261_processTimeline() {
 				}
 				break;
 			case k11_TMEventTypeEnableChampionAction:
-				//F0253_TIMELINE_ProcessEvent11Part1_EnableChampionAction(L0682_s_Event._priority);
+				f253_timelineProcessEvent11Part1_enableChampionAction(L0682_s_Event._priority);
 				if (L0682_s_Event._B._slotOrdinal) {
 					//F0259_TIMELINE_ProcessEvent11Part2_MoveWeaponFromQuiverToSlot(L0682_s_Event._priority, _vm->M1_ordinalToIndex(L0682_s_Event._B._slotOrdinal));
 				}
@@ -876,5 +922,34 @@ void Timeline::f246_timelineProcesEvent65_enableGroupGenerator(TimelineEvent* ev
 		}
 		L0620_T_Thing = _vm->_dungeonMan->f159_getNextThing(L0620_T_Thing);
 	}
+}
+
+void Timeline::f253_timelineProcessEvent11Part1_enableChampionAction(uint16 champIndex) {
+	int16 L0660_i_SlotIndex;
+	int16 L0661_i_QuiverSlotIndex;
+	Champion* L0662_ps_Champion;
+
+	L0662_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
+	L0662_ps_Champion->_enableActionEventIndex = -1;
+	clearFlag(L0662_ps_Champion->_attributes, k0x0008_ChampionAttributeDisableAction);
+	if (L0662_ps_Champion->_actionIndex != k255_ChampionActionNone) {
+		L0662_ps_Champion->_actionDefense -= g495_actionDefense[L0662_ps_Champion->_actionDefense];
+	}
+	if (L0662_ps_Champion->_currHealth) {
+		if ((L0662_ps_Champion->_actionIndex == k32_ChampionActionShoot) && (L0662_ps_Champion->_slots[k0_ChampionSlotReadyHand] == Thing::_none)) {
+			if (_vm->_championMan->f294_isAmmunitionCompatibleWithWeapon(champIndex, k1_ChampionSlotActionHand, L0660_i_SlotIndex = k12_ChampionSlotQuiverLine_1_1)) {
+T0253002:
+				_vm->_championMan->f301_addObjectInSlot((ChampionIndex)champIndex, _vm->_championMan->f300_getObjectRemovedFromSlot(champIndex, L0660_i_SlotIndex), k0_ChampionSlotReadyHand);
+			} else {
+				for (L0661_i_QuiverSlotIndex = 0; L0661_i_QuiverSlotIndex < 3; L0661_i_QuiverSlotIndex++) {
+					if (_vm->_championMan->f294_isAmmunitionCompatibleWithWeapon(champIndex, k1_ChampionSlotActionHand, L0660_i_SlotIndex = L0661_i_QuiverSlotIndex + k7_ChampionSlotQuiverLine_2_1))
+						goto T0253002;
+				}
+			}
+		}
+		setFlag(L0662_ps_Champion->_attributes, k0x8000_ChampionAttributeActionHand);
+		_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
+	}
+	L0662_ps_Champion->_actionIndex = k255_ChampionActionNone;
 }
 }

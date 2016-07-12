@@ -94,6 +94,8 @@ k82_TMEventTypeMagicMap_C82 = 82, // @ C82_EVENT_MAGIC_MAP
 k83_TMEventTypeMagicMap_C83 = 83  // @ C83_EVENT_MAGIC_MAP    
 };
 
+extern signed char g495_actionDefense[44];
+
 class TimelineEvent {
 public:
 	int32 _mapTime;
@@ -175,6 +177,7 @@ public:
 	void f245_timlineProcessEvent5_squareCorridor(TimelineEvent *event); // @ F0245_TIMELINE_ProcessEvent5_Square_Corridor
 	void f252_timelineProcessEvents60to61_moveGroup(TimelineEvent *event); // @ F0252_TIMELINE_ProcessEvents60to61_MoveGroup
 	void f246_timelineProcesEvent65_enableGroupGenerator(TimelineEvent *event); // @ F0246_TIMELINE_ProcessEvent65_EnableGroupGenerator
+	void f253_timelineProcessEvent11Part1_enableChampionAction(uint16 champIndex); // @ F0253_TIMELINE_ProcessEvent11Part1_EnableChampionAction
 };
 
 
