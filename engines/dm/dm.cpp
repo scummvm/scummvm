@@ -168,6 +168,7 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	_g310_disabledMovementTicks = 0;
 	_g313_gameTime = 0;
 	_g353_stringBuildBuffer[0] = '\0';
+	_g318_waitForInputMaxVerticalBlankCount = 0;
 	debug("DMEngine::DMEngine");
 
 
@@ -320,11 +321,12 @@ Common::Error DMEngine::run() {
 }
 
 void DMEngine::f2_gameloop() {
-	warning(false, "DUMMY CODE SETTING PARTY POS AND DIRECTION");
+	warning(false, "DUMMY CODE: SETTING PARTY POS AND DIRECTION");
 	_dungeonMan->_g306_partyMapX = 10;
 	_dungeonMan->_g307_partyMapY = 4;
 	_dungeonMan->_g308_partyDir = kDirNorth;
 
+	_g318_waitForInputMaxVerticalBlankCount = 10;
 	while (true) {
 		if (_g327_newPartyMapIndex != kM1_mapIndexNone) {
 T0002002:

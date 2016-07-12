@@ -172,6 +172,10 @@ inline T f26_getBoundedValue(T min, T val, T max) {
 
 #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
 
+#define k0_modeLoadSavedGame 0 // @ C000_MODE_LOAD_SAVED_GAME        
+#define k1_modeLoadDungeon 1 // @ C001_MODE_LOAD_DUNGEON           
+#define k99_modeWaitingOnEntrance 99 // @ C099_MODE_WAITING_ON_ENTRANCE   
+#define k202_modeEntranceDrawCredits 202 // @ C202_MODE_ENTRANCE_DRAW_CREDITS 
 
 class DMEngine : public Engine {
 	void f462_startGame(); // @ F0462_START_StartGame_CPSF
@@ -234,6 +238,7 @@ public:
 	int8 _dirIntoStepCountNorth[4]; // @ G0234_ai_Graphic559_DirectionToStepNorthCount
 	uint32 _g313_gameTime; // @ G0313_ul_GameTime
 	char _g353_stringBuildBuffer[128]; // @ G0353_ac_StringBuildBuffer
+	int16 _g318_waitForInputMaxVerticalBlankCount; // @ G0318_i_WaitForInputMaximumVerticalBlankCount
 };
 
 class Console : public GUI::Debugger {

@@ -613,39 +613,179 @@ CommandType EventManager::f358_getCommandTypeFromMouseInput(MouseInput *input, C
 
 
 void EventManager::f380_processCommandQueue() {
-	_g435_isCommandQueueLocked = true;
-	if (_commandQueue.empty()) {
-		_g435_isCommandQueueLocked = false;
-		f360_processPendingClick();
+	int16 AL1159_i_ChampionIndex;
+	CommandType cmdType;
+	int16 L1161_i_CommandX;
+	int16 L1162_i_CommandY;
+	static KeyboardInput* G0481_ps_PrimaryKeyboardInputBackup;
+	static KeyboardInput* G0482_ps_SecondaryKeyboardInputBackup;
+	static MouseInput* G0483_ps_PrimaryMouseInputBackup;
+	static MouseInput* G0484_ps_SecondaryMouseInputBackup;
+
+
+	_vm->_eventMan->_g435_isCommandQueueLocked = true;
+	if (_commandQueue.empty()) { /* If the command queue is empty */
+		_vm->_eventMan->_g435_isCommandQueueLocked = false;
+		_vm->_eventMan->f360_processPendingClick();
 		return;
 	}
 
 	Command cmd = _commandQueue.pop();
-
-	int16 commandX = cmd._pos.x;
-	int16 commandY = cmd._pos.y;
-
-	_g435_isCommandQueueLocked = false;
-	f360_processPendingClick();
-
-	if ((cmd._type == k2_CommandTurnRight) || (cmd._type == k1_CommandTurnLeft)) {
-		f365_commandTurnParty(cmd._type);
+	cmdType = cmd._type;
+	if ((cmdType >= k3_CommandMoveForward) && (cmdType <= k6_CommandMoveLeft) && (_vm->_g310_disabledMovementTicks || (_vm->_g311_projectileDisableMovementTicks && (_vm->_g312_lastProjectileDisabledMovementDirection == (M21_normalizeModulo4(_vm->_dungeonMan->_g308_partyDir + cmdType - k3_CommandMoveForward)))))) { /* If movement is disabled */
+		_vm->_eventMan->_g435_isCommandQueueLocked = false;
+		_vm->_eventMan->f360_processPendingClick();
+		return;
+	}
+	L1161_i_CommandX = cmd._pos.x;
+	L1162_i_CommandY = cmd._pos.y;
+	_vm->_eventMan->_g435_isCommandQueueLocked = false;
+	_vm->_eventMan->f360_processPendingClick();
+	if ((cmdType == k2_CommandTurnRight) || (cmdType == k1_CommandTurnLeft)) {
+		_vm->_eventMan->f365_commandTurnParty(cmdType);
+		return;
+	}
+	if ((cmdType >= k3_CommandMoveForward) && (cmdType <= k6_CommandMoveLeft)) {
+		_vm->_eventMan->f366_commandMoveParty(cmdType);
+		return;
+	}
+	if ((cmdType >= k12_CommandClickInChampion_0_StatusBox) && (cmdType <= k15_CommandClickInChampion_3_StatusBox)) {
+		if (((AL1159_i_ChampionIndex = cmdType - k12_CommandClickInChampion_0_StatusBox) < _vm->_championMan->_g305_partyChampionCount) && !_vm->_championMan->_g299_candidateChampionOrdinal) {
+			warning(false, "MISSING CODE: F0367_COMMAND_ProcessTypes12To27_ClickInChampionStatusBox(AL1159_i_ChampionIndex, L1161_i_CommandX, L1162_i_CommandY);");
+		}
+		return;
+	}
+	if ((cmdType >= k125_CommandClickOnChamptionIcon_Top_Left) && (cmdType <= k128_CommandClickOnChamptionIcon_Lower_Left)) {
+		warning(false, "MISSING CODE: F0070_MOUSE_ProcessCommands125To128_ClickOnChampionIcon(cmdType - k125_CommandClickOnChamptionIcon_Top_Left);");
+		return;
+	}
+	if ((cmdType >= k28_CommandClickOnSlotBoxInventoryReadyHand) && (cmdType < (k65_CommandClickOnSlotBoxChest_8 + 1))) {
+		if (_vm->_championMan->_g411_leaderIndex != kM1_ChampionNone) {
+			warning(false, "MISSING CODE: F0302_CHAMPION_ProcessCommands28To65_ClickOnSlotBox(cmdType - k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand);");
+		}
+		return;
+	}
+	if ((cmdType >= k7_CommandToggleInventoryChampion_0) && (cmdType <= k11_CommandCloseInventory)) {
+		if ((((AL1159_i_ChampionIndex = cmdType - k7_CommandToggleInventoryChampion_0) == k4_ChampionCloseInventory) || (AL1159_i_ChampionIndex < _vm->_championMan->_g305_partyChampionCount)) && !_vm->_championMan->_g299_candidateChampionOrdinal) {
+			_vm->_inventoryMan->f355_toggleInventory((ChampionIndex)AL1159_i_ChampionIndex);
+		}
+		return;
+	}
+	if (cmdType == k83_CommandToggleInventoryLeader) {
+		if (_vm->_championMan->_g411_leaderIndex != kM1_ChampionNone) {
+			_vm->_inventoryMan->f355_toggleInventory(_vm->_championMan->_g411_leaderIndex);
+		}
+		return;
+	}
+	if (cmdType == k100_CommandClickInSpellArea) {
+		if ((!_vm->_championMan->_g299_candidateChampionOrdinal) && (_vm->_championMan->_g514_magicCasterChampionIndex != kM1_ChampionNone)) {
+			warning(false, "MISSING CODE: F0370_COMMAND_ProcessType100_ClickInSpellArea(L1161_i_CommandX, L1162_i_CommandY);");
+		}
+		return;
+	}
+	if (cmdType == k111_CommandClickInActionArea) {
+		if (!_vm->_championMan->_g299_candidateChampionOrdinal) {
+			warning(false, "MISSING CODE: F0371_COMMAND_ProcessType111To115_ClickInActionArea_CPSE(L1161_i_CommandX, L1162_i_CommandY);");
+		}
+		return;
+	}
+	if (cmdType == k70_CommandClickOnMouth) {
+		warning(false, "MISSING CODE: F0349_INVENTORY_ProcessCommand70_ClickOnMouth();");
+		return;
+	}
+	if (cmdType == k71_CommandClickOnEye) {
+		warning(false, "MISSING CODE: F0352_INVENTORY_ProcessCommand71_ClickOnEye();");
+		return;
+	}
+	if (cmdType == k80_CommandClickInDungeonView) {
+		_vm->_eventMan->f377_commandProcessType80ClickInDungeonView(L1161_i_CommandX, L1162_i_CommandY);
+		return;
+	}
+	if (cmdType == k81_CommandClickInPanel) {
+		_vm->_eventMan->f378_commandProcess81ClickInPanel(L1161_i_CommandX, L1162_i_CommandY);
 		return;
 	}
 
-	if ((cmd._type >= k3_CommandMoveForward) && (cmd._type <= k6_CommandMoveLeft)) {
-		f366_commandMoveParty(cmd._type);
+	if (_vm->_g331_pressingEye || _vm->_g333_pressingMouth) {
 		return;
 	}
 
-	if (cmd._type == k80_CommandClickInDungeonView) {
-		f377_commandProcessType80ClickInDungeonView(commandX, commandY);
+	if (cmdType == k145_CommandSleep) {
+		if (!_vm->_championMan->_g299_candidateChampionOrdinal) {
+			if (_vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
+				_vm->_inventoryMan->f355_toggleInventory(k4_ChampionCloseInventory);
+			}
+			_vm->_menuMan->f456_drawDisabledMenu();
+			_vm->_championMan->_g300_partyIsSleeping = true;
+			warning(false, "MISSING CODE: F0379_COMMAND_DrawSleepScreen();");
+			_vm->_displayMan->f97_drawViewport(k2_viewportAsBeforeSleepOrFreezeGame);
+			_vm->_g318_waitForInputMaxVerticalBlankCount = 0;
+			_vm->_eventMan->_g441_primaryMouseInput = g450_PrimaryMouseInput_PartySleeping;
+			_vm->_eventMan->_g442_secondaryMouseInput = 0;
+			_g443_primaryKeyboardInput = g460_primaryKeyboardInput_partySleeping;
+			_g444_secondaryKeyboardInput = nullptr;
+			f357_discardAllInput();
+		}
+		return;
 	}
-	if (cmd._type == k81_CommandClickInPanel) {
-		f378_commandProcess81ClickInPanel(commandX, commandY);
+	if (cmdType == k146_CommandWakeUp) {
+		_vm->_championMan->f314_wakeUp();
+		return;
 	}
-
-	// MISSING CODE: the rest of the function
+	if (cmdType == k140_CommandSaveGame) {
+		if ((_vm->_championMan->_g305_partyChampionCount > 0) && !_vm->_championMan->_g299_candidateChampionOrdinal) {
+			warning(false, "MISSING CODE: F0433_STARTEND_ProcessCommand140_SaveGame_CPSCDF();");
+		}
+		return;
+	}
+	if (cmdType == k147_CommandFreezeGame) {
+		_vm->_g301_gameTimeTicking = false;
+		_vm->_menuMan->f456_drawDisabledMenu();
+		_vm->_displayMan->f134_fillBitmap(_vm->_displayMan->_g296_bitmapViewport, k0_ColorBlack, 224, 136);
+		// TODO: localization
+		_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, 81, 69, k4_ColorCyan, k0_ColorBlack,
+											 "GAME FROZEN", k136_heightViewport);
+		_vm->_displayMan->f97_drawViewport(k2_viewportAsBeforeSleepOrFreezeGame);
+		G0483_ps_PrimaryMouseInputBackup = _vm->_eventMan->_g441_primaryMouseInput;
+		G0484_ps_SecondaryMouseInputBackup = _vm->_eventMan->_g442_secondaryMouseInput;
+		G0481_ps_PrimaryKeyboardInputBackup = _g443_primaryKeyboardInput;
+		G0482_ps_SecondaryKeyboardInputBackup = _g444_secondaryKeyboardInput;
+		_vm->_eventMan->_g441_primaryMouseInput = g451_PrimaryMouseInput_FrozenGame;
+		_vm->_eventMan->_g442_secondaryMouseInput = 0;
+		_g443_primaryKeyboardInput = g461_primaryKeyboardInput_frozenGame;
+		_g444_secondaryKeyboardInput = nullptr;
+		f357_discardAllInput();
+		return;
+	}
+	if (cmdType == k148_CommandUnfreezeGame) {
+		_vm->_g301_gameTimeTicking = true;
+		_vm->_menuMan->f457_drawEnabledMenus();
+		_vm->_eventMan->_g441_primaryMouseInput = G0483_ps_PrimaryMouseInputBackup;
+		_vm->_eventMan->_g442_secondaryMouseInput = G0484_ps_SecondaryMouseInputBackup;
+		_g443_primaryKeyboardInput = G0481_ps_PrimaryKeyboardInputBackup;
+		_g444_secondaryKeyboardInput = G0482_ps_SecondaryKeyboardInputBackup;
+		f357_discardAllInput();
+		return;
+	}
+	if (cmdType == k200_CommandEntranceEnterDungeon) {
+		_vm->_g298_newGame = k1_modeLoadDungeon;
+		return;
+	}
+	if (cmdType == k201_CommandEntranceResume) {
+		_vm->_g298_newGame = k0_modeLoadSavedGame;
+		return;
+	}
+	if (cmdType == k202_CommandEntranceDrawCredits) {
+		warning(false, "MISSING CODE: F0442_STARTEND_ProcessCommand202_EntranceDrawCredits()");
+		return;
+	}
+	if ((cmdType >= k210_CommandClickOnDialogChoice_1) && (cmdType <= k213_CommandClickOnDialogChoice_4)) {
+		warning(false, "MISSING CODE:G0335_ui_SelectedDialogChoice = cmdType - (k210_CommandClickOnDialogChoice_1 - 1);");
+		return;
+	}
+	if (cmdType == k215_CommandRestartGame) {
+		_vm->_g523_restartGameRequest = true;
+	}
 }
 
 void EventManager::f365_commandTurnParty(CommandType cmdType) {

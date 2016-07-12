@@ -21,5 +21,8 @@ Todo:
 	I forgot to add a bunch of warning for show/hide mouse pointer and other mouse functions
 
 Finish stuff:
-	f261_processTimeline
-
+	f380_processCommandQueue
+	Missing main loop methods
+	F0577_VBLANK_Handler, if enought time passes, takes the player's chance to act
+		- TODO: implement it
+		- NOTE: _g318_waitForInputMaxVerticalBlankCount is already included in the engine
