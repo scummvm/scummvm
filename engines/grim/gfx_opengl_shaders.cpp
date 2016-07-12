@@ -909,6 +909,17 @@ void GfxOpenGLS::getShadowColor(byte *r, byte *g, byte *b) {
 	*b = _shadowColorB;
 }
 
+void GfxOpenGLS::destroyShadow(Shadow *shadow) {
+	ShadowUserData *sud = static_cast<ShadowUserData *>(shadow->userData);
+	if (sud) {
+		OpenGL::Shader::freeBuffer(sud->_verticesVBO);
+		OpenGL::Shader::freeBuffer(sud->_indicesVBO);
+		delete sud;
+	}
+
+	shadow->userData = nullptr;
+}
+
 void GfxOpenGLS::set3DMode() {
 
 }
@@ -1990,6 +2001,28 @@ void GfxOpenGLS::createEMIModel(EMIModel *model) {
 	}
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void GfxOpenGLS::destroyEMIModel(EMIModel *model) {
+	for (uint32 i = 0; i < model->_numFaces; ++i) {
+		EMIMeshFace *face = &model->_faces[i];
+		OpenGL::Shader::freeBuffer(face->_indicesEBO);
+		face->_indicesEBO = 0;
+	}
+
+	EMIModelUserData *mud = static_cast<EMIModelUserData *>(model->_userData);
+
+	if (mud) {
+		OpenGL::Shader::freeBuffer(mud->_verticesVBO);
+		OpenGL::Shader::freeBuffer(mud->_normalsVBO);
+		OpenGL::Shader::freeBuffer(mud->_texCoordsVBO);
+		OpenGL::Shader::freeBuffer(mud->_colorMapVBO);
+
+		delete mud->_shader;
+		delete mud;
+	}
+
+	model->_userData = nullptr;
 }
 
 void GfxOpenGLS::createMesh(Mesh *mesh) {

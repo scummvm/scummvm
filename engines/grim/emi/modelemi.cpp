@@ -465,6 +465,8 @@ EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *d
 }
 
 EMIModel::~EMIModel() {
+	g_driver->destroyEMIModel(this);
+
 	delete[] _vertices;
 	delete[] _drawVertices;
 	delete[] _normals;

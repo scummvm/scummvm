@@ -1935,8 +1935,7 @@ void Actor::clearShadowPlane(int i) {
 	shadow->active = false;
 	shadow->dontNegate = false;
 
-	// TODO: Clean up the userData properly
-	shadow->userData = nullptr;
+	g_driver->destroyShadow(shadow);
 }
 
 void Actor::putInSet(const Common::String &set) {

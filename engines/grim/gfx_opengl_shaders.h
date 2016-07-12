@@ -80,6 +80,7 @@ public:
 	virtual bool isShadowModeActive() override;
 	virtual void setShadowColor(byte r, byte g, byte b) override;
 	virtual void getShadowColor(byte *r, byte *g, byte *b) override;
+	virtual void destroyShadow(Shadow *shadow) override;
 
 	virtual void set3DMode() override;
 
@@ -206,6 +207,7 @@ public:
 	virtual void destroyMesh(const Mesh *mesh) override;
 	virtual void createEMIModel(EMIModel *model) override;
 	virtual void updateEMIModel(const EMIModel* model) override;
+	virtual void destroyEMIModel(EMIModel *model) override;
 
 	virtual void setBlendMode(bool additive) override;
 

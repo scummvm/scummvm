@@ -133,6 +133,7 @@ public:
 	virtual bool isShadowModeActive();
 	virtual void setShadowColor(byte r, byte g, byte b) = 0;
 	virtual void getShadowColor(byte *r, byte *g, byte *b) = 0;
+	virtual void destroyShadow(Shadow *shadow) {}
 
 	virtual void set3DMode() = 0;
 
@@ -265,6 +266,7 @@ public:
 	virtual void destroyMesh(const Mesh *mesh) {}
 	virtual void createEMIModel(EMIModel *model) {}
 	virtual void updateEMIModel(const EMIModel *model) {}
+	virtual void destroyEMIModel(EMIModel *model) {}
 
 	virtual int genBuffer() { return 0; }
 	virtual void delBuffer(int buffer) {}
