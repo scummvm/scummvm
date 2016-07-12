@@ -75,6 +75,8 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	void handle();
 	void handleClient(uint32 i);
 	void acceptClient();
+        
+        void resolveAddress(void *ipAddress);
 	
 public:
 	LocalWebserver();

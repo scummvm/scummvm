@@ -30,6 +30,13 @@
 #include "common/timer.h"
 #include <SDL/SDL_net.h>
 
+#ifdef POSIX
+#include <sys/types.h>
+#include <ifaddrs.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#endif
+
 namespace Common {
 class MemoryReadWriteStream;
 
@@ -87,23 +94,7 @@ void LocalWebserver::start() {
 		error("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
 	}
 
-	_address = Common::String::format("http://127.0.0.1:%u/ (unresolved)", SERVER_PORT);
-
-	const char *name = SDLNet_ResolveIP(&ip);
-	if (name == NULL) {
-		warning("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
-	} else {
-		IPaddress localIp;
-		if (SDLNet_ResolveHost(&localIp, name, SERVER_PORT) == -1) {
-			warning("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
-		} else {
-			_address = Common::String::format(
-				"http://%u.%u.%u.%u:%u/",
-				localIp.host & 0xFF, (localIp.host >> 8) & 0xFF, (localIp.host >> 16) & 0xFF, (localIp.host >> 24) & 0xFF,
-				SERVER_PORT
-			);
-		}
-	}
+	resolveAddress(&ip);
 
 	_serverSocket = SDLNet_TCP_Open(&ip);
 	if (!_serverSocket) {
@@ -237,6 +228,89 @@ void LocalWebserver::acceptClient() {
 			_client[i].open(_set, client);
 			break;
 		}
+}
+
+void LocalWebserver::resolveAddress(void *ipAddress) {
+	IPaddress *ip = (IPaddress *)ipAddress;
+
+	// not resolved
+	_address = Common::String::format("http://127.0.0.1:%u/ (unresolved)", SERVER_PORT);
+
+	// default way (might work everywhere, surely works on Windows)
+	const char *name = SDLNet_ResolveIP(ip);
+	if (name == NULL) {
+		warning("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
+	} else {
+		IPaddress localIp;
+		if (SDLNet_ResolveHost(&localIp, name, SERVER_PORT) == -1) {
+			warning("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
+		} else {
+			_address = Common::String::format(
+				"http://%u.%u.%u.%u:%u/",
+				localIp.host & 0xFF, (localIp.host >> 8) & 0xFF, (localIp.host >> 16) & 0xFF, (localIp.host >> 24) & 0xFF,
+				SERVER_PORT
+			);
+		}
+	}
+
+	// check that our trick worked
+	if (_address.contains("/127.0.0.1:") || _address.contains("localhost") || _address.contains("/0.0.0.0:"))
+		warning("Failed to resolve IP with the default way");
+	else
+		return;
+
+	// if not - try platform-specific
+#ifdef POSIX
+		struct ifaddrs *ifAddrStruct = NULL;
+		void *tmpAddrPtr = NULL;
+
+		getifaddrs(&ifAddrStruct);
+
+		for (struct ifaddrs *i = ifAddrStruct; i != NULL; i = i->ifa_next) {
+			if (!i->ifa_addr) {
+				continue;
+			}
+			
+			Common::String addr;
+			
+			// IPv4
+			if (i->ifa_addr->sa_family == AF_INET) { 
+				tmpAddrPtr = &((struct sockaddr_in *)i->ifa_addr)->sin_addr;
+				char addressBuffer[INET_ADDRSTRLEN];
+				inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
+				debug("%s IP Address %s", i->ifa_name, addressBuffer);
+				addr = addressBuffer;
+			}
+			
+			// IPv6
+			/*
+			if (i->ifa_addr->sa_family == AF_INET6) {
+				tmpAddrPtr = &((struct sockaddr_in6 *)i->ifa_addr)->sin6_addr;
+				char addressBuffer[INET6_ADDRSTRLEN];
+				inet_ntop(AF_INET6, tmpAddrPtr, addressBuffer, INET6_ADDRSTRLEN);
+				debug("%s IP Address %s", i->ifa_name, addressBuffer);
+				addr = addressBuffer;
+			}
+			*/
+			
+			if (addr.empty()) continue;
+			
+			// ignored IPv4 addresses
+			if (addr.equals("127.0.0.1") || addr.equals("0.0.0.0") || addr.equals("localhost"))
+				continue;
+
+			// ignored IPv6 addresses
+			/*
+			if (addr.equals("::1"))
+				continue;
+			*/
+			
+			// use the address found
+			_address = "http://" + addr + Common::String::format(":%u/", SERVER_PORT);
+		}
+		
+		if (ifAddrStruct != NULL) freeifaddrs(ifAddrStruct);
+#endif
 }
 
 void LocalWebserver::setClientGetHandler(Client &client, Common::String response, long code, const char *mimeType) {
