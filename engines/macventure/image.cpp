@@ -64,7 +64,7 @@ ImageAsset::ImageAsset(ObjID original, Container * container) {
 	_id = (original * 2);
 	_mask = (original * 2) + 1;
 
-	_container = container;	
+	_container = container;
 	decodePPIC(_id, _imgData);
 
 	if (_container->getItemByteSize(_mask)) // Has mask
@@ -124,9 +124,40 @@ void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data) {
 void ImageAsset::decodePPIC0(Common::BitStream & stream, Common::Array<byte> &data) {
 	warning("Untested loading function: decode PPIC0");
 	uint words = _bitWidth >> 4;
-	for (uint y = 0; y <_bitHeight; y++)
-		for (uint x = 0; x < words; x++)
-			data[y * words + x] = (byte)stream.getBits(8);
+	uint bytes = _bitWidth & 0xF;
+	uint v = 0;
+	uint p = 0;
+	for (uint y = 0; y <_bitHeight; y++) {
+		for (uint x = 0; x < words; x++) {
+			v = stream.peekBits(32);
+			stream.skip(16);
+			v >>= 16 - (stream.pos() % 8);
+			data[p] = (v >> 8) & 0xff; p++;
+			data[p] = v & 0xff; p++;
+		}
+		if (bytes) {
+			v = stream.getBits(bytes);
+			v <<= 16 - bytes;
+			data[p] = (v >> 8) & 0xff; p++;
+			data[p] = v & 0xff; p++;
+		}
+	}
+	/*
+	for (var i=0;i<words;i++)
+		{
+			v=ppic.peek32(); ppic.seek(2,ppic.cur);
+			v>>>=16-ppic.bit;
+			bitmap.data[p++]=(v>>8)&0xff;
+			bitmap.data[p++]=v&0xff;
+		}
+		if (bytes)
+		{
+			v=ppic.bits(bytes);
+			v<<=16-bytes;
+			bitmap.data[p++]=(v>>8)&0xff;
+			bitmap.data[p++]=v&0xff;
+		}
+		*/
 }
 
 void ImageAsset::decodePPIC1(Common::BitStream & stream, Common::Array<byte> &data) {
@@ -211,7 +242,7 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & st
 		pos += blank;
 	}
 
-	uint16 edge = _bitWidth & 3;	
+	uint16 edge = _bitWidth & 3;
 	if (edge) {
 		pos = _rowBytes - blank;
 		uint16 bits = 0;
@@ -332,10 +363,10 @@ void ImageAsset::blitInto(Graphics::ManagedSurface *target, uint32 x, uint32 y, 
 		} else if (_container->getItemByteSize(_id)) {
 			switch (mode) {
 			case MacVenture::kBlitBIC:
-				target->fillRect(Common::Rect(x, y, x + _bitWidth, y + _bitHeight * 2), kColorWhite);
+				target->fillRect(Common::Rect(x, y, x + _bitWidth, y + _bitHeight), kColorWhite);
 				break;
 			case MacVenture::kBlitOR:
-				target->fillRect(Common::Rect(x, y, x + _bitWidth, y + _bitHeight * 2), kColorBlack);
+				target->fillRect(Common::Rect(x, y, x + _bitWidth, y + _bitHeight), kColorBlack);
 				break;
 			default:
 				break;
@@ -345,7 +376,7 @@ void ImageAsset::blitInto(Graphics::ManagedSurface *target, uint32 x, uint32 y, 
 		if (_container->getItemByteSize(_id) && mode > 0) {
 			blitXOR(target, x, y, _imgData);
 		}
-	}	
+	}
 }
 
 bool ImageAsset::isPointInside(Common::Point point) {
@@ -357,6 +388,9 @@ bool ImageAsset::isPointInside(Common::Point point) {
 }
 
 bool ImageAsset::isRectInside(Common::Rect rect) {
+	// HACK is it &&, or ||?
+	if (_maskData.empty()) return (rect.width() > 0 && rect.height() > 0);
+
 	for (uint y = rect.top; y < rect.top + rect.height(); y++) {
 		uint bmpofs = y * _rowBytes;
 		byte pix;
@@ -389,7 +423,7 @@ void ImageAsset::blitDirect(Graphics::ManagedSurface * target, uint32 ox, uint32
 	if (h + oy >= target->h) h = target->h - oy;
 	if (w == 0 || h == 0) return;
 	*/
-	
+
 	for (uint y = 0; y < _bitHeight; y++) {
 		uint bmpofs = y * _rowBytes;
 		byte pix = 0;
@@ -418,7 +452,7 @@ void ImageAsset::blitBIC(Graphics::ManagedSurface * target, uint32 ox, uint32 oy
 		uint bmpofs = y * _rowBytes;
 		byte pix = 0;
 		for (uint x = 0; x < _bitWidth; x++) {
-			pix = data[bmpofs + (x >> 3)] & (1 << (7 - (x & 7)));			
+			pix = data[bmpofs + (x >> 3)] & (1 << (7 - (x & 7)));
 			if (pix) *((byte *)target->getBasePtr(ox + x, oy + y)) = kColorWhite;
 		}
 	}
@@ -470,7 +504,7 @@ void ImageAsset::blitXOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy
 			if (pix) { // We need to xor
 				byte p = *((byte *)target->getBasePtr(ox + x, oy + y));
 
-				*((byte *)target->getBasePtr(ox + x, oy + y)) = 
+				*((byte *)target->getBasePtr(ox + x, oy + y)) =
 					(p == kColorWhite) ? kColorBlack : kColorWhite;
 			}
 		}
