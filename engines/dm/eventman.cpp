@@ -656,7 +656,7 @@ void EventManager::f380_processCommandQueue() {
 		return;
 	}
 	if ((cmdType >= k125_CommandClickOnChamptionIcon_Top_Left) && (cmdType <= k128_CommandClickOnChamptionIcon_Lower_Left)) {
-		warning(false, "MISSING CODE: F0070_MOUSE_ProcessCommands125To128_ClickOnChampionIcon(cmdType - k125_CommandClickOnChamptionIcon_Top_Left);");
+		f70_mouseProcessCommands125To128_clickOnChampionIcon(cmdType - k125_CommandClickOnChamptionIcon_Top_Left);
 		return;
 	}
 	if ((cmdType >= k28_CommandClickOnSlotBoxInventoryReadyHand) && (cmdType < (k65_CommandClickOnSlotBoxChest_8 + 1))) {
@@ -1299,5 +1299,64 @@ void EventManager::f367_commandProcessTypes12to27_clickInChampionStatusBox(uint1
 			}
 		}
 	}
+}
+
+void EventManager::f70_mouseProcessCommands125To128_clickOnChampionIcon(uint16 champIconIndex) {
+	static Box G0621_s_Box_MousePointer_ChampionIconShadow = Box(2, 20, 2, 15);
+	static Box G0622_s_Box_MousePointer_ChampionIcon = Box(0, 18, 0, 13);
+	static byte G0045_auc_Graphic562_PaletteChanges_MousePointerIconShadow[16] = {0, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 0, 120, 120, 120}; 
+
+	uint16 L0052_ui_ChampionIconIndex;
+	int16 L0053_i_ChampionIndex;
+	int16 L0054_i_ChampionIndex;
+	Box* L0055_pi_ChampionIconBox;
+	register unsigned char* L0056_puc_Bitmap;
+
+
+	_gK100_preventBuildPointerScreenArea = true;
+	if (!_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap) {
+		if (_vm->_championMan->f285_getIndexInCell(M21_normalizeModulo4(champIconIndex + _vm->_dungeonMan->_g308_partyDir)) == kM1_ChampionNone) {
+			_gK100_preventBuildPointerScreenArea = false;
+			return;
+		}
+		_vm->_eventMan->_g598_mousePointerBitmapUpdated = true;
+		_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap = true;
+		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
+		L0056_puc_Bitmap = _gK190_mousePointerTempBuffer;
+		memset(L0056_puc_Bitmap, 0, 32 * 18);
+		L0055_pi_ChampionIconBox = &g54_BoxChampionIcons[champIconIndex];
+
+		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g348_bitmapScreen, L0056_puc_Bitmap, G0621_s_Box_MousePointer_ChampionIconShadow, L0055_pi_ChampionIconBox->_x1, L0055_pi_ChampionIconBox->_y1, k160_byteWidthScreen, k16_byteWidth, k0_ColorBlack, 200, 18);
+
+		_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(L0056_puc_Bitmap, _g613_mousePointerOriginalColorsChampionIcon, 32, 18, 32, 18, G0045_auc_Graphic562_PaletteChanges_MousePointerIconShadow);
+
+		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g348_bitmapScreen, _g613_mousePointerOriginalColorsChampionIcon, G0622_s_Box_MousePointer_ChampionIcon, L0055_pi_ChampionIconBox->_x1, L0055_pi_ChampionIconBox->_y1, k160_byteWidthScreen, k16_byteWidth, k0_ColorBlack, 200, 18);
+
+		_vm->_displayMan->D24_fillScreenBox(*L0055_pi_ChampionIconBox, k0_ColorBlack);
+		_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->M0_indexToOrdinal(champIconIndex);
+	} else {
+		_vm->_eventMan->_g598_mousePointerBitmapUpdated = true;
+		L0052_ui_ChampionIconIndex = _vm->M1_ordinalToIndex(_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap);
+		_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->M0_indexToOrdinal(kM1_ChampionNone);
+		L0054_i_ChampionIndex = _vm->_championMan->f285_getIndexInCell(M21_normalizeModulo4(L0052_ui_ChampionIconIndex + _vm->_dungeonMan->_g308_partyDir));
+		if (L0052_ui_ChampionIconIndex == champIconIndex) {
+			setFlag(_vm->_championMan->_gK71_champions[L0054_i_ChampionIndex]._attributes, k0x0400_ChampionAttributeIcon);
+			_vm->_championMan->f292_drawChampionState((ChampionIndex)L0054_i_ChampionIndex);
+		} else {
+			L0053_i_ChampionIndex = _vm->_championMan->f285_getIndexInCell(M21_normalizeModulo4(champIconIndex + _vm->_dungeonMan->_g308_partyDir));
+			if (L0053_i_ChampionIndex >= 0) {
+				_vm->_championMan->_gK71_champions[L0053_i_ChampionIndex]._cell = (ViewCell)M21_normalizeModulo4(L0052_ui_ChampionIconIndex + _vm->_dungeonMan->_g308_partyDir);
+				setFlag(_vm->_championMan->_gK71_champions[L0053_i_ChampionIndex]._attributes, k0x0400_ChampionAttributeIcon);
+				_vm->_championMan->f292_drawChampionState((ChampionIndex)L0053_i_ChampionIndex);
+			} else {
+				_vm->_displayMan->D24_fillScreenBox(g54_BoxChampionIcons[L0052_ui_ChampionIconIndex], k0_ColorBlack);
+			}
+			_vm->_championMan->_gK71_champions[L0054_i_ChampionIndex]._cell = (ViewCell)M21_normalizeModulo4(champIconIndex + _vm->_dungeonMan->_g308_partyDir);
+			setFlag(_vm->_championMan->_gK71_champions[L0054_i_ChampionIndex]._attributes, k0x0400_ChampionAttributeIcon);
+			_vm->_championMan->f292_drawChampionState((ChampionIndex)L0054_i_ChampionIndex);
+		}
+	}
+	_gK100_preventBuildPointerScreenArea = false;
+	f73_buildpointerScreenArea(_mousePos.x, _mousePos.y);
 }
 } // end of namespace DM

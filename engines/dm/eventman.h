@@ -299,6 +299,7 @@ public:
 	void f364_commandTakeStairs(bool stairsGoDown);// @ F0364_COMMAND_TakeStairs
 	void f367_commandProcessTypes12to27_clickInChampionStatusBox(uint16 champIndex, int16 posX,
 																 int16 posY); // @ F0367_COMMAND_ProcessTypes12To27_ClickInChampionStatusBox
+	void f70_mouseProcessCommands125To128_clickOnChampionIcon(uint16 champIconIndex); // @ F0070_MOUSE_ProcessCommands125To128_ClickOnChampionIcon
 
 };
 
