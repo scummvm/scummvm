@@ -50,7 +50,6 @@ GfxBase *CreateGfxTinyGL() {
 GfxTinyGL::GfxTinyGL() :
 		_zb(nullptr), _alpha(1.f),
 		_bufferId(0), _currentActor(nullptr) {
-	g_driver = this;
 	_storedDisplay = nullptr;
 	// TGL_LEQUAL as tglDepthFunc ensures that subsequent drawing attempts for
 	// the same triangles are not ignored by the depth test.
