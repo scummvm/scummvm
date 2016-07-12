@@ -83,6 +83,16 @@ protected:
 	bool supportsAudioTrackSwitching() const { return true; }
 	AudioTrack *getAudioTrack(int index);
 
+	/**
+	 * Define a track to be used by this class.
+	 *
+	 * The pointer is then owned by this base class.
+	 *
+	 * @param track The track to add
+	 * @param isExternal Is this an external track not found by loadStream()?
+	 */
+	void addTrack(Track *track, bool isExternal = false);
+
 	struct BitmapInfoHeader {
 		uint32 size;
 		uint32 width;
@@ -166,6 +176,7 @@ protected:
 		uint32 quality;
 		uint32 sampleSize;
 		Common::Rect frame;
+		Common::String name;
 	};
 
 	class AVIVideoTrack : public FixedRateVideoTrack {
@@ -181,6 +192,7 @@ protected:
 		Graphics::PixelFormat getPixelFormat() const;
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const { return _frameCount; }
+		Common::String &getName() { return _vidsHeader.name; }
 		const Graphics::Surface *decodeNextFrame() { return _lastFrame; }
 
 		const byte *getPalette() const;
@@ -224,6 +236,7 @@ protected:
 		void skipAudio(const Audio::Timestamp &time, const Audio::Timestamp &frameTime);
 		virtual void resetStream();
 		uint32 getCurChunk() const { return _curChunk; }
+		Common::String &getName() { return _audsHeader.name; }
 		void setCurChunk(uint32 chunk) { _curChunk = chunk; }
 
 		bool isRewindable() const { return true; }
@@ -272,6 +285,7 @@ protected:
 	Common::Rational _frameRateOverride;
 
 	int _videoTrackCounter, _audioTrackCounter;
+	Track *_lastAddedTrack;
 	SelectTrackFn _selectTrackFn;
 
 	void initCommon();
@@ -280,6 +294,7 @@ protected:
 	void skipChunk(uint32 size);
 	void handleList(uint32 listSize);
 	void handleStreamHeader(uint32 size);
+	void readStreamName(uint32 size);
 	uint16 getStreamType(uint32 tag) const { return tag & 0xFFFF; }
 	byte getStreamIndex(uint32 tag) const;
 	void checkTruemotion1();

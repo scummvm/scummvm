@@ -101,6 +101,7 @@ void AVIDecoder::initCommon() {
 	_movieListEnd = 0;
 	_fileStream = 0;
 	_videoTrackCounter = _audioTrackCounter = 0;
+	_lastAddedTrack = nullptr;
 	memset(&_header, 0, sizeof(_header));
 }
 
@@ -147,9 +148,11 @@ bool AVIDecoder::parseNextChunk() {
 	case ID_JUNQ: // Same as JUNK, safe to ignore
 	case ID_ISFT: // Metadata, safe to ignore
 	case ID_DISP: // Metadata, should be safe to ignore
-	case ID_STRN: // Metadata, safe to ignore
 	case ID_DMLH: // OpenDML extension, contains an extra total frames field, safe to ignore
 		skipChunk(size);
+		break;
+	case ID_STRN: // Metadata, safe to ignore
+		readStreamName(size);
 		break;
 	case ID_IDX1:
 		readOldIndex(size);
@@ -265,8 +268,7 @@ void AVIDecoder::handleStreamHeader(uint32 size) {
 			}
 		}
 
-		if (!_selectTrackFn || _selectTrackFn(true, _videoTrackCounter++))
-			addTrack(new AVIVideoTrack(_header.totalFrames, sHeader, bmInfo, initialPalette));
+		addTrack(new AVIVideoTrack(_header.totalFrames, sHeader, bmInfo, initialPalette));
 	} else if (sHeader.streamType == ID_AUDS) {
 		PCMWaveFormat wvInfo;
 		wvInfo.tag = _fileStream->readUint16LE();
@@ -281,15 +283,46 @@ void AVIDecoder::handleStreamHeader(uint32 size) {
 		if (wvInfo.channels == 2)
 			sHeader.sampleSize /= 2;
 
-		if (!_selectTrackFn || _selectTrackFn(false, _audioTrackCounter++)) {
-			AVIAudioTrack *track = createAudioTrack(sHeader, wvInfo);
-			track->createAudioStream();
-			addTrack(track);
-		}
+		AVIAudioTrack *track = createAudioTrack(sHeader, wvInfo);
+		track->createAudioStream();
+		addTrack(track);
 	}
 
 	// Ensure that we're at the end of the chunk
 	_fileStream->seek(startPos + strfSize);
+}
+
+void AVIDecoder::addTrack(Track *track, bool isExternal) {
+	if (!_selectTrackFn ||
+			(dynamic_cast<AVIVideoTrack *>(track) && _selectTrackFn(true, _videoTrackCounter++)) ||
+			(dynamic_cast<AVIAudioTrack *>(track) && _selectTrackFn(false, _audioTrackCounter++))) {
+		VideoDecoder::addTrack(track, isExternal);
+		_lastAddedTrack = track;
+	} else {
+		_lastAddedTrack = nullptr;
+	}
+}
+
+void AVIDecoder::readStreamName(uint32 size) {
+	if (!_lastAddedTrack) {
+		skipChunk(size);
+	} else {
+		// Get in the name
+		assert(size > 0 && size < 64);
+		char buffer[64];
+		_fileStream->read(buffer, size);
+		if (size & 1)
+			_fileStream->skip(1);
+
+		// Apply it to the most recently read stream
+		assert(_lastAddedTrack);
+		AVIVideoTrack *vidTrack = dynamic_cast<AVIVideoTrack *>(_lastAddedTrack);
+		AVIAudioTrack *audTrack = dynamic_cast<AVIAudioTrack *>(_lastAddedTrack);
+		if (vidTrack)
+			vidTrack->getName() = Common::String(buffer);
+		else if (audTrack)
+			audTrack->getName() = Common::String(buffer);
+	}
 }
 
 bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
@@ -301,7 +334,7 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 		return false;
 	}
 
-	uint32 fileSize = stream->readUint32LE();
+	int32 fileSize = stream->readUint32LE();
 	uint32 riffType = stream->readUint32BE();
 
 	if (riffType != ID_AVI) {
