@@ -97,7 +97,7 @@
 				padding = '0, 0, 2, 0'
 		/>
 		<widget name = 'TabWidget.Body'
-				padding = '0, 0, 0, -8'
+				padding = '0, 0, 0, 0'
 		/>
 		<widget name = 'TabWidget.NavButton'
 				size = '32, 18'
@@ -219,7 +219,7 @@
 
 	<dialog name = 'GlobalOptions' overlays = 'screen' inset = '16' shading = 'dim'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
-			<widget name = 'TabWidget'/>
+			<widget name = 'TabWidget' type = 'TabWidget'/>
 			<layout type = 'horizontal' padding = '8, 8, 8, 8'>
 				<space/>
 				<widget name = 'Cancel'
@@ -556,7 +556,7 @@
 
 	<dialog name = 'GameOptions' overlays = 'screen' inset = '16' shading = 'dim'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '16'>
-			<widget name = 'TabWidget'/>
+			<widget name = 'TabWidget' type = 'TabWidget'/>
 			<layout type = 'horizontal' padding = '8, 8, 8, 8'>
 				<space/>
 				<widget name = 'Cancel'
@@ -863,7 +863,7 @@
 
 	<dialog name = 'FluidSynthSettings' overlays = 'GlobalOptions' shading = 'dim'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
-			<widget name = 'TabWidget'/>
+			<widget name = 'TabWidget' type = 'TabWidget'/>
 			<layout type = 'horizontal' padding = '8, 8, 8, 8'>
 				<space/>
 				<widget name = 'ResetSettings'
