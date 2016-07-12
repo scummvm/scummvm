@@ -143,9 +143,6 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	g_system->setWindowCaption("ResidualVM: OpenGL Renderer");
 
-	// Load emergency built-in font
-	loadEmergFont();
-
 	int screenSize = _screenWidth * _screenHeight * 4;
 	_storedDisplay = new byte[screenSize];
 	memset(_storedDisplay, 0, screenSize);

@@ -257,6 +257,7 @@ GfxOpenGLS::~GfxOpenGLS() {
 	delete _dimPlaneProgram;
 	delete _dimRegionProgram;
 	glDeleteTextures(1, &_storedDisplay);
+	glDeleteTextures(1, &_emergTexture);
 }
 
 void GfxOpenGLS::setupZBuffer() {
@@ -421,9 +422,6 @@ byte *GfxOpenGLS::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	setupZBuffer();
 	setupShaders();
-
-	// Load emergency built-in font
-	loadEmergFont();
 
 	glViewport(0, 0, _screenWidth, _screenHeight);
 

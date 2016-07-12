@@ -273,6 +273,7 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
 	}
 
 	renderer->setupScreen(screenW, screenH, fullscreen);
+	renderer->loadEmergFont();
 	return renderer;
 }
 
@@ -346,7 +347,6 @@ Common::Error GrimEngine::run() {
 	g_sound = new SoundPlayer();
 
 	g_driver = createRenderer(640, 480);
-	g_driver->loadEmergFont();
 
 	if (getGameType() == GType_MONKEY4 && SearchMan.hasFile("AMWI.m4b")) {
 		// Play EMI Mac Aspyr logo
