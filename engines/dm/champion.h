@@ -525,7 +525,7 @@ public:
 											   uint16 ammunitionSlotIndex); // @ F0294_CHAMPION_IsAmmunitionCompatibleWithWeapon
 	void f293_drawAllChampionStates(); // @ F0293_CHAMPION_DrawAllChampionStates
 	void f283_viAltarRebirth(uint16 champIndex); // @ F0283_CHAMPION_ViAltarRebirth
-
+	void f302_processCommands28to65_clickOnSlotBox(uint16 slotBoxIndex); // @ F0302_CHAMPION_ProcessCommands28To65_ClickOnSlotBox
 
 
 

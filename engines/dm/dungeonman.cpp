@@ -1251,44 +1251,46 @@ uint16 DungeonMan::f140_getObjectWeight(Thing thing) {
 		2, 0, 8
 	};
 
+	Junk* junk;
+	uint16 weight;
+
 	if (thing == Thing::_none)
 		return 0;
+
+	junk = (Junk*)f156_getThingData(thing);
 	switch (thing.getType()) {
 	case k5_WeaponThingType:
-		return g238_WeaponInfo[Weapon(f156_getThingData(thing)).getType()]._weight;
-	case k6_ArmourThingType:
-		return g239_ArmourInfo[Armour(f156_getThingData(thing)).getType()]._weight;
-	case k10_JunkThingType: {
-		Junk junk(f156_getThingData(thing));
-		uint16 weight = g241_junkInfo[junk.getType()];
-		if (junk.getType() == k1_JunkTypeWaterskin)
-			weight += junk.getChargeCount() * 2;
-		return weight;
-	}
-	case k9_ContainerThingType: {
-		uint16 weight = 50;
-		Container container(f156_getThingData(thing));
-		Thing slotThing = container.getSlot();
-		while (slotThing != Thing::_endOfList) {
-			weight += f140_getObjectWeight(slotThing);
-			slotThing = f159_getNextThing(slotThing);
-		}
-		return weight;
-	}
-	case k8_PotionThingType:
-		if (Junk(f156_getThingData(thing)).getType() == k20_PotionTypeEmptyFlask) {
-			return 1;
-		} else {
-			return 3;
-		}
-	case k7_ScrollThingType:
-		return 1;
-	default:
+		weight = g238_WeaponInfo[((Weapon*)junk)->getType()]._weight;
 		break;
+	case k6_ArmourThingType:
+		weight = g239_ArmourInfo[((Armour*)junk)->getType()]._weight;
+		break;
+	case k10_JunkThingType:
+		weight = g241_junkInfo[junk->getType()];
+		if (junk->getType() == k1_JunkTypeWaterskin) {
+			weight += junk->getChargeCount() << 1;
+		}
+		break;
+	case k9_ContainerThingType:
+		weight = 50;
+		thing = ((Container*)junk)->getSlot();
+		while (thing != Thing::_endOfList) {
+			weight += f140_getObjectWeight(thing);
+			thing = f159_getNextThing(thing);
+		}
+		break;
+	case k8_PotionThingType:
+		if (((Potion*)junk)->getType() == k20_PotionTypeEmptyFlask) {
+			weight = 1;
+		} else {
+			weight = 3;
+		}
+		break;
+	case k7_ScrollThingType:
+		weight = 1;
 	}
 
-	assert(false); // this should never be taken
-	return 0; // dummy
+	return weight; // this is garbage if none of the branches were taken
 }
 
 

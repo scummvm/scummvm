@@ -297,6 +297,8 @@ public:
 	void f379_drawSleepScreen(); // @ F0379_COMMAND_DrawSleepScreen
 	void f357_discardAllInput(); // @ F0357_COMMAND_DiscardAllInput
 	void f364_commandTakeStairs(bool stairsGoDown);// @ F0364_COMMAND_TakeStairs
+	void f367_commandProcessTypes12to27_clickInChampionStatusBox(uint16 champIndex, int16 posX,
+																 int16 posY); // @ F0367_COMMAND_ProcessTypes12To27_ClickInChampionStatusBox
 
 };
 

@@ -651,7 +651,7 @@ void EventManager::f380_processCommandQueue() {
 	}
 	if ((cmdType >= k12_CommandClickInChampion_0_StatusBox) && (cmdType <= k15_CommandClickInChampion_3_StatusBox)) {
 		if (((AL1159_i_ChampionIndex = cmdType - k12_CommandClickInChampion_0_StatusBox) < _vm->_championMan->_g305_partyChampionCount) && !_vm->_championMan->_g299_candidateChampionOrdinal) {
-			warning(false, "MISSING CODE: F0367_COMMAND_ProcessTypes12To27_ClickInChampionStatusBox(AL1159_i_ChampionIndex, L1161_i_CommandX, L1162_i_CommandY);");
+			f367_commandProcessTypes12to27_clickInChampionStatusBox(AL1159_i_ChampionIndex, L1161_i_CommandX, L1162_i_CommandY);
 		}
 		return;
 	}
@@ -1282,5 +1282,22 @@ void EventManager::f364_commandTakeStairs(bool stairsGoDown) {
 	_vm->_dungeonMan->f173_setCurrentMap(_vm->_g327_newPartyMapIndex);
 	_vm->_championMan->f284_setPartyDirection(_vm->_dungeonMan->f155_getStairsExitDirection(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY));
 	_vm->_dungeonMan->f173_setCurrentMap(_vm->_dungeonMan->_g309_partyMapIndex);
+}
+
+void EventManager::f367_commandProcessTypes12to27_clickInChampionStatusBox(uint16 champIndex, int16 posX, int16 posY) {
+	uint16 L1126_ui_Command;
+
+	if (_vm->M0_indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
+		_vm->_eventMan->f368_commandSetLeader((ChampionIndex)champIndex);
+	} else {
+		L1126_ui_Command = _vm->_eventMan->f358_getCommandTypeFromMouseInput(g455_MouseInput_ChampionNamesHands, Common::Point(posX, posY), k1_LeftMouseButton);
+		if ((L1126_ui_Command >= k16_CommandSetLeaderChampion_0) && (L1126_ui_Command <= k19_CommandSetLeaderChampion_3)) {
+			_vm->_eventMan->f368_commandSetLeader((ChampionIndex)(L1126_ui_Command - k16_CommandSetLeaderChampion_0));
+		} else {
+			if ((L1126_ui_Command >= k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand) && (L1126_ui_Command <= k27_CommandClickOnSlotBoxChampion_3_StatusBoxActionHand)) {
+				_vm->_championMan->f302_processCommands28to65_clickOnSlotBox(L1126_ui_Command - k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand);
+			}
+		}
+	}
 }
 } // end of namespace DM

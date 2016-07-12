@@ -39,6 +39,47 @@
 
 namespace DM {
 
+uint16 g38_slotMasks[38] = { // @ G0038_ai_Graphic562_SlotMasks
+	/* 30 for champion inventory, 8 for chest */
+	0xFFFF,   /* Ready Hand       Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	0xFFFF,   /* Action Hand      Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	0x0002,   /* Head             Head */
+	0x0008,   /* Torso            Torso */
+	0x0010,   /* Legs             Legs */
+	0x0020,   /* Feet             Feet */
+	0x0100,   /* Pouch 2          Pouch */
+	0x0080,   /* Quiver Line2 1   Quiver 2 */
+	0x0080,   /* Quiver Line1 2   Quiver 2 */
+	0x0080,   /* Quiver Line2 2   Quiver 2 */
+	0x0004,   /* Neck             Neck */
+	0x0100,   /* Pouch 1          Pouch */
+	0x0040,   /* Quiver Line1 1   Quiver 1 */
+	0xFFFF,   /* Backpack Line1 1 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	0xFFFF,   /* Backpack Line2 2 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	0xFFFF,   /* Backpack Line2 3 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	0xFFFF,   /* Backpack Line2 4 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	0xFFFF,   /* Backpack Line2 5 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	0xFFFF,   /* Backpack Line2 6 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	0xFFFF,   /* Backpack Line2 7 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	0xFFFF,   /* Backpack Line2 8 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	0xFFFF,   /* Backpack Line2 9 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	0xFFFF,   /* Backpack Line1 2 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	0xFFFF,   /* Backpack Line1 3 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	0xFFFF,   /* Backpack Line1 4 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	0xFFFF,   /* Backpack Line1 5 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	0xFFFF,   /* Backpack Line1 6 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	0xFFFF,   /* Backpack Line1 7 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	0xFFFF,   /* Backpack Line1 8 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	0xFFFF,   /* Backpack Line1 9 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	0x0400,   /* Chest 1          Chest */
+	0x0400,   /* Chest 2          Chest */
+	0x0400,   /* Chest 3          Chest */
+	0x0400,   /* Chest 4          Chest */
+	0x0400,   /* Chest 5          Chest */
+	0x0400,   /* Chest 6          Chest */
+	0x0400,   /* Chest 7          Chest */
+	0x0400}; /* Chest 8          Chest */
+
 const char *g417_baseSkillName[4] = {"FIGHTER", "NINJA", "PRIEST", "WIZARD"};
 
 Box gBoxMouth = Box(55, 72, 12, 29); // @ G0048_s_Graphic562_Box_Mouth 
@@ -1217,6 +1258,53 @@ void ChampionMan::f283_viAltarRebirth(uint16 champIndex) {
 	L0832_ps_Champion->_dir = _vm->_dungeonMan->_g308_partyDir;
 	setFlag(L0832_ps_Champion->_attributes, k0x8000_ChampionAttributeActionHand | k0x1000_ChampionAttributeStatusBox | k0x0400_ChampionAttributeIcon);
 	_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
+}
+
+void ChampionMan::f302_processCommands28to65_clickOnSlotBox(uint16 slotBoxIndex) {
+	uint16 L0903_ui_ChampionIndex;
+	uint16 L0904_ui_SlotIndex;
+	Thing L0905_T_LeaderHandObject;
+	Thing L0906_T_SlotThing;
+
+
+	if (slotBoxIndex < k8_SlotBoxInventoryFirstSlot) {
+		if (_vm->_championMan->_g299_candidateChampionOrdinal) {
+			return;
+		}
+		L0903_ui_ChampionIndex = slotBoxIndex >> 1;
+		if ((L0903_ui_ChampionIndex >= _vm->_championMan->_g305_partyChampionCount) || (_vm->M0_indexToOrdinal(L0903_ui_ChampionIndex) == (int)_vm->_inventoryMan->_g432_inventoryChampionOrdinal) || !_vm->_championMan->_gK71_champions[L0903_ui_ChampionIndex]._currHealth) {
+			return;
+		}
+		L0904_ui_SlotIndex = _vm->_championMan->M70_handSlotIndex(slotBoxIndex);
+	} else {
+		L0903_ui_ChampionIndex = _vm->M1_ordinalToIndex(_vm->_inventoryMan->_g432_inventoryChampionOrdinal);
+		L0904_ui_SlotIndex = slotBoxIndex - k8_SlotBoxInventoryFirstSlot;
+	}
+	L0905_T_LeaderHandObject = _vm->_championMan->_g414_leaderHandObject;
+	if (L0904_ui_SlotIndex >= k30_ChampionSlotChest_1) {
+		L0906_T_SlotThing = _vm->_inventoryMan->_g425_chestSlots[L0904_ui_SlotIndex - k30_ChampionSlotChest_1];
+	} else {
+		L0906_T_SlotThing = _vm->_championMan->_gK71_champions[L0903_ui_ChampionIndex]._slots[L0904_ui_SlotIndex];
+	}
+	if ((L0906_T_SlotThing == Thing::_none) && (L0905_T_LeaderHandObject == Thing::_none)) {
+		return;
+	}
+	if ((L0905_T_LeaderHandObject != Thing::_none) && (!(g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(L0905_T_LeaderHandObject)]._allowedSlots & g38_slotMasks[L0904_ui_SlotIndex]))) {
+		return;
+	}
+	_vm->_eventMan->f78_showMouse();
+	if (L0905_T_LeaderHandObject != Thing::_none) {
+		f298_getObjectRemovedFromLeaderHand();
+	}
+	if (L0906_T_SlotThing != Thing::_none) {
+		f300_getObjectRemovedFromSlot(L0903_ui_ChampionIndex, L0904_ui_SlotIndex);
+		f297_putObjectInLeaderHand(L0906_T_SlotThing, false); 
+	}
+	if (L0905_T_LeaderHandObject != Thing::_none) {
+		_vm->_championMan->f301_addObjectInSlot((ChampionIndex)L0903_ui_ChampionIndex, L0905_T_LeaderHandObject, (ChampionSlot)L0904_ui_SlotIndex);
+	}
+	_vm->_championMan->f292_drawChampionState((ChampionIndex)L0903_ui_ChampionIndex);
+	_vm->_eventMan->f77_hideMouse();
 }
 
 ChampionIndex ChampionMan::f285_getIndexInCell(int16 cell) {
