@@ -168,7 +168,7 @@ void Lingo::initTheEntities() {
 	TheEntityField *f = fields;
 
 	while (f->entity != kTheNOEntity) {
-		_theEntityFields[f->name] = f;
+		_theEntityFields[Common::String::format("%d%s", f->entity, f->name)] = f;
 		f++;
 	}
 }

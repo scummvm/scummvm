@@ -101,10 +101,6 @@ whitespace [\t ]
 		while (*ptr != ' ' && *ptr != '\t')
 			field += *ptr++;
 
-		if (!g_lingo->_theEntityFields.contains(field)) {
-			error("Unhandled the field %s", ptr);
-		}
-
 		while (*ptr == ' ' || *ptr == '\t')
 			ptr++;
 
@@ -114,6 +110,12 @@ whitespace [\t ]
 			ptr++;
 
 		if (g_lingo->_theEntities.contains(ptr)) {
+			field = Common::String::format("%d%s", g_lingo->_theEntities[ptr]->entity, field.c_str());
+
+			if (!g_lingo->_theEntityFields.contains(field)) {
+				error("Unhandled the field %s", ptr);
+			}
+
 			if (g_lingo->_theEntityFields[field]->entity != g_lingo->_theEntities[ptr]->entity)
 				error("Unsupported field '%s' for entity '%s'", field.c_str(), ptr);
 
@@ -143,8 +145,6 @@ whitespace [\t ]
 				return THEENTITYWITHID;
 			else
 				return THEENTITY;
-		} else if (g_lingo->_theEntityFields.contains(ptr)) {
-			error("the field without entity: %s", ptr);
 		}
 
 		error("Unhandled the entity %s", ptr);
