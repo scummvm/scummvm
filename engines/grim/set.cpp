@@ -752,6 +752,7 @@ void SetShadow::loadBinary(Common::SeekableReadStream *data, Set *set) {
 	_color._vals[0] = (byte)data->readSint32LE();
 	_color._vals[1] = (byte)data->readSint32LE();
 	_color._vals[2] = (byte)data->readSint32LE();
+	delete[] lightName;
 	delete[] name;
 }
 
