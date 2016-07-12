@@ -28,6 +28,7 @@
 #include <backends/cloud/storage.h>
 
 namespace GUI {
+class LauncherDialog;
 
 class CommandSender;
 class EditTextWidget;
@@ -43,6 +44,7 @@ enum DownloadProgress {
 };
 
 class DownloadDialog : public Dialog {
+	LauncherDialog *_launcher;
 	BrowserDialog *_browser;
 	RemoteBrowserDialog *_remoteBrowser;
 	
@@ -58,10 +60,9 @@ class DownloadDialog : public Dialog {
 
 	void refreshWidgets();
 	bool selectDirectories();
-	void addGame();
 
 public:
-	DownloadDialog(uint32 storageId);
+	DownloadDialog(uint32 storageId, LauncherDialog *launcher);
 	virtual ~DownloadDialog();
 
 	virtual void open();

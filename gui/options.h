@@ -42,6 +42,7 @@
 #endif
 
 namespace GUI {
+class LauncherDialog;
 
 class CheckboxWidget;
 class PopUpWidget;
@@ -204,7 +205,7 @@ protected:
 
 class GlobalOptionsDialog : public OptionsDialog {
 public:
-	GlobalOptionsDialog();
+	GlobalOptionsDialog(LauncherDialog *launcher);
 	~GlobalOptionsDialog();
 
 	void open();
@@ -215,6 +216,7 @@ public:
 	virtual void reflowLayout();
 
 protected:
+	LauncherDialog *_launcher;
 #ifdef GUI_ENABLE_KEYSDIALOG
 	KeysDialog *_keysDialog;
 #endif

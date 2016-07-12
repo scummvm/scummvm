@@ -28,6 +28,7 @@
 #include "gui/browser.h"
 #include "gui/chooser.h"
 #include "gui/editgamedialog.h"
+#include "gui/launcher.h"
 #include "gui/message.h"
 #include "gui/remotebrowser.h"
 #include "gui/widgets/edittext.h"
@@ -39,8 +40,8 @@ enum {
 	kDownloadDialogButtonCmd = 'Dldb'	
 };
 
-DownloadDialog::DownloadDialog(uint32 storageId):
-	Dialog("GlobalOptions_Cloud_DownloadDialog"), _close(false) {
+DownloadDialog::DownloadDialog(uint32 storageId, LauncherDialog *launcher):
+	Dialog("GlobalOptions_Cloud_DownloadDialog"), _launcher(launcher), _close(false) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	_browser = new BrowserDialog(_("Select directory where to download game data"), true);
@@ -165,82 +166,14 @@ bool DownloadDialog::selectDirectories() {
 
 void DownloadDialog::handleTickle() {
 	if (_close) {
-		addGame();
+		if (_launcher)
+			_launcher->doGameDetection(_localDirectory);
 		close();
 		_close = false;
 		return;
 	}
 
 	Dialog::handleTickle();
-}
-
-void DownloadDialog::addGame() {
-	// Allow user to add a new game to the list.
-	// 2) try to auto detect which game is in the directory, if we cannot
-	//    determine it uniquely present a list of candidates to the user
-	//    to pick from
-	// 3) Display the 'Edit' dialog for that item, letting the user specify
-	//    an alternate description (to distinguish multiple versions of the
-	//    game, e.g. 'Monkey German' and 'Monkey English') and set default
-	//    options for that game
-	// 4) If no game is found in the specified directory, return to the
-	//    dialog.
-
-	// User made his choice...
-	Common::FSNode dir(_localDirectory);
-	Common::FSList files;
-	if (!dir.getChildren(files, Common::FSNode::kListAll)) {
-		MessageDialog alert(_("ScummVM couldn't open the specified directory!"));
-		alert.runModal();
-		return;
-	}
-
-	// ...so let's determine a list of candidates, games that
-	// could be contained in the specified directory.
-	GameList candidates(EngineMan.detectGames(files));
-
-	int idx;
-	if (candidates.empty()) {
-		// No game was found in the specified directory
-		MessageDialog alert(_("ScummVM could not find any game in the specified directory!"));
-		alert.runModal();
-		return;
-	}
-				
-	if (candidates.size() == 1) {
-		// Exact match
-		idx = 0;
-	} else {
-		// Display the candidates to the user and let her/him pick one
-		Common::StringArray list;
-		for (idx = 0; idx < (int)candidates.size(); idx++)
-			list.push_back(candidates[idx].description());
-
-		ChooserDialog dialog(_("Pick the game:"));
-		dialog.setList(list);
-		idx = dialog.runModal();
-	}
-	if (0 <= idx && idx < (int)candidates.size()) {
-		GameDescriptor result = candidates[idx];
-
-		// TODO: Change the detectors to set "path" !
-		result["path"] = dir.getPath();
-
-		Common::String domain = addGameToConf(result);
-
-		// Display edit dialog for the new entry
-		EditGameDialog editDialog(domain, result.description());
-		if (editDialog.runModal() > 0) {
-			// User pressed OK, so make changes permanent
-
-			// Write config to disk
-			ConfMan.flushToDisk();
-		} else {
-			// User aborted, remove the the new domain again
-			ConfMan.removeGameDomain(domain);
-		}
-
-	}
 }
 
 void DownloadDialog::reflowLayout() {

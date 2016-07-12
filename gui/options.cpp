@@ -1099,8 +1099,8 @@ void OptionsDialog::reflowLayout() {
 #pragma mark -
 
 
-GlobalOptionsDialog::GlobalOptionsDialog()
-	: OptionsDialog(Common::ConfigManager::kApplicationDomain, "GlobalOptions") {
+GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
+	: OptionsDialog(Common::ConfigManager::kApplicationDomain, "GlobalOptions"), _launcher(launcher) {
 
 	// The tab widget
 	TabWidget *tab = new TabWidget(this, "GlobalOptions.TabWidget");
@@ -1632,7 +1632,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 	case kDownloadStorageCmd:
 	{
-		DownloadDialog dialog(_selectedStorageIndex);
+		DownloadDialog dialog(_selectedStorageIndex, _launcher);
 		dialog.runModal();
 		break;
 	}
