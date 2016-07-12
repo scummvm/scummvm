@@ -885,8 +885,8 @@ void Kernel::loadKernelNames(GameFeatures *features) {
 			// how kDoSound is called from Sound::play().
 			// Known games that use this:
 			// GK2 demo
-			// KQ7 1.4
-			// PQ4 SWAT demo
+			// KQ7 1.4/1.51
+			// PQ:SWAT demo
 			// LSL6
 			// PQ4CD
 			// QFG4CD
@@ -897,7 +897,7 @@ void Kernel::loadKernelNames(GameFeatures *features) {
 
 			_kernelNames = Common::StringArray(sci2_default_knames, kKernelEntriesGk2Demo);
 			// OnMe is IsOnMe here, but they should be compatible
-			_kernelNames[0x23] = "Robot"; // Graph in SCI2
+			_kernelNames[0x23] = g_sci->getGameId() == GID_LSL6HIRES ? "Empty" : "Robot"; // Graph in SCI2
 			_kernelNames[0x2e] = "Priority"; // DisposeTextBitmap in SCI2
 		} else {
 			// Normal SCI2.1 kernel table
