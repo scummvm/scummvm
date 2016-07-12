@@ -63,6 +63,7 @@ class Shader {
 	typedef Common::HashMap<Common::String, GLint> UniformsMap;
 
 public:
+	~Shader();
 	Shader* clone() {
 		return new Shader(*this);
 	}

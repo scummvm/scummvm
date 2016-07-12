@@ -246,6 +246,14 @@ void Shader::unbind() {
 	glUseProgram(0);
 	_previousShader = nullptr;
 }
+
+Shader::~Shader() {
+	// If this is the currently active shader, unbind
+	if (_previousShader == this) {
+		unbind();
+	}
+}
+
 } // End of namespace OpenGL
 
 #endif
