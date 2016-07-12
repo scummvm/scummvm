@@ -337,7 +337,7 @@ void Timeline::f261_processTimeline() {
 				break;
 			case k70_TMEventTypeLight:
 				_vm->_dungeonMan->f173_setCurrentMap(_vm->_dungeonMan->_g309_partyMapIndex);
-				//F0257_TIMELINE_ProcessEvent70_Light(L0681_ps_Event);
+				f257_timelineProcessEvent70_light(L0681_ps_Event);
 				_vm->_inventoryMan->f337_setDungeonViewPalette();
 				break;
 			case k71_TMEventTypeInvisibility:
@@ -996,6 +996,37 @@ void Timeline::f254_timelineProcessEvent12_hideDamageReceived(uint16 champIndex)
 	} else {
 		setFlag(L0663_ps_Champion->_attributes, k0x0080_ChampionAttributeNameTitle);
 		_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
+	}
+}
+
+void Timeline::f257_timelineProcessEvent70_light(TimelineEvent* event) {
+	int16 L0673_i_WeakerLightPower;
+	int16 L0674_i_Multiple;
+#define AL0674_i_LightPower  L0674_i_Multiple
+#define AL0674_i_LightAmount L0674_i_Multiple
+	bool L0675_B_NegativeLightPower;
+	TimelineEvent L0676_s_Event;
+
+
+	if ((AL0674_i_LightPower = event->_B._lightPower) == 0) {
+		return;
+	}
+	if (L0675_B_NegativeLightPower = (AL0674_i_LightPower < 0)) {
+		AL0674_i_LightPower = -AL0674_i_LightPower;
+	}
+	L0673_i_WeakerLightPower = AL0674_i_LightPower - 1;
+	AL0674_i_LightAmount = g39_LightPowerToLightAmount[AL0674_i_LightPower] - g39_LightPowerToLightAmount[L0673_i_WeakerLightPower];
+	if (L0675_B_NegativeLightPower) {
+		AL0674_i_LightAmount = -AL0674_i_LightAmount;
+		L0673_i_WeakerLightPower = -L0673_i_WeakerLightPower;
+	}
+	_vm->_championMan->_g407_party._magicalLightAmount += AL0674_i_LightAmount;
+	if (L0673_i_WeakerLightPower) {
+		L0676_s_Event._type = k70_TMEventTypeLight;
+		L0676_s_Event._B._lightPower = L0673_i_WeakerLightPower;
+		M33_setMapAndTime(L0676_s_Event._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + 4);
+		L0676_s_Event._priority = 0;
+		_vm->_timeline->f238_addEventGetEventIndex(&L0676_s_Event);
 	}
 }
 }
