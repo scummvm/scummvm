@@ -55,8 +55,9 @@ private:
 	void clipBounds(Rect &srcRect, Rect &destRect, CVideoSurface *srcSurface,
 		const Rect *subRect = nullptr, const Point *destPos = nullptr);
 
-	void blitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
-	void transBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
+	void blitRect1(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
+	void blitRect2(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
+	void movieBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
 protected:
 	static int _videoSurfaceCounter;
 protected:

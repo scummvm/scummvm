@@ -32,7 +32,8 @@ int CVideoSurface::_videoSurfaceCounter = 0;
 CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
 		_screenManager(screenManager), _rawSurface(nullptr), _movie(nullptr),
 		_pendingLoad(false), _transBlitFlag(false), _fastBlitFlag(false),
-		_movieFrameSurface(nullptr), _transparencyMode(TRANS_DEFAULT), _field48(0), _field50(1) {
+		_movieFrameSurface(nullptr), _transparencyMode(TRANS_DEFAULT), 
+		_field48(0), _field50(1), _lockCount(0) {
 	_videoSurfaceNum = _videoSurfaceCounter++;
 }
 
@@ -52,10 +53,10 @@ void CVideoSurface::blitFrom(const Point &destPos, CVideoSurface *src, const Rec
 		Rect srcBounds, destBounds;
 		clipBounds(srcBounds, destBounds, src, srcRect, &destPos);
 
-		if (_transBlitFlag)
-			transBlitRect(srcBounds, destBounds, src);
+		if (src->_transBlitFlag)
+			blitRect2(srcBounds, destBounds, src);
 		else
-			blitRect(srcBounds, destBounds, src);
+			blitRect1(srcBounds, destBounds, src);
 	}
 }
 
@@ -128,25 +129,38 @@ void CVideoSurface::clipBounds(Rect &srcRect, Rect &destRect,
 		error("Invalid rect");
 }
 
-void CVideoSurface::blitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
+void CVideoSurface::blitRect1(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
 	src->lock();
 	lock();
 
-	if (_fastBlitFlag) {
-		_rawSurface->transBlitFrom(*src->_rawSurface, srcRect, destRect,
-			getTransparencyColor());
-		return;
+	if (src->_fastBlitFlag) {
+		_rawSurface->blitFrom(*src->_rawSurface, srcRect, Point(destRect.left, destRect.top));
+	} else if (getMovieFrameSurface()) {
+		movieBlitRect(srcRect, destRect, src);
+	} else {
+		_rawSurface->transBlitFrom(*src->_rawSurface, srcRect, destRect, src->getTransparencyColor());
 	}
-
-	// TODO
 
 	src->unlock();
 	unlock();
 }
 
-void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
-	// TODO: Do it like the original does it
-	blitRect(srcRect, destRect, src);
+void CVideoSurface::blitRect2(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
+	if (getMovieFrameSurface()) {
+		movieBlitRect(srcRect, destRect, src);
+	} else {
+		src->lock();
+		lock();
+
+		_rawSurface->blitFrom(*src->_rawSurface, srcRect, Point(destRect.left, destRect.top));
+
+		src->unlock();
+		unlock();
+	}
+}
+
+void CVideoSurface::movieBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
+	// TODO
 }
 
 uint CVideoSurface::getTransparencyColor() {
