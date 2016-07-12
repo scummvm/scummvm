@@ -45,6 +45,7 @@ void CJPEGDecode::decode(OSVideoSurface &surface, const CString &name) {
 	Common::copy((byte *)convertedSurface->getPixels(), (byte *)convertedSurface->getPixels() +
 		surface.getPitch() * surface.getHeight(), (byte *)surface._rawSurface->getPixels());
 
+	convertedSurface->free();
 	delete convertedSurface;
 	surface.unlock();
 }
@@ -72,6 +73,7 @@ void CTargaDecode::decode(OSVideoSurface &surface, const CString &name) {
 	Common::copy((byte *)convertedSurface->getPixels(), (byte *)convertedSurface->getPixels() +
 		surface.getPitch() * surface.getHeight(), (byte *)surface._rawSurface->getPixels());
 
+	convertedSurface->free();
 	delete convertedSurface;
 	surface.unlock();
 }
