@@ -56,7 +56,7 @@ enum {
 };
 
 enum {
-	kDragThreshold = 1
+	kDragThreshold = 5
 };
 
 static const Graphics::MenuData menuSubItems[] = {
@@ -841,12 +841,17 @@ void Gui::moveDraggedObject(Common::Point target) {
 		movement = true;
 	}
 
-	// TODO establish an absolute distance, such as _draggedObj.pos.sqrDist(_draggedObj.startPos);
-	_draggedObj.hasMoved |= movement && (newPos.sqrDist(_draggedObj.pos) >= kDragThreshold);
+	// TODO FInd more elegant way of making pow2
+	_draggedObj.hasMoved = movement && (_draggedObj.startPos.sqrDist(_draggedObj.pos) >= (kDragThreshold * kDragThreshold));
 
-	// TODO DELETE MEEE
-	debug("Dragged obj position: (%d, %d), mouse offset: (%d, %d)",
-				_draggedObj.pos.x, _draggedObj.pos.y, _draggedObj.mouseOffset.x, _draggedObj.mouseOffset.y);
+	debug(4, "Dragged obj position: (%d, %d), mouse offset: (%d, %d), hasMoved: %d, dist: %d, threshold: %d",
+		_draggedObj.pos.x, _draggedObj.pos.y,
+		_draggedObj.mouseOffset.x, _draggedObj.mouseOffset.y,
+		_draggedObj.hasMoved,
+		_draggedObj.startPos.sqrDist(_draggedObj.pos),
+		kDragThreshold * kDragThreshold
+	);
+
 }
 
 WindowReference Gui::findWindowAtPoint(Common::Point point) {
@@ -969,14 +974,14 @@ bool Gui::isRectInsideObject(Common::Rect target, ObjID obj) {
 	return false;
 }
 
-void Gui::selectDraggable(ObjID child, WindowReference origin, Common::Point startPos) {
+void Gui::selectDraggable(ObjID child, WindowReference origin, Common::Point click) {
 	if (_engine->isObjClickable(child) && _draggedObj.id == 0) {
 		_draggedObj.hasMoved = false;
 		_draggedObj.id = child;
-		_draggedObj.startPos = startPos;
 		_draggedObj.startWin = origin;
-		_draggedObj.mouseOffset = (_engine->getObjPosition(child) + getWindowSurfacePos(origin)) - startPos;
-		_draggedObj.pos = startPos + _draggedObj.mouseOffset;
+		_draggedObj.mouseOffset = (_engine->getObjPosition(child) + getWindowSurfacePos(origin)) - click;
+		_draggedObj.pos = click + _draggedObj.mouseOffset;
+		_draggedObj.startPos = _draggedObj.pos;
 	}
 }
 
