@@ -681,12 +681,12 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 				surface, pos.x, pos.y, kBlitOR);
 
 		// For test
-		/*surface->frameRect(Common::Rect(
+		surface->frameRect(Common::Rect(
 			pos.x,
 			pos.y,
 			pos.x + _assets[child]->getWidth() + 1,
 			pos.y + _assets[child]->getHeight() + 1), kColorGreen);
-			*/
+
 	}
 }
 
@@ -991,7 +991,7 @@ void Gui::handleDragRelease(Common::Point pos, bool shiftPressed, bool isDoubleC
 	if (_draggedObj.id != 0) {
 		if (_draggedObj.hasMoved) {
 			ObjID destObject = getWindowData(destinationWindow).objRef;
-			pos -= _draggedObj.startPos;
+			pos -= (_draggedObj.startPos - _draggedObj.mouseOffset);
 			pos = localize(pos, _draggedObj.startWin, destinationWindow);
 			debug("drop the object at obj %d, pos (%d, %d)", destObject, pos.x, pos.y);
 
