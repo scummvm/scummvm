@@ -30,8 +30,6 @@ MODULE_OBJS += \
 	cloud/savessyncrequest.o \
 	cloud/box/boxstorage.o \
 	cloud/box/boxlistdirectorybyidrequest.o \
-	cloud/box/boxlistdirectoryrequest.o \
-	cloud/box/boxresolveidrequest.o \
 	cloud/box/boxtokenrefresher.o \
 	cloud/dropbox/dropboxstorage.o \
 	cloud/dropbox/dropboxcreatedirectoryrequest.o \
@@ -46,6 +44,9 @@ MODULE_OBJS += \
 	cloud/googledrive/googledrivestreamfilerequest.o \
 	cloud/googledrive/googledrivetokenrefresher.o \
 	cloud/googledrive/googledriveuploadrequest.o \
+	cloud/id/idstorage.o \
+	cloud/id/idlistdirectoryrequest.o \
+	cloud/id/idresolveidrequest.o \
 	cloud/onedrive/onedrivestorage.o \
 	cloud/onedrive/onedrivecreatedirectoryrequest.o \
 	cloud/onedrive/onedrivetokenrefresher.o \

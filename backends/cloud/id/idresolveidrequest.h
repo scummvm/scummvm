@@ -20,47 +20,41 @@
 *
 */
 
-#ifndef BACKENDS_CLOUD_BOX_BOXLISTDIRECTORYREQUEST_H
-#define BACKENDS_CLOUD_BOX_BOXLISTDIRECTORYREQUEST_H
+#ifndef BACKENDS_CLOUD_ID_IDRESOLVEIDREQUEST_H
+#define BACKENDS_CLOUD_ID_IDRESOLVEIDREQUEST_H
 
 #include "backends/cloud/storage.h"
 #include "backends/networking/curl/request.h"
 #include "common/callback.h"
 
 namespace Cloud {
-namespace Box {
+namespace Id {
 
-class BoxStorage;
+class IdStorage;
 
-class BoxListDirectoryRequest: public Networking::Request {
-	Common::String _requestedPath;
-	bool _requestedRecursive;
-	BoxStorage *_storage;
-	Storage::ListDirectoryCallback _listDirectoryCallback;
-	Common::Array<StorageFile> _files;
-	Common::Array<StorageFile> _directoriesQueue;
-	StorageFile _currentDirectory;
+class IdResolveIdRequest: public Networking::Request {
+	Common::String _requestedPath;	
+	IdStorage *_storage;
+	Storage::UploadCallback _uploadCallback;
+	Common::String _currentDirectory;
+	Common::String _currentDirectoryId;
 	Request *_workingRequest;
 	bool _ignoreCallback;
-	Common::String _date;
 
 	void start();
-	void idResolvedCallback(Storage::UploadResponse response);
-	void idResolveErrorCallback(Networking::ErrorResponse error);
-	void listNextDirectory();
+	void listNextDirectory(StorageFile fileToReturn);
 	void listedDirectoryCallback(Storage::FileArrayResponse response);
 	void listedDirectoryErrorCallback(Networking::ErrorResponse error);
-	void finishListing(Common::Array<StorageFile> &files);
+	void finishFile(StorageFile file);
 public:
-	BoxListDirectoryRequest(BoxStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive = false);
-	virtual ~BoxListDirectoryRequest();
+	IdResolveIdRequest(IdStorage *storage, Common::String path, Storage::UploadCallback cb, Networking::ErrorCallback ecb, bool recursive = false); //TODO: why upload?
+	virtual ~IdResolveIdRequest();
 
 	virtual void handle();
 	virtual void restart();
-	virtual Common::String date() const;
 };
 
-} // End of namespace Box
+} // End of namespace Id
 } // End of namespace Cloud
 
 #endif

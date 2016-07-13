@@ -23,14 +23,14 @@
 #ifndef BACKENDS_CLOUD_BOX_BOXSTORAGE_H
 #define BACKENDS_CLOUD_BOX_BOXSTORAGE_H
 
-#include "backends/cloud/storage.h"
+#include "backends/cloud/id/idstorage.h"
 #include "common/callback.h"
 #include "backends/networking/curl/curljsonrequest.h"
 
 namespace Cloud {
 namespace Box {
 
-class BoxStorage: public Cloud::Storage {
+class BoxStorage: public Id::IdStorage {
 	static char *KEY, *SECRET;
 
 	static void loadKeyAndSecret();
@@ -46,11 +46,7 @@ class BoxStorage: public Cloud::Storage {
 	/** Constructs StorageInfo based on JSON response from cloud. */
 	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);
 
-	void printJson(Networking::JsonResponse response);
 	void fileDownloaded(BoolResponse response);
-	void printFiles(FileArrayResponse response);
-	void printBool(BoolResponse response);
-	void printFile(UploadResponse response);
 
 	void fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response);
 public:	
@@ -79,11 +75,6 @@ public:
 
 	/** Public Cloud API comes down there. */
 
-	/** Returns StorageFile with the resolved file's id. */
-	virtual Networking::Request *resolveFileId(Common::String path, UploadCallback callback, Networking::ErrorCallback errorCallback);
-
-	/** Returns ListDirectoryStatus struct with list of files. */
-	virtual Networking::Request *listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
 	virtual Networking::Request *listDirectoryById(Common::String id, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Returns UploadStatus struct with info about uploaded file. */
@@ -114,6 +105,8 @@ public:
 	 * Returns Box auth link.
 	 */
 	static Common::String getAuthLink();
+
+	virtual Common::String getRootDirectoryId();
 
 	/**
 	 * Gets new access_token. If <code> passed is "", refresh_token is used.

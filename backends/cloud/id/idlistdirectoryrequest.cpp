@@ -20,26 +20,26 @@
 *
 */
 
-#include "backends/cloud/box/boxlistdirectoryrequest.h"
-#include "backends/cloud/box/boxstorage.h"
+#include "backends/cloud/id/idlistdirectoryrequest.h"
+#include "backends/cloud/id/idstorage.h"
 
 namespace Cloud {
-namespace Box {
+namespace Id {
 
-BoxListDirectoryRequest::BoxListDirectoryRequest(BoxStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive):
+IdListDirectoryRequest::IdListDirectoryRequest(IdStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive):
 	Networking::Request(nullptr, ecb),
 	_requestedPath(path), _requestedRecursive(recursive), _storage(storage), _listDirectoryCallback(cb),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
 
-BoxListDirectoryRequest::~BoxListDirectoryRequest() {
+IdListDirectoryRequest::~IdListDirectoryRequest() {
 	_ignoreCallback = true;
 	if (_workingRequest) _workingRequest->finish();
 	delete _listDirectoryCallback;
 }
 
-void BoxListDirectoryRequest::start() {
+void IdListDirectoryRequest::start() {
 	//cleanup
 	_ignoreCallback = true;
 	if (_workingRequest) _workingRequest->finish();
@@ -50,12 +50,12 @@ void BoxListDirectoryRequest::start() {
 	_ignoreCallback = false;
 
 	//find out that directory's id
-	Storage::UploadCallback innerCallback = new Common::Callback<BoxListDirectoryRequest, Storage::UploadResponse>(this, &BoxListDirectoryRequest::idResolvedCallback);
-	Networking::ErrorCallback innerErrorCallback = new Common::Callback<BoxListDirectoryRequest, Networking::ErrorResponse>(this, &BoxListDirectoryRequest::idResolveErrorCallback);
+	Storage::UploadCallback innerCallback = new Common::Callback<IdListDirectoryRequest, Storage::UploadResponse>(this, &IdListDirectoryRequest::idResolvedCallback);
+	Networking::ErrorCallback innerErrorCallback = new Common::Callback<IdListDirectoryRequest, Networking::ErrorResponse>(this, &IdListDirectoryRequest::idResolveErrorCallback);
 	_workingRequest = _storage->resolveFileId(_requestedPath, innerCallback, innerErrorCallback);
 }
 
-void BoxListDirectoryRequest::idResolvedCallback(Storage::UploadResponse response) {
+void IdListDirectoryRequest::idResolvedCallback(Storage::UploadResponse response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 	if (response.request) _date = response.request->date();
@@ -66,14 +66,14 @@ void BoxListDirectoryRequest::idResolvedCallback(Storage::UploadResponse respons
 	listNextDirectory();
 }
 
-void BoxListDirectoryRequest::idResolveErrorCallback(Networking::ErrorResponse error) {
+void IdListDirectoryRequest::idResolveErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 	if (error.request) _date = error.request->date();
 	finishError(error);
 }
 
-void BoxListDirectoryRequest::listNextDirectory() {
+void IdListDirectoryRequest::listNextDirectory() {
 	if (_directoriesQueue.empty()) {
 		finishListing(_files);
 		return;
@@ -82,12 +82,12 @@ void BoxListDirectoryRequest::listNextDirectory() {
 	_currentDirectory = _directoriesQueue.back();
 	_directoriesQueue.pop_back();
 
-	Storage::FileArrayCallback callback = new Common::Callback<BoxListDirectoryRequest, Storage::FileArrayResponse>(this, &BoxListDirectoryRequest::listedDirectoryCallback);
-	Networking::ErrorCallback failureCallback = new Common::Callback<BoxListDirectoryRequest, Networking::ErrorResponse>(this, &BoxListDirectoryRequest::listedDirectoryErrorCallback);	
+	Storage::FileArrayCallback callback = new Common::Callback<IdListDirectoryRequest, Storage::FileArrayResponse>(this, &IdListDirectoryRequest::listedDirectoryCallback);
+	Networking::ErrorCallback failureCallback = new Common::Callback<IdListDirectoryRequest, Networking::ErrorResponse>(this, &IdListDirectoryRequest::listedDirectoryErrorCallback);	
 	_workingRequest = _storage->listDirectoryById(_currentDirectory.id(), callback, failureCallback);
 }
 
-void BoxListDirectoryRequest::listedDirectoryCallback(Storage::FileArrayResponse response) {
+void IdListDirectoryRequest::listedDirectoryCallback(Storage::FileArrayResponse response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 	if (response.request) _date = response.request->date();
@@ -107,23 +107,23 @@ void BoxListDirectoryRequest::listedDirectoryCallback(Storage::FileArrayResponse
 	listNextDirectory();
 }
 
-void BoxListDirectoryRequest::listedDirectoryErrorCallback(Networking::ErrorResponse error) {
+void IdListDirectoryRequest::listedDirectoryErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 	if (error.request) _date = error.request->date();
 	finishError(error);
 }
 
-void BoxListDirectoryRequest::handle() {}
+void IdListDirectoryRequest::handle() {}
 
-void BoxListDirectoryRequest::restart() { start(); }
+void IdListDirectoryRequest::restart() { start(); }
 
-Common::String BoxListDirectoryRequest::date() const { return _date; }
+Common::String IdListDirectoryRequest::date() const { return _date; }
 
-void BoxListDirectoryRequest::finishListing(Common::Array<StorageFile> &files) {
+void IdListDirectoryRequest::finishListing(Common::Array<StorageFile> &files) {
 	Request::finishSuccess();
 	if (_listDirectoryCallback) (*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, files));
 }
 
-} // End of namespace Box
+} // End of namespace Id
 } // End of namespace Cloud

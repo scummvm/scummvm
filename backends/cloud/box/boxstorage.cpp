@@ -23,8 +23,6 @@
 
 #include "backends/cloud/box/boxstorage.h"
 #include "backends/cloud/box/boxlistdirectorybyidrequest.h"
-#include "backends/cloud/box/boxlistdirectoryrequest.h"
-#include "backends/cloud/box/boxresolveidrequest.h"
 #include "backends/cloud/box/boxtokenrefresher.h"
 #include "backends/cloud/cloudmanager.h"
 #include "backends/networking/curl/connectionmanager.h"
@@ -178,17 +176,6 @@ void BoxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking
 	delete json;
 }
 
-void BoxStorage::printJson(Networking::JsonResponse response) {
-	Common::JSONValue *json = response.value;
-	if (!json) {
-		warning("printJson: NULL");
-		return;
-	}
-
-	debug("%s", json->stringify().c_str());
-	delete json;
-}
-
 void BoxStorage::fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response) {
 	if (!response.value) {
 		warning("fileInfoCallback: NULL");
@@ -212,21 +199,9 @@ void BoxStorage::fileInfoCallback(Networking::NetworkReadStreamCallback outerCal
 	delete response.value;
 }
 
-Networking::Request *BoxStorage::resolveFileId(Common::String path, UploadCallback callback, Networking::ErrorCallback errorCallback) {
-	if (!errorCallback) errorCallback = getErrorPrintingCallback();
-	if (!callback) callback = new Common::Callback<BoxStorage, UploadResponse>(this, &BoxStorage::printFile);
-	return addRequest(new BoxResolveIdRequest(this, path, callback, errorCallback));
-}
-
-Networking::Request *BoxStorage::listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
-	if (!errorCallback) errorCallback = getErrorPrintingCallback();
-	if (!callback) callback = new Common::Callback<BoxStorage, FileArrayResponse>(this, &BoxStorage::printFiles);
-	return addRequest(new BoxListDirectoryRequest(this, path, callback, errorCallback, recursive));
-}
-
 Networking::Request *BoxStorage::listDirectoryById(Common::String id, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback) {
 	if (!errorCallback) errorCallback = getErrorPrintingCallback();
-	if (!callback) callback = new Common::Callback<BoxStorage, FileArrayResponse>(this, &BoxStorage::printFiles);
+	if (!callback) callback = getPrintFilesCallback();
 	return addRequest(new BoxListDirectoryByIdRequest(this, id, callback, errorCallback));
 }
 
@@ -249,24 +224,6 @@ Networking::Request *BoxStorage::streamFileById(Common::String path, Networking:
 void BoxStorage::fileDownloaded(BoolResponse response) {
 	if (response.value) debug("file downloaded!");
 	else debug("download failed!");
-}
-
-void BoxStorage::printFiles(FileArrayResponse response) {
-	debug("files:");
-	Common::Array<StorageFile> &files = response.value;
-	for (uint32 i = 0; i < files.size(); ++i)
-		debug("\t%s", files[i].path().c_str());
-}
-
-void BoxStorage::printBool(BoolResponse response) {
-	debug("bool: %s", response.value ? "true" : "false");
-}
-
-void BoxStorage::printFile(UploadResponse response) {
-	debug("\nuploaded file info:");
-	debug("\tpath: %s", response.value.path().c_str());
-	debug("\tsize: %u", response.value.size());
-	debug("\ttimestamp: %u", response.value.timestamp());
 }
 
 Networking::Request *BoxStorage::createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) {
@@ -305,6 +262,10 @@ BoxStorage *BoxStorage::loadFromConfig(Common::String keyPrefix) {
 Common::String BoxStorage::getAuthLink() {
 	// now we only specify short "scummvm.org/c/bx" with actual redirect to the auth page
 	return "";
+}
+
+Common::String BoxStorage::getRootDirectoryId() {
+	return "0";
 }
 
 } // End of namespace Box
