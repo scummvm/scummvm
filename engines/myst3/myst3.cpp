@@ -78,7 +78,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
 		_inputEscapePressed(false), _inputTildePressed(false),
 		_menuAction(0), _projectorBackground(0),
 		_shakeEffect(0), _rotationEffect(0), _backgroundSoundScriptLastRoomId(0),
-		_transition(0) {
+		_transition(0), _frameLimiter(0) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Track Script Execution");
@@ -132,6 +132,7 @@ Myst3Engine::~Myst3Engine() {
 	delete _rnd;
 	delete _sound;
 	delete _ambient;
+	delete _frameLimiter;
 	delete _gfx;
 }
 
@@ -155,6 +156,7 @@ Common::Error Myst3Engine::run() {
 	}
 
 	_gfx = createRenderer(_system);
+	_frameLimiter = new FrameLimiter(_system, 60);
 	_sound = new Sound(this);
 	_ambient = new Ambient(this);
 	_rnd = new Common::RandomSource("sprint");
@@ -687,9 +689,10 @@ void Myst3Engine::drawFrame(bool noSwap) {
 	_gfx->flipBuffer();
 
 	if (!noSwap) {
+		_frameLimiter->delayBeforeSwap();
 		_system->updateScreen();
-		_system->delayMillis(10);
 		_state->updateFrameCounters();
+		_frameLimiter->startFrame();
 	}
 }
 

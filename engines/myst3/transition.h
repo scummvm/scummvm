@@ -27,6 +27,8 @@
 
 namespace Myst3 {
 
+class FrameLimiter;
+
 class Transition {
 public:
 	Transition(Myst3Engine *vm);
@@ -40,6 +42,7 @@ private:
 	void playSound();
 
 	Myst3Engine *_vm;
+	FrameLimiter *_frameLimiter;
 	TransitionType _type;
 
 	Graphics::Surface *_sourceScreenshot;

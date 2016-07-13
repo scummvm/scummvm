@@ -33,7 +33,8 @@ namespace Myst3 {
 Transition::Transition(Myst3Engine *vm) :
 		_vm(vm),
 		_type(kTransitionNone),
-		_sourceScreenshot(nullptr) {
+		_sourceScreenshot(nullptr),
+		_frameLimiter(new FrameLimiter(g_system, 60)) {
 
 	int transitionSpeed = ConfMan.getInt("transition_speed");
 
@@ -48,6 +49,8 @@ Transition::~Transition() {
 		_sourceScreenshot->free();
 		delete _sourceScreenshot;
 	}
+
+	delete _frameLimiter;
 }
 
 int Transition::computeDuration() {
@@ -97,13 +100,15 @@ void Transition::draw(TransitionType type) {
 	// Draw each step until completion
 	int completion = 0;
 	while (_vm->_state->getFrameCount() <= endFrame || completion < 100) {
+		_frameLimiter->startFrame();
+
 		completion = CLIP<int>(100 * (_vm->_state->getFrameCount() - startFrame) / durationFrames, 0, 100);
 
 		drawStep(targetTexture, sourceTexture, completion);
 
 		_vm->_gfx->flipBuffer();
+		_frameLimiter->delayBeforeSwap();
 		g_system->updateScreen();
-		g_system->delayMillis(10);
 		_vm->_state->updateFrameCounters();
 	}
 

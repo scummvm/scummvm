@@ -253,4 +253,24 @@ Renderer *createRenderer(OSystem *system) {
 	error("Unable to create a '%s' renderer", rendererConfig.c_str());
 }
 
+FrameLimiter::FrameLimiter(OSystem *system, const uint framerate) :
+	_system(system),
+	_speedLimitMs(1000 / framerate),
+	_startFrameTime(0) {
+
+}
+
+void FrameLimiter::startFrame() {
+	_startFrameTime = _system->getMillis();
+}
+
+void FrameLimiter::delayBeforeSwap() {
+	uint endFrameTime = _system->getMillis();
+	uint frameDuration = endFrameTime - _startFrameTime;
+
+	if (frameDuration < _speedLimitMs) {
+		_system->delayMillis(_speedLimitMs - frameDuration);
+	}
+}
+
 } // End of namespace Myst3
