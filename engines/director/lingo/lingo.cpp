@@ -94,6 +94,8 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_hadError = false;
 
+	_inFactory = false;
+
 	_floatPrecision = 4;
 	_floatPrecisionFormat = "%.4f";
 
@@ -101,6 +103,28 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 }
 
 Lingo::~Lingo() {
+}
+
+const char *Lingo::findNextDefinition(const char *s) {
+	const char *res;
+
+	if ((res = strstr(s, "\nmacro "))) {
+		return res;
+	} else if ((res = strstr(s, "\nfactory "))) {
+		return res;
+	} else if (_inFactory && (res = strstr(s, "method "))) {
+		if (s == res)
+			return res;
+
+		// Check that this is the first token on the line
+		const char *tres = res;
+		while (tres > s && (*tres == ' ' || *tres == '\t') && *tres != '\n')
+			tres--;
+		if (*tres == '\n')
+			return res;
+	}
+
+	return nullptr;
 }
 
 void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
@@ -119,18 +143,25 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 
 	const char *begin, *end;
 
-	// macros have conflicting grammar. Thus we ease life for the parser.
-	if ((begin = strstr(code, "\nmacro "))) {
+	// macros and factories have conflicting grammar. Thus we ease life for the parser.
+	if ((begin = findNextDefinition(code))) {
 		bool first = true;
 
 		begin += 1;
 
-		while ((end = strstr(begin, "\nmacro "))) {
+		while ((end = findNextDefinition(begin))) {
 			if (first) {
 				begin = code;
 				first = false;
 			}
 			Common::String chunk(begin, end + 1);
+
+			if (chunk.hasPrefix("factory") || chunk.hasPrefix("method"))
+				_inFactory = true;
+			else if (chunk.hasPrefix("macro"))
+				_inFactory = false;
+			else
+				_inFactory = false;
 
 			debug(2, "Code chunk\n#####\n%s#####", chunk.c_str());
 
@@ -148,6 +179,8 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 
 		code1(STOP);
 	}
+
+	_inFactory = false;
 
 	if (_currentScript->size() && !_hadError)
 		Common::hexdump((byte *)&_currentScript->front(), _currentScript->size() * sizeof(inst));

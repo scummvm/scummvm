@@ -150,6 +150,9 @@ public:
 
 	void runTests();
 
+private:
+	const char *findNextDefinition(const char *s);
+
 public:
 	void execute(int pc);
 	void pushContext();
@@ -283,6 +286,8 @@ public:
 	Common::String _floatPrecisionFormat;
 
 	bool _hadError;
+
+	bool _inFactory;
 
 private:
 	int parse(const char *code);
