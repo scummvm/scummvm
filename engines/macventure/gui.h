@@ -323,6 +323,8 @@ private: // Methods
 	Common::Rect calculateClickRect(Common::Point clickPos, Common::Rect windowBounds);
 	Common::Point localize(Common::Point point, WindowReference origin, WindowReference target);
 
+	void ensureAssetLoaded(ObjID obj);
+
 };
 
 class Cursor {
