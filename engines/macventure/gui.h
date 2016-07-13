@@ -306,6 +306,8 @@ private: // Methods
 	void drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *surface);
 	void drawWindowTitle(WindowReference target, Graphics::ManagedSurface *surface);
 
+	void moveDraggedObject(Common::Point target);
+
 	// Finders
 	WindowReference findWindowAtPoint(Common::Point point);
 	Common::Point getWindowSurfacePos(WindowReference reference);

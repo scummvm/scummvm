@@ -203,6 +203,48 @@ void Gui::clearControls() {
 	}
 }
 
+void Gui::initWindows() {
+	// Game Controls Window
+	_controlsWindow = _wm.addWindow(false, false, false);
+	_controlsWindow->setDimensions(getWindowData(kCommandsWindow).bounds);
+	_controlsWindow->setActive(false);
+	_controlsWindow->setCallback(commandsWindowCallback, this);
+	loadBorder(_controlsWindow, "border_command.bmp", false);
+	loadBorder(_controlsWindow, "border_command.bmp", true);
+
+	// Main Game Window
+	_mainGameWindow = _wm.addWindow(false, false, false);
+	_mainGameWindow->setDimensions(getWindowData(kMainGameWindow).bounds);
+	_mainGameWindow->setActive(false);
+	_mainGameWindow->setCallback(mainGameWindowCallback, this);
+	loadBorder(_mainGameWindow, "border_no_scroll_inac.bmp", false);
+	loadBorder(_mainGameWindow, "border_no_scroll_act.bmp", true);
+
+	// In-game Output Console
+	_outConsoleWindow = _wm.addWindow(false, true, true);
+	_outConsoleWindow->setDimensions(getWindowData(kOutConsoleWindow).bounds);
+	_outConsoleWindow->setActive(false);
+	_outConsoleWindow->setCallback(outConsoleWindowCallback, this);
+	loadBorder(_outConsoleWindow, "border_left_scroll_inac.bmp", false);
+	loadBorder(_outConsoleWindow, "border_left_scroll_inac.bmp", true);
+
+	// Self Window
+	_selfWindow = _wm.addWindow(false, true, false);
+	_selfWindow->setDimensions(getWindowData(kSelfWindow).bounds);
+	_selfWindow->setActive(false);
+	_selfWindow->setCallback(selfWindowCallback, this);
+	loadBorder(_selfWindow, "border_none.bmp", false);
+	loadBorder(_selfWindow, "border_none.bmp", true);
+
+	// Exits Window
+	_exitsWindow = _wm.addWindow(false, false, false);
+	_exitsWindow->setDimensions(getWindowData(kExitsWindow).bounds);
+	_exitsWindow->setActive(false);
+	_exitsWindow->setCallback(exitsWindowCallback, this);
+	loadBorder(_exitsWindow, "border_no_scroll_inac.bmp", false);
+	loadBorder(_exitsWindow, "border_no_scroll_act.bmp", true);
+}
+
 const WindowData& Gui::getWindowData(WindowReference reference) {
 	return findWindowData(reference);
 }
@@ -278,49 +320,6 @@ void Gui::removeChild(WindowReference target, ObjID child) {
 
 	if (index < data.children.size())
 		data.children.remove_at(index);
-}
-
-void Gui::initWindows() {
-
-	// Game Controls Window
-	_controlsWindow = _wm.addWindow(false, false, false);
-	_controlsWindow->setDimensions(getWindowData(kCommandsWindow).bounds);
-	_controlsWindow->setActive(false);
-	_controlsWindow->setCallback(commandsWindowCallback, this);
-	loadBorder(_controlsWindow, "border_command.bmp", false);
-	loadBorder(_controlsWindow, "border_command.bmp", true);
-
-	// Main Game Window
-	_mainGameWindow = _wm.addWindow(false, false, false);
-	_mainGameWindow->setDimensions(getWindowData(kMainGameWindow).bounds);
-	_mainGameWindow->setActive(false);
-	_mainGameWindow->setCallback(mainGameWindowCallback, this);
-	loadBorder(_mainGameWindow, "border_no_scroll_inac.bmp", false);
-	loadBorder(_mainGameWindow, "border_no_scroll_act.bmp", true);
-
-	// In-game Output Console
-	_outConsoleWindow = _wm.addWindow(false, true, true);
-	_outConsoleWindow->setDimensions(Common::Rect(20, 20, 120, 120));
-	_outConsoleWindow->setActive(false);
-	_outConsoleWindow->setCallback(outConsoleWindowCallback, this);
-	loadBorder(_outConsoleWindow, "border_left_scroll_inac.bmp", false);
-	loadBorder(_outConsoleWindow, "border_left_scroll_inac.bmp", true);
-
-	// Self Window
-	_selfWindow = _wm.addWindow(false, true, false);
-	_selfWindow->setDimensions(getWindowData(kSelfWindow).bounds);
-	_selfWindow->setActive(false);
-	_selfWindow->setCallback(selfWindowCallback, this);
-	loadBorder(_selfWindow, "border_none.bmp", false);
-	loadBorder(_selfWindow, "border_none.bmp", true);
-
-	// Exits Window
-	_exitsWindow = _wm.addWindow(false, false, false);
-	_exitsWindow->setDimensions(getWindowData(kExitsWindow).bounds);
-	_exitsWindow->setActive(false);
-	_exitsWindow->setCallback(exitsWindowCallback, this);
-	loadBorder(_exitsWindow, "border_no_scroll_inac.bmp", false);
-	loadBorder(_exitsWindow, "border_no_scroll_act.bmp", true);
 }
 
 void Gui::assignObjReferences() {
@@ -824,6 +823,31 @@ void Gui::printText(const Common::String & text) {
 	_consoleText->printLine(text, _outConsoleWindow->getDimensions().width());
 }
 
+void Gui::moveDraggedObject(Common::Point target) {
+	Common::Point newPos = target + _draggedObj.mouseOffset;
+	bool movement = false;
+	// If we overflow, move the mouseOffset, not the position.
+	if (newPos.x < 0 || newPos.x + _assets[_draggedObj.id]->getWidth() >= kScreenWidth) {
+		_draggedObj.mouseOffset.x = _draggedObj.pos.x - target.x;
+	} else {
+		_draggedObj.pos.x = newPos.x;
+		movement = true;
+	}
+
+	if (newPos.y < 0 || newPos.y + _assets[_draggedObj.id]->getHeight() >= kScreenHeight) {
+		_draggedObj.mouseOffset.y = _draggedObj.pos.y - target.y;
+	} else {
+		_draggedObj.pos.y = newPos.y;
+		movement = true;
+	}
+
+	// TODO establish an absolute distance, such as _draggedObj.pos.sqrDist(_draggedObj.startPos);
+	_draggedObj.hasMoved |= movement && (newPos.sqrDist(_draggedObj.pos) >= kDragThreshold);
+
+	// TODO DELETE MEEE
+	debug("Dragged obj position: (%d, %d), mouse offset: (%d, %d)",
+				_draggedObj.pos.x, _draggedObj.pos.y, _draggedObj.mouseOffset.x, _draggedObj.mouseOffset.y);
+}
 
 WindowReference Gui::findWindowAtPoint(Common::Point point) {
 	// HACK, MIGHT NEED TO LOOK INTO THE Graphcis::MacWindow dimensions to account for window movement
@@ -1132,9 +1156,7 @@ bool Gui::processEvent(Common::Event &event) {
 
 	if (event.type == Common::EVENT_MOUSEMOVE) {
 		if (_draggedObj.id != 0) {
-			Common::Point newPos = event.mouse + _draggedObj.mouseOffset;
-			_draggedObj.hasMoved = newPos.sqrDist(_draggedObj.pos) >= kDragThreshold;
-			_draggedObj.pos = newPos;
+			moveDraggedObject(event.mouse);
 		}
 		processed = true;
 
