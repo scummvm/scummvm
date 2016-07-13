@@ -379,6 +379,7 @@ public:
 	uint16 getChargeCount() { return (_desc >> 10) & 0xF; }
 	uint16 setChargeCount(uint16 val) { _desc = (_desc & ~(0xF << 10)) | ((val & 0xF) << 10); return (val & 0xF); }
 	Thing getNextThing() { return _nextThing; }
+	void setNextThing(Thing val) { _nextThing = val;  }
 	uint16 getCursed() { return (_desc >> 8) & 1; }
 	void setCursed(uint16 val) { _desc = (_desc & ~(1 << 8)) | ((val & 1) << 8); }
 	uint16 getPoisoned() { return (_desc >> 9) & 1; }
@@ -405,6 +406,8 @@ public:
 	uint16 getCursed() { return (_attributes >> 8) & 1; }
 	uint16 getBroken() { return (_attributes >> 13) & 1; }
 	uint16 getDoNotDiscard() { return (_attributes >> 7) & 1; }
+	uint16 getChargeCount() { return (_attributes >> 9) & 0xF; }
+	void setChargeCount(uint16 val) { _attributes = (_attributes & ~(0xF << 9)) | ((val & 0xF) << 9); }
 }; // @ ARMOUR
 
 class Scroll {

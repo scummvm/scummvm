@@ -32,6 +32,7 @@
 #include "dm.h"
 
 namespace DM {
+	class Champion;
 	class TimelineEvent;
 	class CreatureInfo;
 
@@ -236,7 +237,14 @@ public:
 	void f195_addAllActiveGroups(); // @ F0195_GROUP_AddAllActiveGroups
 	Thing f185_groupGetGenerated(int16 creatureType, int16 healthMultiplier, uint16 creatureCount, direction dir, int16 mapX, int16 mapY); // @ F0185_GROUP_GetGenerated
 	bool f223_isSquareACorridorTeleporterPitOrDoor(int16 mapX, int16 mapY); // @ F0223_GROUP_IsSquareACorridorTeleporterPitOrDoor
-
+	int16 f177_getMeleeTargetCreatureOrdinal(int16 groupX, int16 groupY, int16 partyX, int16 paryY,
+											 uint16 champCell); // @ F0177_GROUP_GetMeleeTargetCreatureOrdinal
+	int16 f231_getMeleeActionDamage(Champion *champ, int16 champIndex, Group *group, int16 creatureIndex,
+									int16 mapX, int16 mapXÛY, uint16 actionHitProbability, uint16 actionDamageFactor, int16 skillIndex); // @ F0231_GROUP_GetMeleeActionDamage
+	void f224_fluxCageAction(int16 mapX, int16 mapY); // @ F0224_GROUP_FluxCageAction
+	uint16 f222_isLordChaosOnSquare(int16 mapX, int16 mapY); // @ F0222_GROUP_IsLordChaosOnSquare
+	bool f221_isFluxcageOnSquare(int16 mapX, int16 mapY); // @ F0221_GROUP_IsFluxcageOnSquare
+	void f225_fuseAction(uint16 mapX, uint16 mapY); // @ F0225_GROUP_FuseAction
 };
 
 

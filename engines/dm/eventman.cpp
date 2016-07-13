@@ -685,7 +685,7 @@ void EventManager::f380_processCommandQueue() {
 	}
 	if (cmdType == k111_CommandClickInActionArea) {
 		if (!_vm->_championMan->_g299_candidateChampionOrdinal) {
-			warning(false, "MISSING CODE: F0371_COMMAND_ProcessType111To115_ClickInActionArea_CPSE(L1161_i_CommandX, L1162_i_CommandY);");
+			f371_commandProcessType111To115_ClickInActionArea(L1161_i_CommandX, L1162_i_CommandY);
 		}
 		return;
 	}
@@ -1310,7 +1310,7 @@ void EventManager::f70_mouseProcessCommands125To128_clickOnChampionIcon(uint16 c
 	int16 L0053_i_ChampionIndex;
 	int16 L0054_i_ChampionIndex;
 	Box* L0055_pi_ChampionIconBox;
-	register unsigned char* L0056_puc_Bitmap;
+	byte* L0056_puc_Bitmap;
 
 
 	_gK100_preventBuildPointerScreenArea = true;
@@ -1463,6 +1463,43 @@ void EventManager::f369_commandProcessTypes101To108_clickInSpellSymbolsArea(Comm
 		_vm->_menuMan->f399_addChampionSymbol(L1130_ui_SymbolIndex);
 	} else {
 		_vm->_menuMan->f400_deleteChampionSymbol();
+	}
+}
+
+void EventManager::f371_commandProcessType111To115_ClickInActionArea(int16 posX, int16 posY) {
+	uint16 L1134_ui_Command;
+
+
+	if (_vm->_championMan->_g506_actingChampionOrdinal) {
+		L1134_ui_Command = _vm->_eventMan->f358_getCommandTypeFromMouseInput(g452_MouseInput_ActionAreaNames, Common::Point(posX, posY), k1_LeftMouseButton);
+		if (L1134_ui_Command != k0_CommandNone) {
+			if (L1134_ui_Command == k112_CommandClickInActionAreaPass) {
+				warning(false, "MISSING CODE: F0362_COMMAND_HighlightBoxEnable");
+				_vm->_menuMan->f391_didClickTriggerAction(-1);
+			} else {
+				if ((L1134_ui_Command - k112_CommandClickInActionAreaPass) <= _vm->_menuMan->_g507_actionCount) {
+					if (L1134_ui_Command == k113_CommandClickInActionAreaAction_0) {
+						warning(false, "MISSING CODE: F0362_COMMAND_HighlightBoxEnable");
+					} else {
+						if (L1134_ui_Command == k114_CommandClickInActionAreaAction_1) {
+							warning(false, "MISSING CODE: F0362_COMMAND_HighlightBoxEnable");
+						} else {
+							warning(false, "MISSING CODE: F0362_COMMAND_HighlightBoxEnable");
+						}
+					}
+					_vm->_g321_stopWaitingForPlayerInput = _vm->_menuMan->f391_didClickTriggerAction(L1134_ui_Command - k113_CommandClickInActionAreaAction_0);
+				}
+			}
+		}
+	} else {
+		if (_vm->_menuMan->_g509_actionAreaContainsIcons) {
+			L1134_ui_Command = _vm->_eventMan->f358_getCommandTypeFromMouseInput(g453_MouseInput_ActionAreaIcons, Common::Point(posX, posY), k1_LeftMouseButton);
+			if (L1134_ui_Command != k0_CommandNone) {
+				if ((L1134_ui_Command = L1134_ui_Command - k116_CommandClickInActionAreaChampion_0_Action) < _vm->_championMan->_g305_partyChampionCount) {
+					_vm->_menuMan->f389_processCommands116To119_setActingChampion(L1134_ui_Command);
+				}
+			}
+		}
 	}
 }
 } // end of namespace DM

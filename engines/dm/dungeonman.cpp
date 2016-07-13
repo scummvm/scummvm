@@ -795,7 +795,7 @@ Square DungeonMan::f152_getRelSquare(direction dir, int16 stepsForward, int16 st
 int16 DungeonMan::f160_getSquareFirstThingIndex(int16 mapX, int16 mapY) {
 	uint16 L0260_ui_ThingIndex;
 	int16 L0261_i_MapY;
-	register unsigned char* L0262_puc_Square;
+	unsigned char* L0262_puc_Square;
 
 
 	L0262_puc_Square = _vm->_dungeonMan->_g271_currMapData[mapX];

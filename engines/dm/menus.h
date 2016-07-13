@@ -34,6 +34,11 @@
 
 namespace DM {
 
+#define kM1_damageCantReach -1 // @ CM1_DAMAGE_CANT_REACH    
+#define kM2_damageNoAmmunition -2 // @ CM2_DAMAGE_NO_AMMUNITION 
+
+#define k0x8000_hitNonMaterialCreatures 0x8000 // @ MASK0x8000_HIT_NON_MATERIAL_CREATURES 
+
 extern Box g1_BoxActionArea; // @ G0001_s_Graphic562_Box_ActionArea
 extern Box g0_BoxSpellArea; // @ G0000_s_Graphic562_Box_SpellArea
 
@@ -50,6 +55,19 @@ public:
 	}
 }; // @ ACTION_LIST
 
+class ActionSet {
+public:
+	byte _actionIndices[3]; /* 1 byte of padding inserted by compiler on Atari ST, not on Amiga */
+	byte _actionProperties[2]; /* Bit 7: requires charge, Bit 6-0: minimum skill level */
+	ActionSet(byte a1, byte a2, byte a3, byte b1, byte b2) {
+		_actionIndices[0] = a1;
+		_actionIndices[1] = a2;
+		_actionIndices[2] = a3;
+		_actionProperties[0] = b1;
+		_actionProperties[1] = b2;
+	}
+}; // @ ACTION_SET
+
 class MenuMan {
 	DMEngine *_vm;
 public:
@@ -61,6 +79,8 @@ public:
 	int16 _g513_actionDamage; // @ G0513_i_ActionDamage
 	ActionList _g713_actionList; // @ G0713_s_ActionList
 	byte *_gK72_bitmapSpellAreaLine; // @ K0072_puc_Bitmap_SpellAreaLine
+	Thing _g517_actionTargetGroupThing; // @ G0517_T_ActionTargetGroupThing
+	uint16 _g507_actionCount; // @ G0507_ui_ActionCount
 
 	void f388_clearActingChampion(); // @ F0388_MENUS_ClearActingChampion
 	void f386_drawActionIcon(ChampionIndex championIndex); // @ F0386_MENUS_DrawActionIcon
@@ -85,6 +105,17 @@ public:
 	void f398_drawChampionSymbols(Champion *champ); // @ F0398_MENUS_DrawChampionSymbols
 	void f399_addChampionSymbol(int16 symbolIndex); // @ F0399_MENUS_AddChampionSymbol
 	void f400_deleteChampionSymbol(); // @ F0400_MENUS_DeleteChampionSymbol
+	bool f391_didClickTriggerAction(int16 actionListIndex); // @ F0391_MENUS_DidClickTriggerAction
+	bool f407_isActionPerformed(uint16 champIndex, int16 actionIndex); // @ F0407_MENUS_IsActionPerformed
+	void f406_setChampionDirectionToPartyDirection(Champion *champ); // @ F0406_MENUS_SetChampionDirectionToPartyDirection
+	void f405_decrementCharges(Champion *champ); // @ F0405_MENUS_DecrementCharges
+	bool f402_isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 actionIndex, int16 targetMapX,
+									 int16 targetMapY, int16 skillIndex); // @ F0402_MENUS_IsMeleeActionPerformed
+	bool  f401_isGroupFrightenedByAction(int16 champIndex, uint16 actionIndex, int16 mapX, int16 mapY); // @ F0401_MENUS_IsGroupFrightenedByAction
+	void f381_printMessageAfterReplacements(char *str); // @ F0381_MENUS_PrintMessageAfterReplacements
+	void f389_processCommands116To119_setActingChampion(uint16 champIndex); // @ F0389_MENUS_ProcessCommands116To119_SetActingChampion
+	void f383_setActionList(ActionSet *actionSet); // @ F0383_MENUS_SetActionList
+	int16 f382_getActionObjectChargeCount(); // @ F0382_MENUS_GetActionObjectChargeCount
 };
 
 }

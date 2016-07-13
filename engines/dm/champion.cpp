@@ -1059,7 +1059,7 @@ bool ChampionMan::f308_isLucky(Champion* champ, uint16 percentage) {
 	if (_vm->getRandomNumber(2) && (_vm->getRandomNumber(100) > percentage)) {
 		return true;
 	}
-	register unsigned char* L0928_puc_Statistic = champ->_statistics[k0_ChampionStatLuck];
+	unsigned char* L0928_puc_Statistic = champ->_statistics[k0_ChampionStatLuck];
 	AP0646_ui_IsLucky = (_vm->getRandomNumber(L0928_puc_Statistic[k1_ChampionStatCurrent]) > percentage);
 	L0928_puc_Statistic[k1_ChampionStatCurrent] = f26_getBoundedValue((int32)L0928_puc_Statistic[k2_ChampionStatMinimum], (int32)L0928_puc_Statistic[k1_ChampionStatCurrent] + (AP0646_ui_IsLucky ? -2 : 2), (int32)L0928_puc_Statistic[k0_ChampionStatMaximum]);
 	return AP0646_ui_IsLucky;

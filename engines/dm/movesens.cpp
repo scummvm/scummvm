@@ -963,7 +963,7 @@ void MovesensMan::f272_sensorTriggerEffect(Sensor* sensor, int16 effect, int16 m
 
 	int16 L0736_i_TargetMapX;
 	int16 L0737_i_TargetMapY;
-	register long L0738_l_Time;
+	int32 L0738_l_Time;
 	uint16 L0739_ui_SquareType;
 	uint16 L0740_ui_TargetCell;
 

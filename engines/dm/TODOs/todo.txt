@@ -6,7 +6,9 @@ Bugs:
 
 	Logic:
 		When object are put on the right side of the current square, they disappear
-		Drawing door ornaments segfaults when going back to the start 
+		Drawing door ornaments segfaults when going back to the start
+	  !! It seems that that deleted events' _type fields are not getting set to 0, when looking for available slots, the code looks for events with 0 _type fields, 
+	  		this results in segfaults
 
 Possible bugs:
 	- k1_LeftMouseButton and k2_RightMouseButton have values 1 and 2 respectively, contrary to the original in the original: MASK0x0001_MOUSE_RIGHT_BUTTON, MASK0x0002_MOUSE_LEFT_BUTTON

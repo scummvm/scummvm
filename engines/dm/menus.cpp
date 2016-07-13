@@ -35,9 +35,58 @@
 #include "eventman.h"
 #include "timeline.h"
 #include "movesens.h"
+#include "group.h"
+#include "projexpl.h"
 
 
 namespace DM {
+
+unsigned char g496_ActionSkillIndex[44] = { // @ G0496_auc_Graphic560_ActionSkillIndex
+	0,  /* N */
+	7,  /* BLOCK */
+	6,  /* CHOP */
+	0,  /* X */
+	14, /* BLOW HORN */
+	12, /* FLIP */
+	9,  /* PUNCH */
+	9,  /* KICK */
+	7,  /* WAR CRY Atari ST Versions 1.0 1987-12-08 1987-12-11 1.1: 14 */
+	9,  /* STAB */
+	8,  /* CLIMB DOWN */
+	14, /* FREEZE LIFE */
+	9,  /* HIT */
+	4,  /* SWING */
+	5,  /* STAB */
+	5,  /* THRUST */
+	5,  /* JAB */
+	7,  /* PARRY */
+	4,  /* HACK */
+	4,  /* BERZERK */
+	16, /* FIREBALL */
+	17, /* DISPELL */
+	14, /* CONFUSE */
+	17, /* LIGHTNING */
+	17, /* DISRUPT */
+	6,  /* MELEE */
+	8,  /* X */
+	3,  /* INVOKE */
+	4,  /* SLASH */
+	4,  /* CLEAVE */
+	6,  /* BASH */
+	6,  /* STUN */
+	11, /* SHOOT */
+	15, /* SPELLSHIELD */
+	15, /* FIRESHIELD */
+	3,  /* FLUXCAGE */
+	13, /* HEAL */
+	14, /* CALM */
+	17, /* LIGHT */
+	18, /* WINDOW */
+	16, /* SPIT */
+	14, /* BRANDISH */
+	10, /* THROW */
+	3}; /* FUSE */
+
 
 Box  g499_BoxActionArea3ActionMenu = Box(224, 319, 77, 121); // @ G0499_s_Graphic560_Box_ActionArea3ActionsMenu
 Box  g500_BoxActionArea2ActionMenu = Box(224, 319, 77, 109); // @ G0500_s_Graphic560_Box_ActionArea2ActionsMenu
@@ -56,6 +105,8 @@ MenuMan::MenuMan(DMEngine *vm) : _vm(vm) {
 	_g513_actionDamage = 0;
 	_g713_actionList.resetToZero();
 	_gK72_bitmapSpellAreaLine = new byte[96 * 12];
+	_g517_actionTargetGroupThing = Thing(0);
+	_g507_actionCount = 0;
 }
 
 MenuMan::~MenuMan() {
@@ -812,5 +863,818 @@ void MenuMan::f400_deleteChampionSymbol() {
 	f397_drawAvailableSymbols(L1226_ui_SymbolStep);
 	f398_drawChampionSymbols(L1228_ps_Champion);
 	_vm->_eventMan->f77_hideMouse();
+}
+
+bool MenuMan::f391_didClickTriggerAction(int16 actionListIndex) {
+	uint16 L1196_ui_ChampionIndex;
+	uint16 L1197_ui_ActionIndex;
+	bool L1198_B_ClickTriggeredAction;
+	Champion* L1199_ps_Champion;
+
+
+	if (!_vm->_championMan->_g506_actingChampionOrdinal || (actionListIndex != -1 && (_vm->_menuMan->_g713_actionList._actionIndices[actionListIndex] == k255_ChampionActionNone)))
+		return false;
+
+	L1199_ps_Champion = &_vm->_championMan->_gK71_champions[L1196_ui_ChampionIndex = _vm->M1_ordinalToIndex(_vm->_championMan->_g506_actingChampionOrdinal)];
+	if (actionListIndex == -1) {
+		warning(false, "possible bug in f391_didClickTriggerAction");
+		// L1198_B_ClickTriggeredAction is set to -1 since booleans are stored in int16 in the original
+		L1198_B_ClickTriggeredAction = true;
+	} else {
+		L1197_ui_ActionIndex = _vm->_menuMan->_g713_actionList._actionIndices[actionListIndex];
+		L1199_ps_Champion->_actionDefense += g495_actionDefense[L1197_ui_ActionIndex]; /* BUG0_54 The defense modifier of an action is permanent.
+																									 Each action has an associated defense modifier value and a number of ticks while the champion cannot perform another action because the action icon is grayed out. If an action has a non zero defense modifier and a zero value for the number of ticks then the defense modifier is applied but it is never removed. This causes no issue in the original games because there are no actions in this case but it may occur in a version where data is customized. This statement should only be executed if the value for the action in G0491_auc_Graphic560_ActionDisabledTicks is not 0 otherwise the action is not disabled at the end of F0407_MENUS_IsActionPerformed and thus not enabled later in F0253_TIMELINE_ProcessEvent11Part1_EnableChampionAction where the defense modifier is also removed */
+		setFlag(L1199_ps_Champion->_attributes, k0x0100_ChampionAttributeStatistics);
+		L1198_B_ClickTriggeredAction = f407_isActionPerformed(L1196_ui_ChampionIndex, L1197_ui_ActionIndex);
+		L1199_ps_Champion->_actionIndex = (ChampionAction)L1197_ui_ActionIndex;
+	}
+	_vm->_menuMan->f388_clearActingChampion();
+	return L1198_B_ClickTriggeredAction;
+}
+
+bool MenuMan::f407_isActionPerformed(uint16 champIndex, int16 actionIndex) {
+	static unsigned char G0491_auc_Graphic560_ActionDisabledTicks[44] = {
+		0,  /* N */
+		6,  /* BLOCK */
+		8,  /* CHOP */
+		0,  /* X */
+		6,  /* BLOW HORN */
+		3,  /* FLIP */
+		1,  /* PUNCH */
+		5,  /* KICK */
+		3,  /* WAR CRY */
+		5,  /* STAB */
+		35, /* CLIMB DOWN */
+		20, /* FREEZE LIFE */
+		4,  /* HIT */
+		6,  /* SWING */
+		10, /* STAB */
+		16, /* THRUST */
+		2,  /* JAB */
+		18, /* PARRY */
+		8,  /* HACK */
+		30, /* BERZERK */
+		42, /* FIREBALL */
+		31, /* DISPELL */
+		10, /* CONFUSE */
+		38, /* LIGHTNING */
+		9,  /* DISRUPT */
+		20, /* MELEE */
+		10, /* X */
+		16, /* INVOKE */
+		4,  /* SLASH */
+		12, /* CLEAVE */
+		20, /* BASH */
+		7,  /* STUN */
+		14, /* SHOOT */
+		30, /* SPELLSHIELD */
+		35, /* FIRESHIELD */
+		2,  /* FLUXCAGE */
+		19, /* HEAL */
+		9,  /* CALM */
+		10, /* LIGHT */
+		15, /* WINDOW */
+		22, /* SPIT */
+		10, /* BRANDISH */
+		0,  /* THROW */
+		2}; /* FUSE */
+	static unsigned char G0494_auc_Graphic560_ActionStamina[44] = {
+		0,  /* N */
+		4,  /* BLOCK */
+		10, /* CHOP */
+		0,  /* X */
+		1,  /* BLOW HORN */
+		0,  /* FLIP */
+		1,  /* PUNCH */
+		3,  /* KICK */
+		1,  /* WAR CRY */
+		3,  /* STAB */
+		40, /* CLIMB DOWN */
+		3,  /* FREEZE LIFE */
+		3,  /* HIT */
+		2,  /* SWING */
+		4,  /* STAB */
+		17, /* THRUST */
+		3,  /* JAB */
+		1,  /* PARRY */
+		6,  /* HACK */
+		40, /* BERZERK */
+		5,  /* FIREBALL */
+		2,  /* DISPELL */
+		2,  /* CONFUSE */
+		4,  /* LIGHTNING */
+		5,  /* DISRUPT */
+		25, /* MELEE */
+		1,  /* X */
+		2,  /* INVOKE */
+		2,  /* SLASH */
+		10, /* CLEAVE */
+		9,  /* BASH */
+		2,  /* STUN */
+		3,  /* SHOOT */
+		1,  /* SPELLSHIELD */
+		2,  /* FIRESHIELD */
+		6,  /* FLUXCAGE */
+		1,  /* HEAL */
+		1,  /* CALM */
+		3,  /* LIGHT */
+		2,  /* WINDOW */
+		3,  /* SPIT */
+		2,  /* BRANDISH */
+		0,  /* THROW */
+		2}; /* FUSE */
+	unsigned char G0497_auc_Graphic560_ActionExperienceGain[44] = {
+		0,  /* N */
+		8,  /* BLOCK */
+		10, /* CHOP */
+		0,  /* X */
+		0,  /* BLOW HORN */
+		0,  /* FLIP */
+		8,  /* PUNCH */
+		13, /* KICK */
+		7,  /* WAR CRY */
+		15, /* STAB */
+		15, /* CLIMB DOWN */
+		22, /* FREEZE LIFE */
+		10, /* HIT */
+		6,  /* SWING */
+		12, /* STAB */
+		19, /* THRUST */
+		11, /* JAB */
+		17, /* PARRY */
+		9,  /* HACK */
+		40, /* BERZERK */
+		35, /* FIREBALL */
+		25, /* DISPELL */
+		0,  /* CONFUSE */
+		30, /* LIGHTNING */
+		10, /* DISRUPT */
+		24, /* MELEE */
+		0,  /* X */
+		25, /* INVOKE */
+		9,  /* SLASH */
+		12, /* CLEAVE */
+		11, /* BASH */
+		10, /* STUN */
+		20, /* SHOOT Atari ST Versions 1.0 1987-12-08 1987-12-11: 9 */
+		20, /* SPELLSHIELD */
+		20, /* FIRESHIELD */
+		12, /* FLUXCAGE */
+		0,  /* HEAL */
+		0,  /* CALM */
+		20, /* LIGHT */
+		30, /* WINDOW */
+		25, /* SPIT */
+		0,  /* BRANDISH */
+		5,  /* THROW */
+		1}; /* FUSE */
+	uint16 L1244_ui_Multiple;
+#define AL1244_ui_TargetSquare  L1244_ui_Multiple
+#define AL1244_ui_HealingAmount L1244_ui_Multiple
+#define AL1244_ui_ManaCost      L1244_ui_Multiple
+	int16 L1245_i_Multiple;
+#define AL1245_T_ExplosionThing  L1245_i_Multiple
+#define AL1245_B_ActionPerformed L1245_i_Multiple
+	int16 L1246_i_Multiple;
+#define AL1246_i_RequiredManaAmount    L1246_i_Multiple
+#define AL1246_i_ActionHandWeaponClass L1246_i_Multiple
+#define AL1246_i_StepEnergy            L1246_i_Multiple
+#define AL1246_i_HealingCapability     L1246_i_Multiple
+#define AL1246_i_Ticks                 L1246_i_Multiple
+	Champion* L1247_ps_Champion;
+	Weapon* L1248_ps_Weapon;
+	uint16 L1249_ui_ActionDisabledTicks;
+	int16 L1250_i_Multiple;
+#define AL1250_i_KineticEnergy        L1250_i_Multiple
+#define AL1250_i_ReadyHandWeaponClass L1250_i_Multiple
+#define AL1250_i_MissingHealth        L1250_i_Multiple
+#define AL1250_i_HealingAmount        L1250_i_Multiple
+	int16 L1251_i_MapX;
+	int16 L1252_i_MapY;
+	int16 L1253_i_ActionStamina;
+	int16 L1254_i_ActionSkillIndex;
+	int16 L1255_i_ActionExperienceGain;
+	WeaponInfo* L1256_ps_WeaponInfoActionHand;
+	WeaponInfo* L1257_ps_WeaponInfoReadyHand;
+	TimelineEvent L1258_s_Event;
+
+
+	if (champIndex >= _vm->_championMan->_g305_partyChampionCount) {
+		return false;
+	}
+	L1247_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
+	L1248_ps_Weapon = (Weapon*)_vm->_dungeonMan->f156_getThingData(L1247_ps_Champion->_slots[k1_ChampionSlotActionHand]);
+	if (!L1247_ps_Champion->_currHealth) {
+		return false;
+	}
+	L1251_i_MapX = _vm->_dungeonMan->_g306_partyMapX;
+	L1252_i_MapY = _vm->_dungeonMan->_g307_partyMapY;
+	L1251_i_MapX += _vm->_dirIntoStepCountEast[L1247_ps_Champion->_dir], L1252_i_MapY += _vm->_dirIntoStepCountNorth[L1247_ps_Champion->_dir];
+	_g517_actionTargetGroupThing = _vm->_groupMan->f175_groupGetThing(L1251_i_MapX, L1252_i_MapY);
+	L1249_ui_ActionDisabledTicks = G0491_auc_Graphic560_ActionDisabledTicks[actionIndex];
+	L1254_i_ActionSkillIndex = g496_ActionSkillIndex[actionIndex];
+	L1253_i_ActionStamina = G0494_auc_Graphic560_ActionStamina[actionIndex] + _vm->getRandomNumber(2);
+	L1255_i_ActionExperienceGain = G0497_auc_Graphic560_ActionExperienceGain[actionIndex];
+	AL1244_ui_TargetSquare = _vm->_dungeonMan->f151_getSquare(L1251_i_MapX, L1252_i_MapY).toByte();
+	AL1245_B_ActionPerformed = true;
+	if (((L1254_i_ActionSkillIndex >= k16_ChampionSkillFire) && (L1254_i_ActionSkillIndex <= k19_ChampionSkillWater)) || (L1254_i_ActionSkillIndex == k3_ChampionSkillWizard)) {
+		AL1246_i_RequiredManaAmount = 7 - MIN((uint16)6, _vm->_championMan->f303_getSkillLevel(champIndex, L1254_i_ActionSkillIndex));
+	}
+	switch (actionIndex) {
+	case k23_ChampionActionLightning:
+		AL1250_i_KineticEnergy = 180;
+		AL1245_T_ExplosionThing = Thing::_explLightningBolt.toUint16();
+		goto T0407014;
+	case k21_ChampionActionDispel:
+		AL1250_i_KineticEnergy = 150;
+		AL1245_T_ExplosionThing = Thing::_explHarmNonMaterial.toUint16();
+		goto T0407014;
+	case k20_ChampionActionFireball:
+		AL1250_i_KineticEnergy = 150;
+		goto T0407013;
+	case k40_ChampionActionSpit:
+		AL1250_i_KineticEnergy = 250;
+T0407013:
+		AL1245_T_ExplosionThing = Thing::_explFireBall.toUint16();
+T0407014:
+		f406_setChampionDirectionToPartyDirection(L1247_ps_Champion);
+		if (L1247_ps_Champion->_currMana < AL1246_i_RequiredManaAmount) {
+			AL1250_i_KineticEnergy = MAX(2, L1247_ps_Champion->_currMana * AL1250_i_KineticEnergy / AL1246_i_RequiredManaAmount);
+			AL1246_i_RequiredManaAmount = L1247_ps_Champion->_currMana;
+		}
+		if (!(AL1245_B_ActionPerformed = _vm->_championMan->f327_isProjectileSpellCast(champIndex, Thing(AL1245_T_ExplosionThing), AL1250_i_KineticEnergy, AL1246_i_RequiredManaAmount))) {
+			L1255_i_ActionExperienceGain >>= 1;
+		}
+		f405_decrementCharges(L1247_ps_Champion);
+		break;
+	case k30_ChampionActionBash:
+	case k18_ChampionActionHack:
+	case k19_ChampionActionBerzerk:
+	case k7_ChampionActionKick:
+	case k13_ChampionActionSwing:
+	case k2_ChampionActionChop:
+		if ((Square(AL1244_ui_TargetSquare).getType() == k4_DoorElemType) && (Square(AL1244_ui_TargetSquare).getDoorState() == k4_doorState_CLOSED)) {
+			warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+			L1249_ui_ActionDisabledTicks = 6;
+			_vm->_groupMan->f232_groupIsDoorDestoryedByAttack(L1251_i_MapX, L1252_i_MapY, _vm->_championMan->f312_getStrength(champIndex, k1_ChampionSlotActionHand), false, 2);
+			warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+			break;
+		}
+	case k24_ChampionActionDisrupt:
+	case k16_ChampionActionJab:
+	case k17_ChampionActionParry:
+	case k14_ChampionActionStab_C014:
+	case k9_ChampionActionStab_C009:
+	case k31_ChampionActionStun:
+	case k15_ChampionActionThrust:
+	case k25_ChampionActionMelee:
+	case k28_ChampionActionSlash:
+	case k29_ChampionActionCleave:
+	case k6_ChampionActionPunch:
+		if (!(AL1245_B_ActionPerformed = f402_isMeleeActionPerformed(champIndex, L1247_ps_Champion, actionIndex, L1251_i_MapX, L1252_i_MapY, L1254_i_ActionSkillIndex))) {
+			L1255_i_ActionExperienceGain >>= 1;
+			L1249_ui_ActionDisabledTicks >>= 1;
+		}
+		break;
+	case k22_ChampionActionConfuse:
+		f405_decrementCharges(L1247_ps_Champion);
+	case k8_ChampionActionWarCry:
+	case k37_ChampionActionCalm:
+	case k41_ChampionActionBrandish:
+	case k4_ChampionActionBlowHorn:
+		if (actionIndex == k8_ChampionActionWarCry) {
+			warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+		}
+		if (actionIndex == k4_ChampionActionBlowHorn) {
+			warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+		}
+		AL1245_B_ActionPerformed = f401_isGroupFrightenedByAction(champIndex, actionIndex, L1251_i_MapX, L1252_i_MapY);
+		break;
+	case k32_ChampionActionShoot:
+		if (Thing(L1247_ps_Champion->_slots[k0_ChampionSlotReadyHand]).getType() != k5_WeaponThingType)
+			goto T0407032;
+		L1256_ps_WeaponInfoActionHand = &g238_WeaponInfo[L1248_ps_Weapon->getType()];
+		L1257_ps_WeaponInfoReadyHand = _vm->_dungeonMan->f158_getWeaponInfo(L1247_ps_Champion->_slots[k0_ChampionSlotReadyHand]);
+		AL1246_i_ActionHandWeaponClass = L1256_ps_WeaponInfoActionHand->_class;
+		AL1250_i_ReadyHandWeaponClass = L1257_ps_WeaponInfoReadyHand->_class;
+		if ((AL1246_i_ActionHandWeaponClass >= k16_WeaponClassFirstBow) && (AL1246_i_ActionHandWeaponClass <= k31_WeaponClassLastBow)) {
+			if (AL1250_i_ReadyHandWeaponClass != k10_WeaponClassBowAmmunition)
+				goto T0407032;
+			AL1246_i_StepEnergy -= k16_WeaponClassFirstBow;
+		} else {
+			if ((AL1246_i_ActionHandWeaponClass >= k32_WeaponClassFirstSling) && (AL1246_i_ActionHandWeaponClass <= k47_WeaponClassLastSling)) {
+				if (AL1250_i_ReadyHandWeaponClass != k11_WeaponClassSlingAmmunition) {
+T0407032:
+					_vm->_menuMan->_g513_actionDamage = kM2_damageNoAmmunition;
+					L1255_i_ActionExperienceGain = 0;
+					AL1245_B_ActionPerformed = false;
+					break;
+				}
+				AL1246_i_StepEnergy -= k32_WeaponClassFirstSling;
+			}
+		}
+		f406_setChampionDirectionToPartyDirection(L1247_ps_Champion);
+		{ // so gotos won't skip init
+			Thing AL1250_T_Object = _vm->_championMan->f300_getObjectRemovedFromSlot(champIndex, k0_ChampionSlotReadyHand);
+			warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+			_vm->_championMan->f326_championShootProjectile(L1247_ps_Champion, AL1250_T_Object, L1256_ps_WeaponInfoActionHand->_kineticEnergy + L1257_ps_WeaponInfoReadyHand->_kineticEnergy, (L1256_ps_WeaponInfoActionHand->getShootAttack() + _vm->_championMan->f303_getSkillLevel(champIndex, k11_ChampionSkillShoot)) << 1, AL1246_i_StepEnergy);
+		}
+		break;
+	case k5_ChampionActionFlip:
+		// TODO: localization
+		if (_vm->getRandomNumber(2)) {
+			f381_printMessageAfterReplacements("IT COMES UP HEADS.");
+		} else {
+			f381_printMessageAfterReplacements("IT COMES UP TAILS.");
+		}
+		break;
+	case k33_ChampionActionSpellshield:
+	case k34_ChampionActionFireshield:
+		if (!f403_isPartySpellOrFireShieldSuccessful(L1247_ps_Champion, actionIndex == k33_ChampionActionSpellshield, 280, true)) {
+			L1255_i_ActionExperienceGain >>= 2;
+			L1249_ui_ActionDisabledTicks >>= 1;
+		} else {
+			f405_decrementCharges(L1247_ps_Champion);
+		}
+		break;
+	case k27_ChampionActionInvoke:
+		AL1250_i_KineticEnergy = _vm->getRandomNumber(128) + 100;
+		switch (_vm->getRandomNumber(6)) {
+		case 0:
+			AL1245_T_ExplosionThing = Thing::_explPoisonBolt.toUint16();
+			goto T0407014;
+		case 1:
+			AL1245_T_ExplosionThing = Thing::_explPoisonCloud.toUint16();
+			goto T0407014;
+		case 2:
+			AL1245_T_ExplosionThing = Thing::_explHarmNonMaterial.toUint16();
+			goto T0407014;
+		default:
+			goto T0407013;
+		}
+	case k35_ChampionActionFluxcage:
+		f406_setChampionDirectionToPartyDirection(L1247_ps_Champion);
+		_vm->_groupMan->f224_fluxCageAction(L1251_i_MapX, L1252_i_MapY);
+		break;
+	case k43_ChampionActionFuse:
+		f406_setChampionDirectionToPartyDirection(L1247_ps_Champion);
+		L1251_i_MapX = _vm->_dungeonMan->_g306_partyMapX;
+		L1252_i_MapY = _vm->_dungeonMan->_g307_partyMapY;
+		L1251_i_MapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir], L1252_i_MapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
+		_vm->_groupMan->f225_fuseAction(L1251_i_MapX, L1252_i_MapY);
+		break;
+	case k36_ChampionActionHeal:
+		/* CHANGE2_17_IMPROVEMENT Heal action is much more effective
+		Heal cycles occur as long as the champion has missing health and enough mana. Cycle count = Min(Current Mana / 2, Missing health / Min(10, Heal skill level))
+		Healing amount is Min(Missing health, Min(10, Heal skill level)) * heal cycle count
+		Mana cost is 2 * heal cycle count
+		Experience gain is 2 + 2 * heal cycle count */
+		if (((AL1250_i_MissingHealth = L1247_ps_Champion->_maxHealth - L1247_ps_Champion->_currHealth) > 0) && L1247_ps_Champion->_currMana) {
+			AL1246_i_HealingCapability = MIN((uint16)10, _vm->_championMan->f303_getSkillLevel(champIndex, k13_ChampionSkillHeal));
+			L1255_i_ActionExperienceGain = 2;
+			do {
+				AL1244_ui_HealingAmount = MIN(AL1250_i_MissingHealth, AL1246_i_HealingCapability);
+				L1247_ps_Champion->_currHealth += AL1244_ui_HealingAmount;
+				L1255_i_ActionExperienceGain += 2;
+			} while (((L1247_ps_Champion->_currMana = L1247_ps_Champion->_currMana - 2) > 0) && (AL1250_i_MissingHealth = AL1250_i_MissingHealth - AL1244_ui_HealingAmount));
+			if (L1247_ps_Champion->_currMana < 0) {
+				L1247_ps_Champion->_currMana = 0;
+			}
+			setFlag(L1247_ps_Champion->_attributes, k0x0100_ChampionAttributeStatistics);
+			AL1245_B_ActionPerformed = true;
+		}
+		break;
+	case k39_ChampionActionWindow:
+		AL1246_i_Ticks = _vm->getRandomNumber(_vm->_championMan->f303_getSkillLevel(champIndex, L1254_i_ActionSkillIndex) + 8) + 5;
+		L1258_s_Event._priority = 0;
+		L1258_s_Event._type = k73_TMEventTypeThievesEye;
+		M33_setMapAndTime(L1258_s_Event._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + AL1246_i_Ticks);
+		_vm->_timeline->f238_addEventGetEventIndex(&L1258_s_Event);
+		_vm->_championMan->_g407_party._event73Count_ThievesEye++;
+		goto T0407076;
+	case k10_ChampionActionClimbDown:
+		L1251_i_MapX = _vm->_dungeonMan->_g306_partyMapX;
+		L1252_i_MapY = _vm->_dungeonMan->_g307_partyMapY;
+		L1251_i_MapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir], L1252_i_MapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
+		/* CHANGE6_00_FIX The presence of a group over the pit is checked so that you cannot climb down a pit with the rope if there is a group levitating over it */
+		if ((_vm->_dungeonMan->f151_getSquare(L1251_i_MapX, L1252_i_MapY).getType() == k2_ElementTypePit) && (_vm->_groupMan->f175_groupGetThing(L1251_i_MapX, L1252_i_MapY) == Thing::_endOfList)) {
+			/* BUG0_77 The party moves forward when using the rope in front of a closed pit. The engine does not check whether the pit is open before moving the party over the pit. This is not consistent with the behavior when using the rope in front of a corridor where nothing happens */
+			_vm->_movsens->_g402_useRopeToClimbDownPit = true;
+			_vm->_movsens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, L1251_i_MapX, L1252_i_MapY);
+			_vm->_movsens->_g402_useRopeToClimbDownPit = false;
+		} else {
+			L1249_ui_ActionDisabledTicks = 0;
+		}
+		break;
+	case k11_ChampionActionFreezeLife:
+		if (L1248_ps_Weapon->getType() == k42_JunkTypeMagicalBoxBlue) {
+			AL1246_i_Ticks = 30;
+			goto T0407071;
+		}
+		if (L1248_ps_Weapon->getType() == k43_JunkTypeMagicalBoxGreen) {
+			AL1246_i_Ticks = 125;
+T0407071:
+			_vm->_championMan->f300_getObjectRemovedFromSlot(champIndex, k1_ChampionSlotActionHand);
+			L1248_ps_Weapon->setNextThing(Thing::_none);
+		} else {
+			AL1246_i_Ticks = 70;
+			f405_decrementCharges(L1247_ps_Champion);
+		}
+		_vm->_championMan->_g407_party._freezeLifeTicks = MIN(200, _vm->_championMan->_g407_party._freezeLifeTicks + AL1246_i_Ticks);
+		break;
+	case k38_ChampionActionLight:
+		_vm->_championMan->_g407_party._magicalLightAmount += g39_LightPowerToLightAmount[2];
+		f404_createEvent70_light(-2, 2500);
+T0407076:
+		f405_decrementCharges(L1247_ps_Champion);
+		break;
+	case k42_ChampionActionThrow:
+		f406_setChampionDirectionToPartyDirection(L1247_ps_Champion);
+		if (AL1245_B_ActionPerformed = _vm->_championMan->f328_isObjectThrown(champIndex, k1_ChampionSlotActionHand, (L1247_ps_Champion->_cell == returnNextVal(_vm->_dungeonMan->_g308_partyDir)) || (L1247_ps_Champion->_cell == returnOppositeDir(_vm->_dungeonMan->_g308_partyDir)))) {
+			_vm->_timeline->_g370_events[L1247_ps_Champion->_enableActionEventIndex]._B._slotOrdinal = _vm->M0_indexToOrdinal(k1_ChampionSlotActionHand);
+		}
+	}
+	if (L1249_ui_ActionDisabledTicks) {
+		_vm->_championMan->f330_disableAction(champIndex, L1249_ui_ActionDisabledTicks);
+	}
+	if (L1253_i_ActionStamina) {
+		_vm->_championMan->f325_decrementStamine(champIndex, L1253_i_ActionStamina);
+	}
+	if (L1255_i_ActionExperienceGain) {
+		_vm->_championMan->f304_addSkillExperience(champIndex, L1254_i_ActionSkillIndex, L1255_i_ActionExperienceGain);
+	}
+	_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
+	return AL1245_B_ActionPerformed;
+}
+
+void MenuMan::f406_setChampionDirectionToPartyDirection(Champion* champ) {
+	if (champ->_dir != _vm->_dungeonMan->_g308_partyDir) {
+		champ->_dir = _vm->_dungeonMan->_g308_partyDir;
+		setFlag(champ->_attributes, k0x0400_ChampionAttributeIcon);
+	}
+}
+
+void MenuMan::f405_decrementCharges(Champion* champ) {
+	Thing L1242_T_Thing;
+	Junk* L1243_ps_Junk;
+
+	L1243_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(L1242_T_Thing = champ->_slots[k1_ChampionSlotActionHand]);
+	switch (L1242_T_Thing.getType()) {
+	case k5_WeaponThingType:
+		if (((Weapon*)L1243_ps_Junk)->getChargeCount()) {
+			((Weapon*)L1243_ps_Junk)->setChargeCount(((Weapon*)L1243_ps_Junk)->getChargeCount() - 1);
+		}
+		break;
+	case k6_ArmourThingType:
+		if (((Armour*)L1243_ps_Junk)->getChargeCount()) {
+			((Armour*)L1243_ps_Junk)->setChargeCount(((Armour*)L1243_ps_Junk)->getChargeCount() - 1);
+		}
+		break;
+	case k10_JunkThingType:
+		if (L1243_ps_Junk->getChargeCount()) {
+			L1243_ps_Junk->setChargeCount(L1243_ps_Junk->getChargeCount() - 1);
+		}
+	}
+	_vm->_championMan->f296_drawChangedObjectIcons();
+}
+
+bool MenuMan::f402_isMeleeActionPerformed(int16 champIndex, Champion* champ, int16 actionIndex, int16 targetMapX, int16 targetMapY, int16 skillIndex) {
+	static unsigned char G0492_auc_Graphic560_ActionDamageFactor[44] = {
+		0,  /* N */
+		15, /* BLOCK */
+		48, /* CHOP */
+		0,  /* X */
+		0,  /* BLOW HORN */
+		0,  /* FLIP */
+		32, /* PUNCH */
+		48, /* KICK */
+		0,  /* WAR CRY */
+		48, /* STAB */
+		0,  /* CLIMB DOWN */
+		0,  /* FREEZE LIFE */
+		20, /* HIT */
+		16, /* SWING */
+		60, /* STAB */
+		66, /* THRUST */
+		8,  /* JAB */
+		8,  /* PARRY */
+		25, /* HACK */
+		96, /* BERZERK */
+		0,  /* FIREBALL */
+		0,  /* DISPELL */
+		0,  /* CONFUSE */
+		0,  /* LIGHTNING */
+		55, /* DISRUPT */
+		60, /* MELEE */
+		0,  /* X */
+		0,  /* INVOKE */
+		16, /* SLASH */
+		48, /* CLEAVE */
+		50, /* BASH */
+		16, /* STUN */
+		0,  /* SHOOT */
+		0,  /* SPELLSHIELD */
+		0,  /* FIRESHIELD */
+		0,  /* FLUXCAGE */
+		0,  /* HEAL */
+		0,  /* CALM */
+		0,  /* LIGHT */
+		0,  /* WINDOW */
+		0,  /* SPIT */
+		0,  /* BRANDISH */
+		0,  /* THROW */
+		0}; /* FUSE */
+	static unsigned char G0493_auc_Graphic560_ActionHitProbability[44] = {
+		0,  /* N */
+		22, /* BLOCK */
+		48, /* CHOP */
+		0,  /* X */
+		0,  /* BLOW HORN */
+		0,  /* FLIP */
+		38, /* PUNCH */
+		28, /* KICK */
+		0,  /* WAR CRY */
+		30, /* STAB */
+		0,  /* CLIMB DOWN */
+		0,  /* FREEZE LIFE */
+		20, /* HIT */
+		32, /* SWING */
+		42, /* STAB */
+		57, /* THRUST */
+		70, /* JAB */
+		18, /* PARRY */
+		27, /* HACK */
+		46, /* BERZERK */
+		0,  /* FIREBALL */
+		0,  /* DISPELL */
+		0,  /* CONFUSE */
+		0,  /* LIGHTNING */
+		46, /* DISRUPT */
+		64, /* MELEE */
+		0,  /* X */
+		0,  /* INVOKE */
+		26, /* SLASH */
+		40, /* CLEAVE */
+		32, /* BASH */
+		50, /* STUN */
+		0,  /* SHOOT */
+		0,  /* SPELLSHIELD */
+		0,  /* FIRESHIELD */
+		0,  /* FLUXCAGE */
+		0,  /* HEAL */
+		0,  /* CALM */
+		0,  /* LIGHT */
+		0,  /* WINDOW */
+		0,  /* SPIT */
+		0,  /* BRANDISH */
+		0,  /* THROW */
+		0}; /* FUSE */
+
+	uint16 L1236_ui_Multiple;
+#define AL1236_ui_ChampionCell       L1236_ui_Multiple
+#define AL1236_ui_ActionDamageFactor L1236_ui_Multiple
+	uint16 L1237_ui_Multiple;
+#define AL1237_ui_Direction            L1237_ui_Multiple
+#define AL1237_ui_CellDelta            L1237_ui_Multiple
+#define AL1237_ui_ActionHitProbability L1237_ui_Multiple
+	int16 L1238_i_CreatureOrdinal;
+
+
+	warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+	if (_g517_actionTargetGroupThing == Thing::_endOfList)
+		goto T0402010;
+	if (L1238_i_CreatureOrdinal = _vm->_groupMan->f177_getMeleeTargetCreatureOrdinal(targetMapX, targetMapY, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, AL1236_ui_ChampionCell = champ->_cell)) {
+		switch (M21_normalizeModulo4(AL1236_ui_ChampionCell + 4 - champ->_dir)) {
+		case k2_ViewCellBackRight: /* Champion is on the back right of the square and tries to attack a creature in the front right of its square */
+			AL1237_ui_CellDelta = 3;
+			goto T0402005;
+		case k3_ViewCellBackLeft: /* Champion is on the back left of the square and tries to attack a creature in the front left of its square */
+			AL1237_ui_CellDelta = 1;
+T0402005: /* Check if there is another champion in front */
+			if (_vm->_championMan->f285_getIndexInCell(M21_normalizeModulo4(AL1236_ui_ChampionCell + AL1237_ui_CellDelta)) != kM1_ChampionNone) {
+				_vm->_menuMan->_g513_actionDamage = kM1_damageCantReach;
+				goto T0402010;
+			}
+		}
+		if ((actionIndex == k24_ChampionActionDisrupt) && !getFlag(_vm->_dungeonMan->f144_getCreatureAttributes(_g517_actionTargetGroupThing), k0x0040_MaskCreatureInfo_nonMaterial))
+			goto T0402010;
+		AL1237_ui_ActionHitProbability = G0493_auc_Graphic560_ActionHitProbability[actionIndex];
+		AL1236_ui_ActionDamageFactor = G0492_auc_Graphic560_ActionDamageFactor[actionIndex];
+		if ((_vm->_objectMan->f33_getIconIndex(champ->_slots[k1_ChampionSlotActionHand]) == k40_IconIndiceWeaponVorpalBlade) || (actionIndex == k24_ChampionActionDisrupt)) {
+			setFlag(AL1237_ui_ActionHitProbability, k0x8000_hitNonMaterialCreatures);
+		}
+		_vm->_menuMan->_g513_actionDamage = _vm->_groupMan->f231_getMeleeActionDamage(champ, champIndex, (Group*)_vm->_dungeonMan->f156_getThingData(_g517_actionTargetGroupThing), _vm->M1_ordinalToIndex(L1238_i_CreatureOrdinal), targetMapX, targetMapY, AL1237_ui_ActionHitProbability, AL1236_ui_ActionDamageFactor, skillIndex);
+		return true;
+	}
+T0402010:
+	return false;
+}
+
+bool MenuMan::f401_isGroupFrightenedByAction(int16 champIndex, uint16 actionIndex, int16 mapX, int16 mapY) {
+	int16 L1229_i_FrightAmount = 0;
+	uint16 L1230_ui_FearResistance;
+	uint16 L1231_ui_Experience = 0;
+	bool L1232_B_IsGroupFrightenedByAction;
+	Group* L1233_ps_Group;
+	CreatureInfo* L1234_ps_CreatureInfo;
+	ActiveGroup* L1235_ps_ActiveGroup;
+
+
+	L1232_B_IsGroupFrightenedByAction = false;
+	if (_g517_actionTargetGroupThing == Thing::_endOfList)
+		goto T0401016;
+	switch (actionIndex) {
+	case k8_ChampionActionWarCry:
+		L1229_i_FrightAmount = 3;
+		L1231_ui_Experience = 12; /* War Cry gives experience in priest skill k14_ChampionSkillInfluence below. The War Cry action also has an experience gain of 7 defined in G0497_auc_Graphic560_ActionExperienceGain in the same skill (versions 1.1 and below) or in the fighter skill k7_ChampionSkillParry (versions 1.2 and above). In versions 1.2 and above, this is the only action that gives experience in two skills */
+		break;
+	case k37_ChampionActionCalm:
+		L1229_i_FrightAmount = 7;
+		L1231_ui_Experience = 35;
+		break;
+	case k41_ChampionActionBrandish:
+		L1229_i_FrightAmount = 6;
+		L1231_ui_Experience = 30;
+		break;
+	case k4_ChampionActionBlowHorn:
+		L1229_i_FrightAmount = 6;
+		L1231_ui_Experience = 20;
+		break;
+	case k22_ChampionActionConfuse:
+		L1229_i_FrightAmount = 12;
+		L1231_ui_Experience = 45;
+	}
+	L1229_i_FrightAmount += _vm->_championMan->f303_getSkillLevel(champIndex, k14_ChampionSkillInfluence);
+	L1233_ps_Group = (Group*)_vm->_dungeonMan->f156_getThingData(_g517_actionTargetGroupThing);
+	L1234_ps_CreatureInfo = &g243_CreatureInfo[L1233_ps_Group->_type];
+	if (((L1230_ui_FearResistance = L1234_ps_CreatureInfo->M57_getFearResistance()) > _vm->getRandomNumber(L1229_i_FrightAmount)) || (L1230_ui_FearResistance == k15_immuneToFear)) {
+		L1231_ui_Experience >>= 1;
+	} else {
+		L1235_ps_ActiveGroup = &_vm->_groupMan->_g375_activeGroups[L1233_ps_Group->getActiveGroupIndex()];
+		if (L1233_ps_Group->getBehaviour() == k6_behavior_ATTACK) {
+			_vm->_groupMan->f182_stopAttacking(L1235_ps_ActiveGroup, mapX, mapY);
+			_vm->_groupMan->f180_startWanedring(mapX, mapY);
+		}
+		L1233_ps_Group->setBehaviour(k5_behavior_FLEE);
+		L1235_ps_ActiveGroup->_delayFleeingFromTarget = ((16 - L1230_ui_FearResistance) << 2) / L1234_ps_CreatureInfo->_movementTicks;
+		L1232_B_IsGroupFrightenedByAction = true;
+	}
+	_vm->_championMan->f304_addSkillExperience(champIndex, k14_ChampionSkillInfluence, L1231_ui_Experience);
+T0401016:
+	return L1232_B_IsGroupFrightenedByAction;
+}
+
+void MenuMan::f381_printMessageAfterReplacements(char* str) {
+	char* L1164_pc_Character;
+	char* L1165_pc_ReplacementString;
+	char L1166_ac_OutputString[128];
+
+
+	L1164_pc_Character = L1166_ac_OutputString;
+	*L1164_pc_Character++ = '\n'; /* New line */
+	do {
+		if (*str == '@') {
+			str++;
+			if (*(L1164_pc_Character - 1) != '\n') { /* New line */
+				*L1164_pc_Character++ = ' ';
+			}
+			switch (*str) {
+			case 'p': /* '@p' in the source string is replaced by the champion name followed by a space */
+				L1165_pc_ReplacementString = _vm->_championMan->_gK71_champions[_vm->M1_ordinalToIndex(_vm->_championMan->_g506_actingChampionOrdinal)]._name;
+			}
+			*L1164_pc_Character = '\0';
+			strcat(L1166_ac_OutputString, L1165_pc_ReplacementString);
+			L1164_pc_Character += strlen(L1165_pc_ReplacementString);
+			*L1164_pc_Character++ = ' ';
+		} else {
+			*L1164_pc_Character++ = *str;
+		}
+	} while (*str++);
+	*L1164_pc_Character = '\0';
+	if (L1166_ac_OutputString[1]) { /* If the string is not empty (the first character is a new line \n) */
+		_vm->_textMan->f47_messageAreaPrintMessage(k4_ColorCyan, L1166_ac_OutputString);
+	}
+}
+
+void MenuMan::f389_processCommands116To119_setActingChampion(uint16 champIndex) {
+	static ActionSet G0489_as_Graphic560_ActionSets[44] = {
+		/* { ActionIndices[0], ActionIndices[1], ActionIndices[2], ActionProperties[0], ActionProperties[1], Useless } */
+		ActionSet(255, 255, 255, 0x00, 0x00),
+		ActionSet(27,  43,  35, 0x00, 0x00),
+		ActionSet(6,   7,   8, 0x00, 0x00),
+		ActionSet(0,   0,   0, 0x00, 0x00),
+		ActionSet(0,   0,   0, 0x00, 0x00),
+		ActionSet(13, 255, 255, 0x00, 0x00),
+		ActionSet(13,  20, 255, 0x87, 0x00),
+		ActionSet(13,  23, 255, 0x83, 0x00),
+		ActionSet(28,  41,  22, 0x02, 0x83),
+		ActionSet(16,   2,  23, 0x00, 0x84),
+		ActionSet(2,  25,  20, 0x02, 0x86),
+		ActionSet(17,  41,  34, 0x03, 0x05),
+		ActionSet(42,   9,  28, 0x00, 0x02),
+		ActionSet(13,  17,   2, 0x02, 0x03),
+		ActionSet(16,  17,  15, 0x01, 0x05),
+		ActionSet(28,  17,  25, 0x01, 0x05),
+		ActionSet(2,  25,  15, 0x05, 0x06),
+		ActionSet(9,   2,  29, 0x02, 0x05),
+		ActionSet(16,  29,  24, 0x02, 0x04),
+		ActionSet(13,  15,  19, 0x05, 0x07),
+		ActionSet(13,   2,  25, 0x00, 0x05),
+		ActionSet(2,  29,  19, 0x03, 0x08),
+		ActionSet(13,  30,  31, 0x02, 0x04),
+		ActionSet(13,  31,  25, 0x03, 0x06),
+		ActionSet(42,  30, 255, 0x00, 0x00),
+		ActionSet(0,   0,   0, 0x00, 0x00),
+		ActionSet(42,   9, 255, 0x00, 0x00),
+		ActionSet(32, 255, 255, 0x00, 0x00),
+		ActionSet(37,  33,  36, 0x82, 0x03),
+		ActionSet(37,  33,  34, 0x83, 0x84),
+		ActionSet(17,  38,  21, 0x80, 0x83),
+		ActionSet(13,  21,  34, 0x83, 0x84),
+		ActionSet(36,  37,  41, 0x02, 0x03),
+		ActionSet(13,  23,  39, 0x82, 0x84),
+		ActionSet(13,  17,  40, 0x00, 0x83),
+		ActionSet(17,  36,  38, 0x03, 0x84),
+		ActionSet(4, 255, 255, 0x00, 0x00),
+		ActionSet(5, 255, 255, 0x00, 0x00),
+		ActionSet(11, 255, 255, 0x00, 0x00),
+		ActionSet(10, 255, 255, 0x00, 0x00),
+		ActionSet(42,   9, 255, 0x00, 0x00),
+		ActionSet(1,  12, 255, 0x02, 0x00),
+		ActionSet(42, 255, 255, 0x00, 0x00),
+		ActionSet(6,  11, 255, 0x80, 0x00)};
+	uint16 L1188_ui_ActionSetIndex;
+	Thing L1189_T_Thing;
+	Champion* L1190_ps_Champion;
+	ActionSet* L1191_ps_ActionSet;
+
+
+	L1190_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
+	if (getFlag(L1190_ps_Champion->_attributes, k0x0008_ChampionAttributeDisableAction) || !L1190_ps_Champion->_currHealth) {
+		return;
+	}
+	if ((L1189_T_Thing = L1190_ps_Champion->_slots[k1_ChampionSlotActionHand]) == Thing::_none) {
+		L1188_ui_ActionSetIndex = 2; /* Actions Punck, Kick and War Cry */
+	} else {
+		if ((L1188_ui_ActionSetIndex = g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(L1189_T_Thing)]._actionSetIndex) == 0) {
+			return;
+		}
+	}
+	L1191_ps_ActionSet = &G0489_as_Graphic560_ActionSets[L1188_ui_ActionSetIndex];
+	_vm->_championMan->_g506_actingChampionOrdinal = _vm->M0_indexToOrdinal(champIndex);
+	f383_setActionList(L1191_ps_ActionSet);
+	_vm->_menuMan->_g509_actionAreaContainsIcons = false;
+	setFlag(L1190_ps_Champion->_attributes, k0x8000_ChampionAttributeActionHand);
+	_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
+	_vm->_menuMan->f387_drawActionArea();
+	_vm->_menuMan->f387_drawActionArea();
+}
+
+void MenuMan::f383_setActionList(ActionSet* actionSet) {
+
+#define k0x0080_actionRequiresCharge 0x0080 // @ MASK0x0080_ACTION_REQUIRES_CHARGE 
+
+	uint16 L1169_ui_ActionListIndex;
+	uint16 L1170_ui_NextAvailableActionListIndex;
+	uint16 L1171_ui_ActionIndex;
+	uint16 L1172_ui_MinimumSkillLevel;
+
+	_vm->_menuMan->_g713_actionList._actionIndices[0] = (ChampionAction)actionSet->_actionIndices[0];
+	_vm->_menuMan->_g713_actionList._minimumSkillLevel[0] = 1;
+	L1170_ui_NextAvailableActionListIndex = 1;
+	for (L1169_ui_ActionListIndex = 1; L1169_ui_ActionListIndex < 3; L1169_ui_ActionListIndex++) {
+		if ((L1171_ui_ActionIndex = actionSet->_actionIndices[L1169_ui_ActionListIndex]) == k255_ChampionActionNone)
+			continue;
+		if (getFlag(L1172_ui_MinimumSkillLevel = actionSet->_actionProperties[L1169_ui_ActionListIndex - 1], k0x0080_actionRequiresCharge) && !f382_getActionObjectChargeCount())
+			continue;
+		clearFlag(L1172_ui_MinimumSkillLevel, k0x0080_actionRequiresCharge);
+		if (_vm->_championMan->f303_getSkillLevel(_vm->M1_ordinalToIndex(_vm->_championMan->_g506_actingChampionOrdinal), g496_ActionSkillIndex[L1171_ui_ActionIndex]) >= L1172_ui_MinimumSkillLevel) {
+			_vm->_menuMan->_g713_actionList._actionIndices[L1170_ui_NextAvailableActionListIndex] = (ChampionAction)L1171_ui_ActionIndex;
+			_vm->_menuMan->_g713_actionList._minimumSkillLevel[L1170_ui_NextAvailableActionListIndex] = L1172_ui_MinimumSkillLevel;
+			L1170_ui_NextAvailableActionListIndex++;
+		}
+	}
+	_g507_actionCount = L1170_ui_NextAvailableActionListIndex;
+	for (L1169_ui_ActionListIndex = L1170_ui_NextAvailableActionListIndex; L1169_ui_ActionListIndex < 3; L1169_ui_ActionListIndex++) {
+		_vm->_menuMan->_g713_actionList._actionIndices[L1169_ui_ActionListIndex] = k255_ChampionActionNone;
+	}
+}
+
+int16 MenuMan::f382_getActionObjectChargeCount() {
+	Thing L1167_T_Thing;
+	Junk* L1168_ps_Junk;
+
+
+	L1168_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(L1167_T_Thing = _vm->_championMan->_gK71_champions[_vm->M1_ordinalToIndex(_vm->_championMan->_g506_actingChampionOrdinal)]._slots[k1_ChampionSlotActionHand]);
+	switch (L1167_T_Thing.getType()) {
+	case k5_WeaponThingType:
+		return ((Weapon*)L1168_ps_Junk)->getChargeCount();
+	case k6_ArmourThingType:
+		return ((Armour*)L1168_ps_Junk)->getChargeCount();
+	case k10_JunkThingType:
+		return L1168_ps_Junk->getChargeCount();
+	default:
+		return 1;
+	}
 }
 }
