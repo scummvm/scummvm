@@ -495,6 +495,7 @@ public:
 	uint16 getChargeCount() { return (_attributes >> 14) & 0x3; }
 	void setChargeCount(uint16 val) { _attributes = (_attributes & ~(0x3 << 14)) | ((val & 0x3) << 14); }
 	uint16 getDoNotDiscard() { return (_attributes >> 7) & 1; }
+	void setDoNotDiscard(uint16 val) { _attributes = (_attributes & ~(1 << 7)) | ((val & 1) << 7); }
 
 	Thing getNextThing() { return _nextThing; }
 	void setNextThing(Thing thing) { _nextThing = thing; }

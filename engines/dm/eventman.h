@@ -268,6 +268,8 @@ public:
 	uint16 _g599_useChampionIconOrdinalAsMousePointerBitmap; // @ G0599_ui_UseChampionIconOrdinalAsMousePointerBitmap
 	KeyboardInput *_g443_primaryKeyboardInput; // @ G0443_ps_PrimaryKeyboardInput
 	KeyboardInput *_g444_secondaryKeyboardInput; // @ G0444_ps_SecondaryKeyboardInput
+	bool _g597_ignoreMouseMovements;// @ G0597_B_IgnoreMouseMovements
+	int16 _g587_hideMousePointerRequestCount; // @ G0587_i_HideMousePointerRequestCount
 
 	void initMouse();
 	void f67_setMousePointerToNormal(int16 mousePointer); // @ F0067_MOUSE_SetPointerToNormal

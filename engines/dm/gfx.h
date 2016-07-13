@@ -207,6 +207,8 @@ enum GraphicIndice {
 	k10_MenuActionAreaIndice = 10, // @ C010_GRAPHIC_MENU_ACTION_AREA
 	k11_MenuSpellAreLinesIndice = 11, // @ C011_GRAPHIC_MENU_SPELL_AREA_LINES
 	k13_MovementArrowsIndice = 13, // @ C013_GRAPHIC_MOVEMENT_ARROWS
+	k15_damageToChampionSmallIndice = 15, // @ C015_GRAPHIC_DAMAGE_TO_CHAMPION_SMALL
+	k16_damageToChampionBig = 16, // @ C016_GRAPHIC_DAMAGE_TO_CHAMPION_BIG
 	k17_InventoryGraphicIndice = 17, // @ C017_GRAPHIC_INVENTORY
 	k18_ArrowForChestContentIndice = 18, // @ C018_GRAPHIC_ARROW_FOR_CHEST_CONTENT
 	k19_EyeForObjectDescriptionIndice = 19, // @ C019_GRAPHIC_EYE_FOR_OBJECT_DESCRIPTION

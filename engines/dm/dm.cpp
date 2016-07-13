@@ -361,7 +361,7 @@ T0002002:
 		}
 		// F0363_COMMAND_HighlightBoxDisable();
 		// F0065_SOUND_PlayPendingSound_CPSD();
-		// F0320_CHAMPION_ApplyAndDrawPendingDamageAndWounds
+		_championMan->f320_applyAndDrawPendingDamageAndWounds();
 		if (_championMan->_g303_partyDead)
 			break;
 		_g313_gameTime++;

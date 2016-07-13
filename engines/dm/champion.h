@@ -575,7 +575,10 @@ public:
 	bool f327_isProjectileSpellCast(uint16 champIndex, Thing thing, int16 kineticEnergy, uint16 requiredManaAmount); // @ F0327_CHAMPION_IsProjectileSpellCast
 	void f326_championShootProjectile(Champion *champ, Thing thing, int16 kineticEnergy,
 									  int16 attack, int16 stepEnergy); // @ F0326_CHAMPION_ShootProjectile
-
+	void f320_applyAndDrawPendingDamageAndWounds(); // @ F0320_CHAMPION_ApplyAndDrawPendingDamageAndWounds
+	void f319_championKill(uint16 champIndex); // @ F0319_CHAMPION_Kill
+	void f318_dropAllObjects(uint16 champIndex); // @ F0318_CHAMPION_DropAllObjects
+	void f323_unpoison(int16 champIndex); // @ F0323_CHAMPION_Unpoison
 };
 
 

@@ -355,6 +355,8 @@ EventManager::EventManager(DMEngine *vm) : _vm(vm) {
 	_gK100_preventBuildPointerScreenArea = false;
 	_g443_primaryKeyboardInput = nullptr;
 	_g444_secondaryKeyboardInput = nullptr;
+	_g597_ignoreMouseMovements = false;
+	_g587_hideMousePointerRequestCount = 0;
 }
 
 EventManager::~EventManager() {
@@ -518,10 +520,12 @@ void EventManager::f69_setMousePointer() {
 }
 
 void EventManager::f78_showMouse() {
+	//if(_g587_hideMousePointerRequestCount++ == 0)
 	CursorMan.showMouse(true);
 }
 
 void EventManager::f77_hideMouse() {
+	// if(_g587_hideMousePointerRequestCount-- == 1)
 	// CursorMan.showMouse(false);
 }
 
@@ -564,7 +568,8 @@ void EventManager::processInput() {
 
 		}
 		case Common::EVENT_MOUSEMOVE:
-			_mousePos = event.mouse;
+			if (!_g597_ignoreMouseMovements)
+				_mousePos = event.mouse;
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
