@@ -122,7 +122,6 @@ void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data) {
 }
 
 void ImageAsset::decodePPIC0(Common::BitStream & stream, Common::Array<byte> &data) {
-	warning("Untested loading function: decode PPIC0");
 	uint words = _bitWidth >> 4;
 	uint bytes = _bitWidth & 0xF;
 	uint v = 0;

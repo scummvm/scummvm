@@ -308,6 +308,9 @@ void Gui::updateWindowInfo(WindowReference ref, ObjID objID, const Common::Array
 }
 
 void Gui::addChild(WindowReference target, ObjID child) {
+	// HACK WRONG!! Please delete me when you are done testing!
+	if (child == 92) return; // Avoid adding the stones in the waterfall
+
 	findWindowData(target).children.push_back(DrawableObject(child, kBlitBIC));
 }
 
@@ -819,7 +822,7 @@ void Gui::updateExit(ObjID obj) {
 }
 
 void Gui::printText(const Common::String & text) {
-	debug("Print Text: %s", text);
+	debug(1, "Print Text: %s", text.c_str());
 	_consoleText->printLine(text, _outConsoleWindow->getDimensions().width());
 }
 
@@ -947,16 +950,12 @@ void Gui::checkSelect(const WindowData &data, const Common::Event &event, const 
 }
 
 bool Gui::canBeSelected(ObjID obj, const Common::Event &event, const Common::Rect &clickRect, WindowReference ref) {
-	return (_engine->isObjVisible(obj) &&
-					_engine->isObjClickable(obj) &&
+	return (_engine->isObjClickable(obj) &&
 					isRectInsideObject(clickRect, obj));
 }
 
 bool Gui::isRectInsideObject(Common::Rect target, ObjID obj) {
-	if (_assets.contains(obj) &&
-		//_engine->isObjClickable(obj) &&
-		_engine->isObjVisible(obj))
-	{
+	if (_assets.contains(obj)) {
 		Common::Rect bounds = _engine->getObjBounds(obj);
 		Common::Rect intersection = bounds.findIntersectingRect(target);
 		// We translate it to the image's coord system
@@ -965,7 +964,6 @@ bool Gui::isRectInsideObject(Common::Rect target, ObjID obj) {
 			intersection.top - bounds.top,
 			intersection.left - bounds.left + intersection.width(),
 			intersection.top - bounds.top + intersection.height());
-
 
 		if (_assets[obj]->isRectInside(intersection)) {
 			return true;
