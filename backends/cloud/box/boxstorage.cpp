@@ -22,6 +22,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/cloud/box/boxstorage.h"
+#include "backends/cloud/box/boxtokenrefresher.h"
 #include "backends/cloud/cloudmanager.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
@@ -141,20 +142,25 @@ void BoxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking
 	Common::JSONObject info = json->asObject();
 
 	Common::String uid, name, email;
-	uint64 quotaUsed = 0, quotaAllocated = 26843545600L; // 25 GB, because I actually don't know any way to find out the real one
+	uint64 quotaUsed = 0, quotaAllocated = 0;
 
-	if (info.contains("createdBy") && info.getVal("createdBy")->isObject()) {
-		Common::JSONObject createdBy = info.getVal("createdBy")->asObject();
-		if (createdBy.contains("user") && createdBy.getVal("user")->isObject()) {
-			Common::JSONObject user = createdBy.getVal("user")->asObject();
-			uid = user.getVal("id")->asString();
-			name = user.getVal("displayName")->asString();
-		}
-	}
+	// can check that "type": "user"
+	// there is also "max_upload_size", "phone" and "avatar_url"
 
-	if (info.contains("size") && info.getVal("size")->isIntegerNumber()) {
-		quotaUsed = info.getVal("size")->asIntegerNumber();
-	}
+	if (info.contains("id") && info.getVal("id")->isString())
+		uid = info.getVal("id")->asString();
+
+	if (info.contains("name") && info.getVal("name")->isString())
+		name = info.getVal("name")->asString();
+
+	if (info.contains("login") && info.getVal("login")->isString())
+		email = info.getVal("login")->asString();
+
+	if (info.contains("space_amount") && info.getVal("space_amount")->isIntegerNumber())
+		quotaAllocated = info.getVal("space_amount")->asIntegerNumber();
+
+	if (info.contains("space_used") && info.getVal("space_used")->isIntegerNumber())
+		quotaUsed = info.getVal("space_used")->asIntegerNumber();
 
 	Common::String username = email;
 	if (username == "") username = name;
@@ -254,13 +260,10 @@ Networking::Request *BoxStorage::createDirectory(Common::String path, BoolCallba
 }
 
 Networking::Request *BoxStorage::info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) {
-	/*
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<BoxStorage, StorageInfoResponse, Networking::JsonResponse>(this, &BoxStorage::infoInnerCallback, callback);
-	Networking::CurlJsonRequest *request = new BoxTokenRefresher(this, innerCallback, errorCallback, "https://api.Box.com/v1.0/drive/special/approot");
-	request->addHeader("Authorization: bearer " + _token);
+	Networking::CurlJsonRequest *request = new BoxTokenRefresher(this, innerCallback, errorCallback, "https://api.box.com/2.0/users/me");
+	request->addHeader("Authorization: Bearer " + _token);
 	return addRequest(request);
-	*/
-	return nullptr; //TODO
 }
 
 Common::String BoxStorage::savesDirectoryPath() { return "saves/"; }
