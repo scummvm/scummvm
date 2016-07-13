@@ -1922,62 +1922,62 @@ void ChampionMan::f281_renameChampion(Champion* champ) {
 	}
 }
 
-uint16 ChampionMan::f303_getSkillLevel(int16 champIndex, int16 skillIndex) {
-	if (_g300_partyIsSleeping)
+uint16 ChampionMan::f303_getSkillLevel(int16 champIndex, uint16 skillIndex) {
+	if (_vm->_championMan->_g300_partyIsSleeping) {
 		return 1;
-
-	bool ignoreTempExp = skillIndex & k0x8000_IgnoreTemporaryExperience;
-	bool ignoreObjModifiers = skillIndex & k0x4000_IgnoreObjectModifiers;
-	skillIndex = (ChampionSkill)(skillIndex & ~(ignoreTempExp | ignoreObjModifiers));
-	Champion *champ = &_gK71_champions[champIndex];
-	Skill *skill = &champ->getSkill((ChampionSkill)skillIndex);
-	int32 experience = skill->_experience;
-
-	if (!ignoreTempExp)
-		experience += skill->_temporaryExperience;
-
-	if (skillIndex > k3_ChampionSkillWizard) { // hidden skill
-		skill = &champ->getSkill((ChampionSkill)((skillIndex - k4_ChampionSkillSwing) / 4));
-		experience += skill->_experience; // add exp to the base skill
-		if (!ignoreTempExp)
-			experience += skill->_temporaryExperience;
-
-		experience /= 2; // halve the exp to get avarage of base skill + hidden skill exp
 	}
-
+	bool ignoreTmpExp = getFlag(skillIndex, k0x8000_IgnoreTemporaryExperience);
+	bool ignoreObjModifiers = getFlag(skillIndex, k0x4000_IgnoreObjectModifiers);
+	clearFlag(skillIndex, k0x8000_IgnoreTemporaryExperience | k0x4000_IgnoreObjectModifiers);
+	Champion *champ = &_vm->_championMan->_gK71_champions[champIndex];
+	Skill *skill = &champ->_skills[skillIndex];
+	int32 exp = skill->_experience;
+	if (!ignoreTmpExp) {
+		exp += skill->_temporaryExperience;
+	}
+	if (skillIndex > k3_ChampionSkillWizard) { /* Hidden skill */
+		skill = &champ->_skills[(skillIndex - k4_ChampionSkillSwing) >> 2];
+		exp += skill->_experience; /* Add experience in the base skill */
+		if (!ignoreTmpExp) {
+			exp += skill->_temporaryExperience;
+		}
+		exp >>= 1; /* Halve experience to get average of base skill + hidden skill experience */
+	}
 	int16 skillLevel = 1;
-	while (experience >= 500) {
-		experience /= 2;
+	while (exp >= 500) {
+		exp >>= 1;
 		skillLevel++;
 	}
-
 	if (!ignoreObjModifiers) {
-		IconIndice actionHandIconIndex = _vm->_objectMan->f33_getIconIndex(champ->getSlot(k1_ChampionSlotActionHand));
-		if (actionHandIconIndex == k27_IconIndiceWeaponTheFirestaff) {
+		int16 actionHandIconIndex;
+		if ((actionHandIconIndex = _vm->_objectMan->f33_getIconIndex(champ->_slots[k1_ChampionSlotActionHand])) == k27_IconIndiceWeaponTheFirestaff) {
 			skillLevel++;
-		} else if (actionHandIconIndex == k28_IconIndiceWeaponTheFirestaffComplete) {
-			skillLevel += 2;
+		} else {
+			if (actionHandIconIndex == k28_IconIndiceWeaponTheFirestaffComplete) {
+				skillLevel += 2;
+			}
 		}
-
-		IconIndice neckIconIndice = _vm->_objectMan->f33_getIconIndex(champ->getSlot(k10_ChampionSlotNeck));
+		int16 neckIconIndex = _vm->_objectMan->f33_getIconIndex(champ->_slots[k10_ChampionSlotNeck]);
 		switch (skillIndex) {
 		case k3_ChampionSkillWizard:
-			if (neckIconIndice == k124_IconIndiceJunkPendantFeral)
-				skillLevel++;
+			if (neckIconIndex == k124_IconIndiceJunkPendantFeral) {
+				skillLevel += 1;
+			}
 			break;
 		case k15_ChampionSkillDefend:
-			if (neckIconIndice == k121_IconIndiceJunkEkkhardCross)
-				skillLevel++;
+			if (neckIconIndex == k121_IconIndiceJunkEkkhardCross) {
+				skillLevel += 1;
+			}
 			break;
 		case k13_ChampionSkillHeal:
-			// these two are not cummulative
-			if ((neckIconIndice == k120_IconIndiceJunkGemOfAges) || (neckIconIndice == k66_IconIndiceWeaponSceptreOfLyf))
-				skillLevel++;
+			if ((neckIconIndex == k120_IconIndiceJunkGemOfAges) || (actionHandIconIndex == k66_IconIndiceWeaponSceptreOfLyf)) { /* The skill modifiers of these two objects are not cumulative */
+				skillLevel += 1;
+			}
 			break;
 		case k14_ChampionSkillInfluence:
-			if (neckIconIndice == k122_IconIndiceJunkMoonstone)
-				skillLevel++;
-			break;
+			if (neckIconIndex == k122_IconIndiceJunkMoonstone) {
+				skillLevel += 1;
+			}
 		}
 	}
 	return skillLevel;

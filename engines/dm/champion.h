@@ -536,7 +536,7 @@ public:
 	void f290_drawHealthStaminaManaValues(Champion *champ); // @ F0290_CHAMPION_DrawHealthStaminaManaValues
 	void f291_drawSlot(uint16 champIndex, int16 slotIndex); // @ F0291_CHAMPION_DrawSlot
 	void f281_renameChampion(Champion* champ); // @ F0281_CHAMPION_Rename
-	uint16 f303_getSkillLevel(int16 champIndex, int16 skillIndex);// @ F0303_CHAMPION_GetSkillLevel
+	uint16 f303_getSkillLevel(int16 champIndex, uint16 skillIndex);// @ F0303_CHAMPION_GetSkillLevel
 	Common::String f288_getStringFromInteger(uint16 val, bool padding, uint16 paddingCharCount); // @ F0288_CHAMPION_GetStringFromInteger
 	void f299_applyModifiersToStatistics(Champion *champ, int16 slotIndex, int16 iconIndex,
 									int16 modifierFactor, Thing thing); // @ F0299_CHAMPION_ApplyObjectModifiersToStatistics
