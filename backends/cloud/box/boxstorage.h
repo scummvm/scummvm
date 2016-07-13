@@ -49,6 +49,7 @@ class BoxStorage: public Id::IdStorage {
 	void fileDownloaded(BoolResponse response);
 
 	void fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response);
+	void createDirectoryInnerCallback(BoolCallback outerCallback, Networking::JsonResponse response);
 public:	
 	/** This constructor uses OAuth code flow to get tokens. */
 	BoxStorage(Common::String code);
@@ -76,6 +77,7 @@ public:
 	/** Public Cloud API comes down there. */
 
 	virtual Networking::Request *listDirectoryById(Common::String id, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback);
+	virtual Networking::Request *createDirectoryWithParentId(Common::String parentId, Common::String name, BoolCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Returns UploadStatus struct with info about uploaded file. */
 	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback);
@@ -85,9 +87,6 @@ public:
 
 	/** Calls the callback when finished. */
 	virtual Networking::Request *remove(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) { return nullptr; } //TODO
-
-	/** Calls the callback when finished. */
-	virtual Networking::Request *createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Returns the StorageInfo struct. */
 	virtual Networking::Request *info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback);

@@ -205,6 +205,45 @@ Networking::Request *BoxStorage::listDirectoryById(Common::String id, ListDirect
 	return addRequest(new BoxListDirectoryByIdRequest(this, id, callback, errorCallback));
 }
 
+void BoxStorage::createDirectoryInnerCallback(BoolCallback outerCallback, Networking::JsonResponse response) {
+	Common::JSONValue *json = response.value;
+	if (!json) {
+		warning("NULL passed instead of JSON");
+		delete outerCallback;
+		return;
+	}
+
+	if (outerCallback) {
+		Common::JSONObject info = json->asObject();
+		(*outerCallback)(BoolResponse(nullptr, info.contains("id")));
+		delete outerCallback;
+	}
+
+	delete json;
+}
+
+Networking::Request *BoxStorage::createDirectoryWithParentId(Common::String parentId, Common::String name, BoolCallback callback, Networking::ErrorCallback errorCallback) {
+	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+
+	Common::String url = "https://api.box.com/2.0/folders";
+	Networking::JsonCallback innerCallback = new Common::CallbackBridge<BoxStorage, BoolResponse, Networking::JsonResponse>(this, &BoxStorage::createDirectoryInnerCallback, callback);
+	Networking::CurlJsonRequest *request = new BoxTokenRefresher(this, innerCallback, errorCallback, url.c_str());
+	request->addHeader("Authorization: Bearer " + accessToken());
+	request->addHeader("Content-Type: application/json");
+
+	Common::JSONObject parentObject;
+	parentObject.setVal("id", new Common::JSONValue(parentId));
+
+	Common::JSONObject jsonRequestParameters;	
+	jsonRequestParameters.setVal("name", new Common::JSONValue(name));
+	jsonRequestParameters.setVal("parent", new Common::JSONValue(parentObject));
+
+	Common::JSONValue value(jsonRequestParameters);
+	request->addPostField(Common::JSON::stringify(&value));
+
+	return addRequest(request);
+}
+
 Networking::Request *BoxStorage::upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) {
 	//return addRequest(new BoxUploadRequest(this, path, contents, callback, errorCallback));
 	return nullptr; //TODO
@@ -226,12 +265,6 @@ void BoxStorage::fileDownloaded(BoolResponse response) {
 	else debug("download failed!");
 }
 
-Networking::Request *BoxStorage::createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) {
-	if (!errorCallback) errorCallback = getErrorPrintingCallback();
-	//return addRequest(new BoxCreateDirectoryRequest(this, path, callback, errorCallback));
-	return nullptr; //TODO
-}
-
 Networking::Request *BoxStorage::info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) {
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<BoxStorage, StorageInfoResponse, Networking::JsonResponse>(this, &BoxStorage::infoInnerCallback, callback);
 	Networking::CurlJsonRequest *request = new BoxTokenRefresher(this, innerCallback, errorCallback, "https://api.box.com/2.0/users/me");
@@ -239,7 +272,7 @@ Networking::Request *BoxStorage::info(StorageInfoCallback callback, Networking::
 	return addRequest(request);
 }
 
-Common::String BoxStorage::savesDirectoryPath() { return "saves/"; }
+Common::String BoxStorage::savesDirectoryPath() { return "scummvm/saves/"; }
 
 BoxStorage *BoxStorage::loadFromConfig(Common::String keyPrefix) {
 	loadKeyAndSecret();

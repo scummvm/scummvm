@@ -22,6 +22,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/cloud/id/idstorage.h"
+#include "backends/cloud/id/idcreatedirectoryrequest.h"
 #include "backends/cloud/id/idlistdirectoryrequest.h"
 #include "backends/cloud/id/idresolveidrequest.h"
 #include "common/debug.h"
@@ -80,6 +81,24 @@ Networking::Request *IdStorage::listDirectory(Common::String path, ListDirectory
 	if (!errorCallback) errorCallback = getErrorPrintingCallback();
 	if (!callback) callback = new Common::Callback<IdStorage, FileArrayResponse>(this, &IdStorage::printFiles);
 	return addRequest(new IdListDirectoryRequest(this, path, callback, errorCallback, recursive));
+}
+
+Networking::Request *IdStorage::createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) {
+	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+	if (!callback) callback = new Common::Callback<IdStorage, BoolResponse>(this, &IdStorage::printBool);
+
+	//find out the parent path and directory name
+	Common::String parentPath = "", directoryName = path;
+	for (uint32 i = path.size(); i > 0; --i) {
+		if (path[i - 1] == '/' || path[i - 1] == '\\') {
+			parentPath = path;
+			parentPath.erase(i - 1);
+			directoryName.erase(0, i);
+			break;
+		}
+	}
+
+	return addRequest(new IdCreateDirectoryRequest(this, parentPath, directoryName, callback, errorCallback));
 }
 
 } // End of namespace Id
