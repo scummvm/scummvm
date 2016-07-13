@@ -79,6 +79,9 @@ public:
 
 	/** Public Cloud API comes down there. */
 
+	/** Returns StorageFile with the resolved file's id. */
+	virtual Networking::Request *resolveFileId(Common::String path, UploadCallback callback, Networking::ErrorCallback errorCallback);
+
 	/** Returns ListDirectoryStatus struct with list of files. */
 	virtual Networking::Request *listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
 	virtual Networking::Request *listDirectoryById(Common::String id, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback);

@@ -23,6 +23,8 @@
 
 #include "backends/cloud/box/boxstorage.h"
 #include "backends/cloud/box/boxlistdirectorybyidrequest.h"
+#include "backends/cloud/box/boxlistdirectoryrequest.h"
+#include "backends/cloud/box/boxresolveidrequest.h"
 #include "backends/cloud/box/boxtokenrefresher.h"
 #include "backends/cloud/cloudmanager.h"
 #include "backends/networking/curl/connectionmanager.h"
@@ -210,11 +212,16 @@ void BoxStorage::fileInfoCallback(Networking::NetworkReadStreamCallback outerCal
 	delete response.value;
 }
 
+Networking::Request *BoxStorage::resolveFileId(Common::String path, UploadCallback callback, Networking::ErrorCallback errorCallback) {
+	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+	if (!callback) callback = new Common::Callback<BoxStorage, UploadResponse>(this, &BoxStorage::printFile);
+	return addRequest(new BoxResolveIdRequest(this, path, callback, errorCallback));
+}
+
 Networking::Request *BoxStorage::listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
 	if (!errorCallback) errorCallback = getErrorPrintingCallback();
 	if (!callback) callback = new Common::Callback<BoxStorage, FileArrayResponse>(this, &BoxStorage::printFiles);
-	//return addRequest(new BoxListDirectoryRequest(this, path, callback, errorCallback, recursive));
-	return nullptr; //TODO
+	return addRequest(new BoxListDirectoryRequest(this, path, callback, errorCallback, recursive));
 }
 
 Networking::Request *BoxStorage::listDirectoryById(Common::String id, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback) {
