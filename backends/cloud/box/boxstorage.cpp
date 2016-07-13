@@ -252,7 +252,6 @@ Networking::Request *BoxStorage::upload(Common::String path, Common::SeekableRea
 Networking::Request *BoxStorage::streamFileById(Common::String id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) {
 	if (callback) {
 		Common::String url = "https://api.box.com/2.0/files/" + id + "/content";
-		debug("%s", url.c_str());
 		Common::String header = "Authorization: Bearer " + _token;
 		curl_slist *headersList = curl_slist_append(nullptr, header.c_str());
 		Networking::NetworkReadStream *stream = new Networking::NetworkReadStream(url.c_str(), headersList, "");
