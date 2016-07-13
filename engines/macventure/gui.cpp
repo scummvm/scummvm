@@ -716,8 +716,8 @@ void Gui::drawDraggedObject() {
 		ImageAsset *asset = _assets[_draggedObj.id];
 
 		_draggedSurface.create(asset->getWidth(), asset->getHeight(), _screen.format);
-		//_screen.copyRectToSurface(_draggedSurface, _draggedObj.pos.x, _draggedObj.pos.y,
-		//	Common::Rect(asset->getWidth() - 1, asset->getHeight() - 1));
+		_screen.copyRectToSurface(_draggedSurface, _draggedObj.pos.x, _draggedObj.pos.y,
+			Common::Rect(asset->getWidth() - 1, asset->getHeight() - 1));
 
 		asset->blitInto(&_draggedSurface, 0, 0, kBlitBIC);
 
@@ -936,20 +936,20 @@ WindowReference Gui::findObjWindow(ObjID objID) {
 	return kNoWindow;
 }
 
-bool Gui::canBeSelected(ObjID obj, const Common::Event &event, const Common::Rect &clickRect, WindowReference ref) {
-	return (_engine->isObjVisible(obj) &&
-					_engine->isObjClickable(obj) &&
-					isRectInsideObject(clickRect, obj));
-}
-
 void Gui::checkSelect(const WindowData &data, const Common::Event &event, const Common::Rect &clickRect, WindowReference ref) {
-	ObjID child;
+	ObjID child = 0;
 	for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
 		if (canBeSelected((*it).obj, event, clickRect, ref)) {
 			child = (*it).obj;
 		}
 	}
 	if (child != 0) selectDraggable(child, ref, event.mouse);
+}
+
+bool Gui::canBeSelected(ObjID obj, const Common::Event &event, const Common::Rect &clickRect, WindowReference ref) {
+	return (_engine->isObjVisible(obj) &&
+					_engine->isObjClickable(obj) &&
+					isRectInsideObject(clickRect, obj));
 }
 
 bool Gui::isRectInsideObject(Common::Rect target, ObjID obj) {
@@ -993,7 +993,7 @@ void Gui::handleDragRelease(Common::Point pos, bool shiftPressed, bool isDoubleC
 			ObjID destObject = getWindowData(destinationWindow).objRef;
 			pos -= (_draggedObj.startPos - _draggedObj.mouseOffset);
 			pos = localize(pos, _draggedObj.startWin, destinationWindow);
-			debug("drop the object at obj %d, pos (%d, %d)", destObject, pos.x, pos.y);
+			debug("drop the object %d at obj %d, pos (%d, %d)", _draggedObj.id, destObject, pos.x, pos.y);
 
 			_engine->handleObjectDrop(_draggedObj.id, pos, destObject);
 		}
