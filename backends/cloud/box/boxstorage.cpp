@@ -22,6 +22,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/cloud/box/boxstorage.h"
+#include "backends/cloud/box/boxlistdirectorybyidrequest.h"
 #include "backends/cloud/box/boxtokenrefresher.h"
 #include "backends/cloud/cloudmanager.h"
 #include "backends/networking/curl/connectionmanager.h"
@@ -210,8 +211,16 @@ void BoxStorage::fileInfoCallback(Networking::NetworkReadStreamCallback outerCal
 }
 
 Networking::Request *BoxStorage::listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
+	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+	if (!callback) callback = new Common::Callback<BoxStorage, FileArrayResponse>(this, &BoxStorage::printFiles);
 	//return addRequest(new BoxListDirectoryRequest(this, path, callback, errorCallback, recursive));
 	return nullptr; //TODO
+}
+
+Networking::Request *BoxStorage::listDirectoryById(Common::String id, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback) {
+	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+	if (!callback) callback = new Common::Callback<BoxStorage, FileArrayResponse>(this, &BoxStorage::printFiles);
+	return addRequest(new BoxListDirectoryByIdRequest(this, id, callback, errorCallback));
 }
 
 Networking::Request *BoxStorage::upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) {

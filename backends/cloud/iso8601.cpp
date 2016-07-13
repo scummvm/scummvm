@@ -33,6 +33,12 @@ Common::String getSubstring(const Common::String &s, uint32 beginning, uint32 en
 	return result;
 }
 
+int find(const char *cstr, uint32 startPosition, char needle) {
+	const char *res = strchr(cstr + startPosition, needle);
+	if (res == nullptr) return -1;
+	return res - cstr;
+}
+
 }
 
 namespace Cloud {
@@ -41,12 +47,13 @@ namespace ISO8601 {
 uint32 convertToTimestamp(const Common::String &iso8601Date) {		
 	//2015-05-12T15:50:38Z
 	const char *cstr = iso8601Date.c_str();	
-	uint32 firstHyphen = strchr(cstr, '-') - cstr;
-	uint32 secondHyphen = strchr(cstr + firstHyphen + 1, '-') - cstr;
-	uint32 tSeparator = strchr(cstr + secondHyphen + 1, 'T') - cstr;
-	uint32 firstColon = strchr(cstr + tSeparator + 1, ':') - cstr;
-	uint32 secondColon = strchr(cstr + firstColon + 1, ':') - cstr;
-	uint32 zSeparator = strchr(cstr + secondColon + 1, 'Z') - cstr;
+	int firstHyphen = find(cstr, 0, '-');
+	int secondHyphen = find(cstr, firstHyphen + 1, '-');
+	int tSeparator = find(cstr, secondHyphen + 1, 'T');
+	int firstColon = find(cstr, tSeparator + 1, ':');
+	int secondColon = find(cstr, firstColon + 1, ':');
+	int zSeparator = find(cstr, secondColon + 1, 'Z');
+	if (zSeparator == -1) zSeparator = find(cstr, secondColon + 1, '-'); // Box's RFC 3339
 	//now note '+1' which means if there ever was '-1' result of find(), we still did a valid find() from 0th char	
 
 	Common::String year = getSubstring(iso8601Date, 0, firstHyphen);

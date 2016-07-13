@@ -81,6 +81,7 @@ public:
 
 	/** Returns ListDirectoryStatus struct with list of files. */
 	virtual Networking::Request *listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
+	virtual Networking::Request *listDirectoryById(Common::String id, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Returns UploadStatus struct with info about uploaded file. */
 	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback);
