@@ -24,6 +24,7 @@
 #include "backends/cloud/box/boxstorage.h"
 #include "backends/cloud/box/boxlistdirectorybyidrequest.h"
 #include "backends/cloud/box/boxtokenrefresher.h"
+#include "backends/cloud/box/boxuploadrequest.h"
 #include "backends/cloud/cloudmanager.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
@@ -244,9 +245,14 @@ Networking::Request *BoxStorage::createDirectoryWithParentId(Common::String pare
 	return addRequest(request);
 }
 
+Networking::Request *BoxStorage::upload(Common::String remotePath, Common::String localPath, UploadCallback callback, Networking::ErrorCallback errorCallback) {
+	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+	return addRequest(new BoxUploadRequest(this, remotePath, localPath, callback, errorCallback));
+}
+
 Networking::Request *BoxStorage::upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) {
-	//return addRequest(new BoxUploadRequest(this, path, contents, callback, errorCallback));
-	return nullptr; //TODO
+	warning("BoxStorage::upload(ReadStream) not implemented");
+	return nullptr;
 }
 
 Networking::Request *BoxStorage::streamFileById(Common::String id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) {

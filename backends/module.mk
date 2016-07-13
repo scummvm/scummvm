@@ -31,6 +31,7 @@ MODULE_OBJS += \
 	cloud/box/boxstorage.o \
 	cloud/box/boxlistdirectorybyidrequest.o \
 	cloud/box/boxtokenrefresher.o \
+	cloud/box/boxuploadrequest.o \
 	cloud/dropbox/dropboxstorage.o \
 	cloud/dropbox/dropboxcreatedirectoryrequest.o \
 	cloud/dropbox/dropboxlistdirectoryrequest.o \

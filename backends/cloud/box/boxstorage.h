@@ -80,6 +80,7 @@ public:
 	virtual Networking::Request *createDirectoryWithParentId(Common::String parentId, Common::String name, BoolCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Returns UploadStatus struct with info about uploaded file. */
+	virtual Networking::Request *upload(Common::String remotePath, Common::String localPath, UploadCallback callback, Networking::ErrorCallback errorCallback);
 	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Returns pointer to Networking::NetworkReadStream. */
