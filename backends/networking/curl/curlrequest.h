@@ -26,6 +26,8 @@
 #include "backends/networking/curl/request.h"
 #include "common/str.h"
 #include "common/array.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 
 struct curl_slist;
 
@@ -42,6 +44,8 @@ protected:
 	NetworkReadStream *_stream;
 	curl_slist *_headersList;
 	Common::String _postFields;
+	Common::HashMap<Common::String, Common::String> _formFields;
+	Common::HashMap<Common::String, Common::String> _formFiles;
 	byte *_bytesBuffer;
 	uint32 _bytesBufferSize;
 	bool _uploading; //using PUT method
@@ -65,6 +69,12 @@ public:
 
 	/** Adds a post field (key=value pair). */
 	virtual void addPostField(Common::String field);
+
+	/** Adds a form/multipart field (name, value). */
+	virtual void addFormField(Common::String name, Common::String value);
+
+	/** Adds a form/multipart file (field name, file name). */
+	virtual void addFormFile(Common::String name, Common::String filename);
 
 	/** Sets bytes buffer. */
 	virtual void setBuffer(byte *buffer, uint32 size);

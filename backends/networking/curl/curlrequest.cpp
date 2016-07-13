@@ -42,6 +42,8 @@ CurlRequest::~CurlRequest() {
 NetworkReadStream *CurlRequest::makeStream() {
 	if (_bytesBuffer)
 		return new NetworkReadStream(_url.c_str(), _headersList, _bytesBuffer, _bytesBufferSize, _uploading, _usingPatch, true);
+	if (!_formFields.empty() || !_formFiles.empty())
+		return new NetworkReadStream(_url.c_str(), _headersList, _formFields, _formFiles);
 	return new NetworkReadStream(_url.c_str(), _headersList, _postFields, _uploading, _usingPatch);
 }
 
@@ -100,10 +102,33 @@ void CurlRequest::addPostField(Common::String keyValuePair) {
 	if (_bytesBuffer)
 		warning("CurlRequest: added POST fields would be ignored, because there is buffer present");
 
+	if (!_formFields.empty() || !_formFiles.empty())
+		warning("CurlRequest: added POST fields would be ignored, because there are form fields/files present");
+
 	if (_postFields == "")
 		_postFields = keyValuePair;
 	else
 		_postFields += "&" + keyValuePair;
+}
+
+void CurlRequest::addFormField(Common::String name, Common::String value) {
+	if (_bytesBuffer)
+		warning("CurlRequest: added POST form fields would be ignored, because there is buffer present");
+	
+	if (_formFields.contains(name))
+		warning("CurlRequest: form field '%s' already had a value", name.c_str());
+
+	_formFields[name] = value;
+}
+
+void CurlRequest::addFormFile(Common::String name, Common::String filename) {
+	if (_bytesBuffer)
+		warning("CurlRequest: added POST form files would be ignored, because there is buffer present");
+
+	if (_formFields.contains(name))
+		warning("CurlRequest: form file field '%s' already had a value", name.c_str());
+
+	_formFiles[name] = filename;
 }
 
 void CurlRequest::setBuffer(byte *buffer, uint32 size) {

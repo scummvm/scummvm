@@ -26,6 +26,8 @@
 #include "common/memstream.h"
 #include "common/stream.h"
 #include "common/str.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 
 typedef void CURL;
 struct curl_slist;
@@ -40,9 +42,17 @@ class NetworkReadStream: public Common::MemoryReadWriteStream {
 	uint32 _sendingContentsPos;
 	Common::String _responseHeaders;
 	void init(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post);
+	void init(const char *url, curl_slist *headersList, Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles);
 
-public:	
+public:
+	/** Send <postFields>, using POST by default. */
 	NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading = false, bool usingPatch = false);
+	/** Send <formFields>, <formFiles>, using POST multipart/form. */
+	NetworkReadStream(
+		const char *url, curl_slist *headersList,
+		Common::HashMap<Common::String, Common::String> formFields,
+		Common::HashMap<Common::String, Common::String> formFiles);
+	/** Send <buffer, using POST by default. */
 	NetworkReadStream(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading = false, bool usingPatch = false, bool post = true);
 	virtual ~NetworkReadStream();
 

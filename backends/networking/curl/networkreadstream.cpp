@@ -80,8 +80,61 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, const byt
 	ConnMan.registerEasyHandle(_easy);
 }
 
+void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles) {
+	_eos = _requestComplete = false;
+	_sendingContentsBuffer = nullptr;
+	_sendingContentsSize = _sendingContentsPos = 0;
+
+	_easy = curl_easy_init();
+	curl_easy_setopt(_easy, CURLOPT_WRITEFUNCTION, curlDataCallback);
+	curl_easy_setopt(_easy, CURLOPT_WRITEDATA, this); //so callback can call us
+	curl_easy_setopt(_easy, CURLOPT_PRIVATE, this); //so ConnectionManager can call us when request is complete
+	curl_easy_setopt(_easy, CURLOPT_HEADER, 0L);
+	curl_easy_setopt(_easy, CURLOPT_HEADERDATA, this);
+	curl_easy_setopt(_easy, CURLOPT_HEADERFUNCTION, curlHeadersCallback);
+	curl_easy_setopt(_easy, CURLOPT_URL, url);
+	curl_easy_setopt(_easy, CURLOPT_VERBOSE, 0L);
+	curl_easy_setopt(_easy, CURLOPT_FOLLOWLOCATION, 1L); //probably it's OK to have it always on
+	curl_easy_setopt(_easy, CURLOPT_HTTPHEADER, headersList);
+	
+	// set POST multipart upload form fields/files
+	struct curl_httppost *formpost = NULL;
+	struct curl_httppost *lastptr = NULL;
+
+	for (Common::HashMap<Common::String, Common::String>::iterator i = formFields.begin(); i != formFields.end(); ++i) {
+		if (0 != curl_formadd(&formpost, &lastptr,
+			CURLFORM_COPYNAME, i->_key.c_str(),
+			CURLFORM_COPYCONTENTS, i->_value.c_str(),
+			CURLFORM_END)) debug("file failed formadd");
+	}
+
+	/*
+	curl_formadd(&formpost, &lastptr,
+		CURLFORM_COPYNAME, "fieldname",
+		CURLFORM_BUFFER, "filename",
+		CURLFORM_BUFFERPTR, buffer,
+		CURLFORM_BUFFERLENGTH, bufferSize,
+		CURLFORM_END);
+	*/
+
+	for (Common::HashMap<Common::String, Common::String>::iterator i = formFiles.begin(); i != formFiles.end(); ++i) {
+		if (0 != curl_formadd(&formpost, &lastptr,
+			CURLFORM_COPYNAME, i->_key.c_str(),
+			CURLFORM_FILE, i->_value.c_str(),
+			CURLFORM_END)) debug("file failed formadd");
+	}
+
+	curl_easy_setopt(_easy, CURLOPT_HTTPPOST, formpost);
+
+	ConnMan.registerEasyHandle(_easy);
+}
+
 NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading, bool usingPatch) {
 	init(url, headersList, (const byte *)postFields.c_str(), postFields.size(), uploading, usingPatch, false);
+}
+
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles) {
+	init(url, headersList, formFields, formFiles);
 }
 
 NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) {
