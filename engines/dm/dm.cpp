@@ -369,9 +369,6 @@ T0002002:
 		if (!(_g313_gameTime & 511))
 			_inventoryMan->f338_decreaseTorchesLightPower();
 
-		if (_g310_disabledMovementTicks)
-			_g310_disabledMovementTicks--;
-
 		if (_championMan->_g407_party._freezeLifeTicks)
 			_championMan->_g407_party._freezeLifeTicks -= 1;
 
@@ -384,10 +381,12 @@ T0002002:
 		if (_g310_disabledMovementTicks)
 			_g310_disabledMovementTicks--;
 
+		if (_g311_projectileDisableMovementTicks)
+			_g311_projectileDisableMovementTicks--;
+
 		// F0044_TEXT_MESSAGEAREA_ClearExpiredRows();
-
 		_g321_stopWaitingForPlayerInput = false;
-
+		uint16 vblankCounter = 0;
 		do {
 			_eventMan->processInput();
 
@@ -406,9 +405,12 @@ T0002002:
 			// if (!_vm->_g321_stopWaitingForPlayerInput) {
 			//		F0363_COMMAND_HighlightBoxDisable();
 			// }
-		} while (!_g321_stopWaitingForPlayerInput || !_g301_gameTimeTicking);
 
-		_system->delayMillis(18);
+			_system->delayMillis(2);
+			if (++vblankCounter >= _g318_waitForInputMaxVerticalBlankCount * 5)
+				_g321_stopWaitingForPlayerInput = true;
+
+		} while (!_g321_stopWaitingForPlayerInput || !_g301_gameTimeTicking);
 	}
 }
 
