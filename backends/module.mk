@@ -46,8 +46,10 @@ MODULE_OBJS += \
 	cloud/googledrive/googledriveuploadrequest.o \
 	cloud/id/idstorage.o \
 	cloud/id/idcreatedirectoryrequest.o \
+	cloud/id/iddownloadrequest.o \
 	cloud/id/idlistdirectoryrequest.o \
 	cloud/id/idresolveidrequest.o \
+	cloud/id/idstreamfilerequest.o \
 	cloud/onedrive/onedrivestorage.o \
 	cloud/onedrive/onedrivecreatedirectoryrequest.o \
 	cloud/onedrive/onedrivetokenrefresher.o \

@@ -23,8 +23,10 @@
 
 #include "backends/cloud/id/idstorage.h"
 #include "backends/cloud/id/idcreatedirectoryrequest.h"
+#include "backends/cloud/id/iddownloadrequest.h"
 #include "backends/cloud/id/idlistdirectoryrequest.h"
 #include "backends/cloud/id/idresolveidrequest.h"
+#include "backends/cloud/id/idstreamfilerequest.h"
 #include "common/debug.h"
 #include "common/json.h"
 
@@ -99,6 +101,14 @@ Networking::Request *IdStorage::createDirectory(Common::String path, BoolCallbac
 	}
 
 	return addRequest(new IdCreateDirectoryRequest(this, parentPath, directoryName, callback, errorCallback));
+}
+
+Networking::Request *IdStorage::streamFile(Common::String path, Networking::NetworkReadStreamCallback outerCallback, Networking::ErrorCallback errorCallback) {
+	return addRequest(new IdStreamFileRequest(this, path, outerCallback, errorCallback));
+}
+
+Networking::Request *IdStorage::download(Common::String remotePath, Common::String localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) {
+	return addRequest(new IdDownloadRequest(this, remotePath, localPath, callback, errorCallback));
 }
 
 } // End of namespace Id

@@ -249,15 +249,18 @@ Networking::Request *BoxStorage::upload(Common::String path, Common::SeekableRea
 	return nullptr; //TODO
 }
 
-Networking::Request *BoxStorage::streamFileById(Common::String path, Networking::NetworkReadStreamCallback outerCallback, Networking::ErrorCallback errorCallback) {
-	/*
-	Common::String url = "https://api.Box.com/v1.0/drive/special/approot:/" + ConnMan.urlEncode(path);
-	Networking::JsonCallback innerCallback = new Common::CallbackBridge<BoxStorage, Networking::NetworkReadStreamResponse, Networking::JsonResponse>(this, &BoxStorage::fileInfoCallback, outerCallback);
-	Networking::CurlJsonRequest *request = new BoxTokenRefresher(this, innerCallback, errorCallback, url.c_str());
-	request->addHeader("Authorization: Bearer " + _token);
-	return addRequest(request);
-	*/
-	return nullptr; //TODO
+Networking::Request *BoxStorage::streamFileById(Common::String id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) {
+	if (callback) {
+		Common::String url = "https://api.box.com/2.0/files/" + id + "/content";
+		debug("%s", url.c_str());
+		Common::String header = "Authorization: Bearer " + _token;
+		curl_slist *headersList = curl_slist_append(nullptr, header.c_str());
+		Networking::NetworkReadStream *stream = new Networking::NetworkReadStream(url.c_str(), headersList, "");
+		(*callback)(Networking::NetworkReadStreamResponse(nullptr, stream));
+	}
+	delete callback;
+	delete errorCallback;
+	return nullptr;
 }
 
 void BoxStorage::fileDownloaded(BoolResponse response) {
