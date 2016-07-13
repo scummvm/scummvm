@@ -103,7 +103,7 @@ void Timeline::f233_initTimeline() {
 	_g371_timeline = new uint16[_g369_eventMaxCount];
 	if (_vm->_g298_newGame) {
 		for (int16 i = 0; i < _g369_eventMaxCount; ++i)
-			_g370_events->_type = k0_TMEventTypeNone;
+			_g370_events[i]._type = k0_TMEventTypeNone;
 		_g372_eventCount = 0;
 		_g373_firstUnusedEventIndex = 0;
 	}
