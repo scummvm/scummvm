@@ -308,9 +308,6 @@ void Gui::updateWindowInfo(WindowReference ref, ObjID objID, const Common::Array
 }
 
 void Gui::addChild(WindowReference target, ObjID child) {
-	// HACK WRONG!! Please delete me when you are done testing!
-	if (child == 92) return; // Avoid adding the stones in the waterfall
-
 	findWindowData(target).children.push_back(DrawableObject(child, kBlitBIC));
 }
 
@@ -609,7 +606,7 @@ void Gui::drawInventories() {
 	Graphics::ManagedSurface *srf;
 	for (uint i = 0; i < _inventoryWindows.size(); i++) {
 		const WindowData &data = getWindowData((WindowReference)(kInventoryStart + i));
-		srf = findWindow(data.refcon)->getSurface(); // HACK
+		srf = findWindow(data.refcon)->getSurface();
 		BorderBounds border = borderBounds(data.type);
 		srf->fillRect(Common::Rect(
 			border.leftOffset,
@@ -858,11 +855,12 @@ void Gui::moveDraggedObject(Common::Point target) {
 }
 
 WindowReference Gui::findWindowAtPoint(Common::Point point) {
-	// HACK, MIGHT NEED TO LOOK INTO THE Graphcis::MacWindow dimensions to account for window movement
 	Common::List<WindowData>::iterator it;
+	Graphics::MacWindow *win;
 	for (it = _windowData->begin(); it != _windowData->end(); it++) {
-		if (it->bounds.contains(point) && it->refcon != kDiplomaWindow) { //HACK, diploma should be cosnidered
-			if (findWindow(it->refcon)->isActive())
+		win = findWindow(it->refcon);
+		if (win && win->getDimensions().contains(point) && it->refcon != kDiplomaWindow) { //HACK, diploma should be cosnidered
+			if (win->isActive())
 				return it->refcon;
 		}
 	}
@@ -1286,6 +1284,8 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event & event) {
 
 		// Find the appropriate window
 		WindowReference ref = findWindowAtPoint(event.mouse);
+		// TODO DELETE MEEEE!
+		debug("WindowFound: %d", ref);
 		if (ref == kNoWindow) return false;
 		Graphics::MacWindow *win = findWindow(ref);
 		WindowData &data = findWindowData((WindowReference) ref);
@@ -1306,21 +1306,11 @@ void Gui::processCursorTick() {
 void Gui::handleSingleClick(Common::Point pos) {
 	debug("Single Click");
 	handleDragRelease(pos, false, false);
-
-	// HACK For test, please delete me
-	//WindowReference destinationWindow = findWindowAtPoint(pos);
-	//_engine->handleObjectSelect(_draggedObj.id, destinationWindow, false, false);
-	//_draggedObj.id = 0;
 }
 
 void Gui::handleDoubleClick(Common::Point pos) {
 	debug("Double Click");
 	handleDragRelease(pos, false, true);
-
-	// HACK For test, please delete me
-	//WindowReference destinationWindow = findWindowAtPoint(pos);
-	//_engine->handleObjectSelect(_draggedObj.id, destinationWindow, false, true);
-	//_draggedObj.id = 0;
 }
 
 /* Ugly switches */
