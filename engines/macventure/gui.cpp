@@ -254,29 +254,7 @@ const Graphics::Font& Gui::getCurrentFont() {
 }
 
 void Gui::bringToFront(WindowReference winID) {
-	// FIXME: There has to be a better way to do this, maybe with the _wm
-	switch (winID) {
-	case MacVenture::kCommandsWindow:
-		_controlsWindow->setActive(true);
-		break;
-	case MacVenture::kMainGameWindow:
-		_mainGameWindow->setActive(true);
-		break;
-	case MacVenture::kOutConsoleWindow:
-		_outConsoleWindow->setActive(true);
-		break;
-	case MacVenture::kSelfWindow:
-		_selfWindow->setActive(true);
-		break;
-	case MacVenture::kExitsWindow:
-		_exitsWindow->setActive(true);
-		break;
-	case MacVenture::kDiplomaWindow:
-		_diplomaWindow->setActive(true);
-		break;
-	default:
-		break;
-	}
+	findWindow(winID)->setActive(true);
 }
 
 void Gui::setWindowTitle(WindowReference winID, Common::String string) {
