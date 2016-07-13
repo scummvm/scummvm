@@ -31,6 +31,7 @@
 #include "config.h"
 #include "create_project.h"
 
+#include "cmake.h"
 #include "codeblocks.h"
 #include "msvc.h"
 #include "visualstudio.h"
@@ -53,7 +54,7 @@
 #define USE_WIN32_API
 #endif
 
-#ifdef USE_WIN32_API
+#if (defined(_WIN32) || defined(WIN32))
 #include <windows.h>
 #else
 #include <sstream>
@@ -83,10 +84,18 @@ std::string unifyPath(const std::string &path);
  * @param exe Name of the executable.
  */
 void displayHelp(const char *exe);
+
+/**
+ * Build a list of options to enable or disable GCC warnings
+ *
+ * @param globalWarnings Resulting list of warnings
+ */
+void addGCCWarnings(StringList &globalWarnings);
 } // End of anonymous namespace
 
 enum ProjectType {
 	kProjectNone,
+	kProjectCMake,
 	kProjectCodeBlocks,
 	kProjectMSVC,
 	kProjectXcode
@@ -140,6 +149,14 @@ int main(int argc, char *argv[]) {
 			cout.setf(std::ios_base::right, std::ios_base::adjustfield);
 
 			return 0;
+
+		} else if (!std::strcmp(argv[i], "--cmake")) {
+			if (projectType != kProjectNone) {
+				std::cerr << "ERROR: You cannot pass more than one project type!\n";
+				return -1;
+			}
+
+			projectType = kProjectCMake;
 
 		} else if (!std::strcmp(argv[i], "--codeblocks")) {
 			if (projectType != kProjectNone) {
@@ -334,10 +351,7 @@ int main(int argc, char *argv[]) {
 	StringList featureDefines = getFeatureDefines(setup.features);
 	setup.defines.splice(setup.defines.begin(), featureDefines);
 
-	// Windows only has support for the SDL backend, so we hardcode it here (along with winmm)
-	if (projectType != kProjectXcode) {
-		setup.defines.push_back("WIN32");
-	} else {
+	if (projectType == kProjectXcode) {
 		setup.defines.push_back("POSIX");
 		// Define both MACOSX, and IPHONE, but only one of them will be associated to the
 		// correct target by the Xcode project provider.
@@ -346,6 +360,17 @@ int main(int argc, char *argv[]) {
 		// the files, according to the target.
 		setup.defines.push_back("MACOSX");
 		setup.defines.push_back("IPHONE");
+	} else if (projectType == kProjectMSVC || projectType == kProjectCodeBlocks) {
+		// Windows only has support for the SDL backend, so we hardcode it here (along with winmm)
+		setup.defines.push_back("WIN32");
+	} else {
+		// As a last resort, select the backend files to build based on the platform used to build create_project.
+		// This is broken when cross compiling.
+#if defined(_WIN32) || defined(WIN32)
+		setup.defines.push_back("WIN32");
+#else
+		setup.defines.push_back("POSIX");
+#endif
 	}
 
 	bool updatesEnabled = false;
@@ -397,49 +422,25 @@ int main(int argc, char *argv[]) {
 		std::cerr << "ERROR: No project type has been specified!\n";
 		return -1;
 
+	case kProjectCMake:
+		if (setup.devTools || setup.tests) {
+			std::cerr << "ERROR: Building tools or tests is not supported for the CMake project type!\n";
+			return -1;
+		}
+
+		addGCCWarnings(globalWarnings);
+
+		provider = new CreateProjectTool::CMakeProvider(globalWarnings, projectWarnings);
+
+		break;
+
 	case kProjectCodeBlocks:
 		if (setup.devTools || setup.tests) {
 			std::cerr << "ERROR: Building tools or tests is not supported for the CodeBlocks project type!\n";
 			return -1;
 		}
 
-		////////////////////////////////////////////////////////////////////////////
-		// Code::Blocks is using GCC behind the scenes, so we need to pass a list
-		// of options to enable or disable warnings
-		////////////////////////////////////////////////////////////////////////////
-		//
-		// -Wall
-		//   enable all warnings
-		//
-		// -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
-		//   disable annoying and not-so-useful warnings
-		//
-		// -Wpointer-arith -Wcast-qual -Wcast-align
-		// -Wshadow -Wimplicit -Wnon-virtual-dtor -Wwrite-strings
-		//   enable even more warnings...
-		//
-		// -fno-rtti -fno-exceptions -fcheck-new
-		//   disable RTTI and exceptions, and enable checking of pointers returned
-		//   by "new"
-		//
-		////////////////////////////////////////////////////////////////////////////
-
-		globalWarnings.push_back("-Wall");
-		globalWarnings.push_back("-Wno-long-long");
-		globalWarnings.push_back("-Wno-multichar");
-		globalWarnings.push_back("-Wno-unknown-pragmas");
-		globalWarnings.push_back("-Wno-reorder");
-		globalWarnings.push_back("-Wpointer-arith");
-		globalWarnings.push_back("-Wcast-qual");
-		globalWarnings.push_back("-Wcast-align");
-		globalWarnings.push_back("-Wshadow");
-		globalWarnings.push_back("-Wimplicit");
-		globalWarnings.push_back("-Wnon-virtual-dtor");
-		globalWarnings.push_back("-Wwrite-strings");
-		// The following are not warnings at all... We should consider adding them to
-		// a different list of parameters.
-		globalWarnings.push_back("-fno-exceptions");
-		globalWarnings.push_back("-fcheck-new");
+		addGCCWarnings(globalWarnings);
 
 		provider = new CreateProjectTool::CodeBlocksProvider(globalWarnings, projectWarnings);
 
@@ -653,6 +654,7 @@ void displayHelp(const char *exe) {
 	        " Additionally there are the following switches for changing various settings:\n"
 	        "\n"
 	        "Project specific settings:\n"
+	        " --cmake                  build CMake project files\n"
 	        " --codeblocks             build Code::Blocks project files\n"
 	        " --msvc                   build Visual Studio project files\n"
 	        " --xcode                  build XCode project files\n"
@@ -705,6 +707,41 @@ void displayHelp(const char *exe) {
 	for (FeatureList::const_iterator i = features.begin(); i != features.end(); ++i)
 		cout << ' ' << (i->enable ? " enabled" : "disabled") << " | " << std::setw((std::streamsize)15) << i->name << std::setw((std::streamsize)0) << " | " << i->description << '\n';
 	cout.setf(std::ios_base::right, std::ios_base::adjustfield);
+}
+
+void addGCCWarnings(StringList &globalWarnings) {
+	////////////////////////////////////////////////////////////////////////////
+	//
+	// -Wall
+	//   enable all warnings
+	//
+	// -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
+	//   disable annoying and not-so-useful warnings
+	//
+	// -Wpointer-arith -Wcast-qual -Wcast-align
+	// -Wshadow -Wimplicit -Wnon-virtual-dtor -Wwrite-strings
+	//   enable even more warnings...
+	//
+	// -fno-exceptions -fcheck-new
+	//   disable exceptions, and enable checking of pointers returned by "new"
+	//
+	////////////////////////////////////////////////////////////////////////////
+
+	globalWarnings.push_back("-Wall");
+	globalWarnings.push_back("-Wno-long-long");
+	globalWarnings.push_back("-Wno-multichar");
+	globalWarnings.push_back("-Wno-unknown-pragmas");
+	globalWarnings.push_back("-Wno-reorder");
+	globalWarnings.push_back("-Wpointer-arith");
+	globalWarnings.push_back("-Wcast-qual");
+	globalWarnings.push_back("-Wcast-align");
+	globalWarnings.push_back("-Wshadow");
+	globalWarnings.push_back("-Wnon-virtual-dtor");
+	globalWarnings.push_back("-Wwrite-strings");
+	// The following are not warnings at all... We should consider adding them to
+	// a different list of parameters.
+	globalWarnings.push_back("-fno-exceptions");
+	globalWarnings.push_back("-fcheck-new");
 }
 
 /**
@@ -1175,7 +1212,7 @@ bool compareNodes(const FileNode *l, const FileNode *r) {
 
 FileList listDirectory(const std::string &dir) {
 	FileList result;
-#ifdef USE_WIN32_API
+#if defined(_WIN32) || defined(WIN32)
 	WIN32_FIND_DATA fileInformation;
 	HANDLE fileHandle = FindFirstFile((dir + "/*").c_str(), &fileInformation);
 
