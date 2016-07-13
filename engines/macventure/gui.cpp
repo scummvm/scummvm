@@ -460,7 +460,7 @@ bool Gui::loadWindows() {
 			data.title = Common::String(newTitle);
 		}
 
-		debug(4, "Window loaded: %s", data.title);
+		debug(4, "Window loaded: %s", data.title.c_str());
 
 		_windowData->push_back(data);
 	}
@@ -1163,7 +1163,6 @@ bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 			}
 		}
 
-
 		_engine->selectControl(data.getData().refcon);
 		_engine->activateCommand(data.getData().refcon);
 		_engine->refreshReady();
@@ -1178,7 +1177,6 @@ bool MacVenture::Gui::processMainGameEvents(WindowClick click, Common::Event & e
 
 	if (click == kBorderInner && event.type == Common::EVENT_LBUTTONDOWN) {
 		WindowData &data = findWindowData(kMainGameWindow);
-		ObjID child = 0;
 		Common::Point pos;
 		// Click rect to local coordinates. We assume the click is inside the window ^
 		Common::Rect clickRect = calculateClickRect(event.mouse, _mainGameWindow->getDimensions());
@@ -1254,7 +1252,6 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event & event) {
 		if (ref == kNoWindow) return false;
 		Graphics::MacWindow *win = findWindow(ref);
 		WindowData &data = findWindowData((WindowReference) ref);
-		ObjID child;
 		Common::Point pos;
 		// Click rect to local coordinates. We assume the click is inside the window ^
 		Common::Rect clickRect = calculateClickRect(event.mouse, win->getDimensions());

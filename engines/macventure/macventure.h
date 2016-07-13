@@ -71,27 +71,6 @@ enum {
 	kClickToContinueTextID = 0x84,
 	kStartGameFilenameID = 0x85
 };
-/*
-enum ControlAction {
-	kNoCommand = 0,
-	kStartOrResume = 1,
-	kClose = 2,
-	kTick = 3,
-	kActivateObject = 4,
-	kMoveObject = 5,
-	kConsume = 6,
-	kExamine = 7,
-	kGo = 8,
-	kHit = 9,
-	kOpen = 10,
-	kOperate = 11,
-	kSpeak = 12,
-	kBabble = 13,
-	kTargetName = 14,
-	kDebugObject = 15,
-	kClickToContinue = 16
-};
-*/
 
 enum FilePathID {
 	kMCVID = 1,
@@ -206,6 +185,8 @@ public:
 	void focusObjWin(ObjID objID);
 	void updateWindow(WindowReference winID);
 
+	bool showTextEntry(ObjID text, ObjID srcObj, ObjID destObj);
+
 	// Data retrieval
 	bool isPaused();
 	bool needsClickToContinue();
@@ -220,6 +201,7 @@ public:
 	uint getPrefixNdx(ObjID obj);
 	Common::String getPrefixString(uint flag, ObjID obj);
 	Common::String getNoun(ObjID ndx);
+	Common::String getUserInput();
 
 	// Attributes consult
 	Common::Point getObjPosition(ObjID objID);
@@ -317,6 +299,7 @@ private: // Attributes
 	Common::Array<ObjID> _currentSelection;
 	Common::Array<ObjID> _selectedObjs;
 	Common::Point _deltaPoint;
+	Common::String _userInput;
 
 };
 

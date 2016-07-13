@@ -156,6 +156,9 @@ void World::releaseChildren(ObjID objID) {
 }
 
 Common::String World::getText(ObjID objID, ObjID source, ObjID target) {
+	if (objID & 0x8000){
+		return _engine->getUserInput();
+	}
 	TextAsset text = TextAsset(_engine, objID, source, target, _gameText, _engine->isOldText(), _engine->getDecodingHuffman());
 
 	return *text.decode();
@@ -169,7 +172,7 @@ bool World::isObjDraggable(ObjID objID) {
 }
 
 bool World::intersects(ObjID objID, Common::Rect rect) {
-	return _engine->getObjBounds(objID).intersects(rect);	
+	return _engine->getObjBounds(objID).intersects(rect);
 }
 
 bool World::loadStartGameFileName() {

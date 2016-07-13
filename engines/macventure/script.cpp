@@ -1073,7 +1073,11 @@ void ScriptEngine::opd4RELC(EngineState * state, EngineFrame * frame) {
 
 void ScriptEngine::opd5DLOG(EngineState * state, EngineFrame * frame) {
 	word txt = state->pop();
-	op00NOOP(0xd5);
+	if (_engine->showTextEntry(txt, frame->src, frame->dest)) {
+		state->push(0xFFFF);
+	} else {
+		state->push(0x0000);
+	}
 }
 
 void ScriptEngine::opd6ACMD(EngineState * state, EngineFrame * frame) {

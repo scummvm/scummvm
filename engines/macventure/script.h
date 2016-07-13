@@ -27,21 +27,20 @@
 #include "macventure/world.h"
 
 namespace MacVenture {
-		
+
 class Container;
 class World;
-
 
 typedef uint32 ObjID;
 typedef int16 word;
 
 class ScriptAsset {
 public:
-	ScriptAsset(ObjID id, Container *container); 
+	ScriptAsset(ObjID id, Container *container);
 	~ScriptAsset() {}
 
 	void reset();
-	uint8 fetch(); 
+	uint8 fetch();
 	bool hasNext();
 	void branch(word amount);
 
@@ -66,7 +65,7 @@ public:
 	}
 
 	void push(word data) {
-		sp--;		
+		sp--;
 		stack[sp] = unneg16(data);
 	}
 
@@ -97,7 +96,7 @@ public:
 
 private:
 	word unneg16(word data) {
-		if (data < 0) 
+		if (data < 0)
 			data = ((-data) ^ 0xFFFF) + 1;
 
 		return data;
@@ -141,17 +140,17 @@ public:
 	~ScriptEngine();
 
 public:
-	bool runControl(ControlAction action, ObjID source, ObjID destination, Common::Point delta); 
-	bool resume(bool execAll); 
+	bool runControl(ControlAction action, ObjID source, ObjID destination, Common::Point delta);
+	bool resume(bool execAll);
 	void reset();
 
 private:
 	bool execFrame(bool execAll);
 	bool loadScript(EngineFrame * frame, uint32 scriptID);
-	bool resumeFunc(EngineFrame * frame); 
+	bool resumeFunc(EngineFrame * frame);
 	bool runFunc(EngineFrame * frame);
 
-private: 
+private:
 
 	// Aux
 	word neg16(word val);
@@ -208,7 +207,7 @@ private:
 	void opacEQ(EngineState *state, EngineFrame *frame);	//eq?
 	void opadEQS(EngineState *state, EngineFrame *frame);	//eq string?
 	void opaeCONT(EngineState *state, EngineFrame *frame);	//contains
-	void opafCONTW(EngineState *state, EngineFrame *frame); //contains word	
+	void opafCONTW(EngineState *state, EngineFrame *frame); //contains word
 
 	void opb0BRA(EngineState *state, EngineFrame *frame, ScriptAsset *script);	//bra
 	void opb1BRAB(EngineState *state, EngineFrame *frame, ScriptAsset *script);	//bra.b
