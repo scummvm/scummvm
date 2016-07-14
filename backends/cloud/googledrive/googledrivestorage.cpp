@@ -24,20 +24,15 @@
 #include "backends/cloud/googledrive/googledrivestorage.h"
 #include "backends/cloud/cloudmanager.h"
 #include "backends/cloud/googledrive/googledrivetokenrefresher.h"
+#include "backends/cloud/googledrive/googledrivelistdirectorybyidrequest.h"
+#include "backends/cloud/googledrive/googledriveuploadrequest.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
 #include "backends/networking/curl/networkreadstream.h"
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/json.h"
 #include <curl/curl.h>
-#include "googledrivelistdirectorybyidrequest.h"
-#include "googledriveresolveidrequest.h"
-#include "googledrivecreatedirectoryrequest.h"
-#include "googledrivelistdirectoryrequest.h"
-#include "googledrivestreamfilerequest.h"
-#include "googledrivedownloadrequest.h"
-#include "googledriveuploadrequest.h"
-#include "common/config-manager.h"
 
 namespace Cloud {
 namespace GoogleDrive {
@@ -198,29 +193,6 @@ void GoogleDriveStorage::createDirectoryInnerCallback(BoolCallback outerCallback
 	delete json;
 }
 
-void GoogleDriveStorage::printJson(Networking::JsonResponse response) {
-	Common::JSONValue *json = response.value;
-	if (!json) {
-		warning("printJson: NULL");
-		return;
-	}
-
-	debug("%s", json->stringify().c_str());
-	delete json;
-}
-
-Networking::Request *GoogleDriveStorage::resolveFileId(Common::String path, UploadCallback callback, Networking::ErrorCallback errorCallback) {
-	if (!errorCallback) errorCallback = getErrorPrintingCallback();
-	if (!callback) callback = new Common::Callback<GoogleDriveStorage, UploadResponse>(this, &GoogleDriveStorage::printFile);
-	return addRequest(new GoogleDriveResolveIdRequest(this, path, callback, errorCallback));
-}
-
-Networking::Request *GoogleDriveStorage::listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
-	if (!errorCallback) errorCallback = getErrorPrintingCallback();
-	if (!callback) callback = new Common::Callback<GoogleDriveStorage, FileArrayResponse>(this, &GoogleDriveStorage::printFiles);
-	return addRequest(new GoogleDriveListDirectoryRequest(this, path, callback, errorCallback, recursive));	
-}
-
 Networking::Request *GoogleDriveStorage::listDirectoryById(Common::String id, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback) {
 	if (!errorCallback) errorCallback = getErrorPrintingCallback();
 	if (!callback) callback = new Common::Callback<GoogleDriveStorage, FileArrayResponse>(this, &GoogleDriveStorage::printFiles);
@@ -229,10 +201,6 @@ Networking::Request *GoogleDriveStorage::listDirectoryById(Common::String id, Li
 
 Networking::Request *GoogleDriveStorage::upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) {
 	return addRequest(new GoogleDriveUploadRequest(this, path, contents, callback, errorCallback));	
-}
-
-Networking::Request *GoogleDriveStorage::streamFile(Common::String path, Networking::NetworkReadStreamCallback outerCallback, Networking::ErrorCallback errorCallback) {	
-	return addRequest(new GoogleDriveStreamFileRequest(this, path, outerCallback, errorCallback));
 }
 
 Networking::Request *GoogleDriveStorage::streamFileById(Common::String id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) {
@@ -248,36 +216,9 @@ Networking::Request *GoogleDriveStorage::streamFileById(Common::String id, Netwo
 	return nullptr;
 }
 
-Networking::Request *GoogleDriveStorage::download(Common::String remotePath, Common::String localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) {
-	return addRequest(new GoogleDriveDownloadRequest(this, remotePath, localPath, callback, errorCallback));
-}
-
 void GoogleDriveStorage::fileDownloaded(BoolResponse response) {
 	if (response.value) debug("file downloaded!");
 	else debug("download failed!");
-}
-
-void GoogleDriveStorage::printFiles(FileArrayResponse response) {
-	debug("files:");
-	Common::Array<StorageFile> &files = response.value;
-	for (uint32 i = 0; i < files.size(); ++i) {
-		debug("\t%s%s", files[i].name().c_str(), files[i].isDirectory() ? " (directory)" : "");
-		debug("\t%s", files[i].path().c_str());
-		debug("\t%s", files[i].id().c_str());
-		debug(" ");
-	}
-}
-
-void GoogleDriveStorage::printBool(BoolResponse response) {
-	debug("bool: %s", response.value ? "true" : "false");
-}
-
-void GoogleDriveStorage::printFile(UploadResponse response) {
-	debug("\nuploaded file info:");
-	debug("\tid: %s", response.value.path().c_str());
-	debug("\tname: %s", response.value.name().c_str());
-	debug("\tsize: %u", response.value.size());
-	debug("\ttimestamp: %u", response.value.timestamp());
 }
 
 void GoogleDriveStorage::printInfo(StorageInfoResponse response) {
@@ -285,24 +226,6 @@ void GoogleDriveStorage::printInfo(StorageInfoResponse response) {
 	debug("\tname: %s", response.value.name().c_str());
 	debug("\temail: %s", response.value.email().c_str());
 	debug("\tdisk usage: %llu/%llu", response.value.used(), response.value.available());
-}
-
-Networking::Request *GoogleDriveStorage::createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) {
-	if (!errorCallback) errorCallback = getErrorPrintingCallback();
-	if (!callback) callback = new Common::Callback<GoogleDriveStorage, BoolResponse>(this, &GoogleDriveStorage::printBool);
-
-	//find out the parent path and directory name
-	Common::String parentPath = "", directoryName = path;
-	for (uint32 i = path.size(); i > 0; --i) {
-		if (path[i-1] == '/' || path[i-1] == '\\') {
-			parentPath = path;
-			parentPath.erase(i-1);
-			directoryName.erase(0, i);
-			break;
-		}
-	}
-
-	return addRequest(new GoogleDriveCreateDirectoryRequest(this, parentPath, directoryName, callback, errorCallback));
 }
 
 Networking::Request *GoogleDriveStorage::createDirectoryWithParentId(Common::String parentId, Common::String name, BoolCallback callback, Networking::ErrorCallback errorCallback) {
@@ -365,6 +288,11 @@ Common::String GoogleDriveStorage::getAuthLink() {
 	url += "&scope=https://www.googleapis.com/auth/drive"; //for copy-pasting
 	return url;
 }
+
+Common::String GoogleDriveStorage::getRootDirectoryId() {
+	return "root";
+}
+
 
 void GoogleDriveStorage::authThroughConsole() {
 	if (!ConfMan.hasKey("GOOGLE_DRIVE_KEY", ConfMan.kCloudDomain) || !ConfMan.hasKey("GOOGLE_DRIVE_SECRET", ConfMan.kCloudDomain)) {

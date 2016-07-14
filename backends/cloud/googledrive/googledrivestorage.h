@@ -23,14 +23,14 @@
 #ifndef BACKENDS_CLOUD_GOOGLEDRIVE_GOOGLEDRIVESTORAGE_H
 #define BACKENDS_CLOUD_GOOGLEDRIVE_GOOGLEDRIVESTORAGE_H
 
-#include "backends/cloud/storage.h"
+#include "backends/cloud/id/idstorage.h"
 #include "common/callback.h"
 #include "backends/networking/curl/curljsonrequest.h"
 
 namespace Cloud {
 namespace GoogleDrive {
 
-class GoogleDriveStorage: public Cloud::Storage {
+class GoogleDriveStorage: public Id::IdStorage {
 	static char *KEY, *SECRET;
 
 	static void loadKeyAndSecret();
@@ -49,11 +49,7 @@ class GoogleDriveStorage: public Cloud::Storage {
 	/** Returns bool based on JSON response from cloud. */
 	void createDirectoryInnerCallback(BoolCallback outerCallback, Networking::JsonResponse json);
 
-	void printJson(Networking::JsonResponse response);
 	void fileDownloaded(BoolResponse response);
-	void printFiles(FileArrayResponse response);
-	void printBool(BoolResponse response);
-	void printFile(UploadResponse response);
 	void printInfo(StorageInfoResponse response);
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
@@ -81,12 +77,6 @@ public:
 
 	/** Public Cloud API comes down there. */
 
-	/** Returns StorageFile with the resolved file's id. */
-	virtual Networking::Request *resolveFileId(Common::String path, UploadCallback callback, Networking::ErrorCallback errorCallback);
-
-	/** Returns Array<StorageFile> - the list of files. */
-	virtual Networking::Request *listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
-
 	/** Returns Array<StorageFile> - the list of files. */
 	virtual Networking::Request *listDirectoryById(Common::String id, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback);
 
@@ -94,17 +84,10 @@ public:
 	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Returns pointer to Networking::NetworkReadStream. */
-	virtual Networking::Request *streamFile(Common::String path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback);
 	virtual Networking::Request *streamFileById(Common::String id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *download(Common::String remotePath, Common::String localPath, BoolCallback callback, Networking::ErrorCallback errorCallback);
-
-	/** Calls the callback when finished. */
 	virtual Networking::Request *remove(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) { return nullptr; } //TODO
-
-	/** Calls the callback when finished. */
-	virtual Networking::Request *createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Calls the callback when finished. */
 	virtual Networking::Request *createDirectoryWithParentId(Common::String parentId, Common::String name, BoolCallback callback, Networking::ErrorCallback errorCallback);
@@ -125,6 +108,8 @@ public:
 	 * Returns GoogleDrive auth link.
 	 */
 	static Common::String getAuthLink();
+
+	virtual Common::String getRootDirectoryId();
 
 	/**
 	 * Show message with GoogleDrive auth instructions. (Temporary)

@@ -198,11 +198,15 @@ void GoogleDriveUploadRequest::uploadNextPart() {
 
 	byte *buffer = new byte[UPLOAD_PER_ONE_REQUEST];
 	uint32 size = _contentsStream->read(buffer, UPLOAD_PER_ONE_REQUEST);
-	request->setBuffer(buffer, size);
+	if (size != 0) request->setBuffer(buffer, size);
 
 	//request->addHeader(Common::String::format("Content-Length: %u", size));
-	if (_uploadUrl != "")
-		request->addHeader(Common::String::format("Content-Range: bytes %u-%u/%u", oldPos, _contentsStream->pos()-1, _contentsStream->size()));	;
+	if (_uploadUrl != "") {
+		if (_contentsStream->pos() == 0)
+			request->addHeader(Common::String::format("Content-Length: 0"));
+		else
+			request->addHeader(Common::String::format("Content-Range: bytes %u-%u/%u", oldPos, _contentsStream->pos() - 1, _contentsStream->size()));
+	}
 	
 	_workingRequest = ConnMan.addRequest(request);
 }
