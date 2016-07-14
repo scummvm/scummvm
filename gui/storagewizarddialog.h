@@ -48,6 +48,9 @@ class StorageWizardDialog : public Dialog {
 	bool _close;
 	bool _stopServerOnClose;
 
+	/** Return short scummvm.org URL for user to navigate to. */
+	Common::String getUrl() const;
+
 	/**
 	 * Return the value corresponding to the given character.
 	 *

@@ -28,6 +28,7 @@
 #ifdef USE_SDL_NET
 #include "backends/networking/sdl_net/localwebserver.h"
 #endif
+#include "backends/networking/browser/openurl.h"
 #include "common/translation.h"
 #include "widgets/edittext.h"
 
@@ -35,7 +36,8 @@ namespace GUI {
 
 enum {
 	kConnectCmd = 'Cnnt',
-	kCodeBoxCmd = 'CdBx'
+	kCodeBoxCmd = 'CdBx',
+	kOpenUrlCmd = 'OpUr'
 };
 
 StorageWizardDialog::StorageWizardDialog(uint32 storageId):
@@ -46,19 +48,7 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 	new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.Headline", headline);
 	
 	new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.NavigateLine", _s("Navigate to the following URL:"));
-
-	Common::String url = "https://www.scummvm.org/c/";
-	switch (storageId) {
-	case Cloud::kStorageDropboxId: url += "db"; break;
-	case Cloud::kStorageOneDriveId: url += "od"; break;
-	case Cloud::kStorageGoogleDriveId: url += "gd"; break;
-	case Cloud::kStorageBoxId: url += "bx"; break;
-	}
-#ifdef USE_SDL_NET
-	url += "s";
-#endif
-
-	new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.URLLine", url);
+	new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.URLLine", getUrl());
 
 	StaticTextWidget *returnLine1 = new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.ReturnLine1", _s("Obtain the code from the storage, enter it"));
 	StaticTextWidget *returnLine2 = new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.ReturnLine2", _s("in the following field and press 'Connect':"));
@@ -68,6 +58,7 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 
 	// Buttons
 	new ButtonWidget(this, "GlobalOptions_Cloud_ConnectionWizard.CancelButton", _("Cancel"), 0, kCloseCmd);
+	new ButtonWidget(this, "GlobalOptions_Cloud_ConnectionWizard.OpenUrlButton", _("Open URL"), 0, kOpenUrlCmd);
 	_connectWidget = new ButtonWidget(this, "GlobalOptions_Cloud_ConnectionWizard.ConnectButton", _("Connect"), 0, kConnectCmd);
 
 #ifdef USE_SDL_NET
@@ -147,6 +138,12 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		_messageWidget->setLabel(message);
 		break;
 	}
+	case kOpenUrlCmd: {
+		if (!Networking::Browser::openUrl(getUrl())) {
+			_messageWidget->setLabel(_("Failed to open URL!"));
+		}
+		break;
+	}
 	case kConnectCmd: {
 		Common::String code;
 		for (uint32 i = 0; i < CODE_FIELDS; ++i) {
@@ -180,6 +177,21 @@ void StorageWizardDialog::handleTickle() {
 
 	Dialog::handleTickle();
 }
+
+Common::String StorageWizardDialog::getUrl() const {
+	Common::String url = "https://www.scummvm.org/c/";
+	switch (_storageId) {
+	case Cloud::kStorageDropboxId: url += "db"; break;
+	case Cloud::kStorageOneDriveId: url += "od"; break;
+	case Cloud::kStorageGoogleDriveId: url += "gd"; break;
+	case Cloud::kStorageBoxId: url += "bx"; break;
+	}
+#ifdef USE_SDL_NET
+	url += "s";
+#endif
+	return url;
+}
+
 
 int StorageWizardDialog::decodeHashchar(char c) {
 	const char HASHCHARS[65] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ?!";	

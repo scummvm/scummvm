@@ -691,6 +691,9 @@
 				<widget name = 'CancelButton'
 						type = 'Button'
 				/>
+				<widget name = 'OpenUrlButton'
+						type = 'Button'
+				/>
 				<widget name = 'ConnectButton'
 						type = 'Button'
 				/>
