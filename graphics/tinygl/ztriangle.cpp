@@ -43,10 +43,7 @@ FORCEINLINE static void putPixelFlat(FrameBuffer *buffer, int buf, unsigned int 
 		unsigned int r = (color & 0xF800) >> 8;
 		unsigned int g = (color & 0x07E0) >> 3;
 		unsigned int b = (color & 0x001F) << 3;
-		buffer->writePixel<kEnableAlphaTest, kEnableBlending>(buf + _a, a / 256, r, g, b);
-		if (kDepthWrite) {
-			pz[_a] = z;
-		}
+		buffer->writePixel<kEnableAlphaTest, kEnableBlending, kDepthWrite>(buf + _a, a / 256, r, g, b, z);
 	}
 	z += dzdx;
 }
@@ -61,10 +58,7 @@ FORCEINLINE static void putPixelSmooth(FrameBuffer *buffer, int buf, unsigned in
 		unsigned int r = (color & 0xF800) >> 8;
 		unsigned int g = (color & 0x07E0) >> 3;
 		unsigned int b = (color & 0x001F) << 3;
-		buffer->writePixel<kEnableAlphaTest, kEnableBlending>(buf + _a, a / 256, r, g, b);
-		if (kDepthWrite) {
-			pz[_a] = z;
-		}
+		buffer->writePixel<kEnableAlphaTest, kEnableBlending, kDepthWrite>(buf + _a, a / 256, r, g, b, z);
 	}
 	z += dzdx;
 	a += dadx;
@@ -111,10 +105,7 @@ FORCEINLINE static void putPixelTextureMappingPerspective(FrameBuffer *buffer, i
 			c_g = (c_g * l_g) / 256;
 			c_b = (c_b * l_b) / 256;
 		}
-		buffer->writePixel<kEnableAlphaTest, kEnableBlending>(buf + _a, c_a, c_r, c_g, c_b);
-		if (kDepthWrite) {
-			pz[_a] = z;
-		}
+		buffer->writePixel<kEnableAlphaTest, kEnableBlending, kDepthWrite>(buf + _a, c_a, c_r, c_g, c_b, z);
 	}
 	z += dzdx;
 	s += dsdx;
@@ -490,10 +481,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					while (n >= 3) {
 						for (int a = 0; a < 4; a++) {
 							if ((!kEnableScissor || !scissorPixel(buf + a)) && compareDepth(z, pz[a]) && pm[0]) {
-								writePixel<kAlphaTestEnabled, kBlendingEnabled>(buf + a, color);
-								if (kDepthWrite) {
-									pz[a] = z;
-								}
+								writePixel<kAlphaTestEnabled, kBlendingEnabled, kDepthWrite>(buf + a, color, z);
 							}
 							z += dzdx;
 						}
@@ -504,10 +492,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					}
 					while (n >= 0) {
 						if ((!kEnableScissor || !scissorPixel(buf)) && compareDepth(z, pz[0]) && pm[0]) {
-							writePixel<kAlphaTestEnabled, kBlendingEnabled>(buf, color);
-							if (kDepthWrite) {
-								pz[0] = z;
-							}
+							writePixel<kAlphaTestEnabled, kBlendingEnabled, kDepthWrite>(buf, color, z);
 						}
 						pz += 1;
 						pm += 1;
