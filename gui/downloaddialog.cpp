@@ -61,7 +61,7 @@ DownloadDialog::DownloadDialog(uint32 storageId, LauncherDialog *launcher):
 	else
 		_cancelButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", _c("Cancel download", "lowres"), 0, kDownloadDialogButtonCmd);
 	
-	_closeButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.CloseButton", _("OK"), 0, kCloseCmd);
+	_closeButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.CloseButton", _("Hide"), 0, kCloseCmd);
 	refreshWidgets();
 	
 	CloudMan.setDownloadTarget(this);
