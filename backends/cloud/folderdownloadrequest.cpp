@@ -47,7 +47,7 @@ void FolderDownloadRequest::start() {
 	_ignoreCallback = true;
 	if (_workingRequest) _workingRequest->finish();	
 	_currentFile = StorageFile();
-	_files.clear();
+	_pendingFiles.clear();
 	_failedFiles.clear();
 	_ignoreCallback = false;
 	_totalFiles = 0;
@@ -64,8 +64,8 @@ void FolderDownloadRequest::start() {
 void FolderDownloadRequest::directoryListedCallback(Storage::ListDirectoryResponse response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
-	_files = response.value;
-	_totalFiles = _files.size();
+	_pendingFiles = response.value;
+	_totalFiles = _pendingFiles.size();
 	downloadNextFile();
 }
 
@@ -90,13 +90,13 @@ void FolderDownloadRequest::fileDownloadedErrorCallback(Networking::ErrorRespons
 
 void FolderDownloadRequest::downloadNextFile() {
 	do {
-		if (_files.empty()) {
+		if (_pendingFiles.empty()) {
 			finishDownload(_failedFiles);
 			return;
 		}
 	
-		_currentFile = _files.back();
-		_files.pop_back();
+		_currentFile = _pendingFiles.back();
+		_pendingFiles.pop_back();
 	} while (_currentFile.isDirectory()); //TODO: may be create these directories (in case those are empty)
 
 	sendCommand(GUI::kDownloadProgressCmd, (int)(getProgress() * 100));
@@ -146,7 +146,7 @@ double FolderDownloadRequest::getProgress() const {
 		if (idDownloadRequest != nullptr) currentFileProgress = idDownloadRequest->getProgress();
 	}
 
-	return (double)(_totalFiles - _files.size() + currentFileProgress) / (double)(_totalFiles);
+	return (double)(_totalFiles - _pendingFiles.size() + currentFileProgress) / (double)(_totalFiles);
 }
 
 } // End of namespace Cloud

@@ -35,7 +35,7 @@ class FolderDownloadRequest: public Networking::Request, public GUI::CommandSend
 	Storage::FileArrayCallback _fileArrayCallback;
 	Common::String _remoteDirectoryPath, _localDirectoryPath;
 	bool _recursive;
-	Common::Array<StorageFile> _files, _failedFiles;
+	Common::Array<StorageFile> _pendingFiles, _failedFiles;
 	StorageFile _currentFile;
 	Request *_workingRequest;
 	bool _ignoreCallback;
