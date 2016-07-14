@@ -384,7 +384,7 @@ T0002002:
 		if (_g311_projectileDisableMovementTicks)
 			_g311_projectileDisableMovementTicks--;
 
-		// F0044_TEXT_MESSAGEAREA_ClearExpiredRows();
+		_textMan->f44_messageAreaClearExpiredRows();
 		_g321_stopWaitingForPlayerInput = false;
 		uint16 vblankCounter = 0;
 		do {

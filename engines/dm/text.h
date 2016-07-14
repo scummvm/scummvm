@@ -42,7 +42,7 @@ class TextMan {
 public:
 	explicit TextMan(DMEngine *vm);
 	~TextMan();
-	void f40_printTextToBitmap(byte *destBitmap, uint16 destByteWidth, uint16 destX, uint16 destY,
+	void f40_printTextToBitmap(byte *destBitmap, uint16 destByteWidth, int16 destX, int16 destY,
 						   Color textColor, Color bgColor, const char *text, uint16 destHeight); // @ F0040_TEXT_Print
 	void f53_printToLogicalScreen(uint16 destX, uint16 destY, Color textColor, Color bgColor, const char *text); // @ F0053_TEXT_PrintToLogicalScreen
 	void f52_printToViewport(int16 posX, int16 posY, Color textColor, const char *text, Color bgColor = k12_ColorDarkestGray); // @ F0052_TEXT_PrintToViewport
@@ -54,7 +54,7 @@ public:
 	void f46_messageAreaPrintString(Color color, const char* string);// @ F0046_TEXT_MESSAGEAREA_PrintString
 	void f54_textInitialize(); // @ F0054_TEXT_Initialize
 	void f42_messageAreaMoveCursor(int16 column, int16 row); // @ F0042_TEXT_MESSAGEAREA_MoveCursor
-
+	void f44_messageAreaClearExpiredRows(); // @ F0044_TEXT_MESSAGEAREA_ClearExpiredRows
 
 
 };

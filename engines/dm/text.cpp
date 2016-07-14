@@ -45,10 +45,12 @@ TextMan::~TextMan() {
 #define k5_LetterWidth 5
 #define k6_LetterHeight 6
 
-void TextMan::f40_printTextToBitmap(byte* destBitmap, uint16 destByteWidth, uint16 destX, uint16 destY,
+void TextMan::f40_printTextToBitmap(byte* destBitmap, uint16 destByteWidth, int16 destX, int16 destY,
 									Color textColor, Color bgColor, const char* text, uint16 destHeight) {
-	destX -= 1; // fixes missalignment, to be checked
-	destY -= 4; // fixes missalignment, to be checked
+	if ((destX -= 1) < 0) // fixes missalignment, to be checked
+		destX = 0;
+	if ((destY -= 4) < 0) // fixes missalignment, to be checked
+		destY = 0;
 
 	uint16 destPixelWidth = destByteWidth * 2;
 
@@ -155,7 +157,7 @@ void TextMan::f46_messageAreaPrintString(Color color, const char* string) {
 	L0030_i_StringLength = strlen(string);
 	warning(false, "MISSING CODE: F0561_SCROLLER_IsTextScrolling");
 	if (true) { // there is a test here with F0561_SCROLLER_IsTextScrolling
-		_vm->_textMan->f53_printToLogicalScreen(_g359_messageAreaCursorColumn * 6, (_g358_messageAreaCursorRow * 7) + 177, color, k0_ColorBlack, string);
+		_vm->_textMan->f53_printToLogicalScreen(_g359_messageAreaCursorColumn * 6, (_g358_messageAreaCursorRow * 7 - 6) + 177, color, k0_ColorBlack, string);
 	} else {
 		f40_printTextToBitmap(_g356_bitmapMessageAreaNewRow, k160_byteWidthScreen, _g359_messageAreaCursorColumn * 6, 5, color, k0_ColorBlack, string, 7);
 		warning(false, "MISSING CODE: F0561_SCROLLER_IsTextScrolling");
@@ -163,6 +165,7 @@ void TextMan::f46_messageAreaPrintString(Color color, const char* string) {
 	}
 	_g359_messageAreaCursorColumn += L0030_i_StringLength;
 	_g360_messageAreaRowExpirationTime[_g358_messageAreaCursorRow] = _vm->_g313_gameTime + 200;
+
 }
 
 void TextMan::f54_textInitialize() {
@@ -188,5 +191,24 @@ void TextMan::f42_messageAreaMoveCursor(int16 column, int16 row) {
 		}
 	}
 	_g358_messageAreaCursorRow = row;
+}
+
+void TextMan::f44_messageAreaClearExpiredRows() {
+	uint16 L0026_ui_RowIndex;
+	int32 L0027_l_ExpirationTime;
+	Box L0028_s_Box;
+
+	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
+	L0028_s_Box._x1 = 0;
+	L0028_s_Box._x2 = 319;
+	for (L0026_ui_RowIndex = 0; L0026_ui_RowIndex < 4; L0026_ui_RowIndex++) {
+		L0027_l_ExpirationTime = _g360_messageAreaRowExpirationTime[L0026_ui_RowIndex];
+		if ((L0027_l_ExpirationTime == -1) || (L0027_l_ExpirationTime > _vm->_g313_gameTime))
+			continue;
+		L0028_s_Box._y2 = (L0028_s_Box._y1 = 172 + (L0026_ui_RowIndex * 7)) + 6;
+		warning(false, "MISSING CODE:F0561_SCROLLER_IsTextScrolling(&K0060_s_TextScroller, true);");
+		_vm->_displayMan->f135_fillBoxBitmap(_vm->_displayMan->_g348_bitmapScreen, L0028_s_Box, k0_ColorBlack, k160_byteWidthScreen, k200_heightScreen);
+		_g360_messageAreaRowExpirationTime[L0026_ui_RowIndex] = -1;
+	}
 }
 }

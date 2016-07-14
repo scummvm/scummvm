@@ -7,6 +7,8 @@ Bugs:
 	Logic:
 		When object are put on the right side of the current square, they disappear
 		Drawing door ornaments segfaults when going back to the start
+		Stepping onto the plate next doesn't open the grated gate on the 0th level
+		Walking into walls corrupts memory
 
 
 Possible bugs:
@@ -26,7 +28,4 @@ Todo:
 Finish stuff:
 	f380_processCommandQueue
 	Missing main loop methods
-	F0577_VBLANK_Handler, if enought time passes, takes the player's chance to act
-		- TODO: implement it
-		- NOTE: _g318_waitForInputMaxVerticalBlankCount is already included in the engine
 
