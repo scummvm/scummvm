@@ -51,6 +51,7 @@ void FolderDownloadRequest::start() {
 	_failedFiles.clear();
 	_ignoreCallback = false;
 	_totalFiles = 0;
+	_downloadedBytes = _totalBytes = 0;
 
 	//list directory first
 	_workingRequest = _storage->listDirectory(
@@ -70,8 +71,10 @@ void FolderDownloadRequest::directoryListedCallback(Storage::ListDirectoryRespon
 	for (Common::Array<StorageFile>::iterator i = _pendingFiles.begin(); i != _pendingFiles.end(); )
 		if (i->isDirectory())
 			_pendingFiles.erase(i);
-		else
+		else {
+			_totalBytes += i->size();
 			++i;
+		}
 
 	_totalFiles = _pendingFiles.size();
 	downloadNextFile();
@@ -87,6 +90,7 @@ void FolderDownloadRequest::fileDownloadedCallback(Storage::BoolResponse respons
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 	if (!response.value) _failedFiles.push_back(_currentFile);
+	_downloadedBytes += _currentFile.size();
 	downloadNextFile();
 }
 
@@ -157,6 +161,24 @@ double FolderDownloadRequest::getProgress() const {
 
 	uint32 uploadedFiles = _totalFiles - _pendingFiles.size() - 1; // -1 because currently downloaded file is already removed from _pendingFiles
 	return (double)(uploadedFiles + currentFileProgress) / (double)(_totalFiles);
+}
+
+uint64 FolderDownloadRequest::getDownloadedBytes() const {
+	if (_totalFiles == 0) return 0;
+
+	double currentFileProgress = 0;
+	DownloadRequest *downloadRequest = dynamic_cast<DownloadRequest *>(_workingRequest);
+	if (downloadRequest != nullptr) currentFileProgress = downloadRequest->getProgress();
+	else {
+		Id::IdDownloadRequest *idDownloadRequest = dynamic_cast<Id::IdDownloadRequest *>(_workingRequest);
+		if (idDownloadRequest != nullptr) currentFileProgress = idDownloadRequest->getProgress();
+	}
+
+	return _downloadedBytes + (uint64)(currentFileProgress * _currentFile.size());
+}
+
+uint64 FolderDownloadRequest::getTotalBytesToDownload() const {
+	return _totalBytes;
 }
 
 } // End of namespace Cloud

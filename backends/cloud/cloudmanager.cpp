@@ -346,6 +346,18 @@ double CloudManager::getDownloadingProgress() {
 	return 1;
 }
 
+uint64 CloudManager::getDownloadBytesNumber() {
+	Storage *storage = getCurrentStorage();
+	if (storage) return storage->getDownloadBytesNumber();
+	return 1;
+}
+
+uint64 CloudManager::getDownloadTotalBytesNumber() {
+	Storage *storage = getCurrentStorage();
+	if (storage) return storage->getDownloadTotalBytesNumber();
+	return 1;
+}
+
 Common::String CloudManager::getDownloadRemoteDirectory() {
 	Storage *storage = getCurrentStorage();
 	if (storage) return storage->getDownloadRemoteDirectory();

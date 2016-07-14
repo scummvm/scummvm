@@ -198,6 +198,12 @@ public:
 	/** Returns a number in [0, 1] range which represents current download progress (1 = complete). */
 	virtual double getDownloadingProgress();
 
+	/** Returns a number of bytes that is downloaded in current download progress. */
+	virtual uint64 getDownloadBytesNumber();
+
+	/** Returns a total number of bytes to be downloaded in current download progress. */
+	virtual uint64 getDownloadTotalBytesNumber();
+
 	/** Returns remote directory path. */
 	virtual Common::String getDownloadRemoteDirectory();
 

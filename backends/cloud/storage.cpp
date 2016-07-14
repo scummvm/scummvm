@@ -241,6 +241,24 @@ double Storage::getDownloadingProgress() {
 	return result;
 }
 
+uint64 Storage::getDownloadBytesNumber() {
+	uint64 result = 0;
+	_runningRequestsMutex.lock();
+	if (_downloadFolderRequest)
+		result = _downloadFolderRequest->getDownloadedBytes();
+	_runningRequestsMutex.unlock();
+	return result;
+}
+
+uint64 Storage::getDownloadTotalBytesNumber() {
+	uint64 result = 0;
+	_runningRequestsMutex.lock();
+	if (_downloadFolderRequest)
+		result = _downloadFolderRequest->getTotalBytesToDownload();
+	_runningRequestsMutex.unlock();
+	return result;
+}
+
 Common::String Storage::getDownloadRemoteDirectory() {
 	Common::String result = "";
 	_runningRequestsMutex.lock();

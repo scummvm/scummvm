@@ -40,6 +40,7 @@ class FolderDownloadRequest: public Networking::Request, public GUI::CommandSend
 	Request *_workingRequest;
 	bool _ignoreCallback;
 	uint32 _totalFiles;
+	uint64 _downloadedBytes, _totalBytes;
 
 	void start();
 	void directoryListedCallback(Storage::ListDirectoryResponse response);
@@ -57,6 +58,12 @@ public:
 
 	/** Returns a number in range [0, 1], where 1 is "complete". */
 	double getProgress() const;
+
+	/** Returns a number of downloaded bytes. */
+	uint64 getDownloadedBytes() const;
+
+	/** Returns a total number of bytes to download. */
+	uint64 getTotalBytesToDownload() const;
 
 	/** Returns remote directory path. */
 	Common::String getRemotePath() { return _remoteDirectoryPath; }
