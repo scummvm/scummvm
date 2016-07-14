@@ -1745,11 +1745,6 @@ bool Actor::updateTalk(uint frameTime) {
 }
 
 void Actor::draw() {
-	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
-		Costume *c = *i;
-		c->setupTextures();
-	}
-
 	if (!g_driver->isHardwareAccelerated() && g_grim->getFlagRefreshShadowMask()) {
 		for (int l = 0; l < MAX_SHADOWS; l++) {
 			if (!_shadowArray[l].active)

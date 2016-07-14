@@ -49,7 +49,6 @@ public:
 	virtual void setMapName(char *) { }
 	virtual int update(uint time) { return 0; }
 	virtual void animate() { }
-	virtual void setupTexture() { }
 	virtual void draw() { }
 	virtual void reset() { }
 	virtual void fade(Animation::FadeMode, int) { }

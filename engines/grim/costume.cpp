@@ -81,10 +81,6 @@ namespace Grim {
 //                given by a playing chore
 // update() -- gives the component a chance to update its internal
 //             state once every frame
-// setupTexture() -- sets up animated textures for the object.  This
-//                   is a separate stage from update() since all the
-//                   costumes on screen need to get updated before any
-//                   drawing can start.
 // draw() -- actually draws the component onto the screen
 // reset() -- notifies the component that a chore controlling it
 //            has stopped
@@ -418,12 +414,6 @@ int Costume::isChoring(bool excludeLooping) {
 			return i;
 	}
 	return -1;
-}
-
-void Costume::setupTextures() {
-	for (int i = 0; i < _numComponents; i++)
-		if (_components[i])
-			_components[i]->setupTexture();
 }
 
 void Costume::draw() {
