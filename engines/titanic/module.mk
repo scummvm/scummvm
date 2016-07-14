@@ -432,6 +432,13 @@ MODULE_OBJS := \
 	star_control/star_control_sub13.o \
 	star_control/star_control_sub14.o \
 	star_control/star_control_sub15.o \
+	star_control/star_control_sub20.o \
+	star_control/star_control_sub21.o \
+	star_control/star_control_sub22.o \
+	star_control/star_control_sub23.o \
+	star_control/star_control_sub24.o \
+	star_control/star_control_sub25.o \
+	star_control/star_control_sub26.o \
 	star_control/surface_area.o \
 	star_control/surface_fader_base.o \
 	star_control/surface_fader.o \
