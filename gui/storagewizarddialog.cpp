@@ -21,9 +21,9 @@
  */
 
 #include "gui/storagewizarddialog.h"
-#include "gui/widgets/list.h"
-#include "gui/widget.h"
 #include "gui/gui-manager.h"
+#include "gui/message.h"
+#include "gui/widget.h"
 #include "backends/cloud/cloudmanager.h"
 #ifdef USE_SDL_NET
 #include "backends/networking/sdl_net/localwebserver.h"
@@ -140,7 +140,8 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 	case kOpenUrlCmd: {
 		if (!Networking::Browser::openUrl(getUrl())) {
-			_messageWidget->setLabel(_("Failed to open URL!"));
+			MessageDialog alert(_("Failed to open URL!\nYou should navigate there manually then."));
+			alert.runModal();
 		}
 		break;
 	}
