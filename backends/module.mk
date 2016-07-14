@@ -76,6 +76,14 @@ MODULE_OBJS += \
 	networking/sdl_net/uploadfileclienthandler.o
 endif
 
+ifdef WIN32
+MODULE_OBJS += \
+	networking/browser/openurl-windows.o
+else
+MODULE_OBJS += \
+	networking/browser/openurl-default.o
+endif
+
 ifdef USE_ELF_LOADER
 MODULE_OBJS += \
 	plugins/elf/arm-loader.o \
