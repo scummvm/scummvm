@@ -1905,57 +1905,57 @@ T0280048:
 }
 
 void ChampionMan::f287_drawChampionBarGraphs(ChampionIndex champIndex) {
-
-	Champion *curChampion = &_gK71_champions[champIndex];
-	int16 barGraphIndex = 0;
-	int16 barGraphHeightArray[3];
-
-	if (curChampion->_currHealth > 0) {
-		uint32 barGraphHeight = (((uint32)(curChampion->_currHealth) << 10) * 25) / curChampion->_maxHealth;
-		if (barGraphHeight & 0x3FF) {
-			barGraphHeightArray[barGraphIndex++] = (barGraphHeight >> 10) + 1;
+	int16 barGraphHeights[3];
+	Champion *champ = &_vm->_championMan->_gK71_champions[champIndex];
+	int16 AL0842_i_BarGraphIndex = 0;
+	if (champ->_currHealth > 0) {
+		int32 barGraphHeight = (((int32)champ->_currHealth << 10) * 25) / champ->_maxHealth;
+		if (barGraphHeight & 0x000003FF) {
+			barGraphHeights[AL0842_i_BarGraphIndex++] = (barGraphHeight >> 10) + 1;
 		} else {
-			barGraphHeightArray[barGraphIndex++] = (barGraphHeight >> 10);
+			barGraphHeights[AL0842_i_BarGraphIndex++] = (barGraphHeight >> 10);
 		}
 	} else {
-		barGraphHeightArray[barGraphIndex++] = 0;
+		barGraphHeights[AL0842_i_BarGraphIndex++] = 0;
 	}
-
-	if (curChampion->_currStamina > 0) {
-		uint32 barGraphHeight = (((uint32)(curChampion->_currStamina) << 10) * 25) / curChampion->_maxStamina;
-		if (barGraphHeight & 0x3FF) {
-			barGraphHeightArray[barGraphIndex++] = (barGraphHeight >> 10) + 1;
+	if (champ->_currStamina > 0) {
+		int32 barGraphHeight = (((int32)champ->_currStamina << 10) * 25) / champ->_maxStamina;
+		if (barGraphHeight & 0x000003FF) {
+			barGraphHeights[AL0842_i_BarGraphIndex++] = (barGraphHeight >> 10) + 1;
 		} else {
-			barGraphHeightArray[barGraphIndex++] = (barGraphHeight >> 10);
+			barGraphHeights[AL0842_i_BarGraphIndex++] = (barGraphHeight >> 10);
 		}
 	} else {
-		barGraphHeightArray[barGraphIndex++] = 0;
+		barGraphHeights[AL0842_i_BarGraphIndex++] = 0;
 	}
-
-	if (curChampion->_currMana > 0) {
-		uint32 barGraphHeight = (((uint32)(curChampion->_currMana) << 10) * 25) / curChampion->_maxMana;
-		if (barGraphHeight & 0x3FF) {
-			barGraphHeightArray[barGraphIndex++] = (barGraphHeight >> 10) + 1;
+	if (champ->_currMana > 0) {
+		if (champ->_currMana > champ->_maxMana) {
+			barGraphHeights[AL0842_i_BarGraphIndex] = 25;
 		} else {
-			barGraphHeightArray[barGraphIndex++] = (barGraphHeight >> 10);
+			int32 barGraphHeight = (((int32)champ->_currMana << 10) * 25) / champ->_maxMana;
+			if (barGraphHeight & 0x000003FF) {
+				barGraphHeights[AL0842_i_BarGraphIndex] = (barGraphHeight >> 10) + 1;
+			} else {
+				barGraphHeights[AL0842_i_BarGraphIndex] = (barGraphHeight >> 10);
+			}
 		}
 	} else {
-		barGraphHeightArray[barGraphIndex++] = 0;
+		barGraphHeights[AL0842_i_BarGraphIndex] = 0;
 	}
 	_vm->_eventMan->f78_showMouse();
 
+	// Strangerke - TO CHECK: if portraits, maybe the old (assembly) code is required for older versions
 	Box box;
 	box._x1 = champIndex * k69_ChampionStatusBoxSpacing + 46;
 	box._x2 = box._x1 + 3;
 	box._y1 = 2;
 	box._y2 = 26;
-
-	for (int16 AL_0_barGraphIndex = 0; AL_0_barGraphIndex < 3; AL_0_barGraphIndex++) {
-		int16 barGraphHeight = barGraphHeightArray[AL_0_barGraphIndex];
+	for (int16 barGraphIndex = 0; barGraphIndex < 3; barGraphIndex++) {
+		int16 barGraphHeight = barGraphHeights[barGraphIndex];
 		if (barGraphHeight < 25) {
 			box._y1 = 2;
-			box._y1 = 27 - barGraphHeight;
-			_vm->_displayMan->D24_fillScreenBox(box, g46_ChampionColor[champIndex]);
+			box._y2 = 27 - barGraphHeight;
+			_vm->_displayMan->D24_fillScreenBox(box, k12_ColorDarkestGray);
 		}
 		if (barGraphHeight) {
 			box._y1 = 27 - barGraphHeight;
