@@ -236,19 +236,18 @@ void ObjectMan::f38_drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 #define k14_ObjectNameMaximumLength 14 // @ C014_OBJECT_NAME_MAXIMUM_LENGTH
 
 void ObjectMan::f34_drawLeaderObjectName(Thing thing) {
-	IconIndice iconIndex = f33_getIconIndex(thing);
-	char *objName;
-	char objectNameBuffer[16];
-	if (iconIndex == k147_IconIndiceJunkChampionBones) {
+	char* objectName = nullptr;
+	int16 L0007_i_IconIndex = _vm->_objectMan->f33_getIconIndex(thing);
+	if (L0007_i_IconIndex == k147_IconIndiceJunkChampionBones) {
 		Junk *junk = (Junk*)_vm->_dungeonMan->f156_getThingData(thing);
-		strcpy(objectNameBuffer, _vm->_championMan->_gK71_champions[junk->getChargeCount()]._name);
-		strcat(objectNameBuffer, _g352_objectNames[iconIndex]);
-		objName = objectNameBuffer;
+		char champBonesName[16];
+		strcpy(champBonesName, _vm->_championMan->_gK71_champions[junk->getChargeCount()]._name);
+		strcat(champBonesName, _vm->_objectMan->_g352_objectNames[L0007_i_IconIndex]);
+		objectName = champBonesName;
 	} else {
-		objName = _g352_objectNames[iconIndex];
+		objectName = _vm->_objectMan->_g352_objectNames[L0007_i_IconIndex];
 	}
-	_vm->_textMan->f41_printWithTrailingSpaces(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen, 233, 37,
-											   k4_ColorCyan, k0_ColorBlack, objName, k14_ObjectNameMaximumLength, k200_heightScreen);
+	_vm->_textMan->f41_printWithTrailingSpaces(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen, 233, 37, k4_ColorCyan, k0_ColorBlack, objectName, k14_ObjectNameMaximumLength, k200_heightScreen);
 }
 
 IconIndice ObjectMan::f39_getIconIndexInSlotBox(uint16 slotBoxIndex) {

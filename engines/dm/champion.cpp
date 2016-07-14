@@ -1162,8 +1162,6 @@ void ChampionMan::f297_putObjectInLeaderHand(Thing thing, bool setMousePointer) 
 	}
 	_g415_leaderEmptyHanded = false;
 	_vm->_objectMan->f36_extractIconFromBitmap(_g413_leaderHandObjectIconIndex = _vm->_objectMan->f33_getIconIndex(_g414_leaderHandObject = thing), _vm->_objectMan->_g412_objectIconForMousePointer);
-
-
 	_vm->_eventMan->f78_showMouse();
 	_vm->_objectMan->f34_drawLeaderObjectName(thing);
 	if (setMousePointer) {
@@ -1262,49 +1260,47 @@ void ChampionMan::f283_viAltarRebirth(uint16 champIndex) {
 }
 
 void ChampionMan::f302_processCommands28to65_clickOnSlotBox(uint16 slotBoxIndex) {
-	uint16 L0903_ui_ChampionIndex;
-	uint16 L0904_ui_SlotIndex;
-	Thing L0905_T_LeaderHandObject;
-	Thing L0906_T_SlotThing;
-
+	uint16 champIndex;
+	uint16 slotIndex;
 
 	if (slotBoxIndex < k8_SlotBoxInventoryFirstSlot) {
-		if (_vm->_championMan->_g299_candidateChampionOrdinal) {
+		if (_g299_candidateChampionOrdinal) {
 			return;
 		}
-		L0903_ui_ChampionIndex = slotBoxIndex >> 1;
-		if ((L0903_ui_ChampionIndex >= _vm->_championMan->_g305_partyChampionCount) || (_vm->M0_indexToOrdinal(L0903_ui_ChampionIndex) == (int)_vm->_inventoryMan->_g432_inventoryChampionOrdinal) || !_vm->_championMan->_gK71_champions[L0903_ui_ChampionIndex]._currHealth) {
+		champIndex = slotBoxIndex >> 1;
+		if ((champIndex >= _g305_partyChampionCount) || (_vm->M0_indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) || !_gK71_champions[champIndex]._currHealth) {
 			return;
 		}
-		L0904_ui_SlotIndex = _vm->_championMan->M70_handSlotIndex(slotBoxIndex);
+		slotIndex = M70_handSlotIndex(slotBoxIndex);
 	} else {
-		L0903_ui_ChampionIndex = _vm->M1_ordinalToIndex(_vm->_inventoryMan->_g432_inventoryChampionOrdinal);
-		L0904_ui_SlotIndex = slotBoxIndex - k8_SlotBoxInventoryFirstSlot;
+		champIndex = _vm->M1_ordinalToIndex(_vm->_inventoryMan->_g432_inventoryChampionOrdinal);
+		slotIndex = slotBoxIndex - k8_SlotBoxInventoryFirstSlot;
 	}
-	L0905_T_LeaderHandObject = _vm->_championMan->_g414_leaderHandObject;
-	if (L0904_ui_SlotIndex >= k30_ChampionSlotChest_1) {
-		L0906_T_SlotThing = _vm->_inventoryMan->_g425_chestSlots[L0904_ui_SlotIndex - k30_ChampionSlotChest_1];
+	Thing leaderHandObject = _g414_leaderHandObject;
+	Thing slotThing;
+	if (slotIndex >= k30_ChampionSlotChest_1) {
+		slotThing = _vm->_inventoryMan->_g425_chestSlots[slotIndex - k30_ChampionSlotChest_1];
 	} else {
-		L0906_T_SlotThing = _vm->_championMan->_gK71_champions[L0903_ui_ChampionIndex]._slots[L0904_ui_SlotIndex];
+		slotThing = _gK71_champions[champIndex]._slots[slotIndex];
 	}
-	if ((L0906_T_SlotThing == Thing::_none) && (L0905_T_LeaderHandObject == Thing::_none)) {
+	if ((slotThing == Thing::_none) && (leaderHandObject == Thing::_none)) {
 		return;
 	}
-	if ((L0905_T_LeaderHandObject != Thing::_none) && (!(g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(L0905_T_LeaderHandObject)]._allowedSlots & g38_slotMasks[L0904_ui_SlotIndex]))) {
+	if ((leaderHandObject != Thing::_none) && (!(g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(leaderHandObject)]._allowedSlots & g38_slotMasks[slotIndex]))) {
 		return;
 	}
 	_vm->_eventMan->f78_showMouse();
-	if (L0905_T_LeaderHandObject != Thing::_none) {
+	if (leaderHandObject != Thing::_none) {
 		f298_getObjectRemovedFromLeaderHand();
 	}
-	if (L0906_T_SlotThing != Thing::_none) {
-		f300_getObjectRemovedFromSlot(L0903_ui_ChampionIndex, L0904_ui_SlotIndex);
-		f297_putObjectInLeaderHand(L0906_T_SlotThing, false);
+	if (slotThing != Thing::_none) {
+		f300_getObjectRemovedFromSlot(champIndex, slotIndex);
+		f297_putObjectInLeaderHand(slotThing, false); 
 	}
-	if (L0905_T_LeaderHandObject != Thing::_none) {
-		_vm->_championMan->f301_addObjectInSlot((ChampionIndex)L0903_ui_ChampionIndex, L0905_T_LeaderHandObject, (ChampionSlot)L0904_ui_SlotIndex);
+	if (leaderHandObject != Thing::_none) {
+		f301_addObjectInSlot((ChampionIndex)champIndex, leaderHandObject, (ChampionSlot) slotIndex);
 	}
-	_vm->_championMan->f292_drawChampionState((ChampionIndex)L0903_ui_ChampionIndex);
+	f292_drawChampionState((ChampionIndex)champIndex);
 	_vm->_eventMan->f77_hideMouse();
 }
 
