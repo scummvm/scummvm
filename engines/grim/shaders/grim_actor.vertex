@@ -53,15 +53,19 @@ void main()
 	vec4 positionView = viewMatrix * pos;
 	gl_Position = projMatrix * positionView;
 
+	if (shadow._active) {
+		Color = vec4(shadow._color, 1.0);
+	} else {
+		Color = color;
+	}
+
 	if (textured) {
 		Texcoord = vec2(0.0, 1.0) + (texcoord / texScale);
 	} else {
 		Texcoord = vec2(0.0, 0.0);
 	}
 
-	if (shadow._active) {
-		Color = vec4(shadow._color, 1.0);
-	} else if (lightsEnabled) {
+	if (lightsEnabled) {
 		vec3 light = vec3(0.0, 0.0, 0.0);
 		vec3 normalEye = normalize((viewMatrix * (modelMatrix * extraMatrix * vec4(normal, 0.0))).xyz);
 
@@ -92,6 +96,7 @@ void main()
 			}
 			light += lights[i]._color.xyz * intensity;
 		}
-		Color = clamp(vec4(color.xyz * light, color.w), 0.0, 1.0);
+		light /= max(1.0, max(max(light.x, light.y), light.z));
+		Color *= vec4(light, 1.0);
 	}
 }

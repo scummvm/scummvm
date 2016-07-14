@@ -984,12 +984,11 @@ void GfxOpenGLS::drawMesh(const Mesh *mesh) {
 
 	actorShader->use();
 	actorShader->setUniform("extraMatrix", _matrixStack.top());
+	actorShader->setUniform("lightsEnabled", _lightsEnabled && !isShadowModeActive());
 
 	const Material *curMaterial = NULL;
 	for (int i = 0; i < mesh->_numFaces;) {
 		const MeshFace *face = &mesh->_faces[i];
-		if (face->getLight() == 0 && !isShadowModeActive())
-			disableLights();
 
 		curMaterial = face->getMaterial();
 		curMaterial->select();
@@ -1006,9 +1005,6 @@ void GfxOpenGLS::drawMesh(const Mesh *mesh) {
 		actorShader->setUniform("texScale", Math::Vector2d(_selectedTexture->_width, _selectedTexture->_height));
 
 		glDrawArrays(GL_TRIANGLES, *(int *)face->_userData, faces);
-
-		if (face->getLight() == 0 && !isShadowModeActive())
-			enableLights();
 	}
 }
 
