@@ -46,9 +46,6 @@ class BoxStorage: public Id::IdStorage {
 	/** Constructs StorageInfo based on JSON response from cloud. */
 	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);
 
-	void fileDownloaded(BoolResponse response);
-
-	void fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response);
 	void createDirectoryInnerCallback(BoolCallback outerCallback, Networking::JsonResponse response);
 public:	
 	/** This constructor uses OAuth code flow to get tokens. */
@@ -103,11 +100,6 @@ public:
 	 * @return pointer to the newly created BoxStorage or 0 if some problem occured.
 	 */
 	static BoxStorage *loadFromConfig(Common::String keyPrefix);
-
-	/**
-	 * Returns Box auth link.
-	 */
-	static Common::String getAuthLink();
 
 	virtual Common::String getRootDirectoryId();
 

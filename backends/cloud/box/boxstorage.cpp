@@ -177,29 +177,6 @@ void BoxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking
 	delete json;
 }
 
-void BoxStorage::fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response) {
-	if (!response.value) {
-		warning("fileInfoCallback: NULL");
-		if (outerCallback) (*outerCallback)(Networking::NetworkReadStreamResponse(response.request, 0));
-		return;
-	}
-
-	Common::JSONObject result = response.value->asObject();
-	if (result.contains("@content.downloadUrl")) {
-		const char *url = result.getVal("@content.downloadUrl")->asString().c_str();
-		if (outerCallback)
-			(*outerCallback)(Networking::NetworkReadStreamResponse(
-				response.request,
-				new Networking::NetworkReadStream(url, 0, "")
-			));
-	} else {
-		warning("downloadUrl not found in passed JSON");
-		debug("%s", response.value->stringify().c_str());
-		if (outerCallback) (*outerCallback)(Networking::NetworkReadStreamResponse(response.request, 0));
-	}
-	delete response.value;
-}
-
 Networking::Request *BoxStorage::listDirectoryById(Common::String id, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback) {
 	if (!errorCallback) errorCallback = getErrorPrintingCallback();
 	if (!callback) callback = getPrintFilesCallback();
@@ -275,11 +252,6 @@ Networking::Request *BoxStorage::streamFileById(Common::String id, Networking::N
 	return nullptr;
 }
 
-void BoxStorage::fileDownloaded(BoolResponse response) {
-	if (response.value) debug("file downloaded!");
-	else debug("download failed!");
-}
-
 Networking::Request *BoxStorage::info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) {
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<BoxStorage, StorageInfoResponse, Networking::JsonResponse>(this, &BoxStorage::infoInnerCallback, callback);
 	Networking::CurlJsonRequest *request = new BoxTokenRefresher(this, innerCallback, errorCallback, "https://api.box.com/2.0/users/me");
@@ -305,11 +277,6 @@ BoxStorage *BoxStorage::loadFromConfig(Common::String keyPrefix) {
 	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", ConfMan.kCloudDomain);
 	Common::String refreshToken = ConfMan.get(keyPrefix + "refresh_token", ConfMan.kCloudDomain);
 	return new BoxStorage(accessToken, refreshToken);
-}
-
-Common::String BoxStorage::getAuthLink() {
-	// now we only specify short "scummvm.org/c/bx" with actual redirect to the auth page
-	return "";
 }
 
 Common::String BoxStorage::getRootDirectoryId() {

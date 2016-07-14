@@ -46,10 +46,6 @@ class DropboxStorage: public Cloud::Storage {
 	/** Constructs StorageInfo based on JSON response from cloud. */
 	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);
 
-	void printFiles(FileArrayResponse response);
-	void printBool(BoolResponse response);
-	void printStorageFile(UploadResponse response);
-
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
 	DropboxStorage(Common::String code);
@@ -105,11 +101,6 @@ public:
 	 * @return pointer to the newly created DropboxStorage or 0 if some problem occured.
 	 */
 	static DropboxStorage *loadFromConfig(Common::String keyPrefix);
-
-	/**
-	 * Returns Dropbox auth link.
-	 */
-	static Common::String getAuthLink();
 };
 
 } // End of namespace Dropbox

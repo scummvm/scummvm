@@ -105,24 +105,6 @@ Common::String DropboxStorage::name() const {
 	return "Dropbox";
 }
 
-void DropboxStorage::printFiles(FileArrayResponse response) {
-	debug("files:");
-	Common::Array<StorageFile> &files = response.value;
-	for (uint32 i = 0; i < files.size(); ++i)
-		debug("\t%s", files[i].name().c_str());
-}
-
-void DropboxStorage::printBool(BoolResponse response) {
-	debug("bool: %s", (response.value?"true":"false"));
-}
-
-void DropboxStorage::printStorageFile(UploadResponse response) {	
-	debug("\nuploaded file info:");
-	debug("\tpath: %s", response.value.path().c_str());
-	debug("\tsize: %u", response.value.size());
-	debug("\ttimestamp: %u", response.value.timestamp());
-}
-
 Networking::Request *DropboxStorage::listDirectory(Common::String path, ListDirectoryCallback outerCallback, Networking::ErrorCallback errorCallback, bool recursive) {
 	return addRequest(new DropboxListDirectoryRequest(_token, path, outerCallback, errorCallback, recursive));
 }
@@ -216,15 +198,6 @@ DropboxStorage *DropboxStorage::loadFromConfig(Common::String keyPrefix) {
 	Common::String userId = ConfMan.get(keyPrefix + "user_id", ConfMan.kCloudDomain);
 
 	return new DropboxStorage(accessToken, userId);
-}
-
-Common::String DropboxStorage::getAuthLink() {
-	Common::String url = "https://www.dropbox.com/1/oauth2/authorize";
-	url += "?response_type=code";
-	url += "&redirect_uri=http://localhost:12345/"; //that's for copy-pasting
-	//url += "&redirect_uri=http%3A%2F%2Flocalhost%3A12345%2F"; //that's "http://localhost:12345/" for automatic opening
-	url += "&client_id="; url += KEY;
-	return url;
 }
 
 } // End of namespace Dropbox

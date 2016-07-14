@@ -174,17 +174,6 @@ void OneDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Netwo
 	delete json;
 }
 
-void OneDriveStorage::printJson(Networking::JsonResponse response) {
-	Common::JSONValue *json = response.value;
-	if (!json) {
-		warning("printJson: NULL");
-		return;
-	}
-
-	debug("%s", json->stringify().c_str());
-	delete json;
-}
-
 void OneDriveStorage::fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response) {
 	if (!response.value) {
 		warning("fileInfoCallback: NULL");
@@ -224,29 +213,6 @@ Networking::Request *OneDriveStorage::streamFileById(Common::String path, Networ
 	return addRequest(request);
 }
 
-void OneDriveStorage::fileDownloaded(BoolResponse response) {
-	if (response.value) debug("file downloaded!");
-	else debug("download failed!");
-}
-
-void OneDriveStorage::printFiles(FileArrayResponse response) {
-	debug("files:");
-	Common::Array<StorageFile> &files = response.value;
-	for (uint32 i = 0; i < files.size(); ++i)
-		debug("\t%s", files[i].path().c_str());
-}
-
-void OneDriveStorage::printBool(BoolResponse response) {
-	debug("bool: %s", response.value ? "true" : "false");
-}
-
-void OneDriveStorage::printFile(UploadResponse response) {
-	debug("\nuploaded file info:");
-	debug("\tpath: %s", response.value.path().c_str());
-	debug("\tsize: %u", response.value.size());
-	debug("\ttimestamp: %u", response.value.timestamp());
-}
-
 Networking::Request *OneDriveStorage::createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	if (!errorCallback) errorCallback = getErrorPrintingCallback();
 	return addRequest(new OneDriveCreateDirectoryRequest(this, path, callback, errorCallback));
@@ -283,37 +249,6 @@ OneDriveStorage *OneDriveStorage::loadFromConfig(Common::String keyPrefix) {
 	Common::String userId = ConfMan.get(keyPrefix + "user_id", ConfMan.kCloudDomain);
 	Common::String refreshToken = ConfMan.get(keyPrefix + "refresh_token", ConfMan.kCloudDomain);
 	return new OneDriveStorage(accessToken, userId, refreshToken);
-}
-
-Common::String OneDriveStorage::getAuthLink() {
-	Common::String url = "https://login.live.com/oauth20_authorize.srf";
-	url += "?response_type=code";
-	url += "&redirect_uri=http://localhost:12345/"; //that's for copy-pasting
-	//url += "&redirect_uri=http%3A%2F%2Flocalhost%3A12345%2F"; //that's "http://localhost:12345/" for automatic opening
-	url += "&client_id="; url += KEY;
-	url += "&scope=onedrive.appfolder%20offline_access"; //TODO
-	return url;
-}
-
-void OneDriveStorage::authThroughConsole() {
-	if (!ConfMan.hasKey("ONEDRIVE_KEY", ConfMan.kCloudDomain) || !ConfMan.hasKey("ONEDRIVE_SECRET", ConfMan.kCloudDomain)) {
-		warning("No OneDrive keys available, cannot do auth");
-		return;
-	}
-
-	loadKeyAndSecret();
-
-	if (ConfMan.hasKey("onedrive_code", ConfMan.kCloudDomain)) {
-		//phase 2: get access_token using specified code
-		new OneDriveStorage(ConfMan.get("onedrive_code", ConfMan.kCloudDomain));
-		return;
-	}
-
-	debug("Navigate to this URL and press \"Allow\":");
-	debug("%s\n", getAuthLink().c_str());
-	debug("Then, add onedrive_code key in [cloud] section of configuration file. You should copy the <code> value from URL and put it as value for that key.\n");
-	debug("Navigate to this URL to get more information on ScummVM's configuration files:");
-	debug("http://wiki.scummvm.org/index.php/User_Manual/Configuring_ScummVM#Using_the_configuration_file_to_configure_ScummVM\n");	
 }
 
 } // End of namespace OneDrive

@@ -141,9 +141,6 @@ public:
 	virtual Networking::Request *downloadFolder(Common::String remotePath, Common::String localPath, FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *remove(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) = 0;
-
-	/** Calls the callback when finished. */
 	virtual SavesSyncRequest *syncSaves(BoolCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Calls the callback when finished. */

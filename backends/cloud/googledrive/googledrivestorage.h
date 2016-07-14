@@ -49,7 +49,6 @@ class GoogleDriveStorage: public Id::IdStorage {
 	/** Returns bool based on JSON response from cloud. */
 	void createDirectoryInnerCallback(BoolCallback outerCallback, Networking::JsonResponse json);
 
-	void fileDownloaded(BoolResponse response);
 	void printInfo(StorageInfoResponse response);
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
@@ -104,17 +103,7 @@ public:
 	 */
 	static GoogleDriveStorage *loadFromConfig(Common::String keyPrefix);
 
-	/**
-	 * Returns GoogleDrive auth link.
-	 */
-	static Common::String getAuthLink();
-
 	virtual Common::String getRootDirectoryId();
-
-	/**
-	 * Show message with GoogleDrive auth instructions. (Temporary)
-	 */
-	static void authThroughConsole();
 
 	/**
 	 * Gets new access_token. If <code> passed is "", refresh_token is used.

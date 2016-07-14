@@ -45,7 +45,6 @@ namespace Id {
 
 class IdStorage: public Cloud::Storage {
 protected:
-	void printJson(Networking::JsonResponse response);
 	void printFiles(FileArrayResponse response);
 	void printBool(BoolResponse response);
 	void printFile(UploadResponse response);

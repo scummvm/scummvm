@@ -35,17 +35,6 @@ namespace Id {
 
 IdStorage::~IdStorage() {}
 
-void IdStorage::printJson(Networking::JsonResponse response) {
-	Common::JSONValue *json = response.value;
-	if (!json) {
-		warning("printJson: NULL");
-		return;
-	}
-
-	debug("%s", json->stringify().c_str());
-	delete json;
-}
-
 void IdStorage::printFiles(FileArrayResponse response) {
 	debug("files:");
 	Common::Array<StorageFile> &files = response.value;

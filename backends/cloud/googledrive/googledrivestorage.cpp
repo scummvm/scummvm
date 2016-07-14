@@ -216,11 +216,6 @@ Networking::Request *GoogleDriveStorage::streamFileById(Common::String id, Netwo
 	return nullptr;
 }
 
-void GoogleDriveStorage::fileDownloaded(BoolResponse response) {
-	if (response.value) debug("file downloaded!");
-	else debug("download failed!");
-}
-
 void GoogleDriveStorage::printInfo(StorageInfoResponse response) {
 	debug("\nuser info:");
 	debug("\tname: %s", response.value.name().c_str());
@@ -279,40 +274,8 @@ GoogleDriveStorage *GoogleDriveStorage::loadFromConfig(Common::String keyPrefix)
 	return new GoogleDriveStorage(accessToken, refreshToken);
 }
 
-Common::String GoogleDriveStorage::getAuthLink() {
-	Common::String url = "https://accounts.google.com/o/oauth2/auth";
-	url += "?response_type=code";
-	url += "&redirect_uri=http://localhost"; //that's for copy-pasting
-	//url += "&redirect_uri=http%3A%2F%2Flocalhost"; //that's "http://localhost" for automatic opening
-	url += "&client_id="; url += KEY;	
-	url += "&scope=https://www.googleapis.com/auth/drive"; //for copy-pasting
-	return url;
-}
-
 Common::String GoogleDriveStorage::getRootDirectoryId() {
 	return "root";
-}
-
-
-void GoogleDriveStorage::authThroughConsole() {
-	if (!ConfMan.hasKey("GOOGLE_DRIVE_KEY", ConfMan.kCloudDomain) || !ConfMan.hasKey("GOOGLE_DRIVE_SECRET", ConfMan.kCloudDomain)) {
-		warning("No Google Drive keys available, cannot do auth");
-		return;
-	}
-
-	loadKeyAndSecret();
-
-	if (ConfMan.hasKey("googledrive_code", ConfMan.kCloudDomain)) {
-		//phase 2: get access_token using specified code
-		new GoogleDriveStorage(ConfMan.get("googledrive_code", ConfMan.kCloudDomain));
-		return;
-	}
-
-	debug("Navigate to this URL and press \"Allow\":");
-	debug("%s\n", getAuthLink().c_str());
-	debug("Then, add googledrive_code key in [cloud] section of configuration file. You should copy the <code> value from URL and put it as value for that key.\n");
-	debug("Navigate to this URL to get more information on ScummVM's configuration files:");
-	debug("http://wiki.scummvm.org/index.php/User_Manual/Configuring_ScummVM#Using_the_configuration_file_to_configure_ScummVM\n");	
 }
 
 } // End of namespace GoogleDrive

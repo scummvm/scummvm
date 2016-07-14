@@ -24,7 +24,6 @@
 #define BACKENDS_CLOUD_ONEDRIVE_ONEDRIVESTORAGE_H
 
 #include "backends/cloud/storage.h"
-#include "common/callback.h"
 #include "backends/networking/curl/curljsonrequest.h"
 
 namespace Cloud {
@@ -45,12 +44,6 @@ class OneDriveStorage: public Cloud::Storage {
 
 	/** Constructs StorageInfo based on JSON response from cloud. */
 	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);
-
-	void printJson(Networking::JsonResponse response);
-	void fileDownloaded(BoolResponse response);
-	void printFiles(FileArrayResponse response);
-	void printBool(BoolResponse response);
-	void printFile(UploadResponse response);
 
 	void fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response);
 public:	
@@ -89,9 +82,6 @@ public:
 	virtual Networking::Request *streamFileById(Common::String path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *remove(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) { return nullptr; } //TODO
-
-	/** Calls the callback when finished. */
 	virtual Networking::Request *createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Returns the StorageInfo struct. */
@@ -105,16 +95,6 @@ public:
 	 * @return pointer to the newly created OneDriveStorage or 0 if some problem occured.
 	 */
 	static OneDriveStorage *loadFromConfig(Common::String keyPrefix);
-
-	/**
-	 * Returns OneDrive auth link.
-	 */
-	static Common::String getAuthLink();
-
-	/**
-	 * Show message with OneDrive auth instructions. (Temporary)
-	 */
-	static void authThroughConsole();
 
 	/**
 	 * Gets new access_token. If <code> passed is "", refresh_token is used.
