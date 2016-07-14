@@ -80,8 +80,13 @@ ifdef WIN32
 MODULE_OBJS += \
 	networking/browser/openurl-windows.o
 else
-MODULE_OBJS += \
-	networking/browser/openurl-default.o
+	ifdef POSIX
+	MODULE_OBJS += \
+		networking/browser/openurl-posix.o
+	else
+	MODULE_OBJS += \
+		networking/browser/openurl-default.o
+	endif
 endif
 
 ifdef USE_ELF_LOADER
