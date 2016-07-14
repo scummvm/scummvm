@@ -57,6 +57,7 @@ MODULE_OBJS += \
 	events/sdl/sdl-events.o \
 	events/sdl/resvm-sdl-events.o \
 	graphics/sdl/sdl-graphics.o \
+	graphics/sdl/resvm-sdl-graphics.o \
 	graphics/surfacesdl/surfacesdl-graphics.o \
 	mixer/doublebuffersdl/doublebuffersdl-mixer.o \
 	mixer/sdl/sdl-mixer.o \
@@ -68,6 +69,11 @@ MODULE_OBJS += \
 ifndef USE_SDL2
 MODULE_OBJS += \
 	audiocd/sdl/sdl-audiocd.o
+endif
+
+ifdef USE_OPENGL
+MODULE_OBJS += \
+	graphics/openglsdl/openglsdl-graphics.o
 endif
 endif
 

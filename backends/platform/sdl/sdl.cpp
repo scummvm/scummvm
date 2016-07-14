@@ -49,6 +49,11 @@
 #include "backends/timer/sdl/sdl-timer.h"
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 
+#ifdef  USE_OPENGL
+#include "backends/graphics/openglsdl/openglsdl-graphics.h"
+#include "graphics/opengl/context.h"
+#endif
+
 #include <time.h>	// for getTimeAndDate()
 
 #ifdef USE_DETECTLANG
@@ -164,6 +169,11 @@ void OSystem_SDL::initBackend() {
 	// is not active by this point.
 	debug(1, "Using SDL Video Driver \"%s\"", sdlDriverName);
 
+	detectDesktopResolution();
+#ifdef USE_OPENGL
+	detectFramebufferSupport();
+#endif
+
 	// Create the default event source, in case a custom backend
 	// manager didn't provide one yet.
 	if (_eventSource == 0)
@@ -171,7 +181,7 @@ void OSystem_SDL::initBackend() {
 
 	if (_graphicsManager == 0) {
 		if (_graphicsManager == 0) {
-			_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window);
+			_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window, _capabilities);
 		}
 	}
 
@@ -216,6 +226,58 @@ void OSystem_SDL::initBackend() {
 	// manager.
 	dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->activateManager();
 }
+
+// ResidualVM specific code
+void OSystem_SDL::detectDesktopResolution() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_DisplayMode displayMode;
+	if (!SDL_GetDesktopDisplayMode(0, &displayMode)) {
+		_capabilities.desktopWidth = displayMode.w;
+		_capabilities.desktopHeight = displayMode.h;
+	}
+#else
+	// Query the desktop resolution. We simply hope nothing tried to change
+	// the resolution so far.
+	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
+	if (videoInfo && videoInfo->current_w > 0 && videoInfo->current_h > 0) {
+		_capabilities.desktopWidth = videoInfo->current_w;
+		_capabilities.desktopHeight = videoInfo->current_h;
+	}
+#endif
+}
+
+#ifdef USE_OPENGL
+void OSystem_SDL::detectFramebufferSupport() {
+	_capabilities.openGLFrameBuffer = false;
+#if defined(USE_GLES2)
+	// Framebuffers are always available with GLES2
+	_capabilities.openGLFrameBuffer = true;
+#elif !defined(AMIGAOS)
+	// Spawn a 32x32 window off-screen with a GL context to test if framebuffers are supported
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_Window *window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 32, 32, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
+	if (window) {
+		SDL_GLContext glContext = SDL_GL_CreateContext(window);
+		if (glContext) {
+			OpenGLContext.initialize(OpenGL::kContextGL);
+			_capabilities.openGLFrameBuffer = OpenGLContext.framebufferObjectSupported;
+			OpenGLContext.reset();
+			SDL_GL_DeleteContext(glContext);
+		}
+		SDL_DestroyWindow(window);
+	}
+#else
+	SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=9000,9000"));
+	SDL_SetVideoMode(32, 32, 0, SDL_OPENGL);
+	SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=center"));
+	OpenGLContext.initialize(OpenGL::kContextGL);
+	_capabilities.openGLFrameBuffer = OpenGLContext.framebufferObjectSupported;
+	OpenGLContext.reset();
+#endif
+#endif
+}
+#endif // USE_OPENGL
+// End of ResidualVM specific code
 
 #if defined(USE_TASKBAR)
 void OSystem_SDL::engineInit() {
@@ -281,6 +343,36 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 	}
 
 	_window->setWindowCaption(cap);
+}
+
+void OSystem_SDL::setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {
+#ifdef USE_OPENGL
+	bool switchedManager = false;
+	if (accel3d && !dynamic_cast<OpenGLSdlGraphicsManager *>(_graphicsManager)) {
+		switchedManager = true;
+	} else if (!accel3d && !dynamic_cast<SurfaceSdlGraphicsManager *>(_graphicsManager)) {
+		switchedManager = true;
+	}
+
+	if (switchedManager) {
+		SdlGraphicsManager *sdlGraphicsManager = dynamic_cast<SdlGraphicsManager *>(_graphicsManager);
+		sdlGraphicsManager->deactivateManager();
+		delete _graphicsManager;
+
+		if (accel3d) {
+			_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphicsManager(_eventSource, _window, _capabilities);
+		} else {
+			_graphicsManager = sdlGraphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window, _capabilities);
+		}
+		sdlGraphicsManager->activateManager();
+	}
+#endif
+
+	ModularBackend::setupScreen(screenW, screenH, fullscreen, accel3d);
+}
+
+void OSystem_SDL::launcherInitSize(uint w, uint h) {
+	setupScreen(w, h, false, false);
 }
 
 void OSystem_SDL::quit() {
@@ -444,11 +536,4 @@ bool OSystem_SDL::hasFeature(Feature f) {
 	if (f == kFeatureSideTextures)
 		return true;
 	return ModularBackend::hasFeature(f);
-}
-
-// ResidualVM specific code
-void OSystem_SDL::suggestSideTextures(Graphics::Surface *left,
-                                      Graphics::Surface *right) {
-	SurfaceSdlGraphicsManager *ssgm = dynamic_cast<SurfaceSdlGraphicsManager *>(_graphicsManager);
-	ssgm->setSideTextures(left, right);
 }

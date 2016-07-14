@@ -57,11 +57,11 @@ public:
 	virtual OSystem::TransactionError endGFXTransaction() = 0;
 
 	// ResidualVM specific method
-	virtual void launcherInitSize(uint w, uint h) = 0;
-	// ResidualVM specific method
 	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) = 0;
 	// ResidualVM specific method
 	virtual Graphics::PixelBuffer getScreenPixelBuffer() = 0;
+	// ResidualVM specific method
+	virtual void suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) = 0;
 
 	virtual int16 getHeight() = 0;
 	virtual int16 getWidth() = 0;

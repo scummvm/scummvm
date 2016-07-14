@@ -20,20 +20,27 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_SURFACESDL_GRAPHICS_H
-#define BACKENDS_GRAPHICS_SURFACESDL_GRAPHICS_H
+#ifndef BACKENDS_GRAPHICS_OPENGLSDL_GRAPHICS_H
+#define BACKENDS_GRAPHICS_OPENGLSDL_GRAPHICS_H
 
 #include "backends/graphics/sdl/resvm-sdl-graphics.h"
 
+namespace OpenGL {
+	class FrameBuffer;
+	class SurfaceRenderer;
+	class Texture;
+	class TiledSurface;
+}
+
 /**
- * SDL Surface based graphics manager
+ * SDL OpenGL based graphics manager
  *
- * Used when rendering the launcher, or games with TinyGL
+ * Used when rendering games with OpenGL
  */
-class SurfaceSdlGraphicsManager : public ResVmSdlGraphicsManager {
+class OpenGLSdlGraphicsManager : public ResVmSdlGraphicsManager {
 public:
-	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window, const Capabilities &capabilities);
-	virtual ~SurfaceSdlGraphicsManager();
+	OpenGLSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window, const Capabilities &capabilities);
+	virtual ~OpenGLSdlGraphicsManager();
 
 	// GraphicsManager API - Features
 	virtual bool hasFeature(OSystem::Feature f) override;
@@ -45,7 +52,7 @@ public:
 	virtual int16 getWidth() override;
 
 	// GraphicsManager API - Draw methods
-	virtual void updateScreen() override;
+	virtual void updateScreen();
 
 	// GraphicsManager API - Overlay
 	virtual void showOverlay() override;
@@ -68,25 +75,45 @@ public:
 
 protected:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_Renderer *_renderer;
-	SDL_Texture *_screenTexture;
+	SDL_GLContext _glContext;
 	void deinitializeRenderer();
-	SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags);
 #endif
-
-	SDL_Surface *_screen;
-	SDL_Surface *_subScreen;
-
-	SDL_Surface *_overlayscreen;
-	bool _overlayDirty;
 
 	Math::Rect2d _gameRect;
 
-	SDL_Surface *_sideSurfaces[2];
+	struct OpenGLPixelFormat {
+		uint bytesPerPixel;
+		uint redSize;
+		uint blueSize;
+		uint greenSize;
+		uint alphaSize;
+		int multisampleSamples;
 
+		OpenGLPixelFormat(uint screenBytesPerPixel, uint red, uint blue, uint green, uint alpha, int samples);
+	};
+
+	/**
+	 * Initialize an OpenGL window matching as closely as possible the required properties
+	 *
+	 * When unable to create a context with anti-aliasing this tries without.
+	 * When unable to create a context with the desired pixel depth this tries lower values.
+	 */
+	bool createScreen(uint effectiveWidth, uint effectiveHeight, GameRenderTarget gameRenderTarget);
+
+	int _antialiasing;
+
+	OpenGL::TiledSurface *_overlayScreen;
+	OpenGL::TiledSurface *_overlayBackground;
+	OpenGL::Texture *_sideTextures[2];
+	OpenGL::SurfaceRenderer *_surfaceRenderer;
+
+	void initializeOpenGLContext() const;
 	void drawOverlay();
 	void drawSideTextures();
 	void closeOverlay();
+
+	OpenGL::FrameBuffer *_frameBuffer;
+	OpenGL::FrameBuffer *createFramebuffer(uint width, uint height);
 };
 
 #endif

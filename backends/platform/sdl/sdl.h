@@ -30,6 +30,7 @@
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/log/log.h"
 #include "backends/platform/sdl/sdl-window.h"
+#include "backends/graphics/sdl/resvm-sdl-graphics.h"
 
 #include "common/array.h"
 
@@ -79,9 +80,11 @@ public:
 
 	// ResidualVM specific code
 	virtual bool hasFeature(Feature f);
+
 	// ResidualVM specific code
-	virtual void suggestSideTextures(Graphics::Surface *left,
-	                                 Graphics::Surface *right) override;
+	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) override;
+	virtual void launcherInitSize(uint w, uint h) override;
+
 protected:
 	bool _inited;
 	bool _initedSDL;
@@ -101,6 +104,13 @@ protected:
 	 * The SDL output window.
 	 */
 	SdlWindow *_window;
+
+	// ResidualVM specific code
+	// Graphics capabilities
+	void detectDesktopResolution();
+	void detectFramebufferSupport();
+	ResVmSdlGraphicsManager::Capabilities _capabilities;
+	// End of ResidualVM specific code
 
 	virtual Common::EventSource *getDefaultEventSource() { return _eventSource; }
 

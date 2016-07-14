@@ -37,6 +37,7 @@ class Texture;
  */
 class SurfaceRenderer {
 public:
+	SurfaceRenderer();
 	virtual ~SurfaceRenderer();
 
 	/**
@@ -52,12 +53,28 @@ public:
 	 * y: top [0.0, 1.0] bottom
 	 *
 	 */
-	virtual void render(const Texture *tex, const Math::Rect2d &dest, bool flipY = false) = 0;
+	virtual void render(const Texture *tex, const Math::Rect2d &dest) = 0;
 
 	/**
 	 * Pop the OpenGL state to restore it as it was before calling the prepareState method.
 	 */
 	virtual void restorePreviousState() = 0;
+
+	/**
+	 * Invert the surface along the Y coordinate
+	 *
+	 * Causes the image to be drawn upside down
+	 */
+	void setFlipY(bool flipY);
+
+	/**
+	 * Set the alpha blending with already drawn content
+	 */
+	void enableAlphaBlending(bool enable);
+
+protected:
+	bool _flipY;
+	bool _alphaBlending;
 };
 
 #ifndef USE_GLES2
@@ -68,7 +85,7 @@ public:
 
 	// SurfaceRenderer API
 	void prepareState() override;
-	void render(const Texture *tex, const Math::Rect2d &dest, bool flipY) override;
+	void render(const Texture *tex, const Math::Rect2d &dest) override;
 	void restorePreviousState() override;
 };
 
@@ -83,7 +100,7 @@ public:
 
 	// SurfaceRenderer API
 	void prepareState() override;
-	void render(const Texture *tex, const Math::Rect2d &dest, bool flipY) override;
+	void render(const Texture *tex, const Math::Rect2d &dest) override;
 	void restorePreviousState() override;
 
 private:
