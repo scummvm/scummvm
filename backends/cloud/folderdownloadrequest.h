@@ -40,7 +40,7 @@ class FolderDownloadRequest: public Networking::Request, public GUI::CommandSend
 	Request *_workingRequest;
 	bool _ignoreCallback;
 	uint32 _totalFiles;
-	uint64 _downloadedBytes, _totalBytes;
+	uint64 _downloadedBytes, _totalBytes, _wasDownloadedBytes, _currentDownloadSpeed;
 
 	void start();
 	void directoryListedCallback(Storage::ListDirectoryResponse response);
@@ -64,6 +64,9 @@ public:
 
 	/** Returns a total number of bytes to download. */
 	uint64 getTotalBytesToDownload() const;
+
+	/** Returns average download speed for the last second. */
+	uint64 getDownloadSpeed() const;
 
 	/** Returns remote directory path. */
 	Common::String getRemotePath() { return _remoteDirectoryPath; }

@@ -25,6 +25,7 @@
 #include "backends/cloud/id/iddownloadrequest.h"
 #include "common/debug.h"
 #include "gui/downloaddialog.h"
+#include <backends/networking/curl/connectionmanager.h>
 
 namespace Cloud {
 
@@ -51,7 +52,7 @@ void FolderDownloadRequest::start() {
 	_failedFiles.clear();
 	_ignoreCallback = false;
 	_totalFiles = 0;
-	_downloadedBytes = _totalBytes = 0;
+	_downloadedBytes = _totalBytes = _wasDownloadedBytes = _currentDownloadSpeed = 0;
 
 	//list directory first
 	_workingRequest = _storage->listDirectory(
@@ -139,7 +140,13 @@ void FolderDownloadRequest::downloadNextFile() {
 	);
 }
 
-void FolderDownloadRequest::handle() {}
+void FolderDownloadRequest::handle() {
+	uint32 microsecondsPassed = Networking::ConnectionManager::getCloudRequestsPeriodInMicroseconds();
+	uint64 currentDownloadedBytes = getDownloadedBytes();
+	uint64 downloadedThisPeriod = currentDownloadedBytes - _wasDownloadedBytes;
+	_currentDownloadSpeed = downloadedThisPeriod * (1000000L / microsecondsPassed);
+	_wasDownloadedBytes = currentDownloadedBytes;
+}
 
 void FolderDownloadRequest::restart() { start(); }
 
@@ -169,6 +176,10 @@ uint64 FolderDownloadRequest::getDownloadedBytes() const {
 
 uint64 FolderDownloadRequest::getTotalBytesToDownload() const {
 	return _totalBytes;
+}
+
+uint64 FolderDownloadRequest::getDownloadSpeed() const {
+	return _currentDownloadSpeed;
 }
 
 } // End of namespace Cloud

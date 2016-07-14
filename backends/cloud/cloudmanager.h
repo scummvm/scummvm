@@ -250,6 +250,9 @@ public:
 	/** Returns a total number of bytes to be downloaded in current download progress. */
 	uint64 getDownloadTotalBytesNumber();
 
+	/** Returns download speed of current download progress. */
+	uint64 getDownloadSpeed();
+
 	/** Returns remote directory path. */
 	virtual Common::String getDownloadRemoteDirectory();
 

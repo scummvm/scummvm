@@ -120,6 +120,8 @@ public:
 
 	/** Return URL-encoded version of given string. */
 	Common::String urlEncode(Common::String s);
+
+	static uint32 getCloudRequestsPeriodInMicroseconds();
 };
 
 /** Shortcut for accessing the connection manager. */

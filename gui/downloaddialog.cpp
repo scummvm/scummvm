@@ -192,7 +192,7 @@ void DownloadDialog::refreshWidgets() {
 	_remoteDirectoryLabel->setLabel(_("From: ") + CloudMan.getDownloadRemoteDirectory());
 	_localDirectoryLabel->setLabel(_("To: ") + _localDirectory);
 	uint32 progress = (uint32)(100 * CloudMan.getDownloadingProgress());
-	_percentLabel->setLabel(Common::String::format("%u %% (%u bytes out of %u)", progress, CloudMan.getDownloadBytesNumber(), CloudMan.getDownloadTotalBytesNumber()));
+	_percentLabel->setLabel(Common::String::format("%u %% (%u bytes out of %u - %u bytes per second)", progress, CloudMan.getDownloadBytesNumber(), CloudMan.getDownloadTotalBytesNumber(), CloudMan.getDownloadSpeed()));
 	_progressBar->setValue(progress);
 }
 

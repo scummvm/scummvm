@@ -259,6 +259,15 @@ uint64 Storage::getDownloadTotalBytesNumber() {
 	return result;
 }
 
+uint64 Storage::getDownloadSpeed() {
+	uint64 result = 0;
+	_runningRequestsMutex.lock();
+	if (_downloadFolderRequest)
+		result = _downloadFolderRequest->getDownloadSpeed();
+	_runningRequestsMutex.unlock();
+	return result;
+}
+
 Common::String Storage::getDownloadRemoteDirectory() {
 	Common::String result = "";
 	_runningRequestsMutex.lock();
