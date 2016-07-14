@@ -1445,7 +1445,7 @@ void DisplayMan::f21_blitToScreen(byte *bitmap, int16* box, int16 byteWidth, Col
 
 void DisplayMan::f21_blitToScreen(byte* bitmap, Box* box, int16 byteWidth, Color transparent, int16 height) {
 	_g578_useByteBoxCoordinates = false;
-	f132_blitToBitmap(bitmap, _g348_bitmapScreen, *box, 0, 0, byteWidth, k112_byteWidthViewport, transparent, height, k136_heightViewport);
+	f132_blitToBitmap(bitmap, _g348_bitmapScreen, *box, 0, 0, byteWidth, k160_byteWidthScreen, transparent, height, k200_heightScreen);
 }
 
 void DisplayMan::f101_drawWallSetBitmapWithoutTransparency(byte *bitmap, Frame &f) {

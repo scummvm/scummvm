@@ -8,7 +8,7 @@ Bugs:
 		When object are put on the right side of the current square, they disappear
 		Drawing door ornaments segfaults when going back to the start
 		Stepping onto the plate next doesn't open the grated gate on the 0th level
-		Walking into walls corrupts memory
+		Damage to a champion's health is not getting reflected in the bar graphs, only when opening the inventory (maybe health is not getting set correctly)
 
 
 Possible bugs:
