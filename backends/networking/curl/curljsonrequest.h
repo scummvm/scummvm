@@ -32,10 +32,13 @@ namespace Networking {
 typedef Response<Common::JSONValue *> JsonResponse;
 typedef Common::BaseCallback<JsonResponse> *JsonCallback;
 
+#define CURL_JSON_REQUEST_BUFFER_SIZE 512 * 1024
+
 class CurlJsonRequest: public CurlRequest {
 protected:
 	JsonCallback _jsonCallback;
 	Common::MemoryWriteStreamDynamic _contentsStream;
+	byte *_buffer;
 
 	/** Prepares raw bytes from _contentsStream to be parsed with Common::JSON::parse(). */
 	char *getPreparedContents();

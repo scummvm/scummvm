@@ -32,9 +32,13 @@
 namespace Networking {
 
 CurlJsonRequest::CurlJsonRequest(JsonCallback cb, ErrorCallback ecb, Common::String url):
-	CurlRequest(nullptr, ecb, url), _jsonCallback(cb), _contentsStream(DisposeAfterUse::YES) {}
+	CurlRequest(nullptr, ecb, url), _jsonCallback(cb), _contentsStream(DisposeAfterUse::YES),
+	_buffer(new byte[CURL_JSON_REQUEST_BUFFER_SIZE]) {}
 
-CurlJsonRequest::~CurlJsonRequest() { delete _jsonCallback; }
+CurlJsonRequest::~CurlJsonRequest() {
+	delete _jsonCallback;
+	delete[] _buffer;
+}
 
 char *CurlJsonRequest::getPreparedContents() {
 	//write one more byte in the end
@@ -60,11 +64,9 @@ void CurlJsonRequest::handle() {
 	if (!_stream) _stream = makeStream();
 
 	if (_stream) {
-		const int kBufSize = 16*1024;
-		char buf[kBufSize+1];
-		uint32 readBytes = _stream->read(buf, kBufSize);
+		uint32 readBytes = _stream->read(_buffer, CURL_JSON_REQUEST_BUFFER_SIZE);
 		if (readBytes != 0)
-			if (_contentsStream.write(buf, readBytes) != readBytes)
+			if (_contentsStream.write(_buffer, readBytes) != readBytes)
 				warning("MemoryWriteStreamDynamic was unable to write all the bytes");
 
 		if (_stream->eos()) {
