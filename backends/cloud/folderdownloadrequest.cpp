@@ -65,6 +65,14 @@ void FolderDownloadRequest::directoryListedCallback(Storage::ListDirectoryRespon
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 	_pendingFiles = response.value;
+
+	// remove all directories
+	for (Common::Array<StorageFile>::iterator i = _pendingFiles.begin(); i != _pendingFiles.end(); )
+		if (i->isDirectory())
+			_pendingFiles.erase(i);
+		else
+			++i;
+
 	_totalFiles = _pendingFiles.size();
 	downloadNextFile();
 }
@@ -146,7 +154,8 @@ double FolderDownloadRequest::getProgress() const {
 		if (idDownloadRequest != nullptr) currentFileProgress = idDownloadRequest->getProgress();
 	}
 
-	return (double)(_totalFiles - _pendingFiles.size() + currentFileProgress) / (double)(_totalFiles);
+	uint32 uploadedFiles = _totalFiles - _pendingFiles.size() - 1; // -1 because currently downloaded file is already removed from _pendingFiles
+	return (double)(uploadedFiles + currentFileProgress) / (double)(_totalFiles);
 }
 
 } // End of namespace Cloud
