@@ -76,19 +76,6 @@ MODULE_OBJS += \
 	networking/sdl_net/uploadfileclienthandler.o
 endif
 
-ifdef WIN32
-MODULE_OBJS += \
-	networking/browser/openurl-windows.o
-else
-	ifdef POSIX
-	MODULE_OBJS += \
-		networking/browser/openurl-posix.o
-	else
-	MODULE_OBJS += \
-		networking/browser/openurl-default.o
-	endif
-endif
-
 ifdef USE_ELF_LOADER
 MODULE_OBJS += \
 	plugins/elf/arm-loader.o \
@@ -168,7 +155,8 @@ MODULE_OBJS += \
 	fs/chroot/chroot-fs.o \
 	plugins/posix/posix-provider.o \
 	saves/posix/posix-saves.o \
-	taskbar/unity/unity-taskbar.o
+	taskbar/unity/unity-taskbar.o \
+	networking/browser/openurl-posix.o
 endif
 
 ifdef MACOSX
@@ -177,7 +165,8 @@ MODULE_OBJS += \
 	midi/coreaudio.o \
 	midi/coremidi.o \
 	updates/macosx/macosx-updates.o \
-	taskbar/macosx/macosx-taskbar.o
+	taskbar/macosx/macosx-taskbar.o \
+	networking/browser/openurl-default.o
 endif
 
 ifdef WIN32
@@ -189,20 +178,23 @@ MODULE_OBJS += \
 	plugins/win32/win32-provider.o \
 	saves/windows/windows-saves.o \
 	updates/win32/win32-updates.o \
-	taskbar/win32/win32-taskbar.o
+	taskbar/win32/win32-taskbar.o \
+	networking/browser/openurl-windows.o
 endif
 
 ifeq ($(BACKEND),androidsdl)
 MODULE_OBJS += \
 	events/androidsdl/androidsdl-events.o \
-	graphics/androidsdl/androidsdl-graphics.o
+	graphics/androidsdl/androidsdl-graphics.o \
+	networking/browser/openurl-default.o
 endif
 
 ifdef AMIGAOS
 MODULE_OBJS += \
 	fs/amigaos4/amigaos4-fs.o \
 	fs/amigaos4/amigaos4-fs-factory.o \
-	midi/camd.o
+	midi/camd.o \
+	networking/browser/openurl-default.o
 endif
 
 ifdef PLAYSTATION3
@@ -210,7 +202,8 @@ MODULE_OBJS += \
 	fs/posix/posix-fs.o \
 	fs/posix/posix-fs-factory.o \
 	fs/ps3/ps3-fs-factory.o \
-	events/ps3sdl/ps3sdl-events.o
+	events/ps3sdl/ps3sdl-events.o \
+	networking/browser/openurl-default.o
 endif
 
 ifdef USE_LINUXCD
@@ -220,58 +213,67 @@ endif
 
 ifeq ($(BACKEND),tizen)
 MODULE_OBJS += \
-	timer/tizen/timer.o
+	timer/tizen/timer.o \
+	networking/browser/openurl-default.o
 endif
 
 ifeq ($(BACKEND),ds)
 MODULE_OBJS += \
 	fs/ds/ds-fs.o \
 	fs/ds/ds-fs-factory.o \
-	plugins/ds/ds-provider.o
+	plugins/ds/ds-provider.o \
+	networking/browser/openurl-default.o
 endif
 
 ifeq ($(BACKEND),dingux)
 MODULE_OBJS += \
 	events/dinguxsdl/dinguxsdl-events.o \
-	graphics/dinguxsdl/dinguxsdl-graphics.o
+	graphics/dinguxsdl/dinguxsdl-graphics.o \
+	networking/browser/openurl-default.o
 endif
 
 ifeq ($(BACKEND),gph)
 MODULE_OBJS += \
 	events/gph/gph-events.o \
-	graphics/gph/gph-graphics.o
+	graphics/gph/gph-graphics.o \
+	networking/browser/openurl-default.o
 endif
 
 ifeq ($(BACKEND),linuxmoto)
 MODULE_OBJS += \
 	events/linuxmotosdl/linuxmotosdl-events.o \
-	graphics/linuxmotosdl/linuxmotosdl-graphics.o
+	graphics/linuxmotosdl/linuxmotosdl-graphics.o \
+	networking/browser/openurl-default.o
 endif
 
 ifeq ($(BACKEND),maemo)
 MODULE_OBJS += \
 	events/maemosdl/maemosdl-events.o \
-	graphics/maemosdl/maemosdl-graphics.o
+	graphics/maemosdl/maemosdl-graphics.o \
+	networking/browser/openurl-default.o
 endif
 
 ifeq ($(BACKEND),n64)
 MODULE_OBJS += \
 	fs/n64/n64-fs.o \
 	fs/n64/n64-fs-factory.o \
-	fs/n64/romfsstream.o
+	fs/n64/romfsstream.o \
+	networking/browser/openurl-default.o
 endif
 
 ifeq ($(BACKEND),openpandora)
 MODULE_OBJS += \
 	events/openpandora/op-events.o \
-	graphics/openpandora/op-graphics.o
+	graphics/openpandora/op-graphics.o \
+	networking/browser/openurl-default.o
 endif
 
 ifeq ($(BACKEND),ps2)
 MODULE_OBJS += \
 	fs/ps2/ps2-fs.o \
 	fs/ps2/ps2-fs-factory.o \
-	plugins/ps2/ps2-provider.o
+	plugins/ps2/ps2-provider.o \
+	networking/browser/openurl-default.o
 endif
 
 ifeq ($(BACKEND),psp)
@@ -281,18 +283,21 @@ MODULE_OBJS += \
 	fs/psp/psp-stream.o \
 	plugins/psp/psp-provider.o \
 	saves/psp/psp-saves.o \
-	timer/psp/timer.o
+	timer/psp/timer.o \
+	networking/browser/openurl-default.o
 endif
 
 ifeq ($(BACKEND),samsungtv)
 MODULE_OBJS += \
 	events/samsungtvsdl/samsungtvsdl-events.o \
-	graphics/samsungtvsdl/samsungtvsdl-graphics.o
+	graphics/samsungtvsdl/samsungtvsdl-graphics.o \
+	networking/browser/openurl-default.o
 endif
 
 ifeq ($(BACKEND),webos)
 MODULE_OBJS += \
-	events/webossdl/webossdl-events.o
+	events/webossdl/webossdl-events.o \
+	networking/browser/openurl-default.o
 endif
 
 ifeq ($(BACKEND),wince)
@@ -302,14 +307,16 @@ MODULE_OBJS += \
 	fs/windows/windows-fs-factory.o \
 	graphics/wincesdl/wincesdl-graphics.o \
 	mixer/wincesdl/wincesdl-mixer.o \
-	plugins/win32/win32-provider.o
+	plugins/win32/win32-provider.o \
+	networking/browser/openurl-default.o
 endif
 
 ifeq ($(BACKEND),wii)
 MODULE_OBJS += \
 	fs/wii/wii-fs.o \
 	fs/wii/wii-fs-factory.o \
-	plugins/wii/wii-provider.o
+	plugins/wii/wii-provider.o \
+	networking/browser/openurl-default.o
 endif
 
 ifdef ENABLE_EVENTRECORDER
