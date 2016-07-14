@@ -90,7 +90,9 @@ void IdDownloadRequest::finishDownload(bool success) {
 
 double IdDownloadRequest::getProgress() const {
 	DownloadRequest *downloadRequest = dynamic_cast<DownloadRequest *>(_workingRequest);
-	if (downloadRequest == nullptr) return 0.02; // resolving id still
+	if (downloadRequest == nullptr) return 0; // resolving id still
+
+	// id resolve is 10 % and download is the other 90 %
 	return 0.1 + 0.9 * downloadRequest->getProgress(); // downloading
 }
 
