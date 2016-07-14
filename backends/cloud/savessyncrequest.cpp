@@ -279,10 +279,17 @@ void SavesSyncRequest::uploadNextFile() {
 	///////
 	debug("uploading %s (%d %%)", _currentUploadingFile.c_str(), (int)(getProgress()*100));
 	///////
-	_workingRequest = _storage->upload(_storage->savesDirectoryPath() + _currentUploadingFile, g_system->getSavefileManager()->openRawFile(_currentUploadingFile),
-		new Common::Callback<SavesSyncRequest, Storage::UploadResponse>(this, &SavesSyncRequest::fileUploadedCallback),
-		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileUploadedErrorCallback)
-	);
+	if (_storage->uploadStreamSupported()) {
+		_workingRequest = _storage->upload(_storage->savesDirectoryPath() + _currentUploadingFile, g_system->getSavefileManager()->openRawFile(_currentUploadingFile),
+			new Common::Callback<SavesSyncRequest, Storage::UploadResponse>(this, &SavesSyncRequest::fileUploadedCallback),
+			new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileUploadedErrorCallback)
+		);
+	} else {
+		_workingRequest = _storage->upload(_storage->savesDirectoryPath() + _currentUploadingFile, DefaultSaveFileManager::concatWithSavesPath(_currentUploadingFile),
+			new Common::Callback<SavesSyncRequest, Storage::UploadResponse>(this, &SavesSyncRequest::fileUploadedCallback),
+			new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileUploadedErrorCallback)
+		);
+	}
 	if (!_workingRequest) finishError(Networking::ErrorResponse(this));
 }
 

@@ -85,6 +85,10 @@ Networking::Request *Storage::upload(Common::String remotePath, Common::String l
 	return upload(remotePath, f, callback, errorCallback);
 }
 
+bool Storage::uploadStreamSupported() {
+	return true;
+}
+
 Networking::Request *Storage::streamFile(Common::String path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) {
 	//most Storages use paths instead of ids, so this should work
 	return streamFileById(path, callback, errorCallback);

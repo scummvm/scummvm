@@ -252,7 +252,14 @@ Networking::Request *BoxStorage::upload(Common::String remotePath, Common::Strin
 
 Networking::Request *BoxStorage::upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) {
 	warning("BoxStorage::upload(ReadStream) not implemented");
+	if (errorCallback) (*errorCallback)(Networking::ErrorResponse(nullptr, false, true, "BoxStorage::upload(ReadStream) not implemented", -1));
+	delete callback;
+	delete errorCallback;
 	return nullptr;
+}
+
+bool BoxStorage::uploadStreamSupported() {
+	return false;	
 }
 
 Networking::Request *BoxStorage::streamFileById(Common::String id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) {
