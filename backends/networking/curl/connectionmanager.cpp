@@ -92,7 +92,7 @@ Common::String ConnectionManager::urlEncode(Common::String s) {
 }
 
 uint32 ConnectionManager::getCloudRequestsPeriodInMicroseconds() {
-	return TIMER_INTERVAL * FRAMES_PER_SECOND / CLOUD_PERIOD;
+	return TIMER_INTERVAL * CLOUD_PERIOD;
 }
 
 //private goes here:

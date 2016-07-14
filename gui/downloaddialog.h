@@ -51,12 +51,17 @@ class DownloadDialog : public Dialog {
 	StaticTextWidget *_remoteDirectoryLabel;
 	StaticTextWidget *_localDirectoryLabel;
 	StaticTextWidget *_percentLabel;
+	StaticTextWidget *_downloadSizeLabel;
+	StaticTextWidget *_downloadSpeedLabel;
 	SliderWidget *_progressBar;
 	ButtonWidget *_cancelButton;
 	ButtonWidget *_closeButton;
 
 	Common::String _localDirectory;
 	bool _close;
+
+	Common::String getSizeLabelText();
+	Common::String getSpeedLabelText();
 
 	void refreshWidgets();
 	bool selectDirectories();
