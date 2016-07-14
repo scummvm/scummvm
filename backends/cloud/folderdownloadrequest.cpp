@@ -149,18 +149,8 @@ void FolderDownloadRequest::finishDownload(Common::Array<StorageFile> &files) {
 }
 
 double FolderDownloadRequest::getProgress() const {
-	if (_totalFiles == 0) return 0;
-
-	double currentFileProgress = 0;
-	DownloadRequest *downloadRequest = dynamic_cast<DownloadRequest *>(_workingRequest);
-	if (downloadRequest != nullptr) currentFileProgress = downloadRequest->getProgress();
-	else {
-		Id::IdDownloadRequest *idDownloadRequest = dynamic_cast<Id::IdDownloadRequest *>(_workingRequest);
-		if (idDownloadRequest != nullptr) currentFileProgress = idDownloadRequest->getProgress();
-	}
-
-	uint32 uploadedFiles = _totalFiles - _pendingFiles.size() - 1; // -1 because currently downloaded file is already removed from _pendingFiles
-	return (double)(uploadedFiles + currentFileProgress) / (double)(_totalFiles);
+	if (_totalFiles == 0 || _totalBytes == 0) return 0;
+	return (double)getDownloadedBytes() / (double)getTotalBytesToDownload();
 }
 
 uint64 FolderDownloadRequest::getDownloadedBytes() const {
