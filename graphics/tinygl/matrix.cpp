@@ -40,7 +40,7 @@ void gl_print_matrix(const float *m) {
 }
 
 static inline void gl_matrix_update(GLContext *c) {
-	c->matrix_model_projection_updated = (c->matrix_mode <= 1);
+	c->matrix_model_projection_updated |= (c->matrix_mode <= 1);
 }
 
 void glopMatrixMode(GLContext *c, GLParam *p) {
