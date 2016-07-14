@@ -29,7 +29,7 @@ namespace Cloud {
 
 DownloadRequest::DownloadRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb, Common::String remoteFileId, Common::DumpFile *dumpFile):
 	Request(nullptr, ecb), _boolCallback(callback), _localFile(dumpFile), _remoteFileId(remoteFileId), _storage(storage),
-	_remoteFileStream(nullptr), _workingRequest(nullptr), _ignoreCallback(false) {
+	_remoteFileStream(nullptr), _workingRequest(nullptr), _ignoreCallback(false), _buffer(new byte[DOWNLOAD_REQUEST_BUFFER_SIZE]) {
 	start();
 }
 
@@ -38,6 +38,7 @@ DownloadRequest::~DownloadRequest() {
 	if (_workingRequest) _workingRequest->finish();
 	delete _boolCallback;
 	delete _localFile;
+	delete[] _buffer;
 }
 
 void DownloadRequest::start() {
@@ -84,12 +85,10 @@ void DownloadRequest::handle() {
 		return;
 	}
 
-	const int kBufSize = 640 * 1024; //640 KB is enough to everyone?..
-	char buf[kBufSize];
-	uint32 readBytes = _remoteFileStream->read(buf, kBufSize);
+	uint32 readBytes = _remoteFileStream->read(_buffer, DOWNLOAD_REQUEST_BUFFER_SIZE);
 
 	if (readBytes != 0)
-		if (_localFile->write(buf, readBytes) != readBytes) {
+		if (_localFile->write(_buffer, readBytes) != readBytes) {
 			warning("DownloadRequest: unable to write all received bytes into output file");
 			finishError(Networking::ErrorResponse(this, false, true, "", -1));
 			return;

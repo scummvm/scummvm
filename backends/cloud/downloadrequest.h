@@ -30,6 +30,8 @@
 
 namespace Cloud {
 
+#define DOWNLOAD_REQUEST_BUFFER_SIZE 1 * 1024 * 1024
+
 class DownloadRequest: public Networking::Request {	
 	Storage::BoolCallback _boolCallback;	
 	Common::DumpFile *_localFile;
@@ -38,6 +40,7 @@ class DownloadRequest: public Networking::Request {
 	Networking::NetworkReadStream *_remoteFileStream;
 	Request *_workingRequest;
 	bool _ignoreCallback;
+	byte *_buffer;
 
 	void start();
 	void streamCallback(Networking::NetworkReadStreamResponse response);
