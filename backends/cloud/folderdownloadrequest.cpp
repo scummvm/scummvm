@@ -99,6 +99,7 @@ void FolderDownloadRequest::fileDownloadedErrorCallback(Networking::ErrorRespons
 void FolderDownloadRequest::downloadNextFile() {
 	do {
 		if (_pendingFiles.empty()) {
+			sendCommand(GUI::kDownloadEndedCmd, 0);
 			finishDownload(_failedFiles);
 			return;
 		}
