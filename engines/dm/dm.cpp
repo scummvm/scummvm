@@ -322,9 +322,9 @@ Common::Error DMEngine::run() {
 
 void DMEngine::f2_gameloop() {
 	warning(false, "DUMMY CODE: SETTING PARTY POS AND DIRECTION");
-	_dungeonMan->_g306_partyMapX = 10;
-	_dungeonMan->_g307_partyMapY = 4;
-	_dungeonMan->_g308_partyDir = kDirNorth;
+	_dungeonMan->_g306_partyMapX = 9;
+	_dungeonMan->_g307_partyMapY = 9;
+	_dungeonMan->_g308_partyDir = kDirWest;
 
 	_g318_waitForInputMaxVerticalBlankCount = 10;
 	while (true) {

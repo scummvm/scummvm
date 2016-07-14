@@ -315,7 +315,7 @@ public:
 	Thing getNextThing() { return _nextThing; }
 	void setNextThing(Thing thing) { _nextThing = thing; }
 	SensorType getType() { return (SensorType)(_datAndType & 0x7F); } // @ M39_TYPE
-	uint16 getData() { return _datAndType >> 7; } // @ M40_DATA
+	uint16 getData() { return (_datAndType >> 7) & 0x1FF; } // @ M40_DATA
 	static uint16 getDataMask1(uint16 data) { return (data >> 7) & 0xF; } // @ M42_MASK1
 	static uint16 getDataMask2(uint16 data) { return (data >> 11) & 0xF; } // @ M43_MASK2
 	void setData(int16 dat) { _datAndType = (_datAndType & 0x7F) | (dat << 7); } // @ M41_SET_DATA

@@ -748,7 +748,7 @@ void MovesensMan::f276_sensorProcessThingAdditionOrRemoval(uint16 mapX, uint16 m
 	int16 L0767_i_ThingType;
 	bool L0768_B_TriggerSensor;
 	Sensor* L0769_ps_Sensor;
-	uint16 L0770_ui_SensorTriggeredCell;
+	int16 L0770_ui_SensorTriggeredCell;
 	uint16 L0771_ui_ThingType;
 	bool L0772_B_SquareContainsObject;
 	bool L0773_B_SquareContainsGroup;
@@ -773,7 +773,7 @@ void MovesensMan::f276_sensorProcessThingAdditionOrRemoval(uint16 mapX, uint16 m
 	if (Square(L0777_ui_Square = _vm->_dungeonMan->_g271_currMapData[mapX][mapY]).getType() == k0_ElementTypeWall) {
 		L0770_ui_SensorTriggeredCell = thing.getCell();
 	} else {
-		L0770_ui_SensorTriggeredCell = (uint16)kM1_CellAny; // this will wrap around
+		L0770_ui_SensorTriggeredCell = kM1_CellAny; // this will wrap around
 	}
 	L0772_B_SquareContainsObject = L0773_B_SquareContainsGroup = L0775_B_SquareContainsThingOfSameType = L0776_B_SquareContainsThingOfDifferentType = false;
 	L0766_T_Thing = _vm->_dungeonMan->f161_getSquareFirstThing(mapX, mapY);
