@@ -51,6 +51,9 @@ public:
 
 	virtual void handle();
 	virtual void restart();
+
+	/** Returns a number in range [0, 1], where 1 is "complete". */
+	double getProgress() const;
 };
 
 } // End of namespace Id

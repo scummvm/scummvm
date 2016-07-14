@@ -22,6 +22,7 @@
 
 #include "backends/cloud/id/iddownloadrequest.h"
 #include "backends/cloud/id/idstorage.h"
+#include "backends/cloud/downloadrequest.h"
 
 namespace Cloud {
 namespace Id {
@@ -85,6 +86,12 @@ void IdDownloadRequest::restart() { start(); }
 void IdDownloadRequest::finishDownload(bool success) {
 	Request::finishSuccess();
 	if (_boolCallback) (*_boolCallback)(Storage::BoolResponse(this, success));
+}
+
+double IdDownloadRequest::getProgress() const {
+	DownloadRequest *downloadRequest = dynamic_cast<DownloadRequest *>(_workingRequest);
+	if (downloadRequest == nullptr) return 0.02; // resolving id still
+	return 0.1 + 0.9 * downloadRequest->getProgress(); // downloading
 }
 
 } // End of namespace Id

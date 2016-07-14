@@ -41,6 +41,7 @@ class NetworkReadStream: public Common::MemoryReadWriteStream {
 	uint32 _sendingContentsSize;
 	uint32 _sendingContentsPos;
 	Common::String _responseHeaders;
+	uint64 _progressDownloaded, _progressTotal;
 	void init(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post);
 	void init(const char *url, curl_slist *headersList, Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles);
 
@@ -128,6 +129,12 @@ public:
 	* @returns how many bytes were actually read
 	*/
 	uint32 addResponseHeaders(char *buffer, uint32 size);
+
+	/** Returns a number in range [0, 1], where 1 is "complete". */
+	double getProgress() const;
+
+	/** Used in curl progress callback to pass current downloaded/total values. */
+	void setProgress(uint64 downloaded, uint64 total);
 };
 
 } // End of namespace Networking

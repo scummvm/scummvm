@@ -173,6 +173,12 @@ void DownloadDialog::handleTickle() {
 		return;
 	}
 
+	uint32 progress = (uint32)(100 * CloudMan.getDownloadingProgress());
+	if (_progressBar->getValue() != progress) {
+		refreshWidgets();
+		draw();
+	}
+
 	Dialog::handleTickle();
 }
 

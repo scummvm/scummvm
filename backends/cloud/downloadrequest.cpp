@@ -122,4 +122,10 @@ void DownloadRequest::finishError(Networking::ErrorResponse error) {
 	Request::finishError(error);
 }
 
+double DownloadRequest::getProgress() const {
+	if (_remoteFileStream)
+		return _remoteFileStream->getProgress();
+	return 0;
+}
+
 } // End of namespace Cloud

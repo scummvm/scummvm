@@ -47,10 +47,17 @@ static size_t curlHeadersCallback(char *d, size_t n, size_t l, void *p) {
 	return 0;
 }
 
+static int curlProgressCallback(void *p, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow) {
+	NetworkReadStream *stream = (NetworkReadStream *)p;
+	if (stream) stream->setProgress(dlnow, dltotal);
+	return 0;
+}
+
 void NetworkReadStream::init(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) {
 	_eos = _requestComplete = false;
 	_sendingContentsBuffer = nullptr;
 	_sendingContentsSize = _sendingContentsPos = 0;
+	_progressDownloaded = _progressTotal = 0;
 
 	_easy = curl_easy_init();
 	curl_easy_setopt(_easy, CURLOPT_WRITEFUNCTION, curlDataCallback);
@@ -62,7 +69,10 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, const byt
 	curl_easy_setopt(_easy, CURLOPT_URL, url);
 	curl_easy_setopt(_easy, CURLOPT_VERBOSE, 0L);
 	curl_easy_setopt(_easy, CURLOPT_FOLLOWLOCATION, 1L); //probably it's OK to have it always on
-	curl_easy_setopt(_easy, CURLOPT_HTTPHEADER, headersList);	
+	curl_easy_setopt(_easy, CURLOPT_HTTPHEADER, headersList);
+	curl_easy_setopt(_easy, CURLOPT_NOPROGRESS, 0L);
+	curl_easy_setopt(_easy, CURLOPT_XFERINFOFUNCTION, curlProgressCallback);
+	curl_easy_setopt(_easy, CURLOPT_XFERINFODATA, this);
 	if (uploading) {
 		curl_easy_setopt(_easy, CURLOPT_UPLOAD, 1L);
 		curl_easy_setopt(_easy, CURLOPT_READDATA, this);
@@ -84,6 +94,7 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::H
 	_eos = _requestComplete = false;
 	_sendingContentsBuffer = nullptr;
 	_sendingContentsSize = _sendingContentsPos = 0;
+	_progressDownloaded = _progressTotal = 0;
 
 	_easy = curl_easy_init();
 	curl_easy_setopt(_easy, CURLOPT_WRITEFUNCTION, curlDataCallback);
@@ -96,6 +107,9 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::H
 	curl_easy_setopt(_easy, CURLOPT_VERBOSE, 0L);
 	curl_easy_setopt(_easy, CURLOPT_FOLLOWLOCATION, 1L); //probably it's OK to have it always on
 	curl_easy_setopt(_easy, CURLOPT_HTTPHEADER, headersList);
+	curl_easy_setopt(_easy, CURLOPT_NOPROGRESS, 0L);
+	curl_easy_setopt(_easy, CURLOPT_XFERINFOFUNCTION, curlProgressCallback);
+	curl_easy_setopt(_easy, CURLOPT_XFERINFODATA, this);
 	
 	// set POST multipart upload form fields/files
 	struct curl_httppost *formpost = NULL;
@@ -199,6 +213,16 @@ uint32 NetworkReadStream::fillWithSendingContents(char *bufferToFill, uint32 max
 uint32 NetworkReadStream::addResponseHeaders(char *buffer, uint32 size) {
 	_responseHeaders += Common::String(buffer, size);
 	return size;
+}
+
+double NetworkReadStream::getProgress() const {
+	if (_progressTotal < 1) return 0;
+	return (double)_progressDownloaded / (double)_progressTotal;
+}
+
+void NetworkReadStream::setProgress(uint64 downloaded, uint64 total) {
+	_progressDownloaded = downloaded;
+	_progressTotal = total;
 }
 
 } // End of namespace Cloud

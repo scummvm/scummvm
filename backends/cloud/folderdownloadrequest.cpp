@@ -21,6 +21,8 @@
 */
 
 #include "backends/cloud/folderdownloadrequest.h"
+#include "backends/cloud/downloadrequest.h"
+#include "backends/cloud/id/iddownloadrequest.h"
 #include "common/debug.h"
 #include "gui/downloaddialog.h"
 
@@ -133,9 +135,18 @@ void FolderDownloadRequest::finishDownload(Common::Array<StorageFile> &files) {
 	if (_fileArrayCallback) (*_fileArrayCallback)(Storage::FileArrayResponse(this, files));
 }
 
-double FolderDownloadRequest::getProgress() {
-	if (_totalFiles == 0) return 0;	
-	return (double)(_totalFiles - _files.size()) / (double)(_totalFiles);
+double FolderDownloadRequest::getProgress() const {
+	if (_totalFiles == 0) return 0;
+
+	double currentFileProgress = 0;
+	DownloadRequest *downloadRequest = dynamic_cast<DownloadRequest *>(_workingRequest);
+	if (downloadRequest != nullptr) currentFileProgress = downloadRequest->getProgress();
+	else {
+		Id::IdDownloadRequest *idDownloadRequest = dynamic_cast<Id::IdDownloadRequest *>(_workingRequest);
+		if (idDownloadRequest != nullptr) currentFileProgress = idDownloadRequest->getProgress();
+	}
+
+	return (double)(_totalFiles - _files.size() + currentFileProgress) / (double)(_totalFiles);
 }
 
 } // End of namespace Cloud
