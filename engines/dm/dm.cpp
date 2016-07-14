@@ -374,9 +374,9 @@ T0002002:
 
 		_menuMan->f390_refreshActionAreaAndSetChampDirMaxDamageReceived();
 
-		// if (!((int)_vm->_g313_gameTime & (_vm->_championMan->_g300_partyIsSleeping ? 15 : 63))) {
-		//		F0331_CHAMPION_ApplyTimeEffects_CPSF();
-		// }
+		if (!((int32)_g313_gameTime & (_championMan->_g300_partyIsSleeping ? 15 : 63))) {
+			_championMan->f331_applyTimeEffects();
+		}
 
 		if (_g310_disabledMovementTicks)
 			_g310_disabledMovementTicks--;
