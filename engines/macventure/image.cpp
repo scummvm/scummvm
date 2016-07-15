@@ -100,7 +100,7 @@ void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data) {
 	_bitWidth = w;
 	_bitHeight = h;
 
-	for (uint i = 0; i < _rowBytes * h; i++) {
+	for (int i = 0; i < _rowBytes * h; i++) {
 		data.push_back(0);
 	}
 
@@ -141,22 +141,7 @@ void ImageAsset::decodePPIC0(Common::BitStream & stream, Common::Array<byte> &da
 			data[p] = v & 0xff; p++;
 		}
 	}
-	/*
-	for (var i=0;i<words;i++)
-		{
-			v=ppic.peek32(); ppic.seek(2,ppic.cur);
-			v>>>=16-ppic.bit;
-			bitmap.data[p++]=(v>>8)&0xff;
-			bitmap.data[p++]=v&0xff;
-		}
-		if (bytes)
-		{
-			v=ppic.bits(bytes);
-			v<<=16-bytes;
-			bitmap.data[p++]=(v>>8)&0xff;
-			bitmap.data[p++]=v&0xff;
-		}
-		*/
+
 }
 
 void ImageAsset::decodePPIC1(Common::BitStream & stream, Common::Array<byte> &data) {
@@ -186,7 +171,7 @@ void ImageAsset::decodePPIC3(Common::BitStream & stream, Common::Array<byte> &da
 			if (huff.symbols[j] >= huff.symbols[i - 1])
 				huff.symbols[j]++;
 
-	for (uint i = 0x10; i >= 0; i--) {
+	for (int i = 0x10; i >= 0; i--) {
 		if (huff.symbols[i] == 0x10) {
 			huff.symbols[i] = 0xff;
 			break;
@@ -297,7 +282,7 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & st
 		if (flags & 2) delta *= 2;
 		pos = 0;
 		uint q = delta;
-		for (uint i = 0;i < _bitHeight * _rowBytes - delta;i++) {
+		for (int i = 0; i < _bitHeight * _rowBytes - delta; i++) {
 			data[q] ^= data[pos];
 			q++;
 			pos++;
@@ -390,10 +375,10 @@ bool ImageAsset::isRectInside(Common::Rect rect) {
 	// HACK is it &&, or ||?
 	if (_maskData.empty()) return (rect.width() > 0 && rect.height() > 0);
 
-	for (uint y = rect.top; y < rect.top + rect.height(); y++) {
+	for (int y = rect.top; y < rect.top + rect.height(); y++) {
 		uint bmpofs = y * _rowBytes;
 		byte pix;
-		for (uint x = rect.left; x < rect.left + rect.width(); x++) {
+		for (int x = rect.left; x < rect.left + rect.width(); x++) {
 			pix = _maskData[bmpofs + (x >> 3)] & (1 << (7 - (x & 7)));
 			if (pix) return true;
 		}

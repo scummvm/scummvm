@@ -31,6 +31,7 @@
 
 #include "macventure/container.h"
 #include "macventure/image.h"
+#include "macventure/dialog.h"
 
 namespace MacVenture {
 
@@ -43,6 +44,7 @@ class Cursor;
 class ConsoleText;
 class CommandButton;
 class ImageAsset;
+class Dialog;
 
 enum MenuAction {
 	kMenuActionAbout,
@@ -244,6 +246,7 @@ public:
 	void updateExit(ObjID id);
 
 	void printText(const Common::String &text);
+	void closeDialog();
 
 	// Ugly switches
 	BorderBounds borderBounds(MVWindowType type);
@@ -268,6 +271,7 @@ private: // Attributes
 	Graphics::MacWindow *_diplomaWindow;
 	Common::Array<Graphics::MacWindow*> _inventoryWindows;
 	Graphics::Menu *_menu;
+	Dialog *_dialog;
 
 	Container *_graphics;
 	Common::HashMap<ObjID, ImageAsset*> _assets;
@@ -305,6 +309,7 @@ private: // Methods
 	void drawDraggedObject();
 	void drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *surface);
 	void drawWindowTitle(WindowReference target, Graphics::ManagedSurface *surface);
+	void drawDialog();
 
 	void moveDraggedObject(Common::Point target);
 

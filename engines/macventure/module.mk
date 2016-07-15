@@ -8,7 +8,8 @@ MODULE_OBJS := \
 	text.o \
 	world.o \
 	script.o \
-	macventure.o
+	macventure.o \
+	dialog.o
 
 MODULE_DIRS += \
 	engines/macventure
