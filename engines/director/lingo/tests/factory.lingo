@@ -26,7 +26,7 @@ method mExit
 method mDispose
     global aim1
     set aim1 = 1
-    when keydown then nothing
+--    when keydown then nothing
 --
 factory fire2
 method mNew
@@ -41,8 +41,8 @@ method mAtFrame
         set the castnum of sprite 14 to f16
         set the perframehook to false
         me(hit)
---        exit
-    end if
+        exit
+--    end if
     if startV <  targetV  or bcast>g17 then
         set the perframehook to false
         set the locV of sprite 14 to 340

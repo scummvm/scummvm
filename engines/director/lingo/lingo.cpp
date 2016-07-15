@@ -163,7 +163,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 				begin = code;
 				first = false;
 			}
-			Common::String chunk(begin, end - 1);
+			Common::String chunk(begin, end);
 
 			if (chunk.hasPrefix("factory") || chunk.hasPrefix("method"))
 				_inFactory = true;
@@ -182,6 +182,8 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 		}
 
 		_hadError = true; // HACK: This is for preventing test execution
+
+		debug(2, "Code chunk:\n#####\n%s#####", begin);
 		parse(begin);
 	} else {
 		parse(code);
