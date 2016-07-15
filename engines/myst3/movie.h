@@ -158,7 +158,7 @@ public:
 	void setSynchronized(bool b) { _synchronized = b; }
 private:
 	bool _synchronized;
-	uint _startEngineFrame;
+	uint _startEngineTick;
 };
 
 // Used by the projectors on J'nanin, see puzzle #14

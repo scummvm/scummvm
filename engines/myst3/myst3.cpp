@@ -1406,7 +1406,7 @@ Common::Error Myst3Engine::loadGameState(Common::String fileName, TransitionType
 	return Common::kUnknownError;
 }
 
-void Myst3Engine::animateDirectionChange(float targetPitch, float targetHeading, uint16 scriptFrames) {
+void Myst3Engine::animateDirectionChange(float targetPitch, float targetHeading, uint16 scriptTicks) {
 	float startPitch = _state->getLookAtPitch();
 	float startHeading = _state->getLookAtHeading();
 
@@ -1426,38 +1426,38 @@ void Myst3Engine::animateDirectionChange(float targetPitch, float targetHeading,
 	}
 
 	// Compute animation duration in frames
-	float numFrames;
-	if (scriptFrames) {
-		numFrames = scriptFrames;
+	float numTicks;
+	if (scriptTicks) {
+		numTicks = scriptTicks;
 	} else {
-		numFrames = sqrt(pitchDistance * pitchDistance + headingDistance * headingDistance)
+		numTicks = sqrt(pitchDistance * pitchDistance + headingDistance * headingDistance)
 				* 30.0f / _state->getCameraMoveSpeed();
 
-		if (numFrames > 0.0f)
-			numFrames += 10.0f;
+		if (numTicks > 0.0f)
+			numTicks += 10.0f;
 	}
 
-	uint startFrame = _state->getFrameCount();
+	uint startTick = _state->getTickCount();
 
 	// Draw animation
-	if (numFrames != 0.0f) {
+	if (numTicks != 0.0f) {
 		while (1) {
-			uint elapsedFrames = _state->getFrameCount() - startFrame;
-			if (elapsedFrames >= numFrames)
+			uint elapsedTicks = _state->getTickCount() - startTick;
+			if (elapsedTicks >= numTicks)
 				break;
 
 			float step;
-			if (numFrames >= 15) {
+			if (numTicks >= 15) {
 				// Fast then slow movement
-				if (elapsedFrames > numFrames / 2.0f)
-					step = 1.0f - (numFrames - elapsedFrames) * (numFrames - elapsedFrames)
-								/ (numFrames / 2.0f * numFrames / 2.0f) / 2.0f;
+				if (elapsedTicks > numTicks / 2.0f)
+					step = 1.0f - (numTicks - elapsedTicks) * (numTicks - elapsedTicks)
+								/ (numTicks / 2.0f * numTicks / 2.0f) / 2.0f;
 				else
-					step = elapsedFrames * elapsedFrames / (numFrames / 2.0f * numFrames / 2.0f) / 2.0f;
+					step = elapsedTicks * elapsedTicks / (numTicks / 2.0f * numTicks / 2.0f) / 2.0f;
 
 			} else {
 				// Constant speed movement
-				step = elapsedFrames / numFrames;
+				step = elapsedTicks / numTicks;
 			}
 
 			float nextPitch = startPitch + pitchDistance * step;

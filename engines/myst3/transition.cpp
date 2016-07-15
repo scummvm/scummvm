@@ -54,12 +54,12 @@ Transition::~Transition() {
 }
 
 int Transition::computeDuration() {
-	int durationFrames = 30 * (100 - ConfMan.getInt("transition_speed")) / 100;
+	int durationTicks = 30 * (100 - ConfMan.getInt("transition_speed")) / 100;
 	if (_type == kTransitionZip) {
-		durationFrames >>= 1;
+		durationTicks >>= 1;
 	}
 
-	return durationFrames;
+	return durationTicks;
 }
 
 void Transition::playSound() {
@@ -76,10 +76,10 @@ void Transition::draw(TransitionType type) {
 	// Play the transition sound
 	playSound();
 
-	int durationFrames = computeDuration();
+	int durationTicks = computeDuration();
 
 	// Got any transition to draw?
-	if (!_sourceScreenshot || type == kTransitionNone || durationFrames == 0) {
+	if (!_sourceScreenshot || type == kTransitionNone || durationTicks == 0) {
 		return;
 	}
 
@@ -94,15 +94,15 @@ void Transition::draw(TransitionType type) {
 	delete target;
 
 	// Compute the start and end frames for the animation
-	int startFrame = _vm->_state->getFrameCount();
-	uint endFrame = startFrame + durationFrames;
+	int startTick = _vm->_state->getTickCount();
+	uint endTick = startTick + durationTicks;
 
 	// Draw each step until completion
 	int completion = 0;
-	while (_vm->_state->getFrameCount() <= endFrame || completion < 100) {
+	while (_vm->_state->getTickCount() <= endTick || completion < 100) {
 		_frameLimiter->startFrame();
 
-		completion = CLIP<int>(100 * (_vm->_state->getFrameCount() - startFrame) / durationFrames, 0, 100);
+		completion = CLIP<int>(100 * (_vm->_state->getTickCount() - startTick) / durationTicks, 0, 100);
 
 		drawStep(targetTexture, sourceTexture, completion);
 

@@ -177,7 +177,7 @@ public:
 
 	void setMenuAction(uint16 action) { _menuAction = action; }
 
-	void animateDirectionChange(float pitch, float heading, uint16 speed);
+	void animateDirectionChange(float pitch, float heading, uint16 scriptTicks);
 	void getMovieLookAt(uint16 id, bool start, float &pitch, float &heading);
 
 	void processInput(bool lookOnly);

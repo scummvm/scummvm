@@ -98,7 +98,7 @@ private:
 	void runOp(Context &c, const Opcode &op);
 	void goToElse(Context &c);
 
-	void runScriptForVarDrawFramesHelper(uint16 var, int32 startValue, int32 endValue, uint16 script, int32 numFrames);
+	void runScriptForVarDrawTicksHelper(uint16 var, int32 startValue, int32 endValue, uint16 script, int32 numTicks);
 
 	DECLARE_OPCODE(badOpcode);
 	DECLARE_OPCODE(uselessOpcode);
@@ -260,7 +260,8 @@ private:
 	DECLARE_OPCODE(changeNode);
 	DECLARE_OPCODE(changeNodeRoom);
 	DECLARE_OPCODE(changeNodeRoomAge);
-	DECLARE_OPCODE(drawXFrames);
+
+	DECLARE_OPCODE(drawXTicks);
 	DECLARE_OPCODE(drawWhileCond);
 	DECLARE_OPCODE(whileStart);
 	DECLARE_OPCODE(whileEnd);

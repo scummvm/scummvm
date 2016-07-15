@@ -377,7 +377,7 @@ SimpleMovie::SimpleMovie(Myst3Engine *vm, uint16 id) :
 		_synchronized(false) {
 	_startFrame = 1;
 	_endFrame = _bink.getFrameCount();
-	_startEngineFrame = _vm->_state->getFrameCount();
+	_startEngineTick = _vm->_state->getTickCount();
 }
 
 bool SimpleMovie::update() {
@@ -413,7 +413,7 @@ bool SimpleMovie::update() {
 		}
 	} else {
 		// Draw a movie frame each two engine frames
-		int targetFrame = (_vm->_state->getFrameCount() - _startEngineFrame) >> 2;
+		int targetFrame = (_vm->_state->getTickCount() - _startEngineTick) >> 1;
 		if (_bink.getCurFrame() < targetFrame) {
 			drawNextFrameToTexture();
 		}

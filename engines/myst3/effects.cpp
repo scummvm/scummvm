@@ -540,7 +540,7 @@ void MagnetEffect::apply(Graphics::Surface *src, Graphics::Surface *dst, Graphic
 
 ShakeEffect::ShakeEffect(Myst3Engine *vm) :
 		Effect(vm),
-		_lastFrame(0),
+		_lastTick(0),
 		_magnetEffectShakeStep(0),
 		_pitchOffset(0),
 		_headingOffset(0) {
@@ -565,8 +565,8 @@ bool ShakeEffect::update() {
 	}
 
 	// Check if the effect needs to be updated
-	uint frame = _vm->_state->getFrameCount();
-	if (frame < _lastFrame + _vm->_state->getShakeEffectFramePeriod()) {
+	uint tick = _vm->_state->getTickCount();
+	if (tick < _lastTick + _vm->_state->getShakeEffectTickPeriod()) {
 		return false;
 	}
 
@@ -602,7 +602,7 @@ bool ShakeEffect::update() {
 		_headingOffset = (randomAmpl - ampl / 2.0) / 100.0;
 	}
 
-	_lastFrame = frame;
+	_lastTick = tick;
 
 	return true;
 }
@@ -667,7 +667,7 @@ bool ShieldEffect::loadPattern() {
 
 ShieldEffect::ShieldEffect(Myst3Engine *vm):
 	Effect(vm),
-	_lastFrame(0),
+	_lastTick(0),
 	_amplitude(1.0),
 	_amplitudeIncrement(1.0 / 64.0) {
 }
@@ -726,10 +726,10 @@ ShieldEffect *ShieldEffect::create(Myst3Engine *vm, uint32 id) {
 }
 
 bool ShieldEffect::update() {
-	if (_vm->_state->getFrameCount() == _lastFrame)
+	if (_vm->_state->getTickCount() == _lastTick)
 		return false;
 
-	_lastFrame = _vm->_state->getFrameCount();
+	_lastTick = _vm->_state->getTickCount();
 
 	// Update the amplitude, varying between 1.0 and 4.0
 	_amplitude += _amplitudeIncrement;

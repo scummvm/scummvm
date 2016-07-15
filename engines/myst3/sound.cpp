@@ -270,11 +270,11 @@ void Sound::setupNextSound(SoundNextCommand command, int16 controlVar, int16 sta
 	_vm->_state->setSoundNextId(0);
 	_vm->_state->setSoundNextIsLast(false);
 
-	uint32 controlLastFrame = _vm->_state->getVar(controlVar);
+	uint32 controlLastTick = _vm->_state->getVar(controlVar);
 	int32 playingSoundId = _vm->_state->getVar(controlVar + 1) >> 16;
 	int32 soundDelay = _vm->_state->getVar(controlVar + 1) & 0xFFFF;
 
-	if (!controlLastFrame) {
+	if (!controlLastTick) {
 		if (!playSeveralSounds) {
 			for (int16 i = startSoundId; i < startSoundId + soundCount; i++) {
 				int16 soundVarValue = _vm->_state->getVar(i);
@@ -290,17 +290,17 @@ void Sound::setupNextSound(SoundNextCommand command, int16 controlVar, int16 sta
 		return;
 	}
 
-	uint currentFrame = _vm->_state->getFrameCount();
-	if (currentFrame == controlLastFrame) {
+	uint currentTick = _vm->_state->getTickCount();
+	if (currentTick == controlLastTick) {
 		return;
 	}
 
-	if (currentFrame < controlLastFrame) {
+	if (currentTick < controlLastTick) {
 		soundDelay = 0;
-	} else if (currentFrame > controlLastFrame + 10) {
+	} else if (currentTick > controlLastTick + 10) {
 		soundDelay -= 10;
 	} else {
-		soundDelay -= currentFrame - controlLastFrame;
+		soundDelay -= currentTick - controlLastTick;
 	}
 
 	if (soundDelay < 0) {
@@ -308,7 +308,7 @@ void Sound::setupNextSound(SoundNextCommand command, int16 controlVar, int16 sta
 	}
 
 	if (soundDelay) {
-		_vm->_state->setVar(controlVar, currentFrame);
+		_vm->_state->setVar(controlVar, currentTick);
 		_vm->_state->setVar(controlVar + 1, soundDelay | (playingSoundId << 16));
 		return;
 	}

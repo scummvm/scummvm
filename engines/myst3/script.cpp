@@ -207,7 +207,7 @@ Script::Script(Myst3Engine *vm):
 	OP_2(165, changeNodeRoom,				kValue,		kValue											);
 	OP_3(166, changeNodeRoomAge,			kValue,		kValue,		kValue								);
 	OP_0(168, uselessOpcode																				);
-	OP_1(169, drawXFrames,					kValue														);
+	OP_1(169, drawXTicks,					kValue														);
 	OP_1(171, drawWhileCond,				kCondition													);
 	OP_1(172, whileStart,					kCondition													);
 	OP_0(173, whileEnd																					);
@@ -705,7 +705,7 @@ void Script::shakeEffectSet(Context &c, const Opcode &cmd) {
 	uint16 period = _vm->_state->valueOrVarValue(cmd.args[1]);
 
 	_vm->_state->setShakeEffectAmpl(ampl);
-	_vm->_state->setShakeEffectFramePeriod(period);
+	_vm->_state->setShakeEffectTickPeriod(period);
 }
 
 void Script::sunspotAdd(Context &c, const Opcode &cmd) {
@@ -2116,12 +2116,12 @@ void Script::changeNodeRoomAge(Context &c, const Opcode &cmd) {
 	_vm->loadNode(cmd.args[2], cmd.args[1], cmd.args[0]);
 }
 
-void Script::drawXFrames(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Draw %d frames", cmd.op, cmd.args[0]);
+void Script::drawXTicks(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Draw %d ticks", cmd.op, cmd.args[0]);
 
-	uint32 endFrame = _vm->_state->getFrameCount() + cmd.args[0];
+	uint32 endTick = _vm->_state->getTickCount() + cmd.args[0];
 
-	while (_vm->_state->getFrameCount() < endFrame) {
+	while (_vm->_state->getTickCount() < endTick) {
 		_vm->processInput(true);
 		_vm->drawFrame();
 	}
@@ -2182,12 +2182,12 @@ void Script::runScriptWhileCondEachXFrames(Context &c, const Opcode &cmd) {
 	if (firstStep > 100)
 		firstStep /= 100;
 
-	uint nextScript = _vm->_state->getFrameCount() + firstStep;
+	uint nextScript = _vm->_state->getTickCount() + firstStep;
 
 	while (_vm->_state->evaluate(cmd.args[0])) {
 
-		if (_vm->_state->getFrameCount() >= nextScript) {
-			nextScript = _vm->_state->getFrameCount() + step;
+		if (_vm->_state->getTickCount() >= nextScript) {
+			nextScript = _vm->_state->getTickCount() + step;
 
 			_vm->runScriptsFromNode(cmd.args[1]);
 		}
@@ -2274,18 +2274,18 @@ void Script::lookAtMovieStartInXFrames(Context &c, const Opcode &cmd) {
 	_vm->animateDirectionChange(startPitch, startHeading, cmd.args[1]);
 }
 
-void Script::runScriptForVarDrawFramesHelper(uint16 var, int32 startValue, int32 endValue, uint16 script, int32 numFrames) {
-	if (numFrames < 0) {
-		numFrames = -numFrames;
-		uint startFrame = _vm->_state->getFrameCount();
-		uint currentFrame = startFrame;
-		uint endFrame = startFrame + numFrames;
+void Script::runScriptForVarDrawTicksHelper(uint16 var, int32 startValue, int32 endValue, uint16 script, int32 numTicks) {
+	if (numTicks < 0) {
+		numTicks = -numTicks;
+		uint startTick = _vm->_state->getTickCount();
+		uint currentTick = startTick;
+		uint endTick = startTick + numTicks;
 		uint numValues = abs(endValue - startValue);
 
-		if (startFrame < endFrame) {
+		if (startTick < endTick) {
 			int currentValue = -9999;
 			while (1) {
-				int nextValue = numValues * (currentFrame - startFrame) / numFrames;
+				int nextValue = numValues * (currentTick - startTick) / numTicks;
 				if (currentValue != nextValue) {
 					currentValue = nextValue;
 
@@ -2304,9 +2304,9 @@ void Script::runScriptForVarDrawFramesHelper(uint16 var, int32 startValue, int32
 
 				_vm->processInput(true);
 				_vm->drawFrame();
-				currentFrame = _vm->_state->getFrameCount();
+				currentTick = _vm->_state->getTickCount();
 
-				if (currentFrame > endFrame)
+				if (currentTick > endTick)
 					break;
 			}
 		}
@@ -2314,7 +2314,7 @@ void Script::runScriptForVarDrawFramesHelper(uint16 var, int32 startValue, int32
 		_vm->_state->setVar(var, endValue);
 	} else {
 		int currentValue = startValue;
-		uint endFrame = 0;
+		uint endTick = 0;
 
 		bool positiveDirection = endValue > startValue;
 
@@ -2328,10 +2328,10 @@ void Script::runScriptForVarDrawFramesHelper(uint16 var, int32 startValue, int32
 			if (script)
 				_vm->runScriptsFromNode(script);
 
-			for (uint i = _vm->_state->getFrameCount(); i < endFrame; i = _vm->_state->getFrameCount())
+			for (uint i = _vm->_state->getTickCount(); i < endTick; i = _vm->_state->getTickCount())
 				_vm->drawFrame();
 
-			endFrame = _vm->_state->getFrameCount() + numFrames;
+			endTick = _vm->_state->getTickCount() + numTicks;
 
 			currentValue += positiveDirection ? 1 : -1;
 		}
@@ -2342,63 +2342,65 @@ void Script::runScriptForVar(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: For var %d from %d to %d, run script %d",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
 
-	runScriptForVarDrawFramesHelper(cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], 0);
+	runScriptForVarDrawTicksHelper(cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], 0);
 }
 
 void Script::runScriptForVarEachXFrames(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: For var %d from %d to %d, run script %d every %d frames",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4]);
 
-	runScriptForVarDrawFramesHelper(cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4]);
+	runScriptForVarDrawTicksHelper(cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4]);
 }
 
 void Script::runScriptForVarStartVar(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: For var %d from var %d value to %d, run script %d",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
 
-	runScriptForVarDrawFramesHelper(cmd.args[0], _vm->_state->getVar(cmd.args[1]), cmd.args[2], cmd.args[3], 0);
+	runScriptForVarDrawTicksHelper(cmd.args[0], _vm->_state->getVar(cmd.args[1]), cmd.args[2], cmd.args[3], 0);
 }
 
 void Script::runScriptForVarStartVarEachXFrames(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: For var %d from var %d value to %d, run script %d every %d frames",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4]);
 
-	runScriptForVarDrawFramesHelper(cmd.args[0], _vm->_state->getVar(cmd.args[1]), cmd.args[2], cmd.args[3], cmd.args[4]);
+	runScriptForVarDrawTicksHelper(cmd.args[0], _vm->_state->getVar(cmd.args[1]), cmd.args[2], cmd.args[3], cmd.args[4]);
 }
 
 void Script::runScriptForVarEndVar(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: For var %d from %d to var %d value, run script %d",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
 
-	runScriptForVarDrawFramesHelper(cmd.args[0], cmd.args[1], _vm->_state->getVar(cmd.args[2]), cmd.args[3], 0);
+	runScriptForVarDrawTicksHelper(cmd.args[0], cmd.args[1], _vm->_state->getVar(cmd.args[2]), cmd.args[3], 0);
 }
 
 void Script::runScriptForVarEndVarEachXFrames(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: For var %d from var %d value to var %d value, run script %d every %d frames",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4]);
 
-	runScriptForVarDrawFramesHelper(cmd.args[0], cmd.args[1], _vm->_state->getVar(cmd.args[2]), cmd.args[3], cmd.args[4]);
+	runScriptForVarDrawTicksHelper(cmd.args[0], cmd.args[1], _vm->_state->getVar(cmd.args[2]), cmd.args[3], cmd.args[4]);
 }
 
 void Script::runScriptForVarStartEndVar(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: For var %d from var %d value to var %d value, run script %d",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
 
-	runScriptForVarDrawFramesHelper(cmd.args[0], _vm->_state->getVar(cmd.args[1]), _vm->_state->getVar(cmd.args[2]), cmd.args[3], 0);
+	runScriptForVarDrawTicksHelper(cmd.args[0], _vm->_state->getVar(cmd.args[1]), _vm->_state->getVar(cmd.args[2]),
+	                               cmd.args[3], 0);
 }
 
 void Script::runScriptForVarStartEndVarEachXFrames(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: For var %d from var %d value to var %d value, run script %d every %d frames",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4]);
 
-	runScriptForVarDrawFramesHelper(cmd.args[0], _vm->_state->getVar(cmd.args[1]), _vm->_state->getVar(cmd.args[2]), cmd.args[3], cmd.args[4]);
+	runScriptForVarDrawTicksHelper(cmd.args[0], _vm->_state->getVar(cmd.args[1]), _vm->_state->getVar(cmd.args[2]),
+	                               cmd.args[3], cmd.args[4]);
 }
 
 void Script::drawFramesForVar(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: For var %d from %d to %d, every %d frames",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
 
-	runScriptForVarDrawFramesHelper(cmd.args[0], cmd.args[1], cmd.args[2], 0, -cmd.args[3]);
+	runScriptForVarDrawTicksHelper(cmd.args[0], cmd.args[1], cmd.args[2], 0, -cmd.args[3]);
 }
 
 void Script::drawFramesForVarEachTwoFrames(Context &c, const Opcode &cmd) {
@@ -2407,7 +2409,7 @@ void Script::drawFramesForVarEachTwoFrames(Context &c, const Opcode &cmd) {
 
 	uint numFrames = 2 * (-1 - abs(cmd.args[2] - cmd.args[1]));
 
-	runScriptForVarDrawFramesHelper(cmd.args[0], cmd.args[1], cmd.args[2], 0, numFrames);
+	runScriptForVarDrawTicksHelper(cmd.args[0], cmd.args[1], cmd.args[2], 0, numFrames);
 }
 
 void Script::drawFramesForVarStartEndVarEachTwoFrames(Context &c, const Opcode &cmd) {
@@ -2416,7 +2418,8 @@ void Script::drawFramesForVarStartEndVarEachTwoFrames(Context &c, const Opcode &
 
 	uint numFrames = 2 * (-1 - abs(cmd.args[2] - cmd.args[1]));
 
-	runScriptForVarDrawFramesHelper(cmd.args[0], _vm->_state->getVar(cmd.args[1]), _vm->_state->getVar(cmd.args[2]), 0, numFrames);
+	runScriptForVarDrawTicksHelper(cmd.args[0], _vm->_state->getVar(cmd.args[1]), _vm->_state->getVar(cmd.args[2]), 0,
+	                               numFrames);
 }
 
 void Script::runScript(Context &c, const Opcode &cmd) {

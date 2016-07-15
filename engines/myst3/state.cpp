@@ -105,7 +105,7 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(69, MenuSavedNode, false)
 
 	VAR(70, SecondsCountdown, false)
-	VAR(71, FrameCountdown, false)
+	VAR(71, TickCountdown, false)
 
 	// Counters, unused by the game scripts
 	VAR(76, CounterUnk76, false)
@@ -148,7 +148,7 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(111, MagnetEffectUnk3, false)
 
 	VAR(112, ShakeEffectAmpl, false)
-	VAR(113, ShakeEffectFramePeriod, false)
+	VAR(113, ShakeEffectTickPeriod, false)
 	VAR(114, RotationEffectSpeed, false)
 	VAR(115, SunspotIntensity, false)
 	VAR(116, SunspotColor, false)
@@ -267,7 +267,7 @@ GameState::GameState(Myst3Engine *vm):
 
 	// Amateria ambient sound / movie counters (XXXX 1001 and XXXX 1002)
 	VAR(406, AmateriaSecondsCounter, false)
-	VAR(407, AmateriaFramesCounter, false)
+	VAR(407, AmateriaTicksCounter, false)
 
 	VAR(444, ResonanceRingsSolved, false)
 
@@ -710,12 +710,10 @@ void GameState::updateFrameCounters() {
 	if (!_data.gameRunning)
 		return;
 
-	int32 frameCountdown = getFrameCountdown();
-	if (frameCountdown > 0)
-		setFrameCountdown(--frameCountdown);
-
-	if (getAmateriaFramesCounter() > 0)
-		setAmateriaFramesCounter(getAmateriaFramesCounter() - 1);
+	if (_data.currentFrame % 2 == 0) {
+		// One game tick every two frames
+		updateTickCounters();
+	}
 
 	uint32 currentTime = g_system->getMillis();
 	if (currentTime > _data.nextSecondsUpdate || ABS<int32>(_data.nextSecondsUpdate - currentTime) > 2000) {
@@ -735,24 +733,38 @@ void GameState::updateFrameCounters() {
 		if (hasVarMenuAttractCountDown() && getMenuAttractCountDown() > 0)
 			setMenuAttractCountDown(getMenuAttractCountDown() - 1);
 	}
+}
+
+void GameState::updateTickCounters() {
+	int32 tickCountdown = getTickCountdown();
+	if (tickCountdown > 0)
+			setTickCountdown(--tickCountdown);
+
+	if (getAmateriaTicksCounter() > 0)
+			setAmateriaTicksCounter(getAmateriaTicksCounter() - 1);
 
 	if (getSweepEnabled()) {
-		if (getSweepValue() + getSweepStep() > getSweepMax()) {
-			setSweepValue(getSweepMax());
+			if (getSweepValue() + getSweepStep() > getSweepMax()) {
+				setSweepValue(getSweepMax());
 
-			if (getSweepStep() > 0) {
-				setSweepStep(-getSweepStep());
-			}
-		} else if (getSweepValue() + getSweepStep() < getSweepMin()) {
-			setSweepValue(getSweepMin());
+				if (getSweepStep() > 0) {
+					setSweepStep(-getSweepStep());
+				}
+			} else if (getSweepValue() + getSweepStep() < getSweepMin()) {
+				setSweepValue(getSweepMin());
 
-			if (getSweepStep() < 0) {
-				setSweepStep(-getSweepStep());
+				if (getSweepStep() < 0) {
+					setSweepStep(-getSweepStep());
+				}
+			} else {
+				setSweepValue(getSweepValue() + getSweepStep());
 			}
-		} else {
-			setSweepValue(getSweepValue() + getSweepStep());
 		}
-	}
+}
+
+uint GameState::getTickCount() const {
+	// There is one game tick every two frames
+	return _data.currentFrame >> 1;
 }
 
 bool GameState::isZipDestinationAvailable(uint16 node, uint16 room) {

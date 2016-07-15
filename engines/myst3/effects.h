@@ -151,7 +151,7 @@ public:
 protected:
 	ShakeEffect(Myst3Engine *vm);
 
-	uint32 _lastFrame;
+	uint32 _lastTick;
 	uint _magnetEffectShakeStep;
 	float _pitchOffset;
 	float _headingOffset;
@@ -188,7 +188,7 @@ protected:
 	ShieldEffect(Myst3Engine *vm);
 	bool loadPattern();
 
-	uint32 _lastFrame;
+	uint32 _lastTick;
 	float _amplitude;
 	float _amplitudeIncrement;
 

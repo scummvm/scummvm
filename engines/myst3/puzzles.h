@@ -92,7 +92,7 @@ private:
 	void checkCanSave();
 
 	void _drawForVarHelper(int16 var, int32 startValue, int32 endValue);
-	void _drawXFrames(uint16 frames);
+	void _drawXTicks(uint16 ticks);
 };
 
 } // End of namespace Myst3
