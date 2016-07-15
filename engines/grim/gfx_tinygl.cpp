@@ -730,9 +730,13 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 }
 
 void GfxTinyGL::drawModelFace(const Mesh *mesh, const MeshFace *face) {
+	// Support transparency in actor objects, such as the message tube
+	// in Manny's Office
 	float *vertices = mesh->_vertices;
 	float *vertNormals = mesh->_vertNormals;
 	float *textureVerts = mesh->_textureVerts;
+	tglAlphaFunc(TGL_GREATER, 0.5);
+	tglEnable(TGL_ALPHA_TEST);
 	tglNormal3fv(const_cast<float *>(face->getNormal().getData()));
 	tglBegin(TGL_POLYGON);
 	for (int i = 0; i < face->getNumVertices(); i++) {
@@ -741,10 +745,11 @@ void GfxTinyGL::drawModelFace(const Mesh *mesh, const MeshFace *face) {
 		if (face->hasTexture())
 			tglTexCoord2fv(textureVerts + 2 * face->getTextureVertex(i));
 
-		tglColor4f(1.0f, 1.0f, 1.0f, _alpha);
 		tglVertex3fv(vertices + 3 * face->getVertex(i));
 	}
 	tglEnd();
+	// Done with transparency-capable objects
+	tglDisable(TGL_ALPHA_TEST);
 }
 
 void GfxTinyGL::drawSprite(const Sprite *sprite) {

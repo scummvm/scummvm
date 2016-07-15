@@ -188,13 +188,21 @@ struct FrameBuffer {
 
 	template <bool kEnableAlphaTest, bool kBlendingEnabled>
 	FORCEINLINE void writePixel(int pixel, int value) {
+		writePixel<kEnableAlphaTest, kBlendingEnabled, false>(pixel, value, 0);
+	}
+
+	template <bool kEnableAlphaTest, bool kBlendingEnabled, bool kDepthWrite>
+	FORCEINLINE void writePixel(int pixel, int value, unsigned int z) {
 		byte rSrc, gSrc, bSrc, aSrc;
 		this->pbuf.getFormat().colorToARGB(value, aSrc, rSrc, gSrc, bSrc);
 
 		if (kBlendingEnabled == false) {
 			this->pbuf.setPixelAt(pixel, value);
+			if (kDepthWrite) {
+				_zbuf[pixel] = z;
+			}
 		} else {
-			writePixel<kEnableAlphaTest, kBlendingEnabled>(pixel, aSrc, rSrc, gSrc, bSrc);
+			writePixel<kEnableAlphaTest, kBlendingEnabled, kDepthWrite>(pixel, aSrc, rSrc, gSrc, bSrc, z);
 		}
 	}
 
@@ -218,9 +226,17 @@ struct FrameBuffer {
 
 	template <bool kEnableAlphaTest, bool kBlendingEnabled>
 	FORCEINLINE void writePixel(int pixel, byte aSrc, byte rSrc, byte gSrc, byte bSrc) {
+		writePixel<kEnableAlphaTest, kBlendingEnabled, false>(pixel, aSrc, rSrc, gSrc, bSrc, 0);
+	}
+
+	template <bool kEnableAlphaTest, bool kBlendingEnabled, bool kDepthWrite>
+	FORCEINLINE void writePixel(int pixel, byte aSrc, byte rSrc, byte gSrc, byte bSrc, unsigned int z) {
 		if (kEnableAlphaTest) {
 			if (!checkAlphaTest(aSrc))
 				return;
+		}
+		if (kDepthWrite) {
+			_zbuf[pixel] = z;
 		}
 		
 		if (kBlendingEnabled == false) {

@@ -40,19 +40,16 @@ FORCEINLINE static void putPixel(FrameBuffer *buffer, int pixelOffset,
 	if (kInterpZ) {
 		if (buffer->compareDepth(z, *pz)) {
 			if (kInterpRGB) {
-				buffer->writePixel(pixelOffset, RGB_TO_PIXEL(r, g, b));
+				buffer->writePixel<true, true, kDepthWrite>(pixelOffset, RGB_TO_PIXEL(r, g, b), z);
 			} else {
-				buffer->writePixel(pixelOffset, color);
-			}
-			if (kDepthWrite) {
-				*pz = z;
+				buffer->writePixel<true, true, kDepthWrite>(pixelOffset, color, z);
 			}
 		}
 	} else {
 		if (kInterpRGB) {
-			buffer->writePixel(pixelOffset, RGB_TO_PIXEL(r, g, b));
+			buffer->writePixel<true, true>(pixelOffset, RGB_TO_PIXEL(r, g, b));
 		} else {
-			buffer->writePixel(pixelOffset, color);
+			buffer->writePixel<true, true>(pixelOffset, color);
 		}
 	}
 }
