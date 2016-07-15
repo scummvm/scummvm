@@ -796,9 +796,7 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 	tglDisable(TGL_LIGHTING);
 
 	if (g_grim->getGameType() == GType_GRIM) {
-		// Disable Alpha Test, doesn't work the same as OpenGL
-		// It was enabled to sync with OpenGL renderer while TinyGL refactoring
-		//tglEnable(TGL_ALPHA_TEST);
+		tglEnable(TGL_ALPHA_TEST);
 		tglAlphaFunc(TGL_GEQUAL, 0.5f);
 	} else if (sprite->_flags2 & Sprite::AlphaTest) {
 		tglEnable(TGL_ALPHA_TEST);
