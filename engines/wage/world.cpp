@@ -119,6 +119,8 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	out.open("code.bin");
 	out.write(buf, res->size());
 	out.close();
+	free(buf);
+	delete res;
 #endif
 
 	if ((resArray = resMan->getResIDArray(MKTAG('G','C','O','D'))).size() == 0)
