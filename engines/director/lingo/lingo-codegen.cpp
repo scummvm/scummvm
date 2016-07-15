@@ -123,10 +123,13 @@ void Lingo::cleanLocalVars() {
 	delete g_lingo->_localvars;
 }
 
-void Lingo::define(Common::String &name, int start, int nargs) {
+void Lingo::define(Common::String &name, int start, int nargs, Common::String *prefix) {
 	debug(3, "define(\"%s\", %d, %d, %d)", name.c_str(), start, _currentScript->size() - 1, nargs);
 
 	Symbol *sym;
+
+	if (prefix)
+		name = *prefix + "-" + name;
 
 	if (!_handlers.contains(name)) { // Create variable if it was not defined
 		sym = new Symbol;
@@ -247,6 +250,10 @@ void Lingo::processIf(int elselabel, int endlabel) {
 
 		else1 = label;
 	}
+}
+
+void Lingo::codeFactory(Common::String &name) {
+	_currentFactory = name;
 }
 
 }

@@ -159,7 +159,7 @@ public:
 	void popContext();
 	Symbol *lookupVar(const char *name, bool create = true, bool putInGlobalList = false);
 	void cleanLocalVars();
-	void define(Common::String &s, int start, int nargs);
+	void define(Common::String &s, int start, int nargs, Common::String *prefix = NULL);
 	void processIf(int elselabel, int endlabel);
 
 	int alignTypes(Datum &d1, Datum &d2);
@@ -183,6 +183,7 @@ public:
 	int codeId(Common::String &s);
 	int codeId_(Common::String &s);
 	int codeFloat(double f);
+	void codeFactory(Common::String &s);
 
 	static void c_xpop();
 	static void c_printtop();
@@ -288,6 +289,7 @@ public:
 	bool _hadError;
 
 	bool _inFactory;
+	Common::String _currentFactory;
 
 private:
 	int parse(const char *code);

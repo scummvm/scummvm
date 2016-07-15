@@ -82,7 +82,7 @@ void yyerror(char *s) {
 %token<s> BLTIN ID STRING HANDLER
 %token tDOWN tELSE tNLELSIF tEND tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
 %token tMCI tMCIWAIT tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO
-%token tWITH tWHILE tNLELSE
+%token tWITH tWHILE tNLELSE tFACTORY tMETHOD
 %token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT
 %token tCONCAT tCONTAINS tSTARTS
 
@@ -477,12 +477,20 @@ gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
 // See also:
 //   on keyword
 defn: tMACRO ID { g_lingo->_indef = true; }
-	    begin argdef nl argstore stmtlist 		{
+		begin argdef nl argstore stmtlist 		{
 			g_lingo->code2(g_lingo->c_constpush, (inst)0); // Push fake value on stack
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$2, $4, $5);
 			g_lingo->_indef = false; }
-	;
+	| tFACTORY ID	{
+			g_lingo->codeFactory(*$2);
+		}
+	| tMETHOD ID { g_lingo->_indef = true; }
+		begin argdef nl argstore stmtlist 		{
+			g_lingo->code2(g_lingo->c_constpush, (inst)0); // Push fake value on stack
+			g_lingo->code1(g_lingo->c_procret);
+			g_lingo->define(*$2, $4, $5, &g_lingo->_currentFactory);
+			g_lingo->_indef = false; }	;
 argdef:  /* nothing */ 		{ $$ = 0; }
 	| ID					{ g_lingo->codeArg($1); $$ = 1; }
 	| argdef ',' ID			{ g_lingo->codeArg($3); $$ = $1 + 1; }
@@ -490,6 +498,7 @@ argdef:  /* nothing */ 		{ $$ = 0; }
 	;
 argstore:	  /* nothing */		{ g_lingo->codeArgStore(); }
 	;
+
 
 macro: ID begin arglist		{
 		g_lingo->code1(g_lingo->c_call);

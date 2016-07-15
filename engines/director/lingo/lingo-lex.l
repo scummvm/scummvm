@@ -71,6 +71,7 @@ whitespace [\t ]
 (?i:[\n\r]+[\t ]*else)	{ countnl(); return tNLELSE; }
 (?i:else)			{ count(); return tELSE; }
 (?i:end)			{ count(); return tEND; }
+(?i:factory)		{ count(); return tFACTORY; }
 (?i:exit)			{ count(); return tEXIT; }
 (?i:frame)			{ count(); return tFRAME; }
 (?i:global)			{ count(); return tGLOBAL; }
@@ -80,6 +81,7 @@ whitespace [\t ]
 (?i:macro)			{ count(); return tMACRO; }
 (?i:mci)			{ count(); return tMCI; }
 (?i:mciwait)		{ count(); return tMCIWAIT; }
+(?i:method)			{ count(); return tMETHOD; }
 (?i:movie)			{ count(); return tMOVIE; }
 (?i:next)			{ count(); return tNEXT; }
 (?i:not)			{ count(); return tNOT; }
