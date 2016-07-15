@@ -42,11 +42,11 @@
 #include "audio/musicplugin.h"
 #include "audio/mixer.h"
 #include "audio/fmopl.h"
-#include "downloaddialog.h"
 #include "widgets/scrollcontainer.h"
 
 #ifdef USE_LIBCURL
 #include "backends/cloud/cloudmanager.h"
+#include "gui/downloaddialog.h"
 #include "gui/storagewizarddialog.h"
 #endif
 

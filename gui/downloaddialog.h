@@ -25,7 +25,6 @@
 
 #include "gui/dialog.h"
 #include "common/str.h"
-#include <backends/cloud/storage.h>
 
 namespace GUI {
 class LauncherDialog;

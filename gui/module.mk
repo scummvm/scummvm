@@ -6,7 +6,6 @@ MODULE_OBJS := \
 	console.o \
 	debugger.o \
 	dialog.o \
-	downloaddialog.o \
 	editgamedialog.o \
 	error.o \
 	EventRecorder.o \
@@ -18,10 +17,8 @@ MODULE_OBJS := \
 	object.o \
 	options.o \
 	predictivedialog.o \
-	remotebrowser.o \
 	saveload.o \
 	saveload-dialog.o \
-	storagewizarddialog.o \
 	themebrowser.o \
 	ThemeEngine.o \
 	ThemeEval.o \
@@ -59,6 +56,13 @@ else
 MODULE_OBJS += \
 	browser.o
 endif
+endif
+
+ifdef USE_LIBCURL
+MODULE_OBJS += \
+	downloaddialog.o \
+	remotebrowser.o \
+	storagewizarddialog.o
 endif
 
 ifdef ENABLE_EVENTRECORDER

@@ -25,6 +25,7 @@
 #include "common/config-manager.h"
 #include "common/gui_options.h"
 #include "common/translation.h"
+#include "common/system.h"
 
 #include "gui/browser.h"
 #include "gui/message.h"
