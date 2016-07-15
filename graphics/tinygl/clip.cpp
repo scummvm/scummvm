@@ -228,10 +228,7 @@ static inline void updateTmp(GLContext *c, GLVertex *q, GLVertex *p0, GLVertex *
 	if (c->current_shade_model == TGL_SMOOTH) {
 		q->color = p0->color + (p1->color - p0->color) * t;
 	} else {
-		q->color.X = (p0->color.X);
-		q->color.Y = (p0->color.Y);
-		q->color.Z = (p0->color.Z);
-		q->color.W = (p0->color.W);
+		q->color = p0->color;
 	}
 
 	if (c->texture_2d_enabled) {
