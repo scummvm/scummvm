@@ -37,11 +37,13 @@ class DialogElement;
 
 enum DialogAction {
   kDANone,
-  kDACloseDialog
+  kDACloseDialog,
+  kDASubmit
 };
 
 enum PrebuiltDialogs {
   kSaveAsDialog = 0,
+  kSpeakDialog = 1,
   kPrebuiltDialogCount
 };
 

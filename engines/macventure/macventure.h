@@ -186,6 +186,8 @@ public:
 	void updateWindow(WindowReference winID);
 
 	bool showTextEntry(ObjID text, ObjID srcObj, ObjID destObj);
+	void setTextInput(Common::String content);
+	Common::String getUserInput();
 
 	// Data retrieval
 	bool isPaused();
@@ -201,7 +203,6 @@ public:
 	uint getPrefixNdx(ObjID obj);
 	Common::String getPrefixString(uint flag, ObjID obj);
 	Common::String getNoun(ObjID ndx);
-	Common::String getUserInput();
 
 	// Attributes consult
 	Common::Point getObjPosition(ObjID objID);

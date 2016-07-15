@@ -32,6 +32,7 @@ namespace MacVenture {
 ScriptEngine::ScriptEngine(MacVentureEngine * engine, World * world) {
 	_engine = engine;
 	_world = world;
+	// HACK
 	_scripts = new Container("Shadowgate II/Shadow Filter");
 }
 

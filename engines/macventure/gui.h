@@ -246,6 +246,9 @@ public:
 	void updateExit(ObjID id);
 
 	void printText(const Common::String &text);
+
+	void getTextFromUser();
+	void setTextInput(Common::String str);
 	void closeDialog();
 
 	// Ugly switches

@@ -31,6 +31,8 @@
 
 namespace MacVenture {
 
+#define MACVENTURE_DEBUG_GUI true
+
 enum MenuAction;
 
 enum {
@@ -333,8 +335,8 @@ WindowReference Gui::createInventoryWindow(ObjID objRef) {
 
 	newWindow->setDimensions(newData.bounds);
 	newWindow->setCallback(inventoryWindowCallback, this);
-	loadBorder(newWindow, "border_no_scroll_inac.bmp", false);
-	loadBorder(newWindow, "border_no_scroll_act.bmp", true);
+	//loadBorder(newWindow, "border_no_scroll_inac.bmp", false);
+	//loadBorder(newWindow, "border_no_scroll_act.bmp", true);
 	_inventoryWindows.push_back(newWindow);
 
 	debug("Create new inventory window. Reference: %d", newData.refcon);
@@ -658,11 +660,9 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 				surface, pos.x, pos.y, kBlitOR);
 
 		// For test
-		surface->frameRect(Common::Rect(
-			pos.x,
-			pos.y,
-			pos.x + _assets[child]->getWidth() + 1,
-			pos.y + _assets[child]->getHeight() + 1), kColorGreen);
+		if (MACVENTURE_DEBUG_GUI) {
+			surface->frameRect(_engine->getObjBounds(child), kColorGreen);
+		}
 
 	}
 }
@@ -802,10 +802,24 @@ void Gui::printText(const Common::String & text) {
 	_consoleText->printLine(text, _outConsoleWindow->getDimensions().width());
 }
 
+void Gui::setTextInput(Common::String str) {
+	_engine->setTextInput(str);
+}
+
 void Gui::closeDialog() {
 	delete _dialog;
 	_dialog = nullptr;
 }
+
+void Gui::getTextFromUser() {
+	if (_dialog) {
+		delete _dialog;
+	}
+	_dialog = new Dialog(this, kSpeakDialog);
+	// Hack to pause the engine
+	_engine->clickToContinue();
+}
+
 
 void Gui::moveDraggedObject(Common::Point target) {
 	Common::Point newPos = target + _draggedObj.mouseOffset;
@@ -1125,8 +1139,8 @@ bool Gui::tryCloseWindow(WindowReference winID) {
 
 Common::Point Gui::getObjMeasures(ObjID obj) {
 	ensureAssetLoaded(obj);
-	uint w = _assets[obj]->getWidth();
-	uint h = _assets[obj]->getHeight();
+ 	int w = MAX(0, (int)_assets[obj]->getWidth());
+	int h = MAX(0, (int)_assets[obj]->getHeight());
 	return Common::Point(w, h);
 }
 

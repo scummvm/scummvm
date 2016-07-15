@@ -372,9 +372,23 @@ void MacVentureEngine::updateWindow(WindowReference winID) {
 
 bool MacVentureEngine::showTextEntry(ObjID text, ObjID srcObj, ObjID destObj) {
 	debug("Showing speech dialog, asset %d from %d to %d", text, srcObj, destObj);
-	_userInput = Common::String("epor");
-	warning("Show text entry: not fully implemented");
+	_gui->getTextFromUser();
+
+	// HACK WITH FLAGS
+	_prepared = false;
+	warning("Show text entry: not fully tested");
 	return true;
+}
+
+void MacVentureEngine::setTextInput(Common::String content) {
+	// HACK WITH FLAGS
+	_prepared = true;
+	_userInput = content;
+	_clickToContinue = false;
+}
+
+Common::String MacVentureEngine::getUserInput() {
+	return _userInput;
 }
 
 const GlobalSettings& MacVentureEngine::getGlobalSettings() const {
@@ -589,10 +603,6 @@ Common::String MacVentureEngine::getPrefixString(uint flag, ObjID obj) {
 
 Common::String MacVentureEngine::getNoun(ObjID ndx) {
 	return _decodingIndirectArticles->getString(ndx);
-}
-
-Common::String MacVentureEngine::getUserInput() {
-	return _userInput;
 }
 
 void MacVentureEngine::highlightExit(ObjID objID) {
