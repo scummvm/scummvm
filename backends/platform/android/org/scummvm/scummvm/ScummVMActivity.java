@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -73,6 +74,12 @@ public class ScummVMActivity extends Activity {
 			Log.i(LOG_TAG, "OSD: " + msg);
 			Toast.makeText(ScummVMActivity.this, msg, Toast.LENGTH_LONG).show();
 		}
+
+		@Override
+		protected void openUrl(String url) {
+			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+		}
+
 
 		@Override
 		protected void setWindowCaption(final String caption) {

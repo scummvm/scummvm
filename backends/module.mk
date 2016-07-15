@@ -155,8 +155,15 @@ MODULE_OBJS += \
 	fs/chroot/chroot-fs.o \
 	plugins/posix/posix-provider.o \
 	saves/posix/posix-saves.o \
-	taskbar/unity/unity-taskbar.o \
+	taskbar/unity/unity-taskbar.o
+
+ifeq ($(BACKEND),android)
+MODULE_OBJS += \
+	networking/browser/openurl-android.o
+else
+MODULE_OBJS += \
 	networking/browser/openurl-posix.o
+endif
 endif
 
 ifdef MACOSX
