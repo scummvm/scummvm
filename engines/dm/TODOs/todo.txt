@@ -11,7 +11,7 @@ Bugs:
 		Sometimes putting stuff in the player's hand segfaults
 		Footprints are everywhere
 		Object display is a bit mixed up with regards to which cell is it drawn in
-		Taking the stairs teleports the player to the wrong position
+		Activegroup index segfaults when aknig the stairs
 
 
 Possible bugs:

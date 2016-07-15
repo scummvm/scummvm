@@ -735,7 +735,7 @@ void DungeonMan::f173_setCurrentMap(uint16 mapIndex) {
 }
 
 void DungeonMan::f174_setCurrentMapAndPartyMap(uint16 mapIndex) {
-	f173_setCurrentMap(mapIndex);
+	f173_setCurrentMap(_g309_partyMapIndex = mapIndex);
 
 	byte *metaMapData = _g271_currMapData[_g273_currMapWidth - 1] + _g274_currMapHeight;
 	_vm->_displayMan->_g264_currMapAllowedCreatureTypes = metaMapData;
