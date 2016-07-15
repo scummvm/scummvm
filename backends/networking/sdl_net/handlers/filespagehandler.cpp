@@ -68,7 +68,7 @@ void FilesPageHandler::handle(Client &client) {
 				"<table>{content}</table>" \
 			"</body>" \
 		"</html>";
-	Common::String itemTemplate = "<tr><td><a href=\"{link}\">{name}</a></td><td>{size}</td></tr>\n"; //TODO: load this template too?
+	Common::String itemTemplate = "<tr><td><img src=\"icons/{icon}\"/></td><td><a href=\"{link}\">{name}</a></td><td>{size}</td></tr>\n"; //TODO: load this template too?
 
 	// load stylish response page from the archive
 	Common::SeekableReadStream *const stream = HandlerUtils::getArchiveFile(FILES_PAGE_NAME);
@@ -99,8 +99,8 @@ void FilesPageHandler::handle(Client &client) {
 
 bool FilesPageHandler::listDirectory(Common::String path, Common::String &content, const Common::String &itemTemplate) {
 	if (path == "" || path == "/") {
-		addItem(content, itemTemplate, true, "/root/", _("File system root"));
-		addItem(content, itemTemplate, true, "/saves/", _("Saved games"));
+		addItem(content, itemTemplate, IT_DIRECTORY, "/root/", _("File system root"));
+		addItem(content, itemTemplate, IT_DIRECTORY, "/saves/", _("Saved games"));
 		return true;
 	}
 
@@ -127,7 +127,7 @@ bool FilesPageHandler::listDirectory(Common::String path, Common::String &conten
 			filePath = "/";
 		else
 			filePath = parentPath(prefixToAdd + filePath);
-		addItem(content, itemTemplate, true, filePath, _("Parent directory"));
+		addItem(content, itemTemplate, IT_PARENT_DIRECTORY, filePath, _("Parent directory"));
 	}
 
 	// fill the content
@@ -140,14 +140,32 @@ bool FilesPageHandler::listDirectory(Common::String path, Common::String &conten
 			filePath.erase(0, prefixToRemove.size());
 		filePath = prefixToAdd + filePath;
 
-		addItem(content, itemTemplate, i->isDirectory(), filePath, name);
+		addItem(content, itemTemplate, detectType(i->isDirectory(), name), filePath, name);
 	}
 
 	return true;
 }
 
-void FilesPageHandler::addItem(Common::String &content, const Common::String &itemTemplate, bool isDirectory, Common::String path, Common::String name, Common::String size) {
-	Common::String item = itemTemplate;
+FilesPageHandler::ItemType FilesPageHandler::detectType(bool isDirectory, const Common::String &name) const {
+	if (isDirectory) return IT_DIRECTORY;
+	if (name.hasSuffix(".txt")) return IT_TXT;
+	if (name.hasSuffix(".zip")) return IT_ZIP;
+	if (name.hasSuffix(".7z")) return IT_7Z;
+	return IT_UNKNOWN;
+}
+
+void FilesPageHandler::addItem(Common::String &content, const Common::String &itemTemplate, ItemType itemType, Common::String path, Common::String name, Common::String size) {
+	Common::String item = itemTemplate, icon;
+	bool isDirectory = (itemType == IT_DIRECTORY || itemType == IT_PARENT_DIRECTORY);
+	switch (itemType) {
+	case IT_DIRECTORY: icon = "dir.png"; break;
+	case IT_PARENT_DIRECTORY: icon = "up.png"; break;
+	case IT_TXT: icon = "txt.png"; break;
+	case IT_ZIP: icon = "zip.png"; break;
+	case IT_7Z: icon = "7z.png"; break;
+	default: icon = "unk.png";
+	}
+	replace(item, "{icon}", icon);
 	replace(item, "{link}", (isDirectory ? "files?path=" : "download?path=") + LocalWebserver::urlEncodeQueryParameterValue(path));
 	replace(item, "{name}", name);
 	replace(item, "{size}", size);

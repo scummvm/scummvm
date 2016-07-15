@@ -17,12 +17,14 @@ def buildArchive(archiveName):
 	print ("Building '" + archiveName + "' archive:")
 	os.chdir(archiveName)
 
-	filenames = os.listdir('.')
-	filenames.sort()
-	for filename in filenames:
-		if os.path.isfile(filename) and filename.endswith(ARCHIVE_FILE_EXTENSIONS):
-			zf.write(filename, './' + filename)
-			print ("    Adding file: " + filename)
+	directories = ['.', './icons']
+	for d in directories:
+		filenames = os.listdir(d)
+		filenames.sort()
+		for filename in filenames:
+			if os.path.isfile(d + '/' + filename) and filename.endswith(ARCHIVE_FILE_EXTENSIONS):
+				zf.write(d + '/' + filename, d + '/' + filename)
+				print ("    Adding file: " + d + '/' + filename)
 
 	os.chdir('../')
 

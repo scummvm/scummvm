@@ -28,6 +28,15 @@
 namespace Networking {
 
 class FilesPageHandler: public FilesBaseHandler {
+	enum ItemType {
+		IT_DIRECTORY,
+		IT_PARENT_DIRECTORY,
+		IT_TXT,
+		IT_ZIP,
+		IT_7Z,
+		IT_UNKNOWN
+	};
+
 	void handle(Client &client);
 
 	/**
@@ -37,8 +46,11 @@ class FilesPageHandler: public FilesBaseHandler {
 	 */
 	bool listDirectory(Common::String path, Common::String &content, const Common::String &itemTemplate);
 
+	/** Helper method for detecting items' type. */
+	ItemType detectType(bool isDirectory, const Common::String &name) const;
+
 	/** Helper method for adding items into the files list. */
-	void addItem(Common::String &content, const Common::String &itemTemplate, bool isDirectory, Common::String path, Common::String name, Common::String size = "");
+	void addItem(Common::String &content, const Common::String &itemTemplate, ItemType itemType, Common::String path, Common::String name, Common::String size = "");
 
 public:
 	FilesPageHandler();

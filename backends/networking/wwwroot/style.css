@@ -86,3 +86,5 @@ html {
 	background: #F3F3F3;
 	cursor: pointer;
 }
+
+td img { vertical-align: middle; height: 20px; }
