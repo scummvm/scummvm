@@ -86,6 +86,8 @@ Dialog::Dialog(Gui *gui, int width, const char *text, DialogButtonArray *buttons
 }
 
 Dialog::~Dialog() {
+	for (uint i = 0; i < _buttons->size(); i++)
+		delete _buttons->operator[](i);
 }
 
 const Graphics::Font *Dialog::getDialogFont() {
