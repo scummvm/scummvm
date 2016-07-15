@@ -474,28 +474,27 @@ void Design::drawBitmap(Graphics::ManagedSurface *surface, Common::SeekableReadS
 
 	in.skip(numBytes);
 
-	if (_boundsCalculationMode)
-		return;
+	if (!_boundsCalculationMode) {
+		Graphics::FloodFill ff(&tmp, kColorWhite, kColorGreen);
+		for (int yy = 0; yy < h; yy++) {
+			ff.addSeed(0, yy);
+			ff.addSeed(w - 1, yy);
+		}
+		for (int xx = 0; xx < w; xx++) {
+			ff.addSeed(xx, 0);
+			ff.addSeed(xx, h - 1);
+		}
+		ff.fill();
 
-	Graphics::FloodFill ff(&tmp, kColorWhite, kColorGreen);
-	for (int yy = 0; yy < h; yy++) {
-		ff.addSeed(0, yy);
-		ff.addSeed(w - 1, yy);
-	}
-	for (int xx = 0; xx < w; xx++) {
-		ff.addSeed(xx, 0);
-		ff.addSeed(xx, h - 1);
-	}
-	ff.fill();
-
-	for (y = 0; y < h && y1 + y < surface->h; y++) {
-		byte *src = (byte *)tmp.getBasePtr(0, y);
-		byte *dst = (byte *)surface->getBasePtr(x1, y1 + y);
-		for (x = 0; x < w; x++) {
-			if (*src != kColorGreen)
-				*dst = *src;
-			src++;
-			dst++;
+		for (y = 0; y < h && y1 + y < surface->h; y++) {
+			byte *src = (byte *)tmp.getBasePtr(0, y);
+			byte *dst = (byte *)surface->getBasePtr(x1, y1 + y);
+			for (x = 0; x < w; x++) {
+				if (*src != kColorGreen)
+					*dst = *src;
+				src++;
+				dst++;
+			}
 		}
 	}
 
