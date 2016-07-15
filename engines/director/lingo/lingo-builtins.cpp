@@ -47,6 +47,8 @@ static struct BuiltinProto {
 	{ "chars",	Lingo::b_chars, 3},
 	{ "length",	Lingo::b_length, 1},
 	{ "string",	Lingo::b_string, 1},
+	// Misc
+	{ "dontpassevent", Lingo::b_dontpassevent, -1 },
 	{ 0, 0, 0 }
 };
 
@@ -207,5 +209,11 @@ void Lingo::b_string() {
 	g_lingo->push(d);
 }
 
-
+///////////////////
+// Misc
+///////////////////
+void Lingo::b_dontpassevent() {
+	warning("STUB: b_dontpassevent");
 }
+
+} // End of namespace Director

@@ -60,7 +60,7 @@ extern int yyparse();
 using namespace Director;
 void yyerror(char *s) {
 	g_lingo->_hadError = true;
-	warning("%s at line %d col %d", s, g_lingo->_linenumber, g_lingo->_colnumber);
+	error("%s at line %d col %d", s, g_lingo->_linenumber, g_lingo->_colnumber);
 }
 
 
@@ -79,7 +79,7 @@ void yyerror(char *s) {
 %token<i> INT
 %token<e> THEENTITY THEENTITYWITHID
 %token<f> FLOAT
-%token<s> BLTIN ID STRING HANDLER
+%token<s> BLTIN BLTINNOARGS ID STRING HANDLER
 %token tDOWN tELSE tNLELSIF tEND tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
 %token tMCI tMCIWAIT tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO
 %token tWITH tWHILE tNLELSE tFACTORY tMETHOD
@@ -352,6 +352,9 @@ expr: INT		{
 
 		$$ = g_lingo->code1(g_lingo->_builtins[*$1]->func);
 		delete $1; }
+	| BLTINNOARGS 	{
+		$$ = g_lingo->code1(g_lingo->_builtins[*$1]->func);
+		delete $1; }
 	| ID '(' arglist ')'	{
 		$$ = g_lingo->code1(g_lingo->c_call);
 		g_lingo->codeString($1->c_str());
@@ -402,8 +405,8 @@ func: tMCI STRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c_
 	| tMCIWAIT ID			{ g_lingo->code1(g_lingo->c_mciwait); g_lingo->codeString($2->c_str()); delete $2; }
 	| tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| gotofunc
-	| tEXIT					{ 	g_lingo->code2(g_lingo->c_constpush, (inst)0); // Push fake value on stack
-								g_lingo->code1(g_lingo->c_procret); }
+	| tEXIT					{ g_lingo->code2(g_lingo->c_constpush, (inst)0); // Push fake value on stack
+							  g_lingo->code1(g_lingo->c_procret); }
 	| tGLOBAL globallist
 	;
 

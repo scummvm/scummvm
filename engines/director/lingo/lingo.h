@@ -253,6 +253,8 @@ public:
 	static void b_string();
 	static void b_tan();
 
+	static void b_dontpassevent();
+
 	void func_mci(Common::String &s);
 	void func_mciwait(Common::String &s);
 	void func_goto(Common::String &frame, Common::String &movie);

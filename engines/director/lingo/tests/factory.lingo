@@ -37,11 +37,11 @@ method mAtFrame
     dontpassevent
     set the castnum of sprite 14 to bcast
     set the LocV of sprite 14 to (startV-stepV)
-    if sprite 14 intersects 10 and (startV-6) <=  targetV then
+--    if sprite 14 intersects 10 and (startV-6) <=  targetV then
         set the castnum of sprite 14 to f16
         set the perframehook to false
         me(hit)
-        exit
+--        exit
     end if
     if startV <  targetV  or bcast>g17 then
         set the perframehook to false
