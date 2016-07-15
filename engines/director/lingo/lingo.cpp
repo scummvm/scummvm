@@ -106,25 +106,35 @@ Lingo::~Lingo() {
 }
 
 const char *Lingo::findNextDefinition(const char *s) {
-	const char *res;
+	const char *res = s;
 
-	if ((res = strstr(s, "\nmacro "))) {
-		return res;
-	} else if ((res = strstr(s, "\nfactory "))) {
-		return res;
-	} else if (_inFactory && (res = strstr(s, "method "))) {
-		if (s == res)
-			return res;
+	while (*res) {
+		while (*res && (*res == ' ' || *res == '\t' || *res == '\n'))
+			res++;
 
-		// Check that this is the first token on the line
-		const char *tres = res;
-		while (tres > s && (*tres == ' ' || *tres == '\t') && *tres != '\n')
-			tres--;
-		if (*tres == '\n')
+		if (!*res)
+			return NULL;
+
+		if (!strncmp(res, "macro ", 6)) {
+			warning("See macro");
 			return res;
+		}
+
+		if (!strncmp(res, "factory ", 8)) {
+			warning("See factory");
+			return res;
+		}
+
+		if (!strncmp(res, "method ", 7)) {
+			warning("See method");
+			return res;
+		}
+
+		while (*res && *res != '\n')
+			res++;
 	}
 
-	return nullptr;
+	return NULL;
 }
 
 void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
@@ -147,14 +157,13 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	if ((begin = findNextDefinition(code))) {
 		bool first = true;
 
-		begin += 1;
+		while ((end = findNextDefinition(begin + 1))) {
 
-		while ((end = findNextDefinition(begin))) {
 			if (first) {
 				begin = code;
 				first = false;
 			}
-			Common::String chunk(begin, end + 1);
+			Common::String chunk(begin, end - 1);
 
 			if (chunk.hasPrefix("factory") || chunk.hasPrefix("method"))
 				_inFactory = true;
@@ -163,13 +172,13 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 			else
 				_inFactory = false;
 
-			debug(2, "Code chunk\n#####\n%s#####", chunk.c_str());
+			debug(2, "Code chunk:\n#####\n%s#####", chunk.c_str());
 
 			parse(chunk.c_str());
 
 			_currentScript->clear();
 
-			begin = end + 1;
+			begin = end;
 		}
 
 		_hadError = true; // HACK: This is for preventing test execution
