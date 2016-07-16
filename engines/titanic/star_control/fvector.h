@@ -41,6 +41,14 @@ public:
 	void fn3();
 
 	/**
+	 * Returns the distance between a specified point and this one
+	 */
+	double getDistance(const FVector *src) const;
+
+	static void fn4(FVector *dest, const FVector *v1, const FVector *v2);
+	void fn5(FVector *dest, const void *v) const;
+
+	/**
 	 * Returns true if the passed vector equals this one
 	 */
 	bool operator==(const FVector &src) const {

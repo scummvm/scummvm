@@ -22,6 +22,7 @@
 
 #include "titanic/star_control/fvector.h"
 #include "common/algorithm.h"
+#include "common/textconsole.h"
 
 namespace Titanic {
 
@@ -45,6 +46,25 @@ void FVector::fn3() {
 	_x *= 1.0 / hyp;
 	_y *= 1.0 / hyp;
 	_z *= 1.0 / hyp;
+}
+
+double FVector::getDistance(const FVector *src) const {
+	double xd = src->_x - _x;
+	double yd = src->_y - _y;
+	double zd = src->_z - _z;
+
+	return sqrt(xd * xd + yd * yd + zd * zd);
+}
+
+void FVector::fn4(FVector *dest, const FVector *v1, const FVector *v2) {
+	FVector tempVector(v1->_x + v2->_x, v1->_y + v2->_y, v1->_z + v2->_z);
+	tempVector.fn3();
+
+	*dest = tempVector;
+}
+
+void FVector::fn5(FVector *dest, const void *v) const {
+	error("TODO: FVector::fn5");
 }
 
 } // End of namespace Titanic
