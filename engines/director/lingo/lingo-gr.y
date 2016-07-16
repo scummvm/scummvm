@@ -81,7 +81,7 @@ void yyerror(char *s) {
 %token<f> FLOAT
 %token<s> BLTIN BLTINNOARGS ID STRING HANDLER
 %token tDOWN tELSE tNLELSIF tEND tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
-%token tMCI tMCIWAIT tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO
+%token tMCI tMCIWAIT tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tNLELSE tFACTORY tMETHOD
 %token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT
 %token tCONCAT tCONTAINS tSTARTS
@@ -214,6 +214,9 @@ stmt: stmtoneliner
 		(*g_lingo->_currentScript)[$1 + 3] = body;	/* body of loop */
 		(*g_lingo->_currentScript)[$1 + 4] = inc;	/* increment */
 		(*g_lingo->_currentScript)[$1 + 5] = end; }	/* end, if cond fails */
+	| tWHEN ID tTHEN expr {
+			g_lingo->code1(g_lingo->c_ifcode);
+		}
 	;
 
 ifstmt:	if cond tTHEN nl stmtlist end tEND tIF		{

@@ -75,23 +75,24 @@
      tSET = 291,
      tTHEN = 292,
      tTO = 293,
-     tWITH = 294,
-     tWHILE = 295,
-     tNLELSE = 296,
-     tFACTORY = 297,
-     tMETHOD = 298,
-     tGE = 299,
-     tLE = 300,
-     tGT = 301,
-     tLT = 302,
-     tEQ = 303,
-     tNEQ = 304,
-     tAND = 305,
-     tOR = 306,
-     tNOT = 307,
-     tCONCAT = 308,
-     tCONTAINS = 309,
-     tSTARTS = 310
+     tWHEN = 294,
+     tWITH = 295,
+     tWHILE = 296,
+     tNLELSE = 297,
+     tFACTORY = 298,
+     tMETHOD = 299,
+     tGE = 300,
+     tLE = 301,
+     tGT = 302,
+     tLT = 303,
+     tEQ = 304,
+     tNEQ = 305,
+     tAND = 306,
+     tOR = 307,
+     tNOT = 308,
+     tCONCAT = 309,
+     tCONTAINS = 310,
+     tSTARTS = 311
    };
 #endif
 /* Tokens.  */
@@ -131,23 +132,24 @@
 #define tSET 291
 #define tTHEN 292
 #define tTO 293
-#define tWITH 294
-#define tWHILE 295
-#define tNLELSE 296
-#define tFACTORY 297
-#define tMETHOD 298
-#define tGE 299
-#define tLE 300
-#define tGT 301
-#define tLT 302
-#define tEQ 303
-#define tNEQ 304
-#define tAND 305
-#define tOR 306
-#define tNOT 307
-#define tCONCAT 308
-#define tCONTAINS 309
-#define tSTARTS 310
+#define tWHEN 294
+#define tWITH 295
+#define tWHILE 296
+#define tNLELSE 297
+#define tFACTORY 298
+#define tMETHOD 299
+#define tGE 300
+#define tLE 301
+#define tGT 302
+#define tLT 303
+#define tEQ 304
+#define tNEQ 305
+#define tAND 306
+#define tOR 307
+#define tNOT 308
+#define tCONCAT 309
+#define tCONTAINS 310
+#define tSTARTS 311
 
 
 
@@ -164,7 +166,7 @@ typedef union YYSTYPE
 	int	narg;	/* number of arguments */
 }
 /* Line 1529 of yacc.c.  */
-#line 168 "engines/director/lingo/lingo-gr.hpp"
+#line 170 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

@@ -124,12 +124,12 @@ void Lingo::cleanLocalVars() {
 }
 
 void Lingo::define(Common::String &name, int start, int nargs, Common::String *prefix) {
-	debug(3, "define(\"%s\", %d, %d, %d)", name.c_str(), start, _currentScript->size() - 1, nargs);
-
 	Symbol *sym;
 
 	if (prefix)
 		name = *prefix + "-" + name;
+
+	debug(3, "define(\"%s\", %d, %d, %d)", name.c_str(), start, _currentScript->size() - 1, nargs);
 
 	if (!_handlers.contains(name)) { // Create variable if it was not defined
 		sym = new Symbol;
