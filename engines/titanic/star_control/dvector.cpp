@@ -21,8 +21,17 @@
  */
 
 #include "titanic/star_control/dvector.h"
+#include "common/algorithm.h"
 
 namespace Titanic {
 
+void DVector::fn3() {
+	double hyp = sqrt(_x * _x + _y * _y + _z * _z);
+	assert(hyp);
+
+	_x *= 1.0 / hyp;
+	_y *= 1.0 / hyp;
+	_z *= 1.0 / hyp;
+}
 
 } // End of namespace Titanic

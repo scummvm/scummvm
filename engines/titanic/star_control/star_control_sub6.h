@@ -23,19 +23,13 @@
 #ifndef TITANIC_STAR_CONTROL_SUB6_H
 #define TITANIC_STAR_CONTROL_SUB6_H
 
+#include "titanic/star_control/fmatrix.h"
+
 namespace Titanic {
 
 class CStarControlSub6 {
 private:
-	int _field0;
-	int _field4;
-	int _field8;
-	int _fieldC;
-	int _field10;
-	int _field14;
-	int _field18;
-	int _field1C;
-	int _field20;
+	FMatrix _matrix;
 	int _field24;
 	int _field28;
 	int _field2C;

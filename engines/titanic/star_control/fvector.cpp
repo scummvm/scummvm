@@ -21,8 +21,30 @@
  */
 
 #include "titanic/star_control/fvector.h"
+#include "common/algorithm.h"
 
 namespace Titanic {
 
+void FVector::fn1(FVector *v) {
+	v->_x = (ABS(_x - _y) < 0.00001 && ABS(_y - _z) < 0.00001 &&
+		ABS(_x - _z) < 0.00001) ? -_x : _x;
+	v->_y = _y;
+	v->_z = _z;
+}
+
+void FVector::multiply(FVector *dest, const FVector *src) {
+	dest->_x = (src->_z * _y) - (_z * src->_y);
+	dest->_y = (src->_x * _z) - (_x * src->_z);
+	dest->_z = (src->_y * _x) - (_y * src->_x);
+}
+
+void FVector::fn3() {
+	double hyp = sqrt(_x * _x + _y * _y + _z * _z);
+	assert(hyp);
+
+	_x *= 1.0 / hyp;
+	_y *= 1.0 / hyp;
+	_z *= 1.0 / hyp;
+}
 
 } // End of namespace Titanic

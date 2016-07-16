@@ -25,12 +25,18 @@
 
 namespace Titanic {
 
+/**
+ * Double based vector class.
+ * @remarks		TODO: See if it can be merged with FVector
+ */
 class DVector {
 public:
 	double _x, _y, _z;
 public:
 	DVector() : _x(0), _y(0), _z(0) {}
 	DVector(double x, double y, double z) : _x(x), _y(y), _z(z) {}
+
+	void fn3();
 };
 
 } // End of namespace Titanic

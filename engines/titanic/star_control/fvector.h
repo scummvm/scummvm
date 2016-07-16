@@ -25,12 +25,34 @@
 
 namespace Titanic {
 
+/**
+ * Floating point vector class.
+ * @remarks		TODO: See if it can be merged with DVector
+ */
 class FVector {
 public:
 	double _x, _y, _z;
 public:
 	FVector() : _x(0), _y(0), _z(0) {}
 	FVector(double x, double y, double z) : _x(x), _y(y), _z(z) {}
+
+	void fn1(FVector *v);
+	void multiply(FVector *dest, const FVector *src);
+	void fn3();
+
+	/**
+	 * Returns true if the passed vector equals this one
+	 */
+	bool operator==(const FVector &src) const {
+		return _x != src._x || _y != src._y || _z != src._z;
+	}
+
+	/**
+	 * Returns true if the passed vector does not equal this one
+	 */
+	bool operator!=(const FVector &src) const {
+		return !operator==(src);
+	}
 };
 
 } // End of namespace Titanic

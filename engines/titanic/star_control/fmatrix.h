@@ -30,6 +30,10 @@ namespace Titanic {
 
 class DMatrix;
 
+/**
+ * Floating point matrix class.
+ * @remarks		TODO: See if it can be merged with DMatrix
+ */
 class FMatrix {
 private:
 	FVector _row1;
@@ -63,6 +67,25 @@ public:
 	 * Sets the data for the matrix
 	 */
 	void set(FVector *row1, FVector *row2, FVector *row3);
+
+	void fn1(FVector *v);
+
+	void fn2(FMatrix *m);
+	void fn3(FMatrix *m);
+
+	/**
+	 * Returns true if the passed matrix equals this one
+	 */
+	bool operator==(const FMatrix &src) {
+		return _row1 == src._row1 && _row2 == src._row2 && _row3 == src._row3;
+	}
+
+	/**
+	 * Returns true if the passed matrix does not equal this one
+	 */
+	bool operator!=(const FMatrix &src) {
+		return !operator==(src);
+	}
 };
 
 } // End of namespace Titanic

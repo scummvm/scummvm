@@ -25,12 +25,15 @@
 
 namespace Titanic {
 
-class FVector {
+/**
+ * Floating point Point class
+ */
+class FPoint {
 public:
 	double _x, _y;
 public:
-	FVector() : _x(0), _y(0) {}
-	FVector(double x, double y) : _x(x), _y(y) {}
+	FPoint() : _x(0), _y(0) {}
+	FPoint(double x, double y) : _x(x), _y(y) {}
 };
 
 } // End of namespace Titanic

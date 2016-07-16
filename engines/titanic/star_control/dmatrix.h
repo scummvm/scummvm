@@ -27,6 +27,10 @@
 
 namespace Titanic {
 
+/**
+ * Double based matrix class.
+ * @remarks		TODO: See if it can be merged with FMatrix
+ */
 class DMatrix {
 private:
 	DVector _row1;
