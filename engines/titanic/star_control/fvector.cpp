@@ -20,17 +20,9 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub15.h"
+#include "titanic/star_control/fvector.h"
 
 namespace Titanic {
 
-CStarControlSub15::CStarControlSub15() :
-		_field0(1.875), _field8(0), _fieldC(0),
-		_field10(0), _field14(0), _field18(0.0), _field1C(0),
-		_field20(1.875), _field28(0), _field2C(0),
-		_field30(0), _field38(0), _field3C(0),
-		_field40(1.875), _field48(0), _field4C(0),
-		_field50(0), _field54(0), _field58(0), _field5C(0) {
-}
 
 } // End of namespace Titanic

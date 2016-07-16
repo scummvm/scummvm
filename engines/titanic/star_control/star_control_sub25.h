@@ -23,17 +23,17 @@
 #ifndef TITANIC_STAR_CONTROL_SUB25_H
 #define TITANIC_STAR_CONTROL_SUB25_H
 
-#include "titanic/star_control/star_control_sub14.h"
+#include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/star_control_sub26.h"
 
 namespace Titanic {
 
 class CStarControlSub25 {
 public:
-	CStarControlSub14 _sub1;
-	CStarControlSub14 _sub2;
-	CStarControlSub26 _sub3;
-	CStarControlSub26 _sub4;
+	FMatrix _matrix1;
+	FMatrix _matrix2;
+	CStarControlSub26 _sub1;
+	CStarControlSub26 _sub2;
 public:
 	
 };

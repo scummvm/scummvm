@@ -417,10 +417,15 @@ MODULE_OBJS := \
 	sound/water_lapping_sounds.o \
 	sound/wave_file.o \
 	star_control/star_control.o \
+	star_control/base_star.o \
+	star_control/dmatrix.o \
+	star_control/dvector.o \
+	star_control/fmatrix.o \
+	star_control/fpoint.o \
+	star_control/fvector.o \
+	star_control/star_array.o \
 	star_control/star_control_sub1.o \
 	star_control/star_control_sub2.o \
-	star_control/base_star.o \
-	star_control/star_array.o \
 	star_control/star_control_sub4.o \
 	star_control/star_control_sub5.o \
 	star_control/star_control_sub6.o \
@@ -430,8 +435,6 @@ MODULE_OBJS := \
 	star_control/star_view.o \
 	star_control/star_control_sub12.o \
 	star_control/star_control_sub13.o \
-	star_control/star_control_sub14.o \
-	star_control/star_control_sub15.o \
 	star_control/star_control_sub20.o \
 	star_control/star_control_sub21.o \
 	star_control/star_control_sub22.o \

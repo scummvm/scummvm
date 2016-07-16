@@ -20,39 +20,14 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB14_H
-#define TITANIC_STAR_CONTROL_SUB14_H
-
-#include "titanic/support/simple_file.h"
+#include "titanic/star_control/dmatrix.h"
 
 namespace Titanic {
 
-class CStarControlSub14 {
-private:
-	double _field0;
-	double _field4;
-	double _field8;
-	double _fieldC;
-	double _field10;
-	double _field14;
-	double _field18;
-	double _field1C;
-	double _field20;
-public:
-	CStarControlSub14();
+DMatrix::DMatrix() :
+	_row1(1.0, 0.0, 0.0), _row2(0.0, 1.0, 0.0), _row3(0.0, 0.0, 1.0),
+	_row4(0.0, 0.0, 0.0) {
+}
 
-	/**
-	 * Load the data for the class from file
-	 */
-	void load(SimpleFile *file, int param);
-
-	/**
-	 * Save the data for the class to file
-	 */
-	void save(SimpleFile *file, int indent);
-
-};
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_STAR_CONTROL_SUB13_H */

@@ -63,12 +63,12 @@ void CStarControlSub13::load(SimpleFile *file, int param) {
 	for (int idx = 0; idx < 5; ++idx)
 		_valArray[idx] = file->readFloat();
 
-	_sub14.load(file, param);
+	_matrix.load(file, param);
 	_fieldD4 = 0;
 }
 
 void CStarControlSub13::save(SimpleFile *file, int indent) {
-	_sub14.save(file, indent);
+	_matrix.save(file, indent);
 }
 
 

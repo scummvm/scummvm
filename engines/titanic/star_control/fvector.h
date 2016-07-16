@@ -20,54 +20,19 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB13_H
-#define TITANIC_STAR_CONTROL_SUB13_H
-
-#include "titanic/support/simple_file.h"
-#include "titanic/star_control/star_control_sub6.h"
-#include "titanic/star_control/fmatrix.h"
+#ifndef TITANIC_FVECTOR_H
+#define TITANIC_FVECTOR_H
 
 namespace Titanic {
 
-class CStarControlSub13 {
-private:
-	double _field0;
-	double _field4;
-	double _field8;
-	double _fieldC;
-	double _field10;
-	double _field14;
-	double _field18;
-	double _field1C;
-	int _field20;
-	int _field22;
-	int _field24;
-	double _valArray[5];
-	FMatrix _matrix;
-	CStarControlSub6 _sub1;
-	CStarControlSub6 _sub2;
-	int _fieldC0;
-	int _fieldC4;
-	int _fieldC8;
-	int _fieldCC;
-	int _fieldD0;
-	int _fieldD4;
-private:
-	void setup(void *ptr);
+class FVector {
 public:
-	CStarControlSub13(void *ptr);
-
-	/**
-	 * Load the data for the class from file
-	 */
-	void load(SimpleFile *file, int param);
-
-	/**
-	 * Save the data for the class to file
-	 */
-	void save(SimpleFile *file, int indent);
+	double _x, _y, _z;
+public:
+	FVector() : _x(0), _y(0), _z(0) {}
+	FVector(double x, double y, double z) : _x(x), _y(y), _z(z) {}
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CONTROL_SUB13_H */
+#endif /* TITANIC_FVECTOR_H */

@@ -20,42 +20,29 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB13_H
-#define TITANIC_STAR_CONTROL_SUB13_H
+#ifndef TITANIC_FMATRIX_H
+#define TITANIC_FMATRIX_H
 
 #include "titanic/support/simple_file.h"
-#include "titanic/star_control/star_control_sub6.h"
-#include "titanic/star_control/fmatrix.h"
+#include "titanic/star_control/fvector.h"
 
 namespace Titanic {
 
-class CStarControlSub13 {
+class DMatrix;
+
+class FMatrix {
 private:
-	double _field0;
-	double _field4;
-	double _field8;
-	double _fieldC;
-	double _field10;
-	double _field14;
-	double _field18;
-	double _field1C;
-	int _field20;
-	int _field22;
-	int _field24;
-	double _valArray[5];
-	FMatrix _matrix;
-	CStarControlSub6 _sub1;
-	CStarControlSub6 _sub2;
-	int _fieldC0;
-	int _fieldC4;
-	int _fieldC8;
-	int _fieldCC;
-	int _fieldD0;
-	int _fieldD4;
+	FVector _row1;
+	FVector _row2;
+	FVector _row3;
 private:
-	void setup(void *ptr);
+	/**
+	 * Copys data from a given source
+	 */
+	void copyFrom(const DMatrix *src);
 public:
-	CStarControlSub13(void *ptr);
+	FMatrix();
+	FMatrix(DMatrix *src);
 
 	/**
 	 * Load the data for the class from file
@@ -66,8 +53,18 @@ public:
 	 * Save the data for the class to file
 	 */
 	void save(SimpleFile *file, int indent);
+
+	/**
+	 * Clears the matrix
+	 */
+	void clear();
+
+	/**
+	 * Sets the data for the matrix
+	 */
+	void set(FVector *row1, FVector *row2, FVector *row3);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CONTROL_SUB13_H */
+#endif /* TITANIC_MATRIX3_H */

@@ -20,38 +20,19 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB15_H
-#define TITANIC_STAR_CONTROL_SUB15_H
+#ifndef TITANIC_FPOINT_H
+#define TITANIC_FPOINT_H
 
 namespace Titanic {
 
-class CStarControlSub15 {
-private:
-	double _field0;
-	int _field8;
-	int _fieldC;
-	int _field10;
-	int _field14;
-	double _field18;
-	int _field1C;
-	double _field20;
-	int _field24;
-	int _field28;
-	int _field2C;
-	double _field30;
-	int _field38;
-	int _field3C;
-	double _field40;
-	int _field48;
-	int _field4C;
-	int _field50;
-	int _field54;
-	int _field58;
-	int _field5C;
+class FVector {
 public:
-	CStarControlSub15();
+	double _x, _y;
+public:
+	FVector() : _x(0), _y(0) {}
+	FVector(double x, double y) : _x(x), _y(y) {}
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CONTROL_SUB15_H */
+#endif /* TITANIC_FPOINT_H */

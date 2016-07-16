@@ -20,31 +20,19 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub14.h"
+#ifndef TITANIC_DVECTOR_H
+#define TITANIC_DVECTOR_H
 
 namespace Titanic {
 
-CStarControlSub14::CStarControlSub14() :
-	_field0(0x3F800000), _field4(0), _field8(0), _fieldC(0),
-	_field10(0x3F800000), _field14(0), _field18(0), _field1C(0),
-	_field20(0x3F800000) {
-}
-
-void CStarControlSub14::load(SimpleFile *file, int param) {
-	_field0 = file->readFloat();
-	_field4 = file->readFloat();
-	_field8 = file->readFloat();
-	_fieldC = file->readFloat();
-	_field10 = file->readFloat();
-	_field14 = file->readFloat();
-	_field18 = file->readFloat();
-	_field1C = file->readFloat();
-	_field20 = file->readFloat();
-}
-
-void CStarControlSub14::save(SimpleFile *file, int indent) {
-
-}
-
+class DVector {
+public:
+	double _x, _y, _z;
+public:
+	DVector() : _x(0), _y(0), _z(0) {}
+	DVector(double x, double y, double z) : _x(x), _y(y), _z(z) {}
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_DVECTOR_H */
