@@ -63,8 +63,6 @@ static const int DRAW_SMOOTH = 2;
 static const int DRAW_SHADOW_MASK = 3;
 static const int DRAW_SHADOW = 4;
 
-extern uint8 PSZB;
-
 struct Buffer {
 	byte *pbuf;
 	unsigned int *zbuf;
