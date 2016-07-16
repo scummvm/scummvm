@@ -33,10 +33,24 @@ private:
 	int _field24;
 	int _field28;
 	int _field2C;
+private:
+	static CStarControlSub6 *_static;
+public:
+	static void init();
+	static void deinit();
 public:
 	CStarControlSub6();
+	CStarControlSub6(int mode, double amount);
 
+	/**
+	 * Clear the item
+	 */
 	void clear();
+
+	/**
+	 * Sets the default data
+	 */
+	void set(int mode, double val);
 };
 
 } // End of namespace Titanic

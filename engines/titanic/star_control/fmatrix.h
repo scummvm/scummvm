@@ -36,14 +36,14 @@ class DMatrix;
  */
 class FMatrix {
 private:
-	FVector _row1;
-	FVector _row2;
-	FVector _row3;
-private:
 	/**
 	 * Copys data from a given source
 	 */
 	void copyFrom(const DMatrix *src);
+public:
+	FVector _row1;
+	FVector _row2;
+	FVector _row3;
 public:
 	FMatrix();
 	FMatrix(DMatrix *src);

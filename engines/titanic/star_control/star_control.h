@@ -49,6 +49,7 @@ private:
 public:
 	CLASSDEF
 	CStarControl();
+	virtual ~CStarControl();
 
 	/**
 	 * Save the data for the class to file

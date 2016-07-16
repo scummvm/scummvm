@@ -24,8 +24,22 @@
 
 namespace Titanic {
 
+CStarControlSub6 *CStarControlSub6::_static;
+
 CStarControlSub6::CStarControlSub6() {
 	clear();
+}
+
+CStarControlSub6::CStarControlSub6(int mode, double val) {
+	set(mode, val);
+}
+
+void CStarControlSub6::init() {
+	_static = nullptr;
+}
+
+void CStarControlSub6::deinit() {
+	delete _static;
 }
 
 void CStarControlSub6::clear() {
@@ -33,6 +47,57 @@ void CStarControlSub6::clear() {
 	_field24 = 0;
 	_field28 = 0;
 	_field2C = 0;
+}
+
+void CStarControlSub6::set(int mode, double amount) {
+	const double ROTATION = 3.1415927 * 0.0055555557;
+	double sinVal = sin(amount * ROTATION);
+	double cosVal = cos(amount * ROTATION);
+
+	switch (mode) {
+	case 0:
+		_matrix._row1._x = 1.0;
+		_matrix._row1._y = 0.0;
+		_matrix._row1._z = 0.0;
+		_matrix._row2._x = 0.0;
+		_matrix._row2._y = cosVal;
+		_matrix._row2._z = sinVal;
+		_matrix._row3._x = 0.0;
+		_matrix._row3._y = -sinVal;
+		_matrix._row3._z = cosVal;
+		break;
+
+	case 1:
+		_matrix._row1._x = cosVal;
+		_matrix._row1._y = 0.0;
+		_matrix._row1._z = sinVal;
+		_matrix._row2._x = 0.0;
+		_matrix._row2._y = 1.0;
+		_matrix._row2._z = 0.0;
+		_matrix._row3._x = -sinVal;
+		_matrix._row3._y = 0.0;
+		_matrix._row3._z = sinVal;
+		break;
+
+	case 2:
+		_matrix._row1._x = cosVal;
+		_matrix._row1._y = sinVal;
+		_matrix._row1._z = 0.0;
+		_matrix._row2._x = -sinVal;
+		_matrix._row2._y = cosVal;
+		_matrix._row2._z = 0.0;
+		_matrix._row3._x = 0.0;
+		_matrix._row3._y = 0.0;
+		_matrix._row3._z = 1.0;
+		break;
+
+	default:
+		break;
+	}
+
+	_field24 = 0.0;
+	_field28 = 0.0;
+	_field2C = 0.0;
 }
 
 } // End of namespace Titanic
