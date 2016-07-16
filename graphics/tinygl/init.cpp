@@ -102,9 +102,11 @@ void glInit(void *zbuffer1, int textureSize) {
 		if (i == 0) {
 			l->diffuse = Vector4(1, 1, 1, 1);
 			l->specular = Vector4(1, 1, 1, 1);
+			l->has_specular = true;
 		} else {
 			l->diffuse = Vector4(0, 0, 0, 1);
 			l->specular = Vector4(0, 0, 0, 1);
+			l->has_specular = false;
 		}
 		l->position = Vector4(0, 0, 1, 0);
 		l->norm_position = Vector3(0, 0, 1);
@@ -130,6 +132,7 @@ void glInit(void *zbuffer1, int textureSize) {
 		m->ambient = Vector4(0.2f, 0.2f, 0.2f, 1);
 		m->diffuse = Vector4(0.8f, 0.8f, 0.8f, 1);
 		m->specular = Vector4(0, 0, 0, 1);
+		m->has_specular = false;
 		m->shininess = 0;
 	}
 	c->current_color_material_mode = TGL_FRONT_AND_BACK;
