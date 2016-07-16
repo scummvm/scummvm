@@ -43,6 +43,26 @@ Common::String encodeDoubleQuotes(Common::String s) {
 		} else result += s[i];
 	return result;
 }
+
+Common::String encodeHtmlEntities(Common::String s) {
+	Common::String result = "";
+	for (uint32 i = 0; i < s.size(); ++i)
+		if (s[i] == '<') result += "&lt;";
+		else if (s[i] == '>') result += "&gt;";
+		else if (s[i] == '&') result += "&amp;";
+		else if (s[i] > 0x7F) result += Common::String::format("&#%d;", (int)s[i]);
+		else result += s[i];
+	return result;
+}
+
+Common::String getDisplayPath(Common::String s) {
+	Common::String result = "";
+	for (uint32 i = 0; i < s.size(); ++i)
+		if (s[i] == '\\') result += '/';
+		else result += s[i];
+	if (result == "") return "/";
+	return result;
+}
 }
 
 void FilesPageHandler::handle(Client &client) {
@@ -65,6 +85,7 @@ void FilesPageHandler::handle(Client &client) {
 					"<input type=\"submit\" value=\"{upload_file_button}\"/>" \
 				"</form>"
 				"<hr/>" \
+				"<h1>{index_of_directory}</h1>" \
 				"<table>{content}</table>" \
 			"</body>" \
 		"</html>";
@@ -93,7 +114,8 @@ void FilesPageHandler::handle(Client &client) {
 	replace(response, "{create_directory_desc}", _("Type new directory name:"));
 	replace(response, "{upload_file_desc}", _("Select a file to upload:"));
 	replace(response, "{or_upload_directory_desc}", _("Or select a directory (works in Chrome only):"));
-	replace(response, "{content}", content);	
+	replace(response, "{index_of_directory}", Common::String::format(_("Index of %s"), encodeHtmlEntities(getDisplayPath(client.queryParameter("path"))).c_str()));
+	replace(response, "{content}", content);
 	LocalWebserver::setClientGetHandler(client, response);
 }
 
@@ -167,7 +189,7 @@ void FilesPageHandler::addItem(Common::String &content, const Common::String &it
 	}
 	replace(item, "{icon}", icon);
 	replace(item, "{link}", (isDirectory ? "files?path=" : "download?path=") + LocalWebserver::urlEncodeQueryParameterValue(path));
-	replace(item, "{name}", name);
+	replace(item, "{name}", encodeHtmlEntities(name));
 	replace(item, "{size}", size);
 	content += item;
 }

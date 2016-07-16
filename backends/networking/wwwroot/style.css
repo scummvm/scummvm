@@ -88,3 +88,8 @@ html {
 }
 
 td img { vertical-align: middle; height: 20px; }
+
+.directory_name {
+	display: block;
+	padding-bottom: 6px;
+}

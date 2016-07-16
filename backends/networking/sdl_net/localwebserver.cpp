@@ -426,5 +426,4 @@ Common::String LocalWebserver::urlEncodeQueryParameterValue(Common::String value
 	return result;
 }
 
-
 } // End of namespace Networking
