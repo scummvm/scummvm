@@ -1131,6 +1131,8 @@ public:
 
 	byte getNumBoxes();
 	byte *getBoxMatrixBaseAddr();
+	byte *getBoxConnectionBase( int box );
+
 	int getNextBox(byte from, byte to);
 
 	void setBoxFlags(int box, int val);
