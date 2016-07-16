@@ -103,8 +103,8 @@ void glInit(void *zbuffer1, int textureSize) {
 			l->diffuse = Vector4(1, 1, 1, 1);
 			l->specular = Vector4(1, 1, 1, 1);
 		} else {
-			l->diffuse = Vector4(0, 0, 0, 0);
-			l->specular = Vector4(0, 0, 0, 0);
+			l->diffuse = Vector4(0, 0, 0, 1);
+			l->specular = Vector4(0, 0, 0, 1);
 		}
 		l->position = Vector4(0, 0, 1, 0);
 		l->norm_position = Vector3(0, 0, 1);
