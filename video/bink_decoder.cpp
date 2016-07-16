@@ -329,6 +329,30 @@ BinkDecoder::BinkVideoTrack::~BinkVideoTrack() {
 	_surface.free();
 }
 
+// ResidualVM-specific class -- Duplicated from audio/decoders/quicktime.cpp
+// If the Bink seeking code ever makes it to ScummVM, move SilentAudioStream
+// out of quicktime.cpp so that it can be shared.
+/**
+ * An AudioStream that just returns silent samples and runs infinitely.
+ */
+class SilentAudioStream : public Audio::AudioStream {
+public:
+	SilentAudioStream(int rate, bool stereo) : _rate(rate), _isStereo(stereo) {}
+
+	int readBuffer(int16 *buffer, const int numSamples) {
+		memset(buffer, 0, numSamples * 2);
+		return numSamples;
+	}
+
+	bool endOfData() const { return false; } // it never ends!
+	bool isStereo() const { return _isStereo; }
+	int getRate() const { return _rate; }
+
+private:
+	int _rate;
+	bool _isStereo;
+};
+
 // ResidualVM-specific function
 Common::Rational BinkDecoder::getFrameRate() {
 	BinkVideoTrack *videoTrack = (BinkVideoTrack *)getTrack(0);
@@ -352,6 +376,12 @@ bool BinkDecoder::seekIntern(const Audio::Timestamp &time) {
 	if (frame == keyFrame) {
 		// We're already good, no need to go further
 		return true;
+	}
+
+	// Seek the audio tracks
+	for (uint32 i = 0; i < _audioTracks.size(); i++) {
+		BinkAudioTrack *audioTrack = (BinkAudioTrack *)getTrack(i + 1);
+		audioTrack->seek(videoTrack->getFrameTime(keyFrame));
 	}
 
 	while (getCurFrame() < (int32)frame - 1)
@@ -402,6 +432,28 @@ void BinkDecoder::BinkAudioTrack::skipSamples(const Audio::Timestamp &length) {
 	int16 *tempBuffer = new int16[sampleCount];
 	_audioStream->readBuffer(tempBuffer, sampleCount);
 	delete[] tempBuffer;
+}
+
+// ResidualVM-specific function
+bool BinkDecoder::BinkAudioTrack::seek(const Audio::Timestamp &time) {
+	// Don't window the output with the previous frame -- there is no output from the previous frame
+	_audioInfo->first = true;
+
+	if (time != Audio::Timestamp(0)) {
+		// The first frame of the file contains an audio prebuffer of about 750ms.
+		// When seeking to a later frame, the audio stream needs to be prefilled with some data
+		// amounting to 750ms, otherwise the audio stream will underrun and / or the audio and video
+		// streams will be out of sync.
+		// For now, we do as the official Bink decoder up to version 1.2j. The stream is prefilled
+		// with silence.
+		// The official bink decoder behavior is documented here:
+		// http://www.radgametools.com/bnkhist.htm#Changes from 1.2i to 1.2J (02-18-2002)
+		SilentAudioStream *silence = new SilentAudioStream(_audioInfo->outSampleRate, _audioInfo->outChannels == 2);
+		Audio::AudioStream *prebuffer = Audio::makeLimitingAudioStream(silence, Audio::Timestamp(750));
+		_audioStream->queueAudioStream(prebuffer);
+	}
+
+	return true;
 }
 
 void BinkDecoder::BinkVideoTrack::decodePacket(VideoFrame &frame) {

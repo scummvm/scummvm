@@ -336,7 +336,7 @@ private:
 		/** Decode an audio packet. */
 		void decodePacket();
 
-		bool seek(const Audio::Timestamp &time) { return true; }  // ResidualVM-specific
+		bool seek(const Audio::Timestamp &time);  // ResidualVM-specific
 		bool isSeekable() const { return true; }  // ResidualVM-specific
 		void skipSamples(const Audio::Timestamp &length);  // ResidualVM-specific
 		int getRate(); // ResidualVM-specific
