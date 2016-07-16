@@ -9,7 +9,7 @@ World::World(MacVentureEngine *engine, Common::MacResManager *resMan)  {
 	_resourceManager = resMan;
 	_engine = engine;
 
-	if (!loadStartGameFileName())
+	if ((_startGameFileName = _engine->getStartGameFileName()) == "")
 		error("Could not load initial game configuration");
 
 	Common::File saveGameFile;
@@ -150,9 +150,11 @@ void World::updateObj(ObjID objID) {
 }
 
 void World::captureChildren(ObjID objID) {
+	warning("Capture children unimplemented!");
 }
 
 void World::releaseChildren(ObjID objID) {
+	warning("Release children unimplemented!");
 }
 
 Common::String World::getText(ObjID objID, ObjID source, ObjID target) {
@@ -175,23 +177,8 @@ bool World::intersects(ObjID objID, Common::Rect rect) {
 	return _engine->getObjBounds(objID).intersects(rect);
 }
 
-bool World::loadStartGameFileName() {
-	Common::SeekableReadStream *res;
-
-	res = _resourceManager->getResource(MKTAG('S', 'T', 'R', ' '), kStartGameFilenameID);
-	if (!res)
-		return false;
-
-	byte length = res->readByte();
-	char *fileName = new char[length + 1];
-	res->read(fileName, length);
-	fileName[length] = '\0';
-	_startGameFileName = Common::String(fileName, length);
-
-	return true;
-}
-
 void World::calculateObjectRelations() {
+	_relations.clear();
 	ObjID val, next;
 	uint32 numObjs = _engine->getGlobalSettings().numObjects;
 	const AttributeGroup &parents = *_saveGame->getGroup(0);
@@ -226,6 +213,16 @@ void World::setParent(ObjID child, ObjID newParent) {
 	}
 	_relations[child * 2 + 1] = old;
 	_relations[oldNdx] = child;
+}
+
+void World::loadGameFrom(Common::InSaveFile *file) {
+	if (_saveGame) delete _saveGame;
+	_saveGame = new SaveGame(_engine, file);
+	calculateObjectRelations();
+}
+
+void World::saveGameInto(Common::OutSaveFile *file) {
+	_saveGame->saveInto(file);
 }
 
 // SaveGame
@@ -263,12 +260,32 @@ void SaveGame::setGlobal(uint32 attrID, Attribute value) {
 	_globals[attrID] = value;
 }
 
-const Common::Array<uint16>& MacVenture::SaveGame::getGlobals() {
+const Common::Array<uint16>& SaveGame::getGlobals() {
 	return _globals;
 }
 
-const Common::String & MacVenture::SaveGame::getText() {
+const Common::String & SaveGame::getText() {
 	return _text;
+}
+
+void SaveGame::saveInto(Common::OutSaveFile *file) {
+	warning("Saving the game not yet tested!");
+	// Save attibutes
+	Common::Array<AttributeGroup>::const_iterator itg;
+	for(itg = _groups.begin(); itg != _groups.end(); itg++) {
+		Common::Array<Attribute>::const_iterator ita;
+		for (ita = itg->begin(); ita != itg->end(); ita++) {
+			file->writeUint16BE((*ita));
+		}
+	}
+	// Save globals
+	Common::Array<uint16>::const_iterator global;
+	for (global = _globals.begin(); global != _globals.end(); global++) {
+		file->writeUint16BE((*global));
+	}
+	// Save text
+	_text = "Hello";
+	file->write(_text.c_str(), _text.size());
 }
 
 void SaveGame::loadGroups(MacVentureEngine *engine, Common::SeekableReadStream * res) {

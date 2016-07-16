@@ -43,7 +43,7 @@ PrebuiltDialog prebuiltDialogs[kPrebuiltDialogCount] = {
   {/* kSaveAsDialog */
     Common::Rect(0, 146, 456, 254),
     {
-      {kDEButton, "YES", kDANone, Common::Point(24, 68), 120, 22},
+      {kDEButton, "YES", kDASaveAs, Common::Point(24, 68), 120, 22},
       {kDEButton, "NO", kDACloseDialog, Common::Point(168, 68), 120, 22},
       {kDEButton, "CANCEL", kDACloseDialog, Common::Point(312, 68), 120, 22},
       {kDEPlainText, "Save As...", kDANone, Common::Point(100, 10), 340, 38},
@@ -90,6 +90,10 @@ void Dialog::handleDialogAction(DialogElement *trigger, DialogAction action) {
     break;
   case kDASubmit:
     _gui->setTextInput(_userInput);
+    _gui->closeDialog();
+    break;
+  case kDASaveAs:
+    _gui->saveInto(0);
     _gui->closeDialog();
     break;
   }
@@ -169,11 +173,6 @@ DialogElement::DialogElement(Dialog *dialog, Common::String title, DialogAction 
   }
 
 bool DialogElement::processEvent(MacVenture::Dialog *dialog, Common::Event event)  {
-  // HACK for test, please delete me
-  Common::Point mouse = event.mouse;
-  dialog->localize(mouse);
-  if (_bounds.contains(mouse)) debug(1, "Hovering over: %s", _text.c_str());
-
   return doProcessEvent(dialog, event);
 }
 

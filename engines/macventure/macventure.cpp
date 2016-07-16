@@ -82,7 +82,6 @@ Common::Error MacVentureEngine::run() {
 	// Additional setup.
 	debug("MacVentureEngine::init");
 
-
 	_resourceManager = new Common::MacResManager();
 	if (!_resourceManager->open(getGameFileName()))
 		error("Could not open %s as a resource fork", getGameFileName());
@@ -113,7 +112,6 @@ Common::Error MacVentureEngine::run() {
 	_destObject = 0;
 	_prepared = true;
 
-	//if !savegame
 	_cmdReady = true;
 	_selectedControl = kStartOrResume;
 	ObjID playerParent = _world->getObjAttr(1, kAttrParentObject);
@@ -161,6 +159,42 @@ Common::Error MacVentureEngine::run() {
 
 	return Common::kNoError;
 }
+
+Common::Error MacVentureEngine::loadGameState(int slot) {
+	Common::InSaveFile *file = getSaveFileManager()->openForLoading("Shadowgate.1");
+	_world->loadGameFrom(file);
+	reset();
+	return Common::kNoError;
+}
+
+Common::Error MacVentureEngine::saveGameState(int slot, const Common::String &desc) {
+	Common::SaveFileManager *manager = getSaveFileManager();
+	// HACK Get a real name!
+	Common::OutSaveFile *file = manager->openForSaving("Shadowgate.1");
+	_world->saveGameInto(file);
+	delete file;
+}
+
+void MacVentureEngine::reset() {
+	resetInternals();
+	resetGui();
+}
+
+void MacVentureEngine::resetInternals() {
+	_scriptEngine->reset();
+	_currentSelection.clear();
+	_selectedObjs.clear();
+	_objQueue.clear();
+	_textQueue.clear();
+}
+
+void MacVentureEngine::resetGui() {
+	_gui->updateWindowInfo(kMainGameWindow, getParent(1), _world->getChildren(getParent(1), true));
+	// HACK! should update all inventories
+	_gui->updateWindowInfo(kInventoryStart, 1, _world->getChildren(1, true));
+	_gui->updateWindowInfo(kExitsWindow, getParent(1), _world->getChildren(getParent(1), true));
+}
+
 
 void MacVentureEngine::requestQuit() {
 	// TODO: Display save game dialog and such
@@ -389,6 +423,20 @@ void MacVentureEngine::setTextInput(Common::String content) {
 
 Common::String MacVentureEngine::getUserInput() {
 	return _userInput;
+}
+
+
+Common::String MacVentureEngine::getStartGameFileName() {
+	Common::SeekableReadStream *res;
+	res = _resourceManager->getResource(MKTAG('S', 'T', 'R', ' '), kStartGameFilenameID);
+	if (!res)
+		return "";
+
+	byte length = res->readByte();
+	char *fileName = new char[length + 1];
+	res->read(fileName, length);
+	fileName[length] = '\0';
+  return Common::String(fileName, length);
 }
 
 const GlobalSettings& MacVentureEngine::getGlobalSettings() const {

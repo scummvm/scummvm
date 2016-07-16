@@ -24,10 +24,13 @@
 #define MACVENTURE_H
 
 #include "engines/engine.h"
+#include "common/scummsys.h"
+#include "common/system.h"
 #include "common/debug.h"
 #include "common/random.h"
 #include "common/macresman.h"
 #include "common/huffman.h"
+#include "common/savefile.h"
 
 #include "gui/debugger.h"
 
@@ -40,6 +43,8 @@
 struct ADGameDescription;
 
 namespace MacVenture {
+
+class SaveFileManager;
 
 class Console;
 class World;
@@ -158,6 +163,12 @@ public:
 	~MacVentureEngine();
 
 	virtual Common::Error run();
+	virtual Common::Error loadGameState(int slot);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+
+	void reset();
+	void resetInternals();
+	void resetGui();
 
 	void requestQuit();
 	void requestUnpause();
@@ -189,7 +200,9 @@ public:
 	void setTextInput(Common::String content);
 	Common::String getUserInput();
 
+
 	// Data retrieval
+	Common::String getStartGameFileName();
 	bool isPaused();
 	bool needsClickToContinue();
 	Common::String getCommandsPausedString() const;

@@ -247,9 +247,13 @@ public:
 
 	void printText(const Common::String &text);
 
+	//Dialog interactions
 	void getTextFromUser();
 	void setTextInput(Common::String str);
 	void closeDialog();
+
+	void loadGame(int slot);
+	void saveInto(int slot);
 
 	// Ugly switches
 	BorderBounds borderBounds(MVWindowType type);

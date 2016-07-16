@@ -38,7 +38,8 @@ class DialogElement;
 enum DialogAction {
   kDANone,
   kDACloseDialog,
-  kDASubmit
+  kDASubmit,
+  kDASaveAs
 };
 
 enum PrebuiltDialogs {

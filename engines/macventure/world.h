@@ -74,6 +74,8 @@ public:
 	const AttributeGroup *getGroup(uint32 groupID);
 	const Common::String &getText();
 
+	void saveInto(Common::OutSaveFile *file);
+
 private:
 	void loadGroups(MacVentureEngine *engine, Common::SeekableReadStream *res);
 	void loadGlobals(MacVentureEngine *engine, Common::SeekableReadStream *res);
@@ -90,7 +92,6 @@ public:
 	World(MacVentureEngine *engine, Common::MacResManager *resMan);
 	~World();
 
-	
 	void setObjAttr(ObjID objID, uint32 attrID, Attribute value);
 	void setGlobal(uint32 attrID, Attribute value);
 	void updateObj(ObjID objID);
@@ -105,13 +106,15 @@ public:
 
 	ObjID getAncestor(ObjID objID);
 	Common::Array<ObjID> getFamily(ObjID objID, bool recursive);
-	Common::Array<ObjID> getChildren(ObjID objID, bool recursive);	
+	Common::Array<ObjID> getChildren(ObjID objID, bool recursive);
+
+	void loadGameFrom(Common::InSaveFile *file);
+	void saveGameInto(Common::OutSaveFile *file);
 
 private:
 	bool isObjDraggable(ObjID objID);
 	bool intersects(ObjID objID, Common::Rect rect);
 
-	bool loadStartGameFileName();
 	void calculateObjectRelations();
 	void setParent(ObjID child, ObjID newParent);
 
@@ -119,7 +122,7 @@ private:
 	MacVentureEngine *_engine;
 	Common::MacResManager *_resourceManager;
 
-	Common::String _startGameFileName;	
+	Common::String _startGameFileName;
 
 	SaveGame *_saveGame;
 
@@ -132,4 +135,3 @@ private:
 } // End of namespace MacVenture
 
 #endif
-

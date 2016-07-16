@@ -387,11 +387,11 @@ bool ImageAsset::isRectInside(Common::Rect rect) {
 }
 
 uint ImageAsset::getWidth() {
-	return _bitWidth;
+	return MAX(0, (int)_bitWidth);
 }
 
 uint ImageAsset::getHeight() {
-	return _bitHeight;
+	return MAX(0, (int)_bitHeight);
 }
 
 void ImageAsset::blitDirect(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte>& data) {
