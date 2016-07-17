@@ -20,15 +20,15 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub1.h"
+#include "titanic/star_control/star_field.h"
 
 namespace Titanic {
 
-CStarControlSub1::CStarControlSub1() : _val1(0), _val2(0), _val3(0), _val4(1),
+CStarField::CStarField() : _val1(0), _val2(0), _val3(0), _val4(1),
 	_val5(0), _val6(false) {
 }
 
-void CStarControlSub1::load(SimpleFile *file, int param) {
+void CStarField::load(SimpleFile *file, int param) {
 	if (!param) {
 		_sub7.load(file);
 		_sub8.load(file);
@@ -40,7 +40,7 @@ void CStarControlSub1::load(SimpleFile *file, int param) {
 	}
 }
 
-void CStarControlSub1::save(SimpleFile *file, int indent) {
+void CStarField::save(SimpleFile *file, int indent) {
 	_sub7.save(file, indent);
 	_sub8.save(file, indent);
 	file->writeNumberLine(_val1, indent);
@@ -50,7 +50,7 @@ void CStarControlSub1::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_val6, indent);
 }
 
-bool CStarControlSub1::initDocument() {
+bool CStarField::initDocument() {
 	bool valid = setup() && _points1.initialize();
 	if (valid)
 		valid = _sub5.setup();
@@ -60,6 +60,10 @@ bool CStarControlSub1::initDocument() {
 		valid = _points2.initialize();
 
 	return valid;
+}
+
+void CStarField::draw(CVideoSurface *surface, CStarControlSub12 *sub12) {
+	// TODO
 }
 
 } // End of namespace Titanic

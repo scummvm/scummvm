@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB1_H
-#define TITANIC_STAR_CONTROL_SUB1_H
+#ifndef TITANIC_STAR_FIELD_H
+#define TITANIC_STAR_FIELD_H
 
 #include "titanic/star_control/star_control_sub2.h"
 #include "titanic/star_control/star_control_sub5.h"
@@ -32,7 +32,7 @@
 
 namespace Titanic {
 
-class CStarControlSub1 : public CStarControlSub2 {
+class CStarField : public CStarControlSub2 {
 private:
 	CStarControlSub7 _sub7;
 	CStarControlSub8 _sub8;
@@ -47,7 +47,7 @@ private:
 	int _val6;
 	bool _val7;
 public:
-	CStarControlSub1();
+	CStarField();
 
 	/**
 	 * Load the data for the class from file
@@ -61,10 +61,15 @@ public:
 
 	bool initDocument();
 
+	/**
+	 * Renders the contents of the starfield
+	 */
+	void draw(CVideoSurface *surface, CStarControlSub12 *sub12);
+
 	int get6() const { return _val6; }
 	bool get7() const { return _val7; }
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CONTROL_SUB1_H */
+#endif /* TITANIC_STAR_FIELD_H */

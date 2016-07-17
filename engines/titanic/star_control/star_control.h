@@ -24,7 +24,7 @@
 #define TITANIC_STAR_CONTROL_H
 
 #include "titanic/core/game_object.h"
-#include "titanic/star_control/star_control_sub1.h"
+#include "titanic/star_control/star_field.h"
 #include "titanic/star_control/star_view.h"
 
 namespace Titanic {
@@ -37,7 +37,7 @@ class CStarControl : public CGameObject {
 	bool FrameMsg(CFrameMsg *msg);
 private:
 	int _fieldBC;
-	CStarControlSub1 _sub1;
+	CStarField _starField;
 	CStarView _view;
 	Rect _starRect;
 	int _field80B0;

@@ -423,7 +423,6 @@ MODULE_OBJS := \
 	star_control/fmatrix.o \
 	star_control/fpoint.o \
 	star_control/fvector.o \
-	star_control/star_control_sub1.o \
 	star_control/star_control_sub2.o \
 	star_control/star_control_sub4.o \
 	star_control/star_control_sub5.o \
@@ -439,6 +438,7 @@ MODULE_OBJS := \
 	star_control/star_control_sub24.o \
 	star_control/star_control_sub25.o \
 	star_control/star_control_sub26.o \
+	star_control/star_field.o \
 	star_control/star_points1.o \
 	star_control/star_points2.o \
 	star_control/star_view.o \

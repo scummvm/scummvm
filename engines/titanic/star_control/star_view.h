@@ -33,12 +33,12 @@
 namespace Titanic {
 
 class CStarControl;
-class CStarControlSub1;
+class CStarField;
 
 class CStarView {
 private:
 	CStarControl *_owner;
-	CStarControlSub1 *_sub1;
+	CStarField *_starField;
 	CVideoSurface *_videoSurface;
 	CStarControlSub12 _sub12;
 	int _field118;
@@ -49,6 +49,8 @@ private:
 	CGameObject *_homePhotoMask;
 	int _field218;
 	int _field21C;
+private:
+	void fn1();
 public:
 	CStarView();
 
@@ -65,7 +67,7 @@ public:
 	/**
 	 * Sets references used by the view
 	 */
-	void setup(CScreenManager *screenManager, CStarControlSub1 *sub1, CStarControl *starControl);
+	void setup(CScreenManager *screenManager, CStarField *starField, CStarControl *starControl);
 
 	void reset();
 

@@ -23,12 +23,13 @@
 #include "titanic/support/screen_manager.h"
 #include "titanic/star_control/star_view.h"
 #include "titanic/star_control/star_control.h"
+#include "titanic/star_control/star_field.h"
 #include "titanic/core/game_object.h"
 
 namespace Titanic {
 
 CStarView::CStarView() : _sub12(nullptr, nullptr), _sub13(nullptr),
-		_owner(nullptr), _sub1(nullptr), _videoSurface(nullptr), _field118(0), 
+		_owner(nullptr), _starField(nullptr), _videoSurface(nullptr), _field118(0), 
 		_videoSurface2(nullptr), _field210(0), _homePhotoMask(nullptr),
 		_field218(0), _field21C(0) {
 	_sub12.proc3();
@@ -58,8 +59,8 @@ void CStarView::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_field21C, indent);
 }
 
-void CStarView::setup(CScreenManager *screenManager, CStarControlSub1 *sub1, CStarControl *starControl) {
-	_sub1 = sub1;
+void CStarView::setup(CScreenManager *screenManager, CStarField *starField, CStarControl *starControl) {
+	_starField = starField;
 	_owner = starControl;
 }
 
@@ -68,7 +69,7 @@ void CStarView::reset() {
 }
 
 void CStarView::draw(CScreenManager *screenManager) {
-	if (!screenManager || !_videoSurface || !_sub1)
+	if (!screenManager || !_videoSurface || !_starField)
 		return;
 
 	if (_fader.isActive()) {
@@ -88,7 +89,16 @@ void CStarView::draw(CScreenManager *screenManager) {
 			if (_homePhotoMask)
 				_homePhotoMask->draw(screenManager, Point(20, 187));
 		} else {
-			// TODO
+			fn1();
+
+			// Render the display
+			_videoSurface->clear();
+			_videoSurface->lock();
+			_starField->draw(_videoSurface, &_sub12);
+			_videoSurface->unlock();
+
+			// Blit the resulting surface to the screen
+			screenManager->blitFrom(SURFACE_PRIMARY, _videoSurface, &destPos);
 		}
 	}
 }
@@ -112,6 +122,10 @@ bool CStarView::canSetStarDestination() const {
 }
 
 void CStarView::starDestinationSet() {
+	// TODO
+}
+
+void CStarView::fn1() {
 	// TODO
 }
 

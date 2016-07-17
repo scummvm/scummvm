@@ -48,7 +48,7 @@ CStarControl::~CStarControl() {
 
 void CStarControl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	_sub1.save(file, indent);
+	_starField.save(file, indent);
 	_view.save(file, indent);
 	CGameObject::save(file, indent);
 }
@@ -57,8 +57,8 @@ void CStarControl::load(SimpleFile *file) {
 	int val = file->readNumber();
 	
 	if (!val) {
-		_sub1.load(file, 0);
-		if (!_sub1.initDocument())
+		_starField.load(file, 0);
+		if (!_starField.initDocument())
 			error("Couldn't initialise the StarField document");
 
 		_view.load(file, 0);
@@ -66,7 +66,7 @@ void CStarControl::load(SimpleFile *file) {
 		if (!screenManager)
 			error("There's no screen  manager during loading");
 
-		_view.setup(screenManager, &_sub1, this);
+		_view.setup(screenManager, &_starField, this);
 		_view.reset();
 
 		_fieldBC = 1;
@@ -131,7 +131,7 @@ void CStarControl::fn1(int action) {
 }
 
 bool CStarControl::fn4() {
-	return _sub1.get7();
+	return _starField.get7();
 }
 
 bool CStarControl::canSetStarDestination() const {
