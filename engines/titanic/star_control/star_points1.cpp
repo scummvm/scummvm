@@ -32,7 +32,7 @@ const double FACTOR = 3.1415927 * 0.0055555557;
 CStarPoints1::CStarPoints1() {
 }
 
-void CStarPoints1::initialize() {
+bool CStarPoints1::initialize() {
 	// Get a reference to the starfield points resource
 	Common::SeekableReadStream *stream = g_vm->_filesManager->getResource("STARFIELD/POINTS");
 	assert(stream && stream->size() == (12 * ARRAY_COUNT));
@@ -53,9 +53,16 @@ void CStarPoints1::initialize() {
 		entry._y = sin(v2) * 3000000.0 * cos(v1);
 		entry._z = sin(v1) * 3000000.0;
 	}
+
+	return true;
 }
 
 void CStarPoints1::draw(CSurfaceArea *surface, CStarControlSub12 *img) {
+	if (_data.empty())
+		return;
+
+
+
 	// TODO
 }
 

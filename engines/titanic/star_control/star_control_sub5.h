@@ -24,6 +24,7 @@
 #define TITANIC_STAR_CONTROL_SUB5_H
 
 #include "titanic/star_control/star_control_sub6.h"
+#include "titanic/star_control/error_code.h"
 
 namespace Titanic {
 
@@ -43,6 +44,10 @@ private:
 	int _field78B0;
 public:
 	CStarControlSub5();
+
+	virtual bool setup();
+	virtual void proc2();
+	virtual void proc3(CErrorCode *errorCode);
 };
 
 } // End of namespace Titanic

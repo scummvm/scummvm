@@ -39,12 +39,13 @@ private:
 	CStarPoints1 _points1;
 	CStarPoints2 _points2;
 	CStarControlSub5 _sub5;
-	int _field7DA8;
-	int _field7DAC;
-	int _field7DB0;
-	int _field7DB4;
-	int _field7DB8;
-	int _field7DBC;
+	int _val1;
+	int _val2;
+	int _val3;
+	int _val4;
+	int _val5;
+	int _val6;
+	bool _val7;
 public:
 	CStarControlSub1();
 
@@ -53,7 +54,15 @@ public:
 	 */
 	void load(SimpleFile *file, int param);
 
+	/**
+	 * Save the data for the class to file
+	 */
+	void save(SimpleFile *file, int indent);
+
 	bool initDocument();
+
+	int get6() const { return _val6; }
+	bool get7() const { return _val7; }
 };
 
 } // End of namespace Titanic

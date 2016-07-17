@@ -40,7 +40,7 @@ public:
 	/**
 	 * Initialize the array
 	 */
-	void initialize();
+	bool initialize();
 
 	/**
 	 * Draw the starfield points

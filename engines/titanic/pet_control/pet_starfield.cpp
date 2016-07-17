@@ -107,10 +107,10 @@ bool CPetStarfield::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 	if (_petControl) {
 		CStarControl *starControl = _petControl->getStarControl();
 		
-		if (starControl) {
+		if (starControl && starControl->canSetStarDestination()) {
 			CPETSetStarDestinationMsg starfieldMsg;
 			starfieldMsg.execute(_petControl->_remoteTarget);
-			starControl->fn3();
+			starControl->starDestinationSet();
 		}
 	}
 

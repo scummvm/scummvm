@@ -45,7 +45,7 @@ public:
 	/**
 	 * Initializes the data
 	 */
-	void initialize();
+	bool initialize();
 };
 
 } // End of namespace Titanic

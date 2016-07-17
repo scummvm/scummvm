@@ -28,7 +28,7 @@ namespace Titanic {
 #define ARRAY_COUNT 80
 const double FACTOR = 3.1415927 * 0.0055555557;
 
-void CStarPoints2::initialize() {
+bool CStarPoints2::initialize() {
 	// Get a reference to the starfield points resource
 	Common::SeekableReadStream *stream = g_vm->_filesManager->getResource("STARFIELD/POINTS2");
 
@@ -52,6 +52,8 @@ void CStarPoints2::initialize() {
 			entry._v3 = sin(v2) * 3000000.0;
 		}
 	}
+
+	return true;
 }
 
 } // End of namespace Titanic

@@ -66,9 +66,18 @@ public:
 	 */
 	virtual void draw(CScreenManager *screenManager);
 
-	void fn1(int v);
-	void fn3();
-	void fn4();
+	void fn1(int action);
+	bool fn4();
+
+	/**
+	 * Returns true if a star destination can be set
+	 */
+	bool canSetStarDestination() const;
+
+	/**
+	 * Called when a star destination is set
+	 */
+	void starDestinationSet();
 };
 
 } // End of namespace Titanic

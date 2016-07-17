@@ -88,6 +88,16 @@ public:
 	 * Handles keyboard messages
 	 */
 	CErrorCode KeyCharMsg(int key);
+
+	/**
+	 * Returns true if a star destination can be set
+	 */
+	bool canSetStarDestination() const;
+
+	/**
+	 * Called when a star destination is set
+	 */
+	void starDestinationSet();
 };
 
 } // End of namespace Titanic

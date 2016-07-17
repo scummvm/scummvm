@@ -24,28 +24,42 @@
 
 namespace Titanic {
 
-CStarControlSub1::CStarControlSub1() :
-	_field7DA8(0), _field7DAC(0), _field7DB0(0),
-	_field7DB4(1), _field7DB8(0), _field7DBC(0) {
+CStarControlSub1::CStarControlSub1() : _val1(0), _val2(0), _val3(0), _val4(1),
+	_val5(0), _val6(false) {
 }
 
 void CStarControlSub1::load(SimpleFile *file, int param) {
 	if (!param) {
 		_sub7.load(file);
 		_sub8.load(file);
-		_field7DA8 = file->readNumber();
-		_field7DAC = file->readNumber();
-		_field7DB0 = file->readNumber();
-		_field7DB4 = file->readNumber();
-		_field7DBC = file->readNumber();
+		_val1 = file->readNumber();
+		_val2 = file->readNumber();
+		_val3 = file->readNumber();
+		_val4 = file->readNumber();
+		_val6 = file->readNumber();
 	}
 }
 
+void CStarControlSub1::save(SimpleFile *file, int indent) {
+	_sub7.save(file, indent);
+	_sub8.save(file, indent);
+	file->writeNumberLine(_val1, indent);
+	file->writeNumberLine(_val2, indent);
+	file->writeNumberLine(_val3, indent);
+	file->writeNumberLine(_val4, indent);
+	file->writeNumberLine(_val6, indent);
+}
+
 bool CStarControlSub1::initDocument() {
-	warning("CStarControlSub1::initDocument");
-	_points1.initialize();
-	_points2.initialize();
-	return true;
+	bool valid = setup() && _points1.initialize();
+	if (valid)
+		valid = _sub5.setup();
+	if (valid)
+		valid = _points1.initialize();
+	if (valid)
+		valid = _points2.initialize();
+
+	return valid;
 }
 
 } // End of namespace Titanic

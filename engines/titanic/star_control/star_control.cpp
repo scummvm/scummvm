@@ -126,17 +126,20 @@ void CStarControl::newFrame() {
 	// TODO
 }
 
-
-void CStarControl::fn3() {
-	warning("CStarControl::fn3");
+void CStarControl::fn1(int action) {
+	// TODO
 }
 
-void CStarControl::fn1(int v) {
-	warning("CStarControl::fn1");
+bool CStarControl::fn4() {
+	return _sub1.get7();
 }
 
-void CStarControl::fn4() {
-	warning("CStarControl::fn4");
+bool CStarControl::canSetStarDestination() const {
+	return _view.canSetStarDestination();
+}
+
+void CStarControl::starDestinationSet() {
+	_view.starDestinationSet();
 }
 
 } // End of namespace Titanic

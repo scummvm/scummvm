@@ -45,4 +45,9 @@ bool CStarControlSub2::proc7(int v1, int v2) {
 	return true;
 }
 
+bool CStarControlSub2::setup() {
+	// TODO
+	return true;
+}
+
 } // End of namespace Titanic

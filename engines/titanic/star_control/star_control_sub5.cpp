@@ -28,4 +28,17 @@ CStarControlSub5::CStarControlSub5() :
 	_field4(1), _field78AC(0), _field78B0(0) {
 }
 
+bool CStarControlSub5::setup() {
+	// TODO
+	return true;
+}
+
+void CStarControlSub5::proc2() {
+	// TODO
+}
+
+void CStarControlSub5::proc3(CErrorCode *errorCode) {
+	// TODO
+}
+
 } // End of namespace Titanic

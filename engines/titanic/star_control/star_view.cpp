@@ -106,4 +106,13 @@ CErrorCode CStarView::KeyCharMsg(int key) {
 	return CErrorCode();
 }
 
+bool CStarView::canSetStarDestination() const {
+	// TODO
+	return false;
+}
+
+void CStarView::starDestinationSet() {
+	// TODO
+}
+
 } // End of namespace Titanic
