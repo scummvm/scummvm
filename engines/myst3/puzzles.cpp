@@ -683,18 +683,19 @@ void Puzzles::pinball(int16 var) {
 
 	while (1) {
 		_vm->drawFrame();
+		// The original engine waited for 1 tick to be complete before doing a new loop iteration.
+		// In ResidualVM, the tick counter does not run in a separate thread, so just draw two frames
+		// to achieve the same effect.
+		_vm->drawFrame();
 		_vm->processInput(true);
-
-		// while (limit > renderCurrFrame);
-		// limit = _vm->_state->getTickCount() + 1;
 
 		bool shouldRotate;
 		if (leftToRightJumpCountDown >= 3 || rightToLeftJumpCountdown >= 3) {
 			shouldRotate = false;
-			// sound fade stop 1025, 7
+			_vm->_sound->stopEffect(1025, 7);
 		} else {
 			shouldRotate = true;
-			_vm->_sound->playEffect(1025, 50, ballOnLeftSide != 0 ? 150 : 210, 95);
+			_vm->_sound->playEffectLooping(1025, 50, ballOnLeftSide != 0 ? 150 : 210, 95);
 		}
 
 		if (ballOnLeftSide && shouldRotate) {
@@ -777,7 +778,7 @@ void Puzzles::pinball(int16 var) {
 		}
 
 		if (ballShouldJump) {
-			// sound fade stop 1025, 7
+			_vm->_sound->stopEffect(1025, 7);
 			_drawXTicks(30);
 
 			int32 jumpPositionLeft = 50 * ((leftSideFrame + 25) / 50);
@@ -848,7 +849,7 @@ void Puzzles::pinball(int16 var) {
 			} else if (jumpType == 1 || jumpType == 4) {
 				_vm->_state->setVar(26, jumpType);
 				_vm->_state->setWaterEffectRunning(true);
-				// sound fade stop 1025, 7
+				_vm->_sound->stopEffect(1025, 7);
 				return;
 			}
 
@@ -873,8 +874,8 @@ void Puzzles::pinball(int16 var) {
 			if (rightSideFrame == 500)
 				rightSideFrame = 200;
 
-			// sound fade stop 1025, 7
-			// Sound same as opcode 213 : 1005, 65, 0, 0, 5, 60, 20
+			_vm->_sound->stopEffect(1025, 7);
+			_vm->_sound->playEffectFadeInOut(1005, 65, 0, 0, 5, 60, 20);
 			_drawXTicks(55);
 			_vm->_sound->playEffect(1010, 50);
 
@@ -898,7 +899,7 @@ void Puzzles::pinball(int16 var) {
 			break;
 	}
 
-	if (ballCrashed) {
+	if (ballCrashed || ballShouldExpire) {
 		if (leftSideFrame < 500)
 			leftSideFrame += 300;
 		if (rightSideFrame < 500)
@@ -964,18 +965,17 @@ void Puzzles::pinball(int16 var) {
 			}
 
 			_vm->drawFrame();
+			_vm->drawFrame();
 			_vm->processInput(true);
-			// while (limit > renderCurrFrame);
-			// limit = _vm->_state->getTickCount() + 1;
 
 			if (!moviePlaying) {
 				_vm->_state->setVar(26, jumpType);
 				_vm->_state->setVar(93, 1);
-				// sound fade stop 1025, 7
+				_vm->_sound->stopEffect(1025, 7);
 				return;
 			}
 
-			// play sound same as opcode 212 : 1025, 50
+			_vm->_sound->playEffectLooping(1025, 50);
 		}
 	}
 }
