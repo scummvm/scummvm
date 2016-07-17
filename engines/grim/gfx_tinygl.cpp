@@ -49,7 +49,7 @@ GfxBase *CreateGfxTinyGL() {
 
 GfxTinyGL::GfxTinyGL() :
 		_zb(nullptr), _alpha(1.f),
-		_bufferId(0), _currentActor(nullptr) {
+		_bufferId(0), _currentActor(nullptr), _smushImage(nullptr) {
 	_storedDisplay = nullptr;
 	// TGL_LEQUAL as tglDepthFunc ensures that subsequent drawing attempts for
 	// the same triangles are not ignored by the depth test.
@@ -1264,7 +1264,8 @@ void GfxTinyGL::destroyTexture(Texture *texture) {
 }
 
 void GfxTinyGL::prepareMovieFrame(Graphics::Surface *frame) {
-	_smushImage = Graphics::tglGenBlitImage();
+	if (_smushImage == nullptr)
+		_smushImage = Graphics::tglGenBlitImage();
 	Graphics::tglUploadBlitImage(_smushImage, *frame, 0, false);
 }
 
