@@ -25,6 +25,7 @@
 
 #include "titanic/support/simple_file.h"
 #include "titanic/star_control/star_control_sub13.h"
+#include "titanic/star_control/star_control_sub20.h"
 
 namespace Titanic {
 
@@ -38,14 +39,22 @@ class CStarControlSub12 {
 private:
 	int _field4;
 	ArrayEntry _array[3];
-	int _field2C;
+	CStarControlSub20 *_handlerP;
 	CStarControlSub13 _sub13;
 	int _field108;
 private:
-	void setupHandler(void *v);
+	/**
+	 * Set up a handler
+	 */
+	bool setupHandler(void *src);
+
+	/**
+	 * Deletes any previous handler
+	 */
+	void deleteHandler();
 public:
 	CStarControlSub12(void *val1, void *val2);
-	virtual ~CStarControlSub12() {}
+	virtual ~CStarControlSub12();
 
 	virtual void proc3() {}
 

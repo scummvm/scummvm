@@ -24,10 +24,15 @@
 #define TITANIC_STAR_CONTROL_SUB21_H
 
 #include "titanic/star_control/star_control_sub20.h"
+#include "titanic/star_control/star_control_sub24.h"
 
 namespace Titanic {
 
 class CStarControlSub21 : public CStarControlSub20 {
+private:
+	CStarControlSub24 _sub24;
+public:
+	CStarControlSub21(void *src);
 };
 
 } // End of namespace Titanic

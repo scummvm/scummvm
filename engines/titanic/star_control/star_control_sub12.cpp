@@ -21,12 +21,19 @@
  */
 
 #include "titanic/star_control/star_control_sub12.h"
+#include "titanic/star_control/star_control_sub21.h"
+#include "titanic/star_control/star_control_sub22.h"
 
 namespace Titanic {
 
 CStarControlSub12::CStarControlSub12(void *val1, void *val2) : 
-		_field4(-1), _field2C(0), _field108(0),
+		_field4(-1), _handlerP(nullptr), _field108(0),
 		_sub13(val1) {
+	setupHandler(val2);
+}
+
+CStarControlSub12::~CStarControlSub12() {
+	deleteHandler();
 }
 
 void CStarControlSub12::load(SimpleFile *file, int param) {
@@ -37,8 +44,38 @@ void CStarControlSub12::save(SimpleFile *file, int indent) {
 	_sub13.save(file, indent);
 }
 
-void CStarControlSub12::setupHandler(void *v) {
-	// TODO
+bool CStarControlSub12::setupHandler(void *src) {
+	CStarControlSub20 *handler = nullptr;
+
+	switch (_field4) {
+	case -1:
+		handler = new CStarControlSub21(src);
+		break;
+
+	case 0:
+	case 1:
+	case 2:
+		handler = new CStarControlSub22(src);
+		break;
+
+	default:
+		break;
+	}
+
+	if (handler) {
+		assert(!_handlerP);
+		_handlerP = handler;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void CStarControlSub12::deleteHandler() {
+	if (_handlerP) {
+		delete _handlerP;
+		_handlerP = nullptr;
+	}
 }
 
 } // End of namespace Titanic

@@ -20,13 +20,10 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub21.h"
+#include "titanic/star_control/star_control_sub24.h"
 #include "common/textconsole.h"
 
 namespace Titanic {
 
-CStarControlSub21::CStarControlSub21(void *src) :
-		CStarControlSub20(src), _sub24() {
-}
 
 } // End of namespace Titanic

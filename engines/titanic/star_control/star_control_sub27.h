@@ -20,13 +20,16 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub21.h"
-#include "common/textconsole.h"
+#ifndef TITANIC_STAR_CONTROL_SUB27_H
+#define TITANIC_STAR_CONTROL_SUB27_H
+
+#include "titanic/star_control/star_control_sub23.h"
 
 namespace Titanic {
 
-CStarControlSub21::CStarControlSub21(void *src) :
-		CStarControlSub20(src), _sub24() {
-}
+class CStarControlSub27 : public CStarControlSub23 {
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_STAR_CONTROL_SUB27_H */

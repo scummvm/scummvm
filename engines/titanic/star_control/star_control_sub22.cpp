@@ -25,4 +25,8 @@
 
 namespace Titanic {
 
+CStarControlSub22::CStarControlSub22(void *src) :
+		CStarControlSub20(src), _sub27() {
+}
+
 } // End of namespace Titanic

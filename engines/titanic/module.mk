@@ -438,6 +438,7 @@ MODULE_OBJS := \
 	star_control/star_control_sub24.o \
 	star_control/star_control_sub25.o \
 	star_control/star_control_sub26.o \
+	star_control/star_control_sub27.o \
 	star_control/star_field.o \
 	star_control/star_points1.o \
 	star_control/star_points2.o \

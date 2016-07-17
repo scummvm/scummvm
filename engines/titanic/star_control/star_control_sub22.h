@@ -23,9 +23,16 @@
 #ifndef TITANIC_STAR_CONTROL_SUB22_H
 #define TITANIC_STAR_CONTROL_SUB22_H
 
+#include "titanic/star_control/star_control_sub20.h"
+#include "titanic/star_control/star_control_sub27.h"
+
 namespace Titanic {
 
-class CStarControlSub22 {
+class CStarControlSub22 : public CStarControlSub20 {
+private:
+	CStarControlSub27 _sub27;
+public:
+	CStarControlSub22(void *src);
 };
 
 } // End of namespace Titanic
