@@ -27,19 +27,19 @@ namespace Titanic {
 
 class CStarControlSub26 {
 	struct Sub {
-		int _field0;
-		int _field4;
-		int _field8;
-		int _field10;
-		int _field14;
+		double _v1;
+		double _v2;
+		double _v3;
 
-		Sub() : _field0(0), _field4(0), _field8(0), _field10(0), _field14(0) {}
+		Sub() : _v1(0.0), _v2(0.0), _v3(0.0) {}
 	};
 public:
-	int _field0;
-	double _field4;
+	double _field0;
+	Sub _sub;
 public:
-	CStarControlSub26() : _field0(0), _field4(1.875) {}
+	CStarControlSub26() : _field0(1.0) {}
+
+	double fn1() const;
 };
 
 } // End of namespace Titanic

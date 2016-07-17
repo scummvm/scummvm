@@ -40,6 +40,7 @@ void CStarControlSub6::init() {
 
 void CStarControlSub6::deinit() {
 	delete _static;
+	_static = nullptr;
 }
 
 void CStarControlSub6::clear() {

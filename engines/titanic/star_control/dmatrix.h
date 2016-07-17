@@ -24,8 +24,12 @@
 #define TITANIC_DMATRIX_H
 
 #include "titanic/star_control/dvector.h"
+#include "titanic/star_control/fvector.h"
 
 namespace Titanic {
+
+class FMatrix;
+class CStarControlSub26;
 
 /**
  * Double based matrix class.
@@ -33,12 +37,27 @@ namespace Titanic {
  */
 class DMatrix {
 private:
+	static DMatrix *_static;
+public:
 	DVector _row1;
 	DVector _row2;
 	DVector _row3;
-	DVector _row4;
+	FVector _frow1;
+	FVector _frow2;
+public:
+	static void init();
+	static void deinit();
 public:
 	DMatrix();
+	DMatrix(int mode, const FMatrix *src);
+	DMatrix(int mode, double val);
+
+	/**
+	 * Sets up data for the matrix
+	 */
+	void set(int mode, double amount);
+
+	void fn3(CStarControlSub26 *sub26);
 };
 
 } // End of namespace Titanic

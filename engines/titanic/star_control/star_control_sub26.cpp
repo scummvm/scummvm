@@ -25,4 +25,10 @@
 
 namespace Titanic {
 
+double CStarControlSub26::fn1() const {
+	return _sub._v1 * _sub._v1 + _sub._v2 * _sub._v2 +
+		_sub._v3 * _sub._v3 + _field0 * _field0;
+}
+
+
 } // End of namespace Titanic
