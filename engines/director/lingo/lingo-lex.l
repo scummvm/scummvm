@@ -154,7 +154,9 @@ whitespace [\t ]
 	}
 (?i:then)			{ count(); return tTHEN; }
 (?i:to)				{ count(); return tTO; }
+(?i:sprite)			{ count(); return tSPRITE; }
 (?i:with)			{ count(); return tWITH; }
+(?i:within)			{ count(); return tWITHIN; }
 (?i:when)			{ count(); return tWHEN; }
 (?i:while)			{ count(); return tWHILE; }
 

@@ -204,6 +204,7 @@ public:
 	static void c_starts();
 
 	static void c_intersects();
+	static void c_within();
 
 	static void c_constpush();
 	static void c_fconstpush();
