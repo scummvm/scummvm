@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-CStarField::CStarField() : _val1(0), _val2(0), _val3(0), _val4(1),
+CStarField::CStarField() : _val1(0), _val2(0), _val3(0), _val4(true),
 	_val5(0), _val6(false) {
 }
 
@@ -64,6 +64,64 @@ bool CStarField::initDocument() {
 
 void CStarField::draw(CVideoSurface *surface, CStarControlSub12 *sub12) {
 	// TODO
+}
+
+int CStarField::get1() const { 
+	return _val1;
+}
+
+void CStarField::set1(int val) {
+	_val1 = val;
+}
+
+int CStarField::get2() const {
+	return _val2;
+}
+
+void CStarField::set2(int val) {
+	_val2 = val;
+}
+
+int CStarField::get54() const {
+	return _sub5.get4();
+}
+
+void CStarField::set54(int val) {
+	_sub5.set4(val);
+}
+
+int CStarField::get3() const {
+	return _val3;
+}
+
+void CStarField::set3(int val) {
+	_val3 = val;
+}
+
+void CStarField::toggle4() {
+	_val4 = !_val4; 
+}
+
+bool CStarField::set4(bool val) {
+	bool oldVal = _val4;
+	_val4 = val;
+	return val;
+}
+
+int CStarField::get88() const {
+	return _sub8._field8;
+}
+
+int CStarField::get5() const {
+	return _val5;
+}
+
+void CStarField::update6() {
+	_val6 = _sub8._field8 == 2;
+}
+
+int CStarField::get6() const {
+	return _val6;
 }
 
 } // End of namespace Titanic

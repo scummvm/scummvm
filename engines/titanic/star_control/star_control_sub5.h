@@ -48,6 +48,9 @@ public:
 	virtual bool setup();
 	virtual void proc2();
 	virtual void proc3(CErrorCode *errorCode);
+
+	int get4() const { return _field4; }
+	void set4(int val) { _field4 = val; }
 };
 
 } // End of namespace Titanic

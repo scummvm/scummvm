@@ -37,9 +37,10 @@ class CStarControlSub8 {
 private:
 	int _field0;
 	int _field4;
-	int _field8;
 	int _fieldC;
 	StructEntry _array[3];
+public:
+	int _field8;
 public:
 	CStarControlSub8();
 

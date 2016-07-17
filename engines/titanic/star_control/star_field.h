@@ -42,10 +42,9 @@ private:
 	int _val1;
 	int _val2;
 	int _val3;
-	int _val4;
+	bool _val4;
 	int _val5;
-	int _val6;
-	bool _val7;
+	bool _val6;
 public:
 	CStarField();
 
@@ -66,8 +65,20 @@ public:
 	 */
 	void draw(CVideoSurface *surface, CStarControlSub12 *sub12);
 
-	int get6() const { return _val6; }
-	bool get7() const { return _val7; }
+	int get1() const;
+	void set1(int val);
+	int get2() const;
+	void set2(int val);
+	int get54() const;
+	void set54(int val);
+	int get3() const;
+	void set3(int val);
+	void toggle4();	
+	bool set4(bool val);
+	int get88() const;
+	int get5() const;
+	void update6();
+	int get6() const;	
 };
 
 } // End of namespace Titanic

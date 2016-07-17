@@ -131,7 +131,7 @@ void CStarControl::fn1(int action) {
 }
 
 bool CStarControl::fn4() {
-	return _starField.get7();
+	return _starField.get6();
 }
 
 bool CStarControl::canSetStarDestination() const {
