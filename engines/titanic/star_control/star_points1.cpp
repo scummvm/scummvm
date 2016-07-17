@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/star_control/star_array.h"
+#include "titanic/star_control/star_points1.h"
 #include "titanic/star_control/star_control_sub12.h"
 #include "titanic/titanic.h"
 
@@ -29,17 +29,17 @@ namespace Titanic {
 #define ARRAY_COUNT 876
 const double FACTOR = 3.1415927 * 0.0055555557;
 
-CStarArray::CStarArray() {
+CStarPoints1::CStarPoints1() {
 }
 
-void CStarArray::initialize() {
+void CStarPoints1::initialize() {
 	// Get a reference to the starfield points resource
 	Common::SeekableReadStream *stream = g_vm->_filesManager->getResource("STARFIELD/POINTS");
 	assert(stream && stream->size() == (12 * ARRAY_COUNT));
 
 	_data.resize(ARRAY_COUNT);
 	for (int idx = 0; idx < ARRAY_COUNT; ++idx) {
-		CStarArrayEntry &entry = _data[idx];
+		FVector &entry = _data[idx];
 
 		// Get the next set of values
 		double v1 = stream->readUint32LE();
@@ -49,13 +49,13 @@ void CStarArray::initialize() {
 		v1 *= 0.0099999998 * FACTOR;
 		v2 *= 0.015 * FACTOR;
 
-		entry._v1 = cos(v2) * 3000000.0 * cos(v1);
-		entry._v2 = sin(v2) * 3000000.0 * cos(v1);
-		entry._v3 = sin(v1) * 3000000.0;
+		entry._x = cos(v2) * 3000000.0 * cos(v1);
+		entry._y = sin(v2) * 3000000.0 * cos(v1);
+		entry._z = sin(v1) * 3000000.0;
 	}
 }
 
-void CStarArray::draw(CSurfaceArea *surface, CStarControlSub12 *img) {
+void CStarPoints1::draw(CSurfaceArea *surface, CStarControlSub12 *img) {
 	// TODO
 }
 

@@ -23,12 +23,12 @@
 #ifndef TITANIC_STAR_CONTROL_SUB1_H
 #define TITANIC_STAR_CONTROL_SUB1_H
 
-#include "titanic/star_control/star_array.h"
 #include "titanic/star_control/star_control_sub2.h"
 #include "titanic/star_control/star_control_sub5.h"
 #include "titanic/star_control/star_control_sub7.h"
 #include "titanic/star_control/star_control_sub8.h"
-#include "titanic/star_control/star_control_sub9.h"
+#include "titanic/star_control/star_points1.h"
+#include "titanic/star_control/star_points2.h"
 
 namespace Titanic {
 
@@ -36,8 +36,8 @@ class CStarControlSub1 : public CStarControlSub2 {
 private:
 	CStarControlSub7 _sub7;
 	CStarControlSub8 _sub8;
-	CStarControlSub9 _sub9;
-	CStarArray _starArray;
+	CStarPoints1 _points1;
+	CStarPoints2 _points2;
 	CStarControlSub5 _sub5;
 	int _field7DA8;
 	int _field7DAC;

@@ -20,26 +20,22 @@
  *
  */
 
-#ifndef TITANIC_STAR_ARRAY_H
-#define TITANIC_STAR_ARRAY_H
+#ifndef TITANIC_STAR_POINTS1_H
+#define TITANIC_STAR_POINTS1_H
 
 #include "common/array.h"
 #include "titanic/star_control/surface_area.h"
+#include "titanic/star_control/fvector.h"
 
 namespace Titanic {
 
 class CStarControlSub12;
 
-class CStarArray {
-	struct CStarArrayEntry {
-		double _v1;
-		double _v2;
-		double _v3;
-	};
+class CStarPoints1 {
 private:
-	Common::Array<CStarArrayEntry> _data;
+	Common::Array<FVector> _data;
 public:
-	CStarArray();
+	CStarPoints1();
 
 	/**
 	 * Initialize the array
@@ -54,4 +50,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_ARRAY_H */
+#endif /* TITANIC_STAR_POINTS1_H */

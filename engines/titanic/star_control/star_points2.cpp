@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub9.h"
+#include "titanic/star_control/star_points2.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -28,7 +28,7 @@ namespace Titanic {
 #define ARRAY_COUNT 80
 const double FACTOR = 3.1415927 * 0.0055555557;
 
-void CStarControlSub9::initialize() {
+void CStarPoints2::initialize() {
 	// Get a reference to the starfield points resource
 	Common::SeekableReadStream *stream = g_vm->_filesManager->getResource("STARFIELD/POINTS2");
 

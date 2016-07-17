@@ -20,14 +20,14 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB9_H
-#define TITANIC_STAR_CONTROL_SUB9_H
+#ifndef TITANIC_STAR_POINTS2_H
+#define TITANIC_STAR_POINTS2_H
 
 #include "common/array.h"
 
 namespace Titanic {
 
-class CStarControlSub9 {
+class CStarPoints2 {
 	struct DataEntry {
 		int _v1;
 		int _v2;
@@ -50,4 +50,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CONTROL_SUB9_H */
+#endif /* TITANIC_STAR_POINTS2_H */
