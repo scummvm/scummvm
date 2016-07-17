@@ -37,4 +37,8 @@ void CStarControlSub12::save(SimpleFile *file, int indent) {
 	_sub13.save(file, indent);
 }
 
+void CStarControlSub12::setupHandler(void *v) {
+	// TODO
+}
+
 } // End of namespace Titanic

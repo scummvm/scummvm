@@ -48,8 +48,8 @@ void CBaseStarEntry::load(Common::SeekableReadStream &s) {
 CBaseStar::CBaseStar() : _minVal(0.0), _maxVal(1.0), _range(0.0) {
 }
 
-void CBaseStar::proc2(int v1, int v2, int v3) {
-	error("TODO");
+void CBaseStar::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
+	// TODO
 }
 
 void CBaseStar::clear() {

@@ -94,7 +94,7 @@ void CStarView::draw(CScreenManager *screenManager) {
 			// Render the display
 			_videoSurface->clear();
 			_videoSurface->lock();
-			_starField->draw(_videoSurface, &_sub12);
+			_starField->render(_videoSurface, &_sub12);
 			_videoSurface->unlock();
 
 			// Blit the resulting surface to the screen

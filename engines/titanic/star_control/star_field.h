@@ -63,7 +63,7 @@ public:
 	/**
 	 * Renders the contents of the starfield
 	 */
-	void draw(CVideoSurface *surface, CStarControlSub12 *sub12);
+	void render(CVideoSurface *surface, CStarControlSub12 *sub12);
 
 	int get1() const;
 	void set1(int val);

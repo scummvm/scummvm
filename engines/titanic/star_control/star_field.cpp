@@ -21,6 +21,7 @@
  */
 
 #include "titanic/star_control/star_field.h"
+#include "titanic/star_control/surface_area.h"
 
 namespace Titanic {
 
@@ -62,7 +63,11 @@ bool CStarField::initDocument() {
 	return valid;
 }
 
-void CStarField::draw(CVideoSurface *surface, CStarControlSub12 *sub12) {
+void CStarField::render(CVideoSurface *surface, CStarControlSub12 *sub12) {
+	CSurfaceArea surfaceArea(surface);
+	draw(&surfaceArea, sub12, &_sub5);
+
+
 	// TODO
 }
 

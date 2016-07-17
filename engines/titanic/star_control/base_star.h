@@ -25,8 +25,12 @@
 
 #include "titanic/support/simple_file.h"
 #include "titanic/star_control/star_control_sub4.h"
+#include "titanic/star_control/star_control_sub5.h"
+#include "titanic/star_control/surface_area.h"
 
 namespace Titanic {
+
+class CStarControlSub12;
 
 struct CBaseStarEntry {
 	byte _field0;
@@ -72,7 +76,11 @@ public:
 	CBaseStar();
 	virtual ~CBaseStar() {}
 
-	virtual void proc2(int v1, int v2, int v3);
+	/**
+	 * Draw the item
+	 */
+	virtual void draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5);
+
 	virtual bool loadYale(int v1) { return true; }
 	virtual bool proc4(int v1, int v2, int v3, int v4, int v5) { return false; }
 	virtual bool proc5(int v1) { return false; }
