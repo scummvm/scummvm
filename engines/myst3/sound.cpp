@@ -56,8 +56,12 @@ void Sound::playEffect(uint32 id, uint32 volume, uint16 heading, uint16 attenuat
 void Sound::playEffectLooping(uint32 id, uint32 volume, uint16 heading, uint16 attenuation) {
 	id = _vm->_state->valueOrVarValue(id);
 
-	SoundChannel *channel = getChannelForSound(id, kEffect);
-	channel->play(id, volume, heading, attenuation, true, kEffect);
+	bool alreadyPlaying;
+	SoundChannel *channel = getChannelForSound(id, kEffect, &alreadyPlaying);
+
+	if (!alreadyPlaying) {
+		channel->play(id, volume, heading, attenuation, true, kEffect);
+	}
 }
 
 void Sound::playEffectFadeInOut(uint32 id, uint32 volume, uint16 heading, uint16 attenuation,
