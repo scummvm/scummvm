@@ -70,14 +70,14 @@ Symbol *Lingo::lookupVar(const char *name, bool create, bool putInGlobalList) {
 	// Looking for the cast member constants
 	if (_vm->getVersion() < 4) { // TODO: There could be a flag 'Allow Outdated Lingo' in Movie Info in D4
 		if (strlen(name) == 3) {
-			if (name[0] >= 'A' && name[0] <= 'H' &&
+			if (tolower(name[0]) >= 'a' && tolower(name[0]) <= 'h' &&
 				name[1] >= '1' && name[1] <= '8' &&
 				name[2] >= '1' && name[2] <= '8') {
 
 				if (!create)
 					error("Cast reference used in wrong context: %s", name);
 
-				int val = (name[0] - 'A') * 64 + (name[1] - '1') * 8 + (name[2] - '1') + 1;
+				int val = (tolower(name[0]) - 'a') * 64 + (name[1] - '1') * 8 + (name[2] - '1') + 1;
 				sym = new Symbol;
 
 				sym->type = CASTREF;
