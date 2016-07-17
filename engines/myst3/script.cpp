@@ -2580,7 +2580,7 @@ void Script::soundFadeOutEffect(Context &c, const Opcode &cmd) {
 	int32 id = _vm->_state->valueOrVarValue(cmd.args[0]);
 	int32 fadeDuration = _vm->_state->valueOrVarValue(cmd.args[1]);
 
-	_vm->_sound->playEffect(id, fadeDuration);
+	_vm->_sound->stopEffect(id, fadeDuration);
 }
 
 void Script::soundPlayLooping(Context &c, const Opcode &cmd) {
