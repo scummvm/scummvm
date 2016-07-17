@@ -695,13 +695,13 @@ void PagingMenu::draw() {
 	}
 }
 
-void PagingMenu::handleInput(const Common::KeyState &e) {
+bool PagingMenu::handleInput(const Common::KeyState &e) {
 	uint16 node = _vm->_state->getLocationNode();
 	uint16 room = _vm->_state->getLocationRoom();
 	uint16 item = _vm->_state->getMenuSaveLoadSelectedItem();
 
 	if (room != 901 || node != 300 || item != 7)
-		return;
+		return false;
 
 	Common::String display = prepareSaveNameForDisplay(_saveName);
 
@@ -709,11 +709,11 @@ void PagingMenu::handleInput(const Common::KeyState &e) {
 			|| e.keycode == Common::KEYCODE_DELETE) {
 		display.deleteLastChar();
 		_saveName = display;
-		return;
+		return true;
 	} else if (e.keycode == Common::KEYCODE_RETURN
 			|| e.keycode == Common::KEYCODE_KP_ENTER) {
 		saveMenuSave();
-		return;
+		return true;
 	}
 
 	if (((e.ascii >= 'a' && e.ascii <= 'z')
@@ -724,7 +724,11 @@ void PagingMenu::handleInput(const Common::KeyState &e) {
 		display += e.ascii;
 		display.toUppercase();
 		_saveName = display;
+
+		return true;
 	}
+
+	return false;
 }
 
 void PagingMenu::loadMenuChangePage() {
@@ -773,7 +777,8 @@ void AlbumMenu::draw() {
 	}
 }
 
-void AlbumMenu::handleInput(const Common::KeyState &e) {
+bool AlbumMenu::handleInput(const Common::KeyState &e) {
+	return false;
 }
 
 void AlbumMenu::saveLoadAction(uint16 action, uint16 item) {

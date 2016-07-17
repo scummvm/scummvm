@@ -55,7 +55,13 @@ public:
 	virtual ~Menu();
 
 	virtual void draw() = 0;
-	virtual void handleInput(const Common::KeyState &e) = 0;
+
+	/**
+	 * Handle an event for the menu
+	 *
+	 * @return true if the event was handled
+	 */
+	virtual bool handleInput(const Common::KeyState &e) = 0;
 
 	void updateMainMenu(uint16 action);
 	void goToNode(uint16 node);
@@ -84,7 +90,7 @@ public:
 	virtual ~PagingMenu();
 
 	void draw() override;
-	void handleInput(const Common::KeyState &e) override;
+	bool handleInput(const Common::KeyState &e) override;
 
 	void saveLoadAction(uint16 action, uint16 item) override;
 
@@ -117,7 +123,7 @@ public:
 	virtual ~AlbumMenu();
 
 	void draw() override;
-	void handleInput(const Common::KeyState &e) override;
+	bool handleInput(const Common::KeyState &e) override;
 
 	void saveLoadAction(uint16 action, uint16 item) override;
 	void setSaveLoadSpotItem(uint16 id, SpotItemFace *spotItem) override;
