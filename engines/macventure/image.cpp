@@ -386,11 +386,13 @@ bool ImageAsset::isRectInside(Common::Rect rect) {
 	return false;
 }
 
-uint ImageAsset::getWidth() {
+int ImageAsset::getWidth() {
+	if (_imgData.size() == 0) return 0;
 	return MAX(0, (int)_bitWidth);
 }
 
-uint ImageAsset::getHeight() {
+int ImageAsset::getHeight() {
+	if (_imgData.size() == 0) return 0;
 	return MAX(0, (int)_bitHeight);
 }
 

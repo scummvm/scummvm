@@ -55,7 +55,7 @@ struct PPICHuff {
 
 class ImageAsset {
 public:
-	ImageAsset(ObjID original, Container *container); 
+	ImageAsset(ObjID original, Container *container);
 	~ImageAsset();
 
 	void blitInto(Graphics::ManagedSurface *target, uint32 x, uint32 y, BlitMode mode);
@@ -63,8 +63,8 @@ public:
 	bool isPointInside(Common::Point point);
 	bool isRectInside(Common::Rect rect);
 
-	uint getWidth();
-	uint getHeight();
+	int getWidth();
+	int getHeight();
 
 private:
 	void decodePPIC(ObjID id, Common::Array<byte> &data);
