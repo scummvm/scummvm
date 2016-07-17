@@ -63,6 +63,7 @@ GfxTinyGL::GfxTinyGL() :
 }
 
 GfxTinyGL::~GfxTinyGL() {
+	releaseMovieFrame();
 	for (unsigned int i = 0; i < _numSpecialtyTextures; i++) {
 		destroyTexture(&_specialtyTextures[i]);
 	}
