@@ -85,12 +85,14 @@ void yyerror(char *s) {
 %token tWITH tWHILE tNLELSE tFACTORY tMETHOD
 %token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT
 %token tCONCAT tCONTAINS tSTARTS
+%token tINTERSECTS
 
 %type<code> asgn begin elseif elsestmtoneliner end expr if repeatwhile repeatwith stmtlist
 %type<s> gotoframe gotomovie
 %type<narg> argdef arglist
 
 %right '='
+%left tINTERSECTS
 %left '+' '-'
 %left '*' '/' '%'
 %right UNARY
@@ -399,6 +401,7 @@ expr: INT		{
 	| expr tCONCAT expr			{ g_lingo->code1(g_lingo->c_concat); }
 	| expr tCONTAINS expr		{ g_lingo->code1(g_lingo->c_contains); }
 	| expr tSTARTS expr			{ g_lingo->code1(g_lingo->c_starts); }
+	| expr tINTERSECTS expr		{ g_lingo->code1(g_lingo->c_intersects); }
 	| '+' expr  %prec UNARY		{ $$ = $2; }
 	| '-' expr  %prec UNARY		{ $$ = $2; g_lingo->code1(g_lingo->c_negate); }
 	| '(' expr ')'				{ $$ = $2; }

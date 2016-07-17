@@ -390,6 +390,15 @@ void Lingo::c_starts() {
 	g_lingo->push(d1);
 }
 
+void Lingo::c_intersects() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	warning("STUB: c_intersects");
+
+	g_lingo->push(d1);
+}
+
 void Lingo::c_and() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();

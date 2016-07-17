@@ -76,6 +76,7 @@ whitespace [\t ]
 (?i:frame)			{ count(); return tFRAME; }
 (?i:global)			{ count(); return tGLOBAL; }
 (?i:go)				{ count(); return tGO; }
+(?i:intersects)		{ count(); return tINTERSECTS; }
 (?i:into)			{ count(); return tINTO; }
 (?i:loop)			{ count(); return tLOOP; }
 (?i:macro)			{ count(); return tMACRO; }

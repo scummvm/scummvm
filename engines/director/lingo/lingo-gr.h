@@ -92,7 +92,8 @@
      tNOT = 308,
      tCONCAT = 309,
      tCONTAINS = 310,
-     tSTARTS = 311
+     tSTARTS = 311,
+     tINTERSECTS = 312
    };
 #endif
 /* Tokens.  */
@@ -150,6 +151,7 @@
 #define tCONCAT 309
 #define tCONTAINS 310
 #define tSTARTS 311
+#define tINTERSECTS 312
 
 
 
@@ -166,7 +168,7 @@ typedef union YYSTYPE
 	int	narg;	/* number of arguments */
 }
 /* Line 1529 of yacc.c.  */
-#line 170 "engines/director/lingo/lingo-gr.hpp"
+#line 172 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

@@ -203,6 +203,8 @@ public:
 	static void c_contains();
 	static void c_starts();
 
+	static void c_intersects();
+
 	static void c_constpush();
 	static void c_fconstpush();
 	static void c_stringpush();
