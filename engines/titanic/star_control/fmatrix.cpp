@@ -32,6 +32,12 @@ FMatrix::FMatrix(DMatrix *src) {
 	copyFrom(src);
 }
 
+FMatrix::FMatrix(FMatrix *src) {
+	_row1 = src->_row1;
+	_row2 = src->_row2;
+	_row3 = src->_row3;
+}
+
 void FMatrix::copyFrom(const DMatrix *src) {
 	// TODO
 }

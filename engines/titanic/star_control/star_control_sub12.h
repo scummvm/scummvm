@@ -54,6 +54,7 @@ private:
 	void deleteHandler();
 public:
 	CStarControlSub12(void *val1, void *val2);
+	CStarControlSub12(CStarControlSub13 *src);
 	virtual ~CStarControlSub12();
 
 	virtual void proc3() {}

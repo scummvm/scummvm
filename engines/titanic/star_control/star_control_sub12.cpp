@@ -32,6 +32,11 @@ CStarControlSub12::CStarControlSub12(void *val1, void *val2) :
 	setupHandler(val2);
 }
 
+CStarControlSub12::CStarControlSub12(CStarControlSub13 *src) :
+		_field4(-1), _handlerP(nullptr), _field108(0), _sub13(src) {
+
+}
+
 CStarControlSub12::~CStarControlSub12() {
 	deleteHandler();
 }

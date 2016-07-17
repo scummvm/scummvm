@@ -34,6 +34,10 @@ CStarControlSub6::CStarControlSub6(int mode, double val) {
 	set(mode, val);
 }
 
+CStarControlSub6::CStarControlSub6(const CStarControlSub6 *src) {
+	copyFrom(src);
+}
+
 void CStarControlSub6::init() {
 	_static = nullptr;
 }
@@ -99,6 +103,13 @@ void CStarControlSub6::set(int mode, double amount) {
 	_field24 = 0.0;
 	_field28 = 0.0;
 	_field2C = 0.0;
+}
+
+void CStarControlSub6::copyFrom(const CStarControlSub6 *src) {
+	_matrix = src->_matrix;
+	_field24 = src->_field24;
+	_field28 = src->_field28;
+	_field2C = src->_field2C;
 }
 
 } // End of namespace Titanic

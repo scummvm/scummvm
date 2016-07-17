@@ -39,8 +39,8 @@ private:
 	double _field14;
 	double _field18;
 	double _field1C;
-	int _field20;
-	int _field22;
+	int _width;
+	int _height;
 	int _field24;
 	double _valArray[5];
 	FMatrix _matrix;
@@ -56,6 +56,7 @@ private:
 	void setup(void *ptr);
 public:
 	CStarControlSub13(void *ptr);
+	CStarControlSub13(CStarControlSub13 *src);
 
 	/**
 	 * Load the data for the class from file

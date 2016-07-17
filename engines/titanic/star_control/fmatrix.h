@@ -47,6 +47,7 @@ public:
 public:
 	FMatrix();
 	FMatrix(DMatrix *src);
+	FMatrix(FMatrix *src);
 
 	/**
 	 * Load the data for the class from file

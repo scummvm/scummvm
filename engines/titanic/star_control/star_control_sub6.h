@@ -41,6 +41,7 @@ public:
 public:
 	CStarControlSub6();
 	CStarControlSub6(int mode, double amount);
+	CStarControlSub6(const CStarControlSub6 *src);
 
 	/**
 	 * Clear the item
@@ -51,6 +52,8 @@ public:
 	 * Sets the default data
 	 */
 	void set(int mode, double val);
+
+	void copyFrom(const CStarControlSub6 *src);
 };
 
 } // End of namespace Titanic

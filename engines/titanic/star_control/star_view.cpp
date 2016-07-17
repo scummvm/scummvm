@@ -28,7 +28,7 @@
 
 namespace Titanic {
 
-CStarView::CStarView() : _sub12(nullptr, nullptr), _sub13(nullptr),
+CStarView::CStarView() : _sub12(nullptr, nullptr), _sub13((void *)nullptr),
 		_owner(nullptr), _starField(nullptr), _videoSurface(nullptr), _field118(0), 
 		_videoSurface2(nullptr), _field210(0), _homePhotoMask(nullptr),
 		_field218(0), _field21C(0) {
