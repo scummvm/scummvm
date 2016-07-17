@@ -192,7 +192,8 @@ void MacVentureEngine::resetGui() {
 	_gui->updateWindowInfo(kMainGameWindow, getParent(1), _world->getChildren(getParent(1), true));
 	// HACK! should update all inventories
 	_gui->updateWindowInfo(kInventoryStart, 1, _world->getChildren(1, true));
-	_gui->updateWindowInfo(kExitsWindow, getParent(1), _world->getChildren(getParent(1), true));
+	updateControls();
+	updateExits();
 }
 
 
