@@ -57,6 +57,7 @@ namespace Video {
  *  - sci
  *  - sword1
  *  - sword2
+ *  - titanic
  *  - zvision
  */
 class AVIDecoder : public VideoDecoder {
