@@ -165,6 +165,7 @@ public:
 
 	const Graphics::PixelBuffer &getData(int num) const { return _data->getImageData(num); }
 	const Graphics::PixelBuffer &getData() const { return getData(_currImage); }
+	BitmapData *getBitmapData() const { return _data; }
 	void *getTexIds() const { return _data->_texIds; }
 	int getNumTex() const { return _data->_numTex; }
 	const Graphics::PixelFormat &getPixelFormat(int num) const;
