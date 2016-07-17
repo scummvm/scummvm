@@ -23,6 +23,7 @@
 #ifndef MYST3_DIRECTORYSUBENTRY_H
 #define MYST3_DIRECTORYSUBENTRY_H
 
+#include "common/array.h"
 #include "common/memstream.h"
 #include "math/vector3d.h"
 
@@ -95,6 +96,8 @@ class DirectorySubEntry {
 
 		Archive *_archive;
 };
+
+typedef Common::Array<const DirectorySubEntry *> DirectorySubEntryList;
 
 } // End of namespace Myst3
 

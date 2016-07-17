@@ -58,13 +58,24 @@ void DirectoryEntry::dumpToFiles(Common::SeekableReadStream &inStream) {
 
 DirectorySubEntry *DirectoryEntry::getItemDescription(uint16 face, DirectorySubEntry::ResourceType type) {
 	for (uint i = 0; i < _subentries.size(); i++) {
-		if (_subentries[i].getFace() == face
-				&& _subentries[i].getType() == type) {
+		if (_subentries[i].getFace() == face && _subentries[i].getType() == type) {
 			return &_subentries[i];
 		}
 	}
 	
 	return 0;
+}
+
+DirectorySubEntryList DirectoryEntry::listItemsMatching(uint16 face, DirectorySubEntry::ResourceType type) {
+	DirectorySubEntryList list;
+
+	for (uint i = 0; i < _subentries.size(); i++) {
+		if (_subentries[i].getFace() == face && _subentries[i].getType() == type) {
+			list.push_back(&_subentries[i]);
+		}
+	}
+
+	return list;
 }
 
 } // End of namespace Myst3

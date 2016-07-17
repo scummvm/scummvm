@@ -86,13 +86,23 @@ Common::MemoryReadStream *Archive::dumpToMemory(uint32 offset, uint32 size) {
 const DirectorySubEntry *Archive::getDescription(const Common::String &room, uint32 index, uint16 face,
                                                  DirectorySubEntry::ResourceType type) {
 	for (uint i = 0; i < _directory.size(); i++) {
-		if (_directory[i].getIndex() == index
-				&& _directory[i].getRoom() == room) {
+		if (_directory[i].getIndex() == index && _directory[i].getRoom() == room) {
 			return _directory[i].getItemDescription(face, type);
 		}
 	}
 
 	return 0;
+}
+
+DirectorySubEntryList Archive::listFilesMatching(const Common::String &room, uint32 index, uint16 face,
+                                                 DirectorySubEntry::ResourceType type) {
+	for (uint i = 0; i < _directory.size(); i++) {
+		if (_directory[i].getIndex() == index && _directory[i].getRoom() == room) {
+			return _directory[i].listItemsMatching(face, type);
+		}
+	}
+
+	return DirectorySubEntryList();
 }
 
 bool Archive::open(const char *fileName, const char *room) {

@@ -1244,6 +1244,23 @@ const DirectorySubEntry *Myst3Engine::getFileDescription(const Common::String &r
 	return desc;
 }
 
+DirectorySubEntryList Myst3Engine::listFilesMatching(const Common::String &room, uint32 index, uint16 face,
+                                                     DirectorySubEntry::ResourceType type) {
+	Common::String archiveRoom = room;
+	if (archiveRoom == "") {
+		archiveRoom = _db->getRoomName(_state->getLocationRoom());
+	}
+
+	for (uint i = 0; i < _archivesCommon.size(); i++) {
+		DirectorySubEntryList list = _archivesCommon[i]->listFilesMatching(archiveRoom, index, face, type);
+		if (!list.empty()) {
+			return list;
+		}
+	}
+
+	return _archiveNode->listFilesMatching(archiveRoom, index, face, type);
+}
+
 Graphics::Surface *Myst3Engine::loadTexture(uint16 id) {
 	const DirectorySubEntry *desc = getFileDescription("GLOB", id, 0, DirectorySubEntry::kRawData);
 

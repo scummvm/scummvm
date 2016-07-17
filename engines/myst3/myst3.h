@@ -137,6 +137,9 @@ public:
 
 	const DirectorySubEntry *getFileDescription(const Common::String &room, uint32 index, uint16 face,
 	                                            DirectorySubEntry::ResourceType type);
+	DirectorySubEntryList listFilesMatching(const Common::String &room, uint32 index, uint16 face,
+	                                        DirectorySubEntry::ResourceType type);
+
 	Graphics::Surface *loadTexture(uint16 id);
 	static Graphics::Surface *decodeJpeg(const DirectorySubEntry *jpegDesc);
 

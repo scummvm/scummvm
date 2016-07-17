@@ -146,28 +146,30 @@ void Node::loadSpotItem(uint16 id, int16 condition, bool fade) {
 	spotItem->setFadeVar(abs(condition));
 
 	for (int i = 0; i < 6; i++) {
-		const DirectorySubEntry *jpegDesc = _vm->getFileDescription("", id, i + 1, DirectorySubEntry::kLocalizedSpotItem);
+		DirectorySubEntryList spotItemImages = _vm->listFilesMatching("", id, i + 1, DirectorySubEntry::kLocalizedSpotItem);
 
-		if (!jpegDesc)
-			jpegDesc = _vm->getFileDescription("", id, i + 1, DirectorySubEntry::kSpotItem);
+		if (spotItemImages.empty())
+			spotItemImages = _vm->listFilesMatching("", id, i + 1, DirectorySubEntry::kSpotItem);
 
-		if (!jpegDesc) continue;
+		for (uint j = 0; j < spotItemImages.size(); j++) {
+			const DirectorySubEntry *image = spotItemImages[j];
 
-		SpotItemFace *spotItemFace = new SpotItemFace(
-				_faces[i],
-				jpegDesc->getSpotItemData().u,
-				jpegDesc->getSpotItemData().v);
+			SpotItemFace *spotItemFace = new SpotItemFace(
+					_faces[i],
+					image->getSpotItemData().u,
+					image->getSpotItemData().v);
 
-		spotItemFace->loadData(jpegDesc);
+			spotItemFace->loadData(image);
 
-		// SpotItems with an always true conditions cannot be undrawn.
-		// Draw them now to make sure the "non drawn backups" for other, potentially
-		// overlapping SpotItems have them drawn.
-		if (condition == 1) {
-			spotItemFace->draw();
+			// SpotItems with an always true conditions cannot be undrawn.
+			// Draw them now to make sure the "non drawn backups" for other, potentially
+			// overlapping SpotItems have them drawn.
+			if (condition == 1) {
+				spotItemFace->draw();
+			}
+
+			spotItem->addFace(spotItemFace);
 		}
-
-		spotItem->addFace(spotItemFace);
 	}
 
 	_spotItems.push_back(spotItem);
