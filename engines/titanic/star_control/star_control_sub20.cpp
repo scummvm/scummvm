@@ -32,14 +32,14 @@ CStarControlSub20::CStarControlSub20(const CStar20Data *src) {
 	if (src) {
 		copyFrom(src);
 	} else {
-		_data._field0 = 0.0;
-		_data._field4 = 0.0;
-		_data._field8 = 20.0;
-		_data._fieldC = 0.0;
-		_data._field10 = 50000.0;
-		_data._field14 = 1.0;
-		_data._field18 = 1.0;
-		_data._field1C = 0.0;
+		_field0 = 0.0;
+		_field4 = 0.0;
+		_field8 = 20.0;
+		_fieldC = 0.0;
+		_field10 = 50000.0;
+		_field14 = 1.0;
+		_field18 = 1.0;
+		_field1C = 0.0;
 	}
 }
 
@@ -48,50 +48,50 @@ CStarControlSub20::~CStarControlSub20() {
 }
 
 void CStarControlSub20::copyFrom(const CStar20Data *src) {
-	_data = *src;
+	*((CStar20Data *)this) = *src;
 }
 
 void CStarControlSub20::copyTo(CStar20Data *dest) {
-	*dest = _data;
+	*dest = *((CStar20Data *)this);
 }
 
 void CStarControlSub20::proc4() {
-	if (!isLocked() && _data._field0 < _data._field10) {
-		_data._field4 += _data._field0;
-		if (_data._field8 == _data._field4)
-			_data._field0 -= _data._field4;
+	if (!isLocked() && _field0 < _field10) {
+		_field4 += _field0;
+		if (_field8 == _field4)
+			_field0 -= _field4;
 		else
-			_data._field0 += _data._field4;
+			_field0 += _field4;
 	}
 }
 
 void CStarControlSub20::proc5() {
 	if (!isLocked()) {
-		_data._field4 -= _data._field8;
-		if (_data._field4 == _data._field0)
-			_data._field0 += _data._field4;
+		_field4 -= _field8;
+		if (_field4 == _field0)
+			_field0 += _field4;
 		else
-			_data._field0 -= _data._field4;
+			_field0 -= _field4;
 
-		if (_data._field4 < 0.0)
-			_data._field4 = 0.0;
+		if (_field4 < 0.0)
+			_field4 = 0.0;
 	}
 }
 
 void CStarControlSub20::proc6() {
 	if (!isLocked())
-		_data._field0 = _data._field10;
+		_field0 = _field10;
 }
 
 void CStarControlSub20::proc7() {
 	if (!isLocked()) {
-		_data._field0 = 0.0;
-		_data._field4 = 0.0;
+		_field0 = 0.0;
+		_field4 = 0.0;
 	}
 }
 
 void CStarControlSub20::proc11(CErrorCode &errorCode, FVector &v, const FMatrix &m) {
-	if (_data._field0 > 0.0) {
+	if (_field0 > 0.0) {
 		warning("TODO: CStarControlSub20::proc11");
 	}
 }
@@ -110,26 +110,26 @@ void CStarControlSub20::clear() {
 
 void CStarControlSub20::load(SimpleFile *file, int val) {
 	if (!val) {
-		_data._field0 = file->readFloat();
-		_data._field4 = file->readFloat();
-		_data._field8 = file->readFloat();
-		_data._fieldC = file->readFloat();
-		_data._field10 = file->readFloat();
-		_data._field14 = file->readFloat();
-		_data._field18 = file->readFloat();
-		_data._field1C = file->readFloat();
+		_field0 = file->readFloat();
+		_field4 = file->readFloat();
+		_field8 = file->readFloat();
+		_fieldC = file->readFloat();
+		_field10 = file->readFloat();
+		_field14 = file->readFloat();
+		_field18 = file->readFloat();
+		_field1C = file->readFloat();
 	}
 }
 
 void CStarControlSub20::save(SimpleFile *file, int indent) {
-	file->writeFloatLine(_data._field0, indent);
-	file->writeFloatLine(_data._field4, indent);
-	file->writeFloatLine(_data._field8, indent);
-	file->writeFloatLine(_data._fieldC, indent);
-	file->writeFloatLine(_data._field10, indent);
-	file->writeFloatLine(_data._field14, indent);
-	file->writeFloatLine(_data._field18, indent);
-	file->writeFloatLine(_data._field1C, indent);
+	file->writeFloatLine(_field0, indent);
+	file->writeFloatLine(_field4, indent);
+	file->writeFloatLine(_field8, indent);
+	file->writeFloatLine(_fieldC, indent);
+	file->writeFloatLine(_field10, indent);
+	file->writeFloatLine(_field14, indent);
+	file->writeFloatLine(_field18, indent);
+	file->writeFloatLine(_field1C, indent);
 }
 
 void CStarControlSub20::incLockCount() {

@@ -40,9 +40,8 @@ struct CStar20Data {
 	double _field1C;
 };
 
-class CStarControlSub20 {
+class CStarControlSub20 : public CStar20Data {
 public:
-	CStar20Data _data;
 	int _lockCounter;
 	void *_dataP;
 public:
