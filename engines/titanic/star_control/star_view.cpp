@@ -32,7 +32,10 @@ CStarView::CStarView() : _sub12(nullptr, nullptr), _sub13((void *)nullptr),
 		_owner(nullptr), _starField(nullptr), _videoSurface(nullptr), _field118(0), 
 		_videoSurface2(nullptr), _field210(0), _homePhotoMask(nullptr),
 		_field218(0), _field21C(0) {
-	_sub12.proc3();
+	static const uint DATA[8] = { 0, 0, 0x47C35000, 0, 0x41A00000,
+		0x3F800000, 0x3F800000, 0x3F800000 };
+
+	_sub12.proc3(&DATA[0]);
 }
 
 void CStarView::load(SimpleFile *file, int param) {

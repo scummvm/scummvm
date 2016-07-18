@@ -58,6 +58,8 @@ public:
 	CStarControlSub13(void *ptr);
 	CStarControlSub13(CStarControlSub13 *src);
 
+	void copyFrom(const void *src);
+
 	/**
 	 * Load the data for the class from file
 	 */
@@ -67,6 +69,17 @@ public:
 	 * Save the data for the class to file
 	 */
 	void save(SimpleFile *file, int indent);
+
+	void fn10(const void *src);
+	void fn11(const FVector *v);
+	void fn12();
+	void fn13(double v1, double v2);
+
+	void setC(int v);
+	void set10(int v);
+	void set14(int v);
+	void set18(int v);
+	void set1C(int v);
 };
 
 } // End of namespace Titanic

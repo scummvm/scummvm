@@ -44,8 +44,8 @@ public:
 	CStarControlSub20(void *src);
 	virtual ~CStarControlSub20();
 
-	virtual void copyFrom1(void *src);
-	virtual void copyFrom2(void *src);
+	virtual void copyFrom1(const void *src);
+	virtual void copyFrom2(const void *src);
 	virtual void proc4();
 	virtual void proc5();
 	virtual void proc6();

@@ -47,11 +47,11 @@ CStarControlSub20::~CStarControlSub20() {
 	clear();
 }
 
-void CStarControlSub20::copyFrom1(void *src) {
+void CStarControlSub20::copyFrom1(const void *src) {
 	error("TODO: CStarControlSub20::copyFrom1");
 }
 
-void CStarControlSub20::copyFrom2(void *src) {
+void CStarControlSub20::copyFrom2(const void *src) {
 	error("TODO: CStarControlSub20::copyFrom2");
 }
 

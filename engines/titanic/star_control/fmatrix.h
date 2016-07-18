@@ -69,7 +69,7 @@ public:
 	 */
 	void set(FVector *row1, FVector *row2, FVector *row3);
 
-	void fn1(FVector *v);
+	void fn1(const FVector *v);
 
 	void fn2(FMatrix *m);
 	void fn3(FMatrix *m);

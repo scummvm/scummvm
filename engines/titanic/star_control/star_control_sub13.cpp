@@ -21,6 +21,7 @@
  */
 
 #include "titanic/star_control/star_control_sub13.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -73,6 +74,18 @@ void CStarControlSub13::setup(void *ptr) {
 	// TODO
 }
 
+void CStarControlSub13::copyFrom(const void *src) {
+	if (!src)
+		return;
+/*
+	_field0 = src->_field0;
+	_field4 = src->_field4;
+	_field8 = src->_field8;
+	_fieldC = src->_field18;
+	_field10 = src->_field1C;
+	*/
+}
+
 void CStarControlSub13::load(SimpleFile *file, int param) {
 	_field0 = file->readFloat();
 	_field4 = file->readFloat();
@@ -112,5 +125,55 @@ void CStarControlSub13::save(SimpleFile *file, int indent) {
 	_matrix.save(file, indent);
 }
 
+void CStarControlSub13::fn10(const void *src) {
+	error("TODO: CStarControlSub13::fn10");
+}
+
+void CStarControlSub13::fn11(const FVector *v) {
+	_matrix.fn1(v);
+	_fieldD4 = 0;
+}
+
+void CStarControlSub13::setC(int v) {
+	_fieldC = v;
+	_fieldD4 = 0;
+}
+
+void CStarControlSub13::set10(int v) {
+	_field10 = v;
+	_fieldD4 = 0;
+}
+
+void CStarControlSub13::set14(int v) {
+	_field10 = v;
+}
+
+void CStarControlSub13::set18(int v) {
+	_field18 = v;
+	_fieldD4 = 0;
+}
+
+void CStarControlSub13::set1C(int v) {
+	_field1C = v;
+	_fieldD4 = 0;
+}
+
+void CStarControlSub13::fn12() {
+	_matrix.clear();
+	error("TODO: CStarControlSub13::fn12");
+}
+
+void CStarControlSub13::fn13(double v1, double v2) {
+	if (v1 == 0.0) {
+		_valArray[0] = v2;
+		_valArray[1] = -v2;
+	} else {
+		_valArray[3] = v2;
+		_valArray[4] = -v2;
+	}
+
+	_valArray[2] = 0.0;
+	_field24 = v2 ? 2 : 0;
+}
 
 } // End of namespace Titanic

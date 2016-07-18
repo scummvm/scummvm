@@ -41,6 +41,65 @@ CStarControlSub12::~CStarControlSub12() {
 	deleteHandler();
 }
 
+void CStarControlSub12::proc2(const void *src) {
+	_sub13.copyFrom(src); 
+}
+
+void CStarControlSub12::proc3(const void *src) {
+	_handlerP->copyFrom1(src);
+}
+
+void CStarControlSub12::proc4(const void *src) {
+	if (!isLocked()) {
+		_sub13.fn10(src);
+		set108();
+	}
+}
+
+void CStarControlSub12::proc5(const FVector *src) {
+	if (!isLocked())
+		_sub13.fn11(src);
+}
+
+void CStarControlSub12::proc6(int v) {
+	if (!isLocked())
+		_sub13.setC(v);
+}
+
+void CStarControlSub12::proc7(int v) {
+	if (!isLocked())
+		_sub13.set10(v);
+}
+
+void CStarControlSub12::proc8(int v) {
+	if (!isLocked())
+		_sub13.set14(v);
+}
+
+void CStarControlSub12::proc9(int v) {
+	if (!isLocked())
+		_sub13.set18(v);
+}
+
+void CStarControlSub12::proc10(int v) {
+	if (!isLocked())
+		_sub13.set1C(v);
+}
+
+void CStarControlSub12::proc11() {
+	if (!isLocked())
+		_sub13.fn12();
+}
+
+void CStarControlSub12::proc12(double v1, double v2) {
+	if (!isLocked())
+		_sub13.fn13(v1, v2);
+}
+
+void CStarControlSub12::proc13(CStarControlSub13 *dest) {
+	*dest = _sub13;
+}
+
 void CStarControlSub12::load(SimpleFile *file, int param) {
 	_sub13.load(file, param);
 }

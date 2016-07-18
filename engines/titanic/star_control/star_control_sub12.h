@@ -52,12 +52,28 @@ private:
 	 * Deletes any previous handler
 	 */
 	void deleteHandler();
+
+	/**
+	 * Return whether the handler is locked
+	 */
+	bool isLocked() { return _handlerP->isLocked(); }
 public:
 	CStarControlSub12(void *val1, void *val2);
 	CStarControlSub12(CStarControlSub13 *src);
 	virtual ~CStarControlSub12();
 
-	virtual void proc3() {}
+	virtual void proc2(const void *src);
+	virtual void proc3(const void *src);
+	virtual void proc4(const void *src);
+	virtual void proc5(const FVector *src);
+	virtual void proc6(int v);
+	virtual void proc7(int v);
+	virtual void proc8(int v);
+	virtual void proc9(int v);
+	virtual void proc10(int v);
+	virtual void proc11();
+	virtual void proc12(double v1, double v2);
+	virtual void proc13(CStarControlSub13 *dest);
 
 	/**
 	 * Load the data for the class from file
@@ -68,6 +84,11 @@ public:
 	 * Save the data for the class to file
 	 */
 	virtual void save(SimpleFile *file, int indent);
+
+
+	bool is108() const { return _field108; }
+	void set108() { _field108 = true; }
+	void reset108() { _field108 = false; }
 };
 
 } // End of namespace Titanic

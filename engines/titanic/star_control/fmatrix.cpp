@@ -78,17 +78,17 @@ void FMatrix::set(FVector *row1, FVector *row2, FVector *row3) {
 	_row3 = *row3;
 }
 
-void FMatrix::fn1(FVector *v) {
+void FMatrix::fn1(const FVector *v) {
 	_row3._x = v->_x;
 
 	FVector tempVector;
-	tempVector.fn1(v);
+	_row3.fn1(&tempVector);
 
 	_row2._x = tempVector._x;
 	_row2._y = tempVector._y;
 	_row2._z = tempVector._z;
 
-	_row3.multiply(v, &_row2);
+	_row3.multiply(&tempVector, &_row2);
 	_row1._x = _row2._x;
 	_row1._y = _row2._y;
 	_row1._z = _row2._z;
