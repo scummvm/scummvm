@@ -34,6 +34,11 @@ namespace WebserverTests {
 bool startServer();
 TestExitStatus testIP();
 TestExitStatus testIndexPage();
+TestExitStatus testFilesPageInvalidParameterValue();
+TestExitStatus testFilesPageCreateDirectory();
+TestExitStatus testFilesPageUploadFile();
+TestExitStatus testFilesPageUploadDirectory();
+TestExitStatus testFilesPageDownloadFile();
 
 } // End of namespace WebserverTests
 
