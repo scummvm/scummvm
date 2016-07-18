@@ -36,6 +36,7 @@ namespace CloudTests {
 
 bool waitForCallback();
 bool waitForCallbackMore();
+const char *getRemoteTestPath();
 void infoCallback(Cloud::Storage::StorageInfoResponse response);
 void directoryListedCallback(Cloud::Storage::FileArrayResponse response);
 void directoryCreatedCallback(Cloud::Storage::BoolResponse response);

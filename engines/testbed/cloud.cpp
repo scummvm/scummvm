@@ -81,6 +81,12 @@ bool CloudTests::waitForCallbackMore() {
 	return true;
 }
 
+const char *CloudTests::getRemoteTestPath() {
+	if (CloudMan.getStorageIndex() == Cloud::kStorageDropboxId)
+		return "/testbed";
+	return "testbed";
+}
+
 void CloudTests::infoCallback(Cloud::Storage::StorageInfoResponse response) {
 	ConfParams.setCloudTestCallbackCalled(true);
 	Testsuite::logPrintf("Info! User's ID: %s\n", response.value.uid().c_str());
@@ -286,7 +292,7 @@ TestExitStatus CloudTests::testDirectoryCreating() {
 
 	// create 'testbed'
 	if (CloudMan.getCurrentStorage()->createDirectory(
-			"/testbed",
+			getRemoteTestPath(),
 			new Common::GlobalFunctionCallback<Cloud::Storage::BoolResponse>(&directoryCreatedCallback),
 			new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
 		) == nullptr) {
@@ -359,7 +365,7 @@ TestExitStatus CloudTests::testUploading() {
 
 	if (CloudMan.getCurrentStorage()->uploadStreamSupported()) {
 		if (CloudMan.getCurrentStorage()->upload(
-				"/testbed/testfile.txt",
+				Common::String(getRemoteTestPath()) + "/testfile.txt",
 				node.createReadStream(),
 				new Common::GlobalFunctionCallback<Cloud::Storage::UploadResponse>(&fileUploadedCallback),
 				new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
@@ -369,10 +375,10 @@ TestExitStatus CloudTests::testUploading() {
 	} else {
 		Common::String filepath = node.getPath();
 		if (CloudMan.getCurrentStorage()->upload(
-			"/testbed/testfile.txt",
-			filepath.c_str(),
-			new Common::GlobalFunctionCallback<Cloud::Storage::UploadResponse>(&fileUploadedCallback),
-			new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
+				Common::String(getRemoteTestPath()) + "/testfile.txt",
+				filepath.c_str(),
+				new Common::GlobalFunctionCallback<Cloud::Storage::UploadResponse>(&fileUploadedCallback),
+				new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
 			) == nullptr) {
 			Testsuite::logPrintf("Warning! No Request is returned!\n");
 		}
@@ -392,9 +398,9 @@ TestExitStatus CloudTests::testUploading() {
 		ConfParams.setCloudTestCallbackCalled(false);
 
 		if (CloudMan.listDirectory(
-			"/testbed/",
-			new Common::GlobalFunctionCallback<Cloud::Storage::FileArrayResponse>(&directoryListedCallback),
-			new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
+				getRemoteTestPath(),
+				new Common::GlobalFunctionCallback<Cloud::Storage::FileArrayResponse>(&directoryListedCallback),
+				new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
 			) == nullptr) {
 			Testsuite::logPrintf("Warning! No Request is returned!\n");
 		}
@@ -439,7 +445,7 @@ TestExitStatus CloudTests::testDownloading() {
 	Common::FSNode node = gameRoot.getFSNode().getChild("downloaded_file.txt");
 	Common::String filepath = node.getPath();
 	if (CloudMan.getCurrentStorage()->download(
-			"/testbed/testfile.txt",
+			Common::String(getRemoteTestPath()) + "/testfile.txt",
 			filepath.c_str(),
 			new Common::GlobalFunctionCallback<Cloud::Storage::BoolResponse>(&fileDownloadedCallback),
 			new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
@@ -486,7 +492,7 @@ TestExitStatus CloudTests::testFolderDownloading() {
 	Common::FSNode node = gameRoot.getFSNode().getChild("downloaded_directory");
 	Common::String filepath = node.getPath();
 	if (CloudMan.downloadFolder(
-			"/testbed/",
+			getRemoteTestPath(),
 			filepath.c_str(),
 			new Common::GlobalFunctionCallback<Cloud::Storage::FileArrayResponse>(&directoryDownloadedCallback),
 			new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
