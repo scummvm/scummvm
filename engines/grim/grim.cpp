@@ -737,7 +737,7 @@ void GrimEngine::doFlip() {
 		unsigned int currentTime = g_system->getMillis();
 		unsigned int delta = currentTime - _lastFrameTime;
 		if (delta > 500) {
-			sprintf(_fps, "%7.2f", (double)(_frameCounter * 1000) / (double)delta);
+			snprintf(_fps, sizeof(_fps), "%7.2f", (double)(_frameCounter * 1000) / (double)delta);
 			_frameCounter = 0;
 			_lastFrameTime = currentTime;
 		}
