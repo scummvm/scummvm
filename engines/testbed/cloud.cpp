@@ -23,7 +23,7 @@
 #include "common/config-manager.h"
 #include "common/stream.h"
 #include "common/util.h"
-
+#include "testbed/fs.h"
 #include "testbed/cloud.h"
 #include <backends/cloud/cloudmanager.h>
 
@@ -40,6 +40,7 @@ CloudTestSuite::CloudTestSuite() {
 	addTest("UserInfo", &CloudTests::testInfo, true);
 	addTest("ListDirectory", &CloudTests::testDirectoryListing, true);
 	addTest("CreateDirectory", &CloudTests::testDirectoryCreating, true);
+	addTest("FileUpload", &CloudTests::testUploading, true);
 }
 
 /*
@@ -119,6 +120,12 @@ void CloudTests::directoryCreatedCallback(Cloud::Storage::BoolResponse response)
 	} else {
 		Testsuite::logPrintf("Info! Such directory already exists!\n");
 	}
+}
+
+void CloudTests::fileUploadedCallback(Cloud::Storage::UploadResponse response) {
+	ConfParams.setCloudTestCallbackCalled(true);
+	Testsuite::logPrintf("Info! Uploaded file into '%s'\n", response.value.path().c_str());
+	Testsuite::logPrintf("Info! It's id = '%s' and size = '%lu'\n", response.value.id().c_str(), response.value.size());
 }
 
 void CloudTests::errorCallback(Networking::ErrorResponse response) {
@@ -268,9 +275,9 @@ TestExitStatus CloudTests::testDirectoryCreating() {
 
 	// list it again
 	if (CloudMan.listDirectory(
-		"",
-		new Common::GlobalFunctionCallback<Cloud::Storage::FileArrayResponse>(&directoryListedCallback),
-		new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
+			"",
+			new Common::GlobalFunctionCallback<Cloud::Storage::FileArrayResponse>(&directoryListedCallback),
+			new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
 		) == nullptr) {
 		Testsuite::logPrintf("Warning! No Request is returned!\n");
 	}
@@ -289,6 +296,94 @@ TestExitStatus CloudTests::testDirectoryCreating() {
 	}
 
 	Testsuite::logDetailedPrintf("Directory was created\n");
+	return kTestPassed;
+}
+
+TestExitStatus CloudTests::testUploading() {
+	ConfParams.setCloudTestCallbackCalled(false);
+	ConfParams.setCloudTestErrorCallbackCalled(false);
+
+	if (CloudMan.getCurrentStorage() == nullptr) {
+		Testsuite::logPrintf("Couldn't find connected Storage\n");
+		return kTestFailed;
+	}
+
+	Common::String info = "Testing Cloud Storage API upload() method.\n"
+		"In this test we'll try to upload a 'test1/file.txt' file.";
+
+	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : upload()\n");
+		return kTestSkipped;
+	}
+
+	if (!ConfParams.isGameDataFound()) {
+		Testsuite::logPrintf("Info! Couldn't find the game data, so skipping test : upload()\n");
+		return kTestSkipped;
+	}
+
+	const Common::String &path = ConfMan.get("path");
+	Common::FSDirectory gameRoot(path);
+	Common::FSDirectory *directory = gameRoot.getSubDirectory("test1");
+	Common::FSNode node = directory->getFSNode().getChild("file.txt");
+	delete directory;
+
+	if (CloudMan.getCurrentStorage()->uploadStreamSupported()) {
+		if (CloudMan.getCurrentStorage()->upload(
+				"/testbed/testfile.txt",
+				node.createReadStream(),
+				new Common::GlobalFunctionCallback<Cloud::Storage::UploadResponse>(&fileUploadedCallback),
+				new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
+			) == nullptr) {
+			Testsuite::logPrintf("Warning! No Request is returned!\n");
+		}
+	} else {
+		Common::String filepath = node.getPath();
+		if (CloudMan.getCurrentStorage()->upload(
+			"/testbed/testfile.txt",
+			filepath.c_str(),
+			new Common::GlobalFunctionCallback<Cloud::Storage::UploadResponse>(&fileUploadedCallback),
+			new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
+			) == nullptr) {
+			Testsuite::logPrintf("Warning! No Request is returned!\n");
+		}
+	}
+
+	if (!waitForCallbackMore()) return kTestSkipped;
+	Testsuite::clearScreen();
+
+	if (ConfParams.isCloudTestErrorCallbackCalled()) {
+		Testsuite::logPrintf("Error callback was called\n");
+		return kTestFailed;
+	}
+
+	Common::String info2 = "upload() is finished. Do you want to list '/testbed' directory?";
+
+	if (!Testsuite::handleInteractiveInput(info2, "Yes", "No", kOptionRight)) {
+		ConfParams.setCloudTestCallbackCalled(false);
+
+		if (CloudMan.listDirectory(
+			"/testbed/",
+			new Common::GlobalFunctionCallback<Cloud::Storage::FileArrayResponse>(&directoryListedCallback),
+			new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
+			) == nullptr) {
+			Testsuite::logPrintf("Warning! No Request is returned!\n");
+		}
+
+		if (!waitForCallbackMore()) return kTestSkipped;
+		Testsuite::clearScreen();
+
+		if (ConfParams.isCloudTestErrorCallbackCalled()) {
+			Testsuite::logPrintf("Error callback was called\n");
+			return kTestFailed;
+		}
+	}
+
+	if (Testsuite::handleInteractiveInput("Was the CloudMan able to upload into 'testbed/testfile.txt' file?", "Yes", "No", kOptionRight)) {
+		Testsuite::logDetailedPrintf("Error! File was not uploaded!\n");
+		return kTestFailed;
+	}
+
+	Testsuite::logDetailedPrintf("File was uploaded\n");
 	return kTestPassed;
 }
 
