@@ -32,7 +32,7 @@ class CStarControlSub22 : public CStarControlSub20 {
 private:
 	CStarControlSub27 _sub27;
 public:
-	CStarControlSub22(void *src);
+	CStarControlSub22(const CStar20Data *src);
 };
 
 } // End of namespace Titanic

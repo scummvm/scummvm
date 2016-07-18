@@ -29,8 +29,8 @@
 
 namespace Titanic {
 
-class CStarControlSub20 {
-public:
+struct CStar20Data {
+	double _field0;
 	double _field4;
 	double _field8;
 	double _fieldC;
@@ -38,15 +38,19 @@ public:
 	double _field14;
 	double _field18;
 	double _field1C;
-	double _field20;
+};
+
+class CStarControlSub20 {
+public:
+	CStar20Data _data;
 	int _lockCounter;
 	void *_dataP;
 public:
-	CStarControlSub20(void *src);
+	CStarControlSub20(const CStar20Data *src);
 	virtual ~CStarControlSub20();
 
-	virtual void copyFrom1(const void *src);
-	virtual void copyFrom2(const void *src);
+	virtual void copyFrom(const CStar20Data *src);
+	virtual void copyTo(CStar20Data *dest);
 	virtual void proc4();
 	virtual void proc5();
 	virtual void proc6();

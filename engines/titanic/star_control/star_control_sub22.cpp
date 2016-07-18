@@ -25,7 +25,7 @@
 
 namespace Titanic {
 
-CStarControlSub22::CStarControlSub22(void *src) :
+CStarControlSub22::CStarControlSub22(const CStar20Data *src) :
 		CStarControlSub20(src), _sub27() {
 }
 

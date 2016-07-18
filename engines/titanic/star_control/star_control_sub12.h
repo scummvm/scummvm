@@ -44,7 +44,7 @@ private:
 	/**
 	 * Set up a handler
 	 */
-	bool setupHandler(void *src);
+	bool setupHandler(const CStar20Data *src);
 
 	/**
 	 * Deletes any previous handler
@@ -59,12 +59,12 @@ public:
 	static void init();
 	static void deinit();
 public:
-	CStarControlSub12(void *val1, void *val2);
+	CStarControlSub12(void *val1, const CStar20Data *data);
 	CStarControlSub12(CStarControlSub13 *src);
 	virtual ~CStarControlSub12();
 
 	virtual void proc2(const void *src);
-	virtual void proc3(const void *src);
+	virtual void proc3(const CStar20Data *src);
 	virtual void setPosition(const FVector &v);
 	virtual void proc5(const FVector &v);
 	virtual void proc6(int v);

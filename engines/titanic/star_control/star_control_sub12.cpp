@@ -29,10 +29,10 @@ namespace Titanic {
 FMatrix *CStarControlSub12::_matrix1;
 FMatrix *CStarControlSub12::_matrix2;
 
-CStarControlSub12::CStarControlSub12(void *val1, void *val2) : 
+CStarControlSub12::CStarControlSub12(void *val1, const CStar20Data *data) : 
 		_currentIndex(-1), _handlerP(nullptr), _field108(0),
 		_sub13(val1) {
-	setupHandler(val2);
+	setupHandler(data);
 }
 
 CStarControlSub12::CStarControlSub12(CStarControlSub13 *src) :
@@ -59,8 +59,8 @@ void CStarControlSub12::proc2(const void *src) {
 	_sub13.copyFrom(src); 
 }
 
-void CStarControlSub12::proc3(const void *src) {
-	_handlerP->copyFrom1(src);
+void CStarControlSub12::proc3(const CStar20Data *src) {
+	_handlerP->copyFrom(src);
 }
 
 void CStarControlSub12::setPosition(const FVector &v) {
@@ -246,7 +246,7 @@ void CStarControlSub12::save(SimpleFile *file, int indent) {
 	_sub13.save(file, indent);
 }
 
-bool CStarControlSub12::setupHandler(void *src) {
+bool CStarControlSub12::setupHandler(const CStar20Data *src) {
 	CStarControlSub20 *handler = nullptr;
 
 	switch (_currentIndex) {
