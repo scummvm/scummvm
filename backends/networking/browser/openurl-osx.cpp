@@ -33,14 +33,14 @@ using namespace std;
 
 bool openUrl(const Common::String &url) {
 	CFURLRef urlRef = CFURLCreateWithBytes (
-      NULL,
-      (UInt8*)url.c_str(),
-      url.size(),
-      kCFStringEncodingASCII,
-      NULL
-    );
+		NULL,
+		(UInt8*)url.c_str(),
+		url.size(),
+		kCFStringEncodingASCII,
+		NULL
+	);
 	int result = LSOpenCFURLRef(urlRef, 0);
-  CFRelease(urlRef);
+	CFRelease(urlRef);
 	return result == 0;
 }
 
