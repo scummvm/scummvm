@@ -84,7 +84,7 @@ void tglDisposeResources(TinyGL::GLContext *c) {
 			TinyGL::GLTexture *t = c->shared_state.texture_hash_table[i];
 			while (t) {
 				if (t->disposed) {
-					TinyGL::free_texture(c, t->handle);
+					TinyGL::free_texture(c, t);
 					allDisposed = false;
 					break;
 				}
