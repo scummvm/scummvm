@@ -41,6 +41,7 @@ CloudTestSuite::CloudTestSuite() {
 	addTest("ListDirectory", &CloudTests::testDirectoryListing, true);
 	addTest("CreateDirectory", &CloudTests::testDirectoryCreating, true);
 	addTest("FileUpload", &CloudTests::testUploading, true);
+	addTest("FileDownload", &CloudTests::testDownloading, true);
 }
 
 /*
@@ -126,6 +127,15 @@ void CloudTests::fileUploadedCallback(Cloud::Storage::UploadResponse response) {
 	ConfParams.setCloudTestCallbackCalled(true);
 	Testsuite::logPrintf("Info! Uploaded file into '%s'\n", response.value.path().c_str());
 	Testsuite::logPrintf("Info! It's id = '%s' and size = '%lu'\n", response.value.id().c_str(), response.value.size());
+}
+
+void CloudTests::fileDownloadedCallback(Cloud::Storage::BoolResponse response) {
+	ConfParams.setCloudTestCallbackCalled(true);
+	if (response.value) {
+		Testsuite::logPrintf("Info! File downloaded!\n");
+	} else {
+		Testsuite::logPrintf("Info! Failed to download the file!\n");
+	}
 }
 
 void CloudTests::errorCallback(Networking::ErrorResponse response) {
@@ -384,6 +394,53 @@ TestExitStatus CloudTests::testUploading() {
 	}
 
 	Testsuite::logDetailedPrintf("File was uploaded\n");
+	return kTestPassed;
+}
+
+TestExitStatus CloudTests::testDownloading() {
+	ConfParams.setCloudTestCallbackCalled(false);
+	ConfParams.setCloudTestErrorCallbackCalled(false);
+
+	if (CloudMan.getCurrentStorage() == nullptr) {
+		Testsuite::logPrintf("Couldn't find connected Storage\n");
+		return kTestFailed;
+	}
+
+	Common::String info = "Testing Cloud Storage API download() method.\n"
+		"In this test we'll try to download that 'testbed/testfile.txt' file.";
+
+	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : download()\n");
+		return kTestSkipped;
+	}
+
+	const Common::String &path = ConfMan.get("path");
+	Common::FSDirectory gameRoot(path);
+	Common::FSNode node = gameRoot.getFSNode().getChild("downloaded_file.txt");
+	Common::String filepath = node.getPath();
+	if (CloudMan.getCurrentStorage()->download(
+			"/testbed/testfile.txt",
+			filepath.c_str(),
+			new Common::GlobalFunctionCallback<Cloud::Storage::BoolResponse>(&fileDownloadedCallback),
+			new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
+		) == nullptr) {
+		Testsuite::logPrintf("Warning! No Request is returned!\n");
+	}
+
+	if (!waitForCallbackMore()) return kTestSkipped;
+	Testsuite::clearScreen();
+
+	if (ConfParams.isCloudTestErrorCallbackCalled()) {
+		Testsuite::logPrintf("Error callback was called\n");
+		return kTestFailed;
+	}
+
+	if (Testsuite::handleInteractiveInput("Was the CloudMan able to download into 'testbed/downloaded_file.txt' file?", "Yes", "No", kOptionRight)) {
+		Testsuite::logDetailedPrintf("Error! File was not downloaded!\n");
+		return kTestFailed;
+	}
+
+	Testsuite::logDetailedPrintf("File was downloaded\n");
 	return kTestPassed;
 }
 

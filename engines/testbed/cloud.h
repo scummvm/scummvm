@@ -40,12 +40,14 @@ void infoCallback(Cloud::Storage::StorageInfoResponse response);
 void directoryListedCallback(Cloud::Storage::FileArrayResponse response);
 void directoryCreatedCallback(Cloud::Storage::BoolResponse response);
 void fileUploadedCallback(Cloud::Storage::UploadResponse response);
+void fileDownloadedCallback(Cloud::Storage::BoolResponse response);
 void errorCallback(Networking::ErrorResponse response);
 
 TestExitStatus testInfo();
 TestExitStatus testDirectoryListing();
 TestExitStatus testDirectoryCreating();
 TestExitStatus testUploading();
+TestExitStatus testDownloading();
 
 } // End of namespace CloudTests
 
