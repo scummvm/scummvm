@@ -161,8 +161,13 @@ ifeq ($(BACKEND),android)
 MODULE_OBJS += \
 	networking/browser/openurl-android.o
 else
+ifdef MACOSX
+MODULE_OBJS += \
+	networking/browser/openurl-osx.o
+else
 MODULE_OBJS += \
 	networking/browser/openurl-posix.o
+endif
 endif
 endif
 
@@ -172,8 +177,7 @@ MODULE_OBJS += \
 	midi/coreaudio.o \
 	midi/coremidi.o \
 	updates/macosx/macosx-updates.o \
-	taskbar/macosx/macosx-taskbar.o \
-	networking/browser/openurl-default.o
+	taskbar/macosx/macosx-taskbar.o
 endif
 
 ifdef WIN32
