@@ -66,6 +66,17 @@ bool CloudTests::waitForCallback() {
 	return false;
 }
 
+bool CloudTests::waitForCallbackMore() {
+	while (!waitForCallback()) {
+		Common::String info = "It takes more time than expected. Do you want to skip the test or wait more?";
+		if (Testsuite::handleInteractiveInput(info, "Wait", "Skip", kOptionRight)) {
+			Testsuite::logPrintf("Info! Skipping test : info()\n");
+			return false;
+		}
+	}
+	return true;
+}
+
 void CloudTests::infoCallback(Cloud::Storage::StorageInfoResponse response) {
 	ConfParams.setCloudTestCallbackCalled(true);
 	Testsuite::logPrintf("Info! User's ID: %s\n", response.value.uid().c_str());
@@ -147,7 +158,7 @@ TestExitStatus CloudTests::testInfo() {
 		Testsuite::logPrintf("Warning! No Request is returned!\n");
 	}
 
-	waitForCallback();
+	if (!waitForCallbackMore()) return kTestSkipped;
 	Testsuite::clearScreen();
 
 	if (ConfParams.isCloudTestErrorCallbackCalled()) {
@@ -184,7 +195,7 @@ TestExitStatus CloudTests::testDirectoryListing() {
 		Testsuite::logPrintf("Warning! No Request is returned!\n");
 	}
 
-	waitForCallback();
+	if (!waitForCallbackMore()) return kTestSkipped;
 	Testsuite::clearScreen();
 
 	if (ConfParams.isCloudTestErrorCallbackCalled()) {
@@ -226,7 +237,7 @@ TestExitStatus CloudTests::testDirectoryCreating() {
 		Testsuite::logPrintf("Warning! No Request is returned!\n");
 	}
 
-	waitForCallback();
+	if (!waitForCallbackMore()) return kTestSkipped;
 	Testsuite::clearScreen();
 
 	if (ConfParams.isCloudTestErrorCallbackCalled()) {
@@ -245,7 +256,7 @@ TestExitStatus CloudTests::testDirectoryCreating() {
 		Testsuite::logPrintf("Warning! No Request is returned!\n");
 	}
 
-	waitForCallback();
+	if (!waitForCallbackMore()) return kTestSkipped;
 	Testsuite::clearScreen();
 
 	if (ConfParams.isCloudTestErrorCallbackCalled()) {
@@ -264,7 +275,7 @@ TestExitStatus CloudTests::testDirectoryCreating() {
 		Testsuite::logPrintf("Warning! No Request is returned!\n");
 	}
 
-	waitForCallback();
+	if (!waitForCallbackMore()) return kTestSkipped;
 	Testsuite::clearScreen();
 
 	if (ConfParams.isCloudTestErrorCallbackCalled()) {

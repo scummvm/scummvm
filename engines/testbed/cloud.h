@@ -35,6 +35,7 @@ namespace CloudTests {
 // Helper functions for Cloud tests
 
 bool waitForCallback();
+bool waitForCallbackMore();
 void infoCallback(Cloud::Storage::StorageInfoResponse response);
 void directoryListedCallback(Cloud::Storage::FileArrayResponse response);
 void directoryCreatedCallback(Cloud::Storage::BoolResponse response);
