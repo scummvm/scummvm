@@ -1396,19 +1396,16 @@ int16 DungeonMan::f154_getLocationAfterLevelChange(int16 mapIndex, int16 levelDe
 	int16 targetMapIndex;
 
 
-	if (_vm->_dungeonMan->_g309_partyMapIndex == k255_mapIndexEntrance) {
+	if (_g309_partyMapIndex == k255_mapIndexEntrance) {
 		return kM1_mapIndexNone;
 	}
-	map = _vm->_dungeonMan->_g277_dungeonMaps + mapIndex;
+	map = _g277_dungeonMaps + mapIndex;
 	newMapX = map->_offsetMapX + *mapX;
 	newMapY = map->_offsetMapY + *mapY;
 	newLevel = map->_level + levelDelta;
-	map = _vm->_dungeonMan->_g277_dungeonMaps;
-	for (targetMapIndex = 0; targetMapIndex < _vm->_dungeonMan->_g278_dungeonFileHeader._mapCount; targetMapIndex++) {
-		if ((map->_level == newLevel)
-			&& (newMapX >= (offset = map->_offsetMapX))
-			&& (newMapX <= (offset + map->_width))
-			&& (newMapY >= (offset = map->_offsetMapY)) && (newMapY <= (offset + map->_height))) {
+	map = _g277_dungeonMaps;
+	for (targetMapIndex = 0; targetMapIndex < _g278_dungeonFileHeader._mapCount; targetMapIndex++) {
+		if ((map->_level == newLevel) && (newMapX >= (offset = map->_offsetMapX)) && (newMapX <= (offset + map->_width)) && (newMapY >= (offset = map->_offsetMapY)) && (newMapY <= (offset + map->_height))) {
 			*mapY = newMapY - offset;
 			*mapX = newMapX - map->_offsetMapX;
 			return targetMapIndex;

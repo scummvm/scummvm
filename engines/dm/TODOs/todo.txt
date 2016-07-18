@@ -11,7 +11,7 @@ Bugs:
 		Sometimes putting stuff in the player's hand segfaults
 		Footprints are everywhere
 		Object display is a bit mixed up with regards to which cell is it drawn in
-		Activegroup index segfaults when aknig the stairs
+		The last resurrected character can't have stuff in their left hand, segfaults if I try to put stuff into it
 
 
 Possible bugs:

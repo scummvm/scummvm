@@ -114,7 +114,6 @@ public:
 	uint16 _type;
 	uint16 _cells;
 	uint16 _health[4];
-private:
 	uint16 _flags;
 public:
 	explicit Group(uint16 *rawDat) : _nextThing(rawDat[0]), _slot(rawDat[1]), _type(rawDat[2]),
@@ -125,7 +124,7 @@ public:
 		_health[3] = rawDat[7];
 	}
 
-	byte &getActiveGroupIndex() { return *(byte*)&_cells; }
+	uint16 &getActiveGroupIndex() { return _cells; }
 
 	uint16 getBehaviour() { return _flags & 0xF; }
 	uint16 setBehaviour(uint16 val) { _flags = (_flags & ~0xF) | (val & 0xF); return (val & 0xF); }

@@ -1691,17 +1691,16 @@ void GroupMan::f183_addActiveGroup(Thing thing, int16 mapX, int16 mapY) {
 	L0344_i_ActiveGroupIndex = 0;
 	while (L0341_ps_ActiveGroup->_groupThingIndex >= 0) {
 		if (++L0344_i_ActiveGroupIndex >= _vm->_groupMan->_g376_maxActiveGroupCount) {
-			return; /* BUG0_11 Data corruption in memory. Each group located on the same map as the party has additional associated data but there is only provision for 60 instances (_vm->_groupMan->_g376_maxActiveGroupCount). If there are more groups at the same time then some of them do not get their instance and when the game accesses this information it will corrupt other data in memory (either the instance of another group, parts of the timeline or events). This situation cannot occur in the original Dungeon Master and Chaos Strikes Back dungeons for the following reasons (but it may occur in custom dungeons if they are not designed carefully): there is no map with already more than 60 groups in the original dungeons and none of the following 3 possible ways to move a group into a map can increase the number of instances above the maximum of 60:
-					- A group generator sensor is triggered: the game never generates a group on the party map if there are less than 5 instances available. This limits the actual number of groups on a map to 55 in most cases.
-					- A group falls through a pit from the map above (the creature type must be allowed on the target map): a group will never willingly move to an open pit square. It may move to a closed pit square and fall if the pit is then open (either automatically or triggered by the party on the map below). There are no such pits in the original dungeons.
-					- A group is teleported from another map (the creature type must be allowed on the target map): in the original dungeons, all teleporters whose scope include groups and target another map are either inaccessible to groups or the groups are not allowed on the target map. The only exception is for some Gigglers in the Chaos Strikes Back dungeon but there are not enough to use the 5 reserved instances.
-
-					This code returns immediately if all ACTIVE_GROUP entries are already in use, which avoids an out of bounds access into _vm->_groupMan->_g375_activeGroups below (through L0341_ps_ActiveGroup). However in this case the specified group ends up without an associated ACTIVE_GROUP structure which is assumed everywhere in the code to be present for groups on the same map as the party. If there are more than 60 groups on the party map at any given time then this will corrupt memory (in _vm->_timeline->_g370_events and _vm->_timeline->_g371_timeline allocated in _vm->_timeline->f233_initTimeline before _vm->_groupMan->_g375_activeGroups) because of read and write operations at incorrect memory addresses (the 'Cells' value of the GROUP will be used as an index in _vm->_groupMan->_g375_activeGroups even though that value was not replaced by the index of an ACTIVE_GROUP in this function) */
+			return; 
 		}
 		L0341_ps_ActiveGroup++;
 	}
 	_g377_currActiveGroupCount++;
-	L0340_ps_Group = ((Group *)_vm->_dungeonMan->_g284_thingData[k4_GroupThingType]) + (L0341_ps_ActiveGroup->_groupThingIndex = (thing).getType());
+
+	warning(false, "Code differs from the original in GroupMan::f183_addActiveGroup");
+	//L0340_ps_Group = ((Group *)_vm->_dungeonMan->_g284_thingData[k4_GroupThingType]) + (L0341_ps_ActiveGroup->_groupThingIndex = (thing).getType());
+	L0340_ps_Group = (Group*)_vm->_dungeonMan->f156_getThingData(f175_groupGetThing(mapX, mapY));
+
 	L0341_ps_ActiveGroup->_cells = L0340_ps_Group->_cells;
 	L0340_ps_Group->getActiveGroupIndex() = L0344_i_ActiveGroupIndex;
 	L0341_ps_ActiveGroup->_priorMapX = L0341_ps_ActiveGroup->_homeMapX = mapX;
