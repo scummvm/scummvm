@@ -54,6 +54,10 @@ private:
 	 */
 	bool _isInteractive;
 	bool _isGameDataFound;
+#ifdef USE_LIBCURL
+	bool _isCloudTestCallbackCalled;
+	bool _isCloudTestErrorCallbackCalled;
+#endif
 	bool _rerunTests;
 	TestbedConfigManager *_testbedConfMan;
 
@@ -67,6 +71,14 @@ public:
 
 	bool isGameDataFound() { return _isGameDataFound; }
 	void setGameDataFound(bool status) { _isGameDataFound = status; }
+
+#ifdef USE_LIBCURL
+	bool isCloudTestCallbackCalled() const { return _isCloudTestCallbackCalled; }
+	void setCloudTestCallbackCalled(bool status) { _isCloudTestCallbackCalled = status; }
+
+	bool isCloudTestErrorCallbackCalled() const { return _isCloudTestErrorCallbackCalled; }
+	void setCloudTestErrorCallbackCalled(bool status) { _isCloudTestErrorCallbackCalled = status; }
+#endif
 
 	TestbedConfigManager *getTestbedConfigManager() { return _testbedConfMan; }
 	void setTestbedConfigManager(TestbedConfigManager* confMan) { _testbedConfMan = confMan; }

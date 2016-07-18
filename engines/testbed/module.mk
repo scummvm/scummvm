@@ -14,6 +14,11 @@ MODULE_OBJS := \
 	testbed.o \
 	testsuite.o
 
+ifdef USE_LIBCURL
+MODULE_OBJS += \
+	cloud.o
+endif
+
 MODULE_DIRS += \
 	engines/testbed
 
