@@ -64,23 +64,37 @@ ImageAsset::ImageAsset(ObjID original, Container * container) {
 	_id = (original * 2);
 	_mask = (original * 2) + 1;
 
-	_container = container;
-	decodePPIC(_id, _imgData);
+	uint imgRowBytes = 0;
+	uint imgBitWidth = 0;
+	uint imgBitHeight = 0;
+	uint maskRowBytes = 0;
+	uint maskBitWidth = 0;
+	uint maskBitHeight = 0;
 
-	if (_container->getItemByteSize(_mask)) // Has mask
-		decodePPIC(_mask, _maskData);
+	_container = container;
+	decodePPIC(_id, _imgData, imgBitHeight, imgBitWidth, imgRowBytes);
+	_imgRowBytes = imgRowBytes;
+	_imgBitWidth = imgBitWidth;
+	_imgBitHeight = imgBitHeight;
+
+	if (_container->getItemByteSize(_mask)) {
+		decodePPIC(_mask, _maskData, maskBitHeight, maskBitWidth, maskRowBytes);
+	}
+	_maskRowBytes = maskRowBytes;
+	_maskBitWidth = maskBitWidth;
+	_maskBitHeight = maskBitHeight;
 }
 
 ImageAsset::~ImageAsset() {
 }
 
-void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data) {
+void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data, uint &bitHeight, uint &bitWidth, uint &rowBytes) {
 	ObjID realID = id;
 	uint32 size = _container->getItemByteSize(id);
 	if (size < 2) {
-		_rowBytes = 0;
-		_bitHeight = 0;
-		_bitHeight = 0;
+		rowBytes = 0;
+		bitHeight = 0;
+		bitWidth = 0;
 		return;
 	}
 	if (size == 2) {
@@ -96,37 +110,37 @@ void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data) {
 	if (stream.getBit()) w = stream.getBits(10);
 	else w = stream.getBits(6);
 
-	_rowBytes = ((w + 0xF) >> 3) & 0xFFFE;
-	_bitWidth = w;
-	_bitHeight = h;
+	rowBytes = ((w + 0xF) >> 3) & 0xFFFE;
+	bitWidth = w;
+	bitHeight = h;
 
-	for (int i = 0; i < _rowBytes * h; i++) {
+	for (int i = 0; i < rowBytes * h; i++) {
 		data.push_back(0);
 	}
 
 	switch (mode)
 	{
 	case MacVenture::kPPIC0:
-		decodePPIC0(stream, data);
+		decodePPIC0(stream, data, bitHeight, bitWidth, rowBytes);
 		break;
 	case MacVenture::kPPIC1:
-		decodePPIC1(stream, data);
+		decodePPIC1(stream, data, bitHeight, bitWidth, rowBytes);
 		break;
 	case MacVenture::kPPIC2:
-		decodePPIC2(stream, data);
+		decodePPIC2(stream, data, bitHeight, bitWidth, rowBytes);
 		break;
 	case MacVenture::kPPIC3:
-		decodePPIC3(stream, data);
+		decodePPIC3(stream, data, bitHeight, bitWidth, rowBytes);
 		break;
 	}
 }
 
-void ImageAsset::decodePPIC0(Common::BitStream & stream, Common::Array<byte> &data) {
-	uint words = _bitWidth >> 4;
-	uint bytes = _bitWidth & 0xF;
+void ImageAsset::decodePPIC0(Common::BitStream & stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
+	uint words = bitWidth >> 4;
+	uint bytes = bitWidth & 0xF;
 	uint v = 0;
 	uint p = 0;
-	for (uint y = 0; y <_bitHeight; y++) {
+	for (uint y = 0; y < bitHeight; y++) {
 		for (uint x = 0; x < words; x++) {
 			v = stream.peekBits(32);
 			stream.skip(16);
@@ -144,15 +158,15 @@ void ImageAsset::decodePPIC0(Common::BitStream & stream, Common::Array<byte> &da
 
 }
 
-void ImageAsset::decodePPIC1(Common::BitStream & stream, Common::Array<byte> &data) {
-	decodeHuffGraphic(PPIC1Huff, stream, data);
+void ImageAsset::decodePPIC1(Common::BitStream & stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
+	decodeHuffGraphic(PPIC1Huff, stream, data, bitHeight, bitWidth, rowBytes);
 }
 
-void ImageAsset::decodePPIC2(Common::BitStream & stream, Common::Array<byte> &data) {
-	decodeHuffGraphic(PPIC2Huff, stream, data);
+void ImageAsset::decodePPIC2(Common::BitStream & stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
+	decodeHuffGraphic(PPIC2Huff, stream, data, bitHeight, bitWidth, rowBytes);
 }
 
-void ImageAsset::decodePPIC3(Common::BitStream & stream, Common::Array<byte> &data) {
+void ImageAsset::decodePPIC3(Common::BitStream & stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	// We need to load the huffman from the PPIC itself
 	PPICHuff huff;
 	uint16 v, bits;
@@ -193,20 +207,20 @@ void ImageAsset::decodePPIC3(Common::BitStream & stream, Common::Array<byte> &da
 	huff.lens[0xf] = bits;
 	huff.lens[0x10] = bits;
 
-	decodeHuffGraphic(huff, stream, data);
+	decodeHuffGraphic(huff, stream, data, bitHeight, bitWidth, rowBytes);
 }
 
-void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & stream, Common::Array<byte> &data) {
+void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	byte flags = 0;
 	_walkRepeat = 0;
 	_walkLast = 0;
-	if (_bitWidth & 3)
+	if (bitWidth & 3)
 		flags = stream.getBits(5);
 	else
 		flags = stream.getBits(4) << 1;
 
 	byte odd = 0;
-	byte blank = _bitWidth & 0xf;
+	byte blank = bitWidth & 0xf;
 	if (blank) {
 		blank >>= 2;
 		odd = blank & 1;
@@ -214,9 +228,9 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & st
 	}
 
 	uint16 pos = 0;
-	for (uint y = 0; y < _bitHeight; y++) {
+	for (uint y = 0; y < bitHeight; y++) {
 		uint16 x = 0;
-		for (; x < _bitWidth >> 3; x++) {
+		for (; x < bitWidth >> 3; x++) {
 			byte hi = walkHuff(huff, stream) << 4;
 			data[pos++] = walkHuff(huff, stream) | hi;
 		}
@@ -226,13 +240,13 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & st
 		pos += blank;
 	}
 
-	uint16 edge = _bitWidth & 3;
+	uint16 edge = bitWidth & 3;
 	if (edge) {
-		pos = _rowBytes - blank;
+		pos = rowBytes - blank;
 		uint16 bits = 0;
 		uint16 val = 0;
 		uint16 v;
-		for (uint y = 0; y < _bitHeight; y++) {
+		for (uint y = 0; y < bitHeight; y++) {
 			if (flags & 1) {
 				if (bits < edge) {
 					v = walkHuff(huff, stream) << 4;
@@ -251,15 +265,15 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & st
 				v >>= 4;
 
 			data[pos] |= v & 0xff;
-			pos += _rowBytes;
+			pos += rowBytes;
 		}
 	}
 	if (flags & 8) {
 		pos = 0;
-		for (uint y = 0; y < _bitHeight; y++) {
+		for (uint y = 0; y < bitHeight; y++) {
 			uint16 v = 0;
 			if (flags & 2) {
-				for (uint x = 0; x < _rowBytes; x++)
+				for (uint x = 0; x < rowBytes; x++)
 				{
 					data[pos] ^= v;
 					v = data[pos];
@@ -267,7 +281,7 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & st
 				}
 			}
 			else {
-				for (uint x = 0; x < _rowBytes; x++) {
+				for (uint x = 0; x < rowBytes; x++) {
 					uint16 val = data[pos] ^ v;
 					val ^= (val >> 4) & 0xf;
 					data[pos] = val;
@@ -278,11 +292,11 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & st
 		}
 	}
 	if (flags & 4) {
-		uint16 delta = _rowBytes * 4;
+		uint16 delta = rowBytes * 4;
 		if (flags & 2) delta *= 2;
 		pos = 0;
 		uint q = delta;
-		for (int i = 0; i < _bitHeight * _rowBytes - delta; i++) {
+		for (int i = 0; i < bitHeight * rowBytes - delta; i++) {
 			data[q] ^= data[pos];
 			q++;
 			pos++;
@@ -331,15 +345,15 @@ byte ImageAsset::walkHuff(const PPICHuff & huff, Common::BitStream & stream) {
 
 void ImageAsset::blitInto(Graphics::ManagedSurface *target, uint32 x, uint32 y, BlitMode mode) {
 	if (mode == kBlitDirect) {
-		blitDirect(target, x, y, _imgData);
+		blitDirect(target, x, y, _imgData, _imgBitHeight, _imgBitWidth, _imgRowBytes);
 	} else if (mode < kBlitXOR){
 		if (_container->getItemByteSize(_mask)) { // Has mask
 			switch (mode) {
 			case MacVenture::kBlitBIC:
-				blitBIC(target, x, y, _maskData);
+				blitBIC(target, x, y, _maskData, _maskBitHeight, _maskBitWidth, _maskRowBytes);
 				break;
 			case MacVenture::kBlitOR:
-				blitOR(target, x, y, _maskData);
+				blitOR(target, x, y, _maskData, _maskBitHeight, _maskBitWidth, _maskRowBytes);
 				break;
 			default:
 				break;
@@ -347,10 +361,10 @@ void ImageAsset::blitInto(Graphics::ManagedSurface *target, uint32 x, uint32 y, 
 		} else if (_container->getItemByteSize(_id)) {
 			switch (mode) {
 			case MacVenture::kBlitBIC:
-				target->fillRect(Common::Rect(x, y, x + _bitWidth, y + _bitHeight), kColorWhite);
+				target->fillRect(Common::Rect(x, y, x + _imgBitWidth, y + _imgBitHeight), kColorWhite);
 				break;
 			case MacVenture::kBlitOR:
-				target->fillRect(Common::Rect(x, y, x + _bitWidth, y + _bitHeight), kColorBlack);
+				target->fillRect(Common::Rect(x, y, x + _imgBitWidth, y + _imgBitHeight), kColorBlack);
 				break;
 			default:
 				break;
@@ -358,16 +372,16 @@ void ImageAsset::blitInto(Graphics::ManagedSurface *target, uint32 x, uint32 y, 
 		}
 
 		if (_container->getItemByteSize(_id) && mode > 0) {
-			blitXOR(target, x, y, _imgData);
+			blitXOR(target, x, y, _imgData, _imgBitHeight, _imgBitWidth, _imgRowBytes);
 		}
 	}
 }
 
 bool ImageAsset::isPointInside(Common::Point point) {
-	if (point.x >= _bitWidth || point.y >= _bitHeight) return false;
+	if (point.x >= _maskBitWidth || point.y >= _maskBitHeight) return false;
 	if (_maskData.empty()) return false;
 	// We see if the point lands on the mask.
-	uint pix = _maskData[(point.y * _rowBytes) + (point.x >> 3)] & (1 << (7 - (point.x & 7)));
+	uint pix = _maskData[(point.y * _maskRowBytes) + (point.x >> 3)] & (1 << (7 - (point.x & 7)));
 	return pix != 0;
 }
 
@@ -376,7 +390,7 @@ bool ImageAsset::isRectInside(Common::Rect rect) {
 	if (_maskData.empty()) return (rect.width() > 0 && rect.height() > 0);
 
 	for (int y = rect.top; y < rect.top + rect.height(); y++) {
-		uint bmpofs = y * _rowBytes;
+		uint bmpofs = y * _maskRowBytes;
 		byte pix;
 		for (int x = rect.left; x < rect.left + rect.width(); x++) {
 			pix = _maskData[bmpofs + (x >> 3)] & (1 << (7 - (x & 7)));
@@ -388,19 +402,20 @@ bool ImageAsset::isRectInside(Common::Rect rect) {
 
 int ImageAsset::getWidth() {
 	if (_imgData.size() == 0) return 0;
-	return MAX(0, (int)_bitWidth);
+	return MAX(0, (int)_imgBitWidth);
 }
 
 int ImageAsset::getHeight() {
 	if (_imgData.size() == 0) return 0;
-	return MAX(0, (int)_bitHeight);
+	return MAX(0, (int)_imgBitHeight);
 }
 
-void ImageAsset::blitDirect(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte>& data) {
-	/*
-	if (_bitWidth == 0 || _bitHeight == 0) return;
-	uint w = _bitWidth;
-	uint h = _bitHeight;
+void ImageAsset::blitDirect(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte>& data, uint bitHeight, uint bitWidth, uint rowBytes) {
+
+/*
+	if (bitWidth == 0 || bitHeight == 0) return;
+	uint w = bitWidth;
+	uint h = bitHeight;
 	uint sx = 0;
 	uint sy = 0;
 	if (ox<0) { sx = -ox; ox = 0; }
@@ -408,12 +423,11 @@ void ImageAsset::blitDirect(Graphics::ManagedSurface * target, uint32 ox, uint32
 	if (w + ox >= target->w) w = target->w - ox;
 	if (h + oy >= target->h) h = target->h - oy;
 	if (w == 0 || h == 0) return;
-	*/
-
-	for (uint y = 0; y < _bitHeight; y++) {
-		uint bmpofs = y * _rowBytes;
+*/
+	for (uint y = 0; y < bitHeight; y++) {
+		uint bmpofs = y * rowBytes;
 		byte pix = 0;
-		for (uint x = 0; x < _bitWidth; x++) {
+		for (uint x = 0; x < bitWidth; x++) {
 			pix = data[bmpofs + (x >> 3)] & (1 << (7 - (x & 7)));
 			pix = pix ? kColorBlack : kColorWhite;
 			*((byte *)target->getBasePtr(ox + x, oy + y)) = pix;
@@ -421,11 +435,11 @@ void ImageAsset::blitDirect(Graphics::ManagedSurface * target, uint32 ox, uint32
 	}
 }
 
-void ImageAsset::blitBIC(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data) {
-	/*
-	if (_bitWidth == 0 || _bitHeight == 0) return;
-	uint w = _bitWidth;
-	uint h = _bitHeight;
+void ImageAsset::blitBIC(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
+/*
+	if (bitWidth == 0 || bitHeight == 0) return;
+	uint w = bitWidth;
+	uint h = bitHeight;
 	uint sx = 0;
 	uint sy = 0;
 	if (ox<0) { sx = -ox; ox = 0; }
@@ -433,22 +447,22 @@ void ImageAsset::blitBIC(Graphics::ManagedSurface * target, uint32 ox, uint32 oy
 	if (w + ox >= target->w) w = target->w - ox;
 	if (h + oy >= target->h) h = target->h - oy;
 	if (w == 0 || h == 0) return;
-	*/
-	for (uint y = 0; y < _bitHeight; y++) {
-		uint bmpofs = y * _rowBytes;
+*/
+	for (uint y = 0; y < bitHeight; y++) {
+		uint bmpofs = y * rowBytes;
 		byte pix = 0;
-		for (uint x = 0; x < _bitWidth; x++) {
+		for (uint x = 0; x < bitWidth; x++) {
 			pix = data[bmpofs + (x >> 3)] & (1 << (7 - (x & 7)));
 			if (pix) *((byte *)target->getBasePtr(ox + x, oy + y)) = kColorWhite;
 		}
 	}
 }
 
-void ImageAsset::blitOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data) {
-	/*
-	if (_bitWidth == 0 || _bitHeight == 0) return;
-	uint w = _bitWidth;
-	uint h = _bitHeight;
+void ImageAsset::blitOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
+/*
+	if (bitWidth == 0 || bitHeight == 0) return;
+	uint w = bitWidth;
+	uint h = bitHeight;
 	uint sx = 0;
 	uint sy = 0;
 	if (ox<0) { sx = -ox; ox = 0; }
@@ -456,23 +470,22 @@ void ImageAsset::blitOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy,
 	if (w + ox >= target->w) w = target->w - ox;
 	if (h + oy >= target->h) h = target->h - oy;
 	if (w == 0 || h == 0) return;
-	*/
-	for (uint y = 0; y < _bitHeight; y++) {
-		uint bmpofs = y * _rowBytes;
+*/
+	for (uint y = 0; y < bitHeight; y++) {
+		uint bmpofs = y * rowBytes;
 		byte pix = 0;
-		for (uint x = 0; x < _bitWidth; x++) {
+		for (uint x = 0; x < bitWidth; x++) {
 			pix = data[bmpofs + (x >> 3)] & (1 << (7 - (x & 7)));
-
 			if (pix) *((byte *)target->getBasePtr(ox + x, oy + y)) = kColorBlack;
 		}
 	}
 }
 
-void ImageAsset::blitXOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data) {
-	/*
-	if (_bitWidth == 0 || _bitHeight == 0) return;
-	uint w = _bitWidth;
-	uint h = _bitHeight;
+void ImageAsset::blitXOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
+/*
+	if (bitWidth == 0 || bitHeight == 0) return;
+	uint w = bitWidth;
+	uint h = bitHeight;
 	uint sx = 0;
 	uint sy = 0;
 	if (ox<0) { sx = -ox; ox = 0; }
@@ -480,16 +493,14 @@ void ImageAsset::blitXOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy
 	if (w + ox >= target->w) w = target->w - ox;
 	if (h + oy >= target->h) h = target->h - oy;
 	if (w == 0 || h == 0) return;
-	*/
-	for (uint y = 0;y < _bitHeight; y++) {
-		uint bmpofs = y * _rowBytes;
+*/
+	for (uint y = 0; y < bitHeight; y++) {
+		uint bmpofs = y * rowBytes;
 		byte pix = 0;
-		for (uint x = 0; x < _bitWidth; x++) {
+		for (uint x = 0; x < bitWidth; x++) {
 			pix = data[bmpofs + (x >> 3)] & (1 << (7 - (x & 7)));
-
 			if (pix) { // We need to xor
 				byte p = *((byte *)target->getBasePtr(ox + x, oy + y));
-
 				*((byte *)target->getBasePtr(ox + x, oy + y)) =
 					(p == kColorWhite) ? kColorBlack : kColorWhite;
 			}

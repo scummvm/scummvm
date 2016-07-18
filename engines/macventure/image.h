@@ -67,20 +67,20 @@ public:
 	int getHeight();
 
 private:
-	void decodePPIC(ObjID id, Common::Array<byte> &data);
+	void decodePPIC(ObjID id, Common::Array<byte> &data, uint &bitHeight, uint &bitWidth, uint &rowBytes);
 
-	void decodePPIC0(Common::BitStream &stream, Common::Array<byte> &data);
-	void decodePPIC1(Common::BitStream &stream, Common::Array<byte> &data);
-	void decodePPIC2(Common::BitStream &stream, Common::Array<byte> &data);
-	void decodePPIC3(Common::BitStream &stream, Common::Array<byte> &data);
+	void decodePPIC0(Common::BitStream &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
+	void decodePPIC1(Common::BitStream &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
+	void decodePPIC2(Common::BitStream &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
+	void decodePPIC3(Common::BitStream &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
 
-	void decodeHuffGraphic(const PPICHuff &huff, Common::BitStream &stream, Common::Array<byte> &data);
+	void decodeHuffGraphic(const PPICHuff &huff, Common::BitStream &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
 	byte walkHuff(const PPICHuff &huff, Common::BitStream &stream);
 
-	void blitDirect(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data);
-	void blitBIC(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data);
-	void blitOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data);
-	void blitXOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data);
+	void blitDirect(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
+	void blitBIC(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
+	void blitOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
+	void blitXOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
 
 private:
 	ObjID _id;
@@ -90,12 +90,15 @@ private:
 	uint16 _walkRepeat;
 	uint16 _walkLast;
 
-	uint16 _rowBytes;
-	uint16 _bitWidth;
-	uint16 _bitHeight;
-
 	Common::Array<byte> _imgData;
+	uint16 _imgRowBytes;
+	uint16 _imgBitWidth;
+	uint16 _imgBitHeight;
+
 	Common::Array<byte> _maskData;
+	uint16 _maskRowBytes;
+	uint16 _maskBitWidth;
+	uint16 _maskBitHeight;
 };
 
 } // End of namespace MacVenture
