@@ -26,8 +26,7 @@
 namespace Titanic {
 
 CStarControlSub13::CStarControlSub13(void *src) :
-		_field0(0), _field4(0), _field8(0), _fieldC0(0),
-		_fieldC4(0), _fieldC8(0), _fieldCC(0), _fieldD0(0) {
+		_fieldC0(0), _fieldC4(0), _fieldC8(0), _fieldCC(0), _fieldD0(0) {
 	if (src) {
 		setup(src);
 	} else {
@@ -46,9 +45,7 @@ CStarControlSub13::CStarControlSub13(void *src) :
 
 CStarControlSub13::CStarControlSub13(CStarControlSub13 *src) :
 		_matrix(&src->_matrix), _sub1(&src->_sub1), _sub2(&src->_sub2) {
-	_field0 = src->_field0;
-	_field4 = src->_field4;
-	_field8 = src->_field8;
+	_position = src->_position;
 	_fieldC = src->_fieldC;
 	_field10 = src->_field10;
 	_field14 = src->_field14;
@@ -87,9 +84,9 @@ void CStarControlSub13::copyFrom(const void *src) {
 }
 
 void CStarControlSub13::load(SimpleFile *file, int param) {
-	_field0 = file->readFloat();
-	_field4 = file->readFloat();
-	_field8 = file->readFloat();
+	_position._x = file->readFloat();
+	_position._y = file->readFloat();
+	_position._z = file->readFloat();
 	_fieldC = file->readFloat();
 	_field10 = file->readFloat();
 	_field14 = file->readFloat();
@@ -109,9 +106,9 @@ void CStarControlSub13::load(SimpleFile *file, int param) {
 }
 
 void CStarControlSub13::save(SimpleFile *file, int indent) {
-	file->writeFloatLine(_field0, indent);
-	file->writeFloatLine(_field4, indent);
-	file->writeFloatLine(_field8, indent);
+	file->writeFloatLine(_position._x, indent);
+	file->writeFloatLine(_position._y, indent);
+	file->writeFloatLine(_position._z, indent);
 	file->writeFloatLine(_fieldC, indent);
 	file->writeFloatLine(_field10, indent);
 	file->writeFloatLine(_field14, indent);
@@ -125,12 +122,18 @@ void CStarControlSub13::save(SimpleFile *file, int indent) {
 	_matrix.save(file, indent);
 }
 
-void CStarControlSub13::fn10(const void *src) {
-	error("TODO: CStarControlSub13::fn10");
+void CStarControlSub13::setPosition(const FVector &v) {
+	_position = v;
+	_fieldD4 = 0;
 }
 
-void CStarControlSub13::fn11(const FVector *v) {
-	_matrix.fn1(v);
+void CStarControlSub13::setMatrix(const FMatrix &m) {
+	_matrix = m;
+	_fieldD4 = 0;
+}
+
+void CStarControlSub13::fn11(const FVector &v) {
+	_matrix.fn1(&v);
 	_fieldD4 = 0;
 }
 
@@ -174,6 +177,10 @@ void CStarControlSub13::fn13(double v1, double v2) {
 
 	_valArray[2] = 0.0;
 	_field24 = v2 ? 2 : 0;
+}
+
+void CStarControlSub13::getMatrix(FMatrix *matrix) {
+	*matrix = _matrix;
 }
 
 } // End of namespace Titanic

@@ -90,7 +90,7 @@ void CStarControlSub20::proc7() {
 	}
 }
 
-void CStarControlSub20::proc11(CErrorCode *errorCode, void *v2, void *v3) {
+void CStarControlSub20::proc11(CErrorCode &errorCode, FVector &v, const FMatrix &m) {
 	if (_field4 > 0.0) {
 		warning("TODO: CStarControlSub20::proc11");
 	}

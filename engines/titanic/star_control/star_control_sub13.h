@@ -31,9 +31,6 @@ namespace Titanic {
 
 class CStarControlSub13 {
 private:
-	double _field0;
-	double _field4;
-	double _field8;
 	double _fieldC;
 	double _field10;
 	double _field14;
@@ -55,6 +52,8 @@ private:
 private:
 	void setup(void *ptr);
 public:
+	FVector _position;
+public:
 	CStarControlSub13(void *ptr);
 	CStarControlSub13(CStarControlSub13 *src);
 
@@ -70,10 +69,24 @@ public:
 	 */
 	void save(SimpleFile *file, int indent);
 
-	void fn10(const void *src);
-	void fn11(const FVector *v);
+	/**
+	 * Sets the position
+	 */
+	void setPosition(const FVector &v);
+
+	/**
+	 * Sets the matrix
+	 */
+	void setMatrix(const FMatrix &m);
+
+	void fn11(const FVector &v);
 	void fn12();
 	void fn13(double v1, double v2);
+
+	/**
+	 * Makes a copy of the instance's matrix into the passed matrix
+	 */
+	void getMatrix(FMatrix *matrix);
 
 	void setC(int v);
 	void set10(int v);

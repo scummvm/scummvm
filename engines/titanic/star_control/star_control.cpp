@@ -25,6 +25,7 @@
 #include "titanic/star_control/dmatrix.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/star_control/star_control_sub6.h"
+#include "titanic/star_control/star_control_sub12.h"
 
 namespace Titanic {
 
@@ -38,11 +39,13 @@ END_MESSAGE_MAP()
 CStarControl::CStarControl() : _fieldBC(0), _field80B0(0),
 		_starRect(20, 10, 620, 350) {
 	CStarControlSub6::init();
+	CStarControlSub12::init();
 	DMatrix::init();
 }
 
 CStarControl::~CStarControl() {
 	CStarControlSub6::deinit();
+	CStarControlSub12::deinit();
 	DMatrix::deinit();
 }
 

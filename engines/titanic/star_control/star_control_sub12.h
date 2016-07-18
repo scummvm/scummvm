@@ -24,6 +24,7 @@
 #define TITANIC_STAR_CONTROL_SUB12_H
 
 #include "titanic/support/simple_file.h"
+#include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/star_control_sub13.h"
 #include "titanic/star_control/star_control_sub20.h"
 
@@ -36,6 +37,9 @@ class CStarControlSub12 {
 		int _field8;
 		ArrayEntry() : _field0(0), _field4(0), _field8(0) {}
 	};
+private:
+	static FMatrix *_matrix1;
+	static FMatrix *_matrix2;
 private:
 	int _field4;
 	ArrayEntry _array[3];
@@ -58,14 +62,17 @@ private:
 	 */
 	bool isLocked() { return _handlerP->isLocked(); }
 public:
+	static void init();
+	static void deinit();
+public:
 	CStarControlSub12(void *val1, void *val2);
 	CStarControlSub12(CStarControlSub13 *src);
 	virtual ~CStarControlSub12();
 
 	virtual void proc2(const void *src);
 	virtual void proc3(const void *src);
-	virtual void proc4(const void *src);
-	virtual void proc5(const FVector *src);
+	virtual void setPosition(const FVector &v);
+	virtual void proc5(const FVector &v);
 	virtual void proc6(int v);
 	virtual void proc7(int v);
 	virtual void proc8(int v);
@@ -74,6 +81,8 @@ public:
 	virtual void proc11();
 	virtual void proc12(double v1, double v2);
 	virtual void proc13(CStarControlSub13 *dest);
+	virtual void proc14(int v);
+	virtual void proc15(int v);
 
 	/**
 	 * Load the data for the class from file

@@ -25,6 +25,7 @@
 
 #include "titanic/support/simple_file.h"
 #include "titanic/star_control/error_code.h"
+#include "titanic/star_control/fmatrix.h"
 
 namespace Titanic {
 
@@ -51,9 +52,9 @@ public:
 	virtual void proc6();
 	virtual void proc7();
 	virtual void proc8() {}
-	virtual void proc9() {}
+	virtual void proc9(FVector *v, int v2, FMatrix *matrix) {}
 	virtual void proc10() {}
-	virtual void proc11(CErrorCode *errorCode, void *v2, void *v3);
+	virtual void proc11(CErrorCode &errorCode, FVector &v, const FMatrix &m);
 
 	/**
 	 * Set the data
