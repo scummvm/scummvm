@@ -42,6 +42,9 @@
 #ifdef USE_LIBCURL
 #include "testbed/cloud.h"
 #endif
+#ifdef USE_SDL_NET
+#include "testbed/webserver.h"
+#endif
 
 namespace Testbed {
 
@@ -140,6 +143,11 @@ TestbedEngine::TestbedEngine(OSystem *syst)
 #ifdef USE_LIBCURL
 	// Cloud
 	ts = new CloudTestSuite();
+	_testsuiteList.push_back(ts);
+#endif
+#ifdef USE_SDL_NET
+	// Webserver
+	ts = new WebserverTestSuite();
 	_testsuiteList.push_back(ts);
 #endif
 }

@@ -19,6 +19,11 @@ MODULE_OBJS += \
 	cloud.o
 endif
 
+ifdef USE_SDL_NET
+MODULE_OBJS += \
+	webserver.o
+endif
+
 MODULE_DIRS += \
 	engines/testbed
 
