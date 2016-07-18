@@ -25,6 +25,8 @@
 
 namespace Titanic {
 
+class CStarControlSub6;
+
 /**
  * Floating point vector class.
  * @remarks		TODO: See if it can be merged with DVector
@@ -46,7 +48,7 @@ public:
 	double getDistance(const FVector *src) const;
 
 	static void fn4(FVector *dest, const FVector *v1, const FVector *v2);
-	void fn5(FVector *dest, const void *v) const;
+	void fn5(FVector *dest, const CStarControlSub6 *sub6) const;
 
 	/**
 	 * Returns true if the passed vector equals this one

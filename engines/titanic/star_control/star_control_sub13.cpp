@@ -127,6 +127,13 @@ void CStarControlSub13::setPosition(const FVector &v) {
 	_fieldD4 = 0;
 }
 
+void CStarControlSub13::setPosition(const CStarControlSub6 &sub6) {
+	FVector vector;
+	_position.fn5(&vector, &sub6);
+	_position = sub6._matrix._row1;
+	_fieldD4 = 0;
+}
+
 void CStarControlSub13::setMatrix(const FMatrix &m) {
 	_matrix = m;
 	_fieldD4 = 0;
@@ -177,6 +184,50 @@ void CStarControlSub13::fn13(double v1, double v2) {
 
 	_valArray[2] = 0.0;
 	_field24 = v2 ? 2 : 0;
+}
+
+void CStarControlSub13::fn14(double v) {
+	error("TODO: CStarControlSub13::fn14");
+}
+
+void CStarControlSub13::fn15(FMatrix &matrix) {
+	_matrix.fn3(&matrix);
+	_fieldD4 = 0;
+}
+
+CStarControlSub6 CStarControlSub13::getSub1() {
+	if (!_fieldD4)
+		reset();
+
+	return _sub1;
+}
+
+CStarControlSub6 CStarControlSub13::getSub2() {
+	if (!_fieldD4)
+		reset();
+
+	return _sub2;
+}
+
+FVector CStarControlSub13::fn16(const FVector &v) {
+	error("TODO: CStarControlSub13::fn16");
+}
+
+FVector CStarControlSub13::fn17(int index, const FVector &v) {
+	error("TODO: CStarControlSub13::fn17");
+}
+
+FVector CStarControlSub13::fn18(int index, const FVector &v) {
+	error("TODO: CStarControlSub13::fn17");
+}
+
+void CStarControlSub13::fn19(double *v1, double *v2, double *v3, double *v4) {
+	error("TODO: CStarControlSub13::fn19");
+}
+
+void CStarControlSub13::reset() {
+	const double FACTOR = 3.1415927 * 0.0055555557;
+	error("TODO: CStarControlSub13::reset");
 }
 
 void CStarControlSub13::getMatrix(FMatrix *matrix) {

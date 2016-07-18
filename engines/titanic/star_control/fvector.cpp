@@ -21,6 +21,7 @@
  */
 
 #include "titanic/star_control/fvector.h"
+#include "titanic/star_control/star_control_sub6.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
 
@@ -63,7 +64,7 @@ void FVector::fn4(FVector *dest, const FVector *v1, const FVector *v2) {
 	*dest = tempVector;
 }
 
-void FVector::fn5(FVector *dest, const void *v) const {
+void FVector::fn5(FVector *dest, const CStarControlSub6 *sub6) const {
 	error("TODO: FVector::fn5");
 }
 

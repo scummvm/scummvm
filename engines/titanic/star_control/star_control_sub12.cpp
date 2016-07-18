@@ -30,13 +30,13 @@ FMatrix *CStarControlSub12::_matrix1;
 FMatrix *CStarControlSub12::_matrix2;
 
 CStarControlSub12::CStarControlSub12(void *val1, void *val2) : 
-		_field4(-1), _handlerP(nullptr), _field108(0),
+		_currentIndex(-1), _handlerP(nullptr), _field108(0),
 		_sub13(val1) {
 	setupHandler(val2);
 }
 
 CStarControlSub12::CStarControlSub12(CStarControlSub13 *src) :
-		_field4(-1), _handlerP(nullptr), _field108(0), _sub13(src) {
+		_currentIndex(-1), _handlerP(nullptr), _field108(0), _sub13(src) {
 }
 
 void CStarControlSub12::init() {
@@ -146,6 +146,98 @@ void CStarControlSub12::proc15(int v) {
 	}
 }
 
+void CStarControlSub12::proc16() {
+	_handlerP->proc4();
+}
+
+void CStarControlSub12::proc17() {
+	_handlerP->proc5();
+}
+
+void CStarControlSub12::proc18() {
+	_handlerP->proc6();
+}
+
+void CStarControlSub12::proc19() {
+	_handlerP->proc7();
+}
+
+void CStarControlSub12::proc20(double v) {
+	if (!isLocked())
+		_sub13.fn14(v);
+}
+
+void CStarControlSub12::proc21(CStarControlSub6 &sub6) {
+	if (!isLocked()) {
+		_sub13.setPosition(sub6);
+		set108();
+	}
+}
+
+void CStarControlSub12::proc22(FMatrix &m) {
+	if (!isLocked())
+		_sub13.fn15(m);
+}
+
+CStarControlSub6 CStarControlSub12::proc23() {
+	return _sub13.getSub1();
+}
+
+CStarControlSub6 CStarControlSub12::proc24() {
+	return _sub13.getSub2();
+}
+
+double CStarControlSub12::proc25() const {
+	return _sub13._field10;
+}
+
+double CStarControlSub12::proc26() const {
+	return _sub13._field14;
+}
+
+int CStarControlSub12::proc27() const {
+	return _sub13._field24;
+}
+
+FVector CStarControlSub12::proc28(int index, const void *v2) {
+	error("TODO: CStarControlSub12::proc28");
+	return FVector();
+}
+
+FVector CStarControlSub12::proc29(const FVector &v) {
+	return _sub13.fn16(v);
+}
+
+FVector CStarControlSub12::proc30(int index, const FVector &v) {
+	return _sub13.fn17(index, v);
+}
+
+FVector CStarControlSub12::proc31(int index, const FVector &v) {
+	return _sub13.fn18(index, v);
+}
+
+void CStarControlSub12::proc32(double v1, double v2) {
+	error("TODO: CStarControlSub12::proc32");
+}
+
+bool CStarControlSub12::setArrayVector(const FVector &v) {
+	if (_currentIndex >= 2)
+		return false;
+
+	error("TODO: CStarControlSub12::setArrayVector");
+}
+
+bool CStarControlSub12::proc35() {
+	if (_currentIndex == -1)
+		return false;
+
+	error("TODO: CStarControlSub12::proc35");
+}
+
+void CStarControlSub12::proc36(double *v1, double *v2, double *v3, double *v4) {
+	_sub13.fn19(v1, v2, v3, v4);
+}
+
 void CStarControlSub12::load(SimpleFile *file, int param) {
 	_sub13.load(file, param);
 }
@@ -157,7 +249,7 @@ void CStarControlSub12::save(SimpleFile *file, int indent) {
 bool CStarControlSub12::setupHandler(void *src) {
 	CStarControlSub20 *handler = nullptr;
 
-	switch (_field4) {
+	switch (_currentIndex) {
 	case -1:
 		handler = new CStarControlSub21(src);
 		break;

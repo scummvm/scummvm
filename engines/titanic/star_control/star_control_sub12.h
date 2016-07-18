@@ -31,18 +31,12 @@
 namespace Titanic {
 
 class CStarControlSub12 {
-	struct ArrayEntry {
-		int _field0;
-		int _field4;
-		int _field8;
-		ArrayEntry() : _field0(0), _field4(0), _field8(0) {}
-	};
 private:
 	static FMatrix *_matrix1;
 	static FMatrix *_matrix2;
 private:
-	int _field4;
-	ArrayEntry _array[3];
+	int _currentIndex;
+	FVector _array[3];
 	CStarControlSub20 *_handlerP;
 	CStarControlSub13 _sub13;
 	int _field108;
@@ -83,6 +77,27 @@ public:
 	virtual void proc13(CStarControlSub13 *dest);
 	virtual void proc14(int v);
 	virtual void proc15(int v);
+	virtual void proc16();
+	virtual void proc17();
+	virtual void proc18();
+	virtual void proc19();
+	virtual void proc20(double v);
+	virtual void proc21(CStarControlSub6 &sub6);
+	virtual void proc22(FMatrix &m);
+	virtual CStarControlSub6 proc23();
+	virtual CStarControlSub6 proc24();
+	virtual double proc25() const;
+	virtual double proc26() const;
+	virtual int proc27() const;
+	virtual FVector proc28(int index, const void *v2);
+	virtual FVector proc29(const FVector &v);
+	virtual FVector proc30(int index, const FVector &v);
+	virtual FVector proc31(int index, const FVector &v);
+	virtual void proc32(double v1, double v2);
+	virtual int getCurrentIndex() const { return _currentIndex; }
+	virtual bool setArrayVector(const FVector &v);
+	virtual bool proc35();
+	virtual void proc36(double *v1, double *v2, double *v3, double *v4);
 
 	/**
 	 * Load the data for the class from file

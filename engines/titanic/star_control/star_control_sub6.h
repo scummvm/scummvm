@@ -29,7 +29,6 @@ namespace Titanic {
 
 class CStarControlSub6 {
 private:
-	FMatrix _matrix;
 	int _field24;
 	int _field28;
 	int _field2C;
@@ -38,6 +37,8 @@ private:
 public:
 	static void init();
 	static void deinit();
+public:
+	FMatrix _matrix;
 public:
 	CStarControlSub6();
 	CStarControlSub6(int mode, double amount);

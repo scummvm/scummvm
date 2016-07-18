@@ -32,27 +32,29 @@ namespace Titanic {
 class CStarControlSub13 {
 private:
 	double _fieldC;
-	double _field10;
-	double _field14;
 	double _field18;
 	double _field1C;
 	int _width;
 	int _height;
-	int _field24;
 	double _valArray[5];
 	FMatrix _matrix;
 	CStarControlSub6 _sub1;
 	CStarControlSub6 _sub2;
-	int _fieldC0;
-	int _fieldC4;
+	double _fieldC0;
+	double _fieldC4;
 	int _fieldC8;
 	int _fieldCC;
-	int _fieldD0;
+	double _fieldD0;
 	int _fieldD4;
 private:
 	void setup(void *ptr);
+
+	void reset();
 public:
 	FVector _position;
+	double _field10;
+	double _field14;
+	int _field24;
 public:
 	CStarControlSub13(void *ptr);
 	CStarControlSub13(CStarControlSub13 *src);
@@ -75,6 +77,11 @@ public:
 	void setPosition(const FVector &v);
 
 	/**
+	 * Sets the position
+	 */
+	void setPosition(const CStarControlSub6 &sub6);
+
+	/**
 	 * Sets the matrix
 	 */
 	void setMatrix(const FMatrix &m);
@@ -82,6 +89,14 @@ public:
 	void fn11(const FVector &v);
 	void fn12();
 	void fn13(double v1, double v2);
+	void fn14(double v);
+	void fn15(FMatrix &matrix);
+	CStarControlSub6 getSub1();
+	CStarControlSub6 getSub2();
+	FVector fn16(const FVector &v);
+	FVector fn17(int index, const FVector &v);
+	FVector fn18(int index, const FVector &v);
+	void fn19(double *v1, double *v2, double *v3, double *v4);
 
 	/**
 	 * Makes a copy of the instance's matrix into the passed matrix
