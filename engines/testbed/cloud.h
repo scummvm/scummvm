@@ -41,6 +41,7 @@ void directoryListedCallback(Cloud::Storage::FileArrayResponse response);
 void directoryCreatedCallback(Cloud::Storage::BoolResponse response);
 void fileUploadedCallback(Cloud::Storage::UploadResponse response);
 void fileDownloadedCallback(Cloud::Storage::BoolResponse response);
+void directoryDownloadedCallback(Cloud::Storage::FileArrayResponse response);
 void errorCallback(Networking::ErrorResponse response);
 
 TestExitStatus testInfo();
@@ -48,6 +49,7 @@ TestExitStatus testDirectoryListing();
 TestExitStatus testDirectoryCreating();
 TestExitStatus testUploading();
 TestExitStatus testDownloading();
+TestExitStatus testFolderDownloading();
 
 } // End of namespace CloudTests
 

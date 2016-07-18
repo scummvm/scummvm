@@ -42,6 +42,7 @@ CloudTestSuite::CloudTestSuite() {
 	addTest("CreateDirectory", &CloudTests::testDirectoryCreating, true);
 	addTest("FileUpload", &CloudTests::testUploading, true);
 	addTest("FileDownload", &CloudTests::testDownloading, true);
+	addTest("FolderDownload", &CloudTests::testFolderDownloading, true);
 }
 
 /*
@@ -135,6 +136,15 @@ void CloudTests::fileDownloadedCallback(Cloud::Storage::BoolResponse response) {
 		Testsuite::logPrintf("Info! File downloaded!\n");
 	} else {
 		Testsuite::logPrintf("Info! Failed to download the file!\n");
+	}
+}
+
+void CloudTests::directoryDownloadedCallback(Cloud::Storage::FileArrayResponse response) {
+	ConfParams.setCloudTestCallbackCalled(true);
+	if (response.value.size() == 0) {
+		Testsuite::logPrintf("Info! Directory is downloaded successfully!\n");
+	} else {
+		Testsuite::logPrintf("Warning! %lu files were not downloaded during folder downloading!\n", response.value.size());
 	}
 }
 
@@ -441,6 +451,53 @@ TestExitStatus CloudTests::testDownloading() {
 	}
 
 	Testsuite::logDetailedPrintf("File was downloaded\n");
+	return kTestPassed;
+}
+
+TestExitStatus CloudTests::testFolderDownloading() {
+	ConfParams.setCloudTestCallbackCalled(false);
+	ConfParams.setCloudTestErrorCallbackCalled(false);
+
+	if (CloudMan.getCurrentStorage() == nullptr) {
+		Testsuite::logPrintf("Couldn't find connected Storage\n");
+		return kTestFailed;
+	}
+
+	Common::String info = "Testing Cloud Storage API downloadFolder() method.\n"
+		"In this test we'll try to download remote 'testbed/' directory.";
+
+	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : downloadFolder()\n");
+		return kTestSkipped;
+	}
+
+	const Common::String &path = ConfMan.get("path");
+	Common::FSDirectory gameRoot(path);
+	Common::FSNode node = gameRoot.getFSNode().getChild("downloaded_directory");
+	Common::String filepath = node.getPath();
+	if (CloudMan.downloadFolder(
+			"/testbed/",
+			filepath.c_str(),
+			new Common::GlobalFunctionCallback<Cloud::Storage::FileArrayResponse>(&directoryDownloadedCallback),
+			new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
+		) == nullptr) {
+		Testsuite::logPrintf("Warning! No Request is returned!\n");
+	}
+
+	if (!waitForCallbackMore()) return kTestSkipped;
+	Testsuite::clearScreen();
+
+	if (ConfParams.isCloudTestErrorCallbackCalled()) {
+		Testsuite::logPrintf("Error callback was called\n");
+		return kTestFailed;
+	}
+
+	if (Testsuite::handleInteractiveInput("Was the CloudMan able to download into 'testbed/downloaded_directory'?", "Yes", "No", kOptionRight)) {
+		Testsuite::logDetailedPrintf("Error! Directory was not downloaded!\n");
+		return kTestFailed;
+	}
+
+	Testsuite::logDetailedPrintf("Directory was downloaded\n");
 	return kTestPassed;
 }
 
