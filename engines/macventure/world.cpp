@@ -41,7 +41,7 @@ World::~World()	{
 
 
 uint32 World::getObjAttr(ObjID objID, uint32 attrID) {
-	uint32 res;
+	int res;
 	uint32 index = _engine->getGlobalSettings().attrIndices[attrID];
 	// HACK, but if I try to initialize it in the else clause, it goes out of scope and segfaults
 	Common::SeekableReadStream *objStream = _objectConstants->getItem(objID);

@@ -52,14 +52,14 @@ bool ScriptEngine::runControl(ControlAction action, ObjID source, ObjID destinat
 	frame.haltedInFirst = false;
 	frame.haltedInFamily = false;
 	_frames.push_back(frame);
-	debug(2, "SCRIPT: Stored frame %d, action: %d src: %d dest: %d point: (%d, %d)",
+	debug(3, "SCRIPT: Stored frame %d, action: %d src: %d dest: %d point: (%d, %d)",
 		_frames.size() - 1, frame.action, frame.src, frame.dest, frame.x, frame.y);
 
 	return resume(true);
 }
 
 bool ScriptEngine::resume(bool execAll) {
-	debug(2, "SCRIPT: Resume");
+	debug(3, "SCRIPT: Resume");
 	while (_frames.size()) {
 		bool fail = execFrame(execAll);
 		if (fail) return true;
@@ -166,7 +166,6 @@ bool ScriptEngine::resumeFunc(EngineFrame * frame) {
 
 bool ScriptEngine::runFunc(EngineFrame *frame) {
 	ScriptAsset &script = frame->scripts.front();
-	debug(2, "SCRIPT: Executing function %d", script.getId());
 	EngineState *state = &frame->state;
 	byte op;
 	while (script.hasNext()) {
@@ -772,24 +771,26 @@ void ScriptEngine::opa7LNOT(EngineState * state, EngineFrame * frame) {
 }
 
 void ScriptEngine::opa8GTU(EngineState * state, EngineFrame * frame) {
-	word b = state->pop();
-	word a = state->pop();
+	uint16 b = state->pop();
+	uint16 a = state->pop();
 	state->push((a > b) ? 0xFFFF : 0);
 }
 
 void ScriptEngine::opa9LTU(EngineState * state, EngineFrame * frame) {
-	word b = state->pop();
-	word a = state->pop();
+	uint16 b = state->pop();
+	uint16 a = state->pop();
 	state->push((a < b) ? 0xFFFF : 0);
 }
 
 void ScriptEngine::opaaGTS(EngineState * state, EngineFrame * frame) {
+	// HACK !!! May not need the neg16, since word is already a signed int!!
 	word b = neg16(state->pop());
 	word a = neg16(state->pop());
 	state->push((a > b) ? 0xFFFF : 0);
 }
 
 void ScriptEngine::opabLTS(EngineState * state, EngineFrame * frame) {
+	// HACK !!! May not need the neg16, since word is already a signed int!!
 	word b = neg16(state->pop());
 	word a = neg16(state->pop());
 	state->push((a < b) ? 0xFFFF : 0);
@@ -924,6 +925,7 @@ bool ScriptEngine::opbcCALL(EngineState * state, EngineFrame * frame, ScriptAsse
 	word id = state->pop();
 	ScriptAsset newfun = ScriptAsset(id, _scripts);
 	ScriptAsset current = script;
+	debug(2, "SCRIPT: Call function: %d", id);
 	if (loadScript(frame, id))
 		return true;
 	frame->scripts.pop_front();
