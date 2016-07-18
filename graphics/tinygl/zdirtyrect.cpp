@@ -393,10 +393,10 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 		break;
 	case TGL_LINE_STRIP:
 	case TGL_LINE_LOOP:
-		for(int i = 0; i < cnt; i++) {
+		for(int i = 0; i < cnt - 1; i++) {
 			gl_draw_line(c, &c->vertex[i], &c->vertex[i + 1]);
 		}
-		gl_draw_line(c, &c->vertex[0], &c->vertex[cnt - 1]);
+		gl_draw_line(c, &c->vertex[cnt - 1], &c->vertex[0]);
 		break;
 	case TGL_TRIANGLES:
 		for(int i = 0; i < cnt / 3; i++) {
@@ -424,7 +424,7 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 		}
 		break;
 	case TGL_QUADS:
-		for(int i = 0; i < cnt / 4; i++) {
+		for(int i = 0; i < cnt; i += 4) {
 			c->vertex[i + 2].edge_flag = 0;
 			gl_draw_triangle(c, &c->vertex[i], &c->vertex[i + 1], &c->vertex[i + 2]);
 			c->vertex[i + 2].edge_flag = 1;

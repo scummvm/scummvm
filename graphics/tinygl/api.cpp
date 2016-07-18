@@ -113,6 +113,10 @@ void tglColor3fv(float *v)  {
 	tglColor4f(v[0], v[1], v[2], 1);
 }
 
+void tglColor3ub(unsigned char r, unsigned char g, unsigned char b) {
+	tglColor4f(r / 255.0f, g / 255.0f, b / 255.0f, 1.0f);
+}
+
 void tglColor4ub(unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
 	tglColor4f(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
 }

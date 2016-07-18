@@ -1953,33 +1953,12 @@ void GfxOpenGL::drawRectangle(const PrimitiveObject *primitive) {
 		glVertex2f(x1, y2 + 1);
 		glEnd();
 	} else {
-		glBegin(GL_QUADS);
-
-		// top line
+		glLineWidth(_scaleW);
+		glBegin(GL_LINE_LOOP);
 		glVertex2f(x1, y1);
 		glVertex2f(x2 + 1, y1);
-		glVertex2f(x2 + 1, y1 + 1);
-		glVertex2f(x1, y1 + 1);
-
-
-		// right line
-		glVertex2f(x2, y1);
-		glVertex2f(x2 + 1, y1);
-		glVertex2f(x2 + 1, y2 + 1);
-		glVertex2f(x2, y2);
-
-		// bottom line
-		glVertex2f(x1, y2);
-		glVertex2f(x2 + 1, y2);
 		glVertex2f(x2 + 1, y2 + 1);
 		glVertex2f(x1, y2 + 1);
-
-		// left line
-		glVertex2f(x1, y1);
-		glVertex2f(x1 + 1, y1);
-		glVertex2f(x1 + 1, y2 + 1);
-		glVertex2f(x1, y2);
-
 		glEnd();
 	}
 

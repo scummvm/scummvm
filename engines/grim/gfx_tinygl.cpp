@@ -1368,62 +1368,79 @@ void GfxTinyGL::irisAroundRegion(int x1, int y1, int x2, int y2) {
 }
 
 void GfxTinyGL::drawRectangle(const PrimitiveObject *primitive) {
-	int x1 = primitive->getP1().x;
-	int y1 = primitive->getP1().y;
-	int x2 = primitive->getP2().x;
-	int y2 = primitive->getP2().y;
+	float x1 = primitive->getP1().x * _scaleW;
+	float y1 = primitive->getP1().y * _scaleH;
+	float x2 = primitive->getP2().x * _scaleW;
+	float y2 = primitive->getP2().y * _scaleH;
+	const Color color(primitive->getColor());
 
-	const Color &color = primitive->getColor();
-	uint32 c = _pixelFormat.RGBToColor(color.getRed(), color.getGreen(), color.getBlue());
+	tglMatrixMode(TGL_PROJECTION);
+	tglLoadIdentity();
+	tglOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
+	tglMatrixMode(TGL_MODELVIEW);
+	tglLoadIdentity();
+
+	tglDisable(TGL_LIGHTING);
+	tglDisable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_FALSE);
+
+	tglColor3ub(color.getRed(), color.getGreen(), color.getBlue());
 
 	if (primitive->isFilled()) {
-		for (; y1 <= y2; y1++)
-			if (y1 >= 0 && y1 < _gameHeight)
-				for (int x = x1; x <= x2; x++)
-					if (x >= 0 && x < _gameWidth)
-						_zb->writePixel(_gameWidth * y1 + x, c);
+		tglBegin(TGL_QUADS);
+		tglVertex2f(x1, y1);
+		tglVertex2f(x2 + 1, y1);
+		tglVertex2f(x2 + 1, y2 + 1);
+		tglVertex2f(x1, y2 + 1);
+		tglEnd();
 	} else {
-		if (y1 >= 0 && y1 < _gameHeight)
-			for (int x = x1; x <= x2; x++)
-				if (x >= 0 && x < _gameWidth)
-					_zb->writePixel(_gameWidth * y1 + x, c);
-		if (y2 >= 0 && y2 < _gameHeight)
-			for (int x = x1; x <= x2; x++)
-				if (x >= 0 && x < _gameWidth)
-					_zb->writePixel(_gameWidth * y2 + x, c);
-		if (x1 >= 0 && x1 < _gameWidth)
-			for (int y = y1; y <= y2; y++)
-				if (y >= 0 && y < _gameHeight)
-					_zb->writePixel(_gameWidth * y + x1, c);
-		if (x2 >= 0 && x2 < _gameWidth)
-			for (int y = y1; y <= y2; y++)
-				if (y >= 0 && y < _gameHeight)
-					_zb->writePixel(_gameWidth * y + x2, c);
+		tglBegin(TGL_LINE_LOOP);
+		tglVertex2f(x1, y1);
+		tglVertex2f(x2 + 1, y1);
+		tglVertex2f(x2 + 1, y2 + 1);
+		tglVertex2f(x1, y2 + 1);
+		tglEnd();
 	}
+
+	tglColor3f(1.0f, 1.0f, 1.0f);
+
+	tglDepthMask(TGL_TRUE);
+	tglEnable(TGL_DEPTH_TEST);
+	tglEnable(TGL_LIGHTING);
 }
 
 void GfxTinyGL::drawLine(const PrimitiveObject *primitive) {
-	int x1 = primitive->getP1().x;
-	int y1 = primitive->getP1().y;
-	int x2 = primitive->getP2().x;
-	int y2 = primitive->getP2().y;
+	float x1 = primitive->getP1().x * _scaleW;
+	float y1 = primitive->getP1().y * _scaleH;
+	float x2 = primitive->getP2().x * _scaleW;
+	float y2 = primitive->getP2().y * _scaleH;
 
 	const Color &color = primitive->getColor();
 
-	if (x2 == x1) {
-		for (int y = y1; y <= y2; y++) {
-			if (x1 >= 0 && x1 < _gameWidth && y >= 0 && y < _gameHeight)
-				_zb->writePixel(_gameWidth * y + x1, color.getRed(), color.getGreen(), color.getBlue());
-		}
-	} else {
-		float m = (y2 - y1) / (float)(x2 - x1);
-		int b = (int)(-m * x1 + y1);
-		for (int x = x1; x <= x2; x++) {
-			int y = (int)(m * x) + b;
-			if (x >= 0 && x < _gameWidth && y >= 0 && y < _gameHeight)
-				_zb->writePixel(_gameWidth * y + x, color.getRed(), color.getGreen(), color.getBlue());
-		}
-	}
+	tglMatrixMode(TGL_PROJECTION);
+	tglLoadIdentity();
+	tglOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
+	tglMatrixMode(TGL_MODELVIEW);
+	tglLoadIdentity();
+
+	tglDisable(TGL_LIGHTING);
+	tglDisable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_FALSE);
+
+	tglColor3ub(color.getRed(), color.getGreen(), color.getBlue());
+
+//	tglLineWidth(_scaleW); // Not implemented in TinyGL
+
+	tglBegin(TGL_LINES);
+	tglVertex2f(x1, y1);
+	tglVertex2f(x2, y2);
+	tglEnd();
+
+	tglColor3f(1.0f, 1.0f, 1.0f);
+
+	tglDepthMask(TGL_TRUE);
+	tglEnable(TGL_DEPTH_TEST);
+	tglEnable(TGL_LIGHTING);
 }
 
 void GfxTinyGL::drawDimPlane() {
@@ -1460,34 +1477,44 @@ void GfxTinyGL::drawDimPlane() {
 }
 
 void GfxTinyGL::drawPolygon(const PrimitiveObject *primitive) {
-	int x1 = primitive->getP1().x;
-	int y1 = primitive->getP1().y;
-	int x2 = primitive->getP2().x;
-	int y2 = primitive->getP2().y;
-	int x3 = primitive->getP3().x;
-	int y3 = primitive->getP3().y;
-	int x4 = primitive->getP4().x;
-	int y4 = primitive->getP4().y;
-	float m;
-	int b;
+	float x1 = primitive->getP1().x * _scaleW;
+	float y1 = primitive->getP1().y * _scaleH;
+	float x2 = primitive->getP2().x * _scaleW;
+	float y2 = primitive->getP2().y * _scaleH;
+	float x3 = primitive->getP3().x * _scaleW;
+	float y3 = primitive->getP3().y * _scaleH;
+	float x4 = primitive->getP4().x * _scaleW;
+	float y4 = primitive->getP4().y * _scaleH;
 
 	const Color &color = primitive->getColor();
-	uint32 c = _pixelFormat.RGBToColor(color.getRed(), color.getGreen(), color.getBlue());
 
-	m = (y2 - y1) / (x2 - x1);
-	b = (int)(-m * x1 + y1);
-	for (int x = x1; x <= x2; x++) {
-		int y = (int)(m * x) + b;
-		if (x >= 0 && x < _gameWidth && y >= 0 && y < _gameHeight)
-			_zb->writePixel(_gameWidth * y + x, c);
-	}
-	m = (y4 - y3) / (x4 - x3);
-	b = (int)(-m * x3 + y3);
-	for (int x = x3; x <= x4; x++) {
-		int y = (int)(m * x) + b;
-		if (x >= 0 && x < _gameWidth && y >= 0 && y < _gameHeight)
-			_zb->writePixel(_gameWidth * y + x, c);
-	}
+	tglMatrixMode(TGL_PROJECTION);
+	tglLoadIdentity();
+	tglOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
+	tglMatrixMode(TGL_MODELVIEW);
+	tglLoadIdentity();
+
+	tglDisable(TGL_LIGHTING);
+	tglDisable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_FALSE);
+
+	tglColor3ub(color.getRed(), color.getGreen(), color.getBlue());
+
+	tglBegin(TGL_LINES);
+	tglVertex2f(x1, y1);
+	tglVertex2f(x2 + 1, y2 + 1);
+	tglEnd();
+
+	tglBegin(TGL_LINES);
+	tglVertex2f(x3, y3 + 1);
+	tglVertex2f(x4 + 1, y4);
+	tglEnd();
+
+	tglColor3f(1.0f, 1.0f, 1.0f);
+
+	tglDepthMask(TGL_TRUE);
+	tglEnable(TGL_DEPTH_TEST);
+	tglEnable(TGL_LIGHTING);
 }
 
 void GfxTinyGL::readPixels(int x, int y, int width, int height, uint8 *buffer) {
