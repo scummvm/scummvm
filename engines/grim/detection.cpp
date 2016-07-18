@@ -45,8 +45,9 @@ static const PlainGameDescriptor grimGames[] = {
 };
 
 #define GAMEOPTION_LOAD_DATAUSR GUIO_GAMEOPTIONS1
+#define GAMEOPTION_SHOW_FPS GUIO_GAMEOPTIONS2
 
-#define GUI_OPTIONS_GRIME GUIO1(GAMEOPTION_LOAD_DATAUSR)
+#define GUI_OPTIONS_GRIME GUIO2(GAMEOPTION_LOAD_DATAUSR, GAMEOPTION_SHOW_FPS)
 
 static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	{
@@ -55,6 +56,15 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 			"Load user patch (unsupported)",
 			"Load an user patch. Please note that the ResidualVM-team doesn't provide support for using such patches.",
 			"datausr_load",
+			false
+		}
+	},
+	{
+		GAMEOPTION_SHOW_FPS,
+		{
+			"Show FPS",
+			"Show the current FPS-rate, while you play.",
+			"show_fps",
 			false
 		}
 	},
