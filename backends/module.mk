@@ -68,6 +68,7 @@ MODULE_OBJS += \
 	networking/sdl_net/handlers/filesbasehandler.o \
 	networking/sdl_net/handlers/filespagehandler.o \
 	networking/sdl_net/handlers/indexpagehandler.o \
+	networking/sdl_net/handlers/listajaxhandler.o \
 	networking/sdl_net/handlers/resourcehandler.o \
 	networking/sdl_net/handlers/uploadfilehandler.o \
 	networking/sdl_net/handlerutils.o \

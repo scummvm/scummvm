@@ -53,6 +53,7 @@ LocalWebserver::LocalWebserver(): _set(nullptr), _serverSocket(nullptr), _timerS
 	addPathHandler("/create", _createDirectoryHandler.getHandler());
 	addPathHandler("/download", _downloadFileHandler.getHandler());
 	addPathHandler("/upload", _uploadFileHandler.getHandler());
+	addPathHandler("/list", _listAjaxHandler.getHandler());
 	_defaultHandler = _resourceHandler.getHandler();
 }
 
