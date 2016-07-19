@@ -17,7 +17,7 @@
 				</tr></table>
 				<div id="create_directory" class="modal">
 					<p>{create_directory_desc}</p>
-					<form action="create" id="create_directory_form">
+					<form action="create" id="create_directory_form" onsubmit="return createDirectory();">
 						<input type="hidden" name="path" value="{path}"/>
 						<input type="hidden" name="ajax" value="true"/>
 						<input type="text" name="directory_name" value=""/>
@@ -71,8 +71,6 @@
 
 			function getCallback(path) {
 				return function (jsonResponse) {
-					console.log(jsonResponse);
-
 					if (jsonResponse.type == "error") {
 						showError();
 						return;
@@ -80,6 +78,34 @@
 
 					openDirectory(path, jsonResponse.items);
 					hideLoading();
+				};
+			}
+
+			function createDirectory() {
+				if (isLoading) return;
+				showLoading();
+
+				var data = {"answer_json": "true"};
+				var elements = document.getElementById("create_directory_form").elements;
+				for (var el in elements)
+					data[elements[el].name] = elements[el].value;
+
+				ajax.getAndParseJson("./create", data, getCreateDirectoryCallback(data["path"]));
+				show("create_directory");
+				return false; // invalidate form, so it won't submit
+			}
+
+			function getCreateDirectoryCallback(path) {
+				return function (jsonResponse) {
+					console.log(jsonResponse);
+
+					if (jsonResponse.type == "error") {
+						showError();
+						return;
+					}
+
+					hideLoading();
+					showDirectory(path);
 				};
 			}
 
@@ -122,7 +148,7 @@
 			function makeBreadcrumb(name, path) {
 				var a = createElementWithContents("a", name);
 				a.onclick = function () { showDirectory(path); };
-				a.href = "javascript:onclick();";
+				a.href = "javascript:void(0);";
 				return a;
 			}
 
@@ -194,7 +220,7 @@
 				var a = createElementWithContents("a", item.name);
 				if (item.isDirectory) {
 					a.onclick = function () { showDirectory(item.path); };
-					a.href = "javascript:onclick();";
+					a.href = "javascript:void(0);";
 				} else
 					a.href = "./download?path=" + encodeURIComponent(item.path);
 				td.appendChild(a);

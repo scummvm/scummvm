@@ -38,25 +38,25 @@ void CreateDirectoryHandler::handle(Client &client) {
 
 	// check that <path> is not an absolute root
 	if (path == "" || path == "/") {
-		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("Can't create directory here!"));
+		handleError(client, _("Can't create directory here!"));
 		return;
 	}
 
 	// transform virtual path to actual file system one
 	Common::String prefixToRemove = "", prefixToAdd = "";
 	if (!transformPath(path, prefixToRemove, prefixToAdd) || path.empty()) {
-		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("Invalid path!"));
+		handleError(client, _("Invalid path!"));
 		return;
 	}
 
 	// check that <path> exists and is directory
 	AbstractFSNode *node = g_system->getFilesystemFactory()->makeFileNodePath(path);
 	if (!node->exists()) {
-		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("Parent directory doesn't exists!"));
+		handleError(client, _("Parent directory doesn't exists!"));
 		return;
 	}
 	if (!node->isDirectory()) {
-		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("Can't create a directory within a file!"));
+		handleError(client, _("Can't create a directory within a file!"));
 		return;
 	}
 
@@ -65,15 +65,21 @@ void CreateDirectoryHandler::handle(Client &client) {
 	node = g_system->getFilesystemFactory()->makeFileNodePath(path + name);
 	if (node->exists()) {
 		if (!node->isDirectory()) {
-			HandlerUtils::setFilesManagerErrorMessageHandler(client, _("There is a file with that name in the parent directory!"));
+			handleError(client, _("There is a file with that name in the parent directory!"));
 			return;
 		}
 	} else {
 		// create the <directory_name> in <path>
 		if (!node->create(true)) {
-			HandlerUtils::setFilesManagerErrorMessageHandler(client, _("Failed to create the directory!"));
+			handleError(client, _("Failed to create the directory!"));
 			return;
 		}
+	}
+
+	// if json requested, respond with it
+	if (client.queryParameter("answer_json") == "true") {
+		setJsonResponseHandler(client, "success", _("Directory created successfully!"));
+		return;
 	}
 
 	// set redirect on success
@@ -89,6 +95,20 @@ void CreateDirectoryHandler::handle(Client &client) {
 		(client.queryParameter("ajax") == "true" ? "/filesAJAX?path=" : "/files?path=") +
 			LocalWebserver::urlEncodeQueryParameterValue(client.queryParameter("path"))
 	);
+}
+
+void CreateDirectoryHandler::handleError(Client &client, Common::String message) const {
+	if (client.queryParameter("answer_json") == "true") setJsonResponseHandler(client, "error", message);
+	else HandlerUtils::setFilesManagerErrorMessageHandler(client, message);
+}
+
+void CreateDirectoryHandler::setJsonResponseHandler(Client &client, Common::String type, Common::String message) const {
+	Common::JSONObject response;
+	response.setVal("type", new Common::JSONValue(type));
+	response.setVal("message", new Common::JSONValue(message));
+
+	Common::JSONValue json = response;
+	LocalWebserver::setClientGetHandler(client, json.stringify(true));
 }
 
 /// public
