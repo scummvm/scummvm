@@ -604,7 +604,7 @@ public:
 }; // wrapper for bytes which are used as squares
 
 struct DungeonFileHeader {
-	uint16 _dungeonId; // @ G0526_ui_DungeonID
+	uint16 _dungeonId;
 	// equal to dungeonId
 	uint16 _ornamentRandomSeed;
 	uint32 _rawMapDataSize;

@@ -140,7 +140,6 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	_eventMan = nullptr;
 	_menuMan = nullptr;
 	_championMan = nullptr;
-	_loadsaveMan = nullptr;
 	_objectMan = nullptr;
 	_inventoryMan = nullptr;
 	_textMan = nullptr;
@@ -148,6 +147,10 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	_groupMan = nullptr;
 	_timeline = nullptr;
 	_projexpl = nullptr;
+
+	_g528_saveFormat = 0;
+	_g527_platform = 0;
+	_g526_dungeonId = 0;
 
 	_g298_newGame = false;
 	_g523_restartGameRequest = false;
@@ -187,7 +190,6 @@ DMEngine::~DMEngine() {
 	delete _eventMan;
 	delete _menuMan;
 	delete _championMan;
-	delete _loadsaveMan;
 	delete _objectMan;
 	delete _inventoryMan;
 	delete _textMan;
@@ -220,7 +222,7 @@ void DMEngine::f463_initializeGame() {
 	_objectMan->loadObjectNames();
 	_eventMan->initMouse();
 	//F0441_STARTEND_ProcessEntrance();
-	while (_loadsaveMan->f435_loadgame() != k1_LoadgameSuccess) {
+	while (f435_loadgame() != k1_LoadgameSuccess) {
 		warning(false, "TODO: F0441_STARTEND_ProcessEntrance");
 	}
 	//F0396_MENUS_LoadSpellAreaLinesBitmap() is not needed, every bitmap has been loaded
@@ -301,7 +303,6 @@ Common::Error DMEngine::run() {
 	_eventMan = new EventManager(this);
 	_menuMan = new MenuMan(this);
 	_championMan = new ChampionMan(this);
-	_loadsaveMan = new LoadsaveMan(this);
 	_objectMan = new ObjectMan(this);
 	_inventoryMan = new InventoryMan(this);
 	_textMan = new TextMan(this);

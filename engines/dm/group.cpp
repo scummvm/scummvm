@@ -1691,7 +1691,7 @@ void GroupMan::f183_addActiveGroup(Thing thing, int16 mapX, int16 mapY) {
 	L0344_i_ActiveGroupIndex = 0;
 	while (L0341_ps_ActiveGroup->_groupThingIndex >= 0) {
 		if (++L0344_i_ActiveGroupIndex >= _vm->_groupMan->_g376_maxActiveGroupCount) {
-			return; 
+			return;
 		}
 		L0341_ps_ActiveGroup++;
 	}
@@ -2056,4 +2056,24 @@ void GroupMan::f225_fuseAction(uint16 mapX, uint16 mapY) {
 		warning(false, "F0446_STARTEND_FuseSequence()");
 	}
 }
+
+void GroupMan::save1_ActiveGroupPart(Common::OutSaveFile* file) {
+	for (uint16 i = 0; i < _g376_maxActiveGroupCount; ++i) {
+		ActiveGroup *group = &_g375_activeGroups[i];
+		file->writeUint16BE(group->_groupThingIndex);
+		file->writeUint16BE(group->_directions);
+		file->writeByte(group->_cells);
+		file->writeByte(group->_lastMoveTime);
+		file->writeByte(group->_delayFleeingFromTarget);
+		file->writeByte(group->_targetMapX);
+		file->writeByte(group->_targetMapY);
+		file->writeByte(group->_priorMapX);
+		file->writeByte(group->_priorMapY);
+		file->writeByte(group->_homeMapX);
+		file->writeByte(group->_homeMapY);
+		for (uint16 j = 0; j < 4; ++j)
+			file->writeByte(group->_aspect[j]);
+	}
+}
+
 }

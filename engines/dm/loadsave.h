@@ -32,17 +32,13 @@
 
 namespace DM {
 
-enum LoadgameResponse {
-	kM1_LoadgameFailure = -1, // @ CM1_LOAD_GAME_FAILURE
-	k1_LoadgameSuccess = 1// @ C01_LOAD_GAME_SUCCESS
-};
+;
 
 class LoadsaveMan {
 	DMEngine *_vm;
 public:
 	explicit LoadsaveMan(DMEngine *vm);
 
-	LoadgameResponse f435_loadgame(); // @ F0435_STARTEND_LoadGame_CPSF
 };
 
 }

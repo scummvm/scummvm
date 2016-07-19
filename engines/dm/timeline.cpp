@@ -1087,4 +1087,23 @@ T0255002:
 		_vm->_championMan->f283_viAltarRebirth(event->_priority);
 	}
 }
+
+void Timeline::save3_eventsPart(Common::OutSaveFile* file) {
+	for (uint16 i = 0; i < _g369_eventMaxCount; ++i) {
+		TimelineEvent *event = &_g370_events[i];
+		file->writeSint32BE(event->_mapTime);
+		file->writeByte(event->_type);
+		file->writeByte(event->_priority);
+		file->writeByte(event->_B._location._mapX); // writing bytes of the union I think should preserve the union's identity
+		file->writeByte(event->_B._location._mapY);
+		file->writeUint16BE(event->_C.A._cell); // writing bytes of the union I think should preserve the union's identity
+		file->writeUint16BE(event->_C.A._effect);
+	}
+}
+
+void Timeline::save4_timelinePart(Common::OutSaveFile* file) {
+	for (uint16 i = 0; i < _g369_eventMaxCount; ++i)
+		file->writeUint16BE(_g371_timeline[i]);
+}
+
 }

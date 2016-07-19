@@ -31,6 +31,8 @@
 #include "common/random.h"
 #include "engines/engine.h"
 #include "gui/debugger.h"
+#include "common/savefile.h"
+#include "common/str.h"
 
 
 namespace DM {
@@ -41,7 +43,6 @@ class DungeonMan;
 class EventManager;
 class MenuMan;
 class ChampionMan;
-class LoadsaveMan;
 class ObjectMan;
 class InventoryMan;
 class TextMan;
@@ -49,6 +50,7 @@ class MovesensMan;
 class GroupMan;
 class Timeline;
 class ProjExpl;
+
 
 void warning(bool repeat, const char *s, ...);
 
@@ -177,6 +179,11 @@ inline T f26_getBoundedValue(T min, T val, T max) {
 #define k99_modeWaitingOnEntrance 99 // @ C099_MODE_WAITING_ON_ENTRANCE   
 #define k202_modeEntranceDrawCredits 202 // @ C202_MODE_ENTRANCE_DRAW_CREDITS 
 
+enum LoadgameResponse {
+	kM1_LoadgameFailure = -1, // @ CM1_LOAD_GAME_FAILURE
+	k1_LoadgameSuccess = 1// @ C01_LOAD_GAME_SUCCESS
+};
+
 class DMEngine : public Engine {
 	void f462_startGame(); // @ F0462_START_StartGame_CPSF
 	void f3_processNewPartyMap(uint16 mapIndex); // @ F0003_MAIN_ProcessNewPartyMap_CPSE
@@ -184,6 +191,8 @@ class DMEngine : public Engine {
 	void f448_initMemoryManager(); // @ F0448_STARTUP1_InitializeMemoryManager_CPSADEF
 	void f2_gameloop(); // @ F0002_MAIN_GameLoop_CPSDF
 	void initArrays();
+	Common::String getSavefileName(uint16 slot);
+	void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName);
 public:
 	explicit DMEngine(OSystem *syst);
 	~DMEngine();
@@ -195,8 +204,13 @@ public:
 	int16 M0_indexToOrdinal(int16 val); // @ M00_INDEX_TO_ORDINAL
 	void f19_displayErrorAndStop(int16 errorIndex); // @ F0019_MAIN_DisplayErrorAndStop
 	virtual Common::Error run(); // @ main
+	void f433_processCommand140_saveGame(uint16 slot, const Common::String desc); // @ F0433_STARTEND_ProcessCommand140_SaveGame_CPSCDF
+	LoadgameResponse f435_loadgame(); // @ F0435_STARTEND_LoadGame_CPSF
 
 private:
+	int16 _g528_saveFormat; // @ G0528_i_Format
+	int16 _g527_platform; // @ G0527_i_Platform
+	uint16 _g526_dungeonId; // @ G0526_ui_DungeonID
 	Console *_console;
 public:
 	Common::RandomSource *_rnd;
@@ -205,7 +219,6 @@ public:
 	EventManager *_eventMan;
 	MenuMan *_menuMan;
 	ChampionMan *_championMan;
-	LoadsaveMan *_loadsaveMan;
 	ObjectMan *_objectMan;
 	InventoryMan *_inventoryMan;
 	TextMan *_textMan;

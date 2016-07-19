@@ -1295,10 +1295,10 @@ void ChampionMan::f302_processCommands28to65_clickOnSlotBox(uint16 slotBoxIndex)
 	}
 	if (slotThing != Thing::_none) {
 		f300_getObjectRemovedFromSlot(champIndex, slotIndex);
-		f297_putObjectInLeaderHand(slotThing, false); 
+		f297_putObjectInLeaderHand(slotThing, false);
 	}
 	if (leaderHandObject != Thing::_none) {
-		f301_addObjectInSlot((ChampionIndex)champIndex, leaderHandObject, (ChampionSlot) slotIndex);
+		f301_addObjectInSlot((ChampionIndex)champIndex, leaderHandObject, (ChampionSlot)slotIndex);
 	}
 	f292_drawChampionState((ChampionIndex)champIndex);
 	_vm->_eventMan->f77_hideMouse();
@@ -1700,6 +1700,68 @@ void ChampionMan::f331_applyTimeEffects() {
 		}
 	}
 	f293_drawAllChampionStates();
+}
+
+void ChampionMan::save2_PartyPart(Common::OutSaveFile* file) {
+	for (uint16 i = 0; i < 4; ++i) {
+		Champion *champ = &_gK71_champions[i];
+		file->writeUint16BE(champ->_attributes);
+		file->writeUint16BE(champ->_wounds);
+		for (uint16 y = 0; y < 7; ++y)
+			for (uint16 x = 0; x < 3; ++x)
+				file->writeByte(champ->_statistics[y][x]);
+		for (uint16 j = 0; j < 30; ++j)
+			file->writeUint16BE(champ->_slots[j].toUint16());
+		for (uint16 j = 0; j < 20; ++j) {
+			file->writeSint16BE(champ->_skills[j]._temporaryExperience);
+			file->writeSint32BE(champ->_skills[j]._experience);
+		}
+		for (uint16 j = 0; j < 8; ++j)
+			file->writeByte(champ->_name[j]);
+		for (uint16 j = 0; j < 20; ++j)
+			file->writeByte(champ->_title[j]);
+		file->writeUint16BE(champ->_dir);
+		file->writeUint16BE(champ->_cell);
+		file->writeUint16BE(champ->_actionIndex);
+		file->writeUint16BE(champ->_symbolStep);
+		for(uint16 j = 0; j < 5; ++j)
+			file->writeByte(champ->_symbols[j]);
+		file->writeUint16BE(champ->_directionMaximumDamageReceived);
+		file->writeUint16BE(champ->_maximumDamageReceived);
+		file->writeUint16BE(champ->_poisonEventCount);
+		file->writeSint16BE(champ->_enableActionEventIndex);
+		file->writeSint16BE(champ->_hideDamageReceivedIndex);
+		file->writeSint16BE(champ->_currHealth);
+		file->writeSint16BE(champ->_maxHealth);
+		file->writeSint16BE(champ->_currStamina);
+		file->writeSint16BE(champ->_maxStamina);
+		file->writeSint16BE(champ->_currMana);
+		file->writeSint16BE(champ->_maxMana);
+		file->writeSint16BE(champ->_actionDefense);
+		file->writeSint16BE(champ->_food);
+		file->writeSint16BE(champ->_water);
+		file->writeUint16BE(champ->_load);
+		file->writeSint16BE(champ->_shieldDefense);
+		for (uint16 j = 0; j < 928; ++j)
+			file->writeByte(champ->_portrait[j]);
+	}
+
+	Party &party = _g407_party;
+	file->writeSint16BE(party._magicalLightAmount);
+	file->writeByte(party._event73Count_ThievesEye);
+	file->writeByte(party._event79Count_Footprints);
+	file->writeSint16BE(party._shieldDefense);
+	file->writeSint16BE(party._fireShieldDefense);
+	file->writeSint16BE(party._spellShieldDefense);
+	file->writeByte(party._scentCount);
+	file->writeByte(party._freezeLifeTicks);
+	file->writeByte(party._firstScentIndex);
+	file->writeByte(party._lastScentIndex);
+	for(uint16 i = 0; i < 24; ++i)
+		file->writeUint16BE(party._scents[i].toUint16());
+	for (uint16 i = 0; i < 24; ++i)
+		file->writeByte(party._scentStrengths[i]);
+	file->writeByte(party._event71Count_Invisibility);
 }
 
 ChampionIndex ChampionMan::f285_getIndexInCell(int16 cell) {

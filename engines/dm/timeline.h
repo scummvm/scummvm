@@ -187,6 +187,8 @@ public:
 	void f257_timelineProcessEvent70_light(TimelineEvent *event); // @ F0257_TIMELINE_ProcessEvent70_Light
 	void f260_timelineRefreshAllChampionStatusBoxes(); // @ F0260_TIMELINE_RefreshAllChampionStatusBoxes
 	void f255_timelineProcessEvent13_ViAltarRebirth(TimelineEvent *event); // @ F0255_TIMELINE_ProcessEvent13_ViAltarRebirth
+	void save3_eventsPart(Common::OutSaveFile *file);
+	void save4_timelinePart(Common::OutSaveFile *file);
 };
 
 

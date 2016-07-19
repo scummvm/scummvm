@@ -580,6 +580,7 @@ public:
 	void f318_dropAllObjects(uint16 champIndex); // @ F0318_CHAMPION_DropAllObjects
 	void f323_unpoison(int16 champIndex); // @ F0323_CHAMPION_Unpoison
 	void f331_applyTimeEffects(); // @ F0331_CHAMPION_ApplyTimeEffects_CPSF
+	void save2_PartyPart(Common::OutSaveFile *file);
 };
 
 

@@ -92,7 +92,7 @@ enum CreatureType {
 
 class ActiveGroup {
 public:
-	int _groupThingIndex;
+	int16 _groupThingIndex;
 	direction _directions;
 	byte _cells;
 	byte _lastMoveTime;
@@ -244,6 +244,7 @@ public:
 	uint16 f222_isLordChaosOnSquare(int16 mapX, int16 mapY); // @ F0222_GROUP_IsLordChaosOnSquare
 	bool f221_isFluxcageOnSquare(int16 mapX, int16 mapY); // @ F0221_GROUP_IsFluxcageOnSquare
 	void f225_fuseAction(uint16 mapX, uint16 mapY); // @ F0225_GROUP_FuseAction
+	void save1_ActiveGroupPart(Common::OutSaveFile *file);
 };
 
 
