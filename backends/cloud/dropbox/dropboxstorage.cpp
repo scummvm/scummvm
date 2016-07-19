@@ -23,6 +23,7 @@
 
 #include "backends/cloud/dropbox/dropboxstorage.h"
 #include "backends/cloud/dropbox/dropboxcreatedirectoryrequest.h"
+#include "backends/cloud/dropbox/dropboxinforequest.h"
 #include "backends/cloud/dropbox/dropboxlistdirectoryrequest.h"
 #include "backends/cloud/dropbox/dropboxuploadrequest.h"
 #include "backends/cloud/cloudmanager.h"
@@ -62,7 +63,7 @@ DropboxStorage::~DropboxStorage() {}
 void DropboxStorage::getAccessToken(Common::String code) {
 	if (!KEY || !SECRET) loadKeyAndSecret();
 	Networking::JsonCallback callback = new Common::Callback<DropboxStorage, Networking::JsonResponse>(this, &DropboxStorage::codeFlowComplete);		
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, nullptr, "https://api.dropboxapi.com/1/oauth2/token");
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, nullptr, "https://api.dropboxapi.com/oauth2/token");
 	request->addPostField("code=" + code);
 	request->addPostField("grant_type=authorization_code");
 	request->addPostField("client_id=" + Common::String(KEY));
@@ -133,53 +134,12 @@ Networking::Request *DropboxStorage::createDirectory(Common::String path, BoolCa
 	return addRequest(new DropboxCreateDirectoryRequest(_token, path, callback, errorCallback));
 }
 
-Networking::Request *DropboxStorage::info(StorageInfoCallback outerCallback, Networking::ErrorCallback errorCallback) {
-	Networking::JsonCallback innerCallback = new Common::CallbackBridge<DropboxStorage, StorageInfoResponse, Networking::JsonResponse>(this, &DropboxStorage::infoInnerCallback, outerCallback);
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, "https://api.dropboxapi.com/1/account/info");
-	request->addHeader("Authorization: Bearer " + _token);
-	return addRequest(request);
-	//that callback bridge wraps the outerCallback (passed in arguments from user) into innerCallback
-	//so, when CurlJsonRequest is finished, it calls the innerCallback
-	//innerCallback (which is DropboxStorage::infoInnerCallback in this case) processes the void *ptr
-	//and then calls the outerCallback (which wants to receive StorageInfo, not void *)
+Networking::Request *DropboxStorage::info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) {
+	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+	return addRequest(new DropboxInfoRequest(_token, callback, errorCallback));
 }
 
 Common::String DropboxStorage::savesDirectoryPath() { return "/saves/"; }
-
-void DropboxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse response) {
-	Common::JSONValue *json = response.value;
-	if (!json) {
-		warning("NULL passed instead of JSON");
-		delete outerCallback;
-		return;
-	}
-
-	//Dropbox documentation states there is no errors for this API method
-	Common::JSONObject info = json->asObject();
-	Common::String uid = Common::String::format("%d", (int)info.getVal("uid")->asIntegerNumber());
-	Common::String name = info.getVal("display_name")->asString();
-	Common::String email = info.getVal("email")->asString();
-	Common::JSONObject quota = info.getVal("quota_info")->asObject();
-	uint64 quotaNormal = quota.getVal("normal")->asIntegerNumber();
-	uint64 quotaShared = quota.getVal("shared")->asIntegerNumber();
-	uint64 quotaAllocated = quota.getVal("quota")->asIntegerNumber();
-		
-	CloudMan.setStorageUsername(kStorageDropboxId, email);
-
-	if (outerCallback) {
-		(*outerCallback)(StorageInfoResponse(nullptr, StorageInfo(uid, name, email, quotaNormal+quotaShared, quotaAllocated)));
-		delete outerCallback;
-	}
-	
-	delete json;
-}
-
-void DropboxStorage::infoMethodCallback(StorageInfoResponse response) {
-	debug("\nStorage info:");
-	debug("User name: %s", response.value.name().c_str());
-	debug("Email: %s", response.value.email().c_str());
-	debug("Disk usage: %u/%u", (uint32)response.value.used(), (uint32)response.value.available());
-}
 
 DropboxStorage *DropboxStorage::loadFromConfig(Common::String keyPrefix) {
 	loadKeyAndSecret();

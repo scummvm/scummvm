@@ -43,9 +43,6 @@ class DropboxStorage: public Cloud::Storage {
 	void getAccessToken(Common::String code);
 	void codeFlowComplete(Networking::JsonResponse response);
 
-	/** Constructs StorageInfo based on JSON response from cloud. */
-	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);
-
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
 	DropboxStorage(Common::String code);
@@ -89,9 +86,6 @@ public:
 
 	/** Returns the StorageInfo struct. */
 	virtual Networking::Request *info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback);
-
-	/** This method is passed into info(). (Temporary) */
-	void infoMethodCallback(StorageInfoResponse response);
 
 	/** Returns storage's saves directory path with the trailing slash. */
 	virtual Common::String savesDirectoryPath();

@@ -245,7 +245,7 @@ Networking::Request *CloudManager::downloadFolder(Common::String remotePath, Com
 
 Networking::Request *CloudManager::info(Storage::StorageInfoCallback callback, Networking::ErrorCallback errorCallback) {
 	Storage *storage = getCurrentStorage();
-	if (storage) storage->info(callback, errorCallback);
+	if (storage) return storage->info(callback, errorCallback);
 	else {
 		delete callback;
 		delete errorCallback;
