@@ -86,14 +86,16 @@ bool CFilesManager::scanForFile(const CString &name) {
 		fname += ".st";
 	}
 
+	// Return true if the file exists
+	if (fileExists(fname))
+		return true;
+
+	// Couldn't find file. Start by calling the game manager's viewChange
+	// method, which handles all active scene objects freeing their resources
 	if (_gameManager)
 		_gameManager->viewChange();
 
-	// The original had a bunch of code here handling determining
-	// which asset path, if any, the filename was present for,
-	// and storing the "active asset path" it was found on.
-	// This is redundant for ScummVM, which takes care of the paths
-	return fileExists(fname);
+	return false;
 }
 
 void CFilesManager::loadDrive() {
