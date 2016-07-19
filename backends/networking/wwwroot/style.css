@@ -93,3 +93,6 @@ td img { vertical-align: middle; height: 20px; }
 	display: block;
 	padding-bottom: 6px;
 }
+
+.directory_name a { color: black; }
+.directory_name a:hover { color: blue; }

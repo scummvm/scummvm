@@ -86,6 +86,46 @@
 				listDirectory(path, items);
 			}
 
+			function makeBreadcrumb(name, path) {
+				var a = createElementWithContents("a", name);
+				a.onclick = function () { showDirectory(path); };
+				a.href = "javascript:onclick();";
+				return a;
+			}
+
+			function makeBreadcrumbs(path) {
+				var b = document.createElement("b");
+				b.className = "directory_name";
+
+				b.appendChild(createElementWithContents("span", "{index_of}"));
+				var slashes = true;
+				var crumb = "";
+				var currentPath = "";
+				path += ' '; //so the last slash is added
+				for (var i=0; i<path.length; ++i) {
+					if (path[i] == '/' || path[i] == '\\') {
+						if (!slashes) {
+							currentPath += crumb;
+							b.appendChild(makeBreadcrumb(crumb, currentPath+'/'));
+							slashes = true;					
+						}
+					} else {
+						if (slashes) {
+							currentPath += "/";
+							if (currentPath == "/") { //make special '/' crumb here
+								b.appendChild(makeBreadcrumb('/', '/'));
+							} else {
+								b.appendChild(createElementWithContents("span", "/"));
+							}
+							slashes = false;
+							crumb = "";
+						}
+						crumb += path[i];
+					}
+				}
+				return b;
+			}
+
 			function listDirectory(path, items) {
 				// cleanup the list
 				var files_list = document.getElementById("files_list");
@@ -97,9 +137,7 @@
 				var tr = document.createElement("tr");
 				tr.appendChild(createElementWithContents("td", ""));
 				var td = document.createElement("td");
-				var b = createElementWithContents("b", "{index_of}" + path.replace(new RegExp("\\\\", 'g'), '/'));
-				b.className = "directory_name";
-				td.appendChild(b);
+				td.appendChild(makeBreadcrumbs(path));
 				tr.appendChild(td);
 				tr.appendChild(createElementWithContents("td", ""));
 				tbody.appendChild(tr);
