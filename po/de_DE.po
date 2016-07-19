@@ -2923,20 +2923,19 @@ msgstr ""
 
 #: engines/sci/detection.cpp:394
 msgid "Enable high resolution graphics"
-msgstr "Aktiviere hochauflösende Grafik."
+msgstr "Aktiviere hochauflösende Grafik"
 
 #: engines/sci/detection.cpp:395
 msgid "Enable high resolution graphics/content"
 msgstr "Aktiviere hochauflösende Grafik/Inhalte"
 
 #: engines/sci/detection.cpp:404
-#, fuzzy
 msgid "Enable black-lined video"
-msgstr "Roland-GS-Modus"
+msgstr "Aktiviere schwarze Linien in Videos"
 
 #: engines/sci/detection.cpp:405
 msgid "Draw black lines over videos to increase their apparent sharpness"
-msgstr ""
+msgstr "Zeichne schwarze Linien über Videos, um die scheinbare Schärfe zu erhöhen"
 
 #: engines/sci/detection.cpp:414
 msgid "Prefer digital sound effects"
@@ -2944,7 +2943,7 @@ msgstr "Digitale Geräusch-Effekte bevorzugen"
 
 #: engines/sci/detection.cpp:415
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr "Bevorzugt digitale Geräusch-Effekte statt synthethisierter."
+msgstr "Bevorzugt digitale Geräusch-Effekte statt synthethisierter"
 
 #: engines/sci/detection.cpp:434
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
