@@ -33,6 +33,19 @@ FilesAjaxPageHandler::FilesAjaxPageHandler() {}
 
 FilesAjaxPageHandler::~FilesAjaxPageHandler() {}
 
+namespace {
+Common::String encodeDoubleQuotesAndSlashes(Common::String s) {
+	Common::String result = "";
+	for (uint32 i = 0; i < s.size(); ++i)
+		if (s[i] == '"') {
+			result += "\\\"";
+		} else if (s[i] == '\\') {
+			result += "\\\\";
+		} else result += s[i];
+		return result;
+}
+}
+
 void FilesAjaxPageHandler::handle(Client &client) {
 	// load stylish response page from the archive
 	Common::SeekableReadStream *const stream = HandlerUtils::getArchiveFile(FILES_PAGE_NAME);
@@ -55,6 +68,7 @@ void FilesAjaxPageHandler::handle(Client &client) {
 	replace(response, "{index_of}", _("Index of "));
 	replace(response, "{loading}", _("Loading..."));
 	replace(response, "{error}", _("Error occurred"));
+	replace(response, "{start_path}", encodeDoubleQuotesAndSlashes(path));
 	LocalWebserver::setClientGetHandler(client, response);
 }
 

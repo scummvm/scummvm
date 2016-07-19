@@ -159,9 +159,11 @@ void UploadFileClientHandler::handleBlockContent(Client *client) {
 					_("Uploaded successfully!"),
 					client->queryParameter("path").c_str(),
 					_("Back to parent directory")
-					),
-				"/files?path=" + LocalWebserver::urlEncodeQueryParameterValue(client->queryParameter("path"))
-				);
+				),
+
+				(client->queryParameter("ajax") == "true" ? "/filesAJAX?path=" : "/files?path=") +
+					LocalWebserver::urlEncodeQueryParameterValue(client->queryParameter("path"))
+			);
 			_state = UFH_STOP;		
 			return;
 		}
