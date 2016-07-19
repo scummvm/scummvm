@@ -27,6 +27,7 @@
 #include "backends/networking/sdl_net/handlers/basehandler.h"
 #include "backends/networking/sdl_net/handlers/createdirectoryhandler.h"
 #include "backends/networking/sdl_net/handlers/downloadfilehandler.h"
+#include "backends/networking/sdl_net/handlers/filesajaxpagehandler.h"
 #include "backends/networking/sdl_net/handlers/filespagehandler.h"
 #include "backends/networking/sdl_net/handlers/indexpagehandler.h"
 #include "backends/networking/sdl_net/handlers/listajaxhandler.h"
@@ -67,6 +68,7 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	DownloadFileHandler _downloadFileHandler;
 	UploadFileHandler _uploadFileHandler;
 	ListAjaxHandler _listAjaxHandler;
+	FilesAjaxPageHandler _filesAjaxPageHandler;
 	ResourceHandler _resourceHandler;
 	uint32 _idlingFrames;
 	Common::Mutex _handleMutex;

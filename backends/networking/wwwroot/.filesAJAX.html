@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+	<head>
+		<title>ScummVM</title>
+		<meta charset="utf-8"/>
+		<link rel="stylesheet" type="text/css" href="style.css"/>
+	</head>
+	<body>
+		<div class="container">
+			<div class='header'>
+				<center><img src="logo.png"/></center>
+			</div>
+			<div class="controls">
+				<table class="buttons"><tr>
+					<td><a href="javascript:show('create_directory');">{create_directory_button}</a></td>
+					<td><a href="javascript:show('upload_file');">{upload_files_button}</a></td>
+				</tr></table>
+				<div id="create_directory" class="modal">
+					<p>{create_directory_desc}</p>
+					<form action="create" id="create_directory_form">
+						<input type="hidden" name="path" value="{path}"/>
+						<input type="text" name="directory_name" value=""/>
+						<input type="submit" value="{create_directory_button}"/>
+					</form>
+				</div>
+				<div id="upload_file" class="modal">
+					<p>{upload_file_desc}</p>
+					<form action="upload?path={path}" method="post" enctype="multipart/form-data" id="files_upload_form">
+						<!-- we don't need "[]" in the name, as our webserver is not using PHP -->
+						<!-- "allowdirs" is a proposal, not implemented yet -->
+						<input type="file" name="upload_file-f" allowdirs multiple/>
+						<br/><br/>
+						<p>{or_upload_directory_desc}</p>
+						<!-- "directory"/"webkitdirectory" works in Chrome only yet, "multiple" is just in case here -->
+						<input type="file" name="upload_file-d" directory webkitdirectory multiple/>
+						<input type="submit" value="{upload_file_button}"/>
+					</form>
+				</div>
+			</div>
+			<div class="content">
+				<table class="files_list" id="files_list">
+				</table>
+			</div>
+		</div>
+		<script>
+			function show(id) {
+				var e = document.getElementById(id);
+				var visible = (e.style.display == "block");
+				if (visible) id = ""; //hide
+
+				e = document.getElementById("create_directory");
+				e.style.display = (e.id == id ? "block" : "none");
+				e = document.getElementById("upload_file");
+				e.style.display = (e.id == id ? "block" : "none");
+			}
+		</script>
+		<script src="ajax.js"></script>
+		<script>
+			window.onload = function () {
+				showDirectory("/");
+			}
+
+			function showDirectory(path) {
+				ajax.getAndParseJson("./list", {"path": path}, getCallback(path));
+			}
+
+			function getCallback(path) {
+				return function (jsonResponse) {
+					console.log(jsonResponse);
+
+					if (jsonResponse.type == "error") {
+						console.log("error");
+						return;
+					}
+
+					openDirectory(path, jsonResponse.items);
+				};
+			}
+
+			function openDirectory(path, items) {
+				// update path
+				document.getElementById("create_directory_form").elements["path"].value = path;
+				document.getElementById("files_upload_form").action = "upload?path=" + path;
+
+				// update table contents
+				listDirectory(path, items);
+			}
+
+			function listDirectory(path, items) {
+				// cleanup the list
+				var files_list = document.getElementById("files_list");
+				while (files_list.hasChildNodes())
+					files_list.removeChild(files_list.firstChild);
+				var tbody = document.createElement("tbody");
+
+				// add header item
+				var tr = document.createElement("tr");
+				tr.appendChild(createElementWithContents("td", ""));
+				var td = document.createElement("td");
+				var b = createElementWithContents("b", "{index_of}" + path.replace(new RegExp("\\\\", 'g'), '/'));
+				b.className = "directory_name";
+				td.appendChild(b);
+				tr.appendChild(td);
+				tr.appendChild(createElementWithContents("td", ""));
+				tbody.appendChild(tr);
+
+				// add items
+				for (var i in items)
+					addItem(tbody, items[i]);
+
+				files_list.appendChild(tbody);
+			}
+
+			function addItem(tbody, item) {
+				var tr = document.createElement("tr");
+				var td = document.createElement("td");
+				var img = document.createElement("img");
+				img.src = "http://localhost:12345/icons/" + item.icon;
+				td.appendChild(img);
+				tr.appendChild(td);
+
+				td = document.createElement("td");
+				var a = createElementWithContents("a", item.name);
+				if (item.isDirectory) {
+					a.onclick = function () { showDirectory(item.path); };
+					a.href = "javascript:onclick();";
+				} else
+					a.href = "http://localhost:12345/download?path=" + encodeURIComponent(item.path);
+				td.appendChild(a);
+				tr.appendChild(td);
+
+				tr.appendChild(createElementWithContents("td", ""));
+				tbody.appendChild(tr);
+			}
+
+			function createElementWithContents(type, innerHTML) {
+				var e = document.createElement(type);
+				e.innerHTML = innerHTML;
+				return e;
+			}
+		</script>
+	</body>
+</html>
