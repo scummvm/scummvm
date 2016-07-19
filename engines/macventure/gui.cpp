@@ -223,8 +223,8 @@ void Gui::initWindows() {
 	_mainGameWindow->setDimensions(getWindowData(kMainGameWindow).bounds);
 	_mainGameWindow->setActive(false);
 	_mainGameWindow->setCallback(mainGameWindowCallback, this);
-	loadBorder(_mainGameWindow, "border_no_scroll_inac.bmp", false);
-	loadBorder(_mainGameWindow, "border_no_scroll_act.bmp", true);
+	//loadBorder(_mainGameWindow, "border_no_scroll_inac.bmp", false);
+	//loadBorder(_mainGameWindow, "border_no_scroll_act.bmp", true);
 
 	// In-game Output Console
 	_outConsoleWindow = _wm.addWindow(false, true, true);
@@ -335,8 +335,9 @@ WindowReference Gui::createInventoryWindow(ObjID objRef) {
 
 	newWindow->setDimensions(newData.bounds);
 	newWindow->setCallback(inventoryWindowCallback, this);
-	loadBorder(newWindow, "border_no_scroll_inac.bmp", false);
-	loadBorder(newWindow, "border_no_scroll_act.bmp", true);
+	newWindow->setCloseable(true);
+	//loadBorder(newWindow, "border_no_scroll_inac.bmp", false);
+	//loadBorder(newWindow, "border_no_scroll_act.bmp", true);
 	_inventoryWindows.push_back(newWindow);
 
 	debug("Create new inventory window. Reference: %d", newData.refcon);
@@ -1283,14 +1284,32 @@ bool MacVenture::Gui::processDiplomaEvents(WindowClick click, Common::Event & ev
 }
 
 bool Gui::processInventoryEvents(WindowClick click, Common::Event & event) {
+	if (event.type == Common::EVENT_LBUTTONDOWN && click == kBorderCloseButton) {
+		WindowReference ref = findWindowAtPoint(event.mouse);
+		if (ref == kNoWindow) return false;
+
+		if (click == kBorderCloseButton) {
+			_inventoryWindows.remove_at(ref - kInventoryStart);
+			bool found = false;
+			Common::List<WindowData>::iterator it;
+			for (it = _windowData->begin(); it != _windowData->end() && !found; it++) {
+				if (it->refcon == ref) {
+					_windowData->erase(it);
+					found = true;
+				}
+			}
+			return true;
+		}
+	}
+
 	if (_engine->needsClickToContinue())
 		return true;
 
 	if (event.type == Common::EVENT_LBUTTONDOWN) {
-
 		// Find the appropriate window
 		WindowReference ref = findWindowAtPoint(event.mouse);
 		if (ref == kNoWindow) return false;
+
 		Graphics::MacWindow *win = findWindow(ref);
 		WindowData &data = findWindowData((WindowReference) ref);
 		Common::Point pos;
