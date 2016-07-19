@@ -219,7 +219,7 @@ void Gui::initWindows() {
 	loadBorder(_controlsWindow, "border_command.bmp", true);
 
 	// Main Game Window
-	_mainGameWindow = _wm.addWindow(false, false, false);
+	_mainGameWindow = _wm.addWindow(true, true, true);
 	_mainGameWindow->setDimensions(getWindowData(kMainGameWindow).bounds);
 	_mainGameWindow->setActive(false);
 	_mainGameWindow->setCallback(mainGameWindowCallback, this);
