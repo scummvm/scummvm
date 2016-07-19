@@ -38,6 +38,8 @@
 				</div>
 			</div>
 			<div class="content">
+				<div id="loading_message">{loading}</div>
+				<div id="error_message">{error}</div>
 				<table class="files_list" id="files_list">
 				</table>
 			</div>
@@ -61,6 +63,8 @@
 			}
 
 			function showDirectory(path) {
+				if (isLoading) return;
+				showLoading();
 				ajax.getAndParseJson("./list", {"path": path}, getCallback(path));
 			}
 
@@ -69,12 +73,40 @@
 					console.log(jsonResponse);
 
 					if (jsonResponse.type == "error") {
-						console.log("error");
+						showError();
 						return;
 					}
 
 					openDirectory(path, jsonResponse.items);
+					hideLoading();
 				};
+			}
+
+			var isLoading = false;
+
+			function showLoading() {
+				isLoading = true;
+				var e = document.getElementById("loading_message");
+				e.style.display = "block";
+				e = document.getElementById("error_message");
+				e.style.display = "none";
+			}
+
+			function showError() {
+				isLoading = false;
+				var e = document.getElementById("loading_message");
+				e.style.display = "none";
+				e = document.getElementById("error_message");
+				e.style.display = "block";
+				//TODO: pass the actual message there?
+			}
+
+			function hideLoading() {
+				isLoading = false;
+				var e = document.getElementById("loading_message");
+				e.style.display = "none";
+				e = document.getElementById("error_message");
+				e.style.display = "none";
 			}
 
 			function openDirectory(path, items) {

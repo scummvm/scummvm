@@ -53,6 +53,8 @@ void FilesAjaxPageHandler::handle(Client &client) {
 	replace(response, "{upload_file_desc}", _("Select a file to upload:"));
 	replace(response, "{or_upload_directory_desc}", _("Or select a directory (works in Chrome only):"));
 	replace(response, "{index_of}", _("Index of "));
+	replace(response, "{loading}", _("Loading..."));
+	replace(response, "{error}", _("Error occurred"));
 	LocalWebserver::setClientGetHandler(client, response);
 }
 

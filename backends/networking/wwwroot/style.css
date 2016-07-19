@@ -96,3 +96,18 @@ td img { vertical-align: middle; height: 20px; }
 
 .directory_name a { color: black; }
 .directory_name a:hover { color: blue; }
+
+#loading_message, #error_message {
+	margin: -8pt;
+	margin-bottom: 5pt;
+	padding: 4pt;
+	text-align: center;
+}
+
+#loading_message {
+	background: #99FF99;
+}
+
+#error_message {
+	background: #FF9999;
+}
