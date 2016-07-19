@@ -3,9 +3,12 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 1.9.0 (YYYY-MM-DD)
  New Games:
-  - Added support for Myst.
-  - Added support for Myst: Masterpiece Edition.
-  - Added support for U.F.O.s.
+   - Added support for Myst.
+   - Added support for Myst: Masterpiece Edition.
+   - Added support for U.F.O.s.
+
+ General:
+   - Fixed audio corruption in the MS ADPCM decoder.
 
  AGI:
    - Added support for Hercules rendering. Both green and amber modes are
@@ -16,9 +19,30 @@ For a more comprehensive changelog of the latest experimental code, see:
      available in the original interpreter for Hercules rendering.
 
  SCI:
-   - Fix a missing dialog line in QfG3 which awards the player with 3 additional
+   - Fixed a missing dialog line in QfG3 which awards the player with 3 additional
      points. This is a bug in the original game interpreter. Due to this bug,
      it was not possible to get all points in the original game.
+   - Fixed a bug in Space Quest 1 that caused issues with the spider droid.
+   - Fixed a bug in Laura Bow: The Colonel's Bequest that could cause a lock-up when
+     interacting with the armor in room 37 (main house, downstairs). This bug is also
+     present in the original game.
+   - Fixed auto-saving in the fan-made Cascade Quest.
+   - Fixed a bug in Conquests of the Longbow: The Adventures of Robin Hood that caused
+     the game to crash while wandering through the Sherwood Forest.
+   - Added a detection entry for the ImagiNation Network (INN) demo.
+
+ SCUMM:
+   - Fixed missing translations in the in-game quit and restart dialogs in Pajama Sam 1.
+   - Fixed visual glitches in DOTT that occured after loading a savegame with the stereo
+     in Green Tentacle's room turned on.
+
+ Mohawk:
+   - Fixed visual glitches in the Spanish version of Myst.
+   - Changed the cancel button in the options dialog of Riven not to save the settings.
+   - Riven savegames created by ScummVM are now loadable in the original game.
+
+ WAGE:
+   - Closed memory leak.
 
  Windows port:
    - Fixed taskbar support on Windows 10 onwards.
