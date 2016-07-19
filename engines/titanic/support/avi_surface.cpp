@@ -74,6 +74,7 @@ AVISurface::AVISurface(const CResourceKey &key) {
 		++_streamCount;
 	} else {
 		delete decoder2;
+		_decoders[1] = nullptr;
 	}
 }
 
