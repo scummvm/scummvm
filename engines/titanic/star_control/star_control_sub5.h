@@ -44,6 +44,7 @@ private:
 	int _field78B0;
 public:
 	CStarControlSub5();
+	virtual ~CStarControlSub5() {}
 
 	virtual bool setup();
 	virtual void proc2();

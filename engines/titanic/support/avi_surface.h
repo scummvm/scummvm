@@ -84,7 +84,7 @@ public:
 	double _frameRate;
 public:
 	AVISurface(const CResourceKey &key);
-	~AVISurface();
+	virtual ~AVISurface();
 
 	/**
 	 * Start playing the loaded AVI video

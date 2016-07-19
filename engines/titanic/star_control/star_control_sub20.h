@@ -43,7 +43,7 @@ struct CStar20Data {
 class CStarControlSub20 : public CStar20Data {
 public:
 	int _lockCounter;
-	void *_dataP;
+	byte *_dataP;
 public:
 	CStarControlSub20(const CStar20Data *src);
 	virtual ~CStarControlSub20();

@@ -28,7 +28,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPetDragChev, CPetGraphic2)
-
+	ON_MESSAGE(MouseDragStartMsg)
+	ON_MESSAGE(MouseDragMoveMsg)
+	ON_MESSAGE(MouseDragEndMsg)
 END_MESSAGE_MAP()
 
 void CPetDragChev::save(SimpleFile *file, int indent) {
