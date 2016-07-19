@@ -92,9 +92,15 @@ void OneDriveUploadRequest::uploadNextPart() {
 	uint32 size = _contentsStream->read(buffer, UPLOAD_PER_ONE_REQUEST);
 	request->setBuffer(buffer, size);
 
-	//request->addHeader(Common::String::format("Content-Length: %u", size));
 	if (_uploadUrl != "")
-		request->addHeader(Common::String::format("Content-Range: bytes %u-%u/%u", oldPos, _contentsStream->pos()-1, _contentsStream->size()));	;
+		request->addHeader(Common::String::format("Content-Range: bytes %u-%u/%u", oldPos, _contentsStream->pos()-1, _contentsStream->size()));
+	else
+		if (_contentsStream->size() == 0) {
+			warning("\"Sorry, OneDrive can't upload empty files\"");
+			finishUpload(StorageFile(_savePath, 0, 0, false));
+			delete request;
+			return;
+		}
 	
 	_workingRequest = ConnMan.addRequest(request);
 }
