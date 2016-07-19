@@ -210,20 +210,67 @@ void FrameBuffer::clearRegion(int x, int y, int w, int h, int clearZ, int z, int
 	}
 }
 
+inline static void blitPixel(uint8 offset, unsigned int *from_z, unsigned int *to_z, unsigned int z_length, byte *from_color, byte *to_color, unsigned int color_length) {
+	const unsigned int d = from_z[offset];
+	if (d > to_z[offset]) {
+		memcpy(to_color + offset, from_color + offset, color_length);
+		memcpy(to_z + offset, &d, z_length);
+	}
+}
 
 void FrameBuffer::blitOffscreenBuffer(Buffer *buf) {
 	// TODO: could be faster, probably.
+#define UNROLL_COUNT 16
 	if (buf->used) {
-		for (int i = 0; i < this->xsize * this->ysize; ++i) {
-			unsigned int d1 = buf->zbuf[i];
-			unsigned int d2 = this->_zbuf[i];
-			if (d1 > d2) {
-				const int offset = i * this->pixelbytes;
-				memcpy(this->pbuf.getRawBuffer() + offset, buf->pbuf + offset, this->pixelbytes);
-				memcpy(this->_zbuf + i, buf->zbuf + i, sizeof(int));
-			}
+		const int pixel_bytes = this->pixelbytes;
+		const int unrolled_pixel_bytes = pixel_bytes * UNROLL_COUNT;
+		byte *to = this->pbuf.getRawBuffer();
+		byte *from = buf->pbuf;
+		unsigned int *to_z = this->_zbuf;
+		unsigned int *from_z = buf->zbuf;
+		int count = this->xsize * this->ysize;
+		while (count >= UNROLL_COUNT) {
+			blitPixel(0x0, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+			blitPixel(0x1, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+			blitPixel(0x2, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+			blitPixel(0x3, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+			blitPixel(0x4, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+			blitPixel(0x5, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+			blitPixel(0x6, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+			blitPixel(0x7, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+			blitPixel(0x8, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+			blitPixel(0x9, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+			blitPixel(0xA, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+			blitPixel(0xB, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+			blitPixel(0xC, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+			blitPixel(0xD, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+			blitPixel(0xE, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+			blitPixel(0xF, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+			count -= UNROLL_COUNT;
+			to += unrolled_pixel_bytes;
+			from += unrolled_pixel_bytes;
+			to_z += UNROLL_COUNT;
+		}
+		switch (count) {
+		case 0xF: blitPixel(0xE, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+		case 0xE: blitPixel(0xD, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+		case 0xD: blitPixel(0xC, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+		case 0xC: blitPixel(0xB, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+		case 0xB: blitPixel(0xA, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+		case 0xA: blitPixel(0x9, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+		case 0x9: blitPixel(0x8, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+		case 0x8: blitPixel(0x7, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+		case 0x7: blitPixel(0x6, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+		case 0x6: blitPixel(0x5, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+		case 0x5: blitPixel(0x4, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+		case 0x4: blitPixel(0x3, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+		case 0x3: blitPixel(0x2, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+		case 0x2: blitPixel(0x1, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+		case 0x1: blitPixel(0x0, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+		case 0x0: break;
 		}
 	}
+#undef UNROLL_COUNT
 }
 
 void FrameBuffer::selectOffscreenBuffer(Buffer *buf) {
