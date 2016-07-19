@@ -692,14 +692,14 @@ byte *ScummEngine::getBoxMatrixBaseAddr() {
 	return ptr;
 }
 
-byte *ScummEngine::getBoxConnectionBase( int box ) {
+byte *ScummEngine::getBoxConnectionBase(int box) {
 	byte *boxm = getBoxMatrixBaseAddr();
 
 	int boxIndex = 0;
 
 	for (; boxIndex != box; ++boxIndex) {
 
-		while ( *boxm != 0xFF) {
+		while (*boxm != 0xFF) {
 			++boxm;
 		}
 
@@ -736,7 +736,7 @@ int ScummEngine::getNextBox(byte from, byte to) {
 
 	if (_game.version == 0) {
 
-		boxm = getBoxConnectionBase( from );
+		boxm = getBoxConnectionBase(from);
 
 		for (; *boxm != 0xFF; ++boxm) {
 			if (*boxm == to)
@@ -1173,7 +1173,7 @@ bool ScummEngine::areBoxesNeighbors(int box1nr, int box2nr) {
 }
 
 byte ScummEngine_v0::walkboxFindTarget(Actor *a, int destbox, Common::Point walkdest) {
-	Actor_v0 *Actor = (Actor_v0*)a;
+	Actor_v0 *Actor = (Actor_v0 *)a;
 	byte nextBox = kOldInvalidBox;
 
 	// Do we have a walkbox queue to process
@@ -1195,7 +1195,7 @@ byte ScummEngine_v0::walkboxFindTarget(Actor *a, int destbox, Common::Point walk
 	// Next box reached
 	if (nextBox != Actor::kInvalidBox && nextBox != a->_walkbox) {
 
-		getClosestPtOnBox(getBoxCoordinates(nextBox), a->getPos().x, a->getPos().y, Actor->_NewWalkTo.x, Actor->_NewWalkTo.y);
+		getClosestPtOnBox(getBoxCoordinates(nextBox), a->getRealPos().x, a->getRealPos().y, Actor->_NewWalkTo.x, Actor->_NewWalkTo.y);
 
 	} else {
 

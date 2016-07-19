@@ -387,8 +387,8 @@ public:
 
 private:
 
-	bool walkBoxQueueAdd( int box );
-	bool walkBoxQueueFind( int box );
+	bool walkBoxQueueAdd(int box);
+	bool walkBoxQueueFind(int box);
 	void walkboxQueueReverse();
 
 public:

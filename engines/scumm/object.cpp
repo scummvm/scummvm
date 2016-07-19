@@ -1126,6 +1126,7 @@ void ScummEngine_v80he::clearDrawQueues() {
  */
 void ScummEngine::markObjectRectAsDirty(int obj) {
 	int i, strip;
+	++_V0Delay._objectRedrawCount;
 
 	for (i = 1; i < _numLocalObjects; i++) {
 		if (_objs[i].obj_nr == (uint16)obj) {
@@ -1133,6 +1134,7 @@ void ScummEngine::markObjectRectAsDirty(int obj) {
 				const int minStrip = MAX(_screenStartStrip, _objs[i].x_pos / 8);
 				const int maxStrip = MIN(_screenEndStrip+1, _objs[i].x_pos / 8 + _objs[i].width / 8);
 				for (strip = minStrip; strip < maxStrip; strip++) {
+					++_V0Delay._objectStripRedrawCount;
 					setGfxUsageBit(strip, USAGE_BIT_DIRTY);
 				}
 			}

@@ -732,9 +732,38 @@ ScummEngine_v0::ScummEngine_v0(OSystem *syst, const DetectorResult &dr)
 	VAR_ACTIVE_OBJECT2 = 0xFF;
 	VAR_IS_SOUND_RUNNING = 0xFF;
 	VAR_ACTIVE_VERB = 0xFF;
+	
+	DelayReset();
 
 	if (strcmp(dr.fp.pattern, "maniacdemo.d64") == 0 )
 		_game.features |= GF_DEMO;
+}
+
+void ScummEngine_v0::DelayReset() {
+	_V0Delay._screenScroll = false;
+	_V0Delay._objectRedrawCount = 0;
+	_V0Delay._objectStripRedrawCount = 0;
+	_V0Delay._actorRedrawCount = 0;
+	_V0Delay._actorLimbRedrawDrawCount = 0;
+}
+
+int ScummEngine_v0::DelayCalculateDelta() {
+	float Time = 0;
+	
+	// These values are made up, based on trial/error with visual inspection against WinVice
+	// If anyone feels inclined, the routines in the original engine could be profiled
+	// and these values changed accordindly.
+	Time += _V0Delay._objectRedrawCount * 7;
+	Time += _V0Delay._objectStripRedrawCount * 0.6;
+	Time += _V0Delay._actorRedrawCount * 2.0;
+	Time += _V0Delay._actorLimbRedrawDrawCount * 0.3;
+
+	if (_V0Delay._screenScroll)
+		Time += 3.6f;
+
+	DelayReset();
+
+	return roundf(Time);
 }
 
 ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)
@@ -2079,13 +2108,24 @@ Common::Error ScummEngine::go() {
 		if (delta < 1)	// Ensure we don't get into an endless loop
 			delta = 1;  // by not decreasing sleepers.
 
-		// WORKAROUND: walking speed in the original v0/v1 interpreter
+		// WORKAROUND: Unfortunately the MOS 6502 wasn't always fast enough for MM
+		//  a number of situations can lead to the engine running at less than 60 ticks per second, without this drop
+		//	- A single kid is able to escape via the Dungeon Door (after pushing the brick)
+		//	- During the intro, calls to 'SetState08' are made for the lights on the mansion, with a 'breakHere'
+		//	  in between each, the reduction in ticks then occurs while affected stripes are being redrawn.
+		//	  The music buildup is then out of sync with the text "A Lucasfilm Games Production".
+		//	  Each call to 'breakHere' has been replaced with calls to 'Delay' in the V1/V2 versions of the game
+		if (_game.version == 0) {
+			delta += ((ScummEngine_v0 *)this)->DelayCalculateDelta();
+		}
+		
+		// WORKAROUND: walking speed in the original v1 interpreter
 		// is sometimes slower (e.g. during scrolling) than in ScummVM.
 		// This is important for the door-closing action in the dungeon,
 		// otherwise (delta < 6) a single kid is able to escape.
-		if ((_game.version == 0 && isScriptRunning(132)) ||
-			(_game.version == 1 && isScriptRunning(137)))
-			delta = 6;
+		if (_game.version == 1 && isScriptRunning(137)) {
+				delta = 6;
+		}
 
 		// Wait...
 		waitForTimer(delta * 1000 / 60 - diff);
@@ -2452,6 +2492,8 @@ void ScummEngine_v8::scummLoop_handleSaveLoad() {
 
 void ScummEngine::scummLoop_handleDrawing() {
 	if (camera._cur != camera._last || _bgNeedsRedraw || _fullRedraw) {
+		_V0Delay._screenScroll = true;
+
 		redrawBGAreas();
 	}
 

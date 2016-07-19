@@ -3797,7 +3797,7 @@ void ScummEngine::fadeOut(int effect) {
 
 	// V0 wipes the text area before fading out
 	if (_game.version == 0) {
-		updateDirtyScreen( kTextVirtScreen );
+		updateDirtyScreen(kTextVirtScreen);
 	}
 
 	// TheDig can disable fadeIn(), and may call fadeOut() several times
