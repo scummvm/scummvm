@@ -732,7 +732,7 @@ ScummEngine_v0::ScummEngine_v0(OSystem *syst, const DetectorResult &dr)
 	VAR_ACTIVE_OBJECT2 = 0xFF;
 	VAR_IS_SOUND_RUNNING = 0xFF;
 	VAR_ACTIVE_VERB = 0xFF;
-	
+
 	DelayReset();
 
 	if (strcmp(dr.fp.pattern, "maniacdemo.d64") == 0 )
@@ -749,7 +749,7 @@ void ScummEngine_v0::DelayReset() {
 
 int ScummEngine_v0::DelayCalculateDelta() {
 	float Time = 0;
-	
+
 	// These values are made up, based on trial/error with visual inspection against WinVice
 	// If anyone feels inclined, the routines in the original engine could be profiled
 	// and these values changed accordindly.
@@ -763,7 +763,7 @@ int ScummEngine_v0::DelayCalculateDelta() {
 
 	DelayReset();
 
-	return roundf(Time);
+	return floor(Time + 0.5);
 }
 
 ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)
@@ -2118,7 +2118,7 @@ Common::Error ScummEngine::go() {
 		if (_game.version == 0) {
 			delta += ((ScummEngine_v0 *)this)->DelayCalculateDelta();
 		}
-		
+
 		// WORKAROUND: walking speed in the original v1 interpreter
 		// is sometimes slower (e.g. during scrolling) than in ScummVM.
 		// This is important for the door-closing action in the dungeon,
