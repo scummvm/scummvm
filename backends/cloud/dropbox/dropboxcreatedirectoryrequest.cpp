@@ -84,6 +84,14 @@ void DropboxCreateDirectoryRequest::responseCallback(Networking::JsonResponse re
 	Common::JSONObject info = json->asObject();
 	if (info.contains("id")) finishCreation(true);
 	else {
+		if (info.contains("error_summary") && info.getVal("error_summary")->isString()) {
+			Common::String summary = info.getVal("error_summary")->asString();
+			if (summary.contains("path") && summary.contains("conflict") && summary.contains("folder")) {
+				finishCreation(false);
+				delete json;
+				return;
+			}
+		}
 		error.response = json->stringify(true);
 		finishError(error);
 	}
