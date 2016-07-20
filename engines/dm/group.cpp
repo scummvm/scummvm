@@ -1699,6 +1699,7 @@ void GroupMan::f183_addActiveGroup(Thing thing, int16 mapX, int16 mapY) {
 
 	warning(false, "Code differs from the original in GroupMan::f183_addActiveGroup");
 	//L0340_ps_Group = ((Group *)_vm->_dungeonMan->_g284_thingData[k4_GroupThingType]) + (L0341_ps_ActiveGroup->_groupThingIndex = (thing).getType());
+	L0341_ps_ActiveGroup->_groupThingIndex = thing.getType();
 	L0340_ps_Group = (Group*)_vm->_dungeonMan->f156_getThingData(f175_groupGetThing(mapX, mapY));
 
 	L0341_ps_ActiveGroup->_cells = L0340_ps_Group->_cells;
