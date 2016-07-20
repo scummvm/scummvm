@@ -411,9 +411,6 @@ struct FrameBuffer {
 	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawMode>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite>
-	void fillLineGeneric(ZBufferPoint *p1, ZBufferPoint *p2, int color);
-
 	void fillTriangleTextureMappingPerspectiveSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillTriangleTextureMappingPerspectiveFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillTriangleDepthOnly(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
@@ -425,9 +422,9 @@ struct FrameBuffer {
 	void plot(ZBufferPoint *p);
 	void fillLine(ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillLineZ(ZBufferPoint *p1, ZBufferPoint *p2);
-	void fillLineFlatZ(ZBufferPoint *p1, ZBufferPoint *p2, int color);
+	void fillLineFlatZ(ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillLineInterpZ(ZBufferPoint *p1, ZBufferPoint *p2);
-	void fillLineFlat(ZBufferPoint *p1, ZBufferPoint *p2, int color);
+	void fillLineFlat(ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillLineInterp(ZBufferPoint *p1, ZBufferPoint *p2);
 
 	void setScissorRectangle(int left, int right, int top, int bottom) {
@@ -469,6 +466,14 @@ struct FrameBuffer {
 	FORCEINLINE int getDepthTestEnabled() const { return _depthTestEnabled; }
 
 private:
+
+	template <bool kDepthWrite>
+	FORCEINLINE void putPixel(unsigned int pixelOffset, int color, unsigned int z);
+
+	FORCEINLINE void putPixel(unsigned int pixelOffset, int color);
+
+	template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite>
+	void drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2);
 
 	unsigned int *_zbuf;
 	bool _depthWrite;
