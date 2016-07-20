@@ -28,6 +28,7 @@
 #include "common/str.h"
 #include "common/system.h"
 #include "common/timer.h"
+#include "common/translation.h"
 #include <SDL/SDL_net.h>
 
 #ifdef POSIX
@@ -100,7 +101,11 @@ void LocalWebserver::start() {
 
 	_serverSocket = SDLNet_TCP_Open(&ip);
 	if (!_serverSocket) {
-		error("SDLNet_TCP_Open: %s\n", SDLNet_GetError());		
+		warning("SDLNet_TCP_Open: %s", SDLNet_GetError());
+		stopTimer();
+		g_system->displayMessageOnOSD(_("Failed to start local webserver.\nCheck whether selected port is not used by another application and try again."));
+		_handleMutex.unlock();
+		return;
 	}
 
 	// Create a socket set
