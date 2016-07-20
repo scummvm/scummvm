@@ -43,6 +43,7 @@
 #include "audio/mixer.h"
 #include "audio/fmopl.h"
 #include "widgets/scrollcontainer.h"
+#include "widgets/edittext.h"
 
 #ifdef USE_LIBCURL
 #include "backends/cloud/cloudmanager.h"
@@ -1317,6 +1318,10 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_runServerButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.RunServerButton", _("Run server"), _("Run local webserver"), kRunServerCmd);
 	_serverInfoLabel = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.ServerInfoLabel", _("Not running"));
 
+	uint32 port = Networking::LocalWebserver::getPort();
+	_serverPortDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.ServerPortDesc", _("Server's port:"), _("Which port is used by server"));
+	_serverPort = new EditTextWidget(container, "GlobalOptions_Cloud_Container.ServerPortEditText", Common::String::format("%u", port), 0);
+
 	setupCloudTab();
 	_redrawCloudTab = false;
 #ifdef USE_SDL_NET
@@ -1489,7 +1494,17 @@ void GlobalOptionsDialog::close() {
 			}
 		}
 #endif
-
+#ifdef USE_SDL_NET
+#ifdef NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
+		// save server's port
+		uint32 port = Networking::LocalWebserver::getPort();
+		if (_serverPort) {
+			uint64 contents = _serverPort->getEditString().asUint64();
+			if (contents != 0) port = contents;
+		}
+		ConfMan.setInt("local_server_port", port);
+#endif
+#endif
 	}
 	OptionsDialog::close();
 }
@@ -1647,6 +1662,17 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 #ifdef USE_SDL_NET
 	case kRunServerCmd:
 	{
+#ifdef NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
+		// save server's port
+		uint32 port = Networking::LocalWebserver::getPort();
+		if (_serverPort) {
+			uint64 contents = _serverPort->getEditString().asUint64();
+			if (contents != 0) port = contents;
+		}
+		ConfMan.setInt("local_server_port", port);
+		ConfMan.flushToDisk();
+#endif
+
 		if (LocalServer.isRunning()) LocalServer.stopOnIdle();
 		else LocalServer.start();
 		break;
@@ -1787,13 +1813,19 @@ void GlobalOptionsDialog::setupCloudTab() {
 	//determine original widget's positions
 	int16 x, y;
 	uint16 w, h;
-	int serverButtonY, serverInfoY;
+	int serverButtonY, serverInfoY, serverPortDescY, serverPortY;
 	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.RunServerButton", x, y, w, h))
 		warning("GlobalOptions_Cloud_Container.RunServerButton's position is undefined");
 	serverButtonY = y;
 	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.ServerInfoLabel", x, y, w, h))
 		warning("GlobalOptions_Cloud_Container.ServerInfoLabel's position is undefined");
 	serverInfoY = y;
+	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.ServerPortDesc", x, y, w, h))
+		warning("GlobalOptions_Cloud_Container.ServerPortDesc's position is undefined");
+	serverPortDescY = y;
+	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.ServerPortEditText", x, y, w, h))
+		warning("GlobalOptions_Cloud_Container.ServerPortEditText's position is undefined");
+	serverPortY = y;
 
 	bool serverIsRunning = LocalServer.isRunning();
 		
@@ -1809,9 +1841,26 @@ void GlobalOptionsDialog::setupCloudTab() {
 		if (serverIsRunning) _serverInfoLabel->setLabel(LocalServer.getAddress());
 		else _serverInfoLabel->setLabel(_("Not running"));
 	}
+#ifdef NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
+	if (_serverPortDesc) {
+		_serverPortDesc->setVisible(true);
+		_serverPortDesc->setPos(_serverPortDesc->getRelX(), serverLabelPosition + serverPortDescY - serverInfoY);
+		_serverPortDesc->setEnabled(!serverIsRunning);
+	}
+	if (_serverPort) {
+		_serverPort->setVisible(true);
+		_serverPort->setPos(_serverPort->getRelX(), serverLabelPosition + serverPortY - serverInfoY);
+		_serverPort->setEnabled(!serverIsRunning);
+	}
+#else
+	if (_serverPortDesc) _serverPortDesc->setVisible(false);
+	if (_serverPort) _serverPort->setVisible(false);
+#endif
 #else
 	if (_runServerButton) _runServerButton->setVisible(false);
 	if (_serverInfoLabel) _serverInfoLabel->setVisible(false);
+	if (_serverPortDesc) _serverPortDesc->setVisible(false);
+	if (_serverPort) _serverPort->setVisible(false);
 #endif
 }
 #endif

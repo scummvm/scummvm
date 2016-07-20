@@ -50,7 +50,7 @@ namespace Networking {
 class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	static const uint32 FRAMES_PER_SECOND = 20;
 	static const uint32 TIMER_INTERVAL = 1000000 / FRAMES_PER_SECOND;
-	static const uint32 SERVER_PORT = 12345;
+	static const uint32 DEFAULT_SERVER_PORT = 12345;
 	static const uint32 MAX_CONNECTIONS = 10;
 
 	friend void localWebserverTimer(void *); //calls handle()
@@ -73,6 +73,7 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	uint32 _idlingFrames;
 	Common::Mutex _handleMutex;
 	Common::String _address;
+	uint32 _serverPort;
 
 	void startTimer(int interval = TIMER_INTERVAL);
 	void stopTimer();
@@ -95,6 +96,7 @@ public:
 	Common::String getAddress();
 	IndexPageHandler &indexPageHandler();
 	bool isRunning();
+	static uint32 getPort();
 
 	static void setClientGetHandler(Client &client, Common::String response, long code = 200, const char *mimeType = nullptr);
 	static void setClientGetHandler(Client &client, Common::SeekableReadStream *responseStream, long code = 200, const char *mimeType = nullptr);

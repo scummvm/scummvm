@@ -30,6 +30,7 @@
 #include "common/timer.h"
 #include "common/translation.h"
 #include <SDL/SDL_net.h>
+#include <common/config-manager.h>
 
 #ifdef POSIX
 #include <sys/types.h>
@@ -48,7 +49,7 @@ DECLARE_SINGLETON(Networking::LocalWebserver);
 namespace Networking {
 
 LocalWebserver::LocalWebserver(): _set(nullptr), _serverSocket(nullptr), _timerStarted(false),
-	_stopOnIdle(false), _clients(0), _idlingFrames(0) {
+	_stopOnIdle(false), _clients(0), _idlingFrames(0), _serverPort(DEFAULT_SERVER_PORT) {
 	addPathHandler("/", _indexPageHandler.getHandler());
 	addPathHandler("/files", _filesPageHandler.getHandler());
 	addPathHandler("/create", _createDirectoryHandler.getHandler());
@@ -84,6 +85,7 @@ void LocalWebserver::stopTimer() {
 
 void LocalWebserver::start() {
 	_handleMutex.lock();
+	_serverPort = getPort();
 	_stopOnIdle = false;
 	if (_timerStarted) {
 		_handleMutex.unlock();
@@ -93,7 +95,7 @@ void LocalWebserver::start() {
 
 	// Create a listening TCP socket
 	IPaddress ip;	
-	if (SDLNet_ResolveHost(&ip, NULL, SERVER_PORT) == -1) {
+	if (SDLNet_ResolveHost(&ip, NULL, _serverPort) == -1) {
 		error("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
 	}
 
@@ -164,6 +166,14 @@ bool LocalWebserver::isRunning() {
 	result = _timerStarted;
 	_handleMutex.unlock();
 	return result;
+}
+
+uint32 LocalWebserver::getPort() {
+#ifdef NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
+	if (ConfMan.hasKey("local_server_port"))
+		return ConfMan.getInt("local_server_port");
+#endif
+	return DEFAULT_SERVER_PORT;
 }
 
 void LocalWebserver::handle() {
@@ -241,7 +251,7 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 	IPaddress *ip = (IPaddress *)ipAddress;
 
 	// not resolved
-	_address = Common::String::format("http://127.0.0.1:%u/ (unresolved)", SERVER_PORT);
+	_address = Common::String::format("http://127.0.0.1:%u/ (unresolved)", _serverPort);
 
 	// default way (might work everywhere, surely works on Windows)
 	const char *name = SDLNet_ResolveIP(ip);
@@ -249,13 +259,13 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 		warning("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
 	} else {
 		IPaddress localIp;
-		if (SDLNet_ResolveHost(&localIp, name, SERVER_PORT) == -1) {
+		if (SDLNet_ResolveHost(&localIp, name, _serverPort) == -1) {
 			warning("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
 		} else {
 			_address = Common::String::format(
 				"http://%u.%u.%u.%u:%u/",
 				localIp.host & 0xFF, (localIp.host >> 8) & 0xFF, (localIp.host >> 16) & 0xFF, (localIp.host >> 24) & 0xFF,
-				SERVER_PORT
+				_serverPort
 			);
 		}
 	}

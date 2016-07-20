@@ -45,6 +45,7 @@ namespace GUI {
 class LauncherDialog;
 
 class CheckboxWidget;
+class EditTextWidget;
 class PopUpWidget;
 class SliderWidget;
 class StaticTextWidget;
@@ -267,6 +268,8 @@ protected:
 	ButtonWidget	 *_storageDownloadButton;
 	ButtonWidget	 *_runServerButton;
 	StaticTextWidget *_serverInfoLabel;
+	StaticTextWidget *_serverPortDesc;
+	EditTextWidget *_serverPort;
 	bool _redrawCloudTab;
 #ifdef USE_SDL_NET
 	bool _serverWasRunning;

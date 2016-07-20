@@ -596,6 +596,17 @@
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
+				<widget name = 'ServerPortDesc'
+						width = '80'
+						height = 'Globals.Line.Height'
+						textalign = 'right'
+				/>
+				<widget name = 'ServerPortEditText'
+						width = '60'
+						height = '16'
+				/>
+			</layout>
 		</layout>
 	</dialog>
 
