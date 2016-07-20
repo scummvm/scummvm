@@ -270,6 +270,7 @@ protected:
 	StaticTextWidget *_serverInfoLabel;
 	StaticTextWidget *_serverPortDesc;
 	EditTextWidget *_serverPort;
+	ButtonWidget	 *_serverPortClearButton;
 	bool _redrawCloudTab;
 #ifdef USE_SDL_NET
 	bool _serverWasRunning;

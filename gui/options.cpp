@@ -102,7 +102,8 @@ enum {
 	kRefreshStorageCmd = 'rfst',
 	kDownloadStorageCmd = 'dlst',
 	kRunServerCmd = 'rnsv',
-	kCloudTabContainerReflowCmd = 'ctcr'
+	kCloudTabContainerReflowCmd = 'ctcr',
+	kServerPortClearCmd = 'spcl'
 };
 #endif
 
@@ -1321,6 +1322,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	uint32 port = Networking::LocalWebserver::getPort();
 	_serverPortDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.ServerPortDesc", _("Server's port:"), _("Which port is used by server"));
 	_serverPort = new EditTextWidget(container, "GlobalOptions_Cloud_Container.ServerPortEditText", Common::String::format("%u", port), 0);
+	_serverPortClearButton = addClearButton(container, "GlobalOptions_Cloud_Container.ServerPortClearButton", kServerPortClearCmd);
 
 	setupCloudTab();
 	_redrawCloudTab = false;
@@ -1631,6 +1633,16 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 	case kConfigureStorageCmd:
 	{
+#ifdef NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
+		// save server's port
+		uint32 port = Networking::LocalWebserver::getPort();
+		if (_serverPort) {
+			uint64 contents = _serverPort->getEditString().asUint64();
+			if (contents != 0) port = contents;
+		}
+		ConfMan.setInt("local_server_port", port);
+		ConfMan.flushToDisk();
+#endif
 		StorageWizardDialog dialog(_selectedStorageIndex);
 		dialog.runModal();
 		//update container's scrollbar
@@ -1675,6 +1687,14 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 
 		if (LocalServer.isRunning()) LocalServer.stopOnIdle();
 		else LocalServer.start();
+		break;
+	}
+
+	case kServerPortClearCmd: {
+		if (_serverPort) {
+			_serverPort->setEditString(Common::String::format("%u", Networking::LocalWebserver::DEFAULT_SERVER_PORT));
+		}
+		draw();
 		break;
 	}
 #endif
@@ -1813,7 +1833,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 	//determine original widget's positions
 	int16 x, y;
 	uint16 w, h;
-	int serverButtonY, serverInfoY, serverPortDescY, serverPortY;
+	int serverButtonY, serverInfoY, serverPortDescY, serverPortY, serverPortClearButtonY;
 	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.RunServerButton", x, y, w, h))
 		warning("GlobalOptions_Cloud_Container.RunServerButton's position is undefined");
 	serverButtonY = y;
@@ -1826,6 +1846,9 @@ void GlobalOptionsDialog::setupCloudTab() {
 	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.ServerPortEditText", x, y, w, h))
 		warning("GlobalOptions_Cloud_Container.ServerPortEditText's position is undefined");
 	serverPortY = y;
+	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.ServerPortClearButton", x, y, w, h))
+		warning("GlobalOptions_Cloud_Container.ServerPortClearButton's position is undefined");
+	serverPortClearButtonY = y;
 
 	bool serverIsRunning = LocalServer.isRunning();
 		
@@ -1852,15 +1875,22 @@ void GlobalOptionsDialog::setupCloudTab() {
 		_serverPort->setPos(_serverPort->getRelX(), serverLabelPosition + serverPortY - serverInfoY);
 		_serverPort->setEnabled(!serverIsRunning);
 	}
+	if (_serverPortClearButton) {
+		_serverPortClearButton->setVisible(true);
+		_serverPortClearButton->setPos(_serverPortClearButton->getRelX(), serverLabelPosition + serverPortClearButtonY - serverInfoY);
+		_serverPortClearButton->setEnabled(!serverIsRunning);
+	}
 #else
 	if (_serverPortDesc) _serverPortDesc->setVisible(false);
 	if (_serverPort) _serverPort->setVisible(false);
+	if (_serverPortClearButton) _serverPortClearButton->setVisible(false);
 #endif
 #else
 	if (_runServerButton) _runServerButton->setVisible(false);
 	if (_serverInfoLabel) _serverInfoLabel->setVisible(false);
 	if (_serverPortDesc) _serverPortDesc->setVisible(false);
 	if (_serverPort) _serverPort->setVisible(false);
+	if (_serverPortClearButton) _serverPortClearButton->setVisible(false);
 #endif
 }
 #endif

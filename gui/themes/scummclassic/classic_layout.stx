@@ -591,6 +591,10 @@
 						width = '70'
 						height = 'Globals.Line.Height'
 				/>
+				<widget name = 'ServerPortClearButton'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
+				/>
 			</layout>
 		</layout>
 	</dialog>
