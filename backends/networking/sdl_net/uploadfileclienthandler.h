@@ -36,6 +36,16 @@ enum UploadFileHandlerState {
 	UFH_STOP
 };
 
+/**
+ * This class handles POST form/multipart upload.
+ *
+ * handleBlockHeaders() looks for filename and, if it's found,
+ * handleBlockContent() saves content into the file with such name.
+ *
+ * If no file found or other error occurs, it sets
+ * default error message handler.
+ */
+
 class UploadFileClientHandler: public ClientHandler {
 	UploadFileHandlerState _state;
 	Common::MemoryReadWriteStream *_headersStream;

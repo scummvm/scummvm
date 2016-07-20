@@ -28,6 +28,11 @@
 namespace Networking {
 namespace Browser {
 
+/**
+ * Opens URL in default browser (if available on the target system).
+ *
+ * Returns true on success.
+ */
 bool openUrl(const Common::String &url);
 
 } // End of namespace Browser

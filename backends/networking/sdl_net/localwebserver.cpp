@@ -323,7 +323,7 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 			*/
 			
 			// use the address found
-			_address = "http://" + addr + Common::String::format(":%u/", SERVER_PORT);
+			_address = "http://" + addr + Common::String::format(":%u/", _serverPort);
 		}
 		
 		if (ifAddrStruct != NULL) freeifaddrs(ifAddrStruct);

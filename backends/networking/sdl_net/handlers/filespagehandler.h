@@ -47,10 +47,10 @@ class FilesPageHandler: public FilesBaseHandler {
 	bool listDirectory(Common::String path, Common::String &content, const Common::String &itemTemplate);
 
 	/** Helper method for detecting items' type. */
-	ItemType detectType(bool isDirectory, const Common::String &name) const;
+	static ItemType detectType(bool isDirectory, const Common::String &name);
 
 	/** Helper method for adding items into the files list. */
-	void addItem(Common::String &content, const Common::String &itemTemplate, ItemType itemType, Common::String path, Common::String name, Common::String size = "");
+	void addItem(Common::String &content, const Common::String &itemTemplate, ItemType itemType, Common::String path, Common::String name, Common::String size = "") const;
 
 public:
 	FilesPageHandler();

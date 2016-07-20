@@ -26,6 +26,11 @@
 namespace Networking {
 namespace Connection {
 
+/**
+* Returns whether connection's limited (if available on the target system).
+*
+* Returns true if connection seems limited.
+*/
 bool isLimited();
 
 } // End of namespace Connection

@@ -63,7 +63,7 @@ ConnectionManager::~ConnectionManager() {
 	_handleMutex.unlock();
 }
 
-void ConnectionManager::registerEasyHandle(CURL *easy) {
+void ConnectionManager::registerEasyHandle(CURL *easy) const {
 	curl_multi_add_handle(_multi, easy);
 }
 
@@ -80,7 +80,7 @@ void ConnectionManager::showCloudDisabledIcon() {
 	startTimer();
 }
 
-Common::String ConnectionManager::urlEncode(Common::String s) {
+Common::String ConnectionManager::urlEncode(Common::String s) const {
 	if (!_multi) return "";
 	char *output = curl_easy_escape(_multi, s.c_str(), s.size());
 	if (output) {
@@ -111,7 +111,7 @@ void ConnectionManager::startTimer(int interval) {
 }
 
 void ConnectionManager::stopTimer() {
-	debug("timer stopped");
+	debug(9, "timer stopped");
 	Common::TimerManager *manager = g_system->getTimerManager();
 	manager->removeTimerProc(connectionsThread);
 	_timerStarted = false;
@@ -146,7 +146,7 @@ void ConnectionManager::interateRequests() {
 	_addedRequestsMutex.unlock();
 
 	//call handle() of all running requests (so they can do their work)
-	debug("handling %d request(s)", _requests.size());
+	debug(9, "handling %d request(s)", _requests.size());
 	for (Common::Array<RequestWithCallback>::iterator i = _requests.begin(); i != _requests.end();) {
 		Request *request = i->request;		
 		if (request) {
@@ -182,7 +182,7 @@ void ConnectionManager::processTransfers() {
 		if (stream) stream->finished();
 
 		if (curlMsg->msg == CURLMSG_DONE) {
-			debug("ConnectionManager: SUCCESS (%d - %s)", curlMsg->data.result, curl_easy_strerror(curlMsg->data.result));
+			debug(9, "ConnectionManager: SUCCESS (%d - %s)", curlMsg->data.result, curl_easy_strerror(curlMsg->data.result));
 		} else {
 			debug("ConnectionManager: FAILURE (CURLMsg (%d))", curlMsg->msg);
 		}

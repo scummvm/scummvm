@@ -96,7 +96,7 @@ Common::JSONObject ListAjaxHandler::listDirectory(Common::String path) {
 	return successResult;
 }
 
-ListAjaxHandler::ItemType ListAjaxHandler::detectType(bool isDirectory, const Common::String &name) const {
+ListAjaxHandler::ItemType ListAjaxHandler::detectType(bool isDirectory, const Common::String &name) {
 	if (isDirectory) return IT_DIRECTORY;
 	if (name.hasSuffix(".txt")) return IT_TXT;
 	if (name.hasSuffix(".zip")) return IT_ZIP;

@@ -53,6 +53,26 @@ public:
 	virtual void handle(Client *client) = 0;
 };
 
+/**
+ * Client class represents one client's HTTP request
+ * to the LocalWebserver.
+ *
+ * While in READING_HEADERS state, it's kept in LocalWebserver.
+ * Client must read the headers and decide whether it's
+ * READ_HEADERS (could be handled) or BAD_REQUEST (failed).
+ *
+ * If it's READ_HEADERS, LocalWebserver searches for a corresponding
+ * BaseHandler. These classes use the information from headers -
+ * like method, path, GET parameters - to build the response
+ * for this client's request. When they do, they call setHandler()
+ * and pass a special ClientHandler. Client becomes BEING_HANDLED.
+ *
+ * While in that state, LocalWebserver calls Client's handle() and
+ * it's passed to ClientHandler. The latter does the job: it commands
+ * Client to read or write bytes with its socket or calls
+ * readContent() methods, so Client reads the request through Reader.
+ */
+
 class Client {
 	ClientState _state;
 	SDLNet_SocketSet _set;

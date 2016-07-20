@@ -48,10 +48,10 @@ class ListAjaxHandler: public FilesBaseHandler {
 	Common::JSONObject listDirectory(Common::String path);
 
 	/** Helper method for detecting items' type. */
-	ItemType detectType(bool isDirectory, const Common::String &name) const;
+	static ItemType detectType(bool isDirectory, const Common::String &name);
 
 	/** Helper method for adding items into the files list. */
-	void addItem(Common::JSONArray &responseItemsList, ItemType itemType, Common::String path, Common::String name, Common::String size = "");
+	static void addItem(Common::JSONArray &responseItemsList, ItemType itemType, Common::String path, Common::String name, Common::String size = "");
 
 public:
 	ListAjaxHandler();

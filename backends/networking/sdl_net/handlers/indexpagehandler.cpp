@@ -36,7 +36,7 @@ void IndexPageHandler::handle(Client &client) {
 	Common::String code = client.queryParameter("code");
 
 	if (code == "") {
-		// redirect to "/files"
+		// redirect to "/filesAJAX"
 		HandlerUtils::setMessageHandler(
 			client,
 			Common::String::format(
@@ -45,7 +45,7 @@ void IndexPageHandler::handle(Client &client) {
 				client.queryParameter("path").c_str(),
 				_("Open Files manager")
 			),
-			"/files"
+			"/filesAJAX"
 		);
 		return;
 	}

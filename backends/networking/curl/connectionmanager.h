@@ -98,7 +98,7 @@ public:
 	 * So, if you want to start any libcurl transfer, you must create
 	 * an easy handle and register it using this method.
 	 */
-	void registerEasyHandle(CURL *easy);
+	void registerEasyHandle(CURL *easy) const;
 
 	/**
 	 * Use this method to add new Request into manager's queue.
@@ -119,7 +119,7 @@ public:
 	void showCloudDisabledIcon();
 
 	/** Return URL-encoded version of given string. */
-	Common::String urlEncode(Common::String s);
+	Common::String urlEncode(Common::String s) const;
 
 	static uint32 getCloudRequestsPeriodInMicroseconds();
 };

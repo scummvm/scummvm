@@ -168,7 +168,7 @@ bool FilesPageHandler::listDirectory(Common::String path, Common::String &conten
 	return true;
 }
 
-FilesPageHandler::ItemType FilesPageHandler::detectType(bool isDirectory, const Common::String &name) const {
+FilesPageHandler::ItemType FilesPageHandler::detectType(bool isDirectory, const Common::String &name) {
 	if (isDirectory) return IT_DIRECTORY;
 	if (name.hasSuffix(".txt")) return IT_TXT;
 	if (name.hasSuffix(".zip")) return IT_ZIP;
@@ -176,7 +176,7 @@ FilesPageHandler::ItemType FilesPageHandler::detectType(bool isDirectory, const 
 	return IT_UNKNOWN;
 }
 
-void FilesPageHandler::addItem(Common::String &content, const Common::String &itemTemplate, ItemType itemType, Common::String path, Common::String name, Common::String size) {
+void FilesPageHandler::addItem(Common::String &content, const Common::String &itemTemplate, ItemType itemType, Common::String path, Common::String name, Common::String size) const {
 	Common::String item = itemTemplate, icon;
 	bool isDirectory = (itemType == IT_DIRECTORY || itemType == IT_PARENT_DIRECTORY);
 	switch (itemType) {
