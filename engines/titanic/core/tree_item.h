@@ -233,9 +233,10 @@ public:
 	void destroyAll();
 
 	/**
-	 * Destroys all tree items around the given one
+	 * Destroys all child tree items under this one.
+	 * @returns		Total number of tree items recursively removed
 	 */
-	int destroyOthers();
+	int destroyChildren();
 
 	/**
 	 * Detach the tree item from any other associated tree items

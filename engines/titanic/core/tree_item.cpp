@@ -213,16 +213,16 @@ void CTreeItem::moveUnder(CTreeItem *newParent) {
 }
 
 void CTreeItem::destroyAll() {
-	destroyOthers();
+	destroyChildren();
 	detach();
 	delete this;
 }
 
-int CTreeItem::destroyOthers() {
+int CTreeItem::destroyChildren() {
 	if (!_firstChild)
 		return 0;
 
-	CTreeItem *item = this, *child, *nextSibling;
+	CTreeItem *item = _firstChild, *child, *nextSibling;
 	int total = 0;
 
 	do {
@@ -230,9 +230,9 @@ int CTreeItem::destroyOthers() {
 		nextSibling = item->_nextSibling;
 
 		if (child)
-			total += child->destroyOthers();
-		child->detach();
-		delete child;
+			total += item->destroyChildren();
+		item->detach();
+		delete item;
 		++total;
 	} while ((item = nextSibling) != nullptr);
 
