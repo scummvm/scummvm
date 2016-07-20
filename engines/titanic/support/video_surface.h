@@ -65,7 +65,7 @@ protected:
 	Graphics::ManagedSurface *_rawSurface;
 	bool _pendingLoad;
 	Graphics::ManagedSurface *_movieFrameSurface;
-	int _field48;
+	DisposeAfterUse::Flag _freeMovieSurface;
 	int _videoSurfaceNum;
 	bool _hasFrame;
 	int _lockCount;

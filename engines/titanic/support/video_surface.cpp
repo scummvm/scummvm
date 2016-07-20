@@ -33,7 +33,7 @@ CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
 		_screenManager(screenManager), _rawSurface(nullptr), _movie(nullptr),
 		_pendingLoad(false), _transBlitFlag(false), _fastBlitFlag(false),
 		_movieFrameSurface(nullptr), _transparencyMode(TRANS_DEFAULT), 
-		_field48(0), _hasFrame(true), _lockCount(0) {
+		_freeMovieSurface(DisposeAfterUse::NO), _hasFrame(true), _lockCount(0) {
 	_videoSurfaceNum = _videoSurfaceCounter++;
 }
 
@@ -41,6 +41,9 @@ CVideoSurface::~CVideoSurface() {
 	if (_ddSurface)
 		_videoSurfaceCounter -= freeSurface();
 	--_videoSurfaceCounter;
+
+	if (_freeMovieSurface == DisposeAfterUse::YES)
+		delete _movieFrameSurface;
 }
 
 void CVideoSurface::setSurface(CScreenManager *screenManager, DirectDrawSurface *surface) {
