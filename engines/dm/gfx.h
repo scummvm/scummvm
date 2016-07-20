@@ -202,6 +202,10 @@ enum ViewCell {
 };
 
 enum GraphicIndice {
+	k2_entranceLeftDoorGraphicIndice = 2, // @ C002_GRAPHIC_ENTRANCE_LEFT_DOOR
+	k3_entranceRightDoorGraphicIndice = 3, // @ C003_GRAPHIC_ENTRANCE_RIGHT_DOOR
+	k4_entranceGraphicIndice = 4, // @ C004_GRAPHIC_ENTRANCE
+	k5_creditsGraphicIndice = 5, // @ C005_GRAPHIC_CREDITS
 	k8_StatusBoxDeadChampion = 8, // @ C008_GRAPHIC_STATUS_BOX_DEAD_CHAMPION
 	k9_MenuSpellAreaBackground = 9, // @ C009_GRAPHIC_MENU_SPELL_AREA_BACKGROUND
 	k10_MenuActionAreaIndice = 10, // @ C010_GRAPHIC_MENU_ACTION_AREA

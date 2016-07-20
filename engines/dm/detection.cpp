@@ -83,7 +83,7 @@ public:
 	}
 
 	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const { return gameDescriptions; }
-	virtual bool hasFeature(MetaEngineFeature f) const { return false; }
+
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 		if(desc)
 			*engine = new DM::DMEngine(syst);

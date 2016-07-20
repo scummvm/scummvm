@@ -772,6 +772,8 @@ void DisplayMan::setUpScreens(uint16 width, uint16 height) {
 	delete[] _g348_bitmapScreen;
 	_g348_bitmapScreen = new byte[_screenWidth * _screenHeight];
 	fillScreen(k0_ColorBlack);
+
+	_g74_tmpBitmap = new byte[_screenWidth * _screenHeight];
 }
 
 void DisplayMan::f479_loadGraphics() {
@@ -2248,11 +2250,13 @@ void DisplayMan::f128_drawDungeon(direction dir, int16 posX, int16 posY) {
 	f126_drawSquareD0R(dir, tmpPosX, tmpPosY);
 	f127_drawSquareD0C(dir, posX, posY);
 
-	_g698_bitmapWallSet_Wall_D3LCR = _g95_bitmapWall_D3LCR_Native;
-	_g699_bitmapWallSet_Wall_D2LCR = _g96_bitmapWall_D2LCR_Native;
-	_g700_bitmapWallSet_Wall_D1LCR = _g97_bitmapWall_D1LCR_Native;
-	_g701_bitmapWallSet_Wall_D0L = _g98_bitmapWall_D0L_Native;
-	_g702_bitmapWallSet_Wall_D0R = _g99_bitmapWall_D0R_Native;
+	if (_g76_useFlippedWallAndFootprintsBitmap) {
+		_g698_bitmapWallSet_Wall_D3LCR = _g95_bitmapWall_D3LCR_Native;
+		_g699_bitmapWallSet_Wall_D2LCR = _g96_bitmapWall_D2LCR_Native;
+		_g700_bitmapWallSet_Wall_D1LCR = _g97_bitmapWall_D1LCR_Native;
+		_g701_bitmapWallSet_Wall_D0L = _g98_bitmapWall_D0L_Native;
+		_g702_bitmapWallSet_Wall_D0R = _g99_bitmapWall_D0R_Native;
+	}
 
 	f97_drawViewport((_vm->_dungeonMan->_g309_partyMapIndex != k255_mapIndexEntrance) ? 1 : 0);
 	if (_vm->_dungeonMan->_g309_partyMapIndex != k255_mapIndexEntrance)
@@ -2320,7 +2324,6 @@ void DisplayMan::f96_loadCurrentMapGraphics() {
 	f95_loadWallSet(_vm->_dungeonMan->_g269_currMap->_wallSet);
 
 	{
-		_g74_tmpBitmap = new byte[_screenWidth * _screenHeight];
 		_g578_useByteBoxCoordinates = true;
 
 		f99_copyBitmapAndFlipHorizontal(_g95_bitmapWall_D3LCR_Native = _g698_bitmapWallSet_Wall_D3LCR, _g74_tmpBitmap,

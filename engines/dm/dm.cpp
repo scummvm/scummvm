@@ -172,6 +172,9 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	_g313_gameTime = 0;
 	_g353_stringBuildBuffer[0] = '\0';
 	_g318_waitForInputMaxVerticalBlankCount = 0;
+	for (uint16 i = 0; i < 10; ++i)
+		_g562_entranceDoorAnimSteps[i] = nullptr;
+	_g564_interfaceCredits = nullptr;
 	debug("DMEngine::DMEngine");
 
 
@@ -202,6 +205,12 @@ DMEngine::~DMEngine() {
 	DebugMan.clearAllDebugChannels();
 }
 
+bool DMEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsSavingDuringRuntime) ||
+		(f == kSupportsLoadingDuringRuntime);
+}
+
 void DMEngine::f22_delay(uint16 verticalBlank) {
 	_system->delayMillis(verticalBlank * 20); // Google says most Amiga games had a refreshrate of 50 hz
 }
@@ -221,9 +230,9 @@ void DMEngine::f463_initializeGame() {
 	_textMan->f54_textInitialize();
 	_objectMan->loadObjectNames();
 	_eventMan->initMouse();
-	//F0441_STARTEND_ProcessEntrance();
+	f441_processEntrance();
 	while (f435_loadgame() != k1_LoadgameSuccess) {
-		warning(false, "TODO: F0441_STARTEND_ProcessEntrance");
+		f441_processEntrance();
 	}
 	//F0396_MENUS_LoadSpellAreaLinesBitmap() is not needed, every bitmap has been loaded
 
@@ -421,6 +430,105 @@ int16 DMEngine::M1_ordinalToIndex(int16 val) {
 
 int16 DMEngine::M0_indexToOrdinal(int16 val) {
 	return val + 1;
+}
+
+
+void DMEngine::f441_processEntrance() {
+	uint16 L1402_ui_AnimationStep;
+	Box L1405_s_Box;
+
+	_eventMan->_g441_primaryMouseInput = g445_PrimaryMouseInput_Entrance;
+	_eventMan->_g442_secondaryMouseInput = nullptr;
+	_eventMan->_g443_primaryKeyboardInput = nullptr;
+	_eventMan->_g444_secondaryKeyboardInput = nullptr;
+	_g562_entranceDoorAnimSteps[0] = new byte[128 * 161 * 12];
+	for (L1402_ui_AnimationStep = 1; L1402_ui_AnimationStep < 8; L1402_ui_AnimationStep++) {
+		_g562_entranceDoorAnimSteps[L1402_ui_AnimationStep] = _g562_entranceDoorAnimSteps[L1402_ui_AnimationStep - 1] + 128 * 161;
+	}
+	_g562_entranceDoorAnimSteps[8] = _g562_entranceDoorAnimSteps[7] + 128 * 161;
+	_g562_entranceDoorAnimSteps[9] = _g562_entranceDoorAnimSteps[8] + 128 * 161 * 2;
+
+	_displayMan->f466_loadIntoBitmap(k3_entranceRightDoorGraphicIndice, _g562_entranceDoorAnimSteps[4]);
+	_displayMan->f466_loadIntoBitmap(k2_entranceLeftDoorGraphicIndice, _g562_entranceDoorAnimSteps[0]);
+	_g564_interfaceCredits = _displayMan->f489_getNativeBitmapOrGraphic(k5_creditsGraphicIndice);
+	_displayMan->_g578_useByteBoxCoordinates = false;
+	L1405_s_Box._x1 = 0;
+	L1405_s_Box._x2 = 100;
+	L1405_s_Box._y1 = 0;
+	L1405_s_Box._y2 = 160;
+	for (L1402_ui_AnimationStep = 1; L1402_ui_AnimationStep < 4; L1402_ui_AnimationStep++) {
+		_displayMan->f132_blitToBitmap(_g562_entranceDoorAnimSteps[0], _g562_entranceDoorAnimSteps[L1402_ui_AnimationStep], L1405_s_Box, L1402_ui_AnimationStep << 2, 0, k64_byteWidth, k64_byteWidth, kM1_ColorNoTransparency, 161, 161);
+		L1405_s_Box._x2 -= 4;
+	}
+	L1405_s_Box._x2 = 127;
+	for (L1402_ui_AnimationStep = 5; L1402_ui_AnimationStep < 8; L1402_ui_AnimationStep++) {
+		L1405_s_Box._x1 += 4;
+		_displayMan->f132_blitToBitmap(_g562_entranceDoorAnimSteps[4], _g562_entranceDoorAnimSteps[L1402_ui_AnimationStep], L1405_s_Box, 0, 0, k64_byteWidth, k64_byteWidth, kM1_ColorNoTransparency, 161, 161);
+	}
+	do {
+		f439_drawEntrance();
+		//_eventMan->f77_hideMouse();
+		//_eventMan->f77_hideMouse();
+		_eventMan->f78_showMouse();
+		_eventMan->f357_discardAllInput();
+		_g298_newGame = k99_modeWaitingOnEntrance;
+		do {
+			_eventMan->processInput();
+			_eventMan->f380_processCommandQueue();
+			_displayMan->updateScreen();
+		} while (_g298_newGame == k99_modeWaitingOnEntrance);
+	} while (_g298_newGame == k202_CommandEntranceDrawCredits);
+	//Strangerke: CHECKME: Earlier versions were using G0566_puc_Graphic534_Sound01Switch
+	warning(false, "MISSING CODE: F0060_SOUND_Play");
+	f22_delay(20);
+	_eventMan->f78_showMouse();
+	if (_g298_newGame) {
+		warning(false, "MISSING CODE: F0438_STARTEND_OpenEntranceDoors();");
+	}
+	delete[] _g562_entranceDoorAnimSteps[0];
+	for (uint16 i = 0; i < 10; ++i)
+		_g562_entranceDoorAnimSteps[i] = nullptr;
+}
+
+
+void DMEngine::f439_drawEntrance() {
+	static Box K0079_s_Box_Entrance_DoorsUpperHalf = {0, 231, 0, 80};
+	static Box K0152_s_Box_Entrance_DoorsLowerHalf = {0, 231, 81, 160};
+	static Box G0010_s_Graphic562_Box_Entrance_ClosedDoorLeft = {0, 104, 30, 190};
+	static Box G0011_s_Graphic562_Box_Entrance_ClosedDoorRight = {105, 231, 30, 190};
+
+	uint16 L1397_ui_ColumnIndex;
+	byte* L1398_apuc_MicroDungeonCurrentMapData[32];
+	Square L1399_auc_MicroDungeonSquares[25];
+
+	_dungeonMan->_g309_partyMapIndex = k255_mapIndexEntrance;
+	_displayMan->_g297_drawFloorAndCeilingRequested = true;
+	_dungeonMan->_g273_currMapWidth = 5;
+	_dungeonMan->_g274_currMapHeight = 5;
+	_dungeonMan->_g271_currMapData = L1398_apuc_MicroDungeonCurrentMapData;
+
+	Map map; // uninitialized, won't be used
+	_dungeonMan->_g269_currMap = &map; 
+	for (uint16 i = 0; i < 25; ++i)
+		L1399_auc_MicroDungeonSquares[i] = Square(k0_ElementTypeWall, 0);
+	for (L1397_ui_ColumnIndex = 0; L1397_ui_ColumnIndex < 5; L1397_ui_ColumnIndex++) {
+		L1398_apuc_MicroDungeonCurrentMapData[L1397_ui_ColumnIndex] = (byte*)&L1399_auc_MicroDungeonSquares[L1397_ui_ColumnIndex * 5];
+		L1399_auc_MicroDungeonSquares[L1397_ui_ColumnIndex + 10] = Square(k1_CorridorElemType, 0);
+	}
+	L1399_auc_MicroDungeonSquares[7] = Square(k1_CorridorElemType, 0);
+	warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette(G0345_aui_BlankBuffer);");
+
+	// note, a global variable is used here in the original
+	_displayMan->f466_loadIntoBitmap(k4_entranceGraphicIndice, _displayMan->_g348_bitmapScreen);
+	_displayMan->f128_drawDungeon(kDirSouth, 2, 0);
+	warning(false, "IGNORED CODE: G0324_B_DrawViewportRequested = false;");
+
+	_displayMan->_g578_useByteBoxCoordinates = false, _displayMan->f132_blitToBitmap(_displayMan->_g348_bitmapScreen, _g562_entranceDoorAnimSteps[8], K0079_s_Box_Entrance_DoorsUpperHalf, 0, 30, k160_byteWidthScreen, k128_byteWidth, kM1_ColorNoTransparency, 200, 161);
+	_displayMan->_g578_useByteBoxCoordinates = false, _displayMan->f132_blitToBitmap(_displayMan->_g348_bitmapScreen, _g562_entranceDoorAnimSteps[8], K0152_s_Box_Entrance_DoorsLowerHalf, 0, 111, k160_byteWidthScreen, k128_byteWidth, kM1_ColorNoTransparency, 200, 161);
+
+	_displayMan->f21_blitToScreen(_g562_entranceDoorAnimSteps[0], &G0010_s_Graphic562_Box_Entrance_ClosedDoorLeft, k64_byteWidth, kM1_ColorNoTransparency, 161);
+	_displayMan->f21_blitToScreen(_g562_entranceDoorAnimSteps[4], &G0011_s_Graphic562_Box_Entrance_ClosedDoorRight, k64_byteWidth, kM1_ColorNoTransparency, 161);
+	warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette(g20_PalEntrance);");
 }
 
 } // End of namespace DM

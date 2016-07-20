@@ -193,11 +193,13 @@ class DMEngine : public Engine {
 	void initArrays();
 	Common::String getSavefileName(uint16 slot);
 	void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName);
+	void f439_drawEntrance(); // @ F0439_STARTEND_DrawEntrance
 public:
 	explicit DMEngine(OSystem *syst);
 	~DMEngine();
+	virtual bool hasFeature(EngineFeature f) const;
 
-	void f22_delay(uint16 ms); // @ F0022_MAIN_Delay
+	void f22_delay(uint16 verticalBlank); // @ F0022_MAIN_Delay
 	uint16 f30_getScaledProduct(uint16 val, uint16 scale, uint16 vale2); // @ F0030_MAIN_GetScaledProduct
 	uint16 getRandomNumber(uint32 max) { return _rnd->getRandomNumber(max - 1); }
 	int16 M1_ordinalToIndex(int16 val); // @ M01_ORDINAL_TO_INDEX
@@ -206,12 +208,15 @@ public:
 	virtual Common::Error run(); // @ main
 	void f433_processCommand140_saveGame(uint16 slot, const Common::String desc); // @ F0433_STARTEND_ProcessCommand140_SaveGame_CPSCDF
 	LoadgameResponse f435_loadgame(); // @ F0435_STARTEND_LoadGame_CPSF
+	void f441_processEntrance(); // @ F0441_STARTEND_ProcessEntrance
 
 private:
 	int16 _g528_saveFormat; // @ G0528_i_Format
 	int16 _g527_platform; // @ G0527_i_Platform
 	uint16 _g526_dungeonId; // @ G0526_ui_DungeonID
 	Console *_console;
+	byte *_g562_entranceDoorAnimSteps[10]; // @ G0562_apuc_Bitmap_EntranceDoorAnimationSteps
+	byte *_g564_interfaceCredits; // @ G0564_puc_Graphic5_InterfaceCredits
 public:
 	Common::RandomSource *_rnd;
 	DisplayMan *_displayMan;
@@ -228,7 +233,7 @@ public:
 	ProjExpl *_projexpl;
 
 
-	bool _g298_newGame; // @ G0298_B_NewGame
+	int16 _g298_newGame; // @ G0298_B_NewGame
 	bool _g523_restartGameRequest; // @ G0523_B_RestartGameRequested
 
 	bool _g321_stopWaitingForPlayerInput; // @ G0321_B_StopWaitingForPlayerInput

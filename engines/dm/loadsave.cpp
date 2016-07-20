@@ -176,5 +176,4 @@ void DMEngine::writeSaveGameHeader(Common::OutSaveFile* out, const Common::Strin
 	out->writeUint32BE(playTime);
 }
 
-
 }
