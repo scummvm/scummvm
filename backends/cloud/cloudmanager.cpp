@@ -128,7 +128,14 @@ void CloudManager::replaceStorage(Storage *storage, uint32 index) {
 	freeStorages();
 	if (!storage) error("CloudManager::replaceStorage: NULL storage passed");
 	if (index >= kStorageTotal) error("CloudManager::replaceStorage: invalid index passed");
-	delete _activeStorage;
+	if (_activeStorage != nullptr && _activeStorage->isWorking()) {
+		warning("CloudManager::replaceStorage: replacing Storage while the other is working");
+		if (_activeStorage->isDownloading()) _activeStorage->cancelDownload();
+		if (_activeStorage->isSyncing()) _activeStorage->cancelSync();
+		removeStorage(_activeStorage);
+	} else {
+		delete _activeStorage;
+	}
 	_activeStorage = storage;
 	_currentStorageIndex = index;
 	save();

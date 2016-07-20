@@ -74,6 +74,29 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 
 void StorageWizardDialog::open() {
 	Dialog::open();
+
+	if (CloudMan.isWorking()) {
+		bool doClose = true;
+
+		MessageDialog alert(_("The other Storage is working. Do you want to interrupt it?"), _("Yes"), _("No"));
+		if (alert.runModal() == GUI::kMessageOK) {
+			if (CloudMan.isDownloading()) CloudMan.cancelDownload();
+			if (CloudMan.isSyncing()) CloudMan.cancelSync();
+
+			// I believe it still would return `true` here, but just in case
+			if (CloudMan.isWorking()) {
+				MessageDialog alert2(_("Wait until current Storage finishes up and try again."));
+				alert2.runModal();
+			} else
+				doClose = false;
+		}
+
+		if (doClose) {
+			close();
+			return;
+		}
+	}
+
 #ifdef USE_SDL_NET
 	_stopServerOnClose = !LocalServer.isRunning();
 	LocalServer.start();
