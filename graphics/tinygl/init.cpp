@@ -237,6 +237,8 @@ void glInit(void *zbuffer1, int textureSize) {
 void glClose() {
 	GLContext *c = gl_get_context();
 
+	Graphics::Internal::tglCleanupImages();
+
 	specbuf_cleanup(c);
 	for (int i = 0; i < 3; i++)
 		gl_free(c->matrix_stack[i]);

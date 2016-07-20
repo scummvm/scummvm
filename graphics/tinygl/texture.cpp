@@ -34,7 +34,7 @@
 
 namespace TinyGL {
 
-static GLTexture *find_texture(GLContext *c, int h) {
+static GLTexture *find_texture(GLContext *c, unsigned int h) {
 	GLTexture *t;
 
 	t = c->shared_state.texture_hash_table[h % TEXTURE_HASH_TABLE_SIZE];
@@ -47,10 +47,13 @@ static GLTexture *find_texture(GLContext *c, int h) {
 }
 
 void free_texture(GLContext *c, int h) {
-	GLTexture *t, **ht;
+	free_texture(c, find_texture(c, h));
+}
+
+void free_texture(GLContext *c, GLTexture *t) {
+	GLTexture **ht;
 	GLImage *im;
 
-	t = find_texture(c, h);
 	if (!t->prev) {
 		ht = &c->shared_state.texture_hash_table[t->handle % TEXTURE_HASH_TABLE_SIZE];
 		*ht = t->next;
@@ -279,7 +282,7 @@ void glopPixelStore(GLContext *, GLParam *p) {
 
 void tglGenTextures(int n, unsigned int *textures) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	int max;
+	unsigned int max;
 	TinyGL::GLTexture *t;
 
 	max = 0;

@@ -63,16 +63,17 @@ GfxTinyGL::GfxTinyGL() :
 }
 
 GfxTinyGL::~GfxTinyGL() {
+	releaseMovieFrame();
 	for (unsigned int i = 0; i < _numSpecialtyTextures; i++) {
 		destroyTexture(&_specialtyTextures[i]);
+	}
+	for (int i = 0; i < 96; i++) {
+		Graphics::tglDeleteBlitImage(_emergFont[i]);
 	}
 	if (_zb) {
 		delBuffer(1);
 		TinyGL::glClose();
 		delete _zb;
-	}
-	for (int i = 0; i < 96; i++) {
-		Graphics::tglDeleteBlitImage(_emergFont[i]);
 	}
 }
 

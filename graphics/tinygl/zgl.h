@@ -181,7 +181,7 @@ struct GLImage {
 
 struct GLTexture {
 	GLImage images[MAX_TEXTURE_LEVELS];
-	int handle;
+	unsigned int handle;
 	int versionNumber;
 	struct GLTexture *next, *prev;
 	bool disposed;
@@ -417,6 +417,7 @@ void glInitTextures(GLContext *c);
 void glEndTextures(GLContext *c);
 GLTexture *alloc_texture(GLContext *c, int h);
 void free_texture(GLContext *c, int h);
+void free_texture(GLContext *c, GLTexture *t);
 
 // image_util.c
 void gl_resizeImage(unsigned char *dest, int xsize_dest, int ysize_dest,

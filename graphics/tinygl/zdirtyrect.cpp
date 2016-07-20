@@ -80,14 +80,16 @@ void tglDisposeResources(TinyGL::GLContext *c) {
 	bool allDisposed = true;
 	do {
 		allDisposed = true;
-		TinyGL::GLTexture *t = c->shared_state.texture_hash_table[0];
-		while (t) {
-			if (t->disposed) {
-				TinyGL::free_texture(c, t->handle);
-				allDisposed = false;
-				break;
+		for (int i = 0; i < TEXTURE_HASH_TABLE_SIZE; i++) {
+			TinyGL::GLTexture *t = c->shared_state.texture_hash_table[i];
+			while (t) {
+				if (t->disposed) {
+					TinyGL::free_texture(c, t);
+					allDisposed = false;
+					break;
+				}
+				t = t->next;
 			}
-			t = t->next;
 		}
 
 	} while (allDisposed == false);
