@@ -1624,10 +1624,17 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 	case kRefreshStorageCmd:
 	{
-		CloudMan.info(new Common::Callback<GlobalOptionsDialog, Cloud::Storage::StorageInfoResponse>(this, &GlobalOptionsDialog::storageInfoCallback), nullptr);
+		CloudMan.info(
+			new Common::Callback<GlobalOptionsDialog, Cloud::Storage::StorageInfoResponse>(this, &GlobalOptionsDialog::storageInfoCallback),
+			new Common::Callback<GlobalOptionsDialog, Networking::ErrorResponse>(this, &GlobalOptionsDialog::storageErrorCallback)
+		);
 		Common::String dir = CloudMan.savesDirectoryPath();
 		if (dir.lastChar() == '/') dir.deleteLastChar();
-		CloudMan.listDirectory(dir, new Common::Callback<GlobalOptionsDialog, Cloud::Storage::ListDirectoryResponse>(this, &GlobalOptionsDialog::storageListDirectoryCallback), nullptr);
+		CloudMan.listDirectory(
+			dir,
+			new Common::Callback<GlobalOptionsDialog, Cloud::Storage::ListDirectoryResponse>(this, &GlobalOptionsDialog::storageListDirectoryCallback),
+			new Common::Callback<GlobalOptionsDialog, Networking::ErrorResponse>(this, &GlobalOptionsDialog::storageErrorCallback)
+		);
 		break;
 	}
 	case kDownloadStorageCmd:
@@ -1824,6 +1831,14 @@ void GlobalOptionsDialog::storageListDirectoryCallback(Cloud::Storage::ListDirec
 			totalSize += files[i].size();	
 	CloudMan.setStorageUsedSpace(CloudMan.getStorageIndex(), totalSize);
 	_redrawCloudTab = true;
+}
+
+void GlobalOptionsDialog::storageErrorCallback(Networking::ErrorResponse response) {
+	debug("error response (%s, %ld):", (response.failed ? "failed" : "interrupted"), response.httpResponseCode);
+	debug("%s", response.response.c_str());
+
+	if (!response.interrupted)
+		g_system->displayMessageOnOSD(_("Request failed.\nCheck your Internet connection."));
 }
 #endif
 

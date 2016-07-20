@@ -277,6 +277,7 @@ protected:
 #ifdef USE_LIBCURL
 	void storageInfoCallback(Cloud::Storage::StorageInfoResponse response);
 	void storageListDirectoryCallback(Cloud::Storage::ListDirectoryResponse response);
+	void storageErrorCallback(Networking::ErrorResponse response);
 #endif
 };
 
