@@ -88,6 +88,7 @@ struct GLLight {
 	Vector4 ambient;
 	Vector4 diffuse;
 	Vector4 specular;
+	bool has_specular;
 	Vector4 position;
 	Vector3 spot_direction;
 	float spot_exponent;
@@ -107,6 +108,7 @@ struct GLMaterial {
 	Vector4 ambient;
 	Vector4 diffuse;
 	Vector4 specular;
+	bool has_specular;
 	float shininess;
 
 	// computed values
