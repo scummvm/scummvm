@@ -775,13 +775,13 @@ int MovGraph_messageHandler(ExCommand *cmd) {
 	int top;
 
 	if (link) {
-		MovGraphNode *node = link->_movGraphNode1;
+		MovGraphNode *node = link->_graphSrc;
 
 		double sq = (ani->_oy - node->_y) * (ani->_oy - node->_y) + (ani->_ox - node->_x) * (ani->_ox - node->_x);
 		int off = (node->_field_14 >> 16) & 0xFF;
-		double off2 = ((link->_movGraphNode2->_field_14 >> 8) & 0xff) - off;
+		double off2 = ((link->_graphDst->_field_14 >> 8) & 0xff) - off;
 
-		top = off + (int)(sqrt(sq) * off2 / link->_z);
+		top = off + (int)(sqrt(sq) * off2 / link->_length);
 	} else {
 		top = (gr->calcOffset(ani->_ox, ani->_oy)->_field_14 >> 8) & 0xff;
 	}

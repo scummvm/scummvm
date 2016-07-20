@@ -218,14 +218,14 @@ public:
 
 class MovGraphLink : public CObject {
  public:
-	MovGraphNode *_movGraphNode1;
-	MovGraphNode *_movGraphNode2;
+	MovGraphNode *_graphSrc;
+	MovGraphNode *_graphDst;
 	DWordArray _dwordArray1;
 	DWordArray _dwordArray2;
 	int _flags;
 	int _field_38;
 	int _field_3C;
-	double _z;
+	double _length;
 	double _angle;
 	MovGraphReact *_movGraphReact;
 	char *_name;
