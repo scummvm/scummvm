@@ -56,12 +56,16 @@ GoogleDriveStorage::GoogleDriveStorage(Common::String accessToken, Common::Strin
 	_token(accessToken), _refreshToken(refreshToken) {}
 
 GoogleDriveStorage::GoogleDriveStorage(Common::String code) {
-	getAccessToken(new Common::Callback<GoogleDriveStorage, BoolResponse>(this, &GoogleDriveStorage::codeFlowComplete), code);
+	getAccessToken(
+		new Common::Callback<GoogleDriveStorage, BoolResponse>(this, &GoogleDriveStorage::codeFlowComplete),
+		new Common::Callback<GoogleDriveStorage, Networking::ErrorResponse>(this, &GoogleDriveStorage::codeFlowFailed),
+		code
+	);
 }
 
 GoogleDriveStorage::~GoogleDriveStorage() {}
 
-void GoogleDriveStorage::getAccessToken(BoolCallback callback, Common::String code) {
+void GoogleDriveStorage::getAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback, Common::String code) {
 	if (!KEY || !SECRET) loadKeyAndSecret();
 	bool codeFlow = (code != "");
 
@@ -72,7 +76,8 @@ void GoogleDriveStorage::getAccessToken(BoolCallback callback, Common::String co
 	}
 
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<GoogleDriveStorage, BoolResponse, Networking::JsonResponse>(this, &GoogleDriveStorage::tokenRefreshed, callback);
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, getErrorPrintingCallback(), "https://accounts.google.com/o/oauth2/token"); //TODO
+	if (errorCallback == nullptr) errorCallback = getErrorPrintingCallback();
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, "https://accounts.google.com/o/oauth2/token"); //TODO
 	if (codeFlow) {
 		request->addPostField("code=" + code);
 		request->addPostField("grant_type=authorization_code");
@@ -118,12 +123,19 @@ void GoogleDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonR
 void GoogleDriveStorage::codeFlowComplete(BoolResponse response) {
 	if (!response.value) {
 		warning("GoogleDriveStorage: failed to get access token through code flow");
+		CloudMan.removeStorage(this);
 		return;
 	}
 
 	ConfMan.removeKey("googledrive_code", ConfMan.kCloudDomain);
 	CloudMan.replaceStorage(this, kStorageGoogleDriveId);
 	ConfMan.flushToDisk();
+}
+
+void GoogleDriveStorage::codeFlowFailed(Networking::ErrorResponse error) {
+	debug("Google Drive's code flow failed (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
+	debug("%s", error.response.c_str());
+	CloudMan.removeStorage(this);
 }
 
 void GoogleDriveStorage::saveConfig(Common::String keyPrefix) {	

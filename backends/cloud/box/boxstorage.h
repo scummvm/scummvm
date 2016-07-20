@@ -42,6 +42,7 @@ class BoxStorage: public Id::IdStorage {
 
 	void tokenRefreshed(BoolCallback callback, Networking::JsonResponse response);
 	void codeFlowComplete(BoolResponse response);
+	void codeFlowFailed(Networking::ErrorResponse error);
 
 	/** Constructs StorageInfo based on JSON response from cloud. */
 	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);
@@ -108,7 +109,7 @@ public:
 	 * Use "" in order to refresh token and pass a callback, so you could
 	 * continue your work when new token is available.
 	 */
-	void getAccessToken(BoolCallback callback, Common::String code = "");
+	void getAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback = nullptr, Common::String code = "");
 
 	Common::String accessToken() { return _token; }
 };

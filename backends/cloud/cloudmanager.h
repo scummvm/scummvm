@@ -59,12 +59,16 @@ class CloudManager : public Common::Singleton<CloudManager> {
 	Common::Array<StorageConfig> _storages;
 	uint _currentStorageIndex;
 	Storage *_activeStorage;
+	Common::Array<Storage *> _storagesToRemove;
 
 	void printBool(Cloud::Storage::BoolResponse response) const;
 
 	void loadStorage();
 
 	Common::String getStorageConfigName(uint32 index) const;
+
+	/** Frees memory used by storages which failed to connect. */
+	void freeStorages();
 
 public:
 	CloudManager();
@@ -90,6 +94,9 @@ public:
 	 * @param	index   one of Cloud::StorageID enum values to indicate what storage type is replaced.	 
 	 */
 	void replaceStorage(Storage *storage, uint32 index);
+
+	/** Adds storage in the list of storages to remove later. */
+	void removeStorage(Storage *storage);
 
 	/**
 	 * Returns active Storage, which could be used to interact

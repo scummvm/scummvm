@@ -56,12 +56,16 @@ BoxStorage::BoxStorage(Common::String accessToken, Common::String refreshToken):
 	_token(accessToken), _refreshToken(refreshToken) {}
 
 BoxStorage::BoxStorage(Common::String code) {
-	getAccessToken(new Common::Callback<BoxStorage, BoolResponse>(this, &BoxStorage::codeFlowComplete), code);
+	getAccessToken(
+		new Common::Callback<BoxStorage, BoolResponse>(this, &BoxStorage::codeFlowComplete),
+		new Common::Callback<BoxStorage, Networking::ErrorResponse>(this, &BoxStorage::codeFlowFailed),
+		code
+	);
 }
 
 BoxStorage::~BoxStorage() {}
 
-void BoxStorage::getAccessToken(BoolCallback callback, Common::String code) {
+void BoxStorage::getAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback, Common::String code) {
 	if (!KEY || !SECRET) loadKeyAndSecret();
 	bool codeFlow = (code != "");
 
@@ -72,7 +76,8 @@ void BoxStorage::getAccessToken(BoolCallback callback, Common::String code) {
 	}
 
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<BoxStorage, BoolResponse, Networking::JsonResponse>(this, &BoxStorage::tokenRefreshed, callback);
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, getErrorPrintingCallback(), "https://api.box.com/oauth2/token");
+	if (errorCallback == nullptr) errorCallback = getErrorPrintingCallback();
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, "https://api.box.com/oauth2/token");
 	if (codeFlow) {
 		request->addPostField("grant_type=authorization_code");
 		request->addPostField("code=" + code);
@@ -117,11 +122,18 @@ void BoxStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResponse 
 void BoxStorage::codeFlowComplete(BoolResponse response) {
 	if (!response.value) {
 		warning("BoxStorage: failed to get access token through code flow");
+		CloudMan.removeStorage(this);
 		return;
 	}
 
 	CloudMan.replaceStorage(this, kStorageBoxId);
 	ConfMan.flushToDisk();
+}
+
+void BoxStorage::codeFlowFailed(Networking::ErrorResponse error) {
+	debug("Box's code flow failed (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
+	debug("%s", error.response.c_str());
+	CloudMan.removeStorage(this);
 }
 
 void BoxStorage::saveConfig(Common::String keyPrefix) {

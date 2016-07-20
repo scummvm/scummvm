@@ -42,6 +42,7 @@ class DropboxStorage: public Cloud::Storage {
 
 	void getAccessToken(Common::String code);
 	void codeFlowComplete(Networking::JsonResponse response);
+	void codeFlowFailed(Networking::ErrorResponse error);
 
 public:
 	/** This constructor uses OAuth code flow to get tokens. */

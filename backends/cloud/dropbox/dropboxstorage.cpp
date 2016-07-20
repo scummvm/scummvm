@@ -62,8 +62,9 @@ DropboxStorage::~DropboxStorage() {}
 
 void DropboxStorage::getAccessToken(Common::String code) {
 	if (!KEY || !SECRET) loadKeyAndSecret();
-	Networking::JsonCallback callback = new Common::Callback<DropboxStorage, Networking::JsonResponse>(this, &DropboxStorage::codeFlowComplete);		
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, nullptr, "https://api.dropboxapi.com/oauth2/token");
+	Networking::JsonCallback callback = new Common::Callback<DropboxStorage, Networking::JsonResponse>(this, &DropboxStorage::codeFlowComplete);
+	Networking::ErrorCallback errorCallback = new Common::Callback<DropboxStorage, Networking::ErrorResponse>(this, &DropboxStorage::codeFlowFailed);
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, errorCallback, "https://api.dropboxapi.com/oauth2/token");
 	request->addPostField("code=" + code);
 	request->addPostField("grant_type=authorization_code");
 	request->addPostField("client_id=" + Common::String(KEY));
@@ -83,6 +84,7 @@ void DropboxStorage::codeFlowComplete(Networking::JsonResponse response) {
 		if (!result.contains("access_token") || !result.contains("uid")) {
 			warning("%s", json->stringify(true).c_str());
 			warning("Bad response, no token/uid passed");
+			CloudMan.removeStorage(this);
 		} else {
 			_token = result.getVal("access_token")->asString();
 			_uid = result.getVal("uid")->asString();			
@@ -94,7 +96,14 @@ void DropboxStorage::codeFlowComplete(Networking::JsonResponse response) {
 		delete json;
 	} else {
 		debug("DropboxStorage::codeFlowComplete: got NULL instead of JSON!");
+		CloudMan.removeStorage(this);
 	}
+}
+
+void DropboxStorage::codeFlowFailed(Networking::ErrorResponse error) {
+	debug("Dropbox's code flow failed (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
+	debug("%s", error.response.c_str());
+	CloudMan.removeStorage(this);
 }
 
 void DropboxStorage::saveConfig(Common::String keyPrefix) {

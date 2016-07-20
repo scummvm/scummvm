@@ -57,12 +57,16 @@ OneDriveStorage::OneDriveStorage(Common::String accessToken, Common::String user
 	_token(accessToken), _uid(userId), _refreshToken(refreshToken) {}
 
 OneDriveStorage::OneDriveStorage(Common::String code) {
-	getAccessToken(new Common::Callback<OneDriveStorage, BoolResponse>(this, &OneDriveStorage::codeFlowComplete), code);
+	getAccessToken(
+		new Common::Callback<OneDriveStorage, BoolResponse>(this, &OneDriveStorage::codeFlowComplete),
+		new Common::Callback<OneDriveStorage, Networking::ErrorResponse>(this, &OneDriveStorage::codeFlowFailed),
+		code
+	);
 }
 
 OneDriveStorage::~OneDriveStorage() {}
 
-void OneDriveStorage::getAccessToken(BoolCallback callback, Common::String code) {
+void OneDriveStorage::getAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback, Common::String code) {
 	if (!KEY || !SECRET) loadKeyAndSecret();
 	bool codeFlow = (code != "");
 
@@ -73,7 +77,8 @@ void OneDriveStorage::getAccessToken(BoolCallback callback, Common::String code)
 	}
 
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, BoolResponse, Networking::JsonResponse>(this, &OneDriveStorage::tokenRefreshed, callback);
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, getErrorPrintingCallback(), "https://login.live.com/oauth20_token.srf"); //TODO
+	if (errorCallback == nullptr) errorCallback = getErrorPrintingCallback();
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, "https://login.live.com/oauth20_token.srf"); //TODO
 	if (codeFlow) {
 		request->addPostField("code=" + code);
 		request->addPostField("grant_type=authorization_code");
@@ -117,12 +122,19 @@ void OneDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResp
 void OneDriveStorage::codeFlowComplete(BoolResponse response) {
 	if (!response.value) {
 		warning("OneDriveStorage: failed to get access token through code flow");
+		CloudMan.removeStorage(this);
 		return;
 	}
 
 	ConfMan.removeKey("onedrive_code", ConfMan.kCloudDomain);
 	CloudMan.replaceStorage(this, kStorageOneDriveId);
 	ConfMan.flushToDisk();
+}
+
+void OneDriveStorage::codeFlowFailed(Networking::ErrorResponse error) {
+	debug("OneDrive's code flow failed (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
+	debug("%s", error.response.c_str());
+	CloudMan.removeStorage(this);
 }
 
 void OneDriveStorage::saveConfig(Common::String keyPrefix) {

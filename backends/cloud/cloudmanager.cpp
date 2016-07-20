@@ -45,6 +45,7 @@ CloudManager::CloudManager() : _currentStorageIndex(0), _activeStorage(nullptr) 
 CloudManager::~CloudManager() {
 	//TODO: do we have to save storages on manager destruction?	
 	delete _activeStorage;
+	freeStorages();
 }
 
 Common::String CloudManager::getStorageConfigName(uint32 index) const {
@@ -124,6 +125,7 @@ void CloudManager::save() {
 }
 
 void CloudManager::replaceStorage(Storage *storage, uint32 index) {
+	freeStorages();
 	if (!storage) error("CloudManager::replaceStorage: NULL storage passed");
 	if (index >= kStorageTotal) error("CloudManager::replaceStorage: invalid index passed");
 	delete _activeStorage;
@@ -136,6 +138,18 @@ void CloudManager::replaceStorage(Storage *storage, uint32 index) {
 		_activeStorage->info(nullptr, nullptr); //automatically calls setStorageUsername()
 		_activeStorage->syncSaves(nullptr, nullptr);
 	}
+}
+
+void CloudManager::removeStorage(Storage *storage) {
+	// can't just delete it as it's mostly likely the one who calls the method
+	// it would be freed on freeStorages() call (on next Storage connect or replace)
+	_storagesToRemove.push_back(storage);
+}
+
+void CloudManager::freeStorages() {
+	for (uint32 i = 0; i < _storagesToRemove.size(); ++i)
+		delete _storagesToRemove[i];
+	_storagesToRemove.clear();
 }
 
 Storage *CloudManager::getCurrentStorage() const {
@@ -207,6 +221,8 @@ void CloudManager::setStorageLastSync(uint32 index, Common::String date) {
 }
 
 void CloudManager::connectStorage(uint32 index, Common::String code) {
+	freeStorages();
+
 	Storage *storage = nullptr;
 	switch (index) {
 	case kStorageDropboxId: storage = new Dropbox::DropboxStorage(code); break;
@@ -214,7 +230,9 @@ void CloudManager::connectStorage(uint32 index, Common::String code) {
 	case kStorageGoogleDriveId: storage = new GoogleDrive::GoogleDriveStorage(code); break;
 	case kStorageBoxId: storage = new Box::BoxStorage(code); break;
 	}
-	//these would automatically request replaceStorage() when they receive the token
+	// in these constructors Storages request token using the passed code
+	// when the token is received, they call replaceStorage()
+	// or removeStorage(), if some error occurred
 }
 
 void CloudManager::printBool(Storage::BoolResponse response) const {
