@@ -103,7 +103,7 @@ void Scene2xx::sceneEntrySound() {
 				_vm->_sound->command(1);
 			else
 				_vm->_sound->command(9);
-				break;
+			break;
 		case 216:
 			_vm->_sound->command(16);
 			break;
