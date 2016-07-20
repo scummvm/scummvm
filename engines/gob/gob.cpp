@@ -429,6 +429,23 @@ Common::Error GobEngine::initGameParts() {
 		_map      = new Map_v1(this);
 		_goblin   = new Goblin_v1(this);
 		_scenery  = new Scenery_v1(this);
+
+		// WORKAROUND: The EGA version of Gobliiins claims a few resources are
+		//             larger than they actually are. The original happily reads
+		//             past the resource structure boundary, but we don't.
+		//             To make sure we don't throw an error like we normally do
+		//             (which leads to these resources not loading), we enable
+		//             this workaround that automatically fixes the resources
+		//             sizes.
+		//
+		//             This glitch is visible in levels
+		//             - 03 (ICIGCAA)
+		//             - 09 (ICVGCGT)
+		//             - 16 (TCVQRPM)
+		//             - 20 (NNGWTTO)
+		//             See also ScummVM bug report #7162.
+		if (isEGA())
+			_resourceSizeWorkaround = true;
 		break;
 
 	case kGameTypeGeisha:
