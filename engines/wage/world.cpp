@@ -417,7 +417,7 @@ Common::String *World::loadStringFromDITL(Common::MacResManager *resMan, int res
 }
 
 static bool invComparator(const Obj *l, const Obj *r) {
-    return l->_index < r->_index;
+	return l->_index < r->_index;
 }
 
 void World::move(Obj *obj, Chr *chr) {
@@ -457,7 +457,7 @@ void World::move(Obj *obj, Scene *scene, bool skipSort) {
 }
 
 static bool chrComparator(const Chr *l, const Chr *r) {
-    return l->_index < r->_index;
+	return l->_index < r->_index;
 }
 
 void World::move(Chr *chr, Scene *scene, bool skipSort) {

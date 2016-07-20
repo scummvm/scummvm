@@ -264,16 +264,16 @@ void MacWindow::setHighlight(WindowClick highlightedPart) {
 
 	_highlightedPart = highlightedPart;
 	_borderIsDirty = true;
- }
+}
 
- void MacWindow::setScroll(float scrollPos, float scrollSize) {
+void MacWindow::setScroll(float scrollPos, float scrollSize) {
 	if (_scrollPos == scrollPos && _scrollSize == scrollSize)
 		return;
 
 	_scrollPos = scrollPos;
 	_scrollSize = scrollSize;
 	_borderIsDirty = true;
- }
+}
 
 
 void MacWindow::drawBox(Graphics::ManagedSurface *g, int x, int y, int w, int h) {

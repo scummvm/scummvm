@@ -83,7 +83,7 @@ static const MenuData menuSubItems[] = {
 };
 
 static void cursorTimerHandler(void *refCon) {
-    Gui *gui = (Gui *)refCon;
+	Gui *gui = (Gui *)refCon;
 
 	int x = gui->_cursorX;
 	int y = gui->_cursorY;
