@@ -127,9 +127,9 @@ void OneDriveUploadRequest::partUploadedCallback(Networking::JsonResponse respon
 
 			if (object.contains("error")) {
 				warning("OneDrive returned error: %s", json->stringify(true).c_str());
-				delete json;
 				error.response = json->stringify(true);
 				finishError(error);
+				delete json;
 				return;
 			}
 

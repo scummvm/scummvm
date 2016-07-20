@@ -266,9 +266,9 @@ void GoogleDriveUploadRequest::partUploadedCallback(Networking::JsonResponse res
 
 			if (object.contains("error")) {
 				warning("GoogleDrive returned error: %s", json->stringify(true).c_str());
-				delete json;
 				error.response = json->stringify(true);
 				finishError(error);
+				delete json;
 				return;
 			}
 

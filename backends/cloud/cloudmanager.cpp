@@ -240,6 +240,7 @@ void CloudManager::connectStorage(uint32 index, Common::String code) {
 	// in these constructors Storages request token using the passed code
 	// when the token is received, they call replaceStorage()
 	// or removeStorage(), if some error occurred
+	// thus, no memory leak happens
 }
 
 void CloudManager::printBool(Storage::BoolResponse response) const {

@@ -135,7 +135,7 @@ Networking::Request *DropboxStorage::streamFileById(Common::String path, Network
 
 	Networking::NetworkReadStreamResponse response = request->execute();
 	if (callback) (*callback)(response);
-	return response.request;
+	return response.request; // no leak here, response.request == request
 }
 
 Networking::Request *DropboxStorage::createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) {

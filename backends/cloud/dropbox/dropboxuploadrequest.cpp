@@ -137,10 +137,10 @@ void DropboxUploadRequest::partUploadedCallback(Networking::JsonResponse respons
 			//debug("%s", json->stringify(true).c_str());
 
 			if (object.contains("error") || object.contains("error_summary")) {
-				warning("Dropbox returned error: %s", object.getVal("error_summary")->asString().c_str());
-				delete json;
+				warning("Dropbox returned error: %s", object.getVal("error_summary")->asString().c_str());				
 				error.response = json->stringify(true);
 				finishError(error);
+				delete json;
 				return;
 			}
 
