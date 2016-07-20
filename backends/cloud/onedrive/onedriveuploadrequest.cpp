@@ -28,7 +28,6 @@
 #include "backends/networking/curl/curljsonrequest.h"
 #include "backends/networking/curl/networkreadstream.h"
 #include "common/json.h"
-#include "common/debug.h"
 #include "onedrivetokenrefresher.h"
 
 namespace Cloud {
@@ -135,7 +134,7 @@ void OneDriveUploadRequest::partUploadedCallback(Networking::JsonResponse respon
 
 			if (object.contains("id") && object.contains("name")) {
 				//finished				
-				Common::String path = _savePath; //object.getVal("name")->asString();; //object.getVal("id")->asString();
+				Common::String path = _savePath;
 				uint32 size = object.getVal("size")->asIntegerNumber();
 				uint32 timestamp = ISO8601::convertToTimestamp(object.getVal("lastModifiedDateTime")->asString());
 				finishUpload(StorageFile(path, size, timestamp, false));

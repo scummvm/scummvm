@@ -66,10 +66,10 @@ public:
 	virtual void restart();
 
 	/** Returns a number in range [0, 1], where 1 is "complete". */
-	double getDownloadingProgress();
+	double getDownloadingProgress() const;
 
 	/** Returns a number in range [0, 1], where 1 is "complete". */
-	double getProgress();
+	double getProgress() const;
 
 	/** Returns an array of saves names which are not downloaded yet. */
 	Common::Array<Common::String> getFilesToDownload();

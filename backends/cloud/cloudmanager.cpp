@@ -25,7 +25,6 @@
 #include "backends/cloud/dropbox/dropboxstorage.h"
 #include "backends/cloud/onedrive/onedrivestorage.h"
 #include "backends/cloud/googledrive/googledrivestorage.h"
-#include "common/debug.h"
 #include "common/translation.h"
 #include "common/config-manager.h"
 #include "common/str.h"
@@ -243,10 +242,6 @@ void CloudManager::connectStorage(uint32 index, Common::String code) {
 	// thus, no memory leak happens
 }
 
-void CloudManager::printBool(Storage::BoolResponse response) const {
-	debug("bool = %s", (response.value ? "true" : "false"));
-}
-
 Networking::Request *CloudManager::listDirectory(Common::String path, Storage::ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
 	Storage *storage = getCurrentStorage();
 	if (storage) return storage->listDirectory(path, callback, errorCallback, recursive);
@@ -295,12 +290,7 @@ SavesSyncRequest *CloudManager::syncSaves(Storage::BoolCallback callback, Networ
 	return nullptr;
 }
 
-void CloudManager::testFeature() {
-	//Storage *storage = getCurrentStorage();
-	//if (storage) storage->info(nullptr, nullptr);
-}
-
-bool CloudManager::isWorking() {
+bool CloudManager::isWorking() const {
 	Storage *storage = getCurrentStorage();
 	if (storage) return storage->isWorking();
 	return false;
@@ -308,95 +298,95 @@ bool CloudManager::isWorking() {
 
 ///// SavesSyncRequest-related /////
 
-bool CloudManager::isSyncing() {
+bool CloudManager::isSyncing() const {
 	Storage *storage = getCurrentStorage();
 	if (storage) return storage->isSyncing();
 	return false;
 }
 
-double CloudManager::getSyncDownloadingProgress() {
+double CloudManager::getSyncDownloadingProgress() const {
 	Storage *storage = getCurrentStorage();
 	if (storage) return storage->getSyncDownloadingProgress();
 	return 1;
 }
 
-double CloudManager::getSyncProgress() {
+double CloudManager::getSyncProgress() const {
 	Storage *storage = getCurrentStorage();
 	if (storage) return storage->getSyncProgress();
 	return 1;
 }
 
-Common::Array<Common::String> CloudManager::getSyncingFiles() {
+Common::Array<Common::String> CloudManager::getSyncingFiles() const {
 	Storage *storage = getCurrentStorage();
 	if (storage) return storage->getSyncingFiles();
 	return Common::Array<Common::String>();
 }
 
-void CloudManager::cancelSync() {
+void CloudManager::cancelSync() const {
 	Storage *storage = getCurrentStorage();
 	if (storage) storage->cancelSync();
 }
 
-void CloudManager::setSyncTarget(GUI::CommandReceiver *target) {
+void CloudManager::setSyncTarget(GUI::CommandReceiver *target) const {
 	Storage *storage = getCurrentStorage();
 	if (storage) storage->setSyncTarget(target);
 }
 
 ///// DownloadFolderRequest-related /////
 
-bool CloudManager::startDownload(Common::String remotePath, Common::String localPath) {
+bool CloudManager::startDownload(Common::String remotePath, Common::String localPath) const {
 	Storage *storage = getCurrentStorage();
 	if (storage) return storage->startDownload(remotePath, localPath);
 	return false;
 }
 
-void CloudManager::cancelDownload() {
+void CloudManager::cancelDownload() const {
 	Storage *storage = getCurrentStorage();
 	if (storage) storage->cancelDownload();
 }
 
-void CloudManager::setDownloadTarget(GUI::CommandReceiver *target) {
+void CloudManager::setDownloadTarget(GUI::CommandReceiver *target) const {
 	Storage *storage = getCurrentStorage();
 	if (storage) storage->setDownloadTarget(target);
 }
 
-bool CloudManager::isDownloading() {
+bool CloudManager::isDownloading() const {
 	Storage *storage = getCurrentStorage();
 	if (storage) return storage->isDownloading();
 	return false;
 }
 
-double CloudManager::getDownloadingProgress() {
+double CloudManager::getDownloadingProgress() const {
 	Storage *storage = getCurrentStorage();
 	if (storage) return storage->getDownloadingProgress();
 	return 1;
 }
 
-uint64 CloudManager::getDownloadBytesNumber() {
+uint64 CloudManager::getDownloadBytesNumber() const {
 	Storage *storage = getCurrentStorage();
 	if (storage) return storage->getDownloadBytesNumber();
 	return 0;
 }
 
-uint64 CloudManager::getDownloadTotalBytesNumber() {
+uint64 CloudManager::getDownloadTotalBytesNumber() const {
 	Storage *storage = getCurrentStorage();
 	if (storage) return storage->getDownloadTotalBytesNumber();
 	return 0;
 }
 
-uint64 CloudManager::getDownloadSpeed() {
+uint64 CloudManager::getDownloadSpeed() const {
 	Storage *storage = getCurrentStorage();
 	if (storage) return storage->getDownloadSpeed();
 	return 0;
 }
 
-Common::String CloudManager::getDownloadRemoteDirectory() {
+Common::String CloudManager::getDownloadRemoteDirectory() const {
 	Storage *storage = getCurrentStorage();
 	if (storage) return storage->getDownloadRemoteDirectory();
 	return "";
 }
 
-Common::String CloudManager::getDownloadLocalDirectory() {
+Common::String CloudManager::getDownloadLocalDirectory() const {
 	Storage *storage = getCurrentStorage();
 	if (storage) return storage->getDownloadLocalDirectory();
 	return "";

@@ -229,10 +229,10 @@ Networking::Request *GoogleDriveStorage::streamFileById(Common::String id, Netwo
 }
 
 void GoogleDriveStorage::printInfo(StorageInfoResponse response) {
-	debug("\nuser info:");
-	debug("\tname: %s", response.value.name().c_str());
-	debug("\temail: %s", response.value.email().c_str());
-	debug("\tdisk usage: %llu/%llu", response.value.used(), response.value.available());
+	debug(9, "\nuser info:");
+	debug(9, "\tname: %s", response.value.name().c_str());
+	debug(9, "\temail: %s", response.value.email().c_str());
+	debug(9, "\tdisk usage: %llu/%llu", response.value.used(), response.value.available());
 }
 
 Networking::Request *GoogleDriveStorage::createDirectoryWithParentId(Common::String parentId, Common::String name, BoolCallback callback, Networking::ErrorCallback errorCallback) {
@@ -273,12 +273,12 @@ GoogleDriveStorage *GoogleDriveStorage::loadFromConfig(Common::String keyPrefix)
 
 	if (!ConfMan.hasKey(keyPrefix + "access_token", ConfMan.kCloudDomain)) {
 		warning("No access_token found");
-		return 0;
+		return nullptr;
 	}
 
 	if (!ConfMan.hasKey(keyPrefix + "refresh_token", ConfMan.kCloudDomain)) {
 		warning("No refresh_token found");
-		return 0;
+		return nullptr;
 	}
 
 	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", ConfMan.kCloudDomain);

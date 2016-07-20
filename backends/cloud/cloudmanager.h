@@ -61,8 +61,6 @@ class CloudManager : public Common::Singleton<CloudManager> {
 	Storage *_activeStorage;
 	Common::Array<Storage *> _storagesToRemove;
 
-	void printBool(Cloud::Storage::BoolResponse response) const;
-
 	void loadStorage();
 
 	Common::String getStorageConfigName(uint32 index) const;
@@ -206,65 +204,60 @@ public:
 	 */
 	SavesSyncRequest *syncSaves(Cloud::Storage::BoolCallback callback = nullptr, Networking::ErrorCallback errorCallback = nullptr);
 
-	/**
-	 * Starts feature testing (the one I'm working on currently). (Temporary)
-	 */
-	void testFeature();
-
 	/** Returns whether there are any requests running. */
-	bool isWorking();
+	bool isWorking() const;
 
 	///// SavesSyncRequest-related /////
 
 	/** Returns whether there is a SavesSyncRequest running. */
-	bool isSyncing();
+	bool isSyncing() const;
 
 	/** Returns a number in [0, 1] range which represents current sync downloading progress (1 = complete). */
-	double getSyncDownloadingProgress();
+	double getSyncDownloadingProgress() const;
 
 	/** Returns a number in [0, 1] range which represents current sync progress (1 = complete). */
-	double getSyncProgress();
+	double getSyncProgress() const;
 
 	/** Returns an array of saves names which are not yet synced (thus cannot be used). */
-	Common::Array<Common::String> getSyncingFiles();
+	Common::Array<Common::String> getSyncingFiles() const;
 
 	/** Cancels running sync. */
-	void cancelSync();
+	void cancelSync() const;
 
 	/** Sets SavesSyncRequest's target to given CommandReceiver. */
-	void setSyncTarget(GUI::CommandReceiver *target);
+	void setSyncTarget(GUI::CommandReceiver *target) const;
 
 	///// DownloadFolderRequest-related /////
 
 	/** Starts a folder download. */
-	bool startDownload(Common::String remotePath, Common::String localPath);
+	bool startDownload(Common::String remotePath, Common::String localPath) const;
 
 	/** Cancels running download. */
-	void cancelDownload();
+	void cancelDownload() const;
 
 	/** Sets FolderDownloadRequest's target to given CommandReceiver. */
-	void setDownloadTarget(GUI::CommandReceiver *target);
+	void setDownloadTarget(GUI::CommandReceiver *target) const;
 
 	/** Returns whether there is a FolderDownloadRequest running. */
-	bool isDownloading();
+	bool isDownloading() const;
 
 	/** Returns a number in [0, 1] range which represents current download progress (1 = complete). */
-	double getDownloadingProgress();
+	double getDownloadingProgress() const;
 
 	/** Returns a number of bytes that is downloaded in current download progress. */
-	uint64 getDownloadBytesNumber();
+	uint64 getDownloadBytesNumber() const;
 
 	/** Returns a total number of bytes to be downloaded in current download progress. */
-	uint64 getDownloadTotalBytesNumber();
+	uint64 getDownloadTotalBytesNumber() const;
 
 	/** Returns download speed of current download progress. */
-	uint64 getDownloadSpeed();
+	uint64 getDownloadSpeed() const;
 
 	/** Returns remote directory path. */
-	virtual Common::String getDownloadRemoteDirectory();
+	Common::String getDownloadRemoteDirectory() const;
 
 	/** Returns local directory path. */
-	virtual Common::String getDownloadLocalDirectory();
+	Common::String getDownloadLocalDirectory() const;
 };
 
 /** Shortcut for accessing the connection manager. */

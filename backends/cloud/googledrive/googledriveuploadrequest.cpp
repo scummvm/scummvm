@@ -28,7 +28,6 @@
 #include "backends/networking/curl/curljsonrequest.h"
 #include "backends/networking/curl/networkreadstream.h"
 #include "common/json.h"
-#include "common/debug.h"
 #include "googledrivetokenrefresher.h"
 
 namespace Cloud {
@@ -201,7 +200,6 @@ void GoogleDriveUploadRequest::uploadNextPart() {
 	uint32 size = _contentsStream->read(buffer, UPLOAD_PER_ONE_REQUEST);
 	if (size != 0) request->setBuffer(buffer, size);
 
-	//request->addHeader(Common::String::format("Content-Length: %u", size));
 	if (_uploadUrl != "") {
 		if (_contentsStream->pos() == 0)
 			request->addHeader(Common::String::format("Content-Length: 0"));

@@ -24,7 +24,6 @@
 #define BACKENDS_CLOUD_GOOGLEDRIVE_GOOGLEDRIVESTORAGE_H
 
 #include "backends/cloud/id/idstorage.h"
-#include "common/callback.h"
 #include "backends/networking/curl/curljsonrequest.h"
 
 namespace Cloud {
@@ -87,9 +86,6 @@ public:
 	virtual Networking::Request *streamFileById(Common::String id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *remove(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) { return nullptr; } //TODO
-
-	/** Calls the callback when finished. */
 	virtual Networking::Request *createDirectoryWithParentId(Common::String parentId, Common::String name, BoolCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Returns the StorageInfo struct. */
@@ -113,7 +109,7 @@ public:
 	 */
 	void getAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback = nullptr, Common::String code = "");
 
-	Common::String accessToken() { return _token; }
+	Common::String accessToken() const { return _token; }
 };
 
 } // End of namespace GoogleDrive

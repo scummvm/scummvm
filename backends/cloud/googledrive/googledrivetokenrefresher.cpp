@@ -67,7 +67,7 @@ void GoogleDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 	if (result.contains("error")) {
 		//new token needed => request token & then retry original request		
 		if (_stream) {
-			debug("code %ld", _stream->httpResponseCode());
+			debug(9, "code %ld", _stream->httpResponseCode());
 		}
 
 		Common::JSONObject error = result.getVal("error")->asObject();
@@ -77,12 +77,12 @@ void GoogleDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 		Common::String message;
 		if (error.contains("code") && error.getVal("code")->isIntegerNumber()) {
 			code = error.getVal("code")->asIntegerNumber();
-			debug("code = %u", code);
+			debug(9, "code = %u", code);
 		}
 
 		if (error.contains("message")) {
 			message = error.getVal("message")->asString();
-			debug("message = %s", message.c_str());
+			debug(9, "message = %s", message.c_str());
 		}
 
 		if (code == 401 || message == "Invalid Credentials")

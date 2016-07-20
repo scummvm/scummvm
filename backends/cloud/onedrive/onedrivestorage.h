@@ -104,7 +104,7 @@ public:
 	 */
 	void getAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback = nullptr, Common::String code = "");
 
-	Common::String accessToken() { return _token; }
+	Common::String accessToken() const { return _token; }
 };
 
 } // End of namespace OneDrive

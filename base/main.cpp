@@ -486,7 +486,6 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 #ifdef USE_LIBCURL
 	CloudMan.init();
 	CloudMan.syncSaves();
-	CloudMan.testFeature(); //TODO: remove later
 #endif
 
 	// Unless a game was specified, show the launcher dialog

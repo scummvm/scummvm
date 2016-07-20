@@ -24,7 +24,6 @@
 #define BACKENDS_CLOUD_FOLDERDOWNLOADREQUEST_H
 
 #include "backends/networking/curl/request.h"
-#include "backends/networking/curl/networkreadstream.h"
 #include "backends/cloud/storage.h"
 #include "gui/object.h"
 
@@ -69,10 +68,10 @@ public:
 	uint64 getDownloadSpeed() const;
 
 	/** Returns remote directory path. */
-	Common::String getRemotePath() { return _remoteDirectoryPath; }
+	Common::String getRemotePath() const { return _remoteDirectoryPath; }
 
 	/** Returns local directory path. */
-	Common::String getLocalPath() { return _localDirectoryPath; }
+	Common::String getLocalPath() const { return _localDirectoryPath; }
 };
 
 } // End of namespace Cloud

@@ -118,7 +118,7 @@ void DropboxUploadRequest::uploadNextPart() {
 }
 
 void DropboxUploadRequest::partUploadedCallback(Networking::JsonResponse response) {
-	debug("partUploadedCallback");
+	debug(9, "partUploadedCallback");
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 

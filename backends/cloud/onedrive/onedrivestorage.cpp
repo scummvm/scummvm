@@ -189,7 +189,7 @@ void OneDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Netwo
 void OneDriveStorage::fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response) {
 	if (!response.value) {
 		warning("fileInfoCallback: NULL");
-		if (outerCallback) (*outerCallback)(Networking::NetworkReadStreamResponse(response.request, 0));
+		if (outerCallback) (*outerCallback)(Networking::NetworkReadStreamResponse(response.request, nullptr));
 		return;
 	}
 
@@ -199,12 +199,12 @@ void OneDriveStorage::fileInfoCallback(Networking::NetworkReadStreamCallback out
 		if (outerCallback)
 			(*outerCallback)(Networking::NetworkReadStreamResponse(
 				response.request,
-				new Networking::NetworkReadStream(url, 0, "")
+				new Networking::NetworkReadStream(url, nullptr, "")
 			));
 	} else {
 		warning("downloadUrl not found in passed JSON");
 		debug("%s", response.value->stringify().c_str());
-		if (outerCallback) (*outerCallback)(Networking::NetworkReadStreamResponse(response.request, 0));
+		if (outerCallback) (*outerCallback)(Networking::NetworkReadStreamResponse(response.request, nullptr));
 	}
 	delete response.value;
 }
@@ -244,17 +244,17 @@ OneDriveStorage *OneDriveStorage::loadFromConfig(Common::String keyPrefix) {
 
 	if (!ConfMan.hasKey(keyPrefix + "access_token", ConfMan.kCloudDomain)) {
 		warning("No access_token found");
-		return 0;
+		return nullptr;
 	}
 
 	if (!ConfMan.hasKey(keyPrefix + "user_id", ConfMan.kCloudDomain)) {
 		warning("No user_id found");
-		return 0;
+		return nullptr;
 	}
 
 	if (!ConfMan.hasKey(keyPrefix + "refresh_token", ConfMan.kCloudDomain)) {
 		warning("No refresh_token found");
-		return 0;
+		return nullptr;
 	}
 
 	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", ConfMan.kCloudDomain);

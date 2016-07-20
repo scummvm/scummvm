@@ -278,12 +278,12 @@ BoxStorage *BoxStorage::loadFromConfig(Common::String keyPrefix) {
 
 	if (!ConfMan.hasKey(keyPrefix + "access_token", ConfMan.kCloudDomain)) {
 		warning("No access_token found");
-		return 0;
+		return nullptr;
 	}
 
 	if (!ConfMan.hasKey(keyPrefix + "refresh_token", ConfMan.kCloudDomain)) {
 		warning("No refresh_token found");
-		return 0;
+		return nullptr;
 	}
 
 	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", ConfMan.kCloudDomain);

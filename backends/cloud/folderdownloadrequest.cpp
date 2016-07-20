@@ -132,7 +132,7 @@ void FolderDownloadRequest::downloadNextFile() {
 		else
 			localPath = _localDirectoryPath + "/" + localPath;
 	}
-	debug("%s -> %s", remotePath.c_str(), localPath.c_str());
+	debug(9, "%s -> %s", remotePath.c_str(), localPath.c_str());
 	_workingRequest = _storage->downloadById(
 		_currentFile.id(), localPath,
 		new Common::Callback<FolderDownloadRequest, Storage::BoolResponse>(this, &FolderDownloadRequest::fileDownloadedCallback),

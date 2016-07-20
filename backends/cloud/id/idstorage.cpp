@@ -36,26 +36,26 @@ namespace Id {
 IdStorage::~IdStorage() {}
 
 void IdStorage::printFiles(FileArrayResponse response) {
-	debug("files:");
+	debug(9, "files:");
 	Common::Array<StorageFile> &files = response.value;
 	for (uint32 i = 0; i < files.size(); ++i) {
-		debug("\t%s%s", files[i].name().c_str(), files[i].isDirectory() ? " (directory)" : "");
-		debug("\t%s", files[i].path().c_str());
-		debug("\t%s", files[i].id().c_str());
-		debug(" ");
+		debug(9, "\t%s%s", files[i].name().c_str(), files[i].isDirectory() ? " (directory)" : "");
+		debug(9, "\t%s", files[i].path().c_str());
+		debug(9, "\t%s", files[i].id().c_str());
+		debug(9, " ");
 	}
 }
 
 void IdStorage::printBool(BoolResponse response) {
-	debug("bool: %s", response.value ? "true" : "false");
+	debug(9, "bool: %s", response.value ? "true" : "false");
 }
 
 void IdStorage::printFile(UploadResponse response) {
-	debug("\nuploaded file info:");
-	debug("\tid: %s", response.value.path().c_str());
-	debug("\tname: %s", response.value.name().c_str());
-	debug("\tsize: %u", response.value.size());
-	debug("\ttimestamp: %u", response.value.timestamp());
+	debug(9, "\nuploaded file info:");
+	debug(9, "\tid: %s", response.value.path().c_str());
+	debug(9, "\tname: %s", response.value.name().c_str());
+	debug(9, "\tsize: %u", response.value.size());
+	debug(9, "\ttimestamp: %u", response.value.timestamp());
 }
 
 Storage::ListDirectoryCallback IdStorage::getPrintFilesCallback() {

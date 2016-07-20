@@ -49,7 +49,7 @@ void Storage::printErrorResponse(Networking::ErrorResponse error) {
 Networking::Request *Storage::addRequest(Networking::Request *request) {
 	_runningRequestsMutex.lock();
 	++_runningRequestsCount;
-	if (_runningRequestsCount == 1) debug("Storage is working now");
+	if (_runningRequestsCount == 1) debug(9, "Storage is working now");
 	_runningRequestsMutex.unlock();
 	return ConnMan.addRequest(request, new Common::Callback<Storage, Networking::Request *>(this, &Storage::requestFinishedCallback));
 }
@@ -62,7 +62,7 @@ void Storage::requestFinishedCallback(Networking::Request *invalidRequestPointer
 		_savesSyncRequest = nullptr;
 	--_runningRequestsCount;
 	if (_syncRestartRequestsed) restartSync = true;
-	if (_runningRequestsCount == 0 && !restartSync) debug("Storage is not working now");
+	if (_runningRequestsCount == 0 && !restartSync) debug(9, "Storage is not working now");
 	_runningRequestsMutex.unlock();
 
 	if (restartSync)

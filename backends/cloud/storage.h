@@ -62,8 +62,12 @@ protected:
 	/** Keeps track of running requests. */
 	uint32 _runningRequestsCount;
 	Common::Mutex _runningRequestsMutex;
+
+	/** SavesSyncRequest-related */
 	SavesSyncRequest *_savesSyncRequest;
 	bool _syncRestartRequestsed;
+
+	/** FolderDownloadRequest-related */
 	FolderDownloadRequest *_downloadFolderRequest;
 
 	/** Returns default error callback (printErrorResponse). */
@@ -122,7 +126,7 @@ public:
 	/** Returns ListDirectoryResponse with list of files. */
 	virtual Networking::Request *listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false) = 0;
 	
-	/** Returns UploadStatus struct with info about uploaded file. */
+	/** Returns StorageFile with info about uploaded file. */
 	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) = 0;
 	virtual Networking::Request *upload(Common::String remotePath, Common::String localPath, UploadCallback callback, Networking::ErrorCallback errorCallback);
 
@@ -147,8 +151,8 @@ public:
 	virtual Networking::Request *createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) = 0;
 
 	/**
-	 * Return the StorageInfo struct via <callback>.
-	 * Call the <errorCallback> if failed to get information.
+	 * Returns the StorageInfo struct via <callback>.
+	 * Calls the <errorCallback> if failed to get information.
 	 *
 	 * @note on success Storage should also call
 	 *	     CloudMan.setStorageUsername().
