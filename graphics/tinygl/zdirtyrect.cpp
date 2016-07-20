@@ -398,8 +398,8 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 		gl_draw_line(c, &c->vertex[cnt - 1], &c->vertex[0]);
 		break;
 	case TGL_TRIANGLES:
-		for(int i = 0; i < cnt / 3; i++) {
-			gl_draw_triangle(c, &c->vertex[i * 3], &c->vertex[i * 3 + 1], &c->vertex[i * 3 + 2]);
+		for(int i = 0; i < cnt; i += 3) {
+			gl_draw_triangle(c, &c->vertex[i], &c->vertex[i + 1], &c->vertex[i + 2]);
 		}
 		break;
 	case TGL_TRIANGLE_STRIP:
