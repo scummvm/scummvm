@@ -128,7 +128,7 @@ BitmapResource GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const
 	outRect.right = (startPoint.x > endPoint.x ? startPoint.x : endPoint.x) + halfThickness + 1;
 	outRect.bottom = (startPoint.y > endPoint.y ? startPoint.y : endPoint.y) + halfThickness + 1;
 
-	BitmapResource bitmap(_segMan, outRect.width(), outRect.height(), skipColor, 0, 0, g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth, g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight, 0, false);
+	BitmapResource bitmap(_segMan, outRect.width(), outRect.height(), skipColor, 0, 0, g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth, g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight, 0, false, true);
 
 	byte *pixels = bitmap.getPixels();
 	memset(pixels, skipColor, bitmap.getWidth() * bitmap.getHeight());

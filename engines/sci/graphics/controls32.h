@@ -227,6 +227,8 @@ public:
 	const reg_t getBitmap() const { return _bitmap; }
 
 private:
+	SegManager *_segMan;
+
 	typedef Common::Array<ScrollWindowEntry> EntriesList;
 
 	/**
@@ -416,11 +418,6 @@ private:
 	SegManager *_segMan;
 	GfxCache *_gfxCache;
 	GfxText32 *_gfxText32;
-
-#pragma mark -
-#pragma mark Garbage collection
-public:
-	Common::Array<reg_t> listObjectReferences();
 
 #pragma mark -
 #pragma mark Text input control

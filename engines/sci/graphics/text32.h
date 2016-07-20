@@ -117,8 +117,8 @@ public:
 	 * Allocates and initialises a new bitmap in the given
 	 * segment manager.
 	 */
-	inline BitmapResource(SegManager *segMan, const int16 width, const int16 height, const uint8 skipColor, const int16 displaceX, const int16 displaceY, const int16 scaledWidth, const int16 scaledHeight, const uint32 hunkPaletteOffset, const bool remap) {
-		_object = segMan->allocateHunkEntry("Bitmap()", getBitmapSize(width, height));
+	inline BitmapResource(SegManager *segMan, const int16 width, const int16 height, const uint8 skipColor, const int16 displaceX, const int16 displaceY, const int16 scaledWidth, const int16 scaledHeight, const uint32 paletteSize, const bool remap, const bool gc) {
+		_object = segMan->allocateHunkEntry("Bitmap()", getBitmapSize(width, height) + paletteSize, gc);
 		_bitmap = segMan->getHunkPointer(_object);
 
 		const uint16 bitmapHeaderSize = getBitmapHeaderSize();
@@ -132,7 +132,7 @@ public:
 		setRemap(remap);
 		setDataSize(width * height);
 		WRITE_SCI11ENDIAN_UINT32(_bitmap + 16, 0);
-		setHunkPaletteOffset(hunkPaletteOffset);
+		setHunkPaletteOffset(paletteSize > 0 ? (width * height) : 0);
 		setDataOffset(bitmapHeaderSize);
 		setUncompressedDataOffset(bitmapHeaderSize);
 		setControlOffset(0);
@@ -394,12 +394,12 @@ public:
 	 * Creates a plain font bitmap with a flat color
 	 * background.
 	 */
-	reg_t createFontBitmap(int16 width, int16 height, const Common::Rect &rect, const Common::String &text, const uint8 foreColor, const uint8 backColor, const uint8 skipColor, const GuiResourceId fontId, TextAlign alignment, const int16 borderColor, bool dimmed, const bool doScaling);
+	reg_t createFontBitmap(int16 width, int16 height, const Common::Rect &rect, const Common::String &text, const uint8 foreColor, const uint8 backColor, const uint8 skipColor, const GuiResourceId fontId, TextAlign alignment, const int16 borderColor, bool dimmed, const bool doScaling, const bool gc);
 
 	/**
 	 * Creates a font bitmap with a view background.
 	 */
-	reg_t createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &rect, const Common::String &text, const int16 foreColor, const int16 backColor, const GuiResourceId fontId, const int16 skipColor, const int16 borderColor, const bool dimmed);
+	reg_t createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &rect, const Common::String &text, const int16 foreColor, const int16 backColor, const GuiResourceId fontId, const int16 skipColor, const int16 borderColor, const bool dimmed, const bool gc);
 
 	inline int scaleUpWidth(int value) const {
 		const int scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
