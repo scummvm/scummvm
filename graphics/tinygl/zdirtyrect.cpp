@@ -286,9 +286,6 @@ void RasterizationDrawCall::computeDirtyRegion() {
 
 	int left = width, right = 0, top = height, bottom = 0;
 
-	TinyGL::Vector4 minPc(FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX);
-	TinyGL::Vector4 maxPc(FLT_MIN, FLT_MIN, FLT_MIN, FLT_MIN);
-
 	bool pointInsideVolume = false;
 
 	for (int i = 0; i < _vertexCount; i++) {
