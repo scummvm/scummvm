@@ -32,10 +32,6 @@
 
 namespace Titanic {
 
-enum MovieState { 
-	MSTATE_0 = 0, MSTATE_1 = 1
-};
-
 class CGameObject;
 class CMovie;
 class CSoundManager;
@@ -52,7 +48,7 @@ protected:
 	 */
 	void addToPlayingMovies();
 public:
-	MovieState _state;
+	bool _handled;
 	int _field10;
 	int _field14;
 public:
@@ -158,9 +154,6 @@ private:
 	int _field24;
 	int _field28;
 	int _field2C;
-	int _ticksStart;
-	int _frameTime1;
-	int _frameTime2;
 private:
 	/**
 	 * Called when a movie is started playing

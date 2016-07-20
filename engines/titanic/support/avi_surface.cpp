@@ -260,10 +260,13 @@ int AVISurface::getFrame() const {
 	return _decoders[0]->getCurFrame();
 }
 
+bool AVISurface::isFrameReady() const {
+	return _decoders[0]->needsUpdate() && (!_decoders[1] || _decoders[1]->needsUpdate());
+}
+
 bool AVISurface::renderFrame() {
 	// Check there's a frame ready for display
-	assert(_videoSurface);
-	if (!_decoders[0]->needsUpdate() || (_decoders[1] && !_decoders[1]->needsUpdate()))
+	if (!isFrameReady())
 		return false;
 
 	// Decode each decoder's video stream into the appropriate surface

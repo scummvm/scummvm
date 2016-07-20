@@ -162,6 +162,11 @@ public:
 	 * Duplicates the secondary frame, if the movie has a second video track
 	 */
 	Graphics::ManagedSurface *duplicateSecondaryFrame() const;
+
+	/**
+	 * Returns true if a frame is ready to be rendered
+	 */
+	bool isFrameReady() const;
 };
 
 } // End of namespace Titanic

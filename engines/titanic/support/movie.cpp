@@ -36,7 +36,7 @@ namespace Titanic {
 CMovieList *CMovie::_playingMovies;
 CVideoSurface *CMovie::_movieSurface;
 
-CMovie::CMovie() : ListItem(), _state(MSTATE_0), _field10(0),
+CMovie::CMovie() : ListItem(), _handled(false), _field10(0),
 		_field14(0) {
 }
 
@@ -84,9 +84,6 @@ OSMovie::OSMovie(const CResourceKey &name, CVideoSurface *surface) :
 	_field24 = 0;
 	_field28 = 0;
 	_field2C = 0;
-	_ticksStart = 0;
-	_frameTime1 = 0;
-	_frameTime2 = 17066;
 
 	surface->resize(_aviSurface.getWidth(), _aviSurface.getHeight());
 	_aviSurface.setVideoSurface(surface);
@@ -165,25 +162,13 @@ void OSMovie::setFrame(uint frameNumber) {
 bool OSMovie::handleEvents(CMovieEventList &events) {
 	if (!_aviSurface._isPlaying)
 		return false;
-
-	int time = (g_vm->_events->getTicksCount() + ((_ticksStart << 24) - _ticksStart)) << 8;
-	if (time < _frameTime1)
+	if (!_aviSurface.isFrameReady())
 		return _aviSurface._isPlaying;
 
-	if (!_field14 && (time - _frameTime1) > (_frameTime2 * 2))
-		_frameTime1 = time;
-
-	_frameTime1 += _frameTime2;
-	_aviSurface.handleEvents(events);
-	_videoSurface->setMovieFrameSurface(_aviSurface.getSecondarySurface());
-
-	if (_field14) {
-		while (_frameTime1 >= time && events.empty()) {
-			_aviSurface.handleEvents(events);
-			_videoSurface->setMovieFrameSurface(_aviSurface.getSecondarySurface());
-
-			_frameTime1 += _frameTime2;
-		}
+	// Handle updating the frame
+	while (_aviSurface.isFrameReady()) {
+		_aviSurface.handleEvents(events);
+		_videoSurface->setMovieFrameSurface(_aviSurface.getSecondarySurface());
 	}
 
 	return _aviSurface._isPlaying;
@@ -202,9 +187,6 @@ int OSMovie::getFrame() const {
 }
 
 void OSMovie::movieStarted() {
-	_frameTime1 = _frameTime2 = 256000.0 / _aviSurface._frameRate;
-	_ticksStart = g_vm->_events->getTicksCount();
-
 	if (_aviSurface._hasAudio)
 		_aviSurface._soundManager->movieStarted();
 

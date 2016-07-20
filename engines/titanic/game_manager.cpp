@@ -192,14 +192,20 @@ void CGameManager::update() {
 }
 
 void CGameManager::updateMovies() {
+	// Initial iteration to mark all the movies as not yet handled
+	for (CMovieList::iterator i = CMovie::_playingMovies->begin();
+			i != CMovie::_playingMovies->end(); ++i)
+		(*i)->_handled = false;
+
 	bool repeatFlag;
 	do {
 		repeatFlag = false;
 
+		// Scan for a movie to process
 		for (CMovieList::iterator i = CMovie::_playingMovies->begin();
-				i != CMovie::_playingMovies->end(); ) {
+				i != CMovie::_playingMovies->end(); ++i) {
 			CMovie *movie = *i;
-			if (movie->_state)
+			if (movie->_handled)
 				continue;
 
 			CMovieEventList eventsList;
@@ -229,8 +235,9 @@ void CGameManager::updateMovies() {
 				eventsList.remove(movieEvent);
 			}
 
+			// Flag the movie as having been handled
+			movie->_handled = true;
 			repeatFlag = true;
-			movie->_state = MSTATE_1;
 			break;
 		}
 	} while (repeatFlag);
