@@ -50,9 +50,15 @@ OneDriveUploadRequest::~OneDriveUploadRequest() {
 void OneDriveUploadRequest::start() {
 	_ignoreCallback = true;
 	if (_workingRequest) _workingRequest->finish();
+	if (_contentsStream == nullptr) {
+		warning("OneDriveUploadRequest: cannot restart because no stream given");
+		finishError(Networking::ErrorResponse(this, false, true, "No stream given", -1));
+		return;
+	}
 	if (!_contentsStream->seek(0)) {
 		warning("OneDriveUploadRequest: cannot restart because stream couldn't seek(0)");
 		finishError(Networking::ErrorResponse(this, false, true, "", -1));
+		return;
 	}
 	_ignoreCallback = false;
 
