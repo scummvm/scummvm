@@ -21,6 +21,8 @@
  */
 
 #include "titanic/titanic.h"
+#include "titanic/core/project_item.h"
+#include "titanic/support/simple_file.h"
 
 #include "base/plugins.h"
 #include "common/savefile.h"
@@ -106,7 +108,40 @@ bool TitanicMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADG
 }
 
 SaveStateList TitanicMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray filenames;
+	Common::String saveDesc;
+	Common::String pattern = Common::String::format("%s.0##", target);
+	Titanic::TitanicSavegameHeader header;
+
+	filenames = saveFileMan->listSavefiles(pattern);
+
 	SaveStateList saveList;
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		const char *ext = strrchr(file->c_str(), '.');
+		int slot = ext ? atoi(ext + 1) : -1;
+
+		if (slot >= 0 && slot < MAX_SAVES) {
+			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
+
+			if (in) {
+				Titanic::CompressedFile file;
+				file.open(in);
+				Titanic::CProjectItem::readSavegameHeader(&file, header);
+				saveList.push_back(SaveStateDescriptor(slot, header._saveName));
+
+				if (header._thumbnail) {
+					header._thumbnail->free();
+					delete header._thumbnail;
+				}
+
+				file.close();
+			}
+		}
+	}
+
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
@@ -115,9 +150,33 @@ int TitanicMetaEngine::getMaximumSaveSlot() const {
 }
 
 void TitanicMetaEngine::removeSaveState(const char *target, int slot) const {
+	Common::String filename = Common::String::format("%s.%03d", target, slot);
+	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor TitanicMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String filename = Common::String::format("%s.%03d", target, slot);
+	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
+
+	if (f) {
+		Titanic::CompressedFile file;
+		file.open(f);
+
+		Titanic::TitanicSavegameHeader header;
+		Titanic::CProjectItem::readSavegameHeader(&file, header);
+
+		file.close();
+
+		// Create the return descriptor
+		SaveStateDescriptor desc(slot, header._saveName);
+		desc.setThumbnail(header._thumbnail);
+		desc.setSaveDate(header._year, header._month, header._day);
+		desc.setSaveTime(header._hour, header._minute);
+		desc.setPlayTime(header._totalFrames * GAME_FRAME_TIME);
+
+		return desc;
+	}
+
 	return SaveStateDescriptor();
 }
 
