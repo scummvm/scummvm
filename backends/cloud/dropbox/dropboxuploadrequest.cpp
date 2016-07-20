@@ -56,6 +56,7 @@ void DropboxUploadRequest::start() {
 	if (!_contentsStream->seek(0)) {
 		warning("DropboxUploadRequest: cannot restart because stream couldn't seek(0)");
 		finishError(Networking::ErrorResponse(this, false, true, "", -1));
+		return;
 	}
 	_ignoreCallback = false;
 

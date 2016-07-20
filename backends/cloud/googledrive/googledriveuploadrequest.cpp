@@ -50,9 +50,10 @@ GoogleDriveUploadRequest::~GoogleDriveUploadRequest() {
 void GoogleDriveUploadRequest::start() {
 	_ignoreCallback = true;
 	if (_workingRequest) _workingRequest->finish();
-	if (!_contentsStream->seek(0)) {
+	if (_contentsStream == nullptr || !_contentsStream->seek(0)) {
 		warning("GoogleDriveUploadRequest: cannot restart because stream couldn't seek(0)");
 		finishError(Networking::ErrorResponse(this, false, true, "", -1));
+		return;
 	}
 	_resolvedId = ""; //used to update file contents
 	_parentId = ""; //used to create file within parent directory
