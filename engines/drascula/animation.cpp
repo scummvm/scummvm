@@ -116,7 +116,7 @@ void DrasculaEngine::animation_1_1() {
 		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
 			break;
 
-		for (int l2 = 0; l2 < 3; l2++)
+		for (int l2 = 0; l2 < 3; l2++) {
 			for (int l = 0; l < 7; l++) {
 				copyBackground();
 				copyBackground(interf_x[l], interf_y[l], 156, 45, 63, 31, drawSurface2, screenSurface);
@@ -129,6 +129,9 @@ void DrasculaEngine::animation_1_1() {
 			}
 			if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
 				break;
+		}
+		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+			break;
 
 		for (int l = 0, l2 = 0, p = 0; l < 180; l++) {
 			copyBackground(0, 0, 320 - l, 0, l, 200, drawSurface3, screenSurface);
