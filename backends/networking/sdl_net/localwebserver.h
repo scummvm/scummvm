@@ -47,10 +47,11 @@ typedef struct _TCPsocket *TCPsocket;
 
 namespace Networking {
 
+#define NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
+
 class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	static const uint32 FRAMES_PER_SECOND = 20;
 	static const uint32 TIMER_INTERVAL = 1000000 / FRAMES_PER_SECOND;
-	static const uint32 DEFAULT_SERVER_PORT = 12345;
 	static const uint32 MAX_CONNECTIONS = 10;
 
 	friend void localWebserverTimer(void *); //calls handle()
@@ -84,6 +85,8 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
         void resolveAddress(void *ipAddress);
 	
 public:
+	static const uint32 DEFAULT_SERVER_PORT = 12345;
+
 	LocalWebserver();
 	virtual ~LocalWebserver();
 

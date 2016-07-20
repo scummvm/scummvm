@@ -61,15 +61,15 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 	new ButtonWidget(this, "GlobalOptions_Cloud_ConnectionWizard.OpenUrlButton", _("Open URL"), 0, kOpenUrlCmd);
 	_connectWidget = new ButtonWidget(this, "GlobalOptions_Cloud_ConnectionWizard.ConnectButton", _("Connect"), 0, kConnectCmd);
 
-#ifdef USE_SDL_NET
-	// hide fields and even the button if local webserver is on
-	returnLine1->setLabel(_s("You would be navigated to ScummVM's page"));
-	returnLine2->setLabel(_s("when you'd allow it to use your storage."));	
-	for (uint32 i = 0; i < CODE_FIELDS; ++i)
-		_codeWidget[i]->setVisible(false);
-	_messageWidget->setVisible(false);
-	_connectWidget->setVisible(false);
-#endif
+	if (couldUseLocalServer()) {
+		// hide fields and even the button if local webserver is on
+		returnLine1->setLabel(_s("You would be navigated to ScummVM's page"));
+		returnLine2->setLabel(_s("when you'd allow it to use your storage."));
+		for (uint32 i = 0; i < CODE_FIELDS; ++i)
+			_codeWidget[i]->setVisible(false);
+		_messageWidget->setVisible(false);
+		_connectWidget->setVisible(false);
+	}
 }
 
 void StorageWizardDialog::open() {
@@ -97,18 +97,18 @@ void StorageWizardDialog::open() {
 		}
 	}
 
-#ifdef USE_SDL_NET
-	_stopServerOnClose = !LocalServer.isRunning();
-	LocalServer.start();
-	LocalServer.indexPageHandler().setTarget(this);
-#endif
+	if (couldUseLocalServer()) {
+		_stopServerOnClose = !LocalServer.isRunning();
+		LocalServer.start();
+		LocalServer.indexPageHandler().setTarget(this);
+	}
 }
 
 void StorageWizardDialog::close() {
-#ifdef USE_SDL_NET
-	if (_stopServerOnClose) LocalServer.stopOnIdle();
-	LocalServer.indexPageHandler().setTarget(nullptr);
-#endif
+	if (couldUseLocalServer()) {
+		if (_stopServerOnClose) LocalServer.stopOnIdle();
+		LocalServer.indexPageHandler().setTarget(nullptr);
+	}
 	Dialog::close();
 }
 
@@ -182,12 +182,10 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		close();
 		break;
 	}
-#ifdef USE_SDL_NET
 	case kStorageCodePassedCmd:
 		CloudMan.connectStorage(_storageId, LocalServer.indexPageHandler().code());
 		_close = true;		
 		break;
-#endif
 	default:
 		Dialog::handleCommand(sender, cmd, data);
 	}
@@ -210,12 +208,18 @@ Common::String StorageWizardDialog::getUrl() const {
 	case Cloud::kStorageGoogleDriveId: url += "gd"; break;
 	case Cloud::kStorageBoxId: url += "bx"; break;
 	}
-#ifdef USE_SDL_NET
-	url += "s";
-#endif
+	
+	if (couldUseLocalServer()) url += "s";
 	return url;
 }
 
+bool StorageWizardDialog::couldUseLocalServer() const {
+#ifdef USE_SDL_NET
+	return Networking::LocalWebserver::getPort() == Networking::LocalWebserver::DEFAULT_SERVER_PORT;
+#else
+	return false;
+#endif
+}
 
 int StorageWizardDialog::decodeHashchar(char c) {
 	const char HASHCHARS[65] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ?!";	
