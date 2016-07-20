@@ -225,9 +225,11 @@ public:
 	 * @param[in] size		Number of bytes to allocate for the hunk entry
 	 * @param[in] hunk_type	A descriptive string for the hunk entry, for
 	 *						debugging purposes
+	 * @param[in] gc        Whether to make the hunk eligible for garbage
+	 *                      collection
 	 * @return				The offset of the freshly allocated hunk entry
 	 */
-	reg_t allocateHunkEntry(const char *hunk_type, int size);
+	reg_t allocateHunkEntry(const char *hunk_type, int size, bool gc);
 
 	/**
 	 * Deallocates a hunk entry

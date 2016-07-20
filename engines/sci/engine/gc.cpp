@@ -143,22 +143,29 @@ AddrSet *findAllActiveReferences(EngineState *s) {
 	const Common::Array<SegmentObj *> &heap = s->_segMan->getSegments();
 	uint heapSize = heap.size();
 
-	// Init: Explicitly loaded scripts
 	for (uint i = 1; i < heapSize; i++) {
-		if (heap[i] && heap[i]->getType() == SEG_TYPE_SCRIPT) {
-			Script *script = (Script *)heap[i];
+		if (heap[i]) {
+			// Init: Explicitly loaded scripts
+			if (heap[i]->getType() == SEG_TYPE_SCRIPT) {
+				Script *script = (Script *)heap[i];
 
-			if (script->getLockers()) { // Explicitly loaded?
-				wm.pushArray(script->listObjectReferences());
+				if (script->getLockers()) { // Explicitly loaded?
+					wm.pushArray(script->listObjectReferences());
+				}
+			}
+
+			// Init: Explicitly opted-out hunks
+			else if (heap[i]->getType() == SEG_TYPE_HUNK) {
+				HunkTable *ht = static_cast<HunkTable *>(heap[i]);
+
+				for (uint j = 0; j < ht->_table.size(); j++) {
+					if (!ht->_table[j].data.gc) {
+						wm.push(make_reg(i, j));
+					}
+				}
 			}
 		}
 	}
-
-#ifdef ENABLE_SCI32
-	// Init: ScrollWindows
-	if (g_sci->_gfxControls32)
-		wm.pushArray(g_sci->_gfxControls32->listObjectReferences());
-#endif
 
 	debugC(kDebugLevelGC, "[GC] -- Finished explicitly loaded scripts, done with root set");
 

@@ -195,14 +195,14 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 
 	if (subop == 0) {
 		TextAlign alignment = (TextAlign)readSelectorValue(segMan, object, SELECTOR(mode));
-		return g_sci->_gfxText32->createFontBitmap(width, height, rect, text, foreColor, backColor, skipColor, fontId, alignment, borderColor, dimmed, true);
+		return g_sci->_gfxText32->createFontBitmap(width, height, rect, text, foreColor, backColor, skipColor, fontId, alignment, borderColor, dimmed, true, true);
 	} else {
 		CelInfo32 celInfo;
 		celInfo.type = kCelTypeView;
 		celInfo.resourceId = readSelectorValue(segMan, object, SELECTOR(view));
 		celInfo.loopNo = readSelectorValue(segMan, object, SELECTOR(loop));
 		celInfo.celNo = readSelectorValue(segMan, object, SELECTOR(cel));
-		return g_sci->_gfxText32->createFontBitmap(celInfo, rect, text, foreColor, backColor, fontId, skipColor, borderColor, dimmed);
+		return g_sci->_gfxText32->createFontBitmap(celInfo, rect, text, foreColor, backColor, fontId, skipColor, borderColor, dimmed, true);
 	}
 }
 
@@ -534,7 +534,7 @@ reg_t kBitmapCreate(EngineState *s, int argc, reg_t *argv) {
 	int16 scaledHeight = argc > 5 ? argv[5].toSint16() : g_sci->_gfxText32->_scaledHeight;
 	bool useRemap = argc > 6 ? argv[6].toSint16() : false;
 
-	BitmapResource bitmap(s->_segMan, width, height, skipColor, 0, 0, scaledWidth, scaledHeight, 0, useRemap);
+	BitmapResource bitmap(s->_segMan, width, height, skipColor, 0, 0, scaledWidth, scaledHeight, 0, useRemap, true);
 	memset(bitmap.getPixels(), backColor, width * height);
 	return bitmap.getObject();
 }
@@ -604,7 +604,7 @@ reg_t kBitmapDrawText(EngineState *s, int argc, reg_t *argv) {
 	// Then clips. But this seems stupid.
 	textRect.clip(Common::Rect(bitmap.getWidth(), bitmap.getHeight()));
 
-	reg_t textBitmapObject = g_sci->_gfxText32->createFontBitmap(textRect.width(), textRect.height(), Common::Rect(textRect.width(), textRect.height()), text, foreColor, backColor, skipColor, fontId, alignment, borderColor, dimmed, false);
+	reg_t textBitmapObject = g_sci->_gfxText32->createFontBitmap(textRect.width(), textRect.height(), Common::Rect(textRect.width(), textRect.height()), text, foreColor, backColor, skipColor, fontId, alignment, borderColor, dimmed, false, false);
 	CelObjMem textCel(textBitmapObject);
 	textCel.draw(bitmap.getBuffer(), textRect, Common::Point(textRect.left, textRect.top), false);
 	s->_segMan->freeHunkEntry(textBitmapObject);

@@ -205,6 +205,7 @@ struct Hunk {
 	void *mem;
 	uint32 size;
 	const char *type;
+	bool gc;
 };
 
 template<typename T>

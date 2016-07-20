@@ -393,7 +393,7 @@ void SegManager::freeHunkEntry(reg_t addr) {
 	ht->freeEntryContents(addr.getOffset());
 }
 
-reg_t SegManager::allocateHunkEntry(const char *hunk_type, int size) {
+reg_t SegManager::allocateHunkEntry(const char *hunk_type, int size, bool gc) {
 	HunkTable *table;
 	int offset;
 
@@ -412,6 +412,7 @@ reg_t SegManager::allocateHunkEntry(const char *hunk_type, int size) {
 	h->mem = malloc(size);
 	h->size = size;
 	h->type = hunk_type;
+	h->gc = gc;
 
 	return addr;
 }

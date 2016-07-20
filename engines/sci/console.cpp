@@ -1984,7 +1984,7 @@ bool Console::cmdShowSavedBits(int argc, const char **argv) {
 
 	byte bakMask = GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY | GFX_SCREEN_MASK_CONTROL;
 	int bakSize = _engine->_gfxScreen->bitsGetDataSize(rect, bakMask);
-	reg_t bakScreen = segman->allocateHunkEntry("show_saved_bits backup", bakSize);
+	reg_t bakScreen = segman->allocateHunkEntry("show_saved_bits backup", bakSize, true);
 	byte* bakMemory = segman->getHunkPointer(bakScreen);
 	assert(bakMemory);
 	_engine->_gfxScreen->bitsSave(rect, bakMask, bakMemory);

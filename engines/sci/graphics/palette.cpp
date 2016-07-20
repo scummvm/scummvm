@@ -626,7 +626,7 @@ void GfxPalette::kernelAnimateSet() {
 
 reg_t GfxPalette::kernelSave() {
 	SegManager *segMan = g_sci->getEngineState()->_segMan;
-	reg_t memoryId = segMan->allocateHunkEntry("kPalette(save)", 1024);
+	reg_t memoryId = segMan->allocateHunkEntry("kPalette(save)", 1024, true);
 	byte *memoryPtr = segMan->getHunkPointer(memoryId);
 	if (memoryPtr) {
 		for (int colorNr = 0; colorNr < 256; colorNr++) {

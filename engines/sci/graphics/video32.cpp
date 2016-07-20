@@ -117,6 +117,7 @@ VMDPlayer::IOStatus VMDPlayer::close() {
 
 	if (!_planeIsOwned && _screenItem != nullptr) {
 		g_sci->_gfxFrameout->deleteScreenItem(*_screenItem);
+		g_sci->getEngineState()->_segMan->freeHunkEntry(_screenItem->_celInfo.bitmap);
 		_screenItem = nullptr;
 	} else if (_plane != nullptr) {
 		g_sci->_gfxFrameout->deletePlane(*_plane);
@@ -231,7 +232,7 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 		const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
 		const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
 
-		BitmapResource vmdBitmap(_segMan, vmdRect.width(), vmdRect.height(), 255, 0, 0, screenWidth, screenHeight, 0, false);
+		BitmapResource vmdBitmap(_segMan, vmdRect.width(), vmdRect.height(), 255, 0, 0, screenWidth, screenHeight, 0, false, false);
 
 		if (screenWidth != scriptWidth || screenHeight != scriptHeight) {
 			mulru(vmdRect, Ratio(scriptWidth, screenWidth), Ratio(scriptHeight, screenHeight), 1);
