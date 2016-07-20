@@ -508,7 +508,7 @@ void CGameObject::petSetRemoteTarget() {
 void CGameObject::playMovie(uint flags) {
 	_frameNumber = -1;
 
-	if (_surface && !_resource.empty()) {
+	if (!_surface && !_resource.empty()) {
 		loadResource(_resource);
 		_resource.clear();
 	}
