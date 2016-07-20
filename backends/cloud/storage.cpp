@@ -128,7 +128,8 @@ SavesSyncRequest *Storage::syncSaves(BoolCallback callback, Networking::ErrorCal
 		_runningRequestsMutex.unlock();
 		return _savesSyncRequest;
 	}
-	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+	if (!callback) callback = new Common::Callback<Storage, BoolResponse>(this, &Storage::savesSyncDefaultCallback);
+	if (!errorCallback) errorCallback = new Common::Callback<Storage, Networking::ErrorResponse>(this, &Storage::savesSyncDefaultErrorCallback);
 	_savesSyncRequest = new SavesSyncRequest(this, callback, errorCallback);
 	_syncRestartRequestsed = false;
 	_runningRequestsMutex.unlock();	
@@ -190,6 +191,28 @@ void Storage::setSyncTarget(GUI::CommandReceiver *target) {
 	if (_savesSyncRequest)
 		_savesSyncRequest->setTarget(target);
 	_runningRequestsMutex.unlock();
+}
+
+void Storage::savesSyncDefaultCallback(BoolResponse response) {
+	_runningRequestsMutex.lock();
+	_savesSyncRequest = nullptr;
+	_runningRequestsMutex.unlock();
+
+	if (!response.value) warning("SavesSyncRequest called success callback with `false` argument");
+	g_system->displayMessageOnOSD(_("Saves sync complete."));
+}
+
+void Storage::savesSyncDefaultErrorCallback(Networking::ErrorResponse error) {
+	_runningRequestsMutex.lock();
+	_savesSyncRequest = nullptr;
+	_runningRequestsMutex.unlock();
+
+	printErrorResponse(error);
+
+	if (error.interrupted)
+		g_system->displayMessageOnOSD(_("Saves sync was cancelled."));
+	else
+		g_system->displayMessageOnOSD(_("Saves sync failed.\nCheck your Internet connection."));
 }
 
 ///// DownloadFolderRequest-related /////

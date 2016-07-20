@@ -181,6 +181,14 @@ public:
 	/** Sets SavesSyncRequest's target to given CommandReceiver. */
 	virtual void setSyncTarget(GUI::CommandReceiver *target);
 
+protected:
+	/** Finishes the sync. Shows an OSD message. */
+	virtual void savesSyncDefaultCallback(BoolResponse response);
+
+	/** Finishes the sync. Shows an OSD message. */
+	virtual void savesSyncDefaultErrorCallback(Networking::ErrorResponse error);
+
+public:
 	///// DownloadFolderRequest-related /////
 
 	/** Starts a folder download. */
