@@ -1088,7 +1088,10 @@ void ThemeEngine::queueDDTextClip(TextData type, TextColor color, const Common::
 	area.clip(_screen.w, _screen.h);
 	Common::Rect textArea = drawableTextArea;
 	if (textArea.isEmpty()) textArea = clippingArea;
-	else textArea.clip(clippingArea);
+	else {
+		textArea.clip(clippingArea);
+		if (textArea.isEmpty()) textArea = Common::Rect(0, 0, 1, 1); // one small pixel should be invisible enough
+	}
 
 	ThemeItemTextData *q = new ThemeItemTextData(this, _texts[type], _textColors[color], area, textArea, text, alignH, alignV, ellipsis, restoreBg, deltax);
 
