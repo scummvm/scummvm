@@ -240,7 +240,7 @@ void CGameObject::draw(CScreenManager *screenManager) {
 }
 
 Rect CGameObject::getBounds() const {
-	return (_surface && _surface->proc45()) ? _bounds : Rect();
+	return (_surface && _surface->hasFrame()) ? _bounds : Rect();
 }
 
 void CGameObject::viewChange() {
@@ -618,8 +618,8 @@ int CGameObject::getMovieFrame() const {
 	return _initialFrame;
 }
 
-int CGameObject::getSurface45() const {
-	return _surface ? _surface->proc45() : 0;
+bool CGameObject::surfaceHasFrame() const {
+	return _surface ? _surface->hasFrame() : false;
 }
 
 void CGameObject::loadSound(const CString &name) {

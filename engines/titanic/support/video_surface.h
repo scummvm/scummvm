@@ -67,7 +67,7 @@ protected:
 	Graphics::ManagedSurface *_movieFrameSurface;
 	int _field48;
 	int _videoSurfaceNum;
-	int _field50;
+	bool _hasFrame;
 	int _lockCount;
 public:
 	CMovie *_movie;
@@ -257,7 +257,10 @@ public:
 	 */
 	virtual void transPixelate() = 0;
 
-	virtual bool proc45();
+	/**
+	 * Returns true if there's a frame to display on the video surface
+	 */
+	virtual bool hasFrame();
 
 	/**
 	 * Duplicates movie frame surface

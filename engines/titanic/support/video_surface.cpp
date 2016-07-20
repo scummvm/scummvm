@@ -33,7 +33,7 @@ CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
 		_screenManager(screenManager), _rawSurface(nullptr), _movie(nullptr),
 		_pendingLoad(false), _transBlitFlag(false), _fastBlitFlag(false),
 		_movieFrameSurface(nullptr), _transparencyMode(TRANS_DEFAULT), 
-		_field48(0), _field50(1), _lockCount(0) {
+		_field48(0), _hasFrame(true), _lockCount(0) {
 	_videoSurfaceNum = _videoSurfaceCounter++;
 }
 
@@ -170,12 +170,12 @@ uint CVideoSurface::getTransparencyColor() {
 	return val;
 }
 
-bool CVideoSurface::proc45() {
-	if (_field50) {
-		_field50 = 0;
+bool CVideoSurface::hasFrame() {
+	if (_hasFrame) {
+		_hasFrame = false;
 		return true;
 	} else if (_movie) {
-		return _movie->get10();
+		return _movie->hasVideoFrame();
 	} else {
 		return false;
 	}
@@ -519,7 +519,7 @@ bool OSVideoSurface::loadIfReady() {
 	if (hasSurface()) {
 		return true;
 	} else if (_pendingLoad) {
-		_field50 = 1;
+		_hasFrame = true;
 		load();
 		return true;
 	} else {

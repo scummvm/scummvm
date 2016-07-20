@@ -81,7 +81,7 @@ Rect CPetGfxElement::getBounds() const {
 	if (!obj)
 		obj = _object0;
 
-	if (obj && obj->getSurface45())
+	if (obj && obj->surfaceHasFrame())
 		return _bounds;
 	else
 		return Rect();

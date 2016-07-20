@@ -49,7 +49,7 @@ protected:
 	void addToPlayingMovies();
 public:
 	bool _handled;
-	int _field10;
+	bool _hasVideoFrame;
 	int _field14;
 public:
 	static CMovieList *_playingMovies;
@@ -143,7 +143,10 @@ public:
 	 */
 	bool isActive() const;
 
-	bool get10();
+	/**
+	 * Returns true if there's a video frame
+	 */
+	bool hasVideoFrame();
 };
 
 class OSMovie : public CMovie {

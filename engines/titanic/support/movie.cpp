@@ -36,7 +36,7 @@ namespace Titanic {
 CMovieList *CMovie::_playingMovies;
 CVideoSurface *CMovie::_movieSurface;
 
-CMovie::CMovie() : ListItem(), _handled(false), _field10(0),
+CMovie::CMovie() : ListItem(), _handled(false), _hasVideoFrame(false),
 		_field14(0) {
 }
 
@@ -67,9 +67,9 @@ bool CMovie::isActive() const {
 	return _playingMovies->contains(this);
 }
 
-bool CMovie::get10() {
-	if (_field10) {
-		_field10 = 0;
+bool CMovie::hasVideoFrame() {
+	if (_hasVideoFrame) {
+		_hasVideoFrame = 0;
 		return true;
 	} else {
 		return false;
@@ -171,6 +171,9 @@ bool OSMovie::handleEvents(CMovieEventList &events) {
 		_videoSurface->setMovieFrameSurface(_aviSurface.getSecondarySurface());
 	}
 
+	// Flag there's a video frame
+	_hasVideoFrame = true;
+
 	return _aviSurface._isPlaying;
 }
 
@@ -192,7 +195,7 @@ void OSMovie::movieStarted() {
 
 	// Register the movie in the playing list
 	addToPlayingMovies();
-	_field10 = 1;
+	_hasVideoFrame = true;
 }
 
 void OSMovie::setFrameRate(double rate) {

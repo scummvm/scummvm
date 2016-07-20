@@ -639,7 +639,11 @@ public:
 	 */
 	int getPriorClass() const;
 
-	int getSurface45() const;
+	/**
+	 * Returns true if there's an attached surface which has a frame
+	 * ready for display
+	 */
+	bool surfaceHasFrame() const;
 
 	/**
 	 * Finds an item in various system areas
