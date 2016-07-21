@@ -202,7 +202,7 @@ void CProjectItem::loadGame(int slotId) {
 void CProjectItem::saveGame(int slotId, const CString &desc) {
 	CompressedFile file;
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(
-		g_vm->generateSaveName(slotId));
+		g_vm->generateSaveName(slotId), false);
 	file.open(saveFile);
 
 	// Signal the game is being saved
@@ -529,7 +529,7 @@ void CProjectItem::writeSavegameHeader(SimpleFile *file, TitanicSavegameHeader &
 	file->writeUint16LE(td.tm_mday);
 	file->writeUint16LE(td.tm_hour);
 	file->writeUint16LE(td.tm_min);
-	file->writeUint16LE(g_vm->_events->getFrameCounter());
+	file->writeUint32LE(g_vm->_events->getFrameCounter());
 }
 
 Graphics::Surface *CProjectItem::createThumbnail() {
