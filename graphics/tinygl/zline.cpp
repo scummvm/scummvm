@@ -31,22 +31,41 @@
 namespace TinyGL {
 
 template <bool kDepthWrite>
-FORCEINLINE void FrameBuffer::putPixel(unsigned int pixelOffset, int color, unsigned int z) {
-	if (scissorPixel(pixelOffset))
+FORCEINLINE void FrameBuffer::putPixel(unsigned int pixelOffset, int color, int x, int y, unsigned int z) {
+	if (_enableScissor)
+		putPixel<kDepthWrite, true>(pixelOffset, color, x, y, z);
+	else
+		putPixel<kDepthWrite, false>(pixelOffset, color, x, y, z);
+}
+
+template <bool kDepthWrite, bool kEnableScissor>
+FORCEINLINE void FrameBuffer::putPixel(unsigned int pixelOffset, int color, int x, int y, unsigned int z) {
+	if (kEnableScissor && scissorPixel(x, y)) {
 		return;
+	}
 	unsigned int *pz = _zbuf + pixelOffset;
 	if (compareDepth(z, *pz)) {
 		writePixel<true, true, kDepthWrite>(pixelOffset, color, z);
 	}
 }
 
-FORCEINLINE void FrameBuffer::putPixel(unsigned int pixelOffset, int color) {
-	if (scissorPixel(pixelOffset))
+template <bool kEnableScissor>
+FORCEINLINE void FrameBuffer::putPixel(unsigned int pixelOffset, int color, int x, int y) {
+	if (kEnableScissor && scissorPixel(x, y)) {
 		return;
+	}
 	writePixel<true, true>(pixelOffset, color);
 }
 
 template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite>
+FORCEINLINE void FrameBuffer::drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2) {
+	if (_enableScissor)
+		drawLine<kInterpRGB, kInterpZ, kDepthWrite, true>(p1, p2);
+	else
+		drawLine<kInterpRGB, kInterpZ, kDepthWrite, false>(p1, p2);
+}
+
+template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite, bool kEnableScissor>
 void FrameBuffer::drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2) {
 	// Based on Bresenham's line algorithm, as implemented in
 	// https://rosettacode.org/wiki/Bitmap/Bresenham%27s_line_algorithm#C
@@ -57,12 +76,16 @@ void FrameBuffer::drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2) {
 
 	// Where we are in unidimensional framebuffer coordinate
 	unsigned int pixelOffset = p1->y * xsize + p1->x;
+	// and in 2d
+	int x = p1->x;
+	int y = p1->y;
 
 	// How to move on each axis, in both coordinates systems
 	const int dx = abs(p2->x - p1->x);
 	const int inc_x = p1->x < p2->x ? 1 : -1;
 	const int dy = abs(p2->y - p1->y);
-	const int inc_y = p1->y < p2->y ? xsize : -xsize;
+	const int inc_y = p1->y < p2->y ? 1 : -1;
+	const int inc_y_pixel = p1->y < p2->y ? xsize : -xsize;
 
 	// When to move on each axis
 	int err = (dx > dy ? dx : -dy) / 2;
@@ -93,17 +116,19 @@ void FrameBuffer::drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2) {
 	}
 	while (n--) {
 		if (kInterpZ)
-			putPixel<kDepthWrite>(pixelOffset, color, z);
+			putPixel<kDepthWrite, kEnableScissor>(pixelOffset, color, x, y, z);
 		else
-			putPixel(pixelOffset, color);
+			putPixel<kEnableScissor>(pixelOffset, color, x, y);
 		e2 = err;
 		if (e2 > -dx) {
 			err -= dy;
 			pixelOffset += inc_x;
+			x += inc_x;
 		}
 		if (e2 < dy) {
 			err += dx;
-			pixelOffset += inc_y;
+			pixelOffset += inc_y_pixel;
+			y += inc_y;
 		}
 		if (kInterpZ)
 			z += sz;
@@ -121,9 +146,9 @@ void FrameBuffer::plot(ZBufferPoint *p) {
 	const int col = RGB_TO_PIXEL(p->r, p->g, p->b);
 	const unsigned int z = p->z;
 	if (_depthWrite && _depthTestEnabled)
-		putPixel<true>(pixelOffset, col, z);
+		putPixel<true>(pixelOffset, col, p->x, p->y, z);
 	else 
-		putPixel<false>(pixelOffset, col, z);
+		putPixel<false>(pixelOffset, col, p->x, p->y, z);
 }
 
 void FrameBuffer::fillLineFlatZ(ZBufferPoint *p1, ZBufferPoint *p2) {
