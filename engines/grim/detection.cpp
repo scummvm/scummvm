@@ -30,6 +30,7 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/translation.h"
 
 namespace Grim {
 
@@ -53,8 +54,8 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	{
 		GAMEOPTION_LOAD_DATAUSR,
 		{
-			"Load user patch (unsupported)",
-			"Load an user patch. Please note that the ResidualVM-team doesn't provide support for using such patches.",
+			_s("Load user patch (unsupported)"),
+			_s("Load an user patch. Please note that the ResidualVM-team doesn't provide support for using such patches."),
 			"datausr_load",
 			false
 		}
@@ -62,8 +63,8 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	{
 		GAMEOPTION_SHOW_FPS,
 		{
-			"Show FPS",
-			"Show the current FPS-rate, while you play.",
+			_s("Show FPS"),
+			_s("Show the current FPS-rate, while you play."),
 			"show_fps",
 			false
 		}
