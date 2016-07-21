@@ -54,6 +54,8 @@ static void init_entry(int32 tag) {
 		ttype(luaT_getim(tag, i)) = LUA_T_NIL;
 }
 
+static bool tmFBAdded = false;
+
 void luaT_init() {
 	int32 t;
 	IMtable_size = NUM_TAGS * 2;
@@ -61,6 +63,8 @@ void luaT_init() {
 	IMtable = luaM_newvector(IMtable_size, struct IM);
 	for (t = -(IMtable_size - 1); t <= 0; t++)
 		init_entry(t);
+
+	tmFBAdded = false;
 }
 
 int32 lua_newtag() {
@@ -180,8 +184,6 @@ static luaL_reg tmFB[] = {
 	{"  errorFB", errorFB},
 	{"  nilFB", nilFB}
 };
-
-static bool tmFBAdded = false;
 
 void luaT_setfallback() {
 	static const char *oldnames [] = { "error", "getglobal", "arith", "order", nullptr };
