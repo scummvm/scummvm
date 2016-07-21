@@ -1717,7 +1717,7 @@ bool Logic::fnSpeakMe(uint32 targetId, uint32 mesgNum, uint32 animNum) {
 	   on other screens, as the lack of speech files for these lines
 	   will cause Foster's speech to be aborted if the timing is bad.
 	*/
-	if (targetId == 0x4039 && animNum == 0x9B && Logic::_scriptVariables[SCREEN] != 38) {
+	if (targetId == ID_DANIELLE && animNum == 0x9B && Logic::_scriptVariables[SCREEN] != 38) {
 		return false;
 	}
 
