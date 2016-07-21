@@ -276,7 +276,9 @@ RasterizationDrawCall::RasterizationDrawCall() : DrawCall(DrawCall_Rasterization
 	_drawTriangleBack = c->draw_triangle_back;
 	memcpy(_vertex, c->vertex, sizeof(TinyGL::GLVertex) * _vertexCount);
 	_state = captureState();
-	computeDirtyRegion();
+	if (c->_enableDirtyRectangles) {
+		computeDirtyRegion();
+	}
 }
 
 void RasterizationDrawCall::computeDirtyRegion() {
