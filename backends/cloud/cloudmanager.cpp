@@ -45,7 +45,6 @@ const char *const CloudManager::kStoragePrefix = "storage_";
 CloudManager::CloudManager() : _currentStorageIndex(0), _activeStorage(nullptr) {}
 
 CloudManager::~CloudManager() {
-	//TODO: do we have to save storages on manager destruction?
 	delete _activeStorage;
 	freeStorages();
 }
@@ -161,6 +160,11 @@ void CloudManager::freeStorages() {
 	_storagesToRemove.clear();
 }
 
+void CloudManager::passNoStorageConnected(Networking::ErrorCallback errorCallback) const {
+	if (errorCallback == nullptr) return;
+	(*errorCallback)(Networking::ErrorResponse(nullptr, false, true, "No Storage connected!", -1));
+}
+
 Storage *CloudManager::getCurrentStorage() const {
 	return _activeStorage;
 }
@@ -249,9 +253,9 @@ Networking::Request *CloudManager::listDirectory(Common::String path, Storage::L
 	Storage *storage = getCurrentStorage();
 	if (storage) return storage->listDirectory(path, callback, errorCallback, recursive);
 	else {
+		passNoStorageConnected(errorCallback);
 		delete callback;
 		delete errorCallback;
-		//TODO: should we call errorCallback?
 	}
 	return nullptr;
 }
@@ -260,9 +264,9 @@ Networking::Request *CloudManager::downloadFolder(Common::String remotePath, Com
 	Storage *storage = getCurrentStorage();
 	if (storage) return storage->downloadFolder(remotePath, localPath, callback, errorCallback, recursive);
 	else {
+		passNoStorageConnected(errorCallback);
 		delete callback;
 		delete errorCallback;
-		//TODO: should we call errorCallback?
 	}
 	return nullptr;
 }
@@ -271,9 +275,9 @@ Networking::Request *CloudManager::info(Storage::StorageInfoCallback callback, N
 	Storage *storage = getCurrentStorage();
 	if (storage) return storage->info(callback, errorCallback);
 	else {
+		passNoStorageConnected(errorCallback);
 		delete callback;
 		delete errorCallback;
-		//TODO: should we call errorCallback?
 	}
 	return nullptr;
 }
@@ -289,6 +293,10 @@ SavesSyncRequest *CloudManager::syncSaves(Storage::BoolCallback callback, Networ
 	if (storage) {
 		setStorageLastSync(_currentStorageIndex, "???"); //TODO get the date
 		return storage->syncSaves(callback, errorCallback);
+	} else {
+		passNoStorageConnected(errorCallback);
+		delete callback;
+		delete errorCallback;
 	}
 	return nullptr;
 }

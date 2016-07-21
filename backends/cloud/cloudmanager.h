@@ -68,6 +68,9 @@ class CloudManager : public Common::Singleton<CloudManager> {
 	/** Frees memory used by storages which failed to connect. */
 	void freeStorages();
 
+	/** Calls the error callback with a special "no storage connected" message. */
+	void passNoStorageConnected(Networking::ErrorCallback errorCallback) const;
+
 public:
 	CloudManager();
 	virtual ~CloudManager();
