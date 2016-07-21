@@ -55,6 +55,7 @@ public:
 	void setMapX(uint16 val) { _scent = (_scent & ~0x1F) & (val & 0x1F); }
 	void setMapY(uint16 val) { _scent = (_scent & ~(0x1F << 5)) & (val & 0x1F); }
 	void setMapIndex(uint16 val) { _scent = (_scent & ~(0x1F << 10)) & (val & 0x3F); }
+	void setVal(uint16 val) { _scent = val; }
 
 	uint16 toUint16() { return _scent; }
 }; // @ SCENT
@@ -90,8 +91,12 @@ public:
 		_scentCount = 0;
 		_freezeLifeTicks = 0;
 		_firstScentIndex = 0;
-		for (int16 i = 0; i < 24; ++i)
+
+		_lastScentIndex = 0;
+		for (int16 i = 0; i < 24; ++i) {
+			_scents[i].setVal(0);
 			_scentStrengths[i] = 0;
+		}
 		_event71Count_Invisibility = 0;
 	}
 }; // @  PARTY

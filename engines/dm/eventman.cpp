@@ -747,7 +747,7 @@ void EventManager::f380_processCommandQueue() {
 	if (cmdType == k147_CommandFreezeGame) {
 		_vm->_g301_gameTimeTicking = false;
 		_vm->_menuMan->f456_drawDisabledMenu();
-		_vm->_displayMan->f134_fillBitmap(_vm->_displayMan->_g296_bitmapViewport, k0_ColorBlack, 224, 136);
+		_vm->_displayMan->f134_fillBitmap(_vm->_displayMan->_g296_bitmapViewport, k0_ColorBlack, 112, 136);
 		// TODO: localization
 		_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, 81, 69, k4_ColorCyan, k0_ColorBlack,
 											 "GAME FROZEN", k136_heightViewport);
