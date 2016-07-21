@@ -135,11 +135,14 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_mode = _previousMode = NormalMode;
 	_flipEnable = true;
 	int speed = ConfMan.getInt("engine_speed");
-	if (speed <= 0 || speed > 100)
+	if (speed == 0) {
+		_speedLimitMs = 0;
+	} else if (speed < 0 || speed > 100) {
 		_speedLimitMs = 1000 / 60;
-	else
+		ConfMan.setInt("engine_speed", 1000 / _speedLimitMs);
+	} else {
 		_speedLimitMs = 1000 / speed;
-	ConfMan.setInt("engine_speed", 1000 / _speedLimitMs);
+	}
 	_listFilesIter = nullptr;
 	_savedState = nullptr;
 	_fps[0] = 0;
@@ -734,7 +737,7 @@ void GrimEngine::doFlip() {
 		unsigned int currentTime = g_system->getMillis();
 		unsigned int delta = currentTime - _lastFrameTime;
 		if (delta > 500) {
-			sprintf(_fps, "%7.2f", (double)(_frameCounter * 1000) / (double)delta);
+			snprintf(_fps, sizeof(_fps), "%7.2f", (double)(_frameCounter * 1000) / (double)delta);
 			_frameCounter = 0;
 			_lastFrameTime = currentTime;
 		}
