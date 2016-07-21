@@ -481,11 +481,7 @@ void BitmapData::convertToColorFormat(int num, const Graphics::PixelFormat &form
 	Graphics::PixelBuffer dst(format, _width * _height, DisposeAfterUse::NO);
 
 	for (int i = 0; i < _width * _height; ++i) {
-		if (_data[num].getValueAt(i) == 0xf81f) { //transparency
-			dst.setPixelAt(i, 0xf81f);
-		} else {
-			dst.setPixelAt(i, _data[num]);
-		}
+		dst.setPixelAt(i, _data[num]);
 	}
 	_data[num].free();
 	_data[num] = dst;

@@ -943,6 +943,7 @@ void GfxTinyGL::turnOffLight(int lightId) {
 }
 
 void GfxTinyGL::createBitmap(BitmapData *bitmap) {
+	const int colorKeyValue = _pixelFormat.ARGBToColor(0, 255, 0, 255);
 	if (bitmap->_format == 1) {
 		bitmap->convertToColorFormat(_pixelFormat);
 	}	
@@ -975,7 +976,6 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 			Graphics::tglUploadBlitImage(imgs[pic], sourceSurface, 0, false);
 		}
 	} else {
-		const int colorKeyValue = 0xFFFF00FF;
 		for (int i = 0; i < bitmap->_numImages; ++i) {
 			imgs[i] = Graphics::tglGenBlitImage();
 			const Graphics::PixelBuffer &imageBuffer = bitmap->getImageData(i);
@@ -1076,6 +1076,12 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 	const Color &fgColor = text->getFGColor();
 	TextObjectData *userData = new TextObjectData[numLines];
 	text->setUserData(userData);
+	uint32 kKitmapColorkey = _pixelFormat.RGBToColor(0, 255, 0);
+	const uint32 blackColor = _pixelFormat.RGBToColor(0, 0, 0);
+	const uint32 color = _pixelFormat.RGBToColor(fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue());
+	while (color == kKitmapColorkey || blackColor == kKitmapColorkey) {
+		kKitmapColorkey += 1;
+	}
 	for (int j = 0; j < numLines; j++) {
 		const Common::String &currentLine = lines[j];
 
@@ -1109,21 +1115,14 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 		Graphics::PixelBuffer buf(_pixelFormat, width * height, DisposeAfterUse::YES);
 
 		uint8 *bitmapData = _textBitmap;
-		uint8 r = fgColor.getRed();
-		uint8 g = fgColor.getGreen();
-		uint8 b = fgColor.getBlue();
-		uint32 color = _zb->cmode.RGBToColor(r, g, b);
-
-		if (color == 0xf81f)
-			color = 0xf81e;
 
 		int txData = 0;
 		for (int i = 0; i < width * height; i++, txData++, bitmapData++) {
 			byte pixel = *bitmapData;
 			if (pixel == 0x00) {
-				buf.setPixelAt(txData, 0xf81f);
+				buf.setPixelAt(txData, kKitmapColorkey);
 			} else if (pixel == 0x80) {
-				buf.setPixelAt(txData, 0);
+				buf.setPixelAt(txData, blackColor);
 			} else if (pixel == 0xFF) {
 				buf.setPixelAt(txData, color);
 			}
@@ -1131,8 +1130,6 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 
 		userData[j].width = width;
 		userData[j].height = height;
-
-		const int kKitmapColorkey = 0xFFFF00FF;
 
 		Graphics::Surface sourceSurface;
 		sourceSurface.setPixels(buf.getRawBuffer());
