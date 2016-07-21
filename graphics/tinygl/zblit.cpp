@@ -52,7 +52,7 @@ public:
 		if (applyColorKey) {
 			for (int x = 0;  x < surface.w; x++) {
 				for (int y = 0; y < surface.h; y++) {
-					uint32 pixel = dataBuffer.getValueAt(y * surface.w + x);
+					uint32 pixel = buffer.getValueAt(y * surface.w + x);
 					if (pixel == colorKey) {
 						// Color keyed pixels become transparent white.
 						dataBuffer.setPixelAt(y * surface.w + x, 0, 255, 255, 255); 
