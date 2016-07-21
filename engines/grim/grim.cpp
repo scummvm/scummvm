@@ -1061,6 +1061,7 @@ void GrimEngine::restoreGRIM() {
 }
 
 void GrimEngine::storeSaveGameImage(SaveGame *state) {
+	const Graphics::PixelFormat image_format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	int width = 250, height = 188;
 	Bitmap *screenshot;
 
@@ -1076,6 +1077,7 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 	if (screenshot) {
 		int size = screenshot->getWidth() * screenshot->getHeight();
 		screenshot->setActiveImage(0);
+		screenshot->getBitmapData()->convertToColorFormat(image_format);
 		uint16 *data = (uint16 *)screenshot->getData().getRawBuffer();
 		for (int l = 0; l < size; l++) {
 			state->writeLEUint16(data[l]);
