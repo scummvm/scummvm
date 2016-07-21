@@ -69,6 +69,7 @@ void FolderDownloadRequest::directoryListedCallback(Storage::ListDirectoryRespon
 	_pendingFiles = response.value;
 
 	// remove all directories
+	// non-empty directories would be created by DumpFile, and empty ones are just ignored
 	for (Common::Array<StorageFile>::iterator i = _pendingFiles.begin(); i != _pendingFiles.end();)
 		if (i->isDirectory())
 			_pendingFiles.erase(i);
@@ -111,7 +112,7 @@ void FolderDownloadRequest::downloadNextFile() {
 
 		_currentFile = _pendingFiles.back();
 		_pendingFiles.pop_back();
-	} while (_currentFile.isDirectory()); //TODO: may be create these directories (in case those are empty)
+	} while (_currentFile.isDirectory()); // directories are actually removed earlier, in the directoryListedCallback()
 
 	sendCommand(GUI::kDownloadProgressCmd, (int)(getProgress() * 100));
 
