@@ -214,9 +214,7 @@ struct FrameBuffer {
 		writePixel(pixel, 255, rSrc, gSrc, bSrc);
 	}
 
-	FORCEINLINE bool scissorPixel(int pixel) {
-		int x = pixel % xsize;
-		int y = pixel / xsize;
+	FORCEINLINE bool scissorPixel(int x, int y) {
 		return x < _clipRectangle.left || x > _clipRectangle.right || y < _clipRectangle.top || y > _clipRectangle.bottom;
 	}
 
@@ -468,9 +466,9 @@ struct FrameBuffer {
 private:
 
 	template <bool kDepthWrite>
-	FORCEINLINE void putPixel(unsigned int pixelOffset, int color, unsigned int z);
+	FORCEINLINE void putPixel(unsigned int pixelOffset, int color, int x, int y, unsigned int z);
 
-	FORCEINLINE void putPixel(unsigned int pixelOffset, int color);
+	FORCEINLINE void putPixel(unsigned int pixelOffset, int color, int x, int y);
 
 	template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite>
 	void drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2);
