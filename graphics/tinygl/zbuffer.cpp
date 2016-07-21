@@ -36,8 +36,6 @@
 
 namespace TinyGL {
 
-uint8 PSZB;
-
 // adr must be aligned on an 'int'
 void memset_s(void *adr, int val, int count) {
 	int n, v;
@@ -88,7 +86,7 @@ FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelBuffer &fra
 	this->xsize = width;
 	this->ysize = height;
 	this->cmode = frame_buffer.getFormat();
-	PSZB = this->pixelbytes = this->cmode.bytesPerPixel;
+	this->pixelbytes = this->cmode.bytesPerPixel;
 	this->pixelbits = this->cmode.bytesPerPixel * 8;
 	this->linesize = (xsize * this->pixelbytes + 3) & ~3;
 
@@ -177,8 +175,8 @@ void FrameBuffer::blitOffscreenBuffer(Buffer *buf) {
 			unsigned int d1 = buf->zbuf[i];
 			unsigned int d2 = this->_zbuf[i];
 			if (d1 > d2) {
-				const int offset = i * PSZB;
-				memcpy(this->pbuf.getRawBuffer() + offset, buf->pbuf + offset, PSZB);
+				const int offset = i * this->pixelbytes;
+				memcpy(this->pbuf.getRawBuffer() + offset, buf->pbuf + offset, this->pixelbytes);
 				memcpy(this->_zbuf + i, buf->zbuf + i, sizeof(int));
 			}
 		}

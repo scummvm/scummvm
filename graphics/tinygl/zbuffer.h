@@ -63,8 +63,6 @@ static const int DRAW_SMOOTH = 2;
 static const int DRAW_SHADOW_MASK = 3;
 static const int DRAW_SHADOW = 4;
 
-extern uint8 PSZB;
-
 struct Buffer {
 	byte *pbuf;
 	unsigned int *zbuf;
@@ -207,7 +205,20 @@ struct FrameBuffer {
 	}
 
 	FORCEINLINE void writePixel(int pixel, int value) {
-		writePixel<true, true>(pixel, value);
+		if (_alphaTestEnabled) {
+			writePixel<true>(pixel, value);
+		} else {
+			writePixel<false>(pixel, value);
+		}
+	}
+
+	template <bool kEnableAlphaTest>
+	FORCEINLINE void writePixel(int pixel, int value) {
+		if (_blendingEnabled) {
+			writePixel<kEnableAlphaTest, true>(pixel, value);
+		} else {
+			writePixel<kEnableAlphaTest, false>(pixel, value);
+		}
 	}
 
 	FORCEINLINE void writePixel(int pixel, byte rSrc, byte gSrc, byte bSrc) {
@@ -221,7 +232,20 @@ struct FrameBuffer {
 	}
 
 	FORCEINLINE void writePixel(int pixel, byte aSrc, byte rSrc, byte gSrc, byte bSrc) {
-		writePixel<true, true>(pixel, aSrc, rSrc, gSrc, bSrc);
+		if (_alphaTestEnabled) {
+			writePixel<true>(pixel, aSrc, rSrc, gSrc, bSrc);
+		} else {
+			writePixel<false>(pixel, aSrc, rSrc, gSrc, bSrc);
+		}
+	}
+
+	template <bool kEnableAlphaTest>
+	FORCEINLINE void writePixel(int pixel, byte aSrc, byte rSrc, byte gSrc, byte bSrc) {
+		if (_blendingEnabled) {
+			writePixel<kEnableAlphaTest, true>(pixel, aSrc, rSrc, gSrc, bSrc);
+		} else {
+			writePixel<kEnableAlphaTest, false>(pixel, aSrc, rSrc, gSrc, bSrc);
+		}
 	}
 
 	template <bool kEnableAlphaTest, bool kBlendingEnabled>

@@ -198,7 +198,7 @@ void tglPresentBufferDirtyRects(TinyGL::GLContext *c) {
 	// red rectangles are original dirty rects
 
 	bool blendingEnabled = c->fb->isBlendingEnabled();
-	bool alphaTestEnabled = c->fb->isAplhaTestEnabled();
+	bool alphaTestEnabled = c->fb->isAlphaTestEnabled();
 	c->fb->enableBlending(false);
 	c->fb->enableAlphaTest(false);
 
@@ -276,7 +276,9 @@ RasterizationDrawCall::RasterizationDrawCall() : DrawCall(DrawCall_Rasterization
 	_drawTriangleBack = c->draw_triangle_back;
 	memcpy(_vertex, c->vertex, sizeof(TinyGL::GLVertex) * _vertexCount);
 	_state = captureState();
-	computeDirtyRegion();
+	if (c->_enableDirtyRectangles) {
+		computeDirtyRegion();
+	}
 }
 
 void RasterizationDrawCall::computeDirtyRegion() {
@@ -285,9 +287,6 @@ void RasterizationDrawCall::computeDirtyRegion() {
 	int height = c->fb->ysize;
 
 	int left = width, right = 0, top = height, bottom = 0;
-
-	TinyGL::Vector4 minPc(FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX);
-	TinyGL::Vector4 maxPc(FLT_MIN, FLT_MIN, FLT_MIN, FLT_MIN);
 
 	bool pointInsideVolume = false;
 
@@ -401,8 +400,8 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 		gl_draw_line(c, &c->vertex[cnt - 1], &c->vertex[0]);
 		break;
 	case TGL_TRIANGLES:
-		for(int i = 0; i < cnt / 3; i++) {
-			gl_draw_triangle(c, &c->vertex[i * 3], &c->vertex[i * 3 + 1], &c->vertex[i * 3 + 2]);
+		for(int i = 0; i < cnt; i += 3) {
+			gl_draw_triangle(c, &c->vertex[i], &c->vertex[i + 1], &c->vertex[i + 2]);
 		}
 		break;
 	case TGL_TRIANGLE_STRIP:
