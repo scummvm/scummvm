@@ -105,6 +105,19 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// DOS Demo - English (from Bugreport #6946)
+	{
+		{
+			"queen",
+			"Demo Alt",
+			AD_ENTRY1s("queen.1", "2871fc6f8090f37fa1a0c556a1c97460", 3735447),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOSPEECH)
+		},
+	},
+
 	// DOS Interview Demo - English
 	{
 		{
@@ -131,20 +144,18 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
-#if 0
 	// Amiga Floppy - English
 	{
 		{
 			"queen",
 			"Floppy",
-			AD_ENTRY1s("queen.1", NULL, 351775), // TODO: Fill in correct MD5
+			AD_ENTRY1s("queen.1", "9c209c2cbc1730e3138663c4fd29c2e8", 351775),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)
 		},
 	},
-#endif
 
 	// DOS Floppy - English
 	{
@@ -198,6 +209,19 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// DOS Floppy - Russian (From Bugreport #6946)
+	{
+		{
+			"queen",
+			"Floppy",
+			AD_ENTRY1s("queen.1", "f5e827645d3c887be3bdf4729d847756", 22677657),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		},
+	},
+
 	// DOS CD - French
 	{
 		{
@@ -211,35 +235,31 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
-#if 0
 	// DOS Floppy - German
 	{
 		{
 			"queen",
 			"Floppy",
-			AD_ENTRY1s("queen.1", NULL, 22240013), // TODO: Fill in correct MD5
+			AD_ENTRY1s("queen.1", "f5e827645d3c887be3bdf4729d847756", 22240013),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)
 		},
 	},
-#endif
 
-#if 0
 	// DOS CD - German
 	{
 		{
 			"queen",
 			"Talkie",
-			AD_ENTRY1s("queen.1", NULL, 217648975), // TODO: Fill in correct MD5
+			AD_ENTRY1s("queen.1", "551d595be8af890fc4cb8533c9c5f5f1", 217648975),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GAMEOPTION_ALT_INTRO)
 		},
 	},
-#endif
 
 #if 0
 	// DOS CD - Hebrew
@@ -256,20 +276,18 @@ static const QueenGameDescription gameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// DOS Floppy - Italian
 	{
 		{
 			"queen",
 			"Floppy",
-			AD_ENTRY1s("queen.1", NULL, 22461366), // TODO: Fill in correct MD5
+			AD_ENTRY1s("queen.1", "f5e827645d3c887be3bdf4729d847756", 22461366),
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)
 		},
 	},
-#endif
 
 	// DOS CD - Italian
 	{
@@ -284,20 +302,18 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
-#if 0
 	// DOS CD - Spanish
 	{
 		{
 			"queen",
 			"Talkie",
-			AD_ENTRY1s("queen.1", NULL, 190730602), // TODO: Fill in correct MD5
+			AD_ENTRY1s("queen.1", "b6302bccf70463de3d5faf0f0628f742", 190730602),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GAMEOPTION_ALT_INTRO)
 		},
 	},
-#endif
 
 	// DOS CD - English (Compressed Freeware Release v1.0)
 	{
@@ -371,6 +387,19 @@ static const QueenGameDescription gameDescriptions[] = {
 			"Talkie",
 			AD_ENTRY1s("queen.1c", "2f72b715ed753cf905a37cdcc7ea611e", 98327801),
 			Common::IT_ITA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GAMEOPTION_ALT_INTRO)
+		},
+	},
+
+	// DOS CD - Hungarian (Compressed Freeware Release v1.02)
+	{
+		{
+			"queen",
+			"Talkie",
+			AD_ENTRY1s("queen.1c", "21fd690b372f8a6289f6f33bc986276c", 51329031),
+			Common::HU_HUN,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GAMEOPTION_ALT_INTRO)

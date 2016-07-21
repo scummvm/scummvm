@@ -65,5 +65,10 @@ MODULE_OBJS += \
 	fluidsynth-dialog.o
 endif
 
+ifdef USE_UPDATES
+MODULE_OBJS += \
+	updates-dialog.o
+endif
+
 # Include common rules
 include $(srcdir)/rules.mk

@@ -27,7 +27,7 @@
 #include "common/memstream.h"
 #include "common/system.h"
 
-#include "audio/fmopl.h"
+#include "audio/mididrv.h"
 
 #include "sci/resource.h"
 #include "sci/engine/features.h"

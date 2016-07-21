@@ -122,4 +122,17 @@ const char *getGenderSpecificPronoun(int gender, bool capitalize) {
 		return capitalize ? "It" : "it";
 }
 
+bool isStorageScene(const Common::String &name) {
+	if (name.equalsIgnoreCase(STORAGESCENE))
+		return true;
+
+	if (name.equalsIgnoreCase("STROAGE@")) // Jumble
+		return true;
+
+	if (name.equalsIgnoreCase("STORAGE@@")) // Jumble
+		return true;
+
+	return false;
+}
+
 } // End of namespace Wage

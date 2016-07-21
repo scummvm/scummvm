@@ -20,8 +20,6 @@
  *
  */
 
-#include "engines/engine.h"
-
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/system.h"
@@ -30,14 +28,11 @@
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
 
-#include "scumm/bomp.h"
 #include "scumm/file.h"
 #include "scumm/imuse_digi/dimuse.h"
-#include "scumm/imuse/imuse.h"
 #include "scumm/scumm.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/sound.h"
-#include "scumm/util.h"
 #include "scumm/smush/channel.h"
 #include "scumm/smush/codec37.h"
 #include "scumm/smush/codec47.h"
@@ -47,6 +42,7 @@
 
 #include "scumm/insane/insane.h"
 
+#include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+	<channel>
+		<title>ScummVM Changelog</title>
+		<link>https://www.scummvm.org/appcasts/macosx/release.xml</link>
+		<description>Most recent changes with links to updates.</description>
+		<language>en</language>
+		<item>
+			<title>Version 1.8.0</title>
+			<sparkle:releaseNotesLink>
+				https://scummvm.org/frs/scummvm/1.8.0/ReleaseNotes
+			</sparkle:releaseNotesLink>
+			<pubDate>Sat, 5 Mar 2016 20:16:00 +0000</pubDate>
+			<enclosure url="https://www.scummvm.org/frs/scummvm/1.8.0/scummvm-1.8.0-macosx.dmg"
+						sparkle:version="1.8.0" length="14085288" type="application/octet-stream"
+						sparkle:dsaSignature="MC0CFQDNy2yox7vklthHaZcMto8L4EuLwQIUY8cuevlTpLtuJ9nPOlrj4vo55lY=" />
+			<enclosure sparkle:os="windows"
+						url="https://www.scummvm.org/frs/scummvm/1.8.0/scummvm-1.8.0-win32.exe"
+						sparkle:version="1.8.0" length="9081062" type="application/octet-stream"
+						sparkle:dsaSignature="MC0CFQCaG7Oo+Nc2EWVmc7GjUBJLKRvt3QIUQcZTMe2FQhfvrrofX4HLTldDHyY=" />
+		</item>
+		<item>
+			<title>Version 1.7.0</title>
+			<sparkle:releaseNotesLink>
+				https://www.scummvm.org/frs/scummvm/1.7.0/ReleaseNotes
+			</sparkle:releaseNotesLink>
+			<sparkle:version>1.7.0</sparkle:version>
+			<pubDate>Tue, 29 Jul 2014 07:58:00 +0000</pubDate>
+			<link>https://www.scummvm.org/frs/scummvm/1.7.0/</link>
+		</item>
+	</channel>
+</rss>

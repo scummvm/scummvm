@@ -46,69 +46,40 @@
  */
 
 #include "common/timer.h"
-#include "common/unzip.h"
+#include "common/system.h"
 #include "graphics/cursorman.h"
-#include "graphics/fonts/bdf.h"
-#include "graphics/palette.h"
+#include "graphics/primitives.h"
 
 #include "wage/wage.h"
 #include "wage/design.h"
 #include "wage/entities.h"
-#include "wage/menu.h"
 #include "wage/gui.h"
+#include "wage/macwindow.h"
+#include "wage/macwindowmanager.h"
+#include "wage/macmenu.h"
 #include "wage/world.h"
 
 namespace Wage {
 
-static const byte palette[] = {
-	0, 0, 0,           // Black
-	0x80, 0x80, 0x80,  // Gray
-	0xff, 0xff, 0xff,  // White
-	0x00, 0xff, 0x00   // Green
-};
+static const MenuData menuSubItems[] = {
+	{ kMenuHighLevel, "File",	0, 0, false },
+	{ kMenuHighLevel, "Edit",	0, 0, false },
+	{ kMenuFile, "New",			kMenuActionNew, 0, false },
+	{ kMenuFile, "Open...",		kMenuActionOpen, 0, false },
+	{ kMenuFile, "Close",		kMenuActionClose, 0, true },
+	{ kMenuFile, "Save",		kMenuActionSave, 0, false },
+	{ kMenuFile, "Save as...",	kMenuActionSaveAs, 0, true },
+	{ kMenuFile, "Revert",		kMenuActionRevert, 0, false },
+	{ kMenuFile, "Quit",		kMenuActionQuit, 0, true },
 
-static byte fillPatterns[][8] = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }, // kPatternSolid
-								  { 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55 }, // kPatternStripes
-								  { 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 }, // kPatternCheckers
-								  { 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa }  // kPatternCheckers2
-};
+	{ kMenuEdit, "Undo",		kMenuActionUndo, 'Z', false },
+	{ kMenuEdit, NULL,			0, 0, false },
+	{ kMenuEdit, "Cut",			kMenuActionCut, 'K', false },
+	{ kMenuEdit, "Copy",		kMenuActionCopy, 'C', false },
+	{ kMenuEdit, "Paste",		kMenuActionPaste, 'V', false },
+	{ kMenuEdit, "Clear",		kMenuActionClear, 'B', false },
 
-static const byte macCursorArrow[] = {
-	2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-	2, 0, 2, 3, 3, 3, 3, 3, 3, 3, 3,
-	2, 0, 0, 2, 3, 3, 3, 3, 3, 3, 3,
-	2, 0, 0, 0, 2, 3, 3, 3, 3, 3, 3,
-	2, 0, 0, 0, 0, 2, 3, 3, 3, 3, 3,
-	2, 0, 0, 0, 0, 0, 2, 3, 3, 3, 3,
-	2, 0, 0, 0, 0, 0, 0, 2, 3, 3, 3,
-	2, 0, 0, 0, 0, 0, 0, 0, 2, 3, 3,
-	2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3,
-	2, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2,
-	2, 0, 0, 2, 0, 0, 2, 3, 3, 3, 3,
-	2, 0, 2, 3, 2, 0, 0, 2, 3, 3, 3,
-	2, 2, 3, 3, 2, 0, 0, 2, 3, 3, 3,
-	2, 3, 3, 3, 3, 2, 0, 0, 2, 3, 3,
-	3, 3, 3, 3, 3, 2, 0, 0, 2, 3, 3,
-	3, 3, 3, 3, 3, 3, 2, 2, 2, 3, 3
-};
-
-static const byte macCursorBeam[] = {
-	0, 0, 3, 3, 3, 0, 0, 3, 3, 3, 3,
-	3, 3, 0, 3, 0, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 0, 3, 0, 3, 3, 3, 3, 3, 3,
-	0, 0, 3, 3, 3, 0, 0, 3, 3, 3, 3,
+	{ 0, NULL,			0, 0, false }
 };
 
 static void cursorTimerHandler(void *refCon) {
@@ -123,8 +94,8 @@ static void cursorTimerHandler(void *refCon) {
 	if (!gui->_screen.getPixels())
 		return;
 
-	x += gui->_consoleTextArea.left;
-	y += gui->_consoleTextArea.top;
+	x += gui->_consoleWindow->getInnerDimensions().left;
+	y += gui->_consoleWindow->getInnerDimensions().top;
 
 	gui->_screen.vLine(x, y, y + kCursorHeight, gui->_cursorState ? kColorBlack : kColorWhite);
 
@@ -139,22 +110,25 @@ static void cursorTimerHandler(void *refCon) {
 	gui->_cursorDirty = true;
 }
 
+static bool sceneWindowCallback(WindowClick click, Common::Event &event, void *gui);
+static bool consoleWindowCallback(WindowClick click, Common::Event &event, void *gui);
+static void menuCommandsCallback(int action, Common::String &text, void *data);
+
+
 Gui::Gui(WageEngine *engine) {
 	_engine = engine;
 	_scene = NULL;
 	_sceneDirty = true;
 	_consoleDirty = true;
-	_bordersDirty = true;
-	_menuDirty = true;
 	_cursorDirty = false;
 	_consoleFullRedraw = true;
 	_screen.create(g_system->getWidth(), g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
 
+	_wm.setScreen(&_screen);
+
 	_scrollPos = 0;
 	_consoleLineHeight = 8; // Dummy value which makes sense
 	_consoleNumLines = 24; // Dummy value
-	_builtInFonts = false;
-	_sceneIsActive = false;
 
 	_cursorX = 0;
 	_cursorY = 0;
@@ -167,28 +141,39 @@ Gui::Gui(WageEngine *engine) {
 
 	_inputTextLineNum = 0;
 
-	g_system->getPaletteManager()->setPalette(palette, 0, 4);
-
-	CursorMan.replaceCursorPalette(palette, 0, 4);
-	CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
-	_cursorIsArrow = true;
-	CursorMan.showMouse(true);
-
-	for (int i = 0; i < ARRAYSIZE(fillPatterns); i++)
-		_patterns.push_back(fillPatterns[i]);
-
-	loadFonts();
-
 	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "wageCursor");
 
-	_menu = new Menu(this);
+	_menu = _wm.addMenu();
+
+	_menu->setCommandsCallback(menuCommandsCallback, this);
+
+	_menu->addStaticMenus(menuSubItems);
+	_menu->addMenuSubItem(kMenuAbout, _engine->_world->getAboutMenuItemName(), kMenuActionAbout);
+
+	_commandsMenuId = _menu->addMenuItem(_engine->_world->_commandsMenuName.c_str());
+	regenCommandsMenu();
+
+	if (!_engine->_world->_weaponMenuDisabled) {
+		_weaponsMenuId = _menu->addMenuItem(_engine->_world->_weaponsMenuName.c_str());
+
+		regenWeaponsMenu();
+	} else {
+		_weaponsMenuId = -1;
+	}
+
+	_menu->calcDimensions();
+
+	_sceneWindow = _wm.addWindow(false, false, false);
+	_sceneWindow->setCallback(sceneWindowCallback, this);
+
+	_consoleWindow = _wm.addWindow(true, true, true);
+	_consoleWindow->setCallback(consoleWindowCallback, this);
 }
 
 Gui::~Gui() {
 	_screen.free();
 	_console.free();
 	g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
-	delete _menu;
 }
 
 void Gui::undrawCursor() {
@@ -198,82 +183,34 @@ void Gui::undrawCursor() {
 	_cursorOff = false;
 }
 
-const Graphics::Font *Gui::getFont(const char *name, Graphics::FontManager::FontUsage fallback) {
-	const Graphics::Font *font = 0;
-
-	if (!_builtInFonts) {
-		font = FontMan.getFontByName(name);
-
-		if (!font)
-			warning("Cannot load font %s", name);
-	}
-
-	if (_builtInFonts || !font)
-		font = FontMan.getFontByUsage(fallback);
-
-	return font;
-}
-
-const Graphics::Font *Gui::getTitleFont() {
-	return getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
-}
-
-void Gui::drawDesktop() {
-	// Draw desktop
-	Common::Rect r(0, 0, _screen.w - 1, _screen.h - 1);
-	Design::drawFilledRoundRect(&_screen, r, kDesktopArc, kColorBlack, _patterns, kPatternCheckers);
-	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
-}
-
 void Gui::draw() {
 	if (_engine->_isGameOver) {
-		if (_menuDirty) {
-			drawDesktop();
-			_menu->render();
-		}
-
-		_menuDirty = false;
+		_wm.draw();
 
 		return;
 	}
 
-	if (_scene != _engine->_world->_player->_currentScene || _sceneDirty) {
+	if (!_engine->_world->_player->_currentScene)
+		return;
+
+	if (_scene != _engine->_world->_player->_currentScene) {
+		_sceneDirty = true;
+
 		_scene = _engine->_world->_player->_currentScene;
 
-		drawDesktop();
+		_sceneWindow->setDimensions(*_scene->_designBounds);
+		_sceneWindow->setTitle(_scene->_name);
+		_consoleWindow->setDimensions(*_scene->_textBounds);
 
-		_sceneDirty = true;
-		_consoleDirty = true;
-		_menuDirty = true;
-		_consoleFullRedraw = true;
-
-		_scene->paint(&_screen, _scene->_designBounds->left, _scene->_designBounds->top);
-
-		_sceneArea.left = _scene->_designBounds->left + kBorderWidth - 2;
-		_sceneArea.top = _scene->_designBounds->top + kBorderWidth - 2;
-		_sceneArea.setWidth(_scene->_designBounds->width() - 2 * kBorderWidth);
-		_sceneArea.setHeight(_scene->_designBounds->height() - 2 * kBorderWidth);
-
-		_consoleTextArea.left = _scene->_textBounds->left + kBorderWidth - 2;
-		_consoleTextArea.top = _scene->_textBounds->top + kBorderWidth - 2;
-		_consoleTextArea.setWidth(_scene->_textBounds->width() - 2 * kBorderWidth);
-		_consoleTextArea.setHeight(_scene->_textBounds->height() - 2 * kBorderWidth);
+		_wm.setFullRefresh(true);
 	}
 
-	if (_scene && (_bordersDirty || _sceneDirty))
-		paintBorder(&_screen, _sceneArea, kWindowScene);
+	drawScene();
+	drawConsole();
 
-	// Render console
-	if (_consoleDirty || _consoleFullRedraw)
-		renderConsole(&_screen, _consoleTextArea);
+	_wm.draw();
 
-	if (_bordersDirty || _consoleDirty || _consoleFullRedraw)
-		paintBorder(&_screen, _consoleTextArea, kWindowConsole);
-
-	if (_menuDirty)
-		_menu->render();
-
-	if (_cursorDirty) {
+	if (_cursorDirty && _cursorRect.left < _screen.w && _cursorRect.bottom < _screen.h) {
 		g_system->copyRectToScreen(_screen.getBasePtr(_cursorRect.left, _cursorRect.top), _screen.pitch,
 				_cursorRect.left, _cursorRect.top, _cursorRect.width(), _cursorRect.height());
 
@@ -282,394 +219,141 @@ void Gui::draw() {
 
 	_sceneDirty = false;
 	_consoleDirty = false;
-	_bordersDirty = false;
-	_menuDirty = false;
 	_consoleFullRedraw = false;
 }
 
-void Gui::drawBox(Graphics::Surface *g, int x, int y, int w, int h) {
-	Common::Rect r(x, y, x + w + 1, y + h + 1);
-
-	g->fillRect(r, kColorWhite);
-	g->frameRect(r, kColorBlack);
-}
-
-void Gui::fillRect(Graphics::Surface *g, int x, int y, int w, int h, int color) {
-	Common::Rect r(x, y, x + w, y + h);
-
-	g->fillRect(r, color);
-}
-
-#define ARROW_W 12
-#define ARROW_H 6
-const int arrowPixels[ARROW_H][ARROW_W] = {
-		{0,0,0,0,0,1,1,0,0,0,0,0},
-		{0,0,0,0,1,1,1,1,0,0,0,0},
-		{0,0,0,1,1,1,1,1,1,0,0,0},
-		{0,0,1,1,1,1,1,1,1,1,0,0},
-		{0,1,1,1,1,1,1,1,1,1,1,0},
-		{1,1,1,1,1,1,1,1,1,1,1,1}};
-
-void Gui::paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType, int highlightedPart) {
-	bool active = false, scrollable = false, closeable = false, drawTitle = false;
-	const int size = kBorderWidth;
-	int x = r.left - size;
-	int y = r.top - size;
-	int width = r.width() + 2 * size;
-	int height = r.height() + 2 * size;
-
-	switch (windowType) {
-	case kWindowScene:
-		active = _sceneIsActive;
-		scrollable = false;
-		closeable = _sceneIsActive;
-		drawTitle = true;
-		break;
-	case kWindowConsole:
-		active = !_sceneIsActive;
-		scrollable = true;
-		closeable = !_sceneIsActive;
-		drawTitle = false;
-		break;
-	}
-
-	drawBox(g, x,                    y,                     size,                 size);
-	drawBox(g, x + width - size - 1, y,                     size,                 size);
-	drawBox(g, x + width - size - 1, y + height - size - 1, size,                 size);
-	drawBox(g, x,                    y + height - size - 1, size,                 size);
-	drawBox(g, x + size,             y + 2,                 width - 2 * size - 1, size - 4);
-	drawBox(g, x + size,             y + height - size + 1, width - 2 * size - 1, size - 4);
-	drawBox(g, x + 2,                y + size,              size - 4,             height - 2 * size - 1);
-	drawBox(g, x + width - size + 1, y + size,              size - 4,             height - 2 * size - 1);
-
-	if (active) {
-		fillRect(g, x + size, y + 5,           width - 2 * size - 1, 8);
-		fillRect(g, x + size, y + height - 13, width - 2 * size - 1, 8);
-		fillRect(g, x + 5,    y + size,        8,                    height - 2 * size - 1);
-		if (!scrollable) {
-			fillRect(g, x + width - 13, y + size, 8, height - 2 * size - 1);
-		} else {
-			int x1 = x + width - 15;
-			int y1 = y + size + 1;
-			int color1 = kColorBlack;
-			int color2 = kColorWhite;
-			if (highlightedPart == kBorderScrollUp) {
-				SWAP(color1, color2);
-				fillRect(g, x + width - kBorderWidth + 2, y + size, size - 4, r.height() / 2);
-			}
-			for (int yy = 0; yy < ARROW_H; yy++) {
-				for (int xx = 0; xx < ARROW_W; xx++) {
-					if (arrowPixels[yy][xx] != 0) {
-						g->hLine(x1 + xx, y1 + yy, x1 + xx, color1);
-					} else {
-						g->hLine(x1 + xx, y1 + yy, x1 + xx, color2);
-					}
-				}
-			}
-			fillRect(g, x + width - 13, y + size + ARROW_H, 8, r.height() / 2 - ARROW_H, color1);
-
-			color1 = kColorBlack;
-			color2 = kColorWhite;
-			if (highlightedPart == kBorderScrollDown) {
-				SWAP(color1, color2);
-				fillRect(g, x + width - kBorderWidth + 2, y + size + r.height() / 2, size - 4, r.height() / 2);
-			}
-			fillRect(g, x + width - 13, y + size + r.height() / 2, 8, r.height() / 2 - ARROW_H, color1);
-			y1 += height - 2 * size - ARROW_H - 2;
-			for (int yy = 0; yy < ARROW_H; yy++) {
-				for (int xx = 0; xx < ARROW_W; xx++) {
-					if (arrowPixels[ARROW_H - yy - 1][xx] != 0) {
-						g->hLine(x1 + xx, y1 + yy, x1 + xx, color1);
-					} else {
-						g->hLine(x1 + xx, y1 + yy, x1 + xx, color2);
-					}
-				}
-			}
-		}
-		if (closeable) {
-			if (highlightedPart == kBorderCloseButton) {
-				fillRect(g, x + 6, y + 6, 6, 6);
-			} else {
-				drawBox(g, x + 5, y + 5, 7, 7);
-			}
-		}
-	}
-
-	if (drawTitle) {
-		const Graphics::Font *font = getTitleFont();
-		int yOff = _builtInFonts ? 3 : 1;
-
-		int w = font->getStringWidth(_scene->_name) + 10;
-		int maxWidth = width - size * 2 - 7;
-		if (w > maxWidth)
-			w = maxWidth;
-		drawBox(g, x + (width - w) / 2, y, w, size);
-		font->drawString(g, _scene->_name, x + (width - w) / 2 + 5, y + yOff, w, kColorBlack);
-	}
-
-	if (x < 0) {
-		width += x;
-		x = 0;
-	}
-	if (y < 0) {
-		height += y;
-		y = 0;
-	}
-	if (x + width > _screen.w)
-		width = _screen.w - x;
-	if (y + height > _screen.h)
-		height = _screen.h - y;
-
-	g_system->copyRectToScreen(g->getBasePtr(x, y), g->pitch, x, y, width, height);
-}
-
-void Gui::loadFonts() {
-	Common::Archive *dat;
-
-	dat = Common::makeZipArchive("wage.dat");
-
-	if (!dat) {
-		warning("Could not find wage.dat. Falling back to built-in fonts");
-		_builtInFonts = true;
-
+void Gui::drawScene() {
+	if (!_sceneDirty)
 		return;
-	}
 
-	Common::ArchiveMemberList list;
-	dat->listMembers(list);
+	_scene->paint(_sceneWindow->getSurface(), 0, 0);
+	_sceneWindow->setDirty(true);
 
-	for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it) {
-		Common::SeekableReadStream *stream = dat->createReadStreamForMember((*it)->getName());
-
-		Graphics::BdfFont *font = Graphics::BdfFont::loadFont(*stream);
-
-		delete stream;
-
-		Common::String fontName = (*it)->getName();
-
-		// Trim the .bdf extension
-		for (int i = fontName.size() - 1; i >= 0; --i) {
-			if (fontName[i] == '.') {
-				while ((uint)i < fontName.size()) {
-					fontName.deleteLastChar();
-				}
-				break;
-			}
-		}
-
-		FontMan.assignFontToName(fontName, font);
-
-		debug(2, " %s", fontName.c_str());
-	}
-
-	_builtInFonts = false;
-
-	delete dat;
+	_sceneDirty = true;
+	_consoleDirty = true;
+	_menu->setDirty(true);
+	_consoleFullRedraw = true;
 }
 
+static bool sceneWindowCallback(WindowClick click, Common::Event &event, void *g) {
+	Gui *gui = (Gui *)g;
+
+	return gui->processSceneEvents(click, event);
+}
+
+bool Gui::processSceneEvents(WindowClick click, Common::Event &event) {
+	if (click == kBorderInner && event.type == Common::EVENT_LBUTTONUP) {
+		Designed *obj = _scene->lookUpEntity(event.mouse.x - _sceneWindow->getDimensions().left,
+												  event.mouse.y - _sceneWindow->getDimensions().top);
+
+		if (obj != nullptr)
+			_engine->processTurn(NULL, obj);
+
+		return true;
+	}
+
+	return false;
+}
+
+// Render console
+void Gui::drawConsole() {
+	if (!_consoleDirty && !_consoleFullRedraw && !_sceneDirty)
+		return;
+
+	renderConsole(_consoleWindow->getSurface(), Common::Rect(kBorderWidth - 2, kBorderWidth - 2,
+				_consoleWindow->getDimensions().width(), _consoleWindow->getDimensions().height()));
+	_consoleWindow->setDirty(true);
+}
+
+static bool consoleWindowCallback(WindowClick click, Common::Event &event, void *g) {
+	Gui *gui = (Gui *)g;
+
+	return gui->processConsoleEvents(click, event);
+}
+
+////////////////
+// Menu stuff
+////////////////
 void Gui::regenCommandsMenu() {
-	_menu->regenCommandsMenu();
+	_menu->createSubMenuFromString(_commandsMenuId, _engine->_world->_commandsMenu.c_str());
 }
 
 void Gui::regenWeaponsMenu() {
-	_menu->regenWeaponsMenu();
-}
-
-void Gui::processMenuShortCut(byte flags, uint16 ascii) {
-	_menu->processMenuShortCut(flags, ascii);
-}
-
-void Gui::mouseMove(int x, int y) {
-	if (_menu->_menuActivated) {
-		if (_menu->mouseMove(x, y))
-			_menuDirty = true;
-
+	if (_engine->_world->_weaponMenuDisabled)
 		return;
-	}
 
-	if (_inTextSelection) {
-		updateTextSelection(x, y);
-		return;
-	}
+	_menu->clearSubMenu(_weaponsMenuId);
 
-	if (_consoleTextArea.contains(x, y)) {
-		if (_cursorIsArrow) {
-			CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
-			_cursorIsArrow = false;
-		}
-	} else if (_cursorIsArrow == false) {
-		CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
-		_cursorIsArrow = true;
-	}
-}
+	Chr *player = _engine->_world->_player;
+	ObjArray *weapons = player->getWeapons(true);
 
-void Gui::pushArrowCursor() {
-	CursorMan.pushCursor(macCursorArrow, 11, 16, 1, 1, 3);
-}
+	bool empty = true;
 
-void Gui::popCursor() {
-	CursorMan.popCursor();
-}
+	for (uint i = 0; i < weapons->size(); i++) {
+		Obj *obj = (*weapons)[i];
+		if (obj->_type == Obj::REGULAR_WEAPON ||
+			obj->_type == Obj::THROW_WEAPON ||
+			obj->_type == Obj::MAGICAL_OBJECT) {
+			Common::String command(obj->_operativeVerb);
+			command += " ";
+			command += obj->_name;
 
-static int isInBorder(Common::Rect &rect, int x, int y) {
-	if (x >= rect.left - kBorderWidth && x < rect.left && y >= rect.top - kBorderWidth && y < rect.top)
-		return kBorderCloseButton;
+			_menu->addMenuSubItem(_weaponsMenuId, command.c_str(), kMenuActionCommand, 0, 0, true);
 
-	if (x >= rect.right && x < rect.right + kBorderWidth) {
-		if (y < rect.top - kBorderWidth)
-			return kBorderNone;
-
-		if (y >= rect.bottom + kBorderWidth)
-			return kBorderNone;
-
-		if (y >= rect.top + rect.height() / 2)
-			return kBorderScrollDown;
-
-		return kBorderScrollUp;
-	}
-
-	return kBorderNone;
-}
-
-Designed *Gui::mouseUp(int x, int y) {
-	if (_menu->_menuActivated) {
-		if (_menu->mouseRelease(x, y)) {
-			_sceneDirty = true;
-			_consoleDirty = true;
-			_bordersDirty = true;
-			_menuDirty = true;
-		}
-
-		return NULL;
-	}
-
-	if (_inTextSelection) {
-		_inTextSelection = false;
-
-		if (_selectionEndY == -1 ||
-				(_selectionEndX == _selectionStartX && _selectionEndY == _selectionStartY)) {
-			_selectionStartY = _selectionEndY = -1;
-			_consoleFullRedraw = true;
-			_menu->enableCommand(kMenuEdit, kMenuActionCopy, false);
-		} else {
-			_menu->enableCommand(kMenuEdit, kMenuActionCopy, true);
-
-			bool cutAllowed = false;
-
-			if (_selectionStartY == _selectionEndY && _selectionStartY == (int)_lines.size() - 1)
-				cutAllowed = true;
-
-			_menu->enableCommand(kMenuEdit, kMenuActionCut, cutAllowed);
-			_menu->enableCommand(kMenuEdit, kMenuActionClear, cutAllowed);
+			empty = false;
 		}
 	}
+	delete weapons;
 
-	int borderClick;
+	if (empty)
+		_menu->addMenuSubItem(_weaponsMenuId, "You have no weapons", 0, 0, 0, false);
+}
 
-	if (_sceneArea.contains(x, y)) {
-		if (!_sceneIsActive) {
-			_sceneIsActive = true;
-			_bordersDirty = true;
-		}
+bool Gui::processEvent(Common::Event &event) {
+	return _wm.processEvent(event);
+}
 
-		for (ObjList::const_iterator it = _scene->_objs.begin(); it != _scene->_objs.end(); ++it) {
-			if ((*it)->_design->isPointOpaque(x - _sceneArea.left + kBorderWidth, y - _sceneArea.top + kBorderWidth))
-				return *it;
-		}
+void menuCommandsCallback(int action, Common::String &text, void *data) {
+	Gui *g = (Gui *)data;
 
-		for (ChrList::const_iterator it = _scene->_chrs.begin(); it != _scene->_chrs.end(); ++it) {
-			if ((*it)->_design->isPointOpaque(x - _sceneArea.left + kBorderWidth, y - _sceneArea.top + kBorderWidth))
-				return *it;
-		}
-	} else if (_consoleTextArea.contains(x, y)) {
-		if (_sceneIsActive) {
-			_sceneIsActive = false;
-			_bordersDirty = true;
-		}
-	} else if ((borderClick = isInBorder(_consoleTextArea, x, y)) != kBorderNone) {
-		_bordersDirty = true;
-		int _oldScrollPos = _scrollPos;
+	g->executeMenuCommand(action, text);
+}
 
-		switch (borderClick) {
-			case kBorderScrollUp:
-				_scrollPos = MAX<int>(0, _scrollPos - _consoleLineHeight);
-				undrawCursor();
-				_cursorY -= (_scrollPos - _oldScrollPos);
-				_consoleDirty = true;
-				_consoleFullRedraw = true;
-				break;
-			case kBorderScrollDown:
-				_scrollPos = MIN<int>((_lines.size() - 2) * _consoleLineHeight, _scrollPos + _consoleLineHeight);
-				undrawCursor();
-				_cursorY -= (_scrollPos - _oldScrollPos);
-				_consoleDirty = true;
-				_consoleFullRedraw = true;
-				break;
-		}
+void Gui::executeMenuCommand(int action, Common::String &text) {
+	switch(action) {
+	case kMenuActionAbout:
+	case kMenuActionNew:
+	case kMenuActionOpen:
+	case kMenuActionClose:
+	case kMenuActionSave:
+	case kMenuActionSaveAs:
+	case kMenuActionRevert:
+	case kMenuActionQuit:
+
+	case kMenuActionUndo:
+		actionUndo();
+		break;
+	case kMenuActionCut:
+		actionCut();
+		break;
+	case kMenuActionCopy:
+		actionCopy();
+		break;
+	case kMenuActionPaste:
+		actionPaste();
+		break;
+	case kMenuActionClear:
+		actionClear();
+		break;
+
+	case kMenuActionCommand:
+		_engine->processTurn(&text, NULL);
+		break;
+
+	default:
+		warning("Unknown action: %d", action);
+
 	}
-
-	return NULL;
-}
-
-void Gui::mouseDown(int x, int y) {
-	int borderClick;
-
-	if (_menu->mouseClick(x, y)) {
-		_menuDirty = true;
-	} else if (_consoleTextArea.contains(x, y)) {
-		startMarking(x, y);
-	} else if ((borderClick = isInBorder(_consoleTextArea, x, y)) != kBorderNone) {
-		paintBorder(&_screen, _consoleTextArea, kWindowConsole, borderClick);
-	}
-}
-
-int Gui::calcTextX(int x, int textLine) {
-	const Graphics::Font *font = getConsoleFont();
-
-	if ((uint)textLine >= _lines.size())
-		return 0;
-
-	Common::String str = _lines[textLine];
-
-	x -= _consoleTextArea.left;
-
-	for (int i = str.size(); i >= 0; i--) {
-		if (font->getStringWidth(str) < x) {
-			return i;
-		}
-
-		str.deleteLastChar();
-	}
-
-	return 0;
-}
-
-int Gui::calcTextY(int y) {
-	y -= _consoleTextArea.top;
-
-	if (y < 0)
-		y = 0;
-
-	const int firstLine = _scrollPos / _consoleLineHeight;
-	int textLine = (y - _scrollPos % _consoleLineHeight) / _consoleLineHeight + firstLine;
-
-	return textLine;
-}
-
-void Gui::startMarking(int x, int y) {
-	_selectionStartY = calcTextY(y);
-	_selectionStartX = calcTextX(x, _selectionStartY);
-
-	_selectionEndY = -1;
-
-	_inTextSelection = true;
-}
-
-void Gui::updateTextSelection(int x, int y) {
-	_selectionEndY = calcTextY(y);
-	_selectionEndX = calcTextX(x, _selectionEndY);
-
-	_consoleFullRedraw = true;
 }
 
 } // End of namespace Wage

@@ -28,19 +28,17 @@
 #ifndef CGE2_SOUND_H
 #define CGE2_SOUND_H
 
-#include "cge2/fileio.h"
-#include "audio/audiostream.h"
-#include "audio/decoders/wave.h"
-#include "audio/fmopl.h"
-#include "audio/mididrv.h"
-#include "audio/midiparser.h"
 #include "audio/midiplayer.h"
 #include "audio/mixer.h"
-#include "common/memstream.h"
+
+namespace Audio {
+class RewindableAudioStream;
+}
 
 namespace CGE2 {
 
 class CGE2Engine;
+class EncryptedStream;
 
 // sample info
 struct SmpInfo {

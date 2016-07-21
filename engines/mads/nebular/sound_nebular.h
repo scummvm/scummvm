@@ -27,16 +27,20 @@
 #include "common/file.h"
 #include "common/mutex.h"
 #include "common/queue.h"
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
+
+namespace Audio {
+class Mixer;
+}
+
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace OPL {
 class OPL;
 }
 
 namespace MADS {
-
-class SoundManager;
 
 namespace Nebular {
 

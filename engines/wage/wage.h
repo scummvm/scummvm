@@ -75,6 +75,8 @@ typedef Common::Array<Chr *> ChrArray;
 typedef Common::List<Obj *> ObjList;
 typedef Common::List<Chr *> ChrList;
 
+#define STORAGESCENE "STORAGE@"
+
 enum OperandType {
 	OBJ = 0,
 	CHR = 1,
@@ -101,21 +103,12 @@ enum {
 	// the current limitation is 32 debug levels (1 << 31 is the last one)
 };
 
-enum {
-	kColorBlack = 0,
-	kColorGray  = 1,
-	kColorWhite = 2,
-	kColorGreen = 3
-};
-
 Common::String readPascalString(Common::SeekableReadStream *in);
 Common::Rect *readRect(Common::SeekableReadStream *in);
 const char *getIndefiniteArticle(const Common::String &word);
 const char *prependGenderSpecificPronoun(int gender);
 const char *getGenderSpecificPronoun(int gender, bool capitalize);
-
-
-typedef Common::Array<byte *> Patterns;
+bool isStorageScene(const Common::String &name);
 
 class WageEngine : public Engine {
 	friend class Dialog;

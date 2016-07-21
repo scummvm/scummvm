@@ -20,9 +20,6 @@
  *
  */
 
-#include "gui/dialog.h"
-#include "gui/widget.h"
-
 #include "tsage/tsage.h"
 #include "tsage/core.h"
 #include "tsage/dialogs.h"

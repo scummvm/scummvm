@@ -382,6 +382,14 @@ PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const char *toolti
 	_selectedItem = -1;
 }
 
+PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip)
+	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss) {
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_IGNORE_DRAG);
+	_type = kPopUpWidget;
+
+	_selectedItem = -1;
+}
+
 void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (isEnabled()) {
 		PopUpDialog popupDialog(this, x + getAbsX(), y + getAbsY());

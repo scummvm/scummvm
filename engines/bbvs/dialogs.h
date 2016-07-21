@@ -25,7 +25,11 @@
 
 #include "bbvs/bbvs.h"
 #include "gui/dialog.h"
-#include "gui/widgets/edittext.h"
+
+namespace GUI {
+class ButtonWidget;
+class CommandSender;
+}
 
 namespace Bbvs {
 

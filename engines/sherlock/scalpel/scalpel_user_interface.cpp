@@ -1968,7 +1968,7 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 		return;
 	}
 
-	Surface &bb = *screen._backBuffer;
+	Surface &bb = *screen.getBackBuffer();
 	if (firstTime) {
 		// Only draw the border on the first call
 		_infoFlag = true;
@@ -2073,7 +2073,7 @@ void ScalpelUserInterface::summonWindow(const Surface &bgSurface, bool slideUp) 
 	if (slideUp) {
 		// Gradually slide up the display of the window
 		for (int idx = 1; idx <= bgSurface.height(); idx += 2) {
-			screen._backBuffer->SHblitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - idx),
+			screen.getBackBuffer()->SHblitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - idx),
 				Common::Rect(0, 0, bgSurface.width(), idx));
 			screen.slamRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - idx,
 				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
@@ -2083,7 +2083,7 @@ void ScalpelUserInterface::summonWindow(const Surface &bgSurface, bool slideUp) 
 	} else {
 		// Gradually slide down the display of the window
 		for (int idx = 1; idx <= bgSurface.height(); idx += 2) {
-			screen._backBuffer->SHblitFrom(bgSurface,
+			screen.getBackBuffer()->SHblitFrom(bgSurface,
 				Common::Point(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.height()),
 				Common::Rect(0, bgSurface.height() - idx, bgSurface.width(), bgSurface.height()));
 			screen.slamRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.height(),
@@ -2094,7 +2094,7 @@ void ScalpelUserInterface::summonWindow(const Surface &bgSurface, bool slideUp) 
 	}
 
 	// Final display of the entire window
-	screen._backBuffer->SHblitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.height()),
+	screen.getBackBuffer()->SHblitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.height()),
 		Common::Rect(0, 0, bgSurface.width(), bgSurface.height()));
 	screen.slamArea(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.height(), bgSurface.width(), bgSurface.height());
 

@@ -20,29 +20,27 @@
  *
  */
 
-#include "backends/graphics/opengl/extensions.h"
-#include "backends/graphics/opengl/opengl-sys.h"
+#ifndef BACKENDS_GRAPHICS_OPENGL_PIPELINES_CLUT8_H
+#define BACKENDS_GRAPHICS_OPENGL_PIPELINES_CLUT8_H
 
-#include "common/tokenizer.h"
+#include "backends/graphics/opengl/pipelines/shader.h"
 
 namespace OpenGL {
 
-bool g_extNPOTSupported = false;
+#if !USE_FORCED_GLES
+class CLUT8LookUpPipeline : public ShaderPipeline {
+public:
+	CLUT8LookUpPipeline();
 
-void initializeGLExtensions() {
-	const char *extString = (const char *)glGetString(GL_EXTENSIONS);
+	void setPaletteTexture(const GLTexture *paletteTexture) { _paletteTexture = paletteTexture; }
 
-	// Initialize default state.
-	g_extNPOTSupported = false;
+	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates);
 
-	Common::StringTokenizer tokenizer(extString, " ");
-	while (!tokenizer.empty()) {
-		Common::String token = tokenizer.nextToken();
-
-		if (token == "GL_ARB_texture_non_power_of_two") {
-			g_extNPOTSupported = true;
-		}
-	}
-}
+private:
+	const GLTexture *_paletteTexture;
+};
+#endif // !USE_FORCED_GLES
 
 } // End of namespace OpenGL
+
+#endif

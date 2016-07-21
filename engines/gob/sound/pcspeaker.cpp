@@ -20,6 +20,7 @@
  *
  */
 
+#include "audio/softsynth/pcspk.h"
 #include "gob/sound/pcspeaker.h"
 
 namespace Gob {

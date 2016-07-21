@@ -24,23 +24,17 @@
 #define SCUMM_SOUND_H
 
 #include "common/scummsys.h"
-#include "audio/audiostream.h"
+#include "common/str.h"
 #include "audio/mididrv.h"
 #include "audio/mixer.h"
 #include "backends/audiocd/audiocd.h"
 #include "scumm/saveload.h"
 
-namespace Audio {
-class Mixer;
-}
-
 namespace Scumm {
 
 class ScummEngine;
-class BaseScummFile;
 
 struct MP3OffsetTable;
-struct SaveLoadEntry;
 
 enum {
 	kTalkSoundID = 10000

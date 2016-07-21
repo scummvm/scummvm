@@ -23,6 +23,7 @@
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "gui/saveload.h"
+#include "tsage/dialogs.h"
 #include "tsage/scenes.h"
 #include "tsage/globals.h"
 #include "tsage/ringworld/ringworld_logic.h"

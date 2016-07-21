@@ -43,8 +43,6 @@
 #include "agi/logic.h"
 #include "agi/sound.h"
 
-#include "gui/predictivedialog.h"
-
 namespace Common {
 class RandomSource;
 }

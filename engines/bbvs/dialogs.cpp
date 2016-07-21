@@ -22,9 +22,12 @@
 
 #include "bbvs/dialogs.h"
 #include "common/events.h"
-#include "gui/gui-manager.h"
-#include "gui/ThemeEval.h"
+#include "gui/widget.h"
 #include "engines/advancedDetector.h"
+
+namespace GUI {
+class CommandSender;
+}
 
 namespace Bbvs {
 

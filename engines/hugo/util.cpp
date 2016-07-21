@@ -28,13 +28,11 @@
  */
 
 #include "common/system.h"
+#include "common/util.h"
 #include "gui/message.h"
 
-#include "hugo/game.h"
-#include "hugo/hugo.h"
+#include "hugo/dialogs.h"
 #include "hugo/util.h"
-#include "hugo/sound.h"
-#include "hugo/text.h"
 
 namespace Hugo {
 

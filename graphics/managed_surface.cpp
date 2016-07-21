@@ -33,7 +33,7 @@ ManagedSurface::ManagedSurface() :
 		_disposeAfterUse(DisposeAfterUse::NO), _owner(nullptr) {
 }
 
-ManagedSurface::ManagedSurface(const ManagedSurface &surf) :
+ManagedSurface::ManagedSurface(ManagedSurface &surf) :
 		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
 		_disposeAfterUse(DisposeAfterUse::NO), _owner(nullptr) {
 	*this = surf;
@@ -61,7 +61,7 @@ ManagedSurface::~ManagedSurface() {
 	free();
 }
 
-ManagedSurface &ManagedSurface::operator=(const ManagedSurface &surf) {
+ManagedSurface &ManagedSurface::operator=(ManagedSurface &surf) {
 	// Free any current surface
 	free();
 
@@ -74,7 +74,7 @@ ManagedSurface &ManagedSurface::operator=(const ManagedSurface &surf) {
 		// Source isn't managed, so simply copy its fields
 		_owner = surf._owner;
 		_offsetFromOwner = surf._offsetFromOwner;
-		void *srcPixels = (void *)surf._innerSurface.getPixels();
+		void *srcPixels = surf._innerSurface.getPixels();
 		_innerSurface.setPixels(srcPixels);
 		_innerSurface.w = surf.w;
 		_innerSurface.h = surf.h;
@@ -198,7 +198,7 @@ void ManagedSurface::transBlitFrom(const Surface &src, const Common::Rect &srcRe
 }
 
 template<typename T>
-void transBlit(const Surface &src, const Common::Rect &srcRect, const Surface *dest, const Common::Rect &destRect, uint transColor, bool flipped, uint overrideColor) {
+void transBlit(const Surface &src, const Common::Rect &srcRect, Surface *dest, const Common::Rect &destRect, uint transColor, bool flipped, uint overrideColor) {
 	int scaleX = SCALE_THRESHOLD * srcRect.width() / destRect.width();
 	int scaleY = SCALE_THRESHOLD * srcRect.height() / destRect.height();
 

@@ -29,6 +29,7 @@
 #include "avalanche/ghostroom.h"
 
 #include "common/random.h"
+#include "common/system.h"
 
 namespace Avalanche {
 

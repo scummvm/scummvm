@@ -23,12 +23,15 @@
 #ifndef GOB_SOUND_BGATMOSPHERE_H
 #define GOB_SOUND_BGATMOSPHERE_H
 
-#include "audio/mixer.h"
 #include "common/array.h"
 #include "common/mutex.h"
 #include "common/random.h"
 
 #include "gob/sound/soundmixer.h"
+
+namespace Audio {
+class Mixer;
+}
 
 namespace Gob {
 

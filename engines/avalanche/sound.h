@@ -24,7 +24,10 @@
 #define AVALANCHE_SOUND_H
 
 #include "audio/mixer.h"
-#include "audio/softsynth/pcspk.h"
+
+namespace Audio {
+class PCSpeaker;
+}
 
 namespace Avalanche {
 

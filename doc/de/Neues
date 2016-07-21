@@ -4,13 +4,86 @@ Programmcodes finden Sie auf Englisch unter:
 
 1.9.0 (DD.MM.YYYY)
  AGI:
-   - Unterstützung für Hercules-Darstellung (Grün + Bernstein) hinzugefügt
+   - Unterstützung für Hercules-Darstellung (Grün + Bernstein) hinzugefügt.
    - Unterstützung für hochauflösende Hercules-Schriftart hinzugefügt
-     (auch außerhalb der Hercules-Darstellung nutzbar)
+     (auch außerhalb der Hercules-Darstellung nutzbar).
    - Optionale Funktion "Pause, wenn Befehle eingegeben werden" hinzugefügt.
      Diese Funktion war im originalen Interpreter nur im Hercules-Darstellungsmodus
      verfügbar.
 
+1.8.1 (DD.MM.YYYY)
+ Allgemein:
+   - "TESTING"-Markierung von mehreren unterstützten Spielen entfernt.
+   - Chinesische Übersetzung (Pinyin) der Benutzeroberfläche hinzugefügt.
+   - Ruckeln des Mauszeigers im ScummVM-Programmfenster behoben, welches auf
+     einigen Systemen auftrat.
+
+ BBVS:
+   - Fehler beim erneuten Starten des Spiels behoben.
+
+ CinE:
+   - Fehler beim Laden der Soundeffekte behoben.
+
+ Drascula:
+   - Text-Ausrichtung ist jetzt originalgetreu.
+   - Charakter tritt nicht mehr aus dem Bildschirmbereich heraus.
+   - Laden eines Spielstandes in der "Pendulum"-Szene repariert.
+   - Falscher Hintergrund für Inventar-Gegenstände im Kapitel 6 in der
+     spanischen Version korrigiert.
+   - Geschwindigkeit der Animationen korrigiert. Animationen wurden nur halb
+     so schnell wie im originalen Interpreter abgespielt.
+   - Rauschen am Beginn und/oder am Ende der Sprachausgabe behoben.
+     Dieser Fehler trat hauptsächlich in der spanischen Version auf.
+   - Verzögerung während der Interaktion mit dem Verben-Menü und dem Inventar behoben.
+   - Fehler behoben, durch den die Axt im Schloss mehrfach aufgehoben werden konnte.
+
+ Gob:
+   - Aufhängen während Sound-Initialisierung in mehreren Spielen behoben.
+
+ Lab:
+   - Aufhängen während der End-Sequenz behoben.
+   - Interne Spiel-Bedienelemente verbessert.
+
+ SAGA:
+   - Fehlerhafte Farben der Bedienelemente in der französischen und deutschen
+     Version von "I Have No Mouth and I Must Scream" korrigiert.
+
+ SCI:
+   - Cursor-Hilfsroutinen funktionieren nun korrekt auf OpenPandora und anderen
+     Geräten, die einen Touchscreen und analoge Sticks/Mäuse zur gleichen Zeit
+     unterstützen.
+   - Skript-Fehlerbehebung, um den fehlerhaften Endkampf in der mehrsprachigen
+     Version von King's Quest 5 zu korrigieren. Betroffen sind die französische,
+     deutsche und spanische Version.
+   - Ungültiger Speicherzugriff beim Laden der defekten Audiospur im Abspann
+     von King's Quest 5 behoben.
+   - Probleme mit der Einstellung der Bildschirmauflösung beim Speichern in
+     King's Quest 6 behoben.
+
+ SCUMM:
+   - Erkennung von Maniac Mansion innerhalb von Day of the Tentacle in der
+     Windows-Version von ScummVM repariert.
+   - In der EGA-Version von Loom wurde ein Sound-Effekt nicht korrekt angehalten,
+     wenn AdLib verwendet wurde. Dieser Fehler wurde behoben.
+
+ Baphomets Fluch 2.5:
+   - Option zur Auswahl von englischer Sprachausgabe anstelle der deutschen,
+     wenn in der gewählten Sprache keine Sprachausgabe verfügbar ist, hinzugefügt.
+   - Ressourcen-Freigabe beim Beenden des Spiels korrigiert.
+   - Fehler beim Neustart des Spiels nach dem Wechsel der Spiel-Sprache behoben.
+   - Flackern im Hauptmenü behoben.
+   - Lange Dauer des Speichervorgangs unter Windows behoben.
+
+ Windows-Portierung:
+   - Absturz im Zusammenhang mit nicht-funktionierenden MIDI-Geräten behoben.
+
+ Mac OS X-Portierung:
+   - Das Dock-Menü für ScummVM enthält nun eine Liste der zuletzt gespielten Spiele,
+     wenn ScummVM nicht läuft, und ermöglicht den direkten Start dieser Spiele.
+   - Sparkle-Updater für vereinfachte Programmaktualisierungen hinzugefügt.
+
+ GCW0-Portierung:
+   - Verbesserte Unterstützung für die in ScummVM integrierte Dokumentation.
 
 1.8.0 (04.03.2016)
  Neue Spiele:
@@ -28,7 +101,7 @@ Programmcodes finden Sie auf Englisch unter:
      hinzugefügt.
    - Unterstützung für Labyrinth of Time hinzugefügt.
 
-Neue Portierungen:
+ Neue Portierungen:
    - Portierung für den Raspberry Pi hinzugefügt.
    - Portierung für den GCW Zero (GCW0) hinzugefügt.
 
@@ -38,7 +111,7 @@ Neue Portierungen:
  SDL:
    - Alt+x beendet ScummVM nicht mehr. Verwenden Sie stattdessen
      Cmd+q/Strg+q/Strg+z und beachten Sie die Hinweise in der Liesmich-Datei.
-  -  Auf POSIX-Systemen befolgen wir nun die Spezifikation XDG Base Directory
+   - Auf POSIX-Systemen befolgen wir nun die Spezifikation XDG Base Directory
      für die Speicherung von Benutzerdaten. Dies führt zu neuen
      Speicherorten für unsere Konfigurationsdatei, unsere Log-Datei sowie für
      den standardmäßig voreingestellten Speicherort für Spielstände. Wir
@@ -66,7 +139,7 @@ Neue Portierungen:
      (verwendet von Mixed Up Mother Goose).
    - Feste Verzögerung von 2 Sekunden bei Raumwechseln entfernt und durch
      Heuristik ersetzt.
-   - Fehlerhafte Tastenbelegungen nach abspeichern/laden behoben
+   - Fehlerhafte Tastenbelegungen nach abspeichern/laden behoben.
 
  AGOS:
    - Arpeggio-Effekt in der Musik der Amiga-Version von Elvira 1 repariert.
@@ -78,7 +151,7 @@ Neue Portierungen:
      AdLib-Ausgabe erheblich und erhöht die Originaltreue.
 
  Baphomets Fluch 1:
-   - Sprachausgabe in Macintosh-Versionen korrigiert, wenn ScumMVM
+   - Sprachausgabe in Macintosh-Versionen korrigiert, wenn ScummVM
      auf Big-Endian-Systemen ausgeführt wird.
    - Fehler beim Laden eines Spielstandes aus dem Hauptmenü in der
      Bull's Head Hill-Szene korrigiert. Dieser Fehler trat womöglich auch

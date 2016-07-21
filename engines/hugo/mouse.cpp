@@ -33,6 +33,7 @@
 #include "common/system.h"
 
 #include "hugo/hugo.h"
+#include "hugo/dialogs.h"
 #include "hugo/game.h"
 #include "hugo/mouse.h"
 #include "hugo/schedule.h"

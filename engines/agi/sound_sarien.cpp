@@ -22,8 +22,6 @@
 
 #include "common/random.h"
 
-#include "audio/mididrv.h"
-
 #include "agi/agi.h"
 
 #include "agi/sound_sarien.h"

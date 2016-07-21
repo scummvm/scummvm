@@ -25,7 +25,6 @@
 #include "common/file.h"
 #include "common/textconsole.h"
 
-#include "gui/about.h"
 #include "gui/message.h"
 
 #include "agos/agos.h"

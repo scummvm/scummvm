@@ -73,6 +73,8 @@ World::World(WageEngine *engine) {
 	_weaponMenuDisabled = true;
 
 	_engine = engine;
+
+	_patterns = new Patterns;
 }
 
 World::~World() {
@@ -88,8 +90,10 @@ World::~World() {
 	for (uint i = 0; i < _orderedScenes.size(); i++)
 		delete _orderedScenes[i];
 
-	for (uint i = 0; i < _patterns.size(); i++)
-		free(_patterns[i]);
+	for (uint i = 0; i < _patterns->size(); i++)
+		free(_patterns->operator[](i));
+
+	delete _patterns;
 
 	delete _globalScript;
 
@@ -104,6 +108,18 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	Common::MacResIDArray resArray;
 	Common::SeekableReadStream *res;
 	Common::MacResIDArray::const_iterator iter;
+
+	// Dumping interpreter code
+#if 1
+	res = resMan->getResource(MKTAG('C','O','D','E'), 1);
+	warning("code size: %d", res->size());
+	byte *buf = (byte *)malloc(res->size());
+	res->read(buf, res->size());
+	Common::DumpFile out;
+	out.open("code.bin");
+	out.write(buf, res->size());
+	out.close();
+#endif
 
 	if ((resArray = resMan->getResIDArray(MKTAG('G','C','O','D'))).size() == 0)
 		return false;
@@ -249,7 +265,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 			byte *pattern = (byte *)malloc(8);
 
 			res->read(pattern, 8);
-			_patterns.push_back(pattern);
+			_patterns->push_back(pattern);
 		}
 
 		delete res;
@@ -262,7 +278,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 				byte *pattern = (byte *)malloc(8);
 
 				res->read(pattern, 8);
-				_patterns.push_back(pattern);
+				_patterns->push_back(pattern);
 			}
 		}
 		delete res;
@@ -419,7 +435,7 @@ static bool objComparator(const Obj *o1, const Obj *o2) {
 	bool o1Immobile = (o1->_type == Obj::IMMOBILE_OBJECT);
 	bool o2Immobile = (o2->_type == Obj::IMMOBILE_OBJECT);
 	if (o1Immobile == o2Immobile) {
-		return o1->_index - o2->_index;
+		return o1->_index < o2->_index;
 	}
 	return o1Immobile;
 }

@@ -3,6 +3,7 @@ MODULE := backends
 MODULE_OBJS := \
 	base-backend.o \
 	modular-backend.o \
+	audiocd/audiocd-stream.o \
 	audiocd/default/default-audiocd.o \
 	events/default/default-events.o \
 	fs/abstract-fs.o \
@@ -52,10 +53,16 @@ endif
 # OpenGL specific source files.
 ifdef USE_OPENGL
 MODULE_OBJS += \
+	graphics/opengl/context.o \
 	graphics/opengl/debug.o \
-	graphics/opengl/extensions.o \
+	graphics/opengl/framebuffer.o \
 	graphics/opengl/opengl-graphics.o \
-	graphics/opengl/texture.o
+	graphics/opengl/shader.o \
+	graphics/opengl/texture.o \
+	graphics/opengl/pipelines/clut8.o \
+	graphics/opengl/pipelines/fixed.o \
+	graphics/opengl/pipelines/pipeline.o \
+	graphics/opengl/pipelines/shader.o
 endif
 
 # SDL specific source files.
@@ -97,6 +104,7 @@ endif
 
 ifdef MACOSX
 MODULE_OBJS += \
+	audiocd/macosx/macosx-audiocd.o \
 	midi/coreaudio.o \
 	midi/coremidi.o \
 	updates/macosx/macosx-updates.o \
@@ -105,6 +113,7 @@ endif
 
 ifdef WIN32
 MODULE_OBJS += \
+	audiocd/win32/win32-audiocd.o \
 	fs/windows/windows-fs.o \
 	fs/windows/windows-fs-factory.o \
 	midi/windows.o \
@@ -126,6 +135,11 @@ MODULE_OBJS += \
 	fs/posix/posix-fs-factory.o \
 	fs/ps3/ps3-fs-factory.o \
 	events/ps3sdl/ps3sdl-events.o
+endif
+
+ifdef USE_LINUXCD
+MODULE_OBJS += \
+	audiocd/linux/linux-audiocd.o
 endif
 
 ifeq ($(BACKEND),tizen)

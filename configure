@@ -128,13 +128,13 @@ _timidity=auto
 _zlib=auto
 _mpeg2=auto
 _sparkle=auto
+_osxdockplugin=auto
 _jpeg=auto
 _png=auto
 _theoradec=auto
 _faad=auto
 _fluidsynth=auto
-_opengl=auto
-_opengles=auto
+_opengl_mode=auto
 _readline=auto
 _freetype2=auto
 _taskbar=auto
@@ -183,6 +183,7 @@ _win32path="c:/scummvm"
 _amigaospath="Games:ScummVM"
 _staticlibpath=
 _xcodetoolspath=
+_sparklepath=
 _sdlconfig=sdl-config
 _freetypeconfig=freetype-config
 _sdlpath="$PATH"
@@ -940,6 +941,15 @@ Optional Features:
   --enable-verbose-build   enable regular echoing of commands during build
                            process
   --disable-bink           don't build with Bink video support
+  --opengl-mode=MODE       OpenGL (ES) mode to use for OpenGL output [auto]
+                           available modes: auto for autodetection
+                                            none for disabling any OpenGL usage
+                                            any for runtime detection
+                                            gl for forcing OpenGL
+                                            gles for forcing OpenGL ES
+                                            gles2 for forcing OpenGL ES 2
+                           WARNING: only specify this manually if you know what
+                           you are doing!
 
 Optional Libraries:
   --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
@@ -964,9 +974,6 @@ Optional Libraries:
   --with-mpeg2-prefix=DIR  Prefix where libmpeg2 is installed (optional)
   --enable-mpeg2           enable mpeg2 codec for cutscenes [autodetect]
 
-  --with-opengl-prefix=DIR Prefix where OpenGL (ES) is installed (optional)
-  --disable-opengl         disable OpenGL (ES) support [autodetect]
-
   --with-jpeg-prefix=DIR   Prefix where libjpeg is installed (optional)
   --disable-jpeg           disable JPEG decoder [autodetect]
 
@@ -985,6 +992,8 @@ Optional Libraries:
 
   --with-sparkle-prefix=DIR   Prefix where sparkle is installed (Mac OS X only - optional)
   --disable-sparkle        disable sparkle automatic update support [Mac OS X only - autodetect]
+
+  --disable-osx-dock-plugin disable the NSDockTilePlugin support [Mac OS X only - autodetect]
 
   --with-sdl-prefix=DIR    Prefix where the sdl-config script is
                            installed (optional)
@@ -1048,6 +1057,8 @@ for ac_option in $@; do
 	--disable-zlib)           _zlib=no        ;;
 	--enable-sparkle)         _sparkle=yes    ;;
 	--disable-sparkle)        _sparkle=no     ;;
+	--enable-osx-dock-plugin) _osxdockplugin=yes;;
+	--disable-osx-dock-plugin) _osxdockplugin=no;;
 	--enable-nasm)            _nasm=yes       ;;
 	--disable-nasm)           _nasm=no        ;;
 	--enable-mpeg2)           _mpeg2=yes      ;;
@@ -1071,10 +1082,11 @@ for ac_option in $@; do
 	--disable-updates)        _updates=no     ;;
 	--enable-libunity)        _libunity=yes   ;;
 	--disable-libunity)       _libunity=no    ;;
-	--enable-opengl)          _opengl=yes     ;;
-	--disable-opengl)         _opengl=no      ;;
 	--enable-bink)            _bink=yes       ;;
 	--disable-bink)           _bink=no        ;;
+	--opengl-mode=*)
+		_opengl_mode=`echo $ac_option | cut -d '=' -f 2`
+		;;
 	--enable-verbose-build)   _verbose_build=yes ;;
 	--enable-plugins)         _dynamic_modules=yes ;;
 	--default-dynamic)        _plugins_default=dynamic ;;
@@ -1162,8 +1174,7 @@ for ac_option in $@; do
 		;;
 	--with-sparkle-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
-		SPARKLE_CFLAGS="-F$arg"
-		SPARKLE_LIBS="-F$arg"
+		_sparklepath=$arg
 		;;
 	--with-readline-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -1174,11 +1185,6 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		LIBUNITY_CFLAGS="-I$arg/include"
 		LIBUNITY_LIBS="-L$arg/lib"
-		;;
-	--with-opengl-prefix=*)
-		arg=`echo $ac_option | cut -d '=' -f 2`
-		OPENGL_CFLAGS="-I$arg/include"
-		OPENGL_LIBS="-L$arg/lib"
 		;;
 	--backend=*)
 		_backend=`echo $ac_option | cut -d '=' -f 2`
@@ -2354,7 +2360,7 @@ case $_host_os in
 				echo "Could not determine prefix for static libraries"
 			fi
 		fi
-		
+
 		# If _xcodetoolspath is not set yet use xcode-select to get the path
 		if test -z "$_xcodetoolspath"; then
 			_xcodetoolspath=`xcode-select -print-path`/Tools
@@ -2659,10 +2665,11 @@ if test -n "$_host"; then
 			# since SDL2 manages dispmanx/GLES2 very well internally.
 			# SDL1 is bit-rotten on this platform.
 			_sdlconfig=sdl2-config
-			# OpenGL(ES) support is mature enough as to be the best option on
+			# OpenGL ES support is mature enough as to be the best option on
 			# the Raspberry Pi, so it's enabled by default.
-			_opengl=yes
-			_opengles=yes
+			# The Raspberry Pi always supports OpenGL ES 2.0 contexts, thus we
+			# take advantage of those.
+			_opengl_mode=gles2
 			;;
 		dreamcast)
 			append_var DEFINES "-DDISABLE_DEFAULT_SAVEFILEMANAGER"
@@ -2723,21 +2730,19 @@ if test -n "$_host"; then
 		gcw0)
 			_sysroot=`$CXX --print-sysroot`
 			_sdlpath=$_sysroot/usr/bin
-			append_var DEFINES "-DDINGUX -DGCW0"
+			append_var DEFINES "-DDINGUX -DGCW0 -DGUI_ONLY_FULLSCREEN"
 			append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 			append_var CXXFLAGS "-mips32"
 			_backend="dingux"
-			_mt32emu=no
-			_optimization_level=-O3
-			# Disable alsa midi to get the port build on OpenDingux toolchain
 			_alsa=no
-			_vkeybd=yes
-			_build_hq_scalers=no
-			_keymapper=yes
-			# Force disable vorbis on dingux, it has terrible performance compared to tremor
-			_vorbis=no
-			# Force disable seq on dingux, no way to use it and it would get enabled by default with configure
+			_mt32emu=no
 			_seq_midi=no
+			_timidity=no
+			_build_scalers=no
+			_optimization_level=-O3
+			_vkeybd=yes
+			_keymapper=yes
+			_vorbis=no
 			_port_mk="backends/platform/dingux/dingux.mk"
 			;;
 		gp2x)
@@ -2990,6 +2995,8 @@ if test -n "$_host"; then
 			_mt32emu=no
 			_timidity=no
 			_vkeybd=yes
+			# Tizen relies on the OpenGL ES output thus we always enable it.
+			_opengl_mode=gles
 			;;
 		webos)
 			_backend="webos"
@@ -3928,26 +3935,65 @@ echo "$_mpeg2"
 #
 # Check for Sparkle if updates support is enabled
 #
-echocheck "Sparkle"
-if test "$_updates" = no; then
-	_sparkle=no
-else
-if test "$_sparkle" = auto ; then
-	_sparkle=no
-	cat > $TMPC << EOF
+#
+# Check is NSDockTilePlugIn protocol is supported
+#
+case $_host_os in
+	darwin*)
+		echocheck "Sparkle"
+		if test "$_updates" = no; then
+			_sparkle=no
+		else
+			if test ! -z $_sparklepath ; then
+				SPARKLE_CFLAGS="-F$_sparklepath"
+				SPARKLE_LIBS="-F$_sparklepath"
+			fi
+			if test "$_sparkle" = auto ; then
+				_sparkle=no
+				cat > $TMPC << EOF
 #include <Cocoa/Cocoa.h>
 #include <Sparkle/Sparkle.h>
 int main(void) { SUUpdater *updater = [SUUpdater sharedUpdater]; return 0; }
 EOF
-	cc_check $SPARKLE_CFLAGS $SPARKLE_LIBS -framework Sparkle -ObjC++ -lobjc && _sparkle=yes
-fi
-if test "$_sparkle" = yes ; then
-	append_var LIBS "$SPARKLE_LIBS -framework Sparkle"
-	append_var INCLUDES "$SPARKLE_CFLAGS"
-fi
-define_in_config_if_yes "$_sparkle" 'USE_SPARKLE'
-fi
-echo "$_sparkle"
+				cc_check $SPARKLE_CFLAGS $SPARKLE_LIBS -framework Sparkle -ObjC++ -lobjc && _sparkle=yes
+			fi
+			if test "$_sparkle" = yes ; then
+				append_var LIBS "$SPARKLE_LIBS -framework Sparkle"
+				append_var INCLUDES "$SPARKLE_CFLAGS"
+			fi
+			define_in_config_if_yes "$_sparkle" 'USE_SPARKLE'
+		fi
+		echo "$_sparkle"
+	;;
+	*)
+		_sparkle=no
+	;;
+esac
+
+#
+# Check is NSDockTilePlugIn protocol is supported
+#
+case $_host_os in
+	darwin*)
+		# NSDockTilePlugIn was added in OS X 10.6, so will not be available when compiling on older OS X versions.
+		echocheck "DockTilePlugin"
+		if test "$_osxdockplugin" = auto ; then
+			_osxdockplugin=no
+			cat > $TMPC << EOF
+#include <Cocoa/Cocoa.h>
+@interface ScummVMDockTilePlugIn : NSObject <NSDockTilePlugIn> {
+}
+@end
+EOF
+			cc_check -c -ObjC++ && _osxdockplugin=yes
+		fi
+		define_in_config_if_yes "$_osxdockplugin" 'USE_DOCKTILEPLUGIN'
+		echo "$_osxdockplugin"
+	;;
+	*)
+		_osxdockplugin=no
+	;;
+esac
 
 #
 # Check for FluidSynth
@@ -4150,113 +4196,115 @@ echocheck "OpenGL"
 
 case $_backend in
 	openpandora)
-		# Only enable OpenGL ES on the OpanPandora if --enable-opengl is passed in explicitly.
-		if test "$_opengl" = yes ; then
-			_opengl=yes
-			_opengles=yes
-			OPENGL_LIBS="-lGLES_CM -lEGL -lX11"
-			OPENGL_CFLAGS="$OPENGL_LIBS"
-			append_var LIBS "$OPENGL_LIBS"
-			append_var INCLUDES "$OPENGL_CFLAGS"
+		# Only enable OpenGL ES on the OpanPandora if --opengl-mode=gles is passed in explicitly.
+		if test "$_opengl_mode" = "gles" ; then
+			append_var LIBS "-lGLES_CM -lEGL -lX11"
+		else
+			_opengl_mode=none
 		fi
 		;;
 esac
 
-if test "$_opengl" = auto ; then
-	_opengl=no
-	if test "$_backend" = "sdl" ; then
-		# Try different header filenames
-		# 1) GL/gl.h         This is usually used on POSIX and Windows systems
-		# 2) OpenGL/gl.h     This is used on Mac OS X
-		# 3) GLES/gl.h       This is used for OpenGL ES 1.x
-		for i in "GL/gl.h" "OpenGL/gl.h" "GLES/gl.h"; do
-			# Test the current header for OpenGL
-			cat > $TMPC << EOF
-#include <$i>
-#include <stdio.h>
-int main(void) { printf("ANTIVIRUS FALSE POSITIVE WORKAROUND"); return GL_VERSION_1_1; }
-EOF
-			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && break
+if test "$_opengl_mode" = auto ; then
+	case $_backend in
+		sdl)
+			case $_sdlversion in
+				1.2.*)
+					# Stock SDL 1.2 only supports OpenGL contexts.
+					_opengl_mode=gl
+					;;
 
-			# Test the current header for OpenGL ES
-			cat > $TMPC << EOF
-#include <$i>
-int main(void) { return GL_OES_VERSION_1_1; }
-EOF
-			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && _opengles=yes && break
+				2.0.*)
+					# SDL2 supports both OpenGL + OpenGL ES contexts.
+					# However, Mac OS X only allows OpenGL context creation at
+					# this time, thus we limit us to OpenGL on that platform.
+					case $_host_os in
+						darwin*)
+							_opengl_mode=gl
+							;;
 
-			# Test the current header for OpenGL ES on SBCs (Raspberry Pi, Cubieboard, etc)
-			cat > $TMPC << EOF
-#include <$i>
-int main(void) { return GL_VERSION_ES_CM_1_1; }
-EOF
-			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && _opengles=yes && break
-		done
-	fi
-fi
-if test "$_opengl" = yes ; then
-	# Our simple test case
-	cat > $TMPC << EOF
-int main(void) { return 0; }
-EOF
+						*)
+							_opengl_mode=any
+							;;
+					esac
+					;;
+			esac
+			;;
 
-	_opengl=no
-	# Try different library names
-	if test "$_opengles" = "yes" ; then
-		# 1) GLES_CM    This is usually used for OpenGL ES 1.1 (Common profile)
-		# 2) GLESv1_CM  This is used by the Windows Mali OpenGL ES 1.1 Emulator
-		# 3) glesv1     This is used by the Linux Mali OpenGL ES 1.1 Emulator
-		_opengles=no
-		for lib in "-lGLES_CM" "-lGLESv1_CM" "-lglesv1"; do
-			if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib
-				then
-				_opengl=yes
-				_opengles=yes
-				OPENGL_LIBS="$OPENGL_LIBS $lib"
-				break
-			fi
-		done
-	else
-		# 1) -framework OpenGL  This is used on Mac OS X
-		# 2) GL                 This is usually used on POSIX systems
-		# 3) opengl32           This is used on Windows
-		#
-		# We try "-framework OpenGL" first here to assure it will always be
-		# picked up by the configure script on Mac OS X, even when a libGL
-		# exists.
-		for lib in "-framework OpenGL" "-lGL" "-lopengl32"; do
-			if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib
-				then
-				_opengl=yes
-				OPENGL_LIBS="$OPENGL_LIBS $lib"
-				break
-			fi
-		done
-	fi
-	cc_check_clean
+		tizen)
+			# Tizen always runs in GLES mode
+			_opengl_mode=gles
+			;;
 
-	if test "$_opengl" = yes ; then
-		append_var LIBS "$OPENGL_LIBS"
-		append_var INCLUDES "$OPENGL_CFLAGS"
-	fi
+		*)
+			_opengl_mode=none
+			;;
+	esac
 fi
 
-case $_host_os in
-	tizen)
-		# components live in non-standard locations so just assume sane SDK
-		_opengl=yes
-		_opengles=yes
+_opengl=yes
+case $_opengl_mode in
+	auto)
+		# This case should never occur but better safe than sorry.
+		echo "no"
+		_opengl=no
+		;;
+
+	none)
+		echo "no"
+		_opengl=no
+		;;
+
+	any)
+		echo "yes (runtime detection)"
+		add_line_to_config_h "#undef USE_GLES_MODE"
+		;;
+
+	gl)
+		echo "yes (OpenGL)"
+		add_line_to_config_h "#define USE_GLES_MODE 0"
+		;;
+
+	gles)
+		echo "yes (OpenGL ES)"
+		add_line_to_config_h "#define USE_GLES_MODE 1"
+		;;
+
+	gles2)
+		echo "yes (OpenGL ES 2)"
+		add_line_to_config_h "#define USE_GLES_MODE 2"
+		;;
+
+	*)
+		echo "invalid mode specification '$_opengl_mode'. Aborting."
+		exit 1
 		;;
 esac
 
-if test "$_opengles" = "yes" ; then
-	echo "yes (OpenGL ES)"
-else
-	echo "$_opengl"
-fi
-
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
-define_in_config_if_yes "$_opengles" "USE_GLES"
+
+#
+# Check for Linux CD-ROM support
+#
+case $_host_os in
+	*linux*)
+		echocheck "Linux CD-ROM"
+		linuxcd=no
+		cat > $TMPC << EOF
+#include <linux/cdrom.h>
+#include <sys/types.h>
+int main(void) {
+	int x = CDROMREADAUDIO;
+	dev_t dev;
+	return major(dev) + x;
+}
+EOF
+		cc_check && linuxcd=yes
+		define_in_config_if_yes "$linuxcd" 'USE_LINUXCD'
+		echo "$linuxcd"
+		;;
+esac
+
 
 #
 # Check for nasm
@@ -4745,6 +4793,7 @@ WIN32PATH=$_win32path
 AMIGAOSPATH=$_amigaospath
 STATICLIBPATH=$_staticlibpath
 XCODETOOLSPATH=$_xcodetoolspath
+SPARKLEPATH=$_sparklepath
 SDLCONFIG=$_sdlconfig
 
 ABI := $ABI

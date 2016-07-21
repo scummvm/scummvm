@@ -106,16 +106,12 @@ MystGameState::MystGameState(MohawkEngine_Myst *vm, Common::SaveFileManager *sav
 MystGameState::~MystGameState() {
 }
 
-Common::StringArray MystGameState::generateSaveGameList() {
-	return g_system->getSavefileManager()->listSavefiles("*.mys");
-}
-
-bool MystGameState::load(const Common::String &filename) {
-	if (!loadState(filename)) {
+bool MystGameState::load(int slot) {
+	if (!loadState(slot)) {
 		return false;
 	}
 
-	loadMetadata(filename);
+	loadMetadata(slot);
 
 	// Set Channelwood elevator state to down, because we start on the lower level
 	_channelwood.elevatorState = 0;
@@ -136,7 +132,8 @@ bool MystGameState::load(const Common::String &filename) {
 	return true;
 }
 
-bool MystGameState::loadState(const Common::String &filename) {
+bool MystGameState::loadState(int slot) {
+	Common::String filename = buildSaveFilename(slot);
 	Common::InSaveFile *loadFile = _saveFileMan->openForLoading(filename);
 	if (!loadFile) {
 		return false;
@@ -160,9 +157,10 @@ bool MystGameState::loadState(const Common::String &filename) {
 	return true;
 }
 
-void MystGameState::loadMetadata(const Common::String &filename) {
+void MystGameState::loadMetadata(int slot) {
 	// Open the metadata file
-	Common::InSaveFile *metadataFile = openMetadataFile(filename);
+	Common::String filename = buildMetadataFilename(slot);
+	Common::InSaveFile *metadataFile = _vm->getSaveFileManager()->openForLoading(filename);
 	if (!metadataFile) {
 		return;
 	}
@@ -179,25 +177,19 @@ void MystGameState::loadMetadata(const Common::String &filename) {
 	delete metadataFile;
 }
 
-bool MystGameState::save(const Common::String &filename) {
-	// Make sure the description does not have an extension
-	Common::String desc = filename;
-	if (filename.hasSuffix(".mys") || filename.hasSuffix(".MYS")) {
-		desc = removeExtension(filename);
-	}
-
-	if (!saveState(desc)) {
+bool MystGameState::save(int slot, const Common::String &desc) {
+	if (!saveState(slot)) {
 		return false;
 	}
 
 	updateMetadateForSaving(desc);
 
-	return saveMetadata(desc);
+	return saveMetadata(slot);
 }
 
-bool MystGameState::saveState(const Common::String &desc) {
+bool MystGameState::saveState(int slot) {
 	// Make sure we have the right extension
-	Common::String filename = desc + ".mys";
+	Common::String filename = buildSaveFilename(slot);
 	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(filename);
 	if (!saveFile) {
 		return false;
@@ -213,6 +205,14 @@ bool MystGameState::saveState(const Common::String &desc) {
 	return true;
 }
 
+Common::String MystGameState::buildSaveFilename(int slot) {
+	return Common::String::format("myst-%03d.mys", slot);
+}
+
+Common::String MystGameState::buildMetadataFilename(int slot) {
+	return Common::String::format("myst-%03d.mym", slot);
+}
+
 void MystGameState::updateMetadateForSaving(const Common::String &desc) {
 	// Update save creation info
 	TimeDate t;
@@ -226,10 +226,10 @@ void MystGameState::updateMetadateForSaving(const Common::String &desc) {
 	_metadata.totalPlayTime = _vm->getTotalPlayTime();
 }
 
-bool MystGameState::saveMetadata(const Common::String &desc) {
+bool MystGameState::saveMetadata(int slot) {
 	// Write the metadata to a separate file so that the save files
 	// are still compatible with the original engine
-	Common::String metadataFilename = desc + ".mym";
+	Common::String metadataFilename = buildMetadataFilename(slot);
 	Common::OutSaveFile *metadataFile = _saveFileMan->openForSaving(metadataFilename);
 	if (!metadataFile) {
 		return false;
@@ -248,14 +248,12 @@ bool MystGameState::saveMetadata(const Common::String &desc) {
 	return true;
 }
 
-SaveStateDescriptor MystGameState::querySaveMetaInfos(const Common::String filename) {
-	SaveStateDescriptor desc;
-	desc.setDescription(filename);
-
+SaveStateDescriptor MystGameState::querySaveMetaInfos(int slot) {
 	// Open the metadata file
-	Common::InSaveFile *metadataFile = openMetadataFile(filename);
+	Common::String filename = buildMetadataFilename(slot);
+	Common::InSaveFile *metadataFile = g_system->getSavefileManager()->openForLoading(filename);
 	if (!metadataFile) {
-		return desc;
+		return SaveStateDescriptor();
 	}
 
 	Common::Serializer m(metadataFile, nullptr);
@@ -264,10 +262,11 @@ SaveStateDescriptor MystGameState::querySaveMetaInfos(const Common::String filen
 	Mohawk::MystSaveMetadata metadata;
 	if (!metadata.sync(m)) {
 		delete metadataFile;
-		return desc;
+		return SaveStateDescriptor();
 	}
 
 	// Set the save description
+	SaveStateDescriptor desc;
 	desc.setDescription(metadata.saveDescription);
 	desc.setSaveDate(metadata.saveYear, metadata.saveMonth, metadata.saveDay);
 	desc.setSaveTime(metadata.saveHour, metadata.saveMinute);
@@ -279,20 +278,26 @@ SaveStateDescriptor MystGameState::querySaveMetaInfos(const Common::String filen
 	return desc;
 }
 
-Common::InSaveFile *MystGameState::openMetadataFile(const Common::String &filename) {
-	// Remove the extension
-	Common::String baseName = removeExtension(filename);
-
+Common::String MystGameState::querySaveDescription(int slot) {
 	// Open the metadata file
-	return g_system->getSavefileManager()->openForLoading(baseName + ".mym");
-}
-
-Common::String MystGameState::removeExtension(const Common::String &filename) {
-	Common::String baseName = filename;
-	for (uint i = 0; i < 4; i++) {
-		baseName.deleteLastChar();
+	Common::String filename = buildMetadataFilename(slot);
+	Common::InSaveFile *metadataFile = g_system->getSavefileManager()->openForLoading(filename);
+	if (!metadataFile) {
+		return "";
 	}
-	return baseName;
+
+	Common::Serializer m(metadataFile, nullptr);
+
+	// Read the metadata file
+	Mohawk::MystSaveMetadata metadata;
+	if (!metadata.sync(m)) {
+		delete metadataFile;
+		return "";
+	}
+
+	delete metadataFile;
+
+	return metadata.saveDescription;
 }
 
 void MystGameState::syncGameState(Common::Serializer &s, bool isME) {
@@ -471,12 +476,14 @@ void MystGameState::syncGameState(Common::Serializer &s, bool isME) {
 		warning("Unexpected File Position 0x%03X At End of Save/Load", s.bytesSynced());
 }
 
-void MystGameState::deleteSave(const Common::String &saveName) {
-	debugC(kDebugSaveLoad, "Deleting save file \'%s\'", saveName.c_str());
-	Common::String basename = removeExtension(saveName);
+void MystGameState::deleteSave(int slot) {
+	Common::String filename = buildSaveFilename(slot);
+	Common::String metadataFilename = buildMetadataFilename(slot);
 
-	g_system->getSavefileManager()->removeSavefile(saveName);
-	g_system->getSavefileManager()->removeSavefile(basename + ".mym");
+	debugC(kDebugSaveLoad, "Deleting save file \'%s\'", filename.c_str());
+
+	g_system->getSavefileManager()->removeSavefile(filename);
+	g_system->getSavefileManager()->removeSavefile(metadataFilename);
 }
 
 void MystGameState::addZipDest(uint16 stack, uint16 view) {

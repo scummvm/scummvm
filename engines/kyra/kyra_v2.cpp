@@ -46,6 +46,8 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 	memset(&_sceneScriptState, 0, sizeof(_sceneScriptState));
 	memset(&_sceneScriptData, 0, sizeof(_sceneScriptData));
 
+	Common::fill(_sceneSpecialScriptsTimer, ARRAYEND(_sceneSpecialScriptsTimer), 0);
+
 	_animObjects = 0;
 
 	_runFlag = true;

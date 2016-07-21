@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 #include "common/textconsole.h"
+#include "audio/mididrv.h"
 
 #include "zvision/sound/midi.h"
 

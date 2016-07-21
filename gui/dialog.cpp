@@ -119,6 +119,8 @@ void Dialog::reflowLayout() {
 }
 
 void Dialog::lostFocus() {
+	_dragWidget = NULL;
+
 	if (_tickleWidget) {
 		_tickleWidget->lostFocus();
 	}

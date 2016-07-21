@@ -27,7 +27,6 @@
 #include "tinsel/dw.h"
 #include "tinsel/config.h"
 #include "tinsel/music.h"
-#include "tinsel/strres.h"
 #include "tinsel/tinsel.h"
 #include "tinsel/sysvar.h"
 #include "tinsel/background.h"
@@ -37,7 +36,6 @@
 #include "common/system.h"
 
 #include "audio/mixer.h"
-#include "audio/decoders/adpcm.h"
 #include "audio/decoders/flac.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"

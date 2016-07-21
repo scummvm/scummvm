@@ -24,9 +24,12 @@
 #define GOB_SOUND_SOUNDBLASTER_H
 
 #include "common/mutex.h"
-#include "audio/mixer.h"
 
 #include "gob/sound/soundmixer.h"
+
+namespace Audio {
+class Mixer;
+}
 
 namespace Gob {
 

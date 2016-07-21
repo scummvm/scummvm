@@ -20,7 +20,6 @@
  *
  */
 
-#include "agos/agos.h"
 #include "agos/drivers/accolade/mididriver.h"
 
 #include "audio/mididrv.h"

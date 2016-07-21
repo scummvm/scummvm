@@ -1742,8 +1742,8 @@ The platforms that currently have a different default directory are:
     $HOME/Documents/ScummVM Savegames/
 
     Other unices:
-    We follow the XDG Base Directory Specification. This means our
-    configuration can be found in:
+    We follow the XDG Base Directory Specification. This means by default
+    saved games can be found in:
     $XDG_DATA_HOME/scummvm/saves/
 
     If XDG_DATA_HOME is not defined or empty, ~/.local/share will be used

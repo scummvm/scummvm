@@ -239,6 +239,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Codename: Iceman - English Atari ST
+	// Game version 1.041
+	// Executable reports "1.002.041"
+	{ "iceman", "",{
+		{ "resource.map", 0, "066e89b685ad788e06bae0b76d0d37d3", 5718 },
+		{ "resource.000", 0, "053278385ce910a3f630f2e45e3c10be", 26987 },
+		{ "resource.001", 0, "32b351072fccf76fc82234d73d28c08b", 438880 },
+		{ "resource.002", 0, "36670a917550757d57df84c96cf9e6d9", 566667 },
+		{ "resource.003", 0, "d97a96f1ab91b41cf46a02cc89b0a04e", 624304 },
+		{ "resource.004", 0, "8613c45fc771d658e5a505b9a4a54f31", 670884 },
+		AD_LISTEND },
+		Common::EN_ANY, Common::kPlatformAtariST, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
+
 	// Codename: Iceman - English DOS Non-Interactive Demo
 	// Executable scanning reports "0.000.685"
 	{"iceman", "Demo", {
@@ -2766,7 +2779,12 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	 Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
 
 #ifdef ENABLE_SCI3_GAMES
-	// Phantasmagoria 2 - English Windows (from jvprat)
+	// Some versions of Phantasmagoria 2 were heavily censored.
+	// Censored versions (data files are currently unknown to us): UK, Australia, first English release in Germany
+
+	// Phantasmagoria 2 - English Windows (from jvprat) - US release
+	// Note: Fully uncensored
+	//
 	// Executable scanning reports "3.000.000", VERSION file reports "001.0.06"
 	{"phantasmagoria2", "", {
 		{"resmap.001", 0, "0a961e135f4f7effb195158325856633", 1108},
@@ -2782,11 +2800,23 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
-	// Phantasmagoria 2 - German DOS/Windows
+	// Phantasmagoria 2 - English DOS (GOG version) (supplied by littleboy in patch #1360)
+	// Note: Fully uncensored, basically the US release, but ressci.* merged into ressci.000
+	//
+	// Executable scanning reports "3.000.000" - "Dec 07 1996 09:29:03"
+	// VERSION file reports "001.0.06"
+	{"phantasmagoria2", "", {
+		{"ressci.000", 0, "c54f26d9f43f908151263254b6d97053", 108134481},
+		{"resmap.000", 0, "de154a223a9ef4ea7358b76adc38ef5b", 2956},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// Phantasmagoria 2 - German DOS/Windows (supplied by AReim1982)
+	// Note: Fully uncensored, but one scene is missing probably because of a mastering error (Curtis + Therese meeting near water cooler)
+	//
 	// Windows executable scanning reports "unknown" - "Dec 07 1996 15:42:02"
 	// DOS executable scanning reports "unknown" - "Dec 07 1996 08:35:12"
 	// VERSION file reports "000.1.0vu" (HEX: 30 30 30 2E 31 00 2E 30 76 FA 0D 0A)
-	// Supplied by AReim1982
 	{"phantasmagoria2", "", {
 		{"resmap.001", 0, "d62f48ff8bddb39503b97e33439482c9", 1114},
 		{"ressci.001", 0, "4ebc2b8455c74ad205ae592eec27313a", 24590716},
@@ -2800,16 +2830,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.005", 0, "e94005890d22dd3b7f605a2a7c025803", 68232146},
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
-
-	// Phantasmagoria 2 - English DOS (GOG version) - ressci.* merged in ressci.000
-	// Executable scanning reports "3.000.000" - "Dec 07 1996 09:29:03"
-	// VERSION file reports "001.0.06"
-	// Supplied by littleboy in patch #3112884
-	{"phantasmagoria2", "", {
-		{"ressci.000", 0, "c54f26d9f43f908151263254b6d97053", 108134481},
-		{"resmap.000", 0, "de154a223a9ef4ea7358b76adc38ef5b", 2956},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 #endif	// ENABLE_SCI3_GAMES
 
 #endif // ENABLE_SCI32
@@ -4214,6 +4234,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56126981},
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// Torin's Passage - Russian Windows CD (SoftClub official translate)
+	// SCI interpreter version 2.100.002
+	// VERSION file "1.0"
+	{ "torin", "",{
+		{ "resource.aud", 0, "f66df699be5ed011b16b3f816cee8a04", 210583510 },
+		{ "ressci.000", 0, "e672da099fb1663b87c78abc6c8ba2a4", 130622695 },
+		{ "resmap.000", 0, "643859f8f2be8e7701611e29b3b65208", 9799 },
+	AD_LISTEND },
+	Common::RU_RUS, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
 
 	// Torin's Passage - English Macintosh
 	{"torin", "", {

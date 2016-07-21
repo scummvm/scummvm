@@ -47,6 +47,28 @@ struct WizImage {
 	int palette;
 };
 
+struct FontProperties {
+	byte string[4096];
+	byte fontName[4096];
+	int fgColor;
+	int bgColor;
+	int style;
+	int size;
+	int xPos;
+	int yPos;
+};
+
+struct EllipseProperties {
+	int px;
+	int py;
+	int qx;
+	int qy;
+	int kx;
+	int ky;
+	int lod;
+	int color;
+};
+
 struct WizParameters {
 	int field_0;
 	byte filename[260];
@@ -77,22 +99,8 @@ struct WizParameters {
 	int remapNum;
 	int dstResNum;
 	uint16 fillColor;
-	byte string1[4096];
-	byte string2[4096];
-	int field_2399;
-	int field_239D;
-	int field_23A1;
-	int field_23A5;
-	int field_23A9;
-	int field_23AD;
-	int field_23B1;
-	int field_23B5;
-	int field_23B9;
-	int field_23BD;
-	int field_23C1;
-	int field_23C5;
-	int field_23C9;
-	int field_23CD;
+	FontProperties fontProperties;
+	EllipseProperties ellipseProperties;
 	Common::Rect box2;
 	int field_23DE;
 	int spriteId;

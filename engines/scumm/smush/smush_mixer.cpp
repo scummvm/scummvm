@@ -21,14 +21,11 @@
  */
 
 
-#include "common/util.h"
-
 #include "scumm/smush/smush_mixer.h"
 #include "scumm/smush/channel.h"
 #include "scumm/scumm.h"
-#include "scumm/sound.h"
-#include "scumm/imuse/imuse.h"
 
+#include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 

@@ -2256,6 +2256,9 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 template<typename PixelType>
 void VectorRendererAA<PixelType>::
 drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
+	w -= 2*Base::_strokeWidth;
+	h -= 2*Base::_strokeWidth;
+
 	// Do not draw empty space rounded squares.
 	if (w <= 0 || h <= 0) {
 		return;
@@ -2272,8 +2275,6 @@ drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType colo
 	r -= Base::_strokeWidth;
 	x1 += Base::_strokeWidth;
 	y1 += Base::_strokeWidth;
-	w -= 2*Base::_strokeWidth;
-	h -= 2*Base::_strokeWidth;
 	rsq = r*r;
 
 	PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);

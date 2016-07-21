@@ -24,7 +24,6 @@
 #define BBVS_BBVS_H
 
 #include "audio/mixer.h"
-#include "audio/decoders/aiff.h"
 #include "common/array.h"
 #include "common/events.h"
 #include "common/file.h"

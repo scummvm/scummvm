@@ -330,7 +330,7 @@ bool EventRecorder::openRecordFile(const Common::String &fileName) {
 }
 
 bool EventRecorder::checkGameHash(const ADGameDescription *gameDesc) {
-	if (_playbackFile->getHeader().hashRecords.size() != 0) {
+	if (_playbackFile->getHeader().hashRecords.size() == 0) {
 		warning("Engine doesn't contain description table");
 		return false;
 	}
@@ -676,4 +676,3 @@ void EventRecorder::deleteTemporarySave() {
 } // End of namespace GUI
 
 #endif // ENABLE_EVENTRECORDER
-

@@ -22,7 +22,6 @@
 
 #include "common/macresman.h"
 #include "engines/engine.h"
-#include "gui/message.h"
 #include "scumm/players/player_mac.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"

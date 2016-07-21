@@ -31,18 +31,11 @@
 
 #include "common/scummsys.h"
 #include "common/types.h"
-#include "common/substream.h"
+#include "common/stream.h"
 
 #include "audio/audiostream.h"
-#include "audio/decoders/raw.h"
-
-namespace Common {
-class SeekableReadStream;
-}
 
 namespace Audio {
-
-class SeekableAudioStream;
 
 // amount of bytes to be used within the decoder classes as buffers
 #define AUDIO_3DO_CACHE_SIZE 1024

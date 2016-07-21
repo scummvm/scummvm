@@ -23,9 +23,12 @@
 #ifndef BBVS_SOUND_H
 #define BBVS_SOUND_H
 
-#include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "common/array.h"
+
+namespace Audio {
+class RewindableAudioStream;
+}
 
 namespace Bbvs {
 

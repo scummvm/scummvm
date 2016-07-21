@@ -30,6 +30,7 @@ namespace Tattoo {
 TattooScreen::TattooScreen(SherlockEngine *vm) : Screen(vm) {
 	_backBuffer1.create(640, 480);
 	_backBuffer2.create(640, 480);
+	activateBackBuffer1();
 }
 
 } // End of namespace Tattoo

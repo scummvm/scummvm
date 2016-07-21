@@ -48,9 +48,10 @@
 #ifndef WAGE_DESIGN_H
 #define WAGE_DESIGN_H
 
-#include "graphics/surface.h"
 #include "common/memstream.h"
 #include "common/rect.h"
+
+#include "wage/macwindowmanager.h"
 
 namespace Wage {
 
@@ -67,14 +68,14 @@ public:
 		return _bounds;
 	}
 
-    void paint(Graphics::Surface *canvas, Patterns &patterns, int x, int y);
+    void paint(Graphics::ManagedSurface *canvas, Patterns &patterns, int x, int y);
 	bool isPointOpaque(int x, int y);
-	static void drawRect(Graphics::Surface *surface, Common::Rect &rect, int thickness, int color, Patterns &patterns, byte fillType);
-	static void drawRect(Graphics::Surface *surface, int x1, int y1, int x2, int y2, int thickness, int color, Patterns &patterns, byte fillType);
-	static void drawFilledRect(Graphics::Surface *surface, Common::Rect &rect, int color, Patterns &patterns, byte fillType);
-	static void drawFilledRoundRect(Graphics::Surface *surface, Common::Rect &rect, int arc, int color, Patterns &patterns, byte fillType);
-	static void drawHLine(Graphics::Surface *surface, int x1, int x2, int y, int thickness, int color, Patterns &patterns, byte fillType);
-	static void drawVLine(Graphics::Surface *surface, int x, int y1, int y2, int thickness, int color, Patterns &patterns, byte fillType);
+	static void drawRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int thickness, int color, Patterns &patterns, byte fillType);
+	static void drawRect(Graphics::ManagedSurface *surface, int x1, int y1, int x2, int y2, int thickness, int color, Patterns &patterns, byte fillType);
+	static void drawFilledRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int color, Patterns &patterns, byte fillType);
+	static void drawFilledRoundRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int arc, int color, Patterns &patterns, byte fillType);
+	static void drawHLine(Graphics::ManagedSurface *surface, int x1, int x2, int y, int thickness, int color, Patterns &patterns, byte fillType);
+	static void drawVLine(Graphics::ManagedSurface *surface, int x, int y1, int y2, int thickness, int color, Patterns &patterns, byte fillType);
 
 	bool isBoundsCalculation() { return _boundsCalculationMode; }
 	void adjustBounds(int16 x, int16 y);
@@ -83,32 +84,32 @@ private:
 	byte *_data;
 	int _len;
 	Common::Rect *_bounds;
-	Graphics::Surface *_surface;
+	Graphics::ManagedSurface *_surface;
 	bool _boundsCalculationMode;
 
 private:
 	void render(Patterns &patterns);
-	void drawRect(Graphics::Surface *surface, Common::ReadStream &in,
+	void drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
-	void drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in,
+	void drawRoundRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
-	void drawPolygon(Graphics::Surface *surface, Common::ReadStream &in,
+	void drawPolygon(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
-	void drawOval(Graphics::Surface *surface, Common::ReadStream &in,
+	void drawOval(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
-	void drawBitmap(Graphics::Surface *surface, Common::SeekableReadStream &in);
+	void drawBitmap(Graphics::ManagedSurface *surface, Common::SeekableReadStream &in);
 };
 
 class FloodFill {
 public:
-	FloodFill(Graphics::Surface *surface, byte color1, byte color2);
+	FloodFill(Graphics::ManagedSurface *surface, byte color1, byte color2);
 	~FloodFill();
 	void addSeed(int x, int y);
 	void fill();
 
 private:
 	Common::List<Common::Point *> _queue;
-	Graphics::Surface *_surface;
+	Graphics::ManagedSurface *_surface;
 	byte _color1, _color2;
 	byte *_visited;
 	int _w, _h;

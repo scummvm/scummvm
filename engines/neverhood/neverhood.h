@@ -30,7 +30,6 @@
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/system.h"
-#include "audio/mixer.h"
 #include "engines/engine.h"
 #include "gui/debugger.h"
 #include "neverhood/console.h"

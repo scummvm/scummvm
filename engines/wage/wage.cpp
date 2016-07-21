@@ -86,6 +86,7 @@ WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(sy
 	_offer = NULL;
 
 	_resManager = NULL;
+	_debugger = NULL;
 
 	debug("WageEngine::WageEngine()");
 }
@@ -148,23 +149,13 @@ void WageEngine::processEvents() {
 	Common::Event event;
 
 	while (_eventMan->pollEvent(event)) {
+		if (_gui->processEvent(event))
+			continue;
+
 		switch (event.type) {
 		case Common::EVENT_QUIT:
 			if (saveDialog())
 				_shouldQuit = true;
-			break;
-		case Common::EVENT_MOUSEMOVE:
-			_gui->mouseMove(event.mouse.x, event.mouse.y);
-			break;
-		case Common::EVENT_LBUTTONDOWN:
-			_gui->mouseDown(event.mouse.x, event.mouse.y);
-			break;
-		case Common::EVENT_LBUTTONUP:
-			{
-				Designed *obj = _gui->mouseUp(event.mouse.x, event.mouse.y);
-				if (obj != NULL)
-					processTurn(NULL, obj);
-			}
 			break;
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
@@ -186,13 +177,6 @@ void WageEngine::processEvents() {
 			default:
 				if (event.kbd.ascii == '~') {
 					_debugger->attach();
-					break;
-				}
-
-				if (event.kbd.flags & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_META)) {
-					if (event.kbd.ascii >= 0x20 && event.kbd.ascii <= 0x7f) {
-						_gui->processMenuShortCut(event.kbd.flags, event.kbd.ascii);
-					}
 					break;
 				}
 
@@ -236,7 +220,6 @@ void WageEngine::gameOver() {
 
 	_gui->disableAllMenus();
 	_gui->enableNewGameMenus();
-	_gui->_menuDirty = true;
 }
 
 bool WageEngine::saveDialog() {
@@ -281,15 +264,16 @@ void WageEngine::performInitialSetup() {
 	debug(5, "Resetting Owners: %d", _world->_orderedObjs.size());
 	for (uint i = 0; i < _world->_orderedObjs.size(); i++) {
 		Obj *obj = _world->_orderedObjs[i];
-		if (!obj->_sceneOrOwner.equalsIgnoreCase(STORAGESCENE)) {
+		if (!isStorageScene(obj->_sceneOrOwner)) {
 			Common::String location = obj->_sceneOrOwner;
 			location.toLowercase();
-			if (_world->_scenes.contains(location)) {
-				_world->move(obj, _world->_scenes[location]);
+			Scene *scene = getSceneByName(location);
+			if (scene != NULL) {
+				_world->move(obj, scene);
 			} else {
 				if (!_world->_chrs.contains(location)) {
 					// Note: PLAYER@ is not a valid target here.
-					warning("Couldn't move %s to %s", obj->_name.c_str(), obj->_sceneOrOwner.c_str());
+					warning("Couldn't move %s to \"%s\"", obj->_name.c_str(), obj->_sceneOrOwner.c_str());
 				} else {
 					// TODO: Add check for max items.
 					_world->move(obj, _world->_chrs[location]);
@@ -301,7 +285,7 @@ void WageEngine::performInitialSetup() {
 	bool playerPlaced = false;
 	for (uint i = 0; i < _world->_orderedChrs.size(); i++) {
 		Chr *chr = _world->_orderedChrs[i];
-		if (!chr->_initialScene.equalsIgnoreCase(STORAGESCENE)) {
+		if (!isStorageScene(chr->_initialScene)) {
 			Common::String key = chr->_initialScene;
 			key.toLowercase();
 			if (_world->_scenes.contains(key) && _world->_scenes[key] != NULL) {
@@ -328,13 +312,14 @@ void WageEngine::doClose() {
 }
 
 Scene *WageEngine::getSceneByName(Common::String &location) {
-	Scene *scene;
 	if (location.equals("random@")) {
-		scene = _world->getRandomScene();
+		return _world->getRandomScene();
 	} else {
-		scene = _world->_scenes[location];
+		if (_world->_scenes.contains(location))
+			return _world->_scenes[location];
+		else
+			return NULL;
 	}
-	return scene;
 }
 
 void WageEngine::onMove(Designed *what, Designed *from, Designed *to) {
@@ -386,6 +371,7 @@ void WageEngine::onMove(Designed *what, Designed *from, Designed *to) {
 	if (!_temporarilyHidden) {
 		if (to == currentScene || from == currentScene) {
 			redrawScene();
+			g_system->updateScreen();
 			g_system->delayMillis(100);
 		}
 	}
@@ -397,6 +383,7 @@ void WageEngine::redrawScene() {
 	if (currentScene != NULL) {
 		bool firstTime = (_lastScene != currentScene);
 
+		_gui->draw();
 		updateSoundTimerForScene(currentScene, firstTime);
 	}
 }

@@ -59,19 +59,20 @@ endif
 	echo >> $(gcw0_bundle)/README.man.txt
 	echo '[General README]' >> $(gcw0_bundle)/README.man.txt
 	echo >> $(gcw0_bundle)/README.man.txt
-	cat README >> $(gcw0_bundle)/README.man.txt
+	cat $(srcdir)/README | sed -e 's/\[/⟦/g' -e 's/\]/⟧/g' -e '/^1\.1)/,$$ s/^[0-9][0-9]*\.[0-9][0-9]*.*/\[&\]/' >> $(gcw0_bundle)/README.man.txt
+
 
 #	$(CP) GeneralUser\ GS\ FluidSynth\ v1.44.sf2 $(gcw0_bundle)/
 
 gcw0-opk-unstripped: $(gcw0_bundle)
 	$(CP) $(PLUGINS) $(gcw0_bundle)/plugins/
 	$(CP) $(EXECUTABLE) $(gcw0_bundle)/scummvm
-	./dists/gcw0/opk_make.sh -d $(gcw0_bundle) -o scummvm
+	$(srcdir)/dists/gcw0/opk_make.sh -d $(gcw0_bundle) -o scummvm
 
 gcw-opk: $(gcw0_bundle)
 	$(STRIP) $(gcw0_bundle)/plugins/*
 	$(STRIP) $(gcw0_bundle)/scummvm
-	./dists/gcw0/opk_make.sh -d $(gcw0_bundle) -o scummvm
+	$(srcdir)/dists/gcw0/opk_make.sh -d $(gcw0_bundle) -o scummvm
 
 GeneralUser_GS_1.44-FluidSynth.zip:
 	curl -s http://www.scummvm.org/frs/extras/SoundFont/GeneralUser_GS_1.44-FluidSynth.zip -o GeneralUser_GS_1.44-FluidSynth.zip

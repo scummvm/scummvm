@@ -125,7 +125,6 @@ int main(int argc, char *argv[]) {
 
 	ProjectType projectType = kProjectNone;
 	int msvcVersion = 12;
-	bool useSDL2 = false;
 
 	// Parse command line arguments
 	using std::cout;
@@ -269,7 +268,7 @@ int main(int argc, char *argv[]) {
 		} else if (!std::strcmp(argv[i], "--tests")) {
 			setup.tests = true;
 		} else if (!std::strcmp(argv[i], "--sdl2")) {
-			useSDL2 = true;
+			setup.useSDL2 = true;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -349,11 +348,15 @@ int main(int argc, char *argv[]) {
 		setup.defines.push_back("IPHONE");
 	}
 	setup.defines.push_back("SDL_BACKEND");
-	if (!useSDL2) {
-		cout << "\nLinking to SDL 1.2\n\n";
+	if (!setup.useSDL2) {
+		cout << "\nBuilding against SDL 1.2\n\n";
 		setup.libraries.push_back("sdl");
 	} else {
-		cout << "\nLinking to SDL 2.0\n\n";
+		cout << "\nBuilding against SDL 2.0\n\n";
+		// TODO: This also defines USE_SDL2 in the preprocessor, we don't do
+		// this in our configure/make based build system. Adapt create_project
+		// to replicate this behavior.
+		setup.defines.push_back("USE_SDL2");
 		setup.libraries.push_back("sdl2");
 	}
 	setup.libraries.push_back("winmm");
@@ -954,7 +957,8 @@ const Feature s_features[] = {
 	{           "16bit",        "USE_RGB_COLOR",         "", true,  "16bit color support" },
 	{         "mt32emu",          "USE_MT32EMU",         "", true,  "integrated MT-32 emulator" },
 	{            "nasm",             "USE_NASM",         "", true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
-	{          "opengl",           "USE_OPENGL", "opengl32", true,  "OpenGL support" },
+	{          "opengl",           "USE_OPENGL",         "", true,  "OpenGL support" },
+	{        "opengles",             "USE_GLES",         "", true,  "forced OpenGL ES mode" },
 	{         "taskbar",          "USE_TASKBAR",         "", true,  "Taskbar integration support" },
 	{     "translation",      "USE_TRANSLATION",         "", true,  "Translation support" },
 	{          "vkeybd",        "ENABLE_VKEYBD",         "", false, "Virtual keyboard support"},

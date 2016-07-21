@@ -29,12 +29,12 @@
 
 #include "common/events.h"
 #include "common/textconsole.h"
+#include "gui/debugger.h"
 
 #include "hugo/hugo.h"
 #include "hugo/display.h"
 #include "hugo/parser.h"
 #include "hugo/file.h"
-#include "hugo/schedule.h"
 #include "hugo/util.h"
 #include "hugo/route.h"
 #include "hugo/sound.h"

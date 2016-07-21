@@ -27,11 +27,14 @@
 #include "common/coroutines.h"
 #include "common/file.h"
 
-#include "audio/audiostream.h"
 #include "audio/mixer.h"
 
 #include "tinsel/object.h"
 #include "tinsel/palette.h"
+
+namespace Audio {
+class QueuingAudioStream;
+}
 
 namespace Tinsel {
 

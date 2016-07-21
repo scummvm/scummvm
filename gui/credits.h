@@ -535,6 +535,7 @@ static const char *credits[] = {
 "C0""Max Horn",
 "C2""(retired)",
 "C0""Oystein Eftevaag",
+"C0""Thierry Crozat",
 "",
 "C1""Mandriva",
 "C0""Dominik Scherer",

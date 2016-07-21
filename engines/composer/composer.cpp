@@ -21,13 +21,9 @@
  */
 #include "common/scummsys.h"
 
-#include "common/config-manager.h"
 #include "common/events.h"
-#include "common/file.h"
 #include "common/random.h"
-#include "common/fs.h"
 #include "common/keyboard.h"
-#include "common/substream.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
@@ -35,9 +31,6 @@
 #include "graphics/wincursor.h"
 
 #include "engines/util.h"
-#include "engines/advancedDetector.h"
-
-#include "audio/audiostream.h"
 
 #include "composer/composer.h"
 #include "composer/graphics.h"

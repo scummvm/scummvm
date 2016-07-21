@@ -28,7 +28,6 @@
 #include "mohawk/myst_stacks/credits.h"
 
 #include "common/system.h"
-#include "gui/message.h"
 
 namespace Mohawk {
 namespace MystStacks {

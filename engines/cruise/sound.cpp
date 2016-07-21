@@ -29,10 +29,11 @@
 #include "cruise/sound.h"
 #include "cruise/volume.h"
 
-#include "audio/audiostream.h"
 #include "audio/fmopl.h"
-#include "audio/mixer.h"
-#include "audio/mods/soundfx.h"
+
+namespace Audio {
+class Mixer;
+}
 
 namespace Cruise {
 

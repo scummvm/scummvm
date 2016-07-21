@@ -25,7 +25,6 @@
 #include "common/util.h"
 
 #include "audio/decoders/3do.h"
-#include "audio/decoders/raw.h"
 #include "audio/decoders/adpcm_intern.h"
 
 namespace Audio {

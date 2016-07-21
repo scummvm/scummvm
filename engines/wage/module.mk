@@ -9,7 +9,9 @@ MODULE_OBJS := \
 	entities.o \
 	gui.o \
 	gui-console.o \
-	menu.o \
+	macmenu.o \
+	macwindow.o \
+	macwindowmanager.o \
 	randomhat.o \
 	script.o \
 	sound.o \

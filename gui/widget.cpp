@@ -229,20 +229,22 @@ Common::String Widget::cleanupHotkey(const Common::String &label) {
 
 #pragma mark -
 
-StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, Graphics::TextAlign align, const char *tooltip)
+StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, Graphics::TextAlign align, const char *tooltip, ThemeEngine::FontStyle font)
 	: Widget(boss, x, y, w, h, tooltip), _align(align) {
 	setFlags(WIDGET_ENABLED);
 	_type = kStaticTextWidget;
 	_label = text;
+	_font = font;
 }
 
-StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text, const char *tooltip)
+StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text, const char *tooltip, ThemeEngine::FontStyle font)
 	: Widget(boss, name, tooltip) {
 	setFlags(WIDGET_ENABLED);
 	_type = kStaticTextWidget;
 	_label = text;
 
 	_align = g_gui.xmlEval()->getWidgetTextHAlign(name);
+	_font = font;
 }
 
 void StaticTextWidget::setValue(int value) {
@@ -270,14 +272,14 @@ void StaticTextWidget::setAlign(Graphics::TextAlign align) {
 
 
 void StaticTextWidget::drawWidget() {
-	g_gui.theme()->drawText(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state, _align);
+	g_gui.theme()->drawText(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state, _align, ThemeEngine::kTextInversionNone, 0, true, _font);
 }
 
 #pragma mark -
 
 ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: StaticTextWidget(boss, x, y, w, h, cleanupHotkey(label), Graphics::kTextAlignCenter, tooltip), CommandSender(boss),
-	  _cmd(cmd), _hotkey(hotkey), _lastTime(0) {
+	  _cmd(cmd), _hotkey(hotkey), _lastTime(0), _duringPress(false) {
 
 	if (hotkey == 0)
 		_hotkey = parseHotkey(label);
@@ -288,7 +290,7 @@ ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Co
 
 ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: StaticTextWidget(boss, name, cleanupHotkey(label), tooltip), CommandSender(boss),
-	  _cmd(cmd), _hotkey(hotkey), _lastTime(0) {
+	  _cmd(cmd), _hotkey(hotkey), _lastTime(0), _duringPress(false) {
 	if (hotkey == 0)
 		_hotkey = parseHotkey(label);
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
@@ -296,13 +298,15 @@ ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Co
 }
 
 void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
-	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h) {
-		startAnimatePressedState();
+	if (isEnabled() && _duringPress && x >= 0 && x < _w && y >= 0 && y < _h) {
+		setUnpressedState();
 		sendCommand(_cmd, 0);
 	}
+	_duringPress = false;
 }
 
 void ButtonWidget::handleMouseDown(int x, int y, int button, int clickCount) {
+	_duringPress = true;
 	setPressedState();
 }
 
@@ -340,37 +344,15 @@ void ButtonWidget::setHighLighted(bool enable) {
 	draw();
 }
 
-void ButtonWidget::handleTickle() {
-	if (_lastTime) {
-		uint32 curTime = g_system->getMillis();
-		if (curTime - _lastTime > kPressedButtonTime) {
-			stopAnimatePressedState();
-		}
-	}
-}
-
 void ButtonWidget::setPressedState() {
-	wantTickle(true);
 	setFlags(WIDGET_PRESSED);
+	clearFlags(WIDGET_HILITED);
 	draw();
 }
 
-void ButtonWidget::stopAnimatePressedState() {
-	wantTickle(false);
-	_lastTime = 0;
+void ButtonWidget::setUnpressedState() {
 	clearFlags(WIDGET_PRESSED);
 	draw();
-}
-
-void ButtonWidget::startAnimatePressedState() {
-	_lastTime = g_system->getMillis();
-}
-
-void ButtonWidget::wantTickle(bool tickled) {
-	if (tickled)
-		((GUI::Dialog *)_boss)->setTickleWidget(this);
-	else
-		((GUI::Dialog *)_boss)->unSetTickleWidget();
 }
 
 #pragma mark -
@@ -460,9 +442,10 @@ CheckboxWidget::CheckboxWidget(GuiObject *boss, const Common::String &name, cons
 }
 
 void CheckboxWidget::handleMouseUp(int x, int y, int button, int clickCount) {
-	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h) {
+	if (isEnabled() && _duringPress && x >= 0 && x < _w && y >= 0 && y < _h) {
 		toggleState();
 	}
+	_duringPress = false;
 }
 
 void CheckboxWidget::setState(bool state) {
@@ -523,9 +506,10 @@ RadiobuttonWidget::RadiobuttonWidget(GuiObject *boss, const Common::String &name
 }
 
 void RadiobuttonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
-	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h) {
+	if (isEnabled() && _duringPress && x >= 0 && x < _w && y >= 0 && y < _h) {
 		toggleState();
 	}
+	_duringPress = false;
 }
 
 void RadiobuttonWidget::setState(bool state, bool setGroup) {

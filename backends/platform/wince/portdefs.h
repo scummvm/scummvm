@@ -30,7 +30,8 @@
 // Missing string/stdlib/assert declarations for WinCE 2.xx
 #if _WIN32_WCE < 300
 
-	#define SMALL_SCREEN_DEVICE
+	#define GUI_ONLY_FULLSCREEN
+	#define GUI_ENABLE_KEYSDIALOG
 
 	void *calloc(size_t n, size_t s);
 	int isalnum(int c);

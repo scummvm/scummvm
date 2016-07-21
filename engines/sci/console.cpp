@@ -1861,7 +1861,7 @@ bool Console::cmdSavedBits(int argc, const char **argv) {
 
 	for (uint i = 0; i < entries.size(); ++i) {
 		uint16 offset = entries[i].getOffset();
-		const Hunk& h = hunks->_table[offset];
+		const Hunk& h = hunks->at(offset);
 		if (strcmp(h.type, "SaveBits()") == 0) {
 			byte* memoryPtr = (byte *)h.mem;
 
@@ -1928,7 +1928,7 @@ bool Console::cmdShowSavedBits(int argc, const char **argv) {
 		return true;
 	}
 
-	const Hunk& h = hunks->_table[memoryHandle.getOffset()];
+	const Hunk& h = hunks->at(memoryHandle.getOffset());
 
 	if (strcmp(h.type, "SaveBits()") != 0) {
 		debugPrintf("Invalid address.\n");
@@ -2144,32 +2144,32 @@ bool Console::segmentInfo(int nr) {
 	break;
 
 	case SEG_TYPE_CLONES: {
-		CloneTable *ct = (CloneTable *)mobj;
+		CloneTable &ct = *(CloneTable *)mobj;
 
 		debugPrintf("clones\n");
 
-		for (uint i = 0; i < ct->_table.size(); i++)
-			if (ct->isValidEntry(i)) {
+		for (uint i = 0; i < ct.size(); i++)
+			if (ct.isValidEntry(i)) {
 				reg_t objpos = make_reg(nr, i);
 				debugPrintf("  [%04x] %s; copy of ", i, _engine->_gamestate->_segMan->getObjectName(objpos));
 				// Object header
-				const Object *obj = _engine->_gamestate->_segMan->getObject(ct->_table[i].getPos());
+				const Object *obj = _engine->_gamestate->_segMan->getObject(ct[i].getPos());
 				if (obj)
-					debugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(ct->_table[i].getPos()),
-								_engine->_gamestate->_segMan->getObjectName(ct->_table[i].getPos()),
+					debugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(ct[i].getPos()),
+								_engine->_gamestate->_segMan->getObjectName(ct[i].getPos()),
 								obj->getVarCount(), obj->getMethodCount());
 			}
 	}
 	break;
 
 	case SEG_TYPE_LISTS: {
-		ListTable *lt = (ListTable *)mobj;
+		ListTable &lt = *(ListTable *)mobj;
 
 		debugPrintf("lists\n");
-		for (uint i = 0; i < lt->_table.size(); i++)
-			if (lt->isValidEntry(i)) {
+		for (uint i = 0; i < lt.size(); i++)
+			if (lt.isValidEntry(i)) {
 				debugPrintf("  [%04x]: ", i);
-				printList(&(lt->_table[i]));
+				printList(&lt[i]);
 			}
 	}
 	break;
@@ -2180,13 +2180,13 @@ bool Console::segmentInfo(int nr) {
 	}
 
 	case SEG_TYPE_HUNK: {
-		HunkTable *ht = (HunkTable *)mobj;
+		HunkTable &ht = *(HunkTable *)mobj;
 
-		debugPrintf("hunk  (total %d)\n", ht->entries_used);
-		for (uint i = 0; i < ht->_table.size(); i++)
-			if (ht->isValidEntry(i)) {
+		debugPrintf("hunk  (total %d)\n", ht.entries_used);
+		for (uint i = 0; i < ht.size(); i++)
+			if (ht.isValidEntry(i)) {
 				debugPrintf("    [%04x] %d bytes at %p, type=%s\n",
-				          i, ht->_table[i].size, ht->_table[i].mem, ht->_table[i].type);
+				          i, ht[i].size, ht[i].mem, ht[i].type);
 			}
 	}
 	break;
@@ -4362,7 +4362,7 @@ void Console::printList(List *list) {
 			return;
 		}
 
-		node = &(nt->_table[pos.getOffset()]);
+		node = &nt->at(pos.getOffset());
 
 		debugPrintf("\t%04x:%04x  : %04x:%04x -> %04x:%04x\n", PRINT_REG(pos), PRINT_REG(node->key), PRINT_REG(node->value));
 
@@ -4392,7 +4392,7 @@ int Console::printNode(reg_t addr) {
 			return 1;
 		}
 
-		list = &(lt->_table[addr.getOffset()]);
+		list = &lt->at(addr.getOffset());
 
 		debugPrintf("%04x:%04x : first x last = (%04x:%04x, %04x:%04x)\n", PRINT_REG(addr), PRINT_REG(list->first), PRINT_REG(list->last));
 	} else {
@@ -4411,7 +4411,7 @@ int Console::printNode(reg_t addr) {
 			debugPrintf("Address does not contain a node\n");
 			return 1;
 		}
-		node = &(nt->_table[addr.getOffset()]);
+		node = &nt->at(addr.getOffset());
 
 		debugPrintf("%04x:%04x : prev x next = (%04x:%04x, %04x:%04x); maps %04x:%04x -> %04x:%04x\n",
 		          PRINT_REG(addr), PRINT_REG(node->pred), PRINT_REG(node->succ), PRINT_REG(node->key), PRINT_REG(node->value));

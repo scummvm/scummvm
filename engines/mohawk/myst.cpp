@@ -231,11 +231,9 @@ Common::Error MohawkEngine_Myst::run() {
 
 	// Load game from launcher/command line if requested
 	if (ConfMan.hasKey("save_slot") && hasGameSaveSupport()) {
-		uint32 gameToLoad = ConfMan.getInt("save_slot");
-		Common::StringArray savedGamesList = MystGameState::generateSaveGameList();
-		if (gameToLoad > savedGamesList.size())
-			error ("Could not find saved game");
-		_gameState->load(savedGamesList[gameToLoad]);
+		int saveSlot = ConfMan.getInt("save_slot");
+		if (!_gameState->load(saveSlot))
+			error("Failed to load save game from slot %i", saveSlot);
 	} else {
 		// Start us on the first stack.
 		if (getGameType() == GType_MAKINGOF)
@@ -606,7 +604,8 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 			_gfx->runTransition(transition, Common::Rect(544, 333), 10, 0);
 		} else {
 			_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
-			_needsUpdate = true;
+			_system->updateScreen();
+			_needsUpdate = false;
 		}
 	}
 
@@ -1083,19 +1082,14 @@ void MohawkEngine_Myst::loadResources() {
 }
 
 Common::Error MohawkEngine_Myst::loadGameState(int slot) {
-	if (_gameState->load(MystGameState::generateSaveGameList()[slot]))
+	if (_gameState->load(slot))
 		return Common::kNoError;
 
 	return Common::kUnknownError;
 }
 
 Common::Error MohawkEngine_Myst::saveGameState(int slot, const Common::String &desc) {
-	Common::StringArray saveList = MystGameState::generateSaveGameList();
-
-	if ((uint)slot < saveList.size())
-		MystGameState::deleteSave(saveList[slot]);
-
-	return _gameState->save(desc) ? Common::kNoError : Common::kUnknownError;
+	return _gameState->save(slot, desc) ? Common::kNoError : Common::kUnknownError;
 }
 
 bool MohawkEngine_Myst::hasGameSaveSupport() const {

@@ -106,6 +106,7 @@ int TattooMap::show() {
 	ImageFile *map = new ImageFile("map.vgs");
 	screen._backBuffer1.create(SHERLOCK_SCREEN_WIDTH * 2, SHERLOCK_SCREEN_HEIGHT * 2);
 	screen._backBuffer1.SHblitFrom((*map)[0], Common::Point(0, 0));
+	screen.activateBackBuffer1();
 	delete map;
 
 	screen.clear();
@@ -224,6 +225,7 @@ int TattooMap::show() {
 	// Reset the back buffers back to standard size
 	screen._backBuffer1.create(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 	screen._backBuffer2.create(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+	screen.activateBackBuffer1();
 
 	return result;
 }

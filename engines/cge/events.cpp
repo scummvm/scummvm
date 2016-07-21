@@ -26,8 +26,6 @@
  */
 
 #include "gui/saveload.h"
-#include "gui/about.h"
-#include "gui/message.h"
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/translation.h"

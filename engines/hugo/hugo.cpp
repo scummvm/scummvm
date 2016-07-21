@@ -29,7 +29,10 @@
 #include "common/textconsole.h"
 
 #include "hugo/hugo.h"
+#include "hugo/console.h"
+#include "hugo/dialogs.h"
 #include "hugo/file.h"
+#include "hugo/game.h"
 #include "hugo/schedule.h"
 #include "hugo/display.h"
 #include "hugo/mouse.h"

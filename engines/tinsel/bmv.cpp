@@ -39,6 +39,7 @@
 #include "tinsel/tinlib.h"
 #include "tinsel/tinsel.h"
 
+#include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 
 #include "common/textconsole.h"

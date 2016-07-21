@@ -29,6 +29,7 @@
 #include "avalanche/highscore.h"
 
 #include "common/savefile.h"
+#include "common/system.h"
 
 namespace Avalanche {
 

@@ -21,6 +21,7 @@
  */
 
 #include "graphics/cursorman.h"
+#include "tsage/dialogs.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 #include "tsage/ringworld2/ringworld2_outpost.h"

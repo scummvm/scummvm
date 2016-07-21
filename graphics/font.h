@@ -142,6 +142,7 @@ public:
 	 * @param color The color of the character.
 	 */
 	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const = 0;
+	void drawChar(ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const;
 
 	// TODO: Add doxygen comments to this
 	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;

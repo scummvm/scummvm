@@ -23,7 +23,7 @@
 #include "avalanche/avalanche.h"
 #include "avalanche/sound.h"
 
-#include "audio/audiostream.h"
+#include "audio/softsynth/pcspk.h"
 #include "common/config-manager.h"
 
 namespace Avalanche {

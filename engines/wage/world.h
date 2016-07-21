@@ -48,9 +48,9 @@
 #ifndef WAGE_WORLD_H
 #define WAGE_WORLD_H
 
-namespace Wage {
+#include "wage/macwindowmanager.h"
 
-#define STORAGESCENE "STORAGE@"
+namespace Wage {
 
 class Sound;
 
@@ -87,7 +87,7 @@ public:
 	ObjArray _orderedObjs;
 	ChrArray _orderedChrs;
 	Common::Array<Sound *> _orderedSounds;
-	Patterns _patterns;
+	Patterns *_patterns;
 	Scene *_storageScene;
 	Chr *_player;
 	//List<MoveListener> moveListeners;

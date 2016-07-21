@@ -37,6 +37,7 @@
 
 #include "hugo/hugo.h"
 #include "hugo/display.h"
+#include "hugo/file.h"
 #include "hugo/inventory.h"
 #include "hugo/util.h"
 #include "hugo/object.h"

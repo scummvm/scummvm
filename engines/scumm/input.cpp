@@ -25,9 +25,6 @@
 #include "common/system.h"
 #include "common/translation.h"
 
-#include "gui/message.h"
-#include "gui/gui-manager.h"
-
 #include "scumm/debugger.h"
 #include "scumm/dialogs.h"
 #include "scumm/insane/insane.h"

@@ -1310,36 +1310,36 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		if (_wizParams.img.resNum)
 			_wiz->processWizImage(&_wizParams);
 		break;
-	case 128:
-		_wizParams.field_239D = pop();
-		_wizParams.field_2399 = pop();
-		_wizParams.field_23A5 = pop();
-		_wizParams.field_23A1 = pop();
-		copyScriptString(_wizParams.string2, sizeof(_wizParams.string2));
+	case 128: // Font create
 		_wizParams.processMode = 15;
+		_wizParams.fontProperties.bgColor = pop();
+		_wizParams.fontProperties.fgColor = pop();
+		_wizParams.fontProperties.size = pop();
+		_wizParams.fontProperties.style = pop();
+		copyScriptString(_wizParams.fontProperties.fontName, sizeof(_wizParams.fontProperties.fontName));
 		break;
 	case 129:
 		_wizParams.processMode = 14;
 		break;
-	case 130:
+	case 130: // Font render
 		_wizParams.processMode = 16;
-		_wizParams.field_23AD = pop();
-		_wizParams.field_23A9 = pop();
-		copyScriptString(_wizParams.string1, sizeof(_wizParams.string1));
+		_wizParams.fontProperties.yPos = pop();
+		_wizParams.fontProperties.xPos = pop();
+		copyScriptString(_wizParams.fontProperties.string, sizeof(_wizParams.fontProperties.string));
 		break;
 	case 131:
 		_wizParams.processMode = 13;
 		break;
-	case 133:
+	case 133: // Render ellipse
 		_wizParams.processMode = 17;
-		_wizParams.field_23CD = pop();
-		_wizParams.field_23C9 = pop();
-		_wizParams.field_23C5 = pop();
-		_wizParams.field_23C1 = pop();
-		_wizParams.field_23BD = pop();
-		_wizParams.field_23B9 = pop();
-		_wizParams.field_23B5 = pop();
-		_wizParams.field_23B1 = pop();
+		_wizParams.ellipseProperties.color = pop();
+		_wizParams.ellipseProperties.lod = pop();
+		_wizParams.ellipseProperties.ky = pop();
+		_wizParams.ellipseProperties.kx = pop();
+		_wizParams.ellipseProperties.qy = pop();
+		_wizParams.ellipseProperties.qx = pop();
+		_wizParams.ellipseProperties.py = pop();
+		_wizParams.ellipseProperties.px = pop();
 		break;
 	case 134:
 		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;

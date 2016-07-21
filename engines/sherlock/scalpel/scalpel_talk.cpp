@@ -684,7 +684,7 @@ Common::Point ScalpelTalk::get3doPortraitPosition() const {
 
 void ScalpelTalk::drawInterface() {
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
-	Surface &bb = *screen._backBuffer;
+	Surface &bb = *screen.getBackBuffer();
 
 	bb.fillRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y1 + 10), BORDER_COLOR);
 	bb.fillRect(Common::Rect(0, CONTROLS_Y + 10, 2, SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);

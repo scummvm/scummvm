@@ -25,7 +25,6 @@
 
 #include "common/random.h"
 #include "tsage/core.h"
-#include "tsage/dialogs.h"
 #include "tsage/scenes.h"
 #include "tsage/events.h"
 #include "tsage/sound.h"

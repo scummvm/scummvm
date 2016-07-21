@@ -123,6 +123,8 @@ void DrasculaEngine::startWalking() {
 			walkUp();
 		else if (roomY > curY + curHeight)
 			walkDown();
+		else
+			characterMoved = 0;
 	} else {
 		if ((roomX < curX + curWidth / 2 ) && (roomY <= (curY + curHeight)))
 			quadrant_1();
@@ -189,7 +191,7 @@ void DrasculaEngine::moveCharacters() {
 	}
 
 	if (currentChapter != 2 && currentChapter != 3) {
-		if (hare_se_ve == 0) {
+		if (characterVisible == 0) {
 			increaseFrameNum();
 			return;
 		}

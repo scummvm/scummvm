@@ -28,6 +28,7 @@
  *
  */
 
+#include "common/file.h"
 #include "graphics/palette.h"
 
 #include "lab/lab.h"

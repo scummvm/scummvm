@@ -35,7 +35,6 @@
 #include "graphics/surface.h"
 #include "graphics/thumbnail.h"
 #include "gui/saveload.h"
-#include "gui/about.h"
 #include "gui/message.h"
 #include "toon/resource.h"
 #include "toon/toon.h"

@@ -24,3 +24,12 @@ It's pretty simple if you are running Linux on an x86/amd64 machine:
 3. Run backends/platform/dingux/build.gcw0.sh script
 4. Copy the resulting file scummvm.opk to your device
 5. Enjoy
+
+Troubleshooting
+===============
+In case you need to submit a bugreport, you may find the log file at the
+following path:
+
+     /var/tmp/scummvm.log
+
+The log file is being overwritten at every ScummVM run.

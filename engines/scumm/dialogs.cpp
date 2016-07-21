@@ -33,10 +33,8 @@
 #include "scummhelp.h"
 #endif
 
-#include "gui/about.h"
-
 #include "gui/gui-manager.h"
-#include "gui/widgets/list.h"
+#include "gui/widget.h"
 #include "gui/ThemeEval.h"
 
 #include "scumm/dialogs.h"
@@ -45,14 +43,12 @@
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/verbs.h"
-#include "audio/mididrv.h"
-#include "audio/mixer.h"
 
 #ifndef DISABLE_HELP
 #include "scumm/help.h"
 #endif
 
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 #include "gui/KeysDialog.h"
 #endif
 

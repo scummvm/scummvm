@@ -45,93 +45,95 @@
  *
  */
 
-#ifndef WAGE_MENU_H
-#define WAGE_MENU_H
+#ifndef WAGE_MACWINDOWMANAGER_H
+#define WAGE_MACWINDOWMANAGER_H
+
+#include "common/array.h"
+#include "common/list.h"
+#include "common/events.h"
+#include "common/archive.h"
+
+#include "graphics/fontman.h"
+
+namespace Graphics {
+class ManagedSurface;
+}
 
 namespace Wage {
 
-struct MenuItem;
-struct MenuSubItem;
-
 enum {
-	kFontStyleBold = 1,
-	kFontStyleItalic = 2,
-	kFontStyleUnderline = 4,
-	kFontStyleOutline = 8,
-	kFontStyleShadow = 16,
-	kFontStyleCondensed = 32,
-	kFontStyleExtended = 64
+	kDesktopArc = 7
 };
 
 enum {
-	kMenuAbout = 0,
-	kMenuFile = 1,
-	kMenuEdit = 2,
-	kMenuCommands = 3,
-	kMenuWeapons = 4
+	kColorBlack  = 0,
+	kColorGray   = 1,
+	kColorWhite  = 2,
+	kColorGreen  = 3,
+	kColorGreen2 = 4
 };
 
 enum {
-	kMenuActionAbout,
-	kMenuActionNew,
-	kMenuActionOpen,
-	kMenuActionClose,
-	kMenuActionSave,
-	kMenuActionSaveAs,
-	kMenuActionRevert,
-	kMenuActionQuit,
-
-	kMenuActionUndo,
-	kMenuActionCut,
-	kMenuActionCopy,
-	kMenuActionPaste,
-	kMenuActionClear,
-
-	kMenuActionCommand
+	kPatternSolid = 1,
+	kPatternStripes = 2,
+	kPatternCheckers = 3,
+	kPatternCheckers2 = 4
 };
 
-class Menu {
+class BaseMacWindow;
+class MacWindow;
+class Menu;
+
+typedef Common::Array<byte *> Patterns;
+
+class MacWindowManager {
 public:
-	Menu(Gui *gui);
-	~Menu();
+	MacWindowManager();
+	~MacWindowManager();
 
-	void render();
-	bool mouseClick(int x, int y);
-	bool mouseRelease(int x, int y);
-	bool mouseMove(int x, int y);
+	void setScreen(Graphics::ManagedSurface *screen) { _screen = screen; }
+	bool hasBuiltInFonts() { return _builtInFonts; }
+	const Graphics::Font *getFont(const char *name, Graphics::FontManager::FontUsage fallback);
 
-	void regenCommandsMenu();
-	void regenWeaponsMenu();
-	void processMenuShortCut(byte flags, uint16 ascii);
-	void enableCommand(int menunum, int action, bool state);
-	void disableAllMenus();
+	MacWindow *addWindow(bool scrollable, bool resizable, bool editable);
+	Menu *addMenu();
+	void setActive(int id);
 
-	bool _menuActivated;
-	Common::Rect _bbox;
+	void setFullRefresh(bool redraw) { _fullRefresh = true; }
+
+	void draw();
+
+	bool processEvent(Common::Event &event);
+
+	BaseMacWindow *getWindow(int id) { return _windows[id]; }
+
+	Patterns &getPatterns() { return _patterns; }
+	void drawFilledRoundRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int arc, int color);
+
+	void pushArrowCursor();
+	void popCursor();
 
 private:
-	Gui *_gui;
-	Graphics::Surface _screenCopy;
-	Graphics::Surface _tempSurface;
+	void drawDesktop();
+	void loadFonts();
 
 private:
-	const Graphics::Font *getMenuFont();
-	const char *getAcceleratorString(MenuSubItem *item, const char *prefix);
-	int calculateMenuWidth(MenuItem *menu);
-	void calcMenuBounds(MenuItem *menu);
-	void renderSubmenu(MenuItem *menu);
-	void createCommandsMenu(MenuItem *menu);
-	void createWeaponsMenu(MenuItem *menu);
-	void executeCommand(MenuSubItem *subitem);
+	Graphics::ManagedSurface *_screen;
 
-	Common::Array<MenuItem *> _items;
-	MenuItem *_weapons;
-	MenuItem *_commands;
+	Common::List<BaseMacWindow *> _windowStack;
+	Common::Array<BaseMacWindow *> _windows;
 
-	const Graphics::Font *_font;
+	int _lastId;
+	int _activeWindow;
 
-	int _activeItem;
-	int _activeSubItem;
+	bool _fullRefresh;
+
+	Patterns _patterns;
+
+	Menu *_menu;
+
+	bool _builtInFonts;
+	bool _cursorIsArrow;
 };
 
 } // End of namespace Wage

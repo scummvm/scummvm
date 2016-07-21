@@ -56,7 +56,7 @@ static int strToInt(const char *s) {
 }
 
 bool Debugger::Cmd_ListScenes(int argc, const char **argv) {
-	int currentScene;
+	int currentScene = 0;
 
 	for (uint i = 1; i < _engine->_world->_orderedScenes.size(); i++) { // #0 is STORAGE@
 		if (_engine->_world->_player->_currentScene == _engine->_world->_orderedScenes[i])

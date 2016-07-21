@@ -20,21 +20,39 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_OPENGL_EXTENSIONS_H
-#define BACKENDS_GRAPHICS_OPENGL_EXTENSIONS_H
+#ifndef BACKENDS_GRAPHICS_OPENGL_PIPELINES_SHADER_H
+#define BACKENDS_GRAPHICS_OPENGL_PIPELINES_SHADER_H
+
+#include "backends/graphics/opengl/pipelines/pipeline.h"
 
 namespace OpenGL {
 
-/**
- * Checks for availability of extensions we want to use and initializes them
- * when available.
- */
-void initializeGLExtensions();
+#if !USE_FORCED_GLES
+class Shader;
 
-/**
- * Whether non power of two textures are supported
- */
-extern bool g_extNPOTSupported;
+class ShaderPipeline : public Pipeline {
+public:
+	ShaderPipeline(Shader *shader);
+
+	virtual void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+
+	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates);
+
+	virtual void setProjectionMatrix(const GLfloat *projectionMatrix);
+
+protected:
+	virtual void activateInternal();
+	virtual void deactivateInternal();
+
+	GLint _vertexAttribLocation;
+	GLint _texCoordAttribLocation;
+	GLint _colorAttribLocation;
+
+	GLfloat _colorAttributes[4*4];
+
+	Shader *const _activeShader;
+};
+#endif // !USE_FORCED_GLES
 
 } // End of namespace OpenGL
 

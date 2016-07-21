@@ -31,7 +31,6 @@
 #include "common/util.h"
 
 #include "audio/mixer.h"
-#include "audio/audiostream.h"
 
 #include "engines/engine.h"
 

@@ -23,6 +23,7 @@
 
 
 #include "agos/agos.h"
+#include "agos/intern.h"
 #include "agos/midi.h"
 
 #include "common/textconsole.h"

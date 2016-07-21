@@ -50,45 +50,21 @@
 
 #include "common/str-array.h"
 #include "graphics/font.h"
-#include "graphics/fontman.h"
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
+#include "common/events.h"
 #include "common/rect.h"
+
+#include "wage/macwindow.h"
+#include "wage/macwindowmanager.h"
 
 namespace Wage {
 
 class Menu;
-
-enum WindowType {
-	kWindowScene,
-	kWindowConsole
-};
+class Scene;
+class WageEngine;
 
 enum {
-	kMenuHeight = 20,
-	kMenuLeftMargin = 7,
-	kMenuSpacing = 13,
-	kMenuPadding = 16,
-	kMenuDropdownPadding = 14,
-	kMenuDropdownItemHeight = 16,
-	kMenuItemHeight = 20,
-	kBorderWidth = 17,
-	kDesktopArc = 7,
-	kComponentsPadding = 10,
 	kCursorHeight = 12
-};
-
-enum {
-	kPatternSolid = 1,
-	kPatternStripes = 2,
-	kPatternCheckers = 3,
-	kPatternCheckers2 = 4
-};
-
-enum {
-	kBorderNone = 0,
-	kBorderScrollUp,
-	kBorderScrollDown,
-	kBorderCloseButton
 };
 
 class Gui {
@@ -99,17 +75,12 @@ public:
 	void draw();
 	void appendText(const char *str);
 	void clearOutput();
-	void mouseMove(int x, int y);
-	void mouseDown(int x, int y);
-	Designed *mouseUp(int x, int y);
+	bool processEvent(Common::Event &event);
+
 	void drawInput();
 	void setSceneDirty() { _sceneDirty = true; }
-	const Graphics::Font *getFont(const char *name, Graphics::FontManager::FontUsage fallback);
 	void regenCommandsMenu();
 	void regenWeaponsMenu();
-	void processMenuShortCut(byte flags, uint16 ascii);
-	void pushArrowCursor();
-	void popCursor();
 
 	void actionCopy();
 	void actionPaste();
@@ -120,14 +91,15 @@ public:
 	void disableAllMenus();
 	void enableNewGameMenus();
 
+	bool processSceneEvents(WindowClick click, Common::Event &event);
+	bool processConsoleEvents(WindowClick click, Common::Event &event);
+	void executeMenuCommand(int action, Common::String &text);
+
 private:
+	void drawScene();
+	void drawConsole();
 	void undrawCursor();
-	void drawDesktop();
-	void paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType, int highlightedPart = kBorderNone);
-	void renderConsole(Graphics::Surface *g, Common::Rect &r);
-	void drawBox(Graphics::Surface *g, int x, int y, int w, int h);
-	void fillRect(Graphics::Surface *g, int x, int y, int w, int h, int color = kColorBlack);
-	void loadFonts();
+	void renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r);
 	void flowText(Common::String &str);
 	const Graphics::Font *getConsoleFont();
 	const Graphics::Font *getTitleFont();
@@ -137,29 +109,27 @@ private:
 	void updateTextSelection(int x, int y);
 
 public:
-	Graphics::Surface _screen;
+	Graphics::ManagedSurface _screen;
 	int _cursorX, _cursorY;
 	bool _cursorState;
-	Common::Rect _consoleTextArea;
 
-	bool _builtInFonts;
 	WageEngine *_engine;
-
-	Patterns _patterns;
 
 	bool _cursorDirty;
 	Common::Rect _cursorRect;
 	bool _cursorOff;
 
-	bool _menuDirty;
+	Scene *_scene;
+
+	MacWindowManager _wm;
+	MacWindow *_sceneWindow;
+	MacWindow *_consoleWindow;
 
 private:
-	Graphics::Surface _console;
+	Graphics::ManagedSurface _console;
 	Menu *_menu;
-	Scene *_scene;
 	bool _sceneDirty;
 	bool _consoleDirty;
-	bool _bordersDirty;
 
 	Common::StringArray _out;
 	Common::StringArray _lines;
@@ -167,10 +137,6 @@ private:
 	int _consoleLineHeight;
 	uint _consoleNumLines;
 	bool _consoleFullRedraw;
-
-	Common::Rect _sceneArea;
-	bool _sceneIsActive;
-	bool _cursorIsArrow;
 
 	bool _inTextSelection;
 	int _selectionStartX;
@@ -182,6 +148,9 @@ private:
 	Common::String _undobuffer;
 
 	int _inputTextLineNum;
+
+	int _commandsMenuId;
+	int _weaponsMenuId;
 };
 
 } // End of namespace Wage

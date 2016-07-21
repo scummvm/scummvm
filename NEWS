@@ -14,12 +14,26 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Removed TESTING flag from several supported games.
    - Added Chinese Pinyin translation.
+   - Fixed cursor stuttering in the launcher that occured on some systems.
 
  BBVS:
    - Fixed game restart.
 
  CinE:
    - Fixed sound effect loading.
+
+ Drascula:
+   - Fixed text alignment to be faithful to the original.
+   - Fixed character walking off screen.
+   - Fixed loading savegames in the Pendulum scene.
+   - Fixed wrong background for inventory items during chapter 6 in the
+     Spanish version.
+   - Fixed animations speed (they were running two times slower than in the
+     original engine).
+   - Fixed noise at start and/or end of speech. This was most noticeable
+     with the Spanish speech.
+   - Fixed delay when interacting with the verb menu and the inventory.
+   - Fixed possibility to pick up the axe in the castle multiple times.
 
  Gob:
    - Fixed lock up for some games during sound initialization.
@@ -32,6 +46,15 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed user interface colors in the French and German versions of I Have No
      Mouth and I Must Scream.
 
+ SCI:
+   - Make cursor workarounds work properly on OpenPandora (and other devices, that
+     support touch screen and analog sticks/mouse at the same time)
+   - Script patch to fix broken ending battle in multilingual King's Quest 5
+     (French, German + Spanish versions are all broken)
+   - Fixed invalid memory access, when loading broken King's Quest 5 credit music track
+   - Fixed lowres/hires issues in King's Quest 6 when saving, changing the lowres/hires
+     setting and restoring the saved game afterwards.
+
  SCUMM:
    - Fixed detection of Maniac Mansion from Day of the Tentacle in the Windows
      version of ScummVM.
@@ -43,10 +66,19 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed resource releasing on game exit.
    - Fixed game restart after language change in-game.
    - Fixed flickering in main Menu.
+   - Fixed long save time on Windows.
 
  Windows port:
    - Fixed bug in MIDI device listing affecting cases where MIDI devices were
      not usable.
+
+ Mac OS X port:
+   - Dock menu for ScummVM now lists recently played games when ScummVM is
+     not running and allows starting those games.
+   - Enabled Sparkle application updater.
+
+ GCW0 port:
+   - Improved support for built-in ScummVM documentation.
 
 1.8.0 (2016-03-04)
  New Games:

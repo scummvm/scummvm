@@ -45,6 +45,7 @@
  *
  */
 
+#include "common/events.h"
 #include "common/timer.h"
 #include "common/unzip.h"
 #include "graphics/cursorman.h"
@@ -54,7 +55,8 @@
 #include "wage/wage.h"
 #include "wage/design.h"
 #include "wage/entities.h"
-#include "wage/menu.h"
+#include "wage/macwindow.h"
+#include "wage/macmenu.h"
 #include "wage/gui.h"
 #include "wage/world.h"
 
@@ -66,7 +68,7 @@ const Graphics::Font *Gui::getConsoleFont() {
 
 	snprintf(fontName, 128, "%s-%d", scene->getFontName(), scene->_fontSize);
 
-	return getFont(fontName, Graphics::FontManager::kConsoleFont);
+	return _wm.getFont(fontName, Graphics::FontManager::kConsoleFont);
 }
 
 void Gui::clearOutput() {
@@ -114,7 +116,7 @@ enum {
 
 void Gui::flowText(Common::String &str) {
 	Common::StringArray wrappedLines;
-	int textW = _consoleTextArea.width() - kConWPadding * 2;
+	int textW = _consoleWindow->getInnerDimensions().width() - kConWPadding * 2;
 	const Graphics::Font *font = getConsoleFont();
 
 	font->wordWrapText(str, textW, wrappedLines);
@@ -142,7 +144,7 @@ void Gui::flowText(Common::String &str) {
 		draw();
 }
 
-void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
+void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 	bool fullRedraw = _consoleFullRedraw;
 	bool textReflow = false;
 	int surfW = r.width() + kConWOverlap * 2;
@@ -150,7 +152,6 @@ void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 
 	Common::Rect boundsR(kConWOverlap - kConOverscan, kConHOverlap - kConOverscan,
 					r.width() + kConWOverlap + kConOverscan, r.height() + kConHOverlap + kConOverscan);
-	Common::Rect fullR(0, 0, surfW, surfH);
 
 	if (_console.w != surfW || _console.h != surfH) {
 		if (_console.w != surfW)
@@ -163,7 +164,7 @@ void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 	}
 
 	if (fullRedraw)
-		_console.fillRect(fullR, kColorWhite);
+		_console.clear(kColorWhite);
 
 	const Graphics::Font *font = getConsoleFont();
 
@@ -197,7 +198,7 @@ void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 			color = kColorWhite;
 			Common::Rect trect(0, y1, _console.w, y1 + _consoleLineHeight);
 
-			Design::drawFilledRect(&_console, trect, kColorBlack, _patterns, kPatternSolid);
+			Design::drawFilledRect(&_console, trect, kColorBlack, _wm.getPatterns(), kPatternSolid);
 		}
 
 		if (line == _selectionStartY || line == _selectionEndY) {
@@ -224,7 +225,7 @@ void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 				else
 					trect.left = rectW;
 
-				Design::drawFilledRect(&_console, trect, kColorBlack, _patterns, kPatternSolid);
+				Design::drawFilledRect(&_console, trect, kColorBlack, _wm.getPatterns(), kPatternSolid);
 
 				font->drawString(&_console, beg, x1, y1, textW, color1);
 				font->drawString(&_console, end, x1 + rectW - kConWPadding - kConWOverlap, y1, textW, color2);
@@ -243,7 +244,7 @@ void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 				int rectW2 = rectW1 + font->getStringWidth(mid);
 				Common::Rect trect(rectW1, y1, rectW2, y1 + _consoleLineHeight);
 
-				Design::drawFilledRect(&_console, trect, kColorBlack, _patterns, kPatternSolid);
+				Design::drawFilledRect(&_console, trect, kColorBlack, _wm.getPatterns(), kPatternSolid);
 
 				font->drawString(&_console, beg, x1, y1, textW, kColorBlack);
 				font->drawString(&_console, mid, x1 + rectW1 - kConWPadding - kConWOverlap, y1, textW, kColorWhite);
@@ -280,17 +281,13 @@ void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 		rr.bottom = _screen.h - 1;
 
 	g->copyRectToSurface(_console, xcon, ycon, boundsR);
-	g_system->copyRectToScreen(g->getBasePtr(rr.left, rr.top), g->pitch, rr.left, rr.top, rr.width(), rr.height());
 }
 
 void Gui::drawInput() {
 	if (!_screen.getPixels())
 		return;
 
-	if (_sceneIsActive) {
-		_sceneIsActive = false;
-		_bordersDirty = true;
-	}
+	_wm.setActive(_consoleWindow->getId());
 
 	_out.pop_back();
 	_lines.pop_back();
@@ -302,17 +299,17 @@ void Gui::drawInput() {
 	if (_engine->_inputText.contains('\n')) {
 		_consoleDirty = true;
 	} else {
-		int x = kConWPadding + _consoleTextArea.left;
-		int y = _cursorY + _consoleTextArea.top;
+		int x = kConWPadding + _consoleWindow->getInnerDimensions().left;
+		int y = _cursorY + _consoleWindow->getInnerDimensions().top;
 
-		Common::Rect r(x, y, x + _consoleTextArea.width() - kConWPadding, y + font->getFontHeight());
+		Common::Rect r(x, y, x + _consoleWindow->getInnerDimensions().width() - kConWPadding, y + font->getFontHeight());
 		_screen.fillRect(r, kColorWhite);
 
 		undrawCursor();
 
 		font->drawString(&_screen, _out[_inputTextLineNum], x, y, _screen.w, kColorBlack);
 
-		g_system->copyRectToScreen(_screen.getBasePtr(x, y), _screen.pitch, x, y, _consoleTextArea.width(), font->getFontHeight());
+		g_system->copyRectToScreen(_screen.getBasePtr(x, y), _screen.pitch, x, y, _consoleWindow->getInnerDimensions().width(), font->getFontHeight());
 	}
 
 	_cursorX = font->getStringWidth(_out[_inputTextLineNum]) + kConHPadding;
@@ -425,6 +422,142 @@ void Gui::enableNewGameMenus() {
 	_menu->enableCommand(kMenuFile, kMenuActionNew, true);
 	_menu->enableCommand(kMenuFile, kMenuActionOpen, true);
 	_menu->enableCommand(kMenuFile, kMenuActionQuit, true);
+}
+
+bool Gui::processConsoleEvents(WindowClick click, Common::Event &event) {
+	if (click == kBorderScrollUp || click == kBorderScrollDown) {
+		if (event.type == Common::EVENT_LBUTTONDOWN) {
+			int consoleHeight = _consoleWindow->getInnerDimensions().height();
+			int textFullSize = _lines.size() * _consoleLineHeight + consoleHeight;
+			float scrollPos = (float)_scrollPos / textFullSize;
+			float scrollSize = (float)consoleHeight / textFullSize;
+
+			_consoleWindow->setScroll(scrollPos, scrollSize);
+
+			return true;
+		} else if (event.type == Common::EVENT_LBUTTONUP) {
+			int oldScrollPos = _scrollPos;
+
+			switch (click) {
+			case kBorderScrollUp:
+				_scrollPos = MAX<int>(0, _scrollPos - _consoleLineHeight);
+				undrawCursor();
+				_cursorY -= (_scrollPos - oldScrollPos);
+				_consoleDirty = true;
+				_consoleFullRedraw = true;
+				break;
+			case kBorderScrollDown:
+				_scrollPos = MIN<int>((_lines.size() - 2) * _consoleLineHeight, _scrollPos + _consoleLineHeight);
+				undrawCursor();
+				_cursorY -= (_scrollPos - oldScrollPos);
+				_consoleDirty = true;
+				_consoleFullRedraw = true;
+				break;
+			default:
+				return false;
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	if (click == kBorderResizeButton) {
+		_consoleDirty = true;
+		_consoleFullRedraw = true;
+
+		return true;
+	}
+
+	if (click == kBorderInner) {
+		if (event.type == Common::EVENT_LBUTTONDOWN) {
+			startMarking(event.mouse.x, event.mouse.y);
+
+			return true;
+		} else if (event.type == Common::EVENT_LBUTTONUP) {
+			if (_inTextSelection) {
+				_inTextSelection = false;
+
+				if (_selectionEndY == -1 ||
+						(_selectionEndX == _selectionStartX && _selectionEndY == _selectionStartY)) {
+					_selectionStartY = _selectionEndY = -1;
+					_consoleFullRedraw = true;
+					_menu->enableCommand(kMenuEdit, kMenuActionCopy, false);
+				} else {
+					_menu->enableCommand(kMenuEdit, kMenuActionCopy, true);
+
+					bool cutAllowed = false;
+
+					if (_selectionStartY == _selectionEndY && _selectionStartY == (int)_lines.size() - 1)
+						cutAllowed = true;
+
+					_menu->enableCommand(kMenuEdit, kMenuActionCut, cutAllowed);
+					_menu->enableCommand(kMenuEdit, kMenuActionClear, cutAllowed);
+				}
+			}
+
+			return true;
+		} else if (event.type == Common::EVENT_MOUSEMOVE) {
+			if (_inTextSelection) {
+				updateTextSelection(event.mouse.x, event.mouse.y);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	return false;
+}
+
+int Gui::calcTextX(int x, int textLine) {
+	const Graphics::Font *font = getConsoleFont();
+
+	if ((uint)textLine >= _lines.size())
+		return 0;
+
+	Common::String str = _lines[textLine];
+
+	x -= _consoleWindow->getInnerDimensions().left;
+
+	for (int i = str.size(); i >= 0; i--) {
+		if (font->getStringWidth(str) < x) {
+			return i;
+		}
+
+		str.deleteLastChar();
+	}
+
+	return 0;
+}
+
+int Gui::calcTextY(int y) {
+	y -= _consoleWindow->getInnerDimensions().top;
+
+	if (y < 0)
+		y = 0;
+
+	const int firstLine = _scrollPos / _consoleLineHeight;
+	int textLine = (y - _scrollPos % _consoleLineHeight) / _consoleLineHeight + firstLine;
+
+	return textLine;
+}
+
+void Gui::startMarking(int x, int y) {
+	_selectionStartY = calcTextY(y);
+	_selectionStartX = calcTextX(x, _selectionStartY);
+
+	_selectionEndY = -1;
+
+	_inTextSelection = true;
+}
+
+void Gui::updateTextSelection(int x, int y) {
+	_selectionEndY = calcTextY(y);
+	_selectionEndX = calcTextX(x, _selectionEndY);
+
+	_consoleFullRedraw = true;
 }
 
 } // End of namespace Wage

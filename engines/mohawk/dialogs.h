@@ -29,11 +29,13 @@
 #include "common/str.h"
 #include "gui/dialog.h"
 #include "gui/options.h"
-#include "gui/widget.h"
-#include "gui/widgets/list.h"
 
 namespace GUI {
 class SaveLoadChooser;
+class ButtonWidget;
+class CheckboxWidget;
+class CommandSender;
+class StaticTextWidget;
 }
 
 namespace Mohawk {
