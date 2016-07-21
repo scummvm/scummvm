@@ -32,12 +32,15 @@
 #include "engines/grim/resource.h"
 #include "engines/grim/textsplit.h"
 
+#define GRIM_MAT_FLAG_HAS_COLORMAP 1
+#define GRIM_MAT_FLAG_UNKNOWN 2
+
 namespace Grim {
 
 Common::List<MaterialData *> *MaterialData::_materials = nullptr;
 
 MaterialData::MaterialData(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap) :
-		_fname(filename), _cmap(cmap), _refCount(1), _textures(nullptr) {
+		_fname(filename), _cmap(cmap), _refCount(1), _textures(nullptr), _ownCMap(false) {
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		initEMI(data);
@@ -47,42 +50,71 @@ MaterialData::MaterialData(const Common::String &filename, Common::SeekableReadS
 }
 
 void MaterialData::initGrim(Common::SeekableReadStream *data) {
+	/* Main header. */
 	uint32 tag = data->readUint32BE();
 	if (tag != MKTAG('M','A','T',' '))
 		error("Invalid header for texture %s. Expected 'MAT ', got '%c%c%c%c'", _fname.c_str(),
 		                 (tag >> 24) & 0xFF, (tag >> 16) & 0xFF, (tag >> 8) & 0xFF, tag & 0xFF);
 
-	data->seek(12, SEEK_SET);
+	uint32 version = data->readUint32LE();
+	if (version != 0x32) {
+		Debug::warning(Debug::Materials, "Unexpected version value %08x for material %s.", version, _fname.c_str());
+	}
+	uint32 flags = data->readUint32LE();
+	if ((flags & (GRIM_MAT_FLAG_HAS_COLORMAP | GRIM_MAT_FLAG_UNKNOWN)) != flags) {
+		Debug::warning(Debug::Materials, "Unknown flags %08x for material %s.", flags, _fname.c_str());
+	}
 	_numImages = data->readUint32LE();
+	int alt_numImages = data->readUint32LE();
+	if (alt_numImages != _numImages) {
+		Debug::warning(Debug::Materials, "Different image counts %i != %i for material %s.", _numImages, alt_numImages, _fname.c_str());
+	}
 	_textures = new Texture*[_numImages];
-	/* Discovered by diffing orange.mat with pink.mat and blue.mat .
-	 * Actual meaning unknown, so I prefer to use it as an enum-ish
-	 * at the moment, to detect unexpected values.
-	 */
-	data->seek(0x4c, SEEK_SET);
-	uint32 offset = data->readUint32LE();
-	if (offset == 0x8)
-		offset = 16;
-	else if (offset != 0)
-		error("Unknown offset: %d", offset);
+	/* Structure of the rest of main header is unknown. */
+	data->seek(0x38, SEEK_CUR);
 
-	data->seek(60 + _numImages * 40 + offset, SEEK_SET);
+	/* Per-image headers, of which only a magic field is known as it affects header length. */
+	for (int i = 0; i < _numImages; ++i) {
+		uint32 unknown = data->readUint32LE();
+		if (unknown != 0x8 && unknown != 0) {
+			Debug::warning(Debug::Materials, "Unknown value %08x for texture %i header for material %s.", unknown, i, _fname.c_str());
+		}
+		data->seek(0x14 + (unknown == 0 ? 0 : 0x10), SEEK_CUR);
+	}
+	/* Bitmaps. */
 	for (int i = 0; i < _numImages; ++i) {
 		Texture *t = _textures[i] = new Texture();
-		t->_width = data->readUint32LE();
-		t->_height = data->readUint32LE();
+		uint32 width, height;
+		t->_width = width = data->readUint32LE();
+		t->_height = height = data->readUint32LE();
 		t->_hasAlpha = data->readUint32LE();
 		t->_texture = nullptr;
 		t->_colorFormat = BM_RGBA;
 		t->_data = nullptr;
+		data->seek(0x8, SEEK_CUR);
+		uint32 mipmap_count = data->readUint32LE();
+		if (mipmap_count == 0) {
+			Debug::warning(Debug::Materials, "Invalid mipmap count %i for texture %i of material %s.", mipmap_count, i, _fname.c_str());
+			break;
+		}
 		if (t->_width == 0 || t->_height == 0) {
 			Debug::warning(Debug::Materials, "skip load texture: bad texture size (%dx%d) for texture %d of material %s",
 						   t->_width, t->_height, i, _fname.c_str());
 			break;
 		}
 		t->_data = new uint8[t->_width * t->_height];
-		data->seek(12, SEEK_CUR);
 		data->read(t->_data, t->_width * t->_height);
+		/* XXX: Discarding lower-res mipmaps */
+		while (--mipmap_count) {
+			width >>= 1;
+			height >>= 1;
+			data->seek(width * height, SEEK_CUR);
+		}
+	}
+	/* If flags & GRIM_MAT_FLAG_HAS_COLORMAP there is a color map here. */
+	if (flags & GRIM_MAT_FLAG_HAS_COLORMAP) {
+		_ownCMap = true;
+		_cmap = new CMap(_fname, data);
 	}
 }
 
@@ -188,6 +220,9 @@ MaterialData::~MaterialData() {
 		delete t;
 	}
 	delete[] _textures;
+	if (_ownCMap) {
+		delete _cmap;
+	}
 }
 
 MaterialData *MaterialData::getMaterialData(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap) {
