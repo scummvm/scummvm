@@ -20,14 +20,14 @@
 *
 */
 
+
 #include "common/file.h"
-#include "image/bmp.h"
-
-#include "macventure/macventure.h"
-#include "macventure/gui.h"
-
 #include "common/timer.h"
 #include "common/system.h"
+#include "image/bmp.h"
+
+#include "macventure/gui.h"
+#include "macventure/dialog.h"
 
 namespace MacVenture {
 
@@ -36,12 +36,12 @@ namespace MacVenture {
 enum MenuAction;
 
 enum {
-	kCursorWidth = 2, // HACK Arbitrary width to test
+	kCursorWidth = 2,
 	kCursorHeight = 2
 };
 
 enum {
-	kExitButtonWidth = 10, // HACK Arbitrary width to test
+	kExitButtonWidth = 10,
 	kExitButtonHeight = 10
 };
 
@@ -802,9 +802,19 @@ void Gui::printText(const Common::String & text) {
 	_consoleText->printLine(text, _outConsoleWindow->getDimensions().width());
 }
 
+void Gui::showPrebuiltDialog(PrebuiltDialogs type) {
+	closeDialog();
+	_dialog = new Dialog(this, type);
+}
+
+bool Gui::isDialogOpen() {
+	return _dialog != nullptr;
+}
+
 void Gui::setTextInput(Common::String str) {
 	_engine->setTextInput(str);
 }
+
 
 void Gui::closeDialog() {
 	delete _dialog;
@@ -815,9 +825,7 @@ void Gui::getTextFromUser() {
 	if (_dialog) {
 		delete _dialog;
 	}
-	_dialog = new Dialog(this, kSpeakDialog);
-	// Hack to pause the engine
-	_engine->clickToContinue();
+	showPrebuiltDialog(kSpeakDialog);
 }
 
 void Gui::loadGame(int slot) {
@@ -1046,8 +1054,7 @@ void Gui::handleMenuAction(MenuAction action) {
 		break;
 	case MacVenture::kMenuActionSaveAs:
 		debug("MacVenture Menu Action: Save As");
-		// HACK this should be wrapped in a function
-		_dialog = new Dialog(this, kSaveAsDialog);
+		showPrebuiltDialog(kSaveAsDialog);
 		break;
 	case MacVenture::kMenuActionQuit:
 		debug("MacVenture Menu Action: Quit");
@@ -1139,6 +1146,7 @@ void Gui::invertWindowColors(WindowReference winID) {
 		}
 	}
 }
+
 
 bool Gui::tryCloseWindow(WindowReference winID) {
 	WindowData data = findWindowData(winID);

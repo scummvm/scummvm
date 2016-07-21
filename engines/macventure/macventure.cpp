@@ -126,7 +126,7 @@ Common::Error MacVentureEngine::run() {
 
 		if (_gameState != kGameStateQuitting) {
 
-			if (_prepared) {
+			if (_prepared && !_gui->isDialogOpen()) {
 				_prepared = false;
 
 				if (!_halted)
@@ -148,6 +148,7 @@ Common::Error MacVentureEngine::run() {
 
 				if (_gameState == kGameStateWinnig || _gameState == kGameStateLosing) {
 					endGame();
+					return Common::kNoError;
 				}
 			}
 			_gui->draw();

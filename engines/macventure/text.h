@@ -28,6 +28,7 @@
 
 namespace MacVenture {
 typedef uint32 ObjID;
+class MacVentureEngine;
 
 class TextAsset {
 public:
@@ -53,7 +54,7 @@ private:
 	ObjID _sourceObj;
 	const HuffmanLists *_huffman;
 	bool _isOld;
-	
+
 	Common::String _decoded;
 
 };

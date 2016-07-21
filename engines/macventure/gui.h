@@ -29,9 +29,12 @@
 
 #include "graphics/font.h"
 
+#include "macventure/macventure.h"
 #include "macventure/container.h"
 #include "macventure/image.h"
+#include "macventure/prebuilt_dialogs.h"
 #include "macventure/dialog.h"
+#include "macventure/controls.h"
 
 namespace MacVenture {
 
@@ -114,53 +117,6 @@ struct WindowData {
 	bool updateScroll;
 };
 
-enum ControlType { // HACK, should correspond exactly with the types of controls (sliders etc)
-	kControlExitBox = 0,
-	kControlExamine = 1,
-	kControlOpen = 2,
-	kControlClose = 3,
-	kControlSpeak = 4,
-	kControlOperate = 5,
-	kControlGo = 6,
-	kControlHit = 7,
-	kControlConsume = 8,
-	kControlClickToContinue = 9
-};
-
-enum ControlAction { // HACK, figure out a way to put it in engine
-	kNoCommand = 0,
-	kStartOrResume = 1,
-	kClose = 2,
-	kTick = 3,
-	kActivateObject = 4,
-	kMoveObject = 5,
-	kConsume = 6,
-	kExamine = 7,
-	kGo = 8,
-	kHit = 9,
-	kOpen = 10,
-	kOperate = 11,
-	kSpeak = 12,
-	kBabble = 13,
-	kTargetName = 14,
-	kDebugObject = 15,
-	kClickToContinue = 16
-};
-
-struct ControlData {
-	Common::Rect bounds;
-	uint16 scrollValue;
-	uint8 visible;
-	uint16 scrollMax;
-	uint16 scrollMin;
-	uint16 cdef;
-	ControlAction refcon;
-	ControlType type;
-	uint8 titleLength;
-	char* title;
-	uint16 border;
-};
-
 struct BorderBounds {
 	uint16 leftOffset;
 	uint16 topOffset;
@@ -204,6 +160,7 @@ public:
 	void updateWindow(WindowReference winID, bool containerOpen);
 	void invertWindowColors(WindowReference winID);
 
+
 	WindowReference createInventoryWindow(ObjID objRef);
 	bool tryCloseWindow(WindowReference winID);
 
@@ -222,8 +179,6 @@ public:
 	bool processInventoryEvents(WindowClick click, Common::Event &event);
 
 	void processCursorTick();
-
-	//bool processClickObject(ObjID obj, WindowReference win, Common::Event event, bool canDrag);
 
 	const WindowData& getWindowData(WindowReference reference);
 
@@ -248,6 +203,9 @@ public:
 	void printText(const Common::String &text);
 
 	//Dialog interactions
+	void showPrebuiltDialog(PrebuiltDialogs type);
+	bool isDialogOpen();
+
 	void getTextFromUser();
 	void setTextInput(Common::String str);
 	void closeDialog();
@@ -426,74 +384,6 @@ private:
 	Common::Point _pos;
 	ClickState _state;
 
-};
-
-class CommandButton {
-
-enum {
-	kCommandsLeftPadding = 0,
-	kCommandsTopPadding = 0
-};
-
-public:
-
-	CommandButton() {
-		_gui = nullptr;
-	}
-
-	CommandButton(ControlData data, Gui *g) {
-		_data = data;
-		_gui = g;
-		_selected = false;
-	}
-	~CommandButton() {}
-
-	void draw(Graphics::ManagedSurface &surface) const {
-
-		uint colorFill = _selected ? kColorBlack : kColorWhite;
-		uint colorText = _selected ? kColorWhite : kColorBlack;
-
-		surface.fillRect(_data.bounds, colorFill);
-		surface.frameRect(_data.bounds, kColorBlack);
-
-		if (_data.titleLength > 0) {
-			const Graphics::Font &font = _gui->getCurrentFont();
-			Common::String title(_data.title);
-			font.drawString(
-				&surface,
-				title,
-				_data.bounds.left,
-				_data.bounds.top,
-				_data.bounds.right - _data.bounds.left,
-				colorText,
-				Graphics::kTextAlignCenter);
-		}
-	}
-
-	bool isInsideBounds(const Common::Point point) const {
-		return _data.bounds.contains(point);
-	}
-
-	const ControlData& getData() const {
-		return _data;
-	}
-
-	void select() {
-		_selected = true;
-	}
-
-	void unselect() {
-		_selected = false;
-	}
-
-	bool isSelected() {
-		return _selected;
-	}
-
-private:
-	bool _selected;
-	ControlData _data;
-	Gui *_gui;
 };
 
 class ConsoleText {

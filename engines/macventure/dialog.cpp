@@ -23,47 +23,8 @@
 #include "common/system.h"
 
 #include "macventure/dialog.h"
-
 namespace MacVenture {
 
-// Prebuilt dialogs
-
-enum {
-  // HACK
-  kMaxPrebuiltDialogElements = 10
-};
-
-struct PrebuiltDialog {
-  Common::Rect bounds;
-  PrebuiltDialogElement elements[kMaxPrebuiltDialogElements];
-};
-
-PrebuiltDialog prebuiltDialogs[kPrebuiltDialogCount] = {
-
-  {/* kSaveAsDialog */
-    Common::Rect(0, 146, 456, 254),
-    {
-      {kDEButton, "YES", kDASaveAs, Common::Point(24, 68), 120, 22},
-      {kDEButton, "NO", kDACloseDialog, Common::Point(168, 68), 120, 22},
-      {kDEButton, "CANCEL", kDACloseDialog, Common::Point(312, 68), 120, 22},
-      {kDEPlainText, "Save As...", kDANone, Common::Point(100, 10), 340, 38},
-      {kDETextInput, "", kDANone, Common::Point(100, 30), 340, 20},
-      {kDEEnd, "", kDANone, Common::Point(0, 0), 0, 0}
-    }
-  },
-
-  { /* kSpeakDialog */
-    Common::Rect(20, 92, 400, 200),
-    {
-      {kDEButton, "OK", kDASubmit, Common::Point(10, 70), 50, 20},
-      {kDEButton, "CANCEL", kDACloseDialog, Common::Point(96, 70), 50, 20},
-      {kDEPlainText, "What would you like to say?", kDANone, Common::Point(10, 10), 400, 20},
-      {kDETextInput, "", kDANone, Common::Point(10, 25), 350, 40},
-      {kDEEnd, "", kDANone, Common::Point(0, 0), 0, 0}
-    }
-  }
-
-};
 
 Dialog::Dialog(Gui *gui, Common::Point pos, uint width, uint height) :
   _gui(gui), _bounds(Common::Rect(pos.x, pos.y, pos.x + width, pos.y + height)) {}

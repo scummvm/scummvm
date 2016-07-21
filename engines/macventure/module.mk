@@ -3,13 +3,14 @@ MODULE := engines/macventure
 MODULE_OBJS := \
 	image.o \
 	detection.o \
-	gui.o \
 	object.o \
 	text.o \
 	world.o \
 	script.o \
 	macventure.o \
-	dialog.o
+	gui.o \
+	dialog.o \
+	controls.o
 
 MODULE_DIRS += \
 	engines/macventure

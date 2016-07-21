@@ -25,6 +25,8 @@
 
 #include "macventure/container.h"
 #include "macventure/world.h"
+#include "macventure/macventure.h"
+#include "macventure/controls.h"
 
 namespace MacVenture {
 

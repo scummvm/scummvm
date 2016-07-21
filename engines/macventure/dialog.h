@@ -26,43 +26,12 @@
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "macventure/macventure.h"
-#include "macventure/gui.h"
-
+#include "macventure/prebuilt_dialogs.h"
 namespace MacVenture {
 
 using namespace Graphics::MacGUIConstants;
 class Gui;
-
 class DialogElement;
-
-enum DialogAction {
-  kDANone,
-  kDACloseDialog,
-  kDASubmit,
-  kDASaveAs
-};
-
-enum PrebuiltDialogs {
-  kSaveAsDialog = 0,
-  kSpeakDialog = 1,
-  kPrebuiltDialogCount
-};
-
-enum PrebuiltElementType {
-  kDEPlainText,
-  kDEButton,
-  kDETextInput,
-  kDEEnd
-};
-
-struct PrebuiltDialogElement {
-  PrebuiltElementType type;
-  Common::String title;
-  DialogAction action;
-  Common::Point position;
-  uint width;
-  uint height;
-};
 
 class Dialog {
 public:
