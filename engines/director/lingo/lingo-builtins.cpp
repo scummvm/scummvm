@@ -116,7 +116,7 @@ void Lingo::b_log() {
 void Lingo::b_pi() {
 	Datum d;
 	d.toFloat();
-	d.u.f = 3.14159265358979;
+	d.u.f = M_PI;
 	g_lingo->push(d);
 }
 
