@@ -29,6 +29,8 @@ CExitBridge::CExitBridge() : CMovePlayerTo() {
 
 void CExitBridge::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
+	file->writeQuotedLine(_string1, indent);
+
 	CMovePlayerTo::save(file, indent);
 }
 

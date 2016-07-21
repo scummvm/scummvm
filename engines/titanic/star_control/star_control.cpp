@@ -50,7 +50,7 @@ CStarControl::~CStarControl() {
 }
 
 void CStarControl::save(SimpleFile *file, int indent) {
-	file->writeNumberLine(1, indent);
+	file->writeNumberLine(0, indent);
 	_starField.save(file, indent);
 	_view.save(file, indent);
 	CGameObject::save(file, indent);

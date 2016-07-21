@@ -35,6 +35,7 @@ void CRoomItem::save(SimpleFile *file, int indent) {
 	file->writeQuotedLine("Exit Movies", indent);
 	_exitMovieKey.save(file, indent);
 
+	file->writeQuotedLine("Room dimensions x 1000", indent);
 	file->writeNumberLine(_roomDimensionX * 1000.0, indent + 1);
 	file->writeNumberLine(_roomDimensionY * 1000.0, indent + 1);
 

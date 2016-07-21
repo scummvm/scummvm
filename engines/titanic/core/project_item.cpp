@@ -69,6 +69,10 @@ void CProjectItem::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_nextObjectNumber, indent);
 	file->writeQuotedLine("Next Avail. Message Number", indent);
 	file->writeNumberLine(_nextMessageNumber, indent);
+
+	file->writeQuotedLine("", indent);
+	_files.save(file, indent);
+
 	file->writeQuotedLine("Next Avail. Room Number", indent);
 	file->writeNumberLine(_nextRoomNumber, indent);
 
@@ -215,6 +219,9 @@ void CProjectItem::saveGame(int slotId, const CString &desc) {
 
 	// Save the contents out
 	saveData(&file, this);
+
+	// Save the game manager data
+	_gameManager->save(&file);
 
 	// Close the file and signal that the saving has finished
 	file.close();

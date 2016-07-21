@@ -82,6 +82,11 @@ public:
 	~CGameManager();
 
 	/**
+	 * Save data to a save file
+	 */
+	void save(SimpleFile *file);
+
+	/**
 	 * Load data from a save file
 	 */
 	void load(SimpleFile *file);

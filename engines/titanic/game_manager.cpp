@@ -56,6 +56,14 @@ CGameManager::~CGameManager() {
 	_project->resetGameManager();
 }
 
+void CGameManager::save(SimpleFile *file) {
+	file->writeNumber(_lastDiskTicksCount);
+	_gameState.save(file);
+	_timers.save(file, 0);
+	_trueTalkManager.save(file);
+	_sound.save(file);
+}
+
 void CGameManager::load(SimpleFile *file) {
 	file->readNumber();
 

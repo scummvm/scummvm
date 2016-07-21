@@ -392,10 +392,10 @@ void TTnpcScript::load(SimpleFile *file) {
 }
 
 void TTnpcScript::saveBody(SimpleFile *file) {
-	int v = proc31();
-	file->writeNumber(v);
+	int count = proc31();
+	file->writeNumber(count);
 
-	if (v > 0) {
+	if (count > 0) {
 		for (uint idx = 0; idx < _ranges.size(); ++idx) {
 			const TTscriptRange &item = _ranges[idx];
 			if (item._mode == SF_RANDOM && item._priorIndex) {
@@ -411,12 +411,13 @@ void TTnpcScript::loadBody(SimpleFile *file) {
 	preLoad();
 
 	for (int index = 0; index < count; index += 2) {
-		int v = file->readNumber();
+		int id = file->readNumber();
+		int val = file->readNumber();
 
 		for (uint idx = 0; idx < _ranges.size(); ++idx) {
 			TTscriptRange &item = _ranges[idx];
-			if (!item._id) {
-				item._id = v;
+			if (item._id == id) {
+				item._priorIndex = val;
 				break;
 			}
 		}
