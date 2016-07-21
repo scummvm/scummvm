@@ -64,10 +64,12 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 	}
 
 	Common::JSONObject result = json->asObject();
+	long httpResponseCode = -1;
 	if (result.contains("error")) {
 		//new token needed => request token & then retry original request
 		if (_stream) {
-			debug(9, "code %ld", _stream->httpResponseCode());
+			httpResponseCode = _stream->httpResponseCode();
+			debug(9, "code %ld", httpResponseCode);
 		}
 
 		Common::JSONObject error = result.getVal("error")->asObject();
@@ -93,7 +95,7 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 		if (code == "unauthenticated") irrecoverable = false;
 
 		if (irrecoverable) {
-			finishError(Networking::ErrorResponse(this, false, true, json->stringify(true), -1)); //TODO: httpCode
+			finishError(Networking::ErrorResponse(this, false, true, json->stringify(true), httpResponseCode));
 			delete json;
 			return;
 		}
