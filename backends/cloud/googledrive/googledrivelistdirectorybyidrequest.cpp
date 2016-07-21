@@ -35,7 +35,7 @@ namespace GoogleDrive {
 
 GoogleDriveListDirectoryByIdRequest::GoogleDriveListDirectoryByIdRequest(GoogleDriveStorage *storage, Common::String id, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _requestedId(id), _storage(storage), _listDirectoryCallback(cb),
-	 _workingRequest(nullptr), _ignoreCallback(false) {
+	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
 

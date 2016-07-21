@@ -110,7 +110,7 @@ public:
 };
 
 /** Shortcut for accessing the local webserver. */
-#define LocalServer		Networking::LocalWebserver::instance()
+#define LocalServer     Networking::LocalWebserver::instance()
 
 } // End of namespace Networking
 

@@ -88,8 +88,8 @@ public:
 	 * Replace active Storage.
 	 * @note this method automatically saves the changes with ConfMan.
 	 *
-	 * @param	storage Cloud::Storage to replace active storage with.
-	 * @param	index   one of Cloud::StorageID enum values to indicate what storage type is replaced.
+	 * @param   storage Cloud::Storage to replace active storage with.
+	 * @param   index   one of Cloud::StorageID enum values to indicate what storage type is replaced.
 	 */
 	void replaceStorage(Storage *storage, uint32 index);
 
@@ -100,54 +100,54 @@ public:
 	 * Returns active Storage, which could be used to interact
 	 *  with cloud storage.
 	 *
-	 * @return	active Cloud::Storage or null, if there is no active Storage.
+	 * @return  active Cloud::Storage or null, if there is no active Storage.
 	 */
 	Cloud::Storage *getCurrentStorage() const;
 
 	/**
 	 * Return active Storage's index.
 	 *
-	 * @return	active Storage's index.
+	 * @return  active Storage's index.
 	 */
 	uint32 getStorageIndex() const;
 
 	/**
 	 * Return Storages names as list.
 	 *
-	 * @return	a list of Storages names.
+	 * @return  a list of Storages names.
 	 */
 	Common::StringArray listStorages() const;
 
 	/**
 	 * Changes the storage to the one with given index.
 	 *
-	 * @param	new Storage's index.
+	 * @param   new Storage's index.
 	 */
 	bool switchStorage(uint32 index);
 
 	/**
 	 * Return username used by Storage.
 	 *
-	 * @param	Storage's index.
-	 * @returns	username or "" if index is invalid (no such Storage).
+	 * @param   Storage's index.
+	 * @returns username or "" if index is invalid (no such Storage).
 	 */
 	Common::String getStorageUsername(uint32 index);
 
 	/**
 	 * Return space used by Storage.
 	 *
-	 * @param	Storage's index.
-	 * @returns	used space in bytes or 0 if index is invalid (no such Storage).
+	 * @param   Storage's index.
+	 * @returns used space in bytes or 0 if index is invalid (no such Storage).
 	 */
 	uint64 getStorageUsedSpace(uint32 index);
 
 	/**
 	 * Return Storage's last sync date.
 	 *
-	 * @param	Storage's index.
-	 * @returns	last sync date or "" if index is invalid (no such Storage).
-				It also returns "" if there never was any sync
-				or if storage is syncing right now.
+	 * @param   Storage's index.
+	 * @returns last sync date or "" if index is invalid (no such Storage).
+	            It also returns "" if there never was any sync
+	            or if storage is syncing right now.
 	 */
 	Common::String getStorageLastSync(uint32 index);
 
@@ -155,8 +155,8 @@ public:
 	 * Set Storage's username.
 	 * Automatically saves changes to the config.
 	 *
-	 * @param	index	Storage's index.
-	 * @param	name	username to set
+	 * @param   index   Storage's index.
+	 * @param   name    username to set
 	 */
 	void setStorageUsername(uint32 index, Common::String name);
 
@@ -164,8 +164,8 @@ public:
 	 * Set Storage's used space field.
 	 * Automatically saves changes to the config.
 	 *
-	 * @param	index	Storage's index.
-	 * @param	used	value to set
+	 * @param   index   Storage's index.
+	 * @param   used    value to set
 	 */
 	void setStorageUsedSpace(uint32 index, uint64 used);
 
@@ -173,8 +173,8 @@ public:
 	 * Set Storage's last sync date.
 	 * Automatically saves changes to the config.
 	 *
-	 * @param	index	Storage's index.
-	 * @param	date	date to set
+	 * @param   index   Storage's index.
+	 * @param   date    date to set
 	 */
 	void setStorageLastSync(uint32 index, Common::String date);
 
@@ -182,8 +182,8 @@ public:
 	 * Replace Storage which has given index with a
 	 * storage created with given code.
 	 *
-	 * @param	index	Storage's index
-	 * @param	code	OAuth2 code received from user
+	 * @param   index   Storage's index
+	 * @param   code    OAuth2 code received from user
 	 */
 	void connectStorage(uint32 index, Common::String code);
 
@@ -264,7 +264,7 @@ public:
 };
 
 /** Shortcut for accessing the connection manager. */
-#define CloudMan		Cloud::CloudManager::instance()
+#define CloudMan        Cloud::CloudManager::instance()
 
 } // End of namespace Cloud
 

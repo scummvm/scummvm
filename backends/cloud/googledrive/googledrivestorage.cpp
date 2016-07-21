@@ -57,9 +57,9 @@ GoogleDriveStorage::GoogleDriveStorage(Common::String accessToken, Common::Strin
 
 GoogleDriveStorage::GoogleDriveStorage(Common::String code) {
 	getAccessToken(
-		new Common::Callback<GoogleDriveStorage, BoolResponse>(this, &GoogleDriveStorage::codeFlowComplete),
-		new Common::Callback<GoogleDriveStorage, Networking::ErrorResponse>(this, &GoogleDriveStorage::codeFlowFailed),
-		code
+	    new Common::Callback<GoogleDriveStorage, BoolResponse>(this, &GoogleDriveStorage::codeFlowComplete),
+	    new Common::Callback<GoogleDriveStorage, Networking::ErrorResponse>(this, &GoogleDriveStorage::codeFlowFailed),
+	    code
 	);
 }
 

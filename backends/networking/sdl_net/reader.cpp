@@ -163,7 +163,7 @@ void Reader::parseFirstLine(const Common::String &headers) {
 			const char *cstr = headers.c_str();
 			const char *position = strstr(cstr, "\r\n");
 			if (position) { //we have at least one line - and we want the first one
-							//"<METHOD> <path> HTTP/<VERSION>\r\n"
+				//"<METHOD> <path> HTTP/<VERSION>\r\n"
 				Common::String method, path, http, buf;
 				uint32 length = position - cstr;
 				if (headersSize > length) headersSize = length;

@@ -68,7 +68,7 @@ public:
 
 	/**
 	* Return unique storage name.
-	* @returns	some unique storage name (for example, "Dropbox (user@example.com)")
+	* @returns  some unique storage name (for example, "Dropbox (user@example.com)")
 	*/
 	virtual Common::String name() const;
 

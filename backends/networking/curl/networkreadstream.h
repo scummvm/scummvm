@@ -50,9 +50,9 @@ public:
 	NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading = false, bool usingPatch = false);
 	/** Send <formFields>, <formFiles>, using POST multipart/form. */
 	NetworkReadStream(
-		const char *url, curl_slist *headersList,
-		Common::HashMap<Common::String, Common::String> formFields,
-		Common::HashMap<Common::String, Common::String> formFiles);
+	    const char *url, curl_slist *headersList,
+	    Common::HashMap<Common::String, Common::String> formFields,
+	    Common::HashMap<Common::String, Common::String> formFiles);
 	/** Send <buffer, using POST by default. */
 	NetworkReadStream(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading = false, bool usingPatch = false, bool post = true);
 	virtual ~NetworkReadStream();
@@ -77,8 +77,8 @@ public:
 	 * supposed to match those of ISO C fread(), in particular where
 	 * it concerns setting error and end of file/stream flags.
 	 *
-	 * @param dataPtr	pointer to a buffer into which the data is read
-	 * @param dataSize	number of bytes to be read
+	 * @param dataPtr   pointer to a buffer into which the data is read
+	 * @param dataSize  number of bytes to be read
 	 * @return the number of bytes which were actually read.
 	 */
 	virtual uint32 read(void *dataPtr, uint32 dataSize);

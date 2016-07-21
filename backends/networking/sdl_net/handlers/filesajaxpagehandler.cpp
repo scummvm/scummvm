@@ -34,6 +34,7 @@ FilesAjaxPageHandler::FilesAjaxPageHandler() {}
 FilesAjaxPageHandler::~FilesAjaxPageHandler() {}
 
 namespace {
+
 Common::String encodeDoubleQuotesAndSlashes(Common::String s) {
 	Common::String result = "";
 	for (uint32 i = 0; i < s.size(); ++i)
@@ -42,8 +43,9 @@ Common::String encodeDoubleQuotesAndSlashes(Common::String s) {
 		} else if (s[i] == '\\') {
 			result += "\\\\";
 		} else result += s[i];
-		return result;
+	return result;
 }
+
 }
 
 void FilesAjaxPageHandler::handle(Client &client) {

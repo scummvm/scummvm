@@ -111,7 +111,7 @@ public:
 
 	/**
 	* Return unique storage name.
-	* @returns	some unique storage name (for example, "Dropbox (user@example.com)")
+	* @returns  some unique storage name (for example, "Dropbox (user@example.com)")
 	*/
 	virtual Common::String name() const = 0;
 
@@ -155,7 +155,7 @@ public:
 	 * Calls the <errorCallback> if failed to get information.
 	 *
 	 * @note on success Storage should also call
-	 *	     CloudMan.setStorageUsername().
+	 *       CloudMan.setStorageUsername().
 	 */
 	virtual Networking::Request *info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) = 0;
 

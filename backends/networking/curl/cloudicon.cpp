@@ -82,7 +82,7 @@ bool CloudIcon::draw() {
 
 	if (g_system) {
 		Graphics::TransparentSurface *surface = &_icon;
-		makeAlphaIcon((_showingDisabled? _disabledIcon:_icon), _currentAlpha);
+		makeAlphaIcon((_showingDisabled ? _disabledIcon : _icon), _currentAlpha);
 		if (_alphaIcon.getPixels()) surface = &_alphaIcon;
 		if (surface && surface->getPixels()) {
 			int x = g_system->getOverlayWidth() - surface->w - 10, y = 10;

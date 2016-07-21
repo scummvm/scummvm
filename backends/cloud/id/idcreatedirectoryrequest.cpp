@@ -104,7 +104,7 @@ void IdCreateDirectoryRequest::idResolveFailedCallback(Networking::ErrorResponse
 		Common::String parentId = error.response;
 		for (uint32 i = 0; i < parentId.size(); ++i)
 			if (parentId[i] == '\n') {
-				parentId.erase(0, i+1);
+				parentId.erase(0, i + 1);
 				break;
 			}
 

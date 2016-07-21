@@ -31,19 +31,19 @@ namespace Networking {
 
 static size_t curlDataCallback(char *d, size_t n, size_t l, void *p) {
 	NetworkReadStream *stream = (NetworkReadStream *)p;
-	if (stream) return stream->write(d, n*l);
+	if (stream) return stream->write(d, n * l);
 	return 0;
 }
 
 static size_t curlReadDataCallback(char *d, size_t n, size_t l, void *p) {
 	NetworkReadStream *stream = (NetworkReadStream *)p;
-	if (stream) return stream->fillWithSendingContents(d, n*l);
+	if (stream) return stream->fillWithSendingContents(d, n * l);
 	return 0;
 }
 
 static size_t curlHeadersCallback(char *d, size_t n, size_t l, void *p) {
 	NetworkReadStream *stream = (NetworkReadStream *)p;
-	if (stream) return stream->addResponseHeaders(d, n*l);
+	if (stream) return stream->addResponseHeaders(d, n * l);
 	return 0;
 }
 
@@ -112,30 +112,33 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::H
 	curl_easy_setopt(_easy, CURLOPT_XFERINFODATA, this);
 
 	// set POST multipart upload form fields/files
-	struct curl_httppost *formpost = NULL;
-	struct curl_httppost *lastptr = NULL;
+	struct curl_httppost *formpost = nullptr;
+	struct curl_httppost *lastptr = nullptr;
 
 	for (Common::HashMap<Common::String, Common::String>::iterator i = formFields.begin(); i != formFields.end(); ++i) {
-		if (0 != curl_formadd(&formpost, &lastptr,
+		CURLFORMcode code = curl_formadd(
+			&formpost,
+			&lastptr,
 			CURLFORM_COPYNAME, i->_key.c_str(),
 			CURLFORM_COPYCONTENTS, i->_value.c_str(),
-			CURLFORM_END)) debug("file failed formadd");
+			CURLFORM_END
+		);
+
+		if (code != CURL_FORMADD_OK)
+			debug("field failed formadd");
 	}
 
-	/*
-	curl_formadd(&formpost, &lastptr,
-		CURLFORM_COPYNAME, "fieldname",
-		CURLFORM_BUFFER, "filename",
-		CURLFORM_BUFFERPTR, buffer,
-		CURLFORM_BUFFERLENGTH, bufferSize,
-		CURLFORM_END);
-	*/
-
 	for (Common::HashMap<Common::String, Common::String>::iterator i = formFiles.begin(); i != formFiles.end(); ++i) {
-		if (0 != curl_formadd(&formpost, &lastptr,
+		CURLFORMcode code = curl_formadd(
+			&formpost,
+			&lastptr,
 			CURLFORM_COPYNAME, i->_key.c_str(),
 			CURLFORM_FILE, i->_value.c_str(),
-			CURLFORM_END)) debug("file failed formadd");
+			CURLFORM_END
+		);
+
+		if (code != CURL_FORMADD_OK)
+			debug("file failed formadd");
 	}
 
 	curl_easy_setopt(_easy, CURLOPT_HTTPPOST, formpost);

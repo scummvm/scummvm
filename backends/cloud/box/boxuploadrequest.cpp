@@ -174,11 +174,11 @@ void BoxUploadRequest::uploadedCallback(Networking::JsonResponse response) {
 			//TODO: check errors
 			/*
 			if (object.contains("error")) {
-				warning("Box returned error: %s", json->stringify(true).c_str());
-				delete json;
-				error.response = json->stringify(true);
-				finishError(error);
-				return;
+			    warning("Box returned error: %s", json->stringify(true).c_str());
+			    delete json;
+			    error.response = json->stringify(true);
+			    finishError(error);
+			    return;
 			}
 			*/
 		}

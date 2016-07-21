@@ -181,7 +181,8 @@ void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse er
 	Common::String dir = _storage->savesDirectoryPath();
 	if (dir.lastChar() == '/') dir.deleteLastChar();
 	debug(9, "creating %s", dir.c_str());
-	_workingRequest = _storage->createDirectory(dir,
+	_workingRequest = _storage->createDirectory(
+		dir,
 		new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::directoryCreatedCallback),
 		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::directoryCreatedErrorCallback)
 	);
@@ -225,7 +226,9 @@ void SavesSyncRequest::downloadNextFile() {
 	sendCommand(GUI::kSavesSyncProgressCmd, (int)(getDownloadingProgress() * 100));
 
 	debug(9, "downloading %s (%d %%)", _currentDownloadingFile.name().c_str(), (int)(getProgress() * 100));
-	_workingRequest = _storage->downloadById(_currentDownloadingFile.id(), DefaultSaveFileManager::concatWithSavesPath(_currentDownloadingFile.name()),
+	_workingRequest = _storage->downloadById(
+		_currentDownloadingFile.id(),
+		DefaultSaveFileManager::concatWithSavesPath(_currentDownloadingFile.name()),
 		new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::fileDownloadedCallback),
 		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileDownloadedErrorCallback)
 	);
@@ -270,14 +273,18 @@ void SavesSyncRequest::uploadNextFile() {
 	_currentUploadingFile = _filesToUpload.back();
 	_filesToUpload.pop_back();
 
-	debug(9, "uploading %s (%d %%)", _currentUploadingFile.c_str(), (int)(getProgress()*100));
+	debug(9, "uploading %s (%d %%)", _currentUploadingFile.c_str(), (int)(getProgress() * 100));
 	if (_storage->uploadStreamSupported()) {
-		_workingRequest = _storage->upload(_storage->savesDirectoryPath() + _currentUploadingFile, g_system->getSavefileManager()->openRawFile(_currentUploadingFile),
+		_workingRequest = _storage->upload(
+			_storage->savesDirectoryPath() + _currentUploadingFile,
+			g_system->getSavefileManager()->openRawFile(_currentUploadingFile),
 			new Common::Callback<SavesSyncRequest, Storage::UploadResponse>(this, &SavesSyncRequest::fileUploadedCallback),
 			new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileUploadedErrorCallback)
 		);
 	} else {
-		_workingRequest = _storage->upload(_storage->savesDirectoryPath() + _currentUploadingFile, DefaultSaveFileManager::concatWithSavesPath(_currentUploadingFile),
+		_workingRequest = _storage->upload(
+			_storage->savesDirectoryPath() + _currentUploadingFile,
+			DefaultSaveFileManager::concatWithSavesPath(_currentUploadingFile),
 			new Common::Callback<SavesSyncRequest, Storage::UploadResponse>(this, &SavesSyncRequest::fileUploadedCallback),
 			new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileUploadedErrorCallback)
 		);

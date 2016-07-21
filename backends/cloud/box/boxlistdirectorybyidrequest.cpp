@@ -37,7 +37,7 @@ namespace Box {
 
 BoxListDirectoryByIdRequest::BoxListDirectoryByIdRequest(BoxStorage *storage, Common::String id, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _requestedId(id), _storage(storage), _listDirectoryCallback(cb),
-	 _workingRequest(nullptr), _ignoreCallback(false) {
+	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
 
@@ -91,12 +91,12 @@ void BoxListDirectoryByIdRequest::responseCallback(Networking::JsonResponse resp
 		//TODO: check that error is returned the right way
 		/*
 		if (responseObject.contains("error") || responseObject.contains("error_summary")) {
-			warning("Box returned error: %s", responseObject.getVal("error_summary")->asString().c_str());
-			error.failed = true;
-			error.response = json->stringify();
-			finishError(error);
-			delete json;
-			return;
+		    warning("Box returned error: %s", responseObject.getVal("error_summary")->asString().c_str());
+		    error.failed = true;
+		    error.response = json->stringify();
+		    finishError(error);
+		    delete json;
+		    return;
 		}
 		*/
 

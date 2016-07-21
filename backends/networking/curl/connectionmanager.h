@@ -125,7 +125,7 @@ public:
 };
 
 /** Shortcut for accessing the connection manager. */
-#define ConnMan		Networking::ConnectionManager::instance()
+#define ConnMan     Networking::ConnectionManager::instance()
 
 } // End of namespace Networking
 

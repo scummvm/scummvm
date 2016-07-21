@@ -69,7 +69,7 @@ void FolderDownloadRequest::directoryListedCallback(Storage::ListDirectoryRespon
 	_pendingFiles = response.value;
 
 	// remove all directories
-	for (Common::Array<StorageFile>::iterator i = _pendingFiles.begin(); i != _pendingFiles.end(); )
+	for (Common::Array<StorageFile>::iterator i = _pendingFiles.begin(); i != _pendingFiles.end();)
 		if (i->isDirectory())
 			_pendingFiles.erase(i);
 		else {

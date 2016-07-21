@@ -91,9 +91,8 @@ void CreateDirectoryHandler::handle(Client &client) {
 			client.queryParameter("path").c_str(),
 			_("Back to parent directory")
 		),
-
 		(client.queryParameter("ajax") == "true" ? "/filesAJAX?path=" : "/files?path=") +
-			LocalWebserver::urlEncodeQueryParameterValue(client.queryParameter("path"))
+		LocalWebserver::urlEncodeQueryParameterValue(client.queryParameter("path"))
 	);
 }
 

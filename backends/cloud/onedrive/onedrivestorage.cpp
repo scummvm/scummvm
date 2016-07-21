@@ -58,9 +58,9 @@ OneDriveStorage::OneDriveStorage(Common::String accessToken, Common::String user
 
 OneDriveStorage::OneDriveStorage(Common::String code) {
 	getAccessToken(
-		new Common::Callback<OneDriveStorage, BoolResponse>(this, &OneDriveStorage::codeFlowComplete),
-		new Common::Callback<OneDriveStorage, Networking::ErrorResponse>(this, &OneDriveStorage::codeFlowFailed),
-		code
+	    new Common::Callback<OneDriveStorage, BoolResponse>(this, &OneDriveStorage::codeFlowComplete),
+	    new Common::Callback<OneDriveStorage, Networking::ErrorResponse>(this, &OneDriveStorage::codeFlowFailed),
+	    code
 	);
 }
 

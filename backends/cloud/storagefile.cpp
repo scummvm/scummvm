@@ -42,7 +42,7 @@ StorageFile::StorageFile(Common::String pth, uint32 sz, uint32 ts, bool dir) {
 		uint32 i = _name.size() - 1;
 		while (true) {
 			if (_name[i] == '/' || _name[i] == '\\') {
-				_name.erase(0, i+1);
+				_name.erase(0, i + 1);
 				break;
 			}
 			if (i == 0) break;

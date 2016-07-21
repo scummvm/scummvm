@@ -31,45 +31,45 @@ namespace Browser {
 
 namespace {
 bool launch(const Common::String client, const Common::String &url) {
-    // FIXME: system's input must be heavily escaped
-    // well, when url's specified by user
-    // it's OK now (urls are hardcoded somewhere in GUI)
-    Common::String cmd = client + " " + url;
-    return (system(cmd.c_str()) != -1);
+	// FIXME: system's input must be heavily escaped
+	// well, when url's specified by user
+	// it's OK now (urls are hardcoded somewhere in GUI)
+	Common::String cmd = client + " " + url;
+	return (system(cmd.c_str()) != -1);
 }
 }
 
 bool openUrl(const Common::String &url) {
-    // inspired by Qt's "qdesktopservices_x11.cpp"
+	// inspired by Qt's "qdesktopservices_x11.cpp"
 
-    // try "standards"
-    if (launch("xdg-open", url))
-        return true;
-    if (launch(getenv("DEFAULT_BROWSER"), url))
-        return true;
-    if (launch(getenv("BROWSER"), url))
-        return true;
+	// try "standards"
+	if (launch("xdg-open", url))
+		return true;
+	if (launch(getenv("DEFAULT_BROWSER"), url))
+		return true;
+	if (launch(getenv("BROWSER"), url))
+		return true;
 
-    // try desktop environment specific tools
-    if (launch("gnome-open", url)) // gnome
-        return true;
-    if (launch("kfmclient openURL", url)) // kde
-        return true;
-    if (launch("exo-open", url)) // xfce
-        return true;
+	// try desktop environment specific tools
+	if (launch("gnome-open", url)) // gnome
+		return true;
+	if (launch("kfmclient openURL", url)) // kde
+		return true;
+	if (launch("exo-open", url)) // xfce
+		return true;
 
-    // try browser names
-    if (launch("firefox", url))
-        return true;
-    if (launch("mozilla", url))
-        return true;
-    if (launch("netscape", url))
-        return true;
-    if (launch("opera", url))
-        return true;
+	// try browser names
+	if (launch("firefox", url))
+		return true;
+	if (launch("mozilla", url))
+		return true;
+	if (launch("netscape", url))
+		return true;
+	if (launch("opera", url))
+		return true;
 
-    warning("Networking::Browser::openUrl() (POSIX) failed to open URL");
-    return false;
+	warning("Networking::Browser::openUrl() (POSIX) failed to open URL");
+	return false;
 }
 
 } // End of namespace Browser

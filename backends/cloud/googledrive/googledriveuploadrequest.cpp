@@ -218,7 +218,7 @@ bool GoogleDriveUploadRequest::handleHttp308(const Networking::NetworkReadStream
 	Common::String headers = stream->responseHeaders();
 	const char *cstr = headers.c_str();
 	for (int rangeTry = 0; rangeTry < 2; ++rangeTry) {
-		const char *needle = (rangeTry==0 ? "Range: 0-" : "Range: bytes=0-");
+		const char *needle = (rangeTry == 0 ? "Range: 0-" : "Range: bytes=0-");
 		uint32 needleLength = (rangeTry == 0 ? 9 : 15);
 
 		const char *position = strstr(cstr, needle); //if it lost the first part, I refuse to talk with it

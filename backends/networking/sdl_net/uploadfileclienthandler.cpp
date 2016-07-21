@@ -153,16 +153,16 @@ void UploadFileClientHandler::handleBlockContent(Client *client) {
 
 		if (client->noMoreContent()) {
 			// success - redirect back to directory listing
-			HandlerUtils::setMessageHandler(*client,
+			HandlerUtils::setMessageHandler(
+				*client,
 				Common::String::format(
 					"%s<br/><a href=\"files?path=%s\">%s</a>",
 					_("Uploaded successfully!"),
 					client->queryParameter("path").c_str(),
 					_("Back to parent directory")
 				),
-
 				(client->queryParameter("ajax") == "true" ? "/filesAJAX?path=" : "/files?path=") +
-					LocalWebserver::urlEncodeQueryParameterValue(client->queryParameter("path"))
+				LocalWebserver::urlEncodeQueryParameterValue(client->queryParameter("path"))
 			);
 			_state = UFH_STOP;
 			return;

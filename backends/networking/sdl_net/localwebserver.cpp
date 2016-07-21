@@ -205,8 +205,11 @@ void LocalWebserver::handle() {
 
 void LocalWebserver::handleClient(uint32 i) {
 	switch (_client[i].state()) {
-	case INVALID: return;
-	case READING_HEADERS: _client[i].readHeaders(); break;
+	case INVALID:
+		return;
+	case READING_HEADERS:
+		_client[i].readHeaders();
+		break;
 	case READ_HEADERS: //decide what to do next with that client
 		//if GET, check whether we know a handler for such URL
 		//if PUT, check whether we know a handler for that URL
@@ -216,7 +219,6 @@ void LocalWebserver::handleClient(uint32 i) {
 			(*_defaultHandler)(_client[i]); //try default handler
 
 		if (_client[i].state() == BEING_HANDLED || _client[i].state() == INVALID) break;
-
 		//if no handler, answer with default BAD REQUEST
 		//fallthrough
 	case BAD_REQUEST:
@@ -278,55 +280,55 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 
 	// if not - try platform-specific
 #ifdef POSIX
-		struct ifaddrs *ifAddrStruct = NULL;
-		void *tmpAddrPtr = NULL;
+	struct ifaddrs *ifAddrStruct = NULL;
+	void *tmpAddrPtr = NULL;
 
-		getifaddrs(&ifAddrStruct);
+	getifaddrs(&ifAddrStruct);
 
-		for (struct ifaddrs *i = ifAddrStruct; i != NULL; i = i->ifa_next) {
-			if (!i->ifa_addr) {
-				continue;
-			}
-
-			Common::String addr;
-
-			// IPv4
-			if (i->ifa_addr->sa_family == AF_INET) {
-				tmpAddrPtr = &((struct sockaddr_in *)i->ifa_addr)->sin_addr;
-				char addressBuffer[INET_ADDRSTRLEN];
-				inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
-				debug("%s IP Address %s", i->ifa_name, addressBuffer);
-				addr = addressBuffer;
-			}
-
-			// IPv6
-			/*
-			if (i->ifa_addr->sa_family == AF_INET6) {
-				tmpAddrPtr = &((struct sockaddr_in6 *)i->ifa_addr)->sin6_addr;
-				char addressBuffer[INET6_ADDRSTRLEN];
-				inet_ntop(AF_INET6, tmpAddrPtr, addressBuffer, INET6_ADDRSTRLEN);
-				debug("%s IP Address %s", i->ifa_name, addressBuffer);
-				addr = addressBuffer;
-			}
-			*/
-
-			if (addr.empty()) continue;
-
-			// ignored IPv4 addresses
-			if (addr.equals("127.0.0.1") || addr.equals("0.0.0.0") || addr.equals("localhost"))
-				continue;
-
-			// ignored IPv6 addresses
-			/*
-			if (addr.equals("::1"))
-				continue;
-			*/
-
-			// use the address found
-			_address = "http://" + addr + Common::String::format(":%u/", _serverPort);
+	for (struct ifaddrs *i = ifAddrStruct; i != NULL; i = i->ifa_next) {
+		if (!i->ifa_addr) {
+			continue;
 		}
 
-		if (ifAddrStruct != NULL) freeifaddrs(ifAddrStruct);
+		Common::String addr;
+
+		// IPv4
+		if (i->ifa_addr->sa_family == AF_INET) {
+			tmpAddrPtr = &((struct sockaddr_in *)i->ifa_addr)->sin_addr;
+			char addressBuffer[INET_ADDRSTRLEN];
+			inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
+			debug("%s IP Address %s", i->ifa_name, addressBuffer);
+			addr = addressBuffer;
+		}
+
+		// IPv6
+		/*
+		if (i->ifa_addr->sa_family == AF_INET6) {
+		    tmpAddrPtr = &((struct sockaddr_in6 *)i->ifa_addr)->sin6_addr;
+		    char addressBuffer[INET6_ADDRSTRLEN];
+		    inet_ntop(AF_INET6, tmpAddrPtr, addressBuffer, INET6_ADDRSTRLEN);
+		    debug("%s IP Address %s", i->ifa_name, addressBuffer);
+		    addr = addressBuffer;
+		}
+		*/
+
+		if (addr.empty()) continue;
+
+		// ignored IPv4 addresses
+		if (addr.equals("127.0.0.1") || addr.equals("0.0.0.0") || addr.equals("localhost"))
+			continue;
+
+		// ignored IPv6 addresses
+		/*
+		if (addr.equals("::1"))
+		    continue;
+		*/
+
+		// use the address found
+		_address = "http://" + addr + Common::String::format(":%u/", _serverPort);
+	}
+
+	if (ifAddrStruct != NULL) freeifaddrs(ifAddrStruct);
 #endif
 }
 
@@ -397,9 +399,9 @@ Common::String LocalWebserver::urlDecode(Common::String value) {
 			continue;
 		}
 
-		if (value[i] == '%' && i+2 < size) {
-			int d1 = hexDigit(value[i+1]);
-			int d2 = hexDigit(value[i+2]);
+		if (value[i] == '%' && i + 2 < size) {
+			int d1 = hexDigit(value[i + 1]);
+			int d2 = hexDigit(value[i + 2]);
 			if (0 <= d1 && d1 < 16 && 0 <= d2 && d2 < 16) {
 				result += (char)(d1 * 16 + d2);
 				i = i + 2;

@@ -108,14 +108,16 @@ void HandlerUtils::setMessageHandler(Client &client, Common::String message, Com
 }
 
 void HandlerUtils::setFilesManagerErrorMessageHandler(Client &client, Common::String message, Common::String redirectTo) {
-	setMessageHandler(client,
+	setMessageHandler(
+		client,
 		Common::String::format(
 			"%s<br/><a href=\"files%s?path=%s\">%s</a>",
 			message.c_str(),
-			client.queryParameter("ajax") == "true" ? "AJAX": "",
+			client.queryParameter("ajax") == "true" ? "AJAX" : "",
 			"%2F", //that's encoded "/"
 			_("Back to the files manager")
-		), redirectTo
+		),
+		redirectTo
 	);
 }
 

@@ -57,9 +57,9 @@ BoxStorage::BoxStorage(Common::String accessToken, Common::String refreshToken):
 
 BoxStorage::BoxStorage(Common::String code) {
 	getAccessToken(
-		new Common::Callback<BoxStorage, BoolResponse>(this, &BoxStorage::codeFlowComplete),
-		new Common::Callback<BoxStorage, Networking::ErrorResponse>(this, &BoxStorage::codeFlowFailed),
-		code
+	    new Common::Callback<BoxStorage, BoolResponse>(this, &BoxStorage::codeFlowComplete),
+	    new Common::Callback<BoxStorage, Networking::ErrorResponse>(this, &BoxStorage::codeFlowFailed),
+	    code
 	);
 }
 
@@ -89,9 +89,9 @@ void BoxStorage::getAccessToken(BoolCallback callback, Networking::ErrorCallback
 	request->addPostField("client_secret=" + Common::String(SECRET));
 	/*
 	if (Cloud::CloudManager::couldUseLocalServer()) {
-		request->addPostField("&redirect_uri=http%3A%2F%2Flocalhost%3A12345");
+	    request->addPostField("&redirect_uri=http%3A%2F%2Flocalhost%3A12345");
 	} else {
-		request->addPostField("&redirect_uri=https%3A%2F%2Fwww.scummvm.org/c/code");
+	    request->addPostField("&redirect_uri=https%3A%2F%2Fwww.scummvm.org/c/code");
 	}
 	*/
 	addRequest(request);

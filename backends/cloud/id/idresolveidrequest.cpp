@@ -101,7 +101,7 @@ void IdResolveIdRequest::listedDirectoryCallback(Storage::FileArrayResponse resp
 	}
 
 	if (!found) {
-		if (lastLevel) finishError(Networking::ErrorResponse(this, false, true, Common::String("no such file found in its parent directory\n")+_currentDirectoryId, 404));
+		if (lastLevel) finishError(Networking::ErrorResponse(this, false, true, Common::String("no such file found in its parent directory\n") + _currentDirectoryId, 404));
 		else finishError(Networking::ErrorResponse(this, false, true, "subdirectory not found", 400));
 	}
 }

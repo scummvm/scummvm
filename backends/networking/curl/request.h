@@ -161,7 +161,7 @@ public:
 	/** Method, which does actual work. Depends on what this Request is doing. */
 	virtual void handle() = 0;
 
-	/** Method, which is called by ConnectionManager when Request's state is RETRY.	 */
+	/** Method, which is called by ConnectionManager when Request's state is RETRY.  */
 	virtual void handleRetry();
 
 	/** Method, which is used to restart the Request. */
