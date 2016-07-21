@@ -24,6 +24,8 @@
 #define GRAPHICS_PIXELBUFFER_H
 
 #include "common/types.h"
+#include "common/endian.h"
+#include "common/textconsole.h"
 
 #include "graphics/colormasks.h"
 #include "graphics/pixelformat.h"
@@ -119,7 +121,24 @@ public:
 	/**
 	 * Set the value of the pixel at index 'pixel' to 'value',
 	 */
-	void setPixelAt(int pixel, uint32 value);
+	inline void setPixelAt(int pixel, uint32 value) {
+		switch (_format.bytesPerPixel) {
+		case 2:
+			((uint16 *) _buffer)[pixel] = TO_LE_16((uint16) value);
+			return;
+		case 3:
+			pixel *= 3;
+			value = TO_LE_32(value);
+			_buffer[pixel + 0] = value & 0xFF;
+			_buffer[pixel + 1] = (value >> 8) & 0xFF;
+			_buffer[pixel + 2] = (value >> 16) & 0xFF;
+			return;
+		case 4:
+			((uint32 *) _buffer)[pixel] = TO_LE_32(value);
+			return;
+		}
+		error("setPixelAt: Unhandled bytesPerPixel %i", _format.bytesPerPixel);
+	}
 	/**
 	 * Set the value of a pixel. The pixel will be converted from a pixel in another PixelBuffer,
 	 * at the same index.
@@ -180,7 +199,22 @@ public:
 	/**
 	 * Return the encoded value of the pixel at the given index.
 	 */
-	uint32 getValueAt(int i) const;
+	inline uint32 getValueAt(int i) const {
+		switch (_format.bytesPerPixel) {
+		case 2:
+			return FROM_LE_16(((uint16 *) _buffer)[i]);
+		case 3:
+			i *= 3;
+#if defined(SCUMM_BIG_ENDIAN)
+			return (_buffer[i + 0] << 16) | (_buffer[i + 1] << 8) | _buffer[i + 2];
+#elif defined(SCUMM_LITTLE_ENDIAN)
+			return _buffer[i + 0] | (_buffer[i + 1] << 8) | (_buffer[i + 2] << 16);
+#endif
+		case 4:
+			return FROM_LE_32(((uint32 *) _buffer)[i]);
+		}
+		error("getValueAt: Unhandled bytesPerPixel %i", _format.bytesPerPixel);
+	}
 	/**
 	 * Return the RGB value of the pixel at the given index.
 	 */
