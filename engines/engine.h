@@ -298,9 +298,8 @@ public:
 
 	/**
 	 * Run the Global Main Menu Dialog
-	 * added 'virtual' ResidualVM specific
 	 */
-	virtual void openMainMenuDialog();
+	void openMainMenuDialog();
 
 	/**
 	 * Display a warning to the user that the game is not fully supported.

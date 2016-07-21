@@ -179,7 +179,6 @@ public:
 
 	TextObjectDefaults _sayLineDefaults, _printLineDefaults, _blastTextDefaults;
 
-	virtual void openMainMenuDialog() override;
 	void debugLua(const Common::String &str);
 
 	void setSideTextures(const Common::String &setup);

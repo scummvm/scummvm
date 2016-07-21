@@ -1393,12 +1393,6 @@ bool GrimEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsLoadingDuringRuntime);
 }
 
-void GrimEngine::openMainMenuDialog() {
-	Common::KeyState key(Common::KEYCODE_F1, Common::ASCII_F1);
-	handleControls(Common::EVENT_KEYDOWN, key);
-	handleControls(Common::EVENT_KEYUP, key);
-}
-
 void GrimEngine::pauseEngineIntern(bool pause) {
 	if (g_imuse)
 		g_imuse->pause(pause);
