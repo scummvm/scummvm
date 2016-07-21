@@ -44,7 +44,7 @@ void DownloadRequest::start() {
 	_ignoreCallback = true;
 	if (_workingRequest) _workingRequest->finish();
 	_remoteFileStream = nullptr;
-	//TODO: reopen DumpFile
+	//TODO: add some way to reopen DumpFile, so DownloadRequest could be restarted
 	_ignoreCallback = false;
 
 	_workingRequest = _storage->streamFileById(
