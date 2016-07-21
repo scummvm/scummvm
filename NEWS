@@ -18,6 +18,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added optional "pause, when entering commands" feature, that was only
      available in the original interpreter for Hercules rendering.
 
+ Gob:
+   - Fixed graphical issues in Gobliiins (EGA version).
+
  SCI:
    - Fixed a missing dialog line in QfG3 which awards the player with 3 additional
      points. This is a bug in the original game interpreter. Due to this bug,
