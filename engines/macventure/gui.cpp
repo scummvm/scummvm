@@ -598,6 +598,12 @@ void Gui::drawInventories() {
 			srf->h + border.bottomOffset), kColorWhite);
 		drawObjectsInWindow(data.refcon, srf);
 
+		if (MACVENTURE_DEBUG_GUI) {
+			Common::Rect innerDims  = findWindow(data.refcon)->getInnerDimensions();
+			innerDims = Common::Rect(17, 17, innerDims.width() + 17, innerDims.height() + 17);
+			srf->frameRect(innerDims, kColorGreen);
+		}
+
 		findWindow(data.refcon)->setDirty(true);
 	}
 
@@ -1034,6 +1040,18 @@ Common::Point Gui::localize(Common::Point point, WindowReference origin, WindowR
 	return point;
 }
 
+void Gui::removeInventoryWindow(WindowReference ref) {
+	_inventoryWindows.remove_at(ref - kInventoryStart);
+	bool found = false;
+	Common::List<WindowData>::iterator it;
+	for (it = _windowData->begin(); it != _windowData->end() && !found; it++) {
+		if (it->refcon == ref) {
+			_windowData->erase(it);
+			found = true;
+		}
+	}
+}
+
 
 /* HANDLERS */
 void Gui::handleMenuAction(MenuAction action) {
@@ -1147,13 +1165,12 @@ void Gui::invertWindowColors(WindowReference winID) {
 	}
 }
 
-
 bool Gui::tryCloseWindow(WindowReference winID) {
 	WindowData data = findWindowData(winID);
-	if (winID < 0x80) { // Inventory window
-		warning("Window closing not implemented");
-	} else {
-		warning("Window closing not implemented");
+	Graphics::MacWindow *win = findWindow(winID);
+	_wm.removeWindow(win);
+	if (winID < 0x80) {
+		removeInventoryWindow(winID);
 	}
 	return true;
 }
@@ -1297,15 +1314,7 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event & event) {
 		if (ref == kNoWindow) return false;
 
 		if (click == kBorderCloseButton) {
-			_inventoryWindows.remove_at(ref - kInventoryStart);
-			bool found = false;
-			Common::List<WindowData>::iterator it;
-			for (it = _windowData->begin(); it != _windowData->end() && !found; it++) {
-				if (it->refcon == ref) {
-					_windowData->erase(it);
-					found = true;
-				}
-			}
+			removeInventoryWindow(ref);
 			return true;
 		}
 	}
@@ -1352,40 +1361,5 @@ void Gui::ensureAssetLoaded(ObjID obj) {
 	}
 }
 
-/* Ugly switches */
-
-BorderBounds Gui::borderBounds(MVWindowType type) {
-	switch (type) {
-	case MacVenture::kDocument:
-		break;
-	case MacVenture::kDBox:
-		break;
-	case MacVenture::kPlainDBox:
-		return BorderBounds(6, 6, 6, 6);
-	case MacVenture::kAltBox:
-		return BorderBounds(4, 4, 4, 4); // Hand-tested
-		break;
-	case MacVenture::kNoGrowDoc:
-		return BorderBounds(1, 17, 1, 1);
-	case MacVenture::kMovableDBox:
-		break;
-	case MacVenture::kZoomDoc:
-		return BorderBounds(1, 19, 16, 1);
-	case MacVenture::kZoomNoGrow:
-		break;
-	case MacVenture::kRDoc16:
-		break;
-	case MacVenture::kRDoc4:
-		return BorderBounds(0, 19, 1, 1);
-	case MacVenture::kRDoc6:
-		break;
-	case MacVenture::kRDoc10:
-		break;
-	default:
-		break;
-	}
-
-	return BorderBounds(0, 0, 0, 0);
-}
 
 } // End of namespace MacVenture

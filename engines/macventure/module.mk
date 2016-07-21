@@ -10,7 +10,10 @@ MODULE_OBJS := \
 	macventure.o \
 	gui.o \
 	dialog.o \
-	controls.o
+	controls.o \
+	prebuilt_dialogs.o \
+	windows.o
+
 
 MODULE_DIRS += \
 	engines/macventure

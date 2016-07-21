@@ -35,6 +35,7 @@
 #include "macventure/prebuilt_dialogs.h"
 #include "macventure/dialog.h"
 #include "macventure/controls.h"
+#include "macventure/windows.h"
 
 namespace MacVenture {
 
@@ -48,6 +49,9 @@ class ConsoleText;
 class CommandButton;
 class ImageAsset;
 class Dialog;
+
+BorderBounds borderBounds(MVWindowType type);
+extern PrebuiltDialog prebuiltDialogs[];
 
 enum MenuAction {
 	kMenuActionAbout,
@@ -67,64 +71,6 @@ enum MenuAction {
 	kMenuActionCommand
 };
 //} using namespace MacVentureMenuActions;
-
-enum WindowReference {
-	kNoWindow = 0,
-	kInventoryStart = 1,
-	kCommandsWindow = 0x80,
-	kMainGameWindow = 0x81,
-	kOutConsoleWindow = 0x82,
-	kSelfWindow = 0x83,
-	kExitsWindow = 0x84,
-	kDiplomaWindow = 0x85
-};
-
-enum MVWindowType {
-	kDocument = 0x00,
-	kDBox = 0x01,
-	kPlainDBox = 0x02,
-	kAltBox = 0x03,
-	kNoGrowDoc = 0x04,
-	kMovableDBox = 0x05,
-	kZoomDoc = 0x08,
-	kZoomNoGrow = 0x0c,
-	kRDoc16 = 0x10,
-	kRDoc4 = 0x12,
-	kRDoc6 = 0x14,
-	kRDoc10 = 0x16
-};
-
-
-struct DrawableObject {
-	ObjID obj;
-	byte mode;
-	DrawableObject(ObjID id, byte md) {
-		obj = id;
-		mode = md;
-	}
-};
-
-struct WindowData {
-	Common::Rect bounds;
-	MVWindowType type;
-	ObjID objRef;
-	uint16 visible;
-	uint16 hasCloseBox;
-	WindowReference refcon;
-	uint8 titleLength;
-	Common::String title;
-	Common::Array<DrawableObject> children;
-	bool updateScroll;
-};
-
-struct BorderBounds {
-	uint16 leftOffset;
-	uint16 topOffset;
-	uint16 rightOffset;
-	uint16 bottomOffset;
-
-	BorderBounds(uint16 l, uint16 t, uint16 r, uint16 b) : leftOffset(l), topOffset(t), rightOffset(r), bottomOffset(b) {}
-};
 
 struct DraggedObj {
 	ObjID id;
@@ -213,8 +159,6 @@ public:
 	void loadGame(int slot);
 	void saveInto(int slot);
 
-	// Ugly switches
-	BorderBounds borderBounds(MVWindowType type);
 
 private: // Attributes
 
@@ -292,6 +236,7 @@ private: // Methods
 	void handleDragRelease(Common::Point pos, bool shiftPressed, bool isDoubleClick);
 	Common::Rect calculateClickRect(Common::Point clickPos, Common::Rect windowBounds);
 	Common::Point localize(Common::Point point, WindowReference origin, WindowReference target);
+	void removeInventoryWindow(WindowReference ref);
 
 	void ensureAssetLoaded(ObjID obj);
 

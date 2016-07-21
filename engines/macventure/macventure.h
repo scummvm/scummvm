@@ -39,7 +39,8 @@
 #include "macventure/hufflists.h"
 #include "macventure/stringtable.h"
 #include "macventure/script.h"
-#include "controls.h"
+#include "macventure/controls.h"
+#include "macventure/windows.h"
 
 struct ADGameDescription;
 

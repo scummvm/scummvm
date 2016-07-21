@@ -930,7 +930,7 @@ Common::Rect MacVentureEngine::getObjBounds(ObjID objID) {
 
 	WindowReference win  = findParentWindow(objID);
 	if (win != kNoWindow) { // If it's not in a window YET, we don't really care about the border
-		BorderBounds bounds = _gui->borderBounds(_gui->getWindowData(win).type); // HACK
+		BorderBounds bounds = borderBounds(_gui->getWindowData(win).type); // HACK
 		pos.x += bounds.leftOffset;
 		pos.y += bounds.topOffset;
 	}

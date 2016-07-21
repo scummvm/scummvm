@@ -20,52 +20,41 @@
 *
 */
 
-#ifndef MACVENTURE_PREBUIT_DIALOGS_H
-#define MACVENTURE_PREBUIT_DIALOGS_H
-
-#include "common/rect.h"
+#include "macventure/windows.h"
 
 namespace MacVenture {
 
-enum DialogAction {
-  kDANone,
-  kDACloseDialog,
-  kDASubmit,
-  kDASaveAs
-};
+BorderBounds borderBounds(MVWindowType type) {
+	switch (type) {
+	case MacVenture::kDocument:
+		break;
+	case MacVenture::kDBox:
+		break;
+	case MacVenture::kPlainDBox:
+		return BorderBounds(6, 6, 6, 6);
+	case MacVenture::kAltBox:
+		return BorderBounds(4, 4, 4, 4); // Hand-tested
+		break;
+	case MacVenture::kNoGrowDoc:
+		return BorderBounds(1, 17, 1, 1);
+	case MacVenture::kMovableDBox:
+		break;
+	case MacVenture::kZoomDoc:
+		return BorderBounds(1, 19, 16, 1);
+	case MacVenture::kZoomNoGrow:
+		break;
+	case MacVenture::kRDoc16:
+		break;
+	case MacVenture::kRDoc4:
+		return BorderBounds(0, 19, 1, 1);
+	case MacVenture::kRDoc6:
+		break;
+	case MacVenture::kRDoc10:
+		break;
+	default:
+		break;
+	}
 
-enum PrebuiltDialogs {
-  kSaveAsDialog = 0,
-  kSpeakDialog = 1,
-  kPrebuiltDialogCount
-};
-
-enum PrebuiltElementType {
-  kDEPlainText,
-  kDEButton,
-  kDETextInput,
-  kDEEnd
-};
-
-struct PrebuiltDialogElement {
-  PrebuiltElementType type;
-  Common::String title;
-  DialogAction action;
-  Common::Point position;
-  uint width;
-  uint height;
-};
-
-// Prebuilt dialogs
-enum {
-  // HACK
-  kMaxPrebuiltDialogElements = 10
-};
-
-struct PrebuiltDialog {
-  Common::Rect bounds;
-  PrebuiltDialogElement elements[kMaxPrebuiltDialogElements];
-};
+	return BorderBounds(0, 0, 0, 0);
+}
 } // End of namespace MacVenture
-
-#endif

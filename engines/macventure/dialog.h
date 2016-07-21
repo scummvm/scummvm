@@ -27,11 +27,14 @@
 
 #include "macventure/macventure.h"
 #include "macventure/prebuilt_dialogs.h"
+
 namespace MacVenture {
 
 using namespace Graphics::MacGUIConstants;
 class Gui;
 class DialogElement;
+extern PrebuiltDialog prebuiltDialogs[];
+
 
 class Dialog {
 public:
