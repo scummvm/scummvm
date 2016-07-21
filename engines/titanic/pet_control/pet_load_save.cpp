@@ -23,6 +23,7 @@
 #include "titanic/pet_control/pet_load_save.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/core/project_item.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -53,6 +54,7 @@ bool CPetLoadSave::setup(CPetControl *petControl, CPetGlyphs *owner) {
 
 bool CPetLoadSave::reset() {
 	highlightChange();
+	resetSlots();
 
 	CPetControl *pet = getPetControl();
 	if (pet) {
@@ -124,14 +126,29 @@ Rect CPetLoadSave::getSlotBounds(int index) {
 }
 
 void CPetLoadSave::resetSlots() {
-	CPetControl *pet = getPetControl();
-	CProjectItem *project = pet ? pet->getRoot() : nullptr;
-
 	for (int idx = 0; idx < SAVEGAME_SLOTS_COUNT; ++idx) {
 		_slotNames[idx].setText("Empty");
 
-		if (project) {
-			warning("TODO: Get savegame name");
+		// Try and open up the savegame for access
+		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(
+			g_vm->generateSaveName(idx));
+
+		if (in) {
+			// Read in the savegame header data
+			CompressedFile file;
+			file.open(in);
+
+			TitanicSavegameHeader header;
+			CProjectItem::readSavegameHeader(&file, header);
+			if (header._thumbnail) {
+				header._thumbnail->free();
+				delete header._thumbnail;
+			}
+
+			file.close();
+
+			// Set the name text
+			_slotNames[idx].setText(header._saveName);
 		}
 	}
 
