@@ -32,21 +32,40 @@ namespace TinyGL {
 
 template <bool kDepthWrite>
 FORCEINLINE void FrameBuffer::putPixel(unsigned int pixelOffset, int color, int x, int y, unsigned int z) {
-	if (scissorPixel(x, y))
+	if (_enableScissor)
+		putPixel<kDepthWrite, true>(pixelOffset, color, x, y, z);
+	else
+		putPixel<kDepthWrite, false>(pixelOffset, color, x, y, z);
+}
+
+template <bool kDepthWrite, bool kEnableScissor>
+FORCEINLINE void FrameBuffer::putPixel(unsigned int pixelOffset, int color, int x, int y, unsigned int z) {
+	if (kEnableScissor && scissorPixel(x, y)) {
 		return;
+	}
 	unsigned int *pz = _zbuf + pixelOffset;
 	if (compareDepth(z, *pz)) {
 		writePixel<true, true, kDepthWrite>(pixelOffset, color, z);
 	}
 }
 
+template <bool kEnableScissor>
 FORCEINLINE void FrameBuffer::putPixel(unsigned int pixelOffset, int color, int x, int y) {
-	if (scissorPixel(x, y))
+	if (kEnableScissor && scissorPixel(x, y)) {
 		return;
+	}
 	writePixel<true, true>(pixelOffset, color);
 }
 
 template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite>
+FORCEINLINE void FrameBuffer::drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2) {
+	if (_enableScissor)
+		drawLine<kInterpRGB, kInterpZ, kDepthWrite, true>(p1, p2);
+	else
+		drawLine<kInterpRGB, kInterpZ, kDepthWrite, false>(p1, p2);
+}
+
+template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite, bool kEnableScissor>
 void FrameBuffer::drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2) {
 	// Based on Bresenham's line algorithm, as implemented in
 	// https://rosettacode.org/wiki/Bitmap/Bresenham%27s_line_algorithm#C
@@ -97,9 +116,9 @@ void FrameBuffer::drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2) {
 	}
 	while (n--) {
 		if (kInterpZ)
-			putPixel<kDepthWrite>(pixelOffset, color, x, y, z);
+			putPixel<kDepthWrite, kEnableScissor>(pixelOffset, color, x, y, z);
 		else
-			putPixel(pixelOffset, color, x, y);
+			putPixel<kEnableScissor>(pixelOffset, color, x, y);
 		e2 = err;
 		if (e2 > -dx) {
 			err -= dy;

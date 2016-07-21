@@ -430,9 +430,11 @@ struct FrameBuffer {
 		_clipRectangle.right = right;
 		_clipRectangle.top = top;
 		_clipRectangle.bottom = bottom;
+		_enableScissor = left != 0 || right != xsize || top != 0 || bottom != ysize;
 	}
 
 	Common::Rect _clipRectangle;
+	bool _enableScissor;
 	int xsize, ysize;
 	int linesize; // line size, in bytes
 	Graphics::PixelFormat cmode;
@@ -468,9 +470,16 @@ private:
 	template <bool kDepthWrite>
 	FORCEINLINE void putPixel(unsigned int pixelOffset, int color, int x, int y, unsigned int z);
 
+	template <bool kDepthWrite, bool kEnableScissor>
+	FORCEINLINE void putPixel(unsigned int pixelOffset, int color, int x, int y, unsigned int z);
+
+	template <bool kEnableScissor>
 	FORCEINLINE void putPixel(unsigned int pixelOffset, int color, int x, int y);
 
 	template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite>
+	void drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2);
+
+	template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite, bool kEnableScissor>
 	void drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2);
 
 	unsigned int *_zbuf;
