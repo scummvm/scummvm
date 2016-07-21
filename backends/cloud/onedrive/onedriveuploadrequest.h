@@ -40,7 +40,7 @@ class OneDriveUploadRequest: public Networking::Request {
 	Request *_workingRequest;
 	bool _ignoreCallback;
 	Common::String _uploadUrl;
-	
+
 	void start();
 	void uploadNextPart();
 	void partUploadedCallback(Networking::JsonResponse response);

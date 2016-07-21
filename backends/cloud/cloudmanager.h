@@ -89,7 +89,7 @@ public:
 	 * @note this method automatically saves the changes with ConfMan.
 	 *
 	 * @param	storage Cloud::Storage to replace active storage with.
-	 * @param	index   one of Cloud::StorageID enum values to indicate what storage type is replaced.	 
+	 * @param	index   one of Cloud::StorageID enum values to indicate what storage type is replaced.
 	 */
 	void replaceStorage(Storage *storage, uint32 index);
 
@@ -160,7 +160,7 @@ public:
 	 */
 	void setStorageUsername(uint32 index, Common::String name);
 
-	/**	
+	/**
 	 * Set Storage's used space field.
 	 * Automatically saves changes to the config.
 	 *

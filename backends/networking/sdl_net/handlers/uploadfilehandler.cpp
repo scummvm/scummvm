@@ -59,7 +59,7 @@ void UploadFileHandler::handle(Client &client) {
 		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("Can't upload into a file!"));
 		return;
 	}
-	
+
 	// if all OK, set special handler
 	client.setHandler(new UploadFileClientHandler(path));
 }

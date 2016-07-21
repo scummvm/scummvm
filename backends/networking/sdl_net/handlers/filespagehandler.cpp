@@ -66,7 +66,7 @@ Common::String getDisplayPath(Common::String s) {
 }
 
 void FilesPageHandler::handle(Client &client) {
-	Common::String response = 
+	Common::String response =
 		"<html>" \
 			"<head><title>ScummVM</title></head>" \
 			"<body>" \
@@ -97,7 +97,7 @@ void FilesPageHandler::handle(Client &client) {
 
 	Common::String path = client.queryParameter("path");
 	Common::String content = "";
-	
+
 	// show an error message if failed to list directory
 	if (!listDirectory(path, content, itemTemplate)) {
 		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("ScummVM couldn't list the directory you specified."));

@@ -174,7 +174,7 @@ TestExitStatus MiscTests::testOpenUrl() {
 		Testsuite::logPrintf("Info! openUrl() says it couldn't open the url (probably not supported on this platform)\n");
 		return kTestFailed;
 	}
-	
+
 	if (Testsuite::handleInteractiveInput("Was ScummVM able to open 'http://scummvm.org/' in your default browser?", "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Error! openUrl() is not working!\n");
 		return kTestFailed;

@@ -26,7 +26,7 @@
 namespace Networking {
 namespace Browser {
 
-bool openUrl(const Common::String &url) {	
+bool openUrl(const Common::String &url) {
 	return JNI::openUrl(url.c_str());
 }
 

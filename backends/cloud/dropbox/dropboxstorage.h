@@ -72,9 +72,9 @@ public:
 
 	/** Returns ListDirectoryStatus struct with list of files. */
 	virtual Networking::Request *listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
-	
+
 	/** Returns UploadStatus struct with info about uploaded file. */
-	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback);	
+	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Returns pointer to Networking::NetworkReadStream. */
 	virtual Networking::Request *streamFileById(Common::String path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback);
@@ -92,7 +92,7 @@ public:
 	virtual Common::String savesDirectoryPath();
 
 	/**
-	 * Load token and user id from configs and return DropboxStorage for those.	
+	 * Load token and user id from configs and return DropboxStorage for those.
 	 * @return pointer to the newly created DropboxStorage or 0 if some problem occured.
 	 */
 	static DropboxStorage *loadFromConfig(Common::String keyPrefix);

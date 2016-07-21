@@ -111,7 +111,7 @@ bool Client::readBlockContent(Common::WriteStream *stream) {
 	return _reader.readBlockContent(stream);
 }
 
-void Client::setHandler(ClientHandler *handler) {	
+void Client::setHandler(ClientHandler *handler) {
 	if (_handler) {
 		if (_previousHandler) delete _previousHandler;
 		_previousHandler = _handler; //can't just delete it, as setHandler() could've been called by handler itself

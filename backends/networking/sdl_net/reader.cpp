@@ -230,7 +230,7 @@ void Reader::parseQueryParameters() {
 				value = "";
 			} else key += _query[i];
 		} else {
-			if (_query[i] == '&') {				
+			if (_query[i] == '&') {
 				if (_queryParameters.contains(key)) warning("Query parameter \"%s\" is already set!", key.c_str());
 				else _queryParameters[key] = LocalWebserver::urlDecode(value);
 				readingKey = true;

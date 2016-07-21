@@ -29,13 +29,13 @@
 
 namespace Networking {
 
-static size_t curlDataCallback(char *d, size_t n, size_t l, void *p) {	
+static size_t curlDataCallback(char *d, size_t n, size_t l, void *p) {
 	NetworkReadStream *stream = (NetworkReadStream *)p;
 	if (stream) return stream->write(d, n*l);
 	return 0;
 }
 
-static size_t curlReadDataCallback(char *d, size_t n, size_t l, void *p) {	
+static size_t curlReadDataCallback(char *d, size_t n, size_t l, void *p) {
 	NetworkReadStream *stream = (NetworkReadStream *)p;
 	if (stream) return stream->fillWithSendingContents(d, n*l);
 	return 0;
@@ -79,7 +79,7 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, const byt
 		curl_easy_setopt(_easy, CURLOPT_READFUNCTION, curlReadDataCallback);
 		_sendingContentsBuffer = buffer;
 		_sendingContentsSize = bufferSize;
-	} else if (usingPatch) {		
+	} else if (usingPatch) {
 		curl_easy_setopt(_easy, CURLOPT_CUSTOMREQUEST, "PATCH");
 	} else {
 		if (post || bufferSize != 0) {
@@ -110,7 +110,7 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::H
 	curl_easy_setopt(_easy, CURLOPT_NOPROGRESS, 0L);
 	curl_easy_setopt(_easy, CURLOPT_XFERINFOFUNCTION, curlProgressCallback);
 	curl_easy_setopt(_easy, CURLOPT_XFERINFODATA, this);
-	
+
 	// set POST multipart upload form fields/files
 	struct curl_httppost *formpost = NULL;
 	struct curl_httppost *lastptr = NULL;

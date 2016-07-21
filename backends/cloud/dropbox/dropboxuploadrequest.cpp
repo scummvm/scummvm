@@ -63,9 +63,9 @@ void DropboxUploadRequest::start() {
 	uploadNextPart();
 }
 
-void DropboxUploadRequest::uploadNextPart() {	
+void DropboxUploadRequest::uploadNextPart() {
 	const uint32 UPLOAD_PER_ONE_REQUEST = 10 * 1024 * 1024;
-	
+
 	Common::String url = "https://content.dropboxapi.com/2/files/upload_session/";
 	Common::JSONObject jsonRequestParameters;
 
@@ -82,8 +82,8 @@ void DropboxUploadRequest::uploadNextPart() {
 		}
 	} else {
 		if ((uint32)(_contentsStream->size() - _contentsStream->pos()) <= UPLOAD_PER_ONE_REQUEST) {
-			url += "finish";			
-			Common::JSONObject jsonCursor, jsonCommit;			
+			url += "finish";
+			Common::JSONObject jsonCursor, jsonCommit;
 			jsonCursor.setVal("session_id", new Common::JSONValue(_sessionId));
 			jsonCursor.setVal("offset", new Common::JSONValue((long long int)_contentsStream->pos()));
 			jsonCommit.setVal("path", new Common::JSONValue(_savePath));
@@ -98,22 +98,22 @@ void DropboxUploadRequest::uploadNextPart() {
 			jsonCursor.setVal("session_id", new Common::JSONValue(_sessionId));
 			jsonCursor.setVal("offset", new Common::JSONValue((long long int)_contentsStream->pos()));
 			jsonRequestParameters.setVal("cursor", new Common::JSONValue(jsonCursor));
-			jsonRequestParameters.setVal("close", new Common::JSONValue(false));			
+			jsonRequestParameters.setVal("close", new Common::JSONValue(false));
 		}
 	}
-	
+
 	Common::JSONValue value(jsonRequestParameters);
 	Networking::JsonCallback callback = new Common::Callback<DropboxUploadRequest, Networking::JsonResponse>(this, &DropboxUploadRequest::partUploadedCallback);
 	Networking::ErrorCallback failureCallback = new Common::Callback<DropboxUploadRequest, Networking::ErrorResponse>(this, &DropboxUploadRequest::partUploadedErrorCallback);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, failureCallback, url);
 	request->addHeader("Authorization: Bearer " + _token);
-	request->addHeader("Content-Type: application/octet-stream");	
-	request->addHeader("Dropbox-API-Arg: " + Common::JSON::stringify(&value));	
+	request->addHeader("Content-Type: application/octet-stream");
+	request->addHeader("Dropbox-API-Arg: " + Common::JSON::stringify(&value));
 
 	byte *buffer = new byte[UPLOAD_PER_ONE_REQUEST];
 	uint32 size = _contentsStream->read(buffer, UPLOAD_PER_ONE_REQUEST);
 	request->setBuffer(buffer, size);
-	
+
 	_workingRequest = ConnMan.addRequest(request);
 }
 
@@ -137,7 +137,7 @@ void DropboxUploadRequest::partUploadedCallback(Networking::JsonResponse respons
 			//debug("%s", json->stringify(true).c_str());
 
 			if (object.contains("error") || object.contains("error_summary")) {
-				warning("Dropbox returned error: %s", object.getVal("error_summary")->asString().c_str());				
+				warning("Dropbox returned error: %s", object.getVal("error_summary")->asString().c_str());
 				error.response = json->stringify(true);
 				finishError(error);
 				delete json;
@@ -162,14 +162,14 @@ void DropboxUploadRequest::partUploadedCallback(Networking::JsonResponse respons
 			}
 		}
 
-		if (!needsFinishRequest && (_contentsStream->eos() || _contentsStream->pos() >= _contentsStream->size() - 1)) {			
+		if (!needsFinishRequest && (_contentsStream->eos() || _contentsStream->pos() >= _contentsStream->size() - 1)) {
 			warning("no file info to return");
 			finishUpload(StorageFile(_savePath, 0, 0, false));
 		} else {
 			uploadNextPart();
 		}
 	} else {
-		warning("null, not json");		
+		warning("null, not json");
 		finishError(error);
 	}
 

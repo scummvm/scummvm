@@ -154,7 +154,7 @@ void OneDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Netwo
 		delete outerCallback;
 		return;
 	}
-	
+
 	Common::JSONObject info = json->asObject();
 
 	Common::String uid, name, email;

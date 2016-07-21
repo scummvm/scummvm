@@ -39,7 +39,7 @@ class OneDriveCreateDirectoryRequest: public Networking::Request {
 	Request *_workingRequest;
 	bool _ignoreCallback;
 	Common::String _date;
-	
+
 	void start();
 	void responseCallback(Networking::JsonResponse response);
 	void errorCallback(Networking::ErrorResponse error);

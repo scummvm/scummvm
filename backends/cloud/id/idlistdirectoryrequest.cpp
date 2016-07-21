@@ -83,7 +83,7 @@ void IdListDirectoryRequest::listNextDirectory() {
 	_directoriesQueue.pop_back();
 
 	Storage::FileArrayCallback callback = new Common::Callback<IdListDirectoryRequest, Storage::FileArrayResponse>(this, &IdListDirectoryRequest::listedDirectoryCallback);
-	Networking::ErrorCallback failureCallback = new Common::Callback<IdListDirectoryRequest, Networking::ErrorResponse>(this, &IdListDirectoryRequest::listedDirectoryErrorCallback);	
+	Networking::ErrorCallback failureCallback = new Common::Callback<IdListDirectoryRequest, Networking::ErrorResponse>(this, &IdListDirectoryRequest::listedDirectoryErrorCallback);
 	_workingRequest = _storage->listDirectoryById(_currentDirectory.id(), callback, failureCallback);
 }
 

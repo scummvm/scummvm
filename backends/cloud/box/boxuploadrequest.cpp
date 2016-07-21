@@ -123,12 +123,12 @@ void BoxUploadRequest::upload() {
 	_workingRequest = ConnMan.addRequest(request);
 }
 
-void BoxUploadRequest::uploadedCallback(Networking::JsonResponse response) {	
+void BoxUploadRequest::uploadedCallback(Networking::JsonResponse response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
-		
+
 	Networking::ErrorResponse error(this, false, true, "", -1);
-	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;	
+	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
 	if (rq) {
 		const Networking::NetworkReadStream *stream = rq->getNetworkReadStream();
 		if (stream) {
@@ -193,7 +193,7 @@ void BoxUploadRequest::uploadedCallback(Networking::JsonResponse response) {
 	delete json;
 }
 
-void BoxUploadRequest::notUploadedCallback(Networking::ErrorResponse error) {	
+void BoxUploadRequest::notUploadedCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 	finishError(error);

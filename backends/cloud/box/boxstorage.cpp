@@ -152,7 +152,7 @@ void BoxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking
 		delete outerCallback;
 		return;
 	}
-	
+
 	Common::JSONObject info = json->asObject();
 
 	Common::String uid, name, email;
@@ -224,7 +224,7 @@ Networking::Request *BoxStorage::createDirectoryWithParentId(Common::String pare
 	Common::JSONObject parentObject;
 	parentObject.setVal("id", new Common::JSONValue(parentId));
 
-	Common::JSONObject jsonRequestParameters;	
+	Common::JSONObject jsonRequestParameters;
 	jsonRequestParameters.setVal("name", new Common::JSONValue(name));
 	jsonRequestParameters.setVal("parent", new Common::JSONValue(parentObject));
 
@@ -248,7 +248,7 @@ Networking::Request *BoxStorage::upload(Common::String path, Common::SeekableRea
 }
 
 bool BoxStorage::uploadStreamSupported() {
-	return false;	
+	return false;
 }
 
 Networking::Request *BoxStorage::streamFileById(Common::String id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) {

@@ -45,7 +45,7 @@ OneDriveCreateDirectoryRequest::~OneDriveCreateDirectoryRequest() {
 
 void OneDriveCreateDirectoryRequest::start() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();	
+	if (_workingRequest) _workingRequest->finish();
 	_ignoreCallback = false;
 
 	Common::String name = _path, parent = _path;
@@ -54,7 +54,7 @@ void OneDriveCreateDirectoryRequest::start() {
 		while (true) {
 			parent.deleteLastChar();
 			if (name[i] == '/' || name[i] == '\\') {
-				name.erase(0, i + 1);				
+				name.erase(0, i + 1);
 				break;
 			}
 			if (i == 0) break;
@@ -62,9 +62,9 @@ void OneDriveCreateDirectoryRequest::start() {
 		}
 	}
 
-	Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot";	
+	Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot";
 	if (parent != "") url += ":/" + ConnMan.urlEncode(parent) + ":";
-	url += "/children";	
+	url += "/children";
 	Networking::JsonCallback innerCallback = new Common::Callback<OneDriveCreateDirectoryRequest, Networking::JsonResponse>(this, &OneDriveCreateDirectoryRequest::responseCallback);
 	Networking::ErrorCallback errorCallback = new Common::Callback<OneDriveCreateDirectoryRequest, Networking::ErrorResponse>(this, &OneDriveCreateDirectoryRequest::errorCallback);
 	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(_storage, innerCallback, errorCallback, url.c_str());
@@ -93,13 +93,13 @@ void OneDriveCreateDirectoryRequest::responseCallback(Networking::JsonResponse r
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
-	
+
 	if (!json) {
 		warning("NULL passed instead of JSON");
 		finishError(error);
 		return;
 	}
-	
+
 	Common::JSONObject info = json->asObject();
 	if (info.contains("id")) finishCreation(true);
 	else {

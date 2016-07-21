@@ -52,7 +52,7 @@ void BoxTokenRefresher::tokenRefreshed(Storage::BoolResponse response) {
 	}
 	setHeaders(_headers);
 
-	//successfully received refreshed token, can restart the original request now	
+	//successfully received refreshed token, can restart the original request now
 	retry(0);
 }
 
@@ -77,7 +77,7 @@ void BoxTokenRefresher::finishJson(Common::JSONValue *json) {
 		Common::String code, message;
 		if (result.contains("code")) {
 			code = result.getVal("code")->asString();
-			debug(9, "code = %s", code.c_str());			
+			debug(9, "code = %s", code.c_str());
 		}
 
 		if (result.contains("message")) {
@@ -88,13 +88,13 @@ void BoxTokenRefresher::finishJson(Common::JSONValue *json) {
 		//TODO: decide when token refreshment will help
 		//if (code == "unauthenticated") irrecoverable = false;
 
-		if (irrecoverable) {			
+		if (irrecoverable) {
 			finishError(Networking::ErrorResponse(this, false, true, json->stringify(true), httpCode));
 			delete json;
 			return;
 		}
 
-		pause();		
+		pause();
 		delete json;
 		_parentStorage->getAccessToken(new Common::Callback<BoxTokenRefresher, Storage::BoolResponse>(this, &BoxTokenRefresher::tokenRefreshed));
 		return;
@@ -117,7 +117,7 @@ void BoxTokenRefresher::finishError(Networking::ErrorResponse error) {
 	Request::finishError(error);
 }
 
-void BoxTokenRefresher::setHeaders(Common::Array<Common::String> &headers) {	
+void BoxTokenRefresher::setHeaders(Common::Array<Common::String> &headers) {
 	_headers = headers;
 	curl_slist_free_all(_headersList);
 	_headersList = 0;

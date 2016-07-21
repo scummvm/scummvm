@@ -33,13 +33,13 @@ class BoxStorage;
 
 class BoxTokenRefresher: public Networking::CurlJsonRequest {
 	BoxStorage *_parentStorage;
-	Common::Array<Common::String> _headers;	
-	
+	Common::Array<Common::String> _headers;
+
 	void tokenRefreshed(Storage::BoolResponse response);
 
 	virtual void finishJson(Common::JSONValue *json);
 	virtual void finishError(Networking::ErrorResponse error);
-public:	
+public:
 	BoxTokenRefresher(BoxStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url);
 	virtual ~BoxTokenRefresher();
 

@@ -46,7 +46,7 @@ class DownloadDialog : public Dialog {
 	LauncherDialog *_launcher;
 	BrowserDialog *_browser;
 	RemoteBrowserDialog *_remoteBrowser;
-	
+
 	StaticTextWidget *_remoteDirectoryLabel;
 	StaticTextWidget *_localDirectoryLabel;
 	StaticTextWidget *_percentLabel;

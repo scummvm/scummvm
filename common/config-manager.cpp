@@ -129,7 +129,7 @@ void ConfigManager::addDomain(const String &domainName, const ConfigManager::Dom
 		_keymapperDomain = domain;
 #endif
 #ifdef USE_CLOUD
-	} else if (domainName == kCloudDomain) {		
+	} else if (domainName == kCloudDomain) {
 		_cloudDomain = domain;
 #endif
 	} else if (domain.contains("gameid")) {

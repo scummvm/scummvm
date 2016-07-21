@@ -34,7 +34,7 @@ namespace Box {
 class BoxStorage;
 
 class BoxListDirectoryByIdRequest: public Networking::Request {
-	Common::String _requestedId;	
+	Common::String _requestedId;
 	BoxStorage *_storage;
 
 	Storage::ListDirectoryCallback _listDirectoryCallback;
@@ -42,7 +42,7 @@ class BoxListDirectoryByIdRequest: public Networking::Request {
 	Request *_workingRequest;
 	bool _ignoreCallback;
 	Common::String _date;
-	
+
 	void start();
 	void makeRequest(uint32 offset);
 	void responseCallback(Networking::JsonResponse response);

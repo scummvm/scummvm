@@ -77,7 +77,7 @@ void LocalWebserver::startTimer(int interval) {
 	}
 }
 
-void LocalWebserver::stopTimer() {	
+void LocalWebserver::stopTimer() {
 	Common::TimerManager *manager = g_system->getTimerManager();
 	manager->removeTimerProc(localWebserverTimer);
 	_timerStarted = false;
@@ -94,7 +94,7 @@ void LocalWebserver::start() {
 	startTimer();
 
 	// Create a listening TCP socket
-	IPaddress ip;	
+	IPaddress ip;
 	if (SDLNet_ResolveHost(&ip, NULL, _serverPort) == -1) {
 		error("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
 	}
@@ -113,9 +113,9 @@ void LocalWebserver::start() {
 	// Create a socket set
 	_set = SDLNet_AllocSocketSet(MAX_CONNECTIONS + 1); //one more for our server socket
 	if (!_set) {
-		error("SDLNet_AllocSocketSet: %s\n", SDLNet_GetError());		
+		error("SDLNet_AllocSocketSet: %s\n", SDLNet_GetError());
 	}
-	
+
 	int numused = SDLNet_TCP_AddSocket(_set, _serverSocket);
 	if (numused == -1) {
 		error("SDLNet_AddSocket: %s\n", SDLNet_GetError());
@@ -193,7 +193,7 @@ void LocalWebserver::handle() {
 
 	if (_clients == 0) ++_idlingFrames;
 	else _idlingFrames = 0;
-	
+
 	if (_idlingFrames > FRAMES_PER_SECOND && _stopOnIdle) {
 		_handleMutex.unlock();
 		stop();
@@ -203,7 +203,7 @@ void LocalWebserver::handle() {
 	_handleMutex.unlock();
 }
 
-void LocalWebserver::handleClient(uint32 i) {	
+void LocalWebserver::handleClient(uint32 i) {
 	switch (_client[i].state()) {
 	case INVALID: return;
 	case READING_HEADERS: _client[i].readHeaders(); break;
@@ -214,7 +214,7 @@ void LocalWebserver::handleClient(uint32 i) {
 			(*_pathHandlers[_client[i].path()])(_client[i]);
 		else if (_defaultHandler)
 			(*_defaultHandler)(_client[i]); //try default handler
-		
+
 		if (_client[i].state() == BEING_HANDLED || _client[i].state() == INVALID) break;
 
 		//if no handler, answer with default BAD REQUEST
@@ -287,18 +287,18 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 			if (!i->ifa_addr) {
 				continue;
 			}
-			
+
 			Common::String addr;
-			
+
 			// IPv4
-			if (i->ifa_addr->sa_family == AF_INET) { 
+			if (i->ifa_addr->sa_family == AF_INET) {
 				tmpAddrPtr = &((struct sockaddr_in *)i->ifa_addr)->sin_addr;
 				char addressBuffer[INET_ADDRSTRLEN];
 				inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
 				debug("%s IP Address %s", i->ifa_name, addressBuffer);
 				addr = addressBuffer;
 			}
-			
+
 			// IPv6
 			/*
 			if (i->ifa_addr->sa_family == AF_INET6) {
@@ -309,9 +309,9 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 				addr = addressBuffer;
 			}
 			*/
-			
+
 			if (addr.empty()) continue;
-			
+
 			// ignored IPv4 addresses
 			if (addr.equals("127.0.0.1") || addr.equals("0.0.0.0") || addr.equals("localhost"))
 				continue;
@@ -321,11 +321,11 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 			if (addr.equals("::1"))
 				continue;
 			*/
-			
+
 			// use the address found
 			_address = "http://" + addr + Common::String::format(":%u/", _serverPort);
 		}
-		
+
 		if (ifAddrStruct != NULL) freeifaddrs(ifAddrStruct);
 #endif
 }

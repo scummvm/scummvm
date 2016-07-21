@@ -45,7 +45,7 @@ DropboxInfoRequest::~DropboxInfoRequest() {
 
 void DropboxInfoRequest::start() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();	
+	if (_workingRequest) _workingRequest->finish();
 	_ignoreCallback = false;
 
 	Networking::JsonCallback innerCallback = new Common::Callback<DropboxInfoRequest, Networking::JsonResponse>(this, &DropboxInfoRequest::userResponseCallback);
@@ -70,7 +70,7 @@ void DropboxInfoRequest::userResponseCallback(Networking::JsonResponse response)
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
-	
+
 	if (!json) {
 		warning("NULL passed instead of JSON");
 		finishError(error);

@@ -48,7 +48,7 @@ class BoxStorage: public Id::IdStorage {
 	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);
 
 	void createDirectoryInnerCallback(BoolCallback outerCallback, Networking::JsonResponse response);
-public:	
+public:
 	/** This constructor uses OAuth code flow to get tokens. */
 	BoxStorage(Common::String code);
 	virtual ~BoxStorage();
@@ -97,7 +97,7 @@ public:
 	virtual Common::String savesDirectoryPath();
 
 	/**
-	 * Load token and user id from configs and return BoxStorage for those.	
+	 * Load token and user id from configs and return BoxStorage for those.
 	 * @return pointer to the newly created BoxStorage or 0 if some problem occured.
 	 */
 	static BoxStorage *loadFromConfig(Common::String keyPrefix);

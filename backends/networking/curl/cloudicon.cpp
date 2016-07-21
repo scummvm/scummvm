@@ -44,8 +44,8 @@ CloudIcon::~CloudIcon() {}
 bool CloudIcon::draw() {
 	bool stop = false;
 	initIcons();
-	
-	if (CloudMan.isWorking() || _disabledFrames > 0) {		
+
+	if (CloudMan.isWorking() || _disabledFrames > 0) {
 		if (g_system) {
 			if (!_wasVisible) {
 				g_system->clearOSD();
@@ -109,8 +109,8 @@ void CloudIcon::initIcons() {
 	_iconsInited = true;
 }
 
-void CloudIcon::loadIcon(Graphics::TransparentSurface &icon, byte *data, uint32 size) {	
-	Image::PNGDecoder decoder;	
+void CloudIcon::loadIcon(Graphics::TransparentSurface &icon, byte *data, uint32 size) {
+	Image::PNGDecoder decoder;
 	Common::MemoryReadStream stream(data, size);
 	if (!decoder.loadStream(stream))
 		error("CloudIcon::loadIcon: error decoding PNG");

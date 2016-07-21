@@ -87,7 +87,7 @@ void BoxListDirectoryByIdRequest::responseCallback(Networking::JsonResponse resp
 		Common::JSONObject responseObject = json->asObject();
 
 		//debug("%s", json->stringify(true).c_str());
-		
+
 		//TODO: check that error is returned the right way
 		/*
 		if (responseObject.contains("error") || responseObject.contains("error_summary")) {
@@ -100,7 +100,7 @@ void BoxListDirectoryByIdRequest::responseCallback(Networking::JsonResponse resp
 		}
 		*/
 
-		//TODO: check that ALL keys exist AND HAVE RIGHT TYPE to avoid segfaults		
+		//TODO: check that ALL keys exist AND HAVE RIGHT TYPE to avoid segfaults
 
 		if (responseObject.contains("entries") && responseObject.getVal("entries")->isArray()) {
 			Common::JSONArray items = responseObject.getVal("entries")->asArray();
@@ -160,7 +160,7 @@ void BoxListDirectoryByIdRequest::restart() { start(); }
 
 Common::String BoxListDirectoryByIdRequest::date() const { return _date; }
 
-void BoxListDirectoryByIdRequest::finishListing(Common::Array<StorageFile> &files) {	
+void BoxListDirectoryByIdRequest::finishListing(Common::Array<StorageFile> &files) {
 	Request::finishSuccess();
 	if (_listDirectoryCallback) (*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, files));
 }

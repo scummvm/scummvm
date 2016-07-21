@@ -95,7 +95,7 @@ public:
 	virtual Common::String savesDirectoryPath();
 
 	/**
-	 * Load token and user id from configs and return GoogleDriveStorage for those.	
+	 * Load token and user id from configs and return GoogleDriveStorage for those.
 	 * @return pointer to the newly created GoogleDriveStorage or 0 if some problem occured.
 	 */
 	static GoogleDriveStorage *loadFromConfig(Common::String keyPrefix);

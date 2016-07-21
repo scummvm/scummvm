@@ -50,7 +50,7 @@ protected:
 	void printFile(UploadResponse response);
 
 	ListDirectoryCallback getPrintFilesCallback();
-	
+
 public:
 	virtual ~IdStorage();
 

@@ -44,9 +44,9 @@ int find(const char *cstr, uint32 startPosition, char needle) {
 namespace Cloud {
 namespace ISO8601 {
 
-uint32 convertToTimestamp(const Common::String &iso8601Date) {		
+uint32 convertToTimestamp(const Common::String &iso8601Date) {
 	//2015-05-12T15:50:38Z
-	const char *cstr = iso8601Date.c_str();	
+	const char *cstr = iso8601Date.c_str();
 	int firstHyphen = find(cstr, 0, '-');
 	int secondHyphen = find(cstr, firstHyphen + 1, '-');
 	int tSeparator = find(cstr, secondHyphen + 1, 'T');
@@ -54,7 +54,7 @@ uint32 convertToTimestamp(const Common::String &iso8601Date) {
 	int secondColon = find(cstr, firstColon + 1, ':');
 	int zSeparator = find(cstr, secondColon + 1, 'Z');
 	if (zSeparator == -1) zSeparator = find(cstr, secondColon + 1, '-'); // Box's RFC 3339
-	//now note '+1' which means if there ever was '-1' result of find(), we still did a valid find() from 0th char	
+	//now note '+1' which means if there ever was '-1' result of find(), we still did a valid find() from 0th char
 
 	Common::String year = getSubstring(iso8601Date, 0, firstHyphen);
 	Common::String month = getSubstring(iso8601Date, firstHyphen + 1, secondHyphen);

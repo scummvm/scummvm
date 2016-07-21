@@ -67,7 +67,7 @@ RemoteBrowserDialog::~RemoteBrowserDialog() {
 	}
 }
 
-void RemoteBrowserDialog::open() {	
+void RemoteBrowserDialog::open() {
 	Dialog::open();
 	listDirectory(Cloud::StorageFile());
 }
@@ -176,7 +176,7 @@ void RemoteBrowserDialog::goUp() {
 			if (i == 0 || path[i] == '/' || path[i] == '\\') {
 				path.erase(i);
 				break;
-			}		
+			}
 	}
 
 	listDirectory(Cloud::StorageFile(path, 0, 0, true));

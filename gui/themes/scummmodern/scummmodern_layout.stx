@@ -624,7 +624,7 @@
 			<widget name = 'ProgressBar'
 					height = 'Globals.Button.Height'
 			/>
-			<space size = '1'/>	
+			<space size = '1'/>
 			<widget name = 'PercentText'
 					height = 'Globals.Line.Height'
 					textalign = 'center'
@@ -671,7 +671,7 @@
 					/>
 					<widget name = 'ReturnLine2'
 							height = 'Globals.Line.Height'
-					/>					
+					/>
 					<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '4' center = 'true'>
 						<widget name = 'CodeBox1'
 							width = '70'
@@ -713,7 +713,7 @@
 					/>
 					<space size = '6' />
 				</layout>
-			</layout>			
+			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'CancelButton'
 						type = 'Button'
@@ -1258,7 +1258,7 @@
 					width = '496'
 					height = 'Globals.Button.Height'
 			/>
-			<space size = '1'/>	
+			<space size = '1'/>
 			<widget name = 'PercentText'
 					width = '496'
 					height = 'Globals.Line.Height'
@@ -1269,7 +1269,7 @@
 				<widget name = 'Cancel'
 						width = '150'
 						height = 'Globals.Button.Height'
-				/>				
+				/>
 				<widget name = 'Background'
 						width = '150'
 						height = 'Globals.Button.Height'

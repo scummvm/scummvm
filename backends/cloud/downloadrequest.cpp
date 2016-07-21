@@ -66,7 +66,7 @@ void DownloadRequest::streamErrorCallback(Networking::ErrorResponse error) {
 	finishError(error);
 }
 
-void DownloadRequest::handle() {	
+void DownloadRequest::handle() {
 	if (!_localFile) {
 		warning("DownloadRequest: no file to write");
 		finishError(Networking::ErrorResponse(this, false, true, "", -1));
@@ -96,12 +96,12 @@ void DownloadRequest::handle() {
 	if (_remoteFileStream->eos()) {
 		if (_remoteFileStream->httpResponseCode() != 200) {
 			warning("HTTP response code is not 200 OK (it's %ld)", _remoteFileStream->httpResponseCode());
-			//TODO: do something about it actually			
+			//TODO: do something about it actually
 		}
 
 		finishDownload(_remoteFileStream->httpResponseCode() == 200);
 
-		_localFile->close(); //yes, I know it's closed automatically in ~DumpFile()		
+		_localFile->close(); //yes, I know it's closed automatically in ~DumpFile()
 	}
 }
 

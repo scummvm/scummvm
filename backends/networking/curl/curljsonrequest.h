@@ -50,7 +50,7 @@ public:
 	CurlJsonRequest(JsonCallback cb, ErrorCallback ecb, Common::String url);
 	virtual ~CurlJsonRequest();
 
-	virtual void handle(); 
+	virtual void handle();
 	virtual void restart();
 };
 

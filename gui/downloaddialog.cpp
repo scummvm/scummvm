@@ -119,7 +119,7 @@ bool DownloadDialog::selectDirectories() {
 		if (alert.runModal() != GUI::kMessageOK) return false;
 	}
 
-	//first user should select remote directory to download	
+	//first user should select remote directory to download
 	if (_remoteBrowser->runModal() <= 0) return false;
 
 	Cloud::StorageFile remoteDirectory = _remoteBrowser->getResult();
@@ -248,7 +248,7 @@ Common::String DownloadDialog::getSpeedLabelText() {
 	return Common::String::format("Download speed: %s %s", speed.c_str(), _(speedUnits.c_str()));
 }
 
-void DownloadDialog::refreshWidgets() {	
+void DownloadDialog::refreshWidgets() {
 	_localDirectory = CloudMan.getDownloadLocalDirectory();
 	_remoteDirectoryLabel->setLabel(_("From: ") + CloudMan.getDownloadRemoteDirectory());
 	_localDirectoryLabel->setLabel(_("To: ") + _localDirectory);

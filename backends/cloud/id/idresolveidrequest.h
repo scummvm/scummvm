@@ -33,7 +33,7 @@ namespace Id {
 class IdStorage;
 
 class IdResolveIdRequest: public Networking::Request {
-	Common::String _requestedPath;	
+	Common::String _requestedPath;
 	IdStorage *_storage;
 	Storage::UploadCallback _uploadCallback;
 	Common::String _currentDirectory;

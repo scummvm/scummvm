@@ -47,7 +47,7 @@ void IdResolveIdRequest::start() {
 	_currentDirectory = "";
 	_currentDirectoryId = _storage->getRootDirectoryId();
 	_ignoreCallback = false;
-	
+
 	listNextDirectory(StorageFile(_currentDirectoryId, 0, 0, true));
 }
 
@@ -62,10 +62,10 @@ void IdResolveIdRequest::listNextDirectory(StorageFile fileToReturn) {
 	_workingRequest = _storage->listDirectoryById(_currentDirectoryId, callback, failureCallback);
 }
 
-void IdResolveIdRequest::listedDirectoryCallback(Storage::FileArrayResponse response) {	
+void IdResolveIdRequest::listedDirectoryCallback(Storage::FileArrayResponse response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
-	
+
 	Common::String currentLevelName = _requestedPath;
 	///debug("'%s'", currentLevelName.c_str());
 	if (_currentDirectory.size()) currentLevelName.erase(0, _currentDirectory.size());

@@ -56,7 +56,7 @@ void IdCreateDirectoryRequest::start() {
 		_workingRequest = _storage->createDirectory("ScummVM", callback, failureCallback);
 		return;
 	}
-	
+
 	resolveId();
 }
 
@@ -97,9 +97,9 @@ void IdCreateDirectoryRequest::idResolveFailedCallback(Networking::ErrorResponse
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 	if (error.request) _date = error.request->date();
-	
+
 	//not resolved => folder not exists
-	if (error.response.contains("no such file found in its parent directory")) {		
+	if (error.response.contains("no such file found in its parent directory")) {
 		//parent's id after the '\n'
 		Common::String parentId = error.response;
 		for (uint32 i = 0; i < parentId.size(); ++i)

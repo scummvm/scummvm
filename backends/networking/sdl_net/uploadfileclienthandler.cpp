@@ -164,11 +164,11 @@ void UploadFileClientHandler::handleBlockContent(Client *client) {
 				(client->queryParameter("ajax") == "true" ? "/filesAJAX?path=" : "/files?path=") +
 					LocalWebserver::urlEncodeQueryParameterValue(client->queryParameter("path"))
 			);
-			_state = UFH_STOP;		
+			_state = UFH_STOP;
 			return;
 		}
 	}
-	
+
 	// no more content avaiable
 	if (client->noMoreContent()) {
 		// if no file field was found - failure

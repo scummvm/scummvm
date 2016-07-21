@@ -6,7 +6,7 @@ ajax.x = function () { return new XMLHttpRequest(); }; // "no one uses IE6"
 
 ajax.send = function (url, callback, errorCallback, method, data, async) {
     if (async === undefined) async = true;
-    
+
     var x = ajax.x();
     x.open(method, url, async);
     x.onreadystatechange = function () {

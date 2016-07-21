@@ -64,7 +64,7 @@ void OneDriveUploadRequest::start() {
 	uploadNextPart();
 }
 
-void OneDriveUploadRequest::uploadNextPart() {	
+void OneDriveUploadRequest::uploadNextPart() {
 	const uint32 UPLOAD_PER_ONE_REQUEST = 10 * 1024 * 1024;
 
 	if (_uploadUrl == "" && (uint32)_contentsStream->size() > UPLOAD_PER_ONE_REQUEST) {
@@ -79,16 +79,16 @@ void OneDriveUploadRequest::uploadNextPart() {
 	}
 
 	Common::String url;
-	if (_uploadUrl == "") {		
+	if (_uploadUrl == "") {
 		url = "https://api.onedrive.com/v1.0/drive/special/approot:/"+ConnMan.urlEncode(_savePath)+":/content";
-	} else {		
+	} else {
 		url = _uploadUrl;
 	}
-	
+
 	Networking::JsonCallback callback = new Common::Callback<OneDriveUploadRequest, Networking::JsonResponse>(this, &OneDriveUploadRequest::partUploadedCallback);
 	Networking::ErrorCallback failureCallback = new Common::Callback<OneDriveUploadRequest, Networking::ErrorResponse>(this, &OneDriveUploadRequest::partUploadedErrorCallback);
 	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(_storage, callback, failureCallback, url.c_str());
-	request->addHeader("Authorization: Bearer " + _storage->accessToken());	
+	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	request->usePut();
 
 	uint32 oldPos = _contentsStream->pos();
@@ -106,18 +106,18 @@ void OneDriveUploadRequest::uploadNextPart() {
 			delete request;
 			return;
 		}
-	
+
 	_workingRequest = ConnMan.addRequest(request);
 }
 
-void OneDriveUploadRequest::partUploadedCallback(Networking::JsonResponse response) {	
+void OneDriveUploadRequest::partUploadedCallback(Networking::JsonResponse response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
-	
+
 	Networking::ErrorResponse error(this, false, true, "", -1);
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
-		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();		
+		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
 	Common::JSONValue *json = response.value;
 	if (json) {
@@ -133,7 +133,7 @@ void OneDriveUploadRequest::partUploadedCallback(Networking::JsonResponse respon
 			}
 
 			if (object.contains("id") && object.contains("name")) {
-				//finished				
+				//finished
 				Common::String path = _savePath;
 				uint32 size = object.getVal("size")->asIntegerNumber();
 				uint32 timestamp = ISO8601::convertToTimestamp(object.getVal("lastModifiedDateTime")->asString());
@@ -145,7 +145,7 @@ void OneDriveUploadRequest::partUploadedCallback(Networking::JsonResponse respon
 				if (object.contains("uploadUrl"))
 					_uploadUrl = object.getVal("uploadUrl")->asString();
 				else
-					warning("no uploadUrl found in OneDrive's response");				
+					warning("no uploadUrl found in OneDrive's response");
 			}
 		}
 
@@ -156,14 +156,14 @@ void OneDriveUploadRequest::partUploadedCallback(Networking::JsonResponse respon
 			uploadNextPart();
 		}
 	} else {
-		warning("null, not json");		
+		warning("null, not json");
 		finishError(error);
 	}
 
 	delete json;
 }
 
-void OneDriveUploadRequest::partUploadedErrorCallback(Networking::ErrorResponse error) {	
+void OneDriveUploadRequest::partUploadedErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 	finishError(error);

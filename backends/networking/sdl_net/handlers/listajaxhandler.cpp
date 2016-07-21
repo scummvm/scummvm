@@ -116,7 +116,7 @@ void ListAjaxHandler::addItem(Common::JSONArray &responseItemsList, ItemType ite
 	default: icon = "unk.png";
 	}
 
-	Common::JSONObject item;	
+	Common::JSONObject item;
 	item.setVal("name", new Common::JSONValue(name));
 	item.setVal("path", new Common::JSONValue(path));
 	item.setVal("isDirectory", new Common::JSONValue(isDirectory));

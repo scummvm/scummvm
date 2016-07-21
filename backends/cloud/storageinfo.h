@@ -32,7 +32,7 @@ namespace Cloud {
 * It's disk quota usage, owner name, and such.
 */
 
-class StorageInfo {	
+class StorageInfo {
 	Common::String _uid, _name, _email;
 	uint64 _usedBytes, _allocatedBytes;
 

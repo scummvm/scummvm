@@ -110,7 +110,7 @@ public:
 	virtual void saveConfig(Common::String keyPrefix) = 0;
 
 	/**
-	* Return unique storage name.		
+	* Return unique storage name.
 	* @returns	some unique storage name (for example, "Dropbox (user@example.com)")
 	*/
 	virtual Common::String name() const = 0;
@@ -125,7 +125,7 @@ public:
 
 	/** Returns ListDirectoryResponse with list of files. */
 	virtual Networking::Request *listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false) = 0;
-	
+
 	/** Returns StorageFile with info about uploaded file. */
 	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) = 0;
 	virtual Networking::Request *upload(Common::String remotePath, Common::String localPath, UploadCallback callback, Networking::ErrorCallback errorCallback);

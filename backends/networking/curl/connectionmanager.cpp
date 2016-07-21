@@ -54,7 +54,7 @@ ConnectionManager::~ConnectionManager() {
 		delete request;
 		if (callback) (*callback)(request);
 	}
-	_requests.clear();	
+	_requests.clear();
 
 	//cleanup
 	curl_multi_cleanup(_multi);
@@ -68,9 +68,9 @@ void ConnectionManager::registerEasyHandle(CURL *easy) const {
 }
 
 Request *ConnectionManager::addRequest(Request *request, RequestCallback callback) {
-	_addedRequestsMutex.lock();	
+	_addedRequestsMutex.lock();
 	_addedRequests.push_back(RequestWithCallback(request, callback));
-	if (!_timerStarted) startTimer();	
+	if (!_timerStarted) startTimer();
 	_addedRequestsMutex.unlock();
 	return request;
 }
@@ -130,7 +130,7 @@ void ConnectionManager::handle() {
 	++_frame;
 	if (_frame % CLOUD_PERIOD == 0) interateRequests();
 	if (_frame % CURL_PERIOD == 0) processTransfers();
-	
+
 	if (_icon.draw() && _requests.empty() && !hasAddedRequests())
 		stopTimer();
 	_handleMutex.unlock();
@@ -148,7 +148,7 @@ void ConnectionManager::interateRequests() {
 	//call handle() of all running requests (so they can do their work)
 	debug(9, "handling %d request(s)", _requests.size());
 	for (Common::Array<RequestWithCallback>::iterator i = _requests.begin(); i != _requests.end();) {
-		Request *request = i->request;		
+		Request *request = i->request;
 		if (request) {
 			if (request->state() == PROCESSING) request->handle();
 			else if (request->state() == RETRY) request->handleRetry();
@@ -161,7 +161,7 @@ void ConnectionManager::interateRequests() {
 			continue;
 		}
 
-		++i;		
+		++i;
 	}
 }
 

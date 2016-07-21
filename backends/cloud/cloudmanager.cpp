@@ -42,7 +42,7 @@ const char *const CloudManager::kStoragePrefix = "storage_";
 CloudManager::CloudManager() : _currentStorageIndex(0), _activeStorage(nullptr) {}
 
 CloudManager::~CloudManager() {
-	//TODO: do we have to save storages on manager destruction?	
+	//TODO: do we have to save storages on manager destruction?
 	delete _activeStorage;
 	freeStorages();
 }

@@ -71,17 +71,17 @@ class ConnectionManager : public Common::Singleton<ConnectionManager> {
 	struct RequestWithCallback {
 		Request *request;
 		RequestCallback onDeleteCallback;
-		
+
 		RequestWithCallback(Request *rq = nullptr, RequestCallback cb = nullptr): request(rq), onDeleteCallback(cb) {}
 	};
 
-	CURLM *_multi;	
+	CURLM *_multi;
 	bool _timerStarted;
 	Common::Array<RequestWithCallback> _requests, _addedRequests;
 	Common::Mutex _handleMutex, _addedRequestsMutex;
 	CloudIcon _icon;
 	uint32 _frame;
-	
+
 	void startTimer(int interval = TIMER_INTERVAL);
 	void stopTimer();
 	void handle();

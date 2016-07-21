@@ -84,7 +84,7 @@ public:
 #ifdef USE_LIBCURL
 	virtual void runSaveSync(bool hasSavepathOverride);
 #endif
-	
+
 	virtual void handleTickle();
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
@@ -148,8 +148,8 @@ public:
 
 	virtual void open();
 	virtual void close();
-protected:	
-	virtual void updateSaveList();	
+protected:
+	virtual void updateSaveList();
 private:
 	virtual int runIntern();
 
@@ -163,7 +163,7 @@ private:
 	StaticTextWidget	*_playtime;
 
 	String					_resultString;
-	
+
 	void updateSelection(bool redraw);
 };
 

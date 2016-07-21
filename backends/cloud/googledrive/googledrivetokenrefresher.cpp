@@ -52,7 +52,7 @@ void GoogleDriveTokenRefresher::tokenRefreshed(Storage::BoolResponse response) {
 	}
 	setHeaders(_headers);
 
-	//successfully received refreshed token, can restart the original request now	
+	//successfully received refreshed token, can restart the original request now
 	retry(0);
 }
 
@@ -65,13 +65,13 @@ void GoogleDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 
 	Common::JSONObject result = json->asObject();
 	if (result.contains("error")) {
-		//new token needed => request token & then retry original request		
+		//new token needed => request token & then retry original request
 		if (_stream) {
 			debug(9, "code %ld", _stream->httpResponseCode());
 		}
 
 		Common::JSONObject error = result.getVal("error")->asObject();
-		bool irrecoverable = true;		
+		bool irrecoverable = true;
 
 		uint32 code = -1;
 		Common::String message;
@@ -88,13 +88,13 @@ void GoogleDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 		if (code == 401 || message == "Invalid Credentials")
 			irrecoverable = false;
 
-		if (irrecoverable) {			
+		if (irrecoverable) {
 			finishError(Networking::ErrorResponse(this, false, true, json->stringify(true), -1)); //TODO: httpCode
 			delete json;
 			return;
 		}
 
-		pause();		
+		pause();
 		delete json;
 		_parentStorage->getAccessToken(new Common::Callback<GoogleDriveTokenRefresher, Storage::BoolResponse>(this, &GoogleDriveTokenRefresher::tokenRefreshed));
 		return;
@@ -104,7 +104,7 @@ void GoogleDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 	CurlJsonRequest::finishJson(json);
 }
 
-void GoogleDriveTokenRefresher::setHeaders(Common::Array<Common::String> &headers) {	
+void GoogleDriveTokenRefresher::setHeaders(Common::Array<Common::String> &headers) {
 	_headers = headers;
 	curl_slist_free_all(_headersList);
 	_headersList = 0;

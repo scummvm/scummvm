@@ -52,7 +52,7 @@ void ScrollContainerWidget::init() {
 void ScrollContainerWidget::recalc() {
 	int scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 	_limitH = _h;
-	
+
 	//calculate virtual height
 	const int spacing = g_gui.xmlEval()->getVar("Global.Font.Height", 16); //on the bottom
 	int h = 0;
@@ -120,7 +120,7 @@ void ScrollContainerWidget::reflowLayout() {
 
 	//hide and move widgets, if needed
 	sendCommand(_reflowCmd, 0);
-	
+
 	//recalculate height
 	recalc();
 

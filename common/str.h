@@ -236,12 +236,12 @@ public:
 	void trim();
 
 	uint hash() const;
-	 
+
 	/**@{
 	 * Functions to replace some amount of chars with chars from some other string.
 	 *
 	 * @note The implementation follows that of the STL's std::string:
-	 *       http://www.cplusplus.com/reference/string/string/replace/        
+	 *       http://www.cplusplus.com/reference/string/string/replace/
 	 *
 	 * @param pos Starting position for the replace in the original string.
 	 * @param count Number of chars to replace from the original string.
@@ -250,7 +250,7 @@ public:
 	 * @param countOri Same as count
 	 * @param posDest Initial position to read str from.
 	 * @param countDest Number of chars to read from str. npos by default.
-	 */ 
+	 */
 	// Replace 'count' bytes, starting from 'pos' with str.
 	void replace(uint32 pos, uint32 count, const String &str);
 	// The same as above, but accepts a C-like array of characters.
@@ -267,7 +267,7 @@ public:
 	// str[posDest, posDest + countDest)
 	void replace(uint32 posOri, uint32 countOri, const char *str,
 					uint32 posDest, uint32 countDest);
-	/**@}*/ 
+	/**@}*/
 
 	/**
 	 * Print formatted data into a String object. Similar to sprintf,

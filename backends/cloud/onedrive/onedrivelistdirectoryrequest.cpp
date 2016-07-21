@@ -77,7 +77,7 @@ void OneDriveListDirectoryRequest::listNextDirectory() {
 	makeRequest(url);
 }
 
-void OneDriveListDirectoryRequest::makeRequest(Common::String url) {	
+void OneDriveListDirectoryRequest::makeRequest(Common::String url) {
 	Networking::JsonCallback callback = new Common::Callback<OneDriveListDirectoryRequest, Networking::JsonResponse>(this, &OneDriveListDirectoryRequest::listedDirectoryCallback);
 	Networking::ErrorCallback failureCallback = new Common::Callback<OneDriveListDirectoryRequest, Networking::ErrorResponse>(this, &OneDriveListDirectoryRequest::listedDirectoryErrorCallback);
 	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(_storage, callback, failureCallback, url.c_str());
@@ -107,18 +107,18 @@ void OneDriveListDirectoryRequest::listedDirectoryCallback(Networking::JsonRespo
 		return;
 	}
 
-	Common::JSONObject object = json->asObject();		
-	
+	Common::JSONObject object = json->asObject();
+
 	//TODO: check that ALL keys exist AND HAVE RIGHT TYPE to avoid segfaults
 
 	Common::JSONArray items = object.getVal("value")->asArray();
 	for (uint32 i = 0; i < items.size(); ++i) {
-		Common::JSONObject item = items[i]->asObject();	
+		Common::JSONObject item = items[i]->asObject();
 
 		Common::String path = _currentDirectory + item.getVal("name")->asString();
-		bool isDirectory = item.contains("folder");		
+		bool isDirectory = item.contains("folder");
 		uint32 size = item.getVal("size")->asIntegerNumber();
-		uint32 timestamp = ISO8601::convertToTimestamp(item.getVal("lastModifiedDateTime")->asString());		
+		uint32 timestamp = ISO8601::convertToTimestamp(item.getVal("lastModifiedDateTime")->asString());
 
 		StorageFile file(path, size, timestamp, isDirectory);
 		_files.push_back(file);

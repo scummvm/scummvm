@@ -265,7 +265,7 @@ bool JNI::isConnectionLimited() {
 		env->ExceptionClear();
 		limited = true;
 	}
-	
+
 	return limited;
 }
 

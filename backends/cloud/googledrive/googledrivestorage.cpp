@@ -138,7 +138,7 @@ void GoogleDriveStorage::codeFlowFailed(Networking::ErrorResponse error) {
 	CloudMan.removeStorage(this);
 }
 
-void GoogleDriveStorage::saveConfig(Common::String keyPrefix) {	
+void GoogleDriveStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "access_token", _token, ConfMan.kCloudDomain);
 	ConfMan.set(keyPrefix + "refresh_token", _refreshToken, ConfMan.kCloudDomain);
 }
@@ -173,11 +173,11 @@ void GoogleDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Ne
 		//"usageInDrive":"6332462","limit":"18253611008","usage":"6332462","usageInDriveTrash":"0"
 		Common::JSONObject storageQuota = info.getVal("storageQuota")->asObject();
 		Common::String usage = storageQuota.getVal("usage")->asString();
-		Common::String limit = storageQuota.getVal("limit")->asString();			
+		Common::String limit = storageQuota.getVal("limit")->asString();
 		quotaUsed = usage.asUint64();
 		quotaAllocated = limit.asUint64();
 	}
-		
+
 	CloudMan.setStorageUsername(kStorageGoogleDriveId, email);
 
 	if (outerCallback) {
@@ -197,7 +197,7 @@ void GoogleDriveStorage::createDirectoryInnerCallback(BoolCallback outerCallback
 	}
 
 	if (outerCallback) {
-		Common::JSONObject info = json->asObject();		
+		Common::JSONObject info = json->asObject();
 		(*outerCallback)(BoolResponse(nullptr, info.contains("id")));
 		delete outerCallback;
 	}
@@ -212,7 +212,7 @@ Networking::Request *GoogleDriveStorage::listDirectoryById(Common::String id, Li
 }
 
 Networking::Request *GoogleDriveStorage::upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) {
-	return addRequest(new GoogleDriveUploadRequest(this, path, contents, callback, errorCallback));	
+	return addRequest(new GoogleDriveUploadRequest(this, path, contents, callback, errorCallback));
 }
 
 Networking::Request *GoogleDriveStorage::streamFileById(Common::String id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) {
@@ -221,7 +221,7 @@ Networking::Request *GoogleDriveStorage::streamFileById(Common::String id, Netwo
 		Common::String header = "Authorization: Bearer " + _token;
 		curl_slist *headersList = curl_slist_append(nullptr, header.c_str());
 		Networking::NetworkReadStream *stream = new Networking::NetworkReadStream(url.c_str(), headersList, "");
-		(*callback)(Networking::NetworkReadStreamResponse(nullptr, stream));		
+		(*callback)(Networking::NetworkReadStreamResponse(nullptr, stream));
 	}
 	delete callback;
 	delete errorCallback;
@@ -237,8 +237,8 @@ void GoogleDriveStorage::printInfo(StorageInfoResponse response) {
 
 Networking::Request *GoogleDriveStorage::createDirectoryWithParentId(Common::String parentId, Common::String name, BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	if (!errorCallback) errorCallback = getErrorPrintingCallback();
-	
-	Common::String url = "https://www.googleapis.com/drive/v3/files";	
+
+	Common::String url = "https://www.googleapis.com/drive/v3/files";
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<GoogleDriveStorage, BoolResponse, Networking::JsonResponse>(this, &GoogleDriveStorage::createDirectoryInnerCallback, callback);
 	Networking::CurlJsonRequest *request = new GoogleDriveTokenRefresher(this, innerCallback, errorCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + accessToken());
@@ -263,7 +263,7 @@ Networking::Request *GoogleDriveStorage::info(StorageInfoCallback callback, Netw
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<GoogleDriveStorage, StorageInfoResponse, Networking::JsonResponse>(this, &GoogleDriveStorage::infoInnerCallback, callback);
 	Networking::CurlJsonRequest *request = new GoogleDriveTokenRefresher(this, innerCallback, errorCallback, "https://www.googleapis.com/drive/v3/about?fields=storageQuota,user");
 	request->addHeader("Authorization: Bearer " + _token);
-	return addRequest(request);	
+	return addRequest(request);
 }
 
 Common::String GoogleDriveStorage::savesDirectoryPath() { return "scummvm/saves/"; }

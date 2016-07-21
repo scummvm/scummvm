@@ -34,7 +34,7 @@ namespace GoogleDrive {
 class GoogleDriveStorage;
 
 class GoogleDriveListDirectoryByIdRequest: public Networking::Request {
-	Common::String _requestedId;	
+	Common::String _requestedId;
 	GoogleDriveStorage *_storage;
 
 	Storage::ListDirectoryCallback _listDirectoryCallback;
@@ -42,7 +42,7 @@ class GoogleDriveListDirectoryByIdRequest: public Networking::Request {
 	Request *_workingRequest;
 	bool _ignoreCallback;
 	Common::String _date;
-	
+
 	void start();
 	void makeRequest(Common::String pageToken);
 	void responseCallback(Networking::JsonResponse response);

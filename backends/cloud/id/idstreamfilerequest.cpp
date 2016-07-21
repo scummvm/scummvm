@@ -47,7 +47,7 @@ void IdStreamFileRequest::start() {
 
 	//find file's id
 	Storage::UploadCallback innerCallback = new Common::Callback<IdStreamFileRequest, Storage::UploadResponse>(this, &IdStreamFileRequest::idResolvedCallback);
-	Networking::ErrorCallback innerErrorCallback = new Common::Callback<IdStreamFileRequest, Networking::ErrorResponse>(this, &IdStreamFileRequest::idResolveFailedCallback);	
+	Networking::ErrorCallback innerErrorCallback = new Common::Callback<IdStreamFileRequest, Networking::ErrorResponse>(this, &IdStreamFileRequest::idResolveFailedCallback);
 	_workingRequest = _storage->resolveFileId(_requestedFile, innerCallback, innerErrorCallback);
 }
 

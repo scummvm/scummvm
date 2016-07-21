@@ -88,7 +88,7 @@ Common::StringArray DefaultSaveFileManager::listSavefiles(const Common::String &
 	}
 
 	Common::StringArray results;
-	for (SaveFileCache::const_iterator file = _saveFileCache.begin(), end = _saveFileCache.end(); file != end; ++file) {		
+	for (SaveFileCache::const_iterator file = _saveFileCache.begin(), end = _saveFileCache.end(); file != end; ++file) {
 		if (!locked.contains(file->_key) && file->_key.matchString(pattern, true)) {
 			results.push_back(file->_key);
 		}
@@ -142,7 +142,7 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const Common::String 
 		return nullptr;
 
 	for (Common::StringArray::const_iterator i = _lockedFiles.begin(), end = _lockedFiles.end(); i != end; ++i) {
-		if (filename == *i) {			
+		if (filename == *i) {
 			return nullptr; //file is locked, no saving available
 		}
 	}
@@ -238,7 +238,7 @@ void DefaultSaveFileManager::assureCached(const Common::String &savePathName) {
 	checkPath(Common::FSNode(savePathName));
 
 #ifdef USE_LIBCURL
-	Common::Array<Common::String> files = CloudMan.getSyncingFiles(); //returns empty array if not syncing	
+	Common::Array<Common::String> files = CloudMan.getSyncingFiles(); //returns empty array if not syncing
 	if (!files.empty()) updateSavefilesList(files); //makes this cache invalid
 	else _lockedFiles = files;
 #endif
@@ -287,7 +287,7 @@ Common::HashMap<Common::String, uint32> DefaultSaveFileManager::loadTimestamps()
 	Common::Array<Common::String> files;
 	g_system->getSavefileManager()->updateSavefilesList(files);
 
-	//start with listing all the files in saves/ directory and setting invalid timestamp to them	
+	//start with listing all the files in saves/ directory and setting invalid timestamp to them
 	Common::StringArray localFiles = g_system->getSavefileManager()->listSavefiles("*");
 	for (uint32 i = 0; i < localFiles.size(); ++i)
 		timestamps[localFiles[i]] = INVALID_TIMESTAMP;
@@ -329,7 +329,7 @@ Common::HashMap<Common::String, uint32> DefaultSaveFileManager::loadTimestamps()
 
 		//parse timestamp
 		uint32 timestamp = buffer.asUint64();
-		if (buffer == "" || timestamp == 0) break;		
+		if (buffer == "" || timestamp == 0) break;
 		timestamps[filename] = timestamp;
 	}
 

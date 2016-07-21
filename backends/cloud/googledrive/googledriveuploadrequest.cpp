@@ -164,7 +164,7 @@ void GoogleDriveUploadRequest::startUploadCallback(Networking::JsonResponse resp
 		}
 	}
 
-	Common::JSONValue *json = response.value;	
+	Common::JSONValue *json = response.value;
 	delete json;
 
 	finishError(error);
@@ -179,11 +179,11 @@ void GoogleDriveUploadRequest::startUploadErrorCallback(Networking::ErrorRespons
 void GoogleDriveUploadRequest::uploadNextPart() {
 	const uint32 UPLOAD_PER_ONE_REQUEST = 10 * 1024 * 1024;
 	Common::String url = _uploadUrl;
-	
+
 	Networking::JsonCallback callback = new Common::Callback<GoogleDriveUploadRequest, Networking::JsonResponse>(this, &GoogleDriveUploadRequest::partUploadedCallback);
 	Networking::ErrorCallback failureCallback = new Common::Callback<GoogleDriveUploadRequest, Networking::ErrorResponse>(this, &GoogleDriveUploadRequest::partUploadedErrorCallback);
 	Networking::CurlJsonRequest *request = new GoogleDriveTokenRefresher(_storage, callback, failureCallback, url.c_str());
-	request->addHeader("Authorization: Bearer " + _storage->accessToken());	
+	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	request->usePut();
 
 	uint32 oldPos = _contentsStream->pos();
@@ -206,17 +206,17 @@ void GoogleDriveUploadRequest::uploadNextPart() {
 		else
 			request->addHeader(Common::String::format("Content-Range: bytes %u-%u/%u", oldPos, _contentsStream->pos() - 1, _contentsStream->size()));
 	}
-	
+
 	_workingRequest = ConnMan.addRequest(request);
 }
 
 bool GoogleDriveUploadRequest::handleHttp308(const Networking::NetworkReadStream *stream) {
 	//308 Resume Incomplete, with Range: X-Y header
 	if (!stream) return false;
-	if (stream->httpResponseCode() != 308) return false; //seriously	
-	
+	if (stream->httpResponseCode() != 308) return false; //seriously
+
 	Common::String headers = stream->responseHeaders();
-	const char *cstr = headers.c_str();	
+	const char *cstr = headers.c_str();
 	for (int rangeTry = 0; rangeTry < 2; ++rangeTry) {
 		const char *needle = (rangeTry==0 ? "Range: 0-" : "Range: bytes=0-");
 		uint32 needleLength = (rangeTry == 0 ? 9 : 15);
@@ -239,12 +239,12 @@ bool GoogleDriveUploadRequest::handleHttp308(const Networking::NetworkReadStream
 	return false;
 }
 
-void GoogleDriveUploadRequest::partUploadedCallback(Networking::JsonResponse response) {	
+void GoogleDriveUploadRequest::partUploadedCallback(Networking::JsonResponse response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
-		
+
 	Networking::ErrorResponse error(this, false, true, "", -1);
-	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;	
+	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
 	if (rq) {
 		const Networking::NetworkReadStream *stream = rq->getNetworkReadStream();
 		if (stream) {
@@ -301,16 +301,16 @@ void GoogleDriveUploadRequest::partUploadedCallback(Networking::JsonResponse res
 	delete json;
 }
 
-void GoogleDriveUploadRequest::partUploadedErrorCallback(Networking::ErrorResponse error) {	
+void GoogleDriveUploadRequest::partUploadedErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
-	
+
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)error.request;
 	if (rq) {
 		const Networking::NetworkReadStream *stream = rq->getNetworkReadStream();
 		if (stream) {
-			long code = stream->httpResponseCode();			
-			if (code == 308 && handleHttp308(stream)) {				
+			long code = stream->httpResponseCode();
+			if (code == 308 && handleHttp308(stream)) {
 				return;
 			}
 		}

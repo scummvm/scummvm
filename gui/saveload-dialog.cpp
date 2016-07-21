@@ -57,7 +57,7 @@ SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(bool canRunInBa
 	_progressBar->setValue(progress);
 	_progressBar->setEnabled(false);
 	_percentLabel = new StaticTextWidget(this, "SaveLoadCloudSyncProgress.PercentText", Common::String::format("%u %%", progress));
-	new ButtonWidget(this, "SaveLoadCloudSyncProgress.Cancel", "Cancel", 0, kCancelSyncCmd, Common::ASCII_ESCAPE);	// Cancel dialog																																				
+	new ButtonWidget(this, "SaveLoadCloudSyncProgress.Cancel", "Cancel", 0, kCancelSyncCmd, Common::ASCII_ESCAPE);	// Cancel dialog
 	ButtonWidget *backgroundButton = new ButtonWidget(this, "SaveLoadCloudSyncProgress.Background", "Run in background", 0, kBackgroundSyncCmd, Common::ASCII_RETURN);	// Confirm dialog
 	backgroundButton->setEnabled(canRunInBackground);
 	draw();
@@ -69,7 +69,7 @@ SaveLoadCloudSyncProgressDialog::~SaveLoadCloudSyncProgressDialog() {
 
 void SaveLoadCloudSyncProgressDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch(cmd) {
-	case kSavesSyncProgressCmd:				
+	case kSavesSyncProgressCmd:
 		_percentLabel->setLabel(Common::String::format("%u%%", data));
 		_progressBar->setValue(data);
 		_progressBar->draw();
@@ -280,7 +280,7 @@ void SaveLoadChooserDialog::reflowLayout() {
 
 void SaveLoadChooserDialog::updateSaveList() {
 #ifdef USE_LIBCURL
-	Common::Array<Common::String> files = CloudMan.getSyncingFiles(); //returns empty array if not syncing	
+	Common::Array<Common::String> files = CloudMan.getSyncingFiles(); //returns empty array if not syncing
 	g_system->getSavefileManager()->updateSavefilesList(files);
 #endif
 	listSaves();
@@ -300,7 +300,7 @@ void SaveLoadChooserDialog::listSaves() {
 
 			//make up some slot number
 			int slotNum = 0;
-			for (uint32 j = (files[i].size() > 3 ? files[i].size() - 3 : 0); j < files[i].size(); ++j) { //3 last chars			
+			for (uint32 j = (files[i].size() > 3 ? files[i].size() - 3 : 0); j < files[i].size(); ++j) { //3 last chars
 				char c = files[i][j];
 				if (c < '0' || c > '9') continue;
 				slotNum = slotNum * 10 + (c - '0');

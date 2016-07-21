@@ -281,7 +281,7 @@ JSONValue *JSONValue::parse(const char **data) {
 			return new JSONValue(str);
 	}
 
-	// Is it a boolean?	
+	// Is it a boolean?
 	else if ((simplejson_wcsnlen(*data, 4) && scumm_strnicmp(*data, "true", 4) == 0) || (simplejson_wcsnlen(*data, 5) && scumm_strnicmp(*data, "false", 5) == 0)) {
 		bool value = scumm_strnicmp(*data, "true", 4) == 0;
 		(*data) += value ? 4 : 5;
@@ -989,7 +989,7 @@ String JSONValue::stringifyImpl(size_t const indentDepth) const {
 	case JSONType_IntegerNumber: {
 		char str[80];
 		sprintf(str, "%lld", _integerValue);
-		ret_string = str;		
+		ret_string = str;
 		break;
 	}
 

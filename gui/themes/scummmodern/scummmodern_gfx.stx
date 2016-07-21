@@ -181,7 +181,7 @@
 		<text_color	id = 'color_button_hover'
 				color = 'white'
 		/>
-	
+
 		<text_color	id = 'color_alternative_inverted'
 				color = 'white'
 		/>
@@ -327,7 +327,7 @@
 					orientation = 'top'
 		/>
 	</drawdata>
-	
+
 	<drawdata id = 'scrollbar_button_hover' cache = 'false' resolution = 'y>399'>
 		<drawstep	func = 'roundedsq'
 					radius = '10'
@@ -350,7 +350,7 @@
 					orientation = 'top'
 		/>
 	</drawdata>
-	
+
 	<drawdata id = 'scrollbar_button_hover' cache = 'false' resolution = 'y<400'>
 		<drawstep	func = 'roundedsq'
 					radius = '10'
@@ -476,7 +476,7 @@
 					bg_color = 'xtrabrightred'
 					shadow = '1'
 		/>
-	
+
 		<drawstep	func = 'triangle'
 					bg_color = 'shadowcolor'
 					fill = 'background'
@@ -487,7 +487,7 @@
 					padding = '0, 0, 6, 0'
 					orientation = 'bottom'
 		/>
-		
+
 		<drawstep	func = 'triangle'
 					bg_color = 'shadowcolor'
 					fill = 'background'
@@ -498,14 +498,14 @@
 					padding = '0, 0, 6, 0'
 					orientation = 'top'
 		/>
-		
+
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
 				horizontal_align = 'left'
 		/>
 	</drawdata>
-	
+
 	<drawdata id = 'popup_idle' cache = 'false' resolution ='y<400'>
 		<drawstep	func = 'roundedsq'
 					radius = '5'
@@ -515,7 +515,7 @@
 					bg_color = 'xtrabrightred'
 					shadow = '1'
 		/>
-	
+
 		<drawstep	func = 'triangle'
 					bg_color = 'shadowcolor'
 					fill = 'background'
@@ -526,7 +526,7 @@
 					padding = '0, 0, 3, 0'
 					orientation = 'bottom'
 		/>
-		
+
 		<drawstep	func = 'triangle'
 					bg_color = 'shadowcolor'
 					fill = 'background'
@@ -537,7 +537,7 @@
 					padding = '0, 0, 3, 0'
 					orientation = 'top'
 		/>
-		
+
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
@@ -566,7 +566,7 @@
 					padding = '0, 0, 6, 0'
 					orientation = 'bottom'
 		/>
-		
+
 		<drawstep	func = 'triangle'
 					bg_color = 'shadowcolor'
 					fill = 'background'
@@ -577,14 +577,14 @@
 					padding = '0, 0, 6, 0'
 					orientation = 'top'
 		/>
-		
+
 		<text	font = 'text_default'
 				text_color = 'color_normal_hover'
 				vertical_align = 'center'
 				horizontal_align = 'left'
 		/>
 	</drawdata>
-	
+
 	<drawdata id = 'popup_disabled' cache = 'false' resolution = 'y<400'>
 		<drawstep	func = 'roundedsq'
 					radius = '5'
@@ -594,7 +594,7 @@
 					bg_color = 'xtrabrightred'
 					shadow = '2'
 		/>
-	
+
 		<drawstep	func = 'triangle'
 					bg_color = 'shadowcolor'
 					fill = 'background'
@@ -605,7 +605,7 @@
 					padding = '0, 0, 3, 0'
 					orientation = 'bottom'
 		/>
-		
+
 		<drawstep	func = 'triangle'
 					bg_color = 'shadowcolor'
 					fill = 'background'
@@ -616,7 +616,7 @@
 					padding = '0, 0, 3, 0'
 					orientation = 'top'
 		/>
-		
+
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
@@ -645,7 +645,7 @@
 					padding = '0, 0, 6, 0'
 					orientation = 'bottom'
 		/>
-		
+
 		<drawstep	func = 'triangle'
 					bg_color = 'shadowcolor'
 					fill = 'background'
@@ -656,14 +656,14 @@
 					padding = '0, 0, 6, 0'
 					orientation = 'top'
 		/>
-		
+
 		<text	font = 'text_default'
 				text_color = 'color_normal_hover'
 				vertical_align = 'center'
 				horizontal_align = 'left'
 		/>
 	</drawdata>
-	
+
 	<drawdata id = 'popup_hover' cache = 'false' resolution = 'y<400'>
 		<drawstep	func = 'roundedsq'
 					radius = '5'
@@ -673,7 +673,7 @@
 					bg_color = 'xtrabrightred'
 					shadow = '1'
 		/>
-	
+
 		<drawstep	func = 'triangle'
 					bg_color = 'shadowcolor'
 					fill = 'background'
@@ -684,7 +684,7 @@
 					padding = '0, 0, 3, 0'
 					orientation = 'bottom'
 		/>
-		
+
 		<drawstep	func = 'triangle'
 					bg_color = 'shadowcolor'
 					fill = 'background'
@@ -695,7 +695,7 @@
 					padding = '0, 0, 3, 0'
 					orientation = 'top'
 		/>
-		
+
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
@@ -777,7 +777,7 @@
 					bevel = '1'
 					bevel_color = 'black'
 		/>
-	</drawdata> 
+	</drawdata>
 
 	<!-- Idle button -->
 	<drawdata id = 'button_idle' cache = 'false'>

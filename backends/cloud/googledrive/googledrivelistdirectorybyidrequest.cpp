@@ -82,7 +82,7 @@ void GoogleDriveListDirectoryByIdRequest::responseCallback(Networking::JsonRespo
 		Common::JSONObject responseObject = json->asObject();
 
 		///debug("%s", json->stringify(true).c_str());
-		
+
 		if (responseObject.contains("error") || responseObject.contains("error_summary")) {
 			warning("GoogleDrive returned error: %s", responseObject.getVal("error_summary")->asString().c_str());
 			error.failed = true;
@@ -92,7 +92,7 @@ void GoogleDriveListDirectoryByIdRequest::responseCallback(Networking::JsonRespo
 			return;
 		}
 
-		//TODO: check that ALL keys exist AND HAVE RIGHT TYPE to avoid segfaults		
+		//TODO: check that ALL keys exist AND HAVE RIGHT TYPE to avoid segfaults
 
 		if (responseObject.contains("files") && responseObject.getVal("files")->isArray()) {
 			Common::JSONArray items = responseObject.getVal("files")->asArray();
@@ -117,9 +117,9 @@ void GoogleDriveListDirectoryByIdRequest::responseCallback(Networking::JsonRespo
 		if (hasMore) {
 			Common::String token = responseObject.getVal("nextPageToken")->asString();
 			makeRequest(token);
-		} else {			
+		} else {
 			finishListing(_files);
-		}		
+		}
 	} else {
 		warning("null, not json");
 		error.failed = true;
@@ -142,7 +142,7 @@ void GoogleDriveListDirectoryByIdRequest::restart() { start(); }
 
 Common::String GoogleDriveListDirectoryByIdRequest::date() const { return _date; }
 
-void GoogleDriveListDirectoryByIdRequest::finishListing(Common::Array<StorageFile> &files) {	
+void GoogleDriveListDirectoryByIdRequest::finishListing(Common::Array<StorageFile> &files) {
 	Request::finishSuccess();
 	if (_listDirectoryCallback) (*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, files));
 }

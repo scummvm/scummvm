@@ -34,7 +34,7 @@ struct curl_slist;
 
 namespace Networking {
 
-class NetworkReadStream: public Common::MemoryReadWriteStream {	
+class NetworkReadStream: public Common::MemoryReadWriteStream {
 	CURL *_easy;
 	bool _eos, _requestComplete;
 	const byte *_sendingContentsBuffer;

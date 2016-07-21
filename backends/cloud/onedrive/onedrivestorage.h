@@ -47,7 +47,7 @@ class OneDriveStorage: public Cloud::Storage {
 	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);
 
 	void fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response);
-public:	
+public:
 	/** This constructor uses OAuth code flow to get tokens. */
 	OneDriveStorage(Common::String code);
 	virtual ~OneDriveStorage();
@@ -92,7 +92,7 @@ public:
 	virtual Common::String savesDirectoryPath();
 
 	/**
-	 * Load token and user id from configs and return OneDriveStorage for those.	
+	 * Load token and user id from configs and return OneDriveStorage for those.
 	 * @return pointer to the newly created OneDriveStorage or 0 if some problem occured.
 	 */
 	static OneDriveStorage *loadFromConfig(Common::String keyPrefix);

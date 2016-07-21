@@ -42,7 +42,7 @@ class GoogleDriveUploadRequest: public Networking::Request {
 	Common::String _resolvedId, _parentId;
 	Common::String _uploadUrl;
 	uint64 _serverReceivedBytes;
-	
+
 	void start();
 	void resolveId();
 	void idResolvedCallback(Storage::UploadResponse response);

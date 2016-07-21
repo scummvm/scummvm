@@ -52,7 +52,7 @@ void OneDriveTokenRefresher::tokenRefreshed(Storage::BoolResponse response) {
 	}
 	setHeaders(_headers);
 
-	//successfully received refreshed token, can restart the original request now	
+	//successfully received refreshed token, can restart the original request now
 	retry(0);
 }
 
@@ -65,7 +65,7 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 
 	Common::JSONObject result = json->asObject();
 	if (result.contains("error")) {
-		//new token needed => request token & then retry original request		
+		//new token needed => request token & then retry original request
 		if (_stream) {
 			debug(9, "code %ld", _stream->httpResponseCode());
 		}
@@ -76,7 +76,7 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 		Common::String code, message;
 		if (error.contains("code")) {
 			code = error.getVal("code")->asString();
-			debug(9, "code = %s", code.c_str());			
+			debug(9, "code = %s", code.c_str());
 		}
 
 		if (error.contains("message")) {
@@ -92,13 +92,13 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 
 		if (code == "unauthenticated") irrecoverable = false;
 
-		if (irrecoverable) {			
+		if (irrecoverable) {
 			finishError(Networking::ErrorResponse(this, false, true, json->stringify(true), -1)); //TODO: httpCode
 			delete json;
 			return;
 		}
 
-		pause();		
+		pause();
 		delete json;
 		_parentStorage->getAccessToken(new Common::Callback<OneDriveTokenRefresher, Storage::BoolResponse>(this, &OneDriveTokenRefresher::tokenRefreshed));
 		return;
@@ -108,7 +108,7 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 	CurlJsonRequest::finishJson(json);
 }
 
-void OneDriveTokenRefresher::setHeaders(Common::Array<Common::String> &headers) {	
+void OneDriveTokenRefresher::setHeaders(Common::Array<Common::String> &headers) {
 	_headers = headers;
 	curl_slist_free_all(_headersList);
 	_headersList = 0;

@@ -39,7 +39,7 @@ class BoxUploadRequest: public Networking::Request {
 	Request *_workingRequest;
 	bool _ignoreCallback;
 	Common::String _resolvedId, _parentId;
-	
+
 	void start();
 	void resolveId();
 	void idResolvedCallback(Storage::UploadResponse response);

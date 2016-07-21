@@ -132,7 +132,7 @@ SavesSyncRequest *Storage::syncSaves(BoolCallback callback, Networking::ErrorCal
 	if (!errorCallback) errorCallback = new Common::Callback<Storage, Networking::ErrorResponse>(this, &Storage::savesSyncDefaultErrorCallback);
 	_savesSyncRequest = new SavesSyncRequest(this, callback, errorCallback);
 	_syncRestartRequestsed = false;
-	_runningRequestsMutex.unlock();	
+	_runningRequestsMutex.unlock();
 	return (SavesSyncRequest *)addRequest(_savesSyncRequest); //who knows what that ConnMan could return in the future
 }
 

@@ -29,7 +29,7 @@
 namespace Networking {
 namespace Browser {
 
-namespace {    
+namespace {
 bool launch(const Common::String client, const Common::String &url) {
     // FIXME: system's input must be heavily escaped
     // well, when url's specified by user
@@ -41,10 +41,10 @@ bool launch(const Common::String client, const Common::String &url) {
 
 bool openUrl(const Common::String &url) {
     // inspired by Qt's "qdesktopservices_x11.cpp"
-    
+
     // try "standards"
     if (launch("xdg-open", url))
-        return true;    
+        return true;
     if (launch(getenv("DEFAULT_BROWSER"), url))
         return true;
     if (launch(getenv("BROWSER"), url))
@@ -67,7 +67,7 @@ bool openUrl(const Common::String &url) {
         return true;
     if (launch("opera", url))
         return true;
-    
+
     warning("Networking::Browser::openUrl() (POSIX) failed to open URL");
     return false;
 }

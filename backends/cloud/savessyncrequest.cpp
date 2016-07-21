@@ -48,7 +48,7 @@ SavesSyncRequest::~SavesSyncRequest() {
 void SavesSyncRequest::start() {
 	//cleanup
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();	
+	if (_workingRequest) _workingRequest->finish();
 	_currentDownloadingFile = StorageFile();
 	_currentUploadingFile = "";
 	_filesToDownload.clear();
@@ -78,7 +78,7 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 	if (response.request) _date = response.request->date();
 
 	Common::HashMap<Common::String, bool> localFileNotAvailableInCloud;
-	for (Common::HashMap<Common::String, uint32>::iterator i = _localFilesTimestamps.begin(); i != _localFilesTimestamps.end(); ++i) {		
+	for (Common::HashMap<Common::String, uint32>::iterator i = _localFilesTimestamps.begin(); i != _localFilesTimestamps.end(); ++i) {
 		localFileNotAvailableInCloud[i->_key] = true;
 	}
 
@@ -96,7 +96,7 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 			_filesToDownload.push_back(file);
 		else {
 			localFileNotAvailableInCloud[name] = false;
-			
+
 			if (_localFilesTimestamps[name] == file.timestamp())
 				continue;
 
@@ -145,7 +145,7 @@ void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse er
 				//Dropbox-related error:
 				if (object.contains("error_summary")) {
 					Common::String summary = object.getVal("error_summary")->asString();
-					if (summary.contains("not_found")) {						
+					if (summary.contains("not_found")) {
 						irrecoverable = false;
 					}
 				}
@@ -223,7 +223,7 @@ void SavesSyncRequest::downloadNextFile() {
 	_filesToDownload.pop_back();
 
 	sendCommand(GUI::kSavesSyncProgressCmd, (int)(getDownloadingProgress() * 100));
-	
+
 	debug(9, "downloading %s (%d %%)", _currentDownloadingFile.name().c_str(), (int)(getProgress() * 100));
 	_workingRequest = _storage->downloadById(_currentDownloadingFile.id(), DefaultSaveFileManager::concatWithSavesPath(_currentDownloadingFile.name()),
 		new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::fileDownloadedCallback),
@@ -258,7 +258,7 @@ void SavesSyncRequest::fileDownloadedErrorCallback(Networking::ErrorResponse err
 	if (_ignoreCallback) return;
 
 	//stop syncing if download failed
-	finishError(error);	
+	finishError(error);
 }
 
 void SavesSyncRequest::uploadNextFile() {
@@ -269,8 +269,8 @@ void SavesSyncRequest::uploadNextFile() {
 
 	_currentUploadingFile = _filesToUpload.back();
 	_filesToUpload.pop_back();
-		
-	debug(9, "uploading %s (%d %%)", _currentUploadingFile.c_str(), (int)(getProgress()*100));	
+
+	debug(9, "uploading %s (%d %%)", _currentUploadingFile.c_str(), (int)(getProgress()*100));
 	if (_storage->uploadStreamSupported()) {
 		_workingRequest = _storage->upload(_storage->savesDirectoryPath() + _currentUploadingFile, g_system->getSavefileManager()->openRawFile(_currentUploadingFile),
 			new Common::Callback<SavesSyncRequest, Storage::UploadResponse>(this, &SavesSyncRequest::fileUploadedCallback),
@@ -288,7 +288,7 @@ void SavesSyncRequest::uploadNextFile() {
 void SavesSyncRequest::fileUploadedCallback(Storage::UploadResponse response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
-	
+
 	//update local timestamp for the uploaded file
 	_localFilesTimestamps = DefaultSaveFileManager::loadTimestamps();
 	_localFilesTimestamps[_currentUploadingFile] = response.value.timestamp();
@@ -345,7 +345,7 @@ void SavesSyncRequest::finishError(Networking::ErrorResponse error) {
 	debug("SavesSync::finishError");
 	//if we were downloading a file - remember the name
 	//and make the Request close() it, so we can delete it
-	Common::String name = _currentDownloadingFile.name();	
+	Common::String name = _currentDownloadingFile.name();
 	if (_workingRequest) {
 		_ignoreCallback = true;
 		_workingRequest->finish();

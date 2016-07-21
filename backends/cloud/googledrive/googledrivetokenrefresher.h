@@ -33,12 +33,12 @@ class GoogleDriveStorage;
 
 class GoogleDriveTokenRefresher: public Networking::CurlJsonRequest {
 	GoogleDriveStorage *_parentStorage;
-	Common::Array<Common::String> _headers;	
-	
+	Common::Array<Common::String> _headers;
+
 	void tokenRefreshed(Storage::BoolResponse response);
 
 	virtual void finishJson(Common::JSONValue *json);
-public:	
+public:
 	GoogleDriveTokenRefresher(GoogleDriveStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url);
 	virtual ~GoogleDriveTokenRefresher();
 

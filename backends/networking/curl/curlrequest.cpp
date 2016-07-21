@@ -48,7 +48,7 @@ NetworkReadStream *CurlRequest::makeStream() {
 }
 
 void CurlRequest::handle() {
-	if (!_stream) _stream = makeStream();	
+	if (!_stream) _stream = makeStream();
 
 	if (_stream && _stream->eos()) {
 		if (_stream->httpResponseCode() != 200) {
@@ -68,7 +68,7 @@ void CurlRequest::restart() {
 	//with no stream available next handle() will create another one
 }
 
-Common::String CurlRequest::date() const {	
+Common::String CurlRequest::date() const {
 	if (_stream) {
 		Common::String headers = _stream->responseHeaders();
 		const char *cstr = headers.c_str();
@@ -114,7 +114,7 @@ void CurlRequest::addPostField(Common::String keyValuePair) {
 void CurlRequest::addFormField(Common::String name, Common::String value) {
 	if (_bytesBuffer)
 		warning("CurlRequest: added POST form fields would be ignored, because there is buffer present");
-	
+
 	if (_formFields.contains(name))
 		warning("CurlRequest: form field '%s' already had a value", name.c_str());
 

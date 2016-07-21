@@ -81,7 +81,7 @@ void DropboxListDirectoryRequest::responseCallback(Networking::JsonResponse resp
 	Common::JSONValue *json = response.value;
 	if (json) {
 		Common::JSONObject responseObjecct = json->asObject();
-		
+
 		if (responseObjecct.contains("error") || responseObjecct.contains("error_summary")) {
 			warning("Dropbox returned error: %s", responseObjecct.getVal("error_summary")->asString().c_str());
 			error.failed = true;
@@ -91,7 +91,7 @@ void DropboxListDirectoryRequest::responseCallback(Networking::JsonResponse resp
 			return;
 		}
 
-		//TODO: check that ALL keys exist AND HAVE RIGHT TYPE to avoid segfaults		
+		//TODO: check that ALL keys exist AND HAVE RIGHT TYPE to avoid segfaults
 
 		if (responseObjecct.contains("entries")) {
 			Common::JSONArray items = responseObjecct.getVal("entries")->asArray();
@@ -110,7 +110,7 @@ void DropboxListDirectoryRequest::responseCallback(Networking::JsonResponse resp
 
 		bool hasMore = (responseObjecct.contains("has_more") && responseObjecct.getVal("has_more")->asBool());
 
-		if (hasMore) {			
+		if (hasMore) {
 			Networking::JsonCallback callback = new Common::Callback<DropboxListDirectoryRequest, Networking::JsonResponse>(this, &DropboxListDirectoryRequest::responseCallback);
 			Networking::ErrorCallback failureCallback = new Common::Callback<DropboxListDirectoryRequest, Networking::ErrorResponse>(this, &DropboxListDirectoryRequest::errorCallback);
 			Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, failureCallback, "https://api.dropboxapi.com/2/files/list_folder/continue");
@@ -124,9 +124,9 @@ void DropboxListDirectoryRequest::responseCallback(Networking::JsonResponse resp
 			request->addPostField(Common::JSON::stringify(&value));
 
 			_workingRequest = ConnMan.addRequest(request);
-		} else {			
+		} else {
 			finishListing(_files);
-		}		
+		}
 	} else {
 		warning("null, not json");
 		error.failed = true;
@@ -149,7 +149,7 @@ void DropboxListDirectoryRequest::restart() { start(); }
 
 Common::String DropboxListDirectoryRequest::date() const { return _date; }
 
-void DropboxListDirectoryRequest::finishListing(Common::Array<StorageFile> &files) {	
+void DropboxListDirectoryRequest::finishListing(Common::Array<StorageFile> &files) {
 	Request::finishSuccess();
 	if (_listDirectoryCallback) (*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, files));
 }

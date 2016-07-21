@@ -36,7 +36,7 @@ class DropboxInfoRequest: public Networking::Request {
 	Storage::StorageInfoCallback _infoCallback;
 	Request *_workingRequest;
 	bool _ignoreCallback;
-	
+
 	void start();
 	void userResponseCallback(Networking::JsonResponse response);
 	void quotaResponseCallback(Networking::JsonResponse response);

@@ -33,12 +33,12 @@ class OneDriveStorage;
 
 class OneDriveTokenRefresher: public Networking::CurlJsonRequest {
 	OneDriveStorage *_parentStorage;
-	Common::Array<Common::String> _headers;	
-	
+	Common::Array<Common::String> _headers;
+
 	void tokenRefreshed(Storage::BoolResponse response);
 
 	virtual void finishJson(Common::JSONValue *json);
-public:	
+public:
 	OneDriveTokenRefresher(OneDriveStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url);
 	virtual ~OneDriveTokenRefresher();
 

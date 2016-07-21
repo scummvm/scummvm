@@ -1779,7 +1779,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 	int serverLabelPosition = -1; //no override
 #ifdef USE_LIBCURL
 	_selectedStorageIndex = _storagePopUp->getSelectedTag();
-	
+
 	if (_storagePopUpDesc) _storagePopUpDesc->setVisible(true);
 	if (_storagePopUp) _storagePopUp->setVisible(true);
 
@@ -1813,7 +1813,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 	if (!shown) serverLabelPosition = (_storageUsernameDesc ? _storageUsernameDesc->getRelY() : 0);
 #else
 	_selectedStorageIndex = 0;
-	
+
 	if (_storagePopUpDesc) _storagePopUpDesc->setVisible(false);
 	if (_storagePopUp) _storagePopUp->setVisible(false);
 	if (_storageUsernameDesc) _storageUsernameDesc->setVisible(false);
@@ -1822,7 +1822,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 	if (_storageUsedSpaceDesc) _storageUsedSpaceDesc->setVisible(false);
 	if (_storageUsedSpace) _storageUsedSpace->setVisible(false);
 	if (_storageLastSyncDesc) _storageLastSyncDesc->setVisible(false);
-	if (_storageLastSync) _storageLastSync->setVisible(false);	
+	if (_storageLastSync) _storageLastSync->setVisible(false);
 	if (_storageConnectButton) _storageConnectButton->setVisible(false);
 	if (_storageRefreshButton) _storageRefreshButton->setVisible(false);
 	if (_storageDownloadButton) _storageDownloadButton->setVisible(false);
@@ -1851,7 +1851,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 	serverPortClearButtonY = y;
 
 	bool serverIsRunning = LocalServer.isRunning();
-		
+
 	if (serverLabelPosition < 0) serverLabelPosition = serverInfoY;
 	if (_runServerButton) {
 		_runServerButton->setVisible(true);
@@ -1907,7 +1907,7 @@ void GlobalOptionsDialog::storageListDirectoryCallback(Cloud::Storage::ListDirec
 	uint64 totalSize = 0;
 	for (uint32 i = 0; i < files.size(); ++i)
 		if (!files[i].isDirectory())
-			totalSize += files[i].size();	
+			totalSize += files[i].size();
 	CloudMan.setStorageUsedSpace(CloudMan.getStorageIndex(), totalSize);
 	_redrawCloudTab = true;
 }

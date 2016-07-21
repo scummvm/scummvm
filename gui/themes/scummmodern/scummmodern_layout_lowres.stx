@@ -536,7 +536,7 @@
 	<dialog name = 'GlobalOptions_Cloud_Container' overlays = 'GlobalOptions_Cloud.Container'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
-				<widget name = 'StoragePopupDesc'						
+				<widget name = 'StoragePopupDesc'
 						width = '80'
 						height = 'Globals.Line.Height'
 						textalign = 'right'
@@ -623,7 +623,7 @@
 			<widget name = 'ProgressBar'
 					height = 'Globals.Button.Height'
 			/>
-			<space size = '1'/>	
+			<space size = '1'/>
 			<widget name = 'PercentText'
 					height = 'Globals.Line.Height'
 					textalign = 'center'
@@ -707,7 +707,7 @@
 							height = 'Globals.Line.Height'
 					/>
 				<space size = '4' />
-			</layout>		
+			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
 				<widget name = 'CancelButton'
 						type = 'Button'
@@ -1245,7 +1245,7 @@
 					width = '240'
 					height = 'Globals.Button.Height'
 			/>
-			<space size = '1'/>	
+			<space size = '1'/>
 			<widget name = 'PercentText'
 					width = '240'
 					height = 'Globals.Line.Height'
@@ -1256,7 +1256,7 @@
 				<widget name = 'Cancel'
 						width = '100'
 						height = 'Globals.Button.Height'
-				/>				
+				/>
 				<widget name = 'Background'
 						width = '100'
 						height = 'Globals.Button.Height'

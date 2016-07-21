@@ -46,7 +46,7 @@ FolderDownloadRequest::~FolderDownloadRequest() {
 void FolderDownloadRequest::start() {
 	//cleanup
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();	
+	if (_workingRequest) _workingRequest->finish();
 	_currentFile = StorageFile();
 	_pendingFiles.clear();
 	_failedFiles.clear();
@@ -108,7 +108,7 @@ void FolderDownloadRequest::downloadNextFile() {
 			finishDownload(_failedFiles);
 			return;
 		}
-	
+
 		_currentFile = _pendingFiles.back();
 		_pendingFiles.pop_back();
 	} while (_currentFile.isDirectory()); //TODO: may be create these directories (in case those are empty)
@@ -124,7 +124,7 @@ void FolderDownloadRequest::downloadNextFile() {
 	} else {
 		warning("Can't process the following paths:");
 		warning("remote directory: %s", _remoteDirectoryPath.c_str());
-		warning("remote file under that directory: %s", remotePath.c_str());		
+		warning("remote file under that directory: %s", remotePath.c_str());
 	}
 	if (_localDirectoryPath != "") {
 		if (_localDirectoryPath.lastChar() == '/' || _localDirectoryPath.lastChar() == '\\')

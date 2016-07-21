@@ -67,9 +67,9 @@ void DownloadFileHandler::handle(Client &client) {
 
 	GetClientHandler *handler = new GetClientHandler(stream);
 	handler->setResponseCode(200);
-	handler->setHeader("Content-Type", "application/force-download");	
+	handler->setHeader("Content-Type", "application/force-download");
 	handler->setHeader("Content-Disposition", "attachment; filename=\"" + node->getDisplayName() + "\"");
-	handler->setHeader("Content-Transfer-Encoding", "binary");	
+	handler->setHeader("Content-Transfer-Encoding", "binary");
 	client.setHandler(handler);
 }
 

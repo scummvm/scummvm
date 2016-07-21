@@ -44,7 +44,7 @@ DropboxCreateDirectoryRequest::~DropboxCreateDirectoryRequest() {
 
 void DropboxCreateDirectoryRequest::start() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();	
+	if (_workingRequest) _workingRequest->finish();
 	_ignoreCallback = false;
 
 	Networking::JsonCallback innerCallback = new Common::Callback<DropboxCreateDirectoryRequest, Networking::JsonResponse>(this, &DropboxCreateDirectoryRequest::responseCallback);
@@ -74,13 +74,13 @@ void DropboxCreateDirectoryRequest::responseCallback(Networking::JsonResponse re
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
-	
+
 	if (!json) {
 		warning("NULL passed instead of JSON");
 		finishError(error);
 		return;
 	}
-	
+
 	Common::JSONObject info = json->asObject();
 	if (info.contains("id")) finishCreation(true);
 	else {

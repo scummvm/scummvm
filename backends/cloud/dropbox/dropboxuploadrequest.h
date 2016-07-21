@@ -39,7 +39,7 @@ class DropboxUploadRequest: public Networking::Request {
 	Request *_workingRequest;
 	bool _ignoreCallback;
 	Common::String _sessionId;
-	
+
 	void start();
 	void uploadNextPart();
 	void partUploadedCallback(Networking::JsonResponse response);

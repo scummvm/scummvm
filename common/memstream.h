@@ -230,7 +230,7 @@ private:
 		_capacity = MAX(new_len + 32, _capacity * 2);
 		_data = (byte *)malloc(_capacity);
 
-		if (old_data) {			
+		if (old_data) {
 			// Copy old data
 			if (_readPos < _writePos) {
 				memcpy(_data, old_data + _readPos, _writePos - _readPos);
@@ -289,7 +289,7 @@ public:
 	uint32 pos() const { return _pos - _length; } //'read' position in the stream
 	uint32 size() const { return _size; } //that's also 'write' position in the stream, as it's append-only
 
-	byte *getData() { return _data; }	
+	byte *getData() { return _data; }
 };
 
 } // End of namespace Common

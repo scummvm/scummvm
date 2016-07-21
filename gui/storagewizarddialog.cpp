@@ -46,7 +46,7 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 
 	Common::String headline = Common::String::format(_("%s Storage Connection Wizard"), CloudMan.listStorages()[_storageId].c_str());
 	new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.Headline", headline);
-	
+
 	new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.NavigateLine", _s("Navigate to the following URL:"));
 	new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.URLLine", getUrl());
 
@@ -114,7 +114,7 @@ void StorageWizardDialog::close() {
 
 void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-	case kCodeBoxCmd: {		
+	case kCodeBoxCmd: {
 		Common::String code, message;
 		uint32 correctFields = 0;
 		for (uint32 i = 0; i < CODE_FIELDS; ++i) {
@@ -184,7 +184,7 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 	case kStorageCodePassedCmd:
 		CloudMan.connectStorage(_storageId, LocalServer.indexPageHandler().code());
-		_close = true;		
+		_close = true;
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
@@ -208,7 +208,7 @@ Common::String StorageWizardDialog::getUrl() const {
 	case Cloud::kStorageGoogleDriveId: url += "gd"; break;
 	case Cloud::kStorageBoxId: url += "bx"; break;
 	}
-	
+
 	if (couldUseLocalServer()) url += "s";
 	return url;
 }
@@ -222,7 +222,7 @@ bool StorageWizardDialog::couldUseLocalServer() const {
 }
 
 int StorageWizardDialog::decodeHashchar(char c) {
-	const char HASHCHARS[65] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ?!";	
+	const char HASHCHARS[65] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ?!";
 	for (uint32 i = 0; i < 64; ++i)
 		if (c == HASHCHARS[i])
 			return i;
@@ -232,10 +232,10 @@ int StorageWizardDialog::decodeHashchar(char c) {
 bool StorageWizardDialog::correctChecksum(Common::String s) {
 	if (s.size() == 0) return false; //no last char
 	int providedChecksum = decodeHashchar(s.lastChar());
-	int calculatedChecksum = 0x2A; //any initial value would do, but it must equal to the one used on the page where these checksums were generated 
+	int calculatedChecksum = 0x2A; //any initial value would do, but it must equal to the one used on the page where these checksums were generated
 	for (uint32 i = 0; i < s.size()-1; ++i) {
 		calculatedChecksum = calculatedChecksum ^ s[i];
-	}	
+	}
 	return providedChecksum == (calculatedChecksum % 64);
 }
 

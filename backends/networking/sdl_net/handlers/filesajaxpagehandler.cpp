@@ -53,7 +53,7 @@ void FilesAjaxPageHandler::handle(Client &client) {
 		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("The page is not available without the resources."));
 		return;
 	}
-		
+
 	Common::String response = HandlerUtils::readEverythingFromStream(stream);
 	Common::String path = client.queryParameter("path");
 
