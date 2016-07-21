@@ -95,6 +95,7 @@ FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelBuffer &fra
 	size = this->xsize * this->ysize * sizeof(unsigned int);
 
 	this->_zbuf = (unsigned int *)gl_malloc(size);
+	memset(this->_zbuf, 0, size);
 
 	if (!frame_buffer) {
 		byte *pixelBuffer = (byte *)gl_malloc(this->ysize * this->linesize);
