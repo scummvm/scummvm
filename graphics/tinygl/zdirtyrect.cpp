@@ -198,7 +198,7 @@ void tglPresentBufferDirtyRects(TinyGL::GLContext *c) {
 	// red rectangles are original dirty rects
 
 	bool blendingEnabled = c->fb->isBlendingEnabled();
-	bool alphaTestEnabled = c->fb->isAplhaTestEnabled();
+	bool alphaTestEnabled = c->fb->isAlphaTestEnabled();
 	c->fb->enableBlending(false);
 	c->fb->enableAlphaTest(false);
 
