@@ -28,6 +28,9 @@
 #include "common/translation.h"
 #include "common/config-manager.h"
 #include "common/str.h"
+#ifdef USE_SDL_NET
+#include "backends/networking/sdl_net/localwebserver.h"
+#endif
 
 namespace Common {
 
@@ -294,6 +297,14 @@ bool CloudManager::isWorking() const {
 	Storage *storage = getCurrentStorage();
 	if (storage) return storage->isWorking();
 	return false;
+}
+
+bool CloudManager::couldUseLocalServer() {
+#ifdef USE_SDL_NET
+	return Networking::LocalWebserver::getPort() == Networking::LocalWebserver::DEFAULT_SERVER_PORT;
+#else
+	return false;
+#endif
 }
 
 ///// SavesSyncRequest-related /////

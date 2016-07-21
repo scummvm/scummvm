@@ -61,7 +61,7 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 	new ButtonWidget(this, "GlobalOptions_Cloud_ConnectionWizard.OpenUrlButton", _("Open URL"), 0, kOpenUrlCmd);
 	_connectWidget = new ButtonWidget(this, "GlobalOptions_Cloud_ConnectionWizard.ConnectButton", _("Connect"), 0, kConnectCmd);
 
-	if (couldUseLocalServer()) {
+	if (Cloud::CloudManager::couldUseLocalServer()) {
 		// hide fields and even the button if local webserver is on
 		returnLine1->setLabel(_s("You would be navigated to ScummVM's page"));
 		returnLine2->setLabel(_s("when you'd allow it to use your storage."));
@@ -97,7 +97,7 @@ void StorageWizardDialog::open() {
 		}
 	}
 
-	if (couldUseLocalServer()) {
+	if (Cloud::CloudManager::couldUseLocalServer()) {
 		_stopServerOnClose = !LocalServer.isRunning();
 		LocalServer.start();
 		LocalServer.indexPageHandler().setTarget(this);
@@ -105,7 +105,7 @@ void StorageWizardDialog::open() {
 }
 
 void StorageWizardDialog::close() {
-	if (couldUseLocalServer()) {
+	if (Cloud::CloudManager::couldUseLocalServer()) {
 		if (_stopServerOnClose) LocalServer.stopOnIdle();
 		LocalServer.indexPageHandler().setTarget(nullptr);
 	}
@@ -209,16 +209,8 @@ Common::String StorageWizardDialog::getUrl() const {
 	case Cloud::kStorageBoxId: url += "bx"; break;
 	}
 
-	if (couldUseLocalServer()) url += "s";
+	if (Cloud::CloudManager::couldUseLocalServer()) url += "s";
 	return url;
-}
-
-bool StorageWizardDialog::couldUseLocalServer() const {
-#ifdef USE_SDL_NET
-	return Networking::LocalWebserver::getPort() == Networking::LocalWebserver::DEFAULT_SERVER_PORT;
-#else
-	return false;
-#endif
 }
 
 int StorageWizardDialog::decodeHashchar(char c) {

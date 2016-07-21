@@ -51,9 +51,6 @@ class StorageWizardDialog : public Dialog {
 	/** Return short scummvm.org URL for user to navigate to. */
 	Common::String getUrl() const;
 
-	/** Return whether fields should be used or not. */
-	bool couldUseLocalServer() const;
-
 	/**
 	 * Return the value corresponding to the given character.
 	 *
