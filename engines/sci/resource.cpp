@@ -1367,6 +1367,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 		if (!file->open(source->getLocationName())) {
 			warning("ResourceManager::processPatch(): failed to open %s", source->getLocationName().c_str());
 			delete source;
+			delete file;
 			return;
 		}
 		fileStream = file;
@@ -1376,6 +1377,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	if (fsize < 3) {
 		debug("Patching %s failed - file too small", source->getLocationName().c_str());
 		delete source;
+		delete fileStream;
 		return;
 	}
 
