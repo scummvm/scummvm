@@ -37,6 +37,9 @@
 namespace Cloud {
 namespace Dropbox {
 
+#define DROPBOX_OAUTH2_TOKEN "https://api.dropboxapi.com/oauth2/token"
+#define DROPBOX_API_FILES_DOWNLOAD "https://content.dropboxapi.com/2/files/download"
+
 char *DropboxStorage::KEY = nullptr; //can't use CloudConfig there yet, loading it on instance creation/auth
 char *DropboxStorage::SECRET = nullptr; //TODO: hide these secrets somehow
 
@@ -65,7 +68,7 @@ void DropboxStorage::getAccessToken(Common::String code) {
 		loadKeyAndSecret();
 	Networking::JsonCallback callback = new Common::Callback<DropboxStorage, Networking::JsonResponse>(this, &DropboxStorage::codeFlowComplete);
 	Networking::ErrorCallback errorCallback = new Common::Callback<DropboxStorage, Networking::ErrorResponse>(this, &DropboxStorage::codeFlowFailed);
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, errorCallback, "https://api.dropboxapi.com/oauth2/token");
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, errorCallback, DROPBOX_OAUTH2_TOKEN);
 	request->addPostField("code=" + code);
 	request->addPostField("grant_type=authorization_code");
 	request->addPostField("client_id=" + Common::String(KEY));
@@ -129,7 +132,7 @@ Networking::Request *DropboxStorage::streamFileById(Common::String path, Network
 	jsonRequestParameters.setVal("path", new Common::JSONValue(path));
 	Common::JSONValue value(jsonRequestParameters);
 
-	Networking::CurlRequest *request = new Networking::CurlRequest(nullptr, nullptr, "https://content.dropboxapi.com/2/files/download"); //TODO: is it right?
+	Networking::CurlRequest *request = new Networking::CurlRequest(nullptr, nullptr, DROPBOX_API_FILES_DOWNLOAD); //TODO: is it OK to pass no callbacks?
 	request->addHeader("Authorization: Bearer " + _token);
 	request->addHeader("Dropbox-API-Arg: " + Common::JSON::stringify(&value));
 	request->addHeader("Content-Type: "); //required to be empty (as we do POST, it's usually app/form-url-encoded)

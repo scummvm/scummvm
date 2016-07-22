@@ -34,6 +34,7 @@ namespace Cloud {
 namespace Box {
 
 #define BOX_LIST_DIRECTORY_LIMIT 1000
+#define BOX_FOLDERS_API_LINK "https://api.box.com/2.0/folders/%s/items?offset=%u&limit=%u&fields=%s"
 
 BoxListDirectoryByIdRequest::BoxListDirectoryByIdRequest(BoxStorage *storage, Common::String id, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _requestedId(id), _storage(storage), _listDirectoryCallback(cb),
@@ -58,7 +59,7 @@ void BoxListDirectoryByIdRequest::start() {
 
 void BoxListDirectoryByIdRequest::makeRequest(uint32 offset) {
 	Common::String url = Common::String::format(
-		"https://api.box.com/2.0/folders/%s/items?offset=%u&limit=%u&fields=%s",
+		BOX_FOLDERS_API_LINK,
 		_requestedId.c_str(),
 		offset,
 		BOX_LIST_DIRECTORY_LIMIT,

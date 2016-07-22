@@ -38,6 +38,10 @@
 namespace Cloud {
 namespace OneDrive {
 
+#define ONEDRIVE_OAUTH2_TOKEN "https://login.live.com/oauth20_token.srf"
+#define ONEDRIVE_API_SPECIAL_APPROOT_ID "https://api.onedrive.com/v1.0/drive/special/approot:/"
+#define ONEDRIVE_API_SPECIAL_APPROOT "https://api.onedrive.com/v1.0/drive/special/approot"
+
 char *OneDriveStorage::KEY = nullptr; //can't use CloudConfig there yet, loading it on instance creation/auth
 char *OneDriveStorage::SECRET = nullptr; //TODO: hide these secrets somehow
 
@@ -81,7 +85,7 @@ void OneDriveStorage::getAccessToken(BoolCallback callback, Networking::ErrorCal
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, BoolResponse, Networking::JsonResponse>(this, &OneDriveStorage::tokenRefreshed, callback);
 	if (errorCallback == nullptr)
 		errorCallback = getErrorPrintingCallback();
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, "https://login.live.com/oauth20_token.srf"); //TODO
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, ONEDRIVE_OAUTH2_TOKEN);
 	if (codeFlow) {
 		request->addPostField("code=" + code);
 		request->addPostField("grant_type=authorization_code");
@@ -227,7 +231,7 @@ Networking::Request *OneDriveStorage::upload(Common::String path, Common::Seekab
 }
 
 Networking::Request *OneDriveStorage::streamFileById(Common::String path, Networking::NetworkReadStreamCallback outerCallback, Networking::ErrorCallback errorCallback) {
-	Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot:/" + ConnMan.urlEncode(path);
+	Common::String url = ONEDRIVE_API_SPECIAL_APPROOT_ID + ConnMan.urlEncode(path);
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, Networking::NetworkReadStreamResponse, Networking::JsonResponse>(this, &OneDriveStorage::fileInfoCallback, outerCallback);
 	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, errorCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + _token);
@@ -242,7 +246,7 @@ Networking::Request *OneDriveStorage::createDirectory(Common::String path, BoolC
 
 Networking::Request *OneDriveStorage::info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) {
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, StorageInfoResponse, Networking::JsonResponse>(this, &OneDriveStorage::infoInnerCallback, callback);
-	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, errorCallback, "https://api.onedrive.com/v1.0/drive/special/approot");
+	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, errorCallback, ONEDRIVE_API_SPECIAL_APPROOT);
 	request->addHeader("Authorization: bearer " + _token);
 	return addRequest(request);
 }

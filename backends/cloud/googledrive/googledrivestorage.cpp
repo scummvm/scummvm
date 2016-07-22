@@ -37,6 +37,11 @@
 namespace Cloud {
 namespace GoogleDrive {
 
+#define GOOGLEDRIVE_OAUTH2_TOKEN "https://accounts.google.com/o/oauth2/token"
+#define GOOGLEDRIVE_API_FILES_ALT_MEDIA "https://www.googleapis.com/drive/v3/files/%s?alt=media"
+#define GOOGLEDRIVE_API_FILES "https://www.googleapis.com/drive/v3/files"
+#define GOOGLEDRIVE_API_ABOUT "https://www.googleapis.com/drive/v3/about?fields=storageQuota,user"
+
 char *GoogleDriveStorage::KEY = nullptr; //can't use CloudConfig there yet, loading it on instance creation/auth
 char *GoogleDriveStorage::SECRET = nullptr; //TODO: hide these secrets somehow
 
@@ -79,7 +84,7 @@ void GoogleDriveStorage::getAccessToken(BoolCallback callback, Networking::Error
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<GoogleDriveStorage, BoolResponse, Networking::JsonResponse>(this, &GoogleDriveStorage::tokenRefreshed, callback);
 	if (errorCallback == nullptr)
 		errorCallback = getErrorPrintingCallback();
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, "https://accounts.google.com/o/oauth2/token"); //TODO
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, GOOGLEDRIVE_OAUTH2_TOKEN); //TODO
 	if (codeFlow) {
 		request->addPostField("code=" + code);
 		request->addPostField("grant_type=authorization_code");
@@ -224,7 +229,7 @@ Networking::Request *GoogleDriveStorage::upload(Common::String path, Common::See
 
 Networking::Request *GoogleDriveStorage::streamFileById(Common::String id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) {
 	if (callback) {
-		Common::String url = "https://www.googleapis.com/drive/v3/files/" + ConnMan.urlEncode(id) + "?alt=media";
+		Common::String url = Common::String::format(GOOGLEDRIVE_API_FILES_ALT_MEDIA, ConnMan.urlEncode(id).c_str());
 		Common::String header = "Authorization: Bearer " + _token;
 		curl_slist *headersList = curl_slist_append(nullptr, header.c_str());
 		Networking::NetworkReadStream *stream = new Networking::NetworkReadStream(url.c_str(), headersList, "");
@@ -246,7 +251,7 @@ Networking::Request *GoogleDriveStorage::createDirectoryWithParentId(Common::Str
 	if (!errorCallback)
 		errorCallback = getErrorPrintingCallback();
 
-	Common::String url = "https://www.googleapis.com/drive/v3/files";
+	Common::String url = GOOGLEDRIVE_API_FILES;
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<GoogleDriveStorage, BoolResponse, Networking::JsonResponse>(this, &GoogleDriveStorage::createDirectoryInnerCallback, callback);
 	Networking::CurlJsonRequest *request = new GoogleDriveTokenRefresher(this, innerCallback, errorCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + accessToken());
@@ -270,7 +275,7 @@ Networking::Request *GoogleDriveStorage::info(StorageInfoCallback callback, Netw
 	if (!callback)
 		callback = new Common::Callback<GoogleDriveStorage, StorageInfoResponse>(this, &GoogleDriveStorage::printInfo);
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<GoogleDriveStorage, StorageInfoResponse, Networking::JsonResponse>(this, &GoogleDriveStorage::infoInnerCallback, callback);
-	Networking::CurlJsonRequest *request = new GoogleDriveTokenRefresher(this, innerCallback, errorCallback, "https://www.googleapis.com/drive/v3/about?fields=storageQuota,user");
+	Networking::CurlJsonRequest *request = new GoogleDriveTokenRefresher(this, innerCallback, errorCallback, GOOGLEDRIVE_API_ABOUT);
 	request->addHeader("Authorization: Bearer " + _token);
 	return addRequest(request);
 }

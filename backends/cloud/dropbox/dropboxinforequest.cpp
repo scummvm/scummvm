@@ -31,6 +31,9 @@
 namespace Cloud {
 namespace Dropbox {
 
+#define DROPBOX_API_GET_CURRENT_ACCOUNT "https://api.dropboxapi.com/2/users/get_current_account"
+#define DROPBOX_API_GET_SPACE_USAGE "https://api.dropboxapi.com/2/users/get_space_usage"
+
 DropboxInfoRequest::DropboxInfoRequest(Common::String token, Storage::StorageInfoCallback cb, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _token(token), _infoCallback(cb),
 	_workingRequest(nullptr), _ignoreCallback(false) {
@@ -52,7 +55,7 @@ void DropboxInfoRequest::start() {
 
 	Networking::JsonCallback innerCallback = new Common::Callback<DropboxInfoRequest, Networking::JsonResponse>(this, &DropboxInfoRequest::userResponseCallback);
 	Networking::ErrorCallback errorCallback = new Common::Callback<DropboxInfoRequest, Networking::ErrorResponse>(this, &DropboxInfoRequest::errorCallback);
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, "https://api.dropboxapi.com/2/users/get_current_account");
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, DROPBOX_API_GET_CURRENT_ACCOUNT);
 	request->addHeader("Authorization: Bearer " + _token);
 	request->addHeader("Content-Type: application/json");
 	request->addPostField("null"); //use POST
@@ -90,7 +93,7 @@ void DropboxInfoRequest::userResponseCallback(Networking::JsonResponse response)
 
 	Networking::JsonCallback innerCallback = new Common::Callback<DropboxInfoRequest, Networking::JsonResponse>(this, &DropboxInfoRequest::quotaResponseCallback);
 	Networking::ErrorCallback errorCallback = new Common::Callback<DropboxInfoRequest, Networking::ErrorResponse>(this, &DropboxInfoRequest::errorCallback);
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, "https://api.dropboxapi.com/2/users/get_space_usage");
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, DROPBOX_API_GET_SPACE_USAGE);
 	request->addHeader("Authorization: Bearer " + _token);
 	request->addHeader("Content-Type: application/json");
 	request->addPostField("null"); //use POST

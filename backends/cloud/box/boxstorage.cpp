@@ -37,6 +37,11 @@
 namespace Cloud {
 namespace Box {
 
+#define BOX_OAUTH2_TOKEN "https://api.box.com/oauth2/token"
+#define BOX_API_FOLDERS "https://api.box.com/2.0/folders"
+#define BOX_API_FILES_CONTENT "https://api.box.com/2.0/files/%s/content"
+#define BOX_API_USERS_ME "https://api.box.com/2.0/users/me"
+
 char *BoxStorage::KEY = nullptr; //can't use CloudConfig there yet, loading it on instance creation/auth
 char *BoxStorage::SECRET = nullptr; //TODO: hide these secrets somehow
 
@@ -80,7 +85,7 @@ void BoxStorage::getAccessToken(BoolCallback callback, Networking::ErrorCallback
 	if (errorCallback == nullptr)
 		errorCallback = getErrorPrintingCallback();
 
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, "https://api.box.com/oauth2/token");
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, BOX_OAUTH2_TOKEN);
 	if (codeFlow) {
 		request->addPostField("grant_type=authorization_code");
 		request->addPostField("code=" + code);
@@ -223,7 +228,7 @@ Networking::Request *BoxStorage::createDirectoryWithParentId(Common::String pare
 	if (!errorCallback)
 		errorCallback = getErrorPrintingCallback();
 
-	Common::String url = "https://api.box.com/2.0/folders";
+	Common::String url = BOX_API_FOLDERS;
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<BoxStorage, BoolResponse, Networking::JsonResponse>(this, &BoxStorage::createDirectoryInnerCallback, callback);
 	Networking::CurlJsonRequest *request = new BoxTokenRefresher(this, innerCallback, errorCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + accessToken());
@@ -263,7 +268,7 @@ bool BoxStorage::uploadStreamSupported() {
 
 Networking::Request *BoxStorage::streamFileById(Common::String id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) {
 	if (callback) {
-		Common::String url = "https://api.box.com/2.0/files/" + id + "/content";
+		Common::String url = Common::String::format(BOX_API_FILES_CONTENT, id.c_str());
 		Common::String header = "Authorization: Bearer " + _token;
 		curl_slist *headersList = curl_slist_append(nullptr, header.c_str());
 		Networking::NetworkReadStream *stream = new Networking::NetworkReadStream(url.c_str(), headersList, "");
@@ -276,7 +281,7 @@ Networking::Request *BoxStorage::streamFileById(Common::String id, Networking::N
 
 Networking::Request *BoxStorage::info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) {
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<BoxStorage, StorageInfoResponse, Networking::JsonResponse>(this, &BoxStorage::infoInnerCallback, callback);
-	Networking::CurlJsonRequest *request = new BoxTokenRefresher(this, innerCallback, errorCallback, "https://api.box.com/2.0/users/me");
+	Networking::CurlJsonRequest *request = new BoxTokenRefresher(this, innerCallback, errorCallback, BOX_API_USERS_ME);
 	request->addHeader("Authorization: Bearer " + _token);
 	return addRequest(request);
 }

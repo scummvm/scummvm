@@ -31,6 +31,8 @@
 namespace Cloud {
 namespace OneDrive {
 
+#define ONEDRIVE_API_SPECIAL_APPROOT_CHILDREN "https://api.onedrive.com/v1.0/drive/special/approot:/%s:/children"
+
 OneDriveListDirectoryRequest::OneDriveListDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive):
 	Networking::Request(nullptr, ecb),
 	_requestedPath(path), _requestedRecursive(recursive), _storage(storage), _listDirectoryCallback(cb),
@@ -74,8 +76,7 @@ void OneDriveListDirectoryRequest::listNextDirectory() {
 
 	Common::String dir = _currentDirectory;
 	dir.deleteLastChar();
-	Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot:/" + ConnMan.urlEncode(dir);
-	url += ":/children";
+	Common::String url = Common::String::format(ONEDRIVE_API_SPECIAL_APPROOT_CHILDREN, ConnMan.urlEncode(dir).c_str());
 	makeRequest(url);
 }
 

@@ -31,6 +31,8 @@
 namespace Cloud {
 namespace OneDrive {
 
+#define ONEDRIVE_API_SPECIAL_APPROOT "https://api.onedrive.com/v1.0/drive/special/approot"
+
 OneDriveCreateDirectoryRequest::OneDriveCreateDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::BoolCallback cb, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _storage(storage), _path(path), _boolCallback(cb),
 	_workingRequest(nullptr), _ignoreCallback(false) {
@@ -65,7 +67,7 @@ void OneDriveCreateDirectoryRequest::start() {
 		}
 	}
 
-	Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot";
+	Common::String url = ONEDRIVE_API_SPECIAL_APPROOT;
 	if (parent != "")
 		url += ":/" + ConnMan.urlEncode(parent) + ":";
 	url += "/children";

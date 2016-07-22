@@ -33,6 +33,8 @@
 namespace Cloud {
 namespace Box {
 
+#define BOX_API_FILES "https://upload.box.com/api/2.0/files"
+
 BoxUploadRequest::BoxUploadRequest(BoxStorage *storage, Common::String path, Common::String localPath, Storage::UploadCallback callback, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _storage(storage), _savePath(path), _localPath(localPath), _uploadCallback(callback),
 	_workingRequest(nullptr), _ignoreCallback(false) {
@@ -102,7 +104,7 @@ void BoxUploadRequest::upload() {
 		}
 	}
 
-	Common::String url = "https://upload.box.com/api/2.0/files";
+	Common::String url = BOX_API_FILES;
 	if (_resolvedId != "")
 		url += "/" + _resolvedId;
 	url += "/content";

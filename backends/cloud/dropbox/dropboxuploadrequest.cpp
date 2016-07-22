@@ -32,6 +32,9 @@
 namespace Cloud {
 namespace Dropbox {
 
+#define DROPBOX_API_FILES_UPLOAD "https://content.dropboxapi.com/2/files/upload"
+#define DROPBOX_API_FILES_UPLOAD_SESSION "https://content.dropboxapi.com/2/files/upload_session/"
+
 DropboxUploadRequest::DropboxUploadRequest(Common::String token, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _token(token), _savePath(path), _contentsStream(contents), _uploadCallback(callback),
 	_workingRequest(nullptr), _ignoreCallback(false) {
@@ -68,12 +71,12 @@ void DropboxUploadRequest::start() {
 void DropboxUploadRequest::uploadNextPart() {
 	const uint32 UPLOAD_PER_ONE_REQUEST = 10 * 1024 * 1024;
 
-	Common::String url = "https://content.dropboxapi.com/2/files/upload_session/";
+	Common::String url = DROPBOX_API_FILES_UPLOAD_SESSION;
 	Common::JSONObject jsonRequestParameters;
 
 	if (_contentsStream->pos() == 0 || _sessionId == "") {
 		if ((uint32)_contentsStream->size() <= UPLOAD_PER_ONE_REQUEST) {
-			url = "https://content.dropboxapi.com/2/files/upload";
+			url = DROPBOX_API_FILES_UPLOAD;
 			jsonRequestParameters.setVal("path", new Common::JSONValue(_savePath));
 			jsonRequestParameters.setVal("mode", new Common::JSONValue("overwrite"));
 			jsonRequestParameters.setVal("autorename", new Common::JSONValue(false));

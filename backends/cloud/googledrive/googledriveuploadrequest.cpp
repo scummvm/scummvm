@@ -33,6 +33,8 @@
 namespace Cloud {
 namespace GoogleDrive {
 
+#define GOOGLEDRIVE_API_FILES "https://www.googleapis.com/upload/drive/v3/files"
+
 GoogleDriveUploadRequest::GoogleDriveUploadRequest(GoogleDriveStorage *storage, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _storage(storage), _savePath(path), _contentsStream(contents), _uploadCallback(callback),
 	_workingRequest(nullptr), _ignoreCallback(false) {
@@ -111,7 +113,7 @@ void GoogleDriveUploadRequest::startUpload() {
 		}
 	}
 
-	Common::String url = "https://www.googleapis.com/upload/drive/v3/files";
+	Common::String url = GOOGLEDRIVE_API_FILES;
 	if (_resolvedId != "")
 		url += "/" + ConnMan.urlEncode(_resolvedId);
 	url += "?uploadType=resumable&fields=id,mimeType,modifiedTime,name,size";

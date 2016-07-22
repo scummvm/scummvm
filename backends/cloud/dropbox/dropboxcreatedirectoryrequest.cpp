@@ -30,6 +30,8 @@
 namespace Cloud {
 namespace Dropbox {
 
+#define DROPBOX_API_CREATE_FOLDER "https://api.dropboxapi.com/2/files/create_folder"
+
 DropboxCreateDirectoryRequest::DropboxCreateDirectoryRequest(Common::String token, Common::String path, Storage::BoolCallback cb, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _token(token), _path(path), _boolCallback(cb),
 	_workingRequest(nullptr), _ignoreCallback(false) {
@@ -51,7 +53,7 @@ void DropboxCreateDirectoryRequest::start() {
 
 	Networking::JsonCallback innerCallback = new Common::Callback<DropboxCreateDirectoryRequest, Networking::JsonResponse>(this, &DropboxCreateDirectoryRequest::responseCallback);
 	Networking::ErrorCallback errorCallback = new Common::Callback<DropboxCreateDirectoryRequest, Networking::ErrorResponse>(this, &DropboxCreateDirectoryRequest::errorCallback);
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, "https://api.dropboxapi.com/2/files/create_folder");
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, DROPBOX_API_CREATE_FOLDER);
 	request->addHeader("Authorization: Bearer " + _token);
 	request->addHeader("Content-Type: application/json");
 
