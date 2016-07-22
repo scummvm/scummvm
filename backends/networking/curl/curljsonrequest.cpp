@@ -31,7 +31,7 @@
 
 namespace Networking {
 
-CurlJsonRequest::CurlJsonRequest(JsonCallback cb, ErrorCallback ecb, Common::String url):
+CurlJsonRequest::CurlJsonRequest(JsonCallback cb, ErrorCallback ecb, Common::String url) :
 	CurlRequest(nullptr, ecb, url), _jsonCallback(cb), _contentsStream(DisposeAfterUse::YES),
 	_buffer(new byte[CURL_JSON_REQUEST_BUFFER_SIZE]) {}
 
@@ -95,6 +95,45 @@ void CurlJsonRequest::finishJson(Common::JSONValue *json) {
 	Request::finishSuccess();
 	if (_jsonCallback) (*_jsonCallback)(JsonResponse(this, json)); //potential memory leak, free it in your callbacks!
 	else delete json;
+}
+
+bool CurlJsonRequest::jsonIsObject(Common::JSONValue *item, const char *warningPrefix) {
+	if (item == nullptr) {
+		warning("%s: passed item is NULL", warningPrefix);
+		return false;
+	}
+
+	if (item->isObject()) return true;
+
+	warning("%s: passed item is not an object!", warningPrefix);
+	debug(9, "%s", item->stringify(true).c_str());
+	return false;
+}
+
+bool CurlJsonRequest::jsonContainsString(Common::JSONObject &item, const char *key, const char *warningPrefix) {
+	if (!item.contains(key)) {
+		warning("%s: passed item misses the \"%s\" attribute!", warningPrefix, key);
+		return false;
+	}
+
+	if (item.getVal(key)->isString()) return true;
+
+	warning("%s: passed item's \"%s\" attribute is not a string!", warningPrefix, key);
+	debug(9, "%s", item.getVal(key)->stringify(true).c_str());
+	return false;
+}
+
+bool CurlJsonRequest::jsonContainsIntegerNumber(Common::JSONObject &item, const char *key, const char *warningPrefix) {
+	if (!item.contains(key)) {
+		warning("%s: passed item misses the \"%s\" attribute!", warningPrefix, key);
+		return false;
+	}
+
+	if (item.getVal(key)->isIntegerNumber()) return true;
+
+	warning("%s: passed item's \"%s\" attribute is not an integer!", warningPrefix, key);
+	debug(9, "%s", item.getVal(key)->stringify(true).c_str());
+	return false;
 }
 
 } // End of namespace Networking

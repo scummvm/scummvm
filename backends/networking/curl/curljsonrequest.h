@@ -52,6 +52,10 @@ public:
 
 	virtual void handle();
 	virtual void restart();
+
+	static bool jsonIsObject(Common::JSONValue *item, const char *warningPrefix);
+	static bool jsonContainsString(Common::JSONObject &item, const char *key, const char *warningPrefix);
+	static bool jsonContainsIntegerNumber(Common::JSONObject &item, const char *key, const char *warningPrefix);
 };
 
 } // End of namespace Networking

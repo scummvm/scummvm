@@ -125,63 +125,16 @@ void BoxListDirectoryByIdRequest::responseCallback(Networking::JsonResponse resp
 
 		Common::JSONArray items = responseObject.getVal("entries")->asArray();
 		for (uint32 i = 0; i < items.size(); ++i) {
-			if (!items[i]->isObject()) {
-				warning("BoxListDirectoryByIdRequest: \"entries\" item is not an object!");
-				debug(9, "%s", items[i]->stringify(true).c_str());
-				continue;
-			}
+			if (!Networking::CurlJsonRequest::jsonIsObject(items[i], "BoxListDirectoryByIdRequest")) continue;
 
 			Common::JSONObject item = items[i]->asObject();
 
-			if (!item.contains("id") || !item.getVal("id")->isString()) {
-				warning("BoxListDirectoryByIdRequest: \"entries\" item's \"id\"!");
-				if (item.contains("id")) {
-					debug(9, "%s", item.getVal("id")->stringify(true).c_str());
-				} else {
-					debug(9, "(not available)");
-				}
-				continue;
-			}
-
-			if (!item.contains("name") || !item.getVal("name")->isString()) {
-				warning("BoxListDirectoryByIdRequest: \"entries\" item's \"name\"!");
-				if (item.contains("name")) {
-					debug(9, "%s", item.getVal("name")->stringify(true).c_str());
-				} else {
-					debug(9, "(not available)");
-				}
-				continue;
-			}
-
-			if (!item.contains("type") || !item.getVal("type")->isString()) {
-				warning("BoxListDirectoryByIdRequest: \"entries\" item's \"type\"!");
-				if (item.contains("type")) {
-					debug(9, "%s", item.getVal("type")->stringify(true).c_str());
-				} else {
-					debug(9, "(not available)");
-				}
-				continue;
-			}
-
-			if (!item.contains("size") || (!item.getVal("size")->isString() && !item.getVal("size")->isIntegerNumber())) {
-				warning("BoxListDirectoryByIdRequest: \"entries\" item's \"size\"!");
-				if (item.contains("size")) {
-					debug(9, "%s", item.getVal("size")->stringify(true).c_str());
-				} else {
-					debug(9, "(not available)");
-				}
-				continue;
-			}
-
-			if (!item.contains("modified_at") || !item.getVal("modified_at")->isString()) {
-				warning("BoxListDirectoryByIdRequest: \"entries\" item's \"modified_at\"!");
-				if (item.contains("modified_at")) {
-					debug(9, "%s", item.getVal("modified_at")->stringify(true).c_str());
-				} else {
-					debug(9, "(not available)");
-				}
-				continue;
-			}
+			if (!Networking::CurlJsonRequest::jsonContainsString(item, "id", "BoxListDirectoryByIdRequest")) continue;
+			if (!Networking::CurlJsonRequest::jsonContainsString(item, "name", "BoxListDirectoryByIdRequest")) continue;
+			if (!Networking::CurlJsonRequest::jsonContainsString(item, "type", "BoxListDirectoryByIdRequest")) continue;
+			if (!Networking::CurlJsonRequest::jsonContainsString(item, "modified_at", "BoxListDirectoryByIdRequest")) continue;
+			if (!Networking::CurlJsonRequest::jsonContainsString(item, "size", "BoxListDirectoryByIdRequest") &&
+				!Networking::CurlJsonRequest::jsonContainsIntegerNumber(item, "size", "BoxListDirectoryByIdRequest")) continue;
 
 			Common::String id = item.getVal("id")->asString();
 			Common::String name = item.getVal("name")->asString();
