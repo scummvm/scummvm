@@ -1516,6 +1516,10 @@ void GfxFrameout::processShowStyles() {
 			}
 		}
 
+		if (g_engine->shouldQuit()) {
+			return;
+		}
+
 		if (doFrameOut) {
 			frameOut(true);
 
@@ -1523,9 +1527,7 @@ void GfxFrameout::processShowStyles() {
 			// fast, but the throttle value is arbitrary. Someone on
 			// real hardware probably needs to test what the actual
 			// speed of these transitions should be
-			EngineState *state = g_sci->getEngineState();
-			state->speedThrottler(33);
-			state->_throttleTrigger = true;
+			throttle();
 		}
 	} while(continueProcessing && doFrameOut);
 }
