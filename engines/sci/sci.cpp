@@ -167,11 +167,15 @@ SciEngine::~SciEngine() {
 	DebugMan.clearAllDebugChannels();
 
 #ifdef ENABLE_SCI32
-	delete _gfxPalette32;
 	delete _gfxControls32;
 	delete _gfxPaint32;
 	delete _gfxText32;
 	delete _robotDecoder;
+	// GfxFrameout and GfxPalette32 must be deleted after Video32 since
+	// destruction of screen items in the Video32 destructor relies on these
+	// components
+	delete _video32;
+	delete _gfxPalette32;
 	delete _gfxFrameout;
 	delete _gfxRemap32;
 	delete _audio32;
