@@ -54,11 +54,11 @@ static void tglDrawRectangle(Common::Rect rect, int r, int g, int b) {
 
 	for(int x = rect.left; x < rect.right; x++) {
 		c->fb->writePixel(rect.top * c->fb->xsize + x, 255, r, g, b);
-		c->fb->writePixel(rect.bottom * c->fb->xsize + x, 255, r, g, b);
+		c->fb->writePixel((rect.bottom - 1) * c->fb->xsize + x, 255, r, g, b);
 	}
 	for(int y = rect.top; y < rect.bottom; y++) {
 		c->fb->writePixel(y * c->fb->xsize + rect.left, 255, r, g, b);
-		c->fb->writePixel(y * c->fb->xsize + rect.right, 255, r, g, b);
+		c->fb->writePixel(y * c->fb->xsize + rect.right - 1, 255, r, g, b);
 	}
 }
 #endif
@@ -302,7 +302,7 @@ void RasterizationDrawCall::computeDirtyRegion() {
 	int width = c->fb->xsize;
 	int height = c->fb->ysize;
 
-	int left = width, right = 0, top = height, bottom = 0;
+	int left = width - 1, right = 0, top = height - 1, bottom = 0;
 
 	bool pointInsideVolume = false;
 
@@ -339,37 +339,21 @@ void RasterizationDrawCall::computeDirtyRegion() {
 
 	if (left < 0) {
 		left = 0;
-		if (right < left) {
-			left = 0;
-			right = width - 1;
-		}
 	}
 
 	if (right >= width) {
 		right = width - 1;
-		if (left > right) {
-			left = 0;
-			right = width - 1;
-		}
 	}
 
 	if (top < 0) {
 		top = 0;
-		if (bottom < top) {
-			top = 0;
-			bottom = height - 1;
-		}
 	}
 
 	if (bottom >= height) {
 		bottom = height - 1;
-		if (top > bottom) {
-			top = 0;
-			bottom = height - 1;
-		}
 	}
 
-	_dirtyRegion = Common::Rect(left, top, right, bottom);
+	_dirtyRegion = Common::Rect(left, top, right + 1, bottom + 1);
 	// This takes into account precision issues that occur during rasterization.
 	_dirtyRegion.left -= 2;
 	_dirtyRegion.top -= 2;
@@ -648,7 +632,7 @@ const Common::Rect BlittingDrawCall::getDirtyRegion() const {
 			tglGetBlitImageSize(_image, blitWidth, blitHeight);
 		}
 	}
-	return Common::Rect(_transform._destinationRectangle.left, _transform._destinationRectangle.top, _transform._destinationRectangle.left + blitWidth, _transform._destinationRectangle.top + blitHeight);
+	return Common::Rect(_transform._destinationRectangle.left, _transform._destinationRectangle.top, _transform._destinationRectangle.left + blitWidth + 1, _transform._destinationRectangle.top + blitHeight + 1);
 }
 
 bool BlittingDrawCall::operator==(const BlittingDrawCall &other) const {
