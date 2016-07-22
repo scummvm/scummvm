@@ -25,6 +25,8 @@
 
 #include "common/scummsys.h"
 #include "common/events.h"
+#include "common/stack.h"
+#include "support/rect.h"
 
 namespace Titanic {
 
@@ -39,16 +41,41 @@ enum SpecialButtons {
 
 class TitanicEngine;
 
+/**
+ * A base class for windows that can receive event messages
+ */
+class CEventTarget {
+public:
+	virtual ~CEventTarget() {}
+
+	/**
+	 * Called to handle any regular updates the game requires
+	 */
+	virtual void onIdle() {}
+
+	/**
+	 * Mouse/key event handlers
+	 */
+	virtual void mouseMove(const Point &mousePos) {}
+	virtual void leftButtonDown(const Point &mousePos) {}
+	virtual void leftButtonUp(const Point &mousePos) {}
+	virtual void leftButtonDoubleClick(const Point &mousePos) {}
+	virtual void middleButtonDown(const Point &mousePos) {}
+	virtual void middleButtonUp(const Point &mousePos) {}
+	virtual void middleButtonDoubleClick(const Point &mousePos) {}
+	virtual void rightButtonDown(const Point &mousePos) {}
+	virtual void rightButtonUp(const Point &mousePos) {}
+	virtual void keyDown(Common::KeyState keyState) {}
+	virtual void keyUp(Common::KeyState keyState) {}
+};
+
 class Events {
 private:
 	TitanicEngine *_vm;
+	Common::Stack<CEventTarget *> _eventTargets;
 	uint32 _frameCounter;
 	uint32 _priorFrameTime;
-	uint32 _priorLeftDownTime;
-	uint32 _priorMiddleDownTime;
-	uint32 _priorRightDownTime;
 	Common::Point _mousePos;
-	uint _specialButtons;
 
 	/**
 	 * Check whether it's time to display the next screen frame
@@ -56,27 +83,30 @@ private:
 	bool checkForNextFrameCounter();
 
 	/**
-	 * Called to handle any regular updates the game requires
+	 * Return the currently active event target
 	 */
-	void onIdle();
-
-	void mouseMove();
-	void leftButtonDown();
-	void leftButtonUp();
-	void leftButtonDoubleClick();
-	void middleButtonDown();
-	void middleButtonUp();
-	void middleButtonDoubleClick();
-	void rightButtonDown();
-	void rightButtonUp();
-	void rightButtonDoubleClick();
-	void charPress(char c);
-	void keyDown(Common::KeyState keyState);
-	void keyUp(Common::KeyState keyState);
-	void handleKbdSpecial(Common::KeyState keyState);
+	CEventTarget *eventTarget() const {
+		return _eventTargets.top();
+	}
 public:
 	Events(TitanicEngine *vm);
 	~Events() {}
+
+	/**
+	 * Adds a new event target to the top of the list. It will get
+	 * all events generated until such time as another is pushed on
+	 * top of it, or the removeTarget method is called
+	 */
+	void addTarget(CEventTarget *target) {
+		_eventTargets.push(target);
+	}
+
+	/**
+	 * Removes the currently active event target
+	 */
+	void removeTarget() {
+		_eventTargets.pop();
+	}
 
 	/**
 	 * Check for any pending events
@@ -98,13 +128,6 @@ public:
 	 * Get the elapsed playtime
 	 */
 	uint32 getTicksCount() const;
-
-	/**
-	 * Return whether a given special key is currently pressed
-	 */
-	bool isSpecialPressed(SpecialButtons btn) const { return _specialButtons; }
-
-	uint getSpecialButtons() const { return _specialButtons; }
 
 	/**
 	 * Sleep for a specified period of time

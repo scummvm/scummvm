@@ -127,8 +127,9 @@ SaveStateList TitanicMetaEngine::listSaves(const char *target) const {
 			if (in) {
 				Titanic::CompressedFile file;
 				file.open(in);
-				Titanic::CProjectItem::readSavegameHeader(&file, header);
-				saveList.push_back(SaveStateDescriptor(slot, header._saveName));
+				
+				if (Titanic::CProjectItem::readSavegameHeader(&file, header))
+					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
 
 				if (header._thumbnail) {
 					header._thumbnail->free();

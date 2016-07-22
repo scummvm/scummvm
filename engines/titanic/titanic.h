@@ -70,6 +70,8 @@ enum TitanicDebugChannels {
 #define TOTAL_ITEMS 46
 #define TOTAL_ROOMS 34
 
+#define MAX_SAVES 99
+
 struct TitanicGameDescription;
 class TitanicEngine;
 
@@ -159,6 +161,12 @@ public:
 	 * @param slot		Slot number
 	 */
 	CString generateSaveName(int slot);
+
+	/**
+	 * Checks whether a savegame exists for the given slot,
+	 * and if it exists, returns it's description
+	 */
+	CString getSavegameName(int slot);
 };
 
 extern TitanicEngine *g_vm;

@@ -29,16 +29,22 @@
 #include "titanic/game_view.h"
 #include "titanic/support/image.h"
 #include "titanic/core/project_item.h"
+#include "titanic/events.h"
 
 namespace Titanic {
 
 class TitanicEngine;
 
-class CMainGameWindow {
+class CMainGameWindow : public CEventTarget {
 private:
 	TitanicEngine *_vm;
 	int _pendingLoadSlot;
-
+	uint _specialButtons;
+	uint32 _priorFrameTime;
+	uint32 _priorLeftDownTime;
+	uint32 _priorMiddleDownTime;
+	uint32 _priorRightDownTime;
+private:
 	/**
 	 * Checks for the presence of any savegames and, if present,
 	 * lets the user pick one to resume
@@ -65,6 +71,12 @@ private:
 	 * Draws all the items within the view
 	 */
 	void drawViewContents(CScreenManager *screenManager);
+
+	void leftButtonDoubleClick(const Point &mousePos);
+	void middleButtonDoubleClick(const Point &mousePos);
+	void rightButtonDoubleClick(const Point &mousePos);
+	void charPress(char c);
+	void handleKbdSpecial(Common::KeyState keyState);
 public:
 	CGameView *_gameView;
 	CGameManager *_gameManager;
@@ -74,6 +86,22 @@ public:
 	void *_cursor;
 public:
 	CMainGameWindow(TitanicEngine *vm);
+	virtual ~CMainGameWindow();
+
+	/**
+	* Called to handle any regular updates the game requires
+	*/
+	void onIdle();
+
+	virtual void mouseMove(const Point &mousePos);
+	virtual void leftButtonDown(const Point &mousePos);
+	virtual void leftButtonUp(const Point &mousePos);
+	virtual void middleButtonDown(const Point &mousePos);
+	virtual void middleButtonUp(const Point &mousePos);
+	virtual void rightButtonDown(const Point &mousePos);
+	virtual void rightButtonUp(const Point &mousePos);
+	virtual void keyDown(Common::KeyState keyState);
+	virtual void keyUp(Common::KeyState keyState);
 
 	/**
 	 * Creates the window
@@ -104,6 +132,16 @@ public:
 	 * Schedules a savegame to be loaded
 	 */
 	void loadGame(int slotId);
+
+	/*
+	 * Return whether a given special key is currently pressed
+	 */
+	bool isSpecialPressed(SpecialButtons btn) const { return _specialButtons; }
+
+	/**
+	 * Returns the bitset of the currently pressed special buttons
+	 */
+	uint getSpecialButtons() const { return _specialButtons; }
 };
 
 } // End of namespace Titanic

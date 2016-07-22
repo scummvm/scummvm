@@ -181,4 +181,31 @@ CString TitanicEngine::generateSaveName(int slot) {
 	return CString::format("%s.%03d", _targetName.c_str(), slot);
 }
 
+CString TitanicEngine::getSavegameName(int slot) {
+	// Try and open up the savegame for access
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(
+		generateSaveName(slot));
+
+	if (in) {
+		// Read in the savegame header data
+		CompressedFile file;
+		file.open(in);
+
+		TitanicSavegameHeader header;
+		bool isValid = CProjectItem::readSavegameHeader(&file, header);
+		if (header._thumbnail) {
+			header._thumbnail->free();
+			delete header._thumbnail;
+		}
+
+		file.close();
+
+		if (isValid)
+			// Set the name text
+			return header._saveName;
+	}
+
+	return CString();
+}
+
 } // End of namespace Titanic

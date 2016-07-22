@@ -416,7 +416,7 @@ void TTnpcScript::loadBody(SimpleFile *file) {
 
 		for (uint idx = 0; idx < _ranges.size(); ++idx) {
 			TTscriptRange &item = _ranges[idx];
-			if (item._id == id) {
+			if (item._id == (uint)id) {
 				item._priorIndex = val;
 				break;
 			}

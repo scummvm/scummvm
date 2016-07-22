@@ -20,16 +20,19 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "titanic/titanic.h"
-#include "titanic/main_game_window.h"
 #include "titanic/game_manager.h"
 #include "titanic/game_view.h"
+#include "titanic/main_game_window.h"
 #include "titanic/messages/messages.h"
 #include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
-CMainGameWindow::CMainGameWindow(TitanicEngine *vm): _vm(vm) {
+CMainGameWindow::CMainGameWindow(TitanicEngine *vm): _vm(vm),
+		_specialButtons(0), _priorLeftDownTime(0),
+		_priorMiddleDownTime(0), _priorRightDownTime(0) {
 	_gameView = nullptr;
 	_gameManager = nullptr;
 	_project = nullptr;
@@ -37,6 +40,12 @@ CMainGameWindow::CMainGameWindow(TitanicEngine *vm): _vm(vm) {
 	_image = nullptr;
 	_cursor = nullptr;
 	_pendingLoadSlot = -1;
+
+	// Set the window as an event target
+	vm->_events->addTarget(this);
+}
+
+CMainGameWindow::~CMainGameWindow() {
 }
 
 bool CMainGameWindow::Create() {
@@ -53,13 +62,10 @@ void CMainGameWindow::applicationStarting() {
 	// Set up the game project, and get game slot
 	int saveSlot = loadGame();
 	assert(_project);
-	
+
 	// Set the video mode
 	CScreenManager *screenManager = CScreenManager::setCurrent();
 	screenManager->setMode(640, 480, 16, 0, true);
-
-	// TODO: Remove initial background and palette
-
 
 	// Create game view and manager
 	_gameView = new CSTGameView(this);
@@ -98,7 +104,10 @@ int CMainGameWindow::loadGame() {
 }
 
 int CMainGameWindow::selectSavegame() {
-	// TODO: For now, hardcoded to -1 for new saves
+	// If the user selected a savegame from the launcher, return it
+	if (ConfMan.hasKey("save_slot"))
+		return ConfMan.getInt("save_slot");
+
 	return -1;
 }
 
@@ -111,7 +120,7 @@ void CMainGameWindow::setActiveView(CViewItem *viewItem) {
 		_gameView->createSurface(key);
 	}
 }
-
+ 
 void CMainGameWindow::draw() {
 	if (_gameManager) {
 		if (!_gameView->_surface) {
@@ -200,6 +209,128 @@ void CMainGameWindow::mouseChanged() {
 void CMainGameWindow::loadGame(int slotId) {
 	_pendingLoadSlot = slotId;
 	_gameManager->_gameState.setMode(GSMODE_PENDING_LOAD);
+}
+
+void CMainGameWindow::onIdle() {
+	if (!_inputAllowed)
+		return;
+	CGameManager *gameManager = _gameManager;
+	if (!gameManager)
+		return;
+
+	// Let the game manager perform any game updates
+	gameManager->update();
+
+	if (gameManager->_gameState._quitGame) {
+		// Game needs to shut down
+		_vm->quitGame();
+	}
+}
+
+#define HANDLE_MESSAGE(METHOD) 	if (_inputAllowed) { \
+	_gameManager->_inputTranslator.METHOD(_specialButtons, mousePos); \
+	mouseChanged(); \
+	}
+
+
+void CMainGameWindow::mouseMove(const Point &mousePos) {
+	HANDLE_MESSAGE(mouseMove)
+}
+
+void CMainGameWindow::leftButtonDown(const Point &mousePos) {
+	_specialButtons |= MK_LBUTTON;
+
+	if ((_vm->_events->getTicksCount() - _priorLeftDownTime) < DOUBLE_CLICK_TIME) {
+		_priorLeftDownTime = 0;
+		leftButtonDoubleClick(mousePos);
+	} else {
+		_priorLeftDownTime = _vm->_events->getTicksCount();
+		HANDLE_MESSAGE(leftButtonDown)
+	}
+}
+
+void CMainGameWindow::leftButtonUp(const Point &mousePos) {
+	_specialButtons &= ~MK_LBUTTON;
+	HANDLE_MESSAGE(leftButtonUp)
+}
+
+void CMainGameWindow::leftButtonDoubleClick(const Point &mousePos) {
+	HANDLE_MESSAGE(leftButtonDoubleClick)
+}
+
+void CMainGameWindow::middleButtonDown(const Point &mousePos) {
+	_specialButtons |= MK_MBUTTON;
+
+	if ((_vm->_events->getTicksCount() - _priorMiddleDownTime) < DOUBLE_CLICK_TIME) {
+		_priorMiddleDownTime = 0;
+		middleButtonDoubleClick(mousePos);
+	} else {
+		_priorMiddleDownTime = _vm->_events->getTicksCount();
+		HANDLE_MESSAGE(middleButtonDown)
+	}
+}
+
+void CMainGameWindow::middleButtonUp(const Point &mousePos) {
+	_specialButtons &= ~MK_MBUTTON;
+	HANDLE_MESSAGE(middleButtonUp)
+}
+
+void CMainGameWindow::middleButtonDoubleClick(const Point &mousePos) {
+	HANDLE_MESSAGE(middleButtonDoubleClick)
+}
+
+void CMainGameWindow::rightButtonDown(const Point &mousePos) {
+	_specialButtons |= MK_RBUTTON;
+
+	if ((_vm->_events->getTicksCount() - _priorRightDownTime) < DOUBLE_CLICK_TIME) {
+		_priorRightDownTime = 0;
+		rightButtonDoubleClick(mousePos);
+	} else {
+		_priorRightDownTime = _vm->_events->getTicksCount();
+		HANDLE_MESSAGE(rightButtonDown)
+	}
+}
+
+void CMainGameWindow::rightButtonUp(const Point &mousePos) {
+	_specialButtons &= ~MK_RBUTTON;
+	HANDLE_MESSAGE(rightButtonUp)
+}
+
+void CMainGameWindow::rightButtonDoubleClick(const Point &mousePos) {
+	HANDLE_MESSAGE(rightButtonDoubleClick)
+}
+
+void CMainGameWindow::charPress(char c) {
+
+}
+
+void CMainGameWindow::keyDown(Common::KeyState keyState) {
+	handleKbdSpecial(keyState);
+
+	if (keyState.keycode == Common::KEYCODE_d && (keyState.flags & Common::KBD_CTRL)) {
+		// Attach to the debugger
+		_vm->_debugger->attach();
+		_vm->_debugger->onFrame();
+	}
+
+	if (_inputAllowed)
+		_gameManager->_inputTranslator.keyDown(keyState);
+}
+
+void CMainGameWindow::keyUp(Common::KeyState keyState) {
+	handleKbdSpecial(keyState);
+}
+
+void CMainGameWindow::handleKbdSpecial(Common::KeyState keyState) {
+	if (keyState.flags & Common::KBD_CTRL)
+		_specialButtons |= MK_CONTROL;
+	else
+		_specialButtons &= ~MK_CONTROL;
+
+	if (keyState.flags & Common::KBD_SHIFT)
+		_specialButtons |= MK_SHIFT;
+	else
+		_specialButtons &= ~MK_SHIFT;
 }
 
 } // End of namespace Titanic
