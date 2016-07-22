@@ -37,6 +37,7 @@ class TitanicEngine;
 class CMainGameWindow {
 private:
 	TitanicEngine *_vm;
+	int _pendingLoadSlot;
 
 	/**
 	 * Checks for the presence of any savegames and, if present,
@@ -98,6 +99,11 @@ public:
 	 * Called by the event handler when a mouse event has been generated
 	 */
 	void mouseChanged();
+
+	/**
+	 * Schedules a savegame to be loaded
+	 */
+	void loadGame(int slotId);
 };
 
 } // End of namespace Titanic

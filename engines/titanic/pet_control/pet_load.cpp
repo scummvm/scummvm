@@ -24,6 +24,7 @@
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/core/project_item.h"
 #include "titanic/game_manager.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -57,16 +58,10 @@ void CPetLoad::execute() {
 	CPetControl *pet = getPetControl();
 
 	if (_savegameSlotNum >= 0 && _slotInUse[_savegameSlotNum]) {
-		CProjectItem *project = pet ? pet->getRoot() : nullptr;
-		CGameManager *gameManager = project ? project->getGameManager() : nullptr;
+		CMainGameWindow *window = g_vm->_window;
 
-		if (project && gameManager) {
-			pet->displayMessage("Loading the selected game, please wait.");
-
-			gameManager->destroyTreeItem();
-			gameManager->initBounds();
-			project->loadGame(_savegameSlotNum);
-		}
+		// WORKAROUND: Schedule the savegame to be loaded after frame rendering ends
+		window->loadGame(_savegameSlotNum);
 	} else if (pet) {
 		pet->displayMessage("You must select a game to load first.");
 	}

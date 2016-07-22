@@ -36,6 +36,7 @@ CMainGameWindow::CMainGameWindow(TitanicEngine *vm): _vm(vm) {
 	_inputAllowed = false;
 	_image = nullptr;
 	_cursor = nullptr;
+	_pendingLoadSlot = -1;
 }
 
 bool CMainGameWindow::Create() {
@@ -137,6 +138,12 @@ void CMainGameWindow::draw() {
 			g_vm->_filesManager->debug(scrManager);
 			break;
 
+		case GSMODE_PENDING_LOAD:
+			// Pending savegame to load
+			_gameManager->_gameState.setMode(GSMODE_SELECTED);
+			_vm->_window->_project->loadGame(_pendingLoadSlot);
+			break;
+
 		default:
 			break;
 		}
@@ -188,6 +195,11 @@ void CMainGameWindow::drawViewContents(CScreenManager *screenManager) {
 void CMainGameWindow::mouseChanged() {
 	if (_gameManager->_gameState._mode != GSMODE_5)
 		_gameManager->update();
+}
+
+void CMainGameWindow::loadGame(int slotId) {
+	_pendingLoadSlot = slotId;
+	_gameManager->_gameState.setMode(GSMODE_PENDING_LOAD);
 }
 
 } // End of namespace Titanic
