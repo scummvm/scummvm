@@ -232,7 +232,7 @@ void GoogleDriveStorage::printInfo(StorageInfoResponse response) {
 	debug(9, "\nuser info:");
 	debug(9, "\tname: %s", response.value.name().c_str());
 	debug(9, "\temail: %s", response.value.email().c_str());
-	debug(9, "\tdisk usage: %llu/%llu", response.value.used(), response.value.available());
+	debug(9, "\tdisk usage: %lu/%lu", response.value.used(), response.value.available());
 }
 
 Networking::Request *GoogleDriveStorage::createDirectoryWithParentId(Common::String parentId, Common::String name, BoolCallback callback, Networking::ErrorCallback errorCallback) {
