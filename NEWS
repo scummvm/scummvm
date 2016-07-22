@@ -18,6 +18,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added optional "pause, when entering commands" feature, that was only
      available in the original interpreter for Hercules rendering.
 
+ Beneath a Steel Sky:
+   - Fixed a bug that could possibly make the game unfinishable due to a
+     wrong animation for Officer Blunt that makes further interaction with
+     this character impossible.
+
  Gob:
    - Fixed graphical issues in Gobliiins (EGA version).
 
