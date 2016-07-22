@@ -836,7 +836,7 @@ Common::Array<MovItem *> *MovGraph::getPaths(StaticANIObject *ani, int x, int y,
 	point.x = ani->_ox;
 	point.y = ani->_oy;
 
-	if (!calcChunk(idx, ani->_ox, ani->_oy, &_items[idx]->movarr, 0))
+	if (!getHitPoint(idx, ani->_ox, ani->_oy, &_items[idx]->movarr, 0))
 		getNearestPoint(idx, &point, &_items[idx]->movarr);
 
 	_items[idx]->count = 0;
@@ -845,12 +845,12 @@ Common::Array<MovItem *> *MovGraph::getPaths(StaticANIObject *ani, int x, int y,
 	_items[idx]->movitems = 0;
 
 	int arrSize;
-	Common::Array<MovArr *> *movarr = genMovArr(x, y, &arrSize, flag1, 0);
+	Common::Array<MovArr *> *movarr = getHitPoints(x, y, &arrSize, flag1, 0);
 
 	if (movarr) {
 		for (int i = 0; i < arrSize; i++) {
 			int sz;
-			Common::Array<MovItem *> *movitems = calcMovItems(&_items[idx]->movarr, (*movarr)[i], &sz);
+			Common::Array<MovItem *> *movitems = getPaths(&_items[idx]->movarr, (*movarr)[i], &sz);
 
 			if (sz > 0) {
 				for (int j = 0; j < sz; j++)
@@ -1008,7 +1008,7 @@ bool MovGraph::canDropInventory(StaticANIObject *ani, int x, int y) {
 						return true;
 				}
 			}
-		} else if (calcChunk(idx, ani->_ox, ani->_oy, &m, 0) && m._link && (m._link->_flags & 0x4000000)) {
+		} else if (getHitPoint(idx, ani->_ox, ani->_oy, &m, 0) && m._link && (m._link->_flags & 0x4000000)) {
 			return true;
 		}
 	}
@@ -1074,7 +1074,7 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 			_items[idx]->movarr._afield_8 = -1;
 			_items[idx]->movarr._link = 0;
 
-			MessageQueue *mq = fillMGMinfo(_items[idx]->ani, &_items[idx]->movarr, staticsId);
+			MessageQueue *mq = makeWholeQueue(_items[idx]->ani, &_items[idx]->movarr, staticsId);
 			if (mq) {
 				ExCommand *ex = new ExCommand();
 				ex->_messageKind = 17;
@@ -1129,7 +1129,7 @@ MessageQueue *MovGraph::sub1(StaticANIObject *ani, int x, int y, int stid, int x
 			_items[idx]->movarr._afield_8 = -1;
 			_items[idx]->movarr._link = 0;
 
-			res = fillMGMinfo(_items[idx]->ani, &_items[idx]->movarr, stid2);
+			res = makeWholeQueue(_items[idx]->ani, &_items[idx]->movarr, stid2);
 
 			break;
 		}
@@ -1140,7 +1140,7 @@ MessageQueue *MovGraph::sub1(StaticANIObject *ani, int x, int y, int stid, int x
 	return res;
 }
 
-MessageQueue *MovGraph::fillMGMinfo(StaticANIObject *ani, MovArr *movarr, int staticsId) {
+MessageQueue *MovGraph::makeWholeQueue(StaticANIObject *ani, MovArr *movarr, int staticsId) {
 	if (!movarr->_movStepCount)
 		return 0;
 
@@ -1261,7 +1261,7 @@ MessageQueue *MovGraph::method50(StaticANIObject *ani, MovArr *movarr, int stati
 	_items[idx]->movarr._afield_8 = -1;
 	_items[idx]->movarr._link = 0;
 
-	MessageQueue *mq = fillMGMinfo(_items[idx]->ani, &_items[idx]->movarr, 0);
+	MessageQueue *mq = makeWholeQueue(_items[idx]->ani, &_items[idx]->movarr, 0);
 
 	if (!mq)
 		return 0;
@@ -1394,7 +1394,7 @@ int MovGraph::getObjectIndex(StaticANIObject *ani) {
 	return -1;
 }
 
-Common::Array<MovArr *> *MovGraph::genMovArr(int x, int y, int *arrSize, int flag1, int flag2) {
+Common::Array<MovArr *> *MovGraph::getHitPoints(int x, int y, int *arrSize, int flag1, int flag2) {
 	if (!_links.size()) {
 		*arrSize = 0;
 
@@ -1494,7 +1494,7 @@ void MovGraph::findAllPaths(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array
 }
 
 // Returns a list of possible paths two points in graph space
-Common::Array<MovItem *> *MovGraph::calcMovItems(MovArr *currPos, MovArr *destPos, int *pathCount) {
+Common::Array<MovItem *> *MovGraph::getPaths(MovArr *currPos, MovArr *destPos, int *pathCount) {
 	Common::Array<MovGraphLink *> tempObList1;
 	Common::Array<MovGraphLink *> allPaths;
 
@@ -1530,7 +1530,7 @@ void MovGraph::genMovItem(MovItem *movitem, MovGraphLink *grlink, MovArr *movarr
 	warning("STUB: MovGraph::genMovItem()");
 }
 
-bool MovGraph::calcChunk(int idx, int x, int y, MovArr *arr, int a6) {
+bool MovGraph::getHitPoint(int idx, int x, int y, MovArr *arr, int a6) {
 	int staticsId;
 
 	if (_items[idx]->ani->_statics) {
@@ -1544,7 +1544,7 @@ bool MovGraph::calcChunk(int idx, int x, int y, MovArr *arr, int a6) {
 
 	int arrSize;
 
-	Common::Array<MovArr *> *movarr = genMovArr(x, y, &arrSize, 0, 1);
+	Common::Array<MovArr *> *movarr = getHitPoints(x, y, &arrSize, 0, 1);
 
 	if (!movarr)
 		return getNearestPoint(idx, 0, arr);

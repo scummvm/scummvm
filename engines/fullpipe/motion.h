@@ -307,13 +307,13 @@ public:
 	bool getNearestPoint(int unusedArg, Common::Point *p, MovArr *movarr);
 	MovGraphNode *calcOffset(int ox, int oy);
 	int getObjectIndex(StaticANIObject *ani);
-	Common::Array<MovArr *> *genMovArr(int x, int y, int *arrSize, int flag1, int flag2);
+	Common::Array<MovArr *> *getHitPoints(int x, int y, int *arrSize, int flag1, int flag2);
 	void findAllPaths(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array<MovGraphLink *> &tempObList1, Common::Array<MovGraphLink *> &tempObList2);
-	Common::Array<MovItem *> *calcMovItems(MovArr *movarr1, MovArr *movarr2, int *listCount);
+	Common::Array<MovItem *> *getPaths(MovArr *movarr1, MovArr *movarr2, int *listCount);
 	void genMovItem(MovItem *movitem, MovGraphLink *grlink, MovArr *movarr1, MovArr *movarr2);
-	bool calcChunk(int idx, int x, int y, MovArr *arr, int a6);
+	bool getHitPoint(int idx, int x, int y, MovArr *arr, int a6);
 	MessageQueue *sub1(StaticANIObject *ani, int x, int y, int a5, int x1, int y1, int a8, int a9);
-	MessageQueue *fillMGMinfo(StaticANIObject *ani, MovArr *movarr, int staticsId);
+	MessageQueue *makeWholeQueue(StaticANIObject *ani, MovArr *movarr, int staticsId);
 	void setEnds(MovStep *step1, MovStep *step2);
 };
 
