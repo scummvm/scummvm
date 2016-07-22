@@ -40,7 +40,7 @@ BorderBounds borderBounds(MVWindowType type) {
 	case MacVenture::kMovableDBox:
 		break;
 	case MacVenture::kZoomDoc:
-		return BorderBounds(1, 19, 16, 1);
+		return BorderBounds(1, 19, 16, 16);
 	case MacVenture::kZoomNoGrow:
 		break;
 	case MacVenture::kRDoc16:

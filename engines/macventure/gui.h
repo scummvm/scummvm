@@ -203,7 +203,7 @@ private: // Methods
 	bool loadMenus();
 	bool loadWindows();
 	bool loadControls();
-	void loadBorder(Graphics::MacWindow * target, Common::String filename, bool active);
+	void loadBorder(Graphics::MacWindow * target, Common::String filename, bool active, MVWindowType type);
 	void loadGraphics();
 
 	// Drawers
