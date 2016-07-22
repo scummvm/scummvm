@@ -333,9 +333,13 @@ void LauncherDialog::addGame() {
 			String bannedDirectory = CloudMan.getDownloadLocalDirectory();
 			if (selectedDirectory.size() && selectedDirectory.lastChar() != '/' && selectedDirectory.lastChar() != '\\')
 				selectedDirectory += '/';
-			if (bannedDirectory.size() && bannedDirectory.lastChar() != '/' && bannedDirectory.lastChar() != '\\')
-				if (selectedDirectory.size()) bannedDirectory += selectedDirectory.lastChar();
-				else bannedDirectory += '/';
+			if (bannedDirectory.size() && bannedDirectory.lastChar() != '/' && bannedDirectory.lastChar() != '\\') {
+				if (selectedDirectory.size()) {
+					bannedDirectory += selectedDirectory.lastChar();
+				} else {
+					bannedDirectory += '/';
+				}
+			}
 			if (selectedDirectory.equalsIgnoreCase(bannedDirectory)) {
 				MessageDialog alert(_("This directory cannot be used yet, it is being downloaded into!"));
 				alert.runModal();

@@ -1449,6 +1449,9 @@ void ThemeEngine::drawDialogBackgroundClip(const Common::Rect &r, const Common::
 	case kDialogBackgroundDefault:
 		queueDDClip(kDDDefaultBackground, r, clip);
 		break;
+	case kDialogBackgroundNone:
+		// no op
+		break;
 	}
 }
 
