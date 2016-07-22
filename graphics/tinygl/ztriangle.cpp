@@ -75,6 +75,14 @@ FORCEINLINE static void putPixelDepth(FrameBuffer *buffer, int buf, unsigned int
 	z += dzdx;
 }
 
+template <bool kDepthWrite, bool kAlphaTestEnabled, bool kEnableScissor, bool kBlendingEnabled>
+FORCEINLINE static void putPixelShadow(FrameBuffer *buffer, int buf, unsigned int *pz, int _a, int x, int y, unsigned int &z, int color, int &dzdx, unsigned char *pm) {
+	if ((!kEnableScissor || !buffer->scissorPixel(x + _a, y)) && buffer->compareDepth(z, pz[_a]) && pm[_a]) {
+		buffer->writePixel<kAlphaTestEnabled, kBlendingEnabled, kDepthWrite>(buf + _a, color, z);
+	}
+	z += dzdx;
+}
+
 template <bool kDepthWrite, bool kLightsMode, bool kSmoothMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kRGB565Target>
 FORCEINLINE static void putPixelTextureMappingPerspective(FrameBuffer *buffer, int buf,
                         Graphics::PixelFormat &textureFormat, Graphics::PixelBuffer &texture, unsigned int *pz, int _a,
@@ -458,9 +466,10 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					n = (x2 >> 16) - x1;
 					pm = pm1 + x1;
 					while (n >= 3) {
-						for (int a = 0; a <= 3; a++) {
-							pm[a] = 0xff;
-						}
+						pm[0] = 0xff;
+						pm[1] = 0xff;
+						pm[2] = 0xff;
+						pm[3] = 0xff;
 						pm += 4;
 						n -= 4;
 						x += 4;
@@ -485,12 +494,10 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					pz = pz1 + x1;
 					z = z1;
 					while (n >= 3) {
-						for (int a = 0; a < 4; a++) {
-							if ((!kEnableScissor || !scissorPixel(x + a, y)) && compareDepth(z, pz[a]) && pm[0]) {
-								writePixel<kAlphaTestEnabled, kBlendingEnabled, kDepthWrite>(buf + a, color, z);
-							}
-							z += dzdx;
-						}
+						putPixelShadow<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, pz, 0, x, y, z, color, dzdx, pm);
+						putPixelShadow<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, pz, 1, x, y, z, color, dzdx, pm);
+						putPixelShadow<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, pz, 2, x, y, z, color, dzdx, pm);
+						putPixelShadow<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, pz, 3, x, y, z, color, dzdx, pm);
 						pz += 4;
 						pm += 4;
 						buf += 4;
@@ -498,9 +505,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 						x += 4;
 					}
 					while (n >= 0) {
-						if ((!kEnableScissor || !scissorPixel(x, y)) && compareDepth(z, pz[0]) && pm[0]) {
-							writePixel<kAlphaTestEnabled, kBlendingEnabled, kDepthWrite>(buf, color, z);
-						}
+						putPixelShadow<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, pz, 0, x, y, z, color, dzdx, pm);
 						pz += 1;
 						pm += 1;
 						buf += 1;
