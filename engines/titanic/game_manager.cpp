@@ -47,13 +47,16 @@ CGameManager::CGameManager(CProjectItem *project, CGameView *gameView):
 CGameManager::~CGameManager() {
 	delete _movie;
 	delete _movieSurface;
+	destroyTreeItem();
 
+	_project->resetGameManager();
+}
+
+void CGameManager::destroyTreeItem() {
 	if (_treeItem) {
 		_treeItem->destroyAll();
 		_treeItem = nullptr;
 	}
-
-	_project->resetGameManager();
 }
 
 void CGameManager::save(SimpleFile *file) {

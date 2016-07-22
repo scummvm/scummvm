@@ -38,6 +38,21 @@ bool CPetSave::reset() {
 	return true;
 }
 
+bool CPetSave::MouseButtonUpMsg(const Point &pt) {
+	if (_btnLoadSave.MouseButtonUpMsg(pt)) {
+		execute();
+		resetSlots();
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void CPetSave::highlightCurrent() {
+	resetSlots();
+	highlightSave(_savegameSlotNum);
+}
+
 void CPetSave::getTooltip(CPetText *text) {
 	text->setText("Save the game.");
 }

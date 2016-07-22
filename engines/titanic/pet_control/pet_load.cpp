@@ -22,6 +22,8 @@
 
 #include "titanic/pet_control/pet_load.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/core/project_item.h"
+#include "titanic/game_manager.h"
 
 namespace Titanic {
 
@@ -38,12 +40,36 @@ bool CPetLoad::reset() {
 	return true;
 }
 
+bool CPetLoad::MouseButtonUpMsg(const Point &pt) {
+	if (_btnLoadSave.MouseButtonUpMsg(pt)) {
+		execute();
+		return true;
+	} else {
+		return false;
+	}
+}
+
 void CPetLoad::getTooltip(CPetText *text) {
 	text->setText("Load the game.");
 }
 
 void CPetLoad::execute() {
-	warning("TODO: CPetLoad::execute");
+	CPetControl *pet = getPetControl();
+
+	if (_savegameSlotNum >= 0 && _slotInUse[_savegameSlotNum]) {
+		CProjectItem *project = pet ? pet->getRoot() : nullptr;
+		CGameManager *gameManager = project ? project->getGameManager() : nullptr;
+
+		if (project && gameManager) {
+			pet->displayMessage("Loading the selected game, please wait.");
+
+			gameManager->destroyTreeItem();
+			gameManager->initBounds();
+			project->loadGame(_savegameSlotNum);
+		}
+	} else if (pet) {
+		pet->displayMessage("You must select a game to load first.");
+	}
 }
 
 } // End of namespace Titanic

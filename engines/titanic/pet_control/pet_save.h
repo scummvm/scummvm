@@ -35,6 +35,11 @@ public:
 	virtual bool reset();
 
 	/**
+	 * Handles mouse button up messages
+	 */
+	virtual bool MouseButtonUpMsg(const Point &pt);
+
+	/**
 	 * Unhighlight any currently highlighted element
 	 */
 	virtual void unhighlightCurrent() { unhighlightSave(_savegameSlotNum); }
@@ -42,7 +47,7 @@ public:
 	/**
 	 * Highlight any currently highlighted element
 	 */
-	virtual void highlightCurrent() { highlightSave(_savegameSlotNum); }
+	virtual void highlightCurrent();
 
 	/**
 	 * Returns the tooltip text for when the glyph is selected

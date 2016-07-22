@@ -81,16 +81,6 @@ bool CPetLoadSave::MouseButtonDownMsg(const Point &pt) {
 	return false;
 }
 
-bool CPetLoadSave::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (_btnLoadSave.MouseButtonUpMsg(msg->_mousePos)) {
-		execute();
-		resetSlots();
-		return true;
-	} else {
-		return false;
-	}
-}
-
 bool CPetLoadSave::KeyCharMsg(Common::KeyCode key) {
 	switch (key) {
 	case Common::KEYCODE_TAB:
@@ -128,6 +118,7 @@ Rect CPetLoadSave::getSlotBounds(int index) {
 void CPetLoadSave::resetSlots() {
 	for (int idx = 0; idx < SAVEGAME_SLOTS_COUNT; ++idx) {
 		_slotNames[idx].setText("Empty");
+		_slotInUse[idx] = false;
 
 		// Try and open up the savegame for access
 		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(
@@ -139,16 +130,17 @@ void CPetLoadSave::resetSlots() {
 			file.open(in);
 
 			TitanicSavegameHeader header;
-			CProjectItem::readSavegameHeader(&file, header);
+			if (CProjectItem::readSavegameHeader(&file, header)) {
+				_slotInUse[idx] = true;
+				_slotNames[idx].setText(header._saveName);
+			}
+
 			if (header._thumbnail) {
 				header._thumbnail->free();
 				delete header._thumbnail;
 			}
 
 			file.close();
-
-			// Set the name text
-			_slotNames[idx].setText(header._saveName);
 		}
 	}
 

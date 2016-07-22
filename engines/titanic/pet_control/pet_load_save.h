@@ -58,6 +58,7 @@ private:
 	bool isSlotHighlighted(int index, const Point &pt);
 protected:
 	CPetText _slotNames[SAVEGAME_SLOTS_COUNT];
+	bool _slotInUse[SAVEGAME_SLOTS_COUNT];
 	CPetGfxElement _btnLoadSave;
 	CPetGfxElement _gutter;
 	static int _savegameSlotNum;
@@ -88,15 +89,13 @@ public:
 	virtual bool MouseButtonDownMsg(const Point &pt);
 
 	/**
-	 * Handles mouse button messages
-	 */
-	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
-
-	/**
 	 * Handles keypresses when the glyph is focused
 	 */
 	virtual bool KeyCharMsg(Common::KeyCode key);
 
+	/**
+	 * Resets highlighting on the save slots
+	 */
 	virtual void resetSaves() { resetSlots(); }
 
 	/**

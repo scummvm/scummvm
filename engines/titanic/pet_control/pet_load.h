@@ -35,6 +35,11 @@ public:
 	virtual bool reset();
 	
 	/**
+	 * Handles mouse button up messages
+	 */
+	virtual bool MouseButtonUpMsg(const Point &pt);
+
+	/**
 	 * Highlight any currently highlighted element
 	 */
 	virtual void highlightCurrent() { resetSlots(); }

@@ -82,6 +82,11 @@ public:
 	~CGameManager();
 
 	/**
+	 * Destroys and allocated tree item
+	 */
+	void destroyTreeItem();
+
+	/**
 	 * Save data to a save file
 	 */
 	void save(SimpleFile *file);
