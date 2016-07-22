@@ -71,6 +71,10 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 	: Dialog(0, 0, 16, 16),
 	_popUpBoss(boss) {
 
+	_openTime = 0;
+	_buffer = nullptr;
+	_entriesPerColumn = 1;
+
 	// Copy the selection index
 	_selection = _popUpBoss->_selectedItem;
 
@@ -142,10 +146,6 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 	// Remember original mouse position
 	_clickX = clickX - _x;
 	_clickY = clickY - _y;
-
-	_openTime = 0;
-	_buffer = nullptr;
-	_entriesPerColumn = 1;
 }
 
 void PopUpDialog::drawDialog() {
