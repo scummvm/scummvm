@@ -1502,7 +1502,8 @@ void GlobalOptionsDialog::close() {
 		uint32 port = Networking::LocalWebserver::getPort();
 		if (_serverPort) {
 			uint64 contents = _serverPort->getEditString().asUint64();
-			if (contents != 0) port = contents;
+			if (contents != 0)
+				port = contents;
 		}
 		ConfMan.setInt("local_server_port", port);
 #endif
@@ -1638,7 +1639,8 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		uint32 port = Networking::LocalWebserver::getPort();
 		if (_serverPort) {
 			uint64 contents = _serverPort->getEditString().asUint64();
-			if (contents != 0) port = contents;
+			if (contents != 0)
+				port = contents;
 		}
 		ConfMan.setInt("local_server_port", port);
 		ConfMan.flushToDisk();
@@ -1656,7 +1658,8 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			new Common::Callback<GlobalOptionsDialog, Networking::ErrorResponse>(this, &GlobalOptionsDialog::storageErrorCallback)
 		);
 		Common::String dir = CloudMan.savesDirectoryPath();
-		if (dir.lastChar() == '/') dir.deleteLastChar();
+		if (dir.lastChar() == '/')
+			dir.deleteLastChar();
 		CloudMan.listDirectory(
 			dir,
 			new Common::Callback<GlobalOptionsDialog, Cloud::Storage::ListDirectoryResponse>(this, &GlobalOptionsDialog::storageListDirectoryCallback),
@@ -1665,30 +1668,34 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 	case kDownloadStorageCmd:
-	{
-		DownloadDialog dialog(_selectedStorageIndex, _launcher);
-		dialog.runModal();
-		break;
-	}
+		{
+			DownloadDialog dialog(_selectedStorageIndex, _launcher);
+			dialog.runModal();
+			break;
+		}
 #endif
 #ifdef USE_SDL_NET
 	case kRunServerCmd:
-	{
+		{
 #ifdef NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
-		// save server's port
-		uint32 port = Networking::LocalWebserver::getPort();
-		if (_serverPort) {
-			uint64 contents = _serverPort->getEditString().asUint64();
-			if (contents != 0) port = contents;
-		}
-		ConfMan.setInt("local_server_port", port);
-		ConfMan.flushToDisk();
+			// save server's port
+			uint32 port = Networking::LocalWebserver::getPort();
+			if (_serverPort) {
+				uint64 contents = _serverPort->getEditString().asUint64();
+				if (contents != 0)
+					port = contents;
+			}
+			ConfMan.setInt("local_server_port", port);
+			ConfMan.flushToDisk();
 #endif
 
-		if (LocalServer.isRunning()) LocalServer.stopOnIdle();
-		else LocalServer.start();
-		break;
-	}
+			if (LocalServer.isRunning())
+				LocalServer.stopOnIdle();
+			else
+				LocalServer.start();
+
+			break;
+		}
 
 	case kServerPortClearCmd: {
 		if (_serverPort) {
@@ -1787,7 +1794,8 @@ void GlobalOptionsDialog::setupCloudTab() {
 	if (_storageUsernameDesc) _storageUsernameDesc->setVisible(shown);
 	if (_storageUsername) {
 		Common::String username = CloudMan.getStorageUsername(_selectedStorageIndex);
-		if (username == "") username = _("<none>");
+		if (username == "")
+			username = _("<none>");
 		_storageUsername->setLabel(username);
 		_storageUsername->setVisible(shown);
 	}
@@ -1801,31 +1809,49 @@ void GlobalOptionsDialog::setupCloudTab() {
 	if (_storageLastSync) {
 		Common::String sync = CloudMan.getStorageLastSync(_selectedStorageIndex);
 		if (sync == "") {
-			if (_selectedStorageIndex == CloudMan.getStorageIndex() && CloudMan.isSyncing()) sync = _("<right now>");
-			else sync = _("<never>");
+			if (_selectedStorageIndex == CloudMan.getStorageIndex() && CloudMan.isSyncing())
+				sync = _("<right now>");
+			else
+				sync = _("<never>");
 		}
 		_storageLastSync->setLabel(sync);
 		_storageLastSync->setVisible(shown);
 	}
-	if (_storageConnectButton) _storageConnectButton->setVisible(shown);
-	if (_storageRefreshButton) _storageRefreshButton->setVisible(shown && _selectedStorageIndex == CloudMan.getStorageIndex());
-	if (_storageDownloadButton) _storageDownloadButton->setVisible(shown && _selectedStorageIndex == CloudMan.getStorageIndex());
-	if (!shown) serverLabelPosition = (_storageUsernameDesc ? _storageUsernameDesc->getRelY() : 0);
+	if (_storageConnectButton)
+		_storageConnectButton->setVisible(shown);
+	if (_storageRefreshButton)
+		_storageRefreshButton->setVisible(shown && _selectedStorageIndex == CloudMan.getStorageIndex());
+	if (_storageDownloadButton)
+		_storageDownloadButton->setVisible(shown && _selectedStorageIndex == CloudMan.getStorageIndex());
+	if (!shown)
+		serverLabelPosition = (_storageUsernameDesc ? _storageUsernameDesc->getRelY() : 0);
 #else
 	_selectedStorageIndex = 0;
 
-	if (_storagePopUpDesc) _storagePopUpDesc->setVisible(false);
-	if (_storagePopUp) _storagePopUp->setVisible(false);
-	if (_storageUsernameDesc) _storageUsernameDesc->setVisible(false);
-	if (_storageUsernameDesc) _storageUsernameDesc->setVisible(false);
-	if (_storageUsername) _storageUsername->setVisible(false);
-	if (_storageUsedSpaceDesc) _storageUsedSpaceDesc->setVisible(false);
-	if (_storageUsedSpace) _storageUsedSpace->setVisible(false);
-	if (_storageLastSyncDesc) _storageLastSyncDesc->setVisible(false);
-	if (_storageLastSync) _storageLastSync->setVisible(false);
-	if (_storageConnectButton) _storageConnectButton->setVisible(false);
-	if (_storageRefreshButton) _storageRefreshButton->setVisible(false);
-	if (_storageDownloadButton) _storageDownloadButton->setVisible(false);
+	if (_storagePopUpDesc)
+		_storagePopUpDesc->setVisible(false);
+	if (_storagePopUp)
+		_storagePopUp->setVisible(false);
+	if (_storageUsernameDesc)
+		_storageUsernameDesc->setVisible(false);
+	if (_storageUsernameDesc)
+		_storageUsernameDesc->setVisible(false);
+	if (_storageUsername)
+		_storageUsername->setVisible(false);
+	if (_storageUsedSpaceDesc)
+		_storageUsedSpaceDesc->setVisible(false);
+	if (_storageUsedSpace)
+		_storageUsedSpace->setVisible(false);
+	if (_storageLastSyncDesc)
+		_storageLastSyncDesc->setVisible(false);
+	if (_storageLastSync)
+		_storageLastSync->setVisible(false);
+	if (_storageConnectButton)
+		_storageConnectButton->setVisible(false);
+	if (_storageRefreshButton)
+		_storageRefreshButton->setVisible(false);
+	if (_storageDownloadButton)
+		_storageDownloadButton->setVisible(false);
 
 	serverLabelPosition = (_storagePopUpDesc ? _storagePopUpDesc->getRelY() : 0);
 #endif
@@ -1852,7 +1878,8 @@ void GlobalOptionsDialog::setupCloudTab() {
 
 	bool serverIsRunning = LocalServer.isRunning();
 
-	if (serverLabelPosition < 0) serverLabelPosition = serverInfoY;
+	if (serverLabelPosition < 0)
+		serverLabelPosition = serverInfoY;
 	if (_runServerButton) {
 		_runServerButton->setVisible(true);
 		_runServerButton->setPos(_runServerButton->getRelX(), serverLabelPosition + serverButtonY - serverInfoY);
@@ -1861,8 +1888,10 @@ void GlobalOptionsDialog::setupCloudTab() {
 	if (_serverInfoLabel) {
 		_serverInfoLabel->setVisible(true);
 		_serverInfoLabel->setPos(_serverInfoLabel->getRelX(), serverLabelPosition);
-		if (serverIsRunning) _serverInfoLabel->setLabel(LocalServer.getAddress());
-		else _serverInfoLabel->setLabel(_("Not running"));
+		if (serverIsRunning)
+			_serverInfoLabel->setLabel(LocalServer.getAddress());
+		else
+			_serverInfoLabel->setLabel(_("Not running"));
 	}
 #ifdef NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
 	if (_serverPortDesc) {
@@ -1881,16 +1910,24 @@ void GlobalOptionsDialog::setupCloudTab() {
 		_serverPortClearButton->setEnabled(!serverIsRunning);
 	}
 #else
-	if (_serverPortDesc) _serverPortDesc->setVisible(false);
-	if (_serverPort) _serverPort->setVisible(false);
-	if (_serverPortClearButton) _serverPortClearButton->setVisible(false);
+	if (_serverPortDesc)
+		_serverPortDesc->setVisible(false);
+	if (_serverPort)
+		_serverPort->setVisible(false);
+	if (_serverPortClearButton)
+		_serverPortClearButton->setVisible(false);
 #endif
 #else
-	if (_runServerButton) _runServerButton->setVisible(false);
-	if (_serverInfoLabel) _serverInfoLabel->setVisible(false);
-	if (_serverPortDesc) _serverPortDesc->setVisible(false);
-	if (_serverPort) _serverPort->setVisible(false);
-	if (_serverPortClearButton) _serverPortClearButton->setVisible(false);
+	if (_runServerButton)
+		_runServerButton->setVisible(false);
+	if (_serverInfoLabel)
+		_serverInfoLabel->setVisible(false);
+	if (_serverPortDesc)
+		_serverPortDesc->setVisible(false);
+	if (_serverPort)
+		_serverPort->setVisible(false);
+	if (_serverPortClearButton)
+		_serverPortClearButton->setVisible(false);
 #endif
 }
 #endif

@@ -135,8 +135,10 @@ void RemoteBrowserDialog::handleTickle() {
 void RemoteBrowserDialog::updateListing() {
 	// Update the path display
 	Common::String path = _node.path();
-	if (path.empty()) path = "/"; //root
-	if (_navigationLocked) path = "Loading... " + path;
+	if (path.empty())
+		path = "/"; //root
+	if (_navigationLocked)
+		path = "Loading... " + path;
 	_currentPath->setLabel(path);
 
 	if (!_navigationLocked) {
@@ -168,7 +170,8 @@ void RemoteBrowserDialog::goUp() {
 		_rememberedNodeContents.erase(_node.path());
 
 	Common::String path = _node.path();
-	if (path.size() && (path.lastChar() == '/' || path.lastChar() == '\\')) path.deleteLastChar();
+	if (path.size() && (path.lastChar() == '/' || path.lastChar() == '\\'))
+		path.deleteLastChar();
 	if (path.empty()) {
 		_rememberedNodeContents.erase("");
 	} else {
@@ -183,7 +186,8 @@ void RemoteBrowserDialog::goUp() {
 }
 
 void RemoteBrowserDialog::listDirectory(Cloud::StorageFile node) {
-	if (_navigationLocked || _workingRequest) return;
+	if (_navigationLocked || _workingRequest)
+		return;
 
 	if (_rememberedNodeContents.contains(node.path())) {
 		_nodeContent = _rememberedNodeContents[node.path()];
@@ -205,7 +209,8 @@ void RemoteBrowserDialog::listDirectory(Cloud::StorageFile node) {
 
 void RemoteBrowserDialog::directoryListedCallback(Cloud::Storage::ListDirectoryResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
 	_navigationLocked = false;
 	_nodeContent = response.value;
@@ -215,7 +220,8 @@ void RemoteBrowserDialog::directoryListedCallback(Cloud::Storage::ListDirectoryR
 
 void RemoteBrowserDialog::directoryListedErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
 	_navigationLocked = false;
 	_node = _backupNode;

@@ -92,12 +92,12 @@ void DownloadDialog::close() {
 void DownloadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kDownloadDialogButtonCmd:
-	{
-		CloudMan.setDownloadTarget(nullptr);
-		CloudMan.cancelDownload();
-		close();
-		break;
-	}
+		{
+			CloudMan.setDownloadTarget(nullptr);
+			CloudMan.cancelDownload();
+			close();
+			break;
+		}
 	case kDownloadProgressCmd:
 		if (!_close) {
 			refreshWidgets();
@@ -116,16 +116,19 @@ bool DownloadDialog::selectDirectories() {
 	if (Networking::Connection::isLimited()) {
 		MessageDialog alert(_("It looks like your connection is limited. "
 			"Do you really want to download files with it?"), _("Yes"), _("No"));
-		if (alert.runModal() != GUI::kMessageOK) return false;
+		if (alert.runModal() != GUI::kMessageOK)
+			return false;
 	}
 
 	//first user should select remote directory to download
-	if (_remoteBrowser->runModal() <= 0) return false;
+	if (_remoteBrowser->runModal() <= 0)
+		return false;
 
 	Cloud::StorageFile remoteDirectory = _remoteBrowser->getResult();
 
 	//now user should select local directory to download into
-	if (_browser->runModal() <= 0) return false;
+	if (_browser->runModal() <= 0)
+		return false;
 
 	Common::FSNode dir(_browser->getResult());
 	Common::FSList files;
@@ -149,7 +152,8 @@ bool DownloadDialog::selectDirectories() {
 				_("Yes"),
 				_("No")
 				);
-			if (alert.runModal() != GUI::kMessageOK) return false;
+			if (alert.runModal() != GUI::kMessageOK)
+				return false;
 			break;
 		}
 	}
@@ -161,12 +165,18 @@ bool DownloadDialog::selectDirectories() {
 	if (localPath.size() && localPath.lastChar() != '/' && localPath.lastChar() != '\\') {
 		int backslashes = 0;
 		for (uint32 i = 0; i < localPath.size(); ++i)
-			if (localPath[i] == '/') --backslashes;
-			else if (localPath[i] == '\\') ++backslashes;
+			if (localPath[i] == '/')
+				--backslashes;
+			else if (localPath[i] == '\\')
+				++backslashes;
 
-			if (backslashes > 0) localPath += '\\' + remoteDirectory.name();
-			else localPath += '/' + remoteDirectory.name();
-	} else localPath += remoteDirectory.name();
+			if (backslashes > 0)
+				localPath += '\\' + remoteDirectory.name();
+			else
+				localPath += '/' + remoteDirectory.name();
+	} else {
+		localPath += remoteDirectory.name();
+	}
 
 	CloudMan.startDownload(remoteDirectory.path(), localPath);
 	CloudMan.setDownloadTarget(this);

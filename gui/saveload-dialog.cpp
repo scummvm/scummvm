@@ -111,9 +111,9 @@ SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngine &metaEngine) {
 	g_gui.checkScreenChange();
 
 	if (g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400
-	    && metaEngine.hasFeature(MetaEngine::kSavesSupportMetaInfo)
-	    && metaEngine.hasFeature(MetaEngine::kSavesSupportThumbnail)
-	    && userConfig.equalsIgnoreCase("grid")) {
+		&& metaEngine.hasFeature(MetaEngine::kSavesSupportMetaInfo)
+		&& metaEngine.hasFeature(MetaEngine::kSavesSupportThumbnail)
+		&& userConfig.equalsIgnoreCase("grid")) {
 		// In case we are 640x400 or higher, this dialog is not in save mode,
 		// the user requested the grid dialog and the engines supports it we
 		// try to set it up.
@@ -232,7 +232,8 @@ void SaveLoadChooserDialog::runSaveSync(bool hasSavepathOverride) {
 			ConnMan.showCloudDisabledIcon();
 		} else {
 			Cloud::SavesSyncRequest *request = CloudMan.syncSaves();
-			if (request) request->setTarget(this);
+			if (request)
+				request->setTarget(this);
 		}
 	}
 }
@@ -296,13 +297,15 @@ void SaveLoadChooserDialog::listSaves() {
 		Common::String pattern = _target + ".###";
 		Common::Array<Common::String> files = CloudMan.getSyncingFiles(); //returns empty array if not syncing
 		for (uint32 i = 0; i < files.size(); ++i) {
-			if (!files[i].matchString(pattern, true)) continue;
+			if (!files[i].matchString(pattern, true))
+				continue;
 
 			//make up some slot number
 			int slotNum = 0;
 			for (uint32 j = (files[i].size() > 3 ? files[i].size() - 3 : 0); j < files[i].size(); ++j) { //3 last chars
 				char c = files[i][j];
-				if (c < '0' || c > '9') continue;
+				if (c < '0' || c > '9')
+					continue;
 				slotNum = slotNum * 10 + (c - '0');
 			}
 

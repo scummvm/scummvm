@@ -80,15 +80,18 @@ void StorageWizardDialog::open() {
 
 		MessageDialog alert(_("The other Storage is working. Do you want to interrupt it?"), _("Yes"), _("No"));
 		if (alert.runModal() == GUI::kMessageOK) {
-			if (CloudMan.isDownloading()) CloudMan.cancelDownload();
-			if (CloudMan.isSyncing()) CloudMan.cancelSync();
+			if (CloudMan.isDownloading())
+				CloudMan.cancelDownload();
+			if (CloudMan.isSyncing())
+				CloudMan.cancelSync();
 
 			// I believe it still would return `true` here, but just in case
 			if (CloudMan.isWorking()) {
 				MessageDialog alert2(_("Wait until current Storage finishes up and try again."));
 				alert2.runModal();
-			} else
+			} else {
 				doClose = false;
+			}
 		}
 
 		if (doClose) {
@@ -106,7 +109,8 @@ void StorageWizardDialog::open() {
 
 void StorageWizardDialog::close() {
 	if (Cloud::CloudManager::couldUseLocalServer()) {
-		if (_stopServerOnClose) LocalServer.stopOnIdle();
+		if (_stopServerOnClose)
+			LocalServer.stopOnIdle();
 		LocalServer.indexPageHandler().setTarget(nullptr);
 	}
 	Dialog::close();
@@ -139,8 +143,10 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 
 		if (message.size() > 0) {
 			Common::String messageTemplate;
-			if (CODE_FIELDS - correctFields == 1) messageTemplate = _("Field %s has a mistake in it.");
-			else messageTemplate = _("Fields %s have mistakes in them.");
+			if (CODE_FIELDS - correctFields == 1)
+				messageTemplate = _("Field %s has a mistake in it.");
+			else
+				messageTemplate = _("Fields %s have mistakes in them.");
 			message = Common::String::format(messageTemplate.c_str(), message.c_str());
 		}
 
@@ -154,8 +160,10 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 				uint32 crc = crc16(code);
 				ok = (crc == gotcrc);
 			}
-			if (ok) message = _("All OK!");
-			else message = _("Invalid code");
+			if (ok)
+				message = _("All OK!");
+			else
+				message = _("Invalid code");
 		}
 		_connectWidget->setEnabled(ok);
 		_messageWidget->setLabel(message);
@@ -172,7 +180,8 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		Common::String code;
 		for (uint32 i = 0; i < CODE_FIELDS; ++i) {
 			Common::String subcode = _codeWidget[i]->getEditString();
-			if (subcode.size() == 0) continue;
+			if (subcode.size() == 0)
+				continue;
 			code += subcode;
 			code.deleteLastChar();
 		}
@@ -203,13 +212,23 @@ void StorageWizardDialog::handleTickle() {
 Common::String StorageWizardDialog::getUrl() const {
 	Common::String url = "https://www.scummvm.org/c/";
 	switch (_storageId) {
-	case Cloud::kStorageDropboxId: url += "db"; break;
-	case Cloud::kStorageOneDriveId: url += "od"; break;
-	case Cloud::kStorageGoogleDriveId: url += "gd"; break;
-	case Cloud::kStorageBoxId: url += "bx"; break;
+	case Cloud::kStorageDropboxId:
+		url += "db";
+		break;
+	case Cloud::kStorageOneDriveId:
+		url += "od";
+		break;
+	case Cloud::kStorageGoogleDriveId:
+		url += "gd";
+		break;
+	case Cloud::kStorageBoxId:
+		url += "bx";
+		break;
 	}
 
-	if (Cloud::CloudManager::couldUseLocalServer()) url += "s";
+	if (Cloud::CloudManager::couldUseLocalServer())
+		url += "s";
+
 	return url;
 }
 
@@ -222,7 +241,8 @@ int StorageWizardDialog::decodeHashchar(char c) {
 }
 
 bool StorageWizardDialog::correctChecksum(Common::String s) {
-	if (s.size() == 0) return false; //no last char
+	if (s.size() == 0)
+		return false; //no last char
 	int providedChecksum = decodeHashchar(s.lastChar());
 	int calculatedChecksum = 0x2A; //any initial value would do, but it must equal to the one used on the page where these checksums were generated
 	for (uint32 i = 0; i < s.size()-1; ++i) {
