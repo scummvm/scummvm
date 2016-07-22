@@ -1738,4 +1738,12 @@ void Myst3Engine::syncSoundSettings() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic * soundOverall / 256);
 }
 
+void Myst3Engine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+
+	for (uint i = 0; i < _movies.size(); i++) {
+		_movies[i]->pause(pause);
+	}
+}
+
 } // end of namespace Myst3

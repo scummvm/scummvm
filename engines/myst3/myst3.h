@@ -106,6 +106,8 @@ protected:
 	virtual Common::Error run() override;
 	virtual void syncSoundSettings() override;
 	virtual GUI::Debugger *getDebugger() override { return (GUI::Debugger *)_console; }
+	virtual void pauseEngineIntern(bool pause) override;
+
 public:
 	GameState *_state;
 	Scene *_scene;

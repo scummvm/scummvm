@@ -44,6 +44,9 @@ public:
 	virtual void draw() override;
 	virtual void drawOverlay() override;
 
+	/** Increase or decrease the movie's pause level by one */
+	void pause(bool pause);
+
 	uint16 getId() { return _id; }
 	bool isVideoLoaded() {return _bink.isVideoLoaded(); }
 	void setPosU(int32 v) { _posU = v; }

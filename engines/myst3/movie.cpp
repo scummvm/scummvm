@@ -202,6 +202,10 @@ void Movie::setEndFrame(int32 v) {
 	_endFrame = adjustFrameForRate(v, true);
 }
 
+void Movie::pause(bool pause) {
+	_bink.pauseVideo(pause);
+}
+
 Movie::~Movie() {
 	if (_texture)
 		_vm->_gfx->freeTexture(_texture);
