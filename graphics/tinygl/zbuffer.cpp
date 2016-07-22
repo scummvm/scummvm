@@ -139,30 +139,73 @@ void FrameBuffer::delOffscreenBuffer(Buffer *buf) {
 
 void FrameBuffer::clear(int clearZ, int z, int clearColor, int r, int g, int b) {
 	if (clearZ) {
-		memset_l(this->_zbuf, z, this->xsize * this->ysize);
+		const uint8 *zc = (const uint8 *)&z;
+		unsigned int i;
+		for (i = 1; i < sizeof(z) && zc[0] == zc[i]; i++) { ; }
+		if (i == sizeof(z)) {
+			// All "z" bytes are identical, use memset (fast)
+			memset(this->_zbuf, zc[0], sizeof(*this->_zbuf) * this->xsize * this->ysize);
+		} else {
+			// Cannot use memset, use a variant working on integers (slow)
+			memset_l(this->_zbuf, z, this->xsize * this->ysize);
+		}
 	}
 	if (clearColor) {
 		byte *pp = this->pbuf.getRawBuffer();
 		uint32 color = this->cmode.RGBToColor(r, g, b);
-		for (int y = 0; y < this->ysize; y++) {
-			memset_s(pp, color, this->xsize);
-			pp = pp + this->linesize;
+		const uint8 *colorc = (uint8 *)&color;
+		unsigned int i;
+		for (i = 1; i < sizeof(color) && colorc[0] == colorc[i]; i++) { ; }
+		if (i == sizeof(color)) {
+			// All "color" bytes are identical, use memset (fast)
+			memset(pp, colorc[0], this->linesize * this->ysize);
+		} else {
+			// Cannot use memset, use a variant working on shorts (slow)
+			memset_s(pp, color, this->xsize * this->ysize);
 		}
 	}
 }
 
 void FrameBuffer::clearRegion(int x, int y, int w, int h, int clearZ, int z, int clearColor, int r, int g, int b) {
 	if (clearZ) {
-		for (int row = y; row < y + h; row++) {
-			memset_l(this->_zbuf + x + (row * this->xsize), z, w);
+		int height = h;
+		unsigned int *zbuf = this->_zbuf + (y * this->xsize);
+		const uint8 *zc = (const uint8 *)&z;
+		unsigned int i;
+		for (i = 1; i < sizeof(z) && zc[0] == zc[i]; i++) { ; }
+		if (i == sizeof(z)) {
+			// All "z" bytes are identical, use memset (fast)
+			while (height--) {
+				memset(zbuf + x, zc[0], sizeof(*zbuf) * w);
+				zbuf += this->xsize;
+			}
+		} else {
+			// Cannot use memset, use a variant working on integers (slow)
+			while (height--) {
+				memset_l(zbuf + x, z, w);
+				zbuf += this->xsize;
+			}
 		}
 	}
 	if (clearColor) {
-		byte *pp = this->pbuf.getRawBuffer() + y * this->linesize;
+		int height = h;
+		byte *pp = this->pbuf.getRawBuffer() + y * this->linesize + x * this->pixelbytes;
 		uint32 color = this->cmode.RGBToColor(r, g, b);
-		for (int row = y; row < y + h; row++) {
-			memset_s(pp + x * this->pixelbytes, color, w);
-			pp = pp + this->linesize;
+		const uint8 *colorc = (uint8 *)&color;
+		unsigned int i;
+		for (i = 1; i < sizeof(color) && colorc[0] == colorc[i]; i++) { ; }
+		if (i == sizeof(color)) {
+			// All "color" bytes are identical, use memset (fast)
+			while (height--) {
+				memset(pp, colorc[0], w);
+				pp += this->linesize;
+			}
+		} else {
+			// Cannot use memset, use a variant working on shorts (slow)
+			while (height--) {
+				memset_s(pp, color, w);
+				pp += this->linesize;
+			}
 		}
 	}
 }
