@@ -2077,4 +2077,22 @@ void GroupMan::save1_ActiveGroupPart(Common::OutSaveFile* file) {
 	}
 }
 
+void GroupMan::load1_ActiveGroupPart(Common::InSaveFile* file) {
+	for (uint16 i = 0; i < _g376_maxActiveGroupCount; ++i) {
+		ActiveGroup *group = &_g375_activeGroups[i];
+		group->_groupThingIndex = file->readUint16BE();
+		group->_directions = (direction)file->readUint16BE();
+		group->_cells = file->readByte();
+		group->_lastMoveTime = file->readByte();
+		group->_delayFleeingFromTarget = file->readByte();
+		group->_targetMapX = file->readByte();
+		group->_targetMapY = file->readByte();
+		group->_priorMapX = file->readByte();
+		group->_priorMapY = file->readByte();
+		group->_homeMapX = file->readByte();
+		group->_homeMapY = file->readByte();
+		for (uint16 j = 0; j < 4; ++j)
+			group->_aspect[j] = file->readByte();
+	}
+}
 }

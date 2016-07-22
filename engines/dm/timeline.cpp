@@ -1106,4 +1106,22 @@ void Timeline::save4_timelinePart(Common::OutSaveFile* file) {
 		file->writeUint16BE(_g371_timeline[i]);
 }
 
+void Timeline::load3_eventsPart(Common::InSaveFile* file) {
+	for (uint16 i = 0; i < _g369_eventMaxCount; ++i) {
+		TimelineEvent *event = &_g370_events[i];
+		event->_mapTime = file->readSint32BE();
+		event->_type = file->readByte();
+		event->_priority = file->readByte();
+		event->_B._location._mapX = file->readByte();
+		event->_B._location._mapY = file->readByte();
+		event->_C.A._cell = file->readUint16BE();
+		event->_C.A._effect = file->readUint16BE();
+	}
+}
+
+void Timeline::load4_timelinePart(Common::InSaveFile* file) {
+	for (uint16 i = 0; i < _g369_eventMaxCount; ++i)
+		_g371_timeline[i] = file->readUint16BE();
+}
+
 }

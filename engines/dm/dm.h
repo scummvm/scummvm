@@ -33,6 +33,8 @@
 #include "gui/debugger.h"
 #include "common/savefile.h"
 #include "common/str.h"
+#include "engines/savestate.h"
+
 
 
 namespace DM {
@@ -184,6 +186,13 @@ enum LoadgameResponse {
 	k1_LoadgameSuccess = 1// @ C01_LOAD_GAME_SUCCESS
 };
 
+
+struct SaveGameHeader {
+	byte _version;
+	SaveStateDescriptor _descr;
+};
+
+
 class DMEngine : public Engine {
 	void f462_startGame(); // @ F0462_START_StartGame_CPSF
 	void f3_processNewPartyMap(uint16 mapIndex); // @ F0003_MAIN_ProcessNewPartyMap_CPSE
@@ -193,6 +202,7 @@ class DMEngine : public Engine {
 	void initArrays();
 	Common::String getSavefileName(uint16 slot);
 	void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName);
+	bool readSaveGameHeader(Common::InSaveFile *file, SaveGameHeader *header);
 	void f439_drawEntrance(); // @ F0439_STARTEND_DrawEntrance
 public:
 	explicit DMEngine(OSystem *syst);
@@ -207,7 +217,7 @@ public:
 	void f19_displayErrorAndStop(int16 errorIndex); // @ F0019_MAIN_DisplayErrorAndStop
 	virtual Common::Error run(); // @ main
 	void f433_processCommand140_saveGame(uint16 slot, const Common::String desc); // @ F0433_STARTEND_ProcessCommand140_SaveGame_CPSCDF
-	LoadgameResponse f435_loadgame(); // @ F0435_STARTEND_LoadGame_CPSF
+	LoadgameResponse f435_loadgame(int16 slot); // @ F0435_STARTEND_LoadGame_CPSF
 	void f441_processEntrance(); // @ F0441_STARTEND_ProcessEntrance
 
 private:

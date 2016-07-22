@@ -245,6 +245,7 @@ public:
 	bool f221_isFluxcageOnSquare(int16 mapX, int16 mapY); // @ F0221_GROUP_IsFluxcageOnSquare
 	void f225_fuseAction(uint16 mapX, uint16 mapY); // @ F0225_GROUP_FuseAction
 	void save1_ActiveGroupPart(Common::OutSaveFile *file);
+	void load1_ActiveGroupPart(Common::InSaveFile* file);
 };
 
 

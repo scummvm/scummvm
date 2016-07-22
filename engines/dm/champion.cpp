@@ -1724,7 +1724,7 @@ void ChampionMan::save2_PartyPart(Common::OutSaveFile* file) {
 		file->writeUint16BE(champ->_cell);
 		file->writeUint16BE(champ->_actionIndex);
 		file->writeUint16BE(champ->_symbolStep);
-		for(uint16 j = 0; j < 5; ++j)
+		for (uint16 j = 0; j < 5; ++j)
 			file->writeByte(champ->_symbols[j]);
 		file->writeUint16BE(champ->_directionMaximumDamageReceived);
 		file->writeUint16BE(champ->_maximumDamageReceived);
@@ -1757,11 +1757,73 @@ void ChampionMan::save2_PartyPart(Common::OutSaveFile* file) {
 	file->writeByte(party._freezeLifeTicks);
 	file->writeByte(party._firstScentIndex);
 	file->writeByte(party._lastScentIndex);
-	for(uint16 i = 0; i < 24; ++i)
+	for (uint16 i = 0; i < 24; ++i)
 		file->writeUint16BE(party._scents[i].toUint16());
 	for (uint16 i = 0; i < 24; ++i)
 		file->writeByte(party._scentStrengths[i]);
 	file->writeByte(party._event71Count_Invisibility);
+}
+
+void ChampionMan::load2_PartyPart(Common::InSaveFile* file) {
+	for (uint16 i = 0; i < 4; ++i) {
+		Champion *champ = &_gK71_champions[i];
+		champ->_attributes = file->readUint16BE();
+		champ->_wounds = file->readUint16BE();
+		for (uint16 y = 0; y < 7; ++y)
+			for (uint16 x = 0; x < 3; ++x)
+				champ->_statistics[y][x] = file->readByte();
+		for (uint16 j = 0; j < 30; ++j)
+			champ->_slots[j] = Thing(file->readUint16BE());
+			for (uint16 j = 0; j < 20; ++j) {
+				champ->_skills[j]._temporaryExperience = file->readSint16BE();
+				champ->_skills[j]._experience = file->readSint32BE();
+			}
+		for (uint16 j = 0; j < 8; ++j)
+			champ->_name[j] = file->readByte();
+		for (uint16 j = 0; j < 20; ++j)
+			champ->_title[j] = file->readByte();
+		champ->_dir = (direction)file->readUint16BE();
+		champ->_cell = (ViewCell)file->readUint16BE();
+		champ->_actionIndex = (ChampionAction)file->readUint16BE();
+		champ->_symbolStep = file->readUint16BE();
+		for (uint16 j = 0; j < 5; ++j)
+			champ->_symbols[j] = file->readByte();
+		champ->_directionMaximumDamageReceived = file->readUint16BE();
+		champ->_maximumDamageReceived = file->readUint16BE();
+		champ->_poisonEventCount = file->readUint16BE();
+		champ->_enableActionEventIndex = file->readSint16BE();
+		champ->_hideDamageReceivedIndex = file->readSint16BE();
+		champ->_currHealth = file->readSint16BE();
+		champ->_maxHealth = file->readSint16BE();
+		champ->_currStamina = file->readSint16BE();
+		champ->_maxStamina = file->readSint16BE();
+		champ->_currMana = file->readSint16BE();
+		champ->_maxMana = file->readSint16BE();
+		champ->_actionDefense = file->readSint16BE();
+		champ->_food = file->readSint16BE();
+		champ->_water = file->readSint16BE();
+		champ->_load = file->readUint16BE();
+		champ->_shieldDefense = file->readSint16BE();
+		for (uint16 j = 0; j < 928; ++j)
+			champ->_portrait[j] = file->readByte();
+	}
+
+	Party &party = _g407_party;
+	party._magicalLightAmount = file->readSint16BE();
+	party._event73Count_ThievesEye = file->readByte();
+	party._event79Count_Footprints = file->readByte();
+	party._shieldDefense = file->readSint16BE();
+	party._fireShieldDefense = file->readSint16BE();
+	party._spellShieldDefense = file->readSint16BE();
+	party._scentCount = file->readByte();
+	party._freezeLifeTicks = file->readByte();
+	party._firstScentIndex = file->readByte();
+	party._lastScentIndex = file->readByte();
+	for (uint16 i = 0; i < 24; ++i)
+		party._scents[i] = Scent(file->readUint16BE());
+	for (uint16 i = 0; i < 24; ++i)
+		party._scentStrengths[i] = file->readByte();
+	party._event71Count_Invisibility = file->readByte();
 }
 
 ChampionIndex ChampionMan::f285_getIndexInCell(int16 cell) {

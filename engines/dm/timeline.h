@@ -189,6 +189,8 @@ public:
 	void f255_timelineProcessEvent13_ViAltarRebirth(TimelineEvent *event); // @ F0255_TIMELINE_ProcessEvent13_ViAltarRebirth
 	void save3_eventsPart(Common::OutSaveFile *file);
 	void save4_timelinePart(Common::OutSaveFile *file);
+	void load3_eventsPart(Common::InSaveFile* file);
+	void load4_timelinePart(Common::InSaveFile* file);
 };
 
 

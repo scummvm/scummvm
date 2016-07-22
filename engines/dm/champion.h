@@ -586,6 +586,7 @@ public:
 	void f323_unpoison(int16 champIndex); // @ F0323_CHAMPION_Unpoison
 	void f331_applyTimeEffects(); // @ F0331_CHAMPION_ApplyTimeEffects_CPSF
 	void save2_PartyPart(Common::OutSaveFile *file);
+	void load2_PartyPart(Common::InSaveFile* file);
 };
 
 

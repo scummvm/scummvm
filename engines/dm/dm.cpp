@@ -177,9 +177,6 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	_g564_interfaceCredits = nullptr;
 	debug("DMEngine::DMEngine");
 
-
-	warning(false, "DUMMY CODE: setting _g298_newGame to true, should be in processEntrance");
-	_g298_newGame = true;
 }
 
 DMEngine::~DMEngine() {
@@ -222,7 +219,7 @@ uint16 DMEngine::f30_getScaledProduct(uint16 val, uint16 scale, uint16 vale2) {
 void DMEngine::f463_initializeGame() {
 	_displayMan->f479_loadGraphics();
 	_displayMan->f460_initializeGraphicData();
-	// DUMMY CODE: next line
+	warning(false, "Dummy code in f463_initializeGame, setting palette");
 	_displayMan->loadPalette(g21_PalDungeonView[0]);
 	_displayMan->f94_loadFloorSet(k0_FloorSetStone);
 	_displayMan->f95_loadWallSet(k0_WallSetStone);
@@ -231,11 +228,10 @@ void DMEngine::f463_initializeGame() {
 	_objectMan->loadObjectNames();
 	_eventMan->initMouse();
 	f441_processEntrance();
-	while (f435_loadgame() != k1_LoadgameSuccess) {
+	while (f435_loadgame(1) != k1_LoadgameSuccess) {
 		f441_processEntrance();
 	}
 	//F0396_MENUS_LoadSpellAreaLinesBitmap() is not needed, every bitmap has been loaded
-
 
 	// There was some memory wizardy for the Amiga platform, I skipped that part
 	_displayMan->f461_allocateFlippedWallBitmaps();
@@ -321,7 +317,7 @@ Common::Error DMEngine::run() {
 	_projexpl = new ProjExpl(this);
 	_displayMan->setUpScreens(320, 200);
 
-	f463_initializeGame(); // @ F0463_START_InitializeGame_CPSADEF
+	f463_initializeGame();
 	while (true) {
 		f2_gameloop();
 		warning(false, "TODO: F0444_STARTEND_Endgame(G0303_B_PartyDead);");
@@ -490,7 +486,6 @@ void DMEngine::f441_processEntrance() {
 		_g562_entranceDoorAnimSteps[i] = nullptr;
 }
 
-
 void DMEngine::f439_drawEntrance() {
 	static Box K0079_s_Box_Entrance_DoorsUpperHalf = {0, 231, 0, 80};
 	static Box K0152_s_Box_Entrance_DoorsLowerHalf = {0, 231, 81, 160};
@@ -508,7 +503,7 @@ void DMEngine::f439_drawEntrance() {
 	_dungeonMan->_g271_currMapData = L1398_apuc_MicroDungeonCurrentMapData;
 
 	Map map; // uninitialized, won't be used
-	_dungeonMan->_g269_currMap = &map; 
+	_dungeonMan->_g269_currMap = &map;
 	for (uint16 i = 0; i < 25; ++i)
 		L1399_auc_MicroDungeonSquares[i] = Square(k0_ElementTypeWall, 0);
 	for (L1397_ui_ColumnIndex = 0; L1397_ui_ColumnIndex < 5; L1397_ui_ColumnIndex++) {
