@@ -298,67 +298,28 @@ RasterizationDrawCall::RasterizationDrawCall() : DrawCall(DrawCall_Rasterization
 }
 
 void RasterizationDrawCall::computeDirtyRegion() {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	int width = c->fb->xsize;
-	int height = c->fb->ysize;
-
-	int left = width - 1, right = 0, top = height - 1, bottom = 0;
-
-	bool pointInsideVolume = false;
+	int clip_code = 0xf;
 
 	for (int i = 0; i < _vertexCount; i++) {
-		TinyGL::GLVertex *v = &_vertex[i];
-		float winv;
-		// coordinates
-		winv = (float)(1.0 / v->pc.W);
-		float pcX = v->pc.X * winv;
-		float pcY = v->pc.Y * winv;
-		int screenCoordsX = (int)(pcX * c->viewport.scale.X + c->viewport.trans.X);
-		int screenCoordsY = (int)(pcY * c->viewport.scale.Y + c->viewport.trans.Y);
+		clip_code &= _vertex[i].clip_code;
+	}
 
-		left = MIN(left, screenCoordsX);
-		right = MAX(right, screenCoordsX);
-		top = MIN(top, screenCoordsY);
-		bottom = MAX(bottom, screenCoordsY);
-
-		if (!pointInsideVolume) {
-			if (pcX >= -2 && pcX <= 2 && pcY >= -2 && pcY <= 2) { // Normalized cube clipping.
-				pointInsideVolume = true;
-			}
+	if (!clip_code) {
+		TinyGL::GLContext *c = TinyGL::gl_get_context();
+		int xmax = c->fb->xsize - 1;
+		int ymax = c->fb->ysize - 1;
+		int left = xmax, right = 0, top = ymax, bottom = 0;
+		for (int i = 0; i < _vertexCount; i++) {
+			TinyGL::GLVertex *v = &_vertex[i];
+			if (v->clip_code)
+				gl_transform_to_viewport(c, v);
+			left =   MIN(left,   v->clip_code & 0x1 ?    0 : v->zp.x);
+			right =  MAX(right,  v->clip_code & 0x2 ? xmax : v->zp.x);
+			bottom = MAX(bottom, v->clip_code & 0x4 ? ymax : v->zp.y);
+			top =    MIN(top,    v->clip_code & 0x8 ?    0 : v->zp.y);
 		}
+		_dirtyRegion = Common::Rect(left, top, right + 1, bottom + 1);
 	}
-
-	// Clipping out of screen cases.
-	// Reason: other "out of screen cases are actually full screen quads"
-	if (pointInsideVolume == false) {
-		left = right = top = bottom = 0;
-	}
-
-	// Those nested ifs cover the case where the triangle is slightly offscreen
-	// but it should still be rendered.
-
-	if (left < 0) {
-		left = 0;
-	}
-
-	if (right >= width) {
-		right = width - 1;
-	}
-
-	if (top < 0) {
-		top = 0;
-	}
-
-	if (bottom >= height) {
-		bottom = height - 1;
-	}
-
-	_dirtyRegion = Common::Rect(left, top, right + 1, bottom + 1);
-	// This takes into account precision issues that occur during rasterization.
-	_dirtyRegion.left -= 2;
-	_dirtyRegion.top -= 2;
-	_dirtyRegion.right += 2;
-	_dirtyRegion.bottom += 2;
 }
 
 void RasterizationDrawCall::execute(bool restoreState) const {
