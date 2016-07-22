@@ -83,66 +83,134 @@ void BoxListDirectoryByIdRequest::responseCallback(Networking::JsonResponse resp
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
 	Common::JSONValue *json = response.value;
-	if (json) {
-		Common::JSONObject responseObject = json->asObject();
-
-		//debug("%s", json->stringify(true).c_str());
-
-		//TODO: check that error is returned the right way
-		/*
-		if (responseObject.contains("error") || responseObject.contains("error_summary")) {
-		    warning("Box returned error: %s", responseObject.getVal("error_summary")->asString().c_str());
-		    error.failed = true;
-		    error.response = json->stringify();
-		    finishError(error);
-		    delete json;
-		    return;
-		}
-		*/
-
-		//TODO: check that ALL keys exist AND HAVE RIGHT TYPE to avoid segfaults
-
-		if (responseObject.contains("entries") && responseObject.getVal("entries")->isArray()) {
-			Common::JSONArray items = responseObject.getVal("entries")->asArray();
-			for (uint32 i = 0; i < items.size(); ++i) {
-				Common::JSONObject item = items[i]->asObject();
-				Common::String id = item.getVal("id")->asString();
-				Common::String name = item.getVal("name")->asString();
-				bool isDirectory = (item.getVal("type")->asString() == "folder");
-				uint32 size = 0, timestamp = 0;
-				if (item.contains("size")) {
-					if (item.getVal("size")->isString())
-						size = item.getVal("size")->asString().asUint64();
-					else if (item.getVal("size")->isIntegerNumber())
-						size = item.getVal("size")->asIntegerNumber();
-					else
-						warning("strange type for field 'size'");
-				}
-				if (item.contains("modified_at") && item.getVal("modified_at")->isString())
-					timestamp = ISO8601::convertToTimestamp(item.getVal("modified_at")->asString());
-
-				//as we list directory by id, we can't determine full path for the file, so we leave it empty
-				_files.push_back(StorageFile(id, "", name, size, timestamp, isDirectory));
-			}
-		}
-
-		uint32 received = 0;
-		uint32 totalCount = 0;
-		if (responseObject.contains("total_count") && responseObject.getVal("total_count")->isIntegerNumber())
-			totalCount = responseObject.getVal("total_count")->asIntegerNumber();
-		if (responseObject.contains("offset") && responseObject.getVal("offset")->isIntegerNumber())
-			received = responseObject.getVal("offset")->asIntegerNumber();
-		if (responseObject.contains("limit") && responseObject.getVal("limit")->isIntegerNumber())
-			received += responseObject.getVal("limit")->asIntegerNumber();
-		bool hasMore = (received < totalCount);
-
-		if (hasMore) makeRequest(received);
-		else finishListing(_files);
-	} else {
-		warning("null, not json");
-		error.failed = true;
+	if (json == nullptr) {
+		error.response = "Failed to parse JSON, null passed!";
 		finishError(error);
+		return;
 	}
+
+	if (!json->isObject()) {
+		error.response = "Passed JSON is not an object!";
+		finishError(error);
+		delete json;
+		return;
+	}
+
+	Common::JSONObject responseObject = json->asObject();
+	//debug(9, "%s", json->stringify(true).c_str());
+
+	//TODO: check that error is returned the right way
+	/*
+	if (responseObject.contains("error") || responseObject.contains("error_summary")) {
+		warning("Box returned error: %s", responseObject.getVal("error_summary")->asString().c_str());
+		error.failed = true;
+		error.response = json->stringify();
+		finishError(error);
+		delete json;
+		return;
+	}
+	*/
+
+	//check that ALL keys exist AND HAVE RIGHT TYPE to avoid segfaults
+	if (responseObject.contains("entries")) {
+		if (!responseObject.getVal("entries")->isArray()) {
+			error.response = Common::String::format(
+				"\"entries\" found, but that's not an array!\n%s",
+				responseObject.getVal("entries")->stringify(true).c_str()
+			);
+			finishError(error);
+			delete json;
+			return;
+		}
+
+		Common::JSONArray items = responseObject.getVal("entries")->asArray();
+		for (uint32 i = 0; i < items.size(); ++i) {
+			if (!items[i]->isObject()) {
+				warning("BoxListDirectoryByIdRequest: \"entries\" item is not an object!");
+				debug(9, "%s", items[i]->stringify(true).c_str());
+				continue;
+			}
+
+			Common::JSONObject item = items[i]->asObject();
+
+			if (!item.contains("id") || !item.getVal("id")->isString()) {
+				warning("BoxListDirectoryByIdRequest: \"entries\" item's \"id\"!");
+				if (item.contains("id")) {
+					debug(9, "%s", item.getVal("id")->stringify(true).c_str());
+				} else {
+					debug(9, "(not available)");
+				}
+				continue;
+			}
+
+			if (!item.contains("name") || !item.getVal("name")->isString()) {
+				warning("BoxListDirectoryByIdRequest: \"entries\" item's \"name\"!");
+				if (item.contains("name")) {
+					debug(9, "%s", item.getVal("name")->stringify(true).c_str());
+				} else {
+					debug(9, "(not available)");
+				}
+				continue;
+			}
+
+			if (!item.contains("type") || !item.getVal("type")->isString()) {
+				warning("BoxListDirectoryByIdRequest: \"entries\" item's \"type\"!");
+				if (item.contains("type")) {
+					debug(9, "%s", item.getVal("type")->stringify(true).c_str());
+				} else {
+					debug(9, "(not available)");
+				}
+				continue;
+			}
+
+			if (!item.contains("size") || (!item.getVal("size")->isString() && !item.getVal("size")->isIntegerNumber())) {
+				warning("BoxListDirectoryByIdRequest: \"entries\" item's \"size\"!");
+				if (item.contains("size")) {
+					debug(9, "%s", item.getVal("size")->stringify(true).c_str());
+				} else {
+					debug(9, "(not available)");
+				}
+				continue;
+			}
+
+			if (!item.contains("modified_at") || !item.getVal("modified_at")->isString()) {
+				warning("BoxListDirectoryByIdRequest: \"entries\" item's \"modified_at\"!");
+				if (item.contains("modified_at")) {
+					debug(9, "%s", item.getVal("modified_at")->stringify(true).c_str());
+				} else {
+					debug(9, "(not available)");
+				}
+				continue;
+			}
+
+			Common::String id = item.getVal("id")->asString();
+			Common::String name = item.getVal("name")->asString();
+			bool isDirectory = (item.getVal("type")->asString() == "folder");
+			uint32 size;
+			if (item.getVal("size")->isString()) {
+				size = item.getVal("size")->asString().asUint64();
+			} else {
+				size = item.getVal("size")->asIntegerNumber();
+			}
+			uint32 timestamp = ISO8601::convertToTimestamp(item.getVal("modified_at")->asString());
+
+			//as we list directory by id, we can't determine full path for the file, so we leave it empty
+			_files.push_back(StorageFile(id, "", name, size, timestamp, isDirectory));
+		}
+	}
+
+	uint32 received = 0;
+	uint32 totalCount = 0;
+	if (responseObject.contains("total_count") && responseObject.getVal("total_count")->isIntegerNumber())
+		totalCount = responseObject.getVal("total_count")->asIntegerNumber();
+	if (responseObject.contains("offset") && responseObject.getVal("offset")->isIntegerNumber())
+		received = responseObject.getVal("offset")->asIntegerNumber();
+	if (responseObject.contains("limit") && responseObject.getVal("limit")->isIntegerNumber())
+		received += responseObject.getVal("limit")->asIntegerNumber();
+	bool hasMore = (received < totalCount);
+
+	if (hasMore) makeRequest(received);
+	else finishListing(_files);
 
 	delete json;
 }
