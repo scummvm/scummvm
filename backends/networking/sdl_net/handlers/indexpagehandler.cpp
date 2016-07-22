@@ -42,7 +42,6 @@ void IndexPageHandler::handle(Client &client) {
 			Common::String::format(
 				"%s<br/><a href=\"files\">%s</a>",
 				_("This is a local webserver index page."),
-				client.queryParameter("path").c_str(),
 				_("Open Files manager")
 			),
 			"/filesAJAX"
