@@ -54,8 +54,11 @@ public:
 	virtual void restart();
 
 	static bool jsonIsObject(Common::JSONValue *item, const char *warningPrefix);
-	static bool jsonContainsString(Common::JSONObject &item, const char *key, const char *warningPrefix);
-	static bool jsonContainsIntegerNumber(Common::JSONObject &item, const char *key, const char *warningPrefix);
+	static bool jsonContainsString(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional = false);
+	static bool jsonContainsIntegerNumber(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional = false);
+	static bool jsonContainsArray(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional = false);
+	static bool jsonContainsStringOrIntegerNumber(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional = false);
+	static bool jsonContainsAttribute(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional = false);
 };
 
 } // End of namespace Networking

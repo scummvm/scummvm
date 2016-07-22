@@ -104,19 +104,39 @@ void OneDriveListDirectoryRequest::listedDirectoryCallback(Networking::JsonRespo
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
-	if (!json) {
-		error.failed = true;
+	if (json == nullptr) {
+		error.response = "Failed to parse JSON, null passed!";
 		finishError(error);
+		return;
+	}
+
+	if (!json->isObject()) {
+		error.response = "Passed JSON is not an object!";
+		finishError(error);
+		delete json;
 		return;
 	}
 
 	Common::JSONObject object = json->asObject();
 
-	//TODO: check that ALL keys exist AND HAVE RIGHT TYPE to avoid segfaults
+	//check that ALL keys exist AND HAVE RIGHT TYPE to avoid segfaults
+	if (!Networking::CurlJsonRequest::jsonContainsArray(object, "value", "OneDriveListDirectoryRequest")) {
+		error.response = "\"value\" not found or that's not an array!";
+		finishError(error);
+		delete json;
+		return;
+	}
 
 	Common::JSONArray items = object.getVal("value")->asArray();
 	for (uint32 i = 0; i < items.size(); ++i) {
+		if (!Networking::CurlJsonRequest::jsonIsObject(items[i], "OneDriveListDirectoryRequest")) continue;
+
 		Common::JSONObject item = items[i]->asObject();
+
+		if (!Networking::CurlJsonRequest::jsonContainsAttribute(item, "folder", "OneDriveListDirectoryRequest", true)) continue;
+		if (!Networking::CurlJsonRequest::jsonContainsString(item, "name", "OneDriveListDirectoryRequest")) continue;
+		if (!Networking::CurlJsonRequest::jsonContainsIntegerNumber(item, "size", "OneDriveListDirectoryRequest")) continue;
+		if (!Networking::CurlJsonRequest::jsonContainsString(item, "lastModifiedDateTime", "OneDriveListDirectoryRequest")) continue;
 
 		Common::String path = _currentDirectory + item.getVal("name")->asString();
 		bool isDirectory = item.contains("folder");
@@ -132,6 +152,13 @@ void OneDriveListDirectoryRequest::listedDirectoryCallback(Networking::JsonRespo
 
 	bool hasMore = object.contains("@odata.nextLink");
 	if (hasMore) {
+		if (!Networking::CurlJsonRequest::jsonContainsString(object, "@odata.nextLink", "OneDriveListDirectoryRequest")) {
+			error.response = "\"@odata.nextLink\" is not a string!";
+			finishError(error);
+			delete json;
+			return;
+		}
+
 		makeRequest(object.getVal("@odata.nextLink")->asString());
 	} else {
 		listNextDirectory();

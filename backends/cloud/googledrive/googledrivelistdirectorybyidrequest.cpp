@@ -72,8 +72,10 @@ void GoogleDriveListDirectoryByIdRequest::makeRequest(Common::String pageToken) 
 
 void GoogleDriveListDirectoryByIdRequest::responseCallback(Networking::JsonResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback)
+	if (_ignoreCallback) {
+		delete response.value;
 		return;
+	}
 	if (response.request)
 		_date = response.request->date();
 

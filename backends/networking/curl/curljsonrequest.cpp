@@ -42,7 +42,7 @@ CurlJsonRequest::~CurlJsonRequest() {
 
 char *CurlJsonRequest::getPreparedContents() {
 	//write one more byte in the end
-	byte zero[1] = { 0 };
+	byte zero[1] = {0};
 	_contentsStream.write(zero, 1);
 
 	//replace all "bad" bytes with '.' character
@@ -114,8 +114,12 @@ bool CurlJsonRequest::jsonIsObject(Common::JSONValue *item, const char *warningP
 	return false;
 }
 
-bool CurlJsonRequest::jsonContainsString(Common::JSONObject &item, const char *key, const char *warningPrefix) {
+bool CurlJsonRequest::jsonContainsString(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional) {
 	if (!item.contains(key)) {
+		if (isOptional) {
+			return true;
+		}
+
 		warning("%s: passed item misses the \"%s\" attribute!", warningPrefix, key);
 		return false;
 	}
@@ -127,8 +131,12 @@ bool CurlJsonRequest::jsonContainsString(Common::JSONObject &item, const char *k
 	return false;
 }
 
-bool CurlJsonRequest::jsonContainsIntegerNumber(Common::JSONObject &item, const char *key, const char *warningPrefix) {
+bool CurlJsonRequest::jsonContainsIntegerNumber(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional) {
 	if (!item.contains(key)) {
+		if (isOptional) {
+			return true;
+		}
+
 		warning("%s: passed item misses the \"%s\" attribute!", warningPrefix, key);
 		return false;
 	}
@@ -138,6 +146,53 @@ bool CurlJsonRequest::jsonContainsIntegerNumber(Common::JSONObject &item, const 
 	warning("%s: passed item's \"%s\" attribute is not an integer!", warningPrefix, key);
 	debug(9, "%s", item.getVal(key)->stringify(true).c_str());
 	return false;
+}
+
+bool CurlJsonRequest::jsonContainsArray(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional) {
+	if (!item.contains(key)) {
+		if (isOptional) {
+			return true;
+		}
+
+		warning("%s: passed item misses the \"%s\" attribute!", warningPrefix, key);
+		return false;
+	}
+
+	if (item.getVal(key)->isArray()) return true;
+
+	warning("%s: passed item's \"%s\" attribute is not an array!", warningPrefix, key);
+	debug(9, "%s", item.getVal(key)->stringify(true).c_str());
+	return false;
+}
+
+bool CurlJsonRequest::jsonContainsStringOrIntegerNumber(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional) {
+	if (!item.contains(key)) {
+		if (isOptional) {
+			return true;
+		}
+
+		warning("%s: passed item misses the \"%s\" attribute!", warningPrefix, key);
+		return false;
+	}
+
+	if (item.getVal(key)->isString() || item.getVal(key)->isIntegerNumber()) return true;
+
+	warning("%s: passed item's \"%s\" attribute is neither a string or an integer!", warningPrefix, key);
+	debug(9, "%s", item.getVal(key)->stringify(true).c_str());
+	return false;
+}
+
+bool CurlJsonRequest::jsonContainsAttribute(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional) {
+	if (!item.contains(key)) {
+		if (isOptional) {
+			return true;
+		}
+
+		warning("%s: passed item misses the \"%s\" attribute!", warningPrefix, key);
+		return false;
+	}
+
+	return true;
 }
 
 } // End of namespace Networking
