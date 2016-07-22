@@ -39,14 +39,16 @@ FolderDownloadRequest::FolderDownloadRequest(Storage *storage, Storage::FileArra
 FolderDownloadRequest::~FolderDownloadRequest() {
 	sendCommand(GUI::kDownloadEndedCmd, 0);
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	delete _fileArrayCallback;
 }
 
 void FolderDownloadRequest::start() {
 	//cleanup
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	_currentFile = StorageFile();
 	_pendingFiles.clear();
 	_failedFiles.clear();
@@ -65,7 +67,8 @@ void FolderDownloadRequest::start() {
 
 void FolderDownloadRequest::directoryListedCallback(Storage::ListDirectoryResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 	_pendingFiles = response.value;
 
 	// remove all directories
@@ -84,13 +87,15 @@ void FolderDownloadRequest::directoryListedCallback(Storage::ListDirectoryRespon
 
 void FolderDownloadRequest::directoryListedErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 	finishError(error);
 }
 
 void FolderDownloadRequest::fileDownloadedCallback(Storage::BoolResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 	if (!response.value) _failedFiles.push_back(_currentFile);
 	_downloadedBytes += _currentFile.size();
 	downloadNextFile();
@@ -98,7 +103,8 @@ void FolderDownloadRequest::fileDownloadedCallback(Storage::BoolResponse respons
 
 void FolderDownloadRequest::fileDownloadedErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 	fileDownloadedCallback(Storage::BoolResponse(error.request, false));
 }
 
@@ -153,23 +159,28 @@ void FolderDownloadRequest::restart() { start(); }
 
 void FolderDownloadRequest::finishDownload(Common::Array<StorageFile> &files) {
 	Request::finishSuccess();
-	if (_fileArrayCallback) (*_fileArrayCallback)(Storage::FileArrayResponse(this, files));
+	if (_fileArrayCallback)
+		(*_fileArrayCallback)(Storage::FileArrayResponse(this, files));
 }
 
 double FolderDownloadRequest::getProgress() const {
-	if (_totalFiles == 0 || _totalBytes == 0) return 0;
+	if (_totalFiles == 0 || _totalBytes == 0)
+		return 0;
 	return (double)getDownloadedBytes() / (double)getTotalBytesToDownload();
 }
 
 uint64 FolderDownloadRequest::getDownloadedBytes() const {
-	if (_totalFiles == 0) return 0;
+	if (_totalFiles == 0)
+		return 0;
 
 	double currentFileProgress = 0;
 	DownloadRequest *downloadRequest = dynamic_cast<DownloadRequest *>(_workingRequest);
-	if (downloadRequest != nullptr) currentFileProgress = downloadRequest->getProgress();
-	else {
+	if (downloadRequest != nullptr) {
+		currentFileProgress = downloadRequest->getProgress();
+	} else {
 		Id::IdDownloadRequest *idDownloadRequest = dynamic_cast<Id::IdDownloadRequest *>(_workingRequest);
-		if (idDownloadRequest != nullptr) currentFileProgress = idDownloadRequest->getProgress();
+		if (idDownloadRequest != nullptr)
+			currentFileProgress = idDownloadRequest->getProgress();
 	}
 
 	return _downloadedBytes + (uint64)(currentFileProgress * _currentFile.size());

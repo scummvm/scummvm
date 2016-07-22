@@ -58,26 +58,29 @@ OneDriveStorage::OneDriveStorage(Common::String accessToken, Common::String user
 
 OneDriveStorage::OneDriveStorage(Common::String code) {
 	getAccessToken(
-	    new Common::Callback<OneDriveStorage, BoolResponse>(this, &OneDriveStorage::codeFlowComplete),
-	    new Common::Callback<OneDriveStorage, Networking::ErrorResponse>(this, &OneDriveStorage::codeFlowFailed),
-	    code
+		new Common::Callback<OneDriveStorage, BoolResponse>(this, &OneDriveStorage::codeFlowComplete),
+		new Common::Callback<OneDriveStorage, Networking::ErrorResponse>(this, &OneDriveStorage::codeFlowFailed),
+		code
 	);
 }
 
 OneDriveStorage::~OneDriveStorage() {}
 
 void OneDriveStorage::getAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback, Common::String code) {
-	if (!KEY || !SECRET) loadKeyAndSecret();
+	if (!KEY || !SECRET)
+		loadKeyAndSecret();
 	bool codeFlow = (code != "");
 
 	if (!codeFlow && _refreshToken == "") {
 		warning("OneDriveStorage: no refresh token available to get new access token.");
-		if (callback) (*callback)(BoolResponse(nullptr, false));
+		if (callback)
+			(*callback)(BoolResponse(nullptr, false));
 		return;
 	}
 
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, BoolResponse, Networking::JsonResponse>(this, &OneDriveStorage::tokenRefreshed, callback);
-	if (errorCallback == nullptr) errorCallback = getErrorPrintingCallback();
+	if (errorCallback == nullptr)
+		errorCallback = getErrorPrintingCallback();
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, "https://login.live.com/oauth20_token.srf"); //TODO
 	if (codeFlow) {
 		request->addPostField("code=" + code);
@@ -108,13 +111,15 @@ void OneDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResp
 	if (!result.contains("access_token") || !result.contains("user_id") || !result.contains("refresh_token")) {
 		warning("Bad response, no token or user_id passed");
 		debug("%s", json->stringify().c_str());
-		if (callback) (*callback)(BoolResponse(nullptr, false));
+		if (callback)
+			(*callback)(BoolResponse(nullptr, false));
 	} else {
 		_token = result.getVal("access_token")->asString();
 		_uid = result.getVal("user_id")->asString();
 		_refreshToken = result.getVal("refresh_token")->asString();
 		CloudMan.save(); //ask CloudManager to save our new refreshToken
-		if (callback) (*callback)(BoolResponse(nullptr, true));
+		if (callback)
+			(*callback)(BoolResponse(nullptr, true));
 	}
 	delete json;
 }
@@ -174,8 +179,10 @@ void OneDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Netwo
 	}
 
 	Common::String username = email;
-	if (username == "") username = name;
-	if (username == "") username = uid;
+	if (username == "")
+		username = name;
+	if (username == "")
+		username = uid;
 	CloudMan.setStorageUsername(kStorageOneDriveId, username);
 
 	if (outerCallback) {
@@ -189,7 +196,8 @@ void OneDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Netwo
 void OneDriveStorage::fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response) {
 	if (!response.value) {
 		warning("fileInfoCallback: NULL");
-		if (outerCallback) (*outerCallback)(Networking::NetworkReadStreamResponse(response.request, nullptr));
+		if (outerCallback)
+			(*outerCallback)(Networking::NetworkReadStreamResponse(response.request, nullptr));
 		return;
 	}
 
@@ -204,7 +212,8 @@ void OneDriveStorage::fileInfoCallback(Networking::NetworkReadStreamCallback out
 	} else {
 		warning("downloadUrl not found in passed JSON");
 		debug("%s", response.value->stringify().c_str());
-		if (outerCallback) (*outerCallback)(Networking::NetworkReadStreamResponse(response.request, nullptr));
+		if (outerCallback)
+			(*outerCallback)(Networking::NetworkReadStreamResponse(response.request, nullptr));
 	}
 	delete response.value;
 }
@@ -226,7 +235,8 @@ Networking::Request *OneDriveStorage::streamFileById(Common::String path, Networ
 }
 
 Networking::Request *OneDriveStorage::createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) {
-	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+	if (!errorCallback)
+		errorCallback = getErrorPrintingCallback();
 	return addRequest(new OneDriveCreateDirectoryRequest(this, path, callback, errorCallback));
 }
 

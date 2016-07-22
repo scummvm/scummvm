@@ -41,13 +41,15 @@ GoogleDriveListDirectoryByIdRequest::GoogleDriveListDirectoryByIdRequest(GoogleD
 
 GoogleDriveListDirectoryByIdRequest::~GoogleDriveListDirectoryByIdRequest() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	delete _listDirectoryCallback;
 }
 
 void GoogleDriveListDirectoryByIdRequest::start() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	_files.clear();
 	_ignoreCallback = false;
 
@@ -57,7 +59,8 @@ void GoogleDriveListDirectoryByIdRequest::start() {
 void GoogleDriveListDirectoryByIdRequest::makeRequest(Common::String pageToken) {
 	Common::String url = "https://www.googleapis.com/drive/v3/files?spaces=drive&fields=files%28id,mimeType,modifiedTime,name,size%29,nextPageToken&orderBy=folder,name";
 	//files(id,mimeType,modifiedTime,name,size),nextPageToken
-	if (pageToken != "") url += "&pageToken=" + pageToken;
+	if (pageToken != "")
+		url += "&pageToken=" + pageToken;
 	url += "&q=%27" + _requestedId + "%27+in+parents";
 
 	Networking::JsonCallback callback = new Common::Callback<GoogleDriveListDirectoryByIdRequest, Networking::JsonResponse>(this, &GoogleDriveListDirectoryByIdRequest::responseCallback);
@@ -69,8 +72,10 @@ void GoogleDriveListDirectoryByIdRequest::makeRequest(Common::String pageToken) 
 
 void GoogleDriveListDirectoryByIdRequest::responseCallback(Networking::JsonResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
-	if (response.request) _date = response.request->date();
+	if (_ignoreCallback)
+		return;
+	if (response.request)
+		_date = response.request->date();
 
 	Networking::ErrorResponse error(this);
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
@@ -131,8 +136,10 @@ void GoogleDriveListDirectoryByIdRequest::responseCallback(Networking::JsonRespo
 
 void GoogleDriveListDirectoryByIdRequest::errorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
-	if (error.request) _date = error.request->date();
+	if (_ignoreCallback)
+		return;
+	if (error.request)
+		_date = error.request->date();
 	finishError(error);
 }
 
@@ -144,7 +151,8 @@ Common::String GoogleDriveListDirectoryByIdRequest::date() const { return _date;
 
 void GoogleDriveListDirectoryByIdRequest::finishListing(Common::Array<StorageFile> &files) {
 	Request::finishSuccess();
-	if (_listDirectoryCallback) (*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, files));
+	if (_listDirectoryCallback)
+		(*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, files));
 }
 
 } // End of namespace GoogleDrive

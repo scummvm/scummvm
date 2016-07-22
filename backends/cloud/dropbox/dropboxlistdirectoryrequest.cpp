@@ -39,13 +39,15 @@ DropboxListDirectoryRequest::DropboxListDirectoryRequest(Common::String token, C
 
 DropboxListDirectoryRequest::~DropboxListDirectoryRequest() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	delete _listDirectoryCallback;
 }
 
 void DropboxListDirectoryRequest::start() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	_files.clear();
 	_ignoreCallback = false;
 
@@ -69,9 +71,11 @@ void DropboxListDirectoryRequest::start() {
 
 void DropboxListDirectoryRequest::responseCallback(Networking::JsonResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
-	if (response.request) _date = response.request->date();
+	if (response.request)
+		_date = response.request->date();
 
 	Networking::ErrorResponse error(this);
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
@@ -138,8 +142,10 @@ void DropboxListDirectoryRequest::responseCallback(Networking::JsonResponse resp
 
 void DropboxListDirectoryRequest::errorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
-	if (error.request) _date = error.request->date();
+	if (_ignoreCallback)
+		return;
+	if (error.request)
+		_date = error.request->date();
 	finishError(error);
 }
 
@@ -151,7 +157,8 @@ Common::String DropboxListDirectoryRequest::date() const { return _date; }
 
 void DropboxListDirectoryRequest::finishListing(Common::Array<StorageFile> &files) {
 	Request::finishSuccess();
-	if (_listDirectoryCallback) (*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, files));
+	if (_listDirectoryCallback)
+		(*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, files));
 }
 
 } // End of namespace Dropbox

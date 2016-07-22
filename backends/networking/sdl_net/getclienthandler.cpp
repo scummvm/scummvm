@@ -121,15 +121,18 @@ void GetClientHandler::prepareHeaders() {
 }
 
 void GetClientHandler::handle(Client *client) {
-	if (!client) return;
-	if (!_headersPrepared) prepareHeaders();
+	if (!client)
+		return;
+	if (!_headersPrepared)
+		prepareHeaders();
 
 	uint32 readBytes;
 
 	// send headers first
 	if (_headers.size() > 0) {
 		readBytes = _headers.size();
-		if (readBytes > CLIENT_HANDLER_BUFFER_SIZE) readBytes = CLIENT_HANDLER_BUFFER_SIZE;
+		if (readBytes > CLIENT_HANDLER_BUFFER_SIZE)
+			readBytes = CLIENT_HANDLER_BUFFER_SIZE;
 		memcpy(_buffer, _headers.c_str(), readBytes);
 		_headers.erase(0, readBytes);
 	} else {
@@ -149,7 +152,8 @@ void GetClientHandler::handle(Client *client) {
 		}
 
 	// we're done here!
-	if (_stream->eos()) client->close();
+	if (_stream->eos())
+		client->close();
 }
 
 void GetClientHandler::setHeader(Common::String name, Common::String value) { _specialHeaders[name] = value; }

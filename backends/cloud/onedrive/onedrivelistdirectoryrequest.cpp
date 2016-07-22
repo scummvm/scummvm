@@ -40,14 +40,16 @@ OneDriveListDirectoryRequest::OneDriveListDirectoryRequest(OneDriveStorage *stor
 
 OneDriveListDirectoryRequest::~OneDriveListDirectoryRequest() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	delete _listDirectoryCallback;
 }
 
 void OneDriveListDirectoryRequest::start() {
 	//cleanup
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	_workingRequest = nullptr;
 	_files.clear();
 	_directoriesQueue.clear();
@@ -94,7 +96,8 @@ void OneDriveListDirectoryRequest::listedDirectoryCallback(Networking::JsonRespo
 		return;
 	}
 
-	if (response.request) _date = response.request->date();
+	if (response.request)
+		_date = response.request->date();
 
 	Networking::ErrorResponse error(this);
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
@@ -139,8 +142,10 @@ void OneDriveListDirectoryRequest::listedDirectoryCallback(Networking::JsonRespo
 
 void OneDriveListDirectoryRequest::listedDirectoryErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
-	if (error.request) _date = error.request->date();
+	if (_ignoreCallback)
+		return;
+	if (error.request)
+		_date = error.request->date();
 	finishError(error);
 }
 
@@ -152,7 +157,8 @@ Common::String OneDriveListDirectoryRequest::date() const { return _date; }
 
 void OneDriveListDirectoryRequest::finishListing(Common::Array<StorageFile> &files) {
 	Request::finishSuccess();
-	if (_listDirectoryCallback) (*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, files));
+	if (_listDirectoryCallback)
+		(*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, files));
 }
 
 } // End of namespace OneDrive

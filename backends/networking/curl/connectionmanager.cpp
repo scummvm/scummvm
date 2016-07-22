@@ -50,9 +50,11 @@ ConnectionManager::~ConnectionManager() {
 	for (Common::Array<RequestWithCallback>::iterator i = _requests.begin(); i != _requests.end(); ++i) {
 		Request *request = i->request;
 		RequestCallback callback = i->onDeleteCallback;
-		if (request) request->finish();
+		if (request)
+			request->finish();
 		delete request;
-		if (callback) (*callback)(request);
+		if (callback)
+			(*callback)(request);
 	}
 	_requests.clear();
 
@@ -70,7 +72,8 @@ void ConnectionManager::registerEasyHandle(CURL *easy) const {
 Request *ConnectionManager::addRequest(Request *request, RequestCallback callback) {
 	_addedRequestsMutex.lock();
 	_addedRequests.push_back(RequestWithCallback(request, callback));
-	if (!_timerStarted) startTimer();
+	if (!_timerStarted)
+		startTimer();
 	_addedRequestsMutex.unlock();
 	return request;
 }
@@ -81,7 +84,8 @@ void ConnectionManager::showCloudDisabledIcon() {
 }
 
 Common::String ConnectionManager::urlEncode(Common::String s) const {
-	if (!_multi) return "";
+	if (!_multi)
+		return "";
 	char *output = curl_easy_escape(_multi, s.c_str(), s.size());
 	if (output) {
 		Common::String result = output;
@@ -128,8 +132,10 @@ void ConnectionManager::handle() {
 	//lock mutex here (in case another handle() would be called before this one ends)
 	_handleMutex.lock();
 	++_frame;
-	if (_frame % CLOUD_PERIOD == 0) interateRequests();
-	if (_frame % CURL_PERIOD == 0) processTransfers();
+	if (_frame % CLOUD_PERIOD == 0)
+		interateRequests();
+	if (_frame % CURL_PERIOD == 0)
+		processTransfers();
 
 	if (_icon.draw() && _requests.empty() && !hasAddedRequests())
 		stopTimer();
@@ -150,13 +156,16 @@ void ConnectionManager::interateRequests() {
 	for (Common::Array<RequestWithCallback>::iterator i = _requests.begin(); i != _requests.end();) {
 		Request *request = i->request;
 		if (request) {
-			if (request->state() == PROCESSING) request->handle();
-			else if (request->state() == RETRY) request->handleRetry();
+			if (request->state() == PROCESSING)
+				request->handle();
+			else if (request->state() == RETRY)
+				request->handleRetry();
 		}
 
 		if (!request || request->state() == FINISHED) {
 			delete (i->request);
-			if (i->onDeleteCallback) (*i->onDeleteCallback)(i->request); //that's not a mistake (we're passing an address and that method knows there is no object anymore)
+			if (i->onDeleteCallback)
+				(*i->onDeleteCallback)(i->request); //that's not a mistake (we're passing an address and that method knows there is no object anymore)
 			_requests.erase(i);
 			continue;
 		}
@@ -179,7 +188,8 @@ void ConnectionManager::processTransfers() {
 
 		NetworkReadStream *stream;
 		curl_easy_getinfo(easyHandle, CURLINFO_PRIVATE, &stream);
-		if (stream) stream->finished();
+		if (stream)
+			stream->finished();
 
 		if (curlMsg->msg == CURLMSG_DONE) {
 			debug(9, "ConnectionManager: SUCCESS (%d - %s)", curlMsg->data.result, curl_easy_strerror(curlMsg->data.result));

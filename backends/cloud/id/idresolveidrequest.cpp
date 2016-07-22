@@ -35,14 +35,16 @@ IdResolveIdRequest::IdResolveIdRequest(IdStorage *storage, Common::String path, 
 
 IdResolveIdRequest::~IdResolveIdRequest() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	delete _uploadCallback;
 }
 
 void IdResolveIdRequest::start() {
 	//cleanup
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	_workingRequest = nullptr;
 	_currentDirectory = "";
 	_currentDirectoryId = _storage->getRootDirectoryId();
@@ -64,12 +66,15 @@ void IdResolveIdRequest::listNextDirectory(StorageFile fileToReturn) {
 
 void IdResolveIdRequest::listedDirectoryCallback(Storage::FileArrayResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
 	Common::String currentLevelName = _requestedPath;
 	///debug("'%s'", currentLevelName.c_str());
-	if (_currentDirectory.size()) currentLevelName.erase(0, _currentDirectory.size());
-	if (currentLevelName.size() && (currentLevelName[0] == '/' || currentLevelName[0] == '\\')) currentLevelName.erase(0, 1);
+	if (_currentDirectory.size())
+		currentLevelName.erase(0, _currentDirectory.size());
+	if (currentLevelName.size() && (currentLevelName[0] == '/' || currentLevelName[0] == '\\'))
+		currentLevelName.erase(0, 1);
 	///debug("'%s'", currentLevelName.c_str());
 	for (uint32 i = 0; i < currentLevelName.size(); ++i) {
 		if (currentLevelName[i] == '/' || currentLevelName[i] == '\\') {
@@ -80,7 +85,8 @@ void IdResolveIdRequest::listedDirectoryCallback(Storage::FileArrayResponse resp
 	}
 
 	Common::String path = _currentDirectory;
-	if (path != "") path += "/";
+	if (path != "")
+		path += "/";
 	path += currentLevelName;
 	bool lastLevel = (path.equalsIgnoreCase(_requestedPath));
 
@@ -90,7 +96,8 @@ void IdResolveIdRequest::listedDirectoryCallback(Storage::FileArrayResponse resp
 	bool found = false;
 	for (uint32 i = 0; i < files.size(); ++i) {
 		if ((files[i].isDirectory() || lastLevel) && files[i].name().equalsIgnoreCase(currentLevelName)) {
-			if (_currentDirectory != "") _currentDirectory += "/";
+			if (_currentDirectory != "")
+				_currentDirectory += "/";
 			_currentDirectory += files[i].name();
 			_currentDirectoryId = files[i].id();
 			///debug("found it! new directory and its id: '%s', '%s'", _currentDirectory.c_str(), _currentDirectoryId.c_str());
@@ -101,14 +108,17 @@ void IdResolveIdRequest::listedDirectoryCallback(Storage::FileArrayResponse resp
 	}
 
 	if (!found) {
-		if (lastLevel) finishError(Networking::ErrorResponse(this, false, true, Common::String("no such file found in its parent directory\n") + _currentDirectoryId, 404));
-		else finishError(Networking::ErrorResponse(this, false, true, "subdirectory not found", 400));
+		if (lastLevel)
+			finishError(Networking::ErrorResponse(this, false, true, Common::String("no such file found in its parent directory\n") + _currentDirectoryId, 404));
+		else
+			finishError(Networking::ErrorResponse(this, false, true, "subdirectory not found", 400));
 	}
 }
 
 void IdResolveIdRequest::listedDirectoryErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 	finishError(error);
 }
 
@@ -118,7 +128,8 @@ void IdResolveIdRequest::restart() { start(); }
 
 void IdResolveIdRequest::finishFile(StorageFile file) {
 	Request::finishSuccess();
-	if (_uploadCallback) (*_uploadCallback)(Storage::UploadResponse(this, file));
+	if (_uploadCallback)
+		(*_uploadCallback)(Storage::UploadResponse(this, file));
 }
 
 } // End of namespace Id

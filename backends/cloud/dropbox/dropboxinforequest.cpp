@@ -39,13 +39,15 @@ DropboxInfoRequest::DropboxInfoRequest(Common::String token, Storage::StorageInf
 
 DropboxInfoRequest::~DropboxInfoRequest() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	delete _infoCallback;
 }
 
 void DropboxInfoRequest::start() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	_ignoreCallback = false;
 
 	Networking::JsonCallback innerCallback = new Common::Callback<DropboxInfoRequest, Networking::JsonResponse>(this, &DropboxInfoRequest::userResponseCallback);
@@ -136,7 +138,8 @@ void DropboxInfoRequest::restart() { start(); }
 
 void DropboxInfoRequest::finishInfo(StorageInfo info) {
 	Request::finishSuccess();
-	if (_infoCallback) (*_infoCallback)(Storage::StorageInfoResponse(this, info));
+	if (_infoCallback)
+		(*_infoCallback)(Storage::StorageInfoResponse(this, info));
 }
 
 } // End of namespace Dropbox

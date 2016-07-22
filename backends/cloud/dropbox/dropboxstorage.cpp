@@ -61,7 +61,8 @@ DropboxStorage::DropboxStorage(Common::String code) {
 DropboxStorage::~DropboxStorage() {}
 
 void DropboxStorage::getAccessToken(Common::String code) {
-	if (!KEY || !SECRET) loadKeyAndSecret();
+	if (!KEY || !SECRET)
+		loadKeyAndSecret();
 	Networking::JsonCallback callback = new Common::Callback<DropboxStorage, Networking::JsonResponse>(this, &DropboxStorage::codeFlowComplete);
 	Networking::ErrorCallback errorCallback = new Common::Callback<DropboxStorage, Networking::ErrorResponse>(this, &DropboxStorage::codeFlowFailed);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, errorCallback, "https://api.dropboxapi.com/oauth2/token");
@@ -134,17 +135,20 @@ Networking::Request *DropboxStorage::streamFileById(Common::String path, Network
 	request->addHeader("Content-Type: "); //required to be empty (as we do POST, it's usually app/form-url-encoded)
 
 	Networking::NetworkReadStreamResponse response = request->execute();
-	if (callback) (*callback)(response);
+	if (callback)
+		(*callback)(response);
 	return response.request; // no leak here, response.request == request
 }
 
 Networking::Request *DropboxStorage::createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) {
-	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+	if (!errorCallback)
+		errorCallback = getErrorPrintingCallback();
 	return addRequest(new DropboxCreateDirectoryRequest(_token, path, callback, errorCallback));
 }
 
 Networking::Request *DropboxStorage::info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) {
-	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+	if (!errorCallback)
+		errorCallback = getErrorPrintingCallback();
 	return addRequest(new DropboxInfoRequest(_token, callback, errorCallback));
 }
 

@@ -41,14 +41,16 @@ SavesSyncRequest::SavesSyncRequest(Storage *storage, Storage::BoolCallback callb
 
 SavesSyncRequest::~SavesSyncRequest() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	delete _boolCallback;
 }
 
 void SavesSyncRequest::start() {
 	//cleanup
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	_currentDownloadingFile = StorageFile();
 	_currentUploadingFile = "";
 	_filesToDownload.clear();
@@ -62,7 +64,8 @@ void SavesSyncRequest::start() {
 
 	//list saves directory
 	Common::String dir = _storage->savesDirectoryPath();
-	if (dir.lastChar() == '/') dir.deleteLastChar();
+	if (dir.lastChar() == '/')
+		dir.deleteLastChar();
 	_workingRequest = _storage->listDirectory(
 		dir,
 		new Common::Callback<SavesSyncRequest, Storage::ListDirectoryResponse>(this, &SavesSyncRequest::directoryListedCallback),
@@ -73,7 +76,8 @@ void SavesSyncRequest::start() {
 
 void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
 	if (response.request) _date = response.request->date();
 
@@ -87,14 +91,16 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 	uint64 totalSize = 0;
 	for (uint32 i = 0; i < remoteFiles.size(); ++i) {
 		StorageFile &file = remoteFiles[i];
-		if (file.isDirectory()) continue;
+		if (file.isDirectory())
+			continue;
 		totalSize += file.size();
-		if (file.name() == DefaultSaveFileManager::TIMESTAMPS_FILENAME) continue;
+		if (file.name() == DefaultSaveFileManager::TIMESTAMPS_FILENAME)
+			continue;
 
 		Common::String name = file.name();
-		if (!_localFilesTimestamps.contains(name))
+		if (!_localFilesTimestamps.contains(name)) {
 			_filesToDownload.push_back(file);
-		else {
+		} else {
 			localFileNotAvailableInCloud[name] = false;
 
 			if (_localFilesTimestamps[name] == file.timestamp())
@@ -113,8 +119,10 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 
 	//upload files which are unavailable in cloud
 	for (Common::HashMap<Common::String, bool>::iterator i = localFileNotAvailableInCloud.begin(); i != localFileNotAvailableInCloud.end(); ++i) {
-		if (i->_key == DefaultSaveFileManager::TIMESTAMPS_FILENAME) continue;
-		if (i->_value) _filesToUpload.push_back(i->_key);
+		if (i->_key == DefaultSaveFileManager::TIMESTAMPS_FILENAME)
+			continue;
+		if (i->_value)
+			_filesToUpload.push_back(i->_key);
 	}
 
 	debug(9, "\ndownload files:");
@@ -133,7 +141,8 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 
 void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
 	bool irrecoverable = error.interrupted || error.failed;
 	if (error.failed) {
@@ -179,19 +188,22 @@ void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse er
 
 	//we're lucky - user just lacks his "/cloud/" folder - let's create one
 	Common::String dir = _storage->savesDirectoryPath();
-	if (dir.lastChar() == '/') dir.deleteLastChar();
+	if (dir.lastChar() == '/')
+		dir.deleteLastChar();
 	debug(9, "creating %s", dir.c_str());
 	_workingRequest = _storage->createDirectory(
 		dir,
 		new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::directoryCreatedCallback),
 		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::directoryCreatedErrorCallback)
 	);
-	if (!_workingRequest) finishError(Networking::ErrorResponse(this));
+	if (!_workingRequest)
+		finishError(Networking::ErrorResponse(this));
 }
 
 void SavesSyncRequest::directoryCreatedCallback(Storage::BoolResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
 	//stop syncing if failed to create saves directory
 	if (!response.value) {
@@ -206,7 +218,8 @@ void SavesSyncRequest::directoryCreatedCallback(Storage::BoolResponse response) 
 
 void SavesSyncRequest::directoryCreatedErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
 	//stop syncing if failed to create saves directory
 	finishError(error);
@@ -232,12 +245,14 @@ void SavesSyncRequest::downloadNextFile() {
 		new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::fileDownloadedCallback),
 		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileDownloadedErrorCallback)
 	);
-	if (!_workingRequest) finishError(Networking::ErrorResponse(this));
+	if (!_workingRequest)
+		finishError(Networking::ErrorResponse(this));
 }
 
 void SavesSyncRequest::fileDownloadedCallback(Storage::BoolResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
 	//stop syncing if download failed
 	if (!response.value) {
@@ -258,7 +273,8 @@ void SavesSyncRequest::fileDownloadedCallback(Storage::BoolResponse response) {
 
 void SavesSyncRequest::fileDownloadedErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
 	//stop syncing if download failed
 	finishError(error);
@@ -294,7 +310,8 @@ void SavesSyncRequest::uploadNextFile() {
 
 void SavesSyncRequest::fileUploadedCallback(Storage::UploadResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
 	//update local timestamp for the uploaded file
 	_localFilesTimestamps = DefaultSaveFileManager::loadTimestamps();
@@ -307,7 +324,8 @@ void SavesSyncRequest::fileUploadedCallback(Storage::UploadResponse response) {
 
 void SavesSyncRequest::fileUploadedErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
 	//stop syncing if upload failed
 	finishError(error);
@@ -319,11 +337,13 @@ void SavesSyncRequest::restart() { start(); }
 
 double SavesSyncRequest::getDownloadingProgress() const {
 	if (_totalFilesToHandle == 0) {
-		if (_state == Networking::FINISHED) return 1; //nothing to upload and download => Request ends soon
+		if (_state == Networking::FINISHED)
+			return 1; //nothing to upload and download => Request ends soon
 		return 0; //directory not listed yet
 	}
 
-	if (_totalFilesToHandle == _filesToUpload.size()) return 1; //nothing to download => download complete
+	if (_totalFilesToHandle == _filesToUpload.size())
+		return 1; //nothing to download => download complete
 
 	uint32 totalFilesToDownload = _totalFilesToHandle - _filesToUpload.size();
 	uint32 filesLeftToDownload = _filesToDownload.size() + (_currentDownloadingFile.name() != "" ? 1 : 0);
@@ -332,7 +352,8 @@ double SavesSyncRequest::getDownloadingProgress() const {
 
 double SavesSyncRequest::getProgress() const {
 	if (_totalFilesToHandle == 0) {
-		if (_state == Networking::FINISHED) return 1; //nothing to upload and download => Request ends soon
+		if (_state == Networking::FINISHED)
+			return 1; //nothing to upload and download => Request ends soon
 		return 0; //directory not listed yet
 	}
 
@@ -363,7 +384,8 @@ void SavesSyncRequest::finishError(Networking::ErrorResponse error) {
 	_currentDownloadingFile = StorageFile();
 	_filesToDownload.clear();
 	//delete the incomplete file
-	if (name != "") g_system->getSavefileManager()->removeSavefile(name);
+	if (name != "")
+		g_system->getSavefileManager()->removeSavefile(name);
 	Request::finishError(error);
 }
 
@@ -373,7 +395,8 @@ void SavesSyncRequest::finishSync(bool success) {
 	//update last successful sync date
 	CloudMan.setStorageLastSync(CloudMan.getStorageIndex(), _date);
 
-	if (_boolCallback) (*_boolCallback)(Storage::BoolResponse(this, success));
+	if (_boolCallback)
+		(*_boolCallback)(Storage::BoolResponse(this, success));
 }
 
 } // End of namespace Cloud

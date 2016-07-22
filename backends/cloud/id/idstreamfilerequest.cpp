@@ -34,14 +34,16 @@ IdStreamFileRequest::IdStreamFileRequest(IdStorage *storage, Common::String path
 
 IdStreamFileRequest::~IdStreamFileRequest() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	delete _streamCallback;
 }
 
 void IdStreamFileRequest::start() {
 	//cleanup
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	_workingRequest = nullptr;
 	_ignoreCallback = false;
 
@@ -53,7 +55,8 @@ void IdStreamFileRequest::start() {
 
 void IdStreamFileRequest::idResolvedCallback(Storage::UploadResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
 	Networking::NetworkReadStreamCallback innerCallback = new Common::Callback<IdStreamFileRequest, Networking::NetworkReadStreamResponse>(this, &IdStreamFileRequest::streamFileCallback);
 	Networking::ErrorCallback innerErrorCallback = new Common::Callback<IdStreamFileRequest, Networking::ErrorResponse>(this, &IdStreamFileRequest::streamFileErrorCallback);
@@ -62,19 +65,22 @@ void IdStreamFileRequest::idResolvedCallback(Storage::UploadResponse response) {
 
 void IdStreamFileRequest::idResolveFailedCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 	finishError(error);
 }
 
 void IdStreamFileRequest::streamFileCallback(Networking::NetworkReadStreamResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 	finishStream(response.value);
 }
 
 void IdStreamFileRequest::streamFileErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 	finishError(error);
 }
 
@@ -84,7 +90,8 @@ void IdStreamFileRequest::restart() { start(); }
 
 void IdStreamFileRequest::finishStream(Networking::NetworkReadStream *stream) {
 	Request::finishSuccess();
-	if (_streamCallback) (*_streamCallback)(Networking::NetworkReadStreamResponse(this, stream));
+	if (_streamCallback)
+		(*_streamCallback)(Networking::NetworkReadStreamResponse(this, stream));
 }
 
 } // End of namespace Id

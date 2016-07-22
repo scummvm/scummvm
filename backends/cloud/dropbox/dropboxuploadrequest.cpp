@@ -40,14 +40,16 @@ DropboxUploadRequest::DropboxUploadRequest(Common::String token, Common::String 
 
 DropboxUploadRequest::~DropboxUploadRequest() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	delete _contentsStream;
 	delete _uploadCallback;
 }
 
 void DropboxUploadRequest::start() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	if (!_contentsStream) {
 		warning("DropboxUploadRequest: cannot start because stream is invalid");
 		finishError(Networking::ErrorResponse(this, false, true, "", -1));
@@ -120,7 +122,8 @@ void DropboxUploadRequest::uploadNextPart() {
 void DropboxUploadRequest::partUploadedCallback(Networking::JsonResponse response) {
 	debug(9, "partUploadedCallback");
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
 	Networking::ErrorResponse error(this, false, true, "", -1);
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
@@ -179,7 +182,8 @@ void DropboxUploadRequest::partUploadedCallback(Networking::JsonResponse respons
 void DropboxUploadRequest::partUploadedErrorCallback(Networking::ErrorResponse error) {
 	debug("partUploadedErrorCallback");
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 	finishError(error);
 }
 
@@ -189,7 +193,8 @@ void DropboxUploadRequest::restart() { start(); }
 
 void DropboxUploadRequest::finishUpload(StorageFile file) {
 	Request::finishSuccess();
-	if (_uploadCallback) (*_uploadCallback)(Storage::UploadResponse(this, file));
+	if (_uploadCallback)
+		(*_uploadCallback)(Storage::UploadResponse(this, file));
 }
 
 } // End of namespace Dropbox

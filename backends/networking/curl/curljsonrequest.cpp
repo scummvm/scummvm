@@ -49,7 +49,8 @@ char *CurlJsonRequest::getPreparedContents() {
 	byte *result = _contentsStream.getData();
 	uint32 size = _contentsStream.size();
 	for (uint32 i = 0; i < size; ++i) {
-		if (result[i] == '\n') result[i] = ' '; //yeah, kinda stupid
+		if (result[i] == '\n')
+				result[i] = ' '; //yeah, kinda stupid
 		else if (result[i] < 0x20 || result[i] > 0x7f)
 			result[i] = '.';
 	}
@@ -85,7 +86,8 @@ void CurlJsonRequest::handle() {
 }
 
 void CurlJsonRequest::restart() {
-	if (_stream) delete _stream;
+	if (_stream)
+		delete _stream;
 	_stream = nullptr;
 	_contentsStream = Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 	//with no stream available next handle() will create another one
@@ -93,8 +95,10 @@ void CurlJsonRequest::restart() {
 
 void CurlJsonRequest::finishJson(Common::JSONValue *json) {
 	Request::finishSuccess();
-	if (_jsonCallback) (*_jsonCallback)(JsonResponse(this, json)); //potential memory leak, free it in your callbacks!
-	else delete json;
+	if (_jsonCallback)
+		(*_jsonCallback)(JsonResponse(this, json)); //potential memory leak, free it in your callbacks!
+	else
+		delete json;
 }
 
 bool CurlJsonRequest::jsonIsObject(Common::JSONValue *item, const char *warningPrefix) {

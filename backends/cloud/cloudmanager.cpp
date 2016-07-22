@@ -112,7 +112,8 @@ void CloudManager::init() {
 
 void CloudManager::save() {
 	for (uint32 i = 0; i < _storages.size(); ++i) {
-		if (i == kStorageNoneId) continue;
+		if (i == kStorageNoneId)
+			continue;
 		Common::String name = getStorageConfigName(i);
 		ConfMan.set(kStoragePrefix + name + "_username", _storages[i].username, ConfMan.kCloudDomain);
 		ConfMan.set(kStoragePrefix + name + "_lastSync", _storages[i].lastSyncDate, ConfMan.kCloudDomain);
@@ -127,12 +128,16 @@ void CloudManager::save() {
 
 void CloudManager::replaceStorage(Storage *storage, uint32 index) {
 	freeStorages();
-	if (!storage) error("CloudManager::replaceStorage: NULL storage passed");
-	if (index >= kStorageTotal) error("CloudManager::replaceStorage: invalid index passed");
+	if (!storage)
+		error("CloudManager::replaceStorage: NULL storage passed");
+	if (index >= kStorageTotal)
+		error("CloudManager::replaceStorage: invalid index passed");
 	if (_activeStorage != nullptr && _activeStorage->isWorking()) {
 		warning("CloudManager::replaceStorage: replacing Storage while the other is working");
-		if (_activeStorage->isDownloading()) _activeStorage->cancelDownload();
-		if (_activeStorage->isSyncing()) _activeStorage->cancelSync();
+		if (_activeStorage->isDownloading())
+			_activeStorage->cancelDownload();
+		if (_activeStorage->isSyncing())
+			_activeStorage->cancelSync();
 		removeStorage(_activeStorage);
 	} else {
 		delete _activeStorage;
@@ -161,7 +166,8 @@ void CloudManager::freeStorages() {
 }
 
 void CloudManager::passNoStorageConnected(Networking::ErrorCallback errorCallback) const {
-	if (errorCallback == nullptr) return;
+	if (errorCallback == nullptr)
+		return;
 	(*errorCallback)(Networking::ErrorResponse(nullptr, false, true, "No Storage connected!", -1));
 }
 
@@ -200,35 +206,42 @@ bool CloudManager::switchStorage(uint32 index) {
 }
 
 Common::String CloudManager::getStorageUsername(uint32 index) {
-	if (index >= _storages.size()) return "";
+	if (index >= _storages.size())
+		return "";
 	return _storages[index].username;
 }
 
 uint64 CloudManager::getStorageUsedSpace(uint32 index) {
-	if (index >= _storages.size()) return 0;
+	if (index >= _storages.size())
+		return 0;
 	return _storages[index].usedBytes;
 }
 
 Common::String CloudManager::getStorageLastSync(uint32 index) {
-	if (index >= _storages.size()) return "";
-	if (index == _currentStorageIndex && isSyncing()) return "";
+	if (index >= _storages.size())
+		return "";
+	if (index == _currentStorageIndex && isSyncing())
+		return "";
 	return _storages[index].lastSyncDate;
 }
 
 void CloudManager::setStorageUsername(uint32 index, Common::String name) {
-	if (index >= _storages.size()) return;
+	if (index >= _storages.size())
+		return;
 	_storages[index].username = name;
 	save();
 }
 
 void CloudManager::setStorageUsedSpace(uint32 index, uint64 used) {
-	if (index >= _storages.size()) return;
+	if (index >= _storages.size())
+		return;
 	_storages[index].usedBytes = used;
 	save();
 }
 
 void CloudManager::setStorageLastSync(uint32 index, Common::String date) {
-	if (index >= _storages.size()) return;
+	if (index >= _storages.size())
+		return;
 	_storages[index].lastSyncDate = date;
 	save();
 }
@@ -238,10 +251,18 @@ void CloudManager::connectStorage(uint32 index, Common::String code) {
 
 	Storage *storage = nullptr;
 	switch (index) {
-	case kStorageDropboxId: storage = new Dropbox::DropboxStorage(code); break;
-	case kStorageOneDriveId: storage = new OneDrive::OneDriveStorage(code); break;
-	case kStorageGoogleDriveId: storage = new GoogleDrive::GoogleDriveStorage(code); break;
-	case kStorageBoxId: storage = new Box::BoxStorage(code); break;
+	case kStorageDropboxId:
+		storage = new Dropbox::DropboxStorage(code);
+		break;
+	case kStorageOneDriveId:
+		storage = new OneDrive::OneDriveStorage(code);
+		break;
+	case kStorageGoogleDriveId:
+		storage = new GoogleDrive::GoogleDriveStorage(code);
+		break;
+	case kStorageBoxId:
+		storage = new Box::BoxStorage(code);
+		break;
 	}
 	// in these constructors Storages request token using the passed code
 	// when the token is received, they call replaceStorage()
@@ -251,8 +272,9 @@ void CloudManager::connectStorage(uint32 index, Common::String code) {
 
 Networking::Request *CloudManager::listDirectory(Common::String path, Storage::ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
 	Storage *storage = getCurrentStorage();
-	if (storage) return storage->listDirectory(path, callback, errorCallback, recursive);
-	else {
+	if (storage) {
+		return storage->listDirectory(path, callback, errorCallback, recursive);
+	} else {
 		passNoStorageConnected(errorCallback);
 		delete callback;
 		delete errorCallback;
@@ -262,8 +284,9 @@ Networking::Request *CloudManager::listDirectory(Common::String path, Storage::L
 
 Networking::Request *CloudManager::downloadFolder(Common::String remotePath, Common::String localPath, Storage::FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
 	Storage *storage = getCurrentStorage();
-	if (storage) return storage->downloadFolder(remotePath, localPath, callback, errorCallback, recursive);
-	else {
+	if (storage) {
+		return storage->downloadFolder(remotePath, localPath, callback, errorCallback, recursive);
+	} else {
 		passNoStorageConnected(errorCallback);
 		delete callback;
 		delete errorCallback;
@@ -273,8 +296,9 @@ Networking::Request *CloudManager::downloadFolder(Common::String remotePath, Com
 
 Networking::Request *CloudManager::info(Storage::StorageInfoCallback callback, Networking::ErrorCallback errorCallback) {
 	Storage *storage = getCurrentStorage();
-	if (storage) return storage->info(callback, errorCallback);
-	else {
+	if (storage) {
+		return storage->info(callback, errorCallback);
+	} else {
 		passNoStorageConnected(errorCallback);
 		delete callback;
 		delete errorCallback;
@@ -284,7 +308,8 @@ Networking::Request *CloudManager::info(Storage::StorageInfoCallback callback, N
 
 Common::String CloudManager::savesDirectoryPath() {
 	Storage *storage = getCurrentStorage();
-	if (storage) return storage->savesDirectoryPath();
+	if (storage)
+		return storage->savesDirectoryPath();
 	return "";
 }
 
@@ -303,7 +328,8 @@ SavesSyncRequest *CloudManager::syncSaves(Storage::BoolCallback callback, Networ
 
 bool CloudManager::isWorking() const {
 	Storage *storage = getCurrentStorage();
-	if (storage) return storage->isWorking();
+	if (storage)
+		return storage->isWorking();
 	return false;
 }
 
@@ -319,95 +345,111 @@ bool CloudManager::couldUseLocalServer() {
 
 bool CloudManager::isSyncing() const {
 	Storage *storage = getCurrentStorage();
-	if (storage) return storage->isSyncing();
+	if (storage)
+		return storage->isSyncing();
 	return false;
 }
 
 double CloudManager::getSyncDownloadingProgress() const {
 	Storage *storage = getCurrentStorage();
-	if (storage) return storage->getSyncDownloadingProgress();
+	if (storage)
+		return storage->getSyncDownloadingProgress();
 	return 1;
 }
 
 double CloudManager::getSyncProgress() const {
 	Storage *storage = getCurrentStorage();
-	if (storage) return storage->getSyncProgress();
+	if (storage)
+		return storage->getSyncProgress();
 	return 1;
 }
 
 Common::Array<Common::String> CloudManager::getSyncingFiles() const {
 	Storage *storage = getCurrentStorage();
-	if (storage) return storage->getSyncingFiles();
+	if (storage)
+		return storage->getSyncingFiles();
 	return Common::Array<Common::String>();
 }
 
 void CloudManager::cancelSync() const {
 	Storage *storage = getCurrentStorage();
-	if (storage) storage->cancelSync();
+	if (storage)
+		storage->cancelSync();
 }
 
 void CloudManager::setSyncTarget(GUI::CommandReceiver *target) const {
 	Storage *storage = getCurrentStorage();
-	if (storage) storage->setSyncTarget(target);
+	if (storage)
+		storage->setSyncTarget(target);
 }
 
 ///// DownloadFolderRequest-related /////
 
 bool CloudManager::startDownload(Common::String remotePath, Common::String localPath) const {
 	Storage *storage = getCurrentStorage();
-	if (storage) return storage->startDownload(remotePath, localPath);
+	if (storage)
+		return storage->startDownload(remotePath, localPath);
 	return false;
 }
 
 void CloudManager::cancelDownload() const {
 	Storage *storage = getCurrentStorage();
-	if (storage) storage->cancelDownload();
+	if (storage)
+		storage->cancelDownload();
 }
 
 void CloudManager::setDownloadTarget(GUI::CommandReceiver *target) const {
 	Storage *storage = getCurrentStorage();
-	if (storage) storage->setDownloadTarget(target);
+	if (storage)
+		storage->setDownloadTarget(target);
 }
 
 bool CloudManager::isDownloading() const {
 	Storage *storage = getCurrentStorage();
-	if (storage) return storage->isDownloading();
+	if (storage)
+		return storage->isDownloading();
 	return false;
 }
 
 double CloudManager::getDownloadingProgress() const {
 	Storage *storage = getCurrentStorage();
-	if (storage) return storage->getDownloadingProgress();
+	if (storage)
+		return storage->getDownloadingProgress();
 	return 1;
 }
 
 uint64 CloudManager::getDownloadBytesNumber() const {
 	Storage *storage = getCurrentStorage();
-	if (storage) return storage->getDownloadBytesNumber();
+	if (storage)
+		return storage->getDownloadBytesNumber();
 	return 0;
 }
 
 uint64 CloudManager::getDownloadTotalBytesNumber() const {
 	Storage *storage = getCurrentStorage();
-	if (storage) return storage->getDownloadTotalBytesNumber();
+	if (storage)
+		return storage->getDownloadTotalBytesNumber();
 	return 0;
 }
 
 uint64 CloudManager::getDownloadSpeed() const {
 	Storage *storage = getCurrentStorage();
-	if (storage) return storage->getDownloadSpeed();
+	if (storage)
+		return storage->getDownloadSpeed();
 	return 0;
 }
 
 Common::String CloudManager::getDownloadRemoteDirectory() const {
 	Storage *storage = getCurrentStorage();
-	if (storage) return storage->getDownloadRemoteDirectory();
+	if (storage)
+		return storage->getDownloadRemoteDirectory();
 	return "";
 }
 
 Common::String CloudManager::getDownloadLocalDirectory() const {
 	Storage *storage = getCurrentStorage();
-	if (storage) return storage->getDownloadLocalDirectory();
+	if (storage)
+		return storage->getDownloadLocalDirectory();
 	return "";
 }
 

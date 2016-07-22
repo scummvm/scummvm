@@ -35,14 +35,16 @@ IdDownloadRequest::IdDownloadRequest(IdStorage *storage, Common::String remotePa
 
 IdDownloadRequest::~IdDownloadRequest() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	delete _boolCallback;
 }
 
 void IdDownloadRequest::start() {
 	//cleanup
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	_workingRequest = nullptr;
 	_ignoreCallback = false;
 
@@ -54,7 +56,8 @@ void IdDownloadRequest::start() {
 
 void IdDownloadRequest::idResolvedCallback(Storage::UploadResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
 	Storage::BoolCallback innerCallback = new Common::Callback<IdDownloadRequest, Storage::BoolResponse>(this, &IdDownloadRequest::downloadCallback);
 	Networking::ErrorCallback innerErrorCallback = new Common::Callback<IdDownloadRequest, Networking::ErrorResponse>(this, &IdDownloadRequest::downloadErrorCallback);
@@ -63,19 +66,22 @@ void IdDownloadRequest::idResolvedCallback(Storage::UploadResponse response) {
 
 void IdDownloadRequest::idResolveFailedCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 	finishError(error);
 }
 
 void IdDownloadRequest::downloadCallback(Storage::BoolResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 	finishDownload(response.value);
 }
 
 void IdDownloadRequest::downloadErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 	finishError(error);
 }
 
@@ -85,12 +91,14 @@ void IdDownloadRequest::restart() { start(); }
 
 void IdDownloadRequest::finishDownload(bool success) {
 	Request::finishSuccess();
-	if (_boolCallback) (*_boolCallback)(Storage::BoolResponse(this, success));
+	if (_boolCallback)
+		(*_boolCallback)(Storage::BoolResponse(this, success));
 }
 
 double IdDownloadRequest::getProgress() const {
 	DownloadRequest *downloadRequest = dynamic_cast<DownloadRequest *>(_workingRequest);
-	if (downloadRequest == nullptr) return 0; // resolving id still
+	if (downloadRequest == nullptr)
+		return 0; // resolving id still
 
 	// id resolve is 10 % and download is the other 90 %
 	return 0.1 + 0.9 * downloadRequest->getProgress(); // downloading

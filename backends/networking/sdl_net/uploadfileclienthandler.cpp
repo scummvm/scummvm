@@ -89,7 +89,8 @@ void readFromThatUntilDoubleQuote(const char *cstr, Common::String needle, Commo
 	if (position) {
 		char c;
 		for (const char *i = position + needle.size(); c = *i, c != 0; ++i) {
-			if (c == '"') break;
+			if (c == '"')
+				break;
 			result += c;
 		}
 	}
@@ -101,7 +102,8 @@ Common::String readEverythingFromMemoryStream(Common::MemoryReadWriteStream *str
 	uint32 readBytes;
 	while (true) {
 		readBytes = stream->read(buf, 1024);
-		if (readBytes == 0) break;
+		if (readBytes == 0)
+			break;
 		result += Common::String(buf, readBytes);
 	}
 	return result;
@@ -115,17 +117,20 @@ void UploadFileClientHandler::handleBlockHeaders(Client *client) {
 	Common::String headers = readEverythingFromMemoryStream(_headersStream);
 	Common::String fieldName = "";
 	readFromThatUntilDoubleQuote(headers.c_str(), "name=\"", fieldName);
-	if (!fieldName.hasPrefix("upload_file")) return;
+	if (!fieldName.hasPrefix("upload_file"))
+		return;
 
 	Common::String filename = "";
 	readFromThatUntilDoubleQuote(headers.c_str(), "filename=\"", filename);
 
 	// skip block if <filename> is empty
-	if (filename.empty()) return;
+	if (filename.empty())
+		return;
 
 	// check that <path>/<filename> doesn't exist
 	Common::String path = _parentDirectoryPath;
-	if (path.lastChar() != '/' && path.lastChar() != '\\') path += '/';
+	if (path.lastChar() != '/' && path.lastChar() != '\\')
+		path += '/';
 	AbstractFSNode *originalNode = g_system->getFilesystemFactory()->makeFileNodePath(path + filename);
 	if (originalNode->exists()) {
 		setErrorMessageHandler(*client, _("There is a file with that name in the parent directory!"));
@@ -174,7 +179,9 @@ void UploadFileClientHandler::handleBlockContent(Client *client) {
 		// if no file field was found - failure
 		if (_uploadedFiles == 0) {
 			setErrorMessageHandler(*client, _("No file was passed!"));
-		} else _state = UFH_STOP;
+		} else {
+			_state = UFH_STOP;
+		}
 		return;
 	}
 }

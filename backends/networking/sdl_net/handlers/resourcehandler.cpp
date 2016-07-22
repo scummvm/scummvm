@@ -35,11 +35,13 @@ void ResourceHandler::handle(Client &client) {
 	filename.deleteChar(0);
 
 	// if archive hidden file is requested, ignore
-	if (filename.size() && filename[0] == '.') return;
+	if (filename.size() && filename[0] == '.')
+		return;
 
 	// if file not found, don't set handler either
 	Common::SeekableReadStream *file = HandlerUtils::getArchiveFile(filename);
-	if (file == nullptr) return;
+	if (file == nullptr)
+		return;
 
 	LocalWebserver::setClientGetHandler(client, file, 200, LocalWebserver::determineMimeType(filename));
 }

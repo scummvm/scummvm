@@ -41,13 +41,15 @@ BoxUploadRequest::BoxUploadRequest(BoxStorage *storage, Common::String path, Com
 
 BoxUploadRequest::~BoxUploadRequest() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	delete _uploadCallback;
 }
 
 void BoxUploadRequest::start() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	_resolvedId = ""; //used to update file contents
 	_parentId = ""; //used to create file within parent directory
 	_ignoreCallback = false;
@@ -101,7 +103,8 @@ void BoxUploadRequest::upload() {
 	}
 
 	Common::String url = "https://upload.box.com/api/2.0/files";
-	if (_resolvedId != "") url += "/" + _resolvedId;
+	if (_resolvedId != "")
+		url += "/" + _resolvedId;
 	url += "/content";
 	Networking::JsonCallback callback = new Common::Callback<BoxUploadRequest, Networking::JsonResponse>(this, &BoxUploadRequest::uploadedCallback);
 	Networking::ErrorCallback failureCallback = new Common::Callback<BoxUploadRequest, Networking::ErrorResponse>(this, &BoxUploadRequest::notUploadedCallback);
@@ -174,11 +177,11 @@ void BoxUploadRequest::uploadedCallback(Networking::JsonResponse response) {
 			//TODO: check errors
 			/*
 			if (object.contains("error")) {
-			    warning("Box returned error: %s", json->stringify(true).c_str());
-			    delete json;
-			    error.response = json->stringify(true);
-			    finishError(error);
-			    return;
+				warning("Box returned error: %s", json->stringify(true).c_str());
+				delete json;
+				error.response = json->stringify(true);
+				finishError(error);
+				return;
 			}
 			*/
 		}
@@ -205,7 +208,8 @@ void BoxUploadRequest::restart() { start(); }
 
 void BoxUploadRequest::finishUpload(StorageFile file) {
 	Request::finishSuccess();
-	if (_uploadCallback) (*_uploadCallback)(Storage::UploadResponse(this, file));
+	if (_uploadCallback)
+		(*_uploadCallback)(Storage::UploadResponse(this, file));
 }
 
 } // End of namespace Box

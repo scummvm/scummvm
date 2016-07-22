@@ -31,25 +31,29 @@ namespace Networking {
 
 static size_t curlDataCallback(char *d, size_t n, size_t l, void *p) {
 	NetworkReadStream *stream = (NetworkReadStream *)p;
-	if (stream) return stream->write(d, n * l);
+	if (stream)
+		return stream->write(d, n * l);
 	return 0;
 }
 
 static size_t curlReadDataCallback(char *d, size_t n, size_t l, void *p) {
 	NetworkReadStream *stream = (NetworkReadStream *)p;
-	if (stream) return stream->fillWithSendingContents(d, n * l);
+	if (stream)
+		return stream->fillWithSendingContents(d, n * l);
 	return 0;
 }
 
 static size_t curlHeadersCallback(char *d, size_t n, size_t l, void *p) {
 	NetworkReadStream *stream = (NetworkReadStream *)p;
-	if (stream) return stream->addResponseHeaders(d, n * l);
+	if (stream)
+		return stream->addResponseHeaders(d, n * l);
 	return 0;
 }
 
 static int curlProgressCallback(void *p, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow) {
 	NetworkReadStream *stream = (NetworkReadStream *)p;
-	if (stream) stream->setProgress(dlnow, dltotal);
+	if (stream)
+		stream->setProgress(dlnow, dltotal);
 	return 0;
 }
 
@@ -171,7 +175,8 @@ uint32 NetworkReadStream::read(void *dataPtr, uint32 dataSize) {
 	uint32 actuallyRead = MemoryReadWriteStream::read(dataPtr, dataSize);
 
 	if (actuallyRead == 0) {
-		if (_requestComplete) _eos = true;
+		if (_requestComplete)
+			_eos = true;
 		return 0;
 	}
 
@@ -205,7 +210,8 @@ Common::String NetworkReadStream::responseHeaders() const {
 
 uint32 NetworkReadStream::fillWithSendingContents(char *bufferToFill, uint32 maxSize) {
 	uint32 size = _sendingContentsSize - _sendingContentsPos;
-	if (size > maxSize) size = maxSize;
+	if (size > maxSize)
+		size = maxSize;
 	for (uint32 i = 0; i < size; ++i) {
 		bufferToFill[i] = _sendingContentsBuffer[_sendingContentsPos + i];
 	}
@@ -219,7 +225,8 @@ uint32 NetworkReadStream::addResponseHeaders(char *buffer, uint32 size) {
 }
 
 double NetworkReadStream::getProgress() const {
-	if (_progressTotal < 1) return 0;
+	if (_progressTotal < 1)
+		return 0;
 	return (double)_progressDownloaded / (double)_progressTotal;
 }
 

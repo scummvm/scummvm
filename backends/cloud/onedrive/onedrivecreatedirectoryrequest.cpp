@@ -39,13 +39,15 @@ OneDriveCreateDirectoryRequest::OneDriveCreateDirectoryRequest(OneDriveStorage *
 
 OneDriveCreateDirectoryRequest::~OneDriveCreateDirectoryRequest() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	delete _boolCallback;
 }
 
 void OneDriveCreateDirectoryRequest::start() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	_ignoreCallback = false;
 
 	Common::String name = _path, parent = _path;
@@ -57,13 +59,15 @@ void OneDriveCreateDirectoryRequest::start() {
 				name.erase(0, i + 1);
 				break;
 			}
-			if (i == 0) break;
+			if (i == 0)
+				break;
 			--i;
 		}
 	}
 
 	Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot";
-	if (parent != "") url += ":/" + ConnMan.urlEncode(parent) + ":";
+	if (parent != "")
+		url += ":/" + ConnMan.urlEncode(parent) + ":";
 	url += "/children";
 	Networking::JsonCallback innerCallback = new Common::Callback<OneDriveCreateDirectoryRequest, Networking::JsonResponse>(this, &OneDriveCreateDirectoryRequest::responseCallback);
 	Networking::ErrorCallback errorCallback = new Common::Callback<OneDriveCreateDirectoryRequest, Networking::ErrorResponse>(this, &OneDriveCreateDirectoryRequest::errorCallback);
@@ -87,7 +91,8 @@ void OneDriveCreateDirectoryRequest::responseCallback(Networking::JsonResponse r
 		delete json;
 		return;
 	}
-	if (response.request) _date = response.request->date();
+	if (response.request)
+		_date = response.request->date();
 
 	Networking::ErrorResponse error(this);
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
@@ -101,8 +106,9 @@ void OneDriveCreateDirectoryRequest::responseCallback(Networking::JsonResponse r
 	}
 
 	Common::JSONObject info = json->asObject();
-	if (info.contains("id")) finishCreation(true);
-	else {
+	if (info.contains("id")) {
+		finishCreation(true);
+	} else {
 		error.response = json->stringify(true);
 		finishError(error);
 	}
@@ -112,8 +118,10 @@ void OneDriveCreateDirectoryRequest::responseCallback(Networking::JsonResponse r
 
 void OneDriveCreateDirectoryRequest::errorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
-	if (error.request) _date = error.request->date();
+	if (_ignoreCallback)
+		return;
+	if (error.request)
+		_date = error.request->date();
 	finishError(error);
 }
 
@@ -125,7 +133,8 @@ Common::String OneDriveCreateDirectoryRequest::date() const { return _date; }
 
 void OneDriveCreateDirectoryRequest::finishCreation(bool success) {
 	Request::finishSuccess();
-	if (_boolCallback) (*_boolCallback)(Storage::BoolResponse(this, success));
+	if (_boolCallback)
+		(*_boolCallback)(Storage::BoolResponse(this, success));
 }
 
 } // End of namespace OneDrive

@@ -36,20 +36,23 @@ IdCreateDirectoryRequest::IdCreateDirectoryRequest(IdStorage *storage, Common::S
 
 IdCreateDirectoryRequest::~IdCreateDirectoryRequest() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	delete _boolCallback;
 }
 
 void IdCreateDirectoryRequest::start() {
 	//cleanup
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	_workingRequest = nullptr;
 	_ignoreCallback = false;
 
 	//the only exception when we create parent folder - is when it's ScummVM/ base folder
 	Common::String prefix = _requestedParentPath;
-	if (prefix.size() > 7) prefix.erase(7);
+	if (prefix.size() > 7)
+		prefix.erase(7);
 	if (prefix.equalsIgnoreCase("ScummVM")) {
 		Storage::BoolCallback callback = new Common::Callback<IdCreateDirectoryRequest, Storage::BoolResponse>(this, &IdCreateDirectoryRequest::createdBaseDirectoryCallback);
 		Networking::ErrorCallback failureCallback = new Common::Callback<IdCreateDirectoryRequest, Networking::ErrorResponse>(this, &IdCreateDirectoryRequest::createdBaseDirectoryErrorCallback);
@@ -62,15 +65,19 @@ void IdCreateDirectoryRequest::start() {
 
 void IdCreateDirectoryRequest::createdBaseDirectoryCallback(Storage::BoolResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
-	if (response.request) _date = response.request->date();
+	if (_ignoreCallback)
+		return;
+	if (response.request)
+		_date = response.request->date();
 	resolveId();
 }
 
 void IdCreateDirectoryRequest::createdBaseDirectoryErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
-	if (error.request) _date = error.request->date();
+	if (_ignoreCallback)
+		return;
+	if (error.request)
+		_date = error.request->date();
 	finishError(error);
 }
 
@@ -79,15 +86,18 @@ void IdCreateDirectoryRequest::resolveId() {
 	Storage::UploadCallback innerCallback = new Common::Callback<IdCreateDirectoryRequest, Storage::UploadResponse>(this, &IdCreateDirectoryRequest::idResolvedCallback);
 	Networking::ErrorCallback innerErrorCallback = new Common::Callback<IdCreateDirectoryRequest, Networking::ErrorResponse>(this, &IdCreateDirectoryRequest::idResolveFailedCallback);
 	Common::String path = _requestedParentPath;
-	if (_requestedParentPath != "") path += "/";
+	if (_requestedParentPath != "")
+		path += "/";
 	path += _requestedDirectoryName;
 	_workingRequest = _storage->resolveFileId(path, innerCallback, innerErrorCallback);
 }
 
 void IdCreateDirectoryRequest::idResolvedCallback(Storage::UploadResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
-	if (response.request) _date = response.request->date();
+	if (_ignoreCallback)
+		return;
+	if (response.request)
+		_date = response.request->date();
 
 	//resolved => folder already exists
 	finishCreation(false);
@@ -95,8 +105,10 @@ void IdCreateDirectoryRequest::idResolvedCallback(Storage::UploadResponse respon
 
 void IdCreateDirectoryRequest::idResolveFailedCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
-	if (error.request) _date = error.request->date();
+	if (_ignoreCallback)
+		return;
+	if (error.request)
+		_date = error.request->date();
 
 	//not resolved => folder not exists
 	if (error.response.contains("no such file found in its parent directory")) {
@@ -119,15 +131,19 @@ void IdCreateDirectoryRequest::idResolveFailedCallback(Networking::ErrorResponse
 
 void IdCreateDirectoryRequest::createdDirectoryCallback(Storage::BoolResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
-	if (response.request) _date = response.request->date();
+	if (_ignoreCallback)
+		return;
+	if (response.request)
+		_date = response.request->date();
 	finishCreation(response.value);
 }
 
 void IdCreateDirectoryRequest::createdDirectoryErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
-	if (error.request) _date = error.request->date();
+	if (_ignoreCallback)
+		return;
+	if (error.request)
+		_date = error.request->date();
 	finishError(error);
 }
 
@@ -139,7 +155,8 @@ Common::String IdCreateDirectoryRequest::date() const { return _date; }
 
 void IdCreateDirectoryRequest::finishCreation(bool success) {
 	Request::finishSuccess();
-	if (_boolCallback) (*_boolCallback)(Storage::BoolResponse(this, success));
+	if (_boolCallback)
+		(*_boolCallback)(Storage::BoolResponse(this, success));
 }
 
 } // End of namespace Id

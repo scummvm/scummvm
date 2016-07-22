@@ -38,13 +38,15 @@ DropboxCreateDirectoryRequest::DropboxCreateDirectoryRequest(Common::String toke
 
 DropboxCreateDirectoryRequest::~DropboxCreateDirectoryRequest() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	delete _boolCallback;
 }
 
 void DropboxCreateDirectoryRequest::start() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	_ignoreCallback = false;
 
 	Networking::JsonCallback innerCallback = new Common::Callback<DropboxCreateDirectoryRequest, Networking::JsonResponse>(this, &DropboxCreateDirectoryRequest::responseCallback);
@@ -82,8 +84,9 @@ void DropboxCreateDirectoryRequest::responseCallback(Networking::JsonResponse re
 	}
 
 	Common::JSONObject info = json->asObject();
-	if (info.contains("id")) finishCreation(true);
-	else {
+	if (info.contains("id")) {
+		finishCreation(true);
+	} else {
 		if (info.contains("error_summary") && info.getVal("error_summary")->isString()) {
 			Common::String summary = info.getVal("error_summary")->asString();
 			if (summary.contains("path") && summary.contains("conflict") && summary.contains("folder")) {
@@ -101,8 +104,10 @@ void DropboxCreateDirectoryRequest::responseCallback(Networking::JsonResponse re
 
 void DropboxCreateDirectoryRequest::errorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
-	if (error.request) _date = error.request->date();
+	if (_ignoreCallback)
+		return;
+	if (error.request)
+		_date = error.request->date();
 	finishError(error);
 }
 
@@ -114,7 +119,8 @@ Common::String DropboxCreateDirectoryRequest::date() const { return _date; }
 
 void DropboxCreateDirectoryRequest::finishCreation(bool success) {
 	Request::finishSuccess();
-	if (_boolCallback) (*_boolCallback)(Storage::BoolResponse(this, success));
+	if (_boolCallback)
+		(*_boolCallback)(Storage::BoolResponse(this, success));
 }
 
 } // End of namespace Dropbox

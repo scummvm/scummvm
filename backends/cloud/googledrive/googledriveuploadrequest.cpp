@@ -41,14 +41,16 @@ GoogleDriveUploadRequest::GoogleDriveUploadRequest(GoogleDriveStorage *storage, 
 
 GoogleDriveUploadRequest::~GoogleDriveUploadRequest() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	delete _contentsStream;
 	delete _uploadCallback;
 }
 
 void GoogleDriveUploadRequest::start() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	if (_contentsStream == nullptr || !_contentsStream->seek(0)) {
 		warning("GoogleDriveUploadRequest: cannot restart because stream couldn't seek(0)");
 		finishError(Networking::ErrorResponse(this, false, true, "", -1));
@@ -71,14 +73,16 @@ void GoogleDriveUploadRequest::resolveId() {
 
 void GoogleDriveUploadRequest::idResolvedCallback(Storage::UploadResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 	_resolvedId = response.value.id();
 	startUpload();
 }
 
 void GoogleDriveUploadRequest::idResolveFailedCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
 	//not resolved => error or no such file
 	if (error.response.contains("no such file found in its parent directory")) {
@@ -108,18 +112,21 @@ void GoogleDriveUploadRequest::startUpload() {
 	}
 
 	Common::String url = "https://www.googleapis.com/upload/drive/v3/files";
-	if (_resolvedId != "") url += "/" + ConnMan.urlEncode(_resolvedId);
+	if (_resolvedId != "")
+		url += "/" + ConnMan.urlEncode(_resolvedId);
 	url += "?uploadType=resumable&fields=id,mimeType,modifiedTime,name,size";
 	Networking::JsonCallback callback = new Common::Callback<GoogleDriveUploadRequest, Networking::JsonResponse>(this, &GoogleDriveUploadRequest::startUploadCallback);
 	Networking::ErrorCallback failureCallback = new Common::Callback<GoogleDriveUploadRequest, Networking::ErrorResponse>(this, &GoogleDriveUploadRequest::startUploadErrorCallback);
 	Networking::CurlJsonRequest *request = new GoogleDriveTokenRefresher(_storage, callback, failureCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	request->addHeader("Content-Type: application/json");
-	if (_resolvedId != "") request->usePatch();
+	if (_resolvedId != "")
+		request->usePatch();
 
 	Common::JSONObject jsonRequestParameters;
-	if (_resolvedId != "") jsonRequestParameters.setVal("id", new Common::JSONValue(_resolvedId));
-	else {
+	if (_resolvedId != "") {
+		jsonRequestParameters.setVal("id", new Common::JSONValue(_resolvedId));
+	} else {
 		Common::JSONArray parentsArray;
 		parentsArray.push_back(new Common::JSONValue(_parentId));
 		jsonRequestParameters.setVal("parents", new Common::JSONValue(parentsArray));
@@ -134,7 +141,8 @@ void GoogleDriveUploadRequest::startUpload() {
 
 void GoogleDriveUploadRequest::startUploadCallback(Networking::JsonResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
 	Networking::ErrorResponse error(this, false, true, "", -1);
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
@@ -151,7 +159,8 @@ void GoogleDriveUploadRequest::startUploadCallback(Networking::JsonResponse resp
 					Common::String result = "";
 					char c;
 					for (const char *i = position + 10; c = *i, c != 0; ++i) {
-						if (c == '\n' || c == '\r') break;
+						if (c == '\n' || c == '\r')
+							break;
 						result += c;
 					}
 					_uploadUrl = result;
@@ -172,7 +181,8 @@ void GoogleDriveUploadRequest::startUploadCallback(Networking::JsonResponse resp
 
 void GoogleDriveUploadRequest::startUploadErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 	finishError(error);
 }
 
@@ -198,7 +208,8 @@ void GoogleDriveUploadRequest::uploadNextPart() {
 
 	byte *buffer = new byte[UPLOAD_PER_ONE_REQUEST];
 	uint32 size = _contentsStream->read(buffer, UPLOAD_PER_ONE_REQUEST);
-	if (size != 0) request->setBuffer(buffer, size);
+	if (size != 0)
+		request->setBuffer(buffer, size);
 
 	if (_uploadUrl != "") {
 		if (_contentsStream->pos() == 0)
@@ -212,8 +223,10 @@ void GoogleDriveUploadRequest::uploadNextPart() {
 
 bool GoogleDriveUploadRequest::handleHttp308(const Networking::NetworkReadStream *stream) {
 	//308 Resume Incomplete, with Range: X-Y header
-	if (!stream) return false;
-	if (stream->httpResponseCode() != 308) return false; //seriously
+	if (!stream)
+		return false;
+	if (stream->httpResponseCode() != 308)
+		return false; //seriously
 
 	Common::String headers = stream->responseHeaders();
 	const char *cstr = headers.c_str();
@@ -227,7 +240,8 @@ bool GoogleDriveUploadRequest::handleHttp308(const Networking::NetworkReadStream
 			Common::String result = "";
 			char c;
 			for (const char *i = position + needleLength; c = *i, c != 0; ++i) {
-				if (c == '\n' || c == '\r') break;
+				if (c == '\n' || c == '\r')
+					break;
 				result += c;
 			}
 			_serverReceivedBytes = result.asUint64() + 1;
@@ -241,7 +255,8 @@ bool GoogleDriveUploadRequest::handleHttp308(const Networking::NetworkReadStream
 
 void GoogleDriveUploadRequest::partUploadedCallback(Networking::JsonResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
 	Networking::ErrorResponse error(this, false, true, "", -1);
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
@@ -303,7 +318,8 @@ void GoogleDriveUploadRequest::partUploadedCallback(Networking::JsonResponse res
 
 void GoogleDriveUploadRequest::partUploadedErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)error.request;
 	if (rq) {
@@ -325,7 +341,8 @@ void GoogleDriveUploadRequest::restart() { start(); }
 
 void GoogleDriveUploadRequest::finishUpload(StorageFile file) {
 	Request::finishSuccess();
-	if (_uploadCallback) (*_uploadCallback)(Storage::UploadResponse(this, file));
+	if (_uploadCallback)
+		(*_uploadCallback)(Storage::UploadResponse(this, file));
 }
 
 } // End of namespace GoogleDrive

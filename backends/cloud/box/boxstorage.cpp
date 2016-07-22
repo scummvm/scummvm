@@ -57,16 +57,17 @@ BoxStorage::BoxStorage(Common::String accessToken, Common::String refreshToken):
 
 BoxStorage::BoxStorage(Common::String code) {
 	getAccessToken(
-	    new Common::Callback<BoxStorage, BoolResponse>(this, &BoxStorage::codeFlowComplete),
-	    new Common::Callback<BoxStorage, Networking::ErrorResponse>(this, &BoxStorage::codeFlowFailed),
-	    code
+		new Common::Callback<BoxStorage, BoolResponse>(this, &BoxStorage::codeFlowComplete),
+		new Common::Callback<BoxStorage, Networking::ErrorResponse>(this, &BoxStorage::codeFlowFailed),
+		code
 	);
 }
 
 BoxStorage::~BoxStorage() {}
 
 void BoxStorage::getAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback, Common::String code) {
-	if (!KEY || !SECRET) loadKeyAndSecret();
+	if (!KEY || !SECRET)
+		loadKeyAndSecret();
 	bool codeFlow = (code != "");
 
 	if (!codeFlow && _refreshToken == "") {
@@ -76,7 +77,9 @@ void BoxStorage::getAccessToken(BoolCallback callback, Networking::ErrorCallback
 	}
 
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<BoxStorage, BoolResponse, Networking::JsonResponse>(this, &BoxStorage::tokenRefreshed, callback);
-	if (errorCallback == nullptr) errorCallback = getErrorPrintingCallback();
+	if (errorCallback == nullptr)
+		errorCallback = getErrorPrintingCallback();
+
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, "https://api.box.com/oauth2/token");
 	if (codeFlow) {
 		request->addPostField("grant_type=authorization_code");
@@ -109,12 +112,14 @@ void BoxStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResponse 
 	if (!result.contains("access_token") || !result.contains("refresh_token")) {
 		warning("Bad response, no token passed");
 		debug("%s", json->stringify().c_str());
-		if (callback) (*callback)(BoolResponse(nullptr, false));
+		if (callback)
+			(*callback)(BoolResponse(nullptr, false));
 	} else {
 		_token = result.getVal("access_token")->asString();
 		_refreshToken = result.getVal("refresh_token")->asString();
 		CloudMan.save(); //ask CloudManager to save our new refreshToken
-		if (callback) (*callback)(BoolResponse(nullptr, true));
+		if (callback)
+			(*callback)(BoolResponse(nullptr, true));
 	}
 	delete json;
 }
@@ -190,8 +195,10 @@ void BoxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking
 }
 
 Networking::Request *BoxStorage::listDirectoryById(Common::String id, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback) {
-	if (!errorCallback) errorCallback = getErrorPrintingCallback();
-	if (!callback) callback = getPrintFilesCallback();
+	if (!errorCallback)
+		errorCallback = getErrorPrintingCallback();
+	if (!callback)
+		callback = getPrintFilesCallback();
 	return addRequest(new BoxListDirectoryByIdRequest(this, id, callback, errorCallback));
 }
 
@@ -213,7 +220,8 @@ void BoxStorage::createDirectoryInnerCallback(BoolCallback outerCallback, Networ
 }
 
 Networking::Request *BoxStorage::createDirectoryWithParentId(Common::String parentId, Common::String name, BoolCallback callback, Networking::ErrorCallback errorCallback) {
-	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+	if (!errorCallback)
+		errorCallback = getErrorPrintingCallback();
 
 	Common::String url = "https://api.box.com/2.0/folders";
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<BoxStorage, BoolResponse, Networking::JsonResponse>(this, &BoxStorage::createDirectoryInnerCallback, callback);
@@ -235,13 +243,15 @@ Networking::Request *BoxStorage::createDirectoryWithParentId(Common::String pare
 }
 
 Networking::Request *BoxStorage::upload(Common::String remotePath, Common::String localPath, UploadCallback callback, Networking::ErrorCallback errorCallback) {
-	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+	if (!errorCallback)
+		errorCallback = getErrorPrintingCallback();
 	return addRequest(new BoxUploadRequest(this, remotePath, localPath, callback, errorCallback));
 }
 
 Networking::Request *BoxStorage::upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) {
 	warning("BoxStorage::upload(ReadStream) not implemented");
-	if (errorCallback) (*errorCallback)(Networking::ErrorResponse(nullptr, false, true, "BoxStorage::upload(ReadStream) not implemented", -1));
+	if (errorCallback)
+		(*errorCallback)(Networking::ErrorResponse(nullptr, false, true, "BoxStorage::upload(ReadStream) not implemented", -1));
 	delete callback;
 	delete errorCallback;
 	return nullptr;

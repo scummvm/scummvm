@@ -83,14 +83,16 @@ bool CloudIcon::draw() {
 	if (g_system) {
 		Graphics::TransparentSurface *surface = &_icon;
 		makeAlphaIcon((_showingDisabled ? _disabledIcon : _icon), _currentAlpha);
-		if (_alphaIcon.getPixels()) surface = &_alphaIcon;
+		if (_alphaIcon.getPixels())
+			surface = &_alphaIcon;
 		if (surface && surface->getPixels()) {
 			int x = g_system->getOverlayWidth() - surface->w - 10, y = 10;
 			g_system->copyRectToOSD(surface->getPixels(), surface->pitch, x, y, surface->w, surface->h);
 		}
 	}
 
-	if (stop) _showingDisabled = false;
+	if (stop)
+		_showingDisabled = false;
 	return stop;
 }
 
@@ -103,7 +105,8 @@ void CloudIcon::showDisabled() {
 #include "backends/networking/curl/cloudicon_disabled_data.h"
 
 void CloudIcon::initIcons() {
-	if (_iconsInited) return;
+	if (_iconsInited)
+		return;
 	loadIcon(_icon, cloudicon_data, ARRAYSIZE(cloudicon_data));
 	loadIcon(_disabledIcon, cloudicon_disabled_data, ARRAYSIZE(cloudicon_disabled_data));
 	_iconsInited = true;
@@ -120,14 +123,18 @@ void CloudIcon::loadIcon(Graphics::TransparentSurface &icon, byte *data, uint32 
 		Graphics::PixelFormat f = g_system->getOSDFormat();
 		if (f != s->format) {
 			Graphics::TransparentSurface *s2 = s->convertTo(f);
-			if (s2) icon.copyFrom(*s2);
-			else warning("CloudIcon::loadIcon: failed converting TransparentSurface");
+			if (s2)
+				icon.copyFrom(*s2);
+			else
+				warning("CloudIcon::loadIcon: failed converting TransparentSurface");
 			delete s2;
 		} else {
 			icon.copyFrom(*s);
 		}
 		delete s;
-	} else warning("CloudIcon::loadIcon: failed reading TransparentSurface from PNGDecoder");
+	} else {
+		warning("CloudIcon::loadIcon: failed reading TransparentSurface from PNGDecoder");
+	}
 }
 
 void CloudIcon::makeAlphaIcon(Graphics::TransparentSurface &icon, float alpha) {

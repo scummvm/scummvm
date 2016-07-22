@@ -39,8 +39,9 @@ Request::~Request() {
 }
 
 void Request::handleRetry() {
-	if (_retryInSeconds > 0) --_retryInSeconds;
-	else {
+	if (_retryInSeconds > 0) {
+		--_retryInSeconds;
+	} else {
 		_state = PROCESSING;
 		restart();
 	}
@@ -64,7 +65,8 @@ Common::String Request::date() const { return ""; }
 
 void Request::finishError(ErrorResponse error) {
 	_state = FINISHED;
-	if (_errorCallback) (*_errorCallback)(error);
+	if (_errorCallback)
+		(*_errorCallback)(error);
 }
 
 void Request::finishSuccess() { _state = FINISHED; }

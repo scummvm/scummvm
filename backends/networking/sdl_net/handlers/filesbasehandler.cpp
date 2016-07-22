@@ -40,20 +40,24 @@ Common::String FilesBaseHandler::parentPath(Common::String path) {
 				break;
 			}
 	}
-	if (path.size() && path.lastChar() != '/' && path.lastChar() != '\\') path += '/';
+	if (path.size() && path.lastChar() != '/' && path.lastChar() != '\\')
+		path += '/';
 	return path;
 }
 
 bool FilesBaseHandler::transformPath(Common::String &path, Common::String &prefixToRemove, Common::String &prefixToAdd, bool isDirectory) {
 	// <path> is not empty, but could lack the trailing slash
-	if (isDirectory && path.lastChar() != '/' && path.lastChar() != '\\') path += '/';
+	if (isDirectory && path.lastChar() != '/' && path.lastChar() != '\\')
+		path += '/';
 
 	if (path.hasPrefix("/root")) {
 		prefixToAdd = "/root/";
 		prefixToRemove = "";
 		path.erase(0, 5);
-		if (path == "") path = "/"; // absolute root is '/'
-		if (path != "/") path.deleteChar(0); // if that was "/root/ab/c", it becomes "/ab/c", but we need "ab/c"
+		if (path == "")
+			path = "/"; // absolute root is '/'
+		if (path != "/")
+			path.deleteChar(0); // if that was "/root/ab/c", it becomes "/ab/c", but we need "ab/c"
 		return true;
 	}
 

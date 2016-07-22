@@ -49,7 +49,8 @@ void Storage::printErrorResponse(Networking::ErrorResponse error) {
 Networking::Request *Storage::addRequest(Networking::Request *request) {
 	_runningRequestsMutex.lock();
 	++_runningRequestsCount;
-	if (_runningRequestsCount == 1) debug(9, "Storage is working now");
+	if (_runningRequestsCount == 1)
+		debug(9, "Storage is working now");
 	_runningRequestsMutex.unlock();
 	return ConnMan.addRequest(request, new Common::Callback<Storage, Networking::Request *>(this, &Storage::requestFinishedCallback));
 }
@@ -61,8 +62,10 @@ void Storage::requestFinishedCallback(Networking::Request *invalidRequestPointer
 	if (invalidRequestPointer == _savesSyncRequest)
 		_savesSyncRequest = nullptr;
 	--_runningRequestsCount;
-	if (_syncRestartRequestsed) restartSync = true;
-	if (_runningRequestsCount == 0 && !restartSync) debug(9, "Storage is not working now");
+	if (_syncRestartRequestsed)
+		restartSync = true;
+	if (_runningRequestsCount == 0 && !restartSync)
+		debug(9, "Storage is not working now");
 	_runningRequestsMutex.unlock();
 
 	if (restartSync)
@@ -75,7 +78,8 @@ Networking::Request *Storage::upload(Common::String remotePath, Common::String l
 	Common::File *f = new Common::File();
 	if (!f->open(localPath)) {
 		warning("Storage: unable to open file to upload from");
-		if (errorCallback) (*errorCallback)(Networking::ErrorResponse(nullptr, false, true, "", -1));
+		if (errorCallback)
+			(*errorCallback)(Networking::ErrorResponse(nullptr, false, true, "", -1));
 		delete errorCallback;
 		delete callback;
 		delete f;
@@ -116,7 +120,8 @@ Networking::Request *Storage::downloadById(Common::String remoteId, Common::Stri
 }
 
 Networking::Request *Storage::downloadFolder(Common::String remotePath, Common::String localPath, FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
-	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+	if (!errorCallback)
+		errorCallback = getErrorPrintingCallback();
 	return addRequest(new FolderDownloadRequest(this, callback, errorCallback, remotePath, localPath, recursive));
 }
 
@@ -128,8 +133,10 @@ SavesSyncRequest *Storage::syncSaves(BoolCallback callback, Networking::ErrorCal
 		_runningRequestsMutex.unlock();
 		return _savesSyncRequest;
 	}
-	if (!callback) callback = new Common::Callback<Storage, BoolResponse>(this, &Storage::savesSyncDefaultCallback);
-	if (!errorCallback) errorCallback = new Common::Callback<Storage, Networking::ErrorResponse>(this, &Storage::savesSyncDefaultErrorCallback);
+	if (!callback)
+		callback = new Common::Callback<Storage, BoolResponse>(this, &Storage::savesSyncDefaultCallback);
+	if (!errorCallback)
+		errorCallback = new Common::Callback<Storage, Networking::ErrorResponse>(this, &Storage::savesSyncDefaultErrorCallback);
 	_savesSyncRequest = new SavesSyncRequest(this, callback, errorCallback);
 	_syncRestartRequestsed = false;
 	_runningRequestsMutex.unlock();
@@ -198,7 +205,8 @@ void Storage::savesSyncDefaultCallback(BoolResponse response) {
 	_savesSyncRequest = nullptr;
 	_runningRequestsMutex.unlock();
 
-	if (!response.value) warning("SavesSyncRequest called success callback with `false` argument");
+	if (!response.value)
+		warning("SavesSyncRequest called success callback with `false` argument");
 	g_system->displayMessageOnOSD(_("Saves sync complete."));
 }
 
@@ -332,4 +340,3 @@ void Storage::directoryDownloadedErrorCallback(Networking::ErrorResponse error) 
 }
 
 } // End of namespace Cloud
-

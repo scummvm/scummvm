@@ -57,9 +57,9 @@ GoogleDriveStorage::GoogleDriveStorage(Common::String accessToken, Common::Strin
 
 GoogleDriveStorage::GoogleDriveStorage(Common::String code) {
 	getAccessToken(
-	    new Common::Callback<GoogleDriveStorage, BoolResponse>(this, &GoogleDriveStorage::codeFlowComplete),
-	    new Common::Callback<GoogleDriveStorage, Networking::ErrorResponse>(this, &GoogleDriveStorage::codeFlowFailed),
-	    code
+		new Common::Callback<GoogleDriveStorage, BoolResponse>(this, &GoogleDriveStorage::codeFlowComplete),
+		new Common::Callback<GoogleDriveStorage, Networking::ErrorResponse>(this, &GoogleDriveStorage::codeFlowFailed),
+		code
 	);
 }
 
@@ -71,12 +71,14 @@ void GoogleDriveStorage::getAccessToken(BoolCallback callback, Networking::Error
 
 	if (!codeFlow && _refreshToken == "") {
 		warning("GoogleDriveStorage: no refresh token available to get new access token.");
-		if (callback) (*callback)(BoolResponse(nullptr, false));
+		if (callback)
+			(*callback)(BoolResponse(nullptr, false));
 		return;
 	}
 
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<GoogleDriveStorage, BoolResponse, Networking::JsonResponse>(this, &GoogleDriveStorage::tokenRefreshed, callback);
-	if (errorCallback == nullptr) errorCallback = getErrorPrintingCallback();
+	if (errorCallback == nullptr)
+		errorCallback = getErrorPrintingCallback();
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, "https://accounts.google.com/o/oauth2/token"); //TODO
 	if (codeFlow) {
 		request->addPostField("code=" + code);
@@ -99,7 +101,8 @@ void GoogleDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonR
 	Common::JSONValue *json = response.value;
 	if (!json) {
 		warning("GoogleDriveStorage: got NULL instead of JSON");
-		if (callback) (*callback)(BoolResponse(nullptr, false));
+		if (callback)
+			(*callback)(BoolResponse(nullptr, false));
 		return;
 	}
 
@@ -107,7 +110,8 @@ void GoogleDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonR
 	if (!result.contains("access_token")) {
 		warning("Bad response, no token passed");
 		debug("%s", json->stringify().c_str());
-		if (callback) (*callback)(BoolResponse(nullptr, false));
+		if (callback)
+			(*callback)(BoolResponse(nullptr, false));
 	} else {
 		_token = result.getVal("access_token")->asString();
 		if (!result.contains("refresh_token"))
@@ -115,7 +119,8 @@ void GoogleDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonR
 		else
 			_refreshToken = result.getVal("refresh_token")->asString();
 		CloudMan.save(); //ask CloudManager to save our new refreshToken
-		if (callback) (*callback)(BoolResponse(nullptr, true));
+		if (callback)
+			(*callback)(BoolResponse(nullptr, true));
 	}
 	delete json;
 }
@@ -206,8 +211,10 @@ void GoogleDriveStorage::createDirectoryInnerCallback(BoolCallback outerCallback
 }
 
 Networking::Request *GoogleDriveStorage::listDirectoryById(Common::String id, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback) {
-	if (!errorCallback) errorCallback = getErrorPrintingCallback();
-	if (!callback) callback = new Common::Callback<GoogleDriveStorage, FileArrayResponse>(this, &GoogleDriveStorage::printFiles);
+	if (!errorCallback)
+		errorCallback = getErrorPrintingCallback();
+	if (!callback)
+		callback = new Common::Callback<GoogleDriveStorage, FileArrayResponse>(this, &GoogleDriveStorage::printFiles);
 	return addRequest(new GoogleDriveListDirectoryByIdRequest(this, id, callback, errorCallback));
 }
 
@@ -236,7 +243,8 @@ void GoogleDriveStorage::printInfo(StorageInfoResponse response) {
 }
 
 Networking::Request *GoogleDriveStorage::createDirectoryWithParentId(Common::String parentId, Common::String name, BoolCallback callback, Networking::ErrorCallback errorCallback) {
-	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+	if (!errorCallback)
+		errorCallback = getErrorPrintingCallback();
 
 	Common::String url = "https://www.googleapis.com/drive/v3/files";
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<GoogleDriveStorage, BoolResponse, Networking::JsonResponse>(this, &GoogleDriveStorage::createDirectoryInnerCallback, callback);
@@ -259,7 +267,8 @@ Networking::Request *GoogleDriveStorage::createDirectoryWithParentId(Common::Str
 }
 
 Networking::Request *GoogleDriveStorage::info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) {
-	if (!callback) callback = new Common::Callback<GoogleDriveStorage, StorageInfoResponse>(this, &GoogleDriveStorage::printInfo);
+	if (!callback)
+		callback = new Common::Callback<GoogleDriveStorage, StorageInfoResponse>(this, &GoogleDriveStorage::printInfo);
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<GoogleDriveStorage, StorageInfoResponse, Networking::JsonResponse>(this, &GoogleDriveStorage::infoInnerCallback, callback);
 	Networking::CurlJsonRequest *request = new GoogleDriveTokenRefresher(this, innerCallback, errorCallback, "https://www.googleapis.com/drive/v3/about?fields=storageQuota,user");
 	request->addHeader("Authorization: Bearer " + _token);

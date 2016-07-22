@@ -35,7 +35,8 @@ Common::String getSubstring(const Common::String &s, uint32 beginning, uint32 en
 
 int find(const char *cstr, uint32 startPosition, char needle) {
 	const char *res = strchr(cstr + startPosition, needle);
-	if (res == nullptr) return -1;
+	if (res == nullptr)
+		return -1;
 	return res - cstr;
 }
 
@@ -53,7 +54,8 @@ uint32 convertToTimestamp(const Common::String &iso8601Date) {
 	int firstColon = find(cstr, tSeparator + 1, ':');
 	int secondColon = find(cstr, firstColon + 1, ':');
 	int zSeparator = find(cstr, secondColon + 1, 'Z');
-	if (zSeparator == -1) zSeparator = find(cstr, secondColon + 1, '-'); // Box's RFC 3339
+	if (zSeparator == -1)
+		zSeparator = find(cstr, secondColon + 1, '-'); // Box's RFC 3339
 	//now note '+1' which means if there ever was '-1' result of find(), we still did a valid find() from 0th char
 
 	Common::String year = getSubstring(iso8601Date, 0, firstHyphen);

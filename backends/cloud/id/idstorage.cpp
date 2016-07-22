@@ -63,20 +63,26 @@ Storage::ListDirectoryCallback IdStorage::getPrintFilesCallback() {
 }
 
 Networking::Request *IdStorage::resolveFileId(Common::String path, UploadCallback callback, Networking::ErrorCallback errorCallback) {
-	if (!errorCallback) errorCallback = getErrorPrintingCallback();
-	if (!callback) callback = new Common::Callback<IdStorage, UploadResponse>(this, &IdStorage::printFile);
+	if (!errorCallback)
+		errorCallback = getErrorPrintingCallback();
+	if (!callback)
+		callback = new Common::Callback<IdStorage, UploadResponse>(this, &IdStorage::printFile);
 	return addRequest(new IdResolveIdRequest(this, path, callback, errorCallback));
 }
 
 Networking::Request *IdStorage::listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
-	if (!errorCallback) errorCallback = getErrorPrintingCallback();
-	if (!callback) callback = new Common::Callback<IdStorage, FileArrayResponse>(this, &IdStorage::printFiles);
+	if (!errorCallback)
+		errorCallback = getErrorPrintingCallback();
+	if (!callback)
+		callback = new Common::Callback<IdStorage, FileArrayResponse>(this, &IdStorage::printFiles);
 	return addRequest(new IdListDirectoryRequest(this, path, callback, errorCallback, recursive));
 }
 
 Networking::Request *IdStorage::createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) {
-	if (!errorCallback) errorCallback = getErrorPrintingCallback();
-	if (!callback) callback = new Common::Callback<IdStorage, BoolResponse>(this, &IdStorage::printBool);
+	if (!errorCallback)
+		errorCallback = getErrorPrintingCallback();
+	if (!callback)
+		callback = new Common::Callback<IdStorage, BoolResponse>(this, &IdStorage::printBool);
 
 	//find out the parent path and directory name
 	Common::String parentPath = "", directoryName = path;

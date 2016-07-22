@@ -40,17 +40,23 @@ Common::String encodeDoubleQuotes(Common::String s) {
 	for (uint32 i = 0; i < s.size(); ++i)
 		if (s[i] == '"') {
 			result += "\\\"";
-		} else result += s[i];
+		} else {
+			result += s[i];
+		}
 	return result;
 }
 
 Common::String encodeHtmlEntities(Common::String s) {
 	Common::String result = "";
 	for (uint32 i = 0; i < s.size(); ++i)
-		if (s[i] == '<') result += "&lt;";
-		else if (s[i] == '>') result += "&gt;";
-		else if (s[i] == '&') result += "&amp;";
-		else if (s[i] > 0x7F) result += Common::String::format("&#%d;", (int)s[i]);
+		if (s[i] == '<')
+			result += "&lt;";
+		else if (s[i] == '>')
+			result += "&gt;";
+		else if (s[i] == '&')
+			result += "&amp;";
+		else if (s[i] > 0x7F)
+			result += Common::String::format("&#%d;", (int)s[i]);
 		else result += s[i];
 	return result;
 }
@@ -58,9 +64,12 @@ Common::String encodeHtmlEntities(Common::String s) {
 Common::String getDisplayPath(Common::String s) {
 	Common::String result = "";
 	for (uint32 i = 0; i < s.size(); ++i)
-		if (s[i] == '\\') result += '/';
-		else result += s[i];
-	if (result == "") return "/";
+		if (s[i] == '\\')
+			result += '/';
+		else
+			result += s[i];
+	if (result == "")
+		return "/";
 	return result;
 }
 }
@@ -93,7 +102,8 @@ void FilesPageHandler::handle(Client &client) {
 
 	// load stylish response page from the archive
 	Common::SeekableReadStream *const stream = HandlerUtils::getArchiveFile(FILES_PAGE_NAME);
-	if (stream) response = HandlerUtils::readEverythingFromStream(stream);
+	if (stream)
+		response = HandlerUtils::readEverythingFromStream(stream);
 
 	Common::String path = client.queryParameter("path");
 	Common::String content = "";
@@ -127,11 +137,14 @@ bool FilesPageHandler::listDirectory(Common::String path, Common::String &conten
 	}
 
 	Common::String prefixToRemove = "", prefixToAdd = "";
-	if (!transformPath(path, prefixToRemove, prefixToAdd)) return false;
+	if (!transformPath(path, prefixToRemove, prefixToAdd))
+		return false;
 
 	Common::FSNode node = Common::FSNode(path);
-	if (path == "/") node = node.getParent(); // absolute root
-	if (!node.isDirectory()) return false;
+	if (path == "/")
+		node = node.getParent(); // absolute root
+	if (!node.isDirectory())
+		return false;
 
 	// list directory
 	Common::FSList _nodeContent;
@@ -155,7 +168,8 @@ bool FilesPageHandler::listDirectory(Common::String path, Common::String &conten
 	// fill the content
 	for (Common::FSList::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
 		Common::String name = i->getDisplayName();
-		if (i->isDirectory()) name += "/";
+		if (i->isDirectory())
+			name += "/";
 
 		Common::String filePath = i->getPath();
 		if (filePath.hasPrefix(prefixToRemove))
@@ -169,10 +183,14 @@ bool FilesPageHandler::listDirectory(Common::String path, Common::String &conten
 }
 
 FilesPageHandler::ItemType FilesPageHandler::detectType(bool isDirectory, const Common::String &name) {
-	if (isDirectory) return IT_DIRECTORY;
-	if (name.hasSuffix(".txt")) return IT_TXT;
-	if (name.hasSuffix(".zip")) return IT_ZIP;
-	if (name.hasSuffix(".7z")) return IT_7Z;
+	if (isDirectory)
+		return IT_DIRECTORY;
+	if (name.hasSuffix(".txt"))
+		return IT_TXT;
+	if (name.hasSuffix(".zip"))
+		return IT_ZIP;
+	if (name.hasSuffix(".7z"))
+		return IT_7Z;
 	return IT_UNKNOWN;
 }
 
@@ -180,12 +198,23 @@ void FilesPageHandler::addItem(Common::String &content, const Common::String &it
 	Common::String item = itemTemplate, icon;
 	bool isDirectory = (itemType == IT_DIRECTORY || itemType == IT_PARENT_DIRECTORY);
 	switch (itemType) {
-	case IT_DIRECTORY: icon = "dir.png"; break;
-	case IT_PARENT_DIRECTORY: icon = "up.png"; break;
-	case IT_TXT: icon = "txt.png"; break;
-	case IT_ZIP: icon = "zip.png"; break;
-	case IT_7Z: icon = "7z.png"; break;
-	default: icon = "unk.png";
+	case IT_DIRECTORY:
+		icon = "dir.png";
+		break;
+	case IT_PARENT_DIRECTORY:
+		icon = "up.png";
+		break;
+	case IT_TXT:
+		icon = "txt.png";
+		break;
+	case IT_ZIP:
+		icon = "zip.png";
+		break;
+	case IT_7Z:
+		icon = "7z.png";
+		break;
+	default:
+		icon = "unk.png";
 	}
 	replace(item, "{icon}", icon);
 	replace(item, "{link}", (isDirectory ? "files?path=" : "download?path=") + LocalWebserver::urlEncodeQueryParameterValue(path));

@@ -54,11 +54,14 @@ Common::JSONObject ListAjaxHandler::listDirectory(Common::String path) {
 	}
 
 	Common::String prefixToRemove = "", prefixToAdd = "";
-	if (!transformPath(path, prefixToRemove, prefixToAdd)) return errorResult;
+	if (!transformPath(path, prefixToRemove, prefixToAdd))
+		return errorResult;
 
 	Common::FSNode node = Common::FSNode(path);
-	if (path == "/") node = node.getParent(); // absolute root
-	if (!node.isDirectory()) return errorResult;
+	if (path == "/")
+		node = node.getParent(); // absolute root
+	if (!node.isDirectory())
+		return errorResult;
 
 	// list directory
 	Common::FSList _nodeContent;
@@ -97,10 +100,14 @@ Common::JSONObject ListAjaxHandler::listDirectory(Common::String path) {
 }
 
 ListAjaxHandler::ItemType ListAjaxHandler::detectType(bool isDirectory, const Common::String &name) {
-	if (isDirectory) return IT_DIRECTORY;
-	if (name.hasSuffix(".txt")) return IT_TXT;
-	if (name.hasSuffix(".zip")) return IT_ZIP;
-	if (name.hasSuffix(".7z")) return IT_7Z;
+	if (isDirectory)
+		return IT_DIRECTORY;
+	if (name.hasSuffix(".txt"))
+		return IT_TXT;
+	if (name.hasSuffix(".zip"))
+		return IT_ZIP;
+	if (name.hasSuffix(".7z"))
+		return IT_7Z;
 	return IT_UNKNOWN;
 }
 
@@ -108,12 +115,23 @@ void ListAjaxHandler::addItem(Common::JSONArray &responseItemsList, ItemType ite
 	Common::String icon;
 	bool isDirectory = (itemType == IT_DIRECTORY || itemType == IT_PARENT_DIRECTORY);
 	switch (itemType) {
-	case IT_DIRECTORY: icon = "dir.png"; break;
-	case IT_PARENT_DIRECTORY: icon = "up.png"; break;
-	case IT_TXT: icon = "txt.png"; break;
-	case IT_ZIP: icon = "zip.png"; break;
-	case IT_7Z: icon = "7z.png"; break;
-	default: icon = "unk.png";
+	case IT_DIRECTORY:
+		icon = "dir.png";
+		break;
+	case IT_PARENT_DIRECTORY:
+		icon = "up.png";
+		break;
+	case IT_TXT:
+		icon = "txt.png";
+		break;
+	case IT_ZIP:
+		icon = "zip.png";
+		break;
+	case IT_7Z:
+		icon = "7z.png";
+		break;
+	default:
+		icon = "unk.png";
 	}
 
 	Common::JSONObject item;

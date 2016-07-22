@@ -45,7 +45,8 @@ Common::Archive *HandlerUtils::getZipArchive() {
 		if (fileNode.exists() && fileNode.isReadable() && !fileNode.isDirectory()) {
 			Common::SeekableReadStream *const stream = fileNode.createReadStream();
 			Common::Archive *zipArchive = Common::makeZipArchive(stream);
-			if (zipArchive) return zipArchive;
+			if (zipArchive)
+				return zipArchive;
 		}
 	}
 
@@ -56,7 +57,8 @@ Common::Archive *HandlerUtils::getZipArchive() {
 		Common::ArchiveMember       const &m = **it;
 		Common::SeekableReadStream *const stream = m.createReadStream();
 		Common::Archive *zipArchive = Common::makeZipArchive(stream);
-		if (zipArchive) return zipArchive;
+		if (zipArchive)
+			return zipArchive;
 	}
 
 	return nullptr;
@@ -77,7 +79,8 @@ Common::SeekableReadStream *HandlerUtils::getArchiveFile(Common::String name) {
 	Common::Archive *zipArchive = getZipArchive();
 	if (zipArchive) {
 		const Common::ArchiveMemberPtr ptr = zipArchive->getMember(name);
-		if (ptr.get() == nullptr) return nullptr;
+		if (ptr.get() == nullptr)
+			return nullptr;
 		result = ptr->createReadStream();
 		delete zipArchive;
 	}
@@ -100,11 +103,14 @@ void HandlerUtils::setMessageHandler(Client &client, Common::String message, Com
 
 	// load stylish response page from the archive
 	Common::SeekableReadStream *const stream = getArchiveFile(INDEX_PAGE_NAME);
-	if (stream) response = readEverythingFromStream(stream);
+	if (stream)
+		response = readEverythingFromStream(stream);
 
 	replace(response, "{message}", message);
-	if (redirectTo.empty()) LocalWebserver::setClientGetHandler(client, response);
-	else LocalWebserver::setClientRedirectHandler(client, response, redirectTo);
+	if (redirectTo.empty())
+		LocalWebserver::setClientGetHandler(client, response);
+	else
+		LocalWebserver::setClientRedirectHandler(client, response, redirectTo);
 }
 
 void HandlerUtils::setFilesManagerErrorMessageHandler(Client &client, Common::String message, Common::String redirectTo) {

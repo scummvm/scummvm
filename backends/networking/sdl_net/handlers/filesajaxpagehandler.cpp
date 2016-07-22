@@ -42,7 +42,9 @@ Common::String encodeDoubleQuotesAndSlashes(Common::String s) {
 			result += "\\\"";
 		} else if (s[i] == '\\') {
 			result += "\\\\";
-		} else result += s[i];
+		} else {
+			result += s[i];
+		}
 	return result;
 }
 

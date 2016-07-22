@@ -35,14 +35,16 @@ IdListDirectoryRequest::IdListDirectoryRequest(IdStorage *storage, Common::Strin
 
 IdListDirectoryRequest::~IdListDirectoryRequest() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	delete _listDirectoryCallback;
 }
 
 void IdListDirectoryRequest::start() {
 	//cleanup
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	_workingRequest = nullptr;
 	_files.clear();
 	_directoriesQueue.clear();
@@ -57,8 +59,10 @@ void IdListDirectoryRequest::start() {
 
 void IdListDirectoryRequest::idResolvedCallback(Storage::UploadResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
-	if (response.request) _date = response.request->date();
+	if (_ignoreCallback)
+		return;
+	if (response.request)
+		_date = response.request->date();
 
 	StorageFile directory = response.value;
 	directory.setPath(_requestedPath);
@@ -68,8 +72,10 @@ void IdListDirectoryRequest::idResolvedCallback(Storage::UploadResponse response
 
 void IdListDirectoryRequest::idResolveErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
-	if (error.request) _date = error.request->date();
+	if (_ignoreCallback)
+		return;
+	if (error.request)
+		_date = error.request->date();
 	finishError(error);
 }
 
@@ -89,13 +95,16 @@ void IdListDirectoryRequest::listNextDirectory() {
 
 void IdListDirectoryRequest::listedDirectoryCallback(Storage::FileArrayResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
-	if (response.request) _date = response.request->date();
+	if (_ignoreCallback)
+		return;
+	if (response.request)
+		_date = response.request->date();
 
 	for (uint32 i = 0; i < response.value.size(); ++i) {
 		StorageFile &file = response.value[i];
 		Common::String path = _currentDirectory.path();
-		if (path.size() && path.lastChar() != '/' && path.lastChar() != '\\') path += '/';
+		if (path.size() && path.lastChar() != '/' && path.lastChar() != '\\')
+			path += '/';
 		path += file.name();
 		file.setPath(path);
 		_files.push_back(file);
@@ -109,8 +118,10 @@ void IdListDirectoryRequest::listedDirectoryCallback(Storage::FileArrayResponse 
 
 void IdListDirectoryRequest::listedDirectoryErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
-	if (error.request) _date = error.request->date();
+	if (_ignoreCallback)
+		return;
+	if (error.request)
+		_date = error.request->date();
 	finishError(error);
 }
 
@@ -122,7 +133,8 @@ Common::String IdListDirectoryRequest::date() const { return _date; }
 
 void IdListDirectoryRequest::finishListing(Common::Array<StorageFile> &files) {
 	Request::finishSuccess();
-	if (_listDirectoryCallback) (*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, files));
+	if (_listDirectoryCallback)
+		(*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, files));
 }
 
 } // End of namespace Id

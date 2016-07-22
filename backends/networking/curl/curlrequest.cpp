@@ -63,7 +63,8 @@ void CurlRequest::handle() {
 }
 
 void CurlRequest::restart() {
-	if (_stream) delete _stream;
+	if (_stream)
+		delete _stream;
 	_stream = nullptr;
 	//with no stream available next handle() will create another one
 }
@@ -78,7 +79,8 @@ Common::String CurlRequest::date() const {
 			Common::String result = "";
 			char c;
 			for (const char *i = position + 6; c = *i, c != 0; ++i) {
-				if (c == '\n' || c == '\r') break;
+				if (c == '\n' || c == '\r')
+					break;
 				result += c;
 			}
 			return result;
@@ -135,7 +137,8 @@ void CurlRequest::setBuffer(byte *buffer, uint32 size) {
 	if (_postFields != "")
 		warning("CurlRequest: added POST fields would be ignored, because buffer added");
 
-	if (_bytesBuffer) delete _bytesBuffer;
+	if (_bytesBuffer)
+		delete _bytesBuffer;
 
 	_bytesBuffer = buffer;
 	_bytesBufferSize = size;

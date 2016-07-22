@@ -45,7 +45,8 @@ StorageFile::StorageFile(Common::String pth, uint32 sz, uint32 ts, bool dir) {
 				_name.erase(0, i + 1);
 				break;
 			}
-			if (i == 0) break;
+			if (i == 0)
+				break;
 			--i;
 		}
 	}

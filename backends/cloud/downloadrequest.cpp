@@ -34,7 +34,8 @@ DownloadRequest::DownloadRequest(Storage *storage, Storage::BoolCallback callbac
 
 DownloadRequest::~DownloadRequest() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	delete _boolCallback;
 	delete _localFile;
 	delete[] _buffer;
@@ -42,7 +43,8 @@ DownloadRequest::~DownloadRequest() {
 
 void DownloadRequest::start() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	_remoteFileStream = nullptr;
 	//TODO: add some way to reopen DumpFile, so DownloadRequest could be restarted
 	_ignoreCallback = false;
@@ -56,13 +58,15 @@ void DownloadRequest::start() {
 
 void DownloadRequest::streamCallback(Networking::NetworkReadStreamResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 	_remoteFileStream = (Networking::NetworkReadStream *)response.value;
 }
 
 void DownloadRequest::streamErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 	finishError(error);
 }
 
@@ -113,11 +117,13 @@ void DownloadRequest::restart() {
 
 void DownloadRequest::finishDownload(bool success) {
 	Request::finishSuccess();
-	if (_boolCallback) (*_boolCallback)(Storage::BoolResponse(this, success));
+	if (_boolCallback)
+		(*_boolCallback)(Storage::BoolResponse(this, success));
 }
 
 void DownloadRequest::finishError(Networking::ErrorResponse error) {
-	if (_localFile) _localFile->close();
+	if (_localFile)
+		_localFile->close();
 	Request::finishError(error);
 }
 

@@ -61,7 +61,8 @@ void CreateDirectoryHandler::handle(Client &client) {
 	}
 
 	// check that <directory_name> doesn't exist or is directory
-	if (path.lastChar() != '/' && path.lastChar() != '\\') path += '/';
+	if (path.lastChar() != '/' && path.lastChar() != '\\')
+		path += '/';
 	node = g_system->getFilesystemFactory()->makeFileNodePath(path + name);
 	if (node->exists()) {
 		if (!node->isDirectory()) {
@@ -97,8 +98,10 @@ void CreateDirectoryHandler::handle(Client &client) {
 }
 
 void CreateDirectoryHandler::handleError(Client &client, Common::String message) const {
-	if (client.queryParameter("answer_json") == "true") setJsonResponseHandler(client, "error", message);
-	else HandlerUtils::setFilesManagerErrorMessageHandler(client, message);
+	if (client.queryParameter("answer_json") == "true")
+		setJsonResponseHandler(client, "error", message);
+	else
+		HandlerUtils::setFilesManagerErrorMessageHandler(client, message);
 }
 
 void CreateDirectoryHandler::setJsonResponseHandler(Client &client, Common::String type, Common::String message) const {

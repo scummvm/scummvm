@@ -45,15 +45,18 @@ Client::~Client() {
 }
 
 void Client::open(SDLNet_SocketSet set, TCPsocket socket) {
-	if (_state != INVALID) close();
+	if (_state != INVALID)
+		close();
 	_state = READING_HEADERS;
 	_socket = socket;
 	_set = set;
 	Reader cleanReader;
 	_reader = cleanReader;
-	if (_handler) delete _handler;
+	if (_handler)
+		delete _handler;
 	_handler = nullptr;
-	if (_previousHandler) delete _previousHandler;
+	if (_previousHandler)
+		delete _previousHandler;
 	_previousHandler = nullptr;
 	_stream = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
 	if (set) {
@@ -65,10 +68,14 @@ void Client::open(SDLNet_SocketSet set, TCPsocket socket) {
 }
 
 bool Client::readMoreIfNeeded() {
-	if (_stream == nullptr) return false; //nothing to read into
-	if (_stream->size() - _stream->pos() > 0) return true; //not needed, some data left in the stream
-	if (!_socket) return false;
-	if (!SDLNet_SocketReady(_socket)) return false;
+	if (_stream == nullptr)
+		return false; //nothing to read into
+	if (_stream->size() - _stream->pos() > 0)
+		return true; //not needed, some data left in the stream
+	if (!_socket)
+		return false;
+	if (!SDLNet_SocketReady(_socket))
+		return false;
 
 	int bytes = SDLNet_TCP_Recv(_socket, _buffer, CLIENT_BUFFER_SIZE);
 	if (bytes <= 0) {
@@ -87,33 +94,38 @@ bool Client::readMoreIfNeeded() {
 }
 
 void Client::readHeaders() {
-	if (!readMoreIfNeeded()) return;
+	if (!readMoreIfNeeded())
+		return;
 	_reader.setContent(_stream);
 	if (_reader.readFirstHeaders())
 		_state = (_reader.badRequest() ? BAD_REQUEST : READ_HEADERS);
 }
 
 bool Client::readContent(Common::WriteStream *stream) {
-	if (!readMoreIfNeeded()) return false;
+	if (!readMoreIfNeeded())
+		return false;
 	_reader.setContent(_stream);
 	return _reader.readFirstContent(stream);
 }
 
 bool Client::readBlockHeaders(Common::WriteStream *stream) {
-	if (!readMoreIfNeeded()) return false;
+	if (!readMoreIfNeeded())
+		return false;
 	_reader.setContent(_stream);
 	return _reader.readBlockHeaders(stream);
 }
 
 bool Client::readBlockContent(Common::WriteStream *stream) {
-	if (!readMoreIfNeeded()) return false;
+	if (!readMoreIfNeeded())
+		return false;
 	_reader.setContent(_stream);
 	return _reader.readBlockContent(stream);
 }
 
 void Client::setHandler(ClientHandler *handler) {
 	if (_handler) {
-		if (_previousHandler) delete _previousHandler;
+		if (_previousHandler)
+			delete _previousHandler;
 		_previousHandler = _handler; //can't just delete it, as setHandler() could've been called by handler itself
 	}
 	_state = BEING_HANDLED;
@@ -121,9 +133,12 @@ void Client::setHandler(ClientHandler *handler) {
 }
 
 void Client::handle() {
-	if (_state != BEING_HANDLED) warning("handle() called in a wrong Client's state");
-	if (!_handler) warning("Client doesn't have handler to be handled by");
-	if (_handler) _handler->handle(this);
+	if (_state != BEING_HANDLED)
+		warning("handle() called in a wrong Client's state");
+	if (!_handler)
+		warning("Client doesn't have handler to be handled by");
+	if (_handler)
+		_handler->handle(this);
 }
 
 void Client::close() {

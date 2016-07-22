@@ -125,7 +125,8 @@ void LocalWebserver::start() {
 
 void LocalWebserver::stop() {
 	_handleMutex.lock();
-	if (_timerStarted) stopTimer();
+	if (_timerStarted)
+		stopTimer();
 
 	if (_serverSocket) {
 		SDLNet_TCP_Close(_serverSocket);
@@ -147,12 +148,14 @@ void LocalWebserver::stop() {
 void LocalWebserver::stopOnIdle() { _stopOnIdle = true; }
 
 void LocalWebserver::addPathHandler(Common::String path, ClientHandlerCallback handler) {
-	if (_pathHandlers.contains(path)) warning("LocalWebserver::addPathHandler: path already had a handler");
+	if (_pathHandlers.contains(path))
+		warning("LocalWebserver::addPathHandler: path already had a handler");
 	_pathHandlers[path] = handler;
 }
 
 void LocalWebserver::removePathHandler(Common::String path) {
-	if (!_pathHandlers.contains(path)) warning("LocalWebserver::removePathHandler: no handler known for this path");
+	if (!_pathHandlers.contains(path))
+		warning("LocalWebserver::removePathHandler: no handler known for this path");
 	_pathHandlers.erase(path);
 }
 
@@ -181,7 +184,9 @@ void LocalWebserver::handle() {
 	int numready = SDLNet_CheckSockets(_set, 0);
 	if (numready == -1) {
 		error("SDLNet_CheckSockets: %s\n", SDLNet_GetError());
-	} else if (numready) acceptClient();
+	} else if (numready) {
+		acceptClient();
+	}
 
 	for (uint32 i = 0; i < MAX_CONNECTIONS; ++i)
 		handleClient(i);
@@ -191,8 +196,10 @@ void LocalWebserver::handle() {
 		if (_client[i].state() != INVALID)
 			++_clients;
 
-	if (_clients == 0) ++_idlingFrames;
-	else _idlingFrames = 0;
+	if (_clients == 0)
+		++_idlingFrames;
+	else
+		_idlingFrames = 0;
 
 	if (_idlingFrames > FRAMES_PER_SECOND && _stopOnIdle) {
 		_handleMutex.unlock();
@@ -218,7 +225,8 @@ void LocalWebserver::handleClient(uint32 i) {
 		else if (_defaultHandler)
 			(*_defaultHandler)(_client[i]); //try default handler
 
-		if (_client[i].state() == BEING_HANDLED || _client[i].state() == INVALID) break;
+		if (_client[i].state() == BEING_HANDLED || _client[i].state() == INVALID)
+			break;
 		//if no handler, answer with default BAD REQUEST
 		//fallthrough
 	case BAD_REQUEST:
@@ -231,10 +239,12 @@ void LocalWebserver::handleClient(uint32 i) {
 }
 
 void LocalWebserver::acceptClient() {
-	if (!SDLNet_SocketReady(_serverSocket)) return;
+	if (!SDLNet_SocketReady(_serverSocket))
+		return;
 
 	TCPsocket client = SDLNet_TCP_Accept(_serverSocket);
-	if (!client) return;
+	if (!client)
+		return;
 
 	if (_clients == MAX_CONNECTIONS) { //drop the connection
 		SDLNet_TCP_Close(client);
@@ -304,15 +314,16 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 		// IPv6
 		/*
 		if (i->ifa_addr->sa_family == AF_INET6) {
-		    tmpAddrPtr = &((struct sockaddr_in6 *)i->ifa_addr)->sin6_addr;
-		    char addressBuffer[INET6_ADDRSTRLEN];
-		    inet_ntop(AF_INET6, tmpAddrPtr, addressBuffer, INET6_ADDRSTRLEN);
-		    debug("%s IP Address %s", i->ifa_name, addressBuffer);
-		    addr = addressBuffer;
+			tmpAddrPtr = &((struct sockaddr_in6 *)i->ifa_addr)->sin6_addr;
+			char addressBuffer[INET6_ADDRSTRLEN];
+			inet_ntop(AF_INET6, tmpAddrPtr, addressBuffer, INET6_ADDRSTRLEN);
+			debug("%s IP Address %s", i->ifa_name, addressBuffer);
+			addr = addressBuffer;
 		}
 		*/
 
-		if (addr.empty()) continue;
+		if (addr.empty())
+			continue;
 
 		// ignored IPv4 addresses
 		if (addr.equals("127.0.0.1") || addr.equals("0.0.0.0") || addr.equals("localhost"))
@@ -321,7 +332,7 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 		// ignored IPv6 addresses
 		/*
 		if (addr.equals("::1"))
-		    continue;
+			continue;
 		*/
 
 		// use the address found
@@ -342,7 +353,8 @@ void LocalWebserver::setClientGetHandler(Client &client, Common::String response
 void LocalWebserver::setClientGetHandler(Client &client, Common::SeekableReadStream *responseStream, long code, const char *mimeType) {
 	GetClientHandler *handler = new GetClientHandler(responseStream);
 	handler->setResponseCode(code);
-	if (mimeType) handler->setHeader("Content-Type", mimeType);
+	if (mimeType)
+		handler->setHeader("Content-Type", mimeType);
 	client.setHandler(handler);
 }
 
@@ -357,7 +369,8 @@ void LocalWebserver::setClientRedirectHandler(Client &client, Common::SeekableRe
 	GetClientHandler *handler = new GetClientHandler(responseStream);
 	handler->setResponseCode(302); //redirect
 	handler->setHeader("Location", location);
-	if (mimeType) handler->setHeader("Content-Type", mimeType);
+	if (mimeType)
+		handler->setHeader("Content-Type", mimeType);
 	client.setHandler(handler);
 }
 

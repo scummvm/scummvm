@@ -41,14 +41,16 @@ OneDriveUploadRequest::OneDriveUploadRequest(OneDriveStorage *storage, Common::S
 
 OneDriveUploadRequest::~OneDriveUploadRequest() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	delete _contentsStream;
 	delete _uploadCallback;
 }
 
 void OneDriveUploadRequest::start() {
 	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
+	if (_workingRequest)
+		_workingRequest->finish();
 	if (_contentsStream == nullptr) {
 		warning("OneDriveUploadRequest: cannot restart because no stream given");
 		finishError(Networking::ErrorResponse(this, false, true, "No stream given", -1));
@@ -97,9 +99,9 @@ void OneDriveUploadRequest::uploadNextPart() {
 	uint32 size = _contentsStream->read(buffer, UPLOAD_PER_ONE_REQUEST);
 	request->setBuffer(buffer, size);
 
-	if (_uploadUrl != "")
+	if (_uploadUrl != "") {
 		request->addHeader(Common::String::format("Content-Range: bytes %u-%u/%u", oldPos, _contentsStream->pos() - 1, _contentsStream->size()));
-	else if (_contentsStream->size() == 0) {
+	} else if (_contentsStream->size() == 0) {
 		warning("\"Sorry, OneDrive can't upload empty files\"");
 		finishUpload(StorageFile(_savePath, 0, 0, false));
 		delete request;
@@ -111,7 +113,8 @@ void OneDriveUploadRequest::uploadNextPart() {
 
 void OneDriveUploadRequest::partUploadedCallback(Networking::JsonResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
 	Networking::ErrorResponse error(this, false, true, "", -1);
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
@@ -164,7 +167,8 @@ void OneDriveUploadRequest::partUploadedCallback(Networking::JsonResponse respon
 
 void OneDriveUploadRequest::partUploadedErrorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 	finishError(error);
 }
 
@@ -174,7 +178,8 @@ void OneDriveUploadRequest::restart() { start(); }
 
 void OneDriveUploadRequest::finishUpload(StorageFile file) {
 	Request::finishSuccess();
-	if (_uploadCallback) (*_uploadCallback)(Storage::UploadResponse(this, file));
+	if (_uploadCallback)
+		(*_uploadCallback)(Storage::UploadResponse(this, file));
 }
 
 } // End of namespace OneDrive

@@ -51,7 +51,8 @@ Reader::~Reader() {
 }
 
 Reader &Reader::operator=(Reader &r) {
-	if (this == &r) return *this;
+	if (this == &r)
+		return *this;
 	cleanup();
 
 	_state = r._state;
@@ -83,7 +84,8 @@ Reader &Reader::operator=(Reader &r) {
 void Reader::cleanup() {
 	//_content is not to be freed, it's not owned by Reader
 
-	if (_window != nullptr) freeWindow();
+	if (_window != nullptr)
+		freeWindow();
 }
 
 bool Reader::readAndHandleFirstHeaders() {
@@ -94,7 +96,8 @@ bool Reader::readAndHandleFirstHeaders() {
 	}
 
 	while (readOneByteInString(_headers, boundary)) {
-		if (!bytesLeft()) return false;
+		if (!bytesLeft())
+			return false;
 	}
 	handleFirstHeaders(_headers);
 
@@ -108,7 +111,8 @@ bool Reader::readBlockHeadersIntoStream(Common::WriteStream *stream) {
 	if (_window == nullptr) makeWindow(boundary.size());
 
 	while (readOneByteInStream(stream, boundary)) {
-		if (!bytesLeft()) return false;
+		if (!bytesLeft())
+			return false;
 	}
 	if (stream) stream->flush();
 
@@ -124,7 +128,8 @@ void readFromThatUntilLineEnd(const char *cstr, Common::String needle, Common::S
 	if (position) {
 		char c;
 		for (const char *i = position + needle.size(); c = *i, c != 0; ++i) {
-			if (c == '\n' || c == '\r') break;
+			if (c == '\n' || c == '\r')
+				break;
 			result += c;
 		}
 	}
@@ -166,14 +171,19 @@ void Reader::parseFirstLine(const Common::String &headers) {
 				//"<METHOD> <path> HTTP/<VERSION>\r\n"
 				Common::String method, path, http, buf;
 				uint32 length = position - cstr;
-				if (headersSize > length) headersSize = length;
+				if (headersSize > length)
+					headersSize = length;
 				for (uint32 i = 0; i < headersSize; ++i) {
-					if (headers[i] != ' ') buf += headers[i];
+					if (headers[i] != ' ')
+						buf += headers[i];
 					if (headers[i] == ' ' || i == headersSize - 1) {
-						if (method == "") method = buf;
-						else if (path == "") path = buf;
-						else if (http == "") http = buf;
-						else {
+						if (method == "") {
+							method = buf;
+						} else if (path == "") {
+							path = buf;
+						} else if (http == "") {
+							http = buf;
+						} else {
 							bad = true;
 							break;
 						}
@@ -182,10 +192,12 @@ void Reader::parseFirstLine(const Common::String &headers) {
 				}
 
 				//check that method is supported
-				if (method != "GET" && method != "PUT" && method != "POST") bad = true;
+				if (method != "GET" && method != "PUT" && method != "POST")
+					bad = true;
 
 				//check that HTTP/<VERSION> is OK
-				if (!http.hasPrefix("HTTP/")) bad = true;
+				if (!http.hasPrefix("HTTP/"))
+					bad = true;
 
 				_method = method;
 				parsePathQueryAndAnchor(path);
@@ -208,12 +220,18 @@ void Reader::parsePathQueryAndAnchor(Common::String path) {
 			if (path[i] == '?') {
 				readingPath = false;
 				readingQuery = true;
-			} else _path += path[i];
+			} else {
+				_path += path[i];
+			}
 		} else if (readingQuery) {
 			if (path[i] == '#') {
 				readingQuery = false;
-			} else _query += path[i];
-		} else _anchor += path[i];
+			} else {
+				_query += path[i];
+			}
+		} else {
+			_anchor += path[i];
+		}
 	}
 
 	parseQueryParameters();
@@ -228,35 +246,48 @@ void Reader::parseQueryParameters() {
 			if (_query[i] == '=') {
 				readingKey = false;
 				value = "";
-			} else key += _query[i];
+			} else {
+				key += _query[i];
+			}
 		} else {
 			if (_query[i] == '&') {
-				if (_queryParameters.contains(key)) warning("Query parameter \"%s\" is already set!", key.c_str());
-				else _queryParameters[key] = LocalWebserver::urlDecode(value);
+				if (_queryParameters.contains(key))
+					warning("Query parameter \"%s\" is already set!", key.c_str());
+				else
+					_queryParameters[key] = LocalWebserver::urlDecode(value);
 				readingKey = true;
 				key = "";
-			} else value += _query[i];
+			} else {
+				value += _query[i];
+			}
 		}
 	}
 
 	if (!key.empty()) {
-		if (_queryParameters.contains(key)) warning("Query parameter \"%s\" is already set!", key.c_str());
-		else _queryParameters[key] = LocalWebserver::urlDecode(value);
+		if (_queryParameters.contains(key))
+			warning("Query parameter \"%s\" is already set!", key.c_str());
+		else
+			_queryParameters[key] = LocalWebserver::urlDecode(value);
 	}
 }
 
 bool Reader::readContentIntoStream(Common::WriteStream *stream) {
 	Common::String boundary = "--" + _boundary;
-	if (!_firstBlock) boundary = "\r\n" + boundary;
-	if (_boundary.empty()) boundary = "\r\n";
-	if (_window == nullptr) makeWindow(boundary.size());
+	if (!_firstBlock)
+		boundary = "\r\n" + boundary;
+	if (_boundary.empty())
+		boundary = "\r\n";
+	if (_window == nullptr)
+		makeWindow(boundary.size());
 
 	while (readOneByteInStream(stream, boundary)) {
-		if (!bytesLeft()) return false;
+		if (!bytesLeft())
+			return false;
 	}
 
 	_firstBlock = false;
-	if (stream) stream->flush();
+	if (stream)
+		stream->flush();
 
 	freeWindow();
 	_state = RS_READING_HEADERS;
@@ -280,14 +311,16 @@ void Reader::freeWindow() {
 bool Reader::readOneByteInStream(Common::WriteStream *stream, const Common::String &boundary) {
 	byte b = readOne();
 	_window[_windowUsed++] = b;
-	if (_windowUsed < _windowSize) return true;
+	if (_windowUsed < _windowSize)
+		return true;
 
 	//when window is filled, check whether that's the boundary
 	if (Common::String((char *)_window, _windowSize) == boundary)
 		return false;
 
 	//if not, add the first byte of the window to the string
-	if (stream) stream->writeByte(_window[0]);
+	if (stream)
+		stream->writeByte(_window[0]);
 	for (uint32 i = 1; i < _windowSize; ++i)
 		_window[i - 1] = _window[i];
 	--_windowUsed;
@@ -297,7 +330,8 @@ bool Reader::readOneByteInStream(Common::WriteStream *stream, const Common::Stri
 bool Reader::readOneByteInString(Common::String &buffer, const Common::String &boundary) {
 	byte b = readOne();
 	_window[_windowUsed++] = b;
-	if (_windowUsed < _windowSize) return true;
+	if (_windowUsed < _windowSize)
+		return true;
 
 	//when window is filled, check whether that's the boundary
 	if (Common::String((char *)_window, _windowSize) == boundary)
@@ -322,9 +356,11 @@ byte Reader::readOne() {
 /// public
 
 bool Reader::readFirstHeaders() {
-	if (_state == RS_NONE) _state = RS_READING_HEADERS;
+	if (_state == RS_NONE)
+		_state = RS_READING_HEADERS;
 
-	if (!bytesLeft()) return false;
+	if (!bytesLeft())
+		return false;
 
 	if (_state == RS_READING_HEADERS)
 		return readAndHandleFirstHeaders();
@@ -349,7 +385,8 @@ bool Reader::readBlockHeaders(Common::WriteStream *stream) {
 		return false;
 	}
 
-	if (!bytesLeft()) return false;
+	if (!bytesLeft())
+		return false;
 
 	return readBlockHeadersIntoStream(stream);
 }
@@ -360,7 +397,8 @@ bool Reader::readBlockContent(Common::WriteStream *stream) {
 		return false;
 	}
 
-	if (!bytesLeft()) return false;
+	if (!bytesLeft())
+		return false;
 
 	if (!readContentIntoStream(stream))
 		return false;
@@ -369,7 +407,8 @@ bool Reader::readBlockContent(Common::WriteStream *stream) {
 		Common::String bts;
 		bts += readOne();
 		bts += readOne();
-		if (bts == "--") _allContentRead = true;
+		if (bts == "--")
+			_allContentRead = true;
 		else if (bts != "\r\n")
 			warning("strange bytes: \"%s\"", bts.c_str());
 	} else {
