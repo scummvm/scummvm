@@ -266,8 +266,8 @@ void sceneHandler14_showBallFly() {
 }
 
 void sceneHandler14_grandmaJump() {
-	BehaviorEntryInfo *beh1 = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene14_grandma, ST_GMA_SIT, QU_GMA_JUMPFW);
-	BehaviorEntryInfo *beh2 = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene14_grandma, ST_GMA_SIT, QU_GMA_JUMPBK);
+	BehaviorMove *beh1 = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene14_grandma, ST_GMA_SIT, QU_GMA_JUMPFW);
+	BehaviorMove *beh2 = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene14_grandma, ST_GMA_SIT, QU_GMA_JUMPBK);
 
 	if (beh1) {
 		if (beh2) {
@@ -286,11 +286,11 @@ void sceneHandler14_endArcade() {
 	getGameLoaderInteractionController()->enableFlag24();
 	getCurrSceneSc2MotionController()->activate();
 
-	BehaviorEntryInfo *beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene14_grandma, ST_GMA_SIT, QU_GMA_BLINK);
+	BehaviorMove *beh = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene14_grandma, ST_GMA_SIT, QU_GMA_BLINK);
 	if (beh)
 		beh->_percent = 327;
 
-	beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene14_grandma, ST_GMA_SIT, QU_GMA_THROW);
+	beh = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene14_grandma, ST_GMA_SIT, QU_GMA_THROW);
 	if (beh)
 		beh->_percent = 0;
 

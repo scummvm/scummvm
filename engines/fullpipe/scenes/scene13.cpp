@@ -178,14 +178,14 @@ void sceneHandler13_openFast() {
 }
 
 void sceneHandler13_uneatGum() {
-	BehaviorEntryInfo *beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT, QU_STR_CHEW);
+	BehaviorMove *beh = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT, QU_STR_CHEW);
 
 	if (beh) {
 		beh->_percent = 0;
 		beh->_delay = 36;
 	}
 
-	beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT, QU_STR_PLUU);
+	beh = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT, QU_STR_PLUU);
 	if (beh) {
 		beh->_percent = 0;
 		beh->_delay = 36;
@@ -193,7 +193,7 @@ void sceneHandler13_uneatGum() {
 }
 
 void sceneHandler13_eatGum() {
-	BehaviorEntryInfo *beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT, QU_STR_CHEW);
+	BehaviorMove *beh = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT, QU_STR_CHEW);
 
 	if (beh) {
 		beh->_percent = 10922;
@@ -216,7 +216,7 @@ void sceneHandler13_showGum() {
 	chainQueue(QU_SC13_SHOWGUM, 0);
 }
 
-void sceneHandler13_setBehFlag(BehaviorEntryInfo *beh, bool flag) {
+void sceneHandler13_setBehFlag(BehaviorMove *beh, bool flag) {
 	if (!flag) {
 		beh->_percent = 327;
 		beh->_flags |= 1;
@@ -229,11 +229,11 @@ void sceneHandler13_setBehFlag(BehaviorEntryInfo *beh, bool flag) {
 }
 
 void sceneHandler13_walkForward(bool flag) {
-	BehaviorEntryInfo *beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT, QU_STR_RTOL);
+	BehaviorMove *beh = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT, QU_STR_RTOL);
 
 	sceneHandler13_setBehFlag(beh, flag);
 
-	beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene13_guard, ST_STR_LEFT, QU_STR_TURNR);
+	beh = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_LEFT, QU_STR_TURNR);
 
 	sceneHandler13_setBehFlag(beh, flag);
 
@@ -241,11 +241,11 @@ void sceneHandler13_walkForward(bool flag) {
 }
 
 void sceneHandler13_walkBackward(bool flag) {
-	BehaviorEntryInfo *beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT|0x4000, QU_STR_LTOR);
+	BehaviorMove *beh = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT|0x4000, QU_STR_LTOR);
 
 	sceneHandler13_setBehFlag(beh, flag);
 
-	beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene13_guard, ST_STR_LEFT|0x4000, QU_STR_TURNR_L);
+	beh = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_LEFT|0x4000, QU_STR_TURNR_L);
 
 	sceneHandler13_setBehFlag(beh, flag);
 

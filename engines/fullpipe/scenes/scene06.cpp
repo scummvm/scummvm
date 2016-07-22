@@ -38,8 +38,8 @@
 namespace Fullpipe {
 
 void scene06_initMumsy() {
-	g_vars->scene06_mumsyJumpFw = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene06_mumsy, ST_MOM_STANDS, QU_MOM_JUMPFW);
-	g_vars->scene06_mumsyJumpBk = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene06_mumsy, ST_MOM_STANDS, QU_MOM_JUMPBK);
+	g_vars->scene06_mumsyJumpFw = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene06_mumsy, ST_MOM_STANDS, QU_MOM_JUMPFW);
+	g_vars->scene06_mumsyJumpBk = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene06_mumsy, ST_MOM_STANDS, QU_MOM_JUMPBK);
 	g_vars->scene06_mumsyJumpFwPercent = g_vars->scene06_mumsyJumpFw->_percent;
 	g_vars->scene06_mumsyJumpBkPercent = g_vars->scene06_mumsyJumpBk->_percent;
 }
