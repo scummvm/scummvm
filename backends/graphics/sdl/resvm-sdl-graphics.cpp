@@ -269,9 +269,9 @@ bool ResVmSdlGraphicsManager::showMouse(bool visible) {
 bool ResVmSdlGraphicsManager::lockMouse(bool lock) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (lock)
-		SDL_SetWindowGrab(_window->getSDLWindow(), SDL_TRUE);
+		SDL_SetRelativeMouseMode(SDL_TRUE);
 	else
-		SDL_SetWindowGrab(_window->getSDLWindow(), SDL_FALSE);
+		SDL_SetRelativeMouseMode(SDL_FALSE);
 #else
 	if (lock)
 		SDL_WM_GrabInput(SDL_GRAB_ON);
