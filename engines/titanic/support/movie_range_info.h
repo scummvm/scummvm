@@ -38,7 +38,7 @@ public:
 	int _endFrame;
 	int _initialFrame;
 	bool _isReversed;
-	bool _isFlag1;
+	bool _isRepeat;
 	CMovieEventList _events;
 public:
 	CMovieRangeInfo();

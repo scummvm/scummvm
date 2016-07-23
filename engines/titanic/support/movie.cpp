@@ -175,7 +175,7 @@ bool OSMovie::handleEvents(CMovieEventList &events) {
 		return _aviSurface.isPlaying();
 
 	// Handle updating the frame
-	while (_aviSurface.isFrameReady()) {
+	while (_aviSurface.isPlaying() && _aviSurface.isFrameReady()) {
 		_aviSurface.handleEvents(events);
 		_videoSurface->setMovieFrameSurface(_aviSurface.getSecondarySurface());
 	}

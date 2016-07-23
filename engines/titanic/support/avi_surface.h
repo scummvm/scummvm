@@ -34,7 +34,7 @@ class CSoundManager;
 class CVideoSurface;
 
 enum MovieFlag {
-	MOVIE_1 = 1, MOVIE_STOP_PREVIOUS = 2, MOVIE_NO_OBJECT = 4,
+	MOVIE_REPEAT = 1, MOVIE_STOP_PREVIOUS = 2, MOVIE_NO_OBJECT = 4,
 	MOVIE_REVERSE = 8, MOVIE_GAMESTATE = 0x10
 };
 
@@ -69,7 +69,12 @@ protected:
 	/**
 	 * Start playback at the specified frame
 	 */
-	virtual bool startAtFrame(int frameNumber);
+	bool startAtFrame(int frameNumber);
+
+	/**
+	 * Sets whether the movie is playing in reverse
+	 */
+	void setReversed(bool isReversed);
 
 	/**
 	 * Seeks to a given frame number in the video

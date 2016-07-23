@@ -38,7 +38,7 @@ CMovieRangeInfo::CMovieRangeInfo(const CMovieRangeInfo *src) : ListItem() {
 	_endFrame = src->_endFrame;
 	_initialFrame = src->_initialFrame;
 	_isReversed = src->_isReversed;
-	_isFlag1 = src->_isFlag1;
+	_isRepeat = src->_isRepeat;
 
 	// Duplicate the events list
 	for (CMovieEventList::const_iterator i = _events.begin();
@@ -52,7 +52,7 @@ void CMovieRangeInfo::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_startFrame, indent + 1);
 	file->writeNumberLine(_endFrame, indent + 1);
 	file->writeNumberLine(_initialFrame, indent + 1);
-	file->writeNumberLine(_isFlag1, indent + 1);
+	file->writeNumberLine(_isRepeat, indent + 1);
 	file->writeNumberLine(_isReversed, indent + 1);
 	_events.save(file, indent + 1);
 }
@@ -63,7 +63,7 @@ void CMovieRangeInfo::load(SimpleFile *file) {
 		_startFrame = file->readNumber();
 		_endFrame = file->readNumber();
 		_initialFrame = file->readNumber();
-		_isFlag1 = file->readNumber();
+		_isRepeat = file->readNumber();
 		_isReversed = file->readNumber();
 		_events.load(file);
 	}
@@ -88,7 +88,7 @@ void CMovieRangeInfo::getMovieFrame(CMovieEventList &list, int frameNumber) {
 void CMovieRangeInfo::process(CGameObject *owner) {
 	int flags = 0;
 	if (_endFrame)
-		flags |= MOVIE_1;
+		flags |= MOVIE_REPEAT;
 	if (_startFrame)
 		flags |= MOVIE_REVERSE;
 	

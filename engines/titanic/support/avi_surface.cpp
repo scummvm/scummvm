@@ -103,7 +103,7 @@ bool AVISurface::play(int startFrame, int endFrame, int initialFrame, uint flags
 	info->_startFrame = startFrame;
 	info->_endFrame = endFrame;
 	info->_isReversed = endFrame < startFrame;
-	info->_isFlag1 = flags & MOVIE_1;
+	info->_isRepeat = flags & MOVIE_REPEAT;
 
 	if (obj) {
 		CMovieEvent *me = new CMovieEvent();
@@ -119,6 +119,8 @@ bool AVISurface::play(int startFrame, int endFrame, int initialFrame, uint flags
 	_movieRangeInfo.push_back(info);
 	
 	if (_movieRangeInfo.size() == 1) {
+		// First play call, so start the movie playing
+		setReversed(info->_isReversed);
 		return startAtFrame(initialFrame);
 	} else {
 		return true;
@@ -164,6 +166,12 @@ void AVISurface::seekToFrame(uint frameNumber) {
 	renderFrame();
 }
 
+void AVISurface::setReversed(bool isReversed) {
+	_decoders[0]->setReverse(isReversed);
+	if (_decoders[1])
+		_decoders[1]->setReverse(isReversed);
+}
+
 bool AVISurface::handleEvents(CMovieEventList &events) {
 	if (!isPlaying())
 		return true;
@@ -173,7 +181,9 @@ bool AVISurface::handleEvents(CMovieEventList &events) {
 
 	if ((info->_isReversed && currentPos < info->_endFrame) ||
 		(!info->_isReversed && currentPos > info->_endFrame)) {
-		if (info->_isFlag1) {
+		if (info->_isRepeat) {
+			currentPos = info->_startFrame;
+		} else {
 			info->getMovieEnd(events);
 			_movieRangeInfo.remove(info);
 			delete info;
@@ -186,15 +196,15 @@ bool AVISurface::handleEvents(CMovieEventList &events) {
 				info = _movieRangeInfo.front();
 				currentPos = info->_startFrame;
 			}
-		} else {
-			currentPos = info->_startFrame;
 		}
 	}
 
 	if (isPlaying()) {
-		if (currentPos != getFrame())
+		if (currentPos != getFrame()) {
 			// The frame has been changed, so move to new position
+			setReversed(info->_isReversed);
 			seekToFrame(currentPos);
+		}
 	
 		// Get any events for the given position
 		info->getMovieFrame(events, currentPos);
@@ -267,7 +277,8 @@ int AVISurface::getFrame() const {
 }
 
 bool AVISurface::isFrameReady() const {
-	return _decoders[0]->needsUpdate() && (!_decoders[1] || _decoders[1]->needsUpdate());
+	return _decoders[0]->needsUpdate() && 
+		(!_decoders[1] || _decoders[1]->needsUpdate());
 }
 
 bool AVISurface::renderFrame() {
