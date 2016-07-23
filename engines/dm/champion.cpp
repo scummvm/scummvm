@@ -260,128 +260,140 @@ Common::String ChampionMan::f288_getStringFromInteger(uint16 val, bool padding, 
 }
 
 void ChampionMan::f299_applyModifiersToStatistics(Champion* champ, int16 slotIndex, int16 iconIndex, int16 modifierFactor, Thing thing) {
-	int16 statIndex;
+	int16 statIndex = k0_ChampionStatLuck;
 	int16 modifier = 0;
 	ThingType thingType = thing.getType();
-	if (((thingType == k5_WeaponThingType) || (thingType == k6_ArmourThingType))
-		&& (slotIndex >= k0_ChampionSlotReadyHand)
-		&& (slotIndex <= k12_ChampionSlotQuiverLine_1_1)) {
-		Weapon *weapon = (Weapon *)_vm->_dungeonMan->f156_getThingData(thing);
-		Armour *armour = (Armour *)_vm->_dungeonMan->f156_getThingData(thing);
-		if (((thingType == k5_WeaponThingType) && weapon->getCursed())
-			|| ((thingType == k6_ArmourThingType) && armour->getCursed())) {
+
+	bool cursed = false;
+	if (   ((thingType == k5_WeaponThingType) || (thingType == k6_ArmourThingType))
+		&& (slotIndex >= k0_ChampionSlotReadyHand) && (slotIndex <= k12_ChampionSlotQuiverLine_1_1)) {
+		if (thingType == k5_WeaponThingType) {
+			Weapon *weapon = (Weapon *)_vm->_dungeonMan->f156_getThingData(thing);
+			cursed = weapon->getCursed();
+		} else {
+			// k6_ArmourThingType
+			Armour *armour = (Armour *)_vm->_dungeonMan->f156_getThingData(thing);
+			cursed = armour->getCursed();
+		}
+
+		if (cursed) {
 			statIndex = k0_ChampionStatLuck;
 			modifier = -3;
-			goto T0299044_ApplyModifier;
 		}
 	}
 
-	statIndex = (ChampionStatisticType)thingType; // variable sharing
+	if (!cursed) {
+		statIndex = (ChampionStatisticType)thingType; // variable sharing
 
-	if ((iconIndex == k137_IconIndiceJunkRabbitsFoot) && (slotIndex < k30_ChampionSlotChest_1)) {
-		statIndex = k0_ChampionStatLuck;
-		modifier = 10;
-	} else if (slotIndex == k1_ChampionSlotActionHand) {
-
-		if (iconIndex == k45_IconIndiceWeaponMaceOfOrder) {
-			statIndex = k1_ChampionStatStrength;
-			modifier = 5;
-		} else {
-
-			statIndex = k8_ChampionStatMana;
-			if ((iconIndex >= k20_IconIndiceWeaponStaffOfClawsEmpty) && (iconIndex <= k22_IconIndiceWeaponStaffOfClawsFull)) {
-				modifier = 4;
-			} else if ((iconIndex >= k58_IconIndiceWeaponStaff) && (iconIndex <= k66_IconIndiceWeaponSceptreOfLyf)) {
-				switch (iconIndex) {
-				case k58_IconIndiceWeaponStaff:
-					modifier = 2;
-					break;
-				case k59_IconIndiceWeaponWand:
-					modifier = 1;
-					break;
-				case k60_IconIndiceWeaponTeowand:
-					modifier = 6;
-					break;
-				case k61_IconIndiceWeaponYewStaff:
-					modifier = 4;
-					break;
-				case k62_IconIndiceWeaponStaffOfManarStaffOfIrra:
-					modifier = 10;
-					break;
-				case k63_IconIndiceWeaponSnakeStaffCrossOfNeta:
-					modifier = 8;
-					break;
-				case k64_IconIndiceWeaponTheConduitSerpentStaff:
-					modifier = 16;
-					break;
-				case k65_IconIndiceWeaponDragonSpit:
-					modifier = 7;
-					break;
-				case k66_IconIndiceWeaponSceptreOfLyf:
-					modifier = 5;
-					break;
-				}
+		if ((iconIndex == k137_IconIndiceJunkRabbitsFoot) && (slotIndex < k30_ChampionSlotChest_1)) {
+			statIndex = k0_ChampionStatLuck;
+			modifier = 10;
+		} else if (slotIndex == k1_ChampionSlotActionHand) {
+			if (iconIndex == k45_IconIndiceWeaponMaceOfOrder) {
+				statIndex = k1_ChampionStatStrength;
+				modifier = 5;
 			} else {
-				switch (iconIndex) {
-				case k38_IconIndiceWeaponDeltaSideSplitter:
-					modifier = 1;
-					break;
-				case k41_IconIndiceWeaponTheInquisitorDragonFang:
-					modifier = 2;
-					break;
-				case k40_IconIndiceWeaponVorpalBlade:
+				statIndex = k8_ChampionStatMana;
+				if ((iconIndex >= k20_IconIndiceWeaponStaffOfClawsEmpty) && (iconIndex <= k22_IconIndiceWeaponStaffOfClawsFull)) {
 					modifier = 4;
-					break;
+				} else {
+					switch (iconIndex) {
+					case k38_IconIndiceWeaponDeltaSideSplitter:
+						modifier = 1;
+						break;
+					case k41_IconIndiceWeaponTheInquisitorDragonFang:
+						modifier = 2;
+						break;
+					case k40_IconIndiceWeaponVorpalBlade:
+						modifier = 4;
+						break;
+					case k58_IconIndiceWeaponStaff:
+						modifier = 2;
+						break;
+					case k59_IconIndiceWeaponWand:
+						modifier = 1;
+						break;
+					case k60_IconIndiceWeaponTeowand:
+						modifier = 6;
+						break;
+					case k61_IconIndiceWeaponYewStaff:
+						modifier = 4;
+						break;
+					case k62_IconIndiceWeaponStaffOfManarStaffOfIrra:
+						modifier = 10;
+						break;
+					case k63_IconIndiceWeaponSnakeStaffCrossOfNeta:
+						modifier = 8;
+						break;
+					case k64_IconIndiceWeaponTheConduitSerpentStaff:
+						modifier = 16;
+						break;
+					case k65_IconIndiceWeaponDragonSpit:
+						modifier = 7;
+						break;
+					case k66_IconIndiceWeaponSceptreOfLyf:
+						modifier = 5;
+						break;
+					default:
+						break;
+					}
 				}
-			} // end of else
-
+			}
+		} else if (slotIndex == k4_ChampionSlotLegs) {
+			if (iconIndex == k142_IconIndiceArmourPowertowers) {
+				statIndex = k1_ChampionStatStrength;
+				modifier = 10;
+			}
+		} else if (slotIndex == k2_ChampionSlotHead) {
+			switch (iconIndex) {
+			case k104_IconIndiceArmourCrownOfNerra:
+				statIndex = k3_ChampionStatWisdom;
+				modifier = 10;
+				break;
+			case k140_IconIndiceArmourDexhelm:
+				statIndex = k2_ChampionStatDexterity;
+				modifier = 10;
+				break;
+			default:
+				break;
+			}
+		} else if (slotIndex == k3_ChampionSlotTorso) {
+			switch (iconIndex) {
+			case k141_IconIndiceArmourFlamebain:
+				statIndex = k6_ChampionStatAntifire;
+				modifier = 12;
+				break;
+			case k81_IconIndiceArmourCloakOfNight:
+				statIndex = k2_ChampionStatDexterity;
+				modifier = 8;
+				break;
+			default:
+				break;
+			}
+		} else if (slotIndex == k10_ChampionSlotNeck) {
+			switch (iconIndex) {
+			case k10_IconIndiceJunkJewelSymalUnequipped:
+			case k11_IconIndiceJunkJewelSymalEquipped:
+				statIndex = k5_ChampionStatAntimagic;
+				modifier = 15;
+				break;
+			case k81_IconIndiceArmourCloakOfNight:
+				statIndex = k2_ChampionStatDexterity;
+				modifier = 8;
+				break;
+			case k122_IconIndiceJunkMoonstone:
+				statIndex = k8_ChampionStatMana;
+				modifier = 3;
+				break;
+			default:
+				break;
+			}
 		}
-
-	} else if (slotIndex == k4_ChampionSlotLegs) {
-
-		if (iconIndex == k142_IconIndiceArmourPowertowers) {
-			statIndex = k1_ChampionStatStrength;
-			modifier = 10;
-		}
-
-	} else if (slotIndex == k2_ChampionSlotHead) {
-
-		if (iconIndex == k104_IconIndiceArmourCrownOfNerra) {
-			statIndex = k3_ChampionStatWisdom;
-			modifier = 10;
-		} else if (iconIndex == k140_IconIndiceArmourDexhelm) {
-			statIndex = k2_ChampionStatDexterity;
-			modifier = 10;
-		}
-
-	} else if (slotIndex == k3_ChampionSlotTorso) {
-
-		if (iconIndex == k141_IconIndiceArmourFlamebain) {
-			statIndex = k6_ChampionStatAntifire;
-			modifier = 12;
-		} else if (iconIndex == k81_IconIndiceArmourCloakOfNight) {
-			statIndex = k2_ChampionStatDexterity;
-			modifier = 8;
-		}
-
-	} else if (slotIndex == k10_ChampionSlotNeck) {
-
-		if ((iconIndex >= k10_IconIndiceJunkJewelSymalUnequipped) && (iconIndex <= k11_IconIndiceJunkJewelSymalEquipped)) {
-			statIndex = k5_ChampionStatAntimagic;
-			modifier = 15;
-		} else if (iconIndex == k81_IconIndiceArmourCloakOfNight) {
-			statIndex = k2_ChampionStatDexterity;
-			modifier = 8;
-		} else if (iconIndex == k122_IconIndiceJunkMoonstone) {
-			statIndex = k8_ChampionStatMana;
-			modifier = 3;
-		}
-
 	}
 
-T0299044_ApplyModifier:
 	if (modifier) {
 		modifier *= modifierFactor;
+		//statIndex is set when modifier is set
 		if (statIndex == k8_ChampionStatMana) {
 			champ->_maxMana += modifier;
 		} else if (statIndex < k6_ChampionStatAntifire + 1) {
@@ -390,7 +402,6 @@ T0299044_ApplyModifier:
 			}
 		}
 	}
-
 }
 
 bool ChampionMan::f295_hasObjectIconInSlotBoxChanged(int16 slotBoxIndex, Thing thing) {
