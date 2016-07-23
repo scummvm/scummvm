@@ -50,7 +50,7 @@ void CInputHandler::decLockCount() {
 
 void CInputHandler::handleMessage(CMessage &msg, bool respectLock) {
 	if (!respectLock || _lockCount <= 0) {
-		if (_gameManager->_gameState._mode == GSMODE_SELECTED) {
+		if (_gameManager->_gameState._mode == GSMODE_INTERACTIVE) {
 			processMessage(&msg);
 		} else if (!msg.isMouseMsg()) {
 			g_vm->_filesManager->loadDrive();

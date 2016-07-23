@@ -109,7 +109,7 @@ void CFilesManager::debug(CScreenManager *screenManager) {
 
 void CFilesManager::resetView() {
 	if (_gameManager) {
-		_gameManager->_gameState.setMode(GSMODE_SELECTED);
+		_gameManager->_gameState.setMode(GSMODE_INTERACTIVE);
 		_gameManager->initBounds();
 	}
 }

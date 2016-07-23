@@ -75,7 +75,7 @@ void CMainGameWindow::applicationStarting() {
 	// Load either a new game or selected existing save
 	_project->loadGame(saveSlot);
 	_inputAllowed = true;
-	_gameManager->_gameState.setMode(GSMODE_SELECTED);
+	_gameManager->_gameState.setMode(GSMODE_INTERACTIVE);
 
 	// TODO: Cursor/image
 
@@ -147,8 +147,8 @@ void CMainGameWindow::draw() {
 		scrManager->clearSurface(SURFACE_BACKBUFFER, &_gameManager->_bounds);
 
 		switch (_gameManager->_gameState._mode) {
-		case GSMODE_SELECTED:
-		case GSMODE_2:
+		case GSMODE_INTERACTIVE:
+		case GSMODE_CUTSCENE:
 			if (_gameManager->_gameState._petActive)
 				drawPet(scrManager);
 
@@ -163,7 +163,7 @@ void CMainGameWindow::draw() {
 
 		case GSMODE_PENDING_LOAD:
 			// Pending savegame to load
-			_gameManager->_gameState.setMode(GSMODE_SELECTED);
+			_gameManager->_gameState.setMode(GSMODE_INTERACTIVE);
 			_vm->_window->_project->loadGame(_pendingLoadSlot);
 			break;
 

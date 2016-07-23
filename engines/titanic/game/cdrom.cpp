@@ -62,7 +62,7 @@ bool CCDROM::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 	if (msg->_dropTarget && msg->_dropTarget->getName() == "newComputer") {
 		CCDROMTray *newTray = dynamic_cast<CCDROMTray *>(getRoom()->findByName("newTray"));
 
-		if (newTray->_state && newTray->_insertedCD == "None") {
+		if (newTray->_isOpened && newTray->_insertedCD == "None") {
 			CActMsg actMsg(getName());
 			actMsg.execute(newTray);
 			setVisible(false);

@@ -485,7 +485,7 @@ void CGameObject::petShow() {
 	CGameManager *gameManager = getGameManager();
 	if (gameManager) {
 		gameManager->_gameState._petActive = true;
-		gameManager->_gameState.setMode(GSMODE_SELECTED);
+		gameManager->_gameState.setMode(GSMODE_INTERACTIVE);
 		gameManager->initBounds();
 	}
 }
@@ -494,7 +494,7 @@ void CGameObject::petHide() {
 	CGameManager *gameManager = getGameManager();
 	if (gameManager) {
 		gameManager->_gameState._petActive = false;
-		gameManager->_gameState.setMode(GSMODE_SELECTED);
+		gameManager->_gameState.setMode(GSMODE_INTERACTIVE);
 		gameManager->initBounds();
 	}
 }
@@ -513,7 +513,7 @@ void CGameObject::playMovie(uint flags) {
 		_resource.clear();
 	}
 
-	CGameObject *obj = (flags & MOVIE_NO_OBJECT) ? nullptr : this;
+	CGameObject *obj = (flags & MOVIE_NOTIFY_OBJECT) ? this : nullptr;
 	if (_surface) {
 		_surface->playMovie(flags, obj);
 		if (flags & MOVIE_GAMESTATE)
@@ -530,7 +530,7 @@ void CGameObject::playMovie(int startFrame, int endFrame, uint flags) {
 		_resource.clear();
 	}
 
-	CGameObject *obj = (flags & MOVIE_NO_OBJECT) ? nullptr : this;
+	CGameObject *obj = (flags & MOVIE_NOTIFY_OBJECT) ? this : nullptr;
 	if (_surface) {
 		_surface->playMovie(startFrame, endFrame, flags, obj);
 		if (flags & MOVIE_GAMESTATE)
@@ -548,7 +548,7 @@ void CGameObject::playMovie(int startFrame, int endFrame, int initialFrame, uint
 		_resource.clear();
 	}
 
-	CGameObject *obj = (flags & MOVIE_NO_OBJECT) ? nullptr : this;
+	CGameObject *obj = (flags & MOVIE_NOTIFY_OBJECT) ? this : nullptr;
 	if (_surface) {
 		_surface->playMovie(startFrame, endFrame, initialFrame, flags, obj);
 		if (flags & MOVIE_GAMESTATE)

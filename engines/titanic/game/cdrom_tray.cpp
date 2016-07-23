@@ -33,12 +33,12 @@ BEGIN_MESSAGE_MAP(CCDROMTray, CGameObject)
 END_MESSAGE_MAP()
 
 
-CCDROMTray::CCDROMTray() : CGameObject(), _state(0) {
+CCDROMTray::CCDROMTray() : CGameObject(), _isOpened(false) {
 }
 
 void CCDROMTray::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_state, indent);
+	file->writeNumberLine(_isOpened, indent);
 	file->writeQuotedLine(_insertedCD, indent);
 
 	CGameObject::save(file, indent);
@@ -46,7 +46,7 @@ void CCDROMTray::save(SimpleFile *file, int indent) {
 
 void CCDROMTray::load(SimpleFile *file) {
 	file->readNumber();
-	_state = file->readNumber();
+	_isOpened = file->readNumber();
 	_insertedCD = file->readString();
 
 	CGameObject::load(file);
@@ -54,65 +54,73 @@ void CCDROMTray::load(SimpleFile *file) {
 
 bool CCDROMTray::ActMsg(CActMsg *msg) {
 	if (msg->_action == "ClickedOn") {
-		if (_state) {
+		if (_isOpened) {
+			// Closing the tray
 			if (_insertedCD == "None") {
+				// No CD in tray
 				playMovie(55, 65, 0);
 				playSound("a#35.wav", 50, 0, 0);
-				_state = 0;
+				_isOpened = false;
 			} else {
-				CTreeItem *treeItem = getRoom()->findByName(_insertedCD);
-				if (treeItem) {
+				// Ejecting tray with CD
+				CTreeItem *cdrom = getRoom()->findByName(_insertedCD);
+				if (cdrom) {
 					CActMsg actMsg("Ejected");
-					actMsg.execute(treeItem);
+					actMsg.execute(cdrom);
 				}
 
 				_insertedCD = "None";
 				loadFrame(52);
 			}
 		} else if (_insertedCD == "None") {
+			// Opening tray with no CD
 			playMovie(44, 54, 0);
 			playSound("a#34.wav", 50, 0, 0);
-			_state = 1;
+			_isOpened = true;
 		} else if (_insertedCD == "newCD1" || _insertedCD == "newCD2") {
+			// Opening tray with standard CD
 			playMovie(22, 32, 0);
 			playSound("a#34.wav", 50, 0, 0);
-			_state = 1;
+			_isOpened = true;
 		} else if (_insertedCD == "newSTCD") {
+			// Opening tray with Starship Titanic CD
 			playMovie(0, 10, 0);
 			playSound("a#34.wav", 50, 0, 0);
-			_state = 1;
+			_isOpened = true;
 		}
-	} else if (_state) {
+	} else if (_isOpened) {
 		if (msg->_action == "newCD1" || msg->_action == "newCD2") {
-			playMovie(33, 43, 4);
+			// Standard CD dropped on CDROM Tray
+			playMovie(33, 43, MOVIE_NOTIFY_OBJECT);
 			playSound("a#35.wav", 50, 0, 0);
 		} else if (msg->_action == "newSTCD") {
-			playMovie(11, 21, 4);
+			// Starship Titanic CD dropped on CDROM Tray
+			playMovie(11, 21, MOVIE_NOTIFY_OBJECT);
 			playSound("a#35.wav", 50, 0, 0);
 		} else {
 			return true;
 		}
 
 		_insertedCD = msg->_action;
-		_state = 0;
+		_isOpened = false;
 	}
 
 	return true;
 }
 
 bool CCDROMTray::MovieEndMsg(CMovieEndMsg *msg) {
-	CTreeItem *treeItem = getRoom()->findByName("newScreen");
+	CTreeItem *screen = getRoom()->findByName("newScreen");
 	
-	if (treeItem) {
+	if (screen) {
 		CActMsg actMsg(_insertedCD);
-		actMsg.execute(treeItem);
+		actMsg.execute(screen);
 	}
 
 	return true;
 }
 
 bool CCDROMTray::StatusChangeMsg(CStatusChangeMsg *msg) {
-	msg->_success = _state;
+	msg->_success = _isOpened;
 	return true;
 }
 

@@ -100,7 +100,7 @@ CTimeEventInfo::CTimeEventInfo() : ListItem(), _lockCounter(0),
 CTimeEventInfo::CTimeEventInfo(uint ticks, uint f14, uint firstDuration,
 		uint duration, CTreeItem *target, int timerVal3, const CString &action) :
 		ListItem(), _lockCounter(0), _field14(f14), _firstDuration(firstDuration),
-		_duration(duration), _target(target), _field2C(0), _field30(0),
+		_duration(duration), _target(target), _actionVal(0), _field2C(0), _field30(0),
 		_timerCtr(0), _lastTimerTicks(ticks), _field3C(0), _done(false),
 		_field44(true) {
 	_id = _nextId++;

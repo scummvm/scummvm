@@ -34,7 +34,7 @@ class CCDROMTray : public CGameObject {
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
 public:
-	int _state;
+	bool _isOpened;
 	CString _insertedCD;
 public:
 	CLASSDEF

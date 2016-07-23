@@ -36,7 +36,7 @@ bool CGameStateMovieList::clear() {
 
 CGameState::CGameState(CGameManager *gameManager) :
 		_gameManager(gameManager), _gameLocation(this),
-		_passengerClass(0), _priorClass(0), _mode(GSMODE_UNSELECTED),
+		_passengerClass(0), _priorClass(0), _mode(GSMODE_NONE),
 		_field14(0), _petActive(false), _field1C(false), _quitGame(false),
 		_field24(0), _nodeChangeCtr(0), _nodeEnterTicks(0), _field38(0) {
 }
@@ -69,14 +69,14 @@ void CGameState::load(SimpleFile *file) {
 void CGameState::setMode(GameStateMode newMode) {
 	CScreenManager *sm = CScreenManager::_screenManagerPtr;
 
-	if (newMode == GSMODE_2 && newMode != _mode) {
+	if (newMode == GSMODE_CUTSCENE && newMode != _mode) {
 		if (_gameManager)
 			_gameManager->lockInputHandler();
 
 		if (sm && sm->_mouseCursor)
 			sm->_mouseCursor->hide();
 
-	} else if (newMode != GSMODE_2 && newMode != _mode) {
+	} else if (newMode != GSMODE_CUTSCENE && newMode != _mode) {
 		if (sm && sm->_mouseCursor)
 			sm->_mouseCursor->show();
 	
@@ -123,7 +123,7 @@ void CGameState::changeView(CViewItem *newView, CMovieClip *clip) {
 	if (g_vm->_window->isSpecialPressed(MK_SHIFT))
 		clip = nullptr;
 
-	if (_mode == GSMODE_2) {
+	if (_mode == GSMODE_CUTSCENE) {
 		_movieList._view = newView;
 		_movieList._movieClip = clip;
 	} else {
@@ -143,8 +143,8 @@ void CGameState::changeView(CViewItem *newView, CMovieClip *clip) {
 }
 
 void CGameState::checkForViewChange() {
-	if (_mode == GSMODE_2 && _movieList.clear()) {
-		setMode(GSMODE_SELECTED);
+	if (_mode == GSMODE_CUTSCENE && _movieList.clear()) {
+		setMode(GSMODE_INTERACTIVE);
 		if (_movieList._view)
 			enterView();
 	}
@@ -152,7 +152,7 @@ void CGameState::checkForViewChange() {
 
 void CGameState::addMovie(CMovie *movie) {
 	_movieList.push_back(new CMovieListItem(movie));
-	setMode(GSMODE_2);
+	setMode(GSMODE_CUTSCENE);
 }
 
 } // End of namespace Titanic
