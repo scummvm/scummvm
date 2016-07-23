@@ -102,7 +102,7 @@ void OneDriveCreateDirectoryRequest::responseCallback(Networking::JsonResponse r
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
 	if (!json) {
-		warning("NULL passed instead of JSON");
+		warning("OneDriveCreateDirectoryRequest: NULL passed instead of JSON");
 		finishError(error);
 		return;
 	}

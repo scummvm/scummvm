@@ -86,8 +86,8 @@ void DropboxStorage::codeFlowComplete(Networking::JsonResponse response) {
 	if (json) {
 		Common::JSONObject result = json->asObject();
 		if (!result.contains("access_token") || !result.contains("uid")) {
-			warning("%s", json->stringify(true).c_str());
-			warning("Bad response, no token/uid passed");
+			warning("DropboxStorage: bad response, no token/uid passed");
+			debug(9, "%s", json->stringify(true).c_str());
 			CloudMan.removeStorage(this);
 		} else {
 			_token = result.getVal("access_token")->asString();
@@ -99,14 +99,14 @@ void DropboxStorage::codeFlowComplete(Networking::JsonResponse response) {
 
 		delete json;
 	} else {
-		debug("DropboxStorage::codeFlowComplete: got NULL instead of JSON!");
+		debug(9, "DropboxStorage::codeFlowComplete: got NULL instead of JSON!");
 		CloudMan.removeStorage(this);
 	}
 }
 
 void DropboxStorage::codeFlowFailed(Networking::ErrorResponse error) {
-	debug("Dropbox's code flow failed (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
-	debug("%s", error.response.c_str());
+	debug(9, "DropboxStorage: code flow failed (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
+	debug(9, "%s", error.response.c_str());
 	CloudMan.removeStorage(this);
 }
 
@@ -161,12 +161,12 @@ DropboxStorage *DropboxStorage::loadFromConfig(Common::String keyPrefix) {
 	loadKeyAndSecret();
 
 	if (!ConfMan.hasKey(keyPrefix + "access_token", ConfMan.kCloudDomain)) {
-		warning("No access_token found");
+		warning("DropboxStorage: no access_token found");
 		return nullptr;
 	}
 
 	if (!ConfMan.hasKey(keyPrefix + "user_id", ConfMan.kCloudDomain)) {
-		warning("No user_id found");
+		warning("DropboxStorage: no user_id found");
 		return nullptr;
 	}
 

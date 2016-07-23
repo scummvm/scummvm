@@ -1950,8 +1950,8 @@ void GlobalOptionsDialog::storageListDirectoryCallback(Cloud::Storage::ListDirec
 }
 
 void GlobalOptionsDialog::storageErrorCallback(Networking::ErrorResponse response) {
-	debug("error response (%s, %ld):", (response.failed ? "failed" : "interrupted"), response.httpResponseCode);
-	debug("%s", response.response.c_str());
+	debug(9, "GlobalOptionsDialog: error response (%s, %ld):", (response.failed ? "failed" : "interrupted"), response.httpResponseCode);
+	debug(9, "%s", response.response.c_str());
 
 	if (!response.interrupted)
 		g_system->displayMessageOnOSD(_("Request failed.\nCheck your Internet connection."));

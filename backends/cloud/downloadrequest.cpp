@@ -99,8 +99,10 @@ void DownloadRequest::handle() {
 
 	if (_remoteFileStream->eos()) {
 		if (_remoteFileStream->httpResponseCode() != 200) {
-			warning("HTTP response code is not 200 OK (it's %ld)", _remoteFileStream->httpResponseCode());
+			warning("DownloadRequest: HTTP response code is not 200 OK (it's %ld)", _remoteFileStream->httpResponseCode());
 			//TODO: do something about it actually
+			// the problem is file's already downloaded, stream is over
+			// so we can't return error message anymore
 		}
 
 		finishDownload(_remoteFileStream->httpResponseCode() == 200);

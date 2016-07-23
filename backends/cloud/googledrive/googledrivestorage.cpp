@@ -113,14 +113,14 @@ void GoogleDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonR
 
 	Common::JSONObject result = json->asObject();
 	if (!result.contains("access_token")) {
-		warning("Bad response, no token passed");
-		debug("%s", json->stringify().c_str());
+		warning("GoogleDriveStorage: bad response, no token passed");
+		debug(9, "%s", json->stringify().c_str());
 		if (callback)
 			(*callback)(BoolResponse(nullptr, false));
 	} else {
 		_token = result.getVal("access_token")->asString();
 		if (!result.contains("refresh_token"))
-			warning("No refresh_token passed");
+			warning("GoogleDriveStorage: no refresh_token passed");
 		else
 			_refreshToken = result.getVal("refresh_token")->asString();
 		CloudMan.save(); //ask CloudManager to save our new refreshToken
@@ -143,8 +143,8 @@ void GoogleDriveStorage::codeFlowComplete(BoolResponse response) {
 }
 
 void GoogleDriveStorage::codeFlowFailed(Networking::ErrorResponse error) {
-	debug("Google Drive's code flow failed (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
-	debug("%s", error.response.c_str());
+	debug(9, "GoogleDriveStorage: code flow failed (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
+	debug(9, "%s", error.response.c_str());
 	CloudMan.removeStorage(this);
 }
 
@@ -160,7 +160,7 @@ Common::String GoogleDriveStorage::name() const {
 void GoogleDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse response) {
 	Common::JSONValue *json = response.value;
 	if (!json) {
-		warning("NULL passed instead of JSON");
+		warning("GoogleDriveStorage: NULL passed instead of JSON");
 		delete outerCallback;
 		return;
 	}
@@ -201,7 +201,7 @@ void GoogleDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Ne
 void GoogleDriveStorage::createDirectoryInnerCallback(BoolCallback outerCallback, Networking::JsonResponse response) {
 	Common::JSONValue *json = response.value;
 	if (!json) {
-		warning("NULL passed instead of JSON");
+		warning("GoogleDriveStorage: NULL passed instead of JSON");
 		delete outerCallback;
 		return;
 	}
@@ -241,7 +241,7 @@ Networking::Request *GoogleDriveStorage::streamFileById(Common::String id, Netwo
 }
 
 void GoogleDriveStorage::printInfo(StorageInfoResponse response) {
-	debug(9, "\nuser info:");
+	debug(9, "\nGoogleDriveStorage: user info:");
 	debug(9, "\tname: %s", response.value.name().c_str());
 	debug(9, "\temail: %s", response.value.email().c_str());
 	debug(9, "\tdisk usage: %lu/%lu", response.value.used(), response.value.available());
@@ -286,12 +286,12 @@ GoogleDriveStorage *GoogleDriveStorage::loadFromConfig(Common::String keyPrefix)
 	loadKeyAndSecret();
 
 	if (!ConfMan.hasKey(keyPrefix + "access_token", ConfMan.kCloudDomain)) {
-		warning("No access_token found");
+		warning("GoogleDriveStorage: no access_token found");
 		return nullptr;
 	}
 
 	if (!ConfMan.hasKey(keyPrefix + "refresh_token", ConfMan.kCloudDomain)) {
-		warning("No refresh_token found");
+		warning("GoogleDriveStorage: no refresh_token found");
 		return nullptr;
 	}
 

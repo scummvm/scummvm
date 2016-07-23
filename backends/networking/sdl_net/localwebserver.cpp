@@ -96,14 +96,14 @@ void LocalWebserver::start() {
 	// Create a listening TCP socket
 	IPaddress ip;
 	if (SDLNet_ResolveHost(&ip, NULL, _serverPort) == -1) {
-		error("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
+		error("LocalWebserver: SDLNet_ResolveHost: %s\n", SDLNet_GetError());
 	}
 
 	resolveAddress(&ip);
 
 	_serverSocket = SDLNet_TCP_Open(&ip);
 	if (!_serverSocket) {
-		warning("SDLNet_TCP_Open: %s", SDLNet_GetError());
+		warning("LocalWebserver: SDLNet_TCP_Open: %s", SDLNet_GetError());
 		stopTimer();
 		g_system->displayMessageOnOSD(_("Failed to start local webserver.\nCheck whether selected port is not used by another application and try again."));
 		_handleMutex.unlock();
@@ -113,12 +113,12 @@ void LocalWebserver::start() {
 	// Create a socket set
 	_set = SDLNet_AllocSocketSet(MAX_CONNECTIONS + 1); //one more for our server socket
 	if (!_set) {
-		error("SDLNet_AllocSocketSet: %s\n", SDLNet_GetError());
+		error("LocalWebserver: SDLNet_AllocSocketSet: %s\n", SDLNet_GetError());
 	}
 
 	int numused = SDLNet_TCP_AddSocket(_set, _serverSocket);
 	if (numused == -1) {
-		error("SDLNet_AddSocket: %s\n", SDLNet_GetError());
+		error("LocalWebserver: SDLNet_AddSocket: %s\n", SDLNet_GetError());
 	}
 	_handleMutex.unlock();
 }
@@ -183,7 +183,7 @@ void LocalWebserver::handle() {
 	_handleMutex.lock();
 	int numready = SDLNet_CheckSockets(_set, 0);
 	if (numready == -1) {
-		error("SDLNet_CheckSockets: %s\n", SDLNet_GetError());
+		error("LocalWebserver: SDLNet_CheckSockets: %s\n", SDLNet_GetError());
 	} else if (numready) {
 		acceptClient();
 	}
@@ -268,11 +268,11 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 	// default way (might work everywhere, surely works on Windows)
 	const char *name = SDLNet_ResolveIP(ip);
 	if (name == NULL) {
-		warning("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
+		warning("LocalWebserver: SDLNet_ResolveHost: %s\n", SDLNet_GetError());
 	} else {
 		IPaddress localIp;
 		if (SDLNet_ResolveHost(&localIp, name, _serverPort) == -1) {
-			warning("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
+			warning("LocalWebserver: SDLNet_ResolveHost: %s\n", SDLNet_GetError());
 		} else {
 			_address = Common::String::format(
 				"http://%u.%u.%u.%u:%u/",
@@ -284,7 +284,7 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 
 	// check that our trick worked
 	if (_address.contains("/127.0.0.1:") || _address.contains("localhost") || _address.contains("/0.0.0.0:"))
-		warning("Failed to resolve IP with the default way");
+		warning("LocalWebserver: Failed to resolve IP with the default way");
 	else
 		return;
 
@@ -307,7 +307,7 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 			tmpAddrPtr = &((struct sockaddr_in *)i->ifa_addr)->sin_addr;
 			char addressBuffer[INET_ADDRSTRLEN];
 			inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
-			debug("%s IP Address %s", i->ifa_name, addressBuffer);
+			debug(9, "%s IP Address %s", i->ifa_name, addressBuffer);
 			addr = addressBuffer;
 		}
 
@@ -317,7 +317,7 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 			tmpAddrPtr = &((struct sockaddr_in6 *)i->ifa_addr)->sin6_addr;
 			char addressBuffer[INET6_ADDRSTRLEN];
 			inet_ntop(AF_INET6, tmpAddrPtr, addressBuffer, INET6_ADDRSTRLEN);
-			debug("%s IP Address %s", i->ifa_name, addressBuffer);
+			debug(9, "%s IP Address %s", i->ifa_name, addressBuffer);
 			addr = addressBuffer;
 		}
 		*/

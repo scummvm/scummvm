@@ -123,7 +123,6 @@ void DropboxUploadRequest::uploadNextPart() {
 }
 
 void DropboxUploadRequest::partUploadedCallback(Networking::JsonResponse response) {
-	debug(9, "partUploadedCallback");
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -133,6 +132,7 @@ void DropboxUploadRequest::partUploadedCallback(Networking::JsonResponse respons
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
+	// TODO: add more JSON-related warnings
 	Common::JSONValue *json = response.value;
 	if (json) {
 		bool needsFinishRequest = false;
@@ -140,7 +140,7 @@ void DropboxUploadRequest::partUploadedCallback(Networking::JsonResponse respons
 		if (json->isObject()) {
 			Common::JSONObject object = json->asObject();
 
-			//debug("%s", json->stringify(true).c_str());
+			//debug(9, "%s", json->stringify(true).c_str());
 
 			if (object.contains("error") || object.contains("error_summary")) {
 				warning("Dropbox returned error: %s", object.getVal("error_summary")->asString().c_str());
@@ -163,19 +163,19 @@ void DropboxUploadRequest::partUploadedCallback(Networking::JsonResponse respons
 				if (object.contains("session_id"))
 					_sessionId = object.getVal("session_id")->asString();
 				else
-					warning("no session_id found in Dropbox's response");
+					warning("DropboxUploadRequest: no session_id found");
 				needsFinishRequest = true;
 			}
 		}
 
 		if (!needsFinishRequest && (_contentsStream->eos() || _contentsStream->pos() >= _contentsStream->size() - 1)) {
-			warning("no file info to return");
+			warning("DropboxUploadRequest: no file info to return");
 			finishUpload(StorageFile(_savePath, 0, 0, false));
 		} else {
 			uploadNextPart();
 		}
 	} else {
-		warning("null, not json");
+		warning("DropboxUploadRequest: null, not json");
 		finishError(error);
 	}
 
@@ -183,7 +183,6 @@ void DropboxUploadRequest::partUploadedCallback(Networking::JsonResponse respons
 }
 
 void DropboxUploadRequest::partUploadedErrorCallback(Networking::ErrorResponse error) {
-	debug("partUploadedErrorCallback");
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;

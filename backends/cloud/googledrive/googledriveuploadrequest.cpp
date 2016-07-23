@@ -305,13 +305,13 @@ void GoogleDriveUploadRequest::partUploadedCallback(Networking::JsonResponse res
 		}
 
 		if (_contentsStream->eos() || _contentsStream->pos() >= _contentsStream->size() - 1) {
-			warning("no file info to return");
+			warning("GoogleDriveUploadRequest: no file info to return");
 			finishUpload(StorageFile(_savePath, 0, 0, false));
 		} else {
 			uploadNextPart();
 		}
 	} else {
-		warning("null, not json");
+		warning("GoogleDriveUploadRequest: null, not json");
 		finishError(error);
 	}
 

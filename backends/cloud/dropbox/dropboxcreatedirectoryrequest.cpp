@@ -80,7 +80,7 @@ void DropboxCreateDirectoryRequest::responseCallback(Networking::JsonResponse re
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
 	if (!json) {
-		warning("NULL passed instead of JSON");
+		warning("DropboxCreateDirectoryRequest: NULL passed instead of JSON");
 		finishError(error);
 		return;
 	}

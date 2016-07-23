@@ -70,16 +70,16 @@ void IdResolveIdRequest::listedDirectoryCallback(Storage::FileArrayResponse resp
 		return;
 
 	Common::String currentLevelName = _requestedPath;
-	///debug("'%s'", currentLevelName.c_str());
+	///debug(9, "'%s'", currentLevelName.c_str());
 	if (_currentDirectory.size())
 		currentLevelName.erase(0, _currentDirectory.size());
 	if (currentLevelName.size() && (currentLevelName[0] == '/' || currentLevelName[0] == '\\'))
 		currentLevelName.erase(0, 1);
-	///debug("'%s'", currentLevelName.c_str());
+	///debug(9, "'%s'", currentLevelName.c_str());
 	for (uint32 i = 0; i < currentLevelName.size(); ++i) {
 		if (currentLevelName[i] == '/' || currentLevelName[i] == '\\') {
 			currentLevelName.erase(i);
-			///debug("'%s'", currentLevelName.c_str());
+			///debug(9, "'%s'", currentLevelName.c_str());
 			break;
 		}
 	}
@@ -90,7 +90,7 @@ void IdResolveIdRequest::listedDirectoryCallback(Storage::FileArrayResponse resp
 	path += currentLevelName;
 	bool lastLevel = (path.equalsIgnoreCase(_requestedPath));
 
-	///debug("so, searching for '%s' in '%s'", currentLevelName.c_str(), _currentDirectory.c_str());
+	///debug(9, "IdResolveIdRequest: searching for '%s' in '%s'", currentLevelName.c_str(), _currentDirectory.c_str());
 
 	Common::Array<StorageFile> &files = response.value;
 	bool found = false;
@@ -100,7 +100,7 @@ void IdResolveIdRequest::listedDirectoryCallback(Storage::FileArrayResponse resp
 				_currentDirectory += "/";
 			_currentDirectory += files[i].name();
 			_currentDirectoryId = files[i].id();
-			///debug("found it! new directory and its id: '%s', '%s'", _currentDirectory.c_str(), _currentDirectoryId.c_str());
+			///debug(9, "IdResolveIdRequest: found it! new directory and its id: '%s', '%s'", _currentDirectory.c_str(), _currentDirectoryId.c_str());
 			listNextDirectory(files[i]);
 			found = true;
 			break;

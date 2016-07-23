@@ -77,7 +77,7 @@ void DropboxInfoRequest::userResponseCallback(Networking::JsonResponse response)
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
 	if (!json) {
-		warning("NULL passed instead of JSON");
+		warning("DropboxInfoRequest: NULL passed instead of JSON");
 		finishError(error);
 		return;
 	}
@@ -115,7 +115,7 @@ void DropboxInfoRequest::quotaResponseCallback(Networking::JsonResponse response
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
 	if (!json) {
-		warning("NULL passed instead of JSON");
+		warning("DropboxInfoRequest: NULL passed instead of JSON");
 		finishError(error);
 		return;
 	}

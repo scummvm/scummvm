@@ -129,7 +129,7 @@ void FolderDownloadRequest::downloadNextFile() {
 		if (_remoteDirectoryPath != "" && (_remoteDirectoryPath.lastChar() != '/' && _remoteDirectoryPath.lastChar() != '\\'))
 			localPath.erase(0, 1);
 	} else {
-		warning("Can't process the following paths:");
+		warning("FolderDownloadRequest: Can't process the following paths:");
 		warning("remote directory: %s", _remoteDirectoryPath.c_str());
 		warning("remote file under that directory: %s", remotePath.c_str());
 	}
@@ -139,7 +139,7 @@ void FolderDownloadRequest::downloadNextFile() {
 		else
 			localPath = _localDirectoryPath + "/" + localPath;
 	}
-	debug(9, "%s -> %s", remotePath.c_str(), localPath.c_str());
+	debug(9, "FolderDownloadRequest: %s -> %s", remotePath.c_str(), localPath.c_str());
 	_workingRequest = _storage->downloadById(
 		_currentFile.id(), localPath,
 		new Common::Callback<FolderDownloadRequest, Storage::BoolResponse>(this, &FolderDownloadRequest::fileDownloadedCallback),

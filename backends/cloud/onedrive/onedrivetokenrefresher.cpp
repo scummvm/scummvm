@@ -69,7 +69,7 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 		//new token needed => request token & then retry original request
 		if (_stream) {
 			httpResponseCode = _stream->httpResponseCode();
-			debug(9, "code %ld", httpResponseCode);
+			debug(9, "OneDriveTokenRefresher: code = %ld", httpResponseCode);
 		}
 
 		Common::JSONObject error = result.getVal("error")->asObject();
@@ -78,12 +78,12 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 		Common::String code, message;
 		if (error.contains("code")) {
 			code = error.getVal("code")->asString();
-			debug(9, "code = %s", code.c_str());
+			debug(9, "OneDriveTokenRefresher: code = %s", code.c_str());
 		}
 
 		if (error.contains("message")) {
 			message = error.getVal("message")->asString();
-			debug(9, "message = %s", message.c_str());
+			debug(9, "OneDriveTokenRefresher: message = %s", message.c_str());
 		}
 
 		//determine whether token refreshing would help in this situation

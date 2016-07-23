@@ -143,8 +143,9 @@ void BoxUploadRequest::uploadedCallback(Networking::JsonResponse response) {
 	}
 
 	if (error.httpResponseCode != 200 && error.httpResponseCode != 201)
-		warning("looks like an error");
+		warning("BoxUploadRequest: looks like an error (bad HTTP code)");
 
+	//TODO: add more JSON warnings there
 	Common::JSONValue *json = response.value;
 	if (json) {
 		if (json->isObject()) {
@@ -188,10 +189,10 @@ void BoxUploadRequest::uploadedCallback(Networking::JsonResponse response) {
 			*/
 		}
 
-		warning("no file info to return");
+		warning("BoxUploadRequest: no file info to return");
 		finishUpload(StorageFile(_savePath, 0, 0, false));
 	} else {
-		warning("null, not json");
+		warning("BoxUploadRequest: null, not json");
 		finishError(error);
 	}
 

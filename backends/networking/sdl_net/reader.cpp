@@ -138,7 +138,7 @@ void readFromThatUntilLineEnd(const char *cstr, Common::String needle, Common::S
 
 void Reader::handleFirstHeaders(Common::String headers) {
 	if (!_boundary.empty()) {
-		warning("handleFirstHeaders() called when first headers were already handled");
+		warning("Reader: handleFirstHeaders() called when first headers were already handled");
 		return;
 	}
 
@@ -252,7 +252,7 @@ void Reader::parseQueryParameters() {
 		} else {
 			if (_query[i] == '&') {
 				if (_queryParameters.contains(key))
-					warning("Query parameter \"%s\" is already set!", key.c_str());
+					warning("Reader: query parameter \"%s\" is already set!", key.c_str());
 				else
 					_queryParameters[key] = LocalWebserver::urlDecode(value);
 				readingKey = true;
@@ -265,7 +265,7 @@ void Reader::parseQueryParameters() {
 
 	if (!key.empty()) {
 		if (_queryParameters.contains(key))
-			warning("Query parameter \"%s\" is already set!", key.c_str());
+			warning("Reader: query parameter \"%s\" is already set!", key.c_str());
 		else
 			_queryParameters[key] = LocalWebserver::urlDecode(value);
 	}
@@ -410,9 +410,9 @@ bool Reader::readBlockContent(Common::WriteStream *stream) {
 		if (bts == "--")
 			_allContentRead = true;
 		else if (bts != "\r\n")
-			warning("strange bytes: \"%s\"", bts.c_str());
+			warning("Reader: strange bytes: \"%s\"", bts.c_str());
 	} else {
-		warning("strange ending");
+		warning("Reader: strange ending");
 		_allContentRead = true;
 	}
 

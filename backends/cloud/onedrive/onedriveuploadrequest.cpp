@@ -130,7 +130,7 @@ void OneDriveUploadRequest::partUploadedCallback(Networking::JsonResponse respon
 			Common::JSONObject object = json->asObject();
 
 			if (object.contains("error")) {
-				warning("OneDrive returned error: %s", json->stringify(true).c_str());
+				warning("OneDriveUploadRequest: error: %s", json->stringify(true).c_str());
 				error.response = json->stringify(true);
 				finishError(error);
 				delete json;
@@ -150,18 +150,18 @@ void OneDriveUploadRequest::partUploadedCallback(Networking::JsonResponse respon
 				if (object.contains("uploadUrl"))
 					_uploadUrl = object.getVal("uploadUrl")->asString();
 				else
-					warning("no uploadUrl found in OneDrive's response");
+					warning("OneDriveUploadRequest: no uploadUrl found");
 			}
 		}
 
 		if (_contentsStream->eos() || _contentsStream->pos() >= _contentsStream->size() - 1) {
-			warning("no file info to return");
+			warning("OneDriveUploadRequest: no file info to return");
 			finishUpload(StorageFile(_savePath, 0, 0, false));
 		} else {
 			uploadNextPart();
 		}
 	} else {
-		warning("null, not json");
+		warning("OneDriveUploadRequest: null, not json");
 		finishError(error);
 	}
 

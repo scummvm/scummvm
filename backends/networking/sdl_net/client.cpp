@@ -62,7 +62,7 @@ void Client::open(SDLNet_SocketSet set, TCPsocket socket) {
 	if (set) {
 		int numused = SDLNet_TCP_AddSocket(set, socket);
 		if (numused == -1) {
-			error("SDLNet_AddSocket: %s\n", SDLNet_GetError());
+			error("Client: SDLNet_AddSocket: %s\n", SDLNet_GetError());
 		}
 	}
 }
@@ -79,13 +79,13 @@ bool Client::readMoreIfNeeded() {
 
 	int bytes = SDLNet_TCP_Recv(_socket, _buffer, CLIENT_BUFFER_SIZE);
 	if (bytes <= 0) {
-		warning("Client::readHeaders recv fail");
+		warning("Client::readMoreIfNeeded: recv fail");
 		close();
 		return false;
 	}
 
 	if (_stream->write(_buffer, bytes) != bytes) {
-		warning("failed to write() into MemoryReadWriteStream");
+		warning("Client::readMoreIfNeeded: failed to write() into MemoryReadWriteStream");
 		close();
 		return false;
 	}
@@ -146,7 +146,7 @@ void Client::close() {
 		if (_socket) {
 			int numused = SDLNet_TCP_DelSocket(_set, _socket);
 			if (numused == -1)
-				error("SDLNet_DelSocket: %s\n", SDLNet_GetError());
+				error("Client: SDLNet_DelSocket: %s\n", SDLNet_GetError());
 		}
 		_set = nullptr;
 	}

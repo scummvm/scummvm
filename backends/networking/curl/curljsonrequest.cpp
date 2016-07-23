@@ -68,7 +68,7 @@ void CurlJsonRequest::handle() {
 		uint32 readBytes = _stream->read(_buffer, CURL_JSON_REQUEST_BUFFER_SIZE);
 		if (readBytes != 0)
 			if (_contentsStream.write(_buffer, readBytes) != readBytes)
-				warning("MemoryWriteStreamDynamic was unable to write all the bytes");
+				warning("CurlJsonRequest: unable to write all the bytes into MemoryWriteStreamDynamic");
 
 		if (_stream->eos()) {
 			char *contents = getPreparedContents();

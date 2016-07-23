@@ -113,8 +113,8 @@ void OneDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResp
 
 	Common::JSONObject result = json->asObject();
 	if (!result.contains("access_token") || !result.contains("user_id") || !result.contains("refresh_token")) {
-		warning("Bad response, no token or user_id passed");
-		debug("%s", json->stringify().c_str());
+		warning("OneDriveStorage: bad response, no token or user_id passed");
+		debug(9, "%s", json->stringify().c_str());
 		if (callback)
 			(*callback)(BoolResponse(nullptr, false));
 	} else {
@@ -141,8 +141,8 @@ void OneDriveStorage::codeFlowComplete(BoolResponse response) {
 }
 
 void OneDriveStorage::codeFlowFailed(Networking::ErrorResponse error) {
-	debug("OneDrive's code flow failed (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
-	debug("%s", error.response.c_str());
+	debug(9, "OneDriveStorage: code flow failed (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
+	debug(9, "%s", error.response.c_str());
 	CloudMan.removeStorage(this);
 }
 
@@ -159,7 +159,7 @@ Common::String OneDriveStorage::name() const {
 void OneDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse response) {
 	Common::JSONValue *json = response.value;
 	if (!json) {
-		warning("NULL passed instead of JSON");
+		warning("OneDriveStorage: NULL passed instead of JSON");
 		delete outerCallback;
 		return;
 	}
@@ -199,7 +199,7 @@ void OneDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Netwo
 
 void OneDriveStorage::fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response) {
 	if (!response.value) {
-		warning("fileInfoCallback: NULL");
+		warning("OneDriveStorage::fileInfoCallback: NULL, not JSON");
 		if (outerCallback)
 			(*outerCallback)(Networking::NetworkReadStreamResponse(response.request, nullptr));
 		return;
@@ -214,8 +214,8 @@ void OneDriveStorage::fileInfoCallback(Networking::NetworkReadStreamCallback out
 				new Networking::NetworkReadStream(url, nullptr, "")
 			));
 	} else {
-		warning("downloadUrl not found in passed JSON");
-		debug("%s", response.value->stringify().c_str());
+		warning("OneDriveStorage: downloadUrl not found in passed JSON");
+		debug(9, "%s", response.value->stringify().c_str());
 		if (outerCallback)
 			(*outerCallback)(Networking::NetworkReadStreamResponse(response.request, nullptr));
 	}
@@ -257,17 +257,17 @@ OneDriveStorage *OneDriveStorage::loadFromConfig(Common::String keyPrefix) {
 	loadKeyAndSecret();
 
 	if (!ConfMan.hasKey(keyPrefix + "access_token", ConfMan.kCloudDomain)) {
-		warning("No access_token found");
+		warning("OneDriveStorage: no access_token found");
 		return nullptr;
 	}
 
 	if (!ConfMan.hasKey(keyPrefix + "user_id", ConfMan.kCloudDomain)) {
-		warning("No user_id found");
+		warning("OneDriveStorage: no user_id found");
 		return nullptr;
 	}
 
 	if (!ConfMan.hasKey(keyPrefix + "refresh_token", ConfMan.kCloudDomain)) {
-		warning("No refresh_token found");
+		warning("OneDriveStorage: no refresh_token found");
 		return nullptr;
 	}
 

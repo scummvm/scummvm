@@ -129,7 +129,7 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::H
 		);
 
 		if (code != CURL_FORMADD_OK)
-			debug("field failed formadd");
+			warning("NetworkReadStream: field curl_formadd('%s') failed", i->_key.c_str());
 	}
 
 	for (Common::HashMap<Common::String, Common::String>::iterator i = formFiles.begin(); i != formFiles.end(); ++i) {
@@ -142,7 +142,7 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::H
 		);
 
 		if (code != CURL_FORMADD_OK)
-			debug("file failed formadd");
+			warning("NetworkReadStream: file curl_formadd('%s') failed", i->_key.c_str());
 	}
 
 	curl_easy_setopt(_easy, CURLOPT_HTTPPOST, formpost);

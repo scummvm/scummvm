@@ -194,7 +194,7 @@ void ConnectionManager::processTransfers() {
 		if (curlMsg->msg == CURLMSG_DONE) {
 			debug(9, "ConnectionManager: SUCCESS (%d - %s)", curlMsg->data.result, curl_easy_strerror(curlMsg->data.result));
 		} else {
-			debug("ConnectionManager: FAILURE (CURLMsg (%d))", curlMsg->msg);
+			warning("ConnectionManager: FAILURE (CURLMsg (%d))", curlMsg->msg);
 		}
 
 		curl_multi_remove_handle(_multi, easyHandle);

@@ -125,11 +125,11 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 			_filesToUpload.push_back(i->_key);
 	}
 
-	debug(9, "\ndownload files:");
+	debug(9, "\nSavesSyncRequest: download files:");
 	for (uint32 i = 0; i < _filesToDownload.size(); ++i) {
 		debug(9, "%s", _filesToDownload[i].name().c_str());
 	}
-	debug(9, "\nupload files:");
+	debug(9, "\nSavesSyncRequest: upload files:");
 	for (uint32 i = 0; i < _filesToUpload.size(); ++i) {
 		debug(9, "%s", _filesToUpload[i].c_str());
 	}
@@ -190,7 +190,7 @@ void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse er
 	Common::String dir = _storage->savesDirectoryPath();
 	if (dir.lastChar() == '/')
 		dir.deleteLastChar();
-	debug(9, "creating %s", dir.c_str());
+	debug(9, "SavesSyncRequest: creating %s", dir.c_str());
 	_workingRequest = _storage->createDirectory(
 		dir,
 		new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::directoryCreatedCallback),
@@ -238,7 +238,7 @@ void SavesSyncRequest::downloadNextFile() {
 
 	sendCommand(GUI::kSavesSyncProgressCmd, (int)(getDownloadingProgress() * 100));
 
-	debug(9, "downloading %s (%d %%)", _currentDownloadingFile.name().c_str(), (int)(getProgress() * 100));
+	debug(9, "SavesSyncRequest: downloading %s (%d %%)", _currentDownloadingFile.name().c_str(), (int)(getProgress() * 100));
 	_workingRequest = _storage->downloadById(
 		_currentDownloadingFile.id(),
 		DefaultSaveFileManager::concatWithSavesPath(_currentDownloadingFile.name()),
@@ -289,7 +289,7 @@ void SavesSyncRequest::uploadNextFile() {
 	_currentUploadingFile = _filesToUpload.back();
 	_filesToUpload.pop_back();
 
-	debug(9, "uploading %s (%d %%)", _currentUploadingFile.c_str(), (int)(getProgress() * 100));
+	debug(9, "SavesSyncRequest: uploading %s (%d %%)", _currentUploadingFile.c_str(), (int)(getProgress() * 100));
 	if (_storage->uploadStreamSupported()) {
 		_workingRequest = _storage->upload(
 			_storage->savesDirectoryPath() + _currentUploadingFile,
@@ -370,7 +370,7 @@ Common::Array<Common::String> SavesSyncRequest::getFilesToDownload() {
 }
 
 void SavesSyncRequest::finishError(Networking::ErrorResponse error) {
-	debug("SavesSync::finishError");
+	debug(9, "SavesSync::finishError");
 	//if we were downloading a file - remember the name
 	//and make the Request close() it, so we can delete it
 	Common::String name = _currentDownloadingFile.name();

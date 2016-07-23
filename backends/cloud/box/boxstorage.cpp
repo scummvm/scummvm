@@ -115,8 +115,8 @@ void BoxStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResponse 
 
 	Common::JSONObject result = json->asObject();
 	if (!result.contains("access_token") || !result.contains("refresh_token")) {
-		warning("Bad response, no token passed");
-		debug("%s", json->stringify().c_str());
+		warning("BoxStorage: bad response, no token passed");
+		debug(9, "%s", json->stringify().c_str());
 		if (callback)
 			(*callback)(BoolResponse(nullptr, false));
 	} else {
@@ -141,8 +141,8 @@ void BoxStorage::codeFlowComplete(BoolResponse response) {
 }
 
 void BoxStorage::codeFlowFailed(Networking::ErrorResponse error) {
-	debug("Box's code flow failed (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
-	debug("%s", error.response.c_str());
+	debug(9, "BoxStorage: code flow failed (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
+	debug(9, "%s", error.response.c_str());
 	CloudMan.removeStorage(this);
 }
 
@@ -158,7 +158,7 @@ Common::String BoxStorage::name() const {
 void BoxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse response) {
 	Common::JSONValue *json = response.value;
 	if (!json) {
-		warning("NULL passed instead of JSON");
+		warning("BoxStorage::infoInnerCallback: NULL passed instead of JSON");
 		delete outerCallback;
 		return;
 	}
@@ -210,7 +210,7 @@ Networking::Request *BoxStorage::listDirectoryById(Common::String id, ListDirect
 void BoxStorage::createDirectoryInnerCallback(BoolCallback outerCallback, Networking::JsonResponse response) {
 	Common::JSONValue *json = response.value;
 	if (!json) {
-		warning("NULL passed instead of JSON");
+		warning("BoxStorage::createDirectoryInnerCallback: NULL passed instead of JSON");
 		delete outerCallback;
 		return;
 	}
@@ -292,12 +292,12 @@ BoxStorage *BoxStorage::loadFromConfig(Common::String keyPrefix) {
 	loadKeyAndSecret();
 
 	if (!ConfMan.hasKey(keyPrefix + "access_token", ConfMan.kCloudDomain)) {
-		warning("No access_token found");
+		warning("BoxStorage: no access_token found");
 		return nullptr;
 	}
 
 	if (!ConfMan.hasKey(keyPrefix + "refresh_token", ConfMan.kCloudDomain)) {
-		warning("No refresh_token found");
+		warning("BoxStorage: no refresh_token found");
 		return nullptr;
 	}
 

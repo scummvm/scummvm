@@ -36,7 +36,7 @@ namespace Id {
 IdStorage::~IdStorage() {}
 
 void IdStorage::printFiles(FileArrayResponse response) {
-	debug(9, "files:");
+	debug(9, "IdStorage: files:");
 	Common::Array<StorageFile> &files = response.value;
 	for (uint32 i = 0; i < files.size(); ++i) {
 		debug(9, "\t%s%s", files[i].name().c_str(), files[i].isDirectory() ? " (directory)" : "");
@@ -47,11 +47,11 @@ void IdStorage::printFiles(FileArrayResponse response) {
 }
 
 void IdStorage::printBool(BoolResponse response) {
-	debug(9, "bool: %s", response.value ? "true" : "false");
+	debug(9, "IdStorage: bool: %s", response.value ? "true" : "false");
 }
 
 void IdStorage::printFile(UploadResponse response) {
-	debug(9, "\nuploaded file info:");
+	debug(9, "\nIdStorage: uploaded file info:");
 	debug(9, "\tid: %s", response.value.path().c_str());
 	debug(9, "\tname: %s", response.value.name().c_str());
 	debug(9, "\tsize: %u", response.value.size());

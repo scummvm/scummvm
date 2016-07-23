@@ -69,7 +69,7 @@ void BoxTokenRefresher::finishJson(Common::JSONValue *json) {
 		long httpCode = -1;
 		if (_stream) {
 			httpCode = _stream->httpResponseCode();
-			debug(9, "code %ld", httpCode);
+			debug(9, "BoxTokenRefresher: code %ld", httpCode);
 		}
 
 		bool irrecoverable = true;
@@ -77,12 +77,12 @@ void BoxTokenRefresher::finishJson(Common::JSONValue *json) {
 		Common::String code, message;
 		if (result.contains("code")) {
 			code = result.getVal("code")->asString();
-			debug(9, "code = %s", code.c_str());
+			debug(9, "BoxTokenRefresher: code = %s", code.c_str());
 		}
 
 		if (result.contains("message")) {
 			message = result.getVal("message")->asString();
-			debug(9, "message = %s", message.c_str());
+			debug(9, "BoxTokenRefresher: message = %s", message.c_str());
 		}
 
 		//TODO: decide when token refreshment will help
