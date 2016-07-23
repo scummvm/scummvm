@@ -552,22 +552,10 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		f335_drawPanelObjectDescriptionString(str);
 	}
 	f339_drawPanelArrowOrEye(pressingEye);
-
 }
 
 void InventoryMan::f337_setDungeonViewPalette() {
-	uint16 L1039_ui_Multiple;
-#define AL1039_ui_SlotIndex    L1039_ui_Multiple
-#define AL1039_ui_PaletteIndex L1039_ui_Multiple
-#define AL1039_ui_Counter      L1039_ui_Multiple
-	int16* L1040_pi_Multiple;
-#define AL1040_pi_TorchLightPower L1040_pi_Multiple
-#define AL1040_pi_LightAmount     L1040_pi_Multiple
-	uint16 L1044_ui_Multiple;
-#define AL1044_T_Thing            L1044_ui_Multiple
-#define AL1044_ui_TorchLightPower L1044_ui_Multiple
-
-	int16 g40_palIndexToLightAmmount[6] = {99, 75, 50, 25, 1, 0}; // @ G0040_ai_Graphic562_PaletteIndexToLightAmount
+	static const int16 g40_palIndexToLightAmmount[6] = {99, 75, 50, 25, 1, 0}; // @ G0040_ai_Graphic562_PaletteIndexToLightAmount
 
 	if (_vm->_dungeonMan->_g269_currMap->_difficulty == 0) {
 		_vm->_displayMan->_g304_dungeonViewPaletteIndex = 0; /* Brightest color palette index */
@@ -576,12 +564,13 @@ void InventoryMan::f337_setDungeonViewPalette() {
 		int16 L1038_i_Counter = 4; /* BUG0_01 Coding error without consequence. The hands of four champions are inspected even if there are less champions in the party. No consequence as the data in unused champions is set to 0 and _vm->_objectMan->f32_getObjectType then returns -1 */
 		Champion *L1043_ps_Champion = _vm->_championMan->_gK71_champions;
 		int16 L1045_ai_TorchesLightPower[8];
-		AL1040_pi_TorchLightPower = L1045_ai_TorchesLightPower;
+		int16 *AL1040_pi_TorchLightPower = L1045_ai_TorchesLightPower;
 		while (L1038_i_Counter--) {
-			AL1039_ui_SlotIndex = k1_ChampionSlotActionHand + 1;
+			uint16 AL1039_ui_SlotIndex = k1_ChampionSlotActionHand + 1;
 			while (AL1039_ui_SlotIndex--) {
-				if ((_vm->_objectMan->f32_getObjectType(Thing(AL1044_T_Thing = L1043_ps_Champion->_slots[AL1039_ui_SlotIndex].toUint16())) >= k4_IconIndiceWeaponTorchUnlit) &&
-					(_vm->_objectMan->f32_getObjectType(Thing(AL1044_T_Thing = L1043_ps_Champion->_slots[AL1039_ui_SlotIndex].toUint16())) <= k7_IconIndiceWeaponTorchLit)) {
+				uint16 AL1044_T_Thing = L1043_ps_Champion->_slots[AL1039_ui_SlotIndex].toUint16();
+				if ((_vm->_objectMan->f32_getObjectType(Thing(AL1044_T_Thing)) >= k4_IconIndiceWeaponTorchUnlit) &&
+					(_vm->_objectMan->f32_getObjectType(Thing(AL1044_T_Thing)) <= k7_IconIndiceWeaponTorchLit)) {
 					Weapon *L1042_ps_Weapon = (Weapon*)_vm->_dungeonMan->f156_getThingData(Thing(AL1044_T_Thing));
 					*AL1040_pi_TorchLightPower = L1042_ps_Weapon->getChargeCount();
 				} else {
@@ -593,13 +582,13 @@ void InventoryMan::f337_setDungeonViewPalette() {
 		}
 		/* Sort torch light power values so that the four highest values are in the first four entries in the array L1045_ai_TorchesLightPower in decreasing order. The last four entries contain the smallest values but they are not sorted */
 		AL1040_pi_TorchLightPower = L1045_ai_TorchesLightPower;
-		AL1039_ui_Counter = 0;
+		int16 AL1039_ui_Counter = 0;
 		while (AL1039_ui_Counter != 4) {
 			L1038_i_Counter = 7 - AL1039_ui_Counter;
 			int16 *L1041_pi_TorchLightPower = &L1045_ai_TorchesLightPower[AL1039_ui_Counter + 1];
 			while (L1038_i_Counter--) {
 				if (*L1041_pi_TorchLightPower > *AL1040_pi_TorchLightPower) {
-					AL1044_ui_TorchLightPower = *L1041_pi_TorchLightPower;
+					int16 AL1044_ui_TorchLightPower = *L1041_pi_TorchLightPower;
 					*L1041_pi_TorchLightPower = *AL1040_pi_TorchLightPower;
 					*AL1040_pi_TorchLightPower = AL1044_ui_TorchLightPower;
 				}
@@ -622,7 +611,8 @@ void InventoryMan::f337_setDungeonViewPalette() {
 		}
 		L1036_i_TotalLightAmount += _vm->_championMan->_g407_party._magicalLightAmount;
 		/* Select palette corresponding to the total light amount */
-		AL1040_pi_LightAmount = g40_palIndexToLightAmmount;
+		const int16 *AL1040_pi_LightAmount = g40_palIndexToLightAmmount;
+		int16 AL1039_ui_PaletteIndex;
 		if (L1036_i_TotalLightAmount > 0) {
 			AL1039_ui_PaletteIndex = 0; /* Brightest color palette index */
 			while (*AL1040_pi_LightAmount++ > L1036_i_TotalLightAmount) {
