@@ -21,6 +21,7 @@
  */
 
 #include "engines/myst3/puzzles.h"
+#include "engines/myst3/ambient.h"
 #include "engines/myst3/menu.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/state.h"
@@ -470,7 +471,7 @@ void Puzzles::resonanceRingsLaunchBall() {
 					_vm->_state->setVar(38 + j, false);
 			}
 
-			// TODO: Run sound script (same as opcode 200, args 100, 2)
+			_vm->_ambient->playCurrentNode(100, 2);
 		}
 	} while (ballMoviePlaying || boardMoviePlaying);
 
@@ -502,7 +503,7 @@ void Puzzles::resonanceRingsLights() {
 		}
 	}
 
-	// TODO: Run sound script (same as opcode 200, args 100, 2)
+	_vm->_ambient->playCurrentNode(100, 2);
 }
 
 void Puzzles::pinball(int16 var) {
