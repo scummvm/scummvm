@@ -52,7 +52,7 @@ public:
 	static Common::List<MaterialData *> *_materials;
 
 	Common::String _fname;
-	ObjectPtr<CMap> _cmap;
+	const ObjectPtr<CMap> _cmap;
 	int _numImages;
 	Texture **_textures;
 	int _refCount;
@@ -60,7 +60,6 @@ public:
 private:
 	void initGrim(Common::SeekableReadStream *data);
 	void initEMI(Common::SeekableReadStream *data);
-	bool _ownCMap;
 };
 
 class Material : public Object {
