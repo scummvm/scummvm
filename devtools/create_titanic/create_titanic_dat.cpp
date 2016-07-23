@@ -279,9 +279,9 @@ void writeResource(const char *name, Common::File *file) {
 	delete file;
 }
 
-void writeResource(const char *sectionStr, const uint32 resId) {
+void writeResource(const char *sectionStr, uint32 resId) {
 	char nameBuffer[256];
-	sprintf(nameBuffer, "%s/%d", sectionStr, resId);
+	sprintf(nameBuffer, "%s/%u", sectionStr, resId);
 	
 	Common::File *file = res.getResource(getResId(sectionStr), resId);
 	assert(file);
@@ -296,6 +296,43 @@ void writeResource(const char *sectionStr, const char *resId) {
 		Common::WinResourceID(resId));
 	assert(file);
 	writeResource(nameBuffer, file);
+}
+
+void writeBitmap(const char *name, Common::File *file) {
+	outputFile.seek(dataOffset);
+
+	// Write out the necessary bitmap header so that the ScummVM
+	// BMP decoder can properly handle decoding the bitmaps
+	outputFile.write("BM", 2);
+	outputFile.writeLong(file->size() + 14);	// Filesize
+	outputFile.writeLong(0);					// res1 & res2
+	outputFile.writeLong(0x436);				// image offset
+
+	outputFile.write(*file, file->size() + 14);
+
+	writeEntryHeader(name, dataOffset, file->size() + 14);
+	dataOffset += file->size() + 14;
+	delete file;
+}
+
+void writeBitmap(const char *sectionStr, const char *resId) {
+	char nameBuffer[256];
+	sprintf(nameBuffer, "%s/%s", sectionStr, resId);
+
+	Common::File *file = res.getResource(getResId(sectionStr),
+		Common::WinResourceID(resId));
+	assert(file);
+	writeBitmap(nameBuffer, file);
+}
+
+void writeBitmap(const char *sectionStr, uint32 resId) {
+	char nameBuffer[256];
+	sprintf(nameBuffer, "%s/%u", sectionStr, resId);
+
+	Common::File *file = res.getResource(getResId(sectionStr),
+		Common::WinResourceID(resId));
+	assert(file);
+	writeBitmap(nameBuffer, file);
 }
 
 void writeNumbers() {
@@ -356,7 +393,6 @@ void writeResponseTree() {
 	writeEntryHeader("TEXT/TREE", dataOffset, size);
 	dataOffset += size;
 }
-
 
 void writeSentenceEntries(const char *name, uint tableOffset) {
 	outputFile.seek(dataOffset);
@@ -462,18 +498,18 @@ void writeHeader() {
 }
 
 void writeData() {
-	writeResource("Bitmap", "BACKDROP");
-	writeResource("Bitmap", "EVILTWIN");
-	writeResource("Bitmap", "RESTORED");
-	writeResource("Bitmap", "RESTOREF");
-	writeResource("Bitmap", "RESTOREU");
-	writeResource("Bitmap", "STARTD");
-	writeResource("Bitmap", "STARTF");
-	writeResource("Bitmap", "STARTU");
-	writeResource("Bitmap", "TITANIC");
-	writeResource("Bitmap", 133);
-	writeResource("Bitmap", 164);
-	writeResource("Bitmap", 165);
+	writeBitmap("Bitmap", "BACKDROP");
+	writeBitmap("Bitmap", "EVILTWIN");
+	writeBitmap("Bitmap", "RESTORED");
+	writeBitmap("Bitmap", "RESTOREF");
+	writeBitmap("Bitmap", "RESTOREU");
+	writeBitmap("Bitmap", "STARTD");
+	writeBitmap("Bitmap", "STARTF");
+	writeBitmap("Bitmap", "STARTU");
+	writeBitmap("Bitmap", "TITANIC");
+	writeBitmap("Bitmap", 133);
+	writeBitmap("Bitmap", 164);
+	writeBitmap("Bitmap", 165);
 
 	writeResource("STFONT", 149);
 	writeResource("STFONT", 151);
