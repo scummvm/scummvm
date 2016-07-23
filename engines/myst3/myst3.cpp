@@ -1744,6 +1744,8 @@ void Myst3Engine::pauseEngineIntern(bool pause) {
 	for (uint i = 0; i < _movies.size(); i++) {
 		_movies[i]->pause(pause);
 	}
+
+	_state->pauseEngine(pause);
 }
 
 } // end of namespace Myst3

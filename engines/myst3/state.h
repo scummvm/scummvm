@@ -308,6 +308,9 @@ public:
 	void updateFrameCounters();
 	uint getTickCount() const;
 
+	/** Ensture the counters are correct when the engine is paused or resumed */
+	void pauseEngine(bool pause);
+
 	ViewType getViewType() { return static_cast<ViewType>(_data.currentNodeType); }
 	void setViewType(ViewType t) { _data.currentNodeType = t; }
 
@@ -339,7 +342,7 @@ public:
 	struct StateData {
 		uint32 version;
 		uint32 gameRunning;
-		uint32 currentFrame;
+		uint32 tickCount;
 		uint32 nextSecondsUpdate;
 		uint32 secondsPlayed;
 		uint32 dword_4C2C44;
@@ -393,6 +396,9 @@ private:
 	static const uint32 kSaveVersion = 149;
 
 	StateData _data;
+
+	static const uint32 kTickDuration = 1000 / 30;
+	uint32 _lastTickStartTime;
 
 	struct VarDescription {
 		VarDescription() : var(0), name(0), unknown(0) {}

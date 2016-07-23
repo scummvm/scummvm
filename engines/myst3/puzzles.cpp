@@ -682,12 +682,7 @@ void Puzzles::pinball(int16 var) {
 	int32 jumpType = -1;
 
 	while (1) {
-		_vm->drawFrame();
-		// The original engine waited for 1 tick to be complete before doing a new loop iteration.
-		// In ResidualVM, the tick counter does not run in a separate thread, so just draw two frames
-		// to achieve the same effect.
-		_vm->drawFrame();
-		_vm->processInput(true);
+		_drawXTicks(1);
 
 		bool shouldRotate;
 		if (leftToRightJumpCountDown >= 3 || rightToLeftJumpCountdown >= 3) {
@@ -964,9 +959,7 @@ void Puzzles::pinball(int16 var) {
 				}
 			}
 
-			_vm->drawFrame();
-			_vm->drawFrame();
-			_vm->processInput(true);
+			_drawXTicks(1);
 
 			if (!moviePlaying) {
 				_vm->_state->setVar(26, jumpType);

@@ -31,7 +31,7 @@ namespace Myst3 {
 GameState::StateData::StateData() {
 	version = GameState::kSaveVersion;
 	gameRunning = true;
-	currentFrame = 0;
+	tickCount = 0;
 	nextSecondsUpdate = 0;
 	secondsPlayed = 0;
 	dword_4C2C44 = 0;
@@ -407,7 +407,7 @@ void GameState::StateData::syncWithSaveGame(Common::Serializer &s) {
 		error("This savegame (v%d) is too recent (max %d) please get a newer version of ResidualVM", s.getVersion(), kSaveVersion);
 
 	s.syncAsUint32LE(gameRunning);
-	s.syncAsUint32LE(currentFrame);
+	s.syncAsUint32LE(tickCount);
 	s.syncAsUint32LE(nextSecondsUpdate);
 	s.syncAsUint32LE(secondsPlayed);
 	s.syncAsUint32LE(dword_4C2C44);
@@ -498,6 +498,7 @@ void GameState::StateData::resizeThumbnail(Graphics::Surface *small) const {
 
 void GameState::newGame() {
 	_data = StateData();
+	_lastTickStartTime = g_system->getMillis();
 }
 
 bool GameState::load(const Common::String &file) {
@@ -705,17 +706,18 @@ void GameState::limitCubeCamera(float minPitch, float maxPitch, float minHeading
 }
 
 void GameState::updateFrameCounters() {
-	_data.currentFrame++;
-
 	if (!_data.gameRunning)
 		return;
 
-	if (_data.currentFrame % 2 == 0) {
-		// One game tick every two frames
+	uint32 currentTime = g_system->getMillis();
+	int32 timeToNextTick = _lastTickStartTime + kTickDuration - currentTime;
+
+	if (timeToNextTick <= 0) {
+		_data.tickCount++;
 		updateTickCounters();
+		_lastTickStartTime = currentTime + timeToNextTick;
 	}
 
-	uint32 currentTime = g_system->getMillis();
 	if (currentTime > _data.nextSecondsUpdate || ABS<int32>(_data.nextSecondsUpdate - currentTime) > 2000) {
 		_data.secondsPlayed++;
 		_data.nextSecondsUpdate = currentTime + 1000;
@@ -763,8 +765,13 @@ void GameState::updateTickCounters() {
 }
 
 uint GameState::getTickCount() const {
-	// There is one game tick every two frames
-	return _data.currentFrame >> 1;
+	return _data.tickCount;
+}
+
+void GameState::pauseEngine(bool pause) {
+	if (!pause) {
+		_lastTickStartTime = g_system->getMillis();
+	}
 }
 
 bool GameState::isZipDestinationAvailable(uint16 node, uint16 room) {
