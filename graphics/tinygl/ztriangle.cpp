@@ -566,7 +566,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 							fz += fndzdx;
 							zinv = (float)(1.0 / fz);
 						}
-						for (int _a = 0; _a < 8; _a++) {
+						for (int _a = 0; _a < NB_INTERP; _a++) {
 							putPixelTextureMappingPerspective<kDepthWrite, kInterpRGB, kDrawLogic == DRAW_SMOOTH, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, textureFormat, texture,
 							                           pz, _a, x, y, z, t, s, r, g, b, a, dzdx, dsdx, dtdx, drdx, dgdx, dbdx, dadx);
 						}
