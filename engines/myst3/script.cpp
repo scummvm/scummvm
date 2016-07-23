@@ -2328,8 +2328,10 @@ void Script::runScriptForVarDrawTicksHelper(uint16 var, int32 startValue, int32 
 			if (script)
 				_vm->runScriptsFromNode(script);
 
-			for (uint i = _vm->_state->getTickCount(); i < endTick; i = _vm->_state->getTickCount())
+			for (uint i = _vm->_state->getTickCount(); i < endTick; i = _vm->_state->getTickCount()) {
+				_vm->processInput(true);
 				_vm->drawFrame();
+			}
 
 			endTick = _vm->_state->getTickCount() + numTicks;
 
