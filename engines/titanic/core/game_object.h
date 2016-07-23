@@ -210,12 +210,12 @@ protected:
 	/**
 	 * Adds a timer
 	 */
-	int addTimer(int endVal, uint firstDuration, uint duration);
+	int addTimer(int endVal, uint firstDuration, uint repeatDuration);
 
 	/**
 	 * Adds a timer
 	 */
-	int addTimer(uint firstDuration, uint duration);
+	int addTimer(uint firstDuration, uint repeatDuration);
 
 	/**
 	 * Stops a timer

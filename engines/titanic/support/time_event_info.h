@@ -49,9 +49,9 @@ public:
 public:
 	int _lockCounter;
 	uint _id;
-	uint _field14;
+	bool _repeated;
 	uint _firstDuration;
-	uint _duration;
+	uint _repeatDuration;
 	CTreeItem *_target;
 	uint _actionVal;
 	CString _action;
@@ -59,15 +59,15 @@ public:
 	uint _field30;
 	uint _timerCtr;
 	uint _lastTimerTicks;
-	uint _field3C;
+	uint _relativeTicks;
 	bool _done;
 	uint _field44;
 	CString _targetName;
 public:
 	CLASSDEF
 	CTimeEventInfo();
-	CTimeEventInfo(uint ticks, uint f14, uint firstDuration, uint duration,
-		CTreeItem *target, int timerVal3, const CString &action);
+	CTimeEventInfo(uint ticks, bool repeated, uint firstDuration, uint repeatDuration,
+		CTreeItem *target, int endVal, const CString &action);
 
 	/**
 	 * Save the data for the class to file

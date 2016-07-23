@@ -659,17 +659,17 @@ void CGameObject::stopSound(int handle, int val2) {
 	}
 }
 
-int CGameObject::addTimer(int endVal, uint firstDuration, uint duration) {
+int CGameObject::addTimer(int endVal, uint firstDuration, uint repeatDuration) {
 	CTimeEventInfo *timer = new CTimeEventInfo(g_vm->_events->getTicksCount(),
-		duration != 0, firstDuration, duration, this, endVal, CString());
+		repeatDuration != 0, firstDuration, repeatDuration, this, endVal, CString());
 
 	getGameManager()->addTimer(timer);
 	return timer->_id;
 }
 
-int CGameObject::addTimer(uint firstDuration, uint duration) {
+int CGameObject::addTimer(uint firstDuration, uint repeatDuration) {
 	CTimeEventInfo *timer = new CTimeEventInfo(g_vm->_events->getTicksCount(),
-		duration != 0, firstDuration, duration, this, 0, CString());
+		repeatDuration != 0, firstDuration, repeatDuration, this, 0, CString());
 
 	getGameManager()->addTimer(timer);
 	return timer->_id;

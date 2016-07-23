@@ -185,13 +185,13 @@ MESSAGE1(CTimeMsg, uint, _ticks, 0);
 class CTimerMsg : public CTimeMsg {
 public:
 	uint _timerCtr;
-	int _val3;
+	int _actionVal;
 	CString _action;
 public:
 	CLASSDEF
-	CTimerMsg() : CTimeMsg(), _timerCtr(0), _val3(0) {}
-	CTimerMsg(uint ticks, uint timerCtr, int val2, const CString &action) :
-		CTimeMsg(ticks), _timerCtr(timerCtr), _val3(val2), _action(action) {}
+	CTimerMsg() : CTimeMsg(), _timerCtr(0), _actionVal(0) {}
+	CTimerMsg(uint ticks, uint timerCtr, int actionVal, const CString &action) :
+		CTimeMsg(ticks), _timerCtr(timerCtr), _actionVal(actionVal), _action(action) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
 		return supports(item, _type);

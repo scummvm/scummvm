@@ -73,7 +73,7 @@ bool CComputerScreen::EnterViewMsg(CEnterViewMsg *msg) {
 bool CComputerScreen::TimerMsg(CTimerMsg *msg) {
 	int handle;
 
-	switch (msg->_val3) {
+	switch (msg->_actionVal) {
 	case 0:
 		loadSound("a#32.wav");
 		loadSound("a#31.wav");
