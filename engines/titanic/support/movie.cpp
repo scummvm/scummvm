@@ -50,6 +50,15 @@ void CMovie::init() {
 }
 
 void CMovie::deinit() {
+	// Delete each movie in turn
+	for (CMovieList::iterator i = _playingMovies->begin(); i != _playingMovies->end(); ) {
+		// We need to increment iterator before deleting movie,
+		// since the CMovie destructor calls removeFromPlayingMovies
+		CMovie *movie = *i;
+		++i;
+		delete movie;
+	}
+
 	delete _playingMovies;
 	delete _movieSurface;
 }
