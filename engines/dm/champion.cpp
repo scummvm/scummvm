@@ -164,62 +164,55 @@ bool ChampionMan::f329_isLeaderHandObjectThrown(int16 side) {
 }
 
 bool ChampionMan::f328_isObjectThrown(uint16 champIndex, int16 slotIndex, int16 side) {
-	int16 L0993_i_KineticEnergy;
-	int16 L0994_i_Multiple;
-#define AL0994_i_Experience L0994_i_Multiple
-#define AL0994_i_Attack     L0994_i_Multiple
-	int16 L0995_i_Multiple;
-#define AL0995_i_WeaponKineticEnergy L0995_i_Multiple
-#define AL0995_i_SkillLevel          L0995_i_Multiple
-#define AL0995_i_StepEnergy          L0995_i_Multiple
-	Thing L0996_T_Thing;
-	Champion* L0997_ps_Champion = nullptr;
-	WeaponInfo* L0998_ps_WeaponInfo;
-	Thing L0999_T_ActionHandThing;
-	bool L1000_B_ThrowingLeaderHandObject;
+	bool throwingLeaderHandObjectFl = false;
+	Thing curThing;
+	Champion *curChampion = nullptr;
+	Thing actionHandThing;
 
-
-	L1000_B_ThrowingLeaderHandObject = false;
 	if (slotIndex < 0) { /* Throw object in leader hand, which is temporarily placed in action hand */
-		if (_g415_leaderEmptyHanded) {
+		if (_g415_leaderEmptyHanded)
 			return false;
-		}
-		L0996_T_Thing = f298_getObjectRemovedFromLeaderHand();
-		L0997_ps_Champion = &_gK71_champions[champIndex];
-		L0999_T_ActionHandThing = L0997_ps_Champion->getSlot(k1_ChampionSlotActionHand);
-		L0997_ps_Champion->setSlot(k1_ChampionSlotActionHand, L0996_T_Thing);
+
+		curThing = f298_getObjectRemovedFromLeaderHand();
+		curChampion = &_gK71_champions[champIndex];
+		actionHandThing = curChampion->getSlot(k1_ChampionSlotActionHand);
+		curChampion->setSlot(k1_ChampionSlotActionHand, curThing);
 		slotIndex = k1_ChampionSlotActionHand;
-		L1000_B_ThrowingLeaderHandObject = true;
+		throwingLeaderHandObjectFl = true;
 	}
-	L0993_i_KineticEnergy = f312_getStrength(champIndex, slotIndex);
-	if (L1000_B_ThrowingLeaderHandObject) {
-		L0997_ps_Champion->setSlot((ChampionSlot)slotIndex, L0999_T_ActionHandThing);
+
+	int16 kineticEnergy = f312_getStrength(champIndex, slotIndex);
+	if (throwingLeaderHandObjectFl) {
+		// In this case, curChampion and actionHandThing are set.
+		curChampion->setSlot((ChampionSlot)slotIndex, actionHandThing);
 	} else {
-		if ((L0996_T_Thing = f300_getObjectRemovedFromSlot(champIndex, slotIndex)) == Thing::_none) {
+		curThing = f300_getObjectRemovedFromSlot(champIndex, slotIndex);
+		if (curThing == Thing::_none)
 			return false;
-		}
 	}
+
 	_vm->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
-	f325_decrementStamine(champIndex, f305_getThrowingStaminaCost(L0996_T_Thing));
+	f325_decrementStamine(champIndex, f305_getThrowingStaminaCost(curThing));
 	f330_disableAction(champIndex, 4);
-	AL0994_i_Experience = 8;
-	AL0995_i_WeaponKineticEnergy = 1;
-	if (L0996_T_Thing.getType() == k5_WeaponThingType) {
-		AL0994_i_Experience += 4;
-		L0998_ps_WeaponInfo = _vm->_dungeonMan->f158_getWeaponInfo(L0996_T_Thing);
-		if (L0998_ps_WeaponInfo->_class <= k12_WeaponClassPoisinDart) {
-			AL0994_i_Experience += (AL0995_i_WeaponKineticEnergy = L0998_ps_WeaponInfo->_kineticEnergy) >> 2;
+	int16 experience = 8;
+	int16 weaponKineticEnergy = 1;
+	if (curThing.getType() == k5_WeaponThingType) {
+		experience += 4;
+		WeaponInfo *curWeapon = _vm->_dungeonMan->f158_getWeaponInfo(curThing);
+		if (curWeapon->_class <= k12_WeaponClassPoisinDart) {
+			weaponKineticEnergy = curWeapon->_kineticEnergy;
+			experience += weaponKineticEnergy >> 2;
 		}
 	}
-	f304_addSkillExperience(champIndex, k10_ChampionSkillThrow, AL0994_i_Experience);
-	L0993_i_KineticEnergy += AL0995_i_WeaponKineticEnergy;
-	AL0995_i_SkillLevel = f303_getSkillLevel((ChampionIndex)champIndex, k10_ChampionSkillThrow);
-	L0993_i_KineticEnergy += _vm->_rnd->getRandomNumber(16) + (L0993_i_KineticEnergy >> 1) + AL0995_i_SkillLevel;
-	AL0994_i_Attack = f26_getBoundedValue((uint16)40, (uint16)((AL0995_i_SkillLevel << 3) + _vm->_rnd->getRandomNumber(31)), (uint16)200);
-	AL0995_i_StepEnergy = MAX(5, 11 - AL0995_i_SkillLevel);
-	_vm->_projexpl->f212_projectileCreate(L0996_T_Thing, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY,
+	f304_addSkillExperience(champIndex, k10_ChampionSkillThrow, experience);
+	kineticEnergy += weaponKineticEnergy;
+	int16 skillLevel = f303_getSkillLevel((ChampionIndex)champIndex, k10_ChampionSkillThrow);
+	kineticEnergy += _vm->_rnd->getRandomNumber(16) + (kineticEnergy >> 1) + skillLevel;
+	int16 attack = f26_getBoundedValue((uint16)40, (uint16)((skillLevel << 3) + _vm->_rnd->getRandomNumber(31)), (uint16)200);
+	int16 stepEnergy = MAX(5, 11 - skillLevel);
+	_vm->_projexpl->f212_projectileCreate(curThing, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY,
 										  M21_normalizeModulo4(_vm->_dungeonMan->_g308_partyDir + side),
-										  _vm->_dungeonMan->_g308_partyDir, L0993_i_KineticEnergy, AL0994_i_Attack, AL0995_i_StepEnergy);
+										  _vm->_dungeonMan->_g308_partyDir, kineticEnergy, attack, stepEnergy);
 	_vm->_g311_projectileDisableMovementTicks = 4;
 	_vm->_g312_lastProjectileDisabledMovementDirection = _vm->_dungeonMan->_g308_partyDir;
 	f292_drawChampionState((ChampionIndex)champIndex);
@@ -255,9 +248,8 @@ uint16 ChampionMan::M70_handSlotIndex(uint16 slotBoxIndex) {
 }
 
 Common::String ChampionMan::f288_getStringFromInteger(uint16 val, bool padding, uint16 paddingCharCount) {
-	using namespace Common;
-	String valToStr = String::format("%d", val);
-	String result;
+	Common::String valToStr = Common::String::format("%d", val);
+	Common::String result;
 	for (int16 i = 0, end = paddingCharCount - valToStr.size(); i < end; ++i)
 		result += ' ';
 
