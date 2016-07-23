@@ -157,7 +157,7 @@ void CContinueSaveDialog::renderButtons() {
 }
 
 void CContinueSaveDialog::renderSlots() {
-	for (uint idx = 0; idx < _saves.size(); ++idx) {
+	for (int idx = 0; idx < (int)_saves.size(); ++idx) {
 		byte rgb = (_highlightedSlot == idx) ? 255 : 0;
 		_slotNames[idx].setColor(rgb, rgb, rgb);
 		_slotNames[idx].setLineColor(0, rgb, rgb, rgb);
