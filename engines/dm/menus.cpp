@@ -659,24 +659,17 @@ Spell* MenuMan::f409_getSpellFromSymbols(byte* symbols) {
 		Spell(0x00687073, 4, 13, 0x3C61),
 		Spell(0x006B7076, 3,  2, 0xFCD1),
 		Spell(0x006B6C00, 2, 19, 0x7831),
-		Spell(0x006B6E76, 0,  3, 0x3C73)};
-
-
-	int32 L1261_l_Symbols;
-	int16 L1262_i_Multiple;
-#define AL1262_i_BitShiftCount L1262_i_Multiple
-#define AL1262_i_SpellIndex    L1262_i_Multiple
-	Spell* L1263_ps_Spell;
-
+		Spell(0x006B6E76, 0,  3, 0x3C73)
+	};
 
 	if (*(symbols + 1)) {
-		AL1262_i_BitShiftCount = 24;
-		L1261_l_Symbols = 0;
+		int16 AL1262_i_BitShiftCount = 24;
+		int32 L1261_l_Symbols = 0;
 		do {
 			L1261_l_Symbols |= (long)*symbols++ << AL1262_i_BitShiftCount;
 		} while (*symbols && ((AL1262_i_BitShiftCount -= 8) >= 0));
-		L1263_ps_Spell = G0487_as_Graphic560_Spells;
-		AL1262_i_SpellIndex = 25;
+		Spell *L1263_ps_Spell = G0487_as_Graphic560_Spells;
+		int16 AL1262_i_SpellIndex = 25;
 		while (AL1262_i_SpellIndex--) {
 			if (L1263_ps_Spell->_symbols & 0xFF000000) { /* If byte 1 of spell is not 0 then the spell includes the power symbol */
 				if (L1261_l_Symbols == L1263_ps_Spell->_symbols) { /* Compare champion symbols, including power symbol, with spell (never used with actual spells) */

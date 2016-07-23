@@ -232,17 +232,12 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 	uint16 L1638_ui_MovementSoundIndex;
 
 	L0710_i_ThingType = kM1_PartyThingType;
-	bool L0713_B_ThingLevitates = false;
 	L0719_i_TraversedPitCount = 0;
 	L0720_ui_MoveGroupResult = 0;
-	bool L0721_B_GroupOnPartyMap = false;
-	bool L0722_B_FallKilledGroup = false;
-	bool L0723_B_DrawDungeonViewWhileFalling = false;
-	bool L0724_B_DestinationIsTeleporterTarget = false;
-	bool L0725_B_PartySquare = false;
-	bool L0726_B_Audible = false;
 
 	uint16 L0717_ui_ThingCell = 0;
+
+	bool L0713_B_ThingLevitates = false;
 	if (thing != Thing::_party) {
 		L0710_i_ThingType = thing.getType();
 		L0717_ui_ThingCell = thing.getCell();
@@ -254,12 +249,20 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 			return true; /* The specified group thing cannot be moved because it was killed by a projectile impact */
 		}
 	}
+
 	uint16 L0714_ui_MapIndexSource = 0;
 	uint16 L0715_ui_MapIndexDestination = 0;
+	bool L0721_B_GroupOnPartyMap = false;
+	bool L0725_B_PartySquare = false;
+	bool L0726_B_Audible = false;
+
 	if (destMapX >= 0) {
 		L0714_ui_MapIndexSource = L0715_ui_MapIndexDestination = _vm->_dungeonMan->_g272_currMapIndex;
 		L0721_B_GroupOnPartyMap = (L0714_ui_MapIndexSource == _vm->_dungeonMan->_g309_partyMapIndex) && (mapX >= 0);
 		uint16 L0716_ui_Direction = 0;
+		bool L0722_B_FallKilledGroup = false;
+		bool L0723_B_DrawDungeonViewWhileFalling = false;
+		bool L0724_B_DestinationIsTeleporterTarget = false;
 		if (thing == Thing::_party) {
 			_vm->_dungeonMan->_g306_partyMapX = destMapX;
 			_vm->_dungeonMan->_g307_partyMapY = destMapY;
