@@ -174,9 +174,9 @@ bool FloorFace::hasVertices() const {
 	return _indices[0] != 0 || _indices[1] != 0 || _indices[2] != 0;
 }
 
-void FloorFace::enable(bool enable) {
+void FloorFace::enable(bool e) {
 	for (uint i = 0; i < _edges.size(); i++) {
-		_edges[i]->enable(enable);
+		_edges[i]->enable(e);
 	}
 }
 

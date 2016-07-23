@@ -202,8 +202,8 @@ void Movie::setEndFrame(int32 v) {
 	_endFrame = adjustFrameForRate(v, true);
 }
 
-void Movie::pause(bool pause) {
-	_bink.pauseVideo(pause);
+void Movie::pause(bool p) {
+	_bink.pauseVideo(p);
 }
 
 Movie::~Movie() {

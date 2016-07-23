@@ -287,8 +287,8 @@ bool FloorEdge::intersectsSegment(const Floor *floor, const Math::Line3d &segmen
 	return edgeSement.intersectLine2d(segment, nullptr, false);
 }
 
-void FloorEdge::enable(bool enable) {
-	_enabled = enable;
+void FloorEdge::enable(bool e) {
+	_enabled = e;
 }
 
 bool FloorEdge::isEnabled() const {

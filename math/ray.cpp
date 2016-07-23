@@ -29,9 +29,9 @@ namespace Math {
 Ray::Ray() {
 }
 
-Ray::Ray(const Vector3d &origin, const Vector3d &direction) :
+Ray::Ray(const Vector3d &origin, const Vector3d &dir) :
 		_origin(origin),
-		_direction(direction) {
+		_direction(dir) {
 }
 
 void Ray::transform(const Matrix4 &matrix) {
