@@ -1420,8 +1420,6 @@ void ChampionMan::f319_championKill(uint16 champIndex) {
 	int16 L0963_i_AliveChampionIndex;
 	Thing L0964_T_Thing;
 	Champion* L0965_ps_Champion;
-	Junk* L0966_ps_Junk;
-
 
 	L0965_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
 	L0965_ps_Champion->_currHealth = 0;
@@ -1449,7 +1447,7 @@ void ChampionMan::f319_championKill(uint16 champIndex) {
 	L0964_T_Thing = _vm->_dungeonMan->f166_getUnusedThing(k0x8000_championBones | k10_JunkThingType);
 	if (L0964_T_Thing == Thing::_none) {
 	} else {
-		L0966_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(L0964_T_Thing);
+		Junk* L0966_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(L0964_T_Thing);
 		L0966_ps_Junk->setType(k5_JunkTypeBones);
 		L0966_ps_Junk->setDoNotDiscard(true);
 		L0966_ps_Junk->setChargeCount(champIndex);
@@ -1686,7 +1684,7 @@ void ChampionMan::f331_applyTimeEffects() {
 					}
 				}
 			}
-			if (!_vm->_championMan->_g300_partyIsSleeping && (L1010_ps_Champion->_dir != _vm->_dungeonMan->_g308_partyDir) && (_vm->_projexpl->_g361_lastCreatureAttackTime < (_vm->_g313_gameTime - 60))) {
+			if (!_vm->_championMan->_g300_partyIsSleeping && (L1010_ps_Champion->_dir != _vm->_dungeonMan->_g308_partyDir) && (_vm->_projexpl->_g361_lastCreatureAttackTime + 60 < (int32)_vm->_g313_gameTime)) {
 				L1010_ps_Champion->_dir = _vm->_dungeonMan->_g308_partyDir;
 				L1010_ps_Champion->_maximumDamageReceived = 0;
 				setFlag(L1010_ps_Champion->_attributes, k0x0400_ChampionAttributeIcon);

@@ -566,7 +566,6 @@ void InventoryMan::f337_setDungeonViewPalette() {
 	uint16 L1044_ui_Multiple;
 #define AL1044_T_Thing            L1044_ui_Multiple
 #define AL1044_ui_TorchLightPower L1044_ui_Multiple
-	int16 L1045_ai_TorchesLightPower[8];
 
 	int16 g40_palIndexToLightAmmount[6] = {99, 75, 50, 25, 1, 0}; // @ G0040_ai_Graphic562_PaletteIndexToLightAmount
 
@@ -576,6 +575,7 @@ void InventoryMan::f337_setDungeonViewPalette() {
 		/* Get torch light power from both hands of each champion in the party */
 		int16 L1038_i_Counter = 4; /* BUG0_01 Coding error without consequence. The hands of four champions are inspected even if there are less champions in the party. No consequence as the data in unused champions is set to 0 and _vm->_objectMan->f32_getObjectType then returns -1 */
 		Champion *L1043_ps_Champion = _vm->_championMan->_gK71_champions;
+		int16 L1045_ai_TorchesLightPower[8];
 		AL1040_pi_TorchLightPower = L1045_ai_TorchesLightPower;
 		while (L1038_i_Counter--) {
 			AL1039_ui_SlotIndex = k1_ChampionSlotActionHand + 1;
@@ -638,26 +638,18 @@ void InventoryMan::f337_setDungeonViewPalette() {
 }
 
 void InventoryMan::f338_decreaseTorchesLightPower() {
-	int16 L1046_i_ChampionCount;
-	int16 L1047_i_SlotIndex;
-	bool L1048_B_TorchChargeCountChanged;
-	int16 L1049_i_IconIndex;
-	Champion* L1050_ps_Champion;
-	Weapon* L1051_ps_Weapon;
-
-
-	L1048_B_TorchChargeCountChanged = false;
-	L1046_i_ChampionCount = _vm->_championMan->_g305_partyChampionCount;
+	bool L1048_B_TorchChargeCountChanged = false;
+	int16 L1046_i_ChampionCount = _vm->_championMan->_g305_partyChampionCount;
 	if (_vm->_championMan->_g299_candidateChampionOrdinal) {
 		L1046_i_ChampionCount--;
 	}
-	L1050_ps_Champion = _vm->_championMan->_gK71_champions;
+	Champion *L1050_ps_Champion = _vm->_championMan->_gK71_champions;
 	while (L1046_i_ChampionCount--) {
-		L1047_i_SlotIndex = k1_ChampionSlotActionHand + 1;
+		int16 L1047_i_SlotIndex = k1_ChampionSlotActionHand + 1;
 		while (L1047_i_SlotIndex--) {
-			L1049_i_IconIndex = _vm->_objectMan->f33_getIconIndex(L1050_ps_Champion->_slots[L1047_i_SlotIndex]);
+			int16 L1049_i_IconIndex = _vm->_objectMan->f33_getIconIndex(L1050_ps_Champion->_slots[L1047_i_SlotIndex]);
 			if ((L1049_i_IconIndex >= k4_IconIndiceWeaponTorchUnlit) && (L1049_i_IconIndex <= k7_IconIndiceWeaponTorchLit)) {
-				L1051_ps_Weapon = (Weapon*)_vm->_dungeonMan->f156_getThingData(L1050_ps_Champion->_slots[L1047_i_SlotIndex]);
+				Weapon *L1051_ps_Weapon = (Weapon *)_vm->_dungeonMan->f156_getThingData(L1050_ps_Champion->_slots[L1047_i_SlotIndex]);
 				if (L1051_ps_Weapon->getChargeCount()) {
 					if (L1051_ps_Weapon->setChargeCount(L1051_ps_Weapon->getChargeCount() - 1) == 0) {
 						L1051_ps_Weapon->setDoNotDiscard(false);
