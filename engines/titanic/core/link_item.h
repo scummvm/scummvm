@@ -45,7 +45,7 @@ protected:
 	int _roomNumber;
 	int _nodeNumber;
 	int _viewNumber;
-	int _field30;
+	int _linkMode;
 public:
 	Rect _bounds;
 	CursorId _cursorId;
@@ -72,7 +72,7 @@ public:
 	 * Set the destination for the link item
 	 */
 	virtual void setDestination(int roomNumber, int nodeNumber,
-		int viewNumber, int v);
+		int viewNumber, int linkMode);
 
 	/**
 	 * Get the destination view for the link item

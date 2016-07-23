@@ -33,21 +33,49 @@ CLinkItem::CLinkItem() : CNamedItem() {
 	_roomNumber = -1;
 	_nodeNumber = -1;
 	_viewNumber = -1;
-	_field30 = 0;
+	_linkMode = 0;
 	_cursorId = CURSOR_ARROW;
 	_name = "Link";
 }
 
 CString CLinkItem::formName() {
-	warning("TODO: CLinkItem::formName");
-	return "";
+	CViewItem *view = findView();
+	CNodeItem *node = view->findNode();
+	CRoomItem *room = node->findRoom();
+
+	CViewItem *destView = getDestView();
+	CNodeItem *destNode = destView->findNode();
+	CRoomItem *destRoom = destNode->findRoom();
+
+	switch (_linkMode) {
+	case 1:
+		return CString::format("_PANL,%d,%s,%s", node->_nodeNumber,
+			view->getName(), destView->getName());
+
+	case 2:
+		return CString::format("_PANR,%d,%s,%s", node->_nodeNumber,
+			view->getName(), destView->getName());
+
+	case 3:
+		return CString::format("_TRACK,%d,%s,%d,%s", 
+			node->_nodeNumber, view->getName(), 
+			destNode->_nodeNumber, destView->getName());
+
+	case 4:
+		return CString::format("_EXIT,%d,%d,%s,%d,%d,%s",
+			room->_roomNumber, node->_nodeNumber, view->getName(),
+			destRoom->_roomNumber, destNode->_nodeNumber, destView->getName());
+
+	default:
+		return getName();
+	}
 }
 
 void CLinkItem::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(2, indent);
 	file->writeQuotedLine("L", indent);
 	file->writeNumberLine(_cursorId, indent + 1);
-	file->writeNumberLine(_field30, indent + 1);
+	file->writeNumberLine(_linkMode, indent + 1);
 	file->writeNumberLine(_roomNumber, indent + 1);
 	file->writeNumberLine(_nodeNumber, indent + 1);
 	file->writeNumberLine(_viewNumber, indent + 1);
@@ -71,7 +99,7 @@ void CLinkItem::load(SimpleFile *file) {
 		// Deliberate fall-through
 
 	case 1:
-		_field30 = file->readNumber();
+		_linkMode = file->readNumber();
 		// Deliberate fall-through
 
 	case 0:
@@ -93,7 +121,7 @@ void CLinkItem::load(SimpleFile *file) {
 	CNamedItem::load(file);
 
 	if (val < 2) {
-		switch (_field30) {
+		switch (_linkMode) {
 		case 2:
 			_cursorId = CURSOR_MOVE_LEFT;
 			break;
@@ -120,11 +148,11 @@ bool CLinkItem::connectsTo(CViewItem *destView) const {
 }
 
 void CLinkItem::setDestination(int roomNumber, int nodeNumber,
-		int viewNumber, int v) {
+		int viewNumber, int linkMode) {
 	_roomNumber = roomNumber;
 	_nodeNumber = nodeNumber;
 	_viewNumber = viewNumber;
-	_field30 = v;
+	_linkMode = linkMode;
 
 	_name = formName();
 }
