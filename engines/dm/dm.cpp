@@ -487,10 +487,10 @@ void DMEngine::f441_processEntrance() {
 }
 
 void DMEngine::f439_drawEntrance() {
-	static Box K0079_s_Box_Entrance_DoorsUpperHalf = {0, 231, 0, 80};
-	static Box K0152_s_Box_Entrance_DoorsLowerHalf = {0, 231, 81, 160};
-	static Box G0010_s_Graphic562_Box_Entrance_ClosedDoorLeft = {0, 104, 30, 190};
-	static Box G0011_s_Graphic562_Box_Entrance_ClosedDoorRight = {105, 231, 30, 190};
+	static Box K0079_s_Box_Entrance_DoorsUpperHalf = Box(0, 231, 0, 80);
+	static Box K0152_s_Box_Entrance_DoorsLowerHalf = Box(0, 231, 81, 160);
+	static Box G0010_s_Graphic562_Box_Entrance_ClosedDoorLeft = Box(0, 104, 30, 190);
+	static Box G0011_s_Graphic562_Box_Entrance_ClosedDoorRight = Box(105, 231, 30, 190);
 
 	uint16 L1397_ui_ColumnIndex;
 	byte* L1398_apuc_MicroDungeonCurrentMapData[32];
