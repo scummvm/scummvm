@@ -256,6 +256,7 @@ typedef void (*gl_draw_triangle_func)(GLContext *c, GLVertex *p0, GLVertex *p1, 
 struct GLContext {
 	// Z buffer
 	FrameBuffer *fb;
+	Common::Rect renderRect;
 
 	// Internal texture size
 	int _textureSize;

@@ -63,7 +63,9 @@ public:
 	virtual void execute(bool restoreState) const = 0;
 	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const = 0;
 	DrawCallType getType() const { return _type; }
-	virtual const Common::Rect getDirtyRegion() const = 0;
+	virtual const Common::Rect getDirtyRegion() const { return _dirtyRegion; }
+protected:
+	Common::Rect _dirtyRegion;
 private:
 	DrawCallType _type;
 };
@@ -75,7 +77,6 @@ public:
 	bool operator==(const ClearBufferDrawCall &other) const;
 	virtual void execute(bool restoreState) const;
 	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;
-	virtual const Common::Rect getDirtyRegion() const;
 
 	void *operator new(size_t size) {
 		return ::Internal::allocateFrame(size);
@@ -95,7 +96,6 @@ public:
 	bool operator==(const RasterizationDrawCall &other) const;
 	virtual void execute(bool restoreState) const;
 	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;
-	virtual const Common::Rect getDirtyRegion() const;
 
 	void *operator new(size_t size) {
 		return ::Internal::allocateFrame(size);
@@ -103,9 +103,8 @@ public:
 
 	void operator delete(void *p) { }
 private:
-	typedef void (*gl_draw_triangle_func_ptr)(TinyGL::GLContext *c, TinyGL::GLVertex *p0, TinyGL::GLVertex *p1, TinyGL::GLVertex *p2);
 	void computeDirtyRegion();
-	Common::Rect _dirtyRegion;
+	typedef void (*gl_draw_triangle_func_ptr)(TinyGL::GLContext *c, TinyGL::GLVertex *p0, TinyGL::GLVertex *p1, TinyGL::GLVertex *p2);
 	int _vertexCount;
 	TinyGL::GLVertex *_vertex;
 	gl_draw_triangle_func_ptr _drawTriangleFront, _drawTriangleBack; 
@@ -160,7 +159,6 @@ public:
 	bool operator==(const BlittingDrawCall &other) const;
 	virtual void execute(bool restoreState) const;
 	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;
-	virtual const Common::Rect getDirtyRegion() const;
 
 	BlittingMode getBlittingMode() const { return _mode; }
 	
@@ -170,6 +168,7 @@ public:
 
 	void operator delete(void *p) { }
 private:
+	void computeDirtyRegion();
 	BlitImage *_image;
 	BlitTransform _transform;
 	BlittingMode _mode;

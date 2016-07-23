@@ -175,8 +175,6 @@ static void tglPresentBufferDirtyRects(TinyGL::GLContext *c) {
 		}
 	} while(restartMerge);
 
-	Common::Rect renderRect(0, 0, c->fb->xsize - 1, c->fb->ysize - 1);
-
 	for (RectangleIterator it1 = rectangles.begin(); it1 != rectangles.end(); ++it1) {
 		RectangleIterator it2 = it1;
 		it2++;
@@ -187,7 +185,6 @@ static void tglPresentBufferDirtyRects(TinyGL::GLContext *c) {
 				++it2;
 			}
 		}
-		(*it1).rectangle.clip(renderRect);
 	}
 
 	if (!rectangles.empty()) {
@@ -492,10 +489,6 @@ void RasterizationDrawCall::execute(const Common::Rect &clippingRectangle, bool 
 	c->fb->resetScissorRectangle();
 }
 
-const Common::Rect RasterizationDrawCall::getDirtyRegion() const {
-	return _dirtyRegion;
-}
-
 bool RasterizationDrawCall::operator==(const RasterizationDrawCall &other) const {
 	if (_vertexCount == other._vertexCount && 
 		_drawTriangleFront == other._drawTriangleFront && 
@@ -515,6 +508,9 @@ BlittingDrawCall::BlittingDrawCall(Graphics::BlitImage *image, const BlitTransfo
 	tglIncBlitImageRef(image);
 	_blitState = captureState();
 	_imageVersion = tglGetBlitImageVersion(image);
+	if (TinyGL::gl_get_context()->_enableDirtyRectangles) {
+		computeDirtyRegion();
+	}
 }
 
 BlittingDrawCall::~BlittingDrawCall() {
@@ -576,7 +572,7 @@ void BlittingDrawCall::applyState(const BlittingState &state) const {
 	c->fb->enableDepthTest(state.depthTestEnabled);
 }
 
-const Common::Rect BlittingDrawCall::getDirtyRegion() const {
+void BlittingDrawCall::computeDirtyRegion() {
 	int blitWidth = _transform._destinationRectangle.width();
 	int blitHeight = _transform._destinationRectangle.height();
 	if (blitWidth == 0) {
@@ -593,7 +589,17 @@ const Common::Rect BlittingDrawCall::getDirtyRegion() const {
 			tglGetBlitImageSize(_image, blitWidth, blitHeight);
 		}
 	}
-	return Common::Rect(_transform._destinationRectangle.left, _transform._destinationRectangle.top, _transform._destinationRectangle.left + blitWidth + 1, _transform._destinationRectangle.top + blitHeight + 1);
+	if (blitWidth == 0 || blitHeight == 0) {
+		_dirtyRegion = Common::Rect();
+	} else {
+		_dirtyRegion = Common::Rect(
+			_transform._destinationRectangle.left,
+			_transform._destinationRectangle.top,
+			_transform._destinationRectangle.left + blitWidth + 1,
+			_transform._destinationRectangle.top + blitHeight + 1
+		);
+		_dirtyRegion.clip(TinyGL::gl_get_context()->renderRect);
+	}
 }
 
 bool BlittingDrawCall::operator==(const BlittingDrawCall &other) const {
@@ -606,6 +612,10 @@ bool BlittingDrawCall::operator==(const BlittingDrawCall &other) const {
 
 ClearBufferDrawCall::ClearBufferDrawCall(bool clearZBuffer, int zValue, bool clearColorBuffer, int rValue, int gValue, int bValue) 
 	: _clearZBuffer(clearZBuffer), _clearColorBuffer(clearColorBuffer), _zValue(zValue), _rValue(rValue), _gValue(gValue), _bValue(bValue), DrawCall(DrawCall_Clear) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	if (c->_enableDirtyRectangles) {
+		_dirtyRegion = c->renderRect;
+	}
 }
 
 void ClearBufferDrawCall::execute(bool restoreState) const {
@@ -617,11 +627,6 @@ void ClearBufferDrawCall::execute(const Common::Rect &clippingRectangle, bool re
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	Common::Rect clearRect = clippingRectangle.findIntersectingRect(getDirtyRegion());
 	c->fb->clearRegion(clearRect.left, clearRect.top, clearRect.width(), clearRect.height(), _clearZBuffer, _zValue, _clearColorBuffer, _rValue, _gValue, _bValue);
-}
-
-const Common::Rect ClearBufferDrawCall::getDirtyRegion() const {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	return Common::Rect(0, 0, c->fb->xsize, c->fb->ysize);
 }
 
 bool ClearBufferDrawCall::operator==(const ClearBufferDrawCall &other) const {

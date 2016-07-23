@@ -72,6 +72,7 @@ void glInit(void *zbuffer1, int textureSize) {
 
 	c->fb->_textureSize = c->_textureSize = textureSize;
 	c->fb->_textureSizeMask = (textureSize - 1) << ZB_POINT_ST_FRAC_BITS;
+	c->renderRect = Common::Rect(0, 0, zbuffer->xsize, zbuffer->ysize);
 
 	// allocate GLVertex array
 	c->vertex_max = POLYGON_MAX_VERTEX;
