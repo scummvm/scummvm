@@ -114,7 +114,7 @@ public:
 	/**
 	 * Get the current frame
 	 */
-	virtual int getFrame();
+	virtual int getMovieFrame() const;
 
 	/**
 	 * Get the game object associated with this item

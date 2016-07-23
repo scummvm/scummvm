@@ -95,21 +95,21 @@ OSMovie::~OSMovie() {
 void OSMovie::play(uint flags, CGameObject *obj) {
 	_aviSurface.play(flags, obj);
 
-	if (_aviSurface._isPlaying)
+	if (_aviSurface.isPlaying())
 		movieStarted();
 }
 
 void OSMovie::play(uint startFrame, uint endFrame, uint flags, CGameObject *obj) {
 	_aviSurface.play(startFrame, endFrame, flags, obj);
 
-	if (_aviSurface._isPlaying)
+	if (_aviSurface.isPlaying())
 		movieStarted();
 }
 
 void OSMovie::play(uint startFrame, uint endFrame, uint initialFrame, uint flags, CGameObject *obj) {
 	_aviSurface.play(startFrame, endFrame, initialFrame, flags, obj);
 
-	if (_aviSurface._isPlaying)
+	if (_aviSurface.isPlaying())
 		movieStarted();
 }
 
@@ -160,10 +160,10 @@ void OSMovie::setFrame(uint frameNumber) {
 }
 
 bool OSMovie::handleEvents(CMovieEventList &events) {
-	if (!_aviSurface._isPlaying)
+	if (!_aviSurface.isPlaying())
 		return false;
 	if (!_aviSurface.isFrameReady())
-		return _aviSurface._isPlaying;
+		return _aviSurface.isPlaying();
 
 	// Handle updating the frame
 	while (_aviSurface.isFrameReady()) {
@@ -174,7 +174,7 @@ bool OSMovie::handleEvents(CMovieEventList &events) {
 	// Flag there's a video frame
 	_hasVideoFrame = true;
 
-	return _aviSurface._isPlaying;
+	return _aviSurface.isPlaying();
 }
 
 const CMovieRangeInfoList *OSMovie::getMovieRangeInfo() const {

@@ -54,11 +54,8 @@ static bool secondaryTrackSelect(bool isVideo, int trackCounter) {
 
 AVISurface::AVISurface(const CResourceKey &key) {
 	_videoSurface = nullptr;
-	_currentPos = 0;
-	_priorFrame = 0;
 	_streamCount = 0;
 	_movieFrameSurface[0] = _movieFrameSurface[1] = nullptr;
-	_isPlaying = false;
 
 	// Create a decoder for the audio (if any) and primary video track
 	_decoders[0] = new AVIDecoder(Audio::Mixer::kPlainSoundType, primaryTrackSelect);
@@ -122,14 +119,13 @@ bool AVISurface::play(int startFrame, int endFrame, int initialFrame, uint flags
 	_movieRangeInfo.push_back(info);
 	
 	if (_movieRangeInfo.size() == 1) {
-		return changeFrame(initialFrame);
+		return startAtFrame(initialFrame);
 	} else {
 		return true;
 	}	
 }
 
 void AVISurface::stop() {
-	_isPlaying = false;
 	_decoders[0]->stop();
 	if (_decoders[1])
 		_decoders[1]->stop();
@@ -137,37 +133,46 @@ void AVISurface::stop() {
 	_movieRangeInfo.destroyContents();
 }
 
-bool AVISurface::changeFrame(int frameNumber) {
-	if (_isPlaying)
+bool AVISurface::startAtFrame(int frameNumber) {
+	if (isPlaying())
+		// If it's already playing, then don't allow it
 		return false;
 
 	if (frameNumber == -1)
 		// Default to starting frame of first movie range
 		frameNumber = _movieRangeInfo.front()->_startFrame;
 
+	// Get the initial frame
 	seekToFrame(frameNumber);
 	renderFrame();
 
-	_isPlaying = true;
+	// Start the playback
+	_decoders[0]->start();
+	if (_decoders[1])
+		_decoders[1]->start();
+	
 	return true;
 }
 
 void AVISurface::seekToFrame(uint frameNumber) {
-	_decoders[0]->seekToFrame(frameNumber);
-	if (_decoders[1])
-		_decoders[1]->seekToFrame(frameNumber);
+	if ((int)frameNumber != getFrame()) {
+		_decoders[0]->seekToFrame(frameNumber);
+		if (_decoders[1])
+			_decoders[1]->seekToFrame(frameNumber);
+	}
 
-	_priorFrame = frameNumber;
+	renderFrame();
 }
 
 bool AVISurface::handleEvents(CMovieEventList &events) {
-	if (!_isPlaying)
+	if (!isPlaying())
 		return true;
 
 	CMovieRangeInfo *info = _movieRangeInfo.front();
-	_currentPos += info->_isReversed ? -1 : 1;
-	if ((info->_isReversed && _currentPos < info->_endFrame) ||
-		(!info->_isReversed && _currentPos > info->_endFrame)) {
+	int currentPos = getFrame();
+
+	if ((info->_isReversed && currentPos < info->_endFrame) ||
+		(!info->_isReversed && currentPos > info->_endFrame)) {
 		if (info->_isFlag1) {
 			info->getMovieEnd(events);
 			_movieRangeInfo.remove(info);
@@ -179,19 +184,20 @@ bool AVISurface::handleEvents(CMovieEventList &events) {
 			} else {
 				// Not empty, so move onto new first one
 				info = _movieRangeInfo.front();
-				_currentPos = info->_startFrame;
+				currentPos = info->_startFrame;
 			}
 		} else {
-			_currentPos = info->_startFrame;
+			currentPos = info->_startFrame;
 		}
 	}
 
-	if (_isPlaying) {
-		// SInce movie ranges can change the position in the movie,
-		// ensure the decoder is kept in sync
-		seekToFrame(_currentPos);
-				
-		info->getMovieFrame(events, _currentPos);
+	if (isPlaying()) {
+		if (currentPos != getFrame())
+			// The frame has been changed, so move to new position
+			seekToFrame(currentPos);
+	
+		// Get any events for the given position
+		info->getMovieFrame(events, currentPos);
 		return renderFrame();
 	} else {
 		return false;
@@ -245,7 +251,7 @@ uint AVISurface::getHeight() const {
 
 void AVISurface::setFrame(int frameNumber) {
 	// If playback was in process, stop it
-	if (_isPlaying)
+	if (isPlaying())
 		stop();
 
 	// Ensure the frame number is valid
@@ -307,7 +313,7 @@ bool AVISurface::addEvent(int frameNumber, CGameObject *obj) {
 		me->_gameObject = obj;
 		tail->addEvent(me);
 
-		return _movieRangeInfo.size() == 1 && frameNumber == _priorFrame;
+		return _movieRangeInfo.size() == 1 && frameNumber == getFrame();
 	}
 
 	return false;

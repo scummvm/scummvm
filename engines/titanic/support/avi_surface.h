@@ -52,8 +52,6 @@ class AVISurface {
 private:
 	AVIDecoder *_decoders[2];
 	CVideoSurface *_videoSurface;
-	int _currentPos;
-	int _priorFrame;
 	CMovieRangeInfoList _movieRangeInfo;
 	int _streamCount;
 	Graphics::ManagedSurface *_movieFrameSurface[2];
@@ -69,9 +67,9 @@ private:
 	void setupDecompressor();
 protected:
 	/**
-	 * Change the frame with ??? checking
+	 * Start playback at the specified frame
 	 */
-	virtual bool changeFrame(int frameNumber);
+	virtual bool startAtFrame(int frameNumber);
 
 	/**
 	 * Seeks to a given frame number in the video
@@ -80,7 +78,6 @@ protected:
 public:
 	CSoundManager *_soundManager;
 	bool _hasAudio;
-	bool _isPlaying;
 	double _frameRate;
 public:
 	AVISurface(const CResourceKey &key);
@@ -105,6 +102,11 @@ public:
 	 * Stop the currently playing video
 	 */
 	virtual void stop();
+
+	/**
+	 * Return true if a video is currently playing
+	 */
+	virtual bool isPlaying() const { return _decoders[0]->isPlaying(); }
 
 	/**
 	 * Handle any movie events relevent for the frame

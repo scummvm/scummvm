@@ -86,7 +86,7 @@ void CPetElement::loadFrame(int frameNumber) {
 		gameObject->loadFrame(frameNumber);
 }
 
-int CPetElement::getFrame() {
+int CPetElement::getMovieFrame() const {
 	CGameObject *gameObject = getObject();
 	return gameObject ? gameObject->getMovieFrame() : 0;
 }
