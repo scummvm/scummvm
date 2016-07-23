@@ -1133,16 +1133,56 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 #ifdef ENABLE_SCI32
-#define GUIO_HOYLE5_DEMO GUIO3(GUIO_NOSPEECH, \
-                               GUIO_NOASPECT, \
-                               GAMEOPTION_ORIGINAL_SAVELOAD)
+#define GUIO_HOYLE5 GUIO3(GUIO_NOSPEECH, \
+                          GUIO_NOASPECT, \
+                          GUIO_NOLAUNCHLOAD)
 
 	// Hoyle 5 (Hoyle Classic Games) - Windows demo
 	{"hoyle5", "Demo", {
 		{"ressci.000", 0, "98a39ae535dd01714ac313f8ba925045", 7260363},
 		{"resmap.000", 0, "10267a1542a73d527e50f0340549088b", 4900},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE, GUIO_HOYLE5_DEMO },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE, GUIO_HOYLE5 },
+
+	// Hoyle 5 (Hoyle Classic Games) - Windows
+	{"hoyle5", "", {
+		{"resource.aud", 0, "cc4a7e21dc864ae21cf823e893c279ad", 257483406},
+		{"ressci.000", 0, "55ae04012a73abc15b93debf60a7df71", 16909704},
+		{"resmap.000", 0, "daf64a91344a7934fe4374765267c2af", 5767},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_HOYLE5 },
+
+	// Hoyle Bridge - Windows
+	{"hoyle5bridge", "", {
+		{"resource.aud", 0, "cc4a7e21dc864ae21cf823e893c279ad", 257585548},
+		{"ressci.000", 0, "b83cba09229d3003df9e0c864843f962", 16842499},
+		{"resmap.000", 0, "7b3e3030b0ad5f341053c18afce7d176", 5647},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_HOYLE5 },
+
+	// Hoyle Children's Collection - Windows
+	{"hoyle5children", "", {
+		{"resource.aud", 0, "cc4a7e21dc864ae21cf823e893c279ad", 257585548},
+		{"ressci.000", 0, "fd1f7dbeebd4510cd37e171a72f2b6ad", 16824349},
+		{"resmap.000", 0, "b0fe1bcc69596e10fe5caa11d0b55b23", 5671},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_HOYLE5 },
+
+	// Hoyle Solitaire (CD version) - Windows
+	{"hoyle5solitaire", "CD", {
+		{"resource.aud", 0, "d41d8cd98f00b204e9800998ecf8427e", 0},
+		{"ressci.000", 0, "fa4eeb24b1fbf6f33739995360554485", 11628203},
+		{"resmap.000", 0, "3f63df73a49800f080775d2a9ad0e949", 3079},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_HOYLE5 },
+
+	// Hoyle Solitaire (Hard Drive version) - Windows
+	{"hoyle5solitaire", "Hard Drive", {
+		{"resource.aud", 0, "d41d8cd98f00b204e9800998ecf8427e", 0},
+		{"ressci.000", 0, "da180c67d54d4208c84a48fcd8709671", 8582335},
+		{"resmap.000", 0, "e2feb47ab16f9e22a9b6a8580d1da3f0", 3055},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_HOYLE5 },
 
 #endif // ENABLE_SCI32
 
