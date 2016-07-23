@@ -220,6 +220,8 @@ public:
 	LoadgameResponse f435_loadgame(int16 slot); // @ F0435_STARTEND_LoadGame_CPSF
 	void f441_processEntrance(); // @ F0441_STARTEND_ProcessEntrance
 
+	void f064_SOUND_RequestPlay_CPSD(uint16 P0088_ui_SoundIndex, int16 P0089_i_MapX, int16 P0090_i_MapY, uint16 P0091_ui_Mode) { warning(true, "STUB: f064_SOUND_RequestPlay_CPSD"); }
+
 private:
 	int16 _g528_saveFormat; // @ G0528_i_Format
 	int16 _g527_platform; // @ G0527_i_Platform

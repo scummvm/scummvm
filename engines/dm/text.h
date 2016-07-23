@@ -56,9 +56,7 @@ public:
 	void f42_messageAreaMoveCursor(int16 column, int16 row); // @ F0042_TEXT_MESSAGEAREA_MoveCursor
 	void f44_messageAreaClearExpiredRows(); // @ F0044_TEXT_MESSAGEAREA_ClearExpiredRows
 
-
 };
 
 }
-
 #endif

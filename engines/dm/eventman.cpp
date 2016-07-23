@@ -891,7 +891,7 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 				L1117_B_MovementBlocked |= _vm->_championMan->f321_addPendingDamageAndWounds_getDamage(L1125_i_SecondDamagedChampionIndex, 1, k0x0008_ChampionWoundTorso | k0x0010_ChampionWoundLegs, k2_attackType_SELF);
 			}
 			if (L1117_B_MovementBlocked) {
-				warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+				_vm->f064_SOUND_RequestPlay_CPSD(k18_soundPARTY_DAMAGED, L1121_i_MapX, L1122_i_MapY, k0_soundModePlayImmediately);
 			}
 		} else {
 			if (L1117_B_MovementBlocked = (_vm->_groupMan->f175_groupGetThing(L1121_i_MapX, L1122_i_MapY) != Thing::_endOfList)) {
@@ -1027,7 +1027,7 @@ void EventManager::f377_commandProcessType80ClickInDungeonView(int16 posX, int16
 			L1151_ps_Junk = (Junk*)_vm->_dungeonMan->f157_getSquareFirstThingData(L1155_i_MapX, L1156_i_MapY);
 			if ((((Door*)L1151_ps_Junk)->hasButton()) && _vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn].isPointInside(posX, posY - 33)) {
 				_vm->_g321_stopWaitingForPlayerInput = true;
-				warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+				_vm->f064_SOUND_RequestPlay_CPSD(k01_soundSWITCH, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
 				_vm->_movsens->f268_addEvent(k10_TMEventTypeDoor, L1155_i_MapX, L1156_i_MapY, 0, k2_SensorEffToggle, _vm->_g313_gameTime + 1);
 				return;
 			}

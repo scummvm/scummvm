@@ -199,7 +199,7 @@ bool ChampionMan::f328_isObjectThrown(uint16 champIndex, int16 slotIndex, int16 
 			return false;
 		}
 	}
-	warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+	_vm->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
 	f325_decrementStamine(champIndex, f305_getThrowingStaminaCost(L0996_T_Thing));
 	f330_disableAction(champIndex, 4);
 	AL0994_i_Experience = 8;

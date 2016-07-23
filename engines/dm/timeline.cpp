@@ -318,7 +318,7 @@ void Timeline::f261_processTimeline() {
 				f246_timelineProcesEvent65_enableGroupGenerator(L0681_ps_Event);
 				break;
 			case k20_TMEventTypePlaySound:
-				warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+				_vm->f064_SOUND_RequestPlay_CPSD(L0682_s_Event._C._soundIndex, L0682_s_Event._B._location._mapX, L0682_s_Event._B._location._mapY, k1_soundModePlayIfPrioritized);
 				break;
 			case k24_TMEventTypeRemoveFluxcage:
 				if (!_vm->_g302_gameWon) {
@@ -421,7 +421,7 @@ void Timeline::f241_timelineProcessEvent1_doorAnimation(TimelineEvent* event) {
 				// Original bug fixed - A closing horizontal door wounds champions to the head instead of to the hands. Missing parenthesis in the condition cause all doors to wound the head in addition to the torso
 				// See BUG0_78
 				if (_vm->_championMan->f324_damageAll_getDamagedChampionCount(5, k0x0008_ChampionWoundTorso | (AL0602_ui_VerticalDoor ? k0x0004_ChampionWoundHead : k0x0001_ChampionWoundReadHand | k0x0002_ChampionWoundActionHand), k2_attackType_SELF)) {
-					warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+					_vm->f064_SOUND_RequestPlay_CPSD(k18_soundPARTY_DAMAGED, L0593_ui_MapX, L0594_ui_MapY, k1_soundModePlayIfPrioritized);
 				}
 			}
 			event->_mapTime++;
@@ -435,7 +435,7 @@ void Timeline::f241_timelineProcessEvent1_doorAnimation(TimelineEvent* event) {
 				}
 				L0596_i_DoorState = (L0596_i_DoorState == k0_doorState_OPEN) ? k0_doorState_OPEN : (L0596_i_DoorState - 1);
 				L0597_puc_Square->setDoorState(L0596_i_DoorState);
-				warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+				_vm->f064_SOUND_RequestPlay_CPSD(k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, L0593_ui_MapX, L0594_ui_MapY, k1_soundModePlayIfPrioritized);
 				event->_mapTime++;
 				_vm->_timeline->f238_addEventGetEventIndex(event);
 				return;
@@ -447,7 +447,8 @@ void Timeline::f241_timelineProcessEvent1_doorAnimation(TimelineEvent* event) {
 	}
 	L0596_i_DoorState += (L0595_i_Effect == k0_SensorEffSet) ? -1 : 1;
 	L0597_puc_Square->setDoorState(L0596_i_DoorState);
-	warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+	_vm->f064_SOUND_RequestPlay_CPSD(k02_soundDOOR_RATTLE, L0593_ui_MapX, L0594_ui_MapY, k1_soundModePlayIfPrioritized);
+
 	if (L0595_i_Effect == k0_SensorEffSet) {
 		if (L0596_i_DoorState == k0_doorState_OPEN) {
 			return;
@@ -838,7 +839,7 @@ void Timeline::f245_timlineProcessEvent5_squareCorridor(TimelineEvent* event) {
 					}
 					_vm->_groupMan->f185_groupGetGenerated(L0614_ps_Sensor->getData(), AL0618_ui_HealthMultiplier, L0612_i_CreatureCount, (direction)_vm->getRandomNumber(4), L0616_ui_MapX, L0617_ui_MapY);
 					if (L0614_ps_Sensor->getAudibleA()) {
-						warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+						_vm->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, L0616_ui_MapX, L0617_ui_MapY, k1_soundModePlayIfPrioritized);
 					}
 					if (L0614_ps_Sensor->getOnlyOnce()) {
 						L0614_ps_Sensor->setTypeDisabled();
@@ -878,7 +879,7 @@ void Timeline::f252_timelineProcessEvents60to61_moveGroup(TimelineEvent* event) 
 T0252001:
 	if (((_vm->_dungeonMan->_g272_currMapIndex != _vm->_dungeonMan->_g309_partyMapIndex) || (L0656_ui_MapX != _vm->_dungeonMan->_g306_partyMapX) || (L0657_ui_MapY != _vm->_dungeonMan->_g307_partyMapY)) && (_vm->_groupMan->f175_groupGetThing(L0656_ui_MapX, L0657_ui_MapY) == Thing::_endOfList)) { /* BUG0_24 Lord Chaos may teleport into one of the Black Flames and become invisible until the Black Flame is killed. In this case, _vm->_groupMan->f175_groupGetThing returns the Black Flame thing and the Lord Chaos thing is not moved into the dungeon until the Black Flame is killed */
 		if (event->_type == k61_TMEventTypeMoveGroupAudible) {
-			warning(false, "F0064_SOUND_RequestPlay_CPSD");
+			_vm->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, L0656_ui_MapX, L0657_ui_MapY, k1_soundModePlayIfPrioritized);
 		}
 		_vm->_movsens->f267_getMoveResult(Thing(event->_C._slot), kM1_MapXNotOnASquare, 0, L0656_ui_MapX, L0657_ui_MapY);
 	} else {

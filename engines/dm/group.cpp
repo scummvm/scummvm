@@ -147,7 +147,7 @@ void GroupMan::f188_dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThin
 			_vm->_movsens->f267_getMoveResult(L0365_T_CurrentThing, kM1_MapXNotOnASquare, 0, mapX, mapY);
 		} while ((L0365_T_CurrentThing = L0366_T_NextThing) != Thing::_endOfList);
 		if (mode >= k0_soundModePlayImmediately) {
-			warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+			_vm->f064_SOUND_RequestPlay_CPSD(L0371_B_WeaponDropped ? k00_soundMETALLIC_THUD : k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, mode);
 		}
 	}
 }
@@ -229,11 +229,11 @@ void GroupMan::f186_dropCreatureFixedPossessions(uint16 creatureType, int16 mapX
 		L0359_pui_FixedPossessions = g253FixedPossessionCreature_24RedDragon;
 	}
 	uint16 L0356_ui_FixedPossession;
+	bool L0362_B_WeaponDropped = false;
 	while (L0356_ui_FixedPossession = *L0359_pui_FixedPossessions++) {
 		if (getFlag(L0356_ui_FixedPossession, k0x8000_randomDrop) && _vm->getRandomNumber(2))
 			continue;
 		int16 L0357_i_ThingType;
-		bool L0362_B_WeaponDropped = false;
 		if (clearFlag(L0356_ui_FixedPossession, k0x8000_randomDrop) >= k127_ObjectInfoIndexFirstJunk) {
 			L0357_i_ThingType = k10_JunkThingType;
 			L0356_ui_FixedPossession -= k127_ObjectInfoIndexFirstJunk;
@@ -258,7 +258,7 @@ void GroupMan::f186_dropCreatureFixedPossessions(uint16 creatureType, int16 mapX
 		L0358_T_Thing = M15_thingWithNewCell(L0358_T_Thing, ((cell == k255_CreatureTypeSingleCenteredCreature) || !_vm->getRandomNumber(4)) ? _vm->getRandomNumber(4) : cell);
 		_vm->_movsens->f267_getMoveResult(L0358_T_Thing, kM1_MapXNotOnASquare, 0, mapX, mapY);
 	}
-	warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+	_vm->f064_SOUND_RequestPlay_CPSD(L0362_B_WeaponDropped ? k00_soundMETALLIC_THUD : k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, mode);
 }
 
 int16 GroupMan::f228_getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY) {
@@ -890,7 +890,7 @@ T0209089_DoubleSquareMove:
 							AL0450_i_DestinationMapX = eventMapX;
 							AL0451_i_DestinationMapY = eventMapY;
 							AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction] * 2, AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction] * 2;
-							warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+							_vm->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, AL0450_i_DestinationMapX, AL0451_i_DestinationMapY, k1_soundModePlayIfPrioritized);
 							goto T0209061_MoveGroup;
 						}
 					}
@@ -1271,7 +1271,7 @@ int32 GroupMan::f179_getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16
 				if (getFlag(AL0326_ui_Aspect, k0x0080_MaskActiveGroupIsAttacking) && (L0331_ui_CreatureType == k18_CreatureTypeAnimatedArmourDethKnight)) {
 					if (_vm->getRandomNumber(2)) {
 						toggleFlag(AL0326_ui_Aspect, k0x0040_MaskActiveGroupFlipBitmap);
-						warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+						_vm->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _g378_currentGroupMapX, _g379_currentGroupMapY, k1_soundModePlayIfPrioritized);
 					}
 				} else {
 					if (!getFlag(AL0326_ui_Aspect, k0x0080_MaskActiveGroupIsAttacking) || !getFlag(L0327_ui_CreatureGraphicInfo, k0x0400_CreatureInfoGraphicMaskFlipDuringAttack)) {
@@ -1293,7 +1293,7 @@ int32 GroupMan::f179_getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16
 						toggleFlag(AL0326_ui_Aspect, k0x0040_MaskActiveGroupFlipBitmap);
 						L1635_ui_SoundIndex = _vm->_movsens->f514_getSound(k13_CreatureTypeCouatl);
 						if (L1635_ui_SoundIndex <= k34_D13_soundCount) {
-							warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+							_vm->f064_SOUND_RequestPlay_CPSD(L1635_ui_SoundIndex, _g378_currentGroupMapX, _g379_currentGroupMapY, k1_soundModePlayIfPrioritized);
 						}
 					}
 				} else {
@@ -1418,6 +1418,8 @@ bool GroupMan::f204_isArchenemyDoubleMovementPossible(CreatureInfo *info, int16 
 }
 
 bool GroupMan::f207_isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 creatureIndex) {
+	static const uint8 G0244_auc_Graphic559_CreatureAttackSounds[11] = { 3, 7, 14, 15, 19, 21, 29, 30, 31, 4, 16 }; /* Atari ST: { 3, 7, 14, 15, 19, 21, 4, 16 } */
+
 	uint16 L0437_ui_Multiple;
 #define AL0437_ui_CreatureType L0437_ui_Multiple
 #define AL0437_T_Thing         L0437_ui_Multiple
@@ -1486,7 +1488,7 @@ bool GroupMan::f207_isCreatureAttacking(Group *group, int16 mapX, int16 mapY, ui
 		AL0440_i_KineticEnergy = (L0441_ps_CreatureInfo->_attack >> 2) + 1;
 		AL0440_i_KineticEnergy += _vm->getRandomNumber(AL0440_i_KineticEnergy);
 		AL0440_i_KineticEnergy += _vm->getRandomNumber(AL0440_i_KineticEnergy);
-		warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+		_vm->f064_SOUND_RequestPlay_CPSD(k13_soundSPELL, mapX, mapY, k0_soundModePlayImmediately);
 		_vm->_projexpl->f212_projectileCreate(Thing(AL0437_T_Thing), mapX, mapY, AL0439_i_TargetCell, (direction)_g382_currGroupPrimaryDirToParty, f26_getBoundedValue((int16)20, AL0440_i_KineticEnergy, (int16)255), L0441_ps_CreatureInfo->_dexterity, 8);
 	} else {
 		if (getFlag(L0441_ps_CreatureInfo->_attributes, k0x0010_MaskCreatureInfo_attackAnyChamp)) {
@@ -1514,7 +1516,7 @@ bool GroupMan::f207_isCreatureAttacking(Group *group, int16 mapX, int16 mapY, ui
 		}
 	}
 	if (AL0440_i_AttackSoundOrdinal = L0441_ps_CreatureInfo->_attackSoundOrdinal) {
-		warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+		_vm->f064_SOUND_RequestPlay_CPSD(G0244_auc_Graphic559_CreatureAttackSounds[--AL0440_i_AttackSoundOrdinal], mapX, mapY, k1_soundModePlayIfPrioritized);
 	}
 	return true;
 }
@@ -1637,7 +1639,7 @@ int16 GroupMan::f230_getChampionDamage(Group *group, uint16 champIndex) {
 			AL0558_i_Attack -= _vm->getRandomNumber((AL0558_i_Attack >> 1) + 1) - 1;
 		}
 		if (AL0558_i_Damage = _vm->_championMan->f321_addPendingDamageAndWounds_getDamage(champIndex, AL0558_i_Attack, AL0561_ui_AllowedWound, L0564_s_CreatureInfo._attackType)) {
-			warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+			_vm->f064_SOUND_RequestPlay_CPSD(k09_soundCHAMPION_0_DAMAGED + champIndex, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k2_soundModePlayOneTickLater);
 			if ((AL0559_ui_PoisonAttack = L0564_s_CreatureInfo._poisonAttack) && _vm->getRandomNumber(2) && ((AL0559_ui_PoisonAttack = _vm->_championMan->f307_getStatisticAdjustedAttack(L0562_ps_Champion, k4_ChampionStatVitality, AL0559_ui_PoisonAttack)) >= 0)) {
 				_vm->_championMan->f322_championPoison(champIndex, AL0559_ui_PoisonAttack);
 			}
@@ -1808,7 +1810,7 @@ Thing GroupMan::f185_groupGetGenerated(int16 creatureType, int16 healthMultiplie
 	if (_vm->_movsens->f267_getMoveResult(L0349_T_GroupThing, kM1_MapXNotOnASquare, 0, mapX, mapY)) { /* If F0267_MOVE_GetMoveResult_CPSCE returns true then the group was either killed by a projectile impact (in which case the thing data was marked as unused) or the party is on the destination square and an event is created to move the creature into the dungeon later (in which case the thing is referenced in the event) */
 		return Thing::_none;
 	}
-	warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+	_vm->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, mapX, mapY, k1_soundModePlayIfPrioritized);
 	return L0349_T_GroupThing;
 }
 
