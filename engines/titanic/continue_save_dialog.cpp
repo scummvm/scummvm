@@ -60,7 +60,7 @@ void CContinueSaveDialog::addSavegame(int slot, const CString &name) {
 }
 
 Rect CContinueSaveDialog::getSlotBounds(int index) {
-	return Rect(360, 168 + index * 12, 556, 180 + index * 12);
+	return Rect(360, 164 + index * 19, 556, 180 + index * 19);
 }
 
 int CContinueSaveDialog::show() {
@@ -157,8 +157,12 @@ void CContinueSaveDialog::renderButtons() {
 }
 
 void CContinueSaveDialog::renderSlots() {
-	for (int idx = 0; idx < SAVEGAME_SLOTS_COUNT; ++idx)
+	for (uint idx = 0; idx < _saves.size(); ++idx) {
+		byte rgb = (_highlightedSlot == idx) ? 255 : 0;
+		_slotNames[idx].setColor(rgb, rgb, rgb);
+		_slotNames[idx].setLineColor(0, rgb, rgb, rgb);
 		_slotNames[idx].draw(CScreenManager::_screenManagerPtr);
+	}
 }
 
 void CContinueSaveDialog::mouseMove(const Point &mousePos) {
@@ -185,7 +189,14 @@ void CContinueSaveDialog::leftButtonUp(const Point &mousePos) {
 		// Start a new game
 		_selectedSlot = -1;
 	} else {
-		// TODO: Slot highlighting
+		// Check whether a filled in slot was selected
+		for (uint idx = 0; idx < _saves.size(); ++idx) {
+			if (getSlotBounds(idx).contains(mousePos)) {
+				_highlightedSlot = idx;
+				render();
+				break;
+			}
+		}
 	}
 }
 
