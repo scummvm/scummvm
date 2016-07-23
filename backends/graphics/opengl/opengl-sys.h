@@ -48,9 +48,15 @@
 //  0 - Force OpenGL context
 //  1 - Force OpenGL ES context
 //  2 - Force OpenGL ES 2.0 context
-#define USE_FORCED_GL    (defined(USE_GLES_MODE) && USE_GLES_MODE == 0)
-#define USE_FORCED_GLES  (defined(USE_GLES_MODE) && USE_GLES_MODE == 1)
-#define USE_FORCED_GLES2 (defined(USE_GLES_MODE) && USE_GLES_MODE == 2)
+#ifdef USE_GLES_MODE
+	#define USE_FORCED_GL    (USE_GLES_MODE == 0)
+	#define USE_FORCED_GLES  (USE_GLES_MODE == 1)
+	#define USE_FORCED_GLES2 (USE_GLES_MODE == 2)
+#else
+	#define USE_FORCED_GL    0
+	#define USE_FORCED_GLES  0
+	#define USE_FORCED_GLES2 0
+#endif
 
 // On Tizen we include the toolchain's OpenGL file. This is something we
 // actually want to avoid. However, since Tizen uses eglGetProcAddress which
