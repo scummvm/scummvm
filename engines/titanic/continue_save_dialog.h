@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "titanic/events.h"
 #include "titanic/support/image.h"
+#include "titanic/support/rect.h"
 #include "titanic/support/string.h"
 
 namespace Titanic {
@@ -42,8 +43,14 @@ class CContinueSaveDialog : public CEventTarget {
 private:
 	Common::Array<SaveEntry> _saves;
 	int _highlightedSlot, _selectedSlot;
+	Point _mousePos;
+	bool _evilTwinShown;
+	bool _mouseDown;
+	int _restoreState, _startState;
 	Image _backdrop;
 	Image _evilTwin;
+	Image _restoreD, _restoreU, _restoreF;
+	Image _startD, _startU, _startF;
 private:
 	/**
 	 * Load the images
@@ -54,12 +61,20 @@ private:
 	 * Render the dialog
 	 */
 	void render();
+
+	/**
+	 * Render the buttons
+	 */
+	void renderButtons();
 public:
 	CContinueSaveDialog();
 	virtual ~CContinueSaveDialog();
 
+	virtual void mouseMove(const Point &mousePos);
 	virtual void leftButtonDown(const Point &mousePos);
 	virtual void leftButtonUp(const Point &mousePos);
+	virtual void rightButtonDown(const Point &mousePos);
+	virtual void rightButtonUp(const Point &mousePos);
 	virtual void keyDown(Common::KeyState keyState);
 
 	/**

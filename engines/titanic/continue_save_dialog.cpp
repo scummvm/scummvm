@@ -25,9 +25,17 @@
 
 namespace Titanic {
 
+#define RESTORE_X 346
+#define RESTORE_Y 94
+#define START_X 370
+#define START_Y 276
+
 CContinueSaveDialog::CContinueSaveDialog() {
 	g_vm->_events->addTarget(this);
 	_highlightedSlot = _selectedSlot = -999;
+	_restoreState = _startState = -1;
+	_mouseDown = false;
+	_evilTwinShown = false;
 }
 
 CContinueSaveDialog::~CContinueSaveDialog() {
@@ -56,20 +64,122 @@ int CContinueSaveDialog::show() {
 void CContinueSaveDialog::loadImages() {
 	_backdrop.load("Bitmap/BACKDROP");
 	_evilTwin.load("Bitmap/EVILTWIN");
+	_restoreD.load("Bitmap/RESTORED");
+	_restoreU.load("Bitmap/RESTOREU");
+	_restoreF.load("Bitmap/RESTOREF");
+	_startD.load("Bitmap/STARTD");
+	_startU.load("Bitmap/STARTU");
+	_startF.load("Bitmap/STARTF");
 }
 
 void CContinueSaveDialog::render() {
 	Graphics::Screen &screen = *g_vm->_screen;
 	screen.clear();
 	screen.blitFrom(_backdrop, Common::Point(48, 22));
+
+	if (_evilTwinShown)
+		screen.blitFrom(_evilTwin, Common::Point(78, 59));
+
+	_restoreState = _startState = -1;
+	renderButtons();
+}
+
+void CContinueSaveDialog::renderButtons() {
+	Graphics::Screen &screen = *g_vm->_screen;
+	Rect restoreRect(RESTORE_X, RESTORE_Y, RESTORE_X + _restoreU.w, RESTORE_Y + _restoreU.h);
+	Rect startRect(START_X, START_Y, START_X + _startU.w, START_Y + _startU.h);
+
+	// Determine the current state for the buttons
+	int restoreState, startState;
+	if (!restoreRect.contains(_mousePos))
+		restoreState = 0;
+	else
+		restoreState = _mouseDown ? 1 : 2;
+
+	if (!startRect.contains(_mousePos))
+		startState = 0;
+	else
+		startState = _mouseDown ? 1 : 2;
+
+	// Draw the start button
+	if (startState != _startState) {
+		_startState = startState;
+		switch (_startState) {
+		case 0:
+			screen.blitFrom(_startU, Common::Point(START_X, START_Y));
+			break;
+		case 1:
+			screen.blitFrom(_startD, Common::Point(START_X, START_Y));
+			break;
+		case 2:
+			screen.blitFrom(_startF, Common::Point(START_X, START_Y));
+			break;
+		default:
+			break;
+		}
+	}
+
+	// Draw the restore button
+	if (restoreState != _restoreState) {
+		_restoreState = restoreState;
+		switch (_restoreState) {
+		case 0:
+			screen.blitFrom(_restoreU, Common::Point(RESTORE_X, RESTORE_Y));
+			break;
+		case 1:
+			screen.blitFrom(_restoreD, Common::Point(RESTORE_X, RESTORE_Y));
+			break;
+		case 2:
+			screen.blitFrom(_restoreF, Common::Point(RESTORE_X, RESTORE_Y));
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void CContinueSaveDialog::mouseMove(const Point &mousePos) {
+	_mousePos = mousePos;
+	renderButtons();
 }
 
 void CContinueSaveDialog::leftButtonDown(const Point &mousePos) {
-
+	_mouseDown = true;
+	mouseMove(mousePos);
 }
 
 void CContinueSaveDialog::leftButtonUp(const Point &mousePos) {
+	Rect restoreRect(RESTORE_X, RESTORE_Y, RESTORE_X + _restoreU.w, RESTORE_Y + _restoreU.h);
+	Rect startRect(START_X, START_Y, START_X + _startU.w, START_Y + _startU.h);
+	_mouseDown = false;
 
+	if (restoreRect.contains(mousePos)) {
+		// Flag to exit dialog and load highlighted slot. If no slot was
+		// selected explicitly, then fall back on loading the first slot
+		_selectedSlot = (_highlightedSlot == -999) ? _saves[0]._slot :
+			_saves[_highlightedSlot]._slot;
+	} else if (startRect.contains(mousePos)) {
+		// Start a new game
+		_selectedSlot = -1;
+	} else {
+		// TODO: Slot highlighting
+	}
+}
+
+void CContinueSaveDialog::rightButtonDown(const Point &mousePos) {
+	Rect eye1(188, 190, 192, 195), eye2(209, 192, 213, 197);
+
+	if (eye1.contains(mousePos) || eye2.contains(mousePos)) {
+		_evilTwinShown = true;
+		render();
+	}
+}
+
+void CContinueSaveDialog::rightButtonUp(const Point &mousePos) {
+	if (_evilTwinShown) {
+		_evilTwinShown = false;
+		render();
+	}
 }
 
 void CContinueSaveDialog::keyDown(Common::KeyState keyState) {

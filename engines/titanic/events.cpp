@@ -62,6 +62,14 @@ void Events::pollEvents() {
 		_mousePos = event.mouse;
 		eventTarget()->middleButtonUp(_mousePos);
 		break;
+	case Common::EVENT_RBUTTONDOWN:
+		_mousePos = event.mouse;
+		eventTarget()->rightButtonDown(_mousePos);
+		break;
+	case Common::EVENT_RBUTTONUP:
+		_mousePos = event.mouse;
+		eventTarget()->rightButtonUp(_mousePos);
+		break;
 	case Common::EVENT_KEYDOWN:
 		eventTarget()->keyDown(event.kbd);
 		break;
