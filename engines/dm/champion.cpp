@@ -250,8 +250,11 @@ uint16 ChampionMan::M70_handSlotIndex(uint16 slotBoxIndex) {
 Common::String ChampionMan::f288_getStringFromInteger(uint16 val, bool padding, uint16 paddingCharCount) {
 	Common::String valToStr = Common::String::format("%d", val);
 	Common::String result;
-	for (int16 i = 0, end = paddingCharCount - valToStr.size(); i < end; ++i)
-		result += ' ';
+
+	if (padding) {
+		for (int16 i = 0, end = paddingCharCount - valToStr.size(); i < end; ++i)
+			result += ' ';
+	}
 
 	return result += valToStr;
 }
