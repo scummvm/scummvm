@@ -1,6 +1,7 @@
 MODULE := engines/titanic
 
 MODULE_OBJS := \
+	continue_save_dialog.o \
 	debugger.o \
 	detection.o \
 	events.o \

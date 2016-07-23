@@ -20,102 +20,37 @@
  *
  */
 
-#include "common/file.h"
 #include "titanic/support/image.h"
+#include "titanic/titanic.h"
+#include "image/bmp.h"
 
 namespace Titanic {
 
-BITMAPINFOHEADER::BITMAPINFOHEADER() {
-	_biSize = 0;
-	_biWidth = 0;
-	_biHeight = 0;
-	_biPlanes = 0;
-	_biBitCount = 0;
-	_biCompression = 0;
-	_biSizeImage = 0;
-	_biXPelsPerMeter = 0;
-	_biYPelsPerMeter = 0;
-	_biClrUsed = 0;
-	_biClrImportant = 0;
-}
-
-/*------------------------------------------------------------------------*/
-
-RGBQuad::RGBQuad() : _rgbRed(0), _rgbGreen(0), _rgbBlue(0), _rgbReserved(0) {}
-
-/*------------------------------------------------------------------------*/
-
-Image::Image() {
-	_bitmapInfo = nullptr;
-	_bits = nullptr;
-	_flag = true;
-
-	set(16, 16);
-}
-
-void Image::proc6() {
-
-}
-
-void Image::set(int width, int height) {
-	delete _bitmapInfo;
-	if (_flag && _bitmapInfo)
-		delete[] _bits;
-
-	_bitmapInfo = new tagBITMAPINFO;
-	_bits = new byte[(width + 3) & 0xFFFC * height];
-
-	tagBITMAPINFO &bi = *_bitmapInfo;
-	bi._bmiHeader._biWidth = width;
-	bi._bmiHeader._biHeight = height;
-	bi._bmiHeader._biPlanes = 1;
-	bi._bmiHeader._biBitCount = 8;
-}
-
-void Image::proc8() {
-
-}
-
-bool Image::loadResource(const Common::String &name) {
-	// This method is hardcoded for the Titanic splash screen resource
-	assert(name == "TITANIC");
-
-	Common::File f;
-	if (!f.open("ST.exe"))
-		return false;
-
-	// The ST.exe executable has a bitmap called "TITANIC". Since we can't use
-	// the Windows FindResource function in ScummVM, this is hardcoded for now
-	f.seek(0x29B660);
-	uint size = f.readUint32LE();
-	if (size != 40)
-		return false;
-
-	loadBitmap(f);
-
-	return true;
-}
-
-void Image::proc10() {
-
-}
-
-void Image::draw() {
-
+void Image::load(const CString &resName) {
+	Common::SeekableReadStream *stream = g_vm->_filesManager->getResource(resName);
+	loadBitmap(*stream);
+	delete stream;
 }
 
 void Image::loadBitmap(Common::SeekableReadStream &s) {
-	_bitmapInfo->_bmiHeader._biWidth = s.readUint32LE();
-	_bitmapInfo->_bmiHeader._biHeight = s.readUint32LE();
-	_bitmapInfo->_bmiHeader._biPlanes = s.readUint16LE();
-	_bitmapInfo->_bmiHeader._biBitCount = s.readUint16LE();
-	_bitmapInfo->_bmiHeader._biCompression = s.readUint32LE();
-	_bitmapInfo->_bmiHeader._biSizeImage = s.readUint32LE();
-	_bitmapInfo->_bmiHeader._biXPelsPerMeter = s.readUint32LE();
-	_bitmapInfo->_bmiHeader._biYPelsPerMeter = s.readUint32LE();
-	_bitmapInfo->_bmiHeader._biClrUsed = s.readUint32LE();
-	_bitmapInfo->_bmiHeader._biClrImportant = s.readUint32LE();
+	::Image::BitmapDecoder decoder;
+	decoder.loadStream(s);
+	const Graphics::Surface *src = decoder.getSurface();
+	Graphics::PixelFormat scrFormat = g_system->getScreenFormat();
 
+	if (src->format == scrFormat) {
+		create(src->w, src->h, scrFormat);
+		blitFrom(*src);
+	} else {
+		// Convert the loaded surface to the screen surface format
+		const byte *palette = decoder.getPalette();
+		Graphics::Surface *surface = src->convertTo(scrFormat, palette);
+		create(surface->w, surface->h, scrFormat);
+		blitFrom(*surface);
+
+		surface->free();
+		delete surface;
+	}
 }
 
 } // End of namespace Titanic

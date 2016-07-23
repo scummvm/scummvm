@@ -20,24 +20,59 @@
  *
  */
 
-#ifndef TITANIC_IMAGE_H
-#define TITANIC_IMAGE_H
+#ifndef TITANIC_CONTINUE_SAVE_DIALOG_H
+#define TITANIC_CONTINUE_SAVE_DIALOG_H
 
-#include "common/stream.h"
-#include "graphics/managed_surface.h"
+#include "common/array.h"
+#include "titanic/events.h"
+#include "titanic/support/image.h"
 #include "titanic/support/string.h"
 
 namespace Titanic {
 
-class Image : public Graphics::ManagedSurface {
-private:
-	void loadBitmap(Common::SeekableReadStream &s);
-public:
-	virtual ~Image() {}
+#define EXIT_GAME -2
 
-	void load(const CString &resName);
+class CContinueSaveDialog : public CEventTarget {
+	struct SaveEntry {
+		int _slot;
+		CString _name;
+		SaveEntry() : _slot(0) {}
+		SaveEntry(int slot, const CString &name) : _slot(slot), _name(name) {}
+	};
+private:
+	Common::Array<SaveEntry> _saves;
+	int _highlightedSlot, _selectedSlot;
+	Image _backdrop;
+	Image _evilTwin;
+private:
+	/**
+	 * Load the images
+	 */
+	void loadImages();
+
+	/**
+	 * Render the dialog
+	 */
+	void render();
+public:
+	CContinueSaveDialog();
+	virtual ~CContinueSaveDialog();
+
+	virtual void leftButtonDown(const Point &mousePos);
+	virtual void leftButtonUp(const Point &mousePos);
+	virtual void keyDown(Common::KeyState keyState);
+
+	/**
+	 * Add a savegame to the list to be displayed
+	 */
+	void addSavegame(int slot, const CString &name);
+
+	/**
+	 * Show the dialog and wait for a slot to be selected
+	 */
+	int show();
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_IMAGE_H */
+#endif /* TITANIC_CONTINUE_SAVE_DIALOG_H */

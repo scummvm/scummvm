@@ -49,7 +49,7 @@ private:
 	 * Checks for the presence of any savegames and, if present,
 	 * lets the user pick one to resume
 	 */
-	int loadGame();
+	int getSavegameSlot();
 
 	/**
 	 * Creates the game "project" and determine a game save slot

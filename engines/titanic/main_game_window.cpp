@@ -22,6 +22,7 @@
 
 #include "common/config-manager.h"
 #include "titanic/titanic.h"
+#include "titanic/continue_save_dialog.h"
 #include "titanic/game_manager.h"
 #include "titanic/game_view.h"
 #include "titanic/main_game_window.h"
@@ -50,22 +51,21 @@ CMainGameWindow::~CMainGameWindow() {
 
 bool CMainGameWindow::Create() {
 	Image image;
-	bool result = image.loadResource("TITANIC");
-	if (!result)
-		return true;
+	image.load("TITANIC");
 
 	// TODO: Stuff
 	return true;
 }
 
 void CMainGameWindow::applicationStarting() {
-	// Set up the game project, and get game slot
-	int saveSlot = loadGame();
-	assert(_project);
-
 	// Set the video mode
 	CScreenManager *screenManager = CScreenManager::setCurrent();
 	screenManager->setMode(640, 480, 16, 0, true);
+
+	// Set up the game project, and get game slot
+	int saveSlot = getSavegameSlot();
+	if (saveSlot == -2)
+		return;
 
 	// Create game view and manager
 	_gameView = new CSTGameView(this);
@@ -96,7 +96,7 @@ void CMainGameWindow::applicationStarting() {
 	_gameManager->initBounds();
 }
 
-int CMainGameWindow::loadGame() {
+int CMainGameWindow::getSavegameSlot() {
 	_project = new CProjectItem();
 	_project->setFilename("starship.prj");
 
@@ -108,7 +108,21 @@ int CMainGameWindow::selectSavegame() {
 	if (ConfMan.hasKey("save_slot"))
 		return ConfMan.getInt("save_slot");
 
-	return -1;
+	CContinueSaveDialog dialog;
+	bool hasSavegames = false;
+
+	// Loop through save slots to find any existing save slots
+	for (int idx = 0; idx < MAX_SAVES; ++idx) {
+		CString saveName = g_vm->getSavegameName(idx);
+		if (!saveName.empty()) {
+			dialog.addSavegame(idx, saveName);
+			hasSavegames = true;
+		}
+	}
+
+	// If there are savegames, show the select dialog and get a choice.
+	// If there aren't, return -1 to indicate starting a new game
+	return hasSavegames ? dialog.show() : -1;
 }
 
 void CMainGameWindow::setActiveView(CViewItem *viewItem) {
