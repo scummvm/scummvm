@@ -171,11 +171,11 @@ void OSMovie::setFrame(uint frameNumber) {
 bool OSMovie::handleEvents(CMovieEventList &events) {
 	if (!_aviSurface.isPlaying())
 		return false;
-	if (!_aviSurface.isFrameReady())
+	if (!_aviSurface.isNextFrame())
 		return _aviSurface.isPlaying();
 
 	// Handle updating the frame
-	while (_aviSurface.isPlaying() && _aviSurface.isFrameReady()) {
+	while (_aviSurface.isPlaying() && _aviSurface.isNextFrame()) {
 		_aviSurface.handleEvents(events);
 		_videoSurface->setMovieFrameSurface(_aviSurface.getSecondarySurface());
 	}

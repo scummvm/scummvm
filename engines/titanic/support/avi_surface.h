@@ -55,6 +55,8 @@ private:
 	CMovieRangeInfoList _movieRangeInfo;
 	int _streamCount;
 	Graphics::ManagedSurface *_movieFrameSurface[2];
+	bool _isReversed;
+	int _currentFrame;
 private:
 	/**
 	 * Render a frame to the video surface
@@ -141,7 +143,7 @@ public:
 	/**
 	 * Gets the current frame
 	 */
-	int getFrame() const;
+	int getFrame() const { return _currentFrame; }
 
 	/**
 	 * Add a movie event
@@ -171,9 +173,9 @@ public:
 	Graphics::ManagedSurface *duplicateSecondaryFrame() const;
 
 	/**
-	 * Returns true if a frame is ready to be rendered
+	 * Returns true if it's time for the next
 	 */
-	bool isFrameReady() const;
+	bool isNextFrame() const;
 };
 
 } // End of namespace Titanic

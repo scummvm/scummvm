@@ -57,6 +57,12 @@ AVISurface::AVISurface(const CResourceKey &key) {
 	_streamCount = 0;
 	_movieFrameSurface[0] = _movieFrameSurface[1] = nullptr;
 
+	// Reset current frame. We need to keep track of frames separately from the decoders,
+	// since it needs to be able to go beyond the frame count or to negative to allow
+	// correct detection of when range playbacks have finished
+	_currentFrame = -1;
+	_isReversed = false;
+
 	// Create a decoder for the audio (if any) and primary video track
 	_decoders[0] = new AVIDecoder(Audio::Mixer::kPlainSoundType, primaryTrackSelect);
 	if (!_decoders[0]->loadFile(key.getString()))
@@ -103,6 +109,7 @@ bool AVISurface::play(int startFrame, int endFrame, int initialFrame, uint flags
 	info->_startFrame = startFrame;
 	info->_endFrame = endFrame;
 	info->_isReversed = endFrame < startFrame;
+	info->_initialFrame = 0;
 	info->_isRepeat = flags & MOVIE_REPEAT;
 
 	if (obj) {
@@ -161,6 +168,8 @@ void AVISurface::seekToFrame(uint frameNumber) {
 		_decoders[0]->seekToFrame(frameNumber);
 		if (_decoders[1])
 			_decoders[1]->seekToFrame(frameNumber);
+
+		_currentFrame = (int)frameNumber;
 	}
 
 	renderFrame();
@@ -170,6 +179,8 @@ void AVISurface::setReversed(bool isReversed) {
 	_decoders[0]->setReverse(isReversed);
 	if (_decoders[1])
 		_decoders[1]->setReverse(isReversed);
+
+	_isReversed = isReversed;
 }
 
 bool AVISurface::handleEvents(CMovieEventList &events) {
@@ -177,12 +188,13 @@ bool AVISurface::handleEvents(CMovieEventList &events) {
 		return true;
 
 	CMovieRangeInfo *info = _movieRangeInfo.front();
-	int currentPos = getFrame();
+	_currentFrame += _isReversed ? -1 : 1;
 
-	if ((info->_isReversed && currentPos < info->_endFrame) ||
-		(!info->_isReversed && currentPos > info->_endFrame)) {
+	int newFrame = _currentFrame;
+	if ((info->_isReversed && newFrame <= info->_endFrame) ||
+		(!info->_isReversed && newFrame >= info->_endFrame)) {
 		if (info->_isRepeat) {
-			currentPos = info->_startFrame;
+			newFrame = info->_startFrame;
 		} else {
 			info->getMovieEnd(events);
 			_movieRangeInfo.remove(info);
@@ -194,20 +206,20 @@ bool AVISurface::handleEvents(CMovieEventList &events) {
 			} else {
 				// Not empty, so move onto new first one
 				info = _movieRangeInfo.front();
-				currentPos = info->_startFrame;
+				newFrame = info->_startFrame;
 			}
 		}
 	}
 
 	if (isPlaying()) {
-		if (currentPos != getFrame()) {
+		if (newFrame != getFrame()) {
 			// The frame has been changed, so move to new position
 			setReversed(info->_isReversed);
-			seekToFrame(currentPos);
+			seekToFrame(newFrame);
 		}
 	
 		// Get any events for the given position
-		info->getMovieFrame(events, currentPos);
+		info->getMovieFrame(events, newFrame);
 		return renderFrame();
 	} else {
 		return false;
@@ -272,18 +284,13 @@ void AVISurface::setFrame(int frameNumber) {
 	renderFrame();
 }
 
-int AVISurface::getFrame() const {
-	return _decoders[0]->getCurFrame();
-}
-
-bool AVISurface::isFrameReady() const {
-	return _decoders[0]->needsUpdate() && 
-		(!_decoders[1] || _decoders[1]->needsUpdate());
+bool AVISurface::isNextFrame() const {
+	return _decoders[0]->getTimeToNextFrame() == 0;
 }
 
 bool AVISurface::renderFrame() {
 	// Check there's a frame ready for display
-	if (!isFrameReady())
+	if (!_decoders[0]->needsUpdate())
 		return false;
 
 	// Decode each decoder's video stream into the appropriate surface
@@ -331,10 +338,9 @@ bool AVISurface::addEvent(int frameNumber, CGameObject *obj) {
 }
 
 void AVISurface::setFrameRate(double rate) {
-	if (rate >= 0.0 && rate <= 100.0) {
-		_frameRate = rate;
-		warning("TODO: Frame rate set to %d yet to be implemented", (int)rate);
-	}
+	_decoders[0]->setRate(Common::Rational(rate));
+	if (_decoders[1])
+		_decoders[1]->setRate(Common::Rational(rate));
 }
 
 Graphics::ManagedSurface *AVISurface::getSecondarySurface() {
