@@ -30,7 +30,7 @@
 
 namespace Titanic {
 
-enum PetElementMode { MODE_UNSELECTED = 0, MODE_SELECTED = 1, MODE_2 = 2 };
+enum PetElementMode { MODE_UNSELECTED = 0, MODE_SELECTED = 1, MODE_FOCUSED = 2 };
 
 class CGameObject;
 class CPetControl;
@@ -84,7 +84,10 @@ public:
 	 */
 	virtual bool MouseDoubleClickMsg(const Point &pt) const;
 
-	virtual int proc9(const Point &pt);
+	/**
+	 * Handles processing mouse move messages
+	 */
+	virtual bool MouseMoveMsg(const Point &pt);
 
 	/**
 	 * Returns whether the passed point falls inside the item

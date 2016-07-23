@@ -50,10 +50,10 @@ bool CPetElement::MouseDoubleClickMsg(const Point &pt) const {
 	return _bounds.contains(pt);
 }
 
-int CPetElement::proc9(const Point &pt) {
+bool CPetElement::MouseMoveMsg(const Point &pt) {
 	bool result = _bounds.contains(pt);
 	if (result)
-		setMode(MODE_2);
+		setMode(MODE_FOCUSED);
 	return result;
 }
 
@@ -92,7 +92,7 @@ int CPetElement::getMovieFrame() const {
 }
 
 void CPetElement::setMode(PetElementMode newMode) {
-	if (newMode >= MODE_UNSELECTED && newMode <= MODE_2)
+	if (newMode >= MODE_UNSELECTED && newMode <= MODE_FOCUSED)
 		changeMode(newMode);
 }
 

@@ -36,7 +36,7 @@ void CPetGfxElement::setup(PetElementMode mode, const CString &name,
 	case MODE_SELECTED:
 		_object1 = petControl->getHiddenObject(name);
 		break;
-	case MODE_2:
+	case MODE_FOCUSED:
 		_object2 = petControl->getHiddenObject(name);
 		break;
 	default:
@@ -93,7 +93,7 @@ CGameObject *CPetGfxElement::getObject() const {
 		return _object0;
 	case MODE_SELECTED:
 		return _object1;
-	case MODE_2:
+	case MODE_FOCUSED:
 		return _object2;
 	default:
 		return nullptr;
