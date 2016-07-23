@@ -1341,39 +1341,127 @@ void GfxTinyGL::storeDisplay() {
 }
 
 void GfxTinyGL::copyStoredToDisplay() {
-	_zb->copyFromBuffer(_storedDisplay);
+	// XXX: bruteforce workaround for tinygl lacking pixel operation API (glRasterPos2, ...)
+	TGLuint *texture = new TGLuint[1];
+	tglGenTextures(1, texture);
+	tglBindTexture(TGL_TEXTURE_2D, *texture);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
+
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, 3, _gameWidth, _gameHeight, 0, TGL_BGRA, TGL_UNSIGNED_BYTE, _storedDisplay.getRawBuffer());
+
+	tglMatrixMode(TGL_TEXTURE);
+	tglLoadIdentity();
+	tglMatrixMode(TGL_PROJECTION);
+	tglLoadIdentity();
+	tglOrtho(0, _gameWidth, _gameHeight, 0, 0, 1);
+	tglMatrixMode(TGL_MODELVIEW);
+	tglLoadIdentity();
+
+	tglDisable(TGL_LIGHTING);
+	tglDisable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_FALSE);
+	tglEnable(TGL_TEXTURE_2D);
+
+	tglBegin(TGL_QUADS);
+	tglTexCoord2f(0, 0);
+	tglVertex2f(0, 0);
+	tglTexCoord2f(1, 0);
+	tglVertex2f(_gameWidth, 0);
+	tglTexCoord2f(1, 1);
+	tglVertex2f(_gameWidth, _gameHeight);
+	tglTexCoord2f(0, 1);
+	tglVertex2f(0, _gameHeight);
+	tglEnd();
+
+	tglDisable(TGL_TEXTURE_2D);
+	tglDepthMask(TGL_TRUE);
+	tglEnable(TGL_DEPTH_TEST);
+	tglEnable(TGL_LIGHTING);
+
+	tglDeleteTextures(1, texture);
 }
 
 void GfxTinyGL::dimScreen() {
-	for (int l = 0; l < _gameWidth * _gameHeight; l++) {
-		uint8 r, g, b;
-		_storedDisplay.getRGBAt(l, r, g, b);
-		uint32 color = (r + g + b) / 10;
-		_storedDisplay.setPixelAt(l, color, color, color);
-	}
+	dimRegion(0, 0, _gameWidth, _gameHeight, 0.2f);
 }
 
 void GfxTinyGL::dimRegion(int x, int y, int w, int h, float level) {
-	for (int ly = y; ly < y + h; ly++) {
-		for (int lx = x; lx < x + w; lx++) {
-			uint8 r, g, b;
-			_zb->readPixelRGB(ly * _gameWidth + lx, r, g, b);
-			uint32 color = (uint32)(((r + g + b) / 3) * level);
-			_zb->writePixel(ly * _gameWidth + lx, color, color, color);
-		}
-	}
+	tglMatrixMode(TGL_PROJECTION);
+	tglLoadIdentity();
+	tglOrtho(0, _gameWidth, _gameHeight, 0, 0, 1);
+	tglMatrixMode(TGL_MODELVIEW);
+	tglLoadIdentity();
+
+	tglDisable(TGL_LIGHTING);
+	tglDisable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_FALSE);
+	tglEnable(TGL_BLEND);
+	tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
+
+	tglColor4f(0, 0, 0, 1 - level);
+
+	tglBegin(TGL_QUADS);
+	tglVertex2f(x, y);
+	tglVertex2f(x + w, y);
+	tglVertex2f(x + w, y + h);
+	tglVertex2f(x, y + h);
+	tglEnd();
+
+	tglColor3f(1.0f, 1.0f, 1.0f);
+
+	tglDisable(TGL_BLEND);
+	tglDepthMask(TGL_TRUE);
+	tglEnable(TGL_DEPTH_TEST);
+	tglEnable(TGL_LIGHTING);
 }
 
 void GfxTinyGL::irisAroundRegion(int x1, int y1, int x2, int y2) {
-	for (int ly = 0; ly < _gameHeight; ly++) {
-		for (int lx = 0; lx < _gameWidth; lx++) {
-			// Don't do anything with the data in the region we draw Around
-			if (lx > x1 && lx < x2 && ly > y1 && ly < y2)
-				continue;
-			// But set everything around it to black.
-			_zb->writePixel(ly * _gameWidth + lx, 0);
-		}
-	}
+	tglMatrixMode(TGL_PROJECTION);
+	tglLoadIdentity();
+	tglOrtho(0.0, _gameWidth, _gameHeight, 0.0, 0.0, 1.0);
+	tglMatrixMode(TGL_MODELVIEW);
+	tglLoadIdentity();
+
+	tglDisable(TGL_DEPTH_TEST);
+	tglDisable(TGL_TEXTURE_2D);
+	tglDisable(TGL_BLEND);
+	tglDisable(TGL_LIGHTING);
+	tglDepthMask(TGL_FALSE);
+
+	tglColor3f(0.0f, 0.0f, 0.0f);
+
+	//Explicitly cast to avoid problems with C++11
+	float fx1 = x1;
+	float fx2 = x2;
+	float fy1 = y1;
+	float fy2 = y2;
+	float width = _screenWidth;
+	float height = _screenHeight;
+	float points[20] = {
+		0.0f, 0.0f,
+		0.0f, fy1,
+		width, 0.0f,
+		fx2, fy1,
+		width, height,
+		fx2, fy2,
+		0.0f, height,
+		fx1, fy2,
+		0.0f, fy1,
+		fx1, fy1
+	};
+
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	tglVertexPointer(2, TGL_FLOAT, 0, points);
+	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 10);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
+
+	tglColor3f(1.0f, 1.0f, 1.0f);
+	tglEnable(TGL_DEPTH_TEST);
+	tglEnable(TGL_LIGHTING);
+	tglDepthMask(TGL_TRUE);
 }
 
 void GfxTinyGL::drawRectangle(const PrimitiveObject *primitive) {
