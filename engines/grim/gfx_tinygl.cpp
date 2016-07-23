@@ -1044,7 +1044,14 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) {
 	Graphics::BlitImage **b = (Graphics::BlitImage **)bitmap->getTexIds();
 
 	if (bitmap->getFormat() == 1) {
+		if (bitmap->getHasTransparency()) {
+			tglEnable(TGL_BLEND);
+			tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
+		}
 		Graphics::tglBlit(b[num], x, y);
+		if (bitmap->getHasTransparency()) {
+			tglDisable(TGL_BLEND);
+		}
 	} else {
 		Graphics::tglBlitZBuffer(b[num], x, y);
 	}
@@ -1155,10 +1162,13 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 void GfxTinyGL::drawTextObject(const TextObject *text) {
 	const TextObjectData *userData = (const TextObjectData *)text->getUserData();
 	if (userData) {
+		tglEnable(TGL_BLEND);
+		tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
 		int numLines = text->getNumLines();
 		for (int i = 0; i < numLines; ++i) {
 			Graphics::tglBlit(userData[i].image, userData[i].x, userData[i].y);
 		}
+		tglDisable(TGL_BLEND);
 	}
 }
 
