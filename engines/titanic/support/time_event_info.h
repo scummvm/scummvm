@@ -55,13 +55,11 @@ public:
 	CTreeItem *_target;
 	uint _actionVal;
 	CString _action;
-	uint _field2C;
-	uint _field30;
 	uint _timerCtr;
 	uint _lastTimerTicks;
 	uint _relativeTicks;
 	bool _done;
-	uint _field44;
+	bool _persisent;
 	CString _targetName;
 public:
 	CLASSDEF
@@ -96,7 +94,10 @@ public:
 
 	bool update(uint ticks);
 
-	void set44(uint val) { _field44 = val; }
+	/**
+	 * Flags whether the timer will be persisent across save & loads
+	 */
+	void setPersisent(bool val) { _persisent = val; }
 };
 
 class CTimeEventInfoList : public List<CTimeEventInfo> {
@@ -126,7 +127,10 @@ public:
 	 */
 	void stop(uint id);
 
-	void set44(uint id, uint val);
+	/**
+	 * Sets whether a timer with a given Id will be persisent across saves
+	 */
+	void setPersisent(uint id, bool flag);
 };
 
 } // End of namespace Titanic

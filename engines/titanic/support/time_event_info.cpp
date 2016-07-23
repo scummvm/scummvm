@@ -76,11 +76,11 @@ void CTimeEventInfoList::stop(uint id) {
 	}
 }
 
-void CTimeEventInfoList::set44(uint id, uint val) {
+void CTimeEventInfoList::setPersisent(uint id, bool flag) {
 	for (iterator i = begin(); i != end(); ++i) {
 		CTimeEventInfo *item = *i;
 		if (item->_id == id) {
-			item->set44(val);
+			item->setPersisent(flag);
 			return;
 		}
 	}
@@ -91,18 +91,17 @@ void CTimeEventInfoList::set44(uint id, uint val) {
 uint CTimeEventInfo::_nextId;
 
 CTimeEventInfo::CTimeEventInfo() : ListItem(), _lockCounter(0), 
-		_repeated(false), _firstDuration(0), _repeatDuration(0), _target(nullptr),
-		_actionVal(0), _field2C(0), _field30(0), _timerCtr(0),
-		_lastTimerTicks(0), _relativeTicks(0), _done(false), _field44(0) {
+		_repeated(false), _firstDuration(0), _repeatDuration(0),
+		_target(nullptr), _actionVal(0), _timerCtr(0), _done(false),
+		_lastTimerTicks(0), _relativeTicks(0), _persisent(true) {
 	_id = _nextId++;
 }
 
 CTimeEventInfo::CTimeEventInfo(uint ticks, bool repeated, uint firstDuration,
 		uint repeatDuration, CTreeItem *target, int endVal, const CString &action) :
 		ListItem(), _lockCounter(0), _repeated(repeated), _firstDuration(firstDuration),
-		_repeatDuration(repeatDuration), _target(target), _actionVal(endVal), _field2C(0), 
-		_field30(0), _timerCtr(0), _lastTimerTicks(ticks), _relativeTicks(0), _done(false),
-		_field44(true) {
+		_repeatDuration(repeatDuration), _target(target), _actionVal(endVal), _done(false),
+		_timerCtr(0), _lastTimerTicks(ticks), _relativeTicks(0), _persisent(true) {
 	_id = _nextId++;
 }
 
@@ -122,7 +121,7 @@ void CTimeEventInfo::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_timerCtr, indent);
 	file->writeNumberLine(_relativeTicks, indent);
 	file->writeNumberLine(_done, indent);
-	file->writeNumberLine(_field44, indent);
+	file->writeNumberLine(_persisent, indent);
 }
 
 void CTimeEventInfo::load(SimpleFile *file) {
@@ -140,13 +139,13 @@ void CTimeEventInfo::load(SimpleFile *file) {
 		_timerCtr = file->readNumber();
 		_relativeTicks = file->readNumber();
 		_done = file->readNumber() != 0;
-		_field44 = file->readNumber();
+		_persisent = file->readNumber() != 0;
 		_target = nullptr;
 	}
 }
 
 void CTimeEventInfo::postLoad(uint ticks, CProjectItem *project) {
-	if (!_field44 || _targetName.empty())
+	if (!_persisent || _targetName.empty())
 		_done = true;
 	
 	// Get the timer's target

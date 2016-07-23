@@ -621,7 +621,7 @@ void CPetControl::startPetTimer(uint timerIndex, uint firstDuration, uint durati
 	stopPetTimer(timerIndex);
 	_timers[timerIndex]._id = addTimer(timerIndex, firstDuration, duration);
 	_timers[timerIndex]._target = target;
-	setTimer44(_timers[timerIndex]._id, 0);
+	setTimerPersisent(_timers[timerIndex]._id, false);
 }
 
 void CPetControl::stopPetTimer(uint timerIndex) {
@@ -631,8 +631,8 @@ void CPetControl::stopPetTimer(uint timerIndex) {
 	}
 }
 
-void CPetControl::setTimer44(int id, int val) {
-	getGameManager()->setTimer44(id, val);
+void CPetControl::setTimerPersisent(int id, bool flag) {
+	getGameManager()->setTimerPersisent(id, flag);
 }
 
 CGameObject *CPetControl::findBot(const CString &name, CTreeItem *root) {

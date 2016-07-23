@@ -193,7 +193,12 @@ public:
 	 */
 	void stopTimer(uint id) { _timers.stop(id); }
 
-	void setTimer44(uint id, uint val) { _timers.set44(id, val); }
+	/**
+	 * Flags whether the timer will be persisent across save & loads
+	 */
+	void setTimerPersisent(uint id, bool flag) { 
+		_timers.setPersisent(id, flag);
+	}
 
 	/**
 	 * Return the true talk manager

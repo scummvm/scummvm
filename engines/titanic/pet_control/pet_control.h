@@ -103,7 +103,10 @@ private:
 	 */
 	CGameObject *findBot(const CString &name, CTreeItem *root);
 
-	void setTimer44(int id, int val);
+	/**
+	 * Flags whether the timer will be persisent across save & loads
+	 */
+	void setTimerPersisent(int id, bool flag);
 protected:
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
