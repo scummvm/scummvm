@@ -1841,7 +1841,7 @@ int16 GroupMan::f177_getMeleeTargetCreatureOrdinal(int16 groupX, int16 groupY, i
 	}
 }
 
-int16 GroupMan::f231_getMeleeActionDamage(Champion* champ, int16 champIndex, Group* group, int16 creatureIndex, int16 mapX, int16 mapXÛY, uint16 actionHitProbability, uint16 actionDamageFactor, int16 skillIndex) {
+int16 GroupMan::f231_getMeleeActionDamage(Champion* champ, int16 champIndex, Group* group, int16 creatureIndex, int16 mapX, int16 mapY, uint16 actionHitProbability, uint16 actionDamageFactor, int16 skillIndex) {
 	int16 L0565_i_Damage = 0;
 	int16 L0566_i_Damage = 0;
 	int16 L0567_i_DoubledMapDifficulty;
@@ -1903,7 +1903,7 @@ T0231009:
 		if (_vm->getRandomNumber(64) < _vm->_championMan->f303_getSkillLevel(champIndex, skillIndex)) {
 			L0565_i_Damage += L0565_i_Damage + 10;
 		}
-		L0569_i_Outcome = f190_groupGetDamageCreatureOutcome(group, creatureIndex, mapX, mapXÛY, L0565_i_Damage, true);
+		L0569_i_Outcome = f190_groupGetDamageCreatureOutcome(group, creatureIndex, mapX, mapY, L0565_i_Damage, true);
 		_vm->_championMan->f304_addSkillExperience(champIndex, skillIndex, (L0565_i_Damage * L0572_ps_CreatureInfo->M58_getExperience() >> 4) + 3);
 		_vm->_championMan->f325_decrementStamine(champIndex, _vm->getRandomNumber(4) + 4);
 		goto T0231016;
@@ -1915,7 +1915,7 @@ T0231015:
 T0231016:
 	_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
 	if (L0569_i_Outcome != k2_outcomeKilledAllCreaturesInGroup) {
-		f209_processEvents29to41(mapX, mapXÛY, kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent, 0);
+		f209_processEvents29to41(mapX, mapY, kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent, 0);
 	}
 	return L0565_i_Damage;
 }
