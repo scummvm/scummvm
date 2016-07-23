@@ -76,6 +76,8 @@ void CPetText::setLineColor(uint lineNum, byte r, byte g, byte b) {
 	buffer[4] = TEXTCMD_SET_COLOR;
 	buffer[5] = '\0';
 	_array[lineNum]._rgb = buffer;
+
+	_stringsMerged = false;
 }
 
 void CPetText::load(SimpleFile *file, int param) {
