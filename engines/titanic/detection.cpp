@@ -125,10 +125,10 @@ SaveStateList TitanicMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 
 			if (in) {
-				Titanic::CompressedFile file;
-				file.open(in);
+				Titanic::CompressedFile cf;
+				cf.open(in);
 				
-				if (Titanic::CProjectItem::readSavegameHeader(&file, header))
+				if (Titanic::CProjectItem::readSavegameHeader(&cf, header))
 					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
 
 				if (header._thumbnail) {
@@ -136,7 +136,7 @@ SaveStateList TitanicMetaEngine::listSaves(const char *target) const {
 					delete header._thumbnail;
 				}
 
-				file.close();
+				cf.close();
 			}
 		}
 	}

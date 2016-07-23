@@ -127,9 +127,7 @@ public:
 	/**
 	 * Compares the name of the item to a passed name
 	 */
-	virtual int compareTo(const CString &name, int maxLen) const { return false; }
-
-	virtual int proc23() const { return 0; }
+	virtual int compareTo(const CString &name, int maxLen = 0) const { return false; }
 
 	/**
 	 * Returns the clip list, if any, associated with the item

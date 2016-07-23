@@ -110,7 +110,7 @@ void CStarField::toggle4() {
 bool CStarField::set4(bool val) {
 	bool oldVal = _val4;
 	_val4 = val;
-	return val;
+	return oldVal;
 }
 
 int CStarField::get88() const {
