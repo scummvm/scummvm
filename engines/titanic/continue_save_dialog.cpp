@@ -25,6 +25,7 @@
 
 namespace Titanic {
 
+#define SAVEGAME_SLOTS_COUNT 5
 #define RESTORE_X 346
 #define RESTORE_Y 94
 #define START_X 370
@@ -36,6 +37,16 @@ CContinueSaveDialog::CContinueSaveDialog() {
 	_restoreState = _startState = -1;
 	_mouseDown = false;
 	_evilTwinShown = false;
+
+	for (int idx = 0; idx < SAVEGAME_SLOTS_COUNT; ++idx) {
+		Rect slotRect = getSlotBounds(idx);
+		_slotNames[idx].setFontNumber(0);
+		_slotNames[idx].setBounds(slotRect);
+		_slotNames[idx].resize(3);
+		_slotNames[idx].setMaxCharsPerLine(22);
+		_slotNames[idx].setHasBorder(false);
+		_slotNames[idx].setup();
+	}
 }
 
 CContinueSaveDialog::~CContinueSaveDialog() {
@@ -43,7 +54,13 @@ CContinueSaveDialog::~CContinueSaveDialog() {
 }
 
 void CContinueSaveDialog::addSavegame(int slot, const CString &name) {
+	assert(_saves.size() < SAVEGAME_SLOTS_COUNT);
+	_slotNames[_saves.size()].setText(name);
 	_saves.push_back(SaveEntry(slot, name));
+}
+
+Rect CContinueSaveDialog::getSlotBounds(int index) {
+	return Rect(360, 168 + index * 12, 556, 180 + index * 12);
 }
 
 int CContinueSaveDialog::show() {
@@ -82,6 +99,7 @@ void CContinueSaveDialog::render() {
 
 	_restoreState = _startState = -1;
 	renderButtons();
+	renderSlots();
 }
 
 void CContinueSaveDialog::renderButtons() {
@@ -136,6 +154,11 @@ void CContinueSaveDialog::renderButtons() {
 			break;
 		}
 	}
+}
+
+void CContinueSaveDialog::renderSlots() {
+	for (int idx = 0; idx < SAVEGAME_SLOTS_COUNT; ++idx)
+		_slotNames[idx].draw(CScreenManager::_screenManagerPtr);
 }
 
 void CContinueSaveDialog::mouseMove(const Point &mousePos) {

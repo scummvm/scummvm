@@ -28,6 +28,7 @@
 #include "titanic/support/image.h"
 #include "titanic/support/rect.h"
 #include "titanic/support/string.h"
+#include "titanic/pet_control/pet_text.h"
 
 namespace Titanic {
 
@@ -42,6 +43,7 @@ class CContinueSaveDialog : public CEventTarget {
 	};
 private:
 	Common::Array<SaveEntry> _saves;
+	CPetText _slotNames[5];
 	int _highlightedSlot, _selectedSlot;
 	Point _mousePos;
 	bool _evilTwinShown;
@@ -66,6 +68,16 @@ private:
 	 * Render the buttons
 	 */
 	void renderButtons();
+
+	/**
+	 * Render the slots
+	 */
+	void renderSlots();
+
+	/**
+	 * Get the area to draw a slot name in
+	 */
+	Rect getSlotBounds(int index);
 public:
 	CContinueSaveDialog();
 	virtual ~CContinueSaveDialog();
