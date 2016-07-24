@@ -120,6 +120,7 @@ bool MystGameState::load(int slot) {
 	_vm->changeToStack(kIntroStack, 5, 0, 0);
 
 	// Set our default cursor
+	_vm->_cursor->showCursor();
 	if (_globals.heldPage == 0 || _globals.heldPage > 13)
 		_vm->setMainCursor(kDefaultMystCursor);
 	else if (_globals.heldPage < 7)
