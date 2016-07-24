@@ -429,6 +429,9 @@ void gl_resizeImageNoInterpolate(unsigned char *dest, int xsize_dest, int ysize_
 
 void tglIssueDrawCall(Graphics::DrawCall *drawCall);
 
+// zdirtyrect.cpp
+void tglDisposeDrawCallLists(TinyGL::GLContext *c);
+
 GLContext *gl_get_context();
 
 // specular buffer "api"

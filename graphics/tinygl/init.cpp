@@ -28,6 +28,7 @@
 
 #include "graphics/tinygl/zgl.h"
 #include "graphics/tinygl/zblit.h"
+#include "graphics/tinygl/zdirtyrect.h"
 
 namespace TinyGL {
 
@@ -243,6 +244,7 @@ void glInit(void *zbuffer1, int textureSize) {
 void glClose() {
 	GLContext *c = gl_get_context();
 
+	tglDisposeDrawCallLists(c);
 	Graphics::Internal::tglCleanupImages();
 
 	specbuf_cleanup(c);

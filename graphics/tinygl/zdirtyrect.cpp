@@ -97,6 +97,18 @@ void tglDisposeResources(TinyGL::GLContext *c) {
 	Graphics::Internal::tglCleanupImages();
 }
 
+void tglDisposeDrawCallLists(TinyGL::GLContext *c) {
+	typedef Common::List<Graphics::DrawCall *>::const_iterator DrawCallIterator;
+	for (DrawCallIterator it = c->_previousFrameDrawCallsQueue.begin(); it != c->_previousFrameDrawCallsQueue.end(); ++it) {
+		delete *it;
+	}
+	c->_previousFrameDrawCallsQueue.clear();
+	for (DrawCallIterator it = c->_drawCallsQueue.begin(); it != c->_drawCallsQueue.end(); ++it) {
+		delete *it;
+	}
+	c->_drawCallsQueue.clear();
+}
+
 void tglPresentBufferDirtyRects(TinyGL::GLContext *c) {
 	typedef Common::List<Graphics::DrawCall *>::const_iterator DrawCallIterator;
 	typedef Common::List<TinyGL::DirtyRectangle>::iterator RectangleIterator;
