@@ -245,7 +245,7 @@ void glClose() {
 	GLContext *c = gl_get_context();
 
 	tglDisposeDrawCallLists(c);
-	Graphics::Internal::tglCleanupImages();
+	tglDisposeResources(c);
 
 	specbuf_cleanup(c);
 	for (int i = 0; i < 3; i++)

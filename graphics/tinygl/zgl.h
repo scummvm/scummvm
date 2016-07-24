@@ -430,6 +430,7 @@ void gl_resizeImageNoInterpolate(unsigned char *dest, int xsize_dest, int ysize_
 void tglIssueDrawCall(Graphics::DrawCall *drawCall);
 
 // zdirtyrect.cpp
+void tglDisposeResources(GLContext *c);
 void tglDisposeDrawCallLists(TinyGL::GLContext *c);
 
 GLContext *gl_get_context();
