@@ -233,7 +233,7 @@ public:
 	 * Restricts use of the system palette by VMD playback to
 	 * the given range of palette indexes.
 	 */
-	void restrictPalette(const uint8 startColor, const uint8 endColor);
+	void restrictPalette(const uint8 startColor, const int16 endColor);
 
 private:
 	/**

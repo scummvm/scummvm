@@ -348,6 +348,12 @@ void VMDPlayer::renderFrame() const {
 	if (dirtyPalette) {
 		Palette palette;
 		palette.timestamp = g_sci->getTickCount();
+		for (uint16 i = 0; i < _startColor; ++i) {
+			palette.colors[i].used = false;
+		}
+		for (uint16 i = _endColor; i < 256; ++i) {
+			palette.colors[i].used = false;
+		}
 		if (_blackPalette) {
 			for (uint16 i = _startColor; i <= _endColor; ++i) {
 				palette.colors[i].r = palette.colors[i].g = palette.colors[i].b = 0;
@@ -398,9 +404,12 @@ void VMDPlayer::fillPalette(Palette &palette) const {
 #pragma mark -
 #pragma mark VMDPlayer - Palette
 
-void VMDPlayer::restrictPalette(const uint8 startColor, const uint8 endColor) {
+void VMDPlayer::restrictPalette(const uint8 startColor, const int16 endColor) {
 	_startColor = startColor;
-	_endColor = endColor;
+	// At least GK2 sends 256 as the end color, which is wrong,
+	// but works in the original engine as the storage size is 4 bytes
+	// and used values are clamped to 0-255
+	_endColor = MIN((int16)255, endColor);
 }
 
 } // End of namespace Sci
