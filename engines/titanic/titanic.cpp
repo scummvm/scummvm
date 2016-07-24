@@ -41,6 +41,7 @@
 #include "titanic/moves/enter_exit_sec_class_mini_lift.h"
 #include "titanic/moves/exit_pellerator.h"
 #include "titanic/support/simple_file.h"
+#include "titanic/true_talk/tt_npc_script.h"
 
 namespace Titanic {
 
@@ -93,6 +94,7 @@ void TitanicEngine::initialize() {
 	CExitPellerator::init();
 	CEnterExitSecClassMiniLift::init();
 	CTelevision::init();
+	TTnpcScript::init();
 	OSVideoSurface::setup();
 
 	_debugger = new Debugger(this);
@@ -119,6 +121,7 @@ void TitanicEngine::deinitialize() {
 	CEnterExitSecClassMiniLift::deinit();
 	CGameObject::deinit();
 	CTelevision::deinit();
+	TTnpcScript::deinit();
 }
 
 Common::Error TitanicEngine::run() {

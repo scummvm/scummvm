@@ -31,6 +31,8 @@
 
 namespace Titanic {
 
+TTsentenceEntries *TTnpcScript::_defaultEntries;
+
 static const char *const ITEMS[] = {
 	"chicken", "napkin", "parrot", "moth", "fuse", "eye", "nose", "ear", "mouth",
 	"auditorycenter", "visioncenter", "olfactorycenter", "speechcenter", "stick",
@@ -211,11 +213,21 @@ TTnpcScriptBase::TTnpcScriptBase(int charId, const char *charClass, int v2,
 
 /*------------------------------------------------------------------------*/
 
+void TTnpcScript::init() {
+	_defaultEntries = new TTsentenceEntries();
+	_defaultEntries->load("Sentences/Default");
+}
+
+void TTnpcScript::deinit() {
+	delete _defaultEntries;
+	_defaultEntries = nullptr;
+}
+
 TTnpcScript::TTnpcScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTnpcScriptBase(charId, charClass, v2, charName, v3, val2, v4, v5, v6, v7),
 		_entryCount(0), _field68(0), _field6C(0), _rangeResetCtr(0),
-		_field74(0), _field78(0), _field7C(0), _itemStringP(nullptr), _field2CC(false) {
+		_currentDialNum(0), _dialDelta(0), _field7C(0), _itemStringP(nullptr), _field2CC(false) {
 	CTrueTalkManager::_v2 = 0;
 	Common::fill(&_dialValues[0], &_dialValues[DIALS_ARRAY_COUNT], 0);
 	Common::fill(&_array[0], &_array[136], 0);
@@ -274,11 +286,11 @@ void TTnpcScript::setupDials(int dial1, int dial2, int dial3) {
 	_dialValues[0] = dial1;
 	_dialValues[1] = dial2;
 	_dialValues[2] = dial3;
-	_field74 = getRandomNumber(3) - 1;
-	_field78 = getRandomNumber(5) + 6;
+	_currentDialNum = getRandomNumber(3) - 1;
+	_dialDelta = getRandomNumber(5) + 6;
 
 	if (_dialValues[0] > 70)
-		_field78 = -_field78;
+		_dialDelta = -_dialDelta;
 }
 
 void TTnpcScript::addResponse(int id) {
@@ -425,8 +437,8 @@ void TTnpcScript::save(SimpleFile *file) {
 
 	file->writeNumber(4);
 	file->writeNumber(_rangeResetCtr);
-	file->writeNumber(_field74);
-	file->writeNumber(_field78);
+	file->writeNumber(_currentDialNum);
+	file->writeNumber(_dialDelta);
 	file->writeNumber(_field7C);
 	
 	file->writeNumber(10);
@@ -439,8 +451,8 @@ void TTnpcScript::load(SimpleFile *file) {
 
 	int count = file->readNumber();
 	_rangeResetCtr = file->readNumber();
-	_field74 = file->readNumber();
-	_field78 = file->readNumber();
+	_currentDialNum = file->readNumber();
+	_dialDelta = file->readNumber();
 	_field7C = file->readNumber();
 
 	for (int idx = count; idx > 4; --idx)
@@ -890,6 +902,31 @@ bool TTnpcScript::addRandomResponse(bool flag) {
 	
 	addResponse(id);
 	applyResponse();
+	return true;
+}
+
+void TTnpcScript::updateCurrentDial(bool changeDial) {
+	int dialLevel = CLIP(getDialLevel(_currentDialNum) + _dialDelta, 0, 100);
+	setDial(_currentDialNum, dialLevel);
+
+	bool edgeFlag = false;
+	if (_dialDelta < 0) {
+		if (dialLevel < 10 || getRandomNumber(100) > 93)
+			edgeFlag = true;
+	} else {
+		if (dialLevel > 90 || getRandomNumber(100) > 93)
+			edgeFlag = true;
+	}
+
+	if (edgeFlag) {
+		if (changeDial)
+			_currentDialNum = getRandomNumber(3);
+
+		_dialDelta = getRandomNumber(12) + 3;
+		dialLevel = getDialLevel(_currentDialNum, false);
+		if (dialLevel > 50)
+			_dialDelta = -_dialDelta;
+	}
 }
 
 } // End of namespace Titanic

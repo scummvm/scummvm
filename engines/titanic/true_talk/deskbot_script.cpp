@@ -37,8 +37,8 @@ DeskbotScript::DeskbotScript(int val1, const char *charClass, int v2,
 
 	setupDials(0, 0, 0);
 	_array[0] = 100;
-	if (_field74 == 1)
-		_field74 = 0;
+	if (_currentDialNum == 1)
+		_currentDialNum = 0;
 
 	loadRanges("Ranges/Deskbot");
 	loadResponses("Responses/Deskbot", 4);

@@ -159,6 +159,8 @@ class TTnpcScript : public TTnpcScriptBase {
 private:
 	int translateByArray(int id);
 protected:
+	static TTsentenceEntries *_defaultEntries;
+protected:
 	Common::Array<TTnpcScriptResponse> _responses;
 	int _valuesPerResponse;
 	Common::Array<TTscriptRange> _ranges;
@@ -169,8 +171,8 @@ protected:
 	int _field68;
 	int _field6C;
 	int _rangeResetCtr;
-	int _field74;
-	int _field78;
+	int _currentDialNum;
+	int _dialDelta;
 	int _field7C;
 	const char *_itemStringP;
 	int _dialValues[DIALS_ARRAY_COUNT];
@@ -256,6 +258,14 @@ protected:
 	 * Adds a random conversation response
 	 */
 	bool addRandomResponse(bool flag);
+
+	/**
+	 * Updates the current dial with the given delta
+	 */
+	void updateCurrentDial(bool changeDial);
+public:
+	static void init();
+	static void deinit();
 public:
 	TTnpcScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4,

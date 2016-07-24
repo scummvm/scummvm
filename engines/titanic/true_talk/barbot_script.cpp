@@ -57,11 +57,12 @@ void BarbotScript::setupSentences() {
 		CTrueTalkManager::setFlags(idx, 0);
 	setupDials(100, 100, 100);
 
-	if (!_field74)
-		_field74 = 2;
+	if (!_currentDialNum)
+		_currentDialNum = 2;
 
 	_mappings.load("Mappings/Barbot", 8);
 	_entries.load("Sentences/Barbot");
+	_entries2.load("Sentences/Barbot2");
 }
 
 int BarbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {
@@ -619,10 +620,138 @@ done:
 		adjustDial(0, 2 + getRandomNumber(7));
 	}
 
-	// TODO: Remainder of method
+	updateCurrentDial(true);
+
+	if (sentence->contains("goldfish")) {
+		addResponse(250184);
+	} else if ((sentence->localWord("puree") || sentence->localWord("pureed"))
+		&& sentence->localWord("parrot")) {
+		addResponse(250021);
+	} else if (sentence->localWord("starling")) {
+		addResponse(250024);
+	} else {
+		if (getRandomNumber(100) > 95 && getDialRegion(2) == 0) {
+			addResponse(getDialogueId(250210));
+		}
+
+		if (processEntries(&_entries, _entryCount, roomScript, sentence) == 2)
+			return 2;
+		if (processEntries(_defaultEntries, 0, roomScript, sentence) != 2
+				&& !defaultProcess(roomScript, sentence)) {
+			int dval = 0;
+			flag = getRandomNumber(100) > 50;
+			int val;
+
+			switch (_field2C) {
+			case 2:
+				val = getValue(29);
+				if (val < 16)
+					val += 4;
+				if (val < 9) {
+					val = val / 2;
+					dval = 250081 + flag ? 0 : 267;
+				}
+				CTrueTalkManager::setFlags(29, val);
+				break;
+
+			case 3:
+				val = getValue(30);
+				if (val < 16)
+					val += 4;
+				if (val < 9) {
+					val = val / 2;
+					dval = 250081 + flag ? 0 : 243;
+				}
+				CTrueTalkManager::setFlags(30, val);
+				break;
+
+			case 4:
+				val = getValue(31);
+				if (val < 16)
+					val += 4;
+				if (val < 9) {
+					val = val / 2;
+					dval = 250081 + flag ? 0 : 256;
+				}
+				CTrueTalkManager::setFlags(31, val);
+				break;
+
+			case 5:
+				val = getValue(32);
+				if (val < 16)
+					val += 4;
+				if (val < 9) {
+					val = val / 2;
+					dval = 250081 + flag ? 0 : 251;
+				}
+				CTrueTalkManager::setFlags(32, val);
+				break;
+
+			case 6:
+				val = getValue(33);
+				if (val < 16)
+					val += 4;
+				if (val < 9) {
+					val = val / 2;
+					dval = 250081 + flag ? 0 : 273;
+				}
+				CTrueTalkManager::setFlags(33, val);
+				break;
+
+			case 7:
+				val = getValue(34);
+				if (val < 16)
+					val += 4;
+				if (val < 9) {
+					val = val / 2;
+					dval = 250081 + flag ? 0 : 236;
+				}
+				CTrueTalkManager::setFlags(34, val);
+				break;
 
 
-	// TODO
+			case 11:
+				addResponse(getDialogueId(250463));
+				applyResponse();
+				return 2;
+
+			case 12:
+				addResponse(getDialogueId(250455));
+				applyResponse();
+				return 2;
+
+			case 13:
+				addResponse(getDialogueId(250447));
+				applyResponse();
+				return 2;
+
+			case 19:
+				return applySentenceIds(getDialogueId(getDialRegion(0) ? 250062 : 250200));
+
+			default:
+				break;
+			}
+
+			if (dval) {
+				adjustDial(0, -9);
+				adjustDial(1, -2);
+
+				if (dval != 250081) {
+					selectResponse(250286);
+					selectResponse(250296);
+					selectResponse(250307);
+					applyResponse();
+					return 2;
+				}
+			} else if (processEntries(&_entries2, 0, roomScript, sentence) == 2) {
+				return 2;
+			}
+
+			addResponse(getDialogueId(250082 + getRandomNumber(100) <= 89 ? 128 : 0));
+		}
+	}
+
+	applyResponse();
 	return 2;
 }
 
