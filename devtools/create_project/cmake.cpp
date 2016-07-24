@@ -120,7 +120,7 @@ void CMakeProvider::writeEngines(const BuildSetup &setup, std::ofstream &workspa
 		}
 
 		std::string engineName;
-		std::transform(i->name.begin(), i->name.end(), back_inserter(engineName), toupper);
+		std::transform(i->name.begin(), i->name.end(), std::back_inserter(engineName), toupper);
 
 		workspace << " " << engineName;
 	}
@@ -135,7 +135,7 @@ void CMakeProvider::writeSubEngines(const BuildSetup &setup, std::ofstream &work
 		}
 
 		std::string engineName;
-		std::transform(i->name.begin(), i->name.end(), back_inserter(engineName), toupper);
+		std::transform(i->name.begin(), i->name.end(), std::back_inserter(engineName), toupper);
 
 		workspace << "set(SUB_ENGINES_" << engineName;
 		for (StringList::const_iterator j = i->subEngines.begin(), subEnd = i->subEngines.end(); j != subEnd; ++j) {
@@ -143,7 +143,7 @@ void CMakeProvider::writeSubEngines(const BuildSetup &setup, std::ofstream &work
 			if (!subEngine.enable) continue;
 
 			std::string subEngineName;
-			std::transform(j->begin(), j->end(), back_inserter(subEngineName), toupper);
+			std::transform(j->begin(), j->end(), std::back_inserter(subEngineName), toupper);
 
 			workspace << " " << subEngineName;
 		}
@@ -165,7 +165,7 @@ void CMakeProvider::createProjectFile(const std::string &name, const std::string
 		project << "add_executable(" << name << "\n";
 	} else {
 		std::string engineName;
-		std::transform(name.begin(), name.end(), back_inserter(engineName), toupper);
+		std::transform(name.begin(), name.end(), std::back_inserter(engineName), toupper);
 
 		project << "if (ENABLE_" << engineName << ")\n";
 		project << "add_library(" << name << "\n";
