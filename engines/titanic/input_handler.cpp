@@ -22,15 +22,17 @@
 
 #include "titanic/input_handler.h"
 #include "titanic/game_manager.h"
-#include "titanic/support/screen_manager.h"
 #include "titanic/titanic.h"
+#include "titanic/messages/mouse_messages.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/support/screen_manager.h"
 
 namespace Titanic {
 
 CInputHandler::CInputHandler(CGameManager *owner) :
 		_gameManager(owner), _inputTranslator(nullptr), _dragging(false),
-		_buttonDown(false), _dragItem(nullptr),  _lockCount(0), _field24(0) {
+		_buttonDown(false), _dragItem(nullptr),  _lockCount(0),
+		_singleton(false) {
 	CScreenManager::_screenManagerPtr->_inputHandler = this;
 }
 
@@ -44,7 +46,13 @@ void CInputHandler::incLockCount() {
 
 void CInputHandler::decLockCount() {
 	if (--_lockCount == 0 && _inputTranslator) {
-		warning("TODO");
+		if (_dragging && !_inputTranslator->isMousePressed()) {
+			CMouseButtonUpMsg upMsg(_mousePos, MK_LBUTTON);
+			handleMessage(upMsg);
+		}
+
+		_buttonDown = _inputTranslator->isMousePressed();
+		_singleton = true;
 	}
 }
 
@@ -60,11 +68,11 @@ void CInputHandler::handleMessage(CMessage &msg, bool respectLock) {
 
 void CInputHandler::processMessage(CMessage *msg) {
 	const CMouseMsg *mouseMsg = dynamic_cast<const CMouseMsg *>(msg);
-	_field24 = 0;
+	_singleton = false;
 	dispatchMessage(msg);
 
-	if (_field24) {
-		_field24 = 0;
+	if (_singleton) {
+		_singleton = false;
 	} else if (mouseMsg) {
 		// Keep the game state mouse position up to date
 		if (_mousePos != mouseMsg->_mousePos) {

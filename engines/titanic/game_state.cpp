@@ -28,8 +28,18 @@
 namespace Titanic {
 
 bool CGameStateMovieList::clear() {
-	// TODO
-	return false;
+	for (CGameStateMovieList::iterator i = begin(); i != end(); ) {
+		CMovieListItem *movieItem = *i;
+
+		if (movieItem->_item->isActive()) {
+			++i;
+		} else {
+			i = erase(i);
+			delete movieItem;
+		}
+	}
+
+	return !empty();
 }
 
 /*------------------------------------------------------------------------*/

@@ -78,7 +78,7 @@ void CCreditText::setup() {
 			if (srcLine.empty())
 				break;
 
-			CCreditLine *line = new CCreditLine(srcLine,
+			line = new CCreditLine(srcLine,
 				_screenManagerP->stringWidth(srcLine));
 			group->_lines.push_back(line);
 
@@ -107,9 +107,8 @@ CString CCreditText::readLine(Common::SeekableReadStream *stream) {
 	}
 
 	if (c == '\r') {
-		c = stream->readByte();
-		if (c != '\n')
-			stream->skip(-1);
+		// Read following '\n'
+		stream->readByte();
 	}
 
 	return line;

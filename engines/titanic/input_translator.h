@@ -52,6 +52,11 @@ public:
 	void rightButtonUp(int special, const Point &pt);
 	void rightButtonDoubleClick(int special, const Point &pt);
 	void keyDown(const Common::KeyState &keyState);
+
+	/**
+	 * Returns true if any mouse button is currently pressed
+	 */
+	bool isMousePressed() const;
 };
 
 } // End of namespace Titanic

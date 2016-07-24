@@ -24,6 +24,7 @@
 #include "titanic/input_translator.h"
 #include "titanic/events.h"
 #include "titanic/messages/mouse_messages.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -104,6 +105,10 @@ void CInputTranslator::keyDown(const Common::KeyState &keyState) {
 		CKeyCharMsg msg(keyState.ascii);
 		_inputHandler->handleMessage(msg);
 	}
+}
+
+bool CInputTranslator::isMousePressed() const {
+	return g_vm->_window->getSpecialButtons() & (MK_LBUTTON | MK_RBUTTON | MK_MBUTTON);
 }
 
 } // End of namespace Titanic

@@ -56,7 +56,7 @@ public:
 	Point _dragStartPos;
 	Point _mousePos;
 	int _lockCount;
-	int _field24;
+	bool _singleton;
 public:
 	CInputHandler(CGameManager *owner);
 
