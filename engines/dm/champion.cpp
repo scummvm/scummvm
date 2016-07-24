@@ -731,6 +731,7 @@ int16 ChampionMan::f321_addPendingDamageAndWounds_getDamage(int16 champIndex, in
 	if (!curChampion->_currHealth)
 		return 0;
 
+	bool skipScaling = false;
 	if (attackType != k0_attackType_NORMAL) {
 		uint16 defense = 0;
 		uint16 woundCount = 0;
@@ -752,12 +753,15 @@ int16 ChampionMan::f321_addPendingDamageAndWounds_getDamage(int16 champIndex, in
 				} else {
 					attack = _vm->f30_getScaledProduct(attack, 6, wisdomFactor);
 				}
+
+				skipScaling = true;
 			}
-			goto T0321024;
+			break;
 		case k5_attackType_MAGIC:
 			attack = f307_getStatisticAdjustedAttack(curChampion, k5_ChampionStatAntimagic, attack);
 			attack -= _g407_party._spellShieldDefense;
-			goto T0321024;
+			skipScaling = true;
+			break;
 		case k1_attackType_FIRE:
 			attack = f307_getStatisticAdjustedAttack(curChampion, k6_ChampionStatAntifire, attack);
 			attack -= _g407_party._fireShieldDefense;
@@ -769,10 +773,12 @@ int16 ChampionMan::f321_addPendingDamageAndWounds_getDamage(int16 champIndex, in
 			break;
 		}
 
-		if (attack <= 0)
-			return 0;
+		if (!skipScaling) {
+			if (attack <= 0)
+				return 0;
 
-		attack = _vm->f30_getScaledProduct(attack, 6, 130 - defense);
+			attack = _vm->f30_getScaledProduct(attack, 6, 130 - defense);
+		}
 		/* BUG0_44 
 			A champion may take much more damage than expected after a Black Flame attack or an impact
 			with a Fireball projectile. If the party has a fire shield defense value higher than the fire
@@ -781,7 +787,7 @@ int16 ChampionMan::f321_addPendingDamageAndWounds_getDamage(int16 champIndex, in
 			high positive attack value which may kill a champion. This can occur only for k1_attackType_FIRE
 			and if attack is negative before calling F0030_MAIN_GetScaledProduct
 		*/
-T0321024:
+
 		if (attack <= 0)
 			return 0;
 
