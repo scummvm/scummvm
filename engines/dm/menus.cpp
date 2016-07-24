@@ -1291,7 +1291,7 @@ T0407076:
 		_vm->_championMan->f330_disableAction(champIndex, L1249_ui_ActionDisabledTicks);
 	}
 	if (L1253_i_ActionStamina) {
-		_vm->_championMan->f325_decrementStamine(champIndex, L1253_i_ActionStamina);
+		_vm->_championMan->f325_decrementStamina(champIndex, L1253_i_ActionStamina);
 	}
 	if (L1255_i_ActionExperienceGain) {
 		_vm->_championMan->f304_addSkillExperience(champIndex, L1254_i_ActionSkillIndex, L1255_i_ActionExperienceGain);

@@ -192,7 +192,7 @@ bool ChampionMan::f328_isObjectThrown(uint16 champIndex, int16 slotIndex, int16 
 	}
 
 	_vm->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
-	f325_decrementStamine(champIndex, f305_getThrowingStaminaCost(curThing));
+	f325_decrementStamina(champIndex, f305_getThrowingStaminaCost(curThing));
 	f330_disableAction(champIndex, 4);
 	int16 experience = 8;
 	int16 weaponKineticEnergy = 1;
@@ -634,93 +634,93 @@ uint16 ChampionMan::f312_getStrength(int16 champIndex, int16 slotIndex) {
 }
 
 Thing ChampionMan::f300_getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex) {
-	Thing L0894_T_Thing;
-	int16 L0895_i_IconIndex;
-	Champion *L0896_ps_Champion;
-	Weapon *L0897_ps_Weapon;
-	bool L0898_B_IsInventoryChampion;
+	Champion *curChampion = &_gK71_champions[champIndex];
+	Thing curThing;
 
-
-	L0896_ps_Champion = &_gK71_champions[champIndex];
 	if (slotIndex >= k30_ChampionSlotChest_1) {
-		L0894_T_Thing = _vm->_inventoryMan->_g425_chestSlots[slotIndex - k30_ChampionSlotChest_1];
+		curThing = _vm->_inventoryMan->_g425_chestSlots[slotIndex - k30_ChampionSlotChest_1];
 		_vm->_inventoryMan->_g425_chestSlots[slotIndex - k30_ChampionSlotChest_1] = Thing::_none;
 	} else {
-		L0894_T_Thing = L0896_ps_Champion->_slots[slotIndex];
-		L0896_ps_Champion->_slots[slotIndex] = Thing::_none;
+		curThing = curChampion->_slots[slotIndex];
+		curChampion->_slots[slotIndex] = Thing::_none;
 	}
-	if (L0894_T_Thing == Thing::_none) {
+
+	if (curThing == Thing::_none)
 		return Thing::_none;
-	}
-	L0898_B_IsInventoryChampion = (_vm->M0_indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal);
-	L0895_i_IconIndex = _vm->_objectMan->f33_getIconIndex(L0894_T_Thing);
-	f299_applyModifiersToStatistics(L0896_ps_Champion, slotIndex, L0895_i_IconIndex, -1, L0894_T_Thing); /* Remove objet modifiers */
-	L0897_ps_Weapon = (Weapon *)_vm->_dungeonMan->f156_getThingData(L0894_T_Thing);
+
+	bool isInventoryChampion = (_vm->M0_indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal);
+	int16 curIconIndex = _vm->_objectMan->f33_getIconIndex(curThing);
+	// Remove object modifiers
+	f299_applyModifiersToStatistics(curChampion, slotIndex, curIconIndex, -1, curThing);
+
+	Weapon *curWeapon = (Weapon *)_vm->_dungeonMan->f156_getThingData(curThing);
 	if (slotIndex == k10_ChampionSlotNeck) {
-		if ((L0895_i_IconIndex >= k12_IconIndiceJunkIllumuletUnequipped) && (L0895_i_IconIndex <= k13_IconIndiceJunkIllumuletEquipped)) {
-			((Junk *)L0897_ps_Weapon)->setChargeCount(0);
+		if ((curIconIndex >= k12_IconIndiceJunkIllumuletUnequipped) && (curIconIndex <= k13_IconIndiceJunkIllumuletEquipped)) {
+			((Junk *)curWeapon)->setChargeCount(0);
 			_g407_party._magicalLightAmount -= g39_LightPowerToLightAmount[2];
 			_vm->_inventoryMan->f337_setDungeonViewPalette();
-		} else {
-			if ((L0895_i_IconIndex >= k10_IconIndiceJunkJewelSymalUnequipped) && (L0895_i_IconIndex <= k11_IconIndiceJunkJewelSymalEquipped)) {
-				((Junk *)L0897_ps_Weapon)->setChargeCount(0);
-			}
+		} else if ((curIconIndex >= k10_IconIndiceJunkJewelSymalUnequipped) && (curIconIndex <= k11_IconIndiceJunkJewelSymalEquipped)) {
+			((Junk *)curWeapon)->setChargeCount(0);
 		}
 	}
+
 	f291_drawSlot(champIndex, slotIndex);
-	if (L0898_B_IsInventoryChampion) {
-		setFlag(L0896_ps_Champion->_attributes, k0x4000_ChampionAttributeViewport);
-	}
+	if (isInventoryChampion)
+		setFlag(curChampion->_attributes, k0x4000_ChampionAttributeViewport);
+
 	if (slotIndex < k2_ChampionSlotHead) {
 		if (slotIndex == k1_ChampionSlotActionHand) {
-			setFlag(L0896_ps_Champion->_attributes, k0x8000_ChampionAttributeActionHand);
-			if (_g506_actingChampionOrdinal == _vm->M0_indexToOrdinal(champIndex)) {
+			setFlag(curChampion->_attributes, k0x8000_ChampionAttributeActionHand);
+			if (_g506_actingChampionOrdinal == _vm->M0_indexToOrdinal(champIndex))
 				_vm->_menuMan->f388_clearActingChampion();
-			}
-			if ((L0895_i_IconIndex >= k30_IconIndiceScrollOpen) && (L0895_i_IconIndex <= k31_IconIndiceScrollClosed)) {
-				((Scroll *)L0897_ps_Weapon)->setClosed(true);
+
+			if ((curIconIndex >= k30_IconIndiceScrollOpen) && (curIconIndex <= k31_IconIndiceScrollClosed)) {
+				((Scroll *)curWeapon)->setClosed(true);
 				f296_drawChangedObjectIcons();
 			}
 		}
-		if ((L0895_i_IconIndex >= k4_IconIndiceWeaponTorchUnlit) && (L0895_i_IconIndex <= k7_IconIndiceWeaponTorchLit)) {
-			L0897_ps_Weapon->setLit(false);
+
+		if ((curIconIndex >= k4_IconIndiceWeaponTorchUnlit) && (curIconIndex <= k7_IconIndiceWeaponTorchLit)) {
+			curWeapon->setLit(false);
 			_vm->_inventoryMan->f337_setDungeonViewPalette();
 			f296_drawChangedObjectIcons();
 		}
-		if (L0898_B_IsInventoryChampion && (slotIndex == k1_ChampionSlotActionHand)) {
-			if (L0895_i_IconIndex == k144_IconIndiceContainerChestClosed) {
+
+		if (isInventoryChampion && (slotIndex == k1_ChampionSlotActionHand)) {
+			switch (curIconIndex) {
+			case k144_IconIndiceContainerChestClosed:
 				_vm->_inventoryMan->f334_closeChest();
-				goto T0300011;
-			}
-			if ((L0895_i_IconIndex >= k30_IconIndiceScrollOpen) && (L0895_i_IconIndex <= k31_IconIndiceScrollClosed)) {
-T0300011:
-				setFlag(L0896_ps_Champion->_attributes, k0x0800_ChampionAttributePanel);
+			// No break on purpose
+			case k30_IconIndiceScrollOpen:
+			case k31_IconIndiceScrollClosed:
+				setFlag(curChampion->_attributes, k0x0800_ChampionAttributePanel);
+				break;
+			default:
+				break;
 			}
 		}
 	}
-	L0896_ps_Champion->_load -= _vm->_dungeonMan->f140_getObjectWeight(L0894_T_Thing);
-	setFlag(L0896_ps_Champion->_attributes, k0x0200_ChampionAttributeLoad);
-	return L0894_T_Thing;
+	curChampion->_load -= _vm->_dungeonMan->f140_getObjectWeight(curThing);
+	setFlag(curChampion->_attributes, k0x0200_ChampionAttributeLoad);
+	return curThing;
 }
 
-void ChampionMan::f325_decrementStamine(int16 championIndex, int16 decrement) {
-	int16 L0988_i_Stamina;
-	Champion* L0989_ps_Champion;
-
-
-	if (championIndex == kM1_ChampionNone) {
+void ChampionMan::f325_decrementStamina(int16 championIndex, int16 decrement) {
+	if (championIndex == kM1_ChampionNone)
 		return;
+
+	Champion *curChampion = &_gK71_champions[championIndex];
+	curChampion->_currStamina -= decrement;
+
+	int16 stamina = curChampion->_currStamina;
+	if (stamina <= 0) {
+		curChampion->_currStamina = 0;
+		f321_addPendingDamageAndWounds_getDamage(championIndex, (-stamina) >> 1, k0x0000_ChampionWoundNone, k0_attackType_NORMAL);
+	} else if (stamina > curChampion->_maxStamina) {
+		curChampion->_currStamina = curChampion->_maxStamina;
 	}
-	L0989_ps_Champion = &_gK71_champions[championIndex];
-	if ((L0988_i_Stamina = (L0989_ps_Champion->_currStamina -= decrement)) <= 0) {
-		L0989_ps_Champion->_currStamina = 0;
-		f321_addPendingDamageAndWounds_getDamage(championIndex, (-L0988_i_Stamina) >> 1, k0x0000_ChampionWoundNone, k0_attackType_NORMAL);
-	} else {
-		if (L0988_i_Stamina > L0989_ps_Champion->_maxStamina) {
-			L0989_ps_Champion->_currStamina = L0989_ps_Champion->_maxStamina;
-		}
-	}
-	setFlag(L0989_ps_Champion->_attributes, k0x0200_ChampionAttributeLoad | k0x0100_ChampionAttributeStatistics);
+
+	setFlag(curChampion->_attributes, k0x0200_ChampionAttributeLoad | k0x0100_ChampionAttributeStatistics);
 }
 
 int16 ChampionMan::f321_addPendingDamageAndWounds_getDamage(int16 champIndex, int16 attack, int16 allowedWounds, uint16 attackType) {
@@ -736,10 +736,9 @@ int16 ChampionMan::f321_addPendingDamageAndWounds_getDamage(int16 champIndex, in
 		return 0;
 
 	L0979_ps_Champion = &_gK71_champions[champIndex];
-	if (!L0979_ps_Champion->_currHealth) {
-T0321004:
+	if (!L0979_ps_Champion->_currHealth)
 		return 0;
-	}
+
 	if (attackType != k0_attackType_NORMAL) {
 		for (L0978_ui_WoundCount = 0, AL0976_i_WoundIndex = k0_ChampionSlotReadyHand, L0977_ui_Defense = 0; AL0976_i_WoundIndex <= k5_ChampionSlotFeet; AL0976_i_WoundIndex++) {
 			if (allowedWounds & (1 << AL0976_i_WoundIndex)) {
@@ -774,7 +773,8 @@ T0321004:
 			;
 		}
 		if (attack <= 0)
-			goto T0321004;
+			return 0;
+
 		attack = _vm->f30_getScaledProduct(attack, 6, 130 - L0977_ui_Defense);
 		/* BUG0_44 A champion may take much more damage than expected after a Black Flame attack or an impact
 	with a Fireball projectile. If the party has a fire shield defense value higher than the fire attack value then the resulting intermediary
@@ -782,7 +782,8 @@ T0321004:
 	high positive attack value which may kill a champion. This can occur only for k1_attackType_FIRE and if attack is negative before calling F0030_MAIN_GetScaledProduct */
 T0321024:
 		if (attack <= 0)
-			goto T0321004;
+			return 0;
+
 		if (attack > (AL0976_i_AdjustedAttack = f307_getStatisticAdjustedAttack(L0979_ps_Champion, k4_ChampionStatVitality, _vm->_rnd->getRandomNumber(127) + 10))) { /* BUG0_45 This bug is not perceptible because of BUG0_41 that ignores Vitality while determining the probability of being wounded. However if it was fixed, the behavior would be the opposite of what it should: the higher the vitality of a champion, the lower the result of F0307_CHAMPION_GetStatisticAdjustedAttack and the more likely the champion could get wounded (because of more iterations in the loop below) */
 			do {
 				setFlag(*(uint16 *)&_g410_championPendingWounds[champIndex], (1 << _vm->_rnd->getRandomNumber(7)) & allowedWounds);
@@ -1592,7 +1593,7 @@ void ChampionMan::f331_applyTimeEffects() {
 					AL1007_ui_ManaGain = AL1007_ui_ManaGain << 1;
 				}
 				AL1007_ui_ManaGain++;
-				f325_decrementStamine(AL1006_ui_ChampionIndex, AL1007_ui_ManaGain * MAX(7, 16 - AL1008_ui_WizardSkillLevel));
+				f325_decrementStamina(AL1006_ui_ChampionIndex, AL1007_ui_ManaGain * MAX(7, 16 - AL1008_ui_WizardSkillLevel));
 				L1010_ps_Champion->_currMana += MIN(AL1007_ui_ManaGain, (uint16)(L1010_ps_Champion->_maxMana - L1010_ps_Champion->_currMana));
 			} else {
 				if (L1010_ps_Champion->_currMana > L1010_ps_Champion->_maxMana) {
@@ -1645,7 +1646,7 @@ void ChampionMan::f331_applyTimeEffects() {
 					L1010_ps_Champion->_water -= AL1008_ui_StaminaAboveHalf ? 1 : AL1007_ui_StaminaGainCycleCount >> 2;
 				}
 			} while (--AL1007_ui_StaminaGainCycleCount && ((L1010_ps_Champion->_currStamina - AL1009_i_StaminaLoss) < L1010_ps_Champion->_maxStamina));
-			f325_decrementStamine(AL1006_ui_ChampionIndex, AL1009_i_StaminaLoss);
+			f325_decrementStamina(AL1006_ui_ChampionIndex, AL1009_i_StaminaLoss);
 			if (L1010_ps_Champion->_food < -1024) {
 				L1010_ps_Champion->_food = -1024;
 			}

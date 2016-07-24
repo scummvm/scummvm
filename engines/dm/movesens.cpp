@@ -347,7 +347,7 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 							if (_g402_useRopeToClimbDownPit) {
 								for (AL0709_i_ChampionIndex = k0_ChampionFirst, L0711_ps_Champion = _vm->_championMan->_gK71_champions; AL0709_i_ChampionIndex < _vm->_championMan->_g305_partyChampionCount; AL0709_i_ChampionIndex++, L0711_ps_Champion++) {
 									if (L0711_ps_Champion->_currHealth) {
-										_vm->_championMan->f325_decrementStamine(AL0709_i_ChampionIndex, ((L0711_ps_Champion->_load * 25) / _vm->_championMan->f309_getMaximumLoad(L0711_ps_Champion)) + 1);
+										_vm->_championMan->f325_decrementStamina(AL0709_i_ChampionIndex, ((L0711_ps_Champion->_load * 25) / _vm->_championMan->f309_getMaximumLoad(L0711_ps_Champion)) + 1);
 									}
 								}
 							} else {

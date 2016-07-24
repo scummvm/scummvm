@@ -850,7 +850,7 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 	_vm->_g321_stopWaitingForPlayerInput = true;
 	L1119_ps_Champion = _vm->_championMan->_gK71_champions;
 	for (AL1118_ui_ChampionIndex = k0_ChampionFirst; AL1118_ui_ChampionIndex < _vm->_championMan->_g305_partyChampionCount; AL1118_ui_ChampionIndex++) {
-		_vm->_championMan->f325_decrementStamine(AL1118_ui_ChampionIndex, ((L1119_ps_Champion->_load * 3) / _vm->_championMan->f309_getMaximumLoad(L1119_ps_Champion)) + 1); /* BUG0_50 When a champion is brought back to life at a Vi Altar, his current stamina is lower than what it was before dying. Each time the party moves the current stamina of all champions is decreased, including for dead champions, by an amount that depends on the current load of the champion. For a dead champion the load before he died is used */
+		_vm->_championMan->f325_decrementStamina(AL1118_ui_ChampionIndex, ((L1119_ps_Champion->_load * 3) / _vm->_championMan->f309_getMaximumLoad(L1119_ps_Champion)) + 1); /* BUG0_50 When a champion is brought back to life at a Vi Altar, his current stamina is lower than what it was before dying. Each time the party moves the current stamina of all champions is decreased, including for dead champions, by an amount that depends on the current load of the champion. For a dead champion the load before he died is used */
 		L1119_ps_Champion++;
 	}
 	AL1118_ui_MovementArrowIndex = cmdType - k3_CommandMoveForward;

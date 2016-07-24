@@ -1907,13 +1907,13 @@ T0231009:
 		}
 		L0569_i_Outcome = f190_groupGetDamageCreatureOutcome(group, creatureIndex, mapX, mapY, L0565_i_Damage, true);
 		_vm->_championMan->f304_addSkillExperience(champIndex, skillIndex, (L0565_i_Damage * L0572_ps_CreatureInfo->M58_getExperience() >> 4) + 3);
-		_vm->_championMan->f325_decrementStamine(champIndex, _vm->getRandomNumber(4) + 4);
+		_vm->_championMan->f325_decrementStamina(champIndex, _vm->getRandomNumber(4) + 4);
 		goto T0231016;
 	}
 T0231015:
 	L0565_i_Damage = 0;
 	L0569_i_Outcome = k0_outcomeKilledNoCreaturesInGroup;
-	_vm->_championMan->f325_decrementStamine(champIndex, _vm->getRandomNumber(2) + 2);
+	_vm->_championMan->f325_decrementStamina(champIndex, _vm->getRandomNumber(2) + 2);
 T0231016:
 	_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
 	if (L0569_i_Outcome != k2_outcomeKilledAllCreaturesInGroup) {

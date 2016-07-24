@@ -552,7 +552,7 @@ public:
 	Thing f298_getObjectRemovedFromLeaderHand(); // @ F0298_CHAMPION_GetObjectRemovedFromLeaderHand
 	uint16 f312_getStrength(int16 champIndex, int16 slotIndex); // @ F0312_CHAMPION_GetStrength 
 	Thing f300_getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex); // @ F0300_CHAMPION_GetObjectRemovedFromSlot
-	void f325_decrementStamine(int16 championIndex, int16 decrement); // @ F0325_CHAMPION_DecrementStamina
+	void f325_decrementStamina(int16 championIndex, int16 decrement); // @ F0325_CHAMPION_DecrementStamina
 	int16 f321_addPendingDamageAndWounds_getDamage(int16 champIndex, int16 attack, int16 allowedWounds,
 												   uint16 attackType); // @ F0321_CHAMPION_AddPendingDamageAndWounds_GetDamage
 	int16 f313_getWoundDefense(int16 champIndex, uint16 woundIndex); // @ F0313_CHAMPION_GetWoundDefense
