@@ -52,7 +52,7 @@
  */
 
 #define VERSION_NUMBER 1
-#define HEADER_SIZE 0x680
+#define HEADER_SIZE 0x700
 
 Common::File inputFile, outputFile;
 Common::PEResources res;
@@ -535,7 +535,9 @@ void writeData() {
 	writeStringArray("TEXT/REPLACEMENTS3", 0x21D9C8, 82);
 	writeStringArray("TEXT/PRONOUNS", 0x22F718, 15);
 
+	writeSentenceEntries("Sentences/Default", 0x5C0130);
 	writeSentenceEntries("Sentences/Barbot", 0x5ABE60);
+	writeSentenceEntries("Sentences/Barbot2", 0x5BD4E8);
 	writeSentenceEntries("Sentences/Bellbot", 0x5C2230);
 	writeSentenceEntries("Sentences/Deskbot", 0x5DCD10);
 	writeSentenceEntries("Sentences/Doorbot", 0x5EC110);
