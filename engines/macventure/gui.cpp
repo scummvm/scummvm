@@ -232,7 +232,7 @@ void Gui::initWindows() {
 	_outConsoleWindow->setActive(false);
 	_outConsoleWindow->setCallback(outConsoleWindowCallback, this);
 	loadBorder(_outConsoleWindow, "border_left_scroll_inac.bmp", false, findWindowData(kOutConsoleWindow).type);
-	loadBorder(_outConsoleWindow, "border_left_scroll_inac.bmp", true, findWindowData(kOutConsoleWindow).type);
+	loadBorder(_outConsoleWindow, "border_left_scroll_act.bmp", true, findWindowData(kOutConsoleWindow).type);
 
 	// Self Window
 	_selfWindow = _wm.addWindow(false, true, false);
@@ -337,7 +337,7 @@ WindowReference Gui::createInventoryWindow(ObjID objRef) {
 	newWindow->setCallback(inventoryWindowCallback, this);
 	newWindow->setCloseable(true);
 	loadBorder(newWindow, "border_both_scroll_inac.bmp", false, newData.type);
-	loadBorder(newWindow, "border_both_scroll_inac.bmp", true, newData.type);
+	loadBorder(newWindow, "border_both_scroll_act.bmp", true, newData.type);
 	_inventoryWindows.push_back(newWindow);
 
 	debug("Create new inventory window. Reference: %d", newData.refcon);
@@ -539,7 +539,7 @@ void Gui::drawCommandsWindow() {
 		Graphics::ManagedSurface *srf = _controlsWindow->getSurface();
 		WindowData data = getWindowData(kCommandsWindow);
 		uint16 border = borderBounds(data.type).topOffset;
-		srf->fillRect(Common::Rect(border * 2, border * 2, srf->w - (border * 3), srf->h - (border * 3)), kColorWhite);
+		srf->fillRect(Common::Rect(0, 0, srf->w, srf->h), kColorWhite);
 		getCurrentFont().drawString(
 			srf,
 			_engine->getCommandsPausedString(),

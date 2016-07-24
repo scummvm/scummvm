@@ -31,22 +31,22 @@ BorderBounds borderBounds(MVWindowType type) {
 	case MacVenture::kDBox:
 		break;
 	case MacVenture::kPlainDBox:
-		return BorderBounds(6, 6, 6, 6);
+		return BorderBounds(1, 1, 1, 2);
 	case MacVenture::kAltBox:
-		return BorderBounds(4, 4, 4, 4); // Hand-tested
+		return BorderBounds(0, 0, 0, 0); // Hand-tested
 		break;
 	case MacVenture::kNoGrowDoc:
 		return BorderBounds(1, 17, 1, 1);
 	case MacVenture::kMovableDBox:
 		break;
 	case MacVenture::kZoomDoc:
-		return BorderBounds(1, 19, 16, 16);
+		return BorderBounds(1, 19, 17, 17);
 	case MacVenture::kZoomNoGrow:
 		break;
 	case MacVenture::kRDoc16:
 		break;
 	case MacVenture::kRDoc4:
-		return BorderBounds(0, 19, 1, 1);
+		return BorderBounds(1, 19, 1, 1);
 	case MacVenture::kRDoc6:
 		break;
 	case MacVenture::kRDoc10:
