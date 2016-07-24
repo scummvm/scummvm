@@ -87,7 +87,7 @@ void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, boo
 	if (_fullscreen)
 		sdlflags |= SDL_FULLSCREEN;
 
-	_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, 16, sdlflags);
+	_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, 0, sdlflags);
 	if (!_screen) {
 		warning("Error: %s", SDL_GetError());
 		g_system->quit();
@@ -416,13 +416,13 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 		return nullptr;
 	}
 
-	_screenTexture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, width, height);
+	_screenTexture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, width, height);
 	if (!_screenTexture) {
 		deinitializeRenderer();
 		return nullptr;
 	}
 
-	SDL_Surface *screen = SDL_CreateRGBSurface(0, width, height, 16, 0xF800, 0x7E0, 0x1F, 0);
+	SDL_Surface *screen = SDL_CreateRGBSurface(0, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 	if (!screen) {
 		deinitializeRenderer();
 		return nullptr;
