@@ -123,11 +123,12 @@ void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {
 		tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	for (int x = rect.left; x < rect.right; x++) {
-		for (int y = rect.top; y < rect.bottom; y++) {
-			_fb->writePixel(y * kOriginalWidth + x, a, r, g, b);
-		}
-	}
+	tglBegin(TGL_TRIANGLE_STRIP);
+		tglVertex3f(rect.left, rect.bottom, 0.0f);
+		tglVertex3f(rect.right, rect.bottom, 0.0f);
+		tglVertex3f(rect.left, rect.top, 0.0f);
+		tglVertex3f(rect.right, rect.top, 0.0f);
+	tglEnd();
 
 	tglDisable(TGL_BLEND);
 }
