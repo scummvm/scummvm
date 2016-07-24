@@ -20,39 +20,18 @@
  *
  */
 
-/*
- * This file is based on WME Lite.
- * http://dead-code.org/redir.php?target=wmelite
- * Copyright (c) 2011 Jan Nedoma
- */
-
-#ifndef WINTERMUTE_BASE_VIEWPORT_H
-#define WINTERMUTE_BASE_VIEWPORT_H
-
-
-#include "engines/wintermute/base/base.h"
-#include "engines/wintermute/math/rect32.h"
-#include "engines/wintermute/persistent.h"
+#ifndef SOURCE_LISTING_H_
+#define SOURCE_LISTING_H_
+#include "engines/wintermute/debugger/listing.h"
 
 namespace Wintermute {
-class BaseObject;
-class BaseViewport : public BaseClass {
+class SourceListing : public Listing {
+	const Common::Array<Common::String> _strings;
 public:
-	int getHeight() const;
-	int getWidth() const;
-	Rect32 *getRect();
-	bool setRect(int32 left, int32 top, int32 right, int32 bottom, bool noCheck = false);
-	DECLARE_PERSISTENT(BaseViewport, BaseClass)
-	int32 _offsetY;
-	int32 _offsetX;
-	BaseObject *_mainObject;
-	BaseViewport(BaseGame *inGame = nullptr);
-	virtual ~BaseViewport();
-	virtual Common::String debuggerToString() const override;
-private:
-	Rect32 _rect;
+	SourceListing(const Common::Array<Common::String> &strings);
+	virtual ~SourceListing();
+	virtual uint getLength() const;
+	virtual Common::String getLine(uint n);
 };
-
-} // End of namespace Wintermute
-
-#endif
+}
+#endif /* DUMMY_LISTING_H_ */

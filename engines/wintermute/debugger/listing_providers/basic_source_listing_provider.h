@@ -20,39 +20,25 @@
  *
  */
 
-/*
- * This file is based on WME Lite.
- * http://dead-code.org/redir.php?target=wmelite
- * Copyright (c) 2011 Jan Nedoma
- */
+#ifndef BASIC_SOURCE_LISTING_PROVIDER_H_
+#define BASIC_SOURCE_LISTING_PROVIDER_H_
 
-#ifndef WINTERMUTE_BASE_VIEWPORT_H
-#define WINTERMUTE_BASE_VIEWPORT_H
-
-
-#include "engines/wintermute/base/base.h"
-#include "engines/wintermute/math/rect32.h"
-#include "engines/wintermute/persistent.h"
+#include "engines/wintermute/debugger/listing_provider.h"
+#include "source_listing_provider.h"
+#include "source_listing.h"
+#include "common/fs.h"
 
 namespace Wintermute {
-class BaseObject;
-class BaseViewport : public BaseClass {
+
+class BasicSourceListingProvider : public SourceListingProvider {
+	Common::FSDirectory *_fsDirectory;
 public:
-	int getHeight() const;
-	int getWidth() const;
-	Rect32 *getRect();
-	bool setRect(int32 left, int32 top, int32 right, int32 bottom, bool noCheck = false);
-	DECLARE_PERSISTENT(BaseViewport, BaseClass)
-	int32 _offsetY;
-	int32 _offsetX;
-	BaseObject *_mainObject;
-	BaseViewport(BaseGame *inGame = nullptr);
-	virtual ~BaseViewport();
-	virtual Common::String debuggerToString() const override;
-private:
-	Rect32 _rect;
+	BasicSourceListingProvider();
+	virtual ~BasicSourceListingProvider();
+	SourceListing *getListing(const Common::String &filename, ErrorCode &err);
+	ErrorCode setPath(const Common::String &path);
+	Common::String getPath() const;
 };
 
-} // End of namespace Wintermute
-
-#endif
+}
+#endif /* BASIC_SOURCE_LISTING_PROVIDER_H_ */

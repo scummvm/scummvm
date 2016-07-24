@@ -42,7 +42,7 @@ IMPLEMENT_PERSISTENT(BaseScriptHolder, false)
 //////////////////////////////////////////////////////////////////////
 BaseScriptHolder::BaseScriptHolder(BaseGame *inGame) : BaseScriptable(inGame) {
 	setName("<unnamed>");
-
+	_ready = false;
 	_freezable = true;
 	_filename = nullptr;
 }
@@ -312,7 +312,11 @@ bool BaseScriptHolder::addScript(const char *filename) {
 	if (!scr) {
 		if (_gameRef->_editorForceScripts) {
 			// editor hack
+#if EXTENDED_DEBUGGER_ENABLED
+			scr = new DebuggableScript(_gameRef,  _gameRef->_scEngine);
+#else
 			scr = new ScScript(_gameRef,  _gameRef->_scEngine);
+#endif
 			scr->_filename = new char[strlen(filename) + 1];
 			strcpy(scr->_filename, filename);
 			scr->_state = SCRIPT_ERROR;
@@ -462,8 +466,15 @@ void BaseScriptHolder::makeFreezable(bool freezable) {
 ScScript *BaseScriptHolder::invokeMethodThread(const char *methodName) {
 	for (int i = _scripts.size() - 1; i >= 0; i--) {
 		if (_scripts[i]->canHandleMethod(methodName)) {
-
+#if EXTENDED_DEBUGGER_ENABLED == true
+			DebuggableScEngine* debuggableEngine;
+			debuggableEngine = dynamic_cast<DebuggableScEngine*>(_scripts[i]->_engine);
+			// TODO: Not pretty
+			assert(debuggableEngine);
+			ScScript *thread = new DebuggableScript(_gameRef,  debuggableEngine);
+#else
 			ScScript *thread = new ScScript(_gameRef,  _scripts[i]->_engine);
+#endif
 			if (thread) {
 				bool ret = thread->createMethodThread(_scripts[i], methodName);
 				if (DID_SUCCEED(ret)) {

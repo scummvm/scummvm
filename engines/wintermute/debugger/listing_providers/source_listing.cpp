@@ -20,39 +20,38 @@
  *
  */
 
-/*
- * This file is based on WME Lite.
- * http://dead-code.org/redir.php?target=wmelite
- * Copyright (c) 2011 Jan Nedoma
- */
-
-#ifndef WINTERMUTE_BASE_VIEWPORT_H
-#define WINTERMUTE_BASE_VIEWPORT_H
-
-
-#include "engines/wintermute/base/base.h"
-#include "engines/wintermute/math/rect32.h"
-#include "engines/wintermute/persistent.h"
+#include "source_listing.h"
 
 namespace Wintermute {
-class BaseObject;
-class BaseViewport : public BaseClass {
-public:
-	int getHeight() const;
-	int getWidth() const;
-	Rect32 *getRect();
-	bool setRect(int32 left, int32 top, int32 right, int32 bottom, bool noCheck = false);
-	DECLARE_PERSISTENT(BaseViewport, BaseClass)
-	int32 _offsetY;
-	int32 _offsetX;
-	BaseObject *_mainObject;
-	BaseViewport(BaseGame *inGame = nullptr);
-	virtual ~BaseViewport();
-	virtual Common::String debuggerToString() const override;
-private:
-	Rect32 _rect;
-};
+
+SourceListing::SourceListing(const Common::Array<Common::String> &strings) : _strings(strings) {}
+
+SourceListing::~SourceListing() {}
+
+uint SourceListing::getLength() const {
+	return _strings.size();
+}
+
+Common::String SourceListing::getLine(uint n) {
+	uint index = n - 1; // Line numbers start from 1, arrays from 0
+	/*
+	 * Clients should not ask for a line number that
+	 * is not in the source file.
+	 * 0 is undefined, n - 1 is undefined.
+	 * It is easy for the client to check that n > 0
+	 * and n < getLength(), so it should just not happen.
+	 * We return '^', after vim, to misbehaving clients.
+	 */
+	if (n == 0) {
+		return Common::String("^");
+	}
+	if (index < getLength()) {
+		return _strings[index];
+	} else {
+		return Common::String("^");
+	}
+}
 
 } // End of namespace Wintermute
 
-#endif
+

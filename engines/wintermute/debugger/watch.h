@@ -20,39 +20,32 @@
  *
  */
 
-/*
- * This file is based on WME Lite.
- * http://dead-code.org/redir.php?target=wmelite
- * Copyright (c) 2011 Jan Nedoma
- */
+#ifndef WATCH_H_
+#define WATCH_H_
 
-#ifndef WINTERMUTE_BASE_VIEWPORT_H
-#define WINTERMUTE_BASE_VIEWPORT_H
-
-
-#include "engines/wintermute/base/base.h"
-#include "engines/wintermute/math/rect32.h"
-#include "engines/wintermute/persistent.h"
+#include "common/str.h"
 
 namespace Wintermute {
-class BaseObject;
-class BaseViewport : public BaseClass {
+
+class ScValue;
+class ScScript;
+class WatchInstance;
+class ScriptMonitor;
+
+class Watch {
+	const Common::String _filename;
+	const Common::String _symbol;
+	int _enabled;
+	ScriptMonitor *_monitor;
 public:
-	int getHeight() const;
-	int getWidth() const;
-	Rect32 *getRect();
-	bool setRect(int32 left, int32 top, int32 right, int32 bottom, bool noCheck = false);
-	DECLARE_PERSISTENT(BaseViewport, BaseClass)
-	int32 _offsetY;
-	int32 _offsetX;
-	BaseObject *_mainObject;
-	BaseViewport(BaseGame *inGame = nullptr);
-	virtual ~BaseViewport();
-	virtual Common::String debuggerToString() const override;
-private:
-	Rect32 _rect;
+	Watch(const Common::String &filename, const Common::String &symbol, ScriptMonitor*);
+	Common::String getFilename() const;
+	Common::String getSymbol() const;
+	bool isEnabled() const;
+	void enable();
+	void disable();
+	void trigger(WatchInstance*);
+	virtual ~Watch();
 };
-
-} // End of namespace Wintermute
-
-#endif
+}
+#endif /* WATCH_H_ */

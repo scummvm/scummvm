@@ -1134,4 +1134,7 @@ bool AdEntity::setSprite(const char *filename) {
 	}
 }
 
+Common::String AdEntity::debuggerToString() const {
+	return Common::String::format("%p: Entity \"%s\"; (X,Y): (%d, %d), rotate(%d): %f deg, scale(%d): (%f, %f)%%", (const void *)this, getName(), _posX, _posY, _rotatable, _rotate, _zoomable, _scaleX, _scaleY);
+}
 } // End of namespace Wintermute

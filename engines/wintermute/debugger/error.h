@@ -20,39 +20,54 @@
  *
  */
 
-/*
- * This file is based on WME Lite.
- * http://dead-code.org/redir.php?target=wmelite
- * Copyright (c) 2011 Jan Nedoma
- */
+#ifndef ERROR_H_
+#define ERROR_H_
 
-#ifndef WINTERMUTE_BASE_VIEWPORT_H
-#define WINTERMUTE_BASE_VIEWPORT_H
-
-
-#include "engines/wintermute/base/base.h"
-#include "engines/wintermute/math/rect32.h"
-#include "engines/wintermute/persistent.h"
+#include "common/str.h"
 
 namespace Wintermute {
-class BaseObject;
-class BaseViewport : public BaseClass {
+
+enum ErrorLevel {
+    SUCCESS,
+    NOTICE,
+    WARNING,
+    ERROR
+};
+
+enum ErrorCode {
+    OK,
+    NO_SUCH_SOURCE,
+    COULD_NOT_OPEN,
+    NO_SUCH_LINE,
+    NOT_ALLOWED,
+    NO_SUCH_BYTECODE,
+    DUPLICATE_BREAKPOINT,
+    NO_SUCH_BREAKPOINT,
+    WRONG_TYPE,
+    PARSE_ERROR,
+    NOT_YET_IMPLEMENTED,
+    SOURCE_PATH_NOT_SET,
+    ILLEGAL_PATH,
+    UNKNOWN_ERROR
+};
+
+
+class Error {
+	const ErrorLevel _errorLevel;
+	const ErrorCode _errorCode;
+	const int _errorExtraInt;
+	const Common::String _errorExtraString;
 public:
-	int getHeight() const;
-	int getWidth() const;
-	Rect32 *getRect();
-	bool setRect(int32 left, int32 top, int32 right, int32 bottom, bool noCheck = false);
-	DECLARE_PERSISTENT(BaseViewport, BaseClass)
-	int32 _offsetY;
-	int32 _offsetX;
-	BaseObject *_mainObject;
-	BaseViewport(BaseGame *inGame = nullptr);
-	virtual ~BaseViewport();
-	virtual Common::String debuggerToString() const override;
-private:
-	Rect32 _rect;
+	Error(ErrorLevel, ErrorCode);
+	Error(ErrorLevel, ErrorCode, int errorExtraInt);
+	Error(ErrorLevel, ErrorCode, Common::String errorExtraString);
+	Error(ErrorLevel, ErrorCode, Common::String errorExtraString, int errorExtraInt);
+	ErrorLevel getErrorLevel() const;
+	ErrorCode getErrorCode() const;
+	Common::String getErrorLevelStr() const;
+	Common::String getErrorDisplayStr() const;
 };
 
 } // End of namespace Wintermute
 
-#endif
+#endif /* ERROR_H_ */

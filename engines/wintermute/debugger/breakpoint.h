@@ -20,39 +20,39 @@
  *
  */
 
-/*
- * This file is based on WME Lite.
- * http://dead-code.org/redir.php?target=wmelite
- * Copyright (c) 2011 Jan Nedoma
- */
-
-#ifndef WINTERMUTE_BASE_VIEWPORT_H
-#define WINTERMUTE_BASE_VIEWPORT_H
-
-
-#include "engines/wintermute/base/base.h"
-#include "engines/wintermute/math/rect32.h"
-#include "engines/wintermute/persistent.h"
+#ifndef BREAKPOINT_H_
+#define BREAKPOINT_H_
+#include "common/str.h"
 
 namespace Wintermute {
-class BaseObject;
-class BaseViewport : public BaseClass {
+
+class ScriptMonitor;
+class DebuggableScript;
+
+class Breakpoint {
+	const Common::String _filename;
+	const uint _line;
+	uint _hits;
+	bool _enabled;
+	ScriptMonitor *_monitor;
+	void hit(DebuggableScript *script);
 public:
-	int getHeight() const;
-	int getWidth() const;
-	Rect32 *getRect();
-	bool setRect(int32 left, int32 top, int32 right, int32 bottom, bool noCheck = false);
-	DECLARE_PERSISTENT(BaseViewport, BaseClass)
-	int32 _offsetY;
-	int32 _offsetX;
-	BaseObject *_mainObject;
-	BaseViewport(BaseGame *inGame = nullptr);
-	virtual ~BaseViewport();
-	virtual Common::String debuggerToString() const override;
-private:
-	Rect32 _rect;
+	Breakpoint(const Common::String &filename, uint line, ScriptMonitor *monitor);
+	/**
+	 * This should be called inside the interpreter; the breakpoint is evaluated
+	 * in the context of script, and, if it is enabled and filename & line match,
+	 * the attached ScriptMonitor is notified.
+	 */
+	void evaluate(DebuggableScript* script);
+	Common::String getFilename() const;
+	int getLine() const;
+	int getHits() const;
+	bool isEnabled() const;
+	void enable();
+	void disable();
+	virtual ~Breakpoint();
 };
 
 } // End of namespace Wintermute
 
-#endif
+#endif /* BREAKPOINT_H_ */

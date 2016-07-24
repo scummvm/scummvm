@@ -20,39 +20,23 @@
  *
  */
 
-/*
- * This file is based on WME Lite.
- * http://dead-code.org/redir.php?target=wmelite
- * Copyright (c) 2011 Jan Nedoma
- */
-
-#ifndef WINTERMUTE_BASE_VIEWPORT_H
-#define WINTERMUTE_BASE_VIEWPORT_H
-
-
-#include "engines/wintermute/base/base.h"
-#include "engines/wintermute/math/rect32.h"
-#include "engines/wintermute/persistent.h"
+#include "watch.h"
+#include "watch_instance.h"
+#include "script_monitor.h"
 
 namespace Wintermute {
-class BaseObject;
-class BaseViewport : public BaseClass {
-public:
-	int getHeight() const;
-	int getWidth() const;
-	Rect32 *getRect();
-	bool setRect(int32 left, int32 top, int32 right, int32 bottom, bool noCheck = false);
-	DECLARE_PERSISTENT(BaseViewport, BaseClass)
-	int32 _offsetY;
-	int32 _offsetX;
-	BaseObject *_mainObject;
-	BaseViewport(BaseGame *inGame = nullptr);
-	virtual ~BaseViewport();
-	virtual Common::String debuggerToString() const override;
-private:
-	Rect32 _rect;
-};
 
-} // End of namespace Wintermute
+Watch::Watch(const Common::String &filename, const Common::String &symbol, ScriptMonitor* monitor) : _enabled(false), _filename(filename), _symbol(symbol), _monitor(monitor) {}
 
-#endif
+Watch::~Watch() { /* Nothing to take care of in here */ }
+
+void Watch::trigger(WatchInstance* instance) {
+	_monitor->onWatch(this, instance->_script);
+}
+
+Common::String Watch::getFilename() const { return _filename; }
+Common::String Watch::getSymbol() const { return _symbol; }
+bool Watch::isEnabled() const { return _enabled; }
+void Watch::enable() { _enabled = true; }
+void Watch::disable() { _enabled = false; }
+}

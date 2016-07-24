@@ -69,6 +69,7 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value) override;
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString() override;
+	Common::String debuggerToString() const override;
 private:
 	BaseObject *_owner;
 	bool _canBreak;

@@ -20,39 +20,16 @@
  *
  */
 
-/*
- * This file is based on WME Lite.
- * http://dead-code.org/redir.php?target=wmelite
- * Copyright (c) 2011 Jan Nedoma
- */
-
-#ifndef WINTERMUTE_BASE_VIEWPORT_H
-#define WINTERMUTE_BASE_VIEWPORT_H
-
-
-#include "engines/wintermute/base/base.h"
-#include "engines/wintermute/math/rect32.h"
-#include "engines/wintermute/persistent.h"
+#include "debuggable_script_engine.h"
+#include "debuggable_script.h"
+#include "engines/wintermute/debugger/watch_instance.h"
 
 namespace Wintermute {
-class BaseObject;
-class BaseViewport : public BaseClass {
-public:
-	int getHeight() const;
-	int getWidth() const;
-	Rect32 *getRect();
-	bool setRect(int32 left, int32 top, int32 right, int32 bottom, bool noCheck = false);
-	DECLARE_PERSISTENT(BaseViewport, BaseClass)
-	int32 _offsetY;
-	int32 _offsetX;
-	BaseObject *_mainObject;
-	BaseViewport(BaseGame *inGame = nullptr);
-	virtual ~BaseViewport();
-	virtual Common::String debuggerToString() const override;
-private:
-	Rect32 _rect;
-};
+
+DebuggableScEngine::DebuggableScEngine(BaseGame *inGame) : ScEngine(inGame), _monitor(nullptr) {}
+
+void DebuggableScEngine::attachMonitor(ScriptMonitor *monitor) {
+	_monitor = monitor;
+}
 
 } // End of namespace Wintermute
-
-#endif

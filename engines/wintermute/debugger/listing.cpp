@@ -20,39 +20,27 @@
  *
  */
 
-/*
- * This file is based on WME Lite.
- * http://dead-code.org/redir.php?target=wmelite
- * Copyright (c) 2011 Jan Nedoma
- */
-
-#ifndef WINTERMUTE_BASE_VIEWPORT_H
-#define WINTERMUTE_BASE_VIEWPORT_H
-
-
-#include "engines/wintermute/base/base.h"
-#include "engines/wintermute/math/rect32.h"
-#include "engines/wintermute/persistent.h"
+#include "listing.h"
+#include "common/array.h"
 
 namespace Wintermute {
-class BaseObject;
-class BaseViewport : public BaseClass {
-public:
-	int getHeight() const;
-	int getWidth() const;
-	Rect32 *getRect();
-	bool setRect(int32 left, int32 top, int32 right, int32 bottom, bool noCheck = false);
-	DECLARE_PERSISTENT(BaseViewport, BaseClass)
-	int32 _offsetY;
-	int32 _offsetX;
-	BaseObject *_mainObject;
-	BaseViewport(BaseGame *inGame = nullptr);
-	virtual ~BaseViewport();
-	virtual Common::String debuggerToString() const override;
-private:
-	Rect32 _rect;
-};
+
+Common::Array<ListingLine> Listing::getLines(uint begin, uint end) {
+	assert(begin <= end);
+	Common::Array<ListingLine> ret;
+	for (uint i = begin; i <= end; i++) {
+		ListingLine listingline;
+		listingline.number = i;
+		listingline.text = getLine(i);
+		ret.push_back(listingline);
+	}
+	return ret;
+}
+
+Common::Array<ListingLine> Listing::getLines(uint centre, uint before, uint after) {
+	uint begin = MAX(centre - before, (uint)1); // Line numbers start from 1
+	uint end = MIN(centre + after, (uint)(getLength() - 1)); // Line numbers start from 1
+	return getLines(begin, end);
+}
 
 } // End of namespace Wintermute
-
-#endif

@@ -34,7 +34,11 @@
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/math/rect32.h"
+#include "engines/wintermute/debugger.h"
 #include "common/events.h"
+#if EXTENDED_DEBUGGER_ENABLED == true
+#include "engines/wintermute/base/scriptables/debuggable/debuggable_script_engine.h"
+#endif
 
 namespace Wintermute {
 
@@ -148,7 +152,11 @@ public:
 
 	BaseRenderer *_renderer;
 	BaseSoundMgr *_soundMgr;
+#if EXTENDED_DEBUGGER_ENABLED == true
+	DebuggableScEngine *_scEngine;
+#else
 	ScEngine *_scEngine;
+#endif
 	BaseScriptable *_mathClass;
 	BaseSurfaceStorage *_surfaceStorage;
 	BaseFontStorage *_fontStorage;

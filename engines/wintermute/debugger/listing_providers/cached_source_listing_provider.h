@@ -20,39 +20,33 @@
  *
  */
 
-/*
- * This file is based on WME Lite.
- * http://dead-code.org/redir.php?target=wmelite
- * Copyright (c) 2011 Jan Nedoma
- */
+#ifndef CACHED_LISTING_PROVIDER_H_
+#define CACHED_LISTING_PROVIDER_H_
 
-#ifndef WINTERMUTE_BASE_VIEWPORT_H
-#define WINTERMUTE_BASE_VIEWPORT_H
-
-
-#include "engines/wintermute/base/base.h"
-#include "engines/wintermute/math/rect32.h"
-#include "engines/wintermute/persistent.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
+#include "engines/wintermute/debugger/error.h"
+#include "source_listing_provider.h"
 
 namespace Wintermute {
-class BaseObject;
-class BaseViewport : public BaseClass {
+
+class BasicSourceListingProvider;
+class BlankListingProvider;
+class Listing;
+
+class CachedSourceListingProvider : public SourceListingProvider {
+	BasicSourceListingProvider *_sourceListingProvider;
+	BlankListingProvider *_fallbackListingProvider;
+	Common::HashMap<Common::String, SourceListing *> _cached;
+	void invalidateCache();
 public:
-	int getHeight() const;
-	int getWidth() const;
-	Rect32 *getRect();
-	bool setRect(int32 left, int32 top, int32 right, int32 bottom, bool noCheck = false);
-	DECLARE_PERSISTENT(BaseViewport, BaseClass)
-	int32 _offsetY;
-	int32 _offsetX;
-	BaseObject *_mainObject;
-	BaseViewport(BaseGame *inGame = nullptr);
-	virtual ~BaseViewport();
-	virtual Common::String debuggerToString() const override;
-private:
-	Rect32 _rect;
+	CachedSourceListingProvider();
+	virtual ~CachedSourceListingProvider();
+	ErrorCode setPath(const Common::String &path);
+	Common::String getPath() const;
+	Listing *getListing(const Common::String &filename, ErrorCode &err);
 };
 
 } // End of namespace Wintermute
 
-#endif
+#endif /* CACHED_LISTING_PROVIDER_H_ */

@@ -20,39 +20,34 @@
  *
  */
 
-/*
- * This file is based on WME Lite.
- * http://dead-code.org/redir.php?target=wmelite
- * Copyright (c) 2011 Jan Nedoma
- */
-
-#ifndef WINTERMUTE_BASE_VIEWPORT_H
-#define WINTERMUTE_BASE_VIEWPORT_H
-
-
-#include "engines/wintermute/base/base.h"
-#include "engines/wintermute/math/rect32.h"
-#include "engines/wintermute/persistent.h"
+#include "watch_instance.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/base/scriptables/debuggable/debuggable_script.h"
+#include "engines/wintermute/debugger/watch.h"
 
 namespace Wintermute {
-class BaseObject;
-class BaseViewport : public BaseClass {
-public:
-	int getHeight() const;
-	int getWidth() const;
-	Rect32 *getRect();
-	bool setRect(int32 left, int32 top, int32 right, int32 bottom, bool noCheck = false);
-	DECLARE_PERSISTENT(BaseViewport, BaseClass)
-	int32 _offsetY;
-	int32 _offsetX;
-	BaseObject *_mainObject;
-	BaseViewport(BaseGame *inGame = nullptr);
-	virtual ~BaseViewport();
-	virtual Common::String debuggerToString() const override;
-private:
-	Rect32 _rect;
-};
 
+WatchInstance::WatchInstance(Watch* watch, DebuggableScript* script) : _watch(watch), _script(script), _lastValue(nullptr) {}
+WatchInstance::~WatchInstance() { delete _lastValue; }
+
+void WatchInstance::evaluate() {
+	if (_watch->isEnabled()) {
+		if (!_watch->getFilename().compareTo(_script->_filename)) {
+
+			if(_lastValue == nullptr) {
+				_lastValue = new ScValue(_script->_gameRef);
+				// ^^ This here is NULL by default
+			}
+			ScValue* currentValue = _script->resolveName(_watch->getSymbol());
+			if(ScValue::compare(
+					currentValue,
+					_lastValue
+					)) {
+				_lastValue->copy(currentValue);
+				_watch->trigger(this);
+			}
+			delete currentValue;
+		}
+	}
+}
 } // End of namespace Wintermute
-
-#endif
