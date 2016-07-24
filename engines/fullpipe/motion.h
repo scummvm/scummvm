@@ -302,7 +302,7 @@ public:
 	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 	virtual MessageQueue *method50(StaticANIObject *ani, MovArr *movarr, int staticsId);
 
-	double calcDistance(Common::Point *point, MovGraphLink *link, int fuzzyMatch);
+	double putToLink(Common::Point *point, MovGraphLink *link, int fuzzyMatch);
 	void recalcLinkParams();
 	bool getNearestPoint(int unusedArg, Common::Point *p, MovArr *movarr);
 	MovGraphNode *calcOffset(int ox, int oy);

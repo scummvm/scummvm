@@ -1283,7 +1283,7 @@ MessageQueue *MovGraph::method50(StaticANIObject *ani, MovArr *movarr, int stati
 	return mq;
 }
 
-double MovGraph::calcDistance(Common::Point *point, MovGraphLink *link, int fuzzyMatch) {
+double MovGraph::putToLink(Common::Point *point, MovGraphLink *link, int fuzzyMatch) {
 	int n1x = link->_graphSrc->_x;
 	int n1y = link->_graphSrc->_y;
 	int n2x = link->_graphDst->_x;
@@ -1409,7 +1409,7 @@ Common::Array<MovArr *> *MovGraph::getHitPoints(int x, int y, int *arrSize, int 
 
 		if (flag1) {
 			Common::Point point(x, y);
-			double dist = calcDistance(&point, lnk, 0);
+			double dist = putToLink(&point, lnk, 0);
 
 			if (dist >= 0.0 && dist < 2.0) {
 				movarr = new MovArr;
@@ -1450,7 +1450,7 @@ Common::Array<MovArr *> *MovGraph::getHitPoints(int x, int y, int *arrSize, int 
 						movarr->_point.x = x;
 						movarr->_point.y = y;
 
-						calcDistance(&movarr->_point, lnk, 0);
+						putToLink(&movarr->_point, lnk, 0);
 
 						arr->push_back(movarr);
 					}
@@ -2261,7 +2261,7 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 
 		movInfo1.distance2 = (int)(nod->_z + (dst1 * (double)dst / linkInfoDest.link->_length));
 
-		calcDistance(&movInfo1.pt2, linkInfoDest.link, 1);
+		putToLink(&movInfo1.pt2, linkInfoDest.link, 1);
 
 		dx1 = movInfo1.pt1.x;
 		dy1 = movInfo1.pt1.y;
@@ -2619,7 +2619,7 @@ MovGraphLink *MovGraph2::findLink1(int x, int y, int idx, int fuzzyMatch) {
 		if (fuzzyMatch) {
 			point.x = x;
 			point.y = y;
-			double dst = calcDistance(&point, lnk, 0);
+			double dst = putToLink(&point, lnk, 0);
 
 			if (dst >= 0.0 && dst < 2.0)
 				return lnk;

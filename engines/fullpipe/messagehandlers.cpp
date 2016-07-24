@@ -765,7 +765,7 @@ int MovGraph_messageHandler(ExCommand *cmd) {
 		point.x = ani->_ox;
 		point.y = ani->_oy;
 
-		double dst = gr->calcDistance(&point, (MovGraphLink *)(*i), 0);
+		double dst = gr->putToLink(&point, (MovGraphLink *)(*i), 0);
 		if (dst >= 0.0 && dst < mindistance) {
 			mindistance = dst;
 			link = (MovGraphLink *)(*i);
