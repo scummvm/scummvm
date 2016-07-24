@@ -813,48 +813,44 @@ int16 ChampionMan::f321_addPendingDamageAndWounds_getDamage(int16 champIndex, in
 }
 
 int16 ChampionMan::f313_getWoundDefense(int16 champIndex, uint16 woundIndex) {
-	static const byte g50_woundDefenseFactor[6] = {5, 5, 4, 6, 3, 1}; // @ G0050_auc_Graphic562_WoundDefenseFactor
+	static const byte woundDefenseFactor[6] = {5, 5, 4, 6, 3, 1}; // @ G0050_auc_Graphic562_WoundDefenseFactor
 
-	int16 L0942_i_Multiple;
-#define AL0942_i_SlotIndex    L0942_i_Multiple
-#define AL0942_i_WoundDefense L0942_i_Multiple
-	uint16 L0943_ui_ArmourShieldDefense;
-	bool L0944_B_UseSharpDefense;
-	Thing L0945_T_Thing;
-	Champion* L0946_ps_Champion;
-	ArmourInfo* L0947_ps_ArmourInfo;
-
-
-	L0946_ps_Champion = &_gK71_champions[champIndex];
-	if (L0944_B_UseSharpDefense = getFlag(woundIndex, k0x8000_maskUseSharpDefense)) {
+	Champion *curChampion = &_gK71_champions[champIndex];
+	bool useSharpDefense = getFlag(woundIndex, k0x8000_maskUseSharpDefense);
+	if (useSharpDefense)
 		clearFlag(woundIndex, k0x8000_maskUseSharpDefense);
-	}
-	for (L0943_ui_ArmourShieldDefense = 0, AL0942_i_SlotIndex = k0_ChampionSlotReadyHand; AL0942_i_SlotIndex <= k1_ChampionSlotActionHand; AL0942_i_SlotIndex++) {
-		L0945_T_Thing = L0946_ps_Champion->_slots[AL0942_i_SlotIndex];
-		if (L0945_T_Thing.getType() == k6_ArmourThingType) {
-			L0947_ps_ArmourInfo = (ArmourInfo *)_vm->_dungeonMan->f156_getThingData(L0945_T_Thing);
-			L0947_ps_ArmourInfo = &g239_ArmourInfo[((Armour *)L0947_ps_ArmourInfo)->getType()];
-			if (getFlag(L0947_ps_ArmourInfo->_attributes, k0x0080_ArmourAttributeIsAShield)) {
-				L0943_ui_ArmourShieldDefense += ((f312_getStrength(champIndex, AL0942_i_SlotIndex) + _vm->_dungeonMan->f143_getArmourDefense(L0947_ps_ArmourInfo, L0944_B_UseSharpDefense)) * g50_woundDefenseFactor[woundIndex]) >> ((AL0942_i_SlotIndex == woundIndex) ? 4 : 5);
-			}
+
+	uint16 armorShieldDefense = 0;
+	for (int16 slotIndex = k0_ChampionSlotReadyHand; slotIndex <= k1_ChampionSlotActionHand; slotIndex++) {
+		Thing curThing = curChampion->_slots[slotIndex];
+		if (curThing.getType() == k6_ArmourThingType) {
+			ArmourInfo *armorInfo = (ArmourInfo *)_vm->_dungeonMan->f156_getThingData(curThing);
+			armorInfo = &g239_ArmourInfo[((Armour *)armorInfo)->getType()];
+			if (getFlag(armorInfo->_attributes, k0x0080_ArmourAttributeIsAShield))
+				armorShieldDefense += ((f312_getStrength(champIndex, slotIndex) + _vm->_dungeonMan->f143_getArmourDefense(armorInfo, useSharpDefense)) * woundDefenseFactor[woundIndex]) >> ((slotIndex == woundIndex) ? 4 : 5);
 		}
 	}
-	AL0942_i_WoundDefense = _vm->getRandomNumber((L0946_ps_Champion->_statistics[k4_ChampionStatVitality][k1_ChampionStatCurrent] >> 3) + 1);
-	if (L0944_B_UseSharpDefense) {
-		AL0942_i_WoundDefense >>= 1;
+
+	int16 woundDefense = _vm->getRandomNumber((curChampion->_statistics[k4_ChampionStatVitality][k1_ChampionStatCurrent] >> 3) + 1);
+	if (useSharpDefense)
+		woundDefense >>= 1;
+
+	woundDefense += curChampion->_actionDefense + curChampion->_shieldDefense + _g407_party._shieldDefense + armorShieldDefense;
+	if (woundIndex > k1_ChampionSlotActionHand)  {
+		Thing curThing = curChampion->_slots[woundIndex];
+		if (curThing.getType() == k6_ArmourThingType) {
+			ArmourInfo *armourInfo = (ArmourInfo *)_vm->_dungeonMan->f156_getThingData(curThing);
+			woundDefense += _vm->_dungeonMan->f143_getArmourDefense(&g239_ArmourInfo[((Armour *)armourInfo)->getType()], useSharpDefense);
+		}
 	}
-	AL0942_i_WoundDefense += L0946_ps_Champion->_actionDefense + L0946_ps_Champion->_shieldDefense + _g407_party._shieldDefense + L0943_ui_ArmourShieldDefense;
-	if ((woundIndex > k1_ChampionSlotActionHand) && ((L0945_T_Thing = L0946_ps_Champion->_slots[woundIndex]).getType() == k6_ArmourThingType)) {
-		L0947_ps_ArmourInfo = (ArmourInfo *)_vm->_dungeonMan->f156_getThingData(L0945_T_Thing);
-		AL0942_i_WoundDefense += _vm->_dungeonMan->f143_getArmourDefense(&g239_ArmourInfo[((Armour *)L0947_ps_ArmourInfo)->getType()], L0944_B_UseSharpDefense);
-	}
-	if (getFlag(L0946_ps_Champion->_wounds, 1 << woundIndex)) {
-		AL0942_i_WoundDefense -= 8 + _vm->getRandomNumber(4);
-	}
-	if (_g300_partyIsSleeping) {
-		AL0942_i_WoundDefense >>= 1;
-	}
-	return f26_getBoundedValue(0, AL0942_i_WoundDefense >> 1, 100);
+
+	if (getFlag(curChampion->_wounds, 1 << woundIndex))
+		woundDefense -= 8 + _vm->getRandomNumber(4);
+
+	if (_g300_partyIsSleeping)
+		woundDefense >>= 1;
+
+	return f26_getBoundedValue(0, woundDefense >> 1, 100);
 }
 
 uint16 ChampionMan::f307_getStatisticAdjustedAttack(Champion* champ, uint16 statIndex, uint16 attack) {
