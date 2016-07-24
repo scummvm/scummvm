@@ -259,7 +259,7 @@ Common::String ChampionMan::f288_getStringFromInteger(uint16 val, bool padding, 
 	return result += valToStr;
 }
 
-void ChampionMan::f299_applyModifiersToStatistics(Champion* champ, int16 slotIndex, int16 iconIndex, int16 modifierFactor, Thing thing) {
+void ChampionMan::f299_applyModifiersToStatistics(Champion *champ, int16 slotIndex, int16 iconIndex, int16 modifierFactor, Thing thing) {
 	int16 statIndex = k0_ChampionStatLuck;
 	int16 modifier = 0;
 	ThingType thingType = thing.getType();
@@ -518,7 +518,6 @@ void ChampionMan::f301_addObjectInSlot(ChampionIndex champIndex, Thing thing, Ch
 	uint16 *rawObjPtr = dunMan.f156_getThingData(thing);
 
 	if (slotIndex < k2_ChampionSlotHead) {
-
 		if (slotIndex == k1_ChampionSlotActionHand) {
 			champ->setAttributeFlag(k0x8000_ChampionAttributeActionHand, true);
 			if (_g506_actingChampionOrdinal == _vm->M0_indexToOrdinal(champIndex))
@@ -538,9 +537,7 @@ void ChampionMan::f301_addObjectInSlot(ChampionIndex champIndex, Thing thing, Ch
 			((iconIndex == k144_IconIndiceContainerChestClosed) || ((iconIndex >= k30_IconIndiceScrollOpen) && (iconIndex <= k31_IconIndiceScrollClosed)))) {
 			champ->setAttributeFlag(k0x0800_ChampionAttributePanel, true);
 		}
-
 	} else if (slotIndex == k10_ChampionSlotNeck) {
-
 		if ((iconIndex >= k12_IconIndiceJunkIllumuletUnequipped) && (iconIndex <= k13_IconIndiceJunkIllumuletEquipped)) {
 			((Junk *)rawObjPtr)->setChargeCount(1);
 			_g407_party._magicalLightAmount += g39_LightPowerToLightAmount[2];
@@ -550,7 +547,6 @@ void ChampionMan::f301_addObjectInSlot(ChampionIndex champIndex, Thing thing, Ch
 			((Junk *)rawObjPtr)->setChargeCount(1);
 			iconIndex = (IconIndice)(iconIndex + 1);
 		}
-
 	}
 
 	f291_drawSlot(champIndex, slotIndex);
@@ -567,7 +563,7 @@ int16 ChampionMan::f315_getScentOrdinal(int16 mapX, int16 mapY) {
 		searchedScent.setMapY(mapY);
 		searchedScent.setMapIndex(_vm->_dungeonMan->_g272_currMapIndex);
 		uint16 searchedScentRedEagle = searchedScent.toUint16();
-		Scent* scent = &_g407_party._scents[scentIndex--];
+		Scent *scent = &_g407_party._scents[scentIndex--];
 		do {
 			if ((*(--scent)).toUint16() == searchedScentRedEagle) {
 				return _vm->M0_indexToOrdinal(scentIndex);
@@ -578,11 +574,10 @@ int16 ChampionMan::f315_getScentOrdinal(int16 mapX, int16 mapY) {
 }
 
 Thing ChampionMan::f298_getObjectRemovedFromLeaderHand() {
-	Thing L0890_T_LeaderHandObject;
-
-
 	_g415_leaderEmptyHanded = true;
-	if ((L0890_T_LeaderHandObject = _g414_leaderHandObject) != Thing::_none) {
+	Thing leaderHandObject = _g414_leaderHandObject;
+
+	if (leaderHandObject != Thing::_none) {
 		_g414_leaderHandObject = Thing::_none;
 		_g413_leaderHandObjectIconIndex = kM1_IconIndiceNone;
 		_vm->_eventMan->f78_showMouse();
@@ -590,69 +585,59 @@ Thing ChampionMan::f298_getObjectRemovedFromLeaderHand() {
 		_vm->_eventMan->f69_setMousePointer();
 		_vm->_eventMan->f77_hideMouse();
 		if (_g411_leaderIndex != kM1_ChampionNone) {
-			_gK71_champions[_g411_leaderIndex]._load -= _vm->_dungeonMan->f140_getObjectWeight(L0890_T_LeaderHandObject);
+			_gK71_champions[_g411_leaderIndex]._load -= _vm->_dungeonMan->f140_getObjectWeight(leaderHandObject);
 			setFlag(_gK71_champions[_g411_leaderIndex]._attributes, k0x0200_ChampionAttributeLoad);
 			f292_drawChampionState(_g411_leaderIndex);
 		}
 	}
-	return L0890_T_LeaderHandObject;
+	return leaderHandObject;
 }
 
 uint16 ChampionMan::f312_getStrength(int16 champIndex, int16 slotIndex) {
-	int16 L0935_i_Strength;
-	uint16 L0936_ui_Multiple;
-#define AL0936_ui_ObjectWeight L0936_ui_Multiple
-#define AL0936_ui_SkillLevel   L0936_ui_Multiple
-	uint16 L0937_ui_Multiple;
-#define AL0937_ui_OneSixteenthMaximumLoad L0937_ui_Multiple
-#define AL0937_ui_Class                   L0937_ui_Multiple
-	Thing L0938_T_Thing;
-	Champion* L0939_ps_Champion;
-	WeaponInfo* L0940_ps_WeaponInfo;
-	int16 L0941_i_LoadThreshold;
+	Champion *curChampion = &_gK71_champions[champIndex];
+	int16 strength = _vm->_rnd->getRandomNumber(15) + curChampion->_statistics[k1_ChampionStatStrength][k1_ChampionStatCurrent];
+	Thing curThing = curChampion->_slots[slotIndex];
+	uint16 objectWeight = _vm->_dungeonMan->f140_getObjectWeight(curThing);
+	uint16 oneSixteenthMaximumLoad = f309_getMaximumLoad(curChampion) >> 4;
 
-
-	L0939_ps_Champion = &_gK71_champions[champIndex];
-	L0935_i_Strength = _vm->_rnd->getRandomNumber(15) + L0939_ps_Champion->_statistics[k1_ChampionStatStrength][k1_ChampionStatCurrent];
-	L0938_T_Thing = L0939_ps_Champion->_slots[slotIndex];
-	if ((AL0936_ui_ObjectWeight = _vm->_dungeonMan->f140_getObjectWeight(L0938_T_Thing)) <= (AL0937_ui_OneSixteenthMaximumLoad = f309_getMaximumLoad(L0939_ps_Champion) >> 4)) {
-		L0935_i_Strength += AL0936_ui_ObjectWeight - 12;
+	if (objectWeight <= oneSixteenthMaximumLoad) {
+		strength += objectWeight - 12;
 	} else {
-		if (AL0936_ui_ObjectWeight <= (L0941_i_LoadThreshold = AL0937_ui_OneSixteenthMaximumLoad + ((AL0937_ui_OneSixteenthMaximumLoad - 12) >> 1))) {
-			L0935_i_Strength += (AL0936_ui_ObjectWeight - AL0937_ui_OneSixteenthMaximumLoad) >> 1;
+		int16 loadThreshold = oneSixteenthMaximumLoad + ((oneSixteenthMaximumLoad - 12) >> 1);
+		if (objectWeight <= loadThreshold) {
+			strength += (objectWeight - oneSixteenthMaximumLoad) >> 1;
 		} else {
-			L0935_i_Strength -= (AL0936_ui_ObjectWeight - L0941_i_LoadThreshold) << 1;
+			strength -= (objectWeight - loadThreshold) << 1;
 		}
 	}
-	if (L0938_T_Thing.getType() == k5_WeaponThingType) {
-		L0940_ps_WeaponInfo = _vm->_dungeonMan->f158_getWeaponInfo(L0938_T_Thing);
-		L0935_i_Strength += L0940_ps_WeaponInfo->_strength;
-		AL0936_ui_SkillLevel = 0;
-		AL0937_ui_Class = L0940_ps_WeaponInfo->_class;
-		if ((AL0937_ui_Class == k0_WeaponClassSwingWeapon) || (AL0937_ui_Class == k2_WeaponClassDaggerAndAxes)) {
-			AL0936_ui_SkillLevel = f303_getSkillLevel(champIndex, k4_ChampionSkillSwing);
+	if (curThing.getType() == k5_WeaponThingType) {
+		WeaponInfo *weaponInfo = _vm->_dungeonMan->f158_getWeaponInfo(curThing);
+		strength += weaponInfo->_strength;
+		uint16 skillLevel = 0;
+		uint16 weaponClass = weaponInfo->_class;
+		if ((weaponClass == k0_WeaponClassSwingWeapon) || (weaponClass == k2_WeaponClassDaggerAndAxes)) {
+			skillLevel = f303_getSkillLevel(champIndex, k4_ChampionSkillSwing);
 		}
-		if ((AL0937_ui_Class != k0_WeaponClassSwingWeapon) && (AL0937_ui_Class < k16_WeaponClassFirstBow)) {
-			AL0936_ui_SkillLevel += f303_getSkillLevel(champIndex, k10_ChampionSkillThrow);
+		if ((weaponClass != k0_WeaponClassSwingWeapon) && (weaponClass < k16_WeaponClassFirstBow)) {
+			skillLevel += f303_getSkillLevel(champIndex, k10_ChampionSkillThrow);
 		}
-		if ((AL0937_ui_Class >= k16_WeaponClassFirstBow) && (AL0937_ui_Class < k112_WeaponClassFirstMagicWeapon)) {
-			AL0936_ui_SkillLevel += f303_getSkillLevel(champIndex, k11_ChampionSkillShoot);
+		if ((weaponClass >= k16_WeaponClassFirstBow) && (weaponClass < k112_WeaponClassFirstMagicWeapon)) {
+			skillLevel += f303_getSkillLevel(champIndex, k11_ChampionSkillShoot);
 		}
-		L0935_i_Strength += AL0936_ui_SkillLevel << 1;
+		strength += skillLevel << 1;
 	}
-	L0935_i_Strength = f306_getStaminaAdjustedValue(L0939_ps_Champion, L0935_i_Strength);
-	if (getFlag(L0939_ps_Champion->_wounds, (slotIndex == k0_ChampionSlotReadyHand) ? k0x0001_ChampionWoundReadHand : k0x0002_ChampionWoundActionHand)) {
-		L0935_i_Strength >>= 1;
+	strength = f306_getStaminaAdjustedValue(curChampion, strength);
+	if (getFlag(curChampion->_wounds, (slotIndex == k0_ChampionSlotReadyHand) ? k0x0001_ChampionWoundReadHand : k0x0002_ChampionWoundActionHand)) {
+		strength >>= 1;
 	}
-	MAX(1, 2);
-	return f26_getBoundedValue(0, L0935_i_Strength >> 1, 100);
+	return f26_getBoundedValue(0, strength >> 1, 100);
 }
 
 Thing ChampionMan::f300_getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex) {
 	Thing L0894_T_Thing;
 	int16 L0895_i_IconIndex;
-	Champion* L0896_ps_Champion;
-	Weapon* L0897_ps_Weapon;
+	Champion *L0896_ps_Champion;
+	Weapon *L0897_ps_Weapon;
 	bool L0898_B_IsInventoryChampion;
 
 
