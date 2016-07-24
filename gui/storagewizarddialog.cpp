@@ -100,19 +100,23 @@ void StorageWizardDialog::open() {
 		}
 	}
 
+#ifdef USE_SDL_NET
 	if (Cloud::CloudManager::couldUseLocalServer()) {
 		_stopServerOnClose = !LocalServer.isRunning();
 		LocalServer.start();
 		LocalServer.indexPageHandler().setTarget(this);
 	}
+#endif
 }
 
 void StorageWizardDialog::close() {
+#ifdef USE_SDL_NET
 	if (Cloud::CloudManager::couldUseLocalServer()) {
 		if (_stopServerOnClose)
 			LocalServer.stopOnIdle();
 		LocalServer.indexPageHandler().setTarget(nullptr);
 	}
+#endif
 	Dialog::close();
 }
 

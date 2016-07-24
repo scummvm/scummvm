@@ -1509,6 +1509,11 @@ void GlobalOptionsDialog::close() {
 #endif
 #endif
 	}
+#ifdef USE_SDL_NET
+	if (LocalServer.isRunning()) {
+		LocalServer.stop();
+	}
+#endif
 	OptionsDialog::close();
 }
 
