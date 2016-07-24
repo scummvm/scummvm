@@ -76,6 +76,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
 		_rnd(0), _sound(0), _ambient(0),
 		_inputSpacePressed(false), _inputEnterPressed(false),
 		_inputEscapePressed(false), _inputTildePressed(false),
+		_inputEscapePressedNotConsumed(false),
 		_menuAction(0), _projectorBackground(0),
 		_shakeEffect(0), _rotationEffect(0), _backgroundSoundScriptLastRoomId(0),
 		_transition(0), _frameLimiter(0) {
@@ -468,16 +469,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
 				_inputEscapePressed = true;
-
-				// Open main menu
-				if (_state->hasVarMenuEscapePressed()) {
-					if (_cursor->isVisible()) {
-						if (_state->getLocationRoom() != 901)
-							_menu->goToNode(100);
-						else
-							_state->setMenuEscapePressed(1);
-					}
-				}
+				_inputEscapePressedNotConsumed = true;
 				break;
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
@@ -492,7 +484,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 				break;
 			case Common::KEYCODE_F5:
 				// Open main menu
-				if (_cursor->isVisible()) {
+				if (_cursor->isVisible() && !lookOnly) {
 					if (_state->getLocationRoom() != 901)
 						_menu->goToNode(100);
 				}
@@ -512,6 +504,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
 				_inputEscapePressed = false;
+				_inputEscapePressedNotConsumed = false;
 				break;
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
@@ -526,6 +519,22 @@ void Myst3Engine::processInput(bool lookOnly) {
 			default:
 				break;
 			}
+		}
+	}
+
+	// Open main menu
+	// This is not checked directly in the event handling code
+	// because menu open requests done while in lookOnly mode
+	// need to be honored after leaving the inner script loop,
+	// especially when the script loop was cancelled due to pressing
+	// escape.
+	if (_inputEscapePressedNotConsumed && !lookOnly) {
+		_inputEscapePressedNotConsumed = false;
+		if (_cursor->isVisible() && _state->hasVarMenuEscapePressed()) {
+			if (_state->getLocationRoom() != 901)
+				_menu->goToNode(100);
+			else
+				_state->setMenuEscapePressed(1);
 		}
 	}
 }

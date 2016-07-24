@@ -225,6 +225,7 @@ private:
 	bool _inputSpacePressed;
 	bool _inputEnterPressed;
 	bool _inputEscapePressed;
+	bool _inputEscapePressedNotConsumed;
 	bool _inputTildePressed;
 
 	uint32 _backgroundSoundScriptLastRoomId;
