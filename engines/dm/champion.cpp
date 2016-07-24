@@ -853,13 +853,20 @@ int16 ChampionMan::f313_getWoundDefense(int16 champIndex, uint16 woundIndex) {
 	return f26_getBoundedValue(0, woundDefense >> 1, 100);
 }
 
-uint16 ChampionMan::f307_getStatisticAdjustedAttack(Champion* champ, uint16 statIndex, uint16 attack) {
-	int16 L0927_i_Factor;
+uint16 ChampionMan::f307_getStatisticAdjustedAttack(Champion *champ, uint16 statIndex, uint16 attack) {
+	int16 factor = 170 - champ->_statistics[statIndex][k1_ChampionStatCurrent];
 
-	if ((L0927_i_Factor = 170 - champ->_statistics[statIndex][k1_ChampionStatCurrent]) < 16) { /* BUG0_41 The Antifire and Antimagic statistics are completely ignored. The Vitality statistic is ignored against poison and to determine the probability of being wounded. Vitality is still used normally to compute the defense against wounds and the speed of health regeneration. A bug in the Megamax C compiler produces wrong machine code for this statement. It always returns 0 for the current statistic value so that L0927_i_Factor = 170 in all cases */
+	/* BUG0_41
+		The Antifire and Antimagic statistics are completely ignored. The Vitality statistic is ignored
+		against poison and to determine the probability of being wounded. Vitality is still used normally
+		to compute the defense against wounds and the speed of health regeneration. A bug in the Megamax C
+		compiler produces wrong machine code for this statement. It always returns 0 for the current statistic
+		value so that factor = 170 in all cases
+	*/
+	if (factor < 16)
 		return attack >> 3;
-	}
-	return _vm->f30_getScaledProduct(attack, 7, L0927_i_Factor);
+
+	return _vm->f30_getScaledProduct(attack, 7, factor);
 }
 
 void ChampionMan::f314_wakeUp() {
@@ -877,44 +884,39 @@ void ChampionMan::f314_wakeUp() {
 }
 
 int16 ChampionMan::f305_getThrowingStaminaCost(Thing thing) {
-	int16 L0923_i_Weight;
-	int16 L0924_i_StaminaCost;
+	int16 weight = _vm->_dungeonMan->f140_getObjectWeight(thing) >> 1;
+	int16 staminaCost = f26_getBoundedValue<int16>(1, weight, 10);
 
+	while ((weight -= 10) > 0)
+		staminaCost += weight >> 1;
 
-	L0924_i_StaminaCost = f26_getBoundedValue((int16)1, L0923_i_Weight = _vm->_dungeonMan->f140_getObjectWeight(thing) >> 1, (int16)10);
-	while ((L0923_i_Weight -= 10) > 0) {
-		L0924_i_StaminaCost += L0923_i_Weight >> 1;
-	}
-	return L0924_i_StaminaCost;
+	return staminaCost;
 }
 
 void ChampionMan::f330_disableAction(uint16 champIndex, uint16 ticks) {
-	int32 L1001_l_UpdatedEnableActionEventTime;
-	int32 L1002_l_CurrentEnableActionEventTime;
-	int16 L1003_i_EventIndex;
-	Champion* L1004_ps_Champion;
-	TimelineEvent L1005_s_Event;
+	Champion *curChampion = &_gK71_champions[champIndex];
+	int32 updatedEnableActionEventTime = _vm->_g313_gameTime + ticks;
 
+	TimelineEvent curEvent;
+	curEvent._type = k11_TMEventTypeEnableChampionAction;
+	curEvent._priority = champIndex;
+	curEvent._B._slotOrdinal = 0;
 
-	L1004_ps_Champion = &_gK71_champions[champIndex];
-	L1001_l_UpdatedEnableActionEventTime = _vm->_g313_gameTime + ticks;
-	L1005_s_Event._type = k11_TMEventTypeEnableChampionAction;
-	L1005_s_Event._priority = champIndex;
-	L1005_s_Event._B._slotOrdinal = 0;
-	if ((L1003_i_EventIndex = L1004_ps_Champion->_enableActionEventIndex) >= 0) {
-		L1002_l_CurrentEnableActionEventTime = M30_time(_vm->_timeline->_g370_events[L1003_i_EventIndex]._mapTime);
-		if (L1001_l_UpdatedEnableActionEventTime >= L1002_l_CurrentEnableActionEventTime) {
-			L1001_l_UpdatedEnableActionEventTime += (L1002_l_CurrentEnableActionEventTime - _vm->_g313_gameTime) >> 1;
+	int16 eventIndex = curChampion->_enableActionEventIndex;
+	if (eventIndex >= 0) {
+		int32 currentEnableActionEventTime = M30_time(_vm->_timeline->_g370_events[eventIndex]._mapTime);
+		if (updatedEnableActionEventTime >= currentEnableActionEventTime) {
+			updatedEnableActionEventTime += (currentEnableActionEventTime - _vm->_g313_gameTime) >> 1;
 		} else {
-			L1001_l_UpdatedEnableActionEventTime = L1002_l_CurrentEnableActionEventTime + (ticks >> 1);
+			updatedEnableActionEventTime = currentEnableActionEventTime + (ticks >> 1);
 		}
-		_vm->_timeline->f237_deleteEvent(L1003_i_EventIndex);
+		_vm->_timeline->f237_deleteEvent(eventIndex);
 	} else {
-		setFlag(L1004_ps_Champion->_attributes, k0x8000_ChampionAttributeActionHand | k0x0008_ChampionAttributeDisableAction);
+		setFlag(curChampion->_attributes, k0x8000_ChampionAttributeActionHand | k0x0008_ChampionAttributeDisableAction);
 		f292_drawChampionState((ChampionIndex)champIndex);
 	}
-	M33_setMapAndTime(L1005_s_Event._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, L1001_l_UpdatedEnableActionEventTime);
-	L1004_ps_Champion->_enableActionEventIndex = _vm->_timeline->f238_addEventGetEventIndex(&L1005_s_Event);
+	M33_setMapAndTime(curEvent._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, updatedEnableActionEventTime);
+	curChampion->_enableActionEventIndex = _vm->_timeline->f238_addEventGetEventIndex(&curEvent);
 }
 
 void ChampionMan::f304_addSkillExperience(uint16 champIndex, uint16 skillIndex, uint16 exp) {
@@ -933,7 +935,7 @@ void ChampionMan::f304_addSkillExperience(uint16 champIndex, uint16 skillIndex, 
 	int16 L0922_i_BaseSkillLevel;
 
 
-	warning(false, "potaneitally dangerous cast of uint32 below");
+	warning(false, "Potentially dangerous cast of uint32 below");
 	if ((skillIndex >= k4_ChampionSkillSwing) && (skillIndex <= k11_ChampionSkillShoot) && ((uint32)_vm->_projexpl->_g361_lastCreatureAttackTime < (_vm->_g313_gameTime - 150))) {
 		exp >>= 1;
 	}
