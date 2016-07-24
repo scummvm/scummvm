@@ -724,81 +724,90 @@ void ChampionMan::f325_decrementStamina(int16 championIndex, int16 decrement) {
 }
 
 int16 ChampionMan::f321_addPendingDamageAndWounds_getDamage(int16 champIndex, int16 attack, int16 allowedWounds, uint16 attackType) {
-	int16 L0976_i_Multiple;
-#define AL0976_i_WoundIndex     L0976_i_Multiple
-#define AL0976_i_WisdomFactor   L0976_i_Multiple
-#define AL0976_i_AdjustedAttack L0976_i_Multiple
-	uint16 L0977_ui_Defense;
-	uint16 L0978_ui_WoundCount;
-	Champion* L0979_ps_Champion;
-
 	if (attack <= 0)
 		return 0;
 
-	L0979_ps_Champion = &_gK71_champions[champIndex];
-	if (!L0979_ps_Champion->_currHealth)
+	Champion *curChampion = &_gK71_champions[champIndex];
+	if (!curChampion->_currHealth)
 		return 0;
 
 	if (attackType != k0_attackType_NORMAL) {
-		for (L0978_ui_WoundCount = 0, AL0976_i_WoundIndex = k0_ChampionSlotReadyHand, L0977_ui_Defense = 0; AL0976_i_WoundIndex <= k5_ChampionSlotFeet; AL0976_i_WoundIndex++) {
-			if (allowedWounds & (1 << AL0976_i_WoundIndex)) {
-				L0978_ui_WoundCount++;
-				L0977_ui_Defense += f313_getWoundDefense(champIndex, AL0976_i_WoundIndex | ((attackType == k4_attackType_SHARP) ? k0x8000_maskUseSharpDefense : k0x0000_maskDoNotUseSharpDefense));
+		uint16 defense = 0;
+		uint16 woundCount = 0;
+		for (int16 woundIndex = k0_ChampionSlotReadyHand; woundIndex <= k5_ChampionSlotFeet; woundIndex++) {
+			if (allowedWounds & (1 << woundIndex)) {
+				woundCount++;
+				defense += f313_getWoundDefense(champIndex, woundIndex | ((attackType == k4_attackType_SHARP) ? k0x8000_maskUseSharpDefense : k0x0000_maskDoNotUseSharpDefense));
 			}
 		}
-		if (L0978_ui_WoundCount) {
-			L0977_ui_Defense /= L0978_ui_WoundCount;
-		}
+		if (woundCount)
+			defense /= woundCount;
+
 		switch (attackType) {
-		case k6_attackType_PSYCHIC:
-			if ((AL0976_i_WisdomFactor = 115 - L0979_ps_Champion->_statistics[k3_ChampionStatWisdom][k1_ChampionStatCurrent]) <= 0) {
-				attack = 0;
-			} else {
-				attack = _vm->f30_getScaledProduct(attack, 6, AL0976_i_WisdomFactor);
+		case k6_attackType_PSYCHIC: 
+			{
+				int16 wisdomFactor = 115 - curChampion->_statistics[k3_ChampionStatWisdom][k1_ChampionStatCurrent];
+				if (wisdomFactor <= 0) {
+					attack = 0;
+				} else {
+					attack = _vm->f30_getScaledProduct(attack, 6, wisdomFactor);
+				}
 			}
 			goto T0321024;
 		case k5_attackType_MAGIC:
-			attack = f307_getStatisticAdjustedAttack(L0979_ps_Champion, k5_ChampionStatAntimagic, attack);
+			attack = f307_getStatisticAdjustedAttack(curChampion, k5_ChampionStatAntimagic, attack);
 			attack -= _g407_party._spellShieldDefense;
 			goto T0321024;
 		case k1_attackType_FIRE:
-			attack = f307_getStatisticAdjustedAttack(L0979_ps_Champion, k6_ChampionStatAntifire, attack);
+			attack = f307_getStatisticAdjustedAttack(curChampion, k6_ChampionStatAntifire, attack);
 			attack -= _g407_party._fireShieldDefense;
 			break;
 		case k2_attackType_SELF:
-			L0977_ui_Defense >>= 1;
-		case k3_attackType_BLUNT:
-		case k4_attackType_SHARP:
-		case k7_attackType_LIGHTNING:
-			;
+			defense >>= 1;
+			break;
+		default:
+			break;
 		}
+
 		if (attack <= 0)
 			return 0;
 
-		attack = _vm->f30_getScaledProduct(attack, 6, 130 - L0977_ui_Defense);
-		/* BUG0_44 A champion may take much more damage than expected after a Black Flame attack or an impact
-	with a Fireball projectile. If the party has a fire shield defense value higher than the fire attack value then the resulting intermediary
-	attack value is negative and damage should be 0. However, the negative value is still used for further computations and the result may be a very
-	high positive attack value which may kill a champion. This can occur only for k1_attackType_FIRE and if attack is negative before calling F0030_MAIN_GetScaledProduct */
+		attack = _vm->f30_getScaledProduct(attack, 6, 130 - defense);
+		/* BUG0_44 
+			A champion may take much more damage than expected after a Black Flame attack or an impact
+			with a Fireball projectile. If the party has a fire shield defense value higher than the fire
+			attack value then the resulting intermediary attack value is negative and damage should be 0. 
+			However, the negative value is still used for further computations and the result may be a very
+			high positive attack value which may kill a champion. This can occur only for k1_attackType_FIRE
+			and if attack is negative before calling F0030_MAIN_GetScaledProduct
+		*/
 T0321024:
 		if (attack <= 0)
 			return 0;
 
-		if (attack > (AL0976_i_AdjustedAttack = f307_getStatisticAdjustedAttack(L0979_ps_Champion, k4_ChampionStatVitality, _vm->_rnd->getRandomNumber(127) + 10))) { /* BUG0_45 This bug is not perceptible because of BUG0_41 that ignores Vitality while determining the probability of being wounded. However if it was fixed, the behavior would be the opposite of what it should: the higher the vitality of a champion, the lower the result of F0307_CHAMPION_GetStatisticAdjustedAttack and the more likely the champion could get wounded (because of more iterations in the loop below) */
+		int16 adjustedAttack = f307_getStatisticAdjustedAttack(curChampion, k4_ChampionStatVitality, _vm->_rnd->getRandomNumber(127) + 10);
+		if (attack > adjustedAttack) {
+		/* BUG0_45
+			This bug is not perceptible because of BUG0_41 that ignores Vitality while determining the
+			probability of being wounded. However if it was fixed, the behavior would be the opposite
+			of what it should: the higher the vitality of a champion, the lower the result of
+			F0307_CHAMPION_GetStatisticAdjustedAttack and the more likely the champion could get
+			wounded (because of more iterations in the loop below)
+		*/
 			do {
 				setFlag(*(uint16 *)&_g410_championPendingWounds[champIndex], (1 << _vm->_rnd->getRandomNumber(7)) & allowedWounds);
-			} while ((attack > (AL0976_i_AdjustedAttack <<= 1)) && AL0976_i_AdjustedAttack);
+			} while ((attack > (adjustedAttack <<= 1)) && adjustedAttack);
 		}
-		if (_g300_partyIsSleeping) {
+
+		if (_g300_partyIsSleeping)
 			f314_wakeUp();
-		}
 	}
 	_g409_championPendingDamage[champIndex] += attack;
 	return attack;
 }
 
 int16 ChampionMan::f313_getWoundDefense(int16 champIndex, uint16 woundIndex) {
-	static byte g50_woundDefenseFactor[6] = {5, 5, 4, 6, 3, 1}; // @ G0050_auc_Graphic562_WoundDefenseFactor
+	static const byte g50_woundDefenseFactor[6] = {5, 5, 4, 6, 3, 1}; // @ G0050_auc_Graphic562_WoundDefenseFactor
 
 	int16 L0942_i_Multiple;
 #define AL0942_i_SlotIndex    L0942_i_Multiple
