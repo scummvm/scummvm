@@ -188,15 +188,35 @@ void tglPresentBufferDirtyRects(TinyGL::GLContext *c) {
 		(*it1).rectangle.clip(renderRect);
 	}
 
-	// Execute draw calls.
-	for (DrawCallIterator it = c->_drawCallsQueue.begin(); it != c->_drawCallsQueue.end(); ++it) {
-		Common::Rect drawCallRegion = (*it)->getDirtyRegion();
-		for (RectangleIterator itRect = rectangles.begin(); itRect != rectangles.end(); ++itRect) {
-			Common::Rect dirtyRegion = (*itRect).rectangle;
-			if (dirtyRegion.intersects(drawCallRegion)) {
-				(*it)->execute(dirtyRegion, true);
+	if (!rectangles.empty()) {
+		// Execute draw calls.
+		for (DrawCallIterator it = c->_drawCallsQueue.begin(); it != c->_drawCallsQueue.end(); ++it) {
+			Common::Rect drawCallRegion = (*it)->getDirtyRegion();
+			for (RectangleIterator itRect = rectangles.begin(); itRect != rectangles.end(); ++itRect) {
+				Common::Rect dirtyRegion = (*itRect).rectangle;
+				if (dirtyRegion.intersects(drawCallRegion)) {
+					(*it)->execute(dirtyRegion, true);
+				}
 			}
 		}
+#if TGL_DIRTY_RECT_SHOW
+		// Draw debug rectangles.
+		// Note: white rectangles are rectangle that contained other rectangles
+		// blue rectangles are rectangle merged from other rectangles
+		// red rectangles are original dirty rects
+
+		bool blendingEnabled = c->fb->isBlendingEnabled();
+		bool alphaTestEnabled = c->fb->isAlphaTestEnabled();
+		c->fb->enableBlending(false);
+		c->fb->enableAlphaTest(false);
+
+		for (RectangleIterator it = rectangles.begin(); it != rectangles.end(); ++it) {
+			tglDrawRectangle((*it).rectangle, (*it).r, (*it).g, (*it).b);
+		}
+
+		c->fb->enableBlending(blendingEnabled);
+		c->fb->enableAlphaTest(alphaTestEnabled);
+#endif
 	}
 
 	// Dispose not necessary draw calls.
@@ -207,24 +227,6 @@ void tglPresentBufferDirtyRects(TinyGL::GLContext *c) {
 	c->_previousFrameDrawCallsQueue = c->_drawCallsQueue;
 	c->_drawCallsQueue.clear();
 
-#if TGL_DIRTY_RECT_SHOW
-	// Draw debug rectangles.
-	// Note: white rectangles are rectangle that contained other rectangles
-	// blue rectangles are rectangle merged from other rectangles
-	// red rectangles are original dirty rects
-
-	bool blendingEnabled = c->fb->isBlendingEnabled();
-	bool alphaTestEnabled = c->fb->isAlphaTestEnabled();
-	c->fb->enableBlending(false);
-	c->fb->enableAlphaTest(false);
-
-	for (RectangleIterator it = rectangles.begin(); it != rectangles.end(); ++it) {
-		tglDrawRectangle((*it).rectangle, (*it).r, (*it).g, (*it).b);
-	}
-
-	c->fb->enableBlending(blendingEnabled);
-	c->fb->enableAlphaTest(alphaTestEnabled);
-#endif
 
 	tglDisposeResources(c);
 
