@@ -251,6 +251,11 @@ protected:
 	bool defaultProcess(TTroomScript *roomScript, TTsentence *sentence);
 
 	void checkItems(TTroomScript *roomScript, TTsentence *sentence);
+
+	/**
+	 * Adds a random conversation response
+	 */
+	bool addRandomResponse(bool flag);
 public:
 	TTnpcScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4,

@@ -37,6 +37,69 @@ static const char *const ITEMS[] = {
 	"longstick", "bomb", "lemon", "puree", "television", "hammer", nullptr
 };
 
+struct ItemRec {
+	const char *const _name;
+	uint _id;
+};
+static const ItemRec ARRAY1[] = {
+	{ ITEMS[0], 290138 },
+	{ ITEMS[1], 290139 },
+	{ ITEMS[2], 290141 },
+	{ ITEMS[3], 290142 },
+	{ ITEMS[4], 290153 },
+	{ ITEMS[5], 290158 },
+	{ ITEMS[6], 290159 },
+	{ ITEMS[7], 290160 },
+	{ ITEMS[8], 290161 },
+	{ ITEMS[9], 290162 },
+	{ ITEMS[10], 290163 },
+	{ ITEMS[11], 290164 },
+	{ ITEMS[12], 290165 },
+	{ ITEMS[13], 290166 },
+	{ ITEMS[14], 290166 },
+	{ ITEMS[15], 290178 },
+	{ ITEMS[16], 290174 },
+	{ ITEMS[17], 290175 },
+	{ ITEMS[18], 290176 },
+	{ ITEMS[19], 290179 },
+	{ nullptr, 0 }
+};
+static const uint ARRAY2[] = {
+	290167, 290178, 290183, 290144, 290148, 290151, 290154, 290156, 290158, 290159, 290160, 290161,
+	290162, 290163, 290164, 290165, 290177, 290181, 0
+};
+static const uint RANDOM1[] = {
+	290184, 290185, 290187, 290188, 290190, 290191, 290193, 290195, 290196, 290197, 290198, 290199,
+	290202, 290205, 0
+};
+static const uint RANDOM2[] = {
+	290186, 290187, 290188, 290190, 290191, 290193, 290194, 290195, 290196, 290197, 290198, 290199,
+	290200, 290201, 290202, 290204, 290205, 0
+};
+static const uint RANDOM3[] = {
+	290188, 290190, 290192, 290194, 290197, 290200, 290201, 290202, 290204, 290205, 0
+};
+static const uint RANDOM4[] = {
+	290206, 290207, 290209, 290210, 290211, 290212, 290216, 290217, 290218, 290219, 290222, 290223, 0
+};
+static const uint RANDOM5[] = {
+	290208, 290209, 290210, 290211, 290212, 290214, 290215, 290216, 290217, 290218, 290219, 290221,
+	290222, 290223, 0
+};
+static const uint RANDOM6[] = {
+	290210, 290211, 290213, 290214, 290215, 290220, 290221, 290222, 290223, 0
+};
+static const uint RANDOM7[] = {
+	290225, 290226, 290228, 290229, 290230, 290232, 290231, 290235, 290236, 290237, 290238, 290241, 0
+};
+static const uint RANDOM8[] = {
+	290227, 290228, 290229, 290230, 290231, 290232, 290233, 290234, 290235, 290236, 290237, 290238,
+	290240, 290241, 0
+};
+static const uint RANDOM9[] = {
+	290228, 290229, 290230, 290232, 290233, 290234, 290239, 290240, 290241, 0
+};
+
 /*------------------------------------------------------------------------*/
 
 int TTnpcScriptResponse::size() const {
@@ -773,6 +836,60 @@ void TTnpcScript::checkItems(TTroomScript *roomScript, TTsentence *sentence) {
 		if (sentence->localWord("bomb"))
 			_field7C = 1;
 	}
+}
+
+bool TTnpcScript::addRandomResponse(bool flag) {
+	if (getValue(1) > 3)
+		return false;
+
+	const uint *data;
+	if (flag) {
+		if (getValue(1) == 2)
+			data = RANDOM8;
+		else if (getValue(1) == 1)
+			data = RANDOM7;
+		else
+			data = RANDOM9;
+	} else if (getRandomBit()) {
+		if (getValue(1) == 2)
+			data = RANDOM2;
+		else if (getValue(1) == 1)
+			data = RANDOM1;
+		else
+			data = RANDOM3;
+	} else {
+		if (getValue(1) == 2)
+			data = RANDOM5;
+		else if (getValue(1) == 1)
+			data = RANDOM4;
+		else
+			data = RANDOM6;
+	}
+
+	// Pick a random entry
+	uint count = 0;
+	while (data[count])
+		++count;
+	uint id = data[getRandomNumber(count - 1)];
+
+	if (id == 290188 && getRoom54(101))
+		id = 290189;
+	else if (id == 290202 && getRoom54(123))
+		id = 290203;
+
+	if (!id)
+		return false;
+	id = getDialogueId(id);
+	if (id == 4)
+		return true;
+	if (!id)
+		return false;
+
+	if (flag)
+		addResponse(getDialogueId(290224));
+	
+	addResponse(id);
+	applyResponse();
 }
 
 } // End of namespace Titanic

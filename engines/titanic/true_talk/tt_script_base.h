@@ -73,6 +73,7 @@ protected:
 	}
 
 	void set34(int val) { _field34 = val; }
+	int get34() const { return _field34; }
 public:
 	int _id;
 public:

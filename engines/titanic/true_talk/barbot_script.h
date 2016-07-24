@@ -43,6 +43,8 @@ private:
 	void setupSentences();
 
 	bool isState9() const;
+
+	int applySentenceIds(int dialogueId, int v34 = -1);
 public:
 	BarbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7);

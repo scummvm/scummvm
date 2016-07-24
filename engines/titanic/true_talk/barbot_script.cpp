@@ -192,6 +192,434 @@ int BarbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
 		return 2;
 	}
 
+	CTrueTalkManager::setFlags(29, getValue(29) - 1);
+	CTrueTalkManager::setFlags(30, getValue(30) - 1);
+	CTrueTalkManager::setFlags(31, getValue(31) - 1);
+	CTrueTalkManager::setFlags(32, getValue(32) - 1);
+	CTrueTalkManager::setFlags(33, getValue(33) - 1);
+	CTrueTalkManager::setFlags(34, getValue(34) - 1);
+	
+	int val34 = get34();
+	set34(0);
+
+	int val2C = sentence->_field2C;
+	bool flag = val2C == 11 || val2C == 13;
+	bool flag2 = val2C == 12;
+
+	if (!val34) {
+		goto done;
+	} else if (val34 > 50357) {
+		goto done;
+	} else if (val34 == 50357) {
+		return applySentenceIds(50358, -1);
+	}
+
+	switch (val34) {
+	case 1:
+		if (flag)
+			return applySentenceIds(51898, 2);
+		if (flag2)
+			return applySentenceIds(51897);
+		break;
+	case 2:
+		if (flag)
+			return applySentenceIds(51897);
+		break;
+	case 3:
+		if (sentence->localWord("useless") || sentence->contains("useless"))
+			return applySentenceIds(50824);
+		break;
+	case 4:
+		if (flag)
+			return applySentenceIds(getRandomBit() ? 50512 : 51642);
+		else if (flag2)
+			return applySentenceIds(getRandomBit() ? 50511 : 51643);
+		break;
+	case 5:
+		if (flag)
+			return applySentenceIds(50829, 6);
+		if (flag2)
+			return applySentenceIds(50828);
+		break;
+	case 6:
+		if (flag)
+			return applySentenceIds(50831);
+		if (flag2)
+			return applySentenceIds(50830);
+		break;
+	case 7:
+		if (flag2 || sentence->contains("never"))
+			return applySentenceIds(51553);
+		if (flag || sentence->contains("nicest"))
+			return applySentenceIds(51554);
+		break;
+	case 8:
+		if (flag)
+			return applySentenceIds(50961);
+		if (flag2)
+			return applySentenceIds(50960);
+		break;
+	case 9:
+		if (flag)
+			return applySentenceIds(getDialogueId(251858));
+		break;
+	case 10:
+		if (flag)
+			return applySentenceIds(getDialogueId(251014));
+		else if (flag2)
+			return applySentenceIds(getDialogueId(251013));
+		break;
+	case 11:
+		if (flag)
+			return applySentenceIds(getDialogueId(251008));
+		else if (flag2)
+			return applySentenceIds(getDialogueId(251007));
+		break;
+	case 12:
+		if (flag)
+			return applySentenceIds(getDialogueId(250656));
+		else if (flag2)
+			return applySentenceIds(getDialogueId(250655));
+		break;
+	case 13:
+		if (flag)
+			return applySentenceIds(getDialogueId(250614));
+		else if (flag2)
+			return applySentenceIds(getDialogueId(250613));
+		break;
+	case 14:
+		if (val2C == 6)
+			return applySentenceIds(getDialogueId(250946));
+		break;
+	case 15:
+		/* TODO 
+		if (flag || sentence->contains("or")) {
+			return applySentenceIds(getDialogueId(250526), 16);
+		} else {
+			TTtreeResult treeResult;
+			if (TTquotesTree::search(sentence->_normalizedLine.c_str(), 
+					&TTnpcScript_BTREE_3, &treeResult, 0, 0) != -1) {
+				id = getDialogueId(250526);
+				return applySentenceIds(id, 16);
+			}
+		}
+		*/
+		break;
+	case 17:
+		if (flag) {
+			return applySentenceIds(50382);
+		} else if (flag2) {
+			return applySentenceIds(51423);
+		} 
+		// Deliberate fall-through
+
+	case 16:
+		if (val2C == 7 || val2C == 10)
+			return applySentenceIds(getDialogueId(250525));
+		break;
+	case 18:
+		return applySentenceIds(getDialogueId(250589));
+	case 19:
+		return applySentenceIds(getDialogueId(250565), 20);
+	case 20:
+		if (flag)
+			return applySentenceIds(50307);
+		if (flag2)
+			return applySentenceIds(50306);
+		break;
+	case 21:
+		if (flag)
+			return applySentenceIds(50359);
+		if (flag2)
+			return applySentenceIds(50357);
+		break;
+	case 23:
+		if (val2C == 6 || val2C == 10)
+			return applySentenceIds(getDialogueId(250551));
+		break;
+	case 24:
+		if (sentence->contains("do not know")
+				|| sentence->contains("no idea")
+				|| sentence->contains("a clue")) {
+			return applySentenceIds(getDialogueId(250553));
+		} else {
+			return applySentenceIds(getDialogueId(250552));
+		}
+		break;
+	case 25:
+		if (flag || val2C == 10)
+			applySentenceIds(getDialogueId(251899), 26);
+		else if (flag2)
+			return applySentenceIds(50215);
+		break;
+	case 26:
+		/* TODO
+		v43 = TTstring_cstr(&sentence->normalizedLine);
+		if (TTquotesTree_Search(v43, &TTnpcScript_BTREE_3, &buffer, 0, 0) == -1)
+			break;
+		*/
+		return applySentenceIds(getDialogueId(251899), 26);
+
+	case 27:
+		if (flag)
+			return applySentenceIds(getDialogueId(250766));
+		else if (flag2)
+			return applySentenceIds(getDialogueId(250764));
+		break;
+	case 28:
+		return applySentenceIds(getDialogueId(250765));
+	case 29:
+		return applySentenceIds(getDialogueId(250652));
+	case 30:
+		return applySentenceIds(getDialogueId(250653));
+	case 31:
+		if (flag)
+			return applySentenceIds(getDialogueId(250664));
+		else if (flag2)
+			return applySentenceIds(getDialogueId(250663));
+		break;
+	case 32:
+		if (flag)
+			return applySentenceIds(getDialogueId(250643));
+		else if (flag2)
+			return applySentenceIds(getDialogueId(250642));
+		break;
+	case 33:
+		return applySentenceIds(50763);
+	case 34:
+		if (flag)
+			return applySentenceIds(getDialogueId(251622));
+		else if (flag2)
+			return applySentenceIds(getDialogueId(251624));
+		break;
+	case 35:
+		if (val2C == 6 || val2C == 10)
+			return applySentenceIds(getDialogueId(251623));
+		break;
+	case 36:
+		if (flag)
+			return applySentenceIds(50335);
+		if (flag2)
+			return applySentenceIds(50334);
+		break;
+	case 37:
+		if (flag)
+			return applySentenceIds(50217);
+		if (flag2)
+			return applySentenceIds(50153);
+		break;
+	case 38:
+		return applySentenceIds(getDialogueId(250637));
+	case 39:
+		return applySentenceIds(getDialogueId(250638));
+	case 40:
+		return applySentenceIds(getDialogueId(250639));
+	case 41:
+		return applySentenceIds(getDialogueId(250640));
+	case 42:
+		if (flag)
+			return applySentenceIds(getDialogueId(250676));
+		else if (flag2)
+			return applySentenceIds(getDialogueId(250673));
+		break;
+	case 43:
+		if (flag)
+			return applySentenceIds(50416, -1);
+		if (flag2)
+			return applySentenceIds(50415, -1);
+		break;
+	case 44:
+		if (flag)
+			return applySentenceIds(getDialogueId(250468));
+		else if (flag2)
+			return applySentenceIds(getDialogueId(250413));
+
+		if (val2C == 6 || val2C == 10)
+			return applySentenceIds(getDialogueId(251649));
+		break;
+	case 45:
+		if (sentence->localWord("summer")
+				|| sentence->contains("summer")
+				|| sentence->localWord("autumn")
+				|| sentence->contains("autumn")) {
+			return applySentenceIds(50743);
+		} else if (sentence->localWord("winter") || sentence->contains("winter")) {
+			return applySentenceIds(50696);
+		} else {
+			return applySentenceIds(50225);
+		}
+		break;
+	case 46:
+		if (val2C == 7 || val2C == 10)
+			return applySentenceIds(50698);
+		break;
+	case 47:
+		if (flag || flag2 || val2C == 6)
+			return applySentenceIds(50717);
+		break;
+	case 48:
+		if (flag)
+			return applySentenceIds(50710);
+		if (flag2)
+			return applySentenceIds(50225);
+		break;
+	case 49:
+		if (sentence->localWord("scraliontis") || sentence->contains("scraliontis"))
+			return applySentenceIds(50711);
+		if (sentence->localWord("brobostigon") || sentence->contains("brobostigon"))
+			return applySentenceIds(50712);
+		break;
+	case 50:
+		return applySentenceIds(50713);
+	case 51:
+		if (flag)
+			return applySentenceIds(50715);
+		if (flag2)
+			return applySentenceIds(50714);
+		break;
+	case 52:
+		if (sentence->localWord("note") || sentence->contains("note"))
+			return applySentenceIds(50716);
+		return  applySentenceIds(50210);
+	case 53:
+		return applySentenceIds(50210);
+	case 54:
+		if (getDialRegion(0) != 0) {
+			if (val2C == 12)
+				return applySentenceIds(50174);
+			else
+				return applySentenceIds(50300);
+		} else if (val2C == 7 || val2C == 10) {
+			return applySentenceIds(50871);
+		}
+		break;
+	case 55:
+		if (flag)
+			return applySentenceIds(50302);
+		if (flag2)
+			return applySentenceIds(50301);
+		break;
+	case 56:
+		if (flag)
+			return applySentenceIds(50304);
+		if (flag2)
+			return applySentenceIds(50303);
+		break;
+	case 57:
+		if (sentence->localWord("mustard")
+			|| sentence->contains("mustard")
+			|| sentence->localWord("tomato")
+			|| sentence->contains("tomato"))
+			return applySentenceIds(50320);
+		if (sentence->localWord("sauce")
+			|| sentence->localWord("puree")
+			|| sentence->contains("sauce")
+			|| sentence->contains("puree")
+			|| sentence->contains("bird")
+			|| sentence->contains("starling")) {
+			applySentenceIds(50321);
+			CTrueTalkManager::triggerAction(30, 0);
+			return 2;
+		}
+		
+		return applySentenceIds(50320);
+	case 58:
+		if (val2C == 6 || val2C == 10)
+			return applySentenceIds(50880);
+		break;
+	case 59:
+		if (flag) {
+			if (addRandomResponse(true)) {
+				set34(59);
+				return 2;
+			}
+		} else if (flag2) {
+			return applySentenceIds(getDialogueId(251754));
+		}
+		break;
+	case 60:
+		if (flag && addRandomResponse(true)) {
+			set34(59);
+			return 2;
+		} else if (flag2 || val2C == 7 || val2C == 10) {
+			return applySentenceIds(getDialogueId(251712));
+		}
+		break;
+	case 61:
+		if (val2C == 3) {
+			if (sentence->localWord("loop"))
+				return applySentenceIds(getDialogueId(250269));
+			else if (sentence->localWord("do"))
+				return applySentenceIds(getDialogueId(250270));
+		} else if (val2C == 7) {
+			return applySentenceIds(getDialogueId(250270));
+		} else if (flag) {
+			return applySentenceIds(getDialogueId(250270));
+		}
+
+		return applySentenceIds(getDialogueId(250272));
+	case 62:
+		if (flag
+				|| (val2C == 3 && sentence->localWord("do"))
+				|| val2C == 7
+				|| sentence->localWord("help"))
+			return applySentenceIds(getDialogueId(250270));
+
+		return applySentenceIds(getDialogueId(2570272));
+	case 63:
+		if (flag
+				|| (val2C == 3 || sentence->localWord("do"))
+				|| val2C == 7
+				|| sentence->localWord("help"))
+			return applySentenceIds(getDialogueId(250271));
+
+		return applySentenceIds(getDialogueId(250272));
+	case 64:
+		if (flag || val2C == 3 || val2C == 8)
+			return applySentenceIds(getDialogueId(250631));
+		break;
+	case 65:
+		if (sentence->localWord("now") || sentence->localWord("soonh"))
+			return applySentenceIds(getDialogueId(250424));
+		return applySentenceIds(getDialogueId(250506));
+	case 66:
+		if (flag || sentence->localWord("good") || sentence->localWord("well"))
+			return applySentenceIds(getDialogueId(251027));
+		return applySentenceIds(getDialogueId(251021));
+	case 67:
+		if (flag || val2C == 6 || val2C == 10) {
+			setDial(0, getDialLevel(0, false) - 8);
+			return applySentenceIds(getDialogueId(251589));
+		}
+		break;
+	case 68:
+		if (flag || val2C == 6 || val2C == 10) {
+			setDial(0, getDialLevel(0, false) - 12);
+			return applySentenceIds(getDialogueId(251590));
+		}
+		break;
+	case 69:
+		if (flag || val2C == 6 || val2C == 10) {
+			setDial(0, getDialLevel(0, false) - 25);
+			return applySentenceIds(getDialogueId(251591));
+		}
+		break;
+	default:
+		break;
+	}
+
+done:
+	// Adjust primary dial
+	set34(0);
+	if (sentence->get58() != 5) {
+		adjustDial(0, sentence->get58() * 4 - 20);
+	} else if (getDialLevel(0, false) > 65) {
+		adjustDial(0, -2 - getRandomNumber(7));
+	} else if (getDialLevel(0, false) < 35) {
+		adjustDial(0, 2 + getRandomNumber(7));
+	}
+
+	// TODO: Remainder of method
 
 
 	// TODO
@@ -253,6 +681,27 @@ void BarbotScript::adjustDial(int dialNum, int amount) {
 
 bool BarbotScript::isState9() const {
 	return CTrueTalkManager::getStateValue(9) != 0;
+}
+
+int BarbotScript::applySentenceIds(int dialogueId, int v34) {
+	addResponse(dialogueId);
+	applyResponse();
+
+	if (v34 != -1) {
+		set34(v34);
+	} else {
+		for (uint idx = 0; idx < _mappings.size(); ++idx) {
+			const TTscriptMapping &m = _mappings[idx];
+			for (int vidx = 0; vidx < _mappings._valuesPerMapping; ++idx) {
+				if (m._values[vidx] == (uint)dialogueId) {
+					proc21(m._id, m._id, vidx);
+					break;
+				}
+			}
+		}
+	}
+
+	return -2;
 }
 
 } // End of namespace Titanic
