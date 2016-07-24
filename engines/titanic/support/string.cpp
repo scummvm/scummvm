@@ -63,6 +63,11 @@ int CString::indexOf(char c) const {
 	return charP ? charP - c_str() : -1;
 }
 
+int CString::indexOf(const char *s) const {
+	const char *strP = strstr(c_str(), s);
+	return strP ? strP - c_str() : -1;
+}
+
 int CString::lastIndexOf(char c) const {
 	const char *charP = strrchr(c_str(), c);
 	return charP ? charP - c_str() : -1;

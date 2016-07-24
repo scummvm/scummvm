@@ -30,15 +30,21 @@ namespace Titanic {
 class CGameObject;
 class CScreenManager;
 
-class COverrideSubItem : public ListItem {
-
+class CCreditLine : public ListItem {
+public:
+	CString _line;
+	uint _lineWidth;
+public:
+	CCreditLine() : _lineWidth(0) {}
+	CCreditLine(const CString &line, uint lineWidth) : _line(line), _lineWidth(lineWidth) {}
 };
-typedef List<COverrideSubItem> CCreditTextSubList;
+typedef List<CCreditLine> CCreditLines;
 
-class CCreditTextItem : public ListItem {
-
+class CCreditLineGroup : public ListItem {
+public:
+	CCreditLines _lines;
 };
-typedef List<CCreditTextItem> CCreditTextList;
+typedef List<CCreditLineGroup> CCreditLineGroups;
 
 class CCreditText {
 private:
@@ -46,17 +52,27 @@ private:
 	 * Sets up needed data
 	 */
 	void setup();
+
+	/**
+	 * Read in a text line from the passed stream
+	 */
+	CString readLine(Common::SeekableReadStream *stream);
+
+	/**
+	 * Handles a group where the .... sequence was encountered
+	 */
+	void handleDots(CCreditLineGroup *group);
 public:
 	CScreenManager *_screenManagerP;
 	Rect _rect;
 	int _field14;
-	CCreditTextList _list;
+	CCreditLineGroups _groups;
 	uint _ticks;
 	uint _fontHeight;
 	CGameObject *_objectP;
-	int _field34;
-	int _field38;
-	int _field3C;
+	CCreditLineGroups::iterator _groupIt;
+	CCreditLines::iterator _lineIt;
+	uint _totalHeight;
 	int _field40;
 	int _field44;
 	int _field48;

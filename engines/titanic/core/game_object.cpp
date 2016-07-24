@@ -193,8 +193,11 @@ void CGameObject::load(SimpleFile *file) {
 void CGameObject::draw(CScreenManager *screenManager) {
 	if (!_visible)
 		return;
-	if (_credits) {
-		error("TODO: Block in CGameObject::draw");
+	if (_credits && _credits->_objectP == this) {
+		if (!_credits->draw())
+			CGameObject::deinit();
+		
+		return;
 	}
 
 	if (_field40) {

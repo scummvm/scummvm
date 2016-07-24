@@ -75,6 +75,11 @@ public:
 	int indexOf(char c) const;
 
 	/**
+	 * Returns the index of the first occurance of a given string
+	 */
+	int indexOf(const char *s) const;
+
+	/**
 	 * Returns the index of the last occurance of a given character
 	 */
 	int lastIndexOf(char c) const;
