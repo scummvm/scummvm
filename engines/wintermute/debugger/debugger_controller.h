@@ -112,7 +112,7 @@ public:
 	 */
 	void onBreakpoint(const Breakpoint *breakpoint, DebuggableScript *script);
 	void onWatch(const Watch *watch, DebuggableScript *script);
-	void notifyStep(DebuggableScript *script);
+	void notifyStep(DebuggableScript *script) override;
 };
 }
 

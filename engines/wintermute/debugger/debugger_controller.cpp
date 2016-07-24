@@ -147,7 +147,7 @@ void DebuggerController::onBreakpoint(const Breakpoint *breakpoint, DebuggableSc
 	DEBUGGER->notifyBreakpoint(script->dbgGetFilename().c_str(), script->_currentLine);
 }
 
-void DebuggerController::notifyStep(DebuggableScript *script) override {
+void DebuggerController::notifyStep(DebuggableScript *script) {
 	_lastScript = script;
 	_lastLine = script->_currentLine;
 	DEBUGGER->notifyStep(script->dbgGetFilename().c_str(), script->_currentLine);
