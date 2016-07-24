@@ -228,12 +228,8 @@ void tglPresentBufferDirtyRects(TinyGL::GLContext *c) {
 
 	tglDisposeResources(c);
 
-	c->_currentAllocatorIndex++;
-	if (c->_currentAllocatorIndex == 2) {
-		c->_currentAllocatorIndex = 0;
-		c->_drawCallAllocator[0].reset();
-		c->_drawCallAllocator[1].reset();
-	}
+	c->_currentAllocatorIndex = (c->_currentAllocatorIndex + 1) & 0x1;
+	c->_drawCallAllocator[c->_currentAllocatorIndex].reset();
 }
 
 void tglPresentBufferSimple(TinyGL::GLContext *c) {
