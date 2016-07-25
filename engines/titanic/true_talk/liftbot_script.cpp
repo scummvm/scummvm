@@ -39,6 +39,7 @@ LiftbotScript::LiftbotScript(int val1, const char *charClass, int v2,
 	loadResponses("Responses/Liftbot");
 	setupSentences();
 	_tagMappings.load("TagMap/Liftbot");
+	_words.load("Words/Liftbot");
 }
 
 void LiftbotScript::setupSentences() {

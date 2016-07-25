@@ -120,6 +120,18 @@ public:
 	void load(const char *name);
 };
 
+struct TTwordEntry {
+	uint _id;
+	CString _text;
+
+	TTwordEntry() : _id(0) {}
+};
+
+class TTwordEntries : public Common::Array<TTwordEntry> {
+public:
+	void load(const char *name);
+};
+
 class TTnpcScriptBase : public TTscriptBase {
 protected:
 	int _field54;
@@ -167,6 +179,7 @@ protected:
 	TTscriptMappings _mappings;
 	TTsentenceEntries _entries;
 	TTtagMappings _tagMappings;
+	TTwordEntries _words;
 	int _entryCount;
 	int _field68;
 	int _field6C;
@@ -313,7 +326,11 @@ public:
 	 */
 	virtual void selectResponse(int id);
 	
-	virtual int proc15(int id) const;
+	/**
+	 * Handles scanning the word list for a given Id, and if
+	 * found adds it to the sentence concept list
+	 */
+	virtual bool handleWord(uint id) const;
 
 	virtual bool handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 		int val, uint tagId, uint remainder) const;

@@ -38,6 +38,7 @@ DoorbotScript::DoorbotScript(int val1, const char *charClass, int v2,
 	loadResponses("Responses/Doorbot");
 	setupSentences();
 	_tagMappings.load("TagMap/Doorbot");
+	_words.load("Words/Doorbot");
 }
 
 void DoorbotScript::setupSentences() {

@@ -63,6 +63,7 @@ void BarbotScript::setupSentences() {
 	_mappings.load("Mappings/Barbot", 8);
 	_entries.load("Sentences/Barbot");
 	_entries2.load("Sentences/Barbot2");
+	_words.load("Words/Barbot");
 }
 
 int BarbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {

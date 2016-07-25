@@ -206,6 +206,22 @@ void TTtagMappings::load(const char *name) {
 
 /*------------------------------------------------------------------------*/
 
+void TTwordEntries::load(const char *name) {
+	Common::SeekableReadStream *r = g_vm->_filesManager->getResource(name);
+
+	while (r->pos() < r->size()) {
+		TTwordEntry we;
+		we._id = r->readUint32LE();
+		we._text = readStringFromStream(r);
+
+		push_back(we);
+	}
+
+	delete r;
+}
+
+/*------------------------------------------------------------------------*/
+
 TTnpcScriptBase::TTnpcScriptBase(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTscriptBase(0, charClass, v2, charName, v3, v4, v5, v6, v7),
@@ -298,7 +314,7 @@ void TTnpcScript::addResponse(int id) {
 	if (id > 200000)
 		id = getDialogueId(id);
 
-	proc15(id);
+	handleWord(id);
 	TTscriptBase::addResponse(id);
 }
 
@@ -350,8 +366,21 @@ void TTnpcScript::selectResponse(int id) {
 	addResponse(id);
 }
 
-int TTnpcScript::proc15(int id) const {
-	return 0;
+bool TTnpcScript::handleWord(uint id) const {
+	if (_words.empty())
+		return false;
+
+	for (uint idx = 0; idx < _words.size(); ++idx) {
+		const TTwordEntry &we = _words[idx];
+		if (we._id == id) {
+			TTstring str(we._text);
+			g_vm->_scriptHandler->handleWord(&str);
+			return true;
+		}
+	}
+
+	g_vm->_scriptHandler->handleWord(nullptr);
+	return true;
 }
 
 bool TTnpcScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,

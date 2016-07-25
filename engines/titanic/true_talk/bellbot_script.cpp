@@ -43,6 +43,7 @@ BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
 	loadResponses("Responses/Bellbot", 4);
 	setupSentences();
 	_tagMappings.load("TagMap/Bellbot");
+	_words.load("Words/Bellbot");
 }
 
 void BellbotScript::setupSentences() {

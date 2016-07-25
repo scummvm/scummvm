@@ -43,8 +43,8 @@ private:
 	int _inputCtr;
 	int _field30;
 private:
-	void handleWord1(TTstring &str);
-	void handleWord2(TTstring &str);
+	void handleWord1(const TTstring *str);
+	void handleWord2(const TTstring *str);
 public:
 	TTparser _parser;
 	TTvocab *_vocab;
@@ -81,7 +81,7 @@ public:
 	 */
 	int setResponse(TTscriptBase *script, TTresponse *response);
 
-	void handleWord(TTstring &str);
+	void handleWord(const TTstring *str);
 };
 
 } // End of namespace Titanic
