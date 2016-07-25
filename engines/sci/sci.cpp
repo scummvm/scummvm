@@ -69,6 +69,7 @@
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/remap32.h"
 #include "sci/graphics/text32.h"
+#include "sci/graphics/transitions32.h"
 #include "sci/graphics/video32.h"
 #include "sci/sound/audio32.h"
 // TODO: Move this to video32
@@ -176,6 +177,7 @@ SciEngine::~SciEngine() {
 	// components
 	delete _video32;
 	delete _gfxPalette32;
+	delete _gfxTransitions32;
 	delete _gfxFrameout;
 	delete _gfxRemap32;
 	delete _audio32;
@@ -712,6 +714,7 @@ void SciEngine::initGraphics() {
 	_gfxPaint32 = 0;
 	_gfxPalette32 = 0;
 	_gfxRemap32 = 0;
+	_gfxTransitions32 = 0;
 #endif
 
 	if (hasMacIconBar())
@@ -741,7 +744,8 @@ void SciEngine::initGraphics() {
 		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
 		_gfxPaint32 = new GfxPaint32(_gamestate->_segMan);
 		_robotDecoder = new RobotDecoder(getPlatform() == Common::kPlatformMacintosh);
-		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxScreen, _gfxPalette32);
+		_gfxTransitions32 = new GfxTransitions32(_gamestate->_segMan);
+		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxScreen, _gfxPalette32, _gfxTransitions32);
 		_gfxText32 = new GfxText32(_gamestate->_segMan, _gfxCache);
 		_gfxControls32 = new GfxControls32(_gamestate->_segMan, _gfxCache, _gfxText32);
 		_gfxFrameout->run();

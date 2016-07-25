@@ -56,6 +56,7 @@
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/remap32.h"
 #include "sci/graphics/text32.h"
+#include "sci/graphics/transitions32.h"
 #endif
 
 namespace Sci {
@@ -139,7 +140,7 @@ reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kSetPalStyleRange(EngineState *s, int argc, reg_t *argv) {
-	g_sci->_gfxFrameout->kernelSetPalStyleRange(argv[0].toUint16(), argv[1].toUint16());
+	g_sci->_gfxTransitions32->kernelSetPalStyleRange(argv[0].toUint16(), argv[1].toUint16());
 	return s->r_acc;
 }
 
@@ -310,7 +311,7 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	// NOTE: The order of planeObj and showStyle are reversed
 	// because this is how SCI3 called the corresponding method
 	// on the KernelMgr
-	g_sci->_gfxFrameout->kernelSetShowStyle(argc, planeObj, type, seconds, back, priority, animate, refFrame, pFadeArray, divisions, blackScreen);
+	g_sci->_gfxTransitions32->kernelSetShowStyle(argc, planeObj, type, seconds, back, priority, animate, refFrame, pFadeArray, divisions, blackScreen);
 
 	return s->r_acc;
 }
@@ -760,28 +761,19 @@ reg_t kDeleteLine(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+// Used by LSL6hires intro (room 110)
 reg_t kSetScroll(EngineState *s, int argc, reg_t *argv) {
-	// Called in the intro of LSL6 hires (room 110)
-	// The end effect of this is the same as the old screen scroll transition
+	const reg_t plane = argv[0];
+	const int16 deltaX = argv[1].toSint16();
+	const int16 deltaY = argv[2].toSint16();
+	const GuiResourceId pictureId = argv[3].toUint16();
+	const bool animate = argv[4].toUint16();
+	// NOTE: speed was accepted as an argument, but then never actually used
+	// const int16 speed = argc > 5 ? (bool)argv[5].toSint16() : -1;
+	const bool mirrorX = argc > 6 ? (bool)argv[6].toUint16() : false;
 
-	// 7 parameters
-	reg_t planeObject = argv[0];
-	//int16 x = argv[1].toSint16();
-	//int16 y = argv[2].toSint16();
-	uint16 pictureId = argv[3].toUint16();
-	// param 4: int (0 in LSL6, probably scroll direction? The picture in LSL6 scrolls down)
-	// param 5: int (first call is 1, then the subsequent one is 0 in LSL6)
-	// param 6: optional int (0 in LSL6)
-
-	// Set the new picture directly for now
-	//writeSelectorValue(s->_segMan, planeObject, SELECTOR(left), x);
-	//writeSelectorValue(s->_segMan, planeObject, SELECTOR(top), y);
-	writeSelectorValue(s->_segMan, planeObject, SELECTOR(picture), pictureId);
-	// and update our draw list
-	g_sci->_gfxFrameout->kernelUpdatePlane(planeObject);
-
-	// TODO
-	return kStub(s, argc, argv);
+	g_sci->_gfxTransitions32->kernelSetScroll(plane, deltaX, deltaY, pictureId, animate, mirrorX);
+	return s->r_acc;
 }
 
 // Used by SQ6, script 900, the datacorder reprogramming puzzle (from room 270)

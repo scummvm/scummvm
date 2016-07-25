@@ -772,7 +772,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(EditText),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(MakeSaveCatName),   SIG_EVERYWHERE,           "rr",                    NULL,            NULL },
 	{ MAP_CALL(MakeSaveFileName),  SIG_EVERYWHERE,           "rri",                   NULL,            NULL },
-	{ MAP_CALL(SetScroll),         SIG_EVERYWHERE,           "oiiiii(i)",             NULL,            NULL },
+	{ MAP_CALL(SetScroll),         SIG_EVERYWHERE,           "oiiii(i)(i)",           NULL,            NULL },
 	{ MAP_CALL(PalCycle),          SIG_EVERYWHERE,           "(.*)",                  kPalCycle_subops, NULL },
 
 	// SCI2 Empty functions
