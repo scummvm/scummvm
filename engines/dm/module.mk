@@ -31,6 +31,7 @@ MODULE := engines/dm
 MODULE_OBJS := \
 	champion.o \
 	detection.o \
+	dialog.o \
 	dm.o \
 	dmglobals.o \
 	dungeonman.o \

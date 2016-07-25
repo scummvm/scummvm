@@ -536,7 +536,8 @@ const Thing Thing::_explRebirthStep2(0xFFE5); // @ C0xFFE5_THING_EXPLOSION_REBIR
 const Thing Thing::_party(0xFFFF); // @ C0xFFFF_THING_PARTY          
 
 void DungeonMan::f434_loadDungeonFile() {
-	if (_vm->_g298_newGame)
+
+	if(!_rawDunFileData)
 		f455_decompressDungeonFile();
 
 	Common::MemoryReadStream dunDataStream(_rawDunFileData, _rawDunFileDataSize, DisposeAfterUse::NO);

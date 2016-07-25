@@ -52,6 +52,7 @@ class MovesensMan;
 class GroupMan;
 class Timeline;
 class ProjExpl;
+class DialogMan;
 
 
 void warning(bool repeat, const char *s, ...);
@@ -243,6 +244,7 @@ public:
 	GroupMan *_groupMan;
 	Timeline *_timeline;
 	ProjExpl *_projexpl;
+	DialogMan *_dialog;
 
 
 	int16 _g298_newGame; // @ G0298_B_NewGame

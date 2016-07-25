@@ -54,6 +54,7 @@
 #include "group.h"
 #include "timeline.h"
 #include "projexpl.h"
+#include "dialog.h"
 
 namespace DM {
 void warning(bool repeat, const char* s, ...) {
@@ -147,6 +148,7 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	_groupMan = nullptr;
 	_timeline = nullptr;
 	_projexpl = nullptr;
+	_displayMan = nullptr;
 
 	_g528_saveFormat = 0;
 	_g527_platform = 0;
@@ -197,6 +199,7 @@ DMEngine::~DMEngine() {
 	delete _groupMan;
 	delete _timeline;
 	delete _projexpl;
+	delete _dialog;
 
 	// clear debug channels
 	DebugMan.clearAllDebugChannels();
@@ -315,6 +318,7 @@ Common::Error DMEngine::run() {
 	_groupMan = new GroupMan(this);
 	_timeline = new Timeline(this);
 	_projexpl = new ProjExpl(this);
+	_dialog = new DialogMan(this);
 	_displayMan->setUpScreens(320, 200);
 
 	f463_initializeGame();
