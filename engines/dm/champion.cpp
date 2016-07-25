@@ -1324,81 +1324,81 @@ void ChampionMan::f326_championShootProjectile(Champion* champ, Thing thing, int
 }
 
 void ChampionMan::f320_applyAndDrawPendingDamageAndWounds() {
-	uint16 L0967_ui_ChampionIndex;
-	uint16 L0968_ui_PendingDamage;
-	int16 L0969_i_Multiple;
-#define AL0969_i_Health     L0969_i_Multiple
-#define AL0969_i_X          L0969_i_Multiple
-#define AL0969_i_EventIndex L0969_i_Multiple
-	int16 L0970_i_PendingWounds;
-	Champion* L0971_ps_Champion;
-	TimelineEvent* L0972_ps_Event;
-	int16 L0973_i_Y;
-	TimelineEvent L0974_s_Event;
-	Box L0975_s_Box;
-
-
-	L0971_ps_Champion = _vm->_championMan->_gK71_champions;
-	for (L0967_ui_ChampionIndex = k0_ChampionFirst; L0967_ui_ChampionIndex < _vm->_championMan->_g305_partyChampionCount; L0967_ui_ChampionIndex++, L0971_ps_Champion++) {
-		setFlag(L0971_ps_Champion->_wounds, L0970_i_PendingWounds = _g410_championPendingWounds[L0967_ui_ChampionIndex]);
-		_g410_championPendingWounds[L0967_ui_ChampionIndex] = 0;
-		if (!(L0968_ui_PendingDamage = _g409_championPendingDamage[L0967_ui_ChampionIndex]))
+	Champion *championPtr = _vm->_championMan->_gK71_champions;
+	for (uint16 championIndex = k0_ChampionFirst; championIndex < _vm->_championMan->_g305_partyChampionCount; championIndex++, championPtr++) {
+		int16 pendingWounds = _g410_championPendingWounds[championIndex];
+		setFlag(championPtr->_wounds, pendingWounds);
+		_g410_championPendingWounds[championIndex] = 0;
+		uint16 pendingDamage = _g409_championPendingDamage[championIndex];
+		if (!pendingDamage)
 			continue;
-		_g409_championPendingDamage[L0967_ui_ChampionIndex] = 0;
-		if (!(AL0969_i_Health = L0971_ps_Champion->_currHealth))
+
+		_g409_championPendingDamage[championIndex] = 0;
+		int16 curHealth = championPtr->_currHealth;
+		if (!curHealth)
 			continue;
-		if ((AL0969_i_Health = AL0969_i_Health - L0968_ui_PendingDamage) <= 0) {
-			_vm->_championMan->f319_championKill(L0967_ui_ChampionIndex);
+
+		curHealth -= pendingDamage;
+		if (curHealth <= 0) {
+			_vm->_championMan->f319_championKill(championIndex);
 		} else {
-			L0971_ps_Champion->_currHealth = AL0969_i_Health;
-			setFlag(L0971_ps_Champion->_attributes, k0x0100_ChampionAttributeStatistics);
-			if (L0970_i_PendingWounds) {
-				setFlag(L0971_ps_Champion->_attributes, k0x2000_ChampionAttributeWounds);
+			championPtr->_currHealth = curHealth;
+			setFlag(championPtr->_attributes, k0x0100_ChampionAttributeStatistics);
+			if (pendingWounds) {
+				setFlag(championPtr->_attributes, k0x2000_ChampionAttributeWounds);
 			}
-			AL0969_i_X = L0967_ui_ChampionIndex * k69_ChampionStatusBoxSpacing;
-			L0975_s_Box._y1 = 0;
+
+			int16 textPosX = championIndex * k69_ChampionStatusBoxSpacing;
+			int16 textPosY;
+
+			Box blitBox;
+			blitBox._y1 = 0;
 			_vm->_eventMan->f78_showMouse();
-			if (_vm->M0_indexToOrdinal(L0967_ui_ChampionIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
-				L0975_s_Box._y2 = 28;
-				L0975_s_Box._x2 = (L0975_s_Box._x1 = AL0969_i_X + 7) + 31; /* Box is over the champion portrait in the status box */
-				_vm->_displayMan->f21_blitToScreen(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k16_damageToChampionBig), &L0975_s_Box, k16_byteWidth, k10_ColorFlesh, 29);
-				if (L0968_ui_PendingDamage < 10) { /* 1 digit */
-					AL0969_i_X += 21;
-				} else {
-					if (L0968_ui_PendingDamage < 100) { /* 2 digits */
-						AL0969_i_X += 18;
-					} else { /* 3 digits */
-						AL0969_i_X += 15;
-					}
-				}
-				L0973_i_Y = 16;
+
+			if (_vm->M0_indexToOrdinal(championIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
+				blitBox._y2 = 28;
+				blitBox._x1 = textPosX + 7;
+				blitBox._x2 = blitBox._x1 + 31; /* Box is over the champion portrait in the status box */
+				_vm->_displayMan->f21_blitToScreen(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k16_damageToChampionBig), &blitBox, k16_byteWidth, k10_ColorFlesh, 29);
+				// Check the number of digits and sets the position accordingly.
+				if (pendingDamage < 10) // 1 digit
+					textPosX += 21;
+				else if (pendingDamage < 100)  // 2 digits
+					textPosX += 18;
+				else // 3 digits
+					textPosX += 15;
+
+				textPosY = 16;
 			} else {
-				L0975_s_Box._y2 = 6;
-				L0975_s_Box._x2 = (L0975_s_Box._x1 = AL0969_i_X) + 47; /* Box is over the champion name in the status box */
-				_vm->_displayMan->f21_blitToScreen(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k15_damageToChampionSmallIndice), &L0975_s_Box, k24_byteWidth, k10_ColorFlesh, 7);
-				if (L0968_ui_PendingDamage < 10) { /* 1 digit */
-					AL0969_i_X += 19;
-				} else {
-					if (L0968_ui_PendingDamage < 100) { /* 2 digits */
-						AL0969_i_X += 16;
-					} else { /* 3 digits */
-						AL0969_i_X += 13;
-					}
-				}
-				L0973_i_Y = 5;
+				blitBox._y2 = 6;
+				blitBox._x1 = textPosX;
+				blitBox._x2 = blitBox._x1 + 47; /* Box is over the champion name in the status box */
+				_vm->_displayMan->f21_blitToScreen(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k15_damageToChampionSmallIndice), &blitBox, k24_byteWidth, k10_ColorFlesh, 7);
+				// Check the number of digits and sets the position accordingly.
+				if (pendingDamage < 10) // 1 digit
+					textPosX += 19;
+				else if (pendingDamage < 100) // 2 digits
+					textPosX += 16;
+				else //3 digits
+					textPosX += 13;
+
+				textPosY = 5;
 			}
-			_vm->_textMan->f53_printToLogicalScreen(AL0969_i_X, L0973_i_Y, k15_ColorWhite, k8_ColorRed, _vm->_championMan->f288_getStringFromInteger(L0968_ui_PendingDamage, false, 3).c_str());
-			if ((AL0969_i_EventIndex = L0971_ps_Champion->_hideDamageReceivedIndex) == -1) {
-				L0974_s_Event._type = k12_TMEventTypeHideDamageReceived;
-				M33_setMapAndTime(L0974_s_Event._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + 5);
-				L0974_s_Event._priority = L0967_ui_ChampionIndex;
-				L0971_ps_Champion->_hideDamageReceivedIndex = _vm->_timeline->f238_addEventGetEventIndex(&L0974_s_Event);
+			_vm->_textMan->f53_printToLogicalScreen(textPosX, textPosY, k15_ColorWhite, k8_ColorRed, _vm->_championMan->f288_getStringFromInteger(pendingDamage, false, 3).c_str());
+
+			int16 eventIndex = championPtr->_hideDamageReceivedIndex;
+			if (eventIndex == -1) {
+				TimelineEvent newEvent;
+				newEvent._type = k12_TMEventTypeHideDamageReceived;
+				M33_setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + 5);
+				newEvent._priority = championIndex;
+				championPtr->_hideDamageReceivedIndex = _vm->_timeline->f238_addEventGetEventIndex(&newEvent);
 			} else {
-				L0972_ps_Event = &_vm->_timeline->_g370_events[AL0969_i_EventIndex];
-				M33_setMapAndTime(L0972_ps_Event->_mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + 5);
-				_vm->_timeline->f236_fixChronology(_vm->_timeline->f235_getIndex(AL0969_i_EventIndex));
+				TimelineEvent *curEvent = &_vm->_timeline->_g370_events[eventIndex];
+				M33_setMapAndTime(curEvent->_mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + 5);
+				_vm->_timeline->f236_fixChronology(_vm->_timeline->f235_getIndex(eventIndex));
 			}
-			_vm->_championMan->f292_drawChampionState((ChampionIndex)L0967_ui_ChampionIndex);
+			_vm->_championMan->f292_drawChampionState((ChampionIndex)championIndex);
 			_vm->_eventMan->f77_hideMouse();
 		}
 	}
