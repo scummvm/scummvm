@@ -91,12 +91,12 @@ FORCEINLINE static void putPixelTextureMappingPerspective(FrameBuffer *buffer, i
 		c_r = (col >> textureFormat.rShift) & 0xFF;
 		c_g = (col >> textureFormat.gShift) & 0xFF;
 		c_b = (col >> textureFormat.bShift) & 0xFF;
-		unsigned int l_a = (a / 256);
-		c_a = (c_a * l_a) / 256;
 		if (kLightsMode) {
+			unsigned int l_a = (a / 256);
 			unsigned int l_r = (r / 256);
 			unsigned int l_g = (g / 256);
 			unsigned int l_b = (b / 256);
+			c_a = (c_a * l_a) / 256;
 			c_r = (c_r * l_r) / 256;
 			c_g = (c_g * l_g) / 256;
 			c_b = (c_b * l_b) / 256;
