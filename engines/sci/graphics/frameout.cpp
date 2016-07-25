@@ -1609,10 +1609,10 @@ void GfxFrameout::throttle() {
 	if (_throttleFrameOut) {
 		uint8 throttleTime;
 		if (_throttleState == 2) {
-			throttleTime = 17;
+			throttleTime = 16;
 			_throttleState = 0;
 		} else {
-			throttleTime = 16;
+			throttleTime = 17;
 			++_throttleState;
 		}
 
