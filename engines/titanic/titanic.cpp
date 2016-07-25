@@ -82,6 +82,9 @@ void TitanicEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 
+	_debugger = new Debugger(this);
+	_filesManager = new CFilesManager();
+
 	CSaveableObject::initClassList();
 	CEnterExitFirstClassState::init();
 	CGameObject::init();
@@ -97,9 +100,7 @@ void TitanicEngine::initialize() {
 	TTnpcScript::init();
 	OSVideoSurface::setup();
 
-	_debugger = new Debugger(this);
 	_events = new Events(this);
-	_filesManager = new CFilesManager();
 	_screen = new Graphics::Screen(0, 0);
 	_screenManager = new OSScreenManager(this);
 	_window = new CMainGameWindow(this);
