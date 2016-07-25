@@ -88,7 +88,20 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.theme()->supportsImages()) {
 		_picture->useThemeTransparency(true);
-		_picture->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageDropboxLogo));
+		switch (_storageId) {
+		case Cloud::kStorageDropboxId:
+			_picture->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageDropboxLogo));
+			break;
+		case Cloud::kStorageOneDriveId:
+			_picture->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageOneDriveLogo));
+			break;
+		case Cloud::kStorageGoogleDriveId:
+			_picture->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageGoogleDriveLogo));
+			break;
+		case Cloud::kStorageBoxId:
+			_picture->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageBoxLogo));
+			break;
+		}
 	}
 #endif
 

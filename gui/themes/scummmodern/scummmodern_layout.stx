@@ -659,8 +659,8 @@
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '6'>
 					<widget name = 'Picture'
-							width = '115'
-							height = '115'
+							width = '109'
+							height = '109'
 					/>
 					<widget name = 'OpenUrlButton'
 							type = 'Button'
