@@ -286,6 +286,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 	}
 
 	for (part = 0; part < 2; part++) {
+		int y;
 		if (part == 0) {
 			if (fz0 > 0) {
 				update_left = 1;
@@ -303,6 +304,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 				pr2 = p2;
 			}
 			nb_lines = p1->y - p0->y;
+			y = p0->y;
 		} else {
 			// second part
 			if (fz0 > 0) {
@@ -317,6 +319,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 				l2 = p2;
 			}
 			nb_lines = p2->y - p1->y + 1;
+			y = pr1->y;
 		}
 
 		// compute the values for the left edge
@@ -391,7 +394,6 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 			x2 = pr1->x << 16;
 		}
 
-		int y = p1->y;
 		// we draw all the scan line of the part
 		while (nb_lines > 0) {
 			nb_lines--;
@@ -654,8 +656,8 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 
 			if (kDrawLogic == DRAW_SHADOW || kDrawLogic == DRAW_SHADOW_MASK)
 				pm1 = pm1 + xsize;
+			y++;
 		}
-		y++;
 	}
 }
 
