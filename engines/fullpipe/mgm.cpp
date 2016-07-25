@@ -158,7 +158,8 @@ void MGM::rebuildTables(int objId) {
 	for (uint i = 0; i < obj->_staticsList.size(); i++) {
 		_items[idx]->statics.push_back((Statics *)obj->_staticsList[i]);
 
-		_items[idx]->subItems.push_back(new MGMSubItem);
+		for (uint j = 0; j < obj->_staticsList.size(); j++) // Yes, square
+			_items[idx]->subItems.push_back(new MGMSubItem);
 	}
 
 	for (uint i = 0; i < obj->_movements.size(); i++)
