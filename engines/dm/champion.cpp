@@ -1819,116 +1819,95 @@ void ChampionMan::f278_resetDataToStartGame() {
 	_g415_leaderEmptyHanded = true;
 }
 
-
 void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex) {
-	Thing L0793_T_Thing;
-	uint16 L0794_ui_Multiple;
-#define AL0794_ui_ViewCell       L0794_ui_Multiple
-#define AL0794_ui_SlotIndex      L0794_ui_Multiple
-#define AL0794_ui_CharacterIndex L0794_ui_Multiple
-#define AL0794_ui_StatisticIndex L0794_ui_Multiple
-#define AL0794_ui_SkillIndex     L0794_ui_Multiple
-	int16 L0795_i_HiddenSkillIndex;
-	uint16 L0796_ui_Multiple;
-#define AL0796_ui_Character  L0796_ui_Multiple
-#define AL0796_ui_SkillValue L0796_ui_Multiple
-#define AL0796_ui_ThingType  L0796_ui_Multiple
-	Champion* L0797_ps_Champion;
-	char* L0798_pc_Character;
-	uint16 L0799_ui_PreviousPartyChampionCount;
-	uint16 L0800_ui_Multiple;
-#define AL0800_B_ChampionTitleCopied L0800_ui_Multiple
-#define AL0800_ui_HiddenSkillCounter L0800_ui_Multiple
-	uint16 L0801_ui_SlotIndex;
-	int16 L0802_i_MapX;
-	int16 L0803_i_MapY;
-	uint16 L0804_ui_ChampionObjectsCell;
-	int16 L0805_i_ObjectAllowedSlots;
-	int32 L0806_l_BaseSkillExperience;
-	char L0807_ac_DecodedChampionText[77];
+	if (!_vm->_championMan->_g415_leaderEmptyHanded)
+		return;
 
-	if (!_vm->_championMan->_g415_leaderEmptyHanded) {
+	if (_vm->_championMan->_g305_partyChampionCount == 4)
 		return;
-	}
-	if (_vm->_championMan->_g305_partyChampionCount == 4) {
-		return;
-	}
-	L0797_ps_Champion = &_vm->_championMan->_gK71_champions[L0799_ui_PreviousPartyChampionCount = _vm->_championMan->_g305_partyChampionCount];
-	L0797_ps_Champion->resetToZero();
+
+	uint16 previousPartyChampionCount = _vm->_championMan->_g305_partyChampionCount;
+	Champion *championPtr = &_vm->_championMan->_gK71_champions[previousPartyChampionCount];
+	championPtr->resetToZero();
 	// Strangerke - TODO: Check if the new code is possible to run on the older version (example: the portaits could be missing in the data)
 	_vm->_displayMan->_g578_useByteBoxCoordinates = true;
-	_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k26_ChampionPortraitsIndice), L0797_ps_Champion->_portrait, gBoxChampionPortrait, _vm->_championMan->M27_getChampionPortraitX(championPortraitIndex), _vm->_championMan->M28_getChampionPortraitY(championPortraitIndex), k128_byteWidth, k16_byteWidth, kM1_ColorNoTransparency);
-	L0797_ps_Champion->_actionIndex = k255_ChampionActionNone;
-	L0797_ps_Champion->_enableActionEventIndex = -1;
-	L0797_ps_Champion->_hideDamageReceivedIndex = -1;
-	L0797_ps_Champion->_dir = _vm->_dungeonMan->_g308_partyDir;
-	AL0794_ui_ViewCell = k0_ViewCellFronLeft;
-	while (_vm->_championMan->f285_getIndexInCell(M21_normalizeModulo4(AL0794_ui_ViewCell + _vm->_dungeonMan->_g308_partyDir)) != kM1_ChampionNone) {
-		AL0794_ui_ViewCell++;
+	_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k26_ChampionPortraitsIndice), championPtr->_portrait, gBoxChampionPortrait, _vm->_championMan->M27_getChampionPortraitX(championPortraitIndex), _vm->_championMan->M28_getChampionPortraitY(championPortraitIndex), k128_byteWidth, k16_byteWidth, kM1_ColorNoTransparency);
+	championPtr->_actionIndex = k255_ChampionActionNone;
+	championPtr->_enableActionEventIndex = -1;
+	championPtr->_hideDamageReceivedIndex = -1;
+	championPtr->_dir = _vm->_dungeonMan->_g308_partyDir;
+	uint16 viewCell = k0_ViewCellFronLeft;
+	while (_vm->_championMan->f285_getIndexInCell(M21_normalizeModulo4(viewCell + _vm->_dungeonMan->_g308_partyDir)) != kM1_ChampionNone) {
+		viewCell++;
 	}
-	L0797_ps_Champion->_cell = (ViewCell)M21_normalizeModulo4(AL0794_ui_ViewCell + _vm->_dungeonMan->_g308_partyDir);
-	L0797_ps_Champion->_attributes = k0x0400_ChampionAttributeIcon;
-	L0797_ps_Champion->_directionMaximumDamageReceived = _vm->_dungeonMan->_g308_partyDir;
-	L0797_ps_Champion->_food = 1500 + _vm->getRandomNumber(256);
-	L0797_ps_Champion->_water = 1500 + _vm->getRandomNumber(256);
-	for (AL0794_ui_SlotIndex = k0_ChampionSlotReadyHand; AL0794_ui_SlotIndex < k30_ChampionSlotChest_1; AL0794_ui_SlotIndex++) {
-		L0797_ps_Champion->_slots[AL0794_ui_SlotIndex] = Thing::_none;
+	championPtr->_cell = (ViewCell)M21_normalizeModulo4(viewCell + _vm->_dungeonMan->_g308_partyDir);
+	championPtr->_attributes = k0x0400_ChampionAttributeIcon;
+	championPtr->_directionMaximumDamageReceived = _vm->_dungeonMan->_g308_partyDir;
+	championPtr->_food = 1500 + _vm->getRandomNumber(256);
+	championPtr->_water = 1500 + _vm->getRandomNumber(256);
+	for (int16 slotIdx = k0_ChampionSlotReadyHand; slotIdx < k30_ChampionSlotChest_1; slotIdx++)
+		championPtr->_slots[slotIdx] = Thing::_none;
+
+	Thing curThing = _vm->_dungeonMan->f161_getSquareFirstThing(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY);
+	while (curThing.getType() != k2_TextstringType)
+		curThing = _vm->_dungeonMan->f159_getNextThing(curThing);
+
+	char L0807_ac_DecodedChampionText[77];
+	char *decodedStringPtr = L0807_ac_DecodedChampionText;
+	_vm->_dungeonMan->f168_decodeText(decodedStringPtr, curThing, (TextType)(k2_TextTypeScroll | k0x8000_DecodeEvenIfInvisible));
+
+	uint16 charIdx = 0;
+	char tmpChar;
+	while ((tmpChar = *decodedStringPtr++) != '\n') { /* New line */
+		championPtr->_name[charIdx++] = tmpChar;
 	}
-	L0793_T_Thing = _vm->_dungeonMan->f161_getSquareFirstThing(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY);
-	while ((L0793_T_Thing.getType()) != k2_TextstringType) {
-		L0793_T_Thing = _vm->_dungeonMan->f159_getNextThing(L0793_T_Thing);
-	}
-	_vm->_dungeonMan->f168_decodeText(L0798_pc_Character = L0807_ac_DecodedChampionText, L0793_T_Thing, (TextType)(k2_TextTypeScroll | k0x8000_DecodeEvenIfInvisible));
-	AL0794_ui_CharacterIndex = 0;
-	while ((AL0796_ui_Character = *L0798_pc_Character++) != '\n') { /* New line */
-		L0797_ps_Champion->_name[AL0794_ui_CharacterIndex++] = AL0796_ui_Character;
-	}
-	L0797_ps_Champion->_name[AL0794_ui_CharacterIndex] = '\0';
-	AL0794_ui_CharacterIndex = 0;
-	AL0800_B_ChampionTitleCopied = false;
+
+	championPtr->_name[charIdx] = '\0';
+	charIdx = 0;
+	bool championTitleCopiedFl = false;
 	for (;;) { /*_Infinite loop_*/
-		AL0796_ui_Character = *L0798_pc_Character++;
-		if (AL0796_ui_Character == '\n') { /* New line */
-			if (AL0800_B_ChampionTitleCopied)
+		tmpChar = *decodedStringPtr++;
+		if (tmpChar == '\n') { /* New line */
+			if (championTitleCopiedFl)
 				break;
-			AL0800_B_ChampionTitleCopied = true;
+			championTitleCopiedFl = true;
 		} else {
-			L0797_ps_Champion->_title[AL0794_ui_CharacterIndex++] = AL0796_ui_Character;
+			championPtr->_title[charIdx++] = tmpChar;
 		}
 	}
-	L0797_ps_Champion->_title[AL0794_ui_CharacterIndex] = '\0';
-	if (*L0798_pc_Character++ == 'M') {
-		setFlag(L0797_ps_Champion->_attributes, k0x0010_ChampionAttributeMale);
+	championPtr->_title[charIdx] = '\0';
+	if (*decodedStringPtr++ == 'M') {
+		setFlag(championPtr->_attributes, k0x0010_ChampionAttributeMale);
 	}
-	L0798_pc_Character++;
-	L0797_ps_Champion->_currHealth = L0797_ps_Champion->_maxHealth = _vm->_championMan->f279_getDecodedValue(L0798_pc_Character, 4);
-	L0798_pc_Character += 4;
-	L0797_ps_Champion->_currStamina = L0797_ps_Champion->_maxStamina = _vm->_championMan->f279_getDecodedValue(L0798_pc_Character, 4);
-	L0798_pc_Character += 4;
-	L0797_ps_Champion->_currMana = L0797_ps_Champion->_maxMana = _vm->_championMan->f279_getDecodedValue(L0798_pc_Character, 4);
-	L0798_pc_Character += 4;
-	L0798_pc_Character++;
-	for (AL0794_ui_StatisticIndex = k0_ChampionStatLuck; AL0794_ui_StatisticIndex <= k6_ChampionStatAntifire; AL0794_ui_StatisticIndex++) {
-		L0797_ps_Champion->_statistics[AL0794_ui_StatisticIndex][k2_ChampionStatMinimum] = 30;
-		L0797_ps_Champion->_statistics[AL0794_ui_StatisticIndex][k1_ChampionStatCurrent] = L0797_ps_Champion->_statistics[AL0794_ui_StatisticIndex][k0_ChampionStatMaximum] = _vm->_championMan->f279_getDecodedValue(L0798_pc_Character, 2);
-		L0798_pc_Character += 2;
+	decodedStringPtr++;
+	championPtr->_currHealth = championPtr->_maxHealth = _vm->_championMan->f279_getDecodedValue(decodedStringPtr, 4);
+	decodedStringPtr += 4;
+	championPtr->_currStamina = championPtr->_maxStamina = _vm->_championMan->f279_getDecodedValue(decodedStringPtr, 4);
+	decodedStringPtr += 4;
+	championPtr->_currMana = championPtr->_maxMana = _vm->_championMan->f279_getDecodedValue(decodedStringPtr, 4);
+	decodedStringPtr += 4;
+	decodedStringPtr++;
+	for (int16 statIdx = k0_ChampionStatLuck; statIdx <= k6_ChampionStatAntifire; statIdx++) {
+		championPtr->_statistics[statIdx][k2_ChampionStatMinimum] = 30;
+		championPtr->_statistics[statIdx][k1_ChampionStatCurrent] = championPtr->_statistics[statIdx][k0_ChampionStatMaximum] = _vm->_championMan->f279_getDecodedValue(decodedStringPtr, 2);
+		decodedStringPtr += 2;
 	}
-	L0797_ps_Champion->_statistics[k0_ChampionStatLuck][k2_ChampionStatMinimum] = 10;
-	L0798_pc_Character++;
-	for (AL0794_ui_SkillIndex = k4_ChampionSkillSwing; AL0794_ui_SkillIndex <= k19_ChampionSkillWater; AL0794_ui_SkillIndex++) {
-		if ((AL0796_ui_SkillValue = *L0798_pc_Character++ - 'A') > 0) {
-			L0797_ps_Champion->_skills[AL0794_ui_SkillIndex]._experience = 125L << AL0796_ui_SkillValue;
-		}
+	championPtr->_statistics[k0_ChampionStatLuck][k2_ChampionStatMinimum] = 10;
+	decodedStringPtr++;
+	for (uint16 skillIdx = k4_ChampionSkillSwing; skillIdx <= k19_ChampionSkillWater; skillIdx++) {
+		int skillValue = *decodedStringPtr++ - 'A';
+		if (skillValue > 0)
+			championPtr->_skills[skillIdx]._experience = 125L << skillValue;
 	}
-	for (AL0794_ui_SkillIndex = k0_ChampionSkillFighter; AL0794_ui_SkillIndex <= k3_ChampionSkillWizard; AL0794_ui_SkillIndex++) {
-		L0806_l_BaseSkillExperience = 0;
-		L0795_i_HiddenSkillIndex = (AL0794_ui_SkillIndex + 1) << 2;
-		for (AL0800_ui_HiddenSkillCounter = 0; AL0800_ui_HiddenSkillCounter < 4; AL0800_ui_HiddenSkillCounter++) {
-			L0806_l_BaseSkillExperience += L0797_ps_Champion->_skills[L0795_i_HiddenSkillIndex + AL0800_ui_HiddenSkillCounter]._experience;
-		}
-		L0797_ps_Champion->_skills[AL0794_ui_SkillIndex]._experience = L0806_l_BaseSkillExperience;
+	for (uint16 skillIdx = k0_ChampionSkillFighter; skillIdx <= k3_ChampionSkillWizard; skillIdx++) {
+		int32 baseSkillExperience = 0;
+		int16 hiddenSkillIndex = (skillIdx + 1) << 2;
+		for (uint16 hiddenIdx = 0; hiddenIdx < 4; hiddenIdx++)
+			baseSkillExperience += championPtr->_skills[hiddenSkillIndex + hiddenIdx]._experience;
+
+		championPtr->_skills[skillIdx]._experience = baseSkillExperience;
 	}
-	_vm->_championMan->_g299_candidateChampionOrdinal = L0799_ui_PreviousPartyChampionCount + 1;
+	_vm->_championMan->_g299_candidateChampionOrdinal = previousPartyChampionCount + 1;
 	if (++_vm->_championMan->_g305_partyChampionCount == 1) {
 		_vm->_eventMan->f368_commandSetLeader(k0_ChampionFirst);
 		_vm->_menuMan->_g508_refreshActionArea = true;
@@ -1936,41 +1915,44 @@ void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex)
 		_vm->_menuMan->f388_clearActingChampion();
 		_vm->_menuMan->f386_drawActionIcon((ChampionIndex)(_vm->_championMan->_g305_partyChampionCount - 1));
 	}
-	L0802_i_MapX = _vm->_dungeonMan->_g306_partyMapX;
-	L0803_i_MapY = _vm->_dungeonMan->_g307_partyMapY;
-	L0804_ui_ChampionObjectsCell = returnOppositeDir(_vm->_dungeonMan->_g308_partyDir);
-	L0802_i_MapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir], L0803_i_MapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
-	L0793_T_Thing = _vm->_dungeonMan->f161_getSquareFirstThing(L0802_i_MapX, L0803_i_MapY);
-	AL0794_ui_SlotIndex = k13_ChampionSlotBackpackLine_1_1;
-	while (L0793_T_Thing != Thing::_endOfList) {
-		if (((AL0796_ui_ThingType = (L0793_T_Thing.getType())) > k3_SensorThingType) && ((L0793_T_Thing.getCell()) == L0804_ui_ChampionObjectsCell)) {
-			L0805_i_ObjectAllowedSlots = g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(L0793_T_Thing)]._allowedSlots;
-			switch (AL0796_ui_ThingType) {
+
+	int16 curMapX = _vm->_dungeonMan->_g306_partyMapX;
+	int16 curMapY = _vm->_dungeonMan->_g307_partyMapY;
+	uint16 championObjectsCell = returnOppositeDir(_vm->_dungeonMan->_g308_partyDir);
+	curMapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir], curMapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
+	curThing = _vm->_dungeonMan->f161_getSquareFirstThing(curMapX, curMapY);
+	int16 slotIdx = k13_ChampionSlotBackpackLine_1_1;
+	while (curThing != Thing::_endOfList) {
+		ThingType thingType = curThing.getType();
+		if ((thingType > k3_SensorThingType) && (curThing.getCell() == championObjectsCell)) {
+			int16 objectAllowedSlots = g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(curThing)]._allowedSlots;
+			uint16 curSlotIndex;
+			switch (thingType) {
 			case k6_ArmourThingType:
-				for (L0801_ui_SlotIndex = k2_ChampionSlotHead; L0801_ui_SlotIndex <= k5_ChampionSlotFeet; L0801_ui_SlotIndex++) {
-					if (L0805_i_ObjectAllowedSlots & gSlotMasks[L0801_ui_SlotIndex])
+				for (curSlotIndex = k2_ChampionSlotHead; curSlotIndex <= k5_ChampionSlotFeet; curSlotIndex++) {
+					if (objectAllowedSlots & gSlotMasks[curSlotIndex])
 						goto T0280048;
 				}
-				if ((L0805_i_ObjectAllowedSlots & gSlotMasks[k10_ChampionSlotNeck]) && (L0797_ps_Champion->_slots[k10_ChampionSlotNeck] == Thing::_none)) {
-					L0801_ui_SlotIndex = k10_ChampionSlotNeck;
+				if ((objectAllowedSlots & gSlotMasks[k10_ChampionSlotNeck]) && (championPtr->_slots[k10_ChampionSlotNeck] == Thing::_none)) {
+					curSlotIndex = k10_ChampionSlotNeck;
 				} else {
 					goto T0280046;
 				}
 				break;
 			case k5_WeaponThingType:
-				if (L0797_ps_Champion->_slots[k1_ChampionSlotActionHand] == Thing::_none) {
-					L0801_ui_SlotIndex = k1_ChampionSlotActionHand;
+				if (championPtr->_slots[k1_ChampionSlotActionHand] == Thing::_none) {
+					curSlotIndex = k1_ChampionSlotActionHand;
 				} else {
 					goto T0280046;
 				}
 				break;
 			case k7_ScrollThingType:
 			case k8_PotionThingType:
-				if (L0797_ps_Champion->_slots[k11_ChampionSlotPouch_1] == Thing::_none) {
-					L0801_ui_SlotIndex = k11_ChampionSlotPouch_1;
+				if (championPtr->_slots[k11_ChampionSlotPouch_1] == Thing::_none) {
+					curSlotIndex = k11_ChampionSlotPouch_1;
 				} else {
-					if (L0797_ps_Champion->_slots[k6_ChampionSlotPouch_2] == Thing::_none) {
-						L0801_ui_SlotIndex = k6_ChampionSlotPouch_2;
+					if (championPtr->_slots[k6_ChampionSlotPouch_2] == Thing::_none) {
+						curSlotIndex = k6_ChampionSlotPouch_2;
 					} else {
 						goto T0280046;
 					}
@@ -1979,21 +1961,21 @@ void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex)
 			case k9_ContainerThingType:
 			case k10_JunkThingType:
 T0280046:
-				if ((L0805_i_ObjectAllowedSlots & gSlotMasks[k10_ChampionSlotNeck]) && (L0797_ps_Champion->_slots[k10_ChampionSlotNeck] == Thing::_none)) {
-					L0801_ui_SlotIndex = k10_ChampionSlotNeck;
+				if ((objectAllowedSlots & gSlotMasks[k10_ChampionSlotNeck]) && (championPtr->_slots[k10_ChampionSlotNeck] == Thing::_none)) {
+					curSlotIndex = k10_ChampionSlotNeck;
 				} else {
-					L0801_ui_SlotIndex = AL0794_ui_SlotIndex++;
+					curSlotIndex = slotIdx++;
 				}
 			}
 T0280048:
-			if (L0797_ps_Champion->_slots[L0801_ui_SlotIndex] != Thing::_none) {
+			if (championPtr->_slots[curSlotIndex] != Thing::_none) {
 				goto T0280046;
 			}
-			_vm->_championMan->f301_addObjectInSlot((ChampionIndex)L0799_ui_PreviousPartyChampionCount, L0793_T_Thing, (ChampionSlot)L0801_ui_SlotIndex);
+			_vm->_championMan->f301_addObjectInSlot((ChampionIndex)previousPartyChampionCount, curThing, (ChampionSlot)curSlotIndex);
 		}
-		L0793_T_Thing = _vm->_dungeonMan->f159_getNextThing(L0793_T_Thing);
+		curThing = _vm->_dungeonMan->f159_getNextThing(curThing);
 	}
-	_vm->_inventoryMan->f355_toggleInventory((ChampionIndex)L0799_ui_PreviousPartyChampionCount);
+	_vm->_inventoryMan->f355_toggleInventory((ChampionIndex)previousPartyChampionCount);
 	_vm->_menuMan->f456_drawDisabledMenu();;
 }
 
