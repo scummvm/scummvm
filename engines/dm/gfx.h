@@ -202,6 +202,7 @@ enum ViewCell {
 };
 
 enum GraphicIndice {
+	k0_dialogBoxGraphicIndice = 0, // @ C000_GRAPHIC_DIALOG_BOX
 	k2_entranceLeftDoorGraphicIndice = 2, // @ C002_GRAPHIC_ENTRANCE_LEFT_DOOR
 	k3_entranceRightDoorGraphicIndice = 3, // @ C003_GRAPHIC_ENTRANCE_RIGHT_DOOR
 	k4_entranceGraphicIndice = 4, // @ C004_GRAPHIC_ENTRANCE
