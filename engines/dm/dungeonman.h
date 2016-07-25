@@ -650,6 +650,8 @@ public:
 
 class Group;
 
+extern byte g235_ThingDataWordCount[16];
+
 class DungeonMan {
 	DMEngine *_vm;
 

@@ -139,6 +139,8 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 
 
 void DMEngine::f433_processCommand140_saveGame(uint16 slot, const Common::String desc) {
+	warning(false, "DUMMY CODE in f433_processCommand140_saveGame, saveAndPlayChoice is always 0");
+	int16 saveAndPlayChoice = 0;
 	char *message = nullptr;
 
 	_menuMan->f456_drawDisabledMenu();
@@ -150,7 +152,7 @@ void DMEngine::f433_processCommand140_saveGame(uint16 slot, const Common::String
 
 	// F0427_DIALOG_Draw(0, G0551_pc_SAVINGGAME, 0, 0, 0, 0, false, false, false);
 
-	uint16 champHandObjWeight;
+	uint16 champHandObjWeight = 0;
 	if (!_championMan->_g415_leaderEmptyHanded) {
 		champHandObjWeight = _dungeonMan->f140_getObjectWeight(_championMan->_g414_leaderHandObject);
 		_championMan->_gK71_champions[_championMan->_g411_leaderIndex]._load -= champHandObjWeight;
@@ -202,11 +204,81 @@ void DMEngine::f433_processCommand140_saveGame(uint16 slot, const Common::String
 	file->writeSint16BE(_g527_platform);
 	file->writeUint16BE(_g526_dungeonId);
 
-	warning(false, "MISSING CODE in save game");
+	file->writeSint16BE(saveAndPlayChoice);
+
+	// save _g278_dungeonFileHeader
+	{
+		DungeonFileHeader &header = _dungeonMan->_g278_dungeonFileHeader;
+		file->writeUint16BE(header._dungeonId);
+		file->writeUint16BE(header._ornamentRandomSeed);
+		file->writeUint32BE(header._rawMapDataSize);
+		file->writeByte(header._mapCount);
+		file->writeUint16BE(header._textDataWordCount);
+		file->writeUint16BE(header._partyStartDir);
+		file->writeUint16BE(header._partyStartPosX);
+		file->writeUint16BE(header._partyStartPosY);
+		file->writeUint16BE(header._squareFirstThingCount);
+		for (uint16 i = 0; i < 16; ++i)
+			file->writeUint16BE(header._thingCounts[i]);
+	}
+
+	 // save _g277_dungeonMaps
+	for (uint16 i = 0; i < _dungeonMan->_g278_dungeonFileHeader._mapCount; ++i) {
+		Map &map = _dungeonMan->_g277_dungeonMaps[i];
+		file->writeUint32BE(map._rawDunDataOffset);
+		file->writeByte(map._offsetMapX);
+		file->writeByte(map._offsetMapY);
+		file->writeByte(map._level);
+		file->writeByte(map._width);
+		file->writeByte(map._height);
+		file->writeByte(map._wallOrnCount);
+		file->writeByte(map._randWallOrnCount);
+		file->writeByte(map._floorOrnCount);
+		file->writeByte(map._randFloorOrnCount);
+		file->writeByte(map._doorOrnCount);
+		file->writeByte(map._creatureTypeCount);
+		file->writeByte(map._difficulty);
+		file->writeSint16BE(map._floorSet);
+		file->writeSint16BE(map._wallSet);
+		file->writeByte(map._doorSet0);
+		file->writeByte(map._doorSet1);
+	}
+
+// save _g280_dungeonColumnsCumulativeSquareThingCount
+	for (uint16 i = 0; i < _dungeonMan->_g282_dungeonColumCount; ++i)
+		file->writeUint16BE(_dungeonMan->_g280_dungeonColumnsCumulativeSquareThingCount[i]);
+
+	// save _g283_squareFirstThings
+	for (uint16 i = 0; i < _dungeonMan->_g278_dungeonFileHeader._squareFirstThingCount; ++i)
+		file->writeUint16BE(_dungeonMan->_g283_squareFirstThings[i].toUint16());
+
+	// save _g260_dungeonTextData
+	for (uint16 i = 0; i < _dungeonMan->_g278_dungeonFileHeader._textDataWordCount; ++i)
+		file->writeUint16BE(_dungeonMan->_g260_dungeonTextData[i]);
+
+	// save _g284_thingData
+	for (uint16 thingIndex = 0; thingIndex < 16; ++thingIndex)
+		for (uint16 i = 0; i < g235_ThingDataWordCount[thingIndex] * _dungeonMan->_g278_dungeonFileHeader._thingCounts[thingIndex]; ++i)
+			file->writeUint16BE(_dungeonMan->_g284_thingData[thingIndex][i]);
+
+	// save _g276_dungeonRawMapData
+	for (uint16 i = 0; i < _dungeonMan->_g278_dungeonFileHeader._rawMapDataSize; ++i)
+		file->writeByte(_dungeonMan->_g276_dungeonRawMapData[i]);
 
 	file->flush();
 	file->finalize();
 	delete file;
+
+	if (!saveAndPlayChoice) {
+		_eventMan->f77_hideMouse();
+		warning(false, "MISSING CODE: F0444_STARTEND_Endgame");
+	}
+	if (!_championMan->_g415_leaderEmptyHanded) {
+		_championMan->_gK71_champions[_championMan->_g411_leaderIndex]._load += champHandObjWeight;
+	}
+	_g524_restartGameAllowed = true;
+	_menuMan->f457_drawEnabledMenus();
+	_eventMan->f77_hideMouse();
 }
 
 Common::String DMEngine::getSavefileName(uint16 slot) {
