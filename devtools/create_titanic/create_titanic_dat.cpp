@@ -52,7 +52,7 @@
  */
 
 #define VERSION_NUMBER 1
-#define HEADER_SIZE 0x700
+#define HEADER_SIZE 0x740
 
 Common::File inputFile, outputFile;
 Common::PEResources res;
@@ -441,6 +441,29 @@ void writeSentenceEntries(const char *name, uint tableOffset) {
 	dataOffset += size;
 }
 
+void writeWords(const char *name, uint tableOffset, int recordCount = 2) {
+	outputFile.seek(dataOffset);
+	int recordSize = recordCount * 4;
+
+	uint val, strOffset;
+	for (uint idx = 0; ; ++idx) {
+		inputFile.seek(tableOffset - FILE_DIFF + idx * recordSize);
+		val = inputFile.readLong();
+		strOffset = inputFile.readLong();
+
+		if (!val)
+			// Reached end of list
+			break;
+
+		outputFile.writeLong(val);
+		writeString(strOffset);
+	}
+
+	uint size = outputFile.size() - dataOffset;
+	writeEntryHeader(name, dataOffset, size);
+	dataOffset += size;
+}
+
 void writeSentenceMappings(const char *name, uint offset, int numValues) {
 	inputFile.seek(offset - FILE_DIFF);
 	outputFile.seek(dataOffset);
@@ -553,6 +576,11 @@ void writeData() {
 	writeSentenceMappings("Mappings/MaitreD", 0x6125C8, 1);
 	writeSentenceMappings("Mappings/Parrot", 0x615B68, 1);
 	writeSentenceMappings("Mappings/SuccUBus", 0x6189F0, 1);
+	writeWords("Words/Barbot", 0x5BE2E0);
+	writeWords("Words/Bellbot", 0x5D8230);
+	writeWords("Words/Deskbot", 0x5EAAA8);
+	writeWords("Words/Doorbot", 0x601098, 3);
+	writeWords("Words/Liftbot", 0x60C788);
 
 	writeResponseTree();
 	writeNumbers();
