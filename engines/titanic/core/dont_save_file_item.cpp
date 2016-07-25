@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(CDontSaveFileItem, CFileItem)
+EMPTY_MESSAGE_MAP(CDontSaveFileItem, CFileItem);
 
 void CDontSaveFileItem::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(0, indent);

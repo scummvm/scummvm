@@ -35,7 +35,7 @@
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(CGameObject, CNamedItem)
+EMPTY_MESSAGE_MAP(CGameObject, CNamedItem);
 
 CCreditText *CGameObject::_credits;
 

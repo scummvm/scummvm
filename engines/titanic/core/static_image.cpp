@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(CStaticImage, CGameObject)
+EMPTY_MESSAGE_MAP(CStaticImage, CGameObject);
 
 void CStaticImage::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);

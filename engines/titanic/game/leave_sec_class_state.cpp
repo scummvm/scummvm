@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(CLeaveSecClassState, CGameObject)
+EMPTY_MESSAGE_MAP(CLeaveSecClassState, CGameObject);
 
 void CLeaveSecClassState::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);

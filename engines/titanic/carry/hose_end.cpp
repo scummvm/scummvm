@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(CHoseEnd, CHose)
+EMPTY_MESSAGE_MAP(CHoseEnd, CHose);
 
 CHoseEnd::CHoseEnd() : CHose() {
 	_string6 = "Connection refused by remote hose.";

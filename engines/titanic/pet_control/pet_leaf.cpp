@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(PETLeaf, CGameObject)
+EMPTY_MESSAGE_MAP(PETLeaf, CGameObject);
 
 void PETLeaf::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);

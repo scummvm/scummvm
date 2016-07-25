@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(CIconNavDown, CToggleSwitch)
+EMPTY_MESSAGE_MAP(CIconNavDown, CToggleSwitch);
 
 CIconNavDown::CIconNavDown() : CToggleSwitch() {
 }

@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(CHomePhoto, CToggleSwitch)
+EMPTY_MESSAGE_MAP(CHomePhoto, CToggleSwitch);
 
 CHomePhoto::CHomePhoto() : CToggleSwitch() {
 }

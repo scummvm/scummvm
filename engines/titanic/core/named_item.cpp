@@ -27,7 +27,7 @@
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(CNamedItem, CTreeItem)
+EMPTY_MESSAGE_MAP(CNamedItem, CTreeItem);
 
 CString CNamedItem::dumpItem(int indent) const {
 	CString result = CTreeItem::dumpItem(indent);

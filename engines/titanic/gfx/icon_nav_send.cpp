@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(CIconNavSend, CPetGraphic)
+EMPTY_MESSAGE_MAP(CIconNavSend, CPetGraphic);
 
 void CIconNavSend::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);

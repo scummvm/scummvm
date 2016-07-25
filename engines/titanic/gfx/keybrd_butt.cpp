@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(CKeybrdButt, CToggleSwitch)
+EMPTY_MESSAGE_MAP(CKeybrdButt, CToggleSwitch);
 
 CKeybrdButt::CKeybrdButt() : CToggleSwitch() {
 }

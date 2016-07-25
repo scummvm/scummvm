@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(CNavigationComputer, CGameObject)
+EMPTY_MESSAGE_MAP(CNavigationComputer, CGameObject);
 
 void CNavigationComputer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);

@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(CSGTSelector, CPetGraphic)
+EMPTY_MESSAGE_MAP(CSGTSelector, CPetGraphic);
 
 void CSGTSelector::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);

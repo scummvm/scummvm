@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(CTextUp, CPetGraphic)
+EMPTY_MESSAGE_MAP(CTextUp, CPetGraphic);
 
 void CTextUp::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);

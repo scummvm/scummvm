@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(CArbBackground, CBackground)
+EMPTY_MESSAGE_MAP(CArbBackground, CBackground);
 
 CArbBackground::CArbBackground() : CBackground(),
 	_fieldE0(0), _fieldE4(61), _fieldE8(62), _fieldEC(118) {

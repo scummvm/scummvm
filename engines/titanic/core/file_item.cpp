@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(CFileItem, CTreeItem)
+EMPTY_MESSAGE_MAP(CFileItem, CTreeItem);
 
 void CFileItem::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(0, indent);

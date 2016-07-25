@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(CParrotLobbyObject, CGameObject)
+EMPTY_MESSAGE_MAP(CParrotLobbyObject, CGameObject);
 
 int CParrotLobbyObject::_v1;
 int CParrotLobbyObject::_v2;

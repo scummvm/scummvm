@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(CGetFromSucc, CToggleSwitch)
+EMPTY_MESSAGE_MAP(CGetFromSucc, CToggleSwitch);
 
 CGetFromSucc::CGetFromSucc() : CToggleSwitch() {
 }

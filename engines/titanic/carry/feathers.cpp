@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(CFeathers, CCarry)
+EMPTY_MESSAGE_MAP(CFeathers, CCarry);
 
 CFeathers::CFeathers() : CCarry() {
 }

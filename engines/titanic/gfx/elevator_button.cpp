@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(CElevatorButton, CSTButton)
+EMPTY_MESSAGE_MAP(CElevatorButton, CSTButton);
 
 CElevatorButton::CElevatorButton() : CSTButton() {
 }

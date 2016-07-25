@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-EMPTY_MESSAGE_MAP(CHelmetOnOff, CToggleSwitch)
+EMPTY_MESSAGE_MAP(CHelmetOnOff, CToggleSwitch);
 
 CHelmetOnOff::CHelmetOnOff() : CToggleSwitch() {
 }
