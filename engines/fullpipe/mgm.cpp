@@ -392,7 +392,7 @@ int MGM::countPhases(int idx, int subIdx, int endIdx, int flag) {
 
 		res += _items[idx]->subItems[subIdx + endIdx * _items[idx]->statics.size()]->movement->countPhasesWithFlag(-1, flag);
 
-		subIdx = _items[idx]->subItems[subIdx + 6 * endIdx * _items[idx]->statics.size()]->staticsIndex;
+		subIdx = _items[idx]->subItems[subIdx + endIdx * _items[idx]->statics.size()]->staticsIndex;
 	}
 
 	return res;
@@ -518,7 +518,7 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 				int stidx = getStaticsIndex(idx, item->movements1[i]->_staticsObj2);
 				int recalc = recalcOffsets(idx, stidx, st2idx, flip, flop);
 				int sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
-				int newsz = sz + item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->field_C;
+				int newsz = sz + item->subItems[stidx + st2idx * _items[idx]->statics.size()]->field_C;
 
 				if (recalc >= 0) {
 					if (!item->subItems[subIdx]->movement || item->subItems[subIdx]->field_8 > recalc + 1 ||
@@ -530,8 +530,8 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 
 						mov->calcSomeXY(point, 0, -1);
 
-						item->subItems[subIdx]->x = item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->x + point.x;
-						item->subItems[subIdx]->y = item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->y + point.y;
+						item->subItems[subIdx]->x = item->subItems[stidx + st2idx * _items[idx]->statics.size()]->x + point.x;
+						item->subItems[subIdx]->y = item->subItems[stidx + st2idx * _items[idx]->statics.size()]->y + point.y;
 					}
 				}
 			}
@@ -551,12 +551,12 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 
 							int sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
 
-							item->subItems[subIdx]->field_C = sz + item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->field_C;
+							item->subItems[subIdx]->field_C = sz + item->subItems[stidx + st2idx * _items[idx]->statics.size()]->field_C;
 
 							mov->calcSomeXY(point, 0, -1);
 
-							item->subItems[subIdx]->x = item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->x - point.x;
-							item->subItems[subIdx]->y = item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->y - point.y;
+							item->subItems[subIdx]->x = item->subItems[stidx + st2idx * _items[idx]->statics.size()]->x - point.x;
+							item->subItems[subIdx]->y = item->subItems[stidx + st2idx * _items[idx]->statics.size()]->y - point.y;
 						}
 					}
 				}
