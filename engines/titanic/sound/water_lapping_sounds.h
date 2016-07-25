@@ -32,7 +32,7 @@ class CWaterLappingSounds : public CRoomAutoSoundPlayer {
 public:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CWaterLappingSounds() : CRoomAutoSoundPlayer(), _value(0) {}
 
 	/**

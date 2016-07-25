@@ -31,7 +31,7 @@ class CGlass : public CCarry {
 private:
 	CString _string6;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CGlass();
 
 	/**

@@ -35,7 +35,7 @@ private:
 	int _fieldE4;
 	int _fieldE8;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CAutoAnimate() : CBackground(), _fieldE0(1), _fieldE4(1), _fieldE8(0) {}
 
 	/**

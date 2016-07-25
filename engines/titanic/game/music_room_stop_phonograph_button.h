@@ -31,7 +31,7 @@ class CMusicRoomStopPhonographButton : public CEjectPhonographButton {
 private:
 	int _field100;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMusicRoomStopPhonographButton() : CEjectPhonographButton(), _field100(0) {}
 
 	/**

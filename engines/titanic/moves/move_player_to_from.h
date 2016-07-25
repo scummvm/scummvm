@@ -31,7 +31,7 @@ class CMovePlayerToFrom : public CGameObject {
 private:
 	CString _string2;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMovePlayerToFrom();
 
 	/**

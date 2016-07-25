@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CSGTUpperDoorsSound : public CClickResponder {
 public:
-	CLASSDEF
+	CLASSDEF;
 	CSGTUpperDoorsSound();
 
 	/**

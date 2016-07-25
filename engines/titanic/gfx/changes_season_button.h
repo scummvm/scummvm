@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CChangesSeasonButton : public CSTButton {
 public:
-	CLASSDEF
+	CLASSDEF;
 	CChangesSeasonButton();
 
 	/**

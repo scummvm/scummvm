@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CChevSwitch : public CToggleSwitch {
 public:
-	CLASSDEF
+	CLASSDEF;
 	CChevSwitch();
 
 	/**

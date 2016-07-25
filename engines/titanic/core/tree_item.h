@@ -45,7 +45,7 @@ private:
 	CTreeItem *_firstChild;
 	int _field14;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CTreeItem();
 
 

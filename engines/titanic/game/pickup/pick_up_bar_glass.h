@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CPickUpBarGlass : public CPickUp {
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

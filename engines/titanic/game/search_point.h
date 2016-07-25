@@ -31,7 +31,7 @@ class CSearchPoint : public CGameObject {
 public:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CSearchPoint() : CGameObject(), _value(2) {}
 
 	/**

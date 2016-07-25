@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CEarSweetBowl : public CSweetBowl {
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

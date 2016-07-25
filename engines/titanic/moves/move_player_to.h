@@ -31,7 +31,7 @@ class CMovePlayerTo : public CGameObject {
 protected:
 	CString _destination;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMovePlayerTo();
 
 	/**

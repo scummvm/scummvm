@@ -31,7 +31,7 @@ class CPhonographEar : public CEar {
 private:
 	int _field140;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CPhonographEar() : CEar(), _field140(1) {}
 
 	/**

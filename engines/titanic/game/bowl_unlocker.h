@@ -31,7 +31,7 @@ class CBowlUnlocker : public CGameObject {
 public:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CBowlUnlocker() : CGameObject(), _value(0) {}
 
 	/**

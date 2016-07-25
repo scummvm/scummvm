@@ -36,7 +36,7 @@ private:
 	int _fieldCC;
 	CString _string;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CSUBGlass();
 
 	/**

@@ -36,7 +36,7 @@ private:
 private:
 	int _field108;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CLiftBot();
 
 	/**

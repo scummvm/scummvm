@@ -38,7 +38,7 @@ protected:
 
 	CString _string6;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CHose();
 	static void init();
 	static void deinit();

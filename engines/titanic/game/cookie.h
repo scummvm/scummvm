@@ -32,7 +32,7 @@ public:
 	int _value1;
 	int _value2;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CCookie() : CGameObject(), _value1(0), _value2(0) {}
 
 	/**

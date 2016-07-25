@@ -57,7 +57,7 @@ private:
 	bool _bassInversionControl;
 	bool _bassDirectionControl;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CPhonographCylinder();
 
 	/**

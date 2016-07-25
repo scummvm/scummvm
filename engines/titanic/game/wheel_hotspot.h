@@ -32,7 +32,7 @@ public:
 	int _fieldE0;
 	int _fieldE4;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CWheelHotSpot() : CBackground(), _fieldE0(0), _fieldE4(0) {}
 
 	/**

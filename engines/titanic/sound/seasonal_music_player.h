@@ -38,7 +38,7 @@ private:
 	int _fieldF0;
 	int _fieldF4;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CSeasonalMusicPlayer();
 
 	/**

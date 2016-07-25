@@ -47,7 +47,7 @@ MESSAGE2(CPETTargetMsg, CString, name, "", int, numValue, -1);
 	public: \
 	NAME() : CPETTargetMsg() {} \
 	NAME(const CString &name, int num) : CPETTargetMsg(name, num) {} \
-	CLASSDEF \
+	CLASSDEF; \
 	static bool isSupportedBy(const CTreeItem *item) { \
 		return supports(item, _type); \
 	} \

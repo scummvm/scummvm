@@ -62,7 +62,7 @@ protected:
 	bool _enterFrameSet;
 	int _visibleFrame;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CCarry();
 
 	/**

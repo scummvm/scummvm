@@ -31,7 +31,7 @@ class CCreditsButton : public CBackground {
 public:
 	int _fieldE0;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CCreditsButton();
 
 	/**

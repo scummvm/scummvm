@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CAuditoryCentre : public CBrain {
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

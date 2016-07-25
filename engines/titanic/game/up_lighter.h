@@ -36,7 +36,7 @@ private:
 	int _field120;
 	int _field124;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CUpLighter();
 
 	/**

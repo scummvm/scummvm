@@ -31,7 +31,7 @@ class CPhonographLid : public CGameObject {
 private:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CPhonographLid() : CGameObject(), _value(0) {}
 
 	/**

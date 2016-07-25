@@ -48,7 +48,7 @@ private:
 	CString _string3;
 	int _field118;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CGondolierSlider();
 
 	/**

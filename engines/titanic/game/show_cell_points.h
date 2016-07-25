@@ -32,7 +32,7 @@ public:
 	CString _strValue;
 	int _numValue;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CShowCellpoints() : CGameObject(), _numValue(0) {}
 
 	/**

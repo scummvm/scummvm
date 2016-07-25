@@ -31,7 +31,7 @@ class CMailMan : public CGameObject {
 public:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMailMan() : CGameObject(), _value(1) {}
 
 	/**

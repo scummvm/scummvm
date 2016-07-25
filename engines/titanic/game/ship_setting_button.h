@@ -33,7 +33,7 @@ private:
 	int _fieldC8;
 	int _fieldCC;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CShipSettingButton();
 
 	/**

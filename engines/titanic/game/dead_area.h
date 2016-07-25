@@ -36,7 +36,7 @@ class CDeadArea : public CGameObject {
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg) { return true; }
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg) { return true; }
 public:
-	CLASSDEF
+	CLASSDEF;
 	CDeadArea();
 
 	/**

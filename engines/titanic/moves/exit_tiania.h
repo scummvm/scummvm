@@ -34,7 +34,7 @@ private:
 	CString _string2;
 	CString _string3;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CExitTiania();
 
 	/**

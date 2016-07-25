@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CNose : public CHeadPiece {
 public:
-	CLASSDEF
+	CLASSDEF;
 	CNose();
 
 	/**

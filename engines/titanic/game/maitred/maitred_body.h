@@ -31,7 +31,7 @@ class CMaitreDBody : public CMaitreDProdReceptor {
 private:
 	int _fieldC8;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMaitreDBody() : CMaitreDProdReceptor(), _fieldC8(1) {}
 
 	/**

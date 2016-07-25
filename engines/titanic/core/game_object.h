@@ -504,7 +504,7 @@ public:
 	 */
 	static void deinit();
 public:
-	CLASSDEF
+	CLASSDEF;
 	CGameObject();
 	~CGameObject();
 

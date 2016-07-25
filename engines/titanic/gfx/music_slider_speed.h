@@ -29,7 +29,7 @@ namespace Titanic {
 
 	class CMusicSliderSpeed : public CMusicSlider {
 	public:
-		CLASSDEF
+		CLASSDEF;
 
 		/**
 		* Save the data for the class to file

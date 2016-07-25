@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CMusicSwitchInversion : public CMusicSwitch {
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

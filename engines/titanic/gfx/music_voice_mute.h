@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CMusicVoiceMute : public CMusicControl {
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

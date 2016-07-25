@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CDoorbotHomeHandler : public CGameObject {
 public:
-	CLASSDEF
+	CLASSDEF;
 	CDoorbotHomeHandler();
 
 	/**

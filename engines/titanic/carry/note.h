@@ -35,7 +35,7 @@ private:
 	CString _string6;
 	int _field138;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CNote();
 
 	/**

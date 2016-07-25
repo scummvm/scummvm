@@ -33,7 +33,7 @@ protected:
 	int _fieldCC;
 	int _fieldD0;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CExitArboretum();
 
 	/**

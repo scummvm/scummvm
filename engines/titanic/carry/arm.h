@@ -49,7 +49,7 @@ private:
 	int _field16C;
 	int _field170;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CArm();
 
 	/**

@@ -56,7 +56,7 @@ class CFileListItem : public ListItem {
 public:
 	CString _name;
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file
@@ -150,7 +150,7 @@ public:
 	 */
 	static bool readSavegameHeader(SimpleFile *file, TitanicSavegameHeader &header);
 public:
-	CLASSDEF
+	CLASSDEF;
 	CProjectItem();
 
 	/**

@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CTripDownCanal : public CMovePlayerTo {
 public:
-	CLASSDEF
+	CLASSDEF;
 	CTripDownCanal();
 
 	/**

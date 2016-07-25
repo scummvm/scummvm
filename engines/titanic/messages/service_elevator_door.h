@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CServiceElevatorDoor : public CDoorAutoSoundEvent {
 public:
-	CLASSDEF
+	CLASSDEF;
 	CServiceElevatorDoor();
 
 	/**

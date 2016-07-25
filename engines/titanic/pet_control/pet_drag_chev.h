@@ -34,7 +34,7 @@ protected:
 	bool MouseDragMoveMsg(CMouseDragMoveMsg *msg);
 	bool MouseDragEndMsg(CMouseDragEndMsg *msg);
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

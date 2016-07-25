@@ -41,7 +41,7 @@ public:
 	int _fieldE8;
 	int _fieldEC;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CHeadSlot();
 
 	/**

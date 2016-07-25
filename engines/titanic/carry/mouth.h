@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CMouth : public CHeadPiece {
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMouth();
 
 	/**

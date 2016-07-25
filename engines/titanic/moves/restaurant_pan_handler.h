@@ -34,7 +34,7 @@ protected:
 	CString _string1;
 	CString _string2;
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

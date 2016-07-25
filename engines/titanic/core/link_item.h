@@ -50,7 +50,7 @@ public:
 	Rect _bounds;
 	CursorId _cursorId;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CLinkItem();
 
 	/**

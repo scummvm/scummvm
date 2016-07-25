@@ -49,7 +49,7 @@ public:
 	int _startFrame;
 	int _endFrame;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMovieClip();
 	CMovieClip(const CString &name, int startFrame, int endFrame);
 

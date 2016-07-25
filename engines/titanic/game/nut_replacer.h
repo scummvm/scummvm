@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CNutReplacer : public CGameObject {
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

@@ -37,7 +37,7 @@ protected:
 	List<ListItem> _list2;
 	CMovieClipList _clipList;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CGameObjectDescItem();
 
 	/**

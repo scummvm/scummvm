@@ -33,7 +33,7 @@ private:
 	Point _pos1;
 	int _fieldDC;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMobile();
 
 	/**

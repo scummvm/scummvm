@@ -43,7 +43,7 @@ private:
 	CString _soundName;
 	int _buttonFrame;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CSTButton();
 
 	/**

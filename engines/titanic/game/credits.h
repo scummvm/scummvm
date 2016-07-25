@@ -31,7 +31,7 @@ class CCredits : public CGameObject {
 public:
 	int _fieldBC, _fieldC0;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CCredits();
 
 	/**

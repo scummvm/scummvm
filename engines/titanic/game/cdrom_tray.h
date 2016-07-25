@@ -37,7 +37,7 @@ public:
 	bool _isOpened;
 	CString _insertedCD;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CCDROMTray();
 
 	/**

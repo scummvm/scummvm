@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CPerch : public CCentralCore {
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

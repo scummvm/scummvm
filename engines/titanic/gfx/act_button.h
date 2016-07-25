@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CActButton : public CSTButton {
 public:
-	CLASSDEF
+	CLASSDEF;
 	CActButton();
 
 	/**

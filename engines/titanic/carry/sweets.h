@@ -32,7 +32,7 @@ class CSweets : public CCarry {
 	DECLARE_MESSAGE_MAP
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 public:
-	CLASSDEF
+	CLASSDEF;
 	CSweets();
 
 	/**

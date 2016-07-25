@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CTOWParrotNav : public CGameObject {
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

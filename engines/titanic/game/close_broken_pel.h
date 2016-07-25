@@ -31,7 +31,7 @@ class CCloseBrokenPel : public CBackground {
 public:
 	CString _string3;
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

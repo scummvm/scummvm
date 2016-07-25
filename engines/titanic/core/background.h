@@ -40,7 +40,7 @@ protected:
 	CString _string2;
 	int _fieldDC;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CBackground();
 
 	/**

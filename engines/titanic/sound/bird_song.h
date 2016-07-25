@@ -31,7 +31,7 @@ class CBirdSong : public CRoomAutoSoundPlayer {
 public:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CBirdSong() : CRoomAutoSoundPlayer(), _value(0) {}
 
 	/**

@@ -31,7 +31,7 @@ class CMusicSystemLock : public CDropTarget {
 private:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMusicSystemLock() : CDropTarget(), _value(0) {}
 
 	/**

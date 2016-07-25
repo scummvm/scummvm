@@ -30,7 +30,7 @@ namespace Titanic {
 class CKeybrdButt : public CToggleSwitch {
 	DECLARE_MESSAGE_MAP
 public:
-	CLASSDEF
+	CLASSDEF;
 	CKeybrdButt();
 
 	/**

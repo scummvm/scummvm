@@ -32,7 +32,7 @@ private:
 	int _fieldBC;
 	Point _pos1;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CToggleSwitch();
 
 	/**

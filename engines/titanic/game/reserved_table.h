@@ -31,7 +31,7 @@ class CReservedTable : public CGameObject {
 public:
 	int _value1, _value2;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CReservedTable() : CGameObject(), _value1(0), _value2(0) {}
 
 	/**

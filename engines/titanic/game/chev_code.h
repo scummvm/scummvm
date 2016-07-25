@@ -31,7 +31,7 @@ class CChevCode : public CGameObject {
 public:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CChevCode() : CGameObject(), _value(0) {}
 
 	/**

@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CGondolierChest : public CGondolierBase {
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

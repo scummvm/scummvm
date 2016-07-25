@@ -33,7 +33,7 @@ public:
 	int _fieldC0;
 	int _fieldC4;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CBarMenu();
 
 	/**

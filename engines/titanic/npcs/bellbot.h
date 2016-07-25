@@ -31,7 +31,7 @@ class CBellBot : public CTrueTalkNPC {
 private:
 	int _field108;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CBellBot();
 
 	/**

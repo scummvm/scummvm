@@ -30,7 +30,7 @@ namespace Titanic {
 class CSendToSucc : public CToggleSwitch {
 	DECLARE_MESSAGE_MAP
 public:
-	CLASSDEF
+	CLASSDEF;
 	CSendToSucc();
 	
 	/**

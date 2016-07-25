@@ -36,7 +36,7 @@ protected:
 	CString _msgTarget;
 	CString _msgAction;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CStartAction();
 
 	/**

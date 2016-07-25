@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CKey : public CCarry {
 public:
-	CLASSDEF
+	CLASSDEF;
 	CKey();
 
 	/**

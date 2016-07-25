@@ -38,7 +38,7 @@ private:
 	int _field100;
 	int _field104;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CServiceElevator();
 
 	/**

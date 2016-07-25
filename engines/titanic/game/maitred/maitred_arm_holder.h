@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CMaitreDArmHolder : public CDropTarget {
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

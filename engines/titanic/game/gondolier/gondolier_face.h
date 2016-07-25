@@ -31,7 +31,7 @@ class CGondolierFace : public CGondolierBase {
 private:
 	int _fieldBC;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CGondolierFace() : CGondolierBase(), _fieldBC(0) {}
 
 	/**

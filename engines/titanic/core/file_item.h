@@ -34,7 +34,7 @@ class CFileItem: public CTreeItem {
 private:
 	CString _filename;
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

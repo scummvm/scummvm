@@ -36,7 +36,7 @@ class CNamedItem: public CTreeItem {
 public:
 	CString _name;
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Dump the item

@@ -32,7 +32,7 @@ private:
 	int _field118;
 	int _field11C;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CNoseHolder();
 
 	/**

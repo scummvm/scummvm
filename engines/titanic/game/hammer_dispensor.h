@@ -33,7 +33,7 @@ private:
 	int _fieldE4;
 	int _fieldE8;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CHammerDispensor();
 
 	/**

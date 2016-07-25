@@ -33,7 +33,7 @@ class CTitaniaSpeech : public CGameObject {
 private:
 	int _value1, _value2;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CTitaniaSpeech() : CGameObject(), _value1(1), _value2(0) {}
 
 	/**

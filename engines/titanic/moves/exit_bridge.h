@@ -31,7 +31,7 @@ class CExitBridge : public CMovePlayerTo {
 private:
 	CString _string1;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CExitBridge();
 
 	/**

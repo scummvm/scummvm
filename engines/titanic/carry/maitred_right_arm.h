@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CMaitreDRightArm : public CArm {
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

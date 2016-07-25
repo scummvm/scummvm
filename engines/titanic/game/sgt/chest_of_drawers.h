@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CChestOfDrawers : public CSGTStateRoom {
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

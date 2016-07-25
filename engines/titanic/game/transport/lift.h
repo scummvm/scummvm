@@ -41,7 +41,7 @@ private:
 
 	int _fieldF8;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CLift() : CTransport(), _fieldF8(1) {}
 
 	/**

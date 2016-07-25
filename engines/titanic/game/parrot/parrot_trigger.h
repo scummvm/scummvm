@@ -31,7 +31,7 @@ class CParrotTrigger : public CGameObject {
 public:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CParrotTrigger() : CGameObject(), _value(0x446AB) {}
 
 	/**

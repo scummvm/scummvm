@@ -34,7 +34,7 @@ private:
 	static int _v1;
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

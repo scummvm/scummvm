@@ -35,7 +35,7 @@ namespace Titanic {
  */
 class ListItem: public CSaveableObject {
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

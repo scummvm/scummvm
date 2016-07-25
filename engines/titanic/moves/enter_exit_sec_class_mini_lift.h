@@ -39,7 +39,7 @@ private:
 	static CEnterExitSecClassMiniLiftStatics *_statics;
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CEnterExitSecClassMiniLift() : CGameObject(), _value(0) {}
 	static void init();
 	static void deinit();

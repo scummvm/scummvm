@@ -33,7 +33,7 @@ class CAutoMusicPlayer : public CAutoMusicPlayerBase {
 private:
 	CString _string2;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CAutoMusicPlayer();
 
 	/**

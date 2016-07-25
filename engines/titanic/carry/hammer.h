@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CHammer : public CCarry {
 public:
-	CLASSDEF
+	CLASSDEF;
 	CHammer();
 
 	/**

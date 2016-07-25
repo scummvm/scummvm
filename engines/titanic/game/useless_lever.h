@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CUselessLever : public CToggleButton {
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

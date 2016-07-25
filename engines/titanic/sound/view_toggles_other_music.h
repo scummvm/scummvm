@@ -31,7 +31,7 @@ class CViewTogglesOtherMusic : public CEnterViewTogglesOtherMusic {
 private:
 	int _fieldCC;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CViewTogglesOtherMusic();
 
 	/**

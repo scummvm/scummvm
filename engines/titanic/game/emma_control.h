@@ -33,7 +33,7 @@ private:
 
 	CString _wavFile1, _wavFile2;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CEmmaControl() : CBackground(), _wavFile1("b#39.wav"), _wavFile2("b#38.wav") {}
 
 	/**

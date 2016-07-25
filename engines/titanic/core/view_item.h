@@ -59,7 +59,7 @@ protected:
 public:
 	int _viewNumber;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CViewItem();
 
 	/**

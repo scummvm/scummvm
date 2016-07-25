@@ -31,7 +31,7 @@ class CLemonOnBar : public CPlaceHolderItem {
 private:
 	Point _pos1;
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

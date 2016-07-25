@@ -34,7 +34,7 @@ private:
 	int _fieldBC;
 	int _fieldC0;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CChickenCooler() : CGameObject(), _fieldBC(0), _fieldC0(0) {}
 
 	/**

@@ -36,7 +36,7 @@ public:
 	CString _string2;
 	int _fieldE0;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMissiveOMat();
 
 	/**

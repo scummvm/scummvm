@@ -31,7 +31,7 @@ class CViewAutoSoundPlayer : public CAutoSoundPlayer {
 private:
 	int _fieldEC;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CViewAutoSoundPlayer() : CAutoSoundPlayer(), _fieldEC(0) {}
 
 	/**

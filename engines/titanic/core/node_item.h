@@ -33,7 +33,7 @@ public:
 	int _nodeNumber;
 	Point _nodePos;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CNodeItem();
 
 	/**

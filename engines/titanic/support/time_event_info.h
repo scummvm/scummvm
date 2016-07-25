@@ -62,7 +62,7 @@ public:
 	bool _persisent;
 	CString _targetName;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CTimeEventInfo();
 	CTimeEventInfo(uint ticks, bool repeated, uint firstDuration, uint repeatDuration,
 		CTreeItem *target, int endVal, const CString &action);

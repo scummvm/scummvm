@@ -34,7 +34,7 @@ class CTurnOnObject : public CBackground {
 protected:
 	CString _msgName;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CTurnOnObject();
 
 	/**

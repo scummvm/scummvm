@@ -37,7 +37,7 @@ private:
 	int _field10C;
 	int _field110;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CHammerDispensorButton();
 
 	/**

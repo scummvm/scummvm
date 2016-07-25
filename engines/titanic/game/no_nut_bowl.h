@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CNoNutBowl : public CBackground {
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

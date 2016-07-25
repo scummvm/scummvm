@@ -35,7 +35,7 @@ private:
 
 	void setValue(const CString &name);
 public:
-	CLASSDEF
+	CLASSDEF;
 	CResourceKey() {}
 	CResourceKey(const CString &name) { setValue(name); }
 

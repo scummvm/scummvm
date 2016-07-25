@@ -31,7 +31,7 @@ class CPickUp : public CGameObject {
 private:
 	int _fieldBC;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CPickUp() : CGameObject(), _fieldBC(0) {}
 
 	/**

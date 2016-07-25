@@ -42,7 +42,7 @@ private:
 	int _fieldFC;
 	int _field100;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CTitania();
 
 	/**

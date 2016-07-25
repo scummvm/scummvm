@@ -31,7 +31,7 @@ class CRecordPhonographButton : public CBackground {
 public:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CRecordPhonographButton() : CBackground(), _value(0) {}
 
 	/**

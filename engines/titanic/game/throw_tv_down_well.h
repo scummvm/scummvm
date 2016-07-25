@@ -32,7 +32,7 @@ public:
 	CString _strValue;
 	int _numValue;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CThrowTVDownWell() : CGameObject(), _numValue(0) {}
 
 	/**

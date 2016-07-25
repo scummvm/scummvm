@@ -34,7 +34,7 @@ private:
 	int _field134;
 	int _field138;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CFruit();
 
 	/**

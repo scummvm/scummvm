@@ -31,7 +31,7 @@ class CSGTStateControl : public CBackground {
 private:
 	int _fieldE0;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CSGTStateControl() : CBackground(), _fieldE0(1) {}
 
 	/**

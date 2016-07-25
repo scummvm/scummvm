@@ -31,7 +31,7 @@ class CDrawer : public CSGTStateRoom {
 private:
 	int _fieldF4;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CDrawer();
 
 	/**

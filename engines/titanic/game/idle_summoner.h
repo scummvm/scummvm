@@ -40,7 +40,7 @@ public:
 	int _fieldDC;
 public:
 	CIdleSummoner();
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

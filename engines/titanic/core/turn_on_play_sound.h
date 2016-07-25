@@ -33,7 +33,7 @@ private:
 	int _fieldF8;
 	int _fieldFC;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CTurnOnPlaySound();
 
 	/**

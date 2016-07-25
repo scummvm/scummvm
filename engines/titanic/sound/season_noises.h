@@ -35,7 +35,7 @@ private:
 	CString _string4;
 	CString _string5;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CSeasonNoises();
 
 	/**

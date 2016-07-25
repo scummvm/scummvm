@@ -47,7 +47,7 @@ public:
 	bool _deskbotActive;
 	int _classNum;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CDeskbot();
 
 	/**

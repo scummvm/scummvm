@@ -47,7 +47,7 @@ private:
 	 */
 	void newFrame();
 public:
-	CLASSDEF
+	CLASSDEF;
 	CStarControl();
 	virtual ~CStarControl();
 

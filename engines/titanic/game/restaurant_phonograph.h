@@ -34,7 +34,7 @@ private:
 	CString _string3;
 	int _field114;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CRestaurantPhonograph();
 
 	/**

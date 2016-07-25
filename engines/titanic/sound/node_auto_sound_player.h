@@ -33,7 +33,7 @@ class CNodeAutoSoundPlayer : public CAutoSoundPlayer {
 private:
 	int _fieldEC;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CNodeAutoSoundPlayer() : CAutoSoundPlayer(), _fieldEC(1) {}
 
 	/**

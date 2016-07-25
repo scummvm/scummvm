@@ -31,7 +31,7 @@ class CEmptyNutBowl : public CGameObject {
 public:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CEmptyNutBowl() : CGameObject(), _value(1) {}
 
 	/**

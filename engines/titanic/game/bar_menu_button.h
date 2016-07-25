@@ -31,7 +31,7 @@ class CBarMenuButton : public CGameObject {
 public:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CBarMenuButton() : CGameObject(), _value(1) {}
 
 	/**

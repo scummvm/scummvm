@@ -31,7 +31,7 @@ class CElevatorActionArea : public CGameObject {
 public:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CElevatorActionArea() : CGameObject(), _value(4) {}
 
 	/**

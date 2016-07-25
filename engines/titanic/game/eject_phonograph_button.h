@@ -34,7 +34,7 @@ public:
 	CString _string3;
 	CString _string4;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CEjectPhonographButton() : CBackground(), _fieldE0(0), _fieldE4(0) {}
 
 	/**

@@ -31,7 +31,7 @@ class CBarShelfVisCentre : public CPlaceHolderItem {
 private:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CBarShelfVisCentre() : CPlaceHolderItem(), _value(0) {}
 	
 	/**

@@ -35,7 +35,7 @@ private:
 	int _fieldEC;
 	int _fieldF0;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CTurnOnTurnOff();
 
 	/**

@@ -36,7 +36,7 @@ protected:
 	int _fieldCC;
 	int _fieldD0;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMusicPlayer() : CGameObject(),
 		_fieldBC(0), _fieldCC(0), _fieldD0(100) {}
 

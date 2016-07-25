@@ -42,7 +42,7 @@ private:
 	int _startingTicks;
 	int _field104;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CBomb();
 
 	/**

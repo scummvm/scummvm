@@ -34,7 +34,7 @@ class CComputerScreen : public CGameObject {
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
 public:
-	CLASSDEF
+	CLASSDEF;
 	CComputerScreen();
 
 	/**

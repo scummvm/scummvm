@@ -31,7 +31,7 @@ class CAnnoyBarbot : public CGameObject {
 private:
 	static int _v1;
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

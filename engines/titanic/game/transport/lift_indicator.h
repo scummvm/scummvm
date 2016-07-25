@@ -37,7 +37,7 @@ private:
 	int _field108;
 	int _field10C;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CLiftindicator();
 
 	/**

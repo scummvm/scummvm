@@ -31,7 +31,7 @@ class CParrotLobbyViewObject : public CParrotLobbyObject {
 public:
 	int _fieldBC;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CParrotLobbyViewObject() : CParrotLobbyObject(), _fieldBC(1) {}
 
 	/**

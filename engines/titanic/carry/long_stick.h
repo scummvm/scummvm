@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CLongStick : public CCarry {
 public:
-	CLASSDEF
+	CLASSDEF;
 	CLongStick();
 
 	/**

@@ -35,7 +35,7 @@ public:
 	int _buttons;
 	Point _mousePos;
 public:
-	CLASSDEF
+	CLASSDEF;
 	static bool isSupportedBy(const CTreeItem *item) {
 		return supports(item, _type);
 	}
@@ -47,7 +47,7 @@ public:
 
 class CMouseMoveMsg : public CMouseMsg {
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMouseMoveMsg() : CMouseMsg() {}
 	CMouseMoveMsg(const Point &pt, int buttons) : CMouseMsg(pt, buttons) {}
 
@@ -60,7 +60,7 @@ class CMouseButtonMsg : public CMouseMsg {
 public:
 	int _field10;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMouseButtonMsg() : CMouseMsg(), _field10(0) {}
 	CMouseButtonMsg(const Point &pt, int buttons) : CMouseMsg(pt, buttons) {}
 
@@ -71,7 +71,7 @@ public:
 
 class CMouseButtonDownMsg : public CMouseButtonMsg {
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMouseButtonDownMsg() : CMouseButtonMsg() {}
 	CMouseButtonDownMsg(const Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {}
 
@@ -87,7 +87,7 @@ public:
 
 class CMouseButtonUpMsg : public CMouseButtonMsg {
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMouseButtonUpMsg() : CMouseButtonMsg() {}
 	CMouseButtonUpMsg(const Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {}
 
@@ -103,7 +103,7 @@ public:
 
 class CMouseDoubleClickMsg : public CMouseButtonMsg {
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMouseDoubleClickMsg() : CMouseButtonMsg() {}
 	CMouseDoubleClickMsg(const Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {}
 
@@ -114,7 +114,7 @@ public:
 
 class CMouseDragMsg : public CMouseMsg {
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMouseDragMsg() : CMouseMsg() {}
 	CMouseDragMsg(const Point &pt) : CMouseMsg(pt, 0) {}
 
@@ -125,7 +125,7 @@ public:
 
 class CMouseDragMoveMsg : public CMouseDragMsg {
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMouseDragMoveMsg() : CMouseDragMsg() {}
 	CMouseDragMoveMsg(const Point &pt) : CMouseDragMsg(pt) {}
 
@@ -139,7 +139,7 @@ public:
 	CTreeItem *_dragItem;
 	bool _handled;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMouseDragStartMsg() : CMouseDragMsg(), _dragItem(nullptr), _handled(false) {}
 	CMouseDragStartMsg(const Point &pt) : CMouseDragMsg(pt),
 		_dragItem(nullptr), _handled(false) {}
@@ -155,7 +155,7 @@ public:
 	int _value3;
 	int _value4;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CPassOnDragStartMsg() : CMessage() {}
 	CPassOnDragStartMsg(const Point &pt, int v3 = 0, int v4 = 0) : 
 		CMessage(), _mousePos(pt), _value3(v3), _value4(v4) {}
@@ -169,7 +169,7 @@ class CMouseDragEndMsg : public CMouseDragMsg {
 public:
 	CGameObject *_dropTarget;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMouseDragEndMsg() : CMouseDragMsg(), _dropTarget(nullptr) {}
 	CMouseDragEndMsg(const Point &pt, CGameObject *dropTarget = nullptr) :
 		CMouseDragMsg(pt), _dropTarget(dropTarget) {}

@@ -38,7 +38,7 @@ private:
 	int _fieldF8;
 	int _fieldFC;
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

@@ -31,7 +31,7 @@ class CEnterBombRoom : public CMovePlayerTo {
 protected:
 	int _fieldC8;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CEnterBombRoom();
 
 	/**

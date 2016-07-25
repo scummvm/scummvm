@@ -87,7 +87,7 @@ private:
 	int _field1D4;
 	int _field1D8;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CSuccUBus();
 
 	/**

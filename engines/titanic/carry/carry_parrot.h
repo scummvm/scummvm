@@ -51,7 +51,7 @@ private:
 	int _field14C;
 	int _field150;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CCarryParrot();
 
 	/**

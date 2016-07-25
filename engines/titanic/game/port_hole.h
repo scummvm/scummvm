@@ -32,7 +32,7 @@ private:
 	int _fieldBC;
 	CString _string1, _string2;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CPortHole();
 
 	/**

@@ -31,7 +31,7 @@ namespace Titanic {
 class CBilgeDispensorEvent : public CAutoSoundEvent {
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

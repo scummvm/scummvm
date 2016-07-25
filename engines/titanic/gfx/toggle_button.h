@@ -32,7 +32,7 @@ class CToggleButton : public CBackground {
 private:
 	int _fieldE0;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CToggleButton() : CBackground(), _fieldE0(1) {}
 
 	/**

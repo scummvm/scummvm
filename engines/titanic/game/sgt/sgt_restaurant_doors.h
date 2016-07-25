@@ -31,7 +31,7 @@ class CSGTRestaurantDoors : public CGameObject {
 private:
 	int _fieldBC;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CSGTRestaurantDoors() : CGameObject(), _fieldBC(0) {}
 
 	/**

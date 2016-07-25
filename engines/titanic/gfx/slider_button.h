@@ -34,7 +34,7 @@ private:
 	int _field11C;
 	Point _pos1;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CSliderButton();
 
 	/**

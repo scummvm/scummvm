@@ -37,7 +37,7 @@ public:
 
 	static void init();
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

@@ -33,7 +33,7 @@ public:
 	CString _string1;
 	CString _string2;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CTransport();
 
 	/**

@@ -33,7 +33,7 @@ private:
 	CString _string1;
 	int _field14C;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CSpeechCentre() : CBrain(), _string1("Summer"),
 		_field13C(1), _field14C(0) {}
 

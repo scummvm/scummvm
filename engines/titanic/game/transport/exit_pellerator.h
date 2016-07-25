@@ -32,7 +32,7 @@ private:
 	static int _v1;
 	static int _v2;
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

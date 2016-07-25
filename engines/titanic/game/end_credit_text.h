@@ -31,7 +31,7 @@ class CEndCreditText : public CGameObject {
 private:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CEndCreditText() : CGameObject(), _value(0) {}
 
 	/**

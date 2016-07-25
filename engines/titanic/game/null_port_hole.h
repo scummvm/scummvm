@@ -30,7 +30,7 @@ namespace Titanic {
 class CNullPortHole : public CClickResponder {
 	DECLARE_MESSAGE_MAP
 public:
-	CLASSDEF
+	CLASSDEF;
 	CNullPortHole();
 
 	/**

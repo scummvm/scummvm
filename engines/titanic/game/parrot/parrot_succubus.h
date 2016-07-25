@@ -35,7 +35,7 @@ public:
 	int _field1F0;
 	int _field1F4;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CParrotSuccUBus();
 
 	/**

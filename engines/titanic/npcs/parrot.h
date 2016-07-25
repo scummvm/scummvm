@@ -92,7 +92,7 @@ private:
 	int _field1E8;
 	int _field1EC;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CParrot();
 
 	/**

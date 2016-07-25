@@ -31,7 +31,7 @@ class CMissiveOMatButton : public CEditControl {
 public:
 	int _fieldFC;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMissiveOMatButton() : CEditControl(), _fieldFC(2) {}
 
 	/**

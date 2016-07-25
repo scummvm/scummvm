@@ -31,7 +31,7 @@ class CBackgroundSoundMaker : public CGameObject {
 public:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CBackgroundSoundMaker() : CGameObject(), _value(0) {}
 
 	/**

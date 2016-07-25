@@ -49,7 +49,7 @@ public:
 	int _field13C;
 	int _timerId;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CChicken();
 
 	/**

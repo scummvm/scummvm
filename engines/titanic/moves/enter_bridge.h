@@ -33,7 +33,7 @@ class CEnterBridge : public CGameObject {
 private:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CEnterBridge() : CGameObject(), _value(1) {}
 
 	/**

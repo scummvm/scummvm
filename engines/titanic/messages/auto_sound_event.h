@@ -32,7 +32,7 @@ public:
 	int _value1;
 	int _value2;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CAutoSoundEvent();
 
 	/**

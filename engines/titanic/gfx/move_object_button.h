@@ -32,7 +32,7 @@ private:
 	Point _pos1;
 	int _field11C;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMoveObjectButton();
 
 	/**

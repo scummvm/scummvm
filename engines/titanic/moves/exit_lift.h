@@ -31,7 +31,7 @@ class CExitLift : public CGameObject {
 public:
 	CString _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

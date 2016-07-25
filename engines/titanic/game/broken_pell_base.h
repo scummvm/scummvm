@@ -35,7 +35,7 @@ private:
 
 	int _fieldE0;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CBrokenPellBase() : CBackground(), _fieldE0(0) {}
 
 	/**

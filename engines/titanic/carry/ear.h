@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CEar : public CHeadPiece {
 public:
-	CLASSDEF
+	CLASSDEF;
 	CEar();
 
 	/**

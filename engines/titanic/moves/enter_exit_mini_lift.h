@@ -32,7 +32,7 @@ private:
 	int _fieldBC;
 	int _fieldC0;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CEnterExitMiniLift() : CSGTNavigation(), _fieldBC(0), _fieldC0(1) {}
 
 	/**

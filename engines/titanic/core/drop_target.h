@@ -44,7 +44,7 @@ private:
 	int _field110;
 	int _field114;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CDropTarget();
 
 	/**

@@ -31,7 +31,7 @@ class CClickResponder : public CGameObject {
 protected:
 	CString _string1, _string2;
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

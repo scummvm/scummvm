@@ -46,7 +46,7 @@ public:
 	CResourceKey _exitMovieKey;
 	double _roomDimensionX, _roomDimensionY;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CRoomItem();
 
 	/**

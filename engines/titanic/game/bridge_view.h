@@ -31,7 +31,7 @@ class CBridgeView : public CBackground {
 public:
 	int _fieldE0;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CBridgeView() : CBackground(), _fieldE0(0) {}
 
 	/**

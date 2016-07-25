@@ -31,7 +31,7 @@ class CLittleLiftButton : public CBackground {
 private:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CLittleLiftButton() : CBackground(), _value(0) {}
 
 	/**

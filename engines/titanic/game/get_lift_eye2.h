@@ -32,7 +32,7 @@ class CGetLiftEye2 : public CGameObject {
 public:
 	static CString *_v1;
 public:
-	CLASSDEF
+	CLASSDEF;
 	static void init();
 	static void deinit();
 

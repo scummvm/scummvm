@@ -31,7 +31,7 @@ class CNavHelmet : public CGameObject {
 private:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CNavHelmet() : CGameObject(), _value(0) {}
 
 	/**

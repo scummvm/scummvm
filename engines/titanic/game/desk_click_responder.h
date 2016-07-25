@@ -32,7 +32,7 @@ protected:
 	int _fieldD4;
 	int _fieldD8;
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

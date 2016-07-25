@@ -34,7 +34,7 @@ class CCDROMComputer : public CGameObject {
 private:
 	Rect _clickRect;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CCDROMComputer();
 
 	/**

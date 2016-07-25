@@ -35,7 +35,7 @@ private:
 	CString _string1;
 	int _fieldCC;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CVolumeControl();
 
 	/**

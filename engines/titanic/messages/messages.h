@@ -38,7 +38,7 @@ enum MessageFlag {
 #define MESSAGE0(NAME) \
 	class NAME: public CMessage { \
 	public: NAME() : CMessage() {} \
-	CLASSDEF \
+	CLASSDEF; \
 	static bool isSupportedBy(const CTreeItem *item) { \
 		return supports(item, _type); } \
 }
@@ -47,7 +47,7 @@ enum MessageFlag {
 	public: F1 _##N1; \
 	NAME() : CMessage(), _##N1(V1) {} \
 	NAME(F1 N1) : CMessage(), _##N1(N1) {} \
-	CLASSDEF \
+	CLASSDEF; \
 	static bool isSupportedBy(const CTreeItem *item) { \
 		return supports(item, _type); } \
 }
@@ -56,7 +56,7 @@ enum MessageFlag {
 	public: F1 _##N1; F2 _##N2; \
 	NAME() : CMessage(), _##N1(V1), _##N2(V2) {} \
 	NAME(F1 N1, F2 N2) : CMessage(), _##N1(N1), _##N2(N2) {} \
-	CLASSDEF \
+	CLASSDEF; \
 	static bool isSupportedBy(const CTreeItem *item) { \
 		return supports(item, _type); } \
 }
@@ -65,7 +65,7 @@ enum MessageFlag {
 	public: F1 _##N1; F2 _##N2; F3 _##N3; \
 	NAME() : CMessage(), _##N1(V1), _##N2(V2), _##N3(V3) {} \
 	NAME(F1 N1, F2 N2, F3 N3) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3) {} \
-	CLASSDEF \
+	CLASSDEF; \
 	static bool isSupportedBy(const CTreeItem *item) { \
 		return supports(item, _type); } \
 }
@@ -74,7 +74,7 @@ enum MessageFlag {
 	public: F1 _##N1; F2 _##N2; F3 _##N3; F4 _##N4; \
 	NAME() : CMessage(), _##N1(V1), _##N2(V2), _##N3(V3), _##N4(V4) {} \
 	NAME(F1 N1, F2 N2, F3 N3, F4 N4) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3), _##N4(N4) {} \
-	CLASSDEF \
+	CLASSDEF; \
 	static bool isSupportedBy(const CTreeItem *item) { \
 		return supports(item, _type); } \
 }
@@ -93,7 +93,7 @@ private:
 	 */
 	static const MSGMAP_ENTRY *findMapEntry(const CTreeItem *treeItem, const ClassDef *classDef);
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMessage();
 
 	/**
@@ -155,7 +155,7 @@ public:
 	int _field1C;
 	int _field20;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CEditControlMsg() : _field4(0), _field8(0), _field18(0),
 		_field1C(0), _field20(0) {}
 
@@ -171,7 +171,7 @@ public:
 	int _fieldC;
 	int _field10;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CLightsMsg() : CMessage(), _field4(0), _field8(0),
 		_fieldC(0), _field10(0) {}
 
@@ -188,7 +188,7 @@ public:
 	int _actionVal;
 	CString _action;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CTimerMsg() : CTimeMsg(), _timerCtr(0), _actionVal(0) {}
 	CTimerMsg(uint ticks, uint timerCtr, int actionVal, const CString &action) :
 		CTimeMsg(ticks), _timerCtr(timerCtr), _actionVal(actionVal), _action(action) {}

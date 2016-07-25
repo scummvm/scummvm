@@ -36,7 +36,7 @@ public:
 	CString _currentCD;
 	int _state;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CComputer() : CBackground(), _currentCD("None"), _state(0) {}
 
 	/**

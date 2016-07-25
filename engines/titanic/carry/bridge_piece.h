@@ -36,7 +36,7 @@ private:
 	Point _pos3;
 	int _field140;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CBridgePiece();
 
 	/**

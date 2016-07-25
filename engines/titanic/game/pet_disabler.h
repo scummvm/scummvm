@@ -31,7 +31,7 @@ class CPetDisabler : public CGameObject {
 public:
 	CString _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CPetDisabler() : CGameObject() {}
 
 	/**

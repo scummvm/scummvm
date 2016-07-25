@@ -30,7 +30,7 @@ namespace Titanic {
 class CChevRightOff : public CToggleSwitch {
 	DECLARE_MESSAGE_MAP
 public:
-	CLASSDEF
+	CLASSDEF;
 	CChevRightOff();
 
 	/**

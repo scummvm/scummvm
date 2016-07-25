@@ -175,7 +175,7 @@ private:
 	int _field33C;
 	int _field340;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CBarbot();
 
 	/**

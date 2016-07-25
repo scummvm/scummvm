@@ -31,7 +31,7 @@ class CStarlingPuret : public CGameObject {
 private:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CStarlingPuret() : CGameObject(), _value(0) {}
 
 	/**

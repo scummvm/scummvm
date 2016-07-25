@@ -31,7 +31,7 @@ class CParrotNutBowlActor : public CGameObject {
 public:
 	int _value1, _value2;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CParrotNutBowlActor();
 
 	/**

@@ -31,7 +31,7 @@ class CTriggerAutoMusicPlayer : public CGameObject {
 protected:
 	CString _fieldBC;
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

@@ -32,7 +32,7 @@ protected:
 	CString _string1;
 	int _fieldC8;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CCallBot();
 
 	/**

@@ -39,7 +39,7 @@ private:
 	CString _string2;
 	int _fieldE4;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CGondolierMixer();
 
 	/**

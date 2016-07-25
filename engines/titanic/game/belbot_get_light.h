@@ -31,7 +31,7 @@ class CBelbotGetLight : public CGameObject {
 private:
 	CString _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

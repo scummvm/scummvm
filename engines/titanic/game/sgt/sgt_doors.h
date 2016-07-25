@@ -31,7 +31,7 @@ class CSGTDoors : public CGameObject {
 public:
 	int _value1, _value2;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CSGTDoors() : CGameObject(), _value1(0), _value2(0) {}
 
 	/**

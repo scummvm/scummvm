@@ -31,7 +31,7 @@ class CRestrictedMove : public CMovePlayerTo {
 protected:
 	int _fieldC8;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CRestrictedMove();
 
 	/**

@@ -31,7 +31,7 @@ class CHammerClip : public CGameObject {
 public:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CHammerClip() : CGameObject(), _value(0) {}
 
 	/**

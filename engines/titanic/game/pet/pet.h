@@ -37,7 +37,7 @@ public:
 	int _fieldD8;
 	int _fieldDC;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CPET();
 
 	/**

@@ -33,7 +33,7 @@ private:
 	CString _string6;
 	int _field13C;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CHeadPiece();
 
 	/**

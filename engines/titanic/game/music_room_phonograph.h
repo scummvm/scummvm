@@ -32,7 +32,7 @@ class CMusicRoomPhonograph : public CRestaurantPhonograph {
 private:
 	int _field118;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMusicRoomPhonograph() : CRestaurantPhonograph(), _field118(0) {}
 
 	/**

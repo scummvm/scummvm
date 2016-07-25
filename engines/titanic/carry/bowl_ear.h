@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CBowlEar : public CEar {
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

@@ -30,7 +30,7 @@ namespace Titanic {
 class CElevatorButton : public CSTButton {
 	DECLARE_MESSAGE_MAP
 public:
-	CLASSDEF
+	CLASSDEF;
 	CElevatorButton();
 
 	/**

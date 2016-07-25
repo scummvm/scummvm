@@ -31,7 +31,7 @@ class CLiftbotHead : public CCarry {
 private:
 	int _field12C;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CLiftbotHead();
 
 	/**

@@ -32,7 +32,7 @@ protected:
 	int _fieldC8;
 	CString _string1;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CPanFromPel();
 
 	/**

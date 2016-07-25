@@ -32,7 +32,7 @@ public:
 	CString _string5;
 	CString _string6;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMultiDropTarget() : CDropTarget(), _string5("1,2") {}
 
 	/**

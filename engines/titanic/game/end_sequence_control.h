@@ -31,7 +31,7 @@ namespace Titanic {
 class CEndSequenceControl : public CGameObject {
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

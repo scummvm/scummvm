@@ -34,7 +34,7 @@ public:
 	int _field1E4;
 	int _field1E8;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CBilgeSuccUBus();
 
 	/**

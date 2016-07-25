@@ -31,7 +31,7 @@ class CEnterViewTogglesOtherMusic : public CTriggerAutoMusicPlayer {
 protected:
 	int _fieldC8;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CEnterViewTogglesOtherMusic();
 
 	/**

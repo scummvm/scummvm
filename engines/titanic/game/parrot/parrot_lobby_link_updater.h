@@ -31,7 +31,7 @@ class CParrotLobbyLinkUpdater : public CParrotLobbyObject {
 public:
 	int _fieldBC;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CParrotLobbyLinkUpdater() : CParrotLobbyObject(), _fieldBC(1) {}
 
 	/**

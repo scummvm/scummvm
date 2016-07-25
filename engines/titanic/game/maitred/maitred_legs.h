@@ -31,7 +31,7 @@ class CMaitreDLegs : public CMaitreDProdReceptor {
 private:
 	int _fieldC8;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMaitreDLegs() : CMaitreDProdReceptor(), _fieldC8(1) {}
 
 	/**

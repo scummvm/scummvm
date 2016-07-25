@@ -37,7 +37,7 @@ class CExitPellerator : public CGameObject {
 private:
 	static CExitPelleratorStatics *_statics;
 public:
-	CLASSDEF
+	CLASSDEF;
 	static void init();
 	static void deinit();
 

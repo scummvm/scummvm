@@ -39,7 +39,7 @@ private:
 	int _fieldD0;
 	int _fieldD4;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CFanNoises();
 
 	/**

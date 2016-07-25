@@ -33,7 +33,7 @@ private:
 	CString _string3;
 	CString _string4;
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

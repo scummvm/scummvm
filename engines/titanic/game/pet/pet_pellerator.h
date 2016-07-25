@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CPETPellerator : public CPETTransport {
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

@@ -37,7 +37,7 @@ public:
 	int _field104;
 	int _field108;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CSauceDispensor();
 
 	/**

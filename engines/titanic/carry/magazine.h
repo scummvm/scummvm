@@ -39,7 +39,7 @@ private:
 	int _field12C;
 	int _field130;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMagazine();
 
 	/**

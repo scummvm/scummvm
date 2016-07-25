@@ -37,7 +37,7 @@ private:
 	CString _string6;
 	int _field140;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CRestaurantCylinderHolder();
 
 	/**

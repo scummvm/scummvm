@@ -40,7 +40,7 @@ private:
 	static int _v9;
 	static int _v10;
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

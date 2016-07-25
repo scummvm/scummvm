@@ -31,7 +31,7 @@ class CWheelSpin : public CBackground {
 public:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CWheelSpin() : CBackground(), _value(0) {}
 
 	/**

@@ -31,7 +31,7 @@ class CEye : public CHeadPiece {
 private:
 	int _eyeNum;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CEye();
 
 	/**

@@ -31,7 +31,7 @@ class CPETSounds : public CGameObject {
 public:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CPETSounds() : CGameObject(), _value(0) {}
 
 	/**

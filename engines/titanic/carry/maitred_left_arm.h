@@ -31,7 +31,7 @@ class CMaitreDLeftArm : public CArm {
 private:
 	int _field174;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMaitreDLeftArm() : CArm(), _field174(0) {}
 
 	/**

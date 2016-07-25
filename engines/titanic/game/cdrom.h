@@ -38,7 +38,7 @@ class CCDROM : public CGameObject {
 private:
 	Point _tempPos;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CCDROM();
 
 	/**

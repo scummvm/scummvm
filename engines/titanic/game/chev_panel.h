@@ -33,7 +33,7 @@ public:
 	int _fieldC0;
 	int _fieldC4;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CChevPanel() : _fieldBC(0), _fieldC0(0), _fieldC4(0) {}
 
 	/**

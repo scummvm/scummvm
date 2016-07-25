@@ -30,7 +30,7 @@ namespace Titanic {
 class CDontSaveFileItem : public CFileItem {
 	DECLARE_MESSAGE_MAP
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CParrotPerchHolder : public CMultiDropTarget {
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

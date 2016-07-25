@@ -58,7 +58,7 @@ private:
 	int _fieldEC;
 	int _soundHandle;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CTelevision();
 	static void init();
 	static void deinit();

@@ -31,7 +31,7 @@ class CSUBWrapper : public CGameObject {
 public:
 	int _value;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CSUBWrapper() : CGameObject(), _value(0) {}
 
 	/**

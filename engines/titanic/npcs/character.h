@@ -38,7 +38,7 @@ protected:
 	int _fieldC4;
 	CString _charName;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CCharacter();
 
 	/**

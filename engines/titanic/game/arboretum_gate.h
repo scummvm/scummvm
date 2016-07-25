@@ -74,7 +74,7 @@ private:
 	int _field150;
 	CString _string2;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CArboretumGate();
 
 	/**

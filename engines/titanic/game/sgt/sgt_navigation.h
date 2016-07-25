@@ -37,7 +37,7 @@ class CSGTNavigation : public CGameObject {
 private:
 	static CSGTNavigationStatics *_statics;
 public:
-	CLASSDEF
+	CLASSDEF;
 	static void init();
 	static void deinit();
 

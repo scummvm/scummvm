@@ -34,7 +34,7 @@ private:
 	int _fieldC4;
 	int _fieldC8;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CAnnounce();
 
 	/**

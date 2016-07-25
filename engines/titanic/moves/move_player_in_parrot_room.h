@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CMovePlayerInParrotRoom : public CMovePlayerTo {
 public:
-	CLASSDEF
+	CLASSDEF;
 	CMovePlayerInParrotRoom();
 
 	/**

@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CStatusChangeButton : public CSTButton {
 public:
-	CLASSDEF
+	CLASSDEF;
 	CStatusChangeButton();
 
 	/**

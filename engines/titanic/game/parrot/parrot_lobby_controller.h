@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CParrotLobbyController : public CParrotLobbyObject {
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

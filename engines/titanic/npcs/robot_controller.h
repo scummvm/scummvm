@@ -31,7 +31,7 @@ class CRobotController : public CGameObject {
 protected:
 	CString _string1;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CRobotController();
 
 	/**

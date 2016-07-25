@@ -31,7 +31,7 @@ class CStarlings : public CCharacter {
 private:
 	static int _v1;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CStarlings();
 
 	/**

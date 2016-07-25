@@ -30,7 +30,7 @@ namespace Titanic {
 class CIconNavButt : public CPetGraphic {
 	DECLARE_MESSAGE_MAP
 public:
-	CLASSDEF
+	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file

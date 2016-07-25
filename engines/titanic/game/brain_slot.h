@@ -34,7 +34,7 @@ public:
 	int _value1;
 	CString _value2;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CBrainSlot() : CGameObject(), _value1(0) {}
 
 	/**

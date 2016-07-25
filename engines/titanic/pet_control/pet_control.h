@@ -122,7 +122,7 @@ public:
 	CTreeItem *_activeNPC;
 	CGameObject *_remoteTarget;
 public:
-	CLASSDEF
+	CLASSDEF;
 	CPetControl();
 
 	/**
