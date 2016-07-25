@@ -81,7 +81,7 @@ protected: \
 		{ &TheBaseClass::getThisMessageMap, &_messageEntries[0] }; \
 		return &messageMap; \
 	} \
-	static const int DUMMY
+	static const int DUMMY = 0
 
 class CMessageTarget: public CSaveableObject {
 	DECLARE_MESSAGE_MAP
