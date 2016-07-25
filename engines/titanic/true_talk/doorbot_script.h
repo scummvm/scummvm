@@ -67,7 +67,12 @@ public:
 	virtual int proc23() const;
 	virtual int proc25(int val1, int val2, TTroomScript *roomScript, TTsentence *sentence) const;
 	virtual void proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence);
-	virtual void proc32();
+
+	/**
+	 * Sets a given dial to be pointing in a specified region (0 to 2)
+	 */
+	virtual void setDialRegion(int dialNum, int region);
+
 	virtual int proc36(int val) const;
 };
 

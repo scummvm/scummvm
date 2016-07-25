@@ -125,8 +125,10 @@ int LiftbotScript::proc25(int val1, int val2, TTroomScript *roomScript, TTsenten
 void LiftbotScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence) {
 }
 
-void LiftbotScript::proc32() {
-	warning("TODO");
+void LiftbotScript::setDialRegion(int dialNum, int region) {
+	TTnpcScript::setDialRegion(dialNum, region);
+	addResponse(getDialogueId(210688));
+	applyResponse();
 }
 
 } // End of namespace Titanic

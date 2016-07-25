@@ -869,12 +869,13 @@ int BarbotScript::proc25(int val1, int val2, TTroomScript *roomScript, TTsentenc
 void BarbotScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence) {
 }
 
-void BarbotScript::proc32() {
-	warning("TODO");
+void BarbotScript::setDialRegion(int dialNum, int region) {
+	TTnpcScript::setDialRegion(dialNum, region);
+	selectResponse(250365);
+	applyResponse();
 }
 
 int BarbotScript::proc36(int tagId) const {
-	warning("TODO");
 	return 0;
 }
 

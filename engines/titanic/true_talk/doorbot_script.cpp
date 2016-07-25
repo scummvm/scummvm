@@ -148,8 +148,14 @@ int DoorbotScript::proc25(int val1, int val2, TTroomScript *roomScript, TTsenten
 void DoorbotScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence) {
 }
 
-void DoorbotScript::proc32() {
-	warning("TODO");
+void DoorbotScript::setDialRegion(int dialNum, int region) {
+	TTnpcScript::setDialRegion(dialNum, region);
+	if (dialNum == 1 && region != 1) {
+		CTrueTalkManager::setFlags(37, dialNum);
+	} else {
+		addResponse(getDialogueId(221777));
+		applyResponse();
+	}
 }
 
 int DoorbotScript::proc36(int id) const {
