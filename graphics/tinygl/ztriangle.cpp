@@ -140,9 +140,6 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 	int b1 = 0, dbdx = 0, dbdy = 0, dbdl_min = 0, dbdl_max = 0;
 	int a1 = 0, dadx = 0, dady = 0, dadl_min = 0, dadl_max = 0;
 
-	int s1 = 0, dsdx = 0, dsdy = 0, dsdl_min = 0, dsdl_max = 0;
-	int t1 = 0, dtdx = 0, dtdy = 0, dtdl_min = 0, dtdl_max = 0;
-
 	float sz1 = 0.0, dszdx = 0, dszdy = 0, dszdl_min = 0.0, dszdl_max = 0.0;
 	float tz1 = 0.0, dtzdx = 0, dtzdy = 0, dtzdl_min = 0.0, dtzdl_max = 0.0;
 
@@ -210,29 +207,26 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 		dady = (int)(fdx1 * d2 - fdx2 * d1);
 	}
 
-	if (kInterpST) {
-		d1 = (float)(p1->s - p0->s);
-		d2 = (float)(p2->s - p0->s);
-		dsdx = (int)(fdy2 * d1 - fdy1 * d2);
-		dsdy = (int)(fdx1 * d2 - fdx2 * d1);
-
-		d1 = (float)(p1->t - p0->t);
-		d2 = (float)(p2->t - p0->t);
-		dtdx = (int)(fdy2 * d1 - fdy1 * d2);
-		dtdy = (int)(fdx1 * d2 - fdx2 * d1);
-	}
-
-	if (kInterpSTZ) {
-		float zz;
-		zz = (float)p0->z;
-		p0->sz = (float)p0->s * zz;
-		p0->tz = (float)p0->t * zz;
-		zz = (float)p1->z;
-		p1->sz = (float)p1->s * zz;
-		p1->tz = (float)p1->t * zz;
-		zz = (float)p2->z;
-		p2->sz = (float)p2->s * zz;
-		p2->tz = (float)p2->t * zz;
+	if (kInterpST || kInterpSTZ) {
+		if (kInterpSTZ) {
+			float zz;
+			zz = (float)p0->z;
+			p0->sz = (float)p0->s * zz;
+			p0->tz = (float)p0->t * zz;
+			zz = (float)p1->z;
+			p1->sz = (float)p1->s * zz;
+			p1->tz = (float)p1->t * zz;
+			zz = (float)p2->z;
+			p2->sz = (float)p2->s * zz;
+			p2->tz = (float)p2->t * zz;
+		} else {
+			p0->sz = (float)p0->s;
+			p0->tz = (float)p0->t;
+			p1->sz = (float)p1->s;
+			p1->tz = (float)p1->t;
+			p2->sz = (float)p2->s;
+			p2->tz = (float)p2->t;
+		}
 
 		d1 = p1->sz - p0->sz;
 		d2 = p2->sz - p0->sz;
@@ -359,17 +353,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 				dadl_max = dadl_min + dadx;
 			}
 
-			if (kInterpST) {
-				s1 = l1->s;
-				dsdl_min = (dsdy + dsdx * dxdy_min);
-				dsdl_max = dsdl_min + dsdx;
-
-				t1 = l1->t;
-				dtdl_min = (dtdy + dtdx * dxdy_min);
-				dtdl_max = dtdl_min + dtdx;
-			}
-
-			if (kInterpSTZ) {
+			if (kInterpST || kInterpSTZ) {
 				sz1 = l1->sz;
 				dszdl_min = (dszdy + dszdx * dxdy_min);
 				dszdl_max = dszdl_min + dszdx;
@@ -540,6 +524,8 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					unsigned int s, t, z, r, g, b, a;
 					int n;
 					float sz, tz, fz, zinv;
+					int dsdx, dtdx;
+
 					n = (x2 >> 16) - x1;
 					fz = (float)z1;
 					zinv = (float)(1.0 / fz);
@@ -615,12 +601,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					a1 += dadl_max;
 				}
 
-				if (kInterpST) {
-					s1 += dsdl_max;
-					t1 += dtdl_max;
-				}
-
-				if (kInterpSTZ) {
+				if (kInterpST || kInterpSTZ) {
 					sz1 += dszdl_max;
 					tz1 += dtzdl_max;
 				}
@@ -635,11 +616,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					b1 += dbdl_min;
 					a1 += dadl_min;
 				}
-				if (kInterpST) {
-					s1 += dsdl_min;
-					t1 += dtdl_min;
-				}
-				if (kInterpSTZ) {
+				if (kInterpST || kInterpSTZ) {
 					sz1 += dszdl_min;
 					tz1 += dtzdl_min;
 				}
