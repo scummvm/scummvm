@@ -823,7 +823,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(Robot),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(Save),              SIG_EVERYWHERE,           "i(.*)",                 kSave_subops,    NULL },
 	{ MAP_CALL(Text),              SIG_SINCE_SCI21MID, SIGFOR_ALL, "i(.*)",           kText_subops,    NULL },
-	{ MAP_CALL(AddPicAt),          SIG_EVERYWHERE,           "oiii",                  NULL,            NULL },
+	{ MAP_CALL(AddPicAt),          SIG_EVERYWHERE,           "oiii(i)(i)",            NULL,            NULL },
 	{ MAP_CALL(GetWindowsOption),  SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(WinHelp),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(GetConfig),         SIG_EVERYWHERE,           "ro",                    NULL,            NULL },

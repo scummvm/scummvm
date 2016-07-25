@@ -347,7 +347,7 @@ public:
 	 * new picture resource to the plane at the given
 	 * position.
 	 */
-	GuiResourceId addPic(const GuiResourceId pictureId, const Common::Point &position, const bool mirrorX);
+	GuiResourceId addPic(const GuiResourceId pictureId, const Common::Point &position, const bool mirrorX, const bool deleteDuplicate = true);
 
 	/**
 	 * If the plane is a picture plane, re-adds all cels
