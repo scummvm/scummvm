@@ -148,7 +148,7 @@ T0217004:
 		L0494_ps_Door = (Door *)_vm->_dungeonMan->f157_getSquareFirstThingData(AP0454_i_ProjectileTargetMapX, AP0455_i_ProjectileTargetMapY);
 		if ((AL0487_i_DoorState != k5_doorState_DESTROYED) && (L0486_T_ProjectileAssociatedThing == Thing::_explOpenDoor)) {
 			if (L0494_ps_Door->hasButton()) {
-				_vm->_movsens->f268_addEvent(k10_TMEventTypeDoor, AP0454_i_ProjectileTargetMapX, AP0455_i_ProjectileTargetMapY, 0, k2_SensorEffToggle, _vm->_g313_gameTime + 1);
+				_vm->_moveSens->f268_addEvent(k10_TMEventTypeDoor, AP0454_i_ProjectileTargetMapX, AP0455_i_ProjectileTargetMapY, 0, k2_SensorEffToggle, _vm->_g313_gameTime + 1);
 			}
 			break;
 		}
@@ -409,7 +409,7 @@ void ProjExpl::f215_projectileDelete(Thing projectileThing, Thing* groupSlot, in
 				_vm->_dungeonMan->f163_linkThingToList(L0479_T_Thing, L0478_T_PreviousThing, kM1_MapXNotOnASquare, 0);
 			}
 		} else {
-			_vm->_movsens->f267_getMoveResult(Thing((L0479_T_Thing).getTypeAndIndex() | getFlag(projectileThing.toUint16(), 0xC)), -2, 0, mapX, mapY);
+			_vm->_moveSens->f267_getMoveResult(Thing((L0479_T_Thing).getTypeAndIndex() | getFlag(projectileThing.toUint16(), 0xC)), -2, 0, mapX, mapY);
 		}
 	}
 	L0480_ps_Projectile->_nextThing = Thing::_none;
@@ -479,12 +479,12 @@ void ProjExpl::f219_processEvents48To49_projectile(TimelineEvent* event) {
 	}
 	L0515_T_ProjectileThingNewCell = M15_thingWithNewCell(L0515_T_ProjectileThingNewCell, L0518_ui_Cell &= 0x0003);
 	if (L0522_B_ProjectileMovesToOtherSquare) {
-		_vm->_movsens->f267_getMoveResult(L0515_T_ProjectileThingNewCell, L0525_i_SourceMapX, L0526_i_SourceMapY, L0523_i_DestinationMapX, L0524_i_DestinationMapY);
-		L0519_ps_Event->_C._projectile.setMapX(_vm->_movsens->_g397_moveResultMapX);
-		L0519_ps_Event->_C._projectile.setMapY(_vm->_movsens->_g398_moveResultMapY);
-		L0519_ps_Event->_C._projectile.setDir((Direction)_vm->_movsens->_g400_moveResultDir);
-		L0515_T_ProjectileThingNewCell = M15_thingWithNewCell(L0515_T_ProjectileThingNewCell, _vm->_movsens->_g401_moveResultCell);
-		M31_setMap(L0519_ps_Event->_mapTime, _vm->_movsens->_g399_moveResultMapIndex);
+		_vm->_moveSens->f267_getMoveResult(L0515_T_ProjectileThingNewCell, L0525_i_SourceMapX, L0526_i_SourceMapY, L0523_i_DestinationMapX, L0524_i_DestinationMapY);
+		L0519_ps_Event->_C._projectile.setMapX(_vm->_moveSens->_g397_moveResultMapX);
+		L0519_ps_Event->_C._projectile.setMapY(_vm->_moveSens->_g398_moveResultMapY);
+		L0519_ps_Event->_C._projectile.setDir((Direction)_vm->_moveSens->_g400_moveResultDir);
+		L0515_T_ProjectileThingNewCell = M15_thingWithNewCell(L0515_T_ProjectileThingNewCell, _vm->_moveSens->_g401_moveResultCell);
+		M31_setMap(L0519_ps_Event->_mapTime, _vm->_moveSens->_g399_moveResultMapIndex);
 	} else {
 		if ((Square(_vm->_dungeonMan->f151_getSquare(L0523_i_DestinationMapX, L0524_i_DestinationMapY)).getType() == k4_DoorElemType) && f217_projectileHasImpactOccurred(k4_DoorElemType, L0523_i_DestinationMapX, L0524_i_DestinationMapY, L0518_ui_Cell, L0521_T_ProjectileThing)) {
 			return;

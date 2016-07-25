@@ -144,7 +144,7 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	_objectMan = nullptr;
 	_inventoryMan = nullptr;
 	_textMan = nullptr;
-	_movsens = nullptr;
+	_moveSens = nullptr;
 	_groupMan = nullptr;
 	_timeline = nullptr;
 	_projexpl = nullptr;
@@ -195,7 +195,7 @@ DMEngine::~DMEngine() {
 	delete _objectMan;
 	delete _inventoryMan;
 	delete _textMan;
-	delete _movsens;
+	delete _moveSens;
 	delete _groupMan;
 	delete _timeline;
 	delete _projexpl;
@@ -241,7 +241,7 @@ void DMEngine::f463_initializeGame() {
 
 	f462_startGame();
 	if (_g298_newGame)
-		_movsens->f267_getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
+		_moveSens->f267_getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
 	_eventMan->f78_showMouse();
 	_eventMan->f357_discardAllInput();
 }
@@ -314,7 +314,7 @@ Common::Error DMEngine::run() {
 	_objectMan = new ObjectMan(this);
 	_inventoryMan = new InventoryMan(this);
 	_textMan = new TextMan(this);
-	_movsens = new MovesensMan(this);
+	_moveSens = new MovesensMan(this);
 	_groupMan = new GroupMan(this);
 	_timeline = new Timeline(this);
 	_projexpl = new ProjExpl(this);
@@ -341,7 +341,7 @@ void DMEngine::f2_gameloop() {
 		if (_g327_newPartyMapIndex != kM1_mapIndexNone) {
 T0002002:
 			f3_processNewPartyMap(_g327_newPartyMapIndex);
-			_movsens->f267_getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
+			_moveSens->f267_getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
 			_g327_newPartyMapIndex = kM1_mapIndexNone;
 			_eventMan->f357_discardAllInput();
 		}

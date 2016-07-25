@@ -1405,16 +1405,9 @@ void ChampionMan::f320_applyAndDrawPendingDamageAndWounds() {
 }
 
 void ChampionMan::f319_championKill(uint16 champIndex) {
-	uint16 L0962_ui_Multiple = 0;
-#define AL0962_ui_Cell              L0962_ui_Multiple
-#define AL0962_ui_ChampionIconIndex L0962_ui_Multiple
-	int16 L0963_i_AliveChampionIndex;
-	Thing L0964_T_Thing;
-	Champion* L0965_ps_Champion;
-
-	L0965_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
-	L0965_ps_Champion->_currHealth = 0;
-	setFlag(L0965_ps_Champion->_attributes, k0x1000_ChampionAttributeStatusBox);
+	Champion *curChampion = &_vm->_championMan->_gK71_champions[champIndex];
+	curChampion->_currHealth = 0;
+	setFlag(curChampion->_attributes, k0x1000_ChampionAttributeStatusBox);
 	if (_vm->M0_indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
 		if (_vm->_g331_pressingEye) {
 			_vm->_g331_pressingEye = false;
@@ -1424,63 +1417,65 @@ void ChampionMan::f319_championKill(uint16 champIndex) {
 			}
 			_vm->_eventMan->_g587_hideMousePointerRequestCount = 1;
 			_vm->_eventMan->f77_hideMouse();
-		} else {
-			if (_vm->_g333_pressingMouth) {
-				_vm->_g333_pressingMouth = false;
-				_vm->_eventMan->_g597_ignoreMouseMovements = false;
-				_vm->_eventMan->_g587_hideMousePointerRequestCount = 1;
-				_vm->_eventMan->f77_hideMouse();
-			}
+		} else if (_vm->_g333_pressingMouth) {
+			_vm->_g333_pressingMouth = false;
+			_vm->_eventMan->_g597_ignoreMouseMovements = false;
+			_vm->_eventMan->_g587_hideMousePointerRequestCount = 1;
+			_vm->_eventMan->f77_hideMouse();
 		}
 		_vm->_inventoryMan->f355_toggleInventory(k4_ChampionCloseInventory);
 	}
 	f318_dropAllObjects(champIndex);
-	L0964_T_Thing = _vm->_dungeonMan->f166_getUnusedThing(k0x8000_championBones | k10_JunkThingType);
-	if (L0964_T_Thing == Thing::_none) {
-	} else {
-		Junk* L0966_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(L0964_T_Thing);
+	Thing unusedThing = _vm->_dungeonMan->f166_getUnusedThing(k0x8000_championBones | k10_JunkThingType);
+	uint16 curCell = 0;
+	if (unusedThing != Thing::_none) {
+		Junk *L0966_ps_Junk = (Junk *)_vm->_dungeonMan->f156_getThingData(unusedThing);
 		L0966_ps_Junk->setType(k5_JunkTypeBones);
 		L0966_ps_Junk->setDoNotDiscard(true);
 		L0966_ps_Junk->setChargeCount(champIndex);
-		AL0962_ui_Cell = L0965_ps_Champion->_cell;
-		_vm->_movsens->f267_getMoveResult(M15_thingWithNewCell(L0964_T_Thing, AL0962_ui_Cell), kM1_MapXNotOnASquare, 0, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY);
+		curCell = curChampion->_cell;
+		_vm->_moveSens->f267_getMoveResult(M15_thingWithNewCell(unusedThing, curCell), kM1_MapXNotOnASquare, 0, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY);
 	}
-	L0965_ps_Champion->_symbolStep = 0;
-	L0965_ps_Champion->_symbols[0] = '\0';
-	L0965_ps_Champion->_dir = _vm->_dungeonMan->_g308_partyDir;
-	L0965_ps_Champion->_maximumDamageReceived = 0;
-	AL0962_ui_ChampionIconIndex = _vm->_championMan->M26_championIconIndex(AL0962_ui_Cell, _vm->_dungeonMan->_g308_partyDir);
-	if (_vm->M0_indexToOrdinal(AL0962_ui_ChampionIconIndex) == _vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap) {
+	curChampion->_symbolStep = 0;
+	curChampion->_symbols[0] = '\0';
+	curChampion->_dir = _vm->_dungeonMan->_g308_partyDir;
+	curChampion->_maximumDamageReceived = 0;
+	uint16 curChampionIconIndex = _vm->_championMan->M26_championIconIndex(curCell, _vm->_dungeonMan->_g308_partyDir);
+	if (_vm->M0_indexToOrdinal(curChampionIconIndex) == _vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap) {
 		_vm->_eventMan->_g598_mousePointerBitmapUpdated = true;
 		_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->M0_indexToOrdinal(kM1_ChampionNone);
 		warning(false, "IGNORED CODE:G0592_B_BuildMousePointerScreenAreaRequested = true");
 	}
-	if (L0965_ps_Champion->_poisonEventCount) {
+
+	if (curChampion->_poisonEventCount)
 		f323_unpoison(champIndex);
-	}
+
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
-	_vm->_displayMan->D24_fillScreenBox(g54_BoxChampionIcons[AL0962_ui_ChampionIconIndex << 2], k0_ColorBlack);
+	_vm->_displayMan->D24_fillScreenBox(g54_BoxChampionIcons[curChampionIconIndex << 2], k0_ColorBlack);
 	_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
-	for (L0963_i_AliveChampionIndex = k0_ChampionFirst, L0965_ps_Champion = _vm->_championMan->_gK71_champions; L0963_i_AliveChampionIndex < _vm->_championMan->_g305_partyChampionCount; L0963_i_AliveChampionIndex++, L0965_ps_Champion++) {
-		if (L0965_ps_Champion->_currHealth)
+	
+	int16 aliveChampionIndex;
+	for (aliveChampionIndex = k0_ChampionFirst, curChampion = _vm->_championMan->_gK71_champions; aliveChampionIndex < _vm->_championMan->_g305_partyChampionCount; aliveChampionIndex++, curChampion++) {
+		if (curChampion->_currHealth)
 			break;
 	}
-	if (L0963_i_AliveChampionIndex == _vm->_championMan->_g305_partyChampionCount) { /* BUG0_43 The game does not end if the last living champion in the party is killed while looking at a candidate champion in a portrait. The condition to end the game when the whole party is killed is not true because the code considers the candidate champion as alive (in the loop above) */
+
+	if (aliveChampionIndex == _vm->_championMan->_g305_partyChampionCount) { /* BUG0_43 The game does not end if the last living champion in the party is killed while looking at a candidate champion in a portrait. The condition to end the game when the whole party is killed is not true because the code considers the candidate champion as alive (in the loop above) */
 		_vm->_championMan->_g303_partyDead = true;
 		return;
 	}
-	if (champIndex == _vm->_championMan->_g411_leaderIndex) {
-		_vm->_eventMan->f368_commandSetLeader((ChampionIndex)L0963_i_AliveChampionIndex);
-	}
-	if (champIndex == _vm->_championMan->_g514_magicCasterChampionIndex) {
-		_vm->_menuMan->f394_setMagicCasterAndDrawSpellArea(L0963_i_AliveChampionIndex);
-	} else {
+
+	if (champIndex == _vm->_championMan->_g411_leaderIndex)
+		_vm->_eventMan->f368_commandSetLeader((ChampionIndex)aliveChampionIndex);
+
+	if (champIndex == _vm->_championMan->_g514_magicCasterChampionIndex)
+		_vm->_menuMan->f394_setMagicCasterAndDrawSpellArea(aliveChampionIndex);
+	else
 		_vm->_menuMan->f393_drawSpellAreaControls(_vm->_championMan->_g514_magicCasterChampionIndex);
-	}
 }
 
 void ChampionMan::f318_dropAllObjects(uint16 champIndex) {
-	static int16 G0057_ai_Graphic562_SlotDropOrder[30] = {
+	static const int16 slotDropOrder[30] = {
 		k5_ChampionSlotFeet,
 		k4_ChampionSlotLegs,
 		k9_ChampionSlotQuiverLine_2_2,
@@ -1510,31 +1505,26 @@ void ChampionMan::f318_dropAllObjects(uint16 champIndex) {
 		k10_ChampionSlotNeck,
 		k2_ChampionSlotHead,
 		k0_ChampionSlotReadyHand,
-		k1_ChampionSlotActionHand};
+		k1_ChampionSlotActionHand
+	};
 
-	uint16 L0959_ui_Cell;
-	Thing L0960_T_Thing;
-	uint16 L0961_ui_SlotIndex;
-
-	L0959_ui_Cell = _vm->_championMan->_gK71_champions[champIndex]._cell;
-	for (L0961_ui_SlotIndex = k0_ChampionSlotReadyHand; L0961_ui_SlotIndex < k30_ChampionSlotChest_1; L0961_ui_SlotIndex++) {
-		if ((L0960_T_Thing = f300_getObjectRemovedFromSlot(champIndex, G0057_ai_Graphic562_SlotDropOrder[L0961_ui_SlotIndex])) != Thing::_none) {
-			_vm->_movsens->f267_getMoveResult(M15_thingWithNewCell(L0960_T_Thing, L0959_ui_Cell), kM1_MapXNotOnASquare, 0, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY);
+	uint16 curCell = _vm->_championMan->_gK71_champions[champIndex]._cell;
+	for (uint16 slotIndex = k0_ChampionSlotReadyHand; slotIndex < k30_ChampionSlotChest_1; slotIndex++) {
+		Thing curThing = f300_getObjectRemovedFromSlot(champIndex, slotDropOrder[slotIndex]);
+		if (curThing != Thing::_none) {
+			_vm->_moveSens->f267_getMoveResult(M15_thingWithNewCell(curThing, curCell), kM1_MapXNotOnASquare, 0, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY);
 		}
 	}
 }
 
 void ChampionMan::f323_unpoison(int16 champIndex) {
-	int16 L0982_i_EventIndex;
-	TimelineEvent* L0983_ps_Event;
-
-	if (champIndex == kM1_ChampionNone) {
+	if (champIndex == kM1_ChampionNone)
 		return;
-	}
-	for (L0982_i_EventIndex = 0, L0983_ps_Event = _vm->_timeline->_g370_events; L0982_i_EventIndex < _vm->_timeline->_g369_eventMaxCount; L0983_ps_Event++, L0982_i_EventIndex++) {
-		if ((L0983_ps_Event->_type == k75_TMEventTypePoisonChampion) && (L0983_ps_Event->_priority == champIndex)) {
-			_vm->_timeline->f237_deleteEvent(L0982_i_EventIndex);
-		}
+
+	TimelineEvent *eventPtr = _vm->_timeline->_g370_events;
+	for (uint16 eventIndex = 0; eventIndex < _vm->_timeline->_g369_eventMaxCount; eventPtr++, eventIndex++) {
+		if ((eventPtr->_type == k75_TMEventTypePoisonChampion) && (eventPtr->_priority == champIndex))
+			_vm->_timeline->f237_deleteEvent(eventIndex);
 	}
 	_vm->_championMan->_gK71_champions[champIndex]._poisonEventCount = 0;
 }

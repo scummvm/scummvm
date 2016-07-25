@@ -620,7 +620,7 @@ T0412033:
 				_vm->_championMan->f301_addObjectInSlot((ChampionIndex)champIndex, L1272_T_Object, AL1267_ui_SlotIndex);
 				_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
 			} else {
-				_vm->_movsens->f267_getMoveResult(L1272_T_Object, kM1_MapXNotOnASquare, 0, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY);
+				_vm->_moveSens->f267_getMoveResult(L1272_T_Object, kM1_MapXNotOnASquare, 0, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY);
 			}
 			break;
 		case k8_spellType_otherFireshield:
@@ -1252,9 +1252,9 @@ T0407032:
 		/* CHANGE6_00_FIX The presence of a group over the pit is checked so that you cannot climb down a pit with the rope if there is a group levitating over it */
 		if ((_vm->_dungeonMan->f151_getSquare(L1251_i_MapX, L1252_i_MapY).getType() == k2_ElementTypePit) && (_vm->_groupMan->f175_groupGetThing(L1251_i_MapX, L1252_i_MapY) == Thing::_endOfList)) {
 			/* BUG0_77 The party moves forward when using the rope in front of a closed pit. The engine does not check whether the pit is open before moving the party over the pit. This is not consistent with the behavior when using the rope in front of a corridor where nothing happens */
-			_vm->_movsens->_g402_useRopeToClimbDownPit = true;
-			_vm->_movsens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, L1251_i_MapX, L1252_i_MapY);
-			_vm->_movsens->_g402_useRopeToClimbDownPit = false;
+			_vm->_moveSens->_g402_useRopeToClimbDownPit = true;
+			_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, L1251_i_MapX, L1252_i_MapY);
+			_vm->_moveSens->_g402_useRopeToClimbDownPit = false;
 		} else {
 			L1249_ui_ActionDisabledTicks = 0;
 		}

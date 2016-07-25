@@ -806,9 +806,9 @@ void EventManager::f365_commandTurnParty(CommandType cmdType) {
 		f364_commandTakeStairs(getFlag(L1114_ui_Square, k0x0004_StairsUp));
 		return;
 	}
-	_vm->_movsens->f276_sensorProcessThingAdditionOrRemoval(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, Thing::_party, true, false);
+	_vm->_moveSens->f276_sensorProcessThingAdditionOrRemoval(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, Thing::_party, true, false);
 	_vm->_championMan->f284_setPartyDirection(M21_normalizeModulo4(_vm->_dungeonMan->_g308_partyDir + ((cmdType == k2_CommandTurnRight) ? 1 : 3)));
-	_vm->_movsens->f276_sensorProcessThingAdditionOrRemoval(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, Thing::_party, true, true);
+	_vm->_moveSens->f276_sensorProcessThingAdditionOrRemoval(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, Thing::_party, true, true);
 }
 
 void EventManager::f366_commandMoveParty(CommandType cmdType) {
@@ -864,7 +864,7 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 	_vm->_dungeonMan->f150_mapCoordsAfterRelMovement(_vm->_dungeonMan->_g308_partyDir, g465_movementArrowToStepForwardCount[AL1118_ui_MovementArrowIndex], g466_movementArrowToSepRightCount[AL1118_ui_MovementArrowIndex], L1121_i_MapX, L1122_i_MapY);
 	L1116_i_SquareType = Square(AL1115_ui_Square = _vm->_dungeonMan->f151_getSquare(L1121_i_MapX, L1122_i_MapY).toByte()).getType();
 	if (L1116_i_SquareType == k3_ElementTypeStairs) {
-		_vm->_movsens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, kM1_MapXNotOnASquare, 0);
+		_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, kM1_MapXNotOnASquare, 0);
 		_vm->_dungeonMan->_g306_partyMapX = L1121_i_MapX;
 		_vm->_dungeonMan->_g307_partyMapY = L1122_i_MapY;
 		f364_commandTakeStairs(getFlag(AL1115_ui_Square, k0x0004_StairsUp));
@@ -905,9 +905,9 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 		return;
 	}
 	if (L1123_B_StairsSquare) {
-		_vm->_movsens->f267_getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, L1121_i_MapX, L1122_i_MapY);
+		_vm->_moveSens->f267_getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, L1121_i_MapX, L1122_i_MapY);
 	} else {
-		_vm->_movsens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, L1121_i_MapX, L1122_i_MapY);
+		_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, L1121_i_MapX, L1122_i_MapY);
 	}
 	AL1115_ui_Ticks = 1;
 	L1119_ps_Champion = _vm->_championMan->_gK71_champions;
@@ -1003,7 +1003,7 @@ void EventManager::f372_commandProcessType80ClickInDungeonViewTouchFrontWall() {
 	L1136_ui_MapY = _vm->_dungeonMan->_g307_partyMapY;
 	L1135_ui_MapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir], L1136_ui_MapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
 	if ((L1135_ui_MapX >= 0) && (L1135_ui_MapX < _vm->_dungeonMan->_g273_currMapWidth) && (L1136_ui_MapY >= 0) && (L1136_ui_MapY < _vm->_dungeonMan->_g274_currMapHeight)) {
-		_vm->_g321_stopWaitingForPlayerInput = _vm->_movsens->f275_sensorIsTriggeredByClickOnWall(L1135_ui_MapX, L1136_ui_MapY, returnOppositeDir(_vm->_dungeonMan->_g308_partyDir));
+		_vm->_g321_stopWaitingForPlayerInput = _vm->_moveSens->f275_sensorIsTriggeredByClickOnWall(L1135_ui_MapX, L1136_ui_MapY, returnOppositeDir(_vm->_dungeonMan->_g308_partyDir));
 	}
 }
 
@@ -1028,7 +1028,7 @@ void EventManager::f377_commandProcessType80ClickInDungeonView(int16 posX, int16
 			if ((((Door*)L1151_ps_Junk)->hasButton()) && _vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn].isPointInside(posX, posY - 33)) {
 				_vm->_g321_stopWaitingForPlayerInput = true;
 				_vm->f064_SOUND_RequestPlay_CPSD(k01_soundSWITCH, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
-				_vm->_movsens->f268_addEvent(k10_TMEventTypeDoor, L1155_i_MapX, L1156_i_MapY, 0, k2_SensorEffToggle, _vm->_g313_gameTime + 1);
+				_vm->_moveSens->f268_addEvent(k10_TMEventTypeDoor, L1155_i_MapX, L1156_i_MapY, 0, k2_SensorEffToggle, _vm->_g313_gameTime + 1);
 				return;
 			}
 		} else {
@@ -1212,14 +1212,14 @@ void EventManager::f373_processType80_clickInDungeonView_grabLeaderHandObject(ui
 	if (viewCell >= k2_ViewCellBackRight) {
 		L1137_i_MapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir], L1138_i_MapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
 		if (((L1139_T_Thing = _vm->_groupMan->f175_groupGetThing(L1137_i_MapX, L1138_i_MapY)) != Thing::_endOfList) &&
-			!_vm->_movsens->f264_isLevitating(L1139_T_Thing) &&
+			!_vm->_moveSens->f264_isLevitating(L1139_T_Thing) &&
 			_vm->_groupMan->f176_getCreatureOrdinalInCell((Group*)_vm->_dungeonMan->f156_getThingData(L1139_T_Thing), M21_normalizeModulo4(viewCell + _vm->_dungeonMan->_g308_partyDir))) {
 			return; /* It is not possible to grab an object on floor if there is a non levitating creature on its cell */
 		}
 	}
 	L1139_T_Thing = _vm->_dungeonMan->_g292_pileTopObject[viewCell];
 	if (_vm->_objectMan->f33_getIconIndex(L1139_T_Thing) != kM1_IconIndiceNone) {
-		_vm->_movsens->f267_getMoveResult(L1139_T_Thing, L1137_i_MapX, L1138_i_MapY, kM1_MapXNotOnASquare, 0);
+		_vm->_moveSens->f267_getMoveResult(L1139_T_Thing, L1137_i_MapX, L1138_i_MapY, kM1_MapXNotOnASquare, 0);
 		_vm->_championMan->f297_putObjectInLeaderHand(L1139_T_Thing, true);
 	}
 	_vm->_g321_stopWaitingForPlayerInput = true;
@@ -1249,7 +1249,7 @@ void EventManager::f374_processType80_clickInDungeonViewDropLeaderHandObject(uin
 	}
 	L1145_ui_Cell = M21_normalizeModulo4(_vm->_dungeonMan->_g308_partyDir + viewCell);
 	L1142_T_Thing = _vm->_championMan->f298_getObjectRemovedFromLeaderHand();
-	_vm->_movsens->f267_getMoveResult(M15_thingWithNewCell(L1142_T_Thing, L1145_ui_Cell), kM1_MapXNotOnASquare, 0, L1140_i_MapX, L1141_i_MapY);
+	_vm->_moveSens->f267_getMoveResult(M15_thingWithNewCell(L1142_T_Thing, L1145_ui_Cell), kM1_MapXNotOnASquare, 0, L1140_i_MapX, L1141_i_MapY);
 	if (L1146_B_DroppingIntoAnAlcove && _vm->_dungeonMan->_g287_isFacingViAltar && ((L1144_i_IconIndex = _vm->_objectMan->f33_getIconIndex(L1142_T_Thing)) == k147_IconIndiceJunkChampionBones)) {
 		L1143_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(L1142_T_Thing);
 		M33_setMapAndTime(L1147_s_Event._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + 1);
@@ -1283,7 +1283,7 @@ void EventManager::f357_discardAllInput() {
 }
 
 void EventManager::f364_commandTakeStairs(bool stairsGoDown) {
-	_vm->_movsens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, kM1_MapXNotOnASquare, 0);
+	_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, kM1_MapXNotOnASquare, 0);
 	_vm->_g327_newPartyMapIndex = _vm->_dungeonMan->f154_getLocationAfterLevelChange(_vm->_dungeonMan->_g309_partyMapIndex, stairsGoDown ? -1 : 1, &_vm->_dungeonMan->_g306_partyMapX, &_vm->_dungeonMan->_g307_partyMapY);
 	_vm->_dungeonMan->f173_setCurrentMap(_vm->_g327_newPartyMapIndex);
 	_vm->_championMan->f284_setPartyDirection(_vm->_dungeonMan->f155_getStairsExitDirection(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY));

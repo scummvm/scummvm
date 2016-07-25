@@ -240,7 +240,7 @@ public:
 	ObjectMan *_objectMan;
 	InventoryMan *_inventoryMan;
 	TextMan *_textMan;
-	MovesensMan *_movsens;
+	MovesensMan *_moveSens;
 	GroupMan *_groupMan;
 	Timeline *_timeline;
 	ProjExpl *_projexpl;

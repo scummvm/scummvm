@@ -1509,7 +1509,7 @@ Thing DungeonMan::f165_getDiscardTHing(uint16 thingType) {
 										continue;
 T0165026:
 									_vm->_dungeonMan->f173_setCurrentMap(L0279_ui_MapIndex);
-									_vm->_movsens->f267_getMoveResult(L0278_T_Thing, L0276_ui_MapX, L0277_ui_MapY, kM1_MapXNotOnASquare, 0);
+									_vm->_moveSens->f267_getMoveResult(L0278_T_Thing, L0276_ui_MapX, L0277_ui_MapY, kM1_MapXNotOnASquare, 0);
 								}
 								_vm->_dungeonMan->f173_setCurrentMap(L0284_i_CurrentMapIndex);
 								G0294_auc_LastDiscardedThingMapIndex[thingType] = L0279_ui_MapIndex;

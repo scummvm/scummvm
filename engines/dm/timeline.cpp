@@ -554,11 +554,11 @@ void Timeline::f249_moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 
 
 	if ((_vm->_dungeonMan->_g272_currMapIndex == _vm->_dungeonMan->_g309_partyMapIndex) && (mapX == _vm->_dungeonMan->_g306_partyMapX) && (mapY == _vm->_dungeonMan->_g307_partyMapY)) {
-		_vm->_movsens->f267_getMoveResult(Thing::_party, mapX, mapY, mapX, mapY);
+		_vm->_moveSens->f267_getMoveResult(Thing::_party, mapX, mapY, mapX, mapY);
 		_vm->_championMan->f296_drawChangedObjectIcons();
 	}
 	if ((L0645_T_Thing = _vm->_groupMan->f175_groupGetThing(mapX, mapY)) != Thing::_endOfList) {
-		_vm->_movsens->f267_getMoveResult(L0645_T_Thing, mapX, mapY, mapX, mapY);
+		_vm->_moveSens->f267_getMoveResult(L0645_T_Thing, mapX, mapY, mapX, mapY);
 	}
 	L0645_T_Thing = _vm->_dungeonMan->f162_getSquareFirstObject(mapX, mapY);
 	L0648_T_NextThing = L0645_T_Thing;
@@ -575,24 +575,24 @@ void Timeline::f249_moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 		L0648_T_NextThing = _vm->_dungeonMan->f159_getNextThing(L0645_T_Thing);
 		AL0644_ui_ThingType = L0645_T_Thing.getType();
 		if (AL0644_ui_ThingType > k4_GroupThingType) {
-			_vm->_movsens->f267_getMoveResult(L0645_T_Thing, mapX, mapY, mapX, mapY);
+			_vm->_moveSens->f267_getMoveResult(L0645_T_Thing, mapX, mapY, mapX, mapY);
 		}
 		if (AL0644_ui_ThingType == k14_ProjectileThingType) {
 			L0646_ps_Projectile = (Projectile*)_vm->_dungeonMan->f156_getThingData(L0645_T_Thing);
 			L0647_ps_Event = &_vm->_timeline->_g370_events[L0646_ps_Projectile->_eventIndex];
-			L0647_ps_Event->_C._projectile.setMapX(_vm->_movsens->_g397_moveResultMapX);
-			L0647_ps_Event->_C._projectile.setMapY(_vm->_movsens->_g398_moveResultMapY);
-			L0647_ps_Event->_C._projectile.setDir((Direction)_vm->_movsens->_g400_moveResultDir);
-			L0647_ps_Event->_B._slot = M15_thingWithNewCell(L0645_T_Thing, _vm->_movsens->_g401_moveResultCell).toUint16();
-			M31_setMap(L0647_ps_Event->_mapTime, _vm->_movsens->_g399_moveResultMapIndex);
+			L0647_ps_Event->_C._projectile.setMapX(_vm->_moveSens->_g397_moveResultMapX);
+			L0647_ps_Event->_C._projectile.setMapY(_vm->_moveSens->_g398_moveResultMapY);
+			L0647_ps_Event->_C._projectile.setDir((Direction)_vm->_moveSens->_g400_moveResultDir);
+			L0647_ps_Event->_B._slot = M15_thingWithNewCell(L0645_T_Thing, _vm->_moveSens->_g401_moveResultCell).toUint16();
+			M31_setMap(L0647_ps_Event->_mapTime, _vm->_moveSens->_g399_moveResultMapIndex);
 		} else {
 			if (AL0644_ui_ThingType == k15_ExplosionThingType) {
 				for (AL0644_ui_EventIndex = 0, L0647_ps_Event = _vm->_timeline->_g370_events; AL0644_ui_EventIndex < _vm->_timeline->_g369_eventMaxCount; L0647_ps_Event++, AL0644_ui_EventIndex++) {
 					if ((L0647_ps_Event->_type == k25_TMEventTypeExplosion) && (L0647_ps_Event->_C._slot == L0645_T_Thing.toUint16())) { /* BUG0_23 A Fluxcage explosion remains on a square forever. If you open a pit or teleporter on a square where there is a Fluxcage explosion, the Fluxcage explosion is moved but the associated event is not updated (because Fluxcage explosions do not use k25_TMEventTypeExplosion but rather k24_TMEventTypeRemoveFluxcage) causing the Fluxcage explosion to remain in the dungeon forever on its destination square. When the k24_TMEventTypeRemoveFluxcage expires the explosion thing is not removed, but it is marked as unused. Consequently, any objects placed on the Fluxcage square after it was moved but before it expires become orphans upon expiration. After expiration, any object placed on the fluxcage square is cloned when picked up */
-						L0647_ps_Event->_B._location._mapX = _vm->_movsens->_g397_moveResultMapX;
-						L0647_ps_Event->_B._location._mapY = _vm->_movsens->_g398_moveResultMapY;
-						L0647_ps_Event->_C._slot = M15_thingWithNewCell(L0645_T_Thing, _vm->_movsens->_g401_moveResultCell).toUint16();
-						M31_setMap(L0647_ps_Event->_mapTime, _vm->_movsens->_g399_moveResultMapIndex);
+						L0647_ps_Event->_B._location._mapX = _vm->_moveSens->_g397_moveResultMapX;
+						L0647_ps_Event->_B._location._mapY = _vm->_moveSens->_g398_moveResultMapY;
+						L0647_ps_Event->_C._slot = M15_thingWithNewCell(L0645_T_Thing, _vm->_moveSens->_g401_moveResultCell).toUint16();
+						M31_setMap(L0647_ps_Event->_mapTime, _vm->_moveSens->_g399_moveResultMapIndex);
 					}
 				}
 			}
@@ -661,10 +661,10 @@ void Timeline::f248_timelineProcessEvent6_squareWall(TimelineEvent* event) {
 						L0638_ps_Sensor->setData(L0637_ui_SensorData);
 						if (L0638_ps_Sensor->getEffectA() == k3_SensorEffHold) {
 							AL0636_B_TriggerSetEffect = ((L0637_ui_SensorData == 0) != L0638_ps_Sensor->getRevertEffectA());
-							_vm->_movsens->f272_sensorTriggerEffect(L0638_ps_Sensor, AL0636_B_TriggerSetEffect ? k0_SensorEffSet : k1_SensorEffClear, L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
+							_vm->_moveSens->f272_sensorTriggerEffect(L0638_ps_Sensor, AL0636_B_TriggerSetEffect ? k0_SensorEffSet : k1_SensorEffClear, L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
 						} else {
 							if (L0637_ui_SensorData == 0) {
-								_vm->_movsens->f272_sensorTriggerEffect(L0638_ps_Sensor, L0638_ps_Sensor->getEffectA(), L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
+								_vm->_moveSens->f272_sensorTriggerEffect(L0638_ps_Sensor, L0638_ps_Sensor->getEffectA(), L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
 							}
 						}
 					}
@@ -687,10 +687,10 @@ void Timeline::f248_timelineProcessEvent6_squareWall(TimelineEvent* event) {
 						L0638_ps_Sensor->setData(L0637_ui_SensorData);
 						AL0636_B_TriggerSetEffect = (Sensor::getDataMask1(L0637_ui_SensorData) == Sensor::getDataMask2(L0637_ui_SensorData)) != L0638_ps_Sensor->getRevertEffectA();
 						if (L0638_ps_Sensor->getEffectA() == k3_SensorEffHold) {
-							_vm->_movsens->f272_sensorTriggerEffect(L0638_ps_Sensor, AL0636_B_TriggerSetEffect ? k0_SensorEffSet : k1_SensorEffClear, L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
+							_vm->_moveSens->f272_sensorTriggerEffect(L0638_ps_Sensor, AL0636_B_TriggerSetEffect ? k0_SensorEffSet : k1_SensorEffClear, L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
 						} else {
 							if (AL0636_B_TriggerSetEffect) {
-								_vm->_movsens->f272_sensorTriggerEffect(L0638_ps_Sensor, L0638_ps_Sensor->getEffectA(), L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
+								_vm->_moveSens->f272_sensorTriggerEffect(L0638_ps_Sensor, L0638_ps_Sensor->getEffectA(), L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
 							}
 						}
 					} else {
@@ -713,7 +713,7 @@ void Timeline::f248_timelineProcessEvent6_squareWall(TimelineEvent* event) {
 		}
 		L0634_T_Thing = _vm->_dungeonMan->f159_getNextThing(L0634_T_Thing);
 	}
-	_vm->_movsens->f271_processRotationEffect();
+	_vm->_moveSens->f271_processRotationEffect();
 }
 
 void Timeline::f247_triggerProjectileLauncher(Sensor* sensor, TimelineEvent* event) {
@@ -881,7 +881,7 @@ T0252001:
 		if (event->_type == k61_TMEventTypeMoveGroupAudible) {
 			_vm->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, L0656_ui_MapX, L0657_ui_MapY, k1_soundModePlayIfPrioritized);
 		}
-		_vm->_movsens->f267_getMoveResult(Thing(event->_C._slot), kM1_MapXNotOnASquare, 0, L0656_ui_MapX, L0657_ui_MapY);
+		_vm->_moveSens->f267_getMoveResult(Thing(event->_C._slot), kM1_MapXNotOnASquare, 0, L0656_ui_MapX, L0657_ui_MapY);
 	} else {
 		if (!L0659_B_RandomDirectionMoveRetried) {
 			L0659_B_RandomDirectionMoveRetried = true;
