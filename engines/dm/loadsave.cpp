@@ -58,7 +58,6 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 	_g526_dungeonId = C10_DUNGEON_DM;
 	if (_g298_newGame) {
 		//L1366_B_FadePalette = !F0428_DIALOG_RequireGameDiskInDrive_NoDialogDrawn(C0_DO_NOT_FORCE_DIALOG_DM_CSB, true);
-T0435002:
 		_g524_restartGameAllowed = false;
 		_championMan->_g305_partyChampionCount = 0;
 		_championMan->_g414_leaderHandObject = Thing::_none;
@@ -69,6 +68,9 @@ T0435002:
 			L1367_pc_Message = G0546_pc_THATSNOTTHESAMEGAME;
 			goto T0435004;
 		}*/
+
+		warning(false, "DUMMY CODE in f435_loadgame setting _g298_newGame to k1_modeLoadDungeon");
+		_g298_newGame = k1_modeLoadDungeon;
 
 		SaveGameHeader header;
 		readSaveGameHeader(file, &header);
