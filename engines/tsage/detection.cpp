@@ -95,6 +95,7 @@ public:
 		case kSavesSupportThumbnail:
 		case kSavesSupportCreationDate:
 		case kSavesSupportPlayTime:
+		case kSimpleSavesNames:
 			return true;
 		default:
 			return false;
@@ -144,8 +145,6 @@ public:
 		Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 		return saveList;
 	}
-
-	virtual bool simpleSaveNames() const { return true; }
 
 	virtual int getMaximumSaveSlot() const {
 		return MAX_SAVES - 1;

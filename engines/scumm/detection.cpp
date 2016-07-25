@@ -960,7 +960,6 @@ public:
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
 	virtual SaveStateList listSaves(const char *target) const;
-	virtual bool simpleSaveNames() const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
@@ -975,7 +974,8 @@ bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime);
+		(f == kSavesSupportPlayTime) ||
+		(f == kSimpleSavesNames);
 }
 
 bool ScummEngine::hasFeature(EngineFeature f) const {
@@ -1299,8 +1299,6 @@ SaveStateList ScummMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
-
-bool ScummMetaEngine::simpleSaveNames() const { return true; }
 
 void ScummMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = ScummEngine::makeSavegameName(target, slot, false);

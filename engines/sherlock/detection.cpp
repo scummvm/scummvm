@@ -159,8 +159,6 @@ public:
 	 */
 	virtual SaveStateList listSaves(const char *target) const;
 
-	virtual bool simpleSaveNames() const;
-
 	/**
 	 * Returns the maximum number of allowed save slots
 	 */
@@ -201,7 +199,8 @@ bool SherlockMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail);
+		(f == kSavesSupportThumbnail) ||
+		(f == kSimpleSavesNames);
 }
 
 bool Sherlock::SherlockEngine::hasFeature(EngineFeature f) const {
@@ -218,8 +217,6 @@ bool Sherlock::SherlockEngine::isDemo() const {
 SaveStateList SherlockMetaEngine::listSaves(const char *target) const {
 	return Sherlock::SaveManager::getSavegameList(target);
 }
-
-bool SherlockMetaEngine::simpleSaveNames() const { return true; }
 
 int SherlockMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVEGAME_SLOTS;

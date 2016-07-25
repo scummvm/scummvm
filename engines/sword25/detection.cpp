@@ -69,7 +69,6 @@ public:
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	virtual int getMaximumSaveSlot() const { return Sword25::PersistenceService::getSlotCount(); }
 	virtual SaveStateList listSaves(const char *target) const;
-	virtual bool simpleSaveNames() const;
 };
 
 bool Sword25MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -109,8 +108,6 @@ SaveStateList Sword25MetaEngine::listSaves(const char *target) const {
 
 	return saveList;
 }
-
-bool Sword25MetaEngine::simpleSaveNames() const { return false; }
 
 #if PLUGIN_ENABLED_DYNAMIC(SWORD25)
 	REGISTER_PLUGIN_DYNAMIC(SWORD25, PLUGIN_TYPE_ENGINE, Sword25MetaEngine);

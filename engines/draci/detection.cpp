@@ -98,7 +98,6 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual int getMaximumSaveSlot() const { return 99; }
 	virtual SaveStateList listSaves(const char *target) const;
-	virtual bool simpleSaveNames() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
@@ -147,8 +146,6 @@ SaveStateList DraciMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
-
-bool DraciMetaEngine::simpleSaveNames() const { return false; }
 
 void DraciMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(Draci::DraciEngine::getSavegameFile(slot));

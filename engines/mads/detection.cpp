@@ -155,7 +155,6 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
-	virtual bool simpleSaveNames() const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
@@ -167,7 +166,8 @@ bool MADSMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail);
+		(f == kSavesSupportThumbnail) ||
+		(f == kSimpleSavesNames);
 }
 
 bool MADS::MADSEngine::hasFeature(EngineFeature f) const {
@@ -217,8 +217,6 @@ SaveStateList MADSMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
-
-bool MADSMetaEngine::simpleSaveNames() const { return true; }
 
 int MADSMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVES;

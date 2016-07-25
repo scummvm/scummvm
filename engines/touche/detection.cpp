@@ -155,7 +155,6 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
-	virtual bool simpleSaveNames() const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 };
@@ -210,8 +209,6 @@ SaveStateList ToucheMetaEngine::listSaves(const char *target) const {
 	}
 	return saveList;
 }
-
-bool ToucheMetaEngine::simpleSaveNames() const { return false; }
 
 int ToucheMetaEngine::getMaximumSaveSlot() const {
 	return Touche::kMaxSaveStates - 1;

@@ -221,7 +221,6 @@ public:
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	SaveStateList listSaves(const char *target) const;
-	virtual bool simpleSaveNames() const;
 	virtual int getMaximumSaveSlot() const;
 	void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
@@ -235,7 +234,8 @@ bool ToltecsMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime);
+		(f == kSavesSupportPlayTime) ||
+		(f == kSimpleSavesNames);
 }
 
 bool Toltecs::ToltecsEngine::hasFeature(EngineFeature f) const {
@@ -288,8 +288,6 @@ SaveStateList ToltecsMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
-
-bool ToltecsMetaEngine::simpleSaveNames() const { return true; }
 
 int ToltecsMetaEngine::getMaximumSaveSlot() const {
 	return 999;

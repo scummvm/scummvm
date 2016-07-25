@@ -56,7 +56,8 @@ bool PrinceMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
 		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup);
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSimpleSavesNames);
 }
 
 bool Prince::PrinceEngine::hasFeature(EngineFeature f) const {

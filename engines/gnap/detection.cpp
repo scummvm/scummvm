@@ -78,7 +78,6 @@ public:
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual SaveStateList listSaves(const char *target) const;
-	virtual bool simpleSaveNames() const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	virtual void removeSaveState(const char *target, int slot) const;
 };
@@ -90,7 +89,8 @@ bool GnapMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate);
+		(f == kSavesSupportCreationDate) ||
+		(f == kSimpleSavesNames);
 }
 
 bool Gnap::GnapEngine::hasFeature(EngineFeature f) const {
@@ -141,8 +141,6 @@ SaveStateList GnapMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
-
-bool GnapMetaEngine::simpleSaveNames() const { return true; }
 
 SaveStateDescriptor GnapMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);

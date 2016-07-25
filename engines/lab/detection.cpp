@@ -138,7 +138,6 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	SaveStateList listSaves(const char *target) const;
-	virtual bool simpleSaveNames() const;
 	virtual int getMaximumSaveSlot() const;
 	void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
@@ -152,7 +151,8 @@ bool LabMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime);
+		(f == kSavesSupportPlayTime) ||
+		(f == kSimpleSavesNames);
 }
 
 bool Lab::LabEngine::hasFeature(EngineFeature f) const {
@@ -191,8 +191,6 @@ SaveStateList LabMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
-
-bool LabMetaEngine::simpleSaveNames() const { return true; }
 
 int LabMetaEngine::getMaximumSaveSlot() const {
 	return 999;

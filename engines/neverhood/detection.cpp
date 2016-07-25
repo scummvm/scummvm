@@ -214,7 +214,6 @@ public:
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	SaveStateList listSaves(const char *target) const;
-	virtual bool simpleSaveNames() const;
 	virtual int getMaximumSaveSlot() const;
 	void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
@@ -229,7 +228,8 @@ bool NeverhoodMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime);
+		(f == kSavesSupportPlayTime) ||
+		(f == kSimpleSavesNames);
 }
 
 bool Neverhood::NeverhoodEngine::hasFeature(EngineFeature f) const {
@@ -283,8 +283,6 @@ SaveStateList NeverhoodMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
-
-bool NeverhoodMetaEngine::simpleSaveNames() const { return true; }
 
 int NeverhoodMetaEngine::getMaximumSaveSlot() const {
 	return 999;

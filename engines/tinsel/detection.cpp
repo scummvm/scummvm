@@ -101,7 +101,6 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual SaveStateList listSaves(const char *target) const;
-	virtual bool simpleSaveNames() const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 };
@@ -110,7 +109,8 @@ bool TinselMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave);
+		(f == kSupportsDeleteSave) ||
+		(f == kSimpleSavesNames);
 }
 
 bool Tinsel::TinselEngine::hasFeature(EngineFeature f) const {
@@ -164,8 +164,6 @@ SaveStateList TinselMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
-
-bool TinselMetaEngine::simpleSaveNames() const { return true; }
 
 bool TinselMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Tinsel::TinselGameDescription *gd = (const Tinsel::TinselGameDescription *)desc;

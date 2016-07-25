@@ -127,7 +127,6 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual SaveStateList listSaves(const char *target) const;
-	virtual bool simpleSaveNames() const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	virtual void removeSaveState(const char *target, int slot) const;
 };
@@ -186,7 +185,8 @@ bool CGE2MetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
 		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup);
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSimpleSavesNames);
 }
 
 int CGE2MetaEngine::getMaximumSaveSlot() const {
@@ -239,8 +239,6 @@ SaveStateList CGE2MetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
-
-bool CGE2MetaEngine::simpleSaveNames() const { return true; }
 
 SaveStateDescriptor CGE2MetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);

@@ -200,7 +200,6 @@ public:
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	SaveStateList listSavesForPrefix(const char *prefix, const char *extension) const;
-	virtual bool simpleSaveNames() const;
 	virtual int getMaximumSaveSlot() const { return 999; }
 	virtual void removeSaveState(const char *target, int slot) const;
 	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
@@ -272,8 +271,6 @@ SaveStateList MohawkMetaEngine::listSaves(const char *target) const {
 
 	return saveList;
 }
-
-bool MohawkMetaEngine::simpleSaveNames() const { return false; }
 
 void MohawkMetaEngine::removeSaveState(const char *target, int slot) const {
 

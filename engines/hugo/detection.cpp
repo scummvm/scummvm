@@ -149,7 +149,6 @@ public:
 
 	int getMaximumSaveSlot() const;
 	SaveStateList listSaves(const char *target) const;
-	virtual bool simpleSaveNames() const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	void removeSaveState(const char *target, int slot) const;
 };
@@ -221,8 +220,6 @@ SaveStateList HugoMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
-
-bool HugoMetaEngine::simpleSaveNames() const { return false; }
 
 SaveStateDescriptor HugoMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s-%02d.SAV", target, slot);

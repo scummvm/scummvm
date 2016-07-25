@@ -86,7 +86,6 @@ public:
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual SaveStateList listSaves(const char *target) const;
-	virtual bool simpleSaveNames() const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	virtual void removeSaveState(const char *target, int slot) const;
 };
@@ -98,7 +97,8 @@ bool BbvsMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSupportsLoadingDuringStartup) ||
 	    (f == kSavesSupportMetaInfo) ||
 	    (f == kSavesSupportThumbnail) ||
-	    (f == kSavesSupportCreationDate);
+	    (f == kSavesSupportCreationDate) ||
+		(f == kSimpleSavesNames);
 }
 
 void BbvsMetaEngine::removeSaveState(const char *target, int slot) const {
@@ -135,8 +135,6 @@ SaveStateList BbvsMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
-
-bool BbvsMetaEngine::simpleSaveNames() const { return true; }
 
 SaveStateDescriptor BbvsMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Bbvs::BbvsEngine::getSavegameFilename(target, slot);

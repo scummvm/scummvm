@@ -148,7 +148,6 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
-	virtual bool simpleSaveNames() const;
 	virtual int getMaximumSaveSlot() const { return 999; }
 	virtual void removeSaveState(const char *target, int slot) const;
 };
@@ -178,8 +177,6 @@ SaveStateList PegasusMetaEngine::listSaves(const char *target) const {
 
 	return saveList;
 }
-
-bool PegasusMetaEngine::simpleSaveNames() const { return false; }
 
 void PegasusMetaEngine::removeSaveState(const char *target, int slot) const {
 	// See listSaves() for info on the pattern

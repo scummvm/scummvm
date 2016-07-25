@@ -120,13 +120,13 @@ public:
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 
 	virtual SaveStateList listSaves(const char *target) const;
-	virtual bool simpleSaveNames() const;
 	virtual int getMaximumSaveSlot() const;
 };
 
 bool AgosMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsListSaves);
+		(f == kSupportsListSaves) ||
+		(f == kSimpleSavesNames);
 }
 
 bool AGOS::AGOSEngine::hasFeature(EngineFeature f) const {
@@ -207,8 +207,6 @@ SaveStateList AgosMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
-
-bool AgosMetaEngine::simpleSaveNames() const { return true; }
 
 int AgosMetaEngine::getMaximumSaveSlot() const { return 999; }
 

@@ -444,7 +444,6 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
-	virtual bool simpleSaveNames() const;
 	virtual int getMaximumSaveSlot() const { return 99; }
 	virtual void removeSaveState(const char *target, int slot) const;
 
@@ -529,8 +528,6 @@ SaveStateList QueenMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
-
-bool QueenMetaEngine::simpleSaveNames() const { return false; }
 
 void QueenMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Common::String::format("queen.s%02d", slot);

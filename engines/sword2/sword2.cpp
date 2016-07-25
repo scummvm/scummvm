@@ -97,7 +97,6 @@ public:
 	virtual GameDescriptor findGame(const char *gameid) const;
 	virtual GameList detectGames(const Common::FSList &fslist) const;
 	virtual SaveStateList listSaves(const char *target) const;
-	virtual bool simpleSaveNames() const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 
@@ -108,7 +107,8 @@ bool Sword2MetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave);
+		(f == kSupportsDeleteSave) ||
+		(f == kSimpleSavesNames);
 }
 
 bool Sword2::Sword2Engine::hasFeature(EngineFeature f) const {
@@ -256,8 +256,6 @@ SaveStateList Sword2MetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
-
-bool Sword2MetaEngine::simpleSaveNames() const { return true; }
 
 int Sword2MetaEngine::getMaximumSaveSlot() const { return 999; }
 

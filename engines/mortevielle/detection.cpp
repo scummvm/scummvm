@@ -72,7 +72,6 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual SaveStateList listSaves(const char *target) const;
-	virtual bool simpleSaveNames() const;
 	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
 
@@ -91,6 +90,7 @@ bool MortevielleMetaEngine::hasFeature(MetaEngineFeature f) const {
 	case kSavesSupportMetaInfo:
 	case kSavesSupportThumbnail:
 	case kSavesSupportCreationDate:
+	case kSimpleSavesNames:
 		return true;
 	default:
 		return false;
@@ -102,8 +102,6 @@ int MortevielleMetaEngine::getMaximumSaveSlot() const { return 99; }
 SaveStateList MortevielleMetaEngine::listSaves(const char *target) const {
 	return Mortevielle::SavegameManager::listSaves(target);
 }
-
-bool MortevielleMetaEngine::simpleSaveNames() const { return true; }
 
 SaveStateDescriptor MortevielleMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Mortevielle::MortevielleEngine::generateSaveFilename(target, slot);
