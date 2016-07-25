@@ -194,11 +194,11 @@ void Plane::addPicInternal(const GuiResourceId pictureId, const Common::Point *p
 	_type = transparent ? kPlaneTypeTransparentPicture : kPlaneTypePicture;
 }
 
-void Plane::addPic(const GuiResourceId pictureId, const Common::Point &position, const bool mirrorX) {
+GuiResourceId Plane::addPic(const GuiResourceId pictureId, const Common::Point &position, const bool mirrorX) {
+	GuiResourceId oldPictureId = _pictureId;
 	deletePic(pictureId);
 	addPicInternal(pictureId, &position, mirrorX);
-	// NOTE: In SCI engine this method returned the pictureId of the
-	// plane, but this return value was never used
+	return oldPictureId;
 }
 
 void Plane::changePic() {

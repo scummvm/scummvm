@@ -27,130 +27,13 @@
 #include "sci/graphics/screen_item32.h"
 
 namespace Sci {
-// TODO: Don't do this this way
-int splitRects(Common::Rect r, const Common::Rect &other, Common::Rect(&outRects)[4]);
-
-// TODO: Verify display styles and adjust names appropriately for
-// types 1 through 12 & 15 (others are correct)
-// Names should be:
-// * VShutterIn, VShutterOut
-// * HShutterIn, HShutterOut
-// * WipeLeft, WipeRight, WipeDown, WipeUp
-// * PixelDissolve
-// * ShutDown and Kill? (and Plain and Fade?)
-enum ShowStyleType /* : uint8 */ {
-	kShowStyleNone = 0,
-	kShowStyleHShutterOut = 1,
-	kShowStyleHShutterIn = 2,
-	kShowStyleVShutterOut = 3,
-	kShowStyleVShutterIn = 4,
-	kShowStyleWipeLeft = 5,
-	kShowStyleWipeRight = 6,
-	kShowStyleWipeUp = 7,
-	kShowStyleWipeDown = 8,
-	kShowStyleIrisOut = 9,
-	kShowStyleIrisIn = 10,
-	kShowStyle11 = 11,
-	kShowStyle12 = 12,
-	kShowStyleFadeOut = 13,
-	kShowStyleFadeIn = 14,
-	// TODO: Only in SCI3
-	kShowStyleUnknown = 15
-};
-
-/**
- * Show styles represent transitions applied to draw planes.
- * One show style per plane can be active at a time.
- */
-struct ShowStyleEntry {
-	/**
-	 * The ID of the plane this show style belongs to.
-	 * In SCI2.1mid (at least SQ6), per-plane transitions
-	 * were removed and a single plane ID is used.
-	 */
-	reg_t plane;
-
-	/**
-	 * The type of the transition.
-	 */
-	ShowStyleType type;
-
-	// TODO: This name is probably incorrect
-	bool fadeUp;
-
-	/**
-	 * The number of steps for the show style.
-	 */
-	int16 divisions;
-
-	// NOTE: This property exists from SCI2 through at least
-	// SCI2.1mid but is never used in the actual processing
-	// of the styles?
-	int unknownC;
-
-	/**
-	 * The color used by transitions that draw CelObjColor
-	 * screen items. -1 for transitions that do not draw
-	 * screen items.
-	 */
-	int16 color;
-
-	// TODO: Probably uint32
-	// TODO: This field probably should be used in order to
-	// provide time-accurate processing of show styles. In the
-	// actual SCI engine (at least 2–2.1mid) it appears that
-	// style transitions are drawn “as fast as possible”, one
-	// step per loop, even though this delay field exists
-	int delay;
-
-	// TODO: Probably bool, but never seems to be true?
-	int animate;
-
-	/**
-	 * The wall time at which the next step of the animation
-	 * should execute.
-	 */
-	uint32 nextTick;
-
-	/**
-	 * During playback of the show style, the current step
-	 * (out of divisions).
-	 */
-	int currentStep;
-
-	/**
-	 * The next show style.
-	 */
-	ShowStyleEntry *next;
-
-	/**
-	 * Whether or not this style has finished running and
-	 * is ready for disposal.
-	 */
-	bool processed;
-
-	//
-	// Engine specific properties for SCI2.1mid through SCI3
-	//
-
-	/**
-	 * The number of entries in the fadeColorRanges array.
-	 */
-	uint8 fadeColorRangesCount;
-
-	/**
-	 * A pointer to an dynamically sized array of palette
-	 * indexes, in the order [ fromColor, toColor, ... ].
-	 * Only colors within this range are transitioned.
-	 */
-	uint16 *fadeColorRanges;
-};
-
 typedef Common::Array<DrawList> ScreenItemListList;
 typedef Common::Array<RectList> EraseListList;
 
 class GfxCoordAdjuster32;
 class GfxScreen;
+class GfxTransitions32;
+class PlaneShowStyle;
 
 /**
  * Frameout class, kFrameout and relevant functions for SCI32 games.
@@ -166,7 +49,7 @@ private:
 	SegManager *_segMan;
 
 public:
-	GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette32 *palette);
+	GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette32 *palette, GfxTransitions32 *transitions);
 	~GfxFrameout();
 
 	void clear();
@@ -287,47 +170,15 @@ public:
 	void kernelAddPicAt(const reg_t planeObject, const GuiResourceId pictureId, const int16 pictureX, const int16 pictureY, const bool mirrorX);
 
 #pragma mark -
-
-	// TODO: Remap-related?
-	void kernelSetPalStyleRange(const uint8 fromColor, const uint8 toColor);
-
-#pragma mark -
-#pragma mark Transitions
-private:
-	int *_dissolveSequenceSeeds;
-	int16 *_defaultDivisions;
-	int16 *_defaultUnknownC;
-
-	/**
-	 * TODO: Documentation
-	 */
-	ShowStyleEntry *_showStyles;
-
-	inline ShowStyleEntry *findShowStyleForPlane(const reg_t planeObj) const;
-	inline ShowStyleEntry *deleteShowStyleInternal(ShowStyleEntry *const showStyle);
-	void processShowStyles();
-	bool processShowStyleNone(ShowStyleEntry *showStyle);
-	bool processShowStyleMorph(ShowStyleEntry *showStyle);
-	bool processShowStyleFade(const int direction, ShowStyleEntry *showStyle);
-
-public:
-	// NOTE: This signature is taken from SCI3 Phantasmagoria 2
-	// and is valid for all implementations of SCI32
-	void kernelSetShowStyle(const uint16 argc, const reg_t planeObj, const ShowStyleType type, const int16 seconds, const int16 direction, const int16 priority, const int16 animate, const int16 frameOutNow, reg_t pFadeArray, int16 divisions, const int16 blackScreen);
-
-#pragma mark -
 #pragma mark Rendering
 private:
+	GfxTransitions32 *_transitions;
+
 	/**
 	 * State tracker to provide more accurate 60fps
 	 * video throttling.
 	 */
 	uint8 _throttleState;
-
-	/**
-	 * TODO: Documentation
-	 */
-	int8 _styleRanges[256];
 
 	/**
 	 * The internal display pixel buffer. During frameOut,
@@ -428,15 +279,34 @@ private:
 	void mergeToShowList(const Common::Rect &drawRect, RectList &showList, const int overdrawThreshold);
 
 	/**
-	 * TODO: Documentation
-	 */
-	void palMorphFrameOut(const int8 *styleRanges, const ShowStyleEntry *showStyle);
-
-	/**
 	 * Writes the internal frame buffer out to hardware and
 	 * clears the show list.
 	 */
 	void showBits();
+
+	/**
+	 * Validates whether the given palette index in the
+	 * style range should copy a color from the next
+	 * palette to the source palette during a palette
+	 * morph operation.
+	 */
+	inline bool validZeroStyle(const uint8 style, const int i) const {
+		if (style != 0) {
+			return false;
+		}
+
+		// TODO: Cannot check Shivers or MGDX until those executables can be
+		// unwrapped
+		switch (g_sci->getGameId()) {
+		case GID_KQ7:
+		case GID_PHANTASMAGORIA:
+		case GID_SQ6:
+			return (i > 71 && i < 104);
+			break;
+		default:
+			return true;
+		}
+	}
 
 public:
 	/**
@@ -467,6 +337,11 @@ public:
 	void frameOut(const bool shouldShowBits, const Common::Rect &eraseRect = Common::Rect());
 
 	/**
+	 * TODO: Documentation
+	 */
+	void palMorphFrameOut(const int8 *styleRanges, PlaneShowStyle *showStyle);
+
+	/**
 	 * Modifies the raw pixel data for the next frame with
 	 * new palette indexes based on matched style ranges.
 	 */
@@ -483,6 +358,12 @@ public:
 	inline int getScreenCount() const {
 		return 1;
 	};
+
+	/**
+	 * Draws a portion of the current screen buffer to
+	 * hardware. Used to display show styles in SCI2.1mid+.
+	 */
+	void showRect(const Common::Rect &rect);
 
 #pragma mark -
 #pragma mark Mouse cursor
