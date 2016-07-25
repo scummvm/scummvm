@@ -102,16 +102,16 @@ uint16 M21_normalizeModulo4(uint16 val) {
 	return val & 3;
 }
 
-int32 M30_time(int32 map_time) {
-	return map_time & 0x00FFFFFF;
+int32 M30_time(int32 mapTime) {
+	return mapTime & 0x00FFFFFF;
 }
 
-int32 M33_setMapAndTime(int32 &map_time, uint32 map, uint32 time) {
-	return (map_time) = ((time) | (((long)(map)) << 24));
+int32 M33_setMapAndTime(int32 &mapTime, uint32 map, uint32 time) {
+	return (mapTime) = ((time) | (((long)(map)) << 24));
 }
 
-uint16 M29_map(int32 map_time) {
-	return ((uint16)((map_time) >> 24));
+uint16 M29_map(int32 mapTime) {
+	return ((uint16)((mapTime) >> 24));
 }
 
 Thing M15_thingWithNewCell(Thing thing, int16 cell) {
