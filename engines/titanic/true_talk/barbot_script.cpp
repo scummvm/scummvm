@@ -766,7 +766,7 @@ ScriptChangedResult BarbotScript::scriptChanged(TTscriptBase *roomScript, uint i
 		}
 
 		adjustDial(0, getRandomBit() ? getRandomNumber(5) * 4 :
-			-getRandomNumber(5) * 4);
+			-(int)getRandomNumber(5) * 4);
 		break;
 
 	case 3:
@@ -838,11 +838,6 @@ ScriptChangedResult BarbotScript::scriptChanged(TTscriptBase *roomScript, uint i
 	}
 
 	return SCR_2;
-}
-
-int BarbotScript::proc15() const {
-	warning("TODO");
-	return 0;
 }
 
 bool BarbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,

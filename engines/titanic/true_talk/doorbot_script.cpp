@@ -119,11 +119,6 @@ ScriptChangedResult DoorbotScript::scriptChanged(TTscriptBase *roomScript, uint 
 	return SCR_1;
 }
 
-int DoorbotScript::proc15() const {
-	warning("TODO");
-	return 0;
-}
-
 bool DoorbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 		int val, uint tagId, uint remainder) const {
 	warning("TODO");

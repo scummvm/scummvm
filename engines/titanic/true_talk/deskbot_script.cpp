@@ -65,11 +65,6 @@ ScriptChangedResult DeskbotScript::scriptChanged(TTscriptBase *roomScript, uint 
 	return SCR_1;
 }
 
-int DeskbotScript::proc15() const {
-	warning("TODO");
-	return 0;
-}
-
 bool DeskbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 	int val, uint tagId, uint remainder) const {
 	warning("TODO");
