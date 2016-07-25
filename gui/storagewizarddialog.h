@@ -46,7 +46,9 @@ class StorageWizardDialog : public Dialog {
 	StaticTextWidget *_messageWidget;
 	ButtonWidget *_connectWidget;
 	bool _close;
+#ifdef USE_SDL_NET
 	bool _stopServerOnClose;
+#endif
 
 	/** Return short scummvm.org URL for user to navigate to. */
 	Common::String getUrl() const;

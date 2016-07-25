@@ -1319,7 +1319,11 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_runServerButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.RunServerButton", _("Run server"), _("Run local webserver"), kRunServerCmd);
 	_serverInfoLabel = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.ServerInfoLabel", _("Not running"));
 
+#ifdef USE_SDL_NET
 	uint32 port = Networking::LocalWebserver::getPort();
+#else
+	uint32 port = 0; // the following widgets are hidden anyway
+#endif
 	_serverPortDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.ServerPortDesc", _("Server's port:"), _("Which port is used by server\nAuth with server is not available with non-default port"));
 	_serverPort = new EditTextWidget(container, "GlobalOptions_Cloud_Container.ServerPortEditText", Common::String::format("%u", port), 0);
 	_serverPortClearButton = addClearButton(container, "GlobalOptions_Cloud_Container.ServerPortClearButton", kServerPortClearCmd);
