@@ -193,7 +193,7 @@ void tglPresentBufferDirtyRects(TinyGL::GLContext *c) {
 		Common::Rect drawCallRegion = (*it)->getDirtyRegion();
 		for (RectangleIterator itRect = rectangles.begin(); itRect != rectangles.end(); ++itRect) {
 			Common::Rect dirtyRegion = (*itRect).rectangle;
-			if (dirtyRegion.intersects(drawCallRegion) || drawCallRegion.contains(dirtyRegion)) {
+			if (dirtyRegion.intersects(drawCallRegion)) {
 				(*it)->execute(dirtyRegion, true);
 			}
 		}
