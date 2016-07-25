@@ -266,6 +266,12 @@ protected:
 
 	bool fn10(bool flag);
 
+	static bool sentence2C(TTsentence *sentence);
+
+	/**
+	 * Gets the True Talk state value
+	 */
+	bool getStateValue() const;
 public:
 	static void init();
 	static void deinit();

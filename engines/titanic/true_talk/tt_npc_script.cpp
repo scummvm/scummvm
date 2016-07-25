@@ -22,6 +22,7 @@
 
 #include "common/algorithm.h"
 #include "common/textconsole.h"
+#include "titanic/messages/messages.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/true_talk/tt_npc_script.h"
 #include "titanic/true_talk/tt_sentence.h"
@@ -970,6 +971,25 @@ bool TTnpcScript::fn10(bool flag) {
 	}
 
 	return false;
+}
+
+bool TTnpcScript::getStateValue() const {
+	if (!CTrueTalkManager::_currentNPC)
+		return false;
+
+	CGameObject *bomb;
+	if (CTrueTalkManager::_currentNPC->find("Bomb", &bomb, FIND_GLOBAL) && bomb) {
+		CTrueTalkGetStateValueMsg stateMsg(10, -1000);
+		stateMsg.execute(bomb);
+		if (stateMsg._stateVal)
+			return true;
+	}
+
+	return false;
+}
+
+bool TTnpcScript::sentence2C(TTsentence *sentence) {
+	return sentence->_field2C >= 2 && sentence->_field2C <= 7;
 }
 
 } // End of namespace Titanic
