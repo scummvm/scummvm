@@ -118,7 +118,7 @@ void CloudTests::directoryListedCallback(Cloud::Storage::FileArrayResponse respo
 		Testsuite::logPrintf("Info! %u directories listed, first one is '%s'\n", directories, directory.c_str());
 	} else {
 		Testsuite::logPrintf("Info! %u directories and %u files listed\n", directories, files);
-		Testsuite::logPrintf("Info! First directory is '%u' and first file is '%s'\n", directory.c_str(), file.c_str());
+		Testsuite::logPrintf("Info! First directory is '%s' and first file is '%s'\n", directory.c_str(), file.c_str());
 	}
 }
 
@@ -134,7 +134,7 @@ void CloudTests::directoryCreatedCallback(Cloud::Storage::BoolResponse response)
 void CloudTests::fileUploadedCallback(Cloud::Storage::UploadResponse response) {
 	ConfParams.setCloudTestCallbackCalled(true);
 	Testsuite::logPrintf("Info! Uploaded file into '%s'\n", response.value.path().c_str());
-	Testsuite::logPrintf("Info! It's id = '%s' and size = '%lu'\n", response.value.id().c_str(), response.value.size());
+	Testsuite::logPrintf("Info! It's id = '%s' and size = '%u'\n", response.value.id().c_str(), response.value.size());
 }
 
 void CloudTests::fileDownloadedCallback(Cloud::Storage::BoolResponse response) {
@@ -151,7 +151,7 @@ void CloudTests::directoryDownloadedCallback(Cloud::Storage::FileArrayResponse r
 	if (response.value.size() == 0) {
 		Testsuite::logPrintf("Info! Directory is downloaded successfully!\n");
 	} else {
-		Testsuite::logPrintf("Warning! %lu files were not downloaded during folder downloading!\n", response.value.size());
+		Testsuite::logPrintf("Warning! %u files were not downloaded during folder downloading!\n", response.value.size());
 	}
 }
 
