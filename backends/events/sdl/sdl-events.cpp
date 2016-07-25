@@ -872,7 +872,7 @@ bool SdlEventSource::handleResizeEvent(Common::Event &event, int w, int h) {
 }
 
 SDLKey SdlEventSource::obtainKeycode(const SDL_keysym keySym) {
-#if !SDL_VERSION_ATLEAST(2, 0, 0) && defined(WIN32)
+#if !SDL_VERSION_ATLEAST(2, 0, 0) && defined(WIN32) && !defined(_WIN32_WCE)
 	// WORKAROUND: SDL 1.2 on Windows does not use the user configured keyboard layout,
 	// resulting in "keySym.sym" values to always be those expected for an US keyboard.
 	// For example, SDL returns SDLK_Q when pressing the 'A' key on an AZERTY keyboard.
@@ -885,7 +885,7 @@ SDLKey SdlEventSource::obtainKeycode(const SDL_keysym keySym) {
 		// The keycode returned by SDL is kept for the number keys.
 		// Querying the keyboard layout for those would return the base key values
 		// for AZERTY keyboards, which are not numbers. For example, SDLK_1 would
-		// map to SDLK_AMPERSAND. This is theoratically correct but practically unhelpful,
+		// map to SDLK_AMPERSAND. This is theoretically correct but practically unhelpful,
 		// because it makes it impossible to handle key combinations such as "ctrl-1".
 		return keySym.sym;
 	}
