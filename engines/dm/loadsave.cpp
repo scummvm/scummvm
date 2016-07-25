@@ -76,7 +76,7 @@ T0435002:
 		warning(false, "MISSING CODE: missing check for matching format and platform in save in f435_loadgame");
 
 
-		_g313_gameTime = file->readUint32BE();
+		_g313_gameTime = file->readSint32BE();
 		// G0349_ul_LastRandomNumber = L1371_s_GlobalData.LastRandomNumber;
 		_championMan->_g305_partyChampionCount = file->readUint16BE();
 		_dungeonMan->_g306_partyMapX = file->readSint16BE();
@@ -165,7 +165,7 @@ void DMEngine::f433_processCommand140_saveGame(uint16 slot, const Common::String
 	writeSaveGameHeader(file, desc);
 
 	// write C0_SAVE_PART_GLOBAL_DATA part
-	file->writeUint32BE(_g313_gameTime);
+	file->writeSint32BE(_g313_gameTime);
 	//L1348_s_GlobalData.LastRandomNumber = G0349_ul_LastRandomNumber;
 	file->writeUint16BE(_championMan->_g305_partyChampionCount);
 	file->writeSint16BE(_dungeonMan->_g306_partyMapX);

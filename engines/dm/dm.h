@@ -266,7 +266,7 @@ public:
 
 	int8 _dirIntoStepCountEast[4]; // @ G0233_ai_Graphic559_DirectionToStepEastCount
 	int8 _dirIntoStepCountNorth[4]; // @ G0234_ai_Graphic559_DirectionToStepNorthCount
-	uint32 _g313_gameTime; // @ G0313_ul_GameTime
+	int32 _g313_gameTime; // @ G0313_ul_GameTime
 	char _g353_stringBuildBuffer[128]; // @ G0353_ac_StringBuildBuffer
 	int16 _g318_waitForInputMaxVerticalBlankCount; // @ G0318_i_WaitForInputMaximumVerticalBlankCount
 };

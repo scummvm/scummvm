@@ -1316,12 +1316,11 @@ int32 GroupMan::f179_getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16
 
 void GroupMan::f205_setDirection(ActiveGroup *activeGroup, int16 dir, int16 creatureIndex, bool twoHalfSquareSizedCreatures) {
 	uint16 L0435_ui_GroupDirections;
-	static long G0395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime; /* These two variables are used to prevent setting direction of half square sized creatures twice at the same game time */
+	static int32 G0395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime; /* These two variables are used to prevent setting direction of half square sized creatures twice at the same game time */
 	static ActiveGroup *G0396_ps_TwoHalfSquareSizedCreaturesGroupLastDirectionSetActiveGroup;
 
-
-	warning(false, "potentially dangerous cast to uint32 below");
-	if (twoHalfSquareSizedCreatures && (_vm->_g313_gameTime == (uint32)G0395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime) && (activeGroup == G0396_ps_TwoHalfSquareSizedCreaturesGroupLastDirectionSetActiveGroup)) {
+	warning(false, "TODO: Move G0395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime to GroupMan so it's properly initialized");
+	if (twoHalfSquareSizedCreatures && (_vm->_g313_gameTime == G0395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime) && (activeGroup == G0396_ps_TwoHalfSquareSizedCreaturesGroupLastDirectionSetActiveGroup)) {
 		return;
 	}
 	if (M21_normalizeModulo4(_vm->_groupMan->M50_getCreatureValue(L0435_ui_GroupDirections = activeGroup->_directions, creatureIndex) - dir) == 2) { /* If current and new direction are opposites then change direction only one step at a time */

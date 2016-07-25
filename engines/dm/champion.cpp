@@ -920,104 +920,97 @@ void ChampionMan::f330_disableAction(uint16 champIndex, uint16 ticks) {
 }
 
 void ChampionMan::f304_addSkillExperience(uint16 champIndex, uint16 skillIndex, uint16 exp) {
-#define AP0638_ui_SkillLevelAfter exp
-#define AP0638_ui_ChampionColor   exp
-	uint16 L0915_ui_Multiple;
-#define AL0915_ui_MapDifficulty    L0915_ui_Multiple
-#define AL0915_ui_SkillLevelBefore L0915_ui_Multiple
-#define AL0915_ui_VitalityAmount   L0915_ui_Multiple
-#define AL0915_ui_StaminaAmount    L0915_ui_Multiple
-	uint16 L0916_ui_BaseSkillIndex;
-	Skill* L0918_ps_Skill;
-	Champion* L0919_ps_Champion;
-	int16 L0920_i_MinorStatisticIncrease;
-	int16 L0921_i_MajorStatisticIncrease;
-	int16 L0922_i_BaseSkillLevel;
-
-
-	warning(false, "Potentially dangerous cast of uint32 below");
-	if ((skillIndex >= k4_ChampionSkillSwing) && (skillIndex <= k11_ChampionSkillShoot) && ((uint32)_vm->_projexpl->_g361_lastCreatureAttackTime < (_vm->_g313_gameTime - 150))) {
+	if ((skillIndex >= k4_ChampionSkillSwing) && (skillIndex <= k11_ChampionSkillShoot) && (_vm->_projexpl->_g361_lastCreatureAttackTime < _vm->_g313_gameTime - 150))
 		exp >>= 1;
-	}
+
 	if (exp) {
-		if (AL0915_ui_MapDifficulty = _vm->_dungeonMan->_g269_currMap->_difficulty) {
-			exp *= AL0915_ui_MapDifficulty;
-		}
-		L0919_ps_Champion = &_gK71_champions[champIndex];
-		if (skillIndex >= k4_ChampionSkillSwing) {
-			L0916_ui_BaseSkillIndex = (skillIndex - k4_ChampionSkillSwing) >> 2;
-		} else {
-			L0916_ui_BaseSkillIndex = skillIndex;
-		}
-		AL0915_ui_SkillLevelBefore = f303_getSkillLevel(champIndex, L0916_ui_BaseSkillIndex | (k0x4000_IgnoreObjectModifiers | k0x8000_IgnoreTemporaryExperience));
-		warning(false, "potentially dangerous cast of uint32 below");
-		if ((skillIndex >= k4_ChampionSkillSwing) && ((uint32)_vm->_projexpl->_g361_lastCreatureAttackTime > (_vm->_g313_gameTime - 25))) {
+		if (_vm->_dungeonMan->_g269_currMap->_difficulty)
+			exp *= _vm->_dungeonMan->_g269_currMap->_difficulty;
+
+		Champion *curChampion = &_gK71_champions[champIndex];
+		uint16 baseSkillIndex;
+		if (skillIndex >= k4_ChampionSkillSwing)
+			baseSkillIndex = (skillIndex - k4_ChampionSkillSwing) >> 2;
+		else
+			baseSkillIndex = skillIndex;
+
+		uint16 skillLevelBefore = f303_getSkillLevel(champIndex, baseSkillIndex | (k0x4000_IgnoreObjectModifiers | k0x8000_IgnoreTemporaryExperience));
+
+		if ((skillIndex >= k4_ChampionSkillSwing) && (_vm->_projexpl->_g361_lastCreatureAttackTime > _vm->_g313_gameTime - 25))
 			exp <<= 1;
-		}
-		L0918_ps_Skill = &L0919_ps_Champion->_skills[skillIndex];
-		L0918_ps_Skill->_experience += exp;
-		if (L0918_ps_Skill->_temporaryExperience < 32000) {
-			L0918_ps_Skill->_temporaryExperience += f26_getBoundedValue(1, exp >> 3, 100);
-		}
-		L0918_ps_Skill = &L0919_ps_Champion->_skills[L0916_ui_BaseSkillIndex];
-		if (skillIndex >= k4_ChampionSkillSwing) {
-			L0918_ps_Skill->_experience += exp;
-		}
-		AP0638_ui_SkillLevelAfter = f303_getSkillLevel(champIndex, L0916_ui_BaseSkillIndex | (k0x4000_IgnoreObjectModifiers | k0x8000_IgnoreTemporaryExperience));
-		if (AP0638_ui_SkillLevelAfter > AL0915_ui_SkillLevelBefore) {
-			L0922_i_BaseSkillLevel = AP0638_ui_SkillLevelAfter;
-			L0920_i_MinorStatisticIncrease = _vm->getRandomNumber(2);
-			L0921_i_MajorStatisticIncrease = 1 + _vm->getRandomNumber(2);
-			AL0915_ui_VitalityAmount = _vm->getRandomNumber(2); /* For Priest skill, the amount is 0 or 1 for all skill levels */
-			if (L0916_ui_BaseSkillIndex != k2_ChampionSkillPriest) {
-				AL0915_ui_VitalityAmount &= AP0638_ui_SkillLevelAfter; /* For non Priest skills the amount is 0 for even skill levels. The amount is 0 or 1 for odd skill levels */
+
+		Skill *curSkill = &curChampion->_skills[skillIndex];
+		curSkill->_experience += exp;
+		if (curSkill->_temporaryExperience < 32000)
+			curSkill->_temporaryExperience += f26_getBoundedValue(1, exp >> 3, 100);
+
+		curSkill = &curChampion->_skills[baseSkillIndex];
+		if (skillIndex >= k4_ChampionSkillSwing)
+			curSkill->_experience += exp;
+
+		uint16 skillLevelAfter = f303_getSkillLevel(champIndex, baseSkillIndex | (k0x4000_IgnoreObjectModifiers | k0x8000_IgnoreTemporaryExperience));
+		if (skillLevelAfter > skillLevelBefore) {
+			int16 newBaseSkillLevel = skillLevelAfter;
+			int16 minorStatIncrease = _vm->getRandomNumber(2);
+			int16 majorStatIncrease = 1 + _vm->getRandomNumber(2);
+			uint16 vitalityAmount = _vm->getRandomNumber(2); /* For Priest skill, the amount is 0 or 1 for all skill levels */
+			if (baseSkillIndex != k2_ChampionSkillPriest) {
+				vitalityAmount &= skillLevelAfter; /* For non Priest skills the amount is 0 for even skill levels. The amount is 0 or 1 for odd skill levels */
 			}
-			L0919_ps_Champion->_statistics[k4_ChampionStatVitality][k0_ChampionStatMaximum] += AL0915_ui_VitalityAmount;
-			AL0915_ui_StaminaAmount = L0919_ps_Champion->_maxStamina;
-			L0919_ps_Champion->_statistics[k6_ChampionStatAntifire][k0_ChampionStatMaximum] += _vm->getRandomNumber(2) & ~AP0638_ui_SkillLevelAfter; /* The amount is 0 for odd skill levels. The amount is 0 or 1 for even skill levels */
-			switch (L0916_ui_BaseSkillIndex) {
+			curChampion->_statistics[k4_ChampionStatVitality][k0_ChampionStatMaximum] += vitalityAmount;
+			uint16 staminaAmount = curChampion->_maxStamina;
+			curChampion->_statistics[k6_ChampionStatAntifire][k0_ChampionStatMaximum] += _vm->getRandomNumber(2) & ~skillLevelAfter; /* The amount is 0 for odd skill levels. The amount is 0 or 1 for even skill levels */
+			bool increaseManaFl = false;
+			switch (baseSkillIndex) {
 			case k0_ChampionSkillFighter:
-				AL0915_ui_StaminaAmount >>= 4;
-				AP0638_ui_SkillLevelAfter *= 3;
-				L0919_ps_Champion->_statistics[k1_ChampionStatStrength][k0_ChampionStatMaximum] += L0921_i_MajorStatisticIncrease;
-				L0919_ps_Champion->_statistics[k2_ChampionStatDexterity][k0_ChampionStatMaximum] += L0920_i_MinorStatisticIncrease;
+				staminaAmount >>= 4;
+				skillLevelAfter *= 3;
+				curChampion->_statistics[k1_ChampionStatStrength][k0_ChampionStatMaximum] += majorStatIncrease;
+				curChampion->_statistics[k2_ChampionStatDexterity][k0_ChampionStatMaximum] += minorStatIncrease;
 				break;
 			case k1_ChampionSkillNinja:
-				AL0915_ui_StaminaAmount /= 21;
-				AP0638_ui_SkillLevelAfter <<= 1;
-				L0919_ps_Champion->_statistics[k1_ChampionStatStrength][k0_ChampionStatMaximum] += L0920_i_MinorStatisticIncrease;
-				L0919_ps_Champion->_statistics[k2_ChampionStatDexterity][k0_ChampionStatMaximum] += L0921_i_MajorStatisticIncrease;
+				staminaAmount /= 21;
+				skillLevelAfter <<= 1;
+				curChampion->_statistics[k1_ChampionStatStrength][k0_ChampionStatMaximum] += minorStatIncrease;
+				curChampion->_statistics[k2_ChampionStatDexterity][k0_ChampionStatMaximum] += majorStatIncrease;
 				break;
 			case k3_ChampionSkillWizard:
-				AL0915_ui_StaminaAmount >>= 5;
-				L0919_ps_Champion->_maxMana += AP0638_ui_SkillLevelAfter + (AP0638_ui_SkillLevelAfter >> 1);
-				L0919_ps_Champion->_statistics[k3_ChampionStatWisdom][k0_ChampionStatMaximum] += L0921_i_MajorStatisticIncrease;
-				goto T0304016;
+				staminaAmount >>= 5;
+				curChampion->_maxMana += skillLevelAfter + (skillLevelAfter >> 1);
+				curChampion->_statistics[k3_ChampionStatWisdom][k0_ChampionStatMaximum] += majorStatIncrease;
+				increaseManaFl = true;
+				break;
 			case k2_ChampionSkillPriest:
-				AL0915_ui_StaminaAmount /= 25;
-				L0919_ps_Champion->_maxMana += AP0638_ui_SkillLevelAfter;
-				AP0638_ui_SkillLevelAfter += (AP0638_ui_SkillLevelAfter + 1) >> 1;
-				L0919_ps_Champion->_statistics[k3_ChampionStatWisdom][k0_ChampionStatMaximum] += L0920_i_MinorStatisticIncrease;
-T0304016:
-				if ((L0919_ps_Champion->_maxMana += MIN(_vm->getRandomNumber(4), (uint16)(L0922_i_BaseSkillLevel - 1))) > 900) {
-					L0919_ps_Champion->_maxMana = 900;
-				}
-				L0919_ps_Champion->_statistics[k5_ChampionStatAntimagic][k0_ChampionStatMaximum] += _vm->getRandomNumber(3);
+				staminaAmount /= 25;
+				curChampion->_maxMana += skillLevelAfter;
+				skillLevelAfter += (skillLevelAfter + 1) >> 1;
+				curChampion->_statistics[k3_ChampionStatWisdom][k0_ChampionStatMaximum] += minorStatIncrease;
+				increaseManaFl = true;
+				break;
+			default:
+				break;
 			}
-			if ((L0919_ps_Champion->_maxHealth += AP0638_ui_SkillLevelAfter + _vm->getRandomNumber((AP0638_ui_SkillLevelAfter >> 1) + 1)) > 999) {
-				L0919_ps_Champion->_maxHealth = 999;
+			if (increaseManaFl) {
+				if ((curChampion->_maxMana += MIN(_vm->getRandomNumber(4), (uint16)(newBaseSkillLevel - 1))) > 900)
+					curChampion->_maxMana = 900;
+				curChampion->_statistics[k5_ChampionStatAntimagic][k0_ChampionStatMaximum] += _vm->getRandomNumber(3);
 			}
-			if ((L0919_ps_Champion->_maxStamina += AL0915_ui_StaminaAmount + _vm->getRandomNumber((AL0915_ui_StaminaAmount >> 1) + 1)) > 9999) {
-				L0919_ps_Champion->_maxStamina = 9999;
-			}
-			setFlag(L0919_ps_Champion->_attributes, k0x0100_ChampionAttributeStatistics);
+
+			if ((curChampion->_maxHealth += skillLevelAfter + _vm->getRandomNumber((skillLevelAfter >> 1) + 1)) > 999)
+				curChampion->_maxHealth = 999;
+
+			if ((curChampion->_maxStamina += staminaAmount + _vm->getRandomNumber((staminaAmount >> 1) + 1)) > 9999)
+				curChampion->_maxStamina = 9999;
+
+			setFlag(curChampion->_attributes, k0x0100_ChampionAttributeStatistics);
 			f292_drawChampionState((ChampionIndex)champIndex);
 			_vm->_textMan->f51_messageAreaPrintLineFeed();
-			_vm->_textMan->f47_messageAreaPrintMessage((Color)(AP0638_ui_ChampionColor = g46_ChampionColor[champIndex]), L0919_ps_Champion->_name);
+			Color curChampionColor = g46_ChampionColor[champIndex];
+			_vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, curChampion->_name);
 			// TODO: localization
-			_vm->_textMan->f47_messageAreaPrintMessage((Color)AP0638_ui_ChampionColor, " JUST GAINED A ");
-			_vm->_textMan->f47_messageAreaPrintMessage((Color)AP0638_ui_ChampionColor, g417_baseSkillName[L0916_ui_BaseSkillIndex]);
-			_vm->_textMan->f47_messageAreaPrintMessage((Color)AP0638_ui_ChampionColor, " LEVEL!");
+			_vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " JUST GAINED A ");
+			_vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, g417_baseSkillName[baseSkillIndex]);
+			_vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " LEVEL!");
 		}
 	}
 }
@@ -1689,7 +1682,7 @@ void ChampionMan::f331_applyTimeEffects() {
 					}
 				}
 			}
-			if (!_vm->_championMan->_g300_partyIsSleeping && (L1010_ps_Champion->_dir != _vm->_dungeonMan->_g308_partyDir) && (_vm->_projexpl->_g361_lastCreatureAttackTime + 60 < (int32)_vm->_g313_gameTime)) {
+			if (!_vm->_championMan->_g300_partyIsSleeping && (L1010_ps_Champion->_dir != _vm->_dungeonMan->_g308_partyDir) && (_vm->_projexpl->_g361_lastCreatureAttackTime + 60 < _vm->_g313_gameTime)) {
 				L1010_ps_Champion->_dir = _vm->_dungeonMan->_g308_partyDir;
 				L1010_ps_Champion->_maximumDamageReceived = 0;
 				setFlag(L1010_ps_Champion->_attributes, k0x0400_ChampionAttributeIcon);
