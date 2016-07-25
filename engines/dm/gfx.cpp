@@ -1462,7 +1462,7 @@ void DisplayMan::f100_drawWallSetBitmap(byte *bitmap, Frame &f) {
 
 
 // NOTE: has been screened for missing code
-void DisplayMan::f116_drawSquareD3L(direction dir, int16 posX, int16 posY) {
+void DisplayMan::f116_drawSquareD3L(Direction dir, int16 posX, int16 posY) {
 	static DoorFrames g179_doorFrame_D3L = DoorFrames( // @ G0179_s_Graphic558_Frames_Door_D3L
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
 													  Frame(24, 71, 28, 67, 24, 41, 0, 0),     /* Closed Or Destroyed */
@@ -1527,7 +1527,7 @@ T0116017_orangeElk:
 	}
 }
 
-void DisplayMan::f117_drawSquareD3R(direction dir, int16 posX, int16 posY) {
+void DisplayMan::f117_drawSquareD3R(Direction dir, int16 posX, int16 posY) {
 	static DoorFrames g181_doorFrame_D3R = DoorFrames( // @ G0181_s_Graphic558_Frames_Door_D3R
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
 													  Frame(150, 197, 28, 67, 24, 41, 0, 0),	/* Closed Or Destroyed */
@@ -1598,7 +1598,7 @@ T0117018:
 	}
 }
 
-void DisplayMan::f118_drawSquareD3C(direction dir, int16 posX, int16 posY) {
+void DisplayMan::f118_drawSquareD3C(Direction dir, int16 posX, int16 posY) {
 	static DoorFrames g180_doorFrame_D3C = DoorFrames( // @ G0180_s_Graphic558_Frames_Door_D3C
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
 													  Frame(88, 135, 28, 67, 24, 41, 0, 0),		/* Closed Or Destroyed */
@@ -1662,7 +1662,7 @@ T0118028:
 	}
 }
 
-void DisplayMan::f119_drawSquareD2L(direction dir, int16 posX, int16 posY) {
+void DisplayMan::f119_drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 	static DoorFrames g182_doorFrame_D2L = DoorFrames( // @ G0182_s_Graphic558_Frames_Door_D2L
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
 													  Frame(0, 63, 24, 82, 32, 61, 0, 0),	/* Closed Or Destroyed */
@@ -1728,7 +1728,7 @@ T0119020:
 	}
 }
 
-void DisplayMan::f120_drawSquareD2R(direction dir, int16 posX, int16 posY) {
+void DisplayMan::f120_drawSquareD2R(Direction dir, int16 posX, int16 posY) {
 	static DoorFrames g184_doorFrame_D2R = DoorFrames( // @ G0184_s_Graphic558_Frames_Door_D2R
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
 													  Frame(160, 223, 24, 82, 32, 61, 0, 0),	/* Closed Or Destroyed */
@@ -1796,7 +1796,7 @@ T0120029:
 	}
 }
 
-void DisplayMan::f121_drawSquareD2C(direction dir, int16 posX, int16 posY) {
+void DisplayMan::f121_drawSquareD2C(Direction dir, int16 posX, int16 posY) {
 	static DoorFrames g183_doorFrame_D2C = DoorFrames( // @ G0183_s_Graphic558_Frames_Door_D2C
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
 													  Frame(80, 143, 24, 82, 32, 61, 0, 0),		/* Closed Or Destroyed */
@@ -1862,7 +1862,7 @@ T0121016:
 	}
 }
 
-void DisplayMan::f122_drawSquareD1L(direction dir, int16 posX, int16 posY) {
+void DisplayMan::f122_drawSquareD1L(Direction dir, int16 posX, int16 posY) {
 	static DoorFrames g185_doorFrame_D1L = DoorFrames( // @ G0185_s_Graphic558_Frames_Door_D1L
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
 													  Frame(0, 31, 17, 102, 48, 88, 64, 0),	/* Closed Or Destroyed */
@@ -1929,7 +1929,7 @@ T0122021:
 	}
 }
 
-void DisplayMan::f123_drawSquareD1R(direction dir, int16 posX, int16 posY) {
+void DisplayMan::f123_drawSquareD1R(Direction dir, int16 posX, int16 posY) {
 	static DoorFrames g187_doorFrame_D1R = DoorFrames( // @ G0187_s_Graphic558_Frames_Door_D1R
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
 													  Frame(192, 223, 17, 102, 48, 88, 0, 0),     /* Closed Or Destroyed */
@@ -1995,7 +1995,7 @@ T0123021:
 		f113_drawField(&g188_FieldAspects[k8_ViewSquare_D1R], g163_FrameWalls[k8_ViewSquare_D1R]._box);
 	}
 }
-void DisplayMan::f124_drawSquareD1C(direction dir, int16 posX, int16 posY) {
+void DisplayMan::f124_drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 	static Box g107_BoxThievesEyeVisibleArea(0, 95, 0, 94); // @ G0107_s_Graphic558_Box_ThievesEye_VisibleArea 
 	int16 order;
 	int16 squareAspect[5];
@@ -2075,7 +2075,7 @@ T0124018:
 	}
 }
 
-void DisplayMan::f125_drawSquareD0L(direction dir, int16 posX, int16 posY) {
+void DisplayMan::f125_drawSquareD0L(Direction dir, int16 posX, int16 posY) {
 	uint16 squareAspect[5];
 	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
 	switch (squareAspect[0]) {
@@ -2091,7 +2091,7 @@ void DisplayMan::f125_drawSquareD0L(direction dir, int16 posX, int16 posY) {
 	}
 }
 
-void DisplayMan::f126_drawSquareD0R(direction dir, int16 posX, int16 posY) {
+void DisplayMan::f126_drawSquareD0R(Direction dir, int16 posX, int16 posY) {
 	int16 squareAspect[5];
 
 
@@ -2118,7 +2118,7 @@ void DisplayMan::f126_drawSquareD0R(direction dir, int16 posX, int16 posY) {
 	}
 }
 
-void DisplayMan::f127_drawSquareD0C(direction dir, int16 posX, int16 posY) {
+void DisplayMan::f127_drawSquareD0C(Direction dir, int16 posX, int16 posY) {
 	static Box g108_BoxThievesEyeHoleInDoorFrame(0, 31, 19, 113); // @ G0108_s_Graphic558_Box_ThievesEye_HoleInDoorFrame 
 
 	int16 squareAspect[5];
@@ -2155,7 +2155,7 @@ void DisplayMan::f127_drawSquareD0C(direction dir, int16 posX, int16 posY) {
 	}
 }
 
-void DisplayMan::f128_drawDungeon(direction dir, int16 posX, int16 posY) {
+void DisplayMan::f128_drawDungeon(Direction dir, int16 posX, int16 posY) {
 	loadPalette(g20_PalEntrance); // dummy code
 
 
@@ -2878,7 +2878,7 @@ int16 g225_CenteredExplosionCoordinates[15][2] = { // @ G0225_aai_Graphic558_Cen
 
 #define k0x0080_BlitDoNotUseMask 0x0080 // @ MASK0x0080_DO_NOT_USE_MASK
 
-void DisplayMan::f115_cthulhu(Thing thingParam, direction directionParam, int16 mapXpos,
+void DisplayMan::f115_cthulhu(Thing thingParam, Direction directionParam, int16 mapXpos,
 							  int16 mapYpos, int16 viewSquareIndex, uint16 orderedViewCellOrdinals) {
 
 	DungeonMan &dunMan = *_vm->_dungeonMan;
@@ -3460,7 +3460,7 @@ continue;
 						projectileBitmapIndexData = 0;
 						flipVertical = flipHorizontal = false;
 					} else {
-						if (isOrientedWestEast((direction)(projectileDirection = _vm->_timeline->_g370_events[projectile->_eventIndex]._C._projectile.getDir()))
+						if (isOrientedWestEast((Direction)(projectileDirection = _vm->_timeline->_g370_events[projectile->_eventIndex]._C._projectile.getDir()))
 							!= isOrientedWestEast(directionParam)) {
 							if (projectileAspectType == k2_ProjectileAspectHasRotation) {
 								projectileBitmapIndexData = 1;

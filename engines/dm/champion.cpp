@@ -1097,11 +1097,11 @@ void ChampionMan::f284_setPartyDirection(int16 dir) {
 	Champion *curChampion = _gK71_champions;
 	for (int16 i = k0_ChampionFirst; i < _g305_partyChampionCount; i++) {
 		curChampion->_cell = (ViewCell)M21_normalizeModulo4(curChampion->_cell + L0834_i_Delta);
-		curChampion->_dir = (direction)M21_normalizeModulo4(curChampion->_dir + L0834_i_Delta);
+		curChampion->_dir = (Direction)M21_normalizeModulo4(curChampion->_dir + L0834_i_Delta);
 		curChampion++;
 	}
 
-	_vm->_dungeonMan->_g308_partyDir = (direction)dir;
+	_vm->_dungeonMan->_g308_partyDir = (Direction)dir;
 	f296_drawChangedObjectIcons();
 }
 
@@ -1228,31 +1228,26 @@ bool ChampionMan::f294_isAmmunitionCompatibleWithWeapon(uint16 champIndex, uint1
 }
 
 void ChampionMan::f293_drawAllChampionStates() {
-	int16 L0873_i_ChampionIndex;
-	for (L0873_i_ChampionIndex = k0_ChampionFirst; L0873_i_ChampionIndex < _vm->_championMan->_g305_partyChampionCount; L0873_i_ChampionIndex++) {
-		_vm->_championMan->f292_drawChampionState((ChampionIndex)L0873_i_ChampionIndex);
-	}
+	for (int16 i = k0_ChampionFirst; i < _vm->_championMan->_g305_partyChampionCount; i++)
+		_vm->_championMan->f292_drawChampionState((ChampionIndex)i);
 }
 
 void ChampionMan::f283_viAltarRebirth(uint16 champIndex) {
-	uint16 L0831_ui_Multiple;
-#define AL0831_ui_Cell          L0831_ui_Multiple
-#define AL0831_ui_MaximumHealth L0831_ui_Multiple
-	Champion* L0832_ps_Champion;
+	Champion *curChampion = &_vm->_championMan->_gK71_champions[champIndex];
+	if (_vm->_championMan->f285_getIndexInCell(curChampion->_cell) != kM1_ChampionNone) {
+		uint16 numCell = k0_CellNorthWest;
+		while (_vm->_championMan->f285_getIndexInCell(numCell) != kM1_ChampionNone)
+			numCell++;
 
-	L0832_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
-	if (_vm->_championMan->f285_getIndexInCell(L0832_ps_Champion->_cell) != kM1_ChampionNone) {
-		AL0831_ui_Cell = k0_CellNorthWest;
-		while (_vm->_championMan->f285_getIndexInCell(AL0831_ui_Cell) != kM1_ChampionNone) {
-			AL0831_ui_Cell++;
-		}
-		L0832_ps_Champion->_cell = (ViewCell)AL0831_ui_Cell;
+		curChampion->_cell = (ViewCell)numCell;
 	}
-	AL0831_ui_MaximumHealth = L0832_ps_Champion->_maxHealth;
-	L0832_ps_Champion->_currHealth = (L0832_ps_Champion->_maxHealth = MAX(25, AL0831_ui_MaximumHealth - (AL0831_ui_MaximumHealth >> 6) - 1)) >> 1;
+	
+	uint16 maximumHealth = curChampion->_maxHealth;
+	curChampion->_maxHealth = MAX(25, maximumHealth - (maximumHealth >> 6) - 1);
+	curChampion->_currHealth = curChampion->_maxHealth >> 1;
 	_vm->_menuMan->f393_drawSpellAreaControls(_vm->_championMan->_g514_magicCasterChampionIndex);
-	L0832_ps_Champion->_dir = _vm->_dungeonMan->_g308_partyDir;
-	setFlag(L0832_ps_Champion->_attributes, k0x8000_ChampionAttributeActionHand | k0x1000_ChampionAttributeStatusBox | k0x0400_ChampionAttributeIcon);
+	curChampion->_dir = _vm->_dungeonMan->_g308_partyDir;
+	setFlag(curChampion->_attributes, k0x8000_ChampionAttributeActionHand | k0x1000_ChampionAttributeStatusBox | k0x0400_ChampionAttributeIcon);
 	_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
 }
 
@@ -1261,18 +1256,19 @@ void ChampionMan::f302_processCommands28to65_clickOnSlotBox(uint16 slotBoxIndex)
 	uint16 slotIndex;
 
 	if (slotBoxIndex < k8_SlotBoxInventoryFirstSlot) {
-		if (_g299_candidateChampionOrdinal) {
+		if (_g299_candidateChampionOrdinal)
 			return;
-		}
+
 		champIndex = slotBoxIndex >> 1;
-		if ((champIndex >= _g305_partyChampionCount) || (_vm->M0_indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) || !_gK71_champions[champIndex]._currHealth) {
+		if ((champIndex >= _g305_partyChampionCount) || (_vm->M0_indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) || !_gK71_champions[champIndex]._currHealth)
 			return;
-		}
+
 		slotIndex = M70_handSlotIndex(slotBoxIndex);
 	} else {
 		champIndex = _vm->M1_ordinalToIndex(_vm->_inventoryMan->_g432_inventoryChampionOrdinal);
 		slotIndex = slotBoxIndex - k8_SlotBoxInventoryFirstSlot;
 	}
+
 	Thing leaderHandObject = _g414_leaderHandObject;
 	Thing slotThing;
 	if (slotIndex >= k30_ChampionSlotChest_1) {
@@ -1280,53 +1276,51 @@ void ChampionMan::f302_processCommands28to65_clickOnSlotBox(uint16 slotBoxIndex)
 	} else {
 		slotThing = _gK71_champions[champIndex]._slots[slotIndex];
 	}
-	if ((slotThing == Thing::_none) && (leaderHandObject == Thing::_none)) {
+
+	if ((slotThing == Thing::_none) && (leaderHandObject == Thing::_none))
 		return;
-	}
-	if ((leaderHandObject != Thing::_none) && (!(g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(leaderHandObject)]._allowedSlots & g38_slotMasks[slotIndex]))) {
+
+	if ((leaderHandObject != Thing::_none) && (!(g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(leaderHandObject)]._allowedSlots & g38_slotMasks[slotIndex])))
 		return;
-	}
+
 	_vm->_eventMan->f78_showMouse();
-	if (leaderHandObject != Thing::_none) {
+	if (leaderHandObject != Thing::_none)
 		f298_getObjectRemovedFromLeaderHand();
-	}
+
 	if (slotThing != Thing::_none) {
 		f300_getObjectRemovedFromSlot(champIndex, slotIndex);
 		f297_putObjectInLeaderHand(slotThing, false);
 	}
-	if (leaderHandObject != Thing::_none) {
+
+	if (leaderHandObject != Thing::_none)
 		f301_addObjectInSlot((ChampionIndex)champIndex, leaderHandObject, (ChampionSlot)slotIndex);
-	}
+
 	f292_drawChampionState((ChampionIndex)champIndex);
 	_vm->_eventMan->f77_hideMouse();
 }
 
 bool ChampionMan::f327_isProjectileSpellCast(uint16 champIndex, Thing thing, int16 kineticEnergy, uint16 requiredManaAmount) {
-	int16 L0991_i_StepEnergy;
-	Champion* L0992_ps_Champion;
-
-	L0992_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
-	if (L0992_ps_Champion->_currMana < requiredManaAmount) {
+	Champion *curChampion = &_vm->_championMan->_gK71_champions[champIndex];
+	if (curChampion->_currMana < requiredManaAmount)
 		return false;
-	}
-	L0992_ps_Champion->_currMana -= requiredManaAmount;
-	setFlag(L0992_ps_Champion->_attributes, k0x0100_ChampionAttributeStatistics);
-	L0991_i_StepEnergy = 10 - MIN(8, L0992_ps_Champion->_maxMana >> 3);
-	if (kineticEnergy < (L0991_i_StepEnergy << 2)) {
+
+	curChampion->_currMana -= requiredManaAmount;
+	setFlag(curChampion->_attributes, k0x0100_ChampionAttributeStatistics);
+	int16 stepEnergy = 10 - MIN(8, curChampion->_maxMana >> 3);
+	if (kineticEnergy < (stepEnergy << 2)) {
 		kineticEnergy += 3;
-		L0991_i_StepEnergy--;
+		stepEnergy--;
 	}
-	f326_championShootProjectile(L0992_ps_Champion, thing, kineticEnergy, 90, L0991_i_StepEnergy);
+
+	f326_championShootProjectile(curChampion, thing, kineticEnergy, 90, stepEnergy);
 	return true; // fix BUG_01
 }
 
 void ChampionMan::f326_championShootProjectile(Champion* champ, Thing thing, int16 kineticEnergy, int16 attack, int16 stepEnergy) {
-	uint16 L0990_ui_Direction;
-
-	L0990_ui_Direction = champ->_dir;
-	_vm->_projexpl->f212_projectileCreate(thing, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, M21_normalizeModulo4((((champ->_cell - L0990_ui_Direction + 1) & 0x0002) >> 1) + L0990_ui_Direction), (direction)L0990_ui_Direction, kineticEnergy, attack, stepEnergy);
+	Direction newDirection = champ->_dir;
+	_vm->_projexpl->f212_projectileCreate(thing, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, M21_normalizeModulo4((((champ->_cell - newDirection + 1) & 0x0002) >> 1) + newDirection), newDirection, kineticEnergy, attack, stepEnergy);
 	_vm->_g311_projectileDisableMovementTicks = 4;
-	_vm->_g312_lastProjectileDisabledMovementDirection = L0990_ui_Direction;
+	_vm->_g312_lastProjectileDisabledMovementDirection = newDirection;
 }
 
 void ChampionMan::f320_applyAndDrawPendingDamageAndWounds() {
@@ -1777,7 +1771,7 @@ void ChampionMan::load2_PartyPart(Common::InSaveFile* file) {
 			champ->_name[j] = file->readByte();
 		for (uint16 j = 0; j < 20; ++j)
 			champ->_title[j] = file->readByte();
-		champ->_dir = (direction)file->readUint16BE();
+		champ->_dir = (Direction)file->readUint16BE();
 		champ->_cell = (ViewCell)file->readUint16BE();
 		champ->_actionIndex = (ChampionAction)file->readUint16BE();
 		champ->_symbolStep = file->readUint16BE();
@@ -2282,7 +2276,7 @@ T0292042:
 	_vm->_eventMan->f77_hideMouse();
 }
 
-uint16 ChampionMan::M26_championIconIndex(int16 val, direction dir) {
+uint16 ChampionMan::M26_championIconIndex(int16 val, Direction dir) {
 	return ((val + 4 - dir) & 0x3);
 }
 

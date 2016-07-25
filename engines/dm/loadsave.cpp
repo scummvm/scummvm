@@ -83,7 +83,7 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 		_championMan->_g305_partyChampionCount = file->readUint16BE();
 		_dungeonMan->_g306_partyMapX = file->readSint16BE();
 		_dungeonMan->_g307_partyMapY = file->readSint16BE();
-		_dungeonMan->_g308_partyDir = (direction)file->readUint16BE();
+		_dungeonMan->_g308_partyDir = (Direction)file->readUint16BE();
 		_dungeonMan->_g309_partyMapIndex = file->readByte();
 		_championMan->_g411_leaderIndex = (ChampionIndex)file->readSint16BE();
 		_championMan->_g514_magicCasterChampionIndex = (ChampionIndex)file->readSint16BE();

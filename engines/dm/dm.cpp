@@ -76,19 +76,19 @@ void warning(bool repeat, const char* s, ...) {
 	}
 }
 
-void turnDirRight(direction &dir) { dir = (direction)((dir + 1) & 3); }
-void turnDirLeft(direction &dir) { dir = (direction)((dir - 1) & 3); }
-direction returnOppositeDir(direction dir) { return (direction)((dir + 2) & 3); }
+void turnDirRight(Direction &dir) { dir = (Direction)((dir + 1) & 3); }
+void turnDirLeft(Direction &dir) { dir = (Direction)((dir - 1) & 3); }
+Direction returnOppositeDir(Direction dir) { return (Direction)((dir + 2) & 3); }
 
 uint16 returnPrevVal(uint16 val) {
-	return (direction)((val + 3) & 3);
+	return (Direction)((val + 3) & 3);
 }
 
 uint16 returnNextVal(uint16 val) {
 	return (val + 1) & 0x3;
 }
 
-bool isOrientedWestEast(direction dir) { return dir & 1; }
+bool isOrientedWestEast(Direction dir) { return dir & 1; }
 
 uint16 toggleFlag(uint16& val, uint16 mask) {
 	return val ^= mask;

@@ -88,7 +88,7 @@ public:
 	int16 _g367_projectileAttackType; // @ G0367_i_ProjectileAttackType
 	int32 _g362_lastPartyMovementTime; // @ G0362_l_LastPartyMovementTime
 	explicit ProjExpl(DMEngine *vm);
-	void f212_projectileCreate(Thing thing, int16 mapX, int16 mapY, uint16 cell, direction dir,
+	void f212_projectileCreate(Thing thing, int16 mapX, int16 mapY, uint16 cell, Direction dir,
 							   byte kineticEnergy, byte attack, byte stepEnergy); // @ F0212_PROJECTILE_Create
 	bool f217_projectileHasImpactOccurred(int16 impactType, int16 mapXCombo, int16 mapYCombo,
 										  int16 cell, Thing projectileThing); // @ F0217_PROJECTILE_HasImpactOccured

@@ -215,7 +215,7 @@ void MenuMan::f390_refreshActionAreaAndSetChampDirMaxDamageReceived() {
 				&& (champ->_maximumDamageReceived)
 				&& (champ->_dir != champ->_directionMaximumDamageReceived)) {
 
-				champ->_dir = (direction)champ->_directionMaximumDamageReceived;
+				champ->_dir = (Direction)champ->_directionMaximumDamageReceived;
 				champ->setAttributeFlag(k0x0400_ChampionAttributeIcon, true);
 				champMan.f292_drawChampionState((ChampionIndex)champIndex);
 			}

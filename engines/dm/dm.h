@@ -57,7 +57,7 @@ class DialogMan;
 
 void warning(bool repeat, const char *s, ...);
 
-enum direction {
+enum Direction {
 	kDirNorth = 0,
 	kDirEast = 1,
 	kDirSouth = 2,
@@ -122,12 +122,12 @@ public:
 
 
 
-void turnDirRight(direction &dir);
-void turnDirLeft(direction &dir);
-direction returnOppositeDir(direction dir);	// @ M18_OPPOSITE
+void turnDirRight(Direction &dir);
+void turnDirLeft(Direction &dir);
+Direction returnOppositeDir(Direction dir);	// @ M18_OPPOSITE
 uint16 returnPrevVal(uint16 val); // @ M19_PREVIOUS
 uint16 returnNextVal(uint16 val); // @ M17_NEXT
-bool isOrientedWestEast(direction dir);	// @ M16_IS_ORIENTED_WEST_EAST
+bool isOrientedWestEast(Direction dir);	// @ M16_IS_ORIENTED_WEST_EAST
 
 
 #define setFlag(val, mask) ((val) |= (mask))

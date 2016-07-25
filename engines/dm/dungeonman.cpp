@@ -363,7 +363,7 @@ CreatureInfo g243_CreatureInfo[k27_CreatureTypeCount] = { // @ G0243_as_Graphic5
 	{25,  0, 0x38AA, 0x0000,  12, 22, 255, 180, 210,   0, 130, 0x6369, 0xFF37, 0x0FBF, 0x0564, 0xFB52, 5},
 	{26,  0, 0x38AA, 0x0000,  12, 22, 255, 180, 210,   0, 130, 0x6369, 0xFF37, 0x0FBF, 0x0564, 0xFB52, 5}};
 
-void DungeonMan::f150_mapCoordsAfterRelMovement(direction dir, int16 stepsForward, int16 stepsRight, int16 &posX, int16 &posY) {
+void DungeonMan::f150_mapCoordsAfterRelMovement(Direction dir, int16 stepsForward, int16 stepsRight, int16 &posX, int16 &posY) {
 	posX += _vm->_dirIntoStepCountEast[dir] * stepsForward;
 	posY += _vm->_dirIntoStepCountNorth[dir] * stepsForward;
 	turnDirRight(dir);
@@ -385,7 +385,7 @@ DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	for (uint16 i = 0; i < 16; ++i)
 		_g284_thingData[i] = nullptr;
 	_g279_dungeonMapData = nullptr;
-	_g308_partyDir = (direction)0;
+	_g308_partyDir = (Direction)0;
 	_g306_partyMapX = 0;
 	_g307_partyMapY = 0;
 	_g309_partyMapIndex = 0;
@@ -549,7 +549,7 @@ void DungeonMan::f434_loadDungeonFile() {
 	dunDataStream.readByte(); // discard 1 byte
 	_g278_dungeonFileHeader._textDataWordCount = dunDataStream.readUint16BE();
 	uint16 partyPosition = dunDataStream.readUint16BE();
-	_g278_dungeonFileHeader._partyStartDir = (direction)((partyPosition >> 10) & 3);
+	_g278_dungeonFileHeader._partyStartDir = (Direction)((partyPosition >> 10) & 3);
 	_g278_dungeonFileHeader._partyStartPosY = (partyPosition >> 5) & 0x1F;
 	_g278_dungeonFileHeader._partyStartPosX = (partyPosition >> 0) & 0x1F;
 	_g278_dungeonFileHeader._squareFirstThingCount = dunDataStream.readUint16BE();
@@ -788,7 +788,7 @@ Square DungeonMan::f151_getSquare(int16 mapX, int16 mapY) {
 	return Square(k0_ElementTypeWall, 0);
 }
 
-Square DungeonMan::f152_getRelSquare(direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY) {
+Square DungeonMan::f152_getRelSquare(Direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY) {
 	f150_mapCoordsAfterRelMovement(dir, stepsForward, stepsForward, posX, posY);
 	return f151_getSquare(posX, posY);
 }
@@ -822,7 +822,7 @@ Thing DungeonMan::f161_getSquareFirstThing(int16 mapX, int16 mapY) {
 
 
 // TODO: produce more GOTOs
-void DungeonMan::f172_setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX, int16 mapY) {	// complete, except where marked
+void DungeonMan::f172_setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX, int16 mapY) {	// complete, except where marked
 #define thingType dir
 	byte L0307_uc_Multiple;
 #define square            L0307_uc_Multiple
@@ -928,7 +928,7 @@ different sides of the wall, the same text is drawn on each affected side */
 T0172029_Teleporter:
 		footprintsAllowed = true;
 T0172030_Pit:
-		while ((thing != Thing::_endOfList) && ((thingType = (direction)thing.getType()) <= k3_SensorThingType)) {
+		while ((thing != Thing::_endOfList) && ((thingType = (Direction)thing.getType()) <= k3_SensorThingType)) {
 			if (thingType == k3_SensorThingType) {
 				sensor = (Sensor*)_vm->_dungeonMan->f156_getThingData(thing);
 				aspectArray[k4_FloorOrnOrdAspect] = sensor->getOrnOrdinal();
@@ -1554,7 +1554,7 @@ void DungeonMan::f146_setGroupCells(Group* group, uint16 cells, uint16 mapIndex)
 
 void DungeonMan::f148_setGroupDirections(Group* group, int16 dir, uint16 mapIndex) {
 	if (mapIndex == _vm->_dungeonMan->_g309_partyMapIndex) {
-		_vm->_groupMan->_g375_activeGroups[group->getActiveGroupIndex()]._directions = (direction)dir;
+		_vm->_groupMan->_g375_activeGroups[group->getActiveGroupIndex()]._directions = (Direction)dir;
 	} else {
 		group->setDir(M21_normalizeModulo4(dir));
 	}

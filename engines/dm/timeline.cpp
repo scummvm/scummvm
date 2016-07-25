@@ -582,7 +582,7 @@ void Timeline::f249_moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 			L0647_ps_Event = &_vm->_timeline->_g370_events[L0646_ps_Projectile->_eventIndex];
 			L0647_ps_Event->_C._projectile.setMapX(_vm->_movsens->_g397_moveResultMapX);
 			L0647_ps_Event->_C._projectile.setMapY(_vm->_movsens->_g398_moveResultMapY);
-			L0647_ps_Event->_C._projectile.setDir((direction)_vm->_movsens->_g400_moveResultDir);
+			L0647_ps_Event->_C._projectile.setDir((Direction)_vm->_movsens->_g400_moveResultDir);
 			L0647_ps_Event->_B._slot = M15_thingWithNewCell(L0645_T_Thing, _vm->_movsens->_g401_moveResultCell).toUint16();
 			M31_setMap(L0647_ps_Event->_mapTime, _vm->_movsens->_g399_moveResultMapIndex);
 		} else {
@@ -734,7 +734,7 @@ void Timeline::f247_triggerProjectileLauncher(Sensor* sensor, TimelineEvent* eve
 	L0626_i_MapX = event->_B._location._mapX;
 	L0627_i_MapY = event->_B._location._mapY;
 	L0624_ui_Cell = event->_C.A._cell;
-	L0628_ui_ProjectileCell = returnOppositeDir((direction)L0624_ui_Cell);
+	L0628_ui_ProjectileCell = returnOppositeDir((Direction)L0624_ui_Cell);
 	L0625_i_SensorType = sensor->getType();
 	L0629_i_SensorData = sensor->getData();
 	L0630_i_KineticEnergy = sensor->M47_kineticEnergy();
@@ -785,9 +785,9 @@ void Timeline::f247_triggerProjectileLauncher(Sensor* sensor, TimelineEvent* eve
 	}
 	L0626_i_MapX += _vm->_dirIntoStepCountEast[L0624_ui_Cell], L0627_i_MapY += _vm->_dirIntoStepCountNorth[L0624_ui_Cell]; /* BUG0_20 The game crashes if the launcher sensor is on a map boundary and shoots in a direction outside the map */
 	_vm->_projexpl->_g365_createLanucherProjectile = true;
-	_vm->_projexpl->f212_projectileCreate(L0622_T_FirstProjectileAssociatedThing, L0626_i_MapX, L0627_i_MapY, L0628_ui_ProjectileCell, (direction)L0624_ui_Cell, L0630_i_KineticEnergy, 100, L0631_i_StepEnergy);
+	_vm->_projexpl->f212_projectileCreate(L0622_T_FirstProjectileAssociatedThing, L0626_i_MapX, L0627_i_MapY, L0628_ui_ProjectileCell, (Direction)L0624_ui_Cell, L0630_i_KineticEnergy, 100, L0631_i_StepEnergy);
 	if (!L0632_B_LaunchSingleProjectile) {
-		_vm->_projexpl->f212_projectileCreate(L0623_T_SecondProjectileAssociatedThing, L0626_i_MapX, L0627_i_MapY, returnNextVal(L0628_ui_ProjectileCell), (direction)L0624_ui_Cell, L0630_i_KineticEnergy, 100, L0631_i_StepEnergy);
+		_vm->_projexpl->f212_projectileCreate(L0623_T_SecondProjectileAssociatedThing, L0626_i_MapX, L0627_i_MapY, returnNextVal(L0628_ui_ProjectileCell), (Direction)L0624_ui_Cell, L0630_i_KineticEnergy, 100, L0631_i_StepEnergy);
 	}
 	_vm->_projexpl->_g365_createLanucherProjectile = false;
 }
@@ -837,7 +837,7 @@ void Timeline::f245_timlineProcessEvent5_squareCorridor(TimelineEvent* event) {
 					if ((AL0618_ui_HealthMultiplier = L0614_ps_Sensor->M45_healthMultiplier()) == 0) {
 						AL0618_ui_HealthMultiplier = _vm->_dungeonMan->_g269_currMap->_difficulty;
 					}
-					_vm->_groupMan->f185_groupGetGenerated(L0614_ps_Sensor->getData(), AL0618_ui_HealthMultiplier, L0612_i_CreatureCount, (direction)_vm->getRandomNumber(4), L0616_ui_MapX, L0617_ui_MapY);
+					_vm->_groupMan->f185_groupGetGenerated(L0614_ps_Sensor->getData(), AL0618_ui_HealthMultiplier, L0612_i_CreatureCount, (Direction)_vm->getRandomNumber(4), L0616_ui_MapX, L0617_ui_MapY);
 					if (L0614_ps_Sensor->getAudibleA()) {
 						_vm->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, L0616_ui_MapX, L0617_ui_MapY, k1_soundModePlayIfPrioritized);
 					}

@@ -873,8 +873,8 @@ T0209084_SingleSquareMoveTowardParty:
 T0209085_SingleSquareMove:
 					if (f202_isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = L0454_i_PrimaryDirectionToOrFromParty, L0456_B_AllowMovementOverImaginaryPitsAndFakeWalls) ||
 						f202_isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = _vm->_projexpl->_g363_secondaryDirToOrFromParty, L0456_B_AllowMovementOverImaginaryPitsAndFakeWalls && _vm->getRandomNumber(2)) ||
-						f202_isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = returnOppositeDir((direction)AL0446_i_Direction), false) ||
-						(!_vm->getRandomNumber(4) && f202_isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = returnOppositeDir((direction)L0454_i_PrimaryDirectionToOrFromParty), false))) {
+						f202_isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = returnOppositeDir((Direction)AL0446_i_Direction), false) ||
+						(!_vm->getRandomNumber(4) && f202_isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = returnOppositeDir((Direction)L0454_i_PrimaryDirectionToOrFromParty), false))) {
 						AL0450_i_DestinationMapX = eventMapX;
 						AL0451_i_DestinationMapY = eventMapY;
 						AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction], AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction];
@@ -885,8 +885,8 @@ T0209089_DoubleSquareMove:
 						f203_getFirstPossibleMovementDirOrdinal(&L0448_s_CreatureInfo, eventMapX, eventMapY, false); /* BUG0_00 Useless code. Returned value is ignored. When Lord Chaos teleports two squares away the ability to move to the first square is ignored which means Lord Chaos can teleport through walls or any other obstacle */
 						if (f204_isArchenemyDoubleMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = L0454_i_PrimaryDirectionToOrFromParty) ||
 							f204_isArchenemyDoubleMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = _vm->_projexpl->_g363_secondaryDirToOrFromParty) ||
-							(_g386_fluxCageCount && f204_isArchenemyDoubleMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = returnOppositeDir((direction)AL0446_i_Direction))) ||
-							((_g386_fluxCageCount >= 2) && f204_isArchenemyDoubleMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = returnOppositeDir((direction)L0454_i_PrimaryDirectionToOrFromParty)))) {
+							(_g386_fluxCageCount && f204_isArchenemyDoubleMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = returnOppositeDir((Direction)AL0446_i_Direction))) ||
+							((_g386_fluxCageCount >= 2) && f204_isArchenemyDoubleMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = returnOppositeDir((Direction)L0454_i_PrimaryDirectionToOrFromParty)))) {
 							AL0450_i_DestinationMapX = eventMapX;
 							AL0451_i_DestinationMapY = eventMapY;
 							AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction] * 2, AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction] * 2;
@@ -925,8 +925,8 @@ T0209096_SetBehavior0_Wander:
 							AL0451_i_TargetMapY = L0445_ps_ActiveGroup->_targetMapY;
 						}
 						/* Try and flee from the party (opposite direction) */
-						L0454_i_PrimaryDirectionToOrFromParty = returnOppositeDir((direction)f228_getDirsWhereDestIsVisibleFromSource(eventMapX, eventMapY, AL0450_i_TargetMapX, AL0451_i_TargetMapY));
-						_vm->_projexpl->_g363_secondaryDirToOrFromParty = returnOppositeDir((direction)_vm->_projexpl->_g363_secondaryDirToOrFromParty);
+						L0454_i_PrimaryDirectionToOrFromParty = returnOppositeDir((Direction)f228_getDirsWhereDestIsVisibleFromSource(eventMapX, eventMapY, AL0450_i_TargetMapX, AL0451_i_TargetMapY));
+						_vm->_projexpl->_g363_secondaryDirToOrFromParty = returnOppositeDir((Direction)_vm->_projexpl->_g363_secondaryDirToOrFromParty);
 						L0461_i_MovementTicks -= (L0461_i_MovementTicks >> 2);
 						goto T0209085_SingleSquareMove;
 					}
@@ -996,7 +996,7 @@ T0209096_SetBehavior0_Wander:
 									AL0446_i_Cell++;
 								}
 								if (!_vm->_groupMan->f176_getCreatureOrdinalInCell(L0444_ps_Group, AL0446_i_Cell = M21_normalizeModulo4(AL0446_i_Cell)) ||
-									(_vm->getRandomNumber(2) && !_vm->_groupMan->f176_getCreatureOrdinalInCell(L0444_ps_Group, AL0446_i_Cell = returnOppositeDir((direction)AL0446_i_Cell)))) { /* If the selected cell (or the opposite cell) is not already occupied by a creature */
+									(_vm->getRandomNumber(2) && !_vm->_groupMan->f176_getCreatureOrdinalInCell(L0444_ps_Group, AL0446_i_Cell = returnOppositeDir((Direction)AL0446_i_Cell)))) { /* If the selected cell (or the opposite cell) is not already occupied by a creature */
 									if (_vm->_projexpl->f218_projectileGetImpactCount(kM1_CreatureElemType, eventMapX, eventMapY, L0445_ps_ActiveGroup->_cells) && (_vm->_projexpl->_g364_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup)) /* BUG0_70 A projectile impact on a creature may be ignored. The function F0218_PROJECTILE_GetImpactCount to detect projectile impacts when a quarter square sized creature moves inside a group (to another cell on the same square) may fail if there are several creatures in the group because the function expects a single cell index for its last parameter. The function should be called once for each cell where there is a creature */
 										goto T0209139_Return;
 									if (_vm->_projexpl->_g364_creatureDamageOutcome != k1_outcomeKilledSomeCreaturesInGroup) {
@@ -1072,7 +1072,7 @@ bool GroupMan::f202_isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, i
 	if (creatureInfo->_movementTicks == k255_immobile) {
 		return false;
 	}
-	_vm->_dungeonMan->f150_mapCoordsAfterRelMovement((direction)dir, 1, 0, mapX, mapY);
+	_vm->_dungeonMan->f150_mapCoordsAfterRelMovement((Direction)dir, 1, 0, mapX, mapY);
 	L0428_i_MapX = mapX;
 	L0429_i_MapY = mapY;
 	if (_g387_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter =
@@ -1333,7 +1333,7 @@ void GroupMan::f205_setDirection(ActiveGroup *activeGroup, int16 dir, int16 crea
 		G0395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime = _vm->_g313_gameTime;
 		G0396_ps_TwoHalfSquareSizedCreaturesGroupLastDirectionSetActiveGroup = activeGroup;
 	}
-	activeGroup->_directions = (direction)L0435_ui_GroupDirections;
+	activeGroup->_directions = (Direction)L0435_ui_GroupDirections;
 }
 
 void GroupMan::f208_groupAddEvent(TimelineEvent *event, uint32 time) {
@@ -1488,7 +1488,7 @@ bool GroupMan::f207_isCreatureAttacking(Group *group, int16 mapX, int16 mapY, ui
 		AL0440_i_KineticEnergy += _vm->getRandomNumber(AL0440_i_KineticEnergy);
 		AL0440_i_KineticEnergy += _vm->getRandomNumber(AL0440_i_KineticEnergy);
 		_vm->f064_SOUND_RequestPlay_CPSD(k13_soundSPELL, mapX, mapY, k0_soundModePlayImmediately);
-		_vm->_projexpl->f212_projectileCreate(Thing(AL0437_T_Thing), mapX, mapY, AL0439_i_TargetCell, (direction)_g382_currGroupPrimaryDirToParty, f26_getBoundedValue((int16)20, AL0440_i_KineticEnergy, (int16)255), L0441_ps_CreatureInfo->_dexterity, 8);
+		_vm->_projexpl->f212_projectileCreate(Thing(AL0437_T_Thing), mapX, mapY, AL0439_i_TargetCell, (Direction)_g382_currGroupPrimaryDirToParty, f26_getBoundedValue((int16)20, AL0440_i_KineticEnergy, (int16)255), L0441_ps_CreatureInfo->_dexterity, 8);
 	} else {
 		if (getFlag(L0441_ps_CreatureInfo->_attributes, k0x0010_MaskCreatureInfo_attackAnyChamp)) {
 			AL0439_i_ChampionIndex = _vm->getRandomNumber(4);
@@ -1510,7 +1510,7 @@ bool GroupMan::f207_isCreatureAttacking(Group *group, int16 mapX, int16 mapY, ui
 			Champion *L0442_ps_Champion = &_vm->_championMan->_gK71_champions[AL0439_i_ChampionIndex];
 			if (AL0440_i_Damage > L0442_ps_Champion->_maximumDamageReceived) {
 				L0442_ps_Champion->_maximumDamageReceived = AL0440_i_Damage;
-				L0442_ps_Champion->_directionMaximumDamageReceived = returnOppositeDir((direction)L0438_ui_PrimaryDirectionToParty);
+				L0442_ps_Champion->_directionMaximumDamageReceived = returnOppositeDir((Direction)L0438_ui_PrimaryDirectionToParty);
 			}
 		}
 	}
@@ -1710,7 +1710,7 @@ void GroupMan::f183_addActiveGroup(Thing thing, int16 mapX, int16 mapY) {
 	L0341_ps_ActiveGroup->_lastMoveTime = _vm->_g313_gameTime - 127;
 	L0339_ui_CreatureIndex = L0340_ps_Group->getCount();
 	do {
-		L0341_ps_ActiveGroup->_directions = (direction)f178_getGroupValueUpdatedWithCreatureValue(L0341_ps_ActiveGroup->_directions, L0339_ui_CreatureIndex, L0340_ps_Group->getDir());
+		L0341_ps_ActiveGroup->_directions = (Direction)f178_getGroupValueUpdatedWithCreatureValue(L0341_ps_ActiveGroup->_directions, L0339_ui_CreatureIndex, L0340_ps_Group->getDir());
 		L0341_ps_ActiveGroup->_aspect[L0339_ui_CreatureIndex] = 0;
 	} while (L0339_ui_CreatureIndex--);
 	f179_getCreatureAspectUpdateTime(L0341_ps_ActiveGroup, kM1_wholeCreatureGroup, false);
@@ -1770,7 +1770,7 @@ void GroupMan::f195_addAllActiveGroups() {
 	}
 }
 
-Thing GroupMan::f185_groupGetGenerated(int16 creatureType, int16 healthMultiplier, uint16 creatureCount, direction dir, int16 mapX, int16 mapY) {
+Thing GroupMan::f185_groupGetGenerated(int16 creatureType, int16 healthMultiplier, uint16 creatureCount, Direction dir, int16 mapX, int16 mapY) {
 	Thing L0349_T_GroupThing;
 	uint16 L0350_ui_BaseHealth;
 	uint16 L0351_ui_Cell = 0;
@@ -2082,7 +2082,7 @@ void GroupMan::load1_ActiveGroupPart(Common::InSaveFile* file) {
 	for (uint16 i = 0; i < _g376_maxActiveGroupCount; ++i) {
 		ActiveGroup *group = &_g375_activeGroups[i];
 		group->_groupThingIndex = file->readUint16BE();
-		group->_directions = (direction)file->readUint16BE();
+		group->_directions = (Direction)file->readUint16BE();
 		group->_cells = file->readByte();
 		group->_lastMoveTime = file->readByte();
 		group->_delayFleeingFromTarget = file->readByte();

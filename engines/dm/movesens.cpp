@@ -377,7 +377,7 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 						}
 						L0716_ui_Direction = _vm->_dungeonMan->f155_getStairsExitDirection(destMapX, destMapY);
 						destMapX += _vm->_dirIntoStepCountEast[L0716_ui_Direction], destMapY += _vm->_dirIntoStepCountNorth[L0716_ui_Direction];
-						L0716_ui_Direction = returnOppositeDir((direction)L0716_ui_Direction);
+						L0716_ui_Direction = returnOppositeDir((Direction)L0716_ui_Direction);
 						AL0727_ui_ThingCell = thing.getCell();
 						AL0727_ui_ThingCell = M21_normalizeModulo4((((AL0727_ui_ThingCell - L0716_ui_Direction + 1) & 0x0002) >> 1) + L0716_ui_Direction);
 						thing = M15_thingWithNewCell(thing, AL0727_ui_ThingCell);

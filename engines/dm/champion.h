@@ -370,7 +370,7 @@ public:
 	Skill _skills[20];
 	char _name[8];
 	char _title[20];
-	direction _dir;
+	Direction _dir;
 	ViewCell _cell;
 	ChampionAction _actionIndex;
 	uint16 _symbolStep;
@@ -537,7 +537,7 @@ public:
 	uint16 f306_getStaminaAdjustedValue(Champion *champ, int16 val); // @ F0306_CHAMPION_GetStaminaAdjustedValue
 	uint16 f309_getMaximumLoad(Champion *champ); // @ F0309_CHAMPION_GetMaximumLoad
 	void f292_drawChampionState(ChampionIndex champIndex); // @ F0292_CHAMPION_DrawState
-	uint16 M26_championIconIndex(int16 val, direction dir); // @ M26_CHAMPION_ICON_INDEX
+	uint16 M26_championIconIndex(int16 val, Direction dir); // @ M26_CHAMPION_ICON_INDEX
 	void f290_drawHealthStaminaManaValues(Champion *champ); // @ F0290_CHAMPION_DrawHealthStaminaManaValues
 	void f291_drawSlot(uint16 champIndex, int16 slotIndex); // @ F0291_CHAMPION_DrawSlot
 	void f281_renameChampion(Champion* champ); // @ F0281_CHAMPION_Rename

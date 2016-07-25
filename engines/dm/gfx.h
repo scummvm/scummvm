@@ -530,18 +530,18 @@ class DisplayMan {
 	void f104_drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &frame); // @ F0104_DUNGEONVIEW_DrawFloorPitOrStairsBitmap
 	void f100_drawWallSetBitmap(byte *bitmap, Frame &f); // @ F0100_DUNGEONVIEW_DrawWallSetBitmap
 	void f101_drawWallSetBitmapWithoutTransparency(byte *bitmap, Frame &f); // @ F0101_DUNGEONVIEW_DrawWallSetBitmapWithoutTransparency
-	void f116_drawSquareD3L(direction dir, int16 posX, int16 posY); // @ F0116_DUNGEONVIEW_DrawSquareD3L
-	void f117_drawSquareD3R(direction dir, int16 posX, int16 posY); // @ F0117_DUNGEONVIEW_DrawSquareD3R
-	void f118_drawSquareD3C(direction dir, int16 posX, int16 posY); // @ F0118_DUNGEONVIEW_DrawSquareD3C_CPSF
-	void f119_drawSquareD2L(direction dir, int16 posX, int16 posY); // @ F0119_DUNGEONVIEW_DrawSquareD2L
-	void f120_drawSquareD2R(direction dir, int16 posX, int16 posY); // @ F0120_DUNGEONVIEW_DrawSquareD2R_CPSF
-	void f121_drawSquareD2C(direction dir, int16 posX, int16 posY); // @ F0121_DUNGEONVIEW_DrawSquareD2C
-	void f122_drawSquareD1L(direction dir, int16 posX, int16 posY); // @ F0122_DUNGEONVIEW_DrawSquareD1L
-	void f123_drawSquareD1R(direction dir, int16 posX, int16 posY); // @ F0123_DUNGEONVIEW_DrawSquareD1R
-	void f124_drawSquareD1C(direction dir, int16 posX, int16 posY); // @ F0124_DUNGEONVIEW_DrawSquareD1C
-	void f125_drawSquareD0L(direction dir, int16 posX, int16 posY); // @ F0125_DUNGEONVIEW_DrawSquareD0L
-	void f126_drawSquareD0R(direction dir, int16 posX, int16 posY); // @ F0126_DUNGEONVIEW_DrawSquareD0R
-	void f127_drawSquareD0C(direction dir, int16 posX, int16 posY); // @ F0127_DUNGEONVIEW_DrawSquareD0C
+	void f116_drawSquareD3L(Direction dir, int16 posX, int16 posY); // @ F0116_DUNGEONVIEW_DrawSquareD3L
+	void f117_drawSquareD3R(Direction dir, int16 posX, int16 posY); // @ F0117_DUNGEONVIEW_DrawSquareD3R
+	void f118_drawSquareD3C(Direction dir, int16 posX, int16 posY); // @ F0118_DUNGEONVIEW_DrawSquareD3C_CPSF
+	void f119_drawSquareD2L(Direction dir, int16 posX, int16 posY); // @ F0119_DUNGEONVIEW_DrawSquareD2L
+	void f120_drawSquareD2R(Direction dir, int16 posX, int16 posY); // @ F0120_DUNGEONVIEW_DrawSquareD2R_CPSF
+	void f121_drawSquareD2C(Direction dir, int16 posX, int16 posY); // @ F0121_DUNGEONVIEW_DrawSquareD2C
+	void f122_drawSquareD1L(Direction dir, int16 posX, int16 posY); // @ F0122_DUNGEONVIEW_DrawSquareD1L
+	void f123_drawSquareD1R(Direction dir, int16 posX, int16 posY); // @ F0123_DUNGEONVIEW_DrawSquareD1R
+	void f124_drawSquareD1C(Direction dir, int16 posX, int16 posY); // @ F0124_DUNGEONVIEW_DrawSquareD1C
+	void f125_drawSquareD0L(Direction dir, int16 posX, int16 posY); // @ F0125_DUNGEONVIEW_DrawSquareD0L
+	void f126_drawSquareD0R(Direction dir, int16 posX, int16 posY); // @ F0126_DUNGEONVIEW_DrawSquareD0R
+	void f127_drawSquareD0C(Direction dir, int16 posX, int16 posY); // @ F0127_DUNGEONVIEW_DrawSquareD0C
 
 
 	void f93_applyCreatureReplColors(int replacedColor, int replacementColor); // @ F0093_DUNGEONVIEW_ApplyCreatureReplacementColors
@@ -680,7 +680,7 @@ public:
 	void D24_fillScreenBox(Box &box, Color color); // @ D24_FillScreenBox, F0550_VIDEO_FillScreenBox
 /* Expects inclusive boundaries in box */
 	void f135_fillBoxBitmap(byte *destBitmap, Box &box, Color color, int16 byteWidth, int16 height); // @ F0135_VIDEO_FillBox
-	void f128_drawDungeon(direction dir, int16 posX, int16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
+	void f128_drawDungeon(Direction dir, int16 posX, int16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
 	void f98_drawFloorAndCeiling(); // @ F0098_DUNGEONVIEW_DrawFloorAndCeiling
 	void updateScreen();
 	void f97_drawViewport(int16 palSwitchingRequestedState); // @ F0097_DUNGEONVIEW_DrawViewport
@@ -692,7 +692,7 @@ public:
 
 	int16 f459_getScaledBitmapByteCount(int16 byteWidth, int16 height, int16 scale); // @ F0459_START_GetScaledBitmapByteCount
 	int16 M78_getScaledDimension(int16 dimension, int16 scale); // @ M78_SCALED_DIMENSION
-	void f115_cthulhu(Thing thingParam, direction directionParam,
+	void f115_cthulhu(Thing thingParam, Direction directionParam,
 				 int16 mapXpos, int16 mapYpos, int16 viewSquareIndex,
 				 uint16 orderedViewCellOrdinals); // @ F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
 	uint16 M77_getNormalizedByteWidth(uint16 byteWidth); // @ M77_NORMALIZED_BYTE_WIDTH

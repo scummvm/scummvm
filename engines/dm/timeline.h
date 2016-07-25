@@ -131,11 +131,11 @@ public:
 		public:
 			uint16 getMapX() { return _backing & 0x1F; }
 			uint16 getMapY() { return (_backing >> 5) & 0x1F; }
-			direction getDir() { return (direction)((_backing >> 10) & 0x3); }
+			Direction getDir() { return (Direction)((_backing >> 10) & 0x3); }
 			uint16 getStepEnergy() { return (_backing >> 12) & 0xF; }
 			void setMapX(uint16 val) { _backing = (_backing & ~0x1F) | (val & 0x1F); }
 			void setMapY(uint16 val) { _backing = (_backing & ~(0x1F << 5)) | ((val & 0x1F) << 5); }
-			void setDir(direction val) { _backing = (_backing & ~(0x3 << 10)) | ((val & 0x3) << 10); }
+			void setDir(Direction val) { _backing = (_backing & ~(0x3 << 10)) | ((val & 0x3) << 10); }
 			void setStepEnergy(uint16 val) { _backing = (_backing & ~(0xF << 12)) | ((val & 0xF) << 12); }
 		} _projectile;
 

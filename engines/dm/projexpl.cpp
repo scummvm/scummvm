@@ -45,7 +45,7 @@ ProjExpl::ProjExpl(DMEngine* vm) : _vm(vm) {
 	_g362_lastPartyMovementTime = 0;
 }
 
-void ProjExpl::f212_projectileCreate(Thing thing, int16 mapX, int16 mapY, uint16 cell, direction dir, byte kineticEnergy, byte attack, byte stepEnergy) {
+void ProjExpl::f212_projectileCreate(Thing thing, int16 mapX, int16 mapY, uint16 cell, Direction dir, byte kineticEnergy, byte attack, byte stepEnergy) {
 	Thing L0466_T_ProjectileThing;
 	Projectile* L0467_ps_Projectile;
 	TimelineEvent L0468_s_Event;
@@ -482,7 +482,7 @@ void ProjExpl::f219_processEvents48To49_projectile(TimelineEvent* event) {
 		_vm->_movsens->f267_getMoveResult(L0515_T_ProjectileThingNewCell, L0525_i_SourceMapX, L0526_i_SourceMapY, L0523_i_DestinationMapX, L0524_i_DestinationMapY);
 		L0519_ps_Event->_C._projectile.setMapX(_vm->_movsens->_g397_moveResultMapX);
 		L0519_ps_Event->_C._projectile.setMapY(_vm->_movsens->_g398_moveResultMapY);
-		L0519_ps_Event->_C._projectile.setDir((direction)_vm->_movsens->_g400_moveResultDir);
+		L0519_ps_Event->_C._projectile.setDir((Direction)_vm->_movsens->_g400_moveResultDir);
 		L0515_T_ProjectileThingNewCell = M15_thingWithNewCell(L0515_T_ProjectileThingNewCell, _vm->_movsens->_g401_moveResultCell);
 		M31_setMap(L0519_ps_Event->_mapTime, _vm->_movsens->_g399_moveResultMapIndex);
 	} else {

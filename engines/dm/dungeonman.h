@@ -244,7 +244,7 @@ public:
 	bool isAudible() { return (_attributes >> 15) & 1; }
 	TeleporterScope getScope() { return (TeleporterScope)((_attributes >> 13) & 1); }
 	bool getAbsoluteRotation() { return (_attributes >> 12) & 1; }
-	direction getRotation() { return (direction)((_attributes >> 10) & 1); }
+	Direction getRotation() { return (Direction)((_attributes >> 10) & 1); }
 	byte getTargetMapY() { return (_attributes >> 5) & 0xF; }
 	byte getTargetMapX() { return _attributes & 0xF; }
 	uint16 getTargetMapIndex() { return _destMapIndex >> 8; }
@@ -334,7 +334,7 @@ public:
 
 	uint16 getTargetMapY() { return (_action >> 11); }
 	uint16 getTargetMapX() { return (_action >> 6) & 0x1F; }
-	direction getTargetCell() { return (direction)((_action >> 4) & 3); }
+	Direction getTargetCell() { return (Direction)((_action >> 4) & 3); }
 	uint16 M47_kineticEnergy() { return (_action & 0xFF); }// @ M47_KINETIC_ENERGY
 	uint16 M48_stepEnergy() { return (_action >> 8) & 0xFF; }// @ M48_STEP_ENERGY
 	uint16 M49_localEffect() { return _action; } // @ M49_LOCAL_EFFECT
@@ -611,7 +611,7 @@ struct DungeonFileHeader {
 	uint32 _rawMapDataSize;
 	uint8 _mapCount;
 	uint16 _textDataWordCount;
-	direction _partyStartDir; // @ InitialPartyLocation
+	Direction _partyStartDir; // @ InitialPartyLocation
 	uint16 _partyStartPosX, _partyStartPosY;
 	uint16 _squareFirstThingCount; // @ SquareFirstThingCount
 	uint16 _thingCounts[16]; // @ ThingCount[16]
@@ -656,7 +656,7 @@ class DungeonMan {
 	DungeonMan(const DungeonMan &other); // no implementation on purpose
 	void operator=(const DungeonMan &rhs); // no implementation on purpose
 
-	Square f152_getRelSquare(direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY); // @ F0152_DUNGEON_GetRelativeSquare
+	Square f152_getRelSquare(Direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY); // @ F0152_DUNGEON_GetRelativeSquare
 
 	void f455_decompressDungeonFile(); // @ F0455_FLOPPY_DecompressDungeon
 
@@ -683,11 +683,11 @@ public:
 	void f174_setCurrentMapAndPartyMap(uint16 mapIndex); // @ F0174_DUNGEON_SetCurrentMapAndPartyMap
 
 	bool f149_isWallOrnAnAlcove(int16 wallOrnIndex); // @ F0149_DUNGEON_IsWallOrnamentAnAlcove
-	void f150_mapCoordsAfterRelMovement(direction dir, int16 stepsForward, int16 stepsRight, int16 &posX, int16 &posY); // @ F0150_DUNGEON_UpdateMapCoordinatesAfterRelativeMovement
-	SquareType f153_getRelSquareType(direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY) {
+	void f150_mapCoordsAfterRelMovement(Direction dir, int16 stepsForward, int16 stepsRight, int16 &posX, int16 &posY); // @ F0150_DUNGEON_UpdateMapCoordinatesAfterRelativeMovement
+	SquareType f153_getRelSquareType(Direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY) {
 		return Square(f152_getRelSquare(dir, stepsForward, stepsRight, posX, posY)).getType();
 	} // @ F0153_DUNGEON_GetRelativeSquareType
-	void f172_setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX, int16 mapY); // @ F0172_DUNGEON_SetSquareAspect
+	void f172_setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX, int16 mapY); // @ F0172_DUNGEON_SetSquareAspect
 	void f168_decodeText(char *destString, Thing thing, TextType type); // F0168_DUNGEON_DecodeText
 	Thing f166_getUnusedThing(uint16 thingType); // @ F0166_DUNGEON_GetUnusedThing
 
@@ -725,7 +725,7 @@ public:
 	byte ***_g279_dungeonMapData; // @ G0279_pppuc_DungeonMapData
 
 
-	direction _g308_partyDir; // @ G0308_i_PartyDirection
+	Direction _g308_partyDir; // @ G0308_i_PartyDirection
 	int16 _g306_partyMapX; // @ G0306_i_PartyMapX
 	int16 _g307_partyMapY; // @ G0307_i_PartyMapY
 	uint8 _g309_partyMapIndex; // @ G0309_i_PartyMapIndex
