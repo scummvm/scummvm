@@ -42,6 +42,9 @@ private:
 	int _field10;
 	int _inputCtr;
 	int _field30;
+private:
+	void handleWord1(TTstring &str);
+	void handleWord2(TTstring &str);
 public:
 	TTparser _parser;
 	TTvocab *_vocab;
@@ -77,6 +80,8 @@ public:
 	 * Sets a conversation reponse
 	 */
 	int setResponse(TTscriptBase *script, TTresponse *response);
+
+	void handleWord(TTstring &str);
 };
 
 } // End of namespace Titanic

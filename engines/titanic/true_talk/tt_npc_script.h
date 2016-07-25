@@ -263,6 +263,9 @@ protected:
 	 * Updates the current dial with the given delta
 	 */
 	void updateCurrentDial(bool changeDial);
+
+	bool fn10(bool flag);
+
 public:
 	static void init();
 	static void deinit();

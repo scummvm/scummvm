@@ -929,4 +929,47 @@ void TTnpcScript::updateCurrentDial(bool changeDial) {
 	}
 }
 
+bool TTnpcScript::fn10(bool flag) {
+	if (_itemStringP) {
+		for (const ItemRec *ir = ARRAY1; ir->_id; ++ir) {
+			if (!strcmp(ir->_name, _itemStringP)) {
+				_itemStringP = nullptr;
+				uint id = getDialogueId(ir->_id);
+				if (id == 4) {
+					return true;
+				} else if (id != 0) {
+					addResponse(id);
+					applyResponse();
+					return true;
+				}
+				break;
+			}
+		}
+
+		_itemStringP = nullptr;
+	}
+
+	if (flag && getRandomNumber(100) > 60) {
+		int val = getRandomNumber(18) - 1;
+
+		if (val == 0 && !getRoom54(101) && !getRoom54(132))
+			val = -1;
+		else if ((val == 1 && !_field7C) || val == 2)
+			val = -1;
+
+		if (val >= 0) {
+			val = getDialogueId(ARRAY2[val]);
+			if (val == 4) {
+				return true;
+			} else {
+				addResponse(val);
+				applyResponse();
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 } // End of namespace Titanic

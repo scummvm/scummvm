@@ -24,6 +24,7 @@
 #include "titanic/true_talk/tt_concept.h"
 #include "titanic/true_talk/tt_sentence.h"
 #include "titanic/true_talk/tt_parser.h"
+#include "titanic/true_talk/tt_word.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -115,6 +116,27 @@ void CScriptHandler::setParserConcept(TTconcept *newConcept, TTconcept *oldConce
 
 int CScriptHandler::setResponse(TTscriptBase *script, TTresponse *response) {
 	return _owner->setResponse(script, response);
+}
+
+void CScriptHandler::handleWord(TTstring &str) {
+	handleWord1(str);
+	handleWord2(str);
+}
+
+void CScriptHandler::handleWord1(TTstring &str) {
+	if (_concept2P)
+		delete _concept2P;
+
+	TTword word(str, WC_UNKNOWN, 0);
+	_concept2P = new TTconcept(&word);
+}
+
+void CScriptHandler::handleWord2(TTstring &str) {
+	if (_concept1P)
+		delete _concept1P;
+
+	TTword word(str, WC_UNKNOWN, 0);
+	_concept1P = new TTconcept(&word);
 }
 
 } // End of namespace Titanic

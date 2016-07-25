@@ -756,8 +756,87 @@ done:
 }
 
 ScriptChangedResult BarbotScript::scriptChanged(TTscriptBase *roomScript, uint id) {
-	warning("TODO");
-	return SCR_1;
+	switch (id) {
+	case 1:
+	case 100:
+		if (!isState9()) {
+			selectResponse(250210);
+			applyResponse();
+		}
+
+		adjustDial(0, getRandomBit() ? getRandomNumber(5) * 4 :
+			-getRandomNumber(5) * 4);
+		break;
+
+	case 3:
+		if (isState9()) {
+			selectResponse(250244);
+			applyResponse();
+			resetFlags();
+		} else {
+			if (!getValue(28) || !fn10(true)) {
+				addResponse(getDialogueId(251627 + getValue(28) ? -1034 : 0));
+				applyResponse();
+			}
+
+			CTrueTalkManager::setFlags(28, 1);
+			resetFlags();
+		}
+		break;
+
+	case 4:
+		selectResponse(isState9() ? 250141 : 250140);
+		applyResponse();
+		adjustDial(2, getDialLevel(2, false) < 50 ? -15 - getRandomNumber(30) :
+			15 + getRandomNumber(30));
+
+		if (getDialRegion(1) != 0 && getRandomNumber(100) > 75)
+			adjustDial(1, -35);
+		break;
+
+	case 143:
+		addResponse(getDialogueId(isState9() ? 250577 : 250576));
+		break;
+
+	case 144:
+		addResponse(getDialogueId(isState9() ? 250577 : 250584));
+		break;
+
+	case 145:
+		if (isState9()) {
+			addResponse(getDialogueId(250577));
+			applyResponse();
+		} else {
+			set34(57);
+		}
+		break;
+
+	case 146:
+		addResponse(getDialogueId(isState9() ? 250577 : 250574));
+		break;
+
+	case 147:
+		addResponse(getDialogueId(250579));
+		break;
+
+	}
+
+	if (id >= 250000 && id <= 251900) {
+		if (id > 250571) {
+			if (id != 250575 && (id == 250586 || id == 251858 || !isState9())) {
+				addResponse(getDialogueId(id));
+				applyResponse();
+			}
+		} else if (id == 250571 || (id != 250244 && !isState9()) || isState9()) {
+			addResponse(getDialogueId(id));
+			applyResponse();
+		} else {
+			addResponse(getDialogueId(251018));
+			applyResponse();
+		}
+	}
+
+	return SCR_2;
 }
 
 int BarbotScript::proc15() const {
