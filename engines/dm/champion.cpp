@@ -1787,10 +1787,8 @@ ChampionIndex ChampionMan::f285_getIndexInCell(int16 cell) {
 }
 
 void ChampionMan::f278_resetDataToStartGame() {
-	if (!_vm->_g298_newGame) {
-		warning(false, "MISSING CODE: stuff for resetting for loaded games");
-		assert(false);
-	}
+	if (!_vm->_g298_newGame)
+		error("MISSING CODE: stuff for resetting for loaded games");
 
 	_g414_leaderHandObject = Thing::_none;
 	_g413_leaderHandObjectIconIndex = kM1_IconIndiceNone;
