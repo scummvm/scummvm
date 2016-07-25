@@ -503,7 +503,7 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 		return 0;
 	}
 
-	if (item->subItems[subIdx])
+	if (item->subItems[subIdx]->movement)
 		return item->subItems[subIdx]->field_8;
 
 	Common::Point point;
