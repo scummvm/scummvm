@@ -155,6 +155,7 @@ void MGM::rebuildTables(int objId) {
 	if (!obj)
 		return;
 
+	warning("WWW rebuild. idx: %d, size: %d", idx, obj->_staticsList.size() * obj->_staticsList.size());
 	for (uint i = 0; i < obj->_staticsList.size(); i++) {
 		_items[idx]->statics.push_back((Statics *)obj->_staticsList[i]);
 
@@ -577,6 +578,7 @@ int MGM::refreshOffsets(int objectId, int idx1, int idx2) {
 		int from = getStaticsIndexById(idx, idx1);
 		int to = getStaticsIndexById(idx, idx2);
 
+		warning("WWW 6, want idx: %d, off: %d", idx, from + to * _items[idx]->statics.size());
 		MGMSubItem *sub = _items[idx]->subItems[from + to * _items[idx]->statics.size()];
 
 		if (sub->movement) {
