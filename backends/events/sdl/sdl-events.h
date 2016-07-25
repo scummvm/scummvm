@@ -148,6 +148,11 @@ protected:
 	 */
 	uint32 obtainUnicode(const SDL_keysym keySym);
 
+	/**
+	 * Extracts the keycode for the specified key sym.
+	 */
+	SDLKey obtainKeycode(const SDL_keysym keySym);
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	/**
 	 * Whether _fakeKeyUp contains an event we need to send.
