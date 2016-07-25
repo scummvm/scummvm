@@ -649,7 +649,13 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_Cloud_ConnectionWizard' overlays = 'Dialog.GlobalOptions'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>		
+			<widget name = 'Container'/>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GlobalOptions_Cloud_ConnectionWizard_Container' overlays = 'GlobalOptions_Cloud_ConnectionWizard.Container'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '0'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '6'>
 					<widget name = 'Picture'

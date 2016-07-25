@@ -648,6 +648,12 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_Cloud_ConnectionWizard' overlays = 'Dialog.GlobalOptions'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'Container'/>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GlobalOptions_Cloud_ConnectionWizard_Container' overlays = 'GlobalOptions_Cloud_ConnectionWizard.Container'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '4'>
 				<widget name = 'Headline'
@@ -668,60 +674,63 @@
 						height = 'Globals.Line.Height'
 				/>
 				<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '4' center = 'true'>
-						<widget name = 'CodeBox1'
-							width = '60'
-							height = '16'
-						/>
-						<widget name = 'CodeBox2'
-							width = '60'
-							height = '16'
-						/>
-						<widget name = 'CodeBox3'
-							width = '60'
-							height = '16'
-						/>
-						<widget name = 'CodeBox4'
-							width = '60'
-							height = '16'
-						/>
-					</layout>
-					<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '4' center = 'true'>
-						<widget name = 'CodeBox5'
-							width = '60'
-							height = '16'
-						/>
-						<widget name = 'CodeBox6'
-							width = '60'
-							height = '16'
-						/>
-						<widget name = 'CodeBox7'
-							width = '60'
-							height = '16'
-						/>
-						<widget name = 'CodeBox8'
-							width = '60'
-							height = '16'
-						/>
-					</layout>
-					<widget name = 'MessageLine'
-							height = 'Globals.Line.Height'
+					<widget name = 'CodeBox1'
+						width = '60'
+						height = '16'
 					/>
-				<space size = '4' />
+					<widget name = 'CodeBox2'
+						width = '60'
+						height = '16'
+					/>
+					<widget name = 'CodeBox3'
+						width = '60'
+						height = '16'
+					/>
+					<widget name = 'CodeBox4'
+						width = '60'
+						height = '16'
+					/>
+				</layout>
+				<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '4' center = 'true'>
+					<widget name = 'CodeBox5'
+						width = '60'
+						height = '16'
+					/>
+					<widget name = 'CodeBox6'
+						width = '60'
+						height = '16'
+					/>
+					<widget name = 'CodeBox7'
+						width = '60'
+						height = '16'
+					/>
+					<widget name = 'CodeBox8'
+						width = '60'
+						height = '16'
+					/>
+				</layout>
+				<widget name = 'MessageLine'
+						height = 'Globals.Line.Height'
+				/>
+				<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '4' center = 'true'>
+					<widget name = 'OpenUrlButton'
+							type = 'Button'
+					/>
+					<widget name = 'PasteCodeButton'
+							type = 'Button'
+					/>
+				</layout>
+				<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '4' center = 'true'>
+					<widget name = 'CancelButton'
+							type = 'Button'
+					/>
+					<space />
+					<widget name = 'ConnectButton'
+							type = 'Button'
+					/>
+				</layout>
+				<space size = '6' />
 				<widget name = 'Picture' width = '1' height = '1' />
-			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
-				<widget name = 'CancelButton'
-						type = 'Button'
-				/>
-				<widget name = 'OpenUrlButton'
-						type = 'Button'
-				/>
-				<widget name = 'PasteCodeButton'
-						type = 'Button'
-				/>
-				<widget name = 'ConnectButton'
-						type = 'Button'
-				/>
 			</layout>
 		</layout>
 	</dialog>

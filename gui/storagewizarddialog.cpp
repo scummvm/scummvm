@@ -31,13 +31,14 @@
 #include "gui/gui-manager.h"
 #include "gui/message.h"
 #include "gui/widget.h"
+#include "gui/widgets/edittext.h"
+#include "gui/widgets/scrollcontainer.h"
 #include "backends/cloud/cloudmanager.h"
 #ifdef USE_SDL_NET
 #include "backends/networking/sdl_net/localwebserver.h"
 #endif
 #include "backends/networking/browser/openurl.h"
 #include "common/translation.h"
-#include "widgets/edittext.h"
 
 namespace GUI {
 
@@ -45,7 +46,8 @@ enum {
 	kConnectCmd = 'Cnnt',
 	kCodeBoxCmd = 'CdBx',
 	kOpenUrlCmd = 'OpUr',
-	kPasteCodeCmd = 'PsCd'
+	kPasteCodeCmd = 'PsCd',
+	kStorageWizardContainerReflowCmd = 'SWCr',
 };
 
 StorageWizardDialog::StorageWizardDialog(uint32 storageId):
@@ -55,46 +57,42 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 #endif
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
+	ScrollContainerWidget *container = new ScrollContainerWidget(this, "GlobalOptions_Cloud_ConnectionWizard.Container", kStorageWizardContainerReflowCmd);
+	container->setTarget(this);
+
 	Common::String headline = Common::String::format(_("%s Storage Connection Wizard"), CloudMan.listStorages()[_storageId].c_str());
-	new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.Headline", headline);
+	_headlineWidget = new StaticTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.Headline", headline);
 
-	new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.NavigateLine", _s("Navigate to the following URL:"));
-	new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.URLLine", getUrl());
+	_navigateLineWidget = new StaticTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.NavigateLine", _s("Navigate to the following URL:"));
+	_urlLineWidget = new StaticTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.URLLine", getUrl());
 
-	StaticTextWidget *returnLine1 = new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.ReturnLine1", _s("Obtain the code from the storage, enter it"));
-	StaticTextWidget *returnLine2 = new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.ReturnLine2", _s("in the following field and press 'Connect':"));
+	_returnLine1 = new StaticTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.ReturnLine1", _s("Obtain the code from the storage, enter it"));
+	_returnLine2 = new StaticTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.ReturnLine2", _s("in the following field and press 'Connect':"));
 	for (uint32 i = 0; i < CODE_FIELDS; ++i)
-		_codeWidget[i] = new EditTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.CodeBox" + Common::String::format("%d", i+1), "", 0, kCodeBoxCmd);
-	_messageWidget = new StaticTextWidget(this, "GlobalOptions_Cloud_ConnectionWizard.MessageLine", "");
+		_codeWidget[i] = new EditTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.CodeBox" + Common::String::format("%d", i+1), "", 0, kCodeBoxCmd);
+	_messageWidget = new StaticTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.MessageLine", "");
 
 	// Buttons
-	new ButtonWidget(this, "GlobalOptions_Cloud_ConnectionWizard.CancelButton", _("Cancel"), 0, kCloseCmd);
-	new ButtonWidget(this, "GlobalOptions_Cloud_ConnectionWizard.OpenUrlButton", _("Open URL"), 0, kOpenUrlCmd);
-	_pasteCodeWidget = new ButtonWidget(this, "GlobalOptions_Cloud_ConnectionWizard.PasteCodeButton", _("Paste"), _("Pastes clipboard contents into fields"), kPasteCodeCmd);
-	_connectWidget = new ButtonWidget(this, "GlobalOptions_Cloud_ConnectionWizard.ConnectButton", _("Connect"), 0, kConnectCmd);
+	_cancelWidget = new ButtonWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.CancelButton", _("Cancel"), 0, kCloseCmd);
+	_openUrlWidget = new ButtonWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.OpenUrlButton", _("Open URL"), 0, kOpenUrlCmd);
+	_pasteCodeWidget = new ButtonWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.PasteCodeButton", _("Paste"), _("Pastes clipboard contents into fields"), kPasteCodeCmd);
+	_connectWidget = new ButtonWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.ConnectButton", _("Connect"), 0, kConnectCmd);
 
 	if (Cloud::CloudManager::couldUseLocalServer()) {
 		// hide fields and even the button if local webserver is on
-		returnLine1->setLabel(_s("You would be navigated to ScummVM's page"));
-		returnLine2->setLabel(_s("when you'd allow it to use your storage."));
-		for (uint32 i = 0; i < CODE_FIELDS; ++i)
-			_codeWidget[i]->setVisible(false);
-		_messageWidget->setVisible(false);
-		_connectWidget->setVisible(false);
-		_pasteCodeWidget->setVisible(false);
+		_returnLine1->setLabel(_s("You would be navigated to ScummVM's page"));
+		_returnLine2->setLabel(_s("when you'd allow it to use your storage."));
 	}
-
-#ifndef USE_SDL2
-	_pasteCodeWidget->setVisible(false);
-#endif
         
+	_picture = new GraphicsWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.Picture");
 #ifndef DISABLE_FANCY_THEMES
-	if (g_gui.theme()->supportsImages() && g_system->getOverlayWidth() > 320) { // picture only in high-res
-		GraphicsWidget *gfx = new GraphicsWidget(this, "GlobalOptions_Cloud_ConnectionWizard.Picture");
-		gfx->useThemeTransparency(true);
-		gfx->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageDropboxLogo));
+	if (g_gui.theme()->supportsImages()) {
+		_picture->useThemeTransparency(true);
+		_picture->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageDropboxLogo));
 	}
 #endif
+
+	containerWidgetsReflow();
 }
 
 void StorageWizardDialog::open() {
@@ -255,6 +253,9 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		_close = true;
 		break;
 #endif
+	case kStorageWizardContainerReflowCmd:
+		containerWidgetsReflow();
+		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
 	}
@@ -267,6 +268,40 @@ void StorageWizardDialog::handleTickle() {
 	}
 
 	Dialog::handleTickle();
+}
+
+void StorageWizardDialog::containerWidgetsReflow() {
+	// contents
+	if (_headlineWidget) _headlineWidget->setVisible(true);
+	if (_navigateLineWidget) _navigateLineWidget->setVisible(true);
+	if (_urlLineWidget) _urlLineWidget->setVisible(true);
+	if (_returnLine1) _returnLine1->setVisible(true);
+	if (_returnLine2) _returnLine2->setVisible(true);
+
+	bool showFields = (!Cloud::CloudManager::couldUseLocalServer());
+	for (uint32 i = 0; i < CODE_FIELDS; ++i)
+		_codeWidget[i]->setVisible(showFields);
+	_messageWidget->setVisible(showFields);
+
+	// left column / first bottom row
+	if (_picture) {
+		_picture->setVisible(g_system->getOverlayWidth() > 320);
+	}
+	if (_openUrlWidget) _openUrlWidget->setVisible(true);
+	if (_pasteCodeWidget) {
+#ifdef USE_SDL2
+		bool visible = showFields;
+#else
+		bool visible = false;
+#endif
+		_pasteCodeWidget->setVisible(visible);
+	}
+
+	// bottom row
+	if (_cancelWidget) _cancelWidget->setVisible(true);
+	if (_connectWidget) {
+		_connectWidget->setVisible(showFields);
+	}
 }
 
 Common::String StorageWizardDialog::getUrl() const {

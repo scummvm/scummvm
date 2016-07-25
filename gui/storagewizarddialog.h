@@ -32,6 +32,7 @@ class CommandSender;
 class EditTextWidget;
 class StaticTextWidget;
 class ButtonWidget;
+class GraphicsWidget;
 
 #ifdef USE_SDL_NET
 enum StorageWizardDialogCommands {
@@ -42,14 +43,29 @@ enum StorageWizardDialogCommands {
 class StorageWizardDialog : public Dialog {
 	static const uint32 CODE_FIELDS = 8;
 	uint32 _storageId;
+
+	StaticTextWidget *_headlineWidget;
+	StaticTextWidget *_navigateLineWidget;
+	StaticTextWidget *_urlLineWidget;
+	StaticTextWidget *_returnLine1;
+	StaticTextWidget *_returnLine2;
 	EditTextWidget *_codeWidget[CODE_FIELDS];
 	StaticTextWidget *_messageWidget;
+
+	GraphicsWidget *_picture;
+	ButtonWidget *_openUrlWidget;
 	ButtonWidget *_pasteCodeWidget;
+
+	ButtonWidget *_cancelWidget;
 	ButtonWidget *_connectWidget;
+
 	bool _close;
 #ifdef USE_SDL_NET
 	bool _stopServerOnClose;
 #endif
+
+	/** Hides/shows widgets for Container to work with them correctly. */
+	void containerWidgetsReflow();
 
 	/** Return short scummvm.org URL for user to navigate to. */
 	Common::String getUrl() const;
