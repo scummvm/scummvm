@@ -277,8 +277,11 @@ void DMEngine::f462_startGame() {
 	f3_processNewPartyMap(_dungeonMan->_g309_partyMapIndex);
 
 	if (!_g298_newGame) {
-		warning(false, "TODO: loading game");
-		assert(false);
+		_displayMan->_g578_useByteBoxCoordinates = false;
+		f22_delay(1);
+		_displayMan->D24_fillScreenBox(g61_boxScreenTop, k0_ColorBlack);
+		_displayMan->D24_fillScreenBox(g62_boxScreenRight, k0_ColorBlack);
+		_displayMan->D24_fillScreenBox(g63_boxScreenBottom, k0_ColorBlack);
 	} else {
 		_displayMan->_g578_useByteBoxCoordinates = false;
 		_displayMan->D24_fillScreenBox(g61_boxScreenTop, k0_ColorBlack);
@@ -331,10 +334,12 @@ Common::Error DMEngine::run() {
 }
 
 void DMEngine::f2_gameloop() {
-	warning(false, "DUMMY CODE: SETTING PARTY POS AND DIRECTION");
-	_dungeonMan->_g306_partyMapX = 9;
-	_dungeonMan->_g307_partyMapY = 9;
-	_dungeonMan->_g308_partyDir = kDirWest;
+	if (_g298_newGame) {
+		warning(false, "DUMMY CODE: SETTING PARTY POS AND DIRECTION");
+		_dungeonMan->_g306_partyMapX = 9;
+		_dungeonMan->_g307_partyMapY = 9;
+		_dungeonMan->_g308_partyDir = kDirWest;
+	}
 
 	_g318_waitForInputMaxVerticalBlankCount = 10;
 	while (true) {

@@ -1787,8 +1787,32 @@ ChampionIndex ChampionMan::f285_getIndexInCell(int16 cell) {
 }
 
 void ChampionMan::f278_resetDataToStartGame() {
-	if (!_vm->_g298_newGame)
-		error("MISSING CODE: stuff for resetting for loaded games");
+	if (!_vm->_g298_newGame) {
+		Thing L0787_T_Thing;
+		if ((L0787_T_Thing = _g414_leaderHandObject) == Thing::_none) {
+			_g415_leaderEmptyHanded = true;
+			_g413_leaderHandObjectIconIndex = kM1_IconIndiceNone;
+			_vm->_eventMan->f69_setMousePointer();
+		} else {
+			f297_putObjectInLeaderHand(L0787_T_Thing, true); /* This call will add the weight of the leader hand object to the Load of the leader a first time */
+		}
+		Champion *L0788_ps_Champion = _gK71_champions;
+		int16 L0785_i_ChampionIndex;
+		for (L0785_i_ChampionIndex = k0_ChampionFirst; L0785_i_ChampionIndex < _g305_partyChampionCount; L0785_i_ChampionIndex++, L0788_ps_Champion++) {
+			clearFlag(L0788_ps_Champion->_attributes, k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x0200_ChampionAttributeLoad | k0x0400_ChampionAttributeIcon | k0x0800_ChampionAttributePanel | k0x1000_ChampionAttributeStatusBox | k0x2000_ChampionAttributeWounds | k0x4000_ChampionAttributeViewport | k0x8000_ChampionAttributeActionHand);
+			setFlag(L0788_ps_Champion->_attributes, k0x8000_ChampionAttributeActionHand | k0x1000_ChampionAttributeStatusBox | k0x0400_ChampionAttributeIcon);
+		}
+		f293_drawAllChampionStates();
+		if ((L0785_i_ChampionIndex = _g411_leaderIndex) != kM1_ChampionNone) {
+			_g411_leaderIndex = kM1_ChampionNone;
+			_vm->_eventMan->f368_commandSetLeader((ChampionIndex)L0785_i_ChampionIndex);
+		}
+		if ((L0785_i_ChampionIndex = _g514_magicCasterChampionIndex) != kM1_ChampionNone) {
+			_g514_magicCasterChampionIndex = kM1_ChampionNone;
+			_vm->_menuMan->f394_setMagicCasterAndDrawSpellArea(L0785_i_ChampionIndex);
+		}
+		return;
+	}
 
 	_g414_leaderHandObject = Thing::_none;
 	_g413_leaderHandObjectIconIndex = kM1_IconIndiceNone;

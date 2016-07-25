@@ -42,10 +42,19 @@ namespace DM {
 #define C2_FORMAT_DM_AMIGA_2X_PC98_X68000_FM_TOWNS_CSB_ATARI_ST 2
 #define C3_PLATFORM_AMIGA 3
 #define C10_DUNGEON_DM 10
+
 LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 	Common::String fileName;
 	Common::SaveFileManager *saveFileManager = nullptr;
 	Common::InSaveFile *file = nullptr;
+
+	struct {
+		int16 _g528_saveFormat = 0;
+		int16 saveAndPlayChoice = 0;
+		int32 _g525_gameId = 0;
+		int16 _g527_platform = 0;
+		uint16 _g526_dungeonId = 0;
+	} dmSaveHeader;
 
 	if (!_g298_newGame) {
 		fileName = getSavefileName(slot);
@@ -69,14 +78,20 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 			goto T0435004;
 		}*/
 
-		warning(false, "DUMMY CODE in f435_loadgame setting _g298_newGame to k1_modeLoadDungeon");
-		_g298_newGame = k1_modeLoadDungeon;
 
 		SaveGameHeader header;
 		readSaveGameHeader(file, &header);
 
 		warning(false, "MISSING CODE: missing check for matching format and platform in save in f435_loadgame");
 
+
+		dmSaveHeader._g528_saveFormat = file->readSint16BE();
+		dmSaveHeader.saveAndPlayChoice = file->readSint16BE();
+		dmSaveHeader._g525_gameId = file->readSint32BE();
+		dmSaveHeader._g527_platform = file->readSint16BE();
+		dmSaveHeader._g526_dungeonId = file->readUint16BE();
+
+		_g525_gameId = dmSaveHeader._g525_gameId;
 
 		_g313_gameTime = file->readSint32BE();
 		// G0349_ul_LastRandomNumber = L1371_s_GlobalData.LastRandomNumber;
@@ -108,10 +123,14 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 		_timeline->load3_eventsPart(file);
 		_timeline->load4_timelinePart(file);
 
-		_g525_gameId = file->readSint32BE();
+		// read sentinel
+		uint32 sentinel = file->readUint32BE();
+		assert(sentinel == 0x6f85e3d3);
 	}
 
-	_dungeonMan->f434_loadDungeonFile();
+	_dungeonMan->f434_loadDungeonFile(file);
+	delete file;
+
 	if (_g298_newGame) {
 		_timeline->f233_initTimeline();
 		_groupMan->f196_initActiveGroups();
@@ -124,16 +143,15 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 			F0436_STARTEND_FadeToPalette(_vm->_displayMan->_g347_paletteTopAndBottomScreen);
 		}*/
 	} else {
-		_g528_saveFormat = file->readSint16BE();
-		_g527_platform = file->readSint16BE();
-		_g526_dungeonId = file->readUint16BE();
+		_g528_saveFormat = dmSaveHeader._g528_saveFormat;
+		_g527_platform = dmSaveHeader._g527_platform;
+		_g526_dungeonId = dmSaveHeader._g526_dungeonId;
 
-		_g524_restartGameAllowed = true;
+			_g524_restartGameAllowed = true;
 		warning(false, "MISSING CDOE: F0427_DIALOG_Draw in f435_loadgame");
 	}
 	_championMan->_g303_partyDead = false;
 
-	delete file;
 	return k1_LoadgameSuccess;
 }
 
@@ -168,6 +186,12 @@ void DMEngine::f433_processCommand140_saveGame(uint16 slot, const Common::String
 
 	writeSaveGameHeader(file, desc);
 
+	file->writeSint16BE(_g528_saveFormat);
+	file->writeSint16BE(saveAndPlayChoice);
+	file->writeSint32BE(_g525_gameId);
+	file->writeSint16BE(_g527_platform);
+	file->writeUint16BE(_g526_dungeonId);
+
 	// write C0_SAVE_PART_GLOBAL_DATA part
 	file->writeSint32BE(_g313_gameTime);
 	//L1348_s_GlobalData.LastRandomNumber = G0349_ul_LastRandomNumber;
@@ -199,24 +223,18 @@ void DMEngine::f433_processCommand140_saveGame(uint16 slot, const Common::String
 	// write C4_SAVE_PART_TIMELINE part
 	_timeline->save4_timelinePart(file);
 
-	file->writeSint32BE(_g525_gameId);
-	file->writeSint16BE(_g528_saveFormat);
-	file->writeSint16BE(_g527_platform);
-	file->writeUint16BE(_g526_dungeonId);
-
-	file->writeSint16BE(saveAndPlayChoice);
+	// write sentinel
+	file->writeUint32BE(0x6f85e3d3);
 
 	// save _g278_dungeonFileHeader
 	{
 		DungeonFileHeader &header = _dungeonMan->_g278_dungeonFileHeader;
-		file->writeUint16BE(header._dungeonId);
 		file->writeUint16BE(header._ornamentRandomSeed);
-		file->writeUint32BE(header._rawMapDataSize);
+		file->writeUint16BE(header._rawMapDataSize);
 		file->writeByte(header._mapCount);
+		file->writeByte(0); // to match the structure of dungeon.dat, will be discarded
 		file->writeUint16BE(header._textDataWordCount);
-		file->writeUint16BE(header._partyStartDir);
-		file->writeUint16BE(header._partyStartPosX);
-		file->writeUint16BE(header._partyStartPosY);
+		file->writeUint16BE(header._partyStartLocation);
 		file->writeUint16BE(header._squareFirstThingCount);
 		for (uint16 i = 0; i < 16; ++i)
 			file->writeUint16BE(header._thingCounts[i]);
@@ -225,23 +243,26 @@ void DMEngine::f433_processCommand140_saveGame(uint16 slot, const Common::String
 	 // save _g277_dungeonMaps
 	for (uint16 i = 0; i < _dungeonMan->_g278_dungeonFileHeader._mapCount; ++i) {
 		Map &map = _dungeonMan->_g277_dungeonMaps[i];
-		file->writeUint32BE(map._rawDunDataOffset);
+		uint16 tmp;
+
+		file->writeUint16BE(map._rawDunDataOffset);
+		file->writeUint32BE(0); // to match the structure of dungeon.dat, will be discarded
 		file->writeByte(map._offsetMapX);
 		file->writeByte(map._offsetMapY);
-		file->writeByte(map._level);
-		file->writeByte(map._width);
-		file->writeByte(map._height);
-		file->writeByte(map._wallOrnCount);
-		file->writeByte(map._randWallOrnCount);
-		file->writeByte(map._floorOrnCount);
-		file->writeByte(map._randFloorOrnCount);
-		file->writeByte(map._doorOrnCount);
-		file->writeByte(map._creatureTypeCount);
-		file->writeByte(map._difficulty);
-		file->writeSint16BE(map._floorSet);
-		file->writeSint16BE(map._wallSet);
-		file->writeByte(map._doorSet0);
-		file->writeByte(map._doorSet1);
+
+		tmp = ((map._height & 0x1F) << 11) | ((map._width & 0x1F) << 6) | (map._level & 0x3F);
+		file->writeUint16BE(tmp);
+
+		tmp = ((map._randFloorOrnCount & 0xF) << 12) | ((map._floorOrnCount & 0xF) << 8)
+			| ((map._randWallOrnCount & 0xF) << 4) | (map._wallOrnCount & 0xF);
+		file->writeUint16BE(tmp);
+
+		tmp = ((map._difficulty & 0xF) << 12) | ((map._creatureTypeCount & 0xF) << 4) | (map._doorOrnCount & 0xF);
+		file->writeUint16BE(tmp);
+
+		tmp = ((map._doorSet1 & 0xF) << 12) | ((map._doorSet0 & 0xF) << 8) 
+			| ((map._wallSet & 0xF) << 4) | (map._floorSet & 0xF);
+		file->writeUint16BE(tmp);
 	}
 
 // save _g280_dungeonColumnsCumulativeSquareThingCount
@@ -262,7 +283,7 @@ void DMEngine::f433_processCommand140_saveGame(uint16 slot, const Common::String
 			file->writeUint16BE(_dungeonMan->_g284_thingData[thingIndex][i]);
 
 	// save _g276_dungeonRawMapData
-	for (uint16 i = 0; i < _dungeonMan->_g278_dungeonFileHeader._rawMapDataSize; ++i)
+	for (uint32 i = 0; i < _dungeonMan->_g278_dungeonFileHeader._rawMapDataSize; ++i)
 		file->writeByte(_dungeonMan->_g276_dungeonRawMapData[i]);
 
 	file->flush();

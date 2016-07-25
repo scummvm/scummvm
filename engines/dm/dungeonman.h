@@ -605,14 +605,11 @@ public:
 }; // wrapper for bytes which are used as squares
 
 struct DungeonFileHeader {
-	uint16 _dungeonId;
-	// equal to dungeonId
 	uint16 _ornamentRandomSeed;
-	uint32 _rawMapDataSize;
+	uint16 _rawMapDataSize;
 	uint8 _mapCount;
 	uint16 _textDataWordCount;
-	Direction _partyStartDir; // @ InitialPartyLocation
-	uint16 _partyStartPosX, _partyStartPosY;
+	uint16 _partyStartLocation;
 	uint16 _squareFirstThingCount; // @ SquareFirstThingCount
 	uint16 _thingCounts[16]; // @ ThingCount[16]
 }; // @ DUNGEON_HEADER
@@ -681,7 +678,7 @@ public:
 	uint16 *f157_getSquareFirstThingData(int16 mapX, int16 mapY); // @ F0157_DUNGEON_GetSquareFirstThingData
 
 	// TODO: this does stuff other than load the file!
-	void f434_loadDungeonFile();	// @ F0434_STARTEND_IsLoadDungeonSuccessful_CPSC
+	void f434_loadDungeonFile(Common::InSaveFile *file);	// @ F0434_STARTEND_IsLoadDungeonSuccessful_CPSC
 	void f174_setCurrentMapAndPartyMap(uint16 mapIndex); // @ F0174_DUNGEON_SetCurrentMapAndPartyMap
 
 	bool f149_isWallOrnAnAlcove(int16 wallOrnIndex); // @ F0149_DUNGEON_IsWallOrnamentAnAlcove
@@ -740,7 +737,6 @@ public:
 
 
 	Map *_g277_dungeonMaps; // @ G0277_ps_DungeonMaps
-	// does not have to be freed
 	byte *_g276_dungeonRawMapData; // @ G0276_puc_DungeonRawMapData
 
 	int16 _g265_currMapInscriptionWallOrnIndex; // @ G0265_i_CurrentMapInscriptionWallOrnamentIndex

@@ -421,6 +421,7 @@ DungeonMan::~DungeonMan() {
 	for (uint16 i = 0; i < 16; ++i) {
 		delete[] _g284_thingData[i];
 	}
+	delete[] _g276_dungeonRawMapData;
 }
 
 void DungeonMan::f455_decompressDungeonFile() {
@@ -535,108 +536,119 @@ const Thing Thing::_explRebirthStep1(0xFFE4); // @ C0xFFE4_THING_EXPLOSION_REBIR
 const Thing Thing::_explRebirthStep2(0xFFE5); // @ C0xFFE5_THING_EXPLOSION_REBIRTH_STEP2    
 const Thing Thing::_party(0xFFFF); // @ C0xFFFF_THING_PARTY          
 
-void DungeonMan::f434_loadDungeonFile() {
-
-	if(!_rawDunFileData)
+void DungeonMan::f434_loadDungeonFile(Common::InSaveFile *file) {
+	if (_vm->_g298_newGame)
 		f455_decompressDungeonFile();
 
-	Common::MemoryReadStream dunDataStream(_rawDunFileData, _rawDunFileDataSize, DisposeAfterUse::NO);
+
+	Common::ReadStream *dunDataStream = nullptr;
+	if (file) { // if loading a save 
+		dunDataStream = file;
+	} else { // else read dungeon.dat
+		assert(_rawDunFileData && _rawDunFileDataSize);
+		dunDataStream = new Common::MemoryReadStream(_rawDunFileData, _rawDunFileDataSize, DisposeAfterUse::NO);
+	}
 
 	// initialize _g278_dungeonFileHeader
-	_g278_dungeonFileHeader._dungeonId = _g278_dungeonFileHeader._ornamentRandomSeed = dunDataStream.readUint16BE();
-	_g278_dungeonFileHeader._rawMapDataSize = dunDataStream.readUint16BE();
-	_g278_dungeonFileHeader._mapCount = dunDataStream.readByte();
-	dunDataStream.readByte(); // discard 1 byte
-	_g278_dungeonFileHeader._textDataWordCount = dunDataStream.readUint16BE();
-	uint16 partyPosition = dunDataStream.readUint16BE();
-	_g278_dungeonFileHeader._partyStartDir = (Direction)((partyPosition >> 10) & 3);
-	_g278_dungeonFileHeader._partyStartPosY = (partyPosition >> 5) & 0x1F;
-	_g278_dungeonFileHeader._partyStartPosX = (partyPosition >> 0) & 0x1F;
-	_g278_dungeonFileHeader._squareFirstThingCount = dunDataStream.readUint16BE();
+	_g278_dungeonFileHeader._ornamentRandomSeed = dunDataStream->readUint16BE();
+	_g278_dungeonFileHeader._rawMapDataSize = dunDataStream->readUint16BE();
+	_g278_dungeonFileHeader._mapCount = dunDataStream->readByte();
+	dunDataStream->readByte(); // discard 1 byte
+	_g278_dungeonFileHeader._textDataWordCount = dunDataStream->readUint16BE();
+	_g278_dungeonFileHeader._partyStartLocation = dunDataStream->readUint16BE();
+	_g278_dungeonFileHeader._squareFirstThingCount = dunDataStream->readUint16BE();
 	for (uint16 i = 0; i < k16_ThingTypeTotal; ++i)
-		_g278_dungeonFileHeader._thingCounts[i] = dunDataStream.readUint16BE();
+		_g278_dungeonFileHeader._thingCounts[i] = dunDataStream->readUint16BE();
 
 	// init party position and mapindex
 	if (_vm->_g298_newGame) {
-		_g308_partyDir = _g278_dungeonFileHeader._partyStartDir;
-		_g306_partyMapX = _g278_dungeonFileHeader._partyStartPosX;
-		_g307_partyMapY = _g278_dungeonFileHeader._partyStartPosY;
+		uint16 startLoc = _g278_dungeonFileHeader._partyStartLocation;
+		_g308_partyDir = (Direction)((startLoc >> 10) & 3);
+		_g306_partyMapX = startLoc & 0x1F;
+		_g307_partyMapY = (startLoc >> 5) & 0x1F;
 		_g309_partyMapIndex = 0;
 	}
 
 	// load map data
-	delete[] _g277_dungeonMaps;
-	_g277_dungeonMaps = new Map[_g278_dungeonFileHeader._mapCount];
-	for (uint16 i = 0; i < _g278_dungeonFileHeader._mapCount; ++i) {
-		_g277_dungeonMaps[i]._rawDunDataOffset = dunDataStream.readUint16BE();
-		dunDataStream.readUint32BE(); // discard 4 bytes
-		_g277_dungeonMaps[i]._offsetMapX = dunDataStream.readByte();
-		_g277_dungeonMaps[i]._offsetMapY = dunDataStream.readByte();
+	if (!_vm->_g523_restartGameRequest) {
+		delete[] _g277_dungeonMaps;
+		_g277_dungeonMaps = new Map[_g278_dungeonFileHeader._mapCount];
+	}
 
-		uint16 tmp = dunDataStream.readUint16BE();
+	for (uint16 i = 0; i < _g278_dungeonFileHeader._mapCount; ++i) {
+		_g277_dungeonMaps[i]._rawDunDataOffset = dunDataStream->readUint16BE();
+		dunDataStream->readUint32BE(); // discard 4 bytes
+		_g277_dungeonMaps[i]._offsetMapX = dunDataStream->readByte();
+		_g277_dungeonMaps[i]._offsetMapY = dunDataStream->readByte();
+		
+		uint16 tmp = dunDataStream->readUint16BE();
 		_g277_dungeonMaps[i]._height = tmp >> 11;
 		_g277_dungeonMaps[i]._width = (tmp >> 6) & 0x1F;
-		_g277_dungeonMaps[i]._level = tmp & 0x1F; // Only used in DMII
+		_g277_dungeonMaps[i]._level = tmp & 0x3F; // Only used in DMII
 
-		tmp = dunDataStream.readUint16BE();
+		tmp = dunDataStream->readUint16BE();
 		_g277_dungeonMaps[i]._randFloorOrnCount = tmp >> 12;
 		_g277_dungeonMaps[i]._floorOrnCount = (tmp >> 8) & 0xF;
 		_g277_dungeonMaps[i]._randWallOrnCount = (tmp >> 4) & 0xF;
 		_g277_dungeonMaps[i]._wallOrnCount = tmp & 0xF;
 
-		tmp = dunDataStream.readUint16BE();
+		tmp = dunDataStream->readUint16BE();
 		_g277_dungeonMaps[i]._difficulty = tmp >> 12;
 		_g277_dungeonMaps[i]._creatureTypeCount = (tmp >> 4) & 0xF;
 		_g277_dungeonMaps[i]._doorOrnCount = tmp & 0xF;
 
-		tmp = dunDataStream.readUint16BE();
+		tmp = dunDataStream->readUint16BE();
 		_g277_dungeonMaps[i]._doorSet1 = (tmp >> 12) & 0xF;
 		_g277_dungeonMaps[i]._doorSet0 = (tmp >> 8) & 0xF;
 		_g277_dungeonMaps[i]._wallSet = (WallSet)((tmp >> 4) & 0xF);
 		_g277_dungeonMaps[i]._floorSet = (FloorSet)(tmp & 0xF);
 	}
 
-	// TODO: ??? is this - begin
-	delete[] _g281_dungeonMapsFirstColumnIndex;
-	_g281_dungeonMapsFirstColumnIndex = new uint16[_g278_dungeonFileHeader._mapCount];
+	// load column stuff thingy
+	if (!_vm->_g523_restartGameRequest) {
+		delete[] _g281_dungeonMapsFirstColumnIndex;
+		_g281_dungeonMapsFirstColumnIndex = new uint16[_g278_dungeonFileHeader._mapCount];
+	}
 	uint16 columCount = 0;
 	for (uint16 i = 0; i < _g278_dungeonFileHeader._mapCount; ++i) {
 		_g281_dungeonMapsFirstColumnIndex[i] = columCount;
 		columCount += _g277_dungeonMaps[i]._width + 1;
 	}
 	_g282_dungeonColumCount = columCount;
-	// TODO: ??? is this - end
-
 
 	uint32 actualSquareFirstThingCount = _g278_dungeonFileHeader._squareFirstThingCount;
-	if (_vm->_g298_newGame) // TODO: what purpose does this serve?
+	if (_vm->_g298_newGame)
 		_g278_dungeonFileHeader._squareFirstThingCount += 300;
 
-	// TODO: ??? is this - begin
-	delete[] _g280_dungeonColumnsCumulativeSquareThingCount;
-	_g280_dungeonColumnsCumulativeSquareThingCount = new uint16[columCount];
+	if (!_vm->_g523_restartGameRequest) {
+		delete[] _g280_dungeonColumnsCumulativeSquareThingCount;
+		_g280_dungeonColumnsCumulativeSquareThingCount = new uint16[columCount];
+	}
 	for (uint16 i = 0; i < columCount; ++i)
-		_g280_dungeonColumnsCumulativeSquareThingCount[i] = dunDataStream.readUint16BE();
-	// TODO: ??? is this - end
+		_g280_dungeonColumnsCumulativeSquareThingCount[i] = dunDataStream->readUint16BE();
 
-	// TODO: ??? is this - begin
-	delete[] _g283_squareFirstThings;
-	_g283_squareFirstThings = new Thing[_g278_dungeonFileHeader._squareFirstThingCount];
+
+	// load sqaure first things
+	if (!_vm->_g523_restartGameRequest) {
+		delete[] _g283_squareFirstThings;
+		_g283_squareFirstThings = new Thing[_g278_dungeonFileHeader._squareFirstThingCount];
+	}
 	for (uint16 i = 0; i < actualSquareFirstThingCount; ++i)
-		_g283_squareFirstThings[i].set(dunDataStream.readUint16BE());
+		_g283_squareFirstThings[i].set(dunDataStream->readUint16BE());
 	if (_vm->_g298_newGame)
 		for (uint16 i = 0; i < 300; ++i)
 			_g283_squareFirstThings[actualSquareFirstThingCount + i] = Thing::_none;
 
-	// TODO: ??? is this - end
 
 	// load text data
-	delete[] _g260_dungeonTextData;
-	_g260_dungeonTextData = new uint16[_g278_dungeonFileHeader._textDataWordCount];
+	if (!_vm->_g523_restartGameRequest) {
+		delete[] _g260_dungeonTextData;
+		_g260_dungeonTextData = new uint16[_g278_dungeonFileHeader._textDataWordCount];
+	}
 	for (uint16 i = 0; i < _g278_dungeonFileHeader._textDataWordCount; ++i)
-		_g260_dungeonTextData[i] = dunDataStream.readUint16BE();
+		_g260_dungeonTextData[i] = dunDataStream->readUint16BE();
 
-	// TODO: ??? what this
+
 	if (_vm->_g298_newGame)
 		_vm->_timeline->_g369_eventMaxCount = 100;
 
@@ -651,35 +663,26 @@ void DungeonMan::f434_loadDungeonFile() {
 		if (thingStoreWordCount == 0)
 			continue;
 
-		if (_g284_thingData[thingType]) {
+		if (!_vm->_g523_restartGameRequest) {
 			delete[] _g284_thingData[thingType];
+			_g284_thingData[thingType] = new uint16[_g278_dungeonFileHeader._thingCounts[thingType] * thingStoreWordCount];
 		}
-		_g284_thingData[thingType] = new uint16[_g278_dungeonFileHeader._thingCounts[thingType] * thingStoreWordCount];
 
-		if (thingType == k4_GroupThingType) {
+		if ((thingType == k4_GroupThingType || thingType == k14_ProjectileThingType) && !file) { // !file because save files have diff. structure than dungeon.dat 
 			for (uint16 i = 0; i < thingCount; ++i) {
 				uint16 *nextSlot = _g284_thingData[thingType] + i *thingStoreWordCount;
 				for (uint16 j = 0; j < thingStoreWordCount; ++j) {
 					if (j == 2 || j == 3)
-						nextSlot[j] = dunDataStream.readByte();
+						nextSlot[j] = dunDataStream->readByte();
 					else
-						nextSlot[j] = dunDataStream.readUint16BE();
+						nextSlot[j] = dunDataStream->readUint16BE();
 				}
-			}
-		} else if (thingType == k14_ProjectileThingType) {
-			for (uint16 i = 0; i < thingCount; ++i) {
-				uint16 *nextSlot = _g284_thingData[thingType] + i * thingStoreWordCount;
-				nextSlot[0] = dunDataStream.readUint16BE();
-				nextSlot[1] = dunDataStream.readUint16BE();
-				nextSlot[2] = dunDataStream.readByte();
-				nextSlot[3] = dunDataStream.readByte();
-				nextSlot[4] = dunDataStream.readUint16BE();
 			}
 		} else {
 			for (uint16 i = 0; i < thingCount; ++i) {
 				uint16 *nextSlot = _g284_thingData[thingType] + i *thingStoreWordCount;
 				for (uint16 j = 0; j < thingStoreWordCount; ++j)
-					nextSlot[j] = dunDataStream.readUint16BE();
+					nextSlot[j] = dunDataStream->readUint16BE();
 			}
 		}
 
@@ -693,8 +696,13 @@ void DungeonMan::f434_loadDungeonFile() {
 	}
 
 	// load map data
-	if (!_vm->_g523_restartGameRequest)
-		_g276_dungeonRawMapData = _rawDunFileData + dunDataStream.pos();
+	if (!_vm->_g523_restartGameRequest) {
+		delete[] _g276_dungeonRawMapData;
+		_g276_dungeonRawMapData = new byte[_g278_dungeonFileHeader._rawMapDataSize];
+	}
+
+	for (uint32 i = 0; i < _g278_dungeonFileHeader._rawMapDataSize; ++i)
+		_g276_dungeonRawMapData[i] = dunDataStream->readByte();
 
 
 	if (!_vm->_g523_restartGameRequest) {
@@ -712,6 +720,10 @@ void DungeonMan::f434_loadDungeonFile() {
 			}
 		}
 	}
+
+	if (!file) { // this means that we created a new MemoryReadStream
+		delete file;
+	} // the deletion of the function parameter 'file' happens elsewhere
 }
 
 void DungeonMan::f173_setCurrentMap(uint16 mapIndex) {
