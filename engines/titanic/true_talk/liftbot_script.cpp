@@ -112,10 +112,18 @@ int LiftbotScript::proc22(int id) const {
 	return 0;
 }
 
-int LiftbotScript::proc23() const {
-	warning("TODO");
-	return 0;
+uint LiftbotScript::getDialsBitset() const {
+	uint bits = 0;
+	if (!getDialRegion(1))
+		bits = 1;
+	if (!getDialRegion(0))
+		bits |= 2;
+	if (bits > 1)
+		bits ^= 1;
+
+	return bits;
 }
+
 
 int LiftbotScript::proc25(int val1, int val2, TTroomScript *roomScript, TTsentence *sentence) const {
 	warning("TODO");

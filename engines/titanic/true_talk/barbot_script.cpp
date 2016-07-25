@@ -92,7 +92,7 @@ int BarbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence,
 
 	} else if (tag == MKTAG('B', 'A', 'R', 'K') && getRandomNumber(100) > 50) {
 		selectResponse(250025);
-		switch (proc23()) {
+		switch (getDialsBitset()) {
 		case 4:
 		case 6:
 			addResponse(getDialogueId(250125));
@@ -106,7 +106,7 @@ int BarbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence,
 	
 	} else if (tag == MKTAG('B', 'A', 'R', 'U') && getRandomNumber(100) > 50) {
 		selectResponse(250025);
-		switch (proc23()) {
+		switch (getDialsBitset()) {
 		case 4:
 		case 6:
 			addResponse(getDialogueId(250112));
@@ -856,9 +856,16 @@ int BarbotScript::proc22(int id) const {
 	return 0;
 }
 
-int BarbotScript::proc23() const {
-	warning("TODO");
-	return 0;
+uint BarbotScript::getDialsBitset() const {
+	uint bits = 0;
+	if (!getDialRegion(0))
+		bits = 1;
+	if (!getDialRegion(1))
+		bits |= 2;
+	if (!getDialRegion(2))
+		bits |= 4;
+	
+	return bits;
 }
 
 int BarbotScript::proc25(int val1, int val2, TTroomScript *roomScript, TTsentence *sentence) const {

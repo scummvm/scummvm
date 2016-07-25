@@ -135,9 +135,14 @@ int DoorbotScript::proc22(int id) const {
 	return 0;
 }
 
-int DoorbotScript::proc23() const {
-	warning("TODO");
-	return 0;
+uint DoorbotScript::getDialsBitset() const {
+	uint bits = 0;
+	if (!getDialRegion(1))
+		bits = 1;
+	if (!getDialRegion(0))
+		bits |= 2;
+
+	return bits;
 }
 
 int DoorbotScript::proc25(int val1, int val2, TTroomScript *roomScript, TTsentence *sentence) const {

@@ -444,10 +444,6 @@ int TTnpcScript::proc22(int id) const {
 	return 0;
 }
 
-int TTnpcScript::proc23() const {
-	return 0;
-}
-
 const TTscriptMapping *TTnpcScript::getMapping(int index) {
 	if (index >= 0 && index < (int)_mappings.size())
 		return &_mappings[index];
@@ -705,7 +701,7 @@ uint TTnpcScript::getDialogueId(uint tagId) {
 	if (tagId != oldTagId)
 		tagId = getRangeValue(tagId);
 
-	oldTagId = proc23();
+	oldTagId = getDialsBitset();
 	uint newId = proc21(origId, tagId, oldTagId);
 	if (!newId)
 		return 0;

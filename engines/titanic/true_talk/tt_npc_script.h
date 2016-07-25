@@ -349,7 +349,12 @@ public:
 
 	virtual int proc21(int v1, int v2, int v3);
 	virtual int proc22(int id) const;
-	virtual int proc23() const;
+
+	/**
+	 * Returns a bitset of the dials being off or not
+	 */
+	virtual uint getDialsBitset() const { return 0; }
+	
 	virtual const TTscriptMapping *getMapping(int index);
 	virtual int proc25(int val1, int val2, TTroomScript *roomScript, TTsentence *sentence) const;
 	virtual void proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence);
