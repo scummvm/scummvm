@@ -29,7 +29,7 @@
 namespace Titanic {
 
 class CCDROMTray : public CGameObject {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool ActMsg(CActMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool StatusChangeMsg(CStatusChangeMsg *msg);

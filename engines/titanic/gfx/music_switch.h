@@ -28,7 +28,7 @@
 namespace Titanic {
 
 class CMusicSwitch : public CMusicControl {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 public:
 	CLASSDEF;
 

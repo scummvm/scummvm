@@ -28,7 +28,7 @@
 namespace Titanic {
 
 class CDeskbot : public CTrueTalkNPC {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool TurnOn(CTurnOn *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool ActMsg(CActMsg *msg);

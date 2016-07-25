@@ -28,7 +28,7 @@
 namespace Titanic {
 
 class CPhonographCylinder : public CCarry {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
 	bool QueryCylinderMsg(CQueryCylinderMsg *msg);
 	bool RecordOntoCylinderMsg(CRecordOntoCylinderMsg *msg);

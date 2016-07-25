@@ -31,7 +31,7 @@
 namespace Titanic {
 
 class CArm : public CCarry {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool PuzzleSolvedMsg(CPuzzleSolvedMsg *msg);
 	bool TranslateObjectMsg(CTranslateObjectMsg *msg);
 	bool UseWithOtherMsg(CUseWithOtherMsg *msg);

@@ -28,7 +28,7 @@
 namespace Titanic {
 
 class CNodeItem : public CNamedItem {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 public:
 	int _nodeNumber;
 	Point _nodePos;

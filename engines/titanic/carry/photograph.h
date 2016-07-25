@@ -31,7 +31,7 @@
 namespace Titanic {
 
 class CPhotograph : public CCarry {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool MouseDragEndMsg(CMouseDragEndMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 	bool PETGainedObjectMsg(CPETGainedObjectMsg *msg);

@@ -31,7 +31,7 @@
 namespace Titanic {
 
 class CCarryParrot : public CCarry {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool PETGainedObjectMsg(CPETGainedObjectMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
 	bool IsParrotPresentMsg(CIsParrotPresentMsg *msg);

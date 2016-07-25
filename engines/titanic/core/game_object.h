@@ -50,7 +50,7 @@ class OSMovie;
 
 class CGameObject : public CNamedItem {
 	friend class OSMovie;
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 private:
 	static CCreditText *_credits;
 private:

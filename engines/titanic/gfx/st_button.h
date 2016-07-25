@@ -30,7 +30,7 @@
 namespace Titanic {
 
 class CSTButton : public CBackground {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);

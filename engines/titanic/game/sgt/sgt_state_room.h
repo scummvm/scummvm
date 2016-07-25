@@ -46,7 +46,7 @@ struct CSGTStateRoomStatics {
 };
 
 class CSGTStateRoom : public CBackground {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
 	static CSGTStateRoomStatics *_statics;

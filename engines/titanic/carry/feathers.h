@@ -28,7 +28,7 @@
 namespace Titanic {
 
 class CFeathers : public CCarry {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 public:
 	CLASSDEF;
 	CFeathers();

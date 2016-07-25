@@ -43,7 +43,7 @@ namespace Titanic {
 enum SummonResult { SUMMON_CANT = 0, SUMMON_PRESENT = 1, SUMMON_CAN = 2 };
 
 class CPetControl : public CGameObject {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	struct PetEventInfo {
 		int _id;
 		CPetSection *_target;

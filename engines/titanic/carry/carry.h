@@ -30,7 +30,7 @@
 namespace Titanic {
 
 class CCarry : public CGameObject {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 	bool MouseDragMoveMsg(CMouseDragMoveMsg *msg);
 	bool MouseDragEndMsg(CMouseDragEndMsg *msg);

@@ -28,7 +28,7 @@
 namespace Titanic {
 
 class CTurnOnObject : public CBackground {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 protected:

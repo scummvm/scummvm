@@ -28,7 +28,7 @@
 namespace Titanic {
 
 class CMusicalInstrument : public CBackground {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 public:
 	CLASSDEF;
 

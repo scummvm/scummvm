@@ -30,7 +30,7 @@
 namespace Titanic {
 
 class CCDROM : public CGameObject {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 	bool MouseDragEndMsg(CMouseDragEndMsg *msg);
 	bool MouseDragMoveMsg(CMouseDragMoveMsg *msg);

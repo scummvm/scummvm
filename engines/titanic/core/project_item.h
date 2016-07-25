@@ -76,7 +76,7 @@ class CFileList: public List<CFileListItem> {
 };
 
 class CProjectItem : public CFileItem {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 private:
 	CString _filename;
 	CFileList _files;

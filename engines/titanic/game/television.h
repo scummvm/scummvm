@@ -30,7 +30,7 @@
 namespace Titanic {
 
 class CTelevision : public CBackground {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
 	bool ChangeSeasonMsg(CChangeSeasonMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);

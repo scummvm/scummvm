@@ -30,7 +30,7 @@
 namespace Titanic {
 
 class CCrushedTV : public CCarry {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool ActMsg(CActMsg *msg);
 	bool UseWithCharMsg(CUseWithCharMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);

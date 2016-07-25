@@ -30,7 +30,7 @@
 namespace Titanic {
 
 class CChicken : public CCarry {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
 	bool UseWithCharMsg(CUseWithCharMsg *msg);
 	bool ActMsg(CActMsg *msg);

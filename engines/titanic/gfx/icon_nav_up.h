@@ -28,7 +28,7 @@
 namespace Titanic {
 
 class CIconNavUp : public CToggleSwitch {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 public:
 	CLASSDEF;
 	CIconNavUp();

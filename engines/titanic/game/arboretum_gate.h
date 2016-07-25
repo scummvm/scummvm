@@ -30,7 +30,7 @@
 namespace Titanic {
 
 class CArboretumGate : public CBackground {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool ActMsg(CActMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
 	bool TurnOff(CTurnOff *msg);

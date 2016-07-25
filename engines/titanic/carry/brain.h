@@ -31,7 +31,7 @@
 namespace Titanic {
 
 class CBrain : public CCarry {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
 	bool VisibleMsg(CVisibleMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);

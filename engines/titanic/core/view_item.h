@@ -31,7 +31,7 @@
 namespace Titanic {
 
 class CViewItem : public CNamedItem {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 	bool MouseMoveMsg(CMouseMoveMsg *msg);

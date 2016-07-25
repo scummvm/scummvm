@@ -28,7 +28,7 @@
 namespace Titanic {
 
 class CComputer : public CBackground {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool ActMsg(CActMsg *msg);
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);

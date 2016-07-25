@@ -45,7 +45,7 @@ struct MSGMAP {
 #define DECLARE_MESSAGE_MAP \
 protected: \
 	static const MSGMAP *getThisMessageMap(); \
-	virtual const MSGMAP *getMessageMap() const;
+	virtual const MSGMAP *getMessageMap() const
 
 #define BEGIN_MESSAGE_MAP(theClass, baseClass) \
 	const MSGMAP *theClass::getMessageMap() const \
@@ -84,7 +84,7 @@ protected: \
 	static const int DUMMY = 0
 
 class CMessageTarget: public CSaveableObject {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 public:
 	CLASSDEF;
 

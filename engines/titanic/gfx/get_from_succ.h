@@ -28,7 +28,7 @@
 namespace Titanic {
 
 class CGetFromSucc : public CToggleSwitch {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 public:
 	CLASSDEF;
 	CGetFromSucc();

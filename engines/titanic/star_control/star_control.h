@@ -30,7 +30,7 @@
 namespace Titanic {
 
 class CStarControl : public CGameObject {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MouseMoveMsg(CMouseMoveMsg *msg);
 	bool KeyCharMsg(CKeyCharMsg *msg);

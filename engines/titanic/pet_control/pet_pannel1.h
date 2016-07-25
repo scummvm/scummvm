@@ -28,7 +28,7 @@
 namespace Titanic {
 
 class CPetPannel1 : public CPetGraphic {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 public:
 	CLASSDEF;
 

@@ -32,7 +32,7 @@
 namespace Titanic {
 
 class CRoomItem : public CNamedItem {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 private:
 	/**
 	 * Handles post-load processing

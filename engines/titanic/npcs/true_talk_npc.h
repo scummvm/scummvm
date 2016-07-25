@@ -38,7 +38,7 @@ enum NpcFlag {
 class CViewItem;
 
 class CTrueTalkNPC : public CCharacter {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool TextInputMsg(CTextInputMsg *msg);
 	bool TrueTalkGetAssetDetailsMsg(CTrueTalkGetAssetDetailsMsg *msg);
 	bool DismissBotMsg(CDismissBotMsg *msg);

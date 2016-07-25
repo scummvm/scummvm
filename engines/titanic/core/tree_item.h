@@ -37,7 +37,7 @@ class CViewItem;
 
 class CTreeItem: public CMessageTarget {
 	friend class CMessage;
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 private:
 	CTreeItem *_parent;
 	CTreeItem *_nextSibling;

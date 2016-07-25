@@ -29,7 +29,7 @@
 namespace Titanic {
 
 class CLiftindicator : public CLift {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool EnterRoomMsg(CEnterRoomMsg *msg) { return true; }
 private:
 	int _fieldFC;

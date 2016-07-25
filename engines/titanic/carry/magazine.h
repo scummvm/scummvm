@@ -30,7 +30,7 @@
 namespace Titanic {
 
 class CMagazine : public CCarry {
-	DECLARE_MESSAGE_MAP
+	DECLARE_MESSAGE_MAP;
 	bool UseWithCharMsg(CUseWithCharMsg *msg);
 	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
 	bool VisibleMsg(CVisibleMsg *msg);
