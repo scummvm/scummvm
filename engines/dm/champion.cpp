@@ -1511,9 +1511,8 @@ void ChampionMan::f318_dropAllObjects(uint16 champIndex) {
 	uint16 curCell = _vm->_championMan->_gK71_champions[champIndex]._cell;
 	for (uint16 slotIndex = k0_ChampionSlotReadyHand; slotIndex < k30_ChampionSlotChest_1; slotIndex++) {
 		Thing curThing = f300_getObjectRemovedFromSlot(champIndex, slotDropOrder[slotIndex]);
-		if (curThing != Thing::_none) {
+		if (curThing != Thing::_none)
 			_vm->_moveSens->f267_getMoveResult(M15_thingWithNewCell(curThing, curCell), kM1_MapXNotOnASquare, 0, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY);
-		}
 	}
 }
 
@@ -1530,150 +1529,123 @@ void ChampionMan::f323_unpoison(int16 champIndex) {
 }
 
 void ChampionMan::f331_applyTimeEffects() {
-	uint16 L1006_ui_Multiple;
-#define AL1006_ui_GameTime      L1006_ui_Multiple
-#define AL1006_ui_ChampionIndex L1006_ui_Multiple
-	uint16 L1007_ui_Multiple;
-#define AL1007_ui_ScentIndex            L1007_ui_Multiple
-#define AL1007_ui_ManaGain              L1007_ui_Multiple
-#define AL1007_ui_StaminaGainCycleCount L1007_ui_Multiple
-#define AL1007_ui_StatisticIndex        L1007_ui_Multiple
-	uint16 L1008_ui_Multiple;
-#define AL1008_ui_WizardSkillLevel L1008_ui_Multiple
-#define AL1008_ui_Delay            L1008_ui_Multiple
-#define AL1008_ui_StaminaAboveHalf L1008_ui_Multiple
-#define AL1008_ui_StatisticMaximum L1008_ui_Multiple
-	int16 L1009_i_Multiple;
-#define AL1009_i_SkillIndex       L1009_i_Multiple
-#define AL1009_i_StaminaMagnitude L1009_i_Multiple
-#define AL1009_i_StaminaLoss      L1009_i_Multiple
-	Champion* L1010_ps_Champion;
-	unsigned char* L1011_puc_Statistic;
-	uint16 L1012_ui_TimeCriteria;
-	int16 L1013_i_Multiple;
-#define AL1013_i_StaminaAmount L1013_i_Multiple
-#define AL1013_i_HealthGain    L1013_i_Multiple
-	Scent L1014_s_Scent;
-
-
-	if (!_vm->_championMan->_g305_partyChampionCount) {
+	if (!_vm->_championMan->_g305_partyChampionCount)
 		return;
-	}
-	L1014_s_Scent.setMapX(_vm->_dungeonMan->_g306_partyMapX);
-	L1014_s_Scent.setMapY(_vm->_dungeonMan->_g307_partyMapY);
-	L1014_s_Scent.setMapIndex(_vm->_dungeonMan->_g309_partyMapIndex);
-	AL1007_ui_ScentIndex = 0;
-	while ((int16)AL1007_ui_ScentIndex < (int16)(_vm->_championMan->_g407_party._scentCount - 1)) {
-		if (&_vm->_championMan->_g407_party._scents[AL1007_ui_ScentIndex] != &L1014_s_Scent) {
-			if (!(_vm->_championMan->_g407_party._scentStrengths[AL1007_ui_ScentIndex] = MAX(0, _vm->_championMan->_g407_party._scentStrengths[AL1007_ui_ScentIndex] - 1)) && !AL1007_ui_ScentIndex) {
+
+	Scent checkScent;
+	checkScent.setMapX(_vm->_dungeonMan->_g306_partyMapX);
+	checkScent.setMapY(_vm->_dungeonMan->_g307_partyMapY);
+	checkScent.setMapIndex(_vm->_dungeonMan->_g309_partyMapIndex);
+
+	for (byte loopScentIndex = 0; loopScentIndex + 1 < _vm->_championMan->_g407_party._scentCount; loopScentIndex++) {
+		if (&_vm->_championMan->_g407_party._scents[loopScentIndex] != &checkScent) {
+			_vm->_championMan->_g407_party._scentStrengths[loopScentIndex] = MAX(0, _vm->_championMan->_g407_party._scentStrengths[loopScentIndex] - 1);
+			if (!_vm->_championMan->_g407_party._scentStrengths[loopScentIndex] && !loopScentIndex) {
 				f316_deleteScent(0);
 				continue;
 			}
 		}
-		AL1007_ui_ScentIndex++;
 	}
-	AL1006_ui_GameTime = _vm->_g313_gameTime;
-	L1012_ui_TimeCriteria = (((AL1006_ui_GameTime & 0x0080) + ((AL1006_ui_GameTime & 0x0100) >> 2)) + ((AL1006_ui_GameTime & 0x0040) << 2)) >> 2;
-	for (AL1006_ui_ChampionIndex = k0_ChampionFirst, L1010_ps_Champion = _vm->_championMan->_gK71_champions; AL1006_ui_ChampionIndex < _vm->_championMan->_g305_partyChampionCount; AL1006_ui_ChampionIndex++, L1010_ps_Champion++) {
-		if (L1010_ps_Champion->_currHealth && (_vm->M0_indexToOrdinal(AL1006_ui_ChampionIndex) != _vm->_championMan->_g299_candidateChampionOrdinal)) {
-			if ((L1010_ps_Champion->_currMana < L1010_ps_Champion->_maxMana) && (L1012_ui_TimeCriteria < (L1010_ps_Champion->_statistics[k3_ChampionStatWisdom][k1_ChampionStatCurrent] + (AL1008_ui_WizardSkillLevel = _vm->_championMan->f303_getSkillLevel(AL1006_ui_ChampionIndex, k3_ChampionSkillWizard) + _vm->_championMan->f303_getSkillLevel(AL1006_ui_ChampionIndex, k2_ChampionSkillPriest))))) {
-				AL1007_ui_ManaGain = L1010_ps_Champion->_maxMana / 40;
-				if (_vm->_championMan->_g300_partyIsSleeping) {
-					AL1007_ui_ManaGain = AL1007_ui_ManaGain << 1;
-				}
-				AL1007_ui_ManaGain++;
-				f325_decrementStamina(AL1006_ui_ChampionIndex, AL1007_ui_ManaGain * MAX(7, 16 - AL1008_ui_WizardSkillLevel));
-				L1010_ps_Champion->_currMana += MIN(AL1007_ui_ManaGain, (uint16)(L1010_ps_Champion->_maxMana - L1010_ps_Champion->_currMana));
-			} else {
-				if (L1010_ps_Champion->_currMana > L1010_ps_Champion->_maxMana) {
-					L1010_ps_Champion->_currMana--;
-				}
+
+	uint16 gameTime = _vm->_g313_gameTime & 0xFFFF;
+	uint16 timeCriteria = (((gameTime & 0x0080) + ((gameTime & 0x0100) >> 2)) + ((gameTime & 0x0040) << 2)) >> 2;
+	Champion *championPtr = _vm->_championMan->_gK71_champions;
+	for (uint16 championIndex = k0_ChampionFirst; championIndex < _vm->_championMan->_g305_partyChampionCount; championIndex++, championPtr++) {
+		if (championPtr->_currHealth && (_vm->M0_indexToOrdinal(championIndex) != _vm->_championMan->_g299_candidateChampionOrdinal)) {
+			uint16 wizardSkillLevel = _vm->_championMan->f303_getSkillLevel(championIndex, k3_ChampionSkillWizard) + _vm->_championMan->f303_getSkillLevel(championIndex, k2_ChampionSkillPriest);
+			if ((championPtr->_currMana < championPtr->_maxMana)
+			&&  (timeCriteria < championPtr->_statistics[k3_ChampionStatWisdom][k1_ChampionStatCurrent] + wizardSkillLevel)) {
+				int16 manaGain = championPtr->_maxMana / 40;
+				if (_vm->_championMan->_g300_partyIsSleeping)
+					manaGain <<= 1;
+
+				manaGain++;
+				f325_decrementStamina(championIndex, manaGain * MAX(7, 16 - wizardSkillLevel));
+				championPtr->_currMana += MIN<int16>(manaGain, championPtr->_maxMana - championPtr->_currMana);
+			} else if (championPtr->_currMana > championPtr->_maxMana)
+				championPtr->_currMana--;
+
+			for (int16 idx = k19_ChampionSkillWater; idx >= k0_ChampionSkillFighter; idx--) {
+				if (championPtr->_skills[idx]._temporaryExperience > 0)
+					championPtr->_skills[idx]._temporaryExperience--;
 			}
-			for (AL1009_i_SkillIndex = k19_ChampionSkillWater; AL1009_i_SkillIndex >= k0_ChampionSkillFighter; AL1009_i_SkillIndex--) {
-				if (L1010_ps_Champion->_skills[AL1009_i_SkillIndex]._temporaryExperience > 0) {
-					L1010_ps_Champion->_skills[AL1009_i_SkillIndex]._temporaryExperience--;
-				}
-			}
-			AL1007_ui_StaminaGainCycleCount = 4;
-			AL1009_i_StaminaMagnitude = L1010_ps_Champion->_maxStamina;
-			while (L1010_ps_Champion->_currStamina < (AL1009_i_StaminaMagnitude >>= 1)) {
-				AL1007_ui_StaminaGainCycleCount += 2;
-			}
-			AL1009_i_StaminaLoss = 0;
-			AL1013_i_StaminaAmount = f26_getBoundedValue(1, (L1010_ps_Champion->_maxStamina >> 8) - 1, 6);
-			if (_vm->_championMan->_g300_partyIsSleeping) {
-				AL1013_i_StaminaAmount <<= 1;
-			}
-			if ((AL1008_ui_Delay = (_vm->_g313_gameTime - _vm->_projexpl->_g362_lastPartyMovementTime)) > 80) {
-				AL1013_i_StaminaAmount++;
-				if (AL1008_ui_Delay > 250) {
-					AL1013_i_StaminaAmount++;
-				}
+			uint16 staminaGainCycleCount = 4;
+			int16 staminaMagnitude = championPtr->_maxStamina;
+			while (championPtr->_currStamina < (staminaMagnitude >>= 1))
+				staminaGainCycleCount += 2;
+
+			int16 staminaLoss = 0;
+			int16 staminaAmount = f26_getBoundedValue(1, (championPtr->_maxStamina >> 8) - 1, 6);
+			if (_vm->_championMan->_g300_partyIsSleeping)
+				staminaAmount <<= 1;
+
+			int32 compDelay = _vm->_g313_gameTime - _vm->_projexpl->_g362_lastPartyMovementTime;
+			if (compDelay > 80) {
+				staminaAmount++;
+				if (compDelay > 250)
+					staminaAmount++;
 			}
 			do {
-				AL1008_ui_StaminaAboveHalf = (AL1007_ui_StaminaGainCycleCount <= 4);
-				if (L1010_ps_Champion->_food < -512) {
-					if (AL1008_ui_StaminaAboveHalf) {
-						AL1009_i_StaminaLoss += AL1013_i_StaminaAmount;
-						L1010_ps_Champion->_food -= 2;
+				bool staminaAboveHalf = (staminaGainCycleCount <= 4);
+				if (championPtr->_food < -512) {
+					if (staminaAboveHalf) {
+						staminaLoss += staminaAmount;
+						championPtr->_food -= 2;
 					}
 				} else {
-					if (L1010_ps_Champion->_food >= 0) {
-						AL1009_i_StaminaLoss -= AL1013_i_StaminaAmount;
-					}
-					L1010_ps_Champion->_food -= AL1008_ui_StaminaAboveHalf ? 2 : AL1007_ui_StaminaGainCycleCount >> 1;
+					if (championPtr->_food >= 0)
+						staminaLoss -= staminaAmount;
+
+					championPtr->_food -= staminaAboveHalf ? 2 : staminaGainCycleCount >> 1;
 				}
-				if (L1010_ps_Champion->_water < -512) {
-					if (AL1008_ui_StaminaAboveHalf) {
-						AL1009_i_StaminaLoss += AL1013_i_StaminaAmount;
-						L1010_ps_Champion->_water -= 1;
+				if (championPtr->_water < -512) {
+					if (staminaAboveHalf) {
+						staminaLoss += staminaAmount;
+						championPtr->_water -= 1;
 					}
 				} else {
-					if (L1010_ps_Champion->_water >= 0) {
-						AL1009_i_StaminaLoss -= AL1013_i_StaminaAmount;
-					}
-					L1010_ps_Champion->_water -= AL1008_ui_StaminaAboveHalf ? 1 : AL1007_ui_StaminaGainCycleCount >> 2;
+					if (championPtr->_water >= 0)
+						staminaLoss -= staminaAmount;
+
+					championPtr->_water -= staminaAboveHalf ? 1 : staminaGainCycleCount >> 2;
 				}
-			} while (--AL1007_ui_StaminaGainCycleCount && ((L1010_ps_Champion->_currStamina - AL1009_i_StaminaLoss) < L1010_ps_Champion->_maxStamina));
-			f325_decrementStamina(AL1006_ui_ChampionIndex, AL1009_i_StaminaLoss);
-			if (L1010_ps_Champion->_food < -1024) {
-				L1010_ps_Champion->_food = -1024;
-			}
-			if (L1010_ps_Champion->_water < -1024) {
-				L1010_ps_Champion->_water = -1024;
-			}
-			if ((L1010_ps_Champion->_currHealth < L1010_ps_Champion->_maxHealth) && (L1010_ps_Champion->_currStamina >= (L1010_ps_Champion->_maxStamina >> 2)) && (L1012_ui_TimeCriteria < (L1010_ps_Champion->_statistics[k4_ChampionStatVitality][k1_ChampionStatCurrent] + 12))) {
-				AL1013_i_HealthGain = (L1010_ps_Champion->_maxHealth >> 7) + 1;
-				if (_vm->_championMan->_g300_partyIsSleeping) {
-					AL1013_i_HealthGain <<= 1;
-				}
-				if (_vm->_objectMan->f33_getIconIndex(L1010_ps_Champion->_slots[k10_ChampionSlotNeck]) == k121_IconIndiceJunkEkkhardCross) {
-					AL1013_i_HealthGain += (AL1013_i_HealthGain >> 1) + 1;
-				}
-				L1010_ps_Champion->_currHealth += MIN(AL1013_i_HealthGain, (int16)(L1010_ps_Champion->_maxHealth - L1010_ps_Champion->_currHealth));
+			} while (--staminaGainCycleCount && ((championPtr->_currStamina - staminaLoss) < championPtr->_maxStamina));
+			f325_decrementStamina(championIndex, staminaLoss);
+			if (championPtr->_food < -1024)
+				championPtr->_food = -1024;
+
+			if (championPtr->_water < -1024)
+				championPtr->_water = -1024;
+
+			if ((championPtr->_currHealth < championPtr->_maxHealth) && (championPtr->_currStamina >= (championPtr->_maxStamina >> 2)) && (timeCriteria < (championPtr->_statistics[k4_ChampionStatVitality][k1_ChampionStatCurrent] + 12))) {
+				int16 healthGain = (championPtr->_maxHealth >> 7) + 1;
+				if (_vm->_championMan->_g300_partyIsSleeping)
+					healthGain <<= 1;
+
+				if (_vm->_objectMan->f33_getIconIndex(championPtr->_slots[k10_ChampionSlotNeck]) == k121_IconIndiceJunkEkkhardCross)
+					healthGain += (healthGain >> 1) + 1;
+
+				championPtr->_currHealth += MIN(healthGain, (int16)(championPtr->_maxHealth - championPtr->_currHealth));
 			}
 			if (!((int)_vm->_g313_gameTime & (_vm->_championMan->_g300_partyIsSleeping ? 63 : 255))) {
-				for (AL1007_ui_StatisticIndex = k0_ChampionStatLuck; AL1007_ui_StatisticIndex <= k6_ChampionStatAntifire; AL1007_ui_StatisticIndex++) {
-					L1011_puc_Statistic = L1010_ps_Champion->_statistics[AL1007_ui_StatisticIndex];
-					AL1008_ui_StatisticMaximum = L1011_puc_Statistic[k0_ChampionStatMaximum];
-					if (L1011_puc_Statistic[k1_ChampionStatCurrent] < AL1008_ui_StatisticMaximum) {
-						L1011_puc_Statistic[k1_ChampionStatCurrent]++;
-					} else {
-						if (L1011_puc_Statistic[k1_ChampionStatCurrent] > AL1008_ui_StatisticMaximum) {
-							L1011_puc_Statistic[k1_ChampionStatCurrent] -= L1011_puc_Statistic[k1_ChampionStatCurrent] / AL1008_ui_StatisticMaximum;
-						}
-					}
+				for (uint16 i = k0_ChampionStatLuck; i <= k6_ChampionStatAntifire; i++) {
+					byte *curStatistic = championPtr->_statistics[i];
+					uint16 statisticMaximum = curStatistic[k0_ChampionStatMaximum];
+					if (curStatistic[k1_ChampionStatCurrent] < statisticMaximum)
+						curStatistic[k1_ChampionStatCurrent]++;
+					else if (curStatistic[k1_ChampionStatCurrent] > statisticMaximum)
+						curStatistic[k1_ChampionStatCurrent] -= curStatistic[k1_ChampionStatCurrent] / statisticMaximum;
 				}
 			}
-			if (!_vm->_championMan->_g300_partyIsSleeping && (L1010_ps_Champion->_dir != _vm->_dungeonMan->_g308_partyDir) && (_vm->_projexpl->_g361_lastCreatureAttackTime + 60 < _vm->_g313_gameTime)) {
-				L1010_ps_Champion->_dir = _vm->_dungeonMan->_g308_partyDir;
-				L1010_ps_Champion->_maximumDamageReceived = 0;
-				setFlag(L1010_ps_Champion->_attributes, k0x0400_ChampionAttributeIcon);
+			if (!_vm->_championMan->_g300_partyIsSleeping && (championPtr->_dir != _vm->_dungeonMan->_g308_partyDir) && (_vm->_projexpl->_g361_lastCreatureAttackTime + 60 < _vm->_g313_gameTime)) {
+				championPtr->_dir = _vm->_dungeonMan->_g308_partyDir;
+				championPtr->_maximumDamageReceived = 0;
+				setFlag(championPtr->_attributes, k0x0400_ChampionAttributeIcon);
 			}
-			setFlag(L1010_ps_Champion->_attributes, k0x0100_ChampionAttributeStatistics);
-			if (_vm->M0_indexToOrdinal(AL1006_ui_ChampionIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
+			setFlag(championPtr->_attributes, k0x0100_ChampionAttributeStatistics);
+			if (_vm->M0_indexToOrdinal(championIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
 				if (_vm->_g333_pressingMouth || _vm->_g331_pressingEye || (_vm->_inventoryMan->_g424_panelContent == k0_PanelContentFoodWaterPoisoned)) {
-					setFlag(L1010_ps_Champion->_attributes, k0x0800_ChampionAttributePanel);
+					setFlag(championPtr->_attributes, k0x0800_ChampionAttributePanel);
 				}
 			}
 		}
