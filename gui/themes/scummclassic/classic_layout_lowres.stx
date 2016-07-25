@@ -709,12 +709,16 @@
 							height = 'Globals.Line.Height'
 					/>
 				<space size = '4' />
+				<widget name = 'Picture' width = '1' height = '1' />
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
 				<widget name = 'CancelButton'
 						type = 'Button'
 				/>
 				<widget name = 'OpenUrlButton'
+						type = 'Button'
+				/>
+				<widget name = 'PasteCodeButton'
 						type = 'Button'
 				/>
 				<widget name = 'ConnectButton'

@@ -44,6 +44,7 @@ class StorageWizardDialog : public Dialog {
 	uint32 _storageId;
 	EditTextWidget *_codeWidget[CODE_FIELDS];
 	StaticTextWidget *_messageWidget;
+	ButtonWidget *_pasteCodeWidget;
 	ButtonWidget *_connectWidget;
 	bool _close;
 #ifdef USE_SDL_NET

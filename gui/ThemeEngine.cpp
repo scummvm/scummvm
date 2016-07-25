@@ -61,6 +61,7 @@ const char *const ThemeEngine::kImageStopSmallButton = "stopbtn_small.bmp";
 const char *const ThemeEngine::kImageEditSmallButton = "editbtn_small.bmp";
 const char *const ThemeEngine::kImageSwitchModeSmallButton = "switchbtn_small.bmp";
 const char *const ThemeEngine::kImageFastReplaySmallButton = "fastreplay_small.bmp";
+const char *const ThemeEngine::kImageDropboxLogo = "dropbox.bmp";
 
 struct TextDrawData {
 	const Graphics::Font *_fontPtr;

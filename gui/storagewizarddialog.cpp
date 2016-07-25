@@ -20,6 +20,13 @@
  *
  */
 
+#ifdef USE_SDL2
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_clipboard.h>
+#endif
+
 #include "gui/storagewizarddialog.h"
 #include "gui/gui-manager.h"
 #include "gui/message.h"
@@ -37,7 +44,8 @@ namespace GUI {
 enum {
 	kConnectCmd = 'Cnnt',
 	kCodeBoxCmd = 'CdBx',
-	kOpenUrlCmd = 'OpUr'
+	kOpenUrlCmd = 'OpUr',
+	kPasteCodeCmd = 'PsCd'
 };
 
 StorageWizardDialog::StorageWizardDialog(uint32 storageId):
@@ -62,6 +70,7 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 	// Buttons
 	new ButtonWidget(this, "GlobalOptions_Cloud_ConnectionWizard.CancelButton", _("Cancel"), 0, kCloseCmd);
 	new ButtonWidget(this, "GlobalOptions_Cloud_ConnectionWizard.OpenUrlButton", _("Open URL"), 0, kOpenUrlCmd);
+	_pasteCodeWidget = new ButtonWidget(this, "GlobalOptions_Cloud_ConnectionWizard.PasteCodeButton", _("Paste"), _("Pastes clipboard contents into fields"), kPasteCodeCmd);
 	_connectWidget = new ButtonWidget(this, "GlobalOptions_Cloud_ConnectionWizard.ConnectButton", _("Connect"), 0, kConnectCmd);
 
 	if (Cloud::CloudManager::couldUseLocalServer()) {
@@ -72,7 +81,20 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 			_codeWidget[i]->setVisible(false);
 		_messageWidget->setVisible(false);
 		_connectWidget->setVisible(false);
+		_pasteCodeWidget->setVisible(false);
 	}
+
+#ifndef USE_SDL2
+	_pasteCodeWidget->setVisible(false);
+#endif
+        
+#ifndef DISABLE_FANCY_THEMES
+	if (g_gui.theme()->supportsImages() && g_system->getOverlayWidth() > 320) { // picture only in high-res
+		GraphicsWidget *gfx = new GraphicsWidget(this, "GlobalOptions_Cloud_ConnectionWizard.Picture");
+		gfx->useThemeTransparency(true);
+		gfx->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageDropboxLogo));
+	}
+#endif
 }
 
 void StorageWizardDialog::open() {
@@ -162,7 +184,7 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			//the last 3 chars must be an encoded crc16
 			if (code.size() > 3) {
 				uint32 size = code.size();
-				uint32 gotcrc = decodeHashchar(code[size-3]) | (decodeHashchar(code[size-2]) << 6) | (decodeHashchar(code[size-1]) << 12);
+				uint32 gotcrc = decodeHashchar(code[size - 3]) | (decodeHashchar(code[size - 2]) << 6) | (decodeHashchar(code[size - 1]) << 12);
 				code.erase(size - 3);
 				uint32 crc = crc16(code);
 				ok = (crc == gotcrc);
@@ -181,6 +203,35 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			MessageDialog alert(_("Failed to open URL!\nYou should navigate there manually then."));
 			alert.runModal();
 		}
+		break;
+	}
+	case kPasteCodeCmd: {
+#ifdef USE_SDL2
+		if (SDL_HasClipboardText() == SDL_TRUE) {
+			char *text = SDL_GetClipboardText();
+			if (text != nullptr) {
+				Common::String message = text;
+				for (uint32 i = 0; i < CODE_FIELDS; ++i) {
+					if (message.empty()) break;
+					Common::String subcode = "";
+					for (uint32 j = 0; j < message.size(); ++j) {
+						if (message[j] == ' ') {
+							message.erase(0, j+1);
+							break;
+						}
+						subcode += message[j];
+						if (j+1 == message.size()) {
+							message = "";
+							break;
+						}
+					}
+					_codeWidget[i]->setEditString(subcode);
+				}
+				handleCommand(sender, kCodeBoxCmd, data);
+				draw();
+			}
+		}
+#endif
 		break;
 	}
 	case kConnectCmd: {

@@ -119,6 +119,7 @@
 		<bitmap filename = 'editbtn_small.bmp'/>
 		<bitmap filename = 'switchbtn_small.bmp'/>
 		<bitmap filename = 'fastreplay_small.bmp'/>
+		<bitmap filename = 'dropbox.bmp'/>
 	</bitmaps>
 
 	<fonts>
