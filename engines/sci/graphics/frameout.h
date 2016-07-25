@@ -167,7 +167,7 @@ public:
 #pragma mark -
 #pragma mark Pics
 public:
-	void kernelAddPicAt(const reg_t planeObject, const GuiResourceId pictureId, const int16 pictureX, const int16 pictureY, const bool mirrorX);
+	void kernelAddPicAt(const reg_t planeObject, const GuiResourceId pictureId, const int16 pictureX, const int16 pictureY, const bool mirrorX, const bool deleteDuplicate);
 
 #pragma mark -
 #pragma mark Rendering

@@ -194,11 +194,12 @@ void Plane::addPicInternal(const GuiResourceId pictureId, const Common::Point *p
 	_type = transparent ? kPlaneTypeTransparentPicture : kPlaneTypePicture;
 }
 
-GuiResourceId Plane::addPic(const GuiResourceId pictureId, const Common::Point &position, const bool mirrorX) {
-	GuiResourceId oldPictureId = _pictureId;
-	deletePic(pictureId);
+GuiResourceId Plane::addPic(const GuiResourceId pictureId, const Common::Point &position, const bool mirrorX, const bool deleteDuplicate) {
+	if (deleteDuplicate) {
+		deletePic(pictureId);
+	}
 	addPicInternal(pictureId, &position, mirrorX);
-	return oldPictureId;
+	return _pictureId;
 }
 
 void Plane::changePic() {

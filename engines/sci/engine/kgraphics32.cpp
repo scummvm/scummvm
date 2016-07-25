@@ -124,8 +124,9 @@ reg_t kAddPicAt(EngineState *s, int argc, reg_t *argv) {
 	int16 x = argv[2].toSint16();
 	int16 y = argv[3].toSint16();
 	bool mirrorX = argc > 4 ? argv[4].toSint16() : false;
+	bool deleteDuplicate = argc > 5 ? argv[5].toSint16() : true;
 
-	g_sci->_gfxFrameout->kernelAddPicAt(planeObj, pictureId, x, y, mirrorX);
+	g_sci->_gfxFrameout->kernelAddPicAt(planeObj, pictureId, x, y, mirrorX, deleteDuplicate);
 	return s->r_acc;
 }
 

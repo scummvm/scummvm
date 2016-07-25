@@ -485,12 +485,12 @@ void GfxFrameout::updatePlane(Plane &plane) {
 #pragma mark -
 #pragma mark Pics
 
-void GfxFrameout::kernelAddPicAt(const reg_t planeObject, const GuiResourceId pictureId, const int16 x, const int16 y, const bool mirrorX) {
+void GfxFrameout::kernelAddPicAt(const reg_t planeObject, const GuiResourceId pictureId, const int16 x, const int16 y, const bool mirrorX, const bool deleteDuplicate) {
 	Plane *plane = _planes.findByObject(planeObject);
 	if (plane == nullptr) {
 		error("kAddPicAt: Plane %04x:%04x not found", PRINT_REG(planeObject));
 	}
-	plane->addPic(pictureId, Common::Point(x, y), mirrorX);
+	plane->addPic(pictureId, Common::Point(x, y), mirrorX, deleteDuplicate);
 }
 
 #pragma mark -
