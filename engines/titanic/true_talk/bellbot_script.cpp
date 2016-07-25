@@ -90,7 +90,7 @@ int BellbotScript::proc23() const {
 	return 0;
 }
 
-int BellbotScript::proc25(int val1, int val2, TTroomScript *roomScript, TTsentence *sentence) const {
+int BellbotScript::proc25(int val1, const int *val2, TTroomScript *roomScript, TTsentence *sentence) {
 	warning("TODO");
 	return 0;
 }

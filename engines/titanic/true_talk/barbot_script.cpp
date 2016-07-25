@@ -868,9 +868,141 @@ uint BarbotScript::getDialsBitset() const {
 	return bits;
 }
 
-int BarbotScript::proc25(int val1, int val2, TTroomScript *roomScript, TTsentence *sentence) const {
-	warning("TODO");
-	return 0;
+int BarbotScript::proc25(int val1, const int *val2, TTroomScript *roomScript, TTsentence *sentence) {
+	int v34 = get34();
+	uint id = 0;
+
+	if (v34 > 0x200) {
+		switch (v34 - 0x201) {
+		case 0:
+			if (getValue(4) != 2)
+				id = 250738;
+			break;
+		case 1:
+			if (getValue(4) != 3)
+				id = 250738;
+		case 2:
+			if (getValue(4) != 0)
+				id = 250738;
+			break;
+		default:
+			break;
+		}
+	} else if (v34 == 0x200) {
+		if (getValue(4) != 1)
+			id = 250738;
+	} else {
+		switch (v34) {
+		case 2:
+			if (getValue(1) != 1)
+				return 1;
+			break;
+		case 3:
+			if (getValue(1) != 2)
+				return 1;
+			break;
+		case 4:
+			if (getValue(1) != 3)
+				return 1;
+			break;
+		case 5:
+			if (getValue(1) == 3)
+				return 1;
+			break;
+		case 6:
+			if (sentence->contains("do not") || sentence->contains("have no") ||
+					sentence->contains("got no"))
+				return 1;
+			break;
+		case 7:
+			if (!sentence->contains("do not") && !sentence->contains("have no") &&
+					!sentence->contains("got no"))
+				return 1;
+			break;
+		case 8:
+			if (sentence->_field38 == 2)
+				return 1;
+			break;
+		case 9: {
+			uint val = CTrueTalkManager::getStateValue(3);
+			bool bit0 = (val & 1) != 0;
+			bool bit2 = (val & 4) != 0;
+			bool bit3 = (val & 8) != 0;
+
+			if (bit2) {
+				if (!bit0) {
+					id = 250085 - bit3 ? 0 : 199715;
+					break;
+				} else if (!bit3) {
+					id = 250627;
+				}
+			} else {
+				if (!bit0) {
+					id = 50365 + bit3 ? 0 : 2;
+				} else if (!bit3) {
+					id = 50370;
+				}
+			}
+
+			if (id) {
+				addResponse(getDialogueId(id));
+				applyResponse();
+				return 2;
+			}
+			break;
+		}
+			
+		case 10: {
+			uint val = CTrueTalkManager::getStateValue(3);
+			bool bit0 = (val & 1) != 0;
+			bool bit2 = (val & 4) != 0;
+			bool bit3 = (val & 8) != 0;
+
+			if (bit0 && bit2 && bit3) {
+				addResponse(getDialogueId(251027));
+				applyResponse();
+				CTrueTalkManager::triggerAction(7, 0);
+				return 2;
+			} else {
+				if (getDialRegion(1) == 1) {
+					if (*val2 != 251650)
+						id = 251651;
+				} else {
+					addResponse(getDialRegion(0) != 0 ? 51444 : 51530);
+					applyResponse();
+					return 2;
+				}
+			}
+			break;
+		}
+
+		case 11:
+			if (CTrueTalkManager::getStateValue(2) != 0) {
+				CTrueTalkManager::triggerAction(6, 0);
+				id = 251003;
+			}
+			break;
+
+		case 12:
+			if (getDialRegion(1) == 0) {
+				addResponse(getDialogueId(251871));
+				applyResponse();
+				return 2;
+			} else if (getRandomNumber(100) > 25 && addRandomResponse(false)) {
+				return 2;
+			}
+
+		default:
+			break;
+		}
+	}
+
+	if (id) {
+		addResponse(getDialogueId(id));
+		applyResponse();
+	}
+
+	return 2;
 }
 
 void BarbotScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence) {

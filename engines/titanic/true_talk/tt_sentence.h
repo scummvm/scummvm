@@ -51,7 +51,6 @@ private:
 	CScriptHandler *_owner;
 	int _inputCtr;
 	int _field34;
-	int _field38;
 	TTsentenceNode *_nodesP;
 	int _field5C;
 	int _status;
@@ -64,6 +63,7 @@ public:
 	TTsentenceConcept _sentenceConcept;
 	TTstring _initialLine;
 	TTstring _normalizedLine;
+	int _field38;
 	int _field58;
 	TTroomScript *_roomScript;
 	TTnpcScript *_npcScript;

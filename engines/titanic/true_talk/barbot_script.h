@@ -76,7 +76,8 @@ public:
 	 */
 	virtual uint getDialsBitset() const;
 
-	virtual int proc25(int val1, int val2, TTroomScript *roomScript, TTsentence *sentence) const;
+	virtual int proc25(int val1, const int *val2, TTroomScript *roomScript, TTsentence *sentence);
+
 	virtual void proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence);
 
 	/**

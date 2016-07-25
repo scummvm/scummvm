@@ -125,7 +125,7 @@ uint LiftbotScript::getDialsBitset() const {
 }
 
 
-int LiftbotScript::proc25(int val1, int val2, TTroomScript *roomScript, TTsentence *sentence) const {
+int LiftbotScript::proc25(int val1, const int *val2, TTroomScript *roomScript, TTsentence *sentence) {
 	warning("TODO");
 	return 0;
 }
