@@ -1016,52 +1016,50 @@ void ChampionMan::f304_addSkillExperience(uint16 champIndex, uint16 skillIndex, 
 }
 
 int16 ChampionMan::f324_damageAll_getDamagedChampionCount(uint16 attack, int16 wounds, int16 attackType) {
-	int16 L0984_i_ChampionIndex;
-	int16 L0985_i_RandomAttack;
-	int16 L0986_i_DamagedChampionCount;
+	int16 randomMax = (attack >> 3) + 1;
+	uint16 reducedAttack = attack - randomMax;
+	randomMax <<= 1;
 
-	attack -= (L0985_i_RandomAttack = (attack >> 3) + 1);
-	L0985_i_RandomAttack <<= 1;
-	for (L0986_i_DamagedChampionCount = 0, L0984_i_ChampionIndex = k0_ChampionFirst; L0984_i_ChampionIndex < _g305_partyChampionCount; L0984_i_ChampionIndex++) {
-		if (f321_addPendingDamageAndWounds_getDamage(L0984_i_ChampionIndex, MAX(1, attack + _vm->getRandomNumber(L0985_i_RandomAttack)), wounds, attackType)) { /* Actual attack is attack +/- (attack / 8) */
-			L0986_i_DamagedChampionCount++;
-		}
+	int16 damagedChampionCount = 0;
+	for (int16 championIndex = k0_ChampionFirst; championIndex < _g305_partyChampionCount; championIndex++) {
+		// Actual attack is attack +/- (attack / 8)
+		if (f321_addPendingDamageAndWounds_getDamage(championIndex, MAX(1, reducedAttack + _vm->getRandomNumber(randomMax)), wounds, attackType))
+			damagedChampionCount++;
 	}
-	return L0986_i_DamagedChampionCount;
+
+	return damagedChampionCount;
 }
 
 int16 ChampionMan::f286_getTargetChampionIndex(int16 mapX, int16 mapY, uint16 cell) {
 	if (_g305_partyChampionCount && (M38_distance(mapX, mapY, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY) <= 1)) {
-		signed char L0840_auc_OrderedCellsToAttack[4];
-		_vm->_groupMan->f229_setOrderedCellsToAttack(L0840_auc_OrderedCellsToAttack, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, mapX, mapY, cell);
-		for (uint16 L0838_ui_Counter = 0; L0838_ui_Counter < 4; L0838_ui_Counter++) {
-			int16 L0839_i_ChampionIndex = f285_getIndexInCell(L0840_auc_OrderedCellsToAttack[L0838_ui_Counter]);
-			if (L0839_i_ChampionIndex >= 0)
-				return L0839_i_ChampionIndex;
+		signed char orderedCellsToAttack[4];
+		_vm->_groupMan->f229_setOrderedCellsToAttack(orderedCellsToAttack, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, mapX, mapY, cell);
+		for (uint16 i = 0; i < 4; i++) {
+			int16 championIndex = f285_getIndexInCell(orderedCellsToAttack[i]);
+			if (championIndex >= 0)
+				return championIndex;
 		}
 	}
 	return kM1_ChampionNone;
 }
 
 int16 ChampionMan::f311_getDexterity(Champion* champ) {
-	int16 L0934_i_Dexterity = _vm->getRandomNumber(8) + champ->_statistics[k2_ChampionStatDexterity][k1_ChampionStatCurrent];
-	L0934_i_Dexterity -= ((int32)(L0934_i_Dexterity >> 1) * (int32)champ->_load) / f309_getMaximumLoad(champ);
-	if (_g300_partyIsSleeping) {
-		L0934_i_Dexterity >>= 1;
-	}
-	return f26_getBoundedValue(1 + _vm->getRandomNumber(8), L0934_i_Dexterity >> 1, 100 - _vm->getRandomNumber(8));
+	int16 dexterity = _vm->getRandomNumber(8) + champ->_statistics[k2_ChampionStatDexterity][k1_ChampionStatCurrent];
+	dexterity -= ((int32)(dexterity >> 1) * (int32)champ->_load) / f309_getMaximumLoad(champ);
+	if (_g300_partyIsSleeping)
+		dexterity >>= 1;
+
+	return f26_getBoundedValue(1 + _vm->getRandomNumber(8), dexterity >> 1, 100 - _vm->getRandomNumber(8));
 }
 
 bool ChampionMan::f308_isLucky(Champion* champ, uint16 percentage) {
-#define AP0646_ui_IsLucky percentage
-
-	if (_vm->getRandomNumber(2) && (_vm->getRandomNumber(100) > percentage)) {
+	if (_vm->getRandomNumber(2) && (_vm->getRandomNumber(100) > percentage))
 		return true;
-	}
-	unsigned char* L0928_puc_Statistic = champ->_statistics[k0_ChampionStatLuck];
-	AP0646_ui_IsLucky = (_vm->getRandomNumber(L0928_puc_Statistic[k1_ChampionStatCurrent]) > percentage);
-	L0928_puc_Statistic[k1_ChampionStatCurrent] = f26_getBoundedValue((int32)L0928_puc_Statistic[k2_ChampionStatMinimum], (int32)L0928_puc_Statistic[k1_ChampionStatCurrent] + (AP0646_ui_IsLucky ? -2 : 2), (int32)L0928_puc_Statistic[k0_ChampionStatMaximum]);
-	return AP0646_ui_IsLucky;
+
+	unsigned char* curStat = champ->_statistics[k0_ChampionStatLuck];
+	bool isLucky = (_vm->getRandomNumber(curStat[k1_ChampionStatCurrent]) > percentage);
+	curStat[k1_ChampionStatCurrent] = f26_getBoundedValue<char>(curStat[k2_ChampionStatMinimum], curStat[k1_ChampionStatCurrent] + (isLucky ? -2 : 2), curStat[k0_ChampionStatMaximum]);
+	return isLucky;
 }
 
 void ChampionMan::f322_championPoison(int16 champIndex, uint16 attack) {
