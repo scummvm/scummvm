@@ -363,7 +363,6 @@ public:
 	void renderInto(Graphics::ManagedSurface *target, uint leftOffset) {
 		target->fillRect(target->getBounds(), kColorWhite);
 		const Graphics::Font *font = &_gui->getCurrentFont();
-		// HACK print the last lines visible (no scroll)
 		uint y = target->h - font->getFontHeight();
 		for (uint i = _lines.size() - 1; i != 0; i--) {
 			font->drawString(target, _lines[i], leftOffset, y, font->getStringWidth(_lines[i]), kColorBlack);
@@ -372,14 +371,25 @@ public:
 	}
 
 	void updateScroll() {
-		// TODO implemebt
+		_scrollPos = _lines.size() - 1;
 	}
+
+	void scrollDown() {
+		if (_scrollPos < _lines.size() - 1) _scrollPos++;
+	}
+
+	void scrollUp() {
+		debug("scroll up");
+		if (_scrollPos > 0) _scrollPos--;
+	}
+
 
 private:
 
 	Gui *_gui;
 
 	Common::StringArray _lines;
+	int _scrollPos;
 
 };
 

@@ -1270,6 +1270,12 @@ bool MacVenture::Gui::processOutConsoleEvents(WindowClick click, Common::Event &
 	if (_engine->needsClickToContinue())
 		return true;
 
+	debug("OutConsoleEvent: %d", click);
+	if (click == kBorderScrollUp) {
+		_consoleText->scrollUp();
+		return true;
+	}
+
 	return getWindowData(kOutConsoleWindow).visible;
 }
 
