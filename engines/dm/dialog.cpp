@@ -36,11 +36,11 @@ namespace DM {
 DialogMan::DialogMan(DMEngine* vm) : _vm(vm) {}
 
 void DialogMan::f427_dialogDraw(char* msg1, char* msg2, char* choice1, char* choice2, char* choice3, char* choice4, bool screenDialog, bool clearScreen, bool fading) {
-	static Box K0068_s_Box1 = {0, 223, 101, 125};
-	static Box K0069_s_Box2 = {0, 223,  76, 100};
-	static Box K0070_s_Box3 = {0, 223,  51,  75};
-	static Box G0469_s_Graphic561_Box_Dialog2ChoicesPatch = {102, 122, 89, 125};
-	static Box G0470_s_Graphic561_Box_Dialog4ChoicesPatch = {102, 122, 62, 97};
+	static Box K0068_s_Box1 = Box(0, 223, 101, 125);
+	static Box K0069_s_Box2 = Box(0, 223,  76, 100);
+	static Box K0070_s_Box3 = Box(0, 223,  51,  75);
+	static Box G0469_s_Graphic561_Box_Dialog2ChoicesPatch = Box(102, 122, 89, 125);
+	static Box G0470_s_Graphic561_Box_Dialog4ChoicesPatch = Box(102, 122, 62, 97);
 
 	int16 L1308_i_X;
 	int16 L1309_i_Y;
