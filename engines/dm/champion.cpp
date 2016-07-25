@@ -1056,7 +1056,7 @@ bool ChampionMan::f308_isLucky(Champion* champ, uint16 percentage) {
 	if (_vm->getRandomNumber(2) && (_vm->getRandomNumber(100) > percentage))
 		return true;
 
-	unsigned char* curStat = champ->_statistics[k0_ChampionStatLuck];
+	unsigned char *curStat = champ->_statistics[k0_ChampionStatLuck];
 	bool isLucky = (_vm->getRandomNumber(curStat[k1_ChampionStatCurrent]) > percentage);
 	curStat[k1_ChampionStatCurrent] = f26_getBoundedValue<char>(curStat[k2_ChampionStatMinimum], curStat[k1_ChampionStatCurrent] + (isLucky ? -2 : 2), curStat[k0_ChampionStatMaximum]);
 	return isLucky;
@@ -1066,105 +1066,106 @@ void ChampionMan::f322_championPoison(int16 champIndex, uint16 attack) {
 	if ((champIndex == kM1_ChampionNone) || (_vm->M0_indexToOrdinal(champIndex) == _g299_candidateChampionOrdinal))
 		return;
 
-	Champion* L0981_ps_Champion = &_gK71_champions[champIndex];
+	Champion *curChampion = &_gK71_champions[champIndex];
 	f321_addPendingDamageAndWounds_getDamage(champIndex, MAX(1, attack >> 6), k0x0000_ChampionWoundNone, k0_attackType_NORMAL);
-	setFlag(L0981_ps_Champion->_attributes, k0x0100_ChampionAttributeStatistics);
+	setFlag(curChampion->_attributes, k0x0100_ChampionAttributeStatistics);
 	if ((_vm->M0_indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) && (_vm->_inventoryMan->_g424_panelContent == k0_PanelContentFoodWaterPoisoned)) {
-		setFlag(L0981_ps_Champion->_attributes, k0x0800_ChampionAttributePanel);
+		setFlag(curChampion->_attributes, k0x0800_ChampionAttributePanel);
 	}
+
 	if (--attack) {
-		L0981_ps_Champion->_poisonEventCount++;
-		TimelineEvent L0980_s_Event;
-		L0980_s_Event._type = k75_TMEventTypePoisonChampion;
-		L0980_s_Event._priority = champIndex;
-		M33_setMapAndTime(L0980_s_Event._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + 36);
-		L0980_s_Event._B._attack = attack;
-		_vm->_timeline->f238_addEventGetEventIndex(&L0980_s_Event);
+		curChampion->_poisonEventCount++;
+		TimelineEvent newEvent;
+		newEvent._type = k75_TMEventTypePoisonChampion;
+		newEvent._priority = champIndex;
+		M33_setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + 36);
+		newEvent._B._attack = attack;
+		_vm->_timeline->f238_addEventGetEventIndex(&newEvent);
 	}
+
 	f292_drawChampionState((ChampionIndex)champIndex);
 }
 
 void ChampionMan::f284_setPartyDirection(int16 dir) {
-	int16 L0833_i_ChampionIndex;
-	int16 L0834_i_Delta;
-	Champion* L0835_ps_Champion;
-
-
-	if (dir == _vm->_dungeonMan->_g308_partyDir) {
+	if (dir == _vm->_dungeonMan->_g308_partyDir)
 		return;
-	}
-	if ((L0834_i_Delta = dir - _vm->_dungeonMan->_g308_partyDir) < 0) {
+
+	int16 L0834_i_Delta = dir - _vm->_dungeonMan->_g308_partyDir;
+	if (L0834_i_Delta < 0)
 		L0834_i_Delta += 4;
+
+	Champion *curChampion = _gK71_champions;
+	for (int16 i = k0_ChampionFirst; i < _g305_partyChampionCount; i++) {
+		curChampion->_cell = (ViewCell)M21_normalizeModulo4(curChampion->_cell + L0834_i_Delta);
+		curChampion->_dir = (direction)M21_normalizeModulo4(curChampion->_dir + L0834_i_Delta);
+		curChampion++;
 	}
-	L0835_ps_Champion = _gK71_champions;
-	for (L0833_i_ChampionIndex = k0_ChampionFirst; L0833_i_ChampionIndex < _g305_partyChampionCount; L0833_i_ChampionIndex++) {
-		L0835_ps_Champion->_cell = (ViewCell)M21_normalizeModulo4(L0835_ps_Champion->_cell + L0834_i_Delta);
-		L0835_ps_Champion->_dir = (direction)M21_normalizeModulo4(L0835_ps_Champion->_dir + L0834_i_Delta);
-		L0835_ps_Champion++;
-	}
+
 	_vm->_dungeonMan->_g308_partyDir = (direction)dir;
 	f296_drawChangedObjectIcons();
 }
 
 void ChampionMan::f316_deleteScent(uint16 scentIndex) {
-	uint16 L0953_ui_Count;
+	uint16 count = --_g407_party._scentCount - scentIndex;
 
-	if (L0953_ui_Count = --_g407_party._scentCount - scentIndex) {
-		for (uint16 i = 0; i < L0953_ui_Count; ++i) {
+	if (count) {
+		for (uint16 i = 0; i < count; ++i) {
 			_g407_party._scents[scentIndex + i] = _g407_party._scents[scentIndex + i + 1];
 			_g407_party._scentStrengths[scentIndex + i] = _g407_party._scentStrengths[scentIndex + i + 1];
 		}
 	}
-	if (scentIndex < _g407_party._firstScentIndex) {
+
+	if (scentIndex < _g407_party._firstScentIndex)
 		_g407_party._firstScentIndex--;
-	}
-	if (scentIndex < _g407_party._lastScentIndex) {
+
+	if (scentIndex < _g407_party._lastScentIndex)
 		_g407_party._lastScentIndex--;
-	}
 }
 
 void ChampionMan::f317_addScentStrength(int16 mapX, int16 mapY, int32 cycleCount) {
-	int16 L0954_i_ScentIndex = _vm->_championMan->_g407_party._scentCount;
-	if (L0954_i_ScentIndex) {
-		bool L0955_B_Merge = getFlag(cycleCount, k0x8000_mergeCycles);
-		if (L0955_B_Merge) {
+	int16 scentIndex = _vm->_championMan->_g407_party._scentCount;
+	if (scentIndex) {
+		bool mergeFl = getFlag(cycleCount, k0x8000_mergeCycles);
+		if (mergeFl)
 			clearFlag(cycleCount, k0x8000_mergeCycles);
-		}
-		Scent L0958_s_Scent; /* BUG0_00 Useless code */
-		L0958_s_Scent.setMapX(mapX); /* BUG0_00 Useless code */
-		L0958_s_Scent.setMapY(mapY); /* BUG0_00 Useless code */
-		L0958_s_Scent.setMapIndex(_vm->_dungeonMan->_g272_currMapIndex); /* BUG0_00 Useless code */
-		Scent* L0957_ps_Scent = _vm->_championMan->_g407_party._scents; /* BUG0_00 Useless code */
-		bool L0956_B_CycleCountDefined = false;
-		while (L0954_i_ScentIndex--) {
-			if (&*L0957_ps_Scent++ == &L0958_s_Scent) {
-				if (!L0956_B_CycleCountDefined) {
-					L0956_B_CycleCountDefined = true;
-					if (L0955_B_Merge) {
-						cycleCount = MAX((int32)_g407_party._scentStrengths[L0954_i_ScentIndex], cycleCount);
+
+		Scent newScent; /* BUG0_00 Useless code */
+		newScent.setMapX(mapX); /* BUG0_00 Useless code */
+		newScent.setMapY(mapY); /* BUG0_00 Useless code */
+		newScent.setMapIndex(_vm->_dungeonMan->_g272_currMapIndex); /* BUG0_00 Useless code */
+
+		Scent *curScent = _vm->_championMan->_g407_party._scents; /* BUG0_00 Useless code */
+		bool cycleCountDefined = false;
+		while (scentIndex--) {
+			if (&*curScent++ == &newScent) {
+				if (!cycleCountDefined) {
+					cycleCountDefined = true;
+					if (mergeFl) {
+						cycleCount = MAX<int32>(_g407_party._scentStrengths[scentIndex], cycleCount);
 					} else {
-						cycleCount = MIN(80, _g407_party._scentStrengths[L0954_i_ScentIndex] + cycleCount);
+						cycleCount = MIN<int32>(80, _g407_party._scentStrengths[scentIndex] + cycleCount);
 					}
 				}
-				_g407_party._scentStrengths[L0954_i_ScentIndex] = cycleCount;
+				_g407_party._scentStrengths[scentIndex] = cycleCount;
 			}
 		}
 	}
 }
 
 void ChampionMan::f297_putObjectInLeaderHand(Thing thing, bool setMousePointer) {
-	if (thing == Thing::_none) {
+	if (thing == Thing::_none)
 		return;
-	}
+
 	_g415_leaderEmptyHanded = false;
 	_vm->_objectMan->f36_extractIconFromBitmap(_g413_leaderHandObjectIconIndex = _vm->_objectMan->f33_getIconIndex(_g414_leaderHandObject = thing), _vm->_objectMan->_g412_objectIconForMousePointer);
 	_vm->_eventMan->f78_showMouse();
 	_vm->_objectMan->f34_drawLeaderObjectName(thing);
-	if (setMousePointer) {
+
+	if (setMousePointer)
 		_vm->_g325_setMousePointerToObjectInMainLoop = true;
-	} else {
+	else
 		_vm->_eventMan->f68_setPointerToObject(_vm->_objectMan->_g412_objectIconForMousePointer);
-	}
+
 	_vm->_eventMan->f77_hideMouse();
 	if (_g411_leaderIndex != kM1_ChampionNone) {
 		_gK71_champions[_g411_leaderIndex]._load += _vm->_dungeonMan->f140_getObjectWeight(thing);
@@ -1173,57 +1174,57 @@ void ChampionMan::f297_putObjectInLeaderHand(Thing thing, bool setMousePointer) 
 	}
 }
 
-int16 ChampionMan::f310_getMovementTicks(Champion* champ) {
-	uint16 L0931_ui_Multiple;
-#define AL0931_ui_Load       L0931_ui_Multiple
-#define AL0931_ui_WoundTicks L0931_ui_Multiple
-	uint16 L0932_ui_MaximumLoad;
-	int16 L0933_i_Ticks;
+int16 ChampionMan::f310_getMovementTicks(Champion *champ) {
+	uint16 maximumLoad = _vm->_championMan->f309_getMaximumLoad(champ);
+	uint16 curLoad = champ->_load;
+	uint16 woundTicks;
+	int16 ticks;
+	/* BUG0_72 - Fixed
+		The party moves very slowly even though no champion 'Load' value is drawn in red.
+		When the Load of a champion has exactly the maximum value he can carry then the Load
+		is drawn in yellow but the speed is the same as when the champion is overloaded
+		(when the Load is drawn in red). The comparison operator should be >= instead of >
+	*/
+	if (maximumLoad >= curLoad) {
+		ticks = 2;
+		if (((int32)curLoad << 3) > ((int32)maximumLoad * 5))
+			ticks++;
 
-
-	if ((L0932_ui_MaximumLoad = _vm->_championMan->f309_getMaximumLoad(champ)) > (AL0931_ui_Load = champ->_load)) { /* BUG0_72 The party moves very slowly even though no champion 'Load' value is drawn in red. When the Load of a champion has exactly the maximum value he can carry then the Load is drawn in yellow but the speed is the same as when the champion is overloaded (when the Load is drawn in red). The comparison operator should be >= instead of > */
-		L0933_i_Ticks = 2;
-		if (((int32)AL0931_ui_Load << 3) > ((int32)L0932_ui_MaximumLoad * 5)) {
-			L0933_i_Ticks++;
-		}
-		AL0931_ui_WoundTicks = 1;
+		woundTicks = 1;
 	} else {
-		L0933_i_Ticks = 4 + (((AL0931_ui_Load - L0932_ui_MaximumLoad) << 2) / L0932_ui_MaximumLoad);
-		AL0931_ui_WoundTicks = 2;
+		ticks = 4 + (((curLoad - maximumLoad) << 2) / maximumLoad);
+		woundTicks = 2;
 	}
-	if (getFlag(champ->_wounds, k0x0020_ChampionWoundFeet)) {
-		L0933_i_Ticks += AL0931_ui_WoundTicks;
-	}
-	if (_vm->_objectMan->f33_getIconIndex(champ->_slots[k5_ChampionSlotFeet]) == k194_IconIndiceArmourBootOfSpeed) {
-		L0933_i_Ticks--;
-	}
-	return L0933_i_Ticks;
+
+	if (getFlag(champ->_wounds, k0x0020_ChampionWoundFeet))
+		ticks += woundTicks;
+
+	if (_vm->_objectMan->f33_getIconIndex(champ->_slots[k5_ChampionSlotFeet]) == k194_IconIndiceArmourBootOfSpeed)
+		ticks--;
+
+	return ticks;
 }
 
 bool ChampionMan::f294_isAmmunitionCompatibleWithWeapon(uint16 champIndex, uint16 weaponSlotIndex, uint16 ammunitionSlotIndex) {
-	Champion* L0874_ps_Champion;
-	WeaponInfo* L0875_ps_WeaponInfo;
-	Thing L0878_T_Thing;
-	int16 L0879_i_WeaponClass;
-
-	L0874_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
-	L0878_T_Thing = L0874_ps_Champion->_slots[weaponSlotIndex];
-	if (L0878_T_Thing.getType() != k5_WeaponThingType) {
+	Champion *curChampion = &_vm->_championMan->_gK71_champions[champIndex];
+	Thing curThing = curChampion->_slots[weaponSlotIndex];
+	if (curThing.getType() != k5_WeaponThingType)
 		return false;
-	}
-	L0875_ps_WeaponInfo = _vm->_dungeonMan->f158_getWeaponInfo(L0878_T_Thing);
-	if ((L0875_ps_WeaponInfo->_class >= k16_WeaponClassFirstBow) && (L0875_ps_WeaponInfo->_class <= k31_WeaponClassLastBow)) {
-		L0879_i_WeaponClass = k10_WeaponClassBowAmmunition;
-	} else {
-		if ((L0875_ps_WeaponInfo->_class >= k32_WeaponClassFirstSling) && (L0875_ps_WeaponInfo->_class <= k47_WeaponClassLastSling)) {
-			L0879_i_WeaponClass = k11_WeaponClassSlingAmmunition;
-		} else {
-			return false;
-		}
-	}
-	L0878_T_Thing = L0874_ps_Champion->_slots[ammunitionSlotIndex];
-	L0875_ps_WeaponInfo = _vm->_dungeonMan->f158_getWeaponInfo(L0878_T_Thing);
-	return ((L0878_T_Thing.getType() == k5_WeaponThingType) && (L0875_ps_WeaponInfo->_class == L0879_i_WeaponClass));
+
+	WeaponInfo *weaponInfo = _vm->_dungeonMan->f158_getWeaponInfo(curThing);
+	int16 weaponClass = kM1_WeaponClassNone;
+
+	if ((weaponInfo->_class >= k16_WeaponClassFirstBow) && (weaponInfo->_class <= k31_WeaponClassLastBow))
+		weaponClass = k10_WeaponClassBowAmmunition;
+	else if ((weaponInfo->_class >= k32_WeaponClassFirstSling) && (weaponInfo->_class <= k47_WeaponClassLastSling))
+		weaponClass = k11_WeaponClassSlingAmmunition;
+
+	if (weaponClass == kM1_WeaponClassNone)
+		return false;
+
+	curThing = curChampion->_slots[ammunitionSlotIndex];
+	weaponInfo = _vm->_dungeonMan->f158_getWeaponInfo(curThing);
+	return ((curThing.getType() == k5_WeaponThingType) && (weaponInfo->_class == weaponClass));
 }
 
 void ChampionMan::f293_drawAllChampionStates() {

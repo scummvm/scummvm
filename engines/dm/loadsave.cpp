@@ -143,7 +143,7 @@ void DMEngine::f433_processCommand140_saveGame(uint16 slot, const Common::String
 	_eventMan->f78_showMouse();
 
 	// do {
-	//		ask the play what he wants
+	//		ask the player what he wants
 	// while 
 
 	// F0427_DIALOG_Draw(0, G0551_pc_SAVINGGAME, 0, 0, 0, 0, false, false, false);

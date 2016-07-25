@@ -629,7 +629,6 @@ T0266017_CheckProjectileImpacts:
 void MovesensMan::f268_addEvent(byte type, byte mapX, byte mapY, byte cell, byte effect, int32 time) {
 	TimelineEvent L0729_s_Event;
 
-
 	M33_setMapAndTime(L0729_s_Event._mapTime, _vm->_dungeonMan->_g272_currMapIndex, time);
 	L0729_s_Event._type = type;
 	L0729_s_Event._priority = 0;

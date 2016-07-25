@@ -101,7 +101,7 @@ class TimelineEvent {
 public:
 	int32 _mapTime;
 	byte _type;
-	byte _priority;
+	byte _priority; // CHECKME: byte? or int16? Inconsistency in the code
 
 	uint16 getTypePriority() { return (_type << 8) + _priority; }
 

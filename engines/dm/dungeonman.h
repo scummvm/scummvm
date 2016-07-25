@@ -116,6 +116,7 @@ public:
 
 extern ArmourInfo g239_ArmourInfo[58]; // G0239_as_Graphic559_ArmourInfo
 
+#define kM1_WeaponClassNone					-1
 /* Class 0: SWING weapons */
 #define k0_WeaponClassSwingWeapon			0 // @ C000_CLASS_SWING_WEAPON 
 /* Class 1 to 15: THROW weapons */

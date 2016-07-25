@@ -168,10 +168,10 @@ enum {
 
 
 
-
+//TODO: Directly use CLIP
 template<typename T>
 inline T f26_getBoundedValue(T min, T val, T max) {
-	return MIN(MAX(min, val), max);
+	return CLIP<T>(min, val, max);
 } // @ F0026_MAIN_GetBoundedValue
 
 #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
