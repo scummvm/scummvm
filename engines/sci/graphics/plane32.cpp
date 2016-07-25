@@ -247,6 +247,8 @@ void Plane::deleteAllPics() {
 #pragma mark -
 #pragma mark Plane - Rendering
 
+extern int splitRects(Common::Rect r, const Common::Rect &other, Common::Rect(&outRects)[4]);
+
 void Plane::breakDrawListByPlanes(DrawList &drawList, const PlaneList &planeList) const {
 	const int nextPlaneIndex = planeList.findIndexByObject(_object) + 1;
 	const PlaneList::size_type planeCount = planeList.size();
