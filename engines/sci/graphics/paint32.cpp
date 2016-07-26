@@ -117,7 +117,7 @@ void GfxPaint32::plotter(int x, int y, int color, void *data) {
 }
 
 BitmapResource GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const Common::Point &endPoint, const int16 priority, const uint8 color, const LineStyle style, uint16 pattern, uint8 thickness, Common::Rect &outRect) {
-	const uint8 skipColor = color != 250 ? 250 : 0;
+	const uint8 skipColor = color != kDefaultSkipColor ? kDefaultSkipColor : 0;
 
 	// Thickness is expected to be 2n+1
 	thickness = ((MAX((uint8)1, thickness) - 1) | 1);

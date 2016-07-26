@@ -46,6 +46,10 @@ enum BitmapFlags {
 	kBitmapRemap = 2
 };
 
+enum {
+	kDefaultSkipColor = 250
+};
+
 #define BITMAP_PROPERTY(size, property, offset)\
 inline uint##size get##property() const {\
 	return READ_SCI11ENDIAN_UINT##size(_bitmap + (offset));\
