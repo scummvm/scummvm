@@ -32,8 +32,6 @@
 
 namespace DM {
 
-;
-
 class LoadsaveMan {
 	DMEngine *_vm;
 public:

@@ -49,12 +49,18 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 	Common::InSaveFile *file = nullptr;
 
 	struct {
-		int16 _g528_saveFormat = 0;
-		int16 saveAndPlayChoice = 0;
-		int32 _g525_gameId = 0;
-		int16 _g527_platform = 0;
-		uint16 _g526_dungeonId = 0;
+		int16 _saveFormat;
+		int16 _saveAndPlayChoice;
+		int32 _gameId;
+		int16 _platform;
+		uint16 _dungeonId;
 	} dmSaveHeader;
+
+	dmSaveHeader._saveFormat = 0;
+	dmSaveHeader._saveAndPlayChoice = 0;
+	dmSaveHeader._gameId = 0;
+	dmSaveHeader._platform = 0;
+	dmSaveHeader._dungeonId = 0;
 
 	if (!_g298_newGame) {
 		fileName = getSavefileName(slot);
@@ -85,13 +91,13 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 		warning(false, "MISSING CODE: missing check for matching format and platform in save in f435_loadgame");
 
 
-		dmSaveHeader._g528_saveFormat = file->readSint16BE();
-		dmSaveHeader.saveAndPlayChoice = file->readSint16BE();
-		dmSaveHeader._g525_gameId = file->readSint32BE();
-		dmSaveHeader._g527_platform = file->readSint16BE();
-		dmSaveHeader._g526_dungeonId = file->readUint16BE();
+		dmSaveHeader._saveFormat = file->readSint16BE();
+		dmSaveHeader._saveAndPlayChoice = file->readSint16BE();
+		dmSaveHeader._gameId = file->readSint32BE();
+		dmSaveHeader._platform = file->readSint16BE();
+		dmSaveHeader._dungeonId = file->readUint16BE();
 
-		_g525_gameId = dmSaveHeader._g525_gameId;
+		_g525_gameId = dmSaveHeader._gameId;
 
 		_g313_gameTime = file->readSint32BE();
 		// G0349_ul_LastRandomNumber = L1371_s_GlobalData.LastRandomNumber;
@@ -143,9 +149,9 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 			F0436_STARTEND_FadeToPalette(_vm->_displayMan->_g347_paletteTopAndBottomScreen);
 		}*/
 	} else {
-		_g528_saveFormat = dmSaveHeader._g528_saveFormat;
-		_g527_platform = dmSaveHeader._g527_platform;
-		_g526_dungeonId = dmSaveHeader._g526_dungeonId;
+		_g528_saveFormat = dmSaveHeader._saveFormat;
+		_g527_platform = dmSaveHeader._platform;
+		_g526_dungeonId = dmSaveHeader._dungeonId;
 
 			_g524_restartGameAllowed = true;
 		warning(false, "MISSING CDOE: F0427_DIALOG_Draw in f435_loadgame");
