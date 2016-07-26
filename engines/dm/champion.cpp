@@ -1829,7 +1829,7 @@ void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex)
 	uint16 previousPartyChampionCount = _vm->_championMan->_g305_partyChampionCount;
 	Champion *championPtr = &_vm->_championMan->_gK71_champions[previousPartyChampionCount];
 	championPtr->resetToZero();
-	// Strangerke - TODO: Check if the new code is possible to run on the older version (example: the portaits could be missing in the data)
+	// Strangerke - TODO: Check if the new code is possible to run on the older version (example: the portraits could be missing in the data)
 	_vm->_displayMan->_g578_useByteBoxCoordinates = true;
 	_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k26_ChampionPortraitsIndice), championPtr->_portrait, gBoxChampionPortrait, _vm->_championMan->M27_getChampionPortraitX(championPortraitIndex), _vm->_championMan->M28_getChampionPortraitY(championPortraitIndex), k128_byteWidth, k16_byteWidth, kM1_ColorNoTransparency);
 	championPtr->_actionIndex = k255_ChampionActionNone;
@@ -1837,9 +1837,9 @@ void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex)
 	championPtr->_hideDamageReceivedIndex = -1;
 	championPtr->_dir = _vm->_dungeonMan->_g308_partyDir;
 	uint16 viewCell = k0_ViewCellFronLeft;
-	while (_vm->_championMan->f285_getIndexInCell(M21_normalizeModulo4(viewCell + _vm->_dungeonMan->_g308_partyDir)) != kM1_ChampionNone) {
+	while (_vm->_championMan->f285_getIndexInCell(M21_normalizeModulo4(viewCell + _vm->_dungeonMan->_g308_partyDir)) != kM1_ChampionNone)
 		viewCell++;
-	}
+
 	championPtr->_cell = (ViewCell)M21_normalizeModulo4(viewCell + _vm->_dungeonMan->_g308_partyDir);
 	championPtr->_attributes = k0x0400_ChampionAttributeIcon;
 	championPtr->_directionMaximumDamageReceived = _vm->_dungeonMan->_g308_partyDir;
@@ -1858,9 +1858,8 @@ void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex)
 
 	uint16 charIdx = 0;
 	char tmpChar;
-	while ((tmpChar = *decodedStringPtr++) != '\n') { /* New line */
+	while ((tmpChar = *decodedStringPtr++) != '\n')
 		championPtr->_name[charIdx++] = tmpChar;
-	}
 
 	championPtr->_name[charIdx] = '\0';
 	charIdx = 0;
@@ -1871,14 +1870,13 @@ void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex)
 			if (championTitleCopiedFl)
 				break;
 			championTitleCopiedFl = true;
-		} else {
+		} else
 			championPtr->_title[charIdx++] = tmpChar;
-		}
 	}
 	championPtr->_title[charIdx] = '\0';
-	if (*decodedStringPtr++ == 'M') {
+	if (*decodedStringPtr++ == 'M')
 		setFlag(championPtr->_attributes, k0x0010_ChampionAttributeMale);
-	}
+
 	decodedStringPtr++;
 	championPtr->_currHealth = championPtr->_maxHealth = _vm->_championMan->f279_getDecodedValue(decodedStringPtr, 4);
 	decodedStringPtr += 4;
@@ -2072,174 +2070,161 @@ uint16 ChampionMan::f309_getMaximumLoad(Champion *champ) {
 }
 
 void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
-	uint16 L0862_ui_ChampionAttributes;
-	bool L0863_B_IsInventoryChampion;
-	int16 L0864_i_Multiple;
-#define AL0864_i_BorderCount       L0864_i_Multiple
-#define AL0864_i_ColorIndex        L0864_i_Multiple
-#define AL0864_i_Load              L0864_i_Multiple
-#define AL0864_i_ChampionIconIndex L0864_i_Multiple
-#define AL0864_i_StatisticIndex    L0864_i_Multiple
-#define AL0864_i_SlotIndex         L0864_i_Multiple
-	Champion* L0865_ps_Champion;
-	char* L0866_pc_ChampionName;
-	char L0867_c_ChampionTitleFirstCharacter;
-	int16 L0868_i_ChampionStatusBoxX;
-	int16 L0869_i_ChampionTitleX;
-	int16 L0870_i_Multiple;
-#define AL0870_i_NativeBitmapIndex L0870_i_Multiple
-#define AL0870_i_Color             L0870_i_Multiple
-	Box L0871_s_Box;
-	int16 L0872_ai_NativeBitmapIndices[3];
-
-
-	L0868_i_ChampionStatusBoxX = champIndex * k69_ChampionStatusBoxSpacing;
-	L0865_ps_Champion = &_gK71_champions[champIndex];
-	L0862_ui_ChampionAttributes = L0865_ps_Champion->_attributes;
-	if (!getFlag(L0862_ui_ChampionAttributes, k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x0200_ChampionAttributeLoad | k0x0400_ChampionAttributeIcon | k0x0800_ChampionAttributePanel | k0x1000_ChampionAttributeStatusBox | k0x2000_ChampionAttributeWounds | k0x4000_ChampionAttributeViewport | k0x8000_ChampionAttributeActionHand)) {
+	int16 championStatusBoxX = champIndex * k69_ChampionStatusBoxSpacing;
+	Champion *curChampion = &_gK71_champions[champIndex];
+	uint16 championAttributes = curChampion->_attributes;
+	if (!getFlag(championAttributes, k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x0200_ChampionAttributeLoad | k0x0400_ChampionAttributeIcon | k0x0800_ChampionAttributePanel | k0x1000_ChampionAttributeStatusBox | k0x2000_ChampionAttributeWounds | k0x4000_ChampionAttributeViewport | k0x8000_ChampionAttributeActionHand))
 		return;
-	}
-	L0863_B_IsInventoryChampion = (_vm->M0_indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal);
+
+	bool isInventoryChampion = (_vm->M0_indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal);
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 	_vm->_eventMan->f78_showMouse();
-	if (getFlag(L0862_ui_ChampionAttributes, k0x1000_ChampionAttributeStatusBox)) {
-		L0871_s_Box._y1 = 0;
-		L0871_s_Box._y2 = 28;
-		L0871_s_Box._x2 = (L0871_s_Box._x1 = L0868_i_ChampionStatusBoxX) + 66;
-		if (L0865_ps_Champion->_currHealth) {
-			_vm->_displayMan->D24_fillScreenBox(L0871_s_Box, k12_ColorDarkestGray);
+	if (getFlag(championAttributes, k0x1000_ChampionAttributeStatusBox)) {
+		Box box;
+		box._y1 = 0;
+		box._y2 = 28;
+		box._x1 = championStatusBoxX;
+		box._x2 = box._x1 + 66;
+		if (curChampion->_currHealth) {
+			_vm->_displayMan->D24_fillScreenBox(box, k12_ColorDarkestGray);
+			int16 nativeBitmapIndices[3];
 			for (uint16 i = 0; i < 3; ++i)
-				L0872_ai_NativeBitmapIndices[i] = 0;
-			AL0864_i_BorderCount = 0;
-			if (_g407_party._fireShieldDefense > 0) {
-				L0872_ai_NativeBitmapIndices[AL0864_i_BorderCount++] = k38_BorderPartyFireshieldIndice;
-			}
-			if (_g407_party._spellShieldDefense > 0) {
-				L0872_ai_NativeBitmapIndices[AL0864_i_BorderCount++] = k39_BorderPartySpellshieldIndice;
-			}
-			if ((_g407_party._shieldDefense > 0) || L0865_ps_Champion->_shieldDefense) {
-				L0872_ai_NativeBitmapIndices[AL0864_i_BorderCount++] = k37_BorderPartyShieldIndice;
-			}
-			while (AL0864_i_BorderCount--) {
-				_vm->_displayMan->f21_blitToScreen(_vm->_displayMan->f489_getNativeBitmapOrGraphic(L0872_ai_NativeBitmapIndices[AL0864_i_BorderCount]), &L0871_s_Box, k40_byteWidth, k10_ColorFlesh, 29);
-			}
-			if (L0863_B_IsInventoryChampion) {
+				nativeBitmapIndices[i] = 0;
+
+			uint16 borderCount = 0;
+			if (_g407_party._fireShieldDefense > 0)
+				nativeBitmapIndices[borderCount++] = k38_BorderPartyFireshieldIndice;
+
+			if (_g407_party._spellShieldDefense > 0)
+				nativeBitmapIndices[borderCount++] = k39_BorderPartySpellshieldIndice;
+
+			if ((_g407_party._shieldDefense > 0) || curChampion->_shieldDefense)
+				nativeBitmapIndices[borderCount++] = k37_BorderPartyShieldIndice;
+
+			while (borderCount--)
+				_vm->_displayMan->f21_blitToScreen(_vm->_displayMan->f489_getNativeBitmapOrGraphic(nativeBitmapIndices[borderCount]), &box, k40_byteWidth, k10_ColorFlesh, 29);
+
+			if (isInventoryChampion) {
 				_vm->_inventoryMan->f354_drawStatusBoxPortrait(champIndex);
-				setFlag(L0862_ui_ChampionAttributes, k0x0100_ChampionAttributeStatistics);
-			} else {
-				setFlag(L0862_ui_ChampionAttributes, k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x2000_ChampionAttributeWounds | k0x8000_ChampionAttributeActionHand);
-			}
+				setFlag(championAttributes, k0x0100_ChampionAttributeStatistics);
+			} else
+				setFlag(championAttributes, k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x2000_ChampionAttributeWounds | k0x8000_ChampionAttributeActionHand);
 		} else {
-			_vm->_displayMan->f21_blitToScreen(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k8_StatusBoxDeadChampion), &L0871_s_Box, k40_byteWidth, kM1_ColorNoTransparency, 29);
-			_vm->_textMan->f53_printToLogicalScreen(L0868_i_ChampionStatusBoxX + 1, 5, k13_ColorLightestGray, k1_ColorDarkGary, L0865_ps_Champion->_name);
+			_vm->_displayMan->f21_blitToScreen(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k8_StatusBoxDeadChampion), &box, k40_byteWidth, kM1_ColorNoTransparency, 29);
+			_vm->_textMan->f53_printToLogicalScreen(championStatusBoxX + 1, 5, k13_ColorLightestGray, k1_ColorDarkGary, curChampion->_name);
 			_vm->_menuMan->f386_drawActionIcon(champIndex);
-			goto T0292042;
+
+			clearFlag(curChampion->_attributes, k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x0200_ChampionAttributeLoad | k0x0400_ChampionAttributeIcon | k0x0800_ChampionAttributePanel | k0x1000_ChampionAttributeStatusBox | k0x2000_ChampionAttributeWounds | k0x4000_ChampionAttributeViewport | k0x8000_ChampionAttributeActionHand);
+			_vm->_eventMan->f77_hideMouse();
+			return;
 		}
 	}
-	if (!(L0865_ps_Champion->_currHealth))
-		goto T0292042;
-	if (getFlag(L0862_ui_ChampionAttributes, k0x0080_ChampionAttributeNameTitle)) {
-		AL0864_i_ColorIndex = (champIndex == _g411_leaderIndex) ? k9_ColorGold : k13_ColorLightestGray;
-		if (L0863_B_IsInventoryChampion) {
-			_vm->_textMan->f52_printToViewport(3, 7, (Color)AL0864_i_ColorIndex, L0866_pc_ChampionName = L0865_ps_Champion->_name);
-			L0869_i_ChampionTitleX = 6 * strlen(L0866_pc_ChampionName) + 3;
-			L0867_c_ChampionTitleFirstCharacter = L0865_ps_Champion->_title[0];
-			if ((L0867_c_ChampionTitleFirstCharacter != ',') && (L0867_c_ChampionTitleFirstCharacter != ';') && (L0867_c_ChampionTitleFirstCharacter != '-')) {
-				L0869_i_ChampionTitleX += 6;
-			}
-			_vm->_textMan->f52_printToViewport(L0869_i_ChampionTitleX, 7, (Color)AL0864_i_ColorIndex, L0865_ps_Champion->_title);
-			setFlag(L0862_ui_ChampionAttributes, k0x4000_ChampionAttributeViewport);
+	if (!(curChampion->_currHealth)) {
+		clearFlag(curChampion->_attributes, k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x0200_ChampionAttributeLoad | k0x0400_ChampionAttributeIcon | k0x0800_ChampionAttributePanel | k0x1000_ChampionAttributeStatusBox | k0x2000_ChampionAttributeWounds | k0x4000_ChampionAttributeViewport | k0x8000_ChampionAttributeActionHand);
+		_vm->_eventMan->f77_hideMouse();
+		return;
+	}
+
+	if (getFlag(championAttributes, k0x0080_ChampionAttributeNameTitle)) {
+		Color nameColor = (champIndex == _g411_leaderIndex) ? k9_ColorGold : k13_ColorLightestGray;
+		if (isInventoryChampion) {
+			char *championName = curChampion->_name;
+			_vm->_textMan->f52_printToViewport(3, 7, nameColor, championName);
+			int16 championTitleX = 6 * strlen(championName) + 3;
+			char titleFirstCharacter = curChampion->_title[0];
+			if ((titleFirstCharacter != ',') && (titleFirstCharacter != ';') && (titleFirstCharacter != '-'))
+				championTitleX += 6;
+
+			_vm->_textMan->f52_printToViewport(championTitleX, 7, nameColor, curChampion->_title);
+			setFlag(championAttributes, k0x4000_ChampionAttributeViewport);
 		} else {
-			L0871_s_Box._y1 = 0;
-			L0871_s_Box._y2 = 6;
-			L0871_s_Box._x2 = (L0871_s_Box._x1 = L0868_i_ChampionStatusBoxX) + 42;
-			_vm->_displayMan->D24_fillScreenBox(L0871_s_Box, k1_ColorDarkGary);
-			_vm->_textMan->f53_printToLogicalScreen(L0868_i_ChampionStatusBoxX + 1, 5, (Color)AL0864_i_ColorIndex, k1_ColorDarkGary, L0865_ps_Champion->_name);
+			Box box;
+			box._y1 = 0;
+			box._y2 = 6;
+			box._x1 = championStatusBoxX;
+			box._x2 = box._x1 + 42;
+			_vm->_displayMan->D24_fillScreenBox(box, k1_ColorDarkGary);
+			_vm->_textMan->f53_printToLogicalScreen(championStatusBoxX + 1, 5, nameColor, k1_ColorDarkGary, curChampion->_name);
 		}
 	}
-	if (getFlag(L0862_ui_ChampionAttributes, k0x0100_ChampionAttributeStatistics)) {
+	if (getFlag(championAttributes, k0x0100_ChampionAttributeStatistics)) {
 		f287_drawChampionBarGraphs(champIndex);
-		if (L0863_B_IsInventoryChampion) {
-			f290_drawHealthStaminaManaValues(L0865_ps_Champion);
-			if ((L0865_ps_Champion->_food < 0) || (L0865_ps_Champion->_water < 0) || (L0865_ps_Champion->_poisonEventCount)) {
-				AL0870_i_NativeBitmapIndex = k34_SlotBoxWoundedIndice;
-			} else {
-				AL0870_i_NativeBitmapIndex = k33_SlotBoxNormalIndice;
-			}
-			_vm->_displayMan->f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(AL0870_i_NativeBitmapIndex), gBoxMouth, k16_byteWidth, k12_ColorDarkestGray, 18);
-			AL0870_i_NativeBitmapIndex = k33_SlotBoxNormalIndice;
-			for (AL0864_i_StatisticIndex = k1_ChampionStatStrength; AL0864_i_StatisticIndex <= k6_ChampionStatAntifire; AL0864_i_StatisticIndex++) {
-				if ((L0865_ps_Champion->_statistics[AL0864_i_StatisticIndex][k1_ChampionStatCurrent] < L0865_ps_Champion->_statistics[AL0864_i_StatisticIndex][k0_ChampionStatMaximum])) {
-					AL0870_i_NativeBitmapIndex = k34_SlotBoxWoundedIndice;
+		if (isInventoryChampion) {
+			f290_drawHealthStaminaManaValues(curChampion);
+			int16 nativeBitmapIndex;
+			if ((curChampion->_food < 0) || (curChampion->_water < 0) || (curChampion->_poisonEventCount))
+				nativeBitmapIndex = k34_SlotBoxWoundedIndice;
+			else
+				nativeBitmapIndex = k33_SlotBoxNormalIndice;
+
+			_vm->_displayMan->f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(nativeBitmapIndex), gBoxMouth, k16_byteWidth, k12_ColorDarkestGray, 18);
+			nativeBitmapIndex = k33_SlotBoxNormalIndice;
+			for (int i = k1_ChampionStatStrength; i <= k6_ChampionStatAntifire; i++) {
+				if ((curChampion->_statistics[i][k1_ChampionStatCurrent] < curChampion->_statistics[i][k0_ChampionStatMaximum])) {
+					nativeBitmapIndex = k34_SlotBoxWoundedIndice;
 					break;
 				}
 			}
-			_vm->_displayMan->f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(AL0870_i_NativeBitmapIndex), gBoxEye, k16_byteWidth, k12_ColorDarkestGray, 18);
-			setFlag(L0862_ui_ChampionAttributes, k0x4000_ChampionAttributeViewport);
+			_vm->_displayMan->f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(nativeBitmapIndex), gBoxEye, k16_byteWidth, k12_ColorDarkestGray, 18);
+			setFlag(championAttributes, k0x4000_ChampionAttributeViewport);
 		}
 	}
-	if (getFlag(L0862_ui_ChampionAttributes, k0x2000_ChampionAttributeWounds)) {
-		for (AL0864_i_SlotIndex = L0863_B_IsInventoryChampion ? k5_ChampionSlotFeet : k1_ChampionSlotActionHand; AL0864_i_SlotIndex >= k0_ChampionSlotReadyHand; AL0864_i_SlotIndex--) {
-			f291_drawSlot(champIndex, AL0864_i_SlotIndex);
-		}
-		if (L0863_B_IsInventoryChampion) {
-			setFlag(L0862_ui_ChampionAttributes, k0x4000_ChampionAttributeViewport);
-		}
+	if (getFlag(championAttributes, k0x2000_ChampionAttributeWounds)) {
+		for (int i = isInventoryChampion ? k5_ChampionSlotFeet : k1_ChampionSlotActionHand; i >= k0_ChampionSlotReadyHand; i--)
+			f291_drawSlot(champIndex, i);
+
+		if (isInventoryChampion)
+			setFlag(championAttributes, k0x4000_ChampionAttributeViewport);
 	}
-	if (getFlag(L0862_ui_ChampionAttributes, k0x0200_ChampionAttributeLoad) && L0863_B_IsInventoryChampion) {
-		if (L0865_ps_Champion->_load > (AL0864_i_Load = f309_getMaximumLoad(L0865_ps_Champion))) {
-			AL0870_i_Color = k8_ColorRed;
-		} else {
-			if (((long)L0865_ps_Champion->_load << 3) > ((long)AL0864_i_Load * 5)) {
-				AL0870_i_Color = k11_ColorYellow;
-			} else {
-				AL0870_i_Color = k13_ColorLightestGray;
-			}
-		}
-		_vm->_textMan->f52_printToViewport(104, 132, (Color)AL0870_i_Color, "LOAD ");
-		AL0864_i_Load = L0865_ps_Champion->_load / 10;
-		strcpy(_vm->_g353_stringBuildBuffer, f288_getStringFromInteger(AL0864_i_Load, true, 3).c_str());
+	if (getFlag(championAttributes, k0x0200_ChampionAttributeLoad) && isInventoryChampion) {
+		uint16 maxLoad = f309_getMaximumLoad(curChampion);
+		Color loadColor;
+		if (curChampion->_load > maxLoad)
+			loadColor = k8_ColorRed;
+		else if (((long)curChampion->_load << 3) > ((long)maxLoad * 5))
+			loadColor = k11_ColorYellow;
+		else
+			loadColor = k13_ColorLightestGray;
+
+		_vm->_textMan->f52_printToViewport(104, 132, loadColor, "LOAD ");
+		maxLoad = curChampion->_load / 10;
+		strcpy(_vm->_g353_stringBuildBuffer, f288_getStringFromInteger(maxLoad, true, 3).c_str());
 		strcat(_vm->_g353_stringBuildBuffer, ".");
-		AL0864_i_Load = L0865_ps_Champion->_load - (AL0864_i_Load * 10);
-		strcat(_vm->_g353_stringBuildBuffer, f288_getStringFromInteger(AL0864_i_Load, false, 1).c_str());
+		maxLoad = curChampion->_load - (maxLoad * 10);
+		strcat(_vm->_g353_stringBuildBuffer, f288_getStringFromInteger(maxLoad, false, 1).c_str());
 		strcat(_vm->_g353_stringBuildBuffer, "/");
-		AL0864_i_Load = (f309_getMaximumLoad(L0865_ps_Champion) + 5) / 10;
-		strcat(_vm->_g353_stringBuildBuffer, f288_getStringFromInteger(AL0864_i_Load, true, 3).c_str());
+		maxLoad = (f309_getMaximumLoad(curChampion) + 5) / 10;
+		strcat(_vm->_g353_stringBuildBuffer, f288_getStringFromInteger(maxLoad, true, 3).c_str());
 		strcat(_vm->_g353_stringBuildBuffer, " KG");
-		_vm->_textMan->f52_printToViewport(148, 132, (Color)AL0870_i_Color, _vm->_g353_stringBuildBuffer);
-		setFlag(L0862_ui_ChampionAttributes, k0x4000_ChampionAttributeViewport);
+		_vm->_textMan->f52_printToViewport(148, 132, loadColor, _vm->_g353_stringBuildBuffer);
+		setFlag(championAttributes, k0x4000_ChampionAttributeViewport);
 	}
-	AL0864_i_ChampionIconIndex = M26_championIconIndex(L0865_ps_Champion->_cell, _vm->_dungeonMan->_g308_partyDir);
-	if (getFlag(L0862_ui_ChampionAttributes, k0x0400_ChampionAttributeIcon) && (_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap != _vm->M0_indexToOrdinal(AL0864_i_ChampionIconIndex))) {
-		_vm->_displayMan->D24_fillScreenBox(g54_BoxChampionIcons[AL0864_i_ChampionIconIndex], g46_ChampionColor[champIndex]);
-		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k28_ChampionIcons), _vm->_displayMan->_g348_bitmapScreen, g54_BoxChampionIcons[AL0864_i_ChampionIconIndex], _vm->_championMan->M26_championIconIndex(L0865_ps_Champion->_dir, _vm->_dungeonMan->_g308_partyDir) * 19, 0, k40_byteWidth, k160_byteWidthScreen, k12_ColorDarkestGray, 14, k200_heightScreen);
+	uint16 championIconIndex = M26_championIconIndex(curChampion->_cell, _vm->_dungeonMan->_g308_partyDir);
+	if (getFlag(championAttributes, k0x0400_ChampionAttributeIcon) && (_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap != _vm->M0_indexToOrdinal(championIconIndex))) {
+		_vm->_displayMan->D24_fillScreenBox(g54_BoxChampionIcons[championIconIndex], g46_ChampionColor[champIndex]);
+		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k28_ChampionIcons), _vm->_displayMan->_g348_bitmapScreen, g54_BoxChampionIcons[championIconIndex], _vm->_championMan->M26_championIconIndex(curChampion->_dir, _vm->_dungeonMan->_g308_partyDir) * 19, 0, k40_byteWidth, k160_byteWidthScreen, k12_ColorDarkestGray, 14, k200_heightScreen);
 	}
-	if (getFlag(L0862_ui_ChampionAttributes, k0x0800_ChampionAttributePanel) && L0863_B_IsInventoryChampion) {
-		if (_vm->_g333_pressingMouth) {
+	if (getFlag(championAttributes, k0x0800_ChampionAttributePanel) && isInventoryChampion) {
+		if (_vm->_g333_pressingMouth)
 			_vm->_inventoryMan->f345_drawPanelFoodWaterPoisoned();
-		} else {
-			if (_vm->_g331_pressingEye) {
-				if (_g415_leaderEmptyHanded) {
-					_vm->_inventoryMan->f351_drawChampionSkillsAndStatistics();
-				}
-			} else {
-				_vm->_inventoryMan->f347_drawPanel();
-			}
-		}
-		setFlag(L0862_ui_ChampionAttributes, k0x4000_ChampionAttributeViewport);
+		else if (_vm->_g331_pressingEye) {
+			if (_g415_leaderEmptyHanded)
+				_vm->_inventoryMan->f351_drawChampionSkillsAndStatistics();
+		} else
+			_vm->_inventoryMan->f347_drawPanel();
+
+		setFlag(championAttributes, k0x4000_ChampionAttributeViewport);
 	}
-	if (getFlag(L0862_ui_ChampionAttributes, k0x8000_ChampionAttributeActionHand)) {
+	if (getFlag(championAttributes, k0x8000_ChampionAttributeActionHand)) {
 		f291_drawSlot(champIndex, k1_ChampionSlotActionHand);
 		_vm->_menuMan->f386_drawActionIcon(champIndex);
-		if (L0863_B_IsInventoryChampion) {
-			setFlag(L0862_ui_ChampionAttributes, k0x4000_ChampionAttributeViewport);
-		}
+		if (isInventoryChampion)
+			setFlag(championAttributes, k0x4000_ChampionAttributeViewport);
 	}
-	if (getFlag(L0862_ui_ChampionAttributes, k0x4000_ChampionAttributeViewport)) {
+	if (getFlag(championAttributes, k0x4000_ChampionAttributeViewport))
 		_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
-	}
-T0292042:
-	clearFlag(L0865_ps_Champion->_attributes, k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x0200_ChampionAttributeLoad | k0x0400_ChampionAttributeIcon | k0x0800_ChampionAttributePanel | k0x1000_ChampionAttributeStatusBox | k0x2000_ChampionAttributeWounds | k0x4000_ChampionAttributeViewport | k0x8000_ChampionAttributeActionHand);
+
+	clearFlag(curChampion->_attributes, k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x0200_ChampionAttributeLoad | k0x0400_ChampionAttributeIcon | k0x0800_ChampionAttributePanel | k0x1000_ChampionAttributeStatusBox | k0x2000_ChampionAttributeWounds | k0x4000_ChampionAttributeViewport | k0x8000_ChampionAttributeActionHand);
 	_vm->_eventMan->f77_hideMouse();
 }
 
@@ -2260,20 +2245,17 @@ void ChampionMan::f291_drawSlot(uint16 champIndex, int16 slotIndex) {
 
 	uint16 slotBoxIndex;
 	if (!isInventoryChamp) {  /* If drawing a slot for a champion other than the champion whose inventory is open */
-		if ((slotIndex > k1_ChampionSlotActionHand) || (_g299_candidateChampionOrdinal == _vm->M0_indexToOrdinal(champIndex))) {
+		if ((slotIndex > k1_ChampionSlotActionHand) || (_g299_candidateChampionOrdinal == _vm->M0_indexToOrdinal(champIndex)))
 			return;
-		}
 		slotBoxIndex = (champIndex << 1) + slotIndex;
-	} else {
+	} else
 		slotBoxIndex = k8_SlotBoxInventoryFirstSlot + slotIndex;
-	}
 
 	Thing thing;
-	if (slotIndex >= k30_ChampionSlotChest_1) {
+	if (slotIndex >= k30_ChampionSlotChest_1)
 		thing = _vm->_inventoryMan->_g425_chestSlots[slotIndex - k30_ChampionSlotChest_1];
-	} else {
+	else
 		thing = champ->getSlot((ChampionSlot)slotIndex);
-	}
 
 	SlotBox *slotBox = &_vm->_objectMan->_g30_slotBoxes[slotBoxIndex];
 	Box box;
@@ -2282,10 +2264,8 @@ void ChampionMan::f291_drawSlot(uint16 champIndex, int16 slotIndex) {
 	box._x2 = box._x1 + 17;
 	box._y2 = box._y1 + 17;
 
-
-	if (!isInventoryChamp) {
+	if (!isInventoryChamp)
 		_vm->_eventMan->f77_hideMouse();
-	}
 
 	int16 iconIndex;
 	if (thing == Thing::_none) {
@@ -2294,15 +2274,13 @@ void ChampionMan::f291_drawSlot(uint16 champIndex, int16 slotIndex) {
 			if (champ->getWoundsFlag((ChampionWound)(1 << slotIndex))) {
 				iconIndex++;
 				nativeBitmapIndex = k34_SlotBoxWoundedIndice;
-			} else {
+			} else
 				nativeBitmapIndex = k33_SlotBoxNormalIndice;
-			}
 		} else {
-			if ((slotIndex >= k10_ChampionSlotNeck) && (slotIndex <= k13_ChampionSlotBackpackLine_1_1)) {
+			if ((slotIndex >= k10_ChampionSlotNeck) && (slotIndex <= k13_ChampionSlotBackpackLine_1_1))
 				iconIndex = k208_IconIndiceNeck + (slotIndex - k10_ChampionSlotNeck);
-			} else {
+			else
 				iconIndex = k204_IconIndiceEmptyBox;
-			}
 		}
 	} else {
 		iconIndex = _vm->_objectMan->f33_getIconIndex(thing); // BUG0_35
@@ -2310,17 +2288,15 @@ void ChampionMan::f291_drawSlot(uint16 champIndex, int16 slotIndex) {
 			iconIndex++;
 		} // BUG2_00
 		if (slotIndex <= k5_ChampionSlotFeet) {
-			if (champ->getWoundsFlag((ChampionWound)(1 << slotIndex))) {
+			if (champ->getWoundsFlag((ChampionWound)(1 << slotIndex)))
 				nativeBitmapIndex = k34_SlotBoxWoundedIndice;
-			} else {
+			else
 				nativeBitmapIndex = k33_SlotBoxNormalIndice;
-			}
 		}
 	}
 
-	if ((slotIndex == k1_ChampionSlotActionHand) && (_vm->M0_indexToOrdinal(champIndex) == _g506_actingChampionOrdinal)) {
+	if ((slotIndex == k1_ChampionSlotActionHand) && (_vm->M0_indexToOrdinal(champIndex) == _g506_actingChampionOrdinal))
 		nativeBitmapIndex = k35_SlotBoxActingHandIndice;
-	}
 
 	if (nativeBitmapIndex != -1) {
 		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
@@ -2335,9 +2311,8 @@ void ChampionMan::f291_drawSlot(uint16 champIndex, int16 slotIndex) {
 
 	_vm->_objectMan->f38_drawIconInSlotBox(slotBoxIndex, iconIndex);
 
-	if (!isInventoryChamp) {
+	if (!isInventoryChamp)
 		_vm->_eventMan->f78_showMouse();
-	}
 }
 
 void ChampionMan::f281_renameChampion(Champion* champ) {
