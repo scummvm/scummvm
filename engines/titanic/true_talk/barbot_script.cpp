@@ -841,8 +841,112 @@ ScriptChangedResult BarbotScript::scriptChanged(TTscriptBase *roomScript, uint i
 }
 
 bool BarbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
-	int val, uint tagId, uint remainder) const {
-	warning("TODO: handleQuote");
+		int val, uint tagId, uint remainder) const {
+	switch (tagId) {
+	case MKTAG('A', 'D', 'V', 'T'):
+	case MKTAG('A', 'R', 'T', 'I'):
+	case MKTAG('A', 'R', 'T', 'Y'):
+	case MKTAG('B', 'R', 'N', 'D'):
+	case MKTAG('C', 'O', 'M', 'D'):
+	case MKTAG('D', 'N', 'C', 'E'):
+	case MKTAG('H', 'B', 'B', 'Y'):
+	case MKTAG('M', 'A', 'G', 'S'):
+	case MKTAG('L', 'I', 'T', 'R'):
+	case MKTAG('M', 'C', 'P', 'Y'):
+	case MKTAG('M', 'I', 'N', 'S'):
+	case MKTAG('M', 'U', 'S', 'I'):
+	case MKTAG('N', 'I', 'K', 'E'):
+	case MKTAG('S', 'F', 'S', 'F'):
+	case MKTAG('S', 'O', 'A', 'P'):
+	case MKTAG('S', 'O', 'N', 'G'):
+	case MKTAG('S', 'P', 'R', 'T'):
+	case MKTAG('T', 'E', 'A', 'M'):
+	case MKTAG('T', 'U', 'S', 'H'):
+	case MKTAG('W', 'W', 'E', 'B'):
+		tagId = MKTAG('E', 'N', 'T', 'N');
+		break;
+	case MKTAG('A', 'U', 'T', 'H'):
+	case MKTAG('B', 'A', 'R', 'K'):
+	case MKTAG('B', 'L', 'R', '1'):
+	case MKTAG('B', 'L', 'P', '1'):
+	case MKTAG('B', 'L', 'P', '2'):
+	case MKTAG('B', 'L', 'P', '3'):
+	case MKTAG('B', 'L', 'P', '4'):
+	case MKTAG('B', 'L', 'T', '1'):
+	case MKTAG('B', 'L', 'T', '2'):
+	case MKTAG('B', 'L', 'T', '3'):
+	case MKTAG('B', 'L', 'T', '4'):
+	case MKTAG('B', 'L', 'T', '5'):
+	case MKTAG('B', 'O', 'Y', 'S'):
+	case MKTAG('C', 'O', 'P', 'S'):
+	case MKTAG('D', 'C', 'T', 'R'):
+	case MKTAG('F', 'A', 'M', 'E'):
+	case MKTAG('F', 'A', 'S', 'H'):
+	case MKTAG('G', 'I', 'R', 'L'):
+	case MKTAG('H', 'E', 'R', 'O'):
+	case MKTAG('H', 'O', 'S', 'T'):
+	case MKTAG('K', 'N', 'O', 'B'):
+	case MKTAG('N', 'H', 'R', 'O'):
+	case MKTAG('R', 'A', 'C', 'E'):
+	case MKTAG('S', 'C', 'I', 'T'):
+	case MKTAG('T', 'D', 'U', 'P'):
+	case MKTAG('T', 'W', 'A', 'T'):
+	case MKTAG('W', 'E', 'A', 'T'):
+		tagId = MKTAG('P', 'R', 'S', 'N');
+		break;
+	case MKTAG('C', 'H', 'S', 'E'):
+	case MKTAG('C', 'M', 'N', 'T'):
+	case MKTAG('F', 'I', 'L', 'M'):
+	case MKTAG('J', 'F', 'O', 'D'):
+	case MKTAG('L', 'I', 'Q', 'D'):
+		tagId = MKTAG('F', 'O', 'O', 'D');
+		break;
+	case MKTAG('C', 'R', 'M', 'N'):
+	case MKTAG('C', 'S', 'P', 'Y'):
+	case MKTAG('U', 'B', 'A', 'D'):
+		tagId = MKTAG('U', 'B', 'A', 'D');
+		break;
+	case MKTAG('E', 'A', 'R', 'T'):
+	case MKTAG('H', 'O', 'M', 'E'):
+	case MKTAG('N', 'P', 'L', 'C'):
+	case MKTAG('P', 'L', 'A', 'C'):
+	case MKTAG('P', 'L', 'A', 'N'):
+		tagId = MKTAG('P', 'L', 'A', 'C');
+		break;
+	case MKTAG('F', 'A', 'U', 'N'):
+	case MKTAG('F', 'I', 'S', 'H'):
+	case MKTAG('F', 'L', 'O', 'R'):
+		tagId = MKTAG('N', 'A', 'T', 'R');
+		break;
+	case MKTAG('H', 'H', 'L', 'D'):
+	case MKTAG('T', 'O', 'Y', 'S'):
+	case MKTAG('W', 'E', 'A', 'P'):
+		tagId = MKTAG('M', 'A', 'C', 'H');
+			break;
+	case MKTAG('M', 'L', 'T', 'Y'):
+	case MKTAG('P', 'G', 'R', 'P'):
+	case MKTAG('P', 'T', 'I', 'C'):
+		tagId = MKTAG('G', 'R', 'U', 'P');
+		break;
+	case MKTAG('P', 'K', 'U', 'P'):
+	case MKTAG('S', 'E', 'X', '1'):
+	case MKTAG('S', 'W', 'E', 'R'):
+		tagId = MKTAG('R', 'U', 'D', 'E');
+		break;
+	case MKTAG('P', 'H', 'I', 'L'):
+	case MKTAG('R', 'C', 'K', 'T'):
+	case MKTAG('S', 'C', 'I', 'E'):		
+		tagId = MKTAG('S', 'C', 'I', 'E');
+		break;
+	case MKTAG('T', 'R', 'A', '2'):
+	case MKTAG('T', 'R', 'A', '3'):
+		tagId = MKTAG('T', 'R', 'A', 'V');
+		break;
+	default:
+		break;
+	}
+	
+	warning("TODO: handleQuote - %d", tagId);
 	return false;
 }
 
