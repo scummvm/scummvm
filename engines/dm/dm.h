@@ -230,8 +230,8 @@ private:
 	Console *_console;
 	byte *_g562_entranceDoorAnimSteps[10]; // @ G0562_apuc_Bitmap_EntranceDoorAnimationSteps
 	byte *_g564_interfaceCredits; // @ G0564_puc_Graphic5_InterfaceCredits
-public:
 	Common::RandomSource *_rnd;
+public:
 	DisplayMan *_displayMan;
 	DungeonMan *_dungeonMan;
 	EventManager *_eventMan;

@@ -207,8 +207,8 @@ bool ChampionMan::f328_isObjectThrown(uint16 champIndex, int16 slotIndex, int16 
 	f304_addSkillExperience(champIndex, k10_ChampionSkillThrow, experience);
 	kineticEnergy += weaponKineticEnergy;
 	int16 skillLevel = f303_getSkillLevel((ChampionIndex)champIndex, k10_ChampionSkillThrow);
-	kineticEnergy += _vm->_rnd->getRandomNumber(16) + (kineticEnergy >> 1) + skillLevel;
-	int16 attack = f26_getBoundedValue((uint16)40, (uint16)((skillLevel << 3) + _vm->_rnd->getRandomNumber(31)), (uint16)200);
+	kineticEnergy += _vm->getRandomNumber(16) + (kineticEnergy >> 1) + skillLevel;
+	int16 attack = f26_getBoundedValue((uint16)40, (uint16)((skillLevel << 3) + _vm->getRandomNumber(32)), (uint16)200);
 	int16 stepEnergy = MAX(5, 11 - skillLevel);
 	_vm->_projexpl->f212_projectileCreate(curThing, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY,
 										  M21_normalizeModulo4(_vm->_dungeonMan->_g308_partyDir + side),
@@ -595,7 +595,7 @@ Thing ChampionMan::f298_getObjectRemovedFromLeaderHand() {
 
 uint16 ChampionMan::f312_getStrength(int16 champIndex, int16 slotIndex) {
 	Champion *curChampion = &_gK71_champions[champIndex];
-	int16 strength = _vm->_rnd->getRandomNumber(15) + curChampion->_statistics[k1_ChampionStatStrength][k1_ChampionStatCurrent];
+	int16 strength = _vm->getRandomNumber(16) + curChampion->_statistics[k1_ChampionStatStrength][k1_ChampionStatCurrent];
 	Thing curThing = curChampion->_slots[slotIndex];
 	uint16 objectWeight = _vm->_dungeonMan->f140_getObjectWeight(curThing);
 	uint16 oneSixteenthMaximumLoad = f309_getMaximumLoad(curChampion) >> 4;
@@ -791,7 +791,7 @@ int16 ChampionMan::f321_addPendingDamageAndWounds_getDamage(int16 champIndex, in
 		if (attack <= 0)
 			return 0;
 
-		int16 adjustedAttack = f307_getStatisticAdjustedAttack(curChampion, k4_ChampionStatVitality, _vm->_rnd->getRandomNumber(127) + 10);
+		int16 adjustedAttack = f307_getStatisticAdjustedAttack(curChampion, k4_ChampionStatVitality, _vm->getRandomNumber(128) + 10);
 		if (attack > adjustedAttack) {
 		/* BUG0_45
 			This bug is not perceptible because of BUG0_41 that ignores Vitality while determining the
@@ -801,7 +801,7 @@ int16 ChampionMan::f321_addPendingDamageAndWounds_getDamage(int16 champIndex, in
 			wounded (because of more iterations in the loop below)
 		*/
 			do {
-				setFlag(*(uint16 *)&_g410_championPendingWounds[champIndex], (1 << _vm->_rnd->getRandomNumber(7)) & allowedWounds);
+				setFlag(*(uint16 *)&_g410_championPendingWounds[champIndex], (1 << _vm->getRandomNumber(8)) & allowedWounds);
 			} while ((attack > (adjustedAttack <<= 1)) && adjustedAttack);
 		}
 

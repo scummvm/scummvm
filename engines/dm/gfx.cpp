@@ -1346,10 +1346,10 @@ void DisplayMan::f111_drawDoor(uint16 doorThingIndex, uint16 doorState, int16* d
 		memmove(_g74_tmpBitmap, f489_getNativeBitmapOrGraphic(doorNativeBitmapIndices[doorType = door->getType()]), byteCount * 2);
 		f109_drawDoorOrnament(door->getOrnOrdinal(), viewDoorOrnIndex);
 		if (getFlag(_vm->_dungeonMan->_g275_currMapDoorInfo[doorType]._attributes, k0x0004_MaskDoorInfo_Animated)) {
-			if (_vm->_rnd->getRandomNumber(1)) {
+			if (_vm->getRandomNumber(2)) {
 				f130_flipBitmapHorizontal(_g74_tmpBitmap, doorFramesTemp->_closedOrDestroyed._srcByteWidth, doorFramesTemp->_closedOrDestroyed._srcHeight);
 			}
-			if (_vm->_rnd->getRandomNumber(1)) {
+			if (_vm->getRandomNumber(2)) {
 				f131_flipVertical(_g74_tmpBitmap, doorFramesTemp->_closedOrDestroyed._srcByteWidth, doorFramesTemp->_closedOrDestroyed._srcHeight);
 			}
 		}
@@ -3632,7 +3632,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 					AL_6_bitmapRedBanana = _g74_tmpBitmap;
 				}
 				f133_blitBoxFilledWithMaskedBitmap(AL_6_bitmapRedBanana, _g296_bitmapViewport, nullptr, f492_getDerivedBitmap(k0_DerivedBitmapViewport), g105_BoxExplosionPattern_D0C,
-												   _vm->_rnd->getRandomNumber(4) + 87, _vm->_rnd->getRandomNumber(64),
+												   _vm->getRandomNumber(4) + 87, _vm->getRandomNumber(64),
 												   224, (Color)(k0x0080_BlitDoNotUseMask | k10_ColorFlesh), 0, 0, 136, 93);
 				warning(false, "IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
 				warning(false, "IGNORED CODE: F0493_CACHE_AddDerivedBitmap");
@@ -3655,9 +3655,9 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 				}
 				AL_6_bitmapRedBanana = f114_getExplosionBitmap(AL_4_explosionAspectIndex, explosionScale, byteWidth, heightRedEagle);
 T0115200_DrawExplosion:
-				flipVertical = _vm->_rnd->getRandomNumber(2);
+				flipVertical = _vm->getRandomNumber(2);
 				paddingPixelCount = 0;
-				if (flipHorizontal = _vm->_rnd->getRandomNumber(2)) {
+				if (flipHorizontal = _vm->getRandomNumber(2)) {
 					paddingPixelCount = (7 - ((byteWidth - 1) & 0x0007)) << 1; /* Number of unused pixels in the units on the right of the bitmap */
 				}
 				boxByteGreen._y2 = MIN(135, explosionCoordinates[1] + (heightRedEagle >> 1));

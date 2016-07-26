@@ -8,9 +8,8 @@ Bugs:
 
 	Logic:
 		When object are put on the right side of the current square, they disappear
-		Drawing door ornaments segfaults when going back to the start
 		Object display is a bit mixed up with regards to which cell is it drawn in
-		Method cthulu messes up the callstack
+
 
 
 Possible bugs:
