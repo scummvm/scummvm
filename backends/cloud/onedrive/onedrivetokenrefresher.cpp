@@ -63,48 +63,50 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 		return;
 	}
 
-	Common::JSONObject result = json->asObject();
-	long httpResponseCode = -1;
-	if (result.contains("error")) {
-		//new token needed => request token & then retry original request
-		if (_stream) {
-			httpResponseCode = _stream->httpResponseCode();
-			debug(9, "OneDriveTokenRefresher: code = %ld", httpResponseCode);
-		}
+	if (jsonIsObject(json, "OneDriveTokenRefresher")) {
+		Common::JSONObject result = json->asObject();
+		long httpResponseCode = -1;
+		if (jsonContainsAttribute(result, "error", "OneDriveTokenRefresher") && jsonIsObject(result.getVal("error"), "OneDriveTokenRefresher")) {
+			//new token needed => request token & then retry original request
+			if (_stream) {
+				httpResponseCode = _stream->httpResponseCode();
+				debug(9, "OneDriveTokenRefresher: code = %ld", httpResponseCode);
+			}
 
-		Common::JSONObject error = result.getVal("error")->asObject();
-		bool irrecoverable = true;
+			Common::JSONObject error = result.getVal("error")->asObject();
+			bool irrecoverable = true;
 
-		Common::String code, message;
-		if (error.contains("code")) {
-			code = error.getVal("code")->asString();
-			debug(9, "OneDriveTokenRefresher: code = %s", code.c_str());
-		}
+			Common::String code, message;
+			if (jsonContainsString(error, "code", "OneDriveTokenRefresher")) {
+				code = error.getVal("code")->asString();
+				debug(9, "OneDriveTokenRefresher: code = %s", code.c_str());
+			}
 
-		if (error.contains("message")) {
-			message = error.getVal("message")->asString();
-			debug(9, "OneDriveTokenRefresher: message = %s", message.c_str());
-		}
+			if (jsonContainsString(error, "message", "OneDriveTokenRefresher")) {
+				message = error.getVal("message")->asString();
+				debug(9, "OneDriveTokenRefresher: message = %s", message.c_str());
+			}
 
-		//determine whether token refreshing would help in this situation
-		if (code == "itemNotFound") {
-			if (message.contains("application ID"))
+			//determine whether token refreshing would help in this situation
+			if (code == "itemNotFound") {
+				if (message.contains("application ID"))
+					irrecoverable = false;
+			}
+
+			if (code == "unauthenticated")
 				irrecoverable = false;
-		}
 
-		if (code == "unauthenticated")
-			irrecoverable = false;
+			if (irrecoverable) {
+				finishError(Networking::ErrorResponse(this, false, true, json->stringify(true), httpResponseCode));
+				delete json;
+				return;
+			}
 
-		if (irrecoverable) {
-			finishError(Networking::ErrorResponse(this, false, true, json->stringify(true), httpResponseCode));
+			pause();
 			delete json;
+			_parentStorage->getAccessToken(new Common::Callback<OneDriveTokenRefresher, Storage::BoolResponse>(this, &OneDriveTokenRefresher::tokenRefreshed));
 			return;
 		}
-
-		pause();
-		delete json;
-		_parentStorage->getAccessToken(new Common::Callback<OneDriveTokenRefresher, Storage::BoolResponse>(this, &OneDriveTokenRefresher::tokenRefreshed));
-		return;
 	}
 
 	//notify user of success

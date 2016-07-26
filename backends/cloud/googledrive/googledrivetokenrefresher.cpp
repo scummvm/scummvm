@@ -63,43 +63,45 @@ void GoogleDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 		return;
 	}
 
-	Common::JSONObject result = json->asObject();
-	long httpResponseCode = -1;
-	if (result.contains("error")) {
-		//new token needed => request token & then retry original request
-		if (_stream) {
-			httpResponseCode = _stream->httpResponseCode();
-			debug(9, "GoogleDriveTokenRefresher: code = %ld", httpResponseCode);
-		}
+	if (jsonIsObject(json, "GoogleDriveTokenRefresher")) {
+		Common::JSONObject result = json->asObject();
+		long httpResponseCode = -1;
+		if (jsonContainsAttribute(result, "error", "GoogleDriveTokenRefresher") && jsonIsObject(result.getVal("error"), "GoogleDriveTokenRefresher")) {
+			//new token needed => request token & then retry original request
+			if (_stream) {
+				httpResponseCode = _stream->httpResponseCode();
+				debug(9, "GoogleDriveTokenRefresher: code = %ld", httpResponseCode);
+			}
 
-		Common::JSONObject error = result.getVal("error")->asObject();
-		bool irrecoverable = true;
+			Common::JSONObject error = result.getVal("error")->asObject();
+			bool irrecoverable = true;
 
-		uint32 code = -1;
-		Common::String message;
-		if (error.contains("code") && error.getVal("code")->isIntegerNumber()) {
-			code = error.getVal("code")->asIntegerNumber();
-			debug(9, "GoogleDriveTokenRefresher: code = %u", code);
-		}
+			uint32 code = -1;
+			Common::String message;
+			if (jsonContainsIntegerNumber(error, "code", "GoogleDriveTokenRefresher")) {
+				code = error.getVal("code")->asIntegerNumber();
+				debug(9, "GoogleDriveTokenRefresher: code = %u", code);
+			}
 
-		if (error.contains("message")) {
-			message = error.getVal("message")->asString();
-			debug(9, "GoogleDriveTokenRefresher: message = %s", message.c_str());
-		}
+			if (jsonContainsString(error, "message", "GoogleDriveTokenRefresher")) {
+				message = error.getVal("message")->asString();
+				debug(9, "GoogleDriveTokenRefresher: message = %s", message.c_str());
+			}
 
-		if (code == 401 || message == "Invalid Credentials")
-			irrecoverable = false;
+			if (code == 401 || message == "Invalid Credentials")
+				irrecoverable = false;
 
-		if (irrecoverable) {
-			finishError(Networking::ErrorResponse(this, false, true, json->stringify(true), httpResponseCode));
+			if (irrecoverable) {
+				finishError(Networking::ErrorResponse(this, false, true, json->stringify(true), httpResponseCode));
+				delete json;
+				return;
+			}
+
+			pause();
 			delete json;
+			_parentStorage->getAccessToken(new Common::Callback<GoogleDriveTokenRefresher, Storage::BoolResponse>(this, &GoogleDriveTokenRefresher::tokenRefreshed));
 			return;
 		}
-
-		pause();
-		delete json;
-		_parentStorage->getAccessToken(new Common::Callback<GoogleDriveTokenRefresher, Storage::BoolResponse>(this, &GoogleDriveTokenRefresher::tokenRefreshed));
-		return;
 	}
 
 	//notify user of success

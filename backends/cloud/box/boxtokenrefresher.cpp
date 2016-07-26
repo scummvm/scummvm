@@ -63,41 +63,44 @@ void BoxTokenRefresher::finishJson(Common::JSONValue *json) {
 		return;
 	}
 
-	Common::JSONObject result = json->asObject();
-	if (result.contains("type") && result.getVal("type")->isString() && result.getVal("type")->asString() == "error") {
-		//new token needed => request token & then retry original request
-		long httpCode = -1;
-		if (_stream) {
-			httpCode = _stream->httpResponseCode();
-			debug(9, "BoxTokenRefresher: code %ld", httpCode);
-		}
+	if (jsonIsObject(json, "BoxTokenRefresher")) {
+		Common::JSONObject result = json->asObject();
+		if (result.contains("type") && result.getVal("type")->isString() && result.getVal("type")->asString() == "error") {
+			//new token needed => request token & then retry original request
+			long httpCode = -1;
+			if (_stream) {
+				httpCode = _stream->httpResponseCode();
+				debug(9, "BoxTokenRefresher: code %ld", httpCode);
+			}
 
-		bool irrecoverable = true;
+			bool irrecoverable = true;
 
-		Common::String code, message;
-		if (result.contains("code")) {
-			code = result.getVal("code")->asString();
-			debug(9, "BoxTokenRefresher: code = %s", code.c_str());
-		}
+			Common::String code, message;
+			if (jsonContainsString(result, "code", "BoxTokenRefresher")) {
+				code = result.getVal("code")->asString();
+				debug(9, "BoxTokenRefresher: code = %s", code.c_str());
+			}
 
-		if (result.contains("message")) {
-			message = result.getVal("message")->asString();
-			debug(9, "BoxTokenRefresher: message = %s", message.c_str());
-		}
+			if (jsonContainsString(result, "message", "BoxTokenRefresher")) {
+				message = result.getVal("message")->asString();
+				debug(9, "BoxTokenRefresher: message = %s", message.c_str());
+			}
 
-		//TODO: decide when token refreshment will help
-		//if (code == "unauthenticated") irrecoverable = false;
+			//TODO: decide when token refreshment will help
+			//for now refreshment is used only when HTTP 401 is passed in finishError()
+			//if (code == "unauthenticated") irrecoverable = false;
 
-		if (irrecoverable) {
-			finishError(Networking::ErrorResponse(this, false, true, json->stringify(true), httpCode));
+			if (irrecoverable) {
+				finishError(Networking::ErrorResponse(this, false, true, json->stringify(true), httpCode));
+				delete json;
+				return;
+			}
+
+			pause();
 			delete json;
+			_parentStorage->getAccessToken(new Common::Callback<BoxTokenRefresher, Storage::BoolResponse>(this, &BoxTokenRefresher::tokenRefreshed));
 			return;
 		}
-
-		pause();
-		delete json;
-		_parentStorage->getAccessToken(new Common::Callback<BoxTokenRefresher, Storage::BoolResponse>(this, &BoxTokenRefresher::tokenRefreshed));
-		return;
 	}
 
 	//notify user of success
