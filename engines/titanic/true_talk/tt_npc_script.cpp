@@ -450,7 +450,7 @@ const TTscriptMapping *TTnpcScript::getMapping(int index) {
 	return nullptr;
 }
 
-int TTnpcScript::proc25(int val1, const int *val2, TTroomScript *roomScript, TTsentence *sentence) {
+int TTnpcScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
 	return 0;
 }
 
@@ -1015,6 +1015,33 @@ bool TTnpcScript::getStateValue() const {
 
 bool TTnpcScript::sentence2C(TTsentence *sentence) {
 	return sentence->_field2C >= 2 && sentence->_field2C <= 7;
+}
+
+void TTnpcScript::getAssignedRoom(int *roomNum, int *floorNum, int *elevatorNum) const {
+	if (roomNum)
+		*roomNum = 5;
+	if (floorNum)
+		*floorNum = 40;
+	if (elevatorNum)
+		*elevatorNum = 3;
+
+	CGameManager *gameManager = g_vm->_trueTalkManager->getGameManager();
+	CPetControl *petControl = getPetControl(gameManager);
+	if (petControl) {
+		if (roomNum)
+			*roomNum = petControl->getAssignedRoomNum();
+		if (floorNum)
+			*floorNum = petControl->getAssignedFloorNum();
+		if (elevatorNum)
+			*elevatorNum = petControl->getAssignedElevatorNum();
+	}
+
+	if (floorNum)
+		*floorNum = CLIP(*floorNum, 1, 42);
+	if (roomNum)
+		*roomNum = CLIP(*roomNum, 1, 18);
+	if (elevatorNum)
+		*elevatorNum = CLIP(*elevatorNum, 1, 4);
 }
 
 } // End of namespace Titanic

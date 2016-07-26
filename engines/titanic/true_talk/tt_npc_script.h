@@ -285,6 +285,11 @@ protected:
 	 * Gets the True Talk state value
 	 */
 	bool getStateValue() const;
+
+	/**
+	 * Gets the assigned room's room, floor, and elevator number
+	 */
+	void getAssignedRoom(int *roomNum, int *floorNum, int *elevatorNum) const;
 public:
 	static void init();
 	static void deinit();
@@ -356,7 +361,7 @@ public:
 	virtual uint getDialsBitset() const { return 0; }
 	
 	virtual const TTscriptMapping *getMapping(int index);
-	virtual int proc25(int val1, const int *val2, TTroomScript *roomScript, TTsentence *sentence);
+	virtual int proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence);
 	virtual void proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence);
 	virtual void save(SimpleFile *file);
 	virtual void load(SimpleFile *file);

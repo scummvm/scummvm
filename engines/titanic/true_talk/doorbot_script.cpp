@@ -145,7 +145,7 @@ uint DoorbotScript::getDialsBitset() const {
 	return bits;
 }
 
-int DoorbotScript::proc25(int val1, const int *val2, TTroomScript *roomScript, TTsentence *sentence) {
+int DoorbotScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
 	warning("TODO");
 	return 0;
 }

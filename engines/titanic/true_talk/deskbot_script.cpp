@@ -86,8 +86,48 @@ int DeskbotScript::proc23() const {
 	return 0;
 }
 
-int DeskbotScript::proc25(int val1, const int *val2, TTroomScript *roomScript, TTsentence *sentence) {
-	warning("TODO");
+int DeskbotScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
+	uint id;
+
+	switch (val1) {
+	case 1:
+		id = *srcIdP;
+		if (id == 240431 || id == 240432) {
+			switch (getValue(1)) {
+			case 1:
+				id = 240336;
+				break;
+			case 2:
+				id = addAssignedRoomDialogue();
+				break;
+			case 3:
+				if (getValue(3) == 1) {
+					if (id == 240431)
+						id = 240432;
+				}
+				else {
+					if (id == 240432)
+						id = 240431;
+				}
+			default:
+				break;
+			}
+
+			addResponse(getDialogueId(id));
+			applyResponse();
+			return 2;
+		}
+		break;
+
+	case 2:
+		if (getValue(1) == 1)
+			return true;
+		break;
+
+	default:
+		break;
+	}
+	
 	return 0;
 }
 
@@ -113,6 +153,27 @@ bool DeskbotScript::isDial1Medium() const {
 
 bool DeskbotScript::isDial1Low() const {
 	return getDialRegion(1) == 0;
+}
+
+int DeskbotScript::addAssignedRoomDialogue() {
+	if (isDial1Medium()) {
+		addResponse(getDialogueId(240407));
+		addResponse(getDialogueId(241510));
+		CTrueTalkManager::setFlags(1, 1);
+		CTrueTalkManager::triggerAction(19, 1);
+
+		int roomNum, floorNum, elevatorNum;
+		getAssignedRoom(&roomNum, &floorNum, &elevatorNum);
+
+		addResponse(getDialogueId(241317 + roomNum));
+		addResponse(getDialogueId(241271 + floorNum));
+		addResponse(getDialogueId(241511));
+		addResponse(getDialogueId(241313 + elevatorNum));
+
+		return 241512;
+	} else {
+		return 240567;
+	}
 }
 
 } // End of namespace Titanic

@@ -524,7 +524,7 @@ public:
 	/**
 	 * Returns the elevator number for the player's currently assigned room
 	 */
-	int getRoomsElevatorNum1() const {
+	int getAssignedElevatorNum() const {
 		return _rooms.getAssignedElevatorNum();
 	}
 

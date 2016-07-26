@@ -23,6 +23,7 @@
 #include "common/textconsole.h"
 #include "titanic/true_talk/bellbot_script.h"
 #include "titanic/true_talk/true_talk_manager.h"
+#include "titanic/core/node_item.h"
 
 namespace Titanic {
 
@@ -90,8 +91,87 @@ int BellbotScript::proc23() const {
 	return 0;
 }
 
-int BellbotScript::proc25(int val1, const int *val2, TTroomScript *roomScript, TTsentence *sentence) {
-	warning("TODO");
+int BellbotScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
+	switch (val1) {
+	case 1:
+		addResponse(getDialogueId(*srcIdP));
+		applyResponse();
+		return 2;
+
+	case 2:
+		addResponse(getDialogueId(*srcIdP));
+		addResponse(getDialogueId(getRandomNumber(2) == 1 ? 200192 : 200157));
+		addResponse(getDialogueId(200176));
+		applyResponse();
+		return 2;
+
+	case 21:
+		if (CTrueTalkManager::getStateValue(7) == 0) {
+			selectResponse(21372);
+			applyResponse();
+			return 2;
+		}
+
+		if (!sentence->localWord("broken") && !sentence->contains("broken") &&
+				CTrueTalkManager::_currentNPC) {
+			CNodeItem *node = CTrueTalkManager::_currentNPC->getNode();
+			if (node) {
+				CString nodeName = node->getName();
+				if (nodeName == "5" || nodeName == "6" || nodeName == "7") {
+					CTrueTalkManager::triggerAction(29, 2);
+					selectResponse(201571);
+					applyResponse();
+					return 2;
+				}
+			}
+		}
+
+		CTrueTalkManager::triggerAction(29, 1);
+		selectResponse(201771);
+		applyResponse();
+		return 2;
+
+	case 22:
+		if (CTrueTalkManager::getStateValue(7) == 0) {
+			selectResponse(21372);
+			applyResponse();
+			return 2;
+		}
+
+		if (!sentence->localWord("broken") && !sentence->contains("broken") &&
+			CTrueTalkManager::_currentNPC) {
+			CNodeItem *node = CTrueTalkManager::_currentNPC->getNode();
+			if (node) {
+				CString nodeName = node->getName();
+				if (nodeName == "5" || nodeName == "6" || nodeName != "7") {
+					CTrueTalkManager::triggerAction(29, 2);
+					selectResponse(201571);
+					applyResponse();
+					return 2;
+				}
+			}
+		}
+
+		CTrueTalkManager::triggerAction(29, 1);
+		selectResponse(201771);
+		applyResponse();
+		return 2;
+
+	case 23:
+	case 24:
+		if (CTrueTalkManager::getStateValue(7) == 0) {
+			selectResponse(21372);
+			applyResponse();
+			return 2;
+		}
+
+		CTrueTalkManager::triggerAction(29, val1 == 23 ? 3 : 4);
+		break;
+
+	default:
+		break;
+	}
+
 	return 0;
 }
 

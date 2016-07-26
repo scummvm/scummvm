@@ -34,6 +34,11 @@ private:
 	 * Setup sentence data
 	 */
 	void setupSentences();
+
+	/**
+	 * Adds dialogue for the player's assigned room
+	 */
+	int addAssignedRoomDialogue();
 public:
 	DeskbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2);
@@ -54,7 +59,7 @@ public:
 	virtual int proc21(int v1, int v2, int v3);
 	virtual int proc22(int id) const;
 	virtual int proc23() const;
-	virtual int proc25(int val1, const int *val2, TTroomScript *roomScript, TTsentence *sentence);
+	virtual int proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence);
 	virtual void proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence);
 	virtual int proc36(int val) const;
 

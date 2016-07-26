@@ -94,7 +94,7 @@ int MaitreDScript::proc23() const {
 	return 0;
 }
 
-int MaitreDScript::proc25(int val1, const int *val2, TTroomScript *roomScript, TTsentence *sentence) {
+int MaitreDScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
 	warning("TODO");
 	return 0;
 }

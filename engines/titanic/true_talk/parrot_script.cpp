@@ -107,7 +107,7 @@ int ParrotScript::proc23() const {
 	return 0;
 }
 
-int ParrotScript::proc25(int val1, const int *val2, TTroomScript *roomScript, TTsentence *sentence) {
+int ParrotScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
 	return 0;
 }
 

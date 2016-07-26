@@ -868,7 +868,7 @@ uint BarbotScript::getDialsBitset() const {
 	return bits;
 }
 
-int BarbotScript::proc25(int val1, const int *val2, TTroomScript *roomScript, TTsentence *sentence) {
+int BarbotScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
 	int v34 = get34();
 	uint id = 0;
 
@@ -965,7 +965,7 @@ int BarbotScript::proc25(int val1, const int *val2, TTroomScript *roomScript, TT
 				return 2;
 			} else {
 				if (getDialRegion(1) == 1) {
-					if (*val2 != 251650)
+					if (*srcIdP != 251650)
 						id = 251651;
 				} else {
 					addResponse(getDialRegion(0) != 0 ? 51444 : 51530);
