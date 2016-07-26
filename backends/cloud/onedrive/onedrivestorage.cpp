@@ -47,7 +47,7 @@ namespace OneDrive {
 #define ONEDRIVE_API_SPECIAL_APPROOT "https://api.onedrive.com/v1.0/drive/special/approot"
 
 char *OneDriveStorage::KEY = nullptr; //can't use CloudConfig there yet, loading it on instance creation/auth
-char *OneDriveStorage::SECRET = nullptr; //TODO: hide these secrets somehow
+char *OneDriveStorage::SECRET = nullptr;
 
 void OneDriveStorage::loadKeyAndSecret() {
 #ifdef ENABLE_RELEASE

@@ -47,7 +47,7 @@ namespace GoogleDrive {
 #define GOOGLEDRIVE_API_ABOUT "https://www.googleapis.com/drive/v3/about?fields=storageQuota,user"
 
 char *GoogleDriveStorage::KEY = nullptr; //can't use CloudConfig there yet, loading it on instance creation/auth
-char *GoogleDriveStorage::SECRET = nullptr; //TODO: hide these secrets somehow
+char *GoogleDriveStorage::SECRET = nullptr;
 
 void GoogleDriveStorage::loadKeyAndSecret() {
 #ifdef ENABLE_RELEASE

@@ -45,7 +45,7 @@ namespace Dropbox {
 #define DROPBOX_API_FILES_DOWNLOAD "https://content.dropboxapi.com/2/files/download"
 
 char *DropboxStorage::KEY = nullptr; //can't use CloudConfig there yet, loading it on instance creation/auth
-char *DropboxStorage::SECRET = nullptr; //TODO: hide these secrets somehow
+char *DropboxStorage::SECRET = nullptr;
 
 void DropboxStorage::loadKeyAndSecret() {
 #ifdef ENABLE_RELEASE

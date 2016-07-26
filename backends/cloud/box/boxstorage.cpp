@@ -47,7 +47,7 @@ namespace Box {
 #define BOX_API_USERS_ME "https://api.box.com/2.0/users/me"
 
 char *BoxStorage::KEY = nullptr; //can't use CloudConfig there yet, loading it on instance creation/auth
-char *BoxStorage::SECRET = nullptr; //TODO: hide these secrets somehow
+char *BoxStorage::SECRET = nullptr;
 
 void BoxStorage::loadKeyAndSecret() {
 #ifdef ENABLE_RELEASE
