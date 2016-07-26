@@ -54,6 +54,7 @@ public:
 	virtual void restart();
 
 	static bool jsonIsObject(Common::JSONValue *item, const char *warningPrefix);
+	static bool jsonContainsObject(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional = false);
 	static bool jsonContainsString(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional = false);
 	static bool jsonContainsIntegerNumber(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional = false);
 	static bool jsonContainsArray(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional = false);

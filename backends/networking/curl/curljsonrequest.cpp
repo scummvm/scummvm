@@ -114,6 +114,23 @@ bool CurlJsonRequest::jsonIsObject(Common::JSONValue *item, const char *warningP
 	return false;
 }
 
+bool CurlJsonRequest::jsonContainsObject(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional) {
+	if (!item.contains(key)) {
+		if (isOptional) {
+			return true;
+		}
+
+		warning("%s: passed item misses the \"%s\" attribute!", warningPrefix, key);
+		return false;
+	}
+
+	if (item.getVal(key)->isObject()) return true;
+
+	warning("%s: passed item's \"%s\" attribute is not an object!", warningPrefix, key);
+	debug(9, "%s", item.getVal(key)->stringify(true).c_str());
+	return false;
+}
+
 bool CurlJsonRequest::jsonContainsString(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional) {
 	if (!item.contains(key)) {
 		if (isOptional) {

@@ -116,12 +116,24 @@ void OneDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResp
 	Common::JSONValue *json = response.value;
 	if (!json) {
 		warning("OneDriveStorage: got NULL instead of JSON");
-		if (callback) (*callback)(BoolResponse(nullptr, false));
+		if (callback)
+			(*callback)(BoolResponse(nullptr, false));
+		delete callback;
+		return;
+	}
+
+	if (!Networking::CurlJsonRequest::jsonIsObject(json, "OneDriveStorage")) {
+		if (callback)
+			(*callback)(BoolResponse(nullptr, false));
+		delete json;
+		delete callback;
 		return;
 	}
 
 	Common::JSONObject result = json->asObject();
-	if (!result.contains("access_token") || !result.contains("user_id") || !result.contains("refresh_token")) {
+	if (!Networking::CurlJsonRequest::jsonContainsString(result, "access_token", "OneDriveStorage") ||
+		!Networking::CurlJsonRequest::jsonContainsString(result, "user_id", "OneDriveStorage") ||
+		!Networking::CurlJsonRequest::jsonContainsString(result, "refresh_token", "OneDriveStorage")) {
 		warning("OneDriveStorage: bad response, no token or user_id passed");
 		debug(9, "%s", json->stringify().c_str());
 		if (callback)
@@ -135,6 +147,7 @@ void OneDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResp
 			(*callback)(BoolResponse(nullptr, true));
 	}
 	delete json;
+	delete callback;
 }
 
 void OneDriveStorage::codeFlowComplete(BoolResponse response) {
@@ -168,7 +181,13 @@ Common::String OneDriveStorage::name() const {
 void OneDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse response) {
 	Common::JSONValue *json = response.value;
 	if (!json) {
-		warning("OneDriveStorage: NULL passed instead of JSON");
+		warning("OneDriveStorage::infoInnerCallback: NULL passed instead of JSON");
+		delete outerCallback;
+		return;
+	}
+
+	if (!Networking::CurlJsonRequest::jsonIsObject(json, "OneDriveStorage::infoInnerCallback")) {
+		delete json;
 		delete outerCallback;
 		return;
 	}
@@ -178,16 +197,18 @@ void OneDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Netwo
 	Common::String uid, name, email;
 	uint64 quotaUsed = 0, quotaAllocated = 26843545600L; // 25 GB, because I actually don't know any way to find out the real one
 
-	if (info.contains("createdBy") && info.getVal("createdBy")->isObject()) {
+	if (Networking::CurlJsonRequest::jsonContainsObject(info, "createdBy", "OneDriveStorage::infoInnerCallback")) {
 		Common::JSONObject createdBy = info.getVal("createdBy")->asObject();
-		if (createdBy.contains("user") && createdBy.getVal("user")->isObject()) {
+		if (Networking::CurlJsonRequest::jsonContainsObject(createdBy, "user", "OneDriveStorage::infoInnerCallback")) {
 			Common::JSONObject user = createdBy.getVal("user")->asObject();
-			uid = user.getVal("id")->asString();
-			name = user.getVal("displayName")->asString();
+			if (Networking::CurlJsonRequest::jsonContainsString(user, "id", "OneDriveStorage::infoInnerCallback"))
+				uid = user.getVal("id")->asString();
+			if (Networking::CurlJsonRequest::jsonContainsString(user, "displayName", "OneDriveStorage::infoInnerCallback"))
+				name = user.getVal("displayName")->asString();
 		}
 	}
 
-	if (info.contains("size") && info.getVal("size")->isIntegerNumber()) {
+	if (Networking::CurlJsonRequest::jsonContainsIntegerNumber(info, "size", "OneDriveStorage::infoInnerCallback")) {
 		quotaUsed = info.getVal("size")->asIntegerNumber();
 	}
 
@@ -207,28 +228,43 @@ void OneDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Netwo
 }
 
 void OneDriveStorage::fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response) {
-	if (!response.value) {
-		warning("OneDriveStorage::fileInfoCallback: NULL, not JSON");
+	Common::JSONValue *json = response.value;
+	if (!json) {
+		warning("OneDriveStorage::fileInfoCallback: NULL passed instead of JSON");
 		if (outerCallback)
 			(*outerCallback)(Networking::NetworkReadStreamResponse(response.request, nullptr));
+		delete outerCallback;
+		return;
+	}
+
+	if (!Networking::CurlJsonRequest::jsonIsObject(json, "OneDriveStorage::fileInfoCallback")) {
+		if (outerCallback)
+			(*outerCallback)(Networking::NetworkReadStreamResponse(response.request, nullptr));
+		delete json;
+		delete outerCallback;
 		return;
 	}
 
 	Common::JSONObject result = response.value->asObject();
-	if (result.contains("@content.downloadUrl")) {
-		const char *url = result.getVal("@content.downloadUrl")->asString().c_str();
-		if (outerCallback)
-			(*outerCallback)(Networking::NetworkReadStreamResponse(
-				response.request,
-				new Networking::NetworkReadStream(url, nullptr, "")
-			));
-	} else {
+	if (!Networking::CurlJsonRequest::jsonContainsString(result, "@content.downloadUrl", "OneDriveStorage::fileInfoCallback")) {
 		warning("OneDriveStorage: downloadUrl not found in passed JSON");
 		debug(9, "%s", response.value->stringify().c_str());
 		if (outerCallback)
 			(*outerCallback)(Networking::NetworkReadStreamResponse(response.request, nullptr));
+		delete json;
+		delete outerCallback;
+		return;
 	}
-	delete response.value;
+
+	const char *url = result.getVal("@content.downloadUrl")->asString().c_str();
+	if (outerCallback)
+		(*outerCallback)(Networking::NetworkReadStreamResponse(
+			response.request,
+			new Networking::NetworkReadStream(url, nullptr, "")
+		));
+		
+	delete json;
+	delete outerCallback;
 }
 
 Networking::Request *OneDriveStorage::listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {

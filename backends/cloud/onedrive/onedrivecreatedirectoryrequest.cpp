@@ -101,9 +101,16 @@ void OneDriveCreateDirectoryRequest::responseCallback(Networking::JsonResponse r
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
-	if (!json) {
-		warning("OneDriveCreateDirectoryRequest: NULL passed instead of JSON");
+	if (json == nullptr) {
+		error.response = "Failed to parse JSON, null passed!";
 		finishError(error);
+		return;
+	}
+
+	if (!json->isObject()) {
+		error.response = "Passed JSON is not an object!";
+		finishError(error);
+		delete json;
 		return;
 	}
 

@@ -93,7 +93,7 @@ void GoogleDriveStorage::getAccessToken(BoolCallback callback, Networking::Error
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<GoogleDriveStorage, BoolResponse, Networking::JsonResponse>(this, &GoogleDriveStorage::tokenRefreshed, callback);
 	if (errorCallback == nullptr)
 		errorCallback = getErrorPrintingCallback();
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, GOOGLEDRIVE_OAUTH2_TOKEN); //TODO
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, GOOGLEDRIVE_OAUTH2_TOKEN);
 	if (codeFlow) {
 		request->addPostField("code=" + code);
 		request->addPostField("grant_type=authorization_code");
