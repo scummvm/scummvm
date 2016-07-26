@@ -92,25 +92,34 @@ void DropboxStorage::getAccessToken(Common::String code) {
 
 void DropboxStorage::codeFlowComplete(Networking::JsonResponse response) {
 	Common::JSONValue *json = (Common::JSONValue *)response.value;
-	if (json) {
-		Common::JSONObject result = json->asObject();
-		if (!result.contains("access_token") || !result.contains("uid")) {
-			warning("DropboxStorage: bad response, no token/uid passed");
-			debug(9, "%s", json->stringify(true).c_str());
-			CloudMan.removeStorage(this);
-		} else {
-			_token = result.getVal("access_token")->asString();
-			_uid = result.getVal("uid")->asString();
-			ConfMan.removeKey("dropbox_code", ConfMan.kCloudDomain);
-			CloudMan.replaceStorage(this, kStorageDropboxId);
-			ConfMan.flushToDisk();
-		}
-
-		delete json;
-	} else {
+	if (json == nullptr) {
 		debug(9, "DropboxStorage::codeFlowComplete: got NULL instead of JSON!");
 		CloudMan.removeStorage(this);
+		return;
 	}
+
+	if (!json->isObject()) {
+		debug(9, "DropboxStorage::codeFlowComplete: Passed JSON is not an object!");
+		CloudMan.removeStorage(this);
+		delete json;
+		return;
+	}
+
+	Common::JSONObject result = json->asObject();
+	if (!Networking::CurlJsonRequest::jsonContainsString(result, "access_token", "DropboxStorage::codeFlowComplete") ||
+		!Networking::CurlJsonRequest::jsonContainsString(result, "uid", "DropboxStorage::codeFlowComplete")) {
+		warning("DropboxStorage: bad response, no token/uid passed");
+		debug(9, "%s", json->stringify(true).c_str());
+		CloudMan.removeStorage(this);
+	} else {
+		_token = result.getVal("access_token")->asString();
+		_uid = result.getVal("uid")->asString();
+		ConfMan.removeKey("dropbox_code", ConfMan.kCloudDomain);
+		CloudMan.replaceStorage(this, kStorageDropboxId);
+		ConfMan.flushToDisk();
+	}
+
+	delete json;
 }
 
 void DropboxStorage::codeFlowFailed(Networking::ErrorResponse error) {
