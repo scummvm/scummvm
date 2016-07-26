@@ -119,11 +119,21 @@ void BoxStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResponse 
 	if (!json) {
 		warning("BoxStorage: got NULL instead of JSON");
 		if (callback) (*callback)(BoolResponse(nullptr, false));
+		delete callback;
+		return;
+	}
+
+	if (!Networking::CurlJsonRequest::jsonIsObject(json, "BoxStorage")) {
+		if (callback)
+			(*callback)(BoolResponse(nullptr, false));
+		delete json;
+		delete callback;
 		return;
 	}
 
 	Common::JSONObject result = json->asObject();
-	if (!result.contains("access_token") || !result.contains("refresh_token")) {
+	if (!Networking::CurlJsonRequest::jsonContainsString(result, "access_token", "BoxStorage") ||
+		!Networking::CurlJsonRequest::jsonContainsString(result, "refresh_token", "BoxStorage")) {
 		warning("BoxStorage: bad response, no token passed");
 		debug(9, "%s", json->stringify().c_str());
 		if (callback)
@@ -136,6 +146,7 @@ void BoxStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResponse 
 			(*callback)(BoolResponse(nullptr, true));
 	}
 	delete json;
+	delete callback;
 }
 
 void BoxStorage::codeFlowComplete(BoolResponse response) {
@@ -172,6 +183,12 @@ void BoxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking
 		return;
 	}
 
+	if (!Networking::CurlJsonRequest::jsonIsObject(json, "BoxStorage::infoInnerCallback")) {
+		delete json;
+		delete outerCallback;
+		return;
+	}
+
 	Common::JSONObject info = json->asObject();
 
 	Common::String uid, name, email;
@@ -180,19 +197,19 @@ void BoxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking
 	// can check that "type": "user"
 	// there is also "max_upload_size", "phone" and "avatar_url"
 
-	if (info.contains("id") && info.getVal("id")->isString())
+	if (Networking::CurlJsonRequest::jsonContainsString(info, "id", "BoxStorage::infoInnerCallback"))
 		uid = info.getVal("id")->asString();
 
-	if (info.contains("name") && info.getVal("name")->isString())
+	if (Networking::CurlJsonRequest::jsonContainsString(info, "name", "BoxStorage::infoInnerCallback"))
 		name = info.getVal("name")->asString();
 
-	if (info.contains("login") && info.getVal("login")->isString())
+	if (Networking::CurlJsonRequest::jsonContainsString(info, "login", "BoxStorage::infoInnerCallback"))
 		email = info.getVal("login")->asString();
 
-	if (info.contains("space_amount") && info.getVal("space_amount")->isIntegerNumber())
+	if (Networking::CurlJsonRequest::jsonContainsIntegerNumber(info, "space_amount", "BoxStorage::infoInnerCallback"))
 		quotaAllocated = info.getVal("space_amount")->asIntegerNumber();
 
-	if (info.contains("space_used") && info.getVal("space_used")->isIntegerNumber())
+	if (Networking::CurlJsonRequest::jsonContainsIntegerNumber(info, "space_used", "BoxStorage::infoInnerCallback"))
 		quotaUsed = info.getVal("space_used")->asIntegerNumber();
 
 	Common::String username = email;
@@ -225,8 +242,12 @@ void BoxStorage::createDirectoryInnerCallback(BoolCallback outerCallback, Networ
 	}
 
 	if (outerCallback) {
-		Common::JSONObject info = json->asObject();
-		(*outerCallback)(BoolResponse(nullptr, info.contains("id")));
+		if (Networking::CurlJsonRequest::jsonIsObject(json, "BoxStorage::createDirectoryInnerCallback")) {
+			Common::JSONObject info = json->asObject();
+			(*outerCallback)(BoolResponse(nullptr, info.contains("id")));
+		} else {
+			(*outerCallback)(BoolResponse(nullptr, false));
+		}
 		delete outerCallback;
 	}
 
