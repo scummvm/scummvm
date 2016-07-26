@@ -364,7 +364,7 @@ public:
 		target->fillRect(target->getBounds(), kColorWhite);
 		const Graphics::Font *font = &_gui->getCurrentFont();
 		uint y = target->h - font->getFontHeight();
-		for (uint i = _lines.size() - 1; i != 0; i--) {
+		for (uint i = _scrollPos; i != 0; i--) {
 			font->drawString(target, _lines[i], leftOffset, y, font->getStringWidth(_lines[i]), kColorBlack);
 			y -= font->getFontHeight();
 		}

@@ -227,7 +227,7 @@ void Gui::initWindows() {
 	loadBorder(_mainGameWindow, "border_no_scroll_act.bmp", true, findWindowData(kMainGameWindow).type);
 
 	// In-game Output Console
-	_outConsoleWindow = _wm.addWindow(false, true, true);
+	_outConsoleWindow = _wm.addWindow(true, true, false);
 	_outConsoleWindow->setDimensions(getWindowData(kOutConsoleWindow).bounds);
 	_outConsoleWindow->setActive(false);
 	_outConsoleWindow->setCallback(outConsoleWindowCallback, this);
@@ -1266,13 +1266,17 @@ bool MacVenture::Gui::processMainGameEvents(WindowClick click, Common::Event & e
 	}
 	return false;
 }
+
 bool MacVenture::Gui::processOutConsoleEvents(WindowClick click, Common::Event & event) {
 	if (_engine->needsClickToContinue())
 		return true;
 
-	debug("OutConsoleEvent: %d", click);
-	if (click == kBorderScrollUp) {
+	if (click == kBorderScrollUp && event.type == Common::EVENT_LBUTTONDOWN) {
 		_consoleText->scrollUp();
+		return true;
+	}
+	if (click == kBorderScrollDown && event.type == Common::EVENT_LBUTTONDOWN) {
+		_consoleText->scrollDown();
 		return true;
 	}
 

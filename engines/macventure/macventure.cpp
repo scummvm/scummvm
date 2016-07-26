@@ -714,8 +714,6 @@ void MacVentureEngine::openObject(ObjID objID) {
 		_gui->setWindowTitle(kMainGameWindow, _world->getText(objID, objID, objID)); // it ignores source and target in the original
 	} else { // Open inventory window
 		Common::Point p(_world->getObjAttr(objID, kAttrPosX), _world->getObjAttr(objID, kAttrPosY));
-		//getParentWin(obj).localToGlobal(p);
-		//globalToDesktop(p);
 		WindowReference invID = _gui->createInventoryWindow(objID);
 		_gui->setWindowTitle(invID, _world->getText(objID, objID, objID));
 		_gui->updateWindowInfo(invID, objID, _world->getChildren(objID, true));
