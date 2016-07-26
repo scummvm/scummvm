@@ -889,7 +889,7 @@ bool BarbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 	case MKTAG('N', 'H', 'R', 'O'):
 	case MKTAG('R', 'A', 'C', 'E'):
 	case MKTAG('S', 'C', 'I', 'T'):
-	case MKTAG('T', 'D', 'U', 'P'):
+	case MKTAG('T', 'D', 'V', 'P'):
 	case MKTAG('T', 'W', 'A', 'T'):
 	case MKTAG('W', 'E', 'A', 'T'):
 		tagId = MKTAG('P', 'R', 'S', 'N');
@@ -904,7 +904,7 @@ bool BarbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 	case MKTAG('C', 'R', 'M', 'N'):
 	case MKTAG('C', 'S', 'P', 'Y'):
 	case MKTAG('U', 'B', 'A', 'D'):
-		tagId = MKTAG('U', 'B', 'A', 'D');
+		tagId = MKTAG('V', 'B', 'A', 'D');
 		break;
 	case MKTAG('E', 'A', 'R', 'T'):
 	case MKTAG('H', 'O', 'M', 'E'):
