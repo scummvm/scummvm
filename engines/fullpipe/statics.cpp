@@ -1766,8 +1766,8 @@ Common::Point *Movement::calcSomeXY(Common::Point &p, int idx, int dynidx) {
 		Common::Point point;
 
 		_staticsObj1->getSomeXY(point);
-		int y1 = _my - point.y;
 		int x1 = _mx - point.x;
+		int y1 = _my - point.y;
 
 		setDynamicPhaseIndex(0);
 
