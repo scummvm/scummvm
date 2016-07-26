@@ -232,7 +232,7 @@ private: // Methods
 	bool canBeSelected(ObjID obj, const Common::Event &event, const Common::Rect &clickRect, WindowReference ref);
 	void checkSelect(const WindowData &data, const Common::Event &event, const Common::Rect &clickRect, WindowReference ref);
 	bool isRectInsideObject(Common::Rect target, ObjID obj);
-	void selectDraggable(ObjID child, WindowReference origin, Common::Point startPos);
+	void selectDraggable(ObjID child, WindowReference origin, Common::Point startPos, Common::Point scroll);
 	void handleDragRelease(Common::Point pos, bool shiftPressed, bool isDoubleClick);
 	Common::Rect calculateClickRect(Common::Point clickPos, Common::Rect windowBounds);
 	Common::Point localize(Common::Point point, WindowReference origin, WindowReference target);
