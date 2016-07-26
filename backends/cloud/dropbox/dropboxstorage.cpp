@@ -29,10 +29,14 @@
 #include "backends/cloud/cloudmanager.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/json.h"
 #include <curl/curl.h>
-#include "common/config-manager.h"
+
+#ifdef ENABLE_RELEASE
+#include "dists/clouds/cloud_keys.h"
+#endif
 
 namespace Cloud {
 namespace Dropbox {
@@ -44,6 +48,10 @@ char *DropboxStorage::KEY = nullptr; //can't use CloudConfig there yet, loading 
 char *DropboxStorage::SECRET = nullptr; //TODO: hide these secrets somehow
 
 void DropboxStorage::loadKeyAndSecret() {
+#ifdef ENABLE_RELEASE
+	KEY = RELEASE_DROPBOX_KEY;
+	SECRET = RELEASE_DROPBOX_SECRET;
+#else
 	Common::String k = ConfMan.get("DROPBOX_KEY", ConfMan.kCloudDomain);
 	KEY = new char[k.size() + 1];
 	memcpy(KEY, k.c_str(), k.size());
@@ -53,6 +61,7 @@ void DropboxStorage::loadKeyAndSecret() {
 	SECRET = new char[k.size() + 1];
 	memcpy(SECRET, k.c_str(), k.size());
 	SECRET[k.size()] = 0;
+#endif
 }
 
 DropboxStorage::DropboxStorage(Common::String accessToken, Common::String userId): _token(accessToken), _uid(userId) {}

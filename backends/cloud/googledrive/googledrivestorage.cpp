@@ -34,6 +34,10 @@
 #include "common/json.h"
 #include <curl/curl.h>
 
+#ifdef ENABLE_RELEASE
+#include "dists/clouds/cloud_keys.h"
+#endif
+
 namespace Cloud {
 namespace GoogleDrive {
 
@@ -46,6 +50,10 @@ char *GoogleDriveStorage::KEY = nullptr; //can't use CloudConfig there yet, load
 char *GoogleDriveStorage::SECRET = nullptr; //TODO: hide these secrets somehow
 
 void GoogleDriveStorage::loadKeyAndSecret() {
+#ifdef ENABLE_RELEASE
+	KEY = RELEASE_GOOGLE_DRIVE_KEY;
+	SECRET = RELEASE_GOOGLE_DRIVE_SECRET;
+#else
 	Common::String k = ConfMan.get("GOOGLE_DRIVE_KEY", ConfMan.kCloudDomain);
 	KEY = new char[k.size() + 1];
 	memcpy(KEY, k.c_str(), k.size());
@@ -55,6 +63,7 @@ void GoogleDriveStorage::loadKeyAndSecret() {
 	SECRET = new char[k.size() + 1];
 	memcpy(SECRET, k.c_str(), k.size());
 	SECRET[k.size()] = 0;
+#endif
 }
 
 GoogleDriveStorage::GoogleDriveStorage(Common::String accessToken, Common::String refreshToken):
