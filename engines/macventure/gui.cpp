@@ -467,6 +467,7 @@ bool Gui::loadWindows() {
 			newTitle[data.titleLength] = '\0';
 			data.title = Common::String(newTitle);
 		}
+		data.scrollPos = Common::Point(0, 0);
 
 		debug(4, "Window loaded: %s", data.title.c_str());
 
@@ -667,6 +668,7 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 		mode = (BlitMode)data.children[i].mode;
 		pos = _engine->getObjPosition(child);
 		pos += Common::Point(border.leftOffset, border.topOffset);
+		pos -= data.scrollPos;
 		ensureAssetLoaded(child);
 
 		_assets[child]->blitInto(
@@ -1345,18 +1347,33 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event & event) {
 	if (_engine->needsClickToContinue())
 		return true;
 
-	if (event.type == Common::EVENT_LBUTTONDOWN && click == kBorderInner) {
+	if (event.type == Common::EVENT_LBUTTONDOWN) {
 		// Find the appropriate window
 		WindowReference ref = findWindowAtPoint(event.mouse);
 		if (ref == kNoWindow) return false;
 
 		Graphics::MacWindow *win = findWindow(ref);
 		WindowData &data = findWindowData((WindowReference) ref);
-		Common::Point pos;
-		// Click rect to local coordinates. We assume the click is inside the window ^
-		Common::Rect clickRect = calculateClickRect(event.mouse, win->getDimensions());
-		checkSelect(data, event, clickRect, (WindowReference)ref);
 
+		if (click == kBorderScrollUp) {
+			data.scrollPos.y = MAX(0, data.scrollPos.y - kScrollAmount);
+		}
+		if (click == kBorderScrollDown) {
+			data.scrollPos.y += kScrollAmount;
+		}
+		if (click == kBorderScrollLeft) {
+			data.scrollPos.x = MAX(0, data.scrollPos.x - kScrollAmount);
+		}
+		if (click == kBorderScrollRight) {
+			data.scrollPos.x += kScrollAmount;
+		}
+
+		if (click == kBorderInner) {
+			Common::Point pos;
+			// Click rect to local coordinates. We assume the click is inside the window ^
+			Common::Rect clickRect = calculateClickRect(event.mouse, win->getDimensions());
+			checkSelect(data, event, clickRect, (WindowReference)ref);
+		}
 	}
 	return true;
 }

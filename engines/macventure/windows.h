@@ -65,6 +65,10 @@ struct DrawableObject {
 	}
 };
 
+enum {
+	kScrollAmount = 10
+};
+
 struct WindowData {
 	Common::Rect bounds;
 	MVWindowType type;
@@ -76,6 +80,7 @@ struct WindowData {
 	Common::String title;
 	Common::Array<DrawableObject> children;
 	bool updateScroll;
+	Common::Point scrollPos;
 };
 
 struct BorderBounds {
