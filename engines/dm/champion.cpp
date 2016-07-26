@@ -1982,40 +1982,40 @@ T0280048:
 void ChampionMan::f287_drawChampionBarGraphs(ChampionIndex champIndex) {
 	int16 barGraphHeights[3];
 	Champion *champ = &_vm->_championMan->_gK71_champions[champIndex];
-	int16 AL0842_i_BarGraphIndex = 0;
+	int16 barGraphIdx = 0;
 	if (champ->_currHealth > 0) {
 		int32 barGraphHeight = (((int32)champ->_currHealth << 10) * 25) / champ->_maxHealth;
 		if (barGraphHeight & 0x000003FF) {
-			barGraphHeights[AL0842_i_BarGraphIndex++] = (barGraphHeight >> 10) + 1;
+			barGraphHeights[barGraphIdx++] = (barGraphHeight >> 10) + 1;
 		} else {
-			barGraphHeights[AL0842_i_BarGraphIndex++] = (barGraphHeight >> 10);
+			barGraphHeights[barGraphIdx++] = (barGraphHeight >> 10);
 		}
 	} else {
-		barGraphHeights[AL0842_i_BarGraphIndex++] = 0;
+		barGraphHeights[barGraphIdx++] = 0;
 	}
 	if (champ->_currStamina > 0) {
 		int32 barGraphHeight = (((int32)champ->_currStamina << 10) * 25) / champ->_maxStamina;
 		if (barGraphHeight & 0x000003FF) {
-			barGraphHeights[AL0842_i_BarGraphIndex++] = (barGraphHeight >> 10) + 1;
+			barGraphHeights[barGraphIdx++] = (barGraphHeight >> 10) + 1;
 		} else {
-			barGraphHeights[AL0842_i_BarGraphIndex++] = (barGraphHeight >> 10);
+			barGraphHeights[barGraphIdx++] = (barGraphHeight >> 10);
 		}
 	} else {
-		barGraphHeights[AL0842_i_BarGraphIndex++] = 0;
+		barGraphHeights[barGraphIdx++] = 0;
 	}
 	if (champ->_currMana > 0) {
 		if (champ->_currMana > champ->_maxMana) {
-			barGraphHeights[AL0842_i_BarGraphIndex] = 25;
+			barGraphHeights[barGraphIdx] = 25;
 		} else {
 			int32 barGraphHeight = (((int32)champ->_currMana << 10) * 25) / champ->_maxMana;
 			if (barGraphHeight & 0x000003FF) {
-				barGraphHeights[AL0842_i_BarGraphIndex] = (barGraphHeight >> 10) + 1;
+				barGraphHeights[barGraphIdx] = (barGraphHeight >> 10) + 1;
 			} else {
-				barGraphHeights[AL0842_i_BarGraphIndex] = (barGraphHeight >> 10);
+				barGraphHeights[barGraphIdx] = (barGraphHeight >> 10);
 			}
 		}
 	} else {
-		barGraphHeights[AL0842_i_BarGraphIndex] = 0;
+		barGraphHeights[barGraphIdx] = 0;
 	}
 	_vm->_eventMan->f78_showMouse();
 
