@@ -42,6 +42,25 @@ static const XeenGameDescription gameDescriptions[] = {
 		0
 	},
 
+	{
+		// World of Xeen (German)
+		{
+			"worldofxeen",
+			nullptr,
+			{
+				{"xeen.cc", 0, "f4e4b3ddc43bd102dbe1637f480f1fa1", 13214150},
+				{"dark.cc", 0, "84a86bbbc5f2fe96c0b0325485ed8203", 11173657},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE),
+		},
+		GType_WorldOfXeen,
+		0
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
