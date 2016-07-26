@@ -57,6 +57,11 @@ static int curlProgressCallback(void *p, curl_off_t dltotal, curl_off_t dlnow, c
 	return 0;
 }
 
+static int curlProgressCallbackOlder(void *p, double dltotal, double dlnow, double ultotal, double ulnow) {
+	// for libcurl older than 7.32.0 (CURLOPT_PROGRESSFUNCTION)
+	return curlProgressCallback(p, (curl_off_t)dltotal, (curl_off_t)dlnow, (curl_off_t)ultotal, (curl_off_t)ulnow);
+}
+
 void NetworkReadStream::init(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) {
 	_eos = _requestComplete = false;
 	_sendingContentsBuffer = nullptr;
@@ -75,8 +80,14 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, const byt
 	curl_easy_setopt(_easy, CURLOPT_FOLLOWLOCATION, 1L); //probably it's OK to have it always on
 	curl_easy_setopt(_easy, CURLOPT_HTTPHEADER, headersList);
 	curl_easy_setopt(_easy, CURLOPT_NOPROGRESS, 0L);
+	curl_easy_setopt(_easy, CURLOPT_PROGRESSFUNCTION, curlProgressCallbackOlder);
+	curl_easy_setopt(_easy, CURLOPT_PROGRESSDATA, this);
+#if LIBCURL_VERSION_NUM >= 0x072000
+	// CURLOPT_XFERINFOFUNCTION introduced in libcurl 7.32.0
+	// CURLOPT_PROGRESSFUNCTION is used as a backup plan in case older version is used
 	curl_easy_setopt(_easy, CURLOPT_XFERINFOFUNCTION, curlProgressCallback);
 	curl_easy_setopt(_easy, CURLOPT_XFERINFODATA, this);
+#endif
 	if (uploading) {
 		curl_easy_setopt(_easy, CURLOPT_UPLOAD, 1L);
 		curl_easy_setopt(_easy, CURLOPT_READDATA, this);
@@ -112,8 +123,14 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::H
 	curl_easy_setopt(_easy, CURLOPT_FOLLOWLOCATION, 1L); //probably it's OK to have it always on
 	curl_easy_setopt(_easy, CURLOPT_HTTPHEADER, headersList);
 	curl_easy_setopt(_easy, CURLOPT_NOPROGRESS, 0L);
+	curl_easy_setopt(_easy, CURLOPT_PROGRESSFUNCTION, curlProgressCallbackOlder);
+	curl_easy_setopt(_easy, CURLOPT_PROGRESSDATA, this);
+#if LIBCURL_VERSION_NUM >= 0x072000
+	// CURLOPT_XFERINFOFUNCTION introduced in libcurl 7.32.0
+	// CURLOPT_PROGRESSFUNCTION is used as a backup plan in case older version is used
 	curl_easy_setopt(_easy, CURLOPT_XFERINFOFUNCTION, curlProgressCallback);
 	curl_easy_setopt(_easy, CURLOPT_XFERINFODATA, this);
+#endif
 
 	// set POST multipart upload form fields/files
 	struct curl_httppost *formpost = nullptr;
