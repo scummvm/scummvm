@@ -74,6 +74,7 @@ extern const SciWorkaroundEntry kDeviceInfo_workarounds[];
 extern const SciWorkaroundEntry kDisplay_workarounds[];
 extern const SciWorkaroundEntry kDirLoop_workarounds[];
 extern const SciWorkaroundEntry kDisposeScript_workarounds[];
+extern const SciWorkaroundEntry kDoSoundPlay_workarounds[];
 extern const SciWorkaroundEntry kDoSoundFade_workarounds[];
 extern const SciWorkaroundEntry kFindKey_workarounds[];
 extern const SciWorkaroundEntry kDeleteKey_workarounds[];
@@ -89,6 +90,7 @@ extern const SciWorkaroundEntry kIsObject_workarounds[];
 extern const SciWorkaroundEntry kMemory_workarounds[];
 extern const SciWorkaroundEntry kMoveCursor_workarounds[];
 extern const SciWorkaroundEntry kNewWindow_workarounds[];
+extern const SciWorkaroundEntry kPalVarySetPercent_workarounds[];
 extern const SciWorkaroundEntry kReadNumber_workarounds[];
 extern const SciWorkaroundEntry kPaletteUnsetFlag_workarounds[];
 extern const SciWorkaroundEntry kSetCursor_workarounds[];
@@ -97,6 +99,7 @@ extern const SciWorkaroundEntry kStrAt_workarounds[];
 extern const SciWorkaroundEntry kStrCpy_workarounds[];
 extern const SciWorkaroundEntry kStrLen_workarounds[];
 extern const SciWorkaroundEntry kUnLoad_workarounds[];
+extern const SciWorkaroundEntry kScrollWindowAdd_workarounds[];
 
 extern SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciTrackOriginReply *trackOrigin);
 

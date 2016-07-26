@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef DRASCULA_H
-#define DRASCULA_H
+#ifndef DRASCULA_DRASCULA_H
+#define DRASCULA_DRASCULA_H
 
 #include "common/scummsys.h"
 #include "common/archive.h"
@@ -429,7 +429,7 @@ public:
 
 	int frame_y;
 	int curX, curY, characterMoved, curDirection, trackProtagonist, _characterFrame;
-	int hare_se_ve;		// TODO: what is this for?
+	int characterVisible;
 	int roomX, roomY, checkFlags;
 	int doBreak;
 	int stepX, stepY;
@@ -784,4 +784,4 @@ protected:
 
 } // End of namespace Drascula
 
-#endif /* DRASCULA_H */
+#endif /* DRASCULA_DRASCULA_H */

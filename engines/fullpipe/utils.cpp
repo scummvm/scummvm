@@ -262,15 +262,11 @@ double MfcArchive::readDouble() {
 	// http://randomascii.wordpress.com/2012/01/11/tricks-with-the-floating-point-format/
 
 	union {
-		struct {
-			int32 a;
-			int32 b;
-		} i;
+		byte b[8];
 		double d;
 	} tmp;
 
-	tmp.i.a = readUint32LE();
-	tmp.i.b = readUint32LE();
+	read(&tmp.b, 8);
 
 	return tmp.d;
 }

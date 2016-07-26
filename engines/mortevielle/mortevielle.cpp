@@ -145,6 +145,7 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescr
 	_endGame = false;
 	_loseGame = false;
 	_txxFileFl = false;
+	_is = 0;
 }
 
 MortevielleEngine::~MortevielleEngine() {

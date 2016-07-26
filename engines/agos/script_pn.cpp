@@ -21,6 +21,7 @@
  */
 
 #include "agos/agos.h"
+#include "agos/intern.h"
 #include "agos/vga.h"
 
 #include "common/endian.h"

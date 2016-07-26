@@ -33,8 +33,6 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 
-#include "gui/message.h"
-
 namespace Kyra {
 
 KyraEngine_LoK::KyraEngine_LoK(OSystem *system, const GameFlags &flags)

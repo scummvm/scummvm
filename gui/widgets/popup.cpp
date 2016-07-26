@@ -71,6 +71,10 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 	: Dialog(0, 0, 16, 16),
 	_popUpBoss(boss) {
 
+	_openTime = 0;
+	_buffer = nullptr;
+	_entriesPerColumn = 1;
+
 	// Copy the selection index
 	_selection = _popUpBoss->_selectedItem;
 
@@ -142,8 +146,6 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 	// Remember original mouse position
 	_clickX = clickX - _x;
 	_clickY = clickY - _y;
-
-	_openTime = 0;
 }
 
 void PopUpDialog::drawDialog() {
@@ -362,8 +364,11 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 		// Draw a separator
 		g_gui.theme()->drawLineSeparator(Common::Rect(x, y, x+w, y+kLineHeight));
 	} else {
-		g_gui.theme()->drawText(Common::Rect(x+1, y+2, x+w, y+2+kLineHeight), name,	hilite ? ThemeEngine::kStateHighlight : ThemeEngine::kStateEnabled,
-								Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone, _leftPadding);
+		g_gui.theme()->drawText(
+			Common::Rect(x+1, y+2, x+w, y+2+kLineHeight),
+			name, hilite ? ThemeEngine::kStateHighlight : ThemeEngine::kStateEnabled,
+			Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone, _leftPadding
+		);
 	}
 }
 
@@ -380,6 +385,17 @@ PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const char *toolti
 	_type = kPopUpWidget;
 
 	_selectedItem = -1;
+	_leftPadding = _rightPadding = 0;
+}
+
+PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip)
+	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss) {
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_IGNORE_DRAG);
+	_type = kPopUpWidget;
+
+	_selectedItem = -1;
+
+	_leftPadding = _rightPadding = 0;
 }
 
 void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
@@ -457,7 +473,10 @@ void PopUpWidget::drawWidget() {
 	Common::String sel;
 	if (_selectedItem >= 0)
 		sel = _entries[_selectedItem].name;
-	g_gui.theme()->drawPopUpWidget(Common::Rect(_x, _y, _x + _w, _y + _h), sel, _leftPadding, _state, Graphics::kTextAlignLeft);
+	g_gui.theme()->drawPopUpWidgetClip(
+		Common::Rect(_x, _y, _x + _w, _y + _h), getBossClipRect(),
+		sel, _leftPadding, _state, Graphics::kTextAlignLeft
+	);
 }
 
 } // End of namespace GUI

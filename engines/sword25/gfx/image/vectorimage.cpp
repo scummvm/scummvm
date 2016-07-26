@@ -217,6 +217,7 @@ Common::Rect CalculateBoundingBox(const VectorImageElement &vectorImageElement) 
 
 VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success, const Common::String &fname) : _pixelData(0), _fname(fname) {
 	success = false;
+	_bgColor = 0;
 
 	// Create bitstream object
 	// In the following the file data will be readout of the bitstream object.
@@ -283,7 +284,18 @@ VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success, co
 		case 32:
 			success = parseDefineShape(3, bs);
 			return;
+		case 9:
+			// SetBackgroundColor
+			{
+				byte r, g, b;
+				r = bs.getByte();
+				g = bs.getByte();
+				b = bs.getByte();
+				_bgColor = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(0xff, r, g, b);
+			}
+			break;
 		default:
+			warning("Ignoring tag: %d, %d bytes", tagType, tagLength);
 			// Ignore unknown tags
 			bs.skipBytes(tagLength);
 		}
@@ -300,8 +312,7 @@ VectorImage::~VectorImage() {
 			if (_elements[j].getPathInfo(i).getVec())
 				free(_elements[j].getPathInfo(i).getVec());
 
-	if (_pixelData)
-		free(_pixelData);
+	free(_pixelData);
 }
 
 

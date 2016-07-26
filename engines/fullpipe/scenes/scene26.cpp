@@ -257,7 +257,7 @@ void sceneHandler26_clickVent(StaticANIObject *ani, ExCommand *cmd) {
 			int y = ani->_oy + 61;
 
 			if (abs(x - g_fp->_aniMan->_ox) > 1 || abs(y - g_fp->_aniMan->_oy) > 1 || g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_UP) {
-				MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, x, y, 1, ST_MAN_UP);
+				MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, x, y, 1, ST_MAN_UP);
 
 				if (mq) {
 					ExCommand *ex = new ExCommand(0, 17, MSG_SC26_CLICKVENT, 0, 0, 0, 1, 0, 0, 0);

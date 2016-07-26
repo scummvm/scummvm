@@ -60,22 +60,15 @@ void DefaultSaveFileManager::checkPath(const Common::FSNode &dir) {
 }
 
 Common::StringArray DefaultSaveFileManager::listSavefiles(const Common::String &pattern) {
-	Common::String savePathName = getSavePath();
-	checkPath(Common::FSNode(savePathName));
+	// Assure the savefile name cache is up-to-date.
+	assureCached(getSavePath());
 	if (getError().getCode() != Common::kNoError)
 		return Common::StringArray();
 
-	// recreate FSNode since checkPath may have changed/created the directory
-	Common::FSNode savePath(savePathName);
-
-	Common::FSDirectory dir(savePath);
-	Common::ArchiveMemberList savefiles;
 	Common::StringArray results;
-	Common::String search(pattern);
-
-	if (dir.listMatchingMembers(savefiles, search) > 0) {
-		for (Common::ArchiveMemberList::const_iterator file = savefiles.begin(); file != savefiles.end(); ++file) {
-			results.push_back((*file)->getName());
+	for (SaveFileCache::const_iterator file = _saveFileCache.begin(), end = _saveFileCache.end(); file != end; ++file) {
+		if (file->_key.matchString(pattern, true)) {
+			results.push_back(file->_key);
 		}
 	}
 
@@ -83,68 +76,81 @@ Common::StringArray DefaultSaveFileManager::listSavefiles(const Common::String &
 }
 
 Common::InSaveFile *DefaultSaveFileManager::openForLoading(const Common::String &filename) {
-	// Ensure that the savepath is valid. If not, generate an appropriate error.
-	Common::String savePathName = getSavePath();
-	checkPath(Common::FSNode(savePathName));
+	// Assure the savefile name cache is up-to-date.
+	assureCached(getSavePath());
 	if (getError().getCode() != Common::kNoError)
-		return 0;
+		return nullptr;
 
-	// recreate FSNode since checkPath may have changed/created the directory
-	Common::FSNode savePath(savePathName);
-
-	Common::FSNode file = savePath.getChild(filename);
-	if (!file.exists())
-		return 0;
-
-	// Open the file for reading
-	Common::SeekableReadStream *sf = file.createReadStream();
-
-	return Common::wrapCompressedReadStream(sf);
+	SaveFileCache::const_iterator file = _saveFileCache.find(filename);
+	if (file == _saveFileCache.end()) {
+		return nullptr;
+	} else {
+		// Open the file for loading.
+		Common::SeekableReadStream *sf = file->_value.createReadStream();
+		return Common::wrapCompressedReadStream(sf);
+	}
 }
 
 Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const Common::String &filename, bool compress) {
-	// Ensure that the savepath is valid. If not, generate an appropriate error.
-	Common::String savePathName = getSavePath();
-	checkPath(Common::FSNode(savePathName));
+	// Assure the savefile name cache is up-to-date.
+	const Common::String savePathName = getSavePath();
+	assureCached(savePathName);
 	if (getError().getCode() != Common::kNoError)
-		return 0;
+		return nullptr;
 
-	// recreate FSNode since checkPath may have changed/created the directory
-	Common::FSNode savePath(savePathName);
+	// Obtain node.
+	SaveFileCache::const_iterator file = _saveFileCache.find(filename);
+	Common::FSNode fileNode;
 
-	Common::FSNode file = savePath.getChild(filename);
+	// If the file did not exist before, we add it to the cache.
+	if (file == _saveFileCache.end()) {
+		const Common::FSNode savePath(savePathName);
+		fileNode = savePath.getChild(filename);
+	} else {
+		fileNode = file->_value;
+	}
 
-	// Open the file for saving
-	Common::WriteStream *sf = file.createWriteStream();
+	// Open the file for saving.
+	Common::WriteStream *const sf = fileNode.createWriteStream();
+	Common::OutSaveFile *const result = compress ? Common::wrapCompressedWriteStream(sf) : sf;
 
-	return compress ? Common::wrapCompressedWriteStream(sf) : sf;
+	// Add file to cache now that it exists.
+	_saveFileCache[filename] = Common::FSNode(fileNode.getPath());
+
+	return result;
 }
 
 bool DefaultSaveFileManager::removeSavefile(const Common::String &filename) {
-	Common::String savePathName = getSavePath();
-	checkPath(Common::FSNode(savePathName));
+	// Assure the savefile name cache is up-to-date.
+	assureCached(getSavePath());
 	if (getError().getCode() != Common::kNoError)
 		return false;
 
-	// recreate FSNode since checkPath may have changed/created the directory
-	Common::FSNode savePath(savePathName);
-
-	Common::FSNode file = savePath.getChild(filename);
-
-	// FIXME: remove does not exist on all systems. If your port fails to
-	// compile because of this, please let us know (scummvm-devel or Fingolfin).
-	// There is a nicely portable workaround, too: Make this method overloadable.
-	if (remove(file.getPath().c_str()) != 0) {
-#ifndef _WIN32_WCE
-		if (errno == EACCES)
-			setError(Common::kWritePermissionDenied, "Search or write permission denied: "+file.getName());
-
-		if (errno == ENOENT)
-			setError(Common::kPathDoesNotExist, "removeSavefile: '"+file.getName()+"' does not exist or path is invalid");
-#endif
+	// Obtain node if exists.
+	SaveFileCache::const_iterator file = _saveFileCache.find(filename);
+	if (file == _saveFileCache.end()) {
 		return false;
 	} else {
-		return true;
+		const Common::FSNode fileNode = file->_value;
+		// Remove from cache, this invalidates the 'file' iterator.
+		_saveFileCache.erase(file);
+		file = _saveFileCache.end();
+
+		// FIXME: remove does not exist on all systems. If your port fails to
+		// compile because of this, please let us know (scummvm-devel).
+		// There is a nicely portable workaround, too: Make this method overloadable.
+		if (remove(fileNode.getPath().c_str()) != 0) {
+#ifndef _WIN32_WCE
+			if (errno == EACCES)
+				setError(Common::kWritePermissionDenied, "Search or write permission denied: "+fileNode.getName());
+
+			if (errno == ENOENT)
+				setError(Common::kPathDoesNotExist, "removeSavefile: '"+fileNode.getName()+"' does not exist or path is invalid");
+#endif
+			return false;
+		} else {
+			return true;
+		}
 	}
 }
 
@@ -169,6 +175,45 @@ Common::String DefaultSaveFileManager::getSavePath() const {
 #endif
 
 	return dir;
+}
+
+void DefaultSaveFileManager::assureCached(const Common::String &savePathName) {
+	// Check that path exists and is usable.
+	checkPath(Common::FSNode(savePathName));
+
+	if (_cachedDirectory == savePathName) {
+		return;
+	}
+
+	_saveFileCache.clear();
+	_cachedDirectory.clear();
+
+	if (getError().getCode() != Common::kNoError) {
+		warning("DefaultSaveFileManager::assureCached: Can not cache path '%s': '%s'", savePathName.c_str(), getErrorDesc().c_str());
+		return;
+	}
+
+	// FSNode can cache its members, thus create it after checkPath to reflect
+	// actual file system state.
+	const Common::FSNode savePath(savePathName);
+
+	Common::FSList children;
+	if (!savePath.getChildren(children, Common::FSNode::kListFilesOnly)) {
+		return;
+	}
+
+	// Build the savefile name cache.
+	for (Common::FSList::const_iterator file = children.begin(), end = children.end(); file != end; ++file) {
+		if (_saveFileCache.contains(file->getName())) {
+			warning("DefaultSaveFileManager::assureCached: Name clash when building cache, ignoring file '%s'", file->getName().c_str());
+		} else {
+			_saveFileCache[file->getName()] = *file;
+		}
+	}
+
+	// Only now store that we cached 'savePathName' to indicate we successfully
+	// cached the directory.
+	_cachedDirectory = savePathName;
 }
 
 #endif // !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)

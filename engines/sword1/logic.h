@@ -28,9 +28,12 @@
 #include "sword1/objectman.h"
 #include "common/util.h"
 #include "common/random.h"
-#include "audio/mixer.h"
 
 class OSystem;
+
+namespace Audio {
+class Mixer;
+}
 
 namespace Sword1 {
 

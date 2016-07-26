@@ -74,7 +74,6 @@ private:
 			size = 0;
 		}
 	} _samples[256];
-	byte sampleCount;
 
 	Common::Array<Row> _rows;
 	uint _currRow;

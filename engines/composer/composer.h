@@ -20,14 +20,15 @@
  *
  */
 
-#ifndef COMPOSER_H
-#define COMPOSER_H
+#ifndef COMPOSER_COMPOSER_H
+#define COMPOSER_COMPOSER_H
 
 #include "common/ini-file.h"
 #include "common/random.h"
 #include "common/system.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/error.h"
 #include "common/textconsole.h"
 #include "common/rect.h"
 

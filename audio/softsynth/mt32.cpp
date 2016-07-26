@@ -140,10 +140,7 @@ MidiDriver_MT32::MidiDriver_MT32(Audio::Mixer *mixer) : MidiDriver_Emulated(mixe
 	}
 	_reportHandler = NULL;
 	_synth = NULL;
-	// Unfortunately bugs in the emulator cause inaccurate tuning
-	// at rates other than 32KHz, thus we produce data at 32KHz and
-	// rely on Mixer to convert.
-	_outputRate = 32000; //_mixer->getOutputRate();
+	_outputRate = 0;
 	_initializing = false;
 
 	// Initialized in open()
@@ -180,7 +177,6 @@ int MidiDriver_MT32::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 
-	MidiDriver_Emulated::open();
 	_reportHandler = new MT32Emu::ReportHandlerScummVM();
 	_synth = new MT32Emu::Synth(_reportHandler);
 
@@ -199,10 +195,10 @@ int MidiDriver_MT32::open() {
 	_initializing = true;
 	debug(4, _s("Initializing MT-32 Emulator"));
 	_controlFile = new Common::File();
-	if (!_controlFile->open("MT32_CONTROL.ROM") && !_controlFile->open("CM32L_CONTROL.ROM"))
+	if (!_controlFile->open("CM32L_CONTROL.ROM") && !_controlFile->open("MT32_CONTROL.ROM"))
 		error("Error opening MT32_CONTROL.ROM / CM32L_CONTROL.ROM");
 	_pcmFile = new Common::File();
-	if (!_pcmFile->open("MT32_PCM.ROM") && !_pcmFile->open("CM32L_PCM.ROM"))
+	if (!_pcmFile->open("CM32L_PCM.ROM") && !_pcmFile->open("MT32_PCM.ROM"))
 		error("Error opening MT32_PCM.ROM / CM32L_PCM.ROM");
 	_controlROM = MT32Emu::ROMImage::makeROMImage(_controlFile);
 	_pcmROM = MT32Emu::ROMImage::makeROMImage(_pcmFile);
@@ -212,6 +208,18 @@ int MidiDriver_MT32::open() {
 	double gain = (double)ConfMan.getInt("midi_gain") / 100.0;
 	_synth->setOutputGain(1.0f * gain);
 	_synth->setReverbOutputGain(0.68f * gain);
+	// We let the synthesizer play MIDI messages immediately. Our MIDI
+	// handling is synchronous to sample generation. This makes delaying MIDI
+	// events result in odd sound output in some cases. For example, the
+	// shattering window in the Indiana Jones and the Fate of Atlantis intro
+	// will sound like a bell if we use any delay here.
+	// Bug #6242 "AUDIO: Built-In MT-32 MUNT Produces Wrong Sounds".
+	_synth->setMIDIDelayMode(MT32Emu::MIDIDelayMode_IMMEDIATE);
+
+	// We need to report the sample rate MUNT renders at as sample rate of our
+	// AudioStream.
+	_outputRate = _synth->getStereoOutputSampleRate();
+	MidiDriver_Emulated::open();
 
 	_initializing = false;
 

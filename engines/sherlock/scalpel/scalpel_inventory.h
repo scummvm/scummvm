@@ -34,6 +34,18 @@ public:
 	ScalpelInventory(SherlockEngine *vm);
 	~ScalpelInventory();
 
+	Common::String _fixedTextExit;
+	Common::String _fixedTextLook;
+	Common::String _fixedTextUse;
+	Common::String _fixedTextGive;
+
+	byte _hotkeyExit;
+	byte _hotkeyLook;
+	byte _hotkeyUse;
+	byte _hotkeyGive;
+
+	byte _hotkeysIndexed[8];
+
 	/**
 	 * Put the game into inventory mode and open the interface window.
 	 */
@@ -65,6 +77,11 @@ public:
 	 * and then calls loadGraphics to load the associated graphics
 	 */
 	virtual void loadInv();
+
+	/**
+	 * Identifies a button number according to the key, that the user pressed
+	 */
+	int identifyUserButton(int key);
 };
 
 } // End of namespace Scalpel

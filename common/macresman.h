@@ -33,6 +33,7 @@
 #include "common/array.h"
 #include "common/fs.h"
 #include "common/str.h"
+#include "common/str-array.h"
 
 #ifndef COMMON_MACRESMAN_H
 #define COMMON_MACRESMAN_H
@@ -80,6 +81,16 @@ public:
 	 * @return True if either a data fork or resource fork with this name exists
 	 */
 	static bool exists(const String &fileName);
+
+	/**
+	 * List all filenames matching pattern for opening with open().
+	 *
+	 * @param files Array containing all matching filenames discovered. Only
+	 *              adds to the list.
+	 * @param pattern Pattern to match against. Taking String::matchPattern's
+	 *                format.
+	 */
+	static void listFiles(StringArray &files, const String &pattern);
 
 	/**
 	 * Close the Mac data/resource fork pair.
@@ -176,12 +187,20 @@ private:
 	bool loadFromAppleDouble(SeekableReadStream &stream);
 
 	static String constructAppleDoubleName(String name);
+	static String disassembleAppleDoubleName(String name, bool *isAppleDouble);
 
 	/**
 	 * Check if the given stream is in the MacBinary format.
 	 * @param stream The stream we're checking
 	 */
 	static bool isMacBinary(SeekableReadStream &stream);
+
+	/**
+	 * Do a sanity check whether the given stream is a raw resource fork.
+	 *
+	 * @param stream Stream object to check. Will not preserve its position.
+	 */
+	static bool isRawFork(SeekableReadStream &stream);
 
 	enum {
 		kResForkNone = 0,

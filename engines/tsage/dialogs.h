@@ -23,7 +23,6 @@
 #ifndef TSAGE_DIALOGS_H
 #define TSAGE_DIALOGS_H
 
-#include "gui/options.h"
 #include "tsage/events.h"
 #include "tsage/graphics.h"
 #include "common/list.h"
@@ -42,11 +41,6 @@ public:
 
 	static int show(const Common::String &message, const Common::String &btn1Message, const Common::String &btn2Message = Common::String());
 	static int show2(const Common::String &message, const Common::String &btn1Message, const Common::String &btn2Message = Common::String());
-};
-
-class ConfigDialog : public GUI::OptionsDialog {
-public:
-	ConfigDialog();
 };
 
 /*--------------------------------------------------------------------------*/

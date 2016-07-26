@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SCI_H
-#define SCI_H
+#ifndef SCI_SCI_H
+#define SCI_SCI_H
 
 #include "engines/engine.h"
 #include "common/macresman.h"
@@ -56,6 +56,7 @@ class SoundCommandParser;
 class EventManager;
 class SegManager;
 class ScriptPatcher;
+class Sync;
 
 class GfxAnimate;
 class GfxCache;
@@ -66,10 +67,12 @@ class GfxCoordAdjuster;
 class GfxCursor;
 class GfxMacIconBar;
 class GfxMenu;
-class GfxPaint;
 class GfxPaint16;
 class GfxPaint32;
 class GfxPalette;
+class GfxPalette32;
+class GfxRemap;
+class GfxRemap32;
 class GfxPorts;
 class GfxScreen;
 class GfxText16;
@@ -77,8 +80,11 @@ class GfxText32;
 class GfxTransitions;
 
 #ifdef ENABLE_SCI32
+// TODO: Move RobotDecoder to Video32
 class RobotDecoder;
 class GfxFrameout;
+class Audio32;
+class Video32;
 #endif
 
 // our engine debug levels
@@ -127,13 +133,16 @@ enum SciGameId {
 	GID_FAIRYTALES,
 	GID_FREDDYPHARKAS,
 	GID_FUNSEEKER,
+	GID_GK1DEMO,	// We have a separate ID for GK1 demo, because it's actually a completely different game (SCI1.1 vs SCI2/SCI2.1)
 	GID_GK1,
 	GID_GK2,
 	GID_HOYLE1,
 	GID_HOYLE2,
 	GID_HOYLE3,
 	GID_HOYLE4,
+	GID_HOYLE5,
 	GID_ICEMAN,
+	GID_INNDEMO,
 	GID_ISLANDBRAIN,
 	GID_JONES,
 	GID_KQ1,
@@ -164,12 +173,14 @@ enum SciGameId {
 	GID_PQ2,
 	GID_PQ3,
 	GID_PQ4,
+	GID_PQ4DEMO,	// We have a separate ID for PQ4 demo, because it's actually a completely different game (SCI1.1 vs SCI2/SCI2.1)
 	GID_PQSWAT,
 	GID_QFG1,
 	GID_QFG1VGA,
 	GID_QFG2,
 	GID_QFG3,
 	GID_QFG4,
+	GID_QFG4DEMO,	// We have a separate ID for QFG4 demo, because it's actually a completely different game (SCI1.1 vs SCI2/SCI2.1)
 	GID_RAMA,
 	GID_SHIVERS,
 	//GID_SHIVERS2,	// Not SCI
@@ -200,7 +211,9 @@ enum SciVersion {
 	SCI_VERSION_1_LATE, // Dr. Brain 1, EcoQuest 1, Longbow, PQ3, SQ1, LSL5, KQ5 CD
 	SCI_VERSION_1_1, // Dr. Brain 2, EcoQuest 1 CD, EcoQuest 2, KQ6, QFG3, SQ4CD, XMAS 1992 and many more
 	SCI_VERSION_2, // GK1, PQ4 floppy, QFG4 floppy
-	SCI_VERSION_2_1, // GK2, KQ7, LSL6 hires, MUMG Deluxe, Phantasmagoria 1, PQ4CD, PQ:SWAT, QFG4CD, Shivers 1, SQ6, Torin
+	SCI_VERSION_2_1_EARLY, // GK2 demo, KQ7 1.4/1.51, LSL6 hires, PQ4CD, QFG4 floppy
+	SCI_VERSION_2_1_MIDDLE, // GK2, KQ7 2.00b, MUMG Deluxe, Phantasmagoria 1, PQ:SWAT, QFG4CD, Shivers 1, SQ6, Torin
+	SCI_VERSION_2_1_LATE, // demos of LSL7, Lighthouse, RAMA
 	SCI_VERSION_3 // LSL7, Lighthouse, RAMA, Phantasmagoria 2
 };
 
@@ -233,6 +246,8 @@ public:
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
 	void syncSoundSettings();
+	uint32 getTickCount();
+	void setTickCount(const uint32 ticks);
 
 	/**
 	 * Syncs the audio options of the ScummVM launcher (speech, subtitles or
@@ -264,6 +279,7 @@ public:
 	Common::Platform getPlatform() const;
 	bool isDemo() const;
 	bool isCD() const;
+	bool forceHiresGraphics() const;
 
 	/** Returns true if the game's original platform is big-endian. */
 	bool isBE() const;
@@ -276,7 +292,7 @@ public:
 	inline EngineState *getEngineState() const { return _gamestate; }
 	inline Vocabulary *getVocabulary() const { return _vocabulary; }
 	inline EventManager *getEventManager() const { return _eventMan; }
-	inline reg_t getGameObject() const { return _gameObjectAddress; }
+	inline reg_t getGameObject() const { return _gameObjectAddress; } // Gets the game object VM address
 
 	Common::RandomSource &getRNG() { return _rng; }
 
@@ -290,6 +306,8 @@ public:
 
 	/** Remove the 'TARGET-' prefix of the given filename, if present. */
 	Common::String unwrapFilename(const Common::String &name) const;
+
+	const char *getGameObjectName(); // Gets the name of the game object (should only be used for identifying fanmade games)
 
 	/**
 	 * Checks if we are in a QfG import screen, where special handling
@@ -341,8 +359,10 @@ public:
 	GfxCoordAdjuster *_gfxCoordAdjuster;
 	GfxCursor *_gfxCursor;
 	GfxMenu *_gfxMenu; // Menu for 16-bit gfx
-	GfxPalette *_gfxPalette;
-	GfxPaint *_gfxPaint;
+	GfxPalette *_gfxPalette16;
+	GfxPalette32 *_gfxPalette32; // Palette for 32-bit gfx
+	GfxRemap *_gfxRemap16;	// Remapping for the QFG4 demo
+	GfxRemap32 *_gfxRemap32; // Remapping for 32-bit gfx
 	GfxPaint16 *_gfxPaint16; // Painting in 16-bit gfx
 	GfxPaint32 *_gfxPaint32; // Painting in 32-bit gfx
 	GfxPorts *_gfxPorts; // Port managment for 16-bit gfx
@@ -353,11 +373,14 @@ public:
 	GfxMacIconBar *_gfxMacIconBar; // Mac Icon Bar manager
 
 #ifdef ENABLE_SCI32
+	Audio32 *_audio32;
+	Video32 *_video32;
 	RobotDecoder *_robotDecoder;
 	GfxFrameout *_gfxFrameout; // kFrameout and the like for 32-bit gfx
 #endif
 
 	AudioPlayer *_audio;
+	Sync *_sync;
 	SoundCommandParser *_soundCmd;
 	GameFeatures *_features;
 
@@ -416,6 +439,7 @@ private:
 	Console *_console;
 	Common::RandomSource _rng;
 	Common::MacResManager _macExecutable;
+	bool _forceHiresGraphics; // user-option for GK1, KQ6, PQ4
 };
 
 
@@ -445,4 +469,4 @@ const char *getSciVersionDesc(SciVersion version);
 
 } // End of namespace Sci
 
-#endif // SCI_H
+#endif // SCI_SCI_H

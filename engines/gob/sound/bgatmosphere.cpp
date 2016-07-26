@@ -23,6 +23,7 @@
 #include "common/array.h"
 
 #include "gob/sound/bgatmosphere.h"
+#include "gob/sound/sound.h"
 #include "gob/sound/sounddesc.h"
 
 namespace Gob {
@@ -30,7 +31,7 @@ namespace Gob {
 BackgroundAtmosphere::BackgroundAtmosphere(Audio::Mixer &mixer) :
 	SoundMixer(mixer, Audio::Mixer::kMusicSoundType), _rnd("gobBA") {
 
-	_playMode = kPlayModeLinear;
+	_playMode = Sound::kPlayModeLinear;
 	_queuePos = -1;
 	_shaded = false;
 	_shadable = true;
@@ -56,7 +57,7 @@ void BackgroundAtmosphere::stopBA() {
 	SoundMixer::stop(0);
 }
 
-void BackgroundAtmosphere::setPlayMode(PlayMode mode) {
+void BackgroundAtmosphere::setPlayMode(Sound::BackgroundPlayMode mode) {
 	_playMode = mode;
 }
 
@@ -100,11 +101,11 @@ void BackgroundAtmosphere::getNextQueuePos() {
 
 	switch (_playMode) {
 
-	case kPlayModeLinear:
+	case Sound::kPlayModeLinear:
 		_queuePos = (_queuePos + 1) % _queue.size();
 		break;
 
-	case kPlayModeRandom:
+	case Sound::kPlayModeRandom:
 		_queuePos = _rnd.getRandomNumber(_queue.size() - 1);
 		break;
 

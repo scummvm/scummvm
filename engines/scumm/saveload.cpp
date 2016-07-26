@@ -41,8 +41,6 @@
 #include "scumm/he/sprite_he.h"
 #include "scumm/verbs.h"
 
-#include "audio/mixer.h"
-
 #include "backends/audiocd/audiocd.h"
 
 #include "graphics/thumbnail.h"
@@ -1139,6 +1137,10 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	if (s->isLoading() && s->getVersion() < VER(14))
 		upgradeGfxUsageBits();
 
+	// When loading, reset the ShakePos. Fixes one part of bug #7141
+	if (s->isLoading() && s->getVersion() >= VER(10))
+		_system->setShakePos(0);
+
 	// When loading, move the mouse to the saved mouse position.
 	if (s->isLoading() && s->getVersion() >= VER(20)) {
 		updateCursor();
@@ -1303,7 +1305,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 
 	if (hasTownsData) {
 		// Skip FM-Towns specific data
-		for (int i = 69 * sizeof(uint8) + 44 * sizeof(int16); i; i--)
+		for (i = 69 * sizeof(uint8) + 44 * sizeof(int16); i; i--)
 			s->loadByte();
 	}
 

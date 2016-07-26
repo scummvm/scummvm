@@ -25,6 +25,7 @@
 
 #include "agos/agos.h"
 #include "agos/intern.h"
+#include "agos/sound.h"
 #include "agos/vga.h"
 
 #include "common/debug-channels.h"

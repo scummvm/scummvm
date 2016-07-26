@@ -31,7 +31,7 @@
 namespace Groovie {
 
 GraphicsMan::GraphicsMan(GroovieEngine *vm) :
-	_vm(vm), _changed(false), _fading(0) {
+	_vm(vm), _changed(false), _fading(0), _fadeStartTime(0) {
 	// Create the game surfaces
 	_foreground.create(640, 320, _vm->_pixelFormat);
 	_background.create(640, 320, _vm->_pixelFormat);

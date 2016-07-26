@@ -31,7 +31,7 @@ namespace Sherlock {
 namespace Tattoo {
 
 enum JournalHighlight {
-	JH_NONE = -1, JH_CLOSE = 0, JH_SEARCH = 1, JH_PRINT = 2,
+	JH_NONE = -1, JH_CLOSE = 0, JH_SEARCH = 1, JH_SAVE = 2,
 	JH_SCROLL_LEFT = 3, JH_PAGE_LEFT = 4, JH_PAGE_RIGHT = 5, JH_SCROLL_RIGHT = 6, JH_THUMBNAIL = 7
 };
 
@@ -86,6 +86,16 @@ private:
 	 * Get in a name to search through the journal for
 	 */
 	int getFindName(bool printError);
+
+	/**
+	 * Save the journal to file
+	 */
+	void saveJournal();
+
+	/**
+	 * Show a message that the journal has been saved to file
+	 */
+	void showSavedDialog();
 public:
 	TattooJournal(SherlockEngine *vm);
 	virtual ~TattooJournal() {}

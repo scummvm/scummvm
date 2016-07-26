@@ -27,11 +27,18 @@
 #include "common/mutex.h"
 
 #include "audio/mixer.h"
-#include "audio/audiostream.h"
 
 #include "sci/sci.h"
 #include "sci/resource.h"
 #include "sci/sound/drivers/mididriver.h"
+#ifdef ENABLE_SCI32
+#include "sci/sound/audio32.h"
+#endif
+
+namespace Audio {
+class LoopingAudioStream;
+class RewindableAudioStream;
+}
 
 namespace Sci {
 
@@ -119,6 +126,7 @@ public:
 	Audio::RewindableAudioStream *pStreamAud;
 	Audio::LoopingAudioStream *pLoopStream;
 	Audio::SoundHandle hCurrentAud;
+	bool isSample;
 
 public:
 	MusicEntry();

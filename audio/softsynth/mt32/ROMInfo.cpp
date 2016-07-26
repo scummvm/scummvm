@@ -54,12 +54,21 @@ static const ROMInfo *getKnownROMInfoFromList(unsigned int index) {
 
 const ROMInfo* ROMInfo::getROMInfo(Common::File *file) {
 	size_t fileSize = file->size();
+	Common::String fileName = file->getName();
+	fileName.toUppercase();
+	bool isCM32LROM = fileName.hasPrefix("CM32L_");
 	// We haven't added the SHA1 checksum code in ScummVM, as the file size
-	// suffices for our needs for now.
+	// and ROM name suffices for our needs for now.
 	//const char *fileDigest = file->getSHA1();
 	for (int i = 0; getKnownROMInfoFromList(i) != NULL; i++) {
 		const ROMInfo *romInfo = getKnownROMInfoFromList(i);
 		if (fileSize == romInfo->fileSize /*&& !strcmp(fileDigest, romInfo->sha1Digest)*/) {
+			if (fileSize == 65536) {
+				// If we are looking for a CM-32L ROM, make sure we return the first matching
+				// CM-32L ROM from the list, instead of the first matching MT-32 ROM
+				if (isCM32LROM && romInfo->controlROMFeatures->isDefaultReverbMT32Compatible())
+					continue;
+			}
 			return romInfo;
 		}
 	}

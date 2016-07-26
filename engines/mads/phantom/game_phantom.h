@@ -32,8 +32,9 @@ namespace MADS {
 
 namespace Phantom {
 
-// TODO: Adapt for Phantom's difficulty setting
-enum StoryMode { STORYMODE_NAUGHTY = 1, STORYMODE_NICE = 2 };
+enum Difficulty {
+	DIFFICULTY_HARD = 1, DIFFICULTY_MEDIUM = 2, DIFFICULTY_EASY = 3
+};
 
 enum InventoryObject {
 	OBJ_NONE = -1,
@@ -64,8 +65,40 @@ enum InventoryObject {
 	OBJ_OAR = 24
 };
 
+enum MazeEvent {
+	MAZE_EVENT_NONE = 0,
+	MAZE_EVENT_PUDDLE = 0x0001,
+	MAZE_EVENT_RAT_NEST = 0x0002,
+	MAZE_EVENT_SKULL = 0x0004,
+	MAZE_EVENT_POT = 0x0008,
+	MAZE_EVENT_BRICK = 0x0010,
+	MAZE_EVENT_HOLE = 0x0020,
+	MAZE_EVENT_WEB = 0x0040,
+	MAZE_EVENT_PLANK = 0x0080,
+	MAZE_EVENT_DRAIN = 0x0100,
+	MAZE_EVENT_STONE = 0x0200,
+	MAZE_EVENT_BLOCK = 0x0400,
+	MAZE_EVENT_FALLEN_BLOCK = 0x0800
+};
+
+struct Catacombs {
+	int _sceneNum;
+	int _exit[4];
+	int _fromDirection[4];
+	int _flags;
+};
+
 class GamePhantom : public Game {
 	friend class Game;
+
+private:
+	void genericObjectExamine();
+	void stopWalker();
+	void stopWalkerBasic();
+
+	Catacombs *_catacombs;
+	int _catacombSize;
+
 protected:
 	GamePhantom(MADSEngine *vm);
 
@@ -78,7 +111,8 @@ protected:
 	virtual void checkShowDialog();
 public:
 	PhantomGlobals _globals;
-	StoryMode _storyMode;
+	Difficulty _difficulty;
+
 
 	virtual Globals &globals() { return _globals; }
 
@@ -89,20 +123,25 @@ public:
 	virtual void step();
 
 	virtual void synchronize(Common::Serializer &s, bool phase1);
+
+	void setupCatacombs();
+	void enterCatacombs(bool val);
+	void initCatacombs();
+	void moveCatacombs(int dir);
+	int exitCatacombs(int dir);
+	void newCatacombRoom(int fromRoom, int fromExit);
 };
 
-
+// Section handlers aren't needed in ScummVM implementation
 class Section1Handler : public SectionHandler {
 public:
 	Section1Handler(MADSEngine *vm) : SectionHandler(vm) {}
 
-	// TODO: Properly implement handler methods
 	virtual void preLoadSection() {}
 	virtual void sectionPtr2() {}
 	virtual void postLoadSection() {}
 };
 
-// TODO: Properly implement handler classes
 typedef Section1Handler Section2Handler;
 typedef Section1Handler Section3Handler;
 typedef Section1Handler Section4Handler;

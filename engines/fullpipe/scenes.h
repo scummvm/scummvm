@@ -26,7 +26,7 @@
 namespace Fullpipe {
 
 struct Bat;
-struct BehaviorEntryInfo;
+struct BehaviorMove;
 struct Hanger;
 class MGM;
 class MctlLadder;
@@ -346,12 +346,12 @@ public:
 	int scene06_sceneClickX;
 	int scene06_sceneClickY;
 	int scene06_mumsyPos;
-	BehaviorEntryInfo *scene06_mumsyJumpBk;
-	BehaviorEntryInfo *scene06_mumsyJumpFw;
+	BehaviorMove *scene06_mumsyJumpBk;
+	BehaviorMove *scene06_mumsyJumpFw;
 	int scene06_mumsyJumpBkPercent;
 	int scene06_mumsyJumpFwPercent;
 
-	BehaviorEntryInfo *scene07_lukeAnim;
+	BehaviorMove *scene07_lukeAnim;
 	int scene07_lukePercent;
 	StaticANIObject *scene07_plusMinus;
 

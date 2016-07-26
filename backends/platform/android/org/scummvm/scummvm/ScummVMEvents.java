@@ -119,6 +119,8 @@ public class ScummVMEvents implements
 			case KeyEvent.KEYCODE_MENU:
 			case KeyEvent.KEYCODE_CAMERA:
 			case KeyEvent.KEYCODE_SEARCH:
+			case KeyEvent.KEYCODE_MEDIA_PLAY:
+			case KeyEvent.KEYCODE_MEDIA_PAUSE:
 				break;
 
 			default:

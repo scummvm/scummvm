@@ -224,7 +224,7 @@ void sceneHandler08_startArcade() {
 	g_vars->scene08_onBelly = false;
 
 	getGameLoaderInteractionController()->disableFlag24();
-	getCurrSceneSc2MotionController()->clearEnabled();
+	getCurrSceneSc2MotionController()->deactivate();
 
 	g_vars->scene08_batuta->stopAnim_maybe();
 
@@ -276,7 +276,7 @@ void sceneHandler08_finishArcade() {
 	g_vars->scene08_inArcade = false;
 
 	getGameLoaderInteractionController()->enableFlag24();
-	getCurrSceneSc2MotionController()->setEnabled();
+	getCurrSceneSc2MotionController()->activate();
 }
 
 void sceneHandler08_jumpOff(ExCommand *cmd) {

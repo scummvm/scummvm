@@ -29,6 +29,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
+#include "common/memstream.h"
 
 #include "gui/saveload.h"
 
@@ -37,7 +38,6 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
-#include "sci/graphics/menu.h"
 #include "sci/sound/audio.h"
 #include "sci/console.h"
 
@@ -258,20 +258,12 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	}
 	debugC(kDebugLevelFile, "kFileIO(open): %s, 0x%x", name.c_str(), mode);
 
-#ifdef ENABLE_SCI32
-	if (name == PHANTASMAGORIA_SAVEGAME_INDEX) {
-		if (s->_virtualIndexFile) {
-			return make_reg(0, VIRTUALFILE_HANDLE);
-		} else {
-			Common::String englishName = g_sci->getSciLanguageString(name, K_LANG_ENGLISH);
-			Common::String wrappedName = g_sci->wrapFilename(englishName);
-			if (!g_sci->getSaveFileManager()->listSavefiles(wrappedName).empty()) {
-				s->_virtualIndexFile = new VirtualIndexFile(wrappedName);
-				return make_reg(0, VIRTUALFILE_HANDLE);
-			}
-		}
+	if (name.hasPrefix("sciAudio\\")) {
+		// fan-made sciAudio extension, don't create those files and instead return a virtual handle
+		return make_reg(0, VIRTUALFILE_HANDLE_SCIAUDIO);
 	}
 
+#ifdef ENABLE_SCI32
 	// Shivers is trying to store savegame descriptions and current spots in
 	// separate .SG files, which are hardcoded in the scripts.
 	// Essentially, there is a normal save file, created by the executable
@@ -309,18 +301,18 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 			listSavegames(saves);
 			int savegameNr = findSavegame(saves, slotNumber - SAVEGAMEID_OFFICIALRANGE_START);
 
-			if (!s->_virtualIndexFile) {
-				// Make the virtual file buffer big enough to avoid having it grow dynamically.
-				// 50 bytes should be more than enough.
-				s->_virtualIndexFile = new VirtualIndexFile(50);
-			}
+			int size = strlen(saves[savegameNr].name) + 2;
+			char *buf = (char *)malloc(size);
+			strcpy(buf, saves[savegameNr].name);
+			buf[size - 1] = 0; // Spot description (empty)
 
-			s->_virtualIndexFile->seek(0, SEEK_SET);
-			s->_virtualIndexFile->write(saves[savegameNr].name, strlen(saves[savegameNr].name));
-			s->_virtualIndexFile->write("\0", 1);
-			s->_virtualIndexFile->write("\0", 1);	// Spot description (empty)
-			s->_virtualIndexFile->seek(0, SEEK_SET);
-			return make_reg(0, VIRTUALFILE_HANDLE);
+			uint handle = findFreeFileHandle(s);
+
+			s->_fileHandles[handle]._in = new Common::MemoryReadStream((byte *)buf, size, DisposeAfterUse::YES);
+			s->_fileHandles[handle]._out = nullptr;
+			s->_fileHandles[handle]._name = "";
+
+			return make_reg(0, handle);
 		}
 	}
 #endif
@@ -345,12 +337,10 @@ reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv) {
 
 	uint16 handle = argv[0].toUint16();
 
-#ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE) {
-		s->_virtualIndexFile->close();
+	if (handle >= VIRTUALFILE_HANDLE_START) {
+		// it's a virtual handle? ignore it
 		return SIGNAL_REG;
 	}
-#endif
 
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (f) {
@@ -372,17 +362,9 @@ reg_t kFileIOReadRaw(EngineState *s, int argc, reg_t *argv) {
 	char *buf = new char[size];
 	debugC(kDebugLevelFile, "kFileIO(readRaw): %d, %d", handle, size);
 
-#ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE) {
-		bytesRead = s->_virtualIndexFile->read(buf, size);
-	} else {
-#endif
-		FileHandle *f = getFileFromHandle(s, handle);
-		if (f)
-			bytesRead = f->_in->read(buf, size);
-#ifdef ENABLE_SCI32
-	}
-#endif
+	FileHandle *f = getFileFromHandle(s, handle);
+	if (f)
+		bytesRead = f->_in->read(buf, size);
 
 	// TODO: What happens if less bytes are read than what has
 	// been requested? (i.e. if bytesRead is non-zero, but still
@@ -402,20 +384,11 @@ reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv) {
 	s->_segMan->memcpy((byte *)buf, argv[1], size);
 	debugC(kDebugLevelFile, "kFileIO(writeRaw): %d, %d", handle, size);
 
-#ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE) {
-		s->_virtualIndexFile->write(buf, size);
+	FileHandle *f = getFileFromHandle(s, handle);
+	if (f) {
+		f->_out->write(buf, size);
 		success = true;
-	} else {
-#endif
-		FileHandle *f = getFileFromHandle(s, handle);
-		if (f) {
-			f->_out->write(buf, size);
-			success = true;
-		}
-#ifdef ENABLE_SCI32
 	}
-#endif
 
 	delete[] buf;
 	if (success)
@@ -454,13 +427,6 @@ reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 			const Common::String wrappedName = g_sci->wrapFilename(name);
 			result = saveFileMan->removeSavefile(wrappedName);
 		}
-
-#ifdef ENABLE_SCI32
-		if (name == PHANTASMAGORIA_SAVEGAME_INDEX) {
-			delete s->_virtualIndexFile;
-			s->_virtualIndexFile = 0;
-		}
-#endif
 	} else {
 		const Common::String wrappedName = g_sci->wrapFilename(name);
 		result = saveFileMan->removeSavefile(wrappedName);
@@ -479,12 +445,7 @@ reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv) {
 	debugC(kDebugLevelFile, "kFileIO(readString): %d, %d", handle, maxsize);
 	uint32 bytesRead;
 
-#ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE)
-		bytesRead = s->_virtualIndexFile->readLine(buf, maxsize);
-	else
-#endif
-		bytesRead = fgets_wrapper(s, buf, maxsize, handle);
+	bytesRead = fgets_wrapper(s, buf, maxsize, handle);
 
 	s->_segMan->memcpy(argv[0], (const byte*)buf, maxsize);
 	delete[] buf;
@@ -503,20 +464,13 @@ reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 	// We skip creating these files, and instead handle the calls
 	// directly. Since the sciAudio calls are only creating text files,
 	// this is probably the most straightforward place to handle them.
-	if (handle == 0xFFFF && str.hasPrefix("(sciAudio")) {
+	if (handle == VIRTUALFILE_HANDLE_SCIAUDIO) {
 		Common::List<ExecStack>::const_iterator iter = s->_executionStack.reverse_begin();
 		iter--;	// sciAudio
 		iter--;	// sciAudio child
 		g_sci->_audio->handleFanmadeSciAudio(iter->sendp, s->_segMan);
 		return NULL_REG;
 	}
-
-#ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE) {
-		s->_virtualIndexFile->write(str.c_str(), str.size());
-		return NULL_REG;
-	}
-#endif
 
 	FileHandle *f = getFileFromHandle(s, handle);
 
@@ -537,11 +491,6 @@ reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv) {
 	uint16 offset = ABS<int16>(argv[1].toSint16());	// can be negative
 	uint16 whence = argv[2].toUint16();
 	debugC(kDebugLevelFile, "kFileIO(seek): %d, %d, %d", handle, offset, whence);
-
-#ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE)
-		return make_reg(0, s->_virtualIndexFile->seek(offset, whence));
-#endif
 
 	FileHandle *f = getFileFromHandle(s, handle);
 
@@ -582,15 +531,20 @@ reg_t kFileIOFindNext(EngineState *s, int argc, reg_t *argv) {
 reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 	Common::String name = s->_segMan->getString(argv[0]);
 
-#ifdef ENABLE_SCI32
-	// Cache the file existence result for the Phantasmagoria
-	// save index file, as the game scripts keep checking for
-	// its existence.
-	if (name == PHANTASMAGORIA_SAVEGAME_INDEX && s->_virtualIndexFile)
-		return TRUE_REG;
-#endif
-
 	bool exists = false;
+
+	if (g_sci->getGameId() == GID_PEPPER) {
+		// HACK: Special case for Pepper's Adventure in Time
+		// The game checks like crazy for the file CDAUDIO when entering the game menu.
+		// On at least Windows that makes the engine slow down to a crawl and takes at least 1 second.
+		// Should get solved properly by changing the code below. This here is basically for 1.8.0 release.
+		// TODO: Fix this properly.
+		if (name == "CDAUDIO")
+			return NULL_REG;
+	}
+
+	// TODO: It may apparently be worth caching the existence of
+	// phantsg.dir, and possibly even keeping it open persistently
 
 	// Check for regular file
 	exists = Common::File::exists(name);
@@ -787,25 +741,47 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 				return NULL_REG;
 		} else if (virtualId < SAVEGAMEID_OFFICIALRANGE_START) {
 			// virtualId is low, we assume that scripts expect us to create new slot
-			if (g_sci->getGameId() == GID_JONES) {
+			switch (g_sci->getGameId()) {
+			case GID_JONES:
 				// Jones has one save slot only
 				savegameId = 0;
-			} else if (virtualId == s->_lastSaveVirtualId) {
-				// if last virtual id is the same as this one, we assume that caller wants to overwrite last save
-				savegameId = s->_lastSaveNewId;
-			} else {
-				uint savegameNr;
-				// savegameId is in lower range, scripts expect us to create a new slot
-				for (savegameId = 0; savegameId < SAVEGAMEID_OFFICIALRANGE_START; savegameId++) {
-					for (savegameNr = 0; savegameNr < saves.size(); savegameNr++) {
-						if (savegameId == saves[savegameNr].id)
+				break;
+			case GID_FANMADE: {
+				// Fanmade game, try to identify the game
+				const char *gameName = g_sci->getGameObjectName();
+
+				if (strcmp(gameName, "CascadeQuest") == 0) {
+					// Cascade Quest calls us directly to auto-save and uses slot 99,
+					//  put that save into slot 0 (ScummVM auto-save slot) see bug #7007
+					if (virtualId == (SAVEGAMEID_OFFICIALRANGE_START - 1)) {
+						savegameId = 0;
+					}
+				}
+				break;
+			}
+			default:
+				break;
+			}
+
+			if (savegameId < 0) {
+				// savegameId not set yet
+				if (virtualId == s->_lastSaveVirtualId) {
+					// if last virtual id is the same as this one, we assume that caller wants to overwrite last save
+					savegameId = s->_lastSaveNewId;
+				} else {
+					uint savegameNr;
+					// savegameId is in lower range, scripts expect us to create a new slot
+					for (savegameId = SAVEGAMESLOT_FIRST; savegameId <= SAVEGAMESLOT_LAST; savegameId++) {
+						for (savegameNr = 0; savegameNr < saves.size(); savegameNr++) {
+							if (savegameId == saves[savegameNr].id)
+								break;
+						}
+						if (savegameNr == saves.size()) // Slot not found, seems to be good to go
 							break;
 					}
-					if (savegameNr == saves.size())
-						break;
+					if (savegameId > SAVEGAMESLOT_LAST)
+						error("kSavegame: no more savegame slots available");
 				}
-				if (savegameId == SAVEGAMEID_OFFICIALRANGE_START)
-					error("kSavegame: no more savegame slots available");
 			}
 		} else {
 			error("kSaveGame: invalid savegameId used");
@@ -897,50 +873,8 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 			gamestate_restore(s, in);
 			delete in;
 
-			switch (g_sci->getGameId()) {
-			case GID_MOTHERGOOSE:
-				// WORKAROUND: Mother Goose SCI0
-				//  Script 200 / rm200::newRoom will set global C5h directly right after creating a child to the
-				//   current number of children plus 1.
-				//  We can't trust that global, that's why we set the actual savedgame id right here directly after
-				//   restoring a saved game.
-				//  If we didn't, the game would always save to a new slot
-				s->variables[VAR_GLOBAL][0xC5].setOffset(SAVEGAMEID_OFFICIALRANGE_START + savegameId);
-				break;
-			case GID_MOTHERGOOSE256:
-				// WORKAROUND: Mother Goose SCI1/SCI1.1 does some weird things for
-				//  saving a previously restored game.
-				// We set the current savedgame-id directly and remove the script
-				//  code concerning this via script patch.
-				s->variables[VAR_GLOBAL][0xB3].setOffset(SAVEGAMEID_OFFICIALRANGE_START + savegameId);
-				break;
-			case GID_JONES:
-				// HACK: The code that enables certain menu items isn't called when a game is restored from the
-				// launcher, or the "Restore game" option in the game's main menu - bugs #6537 and #6723.
-				// These menu entries are disabled when the game is launched, and are enabled when a new game is
-				// started. The code for enabling these entries is is all in script 1, room1::init, but that code
-				// path is never followed in these two cases (restoring game from the menu, or restoring a game
-				// from the ScummVM launcher). Thus, we perform the calls to enable the menus ourselves here.
-				// These two are needed when restoring from the launcher
-				// FIXME: The original interpreter saves and restores the menu state, so these attributes
-				// are automatically reset there. We may want to do the same.
-				g_sci->_gfxMenu->kernelSetAttribute(257 >> 8, 257 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Sierra -> About Jones
-				g_sci->_gfxMenu->kernelSetAttribute(258 >> 8, 258 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Sierra -> Help
-				// The rest are normally enabled from room1::init
-				g_sci->_gfxMenu->kernelSetAttribute(769 >> 8, 769 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Options -> Delete current player
-				g_sci->_gfxMenu->kernelSetAttribute(513 >> 8, 513 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Game -> Save Game
-				g_sci->_gfxMenu->kernelSetAttribute(515 >> 8, 515 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Game -> Restore Game
-				g_sci->_gfxMenu->kernelSetAttribute(1025 >> 8, 1025 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);  // Status -> Statistics
-				g_sci->_gfxMenu->kernelSetAttribute(1026 >> 8, 1026 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);  // Status -> Goals
-				break;
-			case GID_PQ2:
-				// HACK: Same as above - enable the save game menu option when loading in PQ2 (bug #6875).
-				// It gets disabled in the game's death screen.
-				g_sci->_gfxMenu->kernelSetAttribute(2, 1, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);	// Game -> Save Game
-				break;
-			default:
-				break;
-			}
+			gamestate_afterRestoreFixUp(s, savegameId);
+
 		} else {
 			s->r_acc = TRUE_REG;
 			warning("Savegame #%d not found", savegameId);

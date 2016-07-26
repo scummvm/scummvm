@@ -89,7 +89,7 @@ SaveStateList SaveManager::getSavegameList(const Common::String &target) {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
-	Common::String pattern = Common::String::format("%s.0??", target.c_str());
+	Common::String pattern = Common::String::format("%s.0##", target.c_str());
 	SherlockSavegameHeader header;
 
 	filenames = saveFileMan->listSavefiles(pattern);

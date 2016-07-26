@@ -91,10 +91,18 @@ void ThemeEval::addWidget(const Common::String &name, int w, int h, const Common
 		typeAlign = (Graphics::TextAlign)getVar("Globals." + type + ".Align", Graphics::kTextAlignInvalid);
 	}
 
-	ThemeLayoutWidget *widget = new ThemeLayoutWidget(_curLayout.top(), name,
-								typeW == -1 ? w : typeW,
-								typeH == -1 ? h : typeH,
-								typeAlign == Graphics::kTextAlignInvalid ? align : typeAlign);
+	ThemeLayoutWidget *widget;
+	if (type == "TabWidget")
+		widget = new ThemeLayoutTabWidget(_curLayout.top(), name,
+									typeW == -1 ? w : typeW,
+									typeH == -1 ? h : typeH,
+									typeAlign == Graphics::kTextAlignInvalid ? align : typeAlign,
+									getVar("Globals.TabWidget.Tab.Height", 0));
+	else
+		widget = new ThemeLayoutWidget(_curLayout.top(), name,
+									typeW == -1 ? w : typeW,
+									typeH == -1 ? h : typeH,
+									typeAlign == Graphics::kTextAlignInvalid ? align : typeAlign);
 
 	_curLayout.top()->addChild(widget);
 	setVar(_curDialog + "." + name + ".Enabled", enabled ? 1 : 0);

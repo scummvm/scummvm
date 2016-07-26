@@ -44,6 +44,48 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(iter, array.end());
 	}
 
+	void test_erase_iterator() {
+		Common::Array<int> array;
+		Common::Array<int>::iterator iter;
+
+		// Fill the array with some random data
+		array.push_back(17);
+		array.push_back(33);
+		array.push_back(-11);
+
+		iter = array.begin();
+		++iter;
+
+		iter = array.erase(iter);
+		TS_ASSERT_DIFFERS(iter, array.end());
+		TS_ASSERT_EQUALS(*iter, -11);
+		TS_ASSERT_EQUALS(array.size(), (unsigned int)2);
+		TS_ASSERT_EQUALS(array[0], 17);
+		TS_ASSERT_EQUALS(array[1], -11);
+	}
+
+	void test_insert_iterator() {
+		Common::Array<int> array;
+		Common::Array<int>::iterator iter;
+
+		// Fill the array with some random data
+		array.push_back(17);
+		array.push_back(33);
+		array.push_back(-11);
+
+		iter = array.begin();
+		++iter;
+
+		array.insert(iter, 99);
+
+		TS_ASSERT_EQUALS(*iter, 99);
+		TS_ASSERT_EQUALS(array.size(), (unsigned int)4);
+		TS_ASSERT_EQUALS(array[0], 17);
+		TS_ASSERT_EQUALS(array[1], 99);
+		TS_ASSERT_EQUALS(array[2], 33);
+		TS_ASSERT_EQUALS(array[3], -11);
+	}
+
 	void test_direct_access() {
 		Common::Array<int> array;
 
@@ -309,6 +351,46 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(array.size(), (unsigned int)2);
 		TS_ASSERT_EQUALS(array[0], -3);
 		TS_ASSERT_EQUALS(array[1], 163);
+	}
+
+};
+
+struct ListElement {
+	int value;
+
+	ListElement(int v) : value(v) {}
+};
+
+static int compareInts(const void *a, const void *b) {
+	return ((ListElement *)a)->value - ((ListElement *)b)->value;
+}
+
+class SortedArrayTestSuite : public CxxTest::TestSuite {
+public:
+	void test_insert() {
+		Common::SortedArray<ListElement *> container(compareInts);
+		Common::SortedArray<ListElement *>::iterator iter;
+
+		// Fill the container with some random data
+		container.insert(new ListElement(1));
+		container.insert(new ListElement(7));
+		container.insert(new ListElement(8));
+		container.insert(new ListElement(3));
+		container.insert(new ListElement(5));
+		container.insert(new ListElement(4));
+		container.insert(new ListElement(9));
+		container.insert(new ListElement(2));
+		container.insert(new ListElement(6));
+
+		// Verify contents are correct
+		iter = container.begin();
+
+		for (int i = 1; i < 10; i++) {
+			TS_ASSERT_EQUALS((*iter)->value, i);
+			++iter;
+		}
+
+		TS_ASSERT_EQUALS(iter, container.end());
 	}
 
 };

@@ -191,7 +191,7 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 				xpos = 841;
 				manId = ST_MAN_RIGHT;
 			LABEL_31:
-				mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, xpos, 449, 1, manId);
+				mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, xpos, 449, 1, manId);
 
 				if (!mq)
 					return;
@@ -278,7 +278,7 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 					}
 				}
 
-				mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, 1010, 443, 1, ST_MAN_UP);
+				mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, 1010, 443, 1, ST_MAN_UP);
 
 				if (mq) {
 					mq->addExCommandToEnd(cmd->createClone());
@@ -318,13 +318,13 @@ int sceneHandler22(ExCommand *cmd) {
 		g_vars->scene22_dudeIsOnStool = false;
 		g_vars->scene22_interactionIsDisabled = false;
 
-		getCurrSceneSc2MotionController()->setEnabled();
+		getCurrSceneSc2MotionController()->activate();
 		g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 1);
 		break;
 
 	case MSG_SC22_ONSTOOL:
 		g_vars->scene22_dudeIsOnStool = true;
-		getCurrSceneSc2MotionController()->clearEnabled();
+		getCurrSceneSc2MotionController()->deactivate();
 		g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
 		break;
 

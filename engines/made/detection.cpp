@@ -521,7 +521,7 @@ static MadeGameDescription g_fallbackDesc = {
 class MadeMetaEngine : public AdvancedMetaEngine {
 public:
 	MadeMetaEngine() : AdvancedMetaEngine(Made::gameDescriptions, sizeof(Made::MadeGameDescription), madeGames) {
-		_singleid = "made";
+		_singleId = "made";
 	}
 
 	virtual const char *getName() const {

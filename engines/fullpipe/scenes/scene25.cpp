@@ -153,7 +153,7 @@ void sceneHandler25_enterMan() {
 	if (g_vars->scene25_waterIsPresent) {
 		chainQueue(QU_SC25_ENTERUP_WATER, 1);
 
-		getCurrSceneSc2MotionController()->clearEnabled();
+		getCurrSceneSc2MotionController()->deactivate();
 	} else {
 		chainQueue(QU_SC25_ENTERUP_FLOOR, 1);
 	}

@@ -21,6 +21,7 @@
  */
 
 #include "graphics/cursorman.h"
+#include "tsage/dialogs.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 #include "tsage/ringworld2/ringworld2_outpost.h"
@@ -4689,7 +4690,7 @@ GfxButton *Scene1337::OptionsDialog::execute(GfxButton *defaultButton) {
 		}
 
 		g_system->delayMillis(10);
-		GLOBALS._screenSurface.updateScreen();
+		GLOBALS._screen.update();
 	}
 
 	_gfxManager.deactivate();

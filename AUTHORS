@@ -47,10 +47,11 @@ ScummVM Team
 
     AGI:
        Stuart George
-       Matthew Hoops
+       Matthew Hoops                - (retired)
        Filippos Karapetis
+       Martin Kiewitz
        Pawel Kolodziejski
-       Walter van Niftrik           - (retired)
+       Walter van Niftrik
        Kari Salminen
        Eugene Sandulenko
        David Symonds                - (retired)
@@ -62,9 +63,16 @@ ScummVM Team
        Oliver Kiehl                 - (retired)
        Ludvig Strigeus              - (retired)
 
+    Access:
+       Arnaud Boutonne
+       Paul Gilbert
+
     Avalanche:
        Peter Bozso
        Arnaud Boutonne
+
+    BBVS:
+       Benjamin Haisch
 
     CGE:
        Arnaud Boutonne
@@ -96,6 +104,7 @@ ScummVM Team
     Drascula:
        Filippos Karapetis
        Pawel Kolodziejski
+       Thierry Crozat
 
     DreamWeb:
        Torbjorn Andersson
@@ -103,6 +112,10 @@ ScummVM Team
        Filippos Karapetis
        Vladimir Menshakov           - (retired)
        Willem Jan Palenstijn
+
+    Gnap:
+       Arnaud Boutonne
+       Benjamin Haisch
 
     Gob:
        Torbjorn Andersson
@@ -132,7 +145,7 @@ ScummVM Team
        Johannes Schickel
 
     Lastexpress:
-       Matthew Hoops
+       Matthew Hoops                - (retired)
        Jordi Vilalta Prat
        Julien Templier
 
@@ -150,7 +163,7 @@ ScummVM Team
 
     Mohawk:
        Bastien Bouclet
-       Matthew Hoops
+       Matthew Hoops                - (retired)
        Filippos Karapetis
        Alyssa Milburn
        Eugene Sandulenko
@@ -168,7 +181,7 @@ ScummVM Team
        peres
 
     Pegasus:
-       Matthew Hoops
+       Matthew Hoops                - (retired)
 
     Queen:
        David Eriksson               - (retired)
@@ -189,10 +202,14 @@ ScummVM Team
        Max Horn                     - (retired)
        Filippos Karapetis
        Martin Kiewitz
-       Walter van Niftrik           - (retired)
+       Walter van Niftrik
        Willem Jan Palenstijn
        Jordi Vilalta Prat
        Lars Skovlund
+
+    Sherlock:
+       Paul Gilbert
+       Martin Kiewitz
 
     Sky:
        Robert Goeffringmann         - (retired)
@@ -269,15 +286,20 @@ ScummVM Team
     Android:
        Andre Heider
        Angus Lees
+       Lubomyr Lisen
 
     Dreamcast:
        Marcus Comstedt
 
+    GCW0:
+       Eugene Sandulenko
+
     GPH Devices (GP2X, GP2XWiz & Caanoo):
        John Willis
 
-    iPhone:
+    iPhone / iPad:
        Oystein Eftevaag
+       Vincent Benony
 
     LinuxMoto:
        Lubomyr Lisen
@@ -285,6 +307,9 @@ ScummVM Team
     Maemo:
        Frantisek Dufka              - (retired)
        Tarek Soliman
+
+    Nintendo 3DS:
+       Thomas Edvalson
 
     Nintendo 64:
        Fabio Battaglia
@@ -326,6 +351,9 @@ ScummVM Team
 
     Wii:
        Andre Heider
+
+    Raspberry Pi:
+       Manuel Alfayate
 
   Other subsystems
   ----------------
@@ -382,7 +410,8 @@ ScummVM Team
      Thierry Crozat               - Numerous contributions to documentation
      Joachim Eberhard             - Numerous contributions to documentation
                                     (retired)
-     Matthew Hoops                - Wiki editor
+     Matthew Hoops                - Numerous contributions to documentation
+                                    (retired)
 
   Retired Team Members
   --------------------
@@ -425,6 +454,7 @@ Other contributions
     Mac OS X:
        Max Horn                     - (retired)
        Oystein Eftevaag
+       Thierry Crozat
 
     Mandriva:
        Dominik Scherer              - (retired)
@@ -718,4 +748,12 @@ Special thanks to
 
    Bob Bell, Michel Kripalani, Tommy Yune, from Presto Studios for providing
    the source code of The Journeyman Project: Pegasus Prime.
+
+   Electronic Arts IP Preservation Team, particularly Stefan Serbicki, and
+   Vasyl Tsvirkunov of Electronic Arts for providing the source code of the
+   two Lost Files of Sherlock Holmes games. James M. Ferguson and Barry
+   Duncan for their tenacious efforts to recover the sources.
+
+   The mindFactory team for writing Broken Sword 2.5, a splendid fan-made
+   sequel, and for sharing the source code with us.
 

@@ -320,10 +320,11 @@ int MS_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 				_decodedSamples[_decodedSampleCount++] = decodeMS(&_status.ch[0], (data >> 4) & 0x0f);
 				_decodedSamples[_decodedSampleCount++] = decodeMS(&_status.ch[_channels - 1], data & 0x0f);
 			}
+			_decodedSampleIndex = 0;
 		}
 
-		// (1 - (count - 1)) ensures that _decodedSamples acts as a FIFO of depth 2
-		buffer[samples] = _decodedSamples[1 - (_decodedSampleCount - 1)];
+		// _decodedSamples acts as a FIFO of depth 2 or 4;
+		buffer[samples] = _decodedSamples[_decodedSampleIndex++];
 		_decodedSampleCount--;
 	}
 
@@ -433,7 +434,7 @@ int16 Ima_ADPCMStream::decodeIMA(byte code, int channel) {
 	return samp;
 }
 
-RewindableAudioStream *makeADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, ADPCMType type, int rate, int channels, uint32 blockAlign) {
+SeekableAudioStream *makeADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, ADPCMType type, int rate, int channels, uint32 blockAlign) {
 	// If size is 0, report the entire size of the stream
 	if (!size)
 		size = stream->size();

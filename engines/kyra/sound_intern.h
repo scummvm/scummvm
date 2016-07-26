@@ -151,7 +151,7 @@ private:
 	uint8 *_sfxFileData;
 	uint8 _sfxChannel;
 
-	TownsEuphonyDriver *_driver;
+	EuphonyPlayer *_player;
 
 	bool _cdaPlaying;
 

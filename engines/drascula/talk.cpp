@@ -232,7 +232,7 @@ void DrasculaEngine::talk_solo(const char *said, const char *filename) {
 
 	if (currentChapter == 1)
 		color_abc(color_solo);
-	else if (currentChapter == 4)
+	else if (currentChapter == 5)
 		color_abc(kColorRed);
 
 	talkInit(filename);

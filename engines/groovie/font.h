@@ -44,7 +44,7 @@ private:
 	int _maxHeight, _maxWidth;
 
 	struct Glyph {
-		Glyph() : pixels(0) {}
+		Glyph() : pixels(0), width(0), height(0), julia(0) {}
 		~Glyph() { delete[] pixels; }
 
 		byte width;

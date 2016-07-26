@@ -30,8 +30,10 @@
 #include "cge/cge_main.h"
 #include "common/config-manager.h"
 #include "common/memstream.h"
-#include "audio/decoders/raw.h"
 #include "audio/audiostream.h"
+#include "audio/decoders/wave.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
 
 namespace CGE {
 

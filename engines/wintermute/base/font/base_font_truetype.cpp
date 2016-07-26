@@ -581,7 +581,7 @@ bool BaseFontTT::initFont() {
 	}
 
 	if (file) {
-		_deletableFont = Graphics::loadTTFFont(*file, _fontHeight, 96); // Use the same dpi as WME (96 vs 72).
+		_deletableFont = Graphics::loadTTFFont(*file, _fontHeight, Graphics::kTTFSizeModeCharacter, 96); // Use the same dpi as WME (96 vs 72).
 		_font = _deletableFont;
 		BaseFileManager::getEngineInstance()->closeFile(file);
 		file = nullptr;
@@ -607,7 +607,7 @@ bool BaseFontTT::initFont() {
 			if (themeArchive->hasFile(fallbackFilename)) {
 				file = nullptr;
 				file = themeArchive->createReadStreamForMember(fallbackFilename);
-				_deletableFont = Graphics::loadTTFFont(*file, _fontHeight, 96); // Use the same dpi as WME (96 vs 72).
+				_deletableFont = Graphics::loadTTFFont(*file, _fontHeight, Graphics::kTTFSizeModeCharacter, 96); // Use the same dpi as WME (96 vs 72).
 				_font = _deletableFont;
 			}
 			// We're not using BaseFileManager, so clean up after ourselves:

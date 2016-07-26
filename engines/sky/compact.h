@@ -78,6 +78,8 @@ public:
 	uint16 giveDataListLen(uint16 listNum);
 	const char *nameForType(uint16 type);
 private:
+	void checkAndFixOfficerBluntError();
+
 	uint16  _numDataLists;
 	uint16  *_dataListLen;
 	uint16  *_rawBuf;

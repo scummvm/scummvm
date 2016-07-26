@@ -136,6 +136,19 @@ struct reg_t {
 	reg_t operator|(const reg_t right) const;
 	reg_t operator^(const reg_t right) const;
 
+#ifdef ENABLE_SCI32
+	reg_t operator&(int16 right) const;
+	reg_t operator|(int16 right) const;
+	reg_t operator^(int16 right) const;
+
+	void operator&=(const reg_t &right) { *this = *this & right; }
+	void operator|=(const reg_t &right) { *this = *this | right; }
+	void operator^=(const reg_t &right) { *this = *this ^ right; }
+	void operator&=(int16 right) { *this = *this & right; }
+	void operator|=(int16 right) { *this = *this | right; }
+	void operator^=(int16 right) { *this = *this ^ right; }
+#endif
+
 private:
 	/**
 	 * Compares two reg_t's.
@@ -147,6 +160,10 @@ private:
 	int cmp(const reg_t right, bool treatAsUnsigned) const;
 	reg_t lookForWorkaround(const reg_t right, const char *operation) const;
 	bool pointerComparisonWithInteger(const reg_t right) const;
+
+#ifdef ENABLE_SCI32
+	int sci32Comparison(const reg_t right) const;
+#endif
 };
 
 static inline reg_t make_reg(SegmentId segment, uint16 offset) {

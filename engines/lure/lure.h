@@ -20,12 +20,11 @@
  *
  */
 
-#ifndef LURE_H
-#define LURE_H
+#ifndef LURE_LURE_H
+#define LURE_LURE_H
 
 #include "engines/engine.h"
 #include "common/rect.h"
-#include "audio/mixer.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/util.h"
@@ -58,6 +57,7 @@ enum LureLanguage {
 	LANG_DE_DEU = 7,
 	LANG_ES_ESP = 17,
 	LANG_EN_ANY = 3,
+	LANG_RU_RUS = 3,	// English data has been overridden
 	LANG_UNKNOWN = -1
 };
 

@@ -30,6 +30,7 @@
 namespace MADS {
 
 enum TriggerMode {
+	SEQUENCE_TRIGGER_NONE = -1,
 	SEQUENCE_TRIGGER_PARSER = 0,		// Triggers parser
 	SEQUENCE_TRIGGER_DAEMON = 1,		// Triggers step/daemon code
 	SEQUENCE_TRIGGER_PREPARE = 2		// Triggers preparser

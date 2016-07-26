@@ -93,16 +93,19 @@ struct ExecStack {
 
 	SegmentId local_segment; // local variables etc
 
-	Selector debugSelector;   // The selector which was used to call or -1 if not applicable
-	int debugExportId;        // The exportId which was called or -1 if not applicable
-	int debugLocalCallOffset; // Local call offset or -1 if not applicable
-	int debugOrigin;          // The stack frame position the call was made from, or -1 if it was the initial call
+	Selector debugSelector;     // The selector which was used to call or -1 if not applicable
+	int debugExportId;          // The exportId which was called or -1 if not applicable
+	int debugLocalCallOffset;   // Local call offset or -1 if not applicable
+	int debugOrigin;            // The stack frame position the call was made from, or -1 if it was the initial call
+	int debugKernelFunction;    // The kernel function called, or -1 if not applicable
+	int debugKernelSubFunction; // The kernel subfunction called, or -1 if not applicable
 	ExecStackType type;
 
 	reg_t* getVarPointer(SegManager *segMan) const;
 
 	ExecStack(reg_t objp_, reg_t sendp_, StackPtr sp_, int argc_, StackPtr argp_,
 				SegmentId localsSegment_, reg32_t pc_, Selector debugSelector_,
+				int debugKernelFunction_, int debugKernelSubFunction_,
 				int debugExportId_, int debugLocalCallOffset_, int debugOrigin_,
 				ExecStackType type_) {
 		objp = objp_;
@@ -112,12 +115,13 @@ struct ExecStack {
 		fp = sp = sp_;
 		argc = argc_;
 		variables_argp = argp_;
-		*variables_argp = make_reg(0, argc);  // The first argument is argc
 		if (localsSegment_ != 0xFFFF)
 			local_segment = localsSegment_;
 		else
 			local_segment = pc_.getSegment();
 		debugSelector = debugSelector_;
+		debugKernelFunction = debugKernelFunction_;
+		debugKernelSubFunction = debugKernelSubFunction_;
 		debugExportId = debugExportId_;
 		debugLocalCallOffset = debugLocalCallOffset_;
 		debugOrigin = debugOrigin_;
@@ -176,8 +180,8 @@ enum SciOpcodes {
 	op_calle    = 0x23,	// 035
 	op_ret      = 0x24,	// 036
 	op_send     = 0x25,	// 037
-	// dummy      0x26,	// 038
-	// dummy      0x27,	// 039
+	op_infoToa  = 0x26,	// 038
+	op_superToa = 0x27,	// 039
 	op_class    = 0x28,	// 040
 	// dummy      0x29,	// 041
 	op_self     = 0x2a,	// 042

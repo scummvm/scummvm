@@ -94,7 +94,7 @@ void WidgetInventoryTooltip::setText(const Common::String &str) {
 	// Allocate a fresh surface for the new string
 	_bounds = Common::Rect(width, height);
 	_surface.create(width, height);
-	_surface.fill(TRANSPARENCY);
+	_surface.clear(TRANSPARENCY);
 
 	if (line2.empty()) {
 		_surface.writeFancyString(str, Common::Point(0, 0), BLACK, INFO_TOP);
@@ -338,7 +338,7 @@ void WidgetInventoryVerbs::load() {
 
 	// Create the surface
 	_surface.create(_bounds.width(), _bounds.height());
-	_surface.fill(TRANSPARENCY);
+	_surface.clear(TRANSPARENCY);
 	makeInfoArea();
 
 	// Draw the Verb commands and the lines separating them
@@ -352,8 +352,8 @@ void WidgetInventoryVerbs::load() {
 			_surface.vLine(3, (_surface.fontHeight() + 7) * (idx + 1) + 1, _bounds.right - 4, INFO_MIDDLE);
 			_surface.vLine(3, (_surface.fontHeight() + 7) * (idx + 1) + 2, _bounds.right - 4, INFO_BOTTOM);
 
-			_surface.transBlitFrom(images[4], Common::Point(0, (_surface.fontHeight() + 7) * (idx + 1)));
-			_surface.transBlitFrom(images[5], Common::Point(_bounds.width() - images[5]._width,
+			_surface.SHtransBlitFrom(images[4], Common::Point(0, (_surface.fontHeight() + 7) * (idx + 1)));
+			_surface.SHtransBlitFrom(images[5], Common::Point(_bounds.width() - images[5]._width,
 				(_surface.fontHeight() + 7) * (idx + 1) - 1));
 		}
 	}
@@ -515,7 +515,7 @@ void WidgetInventory::load(int mode) {
 
 	// Redraw the inventory menu on the widget surface
 	_surface.create(_bounds.width(), _bounds.height());
-	_surface.fill(TRANSPARENCY);
+	_surface.clear(TRANSPARENCY);
 
 	// Draw the window background and then the inventory on top of it
 	makeInfoArea(_surface);
@@ -531,7 +531,7 @@ void WidgetInventory::drawBars() {
 	_surface.hLine(3, INVENTORY_YSIZE + 3, _bounds.width() - 4, INFO_TOP);
 	_surface.hLine(3, INVENTORY_YSIZE + 4, _bounds.width() - 4, INFO_MIDDLE);
 	_surface.hLine(3, INVENTORY_YSIZE + 5, _bounds.width() - 4, INFO_BOTTOM);
-	_surface.transBlitFrom(images[4], Common::Point(0, INVENTORY_YSIZE + 2));
+	_surface.SHtransBlitFrom(images[4], Common::Point(0, INVENTORY_YSIZE + 2));
 
 	for (int idx = 1; idx <= NUM_INVENTORY_SHOWN / 2; ++idx) {
 		x = idx * (INVENTORY_XSIZE + 3);
@@ -540,13 +540,13 @@ void WidgetInventory::drawBars() {
 		_surface.vLine(x + 1, 3, _bounds.height() - 4, INFO_MIDDLE);
 		_surface.vLine(x + 2, 3, _bounds.height() - 4, INFO_BOTTOM);
 
-		_surface.transBlitFrom(images[6], Common::Point(x - 1, 1));
-		_surface.transBlitFrom(images[7], Common::Point(x - 1, _bounds.height() - 4));
-		_surface.transBlitFrom(images[6], Common::Point(x - 1, INVENTORY_YSIZE + 5));
-		_surface.transBlitFrom(images[7], Common::Point(x - 1, INVENTORY_YSIZE + 2));
+		_surface.SHtransBlitFrom(images[6], Common::Point(x - 1, 1));
+		_surface.SHtransBlitFrom(images[7], Common::Point(x - 1, _bounds.height() - 4));
+		_surface.SHtransBlitFrom(images[6], Common::Point(x - 1, INVENTORY_YSIZE + 5));
+		_surface.SHtransBlitFrom(images[7], Common::Point(x - 1, INVENTORY_YSIZE + 2));
 	}
 
-	_surface.hLine(x + 2, INVENTORY_YSIZE + 2, INVENTORY_YSIZE + 8, INFO_BOTTOM);
+	_surface.vLine(x + 2, INVENTORY_YSIZE + 2, INVENTORY_YSIZE + 8, INFO_BOTTOM);
 }
 
 void WidgetInventory::drawInventory() {
@@ -566,7 +566,7 @@ void WidgetInventory::drawInventory() {
 		// Draw the item
 		if (itemId < inv._holdings) {
 			ImageFrame &img = (*inv._invShapes[idx])[0];
-			_surface.transBlitFrom(img, Common::Point(pt.x + (INVENTORY_XSIZE - img._width) / 2,
+			_surface.SHtransBlitFrom(img, Common::Point(pt.x + (INVENTORY_XSIZE - img._width) / 2,
 				pt.y + (INVENTORY_YSIZE - img._height) / 2));
 		}
 	}
@@ -641,10 +641,12 @@ void WidgetInventory::handleEvents() {
 				bool found = false;
 				if (ui._bgFound != -1) {
 					if (ui._personFound) {
+						Person &person = people[ui._bgFound - 1000];
+
 						for (int idx = 0; idx < 2; ++idx) {
-							if (!people[ui._bgFound - 1000]._use[idx]._verb.compareToIgnoreCase(_verb) &&
-								!people[ui._bgFound - 1000]._use[idx]._target.compareToIgnoreCase(_invTarget)) {
-								ui.checkAction(people[ui._bgFound - 1000]._use[idx], ui._bgFound);
+							if (!person._use[idx]._verb.compareToIgnoreCase(_verb) &&
+								!person._use[idx]._target.compareToIgnoreCase(_invTarget)) {
+								ui.checkAction(person._use[idx], ui._bgFound);
 								found = true;
 							}
 						}

@@ -222,10 +222,11 @@ static const char *const k1PoisonGoneStringPC98Japanese[2] = {
 
 static const StringListProvider k1PoisonGoneStringPC98JapaneseProvider = { ARRAYSIZE(k1PoisonGoneStringPC98Japanese), k1PoisonGoneStringPC98Japanese };
 
-static const char *const k1ThePoisonStringsPC98Japanese[3] = {
+static const char *const k1ThePoisonStringsPC98Japanese[4] = {
 	"\x93\xC5\x82\xBE\x81""E""\x81""E""\x81""E",
 	"\x8C\xC4\x8B""z""\x82\xAA\x8F""o""\x97\x88\x82\xC8\x82\xA2\x81""E""\x81""E""\x81""E",
-	"\x8B""C""\x95\xAA\x82\xAA\x88\xAB\x82\xA2\x81""E""\x81""E""\x81""E"
+	"\x8B""C""\x95\xAA\x82\xAA\x88\xAB\x82\xA2\x81""E""\x81""E""\x81""E",
+	"\x82\xA0\x82\xCC\x8E\xD6\x82\xCD""\r""\x93\xC5\x8E\xD6\x82\xC9\x82\xBF\x82\xAA\x82\xA2\x82\xC8\x82\xA2\x81""I"
 };
 
 static const StringListProvider k1ThePoisonStringsPC98JapaneseProvider = { ARRAYSIZE(k1ThePoisonStringsPC98Japanese), k1ThePoisonStringsPC98Japanese };

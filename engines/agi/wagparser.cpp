@@ -79,7 +79,7 @@ bool WagProperty::read(Common::SeekableReadStream &stream) {
 	uint32 readBytes = stream.read(_propData, _propSize); // Read the data in
 	_propData[_propSize] = 0; // Set the trailing zero for easy C-style string access
 
-	_readOk = (_propData != NULL && readBytes == _propSize); // Check that we got the whole data
+	_readOk = (readBytes == _propSize); // Check that we got the whole data
 	return _readOk;
 }
 
@@ -111,9 +111,9 @@ WagFileParser::~WagFileParser() {
 
 bool WagFileParser::checkAgiVersionProperty(const WagProperty &version) const {
 	if (version.getCode() == WagProperty::PC_INTVERSION && // Must be AGI interpreter version property
-		version.getSize() >= 3 && // Need at least three characters for a version number like "X.Y"
-		Common::isDigit(version.getData()[0]) && // And the first character must be a digit
-		(version.getData()[1] == ',' || version.getData()[1] == '.')) { // And the second a comma or a period
+	        version.getSize() >= 3 && // Need at least three characters for a version number like "X.Y"
+	        Common::isDigit(version.getData()[0]) && // And the first character must be a digit
+	        (version.getData()[1] == ',' || version.getData()[1] == '.')) { // And the second a comma or a period
 
 		for (int i = 2; i < version.getSize(); i++) // And the rest must all be digits
 			if (!Common::isDigit(version.getData()[i]))
@@ -129,7 +129,7 @@ uint16 WagFileParser::convertToAgiVersionNumber(const WagProperty &version) {
 	if (checkAgiVersionProperty(version)) { // Check that the string is a valid AGI interpreter version string
 		// Convert first ascii digit to an integer and put it in the fourth nibble (Bits 12...15) of the version number
 		// and at the same time set all other nibbles to zero.
-		uint16 agiVerNum = ((uint16) (version.getData()[0] - '0')) << (3 * 4);
+		uint16 agiVerNum = ((uint16)(version.getData()[0] - '0')) << (3 * 4);
 
 		// Convert at most three least significant digits of the version number's minor part
 		// (i.e. the part after the decimal point) and put them in order to the third, second
@@ -137,7 +137,7 @@ uint16 WagFileParser::convertToAgiVersionNumber(const WagProperty &version) {
 		// is the number of digits after the decimal point.
 		int32 digitCount = MIN<int32>(3, ((int32) version.getSize()) - 2); // How many digits left to convert
 		for (int i = 0; i < digitCount; i++)
-			agiVerNum |= ((uint16) (version.getData()[version.getSize() - digitCount + i] - '0')) << ((2 - i) * 4);
+			agiVerNum |= ((uint16)(version.getData()[version.getSize() - digitCount + i] - '0')) << ((2 - i) * 4);
 
 		debug(3, "WagFileParser: Converted AGI version from string %s to number 0x%x", version.getData(), agiVerNum);
 		return agiVerNum;
@@ -148,7 +148,7 @@ uint16 WagFileParser::convertToAgiVersionNumber(const WagProperty &version) {
 bool WagFileParser::checkWagVersion(Common::SeekableReadStream &stream) {
 	if (stream.size() >= WINAGI_VERSION_LENGTH) { // Stream has space to contain the WinAGI version string
 		// Read the last WINAGI_VERSION_LENGTH bytes of the stream and make a string out of it
-		char str[WINAGI_VERSION_LENGTH+1]; // Allocate space for the trailing zero also
+		char str[WINAGI_VERSION_LENGTH + 1]; // Allocate space for the trailing zero also
 		uint32 oldStreamPos = stream.pos(); // Save the old stream position
 		stream.seek(stream.size() - WINAGI_VERSION_LENGTH);
 		uint32 readBytes = stream.read(str, WINAGI_VERSION_LENGTH);
@@ -164,7 +164,7 @@ bool WagFileParser::checkWagVersion(Common::SeekableReadStream &stream) {
 		// WinAGI 1.1.21 recognizes as acceptable in the end of a *.wag file.
 		// Note that they are all of length 16 and are padded with spaces to be that long.
 		return scumm_stricmp(str, "WINAGI v1.0     ") == 0 ||
-			scumm_stricmp(str, "1.0 BETA        ") == 0;
+		       scumm_stricmp(str, "1.0 BETA        ") == 0;
 	} else { // Stream is too small to contain the WinAGI version string
 		debug(3, "WagFileParser::checkWagVersion: Stream is too small to contain a valid WAG file");
 		return false;
@@ -188,7 +188,7 @@ bool WagFileParser::parse(const Common::FSNode &node) {
 				if (property.read(*stream)) { // Read the property and check it was read ok
 					_propList.push_back(property); // Add read property to properties list
 					debug(4, "WagFileParser::parse: Read property with code %d, type %d, number %d, size %d, data \"%s\"",
-						property.getCode(), property.getType(), property.getNumber(), property.getSize(), property.getData());
+					      property.getCode(), property.getType(), property.getNumber(), property.getSize(), property.getData());
 				} else // Reading failed, let's bail out
 					break;
 			} while (!endOfProperties(*stream)); // Loop until the end of properties

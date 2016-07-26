@@ -144,11 +144,21 @@ Script *SegManager::allocateScript(int script_nr, SegmentId *segid) {
 	return (Script *)mem;
 }
 
+SegmentId SegManager::getActualSegment(SegmentId seg) const {
+	if (getSciVersion() <= SCI_VERSION_2_1_LATE) {
+		return seg;
+	} else {
+		// Return the lower 14 bits of the segment
+		return (seg & 0x3FFF);
+	}
+}
+
 void SegManager::deallocate(SegmentId seg) {
-	if (seg < 1 || (uint)seg >= _heap.size())
+	SegmentId actualSegment = getActualSegment(seg);
+	if (actualSegment < 1 || (uint)actualSegment >= _heap.size())
 		error("Attempt to deallocate an invalid segment ID");
 
-	SegmentObj *mobj = _heap[seg];
+	SegmentObj *mobj = _heap[actualSegment];
 	if (!mobj)
 		error("Attempt to deallocate an already freed segment");
 
@@ -169,7 +179,7 @@ void SegManager::deallocate(SegmentId seg) {
 	}
 
 	delete mobj;
-	_heap[seg] = NULL;
+	_heap[actualSegment] = NULL;
 }
 
 bool SegManager::isHeapObject(reg_t pos) const {
@@ -185,22 +195,24 @@ void SegManager::deallocateScript(int script_nr) {
 }
 
 Script *SegManager::getScript(const SegmentId seg) {
-	if (seg < 1 || (uint)seg >= _heap.size()) {
-		error("SegManager::getScript(): seg id %x out of bounds", seg);
+	SegmentId actualSegment = getActualSegment(seg);
+	if (actualSegment < 1 || (uint)actualSegment >= _heap.size()) {
+		error("SegManager::getScript(): seg id %x out of bounds", actualSegment);
 	}
-	if (!_heap[seg]) {
-		error("SegManager::getScript(): seg id %x is not in memory", seg);
+	if (!_heap[actualSegment]) {
+		error("SegManager::getScript(): seg id %x is not in memory", actualSegment);
 	}
-	if (_heap[seg]->getType() != SEG_TYPE_SCRIPT) {
-		error("SegManager::getScript(): seg id %x refers to type %d != SEG_TYPE_SCRIPT", seg, _heap[seg]->getType());
+	if (_heap[actualSegment]->getType() != SEG_TYPE_SCRIPT) {
+		error("SegManager::getScript(): seg id %x refers to type %d != SEG_TYPE_SCRIPT", actualSegment, _heap[actualSegment]->getType());
 	}
-	return (Script *)_heap[seg];
+	return (Script *)_heap[actualSegment];
 }
 
 Script *SegManager::getScriptIfLoaded(const SegmentId seg) const {
-	if (seg < 1 || (uint)seg >= _heap.size() || !_heap[seg] || _heap[seg]->getType() != SEG_TYPE_SCRIPT)
+	SegmentId actualSegment = getActualSegment(seg);
+	if (actualSegment < 1 || (uint)actualSegment >= _heap.size() || !_heap[actualSegment] || _heap[actualSegment]->getType() != SEG_TYPE_SCRIPT)
 		return 0;
-	return (Script *)_heap[seg];
+	return (Script *)_heap[actualSegment];
 }
 
 SegmentId SegManager::findSegmentByType(int type) const {
@@ -211,19 +223,22 @@ SegmentId SegManager::findSegmentByType(int type) const {
 }
 
 SegmentObj *SegManager::getSegmentObj(SegmentId seg) const {
-	if (seg < 1 || (uint)seg >= _heap.size() || !_heap[seg])
+	SegmentId actualSegment = getActualSegment(seg);
+	if (actualSegment < 1 || (uint)actualSegment >= _heap.size() || !_heap[actualSegment])
 		return 0;
-	return _heap[seg];
+	return _heap[actualSegment];
 }
 
 SegmentType SegManager::getSegmentType(SegmentId seg) const {
-	if (seg < 1 || (uint)seg >= _heap.size() || !_heap[seg])
+	SegmentId actualSegment = getActualSegment(seg);
+	if (actualSegment < 1 || (uint)actualSegment >= _heap.size() || !_heap[actualSegment])
 		return SEG_TYPE_INVALID;
-	return _heap[seg]->getType();
+	return _heap[actualSegment]->getType();
 }
 
 SegmentObj *SegManager::getSegment(SegmentId seg, SegmentType type) const {
-	return getSegmentType(seg) == type ? _heap[seg] : NULL;
+	SegmentId actualSegment = getActualSegment(seg);
+	return getSegmentType(actualSegment) == type ? _heap[actualSegment] : NULL;
 }
 
 Object *SegManager::getObject(reg_t pos) const {
@@ -232,9 +247,9 @@ Object *SegManager::getObject(reg_t pos) const {
 
 	if (mobj != NULL) {
 		if (mobj->getType() == SEG_TYPE_CLONES) {
-			CloneTable *ct = (CloneTable *)mobj;
-			if (ct->isValidEntry(pos.getOffset()))
-				obj = &(ct->_table[pos.getOffset()]);
+			CloneTable &ct = *(CloneTable *)mobj;
+			if (ct.isValidEntry(pos.getOffset()))
+				obj = &(ct[pos.getOffset()]);
 			else
 				warning("getObject(): Trying to get an invalid object");
 		} else if (mobj->getType() == SEG_TYPE_SCRIPT) {
@@ -298,7 +313,7 @@ reg_t SegManager::findObjectByName(const Common::String &name, int index) {
 		} else if (mobj->getType() == SEG_TYPE_CLONES) {
 			// It's clone table, scan all objects in it
 			const CloneTable *ct = (const CloneTable *)mobj;
-			for (uint idx = 0; idx < ct->_table.size(); ++idx) {
+			for (uint idx = 0; idx < ct->size(); ++idx) {
 				if (!ct->isValidEntry(idx))
 					continue;
 
@@ -389,7 +404,7 @@ reg_t SegManager::allocateHunkEntry(const char *hunk_type, int size) {
 	offset = table->allocEntry();
 
 	reg_t addr = make_reg(_hunksSegId, offset);
-	Hunk *h = &(table->_table[offset]);
+	Hunk *h = &table->at(offset);
 
 	if (!h)
 		return NULL_REG;
@@ -409,7 +424,7 @@ byte *SegManager::getHunkPointer(reg_t addr) {
 		return NULL;
 	}
 
-	return (byte *)ht->_table[addr.getOffset()].mem;
+	return (byte *)ht->at(addr.getOffset()).mem;
 }
 
 Clone *SegManager::allocateClone(reg_t *addr) {
@@ -424,7 +439,7 @@ Clone *SegManager::allocateClone(reg_t *addr) {
 	offset = table->allocEntry();
 
 	*addr = make_reg(_clonesSegId, offset);
-	return &(table->_table[offset]);
+	return &table->at(offset);
 }
 
 List *SegManager::allocateList(reg_t *addr) {
@@ -438,7 +453,7 @@ List *SegManager::allocateList(reg_t *addr) {
 	offset = table->allocEntry();
 
 	*addr = make_reg(_listsSegId, offset);
-	return &(table->_table[offset]);
+	return &table->at(offset);
 }
 
 Node *SegManager::allocateNode(reg_t *addr) {
@@ -452,7 +467,7 @@ Node *SegManager::allocateNode(reg_t *addr) {
 	offset = table->allocEntry();
 
 	*addr = make_reg(_nodesSegId, offset);
-	return &(table->_table[offset]);
+	return &table->at(offset);
 }
 
 reg_t SegManager::newNode(reg_t value, reg_t key) {
@@ -471,14 +486,14 @@ List *SegManager::lookupList(reg_t addr) {
 		return NULL;
 	}
 
-	ListTable *lt = (ListTable *)_heap[addr.getSegment()];
+	ListTable &lt = *(ListTable *)_heap[addr.getSegment()];
 
-	if (!lt->isValidEntry(addr.getOffset())) {
+	if (!lt.isValidEntry(addr.getOffset())) {
 		error("Attempt to use non-list %04x:%04x as list", PRINT_REG(addr));
 		return NULL;
 	}
 
-	return &(lt->_table[addr.getOffset()]);
+	return &(lt[addr.getOffset()]);
 }
 
 Node *SegManager::lookupNode(reg_t addr, bool stopOnDiscarded) {
@@ -492,9 +507,9 @@ Node *SegManager::lookupNode(reg_t addr, bool stopOnDiscarded) {
 		return NULL;
 	}
 
-	NodeTable *nt = (NodeTable *)_heap[addr.getSegment()];
+	NodeTable &nt = *(NodeTable *)_heap[addr.getSegment()];
 
-	if (!nt->isValidEntry(addr.getOffset())) {
+	if (!nt.isValidEntry(addr.getOffset())) {
 		if (!stopOnDiscarded)
 			return NULL;
 
@@ -502,7 +517,7 @@ Node *SegManager::lookupNode(reg_t addr, bool stopOnDiscarded) {
 		return NULL;
 	}
 
-	return &(nt->_table[addr.getOffset()]);
+	return &(nt[addr.getOffset()]);
 }
 
 SegmentRef SegManager::dereference(reg_t pointer) {
@@ -822,10 +837,13 @@ byte *SegManager::allocDynmem(int size, const char *descr, reg_t *addr) {
 
 	d._size = size;
 
-	if (size == 0)
+	// Original SCI only zeroed out heap memory on initialize
+	// They didn't do it again for every allocation
+	if (size) {
+		d._buf = (byte *)calloc(size, 1);
+	} else {
 		d._buf = NULL;
-	else
-		d._buf = (byte *)malloc(size);
+	}
 
 	d._description = descr;
 
@@ -855,32 +873,32 @@ SciArray<reg_t> *SegManager::allocateArray(reg_t *addr) {
 	offset = table->allocEntry();
 
 	*addr = make_reg(_arraysSegId, offset);
-	return &(table->_table[offset]);
+	return &table->at(offset);
 }
 
 SciArray<reg_t> *SegManager::lookupArray(reg_t addr) {
 	if (_heap[addr.getSegment()]->getType() != SEG_TYPE_ARRAY)
 		error("Attempt to use non-array %04x:%04x as array", PRINT_REG(addr));
 
-	ArrayTable *arrayTable = (ArrayTable *)_heap[addr.getSegment()];
+	ArrayTable &arrayTable = *(ArrayTable *)_heap[addr.getSegment()];
 
-	if (!arrayTable->isValidEntry(addr.getOffset()))
+	if (!arrayTable.isValidEntry(addr.getOffset()))
 		error("Attempt to use non-array %04x:%04x as array", PRINT_REG(addr));
 
-	return &(arrayTable->_table[addr.getOffset()]);
+	return &(arrayTable[addr.getOffset()]);
 }
 
 void SegManager::freeArray(reg_t addr) {
 	if (_heap[addr.getSegment()]->getType() != SEG_TYPE_ARRAY)
 		error("Attempt to use non-array %04x:%04x as array", PRINT_REG(addr));
 
-	ArrayTable *arrayTable = (ArrayTable *)_heap[addr.getSegment()];
+	ArrayTable &arrayTable = *(ArrayTable *)_heap[addr.getSegment()];
 
-	if (!arrayTable->isValidEntry(addr.getOffset()))
+	if (!arrayTable.isValidEntry(addr.getOffset()))
 		error("Attempt to use non-array %04x:%04x as array", PRINT_REG(addr));
 
-	arrayTable->_table[addr.getOffset()].destroy();
-	arrayTable->freeEntry(addr.getOffset());
+	arrayTable[addr.getOffset()].destroy();
+	arrayTable.freeEntry(addr.getOffset());
 }
 
 SciString *SegManager::allocateString(reg_t *addr) {
@@ -895,32 +913,32 @@ SciString *SegManager::allocateString(reg_t *addr) {
 	offset = table->allocEntry();
 
 	*addr = make_reg(_stringSegId, offset);
-	return &(table->_table[offset]);
+	return &table->at(offset);
 }
 
 SciString *SegManager::lookupString(reg_t addr) {
 	if (_heap[addr.getSegment()]->getType() != SEG_TYPE_STRING)
 		error("lookupString: Attempt to use non-string %04x:%04x as string", PRINT_REG(addr));
 
-	StringTable *stringTable = (StringTable *)_heap[addr.getSegment()];
+	StringTable &stringTable = *(StringTable *)_heap[addr.getSegment()];
 
-	if (!stringTable->isValidEntry(addr.getOffset()))
+	if (!stringTable.isValidEntry(addr.getOffset()))
 		error("lookupString: Attempt to use non-string %04x:%04x as string", PRINT_REG(addr));
 
-	return &(stringTable->_table[addr.getOffset()]);
+	return &(stringTable[addr.getOffset()]);
 }
 
 void SegManager::freeString(reg_t addr) {
 	if (_heap[addr.getSegment()]->getType() != SEG_TYPE_STRING)
 		error("freeString: Attempt to use non-string %04x:%04x as string", PRINT_REG(addr));
 
-	StringTable *stringTable = (StringTable *)_heap[addr.getSegment()];
+	StringTable &stringTable = *(StringTable *)_heap[addr.getSegment()];
 
-	if (!stringTable->isValidEntry(addr.getOffset()))
+	if (!stringTable.isValidEntry(addr.getOffset()))
 		error("freeString: Attempt to use non-string %04x:%04x as string", PRINT_REG(addr));
 
-	stringTable->_table[addr.getOffset()].destroy();
-	stringTable->freeEntry(addr.getOffset());
+	stringTable[addr.getOffset()].destroy();
+	stringTable.freeEntry(addr.getOffset());
 }
 
 #endif

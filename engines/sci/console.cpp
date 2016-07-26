@@ -41,9 +41,7 @@
 #include "sci/graphics/cache.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
-#include "sci/graphics/paint.h"
 #include "sci/graphics/paint16.h"
-#include "sci/graphics/paint32.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/view.h"
@@ -54,6 +52,7 @@
 #include "sci/video/seq_decoder.h"
 #ifdef ENABLE_SCI32
 #include "sci/graphics/frameout.h"
+#include "sci/graphics/paint32.h"
 #include "video/coktel_decoder.h"
 #include "sci/video/robot_decoder.h"
 #endif
@@ -137,8 +136,12 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("wl",                 WRAP_METHOD(Console, cmdWindowList));	// alias
 	registerCmd("plane_list",         WRAP_METHOD(Console, cmdPlaneList));
 	registerCmd("pl",                 WRAP_METHOD(Console, cmdPlaneList));	// alias
+	registerCmd("visible_plane_list", WRAP_METHOD(Console, cmdVisiblePlaneList));
+	registerCmd("vpl",                WRAP_METHOD(Console, cmdVisiblePlaneList));	// alias
 	registerCmd("plane_items",        WRAP_METHOD(Console, cmdPlaneItemList));
 	registerCmd("pi",                 WRAP_METHOD(Console, cmdPlaneItemList));	// alias
+	registerCmd("visible_plane_items", WRAP_METHOD(Console, cmdVisiblePlaneItemList));
+	registerCmd("vpi",                WRAP_METHOD(Console, cmdVisiblePlaneItemList));	// alias
 	registerCmd("saved_bits",         WRAP_METHOD(Console, cmdSavedBits));
 	registerCmd("show_saved_bits",    WRAP_METHOD(Console, cmdShowSavedBits));
 	// Segments
@@ -190,6 +193,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("send",				WRAP_METHOD(Console, cmdSend));
 	registerCmd("go",					WRAP_METHOD(Console, cmdGo));
 	registerCmd("logkernel",          WRAP_METHOD(Console, cmdLogKernel));
+	registerCmd("vocab994",          WRAP_METHOD(Console, cmdMapVocab994));
 	// Breakpoints
 	registerCmd("bp_list",			WRAP_METHOD(Console, cmdBreakpointList));
 	registerCmd("bplist",				WRAP_METHOD(Console, cmdBreakpointList));			// alias
@@ -330,6 +334,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf("debugflag_list - Lists the available debug flags and their status\n");
 	debugPrintf("debugflag_enable - Enables a debug flag\n");
 	debugPrintf("debugflag_disable - Disables a debug flag\n");
+	debugPrintf("debuglevel - Shows or sets debug level\n");
 	debugPrintf("\n");
 	debugPrintf("Commands\n");
 	debugPrintf("--------\n");
@@ -380,7 +385,9 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" animate_list / al - Shows the current list of objects in kAnimate's draw list (SCI0 - SCI1.1)\n");
 	debugPrintf(" window_list / wl - Shows a list of all the windows (ports) in the draw list (SCI0 - SCI1.1)\n");
 	debugPrintf(" plane_list / pl - Shows a list of all the planes in the draw list (SCI2+)\n");
+	debugPrintf(" visible_plane_list / vpl - Shows a list of all the planes in the visible draw list (SCI2+)\n");
 	debugPrintf(" plane_items / pi - Shows a list of all items for a plane (SCI2+)\n");
+	debugPrintf(" visible_plane_items / vpi - Shows a list of all items for a plane in the visible draw list (SCI2+)\n");
 	debugPrintf(" saved_bits - List saved bits on the hunk\n");
 	debugPrintf(" show_saved_bits - Display saved bits\n");
 	debugPrintf("\n");
@@ -483,14 +490,17 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	debugPrintf("Move count type: %s\n", (_engine->_features->handleMoveCount()) ? "increment" : "ignore");
 	debugPrintf("SetCursor type: %s\n", getSciVersionDesc(_engine->_features->detectSetCursorType()));
 #ifdef ENABLE_SCI32
-	if (getSciVersion() >= SCI_VERSION_2)
-		debugPrintf("kString type: %s\n", (_engine->_features->detectSci2StringFunctionType() == kSci2StringFunctionOld) ? "SCI2 (old)" : "SCI2.1 (new)");
-	if (getSciVersion() == SCI_VERSION_2_1)
+	if ((getSciVersion() >= SCI_VERSION_2_1_EARLY) && (getSciVersion() <= SCI_VERSION_2_1_LATE))
 		debugPrintf("SCI2.1 kernel table: %s\n", (_engine->_features->detectSci21KernelType() == SCI_VERSION_2) ? "modified SCI2 (old)" : "SCI2.1 (new)");
 #endif
 	debugPrintf("View type: %s\n", viewTypeDesc[g_sci->getResMan()->getViewType()]);
-	debugPrintf("Uses palette merging: %s\n", g_sci->_gfxPalette->isMerging() ? "yes" : "no");
-	debugPrintf("Uses 16 bit color matching: %s\n", g_sci->_gfxPalette->isUsing16bitColorMatch() ? "yes" : "no");
+	if (getSciVersion() <= SCI_VERSION_1_1) {
+		debugPrintf("kAnimate fastCast enabled: %s\n", g_sci->_gfxAnimate->isFastCastEnabled() ? "yes" : "no");
+	}
+	if (getSciVersion() < SCI_VERSION_2) {
+		debugPrintf("Uses palette merging: %s\n", g_sci->_gfxPalette16->isMerging() ? "yes" : "no");
+		debugPrintf("Uses 16 bit color matching: %s\n", g_sci->_gfxPalette16->isUsing16bitColorMatch() ? "yes" : "no");
+	}
 	debugPrintf("Resource volume version: %s\n", g_sci->getResMan()->getVolVersionDesc());
 	debugPrintf("Resource map version: %s\n", g_sci->getResMan()->getMapVersionDesc());
 	debugPrintf("Contains selector vocabulary (vocab.997): %s\n", hasVocab997 ? "yes" : "no");
@@ -996,7 +1006,7 @@ bool Console::cmdHexgrep(int argc, const char **argv) {
 	for (; resNumber <= resMax; resNumber++) {
 		script = _engine->getResMan()->findResource(ResourceId(restype, resNumber), 0);
 		if (script) {
-			unsigned int seeker = 0, seekerold = 0;
+			uint32 seeker = 0, seekerold = 0;
 			uint32 comppos = 0;
 			int output_script_name = 0;
 
@@ -1046,7 +1056,7 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 		if (!script)
 			debugPrintf("Error: script %d couldn't be loaded\n", itr->getNumber());
 
-		if (getSciVersion() <= SCI_VERSION_2_1) {
+		if (getSciVersion() <= SCI_VERSION_2_1_LATE) {
 			heap = _engine->getResMan()->findResource(ResourceId(kResourceTypeHeap, itr->getNumber()), false);
 			if (!heap)
 				debugPrintf("Error: script %d doesn't have a corresponding heap\n", itr->getNumber());
@@ -1502,7 +1512,7 @@ bool Console::cmdSaid(int argc, const char **argv) {
 	}
 
 	// TODO: Maybe turn this into a proper said spec compiler
-	unsigned int len = 0;
+	uint32 len = 0;
 	for (p++; p < argc; p++) {
 		if (strcmp(argv[p], ",") == 0) {
 			spec[len++] = 0xf0;
@@ -1539,7 +1549,7 @@ bool Console::cmdSaid(int argc, const char **argv) {
 			spec[len++] = 0xfe;
 			spec[len++] = 0xf6;
 		} else {
-			unsigned int s = strtol(argv[p], 0, 16);
+			uint32 s = strtol(argv[p], 0, 16);
 			if (s >= 0xf0 && s <= 0xff) {
 				spec[len++] = s;
 			} else {
@@ -1612,7 +1622,7 @@ bool Console::cmdParserNodes(int argc, const char **argv) {
 
 bool Console::cmdSetPalette(int argc, const char **argv) {
 	if (argc < 2) {
-		debugPrintf("Sets a palette resource\n");
+		debugPrintf("Sets a palette resource (SCI16)\n");
 		debugPrintf("Usage: %s <resourceId>\n", argv[0]);
 		debugPrintf("where <resourceId> is the number of the palette resource to set\n");
 		return true;
@@ -1620,7 +1630,14 @@ bool Console::cmdSetPalette(int argc, const char **argv) {
 
 	uint16 resourceId = atoi(argv[1]);
 
-	_engine->_gfxPalette->kernelSetFromResource(resourceId, true);
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		debugPrintf("This SCI version does not support this command\n");
+		return true;
+	}
+#endif
+
+	_engine->_gfxPalette16->kernelSetFromResource(resourceId, true);
 	return true;
 }
 
@@ -1639,7 +1656,7 @@ bool Console::cmdDrawPic(int argc, const char **argv) {
 #endif
 
 	uint16 resourceId = atoi(argv[1]);
-	_engine->_gfxPaint->kernelDrawPicture(resourceId, 100, false, false, false, 0);
+	_engine->_gfxPaint16->kernelDrawPicture(resourceId, 100, false, false, false, 0);
 	_engine->_gfxScreen->copyToScreen();
 	_engine->sleep(2000);
 
@@ -1768,6 +1785,21 @@ bool Console::cmdPlaneList(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdVisiblePlaneList(int argc, const char **argv) {
+#ifdef ENABLE_SCI32
+	if (_engine->_gfxFrameout) {
+		debugPrintf("Visible plane list:\n");
+		_engine->_gfxFrameout->printVisiblePlaneList(this);
+	} else {
+		debugPrintf("This SCI version does not have a list of planes\n");
+	}
+#else
+	debugPrintf("SCI32 isn't included in this compiled executable\n");
+#endif
+	return true;
+}
+
+
 bool Console::cmdPlaneItemList(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Shows the list of items for a plane\n");
@@ -1796,6 +1828,34 @@ bool Console::cmdPlaneItemList(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdVisiblePlaneItemList(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Shows the list of items for a plane\n");
+		debugPrintf("Usage: %s <plane address>\n", argv[0]);
+		return true;
+	}
+
+	reg_t planeObject = NULL_REG;
+
+	if (parse_reg_t(_engine->_gamestate, argv[1], &planeObject, false)) {
+		debugPrintf("Invalid address passed.\n");
+		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+#ifdef ENABLE_SCI32
+	if (_engine->_gfxFrameout) {
+		debugPrintf("Visible plane item list:\n");
+		_engine->_gfxFrameout->printVisiblePlaneItemList(this, planeObject);
+	} else {
+		debugPrintf("This SCI version does not have a list of plane items\n");
+	}
+#else
+	debugPrintf("SCI32 isn't included in this compiled executable\n");
+#endif
+	return true;
+}
+
 bool Console::cmdSavedBits(int argc, const char **argv) {
 	SegManager *segman = _engine->_gamestate->_segMan;
 	SegmentId id = segman->findSegmentByType(SEG_TYPE_HUNK);
@@ -1809,7 +1869,7 @@ bool Console::cmdSavedBits(int argc, const char **argv) {
 
 	for (uint i = 0; i < entries.size(); ++i) {
 		uint16 offset = entries[i].getOffset();
-		const Hunk& h = hunks->_table[offset];
+		const Hunk& h = hunks->at(offset);
 		if (strcmp(h.type, "SaveBits()") == 0) {
 			byte* memoryPtr = (byte *)h.mem;
 
@@ -1876,7 +1936,7 @@ bool Console::cmdShowSavedBits(int argc, const char **argv) {
 		return true;
 	}
 
-	const Hunk& h = hunks->_table[memoryHandle.getOffset()];
+	const Hunk& h = hunks->at(memoryHandle.getOffset());
 
 	if (strcmp(h.type, "SaveBits()") != 0) {
 		debugPrintf("Invalid address.\n");
@@ -2092,32 +2152,32 @@ bool Console::segmentInfo(int nr) {
 	break;
 
 	case SEG_TYPE_CLONES: {
-		CloneTable *ct = (CloneTable *)mobj;
+		CloneTable &ct = *(CloneTable *)mobj;
 
 		debugPrintf("clones\n");
 
-		for (uint i = 0; i < ct->_table.size(); i++)
-			if (ct->isValidEntry(i)) {
+		for (uint i = 0; i < ct.size(); i++)
+			if (ct.isValidEntry(i)) {
 				reg_t objpos = make_reg(nr, i);
 				debugPrintf("  [%04x] %s; copy of ", i, _engine->_gamestate->_segMan->getObjectName(objpos));
 				// Object header
-				const Object *obj = _engine->_gamestate->_segMan->getObject(ct->_table[i].getPos());
+				const Object *obj = _engine->_gamestate->_segMan->getObject(ct[i].getPos());
 				if (obj)
-					debugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(ct->_table[i].getPos()),
-								_engine->_gamestate->_segMan->getObjectName(ct->_table[i].getPos()),
+					debugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(ct[i].getPos()),
+								_engine->_gamestate->_segMan->getObjectName(ct[i].getPos()),
 								obj->getVarCount(), obj->getMethodCount());
 			}
 	}
 	break;
 
 	case SEG_TYPE_LISTS: {
-		ListTable *lt = (ListTable *)mobj;
+		ListTable &lt = *(ListTable *)mobj;
 
 		debugPrintf("lists\n");
-		for (uint i = 0; i < lt->_table.size(); i++)
-			if (lt->isValidEntry(i)) {
+		for (uint i = 0; i < lt.size(); i++)
+			if (lt.isValidEntry(i)) {
 				debugPrintf("  [%04x]: ", i);
-				printList(&(lt->_table[i]));
+				printList(&lt[i]);
 			}
 	}
 	break;
@@ -2128,13 +2188,13 @@ bool Console::segmentInfo(int nr) {
 	}
 
 	case SEG_TYPE_HUNK: {
-		HunkTable *ht = (HunkTable *)mobj;
+		HunkTable &ht = *(HunkTable *)mobj;
 
-		debugPrintf("hunk  (total %d)\n", ht->entries_used);
-		for (uint i = 0; i < ht->_table.size(); i++)
-			if (ht->isValidEntry(i)) {
+		debugPrintf("hunk  (total %d)\n", ht.entries_used);
+		for (uint i = 0; i < ht.size(); i++)
+			if (ht.isValidEntry(i)) {
 				debugPrintf("    [%04x] %d bytes at %p, type=%s\n",
-				          i, ht->_table[i].size, ht->_table[i].mem, ht->_table[i].type);
+				          i, ht[i].size, ht[i].mem, ht[i].type);
 			}
 	}
 	break;
@@ -2513,9 +2573,14 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 	case 1:
 	case 2:
 	case 3: {
-		// for global, local, temp and param, we need an index
 		if (argc < 3) {
-			debugPrintf("Variable number must be specified for requested type\n");
+			for (int i = 0; i < s->variablesMax[varType]; ++i) {
+				curValue = &s->variables[varType][i];
+				debugPrintf("%s var %d == %04x:%04x", varNames[varType], i, PRINT_REG(*curValue));
+				printBasicVarInfo(*curValue);
+				debugPrintf("\n");
+			}
+
 			return true;
 		}
 		if (argc > 4) {
@@ -3038,7 +3103,10 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 			break;
 
 		case EXEC_STACK_TYPE_KERNEL: // Kernel function
-			debugPrintf(" %x:[%x]  k%s(", i, call.debugOrigin, _engine->getKernel()->getKernelName(call.debugSelector).c_str());
+			if (call.debugKernelSubFunction == -1)
+				debugPrintf(" %x:[%x]  k%s(", i, call.debugOrigin, _engine->getKernel()->getKernelName(call.debugKernelFunction).c_str());
+			else
+				debugPrintf(" %x:[%x]  k%s(", i, call.debugOrigin, _engine->getKernel()->getKernelName(call.debugKernelFunction, call.debugKernelSubFunction).c_str());
 			break;
 
 		case EXEC_STACK_TYPE_VARSELECTOR:
@@ -3903,6 +3971,55 @@ bool Console::cmdSfx01Track(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdMapVocab994(int argc, const char **argv) {
+	EngineState *s = _engine->_gamestate;	// for the several defines in this function
+	reg_t reg;
+
+	if (argc != 4) {
+		debugPrintf("Attempts to map a range of vocab.994 entries to a given class\n");
+		debugPrintf("Usage: %s <class addr> <first> <last>\n", argv[0]);
+		return true;
+	}
+
+	if (parse_reg_t(_engine->_gamestate, argv[1], &reg, false)) {
+		debugPrintf("Invalid address passed.\n");
+		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	Resource *resource = _engine->_resMan->findResource(ResourceId(kResourceTypeVocab, 994), 0);
+	const Object *obj = s->_segMan->getObject(reg);
+	uint16 *data = (uint16 *) resource->data;
+	uint32 first = atoi(argv[2]);
+	uint32 last  = atoi(argv[3]);
+	Common::Array<bool> markers;
+
+	markers.resize(_engine->getKernel()->getSelectorNamesSize());
+	if (!obj->isClass() && getSciVersion() != SCI_VERSION_3)
+		obj = s->_segMan->getObject(obj->getSuperClassSelector());
+
+	first = MIN(first, (uint32) (resource->size / 2 - 2));
+	last =  MIN(last, (uint32) (resource->size / 2 - 2));
+
+	for (uint32 i = first; i <= last; ++i) {
+		uint16 ofs = data[i];
+
+		if (obj && ofs < obj->getVarCount()) {
+			uint16 varSelector = obj->getVarSelector(ofs);
+			debugPrintf("%d: property at index %04x of %s is %s %s\n", i, ofs,
+				    s->_segMan->derefString(obj->getNameSelector()),
+				    _engine->getKernel()->getSelectorName(varSelector).c_str(),
+				    markers[varSelector] ? "(repeat!)" : "");
+			markers[varSelector] = true;
+		}
+		else {
+			debugPrintf("%d: property at index %04x doesn't match up with %s\n", i, ofs,
+				    s->_segMan->derefString(obj->getNameSelector()));
+		}
+	}
+
+	return true;
+}
 bool Console::cmdQuit(int argc, const char **argv) {
 	if (argc != 2) {
 	}
@@ -4261,7 +4378,7 @@ void Console::printList(List *list) {
 			return;
 		}
 
-		node = &(nt->_table[pos.getOffset()]);
+		node = &nt->at(pos.getOffset());
 
 		debugPrintf("\t%04x:%04x  : %04x:%04x -> %04x:%04x\n", PRINT_REG(pos), PRINT_REG(node->key), PRINT_REG(node->value));
 
@@ -4291,7 +4408,7 @@ int Console::printNode(reg_t addr) {
 			return 1;
 		}
 
-		list = &(lt->_table[addr.getOffset()]);
+		list = &lt->at(addr.getOffset());
 
 		debugPrintf("%04x:%04x : first x last = (%04x:%04x, %04x:%04x)\n", PRINT_REG(addr), PRINT_REG(list->first), PRINT_REG(list->last));
 	} else {
@@ -4310,7 +4427,7 @@ int Console::printNode(reg_t addr) {
 			debugPrintf("Address does not contain a node\n");
 			return 1;
 		}
-		node = &(nt->_table[addr.getOffset()]);
+		node = &nt->at(addr.getOffset());
 
 		debugPrintf("%04x:%04x : prev x next = (%04x:%04x, %04x:%04x); maps %04x:%04x -> %04x:%04x\n",
 		          PRINT_REG(addr), PRINT_REG(node->pred), PRINT_REG(node->succ), PRINT_REG(node->key), PRINT_REG(node->value));
@@ -4341,7 +4458,8 @@ int Console::printObject(reg_t pos) {
 		debugPrintf("    ");
 		if (var_container && i < var_container->getVarCount()) {
 			uint16 varSelector = var_container->getVarSelector(i);
-			debugPrintf("[%03x] %s = ", varSelector, _engine->getKernel()->getSelectorName(varSelector).c_str());
+			// Times two commented out for now for easy parsing of vocab.994
+			debugPrintf("(%04x) [%03x] %s = ", i /* *2 */, varSelector, _engine->getKernel()->getSelectorName(varSelector).c_str());
 		} else
 			debugPrintf("p#%x = ", i);
 

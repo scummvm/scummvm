@@ -3,6 +3,7 @@ MODULE := engines/sherlock
 MODULE_OBJS = \
 	scalpel/scalpel.o \
 	scalpel/3do/movie_decoder.o \
+	scalpel/3do/scalpel_3do_screen.o \
 	scalpel/drivers/adlib.o \
 	scalpel/drivers/mt32.o \
 	scalpel/tsage/logo.o \
@@ -30,6 +31,7 @@ MODULE_OBJS = \
 	tattoo/tattoo_people.o \
 	tattoo/tattoo_resources.o \
 	tattoo/tattoo_scene.o \
+	tattoo/tattoo_screen.o \
 	tattoo/tattoo_talk.o \
 	tattoo/tattoo_user_interface.o \
 	tattoo/widget_base.o \

@@ -255,6 +255,19 @@ bool DrasculaEngine::loadGame(int slot) {
 	if (!(in = _saveFileMan->openForLoading(saveFileName))) {
 		error("missing savegame file %s", saveFileName.c_str());
 	}
+	
+	// If we currently are in room 102 while being attached below the pendulum
+	// the character is invisible and some surface are temporarily used for other
+	// things. Reset those before loading the savegame otherwise we may have some
+	// issues such as the protagonist being invisible after reloading a savegame.
+	if (_roomNumber == 102 && flags[1] == 2) {
+		characterVisible = 1;
+		loadPic(96, frontSurface);
+		loadPic(97, frontSurface);
+		loadPic(97, extraSurface);
+		loadPic(99, backSurface);
+	}
+	
 
 	loadMetaData(in, slot, true);
 	Graphics::skipThumbnail(*in);
@@ -287,8 +300,23 @@ bool DrasculaEngine::loadGame(int slot) {
 	if (!sscanf(currentData, "%d.ald", &roomNum)) {
 		error("Bad save format");
 	}
+	
+	// When loading room 102 while being attached below the pendulum Some variables
+	// are not correctly set and can cause random crashes when calling enterRoom below.
+	// The crash occurs in moveCharacters() when accessing factor_red[curY + curHeight].
+	if (roomNum == 102 && flags[1] == 2) {
+		curX = 103;
+		curY = 108;
+		curWidth = curHeight = 0;
+	}
+	
 	enterRoom(roomNum);
 	selectVerb(kVerbNone);
+	
+	// When loading room 102 while being attached below the pendulum we
+	// need to call activatePendulum() to properly initialized the scene.
+	if (_roomNumber == 102 && flags[1] == 2)
+		activatePendulum();
 
 	return true;
 }

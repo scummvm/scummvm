@@ -128,17 +128,17 @@ GameList SwordMetaEngine::getSupportedGames() const {
 }
 
 GameDescriptor SwordMetaEngine::findGame(const char *gameid) const {
-	if (0 == scumm_stricmp(gameid, sword1FullSettings.gameid))
+	if (0 == scumm_stricmp(gameid, sword1FullSettings.gameId))
 		return sword1FullSettings;
-	if (0 == scumm_stricmp(gameid, sword1DemoSettings.gameid))
+	if (0 == scumm_stricmp(gameid, sword1DemoSettings.gameId))
 		return sword1DemoSettings;
-	if (0 == scumm_stricmp(gameid, sword1MacFullSettings.gameid))
+	if (0 == scumm_stricmp(gameid, sword1MacFullSettings.gameId))
 		return sword1MacFullSettings;
-	if (0 == scumm_stricmp(gameid, sword1MacDemoSettings.gameid))
+	if (0 == scumm_stricmp(gameid, sword1MacDemoSettings.gameId))
 		return sword1MacDemoSettings;
-	if (0 == scumm_stricmp(gameid, sword1PSXSettings.gameid))
+	if (0 == scumm_stricmp(gameid, sword1PSXSettings.gameId))
 		return sword1PSXSettings;
-	if (0 == scumm_stricmp(gameid, sword1PSXDemoSettings.gameid))
+	if (0 == scumm_stricmp(gameid, sword1PSXDemoSettings.gameId))
 		return sword1PSXDemoSettings;
 	return GameDescriptor();
 }
@@ -240,8 +240,7 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 	SaveStateList saveList;
 	char saveName[40];
 
-	Common::StringArray filenames = saveFileMan->listSavefiles("sword1.???");
-	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
+	Common::StringArray filenames = saveFileMan->listSavefiles("sword1.###");
 
 	int slotNum = 0;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -259,6 +258,8 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

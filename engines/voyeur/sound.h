@@ -26,8 +26,6 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "audio/mixer.h"
-#include "audio/decoders/voc.h"
-#include "voyeur/files.h"
 
 namespace Voyeur {
 

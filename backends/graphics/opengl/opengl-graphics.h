@@ -24,6 +24,7 @@
 #define BACKENDS_GRAPHICS_OPENGL_OPENGL_GRAPHICS_H
 
 #include "backends/graphics/opengl/opengl-sys.h"
+#include "backends/graphics/opengl/framebuffer.h"
 #include "backends/graphics/graphics.h"
 
 #include "common/frac.h"
@@ -40,7 +41,11 @@ namespace OpenGL {
 // SurfaceSDL backend enables it and disabling it can cause issues in sdl.cpp.
 #define USE_OSD 1
 
-class Texture;
+class Surface;
+class Pipeline;
+#if !USE_FORCED_GLES
+class Shader;
+#endif
 
 enum {
 	GFX_LINEAR = 0,
@@ -117,6 +122,11 @@ public:
 
 protected:
 	/**
+	 * Whether an GLES or GLES2 context is active.
+	 */
+	bool isGLESContext() const { return g_context.type == kContextGLES || g_context.type == kContextGLES2; }
+
+	/**
 	 * Set up the actual screen size available for the OpenGL code to do any
 	 * drawing.
 	 *
@@ -124,6 +134,16 @@ protected:
 	 * @param height The height of the screen.
 	 */
 	void setActualScreenSize(uint width, uint height);
+
+	/**
+	 * Sets the OpenGL (ES) type the graphics manager shall work with.
+	 *
+	 * This needs to be called at least once (and before ever calling
+	 * notifyContextCreate).
+	 *
+	 * @param type Type of the OpenGL (ES) contexts to be created.
+	 */
+	void setContextType(ContextType type);
 
 	/**
 	 * Notify the manager of a OpenGL context change. This should be the first
@@ -172,15 +192,15 @@ protected:
 
 private:
 	/**
-	 * Create a texture with the specified pixel format.
+	 * Create a surface with the specified pixel format.
 	 *
-	 * @param format    The pixel format the Texture object should accept as
+	 * @param format    The pixel format the Surface object should accept as
 	 *                  input.
-	 * @param wantAlpha For CLUT8 textures this marks whether an alpha
+	 * @param wantAlpha For CLUT8 surfaces this marks whether an alpha
 	 *                  channel should be used.
-	 * @return A pointer to the texture or nullptr on failure.
+	 * @return A pointer to the surface or nullptr on failure.
 	 */
-	Texture *createTexture(const Graphics::PixelFormat &format, bool wantAlpha = false);
+	Surface *createSurface(const Graphics::PixelFormat &format, bool wantAlpha = false);
 
 	//
 	// Transaction support
@@ -263,6 +283,11 @@ protected:
 	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) = 0;
 
 	/**
+	 * Refresh the screen contents.
+	 */
+	virtual void refreshScreen() = 0;
+
+	/**
 	 * Save a screenshot of the full display as BMP to the given file. This
 	 * uses Common::DumpFile for writing the screenshot.
 	 *
@@ -275,6 +300,36 @@ private:
 	// OpenGL utilities
 	//
 
+	/**
+	 * Initialize the active context for use.
+	 */
+	void initializeGLContext();
+
+	/**
+	 * Render back buffer.
+	 */
+	Backbuffer _backBuffer;
+
+	/**
+	 * OpenGL pipeline used for rendering.
+	 */
+	Pipeline *_pipeline;
+
+protected:
+	/**
+	 * Query the address of an OpenGL function by name.
+	 *
+	 * This can only be used after a context has been created.
+	 * Please note that this function can return valid addresses even if the
+	 * OpenGL context does not support the function.
+	 *
+	 * @param name The name of the OpenGL function.
+	 * @return An function pointer for the requested OpenGL function or
+	 *         nullptr in case of failure.
+	 */
+	virtual void *getProcAddress(const char *name) const = 0;
+
+private:
 	/**
 	 * Try to determine the internal parameters for a given pixel format.
 	 *
@@ -343,7 +398,7 @@ private:
 	/**
 	 * The virtual game screen.
 	 */
-	Texture *_gameScreen;
+	Surface *_gameScreen;
 
 	/**
 	 * The game palette if in CLUT8 mode.
@@ -362,7 +417,7 @@ private:
 	/**
 	 * The overlay screen.
 	 */
-	Texture *_overlay;
+	Surface *_overlay;
 
 	/**
 	 * Whether the overlay is visible or not.
@@ -381,7 +436,7 @@ private:
 	/**
 	 * The cursor image.
 	 */
-	Texture *_cursor;
+	Surface *_cursor;
 
 	/**
 	 * X coordinate of the cursor in phyiscal coordinates.
@@ -464,10 +519,19 @@ private:
 	 */
 	byte _cursorPalette[3 * 256];
 
+	//
+	// Misc
+	//
+
 	/**
-	 * Draws a rectangle
+	 * Whether the screen contents shall be forced to redrawn.
 	 */
-	void drawRect(GLfloat x, GLfloat y, GLfloat w, GLfloat h);
+	bool _forceRedraw;
+
+	/**
+	 * Number of frames glClear shall ignore scissor testing.
+	 */
+	uint _scissorOverride;
 
 #ifdef USE_OSD
 	//
@@ -483,7 +547,7 @@ private:
 	/**
 	 * The OSD's contents.
 	 */
-	Texture *_osd;
+	Surface *_osd;
 
 	/**
 	 * Current opacity level of the OSD.

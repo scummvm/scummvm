@@ -79,7 +79,7 @@ bool EditableWidget::tryInsertChar(byte c, int pos) {
 
 void EditableWidget::handleTickle() {
 	uint32 time = g_system->getMillis();
-	if (_caretTime < time) {
+	if (_caretTime < time && isEnabled()) {
 		_caretTime = time + kCaretBlinkTime;
 		drawCaret(_caretVisible);
 	}
@@ -89,6 +89,9 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	bool handled = true;
 	bool dirty = false;
 	bool forcecaret = false;
+
+	if (!isEnabled())
+		return false;
 
 	// First remove caret
 	if (_caretVisible)
@@ -271,7 +274,7 @@ void EditableWidget::drawCaret(bool erase) {
 	x += getAbsX();
 	y += getAbsY();
 
-	g_gui.theme()->drawCaret(Common::Rect(x, y, x + 1, y + editRect.height()), erase);
+	g_gui.theme()->drawCaretClip(Common::Rect(x, y, x + 1, y + editRect.height()), getBossClipRect(), erase);
 
 	if (erase) {
 		GUI::EditableWidget::String character;
@@ -300,7 +303,7 @@ void EditableWidget::drawCaret(bool erase) {
 		// possible glitches due to different methods used.
 		width = MIN(editRect.width() - caretOffset, width);
 		if (width > 0) {
-			g_gui.theme()->drawText(Common::Rect(x, y, x + width, y + editRect.height()), character, _state, Graphics::kTextAlignLeft, _inversion, 0, false, _font, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
+			g_gui.theme()->drawTextClip(Common::Rect(x, y, x + width, y + editRect.height()), getBossClipRect(), character, _state, Graphics::kTextAlignLeft, _inversion, 0, false, _font, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 		}
 	}
 

@@ -277,6 +277,15 @@ public:
 			_channels[i].init(this, i);
 
 		_isOpen = false;
+
+		_opl = NULL;
+		memset(_voices, 0, sizeof(_voices));
+
+		_lastVoice = 0;
+		_percussionMask = 0;
+
+		_adlibTimerProc = NULL;
+		_adlibTimerParam = NULL;
 	}
 
 	int open();

@@ -425,6 +425,7 @@ int global_messageHandler3(ExCommand *cmd) {
 				if (g_fp->_msgX != cmd->_sceneClickX || g_fp->_msgY != cmd->_sceneClickY) {
 					ani = g_fp->_currentScene->getStaticANIObject1ById(g_fp->_gameLoader->_field_FA, -1);
 					if (!ani || (ani->isIdle() && !(ani->_flags & 0x80) && !(ani->_flags & 0x100))) {
+						warning("WWW 1");
 						result = startWalkTo(g_fp->_gameLoader->_field_FA, -1, cmd->_sceneClickX, cmd->_sceneClickY, 0);
 						if (result) {
 							ExCommand *ex = new ExCommand(g_fp->_gameLoader->_field_FA, 17, 64, 0, 0, 0, 1, 0, 0, 0);
@@ -765,7 +766,7 @@ int MovGraph_messageHandler(ExCommand *cmd) {
 		point.x = ani->_ox;
 		point.y = ani->_oy;
 
-		double dst = gr->calcDistance(&point, (MovGraphLink *)(*i), 0);
+		double dst = gr->putToLink(&point, (MovGraphLink *)(*i), 0);
 		if (dst >= 0.0 && dst < mindistance) {
 			mindistance = dst;
 			link = (MovGraphLink *)(*i);
@@ -775,13 +776,13 @@ int MovGraph_messageHandler(ExCommand *cmd) {
 	int top;
 
 	if (link) {
-		MovGraphNode *node = link->_movGraphNode1;
+		MovGraphNode *node = link->_graphSrc;
 
 		double sq = (ani->_oy - node->_y) * (ani->_oy - node->_y) + (ani->_ox - node->_x) * (ani->_ox - node->_x);
 		int off = (node->_field_14 >> 16) & 0xFF;
-		double off2 = ((link->_movGraphNode2->_field_14 >> 8) & 0xff) - off;
+		double off2 = ((link->_graphDst->_field_14 >> 8) & 0xff) - off;
 
-		top = off + (int)(sqrt(sq) * off2 / link->_distance);
+		top = off + (int)(sqrt(sq) * off2 / link->_length);
 	} else {
 		top = (gr->calcOffset(ani->_ox, ani->_oy)->_field_14 >> 8) & 0xff;
 	}

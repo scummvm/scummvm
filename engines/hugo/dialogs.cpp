@@ -26,7 +26,8 @@
 #include "image/bmp.h"
 
 #include "hugo/hugo.h"
-#include "hugo/display.h"
+#include "hugo/dialogs.h"
+#include "hugo/file.h"
 #include "hugo/parser.h"
 #include "hugo/schedule.h"
 #include "hugo/sound.h"

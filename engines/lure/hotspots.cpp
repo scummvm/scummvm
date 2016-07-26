@@ -1898,8 +1898,8 @@ void Hotspot::doStatus(HotspotData *hotspot) {
 	endAction();
 
 	strings.getString(room.roomNumber(), buffer);
-	strcat(buffer, "\n\n");
-	strcat(buffer, stringList.getString(S_YOU_ARE_CARRYING));
+	Common::strlcat(buffer, "\n\n", MAX_DESC_SIZE);
+	Common::strlcat(buffer, stringList.getString(S_YOU_ARE_CARRYING), MAX_DESC_SIZE);
 
 	// Scan through the list and add in any items assigned to the player
 	HotspotDataList &list = res.hotspotData();
@@ -1909,25 +1909,25 @@ void Hotspot::doStatus(HotspotData *hotspot) {
 
 		if (rec.roomNumber == PLAYER_ID) {
 			if (numItems++ == 0)
-				strcat(buffer, ": ");
+				Common::strlcat(buffer, ": ", MAX_DESC_SIZE);
 			else
-				strcat(buffer, ", ");
+				Common::strlcat(buffer, ", ", MAX_DESC_SIZE);
 			strings.getString(rec.nameId, buffer + strlen(buffer));
 		}
 	}
 
 	// If there were no items, add in the word 'nothing'
 	if (numItems == 0)
-		strcat(buffer, stringList.getString(S_INV_NOTHING));
+		Common::strlcat(buffer, stringList.getString(S_INV_NOTHING), MAX_DESC_SIZE);
 
 	// If the player has money, add it in
 	uint16 numGroats = res.fieldList().numGroats();
 	if (numGroats > 0) {
-		strcat(buffer, "\n\n");
-		strcat(buffer, stringList.getString(S_YOU_HAVE));
-		sprintf(buffer + strlen(buffer), "%d", numGroats);
-		strcat(buffer, " ");
-		strcat(buffer, stringList.getString((numGroats == 1) ? S_GROAT : S_GROATS));
+		Common::strlcat(buffer, "\n\n", MAX_DESC_SIZE);
+		Common::strlcat(buffer, stringList.getString(S_YOU_HAVE), MAX_DESC_SIZE);
+		snprintf(buffer + strlen(buffer), MAX_DESC_SIZE - strlen(buffer), "%d", numGroats);
+		Common::strlcat(buffer, " ", MAX_DESC_SIZE);
+		Common::strlcat(buffer, stringList.getString((numGroats == 1) ? S_GROAT : S_GROATS), MAX_DESC_SIZE); // Make sure we're not overrunning
 	}
 
 	// Display the dialog

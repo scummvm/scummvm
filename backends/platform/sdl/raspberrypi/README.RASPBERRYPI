@@ -1,0 +1,77 @@
+ScummVM-RASPBERRYPI README
+==============================================================================
+
+Notes
+============
+
+This version of ScummVM uses SDL2 hardware accelerated graphics, be it
+plain SDL2 which in turn uses dispmanx/gles2 or by using gles1 via an
+SDL2-configured GLES1 context.
+
+Requirements
+============
+- Raspberry Pi 1 or 2 microcomputer.
+- Raspbian (Debian) installed on SD card. Other distros may be supported if 
+  they include the VideoCore runtime libraries that Raspbian includes.
+-An attached keyboard and mouse, or alternatively joystick.
+
+Controls
+============
+
+The standard ScummVM keyboard and mouse controls are used as in any other 
+GNU/Linux based system.
+Use the --joystick parameter if you want to use a joystick instead of the
+intended mouse for playing the games (not recommended).
+
+Installation from binaries
+==============================
+
+We have at least three methods to get the binaries into the Raspbian SD:
+
+1) Since Debian (Raspbian) includes an ssh service by default, I recommend 
+keeping the SD card on the Raspberry Pi, and using scp to copy the package over 
+to your home directory in the Debian filesystem.
+
+scp scummvm-rpi_<version>.zip pi@<raspberrypi_ip>:/home/pi
+
+2) If your RaspberryPi has internet access, you can simply use wget to 
+download the package to your home folder:
+
+cd ~/
+wget <package_link>
+
+3) You could also connect the Raspbian SD card to your main PC and, after
+mounting it (or being automounted as it would be in most desktop GNU/Linux 
+systems), copy the package file manually to your home directory.
+How to mount an SD and copy files to it is beyond the scope of this README.
+
+Once we have the package file in our home directory using one of the three 
+aforementioned methods, we would need to uncompress it:
+
+unzip scummvm-rpi_<version>.zip
+
+As a result, a directory containing the scummvm along with this README will be
+created. 
+We can run it by simply changing to our scummvm directory and executing the 
+scummvm file.
+
+cd scummvm-rpi
+./scummvm
+
+I recommend copying the games to /home/pi/scummvm-rpi. Adding the games via the menu
+works as in any other system ScummVM runs on.
+
+Building from sources
+==============================
+
+Recommended method is building by cross-compiling on a GNU/Linux X86-based computer.
+You can find concise instructions for this on the ScummVM wiki:
+
+http://wiki.scummvm.org/index.php/Compiling_ScummVM/RPI 
+
+The configure script is disabling scalers because we prefer dispmanx for that, which 
+makes scalers unnecessary on a CPU limited platform like this, timestamps because most people
+doesn't have an RTC on the Raspberry Pi, and event recorder to save SD card write cycles.
+All these are automatically disabled when we crosscompile by passing "--host=raspberrypi".
+
+Enjoy!

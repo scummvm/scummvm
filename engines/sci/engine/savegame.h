@@ -37,6 +37,8 @@ struct EngineState;
  *
  * Version - new/changed feature
  * =============================
+ *      35 - SCI32 remap
+ *      34 - SCI32 palettes, and store play time in ticks
  *      33 - new overridePriority flag in MusicEntry
  *      32 - new playBed flag in MusicEntry
  *      31 - priority for sound effects/music is now a signed int16, instead of a byte
@@ -58,7 +60,7 @@ struct EngineState;
  */
 
 enum {
-	CURRENT_SAVEGAME_VERSION = 33,
+	CURRENT_SAVEGAME_VERSION = 35,
 	MINIMUM_SAVEGAME_VERSION = 14
 };
 
@@ -85,6 +87,9 @@ bool gamestate_save(EngineState *s, Common::WriteStream *save, const Common::Str
 
 // does a delayed saved game restore, used by ScummVM game menu - see detection.cpp / SciEngine::loadGameState()
 void gamestate_delayedrestore(EngineState *s);
+
+// does a few fixups right after restoring a saved game
+void gamestate_afterRestoreFixUp(EngineState *s, int savegameId);
 
 /**
  * Restores a game state from a directory.

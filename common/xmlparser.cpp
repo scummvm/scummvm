@@ -97,36 +97,38 @@ bool XMLParser::parserError(const String &errStr) {
 	assert(_stream->pos() == startPosition);
 	currentPosition = startPosition;
 
-	int keyOpening = 0;
-	int keyClosing = 0;
-
-	while (currentPosition-- && keyOpening == 0) {
-		_stream->seek(-2, SEEK_CUR);
-		c = _stream->readByte();
-
-		if (c == '<')
-			keyOpening = currentPosition - 1;
-		else if (c == '>')
-			keyClosing = currentPosition;
-	}
-
-	_stream->seek(startPosition, SEEK_SET);
-	currentPosition = startPosition;
-	while (keyClosing == 0 && c && currentPosition++) {
-		c = _stream->readByte();
-
-		if (c == '>')
-			keyClosing = currentPosition;
-	}
-
 	Common::String errorMessage = Common::String::format("\n  File <%s>, line %d:\n", _fileName.c_str(), lineCount);
 
-	currentPosition = (keyClosing - keyOpening);
-	_stream->seek(keyOpening, SEEK_SET);
+	if (startPosition > 1) {
+		int keyOpening = 0;
+		int keyClosing = 0;
 
-	while (currentPosition--)
-		errorMessage += (char)_stream->readByte();
+		while (currentPosition-- && keyOpening == 0) {
+			_stream->seek(-2, SEEK_CUR);
+			c = _stream->readByte();
 
+			if (c == '<')
+				keyOpening = currentPosition - 1;
+			else if (c == '>')
+				keyClosing = currentPosition;
+		}
+
+		_stream->seek(startPosition, SEEK_SET);
+		currentPosition = startPosition;
+		while (keyClosing == 0 && c && currentPosition++) {
+			c = _stream->readByte();
+
+			if (c == '>')
+				keyClosing = currentPosition;
+		}
+
+		currentPosition = (keyClosing - keyOpening);
+		_stream->seek(keyOpening, SEEK_SET);
+
+		while (currentPosition--)
+			errorMessage += (char)_stream->readByte();
+	}
+	
 	errorMessage += "\n\nParser error: ";
 	errorMessage += errStr;
 	errorMessage += "\n\n";

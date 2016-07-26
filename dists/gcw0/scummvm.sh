@@ -6,4 +6,4 @@ if [ ! -f $HOME/.scummvmrc ] ; then
 	cp ./scummvmrc $HOME/.scummvmrc
 fi
 
-exec ./scummvm
+exec ./scummvm 2>&1 >/var/tmp/scummvm.log

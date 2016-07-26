@@ -40,6 +40,7 @@ public:
 	uint16 kernelOnControl(byte screenMask, const Common::Rect &rect);
 	void kernelSetNowSeen(reg_t objectReference);
 	reg_t kernelCanBeHere(reg_t curObject, reg_t listReference);
+	reg_t kernelCantBeHere32(const reg_t curObject, const reg_t listReference) const;
 	bool kernelIsItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position);
 	void kernelBaseSetter(reg_t object);
 	Common::Rect getNSRect(reg_t object);
@@ -58,7 +59,7 @@ private:
 	 * *different* from checkObject, has a brRect which is contained inside
 	 * checkRect.
 	 */
-	reg_t canBeHereCheckRectList(reg_t checkObject, const Common::Rect &checkRect, List *list);
+	reg_t canBeHereCheckRectList(const reg_t checkObject, const Common::Rect &checkRect, const List *list, const uint16 signalFlags) const;
 };
 
 } // End of namespace Sci

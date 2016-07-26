@@ -70,6 +70,8 @@ public:
 		_data = (byte *)malloc(size);
 		stream.read(_data, size);
 
+		_cp = 0;
+		_bufPitch = 0;
 	}
 
 	~BraFont() {
@@ -302,7 +304,7 @@ protected:
 	}
 
 public:
-	DosFont(Cnv *cnv) : _data(cnv), _pitch(cnv->_width) {
+	DosFont(Cnv *cnv) : _data(cnv), _pitch(cnv->_width), _cp(NULL), _bufPitch(0) {
 	}
 
 	~DosFont() {

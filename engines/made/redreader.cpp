@@ -102,7 +102,7 @@ int LzhDecompressor::decompress(Common::SeekableReadStream &source, byte *dest, 
 	int bufsize;
 	byte* buffer;
 
-	buffer = (byte *) malloc(DICSIZ);
+	buffer = (byte *)calloc(DICSIZ, 1);
 
 	_source = &source;
 	_compSize = sourceLen;

@@ -41,6 +41,7 @@
 #include "engines/advancedDetector.h"
 
 #include "audio/audiostream.h"
+#include "audio/decoders/wave.h"
 
 #include "prince/prince.h"
 #include "prince/font.h"
@@ -106,8 +107,6 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	DebugMan.enableDebugChannel("script");
 
 	memset(_audioStream, 0, sizeof(_audioStream));
-
-	gDebugLevel = 10;
 }
 
 PrinceEngine::~PrinceEngine() {
@@ -225,8 +224,8 @@ void PrinceEngine::init() {
 		error("Can't open all/databank.ptc");
 
 	PtcArchive *voices = new PtcArchive();
-	if (!voices->open("data/voices/databank.ptc"))
-		error("Can't open data/voices/databank.ptc");
+	if (!voices->open("voices/databank.ptc"))
+		error("Can't open voices/databank.ptc");
 
 	PtcArchive *sound = new PtcArchive();
 	if (!sound->open("sound/databank.ptc"))
@@ -240,9 +239,12 @@ void PrinceEngine::init() {
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "all");
 
-	SearchMan.add("all", all);
-	SearchMan.add("voices", voices);
-	SearchMan.add("sound", sound);
+	// Prefix the archive names, so that "all" doesn't conflict with the
+	// "all" directory, if that happens to be named in all lower case.
+	// It isn't on the CD, but we should try to stay case-insensitive.
+	SearchMan.add("_all", all);
+	SearchMan.add("_voices", voices);
+	SearchMan.add("_sound", sound);
 	if (getLanguage() != Common::PL_POL && getLanguage() != Common::DE_DEU) {
 		SearchMan.add("translation", translation);
 	}
@@ -443,6 +445,7 @@ Common::Error PrinceEngine::run() {
 	int startGameSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 	init();
 	if (startGameSlot == -1) {
+		playVideo("topware.avi");
 		showLogo();
 	} else {
 		loadLocation(59); // load intro location - easiest way to set everything up
@@ -622,6 +625,8 @@ void PrinceEngine::changeCursor(uint16 curId) {
 	const Graphics::Surface *curSurface = nullptr;
 
 	switch (curId) {
+	default:
+		error("Unknown cursor Id: %d", curId);
 	case 0:
 		CursorMan.showMouse(false);
 		_optionsFlag = 0;
@@ -1542,20 +1547,18 @@ void PrinceEngine::showAnim(Anim &anim) {
 
 	// make_special_shadow
 	if ((anim._flags & 0x80)) {
-		if (animSurface) {
-			DrawNode newDrawNode;
-			newDrawNode.posX = x;
-			newDrawNode.posY = y + animSurface->h - anim._shadowBack;
-			newDrawNode.posZ = Hero::kHeroShadowZ;
-			newDrawNode.width = 0;
-			newDrawNode.height = 0;
-			newDrawNode.scaleValue = _scaleValue;
-			newDrawNode.originalRoomSurface = nullptr;
-			newDrawNode.data = this;
-			newDrawNode.drawFunction = &Hero::showHeroShadow;
-			newDrawNode.s = animSurface;
-			_drawNodeList.push_back(newDrawNode);
-		}
+		DrawNode newDrawNode;
+		newDrawNode.posX = x;
+		newDrawNode.posY = y + animSurface->h - anim._shadowBack;
+		newDrawNode.posZ = Hero::kHeroShadowZ;
+		newDrawNode.width = 0;
+		newDrawNode.height = 0;
+		newDrawNode.scaleValue = _scaleValue;
+		newDrawNode.originalRoomSurface = nullptr;
+		newDrawNode.data = this;
+		newDrawNode.drawFunction = &Hero::showHeroShadow;
+		newDrawNode.s = animSurface;
+		_drawNodeList.push_back(newDrawNode);
 	}
 
 	//ShowFrameCodeShadow

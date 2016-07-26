@@ -149,6 +149,11 @@ public:
 	void setFrameRate(int newRate);
 
 	/**
+	 * Toggle between standard game speed and an "extra fast" mode
+	 */
+	void toggleSpeed();
+
+	/**
 	 * Return the current game frame number
 	 */
 	uint32 getFrameCounter() const { return _frameCounter; }

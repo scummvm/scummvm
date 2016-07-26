@@ -35,6 +35,10 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{0, 0, 0}
 };
 
+#ifndef USE_SCALERS
+#define DownscaleAllByHalf 0
+#endif
+
 DINGUXSdlGraphicsManager::DINGUXSdlGraphicsManager(SdlEventSource *boss, SdlWindow *window)
 	: SurfaceSdlGraphicsManager(boss, window) {
 }
@@ -61,9 +65,11 @@ bool DINGUXSdlGraphicsManager::setGraphicsMode(int mode) {
 	case GFX_NORMAL:
 		newScaleFactor = 1;
 		break;
+#ifdef USE_SCALERS
 	case GFX_HALF:
 		newScaleFactor = 1;
 		break;
+#endif
 	default:
 		warning("unknown gfx mode %d", mode);
 		return false;
@@ -89,9 +95,11 @@ void DINGUXSdlGraphicsManager::setGraphicsModeIntern() {
 	case GFX_NORMAL:
 		newScalerProc = Normal1x;
 		break;
+#ifdef USE_SCALERS
 	case GFX_HALF:
 		newScalerProc = DownscaleAllByHalf;
 		break;
+#endif
 
 	default:
 		error("Unknown gfx mode %d", _videoMode.mode);

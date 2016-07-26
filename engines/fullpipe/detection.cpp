@@ -32,7 +32,7 @@
 namespace Fullpipe {
 
 const char *FullpipeEngine::getGameId() const {
-	return _gameDescription->gameid;
+	return _gameDescription->gameId;
 }
 
 }
@@ -76,7 +76,7 @@ static const ADGameDescription gameDescriptions[] = {
 class FullpipeMetaEngine : public AdvancedMetaEngine {
 public:
 	FullpipeMetaEngine() : AdvancedMetaEngine(Fullpipe::gameDescriptions, sizeof(ADGameDescription), fullpipeGames) {
-		_singleid = "fullpipe";
+		_singleId = "fullpipe";
 	}
 
 	virtual const char *getName() const {
@@ -108,10 +108,9 @@ bool FullpipeMetaEngine::hasFeature(MetaEngineFeature f) const {
 SaveStateList FullpipeMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
-	Common::String pattern("fullpipe.s??");
+	Common::String pattern("fullpipe.s##");
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -130,6 +129,8 @@ SaveStateList FullpipeMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

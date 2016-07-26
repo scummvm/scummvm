@@ -30,8 +30,6 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
-#include "audio/mixer.h"
-
 #include "graphics/transparent_surface.h"
 
 #include "engines/engine.h"
@@ -40,6 +38,10 @@
 #include "fullpipe/console.h"
 
 struct ADGameDescription;
+
+namespace Audio {
+class SoundHandle;
+}
 
 namespace Fullpipe {
 
@@ -312,7 +314,7 @@ public:
 	void lift_openLift();
 
 	GameVar *_musicGameVar;
-	Audio::SoundHandle _sceneTrackHandle;
+	Audio::SoundHandle *_sceneTrackHandle;
 
 public:
 

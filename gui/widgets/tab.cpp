@@ -80,7 +80,17 @@ TabWidget::~TabWidget() {
 }
 
 int16 TabWidget::getChildY() const {
+	// NOTE: if you change that, make sure to do the same
+	// changes in the ThemeLayoutTabWidget (gui/ThemeLayout.cpp)
 	return getAbsY() + _tabHeight;
+}
+
+uint16 TabWidget::getHeight() const {
+	// NOTE: if you change that, make sure to do the same
+	// changes in the ThemeLayoutTabWidget (gui/ThemeLayout.cpp)
+	// NOTE: this height is used for clipping, so it *includes*
+	// tabs, because it starts from getAbsY(), not getChildY()
+	return _h + _tabHeight;
 }
 
 int TabWidget::addTab(const String &title) {
@@ -258,6 +268,12 @@ void TabWidget::adjustTabs(int value) {
 void TabWidget::reflowLayout() {
 	Widget::reflowLayout();
 
+	// NOTE: if you change that, make sure to do the same
+	// changes in the ThemeLayoutTabWidget (gui/ThemeLayout.cpp)
+	_tabHeight = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Height");
+	_tabWidth = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Width");
+	_titleVPad = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Padding.Top");
+
 	for (uint i = 0; i < _tabs.size(); ++i) {
 		Widget *w = _tabs[i].firstWidget;
 		while (w) {
@@ -265,10 +281,6 @@ void TabWidget::reflowLayout() {
 			w = w->next();
 		}
 	}
-
-	_tabHeight = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Height");
-	_tabWidth = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Width");
-	_titleVPad = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Padding.Top");
 
 	if (_tabWidth == 0) {
 		_tabWidth = 40;
@@ -304,9 +316,9 @@ void TabWidget::drawWidget() {
 	for (int i = _firstVisibleTab; i < (int)_tabs.size(); ++i) {
 		tabs.push_back(_tabs[i].title);
 	}
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x + _bodyLP, _y + _bodyTP, _x+_w-_bodyRP, _y+_h-_bodyBP), _bodyBackgroundType);
+	g_gui.theme()->drawDialogBackgroundClip(Common::Rect(_x + _bodyLP, _y + _bodyTP, _x+_w-_bodyRP, _y+_h-_bodyBP+_tabHeight), getBossClipRect(), _bodyBackgroundType);
 
-	g_gui.theme()->drawTab(Common::Rect(_x, _y, _x+_w, _y+_h), _tabHeight, _tabWidth, tabs, _activeTab - _firstVisibleTab, 0, _titleVPad);
+	g_gui.theme()->drawTabClip(Common::Rect(_x, _y, _x+_w, _y+_h), getBossClipRect(), _tabHeight, _tabWidth, tabs, _activeTab - _firstVisibleTab, 0, _titleVPad);
 }
 
 void TabWidget::draw() {

@@ -20,15 +20,13 @@
  *
  */
 
-#include "prince/prince.h"
 #include "prince/sound.h"
 #include "prince/musNum.h"
 
-#include "common/config-manager.h"
-#include "common/memstream.h"
 #include "common/archive.h"
-#include "audio/decoders/raw.h"
-#include "audio/audiostream.h"
+#include "common/debug.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
 
 namespace Prince {
 
@@ -120,6 +118,7 @@ const uint8 MusicPlayer::_musRoomTable[] = {
 
 MusicPlayer::MusicPlayer(PrinceEngine *vm) : _vm(vm) {
 	_data = nullptr;
+	_dataSize = 0;
 	_isGM = false;
 
 	MidiPlayer::createDriver();

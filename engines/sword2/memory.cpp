@@ -225,7 +225,7 @@ void MemoryManager::memFree(byte *ptr) {
 	int16 idx = findExactPointerInIndex(ptr);
 
 	if (idx == -1) {
-		warning("Freeing non-allocated pointer %p", ptr);
+		warning("Freeing non-allocated pointer %p", (void *)ptr);
 		return;
 	}
 

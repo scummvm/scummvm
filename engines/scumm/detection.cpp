@@ -29,6 +29,7 @@
 #include "common/md5.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "audio/mididrv.h"
 
@@ -185,6 +186,11 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 		}
 
 		if (_filenamePattern.genMethod == kGenHEPC || _filenamePattern.genMethod == kGenHEIOS) {
+			if (id == '3' && _game.id == GID_MOONBASE) {
+				result = Common::String::format("%s.u32", _filenamePattern.pattern);
+				break;
+			}
+
 			// For HE >= 98, we already called snprintf above.
 			if (_game.heversion < 98 || room < 0)
 				result = Common::String::format("%s.he%c", _filenamePattern.pattern, id);
@@ -957,6 +963,7 @@ public:
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 };
 
 bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -1268,10 +1275,9 @@ SaveStateList ScummMetaEngine::listSaves(const char *target) const {
 	Common::StringArray filenames;
 	Common::String saveDesc;
 	Common::String pattern = target;
-	pattern += ".s??";
+	pattern += ".s##";
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -1288,6 +1294,8 @@ SaveStateList ScummMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
@@ -1326,6 +1334,21 @@ SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int 
 	}
 
 	return desc;
+}
+
+static const ExtraGuiOption comiObjectLabelsOption = {
+	_s("Show Object Line"),
+	_s("Show the names of objects at the bottom of the screen"),
+	"object_labels",
+	true
+};
+
+const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	ExtraGuiOptions options;
+	if (target.empty() || ConfMan.get("gameid", target) == "comi") {
+		options.push_back(comiObjectLabelsOption);
+	}
+	return options;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SCUMM)

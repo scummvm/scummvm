@@ -35,6 +35,7 @@ class DynamicHotspot {
 public:
 	bool _active;
 	int _seqIndex;
+	int _animIndex;
 	Common::Rect _bounds;
 	Common::Point _feetPos;
 	Facing _facing;
@@ -54,7 +55,17 @@ public:
 	void synchronize(Common::Serializer &s);
 };
 
-#define DYNAMIC_HOTSPOTS_SIZE 8
+#define DYNAMIC_HOTSPOTS_SIZE 16
+
+#define SYNTAX_SINGULAR               0
+#define SYNTAX_PLURAL                 1
+#define SYNTAX_PARTITIVE              2
+#define SYNTAX_SINGULAR_MASC          3
+#define SYNTAX_SINGULAR_FEM           4
+#define SYNTAX_SINGULAR_LIVING        5
+#define SYNTAX_MASC_NOT_PROPER        6
+#define SYNTAX_FEM_NOT_PROPER         7
+#define MAX_SYNTAX                    8
 
 class DynamicHotspots {
 private:
@@ -68,6 +79,7 @@ public:
 
 	Common::Array<MADS::DynamicHotspot>::size_type size() const { return _entries.size(); }
 	DynamicHotspot &operator[](uint idx) { return _entries[idx]; }
+	int add(int descId, int verbId, int syntax, int seqIndex, const Common::Rect &bounds);
 	int add(int descId, int verbId, int seqIndex, const Common::Rect &bounds);
 	int setPosition(int index, const Common::Point &pos, Facing facing);
 	int setCursor(int index, CursorType cursor);
@@ -113,6 +125,12 @@ public:
 	 * Sets the active state of a given hotspot
 	 */
 	void activate(int vocabId, bool active);
+
+	/**
+	 * Sets the active state of a given hotspot if it includes a given position
+	 */
+	void activateAtPos(int vocabId, bool active, Common::Point pos);
+
 };
 
 } // End of namespace MADS

@@ -77,9 +77,11 @@ protected:
 
 	void getResultPosIndirect();
 	virtual void getResultPos();
+
 	virtual int readVar(uint var);
 	virtual void writeVar(uint var, int value);
 
+protected:
 	virtual int getActiveObject();
 	void ifStateCommon(byte type);
 	void ifNotStateCommon(byte type);

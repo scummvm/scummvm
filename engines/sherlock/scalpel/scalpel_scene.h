@@ -75,6 +75,8 @@ protected:
 public:
 	ScalpelScene(SherlockEngine *vm) : Scene(vm) {}
 
+	virtual ~ScalpelScene();
+
 	/**
 	 * Draw all objects and characters.
 	 */

@@ -211,8 +211,9 @@ bool AnimationResource::precacheAllFrames() const {
 			error("Could not precache \"%s\".", (*iter).fileName.c_str());
 			return false;
 		}
-#else
-		Kernel::getInstance()->getResourceManager()->requestResource((*iter).fileName);
+#else		 
+		Resource *pResource = Kernel::getInstance()->getResourceManager()->requestResource((*iter).fileName);
+		pResource->release(); //unlock precached resource
 #endif
 	}
 

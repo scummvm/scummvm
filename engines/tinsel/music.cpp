@@ -29,7 +29,6 @@
 #include "audio/midiparser.h"
 // Miles Audio for Discworld 1
 #include "audio/miles.h"
-#include "audio/decoders/adpcm.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -381,14 +380,28 @@ MidiMusicPlayer::MidiMusicPlayer(TinselEngine *vm) {
 	bool milesAudioEnabled = false;
 
 	if (vm->getPlatform() == Common::kPlatformDOS) {
-		// Enable Miles Audio for DOS only
-		milesAudioEnabled = true;
+		// Enable Miles Audio for DOS platform only...
+		switch (vm->getGameID()) {
+		case GID_DW1:
+			if (!vm->getIsADGFDemo()) {
+				// ...for Discworld 1
+				milesAudioEnabled = true;
+			} else {
+				if (vm->isV1CD()) {
+					// ...and for Discworld 1 CD Demo
+					milesAudioEnabled = true;
+				}
+			}
+			break;
+		default:
+			break;
+		}
 	}
 
-	if ((vm->getGameId() == GID_DW1) && (milesAudioEnabled)) {
+	if (milesAudioEnabled) {
 		// Discworld 1 (DOS) uses Miles Audio 3
 		// use our own Miles Audio drivers
-		// 
+		//
 		// It seems that there are multiple versions of Discworld 1
 		//
 		// Version 1:
@@ -418,9 +431,12 @@ MidiMusicPlayer::MidiMusicPlayer(TinselEngine *vm) {
 					// Version 2: drivers got installed and fat.opl got copied over by the user
 					_driver = Audio::MidiDriver_Miles_AdLib_create("MIDPAK.AD", "");
 				} else {
-					// Version 1: sample.ad / sample.opl, have to be copied over by the user for this version
-					// That's why we check those last, because then the user gets a proper error message for them
-					_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL");
+					if ((fileClass.exists("SAMPLE.AD")) || (fileClass.exists("SAMPLE.OPL"))) {
+						// Version 1: sample.ad / sample.opl, have to be copied over by the user for this version
+						_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL");
+					} else {
+						error("MILES-ADLIB: timbre file not found (may be called FAT.OPL, MIDPAK.AD, SAMPLE.AD or SAMPLE.OPL, may be in a subdirectory)");
+					}
 				}
 			}
 			break;
@@ -623,9 +639,13 @@ PCMMusicPlayer::PCMMusicPlayer() {
 	_dimmed = false;
 	_dimmedTinsel = false;
 	_dimIteration = 0;
+	_dimmedVolume = 0;
+	_dimPosition = 0;
 
 	_fadeOutVolume = 0;
 	_fadeOutIteration = 0;
+
+	_hScript = _hSegment = 0;
 
 	_end = true;
 

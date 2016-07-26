@@ -25,7 +25,7 @@
 #include "common/archive.h"
 #include "common/file.h"
 #include "common/textconsole.h"
-
+#include "common/memstream.h"
 #include "sci/resource.h"
 #include "sci/resource_intern.h"
 #include "sci/util.h"
@@ -139,7 +139,7 @@ bool Resource::loadFromAudioVolumeSCI1(Common::SeekableReadStream *file) {
 		error("Can't allocate %d bytes needed for loading %s", size, _id.toString().c_str());
 	}
 
-	unsigned int really_read = file->read(data, size);
+	uint32 really_read = file->read(data, size);
 	if (really_read != size)
 		warning("Read %d bytes from %s but expected %d", really_read, _id.toString().c_str(), size);
 
@@ -637,7 +637,7 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 
 	case SCI_VERSION_1_EARLY:
 	case SCI_VERSION_1_LATE:
-	case SCI_VERSION_2_1:
+	case SCI_VERSION_2_1_EARLY:
 		data = resource->data;
 		// Count # of tracks
 		_trackCount = 0;
@@ -688,6 +688,12 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 
 					channel->data = resource->data + dataOffset;
 					channel->size = READ_LE_UINT16(data + 4);
+
+					if (dataOffset + channel->size > resource->size) {
+						warning("Invalid size inside sound resource %d: track %d, channel %d", resourceNr, trackNr, channelNr);
+						channel->size = resource->size - dataOffset;
+					}
+
 					channel->curPos = 0;
 					channel->number = *channel->data;
 
@@ -863,6 +869,7 @@ void WaveResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	if (!fileStream)
 		return;
 
+	assert(fileStream->size() == -1 || res->_fileOffset < fileStream->size());
 	fileStream->seek(res->_fileOffset, SEEK_SET);
 	res->loadFromWaveFile(fileStream);
 	if (_resourceFile)
@@ -916,6 +923,7 @@ void AudioVolumeResourceSource::loadResource(ResourceManager *resMan, Resource *
 			break;
 		}
 	} else {
+		assert(fileStream->size() == -1 || res->_fileOffset < fileStream->size());
 		// original file, directly seek to given offset and get SCI1/SCI1.1 audio resource
 		fileStream->seek(res->_fileOffset, SEEK_SET);
 	}

@@ -43,12 +43,12 @@
 
 #include "sci/sound/audio.h"
 #include "sci/sound/music.h"
+#include "sci/sound/sync.h"
 #include "sci/sound/soundcmd.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/controls16.h"
-#include "sci/graphics/controls32.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/maciconbar.h"
@@ -58,13 +58,20 @@
 #include "sci/graphics/picture.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/remap.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text16.h"
 #include "sci/graphics/transitions.h"
 
 #ifdef ENABLE_SCI32
-#include "sci/graphics/text32.h"
+#include "sci/graphics/controls32.h"
 #include "sci/graphics/frameout.h"
+#include "sci/graphics/palette32.h"
+#include "sci/graphics/remap32.h"
+#include "sci/graphics/text32.h"
+#include "sci/graphics/video32.h"
+#include "sci/sound/audio32.h"
+// TODO: Move this to video32
 #include "sci/video/robot_decoder.h"
 #endif
 
@@ -84,6 +91,11 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	_gfxMacIconBar = 0;
 
 	_audio = 0;
+	_sync = nullptr;
+#ifdef ENABLE_SCI32
+	_audio32 = nullptr;
+	_video32 = nullptr;
+#endif
 	_features = 0;
 	_resMan = 0;
 	_gamestate = 0;
@@ -93,6 +105,8 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	_eventMan = 0;
 	_console = 0;
 	_opcode_formats = 0;
+
+	_forceHiresGraphics = false;
 
 	// Set up the engine specific debug levels
 	DebugMan.addDebugChannel(kDebugLevelError, "Error", "Script error debugging");
@@ -154,25 +168,35 @@ SciEngine::~SciEngine() {
 
 #ifdef ENABLE_SCI32
 	delete _gfxControls32;
+	delete _gfxPaint32;
 	delete _gfxText32;
 	delete _robotDecoder;
+	// GfxFrameout and GfxPalette32 must be deleted after Video32 since
+	// destruction of screen items in the Video32 destructor relies on these
+	// components
+	delete _video32;
+	delete _gfxPalette32;
 	delete _gfxFrameout;
+	delete _gfxRemap32;
+	delete _audio32;
 #endif
 	delete _gfxMenu;
 	delete _gfxControls16;
 	delete _gfxText16;
 	delete _gfxAnimate;
-	delete _gfxPaint;
+	delete _gfxPaint16;
 	delete _gfxTransitions;
 	delete _gfxCompare;
 	delete _gfxCoordAdjuster;
 	delete _gfxPorts;
 	delete _gfxCache;
-	delete _gfxPalette;
+	delete _gfxPalette16;
+	delete _gfxRemap16;
 	delete _gfxCursor;
 	delete _gfxScreen;
 
 	delete _audio;
+	delete _sync;
 	delete _soundCmd;
 	delete _kernel;
 	delete _vocabulary;
@@ -194,12 +218,6 @@ SciEngine::~SciEngine() {
 extern void showScummVMDialog(const Common::String &message);
 
 Common::Error SciEngine::run() {
-	// Assign default values to the config manager, in case settings are missing
-	ConfMan.registerDefault("originalsaveload", "false");
-	ConfMan.registerDefault("native_fb01", "false");
-	ConfMan.registerDefault("windows_cursors", "false");	// Windows cursors for KQ6 Windows
-	ConfMan.registerDefault("silver_cursors", "false");	// Silver cursors for SQ4 CD
-
 	_resMan = new ResourceManager();
 	assert(_resMan);
 	_resMan->addAppropriateSources();
@@ -224,6 +242,32 @@ Common::Error SciEngine::run() {
 	_scriptPatcher = new ScriptPatcher();
 	SegManager *segMan = new SegManager(_resMan, _scriptPatcher);
 
+	// Read user option for hires graphics
+	// Only show/selectable for:
+	//  - King's Quest 6 CD
+	//  - King's Quest 6 CD demo
+	//  - Gabriel Knight 1 CD
+	//  - Police Quest 4 CD
+	// TODO: Check, if Gabriel Knight 1 floppy supports high resolution
+	// TODO: Check, if Gabriel Knight 1 on Mac supports high resolution
+	switch (getPlatform()) {
+	case Common::kPlatformDOS:
+	case Common::kPlatformWindows:
+		// Only DOS+Windows
+		switch (_gameId) {
+		case GID_KQ6:
+		case GID_GK1:
+		case GID_PQ4:
+			if (isCD())
+				_forceHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
+			break;
+		default:
+			break;
+		}
+	default:
+		break;
+	};
+
 	// Initialize the game screen
 	_gfxScreen = new GfxScreen(_resMan);
 	_gfxScreen->enableUndithering(ConfMan.getBool("disable_dithering"));
@@ -237,9 +281,21 @@ Common::Error SciEngine::run() {
 	// Also, XMAS1990 apparently had a parser too. Refer to http://forums.scummvm.org/viewtopic.php?t=9135
 	if (getGameId() == GID_CHRISTMAS1990)
 		_vocabulary = new Vocabulary(_resMan, false);
-	_audio = new AudioPlayer(_resMan);
+
 	_gamestate = new EngineState(segMan);
 	_eventMan = new EventManager(_resMan->detectFontExtended());
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2_1_EARLY) {
+		_audio32 = new Audio32(_resMan);
+	} else
+#endif
+		_audio = new AudioPlayer(_resMan);
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		_video32 = new Video32(segMan, _eventMan);
+	}
+#endif
+	_sync = new Sync(_resMan, segMan);
 
 	// Create debugger console. It requires GFX and _gamestate to be initialized
 	_console = new Console(this);
@@ -284,6 +340,7 @@ Common::Error SciEngine::run() {
 	if (directSaveSlotLoading >= 0) {
 		_gamestate->_delayedRestoreGame = true;
 		_gamestate->_delayedRestoreGameId = directSaveSlotLoading;
+		_gamestate->_delayedRestoreFromLauncher = true;
 
 		// Jones only initializes its menus when restarting/restoring, thus set
 		// the gameIsRestarting flag here before initializing. Fixes bug #6536.
@@ -309,6 +366,17 @@ Common::Error SciEngine::run() {
 			                  "the latest patch for this game by Sierra to avoid possible "
 			                  "problems");
 		}
+	}
+
+	if (getGameId() == GID_KQ7 && ConfMan.getBool("subtitles")) {
+		showScummVMDialog("Subtitles are enabled, but subtitling in King's"
+						  " Quest 7 was unfinished and disabled in the release"
+						  " version of the game. ScummVM allows the subtitles"
+						  " to be re-enabled, but because they were removed from"
+						  " the original game, they do not always render"
+						  " properly or reflect the actual game speech."
+						  " This is not a ScummVM bug -- it is a problem with"
+						  " the game's assets.");
 	}
 
 	// Show a warning if the user has selected a General MIDI device, no GM patch exists
@@ -497,7 +565,7 @@ void SciEngine::patchGameSaveRestore() {
 	byte kernelIdSave = 0;
 
 	switch (_gameId) {
-	case GID_HOYLE1: // gets confused, although the game doesnt support saving/restoring at all
+	case GID_HOYLE1: // gets confused, although the game doesn't support saving/restoring at all
 	case GID_HOYLE2: // gets confused, see hoyle1
 	case GID_JONES: // gets confused, when we patch us in, the game is only able to save to 1 slot, so hooking is not required
 	case GID_MOTHERGOOSE: // mother goose EGA saves/restores directly and has no save/restore dialogs
@@ -544,17 +612,29 @@ void SciEngine::patchGameSaveRestore() {
 		}
 	}
 
+	const Object *patchObjectSave = nullptr;
+
+	if (getSciVersion() < SCI_VERSION_2) {
+		// Patch gameobject ::save for now for SCI0 - SCI1.1
+		// TODO: It seems this was never adjusted to superclass, but adjusting it now may cause
+		// issues with some game. Needs to get checked and then possibly changed.
+		patchObjectSave = gameObject;
+	} else {
+		// Patch superclass ::save for SCI32
+		patchObjectSave = gameSuperObject;
+	}
+
 	// Search for gameobject ::save, if there is one patch that one too
-	uint16 gameObjectMethodCount = gameObject->getMethodCount();
-	for (uint16 methodNr = 0; methodNr < gameObjectMethodCount; methodNr++) {
-		uint16 selectorId = gameObject->getFuncSelector(methodNr);
+	uint16 patchObjectMethodCount = patchObjectSave->getMethodCount();
+	for (uint16 methodNr = 0; methodNr < patchObjectMethodCount; methodNr++) {
+		uint16 selectorId = patchObjectSave->getFuncSelector(methodNr);
 		Common::String methodName = _kernel->getSelectorName(selectorId);
 		if (methodName == "save") {
 			if (_gameId != GID_FAIRYTALES) {	// Fairy Tales saves automatically without a dialog
 				if (kernelIdSave != kernelIdRestore)
-					patchGameSaveRestoreCode(segMan, gameObject->getFunction(methodNr), kernelIdSave);
+					patchGameSaveRestoreCode(segMan, patchObjectSave->getFunction(methodNr), kernelIdSave);
 				else
-					patchGameSaveRestoreCodeSci21(segMan, gameObject->getFunction(methodNr), kernelIdSave, false);
+					patchGameSaveRestoreCodeSci21(segMan, patchObjectSave->getFunction(methodNr), kernelIdSave, false);
 			}
 			break;
 		}
@@ -618,9 +698,9 @@ void SciEngine::initGraphics() {
 	_gfxCursor = 0;
 	_gfxMacIconBar = 0;
 	_gfxMenu = 0;
-	_gfxPaint = 0;
 	_gfxPaint16 = 0;
-	_gfxPalette = 0;
+	_gfxPalette16 = 0;
+	_gfxRemap16 = 0;
 	_gfxPorts = 0;
 	_gfxText16 = 0;
 	_gfxTransitions = 0;
@@ -630,14 +710,28 @@ void SciEngine::initGraphics() {
 	_robotDecoder = 0;
 	_gfxFrameout = 0;
 	_gfxPaint32 = 0;
+	_gfxPalette32 = 0;
+	_gfxRemap32 = 0;
 #endif
 
 	if (hasMacIconBar())
 		_gfxMacIconBar = new GfxMacIconBar();
 
-	_gfxPalette = new GfxPalette(_resMan, _gfxScreen);
-	_gfxCache = new GfxCache(_resMan, _gfxScreen, _gfxPalette);
-	_gfxCursor = new GfxCursor(_resMan, _gfxPalette, _gfxScreen);
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		_gfxPalette32 = new GfxPalette32(_resMan);
+		_gfxRemap32 = new GfxRemap32();
+	} else {
+#endif
+		_gfxPalette16 = new GfxPalette(_resMan, _gfxScreen);
+		if (getGameId() == GID_QFG4DEMO)
+			_gfxRemap16 = new GfxRemap(_gfxPalette16);
+#ifdef ENABLE_SCI32
+	}
+#endif
+
+	_gfxCache = new GfxCache(_resMan, _gfxScreen, _gfxPalette16);
+	_gfxCursor = new GfxCursor(_resMan, _gfxPalette16, _gfxScreen);
 
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
@@ -645,12 +739,12 @@ void SciEngine::initGraphics() {
 		_gfxCoordAdjuster = new GfxCoordAdjuster32(_gamestate->_segMan);
 		_gfxCursor->init(_gfxCoordAdjuster, _eventMan);
 		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
-		_gfxPaint32 = new GfxPaint32(_resMan, _gfxCoordAdjuster, _gfxScreen, _gfxPalette);
-		_gfxPaint = _gfxPaint32;
-		_gfxText32 = new GfxText32(_gamestate->_segMan, _gfxCache, _gfxScreen);
-		_gfxControls32 = new GfxControls32(_gamestate->_segMan, _gfxCache, _gfxText32);
+		_gfxPaint32 = new GfxPaint32(_gamestate->_segMan);
 		_robotDecoder = new RobotDecoder(getPlatform() == Common::kPlatformMacintosh);
-		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette, _gfxPaint32);
+		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxScreen, _gfxPalette32);
+		_gfxText32 = new GfxText32(_gamestate->_segMan, _gfxCache);
+		_gfxControls32 = new GfxControls32(_gamestate->_segMan, _gfxCache, _gfxText32);
+		_gfxFrameout->run();
 	} else {
 #endif
 		// SCI0-SCI1.1 graphic objects creation
@@ -658,10 +752,9 @@ void SciEngine::initGraphics() {
 		_gfxCoordAdjuster = new GfxCoordAdjuster16(_gfxPorts);
 		_gfxCursor->init(_gfxCoordAdjuster, _eventMan);
 		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
-		_gfxTransitions = new GfxTransitions(_gfxScreen, _gfxPalette);
-		_gfxPaint16 = new GfxPaint16(_resMan, _gamestate->_segMan, _gfxCache, _gfxPorts, _gfxCoordAdjuster, _gfxScreen, _gfxPalette, _gfxTransitions, _audio);
-		_gfxPaint = _gfxPaint16;
-		_gfxAnimate = new GfxAnimate(_gamestate, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen, _gfxPalette, _gfxCursor, _gfxTransitions);
+		_gfxTransitions = new GfxTransitions(_gfxScreen, _gfxPalette16);
+		_gfxPaint16 = new GfxPaint16(_resMan, _gamestate->_segMan, _gfxCache, _gfxPorts, _gfxCoordAdjuster, _gfxScreen, _gfxPalette16, _gfxTransitions, _audio);
+		_gfxAnimate = new GfxAnimate(_gamestate, _scriptPatcher, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen, _gfxPalette16, _gfxCursor, _gfxTransitions);
 		_gfxText16 = new GfxText16(_gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen);
 		_gfxControls16 = new GfxControls16(_gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen);
 		_gfxMenu = new GfxMenu(_eventMan, _gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen, _gfxCursor);
@@ -675,8 +768,10 @@ void SciEngine::initGraphics() {
 	}
 #endif
 
-	// Set default (EGA, amiga or resource 999) palette
-	_gfxPalette->setDefault();
+	if (getSciVersion() < SCI_VERSION_2) {
+		// Set default (EGA, amiga or resource 999) palette
+		_gfxPalette16->setDefault();
+	}
 }
 
 void SciEngine::initStackBaseWithSelector(Selector selector) {
@@ -742,7 +837,10 @@ void SciEngine::runGame() {
 void SciEngine::exitGame() {
 	if (_gamestate->abortScriptProcessing != kAbortLoadGame) {
 		_gamestate->_executionStack.clear();
-		_audio->stopAllAudio();
+		if (_audio) {
+			_audio->stopAllAudio();
+		}
+		_sync->stop();
 		_soundCmd->clearPlayList();
 	}
 
@@ -777,7 +875,7 @@ Console *SciEngine::getSciDebugger() {
 }
 
 const char *SciEngine::getGameIdStr() const {
-	return _gameDescription->gameid;
+	return _gameDescription->gameId;
 }
 
 Common::Language SciEngine::getLanguage() const {
@@ -794,6 +892,10 @@ bool SciEngine::isDemo() const {
 
 bool SciEngine::isCD() const {
 	return _gameDescription->flags & ADGF_CD;
+}
+
+bool SciEngine::forceHiresGraphics() const {
+	return _forceHiresGraphics;
 }
 
 bool SciEngine::isBE() const{
@@ -816,7 +918,7 @@ Common::String SciEngine::getSavegameName(int nr) const {
 }
 
 Common::String SciEngine::getSavegamePattern() const {
-	return _targetName + ".???";
+	return _targetName + ".###";
 }
 
 Common::String SciEngine::getFilePrefix() const {
@@ -832,6 +934,10 @@ Common::String SciEngine::unwrapFilename(const Common::String &name) const {
 	if (name.hasPrefix(prefix.c_str()))
 		return Common::String(name.c_str() + prefix.size());
 	return name;
+}
+
+const char *SciEngine::getGameObjectName() {
+	return _gamestate->_segMan->getObjectName(_gameObjectAddress);
 }
 
 int SciEngine::inQfGImportRoom() const {
@@ -850,12 +956,30 @@ int SciEngine::inQfGImportRoom() const {
 void SciEngine::setLauncherLanguage() {
 	if (_gameDescription->flags & ADGF_ADDENGLISH) {
 		// If game is multilingual
-		if (Common::parseLanguage(ConfMan.get("language")) == Common::EN_ANY) {
+		Common::Language chosenLanguage = Common::parseLanguage(ConfMan.get("language"));
+		uint16 languageToSet = 0;
+
+		switch (chosenLanguage) {
+		case Common::EN_ANY:
 			// and English was selected as language
-			if (SELECTOR(printLang) != -1) // set text language to English
-				writeSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(printLang), K_LANG_ENGLISH);
-			if (SELECTOR(parseLang) != -1) // and set parser language to English as well
-				writeSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(parseLang), K_LANG_ENGLISH);
+			languageToSet = K_LANG_ENGLISH;
+			break;
+		case Common::JA_JPN: {
+			// Set Japanese for FM-Towns games
+			// KQ5 on FM-Towns has no initial language set
+			if (g_sci->getPlatform() == Common::kPlatformFMTowns) {
+				languageToSet = K_LANG_JAPANESE;
+			}
+		}
+		default:
+			break;
+		}
+
+		if (languageToSet) {
+			if (SELECTOR(printLang) != -1) // set text language
+				writeSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(printLang), languageToSet);
+			if (SELECTOR(parseLang) != -1) // and set parser language as well
+				writeSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(parseLang), languageToSet);
 		}
 	}
 }
@@ -892,29 +1016,79 @@ bool SciEngine::speechAndSubtitlesEnabled() {
 }
 
 void SciEngine::syncIngameAudioOptions() {
+	bool useGlobal90 = false;
+
 	// Sync the in-game speech/subtitles settings for SCI1.1 CD games
-	if (isCD() && getSciVersion() == SCI_VERSION_1_1) {
+	if (isCD()) {
+		switch (getSciVersion()) {
+		case SCI_VERSION_1_1:
+			// All SCI1.1 CD games use global 90
+			useGlobal90 = true;
+			break;
+#ifdef ENABLE_SCI32
+		case SCI_VERSION_2:
+		case SCI_VERSION_2_1_EARLY:
+		case SCI_VERSION_2_1_MIDDLE:
+		case SCI_VERSION_2_1_LATE:
+			// Only use global 90 for some specific games, not all SCI32 games used this method
+			switch (_gameId) {
+			case GID_KQ7: // SCI2.1
+			case GID_GK1: // SCI2
+			case GID_GK2: // SCI2.1
+			case GID_SQ6: // SCI2.1
+			case GID_TORIN: // SCI2.1
+			case GID_QFG4: // SCI2.1
+				useGlobal90 = true;
+				break;
+			case GID_LSL6: // SCI2.1
+				// TODO: Uses gameFlags array
+				break;
+			// TODO: Unknown at the moment:
+			// Shivers - seems not to use global 90
+			// Police Quest: SWAT - unable to check
+			// Police Quest 4 - unable to check
+			// Mixed Up Mother Goose - unable to check
+			// Phantasmagoria - seems to use global 90, unable to check for subtitles atm
+			default:
+				return;
+			}
+			break;
+#endif // ENABLE_SCI32
+		default:
+			return;
+		}
+
 		bool subtitlesOn = ConfMan.getBool("subtitles");
 		bool speechOn = !ConfMan.getBool("speech_mute");
 
-		if (subtitlesOn && !speechOn) {
-			_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 1);	// subtitles
-		} else if (!subtitlesOn && speechOn) {
-			_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 2);	// speech
-		} else if (subtitlesOn && speechOn) {
-			// Is it a game that supports simultaneous speech and subtitles?
-			switch (_gameId) {
-			case GID_SQ4:
-			case GID_FREDDYPHARKAS:
-			case GID_ECOQUEST:
-			case GID_LSL6:
-			case GID_LAURABOW2:
-			case GID_KQ6:
-				_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 3);	// speech + subtitles
-				break;
-			default:
-				// Game does not support speech and subtitles, set it to speech
+		if (useGlobal90) {
+			if (subtitlesOn && !speechOn) {
+				_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 1);	// subtitles
+			} else if (!subtitlesOn && speechOn) {
 				_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 2);	// speech
+			} else if (subtitlesOn && speechOn) {
+				// Is it a game that supports simultaneous speech and subtitles?
+				switch (_gameId) {
+				case GID_SQ4:
+				case GID_FREDDYPHARKAS:
+				case GID_ECOQUEST:
+				case GID_LSL6:
+				case GID_LAURABOW2:
+				case GID_KQ6:
+#ifdef ENABLE_SCI32
+				// Unsure about Gabriel Knight 2
+				case GID_KQ7: // SCI2.1
+				case GID_GK1: // SCI2
+				case GID_SQ6: // SCI2.1, SQ6 seems to always use subtitles anyway
+				case GID_TORIN: // SCI2.1
+				case GID_QFG4: // SCI2.1
+#endif // ENABLE_SCI32
+					_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 3);	// speech + subtitles
+					break;
+				default:
+					// Game does not support speech and subtitles, set it to speech
+					_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 2);	// speech
+				}
 			}
 		}
 	}
@@ -978,4 +1152,10 @@ void SciEngine::loadMacExecutable() {
 	}
 }
 
+uint32 SciEngine::getTickCount() {
+	return g_engine->getTotalPlayTime() * 60 / 1000;
+}
+void SciEngine::setTickCount(const uint32 ticks) {
+	return g_engine->setTotalPlayTime(ticks * 1000 / 60);
+}
 } // End of namespace Sci

@@ -24,30 +24,16 @@
 #define ACCESS_MARTIAN_RESOURCES_H
 
 #include "common/scummsys.h"
+#include "access/resources.h"
 
 namespace Access {
 
 namespace Martian {
 
-extern const char *const FILENAMES[];
-
 extern const int SIDEOFFR[];
 extern const int SIDEOFFL[];
 extern const int SIDEOFFU[];
 extern const int SIDEOFFD[];
-
-extern const byte *const CURSORS[4];
-
-extern const int _travelPos[][2];
-
-extern const int INVENTORY_SIZE;
-extern const char *const INVENTORY_NAMES[];
-
-extern const byte *const ROOM_TABLE[];
-extern const char *const ROOM_DESCR[];
-extern const int ROOM_NUMB;
-
-extern const byte *const CHARTBL_MM[];
 
 extern const int SIDEOFFR[];
 extern const int SIDEOFFL[];
@@ -60,15 +46,23 @@ extern const byte ICON_PALETTE[];
 extern const int RMOUSE[10][2];
 
 extern byte HELP[];
-extern const char *const _askTBL[];
+extern const char *const ASK_TBL[];
 extern const char *const TRAVDATA[];
 
-extern const byte DEATH_SCREENS[];
-extern const char *const DEATHMESSAGE[];
 extern const char *const SPEC7MESSAGE;
 
 extern const byte _byte1EEB5[];
 extern const int PICTURERANGE[][2];
+
+class MartianResources : public Resources {
+public:
+
+public:
+	MartianResources(AccessEngine *vm) : Resources(vm) {}
+	virtual ~MartianResources() {}
+};
+
+#define MMRES (*((Martian::MartianResources *)_vm->_res))
 
 } // End of namespace Martian
 } // End of namespace Access

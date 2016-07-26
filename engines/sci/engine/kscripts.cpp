@@ -229,7 +229,7 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 	uint16 address = scr->validateExportFunc(index, true);
 
 	// Point to the heap for SCI1.1 - SCI2.1 games
-	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1)
+	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE)
 		address += scr->getScriptSize();
 
 	// Bugfix for the intro speed in PQ2 version 1.002.011.
@@ -260,9 +260,6 @@ reg_t kDisposeScript(EngineState *s, int argc, reg_t *argv) {
 	if (argc != 2) {
 		return s->r_acc;
 	} else {
-		// This exists in the KQ5CD and GK1 interpreter. We know it is used
-		// when GK1 starts up, before the Sierra logo.
-		warning("kDisposeScript called with 2 parameters, still untested");
 		return argv[1];
 	}
 }

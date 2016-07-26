@@ -260,7 +260,7 @@ private:
 	}
 
 	static inline byte getRGBLookupEntry(const byte *colorMap, uint16 index) {
-		return colorMap[s_defaultPaletteLookup[CLIP<int>(index, 0, 1024)]];
+		return colorMap[s_defaultPaletteLookup[CLIP<int>(index, 0, 1023)]];
 	}
 };
 

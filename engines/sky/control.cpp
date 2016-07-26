@@ -167,7 +167,7 @@ ControlStatus::~ControlStatus() {
 
 void ControlStatus::setToText(const char *newText) {
 	char tmpLine[256];
-	strcpy(tmpLine, newText);
+	Common::strlcpy(tmpLine, newText, 256);
 	if (_textData) {
 		_statusText->flushForRedraw();
 		free(_textData);
@@ -324,7 +324,11 @@ void Control::initPanel() {
 }
 
 void Control::buttonControl(ConResource *pButton) {
-	char autoSave[] = "Restore Autosave";
+	char autoSave[50] = "Restore Autosave";
+
+	if (Common::parseLanguage(ConfMan.get("language")) == Common::RU_RUS)
+		strncpy(autoSave, "Zarpyzit/ abtocoxpahehie", 50);
+
 	if (pButton == NULL) {
 		free(_textSprite);
 		_textSprite = NULL;
@@ -398,7 +402,8 @@ void Control::animClick(ConResource *pButton) {
 void Control::drawMainPanel() {
 	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 	_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
-	_controlPanel->drawToScreen(NO_MASK);
+	if (_controlPanel)
+		_controlPanel->drawToScreen(NO_MASK);
 	_exitButton->drawToScreen(NO_MASK);
 	_savePanButton->drawToScreen(NO_MASK);
 	_restorePanButton->drawToScreen(NO_MASK);
@@ -525,8 +530,13 @@ void Control::doControlPanel() {
 }
 
 uint16 Control::handleClick(ConResource *pButton) {
-	char quitDos[] = "Quit to DOS?";
-	char restart[] = "Restart?";
+	char quitDos[50] = "Quit to DOS?";
+	char restart[50] = "Restart?";
+
+	if (Common::parseLanguage(ConfMan.get("language")) == Common::RU_RUS) {
+		strncpy(quitDos, "B[uti b DOC?", 50);
+		strncpy(restart, "Hobaq irpa?", 50);
+	}
 
 	switch (pButton->_onClick) {
 	case DO_NOTHING:
@@ -1328,13 +1338,13 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 		displayMessage(0, "Unknown save file revision (%d)", saveRev);
 		return RESTORE_FAILED;
 	} else if (saveRev < OLD_SAVEGAME_TYPE) {
-		displayMessage(0, "This savegame version is unsupported.");
+		displayMessage(0, "This saved game version is unsupported.");
 		return RESTORE_FAILED;
 	}
 	LODSD(srcPos, gameVersion);
 	if (gameVersion != SkyEngine::_systemVars.gameVersion) {
 		if ((!SkyEngine::isCDVersion()) || (gameVersion < 365)) { // cd versions are compatible
-			displayMessage(NULL, "This savegame was created by\n"
+			displayMessage(NULL, "This saved game was created by\n"
 				"Beneath a Steel Sky v0.0%03d\n"
 				"It cannot be loaded by this version (v0.0%3d)",
 				gameVersion, SkyEngine::_systemVars.gameVersion);
@@ -1562,8 +1572,13 @@ void Control::showGameQuitMsg() {
 
 	screenData = _skyScreen->giveCurrent();
 
-	_skyText->displayText(_quitTexts[SkyEngine::_systemVars.language * 2 + 0], textBuf1, true, 320, 255);
-	_skyText->displayText(_quitTexts[SkyEngine::_systemVars.language * 2 + 1], textBuf2, true, 320, 255);
+	if (Common::parseLanguage(ConfMan.get("language")) == Common::RU_RUS) {
+		_skyText->displayText(_quitTexts[8 * 2 + 0], textBuf1, true, 320, 255);
+		_skyText->displayText(_quitTexts[8 * 2 + 1], textBuf2, true, 320, 255);
+	} else {
+		_skyText->displayText(_quitTexts[SkyEngine::_systemVars.language * 2 + 0], textBuf1, true, 320, 255);
+		_skyText->displayText(_quitTexts[SkyEngine::_systemVars.language * 2 + 1], textBuf2, true, 320, 255);
+	}
 	uint8 *curLine1 = textBuf1 + sizeof(DataFileHeader);
 	uint8 *curLine2 = textBuf2 + sizeof(DataFileHeader);
 	uint8 *targetLine = screenData + GAME_SCREEN_WIDTH * 80;
@@ -1584,7 +1599,7 @@ void Control::showGameQuitMsg() {
 	free(textBuf2);
 }
 
-char Control::_quitTexts[16][35] = {
+char Control::_quitTexts[18][35] = {
 	"Game over player one",
 	"BE VIGILANT",
 	"Das Spiel ist aus.",
@@ -1600,7 +1615,9 @@ char Control::_quitTexts[16][35] = {
 	"Fim de jogo para o jogador um",
 	"BE VIGILANT",
 	"Game over player one",
-	"BE VIGILANT"
+	"BE VIGILANT",
+	"Irpa okohseha, irpok 1",
+	"JYD\x96 JDITELEH"
 };
 
 uint8 Control::_crossImg[594] = {

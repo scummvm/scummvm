@@ -41,7 +41,6 @@
 #include "gob/video.h"
 #include "gob/videoplayer.h"
 #include "gob/save/saveload.h"
-#include "gob/sound/sound.h"
 
 namespace Gob {
 

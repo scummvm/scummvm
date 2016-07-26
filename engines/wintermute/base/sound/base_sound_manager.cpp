@@ -100,15 +100,14 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::M
 	BaseSoundBuffer *sound;
 
 	Common::String useFilename = filename;
+	useFilename.toLowercase();
 	// try to switch WAV to OGG file (if available)
-	AnsiString ext = PathUtil::getExtension(filename);
-	if (StringUtil::compareNoCase(ext, "wav")) {
-		AnsiString path = PathUtil::getDirectoryName(filename);
-		AnsiString name = PathUtil::getFileNameWithoutExtension(filename);
-
-		AnsiString newFile = PathUtil::combine(path, name + "ogg");
-		if (BaseFileManager::getEngineInstance()->hasFile(newFile)) {
-			useFilename = newFile;
+	if (useFilename.hasSuffix(".wav")) {
+		Common::String oggFilename = useFilename;
+		oggFilename.erase(oggFilename.size() - 4);
+		oggFilename = oggFilename + ".ogg";
+		if (BaseFileManager::getEngineInstance()->hasFile(oggFilename)) {
+			useFilename = oggFilename;
 		}
 	}
 

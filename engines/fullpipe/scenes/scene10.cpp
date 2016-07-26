@@ -82,7 +82,7 @@ void sceneHandler10_clickGum() {
 				int y = g_vars->scene10_gum->_oy - 48;
 
 				if (abs(x - g_fp->_aniMan->_ox) > 1 || abs(y - g_fp->_aniMan->_oy) > 1) {
-					MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, x, y, 1, ST_MAN_RIGHT);
+					MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, x, y, 1, ST_MAN_RIGHT);
 					if (mq) {
 						ExCommand *ex = new ExCommand(0, 17, MSG_SC10_CLICKGUM, 0, 0, 0, 1, 0, 0, 0);
 						ex->_excFlags = 2;

@@ -40,7 +40,6 @@ GameFeatures::GameFeatures(SegManager *segMan, Kernel *kernel) : _segMan(segMan)
 	_moveCountType = kMoveCountUninitialized;
 #ifdef ENABLE_SCI32
 	_sci21KernelType = SCI_VERSION_NONE;
-	_sci2StringFunctionType = kSci2StringFunctionUninitialized;
 #endif
 	_usesCdTrack = Common::File::exists("cdaudio.map");
 	if (!ConfMan.getBool("use_cdaudio"))
@@ -143,8 +142,8 @@ SciVersion GameFeatures::detectDoSoundType() {
 			//  SCI0LATE. Although the last SCI0EARLY game (lsl2) uses SCI0LATE resources
 			_doSoundType = g_sci->getResMan()->detectEarlySound() ? SCI_VERSION_0_EARLY : SCI_VERSION_0_LATE;
 #ifdef ENABLE_SCI32
-		} else if (getSciVersion() >= SCI_VERSION_2_1) {
-			_doSoundType = SCI_VERSION_2_1;
+		} else if (getSciVersion() >= SCI_VERSION_2_1_EARLY) {
+			_doSoundType = SCI_VERSION_2_1_EARLY;
 #endif
 		} else if (SELECTOR(nodePtr) == -1) {
 			// No nodePtr selector, so this game is definitely using newer
@@ -271,7 +270,7 @@ SciVersion GameFeatures::detectLofsType() {
 			return _lofsType;
 		}
 
-		if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
+		if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
 			// SCI1.1 type, i.e. we compensate for the fact that the heap is attached
 			// to the end of the script
 			_lofsType = SCI_VERSION_1_1;
@@ -475,7 +474,7 @@ bool GameFeatures::autoDetectSci21KernelType() {
 		}
 
 		warning("autoDetectSci21KernelType(): Sound object not loaded, assuming a SCI2.1 table");
-		_sci21KernelType = SCI_VERSION_2_1;
+		_sci21KernelType = SCI_VERSION_2_1_EARLY;
 		return true;
 	}
 
@@ -514,7 +513,7 @@ bool GameFeatures::autoDetectSci21KernelType() {
 				_sci21KernelType = SCI_VERSION_2;
 				return true;
 			} else if (kFuncNum == 0x75) {
-				_sci21KernelType = SCI_VERSION_2_1;
+				_sci21KernelType = SCI_VERSION_2_1_EARLY;
 				return true;
 			}
 		}
@@ -532,65 +531,6 @@ SciVersion GameFeatures::detectSci21KernelType() {
 	}
 	return _sci21KernelType;
 }
-
-Sci2StringFunctionType GameFeatures::detectSci2StringFunctionType() {
-	if (_sci2StringFunctionType == kSci2StringFunctionUninitialized) {
-		if (getSciVersion() <= SCI_VERSION_1_1) {
-			error("detectSci21StringFunctionType() called from SCI1.1 or earlier");
-		} else if (getSciVersion() == SCI_VERSION_2) {
-			// SCI2 games are always using the old type
-			_sci2StringFunctionType = kSci2StringFunctionOld;
-		} else if (getSciVersion() == SCI_VERSION_3) {
-			// SCI3 games are always using the new type
-			_sci2StringFunctionType = kSci2StringFunctionNew;
-		} else {	// SCI2.1
-			if (!autoDetectSci21StringFunctionType())
-				_sci2StringFunctionType = kSci2StringFunctionOld;
-			else
-				_sci2StringFunctionType = kSci2StringFunctionNew;
-		}
-	}
-
-	debugC(1, kDebugLevelVM, "Detected SCI2 kString type: %s", (_sci2StringFunctionType == kSci2StringFunctionOld) ? "old" : "new");
-
-	return _sci2StringFunctionType;
-}
-
-bool GameFeatures::autoDetectSci21StringFunctionType() {
-	// Look up the script address
-	reg_t addr = getDetectionAddr("Str", SELECTOR(size));
-
-	if (!addr.getSegment())
-		return false;
-
-	uint16 offset = addr.getOffset();
-	Script *script = _segMan->getScript(addr.getSegment());
-
-	while (true) {
-		int16 opparams[4];
-		byte extOpcode;
-		byte opcode;
-		offset += readPMachineInstruction(script->getBuf(offset), extOpcode, opparams);
-		opcode = extOpcode >> 1;
-
-		// Check for end of script
-		if (opcode == op_ret || offset >= script->getBufSize())
-			break;
-
-		if (opcode == op_callk) {
-			uint16 kFuncNum = opparams[0];
-
-			// SCI2.1 games which use the new kString functions call kString(8).
-			// Earlier ones call the callKernel script function, but not kString
-			// directly
-			if (_kernel->getKernelName(kFuncNum) == "String")
-				return true;
-		}
-	}
-
-	return false;	// not found a call to kString
-}
-
 #endif
 
 bool GameFeatures::autoDetectMoveCountType() {

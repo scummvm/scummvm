@@ -469,7 +469,7 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 		while (!g_globals->_events.getEvent(event, EVENT_KEYPRESS | EVENT_BUTTON_DOWN | EVENT_MOUSE_MOVE) &&
 				!g_vm->shouldQuit()) {
 			g_system->delayMillis(10);
-			GLOBALS._screenSurface.updateScreen();
+			GLOBALS._screen.update();
 		}
 		if (g_vm->shouldQuit())
 			break;

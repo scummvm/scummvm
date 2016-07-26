@@ -28,6 +28,7 @@
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/sound.h"
 
+#include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "common/scummsys.h"
 

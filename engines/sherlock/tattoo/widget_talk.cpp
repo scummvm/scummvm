@@ -100,7 +100,7 @@ void WidgetTalk::load() {
 
 	// Set up the surface
 	_surface.create(_bounds.width(), _bounds.height());
-	_surface.fill(TRANSPARENCY);
+	_surface.clear(TRANSPARENCY);
 
 	// Form the background for the new window
 	makeInfoArea();
@@ -389,7 +389,7 @@ void WidgetTalk::render(Highlight highlightMode) {
 			if (highlightMode == HL_NO_HIGHLIGHTING || _statementLines[idx]._num == _selector ||
 					_statementLines[idx]._num == _oldSelector) {
 				// Erase the line contents
-				_surface.fillRect(Common::Rect(3, yp, _surface.w() - BUTTON_SIZE - 3, yp + _surface.fontHeight()), TRANSPARENCY);
+				_surface.fillRect(Common::Rect(3, yp, _surface.width() - BUTTON_SIZE - 3, yp + _surface.fontHeight()), TRANSPARENCY);
 
 				// Different coloring based on whether the option has been previously chosen or not
 				byte color = (!talk._talkHistory[talk._converseNum][_statementLines[idx]._num]) ?

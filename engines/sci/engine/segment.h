@@ -203,23 +203,24 @@ struct List {
 
 struct Hunk {
 	void *mem;
-	unsigned int size;
+	uint32 size;
 	const char *type;
 };
 
 template<typename T>
 struct SegmentObjTable : public SegmentObj {
 	typedef T value_type;
-	struct Entry : public T {
+	struct Entry {
+		T data;
 		int next_free; /* Only used for free entries */
 	};
 	enum { HEAPENTRY_INVALID = -1 };
 
-
 	int first_free; /**< Beginning of a singly linked list for entries */
 	int entries_used; /**< Statistical information */
 
-	Common::Array<Entry> _table;
+	typedef Common::Array<Entry> ArrayType;
+	ArrayType _table;
 
 public:
 	SegmentObjTable(SegmentType type) : SegmentObj(type) {
@@ -272,6 +273,14 @@ public:
 				tmp.push_back(make_reg(segId, i));
 		return tmp;
 	}
+
+	uint size() const { return _table.size(); }
+
+	T &at(uint index) { return _table[index].data; }
+	const T &at(uint index) const { return _table[index].data; }
+
+	T &operator[](uint index) { return at(index); }
+	const T &operator[](uint index) const { return at(index); }
 };
 
 
@@ -323,8 +332,8 @@ struct HunkTable : public SegmentObjTable<Hunk> {
 	}
 
 	void freeEntryContents(int idx) {
-		free(_table[idx].mem);
-		_table[idx].mem = 0;
+		free(at(idx).mem);
+		at(idx).mem = 0;
 	}
 
 	virtual void freeEntry(int idx) {
@@ -502,7 +511,7 @@ struct StringTable : public SegmentObjTable<SciString> {
 	StringTable() : SegmentObjTable<SciString>(SEG_TYPE_STRING) {}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) {
-		_table[sub_addr.getOffset()].destroy();
+		at(sub_addr.getOffset()).destroy();
 		freeEntry(sub_addr.getOffset());
 	}
 

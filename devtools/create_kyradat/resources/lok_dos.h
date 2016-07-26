@@ -1898,7 +1898,7 @@ static const byte k1OutroReunionSeqDOS[1351] = {
 
 static const ByteProvider k1OutroReunionSeqDOSProvider = { ARRAYSIZE(k1OutroReunionSeqDOS), k1OutroReunionSeqDOS };
 
-static const char *const k1AudioTracksDOS[8] = {
+static const char *const k1AudioTracksDOS[9] = {
 	"KYRA1A",
 	"KYRA1B",
 	"KYRA2A",
@@ -1906,16 +1906,11 @@ static const char *const k1AudioTracksDOS[8] = {
 	"KYRA4A",
 	"KYRA4B",
 	"KYRA5A",
-	"KYRA5B"
+	"KYRA5B",
+	"KYRAMISC"
 };
 
 static const StringListProvider k1AudioTracksDOSProvider = { ARRAYSIZE(k1AudioTracksDOS), k1AudioTracksDOS };
-
-static const char *const k1AudioTracks2DOS[1] = {
-	"kyramisc"
-};
-
-static const StringListProvider k1AudioTracks2DOSProvider = { ARRAYSIZE(k1AudioTracks2DOS), k1AudioTracks2DOS };
 
 static const char *const k1AudioTracksIntroDOS[1] = {
 	"intro"

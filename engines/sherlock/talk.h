@@ -215,10 +215,10 @@ protected:
 	OpcodeReturn cmdWalkToCAnimation(const byte *&str);
 protected:
 	/**
-	 * Checks, if a character is an opcode
+	 * Checks if a character is an opcode
 	 */
 	bool isOpcode(byte checkCharacter);
-	
+
 	/**
 	 * Form a table of the display indexes for statements
 	 */

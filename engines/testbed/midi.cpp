@@ -27,6 +27,7 @@
 #include "graphics/cursorman.h"
 
 #include "audio/mididrv.h"
+#include "audio/midiparser.h"
 
 #include "testbed/midi.h"
 #include "testbed/testbed.h"

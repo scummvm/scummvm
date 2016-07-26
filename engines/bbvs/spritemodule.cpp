@@ -32,7 +32,8 @@ byte *Sprite::getRow(int y) {
 }
 
 SpriteModule::SpriteModule()
-	: _spritesCount(0), _paletteStart(0), _paletteCount(0), _spriteData(0) {
+	: _spritesCount(0), _paletteStart(0), _paletteCount(0), _spriteData(0), _spriteDataSize(0),
+	_spriteTblOffs(0), _paletteOffs(0) {
 }
 
 SpriteModule::~SpriteModule() {

@@ -365,8 +365,8 @@ bool BaseObject::checkEndOfSequence() {
 
 			if (seq == 99) {
 				--_frameNumber;
-				screen._backBuffer1.transBlitFrom(*_imageFrame, _position);
-				screen._backBuffer2.transBlitFrom(*_imageFrame, _position);
+				screen._backBuffer1.SHtransBlitFrom(*_imageFrame, _position);
+				screen._backBuffer2.SHtransBlitFrom(*_imageFrame, _position);
 				_type = INVALID;
 			} else if (IS_ROSE_TATTOO && _talkSeq && seq == 0) {
 				setObjTalkSequence(_talkSeq);
@@ -539,7 +539,7 @@ int BaseObject::checkNameForCodes(const Common::String &name, FixedTextActionId 
 			// G: Have object go somewhere
 			// A: Add onto existing co-ordinates
 			Common::String sx(name.c_str() + 2, name.c_str() + 5);
-			Common::String sy(name.c_str() + 6, name.c_str() + 9);
+			Common::String sy(name.c_str() + 5, name.c_str() + 8);
 
 			if (ch == 'G')
 				_position = Common::Point(atoi(sx.c_str()), atoi(sy.c_str()));
@@ -620,6 +620,7 @@ void Sprite::clear() {
 	_images = nullptr;
 	_imageFrame = nullptr;
 	_walkCount = 0;
+	_oldWalkSequence = 0;
 	_allow = 0;
 	_frameNumber = 0;
 	_position.x = _position.y = 0;
@@ -634,7 +635,10 @@ void Sprite::clear() {
 	_misc = 0;
 	_altImages = nullptr;
 	_altSeq = 0;
-	Common::fill(&_stopFrames[0], &_stopFrames[8], (ImageFrame *)nullptr);
+	_centerWalk = 0;
+
+	for (int i = 0; i < 8; i++)
+		_stopFrames[i] = nullptr;
 }
 
 void Sprite::setImageFrame() {
@@ -1059,6 +1063,11 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 		for (int idx = 0; idx < 6; ++idx)
 			_use[idx].load(s, true);
 
+		// WORKAROUND: Fix German version using hatpin/pin in pillow in Pratt's loft
+		if (_use[1]._target == "Nadel" && _use[1]._verb == "Untersuche"
+				&& _use[2]._target == "Nadel" && _use[2]._verb == "Untersuche")
+			_use[1]._target = "Alte Nadel";
+
 		_quickDraw = s.readByte();
 		_scaleVal = s.readUint16LE();
 		_requiredFlag[1] = s.readSint16LE();
@@ -1336,7 +1345,7 @@ void Object::adjustObject() {
 			frame = 0;
 
 		int imgNum = _sequences[frame];
-		if (imgNum > _maxFrames)
+		if (imgNum > _maxFrames || imgNum == 0)
 			imgNum = 1;
 
 		_imageFrame = &(*_images)[imgNum - 1];
@@ -1422,8 +1431,19 @@ int Object::pickUpObject(FixedTextActionId fixedTextActionId) {
 			ui.clearInfo();
 
 			Common::String itemName = _description;
-			itemName.setChar(tolower(itemName[0]), 0);
-			screen.print(Common::Point(0, INFO_LINE + 1), COL_INFO_FOREGROUND, "Picked up %s", itemName.c_str());
+
+			// It's an item, make it lowercase
+			switch (_vm->getLanguage()) {
+			case Common::DE_DEU:
+				// don't do this for German version
+				break;
+			default:
+				// do it for English + Spanish version
+				itemName.setChar(tolower(itemName[0]), 0);
+				break;
+			}
+
+			screen.print(Common::Point(0, INFO_LINE + 1), COL_INFO_FOREGROUND, fixedText.getObjectPickedUpText(), itemName.c_str());
 			ui._menuCounter = 25;
 		}
 	}

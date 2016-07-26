@@ -50,6 +50,7 @@ private:
 	bool Cmd_SetObj(int argc, const char **argv);
 	bool Cmd_RunOpcode(int argc, const char **argv);
 	bool Cmd_Agiver(int argc, const char **argv);
+	bool Cmd_Version(int argc, const char **argv);
 	bool Cmd_Flags(int argc, const char **argv);
 	bool Cmd_Vars(int argc, const char **argv);
 	bool Cmd_Objs(int argc, const char **argv);
@@ -61,6 +62,13 @@ private:
 	bool Cmd_Cont(int argc, const char **argv);
 	bool Cmd_Room(int argc, const char **argv);
 	bool Cmd_BT(int argc, const char **argv);
+	bool Cmd_ShowMap(int argc, const char **argv);
+	bool Cmd_ScreenObj(int argc, const char **argv);
+	bool Cmd_VmVars(int argc, const char **argv);
+	bool Cmd_VmFlags(int argc, const char **argv);
+	bool Cmd_DisableAutomaticSave(int argc, const char **argv);
+
+	bool parseInteger(const char *argument, int &result);
 
 private:
 	AgiEngine *_vm;

@@ -234,7 +234,7 @@ void GfxMacIconBar::remapColors(Graphics::Surface *surf, const byte *palette) {
 		byte g = palette[color * 3 + 1];
 		byte b = palette[color * 3 + 2];
 
-		*pixels++ = g_sci->_gfxPalette->findMacIconBarColor(r, g, b);
+		*pixels++ = g_sci->_gfxPalette16->findMacIconBarColor(r, g, b);
 	}
 }
 

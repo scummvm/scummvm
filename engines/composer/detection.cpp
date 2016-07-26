@@ -38,7 +38,7 @@ int ComposerEngine::getGameType() const {
 }
 
 const char *ComposerEngine::getGameId() const {
-	return _gameDescription->desc.gameid;
+	return _gameDescription->desc.gameId;
 }
 
 uint32 ComposerEngine::getFeatures() const {
@@ -81,12 +81,12 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
-	// Magic Tales: Baba Yaga and the Magic Geese Mac - from bug #3466402
+	// Magic Tales: Baba Yaga and the Magic Geese Mac - from bug #3466402, #7025
 	{
 		{
 			"babayaga",
 			"",
-			AD_ENTRY1("Baba Yaga", "ae3a4445f42fe10253da7ee4ea0d37"),
+			AD_ENTRY1s("Baba Yaga", "ae3a4445f42fe10253da7ee4ea0d37d6", 44321),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
@@ -253,6 +253,36 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV2
 	},
 
+	{ // Provided by WindlePoons, "100% Kids Darby & Gregor" Pack. Bugreport #6825
+		{
+			"darby",
+			0,
+			{
+				{"book.ini", 0, "285308372f7dddff2ca5a25c9192cf5c", 2545},
+				{"page99.rsc", 0, "40b4879e9ba6a34d6aa2a9d2e30c5ef7", 1286480},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV2
+	},
+
+	{ // Provided by Niv Baehr, Bugreport #6878
+		{
+			"darby",
+			0,
+			AD_ENTRY1("page99.rsc", "183463d18c050563dcdec2d9f9670515"),
+			Common::HE_ISR,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV2
+	},
+
 	{
 		{
 			"gregory",
@@ -289,6 +319,23 @@ static const ComposerGameDescription gameDescriptions[] = {
 			0,
 			AD_ENTRY1("book.ini", "e54fc5c00de5f94e908a969e445af5d0"),
 			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV2
+	},
+
+	{ // Provided by WindlePoons, "100% Kids Darby & Gregor" Pack. Bugreport #6825
+		{
+			"gregory",
+			0,
+			{
+				{"book.ini", 0, "e54fc5c00de5f94e908a969e445af5d0", 2234},
+				{"page99.rsc", 0, "1ae6610de621a9901bf87b874fbf331f", 388644},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
@@ -386,7 +433,7 @@ static const char *directoryGlobs[] = {
 class ComposerMetaEngine : public AdvancedMetaEngine {
 public:
 	ComposerMetaEngine() : AdvancedMetaEngine(Composer::gameDescriptions, sizeof(Composer::ComposerGameDescription), composerGames) {
-		_singleid = "composer";
+		_singleId = "composer";
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}

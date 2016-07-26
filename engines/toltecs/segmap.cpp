@@ -27,6 +27,11 @@
 namespace Toltecs {
 
 SegmentMap::SegmentMap(ToltecsEngine *vm) : _vm(vm) {
+	_maskRectData = NULL;
+	memset(_deadEndPathRects, 0, sizeof(_closedPathRects));
+	_closedPathRectsCount = 0;
+	_deadEndPathRectsCount = 0;
+	_pathNodesCount = 0;
 }
 
 SegmentMap::~SegmentMap() {

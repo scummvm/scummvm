@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef PEGASUS_H
-#define PEGASUS_H
+#ifndef PEGASUS_PEGASUS_H
+#define PEGASUS_PEGASUS_H
 
 #include "common/list.h"
 #include "common/macresman.h"

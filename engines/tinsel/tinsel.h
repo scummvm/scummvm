@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TINSEL_H
-#define TINSEL_H
+#ifndef TINSEL_TINSEL_H
+#define TINSEL_TINSEL_H
 
 #include "common/scummsys.h"
 #include "common/system.h"
@@ -251,4 +251,4 @@ void CdHasChanged();
 
 } // End of namespace Tinsel
 
-#endif /* TINSEL_H */
+#endif /* TINSEL_TINSEL_H */

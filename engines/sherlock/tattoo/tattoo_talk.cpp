@@ -341,6 +341,10 @@ OpcodeReturn TattooTalk::cmdNextSong(const byte *&str) {
 		music._nextSongName += str[idx];
 	str += 7;
 
+	// WORKAROUND: Original game set wrong music name at the end of the introduction sequence
+	if (_scriptName == "prol80p" && music._nextSongName == "default")
+		music._nextSongName = "01cue90";
+
 	return RET_SUCCESS;
 }
 
@@ -791,7 +795,10 @@ OpcodeReturn TattooTalk::cmdTalkInterruptsDisable(const byte *&str) { error("Dum
 // Dummy opcode
 OpcodeReturn TattooTalk::cmdTalkInterruptsEnable(const byte *&str) { error("Dummy opcode cmdTalkInterruptsEnable called"); }
 
-OpcodeReturn TattooTalk::cmdTurnSoundsOff(const byte *&str) { error("TODO: script opcode (cmdTurnSoundsOff)"); }
+OpcodeReturn TattooTalk::cmdTurnSoundsOff(const byte *&str) {
+	_vm->_sound->stopSound();
+	return RET_SUCCESS;
+}
 
 OpcodeReturn TattooTalk::cmdWalkHolmesAndNPCToCAnimation(const byte *&str) {
 	int npcNum = *++str;

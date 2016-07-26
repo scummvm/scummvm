@@ -34,11 +34,12 @@
 namespace MADS {
 
 enum AnimFlag {
-	ANIMFLAG_DITHER				= 0x1000,	// Dither to 16 colors
-	ANIMFLAG_CUSTOM_FONT		= 0x2000,	// Load ccustom font
-	ANIMFLAG_LOAD_BACKGROUND	= 0x0100,	// Load background
+	ANIMFLAG_LOAD_BACKGROUND	  = 0x0100,	// Load background
 	ANIMFLAG_LOAD_BACKGROUND_ONLY = 0x0200,	// Load background only
-	ANIMFLAG_ANIMVIEW			= 0x4000	// Cutscene animation
+
+	ANIMFLAG_DITHER				  = 0x0001,	// Dither to 16 colors
+	ANIMFLAG_CUSTOM_FONT		  = 0x2000,	// Load custom fonts
+	ANIMFLAG_ANIMVIEW			  = 0x4000	// Cutscene animation
 };
 
 enum AnimBgType {
@@ -189,8 +190,10 @@ public:
 	Common::Array<AnimUIEntry> _uiEntries;
 	Common::Array<AnimMessage> _messages;
 	bool _resetFlag;
+	bool _canChangeView;
 	int _currentFrame;
 	int _oldFrameEntry;
+	int _dynamicHotspotIndex;
 
 	static Animation *init(MADSEngine *vm, Scene *scene);
 	/*
@@ -224,8 +227,8 @@ public:
 	 */
 	void eraseSprites();
 
-	void setNextFrameTimer(int frameNumber);
-	int getNextFrameTimer() const { return _nextFrameTimer; }
+	void setNextFrameTimer(uint32 newTimer);
+	uint32 getNextFrameTimer() const { return _nextFrameTimer; }
 	void setCurrentFrame(int frameNumber);
 	int getCurrentFrame() const { return _currentFrame; }
 
@@ -235,6 +238,8 @@ public:
 	void resetSpriteSetsCount() { _header._spriteSetsCount = 0; } // CHECKME: See if it doesn't leak the memory when the destructor is called
 
 	SpriteAsset *getSpriteSet(int idx) { return _spriteSets[idx]; }
+
+	Common::Point getFramePosAdjust(int idx);
 };
 
 } // End of namespace MADS

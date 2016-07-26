@@ -20,6 +20,7 @@
  *
  */
 #include "common/system.h"
+#include "common/stream.h"
 
 #include "hugo/hugo.h"
 #include "hugo/text.h"

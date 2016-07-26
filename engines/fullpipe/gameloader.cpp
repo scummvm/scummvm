@@ -110,10 +110,10 @@ GameLoader::~GameLoader() {
 }
 
 bool GameLoader::load(MfcArchive &file) {
-	debug(5, "GameLoader::load()");
+	debug(1, "GameLoader::load()");
 
 	_gameName = file.readPascalString();
-	debug(6, "_gameName: %s", _gameName);
+	debug(1, "_gameName: %s", _gameName);
 
 	_gameProject = new GameProject();
 
@@ -126,13 +126,13 @@ bool GameLoader::load(MfcArchive &file) {
 	}
 
 	_gameName = file.readPascalString();
-	debug(6, "_gameName: %s", _gameName);
+	debug(1, "_gameName: %s", _gameName);
 
 	_inventory.load(file);
 
 	_interactionController->load(file);
 
-	debug(6, "sceneTag count: %d", _gameProject->_sceneTagList->size());
+	debug(1, "sceneTag count: %d", _gameProject->_sceneTagList->size());
 
 	_sc2array.resize(_gameProject->_sceneTagList->size());
 
@@ -142,7 +142,7 @@ bool GameLoader::load(MfcArchive &file) {
 
 		snprintf(tmp, 11, "%04d.sc2", it->_sceneId);
 
-		debug(2, "sc: %s", tmp);
+		debug(1, "sc: %s", tmp);
 
 		_sc2array[i].loadFile((const char *)tmp);
 	}
@@ -151,6 +151,8 @@ bool GameLoader::load(MfcArchive &file) {
 
 	_field_FA = file.readUint16LE();
 	_field_F8 = file.readUint16LE();
+
+	debug(1, "_field_FA: %d\n_field_F8: %d", _field_FA, _field_F8);
 
 	_gameVar = (GameVar *)file.readClass();
 
@@ -419,7 +421,7 @@ bool GameLoader::unloadScene(int sceneId) {
 	if (_sc2array[sceneTag]._isLoaded)
 		saveScenePicAniInfos(sceneId);
 
-	_sc2array[sceneTag]._motionController->freeItems();
+	_sc2array[sceneTag]._motionController->detachAllObjects();
 
 	delete tag->_scene;
 	tag->_scene = 0;

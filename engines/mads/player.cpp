@@ -32,6 +32,34 @@ const int Player::_directionListIndexes[32] = {
 	0, 7, 4, 3, 6, 0, 2, 5, 0, 1, 9, 4, 1, 2, 7, 9, 3, 8, 9, 6, 7, 2, 3, 6, 1, 7, 9, 4, 7, 8, 0, 0
 };
 
+/*------------------------------------------------------------------------*/
+
+void StopWalkerEntry::synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(_stack);
+	s.syncAsSint16LE(_trigger);
+}
+
+/*------------------------------------------------------------------------*/
+
+void StopWalkers::synchronize(Common::Serializer &s) {
+	StopWalkerEntry rec;
+	int count = size();
+	s.syncAsUint16LE(count);
+
+	if (s.isLoading()) {
+		clear();
+		for (int idx = 0; idx < count; ++idx) {
+			rec.synchronize(s);
+			push(rec);
+		}
+	} else {
+		for (int idx = 0; idx < count; ++idx)
+			(*this)[idx].synchronize(s);
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
 Player::Player(MADSEngine *vm)
 	: _vm(vm) {
 	_action = nullptr;
@@ -56,7 +84,6 @@ Player::Player(MADSEngine *vm)
 	_special = 0;
 	_ticksAmount = 0;
 	_priorTimer = 0;
-	_trigger = 0;
 	_scalingVelocity = false;
 	_spritesChanged = false;
 	_forceRefresh = false;
@@ -70,7 +97,6 @@ Player::Player(MADSEngine *vm)
 	_upcomingTrigger = 0;
 	_trigger = 0;
 	_frameListIndex = 0;
-	_stopWalkerIndex = 0;
 	_totalDistance = 0;
 	_distAccum = 0;
 	_pixelAccum = 0;
@@ -80,10 +106,17 @@ Player::Player(MADSEngine *vm)
 	_moving = false;
 	_walkOffScreen = 0;
 	_walkOffScreenSceneId = -1;
+	_forcePrefix = false;
+	_commandsAllowed = false;
+	_enableAtTarget = false;
 
-	Common::fill(&_stopWalkerList[0], &_stopWalkerList[12], 0);
-	Common::fill(&_stopWalkerTrigger[0], &_stopWalkerTrigger[12], 0);
 	Common::fill(&_spriteSetsPresent[0], &_spriteSetsPresent[PLAYER_SPRITES_FILE_COUNT], false);
+
+	_walkTrigger = 0;
+	_walkTriggerDest = SEQUENCE_TRIGGER_NONE;
+	_walkTriggerAction._verbId = VERB_NONE;
+	_walkTriggerAction._objectNameId = 0;
+	_walkTriggerAction._indirectObjectId = 0;
 }
 
 void Player::cancelWalk() {
@@ -186,8 +219,10 @@ void Player::changeFacing() {
 		(Facing)_directionListIndexes[_facing + 10];
 	selectSeries();
 
-	if ((_facing == _turnToFacing) && !_moving)
+	if ((_facing == _turnToFacing) && !_moving) {
 		updateFrame();
+		activateTrigger();
+	}
 
 	_priorTimer += 1;
 }
@@ -242,8 +277,8 @@ void Player::updateFrame() {
 	Scene &scene = _vm->_game->_scene;
 	assert(scene._sprites[idx] != nullptr);
 	SpriteAsset &spriteSet = *scene._sprites[idx];
-	
-	// WORKAROUND: Certain cutscenes set up player sprites that don't have any 
+
+	// WORKAROUND: Certain cutscenes set up player sprites that don't have any
 	// character info. In such cases, simply ignore player updates
 	if (!spriteSet._charInfo)
 		return;
@@ -251,15 +286,16 @@ void Player::updateFrame() {
 	if (!spriteSet._charInfo->_numEntries) {
 		_frameNumber = 1;
 	} else {
-		_frameListIndex = _stopWalkerList[_stopWalkerIndex];
+		_frameListIndex = _stopWalkers.empty() ? 0 : _stopWalkers.top()._stack;
 
 		if (!_visible) {
 			_upcomingTrigger = 0;
 		} else {
-			_upcomingTrigger = _stopWalkerTrigger[_stopWalkerIndex];
-
-			if (_stopWalkerIndex > 0)
-				--_stopWalkerIndex;
+			if (_stopWalkers.empty()) {
+				_upcomingTrigger = 0;
+			} else {
+				_upcomingTrigger = _stopWalkers.pop()._trigger;
+			}
 		}
 
 		// Set the player frame number
@@ -278,6 +314,25 @@ void Player::updateFrame() {
 	_forceRefresh = true;
 }
 
+void Player::activateTrigger() {
+	Game &game = *_vm->_game;
+	MADSAction &action = game._scene._action;
+
+	_commandsAllowed |= _enableAtTarget;
+	_enableAtTarget = false;
+	
+	if (_walkTrigger) {
+		game._trigger = _walkTrigger;
+		game._triggerMode = SEQUENCE_TRIGGER_DAEMON;
+		
+		if (game._triggerMode != SEQUENCE_TRIGGER_DAEMON) {
+			action._activeAction = _walkTriggerAction;
+		}
+
+		_walkTrigger = 0;
+	}
+}
+
 void Player::update() {
 	Scene &scene = _vm->_game->_scene;
 
@@ -289,7 +344,7 @@ void Player::update() {
 		int newDepth = 1;
 		int yp = MIN(_playerPos.y, (int16)(MADS_SCENE_HEIGHT - 1));
 
-		for (int idx = 1; idx < 15; ++idx) {
+		for (int idx = 1; idx < DEPTH_BANDS_SIZE; ++idx) {
 			if (scene._sceneInfo->_depthList[newDepth] >= yp)
 				newDepth = idx + 1;
 		}
@@ -361,9 +416,7 @@ void Player::update() {
 }
 
 void Player::clearStopList() {
-	_stopWalkerList[0] = 0;
-	_stopWalkerTrigger[0] = 0;
-	_stopWalkerIndex = 0;
+	_stopWalkers.clear();
 	_upcomingTrigger = 0;
 	_trigger = 0;
 }
@@ -441,10 +494,12 @@ void Player::move() {
 	if (newFacing && _moving)
 		startMovement();
 
-	if (_turnToFacing != _facing)
+	if (_turnToFacing != _facing) {
 		changeFacing();
-	else if (!_moving)
+	} else if (!_moving) {
 		updateFrame();
+		activateTrigger();
+	}
 
 	int velocity = _velocity;
 	if (_scalingVelocity && (_totalDistance > 0)) {
@@ -684,13 +739,9 @@ void Player::addWalker(int walker, int trigger) {
 	SpriteAsset &spriteSet = *scene._sprites[_spritesStart + _spritesIdx];
 	assert(spriteSet._charInfo);
 
-	if (walker < spriteSet._charInfo->_numEntries && _stopWalkerIndex < 11) {
-		++_stopWalkerIndex;
-		_stopWalkerList[_stopWalkerIndex] = walker;
-		_stopWalkerTrigger[_stopWalkerIndex] = trigger;
-	}
+	if (walker < spriteSet._charInfo->_numEntries)
+		_stopWalkers.push(StopWalkerEntry(walker, trigger));
 }
-
 
 /**
 * Releases any sprites used by the player
@@ -753,13 +804,10 @@ void Player::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_currentDepth);
 	s.syncAsSint16LE(_currentScale);
 	s.syncAsSint16LE(_frameListIndex);
+	_stopWalkers.synchronize(s);
+	_walkTriggerAction.synchronize(s);
+	s.syncAsUint16LE(_walkTriggerDest);
 
-	for (int i = 0; i < 12; ++i) {
-		s.syncAsSint16LE(_stopWalkerList[i]);
-		s.syncAsSint16LE(_stopWalkerTrigger[i]);
-	}
-
-	s.syncAsSint16LE(_stopWalkerIndex);
 	s.syncAsSint16LE(_upcomingTrigger);
 	s.syncAsSint16LE(_trigger);
 	s.syncAsSint16LE(_scalingVelocity);
@@ -795,6 +843,30 @@ void Player::removePlayerSprites() {
 	scene._spriteSlots.clear();
 	scene._spriteSlots.fullRefresh();
 	_visible = false;
+}
+
+void Player::firstWalk(Common::Point fromPos, Facing fromFacing, Common::Point destPos, Facing destFacing, bool enableFl) {
+	_playerPos = fromPos;
+	_facing = fromFacing;
+
+	walk(destPos, destFacing);
+	_walkAnywhere = true;
+
+	_commandsAllowed = false;
+	_enableAtTarget = enableFl;
+}
+
+void Player::setWalkTrigger(int val) {
+	Scene &scene = _vm->_game->_scene;
+	_walkTrigger = val;
+	_walkTriggerDest = _vm->_game->_triggerSetupMode;
+	_walkTriggerAction = scene._action._activeAction;
+}
+
+void Player::resetFacing(Facing facing) {
+	_facing = facing;
+	_turnToFacing = facing;
+	selectSeries();
 }
 
 } // End of namespace MADS

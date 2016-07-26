@@ -44,7 +44,7 @@ void DrasculaEngine::updateVolume(Audio::Mixer::SoundType soundType, int prevVol
 }
 
 void DrasculaEngine::volumeControls() {
-	if (_lang == kSpanish)
+	if (_lang == kSpanish && currentChapter != 6)
 		loadPic(95, tableSurface);
 
 	copyRect(1, 56, 73, 63, 177, 97, tableSurface, screenSurface);
@@ -101,7 +101,7 @@ void DrasculaEngine::volumeControls() {
 
 	}
 
-	if (_lang == kSpanish)
+	if (_lang == kSpanish && currentChapter != 6)
 		loadPic(974, tableSurface);
 
 	selectVerb(kVerbNone);
@@ -133,7 +133,7 @@ void DrasculaEngine::stopMusic() {
 }
 
 void DrasculaEngine::updateMusic() {
-	_system->getAudioCDManager()->updateCD();
+	_system->getAudioCDManager()->update();
 }
 
 int DrasculaEngine::musicStatus() {
@@ -166,8 +166,8 @@ void DrasculaEngine::MusicFadeout() {
 void DrasculaEngine::playFile(const char *fname) {
 	Common::SeekableReadStream *stream = _archives.open(fname);
 	if (stream) {
-		int startOffset = 0;
-		int soundSize = stream->size() - startOffset;
+		int startOffset = 32;
+		int soundSize = stream->size() - 64;
 
 		if (!strcmp(fname, "3.als") && soundSize == 145166 && _lang != kSpanish) {
 			// WORKAROUND: File 3.als with English speech files has a big silence at

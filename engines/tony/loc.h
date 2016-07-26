@@ -151,7 +151,7 @@ public:
 	// Reads the position of the pattern
 	RMPoint pos();
 
-	void readFromStream(Common::ReadStream &ds, bool bLOX = false);
+	void readFromStream(Common::ReadStream &ds, bool bLOX);
 
 private:
 	void updateCoord();

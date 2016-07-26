@@ -28,6 +28,7 @@
 #include "gob/game.h"
 #include "gob/inter.h"
 
+#include "gob/sound/bgatmosphere.h"
 #include "gob/sound/pcspeaker.h"
 #include "gob/sound/soundblaster.h"
 #include "gob/sound/adlplayer.h"
@@ -717,7 +718,7 @@ void Sound::bgStop() {
 	_bgatmos->queueClear();
 }
 
-void Sound::bgSetPlayMode(BackgroundAtmosphere::PlayMode mode) {
+void Sound::bgSetPlayMode(Sound::BackgroundPlayMode mode) {
 	if (!_bgatmos)
 		return;
 

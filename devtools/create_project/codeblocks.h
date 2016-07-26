@@ -37,6 +37,8 @@ protected:
 
 	void createOtherBuildFiles(const BuildSetup &) {}
 
+	void addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList);
+
 	void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
 	                       const StringList &includeList, const StringList &excludeList);
 

@@ -2810,6 +2810,10 @@ void AdvancedVMDDecoder::close() {
 	_decoder->close();
 }
 
+void AdvancedVMDDecoder::setSurfaceMemory(void *mem, uint16 width, uint16 height, uint8 bpp) {
+	_decoder->setSurfaceMemory(mem, width, height, bpp);
+}
+
 AdvancedVMDDecoder::VMDVideoTrack::VMDVideoTrack(VMDDecoder *decoder) : _decoder(decoder) {
 }
 

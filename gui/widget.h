@@ -68,7 +68,8 @@ enum {
 	kPopUpWidget		= 'POPU',
 	kTabWidget			= 'TABW',
 	kGraphicsWidget		= 'GFXW',
-	kContainerWidget	= 'CTNR'
+	kContainerWidget	= 'CTNR',
+	kScrollContainerWidget = 'SCTR'
 };
 
 enum {
@@ -111,6 +112,7 @@ public:
 
 	virtual int16	getAbsX() const	{ return _x + _boss->getChildX(); }
 	virtual int16	getAbsY() const	{ return _y + _boss->getChildY(); }
+	virtual Common::Rect getBossClipRect() const;
 
 	virtual void setPos(int x, int y) { _x = x; _y = y; }
 	virtual void setSize(int w, int h) { _w = w; _h = h; }
@@ -168,9 +170,10 @@ class StaticTextWidget : public Widget {
 protected:
 	Common::String			_label;
 	Graphics::TextAlign		_align;
+	ThemeEngine::FontStyle	_font;
 public:
-	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, Graphics::TextAlign align, const char *tooltip = 0);
-	StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text, const char *tooltip = 0);
+	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, Graphics::TextAlign align, const char *tooltip = 0, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold);
+	StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text, const char *tooltip = 0, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold);
 	void setValue(int value);
 	void setLabel(const Common::String &label);
 	const Common::String &getLabel() const		{ return _label; }
@@ -198,19 +201,15 @@ public:
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleMouseDown(int x, int y, int button, int clickCount);
-	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
+	void handleMouseEntered(int button)	{ if (_duringPress) { setFlags(WIDGET_PRESSED); } else { setFlags(WIDGET_HILITED); } draw(); }
 	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED | WIDGET_PRESSED); draw(); }
-	void handleTickle();
 
 	void setHighLighted(bool enable);
 	void setPressedState();
-	void startAnimatePressedState();
-	void stopAnimatePressedState();
-
-	void lostFocusWidget() { stopAnimatePressedState(); }
+	void setUnpressedState();
 protected:
 	void drawWidget();
-	void wantTickle(bool tickled);
+	bool _duringPress;
 private:
 	uint32 _lastTime;
 };

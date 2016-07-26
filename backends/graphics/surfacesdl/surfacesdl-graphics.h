@@ -39,6 +39,15 @@
 #define USE_SDL_DEBUG_FOCUSRECT
 #endif
 
+// We have (some) support for resizable windows when SDL2 is used. However
+// the overlay still uses the resolution setup with SDL_SetVideoMode. This
+// makes the GUI look subpar when the user resizes the window. In addition
+// we do not adapt the scale factor right now. Thus, we disable this code
+// path for now.
+#if SDL_VERSION_ATLEAST(2, 0, 0) && 0
+#define USE_SDL_RESIZABLE_WINDOW
+#endif
+
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 // Uncomment this to enable the 'on screen display' code.
 #define USE_OSD	1
@@ -143,6 +152,9 @@ public:
 
 	// SdlGraphicsManager interface
 	virtual void notifyVideoExpose();
+#ifdef USE_SDL_RESIZABLE_WINDOW
+	virtual void notifyResize(const uint width, const uint height);
+#endif
 	virtual void transformMouseCoordinates(Common::Point &point);
 	virtual void notifyMousePos(Common::Point mouse);
 
@@ -171,7 +183,10 @@ protected:
 	 * around this API to keep the code paths as close as possible. */
 	SDL_Renderer *_renderer;
 	SDL_Texture *_screenTexture;
+	SDL_Rect _viewport;
+	int _windowWidth, _windowHeight;
 	void deinitializeRenderer();
+	void setWindowResolution(int width, int height);
 
 	SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags);
 	void SDL_UpdateRects(SDL_Surface *screen, int numrects, SDL_Rect *rects);
@@ -236,8 +251,22 @@ protected:
 	};
 	VideoState _videoMode, _oldVideoMode;
 
-	// Original BPP to restore the video mode on unload
+#if defined(WIN32) && !SDL_VERSION_ATLEAST(2, 0, 0)
+	/**
+	 * Original BPP to restore the video mode on unload.
+	 *
+	 * This is required to make listing video modes for the OpenGL output work
+	 * on Windows 8+. On these systems OpenGL modes are only available for
+	 * 32bit formats. However, we setup a 16bit format and thus mode listings
+	 * for OpenGL will return an empty list afterwards.
+	 *
+	 * In theory we might require this behavior on non-Win32 platforms too.
+	 * However, SDL sometimes gives us invalid pixel formats for X11 outputs
+	 * causing crashes when trying to setup the original pixel format.
+	 * See bug #7038 "IRIX: X BadMatch when trying to start any 640x480 game".
+	 */
 	uint8 _originalBitsPerPixel;
+#endif
 
 	/** Force full redraw on next updateScreen */
 	bool _forceFull;

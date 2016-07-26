@@ -37,6 +37,16 @@
 namespace Toltecs {
 
 MenuSystem::MenuSystem(ToltecsEngine *vm) : _vm(vm) {
+	_background = nullptr;
+	_running = false;
+	_currMenuID = _newMenuID = kMenuIdNone;
+	_currItemID = kItemIdNone;
+	_top = 0;
+	_savegameListTopIndex = 0;
+	_editingDescription = false;
+	_editingDescriptionID = kItemIdNone;
+	_editingDescriptionItem = nullptr;
+	_needRedraw = false;
 }
 
 MenuSystem::~MenuSystem() {

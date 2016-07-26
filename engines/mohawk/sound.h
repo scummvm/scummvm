@@ -26,15 +26,17 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
-#include "audio/audiostream.h"
 #include "audio/mixer.h"
-#include "audio/decoders/adpcm.h"
 
 #include "mohawk/mohawk.h"
 #include "mohawk/resource.h"
 
 class MidiDriver;
 class MidiParser;
+
+namespace Audio {
+class RewindableAudioStream;
+}
 
 namespace Mohawk {
 
@@ -136,7 +138,7 @@ public:
 
 	// Myst-specific sound functions
 	Audio::SoundHandle *replaceSoundMyst(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false);
-	Audio::SoundHandle *replaceBackgroundMyst(uint16 id, uint16 volume = 0xFFFF);
+	void replaceBackgroundMyst(uint16 id, uint16 volume = 0xFFFF);
 	void pauseBackgroundMyst();
 	void resumeBackgroundMyst();
 	void stopBackgroundMyst();

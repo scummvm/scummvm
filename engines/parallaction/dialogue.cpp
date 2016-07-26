@@ -140,6 +140,21 @@ DialogueManager::DialogueManager(Parallaction *vm, ZonePtr z) : _vm(vm), _z(z) {
 
 	_cmdList = 0;
 	_answerId = 0;
+
+	_faceId = 0;
+
+	_q = NULL;
+	memset(_visAnswers, 0, sizeof(_visAnswers));
+	_numVisAnswers = 0;
+
+	_selection = _oldSelection = 0;
+
+	_isKeyDown = false;
+	_downKey = 0;
+
+	_mouseButtons = 0;
+
+	_state = DIALOGUE_START;
 }
 
 void DialogueManager::start() {
@@ -412,7 +427,8 @@ protected:
 	}
 
 public:
-	DialogueManager_ns(Parallaction_ns *vm, ZonePtr z) : DialogueManager(vm, z), _vm(vm) {
+	DialogueManager_ns(Parallaction_ns *vm, ZonePtr z) : DialogueManager(vm, z), _vm(vm),
+		_passwordChanged(false), _askPassword(false) {
 		_ballonPos._questionBalloon = Common::Point(140, 10);
 		_ballonPos._questionChar = Common::Point(190, 80);
 		_ballonPos._answerChar = Common::Point(10, 80);

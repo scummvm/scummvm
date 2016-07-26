@@ -47,7 +47,7 @@ void WidgetTooltipBase::draw() {
 		
 		// Draw the widget directly onto the screen. Unlike other widgets, we don't draw to the back buffer,
 		// since nothing should be drawing on top of tooltips, so there's no need to store in the back buffer
-		screen.transBlitFrom(_surface, Common::Point(_bounds.left - screen._currentScroll.x, 
+		screen.SHtransBlitFrom(_surface, Common::Point(_bounds.left - screen._currentScroll.x, 
 			_bounds.top - screen._currentScroll.y));
 
 		// Store a copy of the drawn area for later erasing
@@ -126,7 +126,7 @@ void WidgetTooltip::setText(const Common::String &str) {
 
 		// Reallocate the text surface with the new size
 		_surface.create(width, height);
-		_surface.fill(TRANSPARENCY);
+		_surface.clear(TRANSPARENCY);
 
 		if (line2.empty()) {
 			// Only a single line

@@ -84,6 +84,8 @@ public:
 	int getNumerator() const { return _num; }
 	int getDenominator() const { return _denom; }
 
+	bool isOne() const { return _num == _denom; }
+
 	void debugPrint(int debuglevel = 0, const char *caption = "Rational:") const;
 
 private:

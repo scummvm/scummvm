@@ -1,24 +1,171 @@
-Umfangreichere Änderungsaufzeichnungen des neusten experimentellen Codes finden
-Sie auf Englisch unter:
+Umfangreichere Informationen über die Änderungen des aktuellen experimentellen
+Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
-1.8.0 (??.??.????)
+1.9.0 (DD.MM.YYYY)
+ Neue Spiele:
+   - Unterstützung für Myst hinzugefügt.
+   - Unterstützung für Myst: Masterpiece Edition hinzugefügt.
+   - Unterstützung für U.F.O.s./Gnap: Der Schurke aus dem All hinzugefügt.
+
+ AGI:
+   - Unterstützung für Hercules-Darstellung (Grün + Bernstein) hinzugefügt.
+   - Unterstützung für hochauflösende Hercules-Schriftart hinzugefügt
+     (auch außerhalb der Hercules-Darstellung nutzbar).
+   - Optionale Funktion "Pause, wenn Befehle eingegeben werden" hinzugefügt.
+     Diese Funktion war im originalen Interpreter nur im Hercules-Darstellungsmodus
+     verfügbar.
+
+ SCI:
+   - Fehlende Dialogzeile in QfG3 hinzugefügt, die mit drei zusätzlichen Punkten
+     belohnt wird. Diese Dialogzeile fehlt im Originalspiel, weshalb
+     es bislang unmöglich war, die maximale Punktzahl im Spiel zu erreichen.
+
+ Windows-Portierung:
+   - Taskleisten-Integration unter Windows 10 und höher repariert.
+
+1.8.1 (25.05.2016)
+ Neue Portierungen:
+   - Portierung für den Nintendo 3DS hinzugefügt.
+   - Portierung für Android SDL hinzugefügt.
+
+ Allgemein:
+   - "TESTING"-Markierung von mehreren unterstützten Spielen entfernt.
+   - Chinesische Übersetzung (Pinyin) der Benutzeroberfläche hinzugefügt.
+   - Ruckeln des Mauszeigers im ScummVM-Programmfenster behoben, welches auf
+     einigen Systemen auftrat.
+
+ BBVS:
+   - Fehler beim erneuten Starten des Spiels behoben.
+
+ CinE:
+   - Fehler beim Laden der Soundeffekte behoben.
+
+ Drascula:
+   - Text-Ausrichtung ist jetzt originalgetreu.
+   - Charakter tritt nicht mehr aus dem Bildschirmbereich heraus.
+   - Laden eines Spielstandes in der "Pendulum"-Szene repariert.
+   - Falscher Hintergrund für Inventar-Gegenstände im Kapitel 6 in der
+     spanischen Version korrigiert.
+   - Geschwindigkeit der Animationen korrigiert. Animationen wurden nur halb
+     so schnell wie im originalen Interpreter abgespielt.
+   - Rauschen am Beginn und/oder am Ende der Sprachausgabe behoben.
+     Dieser Fehler trat hauptsächlich in der spanischen Version auf.
+   - Verzögerung während der Interaktion mit dem Verben-Menü und dem Inventar behoben.
+   - Fehler behoben, durch den die Axt im Schloss mehrfach aufgehoben werden konnte.
+
+ Gob:
+   - Aufhängen während Sound-Initialisierung in mehreren Spielen behoben.
+
+ KYRA:
+   - Potentieller Absturz behoben, der in "Hand of Fate" auftritt, wenn der
+     Sumpfschlangentrank an der Ratte verwendet wird.
+     (HINWEIS: Dieser Fehler wurde bereits in Version 1.8.0 behoben,
+     jedoch nicht in der Neues-Datei erwähnt).
+   - Fehlende Stimm-Reaktionen korrigiert, wenn Gegner in der CD-Version von
+     Lands of Lore getroffen wurden.
+
+ Lab:
+   - Aufhängen während der End-Sequenz behoben.
+   - Interne Spiel-Bedienelemente verbessert.
+   - Aufhängen bei einigen Animationen im Spiel behoben.
+
+ SAGA:
+   - Fehlerhafte Farben der Bedienelemente in der französischen und deutschen
+     Version von "I Have No Mouth and I Must Scream" korrigiert.
+
+ SCI:
+   - Cursor-Hilfsroutinen funktionieren nun korrekt auf OpenPandora und anderen
+     Geräten, die einen Touchscreen und analoge Sticks/Mäuse zur gleichen Zeit
+     unterstützen.
+   - Skript-Fehlerbehebung, um den fehlerhaften Endkampf in der mehrsprachigen
+     Version von King's Quest 5 zu korrigieren. Betroffen sind die französische,
+     deutsche und spanische Version.
+   - Ungültiger Speicherzugriff beim Laden der defekten Audiospur im Abspann
+     von King's Quest 5 behoben.
+   - Probleme mit der Einstellung der Bildschirmauflösung beim Speichern in
+     King's Quest 6 behoben.
+
+ SCUMM:
+   - Erkennung von Maniac Mansion innerhalb von Day of the Tentacle in der
+     Windows-Version von ScummVM repariert.
+   - In der EGA-Version von Loom wurde ein Sound-Effekt nicht korrekt angehalten,
+     wenn AdLib verwendet wurde. Dieser Fehler wurde behoben.
+
+ Baphomets Fluch 2.5:
+   - Option zur Auswahl von englischer Sprachausgabe anstelle der deutschen,
+     wenn in der gewählten Sprache keine Sprachausgabe verfügbar ist, hinzugefügt.
+   - Ressourcen-Freigabe beim Beenden des Spiels korrigiert.
+   - Fehler beim Neustart des Spiels nach dem Wechsel der Spiel-Sprache behoben.
+   - Flackern im Hauptmenü behoben.
+   - Lange Dauer des Speichervorgangs unter Windows behoben.
+
+ Windows-Portierung:
+   - Absturz im Zusammenhang mit nicht-funktionierenden MIDI-Geräten behoben.
+
+ Mac OS X-Portierung:
+   - Das Dock-Menü für ScummVM enthält nun eine Liste der zuletzt gespielten Spiele,
+     wenn ScummVM nicht läuft, und ermöglicht den direkten Start dieser Spiele.
+   - Sparkle-Updater für vereinfachte Programmaktualisierungen hinzugefügt.
+
+ GCW0-Portierung:
+   - Verbesserte Unterstützung für die in ScummVM integrierte Dokumentation.
+
+1.8.0 (04.03.2016)
  Neue Spiele:
    - Unterstützung für Rex Nebular and the Cosmic Gender Bender hinzugefügt.
    - Unterstützung für Sfinx hinzugefügt.
-   - Unterstützung für Zork Nemesis: The Forbidden Lands hinzugefügt.
-   - Unterstützung für Zork: Grand Inquisitor hinzugefügt.
+   - Unterstützung für Zork Nemesis: Das verbotene Land hinzugefügt.
+   - Unterstützung für Zork: Der Großinquisitor hinzugefügt.
+   - Unterstützung für Die ungelösten Fälle von Sherlock Holmes: Das gezackte
+     Skalpell hinzugefügt.
+   - Unterstützung für Die ungelösten Fälle von Sherlock Holmes: Das Geheimnis
+     der tätowierten Rose hinzugefügt.
+   - Unterstützung für Beavis and Butthead in Virtual Stupidity hinzugefügt.
+   - Unterstützung für Amazon: Guardians of Eden hinzugefügt.
+   - Unterstützung für Baphomets Fluch 2.5: Die Rückkehr der Tempelritter
+     hinzugefügt.
+   - Unterstützung für Labyrinth of Time hinzugefügt.
+
+ Neue Portierungen:
+   - Portierung für den Raspberry Pi hinzugefügt.
+   - Portierung für den GCW Zero (GCW0) hinzugefügt.
 
  Allgemein:
    - Code für Munt-MT-32-Emulation auf Version 1.5.0 aktualisiert.
+
+ SDL:
+   - Alt+x beendet ScummVM nicht mehr. Verwenden Sie stattdessen
+     Cmd+q/Strg+q/Strg+z und beachten Sie die Hinweise in der Liesmich-Datei.
+   - Auf POSIX-Systemen befolgen wir nun die Spezifikation XDG Base Directory
+     für die Speicherung von Benutzerdaten. Dies führt zu neuen
+     Speicherorten für unsere Konfigurationsdatei, unsere Log-Datei sowie für
+     den standardmäßig voreingestellten Speicherort für Spielstände. Wir
+     unterstützen weiterhin die vorherigen Speicherorte. Solange diese vorhanden
+     sind, werden wir diese weiter verwenden. Bitte beachten Sie die
+     Liesmich-Datei für weitere Informationen. Speicherorte auf Mac OS X sind
+     von dieser Änderung nicht betroffen.
 
  3 Skulls of the Toltecs:
    - Unterstützung für AdLib-Musik verbessert.
 
  AGI:
    - Es ist nun möglich, die Maus-Unterstützung zu deaktivieren (außer bei
-Amiga-Versionen und Fan-Spielen, die eine Maus benötigen).
-   - Fehlerhafte Lautstärke-Dämpfung im PCjr-Sound-Code behoben (Fehler #6858).
+     Amiga-Versionen und Fan-Spielen, die eine Maus benötigen).
+   - Fehlerhafte Lautstärke in PCjr-Spielen korrigiert.
+   - Umfangreiche Änderung im Grafik-Subsystem.
+   - Unterstützung für Übergänge, Schriftarten und Mauszeigern für Apple IIgs,
+     Amiga und Atari (die Systemschriftart Atari ST 8x8 ist nicht in ScummVM
+     enthalten)
+   - Eine PC-Version kann jetzt wie eine Apple IIgs-Version dargestellt werden
+     (inklusive Farbpalette, Cursor, Übergänge und Schriftart). Sie müssen
+     lediglich den gewünschten Darstellungsmodus auswählen.
+   - Apple IIgs-Spiele laufen nicht mehr zu schnell.
+   - Unterstützung für automatisches Speichern / Laden hinzugefügt
+     (verwendet von Mixed Up Mother Goose).
+   - Feste Verzögerung von 2 Sekunden bei Raumwechseln entfernt und durch
+     Heuristik ersetzt.
+   - Fehlerhafte Tastenbelegungen nach abspeichern/laden behoben.
 
  AGOS:
    - Arpeggio-Effekt in der Musik der Amiga-Version von Elvira 1 repariert.
@@ -26,13 +173,18 @@ Amiga-Versionen und Fan-Spielen, die eine Maus benötigen).
    - Verb-Feld in der Amiga-Version von Simon the Sorcerer 1 repariert.
    - Accolade AdLib- und MT32-Treiber für folgende Spiele hinzugefügt:
      Elvira 1, Elvira 2, Waxworks und Simon the Sorcerer 1 (Demoversion)
+   - AdLib-Ausgabe in Simon the Sorcerer 1 hinzugefügt. Dies verbessert die
+     AdLib-Ausgabe erheblich und erhöht die Originaltreue.
 
  Baphomets Fluch 1:
-   - Erkennung der Byte-Reihenfolge der Sprachausgabe auf Big-Endian-Systemen
-     für die Macintosh-Version (Fehler #6720) repariert.
-   - Absturz beim Neuladen eines Spiels aus dem Hauptmenü heraus, während sich
-     das Spiel in der Szene am Bull's Head Hill befindet, behoben
-     (Fehler #6728). Dieser Fehler trat womöglich auch in anderen Szenen auf.
+   - Sprachausgabe in Macintosh-Versionen korrigiert, wenn ScummVM
+     auf Big-Endian-Systemen ausgeführt wird.
+   - Fehler beim Laden eines Spielstandes aus dem Hauptmenü in der
+     Bull's Head Hill-Szene korrigiert. Dieser Fehler trat womöglich auch
+     in anderen Szenen auf.
+
+ CinE:
+   - Unterstützung für Musik in der CD-Version von Future Wars hinzugefügt.
 
  MADE:
    - Unterstützung für AdLib-Musik in Return to Zork verbessert.
@@ -43,15 +195,23 @@ Amiga-Versionen und Fan-Spielen, die eine Maus benötigen).
  SCI:
    - Behandlung der Musik-Priorität extrem verbessert.
    - Viele Fehler in den originalen Skripten behoben, die auch bei
-     Verwendung des originalen Interpreters auftreten:
-	 KQ6 (Sprache und Untertitel), LSL5, QfG1 (EGA), QfG (VGA), QfG2, QfG3,
-       SQ1, SQ4 (CD)
+     Verwendung des originalen Interpreters auftreten.
+     Folgende Spiele sind davon betroffen:
+     KQ6 (Sprache und Untertitel), LSL5, PQ1, QfG1 (EGA), QfG (VGA),
+     QfG2, QfG3, SQ1, SQ4 (CD)
    - Rückkehr aus dem ScummVM-Menü im Spiel sollte nun immer funktionieren.
    - Verbesserte Unterstützung für japanische PC-9801-Spiele
+   - Verwende standardmäßig die hochauflösende Version von KQ6
+     (kann in den Spieloptionen umgeschaltet werden)
 
  SCUMM:
+   - Umfangreiche Verbesserung der Textdarstellung in koreanischen Versionen
+   - Originaler Code der Geh-Animation in Maniac Mansion v0-v1 hinzugefügt.
    - Es ist nun möglich, Maniac Mansion innerhalb von Day of the
      Tentacle zu spielen. Bitte Liesmich-Datei für weitere Details lesen.
+   - Alt+x kann jetzt auf allen Plattformen dazu verwendet werden, SCUMM-Spiele
+     zu beenden.
+   - Lippensynchronisation in neueren Spielen von Humongous Entertainment verbessert.
 
  Tinsel:
    - Unterstützung für AdLib-Musik in Discworld 1 verbessert.

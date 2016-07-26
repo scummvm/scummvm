@@ -40,7 +40,7 @@ struct tSageGameDescription {
 };
 
 const char *TSageEngine::getGameId() const {
-	return _gameDescription->desc.gameid;
+	return _gameDescription->desc.gameId;
 }
 
 uint32 TSageEngine::getGameID() const {
@@ -75,7 +75,7 @@ enum {
 class TSageMetaEngine : public AdvancedMetaEngine {
 public:
 	TSageMetaEngine() : AdvancedMetaEngine(TsAGE::gameDescriptions, sizeof(TsAGE::tSageGameDescription), tSageGameTitles) {
-		_singleid = "tsage";
+		_singleId = "tsage";
 	}
 
 	virtual const char *getName() const {
@@ -83,7 +83,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "(c) Tsunami Media";
+		return "(C) Tsunami Media";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const {
@@ -114,10 +114,9 @@ public:
 
 	virtual SaveStateList listSaves(const char *target) const {
 		Common::String pattern = target;
-		pattern += ".???";
+		pattern += ".###";
 
 		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(pattern);
-		sort(filenames.begin(), filenames.end());
 		TsAGE::tSageSavegameHeader header;
 
 		SaveStateList saveList;
@@ -141,6 +140,8 @@ public:
 			}
 		}
 
+		// Sort saves based on slot number.
+		Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 		return saveList;
 	}
 

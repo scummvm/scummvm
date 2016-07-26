@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TESTBED_H
-#define TESTBED_H
+#ifndef TESTBED_TESTBED_H
+#define TESTBED_TESTBED_H
 
 #include "common/array.h"
 
@@ -72,4 +72,4 @@ private:
 
 } // End of namespace Testbed
 
-#endif // TESTBED_H
+#endif // TESTBED_TESTBED_H

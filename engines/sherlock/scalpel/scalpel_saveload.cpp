@@ -20,6 +20,7 @@
  *
  */
 
+#include "sherlock/scalpel/scalpel_fixed_text.h"
 #include "sherlock/scalpel/scalpel_saveload.h"
 #include "sherlock/scalpel/scalpel_screen.h"
 #include "sherlock/scalpel/scalpel.h"
@@ -39,7 +40,44 @@ const int ENV_POINTS[6][3] = {
 
 /*----------------------------------------------------------------*/
 
-ScalpelSaveManager::ScalpelSaveManager(SherlockEngine *vm, const Common::String &target) : SaveManager(vm, target) {
+ScalpelSaveManager::ScalpelSaveManager(SherlockEngine *vm, const Common::String &target) : 
+	SaveManager(vm, target), _envMode(SAVEMODE_NONE) {
+
+	_fixedTextExit = FIXED(LoadSave_Exit);
+	_fixedTextLoad = FIXED(LoadSave_Load);
+	_fixedTextSave  = FIXED(LoadSave_Save);
+	_fixedTextUp = FIXED(LoadSave_Up);
+	_fixedTextDown = FIXED(LoadSave_Down);
+	_fixedTextQuit = FIXED(LoadSave_Quit);
+
+	_hotkeyExit = toupper(_fixedTextExit[0]);
+	_hotkeyLoad = toupper(_fixedTextLoad[0]);
+	_hotkeySave = toupper(_fixedTextSave[0]);
+	_hotkeyUp   = toupper(_fixedTextUp[0]);
+	_hotkeyDown = toupper(_fixedTextDown[0]);
+	_hotkeyQuit = toupper(_fixedTextQuit[0]);
+
+	_hotkeysIndexed[0] = _hotkeyExit;
+	_hotkeysIndexed[1] = _hotkeyLoad;
+	_hotkeysIndexed[2] = _hotkeySave;
+	_hotkeysIndexed[3] = _hotkeyUp;
+	_hotkeysIndexed[4] = _hotkeyDown;
+	_hotkeysIndexed[5] = _hotkeyQuit;
+
+	_fixedTextQuitGameQuestion = FIXED(QuitGame_Question);
+	_fixedTextQuitGameYes = FIXED(QuitGame_Yes);
+	_fixedTextQuitGameNo = FIXED(QuitGame_No);
+
+	_hotkeyQuitGameYes = toupper(_fixedTextQuitGameYes[0]);
+	_hotkeyQuitGameNo  = toupper(_fixedTextQuitGameNo[0]);
+}
+
+int ScalpelSaveManager::identifyUserButton(int key) {
+	for (uint16 hotkeyNr = 0; hotkeyNr < sizeof(_hotkeysIndexed); hotkeyNr++) {
+		if (key == _hotkeysIndexed[hotkeyNr])
+			return hotkeyNr;
+	}
+	return -1;
 }
 
 void ScalpelSaveManager::drawInterface() {
@@ -56,23 +94,23 @@ void ScalpelSaveManager::drawInterface() {
 	screen._backBuffer1.fillRect(Common::Rect(2, CONTROLS_Y + 10, SHERLOCK_SCREEN_WIDTH - 2, SHERLOCK_SCREEN_HEIGHT - 2), INV_BACKGROUND);
 
 	screen.makeButton(Common::Rect(ENV_POINTS[0][0], CONTROLS_Y, ENV_POINTS[0][1], CONTROLS_Y + 10),
-		ENV_POINTS[0][2] - screen.stringWidth("Exit") / 2, "Exit");
+		ENV_POINTS[0][2], _fixedTextExit);
 	screen.makeButton(Common::Rect(ENV_POINTS[1][0], CONTROLS_Y, ENV_POINTS[1][1], CONTROLS_Y + 10),
-		ENV_POINTS[1][2] - screen.stringWidth("Load") / 2, "Load");
+		ENV_POINTS[1][2], _fixedTextLoad);
 	screen.makeButton(Common::Rect(ENV_POINTS[2][0], CONTROLS_Y, ENV_POINTS[2][1], CONTROLS_Y + 10),
-		ENV_POINTS[2][2] - screen.stringWidth("Save") / 2, "Save");
+		ENV_POINTS[2][2], _fixedTextSave);
 	screen.makeButton(Common::Rect(ENV_POINTS[3][0], CONTROLS_Y, ENV_POINTS[3][1], CONTROLS_Y + 10),
-		ENV_POINTS[3][2] - screen.stringWidth("Up") / 2, "Up");
+		ENV_POINTS[3][2], _fixedTextUp);
 	screen.makeButton(Common::Rect(ENV_POINTS[4][0], CONTROLS_Y, ENV_POINTS[4][1], CONTROLS_Y + 10),
-		ENV_POINTS[4][2] - screen.stringWidth("Down") / 2, "Down");
+		ENV_POINTS[4][2], _fixedTextDown);
 	screen.makeButton(Common::Rect(ENV_POINTS[5][0], CONTROLS_Y, ENV_POINTS[5][1], CONTROLS_Y + 10),
-		ENV_POINTS[5][2] - screen.stringWidth("Quit") / 2, "Quit");
+		ENV_POINTS[5][2], _fixedTextQuit);
 
 	if (!_savegameIndex)
-		screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), COMMAND_NULL, 0, "Up");
+		screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), COMMAND_NULL, 0, _fixedTextUp);
 
 	if (_savegameIndex == MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT)
-		screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), COMMAND_NULL, 0, "Down");
+		screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), COMMAND_NULL, 0, _fixedTextDown);
 
 	for (int idx = _savegameIndex; idx < _savegameIndex + ONSCREEN_FILES_COUNT; ++idx) {
 		screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10),
@@ -106,31 +144,31 @@ void ScalpelSaveManager::highlightButtons(int btnIndex) {
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	byte color = (btnIndex == 0) ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND;
 
-	screen.buttonPrint(Common::Point(ENV_POINTS[0][2], CONTROLS_Y), color, 1, "Exit");
+	screen.buttonPrint(Common::Point(ENV_POINTS[0][2], CONTROLS_Y), color, 1, _fixedTextExit);
 
 	if ((btnIndex == 1) || ((_envMode == SAVEMODE_LOAD) && (btnIndex != 2)))
-		screen.buttonPrint(Common::Point(ENV_POINTS[1][2], CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Load");
+		screen.buttonPrint(Common::Point(ENV_POINTS[1][2], CONTROLS_Y), COMMAND_HIGHLIGHTED, true, _fixedTextLoad);
 	else
-		screen.buttonPrint(Common::Point(ENV_POINTS[1][2], CONTROLS_Y), COMMAND_FOREGROUND, true, "Load");
+		screen.buttonPrint(Common::Point(ENV_POINTS[1][2], CONTROLS_Y), COMMAND_FOREGROUND, true, _fixedTextLoad);
 
 	if ((btnIndex == 2) || ((_envMode == SAVEMODE_SAVE) && (btnIndex != 1)))
-		screen.buttonPrint(Common::Point(ENV_POINTS[2][2], CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Save");
+		screen.buttonPrint(Common::Point(ENV_POINTS[2][2], CONTROLS_Y), COMMAND_HIGHLIGHTED, true, _fixedTextSave);
 	else
-		screen.buttonPrint(Common::Point(ENV_POINTS[2][2], CONTROLS_Y), COMMAND_FOREGROUND, true, "Save");
+		screen.buttonPrint(Common::Point(ENV_POINTS[2][2], CONTROLS_Y), COMMAND_FOREGROUND, true, _fixedTextSave);
 
 	if (btnIndex == 3 && _savegameIndex)
-		screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Up");
+		screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), COMMAND_HIGHLIGHTED, true, _fixedTextUp);
 	else
 		if (_savegameIndex)
-			screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), COMMAND_FOREGROUND, true, "Up");
+			screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), COMMAND_FOREGROUND, true, _fixedTextUp);
 
 	if ((btnIndex == 4) && (_savegameIndex < MAX_SAVEGAME_SLOTS - 5))
-		screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Down");
+		screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), COMMAND_HIGHLIGHTED, true, _fixedTextDown);
 	else if (_savegameIndex < (MAX_SAVEGAME_SLOTS - 5))
-		screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), COMMAND_FOREGROUND, true, "Down");
+		screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), COMMAND_FOREGROUND, true, _fixedTextDown);
 
 	color = (btnIndex == 5) ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND;
-	screen.buttonPrint(Common::Point(ENV_POINTS[5][2], CONTROLS_Y), color, 1, "Quit");
+	screen.buttonPrint(Common::Point(ENV_POINTS[5][2], CONTROLS_Y), color, 1, _fixedTextQuit);
 }
 
 bool ScalpelSaveManager::checkGameOnScreen(int slot) {
@@ -153,10 +191,10 @@ bool ScalpelSaveManager::checkGameOnScreen(int slot) {
 		screen.slamRect(Common::Rect(3, CONTROLS_Y + 11, 318, SHERLOCK_SCREEN_HEIGHT));
 
 		byte color = !_savegameIndex ? COMMAND_NULL : COMMAND_FOREGROUND;
-		screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), color, 1, "Up");
+		screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), color, 1, _fixedTextUp);
 
 		color = (_savegameIndex == (MAX_SAVEGAME_SLOTS - 5)) ? COMMAND_NULL : COMMAND_FOREGROUND;
-		screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), color, 1, "Down");
+		screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), color, 1, _fixedTextDown);
 
 		return true;
 	}
@@ -172,12 +210,12 @@ bool ScalpelSaveManager::promptForDescription(int slot) {
 	int xp, yp;
 	bool flag = false;
 
-	screen.buttonPrint(Common::Point(ENV_POINTS[0][2], CONTROLS_Y), COMMAND_NULL, true, "Exit");
-	screen.buttonPrint(Common::Point(ENV_POINTS[1][2], CONTROLS_Y), COMMAND_NULL, true, "Load");
-	screen.buttonPrint(Common::Point(ENV_POINTS[2][2], CONTROLS_Y), COMMAND_NULL, true, "Save");
-	screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), COMMAND_NULL, true, "Up");
-	screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), COMMAND_NULL, true, "Down");
-	screen.buttonPrint(Common::Point(ENV_POINTS[5][2], CONTROLS_Y), COMMAND_NULL, true, "Quit");
+	screen.buttonPrint(Common::Point(ENV_POINTS[0][2], CONTROLS_Y), COMMAND_NULL, true, _fixedTextExit);
+	screen.buttonPrint(Common::Point(ENV_POINTS[1][2], CONTROLS_Y), COMMAND_NULL, true, _fixedTextLoad);
+	screen.buttonPrint(Common::Point(ENV_POINTS[2][2], CONTROLS_Y), COMMAND_NULL, true, _fixedTextSave);
+	screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), COMMAND_NULL, true, _fixedTextUp);
+	screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), COMMAND_NULL, true, _fixedTextDown);
+	screen.buttonPrint(Common::Point(ENV_POINTS[5][2], CONTROLS_Y), COMMAND_NULL, true, _fixedTextQuit);
 
 	Common::String saveName = _savegames[slot];
 	if (isSlotEmpty(slot)) {

@@ -669,24 +669,42 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 	// TODO: we need to either merge SCI2 strings and
 	// arrays together, and in the future merge them with
 	// the SCI1 strings and arrays in the segment manager
+	bool callStringFunc = false;
 	if (op == 0) {
 		// New, check if the target type is 3 (string)
 		if (argv[2].toUint16() == 3)
-			return kString(s, argc, argv);
+			callStringFunc = true;
 	} else {
 		if (s->_segMan->getSegmentType(argv[1].getSegment()) == SEG_TYPE_STRING ||
 			s->_segMan->getSegmentType(argv[1].getSegment()) == SEG_TYPE_SCRIPT) {
-			return kString(s, argc, argv);
+			callStringFunc = true;
 		}
 
 #if 0
 		if (op == 6) {
 			if (s->_segMan->getSegmentType(argv[3].getSegment()) == SEG_TYPE_STRING ||
 				s->_segMan->getSegmentType(argv[3].getSegment()) == SEG_TYPE_SCRIPT) {
-				return kString(s, argc, argv);
+				callStringFunc = true;
 			}
 		}
 #endif
+	}
+
+	if (callStringFunc) {
+		Kernel *kernel = g_sci->getKernel();
+		uint16 kernelStringFuncId = kernel->_kernelFunc_StringId;
+		if (kernelStringFuncId) {
+			const KernelFunction *kernelStringFunc = &kernel->_kernelFuncs[kernelStringFuncId];
+
+			if (op < kernelStringFunc->subFunctionCount) {
+				// subfunction-id is valid
+				const KernelSubFunction *kernelStringSubCall = &kernelStringFunc->subFunctions[op];
+				argc--;
+				argv++; // remove subfunction-id from arguments
+				// and call the kString subfunction
+				return kernelStringSubCall->function(s, argc, argv);
+			}
+		}
 	}
 
 	switch (op) {

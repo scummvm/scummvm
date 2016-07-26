@@ -26,6 +26,8 @@
 #include "hopkins/hopkins.h"
 
 #include "audio/decoders/adpcm_intern.h"
+#include "audio/decoders/wave.h"
+#include "audio/softsynth/pcspk.h"
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/file.h"

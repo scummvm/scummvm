@@ -23,18 +23,12 @@
 #include "common/events.h"
 #include "common/keyboard.h"
 #include "common/file.h"
-#include "common/savefile.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 
 #include "backends/audiocd/audiocd.h"
 
-#include "base/plugins.h"
-#include "base/version.h"
-
 #include "engines/util.h"
-
-#include "audio/mixer.h"
 
 #include "drascula/drascula.h"
 #include "drascula/console.h"
@@ -144,7 +138,7 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	curDirection = 0;
 	trackProtagonist = 0;
 	_characterFrame = 0;
-	hare_se_ve = 0;
+	characterVisible = 0;
 	roomX = 0;
 	roomY = 0;
 	checkFlags = 0;
@@ -183,9 +177,7 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "audio");
 
-	int cd_num = ConfMan.getInt("cdrom");
-	if (cd_num >= 0)
-		_system->getAudioCDManager()->openCD(cd_num);
+	_system->getAudioCDManager()->open();
 
 	_lang = kEnglish;
 
@@ -301,7 +293,7 @@ Common::Error DrasculaEngine::run() {
 		characterMoved = 0;
 		trackProtagonist = 3;
 		_characterFrame = 0;
-		hare_se_ve = 1;
+		characterVisible = 1;
 		checkFlags = 1;
 		doBreak = 0;
 		walkToObject = 0;
@@ -367,7 +359,7 @@ Common::Error DrasculaEngine::run() {
 		for (i = 0; i < 25; i++)
 			memcpy(crosshairCursor + i * 40, tableSurface + 225 + (56 + i) * 320, 40);
 
-		if (_lang == kSpanish)
+		if (_lang == kSpanish && currentChapter != 6)
 			loadPic(974, tableSurface);
 
 		if (currentChapter != 2) {
@@ -603,7 +595,6 @@ bool DrasculaEngine::runCurrentChapter() {
 		if (_rightMouseButton == 1 && _menuScreen) {
 #endif
 			_rightMouseButton = 0;
-			delay(100);
 			if (currentChapter == 2) {
 				loadPic(menuBackground, cursorSurface);
 				loadPic(menuBackground, backSurface);
@@ -632,7 +623,6 @@ bool DrasculaEngine::runCurrentChapter() {
 			!(currentChapter == 5 && pickedObject == 16)) {
 #endif
 			_rightMouseButton = 0;
-			delay(100);
 			characterMoved = 0;
 			if (trackProtagonist == 2)
 				trackProtagonist = 1;
@@ -660,12 +650,11 @@ bool DrasculaEngine::runCurrentChapter() {
 #endif
 
 		if (_leftMouseButton == 1 && _menuBar) {
-			delay(100);
 			selectVerbFromBar();
 		} else if (_leftMouseButton == 1 && takeObject == 0) {
-			delay(100);
 			if (verify1())
 				return true;
+			delay(100);
 		} else if (_leftMouseButton == 1 && takeObject == 1) {
 			if (verify2())
 				return true;
@@ -899,7 +888,7 @@ void DrasculaEngine::pause(int duration) {
 }
 
 int DrasculaEngine::getTime() {
-	return _system->getMillis() / 20; // originally was 1
+	return _system->getMillis() / 10;
 }
 
 void DrasculaEngine::reduce_hare_chico(int xx1, int yy1, int xx2, int yy2, int width, int height, int factor, byte *dir_inicio, byte *dir_fin) {

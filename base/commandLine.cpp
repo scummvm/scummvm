@@ -57,7 +57,7 @@ static const char USAGE_STRING[] =
 ;
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
-#if defined(__SYMBIAN32__) || defined(__GP32__) || defined(ANDROID) || defined(__DS__)
+#if defined(__SYMBIAN32__) || defined(__GP32__) || defined(ANDROID) || defined(__DS__) || defined(__3DS__)
 static const char HELP_STRING[] = "NoUsageString"; // save more data segment space
 #else
 static const char HELP_STRING[] =
@@ -100,8 +100,9 @@ static const char HELP_STRING[] =
 	"  -u, --dump-scripts       Enable script dumping if a directory called 'dumps'\n"
 	"                           exists in the current directory\n"
 	"\n"
-	"  --cdrom=NUM              CD drive to play CD audio from (default: 0 = first\n"
-	"                           drive)\n"
+	"  --cdrom=DRIVE            CD drive to play CD audio from; can either be a\n"
+	"                           drive, path, or numeric index (default: 0 = best\n"
+	"                           choice drive)\n"
 	"  --joystick[=NUM]         Enable joystick input (default: 0 = first joystick)\n"
 	"  --platform=WORD          Specify platform of game (allowed values: 2gs, 3do,\n"
 	"                           acorn, amiga, atari, c64, fmtowns, nes, mac, pc, pc98,\n"
@@ -116,8 +117,9 @@ static const char HELP_STRING[] =
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
 	"  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame)\n"
 	"  --aspect-ratio           Enable aspect ratio correction\n"
-	"  --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen,\n"
-	"                           hercAmber, amiga)\n"
+	"  --render-mode=MODE       Enable additional render modes (hercGreen, hercAmber,\n"
+	"                           cga, ega, vga, amiga, fmtowns, pc9821, pc9801, 2gs,\n"
+	"                           atari, macintosh)\n"
 #ifdef ENABLE_EVENTRECORDER
 	"  --record-mode=MODE       Specify record mode for event recorder (record, playback,\n"
 	"                           passthrough [default])\n"
@@ -372,6 +374,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			// We defer checking whether this is a valid target to a later point.
 			return s;
 		} else {
+			// On MacOS X prior to 10.9 the OS is sometimes adding a -psn_X_XXXXXX argument (where X are digits)
+			// to pass the process serial number. We need to ignore it to avoid an error.
+#ifdef MACOSX
+			if (strncmp(s, "-psn_", 5) == 0)
+				continue;
+#endif
 
 			bool isLongCmd = (s[0] == '-' && s[1] == '-');
 

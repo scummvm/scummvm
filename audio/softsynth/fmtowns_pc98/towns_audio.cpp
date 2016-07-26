@@ -83,7 +83,7 @@ public:
 	bool _activeOutput;
 
 private:
-	void setupLoop(uint32 loopStart, uint32 len);
+	void setupLoop(uint32 loopStart, uint32 loopLen);
 	void setNote(uint8 note, TownsAudio_WaveTable *w, bool stepLimit = false);
 	void setVelo(uint8 velo);
 
@@ -104,10 +104,10 @@ private:
 	uint8 _panRight;
 
 	int8 *_data;
-	int8 *_dataEnd;
 
-	int8 *_loopEnd;
+	uint32 _loopStart;
 	uint32 _loopLen;
+	uint32 _dataEnd;
 
 	uint16 _stepNote;
 	uint16 _stepPitch;
@@ -187,6 +187,7 @@ private:
 	int intf_pcmPlayEffect(va_list &args);
 	int intf_pcmChanOff(va_list &args);
 	int intf_pcmEffectPlaying(va_list &args);
+	int intf_pcmDisableAllChannels(va_list &args);
 	int intf_fmKeyOn(va_list &args);
 	int intf_fmKeyOff(va_list &args);
 	int intf_fmSetPanPos(va_list &args);
@@ -335,7 +336,7 @@ TownsAudioInterfaceInternal::TownsAudioInterfaceInternal(Audio::Mixer *mixer, To
 		INTCB(pcmChanOff),
 		// 40
 		INTCB(pcmEffectPlaying),
-		INTCB(notImpl),
+		INTCB(pcmDisableAllChannels),
 		INTCB(notImpl),
 		INTCB(notImpl),
 		// 44
@@ -784,6 +785,8 @@ int TownsAudioInterfaceInternal::intf_loadWaveTable(va_list &args) {
 	if (_waveTablesTotalDataSize + w.size > 65504)
 		return 5;
 
+	callback(41);
+
 	for (int i = 0; i < _numWaveTables; i++) {
 		if (_waveTables[i].id == w.id)
 			return 10;
@@ -800,6 +803,7 @@ int TownsAudioInterfaceInternal::intf_loadWaveTable(va_list &args) {
 
 int TownsAudioInterfaceInternal::intf_unloadWaveTable(va_list &args) {
 	int id = va_arg(args, int);
+	callback(41);
 
 	if (id == -1) {
 		for (int i = 0; i < 128; i++)
@@ -817,8 +821,8 @@ int TownsAudioInterfaceInternal::intf_unloadWaveTable(va_list &args) {
 						memcpy(&_waveTables[i], &_waveTables[i + 1], sizeof(TownsAudio_WaveTable));
 					return 0;
 				}
-				return 9;
 			}
+			return 9;
 		}
 	}
 
@@ -874,6 +878,12 @@ int TownsAudioInterfaceInternal::intf_pcmEffectPlaying(va_list &args) {
 		return 1;
 	chan -= 0x40;
 	return _pcmChan[chan]._activeEffect ? 1 : 0;
+}
+
+int TownsAudioInterfaceInternal::intf_pcmDisableAllChannels(va_list &args) {
+	for (int i = 0; i < 8; ++i)
+		_pcmChan[i]._activeOutput = false;
+	return 0;
 }
 
 int TownsAudioInterfaceInternal::intf_fmKeyOn(va_list &args) {
@@ -1571,7 +1581,7 @@ void TownsAudio_PcmChannel::clear() {
 	_loopLen = 0;
 
 	_pos = 0;
-	_loopEnd = 0;
+	_loopStart = 0;
 
 	_step = 0;
 	_stepNote = 0x4000;
@@ -1592,7 +1602,8 @@ void TownsAudio_PcmChannel::clear() {
 
 void TownsAudio_PcmChannel::loadData(TownsAudio_WaveTable *w) {
 	_data = w->data;
-	_dataEnd = w->data + w->size;
+	_dataEnd = w->size << 11;
+	_pos = 0;
 }
 
 void TownsAudio_PcmChannel::loadData(uint8 *buffer, uint32 size) {
@@ -1604,7 +1615,7 @@ void TownsAudio_PcmChannel::loadData(uint8 *buffer, uint32 size) {
 		*dst++ = *src & 0x80 ? (*src++ & 0x7f) : -*src++;
 
 	_data = _extData;
-	_dataEnd = _extData + size;
+	_dataEnd = size << 11;
 	_pos = 0;
 }
 
@@ -1643,7 +1654,7 @@ int TownsAudio_PcmChannel::initInstrument(uint8 &note, TownsAudio_WaveTable *&ta
 }
 
 void TownsAudio_PcmChannel::keyOn(uint8 note, uint8 velo, TownsAudio_WaveTable *w) {
-	setupLoop(w->loopStart, w->loopLen);
+	setupLoop(w->loopLen ? w->loopStart : w->size, w->loopLen);
 	setNote(note, w, _reserved);
 	setVelo(velo);
 
@@ -1744,9 +1755,10 @@ void TownsAudio_PcmChannel::updateOutput() {
 	if (_activeKey || _activeEffect) {
 		_pos += _step;
 
-		if (&_data[_pos >> 11] >= _loopEnd) {
-			if (_loopLen) {
-				_pos -= _loopLen;
+		if (_pos >= _dataEnd) {
+			if (_loopStart != _dataEnd) {
+				_pos = _loopStart;
+				_dataEnd = _loopLen;
 			} else {
 				_pos = 0;
 				_activeKey = _activeEffect = false;
@@ -1763,10 +1775,9 @@ int32 TownsAudio_PcmChannel::currentSampleRight() {
 	return (_activeOutput && _panRight) ? (((_data[_pos >> 11] * _tl) * _panRight) >> 3) : 0;
 }
 
-void TownsAudio_PcmChannel::setupLoop(uint32 loopStart, uint32 len) {
-	_loopLen = len << 11;
-	_loopEnd = _loopLen ? &_data[(loopStart + _loopLen) >> 11] : _dataEnd;
-	_pos = loopStart;
+void TownsAudio_PcmChannel::setupLoop(uint32 loopStart, uint32 loopLen) {
+	_loopStart = loopStart << 11;
+	_loopLen = loopLen << 11;
 }
 
 void TownsAudio_PcmChannel::setNote(uint8 note, TownsAudio_WaveTable *w, bool stepLimit) {

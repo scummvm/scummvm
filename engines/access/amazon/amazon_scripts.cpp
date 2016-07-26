@@ -401,10 +401,10 @@ void AmazonScripts::cmdHelp_v2() {
 		_game->_useItem = 0;
 
 		if (_game->_noHints) {
-			printString(NO_HELP_MESSAGE);
+			printString(AMRES.NO_HELP_MESSAGE);
 			return;
 		} else if (_game->_hintLevel == 0) {
-			printString(NO_HINTS_MESSAGE);
+			printString(AMRES.NO_HINTS_MESSAGE);
 			return;
 		}
 	}
@@ -473,12 +473,29 @@ void AmazonScripts::cmdCycleBack() {
 	if (_vm->_startup == -1)
 		_vm->_screen->cyclePaletteBackwards();
 }
+
 void AmazonScripts::cmdChapter() {
+	Resource *activeScript = nullptr;
+
 	if (_vm->isDemo()) {
 		cmdSetHelp();
 	} else {
 		int chapter = _data->readByte();
+
+		if (!_vm->isCD()) {
+			// For floppy version, the current script remains active even
+			// after the end of the chapter start, so we need to save it
+			activeScript = _resource;
+			_resource = nullptr;
+			_data = nullptr;
+		}
+
 		_game->startChapter(chapter);
+
+		if (!_vm->isCD()) {
+			assert(!_resource);
+			setScript(activeScript, false);
+		}
 	}
 }
 

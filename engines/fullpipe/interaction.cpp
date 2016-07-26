@@ -311,7 +311,7 @@ LABEL_38:
 
 		if (abs(xpos - subj->_ox) > 1 || abs(ypos - subj->_oy) > 1
 				|| (inter->_staticsId2 != 0 && (subj->_statics == 0 || subj->_statics->_staticsId != inter->_staticsId2))) {
-			mq = getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->method34(subj, xpos, ypos, 1, inter->_staticsId2);
+			mq = getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->startMove(subj, xpos, ypos, 1, inter->_staticsId2);
 
 			if (!mq)
 				return false;

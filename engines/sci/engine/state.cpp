@@ -70,9 +70,6 @@ static const uint16 s_halfWidthSJISMap[256] = {
 
 EngineState::EngineState(SegManager *segMan)
 : _segMan(segMan),
-#ifdef ENABLE_SCI32
-	_virtualIndexFile(0),
-#endif
 	_dirseeker() {
 
 	reset(false);
@@ -80,9 +77,6 @@ EngineState::EngineState(SegManager *segMan)
 
 EngineState::~EngineState() {
 	delete _msgState;
-#ifdef ENABLE_SCI32
-	delete _virtualIndexFile;
-#endif
 }
 
 void EngineState::reset(bool isRestoring) {
@@ -95,6 +89,7 @@ void EngineState::reset(bool isRestoring) {
 	// reset delayed restore game functionality
 	_delayedRestoreGame = false;
 	_delayedRestoreGameId = 0;
+	_delayedRestoreFromLauncher = false;
 
 	executionStackBase = 0;
 	_executionStackPosChanged = false;
@@ -129,8 +124,6 @@ void EngineState::reset(bool isRestoring) {
 
 	_vmdPalStart = 0;
 	_vmdPalEnd = 256;
-
-	_palCycleToColor = 255;
 }
 
 void EngineState::speedThrottler(uint32 neededSleep) {

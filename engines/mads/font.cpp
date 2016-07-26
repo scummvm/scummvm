@@ -145,7 +145,7 @@ void Font::setColorMode(SelectionMode mode) {
 	}
 }
 
-int Font::writeString(MSurface *surface, const Common::String &msg, const Common::Point &pt,
+int Font::writeString(BaseSurface *surface, const Common::String &msg, const Common::Point &pt,
 		int spaceWidth, int width) {
 	int xEnd;
 	if (width > 0)
@@ -167,15 +167,12 @@ int Font::writeString(MSurface *surface, const Common::String &msg, const Common
 		return x;
 
 	int bottom = y + height - 1;
-	if (bottom > surface->getHeight() - 1) {
-		height -= MIN(height, bottom - (surface->getHeight() - 1));
+	if (bottom > surface->h - 1) {
+		height -= MIN(height, bottom - (surface->h - 1));
 	}
 
 	if (height <= 0)
 		return x;
-
-	byte *destPtr = surface->getBasePtr(x, y);
-	uint8 *oldDestPtr = destPtr;
 
 	int xPos = x;
 
@@ -185,10 +182,11 @@ int Font::writeString(MSurface *surface, const Common::String &msg, const Common
 		int charWidth = _charWidths[(byte)theChar];
 
 		if (charWidth > 0) {
-
 			if (xPos + charWidth > xEnd)
 				return xPos;
 
+			Graphics::Surface dest = surface->getSubArea(
+				Common::Rect(xPos, y, xPos + charWidth, y + height));
 			uint8 *charData = &_charData[_charOffs[(byte)theChar]];
 			int bpp = getBpp(charWidth);
 
@@ -196,6 +194,8 @@ int Font::writeString(MSurface *surface, const Common::String &msg, const Common
 				charData += bpp * skipY;
 
 			for (int i = 0; i < height; i++) {
+				byte *destPtr = (byte *)dest.getBasePtr(0, i);
+
 				for (int j = 0; j < bpp; j++) {
 					if (*charData & 0xc0)
 						*destPtr = _fontColors[(*charData & 0xc0) >> 6];
@@ -211,22 +211,13 @@ int Font::writeString(MSurface *surface, const Common::String &msg, const Common
 					destPtr++;
 					charData++;
 				}
-
-				destPtr += surface->getWidth() - bpp * 4;
-
 			}
-
-			destPtr = oldDestPtr + charWidth + spaceWidth;
-			oldDestPtr = destPtr;
-
 		}
 
 		xPos += charWidth + spaceWidth;
-
 	}
 
 	return xPos;
-
 }
 
 int Font::getWidth(const Common::String &msg, int spaceWidth) {

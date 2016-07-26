@@ -23,8 +23,8 @@
 #ifndef COMMON_SCUMMSYS_H
 #define COMMON_SCUMMSYS_H
 
-#ifndef __has_feature         // Optional of course.
-  #define __has_feature(x) 0  // Compatibility with non-clang compilers.
+#ifndef __has_feature           // Optional of course.
+	#define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
 
 // This is a convenience macro to test whether the compiler used is a GCC
@@ -215,6 +215,10 @@
 #include "config.h"
 #endif
 
+// Now we need to adjust some settings when running tests
+#ifdef COMPILING_TESTS
+#undef ENABLE_EVENTRECORDER
+#endif
 
 // In the following we configure various targets, in particular those
 // which can't use our "configure" tool and hence don't use config.h.
@@ -251,6 +255,7 @@
 
 	#if defined(__DC__) || \
 		  defined(__DS__) || \
+		  defined(__3DS__) || \
 		  defined(__GP32__) || \
 		  defined(IPHONE) || \
 		  defined(__PLAYSTATION2__) || \
@@ -367,11 +372,11 @@
 #endif
 
 #ifndef STRINGBUFLEN
-  #if defined(__N64__) || defined(__DS__)
-    #define STRINGBUFLEN 256
-  #else
-    #define STRINGBUFLEN 1024
-  #endif
+	#if defined(__N64__) || defined(__DS__) || defined(__3DS__)
+		#define STRINGBUFLEN 256
+	#else
+		#define STRINGBUFLEN 1024
+	#endif
 #endif
 
 #ifndef MAXPATHLEN

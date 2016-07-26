@@ -27,6 +27,7 @@ namespace MADS {
 
 DynamicHotspot::DynamicHotspot() {
 	_seqIndex = 0;
+	_animIndex = -1;
 	_facing = FACING_NONE;
 	_descId = 0;
 	_verbId = 0;
@@ -52,6 +53,11 @@ DynamicHotspots::DynamicHotspots(MADSEngine *vm) : _vm(vm) {
 	_count = 0;
 }
 
+int DynamicHotspots::add(int descId, int verbId, int syntax, int seqIndex, const Common::Rect &bounds) {
+	warning("TODO: DynamicHotspots::add(5 params))");
+	return add(descId, verbId, seqIndex, bounds);
+}
+
 int DynamicHotspots::add(int descId, int verbId, int seqIndex, const Common::Rect &bounds) {
 	// Find a free slot
 	uint idx = 0;
@@ -69,6 +75,7 @@ int DynamicHotspots::add(int descId, int verbId, int seqIndex, const Common::Rec
 	_entries[idx]._verbId = verbId;
 	_entries[idx]._articleNumber = PREP_IN;
 	_entries[idx]._cursor = CURSOR_NONE;
+	_entries[idx]._animIndex = -1;
 
 	++_count;
 	_changed = true;
@@ -101,6 +108,8 @@ void DynamicHotspots::remove(int index) {
 	if (index >= 0 && _entries[index]._active) {
 		if (_entries[index]._seqIndex >= 0)
 			scene._sequences[_entries[index]._seqIndex]._dynamicHotspotIndex = -1;
+		if (_entries[index]._animIndex >= 0)
+			scene._animation[_entries[index]._animIndex]->_dynamicHotspotIndex = -1;
 		_entries[index]._active = false;
 
 		--_count;
@@ -206,6 +215,18 @@ void Hotspots::activate(int vocabId, bool active) {
 	for (uint idx = 0; idx < size(); ++idx) {
 		Hotspot &hotspot = (*this)[idx];
 		if (hotspot._vocabId == vocabId) {
+			hotspot._active = active;
+			_vm->_game->_screenObjects.setActive(CAT_HOTSPOT, idx, active);
+		}
+	}
+}
+
+void Hotspots::activateAtPos(int vocabId, bool active, Common::Point pos) {
+	for (uint idx = 0; idx < size(); ++idx) {
+		Hotspot &hotspot = (*this)[idx];
+		if ((hotspot._vocabId == vocabId) && (pos.x >= hotspot._bounds.left) &&
+		    (pos.x <= hotspot._bounds.right) && (pos.y >= hotspot._bounds.top) &&
+		    (pos.y <= hotspot._bounds.bottom)) {
 			hotspot._active = active;
 			_vm->_game->_screenObjects.setActive(CAT_HOTSPOT, idx, active);
 		}

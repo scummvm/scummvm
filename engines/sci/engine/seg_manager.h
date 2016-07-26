@@ -472,6 +472,18 @@ private:
 	void createClassTable();
 
 	SegmentId findFreeSegment() const;
+
+	/**
+	 * This implements our handling of scripts greater than 64K in size.
+	 * They occur sporadically in SCI3 games (and in The Realm (SCI2.1),
+	 * if we ever decide to support it). It works by "stealing" the upper
+	 * two bits of the segment value to use as extra offset bits, making
+	 * the maximum offset 0x3FFFF (262143). This is enough.
+	 *
+	 * The "actual" segment, then, is the segment value with the upper two
+	 * bits masked out.
+	 */
+	SegmentId getActualSegment(SegmentId seg) const;
 };
 
 } // End of namespace Sci

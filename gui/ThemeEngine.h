@@ -36,7 +36,7 @@
 #include "graphics/pixelformat.h"
 
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.20"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.21"
 
 class OSystem;
 
@@ -228,17 +228,17 @@ public:
 	static const char *const kImageLogoSmall; ///< ScummVM logo used in the GMM
 	static const char *const kImageSearch;    ///< Search tool image used in the launcher
 	static const char *const kImageEraser;     ///< Clear input image used in the launcher
-	static const char *const kImageDelbtn; ///< Delete characters in the predictive dialog
+	static const char *const kImageDelButton; ///< Delete characters in the predictive dialog
 	static const char *const kImageList;      ///< List image used in save/load chooser selection
 	static const char *const kImageGrid;      ///< Grid image used in save/load chooser selection
-	static const char *const kImageStopbtn; ///< Stop recording button in recorder onscreen dialog
-	static const char *const kImageEditbtn; ///< Edit recording metadata in recorder onscreen dialog
-	static const char *const kImageSwitchModebtn; ///< Switch mode button in recorder onscreen dialog
-	static const char *const kImageFastReplaybtn; ///< Fast playback mode button in recorder onscreen dialog
-	static const char *const kImageStopSmallbtn; ///< Stop recording button in recorder onscreen dialog (for 320xY)
-	static const char *const kImageEditSmallbtn; ///< Edit recording metadata in recorder onscreen dialog (for 320xY)
-	static const char *const kImageSwitchModeSmallbtn; ///< Switch mode button in recorder onscreen dialog (for 320xY)
-	static const char *const kImageFastReplaySmallbtn; ///< Fast playback mode button in recorder onscreen dialog (for 320xY)
+	static const char *const kImageStopButton; ///< Stop recording button in recorder onscreen dialog
+	static const char *const kImageEditButton; ///< Edit recording metadata in recorder onscreen dialog
+	static const char *const kImageSwitchModeButton; ///< Switch mode button in recorder onscreen dialog
+	static const char *const kImageFastReplayButton; ///< Fast playback mode button in recorder onscreen dialog
+	static const char *const kImageStopSmallButton; ///< Stop recording button in recorder onscreen dialog (for 320xY)
+	static const char *const kImageEditSmallButton; ///< Edit recording metadata in recorder onscreen dialog (for 320xY)
+	static const char *const kImageSwitchModeSmallButton; ///< Switch mode button in recorder onscreen dialog (for 320xY)
+	static const char *const kImageFastReplaySmallButton; ///< Fast playback mode button in recorder onscreen dialog (for 320xY)
 
 	/**
 	 * Graphics mode enumeration.
@@ -340,42 +340,67 @@ public:
 
 	void drawWidgetBackground(const Common::Rect &r, uint16 hints,
 	                          WidgetBackground background = kWidgetBackgroundPlain, WidgetStateInfo state = kStateEnabled);
+	void drawWidgetBackgroundClip(const Common::Rect &r, const Common::Rect &clippingArea, uint16 hints,
+								WidgetBackground background = kWidgetBackgroundPlain, WidgetStateInfo state = kStateEnabled);
 
 	void drawButton(const Common::Rect &r, const Common::String &str,
 	                WidgetStateInfo state = kStateEnabled, uint16 hints = 0);
+	void drawButtonClip(const Common::Rect &r, const Common::Rect &clippingRect, const Common::String &str,
+		WidgetStateInfo state = kStateEnabled, uint16 hints = 0);
 
 	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface,
-	                 WidgetStateInfo state = kStateEnabled, int alpha = 256, bool themeTrans = false);
+	                 WidgetStateInfo state = kStateEnabled, int alpha = 255, bool themeTrans = false);
+	void drawSurfaceClip(const Common::Rect &r, const Common::Rect &clippingRect, const Graphics::Surface &surface,
+		WidgetStateInfo state = kStateEnabled, int alpha = 255, bool themeTrans = false);
 
 	void drawSlider(const Common::Rect &r, int width,
 	                WidgetStateInfo state = kStateEnabled);
+	void drawSliderClip(const Common::Rect &r, const Common::Rect &clippingRect, int width,
+					WidgetStateInfo state = kStateEnabled);
 
 	void drawCheckbox(const Common::Rect &r, const Common::String &str,
 	                  bool checked, WidgetStateInfo state = kStateEnabled);
+	void drawCheckboxClip(const Common::Rect &r, const Common::Rect &clippingRect, const Common::String &str,
+					  bool checked, WidgetStateInfo state = kStateEnabled);
 
 	void drawRadiobutton(const Common::Rect &r, const Common::String &str,
 	                     bool checked, WidgetStateInfo state = kStateEnabled);
+	void drawRadiobuttonClip(const Common::Rect &r, const Common::Rect &clippingRect, const Common::String &str,
+						 bool checked, WidgetStateInfo state = kStateEnabled);
 
 	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth,
 	             const Common::Array<Common::String> &tabs, int active, uint16 hints,
 	             int titleVPad, WidgetStateInfo state = kStateEnabled);
+	void drawTabClip(const Common::Rect &r, const Common::Rect &clippingRect, int tabHeight, int tabWidth,
+				 const Common::Array<Common::String> &tabs, int active, uint16 hints,
+				 int titleVPad, WidgetStateInfo state = kStateEnabled);
 
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight,
 	                   ScrollbarState, WidgetStateInfo state = kStateEnabled);
+	void drawScrollbarClip(const Common::Rect &r, const Common::Rect &clippingRect, int sliderY, int sliderHeight,
+					   ScrollbarState scrollState, WidgetStateInfo state = kStateEnabled);
 
 	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel,
 	                     int deltax, WidgetStateInfo state = kStateEnabled, Graphics::TextAlign align = Graphics::kTextAlignLeft);
+	void drawPopUpWidgetClip(const Common::Rect &r, const Common::Rect &clippingArea, const Common::String &sel,
+							int deltax, WidgetStateInfo state = kStateEnabled, Graphics::TextAlign align = Graphics::kTextAlignLeft);
 
 	void drawCaret(const Common::Rect &r, bool erase,
 	               WidgetStateInfo state = kStateEnabled);
+	void drawCaretClip(const Common::Rect &r, const Common::Rect &clip, bool erase,
+		WidgetStateInfo state = kStateEnabled);
 
 	void drawLineSeparator(const Common::Rect &r, WidgetStateInfo state = kStateEnabled);
+	void drawLineSeparatorClip(const Common::Rect &r, const Common::Rect &clippingArea, WidgetStateInfo state = kStateEnabled);
 
 	void drawDialogBackground(const Common::Rect &r, DialogBackground type, WidgetStateInfo state = kStateEnabled);
+	void drawDialogBackgroundClip(const Common::Rect &r, const Common::Rect &clip, DialogBackground type, WidgetStateInfo state = kStateEnabled);
 
 	void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, Graphics::TextAlign align = Graphics::kTextAlignCenter, TextInversionState inverted = kTextInversionNone, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold, FontColor color = kFontColorNormal, bool restore = true, const Common::Rect &drawableTextArea = Common::Rect(0, 0, 0, 0));
+	void drawTextClip(const Common::Rect &r, const Common::Rect &clippingArea, const Common::String &str, WidgetStateInfo state = kStateEnabled, Graphics::TextAlign align = Graphics::kTextAlignCenter, TextInversionState inverted = kTextInversionNone, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold, FontColor color = kFontColorNormal, bool restore = true, const Common::Rect &drawableTextArea = Common::Rect(0, 0, 0, 0));
 
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state = kStateEnabled, FontColor color = kFontColorNormal);
+	void drawCharClip(const Common::Rect &r, const Common::Rect &clippingArea, byte ch, const Graphics::Font *font, WidgetStateInfo state = kStateEnabled, FontColor color = kFontColorNormal);
 
 	//@}
 
@@ -584,9 +609,13 @@ protected:
 	 * This function is called from all the Widget Drawing methods.
 	 */
 	void queueDD(DrawData type,  const Common::Rect &r, uint32 dynamic = 0, bool restore = false);
+	void queueDDClip(DrawData type, const Common::Rect &r, const Common::Rect &clippingRect, uint32 dynamic = 0, bool restore = false);
 	void queueDDText(TextData type, TextColor color, const Common::Rect &r, const Common::String &text, bool restoreBg,
 	                 bool elipsis, Graphics::TextAlign alignH = Graphics::kTextAlignLeft, TextAlignVertical alignV = kTextAlignVTop, int deltax = 0, const Common::Rect &drawableTextArea = Common::Rect(0, 0, 0, 0));
+	void queueDDTextClip(TextData type, TextColor color, const Common::Rect &r, const Common::Rect &clippingRect, const Common::String &text, bool restoreBg,
+					 bool elipsis, Graphics::TextAlign alignH = Graphics::kTextAlignLeft, TextAlignVertical alignV = kTextAlignVTop, int deltax = 0, const Common::Rect &drawableTextArea = Common::Rect(0, 0, 0, 0));
 	void queueBitmap(const Graphics::Surface *bitmap, const Common::Rect &r, bool alpha);
+	void queueBitmapClip(const Graphics::Surface *bitmap, const Common::Rect &clippingRect, const Common::Rect &r, bool alpha);
 
 	/**
 	 * DEBUG: Draws a white square and writes some text next to it.

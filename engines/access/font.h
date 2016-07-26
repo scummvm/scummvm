@@ -78,12 +78,12 @@ public:
 	/**
 	 * Draw a string on a given surface
 	 */
-	void drawString(ASurface *s, const Common::String &msg, const Common::Point &pt);
+	void drawString(BaseSurface *s, const Common::String &msg, const Common::Point &pt);
 
 	/**
 	 * Draw a character on a given surface
 	 */
-	int drawChar(ASurface *s, char c, Common::Point &pt);
+	int drawChar(BaseSurface *s, char c, Common::Point &pt);
 
 };
 

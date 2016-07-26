@@ -48,7 +48,6 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
-#include "gui/debugger.h"
 
 /**
  * This is the namespace of the Hopkins engine.

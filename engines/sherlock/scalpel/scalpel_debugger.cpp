@@ -22,10 +22,9 @@
 
 #include "sherlock/scalpel/scalpel_debugger.h"
 #include "sherlock/sherlock.h"
+#include "audio/audiostream.h"
 #include "audio/mixer.h"
-#include "audio/decoders/3do.h"
 #include "audio/decoders/aiff.h"
-#include "audio/decoders/wave.h"
 
 namespace Sherlock {
 
@@ -42,7 +41,7 @@ bool ScalpelDebugger::cmd3DO_PlayMovie(int argc, const char **argv) {
 		return true;
 	}
 
-	// play gets postboned until debugger is closed
+	// play gets postponed until debugger is closed
 	Common::String filename = argv[1];
 	_3doPlayMovieFile = filename;
 

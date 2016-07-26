@@ -46,6 +46,11 @@ struct ImageFrame {
 	Graphics::Surface _frame;
 
 	/**
+	 * Converts an ImageFrame record to a surface for convenience in passing to drawing methods
+	 */
+	operator const Graphics::Surface &() { return _frame; }
+
+	/**
 	 * Decompress a single frame for the sprite
 	 */
 	void decompressFrame(const byte *src, bool isRoseTattoo);
@@ -90,7 +95,7 @@ public:
 	ImageFile();
 	ImageFile(const Common::String &name, bool skipPal = false, bool animImages = false);
 	ImageFile(Common::SeekableReadStream &stream, bool skipPal = false);
-	~ImageFile();
+	virtual ~ImageFile();
 	static void setVm(SherlockEngine *vm);
 };
 
@@ -150,7 +155,6 @@ private:
 public:
 	ImageFile3DO(const Common::String &name, ImageFile3DOType imageFile3DOType);
 	ImageFile3DO(Common::SeekableReadStream &stream, bool isRoomData = false);
-	~ImageFile3DO();
 	static void setVm(SherlockEngine *vm);
 };
 

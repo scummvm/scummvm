@@ -442,6 +442,7 @@ private:
 		OTList();
 		OTList(RMGfxPrimitive *pr) {
 			_prim = pr;
+			_next = NULL;
 		}
 	};
 

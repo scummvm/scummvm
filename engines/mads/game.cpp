@@ -57,8 +57,7 @@ Game *Game::init(MADSEngine *vm) {
 }
 
 Game::Game(MADSEngine *vm)
-	: _vm(vm), _surface(nullptr), _objects(vm), _scene(vm),
-	  _screenObjects(vm), _player(vm) {
+	: _vm(vm), _surface(nullptr), _objects(vm), _scene(vm), _screenObjects(vm), _player(vm), _camX(vm), _camY(vm) {
 	_sectionNumber = 1;
 	_priorSectionNumber = 0;
 	_loadGameSlot = -1;
@@ -82,6 +81,7 @@ Game::Game(MADSEngine *vm)
 	_winStatus = 0;
 	_widepipeCtr = 0;
 	_fx = kTransitionNone;
+	_panningSpeed = 1; // Medium speed
 
 	// Load the inventory object list
 	_objects.load();
@@ -218,6 +218,10 @@ void Game::sectionLoop() {
 		}
 
 		_scene.loadScene(_scene._nextSceneId, _aaName, 0);
+		camInitDefault();
+		camSetSpeed();
+
+
 		_vm->_sound->pauseNewCommands();
 
 		if (!_player._spritesLoaded) {
@@ -297,8 +301,10 @@ void Game::sectionLoop() {
 		_vm->_events->waitCursor();
 		_kernelMode = KERNEL_ROOM_PRELOAD;
 
-		delete _scene._activeAnimation;
-		_scene._activeAnimation = nullptr;
+		for (int i = 0; i < 10; i++) {
+			delete _scene._animation[i];
+			_scene._animation[i] = nullptr;
+		}
 
 		_scene._reloadSceneFlag = false;
 
@@ -492,7 +498,7 @@ void Game::loadGame(int slotNumber) {
 	_scene._currentSceneId = -2;
 	_sectionNumber = _scene._nextSceneId / 100;
 	_scene._frameStartTime = _vm->_events->getFrameCounter();
-	_vm->_screen._shakeCountdown = -1;
+	_vm->_screen->_shakeCountdown = -1;
 
 	// Default the selected inventory item to the first one, if the player has any
 	_scene._userInterface._selectedInvIndex = _objects._inventoryList.size() > 0 ? 0 : -1;
@@ -594,7 +600,82 @@ void Game::createThumbnail() {
 	uint8 thumbPalette[PALETTE_SIZE];
 	_vm->_palette->grabPalette(thumbPalette, 0, PALETTE_COUNT);
 	_saveThumb = new Graphics::Surface();
-	::createThumbnail(_saveThumb, _vm->_screen.getData(), MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT, thumbPalette);
+	::createThumbnail(_saveThumb, (const byte *)_vm->_screen->getPixels(),
+		MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT, thumbPalette);
+}
+
+void Game::syncTimers(SyncType slaveType, int slaveId, SyncType masterType, int masterId) {
+	uint32 syncTime = 0;
+
+	switch (masterType) {
+	case SYNC_SEQ:
+		syncTime = _scene._sequences[masterId]._timeout;
+		break;
+
+	case SYNC_ANIM:
+		syncTime = _scene._animation[masterId]->getNextFrameTimer();
+		break;
+
+	case SYNC_CLOCK:
+		syncTime = _scene._frameStartTime + masterId;
+		break;
+
+	case SYNC_PLAYER:
+		syncTime = _player._priorTimer;
+		break;
+	}
+
+
+	switch (slaveType) {
+	case SYNC_SEQ:
+		_scene._sequences[slaveId]._timeout = syncTime;
+		break;
+
+	case SYNC_PLAYER:
+		_player._priorTimer = syncTime;
+		break;
+
+	case SYNC_ANIM:
+		_scene._animation[slaveId]->setNextFrameTimer(syncTime);
+		break;
+
+	case SYNC_CLOCK:
+		error("syncTimer is trying to force _frameStartTime");
+	}
+}
+
+void Game::camInitDefault() {
+	_camX.setDefaultPanX();
+	_camY.setDefaultPanY();
+}
+
+void Game::camSetSpeed() {
+	switch (_panningSpeed) {
+	case 1:
+		_camX._speed = 8;
+		_camY._speed = 4;
+		break;
+
+	case 2:
+		_camX._speed = 320;
+		_camY._speed = 160;
+		break;
+
+	default:
+		_camX._speed = 4;
+		_camY._speed = 2;
+		break;
+	}
+}
+
+void Game::camUpdate() {
+	bool any_pan = _camX.camPan(&_scene._posAdjust.x, &_player._playerPos.x, 320, _scene._sceneInfo->_width);
+	any_pan |= _camY.camPan(&_scene._posAdjust.y, &_player._playerPos.y, 156, _scene._sceneInfo->_height);
+
+	if (any_pan) {
+		_scene.setCamera(_scene._posAdjust);
+		_screenObjects._forceRescan = true;
+	}
 }
 
 } // End of namespace MADS

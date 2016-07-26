@@ -36,7 +36,7 @@
  * consisting of PlainGameDescriptors.
  */
 struct PlainGameDescriptor {
-	const char *gameid;
+	const char *gameId;
 	const char *description;
 };
 
@@ -108,7 +108,7 @@ public:
 	GameList() {}
 	GameList(const GameList &list) : Common::Array<GameDescriptor>(list) {}
 	GameList(const PlainGameDescriptor *g) {
-		while (g->gameid) {
+		while (g->gameId) {
 			push_back(GameDescriptor(*g));
 			g++;
 		}

@@ -43,6 +43,7 @@ public:
 	MenuModule(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~MenuModule();
 	void setLoadgameInfo(uint index);
+	void setLoadgameSlot(int slot);
 	void setSavegameInfo(const Common::String &description, uint index, bool newSavegame);
 	void setDeletegameInfo(uint index);
 	void refreshSaveGameList();

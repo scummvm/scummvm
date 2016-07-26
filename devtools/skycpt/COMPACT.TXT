@@ -2741,7 +2741,7 @@ SECTION::MAINLISTS
 		0000::NULL
 		40E6::sc38_phone_talk
 		40F4::sc32_garden_talk
-		40DF::sc31_guard_talk
+		40DF::sc31_guard_talk2
 		4145::barman_talk
 		4168::sc36_col_talk2
 		4169::sc36_gal_talk

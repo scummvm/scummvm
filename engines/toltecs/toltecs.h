@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TOLTECS_H
-#define TOLTECS_H
+#ifndef TOLTECS_TOLTECS_H
+#define TOLTECS_TOLTECS_H
 
 #include "common/scummsys.h"
 #include "common/endian.h"
@@ -231,4 +231,4 @@ public:
 
 } // End of namespace Toltecs
 
-#endif /* TOLTECS_H */
+#endif /* TOLTECS_TOLTECS_H */

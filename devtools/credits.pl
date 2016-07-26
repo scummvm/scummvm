@@ -287,7 +287,7 @@ sub begin_section {
 			# headlines...
 			my $ascii_title = html_entities_to_ascii($title);
 			$title = html_entities_to_cpp($title);
-			if ($ascii_title ne $title) {	
+			if ($ascii_title ne $title) {
 				print '"A1""'.$ascii_title.'",' . "\n";
 			}
 			print '"C1""'.$title.'",' . "\n";
@@ -295,7 +295,7 @@ sub begin_section {
 		} else {
 			my $ascii_title = html_entities_to_ascii($title);
 			$title = html_entities_to_cpp($title);
-			if ($ascii_title ne $title) {	
+			if ($ascii_title ne $title) {
 				print '"A1""'.$ascii_title.'",' . "\n";
 			}
 			print '"C1""'.$title.'",' . "\n";
@@ -428,7 +428,7 @@ sub add_person {
 		if (length $desc > 0) {
 			my $ascii_desc = html_entities_to_ascii($desc);
 			$desc = html_entities_to_cpp($desc);
-			if ($ascii_desc ne $desc) {	
+			if ($ascii_desc ne $desc) {
 				print '"A2""'.$ascii_desc.'",' . "\n";
 			}
 			print '"C2""'.$desc.'",' . "\n";
@@ -536,10 +536,11 @@ begin_credits("Credits");
 
 			begin_section("AGI");
 				add_person("Stuart George", "darkfiber", "");
-				add_person("Matthew Hoops", "clone2727", "");
+				add_person("Matthew Hoops", "clone2727", "(retired)");
 				add_person("Filippos Karapetis", "[md5]", "");
+				add_person("Martin Kiewitz", "m_kiewitz", "");
 				add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
-				add_person("Walter van Niftrik", "waltervn", "(retired)");
+				add_person("Walter van Niftrik", "waltervn", "");
 				add_person("Kari Salminen", "Buddha^", "");
 				add_person("Eugene Sandulenko", "sev", "");
 				add_person("David Symonds", "dsymonds", "(retired)");
@@ -552,17 +553,26 @@ begin_credits("Credits");
 				add_person("Oliver Kiehl", "olki", "(retired)");
 				add_person("Ludvig Strigeus", "ludde", "(retired)");
 			end_section();
-			
+
+			begin_section("Access");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Paul Gilbert", "dreammaster", "");
+			end_section();
+
 			begin_section("Avalanche");
 				add_person("Peter Bozs&oacute;", "uruk", "");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+			end_section();
+
+			begin_section("BBVS");
+				add_person("Benjamin Haisch", "john_doe", "");
 			end_section();
 
 			begin_section("CGE");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
 				add_person("Paul Gilbert", "dreammaster", "");
 			end_section();
-			
+
 			begin_section("CGE2");
 				add_person("Peter Bozs&oacute;", "uruk", "");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
@@ -594,6 +604,7 @@ begin_credits("Credits");
 			begin_section("Drascula");
 				add_person("Filippos Karapetis", "[md5]", "");
 				add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
+				add_person("Thierry Crozat", "criezy", "");
 			end_section();
 
 			begin_section("DreamWeb");
@@ -602,6 +613,11 @@ begin_credits("Credits");
 				add_person("Filippos Karapetis", "[md5]", "");
 				add_person("Vladimir Menshakov", "whoozle", "(retired)");
 				add_person("Willem Jan Palenstijn", "wjp", "");
+			end_section();
+
+			begin_section("Gnap");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Benjamin Haisch", "john_doe", "");
 			end_section();
 
 			begin_section("Gob");
@@ -637,7 +653,7 @@ begin_credits("Credits");
 			end_section();
 
 			begin_section("Lastexpress");
-				add_person("Matthew Hoops", "clone2727", "");
+				add_person("Matthew Hoops", "clone2727", "(retired)");
 				add_person("Jordi Vilalta Prat", "jvprat", "");
 				add_person("Julien Templier", "littleboy", "");
 			end_section();
@@ -659,7 +675,7 @@ begin_credits("Credits");
 
 			begin_section("Mohawk");
 				add_person("Bastien Bouclet", "bgk", "");
-				add_person("Matthew Hoops", "clone2727", "");
+				add_person("Matthew Hoops", "clone2727", "(retired)");
 				add_person("Filippos Karapetis", "[md5]", "");
 				add_person("Alyssa Milburn", "fuzzie", "");
 				add_person("Eugene Sandulenko", "sev", "");
@@ -681,7 +697,7 @@ begin_credits("Credits");
 			end_section();
 
 			begin_section("Pegasus");
-				add_person("Matthew Hoops", "clone2727", "");
+				add_person("Matthew Hoops", "clone2727", "(retired)");
 			end_section();
 
 			begin_section("Queen");
@@ -704,10 +720,15 @@ begin_credits("Credits");
 				add_person("Max Horn", "Fingolfin", "(retired)");
 				add_person("Filippos Karapetis", "[md5]", "");
 				add_person("Martin Kiewitz", "m_kiewitz", "");
-				add_person("Walter van Niftrik", "waltervn", "(retired)");
+				add_person("Walter van Niftrik", "waltervn", "");
 				add_person("Willem Jan Palenstijn", "wjp", "");
 				add_person("Jordi Vilalta Prat", "jvprat", "");
 				add_person("Lars Skovlund", "lskovlun", "");
+			end_section();
+
+			begin_section("Sherlock");
+				add_person("Paul Gilbert", "dreammaster", "");
+				add_person("Martin Kiewitz", "m_kiewitz", "");
 			end_section();
 
 			begin_section("Sky");
@@ -788,7 +809,7 @@ begin_credits("Credits");
 				add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "");
 				add_person("Tobia Tesan", "t0by", "");
 			end_section();
-            
+
 			begin_section("Z-Vision");
 				add_person("Adrian Astley", "RichieSams", "");
 				add_person("Filippos Karapetis", "[md5]", "");
@@ -802,18 +823,24 @@ begin_credits("Credits");
 			begin_section("Android");
 				add_person("Andre Heider", "dhewg", "");
 				add_person("Angus Lees", "Gus", "");
+				add_person("Lubomyr Lisen", "", "");
 			end_section();
 
 			begin_section("Dreamcast");
 				add_person("Marcus Comstedt", "", "");
 			end_section();
 
+			begin_section("GCW0");
+				add_person("Eugene Sandulenko", "", "");
+			end_section();
+
 			begin_section("GPH Devices (GP2X, GP2XWiz &amp; Caanoo)");
 				add_person("John Willis", "DJWillis", "");
 			end_section();
 
-			begin_section("iPhone");
+			begin_section("iPhone / iPad");
 				add_person("Oystein Eftevaag", "vinterstum", "");
+				add_person("Vincent B&eacute;nony", "bSr43", "");
 			end_section();
 
 			begin_section("LinuxMoto");
@@ -823,6 +850,10 @@ begin_credits("Credits");
 			begin_section("Maemo");
 				add_person("Frantisek Dufka", "fanoush", "(retired)");
 				add_person("Tarek Soliman", "tsoliman", "");
+			end_section();
+
+			begin_section("Nintendo 3DS");
+				add_person("Thomas Edvalson", "Cruel", "");
 			end_section();
 
 			begin_section("Nintendo 64");
@@ -877,6 +908,10 @@ begin_credits("Credits");
 				add_person("Andre Heider", "dhewg", "");
 			end_section();
 
+			begin_section("Raspberry Pi");
+				add_person("Manuel Alfayate", "vanfanel", "");
+			end_section();
+
 		end_section();
 
 		begin_section("Other subsystems");
@@ -929,7 +964,7 @@ begin_credits("Credits");
 			begin_persons();
 				add_person("Thierry Crozat", "criezy", "Numerous contributions to documentation");
 				add_person("Joachim Eberhard", "joachimeberhard", "Numerous contributions to documentation (retired)");
-				add_person("Matthew Hoops", "clone2727", "Wiki editor");
+				add_person("Matthew Hoops", "clone2727", "Numerous contributions to documentation (retired)");
 			end_persons();
 		end_section();
 
@@ -983,6 +1018,7 @@ begin_credits("Credits");
 			begin_section("Mac OS X");
 				add_person("Max Horn", "Fingolfin", "(retired)");
 				add_person("Oystein Eftevaag", "vinterstum", "");
+				add_person("Thierry Crozat", "criezy", "");
 			end_section();
 
 			begin_section("Mandriva");
@@ -1285,6 +1321,15 @@ begin_credits("Credits");
 	add_paragraph(
     "Bob Bell, Michel Kripalani, Tommy Yune, from Presto Studios for ".
     "providing the source code of The Journeyman Project: Pegasus Prime.");
+
+	add_paragraph(
+    "Electronic Arts IP Preservation Team, particularly Stefan Serbicki, and Vasyl Tsvirkunov of ".
+    "Electronic Arts for providing the source code of the two Lost Files of Sherlock Holmes games. ".
+    "James M. Ferguson and Barry Duncan for their tenacious efforts to recover the sources.");
+
+	add_paragraph(
+    "The mindFactory team for writing Broken Sword 2.5, a splendid fan-made sequel, and for sharing ".
+    "the source code with us.");
 
 	end_section();
 

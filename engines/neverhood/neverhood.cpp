@@ -24,6 +24,8 @@
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 
+#include "audio/mixer.h"
+
 #include "base/plugins.h"
 #include "base/version.h"
 
@@ -76,10 +78,6 @@ Common::Error NeverhoodEngine::run() {
 
 	_gameState.sceneNum = 0;
 	_gameState.which = 0;
-
-	// Assign default values to the config manager, in case settings are missing
-	ConfMan.registerDefault("originalsaveload", "false");
-	ConfMan.registerDefault("skiphallofrecordsscenes", "false");
 
 	_staticData = new StaticData();
 	_staticData->load("neverhood.dat");

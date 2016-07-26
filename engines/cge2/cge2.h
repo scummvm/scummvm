@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef CGE2_H
-#define CGE2_H
+#ifndef CGE2_CGE2_H
+#define CGE2_CGE2_H
 
 #include "common/random.h"
 #include "common/savefile.h"
@@ -335,4 +335,4 @@ public:
 
 } // End of namespace CGE2
 
-#endif // CGE2_H
+#endif // CGE2_CGE2_H

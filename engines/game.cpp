@@ -26,8 +26,8 @@
 
 const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const PlainGameDescriptor *list) {
 	const PlainGameDescriptor *g = list;
-	while (g->gameid) {
-		if (0 == scumm_stricmp(gameid, g->gameid))
+	while (g->gameId) {
+		if (0 == scumm_stricmp(gameid, g->gameId))
 			return g;
 		g++;
 	}
@@ -40,7 +40,7 @@ GameDescriptor::GameDescriptor() {
 }
 
 GameDescriptor::GameDescriptor(const PlainGameDescriptor &pgd, Common::String guioptions) {
-	setVal("gameid", pgd.gameid);
+	setVal("gameid", pgd.gameId);
 	setVal("description", pgd.description);
 
 	if (!guioptions.empty())

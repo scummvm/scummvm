@@ -99,9 +99,20 @@ enum GlobalId {
 
 	// Section #4 Variables
 	kCatacombsRoom          = 80,
-	// TODO
+	kCatacombsMisc          = 81,
+	kCatacombsFlag          = 82,
+	kCatacombsFrom          = 83,
+	kCatacombs309           = 84,
+	kCatacombs409a          = 85,
+	kCatacombs409b          = 86,
+	kCatacombs501           = 87,
+	kCatacombs309From       = 88,
+	kCatacombs409aFrom      = 89,
+	kCatacombs409bFrom      = 90,
+	kCatacombs501From       = 91,
+	kCatacombsNextRoom      = 92,
 	kDoorIn409IsOpen        = 93,
-	kUnknown                = 94,	// TODO
+	kPriestPistonPuke       = 94,
 	kCobwebIsCut            = 95,
 
 	// Section #5 Variables
@@ -124,6 +135,7 @@ class PhantomGlobals : public Globals {
 public:
 	SynchronizedList _spriteIndexes;
 	SynchronizedList _sequenceIndexes;
+	SynchronizedList _animationIndexes;
 public:
 	/**
 	 * Constructor

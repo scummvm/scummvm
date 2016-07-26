@@ -1406,7 +1406,7 @@ int32 Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32
 	int32 offset;
 
 	debugC(DEBUG_INSANE, "smush_setupSanWithFlu(%s, %d, %d, %d, %d, %p, %d)", filename, setupsan2,
-		  step1, step2, setupsan1, fluPtr, numFrames);
+		  step1, step2, setupsan1, (void *)fluPtr, numFrames);
 
 	_smush_setupsan1 = setupsan1;
 

@@ -44,14 +44,14 @@ namespace Agi {
 #define ENVELOPE_COEF 100 / _sampleRate
 
 // MIDI player commands
-#define MIDI_NOTE_OFF		0x8
-#define MIDI_NOTE_ON		0x9
-#define MIDI_CONTROLLER		0xB
-#define MIDI_PROGRAM_CHANGE	0xC
-#define MIDI_PITCH_WHEEL	0xE
+#define MIDI_NOTE_OFF       0x8
+#define MIDI_NOTE_ON        0x9
+#define MIDI_CONTROLLER     0xB
+#define MIDI_PROGRAM_CHANGE 0xC
+#define MIDI_PITCH_WHEEL    0xE
 
-#define MIDI_STOP_SEQUENCE	0xFC
-#define MIDI_TIMER_SYNC		0xF8
+#define MIDI_STOP_SEQUENCE  0xFC
+#define MIDI_TIMER_SYNC     0xF8
 
 // Size of the SIERRASTANDARD file (i.e. the wave file i.e. the sample data used by the instruments).
 #define SIERRASTANDARD_SIZE 65536
@@ -70,26 +70,26 @@ namespace Agi {
 
 struct IIgsInstrumentHeader {
 	struct {
-		frac_t bp;		///< Envelope segment breakpoint
-		frac_t inc;		///< Envelope segment velocity
+		frac_t bp;      ///< Envelope segment breakpoint
+		frac_t inc;     ///< Envelope segment velocity
 	} env[ENVELOPE_SEGMENT_COUNT];
-	uint8 seg;			///< Envelope release segment
-	uint8 bend;			///< Maximum range for pitch bend
-	uint8 vibDepth;		///< Vibrato depth
-	uint8 vibSpeed;		///< Vibrato speed
-	uint8 waveCount[2];	///< Wave count for both generators
+	uint8 seg;          ///< Envelope release segment
+	uint8 bend;         ///< Maximum range for pitch bend
+	uint8 vibDepth;     ///< Vibrato depth
+	uint8 vibSpeed;     ///< Vibrato speed
+	uint8 waveCount[2]; ///< Wave count for both generators
 	struct {
-		uint8 key;		///< Highest MIDI key to use this wave
-		int offset;		///< Offset of wave data, relative to base
-		uint size;		///< Wave size
-		bool halt;		///< Oscillator halted?
-		bool loop;		///< Loop mode?
-		bool swap;		///< Swap mode?
-		bool chn;		///< Output channel (left / right)
-		int16 tune;		///< Fine tune in semitones (8.8 fixed point)
+		uint8 key;      ///< Highest MIDI key to use this wave
+		uint32 offset;  ///< Offset of wave data, relative to base
+		uint32 size;    ///< Wave size
+		bool halt;      ///< Oscillator halted?
+		bool loop;      ///< Loop mode?
+		bool swap;      ///< Swap mode?
+		bool rightChannel;  ///< Output channel (left / right)
+		int16 tune;     ///< Fine tune in semitones (8.8 fixed point)
 	} wave[2][MAX_OSCILLATOR_WAVES];
 
-	int8* base; ///< Base of wave data
+	int8 *wavetableBase; ///< Base of wave data
 
 	/**
 	 * Read an Apple IIGS instrument header from the given stream.
@@ -98,7 +98,7 @@ struct IIgsInstrumentHeader {
 	 * @return True if successful, false otherwise.
 	 */
 	bool read(Common::SeekableReadStream &stream, bool ignoreAddr = false);
-	bool finalize(int8 *);
+	bool finalize(int8 *wavetable, uint32 wavetableSize);
 };
 
 struct IIgsSampleHeader {
@@ -107,8 +107,8 @@ struct IIgsSampleHeader {
 	uint8  unknownByte_Ofs3; // 0x7F in Gold Rush's sound resource 60, 0 in all others.
 	uint8  volume; ///< Current guess: Logarithmic in 6 dB steps
 	uint8  unknownByte_Ofs5; ///< 0 in all tested samples.
-	uint16 instrumentSize; ///< Little endian. 44 in all tested samples. A guess.
-	uint16 sampleSize; ///< Little endian. Accurate in all tested samples excluding Manhunter I's sound resource 16.
+	uint16 instrumentSize; ///< 44 in all tested samples. A guess.
+	uint16 sampleSize; ///< Accurate in all tested samples excluding Manhunter I's sound resource 16.
 	IIgsInstrumentHeader instrument;
 
 	/**
@@ -117,29 +117,34 @@ struct IIgsSampleHeader {
 	 * @return True if successful, false otherwise.
 	 */
 	bool read(Common::SeekableReadStream &stream);
-	bool finalize(int8 *sample);
+	bool finalize(int8 *sampleData);
 };
 
 class IIgsGenerator {
 public:
-	IIgsGenerator() : ins(NULL), key(-1), chn(-1) {}
+	IIgsGenerator() : curInstrument(nullptr), key(-1), channel(-1) {
+		memset(&osc, 0, sizeof(osc));
+		seg = 0;
+		a = 0;
+		velocity = 0;
+	}
 
-	const IIgsInstrumentHeader *ins; ///< Currently used instrument
-	int key;		///< MIDI key
-	int vel;		///< MIDI velocity (& channel volume)
-	int chn;		///< MIDI channel
+	const IIgsInstrumentHeader *curInstrument; ///< Currently used instrument
+	int key;        ///< MIDI key
+	int velocity;   ///< MIDI velocity (& channel volume)
+	int channel;    ///< MIDI channel
 	struct {
-		int8 *base;	///< Sample base pointer
-		uint size;	///< Sample size
-		frac_t p;	///< Sample pointer
-		frac_t pd;	///< Sample pointer delta
-		bool halt;	///< Is oscillator halted?
-		bool loop;	///< Is looping enabled?
-		bool swap;	///< Is swapping enabled?
-		bool chn;	///< Output channel (left / right)
+		int8 *base; ///< Sample base pointer
+		uint size;  ///< Sample size
+		frac_t p;   ///< Sample pointer
+		frac_t pd;  ///< Sample pointer delta
+		bool halt;  ///< Is oscillator halted?
+		bool loop;  ///< Is looping enabled?
+		bool swap;  ///< Is swapping enabled?
+		bool rightChannel;  ///< Output channel (left / right)
 	} osc[2];
-	int seg;		///< Current envelope segment
-	frac_t a;		///< Current envelope amplitude
+	int seg;        ///< Current envelope segment
+	frac_t a;       ///< Current envelope amplitude
 };
 
 class IIgsMidi : public AgiSound {
@@ -161,14 +166,13 @@ public:
 
 class IIgsSample : public AgiSound {
 public:
-	IIgsSample(uint8 *data, uint32 len, int resnum);
+	IIgsSample(uint8 *data, uint32 len, int16 resourceNr);
 	~IIgsSample() { delete[] _sample; }
 	virtual uint16 type() { return _header.type; }
 	const IIgsSampleHeader &getHeader() const { return _header; }
-	const int8 *getSample() const { return _sample; }
 protected:
-	IIgsSampleHeader _header;	///< Apple IIGS AGI sample header
-	int8 *_sample;				///< Sample data (8-bit signed format)
+	IIgsSampleHeader _header;   ///< Apple IIGS AGI sample header
+	int8 *_sample;              ///< Sample data (8-bit signed format)
 };
 
 /** Apple IIGS MIDI program change to instrument number mapping. */
@@ -193,11 +197,11 @@ struct IIgsInstrumentSetInfo {
 
 /** Apple IIGS AGI executable file information. */
 struct IIgsExeInfo {
-	enum AgiGameID gameid;	///< Game ID
-	const char *exePrefix;	///< Prefix of the Apple IIGS AGI executable (e.g. "SQ", "PQ", "KQ4" etc)
-	uint agiVer;			///< Apple IIGS AGI version number, not strictly needed
-	uint exeSize;			///< Size of the Apple IIGS AGI executable file in bytes
-	uint instSetStart;		///< Starting offset of the instrument set inside the executable file
+	enum AgiGameID gameid;  ///< Game ID
+	const char *exePrefix;  ///< Prefix of the Apple IIGS AGI executable (e.g. "SQ", "PQ", "KQ4" etc)
+	uint agiVer;            ///< Apple IIGS AGI version number, not strictly needed
+	uint exeSize;           ///< Size of the Apple IIGS AGI executable file in bytes
+	uint instSetStart;      ///< Starting offset of the instrument set inside the executable file
 	const IIgsInstrumentSetInfo *instSet; ///< Information about the used instrument set
 };
 
@@ -205,12 +209,12 @@ class IIgsMidiChannel {
 public:
 	IIgsMidiChannel() : _instrument(NULL), _volume(127) {}
 	void setInstrument(const IIgsInstrumentHeader *instrument) { _instrument = instrument; }
-	const IIgsInstrumentHeader* getInstrument() { return _instrument; }
+	const IIgsInstrumentHeader *getInstrument() { return _instrument; }
 	void setVolume(int volume) { _volume = volume; }
 	int getVolume() { return _volume; }
 private:
-	const IIgsInstrumentHeader *_instrument;	///< Instrument used on this MIDI channel
-	int _volume;								///< MIDI controller number 7 (Volume)
+	const IIgsInstrumentHeader *_instrument;    ///< Instrument used on this MIDI channel
+	int _volume;                                ///< MIDI controller number 7 (Volume)
 };
 
 class SoundGen2GS : public SoundGen, public Audio::AudioStream {
@@ -237,32 +241,32 @@ private:
 	void setProgramChangeMapping(const IIgsMidiProgramMapping *mapping);
 
 	// Player methods
-	void advancePlayer();		///< Advance the player
-	void advanceMidiPlayer();	///< Advance MIDI player
-	uint generateOutput();		///< Fill the output buffer
+	void advancePlayer();       ///< Advance the player
+	void advanceMidiPlayer();   ///< Advance MIDI player
+	uint generateOutput();      ///< Fill the output buffer
 
-	void haltGenerators();		///< Halt all generators
-	uint activeGenerators();	///< How many generators are active?
+	void haltGenerators();      ///< Halt all generators
+	uint activeGenerators();    ///< How many generators are active?
 
 	void midiNoteOff(int channel, int note, int velocity);
 	void midiNoteOn(int channel, int note, int velocity);
 	double midiKeyToFreq(int key, double finetune);
-	IIgsInstrumentHeader* getInstrument(uint8 program) { return &_instruments[_progToInst->map(program)]; }
-	IIgsGenerator* allocateGenerator() { IIgsGenerator* g = &_generators[_nextGen++]; _nextGen %= 16; return g; }
+	IIgsInstrumentHeader *getInstrument(uint8 program) { return &_instruments[_progToInst->map(program)]; }
+	IIgsGenerator *allocateGenerator() { IIgsGenerator *g = &_generators[_nextGen++]; _nextGen %= 16; return g; }
 
-	bool _disableMidi;	///< Disable MIDI if loading instruments fail
-	int _playingSound;	///< Resource number for the currently playing sound
-	bool _playing;		///< True when the resource is still playing
+	bool _disableMidi;  ///< Disable MIDI if loading instruments fail
+	int _playingSound;  ///< Resource number for the currently playing sound
+	bool _playing;      ///< True when the resource is still playing
 
-	IIgsGenerator _generators[MAX_GENERATORS];			///< IIGS sound generators that are used to play single notes
-	uint _nextGen;										///< Next generator available for allocation
-	IIgsMidiChannel _channels[16];						///< MIDI channels
-	Common::Array<IIgsInstrumentHeader> _instruments;	///< Instrument data
-	const IIgsMidiProgramMapping *_progToInst;			///< MIDI program number to instrument mapping
-	int8 *_wavetable;									///< Sample data used by the instruments
-	uint _ticks;										///< MIDI ticks (60Hz)
-	int16 *_out;										///< Output buffer
-	uint _outSize;										///< Output buffer size
+	IIgsGenerator _generators[MAX_GENERATORS];          ///< IIGS sound generators that are used to play single notes
+	uint _nextGen;                                      ///< Next generator available for allocation
+	IIgsMidiChannel _channels[16];                      ///< MIDI channels
+	Common::Array<IIgsInstrumentHeader> _instruments;   ///< Instrument data
+	const IIgsMidiProgramMapping *_progToInst;          ///< MIDI program number to instrument mapping
+	int8 *_wavetable;                                   ///< Sample data used by the instruments
+	uint _ticks;                                        ///< MIDI ticks (60Hz)
+	int16 *_out;                                        ///< Output buffer
+	uint _outSize;                                      ///< Output buffer size
 
 	static const int kSfxMidiChannel = 15; ///< MIDI channel used for playing sample resources
 };

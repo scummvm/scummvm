@@ -28,6 +28,7 @@
 #include "agos/intern.h"
 #include "agos/agos.h"
 #include "agos/midi.h"
+#include "agos/sound.h"
 #include "agos/vga.h"
 
 #include "backends/audiocd/audiocd.h"
@@ -228,7 +229,7 @@ void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
 
 	// Support for compressed music from the ScummVM Music Enhancement Project
 	_system->getAudioCDManager()->stop();
-	_system->getAudioCDManager()->play(music + 1, -1, 0, 0);
+	_system->getAudioCDManager()->play(music + 1, -1, 0, 0, true);
 	if (_system->getAudioCDManager()->isPlaying())
 		return;
 

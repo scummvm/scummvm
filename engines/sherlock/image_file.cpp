@@ -172,7 +172,7 @@ void ImageFrame::decompressFrame(const byte *src, bool isRoseTattoo) {
 		while (frameSize > 0) {
 			if (*src == _rleMarker) {
 				byte rleColor = src[1];
-				byte rleCount = src[2];
+				byte rleCount = MIN((int)src[2], frameSize);
 				src += 3;
 				frameSize -= rleCount;
 				while (rleCount--)
@@ -182,7 +182,6 @@ void ImageFrame::decompressFrame(const byte *src, bool isRoseTattoo) {
 				--frameSize;
 			}
 		}
-		assert(frameSize == 0);
 	} else {
 		// Uncompressed frame
 		Common::copy(src, src + _width * _height, dest);
@@ -303,12 +302,6 @@ ImageFile3DO::ImageFile3DO(Common::SeekableReadStream &stream, bool isRoomData) 
 	}
 }
 
-ImageFile3DO::~ImageFile3DO() {
-	// already done in ImageFile destructor
-	//for (uint idx = 0; idx < size(); ++idx)
-	//	(*this)[idx]._frame.free();
-}
-
 void ImageFile3DO::load(Common::SeekableReadStream &stream, bool isRoomData) {
 	uint32 headerId = 0;
 
@@ -381,7 +374,7 @@ void ImageFile3DO::loadAnimationFile(Common::SeekableReadStream &stream) {
 		if (streamLeft < celDataSize)
 			error("load3DOAnimationFile: expected cel data, not enough bytes");
 
-		// 
+		//
 		// Load data for frame and decompress it
 		byte *data = new byte[celDataSize];
 		stream.read(data, celDataSize);
@@ -684,7 +677,7 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 
 		if (ccbFlags & 0x200) // bit 9
 			ccbFlags_compressed = true;
-		
+
 		// PRE0 first 3 bits define how many bits per encoded pixel are used
 		ccbPRE0_bitsPerPixel = imagefile3DO_cel_bitsPerPixelLookupTable[ccbPRE0 & 0x07];
 		if (!ccbPRE0_bitsPerPixel)
@@ -714,7 +707,7 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 
 		stream.read(celDataPtr, celDataSize);
 		streamLeft -= celDataSize;
-		
+
 		// Set up frame
 		{
 			ImageFrame imageFrame;
@@ -961,59 +954,57 @@ void ImageFile3DO::loadFont(Common::SeekableReadStream &stream) {
 
 	for (curChar = 33; curChar < header_charCount; curChar++) {
 		// create frame
-		{
-			ImageFrame imageFrame;
+		ImageFrame imageFrame;
 
-			imageFrame._width = widthTablePtr[curChar];
-			imageFrame._height = header_fontHeight;
-			imageFrame._paletteBase = 0;
-			imageFrame._offset.x = 0;
-			imageFrame._offset.y = 0;
-			imageFrame._rleEncoded = false;
-			imageFrame._size = 0;
+		imageFrame._width = widthTablePtr[curChar];
+		imageFrame._height = header_fontHeight;
+		imageFrame._paletteBase = 0;
+		imageFrame._offset.x = 0;
+		imageFrame._offset.y = 0;
+		imageFrame._rleEncoded = false;
+		imageFrame._size = 0;
 
-			// Extract pixels
-			imageFrame._frame.create(imageFrame._width, imageFrame._height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
-			uint16 *dest = (uint16 *)imageFrame._frame.getPixels();
-			Common::fill(dest, dest + imageFrame._width * imageFrame._height, 0);
+		// Extract pixels
+		imageFrame._frame.create(imageFrame._width, imageFrame._height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+		uint16 *dest = (uint16 *)imageFrame._frame.getPixels();
+		Common::fill(dest, dest + imageFrame._width * imageFrame._height, 0);
 
-			curCharHeightLeft = header_fontHeight;
-			while (curCharHeightLeft) {
-				curCharWidthLeft = widthTablePtr[curChar];
-				curBitsPtr  = curBitsLinePtr;
-				curBitsLeft = 8;
-				curPosX     = 0;
+		curCharHeightLeft = header_fontHeight;
+		while (curCharHeightLeft) {
+			curCharWidthLeft = widthTablePtr[curChar];
+			curBitsPtr  = curBitsLinePtr;
+			curBitsLeft = 8;
+			curPosX     = 0;
 
-				while (curCharWidthLeft) {
-					if (!(curPosX & 1)) {
-						curBits = *curBitsPtr >> 4;
-					} else {
-						curBits = *curBitsPtr & 0x0F;
-						curBitsPtr++;
-					}
-					// doing this properly is complicated
-					// the 3DO has built-in anti-aliasing
-					// this here at least results in somewhat readable text
-					// TODO: make it better
-					if (curBits) {
-						curBitsReversed = (curBits >> 3) | ((curBits & 0x04) >> 1) | ((curBits & 0x02) << 1) | ((curBits & 0x01) << 3);
-						curBits = 20 - curBits;
-					}
-
-					byte curIntensity = curBits;
-					*dest = (curIntensity << 11) | (curIntensity << 6) | curIntensity;
-					dest++;
-
-					curCharWidthLeft--;
-					curPosX++;
+			while (curCharWidthLeft) {
+				if (!(curPosX & 1)) {
+					curBits = *curBitsPtr >> 4;
+				} else {
+					curBits = *curBitsPtr & 0x0F;
+					curBitsPtr++;
+				}
+				// doing this properly is complicated
+				// the 3DO has built-in anti-aliasing
+				// this here at least results in somewhat readable text
+				// TODO: make it better
+				if (curBits) {
+					curBitsReversed = (curBits >> 3) | ((curBits & 0x04) >> 1) | ((curBits & 0x02) << 1) | ((curBits & 0x01) << 3);
+					curBits = 20 - curBits;
 				}
 
-				curCharHeightLeft--;
-				curBitsLinePtr += header_bytesPerLine;
+				byte curIntensity = curBits;
+				*dest = (curIntensity << 11) | (curIntensity << 6) | curIntensity;
+				dest++;
+
+				curCharWidthLeft--;
+				curPosX++;
 			}
 
-			push_back(imageFrame);
+			curCharHeightLeft--;
+			curBitsLinePtr += header_bytesPerLine;
 		}
+
+		push_back(imageFrame);
 	}
 
 	// Warning below being used to silence unused variable warnings for now
@@ -1051,10 +1042,12 @@ void StreamingImageFile::close() {
 	_stream = nullptr;
 	_frameNumber = -1;
 	_active = false;
+	_imageFrame._frame.free();
 }
 
 bool StreamingImageFile::getNextFrame() {
 	// Don't proceed if we're already at the end of the stream
+	assert(_stream);
 	if (_stream->pos() >= _stream->size()) {
 		_active = false;
 		return false;
@@ -1080,6 +1073,9 @@ bool StreamingImageFile::getNextFrame() {
 	_imageFrame._offset.y = frameStream->readByte();
 	_imageFrame._size = frameStream->readUint16LE() - 11;
 	_imageFrame._rleMarker = frameStream->readByte();
+
+	// Free the previous frame
+	_imageFrame._frame.free();
 
 	// Decode the frame
 	if (_compressed) {

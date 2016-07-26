@@ -29,7 +29,7 @@
 
 namespace Mohawk {
 
-class MystResourceType6;
+class MystAreaVideo;
 struct MystScriptEntry;
 
 namespace MystStacks {
@@ -41,12 +41,12 @@ public:
 	Intro(MohawkEngine_Myst *vm);
 	~Intro();
 
-	void disablePersistentScripts();
-	void runPersistentScripts();
+	void disablePersistentScripts() override;
+	void runPersistentScripts() override;
 
 private:
 	void setupOpcodes();
-	uint16 getVar(uint16 var);
+	uint16 getVar(uint16 var) override;
 
 	DECLARE_OPCODE(o_useLinkBook);
 
@@ -60,7 +60,7 @@ private:
 	uint16 _introStep;
 
 	bool _linkBookRunning;
-	MystResourceType6 *_linkBookMovie;
+	MystAreaVideo *_linkBookMovie;
 };
 
 } // End of namespace MystStacks

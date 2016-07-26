@@ -26,8 +26,6 @@
 #include "common/str.h"
 #include "common/rect.h"
 
-#include "audio/mixer.h"
-
 namespace ZVision {
 
 // Forward declaration of ZVision. This file is included before ZVision is declared

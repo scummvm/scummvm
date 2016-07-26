@@ -35,6 +35,7 @@
  *  - sword25
  *  - touche
  *  - tucker
+ *  - wintermute
  */
 
 #ifndef AUDIO_VORBIS_H

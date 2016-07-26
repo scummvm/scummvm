@@ -240,10 +240,10 @@ void SVoy::reviewAnEvidEvent(int eventIndex) {
 	int frameOff = e._computerOff;
 
 	if (_vm->_bVoy->getBoltGroup(_vm->_playStampGroupId)) {
-		_vm->_graphicsManager->_backColors = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 1)._cMapResource;
-		_vm->_graphicsManager->_backgroundPage = _vm->_bVoy->boltEntry(_vm->_playStampGroupId)._picResource;
-		_vm->_graphicsManager->_vPort->setupViewPort(_vm->_graphicsManager->_backgroundPage);
-		_vm->_graphicsManager->_backColors->startFade();
+		_vm->_screen->_backColors = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 1)._cMapResource;
+		_vm->_screen->_backgroundPage = _vm->_bVoy->boltEntry(_vm->_playStampGroupId)._picResource;
+		_vm->_screen->_vPort->setupViewPort(_vm->_screen->_backgroundPage);
+		_vm->_screen->_backColors->startFade();
 
 		_vm->doEvidDisplay(frameOff, e._dead);
 		_vm->_bVoy->freeBoltGroup(_vm->_playStampGroupId);
@@ -262,10 +262,10 @@ void SVoy::reviewComputerEvent(int eventIndex) {
 	_computerTextId = e._computerOn;
 
 	if (_vm->_bVoy->getBoltGroup(_vm->_playStampGroupId)) {
-		_vm->_graphicsManager->_backColors = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 1)._cMapResource;
-		_vm->_graphicsManager->_backgroundPage = _vm->_bVoy->boltEntry(_vm->_playStampGroupId)._picResource;
-		_vm->_graphicsManager->_vPort->setupViewPort(_vm->_graphicsManager->_backgroundPage);
-		_vm->_graphicsManager->_backColors->startFade();
+		_vm->_screen->_backColors = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 1)._cMapResource;
+		_vm->_screen->_backgroundPage = _vm->_bVoy->boltEntry(_vm->_playStampGroupId)._picResource;
+		_vm->_screen->_vPort->setupViewPort(_vm->_screen->_backgroundPage);
+		_vm->_screen->_backColors->startFade();
 		_vm->flipPageAndWaitForFade();
 
 		_vm->getComputerBrush();

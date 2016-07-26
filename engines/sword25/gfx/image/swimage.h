@@ -45,10 +45,10 @@ public:
 	virtual ~SWImage();
 
 	virtual int getWidth() const {
-		return _width;
+		return _image.w;
 	}
 	virtual int getHeight() const {
-		return _height;
+		return _image.h;
 	}
 	virtual GraphicEngine::COLOR_FORMATS getColorFormat() const {
 		return GraphicEngine::CF_ARGB32;
@@ -86,10 +86,7 @@ public:
 		return false;
 	}
 private:
-	uint *_imageDataPtr;
-
-	int _width;
-	int _height;
+	Graphics::Surface _image;
 };
 
 } // End of namespace Sword25

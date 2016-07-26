@@ -535,7 +535,7 @@ int loadSpl(const char *resourceName, int16 idx) {
 
 	entry = idx < 0 ? emptyAnimSpace() : idx;
 	assert(entry >= 0);
-	g_cine->_animDataTable[entry].load(dataPtr + 0x16, ANIM_RAW, g_cine->_partBuffer[foundFileIdx].unpackedSize - 0x16, 1, foundFileIdx, 0, currentPartName);
+	g_cine->_animDataTable[entry].load(dataPtr, ANIM_RAW, g_cine->_partBuffer[foundFileIdx].unpackedSize, 1, foundFileIdx, 0, currentPartName);
 
 	free(dataPtr);
 	return entry + 1;

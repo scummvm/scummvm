@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef NEVERHOOD_H
-#define NEVERHOOD_H
+#ifndef NEVERHOOD_NEVERHOOD_H
+#define NEVERHOOD_NEVERHOOD_H
 
 #include "common/scummsys.h"
 #include "common/events.h"
@@ -30,7 +30,6 @@
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/system.h"
-#include "audio/mixer.h"
 #include "engines/engine.h"
 #include "gui/debugger.h"
 #include "neverhood/console.h"
@@ -150,4 +149,4 @@ private:
 
 } // End of namespace Neverhood
 
-#endif /* NEVERHOOD_H */
+#endif /* NEVERHOOD_NEVERHOOD_H */

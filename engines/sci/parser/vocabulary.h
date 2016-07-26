@@ -156,7 +156,7 @@ typedef Common::Array<synonym_t> SynonymList;
 struct AltInput {
 	const char *_input;
 	const char *_replacement;
-	unsigned int _inputLength;
+	uint32 _inputLength;
 	bool _prefix;
 };
 

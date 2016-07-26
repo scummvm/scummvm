@@ -25,8 +25,8 @@
 #include "common/savefile.h"
 #include "common/translation.h"
 
-#include "gui/dialog.h"
 #include "gui/message.h"
+#include "gui/filebrowser-dialog.h"
 
 namespace Bbvs {
 
@@ -1204,15 +1204,25 @@ void MinigameBbAirGuitar::stopNote(int noteNum) {
 }
 
 bool MinigameBbAirGuitar::getLoadFilename(Common::String &filename) {
-	// TODO Run dialog and return actual filename
-	filename = "test.air";
-	return true;
+	GUI::FileBrowserDialog browser(0, "air", GUI::kFBModeLoad);
+
+	if (browser.runModal() > 0) {
+		filename = browser.getResult();
+		return true;
+	}
+
+	return false;
 }
 
 bool MinigameBbAirGuitar::getSaveFilename(Common::String &filename) {
-	// TODO Run dialog and return actual filename
-	filename = "test.air";
-	return true;
+	GUI::FileBrowserDialog browser(0, "air", GUI::kFBModeSave);
+
+	if (browser.runModal() > 0) {
+		filename = browser.getResult();
+		return true;
+	}
+
+	return false;
 }
 
 bool MinigameBbAirGuitar::querySaveModifiedDialog() {
@@ -1240,7 +1250,7 @@ bool MinigameBbAirGuitar::loadTracks() {
 
 	if (!querySaveModifiedTracks())
 		return false;
-	
+
 	Common::String filename;
 	if (!getLoadFilename(filename))
 		return false;

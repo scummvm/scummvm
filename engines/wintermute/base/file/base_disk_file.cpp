@@ -113,13 +113,28 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 	Common::String fixedFilename = filename;
 	correctSlashes(fixedFilename);
 
-	// Absolute path: TODO: Add specific fallbacks here.
+	// HACK: There are a few games around which mistakenly refer to absolute paths in the scripts.
+	// The original interpreter on Windows usually simply ignores them when it can't find them.
+	// We try to turn the known ones into relative paths.
 	if (fixedFilename.contains(':')) {
-		if (fixedFilename.hasPrefix("c:/windows/fonts/")) { // East Side Story refers to "c:\windows\fonts\framd.ttf"
-			fixedFilename = filename.c_str() + 14;
-		} else if (fixedFilename.hasPrefix("c:/carol6/svn/data/")) {	// Carol Reed 6: Black Circle refers to "c:\carol6\svn\data\sprites\system\help.png"
-			fixedFilename = fixedFilename.c_str() + 19;
-		} else {
+		const char* const knownPrefixes[] = { // Known absolute paths
+				"c:/windows/fonts/", // East Side Story refers to "c:\windows\fonts\framd.ttf"
+				"c:/carol6/svn/data/", // Carol Reed 6: Black Circle refers to "c:\carol6\svn\data\sprites\system\help.png"
+				"f:/dokument/spel 5/demo/data/" // Carol Reed 5 (non-demo) refers to "f:\dokument\spel 5\demo\data\scenes\credits\op_cred_00\op_cred_00.jpg"
+		};
+
+		bool matched = false;
+
+		for (uint i = 0; i < ARRAYSIZE(knownPrefixes); i++) {
+			if (fixedFilename.hasPrefix(knownPrefixes[i])) {
+				fixedFilename = fixedFilename.c_str() + strlen(knownPrefixes[i]);
+				matched = true;
+			}
+		}
+
+		if (!matched) {
+			// fixedFilename is unchanged and thus still broken, none of the above workarounds worked.
+			// We can only bail out
 			error("openDiskFile::Absolute path or invalid filename used in %s", filename.c_str());
 		}
 	}

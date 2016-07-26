@@ -38,8 +38,7 @@
  *
  */
 
-#include "art.h"
-
+#include "sword25/gfx/image/art.h"
 #include "sword25/gfx/image/vectorimage.h"
 #include "graphics/colormasks.h"
 

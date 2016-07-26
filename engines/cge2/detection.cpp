@@ -111,7 +111,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 class CGE2MetaEngine : public AdvancedMetaEngine {
 public:
 	CGE2MetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), CGE2Games, optionsList) {
-		_singleid = "sfinx";
+		_singleId = "sfinx";
 	}
 
 	virtual const char *getName() const {
@@ -119,7 +119,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Sfinx (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon";
+		return "Sfinx (C) 1994-1997 Janus B. Wisniewski and L.K. Avalon";
 	}
 
 	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
@@ -196,10 +196,9 @@ SaveStateList CGE2MetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = target;
-	pattern += ".???";
+	pattern += ".###";
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
@@ -235,6 +234,8 @@ SaveStateList CGE2MetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

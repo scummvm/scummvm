@@ -130,6 +130,11 @@ void MSVCProvider::createOtherBuildFiles(const BuildSetup &setup) {
 	createBuildProp(setup, false, true, "LLVM");
 }
 
+void MSVCProvider::addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) {
+	includeList.push_back(setup.srcDir + "/icons/" + setup.projectName + ".ico");
+	includeList.push_back(setup.srcDir + "/dists/" + setup.projectName + ".rc");
+}
+
 void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
 	std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_Global" + getPropertiesExtension()).c_str());
 	if (!properties)

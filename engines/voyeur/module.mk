@@ -8,7 +8,7 @@ MODULE_OBJS := \
 	events.o \
 	files.o \
 	files_threads.o \
-	graphics.o \
+	screen.o \
 	sound.o \
 	staticres.o \
 	voyeur.o \

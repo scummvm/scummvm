@@ -30,6 +30,7 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
+#include "mads/conversations.h"
 #include "mads/debugger.h"
 #include "mads/dialogs.h"
 #include "mads/events.h"
@@ -96,9 +97,10 @@ public:
 	EventsManager *_events;
 	Font *_font;
 	Game *_game;
+	GameConversations * _gameConv;
 	Palette *_palette;
 	Resources *_resources;
-	ScreenSurface _screen;
+	Screen *_screen;
 	SoundManager *_sound;
 	AudioPlayer *_audio;
 	bool _easyMouse;
@@ -108,6 +110,7 @@ public:
 	bool _musicFlag;
 	bool _soundFlag;
 	bool _dithering;
+	bool _disableFastwalk;
 public:
 	MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc);
 	virtual ~MADSEngine();

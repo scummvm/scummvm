@@ -155,6 +155,7 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 	};
 
 	soundEnergyItem.position = 0;
+	memset(deltaSoundBuffer, 0, 1024);
 
 	if (soundEnergyArray)
 		soundEnergyArray->clear();
@@ -237,6 +238,7 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 			break;
 
 		default:
+			delete[] soundBuffer;
 			return;
 
 		}
@@ -246,6 +248,9 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 			// as I can tell), and so technically read past the filled part of
 			// soundBuffer.
 			soundBuffer[workChunkSize] = soundBuffer[workChunkSize - 1];
+
+			for (i = 0; i < chunkSize; i++)
+				soundBuffer[i] = 0;
 
 			if (deltaType == 1) {
 				for (i = 0; i < chunkSize - 1; i += 2) {

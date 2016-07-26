@@ -28,6 +28,8 @@
 #include "avalanche/clock.h"
 #include "avalanche/avalanche.h"
 
+#include "common/system.h"
+
 namespace Avalanche {
 
 Clock::Clock(AvalancheEngine *vm) {

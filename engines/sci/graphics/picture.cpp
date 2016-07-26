@@ -209,12 +209,12 @@ void GfxPicture::drawSci32Vga(int16 celNo, int16 drawX, int16 drawY, int16 pictu
 	}
 
 	// Header
-	// [headerSize:WORD] [celCount:BYTE] [Unknown:BYTE] [Unknown:WORD] [paletteOffset:DWORD] [Unknown:DWORD]
+	// 0[headerSize:WORD] 2[celCount:BYTE] 3[Unknown:BYTE] 4[celHeaderSize:WORD] 6[paletteOffset:DWORD] 10[Unknown:WORD] 12[Unknown:WORD]
 	// cel-header follow afterwards, each is 42 bytes
 	// Cel-Header
-	// [width:WORD] [height:WORD] [displaceX:WORD] [displaceY:WORD] [clearColor:BYTE] [compressed:BYTE]
+	// 0[width:WORD] 2[height:WORD] 4[displaceX:WORD] 6[displaceY:WORD] 8[clearColor:BYTE] 9[compressed:BYTE]
 	//  offset 10-23 is unknown
-	// [rleOffset:DWORD] [literalOffset:DWORD] [Unknown:WORD] [Unknown:WORD] [priority:WORD] [relativeXpos:WORD] [relativeYpos:WORD]
+	// 24[rleOffset:DWORD] 28[literalOffset:DWORD] 32[Unknown:WORD] 34[Unknown:WORD] 36[priority:WORD] 38[relativeXpos:WORD] 40[relativeYpos:WORD]
 
 	cel_headerPos += 42 * celNo;
 

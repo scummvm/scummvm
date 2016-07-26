@@ -24,6 +24,7 @@
 #include "sherlock/scalpel/settings.h"
 #include "sherlock/scalpel/scalpel_screen.h"
 #include "sherlock/scalpel/scalpel_user_interface.h"
+#include "sherlock/scalpel/scalpel_fixed_text.h"
 #include "sherlock/scalpel/scalpel.h"
 
 namespace Sherlock {
@@ -45,18 +46,9 @@ static const int SETUP_POINTS[12][4]  = {
 	{ 219, 187, 316, 268 }		// _key Pad Accel. Toggle
 };
 
-static const char *const SETUP_STRS0[2] = { "off", "on" };
-static const char *const SETUP_STRS1[2] = { "Directly", "by Pixel" };
-static const char *const SETUP_STRS2[2] = { "Left", "Right" };
-static const char *const SETUP_STRS3[2] = { "Appear", "Slide" };
-static const char *const SETUP_STRS5[2] = { "Left", "Right" };
-static const char *const SETUP_NAMES[12] = {
-	"Exit", "M", "V", "S", "B", "New Font Style", "J", "Calibrate Joystick", "F", "W", "P", "K"
-};
-
 /*----------------------------------------------------------------*/
 
-void Settings::drawInteface(bool flag) {
+void Settings::drawInterface(bool flag) {
 	People &people = *_vm->_people;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Sound &sound = *_vm->_sound;
@@ -74,54 +66,104 @@ void Settings::drawInteface(bool flag) {
 			SHERLOCK_SCREEN_HEIGHT - 2), INV_BACKGROUND);
 	}
 
+	tempStr = FIXED(Settings_Exit);
+	_hotkeyExit = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[0][0], SETUP_POINTS[0][1], SETUP_POINTS[0][2], SETUP_POINTS[0][1] + 10),
-		SETUP_POINTS[0][3] - screen.stringWidth("Exit") / 2, "Exit");
+		SETUP_POINTS[0][3], tempStr);
 
-	tempStr = Common::String::format("Music %s", SETUP_STRS0[music._musicOn]);
+	if (music._musicOn) {
+		tempStr = FIXED(Settings_MusicOn);
+	} else {
+		tempStr = FIXED(Settings_MusicOff);
+	}
+	_hotkeyMusic = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[1][0], SETUP_POINTS[1][1], SETUP_POINTS[1][2], SETUP_POINTS[1][1] + 10),
-		SETUP_POINTS[1][3] - screen.stringWidth(tempStr) / 2, tempStr);
+		SETUP_POINTS[1][3], tempStr);
 
-	tempStr = Common::String::format("Voices %s", SETUP_STRS0[sound._voices]);
-	screen.makeButton(Common::Rect(SETUP_POINTS[2][0], SETUP_POINTS[2][1], SETUP_POINTS[2][2], SETUP_POINTS[2][1] + 10),
-		SETUP_POINTS[2][3] - screen.stringWidth(tempStr) / 2, tempStr);
-
-	tempStr = Common::String::format("Sound Effects %s", SETUP_STRS0[sound._digitized]);
-	screen.makeButton(Common::Rect(SETUP_POINTS[3][0], SETUP_POINTS[3][1], SETUP_POINTS[3][2], SETUP_POINTS[3][1] + 10),
-		SETUP_POINTS[3][3] - screen.stringWidth(tempStr) / 2, tempStr);
-
-	tempStr = Common::String::format("Auto Help %s", SETUP_STRS5[ui._helpStyle]);
-	screen.makeButton(Common::Rect(SETUP_POINTS[4][0], SETUP_POINTS[4][1], SETUP_POINTS[4][2], SETUP_POINTS[4][1] + 10),
-		SETUP_POINTS[4][3] - screen.stringWidth(tempStr) / 2, tempStr);
-	screen.makeButton(Common::Rect(SETUP_POINTS[5][0], SETUP_POINTS[5][1], SETUP_POINTS[5][2], SETUP_POINTS[5][1] + 10),
-		SETUP_POINTS[5][3] - screen.stringWidth("New Font Style") / 2, "New Font Style");
+	if (people._portraitsOn) {
+		tempStr = FIXED(Settings_PortraitsOn);
+	} else {
+		tempStr = FIXED(Settings_PortraitsOff);
+	}
+	_hotkeyPortraits = toupper(tempStr.firstChar());
+	screen.makeButton(Common::Rect(SETUP_POINTS[10][0], SETUP_POINTS[10][1], SETUP_POINTS[10][2], SETUP_POINTS[10][1] + 10),
+		SETUP_POINTS[10][3], tempStr);
 
 	// WORKAROUND: We don't support the joystick in ScummVM, so draw the next two buttons as disabled
-	tempStr = "Joystick Off";
+	tempStr = FIXED(Settings_JoystickOff);
 	screen.makeButton(Common::Rect(SETUP_POINTS[6][0], SETUP_POINTS[6][1], SETUP_POINTS[6][2], SETUP_POINTS[6][1] + 10),
-		SETUP_POINTS[6][3] - screen.stringWidth(tempStr) / 2, tempStr);
+		SETUP_POINTS[6][3], tempStr);
 	screen.buttonPrint(Common::Point(SETUP_POINTS[6][3], SETUP_POINTS[6][1]), COMMAND_NULL, false, tempStr);
 
-	tempStr = "Calibrate Joystick";
+	tempStr = FIXED(Settings_NewFontStyle);
+	_hotkeyNewFontStyle = toupper(tempStr.firstChar());
+	screen.makeButton(Common::Rect(SETUP_POINTS[5][0], SETUP_POINTS[5][1], SETUP_POINTS[5][2], SETUP_POINTS[5][1] + 10),
+		SETUP_POINTS[5][3], tempStr);
+
+	if (sound._digitized) {
+		tempStr = FIXED(Settings_SoundEffectsOn);
+	} else {
+		tempStr = FIXED(Settings_SoundEffectsOff);
+	}
+	_hotkeySoundEffects = toupper(tempStr.firstChar());
+	screen.makeButton(Common::Rect(SETUP_POINTS[3][0], SETUP_POINTS[3][1], SETUP_POINTS[3][2], SETUP_POINTS[3][1] + 10),
+		SETUP_POINTS[3][3], tempStr);
+
+	if (ui._slideWindows) {
+		tempStr = FIXED(Settings_WindowsSlide);
+	} else {
+		tempStr = FIXED(Settings_WindowsAppear);
+	}
+	_hotkeyWindows = toupper(tempStr.firstChar());
+	screen.makeButton(Common::Rect(SETUP_POINTS[9][0], SETUP_POINTS[9][1], SETUP_POINTS[9][2], SETUP_POINTS[9][1] + 10),
+		SETUP_POINTS[9][3], tempStr);
+
+	tempStr = FIXED(Settings_CalibrateJoystick);
 	screen.makeButton(Common::Rect(SETUP_POINTS[7][0], SETUP_POINTS[7][1], SETUP_POINTS[7][2], SETUP_POINTS[7][1] + 10),
-		SETUP_POINTS[7][3] - screen.stringWidth(tempStr) / 2, tempStr);
+		SETUP_POINTS[7][3], tempStr);
 	screen.buttonPrint(Common::Point(SETUP_POINTS[7][3], SETUP_POINTS[7][1]), COMMAND_NULL, false, tempStr);
 
-	tempStr = Common::String::format("Fade %s", screen._fadeStyle ? "by Pixel" : "Directly");
+	if (ui._helpStyle) {
+		tempStr = FIXED(Settings_AutoHelpRight);
+	} else {
+		tempStr = FIXED(Settings_AutoHelpLeft);
+	}
+	_hotkeyAutoHelp = toupper(tempStr.firstChar());
+	screen.makeButton(Common::Rect(SETUP_POINTS[4][0], SETUP_POINTS[4][1], SETUP_POINTS[4][2], SETUP_POINTS[4][1] + 10),
+		SETUP_POINTS[4][3], tempStr);
+
+	if (sound._voices) {
+		tempStr = FIXED(Settings_VoicesOn);
+	} else {
+		tempStr = FIXED(Settings_VoicesOff);
+	}
+	_hotkeyVoices = toupper(tempStr.firstChar());
+	screen.makeButton(Common::Rect(SETUP_POINTS[2][0], SETUP_POINTS[2][1], SETUP_POINTS[2][2], SETUP_POINTS[2][1] + 10),
+		SETUP_POINTS[2][3], tempStr);
+
+	if (screen._fadeStyle) {
+		tempStr = FIXED(Settings_FadeByPixel);
+	} else {
+		tempStr = FIXED(Settings_FadeDirectly);
+	}
+	_hotkeyFade = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[8][0], SETUP_POINTS[8][1], SETUP_POINTS[8][2], SETUP_POINTS[8][1] + 10),
-		SETUP_POINTS[8][3] - screen.stringWidth(tempStr) / 2, tempStr);
+		SETUP_POINTS[8][3], tempStr);
 
-	tempStr = Common::String::format("Windows %s", ui._slideWindows ? "Slide" : "Appear");
-	screen.makeButton(Common::Rect(SETUP_POINTS[9][0], SETUP_POINTS[9][1], SETUP_POINTS[9][2], SETUP_POINTS[9][1] + 10),
-		SETUP_POINTS[9][3] - screen.stringWidth(tempStr) / 2, tempStr);
-
-	tempStr = Common::String::format("Portraits %s", SETUP_STRS0[people._portraitsOn]);
-	screen.makeButton(Common::Rect(SETUP_POINTS[10][0], SETUP_POINTS[10][1], SETUP_POINTS[10][2], SETUP_POINTS[10][1] + 10),
-		SETUP_POINTS[10][3] - screen.stringWidth(tempStr) / 2, tempStr);
-
-	tempStr = "Key Pad Slow";
+	tempStr = FIXED(Settings_KeyPadSlow);
 	screen.makeButton(Common::Rect(SETUP_POINTS[11][0], SETUP_POINTS[11][1], SETUP_POINTS[11][2], SETUP_POINTS[11][1] + 10),
-		SETUP_POINTS[11][3] - screen.stringWidth(tempStr) / 2, tempStr);
+		SETUP_POINTS[11][3], tempStr);
 	screen.buttonPrint(Common::Point(SETUP_POINTS[11][3], SETUP_POINTS[11][1]), COMMAND_NULL, false, tempStr);
+
+	_hotkeysIndexed[0] = _hotkeyExit;
+	_hotkeysIndexed[1] = _hotkeyMusic;
+	_hotkeysIndexed[2] = _hotkeyVoices;
+	_hotkeysIndexed[3] = _hotkeySoundEffects;
+	_hotkeysIndexed[4] = _hotkeyAutoHelp;
+	_hotkeysIndexed[5] = _hotkeyNewFontStyle;
+	_hotkeysIndexed[8] = _hotkeyFade;
+	_hotkeysIndexed[9] = _hotkeyWindows;
+	_hotkeysIndexed[10] = _hotkeyPortraits;
 
 	// Show the window immediately, or slide it on-screen
 	if (!flag) {
@@ -151,7 +193,7 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 	for (int idx = 0; idx < 12; ++idx) {
 		if ((pt.x > SETUP_POINTS[idx][0] && pt.x < SETUP_POINTS[idx][2] && pt.y > SETUP_POINTS[idx][1]
 				&& pt.y < (SETUP_POINTS[idx][1] + 10) && (events._pressed || events._released))
-				|| (_key == SETUP_NAMES[idx][0])) {
+				|| (_key == toupper(_hotkeysIndexed[idx]))) {
 			found = idx;
 			color = COMMAND_HIGHLIGHTED;
 		} else {
@@ -160,50 +202,74 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 
 		// Print the button text
 		switch (idx) {
+		case 0:
+			tempStr = FIXED(Settings_Exit);
+			break;
 		case 1:
-			tempStr = Common::String::format("Music %s", SETUP_STRS0[music._musicOn]);
-			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
+			if (music._musicOn) {
+				tempStr = FIXED(Settings_MusicOn);
+			} else {
+				tempStr = FIXED(Settings_MusicOff);
+			}
 			break;
 		case 2:
-			tempStr = Common::String::format("Voices %s", SETUP_STRS0[sound._voices]);
-			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
+			if (sound._voices) {
+				tempStr = FIXED(Settings_VoicesOn);
+			} else {
+				tempStr = FIXED(Settings_VoicesOff);
+			}
 			break;
 		case 3:
-			tempStr = Common::String::format("Sound Effects %s", SETUP_STRS0[sound._digitized]);
-			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
+			if (sound._digitized) {
+				tempStr = FIXED(Settings_SoundEffectsOn);
+			} else {
+				tempStr = FIXED(Settings_SoundEffectsOff);
+			}
 			break;
 		case 4:
-			tempStr = Common::String::format("Auto Help %s", SETUP_STRS2[ui._helpStyle]);
-			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
+			if (ui._helpStyle) {
+				tempStr = FIXED(Settings_AutoHelpRight);
+			} else {
+				tempStr = FIXED(Settings_AutoHelpLeft);
+			}
+			break;
+		case 5:
+			tempStr = FIXED(Settings_NewFontStyle);
 			break;
 		case 6:
-			tempStr = "Joystick Off";
-			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), COMMAND_NULL, true, tempStr);
-			break;
+			// Joystick Off - disabled in ScummVM
+			continue;
 		case 7:
-			tempStr = "Calibrate Joystick";
-			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), COMMAND_NULL, true, tempStr);
-			break;
+			// Calibrate Joystick - disabled in ScummVM
+			continue;
 		case 8:
-			tempStr = Common::String::format("Fade %s", SETUP_STRS1[screen._fadeStyle]);
-			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
+			if (screen._fadeStyle) {
+				tempStr = FIXED(Settings_FadeByPixel);
+			} else {
+				tempStr = FIXED(Settings_FadeDirectly);
+			}
 			break;
 		case 9:
-			tempStr = Common::String::format("Windows %s", SETUP_STRS3[ui._slideWindows]);
-			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
+			if (ui._slideWindows) {
+				tempStr = FIXED(Settings_WindowsSlide);
+			} else {
+				tempStr = FIXED(Settings_WindowsAppear);
+			}
 			break;
 		case 10:
-			tempStr = Common::String::format("Portraits %s", SETUP_STRS0[people._portraitsOn]);
-			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
+			if (people._portraitsOn) {
+				tempStr = FIXED(Settings_PortraitsOn);
+			} else {
+				tempStr = FIXED(Settings_PortraitsOff);
+			}
 			break;
 		case 11:
-			tempStr = "Key Pad Slow";
-			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), COMMAND_NULL, true, tempStr);
-			break;
+			// Key Pad Slow - disabled in ScummVM
+			continue;
 		default:
-			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, SETUP_NAMES[idx]);
-			break;
+			continue;
 		}
+		screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 	}
 
 	return found;
@@ -222,7 +288,7 @@ void Settings::show(SherlockEngine *vm) {
 
 	assert(vm->getGameID() == GType_SerratedScalpel);
 	Settings settings(vm);
-	settings.drawInteface(false);
+	settings.drawInterface(false);
 
 	do {
 		if (ui._menuCounter)
@@ -244,7 +310,7 @@ void Settings::show(SherlockEngine *vm) {
 
 			if (events.kbHit()) {
 				Common::KeyState keyState = events.getKey();
-				ui._key = toupper(keyState.keycode);
+				ui._key = toupper(keyState.ascii);
 
 				if (ui._key == Common::KEYCODE_RETURN || ui._key == Common::KEYCODE_SPACE) {
 					events._pressed = false;
@@ -258,11 +324,11 @@ void Settings::show(SherlockEngine *vm) {
 			found = settings.drawButtons(pt, ui._key);
 		}
 
-		if ((found == 0 && events._released) || (ui._key == 'E' || ui._key == Common::KEYCODE_ESCAPE))
+		if ((found == 0 && events._released) || (ui._key == settings._hotkeyExit || ui._key == Common::KEYCODE_ESCAPE))
 			// Exit
 			break;
 
-		if ((found == 1 && events._released) || ui._key == 'M') {
+		if ((found == 1 && events._released) || ui._key == settings._hotkeyMusic) {
 			// Toggle music
 			music._musicOn = !music._musicOn;
 			if (!music._musicOn)
@@ -271,30 +337,30 @@ void Settings::show(SherlockEngine *vm) {
 				music.startSong();
 
 			updateConfig = true;
-			settings.drawInteface(true);
+			settings.drawInterface(true);
 		}
 
-		if ((found == 2 && events._released) || ui._key == 'V') {
+		if ((found == 2 && events._released) || ui._key == settings._hotkeyVoices) {
 			sound._voices = !sound._voices;
 			updateConfig = true;
-			settings.drawInteface(true);
+			settings.drawInterface(true);
 		}
 
-		if ((found == 3 && events._released) || ui._key == 'S') {
+		if ((found == 3 && events._released) || ui._key == settings._hotkeySoundEffects) {
 			// Toggle sound effects
 			sound._digitized = !sound._digitized;
 			updateConfig = true;
-			settings.drawInteface(true);
+			settings.drawInterface(true);
 		}
 
-		if ((found == 4 && events._released) || ui._key == 'A') {
+		if ((found == 4 && events._released) || ui._key == settings._hotkeyAutoHelp) {
 			// Help button style
 			ui._helpStyle = !ui._helpStyle;
 			updateConfig = true;
-			settings.drawInteface(true);
+			settings.drawInterface(true);
 		}
 
-		if ((found == 5 && events._released) || ui._key == 'N') {
+		if ((found == 5 && events._released) || ui._key == settings._hotkeyNewFontStyle) {
 			// New font style
 			int fontNum = screen.fontNumber() + 1;
 			if (fontNum == 3)
@@ -302,28 +368,28 @@ void Settings::show(SherlockEngine *vm) {
 
 			screen.setFont(fontNum);
 			updateConfig = true;
-			settings.drawInteface(true);
+			settings.drawInterface(true);
 		}
 
-		if ((found == 8 && events._released) || ui._key == 'F') {
+		if ((found == 8 && events._released) || ui._key == settings._hotkeyFade) {
 			// Toggle fade style
 			screen._fadeStyle = !screen._fadeStyle;
 			updateConfig = true;
-			settings.drawInteface(true);
+			settings.drawInterface(true);
 		}
 
-		if ((found == 9 && events._released) || ui._key == 'W') {
+		if ((found == 9 && events._released) || ui._key == settings._hotkeyWindows) {
 			// Window style
 			ui._slideWindows = !ui._slideWindows;
 			updateConfig = true;
-			settings.drawInteface(true);
+			settings.drawInterface(true);
 		}
 
-		if ((found == 10 && events._released) || ui._key == 'P') {
+		if ((found == 10 && events._released) || ui._key == settings._hotkeyPortraits) {
 			// Toggle portraits being shown
 			people._portraitsOn = !people._portraitsOn;
 			updateConfig = true;
-			settings.drawInteface(true);
+			settings.drawInterface(true);
 		}
 	} while (!vm->shouldQuit());
 

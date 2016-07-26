@@ -80,6 +80,8 @@ install -m644 -D dists/engine-data/tony.dat %{buildroot}%{_datadir}/scummvm/tony
 install -m644 -D dists/engine-data/toon.dat %{buildroot}%{_datadir}/scummvm/toon.dat
 install -m644 -D dists/engine-data/wintermute.zip %{buildroot}%{_datadir}/scummvm/wintermute.zip
 install -m644 -D dists/engine-data/neverhood.dat %{buildroot}%{_datadir}/scummvm/neverhood.dat
+install -m644 -D dists/engine-data/mort.dat %{buildroot}%{_datadir}/scummvm/mort.dat
+install -m644 -D dists/engine-data/access.dat %{buildroot}%{_datadir}/scummvm/access.dat
 desktop-file-install --vendor scummvm --dir=%{buildroot}/%{_datadir}/applications dists/scummvm.desktop
 
 %clean
@@ -122,6 +124,8 @@ fi
 %{_datadir}/scummvm/toon.dat
 %{_datadir}/scummvm/wintermute.zip
 %{_datadir}/scummvm/neverhood.dat
+%{_datadir}/scummvm/mort.dat
+%{_datadir}/scummvm/access.dat
 %{_mandir}/man6/scummvm.6*
 
 #------------------------------------------------------------------------------

@@ -21,6 +21,7 @@
  */
 
 #include "graphics/palette.h"
+#include "video/smk_decoder.h"
 #include "neverhood/screen.h"
 
 namespace Neverhood {

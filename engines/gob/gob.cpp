@@ -26,6 +26,7 @@
 #include "base/plugins.h"
 #include "common/config-manager.h"
 #include "audio/mididrv.h"
+#include "audio/mixer.h"
 
 #include "gui/gui-manager.h"
 #include "gui/dialog.h"
@@ -296,9 +297,7 @@ Common::Error GobEngine::run() {
 	if (isCD())
 		checkCD();
 
-	int cd_num = ConfMan.getInt("cdrom");
-	if (cd_num >= 0)
-		_system->getAudioCDManager()->openCD(cd_num);
+	_system->getAudioCDManager()->open();
 
 	_global->_debugFlag = 1;
 	_video->_doRangeClamp = true;
@@ -430,6 +429,23 @@ Common::Error GobEngine::initGameParts() {
 		_map      = new Map_v1(this);
 		_goblin   = new Goblin_v1(this);
 		_scenery  = new Scenery_v1(this);
+
+		// WORKAROUND: The EGA version of Gobliiins claims a few resources are
+		//             larger than they actually are. The original happily reads
+		//             past the resource structure boundary, but we don't.
+		//             To make sure we don't throw an error like we normally do
+		//             (which leads to these resources not loading), we enable
+		//             this workaround that automatically fixes the resources
+		//             sizes.
+		//
+		//             This glitch is visible in levels
+		//             - 03 (ICIGCAA)
+		//             - 09 (ICVGCGT)
+		//             - 16 (TCVQRPM)
+		//             - 20 (NNGWTTO)
+		//             See also ScummVM bug report #7162.
+		if (isEGA())
+			_resourceSizeWorkaround = true;
 		break;
 
 	case kGameTypeGeisha:

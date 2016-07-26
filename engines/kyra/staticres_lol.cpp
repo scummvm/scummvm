@@ -255,7 +255,7 @@ void LoLEngine::initStaticResource() {
 	int tempSize;
 	_pakFileList = _staticres->loadStrings(kLoLIngamePakFiles, _pakFileListSize);
 	_charDefaults = _staticres->loadCharData(kLoLCharacterDefs, _charDefaultsSize);
-	_ingameSoundIndex = (const uint16 *)_staticres->loadRawData(kLoLIngameSfxIndex, tempSize);
+	_ingameSoundIndex = (const uint16 *)_staticres->loadRawData(kLoLIngameSfxIndex, _ingameSoundIndexSize);
 	_musicTrackMap = _staticres->loadRawData(kLoLMusicTrackMap, tempSize);
 	_ingameGMSoundIndex = _staticres->loadRawData(kLoLIngameGMSfxIndex, _ingameGMSoundIndexSize);
 	_ingameMT32SoundIndex = _staticres->loadRawData(kLoLIngameMT32SfxIndex, _ingameMT32SoundIndexSize);

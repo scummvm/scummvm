@@ -46,6 +46,16 @@ namespace Audio {
  */
 #define INTERMEDIATE_BUFFER_SIZE 512
 
+/**
+ * The default fractional type in frac.h (with 16 fractional bits) limits
+ * the rate conversion code to 65536Hz audio: we need to able to handle
+ * 96kHz audio, so we use fewer fractional bits in this code.
+ */
+enum {
+	FRAC_BITS_LOW = 15,
+	FRAC_ONE_LOW = (1L << FRAC_BITS_LOW),
+	FRAC_HALF_LOW = (1L << (FRAC_BITS_LOW-1))
+};
 
 /**
  * Audio rate converter based on simple resampling. Used when no
@@ -187,18 +197,18 @@ public:
  */
 template<bool stereo, bool reverseStereo>
 LinearRateConverter<stereo, reverseStereo>::LinearRateConverter(st_rate_t inrate, st_rate_t outrate) {
-	if (inrate >= 65536 || outrate >= 65536) {
-		error("rate effect can only handle rates < 65536");
+	if (inrate >= 131072 || outrate >= 131072) {
+		error("rate effect can only handle rates < 131072");
 	}
 
-	opos = FRAC_ONE;
+	opos = FRAC_ONE_LOW;
 
 	// Compute the linear interpolation increment.
-	// This will overflow if inrate >= 2^16, and underflow if outrate >= 2^16.
+	// This will overflow if inrate >= 2^17, and underflow if outrate >= 2^17.
 	// Also, if the quotient of the two rate becomes too small / too big, that
 	// would cause problems, but since we rarely scale from 1 to 65536 Hz or vice
 	// versa, I think we can live with that limitation ;-).
-	opos_inc = (inrate << FRAC_BITS) / outrate;
+	opos_inc = (inrate << FRAC_BITS_LOW) / outrate;
 
 	ilast0 = ilast1 = 0;
 	icur0 = icur1 = 0;
@@ -220,7 +230,7 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 	while (obuf < oend) {
 
 		// read enough input samples so that opos < 0
-		while ((frac_t)FRAC_ONE <= opos) {
+		while ((frac_t)FRAC_ONE_LOW <= opos) {
 			// Check if we have to refill the buffer
 			if (inLen == 0) {
 				inPtr = inBuf;
@@ -235,17 +245,17 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 				ilast1 = icur1;
 				icur1 = *inPtr++;
 			}
-			opos -= FRAC_ONE;
+			opos -= FRAC_ONE_LOW;
 		}
 
 		// Loop as long as the outpos trails behind, and as long as there is
 		// still space in the output buffer.
-		while (opos < (frac_t)FRAC_ONE && obuf < oend) {
+		while (opos < (frac_t)FRAC_ONE_LOW && obuf < oend) {
 			// interpolate
 			st_sample_t out0, out1;
-			out0 = (st_sample_t)(ilast0 + (((icur0 - ilast0) * opos + FRAC_HALF) >> FRAC_BITS));
+			out0 = (st_sample_t)(ilast0 + (((icur0 - ilast0) * opos + FRAC_HALF_LOW) >> FRAC_BITS_LOW));
 			out1 = (stereo ?
-						  (st_sample_t)(ilast1 + (((icur1 - ilast1) * opos + FRAC_HALF) >> FRAC_BITS)) :
+						  (st_sample_t)(ilast1 + (((icur1 - ilast1) * opos + FRAC_HALF_LOW) >> FRAC_BITS_LOW)) :
 						  out0);
 
 			// output left channel
@@ -333,7 +343,7 @@ public:
 template<bool stereo, bool reverseStereo>
 RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate) {
 	if (inrate != outrate) {
-		if ((inrate % outrate) == 0) {
+		if ((inrate % outrate) == 0 && (inrate < 65536)) {
 			return new SimpleRateConverter<stereo, reverseStereo>(inrate, outrate);
 		} else {
 			return new LinearRateConverter<stereo, reverseStereo>(inrate, outrate);

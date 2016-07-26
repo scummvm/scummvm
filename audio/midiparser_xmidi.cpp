@@ -146,7 +146,7 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 				break;
 			}
 
-		case 0x75:	// XMIDI_CONTORLLER_NEXT_BREAK
+		case 0x75:	// XMIDI_CONTROLLER_NEXT_BREAK
 			if (_loopCount >= 0) {
 				if (info.basic.param2 < 64) {
 					// End the current loop.

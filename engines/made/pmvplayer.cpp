@@ -223,7 +223,10 @@ bool PmvPlayer::play(const char *filename) {
 
 	//delete _audioStream;
 	delete _fd;
-	_surface->free();
+
+	if(_surface)
+		_surface->free();
+
 	delete _surface;
 
 	return !_aborted;

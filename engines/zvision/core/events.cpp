@@ -35,6 +35,7 @@
 #include "common/events.h"
 #include "common/system.h"
 #include "common/rational.h"
+#include "audio/mixer.h"
 
 #include "engines/util.h"
 

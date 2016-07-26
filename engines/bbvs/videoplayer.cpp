@@ -43,6 +43,8 @@ void BbvsEngine::playVideo(int videoNum) {
 		return;
 	}
 
+	debug(0, "Screen format: %s", _system->getScreenFormat().toString().c_str());
+
 	Video::VideoDecoder *videoDecoder = new Video::AVIDecoder();
 	if (!videoDecoder->loadFile(videoFilename)) {
 		delete videoDecoder;
@@ -58,13 +60,20 @@ void BbvsEngine::playVideo(int videoNum) {
 		if (videoDecoder->needsUpdate()) {
 			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
 			if (frame) {
-				_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
+				if (frame->format.bytesPerPixel > 1) {
+					Graphics::Surface *frame1 = frame->convertTo(_system->getScreenFormat());
+					_system->copyRectToScreen(frame1->getPixels(), frame1->pitch, 0, 0, frame1->w, frame1->h);
+					frame1->free();
+					delete frame1;
+				} else {
+					_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
+				}
 				_system->updateScreen();
 			}
 		}
 
 		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event)) {
+		while (_system->getEventManager()->pollEvent(event)) {
 			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) ||
 				event.type == Common::EVENT_LBUTTONUP)
 				skipVideo = true;

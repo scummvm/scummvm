@@ -87,8 +87,12 @@ class GfxView;
  */
 class GfxAnimate {
 public:
-	GfxAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, GfxCursor *cursor, GfxTransitions *transitions);
+	GfxAnimate(EngineState *state, ScriptPatcher *scriptPatcher, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, GfxCursor *cursor, GfxTransitions *transitions);
 	virtual ~GfxAnimate();
+
+	bool isFastCastEnabled() {
+		return _fastCastEnabled;
+	}
 
 	void disposeLastCast();
 	bool invoke(List *list, int argc, reg_t *argv);
@@ -110,6 +114,7 @@ public:
 
 private:
 	void init();
+	bool detectFastCast();
 
 	void addToPicSetPicNotValid();
 	void animateShowPic();
@@ -119,6 +124,7 @@ private:
 	void setNsRect(GfxView *view, AnimateList::iterator it);
 
 	EngineState *_s;
+	ScriptPatcher *_scriptPatcher;
 	GfxCache *_cache;
 	GfxPorts *_ports;
 	GfxPaint16 *_paint16;
@@ -130,7 +136,7 @@ private:
 	AnimateList _list;
 	AnimateArray _lastCastData;
 
-	bool _ignoreFastCast;
+	bool _fastCastEnabled;
 };
 
 } // End of namespace Sci

@@ -25,7 +25,6 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 
-#include "gui/about.h"
 #include "gui/message.h"
 
 #include "agos/agos.h"
@@ -495,7 +494,7 @@ void AGOSEngine_Elvira2::userGame(bool load) {
 
 			i = userGameGetKey(&b, 128);
 			if (b) {
-				if (i <= 223) {
+				if (i <= 23) {
 					if (!confirmOverWrite(window)) {
 						listSaveGames();
 						continue;

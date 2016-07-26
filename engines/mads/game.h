@@ -34,6 +34,7 @@
 #include "mads/inventory.h"
 #include "mads/player.h"
 #include "mads/screen.h"
+#include "mads/camera.h"
 
 namespace MADS {
 
@@ -43,6 +44,11 @@ enum KernelMode {
 	KERNEL_GAME_LOAD = 0, KERNEL_SECTION_PRELOAD = 1, KERNEL_SECTION_INIT = 2,
 	KERNEL_ROOM_PRELOAD = 3, KERNEL_ROOM_INIT = 4, KERNEL_ACTIVE_CODE = 5
 };
+
+enum SyncType {
+	SYNC_SEQ = 1, SYNC_PLAYER = 2, SYNC_ANIM = 3, SYNC_CLOCK = 4
+};
+
 
 #define MADS_SAVEGAME_VERSION 1
 
@@ -142,6 +148,8 @@ public:
 	int _winStatus;
 	int _widepipeCtr;
 	int _loadGameSlot;
+	int _panningSpeed;
+	Camera _camX, _camY;
 
 public:
 	virtual ~Game();
@@ -235,6 +243,12 @@ public:
 	 * Creates a temporary thumbnail for use in saving games
 	 */
 	void createThumbnail();
+
+	void syncTimers(SyncType slaveType, int slaveId, SyncType masterType, int masterId);
+
+	void camInitDefault();
+	void camSetSpeed();
+	void camUpdate();
 };
 
 } // End of namespace MADS

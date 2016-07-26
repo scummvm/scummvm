@@ -75,6 +75,9 @@
 #include "gui/launcher.h"
 #endif
 
+#ifdef USE_UPDATES
+#include "gui/updates-dialog.h"
+#endif
 
 static bool launcherDialog() {
 
@@ -148,12 +151,24 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 #endif
 
 	// Verify that the game path refers to an actual directory
-	if (!(dir.exists() && dir.isDirectory()))
+        if (!dir.exists()) {
+		err = Common::kPathDoesNotExist;
+        } else if (!dir.isDirectory()) {
 		err = Common::kPathNotDirectory;
+        }
 
 	// Create the game engine
-	if (err.getCode() == Common::kNoError)
+	if (err.getCode() == Common::kNoError) {
+		// Set default values for all of the custom engine options
+		// Appareantly some engines query them in their constructor, thus we
+		// need to set this up before instance creation.
+		const ExtraGuiOptions engineOptions = (*plugin)->getExtraGuiOptions(Common::String());
+		for (uint i = 0; i < engineOptions.size(); i++) {
+			ConfMan.registerDefault(engineOptions[i].configOption, engineOptions[i].defaultState);
+		}
+
 		err = (*plugin)->createInstance(&system, &engine);
+	}
 
 	// Check for errors
 	if (!engine || err.getCode() != Common::kNoError) {
@@ -230,12 +245,6 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 
 	// Initialize any game-specific keymaps
 	engine->initKeymap();
-
-	// Set default values for all of the custom engine options
-	const ExtraGuiOptions engineOptions = (*plugin)->getExtraGuiOptions(Common::String());
-	for (uint i = 0; i < engineOptions.size(); i++) {
-		ConfMan.registerDefault(engineOptions[i].configOption, engineOptions[i].defaultState);
-	}
 
 	// Inform backend that the engine is about to be run
 	system.engineInit();
@@ -379,7 +388,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	if (settings.contains("debugflags")) {
 		specialDebug = settings["debugflags"];
 		settings.erase("debugflags");
-	}
+	} else if (ConfMan.hasKey("debugflags"))
+		specialDebug = ConfMan.get("debugflags");
 
 	PluginManager::instance().init();
  	PluginManager::instance().loadAllPlugins(); // load plugins for cached plugin manager
@@ -454,6 +464,13 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 	// Now as the event manager is created, setup the keymapper
 	setupKeymapper(system);
+
+#ifdef USE_UPDATES
+	if (!ConfMan.hasKey("updates_check")) {
+		GUI::UpdatesDialog dlg;
+		dlg.runModal();
+	}
+#endif
 
 	// Unless a game was specified, show the launcher dialog
 	if (0 == ConfMan.getActiveDomain())

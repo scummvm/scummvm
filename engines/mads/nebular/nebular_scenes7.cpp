@@ -361,7 +361,7 @@ void Scene701::actions() {
 
 			case 1: {
 				_game._player._visible = true;
-				_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
+				_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 				_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 				_scene->_sequences.setDepth (_globals._sequenceIndexes[2], 9);
 				int idx = _scene->_dynamicHotspots.add(NOUN_BOAT, VERB_CLIMB_INTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
@@ -498,7 +498,7 @@ void Scene702::actions() {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_scene->_nextSceneId = 711;
-	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._mainObjectSource == 4) && (!_game._objects.isInInventory(OBJ_BONES) || _game._trigger)) {
+	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._mainObjectSource == CAT_HOTSPOT) && (!_game._objects.isInInventory(OBJ_BONES) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -537,9 +537,9 @@ void Scene702::actions() {
 		_vm->_dialogs->show(70215);
 	else if (_action.isAction(VERB_LOOK, NOUN_TELEPORTER))
 		_vm->_dialogs->show(70216);
-	else if (_action.isAction(VERB_LOOK, NOUN_BONES) && (_action._mainObjectSource == 4))
+	else if (_action.isAction(VERB_LOOK, NOUN_BONES) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(70217);
-	else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._mainObjectSource == 4)) {
+	else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._mainObjectSource == CAT_HOTSPOT)) {
 		if (_game._objects.isInInventory(OBJ_BONES))
 			_vm->_dialogs->show(70219);
 	} else if (_action.isAction(VERB_LOOK, NOUN_SUBMERGED_CITY))
@@ -694,7 +694,7 @@ void Scene703::enter() {
 		_boatDir = 2;
 		_monsterMode = 0;
 		_scene->loadAnimation(formAnimName('A', -1));
-		_scene->_activeAnimation->setCurrentFrame(34);
+		_scene->_animation[0]->setCurrentFrame(34);
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._stepEnabled = false;
 		_boatDir = 1;
@@ -712,17 +712,17 @@ void Scene703::enter() {
 		_boatDir = 1;
 		_monsterMode = 1;
 		_scene->loadAnimation(formAnimName('B', -1));
-		_scene->_activeAnimation->setCurrentFrame(39);
+		_scene->_animation[0]->setCurrentFrame(39);
 	} else if (_boatDir == 1) {
 		_curSequence = 0;
 		_monsterMode = 0;
 		_scene->loadAnimation(formAnimName('A', -1));
-		_scene->_activeAnimation->setCurrentFrame(9);
+		_scene->_animation[0]->setCurrentFrame(9);
 	} else if (_boatDir == 2) {
 		_curSequence = 0;
 		_monsterMode = 0;
 		_scene->loadAnimation(formAnimName('A', -1));
-		_scene->_activeAnimation->setCurrentFrame(56);
+		_scene->_animation[0]->setCurrentFrame(56);
 	}
 
 	if (_scene->_roomChanged) {
@@ -764,9 +764,9 @@ void Scene703::step() {
 	if (_game._trigger == 70)
 		_scene->_reloadSceneFlag = true;
 
-	if ((_monsterMode == 3) && (_scene->_activeAnimation != nullptr)) {
-		if (_scene->_activeAnimation->getCurrentFrame() != _boatFrame) {
-			_boatFrame = _scene->_activeAnimation->getCurrentFrame();
+	if ((_monsterMode == 3) && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() != _boatFrame) {
+			_boatFrame = _scene->_animation[0]->getCurrentFrame();
 			int nextBoatFrame = -1;
 
 			if (_boatFrame == 62) {
@@ -777,8 +777,8 @@ void Scene703::step() {
 				}
 			}
 
-			if ((nextBoatFrame >= 0) && (nextBoatFrame != _scene->_activeAnimation->getCurrentFrame())) {
-				_scene->_activeAnimation->setCurrentFrame(nextBoatFrame);
+			if ((nextBoatFrame >= 0) && (nextBoatFrame != _scene->_animation[0]->getCurrentFrame())) {
+				_scene->_animation[0]->setCurrentFrame(nextBoatFrame);
 				_boatFrame = nextBoatFrame;
 			}
 		}
@@ -787,9 +787,9 @@ void Scene703::step() {
 	if (_game._trigger == 70)
 		_scene->_reloadSceneFlag = true;
 
-	if ((_monsterMode == 0) && (_scene->_activeAnimation != nullptr)) {
-		if (_scene->_activeAnimation->getCurrentFrame() != _boatFrame) {
-			_boatFrame = _scene->_activeAnimation->getCurrentFrame();
+	if ((_monsterMode == 0) && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() != _boatFrame) {
+			_boatFrame = _scene->_animation[0]->getCurrentFrame();
 			int nextBoatFrame = -1;
 
 			switch (_boatFrame) {
@@ -860,8 +860,8 @@ void Scene703::step() {
 				break;
 			}
 
-			if ((nextBoatFrame >= 0) && (nextBoatFrame != _scene->_activeAnimation->getCurrentFrame())) {
-				_scene->_activeAnimation->setCurrentFrame(nextBoatFrame);
+			if ((nextBoatFrame >= 0) && (nextBoatFrame != _scene->_animation[0]->getCurrentFrame())) {
+				_scene->_animation[0]->setCurrentFrame(nextBoatFrame);
 				_boatFrame = nextBoatFrame;
 			}
 		}
@@ -895,9 +895,9 @@ void Scene703::step() {
 	}
 
 
-	if ((_monsterMode == 1) && (_scene->_activeAnimation != nullptr)) {
-		if (_scene->_activeAnimation->getCurrentFrame() != _boatFrame) {
-			_boatFrame = _scene->_activeAnimation->getCurrentFrame();
+	if ((_monsterMode == 1) && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() != _boatFrame) {
+			_boatFrame = _scene->_animation[0]->getCurrentFrame();
 			int nextBoatFrame = -1;
 
 			switch (_boatFrame) {
@@ -934,16 +934,16 @@ void Scene703::step() {
 				break;
 			}
 
-			if ((nextBoatFrame >= 0) && (nextBoatFrame != _scene->_activeAnimation->getCurrentFrame())) {
-				_scene->_activeAnimation->setCurrentFrame(nextBoatFrame);
+			if ((nextBoatFrame >= 0) && (nextBoatFrame != _scene->_animation[0]->getCurrentFrame())) {
+				_scene->_animation[0]->setCurrentFrame(nextBoatFrame);
 				_boatFrame = nextBoatFrame;
 			}
 		}
 	}
 
-	if ((_monsterMode == 2) && (_scene->_activeAnimation != nullptr)) {
-		if (_scene->_activeAnimation->getCurrentFrame() != _boatFrame) {
-			_boatFrame = _scene->_activeAnimation->getCurrentFrame();
+	if ((_monsterMode == 2) && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() != _boatFrame) {
+			_boatFrame = _scene->_animation[0]->getCurrentFrame();
 			int nextBoatFrame = -1;
 
 			switch (_boatFrame) {
@@ -983,7 +983,7 @@ void Scene703::step() {
 				_scene->freeAnimation();
 				_monsterMode = 1;
 				_scene->loadAnimation(formAnimName('B', -1));
-				_scene->_activeAnimation->setCurrentFrame(39);
+				_scene->_animation[0]->setCurrentFrame(39);
 				_game._player._stepEnabled = true;
 				break;
 
@@ -992,7 +992,7 @@ void Scene703::step() {
 					_scene->freeAnimation();
 					_monsterMode = 1;
 					_scene->loadAnimation(formAnimName('B', -1));
-					_scene->_activeAnimation->setCurrentFrame(39);
+					_scene->_animation[0]->setCurrentFrame(39);
 					_game._player._stepEnabled = true;
 				} else
 					_game._objects.setRoom(OBJ_CHICKEN_BOMB, 1);
@@ -1005,7 +1005,7 @@ void Scene703::step() {
 				_scene->freeAnimation();
 				_monsterMode = 0;
 				_scene->loadAnimation(formAnimName('A', -1));
-				_scene->_activeAnimation->setCurrentFrame(9);
+				_scene->_animation[0]->setCurrentFrame(9);
 				_game._player._stepEnabled = true;
 				if (_game._storyMode == STORYMODE_NAUGHTY)
 					_vm->_dialogs->show(70321);
@@ -1018,8 +1018,8 @@ void Scene703::step() {
 				break;
 			}
 
-			if ((nextBoatFrame >= 0) && (nextBoatFrame != _scene->_activeAnimation->getCurrentFrame())) {
-				_scene->_activeAnimation->setCurrentFrame(nextBoatFrame);
+			if ((nextBoatFrame >= 0) && (nextBoatFrame != _scene->_animation[0]->getCurrentFrame())) {
+				_scene->_animation[0]->setCurrentFrame(nextBoatFrame);
 				_boatFrame = nextBoatFrame;
 			}
 		}
@@ -1055,7 +1055,7 @@ void Scene703::actions() {
 		_scene->freeAnimation();
 		_monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
-		_scene->_activeAnimation->setCurrentFrame(19);
+		_scene->_animation[0]->setCurrentFrame(19);
 	} else if (_action.isAction(VERB_THROW, NOUN_CHICKEN, NOUN_SEA_MONSTER)) {
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
@@ -1066,13 +1066,13 @@ void Scene703::actions() {
 		_scene->freeAnimation();
 		_monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
-		_scene->_activeAnimation->setCurrentFrame(39);
+		_scene->_animation[0]->setCurrentFrame(39);
 	} else if (_action.isAction(VERB_THROW, NOUN_BOMB, NOUN_SEA_MONSTER)) {
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
 		_monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
-		_scene->_activeAnimation->setCurrentFrame(59);
+		_scene->_animation[0]->setCurrentFrame(59);
 	} else if (_action.isAction(VERB_THROW, NOUN_CHICKEN_BOMB, NOUN_SEA_MONSTER)) {
 		_useBomb = true;
 		_game._player._stepEnabled = false;
@@ -1241,21 +1241,21 @@ void Scene704::enter() {
 		_animationMode = 2;
 		_boatDirection = 2;
 		_scene->loadAnimation(formAnimName('A', -1));
-		_scene->_activeAnimation->setCurrentFrame(36);
+		_scene->_animation[0]->setCurrentFrame(36);
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._stepEnabled = false;
 		_boatDirection = 1;
 		_scene->loadAnimation(formAnimName('A', -1));
 	} else if (_boatDirection == 1) {
 		_scene->loadAnimation(formAnimName('A', -1));
-		_scene->_activeAnimation->setCurrentFrame(8);
+		_scene->_animation[0]->setCurrentFrame(8);
 	} else if (_boatDirection == 2) {
 		if (_game._objects[OBJ_BOTTLE]._roomNumber == _scene->_currentSceneId) {
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(123, 125));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 		}
 		_scene->loadAnimation(formAnimName('A', -1));
-		_scene->_activeAnimation->setCurrentFrame(57);
+		_scene->_animation[0]->setCurrentFrame(57);
 	}
 
 	if (_scene->_roomChanged)
@@ -1269,9 +1269,9 @@ void Scene704::enter() {
 }
 
 void Scene704::step() {
-	if (_scene->_activeAnimation != nullptr) {
-		if (_scene->_activeAnimation->getCurrentFrame() != _boatCurrentFrame) {
-			_boatCurrentFrame = _scene->_activeAnimation->getCurrentFrame();
+	if (_scene->_animation[0] != nullptr) {
+		if (_scene->_animation[0]->getCurrentFrame() != _boatCurrentFrame) {
+			_boatCurrentFrame = _scene->_animation[0]->getCurrentFrame();
 			int nextFrame = -1;
 
 			switch (_boatCurrentFrame) {
@@ -1377,8 +1377,8 @@ void Scene704::step() {
 				break;
 			}
 
-			if ((nextFrame >= 0) && (nextFrame != _scene->_activeAnimation->getCurrentFrame())) {
-				_scene->_activeAnimation->setCurrentFrame(nextFrame);
+			if ((nextFrame >= 0) && (nextFrame != _scene->_animation[0]->getCurrentFrame())) {
+				_scene->_animation[0]->setCurrentFrame(nextFrame);
 				_boatCurrentFrame = nextFrame;
 			}
 		}
@@ -1455,7 +1455,7 @@ void Scene704::actions() {
 			_vm->_dialogs->show(70412);
 	} else if (_action.isAction(VERB_LOOK, NOUN_VOLCANO_RIM))
 		_vm->_dialogs->show(70413);
-	else if (_action.isAction(VERB_LOOK, NOUN_BOTTLE) && (_action._mainObjectSource == 4))
+	else if (_action.isAction(VERB_LOOK, NOUN_BOTTLE) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(70414);
 	else if (_action.isAction(VERB_LOOK, NOUN_OPEN_WATER_TO_SOUTH))
 		_vm->_dialogs->show(70416);
@@ -1906,9 +1906,9 @@ void Scene706::step() {
 		_scene->_reloadSceneFlag = true;
 	}
 
-	if (_scene->_activeAnimation != nullptr) {
-		if ((_animationMode != 0) && (_scene->_activeAnimation->getCurrentFrame() != _animationFrame)) {
-			_animationFrame = _scene->_activeAnimation->getCurrentFrame();
+	if (_scene->_animation[0] != nullptr) {
+		if ((_animationMode != 0) && (_scene->_animation[0]->getCurrentFrame() != _animationFrame)) {
+			_animationFrame = _scene->_animation[0]->getCurrentFrame();
 
 			if (_animationFrame == 6) {
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
@@ -2017,7 +2017,7 @@ void Scene706::actions() {
 		_vm->_dialogs->show(70623);
 	else if (_action.isAction(VERB_LOOK, NOUN_VASE) && (_game._objects[OBJ_VASE]._roomNumber == _scene->_currentSceneId))
 		_vm->_dialogs->show(70624);
-	else if (_action.isAction(VERB_LOOK, NOUN_BOTTLE) && (_action._mainObjectSource == 4))
+	else if (_action.isAction(VERB_LOOK, NOUN_BOTTLE) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(70632);
 	else
 		return;

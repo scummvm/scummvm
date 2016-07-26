@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef PARALLACTION_H
-#define PARALLACTION_H
+#ifndef PARALLACTION_PARALLACTION_H
+#define PARALLACTION_PARALLACTION_H
 
 #include "common/str.h"
 #include "common/stack.h"

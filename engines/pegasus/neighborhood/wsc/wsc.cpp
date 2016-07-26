@@ -486,6 +486,12 @@ static const CoordType kMoleculesMovieTop = kNavAreaTop + 40;
 
 WSC::WSC(InputHandler *nextHandler, PegasusEngine *owner) : Neighborhood(nextHandler, owner, "WSC", kWSCID),
 		_moleculesMovie(kNoDisplayElement) {
+	
+	_argonSprite = nullptr;
+	_cachedZoomSpot = nullptr;
+	_moleculeGameLevel = 0;
+	_numCorrect = 0;
+
 	setIsItemTaken(kArgonCanister);
 	setIsItemTaken(kSinclairKey);
 	setIsItemTaken(kNitrogenCanister);

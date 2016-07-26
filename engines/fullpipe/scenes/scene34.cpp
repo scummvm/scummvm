@@ -115,7 +115,7 @@ int scene34_updateCursor() {
 }
 
 void sceneHandler34_leaveBoard() {
-	getCurrSceneSc2MotionController()->setEnabled();
+	getCurrSceneSc2MotionController()->activate();
 	getGameLoaderInteractionController()->enableFlag24();
 
 	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 1);
@@ -124,7 +124,7 @@ void sceneHandler34_leaveBoard() {
 }
 
 void sceneHandler34_onBoard() {
-	getCurrSceneSc2MotionController()->clearEnabled();
+	getCurrSceneSc2MotionController()->deactivate();
 	getGameLoaderInteractionController()->disableFlag24();
 
 	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
@@ -149,7 +149,7 @@ void sceneHandler34_hideStool() {
 }
 
 void sceneHandler34_climb() {
-	getCurrSceneSc2MotionController()->clearEnabled();
+	getCurrSceneSc2MotionController()->deactivate();
 	getGameLoaderInteractionController()->disableFlag24();
 
 	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
@@ -287,7 +287,7 @@ void sceneHandler34_showStool() {
 }
 
 void sceneHandler34_unclimb() {
-	getCurrSceneSc2MotionController()->setEnabled();
+	getCurrSceneSc2MotionController()->activate();
 	getGameLoaderInteractionController()->enableFlag24();
 
 	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 1);
@@ -323,7 +323,7 @@ int sceneHandler34(ExCommand *cmd) {
 	case MSG_SC34_FROMCACTUS:
 		g_vars->scene34_dudeOnCactus = false;
 
-		getCurrSceneSc2MotionController()->setEnabled();
+		getCurrSceneSc2MotionController()->activate();
 		getGameLoaderInteractionController()->enableFlag24();
 
 		g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 1);
@@ -381,7 +381,7 @@ int sceneHandler34(ExCommand *cmd) {
 	case MSG_SC34_ONCACTUS:
 		g_vars->scene34_dudeOnCactus = true;
 
-		getCurrSceneSc2MotionController()->clearEnabled();
+		getCurrSceneSc2MotionController()->deactivate();
 		getGameLoaderInteractionController()->disableFlag24();
 
 		g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);

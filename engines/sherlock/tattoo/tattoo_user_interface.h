@@ -185,6 +185,9 @@ public:
 	 */
 	void doBgAnimEraseBackground();
 
+	/**
+	 * Draws overlays onto the scene. Basically, the smoke effects some scenes have
+	 */
 	void drawMaskArea(bool mode);
 
 	/**

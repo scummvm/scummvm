@@ -179,6 +179,8 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(fore);
 	FIND_SELECTOR(back);
 	FIND_SELECTOR(skip);
+	FIND_SELECTOR(borderColor);
+	FIND_SELECTOR(width);
 	FIND_SELECTOR(fixPriority);
 	FIND_SELECTOR(mirrored);
 	FIND_SELECTOR(visible);
@@ -187,6 +189,17 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(inLeft);
 	FIND_SELECTOR(inBottom);
 	FIND_SELECTOR(inRight);
+	FIND_SELECTOR(textTop);
+	FIND_SELECTOR(textLeft);
+	FIND_SELECTOR(textBottom);
+	FIND_SELECTOR(textRight);
+	FIND_SELECTOR(title);
+	FIND_SELECTOR(titleFont);
+	FIND_SELECTOR(titleFore);
+	FIND_SELECTOR(titleBack);
+	FIND_SELECTOR(magnifier);
+	FIND_SELECTOR(frameOut);
+	FIND_SELECTOR(casts);
 #endif
 }
 
@@ -198,6 +211,16 @@ reg_t readSelector(SegManager *segMan, reg_t object, Selector selectorId) {
 	else
 		return *address.getPointer(segMan);
 }
+
+#ifdef ENABLE_SCI32
+void updateInfoFlagViewVisible(Object *obj, int index) {
+	// TODO: Make this correct for all SCI versions
+	// Selectors 26 through 44 are selectors for View script objects in SQ6
+	if (index >= 26 && index <= 44 && getSciVersion() >= SCI_VERSION_2) {
+		obj->setInfoSelectorFlag(kInfoFlagViewVisible);
+	}
+}
+#endif
 
 void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t value) {
 	ObjVarRef address;
@@ -211,8 +234,12 @@ void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t 
 	if (lookupSelector(segMan, object, selectorId, &address, NULL) != kSelectorVariable)
 		error("Selector '%s' of object at %04x:%04x could not be"
 		         " written to", g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object));
-	else
+	else {
 		*address.getPointer(segMan) = value;
+#ifdef ENABLE_SCI32
+		updateInfoFlagViewVisible(segMan->getObject(object), selectorId);
+#endif
+	}
 }
 
 void invokeSelector(EngineState *s, reg_t object, int selectorId,

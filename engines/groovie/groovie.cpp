@@ -20,9 +20,6 @@
  *
  */
 
-#include "audio/mididrv.h"
-#include "audio/mixer.h"
-
 #include "groovie/groovie.h"
 #include "groovie/cursor.h"
 #include "groovie/detection.h"
@@ -69,7 +66,7 @@ GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
 
 	// Initialize the custom debug levels
 	DebugMan.addDebugChannel(kDebugVideo, "Video", "Debug video and audio playback");
-	DebugMan.addDebugChannel(kDebugResource, "Resource", "Debug resouce management");
+	DebugMan.addDebugChannel(kDebugResource, "Resource", "Debug resource management");
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Debug the scripts");
 	DebugMan.addDebugChannel(kDebugUnknown, "Unknown", "Report values of unknown data in files");
 	DebugMan.addDebugChannel(kDebugHotspots, "Hotspots", "Show the hotspots");
@@ -257,11 +254,7 @@ Common::Error GroovieEngine::run() {
 	// the same cd
 	if (getPlatform() != Common::kPlatformIOS) {
 		checkCD();
-
-		// Initialize the CD
-		int cd_num = ConfMan.getInt("cdrom");
-		if (cd_num >= 0)
-			_system->getAudioCDManager()->openCD(cd_num);
+		_system->getAudioCDManager()->open();
 	}
 
 	while (!shouldQuit()) {

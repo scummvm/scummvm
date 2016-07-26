@@ -72,14 +72,14 @@ struct SpriteInfo {
 	int32 curAngle;
 	int32 curScale;
 	int32 curImgFlags;
-	int32 field_74;
+	int32 animIndex;
 	int32 animSpeed;
 	int32 sourceImage;
 	int32 maskImage;
-	int32 field_84;
+	int32 zbufferImage;
 	int32 classFlags;
 	int32 imgFlags;
-	int32 field_90;
+	int32 conditionBits;
 };
 
 struct SpriteGroup {
@@ -182,7 +182,7 @@ public:
 	void setSpriteAnimSpeed(int spriteId, int value);
 	void setSpriteSetClass(int spriteId, int classId, int toggle);
 	void setSpriteResetClass(int spriteId);
-	void setSpriteField84(int spriteId, int value);
+	void setSpriteZBuffer(int spriteId, int value);
 	void setSpriteGeneralProperty(int spriteId, int type, int value);
 
 	void moveGroupMembers(int spriteGroupId, int value1, int value2);

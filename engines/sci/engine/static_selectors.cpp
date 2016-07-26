@@ -114,16 +114,16 @@ static const SelectorRemap sciSelectorRemap[] = {
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1, "cantBeHere",   54 },
 	// The following are not really needed. They've only been defined to
 	// ease game debugging.
-	{        SCI_VERSION_1_1,        SCI_VERSION_2_1,    "-objID-", 4096 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_2_1,     "-size-", 4097 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_2_1, "-propDict-", 4098 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_2_1, "-methDict-", 4099 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_2_1, "-classScript-", 4100 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_2_1,   "-script-", 4101 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_2_1,    "-super-", 4102 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_2_1_LATE,    "-objID-", 4096 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_2_1_LATE,     "-size-", 4097 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_2_1_LATE, "-propDict-", 4098 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_2_1_LATE, "-methDict-", 4099 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_2_1_LATE, "-classScript-", 4100 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_2_1_LATE,   "-script-", 4101 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_2_1_LATE,    "-super-", 4102 },
 	//
-	{        SCI_VERSION_1_1,        SCI_VERSION_2_1,     "-info-", 4103 },
-	{ SCI_VERSION_NONE,             SCI_VERSION_NONE,            0,    0 }
+	{        SCI_VERSION_1_1,        SCI_VERSION_2_1_LATE,     "-info-", 4103 },
+	{        SCI_VERSION_NONE,           SCI_VERSION_NONE,            0,    0 }
 };
 
 struct ClassReference {

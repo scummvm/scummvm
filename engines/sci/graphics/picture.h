@@ -38,6 +38,9 @@ enum {
 class GfxPorts;
 class GfxScreen;
 class GfxPalette;
+class GfxCoordAdjuster;
+class ResourceManager;
+class Resource;
 
 /**
  * Picture class, handles loading and displaying of picture resources

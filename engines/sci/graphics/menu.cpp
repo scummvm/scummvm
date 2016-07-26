@@ -424,8 +424,12 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 		default:
 			while (itemIterator != itemEnd) {
 				itemEntry = *itemIterator;
+				// Sierra actually did not check the modifier, they only checked the ascii code
+				// Which is why for example pressing Ctrl-I and Shift-Ctrl-I both brought up the inventory in QfG1
+				// We still check the modifier, but we need to isolate the lower byte, because of a keyboard
+				// driver bug (see engine/kevent.cpp / kGetEvent)
 				if (itemEntry->keyPress == keyPress &&
-					itemEntry->keyModifier == keyModifier &&
+					itemEntry->keyModifier == (keyModifier & 0xFF) &&
 					itemEntry->enabled)
 					break;
 				itemIterator++;
@@ -743,7 +747,7 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 			// - sierra didn't wrap around when changing item id
 			// - sierra allowed item id to be 0, which didn't make any sense
 			do {
-				switch (curEvent.data) {
+				switch (curEvent.character) {
 				case SCI_KEY_ESC:
 					_curMenuId = curItemEntry->menuId; _curItemId = curItemEntry->id;
 					return NULL;
@@ -772,10 +776,10 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 					newMenuId = newItemEntry->menuId; newItemId = newItemEntry->id;
 
 					// if we do this step again because of a separator line -> don't repeat left/right, but go down
-					switch (curEvent.data) {
+					switch (curEvent.character) {
 					case SCI_KEY_LEFT:
 					case SCI_KEY_RIGHT:
-						curEvent.data = SCI_KEY_DOWN;
+						curEvent.character = SCI_KEY_DOWN;
 					}
 				}
 			} while (newItemEntry->separatorLine);

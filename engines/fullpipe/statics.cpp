@@ -106,8 +106,13 @@ bool StepArray::gotoNextPoint() {
 }
 
 void StepArray::insertPoints(Common::Point **points, int pointsCount) {
-	if (_currPointIndex + pointsCount >= _pointsCount)
+	if (_currPointIndex + pointsCount >= _pointsCount) {
 		_points = (Common::Point **)realloc(_points, sizeof(Common::Point *) * (_currPointIndex + pointsCount));
+
+		if (!_points) {
+			error("Out of memory at StepArray::insertPoints()");
+		}
+	}
 
 	_maxPointIndex = _currPointIndex + pointsCount;
 
@@ -1571,6 +1576,9 @@ Movement::Movement(Movement *src, int *oldIdxs, int newSize, StaticANIObject *an
 	_m2x = 0;
 	_m2y = 0;
 
+	_counter = 0;
+	_counterMax = 0;
+
 	_field_78 = 0;
 	_framePosOffsets = 0;
 	_field_84 = 0;
@@ -1758,8 +1766,8 @@ Common::Point *Movement::calcSomeXY(Common::Point &p, int idx, int dynidx) {
 		Common::Point point;
 
 		_staticsObj1->getSomeXY(point);
-		int y1 = _my - point.y;
 		int x1 = _mx - point.x;
+		int y1 = _my - point.y;
 
 		setDynamicPhaseIndex(0);
 

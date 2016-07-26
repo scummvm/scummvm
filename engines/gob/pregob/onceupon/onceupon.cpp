@@ -30,8 +30,6 @@
 #include "gob/anifile.h"
 #include "gob/aniobject.h"
 
-#include "gob/sound/sound.h"
-
 #include "gob/pregob/txtfile.h"
 #include "gob/pregob/gctfile.h"
 

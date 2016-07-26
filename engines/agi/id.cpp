@@ -42,7 +42,7 @@ int AgiEngine::setupV2Game(int ver) {
 	// Should this go above the previous lines, so we can force emulation versions
 	// even for AGDS games? -- dsymonds
 	if (getFeatures() & GF_AGDS)
-		setVersion(ver = 0x2440);	// ALL AGDS games built for 2.440
+		setVersion(ver = 0x2440);   // ALL AGDS games built for 2.440
 
 	debug(0, "Setting up for version 0x%04X", ver);
 

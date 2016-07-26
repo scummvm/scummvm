@@ -283,6 +283,9 @@ void Testsuite::execute() {
 	pt.y += getLineSeparation();
 	int numEnabledTests = getNumTestsEnabled();
 
+	if (!numEnabledTests)
+		return;
+
 	for (Common::Array<Test *>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
 		if (!(*i)->enabled) {
 			logPrintf("Info! Skipping Test: %s, Skipped by configuration.\n", ((*i)->featureName).c_str());

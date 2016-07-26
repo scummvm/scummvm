@@ -174,7 +174,7 @@ IMPLEMENT_FUNCTION_IISS(9, Gendarmes, doCompartment, CarIndex, EntityPosition)
 
 		strcat((char *)&parameters1->seq1, (char *)&params->seq1);
 		strcat((char *)&parameters1->seq2, (char *)&params->seq1);
-		strcat((char *)&parameters1->seq3, (char *)&params->seq1);
+		Common::strlcat((char *)&parameters1->seq3, (char *)&params->seq1, 9); // Beware, seq3 is smaller than seq1
 
 		if ((getEntities()->isInsideCompartment(kEntityPlayer, (CarIndex)params->param1, (EntityPosition)params->param2)
 		  || getEntities()->isInsideCompartment(kEntityPlayer, (CarIndex)params->param1, (EntityPosition)parameters2->param7)

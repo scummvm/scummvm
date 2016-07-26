@@ -80,6 +80,7 @@ void WidgetText::centerWindowOnSpeaker(int speaker) {
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	Common::Point pt;
 
+	speaker &= 0x7f;
 	bool flag = _vm->readFlags(FLAG_PLAYER_IS_HOLMES);
 	if (people[HOLMES]._type == CHARACTER && ((speaker == HOLMES && flag) || (speaker == WATSON && !flag))) {
 		// Place the window centered above the player
@@ -165,7 +166,7 @@ void WidgetText::render(const Common::String &str) {
 
 	// Allocate a surface for the window
 	_surface.create(_bounds.width(), _bounds.height());
-	_surface.fill(TRANSPARENCY);
+	_surface.clear(TRANSPARENCY);
 
 	// Form the background for the new window
 	makeInfoArea();
@@ -194,7 +195,7 @@ void WidgetMessage::load(const Common::String &str, int time) {
 
 	// Allocate a surface for the window
 	_surface.create(_bounds.width(), _bounds.height());
-	_surface.fill(TRANSPARENCY);
+	_surface.clear(TRANSPARENCY);
 
 	// Form the background for the new window and write the line of text
 	makeInfoArea();

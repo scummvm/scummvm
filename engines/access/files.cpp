@@ -84,20 +84,6 @@ byte *Resource::data() {
 /*------------------------------------------------------------------------*/
 
 FileManager::FileManager(AccessEngine *vm) : _vm(vm) {
-	switch (vm->getGameID()) {
-	case GType_Amazon:
-		if (_vm->isDemo())
-			_filenames = &Amazon::FILENAMES_DEMO[0];
-		else
-			_filenames = &Amazon::FILENAMES[0];
-		break;
-	case GType_MartianMemorandum:
-		_filenames = &Martian::FILENAMES[0];
-		break;
-	default:
-		error("Unknown game");
-	}
-
 	_fileNumber = -1;
 	_setPaletteFlag = true;
 }
@@ -144,13 +130,13 @@ void FileManager::openFile(Resource *res, const Common::String &filename) {
 		error("Could not open file - %s", filename.c_str());
 }
 
-void FileManager::loadScreen(Graphics::Surface *dest, int fileNum, int subfile) {
+void FileManager::loadScreen(Graphics::ManagedSurface *dest, int fileNum, int subfile) {
 	Resource *res = loadFile(fileNum, subfile);
 	handleScreen(dest, res);
 	delete res;
 }
 
-void FileManager::handleScreen(Graphics::Surface *dest, Resource *res) {
+void FileManager::handleScreen(Graphics::ManagedSurface *dest, Resource *res) {
 	_vm->_screen->loadRawPalette(res->_stream);
 	if (_setPaletteFlag)
 		_vm->_screen->setPalette();
@@ -161,20 +147,17 @@ void FileManager::handleScreen(Graphics::Surface *dest, Resource *res) {
 	res->_size -= res->_stream->pos();
 	handleFile(res);
 
-	if (dest != _vm->_screen)
-		dest->w = _vm->_screen->w;
+	Graphics::Surface destSurface = dest->getSubArea(Common::Rect(0, 0,
+		_vm->_screen->w, _vm->_screen->h));
 
-	if (dest->w == dest->pitch) {
-		res->_stream->read((byte *)dest->getPixels(), dest->w * dest->h);
+	if (destSurface.w == destSurface.pitch) {
+		res->_stream->read((byte *)destSurface.getPixels(), destSurface.w * destSurface.h);
 	} else {
-		for (int y = 0; y < dest->h; ++y) {
-			byte *pDest = (byte *)dest->getBasePtr(0, y);
-			res->_stream->read(pDest, dest->w);
+		for (int y = 0; y < destSurface.h; ++y) {
+			byte *pDest = (byte *)destSurface.getBasePtr(0, y);
+			res->_stream->read(pDest, destSurface.w);
 		}
 	}
-
-	if (dest == _vm->_screen)
-		_vm->_screen->addDirtyRect(Common::Rect(0, 0, dest->w, dest->h));
 }
 
 void FileManager::loadScreen(int fileNum, int subfile) {
@@ -215,8 +198,8 @@ void FileManager::handleFile(Resource *res) {
 
 void FileManager::setAppended(Resource *res, int fileNum) {
 	// Open the file for access
-	if (!res->_file.open(_filenames[fileNum]))
-		error("Could not open file %s", _filenames[fileNum]);
+	if (!res->_file.open(_vm->_res->FILENAMES[fileNum]))
+		error("Could not open file %s", _vm->_res->FILENAMES[fileNum].c_str());
 
 	// If a different file has been opened then previously, load its index
 	if (_fileNumber != fileNum) {

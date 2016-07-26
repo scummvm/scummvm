@@ -29,6 +29,7 @@
 
 #ifndef INTRO_H
 #define INTRO_H
+#include "graphics/surface.h"
 #include "graphics/fonts/winfont.h"
 
 namespace Hugo {

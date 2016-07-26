@@ -20,6 +20,7 @@
  *
  */
 
+#include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 
@@ -44,7 +45,7 @@ enum ChunkTypes {
 	kChunkStopSubtitles = 8
 };
 
-MoviePlayer::MoviePlayer(ToltecsEngine *vm) : _vm(vm), _isPlaying(false), _lastPrefetchOfs(0), _framesPerSoundChunk(0), _endPos(0) {
+MoviePlayer::MoviePlayer(ToltecsEngine *vm) : _vm(vm), _isPlaying(false), _lastPrefetchOfs(0), _framesPerSoundChunk(0), _endPos(0), _audioStream(0) {
 }
 
 MoviePlayer::~MoviePlayer() {

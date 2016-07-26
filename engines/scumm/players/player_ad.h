@@ -25,8 +25,6 @@
 
 #include "scumm/music.h"
 
-#include "audio/audiostream.h"
-
 #include "common/mutex.h"
 
 namespace OPL {
@@ -36,6 +34,7 @@ class OPL;
 namespace Scumm {
 
 class ScummEngine;
+class Serializer;
 
 /**
  * Sound output for v3/v4 AdLib data.
@@ -68,7 +67,7 @@ private:
 
 	OPL::OPL *_opl2;
 
-	int _soundPlaying;
+	int _musicResource;
 	int32 _engineMusicTimer;
 
 	struct SfxSlot;

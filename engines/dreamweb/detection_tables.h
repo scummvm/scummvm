@@ -244,6 +244,26 @@ static const DreamWebGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// Czech fan-made translation
+	// From bug #7078
+	{
+		{
+			"dreamweb",
+			"CD",
+			{
+				{"dreamweb.r00", 0, "3b5c87717fc40cc5a5ae19c155662ee3", 152918},
+				{"dreamweb.r02", 0, "28458718167a040d7e988cf7d2298eae", 210466},
+				{"dreamweb.exe", 0, "40cc15bdc8fa3a785b5fd1ecd6194119", 65440},
+				AD_LISTEND
+			},
+			Common::CZ_CZE,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
+		},
+	},
+
+
 	{ AD_TABLE_END_MARKER }
 };
 

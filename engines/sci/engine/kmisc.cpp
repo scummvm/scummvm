@@ -218,7 +218,6 @@ enum {
 
 reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 	TimeDate loc_time;
-	uint32 elapsedTime = g_engine->getTotalPlayTime();
 	int retval = 0; // Avoid spurious warning
 
 	g_system->getTimeAndDate(loc_time);
@@ -232,7 +231,7 @@ reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 
 	switch (mode) {
 	case KGETTIME_TICKS :
-		retval = elapsedTime * 60 / 1000;
+		retval = g_sci->getTickCount();
 		debugC(kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
 		break;
 	case KGETTIME_TIME_12HOUR :
@@ -244,10 +243,18 @@ reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 		debugC(kDebugLevelTime, "GetTime(24h) returns %d", retval);
 		break;
 	case KGETTIME_DATE :
-		// Year since 1980 (0 = 1980, 1 = 1981, etc.)
-		retval = loc_time.tm_mday | ((loc_time.tm_mon + 1) << 5) | (((loc_time.tm_year - 80) & 0x7f) << 9);
+	{
+		// SCI0 late: Year since 1920 (0 = 1920, 1 = 1921, etc)
+		// SCI01 and newer: Year since 1980 (0 = 1980, 1 = 1981, etc)
+		// Atari ST SCI0 late versions use the newer base year.
+		int baseYear = 80;
+		if (getSciVersion() == SCI_VERSION_0_LATE && g_sci->getPlatform() == Common::kPlatformDOS) {
+			baseYear = 20;
+		}
+		retval = loc_time.tm_mday | ((loc_time.tm_mon + 1) << 5) | (((loc_time.tm_year - baseYear) & 0x7f) << 9);
 		debugC(kDebugLevelTime, "GetTime(date) returns %d", retval);
 		break;
+	}
 	default:
 		error("Attempt to use unknown GetTime mode %d", mode);
 		break;
@@ -269,7 +276,10 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
 	case K_MEMORY_ALLOCATE_CRITICAL: {
 		int byteCount = argv[1].toUint16();
-		// WORKAROUND:
+		// Sierra themselves allocated at least 2 bytes more than requested.
+		// Probably as a safety margin. And they also made size even.
+		//
+		// This behavior is required by at least these:
 		//  - pq3 (multilingual) room 202
 		//     when plotting crimes, allocates the returned bytes from kStrLen
 		//     on "W" and "E" and wants to put a string in there, which doesn't
@@ -277,18 +287,22 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 		//  - lsl5 (multilingual) room 280
 		//     allocates memory according to a previous kStrLen for the name of
 		//     the airport ladies (bug #3093818), which isn't enough
-
-		// We always allocate 1 byte more, because of this
-		byteCount++;
+		byteCount += 2 + (byteCount & 1);
 
 		if (!s->_segMan->allocDynmem(byteCount, "kMemory() critical", &s->r_acc)) {
 			error("Critical heap allocation failed");
 		}
 		break;
 	}
-	case K_MEMORY_ALLOCATE_NONCRITICAL:
-		s->_segMan->allocDynmem(argv[1].toUint16(), "kMemory() non-critical", &s->r_acc);
+	case K_MEMORY_ALLOCATE_NONCRITICAL: {
+		int byteCount = argv[1].toUint16();
+
+		// See above
+		byteCount += 2 + (byteCount & 1);
+
+		s->_segMan->allocDynmem(byteCount, "kMemory() non-critical", &s->r_acc);
 		break;
+	}
 	case K_MEMORY_FREE :
 		if (!s->_segMan->freeDynmem(argv[1])) {
 			if (g_sci->getGameId() == GID_QFG1VGA) {
@@ -395,6 +409,15 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 	} else if (setting == "startroom") {
 		// Debug setting in LSL7, specifies the room to start from.
 		s->_segMan->strcpy(data, "");
+	} else if (setting == "game") {
+		// Hoyle 5 startup, specifies the number of the game to start.
+		s->_segMan->strcpy(data, "");
+	} else if (setting == "laptop") {
+		// Hoyle 5 startup.
+		s->_segMan->strcpy(data, "");
+	} else if (setting == "jumpto") {
+		// Hoyle 5 startup.
+		s->_segMan->strcpy(data, "");
 	} else {
 		error("GetConfig: Unknown configuration setting %s", setting.c_str());
 	}
@@ -487,7 +510,7 @@ reg_t kMacPlatform(EngineState *s, int argc, reg_t *argv) {
 		// In SCI1, its usage is still unknown
 		// In SCI1.1, it's NOP
 		// In SCI32, it's used for remapping cursor ID's
-		if (getSciVersion() >= SCI_VERSION_2_1) // Set Mac cursor remap
+		if (getSciVersion() >= SCI_VERSION_2_1_EARLY) // Set Mac cursor remap
 			g_sci->_gfxCursor->setMacCursorRemapList(argc - 1, argv + 1);
 		else if (getSciVersion() != SCI_VERSION_1_1)
 			warning("Unknown SCI1 kMacPlatform(0) call");
@@ -540,6 +563,11 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
+	if (g_sci->forceHiresGraphics()) {
+		// force Windows platform, so that hires-graphics are enabled
+		isWindows = true;
+	}
+
 	uint16 operation = (argc == 0) ? 0 : argv[0].toUint16();
 
 	switch (operation) {
@@ -586,18 +614,28 @@ reg_t kEmpty(EngineState *s, int argc, reg_t *argv) {
 reg_t kStub(EngineState *s, int argc, reg_t *argv) {
 	Kernel *kernel = g_sci->getKernel();
 	int kernelCallNr = -1;
+	int kernelSubCallNr = -1;
 
 	Common::List<ExecStack>::const_iterator callIterator = s->_executionStack.end();
 	if (callIterator != s->_executionStack.begin()) {
 		callIterator--;
 		ExecStack lastCall = *callIterator;
-		kernelCallNr = lastCall.debugSelector;
+		kernelCallNr = lastCall.debugKernelFunction;
+		kernelSubCallNr = lastCall.debugKernelSubFunction;
 	}
 
-	Common::String warningMsg = "Dummy function k" + kernel->getKernelName(kernelCallNr) +
-								Common::String::format("[%x]", kernelCallNr) +
-								" invoked. Params: " +
-								Common::String::format("%d", argc) + " (";
+	Common::String warningMsg;
+	if (kernelSubCallNr == -1) {
+		warningMsg = "Dummy function k" + kernel->getKernelName(kernelCallNr) +
+		             Common::String::format("[%x]", kernelCallNr);
+	} else {
+		warningMsg = "Dummy function k" + kernel->getKernelName(kernelCallNr, kernelSubCallNr) +
+		             Common::String::format("[%x:%x]", kernelCallNr, kernelSubCallNr);
+
+	}
+
+	warningMsg += " invoked. Params: " +
+	              Common::String::format("%d", argc) + " (";
 
 	for (int i = 0; i < argc; i++) {
 		warningMsg +=  Common::String::format("%04x:%04x", PRINT_REG(argv[i]));

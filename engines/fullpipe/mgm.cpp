@@ -155,10 +155,12 @@ void MGM::rebuildTables(int objId) {
 	if (!obj)
 		return;
 
+	warning("WWW rebuild. idx: %d, size: %d", idx, obj->_staticsList.size() * obj->_staticsList.size());
 	for (uint i = 0; i < obj->_staticsList.size(); i++) {
 		_items[idx]->statics.push_back((Statics *)obj->_staticsList[i]);
 
-		_items[idx]->subItems.push_back(new MGMSubItem);
+		for (uint j = 0; j < obj->_staticsList.size(); j++) // Yes, square
+			_items[idx]->subItems.push_back(new MGMSubItem);
 	}
 
 	for (uint i = 0; i < obj->_movements.size(); i++)
@@ -389,9 +391,9 @@ int MGM::countPhases(int idx, int subIdx, int endIdx, int flag) {
 		if (subIdx < 0)
 			break;
 
-		res += _items[idx]->subItems[subIdx + endIdx * _items[idx]->statics.size()]->movement->countPhasesWithFlag(-1, flag);
+		res += _items[idx]->subItems[subIdx + endIdx * _items[idx]->statics.size()]->movement->countPhasesWithFlag(0xffffffff, flag);
 
-		subIdx = _items[idx]->subItems[subIdx + 6 * endIdx * _items[idx]->statics.size()]->staticsIndex;
+		subIdx = _items[idx]->subItems[subIdx + endIdx * _items[idx]->statics.size()]->staticsIndex;
 	}
 
 	return res;
@@ -474,7 +476,7 @@ int MGM::getStaticsIndexById(int idx, int16 id) {
 			return i;
 	}
 
-	return 0;
+	return -1;
 }
 
 int MGM::getStaticsIndex(int idx, Statics *st) {
@@ -486,7 +488,7 @@ int MGM::getStaticsIndex(int idx, Statics *st) {
 			return i;
 	}
 
-	return 0;
+	return -1;
 }
 
 void MGM::clearMovements2(int idx) {
@@ -502,7 +504,7 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 		return 0;
 	}
 
-	if (item->subItems[subIdx])
+	if (item->subItems[subIdx]->movement)
 		return item->subItems[subIdx]->field_8;
 
 	Common::Point point;
@@ -511,54 +513,59 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 		Movement *mov = item->movements1[i];
 
 		if (mov->_staticsObj1 == item->statics[st1idx]) {
-			if (!item->movements2[i] && (!flop || mov->_field_50)) {
-				item->movements2[i] = 1;
+			if (item->movements2[i] || (flop && !mov->_field_50))
+				continue;
 
-				int stidx = getStaticsIndex(idx, item->movements1[i]->_staticsObj2);
-				int recalc = recalcOffsets(idx, stidx, st2idx, flip, flop);
-				int sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
-				int newsz = sz + item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->field_C;
+			item->movements2[i] = 1;
 
-				if (recalc >= 0) {
-					if (!item->subItems[subIdx]->movement || item->subItems[subIdx]->field_8 > recalc + 1 ||
-						(item->subItems[subIdx]->field_8 == recalc + 1 && item->subItems[subIdx]->field_C > newsz)) {
-						item->subItems[subIdx]->movement = mov;
-						item->subItems[subIdx]->staticsIndex = stidx;
-						item->subItems[subIdx]->field_8 = recalc + 1;
-						item->subItems[subIdx]->field_C = newsz;
+			int stidx = getStaticsIndex(idx, mov->_staticsObj2);
+			int recalc = recalcOffsets(idx, stidx, st2idx, flip, flop);
+			int sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+			int newsz = sz + item->subItems[stidx + st2idx * _items[idx]->statics.size()]->field_C;
 
-						mov->calcSomeXY(point, 0, -1);
+			if (recalc < 0)
+				continue;
 
-						item->subItems[subIdx]->x = item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->x + point.x;
-						item->subItems[subIdx]->y = item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->y + point.y;
-					}
-				}
+			if (!item->subItems[subIdx]->movement || item->subItems[subIdx]->field_8 > recalc + 1 ||
+				(item->subItems[subIdx]->field_8 == recalc + 1 && item->subItems[subIdx]->field_C > newsz)) {
+				item->subItems[subIdx]->movement = mov;
+				item->subItems[subIdx]->staticsIndex = stidx;
+				item->subItems[subIdx]->field_8 = recalc + 1;
+				item->subItems[subIdx]->field_C = newsz;
+
+				mov->calcSomeXY(point, 0, -1);
+
+				item->subItems[subIdx]->x = item->subItems[stidx + st2idx * _items[idx]->statics.size()]->x + point.x;
+				item->subItems[subIdx]->y = item->subItems[stidx + st2idx * _items[idx]->statics.size()]->y + point.y;
 			}
 		} else if (flip) {
-			if (mov->_staticsObj2 == item->statics[st1idx]) {
-				if (!item->movements2[i] && (!flop || mov->_field_50)) {
-					item->movements2[i] = 1;
+			if (mov->_staticsObj2 != item->statics[st1idx])
+				continue;
 
-					int stidx = getStaticsIndex(idx, mov->_staticsObj1);
-					int recalc = recalcOffsets(idx, stidx, st2idx, flip, flop);
+			if (item->movements2[i] || (flop && !mov->_field_50))
+				continue;
 
-					if (recalc >= 0) {
-						if (!item->subItems[subIdx]->movement || item->subItems[subIdx]->field_8 > recalc + 1) {
-							item->subItems[subIdx]->movement = mov;
-							item->subItems[subIdx]->staticsIndex = stidx;
-							item->subItems[subIdx]->field_8 = recalc + 1;
+			item->movements2[i] = 1;
 
-							int sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+			int stidx = getStaticsIndex(idx, mov->_staticsObj1);
+			int recalc = recalcOffsets(idx, stidx, st2idx, flip, flop);
 
-							item->subItems[subIdx]->field_C = sz + item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->field_C;
+			if (recalc < 0)
+				continue;
 
-							mov->calcSomeXY(point, 0, -1);
+			if (!item->subItems[subIdx]->movement || item->subItems[subIdx]->field_8 > recalc + 1) {
+				item->subItems[subIdx]->movement = mov;
+				item->subItems[subIdx]->staticsIndex = stidx;
+				item->subItems[subIdx]->field_8 = recalc + 1;
 
-							item->subItems[subIdx]->x = item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->x - point.x;
-							item->subItems[subIdx]->y = item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->y - point.y;
-						}
-					}
-				}
+				int sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+
+				item->subItems[subIdx]->field_C = sz + item->subItems[stidx + st2idx * _items[idx]->statics.size()]->field_C;
+
+				mov->calcSomeXY(point, 0, -1);
+
+				item->subItems[subIdx]->x = item->subItems[stidx + st2idx * _items[idx]->statics.size()]->x - point.x;
+				item->subItems[subIdx]->y = item->subItems[stidx + st2idx * _items[idx]->statics.size()]->y - point.y;
 			}
 		}
 	}
@@ -576,6 +583,7 @@ int MGM::refreshOffsets(int objectId, int idx1, int idx2) {
 		int from = getStaticsIndexById(idx, idx1);
 		int to = getStaticsIndexById(idx, idx2);
 
+		warning("WWW 6, want idx: %d, off: %d", idx, from + to * _items[idx]->statics.size());
 		MGMSubItem *sub = _items[idx]->subItems[from + to * _items[idx]->statics.size()];
 
 		if (sub->movement) {

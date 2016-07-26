@@ -24,13 +24,44 @@
 
 #if defined(__amigaos4__)
 
+#include "backends/fs/amigaos4/amigaos4-fs.h"
 #include "backends/platform/sdl/amigaos/amigaos.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
 int main(int argc, char *argv[]) {
 
-	// Set up a stack cookie to avoid crashes due to too few stack set by users 
+	// The following will gather the application name and add the install path
+	// to a variable in AmigaOS4's ENV(ARC) system. It will be placed in AppPaths
+	// so that ScummVM can become AmiUpdate aware
+	const char *const appname = "ScummVM";
+
+	BPTR lock;
+	APTR oldwin;
+
+	// Obtain a lock to the home directory
+	if ((lock = IDOS->GetProgramDir())) {
+		TEXT progpath[2048];
+		TEXT apppath[1024] = "AppPaths";
+
+		if (IDOS->DevNameFromLock(lock,
+			progpath,
+			sizeof(progpath),
+			DN_FULLPATH)) {
+
+			// Stop any "Insert volume..." type requesters
+			oldwin = IDOS->SetProcWindow((APTR)-1);
+
+			// Finally, set the variable to the path the executable was run from
+			IDOS->AddPart( apppath, appname, 1024);
+			IDOS->SetVar( apppath, progpath, -1, GVF_GLOBAL_ONLY|GVF_SAVE_VAR );
+
+			// Turn system requesters back on
+			IDOS->SetProcWindow( oldwin );
+		}
+	}
+
+	// Set up a stack cookie to avoid crashes from a stack set too low
 	static const char *stack_cookie __attribute__((used)) = "$STACK: 600000";
 
 	// Create our OSystem instance
@@ -44,7 +75,7 @@ int main(int argc, char *argv[]) {
 	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
 #endif
 
-	// Invoke the actual ScummVM main entry point:
+	// Invoke the actual ScummVM main entry point
 	int res = scummvm_main(argc, argv);
 
 	// Free OSystem

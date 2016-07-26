@@ -32,6 +32,7 @@ namespace Parallaction {
 Debugger::Debugger(Parallaction *vm)
 	: GUI::Debugger() {
 	_vm = vm;
+	_mouseState = MOUSE_ENABLED_SHOW;
 
 	registerCmd("continue",	WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("location",	WRAP_METHOD(Debugger, Cmd_Location));

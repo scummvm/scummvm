@@ -159,7 +159,7 @@ void sceneHandler27_driverGiveVent() {
 
 	g_vars->scene27_driverHasVent = false;
 
-	getCurrSceneSc2MotionController()->setEnabled();
+	getCurrSceneSc2MotionController()->activate();
 	getGameLoaderInteractionController()->enableFlag24();
 
 	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 1);
@@ -226,7 +226,7 @@ void sceneHandler27_throwBat() {
 
 	g_fp->_aniMan->startAnim(MV_MAN27_THROWBET, 0, -1);
 
-	getCurrSceneSc2MotionController()->clearEnabled();
+	getCurrSceneSc2MotionController()->deactivate();
 	getGameLoaderInteractionController()->disableFlag24();
 
 	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
@@ -247,7 +247,7 @@ void sceneHandler27_clickBat(ExCommand *cmd) {
 
 	if (ABS(bx - g_fp->_aniMan->_ox) > 1 || ABS(by - g_fp->_aniMan->_oy) > 1
 		|| g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
-		MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, bx, by, 1, ST_MAN_RIGHT);
+		MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, bx, by, 1, ST_MAN_RIGHT);
 
 		if (mq) {
 			mq->addExCommandToEnd(cmd->createClone());
@@ -501,7 +501,7 @@ void sceneHandler27_batLogic() {
 		default:
 			chainQueue(QU_SC27_RESTARTBETS, 1);
 
-			getCurrSceneSc2MotionController()->setEnabled();
+			getCurrSceneSc2MotionController()->activate();
 			getGameLoaderInteractionController()->enableFlag24();
 
 			g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 1);

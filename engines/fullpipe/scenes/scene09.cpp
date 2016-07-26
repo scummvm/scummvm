@@ -271,7 +271,7 @@ void sceneHandler09_spitterClick() {
 		g_vars->scene09_spitter->setPicAniInfo(&info);
 
 		if (ABS(x - g_fp->_aniMan->_ox) > 1 || ABS(y - g_fp->_aniMan->_oy) > 1) {
-			MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, x, y, 1, ST_MAN_UP);
+			MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, x, y, 1, ST_MAN_UP);
 
 			if (mq) {
 				ExCommand *ex = new ExCommand(0, 17, MSG_SC9_PLVCLICK, 0, 0, 0, 1, 0, 0, 0);
@@ -602,14 +602,14 @@ int sceneHandler09(ExCommand *cmd) {
 		break;
 
 	case MSG_SC9_FROMLADDER:
-		getCurrSceneSc2MotionController()->setEnabled();
+		getCurrSceneSc2MotionController()->activate();
 		getGameLoaderInteractionController()->enableFlag24();
 
 		g_vars->scene09_dudeIsOnLadder = false;
 		break;
 
 	case MSG_SC9_TOLADDER:
-		getCurrSceneSc2MotionController()->clearEnabled();
+		getCurrSceneSc2MotionController()->deactivate();
 		getGameLoaderInteractionController()->disableFlag24();
 
 		g_vars->scene09_dudeIsOnLadder = true;

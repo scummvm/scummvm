@@ -174,7 +174,7 @@ int Player_V4A::getMusicTimer() {
 		return 2000;
 	if (_musicId) {
 		// The titlesong (and a few others) is running with ~70 ticks per second and the scale seems to be based on that.
-		// The Game itself doesnt get the timing from the Tfmx Player however, so we just use the elapsed time
+		// The Game itself doesn't get the timing from the Tfmx Player however, so we just use the elapsed time
 		// 357 ~ 1000 * 25 * (1 / 70)
 		return _mixer->getSoundElapsedTime(_musicHandle) / 357;
 	}
@@ -183,7 +183,7 @@ int Player_V4A::getMusicTimer() {
 
 int Player_V4A::getSoundStatus(int nr) const {
 	// For music the game queues a variable the Tfmx Player sets through a special command.
-	// For sfx there seems to be no way to queue them, and the game doesnt try to.
+	// For sfx there seems to be no way to queue them, and the game doesn't try to.
 	return (nr == _musicId) ? _signal : 0;
 }
 

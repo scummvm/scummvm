@@ -27,7 +27,7 @@ echo Invalid target folder (%~2)!
 goto done
 
 :error_script:
-echo An error occured while running the revision script!
+echo An error occurred while running the revision script!
 
 :done
 exit /B0

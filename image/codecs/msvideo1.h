@@ -38,7 +38,7 @@ public:
 	~MSVideo1Decoder();
 
 	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
-	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
+	Graphics::PixelFormat getPixelFormat() const { return _surface->format; }
 
 private:
 	byte _bitsPerPixel;
@@ -46,7 +46,7 @@ private:
 	Graphics::Surface *_surface;
 
 	void decode8(Common::SeekableReadStream &stream);
-	//void decode16(Common::SeekableReadStream &stream);
+	void decode16(Common::SeekableReadStream &stream);
 };
 
 } // End of namespace Image

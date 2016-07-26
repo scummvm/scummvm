@@ -451,7 +451,7 @@ protected:
 
 class Tracker : public InputHandler {
 public:
-	Tracker() : InputHandler(0) {}
+	Tracker() : InputHandler(0), _savedHandler(nullptr) {}
 	virtual ~Tracker() {}
 
 	virtual void handleInput(const Input &, const Hotspot *);

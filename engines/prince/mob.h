@@ -35,7 +35,7 @@ namespace Prince {
 class Mob {
 public:
 
-	Mob() : _name(""), _examText("") {}
+	Mob() : _name(""), _examText(""), _visible(false), _type(0), _mask(0), _examDirection(kDirL), _useDirection(kDirL) {}
 
 	bool loadFromStream(Common::SeekableReadStream &stream);
 

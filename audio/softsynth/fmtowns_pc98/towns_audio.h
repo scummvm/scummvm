@@ -23,7 +23,9 @@
 #ifndef TOWNS_AUDIO_H
 #define TOWNS_AUDIO_H
 
-#include "audio/mixer.h"
+namespace Audio {
+class Mixer;
+}
 
 class TownsAudioInterfaceInternal;
 

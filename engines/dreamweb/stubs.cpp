@@ -23,6 +23,7 @@
 #include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 #include "common/config-manager.h"
+#include "common/file.h"
 
 namespace DreamWeb {
 

@@ -506,15 +506,13 @@ void RMItem::readFromStream(Common::SeekableReadStream &ds, bool bLOX) {
 	if (!ds.err()) {
 		for (int i = 0; i < _nSprites && !ds.err(); i++) {
 			// Download the sprites
-			if (bLOX) {
+			if (bLOX)
 				_sprites[i].LOXGetSizeFromStream(ds, &dimx, &dimy);
-				_sprites[i].init(newItemSpriteBuffer(dimx, dimy, true));
-				_sprites[i].readFromStream(ds, true);
-			} else {
+			else
 				_sprites[i].getSizeFromStream(ds, &dimx, &dimy);
-				_sprites[i].init(newItemSpriteBuffer(dimx, dimy, false));
-				_sprites[i].readFromStream(ds, false);
-			}
+
+			_sprites[i].init(newItemSpriteBuffer(dimx, dimy, bLOX));
+			_sprites[i].readFromStream(ds, bLOX);
 
 			if (_cm == CM_256 && _bPal)
 				_sprites[i].setPalette(_pal._data);
@@ -523,21 +521,14 @@ void RMItem::readFromStream(Common::SeekableReadStream &ds, bool bLOX) {
 
 	if (!ds.err()) {
 		for (int i = 0; i < _nSfx && !ds.err(); i++) {
-			if (bLOX)
-				_sfx[i].readFromStream(ds, true);
-			else
-				_sfx[i].readFromStream(ds, false);
+			_sfx[i].readFromStream(ds, bLOX);
 		}
 	}
 
 	// Read the pattern from pattern 1
 	if (!ds.err()) {
-		for (int i = 1; i <= _nPatterns && !ds.err(); i++) {
-			if (bLOX)
-				_patterns[i].readFromStream(ds, true);
-			else
-				_patterns[i].readFromStream(ds, false);
-		}
+		for (int i = 1; i <= _nPatterns && !ds.err(); i++)
+			_patterns[i].readFromStream(ds, bLOX);
 	}
 
 	// Initialize the current pattern
@@ -610,7 +601,7 @@ void RMItem::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	// Offset direction for scrolling
 	prim->getDst().offset(-_curScroll);
 
-	// We must offset the cordinates of the item inside the primitive
+	// We must offset the coordinates of the item inside the primitive
 	// It is estimated as nonno + (babbo + figlio)
 	prim->getDst().offset(calculatePos());
 

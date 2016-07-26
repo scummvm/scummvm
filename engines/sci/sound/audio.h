@@ -46,12 +46,6 @@ enum AudioCommands {
 	kSciAudioCD = 10 /* Plays SCI1.1 CD audio */
 };
 
-enum AudioSyncCommands {
-	kSciAudioSyncStart = 0,
-	kSciAudioSyncNext = 1,
-	kSciAudioSyncStop = 2
-};
-
 #define AUDIO_VOLUME_MAX 127
 
 class Resource;
@@ -77,10 +71,6 @@ public:
 
 	void handleFanmadeSciAudio(reg_t sciAudioObject, SegManager *segMan);
 
-	void setSoundSync(ResourceId id, reg_t syncObjAddr, SegManager *segMan);
-	void doSoundSync(reg_t syncObjAddr, SegManager *segMan);
-	void stopSoundSync();
-
 	int audioCdPlay(int track, int start, int duration);
 	void audioCdStop();
 	void audioCdUpdate();
@@ -93,10 +83,9 @@ private:
 	uint16 _audioRate;
 	Audio::SoundHandle _audioHandle;
 	Audio::Mixer *_mixer;
-	Resource *_syncResource; /**< Used by kDoSync for speech syncing in CD talkie games */
-	uint _syncOffset;
 	uint32 _audioCdStart;
 	bool _wPlayFlag;
+	bool _initCD;
 };
 
 } // End of namespace Sci

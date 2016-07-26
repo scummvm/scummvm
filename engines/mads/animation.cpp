@@ -162,6 +162,7 @@ Animation::Animation(MADSEngine *vm, Scene *scene) : _vm(vm), _scene(scene) {
 	_flags = 0;
 	_font = nullptr;
 	_resetFlag = false;
+	_canChangeView = false;
 	_messageCtr = 0;
 	_skipLoad = false;
 	_freeFlag = false;
@@ -177,6 +178,7 @@ Animation::Animation(MADSEngine *vm, Scene *scene) : _vm(vm), _scene(scene) {
 	_oldFrameEntry = 0;
 	_rgbResult = -1;
 	_palIndex1 = _palIndex2 = -1;
+	_dynamicHotspotIndex = -1;
 }
 
 Animation::~Animation() {
@@ -375,6 +377,7 @@ void Animation::loadFrame(int frameNumber) {
 		pt.x = _unkList[_unkIndex].x;
 		pt.y = _unkList[_unkIndex].y;
 		_unkIndex = 1 - _unkIndex;
+		warning("LoadFrame - Using unknown array");
 	}
 
 	if (drawFrame(spriteSet, pt, frameNumber))
@@ -463,21 +466,25 @@ void Animation::update() {
 		scene._spriteSlots.fullRefresh();
 	}
 
-	// Handle any offset adjustment for sprites as of this frame
-	bool paChanged = false;
-	if (scene._posAdjust.x != misc._posAdjust.x) {
-		scene._posAdjust.x = misc._posAdjust.x;
-		paChanged = true;
-	}
-	if (scene._posAdjust.y != misc._posAdjust.y) {
-		scene._posAdjust.y = misc._posAdjust.y;
-		paChanged = true;
-	}
+	bool isV2 = (_vm->getGameID() != GType_RexNebular);
+	if (isV2 && _canChangeView) {
+		// Handle any offset adjustment for sprites as of this frame
+		bool paChanged = false;
+		if (getFramePosAdjust(_currentFrame).x != scene._posAdjust.x) {
+			scene._posAdjust.x = getFramePosAdjust(_currentFrame).x;
+			paChanged = true;
+		}
 
-	if (paChanged) {
-		int newIndex = scene._spriteSlots.add();
-		scene._spriteSlots[newIndex]._seqIndex = -1;
-		scene._spriteSlots[newIndex]._flags = IMG_REFRESH;
+		if (getFramePosAdjust(_currentFrame).y != scene._posAdjust.y) {
+			scene._posAdjust.y = getFramePosAdjust(_currentFrame).y;
+			paChanged = true;
+		}
+
+		if (paChanged) {
+			int newIndex = scene._spriteSlots.add();
+			scene._spriteSlots[newIndex]._seqIndex = -1;
+			scene._spriteSlots[newIndex]._flags = IMG_REFRESH;
+		}
 	}
 
 	// Main frame animation loop - frames get animated by being placed, as necessary, into the
@@ -598,8 +605,8 @@ void Animation::setCurrentFrame(int frameNumber) {
 	_freeFlag = false;
 }
 
-void Animation::setNextFrameTimer(int frameNumber) {
-	_nextFrameTimer = frameNumber;
+void Animation::setNextFrameTimer(uint32 newTimer) {
+	_nextFrameTimer = newTimer;
 }
 
 void Animation::eraseSprites() {
@@ -611,4 +618,9 @@ void Animation::eraseSprites() {
 	}
 }
 
+Common::Point Animation::getFramePosAdjust(int idx) {
+	warning("TODO: Implement getFramePosAdjust");
+
+	return Common::Point(0, 0);
+}
 } // End of namespace MADS

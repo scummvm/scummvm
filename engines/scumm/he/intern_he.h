@@ -121,13 +121,24 @@ class ScummEngine_v70he : public ScummEngine_v60he {
 	friend class ResExtractor;
 
 protected:
+	enum HESndFlags {
+		HE_SND_LOOP = 1,
+		HE_SND_APPEND = 2,
+		HE_SND_SOFT_SOUND = 4,
+		HE_SND_QUICK_START = 8,
+		HE_SND_OFFSET = 16,
+		HE_SND_VOL = 32,
+		HE_SND_FREQUENCY = 64,
+		HE_SND_PAN = 128
+	};
+
 	ResExtractor *_resExtractor;
 
 	byte *_heV7DiskOffsets;
 	byte *_heV7RoomOffsets;
 	uint32 *_heV7RoomIntOffsets;
 
-	int32 _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndSoundFreq;
+	int32 _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndSoundFreq, _heSndPan, _heSndVol;
 
 	int _numStoredFlObjects;
 	ObjectData *_storedFlObjects;
@@ -168,7 +179,7 @@ protected:
 	virtual void setDefaultCursor();
 
 	/* HE version 70 script opcodes */
-	void o70_startSound();
+	void o70_soundOps();
 	void o70_pickupObject();
 	void o70_getActorRoom();
 	void o70_resourceRoutines();
@@ -184,8 +195,11 @@ protected:
 };
 
 #ifdef ENABLE_HE
+class Moonbase;
+
 class ScummEngine_v71he : public ScummEngine_v70he {
 	friend class Wiz;
+	friend class Moonbase;
 
 protected:
 	bool _skipProcessActors;
@@ -423,6 +437,7 @@ protected:
 
 class ScummEngine_v90he : public ScummEngine_v80he {
 	friend class LogicHE;
+	friend class Moonbase;
 	friend class MoviePlayer;
 	friend class Sprite;
 
@@ -433,7 +448,7 @@ protected:
 		byte filename[260];
 		int32 status;
 		int32 flags;
-		int32 unk2;
+		int32 number;
 		int32 wizResNum;
 	};
 
@@ -571,15 +586,24 @@ protected:
 };
 
 class ScummEngine_v100he : public ScummEngine_v99he {
+friend class AI;
+
 protected:
 	ResType _heResType;
 	int32 _heResId;
 
 	byte _debugInputBuffer[256];
+
 public:
-	ScummEngine_v100he(OSystem *syst, const DetectorResult &dr) : ScummEngine_v99he(syst, dr) {}
+	Moonbase *_moonbase;
+
+public:
+	ScummEngine_v100he(OSystem *syst, const DetectorResult &dr);
+	~ScummEngine_v100he();
 
 	virtual void resetScumm();
+
+	virtual void setupScummVars();
 
 protected:
 	virtual void setupOpcodes();
@@ -609,7 +633,7 @@ protected:
 	void o100_redimArray();
 	void o100_roomOps();
 	void o100_setSystemMessage();
-	void o100_startSound();
+	void o100_soundOps();
 	void o100_setSpriteInfo();
 	void o100_startScript();
 	void o100_systemOps();
@@ -626,6 +650,14 @@ protected:
 	void o100_getSpriteInfo();
 	void o100_getWizData();
 	void o100_getVideoData();
+
+protected:
+	byte VAR_U32_USER_VAR_A;
+	byte VAR_U32_USER_VAR_B;
+	byte VAR_U32_USER_VAR_C;
+	byte VAR_U32_USER_VAR_D;
+	byte VAR_U32_USER_VAR_E;
+	byte VAR_U32_USER_VAR_F;
 };
 
 class ScummEngine_vCUPhe : public Engine {

@@ -100,7 +100,7 @@ public:
 	/**
 	 * Set the image for the inventory cursor
 	 */
-	void setCursorData(Graphics::Surface *src, const Common::Rect &r);
+	void setCursorData(Graphics::ManagedSurface *src, const Common::Rect &r);
 
 	/**
 	 * Return the current cursor Id

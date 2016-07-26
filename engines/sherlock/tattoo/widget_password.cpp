@@ -47,7 +47,7 @@ void WidgetPassword::show() {
 
 	// Create the surface
 	_surface.create(_bounds.width(), _bounds.height());
-	_surface.fill(TRANSPARENCY);
+	_surface.clear(TRANSPARENCY);
 	makeInfoArea();
 
 	// Draw the header area
@@ -55,8 +55,8 @@ void WidgetPassword::show() {
 	_surface.hLine(3, _surface.fontHeight() + 7, _bounds.width() - 4, INFO_TOP);
 	_surface.hLine(3, _surface.fontHeight() + 8, _bounds.width() - 4, INFO_MIDDLE);
 	_surface.hLine(3, _surface.fontHeight() + 9, _bounds.width() - 4, INFO_BOTTOM);
-	_surface.transBlitFrom(images[4], Common::Point(0, _surface.fontHeight() + 7 - 1));
-	_surface.transBlitFrom(images[5], Common::Point(_bounds.width() - images[5]._width, _surface.fontHeight() + 7 - 1));
+	_surface.SHtransBlitFrom(images[4], Common::Point(0, _surface.fontHeight() + 7 - 1));
+	_surface.SHtransBlitFrom(images[5], Common::Point(_bounds.width() - images[5]._width, _surface.fontHeight() + 7 - 1));
 
 	// Set the password entry data
 	_cursorPos = Common::Point(_surface.widestChar(), _surface.fontHeight() + 12);
@@ -159,7 +159,7 @@ void WidgetPassword::handleEvents() {
 	} else if (keycode == Common::KEYCODE_RETURN || keycode == Common::KEYCODE_ESCAPE) {
 		close();
 		return;
-	} else if (((ui._keyState.ascii >= ' ' && ui._keyState.ascii < 169) || ui._keyState.ascii == 225)) {
+	} else if ((ui._keyState.ascii >= ' ') && (ui._keyState.ascii <= 'z')) {
 		if (_cursorPos.x + _surface.charWidth(ui._keyState.ascii) < _bounds.width() - _surface.widestChar() - 3) {
 			if (_insert)
 				_password.insertChar(ui._keyState.ascii, _index);

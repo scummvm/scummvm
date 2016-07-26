@@ -24,7 +24,6 @@
 #define BBVS_BBVS_H
 
 #include "audio/mixer.h"
-#include "audio/decoders/aiff.h"
 #include "common/array.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -61,6 +60,10 @@ class Screen;
 class SoundMan;
 
 #define BBVS_SAVEGAME_VERSION 0
+
+enum {
+	GF_GUILANGSWITCH =    (1 << 0) // If GUI language switch is required for menus
+};
 
 enum {
 	kVerbLook      = 0,
@@ -226,9 +229,15 @@ public:
 	void continueGameFromQuickSave();
 	void setNewSceneNum(int newSceneNum);
 	const Common::String getTargetName() { return _targetName; }
-private:
 	const ADGameDescription *_gameDescription;
+
+private:
 	Graphics::PixelFormat _pixelFormat;
+
+#ifdef USE_TRANSLATION
+	Common::String _oldGUILanguage;
+#endif
+
 public:
 	Common::RandomSource *_random;
 

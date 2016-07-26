@@ -396,7 +396,7 @@ void Scene402::handleConversation1() {
 			break;
 		}
 		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(quotePosX, 41), 0xFDFC, 0, 0, 9999999, _game.getQuote(quoteId));
+		_scene->_kernelMessages.add(Common::Point(quotePosX, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(quoteId));
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 100);
 		_talkTimer = 120;
@@ -406,7 +406,7 @@ void Scene402::handleConversation1() {
 
 	case 0x215:
 		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(260, 41), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1EC));
+		_scene->_kernelMessages.add(Common::Point(260, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1EC));
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 100);
 		_talkTimer = 120;
@@ -502,8 +502,8 @@ void Scene402::handleConversation2() {
 			_scene->_sequences.addTimer(1, 100);
 			_talkTimer = 180;
 			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(198, 27), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1E7));
-			_scene->_kernelMessages.add(Common::Point(201, 41), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1E8));
+			_scene->_kernelMessages.add(Common::Point(198, 27), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1E7));
+			_scene->_kernelMessages.add(Common::Point(201, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1E8));
 			_bartenderCurrentQuestion = 7;
 			break;
 
@@ -512,8 +512,8 @@ void Scene402::handleConversation2() {
 			_scene->_sequences.addTimer(1, 100);
 			_talkTimer = 180;
 			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(220, 27), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1E9));
-			_scene->_kernelMessages.add(Common::Point(190, 41), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1EA));
+			_scene->_kernelMessages.add(Common::Point(220, 27), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1E9));
+			_scene->_kernelMessages.add(Common::Point(190, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1EA));
 			_bartenderCurrentQuestion = 8;
 			break;
 
@@ -522,7 +522,7 @@ void Scene402::handleConversation2() {
 			_scene->_sequences.addTimer(1, 100);
 			_talkTimer = 150;
 			_scene->_kernelMessages.reset();
-			_scene->_kernelMessages.add(Common::Point(196, 41), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1EB));
+			_scene->_kernelMessages.add(Common::Point(196, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1EB));
 			_bartenderCurrentQuestion = 9;
 			break;
 
@@ -548,8 +548,8 @@ void Scene402::handleConversation3() {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 86);
 		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.add(Common::Point(188, 27), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1ED));
-		_scene->_kernelMessages.add(Common::Point(199, 41), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1EE));
+		_scene->_kernelMessages.add(Common::Point(188, 27), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1ED));
+		_scene->_kernelMessages.add(Common::Point(199, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1EE));
 		setDialogNode(4);
 		_bartenderCurrentQuestion = 2;
 		break;
@@ -799,47 +799,47 @@ void Scene402::enter() {
 
 		switch (_bartenderCurrentQuestion) {
 		case 1:
-			_scene->_kernelMessages.add(Common::Point(260, 41), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1EC));
+			_scene->_kernelMessages.add(Common::Point(260, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1EC));
 			break;
 
 		case 2:
-			_scene->_kernelMessages.add(Common::Point(188, 27), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1ED));
-			_scene->_kernelMessages.add(Common::Point(199, 41), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1EE));
+			_scene->_kernelMessages.add(Common::Point(188, 27), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1ED));
+			_scene->_kernelMessages.add(Common::Point(199, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1EE));
 			break;
 
 		case 3:
-			_scene->_kernelMessages.add(Common::Point(177, 41), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1EF));
+			_scene->_kernelMessages.add(Common::Point(177, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1EF));
 			break;
 
 		case 4:
-			_scene->_kernelMessages.add(Common::Point(205, 41), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1E4));
+			_scene->_kernelMessages.add(Common::Point(205, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1E4));
 			break;
 
 		case 5:
-			_scene->_kernelMessages.add(Common::Point(203, 41), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1E5));
+			_scene->_kernelMessages.add(Common::Point(203, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1E5));
 			break;
 
 		case 6:
-			_scene->_kernelMessages.add(Common::Point(260, 41), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1E6));
+			_scene->_kernelMessages.add(Common::Point(260, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1E6));
 			break;
 
 		case 7:
-			_scene->_kernelMessages.add(Common::Point(198, 27), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1E7));
-			_scene->_kernelMessages.add(Common::Point(201, 41), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1E8));
+			_scene->_kernelMessages.add(Common::Point(198, 27), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1E7));
+			_scene->_kernelMessages.add(Common::Point(201, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1E8));
 			break;
 
 		case 8:
-			_scene->_kernelMessages.add(Common::Point(220, 27), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1E9));
-			_scene->_kernelMessages.add(Common::Point(190, 41), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1EA));
+			_scene->_kernelMessages.add(Common::Point(220, 27), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1E9));
+			_scene->_kernelMessages.add(Common::Point(190, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1EA));
 			break;
 
 		case 9:
-			_scene->_kernelMessages.add(Common::Point(196, 41), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1EB));
+			_scene->_kernelMessages.add(Common::Point(196, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1EB));
 			break;
 
 		case 10:
-			_scene->_kernelMessages.add(Common::Point(198, 27), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1E2));
-			_scene->_kernelMessages.add(Common::Point(199, 41), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1E3));
+			_scene->_kernelMessages.add(Common::Point(198, 27), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1E2));
+			_scene->_kernelMessages.add(Common::Point(199, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1E3));
 			break;
 
 		default:
@@ -876,7 +876,7 @@ void Scene402::enter() {
 	_refuseAlienLiquor = false;
 
 	_scene->loadAnimation(Resources::formatName(402, 'd', 1, EXT_AA, ""));
-	_scene->_activeAnimation->_resetFlag = true;
+	_scene->_animation[0]->_resetFlag = true;
 
 	_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);
@@ -1536,43 +1536,43 @@ void Scene402::step() {
 	if (_game._trigger == 32)
 		_rightWomanMoving = false;
 
-	if (_scene->_activeAnimation->getCurrentFrame() == 1) {
+	if (_scene->_animation[0]->getCurrentFrame() == 1) {
 		switch (_vm->getRandomNumber(1, 50)) {
 		case 1:
-			_scene->_activeAnimation->setCurrentFrame(2);
+			_scene->_animation[0]->setCurrentFrame(2);
 			break;
 
 		case 2:
-			_scene->_activeAnimation->setCurrentFrame(7);
+			_scene->_animation[0]->setCurrentFrame(7);
 			break;
 
 		case 3:
-			_scene->_activeAnimation->setCurrentFrame(11);
+			_scene->_animation[0]->setCurrentFrame(11);
 			break;
 
 		default:
-			_scene->_activeAnimation->setCurrentFrame(0);
+			_scene->_animation[0]->setCurrentFrame(0);
 			break;
 		}
 	}
 
-	if ((_scene->_activeAnimation->getCurrentFrame() == 4) && (_drinkTimer < 10)) {
+	if ((_scene->_animation[0]->getCurrentFrame() == 4) && (_drinkTimer < 10)) {
 		++ _drinkTimer;
-		_scene->_activeAnimation->setCurrentFrame(3);
+		_scene->_animation[0]->setCurrentFrame(3);
 	}
 
 	if (_drinkTimer == 10) {
 		_drinkTimer = 0;
-		_scene->_activeAnimation->setCurrentFrame(4);
-		_scene->_activeAnimation->_currentFrame = 5;
+		_scene->_animation[0]->setCurrentFrame(4);
+		_scene->_animation[0]->_currentFrame = 5;
 	}
 
 
-	switch (_scene->_activeAnimation->getCurrentFrame()) {
+	switch (_scene->_animation[0]->getCurrentFrame()) {
 	case 6:
 	case 10:
 	case 14:
-		_scene->_activeAnimation->setCurrentFrame(0);
+		_scene->_animation[0]->setCurrentFrame(0);
 		break;
 
 	default:
@@ -2268,8 +2268,8 @@ void Scene402::actions() {
 				if (_game._objects.isInRoom(OBJ_ALIEN_LIQUOR)) {
 					if (!_refuseAlienLiquor) {
 						_scene->_kernelMessages.reset();
-						_scene->_kernelMessages.add(Common::Point(198, 27), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1E2));
-						_scene->_kernelMessages.add(Common::Point(199, 41), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1E3));
+						_scene->_kernelMessages.add(Common::Point(198, 27), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1E2));
+						_scene->_kernelMessages.add(Common::Point(199, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1E3));
 						_bartenderCurrentQuestion = 10;
 						_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 						_scene->_sequences.addTimer(1, 100);
@@ -2281,7 +2281,7 @@ void Scene402::actions() {
 
 						_dialog1.start();
 					} else {
-						_scene->_kernelMessages.add(Common::Point(177, 41), 0xFDFC, 0, 0, 9999999, _game.getQuote(0x1EF));
+						_scene->_kernelMessages.add(Common::Point(177, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1EF));
 						_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 						_scene->_sequences.addTimer(1, 100);
 						_talkTimer = 120;
@@ -3126,36 +3126,36 @@ void Scene410::enter() {
 	sceneEntrySound();
 
 	_scene->loadAnimation(Resources::formatName(410, 'r', -1, EXT_AA, ""));
-	_scene->_activeAnimation->_resetFlag = true;
+	_scene->_animation[0]->_resetFlag = true;
 }
 
 void Scene410::step() {
-	if (_scene->_activeAnimation->getCurrentFrame() == 1) {
+	if (_scene->_animation[0]->getCurrentFrame() == 1) {
 		if (_vm->getRandomNumber(1, 30) == 1)
-			_scene->_activeAnimation->setCurrentFrame(2);
+			_scene->_animation[0]->setCurrentFrame(2);
 		else
-			_scene->_activeAnimation->setCurrentFrame(0);
+			_scene->_animation[0]->setCurrentFrame(0);
 	}
 
-	if (_scene->_activeAnimation->getCurrentFrame() == 9) {
+	if (_scene->_animation[0]->getCurrentFrame() == 9) {
 		if (_vm->getRandomNumber(1, 30) == 1)
-			_scene->_activeAnimation->setCurrentFrame(10);
+			_scene->_animation[0]->setCurrentFrame(10);
 		else
-			_scene->_activeAnimation->setCurrentFrame(8);
+			_scene->_animation[0]->setCurrentFrame(8);
 	}
 
-	if (_scene->_activeAnimation->getCurrentFrame() == 5) {
+	if (_scene->_animation[0]->getCurrentFrame() == 5) {
 		if (_vm->getRandomNumber(1, 30) == 1)
-			_scene->_activeAnimation->setCurrentFrame(6);
+			_scene->_animation[0]->setCurrentFrame(6);
 		else
-			_scene->_activeAnimation->setCurrentFrame(4);
+			_scene->_animation[0]->setCurrentFrame(4);
 	}
 
-	if (_scene->_activeAnimation->getCurrentFrame() == 3) {
+	if (_scene->_animation[0]->getCurrentFrame() == 3) {
 		if (_vm->getRandomNumber(1, 2) == 1)
-			_scene->_activeAnimation->setCurrentFrame(4);
+			_scene->_animation[0]->setCurrentFrame(4);
 		else // == 2
-			_scene->_activeAnimation->setCurrentFrame(8);
+			_scene->_animation[0]->setCurrentFrame(8);
 	}
 }
 
@@ -3491,7 +3491,7 @@ void Scene411::handleDialog() {
 			_game._player._priorTimer = _scene->_frameStartTime + _game._player._ticksAmount;
 			_game._player._visible = false;
 			_game._player._stepEnabled = false;
-			_scene->_activeAnimation->setCurrentFrame(_resetFrame);
+			_scene->_animation[0]->setCurrentFrame(_resetFrame);
 		}
 		_scene->_kernelMessages.reset();
 		_newQuantity = computeQuoteAndQuantity();
@@ -3661,16 +3661,16 @@ void Scene411::enter() {
 	}
 
 	_scene->loadAnimation(formAnimName('a', -1));
-	_scene->_activeAnimation->setCurrentFrame(128);
+	_scene->_animation[0]->setCurrentFrame(128);
 
 	_makeMushroomCloud = false;
 	_killRox = false;
 }
 
 void Scene411::step() {
-	if (_scene->_activeAnimation != nullptr) {
-		if (_curAnimationFrame != _scene->_activeAnimation->getCurrentFrame()) {
-			_curAnimationFrame = _scene->_activeAnimation->getCurrentFrame();
+	if (_scene->_animation[0] != nullptr) {
+		if (_curAnimationFrame != _scene->_animation[0]->getCurrentFrame()) {
+			_curAnimationFrame = _scene->_animation[0]->getCurrentFrame();
 			_resetFrame = -1;
 
 			switch (_curAnimationFrame) {
@@ -3738,14 +3738,14 @@ void Scene411::step() {
 				break;
 			}
 
-			if ((_resetFrame >= 0) && (_resetFrame != _scene->_activeAnimation->getCurrentFrame())) {
-				_scene->_activeAnimation->setCurrentFrame(_resetFrame);
+			if ((_resetFrame >= 0) && (_resetFrame != _scene->_animation[0]->getCurrentFrame())) {
+				_scene->_animation[0]->setCurrentFrame(_resetFrame);
 				_curAnimationFrame = _resetFrame;
 			}
 		}
 	}
 
-	if (_scene->_activeAnimation->getCurrentFrame() == 86)
+	if (_scene->_animation[0]->getCurrentFrame() == 86)
 		_vm->_sound->command(59);
 }
 
@@ -4113,10 +4113,10 @@ void Scene413::enter() {
 }
 
 void Scene413::step() {
-	if (_scene->_activeAnimation && _scene->_activeAnimation->getCurrentFrame() == 38)
-		_scene->_activeAnimation->setCurrentFrame(37);
+	if (_scene->_animation[0] && _scene->_animation[0]->getCurrentFrame() == 38)
+		_scene->_animation[0]->setCurrentFrame(37);
 
-	if (_scene->_activeAnimation && _scene->_activeAnimation->getCurrentFrame() == 21 && _canMove) {
+	if (_scene->_animation[0] && _scene->_animation[0]->getCurrentFrame() == 21 && _canMove) {
 		_vm->_sound->command(27);
 		_canMove = false;
 	}

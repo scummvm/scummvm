@@ -762,14 +762,11 @@ Common::String AmigaDisk_br::selectArchive(const Common::String& name) {
 }
 
 
-Disk_br::Disk_br(Parallaction *vm) : _vm(vm), _baseDir(0) {
-
+Disk_br::Disk_br(Parallaction *vm) : _vm(vm), _baseDir(0), _language(0) {
 }
 
 Disk_br::~Disk_br() {
 	_sset.clear();
 }
-
-
 
 } // namespace Parallaction

@@ -23,7 +23,7 @@
 
 #include "common/endian.h"
 #include "common/textconsole.h"
-#include "common/util.h"
+#include "audio/fmopl.h"
 #include "sky/music/adlibchannel.h"
 #include "sky/sky.h"
 

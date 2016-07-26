@@ -48,19 +48,19 @@ public:
 	virtual bool load(MfcArchive &file);
 	virtual void methodC() {}
 	virtual void method10() {}
-	virtual void clearEnabled() { _isEnabled = false; }
-	virtual void setEnabled() { _isEnabled = true; }
-	virtual void addObject(StaticANIObject *obj) {}
-	virtual int removeObject(StaticANIObject *obj) { return 0; }
-	virtual void freeItems() {}
-	virtual Common::Array<MovItem *> *method28(StaticANIObject *ani, int x, int y, int flag1, int *rescount) { return 0; }
-	virtual bool method2C(StaticANIObject *obj, int x, int y) { return false; }
+	virtual void deactivate() { _isEnabled = false; }
+	virtual void activate() { _isEnabled = true; }
+	virtual void attachObject(StaticANIObject *obj) {}
+	virtual int detachObject(StaticANIObject *obj) { return 0; }
+	virtual void detachAllObjects() {}
+	virtual Common::Array<MovItem *> *getPaths(StaticANIObject *ani, int x, int y, int flag1, int *rescount) { return 0; }
+	virtual bool setPosImmediate(StaticANIObject *obj, int x, int y) { return false; }
 	virtual int method30() { return 0; }
-	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
-	virtual void changeCallback(MovArr *(*_callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter)) {}
-	virtual bool method3C(StaticANIObject *ani, int flag) { return 0; }
+	virtual MessageQueue *startMove(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
+	virtual void setSelFunc(MovArr *(*_callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter)) {}
+	virtual bool resetPosition(StaticANIObject *ani, int flag) { return 0; }
 	virtual int method40() { return 0; }
-	virtual bool method44(StaticANIObject *ani, int x, int y) { return false; }
+	virtual bool canDropInventory(StaticANIObject *ani, int x, int y) { return false; }
 	virtual int method48() { return -1; }
 	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
 
@@ -82,7 +82,7 @@ public:
 	virtual bool pointInRegion(int x, int y);
 };
 
-class MctlCompoundArrayItem : public CObject {
+class MctlItem : public CObject {
 public:
 	MotionController *_motionControllerObj;
 	MovGraphReact *_movGraphReactObj;
@@ -92,11 +92,11 @@ public:
 	int _field_28;
 
 public:
-	MctlCompoundArrayItem() : _movGraphReactObj(0), _motionControllerObj(0), _field_20(0), _field_24(0), _field_28(0) {}
-	~MctlCompoundArrayItem();
+	MctlItem() : _movGraphReactObj(0), _motionControllerObj(0), _field_20(0), _field_24(0), _field_28(0) {}
+	~MctlItem();
 };
 
-class MctlCompoundArray : public Common::Array<MctlCompoundArrayItem *>, public CObject {
+class MctlCompoundArray : public Common::Array<MctlItem *>, public CObject {
  public:
 	virtual bool load(MfcArchive &file);
 };
@@ -109,10 +109,10 @@ public:
 
 	virtual bool load(MfcArchive &file);
 
-	virtual void addObject(StaticANIObject *obj);
-	virtual int removeObject(StaticANIObject *obj);
-	virtual void freeItems();
-	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
+	virtual void attachObject(StaticANIObject *obj);
+	virtual int detachObject(StaticANIObject *obj);
+	virtual void detachAllObjects();
+	virtual MessageQueue *startMove(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 
 	void initMovGraph2();
@@ -156,10 +156,10 @@ public:
 	virtual ~MctlLadder();
 	int collisionDetection(StaticANIObject *man);
 
-	virtual void addObject(StaticANIObject *obj);
-	virtual int removeObject(StaticANIObject *obj) { return 1; }
-	virtual void freeItems();
-	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
+	virtual void attachObject(StaticANIObject *obj);
+	virtual int detachObject(StaticANIObject *obj) { return 1; }
+	virtual void detachAllObjects();
+	virtual MessageQueue *startMove(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 
 	MessageQueue *controllerWalkTo(StaticANIObject *ani, int off);
@@ -173,12 +173,12 @@ class MovGraphNode : public CObject {
 public:
 	int _x;
 	int _y;
-	int _distance;
+	int _z;
 	int16 _field_10;
 	int _field_14;
 
 public:
-	MovGraphNode() : _x(0), _y(0), _distance(0), _field_10(0), _field_14(0) { _objtype = kObjTypeMovGraphNode; }
+	MovGraphNode() : _x(0), _y(0), _z(0), _field_10(0), _field_14(0) { _objtype = kObjTypeMovGraphNode; }
 	virtual bool load(MfcArchive &file);
 };
 
@@ -218,14 +218,14 @@ public:
 
 class MovGraphLink : public CObject {
  public:
-	MovGraphNode *_movGraphNode1;
-	MovGraphNode *_movGraphNode2;
+	MovGraphNode *_graphSrc;
+	MovGraphNode *_graphDst;
 	DWordArray _dwordArray1;
 	DWordArray _dwordArray2;
 	int _flags;
 	int _field_38;
 	int _field_3C;
-	double _distance;
+	double _length;
 	double _angle;
 	MovGraphReact *_movGraphReact;
 	char *_name;
@@ -236,7 +236,7 @@ class MovGraphLink : public CObject {
 
 	virtual bool load(MfcArchive &file);
 
-	void calcNodeDistanceAndAngle();
+	void recalcLength();
 };
 
 struct MovStep {
@@ -290,30 +290,30 @@ public:
 
 	virtual bool load(MfcArchive &file);
 
-	virtual void addObject(StaticANIObject *obj);
-	virtual int removeObject(StaticANIObject *obj);
-	virtual void freeItems();
-	virtual Common::Array<MovItem *> *method28(StaticANIObject *ani, int x, int y, int flag1, int *rescount);
-	virtual bool method2C(StaticANIObject *obj, int x, int y);
-	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
-	virtual void changeCallback(MovArr *(*_callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter));
-	virtual bool method3C(StaticANIObject *ani, int flag);
-	virtual bool method44(StaticANIObject *ani, int x, int y);
+	virtual void attachObject(StaticANIObject *obj);
+	virtual int detachObject(StaticANIObject *obj);
+	virtual void detachAllObjects();
+	virtual Common::Array<MovItem *> *getPaths(StaticANIObject *ani, int x, int y, int flag1, int *rescount);
+	virtual bool setPosImmediate(StaticANIObject *obj, int x, int y);
+	virtual MessageQueue *startMove(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
+	virtual void setSelFunc(MovArr *(*_callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter));
+	virtual bool resetPosition(StaticANIObject *ani, int flag);
+	virtual bool canDropInventory(StaticANIObject *ani, int x, int y);
 	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 	virtual MessageQueue *method50(StaticANIObject *ani, MovArr *movarr, int staticsId);
 
-	double calcDistance(Common::Point *point, MovGraphLink *link, int fuzzyMatch);
-	void calcNodeDistancesAndAngles();
-	bool findClosestLink(int unusedArg, Common::Point *p, MovArr *movarr);
+	double putToLink(Common::Point *point, MovGraphLink *link, int fuzzyMatch);
+	void recalcLinkParams();
+	bool getNearestPoint(int unusedArg, Common::Point *p, MovArr *movarr);
 	MovGraphNode *calcOffset(int ox, int oy);
-	int getItemIndexByStaticAni(StaticANIObject *ani);
-	Common::Array<MovArr *> *genMovArr(int x, int y, int *arrSize, int flag1, int flag2);
+	int getObjectIndex(StaticANIObject *ani);
+	Common::Array<MovArr *> *getHitPoints(int x, int y, int *arrSize, int flag1, int flag2);
 	void findAllPaths(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array<MovGraphLink *> &tempObList1, Common::Array<MovGraphLink *> &tempObList2);
-	Common::Array<MovItem *> *calcMovItems(MovArr *movarr1, MovArr *movarr2, int *listCount);
+	Common::Array<MovItem *> *getPaths(MovArr *movarr1, MovArr *movarr2, int *listCount);
 	void genMovItem(MovItem *movitem, MovGraphLink *grlink, MovArr *movarr1, MovArr *movarr2);
-	bool calcChunk(int idx, int x, int y, MovArr *arr, int a6);
+	bool getHitPoint(int idx, int x, int y, MovArr *arr, int a6);
 	MessageQueue *sub1(StaticANIObject *ani, int x, int y, int a5, int x1, int y1, int a8, int a9);
-	MessageQueue *fillMGMinfo(StaticANIObject *ani, MovArr *movarr, int staticsId);
+	MessageQueue *makeWholeQueue(StaticANIObject *ani, MovArr *movarr, int staticsId);
 	void setEnds(MovStep *step1, MovStep *step2);
 };
 
@@ -374,10 +374,10 @@ public:
 	Common::Array<MovGraph2Item *> _items2;
 
 public:
-	virtual void addObject(StaticANIObject *obj);
-	virtual int removeObject(StaticANIObject *obj);
-	virtual void freeItems();
-	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
+	virtual void attachObject(StaticANIObject *obj);
+	virtual int detachObject(StaticANIObject *obj);
+	virtual void detachAllObjects();
+	virtual MessageQueue *startMove(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 
 	int getItemIndexByGameObjectId(int objectId);
@@ -404,10 +404,9 @@ class MctlConnectionPoint : public CObject {
 public:
 	int _connectionX;
 	int _connectionY;
-	int _field_C;
-	int _field_10;
-	int16 _field_14;
-	int16 _field_16;
+	int _mctlflags;
+	int _mctlstatic;
+	int16 _mctlmirror;
 	MessageQueue *_messageQueueObj;
 	int _motionControllerObj;
 

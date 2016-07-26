@@ -41,7 +41,7 @@ enum GenType {
 struct SndGenChan {
 	const byte *data;
 	uint16 duration;
-	uint16 avail;	// turned on (1)  but when the channel's data runs out, it's set to (0)
+	uint16 avail;   // turned on (1)  but when the channel's data runs out, it's set to (0)
 	uint16 dissolveCount;
 	byte attenuation;
 	byte attenuationCopy;
@@ -67,8 +67,8 @@ struct ToneChan {
 	int count;
 	int scale;
 	int sign;
-	unsigned int noiseState;		/* noise generator      */
-	int feedback;						/* noise feedback mask */
+	unsigned int noiseState; /* noise generator      */
+	int feedback;            /* noise feedback mask */
 };
 
 class SoundGenPCJr : public SoundGen, public Audio::AudioStream {

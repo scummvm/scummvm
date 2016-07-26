@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef PRINCE_H
-#define PRINCE_H
+#ifndef PRINCE_PRINCE_H
+#define PRINCE_PRINCE_H
 
 #include "common/random.h"
 #include "common/system.h"
@@ -261,6 +261,8 @@ public:
 	virtual bool canLoadGameStateCurrently();
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual Common::Error loadGameState(int slot);
+
+	void playVideo(Common::String videoFilename);
 
 	static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header);
 	Common::String generateSaveName(int slot);

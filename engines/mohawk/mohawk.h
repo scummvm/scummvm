@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef MOHAWK_H
-#define MOHAWK_H
+#ifndef MOHAWK_MOHAWK_H
+#define MOHAWK_MOHAWK_H
 
 #include "common/scummsys.h"
 #include "common/array.h"

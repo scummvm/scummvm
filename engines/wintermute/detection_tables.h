@@ -140,9 +140,18 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Five Lethal Demons
 	WME_WINENTRY("5ld", "", 
 		WME_ENTRY1s("data.dcp", "1037a77cbd001e0644898addc022322c", 15407750), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
-	// Five Magical Amulets
+	// Five Magical Amulets (Czech)
 	WME_WINENTRY("5ma", "", 
-		WME_ENTRY1s("data.dcp", "0134e92bcd5fd2837df3971087e96067", 163316498), Common::EN_ANY, ADGF_UNSTABLE, WME_1_7_0),
+		WME_ENTRY2s("czech.dcp", "7b2515a8ceb955c72bc14f0f1fca869e", 184,
+					"data.dcp", "0134e92bcd5fd2837df3971087e96067", 163316498), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_7_0),
+	// Five Magical Amulets (English)
+	WME_WINENTRY("5ma", "",
+		WME_ENTRY2s("english.dcp", "2f97bca09260ba23b645da9f0855ce7f", 893681,
+					"data.dcp", "0134e92bcd5fd2837df3971087e96067", 163316498), Common::EN_ANY, ADGF_UNSTABLE, WME_1_7_0),
+	// Five Magical Amulets (Polish)
+	WME_WINENTRY("5ma", "",
+		WME_ENTRY2s("polish.dcp", "bb877d48795471a17f25b0b5109100d1", 1132197,
+					"data.dcp", "0134e92bcd5fd2837df3971087e96067", 163316498), Common::PL_POL, ADGF_UNSTABLE, WME_1_7_0),
 	// Actual Destination
 	WME_WINENTRY("actualdest", "", 
 		WME_ENTRY1s("data.dcp", "6926f44b26f21ceb1d840eaab9aeb510", 9081740), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
@@ -172,10 +181,13 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "b3f8b09bb4b05ee3e9d14697525257f9", 59296246), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
 	// Carol Reed 4 - East Side Story
 	WME_WINENTRY("carolreed4", "", 
-		WME_ENTRY1s("data.dcp", "b26377797f060afc2d440d820100c1ce", 529320536), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "b26377797f060afc2d440d820100c1ce", 529320536), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 	// Carol Reed 5 - The Colour of Murder
 	WME_WINENTRY("carolreed5", "", 
 		WME_ENTRY1s("data.dcp", "3fcfca44209545d0e26774156427b494", 603660415), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Carol Reed 5 - The Colour of Murder (1.0 Demo)
+	WME_WINENTRY("carolreed5", "Demo",
+		WME_ENTRY1s("data.dcp", "27b3efc018ade5ee8f4adf08b4e3c0dd", 92019500), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
 	// Carol Reed 6 - Black Circle
 	WME_WINENTRY("carolreed6", "", 
 		WME_ENTRY1s("data.dcp", "0e4c532beecf23d85012168753f41189", 456258147), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
@@ -334,6 +346,22 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Oknytt
 	WME_WINENTRY("oknytt", "Version 1.0", 
 		WME_ENTRY1s("data.dcp", "6456cf8f429905c83f07509f9da536dd", 109502959), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Oknytt (Version 1.13 English) (These are detected along with d_sounds.dcp to avoid mass-detecting in the languages-subfolder.)
+	WME_WINENTRY("oknytt", "Version 1.13",
+		WME_ENTRY2s("english.dcp", "d2afd722c78cfe66b7d4250d11f6ae16", 293274135,
+					"d_sounds.dcp", "7d04dff8ca11174486bd4b7a80fdcabb", 154943401), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Oknytt (Version 1.13 German)
+	WME_WINENTRY("oknytt", "Version 1.13",
+		WME_ENTRY2s("german.dcp", "0fc6401d8d76b04f6da49206ecafa0dc", 304292574,
+					"d_sounds.dcp", "7d04dff8ca11174486bd4b7a80fdcabb", 154943401), Common::DE_DEU, ADGF_UNSTABLE, LATEST_VERSION),
+	// Oknytt (Version 1.13 Russian)
+	WME_WINENTRY("oknytt", "Version 1.13",
+		WME_ENTRY2s("russian.dcp", "dd24a1c0b36a82e2b02fb6c1050d4aad", 362681669,
+					"d_sounds.dcp", "7d04dff8ca11174486bd4b7a80fdcabb", 154943401), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
+	// Oknytt (Version 1.13 Spanish)
+	WME_WINENTRY("oknytt", "Version 1.13",
+		WME_ENTRY2s("spanish.dcp", "10c46152cb29581671f3b6b7c229c957", 319406572,
+					"d_sounds.dcp", "7d04dff8ca11174486bd4b7a80fdcabb", 154943401), Common::ES_ESP, ADGF_UNSTABLE, LATEST_VERSION),
 	// Night Train Demo
 	WME_WINENTRY("nighttrain", "", 
 		WME_ENTRY1s("data.dcp", "5a027ef84b083a730c9a4c85ec1d3a32", 131760816), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
