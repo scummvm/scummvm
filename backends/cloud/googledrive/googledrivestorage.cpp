@@ -117,18 +117,27 @@ void GoogleDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonR
 		warning("GoogleDriveStorage: got NULL instead of JSON");
 		if (callback)
 			(*callback)(BoolResponse(nullptr, false));
+		delete callback;
+		return;
+	}
+
+	if (!Networking::CurlJsonRequest::jsonIsObject(json, "GoogleDriveStorage")) {
+		if (callback)
+			(*callback)(BoolResponse(nullptr, false));
+		delete json;
+		delete callback;
 		return;
 	}
 
 	Common::JSONObject result = json->asObject();
-	if (!result.contains("access_token")) {
+	if (!Networking::CurlJsonRequest::jsonContainsString(result, "access_token", "GoogleDriveStorage")) {
 		warning("GoogleDriveStorage: bad response, no token passed");
 		debug(9, "%s", json->stringify().c_str());
 		if (callback)
 			(*callback)(BoolResponse(nullptr, false));
 	} else {
 		_token = result.getVal("access_token")->asString();
-		if (!result.contains("refresh_token"))
+		if (!Networking::CurlJsonRequest::jsonContainsString(result, "refresh_token", "GoogleDriveStorage"))
 			warning("GoogleDriveStorage: no refresh_token passed");
 		else
 			_refreshToken = result.getVal("refresh_token")->asString();
@@ -137,6 +146,7 @@ void GoogleDriveStorage::tokenRefreshed(BoolCallback callback, Networking::JsonR
 			(*callback)(BoolResponse(nullptr, true));
 	}
 	delete json;
+	delete callback;
 }
 
 void GoogleDriveStorage::codeFlowComplete(BoolResponse response) {
@@ -169,7 +179,13 @@ Common::String GoogleDriveStorage::name() const {
 void GoogleDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse response) {
 	Common::JSONValue *json = response.value;
 	if (!json) {
-		warning("GoogleDriveStorage: NULL passed instead of JSON");
+		warning("GoogleDriveStorage::infoInnerCallback: NULL passed instead of JSON");
+		delete outerCallback;
+		return;
+	}
+
+	if (!Networking::CurlJsonRequest::jsonIsObject(json, "GoogleDriveStorage::infoInnerCallback")) {
+		delete json;
 		delete outerCallback;
 		return;
 	}
@@ -179,22 +195,33 @@ void GoogleDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Ne
 	Common::String uid, name, email;
 	uint64 quotaUsed = 0, quotaAllocated = 0;
 
-	if (info.contains("user") && info.getVal("user")->isObject()) {
+	if (Networking::CurlJsonRequest::jsonContainsAttribute(info, "user", "GoogleDriveStorage::infoInnerCallback") &&
+		Networking::CurlJsonRequest::jsonIsObject(info.getVal("user"), "GoogleDriveStorage::infoInnerCallback")) {
 		//"me":true, "kind":"drive#user","photoLink": "",
 		//"displayName":"Alexander Tkachev","emailAddress":"alexander@tkachov.ru","permissionId":""
 		Common::JSONObject user = info.getVal("user")->asObject();
-		uid = user.getVal("permissionId")->asString(); //not sure it's user's id, but who cares anyway?
-		name = user.getVal("displayName")->asString();
-		email = user.getVal("emailAddress")->asString();
+		if (Networking::CurlJsonRequest::jsonContainsString(user, "permissionId", "GoogleDriveStorage::infoInnerCallback"))
+			uid = user.getVal("permissionId")->asString(); //not sure it's user's id, but who cares anyway?
+		if (Networking::CurlJsonRequest::jsonContainsString(user, "displayName", "GoogleDriveStorage::infoInnerCallback"))
+			name = user.getVal("displayName")->asString();
+		if (Networking::CurlJsonRequest::jsonContainsString(user, "emailAddress", "GoogleDriveStorage::infoInnerCallback"))
+			email = user.getVal("emailAddress")->asString();
 	}
 
-	if (info.contains("storageQuota") && info.getVal("storageQuota")->isObject()) {
+	if (Networking::CurlJsonRequest::jsonContainsAttribute(info, "storageQuota", "GoogleDriveStorage::infoInnerCallback") &&
+		Networking::CurlJsonRequest::jsonIsObject(info.getVal("storageQuota"), "GoogleDriveStorage::infoInnerCallback")) {
 		//"usageInDrive":"6332462","limit":"18253611008","usage":"6332462","usageInDriveTrash":"0"
 		Common::JSONObject storageQuota = info.getVal("storageQuota")->asObject();
-		Common::String usage = storageQuota.getVal("usage")->asString();
-		Common::String limit = storageQuota.getVal("limit")->asString();
-		quotaUsed = usage.asUint64();
-		quotaAllocated = limit.asUint64();
+
+		if (Networking::CurlJsonRequest::jsonContainsString(storageQuota, "usage", "GoogleDriveStorage::infoInnerCallback")) {
+			Common::String usage = storageQuota.getVal("usage")->asString();
+			quotaUsed = usage.asUint64();
+		}
+
+		if (Networking::CurlJsonRequest::jsonContainsString(storageQuota, "limit", "GoogleDriveStorage::infoInnerCallback")) {
+			Common::String limit = storageQuota.getVal("limit")->asString();
+			quotaAllocated = limit.asUint64();
+		}
 	}
 
 	CloudMan.setStorageUsername(kStorageGoogleDriveId, email);
@@ -210,14 +237,18 @@ void GoogleDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Ne
 void GoogleDriveStorage::createDirectoryInnerCallback(BoolCallback outerCallback, Networking::JsonResponse response) {
 	Common::JSONValue *json = response.value;
 	if (!json) {
-		warning("GoogleDriveStorage: NULL passed instead of JSON");
+		warning("GoogleDriveStorage::createDirectoryInnerCallback: NULL passed instead of JSON");
 		delete outerCallback;
 		return;
 	}
 
 	if (outerCallback) {
-		Common::JSONObject info = json->asObject();
-		(*outerCallback)(BoolResponse(nullptr, info.contains("id")));
+		if (Networking::CurlJsonRequest::jsonIsObject(json, "GoogleDriveStorage::createDirectoryInnerCallback")) {
+			Common::JSONObject info = json->asObject();
+			(*outerCallback)(BoolResponse(nullptr, info.contains("id")));
+		} else {
+			(*outerCallback)(BoolResponse(nullptr, false));
+		}
 		delete outerCallback;
 	}
 

@@ -118,7 +118,8 @@ void BoxStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResponse 
 	Common::JSONValue *json = response.value;
 	if (!json) {
 		warning("BoxStorage: got NULL instead of JSON");
-		if (callback) (*callback)(BoolResponse(nullptr, false));
+		if (callback)
+			(*callback)(BoolResponse(nullptr, false));
 		delete callback;
 		return;
 	}
