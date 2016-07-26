@@ -685,10 +685,6 @@ void CelObj::render(Buffer &target, const Common::Rect &targetRect, const Common
 	}
 }
 
-void dummyFill(Buffer &target, const Common::Rect &targetRect) {
-	target.fillRect(targetRect, 250);
-}
-
 void CelObj::drawHzFlip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	render<MAPPER_NoMap, SCALER_NoScale<true, READER_Compressed> >(target, targetRect, scaledPosition);
 }
