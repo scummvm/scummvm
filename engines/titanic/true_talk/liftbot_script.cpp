@@ -126,7 +126,109 @@ uint LiftbotScript::getDialsBitset() const {
 
 
 int LiftbotScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
-	warning("TODO");
+	static const int ARRAY13[] = {
+		210724, 210735, 210746, 210757, 210758, 210759, 210760,
+		210761, 210762, 210725, 210726, 210727, 210728, 210729,
+		210730, 210731, 210732, 210733, 210734, 210736, 210737,
+		210738, 210739, 210740, 210741, 210742, 210743, 210744,
+		210745, 210747, 210748, 210749, 210750, 210751, 210752,
+		210753, 210754, 210755, 210756
+	};
+	static const int ARRAY14[] = {
+		0, 210849, 210850, 210851, 210852, 210838, 210839, 210840, 210841, 0
+	};
+
+	get34();
+	int stateVal;
+
+	switch (val1) {
+	case 1:
+		if (getValue(1) != 1)
+			return 1;
+		break;
+	case 2:
+		if (getValue(1) != 2)
+			return 1;
+		break;
+	case 3:
+		if (getValue(1) != 3)
+			return 1;
+		break;
+	case 4:
+	case 5:
+		return !sentence1(sentence);
+	case 6:
+		if (sentence->localWord("big") || sentence->localWord("small")) {
+			addResponse(getDialogueId(210215));
+			applyResponse();
+		} else if (sentence->localWord("my") || sentence->contains("my") ||
+				sentence->contains("bedroom") || sentence->contains("state")) {
+			addResponse1(CTrueTalkManager::getStateValue(4), true, 0);
+		} else {
+			selectResponse(210763);
+			applyResponse();
+		}
+		return 2;
+	case 7:
+		if (!sentence->localWord("ill") && !sentence->localWord("well"))
+			return 1;
+		break;
+	case 8:
+		if (!sentence->localWord("long"))
+			return 1;
+		break;
+	case 9:
+		if (addResponse1(1, false, 0))
+			return 2;
+		break;
+	case 10:
+		if (addResponse1(39, false, 0))
+			return 2;
+		break;
+	case 11:
+		if (getState6() == 2 || getState6() == 4)
+			return 1;
+		break;
+	case 12:
+		if (getState6() == 1 || getState6() == 3)
+			return 1;
+		break;
+	case 13:
+		selectResponse(ARRAY13[getState5()]);
+		applyResponse();
+		return 2;
+	case 14:
+		stateVal = getState6();
+		if (sentence->contains("elevator") ||
+			(!sentence->contains("lift") && getRandomNumber(100) > 60))
+			stateVal += 4;
+		selectResponse(ARRAY14[stateVal]);
+		applyResponse();
+		return 2;
+	case 15:
+		if (getRandomNumber(100) > 60) {
+			addResponse(getDialogueId(210440));
+		} else {
+			addResponse(getDialogueId(210906));
+			addResponse(getDialogueId(210901));
+		}
+		applyResponse();
+		return 2;
+	case 16:
+		if (sentence->contains("elevator") || sentence->contains("elavator"))
+			addResponse(30579);
+		else
+			addResponse(30580);
+		applyResponse();
+		return 2;
+	case 17:
+		if (sentence->localWord("restaurant") || sentence->contains("restaurant"))
+			return 1;
+		break;
+	default:
+		break;
+	}
+
 	return 0;
 }
 
@@ -137,6 +239,105 @@ void LiftbotScript::setDialRegion(int dialNum, int region) {
 	TTnpcScript::setDialRegion(dialNum, region);
 	addResponse(getDialogueId(210688));
 	applyResponse();
+}
+
+int LiftbotScript::getState5() const {
+	int val = CTrueTalkManager::getStateValue(5);
+	return CLIP(val, 1, 39);
+}
+
+int LiftbotScript::getState6() const {
+	int val = CTrueTalkManager::getStateValue(6);
+	return (val < 1 || val > 4) ? 1 : val;
+}
+
+int LiftbotScript::addDialogueAndState(int id, int state) {
+	addResponse(id);
+	applyResponse();
+
+	if (state != 1)
+		set34(state);
+	return 2;
+}
+
+int LiftbotScript::addResponse1(int index, bool flag, int id) {
+	static const int DIALOGUE_IDS[37] = {
+		210735, 210746, 210757, 210758, 210759, 210760, 210761, 210762,
+		210725, 210726, 210727, 210728, 210729, 210730, 210731, 210732,
+		210733, 210734, 210736, 210737, 210738, 210739, 210740, 210741,
+		210742, 210743, 210744, 210745, 210747, 210748, 210749, 210750,
+		210751, 210752, 210753, 210754, 210755
+	};
+
+	int stateVal = getState6();
+	int maxIndex = (stateVal == 2 || stateVal == 4) ? 27 : 39;
+
+	if (index < 1 || index > maxIndex) {
+		addResponse(getDialogueId(maxIndex == 27 ? 210587 : 210586));
+		applyResponse();
+		return 1;
+	} else if (index == getState5()) {
+		if (index == 1) {
+			addResponse(30558 - getRandomBit() ? 290 : 0);
+			addResponse(getDialogueId(210589));
+		} else {
+			if (index == 39)
+				addResponse(30346);
+			addResponse(getDialogueId(210589));
+		}
+
+		applyResponse();
+		return 2;
+	}
+
+	stateVal = getValue(1);
+	if (index >= 2 && index <= 19 && stateVal > 1) {
+		addResponse(getDialogueId(210203));
+		applyResponse();
+		set34(7);
+		return true;
+	}
+
+	if (index >= 20 && index <= 27 && stateVal > 2) {
+		addResponse(getDialogueId(210210));
+		applyResponse();
+		set34(8);
+		return true;
+	}
+
+	if (flag) {
+		if (index == 1) {
+			selectResponse(30558 - getRandomBit() ? 290 : 0);
+		} else if (index == 39) {
+			addResponse(30346);
+		} else {
+			if (getRandomNumber(100) > 35 && index >= 2 && index <= 38) {
+				addResponse(getDialogueId(DIALOGUE_IDS[index - 2]));
+			}
+
+			addResponse(getDialogueId(210588));
+		}
+
+		if (id) {
+			if (id == 210717 || id == 210716 || id == 210719 || id == 210718) {
+				addResponse(getDialogueId(210720));
+				addResponse(getDialogueId(id));
+				addResponse(getDialogueId(210715));
+			} else {
+				addResponse(getDialogueId(id));
+			}
+		}
+
+		applyResponse();
+	}
+
+	CTrueTalkManager::triggerAction(2, index);
+	return flag;
+}
+
+int LiftbotScript::sentence1(const TTsentence *sentence) {
+	warning("TODO: LiftbotScript::sentence1");
+	return 0;
 }
 
 } // End of namespace Titanic

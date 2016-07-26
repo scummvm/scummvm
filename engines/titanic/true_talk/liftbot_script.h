@@ -35,6 +35,16 @@ private:
 	 * Setup sentence data
 	 */
 	void setupSentences();
+
+	int addResponse1(int mode, bool flag, int id);
+	int sentence1(const TTsentence *sentence);
+	int getState5() const;
+	int getState6() const;
+
+	/**
+	 * Adds a dialogue response and sets the state
+	 */
+	int addDialogueAndState(int id, int state);
 public:
 	LiftbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7);
