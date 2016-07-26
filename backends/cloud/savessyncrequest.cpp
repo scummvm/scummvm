@@ -22,6 +22,8 @@
 
 #include "backends/cloud/savessyncrequest.h"
 #include "backends/cloud/cloudmanager.h"
+#include "backends/networking/curl/curljsonrequest.h"
+#include "backends/saves/default/default-saves.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
@@ -29,7 +31,6 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "gui/saveload-dialog.h"
-#include <backends/saves/default/default-saves.h>
 
 namespace Cloud {
 
@@ -152,7 +153,7 @@ void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse er
 				Common::JSONObject object = value->asObject();
 
 				//Dropbox-related error:
-				if (object.contains("error_summary")) {
+				if (Networking::CurlJsonRequest::jsonContainsString(object, "error_summary", "SavesSyncRequest", true)) {
 					Common::String summary = object.getVal("error_summary")->asString();
 					if (summary.contains("not_found")) {
 						irrecoverable = false;
@@ -160,9 +161,9 @@ void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse er
 				}
 
 				//OneDrive-related error:
-				if (object.contains("error") && object.getVal("error")->isObject()) {
+				if (Networking::CurlJsonRequest::jsonContainsObject(object, "error", "SavesSyncRequest", true)) {
 					Common::JSONObject errorNode = object.getVal("error")->asObject();
-					if (errorNode.contains("code") && errorNode.contains("message")) {
+					if (Networking::CurlJsonRequest::jsonContainsString(errorNode, "code", "SavesSyncRequest")) {
 						Common::String code = errorNode.getVal("code")->asString();
 						if (code == "itemNotFound") {
 							irrecoverable = false;
