@@ -734,8 +734,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
                               GAMEOPTION_PREFER_DIGITAL_SFX, \
                               GAMEOPTION_ORIGINAL_SAVELOAD, \
                               GAMEOPTION_FB01_MIDI)
-#define GUIO_GK1_CD     GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, \
+#define GUIO_GK1_CD     GUIO4(GAMEOPTION_PREFER_DIGITAL_SFX, \
                               GAMEOPTION_ORIGINAL_SAVELOAD, \
+                              GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, \
                               GAMEOPTION_FB01_MIDI)
 #define GUIO_GK1_MAC    GUIO_GK1_FLOPPY
 
