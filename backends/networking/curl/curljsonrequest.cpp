@@ -109,7 +109,7 @@ bool CurlJsonRequest::jsonIsObject(Common::JSONValue *item, const char *warningP
 
 	if (item->isObject()) return true;
 
-	warning("%s: passed item is not an object!", warningPrefix);
+	warning("%s: passed item is not an object", warningPrefix);
 	debug(9, "%s", item->stringify(true).c_str());
 	return false;
 }
@@ -120,13 +120,13 @@ bool CurlJsonRequest::jsonContainsObject(Common::JSONObject &item, const char *k
 			return true;
 		}
 
-		warning("%s: passed item misses the \"%s\" attribute!", warningPrefix, key);
+		warning("%s: passed item misses the \"%s\" attribute", warningPrefix, key);
 		return false;
 	}
 
 	if (item.getVal(key)->isObject()) return true;
 
-	warning("%s: passed item's \"%s\" attribute is not an object!", warningPrefix, key);
+	warning("%s: passed item's \"%s\" attribute is not an object", warningPrefix, key);
 	debug(9, "%s", item.getVal(key)->stringify(true).c_str());
 	return false;
 }
@@ -137,13 +137,13 @@ bool CurlJsonRequest::jsonContainsString(Common::JSONObject &item, const char *k
 			return true;
 		}
 
-		warning("%s: passed item misses the \"%s\" attribute!", warningPrefix, key);
+		warning("%s: passed item misses the \"%s\" attribute", warningPrefix, key);
 		return false;
 	}
 
 	if (item.getVal(key)->isString()) return true;
 
-	warning("%s: passed item's \"%s\" attribute is not a string!", warningPrefix, key);
+	warning("%s: passed item's \"%s\" attribute is not a string", warningPrefix, key);
 	debug(9, "%s", item.getVal(key)->stringify(true).c_str());
 	return false;
 }
@@ -154,13 +154,13 @@ bool CurlJsonRequest::jsonContainsIntegerNumber(Common::JSONObject &item, const 
 			return true;
 		}
 
-		warning("%s: passed item misses the \"%s\" attribute!", warningPrefix, key);
+		warning("%s: passed item misses the \"%s\" attribute", warningPrefix, key);
 		return false;
 	}
 
 	if (item.getVal(key)->isIntegerNumber()) return true;
 
-	warning("%s: passed item's \"%s\" attribute is not an integer!", warningPrefix, key);
+	warning("%s: passed item's \"%s\" attribute is not an integer", warningPrefix, key);
 	debug(9, "%s", item.getVal(key)->stringify(true).c_str());
 	return false;
 }
@@ -171,13 +171,13 @@ bool CurlJsonRequest::jsonContainsArray(Common::JSONObject &item, const char *ke
 			return true;
 		}
 
-		warning("%s: passed item misses the \"%s\" attribute!", warningPrefix, key);
+		warning("%s: passed item misses the \"%s\" attribute", warningPrefix, key);
 		return false;
 	}
 
 	if (item.getVal(key)->isArray()) return true;
 
-	warning("%s: passed item's \"%s\" attribute is not an array!", warningPrefix, key);
+	warning("%s: passed item's \"%s\" attribute is not an array", warningPrefix, key);
 	debug(9, "%s", item.getVal(key)->stringify(true).c_str());
 	return false;
 }
@@ -188,13 +188,13 @@ bool CurlJsonRequest::jsonContainsStringOrIntegerNumber(Common::JSONObject &item
 			return true;
 		}
 
-		warning("%s: passed item misses the \"%s\" attribute!", warningPrefix, key);
+		warning("%s: passed item misses the \"%s\" attribute", warningPrefix, key);
 		return false;
 	}
 
 	if (item.getVal(key)->isString() || item.getVal(key)->isIntegerNumber()) return true;
 
-	warning("%s: passed item's \"%s\" attribute is neither a string or an integer!", warningPrefix, key);
+	warning("%s: passed item's \"%s\" attribute is neither a string or an integer", warningPrefix, key);
 	debug(9, "%s", item.getVal(key)->stringify(true).c_str());
 	return false;
 }
@@ -205,7 +205,7 @@ bool CurlJsonRequest::jsonContainsAttribute(Common::JSONObject &item, const char
 			return true;
 		}
 
-		warning("%s: passed item misses the \"%s\" attribute!", warningPrefix, key);
+		warning("%s: passed item misses the \"%s\" attribute", warningPrefix, key);
 		return false;
 	}
 

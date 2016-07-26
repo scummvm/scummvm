@@ -66,7 +66,7 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 	if (jsonIsObject(json, "OneDriveTokenRefresher")) {
 		Common::JSONObject result = json->asObject();
 		long httpResponseCode = -1;
-		if (jsonContainsAttribute(result, "error", "OneDriveTokenRefresher") && jsonIsObject(result.getVal("error"), "OneDriveTokenRefresher")) {
+		if (result.contains("error") && jsonIsObject(result.getVal("error"), "OneDriveTokenRefresher")) {
 			//new token needed => request token & then retry original request
 			if (_stream) {
 				httpResponseCode = _stream->httpResponseCode();

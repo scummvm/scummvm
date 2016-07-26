@@ -165,7 +165,7 @@ void BoxUploadRequest::uploadedCallback(Networking::JsonResponse response) {
 		Common::JSONArray entries = object.getVal("entries")->asArray();
 		if (entries.size() == 0) {
 			warning("BoxUploadRequest: 'entries' found, but it's empty");
-		} else if (Networking::CurlJsonRequest::jsonIsObject(entries[0], "BoxUploadRequest")) {
+		} else if (!Networking::CurlJsonRequest::jsonIsObject(entries[0], "BoxUploadRequest")) {
 			warning("BoxUploadRequest: 'entries' first item is not an object");
 		} else {
 			Common::JSONObject item = entries[0]->asObject();

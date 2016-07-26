@@ -153,7 +153,7 @@ void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse er
 				Common::JSONObject object = value->asObject();
 
 				//Dropbox-related error:
-				if (Networking::CurlJsonRequest::jsonContainsString(object, "error_summary", "SavesSyncRequest", true)) {
+				if (object.contains("error_summary") && object.getVal("error_summary")->isString()) {
 					Common::String summary = object.getVal("error_summary")->asString();
 					if (summary.contains("not_found")) {
 						irrecoverable = false;
@@ -161,7 +161,7 @@ void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse er
 				}
 
 				//OneDrive-related error:
-				if (Networking::CurlJsonRequest::jsonContainsObject(object, "error", "SavesSyncRequest", true)) {
+				if (object.contains("error") && object.getVal("error")->isObject()) {
 					Common::JSONObject errorNode = object.getVal("error")->asObject();
 					if (Networking::CurlJsonRequest::jsonContainsString(errorNode, "code", "SavesSyncRequest")) {
 						Common::String code = errorNode.getVal("code")->asString();

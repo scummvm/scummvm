@@ -66,7 +66,7 @@ void GoogleDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 	if (jsonIsObject(json, "GoogleDriveTokenRefresher")) {
 		Common::JSONObject result = json->asObject();
 		long httpResponseCode = -1;
-		if (jsonContainsAttribute(result, "error", "GoogleDriveTokenRefresher") && jsonIsObject(result.getVal("error"), "GoogleDriveTokenRefresher")) {
+		if (result.contains("error") && jsonIsObject(result.getVal("error"), "GoogleDriveTokenRefresher")) {
 			//new token needed => request token & then retry original request
 			if (_stream) {
 				httpResponseCode = _stream->httpResponseCode();
