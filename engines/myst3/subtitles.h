@@ -53,6 +53,7 @@ protected:
 	virtual void loadResources() = 0;
 	virtual bool loadSubtitles(int32 id) = 0;
 	virtual void drawToTexture(const Phrase *phrase) = 0;
+	void freeTexture();
 
 	int32 checkOverridenId(int32 id);
 	const DirectorySubEntry *loadText(int32 id, bool overriden);

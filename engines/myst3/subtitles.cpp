@@ -175,10 +175,14 @@ bool FontSubtitles::loadSubtitles(int32 id) {
 void FontSubtitles::createTexture() {
 	// Create a surface to draw the subtitles on
 	// Use RGB 565 to allow use of BDF fonts
-	_surface = new Graphics::Surface();
-	_surface->create(Renderer::kOriginalWidth * _scale, _surfaceHeight * _scale, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+	if (!_surface) {
+		_surface = new Graphics::Surface();
+		_surface->create(Renderer::kOriginalWidth * _scale, _surfaceHeight * _scale, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+	}
 
-	_texture = _vm->_gfx->createTexture(_surface);
+	if (!_texture) {
+		_texture = _vm->_gfx->createTexture(_surface);
+	}
 }
 
 const char *FontSubtitles::getCodePage(uint32 gdiCharset) {
@@ -221,8 +225,9 @@ void FontSubtitles::drawToTexture(const Phrase *phrase) {
 	if (!font)
 		error("No available font");
 
-	if (!_surface)
+	if (!_texture || !_surface) {
 		createTexture();
+	}
 
 	// Draw the new text
 	memset(_surface->getPixels(), 0, _surface->pitch * _surface->h);
@@ -339,9 +344,7 @@ Subtitles::Subtitles(Myst3Engine *vm) :
 }
 
 Subtitles::~Subtitles() {
-	if (_texture) {
-		_vm->_gfx->freeTexture(_texture);
-	}
+	freeTexture();
 }
 
 void Subtitles::loadFontSettings(int32 id) {
@@ -388,7 +391,7 @@ const DirectorySubEntry *Subtitles::loadText(int32 id, bool overriden) {
 }
 
 void Subtitles::setFrame(int32 frame) {
-	const Phrase *phrase = 0;
+	const Phrase *phrase = nullptr;
 
 	for (uint i = 0; i < _phrases.size(); i++) {
 		if (_phrases[i].frame > frame)
@@ -397,9 +400,14 @@ void Subtitles::setFrame(int32 frame) {
 		phrase = &_phrases[i];
 	}
 
-	if (phrase == 0
-			|| phrase->frame == _frame)
+	if (!phrase) {
+		freeTexture();
 		return;
+	}
+
+	if (phrase->frame == _frame) {
+		return;
+	}
 
 	_frame = phrase->frame;
 
@@ -435,6 +443,13 @@ Subtitles *Subtitles::create(Myst3Engine *vm, uint32 id) {
 	s->loadResources();
 
 	return s;
+}
+
+void Subtitles::freeTexture() {
+	if (_texture) {
+		_vm->_gfx->freeTexture(_texture);
+		_texture = nullptr;
+	}
 }
 
 } // End of namespace Myst3
