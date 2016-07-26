@@ -40,6 +40,16 @@ private:
 	 * Sets a response
 	 */
 	int setResponse(int dialogueId, int v34 = -1);
+
+	/**
+	 * Gets the dialogue Id for a given room
+	 */
+	int getRoomDialogueId1(const TTroomScript *roomScript);
+
+	/**
+	 * Gets the dialogue Id for a given room
+	 */
+	int getRoomDialogueId2(const TTroomScript *roomScript);
 public:
 	DoorbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7);

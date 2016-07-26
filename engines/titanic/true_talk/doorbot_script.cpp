@@ -31,6 +31,26 @@ static const int STATE_ARRAY[9] = {
 	0x2E2A, 0x2E2B, 0x2E2C, 0x2E2D, 0x2E2E, 0x2E2F, 0x2E30, 0x2E31, 0x2E32
 };
 
+struct RoomDialogueId {
+	int _roomNum;
+	int _dialogueId;
+};
+static const RoomDialogueId ROOM_DIALOGUES1[] = {
+	{ 100, 10523 }, { 101, 10499 }, { 107, 10516 }, { 108, 10500 },
+	{ 109, 10490 }, { 110, 10504 }, { 111, 10506 }, { 112, 10498 },
+	{ 113, 10502 }, { 114, 10507 }, { 115, 10497 }, { 116, 10508 },
+	{ 117, 10505 }, { 118, 10505 }, { 122, 10516 }, { 123, 10383 },
+	{ 124, 10510 }, { 125, 10511 }, { 126, 10513 }, { 127, 10512 },
+	{ 128, 10495 }, { 129, 10496 }, { 130, 10491 }, { 131, 10493 },
+	{ 132, 10492 }, { 0, 0 }
+};
+static const RoomDialogueId ROOM_DIALOGUES2[] = {
+	{ 102, 221981 }, { 110, 221948 }, { 111, 221968 }, { 107, 222000 },
+	{ 101, 221935 }, { 112, 221924 }, { 113, 221942 }, { 116, 221977 },
+	{ 124, 221987 }, { 125, 221984 }, { 127, 221991 }, { 128, 221916 },
+	{ 129, 221919 }, { 131, 221912 }, { 132, 221908 }, { 0, 0 }
+};
+
 DoorbotScript::DoorbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
@@ -146,6 +166,176 @@ uint DoorbotScript::getDialsBitset() const {
 }
 
 int DoorbotScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
+	int id2, id = 0;
+
+	switch (val1) {
+	case 2:
+		if (getValue(1) != 1)
+			return 1;
+		break;
+	case 3:
+		if (getValue(1) != 2)
+			return 1;
+		break;
+	case 4:
+		if (getValue(1) != 3)
+			return 1;
+		break;
+	case 5:
+		if (getValue(1) == 3)
+			return 1;
+	case 6:
+		if (getRoom54(132))
+			return 1;
+		break;
+	case 9:
+		if (sentence->localWord("my") || sentence->contains("my"))
+			return true;
+		id2 = getRoomDialogueId1(roomScript);
+		if (id2) {
+			addResponse(id2);
+			applyResponse();
+			return 2;
+		}
+		break;
+	case 11:
+		switch (getValue(1)) {
+		case 1:
+			id = 220837;
+			break;
+		case 2:
+			id = 220849;
+			break;
+		default:
+			id = 220858;
+			break;
+		}
+		break;
+	case 12:
+		if (getValue(4) != 1)
+			id = 221157;
+		break;
+	case 13:
+		if (getValue(4) != 2)
+			id = 221157;
+		break;
+	case 14:
+		if (getValue(4) != 3)
+			id = 221157;
+		break;
+	case 15:
+		if (getValue(4) != 0)
+			id = 221157;
+		break;
+	case 16:
+		if (!sentence->localWord("weather"))
+			return true;
+		switch (getRandomNumber(4)) {
+		case 1:
+			if (getValue(4) != 0)
+				id = 221354 - getRandomNumber(2) ? -489 : 0;
+			break;
+		case 2:
+			switch (getValue(4)) {
+			case 0:
+				id = 220851;
+				break;
+			case 1:
+				id = 221268;
+				break;
+			case 2:
+				id = 221270;
+				break;
+			default:
+				id = 220865;
+			}
+			break;
+		case 3:
+			id = 221280;
+			break;
+		default:
+			break;
+		}
+		break;
+	case 17:
+		if (get34())
+			return 1;
+		set34(0);
+		break;
+	case 18:
+		if (roomScript->_scriptId == 100) {
+			CTrueTalkManager::triggerAction(3, 0);
+			return 2;
+		}
+		break;
+	case 19:
+		CTrueTalkManager::_v9 = 104;
+		CTrueTalkManager::triggerAction(4, 0);
+		break;
+	case 20:
+		CTrueTalkManager::triggerAction(28, 0);
+		break;
+	case 22:
+		CTrueTalkManager::triggerAction(29, 1);
+		break;
+	case 23:
+		CTrueTalkManager::triggerAction(29, 2);
+		break;
+	case 24:
+		CTrueTalkManager::triggerAction(29, 3);
+		break;
+	case 25:
+		CTrueTalkManager::triggerAction(29, 4);
+		break;
+	case 26:
+		if (!sentence->localWord("my") && !sentence->contains("my"))
+			return 1;
+		break;
+	case 27:
+		if (!sentence->localWord("earth") && !sentence->contains("earth"))
+			return 1;
+		break;
+	case 28:
+		id2 = getRoomDialogueId2(roomScript);
+		if (id2) {
+			addResponse(id2);
+			applyResponse();
+			return 2;
+		}
+		break;
+	case 29:
+		if (sentence->localWord("another") || sentence->localWord("more") ||
+				sentence->localWord("additional") || sentence->contains("another") ||
+				sentence->contains("more") || sentence->contains("additional")) { 
+			addResponse(getDialogueId(220058));
+			applyResponse();
+			return 2;
+		}
+		break;
+	case 30:
+		if (!sentence->localWord("because") && !sentence->contains("because"))
+			return 1;
+		break;
+	case 0x200:
+		if (getValue(4) != 1)
+			id = 221157;
+		break;
+	case 0x201:
+		if (getValue(4) != 2)
+			id = 221157;
+		break;
+	case 0x202:
+		if (getValue(4) != 3)
+			id = 221157;
+		break;
+	case 0x203:
+		if (getValue(4) != 0)
+			id = 221157;
+		break;
+	default:
+		break;
+	}
+
 	warning("TODO");
 	return 0;
 }
@@ -175,6 +365,24 @@ int DoorbotScript::setResponse(int dialogueId, int v34) {
 	if (v34 != -1)
 		set34(v34);
 	return 2;
+}
+
+int DoorbotScript::getRoomDialogueId1(const TTroomScript *roomScript) {
+	for (const RoomDialogueId *r = ROOM_DIALOGUES1; r->_roomNum; ++r) {
+		if (r->_roomNum == roomScript->_scriptId == r->_roomNum)
+			return getDialogueId(r->_dialogueId);
+	}
+
+	return 0;
+}
+
+int DoorbotScript::getRoomDialogueId2(const TTroomScript *roomScript) {
+	for (const RoomDialogueId *r = ROOM_DIALOGUES2; r->_roomNum; ++r) {
+		if (r->_roomNum == roomScript->_scriptId == r->_roomNum)
+			return getDialogueId(r->_dialogueId);
+	}
+
+	return 0;
 }
 
 } // End of namespace Titanic
