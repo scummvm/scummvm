@@ -3,12 +3,12 @@ Bugs:
 		Broken colour palette
 		Portraits, alcoves etc. look broken from afar
 		Arrow and hand display is messed up
+		Items are displayed in the wrong cells
+		Levers look the same after pulling them
 
 	Logic:
 		When object are put on the right side of the current square, they disappear
 		Drawing door ornaments segfaults when going back to the start
-		Placing one of the play icons from the top right corner into one of the champions' hands will crash the engine
-		Sometimes putting stuff in the player's hand segfaults
 		Object display is a bit mixed up with regards to which cell is it drawn in
 		Method cthulu messes up the callstack
 

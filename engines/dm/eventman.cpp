@@ -1149,7 +1149,7 @@ void EventManager::f282_commandProcessCommands160To162ClickInResurrectReincarnat
 		champ->resetSkillsToZero();
 
 		for (uint16 i = 0; i < 12; i++) {
-			uint16 statIndex = _vm->_rnd->getRandomNumber(7);
+			uint16 statIndex = _vm->getRandomNumber(7);
 			champ->getStatistic((ChampionStatisticType)statIndex, k1_ChampionStatCurrent)++; // returns reference
 			champ->getStatistic((ChampionStatisticType)statIndex, k0_ChampionStatMaximum)++; // returns reference
 		}
