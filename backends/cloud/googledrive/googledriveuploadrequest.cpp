@@ -275,44 +275,46 @@ void GoogleDriveUploadRequest::partUploadedCallback(Networking::JsonResponse res
 	}
 
 	Common::JSONValue *json = response.value;
-	if (json) {
-		if (json->isObject()) {
-			Common::JSONObject object = json->asObject();
-
-			if (object.contains("error")) {
-				warning("GoogleDrive returned error: %s", json->stringify(true).c_str());
-				error.response = json->stringify(true);
-				finishError(error);
-				delete json;
-				return;
-			}
-
-			if (object.contains("id") && object.contains("name")) {
-				//finished
-				Common::String id = object.getVal("id")->asString();
-				Common::String name = object.getVal("name")->asString();
-				bool isDirectory = (object.getVal("mimeType")->asString() == "application/vnd.google-apps.folder");
-				uint32 size = 0, timestamp = 0;
-				if (object.contains("size") && object.getVal("size")->isString())
-					size = object.getVal("size")->asString().asUint64();
-				if (object.contains("modifiedTime") && object.getVal("modifiedTime")->isString())
-					timestamp = ISO8601::convertToTimestamp(object.getVal("modifiedTime")->asString());
-
-				//as we list directory by id, we can't determine full path for the file, so we leave it empty
-				finishUpload(StorageFile(id, _savePath, name, size, timestamp, isDirectory));
-				return;
-			}
-		}
-
-		if (_contentsStream->eos() || _contentsStream->pos() >= _contentsStream->size() - 1) {
-			warning("GoogleDriveUploadRequest: no file info to return");
-			finishUpload(StorageFile(_savePath, 0, 0, false));
-		} else {
-			uploadNextPart();
-		}
-	} else {
-		warning("GoogleDriveUploadRequest: null, not json");
+	if (json == nullptr) {
+		error.response = "Failed to parse JSON, null passed!";
 		finishError(error);
+		return;
+	}
+
+	if (json->isObject()) {
+		Common::JSONObject object = json->asObject();
+
+		if (object.contains("error")) {
+			warning("GoogleDrive returned error: %s", json->stringify(true).c_str());
+			error.response = json->stringify(true);
+			finishError(error);
+			delete json;
+			return;
+		}
+
+		if (Networking::CurlJsonRequest::jsonContainsString(object, "id", "GoogleDriveUploadRequest") &&
+			Networking::CurlJsonRequest::jsonContainsString(object, "name", "GoogleDriveUploadRequest") &&
+			Networking::CurlJsonRequest::jsonContainsString(object, "mimeType", "GoogleDriveUploadRequest")) {
+			//finished
+			Common::String id = object.getVal("id")->asString();
+			Common::String name = object.getVal("name")->asString();
+			bool isDirectory = (object.getVal("mimeType")->asString() == "application/vnd.google-apps.folder");
+			uint32 size = 0, timestamp = 0;
+			if (Networking::CurlJsonRequest::jsonContainsString(object, "size", "GoogleDriveUploadRequest", true))
+				size = object.getVal("size")->asString().asUint64();
+			if (Networking::CurlJsonRequest::jsonContainsString(object, "modifiedTime", "GoogleDriveUploadRequest", true))
+				timestamp = ISO8601::convertToTimestamp(object.getVal("modifiedTime")->asString());
+
+			finishUpload(StorageFile(id, _savePath, name, size, timestamp, isDirectory));
+			return;
+		}
+	}
+
+	if (_contentsStream->eos() || _contentsStream->pos() >= _contentsStream->size() - 1) {
+		warning("GoogleDriveUploadRequest: no file info to return");
+		finishUpload(StorageFile(_savePath, 0, 0, false));
+	} else {
+		uploadNextPart();
 	}
 
 	delete json;
