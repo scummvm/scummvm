@@ -82,6 +82,7 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	void handleClient(uint32 i);
 	void acceptClient();
 	void resolveAddress(void *ipAddress);
+	void addPathHandler(Common::String path, ClientHandlerCallback handler);
 
 public:
 	static const uint32 DEFAULT_SERVER_PORT = 12345;
@@ -92,8 +93,6 @@ public:
 	void start();
 	void stop();
 	void stopOnIdle();
-	void addPathHandler(Common::String path, ClientHandlerCallback handler);
-	void removePathHandler(Common::String path);
 
 	Common::String getAddress();
 	IndexPageHandler &indexPageHandler();

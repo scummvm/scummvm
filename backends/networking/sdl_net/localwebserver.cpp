@@ -153,12 +153,6 @@ void LocalWebserver::addPathHandler(Common::String path, ClientHandlerCallback h
 	_pathHandlers[path] = handler;
 }
 
-void LocalWebserver::removePathHandler(Common::String path) {
-	if (!_pathHandlers.contains(path))
-		warning("LocalWebserver::removePathHandler: no handler known for this path");
-	_pathHandlers.erase(path);
-}
-
 Common::String LocalWebserver::getAddress() { return _address;  }
 
 IndexPageHandler &LocalWebserver::indexPageHandler() { return _indexPageHandler; }
