@@ -137,6 +137,12 @@ void UploadFileClientHandler::handleBlockHeaders(Client *client) {
 		return;
 	}
 
+	// remove previous stream (if there is one)
+	if (_contentStream) {
+		delete _contentStream;
+		_contentStream = nullptr;
+	}
+
 	// create file stream (and necessary subdirectories)
 	Common::DumpFile *f = new Common::DumpFile();
 	if (!f->open(originalNode->getPath(), true)) {
@@ -155,6 +161,9 @@ void UploadFileClientHandler::handleBlockContent(Client *client) {
 	if (_contentStream) {
 		_contentStream->flush();
 		++_uploadedFiles;
+
+		delete _contentStream;
+		_contentStream = nullptr;
 
 		if (client->noMoreContent()) {
 			// success - redirect back to directory listing
