@@ -48,10 +48,12 @@
 #ifndef WAGE_WORLD_H
 #define WAGE_WORLD_H
 
+#include "wage/entities.h"
 #include "wage/macwindowmanager.h"
 
 namespace Wage {
 
+class Script;
 class Sound;
 
 class World {

@@ -208,6 +208,14 @@ public:
 	void redrawScene();
 	void saveGame();
 
+	Common::Error saveGameState(int slot, const Common::String &description);
+
+private:
+	int saveGame(const Common::String &fileName, const Common::String &descriptionString);
+	Common::String getSavegameFilename(int16 slotId) const;
+
+public:
+
 	virtual GUI::Debugger *getDebugger() { return _debugger; }
 
 private:

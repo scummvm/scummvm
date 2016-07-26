@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	macwindow.o \
 	macwindowmanager.o \
 	randomhat.o \
+	saveload.o \
 	script.o \
 	sound.o \
 	util.o \
