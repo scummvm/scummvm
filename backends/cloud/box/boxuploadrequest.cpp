@@ -145,56 +145,69 @@ void BoxUploadRequest::uploadedCallback(Networking::JsonResponse response) {
 	if (error.httpResponseCode != 200 && error.httpResponseCode != 201)
 		warning("BoxUploadRequest: looks like an error (bad HTTP code)");
 
-	//TODO: add more JSON warnings there
+	//check JSON and show warnings if it's malformed
 	Common::JSONValue *json = response.value;
-	if (json) {
-		if (json->isObject()) {
-			Common::JSONObject object = json->asObject();
-			if (object.contains("entries") && object.getVal("entries")->isArray()) {
-				Common::JSONArray entries = object.getVal("entries")->asArray();
-				if (entries.size() > 0) {
-					Common::JSONObject entry = entries[0]->asObject();
+	if (json == nullptr) {
+		error.response = "Failed to parse JSON, null passed!";
+		finishError(error);
+		return;
+	}
 
-					//finished
-					Common::String id = entry.getVal("id")->asString();
-					Common::String name = entry.getVal("name")->asString();
-					bool isDirectory = (entry.getVal("type")->asString() == "folder");
-					uint32 size = 0, timestamp = 0;
-					if (entry.contains("size")) {
-						if (entry.getVal("size")->isString())
-							size = entry.getVal("size")->asString().asUint64();
-						else if (entry.getVal("size")->isIntegerNumber())
-							size = entry.getVal("size")->asIntegerNumber();
-						else
-							warning("strange type for field 'size'");
-					}
-					if (entry.contains("modified_at") && entry.getVal("modified_at")->isString())
-						timestamp = ISO8601::convertToTimestamp(entry.getVal("modified_at")->asString());
+	if (!json->isObject()) {
+		error.response = "Passed JSON is not an object!";
+		finishError(error);
+		delete json;
+		return;
+	}
 
-					//as we list directory by id, we can't determine full path for the file, so we leave it empty
-					finishUpload(StorageFile(id, _savePath, name, size, timestamp, isDirectory));
-					return;
+	Common::JSONObject object = json->asObject();
+	if (Networking::CurlJsonRequest::jsonContainsArray(object, "entries", "BoxUploadRequest")) {
+		Common::JSONArray entries = object.getVal("entries")->asArray();
+		if (entries.size() == 0) {
+			warning("BoxUploadRequest: 'entries' found, but it's empty");
+		} else if (Networking::CurlJsonRequest::jsonIsObject(entries[0], "BoxUploadRequest")) {
+			warning("BoxUploadRequest: 'entries' first item is not an object");
+		} else {
+			Common::JSONObject item = entries[0]->asObject();
+
+			if (Networking::CurlJsonRequest::jsonContainsString(item, "id", "BoxUploadRequest") &&
+				Networking::CurlJsonRequest::jsonContainsString(item, "name", "BoxUploadRequest") &&
+				Networking::CurlJsonRequest::jsonContainsString(item, "type", "BoxUploadRequest") &&
+				Networking::CurlJsonRequest::jsonContainsString(item, "modified_at", "BoxUploadRequest") &&
+				Networking::CurlJsonRequest::jsonContainsStringOrIntegerNumber(item, "size", "BoxUploadRequest")) {
+
+				//finished
+				Common::String id = item.getVal("id")->asString();
+				Common::String name = item.getVal("name")->asString();
+				bool isDirectory = (item.getVal("type")->asString() == "folder");
+				uint32 size;
+				if (item.getVal("size")->isString()) {
+					size = item.getVal("size")->asString().asUint64();
+				} else {
+					size = item.getVal("size")->asIntegerNumber();
 				}
-			}
+				uint32 timestamp = ISO8601::convertToTimestamp(item.getVal("modified_at")->asString());
 
-			//TODO: check errors
-			/*
-			if (object.contains("error")) {
-				warning("Box returned error: %s", json->stringify(true).c_str());
+				finishUpload(StorageFile(id, _savePath, name, size, timestamp, isDirectory));
 				delete json;
-				error.response = json->stringify(true);
-				finishError(error);
 				return;
 			}
-			*/
 		}
-
-		warning("BoxUploadRequest: no file info to return");
-		finishUpload(StorageFile(_savePath, 0, 0, false));
-	} else {
-		warning("BoxUploadRequest: null, not json");
-		finishError(error);
 	}
+
+	//TODO: check errors
+	/*
+	if (object.contains("error")) {
+		warning("Box returned error: %s", json->stringify(true).c_str());
+		delete json;
+		error.response = json->stringify(true);
+		finishError(error);
+		return;
+	}
+	*/
+
+	warning("BoxUploadRequest: no file info to return");
+	finishUpload(StorageFile(_savePath, 0, 0, false));
 
 	delete json;
 }
