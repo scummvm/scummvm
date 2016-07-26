@@ -1928,48 +1928,60 @@ void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex)
 			int16 objectAllowedSlots = g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(curThing)]._allowedSlots;
 			uint16 curSlotIndex;
 			switch (thingType) {
-			case k6_ArmourThingType:
+			case k6_ArmourThingType: {
+				bool skipCheck = false;
 				for (curSlotIndex = k2_ChampionSlotHead; curSlotIndex <= k5_ChampionSlotFeet; curSlotIndex++) {
-					if (objectAllowedSlots & gSlotMasks[curSlotIndex])
-						goto T0280048;
+					if (objectAllowedSlots & gSlotMasks[curSlotIndex]) {
+						skipCheck = true;
+						break;
+					}
 				}
-				if ((objectAllowedSlots & gSlotMasks[k10_ChampionSlotNeck]) && (championPtr->_slots[k10_ChampionSlotNeck] == Thing::_none)) {
+
+				if (skipCheck)
+					break;
+
+				if ((objectAllowedSlots & gSlotMasks[k10_ChampionSlotNeck]) && (championPtr->_slots[k10_ChampionSlotNeck] == Thing::_none))
 					curSlotIndex = k10_ChampionSlotNeck;
-				} else {
-					goto T0280046;
-				}
+				else
+					curSlotIndex = slotIdx++;
+
 				break;
-			case k5_WeaponThingType:
-				if (championPtr->_slots[k1_ChampionSlotActionHand] == Thing::_none) {
-					curSlotIndex = k1_ChampionSlotActionHand;
-				} else {
-					goto T0280046;
 				}
+			case k5_WeaponThingType:
+				if (championPtr->_slots[k1_ChampionSlotActionHand] == Thing::_none)
+					curSlotIndex = k1_ChampionSlotActionHand;
+				else if ((objectAllowedSlots & gSlotMasks[k10_ChampionSlotNeck]) && (championPtr->_slots[k10_ChampionSlotNeck] == Thing::_none))
+					curSlotIndex = k10_ChampionSlotNeck;
+				else
+					curSlotIndex = slotIdx++;
 				break;
 			case k7_ScrollThingType:
 			case k8_PotionThingType:
-				if (championPtr->_slots[k11_ChampionSlotPouch_1] == Thing::_none) {
+				if (championPtr->_slots[k11_ChampionSlotPouch_1] == Thing::_none)
 					curSlotIndex = k11_ChampionSlotPouch_1;
-				} else {
-					if (championPtr->_slots[k6_ChampionSlotPouch_2] == Thing::_none) {
-						curSlotIndex = k6_ChampionSlotPouch_2;
-					} else {
-						goto T0280046;
-					}
-				}
+				else if (championPtr->_slots[k6_ChampionSlotPouch_2] == Thing::_none)
+					curSlotIndex = k6_ChampionSlotPouch_2;
+				else if ((objectAllowedSlots & gSlotMasks[k10_ChampionSlotNeck]) && (championPtr->_slots[k10_ChampionSlotNeck] == Thing::_none))
+					curSlotIndex = k10_ChampionSlotNeck;
+				else
+					curSlotIndex = slotIdx++;
 				break;
 			case k9_ContainerThingType:
 			case k10_JunkThingType:
-T0280046:
-				if ((objectAllowedSlots & gSlotMasks[k10_ChampionSlotNeck]) && (championPtr->_slots[k10_ChampionSlotNeck] == Thing::_none)) {
+				if ((objectAllowedSlots & gSlotMasks[k10_ChampionSlotNeck]) && (championPtr->_slots[k10_ChampionSlotNeck] == Thing::_none))
 					curSlotIndex = k10_ChampionSlotNeck;
-				} else {
+				else
 					curSlotIndex = slotIdx++;
-				}
+
+				break;
+			default:break;
 			}
-T0280048:
-			if (championPtr->_slots[curSlotIndex] != Thing::_none) {
-				goto T0280046;
+
+			while (championPtr->_slots[curSlotIndex] != Thing::_none) {
+				if ((objectAllowedSlots & gSlotMasks[k10_ChampionSlotNeck]) && (championPtr->_slots[k10_ChampionSlotNeck] == Thing::_none))
+					curSlotIndex = k10_ChampionSlotNeck;
+				else
+					curSlotIndex = slotIdx++;
 			}
 			_vm->_championMan->f301_addObjectInSlot((ChampionIndex)previousPartyChampionCount, curThing, (ChampionSlot)curSlotIndex);
 		}
@@ -2059,12 +2071,12 @@ uint16 ChampionMan::f309_getMaximumLoad(Champion *champ) {
 	uint16 maximumLoad = champ->getStatistic(k1_ChampionStatStrength, k1_ChampionStatCurrent) * 8 + 100;
 	maximumLoad = f306_getStaminaAdjustedValue(champ, maximumLoad);
 	int16 wounds = champ->getWounds();
-	if (wounds) {
+	if (wounds)
 		maximumLoad -= maximumLoad >> (champ->getWoundsFlag(k0x0010_ChampionWoundLegs) ? 2 : 3);
-	}
-	if (_vm->_objectMan->f33_getIconIndex(champ->getSlot(k5_ChampionSlotFeet)) == k119_IconIndiceArmourElvenBoots) {
+
+	if (_vm->_objectMan->f33_getIconIndex(champ->getSlot(k5_ChampionSlotFeet)) == k119_IconIndiceArmourElvenBoots)
 		maximumLoad += maximumLoad * 16;
-	}
+
 	maximumLoad += 9;
 	maximumLoad -= maximumLoad % 10;
 	return maximumLoad;
