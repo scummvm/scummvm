@@ -132,51 +132,53 @@ void DropboxUploadRequest::partUploadedCallback(Networking::JsonResponse respons
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
-	// TODO: add more JSON-related warnings
 	Common::JSONValue *json = response.value;
-	if (json) {
-		bool needsFinishRequest = false;
-
-		if (json->isObject()) {
-			Common::JSONObject object = json->asObject();
-
-			//debug(9, "%s", json->stringify(true).c_str());
-
-			if (object.contains("error") || object.contains("error_summary")) {
-				warning("Dropbox returned error: %s", object.getVal("error_summary")->asString().c_str());
-				error.response = json->stringify(true);
-				finishError(error);
-				delete json;
-				return;
-			}
-
-			if (object.contains("server_modified")) {
-				//finished
-				Common::String path = object.getVal("path_lower")->asString();
-				uint32 size = object.getVal("size")->asIntegerNumber();
-				uint32 timestamp = ISO8601::convertToTimestamp(object.getVal("server_modified")->asString());
-				finishUpload(StorageFile(path, size, timestamp, false));
-				return;
-			}
-
-			if (_sessionId == "") {
-				if (object.contains("session_id"))
-					_sessionId = object.getVal("session_id")->asString();
-				else
-					warning("DropboxUploadRequest: no session_id found");
-				needsFinishRequest = true;
-			}
-		}
-
-		if (!needsFinishRequest && (_contentsStream->eos() || _contentsStream->pos() >= _contentsStream->size() - 1)) {
-			warning("DropboxUploadRequest: no file info to return");
-			finishUpload(StorageFile(_savePath, 0, 0, false));
-		} else {
-			uploadNextPart();
-		}
-	} else {
-		warning("DropboxUploadRequest: null, not json");
+	if (json == nullptr) {
+		error.response = "Failed to parse JSON, null passed!";
 		finishError(error);
+		return;
+	}
+
+	bool needsFinishRequest = false;
+
+	if (json->isObject()) {
+		Common::JSONObject object = json->asObject();
+
+		//debug(9, "%s", json->stringify(true).c_str());
+
+		if (object.contains("error") || object.contains("error_summary")) {
+			if (Networking::CurlJsonRequest::jsonContainsString(object, "error_summary", "DropboxUploadRequest")) {
+				warning("Dropbox returned error: %s", object.getVal("error_summary")->asString().c_str());
+			}
+			error.response = json->stringify(true);
+			finishError(error);
+			delete json;
+			return;
+		}
+
+		if (Networking::CurlJsonRequest::jsonContainsString(object, "path_lower", "DropboxUploadRequest") &&
+			Networking::CurlJsonRequest::jsonContainsString(object, "server_modified", "DropboxUploadRequest") &&
+			Networking::CurlJsonRequest::jsonContainsIntegerNumber(object, "size", "DropboxUploadRequest")) {
+			//finished
+			Common::String path = object.getVal("path_lower")->asString();
+			uint32 size = object.getVal("size")->asIntegerNumber();
+			uint32 timestamp = ISO8601::convertToTimestamp(object.getVal("server_modified")->asString());
+			finishUpload(StorageFile(path, size, timestamp, false));
+			return;
+		}
+
+		if (_sessionId == "") {
+			if (Networking::CurlJsonRequest::jsonContainsString(object, "session_id", "DropboxUploadRequest"))
+				_sessionId = object.getVal("session_id")->asString();
+			needsFinishRequest = true;
+		}
+	}
+
+	if (!needsFinishRequest && (_contentsStream->eos() || _contentsStream->pos() >= _contentsStream->size() - 1)) {
+		warning("DropboxUploadRequest: no file info to return");
+		finishUpload(StorageFile(_savePath, 0, 0, false));
+	} else {
+		uploadNextPart();
 	}
 
 	delete json;
