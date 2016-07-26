@@ -76,18 +76,34 @@ void DropboxInfoRequest::userResponseCallback(Networking::JsonResponse response)
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
-	if (!json) {
-		warning("DropboxInfoRequest: NULL passed instead of JSON");
+	if (json == nullptr) {
+		error.response = "Failed to parse JSON, null passed!";
 		finishError(error);
+		return;
+	}
+
+	if (!json->isObject()) {
+		error.response = "Passed JSON is not an object!";
+		finishError(error);
+		delete json;
 		return;
 	}
 
 	//Dropbox documentation states there are no errors for this API method
 	Common::JSONObject info = json->asObject();
-	Common::JSONObject nameInfo = info.getVal("name")->asObject();
-	_uid = info.getVal("account_id")->asString();
-	_name = nameInfo.getVal("display_name")->asString();
-	_email = info.getVal("email")->asString();
+	if (Networking::CurlJsonRequest::jsonContainsAttribute(info, "name", "DropboxInfoRequest") &&
+		Networking::CurlJsonRequest::jsonIsObject(info.getVal("name"), "DropboxInfoRequest")) {
+		Common::JSONObject nameInfo = info.getVal("name")->asObject();
+		if (Networking::CurlJsonRequest::jsonContainsString(nameInfo, "display_name", "DropboxInfoRequest")) {
+			_name = nameInfo.getVal("display_name")->asString();
+		}
+	}
+	if (Networking::CurlJsonRequest::jsonContainsString(info, "account_id", "DropboxInfoRequest")) {
+		_uid = info.getVal("account_id")->asString();
+	}
+	if (Networking::CurlJsonRequest::jsonContainsString(info, "email", "DropboxInfoRequest")) {
+		_email = info.getVal("email")->asString();
+	}
 	CloudMan.setStorageUsername(kStorageDropboxId, _email);
 	delete json;
 
@@ -114,17 +130,44 @@ void DropboxInfoRequest::quotaResponseCallback(Networking::JsonResponse response
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
-	if (!json) {
-		warning("DropboxInfoRequest: NULL passed instead of JSON");
+	if (json == nullptr) {
+		error.response = "Failed to parse JSON, null passed!";
 		finishError(error);
+		return;
+	}
+
+	if (!json->isObject()) {
+		error.response = "Passed JSON is not an object!";
+		finishError(error);
+		delete json;
 		return;
 	}
 
 	//Dropbox documentation states there are no errors for this API method
 	Common::JSONObject info = json->asObject();
-	Common::JSONObject allocation = info.getVal("allocation")->asObject();
-	uint64 used = info.getVal("used")->asIntegerNumber();
-	uint64 allocated = allocation.getVal("allocated")->asIntegerNumber();
+	
+	if (!Networking::CurlJsonRequest::jsonContainsIntegerNumber(info, "used", "DropboxInfoRequest")) {
+		error.response = "Passed JSON misses 'used' attribute!";
+		finishError(error);
+		delete json;
+		return;
+	}
+
+	uint64 used = info.getVal("used")->asIntegerNumber(), allocated = 0;
+
+	if (Networking::CurlJsonRequest::jsonContainsAttribute(info, "allocation", "DropboxInfoRequest") &&
+		Networking::CurlJsonRequest::jsonIsObject(info.getVal("allocation"), "DropboxInfoRequest")) {
+		Common::JSONObject allocation = info.getVal("allocation")->asObject();
+		if (!Networking::CurlJsonRequest::jsonContainsIntegerNumber(allocation, "allocated", "DropboxInfoRequest")) {
+			error.response = "Passed JSON misses 'allocation/allocated' attribute!";
+			finishError(error);
+			delete json;
+			return;
+		}
+		
+		allocated = allocation.getVal("allocated")->asIntegerNumber();		
+	}
+	
 	finishInfo(StorageInfo(_uid, _name, _email, used, allocated));
 	delete json;
 }

@@ -79,9 +79,16 @@ void DropboxCreateDirectoryRequest::responseCallback(Networking::JsonResponse re
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
-	if (!json) {
-		warning("DropboxCreateDirectoryRequest: NULL passed instead of JSON");
+	if (json == nullptr) {
+		error.response = "Failed to parse JSON, null passed!";
 		finishError(error);
+		return;
+	}
+
+	if (!json->isObject()) {
+		error.response = "Passed JSON is not an object!";
+		finishError(error);
+		delete json;
 		return;
 	}
 
@@ -89,9 +96,10 @@ void DropboxCreateDirectoryRequest::responseCallback(Networking::JsonResponse re
 	if (info.contains("id")) {
 		finishCreation(true);
 	} else {
-		if (info.contains("error_summary") && info.getVal("error_summary")->isString()) {
+		if (Networking::CurlJsonRequest::jsonContainsString(info, "error_summary", "DropboxCreateDirectoryRequest")) {
 			Common::String summary = info.getVal("error_summary")->asString();
 			if (summary.contains("path") && summary.contains("conflict") && summary.contains("folder")) {
+				// existing directory - not an error for CreateDirectoryRequest
 				finishCreation(false);
 				delete json;
 				return;
