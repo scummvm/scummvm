@@ -47,7 +47,7 @@ enum {
 	kCodeBoxCmd = 'CdBx',
 	kOpenUrlCmd = 'OpUr',
 	kPasteCodeCmd = 'PsCd',
-	kStorageWizardContainerReflowCmd = 'SWCr',
+	kStorageWizardContainerReflowCmd = 'SWCr'
 };
 
 StorageWizardDialog::StorageWizardDialog(uint32 storageId):
