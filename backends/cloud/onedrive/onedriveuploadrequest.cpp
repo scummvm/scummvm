@@ -125,44 +125,46 @@ void OneDriveUploadRequest::partUploadedCallback(Networking::JsonResponse respon
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
 	Common::JSONValue *json = response.value;
-	if (json) {
-		if (json->isObject()) {
-			Common::JSONObject object = json->asObject();
-
-			if (object.contains("error")) {
-				warning("OneDriveUploadRequest: error: %s", json->stringify(true).c_str());
-				error.response = json->stringify(true);
-				finishError(error);
-				delete json;
-				return;
-			}
-
-			if (object.contains("id") && object.contains("name")) {
-				//finished
-				Common::String path = _savePath;
-				uint32 size = object.getVal("size")->asIntegerNumber();
-				uint32 timestamp = ISO8601::convertToTimestamp(object.getVal("lastModifiedDateTime")->asString());
-				finishUpload(StorageFile(path, size, timestamp, false));
-				return;
-			}
-
-			if (_uploadUrl == "") {
-				if (object.contains("uploadUrl"))
-					_uploadUrl = object.getVal("uploadUrl")->asString();
-				else
-					warning("OneDriveUploadRequest: no uploadUrl found");
-			}
-		}
-
-		if (_contentsStream->eos() || _contentsStream->pos() >= _contentsStream->size() - 1) {
-			warning("OneDriveUploadRequest: no file info to return");
-			finishUpload(StorageFile(_savePath, 0, 0, false));
-		} else {
-			uploadNextPart();
-		}
-	} else {
-		warning("OneDriveUploadRequest: null, not json");
+	if (json == nullptr) {
+		error.response = "Failed to parse JSON, null passed!";
 		finishError(error);
+		return;
+	}
+
+	if (json->isObject()) {
+		Common::JSONObject object = json->asObject();
+
+		if (object.contains("error")) {
+			warning("OneDriveUploadRequest: error: %s", json->stringify(true).c_str());
+			error.response = json->stringify(true);
+			finishError(error);
+			delete json;
+			return;
+		}
+
+		if (Networking::CurlJsonRequest::jsonContainsString(object, "id", "OneDriveUploadRequest") &&
+			Networking::CurlJsonRequest::jsonContainsString(object, "name", "OneDriveUploadRequest") &&
+			Networking::CurlJsonRequest::jsonContainsIntegerNumber(object, "size", "OneDriveUploadRequest") &&
+			Networking::CurlJsonRequest::jsonContainsString(object, "lastModifiedDateTime", "OneDriveUploadRequest")) {
+			//finished
+			Common::String path = _savePath;
+			uint32 size = object.getVal("size")->asIntegerNumber();
+			uint32 timestamp = ISO8601::convertToTimestamp(object.getVal("lastModifiedDateTime")->asString());
+			finishUpload(StorageFile(path, size, timestamp, false));
+			return;
+		}
+
+		if (_uploadUrl == "") {
+			if (Networking::CurlJsonRequest::jsonContainsString(object, "uploadUrl", "OneDriveUploadRequest"))
+				_uploadUrl = object.getVal("uploadUrl")->asString();
+		}
+	}
+
+	if (_contentsStream->eos() || _contentsStream->pos() >= _contentsStream->size() - 1) {
+		warning("OneDriveUploadRequest: no file info to return");
+		finishUpload(StorageFile(_savePath, 0, 0, false));
+	} else {
+		uploadNextPart();
 	}
 
 	delete json;
