@@ -9,23 +9,22 @@ Bugs:
 		Drawing door ornaments segfaults when going back to the start
 		Placing one of the play icons from the top right corner into one of the champions' hands will crash the engine
 		Sometimes putting stuff in the player's hand segfaults
-		Footprints are everywhere
 		Object display is a bit mixed up with regards to which cell is it drawn in
-		The last resurrected character can't have stuff in their left hand, segfaults if I try to put stuff into it
+		Method cthulu messes up the callstack
 
 
 Possible bugs:
 	- k1_LeftMouseButton and k2_RightMouseButton have values 1 and 2 respectively, contrary to the original in the original: MASK0x0001_MOUSE_RIGHT_BUTTON, MASK0x0002_MOUSE_LEFT_BUTTON
 	- possible garbage value return in f140_getObjectWeight
+	- After loading, creatures are in the wrong cells of a square
+
 	
 Todo:
 	Add wiki entry for DM
-	Rename GraphicIndice enum entires and have their name include GraphicIndice
+	
 	I forgot to add localization warnings
-	Attend to Arnaud's notes on github
-	Attend to sev's notes on github
-	Double check enums with hex literals, I think I screwed the regex when processing them
-	Double check strcat, strstr usages, I might have messed them up in many places
+	Double check enums with hex literals
+	Double check strcat, strstr usages
 	I forgot to add a bunch of warning for show/hide mouse pointer and other mouse functions
 
 Finish stuff:

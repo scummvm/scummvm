@@ -1,3 +1,5 @@
+# This file is obsolete
+
 F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
 	F0113_DUNGEONVIEW_DrawField // stub method
 		F0133_VIDEO_BlitBoxFilledWithMaskedBitmap // dummy
