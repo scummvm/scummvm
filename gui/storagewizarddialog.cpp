@@ -20,13 +20,6 @@
  *
  */
 
-#ifdef USE_SDL2
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_clipboard.h>
-#endif
-
 #include "gui/storagewizarddialog.h"
 #include "gui/gui-manager.h"
 #include "gui/message.h"
@@ -217,32 +210,27 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 	case kPasteCodeCmd: {
-#ifdef USE_SDL2
-		if (SDL_HasClipboardText() == SDL_TRUE) {
-			char *text = SDL_GetClipboardText();
-			if (text != nullptr) {
-				Common::String message = text;
-				for (uint32 i = 0; i < CODE_FIELDS; ++i) {
-					if (message.empty()) break;
-					Common::String subcode = "";
-					for (uint32 j = 0; j < message.size(); ++j) {
-						if (message[j] == ' ') {
-							message.erase(0, j+1);
-							break;
-						}
-						subcode += message[j];
-						if (j+1 == message.size()) {
-							message = "";
-							break;
-						}
+		if (g_system->hasTextInClipboard()) {
+			Common::String message = g_system->getTextFromClipboard();
+			for (uint32 i = 0; i < CODE_FIELDS; ++i) {
+				if (message.empty()) break;
+				Common::String subcode = "";
+				for (uint32 j = 0; j < message.size(); ++j) {
+					if (message[j] == ' ') {
+						message.erase(0, j+1);
+						break;
 					}
-					_codeWidget[i]->setEditString(subcode);
+					subcode += message[j];
+					if (j+1 == message.size()) {
+						message = "";
+						break;
+					}
 				}
-				handleCommand(sender, kCodeBoxCmd, data);
-				draw();
+				_codeWidget[i]->setEditString(subcode);
 			}
+			handleCommand(sender, kCodeBoxCmd, data);
+			draw();
 		}
-#endif
 		break;
 	}
 	case kConnectCmd: {
@@ -302,11 +290,7 @@ void StorageWizardDialog::containerWidgetsReflow() {
 	}
 	if (_openUrlWidget) _openUrlWidget->setVisible(true);
 	if (_pasteCodeWidget) {
-#ifdef USE_SDL2
-		bool visible = showFields;
-#else
-		bool visible = false;
-#endif
+		bool visible = showFields && g_system->hasFeature(OSystem::kFeatureClipboardSupport);
 		_pasteCodeWidget->setVisible(visible);
 	}
 

@@ -55,6 +55,8 @@ public:
 	 */
 	virtual SdlMixerManager *getMixerManager();
 
+	virtual bool hasFeature(Feature f);
+
 	// Override functions from ModularBackend and OSystem
 	virtual void initBackend();
 #if defined(USE_TASKBAR)
@@ -68,6 +70,10 @@ public:
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 
 	virtual Common::String getSystemLanguage() const;
+
+	// Clipboard
+	virtual bool hasTextInClipboard();
+	virtual Common::String getTextFromClipboard();
 
 	virtual void setWindowCaption(const char *caption);
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);

@@ -64,6 +64,11 @@
 #include <SDL/SDL_net.h>
 #endif
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_clipboard.h>
+#endif
+
 OSystem_SDL::OSystem_SDL()
 	:
 #ifdef USE_OPENGL
@@ -169,6 +174,13 @@ void OSystem_SDL::init() {
 		_taskbarManager = new Common::TaskbarManager();
 #endif
 
+}
+
+bool OSystem_SDL::hasFeature(Feature f) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (f == kFeatureClipboardSupport) return true;
+#endif
+	return ModularBackend::hasFeature(f);
 }
 
 void OSystem_SDL::initBackend() {
@@ -451,6 +463,26 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 #else // USE_DETECTLANG
 	return ModularBackend::getSystemLanguage();
 #endif // USE_DETECTLANG
+}
+
+bool OSystem_SDL::hasTextInClipboard() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	return SDL_HasClipboardText() == SDL_TRUE;
+#else
+	return false;
+#endif
+}
+
+Common::String OSystem_SDL::getTextFromClipboard() {
+	if (!hasTextInClipboard()) return "";
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	char *text = SDL_GetClipboardText();
+	if (text == nullptr) return "";
+	return text;
+#else
+	return "";
+#endif
 }
 
 uint32 OSystem_SDL::getMillis(bool skipRecord) {

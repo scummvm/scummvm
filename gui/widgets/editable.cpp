@@ -20,13 +20,6 @@
  *
  */
 
-#ifdef USE_SDL2
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_clipboard.h>
-#endif
-
 #include "common/rect.h"
 #include "common/system.h"
 #include "gui/widgets/editable.h"
@@ -192,24 +185,20 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		forcecaret = true;
 		break;
 
-#ifdef USE_SDL2
-		case Common::KEYCODE_v:
-			if (state.flags & Common::KBD_CTRL) {
-				if (SDL_HasClipboardText() == SDL_TRUE) {
-					char *text = SDL_GetClipboardText();
-					if (text != nullptr) {
-						for (char *ptr = text; *ptr; ++ptr) {
-							if (tryInsertChar(*ptr, _caretPos))
-								++_caretPos;
-						}
-						dirty = true;
-					}
+	case Common::KEYCODE_v:
+		if (g_system->hasFeature(OSystem::kFeatureClipboardSupport) && state.flags & Common::KBD_CTRL) {
+			if (g_system->hasTextInClipboard()) {
+				String text = g_system->getTextFromClipboard();
+				for (uint32 i = 0; i < text.size(); ++i) {
+					if (tryInsertChar(text[i], _caretPos))
+						++_caretPos;
 				}
-			} else {
-				defaultKeyDownHandler(state, dirty, forcecaret, handled);
+				dirty = true;
 			}
-			break;
-#endif
+		} else {
+			defaultKeyDownHandler(state, dirty, forcecaret, handled);
+		}
+		break;
 
 #ifdef MACOSX
 	// Let ctrl-a / ctrl-e move the caret to the start / end of the line.
