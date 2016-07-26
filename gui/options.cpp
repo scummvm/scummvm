@@ -1893,6 +1893,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 		_runServerButton->setVisible(true);
 		_runServerButton->setPos(_runServerButton->getRelX(), serverLabelPosition + serverButtonY - serverInfoY);
 		_runServerButton->setLabel(_(serverIsRunning ? "Stop server" : "Run server"));
+		_runServerButton->setTooltip(_(serverIsRunning ? "Stop local webserver" : "Run local webserver"));
 	}
 	if (_serverInfoLabel) {
 		_serverInfoLabel->setVisible(true);
