@@ -58,7 +58,7 @@ Background::~Background() {
 }
 
 bool Background::load(MfcArchive &file) {
-	debug(5, "Background::load()");
+	debugC(5, kDebugLoading, "Background::load()");
 	_bgname = file.readPascalString();
 
 	int count = file.readUint16LE();
@@ -80,7 +80,7 @@ bool Background::load(MfcArchive &file) {
 
 	_bigPictureArray = (BigPicture ***)calloc(_bigPictureArray1Count, sizeof(BigPicture **));
 
-	debug(6, "bigPictureArray[%d][%d]", _bigPictureArray1Count, _bigPictureArray2Count);
+	debugC(6, kDebugLoading, "bigPictureArray[%d][%d]", _bigPictureArray1Count, _bigPictureArray2Count);
 
 	for (int i = 0; i < _bigPictureArray1Count; i++) {
 		_bigPictureArray[i] = (BigPicture **)calloc(_bigPictureArray2Count, sizeof(BigPicture *));
@@ -137,7 +137,7 @@ PictureObject::PictureObject(PictureObject *src) : GameObject(src) {
 }
 
 bool PictureObject::load(MfcArchive &file, bool bigPicture) {
-	debug(5, "PictureObject::load()");
+	debugC(5, kDebugLoading, "PictureObject::load()");
 	GameObject::load(file);
 
 	if (bigPicture)
@@ -282,7 +282,7 @@ GameObject::~GameObject() {
 }
 
 bool GameObject::load(MfcArchive &file) {
-	debug(5, "GameObject::load()");
+	debugC(5, kDebugLoading, "GameObject::load()");
 	_okeyCode = 0;
 	_flags = 0;
 	_field_20 = 0;
@@ -464,7 +464,7 @@ Picture::~Picture() {
 }
 
 void Picture::freePicture() {
-	debug(5, "Picture::freePicture(): file: %s", _memfilename);
+	debugC(5, kDebugMemory, "Picture::freePicture(): file: %s", _memfilename);
 
 	if (_bitmap) {
 		if (testFlags() && !_field_54) {
@@ -492,7 +492,7 @@ void Picture::freePixelData() {
 }
 
 bool Picture::load(MfcArchive &file) {
-	debug(5, "Picture::load()");
+	debugC(5, kDebugLoading, "Picture::load()");
 	MemoryObject::load(file);
 
 	_x = file.readUint32LE();
@@ -526,7 +526,7 @@ bool Picture::load(MfcArchive &file) {
 
 	getData();
 
-	debug(5, "Picture::load: loaded <%s>", _memfilename);
+	debugC(5, kDebugLoading, "Picture::load: loaded <%s>", _memfilename);
 
 	return true;
 }
@@ -546,7 +546,7 @@ void Picture::setAOIDs() {
 }
 
 void Picture::init() {
-	debug(5, "Picture::init(), %s", _memfilename);
+	debugC(5, kDebugLoading, "Picture::init(), %s", _memfilename);
 
 	MemoryObject::getData();
 
@@ -567,7 +567,7 @@ Common::Point *Picture::getDimensions(Common::Point *p) {
 void Picture::getDibInfo() {
 	int off = _dataSize & ~0xf;
 
-	debug(9, "Picture::getDibInfo: _dataSize: %d", _dataSize);
+	debugC(9, kDebugLoading, "Picture::getDibInfo: _dataSize: %d", _dataSize);
 
 	if (!_dataSize) {
 		warning("Picture::getDibInfo(): Empty data size");
@@ -605,7 +605,7 @@ void Picture::draw(int x, int y, int style, int angle) {
 	int x1 = x;
 	int y1 = y;
 
-	debug(7, "Picture::draw(%d, %d, %d, %d) (%s)", x, y, style, angle, _memfilename);
+	debugC(7, kDebugDrawing, "Picture::draw(%d, %d, %d, %d) (%s)", x, y, style, angle, _memfilename);
 
 	if (x != -1)
 		x1 = x;
@@ -620,7 +620,7 @@ void Picture::draw(int x, int y, int style, int angle) {
 		return;
 
 	if ((_alpha & 0xff) < 0xff) {
-		debug(7, "Picture:draw: alpha = %0x", _alpha);
+		debugC(7, kDebugDrawing, "Picture:draw: alpha = %0x", _alpha);
 	}
 
 	byte *pal = _paletteData;
@@ -784,7 +784,7 @@ Bitmap::~Bitmap() {
 }
 
 void Bitmap::load(Common::ReadStream *s) {
-	debug(5, "Bitmap::load()");
+	debugC(5, kDebugLoading, "Bitmap::load()");
 
 	_x = s->readUint32LE();
 	_y = s->readUint32LE();
@@ -795,8 +795,8 @@ void Bitmap::load(Common::ReadStream *s) {
 	_dataSize = s->readUint32LE();
 	_flags = s->readUint32LE();
 
-	debug(8, "Bitmap: x: %d y: %d w: %d h: %d dataSize: 0x%x", _x, _y, _width, _height, _dataSize);
-	debug(8, "Bitmap: type: %s (0x%04x) flags: 0x%x", Common::tag2string(_type).c_str(), _type, _flags);
+	debugC(8, kDebugLoading, "Bitmap: x: %d y: %d w: %d h: %d dataSize: 0x%x", _x, _y, _width, _height, _dataSize);
+	debugC(8, kDebugLoading, "Bitmap: type: %s (0x%04x) flags: 0x%x", Common::tag2string(_type).c_str(), _type, _flags);
 }
 
 bool Bitmap::isPixelHitAtPos(int x, int y) {
@@ -821,7 +821,7 @@ void Bitmap::decode(int32 *palette) {
 }
 
 void Bitmap::putDib(int x, int y, int32 *palette, int alpha) {
-	debug(7, "Bitmap::putDib(%d, %d)", x, y);
+	debugC(7, kDebugDrawing, "Bitmap::putDib(%d, %d)", x, y);
 
 	int x1 = x - g_fp->_sceneRect.left;
 	int y1 = y - g_fp->_sceneRect.top;
@@ -868,11 +868,11 @@ bool Bitmap::putDibRB(int32 *palette) {
 	uint16 *srcPtr;
 
 	if (!palette) {
-		debug(2, "Bitmap::putDibRB(): Both global and local palettes are empty");
+		debugC(2, kDebugDrawing, "Bitmap::putDibRB(): Both global and local palettes are empty");
 		return false;
 	}
 
-	debug(8, "Bitmap::putDibRB()");
+	debugC(8, kDebugDrawing, "Bitmap::putDibRB()");
 
 	endy = _height - 1;
 
@@ -1149,7 +1149,7 @@ void Bitmap::drawRotated(int x, int y, int angle, byte *palette, int alpha) {
 }
 
 bool BigPicture::load(MfcArchive &file) {
-	debug(5, "BigPicture::load()");
+	debugC(5, kDebugLoading, "BigPicture::load()");
 	Picture::load(file);
 
 	return true;
@@ -1190,7 +1190,7 @@ Shadows::Shadows() {
 }
 
 bool Shadows::load(MfcArchive &file) {
-	debug(5, "Shadows::load()");
+	debugC(5, kDebugLoading, "Shadows::load()");
 	_sceneId = file.readUint32LE();
 	_staticAniObjectId = file.readUint32LE();
 	_movementId = file.readUint32LE();

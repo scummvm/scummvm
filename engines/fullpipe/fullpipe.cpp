@@ -203,6 +203,9 @@ void FullpipeEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugPathfinding, "path", "Pathfinding");
 	DebugMan.addDebugChannel(kDebugDrawing, "drawing", "Drawing");
 	DebugMan.addDebugChannel(kDebugLoading, "loading", "Scene loading");
+	DebugMan.addDebugChannel(kDebugAnimation, "animation", "Animation");
+	DebugMan.addDebugChannel(kDebugMemory, "memory", "Memory management");
+	DebugMan.addDebugChannel(kDebugEvents, "events", "Event handling");
 
 	_globalMessageQueueList = new GlobalMessageQueueList;
 	_behaviorManager = new BehaviorManager;
@@ -457,7 +460,7 @@ void FullpipeEngine::cleanup() {
 }
 
 void FullpipeEngine::updateScreen() {
-	debug(4, "FullpipeEngine::updateScreen()");
+	debugC(4, kDebugDrawing, "FullpipeEngine::updateScreen()");
 
 	_mouseVirtX = _mouseScreenPos.x + _sceneRect.left;
 	_mouseVirtY = _mouseScreenPos.y + _sceneRect.top;

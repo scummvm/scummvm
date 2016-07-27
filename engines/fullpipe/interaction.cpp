@@ -62,7 +62,7 @@ InteractionController::~InteractionController() {
 }
 
 bool InteractionController::load(MfcArchive &file) {
-	debug(5, "InteractionController::load()");
+	debugC(5, kDebugLoading, "InteractionController::load()");
 
 	return _interactions.load(file);
 }
@@ -440,7 +440,7 @@ Interaction::~Interaction() {
 }
 
 bool Interaction::load(MfcArchive &file) {
-	debug(5, "Interaction::load()");
+	debugC(5, kDebugLoading, "Interaction::load()");
 
 	_objectId1 = file.readUint16LE();
 	_objectId2 = file.readUint16LE();
@@ -531,7 +531,7 @@ bool Interaction::isOverlapping(StaticANIObject *subj, GameObject *obj) {
 }
 
 bool EntranceInfo::load(MfcArchive &file) {
-	debug(5, "EntranceInfo::load()");
+	debugC(5, kDebugLoading, "EntranceInfo::load()");
 
 	_sceneId = file.readUint32LE();
 	_field_4 = file.readUint32LE();

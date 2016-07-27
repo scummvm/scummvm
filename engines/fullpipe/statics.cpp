@@ -779,7 +779,7 @@ Common::Point *StaticANIObject::getSomeXY(Common::Point &p) {
 void StaticANIObject::update(int counterdiff) {
 	int mqid;
 
-	debug(6, "StaticANIObject::update() (%s) [%d] [%d, %d] fl: %x", transCyrillic((byte *)_objectName), _id, _ox, _oy, _flags);
+	debugC(6, kDebugAnimation, "StaticANIObject::update() (%s) [%d] [%d, %d] fl: %x", transCyrillic((byte *)_objectName), _id, _ox, _oy, _flags);
 
 	if (_flags & 2) {
 		_messageNum--;
@@ -951,7 +951,7 @@ Common::Point *StaticANIObject::calcNextStep(Common::Point *pRes) {
 }
 
 void StaticANIObject::stopAnim_maybe() {
-	debug(6, "StaticANIObject::stopAnim_maybe()");
+	debugC(6, kDebugAnimation, "StaticANIObject::stopAnim_maybe()");
 
 	if (!(_flags & 1))
 		return;
@@ -1093,7 +1093,7 @@ void StaticANIObject::hide() {
 }
 
 void StaticANIObject::show1(int x, int y, int movId, int mqId) {
-	debug(6, "StaticANIObject::show1(%d, %d, %d, %d)", x, y, movId, mqId);
+	debugC(6, kDebugAnimation, "StaticANIObject::show1(%d, %d, %d, %d)", x, y, movId, mqId);
 
 	if (_messageQueueId)
 		return;
@@ -1285,7 +1285,7 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 	if (_flags & 0x80)
 		return false;
 
-	debug(4, "StaticANIObject::startAnim(%d, %d, %d) (%s [%d]) [%d, %d]", movementId, messageQueueId, dynPhaseIdx, transCyrillic((byte *)_objectName), _id, _ox, _oy);
+	debugC(4, kDebugAnimation, "StaticANIObject::startAnim(%d, %d, %d) (%s [%d]) [%d, %d]", movementId, messageQueueId, dynPhaseIdx, transCyrillic((byte *)_objectName), _id, _ox, _oy);
 
 	if (_messageQueueId) {
 		updateGlobalMessageQueue(messageQueueId, _id);
@@ -1826,7 +1826,7 @@ void Movement::initStatics(StaticANIObject *ani) {
 	if (!_currMovement)
 		return;
 
-	debug(7, "Movement::initStatics()");
+	debugC(7, kDebugAnimation, "Movement::initStatics()");
 
 	_staticsObj2 = ani->addReverseStatics(_currMovement->_staticsObj2);
 	_staticsObj1 = ani->addReverseStatics(_currMovement->_staticsObj1);
@@ -1853,7 +1853,7 @@ void Movement::initStatics(StaticANIObject *ani) {
 }
 
 void Movement::updateCurrDynamicPhase() {
-	debug(7, "Movement::updateCurrDynamicPhase()");
+	debugC(7, kDebugAnimation, "Movement::updateCurrDynamicPhase()");
 
 	if (_currMovement) {
 		if (_currMovement->_dynamicPhases.size() == 0 || (uint)_currDynamicPhaseIndex >= _currMovement->_dynamicPhases.size())
@@ -1905,7 +1905,7 @@ int Movement::countPhasesWithFlag(int maxidx, int flag) {
 }
 
 void Movement::setDynamicPhaseIndex(int index) {
-	debug(7, "Movement::setDynamicPhaseIndex(%d)", index);
+	debugC(7, kDebugAnimation, "Movement::setDynamicPhaseIndex(%d)", index);
 	while (_currDynamicPhaseIndex < index)
 		gotoNextFrame(0, 0);
 
@@ -1914,7 +1914,7 @@ void Movement::setDynamicPhaseIndex(int index) {
 }
 
 DynamicPhase *Movement::getDynamicPhaseByIndex(int idx) {
-	debug(7, "Movement::updateCurrDynamicPhase()");
+	debugC(7, kDebugAnimation, "Movement::updateCurrDynamicPhase()");
 
 	if (_currMovement) {
 		if (_currMovement->_dynamicPhases.size() == 0 || (uint)idx >= _currMovement->_dynamicPhases.size())
@@ -1973,7 +1973,7 @@ void Movement::removeFirstPhase() {
 }
 
 bool Movement::gotoNextFrame(void (*callback1)(int, Common::Point *point, int, int), void (*callback2)(int *)) {
-	debug(8, "Movement::gotoNextFrame()");
+	debugC(8, kDebugAnimation, "Movement::gotoNextFrame()");
 
 	if (!callback2) {
 		if (_currMovement) {
@@ -2094,7 +2094,7 @@ bool Movement::gotoNextFrame(void (*callback1)(int, Common::Point *point, int, i
 }
 
 bool Movement::gotoPrevFrame() {
-	debug(8, "Movement::gotoPrevFrame()");
+	debugC(8, kDebugAnimation, "Movement::gotoPrevFrame()");
 
 	if (!_currDynamicPhaseIndex) {
 		gotoLastFrame();
@@ -2192,7 +2192,7 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 	_field_7E = 0;
 	_rect = new Common::Rect();
 
-	debug(1, "DynamicPhase::DynamicPhase(src, %d)", reverse);
+	debugC(1, kDebugAnimation, "DynamicPhase::DynamicPhase(src, %d)", reverse);
 
 	if (reverse) {
 		if (!src->_bitmap)

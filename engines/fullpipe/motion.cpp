@@ -2094,7 +2094,7 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	PicAniInfo picAniInfo;
 	Common::Point point;
 
-	debugC(0, kDebugPathfinding, "MovGraph2::doWalkTo(%d, %d, %d, %d, %d)", obj->_id, xpos, ypos, fuzzyMatch, staticsId);
+	debugC(1, kDebugPathfinding, "MovGraph2::doWalkTo(%d, %d, %d, %d, %d)", obj->_id, xpos, ypos, fuzzyMatch, staticsId);
 
 	int idx = getItemIndexByGameObjectId(obj->_id);
 
@@ -2227,7 +2227,7 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	Common::Array<MovGraphLink *> tempLinkList;
 	double minPath = findMinPath(&linkInfoSource, &linkInfoDest, &tempLinkList);
 
-	debugC(0, kDebugPathfinding, "MovGraph2::doWalkTo(): path: %g  parts: %d", minPath, tempLinkList.size());
+	debugC(1, kDebugPathfinding, "MovGraph2::doWalkTo(): path: %g  parts: %d", minPath, tempLinkList.size());
 
 	if (minPath < 0.0 || ((linkInfoSource.node != linkInfoDest.node || !linkInfoSource.node) && !tempLinkList.size()))
 		return 0;

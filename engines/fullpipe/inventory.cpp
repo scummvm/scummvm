@@ -35,7 +35,7 @@ Inventory::~Inventory() {
 }
 
 bool Inventory::load(MfcArchive &file) {
-	debug(5, "Inventory::load()");
+	debugC(5, kDebugLoading, "Inventory::load()");
 
 	_sceneId = file.readUint16LE();
 	int numInvs = file.readUint32LE();

@@ -45,13 +45,13 @@ bool CObject::loadFile(const char *fname) {
 }
 
 bool ObList::load(MfcArchive &file) {
-	debug(5, "ObList::load()");
+	debugC(5, kDebugLoading, "ObList::load()");
 	int count = file.readCount();
 
-	debug(9, "ObList::count: %d:", count);
+	debugC(9, kDebugLoading, "ObList::count: %d:", count);
 
 	for (int i = 0; i < count; i++) {
-		debug(9, "ObList::[%d]", i);
+		debugC(9, kDebugLoading, "ObList::[%d]", i);
 		CObject *t = file.readClass();
 
 		push_back(t);
@@ -61,7 +61,7 @@ bool ObList::load(MfcArchive &file) {
 }
 
 bool ObArray::load(MfcArchive &file) {
-	debug(5, "ObArray::load()");
+	debugC(5, kDebugLoading, "ObArray::load()");
 	int count = file.readCount();
 
 	resize(count);
@@ -76,10 +76,10 @@ bool ObArray::load(MfcArchive &file) {
 }
 
 bool DWordArray::load(MfcArchive &file) {
-	debug(5, "DWordArray::load()");
+	debugC(5, kDebugLoading, "DWordArray::load()");
 	int count = file.readCount();
 
-	debug(9, "DWordArray::count: %d", count);
+	debugC(9, kDebugLoading, "DWordArray::count: %d", count);
 
 	resize(count);
 
@@ -104,7 +104,7 @@ char *MfcArchive::readPascalString(bool twoByte) {
 	tmp = (char *)calloc(len + 1, 1);
 	read(tmp, len);
 
-	debug(9, "readPascalString: %d <%s>", len, transCyrillic((byte *)tmp));
+	debugC(9, kDebugLoading, "readPascalString: %d <%s>", len, transCyrillic((byte *)tmp));
 
 	return tmp;
 }
@@ -128,7 +128,7 @@ MemoryObject::~MemoryObject() {
 }
 
 bool MemoryObject::load(MfcArchive &file) {
-	debug(5, "MemoryObject::load()");
+	debugC(5, kDebugLoading, "MemoryObject::load()");
 	_memfilename = file.readPascalString();
 
 	if (char *p = strchr(_memfilename, '\\')) {
@@ -147,7 +147,7 @@ bool MemoryObject::load(MfcArchive &file) {
 }
 
 void MemoryObject::loadFile(char *filename) {
-	debug(5, "MemoryObject::loadFile(<%s>)", filename);
+	debugC(5, kDebugLoading, "MemoryObject::loadFile(<%s>)", filename);
 
 	if (!*filename)
 		return;
@@ -165,7 +165,7 @@ void MemoryObject::loadFile(char *filename) {
 
 			_dataSize = s->size();
 
-			debug(5, "Loading %s (%d bytes)", filename, _dataSize);
+			debugC(5, kDebugLoading, "Loading %s (%d bytes)", filename, _dataSize);
 			_data = (byte *)calloc(_dataSize, 1);
 			s->read(_data, _dataSize);
 
@@ -194,7 +194,7 @@ byte *MemoryObject::loadData() {
 }
 
 void MemoryObject::freeData() {
-	debug(8, "MemoryObject::freeData(): file: %s", _memfilename);
+	debugC(8, kDebugMemory, "MemoryObject::freeData(): file: %s", _memfilename);
 
 	if (_data)
 		free(_data);
@@ -222,12 +222,12 @@ MemoryObject2::~MemoryObject2() {
 }
 
 bool MemoryObject2::load(MfcArchive &file) {
-	debug(5, "MemoryObject2::load()");
+	debugC(5, kDebugLoading, "MemoryObject2::load()");
 	MemoryObject::load(file);
 
 	_mflags |= 1;
 
-	debug(5, "MemoryObject2::load: <%s>", _memfilename);
+	debugC(5, kDebugLoading, "MemoryObject2::load: <%s>", _memfilename);
 
 	if (_memfilename && *_memfilename) {
 		MemoryObject::loadFile(_memfilename);
@@ -377,15 +377,15 @@ CObject *MfcArchive::parseClass(bool *isCopyReturned) {
 
 	uint obTag = readUint16LE();
 
-	debug(7, "parseClass::obTag = %d (%04x)  at 0x%08x", obTag, obTag, pos() - 2);
+	debugC(7, kDebugLoading, "parseClass::obTag = %d (%04x)  at 0x%08x", obTag, obTag, pos() - 2);
 
 	if (obTag == 0xffff) {
 		int schema = readUint16LE();
 
-		debug(7, "parseClass::schema = %d", schema);
+		debugC(7, kDebugLoading, "parseClass::schema = %d", schema);
 
 		name = readPascalString(true);
-		debug(7, "parseClass::class <%s>", name);
+		debugC(7, kDebugLoading, "parseClass::class <%s>", name);
 
 		if (!_classMap.contains(name)) {
 			error("Unknown class in MfcArchive: <%s>", name);
@@ -393,7 +393,7 @@ CObject *MfcArchive::parseClass(bool *isCopyReturned) {
 
 		objectId = _classMap[name];
 
-		debug(7, "tag: %d 0x%x (%x)", _objectMap.size() - 1, _objectMap.size() - 1, objectId);
+		debugC(7, kDebugLoading, "tag: %d 0x%x (%x)", _objectMap.size() - 1, _objectMap.size() - 1, objectId);
 
 		res = createObject(objectId);
 		_objectMap.push_back(res);
@@ -407,7 +407,7 @@ CObject *MfcArchive::parseClass(bool *isCopyReturned) {
 		if (_objectMap.size() < obTag) {
 			error("Object index too big: %d  at 0x%08x", obTag, pos() - 2);
 		}
-		debug(7, "parseClass::obTag <%s>", lookupObjectId(_objectIdMap[obTag]));
+		debugC(7, kDebugLoading, "parseClass::obTag <%s>", lookupObjectId(_objectIdMap[obTag]));
 
 		res = _objectMap[obTag];
 
@@ -420,7 +420,7 @@ CObject *MfcArchive::parseClass(bool *isCopyReturned) {
 			error("Object index too big: %d  at 0x%08x", obTag, pos() - 2);
 		}
 
-		debug(7, "parseClass::obTag <%s>", lookupObjectId(_objectIdMap[obTag]));
+		debugC(7, kDebugLoading, "parseClass::obTag <%s>", lookupObjectId(_objectIdMap[obTag]));
 
 		objectId = _objectIdMap[obTag];
 
@@ -443,7 +443,7 @@ char *genFileName(int superId, int sceneId, const char *ext) {
 		snprintf(s, 255, "%04d.%s", sceneId, ext);
 	}
 
-	debug(7, "genFileName: %s", s);
+	debugC(7, kDebugLoading, "genFileName: %s", s);
 
 	return s;
 }

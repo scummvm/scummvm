@@ -57,7 +57,7 @@ ExCommand::ExCommand(int16 parentId, int messageKind, int messageNum, int x, int
 }
 
 bool ExCommand::load(MfcArchive &file) {
-	debug(5, "ExCommand::load()");
+	debugC(5, kDebugLoading, "ExCommand::load()");
 
 	_parentId = file.readUint16LE();
 	_messageKind = file.readUint32LE();
@@ -247,7 +247,7 @@ ObjstateCommand::~ObjstateCommand() {
 }
 
 bool ObjstateCommand::load(MfcArchive &file) {
-	debug(5, "ObjStateCommand::load()");
+	debugC(5, kDebugLoading, "ObjStateCommand::load()");
 
 	_objtype = kObjTypeObjstateCommand;
 
@@ -341,7 +341,7 @@ MessageQueue::~MessageQueue() {
 }
 
 bool MessageQueue::load(MfcArchive &file) {
-	debug(5, "MessageQueue::load()");
+	debugC(5, kDebugLoading, "MessageQueue::load()");
 
 	_dataId = file.readUint16LE();
 
