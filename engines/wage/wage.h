@@ -211,6 +211,7 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &description);
 
 private:
+	int getSceneIndex(Scene *scene) const;
 	int saveGame(const Common::String &fileName, const Common::String &descriptionString);
 	Common::String getSavegameFilename(int16 slotId) const;
 

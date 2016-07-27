@@ -18,6 +18,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * MIT License:
+ *
+ * Copyright (c) 2009 Alexei Svitkine, Eugene Sandulenko
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ *
  */
 
 #include "common/file.h"
@@ -47,6 +72,30 @@
 namespace Wage {
 
 static const uint32 AGIflag = MKTAG('W', 'A', 'G', 'E');
+
+//TODO: make sure these are calculated right: (we add flag, description, etc)
+#define VARS_INDEX 0x005E
+#define SCENES_INDEX 0x0232
+
+#define SCENE_SIZE 0x0010
+#define CHR_SIZE 0x0016
+#define OBJ_SIZE 0x0010
+
+#define GET_HEX_OFFSET(ptr, baseOffset, entrySize) ((ptr) == nullptr ? -1 : ((baseOffset) + (entrySize) * (ptr)->_index))
+#define GET_HEX_CHR_OFFSET(ptr) GET_HEX_OFFSET((ptr), chrsHexOffset, CHR_SIZE)
+#define GET_HEX_OBJ_OFFSET(ptr) GET_HEX_OFFSET((ptr), objsHexOffset, OBJ_SIZE)
+#define GET_HEX_SCENE_OFFSET(ptr) ((ptr) == nullptr ? -1 : (SCENES_INDEX + getSceneIndex(_world->_player->_currentScene) * SCENE_SIZE))
+
+int WageEngine::getSceneIndex(Scene *scene) const {
+	assert(scene);
+	Common::Array<Scene *> &orderedScenes = _world->_orderedScenes;
+	for (uint32 i = 0; i < orderedScenes.size(); ++i) {
+		if (orderedScenes[i] == scene) return i;
+	}
+
+	warning("Scene's index not found");
+	return -1;
+}
 
 int WageEngine::saveGame(const Common::String &fileName, const Common::String &descriptionString) {
 	Common::OutSaveFile *out;
@@ -83,37 +132,42 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 	out->writeSint16LE(_world->_objs.size()); //numObjs
 
 	// Hex Offsets
-	out->writeSint32LE(0); //state.getChrsHexOffset()
-	out->writeSint32LE(0); //state.getObjsHexOffset()
+	int chrsHexOffset = SCENES_INDEX + _world->_scenes.size() * SCENE_SIZE; //chrs start after scenes
+	int objsHexOffset = chrsHexOffset + _world->_chrs.size() * CHR_SIZE; //objs start after chrs
+	out->writeSint32LE(chrsHexOffset);
+	out->writeSint32LE(objsHexOffset);
 
 	// Unique 8-byte World Signature
-	out->writeSint32LE(0); //8-byte ints? seriously?
+	out->writeSint32LE(0); //TODO: 8-byte ints? seriously?
+
+	Chr *player = _world->_player;
+	Context &playerContext = player->_context;
 
 	// More Counters
-	out->writeSint32LE(_world->_player->_context._visits); //visitNum
-	out->writeSint32LE(0); //state.getLoopNum()
-	out->writeSint32LE(_world->_player->_context._kills); //killNum
+	out->writeSint32LE(playerContext._visits); //visitNum
+	out->writeSint32LE(0); //TODO: state.getLoopNum()
+	out->writeSint32LE(playerContext._kills); //killNum
 
 	// Hex offset to player character
-	out->writeSint32LE(0); //state.getPlayerHexOffset()
+	out->writeSint32LE(GET_HEX_CHR_OFFSET(player)); //getPlayerHexOffset() == getHexOffsetForChr(player)
 
 	// character in this scene?
-	out->writeSint32LE(0); //state.getPresCharHexOffset()
+	out->writeSint32LE(GET_HEX_CHR_OFFSET(_monster)); //getPresCharHexOffset() == getHexOffsetForChr(monster)
 
 	// Hex offset to current scene
-	out->writeSint32LE(0); //state.getCurSceneHexOffset()
+	out->writeSint32LE(GET_HEX_SCENE_OFFSET(player->_currentScene)); //getCurSceneHexOffset()
 
 	// wearing a helmet?
-	out->writeSint32LE(0); //hex offset for <_world->_player->_armor[Chr::ChrArmorType::HEAD_ARMOR]> //state.getHelmetIndex()
+	out->writeSint32LE(GET_HEX_OBJ_OFFSET(player->_armor[Chr::ChrArmorType::HEAD_ARMOR])); //helmetIndex
 
 	// holding a shield?
-	out->writeSint32LE(0); //hex offset for <_world->_player->_armor[Chr::ChrArmorType::SHIELD_ARMOR]> //state.getShieldIndex()
+	out->writeSint32LE(GET_HEX_OBJ_OFFSET(player->_armor[Chr::ChrArmorType::SHIELD_ARMOR])); //shieldIndex
 
 	// wearing chest armor?
-	out->writeSint32LE(0); //hex offset for <_world->_player->_armor[Chr::ChrArmorType::BODY_ARMOR]> //state.getChestArmIndex()
+	out->writeSint32LE(GET_HEX_OBJ_OFFSET(player->_armor[Chr::ChrArmorType::BODY_ARMOR])); //chestArmIndex
 
 	// wearing spiritual armor?
-	out->writeSint32LE(0); //hex offset for <_world->_player->_armor[Chr::ChrArmorType::MAGIC_ARMOR]> //state.getSprtArmIndex()
+	out->writeSint32LE(GET_HEX_OBJ_OFFSET(player->_armor[Chr::ChrArmorType::MAGIC_ARMOR])); //sprtArmIndex
 
 	// TODO:
 	out->writeSint16LE(0xffff);	// ???? - always FFFF
@@ -122,13 +176,13 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 	out->writeSint16LE(0xffff);	// ???? - always FFFF
 
 	// did a character just escape?
-	out->writeSint32LE(0); //state.getRunCharHexOffset()
+	out->writeSint32LE(GET_HEX_CHR_OFFSET(_running)); //getRunCharHexOffset() == getHexOffsetForChr(running)
 
 	// players experience points
-	out->writeSint32LE(_world->_player->_context._experience);
+	out->writeSint32LE(playerContext._experience);
 
-	out->writeSint16LE(0); //state.getAim()
-	out->writeSint16LE(0); //state.getOpponentAim()
+	out->writeSint16LE(0); //TODO: state.getAim()
+	out->writeSint16LE(0); //TODO: state.getOpponentAim()
 
 	// TODO:
 	out->writeSint16LE(0x0000);	// always 0
@@ -136,33 +190,96 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 	out->writeSint16LE(0x0000);	// always 0
 
 	// Base character stats
-	out->writeByte(_world->_player->_physicalStrength); //state.getBasePhysStr()
-	out->writeByte(_world->_player->_physicalHp); //state.getBasePhysHp()
-	out->writeByte(_world->_player->_naturalArmor); //state.getBasePhysArm()
-	out->writeByte(_world->_player->_physicalAccuracy); //state.getBasePhysAcc()
-	out->writeByte(_world->_player->_spiritualStength); //state.getBaseSprtStr()
-	out->writeByte(_world->_player->_spiritialHp); //state.getBaseSprtHp()
-	out->writeByte(_world->_player->_resistanceToMagic); //state.getBaseSprtArm()
-	out->writeByte(_world->_player->_spiritualAccuracy); //state.getBaseSprtAcc()
-	out->writeByte(_world->_player->_runningSpeed); //state.getBaseRunSpeed()
+	// TODO: are these *base* btw? looks like we don't want to save *current* stats
+	out->writeByte(player->_physicalStrength); //state.getBasePhysStr()
+	out->writeByte(player->_physicalHp); //state.getBasePhysHp()
+	out->writeByte(player->_naturalArmor); //state.getBasePhysArm()
+	out->writeByte(player->_physicalAccuracy); //state.getBasePhysAcc()
+	out->writeByte(player->_spiritualStength); //state.getBaseSprtStr()
+	out->writeByte(player->_spiritialHp); //state.getBaseSprtHp()
+	out->writeByte(player->_resistanceToMagic); //state.getBaseSprtArm()
+	out->writeByte(player->_spiritualAccuracy); //state.getBaseSprtAcc()
+	out->writeByte(player->_runningSpeed); //state.getBaseRunSpeed()
 
 	// TODO:
 	out->writeByte(0x0A);		// ???? - always seems to be 0x0A
 
-	/*
 	// write user vars
-	for (short var : state.getUserVars())
-		out->->writeSint16LE(var);
-
+	for (uint32 i = 0; i < 26 * 9; ++i)
+		out->writeSint16LE(playerContext._userVariables[i]);
+	
 	// write updated info for all scenes
-	out.write(state.getSceneData());
+	Common::Array<Scene *> &orderedScenes = _world->_orderedScenes;
+	for (uint32 i = 0; i < orderedScenes.size(); ++i) {
+		Scene *scene = orderedScenes[i];
+		if (scene != _world->_storageScene) {
+			out->writeSint16LE(0); //TODO: scene.resourceId
+			out->writeSint16LE(scene->_worldY);
+			out->writeSint16LE(scene->_worldX);
+			out->writeByte(scene->_blocked[NORTH] ? 0x01 : 0x00);
+			out->writeByte(scene->_blocked[SOUTH] ? 0x01 : 0x00);
+			out->writeByte(scene->_blocked[EAST] ? 0x01 : 0x00);
+			out->writeByte(scene->_blocked[WEST] ? 0x01 : 0x00);
+			out->writeSint16LE(scene->_soundFrequency);
+			out->writeByte(scene->_soundType);
+			// the following two bytes are currently unknown
+			out->writeByte(0);
+			out->writeByte(0);
+			out->writeByte(scene->_visited ? 0x01 : 0x00);
+		}
+	}
 
 	// write updated info for all characters
-	out.write(state.getChrData());
+	Common::Array<Chr *> &orderedChrs = _world->_orderedChrs;
+	for (uint32 i = 0; i < orderedChrs.size(); ++i) {
+		Chr *chr = orderedChrs[i];
+		out->writeSint16LE(0); //TODO: chr.getResourceID()
+		out->writeSint16LE(0); //TODO: chr->_currentScene.getResourceID()
+		//TODO: here we want to write *current* stats
+		out->writeByte(chr->_physicalStrength);
+		out->writeByte(chr->_physicalHp);
+		out->writeByte(chr->_naturalArmor);
+		out->writeByte(chr->_physicalAccuracy);
+		out->writeByte(chr->_spiritualStength);
+		out->writeByte(chr->_spiritialHp);
+		out->writeByte(chr->_resistanceToMagic);
+		out->writeByte(chr->_spiritualAccuracy);
+		out->writeByte(chr->_runningSpeed);
+		out->writeByte(chr->_rejectsOffers);
+		out->writeByte(chr->_followsOpponent);
+		// bytes 16-20 are unknown
+		out->writeByte(0);
+		out->writeByte(0);
+		out->writeByte(0);
+		out->writeByte(0);
+		out->writeByte(0);
+		out->writeByte(chr->_weaponDamage1);
+		out->writeByte(chr->_weaponDamage2);
+	}
 
 	// write updated info for all objects
-	out.write(state.getObjData());
-	*/
+	Common::Array<Obj *> &orderedObjs = _world->_orderedObjs;
+	for (uint32 i = 0; i < orderedObjs.size(); ++i) {
+		Obj *obj = orderedObjs[i];
+		Scene *location = obj->_currentScene;
+		Chr *owner = obj->_currentOwner;
+
+		out->writeSint16LE(0); //TODO: obj.getResourceID()
+		out->writeSint16LE(0); //TODO: location == nullptr ? 0 : location.getResourceID());
+		out->writeSint16LE(0); //TODO: owner == nullptr ? 0 : owner.getResourceID());
+
+		// bytes 7-9 are unknown (always = 0)
+		out->writeByte(0);
+		out->writeByte(0);
+		out->writeByte(0);
+
+		out->writeByte(obj->_accuracy);
+		out->writeByte(obj->_value);
+		out->writeByte(obj->_type);
+		out->writeByte(obj->_damage);
+		out->writeByte(obj->_attackType);
+		out->writeSint16LE(obj->_numberOfUses);
+	}
 
 	out->finalize();
 	if (out->err()) {
