@@ -36,6 +36,7 @@
 #include "common/rect.h"
 #include "winexe_pe.h"
 #include "file.h"
+#include "script_quotes.h"
 #include "script_responses.h"
 #include "script_ranges.h"
 #include "tag_maps.h"
@@ -52,7 +53,7 @@
  */
 
 #define VERSION_NUMBER 1
-#define HEADER_SIZE 0x740
+#define HEADER_SIZE 0x800
 
 Common::File inputFile, outputFile;
 Common::PEResources res;
@@ -584,6 +585,7 @@ void writeData() {
 
 	writeResponseTree();
 	writeNumbers();
+	writeAllScriptQuotes();
 	writeAllScriptResponses();
 	writeAllScriptRanges();
 	writeAllTagMappings();
