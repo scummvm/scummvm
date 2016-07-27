@@ -96,8 +96,8 @@ ScriptChangedResult LiftbotScript::scriptChanged(TTscriptBase *roomScript, uint 
 	return SCR_1;
 }
 
-bool LiftbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
-		int val, uint tagId, uint remainder) const {
+int LiftbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
+		uint val, uint tagId, uint remainder) {
 	warning("TODO");
 	return 0;
 }

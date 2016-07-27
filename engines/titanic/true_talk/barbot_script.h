@@ -46,6 +46,11 @@ private:
 	bool isState9() const;
 
 	int applySentenceIds(int dialogueId, int v34 = -1);
+
+	/**
+	 * Add a response and optionally set the state
+	 */
+	int setResponse(int dialogueId, int state = -1);
 public:
 	BarbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7);
@@ -65,8 +70,8 @@ public:
 	 */
 	virtual ScriptChangedResult scriptChanged(TTscriptBase *roomScript, uint id);
 
-	virtual bool handleQuote(TTroomScript *roomScript, TTsentence *sentence,
-		int val, uint tagId, uint remainder) const;
+	virtual int handleQuote(TTroomScript *roomScript, TTsentence *sentence,
+		uint val, uint tagId, uint remainder);
 	
 	virtual int proc21(int v1, int v2, int v3);
 	virtual int proc22(int id) const;

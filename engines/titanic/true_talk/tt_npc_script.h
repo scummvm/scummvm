@@ -240,8 +240,8 @@ public:
 	 */
 	virtual bool handleWord(uint id) const;
 
-	virtual bool handleQuote(TTroomScript *roomScript, TTsentence *sentence,
-		int val, uint tagId, uint remainder) const;
+	virtual int handleQuote(TTroomScript *roomScript, TTsentence *sentence,
+		uint val, uint tagId, uint remainder);
 
 	/**
 	 * Given an Id for a previously registered set of random number values,

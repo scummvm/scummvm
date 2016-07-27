@@ -266,9 +266,9 @@ bool TTnpcScript::handleWord(uint id) const {
 	return true;
 }
 
-bool TTnpcScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
-		int val, uint tagId, uint remainder) const {
-	return true;
+int TTnpcScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
+		uint val, uint tagId, uint remainder) {
+	return 1;
 }
 
 uint TTnpcScript::getRangeValue(uint id) {

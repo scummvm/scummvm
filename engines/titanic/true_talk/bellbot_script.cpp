@@ -70,8 +70,8 @@ int BellbotScript::proc15() const {
 	return 0;
 }
 
-bool BellbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
-		int val, uint tagId, uint remainder) const {
+int BellbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
+		uint val, uint tagId, uint remainder) {
 	switch (tagId) {
 	case MKTAG('A', 'D', 'V', 'T'):
 	case MKTAG('A', 'R', 'T', 'I'):

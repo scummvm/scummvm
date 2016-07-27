@@ -125,6 +125,12 @@ public:
 	void load(const char *name);
 };
 
+struct TThandleQuoteEntry {
+	uint _index;
+	uint _tagId;
+	uint _dialogueId;
+};
+
 } // End of namespace Titanic
 
 #endif /* TITANIC_TT_NPC_SCRIPT_H */

@@ -52,8 +52,8 @@ public:
 	 */
 	virtual ScriptChangedResult scriptChanged(TTscriptBase *roomScript, uint id);
 
-	virtual bool handleQuote(TTroomScript *roomScript, TTsentence *sentence,
-		int val, uint tagId, uint remainder) const;
+	virtual int handleQuote(TTroomScript *roomScript, TTsentence *sentence,
+		uint val, uint tagId, uint remainder);
 
 	virtual int proc21(int v1, int v2, int v3);
 	virtual int proc22(int id) const;
