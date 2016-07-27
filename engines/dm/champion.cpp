@@ -147,6 +147,7 @@ ChampionMan::ChampionMan(DMEngine *vm) : _vm(vm) {
 	_g303_partyDead = false;
 	_g414_leaderHandObject = Thing(0);
 	_g411_leaderIndex = kM1_ChampionNone;
+	_g299_candidateChampionOrdinal = 0;
 	_g300_partyIsSleeping = false;
 	_g506_actingChampionOrdinal = 0;
 	_g413_leaderHandObjectIconIndex = (IconIndice)0;
