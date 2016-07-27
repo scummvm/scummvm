@@ -25,112 +25,15 @@
 
 #include "titanic/support/simple_file.h"
 #include "titanic/true_talk/tt_script_base.h"
+#include "titanic/true_talk/script_support.h"
 
 namespace Titanic {
 
 #define DIALS_ARRAY_COUNT 10
 
-enum ScriptArrayFlag { SF_NONE = 0, SF_RANDOM = 1, SF_SEQUENTIAL = 2 };
-
 class CGameManager;
 class CPetControl;
 class TTroomScript;
-class TTsentence;
-struct TTsentenceEntry;
-
-struct TTnpcScriptResponse {
-	uint _tag;
-	uint _values[4];
-
-	/**
-	 * Returns the size of the values list plus 1
-	 */
-	int size() const;
-};
-
-struct TTscriptRange {
-	uint _id;
-	Common::Array<uint> _values;
-	TTscriptRange *_nextP;
-	uint _priorIndex;
-	ScriptArrayFlag _mode;
-
-	TTscriptRange() : _id(0), _nextP(nullptr),
-		_priorIndex(0), _mode(SF_NONE) {}
-	TTscriptRange(uint id, const Common::Array<uint> &values, bool isRandom, 
-		bool isSequential);
-};
-
-
-struct TTsentenceEntry {
-	int _field0;
-	int _field4;
-	CString _string8;
-	int _fieldC;
-	CString _string10;
-	CString _string14;
-	CString _string18;
-	CString _string1C;
-	int _field20;
-	CString _string24;
-	int _field28;
-	int _field2C;
-	int _field30;
-
-	TTsentenceEntry() : _field0(0), _field4(0), _fieldC(0),
-		_field20(0), _field28(0), _field2C(0), _field30(0) {}
-
-	/**
-	* Load an entry from the passed stream, and returns true
-	* if an entry was successfully loaded
-	*/
-	bool load(Common::SeekableReadStream *s);
-};
-
-class TTsentenceEntries : public Common::Array<TTsentenceEntry> {
-public:
-	/**
-	* Load a list of entries from the specified resource
-	*/
-	void load(const CString &resName);
-};
-
-struct TTscriptMapping {
-	uint _id;
-	uint _values[8];
-
-	TTscriptMapping();
-};
-
-class TTscriptMappings : public Common::Array<TTscriptMapping> {
-public:
-	int _valuesPerMapping;
-
-	void load(const char *name, int valuesPerMapping);
-};
-
-struct TTtagMapping {
-	uint _src, _dest;
-	TTtagMapping() : _src(0), _dest(0) {}
-	TTtagMapping(uint src, uint dest) : _src(src), _dest(dest) {}
-};
-
-class TTtagMappings : public Common::Array<TTtagMapping> {
-public:
-	void load(const char *name);
-};
-
-struct TTwordEntry {
-	uint _id;
-	CString _text;
-
-	TTwordEntry() : _id(0) {}
-};
-
-class TTwordEntries : public Common::Array<TTwordEntry> {
-public:
-	void load(const char *name);
-};
 
 class TTnpcScriptBase : public TTscriptBase {
 protected:

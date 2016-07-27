@@ -481,6 +481,7 @@ MODULE_OBJS := \
 	true_talk/succubus_script.o \
 	true_talk/title_engine.o \
 	true_talk/script_handler.o \
+	true_talk/script_support.o \
 	true_talk/true_talk_manager.o \
 	true_talk/tt_action.o \
 	true_talk/tt_adj.o \
