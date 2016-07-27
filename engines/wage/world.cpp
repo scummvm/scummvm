@@ -217,6 +217,8 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 			delete res;
 		}
+
+		scene->_resourceId = *iter;
 		addScene(scene);
 	}
 
@@ -226,7 +228,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = resMan->getResource(MKTAG('A','O','B','J'), *iter);
-		addObj(new Obj(resMan->getResName(MKTAG('A','O','B','J'), *iter), res));
+		addObj(new Obj(resMan->getResName(MKTAG('A','O','B','J'), *iter), res, *iter));
 	}
 
 	// Load Characters
@@ -236,7 +238,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = resMan->getResource(MKTAG('A','C','H','R'), *iter);
 		Chr *chr = new Chr(resMan->getResName(MKTAG('A','C','H','R'), *iter), res);
-
+		chr->_resourceId = *iter;
 		addChr(chr);
 		// TODO: What if there's more than one player character?
 		if (chr->_playerCharacter)

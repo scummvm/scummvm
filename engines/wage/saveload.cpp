@@ -212,7 +212,7 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 	for (uint32 i = 0; i < orderedScenes.size(); ++i) {
 		Scene *scene = orderedScenes[i];
 		if (scene != _world->_storageScene) {
-			out->writeSint16LE(0); //TODO: scene.resourceId
+			out->writeSint16LE(scene->_resourceId);
 			out->writeSint16LE(scene->_worldY);
 			out->writeSint16LE(scene->_worldX);
 			out->writeByte(scene->_blocked[NORTH] ? 0x01 : 0x00);
@@ -232,8 +232,8 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 	Common::Array<Chr *> &orderedChrs = _world->_orderedChrs;
 	for (uint32 i = 0; i < orderedChrs.size(); ++i) {
 		Chr *chr = orderedChrs[i];
-		out->writeSint16LE(0); //TODO: chr.getResourceID()
-		out->writeSint16LE(0); //TODO: chr->_currentScene.getResourceID()
+		out->writeSint16LE(chr->_resourceId);
+		out->writeSint16LE(chr->_currentScene->_resourceId);
 		Context &chrContext = chr->_context;
 		out->writeByte(chrContext._statVariables[PHYS_STR_CUR]);
 		out->writeByte(chrContext._statVariables[PHYS_HIT_CUR]);
@@ -263,9 +263,9 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 		Scene *location = obj->_currentScene;
 		Chr *owner = obj->_currentOwner;
 
-		out->writeSint16LE(0); //TODO: obj.getResourceID()
-		out->writeSint16LE(0); //TODO: location == nullptr ? 0 : location.getResourceID());
-		out->writeSint16LE(0); //TODO: owner == nullptr ? 0 : owner.getResourceID());
+		out->writeSint16LE(obj->_resourceId);
+		out->writeSint16LE(location == nullptr ? 0 : location->_resourceId);
+		out->writeSint16LE(owner == nullptr ? 0 : owner->_resourceId);
 
 		// bytes 7-9 are unknown (always = 0)
 		out->writeByte(0);

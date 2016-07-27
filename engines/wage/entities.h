@@ -152,6 +152,7 @@ public:
 	Chr(Common::String name, Common::SeekableReadStream *data);
 
 	int _index;
+	int _resourceId;
 	Common::String _initialScene;
 	int _gender;
 	bool _nameProperNoun;
@@ -229,7 +230,7 @@ public:
 class Obj : public Designed {
 public:
 	Obj();
-	Obj(Common::String name, Common::SeekableReadStream *data);
+	Obj(Common::String name, Common::SeekableReadStream *data, int resourceId);
 	~Obj();
 
 	enum ObjectType {
@@ -256,6 +257,7 @@ public:
 
 public:
 	int _index;
+	int _resourceId;
 	bool _namePlural;
 	uint _value;
 	int _attackType;
@@ -300,6 +302,8 @@ public:
 		PERIODIC = 0,
 		RANDOM = 1
 	};
+
+	int _resourceId;
 
 	Script *_script;
 	Common::String _text;
