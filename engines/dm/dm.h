@@ -105,6 +105,7 @@ public:
 	static const Thing _party; // @ C0xFFFF_THING_PARTY  
 
 	Thing() : _data(0) {}
+	Thing(const Thing &other) { set(other._data); }
 	explicit Thing(uint16 d) { set(d); }
 
 	void set(uint16 d) {

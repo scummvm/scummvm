@@ -2023,12 +2023,6 @@ void DisplayMan::f124_drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 							  g106_BoxThievesEye_ViewPortVisibleArea._y1,
 							  k112_byteWidthViewport, 48, kM1_ColorNoTransparency, 136, 95);
 			bitmap = f489_getNativeBitmapOrGraphic(k41_holeInWall_GraphicIndice);
- /* BUG0_74 Creatures are drawn with wrong colors when viewed through a wall with the 'Thieve's Eye' spell. The 'hole in wall'
- graphic is applied to the visible area with transparency on color 10. However the visible area may contain creature graphics
- that use color 9. When the bitmap is drawn below with transparency on color 9 then the creature graphic is alterated: pixels
- using color 9 are transparent and the background wall is visible through the creature graphic (grey/white pixels).
- To fix this bug, the 'hole in wall' graphic should be applied to the wall graphic first (in a temporary buffer) and
- then the wall with the hole should be drawn over the visible area */
 			f132_blitToBitmap(bitmap, f492_getDerivedBitmap(k1_DerivedBitmapThievesEyeVisibleArea),
 							  g107_BoxThievesEyeVisibleArea,
 							  0, 0, 48, 48, k10_ColorFlesh, 95, 95);
@@ -2451,7 +2445,7 @@ void DisplayMan::f93_applyCreatureReplColors(int replacedColor, int replacementC
 
 void DisplayMan::f104_drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &f) {
 	if (f._srcByteWidth)
-		f132_blitToBitmap(_bitmaps[nativeIndex], _g296_bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth, k112_byteWidthViewport, k10_ColorFlesh);
+		f132_blitToBitmap(f489_getNativeBitmapOrGraphic(nativeIndex), _g296_bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth, k112_byteWidthViewport, k10_ColorFlesh);
 }
 
 void DisplayMan::f105_drawFloorPitOrStairsBitmapFlippedHorizontally(uint16 nativeIndex, Frame &f) {
@@ -2645,10 +2639,7 @@ bool DisplayMan::f107_isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWall
 		f132_blitToBitmap(AL0091_puc_Bitmap, _g296_bitmapViewport,
 						  *(Box *)AL0090_puc_CoordinateSet, AL0089_i_X, 0,
 						  AL0090_puc_CoordinateSet[4], k112_byteWidthViewport, k10_ColorFlesh, AL0090_puc_CoordinateSet[5], k136_heightViewport);
-/* BUG0_05 A champion portrait sensor on a wall square is visible on all sides of the wall.
-If there is another sensor with a wall ornament on one side of the wall then the champion portrait is drawn over that wall ornament */
 		if ((viewWallIndex == k12_ViewWall_D1C_FRONT) && _g289_championPortraitOrdinal--) {
-/* A portrait is 32x29 pixels */
 			f132_blitToBitmap(f489_getNativeBitmapOrGraphic(k26_ChampionPortraitsIndice),
 							  _g296_bitmapViewport, g109_BoxChampionPortraitOnWall,
 							  (_g289_championPortraitOrdinal & 0x0007) << 5,
