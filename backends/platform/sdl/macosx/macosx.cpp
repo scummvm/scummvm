@@ -33,6 +33,7 @@
 #include "backends/platform/sdl/macosx/macosx.h"
 #include "backends/updates/macosx/macosx-updates.h"
 #include "backends/taskbar/macosx/macosx-taskbar.h"
+#include "backends/platform/sdl/macosx/macosx_wrapper.h"
 
 #include "common/archive.h"
 #include "common/config-manager.h"
@@ -106,7 +107,7 @@ void OSystem_MacOSX::addSysArchivesToSearchSet(Common::SearchSet &s, int priorit
 }
 
 bool OSystem_MacOSX::hasFeature(Feature f) {
-	if (f == kFeatureDisplayLogFile)
+	if (f == kFeatureDisplayLogFile || f == kFeatureClipboardSupport)
 		return true;
 	return OSystem_POSIX::hasFeature(f);
 }
@@ -122,6 +123,14 @@ bool OSystem_MacOSX::displayLogFile() {
     CFRelease(url);
 
 	return err != noErr;
+}
+
+bool OSystem_MacOSX::hasTextInClipboard() {
+	return hasTextInClipboardMacOSX();
+}
+
+Common::String OSystem_MacOSX::getTextFromClipboard() {
+	return getTextFromClipboardMacOSX();
 }
 
 Common::String OSystem_MacOSX::getSystemLanguage() const {

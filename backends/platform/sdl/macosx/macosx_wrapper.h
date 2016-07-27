@@ -20,32 +20,12 @@
  *
  */
 
-#ifndef PLATFORM_SDL_MACOSX_H
-#define PLATFORM_SDL_MACOSX_H
+#ifndef PLATFORM_SDL_MACOSX_WRAPPER_H
+#define PLATFORM_SDL_MACOSX_WRAPPER_H
 
-#include "backends/platform/sdl/posix/posix.h"
+#include <common/str.h>
 
-class OSystem_MacOSX : public OSystem_POSIX {
-public:
-	OSystem_MacOSX();
-
-	virtual bool hasFeature(Feature f);
-
-	virtual bool displayLogFile();
-
-	virtual bool hasTextInClipboard();
-	virtual Common::String getTextFromClipboard();
-
-	virtual Common::String getSystemLanguage() const;
-
-	virtual void init();
-	virtual void initBackend();
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
-
-protected:
-	// Override createAudioCDManager() to get our Mac-specific
-	// version.
-	virtual AudioCDManager *createAudioCDManager();
-};
+bool hasTextInClipboardMacOSX();
+Common::String getTextFromClipboardMacOSX();
 
 #endif

@@ -14,6 +14,7 @@ ifdef MACOSX
 MODULE_OBJS += \
 	macosx/macosx-main.o \
 	macosx/macosx.o \
+	macosx/macosx_wrapper.o \
 	macosx/appmenu_osx.o
 endif
 
