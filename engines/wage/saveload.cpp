@@ -145,7 +145,7 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 
 	// More Counters
 	out->writeSint32LE(playerContext._visits); //visitNum
-	out->writeSint32LE(0); //TODO: state.getLoopNum()
+	out->writeSint32LE(_loopCount); //loopNum
 	out->writeSint32LE(playerContext._kills); //killNum
 
 	// Hex offset to player character
@@ -181,8 +181,8 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 	// players experience points
 	out->writeSint32LE(playerContext._experience);
 
-	out->writeSint16LE(0); //TODO: state.getAim()
-	out->writeSint16LE(0); //TODO: state.getOpponentAim()
+	out->writeSint16LE(_aim); //aim
+	out->writeSint16LE(_opponentAim); //opponentAim
 
 	// TODO:
 	out->writeSint16LE(0x0000);	// always 0
@@ -190,16 +190,15 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 	out->writeSint16LE(0x0000);	// always 0
 
 	// Base character stats
-	// TODO: are these *base* btw? looks like we don't want to save *current* stats
-	out->writeByte(player->_physicalStrength); //state.getBasePhysStr()
-	out->writeByte(player->_physicalHp); //state.getBasePhysHp()
-	out->writeByte(player->_naturalArmor); //state.getBasePhysArm()
-	out->writeByte(player->_physicalAccuracy); //state.getBasePhysAcc()
-	out->writeByte(player->_spiritualStength); //state.getBaseSprtStr()
-	out->writeByte(player->_spiritialHp); //state.getBaseSprtHp()
-	out->writeByte(player->_resistanceToMagic); //state.getBaseSprtArm()
-	out->writeByte(player->_spiritualAccuracy); //state.getBaseSprtAcc()
-	out->writeByte(player->_runningSpeed); //state.getBaseRunSpeed()
+	out->writeByte(playerContext._statVariables[PHYS_STR_BAS]); //state.getBasePhysStr()
+	out->writeByte(playerContext._statVariables[PHYS_HIT_BAS]); //state.getBasePhysHp()
+	out->writeByte(playerContext._statVariables[PHYS_ARM_BAS]); //state.getBasePhysArm()
+	out->writeByte(playerContext._statVariables[PHYS_ACC_BAS]); //state.getBasePhysAcc()
+	out->writeByte(playerContext._statVariables[SPIR_STR_BAS]); //state.getBaseSprtStr()
+	out->writeByte(playerContext._statVariables[SPIR_HIT_BAS]); //state.getBaseSprtHp()
+	out->writeByte(playerContext._statVariables[SPIR_ARM_BAS]); //state.getBaseSprtArm()
+	out->writeByte(playerContext._statVariables[SPIR_ACC_BAS]); //state.getBaseSprtAcc()
+	out->writeByte(playerContext._statVariables[PHYS_SPE_BAS]); //state.getBaseRunSpeed()
 
 	// TODO:
 	out->writeByte(0x0A);		// ???? - always seems to be 0x0A
@@ -235,16 +234,16 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 		Chr *chr = orderedChrs[i];
 		out->writeSint16LE(0); //TODO: chr.getResourceID()
 		out->writeSint16LE(0); //TODO: chr->_currentScene.getResourceID()
-		//TODO: here we want to write *current* stats
-		out->writeByte(chr->_physicalStrength);
-		out->writeByte(chr->_physicalHp);
-		out->writeByte(chr->_naturalArmor);
-		out->writeByte(chr->_physicalAccuracy);
-		out->writeByte(chr->_spiritualStength);
-		out->writeByte(chr->_spiritialHp);
-		out->writeByte(chr->_resistanceToMagic);
-		out->writeByte(chr->_spiritualAccuracy);
-		out->writeByte(chr->_runningSpeed);
+		Context &chrContext = chr->_context;
+		out->writeByte(chrContext._statVariables[PHYS_STR_CUR]);
+		out->writeByte(chrContext._statVariables[PHYS_HIT_CUR]);
+		out->writeByte(chrContext._statVariables[PHYS_ARM_CUR]);
+		out->writeByte(chrContext._statVariables[PHYS_ACC_CUR]);
+		out->writeByte(chrContext._statVariables[SPIR_STR_CUR]);
+		out->writeByte(chrContext._statVariables[SPIR_HIT_CUR]);
+		out->writeByte(chrContext._statVariables[SPIR_ARM_CUR]);
+		out->writeByte(chrContext._statVariables[SPIR_ACC_CUR]);
+		out->writeByte(chrContext._statVariables[PHYS_SPE_CUR]);
 		out->writeByte(chr->_rejectsOffers);
 		out->writeByte(chr->_followsOpponent);
 		// bytes 16-20 are unknown
