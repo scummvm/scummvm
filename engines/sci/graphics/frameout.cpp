@@ -1143,6 +1143,13 @@ void GfxFrameout::showBits() {
 
 		byte *sourceBuffer = (byte *)_currentBuffer.getPixels() + rounded.top * _currentBuffer.screenWidth + rounded.left;
 
+		// TODO: Sometimes transition screen items generate zero-dimension
+		// show rectangles. Is this a bug?
+		if (rounded.width() == 0 || rounded.height() == 0) {
+			warning("Zero-dimension show rectangle ignored");
+			continue;
+		}
+
 		g_system->copyRectToScreen(sourceBuffer, _currentBuffer.screenWidth, rounded.left, rounded.top, rounded.width(), rounded.height());
 	}
 
