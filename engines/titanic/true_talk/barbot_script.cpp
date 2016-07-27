@@ -1042,7 +1042,7 @@ int BarbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 					rangeLimit = MAX(rangeLimit - 20, 20);
 				}
 
-				dialogueId = (((int)remainder + 25) % 100) > rangeLimit ? 221376 : 221375;
+				dialogueId = (((int)remainder + 25) % 100) >= rangeLimit ? 221376 : 221375;
 			}
 
 			addResponse(getDialogueId(dialogueId));
