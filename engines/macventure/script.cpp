@@ -33,7 +33,7 @@ ScriptEngine::ScriptEngine(MacVentureEngine * engine, World * world) {
 	_engine = engine;
 	_world = world;
 	// HACK
-	_scripts = new Container("Shadowgate II/Shadow Filter");
+	_scripts = new Container(_engine->getFilePath(kFilterPathID));
 }
 
 ScriptEngine::~ScriptEngine() {

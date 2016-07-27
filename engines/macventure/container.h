@@ -26,6 +26,7 @@
 #include "macventure/macventure.h"
 
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/bitstream.h"
 
 namespace MacVenture {
@@ -38,20 +39,23 @@ struct ItemGroup {
 
 typedef uint32 ContainerHeader;
 
-class Container {	
+class Container {
 
 public:
-	Container(const char *filename) {
-		_filename = Common::String(filename);
+	Container(Common::String filename) {
+		_filename = filename;
 
-		if (!_file.open(filename))
-			error("Could not open %s", filename);
+		FSNode node = FSDirectory(".");
+		debug(node.getDisplayName().c_str());
+
+		if (!_file.open(_filename))
+			error("Could not open %s", _filename.c_str());
 
 		_res = _file.readStream(_file.size());
 		_header = _res->readUint32BE();
 		_simplified = false;
-		
-		if (!(_header & 0x80000000)) { 
+
+		if (!(_header & 0x80000000)) {
 			// Is simplified container
 			_simplified = true;
 			int dataLen = _res->size() - sizeof(_header);
@@ -75,7 +79,7 @@ public:
 
 			for (uint i = 0; i < numGroups; ++i) {
 				ItemGroup group;
-				
+
 				// Place myself in the correct position to read group
 				_res->seek(_header + (i * 6) + 0x30, SEEK_SET);
 				byte b1, b2, b3;
@@ -91,10 +95,10 @@ public:
 
 				// Place the bit reader in the correct position
 				// group.bitOffset indicates the offset from the start of the subHeader
-				_res->seek(_header + (group.bitOffset >> 3), SEEK_SET);		
+				_res->seek(_header + (group.bitOffset >> 3), SEEK_SET);
 				uint32 bits = group.bitOffset & 7;
 
-				for (uint j = 0; j < 64; ++j) {					
+				for (uint j = 0; j < 64; ++j) {
 					uint32 length = 0;
 					//debug("reading mask from address %x", _res->pos());
 					uint32 mask = _res->readUint32BE();
@@ -107,8 +111,8 @@ public:
 					for (x = 0; x < 16; x++) {
 						if (_huff[x] > mask) break;
 					}
-					
-					// I will opt to copy the code from webventure, 
+
+					// I will opt to copy the code from webventure,
 					// But according to the docs, this call should suffice:
 					// length = bitStream.getBits(_lens[x]);
 					// The problem is that _lens[] usually contains values larger
@@ -131,19 +135,19 @@ public:
 						else length >>= (32 - bitSize) - bits;
 						length &= (1 << bitSize) - 1;
 						length |= 1 << bitSize;
-						bits += bitSize;	
+						bits += bitSize;
 						if (bits & 0x10) {
 							bits &= 0xF;
 							_res->seek(2, SEEK_CUR);
 						}
-					}		
+					}
 
 					group.lengths[j] = length;
 					debug(11, "Load legth of object %d:%d is %d", i, j, length);
 				}
-				
-				_groups.push_back(group);				
-			}			 
+
+				_groups.push_back(group);
+			}
 		}
 	}
 
@@ -173,12 +177,12 @@ public:
 	/**
 	* getItemByteSize should be called before this one
 	*/
-	Common::SeekableReadStream *getItem(uint32 id) {	
+	Common::SeekableReadStream *getItem(uint32 id) {
 		if (_simplified) {
 			_res->seek((id * _lenObjs) + sizeof(_header), SEEK_SET);
 		} else {
 			uint32 groupID = (id >> 6);
-			uint32 objectIndex = id & 0x3f; // Index within the group		
+			uint32 objectIndex = id & 0x3f; // Index within the group
 
 			uint32 offset = 0;
 			for (uint i = 0; i < objectIndex; i++) {
@@ -192,24 +196,24 @@ public:
 		Common::SeekableReadStream *res = _res->readStream(getItemByteSize(id) * 2);
 		return res;
 	}
-	
+
 protected:
 
 	bool _simplified;
-	
+
 	uint _lenObjs; // In the case of simple container, lenght of an object
 	uint _numObjs;
 
 	ContainerHeader _header;
-	
+
 	uint16 _huff[15];   // huffman masks
 	uint8  _lens[16];   // huffman lengths
 	Common::Array<ItemGroup> _groups;
-	
+
 	Common::String _filename;
 	Common::File _file;
 	Common::SeekableReadStream *_res;
-	
+
 
 };
 

@@ -20,10 +20,10 @@ World::World(MacVentureEngine *engine, Common::MacResManager *resMan)  {
 	Common::SeekableReadStream *saveGameRes = saveGameFile.readStream(saveGameFile.size());
 
 	_saveGame = new SaveGame(_engine, saveGameRes);
-	_objectConstants = new Container(_engine->getFilePath(kObjectPathID).c_str());
+	_objectConstants = new Container(_engine->getFilePath(kObjectPathID));
 	calculateObjectRelations();
 
-	_gameText = new Container(_engine->getFilePath(kTextPathID).c_str());
+	_gameText = new Container(_engine->getFilePath(kTextPathID));
 
 	delete saveGameRes;
 	saveGameFile.close();

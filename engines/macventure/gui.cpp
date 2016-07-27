@@ -368,7 +368,7 @@ void Gui::loadBorder(Graphics::MacWindow *target, Common::String filename, bool 
 }
 
 void Gui::loadGraphics() {
-	_graphics = new Container(_engine->getFilePath(kGraphicPathID).c_str());
+	_graphics = new Container(_engine->getFilePath(kGraphicPathID));
 }
 
 bool Gui::loadMenus() {
