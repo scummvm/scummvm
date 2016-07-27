@@ -302,6 +302,190 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 	return result;
 }
 
+int WageEngine::loadGame(int slotId) {
+	Common::InSaveFile *data;
+	Common::String fileName = getSavegameFilename(slotId);
+
+	debug(9, "WageEngine::loadGame(%d)", slotId);
+	if (!(data = _saveFileMan->openForLoading(fileName))) {
+		warning("Can't open file '%s', game not loaded", fileName.c_str());
+		return -1;
+	} else {
+		debug(9, "Successfully opened %s for reading", fileName.c_str());
+	}
+
+	// Counters
+	int numScenes = data->readSint16LE();
+	int numChars = data->readSint16LE();
+	int numObjs = data->readSint16LE();
+
+	// Hex Offsets
+	int chrsHexOffset = data->readSint32LE();
+	int objsHexOffset = data->readSint32LE();
+
+	// Unique 8-byte World Signature
+	_world->_signature = data->readSint32LE();
+
+	//Chr *player = _world->_player;
+	//Context &playerContext = player->_context;
+
+	// More Counters
+	int visitNum = data->readSint32LE(); //visitNum @ playerContext._visits
+	_loopCount = data->readSint32LE(); //loopNum
+	int killNum = data->readSint32LE(); //killNum @ playerContext._kills
+
+	// Hex offset to player character
+	int playerOffset = data->readSint32LE();
+
+	// character in this scene?
+	int presCharOffset = data->readSint32LE();
+
+	// Hex offset to current scene
+	int currentSceneOffset = data->readSint32LE();
+
+	// wearing a helmet?
+	int helmetOffset = data->readSint32LE(); //helmetIndex @ player->_armor[Chr::ChrArmorType::HEAD_ARMOR]
+
+	// holding a shield?
+	int shieldOffset = data->readSint32LE(); //shieldIndex @ player->_armor[Chr::ChrArmorType::SHIELD_ARMOR]
+
+	// wearing chest armor?
+	int armorOffset = data->readSint32LE(); //chestArmIndex @ player->_armor[Chr::ChrArmorType::BODY_ARMOR]
+
+	// wearing spiritual armor?
+	int spiritualArmorOffset = data->readSint32LE(); //sprtArmIndex @ player->_armor[Chr::ChrArmorType::MAGIC_ARMOR]
+
+	data->readSint16LE();	// FFFF
+	data->readSint16LE();	// FFFF
+	data->readSint16LE();	// FFFF
+	data->readSint16LE();	// FFFF
+
+	int runCharOffset = data->readSint32LE();
+
+	// players experience points
+	int exp = data->readSint32LE(); // @ playerContext._experience
+
+	_aim = data->readSint16LE(); //aim
+	_opponentAim = data->readSint16LE(); //opponentAim
+
+	data->readSint16LE(); // 0000
+	data->readSint16LE(); // 0000
+	data->readSint16LE(); // 0000
+
+	// Base character stats
+	int basePhysStr = data->readByte(); // @ playerContext._statVariables[PHYS_STR_BAS]
+	int basePhysHp = data->readByte(); // @ playerContext._statVariables[PHYS_HIT_BAS]
+	int basePhysArm = data->readByte(); // @ playerContext._statVariables[PHYS_ARM_BAS]
+	int basePhysAcc = data->readByte(); // @ playerContext._statVariables[PHYS_ACC_BAS]
+	int baseSprtStr = data->readByte(); // @ playerContext._statVariables[SPIR_STR_BAS]
+	int baseSprtHp = data->readByte(); // @ playerContext._statVariables[SPIR_HIT_BAS]
+	int baseSprtArm = data->readByte(); // @ playerContext._statVariables[SPIR_ARM_BAS]
+	int baseSprtAcc = data->readByte(); // @ playerContext._statVariables[SPIR_ACC_BAS]
+	int baseRunSpeed = data->readByte(); // @ playerContext._statVariables[PHYS_SPE_BAS]
+
+	data->readByte(); // 0x0A?
+
+	// write user vars
+	for (uint32 i = 0; i < 26 * 9; ++i)
+		data->readSint16LE(); // @ playerContext._userVariables[i]
+
+	// write updated info for all scenes	
+	for (uint32 i = 0; i < numScenes; ++i) {		
+		data->readSint16LE(); // @ scene->_resourceId
+		data->readSint16LE(); // @ scene->_worldY
+		data->readSint16LE(); // @ scene->_worldX
+		data->readByte(); // @ scene->_blocked[NORTH]
+		data->readByte(); // @ scene->_blocked[SOUTH]
+		data->readByte(); // @ scene->_blocked[EAST]
+		data->readByte(); // @ scene->_blocked[WEST]
+		data->readSint16LE(); // @ scene->_soundFrequency
+		data->readByte(); // @ scene->_soundType
+		// the following two bytes are currently unknown
+		data->readByte();
+		data->readByte();
+		data->readByte(); // @ scene->_visited
+	}
+
+	// write updated info for all characters
+	Common::Array<Chr *> &orderedChrs = _world->_orderedChrs;
+	for (uint32 i = 0; i < orderedChrs.size(); ++i) {
+		int resourceId = data->readSint16LE();
+		int sceneResourceId = data->readSint16LE();
+
+		int strength = data->readByte(); // @ chrContext._statVariables[PHYS_STR_CUR]
+		int hp = data->readByte(); // @ chrContext._statVariables[PHYS_HIT_CUR]
+		int armor = data->readByte(); // @ chrContext._statVariables[PHYS_ARM_CUR]
+		int accuracy = data->readByte(); // @ chrContext._statVariables[PHYS_ACC_CUR]
+		int spirStrength = data->readByte(); // @ chrContext._statVariables[SPIR_STR_CUR]
+		int spirHp = data->readByte(); // @ chrContext._statVariables[SPIR_HIT_CUR]
+		int spirArmor = data->readByte(); // @ chrContext._statVariables[SPIR_ARM_CUR]
+		int spirAccuracy = data->readByte(); // @ chrContext._statVariables[SPIR_ACC_CUR]
+		int speed = data->readByte(); // @ chrContext._statVariables[PHYS_SPE_CUR]
+		int rejectsOffers = data->readByte(); // @ chr->_rejectsOffers
+		int followsOpponent = data->readByte(); // @ chr->_followsOpponent
+
+		// bytes 16-20 are unknown
+		data->readByte();
+		data->readByte();
+		data->readByte();
+		data->readByte();
+		data->readByte();
+
+		data->readByte(); // @ chr->_weaponDamage1
+		data->readByte(); // @ chr->_weaponDamage2
+	}
+
+	// write updated info for all objects
+	for (uint32 i = 0; i < numObjs; ++i) {
+		int resourceId = data->readSint16LE();
+		int locationResourceId = data->readSint16LE();
+		int ownerResourceId = data->readSint16LE();
+
+		// bytes 7-9 are unknown (always = 0)
+		data->readByte();
+		data->readByte();
+		data->readByte();
+
+		data->readByte(); // @ obj->_accuracy
+		data->readByte(); // @ obj->_value
+		data->readByte(); // @ obj->_type
+		data->readByte(); // @ obj->_damage
+		data->readByte(); // @ obj->_attackType
+		data->readSint16LE(); // @ obj->_numberOfUses
+	}
+
+	// the following is appended by ScummVM
+	if (data->pos() < data->size()) {
+		int scummvmWageFlag = data->readUint32BE();
+
+		if (scummvmWageFlag != WAGEflag) {
+			warning("Extra bytes after original save's information found, but that's not ScummVM's");
+			delete data;
+			return 0;
+		}
+
+		// Write description of saved game, limited to WAGE_SAVEDGAME_DESCRIPTION_LEN characters + terminating NUL
+		const int WAGE_SAVEDGAME_DESCRIPTION_LEN = 127;
+		char description[WAGE_SAVEDGAME_DESCRIPTION_LEN + 1];
+		data->read(description, 128);
+		if (description[WAGE_SAVEDGAME_DESCRIPTION_LEN] != 0) {
+			warning("Description's last byte is not '\0'");
+			description[WAGE_SAVEDGAME_DESCRIPTION_LEN] = 0;
+		}
+
+		int version = data->readByte();
+		if (version != SAVEGAME_CURRENT_VERSION) {
+			warning("Reading version %d while current is %d", version, SAVEGAME_CURRENT_VERSION);
+		}
+
+		// Thumbnail
+		Graphics::loadThumbnail(*data);
+	}
+
+	delete data;
+	return 0;
+}
+
 Common::String WageEngine::getSavegameFilename(int16 slotId) const {
 	Common::String saveLoadSlot = _targetName;
 	saveLoadSlot += Common::String::format(".%.3d", slotId);
