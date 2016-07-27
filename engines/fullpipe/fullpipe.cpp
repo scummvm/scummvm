@@ -24,6 +24,7 @@
 
 #include "common/archive.h"
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "audio/mixer.h"
 
 #include "engines/util.h"
@@ -199,6 +200,8 @@ FullpipeEngine::~FullpipeEngine() {
 }
 
 void FullpipeEngine::initialize() {
+	DebugMan.addDebugChannel(kDebugPathfinding, "path", "Pathfinding");
+
 	_globalMessageQueueList = new GlobalMessageQueueList;
 	_behaviorManager = new BehaviorManager;
 

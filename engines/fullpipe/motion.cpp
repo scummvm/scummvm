@@ -186,7 +186,7 @@ MessageQueue *MctlCompound::startMove(StaticANIObject *ani, int sourceX, int sou
 	if (sourceIdx == -1)
 		return 0;
 
-	warning("WWW 2");
+	debugC(1, kDebugPathfinding, "WWW 2");
 	if (idx == sourceIdx)
 		return _motionControllers[idx]->_motionControllerObj->startMove(ani, sourceX, sourceY, fuzzyMatch, staticsId);
 
@@ -1634,7 +1634,7 @@ int MovGraph2::getItemSubIndexByMGM(int index, StaticANIObject *ani) {
 		int min = 0;
 
 		for (int i = 0; i < 4; i++) {
-			warning("WWW 5");
+			debugC(1, kDebugPathfinding, "WWW 5");
 			int tmp = _mgm.refreshOffsets(ani->_id, ani->_statics->_staticsId, _items2[index]->_subItems[i]._staticsId1);
 
 			if (tmp >= 0 && (minidx == -1 || tmp < min)) {
@@ -2052,7 +2052,7 @@ MessageQueue *MovGraph2::startMove(StaticANIObject *ani, int xpos, int ypos, int
 	if (ani->_flags & 0x100)
 		return 0;
 
-	warning("WWW 3");
+	debugC(1, kDebugPathfinding, "WWW 3");
 	MessageQueue *mq = doWalkTo(ani, xpos, ypos, fuzzyMatch, staticsId);
 
 	if (!mq)
@@ -2121,7 +2121,7 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	bool subMgm = false;
 
 	if (idxsub == -1) {
-		warning("WWW 4");
+		debugC(1, kDebugPathfinding, "WWW 4");
 		idxsub = getItemSubIndexByMGM(idx, obj);
 		subMgm = true;
 

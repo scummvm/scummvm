@@ -654,7 +654,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 		g_fp->_globalPalette = _palette->_data;
 	}
 
-	debug(1, "Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
+	debugC(1, kDebugDrawing, "Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
 
 	if (_picObjList.size() > 2) { // We need to z-sort them
 		objectList_sortByPriority(_picObjList, true);
@@ -666,11 +666,11 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 	if (maxPri == -1)
 		maxPri = 60000;
 
-	debug(1, "-> Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
+	debugC(1, kDebugDrawing, "-> Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
 
 	Common::Point point;
 
-	debug(1, "_bigPict: %d objlist: %d", _bigPictureArray1Count, _picObjList.size());
+	debugC(1, kDebugDrawing, "_bigPict: %d objlist: %d", _bigPictureArray1Count, _picObjList.size());
 
 	if (drawBg && _bigPictureArray1Count && _picObjList.size()) {
 

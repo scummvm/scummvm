@@ -48,6 +48,11 @@ namespace Fullpipe {
 enum FullpipeGameFeatures {
 };
 
+enum AccessDebugChannels {
+	kDebugPathfinding = 1 << 0,
+	kDebugDrawing     = 1 << 1
+};
+
 class BehaviorManager;
 class BaseModalObject;
 class GameLoader;
