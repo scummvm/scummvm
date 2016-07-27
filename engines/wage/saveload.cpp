@@ -66,12 +66,16 @@
 #define SAVEGAME_CURRENT_VERSION 1
 
 //
-// Version 0 (ScummVM):  first ScummVM version
+// Original saves format is supported.
+// ScummVM adds flags, description and thumbnail
+// in the end of the file (shouldn't make saves incompatible).
+//
+// Version 0 (original/ScummVM):  first ScummVM version
 //
 
 namespace Wage {
 
-static const uint32 AGIflag = MKTAG('W', 'A', 'G', 'E');
+static const uint32 WAGEflag = MKTAG('W', 'A', 'G', 'E');
 
 //TODO: make sure these are calculated right: (we add flag, description, etc)
 #define VARS_INDEX 0x005E
@@ -108,23 +112,6 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 	} else {
 		debug(9, "Successfully opened %s for writing", fileName.c_str());
 	}
-
-	out->writeUint32BE(AGIflag);
-
-	// Write description of saved game, limited to WAGE_SAVEDGAME_DESCRIPTION_LEN characters + terminating NUL
-	const int WAGE_SAVEDGAME_DESCRIPTION_LEN = 127;
-	char description[WAGE_SAVEDGAME_DESCRIPTION_LEN + 1];
-
-	memset(description, 0, sizeof(description));
-	strncpy(description, descriptionString.c_str(), WAGE_SAVEDGAME_DESCRIPTION_LEN);
-	assert(WAGE_SAVEDGAME_DESCRIPTION_LEN + 1 == 128); // safety
-	out->write(description, 128);
-
-	out->writeByte(SAVEGAME_CURRENT_VERSION);
-	debug(9, "Writing save game version (%d)", SAVEGAME_CURRENT_VERSION);
-
-	// Thumbnail
-	Graphics::saveThumbnail(*out);
 
 	// Counters
 	out->writeSint16LE(_world->_scenes.size()); //numScenes
@@ -279,6 +266,30 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 		out->writeByte(obj->_attackType);
 		out->writeSint16LE(obj->_numberOfUses);
 	}
+
+	// the following is appended by ScummVM
+	out->writeUint32BE(WAGEflag);
+
+	// Write description of saved game, limited to WAGE_SAVEDGAME_DESCRIPTION_LEN characters + terminating NUL
+	const int WAGE_SAVEDGAME_DESCRIPTION_LEN = 127;
+	char description[WAGE_SAVEDGAME_DESCRIPTION_LEN + 1];
+
+	memset(description, 0, sizeof(description));
+	strncpy(description, descriptionString.c_str(), WAGE_SAVEDGAME_DESCRIPTION_LEN);
+	assert(WAGE_SAVEDGAME_DESCRIPTION_LEN + 1 == 128); // safety
+	out->write(description, 128);
+
+	out->writeByte(SAVEGAME_CURRENT_VERSION);
+	debug(9, "Writing save game version (%d)", SAVEGAME_CURRENT_VERSION);
+
+	// Thumbnail
+	Graphics::saveThumbnail(*out);
+
+	// this one to make checking easier:
+	// it couldn't be added to the beginning
+	// and we won't be able to find it in the middle,
+	// so these would be the last 4 bytes of the file
+	out->writeUint32BE(WAGEflag);
 
 	out->finalize();
 	if (out->err()) {
