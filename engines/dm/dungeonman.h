@@ -319,7 +319,7 @@ public:
 	uint16 getData() { return (_datAndType >> 7) & 0x1FF; } // @ M40_DATA
 	static uint16 getDataMask1(uint16 data) { return (data >> 7) & 0xF; } // @ M42_MASK1
 	static uint16 getDataMask2(uint16 data) { return (data >> 11) & 0xF; } // @ M43_MASK2
-	void setData(int16 dat) { _datAndType = (_datAndType & 0x7F) | (dat << 7); } // @ M41_SET_DATA
+	void setData(uint16 dat) { _datAndType = dat; } // @ M41_SET_DATA
 	void setTypeDisabled() { _datAndType &= 0xFF80; } // @ M44_SET_TYPE_DISABLED
 
 
@@ -335,11 +335,11 @@ public:
 	uint16 getTargetMapY() { return (_action >> 11); }
 	uint16 getTargetMapX() { return (_action >> 6) & 0x1F; }
 	Direction getTargetCell() { return (Direction)((_action >> 4) & 3); }
-	uint16 M47_kineticEnergy() { return (_action & 0xFF); }// @ M47_KINETIC_ENERGY
-	uint16 M48_stepEnergy() { return (_action >> 8) & 0xFF; }// @ M48_STEP_ENERGY
-	uint16 M49_localEffect() { return _action; } // @ M49_LOCAL_EFFECT
-	uint16 M45_healthMultiplier() { return (_action & 0xF); } // @ M45_HEALTH_MULTIPLIER
-	uint16 M46_ticks() { return (_action >> 4) & 0xFFF; } // @ M46_TICKS
+	uint16 M45_healthMultiplier() { return ((_action >> 4) & 0xF); } // @ M45_HEALTH_MULTIPLIER
+	uint16 M46_ticks() { return ((_action >> 4) >> 4) & 0xFFF; } // @ M46_TICKS
+	uint16 M47_kineticEnergy() { return ((_action >> 4) & 0xFF); }// @ M47_KINETIC_ENERGY
+	uint16 M48_stepEnergy() { return ((_action >> 4) >> 8) & 0xFF; }// @ M48_STEP_ENERGY
+	uint16 M49_localEffect() { return (_action >> 4); } // @ M49_LOCAL_EFFECT
 
 	void setDatAndTypeWithOr(uint16 val) { _datAndType |= val;  }
 

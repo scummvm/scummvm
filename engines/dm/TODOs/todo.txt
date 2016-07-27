@@ -4,7 +4,7 @@ Bugs:
 		Portraits, alcoves etc. look broken from afar
 		Arrow and hand display is messed up
 		Items are displayed in the wrong cells
-		Levers look the same after pulling them
+
 
 	Logic:
 		When object are put on the right side of the current square, they disappear
