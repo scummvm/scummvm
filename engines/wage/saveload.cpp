@@ -138,7 +138,7 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 	out->writeSint32LE(objsHexOffset);
 
 	// Unique 8-byte World Signature
-	out->writeSint32LE(0); //TODO: 8-byte ints? seriously?
+	out->writeSint32LE(_world->_signature); //8-byte ints? seriously? (uses 4 bytes in java code too)
 
 	Chr *player = _world->_player;
 	Context &playerContext = player->_context;

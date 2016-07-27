@@ -92,6 +92,7 @@ public:
 	Patterns *_patterns;
 	Scene *_storageScene;
 	Chr *_player;
+	int _signature;
 	//List<MoveListener> moveListeners;
 
 	Common::String *_gameOverMessage;

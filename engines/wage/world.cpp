@@ -69,6 +69,7 @@ World::World(WageEngine *engine) {
 
 	_globalScript = nullptr;
 	_player = nullptr;
+	_signature = 0;
 
 	_weaponMenuDisabled = true;
 
@@ -146,7 +147,8 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 		res = resMan->getResource(MKTAG('V','E','R','S'), resArray[0]);
 
-		res->skip(10);
+		_signature = res->readSint32LE();
+		res->skip(6);
 		byte b = res->readByte();
 		_weaponMenuDisabled = (b != 0);
 		if (b != 0 && b != 1)
