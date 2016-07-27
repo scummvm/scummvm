@@ -32,7 +32,7 @@ namespace Fullpipe {
 bool MotionController::load(MfcArchive &file) {
 	// Is originally empty	file.readClass();
 
-	debug(5, "MotionController::load()");
+	debugC(5, kDebugLoading, "MotionController::load()");
 
 	return true;
 }
@@ -80,23 +80,23 @@ MovGraphLink *MotionController::getLinkByName(const char *name) {
 }
 
 bool MctlCompound::load(MfcArchive &file) {
-	debug(5, "MctlCompound::load()");
+	debugC(5, kDebugLoading, "MctlCompound::load()");
 
 	int count = file.readUint32LE();
 
-	debug(6, "MctlCompound::count = %d", count);
+	debugC(6, kDebugLoading, "MctlCompound::count = %d", count);
 
 	for (int i = 0; i < count; i++) {
-		debug(6, "CompoundArray[%d]", i);
+		debugC(6, kDebugLoading, "CompoundArray[%d]", i);
 		MctlItem *obj = new MctlItem();
 
 		obj->_motionControllerObj = (MotionController *)file.readClass();
 
 		int count1 = file.readUint32LE();
 
-		debug(6, "ConnectionPoint::count: %d", count1);
+		debugC(6, kDebugLoading, "ConnectionPoint::count: %d", count1);
 		for (int j = 0; j < count1; j++) {
-			debug(6, "ConnectionPoint[%d]", j);
+			debugC(6, kDebugLoading, "ConnectionPoint[%d]", j);
 			MctlConnectionPoint *obj1 = (MctlConnectionPoint *)file.readClass();
 
 			obj->_connectionPoints.push_back(obj1);
@@ -105,7 +105,7 @@ bool MctlCompound::load(MfcArchive &file) {
 		obj->_field_20 = file.readUint32LE();
 		obj->_field_24 = file.readUint32LE();
 
-		debug(6, "graphReact");
+		debugC(6, kDebugLoading, "graphReact");
 		obj->_movGraphReactObj = (MovGraphReact *)file.readClass();
 
 		_motionControllers.push_back(obj);
@@ -708,11 +708,11 @@ void MovInfo1::clear() {
 }
 
 bool MctlCompoundArray::load(MfcArchive &file) {
-	debug(5, "MctlCompoundArray::load()");
+	debugC(5, kDebugLoading, "MctlCompoundArray::load()");
 
 	int count = file.readUint32LE();
 
-	debug(0, "MctlCompoundArray::count = %d", count);
+	debugC(0, kDebugLoading, "MctlCompoundArray::count = %d", count);
 
 	assert(0);
 
@@ -771,7 +771,7 @@ MovGraph::~MovGraph() {
 }
 
 bool MovGraph::load(MfcArchive &file) {
-	debug(5, "MovGraph::load()");
+	debugC(5, kDebugLoading, "MovGraph::load()");
 
 	_links.load(file);
 	_nodes.load(file);
@@ -2094,7 +2094,7 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	PicAniInfo picAniInfo;
 	Common::Point point;
 
-	debug(0, "MovGraph2::doWalkTo(%d, %d, %d, %d, %d)", obj->_id, xpos, ypos, fuzzyMatch, staticsId);
+	debugC(0, kDebugPathfinding, "MovGraph2::doWalkTo(%d, %d, %d, %d, %d)", obj->_id, xpos, ypos, fuzzyMatch, staticsId);
 
 	int idx = getItemIndexByGameObjectId(obj->_id);
 
@@ -2227,7 +2227,7 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	Common::Array<MovGraphLink *> tempLinkList;
 	double minPath = findMinPath(&linkInfoSource, &linkInfoDest, &tempLinkList);
 
-	debug(0, "MovGraph2::doWalkTo(): path: %g  parts: %d", minPath, tempLinkList.size());
+	debugC(0, kDebugPathfinding, "MovGraph2::doWalkTo(): path: %g  parts: %d", minPath, tempLinkList.size());
 
 	if (minPath < 0.0 || ((linkInfoSource.node != linkInfoDest.node || !linkInfoSource.node) && !tempLinkList.size()))
 		return 0;
@@ -2800,22 +2800,22 @@ MovGraphLink::~MovGraphLink() {
 
 
 bool MovGraphLink::load(MfcArchive &file) {
-	debug(5, "MovGraphLink::load()");
+	debugC(5, kDebugLoading, "MovGraphLink::load()");
 
 	_dwordArray1.load(file);
 	_dwordArray2.load(file);
 
 	_flags = file.readUint32LE();
 
-	debug(8, "GraphNode1");
+	debugC(8, kDebugLoading, "GraphNode1");
 	_graphSrc = (MovGraphNode *)file.readClass();
-	debug(8, "GraphNode2");
+	debugC(8, kDebugLoading, "GraphNode2");
 	_graphDst = (MovGraphNode *)file.readClass();
 
 	_length = file.readDouble();
 	_angle = file.readDouble();
 
-	debug(8, "length: %g, angle: %g", _length, _angle);
+	debugC(8, kDebugLoading, "length: %g, angle: %g", _length, _angle);
 
 	_movGraphReact = (MovGraphReact *)file.readClass();
 	_name = file.readPascalString();
@@ -2834,7 +2834,7 @@ void MovGraphLink::recalcLength() {
 }
 
 bool MovGraphNode::load(MfcArchive &file) {
-	debug(5, "MovGraphNode::load()");
+	debugC(5, kDebugLoading, "MovGraphNode::load()");
 
 	_field_14 = file.readUint32LE();
 	_x = file.readUint32LE();
@@ -2854,7 +2854,7 @@ ReactParallel::ReactParallel() {
 }
 
 bool ReactParallel::load(MfcArchive &file) {
-	debug(5, "ReactParallel::load()");
+	debugC(5, kDebugLoading, "ReactParallel::load()");
 
 	_x1 = file.readUint32LE();
 	_y1 = file.readUint32LE();
@@ -2912,7 +2912,7 @@ ReactPolygonal::~ReactPolygonal() {
 }
 
 bool ReactPolygonal::load(MfcArchive &file) {
-	debug(5, "ReactPolygonal::load()");
+	debugC(5, kDebugLoading, "ReactPolygonal::load()");
 
 	_centerX = file.readUint32LE();
 	_centerY = file.readUint32LE();

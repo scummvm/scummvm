@@ -201,7 +201,7 @@ StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
 }
 
 bool StaticANIObject::load(MfcArchive &file) {
-	debug(5, "StaticANIObject::load()");
+	debugC(5, kDebugLoading, "StaticANIObject::load()");
 
 	GameObject::load(file);
 
@@ -215,7 +215,7 @@ bool StaticANIObject::load(MfcArchive &file) {
 	}
 
 	count = file.readUint16LE();
-	debug(7, "Movements: %d", count);
+	debugC(7, kDebugLoading, "Movements: %d", count);
 
 	for (int i = 0; i < count; i++) {
 		int movNum = file.readUint16LE();
@@ -512,7 +512,7 @@ bool StaticANIObject::getPixelAtPos(int x, int y, int *pixel) {
 }
 
 void Movement::draw(bool flipFlag, int angle) {
-	debug(3, "Movement::draw(%d, %d)", flipFlag, angle);
+	debugC(3, kDebugDrawing, "Movement::draw(%d, %d)", flipFlag, angle);
 
 	Common::Point point;
 
@@ -594,7 +594,7 @@ void StaticANIObject::draw() {
 	Common::Point point;
 	Common::Rect rect;
 
-	debug(6, "StaticANIObject::draw() (%s) [%d] [%d, %d]", transCyrillic((byte *)_objectName), _id, _ox, _oy);
+	debugC(6, kDebugDrawing, "StaticANIObject::draw() (%s) [%d] [%d, %d]", transCyrillic((byte *)_objectName), _id, _ox, _oy);
 
 	if (_shadowsOn && g_fp->_currentScene && g_fp->_currentScene->_shadows
 		&& (getCurrDimensions(point)->x != 1 || getCurrDimensions(point)->y != 1)) {
@@ -654,7 +654,7 @@ void StaticANIObject::draw() {
 }
 
 void StaticANIObject::draw2() {
-	debug(6, "StatciANIObject::draw2(): id: (%s) %d [%d, %d]", transCyrillic((byte *)_objectName), _id, _ox, _oy);
+	debugC(6, kDebugDrawing, "StatciANIObject::draw2(): id: (%s) %d [%d, %d]", transCyrillic((byte *)_objectName), _id, _ox, _oy);
 
 	if ((_flags & 4) && (_flags & 0x10)) {
 		if (_movement) {
@@ -1444,14 +1444,14 @@ Statics::Statics(Statics *src, bool reverse) : DynamicPhase(src, reverse) {
 }
 
 bool Statics::load(MfcArchive &file) {
-	debug(5, "Statics::load()");
+	debugC(5, kDebugLoading, "Statics::load()");
 
 	DynamicPhase::load(file);
 
 	_staticsId = file.readUint16LE();
 
 	_staticsName = file.readPascalString();
-	debug(7, "statics: <%s> id: %d (%x)", transCyrillic((byte *)_staticsName), _staticsId, _staticsId);
+	debugC(7, kDebugLoading, "statics: <%s> id: %d (%x)", transCyrillic((byte *)_staticsName), _staticsId, _staticsId);
 
 	_picture = new Picture();
 	_picture->load(file);
@@ -1670,7 +1670,7 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 
 	int dynCount = file.readUint16LE();
 
-	debug(7, "dynCount: %d  _id: %d", dynCount, _id);
+	debugC(7, kDebugLoading, "dynCount: %d  _id: %d", dynCount, _id);
 	if (dynCount != 0xffff || _id == MV_MAN_TURN_LU) {
 		_framePosOffsets = (Common::Point **)calloc(dynCount + 2, sizeof(Common::Point *));
 
@@ -2254,7 +2254,7 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 }
 
 bool DynamicPhase::load(MfcArchive &file) {
-	debug(5, "DynamicPhase::load()");
+	debugC(5, kDebugLoading, "DynamicPhase::load()");
 
 	StaticPhase::load(file);
 
@@ -2290,7 +2290,7 @@ StaticPhase::~StaticPhase() {
 }
 
 bool StaticPhase::load(MfcArchive &file) {
-	debug(5, "StaticPhase::load()");
+	debugC(5, kDebugLoading, "StaticPhase::load()");
 
 	Picture::load(file);
 

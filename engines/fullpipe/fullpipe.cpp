@@ -201,6 +201,8 @@ FullpipeEngine::~FullpipeEngine() {
 
 void FullpipeEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugPathfinding, "path", "Pathfinding");
+	DebugMan.addDebugChannel(kDebugDrawing, "drawing", "Drawing");
+	DebugMan.addDebugChannel(kDebugLoading, "loading", "Scene loading");
 
 	_globalMessageQueueList = new GlobalMessageQueueList;
 	_behaviorManager = new BehaviorManager;
