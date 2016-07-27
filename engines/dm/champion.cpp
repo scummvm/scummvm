@@ -1998,13 +1998,13 @@ void ChampionMan::f287_drawChampionBarGraphs(ChampionIndex champIndex) {
 	int16 barGraphIdx = 0;
 	if (champ->_currHealth > 0) {
 		int32 barGraphHeight = (((int32)champ->_currHealth << 10) * 25) / champ->_maxHealth;
-		barGraphHeights[barGraphIdx++] = (barGraphHeight >> 10) + (barGraphHeight & 0x000003FF) ? 1 : 0;
+		barGraphHeights[barGraphIdx++] = (barGraphHeight >> 10) + ((barGraphHeight & 0x000003FF) ? 1 : 0);
 	} else
 		barGraphHeights[barGraphIdx++] = 0;
 
 	if (champ->_currStamina > 0) {
 		int32 barGraphHeight = (((int32)champ->_currStamina << 10) * 25) / champ->_maxStamina;
-		barGraphHeights[barGraphIdx++] = (barGraphHeight >> 10) + (barGraphHeight & 0x000003FF) ? 1 : 0;
+		barGraphHeights[barGraphIdx++] = (barGraphHeight >> 10) + ((barGraphHeight & 0x000003FF) ? 1 : 0);
 	} else
 		barGraphHeights[barGraphIdx++] = 0;
 
@@ -2013,7 +2013,7 @@ void ChampionMan::f287_drawChampionBarGraphs(ChampionIndex champIndex) {
 			barGraphHeights[barGraphIdx] = 25;
 		else {
 			int32 barGraphHeight = (((int32)champ->_currMana << 10) * 25) / champ->_maxMana;
-			barGraphHeights[barGraphIdx] = (barGraphHeight >> 10) + (barGraphHeight & 0x000003FF) ? 1 : 0;
+			barGraphHeights[barGraphIdx] = (barGraphHeight >> 10) + ((barGraphHeight & 0x000003FF) ? 1 : 0);
 		}
 	} else {
 		barGraphHeights[barGraphIdx] = 0;

@@ -9,7 +9,8 @@ Bugs:
 	Logic:
 		When object are put on the right side of the current square, they disappear
 		Object display is a bit mixed up with regards to which cell is it drawn in
-
+		Method cthulu messes up the callstack sometimes
+		
 
 
 Possible bugs:
