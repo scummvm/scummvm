@@ -129,7 +129,19 @@ struct TThandleQuoteEntry {
 	uint _index;
 	uint _tagId;
 	uint _dialogueId;
+
+	TThandleQuoteEntry() : _index(0), _tagId(0), _dialogueId(0) {}
 };
+
+class TThandleQuoteEntries : public Common::Array<TThandleQuoteEntry> {
+public:
+	uint _tag1, _tag2;
+	uint _rangeStart, _rangeEnd;
+public:
+	TThandleQuoteEntries() : _tag1(0), _tag2(0), _rangeStart(0), _rangeEnd(0) {}
+	void load(const char *name);
+};
+
 
 } // End of namespace Titanic
 

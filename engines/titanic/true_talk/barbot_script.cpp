@@ -40,55 +40,6 @@ static const uint ARRAY2[] = {
 	51899, 51900, 51901, 51902, 51903, 51904, 51905, 51906, 51907, 0
 };
 
-static const TThandleQuoteEntry QUOTES[] = {
-	{ 0x00000008, 0x00000000, 0x0003D372 },
-	{ 0x00000007, 0x00000000, 0x0003D72B },
-	{ 0x00000004, 0x00000000, 0x0003D722 },
-	{ 0x00000006, 0x00000000, 0x0003D264 },
-	{ 0x00000005, 0x00000000, 0x0003D72F },
-	{ 0x00000001, 0x00000032, 0x00000001 },
-	{ 0x00000002, 0x00000032, 0x00000001 },
-	{ 0x00000003, 0x00000032, 0x00000001 },
-	{ 0x00000010, 0x54524156, 0x0003D2B1 },
-	{ 0x00000010, 0x0000003C, 0x00000000 },
-	{ 0x00000011, 0x00000000, 0x0003D484 },
-	{ 0x00000015, 0x00000032, 0x0003D2B2 },
-	{ 0x00000012, 0x00000042, 0x0003D499 },
-	{ 0x00000013, 0x00000021, 0x0003D31E },
-	{ 0x0000001D, 0x00000021, 0x0003D31E },
-	{ 0x00000014, 0x00000042, 0x0003D49E },
-	{ 0x00000016, 0x0000003C, 0x0003D2B6 },
-	{ 0x00000017, 0x00000028, 0x0003D2B5 },
-	{ 0x00000018, 0x00000000, 0x0003D35E },
-	{ 0x00000019, 0x00000000, 0x0003D35E },
-	{ 0x0000001A, 0x0000003C, 0x0003D38B },
-	{ 0x0000001B, 0x00000000, 0x0003D2F8 },
-	{ 0x00000009, 0x00000019, 0x0003D326 },
-	{ 0x0000000A, 0x00000019, 0x0003D314 },
-	{ 0x0000000B, 0x00000028, 0x0003D311 },
-	{ 0x0000001E, 0x00000000, 0x0003D6F2 },
-	{ 0x0000001F, 0x00000000, 0x0003D26C },
-	{ 0x0000000C, 0x00000000, 0x0003D2F4 },
-	{ 0x0000000D, 0x00000000, 0x0003D2F4 },
-	{ 0x0000000E, 0x00000000, 0x0003D2F4 },
-	{ 0x0000000F, 0x00000000, 0x0003D2F4 },
-	{ 0x00000020, 0x00000019, 0x0003D389 },
-	{ 0x00000021, 0x0000000F, 0x0003D29C },
-	{ 0x00000022, 0x0000000F, 0x0003D494 },
-	{ 0x0000001C, 0x00000032, 0x00000000 },
-	{ 0x00000023, 0x00000000, 0x0003D7F8 },
-	{ 0x00000024, 0x00000000, 0x0003D7F9 },
-	{ 0x00000031, 0x00000000, 0x0003D722 },
-	{ 0x00000032, 0x00000000, 0x0003D722 },
-	{ 0x00000033, 0x00000000, 0x0003D372 },
-	{ 0x00000034, 0x00000000, 0x0003D323 },
-	{ 0x0000003E, 0x00000000, 0x0003D163 },
-	{ 0x0000003F, 0x00000000, 0x0003D163 },
-	{ 0x00000040, 0x00000000, 0x0003D163 },
-	{ 0x00000041, 0x00000000, 0x0003D691 },
-	{ 0x00000000, 0x00000000, 0x00000000 }
-};
-
 BarbotScript::BarbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
@@ -99,6 +50,7 @@ BarbotScript::BarbotScript(int val1, const char *charClass, int v2,
 	loadResponses("Responses/Barbot");
 	setupSentences();
 	_tagMappings.load("TagMap/Barbot");
+	_quotes.load("Quotes/Barbot");
 }
 
 void BarbotScript::setupSentences() {
@@ -1009,49 +961,7 @@ int BarbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 		return setResponse(getDialogueId(222301), -1);
 	}
 
-	int loopCounter = 0;
-	for (const TThandleQuoteEntry *qe = QUOTES; qe->_index && loopCounter < 2; ++qe) {
-		if (!qe->_index) {
-			// End of list; start at beginning again
-			++loopCounter;
-			qe = QUOTES;
-		}
-
-		if (qe->_index == val && (
-				(tagId == 0 && loopCounter == 2) ||
-				(qe->_tagId < MKTAG('A', 'A', 'A', 'A')) ||
-				(qe->_tagId == tagId)
-				)) {
-			uint foundTagId = qe->_tagId;
-			if (foundTagId > 0 && foundTagId < 100) {
-				if (!tagId)
-					foundTagId >>= 1;
-				if (getRandomNumber(100) < foundTagId)
-					return 1;
-			}
-
-			uint dialogueId = qe->_dialogueId;
-			if (dialogueId < 1000) {
-				if (dialogueId >= 3)
-					error("Invalid dialogue index in BarbotScript");
-				const int RANDOM_LIMITS[3] = { 30, 50, 70 };
-				int rangeLimit = RANDOM_LIMITS[dialogueId];
-				int dialRegion = getDialRegion(0);
-
-				if (dialRegion != 1) {
-					rangeLimit = MAX(rangeLimit - 20, 20);
-				}
-
-				dialogueId = (((int)remainder + 25) % 100) >= rangeLimit ? 221376 : 221375;
-			}
-
-			addResponse(getDialogueId(dialogueId));
-			applyResponse();
-			return 2;
-		}
-	}
-
-	return 1;
+	return TTnpcScript::handleQuote(roomScript, sentence, val, tagId, remainder);
 }
 
 int BarbotScript::proc21(int v1, int v2, int v3) {

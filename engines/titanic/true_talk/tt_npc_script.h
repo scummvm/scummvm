@@ -83,6 +83,7 @@ protected:
 	TTsentenceEntries _entries;
 	TTtagMappings _tagMappings;
 	TTwordEntries _words;
+	TThandleQuoteEntries _quotes;
 	int _entryCount;
 	int _field68;
 	int _field6C;

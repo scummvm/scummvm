@@ -42,6 +42,7 @@ MaitreDScript::MaitreDScript(int val1, const char *charClass, int v2,
 	loadResponses("Responses/MaitreD");
 	setupSentences();
 	_tagMappings.load("TagMap/MaitreD");
+	_quotes.load("Quotes/MaitreD");
 }
 
 void MaitreDScript::setupSentences() {
@@ -76,7 +77,8 @@ ScriptChangedResult MaitreDScript::scriptChanged(TTscriptBase *roomScript, uint 
 int MaitreDScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 		uint val, uint tagId, uint remainder) {
 	warning("TODO");
-	return 0;
+
+	return TTnpcScript::handleQuote(roomScript, sentence, val, tagId, remainder);
 }
 
 int MaitreDScript::proc21(int v1, int v2, int v3) {

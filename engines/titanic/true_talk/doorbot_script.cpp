@@ -59,6 +59,7 @@ DoorbotScript::DoorbotScript(int val1, const char *charClass, int v2,
 	setupSentences();
 	_tagMappings.load("TagMap/Doorbot");
 	_words.load("Words/Doorbot");
+	_quotes.load("Quotes/Doorbot");
 }
 
 void DoorbotScript::setupSentences() {
@@ -142,7 +143,8 @@ ScriptChangedResult DoorbotScript::scriptChanged(TTscriptBase *roomScript, uint 
 int DoorbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 		uint val, uint tagId, uint remainder) {
 	warning("TODO");
-	return 0;
+
+	return TTnpcScript::handleQuote(roomScript, sentence, val, tagId, remainder);
 }
 
 int DoorbotScript::proc21(int v1, int v2, int v3) {

@@ -268,7 +268,60 @@ bool TTnpcScript::handleWord(uint id) const {
 
 int TTnpcScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 		uint val, uint tagId, uint remainder) {
+	if (_quotes.empty())
+		return 1;
+
+
+	int loopCounter = 0;
+	for (uint idx = 0; idx < _quotes.size() && loopCounter < 2; ++idx) {
+		const TThandleQuoteEntry *qe = &_quotes[idx];
+
+		if (!qe->_index) {
+			// End of list; start at beginning again
+			++loopCounter;
+			idx = 0;
+			qe = &_quotes[0];
+		}
+
+		if (qe->_index == val && (
+				(tagId == 0 && loopCounter == 2) ||
+				(qe->_tagId < MKTAG('A', 'A', 'A', 'A')) ||
+				(qe->_tagId == tagId)
+				)) {
+			uint foundTagId = qe->_tagId;
+			if (foundTagId > 0 && foundTagId < 100) {
+				if (!tagId)
+					foundTagId >>= 1;
+				if (getRandomNumber(100) < foundTagId)
+					return 1;
+			}
+
+			uint dialogueId = qe->_dialogueId;
+			if (dialogueId >= _quotes._rangeStart && dialogueId <= _quotes._rangeEnd) {
+				dialogueId -= _quotes._rangeStart;
+				if (dialogueId > 3)
+					error("Invalid dialogue index in BarbotScript");
+				
+				const int RANDOM_LIMITS[4] = { 30, 50, 70, 60 };
+				int rangeLimit = RANDOM_LIMITS[dialogueId];
+				int dialRegion = getDialRegion(0);
+
+				if (dialRegion != 1) {
+					rangeLimit = MAX(rangeLimit - 20, 20);
+				}
+
+				dialogueId = (((int)remainder + 25) % 100) >= rangeLimit 
+					? _quotes._tag1 : _quotes._tag2;
+			}
+
+			addResponse(getDialogueId(dialogueId));
+			applyResponse();
+			return 2;
+		}
+	}
+
 	return 1;
+
 }
 
 uint TTnpcScript::getRangeValue(uint id) {
