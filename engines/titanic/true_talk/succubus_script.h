@@ -54,7 +54,11 @@ public:
 	 */
 	virtual ScriptChangedResult scriptChanged(TTscriptBase *roomScript, uint id);
 
-	virtual int proc21(int v1, int v2, int v3);
+	/**
+	 * Handles updating NPC state based on specified dialogue Ids and dial positions
+	 */
+	virtual int updateState(int oldId, int newId, int index);
+
 	virtual int proc23() const;
 	virtual int proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence);
 	virtual void proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence);

@@ -83,7 +83,7 @@ int DoorbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence
 		applyResponse();
 
 		if (STATE_ARRAY[_state] == 11826)
-			set34(1);
+			setState(1);
 		++_state;
 		return 2;
 	}
@@ -250,7 +250,7 @@ int DoorbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 	return TTnpcScript::handleQuote(roomScript, sentence, val, tagId, remainder);
 }
 
-int DoorbotScript::proc21(int v1, int v2, int v3) {
+int DoorbotScript::updateState(int oldId, int newId, int index) {
 	warning("TODO");
 	return 0;
 }
@@ -363,9 +363,9 @@ int DoorbotScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript,
 		}
 		break;
 	case 17:
-		if (get34())
+		if (getState())
 			return 1;
-		set34(0);
+		setState(0);
 		break;
 	case 18:
 		if (roomScript->_scriptId == 100) {
@@ -468,7 +468,7 @@ int DoorbotScript::setResponse(int dialogueId, int v34) {
 	applyResponse();
 
 	if (v34 != -1)
-		set34(v34);
+		setState(v34);
 	return 2;
 }
 

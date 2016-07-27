@@ -184,7 +184,7 @@ int MaitreDScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 	return TTnpcScript::handleQuote(roomScript, sentence, val, tagId, remainder);
 }
 
-int MaitreDScript::proc21(int v1, int v2, int v3) {
+int MaitreDScript::updateState(int oldId, int newId, int index) {
 	warning("TODO");
 	return 0;
 }

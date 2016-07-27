@@ -258,7 +258,7 @@ int TTsentence::is1C(int val, const TTconceptNode *node) const {
 
 bool TTsentence::isConcept34(int slotIndex, TTconceptNode *node) {
 	TTconcept *concept = getFrameEntry(slotIndex, node);
-	return concept && concept->get34();
+	return concept && concept->getState();
 }
 
 bool TTsentence::localWord(const char *str) const {

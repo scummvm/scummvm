@@ -74,7 +74,7 @@ int BarbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence,
 			addResponse(STATE_ARRAY[_state++]);
 		} else {
 			selectResponse(51896);
-			set34(1);
+			setState(1);
 			_state = 0;
 		}
 
@@ -202,8 +202,8 @@ int BarbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
 	CTrueTalkManager::setFlags(33, getValue(33) - 1);
 	CTrueTalkManager::setFlags(34, getValue(34) - 1);
 	
-	int val34 = get34();
-	set34(0);
+	int val34 = getState();
+	setState(0);
 
 	int val2C = sentence->_field2C;
 	bool flag = val2C == 11 || val2C == 13;
@@ -533,7 +533,7 @@ int BarbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
 	case 59:
 		if (flag) {
 			if (addRandomResponse(true)) {
-				set34(59);
+				setState(59);
 				return 2;
 			}
 		} else if (flag2) {
@@ -542,7 +542,7 @@ int BarbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
 		break;
 	case 60:
 		if (flag && addRandomResponse(true)) {
-			set34(59);
+			setState(59);
 			return 2;
 		} else if (flag2 || val2C == 7 || val2C == 10) {
 			return applySentenceIds(getDialogueId(251712));
@@ -613,7 +613,7 @@ int BarbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
 
 done:
 	// Adjust primary dial
-	set34(0);
+	setState(0);
 	if (sentence->get58() != 5) {
 		adjustDial(0, sentence->get58() * 4 - 20);
 	} else if (getDialLevel(0, false) > 65) {
@@ -809,7 +809,7 @@ ScriptChangedResult BarbotScript::scriptChanged(TTscriptBase *roomScript, uint i
 			addResponse(getDialogueId(250577));
 			applyResponse();
 		} else {
-			set34(57);
+			setState(57);
 		}
 		break;
 
@@ -964,7 +964,7 @@ int BarbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 	return TTnpcScript::handleQuote(roomScript, sentence, val, tagId, remainder);
 }
 
-int BarbotScript::proc21(int v1, int v2, int v3) {
+int BarbotScript::updateState(int oldId, int newId, int index) {
 	warning("TODO");
 	return 0;
 }
@@ -987,7 +987,7 @@ uint BarbotScript::getDialsBitset() const {
 }
 
 int BarbotScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
-	int v34 = get34();
+	int v34 = getState();
 	uint id = 0;
 
 	if (v34 > 0x200) {
@@ -1150,13 +1150,13 @@ int BarbotScript::applySentenceIds(int dialogueId, int v34) {
 	applyResponse();
 
 	if (v34 != -1) {
-		set34(v34);
+		setState(v34);
 	} else {
 		for (uint idx = 0; idx < _mappings.size(); ++idx) {
 			const TTscriptMapping &m = _mappings[idx];
 			for (int vidx = 0; vidx < _mappings._valuesPerMapping; ++idx) {
 				if (m._values[vidx] == (uint)dialogueId) {
-					proc21(m._id, m._id, vidx);
+					updateState(m._id, m._id, vidx);
 					break;
 				}
 			}
@@ -1171,7 +1171,7 @@ int BarbotScript::setResponse(int dialogueId, int state) {
 	applyResponse();
 
 	if (state != -1)
-		set34(state);
+		setState(state);
 	return 2;
 }
 

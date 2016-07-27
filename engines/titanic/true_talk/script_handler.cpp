@@ -88,7 +88,7 @@ int CScriptHandler::processInput(TTroomScript *roomScript, TTnpcScript *npcScrip
 
 	int canProcess = 0;
 	if (result) {
-		sentence->set34(result);
+		sentence->setState(result);
 		if (roomScript->canRespond(npcScript, sentence, result)) {
 			canProcess = npcScript->chooseResponse(roomScript, sentence, result);
 		}

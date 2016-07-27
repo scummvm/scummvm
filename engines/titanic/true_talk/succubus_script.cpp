@@ -84,7 +84,7 @@ ScriptChangedResult SuccUBusScript::scriptChanged(TTscriptBase *roomScript, uint
 	return SCR_1;
 }
 
-int SuccUBusScript::proc21(int v1, int v2, int v3) {
+int SuccUBusScript::updateState(int oldId, int newId, int index) {
 	warning("TODO");
 	return 0;
 }

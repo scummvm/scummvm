@@ -60,7 +60,7 @@ int LiftbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence
 	case MKTAG('A', 'N', 'S', 'W'):
 		if (_state >= 7) {
 			selectResponse(30918);
-			set34(2);
+			setState(2);
 			_state = 0;
 		} else {
 			addResponse(STATE_ARRAY[_state++]);
@@ -208,7 +208,7 @@ int LiftbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 	return TTnpcScript::handleQuote(roomScript, sentence, val, tagId, remainder);
 }
 
-int LiftbotScript::proc21(int v1, int v2, int v3) {
+int LiftbotScript::updateState(int oldId, int newId, int index) {
 	warning("TODO");
 	return 0;
 }
@@ -244,7 +244,7 @@ int LiftbotScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript,
 		0, 210849, 210850, 210851, 210852, 210838, 210839, 210840, 210841, 0
 	};
 
-	get34();
+	getState();
 	int stateVal;
 
 	switch (val1) {
@@ -362,7 +362,7 @@ int LiftbotScript::addDialogueAndState(int id, int state) {
 	applyResponse();
 
 	if (state != 1)
-		set34(state);
+		setState(state);
 	return 2;
 }
 
@@ -400,14 +400,14 @@ int LiftbotScript::addResponse1(int index, bool flag, int id) {
 	if (index >= 2 && index <= 19 && stateVal > 1) {
 		addResponse(getDialogueId(210203));
 		applyResponse();
-		set34(7);
+		setState(7);
 		return true;
 	}
 
 	if (index >= 20 && index <= 27 && stateVal > 2) {
 		addResponse(getDialogueId(210210));
 		applyResponse();
-		set34(8);
+		setState(8);
 		return true;
 	}
 

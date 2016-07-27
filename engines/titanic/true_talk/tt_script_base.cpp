@@ -26,12 +26,12 @@
 
 namespace Titanic {
 
-TTscriptBase::TTscriptBase(int scriptId, const char *charClass, int v2,
+TTscriptBase::TTscriptBase(int scriptId, const char *charClass, int state,
 		const char *charName, int v3, int v4, int v5, int v6, int v7) :
 		_charName(charName), _charClass(charClass), _status(0),
 		_nodesP(nullptr), _id(0), _hist1P(nullptr),
 		_field20(0), _field24(0), _field28(0), _field2C(0),
-		_field30(0), _field34(0), _hist2P(nullptr), _field3C(0),
+		_field30(0), _state(0), _hist2P(nullptr), _field3C(0),
 		_respHeadP(nullptr), _respTailP(nullptr), _oldResponseP(nullptr) {
 	if (!isValid()) {
 		if (!v7 || !getStatus()) {
@@ -41,7 +41,7 @@ TTscriptBase::TTscriptBase(int scriptId, const char *charClass, int v2,
 			_field28 = v5;
 			_field2C = v6;
 			_field30 = v7;
-			_field34 = v2;
+			_state = state;
 		} else {
 			_status = 5;
 		}
@@ -79,7 +79,7 @@ void TTscriptBase::reset() {
 	_field28 = -1;
 	_field2C = -1;
 	_field30 = 0;
-	_field34 = 0;
+	_state = 0;
 	_hist2P = nullptr;
 	_field3C = 0;
 	_respHeadP = nullptr;

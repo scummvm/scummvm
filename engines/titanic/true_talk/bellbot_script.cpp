@@ -182,7 +182,7 @@ int BellbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 	return TTnpcScript::handleQuote(roomScript, sentence, val, tagId, remainder);
 }
 
-int BellbotScript::proc21(int v1, int v2, int v3) {
+int BellbotScript::updateState(int oldId, int newId, int index) {
 	warning("TODO");
 	return 0;
 }

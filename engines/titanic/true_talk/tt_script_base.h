@@ -48,7 +48,7 @@ protected:
 	int _field28;
 	int _field2C;
 	int _field30;
-	int _field34;
+	int _state;
 	TThist *_hist2P;
 	int _field3C;
 	TTresponse *_respHeadP;
@@ -72,8 +72,15 @@ protected:
 		appendResponse(val1, val2, str);
 	}
 
-	void set34(int val) { _field34 = val; }
-	int get34() const { return _field34; }
+	/**
+	 * Set the script state
+	 */
+	void setState(int state) { _state = state; }
+	
+	/**
+	 * Get the current state
+	 */
+	int getState() const { return _state; }
 public:
 	int _id;
 public:

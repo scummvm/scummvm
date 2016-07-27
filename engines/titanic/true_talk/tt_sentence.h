@@ -74,7 +74,7 @@ public:
 	TTsentence(const TTsentence *src);
 	~TTsentence();
 
-	void set34(int v) { _field34 = v; }
+	void setState(int v) { _field34 = v; }
 	void set38(int v) { _field38 = v; }
 	bool check2C() const { return _field2C > 1 && _field2C <= 10; }
 	int concept18(TTconceptNode *conceptNode) {

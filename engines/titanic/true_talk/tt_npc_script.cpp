@@ -372,8 +372,8 @@ void TTnpcScript::resetRange(int id) {
 		range->_priorIndex = 0;
 }
 
-int TTnpcScript::proc21(int v1, int v2, int v3) {
-	return v2;
+int TTnpcScript::updateState(int oldId, int newId, int index) {
+	return newId;
 }
 
 int TTnpcScript::proc22(int id) const {
@@ -638,7 +638,7 @@ uint TTnpcScript::getDialogueId(uint tagId) {
 		tagId = getRangeValue(tagId);
 
 	oldTagId = getDialsBitset();
-	uint newId = proc21(origId, tagId, oldTagId);
+	uint newId = updateState(origId, tagId, oldTagId);
 	if (!newId)
 		return 0;
 

@@ -180,7 +180,7 @@ int DeskbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 
 }
 
-int DeskbotScript::proc21(int v1, int v2, int v3) {
+int DeskbotScript::updateState(int oldId, int newId, int index) {
 	warning("TODO");
 	return 0;
 }
