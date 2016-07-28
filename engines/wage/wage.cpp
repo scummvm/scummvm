@@ -130,6 +130,8 @@ Common::Error WageEngine::run() {
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");
 		loadGame(saveSlot);
+		_gui->regenCommandsMenu();
+		_gui->regenWeaponsMenu();
 	}
 	Common::String input("look");
 	processTurn(&input, NULL);
