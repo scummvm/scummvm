@@ -29,6 +29,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "engines/engine.h"
+#include "engines/util.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
@@ -55,30 +56,35 @@
 
 namespace Sci {
 
-GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette32 *palette, GfxTransitions32 *transitions) :
+GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxPalette32 *palette, GfxTransitions32 *transitions) :
 	_isHiRes(ConfMan.getBool("enable_high_resolution_graphics")),
 	_palette(palette),
 	_resMan(resMan),
-	_screen(screen),
 	_segMan(segMan),
 	_transitions(transitions),
 	_benchmarkingFinished(false),
 	_throttleFrameOut(true),
 	_throttleState(0),
-	// TODO: Stop using _gfxScreen
-	_currentBuffer(screen->getDisplayWidth(), screen->getDisplayHeight(), nullptr),
 	_remapOccurred(false),
 	_frameNowVisible(false),
-	_screenRect(screen->getDisplayWidth(), screen->getDisplayHeight()),
 	_overdrawThreshold(0),
 	_palMorphIsOn(false) {
-
-	_currentBuffer.setPixels(calloc(1, screen->getDisplayWidth() * screen->getDisplayHeight()));
 
 	// QFG4 is the only SCI32 game that doesn't have a high-resolution toggle
 	if (g_sci->getGameId() == GID_QFG4) {
 		_isHiRes = false;
 	}
+
+	if (g_sci->getGameId() == GID_PHANTASMAGORIA) {
+		_currentBuffer = Buffer(630, 450, nullptr);
+	} else if (_isHiRes) {
+		_currentBuffer = Buffer(640, 480, nullptr);
+	} else {
+		_currentBuffer = Buffer(320, 200, nullptr);
+	}
+	_currentBuffer.setPixels(calloc(1, _currentBuffer.screenWidth * _currentBuffer.screenHeight));
+	_screenRect = Common::Rect(_currentBuffer.screenWidth, _currentBuffer.screenHeight);
+	initGraphics(_currentBuffer.screenWidth, _currentBuffer.screenHeight, _isHiRes);
 
 	switch (g_sci->getGameId()) {
 	case GID_HOYLE5:
@@ -559,7 +565,7 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, PlaneShowStyle *show
 
 	int16 prevRoom = g_sci->getEngineState()->variables[VAR_GLOBAL][12].toSint16();
 
-	Common::Rect rect(_screen->getDisplayWidth(), _screen->getDisplayHeight());
+	Common::Rect rect(_currentBuffer.screenWidth, _currentBuffer.screenHeight);
 	_showList.add(rect);
 	showBits();
 

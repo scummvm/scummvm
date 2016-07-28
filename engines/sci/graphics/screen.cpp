@@ -30,6 +30,9 @@
 #include "sci/engine/state.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/view.h"
+#ifdef ENABLE_SCI32
+#include "sci/graphics/frameout.h"
+#endif
 
 namespace Sci {
 
@@ -53,12 +56,6 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	if ((g_sci->getPlatform() == Common::kPlatformWindows) || (g_sci->forceHiresGraphics())) {
 		if (g_sci->getGameId() == GID_KQ6)
 			_upscaledHires = GFX_SCREEN_UPSCALED_640x440;
-#ifdef ENABLE_SCI32
-		if (g_sci->getGameId() == GID_GK1)
-			_upscaledHires = GFX_SCREEN_UPSCALED_640x480;
-		if (g_sci->getGameId() == GID_PQ4)
-			_upscaledHires = GFX_SCREEN_UPSCALED_640x480;
-#endif
 	}
 
 	// Japanese versions of games use hi-res font on upscaled version of the game.
@@ -90,27 +87,10 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 		}
 	}
 
-#ifdef ENABLE_SCI32
-	// GK1 Mac uses a 640x480 resolution too
-	if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
-		if (g_sci->getGameId() == GID_GK1)
-			_upscaledHires = GFX_SCREEN_UPSCALED_640x480;
-	}
-#endif
-
 	if (_resMan->detectHires()) {
 		_scriptWidth = 640;
 		_scriptHeight = 480;
 	}
-
-#ifdef ENABLE_SCI32
-	// Phantasmagoria 1 effectively outputs 630x450
-	//  Coordinate translation has to use this resolution as well
-	if (g_sci->getGameId() == GID_PHANTASMAGORIA) {
-		_width = 630;
-		_height = 450;
-	}
-#endif
 
 	// if not yet set, set those to script-width/height
 	if (!_width)
@@ -212,7 +192,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 			initGraphics(_displayWidth, _displayHeight + 28 + 2, _displayWidth > 320);
 		else
 			error("Unknown SCI1.1 Mac game");
-	} else
+	} else if (getSciVersion() < SCI_VERSION_2)
 		initGraphics(_displayWidth, _displayHeight, _displayWidth > 320);
 }
 

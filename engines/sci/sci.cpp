@@ -262,6 +262,7 @@ Common::Error SciEngine::run() {
 		_forceHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
 	}
 
+	// TODO: Get rid of GfxScreen when running SCI32 games
 	// Initialize the game screen
 	_gfxScreen = new GfxScreen(_resMan);
 	_gfxScreen->enableUndithering(ConfMan.getBool("disable_dithering"));
@@ -737,7 +738,7 @@ void SciEngine::initGraphics() {
 		_gfxPaint32 = new GfxPaint32(_gamestate->_segMan);
 		_robotDecoder = new RobotDecoder(getPlatform() == Common::kPlatformMacintosh);
 		_gfxTransitions32 = new GfxTransitions32(_gamestate->_segMan);
-		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxScreen, _gfxPalette32, _gfxTransitions32);
+		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxPalette32, _gfxTransitions32);
 		_gfxText32 = new GfxText32(_gamestate->_segMan, _gfxCache);
 		_gfxControls32 = new GfxControls32(_gamestate->_segMan, _gfxCache, _gfxText32);
 		_gfxFrameout->run();
