@@ -34,6 +34,6 @@ os:
 
 script:
   - ./configure --enable-all-engines --disable-eventrecorder
-  - make
+  - make -j 2
   - make test
   - make devtools
