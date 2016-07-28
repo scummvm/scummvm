@@ -145,6 +145,8 @@ int Menu::addMenuItem(const char *name) {
 
 void Menu::addMenuSubItem(int id, const char *text, int action, int style, char shortcut, bool enabled) {
 	_items[id]->subitems.push_back(new MenuSubItem(text, action, style, shortcut, enabled));
+
+	calcMenuBounds(_items[id]);
 }
 
 void Menu::calcDimensions() {
