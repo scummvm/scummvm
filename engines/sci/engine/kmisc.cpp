@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/system.h"
 
 #include "sci/sci.h"
@@ -542,7 +543,7 @@ enum kSciPlatforms {
 enum kPlatformOps {
 	kPlatformUnk0 = 0,
 	kPlatformCDSpeed = 1,
-	kPlatformUnk2 = 2,
+	kPlatformColorDepth = 2,
 	kPlatformCDCheck = 3,
 	kPlatformGetPlatform = 4,
 	kPlatformUnk5 = 5,
@@ -563,11 +564,6 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	if (g_sci->forceHiresGraphics()) {
-		// force Windows platform, so that hires-graphics are enabled
-		isWindows = true;
-	}
-
 	uint16 operation = (argc == 0) ? 0 : argv[0].toUint16();
 
 	switch (operation) {
@@ -575,9 +571,9 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 		// TODO: Returns CD Speed?
 		warning("STUB: kPlatform(CDSpeed)");
 		break;
-	case kPlatformUnk2:
+	case kPlatformColorDepth:
 		// Always returns 2
-		return make_reg(0, 2);
+		return make_reg(0, /* 256-color */ 2);
 	case kPlatformCDCheck:
 		// TODO: Some sort of CD check?
 		warning("STUB: kPlatform(CDCheck)");
@@ -591,9 +587,9 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 		return make_reg(0, (isWindows) ? kSciPlatformWindows : kSciPlatformDOS);
 	case kPlatformUnk5:
 		// This case needs to return the opposite of case 6 to get hires graphics
-		return make_reg(0, !isWindows);
+		return make_reg(0, !ConfMan.getBool("enable_high_resolution_graphics"));
 	case kPlatformIsHiRes:
-		return make_reg(0, isWindows);
+		return make_reg(0, ConfMan.getBool("enable_high_resolution_graphics"));
 	case kPlatformIsItWindows:
 		return make_reg(0, isWindows);
 	default:
