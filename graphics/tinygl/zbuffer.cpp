@@ -197,7 +197,7 @@ void FrameBuffer::clearRegion(int x, int y, int w, int h, int clearZ, int z, int
 		if (i == sizeof(color)) {
 			// All "color" bytes are identical, use memset (fast)
 			while (height--) {
-				memset(pp, colorc[0], w);
+				memset(pp, colorc[0], this->pixelbytes * w);
 				pp += this->linesize;
 			}
 		} else {
