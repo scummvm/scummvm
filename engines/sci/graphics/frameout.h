@@ -31,7 +31,6 @@ typedef Common::Array<DrawList> ScreenItemListList;
 typedef Common::Array<RectList> EraseListList;
 
 class GfxCoordAdjuster32;
-class GfxScreen;
 class GfxTransitions32;
 struct PlaneShowStyle;
 
@@ -44,12 +43,13 @@ private:
 	GfxCoordAdjuster32 *_coordAdjuster;
 	GfxPalette32 *_palette;
 	ResourceManager *_resMan;
-	GfxScreen *_screen;
 	SegManager *_segMan;
 
 public:
-	GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette32 *palette, GfxTransitions32 *transitions);
+	GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxPalette32 *palette, GfxTransitions32 *transitions);
 	~GfxFrameout();
+
+	bool _isHiRes;
 
 	void clear();
 	void syncWithScripts(bool addElements); // this is what Game::restore does, only needed when our ScummVM dialogs are patched in
@@ -308,8 +308,6 @@ private:
 	}
 
 public:
-	bool _isHiRes;
-
 	/**
 	 * Whether palMorphFrameOut should be used instead of
 	 * frameOut for rendering. Used by kMorphOn to
