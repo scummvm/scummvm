@@ -109,6 +109,12 @@ void tglDisposeDrawCallLists(TinyGL::GLContext *c) {
 	c->_drawCallsQueue.clear();
 }
 
+inline void _appendDirtyRectangle(const Graphics::DrawCall &call, Common::List<DirtyRectangle> &rectangles, int r, int g, int b) {
+	Common::Rect dirty_region = call.getDirtyRegion();
+	if (rectangles.empty() || dirty_region != (*rectangles.end()).rectangle)
+		rectangles.push_back(DirtyRectangle(dirty_region, r, g, b));
+}
+
 void tglPresentBufferDirtyRects(TinyGL::GLContext *c) {
 	typedef Common::List<Graphics::DrawCall *>::const_iterator DrawCallIterator;
 	typedef Common::List<TinyGL::DirtyRectangle>::iterator RectangleIterator;
@@ -116,30 +122,30 @@ void tglPresentBufferDirtyRects(TinyGL::GLContext *c) {
 	Common::List<DirtyRectangle> rectangles;
 
 	DrawCallIterator itFrame = c->_drawCallsQueue.begin();
+	DrawCallIterator endFrame = c->_drawCallsQueue.end();
+	DrawCallIterator itPrevFrame = c->_previousFrameDrawCallsQueue.begin();
 	DrawCallIterator endPrevFrame = c->_previousFrameDrawCallsQueue.end();
 
 	// Compare draw calls.
 	if (c->_drawCallsQueue.size() > 0) {
-		for (DrawCallIterator itPrevFrame = c->_previousFrameDrawCallsQueue.begin();
-			itPrevFrame != endPrevFrame;
+		for ( ; itPrevFrame != endPrevFrame && itFrame != endFrame;
 			++itPrevFrame, ++itFrame) {
 				const Graphics::DrawCall &currentCall = **itFrame;
 				const Graphics::DrawCall &previousCall = **itPrevFrame;
 
 				if (previousCall != currentCall) {
-					while (itPrevFrame != endPrevFrame) {
-						Graphics::DrawCall *dirtyDrawCall = *itPrevFrame;
-						rectangles.push_back(DirtyRectangle(dirtyDrawCall->getDirtyRegion(), 255, 255, 255));
-						++itPrevFrame;
-					}
-					break;
+					_appendDirtyRectangle(previousCall, rectangles, 255, 255, 255);
+					_appendDirtyRectangle(currentCall, rectangles, 255, 0, 0);
 				}
 		}
 	}
 
-	for ( ; itFrame != c->_drawCallsQueue.end(); ++itFrame) {
-		const Graphics::DrawCall &currentCall = **itFrame;
-		rectangles.push_back(DirtyRectangle(currentCall.getDirtyRegion(), 255, 0, 0));
+	for ( ; itPrevFrame != endPrevFrame; ++itPrevFrame) {
+		_appendDirtyRectangle(**itPrevFrame, rectangles, 255, 255, 255);
+	}
+
+	for ( ; itFrame != endFrame; ++itFrame) {
+		_appendDirtyRectangle(**itFrame, rectangles, 255, 0, 0);
 	}
 
 	// This loop increases outer rectangle coordinates to favor merging of adjacent rectangles.
