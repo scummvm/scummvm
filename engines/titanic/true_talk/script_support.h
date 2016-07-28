@@ -143,9 +143,9 @@ public:
 };
 
 struct TTupdateStateEntry {
-	uint _v1;
-	uint _v2;
-	uint _v3;
+	uint _newId;
+	uint _newValue;
+	uint _idMatch;
 };
 
 class TTupdateStateEntries : public Common::Array<TTupdateStateEntry> {

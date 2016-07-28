@@ -30,6 +30,8 @@ namespace Titanic {
 
 class DeskbotScript : public TTnpcScript {
 private:
+	static int _oldId;
+private:
 	/**
 	 * Setup sentence data
 	 */
@@ -39,6 +41,26 @@ private:
 	 * Adds dialogue for the player's assigned room
 	 */
 	int addAssignedRoomDialogue();
+
+	/**
+	 * Adds dialogue for the player's assigned room
+	 */
+	int addAssignedRoomDialogue2();
+
+	/**
+	 * Adds dialogue for the player's assigned room
+	 */
+	void addAssignedRoomDialogue3();
+
+	/**
+	 * Gets a dialogue Id based on the NPC's state
+	 */
+	int getStateDialogueId() const;
+
+	/**
+	 * Sets state data in flags 17
+	 */
+	void setFlags17(int newId, int index);
 public:
 	DeskbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2);

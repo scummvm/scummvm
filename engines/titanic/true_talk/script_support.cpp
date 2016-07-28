@@ -169,9 +169,9 @@ void TTupdateStateEntries::load(const char *name) {
 
 	while (r->pos() < r->size()) {
 		TTupdateStateEntry ue;
-		ue._v1 = r->readUint32LE();
-		ue._v2 = r->readUint32LE();
-		ue._v3 = r->readUint32LE();
+		ue._newId = r->readUint32LE();
+		ue._newValue = r->readUint32LE();
+		ue._idMatch = r->readUint32LE();
 
 		push_back(ue);
 	}
