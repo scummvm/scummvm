@@ -30,6 +30,7 @@
 
 #include "common/events.h"
 #include "common/queue.h"
+#include "common/array.h"
 
 #include "dm.h"
 #include "gfx.h"
@@ -229,6 +230,8 @@ class DMEngine;
 #define k4_pointerTypeAutoselect 4 // @ C4_POINTER_TYPE_AUTOSELECT    
 
 
+
+
 class EventManager {
 	DMEngine *_vm;
 
@@ -281,7 +284,14 @@ public:
 	void f77_hideMouse(); // @ F0078_MOUSE_ShowPointer
 
 	void setMousePos(Common::Point pos);
-	void processInput(); // acknowledges mouse and keyboard input
+	Common::Point getMousePos() { return _mousePos; }
+	/**
+	* Upon encountering an event type for which the grab parameter is not null, the function
+	* will return with the event type, passes the event to the grab desitination and returns without
+	* processing the rest of the events into commands accoring to the current keyboard and mouse input.
+	* If there are no more events, it returns with Common::EVENT_INVALID.
+	*/
+	Common::EventType processInput(Common::Event *grabKey = nullptr, Common::Event *grabMouseClick = nullptr);
 	void f360_processPendingClick(); // @ F0360_COMMAND_ProcessPendingClick
 	void f359_processClick(Common::Point mousePos, MouseButton button); // @ F0359_COMMAND_ProcessClick_CPSC
 	CommandType f358_getCommandTypeFromMouseInput(MouseInput *input, Common::Point mousePos, MouseButton button); // @ F0358_COMMAND_GetCommandFromMouseInput_CPSC

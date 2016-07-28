@@ -535,13 +535,17 @@ void EventManager::setMousePos(Common::Point pos) {
 }
 
 
-void EventManager::processInput() {
+Common::EventType EventManager::processInput(Common::Event *grabKey, Common::Event *grabMouseClick) {
 	Common::Event event;
 	while (_vm->_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN: {
 			if (event.synthetic)
 				break;
+			if (grabKey) {
+				*grabKey = event;
+				return event.type;
+			}
 			if (_g443_primaryKeyboardInput) {
 				KeyboardInput *input = _g443_primaryKeyboardInput;
 				while (input->_commandToIssue != k0_CommandNone) {
@@ -565,7 +569,7 @@ void EventManager::processInput() {
 					input++;
 				}
 			}
-
+			break;
 		}
 		case Common::EVENT_MOUSEMOVE:
 			if (!_g597_ignoreMouseMovements)
@@ -573,6 +577,10 @@ void EventManager::processInput() {
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
+			if (grabMouseClick) {
+				*grabMouseClick = event;
+				return event.type;
+			}
 			_g436_pendingClickPresent = true;
 			_g437_pendingClickPos = _mousePos;
 			_g439_pendingClickButton = (event.type == Common::EVENT_LBUTTONDOWN) ? k1_LeftMouseButton : k2_RightMouseButton;
@@ -581,7 +589,9 @@ void EventManager::processInput() {
 			break;
 		}
 	}
+	return Common::EVENT_INVALID;
 }
+
 
 void EventManager::f360_processPendingClick() {
 	if (_g436_pendingClickPresent) {

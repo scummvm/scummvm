@@ -266,7 +266,7 @@ void ChampionMan::f299_applyModifiersToStatistics(Champion *champ, int16 slotInd
 	ThingType thingType = thing.getType();
 
 	bool cursed = false;
-	if (   ((thingType == k5_WeaponThingType) || (thingType == k6_ArmourThingType))
+	if (((thingType == k5_WeaponThingType) || (thingType == k6_ArmourThingType))
 		&& (slotIndex >= k0_ChampionSlotReadyHand) && (slotIndex <= k12_ChampionSlotQuiverLine_1_1)) {
 		if (thingType == k5_WeaponThingType) {
 			Weapon *weapon = (Weapon *)_vm->_dungeonMan->f156_getThingData(thing);
@@ -746,18 +746,18 @@ int16 ChampionMan::f321_addPendingDamageAndWounds_getDamage(int16 champIndex, in
 			defense /= woundCount;
 
 		switch (attackType) {
-		case k6_attackType_PSYCHIC: 
-			{
-				int16 wisdomFactor = 115 - curChampion->_statistics[k3_ChampionStatWisdom][k1_ChampionStatCurrent];
-				if (wisdomFactor <= 0) {
-					attack = 0;
-				} else {
-					attack = _vm->f30_getScaledProduct(attack, 6, wisdomFactor);
-				}
-
-				skipScaling = true;
+		case k6_attackType_PSYCHIC:
+		{
+			int16 wisdomFactor = 115 - curChampion->_statistics[k3_ChampionStatWisdom][k1_ChampionStatCurrent];
+			if (wisdomFactor <= 0) {
+				attack = 0;
+			} else {
+				attack = _vm->f30_getScaledProduct(attack, 6, wisdomFactor);
 			}
-			break;
+
+			skipScaling = true;
+		}
+		break;
 		case k5_attackType_MAGIC:
 			attack = f307_getStatisticAdjustedAttack(curChampion, k5_ChampionStatAntimagic, attack);
 			attack -= _g407_party._spellShieldDefense;
@@ -780,10 +780,10 @@ int16 ChampionMan::f321_addPendingDamageAndWounds_getDamage(int16 champIndex, in
 
 			attack = _vm->f30_getScaledProduct(attack, 6, 130 - defense);
 		}
-		/* BUG0_44 
+		/* BUG0_44
 			A champion may take much more damage than expected after a Black Flame attack or an impact
 			with a Fireball projectile. If the party has a fire shield defense value higher than the fire
-			attack value then the resulting intermediary attack value is negative and damage should be 0. 
+			attack value then the resulting intermediary attack value is negative and damage should be 0.
 			However, the negative value is still used for further computations and the result may be a very
 			high positive attack value which may kill a champion. This can occur only for k1_attackType_FIRE
 			and if attack is negative before calling F0030_MAIN_GetScaledProduct
@@ -837,7 +837,7 @@ int16 ChampionMan::f313_getWoundDefense(int16 champIndex, uint16 woundIndex) {
 		woundDefense >>= 1;
 
 	woundDefense += curChampion->_actionDefense + curChampion->_shieldDefense + _g407_party._shieldDefense + armorShieldDefense;
-	if (woundIndex > k1_ChampionSlotActionHand)  {
+	if (woundIndex > k1_ChampionSlotActionHand) {
 		Thing curThing = curChampion->_slots[woundIndex];
 		if (curThing.getType() == k6_ArmourThingType) {
 			ArmourInfo *armourInfo = (ArmourInfo *)_vm->_dungeonMan->f156_getThingData(curThing);
@@ -1242,7 +1242,7 @@ void ChampionMan::f283_viAltarRebirth(uint16 champIndex) {
 
 		curChampion->_cell = (ViewCell)numCell;
 	}
-	
+
 	uint16 maximumHealth = curChampion->_maxHealth;
 	curChampion->_maxHealth = MAX(25, maximumHealth - (maximumHealth >> 6) - 1);
 	curChampion->_currHealth = curChampion->_maxHealth >> 1;
@@ -1454,7 +1454,7 @@ void ChampionMan::f319_championKill(uint16 champIndex) {
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 	_vm->_displayMan->D24_fillScreenBox(g54_BoxChampionIcons[curChampionIconIndex << 2], k0_ColorBlack);
 	_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
-	
+
 	int16 aliveChampionIndex;
 	for (aliveChampionIndex = k0_ChampionFirst, curChampion = _vm->_championMan->_gK71_champions; aliveChampionIndex < _vm->_championMan->_g305_partyChampionCount; aliveChampionIndex++, curChampion++) {
 		if (curChampion->_currHealth)
@@ -1555,7 +1555,7 @@ void ChampionMan::f331_applyTimeEffects() {
 		if (championPtr->_currHealth && (_vm->M0_indexToOrdinal(championIndex) != _vm->_championMan->_g299_candidateChampionOrdinal)) {
 			uint16 wizardSkillLevel = _vm->_championMan->f303_getSkillLevel(championIndex, k3_ChampionSkillWizard) + _vm->_championMan->f303_getSkillLevel(championIndex, k2_ChampionSkillPriest);
 			if ((championPtr->_currMana < championPtr->_maxMana)
-			&&  (timeCriteria < championPtr->_statistics[k3_ChampionStatWisdom][k1_ChampionStatCurrent] + wizardSkillLevel)) {
+				&& (timeCriteria < championPtr->_statistics[k3_ChampionStatWisdom][k1_ChampionStatCurrent] + wizardSkillLevel)) {
 				int16 manaGain = championPtr->_maxMana / 40;
 				if (_vm->_championMan->_g300_partyIsSleeping)
 					manaGain <<= 1;
@@ -1726,10 +1726,10 @@ void ChampionMan::load2_PartyPart(Common::InSaveFile* file) {
 				champ->_statistics[y][x] = file->readByte();
 		for (uint16 j = 0; j < 30; ++j)
 			champ->_slots[j] = Thing(file->readUint16BE());
-			for (uint16 j = 0; j < 20; ++j) {
-				champ->_skills[j]._temporaryExperience = file->readSint16BE();
-				champ->_skills[j]._experience = file->readSint32BE();
-			}
+		for (uint16 j = 0; j < 20; ++j) {
+			champ->_skills[j]._temporaryExperience = file->readSint16BE();
+			champ->_skills[j]._experience = file->readSint32BE();
+		}
 		for (uint16 j = 0; j < 8; ++j)
 			champ->_name[j] = file->readByte();
 		for (uint16 j = 0; j < 20; ++j)
@@ -1945,7 +1945,7 @@ void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex)
 					curSlotIndex = slotIdx++;
 
 				break;
-				}
+			}
 			case k5_WeaponThingType:
 				if (championPtr->_slots[k1_ChampionSlotActionHand] == Thing::_none)
 					curSlotIndex = k1_ChampionSlotActionHand;
@@ -2317,31 +2317,162 @@ void ChampionMan::f291_drawSlot(uint16 champIndex, int16 slotIndex) {
 }
 
 void ChampionMan::f281_renameChampion(Champion* champ) {
-	warning(false, "STUB METHOD: Champion::renameChampion, F0281_CHAMPION_Rename");
+#define k1_RENAME_CHAMPION_NAME 1
+#define k2_RENAME_CHAMPION_TITLE 2
+	static char G0051_ac_Graphic562_UnderscoreCharacterString[2] = "_";
+	static char G0052_ac_Graphic562_RenameChampionInputCharacterString[2] = " ";
+	static char G0053_ac_Graphic562_ReincarnateSpecialCharacters[6] = {',', '.', ';', ':', ' '};
 
-	DisplayMan &dispMan = *_vm->_displayMan;
-	TextMan &textMan = *_vm->_textMan;
+	uint16 L0808_ui_Multiple;
+#define AL0808_ui_CharacterIndex L0808_ui_Multiple
+#define AL0808_ui_ChampionIndex  L0808_ui_Multiple
+	int16 L0809_i_RenamedChampionString;
+	int16 L0810_i_Character;
+	bool L0811_B_ChampionTitleIsFull;
+	char* L0812_pc_RenamedChampionString;
+	int16 L0813_i_X;
+	int16 L0814_i_Y;
+	Box L0815_s_Box;
+	int16 L0820_i_CharacterIndexBackup;
+	char L0821_ac_ChampionNameBackupString[8];
 
-	Box box;
-	box._y1 = 3;
-	box._y2 = 8;
-	box._x1 = 3;
-	box._x2 = box._x1 + 167;
 
-	dispMan.f135_fillBoxBitmap(dispMan._g296_bitmapViewport, box, k12_ColorDarkestGray, k112_byteWidthViewport, k136_heightViewport);
-	dispMan.f132_blitToBitmap(dispMan.f489_getNativeBitmapOrGraphic(k27_PanelRenameChampionIndice), dispMan._g296_bitmapViewport, g32_BoxPanel,
-							  0, 0, 72, k112_byteWidthViewport, k4_ColorCyan);
-	textMan.f52_printToViewport(177, 58, k13_ColorLightestGray, "_______");
-	textMan.f52_printToViewport(105, 76, k13_ColorLightestGray, "___________________");
-	Common::Point clickPos;
-	static Box okButtonBox(197, 215, 147, 155);
-	for (;;) {
-		_vm->_eventMan->processInput();
-		if (_vm->_eventMan->f360_hasPendingClick(clickPos, k1_LeftMouseButton) && okButtonBox.isPointInside(clickPos)) {
-			return;
+	L0815_s_Box._y1 = 3;
+	L0815_s_Box._y2 = 8;
+	L0815_s_Box._x2 = (L0815_s_Box._x1 = 3) + 167;
+	_vm->_displayMan->f135_fillBoxBitmap(_vm->_displayMan->_g296_bitmapViewport, L0815_s_Box, k12_ColorDarkestGray, k112_byteWidthViewport, k136_heightViewport);
+	_vm->_displayMan->f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k27_PanelRenameChampionIndice), g32_BoxPanel, k72_byteWidth, k4_ColorCyan, 73);
+	_vm->_textMan->f52_printToViewport(177, 58, k13_ColorLightestGray, "_______");
+	_vm->_textMan->f52_printToViewport(105, 76, k13_ColorLightestGray, "___________________");
+	_vm->_eventMan->f78_showMouse();
+	_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
+	_vm->_eventMan->f67_setMousePointerToNormal(k0_pointerArrow);
+	_vm->_eventMan->f77_hideMouse();
+	champ->_name[AL0808_ui_CharacterIndex = 0] = '\0';
+	champ->_title[0] = '\0';
+	L0809_i_RenamedChampionString = k1_RENAME_CHAMPION_NAME;
+	L0812_pc_RenamedChampionString = champ->_name;
+	L0813_i_X = 177;
+	L0814_i_Y = 91;
+
+	for (;;) { /*_Infinite loop_*/
+		if (!(L0811_B_ChampionTitleIsFull = ((L0809_i_RenamedChampionString == k2_RENAME_CHAMPION_TITLE) && (AL0808_ui_CharacterIndex == 19)))) {
+			_vm->_eventMan->f78_showMouse();
+			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen, L0813_i_X, L0814_i_Y, k9_ColorGold, k12_ColorDarkestGray, G0051_ac_Graphic562_UnderscoreCharacterString, k200_heightScreen);
+			_vm->_eventMan->f77_hideMouse();
 		}
-		dispMan.f97_drawViewport(k0_viewportNotDungeonView);
-		dispMan.updateScreen();
+		L0810_i_Character = 256;
+		while (L0810_i_Character == 256) {
+			Common::Event event;
+			Common::EventType eventType;
+			{
+				eventType = _vm->_eventMan->processInput(&event, &event);
+				_vm->_displayMan->updateScreen();
+				_vm->f22_delay(1);
+			}
+			if (eventType == Common::EVENT_LBUTTONDOWN) { /* If left mouse button status has changed */
+				Common::Point mousePos = _vm->_eventMan->getMousePos();
+				if ((L0809_i_RenamedChampionString == k2_RENAME_CHAMPION_TITLE || (AL0808_ui_CharacterIndex > 0)) && (mousePos.x >= 197) && (mousePos.x <= 215) && (mousePos.y >= 147) && (mousePos.y <= 155)) { /* Coordinates of 'OK' button */
+					L0820_i_CharacterIndexBackup = AL0808_ui_CharacterIndex;
+					strcpy(L0821_ac_ChampionNameBackupString, L0812_pc_RenamedChampionString = champ->_name);
+					AL0808_ui_CharacterIndex = strlen(L0812_pc_RenamedChampionString);
+					while (L0812_pc_RenamedChampionString[--AL0808_ui_CharacterIndex] == ' ') { /* Replace space characters on the right of the champion name by '\0' characters */
+						L0812_pc_RenamedChampionString[AL0808_ui_CharacterIndex] = '\0';
+					}
+					for (AL0808_ui_ChampionIndex = k0_ChampionFirst; AL0808_ui_ChampionIndex < _vm->_championMan->_g305_partyChampionCount - 1; AL0808_ui_ChampionIndex++) {
+						if (!strcmp(_vm->_championMan->_gK71_champions[AL0808_ui_ChampionIndex]._name, L0812_pc_RenamedChampionString)) /* If an existing champion already has the specified name for the new champion */
+							goto T0281011_ContinueRename;
+					}
+					return;
+T0281011_ContinueRename:
+					if (L0809_i_RenamedChampionString == k2_RENAME_CHAMPION_TITLE) {
+						L0812_pc_RenamedChampionString = champ->_title;
+					}
+					strcpy(L0812_pc_RenamedChampionString = champ->_name, L0821_ac_ChampionNameBackupString);
+					AL0808_ui_CharacterIndex = L0820_i_CharacterIndexBackup;
+				} else {
+					if ((mousePos.x >= 107) && (mousePos.x <= 175) && (mousePos.y >= 147) && (mousePos.y <= 155)) { /* Coordinates of 'BACKSPACE' button */
+						L0810_i_Character = '\b';
+						break;
+					}
+					if ((mousePos.x < 107) || (mousePos.x > 215) || (mousePos.y < 116) || (mousePos.y > 144)) {/* Coordinates of table of all other characters */
+						//goto T0281023;
+					}
+					if (!((mousePos.x + 4) % 10) || (!((mousePos.y + 5) % 10) && ((mousePos.x < 207) || (mousePos.y != 135)))) {
+						//goto T0281023;
+					}
+					L0810_i_Character = 'A' + (11 * ((mousePos.y - 116) / 10)) + ((mousePos.x - 107) / 10);
+					if ((L0810_i_Character == 86) || (L0810_i_Character == 97)) { /* The 'Return' button occupies two cells in the table */
+						L0810_i_Character = '\r'; /* Carriage return */
+						break;
+					}
+					if (L0810_i_Character >= 87) { /* Compensate for the first cell occupied by 'Return' button */
+						L0810_i_Character--;
+					}
+					if (L0810_i_Character > 'Z') {
+						L0810_i_Character = G0053_ac_Graphic562_ReincarnateSpecialCharacters[(L0810_i_Character - 'Z') - 1];
+					}
+					break;
+				}
+			} else if (eventType == Common::EVENT_KEYDOWN) {
+				L0810_i_Character = event.kbd.ascii;
+			}
+		}
+
+		if ((L0810_i_Character >= 'a') && (L0810_i_Character <= 'z')) {
+			L0810_i_Character -= 32; /* Convert to uppercase */
+		}
+		if (((L0810_i_Character >= 'A') && (L0810_i_Character <= 'Z')) || (L0810_i_Character == '.') || (L0810_i_Character == ',') || (L0810_i_Character == ';') || (L0810_i_Character == ':') || (L0810_i_Character == ' ')) {
+			if ((L0810_i_Character == ' ') && AL0808_ui_CharacterIndex == 0) {
+			} else {
+				if (!L0811_B_ChampionTitleIsFull) {
+					G0052_ac_Graphic562_RenameChampionInputCharacterString[0] = L0810_i_Character;
+					_vm->_eventMan->f78_showMouse();
+					_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen, L0813_i_X, L0814_i_Y, k13_ColorLightestGray, k12_ColorDarkestGray, G0052_ac_Graphic562_RenameChampionInputCharacterString, k200_heightScreen);
+					_vm->_eventMan->f77_hideMouse();
+					L0812_pc_RenamedChampionString[AL0808_ui_CharacterIndex++] = L0810_i_Character;
+					L0812_pc_RenamedChampionString[AL0808_ui_CharacterIndex] = '\0';
+					L0813_i_X += 6;
+					if ((L0809_i_RenamedChampionString == k1_RENAME_CHAMPION_NAME) && (AL0808_ui_CharacterIndex == 7))
+						goto T0281033_ProceedToTitle;
+				}
+			}
+		} else {
+			if (L0810_i_Character == '\r') { /* Carriage return */
+				if ((L0809_i_RenamedChampionString == k1_RENAME_CHAMPION_NAME) && (AL0808_ui_CharacterIndex > 0)) {
+					_vm->_eventMan->f78_showMouse();
+					_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen, L0813_i_X, L0814_i_Y, k13_ColorLightestGray, k12_ColorDarkestGray, G0051_ac_Graphic562_UnderscoreCharacterString, k200_heightScreen);
+					_vm->_eventMan->f77_hideMouse();
+T0281033_ProceedToTitle:
+					L0809_i_RenamedChampionString = k2_RENAME_CHAMPION_TITLE;
+					L0812_pc_RenamedChampionString = champ->_title;
+					L0813_i_X = 105;
+					L0814_i_Y = 109;
+					AL0808_ui_CharacterIndex = 0;
+				}
+			} else {
+				if (L0810_i_Character == '\b') { /* Backspace */
+					if ((L0809_i_RenamedChampionString == k1_RENAME_CHAMPION_NAME) && (AL0808_ui_CharacterIndex == 0))
+						continue;
+					if (!L0811_B_ChampionTitleIsFull) {
+						_vm->_eventMan->f78_showMouse();
+						_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen, L0813_i_X, L0814_i_Y, k13_ColorLightestGray, k12_ColorDarkestGray, G0051_ac_Graphic562_UnderscoreCharacterString, k200_heightScreen);
+						_vm->_eventMan->f77_hideMouse();
+					}
+					if (AL0808_ui_CharacterIndex == 0) {
+						L0812_pc_RenamedChampionString = champ->_name;
+						AL0808_ui_CharacterIndex = strlen(L0812_pc_RenamedChampionString) - 1;
+						L0809_i_RenamedChampionString = k1_RENAME_CHAMPION_NAME;
+						L0813_i_X = 177 + (AL0808_ui_CharacterIndex * 6);
+						L0814_i_Y = 91;
+					} else {
+						AL0808_ui_CharacterIndex--;
+						L0813_i_X -= 6;
+					}
+					L0812_pc_RenamedChampionString[AL0808_ui_CharacterIndex] = '\0';
+				}
+			}
+		}
 	}
 }
 
