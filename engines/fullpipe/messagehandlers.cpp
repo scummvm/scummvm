@@ -425,7 +425,7 @@ int global_messageHandler3(ExCommand *cmd) {
 				if (g_fp->_msgX != cmd->_sceneClickX || g_fp->_msgY != cmd->_sceneClickY) {
 					ani = g_fp->_currentScene->getStaticANIObject1ById(g_fp->_gameLoader->_field_FA, -1);
 					if (!ani || (ani->isIdle() && !(ani->_flags & 0x80) && !(ani->_flags & 0x100))) {
-						warning("WWW 1");
+						debugC(0, kDebugPathfinding, "WWW 1");
 						result = startWalkTo(g_fp->_gameLoader->_field_FA, -1, cmd->_sceneClickX, cmd->_sceneClickY, 0);
 						if (result) {
 							ExCommand *ex = new ExCommand(g_fp->_gameLoader->_field_FA, 17, 64, 0, 0, 0, 1, 0, 0, 0);
