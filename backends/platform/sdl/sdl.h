@@ -76,6 +76,7 @@ public:
 	virtual void getTimeAndDate(TimeDate &td) const;
 	virtual Audio::Mixer *getMixer();
 	virtual Common::TimerManager *getTimerManager();
+	virtual Common::SaveFileManager *getSavefileManager();
 
 protected:
 	bool _inited;

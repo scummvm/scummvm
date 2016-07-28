@@ -33,7 +33,7 @@ os:
   - linux
 
 script:
-  - ./configure --enable-all-engines --disable-eventrecorder
+  - ./configure --enable-all-engines
   - make -j 2
   - make test
   - make devtools
