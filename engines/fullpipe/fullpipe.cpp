@@ -48,6 +48,13 @@ FullpipeEngine *g_fp = 0;
 Vars *g_vars = 0;
 
 FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+	DebugMan.addDebugChannel(kDebugPathfinding, "path", "Pathfinding");
+	DebugMan.addDebugChannel(kDebugDrawing, "drawing", "Drawing");
+	DebugMan.addDebugChannel(kDebugLoading, "loading", "Scene loading");
+	DebugMan.addDebugChannel(kDebugAnimation, "animation", "Animation");
+	DebugMan.addDebugChannel(kDebugMemory, "memory", "Memory management");
+	DebugMan.addDebugChannel(kDebugEvents, "events", "Event handling");
+
 	// Setup mixer
 	if (!_mixer->isReady()) {
 		warning("Sound initialization failed.");
@@ -200,13 +207,6 @@ FullpipeEngine::~FullpipeEngine() {
 }
 
 void FullpipeEngine::initialize() {
-	DebugMan.addDebugChannel(kDebugPathfinding, "path", "Pathfinding");
-	DebugMan.addDebugChannel(kDebugDrawing, "drawing", "Drawing");
-	DebugMan.addDebugChannel(kDebugLoading, "loading", "Scene loading");
-	DebugMan.addDebugChannel(kDebugAnimation, "animation", "Animation");
-	DebugMan.addDebugChannel(kDebugMemory, "memory", "Memory management");
-	DebugMan.addDebugChannel(kDebugEvents, "events", "Event handling");
-
 	_globalMessageQueueList = new GlobalMessageQueueList;
 	_behaviorManager = new BehaviorManager;
 
