@@ -145,6 +145,8 @@ void MGM::rebuildTables(int objId) {
 	if (idx == -1)
 		return;
 
+	debugC(3, kDebugPathfinding, "MGM::rebuildTables. (1) movements1 sz: %d movements2 sz: %d", _items[idx]->movements1.size(), _items[idx]->movements2.size());
+
 	_items[idx]->subItems.clear();
 	_items[idx]->statics.clear();
 	_items[idx]->movements1.clear();
@@ -163,8 +165,12 @@ void MGM::rebuildTables(int objId) {
 			_items[idx]->subItems.push_back(new MGMSubItem);
 	}
 
-	for (uint i = 0; i < obj->_movements.size(); i++)
+	for (uint i = 0; i < obj->_movements.size(); i++) {
 		_items[idx]->movements1.push_back((Movement *)obj->_movements[i]);
+		_items[idx]->movements2.push_back(0);
+	}
+
+	debugC(3, kDebugPathfinding, "MGM::rebuildTables. (2) movements1 sz: %d movements2 sz: %d", _items[idx]->movements1.size(), _items[idx]->movements2.size());
 }
 
 int MGM::getItemIndexById(int objId) {
@@ -216,11 +222,14 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	if (!mov)
 		return 0;
 
+
 	int itemIdx = getItemIndexById(mgminfo->ani->_id);
 	int subIdx = getStaticsIndexById(itemIdx, mgminfo->staticsId1);
 	int st2idx = getStaticsIndexById(itemIdx, mov->_staticsObj1->_staticsId);
 	int st1idx = getStaticsIndexById(itemIdx, mov->_staticsObj2->_staticsId);
 	int subOffset = getStaticsIndexById(itemIdx, mgminfo->staticsId2);
+
+	debugC(3, kDebugPathfinding, "MGM::genMovement. (1) movements1 sz: %d movements2 sz: %d", _items[itemIdx]->movements1.size(), _items[itemIdx]->movements2.size());
 
 	clearMovements2(itemIdx);
 	recalcOffsets(itemIdx, subIdx, st2idx, 0, 1);
@@ -378,6 +387,8 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 
 	mq->addExCommandToEnd(ex);
 
+	debugC(3, kDebugPathfinding, "MGM::genMovement. (2) movements1 sz: %d movements2 sz: %d", _items[itemIdx]->movements1.size(), _items[itemIdx]->movements2.size());
+
 	return mq;
 }
 
@@ -492,12 +503,19 @@ int MGM::getStaticsIndex(int idx, Statics *st) {
 }
 
 void MGM::clearMovements2(int idx) {
-	_items[idx]->movements2.clear();
+	debugC(2, kDebugPathfinding, "MGM::clearMovements2(%d)", idx);
+
+	for (uint i = 0; i < _items[idx]->movements2.size(); i++)
+		_items[idx]->movements2[i] = 0;
+
+	debugC(3, kDebugPathfinding, "MGM::clearMovements2. movements1 sz: %d movements2 sz: %d", _items[idx]->movements1.size(), _items[idx]->movements2.size());
 }
 
 int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 	MGMItem *item = _items[idx];
 	int subIdx = st1idx + st2idx * item->statics.size();
+
+	debugC(2, kDebugPathfinding, "MGM::recalcOffsets(%d, %d, %d, %d, %d)", idx, st1idx, st2idx, flip, flop);
 
 	if (st1idx == st2idx) {
 		memset(&item->subItems[subIdx], 0, sizeof(item->subItems[subIdx]));
@@ -508,6 +526,8 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 		return item->subItems[subIdx]->field_8;
 
 	Common::Point point;
+
+	debugC(3, kDebugPathfinding, "MGM::recalcOffsets. movements1 sz: %d movements2 sz: %d", item->movements1.size(), item->movements2.size());
 
 	for (uint i = 0; i < item->movements1.size(); i++) {
 		Movement *mov = item->movements1[i];
@@ -521,6 +541,8 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 			int stidx = getStaticsIndex(idx, mov->_staticsObj2);
 			int recalc = recalcOffsets(idx, stidx, st2idx, flip, flop);
 			int sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+			debugC(1, kDebugPathfinding, "MGM::recalcOffsets, want idx: %d, off: %d (%d + %d), sz: %d", idx, stidx + st2idx * _items[idx]->statics.size(), stidx, st2idx, item->subItems.size());
+
 			int newsz = sz + item->subItems[stidx + st2idx * _items[idx]->statics.size()]->field_C;
 
 			if (recalc < 0)
