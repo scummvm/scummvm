@@ -238,7 +238,7 @@ void MenuMan::f390_refreshActionAreaAndSetChampDirMaxDamageReceived() {
 			_g509_actionAreaContainsIcons = false;
 			champ->setAttributeFlag(k0x8000_ChampionAttributeActionHand, true);
 			champMan.f292_drawChampionState((ChampionIndex)_vm->M1_ordinalToIndex(champMan._g506_actingChampionOrdinal));
-			warning(false, "MISSING CODE: F0387_MENUS_DrawActionArea");
+			f387_drawActionArea();
 		}
 	}
 }
@@ -251,7 +251,7 @@ void MenuMan::f387_drawActionArea() {
 	ChampionMan &champMan = *_vm->_championMan;
 	TextMan &textMan = *_vm->_textMan;
 
-	warning(false, "MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
+	_vm->_eventMan->f77_hideMouse();
 	dispMan._g578_useByteBoxCoordinates = false;
 	dispMan.D24_fillScreenBox(g1_BoxActionArea, k0_ColorBlack);
 	if (_g509_actionAreaContainsIcons) {
@@ -274,7 +274,7 @@ void MenuMan::f387_drawActionArea() {
 												k12_ActionNameMaximumLength, k200_heightScreen);
 		}
 	}
-	warning(false, "MISSING CODE: F0078_MOUSE_ShowPointer");
+	_vm->_eventMan->f78_showMouse();
 	_g508_refreshActionArea = false;
 }
 
