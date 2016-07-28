@@ -162,6 +162,7 @@ void tglBlitFast(BlitImage *blitImage, int x, int y);
 */
 void tglBlitZBuffer(BlitImage *blitImage, int x, int y);
 
+void tglIncBlitImageRef(BlitImage *blitImage);
 
 namespace Internal {
 	/**

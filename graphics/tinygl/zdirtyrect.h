@@ -156,7 +156,7 @@ public:
 	};
 
 	BlittingDrawCall(BlitImage *image, const BlitTransform &transform, BlittingMode blittingMode);
-	virtual ~BlittingDrawCall() { }
+	virtual ~BlittingDrawCall();
 	bool operator==(const BlittingDrawCall &other) const;
 	virtual void execute(bool restoreState) const;
 	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;

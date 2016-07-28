@@ -563,8 +563,13 @@ bool RasterizationDrawCall::operator==(const RasterizationDrawCall &other) const
 }
 
 BlittingDrawCall::BlittingDrawCall(Graphics::BlitImage *image, const BlitTransform &transform, BlittingMode blittingMode) : DrawCall(DrawCall_Blitting), _transform(transform), _mode(blittingMode), _image(image) {
+	tglIncBlitImageRef(image);
 	_blitState = captureState();
 	_imageVersion = tglGetBlitImageVersion(image);
+}
+
+BlittingDrawCall::~BlittingDrawCall() {
+	tglDeleteBlitImage(_image);
 }
 
 void BlittingDrawCall::execute(bool restoreState) const {
