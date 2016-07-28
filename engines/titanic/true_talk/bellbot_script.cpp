@@ -50,6 +50,7 @@ BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
 	_tagMappings.load("TagMap/Bellbot");
 	_words.load("Words/Bellbot");
 	_quotes.load("Quotes/Bellbot");
+	_states.load("States/Bellbot");
 }
 
 void BellbotScript::setupSentences() {
@@ -294,7 +295,7 @@ int BellbotScript::updateState(int oldId, int newId, int index) {
 		}
 	}
 
-	setValue25(newId);
+	setValue23(newId);
 	return newId;
 }
 
@@ -423,8 +424,15 @@ int BellbotScript::getStateDialogueId() const {
 	}
 }
 
-void BellbotScript::setValue25(int id) {
-	// TODO
+void BellbotScript::setValue23(uint id) {
+	uint val = 0;
+	for (uint idx = 0; idx < _states.size() && !val; ++idx) {
+		TTmapEntry &me = _states[idx];
+		if (me._src == id)
+			val = me._dest;
+	}
+
+	CTrueTalkManager::setFlags(23, val);
 }
 
 } // End of namespace Titanic

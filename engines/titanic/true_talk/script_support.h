@@ -153,6 +153,18 @@ public:
 	void load(const char *name);
 };
 
+struct TTmapEntry {
+	uint _src;
+	uint _dest;
+
+	TTmapEntry() : _src(0), _dest(0) {}
+};
+
+class TTmapEntries : public Common::Array<TTmapEntry> {
+public:
+	void load(const char *name);
+};
+
 } // End of namespace Titanic
 
 #endif /* TITANIC_TT_NPC_SCRIPT_H */

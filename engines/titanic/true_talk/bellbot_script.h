@@ -30,6 +30,7 @@ namespace Titanic {
 class BellbotScript : public TTnpcScript {
 private:
 	static int _oldId;
+	TTmapEntries _states;
 	int _array[150];
 	int _field2D0;
 	int _field2D4;
@@ -54,7 +55,7 @@ private:
 	/**
 	 * Sets the state value 25 based on the passed Id
 	 */
-	void setValue25(int id);
+	void setValue23(uint id);
 public:
 	BellbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2);
