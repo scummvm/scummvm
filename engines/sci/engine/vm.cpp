@@ -405,6 +405,21 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 			error("[VM] k%s[%x]: no subfunction ID parameter given", kernelCall.name, kernelCallNr);
 		if (argv[0].isPointer())
 			error("[VM] k%s[%x]: given subfunction ID is actually a pointer", kernelCall.name, kernelCallNr);
+
+#ifdef ENABLE_SCI32
+		// The Windows version of kShowMovie has subops, but the subop number
+		// is put in the second parameter in SCI2.1+, even though every other
+		// kcall with subops puts the subop in the first parameter. To allow use
+		// of the normal subops system, we swap the arguments so the subop
+		// number is in the usual place.
+		if (getSciVersion() > SCI_VERSION_2 &&
+			g_sci->getPlatform() == Common::kPlatformWindows &&
+			strcmp(kernelCall.name, "ShowMovie") == 0) {
+			assert(argc > 1);
+			SWAP(argv[0], argv[1]);
+		}
+#endif
+
 		const uint16 subId = argv[0].toUint16();
 		// Skip over subfunction-id
 		argc--;
