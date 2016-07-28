@@ -160,8 +160,17 @@ void FrameBuffer::clear(int clearZ, int z, int clearColor, int r, int g, int b) 
 			// All "color" bytes are identical, use memset (fast)
 			memset(pp, colorc[0], this->linesize * this->ysize);
 		} else {
-			// Cannot use memset, use a variant working on shorts (slow)
-			memset_s(pp, color, this->xsize * this->ysize);
+			// Cannot use memset, use a variant working on shorts/ints (slow)
+			switch(this->pixelbytes) {
+			case 2:
+				memset_s(pp, color, this->xsize * this->ysize);
+				break;
+			case 4:
+				memset_l(pp, color, this->xsize * this->ysize);
+				break;
+			default:
+				error("Unsupported pixel size %i", this->pixelbytes);
+			}
 		}
 	}
 }
@@ -201,9 +210,18 @@ void FrameBuffer::clearRegion(int x, int y, int w, int h, int clearZ, int z, int
 				pp += this->linesize;
 			}
 		} else {
-			// Cannot use memset, use a variant working on shorts (slow)
+			// Cannot use memset, use a variant working on shorts/ints (slow)
 			while (height--) {
-				memset_s(pp, color, w);
+				switch(this->pixelbytes) {
+				case 2:
+					memset_s(pp, color, w);
+					break;
+				case 4:
+					memset_l(pp, color, w);
+					break;
+				default:
+					error("Unsupported pixel size %i", this->pixelbytes);
+				}
 				pp += this->linesize;
 			}
 		}
