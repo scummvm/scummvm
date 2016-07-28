@@ -162,4 +162,21 @@ void TThandleQuoteEntries::load(const char *name) {
 	delete r;
 }
 
+/*------------------------------------------------------------------------*/
+
+void TTupdateStateEntries::load(const char *name) {
+	Common::SeekableReadStream *r = g_vm->_filesManager->getResource(name);
+
+	while (r->pos() < r->size()) {
+		TTupdateStateEntry ue;
+		ue._v1 = r->readUint32LE();
+		ue._v2 = r->readUint32LE();
+		ue._v3 = r->readUint32LE();
+
+		push_back(ue);
+	}
+
+	delete r;
+}
+
 } // End of namespace Titanic

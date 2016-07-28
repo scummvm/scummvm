@@ -23,9 +23,13 @@
 #include "common/textconsole.h"
 #include "titanic/true_talk/bellbot_script.h"
 #include "titanic/true_talk/true_talk_manager.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/core/node_item.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
+
+int BellbotScript::_oldId;
 
 BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2) :
@@ -183,8 +187,115 @@ int BellbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 }
 
 int BellbotScript::updateState(int oldId, int newId, int index) {
-	warning("TODO");
-	return 0;
+	if (!getValue(25)) {
+		newId = 202043 - getValue(1) <= 2 ? 994 : 0;
+		CTrueTalkManager::setFlags(25, 1);
+	}
+
+	if (oldId == _oldId && _rangeResetCtr >= 3) {
+		TTscriptRange *range = findRange(oldId);
+		if (range)
+			range->_priorIndex = 0;
+
+		_rangeResetCtr = 0;
+		return getRangeValue(200370);
+	}
+
+	if (oldId != _oldId) {
+		_oldId = oldId;
+		_rangeResetCtr = 0;
+	}
+
+	if (oldId >= 201709 && oldId <= 201754) {
+		addResponse(getDialogueId(201705));
+		addResponse(getDialogueId(201706));
+		newId = getRangeValue(201707);
+	}
+
+	if (newId == 202276)
+		newId = addLocation();
+	if (newId == 202275)
+		newId = getStateDialogueId();
+
+	if (getValue(1) >= 2) {
+		if (newId == 200840 || newId == 200845 || newId == 200846 || newId == 200851) {
+			if (getValue(1) == 2) {
+				newId = 202047;
+			} else {
+				newId = getRangeValue(202848);
+			}
+		}
+	}
+
+	if (getValue(1) >= 3) {
+		if (newId == 200841 || newId == 200842 || newId == 200843 ||
+				newId == 200847 || newId == 200848 || newId == 200854) {
+			newId = getRangeValue(202038);
+		}
+	}
+
+	if (newId == 200264 && getValue(1) == 1)
+		newId = 200267;
+	if (newId == 202231 && getValue(1) == 1)
+		newId = 200848;
+
+	int v4 = getValue(4);
+	if (newId == 200187 && v4) {
+		return 200188;
+	} else if (newId == 200188 && !v4) {
+		return 200187;
+	} else if (newId == 200014 && (v4 == 1 || v4 == 2)) {
+		return 200011;
+	} else if (newId == 200011 && !v4) {
+		return 200014;
+	}
+
+	if (oldId == 200612) {
+		CTrueTalkManager::setFlags(25, 2);
+		CTrueTalkManager::setFlags(5, 1);
+	}
+
+	if (newId == 200423 || newId == 200424 || newId == 200425) {
+		if (getValue(5)) {
+			CTrueTalkManager::triggerAction(16, 0);
+		} else {
+			newId = 200611;
+		}
+	}
+
+	if (oldId == 200261 && getRandomNumber(10) == 1) {
+		if (getValue(1) >= 3)
+			newId = getRangeValue(200283);
+		else if (getValue(1) == 2)
+			newId = getRangeValue(200279);
+	}
+
+	if (oldId == 200962) {
+		if (getValue(1) == 2)
+			return 200963;
+		if (getValue(1) == 1)
+			return 200964;
+	}
+	if (oldId == 200989 && getValue(1) <= 2)
+		return 200990;
+
+	if (oldId == 201760) {
+		CGameManager *gameManager = g_vm->_trueTalkManager->getGameManager();
+		CPetControl *pet = getPetControl(gameManager);
+
+		if (pet) {
+			bool canSummon = pet->canSummonBot("DoorBot");
+			if (canSummon) {
+				CTrueTalkManager::_v9 = 101;
+				CTrueTalkManager::triggerAction(5, 0);
+			} else {
+				newId = 201857;
+			}
+		}
+	}
+
+	setValue25(newId);
+	return newId;
 }
 
 int BellbotScript::proc22(int id) const {
@@ -287,6 +398,33 @@ void BellbotScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *r
 int BellbotScript::proc36(int id) const {
 	warning("TODO");
 	return 0;
+}
+
+int BellbotScript::addLocation() {
+	addResponse(getDialogueId(202228));
+	int roomNum, floorNum, elevatorNum;
+	getAssignedRoom(&roomNum, &floorNum, &elevatorNum);
+
+	addResponse(getDialogueId(202071 + roomNum));
+	addResponse(getDialogueId(201933 + floorNum));
+	addResponse(getDialogueId(201916 + elevatorNum));
+
+	return 200858;
+}
+
+int BellbotScript::getStateDialogueId() const {
+	switch (getValue(1)) {
+	case 1:
+		return 201253;
+	case 2:
+		return 200282;
+	default:
+		return 201246;
+	}
+}
+
+void BellbotScript::setValue25(int id) {
+	// TODO
 }
 
 } // End of namespace Titanic

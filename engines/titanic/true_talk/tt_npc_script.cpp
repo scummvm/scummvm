@@ -559,7 +559,7 @@ int TTnpcScript::getRoom54(int roomId) {
 	return room ? room->_field54 : 0;
 }
 
-int TTnpcScript::getValue(int testNum) {
+int TTnpcScript::getValue(int testNum) const {
 	switch (testNum) {
 	case 0:
 		return CTrueTalkManager::_v2;

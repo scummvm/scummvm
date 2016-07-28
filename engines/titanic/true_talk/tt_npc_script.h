@@ -121,7 +121,7 @@ protected:
 	/**
 	 * Perform test on various state values
 	 */
-	int getValue(int testNum);
+	int getValue(int testNum) const;
 
 	/**
 	 * Gets a random number between 1 and a given max

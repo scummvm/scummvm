@@ -29,6 +29,7 @@ namespace Titanic {
 
 class BellbotScript : public TTnpcScript {
 private:
+	static int _oldId;
 	int _array[150];
 	int _field2D0;
 	int _field2D4;
@@ -39,6 +40,21 @@ private:
 	 * Setup sentence data
 	 */
 	void setupSentences();
+
+	/**
+	 * Add the current location to the response
+	 */
+	int addLocation();
+
+	/**
+	 * Get a dialogue Id based on the state
+	 */
+	int getStateDialogueId() const;
+
+	/**
+	 * Sets the state value 25 based on the passed Id
+	 */
+	void setValue25(int id);
 public:
 	BellbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2);

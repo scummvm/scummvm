@@ -142,6 +142,16 @@ public:
 	void load(const char *name);
 };
 
+struct TTupdateStateEntry {
+	uint _v1;
+	uint _v2;
+	uint _v3;
+};
+
+class TTupdateStateEntries : public Common::Array<TTupdateStateEntry> {
+public:
+	void load(const char *name);
+};
 
 } // End of namespace Titanic
 
