@@ -809,7 +809,7 @@ void DisplayMan::f460_initializeGraphicData() {
 	_g702_bitmapWallSet_Wall_D0R = new byte[32 * 136];
 	_g703_bitmapWallSet_DoorFrameTop_D2LCR = new byte[96 * 3];
 	_g704_bitmapWallSet_DoorFrameTop_D1LCR = new byte[128 * 4];
-	_g705_bitmapWallSet_DoorFrameLeft_D3L = new byte[32 * 43];
+	_g705_bitmapWallSet_DoorFrameLeft_D3L = new byte[32 * 44];
 	_g706_bitmapWallSet_DoorFrameLeft_D3C = new byte[32 * 44];
 	_g707_bitmapWallSet_DoorFrameLeft_D2C = new byte[48 * 65];
 	_g708_bitmapWallSet_DoorFrameLeft_D1C = new byte[32 * 94];
