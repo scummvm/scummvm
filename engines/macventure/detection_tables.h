@@ -28,7 +28,7 @@ namespace MacVenture {
 
 static const ADGameDescription gameDescriptions[] = {
 	BASEGAME("shadowgate", "Zojoi Rerelease", "Shadowgate.bin", "ebbfbcbf93938bd2900cb0c0213b19ad", 68974), // Zojoi Rerelease
-	BASEGAME("deja_vu", "Zojoi Rerelease", "Déjà Vu.bin", "5e9f5a8e3c8eb29ed02b34ae5937354f", 69034), // Zojoi Rerelease
+	BASEGAME("deja_vu", "Zojoi Rerelease", "Deja Vu.bin", "5e9f5a8e3c8eb29ed02b34ae5937354f", 69034), // Zojoi Rerelease
 	AD_TABLE_END_MARKER
 };
 } // End of namespace MacVenture

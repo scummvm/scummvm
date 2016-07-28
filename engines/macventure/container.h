@@ -45,8 +45,8 @@ public:
 	Container(Common::String filename) {
 		_filename = filename;
 
-		FSNode node = FSDirectory(".");
-		debug(node.getDisplayName().c_str());
+		//FSNode node = FSDirectory(".");
+		//debug(node.getDisplayName().c_str());
 
 		if (!_file.open(_filename))
 			error("Could not open %s", _filename.c_str());

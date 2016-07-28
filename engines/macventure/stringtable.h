@@ -29,6 +29,8 @@
 
 namespace MacVenture {
 
+extern void toASCII(Common::String &str);
+
 enum StringTableID {
 	kErrorStringTableID = 0x80,
 	kFilenamesStringTableID = 0x81,
@@ -39,11 +41,11 @@ enum StringTableID {
 
 class StringTable {
 public:
-	StringTable(MacVentureEngine *engine, Common::MacResManager *resMan, StringTableID id) { 
+	StringTable(MacVentureEngine *engine, Common::MacResManager *resMan, StringTableID id) {
 		_engine = engine;
 		_resourceManager = resMan;
 		_id = id;
-		
+
 		if (!loadStrings())
 			error("Could not load string table %x", id);
 	}
@@ -80,8 +82,11 @@ private:
 			char* str = new char[strLength + 1];
 			res->read(str, strLength);
 			str[strLength] = '\0';
+			// HACK until a proper special char implementation is found, this will have to do.
+			Common::String result = Common::String(str);
+			toASCII(result);
 			debug(11, "Loaded string %s", str);
-			_strings.push_back(Common::String(str));
+			_strings.push_back(Common::String(result));
 			delete[] str;
 		}
 
@@ -101,4 +106,3 @@ private:
 } // End of namespace MacVenture
 
 #endif
-

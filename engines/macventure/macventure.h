@@ -54,6 +54,9 @@ class ScriptEngine;
 
 typedef uint32 ObjID;
 
+// HACK, until I find a way to translate correctly
+extern void toASCII(Common::String &str);
+
 enum {
 	kScreenWidth = 512,
 	kScreenHeight = 342
