@@ -42,6 +42,7 @@ namespace MacVenture {
 static const PlainGameDescriptor macventureGames[] = {
 	{ "shadowgate", "Shadowgate" },
 	{ "deja_vu", "Deja Vu"},
+	{ "deja_vu2", "Deja Vu II"},
 	{ 0, 0 }
 };
 
