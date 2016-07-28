@@ -3773,6 +3773,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_UNSTABLE, GUIO_QFG4_CD	},
 
+	// Quest for Glory 4 CD - English DOS/Windows (from jvprat)
+	// Executable scanning reports "2.100.002", VERSION file reports "1.0"
+	{"qfg4", "CD", {
+		{"resource.map", 0, "aba367f2102e81782d961b14fbe3d630", 10246},
+		{"resource.000", 0, "263dce4aa34c49d3ad29bec889007b1c", 11571394},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD | ADGF_UNSTABLE, GUIO_QFG4_CD	},
+
 #define GUIO_RAMA_DEMO GUIO5(GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
                              GUIO_NOASPECT, \
                              GAMEOPTION_PREFER_DIGITAL_SFX, \
