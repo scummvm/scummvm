@@ -357,6 +357,7 @@ EventManager::EventManager(DMEngine *vm) : _vm(vm) {
 	_g444_secondaryKeyboardInput = nullptr;
 	_g597_ignoreMouseMovements = false;
 	_g587_hideMousePointerRequestCount = 0;
+	_g558_mouseButtonStatus = 0;
 }
 
 EventManager::~EventManager() {
@@ -529,6 +530,9 @@ void EventManager::f77_hideMouse() {
 	// CursorMan.showMouse(false);
 }
 
+bool EventManager::isMouseButtonDown(MouseButton button) {
+	return (button != k0_NoneMouseButton) ? (_g558_mouseButtonStatus & button) : (_g558_mouseButtonStatus == 0);
+}
 
 void EventManager::setMousePos(Common::Point pos) {
 	_vm->_system->warpMouse(pos.x, pos.y);
@@ -576,15 +580,24 @@ Common::EventType EventManager::processInput(Common::Event *grabKey, Common::Eve
 				_mousePos = event.mouse;
 			break;
 		case Common::EVENT_LBUTTONDOWN:
-		case Common::EVENT_RBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN: {
+			MouseButton button = (event.type == Common::EVENT_LBUTTONDOWN) ? k1_LeftMouseButton : k2_RightMouseButton;
+			_g558_mouseButtonStatus |= button;
 			if (grabMouseClick) {
 				*grabMouseClick = event;
 				return event.type;
 			}
 			_g436_pendingClickPresent = true;
 			_g437_pendingClickPos = _mousePos;
-			_g439_pendingClickButton = (event.type == Common::EVENT_LBUTTONDOWN) ? k1_LeftMouseButton : k2_RightMouseButton;
+			_g439_pendingClickButton = button;
 			break;
+		}
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_RBUTTONUP: {
+			MouseButton button = (event.type == Common::EVENT_LBUTTONDOWN) ? k1_LeftMouseButton : k2_RightMouseButton;
+			_g558_mouseButtonStatus &= ~button;
+			break;
+		}
 		default:
 			break;
 		}
@@ -705,7 +718,7 @@ void EventManager::f380_processCommandQueue() {
 		return;
 	}
 	if (cmdType == k70_CommandClickOnMouth) {
-		warning(false, "MISSING CODE: F0349_INVENTORY_ProcessCommand70_ClickOnMouth();");
+		_vm->_inventoryMan->f349_processCommand70_clickOnMouth();
 		return;
 	}
 	if (cmdType == k71_CommandClickOnEye) {
@@ -749,7 +762,6 @@ void EventManager::f380_processCommandQueue() {
 	}
 	if (cmdType == k140_CommandSaveGame) {
 		if ((_vm->_championMan->_g305_partyChampionCount > 0) && !_vm->_championMan->_g299_candidateChampionOrdinal) {
-			warning(false, "MISSING CODE: F0433_STARTEND_ProcessCommand140_SaveGame_CPSCDF();");
 			_vm->f433_processCommand140_saveGame(1, "Nice save:)");
 		}
 		return;

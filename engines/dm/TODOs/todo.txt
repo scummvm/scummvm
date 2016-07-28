@@ -5,6 +5,9 @@ Bugs:
 		Arrow and hand display is messed up
 		Items are displayed in the wrong cells
 
+		Gui is messed up by drawn spell area line on startup
+		Spellcasting tabs are displayed inproperly, switching between them is possible tho
+
 
 	Logic:
 		When object are put on the right side of the current square, they disappear

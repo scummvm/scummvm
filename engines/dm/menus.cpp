@@ -396,35 +396,32 @@ void MenuMan::f392_buildSpellAreaLine(int16 spellAreaBitmapLine) {
 }
 
 void MenuMan::f394_setMagicCasterAndDrawSpellArea(int16 champIndex) {
-	ChampionMan &champMan = *_vm->_championMan;
-	DisplayMan &dispMan = *_vm->_displayMan;
+	Champion* L1213_ps_Champion;
 
-	if ((champIndex == champMan._g514_magicCasterChampionIndex)
-		|| ((champIndex != kM1_ChampionNone) && !champMan._gK71_champions[champIndex]._currHealth))
+	if ((champIndex == _vm->_championMan->_g514_magicCasterChampionIndex) || ((champIndex != kM1_ChampionNone) && !_vm->_championMan->_gK71_champions[champIndex]._currHealth)) {
 		return;
-	if (champMan._g514_magicCasterChampionIndex == kM1_ChampionNone) {
-		warning(false, "MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
-		dispMan.f132_blitToBitmap(dispMan.f489_getNativeBitmapOrGraphic(k9_MenuSpellAreaBackground), dispMan._g348_bitmapScreen, g0_BoxSpellArea, 0, 0,
-								  48, k160_byteWidthScreen, kM1_ColorNoTransparency);
-		warning(false, "MISSING CODE: F0078_MOUSE_ShowPointer");
+	}
+	if (_vm->_championMan->_g514_magicCasterChampionIndex == kM1_ChampionNone) {
+		_vm->_eventMan->f78_showMouse();
+		_vm->_displayMan->f21_blitToScreen(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k9_MenuSpellAreaBackground), &g0_BoxSpellArea, k48_byteWidth, kM1_ColorNoTransparency, 33); 
+		_vm->_eventMan->f77_hideMouse();
 	}
 	if (champIndex == kM1_ChampionNone) {
-		champMan._g514_magicCasterChampionIndex = kM1_ChampionNone;
-		warning(false, "MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
-		dispMan._g578_useByteBoxCoordinates = false;
-		dispMan.D24_fillScreenBox(g0_BoxSpellArea, k0_ColorBlack);
-		warning(false, "MISSING CODE: F0078_MOUSE_ShowPointer");
+		_vm->_championMan->_g514_magicCasterChampionIndex = kM1_ChampionNone;
+		_vm->_eventMan->f78_showMouse();
+		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
+		_vm->_displayMan->D24_fillScreenBox(g0_BoxSpellArea, k0_ColorBlack);
+		_vm->_eventMan->f77_hideMouse();
 		return;
 	}
-
-	champMan._g514_magicCasterChampionIndex = (ChampionIndex)champIndex;
-	f392_buildSpellAreaLine(k2_SpellAreaAvailableSymbols);
-	warning(false, "MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
-	f393_drawSpellAreaControls((ChampionIndex)champIndex);
-	dispMan.f132_blitToBitmap(_gK72_bitmapSpellAreaLine, dispMan._g348_bitmapScreen, gK75_BoxSpellAreaLine2, 0, 0, 48, k160_byteWidthScreen, kM1_ColorNoTransparency);
-	f392_buildSpellAreaLine(k3_SpellAreaChampionSymbols);
-	dispMan.f132_blitToBitmap(_gK72_bitmapSpellAreaLine, dispMan._g348_bitmapScreen, gK76_BoxSpellAreaLine3, 0, 0, 48, k160_byteWidthScreen, kM1_ColorNoTransparency);
-	warning(false, "MISSING CODE: F0078_MOUSE_ShowPointer");
+	L1213_ps_Champion = &_vm->_championMan->_gK71_champions[_vm->_championMan->_g514_magicCasterChampionIndex = (ChampionIndex)champIndex];
+	_vm->_menuMan->f392_buildSpellAreaLine(k2_SpellAreaAvailableSymbols);
+	_vm->_eventMan->f78_showMouse();
+	_vm->_menuMan->f393_drawSpellAreaControls((ChampionIndex)champIndex);
+	_vm->_displayMan->f21_blitToScreen(_vm->_menuMan->_gK72_bitmapSpellAreaLine, &gK75_BoxSpellAreaLine2, k48_byteWidth, kM1_ColorNoTransparency, 12);
+	_vm->_menuMan->f392_buildSpellAreaLine(k3_SpellAreaChampionSymbols);
+	_vm->_displayMan->f21_blitToScreen(_vm->_menuMan->_gK72_bitmapSpellAreaLine, &gK76_BoxSpellAreaLine3, k48_byteWidth, kM1_ColorNoTransparency, 12);
+	_vm->_eventMan->f77_hideMouse();
 }
 
 void MenuMan::f457_drawEnabledMenus() {

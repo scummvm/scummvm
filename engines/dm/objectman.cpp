@@ -259,4 +259,13 @@ void ObjectMan::f35_clearLeaderObjectName() {
 	_vm->_displayMan->D24_fillScreenBox(g28_BoxLeaderHandObjectName, k0_ColorBlack);
 }
 
+void ObjectMan::f37_drawIconToScreen(int16 iconIndex, int16 posX, int16 posY) {
+	static byte L0013_puc_Bitmap_Icon[16 * 16];
+	Box L0014_s_Box;
+
+	L0014_s_Box._x2 = (L0014_s_Box._x1 = posX) + 15;
+	L0014_s_Box._y2 = (L0014_s_Box._y1 = posY) + 15;
+	_vm->_objectMan->f36_extractIconFromBitmap(iconIndex, L0013_puc_Bitmap_Icon);
+	_vm->_displayMan->f21_blitToScreen(L0013_puc_Bitmap_Icon, &L0014_s_Box, k8_byteWidth, kM1_ColorNoTransparency, 16);
+}
 }

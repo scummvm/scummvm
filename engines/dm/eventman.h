@@ -249,6 +249,7 @@ class EventManager {
 	byte *_gK190_mousePointerTempBuffer; // @ K0190_puc_Bitmap_MousePointerTemporaryBuffer
 	int16 _gK104_mousePointerType; // @ K0104_i_MousePointerType
 	int16 _gK105_previousMousePointerType; // @ K0105_i_PreviousMousePointerType
+	uint16 _g558_mouseButtonStatus;// @ G0588_i_MouseButtonsStatus
 
 // this doesn't seem to be used anywhere at all
 	bool _g435_isCommandQueueLocked; // @ G0435_B_CommandQueueLocked
@@ -257,7 +258,6 @@ class EventManager {
 	void f365_commandTurnParty(CommandType cmdType); // @ F0365_COMMAND_ProcessTypes1To2_TurnParty
 	void f366_commandMoveParty(CommandType cmdType); // @ F0366_COMMAND_ProcessTypes3To6_MoveParty
 	bool f375_processType80_clickDungeonView_isLeaderHandObjThrown(int16 posX, int16 posY); // @ F0375_COMMAND_ProcessType80_ClickInDungeonView_IsLeaderHandObjectThrown
-
 
 public:
 	explicit EventManager(DMEngine *vm);
@@ -282,6 +282,7 @@ public:
 	void f69_setMousePointer(); // @ F0069_MOUSE_SetPointer
 	void f78_showMouse(); // @ F0077_MOUSE_HidePointer_CPSE
 	void f77_hideMouse(); // @ F0078_MOUSE_ShowPointer
+	bool isMouseButtonDown(MouseButton button);
 
 	void setMousePos(Common::Point pos);
 	Common::Point getMousePos() { return _mousePos; }

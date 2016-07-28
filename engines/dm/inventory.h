@@ -83,6 +83,8 @@ public:
 	void f351_drawChampionSkillsAndStatistics(); // @ F0351_INVENTORY_DrawChampionSkillsAndStatistics
 	void f350_drawStopPressingMouth(); // @ F0350_INVENTORY_DrawStopPressingMouth
 	void f353_drawStopPressingEye();// @ F0353_INVENTORY_DrawStopPressingEye
+	void f349_processCommand70_clickOnMouth(); // @ F0349_INVENTORY_ProcessCommand70_ClickOnMouth
+	void f348_adjustStatisticCurrentValue(Champion *champ, uint16 statIndex, int16 valueDelta); // @ F0348_INVENTORY_AdjustStatisticCurrentValue
 
 };
 

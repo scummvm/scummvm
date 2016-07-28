@@ -32,6 +32,8 @@
 #include "gfx.h"
 #include "text.h"
 #include "objectman.h"
+#include "timeline.h"
+#include "projexpl.h"
 
 
 namespace DM {
@@ -745,4 +747,196 @@ void InventoryMan::f353_drawStopPressingEye() {
 	}
 	_vm->_eventMan->f77_hideMouse();
 }
+
+void InventoryMan::f349_processCommand70_clickOnMouth() {
+	static int16 G0242_ai_Graphic559_FoodAmounts[8] = {
+		500,    /* Apple */
+		600,    /* Corn */
+		650,    /* Bread */
+		820,    /* Cheese */
+		550,    /* Screamer Slice */
+		350,    /* Worm round */
+		990,    /* Drumstick / Shank */
+		1400}; /* Dragon steak */
+
+	Thing L1078_T_Thing;
+	uint16 L1079_ui_IconIndex;
+	uint16 L1080_ui_ChampionIndex;
+	bool L1081_B_RemoveObjectFromLeaderHand;
+	Junk* L1082_ps_Junk;
+	Champion* L1083_ps_Champion;
+	TimelineEvent L1084_s_Event;
+	uint16 L1085_ui_Multiple;
+#define AL1085_ui_PotionPower         L1085_ui_Multiple
+#define AL1085_ui_AdjustedPotionPower L1085_ui_Multiple
+#define AL1085_ui_Counter             L1085_ui_Multiple
+	uint16 L1086_ui_Counter;
+	int16 L1087_i_Wounds;
+	uint16 L1088_ui_Multiple;
+#define AL1088_ui_ThingType               L1088_ui_Multiple
+#define AL1088_ui_Mana                    L1088_ui_Multiple
+#define AL1088_ui_HealWoundIterationCount L1088_ui_Multiple
+	uint16 L1089_ui_Weight;
+
+
+	if (_vm->_championMan->_g415_leaderEmptyHanded) {
+		if (_vm->_inventoryMan->_g424_panelContent == k0_PanelContentFoodWaterPoisoned) {
+			return;
+		}
+		_vm->_eventMan->_g597_ignoreMouseMovements = true;
+		_vm->_g333_pressingMouth = true;
+		if (!_vm->_eventMan->isMouseButtonDown(k1_LeftMouseButton)) {
+			_vm->_eventMan->_g597_ignoreMouseMovements = false;
+			_vm->_g333_pressingMouth = false;
+			_vm->_g334_stopPressingMouth = false;
+		} else {
+			_vm->_eventMan->f78_showMouse();
+			_vm->_eventMan->_g587_hideMousePointerRequestCount = 1;
+			_vm->_inventoryMan->f345_drawPanelFoodWaterPoisoned();
+			_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
+		}
+		return;
+	}
+	if (_vm->_championMan->_g299_candidateChampionOrdinal) {
+		return;
+	}
+	if (!getFlag(g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(L1078_T_Thing = _vm->_championMan->_g414_leaderHandObject)]._allowedSlots, k0x0001_ObjectAllowedSlotMouth)) {
+		return;
+	}
+	L1079_ui_IconIndex = _vm->_objectMan->f33_getIconIndex(L1078_T_Thing);
+	AL1088_ui_ThingType = L1078_T_Thing.getType();
+	L1089_ui_Weight = _vm->_dungeonMan->f140_getObjectWeight(L1078_T_Thing);
+	L1083_ps_Champion = &_vm->_championMan->_gK71_champions[L1080_ui_ChampionIndex = _vm->M1_ordinalToIndex(_vm->_inventoryMan->_g432_inventoryChampionOrdinal)];
+	L1082_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(L1078_T_Thing);
+	if ((L1079_ui_IconIndex >= k8_IconIndiceJunkWater) && (L1079_ui_IconIndex <= k9_IconIndiceJunkWaterSkin)) {
+		if (!(L1082_ps_Junk->getChargeCount())) {
+			return;
+		}
+		L1083_ps_Champion->_water = MIN(L1083_ps_Champion->_water + 800, 2048);
+		L1082_ps_Junk->setChargeCount(L1082_ps_Junk->getChargeCount() - 1);
+		L1081_B_RemoveObjectFromLeaderHand = false;
+	} else {
+		if (AL1088_ui_ThingType == k8_PotionThingType) {
+			L1081_B_RemoveObjectFromLeaderHand = false;
+		} else {
+			L1082_ps_Junk->setNextThing(Thing::_none);
+			L1081_B_RemoveObjectFromLeaderHand = true;
+		}
+	}
+	_vm->_eventMan->f78_showMouse();
+	if (L1081_B_RemoveObjectFromLeaderHand) {
+		_vm->_championMan->f298_getObjectRemovedFromLeaderHand();
+	}
+	if (AL1088_ui_ThingType == k8_PotionThingType) {
+		AL1085_ui_PotionPower = ((Potion*)L1082_ps_Junk)->getPower();
+		L1086_ui_Counter = ((511 - AL1085_ui_PotionPower) / (32 + (AL1085_ui_PotionPower + 1) / 8)) >> 1;
+		AL1085_ui_AdjustedPotionPower = (AL1085_ui_PotionPower / 25) + 8; /* Value between 8 and 18 */
+		switch (((Potion*)L1082_ps_Junk)->getType()) {
+		case k6_PotionTypeRos:
+			f348_adjustStatisticCurrentValue(L1083_ps_Champion, k2_ChampionStatDexterity, AL1085_ui_AdjustedPotionPower);
+			break;
+		case k7_PotionTypeKu:
+			f348_adjustStatisticCurrentValue(L1083_ps_Champion, k1_ChampionStatStrength, (((Potion*)L1082_ps_Junk)->getPower() / 35) + 5); /* Value between 5 and 12 */
+			break;
+		case k8_PotionTypeDane:
+			f348_adjustStatisticCurrentValue(L1083_ps_Champion, k3_ChampionStatWisdom, AL1085_ui_AdjustedPotionPower);
+			break;
+		case k9_PotionTypeNeta:
+			f348_adjustStatisticCurrentValue(L1083_ps_Champion, k4_ChampionStatVitality, AL1085_ui_AdjustedPotionPower);
+			break;
+		case k10_PotionTypeAntivenin:
+			_vm->_championMan->f323_unpoison(L1080_ui_ChampionIndex);
+			break;
+		case k11_PotionTypeMon:
+			L1083_ps_Champion->_currStamina += MIN(L1083_ps_Champion->_maxStamina - L1083_ps_Champion->_currStamina, L1083_ps_Champion->_maxStamina / L1086_ui_Counter);
+			break;
+		case k12_PotionTypeYa:
+			AL1085_ui_AdjustedPotionPower += AL1085_ui_AdjustedPotionPower >> 1;
+			if (L1083_ps_Champion->_shieldDefense > 50) {
+				AL1085_ui_AdjustedPotionPower >>= 2;
+			}
+			L1083_ps_Champion->_shieldDefense += AL1085_ui_AdjustedPotionPower;
+			L1084_s_Event._type = k72_TMEventTypeChampionShield;
+			M33_setMapAndTime(L1084_s_Event._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + (AL1085_ui_AdjustedPotionPower * AL1085_ui_AdjustedPotionPower));
+			L1084_s_Event._priority = L1080_ui_ChampionIndex;
+			L1084_s_Event._B._defense = AL1085_ui_AdjustedPotionPower;
+			_vm->_timeline->f238_addEventGetEventIndex(&L1084_s_Event);
+			setFlag(L1083_ps_Champion->_attributes, k0x1000_ChampionAttributeStatusBox);
+			break;
+		case k13_PotionTypeEe:
+			AL1088_ui_Mana = MIN(900, (L1083_ps_Champion->_currMana + AL1085_ui_AdjustedPotionPower) + (AL1085_ui_AdjustedPotionPower - 8));
+			if (AL1088_ui_Mana > L1083_ps_Champion->_maxMana) {
+				AL1088_ui_Mana -= (AL1088_ui_Mana - MAX(L1083_ps_Champion->_currMana, L1083_ps_Champion->_maxMana)) >> 1;
+			}
+			L1083_ps_Champion->_currMana = AL1088_ui_Mana;
+			break;
+		case k14_PotionTypeVi:
+			AL1088_ui_HealWoundIterationCount = MAX(1, (((Potion*)L1082_ps_Junk)->getPower() / 42));
+			L1083_ps_Champion->_currHealth += L1083_ps_Champion->_maxHealth / L1086_ui_Counter;
+			if (L1087_i_Wounds = L1083_ps_Champion->_wounds) { /* If the champion is wounded */
+				L1086_ui_Counter = 10;
+				do {
+					for (AL1085_ui_Counter = 0; AL1085_ui_Counter < AL1088_ui_HealWoundIterationCount; AL1085_ui_Counter++) {
+						L1083_ps_Champion->_wounds &= _vm->getRandomNumber(65536);
+					}
+					AL1088_ui_HealWoundIterationCount = 1;
+				} while ((L1087_i_Wounds == L1083_ps_Champion->_wounds) && --L1086_ui_Counter); /* Loop until at least one wound is healed or there are no more heal iterations */
+			}
+			setFlag(L1083_ps_Champion->_attributes, k0x0200_ChampionAttributeLoad | k0x2000_ChampionAttributeWounds);
+			break;
+		case k15_PotionTypeWaterFlask:
+			L1083_ps_Champion->_water = MIN(L1083_ps_Champion->_water + 1600, 2048);
+		}
+		((Potion*)L1082_ps_Junk)->setType(k20_PotionTypeEmptyFlask);
+	} else {
+		if ((L1079_ui_IconIndex >= k168_IconIndiceJunkApple) && (L1079_ui_IconIndex < k176_IconIndiceJunkIronKey)) {
+			L1083_ps_Champion->_food = MIN(L1083_ps_Champion->_food + G0242_ai_Graphic559_FoodAmounts[L1079_ui_IconIndex - k168_IconIndiceJunkApple], 2048);
+		}
+	}
+	if (L1083_ps_Champion->_currStamina > L1083_ps_Champion->_maxStamina) {
+		L1083_ps_Champion->_currStamina = L1083_ps_Champion->_maxStamina;
+	}
+	if (L1083_ps_Champion->_currHealth > L1083_ps_Champion->_maxHealth) {
+		L1083_ps_Champion->_currHealth = L1083_ps_Champion->_maxHealth;
+	}
+	if (L1081_B_RemoveObjectFromLeaderHand) {
+		for (L1086_ui_Counter = 5; --L1086_ui_Counter; _vm->f22_delay(8)) { /* Animate mouth icon */
+			_vm->_objectMan->f37_drawIconToScreen(k205_IconIndiceMouthOpen + !(L1086_ui_Counter & 0x0001), 56, 46);
+			_vm->_eventMan->processInput();
+			_vm->_displayMan->updateScreen();
+		}
+	} else {
+		_vm->_championMan->f296_drawChangedObjectIcons();
+		_vm->_championMan->_gK71_champions[_vm->_championMan->_g411_leaderIndex]._load += _vm->_dungeonMan->f140_getObjectWeight(L1078_T_Thing) - L1089_ui_Weight;
+		setFlag(_vm->_championMan->_gK71_champions[_vm->_championMan->_g411_leaderIndex]._attributes, k0x0200_ChampionAttributeLoad);
+	}
+	_vm->f064_SOUND_RequestPlay_CPSD(k08_soundSWALLOW, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k0_soundModePlayImmediately);
+	setFlag(L1083_ps_Champion->_attributes, k0x0100_ChampionAttributeStatistics);
+	if (_vm->_inventoryMan->_g424_panelContent == k0_PanelContentFoodWaterPoisoned) {
+		setFlag(L1083_ps_Champion->_attributes, k0x0800_ChampionAttributePanel);
+	}
+	_vm->_championMan->f292_drawChampionState((ChampionIndex)L1080_ui_ChampionIndex);
+	_vm->_eventMan->f77_hideMouse();
+}
+
+void InventoryMan::f348_adjustStatisticCurrentValue(Champion* champ, uint16 statIndex, int16 valueDelta) {
+	int16 L1077_i_Multiple;
+#define AL1077_i_CurrentValue L1077_i_Multiple
+#define AL1077_i_Delta        L1077_i_Multiple
+
+	if (valueDelta >= 0) {
+		if ((AL1077_i_CurrentValue = champ->_statistics[statIndex][k1_ChampionStatCurrent]) > 120) {
+			valueDelta >>= 1;
+			if (AL1077_i_CurrentValue > 150) {
+				valueDelta >>= 1;
+			}
+			valueDelta++;
+		}
+		AL1077_i_Delta = MIN(valueDelta, (int16)(170 - AL1077_i_CurrentValue));
+	} else { /* BUG0_00 Useless code. The function is always called with valueDelta having a positive value */
+		AL1077_i_Delta = MAX(valueDelta, int16(champ->_statistics[statIndex][k2_ChampionStatMinimum] - champ->_statistics[statIndex][k1_ChampionStatCurrent]));
+	}
+	champ->_statistics[statIndex][k1_ChampionStatCurrent] += AL1077_i_Delta;
+}
+
 }
