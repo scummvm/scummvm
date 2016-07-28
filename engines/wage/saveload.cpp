@@ -88,17 +88,84 @@ static const uint32 WAGEflag = MKTAG('W', 'A', 'G', 'E');
 #define GET_HEX_OFFSET(ptr, baseOffset, entrySize) ((ptr) == nullptr ? -1 : ((baseOffset) + (entrySize) * (ptr)->_index))
 #define GET_HEX_CHR_OFFSET(ptr) GET_HEX_OFFSET((ptr), chrsHexOffset, CHR_SIZE)
 #define GET_HEX_OBJ_OFFSET(ptr) GET_HEX_OFFSET((ptr), objsHexOffset, OBJ_SIZE)
-#define GET_HEX_SCENE_OFFSET(ptr) ((ptr) == nullptr ? -1 : (SCENES_INDEX + getSceneIndex(_world->_player->_currentScene) * SCENE_SIZE))
+#define GET_HEX_SCENE_OFFSET(ptr) ((ptr) == nullptr ? -1 : \
+	((ptr) == _world->_storageScene ? 0 : (SCENES_INDEX + getSceneIndex(_world->_player->_currentScene) * SCENE_SIZE)))
 
 int WageEngine::getSceneIndex(Scene *scene) const {
 	assert(scene);
 	Common::Array<Scene *> &orderedScenes = _world->_orderedScenes;
 	for (uint32 i = 0; i < orderedScenes.size(); ++i) {
-		if (orderedScenes[i] == scene) return i;
+		if (orderedScenes[i] == scene) return i-1;
 	}
 
 	warning("Scene's index not found");
 	return -1;
+}
+
+Obj *WageEngine::getObjByOffset(int offset, int objBaseOffset) const {
+	int objIndex = -1;
+
+	if (offset != 0xFFFF) {
+		objIndex = (offset - objBaseOffset) / CHR_SIZE;
+	}
+
+	if (objIndex >= 0 && objIndex < _world->_orderedObjs.size()) {
+		return _world->_orderedObjs[objIndex];
+	}
+
+	return nullptr;
+}
+
+Chr *WageEngine::getChrById(int resId) const {
+	Common::Array<Chr *> &orderedChrs = _world->_orderedChrs;
+	for (uint32 i = 0; i < orderedChrs.size(); ++i) {
+		if (orderedChrs[i]->_resourceId == resId)
+			return orderedChrs[i];
+	}
+
+	return nullptr;
+}
+
+Chr *WageEngine::getChrByOffset(int offset, int chrBaseOffset) const {
+	int chrIndex = -1;
+
+	if (offset != 0xFFFF) {
+		chrIndex = (offset - chrBaseOffset) / CHR_SIZE;
+	}
+
+	if (chrIndex >= 0 && chrIndex < _world->_orderedChrs.size()) {
+		return _world->_orderedChrs[chrIndex];
+	}
+
+	return nullptr;
+}
+
+Scene *WageEngine::getSceneById(int resId) const {
+	Common::Array<Scene *> &orderedScenes = _world->_orderedScenes;
+	for (uint32 i = 0; i < orderedScenes.size(); ++i) {
+		if (orderedScenes[i]->_resourceId == resId)
+			return orderedScenes[i];
+	}
+
+	return nullptr;
+}
+
+Scene *WageEngine::getSceneByOffset(int offset) const {
+	int sceneIndex = -1;
+
+	if (offset != 0xFFFF) {
+		if (offset == 0)
+			sceneIndex = 0;
+		else
+			sceneIndex = 1 + (offset - SCENES_INDEX) / SCENE_SIZE;
+	}
+
+	if (sceneIndex >= 0 && sceneIndex < _world->_orderedScenes.size()) {
+		if (sceneIndex == 0) return _world->_storageScene;
+		return _world->_orderedScenes[sceneIndex];
+	}
+
+	return nullptr;
 }
 
 int WageEngine::saveGame(const Common::String &fileName, const Common::String &descriptionString) {
@@ -324,15 +391,18 @@ int WageEngine::loadGame(int slotId) {
 	int objsHexOffset = data->readSint32LE();
 
 	// Unique 8-byte World Signature
-	_world->_signature = data->readSint32LE();
-
-	//Chr *player = _world->_player;
-	//Context &playerContext = player->_context;
+	int signature = data->readSint32LE();
+	if (_world->_signature != signature) {
+		warning("This saved game is for a different world, please select another one");
+		warning("World signature = %d, save signature = %d", _world->_signature, signature);
+		delete data;
+		return -1;
+	}
 
 	// More Counters
-	int visitNum = data->readSint32LE(); //visitNum @ playerContext._visits
-	_loopCount = data->readSint32LE(); //loopNum
-	int killNum = data->readSint32LE(); //killNum @ playerContext._kills
+	int visitNum = data->readSint32LE(); //visitNum
+	int loopNum = data->readSint32LE(); //loopNum
+	int killNum = data->readSint32LE(); //killNum
 
 	// Hex offset to player character
 	int playerOffset = data->readSint32LE();
@@ -343,17 +413,41 @@ int WageEngine::loadGame(int slotId) {
 	// Hex offset to current scene
 	int currentSceneOffset = data->readSint32LE();
 
+	// find player and current scene
+	Chr *player = getChrByOffset(playerOffset, chrsHexOffset);
+	if (player == nullptr) {
+		warning("Invalid Character!  Aborting load.");
+		delete data;
+		return -1;
+	}
+
+	Scene *currentScene = getSceneByOffset(currentSceneOffset);
+	if (currentScene == nullptr) {
+		warning("Invalid Scene!  Aborting load.");
+		delete data;
+		return -1;
+	}
+
+	// set player character
+	_world->_player = player;
+
+	// set current scene
+	player->_currentScene = currentScene;
+
+	// clear the players inventory list
+	player->_inventory.clear();
+
 	// wearing a helmet?
-	int helmetOffset = data->readSint32LE(); //helmetIndex @ player->_armor[Chr::ChrArmorType::HEAD_ARMOR]
+	int helmetOffset = data->readSint32LE(); //helmetIndex
 
 	// holding a shield?
-	int shieldOffset = data->readSint32LE(); //shieldIndex @ player->_armor[Chr::ChrArmorType::SHIELD_ARMOR]
+	int shieldOffset = data->readSint32LE(); //shieldIndex
 
 	// wearing chest armor?
-	int armorOffset = data->readSint32LE(); //chestArmIndex @ player->_armor[Chr::ChrArmorType::BODY_ARMOR]
+	int armorOffset = data->readSint32LE(); //chestArmIndex
 
 	// wearing spiritual armor?
-	int spiritualArmorOffset = data->readSint32LE(); //sprtArmIndex @ player->_armor[Chr::ChrArmorType::MAGIC_ARMOR]
+	int spiritualArmorOffset = data->readSint32LE(); //sprtArmIndex
 
 	data->readSint16LE();	// FFFF
 	data->readSint16LE();	// FFFF
@@ -365,64 +459,118 @@ int WageEngine::loadGame(int slotId) {
 	// players experience points
 	int exp = data->readSint32LE(); // @ playerContext._experience
 
-	_aim = data->readSint16LE(); //aim
-	_opponentAim = data->readSint16LE(); //opponentAim
+	int aim = data->readSint16LE(); //aim
+	int opponentAim = data->readSint16LE(); //opponentAim
 
 	data->readSint16LE(); // 0000
 	data->readSint16LE(); // 0000
 	data->readSint16LE(); // 0000
 
 	// Base character stats
-	int basePhysStr = data->readByte(); // @ playerContext._statVariables[PHYS_STR_BAS]
-	int basePhysHp = data->readByte(); // @ playerContext._statVariables[PHYS_HIT_BAS]
-	int basePhysArm = data->readByte(); // @ playerContext._statVariables[PHYS_ARM_BAS]
-	int basePhysAcc = data->readByte(); // @ playerContext._statVariables[PHYS_ACC_BAS]
-	int baseSprtStr = data->readByte(); // @ playerContext._statVariables[SPIR_STR_BAS]
-	int baseSprtHp = data->readByte(); // @ playerContext._statVariables[SPIR_HIT_BAS]
-	int baseSprtArm = data->readByte(); // @ playerContext._statVariables[SPIR_ARM_BAS]
-	int baseSprtAcc = data->readByte(); // @ playerContext._statVariables[SPIR_ACC_BAS]
-	int baseRunSpeed = data->readByte(); // @ playerContext._statVariables[PHYS_SPE_BAS]
+	int basePhysStr = data->readByte();
+	int basePhysHp = data->readByte();
+	int basePhysArm = data->readByte();
+	int basePhysAcc = data->readByte();
+	int baseSprtStr = data->readByte();
+	int baseSprtHp = data->readByte();
+	int baseSprtArm = data->readByte();
+	int baseSprtAcc = data->readByte();
+	int baseRunSpeed = data->readByte();
+
+	// set player stats
+	Context &playerContext = player->_context;
+	// I'm setting player fields also, because those are used as base values in Chr::resetState()
+	playerContext._statVariables[PHYS_STR_BAS] = player->_physicalStrength = basePhysStr;
+	playerContext._statVariables[PHYS_HIT_BAS] = player->_physicalHp = basePhysHp;
+	playerContext._statVariables[PHYS_ARM_BAS] = player->_naturalArmor = basePhysArm;
+	playerContext._statVariables[PHYS_ACC_BAS] = player->_physicalAccuracy = basePhysAcc;
+	playerContext._statVariables[SPIR_STR_BAS] = player->_spiritualStength = baseSprtStr;
+	playerContext._statVariables[SPIR_HIT_BAS] = player->_spiritialHp = baseSprtHp;
+	playerContext._statVariables[SPIR_ARM_BAS] = player->_resistanceToMagic = baseSprtArm;
+	playerContext._statVariables[SPIR_ACC_BAS] = player->_spiritualAccuracy = baseSprtAcc;
+	playerContext._statVariables[PHYS_SPE_BAS] = player->_runningSpeed = baseRunSpeed;
+
+	// set visit#
+	playerContext._visits = visitNum;
+
+	// set monsters killed
+	playerContext._kills = killNum;
+
+	// set experience
+	playerContext._experience = exp;
+
+	// if a character is present, move it to this scene
+	// TODO: This is done in the engine object, would it be cleaner
+	// to move it here?
+	// well, it's actually down there now, now sure if that's "cleaner"
+	// when it's up there or down there
+
+	// if a character just ran away, let our engine know
+	// TODO: The current engine doesn't have a case for this, we
+	// should update it
+	// yep, I don't see such code anywhere in java, so not added it here
 
 	data->readByte(); // 0x0A?
 
-	// write user vars
-	for (uint32 i = 0; i < 26 * 9; ++i)
-		data->readSint16LE(); // @ playerContext._userVariables[i]
-
-	// write updated info for all scenes	
-	for (uint32 i = 0; i < numScenes; ++i) {		
-		data->readSint16LE(); // @ scene->_resourceId
-		data->readSint16LE(); // @ scene->_worldY
-		data->readSint16LE(); // @ scene->_worldX
-		data->readByte(); // @ scene->_blocked[NORTH]
-		data->readByte(); // @ scene->_blocked[SOUTH]
-		data->readByte(); // @ scene->_blocked[EAST]
-		data->readByte(); // @ scene->_blocked[WEST]
-		data->readSint16LE(); // @ scene->_soundFrequency
-		data->readByte(); // @ scene->_soundType
-		// the following two bytes are currently unknown
-		data->readByte();
-		data->readByte();
-		data->readByte(); // @ scene->_visited
+	// set all user variables
+	for (uint32 i = 0; i < 26 * 9; ++i) {
+		playerContext._userVariables[i] = data->readSint16LE();	
 	}
 
-	// write updated info for all characters
+	// update all scene stats
+	Common::Array<Scene *> &orderedScenes = _world->_orderedScenes;
+	if (numScenes != orderedScenes.size()) {
+		warning("scenes number in file (%d) differs from the one in world (%d)", numScenes, orderedScenes.size());
+	}
+	for (uint32 i = 0; i < orderedScenes.size(); ++i) {
+		Scene *scene = orderedScenes[i];
+		if (scene == _world->_storageScene) {
+			scene->_chrs.clear();
+			scene->_objs.clear();
+		} else {
+			int id = data->readSint16LE();
+
+			if (scene->_resourceId != id) {
+				warning("loadGame(): updating scenes: expected %d but got %d", scene->_resourceId, id);
+				data->skip(14); //2,2,1,1,1,1,2,1,1,1,1 down there
+				continue;
+			}
+
+			scene->_worldY = data->readSint16LE();
+			scene->_worldX = data->readSint16LE();
+			scene->_blocked[NORTH] = data->readByte() != 0;
+			scene->_blocked[SOUTH] = data->readByte() != 0;
+			scene->_blocked[EAST] = data->readByte() != 0;
+			scene->_blocked[WEST] = data->readByte() != 0;
+			scene->_soundFrequency = data->readSint16LE();
+			scene->_soundType = data->readByte();
+			// the following two bytes are currently unknown
+			data->readByte();
+			data->readByte();
+			scene->_visited = data->readByte() != 0;
+		}
+	}
+
+	// update all char locations and stats
 	Common::Array<Chr *> &orderedChrs = _world->_orderedChrs;
+	if (numChars != orderedChrs.size()) {
+		warning("characters number in file (%d) differs from the one in world (%d)", numChars, orderedChrs.size());
+	}
 	for (uint32 i = 0; i < orderedChrs.size(); ++i) {
 		int resourceId = data->readSint16LE();
 		int sceneResourceId = data->readSint16LE();
 
-		int strength = data->readByte(); // @ chrContext._statVariables[PHYS_STR_CUR]
-		int hp = data->readByte(); // @ chrContext._statVariables[PHYS_HIT_CUR]
-		int armor = data->readByte(); // @ chrContext._statVariables[PHYS_ARM_CUR]
-		int accuracy = data->readByte(); // @ chrContext._statVariables[PHYS_ACC_CUR]
-		int spirStrength = data->readByte(); // @ chrContext._statVariables[SPIR_STR_CUR]
-		int spirHp = data->readByte(); // @ chrContext._statVariables[SPIR_HIT_CUR]
-		int spirArmor = data->readByte(); // @ chrContext._statVariables[SPIR_ARM_CUR]
-		int spirAccuracy = data->readByte(); // @ chrContext._statVariables[SPIR_ACC_CUR]
-		int speed = data->readByte(); // @ chrContext._statVariables[PHYS_SPE_CUR]
-		int rejectsOffers = data->readByte(); // @ chr->_rejectsOffers
-		int followsOpponent = data->readByte(); // @ chr->_followsOpponent
+		int strength = data->readByte();
+		int hp = data->readByte();
+		int armor = data->readByte();
+		int accuracy = data->readByte();
+		int spirStrength = data->readByte();
+		int spirHp = data->readByte();
+		int spirArmor = data->readByte();
+		int spirAccuracy = data->readByte();
+		int speed = data->readByte();
+		int rejectsOffers = data->readByte();
+		int followsOpponent = data->readByte();
 
 		// bytes 16-20 are unknown
 		data->readByte();
@@ -431,12 +579,38 @@ int WageEngine::loadGame(int slotId) {
 		data->readByte();
 		data->readByte();
 
-		data->readByte(); // @ chr->_weaponDamage1
-		data->readByte(); // @ chr->_weaponDamage2
+		int weaponDamage1 = data->readByte();
+		int weaponDamage2 = data->readByte();
+
+		Chr *chr = orderedChrs[i];
+		if (chr->_resourceId != resourceId) {
+			warning("loadGame(): updating chrs: expected %d but got %d", chr->_resourceId, resourceId);
+			continue;
+		}
+
+		chr->_currentScene = getSceneById(sceneResourceId);
+		Context &chrContext = chr->_context;
+		chrContext._statVariables[PHYS_STR_CUR] = strength;
+		chrContext._statVariables[PHYS_HIT_CUR] = hp;
+		chrContext._statVariables[PHYS_ARM_CUR] = armor;
+		chrContext._statVariables[PHYS_ACC_CUR] = accuracy;
+		chrContext._statVariables[SPIR_STR_CUR] = spirStrength;
+		chrContext._statVariables[SPIR_HIT_CUR] = spirHp;
+		chrContext._statVariables[SPIR_ARM_CUR] = spirArmor;
+		chrContext._statVariables[SPIR_ACC_CUR] = spirAccuracy;
+		chrContext._statVariables[PHYS_SPE_CUR] = speed;
+		chr->_rejectsOffers = rejectsOffers;
+		chr->_followsOpponent = followsOpponent;
+		chr->_weaponDamage1 = weaponDamage1;
+		chr->_weaponDamage2 = weaponDamage2;
 	}
 
-	// write updated info for all objects
-	for (uint32 i = 0; i < numObjs; ++i) {
+	// update all object locations and stats
+	Common::Array<Obj *> &orderedObjs = _world->_orderedObjs;
+	if (numObjs != orderedObjs.size()) {
+		warning("objects number in file (%d) differs from the one in world (%d)", numObjs, orderedObjs.size());
+	}
+	for (uint32 i = 0; i < orderedObjs.size(); ++i) {
 		int resourceId = data->readSint16LE();
 		int locationResourceId = data->readSint16LE();
 		int ownerResourceId = data->readSint16LE();
@@ -446,41 +620,96 @@ int WageEngine::loadGame(int slotId) {
 		data->readByte();
 		data->readByte();
 
-		data->readByte(); // @ obj->_accuracy
-		data->readByte(); // @ obj->_value
-		data->readByte(); // @ obj->_type
-		data->readByte(); // @ obj->_damage
-		data->readByte(); // @ obj->_attackType
-		data->readSint16LE(); // @ obj->_numberOfUses
+		int accuracy = data->readByte();
+		int value = data->readByte();
+		int type = data->readByte();
+		int damage = data->readByte();
+		int attackType= data->readByte();
+		int numberOfUses = data->readSint16LE();
+
+		Obj *obj = orderedObjs[i];
+		if (obj->_resourceId != resourceId) {
+			warning("loadGame(): updating objs: expected %d but got %d", obj->_resourceId, resourceId);
+			continue;
+		}
+
+		if (ownerResourceId != 0) {
+			obj->setCurrentOwner(getChrById(ownerResourceId));
+			if (obj->_currentOwner == nullptr)
+				warning("loadGame(): updating objs: owner not found - char with id %d", ownerResourceId);
+		} else {
+			obj->setCurrentScene(getSceneById(locationResourceId));
+			if (obj->_currentScene == nullptr)
+				warning("loadGame(): updating objs: scene with id %d not found", ownerResourceId);
+		}
+
+		obj->_accuracy = accuracy;
+		obj->_value = value;
+		obj->_type = type;
+		obj->_damage = damage;
+		obj->_attackType = attackType;
+		obj->_numberOfUses = numberOfUses;
 	}
 
-	// the following is appended by ScummVM
-	if (data->pos() < data->size()) {
-		int scummvmWageFlag = data->readUint32BE();
-
-		if (scummvmWageFlag != WAGEflag) {
-			warning("Extra bytes after original save's information found, but that's not ScummVM's");
-			delete data;
-			return 0;
+	// update inventories and scene contents
+	for (uint32 i = 0; i < orderedObjs.size(); ++i) {
+		Obj *obj = orderedObjs[i];
+		Chr *chr = obj->_currentOwner;
+		if (chr != nullptr) {
+			chr->_inventory.push_back(obj);
+		} else {
+			Scene *scene = obj->_currentScene;
+			scene->_objs.push_back(obj);
 		}
-
-		// Write description of saved game, limited to WAGE_SAVEDGAME_DESCRIPTION_LEN characters + terminating NUL
-		const int WAGE_SAVEDGAME_DESCRIPTION_LEN = 127;
-		char description[WAGE_SAVEDGAME_DESCRIPTION_LEN + 1];
-		data->read(description, 128);
-		if (description[WAGE_SAVEDGAME_DESCRIPTION_LEN] != 0) {
-			warning("Description's last byte is not '\0'");
-			description[WAGE_SAVEDGAME_DESCRIPTION_LEN] = 0;
-		}
-
-		int version = data->readByte();
-		if (version != SAVEGAME_CURRENT_VERSION) {
-			warning("Reading version %d while current is %d", version, SAVEGAME_CURRENT_VERSION);
-		}
-
-		// Thumbnail
-		Graphics::loadThumbnail(*data);
 	}
+
+	// update scene chrs
+	for (uint32 i = 0; i < orderedChrs.size(); ++i) {
+		Chr *chr = orderedChrs[i];
+		Scene *scene = chr->_currentScene;
+		scene->_chrs.push_back(chr);
+		if (chr != player) {
+			wearObjs(chr);
+		}
+	}
+
+	// move all worn helmets, shields, chest armors and spiritual
+	// armors to player
+	for (int type = 0; type < Chr::ChrArmorType::NUMBER_OF_ARMOR_TYPES; ++type) {
+		Obj *armor;
+
+		if (type == Chr::ChrArmorType::HEAD_ARMOR)
+			armor = getObjByOffset(helmetOffset, objsHexOffset);
+		else if (type == Chr::ChrArmorType::SHIELD_ARMOR)
+			armor = getObjByOffset(shieldOffset, objsHexOffset);
+		else if (type == Chr::ChrArmorType::BODY_ARMOR)
+			armor = getObjByOffset(armorOffset, objsHexOffset);
+		else
+			armor = getObjByOffset(spiritualArmorOffset, objsHexOffset);
+
+		if (armor != nullptr) {
+			_world->move(armor, player);
+			player->_armor[type] = armor;
+		}
+	}
+
+	//TODO: make sure that armor in the inventory gets put on if we are wearing it
+
+	_loopCount = loopNum;
+
+	// let the engine know if there is a npc in the current scene
+	if (presCharOffset != 0xffff) {
+		_monster = getChrByOffset(presCharOffset, chrsHexOffset);
+	}
+
+	// java engine calls clearOutput(); here
+	// processTurn("look", NULL); called in Wage right after this loadGame()
+
+	// TODO: as you may see, aim, opponentAim or runCharOffset are not used anywhere
+	// I'm fixing the first two, as those are clearly not even mentioned anywhere
+	// the runCharOffset is mentioned up there as "not implemented case"
+	_aim = aim;
+	_opponentAim = opponentAim;
 
 	delete data;
 	return 0;

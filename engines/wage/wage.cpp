@@ -130,10 +130,9 @@ Common::Error WageEngine::run() {
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");
 		loadGame(saveSlot);
-	} else {
-		Common::String input("look");
-		processTurn(&input, NULL);
 	}
+	Common::String input("look");
+	processTurn(&input, NULL);
 	_temporarilyHidden = false;
 
 	_shouldQuit = false;
@@ -252,6 +251,8 @@ bool WageEngine::saveDialog() {
 
 void WageEngine::saveGame() {
 	warning("STUB: saveGame()");
+	Common::String fileName = getSavegameFilename(1), desc = "test save #1";
+	saveGame(fileName, desc);
 }
 
 void WageEngine::performInitialSetup() {
@@ -311,6 +312,11 @@ void WageEngine::performInitialSetup() {
 	if (!playerPlaced) {
 		_world->move(_world->_player, _world->getRandomScene());
 	}
+}
+
+void WageEngine::wearObjs(Chr* chr) {
+	if (chr != nullptr)
+		chr->wearObjs();
 }
 
 void WageEngine::doClose() {
