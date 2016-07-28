@@ -103,7 +103,6 @@ public:
 	static void setClientGetHandler(Client &client, Common::SeekableReadStream *responseStream, long code = 200, const char *mimeType = nullptr);
 	static void setClientRedirectHandler(Client &client, Common::String response, Common::String location, const char *mimeType = nullptr);
 	static void setClientRedirectHandler(Client &client, Common::SeekableReadStream *responseStream, Common::String location, const char *mimeType = nullptr);
-	static const char *determineMimeType(Common::String &filename);
 	static Common::String urlDecode(Common::String value);
 	static Common::String urlEncodeQueryParameterValue(Common::String value);
 };
