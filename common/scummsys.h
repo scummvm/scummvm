@@ -215,10 +215,6 @@
 #include "config.h"
 #endif
 
-// Now we need to adjust some settings when running tests
-#ifdef COMPILING_TESTS
-#undef ENABLE_EVENTRECORDER
-#endif
 
 // In the following we configure various targets, in particular those
 // which can't use our "configure" tool and hence don't use config.h.
