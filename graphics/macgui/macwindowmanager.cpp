@@ -158,8 +158,8 @@ MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool edi
     return w;
 }
 
-Wage::Menu *MacWindowManager::addMenu() {
-	_menu = new Wage::Menu(_lastId, _screen->getBounds(), this);
+Menu *MacWindowManager::addMenu() {
+	_menu = new Menu(_lastId, _screen->getBounds(), this);
 
 	_windows.push_back(_menu);
 

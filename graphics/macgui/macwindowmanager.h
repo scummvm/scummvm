@@ -56,12 +56,6 @@
 #include "graphics/fontman.h"
 #include "graphics/macgui/macwindow.h"
 
-namespace Wage {
-	class MacWindow;
-	class BaseMacWindow;
-	class Menu;
-}
-
 namespace Graphics {	
 
 enum {
@@ -85,6 +79,8 @@ enum {
 
 class ManagedSurface;
 
+class Menu;
+
 typedef Common::Array<byte *> Patterns;
 
 class MacWindowManager {
@@ -97,7 +93,7 @@ public:
 	const Font *getFont(const char *name, FontManager::FontUsage fallback);
 
 	MacWindow *addWindow(bool scrollable, bool resizable, bool editable);
-	Wage::Menu *addMenu();
+	Menu *addMenu();
 	void setActive(int id);
 
 	void setFullRefresh(bool redraw) { _fullRefresh = true; }
@@ -131,7 +127,7 @@ private:
 
 	Patterns _patterns;
 
-	Wage::Menu *_menu;
+	Menu *_menu;
 
 	bool _builtInFonts;
 	bool _cursorIsArrow;
