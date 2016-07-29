@@ -59,17 +59,52 @@
 #include "common/rect.h"
 
 namespace Wage {
-	
-// Import the enum definitions
-using namespace Graphics::MacMenuConstants;
-using namespace Graphics::MacWindowConstants;
-using namespace Graphics::MacGUIConstants;
 
+using namespace Graphics::MacWindowConstants;
+	
 class Scene;
 class WageEngine;
 
 enum {
 	kCursorHeight = 12
+};
+
+enum {
+	kFontStyleBold = 1,
+	kFontStyleItalic = 2,
+	kFontStyleUnderline = 4,
+	kFontStyleOutline = 8,
+	kFontStyleShadow = 16,
+	kFontStyleCondensed = 32,
+	kFontStyleExtended = 64
+};
+
+enum {
+	kMenuHighLevel = -1,
+	kMenuAbout = 0,
+	kMenuFile = 1,
+	kMenuEdit = 2,
+	kMenuCommands = 3,
+	kMenuWeapons = 4
+};
+
+enum {
+	kMenuActionAbout,
+	kMenuActionNew,
+	kMenuActionOpen,
+	kMenuActionClose,
+	kMenuActionSave,
+	kMenuActionSaveAs,
+	kMenuActionRevert,
+	kMenuActionQuit,
+
+	kMenuActionUndo,
+	kMenuActionCut,
+	kMenuActionCopy,
+	kMenuActionPaste,
+	kMenuActionClear,
+
+	kMenuActionCommand
 };
 
 class Gui {

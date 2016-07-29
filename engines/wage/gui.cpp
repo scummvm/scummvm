@@ -73,8 +73,8 @@ static const Graphics::MenuData menuSubItems[] = {
 	{ kMenuFile, "Quit",			kMenuActionQuit, 0, true },
 
 	{ kMenuEdit, "Undo",			kMenuActionUndo, 'Z', false },
-	{ kMenuEdit, NULL,			0, 0, false },
-	{ kMenuEdit, "Cut",			kMenuActionCut, 'K', false },
+	{ kMenuEdit, NULL,				0, 0, false },
+	{ kMenuEdit, "Cut",				kMenuActionCut, 'K', false },
 	{ kMenuEdit, "Copy",			kMenuActionCopy, 'C', false },
 	{ kMenuEdit, "Paste",			kMenuActionPaste, 'V', false },
 	{ kMenuEdit, "Clear",			kMenuActionClear, 'B', false },

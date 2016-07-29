@@ -66,6 +66,25 @@ enum {
 	kMenuItemHeight = 20
 };
 
+enum {
+	kMenuHighLevel = -1
+};
+
+enum {
+	kFontStyleBold = 1,
+	kFontStyleItalic = 2,
+	kFontStyleUnderline = 4,
+	kFontStyleOutline = 8,
+	kFontStyleShadow = 16,
+	kFontStyleCondensed = 32,
+	kFontStyleExtended = 64
+};
+
+enum {
+	kMenuActionCommand
+};
+
+
 struct MenuSubItem {
 	Common::String text;
 	int action;

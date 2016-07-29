@@ -75,7 +75,7 @@ World::World(WageEngine *engine) {
 
 	_engine = engine;
 
-	_patterns = new Patterns;
+	_patterns = new Graphics::MacPatterns;
 }
 
 World::~World() {

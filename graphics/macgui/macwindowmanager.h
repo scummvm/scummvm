@@ -63,7 +63,7 @@ namespace MacGUIConstants {
 		kDesktopArc = 7
 	};
 
-	enum MacGUIColor {
+	enum {
 		kColorBlack = 0,
 		kColorGray = 1,
 		kColorWhite = 2,
@@ -71,7 +71,7 @@ namespace MacGUIConstants {
 		kColorGreen2 = 4
 	};
 
-	enum MacGUIPattern {
+	enum {
 		kPatternSolid = 1,
 		kPatternStripes = 2,
 		kPatternCheckers = 3,
@@ -84,7 +84,7 @@ class ManagedSurface;
 
 class Menu;
 
-typedef Common::Array<byte *> Patterns;
+typedef Common::Array<byte *> MacPatterns;
 
 class MacWindowManager {
 public:
@@ -107,7 +107,7 @@ public:
 
 	BaseMacWindow *getWindow(int id) { return _windows[id]; }
 
-	Patterns &getPatterns() { return _patterns; }
+	MacPatterns &getPatterns() { return _patterns; }
 	void drawFilledRoundRect(ManagedSurface *surface, Common::Rect &rect, int arc, int color);
 
 	void pushArrowCursor();
@@ -128,7 +128,7 @@ private:
 
 	bool _fullRefresh;
 
-	Patterns _patterns;
+	MacPatterns _patterns;
 
 	Menu *_menu;
 

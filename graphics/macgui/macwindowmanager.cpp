@@ -186,11 +186,11 @@ void MacWindowManager::setActive(int id) {
 
 struct PlotData {
 	Graphics::ManagedSurface *surface;
-	Patterns *patterns;
+	MacPatterns *patterns;
 	uint fillType;
 	int thickness;
 
-	PlotData(Graphics::ManagedSurface *s, Patterns *p, int f, int t) :
+	PlotData(Graphics::ManagedSurface *s, MacPatterns *p, int f, int t) :
 		surface(s), patterns(p), fillType(f), thickness(t) {}
 };
 
