@@ -212,8 +212,15 @@ int LiftbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 }
 
 int LiftbotScript::updateState(uint oldId, uint newId, int index) {
-	warning("TODO");
-	return 0;
+	for (uint idx = 0; idx < _states.size(); ++idx) {
+		TTupdateState2 &us = _states[idx];
+		if (us._src == newId) {
+			setState(us._dest);
+			break;
+		}
+	}
+
+	return newId;
 }
 
 int LiftbotScript::proc22(int id) const {
