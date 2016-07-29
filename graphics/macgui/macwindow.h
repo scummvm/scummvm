@@ -54,25 +54,28 @@ namespace Graphics {
 
 class MacWindowManager;
 
-enum WindowType {
-	kWindowUnknown,
-	kWindowWindow,
-	kWindowMenu
-};
+namespace MacWindowConstants {
+	enum WindowType {
+		kWindowUnknown,
+		kWindowWindow,
+		kWindowMenu
+	};
 
-enum {
-	kBorderWidth = 17
-};
+	enum {
+		kBorderWidth = 17
+	};
 
-enum WindowClick {
-	kBorderNone = 0,
-	kBorderScrollUp,
-	kBorderScrollDown,
-	kBorderCloseButton,
-	kBorderInner,
-	kBorderBorder,
-	kBorderResizeButton
-};
+	enum WindowClick {
+		kBorderNone = 0,
+		kBorderScrollUp,
+		kBorderScrollDown,
+		kBorderCloseButton,
+		kBorderInner,
+		kBorderBorder,
+		kBorderResizeButton
+	};
+}
+using namespace MacWindowConstants;
 
 class BaseMacWindow {
 public:

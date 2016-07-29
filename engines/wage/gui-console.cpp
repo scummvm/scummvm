@@ -348,7 +348,7 @@ void Gui::actionCopy() {
 		}
 	}
 
-	_menu->enableCommand(Graphics::kMenuEdit, Graphics::kMenuActionPaste, true);
+	_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
 }
 
 void Gui::actionPaste() {
@@ -357,14 +357,14 @@ void Gui::actionPaste() {
 	drawInput();
 	_engine->_inputText = _out.back();	// Set last part of the multiline text
 
-	_menu->enableCommand(Graphics::kMenuEdit, Graphics::kMenuActionUndo, true);
+	_menu->enableCommand(kMenuEdit, kMenuActionUndo, true);
 }
 
 void Gui::actionUndo() {
 	_engine->_inputText = _undobuffer;
 	drawInput();
 
-	_menu->enableCommand(Graphics::kMenuEdit, Graphics::kMenuActionUndo, false);
+	_menu->enableCommand(kMenuEdit, kMenuActionUndo, false);
 }
 
 void Gui::actionClear() {
@@ -381,7 +381,7 @@ void Gui::actionClear() {
 	_engine->_inputText = beg + end;
 	drawInput();
 
-	_menu->enableCommand(Graphics::kMenuEdit, Graphics::kMenuActionUndo, true);
+	_menu->enableCommand(kMenuEdit, kMenuActionUndo, true);
 
 	_selectionStartY = -1;
 	_selectionEndY = -1;
@@ -403,15 +403,15 @@ void Gui::actionCut() {
 	_clipboard = mid;
 	drawInput();
 
-	_menu->enableCommand(Graphics::kMenuEdit, Graphics::kMenuActionUndo, true);
-	_menu->enableCommand(Graphics::kMenuEdit, Graphics::kMenuActionPaste, true);
+	_menu->enableCommand(kMenuEdit, kMenuActionUndo, true);
+	_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
 
 	_selectionStartY = -1;
 	_selectionEndY = -1;
 }
 
 void Gui::disableUndo() {
-	_menu->enableCommand(Graphics::kMenuEdit, Graphics::kMenuActionUndo, false);
+	_menu->enableCommand(kMenuEdit, kMenuActionUndo, false);
 }
 
 void Gui::disableAllMenus() {
@@ -419,13 +419,13 @@ void Gui::disableAllMenus() {
 }
 
 void Gui::enableNewGameMenus() {
-	_menu->enableCommand(Graphics::kMenuFile, Graphics::kMenuActionNew, true);
-	_menu->enableCommand(Graphics::kMenuFile, Graphics::kMenuActionOpen, true);
-	_menu->enableCommand(Graphics::kMenuFile, Graphics::kMenuActionQuit, true);
+	_menu->enableCommand(kMenuFile, kMenuActionNew, true);
+	_menu->enableCommand(kMenuFile, kMenuActionOpen, true);
+	_menu->enableCommand(kMenuFile, kMenuActionQuit, true);
 }
 
-bool Gui::processConsoleEvents(Graphics::WindowClick click, Common::Event &event) {
-	if (click == Graphics::kBorderScrollUp || click == Graphics::kBorderScrollDown) {
+bool Gui::processConsoleEvents(WindowClick click, Common::Event &event) {
+	if (click == kBorderScrollUp || click == kBorderScrollDown) {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
 			int consoleHeight = _consoleWindow->getInnerDimensions().height();
 			int textFullSize = _lines.size() * _consoleLineHeight + consoleHeight;
@@ -439,14 +439,14 @@ bool Gui::processConsoleEvents(Graphics::WindowClick click, Common::Event &event
 			int oldScrollPos = _scrollPos;
 
 			switch (click) {
-			case Graphics::kBorderScrollUp:
+			case kBorderScrollUp:
 				_scrollPos = MAX<int>(0, _scrollPos - _consoleLineHeight);
 				undrawCursor();
 				_cursorY -= (_scrollPos - oldScrollPos);
 				_consoleDirty = true;
 				_consoleFullRedraw = true;
 				break;
-			case Graphics::kBorderScrollDown:
+			case kBorderScrollDown:
 				_scrollPos = MIN<int>((_lines.size() - 2) * _consoleLineHeight, _scrollPos + _consoleLineHeight);
 				undrawCursor();
 				_cursorY -= (_scrollPos - oldScrollPos);
@@ -463,14 +463,14 @@ bool Gui::processConsoleEvents(Graphics::WindowClick click, Common::Event &event
 		return false;
 	}
 
-	if (click == Graphics::kBorderResizeButton) {
+	if (click == kBorderResizeButton) {
 		_consoleDirty = true;
 		_consoleFullRedraw = true;
 
 		return true;
 	}
 
-	if (click == Graphics::kBorderInner) {
+	if (click == kBorderInner) {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
 			startMarking(event.mouse.x, event.mouse.y);
 
@@ -483,17 +483,17 @@ bool Gui::processConsoleEvents(Graphics::WindowClick click, Common::Event &event
 						(_selectionEndX == _selectionStartX && _selectionEndY == _selectionStartY)) {
 					_selectionStartY = _selectionEndY = -1;
 					_consoleFullRedraw = true;
-					_menu->enableCommand(Graphics::kMenuEdit, Graphics::kMenuActionCopy, false);
+					_menu->enableCommand(kMenuEdit, kMenuActionCopy, false);
 				} else {
-					_menu->enableCommand(Graphics::kMenuEdit, Graphics::kMenuActionCopy, true);
+					_menu->enableCommand(kMenuEdit, kMenuActionCopy, true);
 
 					bool cutAllowed = false;
 
 					if (_selectionStartY == _selectionEndY && _selectionStartY == (int)_lines.size() - 1)
 						cutAllowed = true;
 
-					_menu->enableCommand(Graphics::kMenuEdit, Graphics::kMenuActionCut, cutAllowed);
-					_menu->enableCommand(Graphics::kMenuEdit, Graphics::kMenuActionClear, cutAllowed);
+					_menu->enableCommand(kMenuEdit, kMenuActionCut, cutAllowed);
+					_menu->enableCommand(kMenuEdit, kMenuActionClear, cutAllowed);
 				}
 			}
 

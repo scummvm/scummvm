@@ -60,7 +60,9 @@
 
 namespace Wage {
 	
+// Import the enum definitions
 using namespace Graphics::MacMenuConstants;
+using namespace Graphics::MacWindowConstants;
 
 class Scene;
 class WageEngine;
@@ -93,8 +95,8 @@ public:
 	void disableAllMenus();
 	void enableNewGameMenus();
 
-	bool processSceneEvents(Graphics::WindowClick click, Common::Event &event);
-	bool processConsoleEvents(Graphics::WindowClick click, Common::Event &event);
+	bool processSceneEvents(WindowClick click, Common::Event &event);
+	bool processConsoleEvents(WindowClick click, Common::Event &event);
 	void executeMenuCommand(int action, Common::String &text);
 
 private:
