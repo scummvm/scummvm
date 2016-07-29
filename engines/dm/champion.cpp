@@ -2436,24 +2436,24 @@ T0281033_ProceedToTitle:
 }
 
 uint16 ChampionMan::f303_getSkillLevel(int16 champIndex, uint16 skillIndex) {
-	if (_vm->_championMan->_g300_partyIsSleeping) {
+	if (_vm->_championMan->_g300_partyIsSleeping)
 		return 1;
-	}
+
 	bool ignoreTmpExp = getFlag(skillIndex, k0x8000_IgnoreTemporaryExperience);
 	bool ignoreObjModifiers = getFlag(skillIndex, k0x4000_IgnoreObjectModifiers);
 	clearFlag(skillIndex, k0x8000_IgnoreTemporaryExperience | k0x4000_IgnoreObjectModifiers);
 	Champion *champ = &_vm->_championMan->_gK71_champions[champIndex];
 	Skill *skill = &champ->_skills[skillIndex];
 	int32 exp = skill->_experience;
-	if (!ignoreTmpExp) {
+	if (!ignoreTmpExp)
 		exp += skill->_temporaryExperience;
-	}
+
 	if (skillIndex > k3_ChampionSkillWizard) { /* Hidden skill */
 		skill = &champ->_skills[(skillIndex - k4_ChampionSkillSwing) >> 2];
 		exp += skill->_experience; /* Add experience in the base skill */
-		if (!ignoreTmpExp) {
+		if (!ignoreTmpExp)
 			exp += skill->_temporaryExperience;
-		}
+
 		exp >>= 1; /* Halve experience to get average of base skill + hidden skill experience */
 	}
 	int16 skillLevel = 1;
@@ -2462,35 +2462,33 @@ uint16 ChampionMan::f303_getSkillLevel(int16 champIndex, uint16 skillIndex) {
 		skillLevel++;
 	}
 	if (!ignoreObjModifiers) {
-		int16 actionHandIconIndex;
-		if ((actionHandIconIndex = _vm->_objectMan->f33_getIconIndex(champ->_slots[k1_ChampionSlotActionHand])) == k27_IconIndiceWeaponTheFirestaff) {
+		int16 actionHandIconIndex = _vm->_objectMan->f33_getIconIndex(champ->_slots[k1_ChampionSlotActionHand]);
+		if (actionHandIconIndex == k27_IconIndiceWeaponTheFirestaff)
 			skillLevel++;
-		} else {
-			if (actionHandIconIndex == k28_IconIndiceWeaponTheFirestaffComplete) {
-				skillLevel += 2;
-			}
-		}
+		else if (actionHandIconIndex == k28_IconIndiceWeaponTheFirestaffComplete)
+			skillLevel += 2;
+
 		int16 neckIconIndex = _vm->_objectMan->f33_getIconIndex(champ->_slots[k10_ChampionSlotNeck]);
 		switch (skillIndex) {
 		case k3_ChampionSkillWizard:
-			if (neckIconIndex == k124_IconIndiceJunkPendantFeral) {
+			if (neckIconIndex == k124_IconIndiceJunkPendantFeral)
 				skillLevel += 1;
-			}
-			break;
-		case k15_ChampionSkillDefend:
-			if (neckIconIndex == k121_IconIndiceJunkEkkhardCross) {
-				skillLevel += 1;
-			}
 			break;
 		case k13_ChampionSkillHeal:
-			if ((neckIconIndex == k120_IconIndiceJunkGemOfAges) || (actionHandIconIndex == k66_IconIndiceWeaponSceptreOfLyf)) { /* The skill modifiers of these two objects are not cumulative */
+			// The skill modifiers of these two objects are not cumulative
+			if ((neckIconIndex == k120_IconIndiceJunkGemOfAges) || (actionHandIconIndex == k66_IconIndiceWeaponSceptreOfLyf)) 
 				skillLevel += 1;
-			}
 			break;
 		case k14_ChampionSkillInfluence:
-			if (neckIconIndex == k122_IconIndiceJunkMoonstone) {
+			if (neckIconIndex == k122_IconIndiceJunkMoonstone)
 				skillLevel += 1;
-			}
+			break;
+		case k15_ChampionSkillDefend:
+			if (neckIconIndex == k121_IconIndiceJunkEkkhardCross)
+				skillLevel += 1;
+			break;
+		default:
+			break;
 		}
 	}
 	return skillLevel;
