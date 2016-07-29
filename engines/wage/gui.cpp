@@ -385,7 +385,6 @@ void Gui::loadBorders() {
 
 		_borders.create(source->w, source->h, source->format);
 		_borders.copyRectToSurface(*source, 0, 0, Common::Rect(0, 0, source->w, source->h));
-		//source = source->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 0, 0, 0));
 
 		delete stream;
 
