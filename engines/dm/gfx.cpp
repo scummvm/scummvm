@@ -1252,7 +1252,6 @@ uint16 DisplayMan::getPixelHeight(uint16 index) {
 	return READ_BE_UINT16(data + 2);
 }
 
-// Note: has been screened for missing code
 void DisplayMan::f99_copyBitmapAndFlipHorizontal(byte* srcBitmap, byte* destBitmap, uint16 byteWidth, uint16 height) {
 	memmove(destBitmap, srcBitmap, byteWidth * 2 * height * sizeof(byte));
 	f130_flipBitmapHorizontal(destBitmap, byteWidth, height);
@@ -1462,7 +1461,6 @@ void DisplayMan::f100_drawWallSetBitmap(byte *bitmap, Frame &f) {
 }
 
 
-// NOTE: has been screened for missing code
 void DisplayMan::f116_drawSquareD3L(Direction dir, int16 posX, int16 posY) {
 	static DoorFrames g179_doorFrame_D3L = DoorFrames( // @ G0179_s_Graphic558_Frames_Door_D3L
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
@@ -2272,7 +2270,6 @@ void DisplayMan::f134_fillBitmap(byte *bitmap, Color color, uint16 byteWidth, ui
 	memset(bitmap, color, sizeof(byte) * width * height);
 }
 
-// NOTE: has been screened for missing code
 void DisplayMan::f94_loadFloorSet(FloorSet set) {
 	if (_g230_currentFloorSet != set) {
 		_g230_currentFloorSet = set;
@@ -2282,7 +2279,6 @@ void DisplayMan::f94_loadFloorSet(FloorSet set) {
 	}
 }
 
-// Note: has been screened for missing code
 void DisplayMan::f95_loadWallSet(WallSet set) {
 	if ((_g231_currentWallSet != set) || _vm->_g523_restartGameRequest) {
 		_g231_currentWallSet = set;

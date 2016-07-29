@@ -187,7 +187,7 @@ void MenuMan::f456_drawDisabledMenu() {
 		}
 		warning(false, "MISSING CODE: F0136_VIDEO_ShadeScreenBox");
 		warning(false, "MISSING CODE: F0136_VIDEO_ShadeScreenBox");
-		warning(false, "MISSING CODE: F0067_MOUSE_SetPointerToNormal");
+		_vm->_eventMan->f67_setMousePointerToNormal(k0_pointerArrow);
 	}
 }
 
@@ -304,7 +304,7 @@ void MenuMan::f393_drawSpellAreaControls(ChampionIndex champIndex) {
 	int16 champCurrHealth[4];
 	for (uint16 i = 0; i < 4; ++i)
 		champCurrHealth[i] = champMan._gK71_champions[i]._currHealth;
-	warning(false, "MISSING CODE: F0077_MOUSE_HidePointer_CPSE");
+	_vm->_eventMan->f77_hideMouse();
 	dispMan.D24_fillScreenBox(g504_BoxSpellAreaControls, k0_ColorBlack);
 	int16 champCount = champMan._g305_partyChampionCount;
 	switch (champIndex) {
@@ -360,7 +360,7 @@ labelChamp3:
 		textMan.f53_printToLogicalScreen(277, 48, k0_ColorBlack, k4_ColorCyan, champ._name);
 		break;
 	}
-	warning(false, "MISSING CODE: F0078_MOUSE_ShowPointer");
+	_vm->_eventMan->f78_showMouse();
 }
 
 #define k2_SpellAreaAvailableSymbols 2 // @ C2_SPELL_AREA_AVAILABLE_SYMBOLS

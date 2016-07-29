@@ -34,6 +34,15 @@ Finish stuff:
 	f380_processCommandQueue
 	Missing main loop methods
 	Save file f433_processCommand140_saveGame fails silently
+	Sounds
+	F0438_STARTEND_OpenEntranceDoors
+	F0442_STARTEND_ProcessCommand202_EntranceDrawCredits
+	G0335_ui_SelectedDialogChoice
+	Add dialogs
+	Add failcheck to saveing and loading
+	F0444_STARTEND_Endgame
+	F0385_MENUS_DrawActionDamage
 
 Refactoring
 	Places implementing mini mainloop and where input doesn't really matter should call discardInput instead of processInput
+	While reanming a champion, the mouse lags

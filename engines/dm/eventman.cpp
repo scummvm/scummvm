@@ -1209,7 +1209,7 @@ void EventManager::f378_commandProcess81ClickInPanel(int16 x, int16 y) {
 			return;
 		commandType = f358_getCommandTypeFromMouseInput(g456_MouseInput_PanelChest, Common::Point(x, y), k1_LeftMouseButton);
 		if (commandType != k0_CommandNone)
-			warning(false, "MISSING CODE: F0302_CHAMPION_ProcessCommands28To65_ClickOnSlotBox");
+			_vm->_championMan->f302_processCommands28to65_clickOnSlotBox(commandType - k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand); 
 		break;
 	case k5_PanelContentResurrectReincarnate:
 		if (!champMan._g415_leaderEmptyHanded)
