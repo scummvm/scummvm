@@ -55,6 +55,9 @@
 
 namespace Wage {
 
+using namespace Graphics::MacGUIConstants;
+using Graphics::Patterns;
+
 class Design {
 public:
 	Design(Common::SeekableReadStream *data);
@@ -88,15 +91,15 @@ private:
 	bool _boundsCalculationMode;
 
 private:
-	void render(Graphics::Patterns &patterns);
+	void render(Patterns &patterns);
 	void drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
-		Graphics::Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
+		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 	void drawRoundRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
-		Graphics::Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
+		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 	void drawPolygon(Graphics::ManagedSurface *surface, Common::ReadStream &in,
-		Graphics::Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
+		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 	void drawOval(Graphics::ManagedSurface *surface, Common::ReadStream &in,
-		Graphics::Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
+		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 	void drawBitmap(Graphics::ManagedSurface *surface, Common::SeekableReadStream &in);
 };
 

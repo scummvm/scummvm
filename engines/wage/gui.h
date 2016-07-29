@@ -63,6 +63,7 @@ namespace Wage {
 // Import the enum definitions
 using namespace Graphics::MacMenuConstants;
 using namespace Graphics::MacWindowConstants;
+using namespace Graphics::MacGUIConstants;
 
 class Scene;
 class WageEngine;

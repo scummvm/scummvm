@@ -58,24 +58,27 @@
 
 namespace Graphics {	
 
-enum {
-	kDesktopArc = 7
-};
+namespace MacGUIConstants {
+	enum {
+		kDesktopArc = 7
+	};
 
-enum {
-	kColorBlack  = 0,
-	kColorGray   = 1,
-	kColorWhite  = 2,
-	kColorGreen  = 3,
-	kColorGreen2 = 4
-};
+	enum MacGUIColor {
+		kColorBlack = 0,
+		kColorGray = 1,
+		kColorWhite = 2,
+		kColorGreen = 3,
+		kColorGreen2 = 4
+	};
 
-enum {
-	kPatternSolid = 1,
-	kPatternStripes = 2,
-	kPatternCheckers = 3,
-	kPatternCheckers2 = 4
-};
+	enum MacGUIPattern {
+		kPatternSolid = 1,
+		kPatternStripes = 2,
+		kPatternCheckers = 3,
+		kPatternCheckers2 = 4
+	};
+}
+using namespace MacGUIConstants;
 
 class ManagedSurface;
 
@@ -134,29 +137,6 @@ private:
 };
 
 } // End of namespace Graphics
-
-namespace Wage {
-	typedef Graphics::Patterns Patterns;
-	
-	enum {
-		kDesktopArc = 7
-	};
-
-	enum {
-		kColorBlack = 0,
-		kColorGray = 1,
-		kColorWhite = 2,
-		kColorGreen = 3,
-		kColorGreen2 = 4
-	};
-
-	enum {
-		kPatternSolid = 1,
-		kPatternStripes = 2,
-		kPatternCheckers = 3,
-		kPatternCheckers2 = 4
-	};
-}
 
 
 #endif
