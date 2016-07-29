@@ -718,7 +718,7 @@ public:
 
 	bool _g297_drawFloorAndCeilingRequested; // @ G0297_B_DrawFloorAndCeilingRequested
 
-	// This tells blitting functions wther to assume a BYTE_BOX or a WORD_BOX has been passed to them,
+	// This tells blitting functions whether to assume a BYTE_BOX or a WORD_BOX has been passed to them,
 	// I only use WORD_BOX, so this will probably deem useless
 	bool _g578_useByteBoxCoordinates; // @ G0578_B_UseByteBoxCoordinates
 	bool _g77_doNotDrawFluxcagesDuringEndgame; // @ G0077_B_DoNotDrawFluxcagesDuringEndgame

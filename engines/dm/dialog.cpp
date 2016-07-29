@@ -36,110 +36,104 @@ namespace DM {
 DialogMan::DialogMan(DMEngine* vm) : _vm(vm) {}
 
 void DialogMan::f427_dialogDraw(char* msg1, char* msg2, char* choice1, char* choice2, char* choice3, char* choice4, bool screenDialog, bool clearScreen, bool fading) {
-	static Box K0068_s_Box1 = Box(0, 223, 101, 125);
-	static Box K0069_s_Box2 = Box(0, 223,  76, 100);
-	static Box K0070_s_Box3 = Box(0, 223,  51,  75);
-	static Box G0469_s_Graphic561_Box_Dialog2ChoicesPatch = Box(102, 122, 89, 125);
-	static Box G0470_s_Graphic561_Box_Dialog4ChoicesPatch = Box(102, 122, 62, 97);
-
-	int16 L1308_i_X;
-	int16 L1309_i_Y;
-	int16 L1310_i_ChoiceCount;
-	char L1312_ac_StringPart1[70];
-	char L1313_ac_StringPart2[70];
-	Box L1314_s_Box;
-
+	static Box constBox1 = Box(0, 223, 101, 125);
+	static Box constBox2 = Box(0, 223,  76, 100);
+	static Box constBox3 = Box(0, 223,  51,  75);
+	static Box dialog2ChoicesPatch = Box(102, 122, 89, 125);
+	static Box dialog4ChoicesPatch = Box(102, 122, 62, 97);
 
 	_vm->_displayMan->f466_loadIntoBitmap(k0_dialogBoxGraphicIndice, _vm->_displayMan->_g296_bitmapViewport);
 	//Strangerke: the version should be replaced by a ScummVM/RogueVM (?) string
 	// TODO: replace with ScummVM version string
 	_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, 192, 7, k2_ColorLightGray, k1_ColorDarkGary, "V2.2", k136_heightViewport);
-	L1310_i_ChoiceCount = 1;
-	if (choice2 != nullptr) {
-		L1310_i_ChoiceCount++;
-	}
-	if (choice3 != nullptr) {
-		L1310_i_ChoiceCount++;
-	}
-	if (choice4 != nullptr) {
-		L1310_i_ChoiceCount++;
-	}
-	if (fading) {
-		warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette in f427_dialogDraw");
-	}
-	if (clearScreen) {
+	int16 choiceCount = 1;
+	if (choice2)
+		choiceCount++;
+
+	if (choice3)
+		choiceCount++;
+
+	if (choice4)
+		choiceCount++;
+
+	if (fading)
+		_vm->_displayMan->f436_STARTEND_FadeToPalette(_vm->_displayMan->_g345_aui_BlankBuffer);
+
+	if (clearScreen)
 		_vm->_displayMan->fillScreen(k0_ColorBlack);
-	}
+
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
-	if (L1310_i_ChoiceCount == 1) {
-		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g296_bitmapViewport, _vm->_displayMan->_g296_bitmapViewport, K0068_s_Box1, 0, 64, k112_byteWidthViewport, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport, k136_heightViewport);
-		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g296_bitmapViewport, _vm->_displayMan->_g296_bitmapViewport, K0069_s_Box2, 0, 39, k112_byteWidthViewport, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport, k136_heightViewport);
-		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g296_bitmapViewport, _vm->_displayMan->_g296_bitmapViewport, K0070_s_Box3, 0, 14, k112_byteWidthViewport, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport, k136_heightViewport);
+	if (choiceCount == 1) {
+		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g296_bitmapViewport, _vm->_displayMan->_g296_bitmapViewport, constBox1, 0, 64, k112_byteWidthViewport, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport, k136_heightViewport);
+		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g296_bitmapViewport, _vm->_displayMan->_g296_bitmapViewport, constBox2, 0, 39, k112_byteWidthViewport, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport, k136_heightViewport);
+		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g296_bitmapViewport, _vm->_displayMan->_g296_bitmapViewport, constBox3, 0, 14, k112_byteWidthViewport, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport, k136_heightViewport);
 		f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice1, 112, 114);
-	} else {
-		if (L1310_i_ChoiceCount == 2) {
-			_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g296_bitmapViewport, _vm->_displayMan->_g296_bitmapViewport, G0469_s_Graphic561_Box_Dialog2ChoicesPatch, 102, 52, k112_byteWidthViewport, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport, k136_heightViewport);
-			f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice1, 112, 77);
-			f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice2, 112, 114);
-		} else {
-			if (L1310_i_ChoiceCount == 3) {
-				f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice1, 112, 77);
-				f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice2, 59, 114);
-				f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice3, 166, 114);
-			} else {
-				if (L1310_i_ChoiceCount == 4) {
-					_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g296_bitmapViewport, _vm->_displayMan->_g296_bitmapViewport, G0470_s_Graphic561_Box_Dialog4ChoicesPatch, 102, 99, k112_byteWidthViewport, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport, k136_heightViewport);
-					f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice1, 59, 77);
-					f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice2, 166, 77);
-					f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice3, 59, 114);
-					f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice4, 166, 114);
-				}
-			}
-		}
+	} else if (choiceCount == 2) {
+		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g296_bitmapViewport, _vm->_displayMan->_g296_bitmapViewport, dialog2ChoicesPatch, 102, 52, k112_byteWidthViewport, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport, k136_heightViewport);
+		f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice1, 112, 77);
+		f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice2, 112, 114);
+	} else if (choiceCount == 3) {
+		f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice1, 112, 77);
+		f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice2, 59, 114);
+		f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice3, 166, 114);
+	} else if (choiceCount == 4) {
+		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g296_bitmapViewport, _vm->_displayMan->_g296_bitmapViewport, dialog4ChoicesPatch, 102, 99, k112_byteWidthViewport, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport, k136_heightViewport);
+		f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice1, 59, 77);
+		f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice2, 166, 77);
+		f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice3, 59, 114);
+		f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice4, 166, 114);
 	}
-	L1309_i_Y = 29;
-	if (msg1 != nullptr) {
+
+	int16 textPosX;
+	int16 textPosY = 29;
+	if (msg1) {
+		char L1312_ac_StringPart1[70];
+		char L1313_ac_StringPart2[70];
 		if (f426_isMessageOnTwoLines(msg1, L1312_ac_StringPart1, L1313_ac_StringPart2)) {
-			L1309_i_Y = 21;
-			L1308_i_X = 113 - ((strlen(L1312_ac_StringPart1) * 6) >> 1);
-			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, L1308_i_X, L1309_i_Y, k11_ColorYellow, k5_ColorLightBrown, L1312_ac_StringPart1, k136_heightViewport);
-			L1309_i_Y += 8;
-			L1308_i_X = 113 - ((strlen(L1313_ac_StringPart2) * 6) >> 1);
-			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, L1308_i_X, L1309_i_Y, k11_ColorYellow, k5_ColorLightBrown, L1313_ac_StringPart2, k136_heightViewport);
-			L1309_i_Y += 8;
+			textPosY = 21;
+			textPosX = 113 - ((strlen(L1312_ac_StringPart1) * 6) >> 1);
+			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k11_ColorYellow, k5_ColorLightBrown, L1312_ac_StringPart1, k136_heightViewport);
+			textPosY += 8;
+			textPosX = 113 - ((strlen(L1313_ac_StringPart2) * 6) >> 1);
+			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k11_ColorYellow, k5_ColorLightBrown, L1313_ac_StringPart2, k136_heightViewport);
+			textPosY += 8;
 		} else {
-			L1308_i_X = 113 - ((strlen(msg1) * 6) >> 1);
-			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, L1308_i_X, L1309_i_Y, k11_ColorYellow, k5_ColorLightBrown, msg1, k136_heightViewport);
-			L1309_i_Y += 8;
+			textPosX = 113 - ((strlen(msg1) * 6) >> 1);
+			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k11_ColorYellow, k5_ColorLightBrown, msg1, k136_heightViewport);
+			textPosY += 8;
 		}
 	}
-	if (msg2 != nullptr) {
+	if (msg2) {
+		char L1312_ac_StringPart1[70];
+		char L1313_ac_StringPart2[70];
 		if (f426_isMessageOnTwoLines(msg2, L1312_ac_StringPart1, L1313_ac_StringPart2)) {
-			L1308_i_X = 113 - ((strlen(L1312_ac_StringPart1) * 6) >> 1);
-			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, L1308_i_X, L1309_i_Y, k9_ColorGold, k5_ColorLightBrown, L1312_ac_StringPart1, k136_heightViewport);
-			L1309_i_Y += 8;
-			L1308_i_X = 113 - ((strlen(L1313_ac_StringPart2) * 6) >> 1);
-			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, L1308_i_X, L1309_i_Y, k9_ColorGold, k5_ColorLightBrown, L1313_ac_StringPart2, k136_heightViewport);
+			textPosX = 113 - ((strlen(L1312_ac_StringPart1) * 6) >> 1);
+			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k9_ColorGold, k5_ColorLightBrown, L1312_ac_StringPart1, k136_heightViewport);
+			textPosY += 8;
+			textPosX = 113 - ((strlen(L1313_ac_StringPart2) * 6) >> 1);
+			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k9_ColorGold, k5_ColorLightBrown, L1313_ac_StringPart2, k136_heightViewport);
 		} else {
-			L1308_i_X = 113 - ((strlen(msg2) * 6) >> 1);
-			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, L1308_i_X, L1309_i_Y, k9_ColorGold, k5_ColorLightBrown, msg2, k136_heightViewport);
+			textPosX = 113 - ((strlen(msg2) * 6) >> 1);
+			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k9_ColorGold, k5_ColorLightBrown, msg2, k136_heightViewport);
 		}
 	}
 	if (screenDialog) {
-		L1314_s_Box._y1 = 33;
-		L1314_s_Box._y2 = 168;
-		L1314_s_Box._x1 = 47;
-		L1314_s_Box._x2 = 270;
+		Box displayBox;
+		displayBox._y1 = 33;
+		displayBox._y2 = 168;
+		displayBox._x1 = 47;
+		displayBox._x2 = 270;
 		_vm->_eventMan->f78_showMouse();
-		_vm->_displayMan->f21_blitToScreen(_vm->_displayMan->_g296_bitmapViewport, &L1314_s_Box, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport);
+		_vm->_displayMan->f21_blitToScreen(_vm->_displayMan->_g296_bitmapViewport, &displayBox, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport);
 		_vm->_eventMan->f77_hideMouse();
 	} else {
 		_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
 		_vm->f22_delay(1);
 	}
-	if (fading) {
-		warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette in f427_dialogDraw");
-	}
+
+	if (fading)
+		_vm->_displayMan->f436_STARTEND_FadeToPalette(_vm->_displayMan->_g347_paletteTopAndBottomScreen);
+
 	_vm->_displayMan->_g297_drawFloorAndCeilingRequested = true;
 }
 
