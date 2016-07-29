@@ -145,18 +145,9 @@ bool MacWindow::draw(ManagedSurface *g, bool forceRedraw) {
 
 	_contentIsDirty = false;
 
-	
 	// Compose
 	_composeSurface.blitFrom(_surface, Common::Rect(0, 0, _surface.w - 2, _surface.h - 2), Common::Point(2, 2));
 	_composeSurface.transBlitFrom(_borderSurface, kColorGreen);
-
-	if (_borders) {
-		TransparentSurface tr(*_borders);
-		//tr.create(_composeSurface.w, _composeSurface.h, tr.getSupportedPixelFormat());
-
-		//_bmp->blit(tr, 0, 0, tr.w, tr.h)
-		_composeSurface.transBlitFrom(tr);
-	}
 
 	g->transBlitFrom(_composeSurface, _composeSurface.getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
 
@@ -192,19 +183,43 @@ void MacWindow::updateInnerDims() {
 void MacWindow::drawBorder() {
 	_borderIsDirty = false;
 
+	ManagedSurface *g = &_borderSurface;
+	prepareBorderSurface(g);
+
+	if (_borders)
+		drawBorderFromSurface(g);
+	else
+		drawSimpleBorder(g);
+}
+
+void MacWindow::prepareBorderSurface(ManagedSurface *g) {
+	// We draw rect with outer kColorGreen2 and inner kColorGreen, so on 2 passes we cut out
+	// scene by external shape of the border
+	int sz = kBorderWidth / 2;
+	int width = g->w;
+	int height = g->h;
+	g->clear(kColorGreen2);
+	g->fillRect(Common::Rect(sz, sz, width - sz, height - sz), kColorGreen);
+}
+
+void MacWindow::drawBorderFromSurface(ManagedSurface *g) {
+	TransparentSurface srf;
+	srf.create(_composeSurface.w, _composeSurface.h, _borders->format);
+
+	_bmp = new NinePatchBitmap(_borders, false);
+
+	_bmp->blit(srf, 0, 0, srf.w, srf.h);
+	_borderSurface.transBlitFrom(srf, _borderSurface.format.ARGBToColor(0, 255, 255, 255));
+}
+
+void MacWindow::drawSimpleBorder(ManagedSurface *g) {
+
 	bool active = _active, scrollable = _scrollable, closeable = _active, drawTitle = !_title.empty();
 	const int size = kBorderWidth;
 	int x = 0;
 	int y = 0;
 	int width = _borderSurface.w;
 	int height = _borderSurface.h;
-	ManagedSurface *g = &_borderSurface;
-
-	// We draw rect with outer kColorGreen2 and inner kColorGreen, so on 2 passes we cut out
-	// scene by external shape of the border
-	int sz = kBorderWidth / 2;
-	g->clear(kColorGreen2);
-	g->fillRect(Common::Rect(sz, sz, width - sz, height - sz), kColorGreen);
 
 	drawBox(g, x,                    y,                     size,                 size);
 	drawBox(g, x + width - size - 1, y,                     size,                 size);
@@ -214,8 +229,6 @@ void MacWindow::drawBorder() {
 	drawBox(g, x + size,             y + height - size + 1, width - 2 * size - 1, size - 4);
 	drawBox(g, x + 2,                y + size,              size - 4,             height - 2 * size - 1);
 	drawBox(g, x + width - size + 1, y + size,              size - 4,             height - 2 * size - 1);
-
-	
 
 	if (active) {
 		fillRect(g, x + size, y + 5,           width - 2 * size - 1, 8, kColorBlack);
@@ -247,7 +260,7 @@ void MacWindow::drawBorder() {
 				int ry2 = ry1 + _dims.height() * _scrollSize;
 				Common::Rect rr(rx1, ry1, rx2, ry2);
 
-				drawFilledRect(rr, kColorBlack, drawPixelInverted, g);
+				Graphics::drawFilledRect(rr, kColorBlack, drawPixelInverted, g);
 			}
 		}
 		if (closeable) {
@@ -260,7 +273,7 @@ void MacWindow::drawBorder() {
 	}
 
 	if (drawTitle) {
-		const Font *font = getTitleFont();
+		const Graphics::Font *font = getTitleFont();
 		int yOff = _wm->hasBuiltInFonts() ? 3 : 1;
 
 		int w = font->getStringWidth(_title) + 10;
@@ -269,7 +282,7 @@ void MacWindow::drawBorder() {
 			w = maxWidth;
 		drawBox(g, x + (width - w) / 2, y, w, size);
 		font->drawString(g, _title, x + (width - w) / 2 + 5, y + yOff, w, kColorBlack);
-	}	
+	}
 }
 
 void MacWindow::setHighlight(WindowClick highlightedPart) {
@@ -290,7 +303,6 @@ void MacWindow::setHighlight(WindowClick highlightedPart) {
  }
 
  void MacWindow::setBorders(TransparentSurface *source) {
-	 _bmp = new NinePatchBitmap(source, true);
 	 _borders = new TransparentSurface(*source);
  }
 
