@@ -50,6 +50,9 @@
 
 namespace Graphics {
 
+	class TransparentSurface;
+	class Surface;
+
 struct NinePatchMark {
 	int offset;
 	int length;
