@@ -60,9 +60,9 @@ GfxTransitions32::GfxTransitions32(SegManager *segMan) :
 }
 
 GfxTransitions32::~GfxTransitions32() {
-	for (ShowStyleList::iterator it = _showStyles.begin(); it != _showStyles.end(); ++it) {
-		deleteShowStyle(it);
-	}
+	for (ShowStyleList::iterator it = _showStyles.begin();
+		 it != _showStyles.end();
+		 it = deleteShowStyle(it));
 	_scrolls.clear();
 }
 
