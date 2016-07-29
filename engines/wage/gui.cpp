@@ -368,7 +368,7 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 
 void Gui::loadBorders() {
 	Common::File borderfile;
-	if (!borderfile.open("logo.bmp")) {
+	if (!borderfile.open("border.bmp")) {
 		debug(1, "Cannot open border file");
 		return;
 	}
@@ -379,9 +379,8 @@ void Gui::loadBorders() {
 
 	if (stream) {
 		bmpDecoder.loadStream(*stream);	
-		source = *bmpDecoder.getSurface();
+		source = *(bmpDecoder.getSurface());
 		source.convertToInPlace(_borders.getSupportedPixelFormat(), bmpDecoder.getPalette());
-
 		_borders.create(source.w, source.h, source.format);
 		_borders.copyFrom(source);
 		_borders.applyColorKey(255, 0, 255, false);
