@@ -29,6 +29,10 @@
 #include "sci/engine/vm.h"
 #include "sci/engine/vm_types.h"
 #include "sci/engine/segment.h"
+#ifdef ENABLE_SCI32
+// TODO: Baaaad?
+#include "sci/graphics/celobj32.h"
+#endif
 
 namespace Sci {
 
@@ -225,11 +229,9 @@ public:
 	 * @param[in] size		Number of bytes to allocate for the hunk entry
 	 * @param[in] hunk_type	A descriptive string for the hunk entry, for
 	 *						debugging purposes
-	 * @param[in] gc        Whether to make the hunk eligible for garbage
-	 *                      collection
 	 * @return				The offset of the freshly allocated hunk entry
 	 */
-	reg_t allocateHunkEntry(const char *hunk_type, int size, bool gc);
+	reg_t allocateHunkEntry(const char *hunk_type, int size);
 
 	/**
 	 * Deallocates a hunk entry
@@ -435,10 +437,15 @@ public:
 	SciArray<reg_t> *allocateArray(reg_t *addr);
 	SciArray<reg_t> *lookupArray(reg_t addr);
 	void freeArray(reg_t addr);
+
 	SciString *allocateString(reg_t *addr);
 	SciString *lookupString(reg_t addr);
 	void freeString(reg_t addr);
 	SegmentId getStringSegmentId() { return _stringSegId; }
+
+	SciBitmap *allocateBitmap(reg_t *addr, const int16 width, const int16 height, const uint8 skipColor = kDefaultSkipColor, const int16 displaceX = 0, const int16 displaceY = 0, const int16 scaledWidth = kLowResX, const int16 scaledHeight = kLowResY, const uint32 paletteSize = 0, const bool remap = false, const bool gc = true);
+	SciBitmap *lookupBitmap(reg_t addr);
+	void freeBitmap(reg_t addr);
 #endif
 
 	const Common::Array<SegmentObj *> &getSegments() const { return _heap; }
@@ -464,6 +471,7 @@ private:
 #ifdef ENABLE_SCI32
 	SegmentId _arraysSegId;
 	SegmentId _stringSegId;
+	SegmentId _bitmapSegId;
 #endif
 
 public:

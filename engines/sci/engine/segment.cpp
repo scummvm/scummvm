@@ -70,6 +70,9 @@ SegmentObj *SegmentObj::createSegmentObj(SegmentType type) {
 	case SEG_TYPE_STRING:
 		mem = new StringTable();
 		break;
+	case SEG_TYPE_BITMAP:
+		mem = new BitmapTable();
+		break;
 #endif
 	default:
 		error("Unknown SegmentObj type %d", type);
@@ -307,6 +310,17 @@ SegmentRef StringTable::dereference(reg_t pointer) {
 	ret.isRaw = true;
 	ret.maxSize = at(pointer.getOffset()).getSize();
 	ret.raw = (byte *)at(pointer.getOffset()).getRawData();
+	return ret;
+}
+
+#pragma mark -
+#pragma mark Bitmaps
+
+SegmentRef BitmapTable::dereference(reg_t pointer) {
+	SegmentRef ret;
+	ret.isRaw = true;
+	ret.maxSize = at(pointer.getOffset()).getRawSize();
+	ret.raw = at(pointer.getOffset()).getRawData();
 	return ret;
 }
 

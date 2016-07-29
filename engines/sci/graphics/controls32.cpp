@@ -309,7 +309,7 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 		g_sci->_gfxFrameout->frameOut(true);
 	}
 
-	_segMan->freeHunkEntry(editor.bitmap);
+	_segMan->freeBitmap(editor.bitmap);
 
 	if (textChanged) {
 		editor.text.trim();
@@ -419,7 +419,7 @@ ScrollWindow::ScrollWindow(SegManager *segMan, const Common::Rect &gameRect, con
 }
 
 ScrollWindow::~ScrollWindow() {
-	_segMan->freeHunkEntry(_bitmap);
+	_segMan->freeBitmap(_bitmap);
 	// _screenItem will be deleted by GfxFrameout
 }
 

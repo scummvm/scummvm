@@ -1088,7 +1088,7 @@ CelObjMem::CelObjMem(const reg_t bitmapObject) {
 	_celHeaderOffset = 0;
 	_transparent = true;
 
-	BitmapResource bitmap(bitmapObject);
+	SciBitmap &bitmap = *g_sci->getEngineState()->_segMan->lookupBitmap(bitmapObject);
 	_width = bitmap.getWidth();
 	_height = bitmap.getHeight();
 	_displace = bitmap.getDisplace();
@@ -1104,7 +1104,7 @@ CelObjMem *CelObjMem::duplicate() const {
 }
 
 byte *CelObjMem::getResPointer() const {
-	return g_sci->getEngineState()->_segMan->getHunkPointer(_info.bitmap);
+	return g_sci->getEngineState()->_segMan->lookupBitmap(_info.bitmap)->getRawData();
 }
 
 #pragma mark -

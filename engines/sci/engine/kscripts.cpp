@@ -40,7 +40,7 @@ reg_t kLoad(EngineState *s, int argc, reg_t *argv) {
 
 	// Request to dynamically allocate hunk memory for later use
 	if (restype == kResourceTypeMemory)
-		return s->_segMan->allocateHunkEntry("kLoad()", resnr, true);
+		return s->_segMan->allocateHunkEntry("kLoad()", resnr);
 
 	return make_reg(0, ((restype << 11) | resnr)); // Return the resource identifier as handle
 }

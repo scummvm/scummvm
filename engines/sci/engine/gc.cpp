@@ -154,16 +154,18 @@ AddrSet *findAllActiveReferences(EngineState *s) {
 				}
 			}
 
-			// Init: Explicitly opted-out hunks
-			else if (heap[i]->getType() == SEG_TYPE_HUNK) {
-				HunkTable *ht = static_cast<HunkTable *>(heap[i]);
+#ifdef ENABLE_SCI32
+			// Init: Explicitly opted-out bitmaps
+			else if (heap[i]->getType() == SEG_TYPE_BITMAP) {
+				BitmapTable *bt = static_cast<BitmapTable *>(heap[i]);
 
-				for (uint j = 0; j < ht->_table.size(); j++) {
-					if (!ht->_table[j].data.gc) {
+				for (uint j = 0; j < bt->_table.size(); j++) {
+					if (!bt->_table[j].data.getShouldGC()) {
 						wm.push(make_reg(i, j));
 					}
 				}
 			}
+#endif
 		}
 	}
 

@@ -24,8 +24,8 @@
 #define SCI_GRAPHICS_PAINT32_H
 
 namespace Sci {
-class BitmapResource;
 class Plane;
+class SciBitmap;
 class ScreenItem;
 class SegManager;
 
@@ -54,7 +54,7 @@ public:
 
 private:
 	typedef struct {
-		BitmapResource *bitmap;
+		SciBitmap *bitmap;
 		bool pattern[16];
 		uint8 patternIndex;
 		bool solid;
@@ -64,7 +64,7 @@ private:
 
 	static void plotter(int x, int y, int color, void *data);
 
-	BitmapResource makeLineBitmap(const Common::Point &startPoint, const Common::Point &endPoint, const int16 priority, const uint8 color, const LineStyle style, const uint16 pattern, const uint8 thickness, Common::Rect &outRect);
+	reg_t makeLineBitmap(const Common::Point &startPoint, const Common::Point &endPoint, const int16 priority, const uint8 color, const LineStyle style, const uint16 pattern, const uint8 thickness, Common::Rect &outRect);
 };
 
 } // End of namespace Sci
