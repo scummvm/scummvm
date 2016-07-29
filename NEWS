@@ -49,6 +49,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed visual glitches in the Spanish version of Myst.
    - Changed the cancel button in the options dialog of Riven not to save the settings.
    - Riven savegames created by ScummVM are now loadable in the original game.
+   - Fixed missing mouse cursor in Myst after loading a savegame while the intro is playing.
 
  WAGE:
    - Closed memory leak.
