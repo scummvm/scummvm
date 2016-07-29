@@ -52,11 +52,11 @@
 #include "graphics/fonts/bdf.h"
 #include "graphics/palette.h"
 #include "graphics/macgui/macwindow.h"
+#include "graphics/macgui/macmenu.h"
 
 #include "wage/wage.h"
 #include "wage/design.h"
 #include "wage/entities.h"
-#include "wage/macmenu.h"
 #include "wage/gui.h"
 #include "wage/world.h"
 

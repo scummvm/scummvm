@@ -30,7 +30,8 @@ MODULE_OBJS := \
 	wincursor.o \
 	yuv_to_rgb.o \
 	macgui/macwindowmanager.o\
-	macgui/macwindow.o
+	macgui/macwindow.o \
+	macgui/macmenu.o
 
 ifdef USE_SCALERS
 MODULE_OBJS += \

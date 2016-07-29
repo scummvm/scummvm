@@ -59,8 +59,7 @@
 #include "graphics/primitives.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macwindow.h"
-
-#include "wage/macmenu.h"
+#include "graphics/macgui/macmenu.h"
 
 namespace Graphics {
 
