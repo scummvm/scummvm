@@ -40,47 +40,6 @@
 
 namespace DM {
 
-uint16 g38_slotMasks[38] = { // @ G0038_ai_Graphic562_SlotMasks
-	/* 30 for champion inventory, 8 for chest */
-	0xFFFF,   /* Ready Hand       Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Action Hand      Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0x0002,   /* Head             Head */
-	0x0008,   /* Torso            Torso */
-	0x0010,   /* Legs             Legs */
-	0x0020,   /* Feet             Feet */
-	0x0100,   /* Pouch 2          Pouch */
-	0x0080,   /* Quiver Line2 1   Quiver 2 */
-	0x0080,   /* Quiver Line1 2   Quiver 2 */
-	0x0080,   /* Quiver Line2 2   Quiver 2 */
-	0x0004,   /* Neck             Neck */
-	0x0100,   /* Pouch 1          Pouch */
-	0x0040,   /* Quiver Line1 1   Quiver 1 */
-	0xFFFF,   /* Backpack Line1 1 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line2 2 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line2 3 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line2 4 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line2 5 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line2 6 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line2 7 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line2 8 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line2 9 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line1 2 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line1 3 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line1 4 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line1 5 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line1 6 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line1 7 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line1 8 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line1 9 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0x0400,   /* Chest 1          Chest */
-	0x0400,   /* Chest 2          Chest */
-	0x0400,   /* Chest 3          Chest */
-	0x0400,   /* Chest 4          Chest */
-	0x0400,   /* Chest 5          Chest */
-	0x0400,   /* Chest 6          Chest */
-	0x0400,   /* Chest 7          Chest */
-	0x0400}; /* Chest 8          Chest */
-
 const char *g417_baseSkillName[4] = {"FIGHTER", "NINJA", "PRIEST", "WIZARD"};
 
 Box gBoxMouth = Box(55, 72, 12, 29); // @ G0048_s_Graphic562_Box_Mouth 
@@ -1281,7 +1240,7 @@ void ChampionMan::f302_processCommands28to65_clickOnSlotBox(uint16 slotBoxIndex)
 	if ((slotThing == Thing::_none) && (leaderHandObject == Thing::_none))
 		return;
 
-	if ((leaderHandObject != Thing::_none) && (!(g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(leaderHandObject)]._allowedSlots & g38_slotMasks[slotIndex])))
+	if ((leaderHandObject != Thing::_none) && (!(g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(leaderHandObject)]._allowedSlots & gSlotMasks[slotIndex])))
 		return;
 
 	_vm->_eventMan->f78_showMouse();
