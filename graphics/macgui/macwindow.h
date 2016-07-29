@@ -116,7 +116,7 @@ protected:
 
 	bool (*_callback)(WindowClick, Common::Event &, void *);
 	void *_dataPtr;
-	
+
 	MacWindowManager *_wm;
 };
 
@@ -130,7 +130,7 @@ public:
 	const Common::Rect &getInnerDimensions() { return _innerDims; }
 
 	bool draw(ManagedSurface *g, bool forceRedraw = false);
-	
+
 	void setActive(bool active);
 	void setTitle(Common::String &title) { _title = title; }
 	void setHighlight(WindowClick highlightedPart);
@@ -138,7 +138,7 @@ public:
 	bool processEvent(Common::Event &event);
 	bool hasAllFocus() { return _beingDragged || _beingResized; }
 
-	void setBorder(TransparentSurface &border, bool active);
+	void setBorder(TransparentSurface &border, bool active, int lo, int ro, int to, int bo);
 
 private:
 	void drawBorder();
@@ -149,7 +149,7 @@ private:
 	void fillRect(ManagedSurface *g, int x, int y, int w, int h, int color);
 	const Font *getTitleFont();
 	void updateInnerDims();
-	WindowClick isInBorder(int x, int y);	
+	WindowClick isInBorder(int x, int y);
 
 private:
 	ManagedSurface _borderSurface;
@@ -161,6 +161,10 @@ private:
 	bool _resizable;
 	bool _active;
 	bool _borderIsDirty;
+
+	bool _closeable;
+
+	int _borderWidth;
 
 	bool _beingDragged, _beingResized;
 	int _draggedX, _draggedY;

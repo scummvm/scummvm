@@ -78,6 +78,10 @@ MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Mac
 	_draggedX = _draggedY = 0;
 
 	_type = kWindowWindow;
+
+	_closeable = false;
+
+	_borderWidth = kBorderWidth;
 }
 
 MacWindow::~MacWindow() {
@@ -174,7 +178,14 @@ static void drawPixelInverted(int x, int y, int color, void *data) {
 
 void MacWindow::updateInnerDims() {
 	_innerDims = _dims;
-	_innerDims.grow(-kBorderWidth);
+	if (_macBorder.hasBorder(_active) && _macBorder.hasOffsets()) {
+		int maxW = _innerDims.width() - _macBorder.getBorderOffset(kBorderOffsetLeft) - _macBorder.getBorderOffset(kBorderOffsetRight);
+		int maxH = _innerDims.width() - _macBorder.getBorderOffset(kBorderOffsetTop) - _macBorder.getBorderOffset(kBorderOffsetBottom);
+		_innerDims.clip(maxW, maxH);
+		_innerDims.translate(_macBorder.getBorderOffset(kBorderOffsetLeft), _macBorder.getBorderOffset(kBorderOffsetTop));
+	} else {
+		_innerDims.grow(-kBorderWidth);
+	}
 }
 
 void MacWindow::drawBorder() {
@@ -293,11 +304,14 @@ void MacWindow::setHighlight(WindowClick highlightedPart) {
 	_borderIsDirty = true;
  }
 
- void MacWindow::setBorder(TransparentSurface &border, bool active) {
+ void MacWindow::setBorder(TransparentSurface &border, bool active, int lo, int ro, int to, int bo) {
 	 if (active)
 		 _macBorder.addActiveBorder(border);
 	 else
 		 _macBorder.addInactiveBorder(border);
+
+		if (!_macBorder.hasOffsets())
+			_macBorder.setBorderOffsets(lo, ro, to, bo);
  }
 
 void MacWindow::drawBox(ManagedSurface *g, int x, int y, int w, int h) {
@@ -317,18 +331,18 @@ WindowClick MacWindow::isInBorder(int x, int y) {
 	if (_innerDims.contains(x, y))
 		return kBorderInner;
 
-	if (x >= _innerDims.left - kBorderWidth && x < _innerDims.left && y >= _innerDims.top - kBorderWidth && y < _innerDims.top)
+	if (x >= _innerDims.left - _borderWidth && x < _innerDims.left && y >= _innerDims.top - _borderWidth && y < _innerDims.top)
 		return kBorderCloseButton;
 
 	if (_resizable)
-		if (x >= _innerDims.right && x < _innerDims.right + kBorderWidth && y >= _innerDims.bottom && y < _innerDims.bottom + kBorderWidth)
+		if (x >= _innerDims.right && x < _innerDims.right + _borderWidth && y >= _innerDims.bottom && y < _innerDims.bottom + _borderWidth)
 			return kBorderResizeButton;
 
-	if (_scrollable && x >= _innerDims.right && x < _innerDims.right + kBorderWidth) {
-		if (y < _innerDims.top - kBorderWidth)
+	if (_scrollable && x >= _innerDims.right && x < _innerDims.right + _borderWidth) {
+		if (y < _innerDims.top - _borderWidth)
 			return kBorderBorder;
 
-		if (y >= _innerDims.bottom + kBorderWidth)
+		if (y >= _innerDims.bottom + _borderWidth)
 			return kBorderBorder;
 
 		if (y >= _innerDims.top + _innerDims.height() / 2)
@@ -356,8 +370,8 @@ bool MacWindow::processEvent(Common::Event &event) {
 		}
 
 		if (_beingResized) {
-			resize(MAX(kBorderWidth * 4, _dims.width()  + event.mouse.x - _draggedX),
-				   MAX(kBorderWidth * 4, _dims.height() + event.mouse.y - _draggedY));
+			resize(MAX(_borderWidth * 4, _dims.width()  + event.mouse.x - _draggedX),
+				   MAX(_borderWidth * 4, _dims.height() + event.mouse.y - _draggedY));
 
 			_draggedX = event.mouse.x;
 			_draggedY = event.mouse.y;
