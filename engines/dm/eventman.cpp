@@ -596,12 +596,15 @@ Common::EventType EventManager::processInput(Common::Event *grabKey, Common::Eve
 		case Common::EVENT_RBUTTONUP: {
 			MouseButton button = (event.type == Common::EVENT_LBUTTONDOWN) ? k1_LeftMouseButton : k2_RightMouseButton;
 			_g558_mouseButtonStatus &= ~button;
+			f544_resetPressingEyeOrMouth();
 			break;
 		}
 		default:
 			break;
 		}
 	}
+	if (_g597_ignoreMouseMovements)
+		setMousePos(_mousePos);
 	return Common::EVENT_INVALID;
 }
 
@@ -722,7 +725,7 @@ void EventManager::f380_processCommandQueue() {
 		return;
 	}
 	if (cmdType == k71_CommandClickOnEye) {
-		warning(false, "MISSING CODE: F0352_INVENTORY_ProcessCommand71_ClickOnEye();");
+		_vm->_inventoryMan->f352_processCommand71_clickOnEye();
 		return;
 	}
 	if (cmdType == k80_CommandClickInDungeonView) {
@@ -1521,6 +1524,17 @@ void EventManager::f371_commandProcessType111To115_ClickInActionArea(int16 posX,
 				}
 			}
 		}
+	}
+}
+
+void EventManager::f544_resetPressingEyeOrMouth() {
+	if (_vm->_g331_pressingEye) {
+		_g597_ignoreMouseMovements = false;
+		_vm->_g332_stopPressingEye = true;
+	}
+	if (_vm->_g333_pressingMouth) {
+		_g597_ignoreMouseMovements = false;
+		_vm->_g334_stopPressingMouth = true;
 	}
 }
 } // end of namespace DM

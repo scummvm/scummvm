@@ -35,3 +35,5 @@ Finish stuff:
 	Missing main loop methods
 	Save file f433_processCommand140_saveGame fails silently
 
+Refactoring
+	Places implementing mini mainloop and where input doesn't really matter should call discardInput instead of processInput

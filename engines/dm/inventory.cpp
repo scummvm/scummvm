@@ -939,4 +939,26 @@ void InventoryMan::f348_adjustStatisticCurrentValue(Champion* champ, uint16 stat
 	champ->_statistics[statIndex][k1_ChampionStatCurrent] += AL1077_i_Delta;
 }
 
+void InventoryMan::f352_processCommand71_clickOnEye() {
+	_vm->_eventMan->_g597_ignoreMouseMovements = true;
+	_vm->_g331_pressingEye = true;
+	if (!_vm->_eventMan->isMouseButtonDown(k1_LeftMouseButton)) {
+		_vm->_eventMan->_g597_ignoreMouseMovements = false;
+		_vm->_g331_pressingEye = false;
+		_vm->_g332_stopPressingEye = false;
+		return;
+	}
+	_vm->_eventMan->f357_discardAllInput();
+	_vm->_eventMan->f78_showMouse();
+	_vm->f22_delay(8);
+	_vm->_inventoryMan->f332_drawIconToViewport(k203_IconIndiceEyeLooking, 12, 13);
+	if (_vm->_championMan->_g415_leaderEmptyHanded) {
+		f351_drawChampionSkillsAndStatistics();
+	} else {
+		_vm->_objectMan->f35_clearLeaderObjectName();
+		_vm->_inventoryMan->f342_drawPanelObject(_vm->_championMan->_g414_leaderHandObject, true);
+	}
+	_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
+
+}
 }

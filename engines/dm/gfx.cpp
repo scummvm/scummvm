@@ -1235,6 +1235,7 @@ void DisplayMan::f97_drawViewport(int16 palSwitchingRequestedState) {
 	} else {
 		f565_viewportSetPalette(nullptr, nullptr);
 	}
+	updateScreen();
 }
 
 byte *DisplayMan::getCurrentVgaBuffer() {

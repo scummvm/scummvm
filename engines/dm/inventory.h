@@ -85,6 +85,7 @@ public:
 	void f353_drawStopPressingEye();// @ F0353_INVENTORY_DrawStopPressingEye
 	void f349_processCommand70_clickOnMouth(); // @ F0349_INVENTORY_ProcessCommand70_ClickOnMouth
 	void f348_adjustStatisticCurrentValue(Champion *champ, uint16 statIndex, int16 valueDelta); // @ F0348_INVENTORY_AdjustStatisticCurrentValue
+	void f352_processCommand71_clickOnEye(); // @ F0352_INVENTORY_ProcessCommand71_ClickOnEye
 
 };
 
