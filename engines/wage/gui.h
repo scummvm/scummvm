@@ -53,11 +53,14 @@
 #include "graphics/managed_surface.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macwindow.h"
+#include "graphics/macgui/macmenu.h"
 
 #include "common/events.h"
 #include "common/rect.h"
 
 namespace Wage {
+	
+using namespace Graphics::MacMenuConstants;
 
 class Scene;
 class WageEngine;

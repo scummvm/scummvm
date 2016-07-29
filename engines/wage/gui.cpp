@@ -62,22 +62,22 @@
 namespace Wage {
 
 static const Graphics::MenuData menuSubItems[] = {
-	{ Graphics::kMenuHighLevel, "File",	0, 0, false },
-	{ Graphics::kMenuHighLevel, "Edit",	0, 0, false },
-	{ Graphics::kMenuFile, "New",			Graphics::kMenuActionNew, 0, false },
-	{ Graphics::kMenuFile, "Open...",		Graphics::kMenuActionOpen, 0, true },
-	{ Graphics::kMenuFile, "Close",			Graphics::kMenuActionClose, 0, true },
-	{ Graphics::kMenuFile, "Save",			Graphics::kMenuActionSave, 0, true },
-	{ Graphics::kMenuFile, "Save as...",	Graphics::kMenuActionSaveAs, 0, true },
-	{ Graphics::kMenuFile, "Revert",		Graphics::kMenuActionRevert, 0, false },
-	{ Graphics::kMenuFile, "Quit",			Graphics::kMenuActionQuit, 0, true },
+	{ kMenuHighLevel, "File",	0, 0, false },
+	{ kMenuHighLevel, "Edit",	0, 0, false },
+	{ kMenuFile, "New",			kMenuActionNew, 0, false },
+	{ kMenuFile, "Open...",		kMenuActionOpen, 0, true },
+	{ kMenuFile, "Close",			kMenuActionClose, 0, true },
+	{ kMenuFile, "Save",			kMenuActionSave, 0, true },
+	{ kMenuFile, "Save as...",	kMenuActionSaveAs, 0, true },
+	{ kMenuFile, "Revert",		kMenuActionRevert, 0, false },
+	{ kMenuFile, "Quit",			kMenuActionQuit, 0, true },
 
-	{ Graphics::kMenuEdit, "Undo",			Graphics::kMenuActionUndo, 'Z', false },
-	{ Graphics::kMenuEdit, NULL,			0, 0, false },
-	{ Graphics::kMenuEdit, "Cut",			Graphics::kMenuActionCut, 'K', false },
-	{ Graphics::kMenuEdit, "Copy",			Graphics::kMenuActionCopy, 'C', false },
-	{ Graphics::kMenuEdit, "Paste",			Graphics::kMenuActionPaste, 'V', false },
-	{ Graphics::kMenuEdit, "Clear",			Graphics::kMenuActionClear, 'B', false },
+	{ kMenuEdit, "Undo",			kMenuActionUndo, 'Z', false },
+	{ kMenuEdit, NULL,			0, 0, false },
+	{ kMenuEdit, "Cut",			kMenuActionCut, 'K', false },
+	{ kMenuEdit, "Copy",			kMenuActionCopy, 'C', false },
+	{ kMenuEdit, "Paste",			kMenuActionPaste, 'V', false },
+	{ kMenuEdit, "Clear",			kMenuActionClear, 'B', false },
 
 	{ 0, NULL,			0, 0, false }
 };
@@ -148,7 +148,7 @@ Gui::Gui(WageEngine *engine) {
 	_menu->setCommandsCallback(menuCommandsCallback, this);
 
 	_menu->addStaticMenus(menuSubItems);
-	_menu->addMenuSubItem(Graphics::kMenuAbout, _engine->_world->getAboutMenuItemName(), Graphics::kMenuActionAbout);
+	_menu->addMenuSubItem(kMenuAbout, _engine->_world->getAboutMenuItemName(), kMenuActionAbout);
 
 	_commandsMenuId = _menu->addMenuItem(_engine->_world->_commandsMenuName.c_str());
 	regenCommandsMenu();
@@ -298,7 +298,7 @@ void Gui::regenWeaponsMenu() {
 			command += " ";
 			command += obj->_name;
 
-			_menu->addMenuSubItem(_weaponsMenuId, command.c_str(), Graphics::kMenuActionCommand, 0, 0, true);
+			_menu->addMenuSubItem(_weaponsMenuId, command.c_str(), kMenuActionCommand, 0, 0, true);
 
 			empty = false;
 		}
@@ -321,39 +321,39 @@ void menuCommandsCallback(int action, Common::String &text, void *data) {
 
 void Gui::executeMenuCommand(int action, Common::String &text) {
 	switch(action) {
-	case Graphics::kMenuActionAbout:
-	case Graphics::kMenuActionNew:
-	case Graphics::kMenuActionClose:
-	case Graphics::kMenuActionRevert:
-	case Graphics::kMenuActionQuit:
+	case kMenuActionAbout:
+	case kMenuActionNew:
+	case kMenuActionClose:
+	case kMenuActionRevert:
+	case kMenuActionQuit:
 		break;
 
-	case Graphics::kMenuActionOpen:
+	case kMenuActionOpen:
 		_engine->scummVMSaveLoadDialog(false);
 		break;
 
-	case Graphics::kMenuActionSave:
-	case Graphics::kMenuActionSaveAs:
+	case kMenuActionSave:
+	case kMenuActionSaveAs:
 		_engine->scummVMSaveLoadDialog(true);
 		break;
 
-	case Graphics::kMenuActionUndo:
+	case kMenuActionUndo:
 		actionUndo();
 		break;
-	case Graphics::kMenuActionCut:
+	case kMenuActionCut:
 		actionCut();
 		break;
-	case Graphics::kMenuActionCopy:
+	case kMenuActionCopy:
 		actionCopy();
 		break;
-	case Graphics::kMenuActionPaste:
+	case kMenuActionPaste:
 		actionPaste();
 		break;
-	case Graphics::kMenuActionClear:
+	case kMenuActionClear:
 		actionClear();
 		break;
 
-	case Graphics::kMenuActionCommand:
+	case kMenuActionCommand:
 		_engine->processTurn(&text, NULL);
 		break;
 

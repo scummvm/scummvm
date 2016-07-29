@@ -53,43 +53,46 @@ namespace Graphics {
 struct MenuItem;
 struct MenuSubItem;
 
-enum {
-	kFontStyleBold = 1,
-	kFontStyleItalic = 2,
-	kFontStyleUnderline = 4,
-	kFontStyleOutline = 8,
-	kFontStyleShadow = 16,
-	kFontStyleCondensed = 32,
-	kFontStyleExtended = 64
-};
+namespace MacMenuConstants {
+	enum MacMenuFontStyle {
+		kFontStyleBold = 1,
+		kFontStyleItalic = 2,
+		kFontStyleUnderline = 4,
+		kFontStyleOutline = 8,
+		kFontStyleShadow = 16,
+		kFontStyleCondensed = 32,
+		kFontStyleExtended = 64
+	};
 
-enum {
-	kMenuHighLevel = -1,
-	kMenuAbout = 0,
-	kMenuFile = 1,
-	kMenuEdit = 2,
-	kMenuCommands = 3,
-	kMenuWeapons = 4
-};
+	enum MacMenuTab {
+		kMenuHighLevel = -1,
+		kMenuAbout = 0,
+		kMenuFile = 1,
+		kMenuEdit = 2,
+		kMenuCommands = 3,
+		kMenuWeapons = 4
+	};
 
-enum {
-	kMenuActionAbout,
-	kMenuActionNew,
-	kMenuActionOpen,
-	kMenuActionClose,
-	kMenuActionSave,
-	kMenuActionSaveAs,
-	kMenuActionRevert,
-	kMenuActionQuit,
+	enum MacMenuAction {
+		kMenuActionAbout,
+		kMenuActionNew,
+		kMenuActionOpen,
+		kMenuActionClose,
+		kMenuActionSave,
+		kMenuActionSaveAs,
+		kMenuActionRevert,
+		kMenuActionQuit,
 
-	kMenuActionUndo,
-	kMenuActionCut,
-	kMenuActionCopy,
-	kMenuActionPaste,
-	kMenuActionClear,
+		kMenuActionUndo,
+		kMenuActionCut,
+		kMenuActionCopy,
+		kMenuActionPaste,
+		kMenuActionClear,
 
-	kMenuActionCommand
-};
+		kMenuActionCommand
+	};
+}
+using namespace MacMenuConstants;
 
 struct MenuData {
 	int menunum;
