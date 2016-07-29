@@ -142,9 +142,12 @@ bool MacWindow::draw(ManagedSurface *g, bool forceRedraw) {
 
 	_contentIsDirty = false;
 
+	TransparentSurface tr;
+	_bmp->blit(tr, 0, 0, _borderSurface.w, _borderSurface.h);
+
 	// Compose
 	_composeSurface.blitFrom(_surface, Common::Rect(0, 0, _surface.w - 2, _surface.h - 2), Common::Point(2, 2));
-	_composeSurface.transBlitFrom(_borderSurface, kColorGreen);
+	_composeSurface.transBlitFrom(tr, kColorGreen);
 
 	g->transBlitFrom(_composeSurface, _composeSurface.getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
 
@@ -202,6 +205,8 @@ void MacWindow::drawBorder() {
 	drawBox(g, x + 2,                y + size,              size - 4,             height - 2 * size - 1);
 	drawBox(g, x + width - size + 1, y + size,              size - 4,             height - 2 * size - 1);
 
+	
+
 	if (active) {
 		fillRect(g, x + size, y + 5,           width - 2 * size - 1, 8, kColorBlack);
 		fillRect(g, x + size, y + height - 13, width - 2 * size - 1, 8, kColorBlack);
@@ -255,6 +260,20 @@ void MacWindow::drawBorder() {
 		drawBox(g, x + (width - w) / 2, y, w, size);
 		font->drawString(g, _title, x + (width - w) / 2 + 5, y + yOff, w, kColorBlack);
 	}
+	
+	initBorders(g);
+}
+
+void MacWindow::initBorders(ManagedSurface *source) {
+	TransparentSurface *tr = new TransparentSurface();
+	tr->create(source->w, source->h, PixelFormat::createFormatCLUT8());	
+	
+	// Fill with alpha so that _check_pixel will go through
+	tr->drawThickLine(0, tr->h / 2, tr->w, tr->h/2, 1, tr->h/2, Graphics::ALPHA_FULL);
+	// Show that something can be drawn
+	tr->drawLine(1, 1, tr->w - 2, tr->h - 2, kColorBlack);
+
+	_bmp = new NinePatchBitmap(tr, false);
 }
 
 void MacWindow::setHighlight(WindowClick highlightedPart) {

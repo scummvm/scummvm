@@ -49,6 +49,8 @@
 #define GRAPHICS_MACWINDOW_H
 
 #include "graphics/managed_surface.h"
+#include "graphics/transparent_surface.h"
+#include "graphics/nine_patch.h"
 
 namespace Graphics {
 
@@ -110,7 +112,7 @@ protected:
 
 	bool (*_callback)(WindowClick, Common::Event &, void *);
 	void *_dataPtr;
-
+	
 	MacWindowManager *_wm;
 };
 
@@ -140,9 +142,14 @@ private:
 	void updateInnerDims();
 	WindowClick isInBorder(int x, int y);
 
+	void initBorders(ManagedSurface *tr);
+
 private:
 	ManagedSurface _borderSurface;
 	ManagedSurface _composeSurface;
+
+	NinePatchBitmap *_bmp;
+
 	bool _scrollable;
 	bool _resizable;
 	bool _active;
