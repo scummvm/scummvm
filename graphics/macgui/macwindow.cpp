@@ -64,7 +64,7 @@ BaseMacWindow::BaseMacWindow(int id, bool editable, MacWindowManager *wm) :
 }
 
 MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, MacWindowManager *wm) :
-		BaseMacWindow(id, editable, wm), _scrollable(scrollable), _resizable(resizable), _bmp(new TransparentSurface(), false) {
+		BaseMacWindow(id, editable, wm), _scrollable(scrollable), _resizable(resizable) {
 	_active = false;
 	_borderIsDirty = true;
 
@@ -79,8 +79,6 @@ MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Mac
 
 	_type = kWindowWindow;
 
-	TransparentSurface *srf = new TransparentSurface;
-	_bmp = NinePatchBitmap(srf, false);
 }
 
 MacWindow::~MacWindow() {
@@ -150,17 +148,17 @@ bool MacWindow::draw(ManagedSurface *g, bool forceRedraw) {
 	_composeSurface.blitFrom(_surface, Common::Rect(0, 0, _surface.w - 2, _surface.h - 2), Common::Point(2, 2));
 	_composeSurface.transBlitFrom(_borderSurface, kColorGreen);
 
+	TransparentSurface tr(_borders);
+	//tr.create(_composeSurface.w, _composeSurface.h, tr.getSupportedPixelFormat());
+	
+	//_bmp->blit(tr, 0, 0, tr.w, tr.h)
+	_composeSurface.transBlitFrom(tr);
+
 	g->transBlitFrom(_composeSurface, _composeSurface.getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
 
 	return true;
 }
 
-bool MacWindow::drawTR(Surface &g, int x, int y, int w, int h, bool forceRedraw) {
-
-	_bmp.blit(g, x, y, w, h);
-
-	return false;
-}
 
 #define ARROW_W 12
 #define ARROW_H 6
@@ -289,6 +287,7 @@ void MacWindow::setHighlight(WindowClick highlightedPart) {
 
  void MacWindow::setBorders(TransparentSurface *source) {
 	 _bmp = NinePatchBitmap(source, true);
+	 _borders = TransparentSurface(*source);
  }
 
 

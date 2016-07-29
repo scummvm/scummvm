@@ -61,9 +61,8 @@
 #include "common/file.h"
 #include "graphics/pixelformat.h"
 #include "image/bmp.h"
-#include "image/png.h"
 
-#include "graphics/primitives.h"
+#include "graphics/palette.h"
 
 
 namespace Wage {

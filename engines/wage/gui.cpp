@@ -170,7 +170,7 @@ Gui::Gui(WageEngine *engine) {
 	_consoleWindow->setCallback(consoleWindowCallback, this);
 
 	loadBorders();
-	//_sceneWindow->setBorders(&_borders);
+	_sceneWindow->setBorders(&_borders);
 }
 
 Gui::~Gui() {
@@ -223,8 +223,6 @@ void Gui::draw() {
 	_sceneDirty = false;
 	_consoleDirty = false;
 	_consoleFullRedraw = false;
-
-	loadBorders();
 }
 
 void Gui::drawScene() {
@@ -370,27 +368,29 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 
 void Gui::loadBorders() {
 	Common::File borderfile;
-	if (!borderfile.open("borders.bmp")) {
+	if (!borderfile.open("logo.bmp")) {
 		debug(1, "Cannot open border file");
 		return;
 	}
 
 	Image::BitmapDecoder bmpDecoder;
 	Common::SeekableReadStream *stream = borderfile.readStream(borderfile.size());
-	const Graphics::Surface * source;
+	Graphics::Surface source;
 
 	if (stream) {
-		bmpDecoder.loadStream(*stream);		
-		source = bmpDecoder.getSurface();		
+		bmpDecoder.loadStream(*stream);	
+		source = *bmpDecoder.getSurface();
+		source.convertToInPlace(_borders.getSupportedPixelFormat(), bmpDecoder.getPalette());
 
-		_borders.create(source->w, source->h, source->format);
-		_borders.copyRectToSurface(*source, 0, 0, Common::Rect(0, 0, source->w, source->h));
+		_borders.create(source.w, source.h, source.format);
+		_borders.copyFrom(source);
+		_borders.applyColorKey(255, 0, 255, false);
 
 		delete stream;
 
-		g_system->copyRectToScreen(source->getPixels(), source->pitch, 40, 0, source->w, source->h);
-		g_system->copyRectToScreen(_borders.getPixels(), _borders.pitch, 40, 100, _borders.w, _borders.h);
-		g_system->updateScreen();
+		//g_system->copyRectToScreen(source.getPixels(), source.pitch, 40, 0, source.w, source.h);
+		//g_system->copyRectToScreen(_borders.getPixels(), _borders.pitch, 40, 100, _borders.w, _borders.h);
+		//g_system->updateScreen();
 	}
 
 	debug(1, "Hello");

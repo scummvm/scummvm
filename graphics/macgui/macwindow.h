@@ -127,8 +127,7 @@ public:
 	const Common::Rect &getInnerDimensions() { return _innerDims; }
 
 	bool draw(ManagedSurface *g, bool forceRedraw = false);
-	bool drawTR(Surface &g, int x, int y, int w, int h, bool forceRedraw);
-
+	
 	void setActive(bool active);
 	void setTitle(Common::String &title) { _title = title; }
 	void setHighlight(WindowClick highlightedPart);
@@ -151,6 +150,7 @@ private:
 	ManagedSurface _composeSurface;
 
 	NinePatchBitmap _bmp;
+	TransparentSurface _borders;
 
 	bool _scrollable;
 	bool _resizable;
