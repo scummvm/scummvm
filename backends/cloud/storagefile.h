@@ -57,7 +57,7 @@ public:
 	uint32 timestamp() const { return _timestamp; }
 	bool isDirectory() const { return _isDirectory; }
 
-	void setPath(Common::String path) { _path = path; }
+	void setPath(Common::String path_) { _path = path_; }
 };
 
 } // End of namespace Cloud
