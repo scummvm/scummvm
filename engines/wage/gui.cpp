@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -170,7 +170,7 @@ Gui::Gui(WageEngine *engine) {
 	_consoleWindow->setCallback(consoleWindowCallback, this);
 
 	loadBorders();
-	
+
 }
 
 Gui::~Gui() {
@@ -231,7 +231,7 @@ void Gui::drawScene() {
 
 	_scene->paint(_sceneWindow->getSurface(), 0, 0);
 	_sceneWindow->setDirty(true);
-	
+
 	_sceneDirty = true;
 	_consoleDirty = true;
 	_menu->setDirty(true);
@@ -366,9 +366,10 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 	}
 }
 
-void Gui::loadBorders() {	
-	loadBorder(_sceneWindow, "border_inac.bmp", false);
-	loadBorder(_sceneWindow, "border_act.bmp", true);
+void Gui::loadBorders() {
+	// Do not load borders for now
+	//loadBorder(_sceneWindow, "border_inac.bmp", false);
+	//loadBorder(_sceneWindow, "border_act.bmp", true);
 }
 
 void Gui::loadBorder(Graphics::MacWindow *target, Common::String filename, bool active) {
@@ -394,7 +395,7 @@ void Gui::loadBorder(Graphics::MacWindow *target, Common::String filename, bool 
 		surface->copyFrom(source);
 		surface->applyColorKey(255, 0, 255, false);
 
-		target->setBorder(*surface, active);
+		target->setBorder(*surface, active, 10, 10, 1, 1);
 
 		borderfile.close();
 
