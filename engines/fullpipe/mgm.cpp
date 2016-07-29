@@ -34,6 +34,8 @@ void MGM::clear() {
 }
 
 MessageQueue *MGM::genMQ(StaticANIObject *ani, int staticsIndex, int staticsId, int *resStatId, Common::Point **pointArr) {
+	debugC(4, kDebugPathfinding, "MGM::genMQ(*%d, %d, %d, res, point)", ani->_id, staticsIndex, staticsId);
+
 	int idx = getItemIndexById(ani->_id);
 
 	if (idx == -1)
@@ -130,6 +132,8 @@ MGMSubItem::MGMSubItem() {
 }
 
 void MGM::addItem(int objId) {
+	debugC(4, kDebugPathfinding, "MGM::addItem(%d)", objId);
+
 	if (getItemIndexById(objId) == -1) {
 		MGMItem *item = new MGMItem();
 
@@ -182,6 +186,8 @@ int MGM::getItemIndexById(int objId) {
 }
 
 MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
+	debugC(4, kDebugPathfinding, "MGM::genMovement(*%d)", mgminfo->ani ? mgminfo->ani->_id : -1);
+
 	if (!mgminfo->ani)
 		return 0;
 
@@ -410,6 +416,8 @@ int MGM::countPhases(int idx, int subIdx, int endIdx, int flag) {
 	return res;
 }
 void MGM::updateAnimStatics(StaticANIObject *ani, int staticsId) {
+	debugC(4, kDebugPathfinding, "MGM::updateAnimStatics(*%d, %d)", ani->_id, staticsId);
+
 	if (getItemIndexById(ani->_id) == -1)
 		return;
 
@@ -438,6 +446,8 @@ void MGM::updateAnimStatics(StaticANIObject *ani, int staticsId) {
 }
 
 Common::Point *MGM::getPoint(Common::Point *point, int objectId, int staticsId1, int staticsId2) {
+	debugC(4, kDebugPathfinding, "MGM::getPoint([%d, %d], %d, %d, %d)", point->x, point->y, objectId, staticsId1, staticsId2);
+
 	int idx = getItemIndexById(objectId);
 
 	if (idx == -1) {
@@ -599,6 +609,8 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 }
 
 int MGM::refreshOffsets(int objectId, int idx1, int idx2) {
+	debugC(4, kDebugPathfinding, "MGM::refreshOffsets(%d, %d, %d)", objectId, idx1, idx2);
+
 	int idx = getItemIndexById(objectId);
 
 	if (idx != -1) {
@@ -696,6 +708,8 @@ Common::Point *MGM::calcLength(Common::Point *pRes, Movement *mov, int x, int y,
 }
 
 ExCommand2 *MGM::buildExCommand2(Movement *mov, int objId, int x1, int y1, Common::Point *x2, Common::Point *y2, int len) {
+	debugC(2, kDebugPathfinding, "MGM::buildExCommand2(mov, %d, %d, %d, [%d, %d], [%d, %d], %d)", objId, x1, y1, x2->x, x2->y, y2->x, y2->y, len);
+
 	uint cnt;
 
 	if (mov->_currMovement)
