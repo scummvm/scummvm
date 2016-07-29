@@ -52,11 +52,10 @@
 #include "graphics/font.h"
 #include "graphics/managed_surface.h"
 #include "graphics/macgui/macwindowmanager.h"
+#include "graphics/macgui/macwindow.h"
 
 #include "common/events.h"
 #include "common/rect.h"
-
-#include "wage/macwindow.h"
 
 namespace Wage {
 

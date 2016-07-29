@@ -10,7 +10,6 @@ MODULE_OBJS := \
 	gui.o \
 	gui-console.o \
 	macmenu.o \
-	macwindow.o \
 	randomhat.o \
 	saveload.o \
 	script.o \

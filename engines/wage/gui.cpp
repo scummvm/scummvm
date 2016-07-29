@@ -50,12 +50,12 @@
 #include "graphics/cursorman.h"
 #include "graphics/primitives.h"
 #include "graphics/macgui/macwindowmanager.h"
+#include "graphics/macgui/macwindow.h"
 
 #include "wage/wage.h"
 #include "wage/design.h"
 #include "wage/entities.h"
 #include "wage/gui.h"
-#include "wage/macwindow.h"
 #include "wage/macmenu.h"
 #include "wage/world.h"
 

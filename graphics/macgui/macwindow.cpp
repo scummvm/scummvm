@@ -49,8 +49,7 @@
 #include "graphics/primitives.h"
 #include "common/events.h"
 #include "graphics/macgui/macwindowmanager.h"
-
-#include "wage/macwindow.h"
+#include "graphics/macgui/macwindow.h"
 
 namespace Graphics {
 
@@ -264,16 +263,16 @@ void MacWindow::setHighlight(WindowClick highlightedPart) {
 
 	_highlightedPart = highlightedPart;
 	_borderIsDirty = true;
-}
+ }
 
-void MacWindow::setScroll(float scrollPos, float scrollSize) {
+ void MacWindow::setScroll(float scrollPos, float scrollSize) {
 	if (_scrollPos == scrollPos && _scrollSize == scrollSize)
 		return;
 
 	_scrollPos = scrollPos;
 	_scrollSize = scrollSize;
 	_borderIsDirty = true;
-}
+ }
 
 
 void MacWindow::drawBox(ManagedSurface *g, int x, int y, int w, int h) {

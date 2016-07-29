@@ -54,8 +54,7 @@
 #include "common/archive.h"
 
 #include "graphics/fontman.h"
-
-#include "engines/wage/macwindow.h"
+#include "graphics/macgui/macwindow.h"
 
 namespace Wage {
 	class MacWindow;
