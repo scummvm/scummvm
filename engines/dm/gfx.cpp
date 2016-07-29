@@ -2281,30 +2281,26 @@ void DisplayMan::f94_loadFloorSet(FloorSet set) {
 	}
 }
 
-Box g161_BoxWallBitmap_D3LCR = Box(0, 115, 0, 50); // @ G0161_s_Graphic558_Box_WallBitmap_D3LCR
-Box g162_BoxWallBitmap_D2LCR = Box(0, 135, 0, 70); // @ G0162_s_Graphic558_Box_WallBitmap_D2LCR
-
 // Note: has been screened for missing code
 void DisplayMan::f95_loadWallSet(WallSet set) {
-
 	if ((_g231_currentWallSet != set) || _vm->_g523_restartGameRequest) {
 		_g231_currentWallSet = set;
-		{
-			int16 graphicIndice = (set * k13_WallSetGraphicCount) + k77_FirstWallSet;
-			f466_loadIntoBitmap(graphicIndice++, _g709_bitmapWallSet_DoorFrameFront);
-			f466_loadIntoBitmap(graphicIndice++, _g708_bitmapWallSet_DoorFrameLeft_D1C);
-			f466_loadIntoBitmap(graphicIndice++, _g707_bitmapWallSet_DoorFrameLeft_D2C);
-			f466_loadIntoBitmap(graphicIndice++, _g706_bitmapWallSet_DoorFrameLeft_D3C);
-			f466_loadIntoBitmap(graphicIndice++, _g705_bitmapWallSet_DoorFrameLeft_D3L);
-			f466_loadIntoBitmap(graphicIndice++, _g704_bitmapWallSet_DoorFrameTop_D1LCR);
-			f466_loadIntoBitmap(graphicIndice++, _g703_bitmapWallSet_DoorFrameTop_D2LCR);
-			f466_loadIntoBitmap(graphicIndice++, _g702_bitmapWallSet_Wall_D0R);
-			f466_loadIntoBitmap(graphicIndice++, _g701_bitmapWallSet_Wall_D0L);
-			f466_loadIntoBitmap(graphicIndice++, _g700_bitmapWallSet_Wall_D1LCR);
-			f466_loadIntoBitmap(graphicIndice++, _g699_bitmapWallSet_Wall_D2LCR);
-			f466_loadIntoBitmap(graphicIndice++, _g698_bitmapWallSet_Wall_D3LCR);
-			f466_loadIntoBitmap(graphicIndice++, _g697_bitmapWallSet_Wall_D3L2);
-		}
+
+		int16 graphicIndice = (set * k13_WallSetGraphicCount) + k77_FirstWallSet;
+		f466_loadIntoBitmap(graphicIndice++, _g709_bitmapWallSet_DoorFrameFront);
+		f466_loadIntoBitmap(graphicIndice++, _g708_bitmapWallSet_DoorFrameLeft_D1C);
+		f466_loadIntoBitmap(graphicIndice++, _g707_bitmapWallSet_DoorFrameLeft_D2C);
+		f466_loadIntoBitmap(graphicIndice++, _g706_bitmapWallSet_DoorFrameLeft_D3C);
+		f466_loadIntoBitmap(graphicIndice++, _g705_bitmapWallSet_DoorFrameLeft_D3L);
+		f466_loadIntoBitmap(graphicIndice++, _g704_bitmapWallSet_DoorFrameTop_D1LCR);
+		f466_loadIntoBitmap(graphicIndice++, _g703_bitmapWallSet_DoorFrameTop_D2LCR);
+		f466_loadIntoBitmap(graphicIndice++, _g702_bitmapWallSet_Wall_D0R);
+		f466_loadIntoBitmap(graphicIndice++, _g701_bitmapWallSet_Wall_D0L);
+		f466_loadIntoBitmap(graphicIndice++, _g700_bitmapWallSet_Wall_D1LCR);
+		f466_loadIntoBitmap(graphicIndice++, _g699_bitmapWallSet_Wall_D2LCR);
+		f466_loadIntoBitmap(graphicIndice++, _g698_bitmapWallSet_Wall_D3LCR);
+		f466_loadIntoBitmap(graphicIndice++, _g697_bitmapWallSet_Wall_D3L2);
+
 		f99_copyBitmapAndFlipHorizontal(_g708_bitmapWallSet_DoorFrameLeft_D1C, _g710_bitmapWallSet_DoorFrameRight_D1C,
 										g171_Frame_DoorFrameRight_D1C._srcByteWidth, g171_Frame_DoorFrameRight_D1C._srcHeight);
 		f99_copyBitmapAndFlipHorizontal(_g697_bitmapWallSet_Wall_D3L2, _g696_bitmapWallSet_Wall_D3R2,
@@ -2314,68 +2310,65 @@ void DisplayMan::f95_loadWallSet(WallSet set) {
 
 
 void DisplayMan::f96_loadCurrentMapGraphics() {
+	Box BoxWallD3LCR = Box(0, 115, 0, 50); // @ G0161_s_Graphic558_Box_WallBitmap_D3LCR
+	Box BoxWallD2LCR = Box(0, 135, 0, 70); // @ G0162_s_Graphic558_Box_WallBitmap_D2LCR
+
 	f94_loadFloorSet(_vm->_dungeonMan->_g269_currMap->_floorSet);
 	f95_loadWallSet(_vm->_dungeonMan->_g269_currMap->_wallSet);
 
-	{
-		_g578_useByteBoxCoordinates = true;
+	_g578_useByteBoxCoordinates = true;
 
-		f99_copyBitmapAndFlipHorizontal(_g95_bitmapWall_D3LCR_Native = _g698_bitmapWallSet_Wall_D3LCR, _g74_tmpBitmap,
-										g163_FrameWalls[k0_ViewSquare_D3C]._srcByteWidth, g163_FrameWalls[k0_ViewSquare_D3C]._srcHeight);
-		f134_fillBitmap(_g90_bitmapWall_D3LCR_Flipped, k10_ColorFlesh, 64, 51);
-		f132_blitToBitmap(_g74_tmpBitmap, _g90_bitmapWall_D3LCR_Flipped, g161_BoxWallBitmap_D3LCR, 11, 0, 64, 64, kM1_ColorNoTransparency);
+	f99_copyBitmapAndFlipHorizontal(_g95_bitmapWall_D3LCR_Native = _g698_bitmapWallSet_Wall_D3LCR, _g74_tmpBitmap,
+									g163_FrameWalls[k0_ViewSquare_D3C]._srcByteWidth, g163_FrameWalls[k0_ViewSquare_D3C]._srcHeight);
+	f134_fillBitmap(_g90_bitmapWall_D3LCR_Flipped, k10_ColorFlesh, 64, 51);
+	f132_blitToBitmap(_g74_tmpBitmap, _g90_bitmapWall_D3LCR_Flipped, BoxWallD3LCR, 11, 0, 64, 64, kM1_ColorNoTransparency);
 
-		f99_copyBitmapAndFlipHorizontal(_g96_bitmapWall_D2LCR_Native = _g699_bitmapWallSet_Wall_D2LCR, _g74_tmpBitmap,
-										g163_FrameWalls[k3_ViewSquare_D2C]._srcByteWidth, g163_FrameWalls[k3_ViewSquare_D2C]._srcHeight);
-		f134_fillBitmap(_g91_bitmapWall_D2LCR_Flipped, k10_ColorFlesh, 72, 71);
-		f132_blitToBitmap(_g74_tmpBitmap, _g91_bitmapWall_D2LCR_Flipped, g162_BoxWallBitmap_D2LCR, 8, 0, 72, 72, kM1_ColorNoTransparency);
+	f99_copyBitmapAndFlipHorizontal(_g96_bitmapWall_D2LCR_Native = _g699_bitmapWallSet_Wall_D2LCR, _g74_tmpBitmap,
+									g163_FrameWalls[k3_ViewSquare_D2C]._srcByteWidth, g163_FrameWalls[k3_ViewSquare_D2C]._srcHeight);
+	f134_fillBitmap(_g91_bitmapWall_D2LCR_Flipped, k10_ColorFlesh, 72, 71);
+	f132_blitToBitmap(_g74_tmpBitmap, _g91_bitmapWall_D2LCR_Flipped, BoxWallD2LCR, 8, 0, 72, 72, kM1_ColorNoTransparency);
 
-		f99_copyBitmapAndFlipHorizontal(_g97_bitmapWall_D1LCR_Native = _g700_bitmapWallSet_Wall_D1LCR, _g92_bitmapWall_D1LCR_Flipped,
-										g163_FrameWalls[k6_ViewSquare_D1C]._srcByteWidth, g163_FrameWalls[k6_ViewSquare_D1C]._srcHeight);
-		f99_copyBitmapAndFlipHorizontal(_g98_bitmapWall_D0L_Native = _g701_bitmapWallSet_Wall_D0L, _g94_bitmapWall_D0R_Flipped,
-										g163_FrameWalls[k10_ViewSquare_D0L]._srcByteWidth, g163_FrameWalls[k10_ViewSquare_D0L]._srcHeight);
-		f99_copyBitmapAndFlipHorizontal(_g99_bitmapWall_D0R_Native = _g702_bitmapWallSet_Wall_D0R, _g93_bitmapWall_D0L_Flipped,
-										g163_FrameWalls[k10_ViewSquare_D0L]._srcByteWidth, g163_FrameWalls[k10_ViewSquare_D0L]._srcHeight);
-	}
+	f99_copyBitmapAndFlipHorizontal(_g97_bitmapWall_D1LCR_Native = _g700_bitmapWallSet_Wall_D1LCR, _g92_bitmapWall_D1LCR_Flipped,
+									g163_FrameWalls[k6_ViewSquare_D1C]._srcByteWidth, g163_FrameWalls[k6_ViewSquare_D1C]._srcHeight);
+	f99_copyBitmapAndFlipHorizontal(_g98_bitmapWall_D0L_Native = _g701_bitmapWallSet_Wall_D0L, _g94_bitmapWall_D0R_Flipped,
+									g163_FrameWalls[k10_ViewSquare_D0L]._srcByteWidth, g163_FrameWalls[k10_ViewSquare_D0L]._srcHeight);
+	f99_copyBitmapAndFlipHorizontal(_g99_bitmapWall_D0R_Native = _g702_bitmapWallSet_Wall_D0R, _g93_bitmapWall_D0L_Flipped,
+									g163_FrameWalls[k10_ViewSquare_D0L]._srcByteWidth, g163_FrameWalls[k10_ViewSquare_D0L]._srcHeight);
 
-
-	{
-		int16 val = _vm->_dungeonMan->_g269_currMap->_wallSet * k18_StairsGraphicCount + k90_FirstStairs;
-		_g675_stairsNativeBitmapIndex_Up_Front_D3L = val++;
-		_g676_stairsNativeBitmapIndex_Up_Front_D3C = val++;
-		_g677_stairsNativeBitmapIndex_Up_Front_D2L = val++;
-		_g678_stairsNativeBitmapIndex_Up_Front_D2C = val++;
-		_g679_stairsNativeBitmapIndex_Up_Front_D1L = val++;
-		_g680_stairsNativeBitmapIndex_Up_Front_D1C = val++;
-		_g681_stairsNativeBitmapIndex_Up_Front_D0C_Left = val++;
-		_g682_stairsNativeBitmapIndex_Down_Front_D3L = val++;
-		_g683_stairsNativeBitmapIndex_Down_Front_D3C = val++;
-		_g684_stairsNativeBitmapIndex_Down_Front_D2L = val++;
-		_g685_stairsNativeBitmapIndex_Down_Front_D2C = val++;
-		_g686_stairsNativeBitmapIndex_Down_Front_D1L = val++;
-		_g687_stairsNativeBitmapIndex_Down_Front_D1C = val++;
-		_g688_stairsNativeBitmapIndex_Down_Front_D0C_Left = val++;
-		_g689_stairsNativeBitmapIndex_Side_D2L = val++;
-		_g690_stairsNativeBitmapIndex_Up_Side_D1L = val++;
-		_g691_stairsNativeBitmapIndex_Down_Side_D1L = val++;
-		_g692_stairsNativeBitmapIndex_Side_D0L = val++;
-	}
+	int16 val = _vm->_dungeonMan->_g269_currMap->_wallSet * k18_StairsGraphicCount + k90_FirstStairs;
+	_g675_stairsNativeBitmapIndex_Up_Front_D3L = val++;
+	_g676_stairsNativeBitmapIndex_Up_Front_D3C = val++;
+	_g677_stairsNativeBitmapIndex_Up_Front_D2L = val++;
+	_g678_stairsNativeBitmapIndex_Up_Front_D2C = val++;
+	_g679_stairsNativeBitmapIndex_Up_Front_D1L = val++;
+	_g680_stairsNativeBitmapIndex_Up_Front_D1C = val++;
+	_g681_stairsNativeBitmapIndex_Up_Front_D0C_Left = val++;
+	_g682_stairsNativeBitmapIndex_Down_Front_D3L = val++;
+	_g683_stairsNativeBitmapIndex_Down_Front_D3C = val++;
+	_g684_stairsNativeBitmapIndex_Down_Front_D2L = val++;
+	_g685_stairsNativeBitmapIndex_Down_Front_D2C = val++;
+	_g686_stairsNativeBitmapIndex_Down_Front_D1L = val++;
+	_g687_stairsNativeBitmapIndex_Down_Front_D1C = val++;
+	_g688_stairsNativeBitmapIndex_Down_Front_D0C_Left = val++;
+	_g689_stairsNativeBitmapIndex_Side_D2L = val++;
+	_g690_stairsNativeBitmapIndex_Up_Side_D1L = val++;
+	_g691_stairsNativeBitmapIndex_Down_Side_D1L = val++;
+	_g692_stairsNativeBitmapIndex_Side_D0L = val++;
 
 	for (int16 i = 0; i < k3_AlcoveOrnCount; ++i)
 		_g267_currMapAlcoveOrnIndices[i] = -1;
+
 	for (int16 i = 0; i < k1_FountainOrnCount; ++i)
 		_g268_currMapFountainOrnIndices[i] = -1;
 
-	{
-		uint16 doorSets[2];
-		doorSets[0] = _vm->_dungeonMan->_g269_currMap->_doorSet0;
-		doorSets[1] = _vm->_dungeonMan->_g269_currMap->_doorSet1;
-		for (uint16 doorSet = 0; doorSet <= 1; doorSet++) {
-			int16 counter = k108_FirstDoorSet + (doorSets[doorSet] * k3_DoorSetGraphicsCount);
-			_g693_doorNativeBitmapIndex_Front_D3LCR[doorSet] = counter++;
-			_g694_doorNativeBitmapIndex_Front_D2LCR[doorSet] = counter++;
-			_g695_doorNativeBitmapIndex_Front_D1LCR[doorSet] = counter++;
-		}
+	uint16 doorSets[2];
+	doorSets[0] = _vm->_dungeonMan->_g269_currMap->_doorSet0;
+	doorSets[1] = _vm->_dungeonMan->_g269_currMap->_doorSet1;
+	for (uint16 doorSet = 0; doorSet <= 1; doorSet++) {
+		int16 counter = k108_FirstDoorSet + (doorSets[doorSet] * k3_DoorSetGraphicsCount);
+		_g693_doorNativeBitmapIndex_Front_D3LCR[doorSet] = counter++;
+		_g694_doorNativeBitmapIndex_Front_D2LCR[doorSet] = counter++;
+		_g695_doorNativeBitmapIndex_Front_D1LCR[doorSet] = counter++;
 	}
 
 	uint16 alcoveCount = 0;
@@ -2397,9 +2390,10 @@ void DisplayMan::f96_loadCurrentMapGraphics() {
 			}
 		}
 
-		for (uint16 ornCounter = 0; ornCounter < k1_FountainOrnCount; ++ornCounter)
+		for (uint16 ornCounter = 0; ornCounter < k1_FountainOrnCount; ++ornCounter) {
 			if (ornIndice == g193_FountainOrnIndices[ornCounter])
 				_g268_currMapFountainOrnIndices[fountainCount++] = i;
+		}
 
 		_g101_currMapWallOrnInfo[i][k1_CoordinateSet] = g194_WallOrnCoordSetIndices[ornIndice];
 	}
@@ -2426,6 +2420,7 @@ void DisplayMan::f96_loadCurrentMapGraphics() {
 		uint16 replColorOrdinal = aspect.getReplColour9();
 		if (replColorOrdinal)
 			f93_applyCreatureReplColors(9, _vm->M1_ordinalToIndex(replColorOrdinal));
+
 		replColorOrdinal = aspect.getReplColour10();
 		if (replColorOrdinal)
 			f93_applyCreatureReplColors(10, _vm->M1_ordinalToIndex(replColorOrdinal));
@@ -2455,198 +2450,169 @@ void DisplayMan::f105_drawFloorPitOrStairsBitmapFlippedHorizontally(uint16 nativ
 	}
 }
 
-
-Box g202_BoxWallPatchBehindInscription = Box(110, 113, 37, 63); // @ G0202_ac_Graphic558_Box_WallPatchBehindInscription 
-byte g203_InscriptionLineY[4] = { // @ G0203_auc_Graphic558_InscriptionLineY
-	48,   /* 1 Line  */
-	59,   /* 2 lines */
-	75,   /* 3 lines */
-	86}; /* 4 lines */
-byte g190_WallOrnDerivedBitmapIndexIncrement[12] = { // @ G0190_auc_Graphic558_WallOrnamentDerivedBitmapIndexIncrement
-	0,   /* D3L Right */
-	0,   /* D3R Left */
-	1,   /* D3L Front */
-	1,   /* D3C Front */
-	1,   /* D3R Front */
-	2,   /* D2L Right */
-	2,   /* D2R Left */
-	3,   /* D2L Front */
-	3,   /* D2C Front */
-	3,   /* D2R Front */
-	4,   /* D1L Right */
-	4}; /* D1R Left */
-
-
-byte g204_UnreadableInscriptionBoxY2[15] = { // @ G0204_auc_Graphic558_UnreadableInscriptionBoxY2
-	/* { Y for 1 line, Y for 2 lines, Y for 3 lines } */
-	45, 48, 53,   /* D3L Right, D3R Left */
-	43, 49, 56,   /* D3L Front, D3C Front, D3R Front */
-	42, 49, 56,   /* D2L Right, D2R Left */
-	46, 53, 63,   /* D2L Front, D2C Front, D2R Front */
-	46, 57, 68}; /* D1L Right, D1R Left */
-
-Box g109_BoxChampionPortraitOnWall = Box(96, 127, 35, 63); // G0109_s_Graphic558_Box_ChampionPortraitOnWall
-
 bool DisplayMan::f107_isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex) {
-#define AP0116_i_CharacterCount    wallOrnOrd
-#define AP0116_i_WallOrnamentIndex wallOrnOrd
-	int16 L0088_i_Multiple;
-#define AL0088_i_NativeBitmapIndex       L0088_i_Multiple
-#define AL0088_i_UnreadableTextLineCount L0088_i_Multiple
-	int16 L0089_i_Multiple;
-#define AL0089_i_WallOrnamentCoordinateSetIndex L0089_i_Multiple
-#define AL0089_i_FountainOrnamentIndex          L0089_i_Multiple
-#define AL0089_i_PixelWidth                     L0089_i_Multiple
-#define AL0089_i_X                              L0089_i_Multiple
+	static const Box boxWallPatchBehindInscription = Box(110, 113, 37, 63); // @ G0202_ac_Graphic558_Box_WallPatchBehindInscription 
+	static const byte inscriptionLineY[4] = { // @ G0203_auc_Graphic558_InscriptionLineY
+		48,   /* 1 Line  */
+		59,   /* 2 lines */
+		75,   /* 3 lines */
+		86    /* 4 lines */
+	};
+	static const byte wallOrnDerivedBitmapIndexIncrement[12] = { // @ G0190_auc_Graphic558_WallOrnamentDerivedBitmapIndexIncrement
+		0,   /* D3L Right */
+		0,   /* D3R Left */
+		1,   /* D3L Front */
+		1,   /* D3C Front */
+		1,   /* D3R Front */
+		2,   /* D2L Right */
+		2,   /* D2R Left */
+		3,   /* D2L Front */
+		3,   /* D2C Front */
+		3,   /* D2R Front */
+		4,   /* D1L Right */
+		4    /* D1R Left */
+	};
 
-	uint16 *AL0090_puc_CoordinateSet = nullptr;
+	static const byte unreadableInscriptionBoxY2[15] = { // @ G0204_auc_Graphic558_UnreadableInscriptionBoxY2
+		/* { Y for 1 line, Y for 2 lines, Y for 3 lines } */
+		45, 48, 53,   /* D3L Right, D3R Left */
+		43, 49, 56,   /* D3L Front, D3C Front, D3R Front */
+		42, 49, 56,   /* D2L Right, D2R Left */
+		46, 53, 63,   /* D2L Front, D2C Front, D2R Front */
+		46, 57, 68    /* D1L Right, D1R Left */
+	};
 
-	byte* L0091_puc_Multiple;
-#define AL0091_puc_Character     L0091_puc_Multiple
-#define AL0091_puc_Bitmap        L0091_puc_Multiple
-	byte* L0092_puc_Bitmap;
-	int16 L0093_i_CoordinateSetOffset;
-	bool L0094_B_FlipHorizontal;
-	bool L0095_B_IsInscription;
-	bool L0096_B_IsAlcove;
-	int16 L0097_i_TextLineIndex;
-	uint16 tmp[6];
-	byte L0099_auc_InscriptionString[70];
-
+	static const Box boxChampionPortraitOnWall = Box(96, 127, 35, 63); // G0109_s_Graphic558_Box_ChampionPortraitOnWall
 
 	if (wallOrnOrd) {
-		wallOrnOrd--;
-		AL0088_i_NativeBitmapIndex = _g101_currMapWallOrnInfo[AP0116_i_WallOrnamentIndex][k0_NativeBitmapIndex];
+		int16 wallOrnamentIndex = wallOrnOrd - 1;
+		int16 nativeBitmapIndex = _g101_currMapWallOrnInfo[wallOrnamentIndex][k0_NativeBitmapIndex];
+		int16 wallOrnamentCoordinateSetIndex = _g101_currMapWallOrnInfo[wallOrnamentIndex][k1_CoordinateSet];
+		uint16 *coordinateSet = g205_WallOrnCoordSets[wallOrnamentCoordinateSetIndex][viewWallIndex];
 
-		AL0090_puc_CoordinateSet = g205_WallOrnCoordSets[AL0089_i_WallOrnamentCoordinateSetIndex =
-			_g101_currMapWallOrnInfo[AP0116_i_WallOrnamentIndex][k1_CoordinateSet]][viewWallIndex];
+		bool isAlcove = _vm->_dungeonMan->f149_isWallOrnAnAlcove(wallOrnamentIndex);
+		bool isInscription = (wallOrnamentIndex == _vm->_dungeonMan->_g265_currMapInscriptionWallOrnIndex);
+		byte inscriptionString[70];
+		if (isInscription)
+			_vm->_dungeonMan->f168_decodeText((char *)inscriptionString, _g290_inscriptionThing, k0_TextTypeInscription);
 
-		L0096_B_IsAlcove = _vm->_dungeonMan->f149_isWallOrnAnAlcove(AP0116_i_WallOrnamentIndex);
-		if (L0095_B_IsInscription = (AP0116_i_WallOrnamentIndex == _vm->_dungeonMan->_g265_currMapInscriptionWallOrnIndex)) {
-			_vm->_dungeonMan->f168_decodeText((char *)L0099_auc_InscriptionString, _g290_inscriptionThing, k0_TextTypeInscription);
-		}
+		byte *displayBitmap;
+		int16 boxSrcX;
 		if (viewWallIndex >= k10_ViewWall_D1L_RIGHT) {
 			if (viewWallIndex == k12_ViewWall_D1C_FRONT) {
-				if (L0095_B_IsInscription) {
+				if (isInscription) {
 					f132_blitToBitmap(_g700_bitmapWallSet_Wall_D1LCR, _g296_bitmapViewport,
-									  g202_BoxWallPatchBehindInscription, 94, 28,
+									  (Box &)boxWallPatchBehindInscription, 94, 28,
 									  g163_FrameWalls[k6_ViewSquare_D1C]._srcByteWidth,
 									  k112_byteWidthViewport, kM1_ColorNoTransparency, g163_FrameWalls[k6_ViewSquare_D1C]._srcHeight, k136_heightViewport);
-					byte *AL0090_puc_String = L0099_auc_InscriptionString;
-					L0092_puc_Bitmap = f489_getNativeBitmapOrGraphic(k120_InscriptionFont);
-					L0097_i_TextLineIndex = 0;
+					byte *tmpString = inscriptionString;
+					byte *fontBitmap = f489_getNativeBitmapOrGraphic(k120_InscriptionFont);
+					int16 textLineIndex = 0;
 					do {
-						AP0116_i_CharacterCount = 0;
-						AL0091_puc_Character = AL0090_puc_String;
-						while (*AL0091_puc_Character++ < 128) { /* Hexadecimal: 0x80 (Megamax C does not support hexadecimal character constants) */
-							AP0116_i_CharacterCount++;
+						int16 characterCount = 0;
+						byte *curCharacter = tmpString;
+						while (*curCharacter++ < 128) { /* Hexadecimal: 0x80 (Megamax C does not support hexadecimal character constants) */
+							characterCount++;
 						}
-						Frame L0098_s_Frame;
-						L0098_s_Frame._box._x2 = (L0098_s_Frame._box._x1 = 112 - (AP0116_i_CharacterCount << 2)) + 7;
-						L0098_s_Frame._box._y1 = (L0098_s_Frame._box._y2 = g203_InscriptionLineY[L0097_i_TextLineIndex++]) - 7;
-						while (AP0116_i_CharacterCount--) {
-							f132_blitToBitmap(L0092_puc_Bitmap, _g296_bitmapViewport, L0098_s_Frame._box,
-											  *AL0090_puc_String++ << 3, 0, 144, k112_byteWidthViewport, k10_ColorFlesh, 8, k136_heightViewport);
-							L0098_s_Frame._box._x1 += 8;
-							L0098_s_Frame._box._x2 += 8;
+						Frame curFrame;
+						curFrame._box._x2 = (curFrame._box._x1 = 112 - (characterCount << 2)) + 7;
+						curFrame._box._y1 = (curFrame._box._y2 = inscriptionLineY[textLineIndex++]) - 7;
+						while (characterCount--) {
+							f132_blitToBitmap(fontBitmap, _g296_bitmapViewport, curFrame._box,
+											  *tmpString++ << 3, 0, 144, k112_byteWidthViewport, k10_ColorFlesh, 8, k136_heightViewport);
+							curFrame._box._x1 += 8;
+							curFrame._box._x2 += 8;
 						}
-					} while (*AL0090_puc_String++ != 129); /* Hexadecimal: 0x81 (Megamax C does not support hexadecimal character constants) */
-					goto T0107031;
+					} while (*tmpString++ != 129); /* Hexadecimal: 0x81 (Megamax C does not support hexadecimal character constants) */
+					return isAlcove;
 				}
-				AL0088_i_NativeBitmapIndex++;
-				_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._x1 = AL0090_puc_CoordinateSet[0];
-				_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._x2 = AL0090_puc_CoordinateSet[1];
-				_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._y1 = AL0090_puc_CoordinateSet[2];
-				_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._y2 = AL0090_puc_CoordinateSet[3];
+				nativeBitmapIndex++;
+				_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._x1 = coordinateSet[0];
+				_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._x2 = coordinateSet[1];
+				_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._y1 = coordinateSet[2];
+				_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._y2 = coordinateSet[3];
 
-				_vm->_dungeonMan->_g286_isFacingAlcove = L0096_B_IsAlcove;
+				_vm->_dungeonMan->_g286_isFacingAlcove = isAlcove;
 				_vm->_dungeonMan->_g287_isFacingViAltar =
-					(AP0116_i_WallOrnamentIndex == _g266_currMapViAltarIndex);
+					(wallOrnamentIndex == _g266_currMapViAltarIndex);
 				_vm->_dungeonMan->_g288_isFacingFountain = false;
-				for (AL0089_i_FountainOrnamentIndex = 0; AL0089_i_FountainOrnamentIndex < k1_FountainOrnCount; AL0089_i_FountainOrnamentIndex++) {
-					if (_g268_currMapFountainOrnIndices[AL0089_i_FountainOrnamentIndex] == AP0116_i_WallOrnamentIndex) {
+				for (int16 idx = 0; idx < k1_FountainOrnCount; idx++) {
+					if (_g268_currMapFountainOrnIndices[idx] == wallOrnamentIndex) {
 						_vm->_dungeonMan->_g288_isFacingFountain = true;
 						break;
 					}
 				}
 			}
-			AL0091_puc_Bitmap = f489_getNativeBitmapOrGraphic(AL0088_i_NativeBitmapIndex);
+			displayBitmap = f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
 			if (viewWallIndex == k11_ViewWall_D1R_LEFT) {
-				f99_copyBitmapAndFlipHorizontal(AL0091_puc_Bitmap, _g74_tmpBitmap, AL0090_puc_CoordinateSet[4], AL0090_puc_CoordinateSet[5]);
-				AL0091_puc_Bitmap = _g74_tmpBitmap;
+				f99_copyBitmapAndFlipHorizontal(displayBitmap, _g74_tmpBitmap, coordinateSet[4], coordinateSet[5]);
+				displayBitmap = _g74_tmpBitmap;
 			}
-			AL0089_i_X = 0;
+			boxSrcX = 0;
 		} else {
-			uint16 *AL0091_puc_CoordinateSet;
-			L0093_i_CoordinateSetOffset = 0;
-			if (L0094_B_FlipHorizontal = (viewWallIndex == k6_ViewWall_D2R_LEFT) || (viewWallIndex == k1_ViewWall_D3R_LEFT)) {
-				AL0091_puc_CoordinateSet = g205_WallOrnCoordSets[AL0089_i_WallOrnamentCoordinateSetIndex][k11_ViewWall_D1R_LEFT];
-			} else {
-				if ((viewWallIndex == k5_ViewWall_D2L_RIGHT) || (viewWallIndex == k0_ViewWall_D3L_RIGHT)) {
-					AL0091_puc_CoordinateSet = g205_WallOrnCoordSets[AL0089_i_WallOrnamentCoordinateSetIndex][k10_ViewWall_D1L_RIGHT];
-				} else {
-					AL0088_i_NativeBitmapIndex++;
-					AL0091_puc_CoordinateSet = g205_WallOrnCoordSets[AL0089_i_WallOrnamentCoordinateSetIndex][k12_ViewWall_D1C_FRONT];
-					if (viewWallIndex == k7_ViewWall_D2L_FRONT) {
-						L0093_i_CoordinateSetOffset = 6;
-					} else {
-						if (viewWallIndex == k9_ViewWall_D2R_FRONT) {
-							L0093_i_CoordinateSetOffset = -6;
-						}
-					}
-				}
+			uint16 *coordinateSet;
+			int16 coordinateSetOffset = 0;
+			bool flipHorizontal = (viewWallIndex == k6_ViewWall_D2R_LEFT);
+			if (flipHorizontal || (viewWallIndex == k1_ViewWall_D3R_LEFT)) {
+				coordinateSet = g205_WallOrnCoordSets[wallOrnamentCoordinateSetIndex][k11_ViewWall_D1R_LEFT];
+			} else if ((viewWallIndex == k5_ViewWall_D2L_RIGHT) || (viewWallIndex == k0_ViewWall_D3L_RIGHT))
+				coordinateSet = g205_WallOrnCoordSets[wallOrnamentCoordinateSetIndex][k10_ViewWall_D1L_RIGHT];
+			else {
+				nativeBitmapIndex++;
+				coordinateSet = g205_WallOrnCoordSets[wallOrnamentCoordinateSetIndex][k12_ViewWall_D1C_FRONT];
+				if (viewWallIndex == k7_ViewWall_D2L_FRONT)
+					coordinateSetOffset = 6;
+				else if (viewWallIndex == k9_ViewWall_D2R_FRONT)
+					coordinateSetOffset = -6;
 			}
-			AL0089_i_PixelWidth = (AL0090_puc_CoordinateSet + L0093_i_CoordinateSetOffset)[1] - (AL0090_puc_CoordinateSet + L0093_i_CoordinateSetOffset)[0];
-			if (!f491_isDerivedBitmapInCache(AP0116_i_WallOrnamentIndex = k4_DerivedBitmapFirstWallOrnament +
-				(AP0116_i_WallOrnamentIndex << 2) + g190_WallOrnDerivedBitmapIndexIncrement[viewWallIndex])) {
-				L0092_puc_Bitmap = f489_getNativeBitmapOrGraphic(AL0088_i_NativeBitmapIndex);
-				f129_blitToBitmapShrinkWithPalChange(L0092_puc_Bitmap, f492_getDerivedBitmap(AP0116_i_WallOrnamentIndex),
-													 AL0091_puc_CoordinateSet[4] << 1,
-													 AL0091_puc_CoordinateSet[5], AL0089_i_PixelWidth + 1,
-													 AL0090_puc_CoordinateSet[5],
+			int16 pixelWidth = (coordinateSet + coordinateSetOffset)[1] - (coordinateSet + coordinateSetOffset)[0];
+			wallOrnamentIndex = k4_DerivedBitmapFirstWallOrnament + (wallOrnamentIndex << 2) + wallOrnDerivedBitmapIndexIncrement[viewWallIndex];
+			if (!f491_isDerivedBitmapInCache(wallOrnamentIndex)) {
+				byte *L0092_puc_Bitmap = f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
+				f129_blitToBitmapShrinkWithPalChange(L0092_puc_Bitmap, f492_getDerivedBitmap(wallOrnamentIndex),
+													 coordinateSet[4] << 1,
+													 coordinateSet[5], pixelWidth + 1,
+													 coordinateSet[5],
 													 (viewWallIndex <= k4_ViewWall_D3R_FRONT) ? g198_PalChangesDoorButtonAndWallOrn_D3 : g199_PalChangesDoorButtonAndWallOrn_D2);
-				f493_addDerivedBitmap(AP0116_i_WallOrnamentIndex);
+				f493_addDerivedBitmap(wallOrnamentIndex);
 			}
-			AL0091_puc_Bitmap = f492_getDerivedBitmap(AP0116_i_WallOrnamentIndex);
-			if (L0094_B_FlipHorizontal) {
-				f99_copyBitmapAndFlipHorizontal(AL0091_puc_Bitmap, _g74_tmpBitmap, AL0090_puc_CoordinateSet[4], AL0090_puc_CoordinateSet[5]);
-				AL0091_puc_Bitmap = _g74_tmpBitmap;
-				AL0089_i_X = 15 - (AL0089_i_X & 0x000F);
-			} else {
-				if (viewWallIndex == k7_ViewWall_D2L_FRONT) {
-					AL0089_i_X -= AL0090_puc_CoordinateSet[1] - AL0090_puc_CoordinateSet[0];
-				} else {
-					AL0089_i_X = 0;
-				}
-			}
+			displayBitmap = f492_getDerivedBitmap(wallOrnamentIndex);
+			if (flipHorizontal) {
+				f99_copyBitmapAndFlipHorizontal(displayBitmap, _g74_tmpBitmap, coordinateSet[4], coordinateSet[5]);
+				displayBitmap = _g74_tmpBitmap;
+				boxSrcX = 15 - (boxSrcX & 0x000F);
+			} else if (viewWallIndex == k7_ViewWall_D2L_FRONT)
+				boxSrcX = pixelWidth - (coordinateSet[1] - coordinateSet[0]);
+			else
+				boxSrcX = 0;
 		}
-		if (L0095_B_IsInscription) {
-			byte *AL0090_puc_String = L0099_auc_InscriptionString;
-			AL0088_i_UnreadableTextLineCount = 0;
+		if (isInscription) {
+			byte *tmpString = inscriptionString;
+			int16 unreadableTextLineCount = 0;
 			do {
-				while (*AL0090_puc_String < 128) { /* Hexadecimal: 0x80 (Megamax C does not support hexadecimal character constants) */
-					AL0090_puc_String++;
+				while (*tmpString < 128) { /* Hexadecimal: 0x80 (Megamax C does not support hexadecimal character constants) */
+					tmpString++;
 				}
-				AL0088_i_UnreadableTextLineCount++;
-			} while (*AL0090_puc_String++ != 129); /* Hexadecimal: 0x81 (Megamax C does not support hexadecimal character constants) */
-			if (AL0088_i_UnreadableTextLineCount < 4) {
+				unreadableTextLineCount++;
+			} while (*tmpString++ != 129); /* Hexadecimal: 0x81 (Megamax C does not support hexadecimal character constants) */
+			if (unreadableTextLineCount < 4) {
+				uint16 tmp[6];
 				for (uint16 i = 0; i < 6; ++i)
-					tmp[i] = AL0090_puc_CoordinateSet[i];
-				AL0090_puc_CoordinateSet = tmp;
-				AL0090_puc_CoordinateSet[3] = g204_UnreadableInscriptionBoxY2[g190_WallOrnDerivedBitmapIndexIncrement[viewWallIndex] * 3 + AL0088_i_UnreadableTextLineCount - 1];
+					tmp[i] = coordinateSet[i];
+				coordinateSet = tmp;
+				coordinateSet[3] = unreadableInscriptionBoxY2[wallOrnDerivedBitmapIndexIncrement[viewWallIndex] * 3 + unreadableTextLineCount - 1];
 			}
 		}
-		f132_blitToBitmap(AL0091_puc_Bitmap, _g296_bitmapViewport,
-						  *(Box *)AL0090_puc_CoordinateSet, AL0089_i_X, 0,
-						  AL0090_puc_CoordinateSet[4], k112_byteWidthViewport, k10_ColorFlesh, AL0090_puc_CoordinateSet[5], k136_heightViewport);
+		f132_blitToBitmap(displayBitmap, _g296_bitmapViewport,
+						  *(Box *)coordinateSet, boxSrcX, 0,
+						  coordinateSet[4], k112_byteWidthViewport, k10_ColorFlesh, coordinateSet[5], k136_heightViewport);
 		if ((viewWallIndex == k12_ViewWall_D1C_FRONT) && _g289_championPortraitOrdinal--) {
 			f132_blitToBitmap(f489_getNativeBitmapOrGraphic(k26_ChampionPortraitsIndice),
-							  _g296_bitmapViewport, g109_BoxChampionPortraitOnWall,
+							  _g296_bitmapViewport, (Box &)boxChampionPortraitOnWall,
 							  (_g289_championPortraitOrdinal & 0x0007) << 5,
 							  (_g289_championPortraitOrdinal >> 3) * 29, 128, k112_byteWidthViewport, k1_ColorDarkGary, 87, k136_heightViewport);
 		}
-T0107031:
-		return L0096_B_IsAlcove;
+		return isAlcove;
 	}
 	return false;
 }
