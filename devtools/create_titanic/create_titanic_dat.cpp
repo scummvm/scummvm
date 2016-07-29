@@ -39,6 +39,7 @@
 #include "script_quotes.h"
 #include "script_responses.h"
 #include "script_ranges.h"
+#include "script_states.h"
 #include "tag_maps.h"
 
 /**
@@ -53,7 +54,7 @@
  */
 
 #define VERSION_NUMBER 1
-#define HEADER_SIZE 0x800
+#define HEADER_SIZE 0x880
 
 Common::File inputFile, outputFile;
 Common::PEResources res;
@@ -589,6 +590,7 @@ void writeData() {
 	writeAllScriptResponses();
 	writeAllScriptRanges();
 	writeAllTagMappings();
+	writeAllUpdateStates();
 }
 
 void createScriptMap() {

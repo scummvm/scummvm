@@ -4,7 +4,10 @@ MODULE := devtools/create_titanic
 MODULE_OBJS := \
 	create_titanic_dat.o \
 	hashmap.o \
+	script_quotes.o \
+	script_ranges.o \
 	script_responses.o \
+	script_states.o \
 	str.o \
 	winexe.o \
 	winexe_pe.o
