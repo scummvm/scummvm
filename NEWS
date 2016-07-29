@@ -26,6 +26,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Gob:
    - Fixed graphical issues in Gobliiins (EGA version).
 
+ Kyra:
+   - Updated Italian EOB1 translation.
+
  Mohawk:
    - Fixed visual glitches in the Spanish version of Myst.
    - Changed the cancel button in the options dialog of Riven not to save the settings.
