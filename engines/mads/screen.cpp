@@ -671,7 +671,7 @@ void Screen::transition(ScreenTransition transitionType, bool surfaceFlag) {
 
 void Screen::panTransition(MSurface &newScreen, byte *palData, int entrySide,
 		const Common::Point &srcPos, const Common::Point &destPos,
-		ThroughBlack throughBlack, bool setPalette, int numTicks) {
+		ThroughBlack throughBlack, bool setPalette_, int numTicks) {
 	EventsManager &events = *_vm->_events;
 	Palette &palette = *_vm->_palette;
 	Common::Point size;
@@ -693,7 +693,7 @@ void Screen::panTransition(MSurface &newScreen, byte *palData, int entrySide,
 		startX = size.x - 1;
 	deltaX = startX ? -1 : 1;
 
-	if (setPalette & !throughBlack)
+	if (setPalette_ & !throughBlack)
 		palette.setFullPalette(palData);
 
 	// TODO: Original uses a different frequency ticks counter. Need to
@@ -731,7 +731,7 @@ void Screen::panTransition(MSurface &newScreen, byte *palData, int entrySide,
 			g_system->delayMillis(1);
 		}
 
-		if ((setPalette && !loop) || throughBlack == THROUGH_BLACK2)
+		if ((setPalette_ && !loop) || throughBlack == THROUGH_BLACK2)
 			palette.setFullPalette(palData);
 	}
 
