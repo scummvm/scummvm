@@ -2204,7 +2204,8 @@ void ChampionMan::f291_drawSlot(uint16 champIndex, int16 slotIndex) {
 	bool isInventoryChamp = (_vm->_inventoryMan->_g432_inventoryChampionOrdinal == _vm->M0_indexToOrdinal(champIndex));
 
 	uint16 slotBoxIndex;
-	if (!isInventoryChamp) {  /* If drawing a slot for a champion other than the champion whose inventory is open */
+	if (!isInventoryChamp) {
+		// If drawing a slot for a champion other than the champion whose inventory is open
 		if ((slotIndex > k1_ChampionSlotActionHand) || (_g299_candidateChampionOrdinal == _vm->M0_indexToOrdinal(champIndex)))
 			return;
 		slotBoxIndex = (champIndex << 1) + slotIndex;
@@ -2260,13 +2261,12 @@ void ChampionMan::f291_drawSlot(uint16 champIndex, int16 slotIndex) {
 
 	if (nativeBitmapIndex != -1) {
 		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
-		if (isInventoryChamp) {
+		if (isInventoryChamp)
 			_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(nativeBitmapIndex),
 												_vm->_displayMan->_g296_bitmapViewport, box, 0, 0, 16, k112_byteWidthViewport, k12_ColorDarkestGray);
-		} else {
+		else
 			_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(nativeBitmapIndex),
 												_vm->_displayMan->_g348_bitmapScreen, box, 0, 0, 16, k160_byteWidthScreen, k12_ColorDarkestGray);
-		}
 	}
 
 	_vm->_objectMan->f38_drawIconInSlotBox(slotBoxIndex, iconIndex);
@@ -2319,7 +2319,8 @@ void ChampionMan::f281_renameChampion(Champion* champ) {
 			_vm->_displayMan->updateScreen();
 			_vm->f22_delay(1);
 
-			if (eventType == Common::EVENT_LBUTTONDOWN) { /* If left mouse button status has changed */
+			if (eventType == Common::EVENT_LBUTTONDOWN) {
+				// If left mouse button status has changed
 				Common::Point mousePos = _vm->_eventMan->getMousePos();
 				if ((renamedChampionStringMode == k2_RENAME_CHAMPION_TITLE || (curCharacterIndex > 0)) && (mousePos.x >= 197) && (mousePos.x <= 215) && (mousePos.y >= 147) && (mousePos.y <= 155)) { /* Coordinates of 'OK' button */
 					int16 characterIndexBackup = curCharacterIndex;
@@ -2327,14 +2328,14 @@ void ChampionMan::f281_renameChampion(Champion* champ) {
 					renamedChampionString = champ->_name;
 					strcpy(L0821_ac_ChampionNameBackupString, renamedChampionString);
 					curCharacterIndex = strlen(renamedChampionString);
-					while (renamedChampionString[--curCharacterIndex] == ' ')
 					// Replace space characters on the right of the champion name by '\0' characters
+					while (renamedChampionString[--curCharacterIndex] == ' ')
 						renamedChampionString[curCharacterIndex] = '\0';
 
 					bool found = false;
 					for (uint16 idx = k0_ChampionFirst; idx < _vm->_championMan->_g305_partyChampionCount - 1; idx++) {
 						if (!strcmp(_vm->_championMan->_gK71_champions[idx]._name, renamedChampionString)) {
-						// If an existing champion already has the specified name for the new champion
+							// If an existing champion already has the specified name for the new champion
 							found = true;
 							break;
 						}
@@ -2352,18 +2353,23 @@ void ChampionMan::f281_renameChampion(Champion* champ) {
 						curCharacter = '\b';
 						break;
 					}
+#if 0
 					if ((mousePos.x < 107) || (mousePos.x > 215) || (mousePos.y < 116) || (mousePos.y > 144)) {/* Coordinates of table of all other characters */
 						//goto T0281023;
 					}
 					if (!((mousePos.x + 4) % 10) || (!((mousePos.y + 5) % 10) && ((mousePos.x < 207) || (mousePos.y != 135)))) {
 						//goto T0281023;
 					}
+#endif
 					curCharacter = 'A' + (11 * ((mousePos.y - 116) / 10)) + ((mousePos.x - 107) / 10);
-					if ((curCharacter == 86) || (curCharacter == 97)) { /* The 'Return' button occupies two cells in the table */
+					if ((curCharacter == 86) || (curCharacter == 97)) {
+						// The 'Return' button occupies two cells in the table
 						curCharacter = '\r'; /* Carriage return */
 						break;
 					}
-					if (curCharacter >= 87) // Compensate for the first cell occupied by 'Return' button
+
+					if (curCharacter >= 87)
+						// Compensate for the first cell occupied by 'Return' button
 						curCharacter--;
 
 					if (curCharacter > 'Z')
@@ -2397,7 +2403,7 @@ void ChampionMan::f281_renameChampion(Champion* champ) {
 					}
 				}
 			}
-		} else if (curCharacter == '\r') { /* Carriage return */
+		} else if (curCharacter == '\r') { // Carriage return
 			if ((renamedChampionStringMode == k1_RENAME_CHAMPION_NAME) && (curCharacterIndex > 0)) {
 				_vm->_eventMan->f78_showMouse();
 				_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, k13_ColorLightestGray, k12_ColorDarkestGray, underscoreCharacterString, k200_heightScreen);
@@ -2408,7 +2414,7 @@ void ChampionMan::f281_renameChampion(Champion* champ) {
 				textPosY = 109;
 				curCharacterIndex = 0;
 			}
-		} else if (curCharacter == '\b') { /* Backspace */
+		} else if (curCharacter == '\b') { // Backspace
 			if ((renamedChampionStringMode == k1_RENAME_CHAMPION_NAME) && (curCharacterIndex == 0))
 				continue;
 
@@ -2445,13 +2451,14 @@ uint16 ChampionMan::f303_getSkillLevel(int16 champIndex, uint16 skillIndex) {
 	if (!ignoreTmpExp)
 		exp += skill->_temporaryExperience;
 
-	if (skillIndex > k3_ChampionSkillWizard) { /* Hidden skill */
+	if (skillIndex > k3_ChampionSkillWizard) {
+		// Hidden skill
 		skill = &champ->_skills[(skillIndex - k4_ChampionSkillSwing) >> 2];
-		exp += skill->_experience; /* Add experience in the base skill */
+		exp += skill->_experience; // Add experience in the base skill
 		if (!ignoreTmpExp)
 			exp += skill->_temporaryExperience;
 
-		exp >>= 1; /* Halve experience to get average of base skill + hidden skill experience */
+		exp >>= 1; // Halve experience to get average of base skill + hidden skill experience
 	}
 	int16 skillLevel = 1;
 	while (exp >= 500) {
@@ -2492,5 +2499,3 @@ uint16 ChampionMan::f303_getSkillLevel(int16 champIndex, uint16 skillIndex) {
 }
 
 }
-
-
