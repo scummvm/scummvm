@@ -35,6 +35,27 @@ private:
 	 * Setup sentence data
 	 */
 	void setupSentences();
+
+	/**
+	 * Alter dialogue Id based on current NPC state
+	 */
+	uint getStateDialogueId(uint oldId, uint newId);
+
+	/**
+	 * Sets flags 12 and resets some ranges
+	 */
+	void setFlags12();
+
+	/**
+	 * Sets flags 10 to different values based on the passed
+	 * dialogue Id
+	 */
+	void setFlags10(int newId, int index);
+
+	/**
+	 * Trigers 12
+	 */
+	void trigger12(bool flag);
 public:
 	MaitreDScript(int val1, const char *charClass, int v2,
 			const char *charName, int v3, int val2);

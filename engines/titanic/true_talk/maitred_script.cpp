@@ -186,8 +186,112 @@ int MaitreDScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 }
 
 int MaitreDScript::updateState(uint oldId, uint newId, int index) {
-	warning("TODO");
-	return 0;
+	if (getValue(8)) {
+		if (oldId == 260112)
+			return getRangeValue(260654);
+		if (oldId != 260655 && oldId != 260654)
+			return getRangeValue(260655);
+	}
+
+	newId = getStateDialogueId(oldId, newId);
+
+	if (newId == 260023) {
+		switch (getValue(13)) {
+		case 1:
+			newId = 260023; break;
+		case 2:
+			newId = 260024; break;
+		case 3:
+			newId = 260025; break;
+		case 4:
+			newId = 260026; break;
+		case 5:
+			newId = 260027; break;
+		default:
+			newId = 260016; break;
+		}
+	}
+
+	if (newId == 260034) {
+		switch (getValue(13)) {
+		case 1:
+			newId = 260034; break;
+		case 2:
+			newId = 260035; break;
+		case 3:
+			newId = 260036; break;
+		case 4:
+			newId = 260037; break;
+		case 5:
+			newId = 260038; break;
+		default:
+			newId = 260045; break;
+		}
+	}
+
+	if (newId == 260070) {
+		switch (getValue(13)) {
+		case 1:
+			newId = 260070; break;
+		case 2:
+			newId = 260071; break;
+		case 3:
+			newId = 260072; break;
+		case 4:
+			newId = 260073; break;
+		case 5:
+			newId = 260074; break;
+		default:
+			newId = 260110; break;
+		}
+	}
+
+	if (newId == 260076 || newId == 260181 || newId == 261010) {
+		CTrueTalkManager::setFlags(14, 1);
+		trigger12(true);
+		setFlags10(newId, index);
+		return newId;
+	}
+
+	if (!getValue(12)) {
+		static const int FLAG_IDS[] = {
+			260080, 260066, 260067, 260062, 260050, 260087, 260090, 260171, 260173,
+			260184, 260193, 260202, 260205, 260220, 260221, 260223, 260231, 260232,
+			260365, 260373, 260374, 260387, 260421, 260622, 260695, 0
+		};
+
+		for (uint idx = 0; FLAG_IDS[idx]; ++idx) {
+			if (FLAG_IDS[idx] == newId) {
+				setFlags12();
+				break;
+			}
+		}
+	}
+
+	if (newId == 261018) {
+		if (getValue(8) == 0 && getValue(9) == 0) {
+			newId = getRangeValue(260961);
+			setFlags10(newId, index);
+			return newId;
+		}
+
+		if (getValue(8) == 1 && getValue(9) == 1) {
+			newId = getRangeValue(260655);
+			setFlags10(newId, index);
+			return newId;
+		}
+
+		if (getValue(9) && getValue(16)) {
+			newId = getValue(16);
+			setFlags10(newId, index);
+			return index;
+		}
+
+		newId = 260989;
+	}
+
+	setFlags10(newId, index);
+	return newId;
 }
 
 int MaitreDScript::proc22(int id) const {
@@ -206,6 +310,92 @@ int MaitreDScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript,
 }
 
 void MaitreDScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence) {
+}
+
+uint MaitreDScript::getStateDialogueId(uint oldId, uint newId) {
+	if (getValue(8) || getValue(9))
+		return newId;
+
+	switch (newId) {
+	case 260009:
+	case 260010:
+	case 260011:
+	case 260012:
+		return getRangeValue(260961);
+	case 260052:
+		return 260094;
+	case 260203:
+		return 260204;
+	case 260211:
+	case 260212:
+	case 260761:
+	case 260986:
+	case 260987:
+	case 260989:
+		return getRangeValue(260961);
+	case 260263:
+	case 260264:
+		return 260265;
+	case 260411:
+		return 260457;
+	case 260427:
+	case 260053:
+	case 260054:
+	case 260055:
+	case 260056:
+	case 260057:
+	case 260058:
+	case 260059:
+	case 260060:
+		return 260135;
+	case 260698:
+	case 260895:
+	case 260896:
+		return 260457;
+	case 260799:
+		return 260214;
+
+	default:
+		return newId;
+	}
+}
+
+
+void MaitreDScript::setFlags12() {
+	int val = getValue(12);
+	CTrueTalkManager::setFlags(12, 1);
+
+	if (!val) {
+		CTrueTalkManager::triggerAction(8, 0);
+		resetRange(260121);
+		resetRange(260122);
+		resetRange(260123);
+		resetRange(260124);
+		resetRange(260125);
+		resetRange(260126);
+	}
+}
+
+void MaitreDScript::setFlags10(int newId, int index) {
+	int val = 28;
+	for (uint idx = 0; idx < _states.size(); ++idx) {
+		TTupdateState2 &us = _states[idx];
+		if (us._src == newId) {
+			val = us._dest;
+			break;
+		}
+	}
+
+	CTrueTalkManager::setFlags(10, val);
+}
+
+void MaitreDScript::trigger12(bool flag) {
+	int val = getValue(12);
+	CTrueTalkManager::setFlags(12, 0);
+
+	if (val) {
+		CTrueTalkManager::triggerAction(flag ? 10 : 9, 0);
+	}
 }
 
 } // End of namespace Titanic
