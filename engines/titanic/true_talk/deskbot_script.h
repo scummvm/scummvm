@@ -31,6 +31,7 @@ namespace Titanic {
 class DeskbotScript : public TTnpcScript {
 private:
 	static int _oldId;
+	TTupdateState3Array _states;
 private:
 	/**
 	 * Setup sentence data

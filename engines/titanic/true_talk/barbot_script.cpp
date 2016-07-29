@@ -51,6 +51,7 @@ BarbotScript::BarbotScript(int val1, const char *charClass, int v2,
 	setupSentences();
 	_tagMappings.load("TagMap/Barbot");
 	_quotes.load("Quotes/Barbot");
+	_states.load("States/Barbot");
 }
 
 void BarbotScript::setupSentences() {

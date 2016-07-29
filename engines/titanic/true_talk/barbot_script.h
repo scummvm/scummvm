@@ -32,6 +32,7 @@ private:
 	int _state;
 	int _arrIndex;
 	TTsentenceEntries _entries2;
+	TTupdateState3Array _states;
 private:
 	/**
 	 * Adjust a given dial number by a given delta amount

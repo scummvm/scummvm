@@ -26,6 +26,8 @@
 
 namespace Titanic {
 
+int LiftbotScript::_stateIndex;
+
 static const int STATE_ARRAY[7] = {
 	0x78BE, 0x78C0, 0x78C1, 0x78C2, 0x78C3, 0x78C4, 0x78C5
 };
@@ -33,7 +35,7 @@ static const int STATE_ARRAY[7] = {
 LiftbotScript::LiftbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
-	_state = 0;
+	_stateIndex = 0;
 
 	loadRanges("Ranges/Liftbot");
 	loadResponses("Responses/Liftbot");
@@ -41,6 +43,7 @@ LiftbotScript::LiftbotScript(int val1, const char *charClass, int v2,
 	_tagMappings.load("TagMap/Liftbot");
 	_words.load("Words/Liftbot");
 	_quotes.load("Quotes/Liftbot");
+	_states.load("States/Liftbot");
 }
 
 void LiftbotScript::setupSentences() {
@@ -58,12 +61,12 @@ int LiftbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence
 	case MKTAG('D', 'N', 'A', '1'):
 	case MKTAG('H', 'H', 'G', 'Q'):
 	case MKTAG('A', 'N', 'S', 'W'):
-		if (_state >= 7) {
+		if (_stateIndex >= 7) {
 			selectResponse(30918);
 			setState(2);
-			_state = 0;
+			_stateIndex = 0;
 		} else {
-			addResponse(STATE_ARRAY[_state++]);
+			addResponse(STATE_ARRAY[_stateIndex++]);
 		}
 
 		applyResponse();

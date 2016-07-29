@@ -29,6 +29,8 @@ namespace Titanic {
 
 class MaitreDScript : public TTnpcScript {
 private:
+	TTupdateState2Array _states;
+private:
 	/**
 	 * Setup sentence data
 	 */

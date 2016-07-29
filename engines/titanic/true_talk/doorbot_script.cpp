@@ -60,6 +60,7 @@ DoorbotScript::DoorbotScript(int val1, const char *charClass, int v2,
 	_tagMappings.load("TagMap/Doorbot");
 	_words.load("Words/Doorbot");
 	_quotes.load("Quotes/Doorbot");
+	_states.load("States/Doorbot");
 }
 
 void DoorbotScript::setupSentences() {
@@ -77,14 +78,14 @@ void DoorbotScript::setupSentences() {
 int DoorbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {
 	if (tag == MKTAG('D', 'N', 'A', '1') || tag == MKTAG('H', 'H', 'G', 'Q') ||
 		tag == MKTAG('A', 'N', 'S', 'W') || tag == MKTAG('S', 'U', 'M', 'S')) {
-		if (_state > 9)
-			_state = 0;
-		addResponse(STATE_ARRAY[_state]);
+		if (_stateIndex > 9)
+			_stateIndex = 0;
+		addResponse(STATE_ARRAY[_stateIndex]);
 		applyResponse();
 
-		if (STATE_ARRAY[_state] == 11826)
+		if (STATE_ARRAY[_stateIndex] == 11826)
 			setState(1);
-		++_state;
+		++_stateIndex;
 		return 2;
 	}
 

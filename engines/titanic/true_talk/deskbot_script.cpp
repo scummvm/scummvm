@@ -48,6 +48,7 @@ DeskbotScript::DeskbotScript(int val1, const char *charClass, int v2,
 	_tagMappings.load("TagMap/Deskbot");
 	_words.load("Words/Deskbot");
 	_quotes.load("Quotes/Deskbot");
+	_states.load("States/Deskbot");
 }
 
 void DeskbotScript::setupSentences() {

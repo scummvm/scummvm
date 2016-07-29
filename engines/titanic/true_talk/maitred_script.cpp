@@ -43,6 +43,7 @@ MaitreDScript::MaitreDScript(int val1, const char *charClass, int v2,
 	setupSentences();
 	_tagMappings.load("TagMap/MaitreD");
 	_quotes.load("Quotes/MaitreD");
+	_states.load("States/MaitreD");
 }
 
 void MaitreDScript::setupSentences() {

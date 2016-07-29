@@ -427,9 +427,9 @@ int BellbotScript::getStateDialogueId() const {
 void BellbotScript::setValue23(uint id) {
 	uint val = 0;
 	for (uint idx = 0; idx < _states.size() && !val; ++idx) {
-		TTmapEntry &me = _states[idx];
-		if (me._src == id)
-			val = me._dest;
+		TTupdateState2 &us = _states[idx];
+		if (us._src == id)
+			val = us._dest;
 	}
 
 	CTrueTalkManager::setFlags(23, val);

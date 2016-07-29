@@ -29,7 +29,8 @@ namespace Titanic {
 
 class DoorbotScript : public TTnpcScript {
 private:
-	int _state;
+	TTupdateState3Array _states;
+	int _stateIndex;
 private:
 	/**
 	 * Setup sentence data

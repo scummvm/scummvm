@@ -142,25 +142,27 @@ public:
 	void load(const char *name);
 };
 
-struct TTupdateStateEntry {
-	uint _newId;
-	uint _newValue;
-	uint _idMatch;
+struct TTupdateState2 {
+	uint _src;
+	uint _dest;
+
+	TTupdateState2() : _src(0), _dest(0) {}
 };
 
-class TTupdateStateEntries : public Common::Array<TTupdateStateEntry> {
+class TTupdateState2Array : public Common::Array<TTupdateState2> {
 public:
 	void load(const char *name);
 };
 
-struct TTmapEntry {
-	uint _src;
-	uint _dest;
+struct TTupdateState3 {
+	uint _newId;
+	uint _newValue;
+	uint _idMatch;
 
-	TTmapEntry() : _src(0), _dest(0) {}
+	TTupdateState3() : _newId(0), _newValue(0), _idMatch(0) {}
 };
 
-class TTmapEntries : public Common::Array<TTmapEntry> {
+class TTupdateState3Array : public Common::Array<TTupdateState3> {
 public:
 	void load(const char *name);
 };

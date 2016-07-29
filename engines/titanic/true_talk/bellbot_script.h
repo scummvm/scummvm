@@ -30,7 +30,7 @@ namespace Titanic {
 class BellbotScript : public TTnpcScript {
 private:
 	static int _oldId;
-	TTmapEntries _states;
+	TTupdateState2Array _states;
 	int _array[150];
 	int _field2D0;
 	int _field2D4;

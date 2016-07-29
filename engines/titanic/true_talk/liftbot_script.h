@@ -29,7 +29,8 @@ namespace Titanic {
 
 class LiftbotScript : public TTnpcScript {
 private:
-	int _state;
+	TTupdateState2Array _states;
+	static int _stateIndex;
 private:
 	/**
 	 * Setup sentence data
