@@ -212,16 +212,16 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 	out->writeSint32LE(GET_HEX_SCENE_OFFSET(player->_currentScene)); //getCurSceneHexOffset()
 
 	// wearing a helmet?
-	out->writeSint32LE(GET_HEX_OBJ_OFFSET(player->_armor[Chr::ChrArmorType::HEAD_ARMOR])); //helmetIndex
+	out->writeSint32LE(GET_HEX_OBJ_OFFSET(player->_armor[Chr::HEAD_ARMOR])); //helmetIndex
 
 	// holding a shield?
-	out->writeSint32LE(GET_HEX_OBJ_OFFSET(player->_armor[Chr::ChrArmorType::SHIELD_ARMOR])); //shieldIndex
+	out->writeSint32LE(GET_HEX_OBJ_OFFSET(player->_armor[Chr::SHIELD_ARMOR])); //shieldIndex
 
 	// wearing chest armor?
-	out->writeSint32LE(GET_HEX_OBJ_OFFSET(player->_armor[Chr::ChrArmorType::BODY_ARMOR])); //chestArmIndex
+	out->writeSint32LE(GET_HEX_OBJ_OFFSET(player->_armor[Chr::BODY_ARMOR])); //chestArmIndex
 
 	// wearing spiritual armor?
-	out->writeSint32LE(GET_HEX_OBJ_OFFSET(player->_armor[Chr::ChrArmorType::MAGIC_ARMOR])); //sprtArmIndex
+	out->writeSint32LE(GET_HEX_OBJ_OFFSET(player->_armor[Chr::MAGIC_ARMOR])); //sprtArmIndex
 
 	// TODO:
 	out->writeSint16LE(0xffff);	// ???? - always FFFF
@@ -675,14 +675,14 @@ int WageEngine::loadGame(int slotId) {
 
 	// move all worn helmets, shields, chest armors and spiritual
 	// armors to player
-	for (int type = 0; type < Chr::ChrArmorType::NUMBER_OF_ARMOR_TYPES; ++type) {
+	for (int type = 0; type < Chr::NUMBER_OF_ARMOR_TYPES; ++type) {
 		Obj *armor;
 
-		if (type == Chr::ChrArmorType::HEAD_ARMOR)
+		if (type == Chr::HEAD_ARMOR)
 			armor = getObjByOffset(helmetOffset, objsHexOffset);
-		else if (type == Chr::ChrArmorType::SHIELD_ARMOR)
+		else if (type == Chr::SHIELD_ARMOR)
 			armor = getObjByOffset(shieldOffset, objsHexOffset);
-		else if (type == Chr::ChrArmorType::BODY_ARMOR)
+		else if (type == Chr::BODY_ARMOR)
 			armor = getObjByOffset(armorOffset, objsHexOffset);
 		else
 			armor = getObjByOffset(spiritualArmorOffset, objsHexOffset);
