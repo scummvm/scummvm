@@ -158,6 +158,18 @@ void syncWithSerializer(Common::Serializer &s, SciString &obj) {
 			obj.setValue(i, value);
 	}
 }
+
+void syncWithSerializer(Common::Serializer &s, SciBitmap &obj) {
+	debug("TODO: Sync bitmap");
+
+//	if (s.isSaving()) {
+//		size = obj.getSize();
+//		s.syncAsUint32LE(size);
+//	} else {
+//		s.syncAsUint32LE(size);
+//		obj.setSize(size);
+//	}
+}
 #endif
 
 #pragma mark -
@@ -273,6 +285,8 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		} else if (type == SEG_TYPE_STRING) {
 			// Set the correct segment for SCI32 strings
 			_stringSegId = i;
+		} else if (s.getVersion() >= 36 && type == SEG_TYPE_BITMAP) {
+			_bitmapSegId = i;
 #endif
 		}
 
@@ -686,6 +700,14 @@ void StringTable::saveLoadWithSerializer(Common::Serializer &ser) {
 		return;
 
 	sync_Table<StringTable>(ser, *this);
+}
+
+void BitmapTable::saveLoadWithSerializer(Common::Serializer &ser) {
+	if (ser.getVersion() < 36)
+		return;
+
+	// TODO: Should only include bitmaps with gc = true
+	sync_Table(ser, *this);
 }
 #endif
 

@@ -1984,7 +1984,7 @@ bool Console::cmdShowSavedBits(int argc, const char **argv) {
 
 	byte bakMask = GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY | GFX_SCREEN_MASK_CONTROL;
 	int bakSize = _engine->_gfxScreen->bitsGetDataSize(rect, bakMask);
-	reg_t bakScreen = segman->allocateHunkEntry("show_saved_bits backup", bakSize, true);
+	reg_t bakScreen = segman->allocateHunkEntry("show_saved_bits backup", bakSize);
 	byte* bakMemory = segman->getHunkPointer(bakScreen);
 	assert(bakMemory);
 	_engine->_gfxScreen->bitsSave(rect, bakMask, bakMemory);
@@ -2079,6 +2079,10 @@ bool Console::cmdPrintSegmentTable(int argc, const char **argv) {
 
 			case SEG_TYPE_STRING:
 				debugPrintf("T  SCI32 strings (%d)", (*(StringTable *)mobj).entries_used);
+				break;
+
+			case SEG_TYPE_BITMAP:
+				debugPrintf("T  SCI32 bitmaps (%d)", (*(BitmapTable *)mobj).entries_used);
 				break;
 #endif
 
@@ -2213,6 +2217,9 @@ bool Console::segmentInfo(int nr) {
 		break;
 	case SEG_TYPE_ARRAY:
 		debugPrintf("SCI32 arrays\n");
+		break;
+	case SEG_TYPE_BITMAP:
+		debugPrintf("SCI32 bitmaps\n");
 		break;
 #endif
 
@@ -2813,6 +2820,12 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 					debugPrintf("SCI32 array:\n");
 					const SciArray<reg_t> *array = _engine->_gamestate->_segMan->lookupArray(reg);
 					hexDumpReg(array->getRawData(), array->getSize(), 4, 0, true);
+					break;
+				}
+				case SEG_TYPE_BITMAP: {
+					debugPrintf("SCI32 bitmap:\n");
+					const SciBitmap *bitmap = _engine->_gamestate->_segMan->lookupBitmap(reg);
+					Common::hexdump((const byte *) bitmap->getRawData(), bitmap->getRawSize(), 16, 0);
 					break;
 				}
 #endif

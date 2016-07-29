@@ -334,7 +334,7 @@ reg_t GfxPaint16::bitsSave(const Common::Rect &rect, byte screenMask) {
 	// now actually ask _screen how much space it will need for saving
 	size = _screen->bitsGetDataSize(workerRect, screenMask);
 
-	memoryId = _segMan->allocateHunkEntry("SaveBits()", size, true);
+	memoryId = _segMan->allocateHunkEntry("SaveBits()", size);
 	memoryPtr = _segMan->getHunkPointer(memoryId);
 	if (memoryPtr)
 		_screen->bitsSave(workerRect, screenMask, memoryPtr);

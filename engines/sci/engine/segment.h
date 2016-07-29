@@ -71,6 +71,7 @@ enum SegmentType {
 #ifdef ENABLE_SCI32
 	SEG_TYPE_ARRAY = 11,
 	SEG_TYPE_STRING = 12,
+	SEG_TYPE_BITMAP = 13,
 #endif
 
 	SEG_TYPE_MAX // For sanity checking
@@ -205,7 +206,6 @@ struct Hunk {
 	void *mem;
 	uint32 size;
 	const char *type;
-	bool gc;
 };
 
 template<typename T>
@@ -510,6 +510,244 @@ struct ArrayTable : public SegmentObjTable<SciArray<reg_t> > {
 
 struct StringTable : public SegmentObjTable<SciString> {
 	StringTable() : SegmentObjTable<SciString>(SEG_TYPE_STRING) {}
+
+	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) {
+		at(sub_addr.getOffset()).destroy();
+		freeEntry(sub_addr.getOffset());
+	}
+
+	void saveLoadWithSerializer(Common::Serializer &ser);
+	SegmentRef dereference(reg_t pointer);
+};
+
+#pragma mark -
+#pragma mark Bitmaps
+
+enum {
+	kDefaultSkipColor = 250
+};
+
+#define BITMAP_PROPERTY(size, property, offset)\
+inline uint##size get##property() const {\
+	return READ_SCI11ENDIAN_UINT##size(_data + (offset));\
+}\
+inline void set##property(uint##size value) {\
+	WRITE_SCI11ENDIAN_UINT##size(_data + (offset), (value));\
+}
+
+/**
+ * A convenience class for creating and modifying in-memory
+ * bitmaps.
+ */
+class SciBitmap {
+	byte *_data;
+	int _dataSize;
+	Buffer _buffer;
+	bool _gc;
+
+public:
+	enum BitmapFlags {
+		kBitmapRemap = 2
+	};
+
+	/**
+	 * Gets the size of the bitmap header for the current
+	 * engine version.
+	 */
+	static inline uint16 getBitmapHeaderSize() {
+		// TODO: These values are accurate for each engine, but there may be no reason
+		// to not simply just always use size 40, since SCI2.1mid does not seem to
+		// actually store any data above byte 40, and SCI2 did not allow bitmaps with
+		// scaling resolutions other than the default (320x200). Perhaps SCI3 used
+		// the extra bytes, or there is some reason why they tried to align the header
+		// size with other headers like pic headers?
+//		uint32 bitmapHeaderSize;
+//		if (getSciVersion() >= SCI_VERSION_2_1_MIDDLE) {
+//			bitmapHeaderSize = 46;
+//		} else if (getSciVersion() == SCI_VERSION_2_1_EARLY) {
+//			bitmapHeaderSize = 40;
+//		} else {
+//			bitmapHeaderSize = 36;
+//		}
+//		return bitmapHeaderSize;
+		return 46;
+	}
+
+	/**
+	 * Gets the byte size of a bitmap with the given width
+	 * and height.
+	 */
+	static inline uint32 getBitmapSize(const uint16 width, const uint16 height) {
+		return width * height + getBitmapHeaderSize();
+	}
+
+	inline SciBitmap() : _data(nullptr), _dataSize(0), _gc(true) {}
+
+	/**
+	 * Allocates and initialises a new bitmap.
+	 */
+	inline void create(const int16 width, const int16 height, const uint8 skipColor, const int16 displaceX, const int16 displaceY, const int16 scaledWidth, const int16 scaledHeight, const uint32 paletteSize, const bool remap, const bool gc) {
+
+		_dataSize = getBitmapSize(width, height) + paletteSize;
+		_data = (byte *)realloc(_data, _dataSize);
+		_gc = gc;
+
+		const uint16 bitmapHeaderSize = getBitmapHeaderSize();
+
+		setWidth(width);
+		setHeight(height);
+		setDisplace(Common::Point(displaceX, displaceY));
+		setSkipColor(skipColor);
+		_data[9] = 0;
+		WRITE_SCI11ENDIAN_UINT16(_data + 10, 0);
+		setRemap(remap);
+		setDataSize(width * height);
+		WRITE_SCI11ENDIAN_UINT32(_data + 16, 0);
+		setHunkPaletteOffset(paletteSize > 0 ? (width * height) : 0);
+		setDataOffset(bitmapHeaderSize);
+		setUncompressedDataOffset(bitmapHeaderSize);
+		setControlOffset(0);
+		setScaledWidth(scaledWidth);
+		setScaledHeight(scaledHeight);
+
+		_buffer = Buffer(getWidth(), getHeight(), getPixels());
+	}
+
+	inline void destroy() {
+		free(_data);
+		_data = nullptr;
+		_dataSize = 0;
+	}
+
+	inline int getRawSize() const {
+		return _dataSize;
+	}
+
+	inline byte *getRawData() const {
+		return _data;
+	}
+
+	inline Buffer &getBuffer() {
+		return _buffer;
+	}
+
+	inline bool getShouldGC() const {
+		return _gc;
+	}
+
+	inline void enableGC() {
+		_gc = true;
+	}
+
+	inline void disableGC() {
+		_gc = false;
+	}
+
+	BITMAP_PROPERTY(16, Width, 0);
+	BITMAP_PROPERTY(16, Height, 2);
+
+	inline Common::Point getDisplace() const {
+		return Common::Point(
+			(int16)READ_SCI11ENDIAN_UINT16(_data + 4),
+			(int16)READ_SCI11ENDIAN_UINT16(_data + 6)
+		);
+	}
+
+	inline void setDisplace(const Common::Point &displace) {
+		WRITE_SCI11ENDIAN_UINT16(_data + 4, (uint16)displace.x);
+		WRITE_SCI11ENDIAN_UINT16(_data + 6, (uint16)displace.y);
+	}
+
+	inline uint8 getSkipColor() const {
+		return _data[8];
+	}
+
+	inline void setSkipColor(const uint8 skipColor) {
+		_data[8] = skipColor;
+	}
+
+	inline bool getRemap() const {
+		return READ_SCI11ENDIAN_UINT16(_data + 10) & kBitmapRemap;
+	}
+
+	inline void setRemap(const bool remap) {
+		uint16 flags = READ_SCI11ENDIAN_UINT16(_data + 10);
+		if (remap) {
+			flags |= kBitmapRemap;
+		} else {
+			flags &= ~kBitmapRemap;
+		}
+		WRITE_SCI11ENDIAN_UINT16(_data + 10, flags);
+	}
+
+	BITMAP_PROPERTY(32, DataSize, 12);
+
+	inline uint32 getHunkPaletteOffset() const {
+		return READ_SCI11ENDIAN_UINT32(_data + 20);
+	}
+
+	inline void setHunkPaletteOffset(uint32 hunkPaletteOffset) {
+		if (hunkPaletteOffset) {
+			hunkPaletteOffset += getBitmapHeaderSize();
+		}
+
+		WRITE_SCI11ENDIAN_UINT32(_data + 20, hunkPaletteOffset);
+	}
+
+	BITMAP_PROPERTY(32, DataOffset, 24);
+
+	// NOTE: This property is used as a "magic number" for
+	// validating that a block of memory is a valid bitmap,
+	// and so is always set to the size of the header.
+	BITMAP_PROPERTY(32, UncompressedDataOffset, 28);
+
+	// NOTE: This property always seems to be zero
+	BITMAP_PROPERTY(32, ControlOffset, 32);
+
+	inline uint16 getScaledWidth() const {
+		if (getDataOffset() >= 40) {
+			return READ_SCI11ENDIAN_UINT16(_data + 36);
+		}
+
+		// SCI2 bitmaps did not have scaling ability
+		return 320;
+	}
+
+	inline void setScaledWidth(uint16 scaledWidth) {
+		if (getDataOffset() >= 40) {
+			WRITE_SCI11ENDIAN_UINT16(_data + 36, scaledWidth);
+		}
+	}
+
+	inline uint16 getScaledHeight() const {
+		if (getDataOffset() >= 40) {
+			return READ_SCI11ENDIAN_UINT16(_data + 38);
+		}
+
+		// SCI2 bitmaps did not have scaling ability
+		return 200;
+	}
+
+	inline void setScaledHeight(uint16 scaledHeight) {
+		if (getDataOffset() >= 40) {
+			WRITE_SCI11ENDIAN_UINT16(_data + 38, scaledHeight);
+		}
+	}
+
+	inline byte *getPixels() {
+		return _data + getUncompressedDataOffset();
+	}
+
+	inline byte *getHunkPalette() {
+		if (getHunkPaletteOffset() == 0) {
+			return nullptr;
+		}
+		return _data + getHunkPaletteOffset();
+	}
+};
+
+struct BitmapTable : public SegmentObjTable<SciBitmap> {
+	BitmapTable() : SegmentObjTable<SciBitmap>(SEG_TYPE_BITMAP) {}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) {
 		at(sub_addr.getOffset()).destroy();

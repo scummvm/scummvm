@@ -362,7 +362,7 @@ ShowStyleList::iterator GfxTransitions32::deleteShowStyle(const ShowStyleList::i
 	case kShowStyleDissolveNoMorph:
 	case kShowStyleDissolve:
 		if (getSciVersion() <= SCI_VERSION_2_1_EARLY) {
-			_segMan->freeHunkEntry(showStyle->bitmap);
+			_segMan->freeBitmap(showStyle->bitmap);
 			g_sci->_gfxFrameout->deleteScreenItem(*showStyle->bitmapScreenItem);
 		}
 		break;
@@ -459,9 +459,10 @@ void GfxTransitions32::configure21EarlyIris(PlaneShowStyle &showStyle, const int
 
 void GfxTransitions32::configure21EarlyDissolve(PlaneShowStyle &showStyle, const int16 priority, const Common::Rect &gameRect) {
 
-	BitmapResource bitmap(_segMan, showStyle.width, showStyle.height, kDefaultSkipColor, 0, 0, kLowResX, kLowResY, 0, false, false);
+	reg_t bitmapId;
+	SciBitmap &bitmap = *_segMan->allocateBitmap(&bitmapId, showStyle.width, showStyle.height, kDefaultSkipColor, 0, 0, kLowResX, kLowResY, 0, false, false);
 
-	showStyle.bitmap = bitmap.getObject();
+	showStyle.bitmap = bitmapId;
 
 	const Buffer &source = g_sci->_gfxFrameout->getCurrentBuffer();
 	Buffer target(showStyle.width, showStyle.height, bitmap.getPixels());
@@ -471,7 +472,7 @@ void GfxTransitions32::configure21EarlyDissolve(PlaneShowStyle &showStyle, const
 
 	CelInfo32 celInfo;
 	celInfo.type = kCelTypeMem;
-	celInfo.bitmap = bitmap.getObject();
+	celInfo.bitmap = bitmapId;
 
 	showStyle.bitmapScreenItem = new ScreenItem(showStyle.plane, celInfo, Common::Point(0, 0), ScaleInfo());
 	showStyle.bitmapScreenItem->_priority = priority;
@@ -608,7 +609,7 @@ bool GfxTransitions32::processPixelDissolve(PlaneShowStyle &showStyle) {
 bool GfxTransitions32::processPixelDissolve21Early(PlaneShowStyle &showStyle) {
 	bool unchanged = true;
 
-	BitmapResource bitmap(showStyle.bitmap);
+	SciBitmap &bitmap = *_segMan->lookupBitmap(showStyle.bitmap);
 	Buffer buffer(showStyle.width, showStyle.height, bitmap.getPixels());
 
 	uint32 numPixels = showStyle.width * showStyle.height;

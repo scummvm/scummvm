@@ -37,6 +37,7 @@ struct EngineState;
  *
  * Version - new/changed feature
  * =============================
+ *      36 - SCI32 bitmap segment
  *      35 - SCI32 remap
  *      34 - SCI32 palettes, and store play time in ticks
  *      33 - new overridePriority flag in MusicEntry
@@ -60,7 +61,7 @@ struct EngineState;
  */
 
 enum {
-	CURRENT_SAVEGAME_VERSION = 35,
+	CURRENT_SAVEGAME_VERSION = 36,
 	MINIMUM_SAVEGAME_VERSION = 14
 };
 
