@@ -252,8 +252,72 @@ int DoorbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 }
 
 int DoorbotScript::updateState(uint oldId, uint newId, int index) {
-	warning("TODO");
-	return 0;
+	getValue(38);
+	bool flag39 = getValue(39) != 0;
+	CTrueTalkManager::setFlags(38, 0);
+	CTrueTalkManager::setFlags(39, 0);
+	
+	if (newId > 220890) {
+		switch (newId) {
+		case 221064:
+			return getValue(1) == 2 ? newId : 221062;
+		case 221080:
+			return getValue(1) >= 2 ? newId : 221066;
+		case 221078:
+		case 221079:
+			return getValue(1) >= 3 ? newId : 221065;
+		case 221081:
+			return getValue(7) == 0 ? newId : 221070;
+		case 221251:
+			CTrueTalkManager::triggerAction(28, 0);
+			break;
+		default:
+			break;
+		}
+	} else if (newId >= 220883) {
+		CTrueTalkManager::setFlags(38, 1);
+		CTrueTalkManager::triggerAction(28, 0);
+	} else if (newId >= 220076) {
+		switch (newId) {
+		case 220078:
+		case 220080:
+		case 220081:
+		case 220082:
+		case 220083:
+		case 220084:
+			if (flag39)
+				return getRangeValue(221381);
+			break;
+		default:
+			break;
+		}
+
+		CTrueTalkManager::setFlags(39, 1);
+	} else if (newId == 220075) {
+		if (flag39)
+			return getRangeValue(221381);
+		CTrueTalkManager::setFlags(39, 1);
+	} else if (newId == 220038) {
+		return 220038;
+	}
+
+	for (uint idx = 0; idx < _states.size(); ++idx) {
+		TTupdateState3 &us = _states[idx];
+		if (us._newId == newId) {
+			uint bits = us._dialBits;
+
+			if (!bits
+				|| (index == 0 && (bits == 5 || bits == 1))
+				|| (index == 1 && (bits == 6 || bits == 2))
+				|| (index == 2 && (bits == 9 || bits == 1))
+				|| (index == 3 && (bits == 10 || bits == 2))) {
+				setState(us._newValue);
+				break;
+			}
+		}
+	}
+
+	return newId;
 }
 
 int DoorbotScript::proc22(int id) const {
