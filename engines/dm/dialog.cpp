@@ -145,21 +145,17 @@ void DialogMan::f425_printCenteredChoice(byte* bitmap, char* str, int16 posX, in
 }
 
 bool DialogMan::f426_isMessageOnTwoLines(char* str, char* part1, char* part2) {
-	uint16 L1305_ui_StringLength;
-	uint16 L1306_ui_SplitPosition;
-
-
-	L1305_ui_StringLength = strlen(str);
-	if (L1305_ui_StringLength <= 30) {
+	uint16 strLength = strlen(str);
+	if (strLength <= 30)
 		return false;
-	}
+
 	strcpy(part1, str);
-	L1306_ui_SplitPosition = L1305_ui_StringLength >> 1;
-	while ((part1[L1306_ui_SplitPosition] != ' ') && L1306_ui_SplitPosition < L1305_ui_StringLength) {
-		L1306_ui_SplitPosition++;
-	}
-	part1[L1306_ui_SplitPosition] = '\0';
-	strcpy(part2, &part1[L1306_ui_SplitPosition + 1]);
+	uint16 splitPosition = strLength >> 1;
+	while ((part1[splitPosition] != ' ') && (splitPosition < strLength))
+		splitPosition++;
+
+	part1[splitPosition] = '\0';
+	strcpy(part2, &part1[splitPosition + 1]);
 	return true;
 }
 }
