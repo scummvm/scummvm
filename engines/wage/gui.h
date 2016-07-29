@@ -51,11 +51,12 @@
 #include "common/str-array.h"
 #include "graphics/font.h"
 #include "graphics/managed_surface.h"
+#include "graphics/macgui/macwindowmanager.h"
+
 #include "common/events.h"
 #include "common/rect.h"
 
 #include "wage/macwindow.h"
-#include "wage/macwindowmanager.h"
 
 namespace Wage {
 
@@ -121,7 +122,7 @@ public:
 
 	Scene *_scene;
 
-	MacWindowManager _wm;
+	Graphics::MacWindowManager _wm;
 	MacWindow *_sceneWindow;
 	MacWindow *_consoleWindow;
 

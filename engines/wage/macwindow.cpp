@@ -48,13 +48,13 @@
 #include "graphics/font.h"
 #include "graphics/primitives.h"
 #include "common/events.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 #include "wage/macwindow.h"
-#include "wage/macwindowmanager.h"
 
 namespace Wage {
 
-BaseMacWindow::BaseMacWindow(int id, bool editable, MacWindowManager *wm) :
+BaseMacWindow::BaseMacWindow(int id, bool editable, Graphics::MacWindowManager *wm) :
 		_id(id), _editable(editable), _wm(wm) {
 	_callback = 0;
 	_dataPtr = 0;
@@ -64,7 +64,7 @@ BaseMacWindow::BaseMacWindow(int id, bool editable, MacWindowManager *wm) :
 	_type = kWindowUnknown;
 }
 
-MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, MacWindowManager *wm) :
+MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm) :
 		BaseMacWindow(id, editable, wm), _scrollable(scrollable), _resizable(resizable) {
 	_active = false;
 	_borderIsDirty = true;

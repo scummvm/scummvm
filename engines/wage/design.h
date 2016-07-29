@@ -51,7 +51,7 @@
 #include "common/memstream.h"
 #include "common/rect.h"
 
-#include "wage/macwindowmanager.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 namespace Wage {
 
@@ -68,14 +68,14 @@ public:
 		return _bounds;
 	}
 
-    void paint(Graphics::ManagedSurface *canvas, Patterns &patterns, int x, int y);
+    void paint(Graphics::ManagedSurface *canvas, Graphics::Patterns &patterns, int x, int y);
 	bool isPointOpaque(int x, int y);
-	static void drawRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int thickness, int color, Patterns &patterns, byte fillType);
-	static void drawRect(Graphics::ManagedSurface *surface, int x1, int y1, int x2, int y2, int thickness, int color, Patterns &patterns, byte fillType);
-	static void drawFilledRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int color, Patterns &patterns, byte fillType);
-	static void drawFilledRoundRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int arc, int color, Patterns &patterns, byte fillType);
-	static void drawHLine(Graphics::ManagedSurface *surface, int x1, int x2, int y, int thickness, int color, Patterns &patterns, byte fillType);
-	static void drawVLine(Graphics::ManagedSurface *surface, int x, int y1, int y2, int thickness, int color, Patterns &patterns, byte fillType);
+	static void drawRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int thickness, int color, Graphics::Patterns &patterns, byte fillType);
+	static void drawRect(Graphics::ManagedSurface *surface, int x1, int y1, int x2, int y2, int thickness, int color, Graphics::Patterns &patterns, byte fillType);
+	static void drawFilledRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int color, Graphics::Patterns &patterns, byte fillType);
+	static void drawFilledRoundRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int arc, int color, Graphics::Patterns &patterns, byte fillType);
+	static void drawHLine(Graphics::ManagedSurface *surface, int x1, int x2, int y, int thickness, int color, Graphics::Patterns &patterns, byte fillType);
+	static void drawVLine(Graphics::ManagedSurface *surface, int x, int y1, int y2, int thickness, int color, Graphics::Patterns &patterns, byte fillType);
 
 	bool isBoundsCalculation() { return _boundsCalculationMode; }
 	void adjustBounds(int16 x, int16 y);
@@ -88,15 +88,15 @@ private:
 	bool _boundsCalculationMode;
 
 private:
-	void render(Patterns &patterns);
+	void render(Graphics::Patterns &patterns);
 	void drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
-		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
+		Graphics::Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 	void drawRoundRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
-		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
+		Graphics::Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 	void drawPolygon(Graphics::ManagedSurface *surface, Common::ReadStream &in,
-		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
+		Graphics::Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 	void drawOval(Graphics::ManagedSurface *surface, Common::ReadStream &in,
-		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
+		Graphics::Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 	void drawBitmap(Graphics::ManagedSurface *surface, Common::SeekableReadStream &in);
 };
 

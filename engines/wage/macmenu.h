@@ -48,6 +48,10 @@
 #ifndef WAGE_MACMENU_H
 #define WAGE_MACMENU_H
 
+namespace Graphics {
+	class MacWindowManager;
+}
+
 namespace Wage {
 
 struct MenuItem;
@@ -101,7 +105,7 @@ struct MenuData {
 
 class Menu : public BaseMacWindow {
 public:
-	Menu(int id, const Common::Rect &bounds, MacWindowManager *wm);
+	Menu(int id, const Common::Rect &bounds, Graphics::MacWindowManager *wm);
 	~Menu();
 
 	void setCommandsCallback(void (*callback)(int, Common::String &, void *), void *data) { _ccallback = callback; _cdata = data; }

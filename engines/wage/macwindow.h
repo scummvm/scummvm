@@ -50,9 +50,11 @@
 
 #include "graphics/managed_surface.h"
 
-namespace Wage {
+namespace Graphics {
+	class MacWindowManager;
+}
 
-class MacWindowManager;
+namespace Wage {
 
 enum WindowType {
 	kWindowUnknown,
@@ -76,7 +78,7 @@ enum WindowClick {
 
 class BaseMacWindow {
 public:
-	BaseMacWindow(int id, bool editable, MacWindowManager *wm);
+	BaseMacWindow(int id, bool editable, Graphics::MacWindowManager *wm);
 	virtual ~BaseMacWindow() {}
 
 	const Common::Rect &getDimensions() { return _dims; }
@@ -108,12 +110,12 @@ protected:
 	bool (*_callback)(WindowClick, Common::Event &, void *);
 	void *_dataPtr;
 
-	MacWindowManager *_wm;
+	Graphics::MacWindowManager *_wm;
 };
 
 class MacWindow : public BaseMacWindow {
 public:
-	MacWindow(int id, bool scrollable, bool resizable, bool editable, MacWindowManager *wm);
+	MacWindow(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm);
 	virtual ~MacWindow();
 	void move(int x, int y);
 	void resize(int w, int h);

@@ -47,15 +47,15 @@
 
 #include "graphics/managed_surface.h"
 #include "graphics/primitives.h"
+#include "graphics/macgui/macwindowmanager.h"
 
-#include "wage/macwindowmanager.h"
 #include "wage/design.h"
 
 namespace Wage {
 
 struct PlotData {
 	Graphics::ManagedSurface *surface;
-	Patterns *patterns;
+	Graphics::Patterns *patterns;
 	uint fillType;
 	int thickness;
 	Design *design;

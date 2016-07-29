@@ -28,7 +28,8 @@ MODULE_OBJS := \
 	VectorRenderer.o \
 	VectorRendererSpec.o \
 	wincursor.o \
-	yuv_to_rgb.o
+	yuv_to_rgb.o \
+	macgui/macwindowmanager.o
 
 ifdef USE_SCALERS
 MODULE_OBJS += \

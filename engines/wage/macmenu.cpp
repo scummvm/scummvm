@@ -50,8 +50,8 @@
 
 #include "graphics/primitives.h"
 #include "graphics/font.h"
+#include "graphics/macgui/macwindowmanager.h"
 
-#include "wage/macwindowmanager.h"
 #include "wage/macwindow.h"
 #include "wage/macmenu.h"
 
@@ -89,7 +89,7 @@ struct MenuItem {
 	MenuItem(const char *n) : name(n) {}
 };
 
-Menu::Menu(int id, const Common::Rect &bounds, MacWindowManager *wm)
+Menu::Menu(int id, const Common::Rect &bounds, Graphics::MacWindowManager *wm)
 		: BaseMacWindow(id, false, wm) {
 	_font = getMenuFont();
 

@@ -45,8 +45,8 @@
  *
  */
 
-#ifndef WAGE_MACWINDOWMANAGER_H
-#define WAGE_MACWINDOWMANAGER_H
+#ifndef GRAPHICS_MACWINDOWMANAGER_H
+#define GRAPHICS_MACWINDOWMANAGER_H
 
 #include "common/array.h"
 #include "common/list.h"
@@ -55,11 +55,15 @@
 
 #include "graphics/fontman.h"
 
-namespace Graphics {
-class ManagedSurface;
-}
+#include "engines\wage\macwindow.h"
 
 namespace Wage {
+	class MacWindow;
+	class BaseMacWindow;
+	class Menu;
+}
+
+namespace Graphics {	
 
 enum {
 	kDesktopArc = 7
@@ -80,9 +84,7 @@ enum {
 	kPatternCheckers2 = 4
 };
 
-class BaseMacWindow;
-class MacWindow;
-class Menu;
+class ManagedSurface;
 
 typedef Common::Array<byte *> Patterns;
 
@@ -91,12 +93,12 @@ public:
 	MacWindowManager();
 	~MacWindowManager();
 
-	void setScreen(Graphics::ManagedSurface *screen) { _screen = screen; }
+	void setScreen(ManagedSurface *screen) { _screen = screen; }
 	bool hasBuiltInFonts() { return _builtInFonts; }
-	const Graphics::Font *getFont(const char *name, Graphics::FontManager::FontUsage fallback);
+	const Font *getFont(const char *name, FontManager::FontUsage fallback);
 
-	MacWindow *addWindow(bool scrollable, bool resizable, bool editable);
-	Menu *addMenu();
+	Wage::MacWindow *addWindow(bool scrollable, bool resizable, bool editable);
+	Wage::Menu *addMenu();
 	void setActive(int id);
 
 	void setFullRefresh(bool redraw) { _fullRefresh = true; }
@@ -105,10 +107,10 @@ public:
 
 	bool processEvent(Common::Event &event);
 
-	BaseMacWindow *getWindow(int id) { return _windows[id]; }
+	Wage::BaseMacWindow *getWindow(int id) { return _windows[id]; }
 
 	Patterns &getPatterns() { return _patterns; }
-	void drawFilledRoundRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int arc, int color);
+	void drawFilledRoundRect(ManagedSurface *surface, Common::Rect &rect, int arc, int color);
 
 	void pushArrowCursor();
 	void popCursor();
@@ -118,10 +120,10 @@ private:
 	void loadFonts();
 
 private:
-	Graphics::ManagedSurface *_screen;
+	ManagedSurface *_screen;
 
-	Common::List<BaseMacWindow *> _windowStack;
-	Common::Array<BaseMacWindow *> _windows;
+	Common::List<Wage::BaseMacWindow *> _windowStack;
+	Common::Array<Wage::BaseMacWindow *> _windows;
 
 	int _lastId;
 	int _activeWindow;
@@ -130,12 +132,36 @@ private:
 
 	Patterns _patterns;
 
-	Menu *_menu;
+	Wage::Menu *_menu;
 
 	bool _builtInFonts;
 	bool _cursorIsArrow;
 };
 
-} // End of namespace Wage
+} // End of namespace Graphics
+
+namespace Wage {
+	typedef Graphics::Patterns Patterns;
+	
+	enum {
+		kDesktopArc = 7
+	};
+
+	enum {
+		kColorBlack = 0,
+		kColorGray = 1,
+		kColorWhite = 2,
+		kColorGreen = 3,
+		kColorGreen2 = 4
+	};
+
+	enum {
+		kPatternSolid = 1,
+		kPatternStripes = 2,
+		kPatternCheckers = 3,
+		kPatternCheckers2 = 4
+	};
+}
+
 
 #endif

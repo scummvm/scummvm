@@ -11,7 +11,6 @@ MODULE_OBJS := \
 	gui-console.o \
 	macmenu.o \
 	macwindow.o \
-	macwindowmanager.o \
 	randomhat.o \
 	saveload.o \
 	script.o \
