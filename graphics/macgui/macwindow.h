@@ -161,5 +161,4 @@ private:
 
 } // End of namespace Graphics
 
-
 #endif
