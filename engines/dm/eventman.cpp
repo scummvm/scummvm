@@ -748,7 +748,7 @@ void EventManager::f380_processCommandQueue() {
 			}
 			_vm->_menuMan->f456_drawDisabledMenu();
 			_vm->_championMan->_g300_partyIsSleeping = true;
-			warning(false, "MISSING CODE: F0379_COMMAND_DrawSleepScreen();");
+			f379_drawSleepScreen();
 			_vm->_displayMan->f97_drawViewport(k2_viewportAsBeforeSleepOrFreezeGame);
 			_vm->_g318_waitForInputMaxVerticalBlankCount = 0;
 			_vm->_eventMan->_g441_primaryMouseInput = g450_PrimaryMouseInput_PartySleeping;
@@ -1297,7 +1297,7 @@ bool EventManager::f360_hasPendingClick(Common::Point& point, MouseButton button
 }
 
 void EventManager::f379_drawSleepScreen() {
-	_vm->_displayMan->f134_fillBitmap(_vm->_displayMan->_g296_bitmapViewport, k0_ColorBlack, 224, 136); // TODO: localization
+	_vm->_displayMan->f134_fillBitmap(_vm->_displayMan->_g296_bitmapViewport, k0_ColorBlack, 112, 136); // TODO: localization
 }
 
 void EventManager::f357_discardAllInput() {
