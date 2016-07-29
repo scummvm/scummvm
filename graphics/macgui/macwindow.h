@@ -51,6 +51,7 @@
 #include "graphics/managed_surface.h"
 #include "graphics/transparent_surface.h"
 #include "graphics/nine_patch.h"
+#include "graphics/palette.h"
 
 namespace Graphics {
 
@@ -126,6 +127,7 @@ public:
 	const Common::Rect &getInnerDimensions() { return _innerDims; }
 
 	bool draw(ManagedSurface *g, bool forceRedraw = false);
+	bool drawTR(Surface &g, int x, int y, int w, int h, bool forceRedraw);
 
 	void setActive(bool active);
 	void setTitle(Common::String &title) { _title = title; }
@@ -134,21 +136,21 @@ public:
 	bool processEvent(Common::Event &event);
 	bool hasAllFocus() { return _beingDragged || _beingResized; }
 
+	void setBorders(TransparentSurface *source);
+
 private:
 	void drawBorder();
 	void drawBox(ManagedSurface *g, int x, int y, int w, int h);
 	void fillRect(ManagedSurface *g, int x, int y, int w, int h, int color);
 	const Font *getTitleFont();
 	void updateInnerDims();
-	WindowClick isInBorder(int x, int y);
-
-	void initBorders(ManagedSurface *tr);
+	WindowClick isInBorder(int x, int y);	
 
 private:
 	ManagedSurface _borderSurface;
 	ManagedSurface _composeSurface;
 
-	NinePatchBitmap *_bmp;
+	NinePatchBitmap _bmp;
 
 	bool _scrollable;
 	bool _resizable;
