@@ -397,7 +397,25 @@ int DeskbotScript::getStateDialogueId() const {
 }
 
 void DeskbotScript::setFlags17(int newId, int index) {
-	// TODO
+	int newValue = getValue(17);
+
+	for (uint idx = 0; idx < _states.size(); ++idx) {
+		const TTupdateState3 &us = _states[idx];
+		if (newId == (idx == 0 ? 0 : us._newId)) {
+			uint bits = us._dialBits;
+
+			if (!bits
+				|| (index == 1 && (bits & 1) && (bits & 4))
+				|| (index == 0 && (bits & 2) && (bits & 4))
+				|| (index == 3 && (bits & 1) && (bits & 8))
+				|| (index == 2 && (bits & 2) && (bits & 8))) {
+				newValue = us._newValue;
+				break;
+			}
+		}
+	}
+
+	CTrueTalkManager::setFlags(17, newValue);
 }
 
 } // End of namespace Titanic

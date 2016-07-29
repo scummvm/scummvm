@@ -974,22 +974,23 @@ int BarbotScript::updateState(uint oldId, uint newId, int index) {
 		return 251701 + _field7C ? 3 : 0;
 	}
 
-	for (const TTupdateState3 *us = &_states[0]; us->_newId; ++us) {
-		if (us->_newId == newId) {
-			if ((us->_dialBits & 1) && !getDialRegion(0))
+	for (uint idx = 0; idx < _states.size(); ++idx) {
+		const TTupdateState3 &us = _states[idx];
+		if (us._newId == newId) {
+			if ((us._dialBits & 1) && !getDialRegion(0))
 				continue;
-			if ((us->_dialBits & 2) && getDialRegion(0))
+			if ((us._dialBits & 2) && getDialRegion(0))
 				continue;
-			if ((us->_dialBits & 4) && !getDialRegion(1))
+			if ((us._dialBits & 4) && !getDialRegion(1))
 				continue;
-			if ((us->_dialBits & 8) && getDialRegion(1))
+			if ((us._dialBits & 8) && getDialRegion(1))
 				continue;
-			if ((us->_dialBits & 0x10) && !getDialRegion(2))
+			if ((us._dialBits & 0x10) && !getDialRegion(2))
 				continue;
-			if ((us->_dialBits & 0x20) && getDialRegion(2))
+			if ((us._dialBits & 0x20) && getDialRegion(2))
 				continue;
 
-			setState(us->_newValue);
+			setState(us._newValue);
 			break;
 		}
 	}
