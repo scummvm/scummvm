@@ -167,18 +167,7 @@ void UploadFileClientHandler::handleBlockContent(Client *client) {
 
 		if (client->noMoreContent()) {
 			// success - redirect back to directory listing
-			HandlerUtils::setMessageHandler(
-				*client,
-				Common::String::format(
-					"%s<br/><a href=\"files?path=%s\">%s</a>",
-					_("Uploaded successfully!"),
-					client->queryParameter("path").c_str(),
-					_("Back to parent directory")
-				),
-				(client->queryParameter("ajax") == "true" ? "/filesAJAX?path=" : "/files?path=") +
-				LocalWebserver::urlEncodeQueryParameterValue(client->queryParameter("path"))
-			);
-			_state = UFH_STOP;
+			setSuccessHandler(*client);
 			return;
 		}
 	}
@@ -189,15 +178,30 @@ void UploadFileClientHandler::handleBlockContent(Client *client) {
 		if (_uploadedFiles == 0) {
 			setErrorMessageHandler(*client, _("No file was passed!"));
 		} else {
-			_state = UFH_STOP;
+			setSuccessHandler(*client);
 		}
-		return;
 	}
 }
 
 void UploadFileClientHandler::setErrorMessageHandler(Client &client, Common::String message) {
 	HandlerUtils::setFilesManagerErrorMessageHandler(client, message);
 	_state = UFH_ERROR;
+}
+
+void UploadFileClientHandler::setSuccessHandler(Client &client) {
+	// success - redirect back to directory listing
+	HandlerUtils::setMessageHandler(
+		client,
+		Common::String::format(
+			"%s<br/><a href=\"files?path=%s\">%s</a>",
+			_("Uploaded successfully!"),
+			client.queryParameter("path").c_str(),
+			_("Back to parent directory")
+			),
+		(client.queryParameter("ajax") == "true" ? "/filesAJAX?path=" : "/files?path=") +
+		LocalWebserver::urlEncodeQueryParameterValue(client.queryParameter("path"))
+	);
+	_state = UFH_STOP;
 }
 
 } // End of namespace Networking
