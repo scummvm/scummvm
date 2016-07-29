@@ -229,6 +229,8 @@ private:
 
 /**
  * VMDPlayer is used to play VMD videos.
+ * Used by Phant1, GK2, PQ:SWAT, Shivers, SQ6,
+ * Torin, and Lighthouse.
  */
 class VMDPlayer {
 public:
@@ -493,6 +495,10 @@ private:
 	bool _showCursor;
 };
 
+/**
+ * Video32 provides facilities for playing back
+ * video in SCI engine.
+ */
 class Video32 {
 public:
 	Video32(SegManager *segMan, EventManager *eventMan) :
