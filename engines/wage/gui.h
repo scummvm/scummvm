@@ -154,6 +154,7 @@ private:
 	int calcTextX(int x, int textLine);
 	int calcTextY(int y);
 	void updateTextSelection(int x, int y);
+	
 	void loadBorders();
 
 public:
@@ -173,9 +174,10 @@ public:
 	Graphics::MacWindow *_sceneWindow;
 	Graphics::MacWindow *_consoleWindow;
 
-	Graphics::TransparentSurface _borders;
-
 private:
+	Graphics::TransparentSurface *_activeBorder;
+	Graphics::TransparentSurface *_inactiveBorder;
+
 	Graphics::ManagedSurface _console;
 	Graphics::Menu *_menu;
 	bool _sceneDirty;

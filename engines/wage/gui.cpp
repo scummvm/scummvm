@@ -170,7 +170,8 @@ Gui::Gui(WageEngine *engine) {
 	_consoleWindow->setCallback(consoleWindowCallback, this);
 
 	loadBorders();
-	_sceneWindow->setBorders(&_borders);
+	_sceneWindow->setBorder(_activeBorder, true);
+	_sceneWindow->setBorder(_inactiveBorder, false);
 }
 
 Gui::~Gui() {
@@ -368,7 +369,7 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 
 void Gui::loadBorders() {
 	Common::File borderfile;
-	if (!borderfile.open("border.bmp")) {
+	if (!borderfile.open("border_act.bmp")) {
 		debug(1, "Cannot open border file");
 		return;
 	}
@@ -380,19 +381,35 @@ void Gui::loadBorders() {
 	if (stream) {
 		bmpDecoder.loadStream(*stream);	
 		source = *(bmpDecoder.getSurface());
-		source.convertToInPlace(_borders.getSupportedPixelFormat(), bmpDecoder.getPalette());
-		_borders.create(source.w, source.h, source.format);
-		_borders.copyFrom(source);
-		_borders.applyColorKey(255, 0, 255, false);
+
+		_activeBorder = new Graphics::TransparentSurface();
+		source.convertToInPlace(_activeBorder->getSupportedPixelFormat(), bmpDecoder.getPalette());		
+		_activeBorder->create(source.w, source.h, source.format);
+		_activeBorder->copyFrom(source);
+		_activeBorder->applyColorKey(255, 0, 255, false);
 
 		delete stream;
-
-		//g_system->copyRectToScreen(source.getPixels(), source.pitch, 40, 0, source.w, source.h);
-		//g_system->copyRectToScreen(_borders.getPixels(), _borders.pitch, 40, 100, _borders.w, _borders.h);
-		//g_system->updateScreen();
 	}
 
-	debug(1, "Hello");
+	if (!borderfile.open("border_inac.bmp")) {
+		debug(1, "Cannot open border file");
+		return;
+	}
+	
+	stream = borderfile.readStream(borderfile.size());
+
+	if (stream) {
+		bmpDecoder.loadStream(*stream);
+		source = *(bmpDecoder.getSurface());
+
+		_inactiveBorder = new Graphics::TransparentSurface();
+		source.convertToInPlace(_inactiveBorder->getSupportedPixelFormat(), bmpDecoder.getPalette());
+		_inactiveBorder->create(source.w, source.h, source.format);
+		_inactiveBorder->copyFrom(source);
+		_inactiveBorder->applyColorKey(255, 0, 255, false);
+
+		delete stream;
+	}
 }
 
 } // End of namespace Wage
