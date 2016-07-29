@@ -1668,8 +1668,8 @@ int16 MenuMan::f382_getActionObjectChargeCount() {
 }
 
 void MenuMan::f385_drawActionDamage(int16 damage) {
-	static Box G0502_s_Graphic560_Box_ActionAreaMediumDamage = {242, 305, 81, 117};
-	static Box G0503_s_Graphic560_Box_ActionAreaSmallDamage = {251, 292, 81, 117};
+	static const Box G0502_s_Graphic560_Box_ActionAreaMediumDamage = Box(242, 305, 81, 117);
+	static const Box G0503_s_Graphic560_Box_ActionAreaSmallDamage = Box(251, 292, 81, 117);
 
 	uint16 L1174_ui_Multiple;
 #define AL1174_ui_DerivedBitmapIndex L1174_ui_Multiple
@@ -1683,7 +1683,7 @@ void MenuMan::f385_drawActionDamage(int16 damage) {
 #define AL1178_puc_String L1178_puc_Multiple
 #define AL1178_puc_Bitmap L1178_puc_Multiple
 	char L1179_ac_String[6];
-	Box* L1180_ps_Box;
+	const Box* L1180_ps_Box;
 	int16 L1643_i_Width;
 
 	_vm->_eventMan->f78_showMouse();
@@ -1725,7 +1725,7 @@ void MenuMan::f385_drawActionDamage(int16 damage) {
 				L1177_puc_Bitmap = _vm->_displayMan->f492_getDerivedBitmap(AL1174_ui_DerivedBitmapIndex);
 			}
 		}
-		_vm->_displayMan->f21_blitToScreen(L1177_puc_Bitmap, L1180_ps_Box, L1175_i_ByteWidth, kM1_ColorNoTransparency, L1643_i_Width);
+		_vm->_displayMan->f21_blitToScreen(L1177_puc_Bitmap, (int16 *)L1180_ps_Box, L1175_i_ByteWidth, kM1_ColorNoTransparency, L1643_i_Width);
 		/* Convert damage value to string */
 		AL1174_ui_CharacterIndex = 5;
 		AL1176_i_X = 274;
