@@ -58,6 +58,14 @@
 #include "common/events.h"
 #include "common/rect.h"
 
+#include "common/file.h"
+#include "graphics/pixelformat.h"
+#include "image/bmp.h"
+#include "image/png.h"
+
+#include "graphics/primitives.h"
+
+
 namespace Wage {
 
 using namespace Graphics::MacWindowConstants;
@@ -147,6 +155,7 @@ private:
 	int calcTextX(int x, int textLine);
 	int calcTextY(int y);
 	void updateTextSelection(int x, int y);
+	void loadBorders();
 
 public:
 	Graphics::ManagedSurface _screen;
@@ -164,6 +173,8 @@ public:
 	Graphics::MacWindowManager _wm;
 	Graphics::MacWindow *_sceneWindow;
 	Graphics::MacWindow *_consoleWindow;
+
+	Graphics::TransparentSurface _borders;
 
 private:
 	Graphics::ManagedSurface _console;

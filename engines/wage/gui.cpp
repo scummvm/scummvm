@@ -168,6 +168,9 @@ Gui::Gui(WageEngine *engine) {
 
 	_consoleWindow = _wm.addWindow(true, true, true);
 	_consoleWindow->setCallback(consoleWindowCallback, this);
+
+	loadBorders();
+	//_sceneWindow->setBorders(&_borders);
 }
 
 Gui::~Gui() {
@@ -220,6 +223,8 @@ void Gui::draw() {
 	_sceneDirty = false;
 	_consoleDirty = false;
 	_consoleFullRedraw = false;
+
+	loadBorders();
 }
 
 void Gui::drawScene() {
@@ -228,7 +233,7 @@ void Gui::drawScene() {
 
 	_scene->paint(_sceneWindow->getSurface(), 0, 0);
 	_sceneWindow->setDirty(true);
-
+	
 	_sceneDirty = true;
 	_consoleDirty = true;
 	_menu->setDirty(true);
@@ -361,6 +366,35 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 		warning("Unknown action: %d", action);
 
 	}
+}
+
+void Gui::loadBorders() {
+	Common::File borderfile;
+	if (!borderfile.open("borders.bmp")) {
+		debug(1, "Cannot open border file");
+		return;
+	}
+
+	Image::BitmapDecoder bmpDecoder;
+	Common::SeekableReadStream *stream = borderfile.readStream(borderfile.size());
+	const Graphics::Surface * source;
+
+	if (stream) {
+		bmpDecoder.loadStream(*stream);		
+		source = bmpDecoder.getSurface();		
+
+		_borders.create(source->w, source->h, source->format);
+		_borders.copyRectToSurface(*source, 0, 0, Common::Rect(0, 0, source->w, source->h));
+		//source = source->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 0, 0, 0));
+
+		delete stream;
+
+		g_system->copyRectToScreen(source->getPixels(), source->pitch, 40, 0, source->w, source->h);
+		g_system->copyRectToScreen(_borders.getPixels(), _borders.pitch, 40, 100, _borders.w, _borders.h);
+		g_system->updateScreen();
+	}
+
+	debug(1, "Hello");
 }
 
 } // End of namespace Wage
