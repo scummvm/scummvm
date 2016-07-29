@@ -62,6 +62,7 @@ public:
 	MacWindowBorder();
 	~MacWindowBorder();
 
+	bool empty();
 	void addActiveBorder(TransparentSurface *source);
 	void addInactiveBorder(TransparentSurface *source);
 	void blitBorderInto(ManagedSurface &destination, bool active);

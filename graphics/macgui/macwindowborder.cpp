@@ -15,6 +15,8 @@ MacWindowBorder::~MacWindowBorder() {
 		delete _inactiveBorder;
 }
 
+bool MacWindowBorder::empty() { return !(_activeBorder || _inactiveBorder); }
+
 void MacWindowBorder::addActiveBorder(TransparentSurface *source) {
 	// Assumes NinePatchBitmap invariants hold
 	_activeBorder = new NinePatchBitmap(source, false);	

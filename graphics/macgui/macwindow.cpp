@@ -186,7 +186,7 @@ void MacWindow::drawBorder() {
 	ManagedSurface *g = &_borderSurface;
 	prepareBorderSurface(g);
 
-	if (_borders)
+	if (!_macBorder.empty())
 		drawBorderFromSurface(g);
 	else
 		drawSimpleBorder(g);
@@ -203,12 +203,11 @@ void MacWindow::prepareBorderSurface(ManagedSurface *g) {
 }
 
 void MacWindow::drawBorderFromSurface(ManagedSurface *g) {
-	assert(_borders);
 
 	TransparentSurface srf;
 	srf.create(_borderSurface.w, _borderSurface.h, _borders->format);
 
-	_macBorder.blitBorderInto(_borderSurface, false);
+	_macBorder.blitBorderInto(_borderSurface, _active);
 	_borderSurface.transBlitFrom(srf, _borderSurface.format.ARGBToColor(0, 255, 255, 255));
 }
 
@@ -302,10 +301,12 @@ void MacWindow::setHighlight(WindowClick highlightedPart) {
 	_borderIsDirty = true;
  }
 
- void MacWindow::setBorders(TransparentSurface *source) {
+ void MacWindow::setBorder(TransparentSurface *source, bool active) {
 	 _borders = new TransparentSurface(*source);
-	 if (_borders)
-		 _macBorder.addInactiveBorder(_borders);
+	 if (active)
+		 _macBorder.addActiveBorder(_borders);
+	 else	
+		_macBorder.addInactiveBorder(_borders);
  }
 
 
