@@ -68,14 +68,15 @@ void yyerror(char *s) {
 
 %union {
 	Common::String *s;
-	int	i;
+	int i;
 	double f;
 	int e[2];	// Entity + field
 	int code;
-	int	narg;	/* number of arguments */
+	int narg;	/* number of arguments */
+	Common::Array<double> *arr;
 }
 
-%token CASTREF UNARY VOID VAR
+%token CASTREF UNARY VOID VAR POINT RECT ARRAY
 %token<i> INT
 %token<e> THEENTITY THEENTITYWITHID
 %token<f> FLOAT

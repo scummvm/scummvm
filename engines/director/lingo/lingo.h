@@ -76,6 +76,7 @@ typedef void (*inst)(void);
 #define	STOP (inst)0
 
 typedef Common::Array<inst> ScriptData;
+typedef Common::Array<double> FloatArray;
 
 struct Symbol {	/* symbol table entry */
 	char *name;
@@ -85,6 +86,7 @@ struct Symbol {	/* symbol table entry */
 		double	f;			/* FLOAT */
 		ScriptData	*defn;	/* FUNCTION, PROCEDURE */
 		Common::String	*s;	/* STRING */
+		FloatArray *arr;	/* ARRAY, POINT, RECT */
 	} u;
 	int nargs;
 	bool global;
@@ -100,6 +102,7 @@ struct Datum {	/* interpreter stack type */
 		double f;
 		Common::String *s;
 		Symbol	*sym;
+		FloatArray *arr;	/* ARRAY, POINT, RECT */
 	} u;
 
 	Datum() { u.sym = NULL; type = VOID; }
@@ -257,6 +260,8 @@ public:
 	static void b_tan();
 
 	static void b_dontpassevent();
+
+	static void b_point();
 
 	void func_mci(Common::String &s);
 	void func_mciwait(Common::String &s);

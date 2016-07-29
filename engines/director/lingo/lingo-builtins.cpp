@@ -49,6 +49,8 @@ static struct BuiltinProto {
 	{ "string",	Lingo::b_string, 1},
 	// Misc
 	{ "dontpassevent", Lingo::b_dontpassevent, -1 },
+	// point
+	{ "point",	Lingo::b_point, 2},
 	{ 0, 0, 0 }
 };
 
@@ -215,5 +217,26 @@ void Lingo::b_string() {
 void Lingo::b_dontpassevent() {
 	warning("STUB: b_dontpassevent");
 }
+
+///////////////////
+// Point
+///////////////////
+void Lingo::b_point() {
+	Datum y = g_lingo->pop();
+	Datum x = g_lingo->pop();
+	Datum d;
+
+	x.toFloat();
+	y.toFloat();
+
+	d.u.arr = new FloatArray;
+
+	d.u.arr->push_back(x.u.f);
+	d.u.arr->push_back(y.u.f);
+	d.type = POINT;
+
+	g_lingo->push(d);
+}
+
 
 } // End of namespace Director

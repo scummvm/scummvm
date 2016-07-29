@@ -43,59 +43,62 @@
      UNARY = 259,
      VOID = 260,
      VAR = 261,
-     INT = 262,
-     THEENTITY = 263,
-     THEENTITYWITHID = 264,
-     FLOAT = 265,
-     BLTIN = 266,
-     BLTINNOARGS = 267,
-     ID = 268,
-     STRING = 269,
-     HANDLER = 270,
-     tDOWN = 271,
-     tELSE = 272,
-     tNLELSIF = 273,
-     tEND = 274,
-     tEXIT = 275,
-     tFRAME = 276,
-     tGLOBAL = 277,
-     tGO = 278,
-     tIF = 279,
-     tINTO = 280,
-     tLOOP = 281,
-     tMACRO = 282,
-     tMCI = 283,
-     tMCIWAIT = 284,
-     tMOVIE = 285,
-     tNEXT = 286,
-     tOF = 287,
-     tPREVIOUS = 288,
-     tPUT = 289,
-     tREPEAT = 290,
-     tSET = 291,
-     tTHEN = 292,
-     tTO = 293,
-     tWHEN = 294,
-     tWITH = 295,
-     tWHILE = 296,
-     tNLELSE = 297,
-     tFACTORY = 298,
-     tMETHOD = 299,
-     tGE = 300,
-     tLE = 301,
-     tGT = 302,
-     tLT = 303,
-     tEQ = 304,
-     tNEQ = 305,
-     tAND = 306,
-     tOR = 307,
-     tNOT = 308,
-     tCONCAT = 309,
-     tCONTAINS = 310,
-     tSTARTS = 311,
-     tSPRITE = 312,
-     tINTERSECTS = 313,
-     tWITHIN = 314
+     POINT = 262,
+     RECT = 263,
+     ARRAY = 264,
+     INT = 265,
+     THEENTITY = 266,
+     THEENTITYWITHID = 267,
+     FLOAT = 268,
+     BLTIN = 269,
+     BLTINNOARGS = 270,
+     ID = 271,
+     STRING = 272,
+     HANDLER = 273,
+     tDOWN = 274,
+     tELSE = 275,
+     tNLELSIF = 276,
+     tEND = 277,
+     tEXIT = 278,
+     tFRAME = 279,
+     tGLOBAL = 280,
+     tGO = 281,
+     tIF = 282,
+     tINTO = 283,
+     tLOOP = 284,
+     tMACRO = 285,
+     tMCI = 286,
+     tMCIWAIT = 287,
+     tMOVIE = 288,
+     tNEXT = 289,
+     tOF = 290,
+     tPREVIOUS = 291,
+     tPUT = 292,
+     tREPEAT = 293,
+     tSET = 294,
+     tTHEN = 295,
+     tTO = 296,
+     tWHEN = 297,
+     tWITH = 298,
+     tWHILE = 299,
+     tNLELSE = 300,
+     tFACTORY = 301,
+     tMETHOD = 302,
+     tGE = 303,
+     tLE = 304,
+     tGT = 305,
+     tLT = 306,
+     tEQ = 307,
+     tNEQ = 308,
+     tAND = 309,
+     tOR = 310,
+     tNOT = 311,
+     tCONCAT = 312,
+     tCONTAINS = 313,
+     tSTARTS = 314,
+     tSPRITE = 315,
+     tINTERSECTS = 316,
+     tWITHIN = 317
    };
 #endif
 /* Tokens.  */
@@ -103,59 +106,62 @@
 #define UNARY 259
 #define VOID 260
 #define VAR 261
-#define INT 262
-#define THEENTITY 263
-#define THEENTITYWITHID 264
-#define FLOAT 265
-#define BLTIN 266
-#define BLTINNOARGS 267
-#define ID 268
-#define STRING 269
-#define HANDLER 270
-#define tDOWN 271
-#define tELSE 272
-#define tNLELSIF 273
-#define tEND 274
-#define tEXIT 275
-#define tFRAME 276
-#define tGLOBAL 277
-#define tGO 278
-#define tIF 279
-#define tINTO 280
-#define tLOOP 281
-#define tMACRO 282
-#define tMCI 283
-#define tMCIWAIT 284
-#define tMOVIE 285
-#define tNEXT 286
-#define tOF 287
-#define tPREVIOUS 288
-#define tPUT 289
-#define tREPEAT 290
-#define tSET 291
-#define tTHEN 292
-#define tTO 293
-#define tWHEN 294
-#define tWITH 295
-#define tWHILE 296
-#define tNLELSE 297
-#define tFACTORY 298
-#define tMETHOD 299
-#define tGE 300
-#define tLE 301
-#define tGT 302
-#define tLT 303
-#define tEQ 304
-#define tNEQ 305
-#define tAND 306
-#define tOR 307
-#define tNOT 308
-#define tCONCAT 309
-#define tCONTAINS 310
-#define tSTARTS 311
-#define tSPRITE 312
-#define tINTERSECTS 313
-#define tWITHIN 314
+#define POINT 262
+#define RECT 263
+#define ARRAY 264
+#define INT 265
+#define THEENTITY 266
+#define THEENTITYWITHID 267
+#define FLOAT 268
+#define BLTIN 269
+#define BLTINNOARGS 270
+#define ID 271
+#define STRING 272
+#define HANDLER 273
+#define tDOWN 274
+#define tELSE 275
+#define tNLELSIF 276
+#define tEND 277
+#define tEXIT 278
+#define tFRAME 279
+#define tGLOBAL 280
+#define tGO 281
+#define tIF 282
+#define tINTO 283
+#define tLOOP 284
+#define tMACRO 285
+#define tMCI 286
+#define tMCIWAIT 287
+#define tMOVIE 288
+#define tNEXT 289
+#define tOF 290
+#define tPREVIOUS 291
+#define tPUT 292
+#define tREPEAT 293
+#define tSET 294
+#define tTHEN 295
+#define tTO 296
+#define tWHEN 297
+#define tWITH 298
+#define tWHILE 299
+#define tNLELSE 300
+#define tFACTORY 301
+#define tMETHOD 302
+#define tGE 303
+#define tLE 304
+#define tGT 305
+#define tLT 306
+#define tEQ 307
+#define tNEQ 308
+#define tAND 309
+#define tOR 310
+#define tNOT 311
+#define tCONCAT 312
+#define tCONTAINS 313
+#define tSTARTS 314
+#define tSPRITE 315
+#define tINTERSECTS 316
+#define tWITHIN 317
 
 
 
@@ -165,14 +171,15 @@ typedef union YYSTYPE
 #line 69 "engines/director/lingo/lingo-gr.y"
 {
 	Common::String *s;
-	int	i;
+	int i;
 	double f;
 	int e[2];	// Entity + field
 	int code;
-	int	narg;	/* number of arguments */
+	int narg;	/* number of arguments */
+	Common::Array<double> *arr;
 }
 /* Line 1529 of yacc.c.  */
-#line 176 "engines/director/lingo/lingo-gr.hpp"
+#line 183 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

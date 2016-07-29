@@ -304,6 +304,8 @@ const char *Datum::type2str() {
 		return "CASTREF";
 	case VOID:
 		return "VOID";
+	case POINT:
+		return "POINT";
 	default:
 		snprintf(res, 20, "-- (%d) --", type);
 		return res;
