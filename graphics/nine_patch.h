@@ -86,15 +86,25 @@ public:
 	NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bitmap);
 	~NinePatchBitmap();
 
-	void blit(Graphics::Surface &target, int dx, int dy, int dw, int dh);
+	void blit(Graphics::Surface &target, int dx, int dy, int dw, int dh, byte *palette = NULL, byte numColours = 0);
 	void blitClip(Graphics::Surface &target, Common::Rect clip, int dx, int dy, int dw, int dh);
-
+		
 	int getWidth() { return _width; }
 	int getHeight() { return _height; }
 	int getMinWidth() { return _h._fix; }
 	int getMinHeight() { return _v._fix; }
 	Graphics::TransparentSurface *getSource() { return _bmp; }
 	Common::Rect &getPadding() { return _padding; }
+
+private:
+
+	void drawRegions(Graphics::Surface &target, int dx, int dy, int dw, int dh);
+
+	// Assumes color is in the palette
+	byte getColorIndex(uint32 target, byte *palette);
+	uint32 grayscale(uint32 color);
+	uint32 grayscale(byte r, byte g, byte b);
+	byte closestGrayscale(uint32 color, byte* palette, byte paletteLength);
 };
 
 } // end of namespace Graphics

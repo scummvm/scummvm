@@ -74,8 +74,8 @@ public:
 	void addInactiveBorder(TransparentSurface &source);
 
 	bool hasOffsets();
-	void setBorderOffsets(int left, int right, int top, int bottom);
-	int getBorderOffset(MacBorderOffset offset);
+	void setOffsets(int left, int right, int top, int bottom);
+	int getOffset(MacBorderOffset offset);
 
 	void blitBorderInto(ManagedSurface &destination, bool active);
 

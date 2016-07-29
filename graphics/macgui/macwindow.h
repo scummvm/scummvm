@@ -75,6 +75,8 @@ namespace MacWindowConstants {
 		kBorderNone = 0,
 		kBorderScrollUp,
 		kBorderScrollDown,
+		kBorderScrollLeft,
+		kBorderScrollRight,
 		kBorderCloseButton,
 		kBorderInner,
 		kBorderBorder,
@@ -132,13 +134,18 @@ public:
 	bool draw(ManagedSurface *g, bool forceRedraw = false);
 
 	void setActive(bool active);
+	bool isActive();
+
 	void setTitle(Common::String &title) { _title = title; }
 	void setHighlight(WindowClick highlightedPart);
 	void setScroll(float scrollPos, float scrollSize);
 	bool processEvent(Common::Event &event);
 	bool hasAllFocus() { return _beingDragged || _beingResized; }
 
-	void setBorder(TransparentSurface &border, bool active, int lo, int ro, int to, int bo);
+	void loadBorder(Common::SeekableReadStream &file, bool active, int lo, int ro, int to, int bo);
+	//void setBorder(TransparentSurface &border, bool active);
+
+	void setCloseable(bool closeable);
 
 private:
 	void drawBorder();
@@ -150,6 +157,10 @@ private:
 	const Font *getTitleFont();
 	void updateInnerDims();
 	WindowClick isInBorder(int x, int y);
+
+	bool isInCloseButton(int x, int y);
+	bool isInResizeButton(int x, int y);
+	WindowClick isInScroll(int x, int y);
 
 private:
 	ManagedSurface _borderSurface;
@@ -176,6 +187,8 @@ private:
 
 	Common::String _title;
 };
+
+
 
 } // End of namespace Graphics
 

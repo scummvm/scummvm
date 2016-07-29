@@ -184,6 +184,11 @@ void MacWindowManager::setActive(int id) {
     _fullRefresh = true;
 }
 
+void MacWindowManager::removeWindow(MacWindow *target) {
+	_windowsToRemove.push_back(target);
+	_needsRemoval = true;
+}
+
 struct PlotData {
 	Graphics::ManagedSurface *surface;
 	MacPatterns *patterns;
@@ -242,6 +247,8 @@ void MacWindowManager::drawDesktop() {
 void MacWindowManager::draw() {
     assert(_screen);
 
+		removeMarked();
+
 	if (_fullRefresh)
 		drawDesktop();
 
@@ -269,9 +276,9 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 	if (_menu && _menu->processEvent(event))
 		return true;
 
-    if (event.type != Common::EVENT_MOUSEMOVE && event.type != Common::EVENT_LBUTTONDOWN &&
-            event.type != Common::EVENT_LBUTTONUP)
-        return false;
+  if (event.type != Common::EVENT_MOUSEMOVE && event.type != Common::EVENT_LBUTTONDOWN &&
+          event.type != Common::EVENT_LBUTTONUP)
+      return false;
 
 	if (_windows[_activeWindow]->isEditable() && _windows[_activeWindow]->getType() == kWindowWindow &&
 			((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y)) {
@@ -300,6 +307,42 @@ bool MacWindowManager::processEvent(Common::Event &event) {
     }
 
     return false;
+}
+
+void MacWindowManager::removeMarked() {
+	if (!_needsRemoval) return;
+
+	Common::List<BaseMacWindow *>::const_iterator it;
+	for (it = _windowsToRemove.begin(); it != _windowsToRemove.end(); it++) {
+		removeFromStack(*it);
+		removeFromWindowList(*it);
+		delete *it;
+		_activeWindow = 0;
+		_fullRefresh = true;
+	}
+	_windowsToRemove.clear();
+	_needsRemoval = false;
+}
+
+void MacWindowManager::removeFromStack(BaseMacWindow *target) {
+	Common::List<BaseMacWindow *>::iterator stackIt;
+	for (stackIt = _windowStack.begin(); stackIt != _windowStack.end(); stackIt++) {
+		if (*stackIt == target) {
+			stackIt = _windowStack.erase(stackIt);
+			stackIt--;
+		}
+	}
+}
+
+void MacWindowManager::removeFromWindowList(BaseMacWindow *target) {
+	int size = _windows.size();
+	int ndx = 0;
+	for (int i = 0; i < size; i++) {
+		if (_windows[i] == target) {
+			ndx = i;
+		}
+	}
+	_windows.remove_at(ndx);
 }
 
 //////////////////////
