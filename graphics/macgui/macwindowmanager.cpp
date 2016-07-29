@@ -145,8 +145,8 @@ MacWindowManager::~MacWindowManager() {
         delete _windows[i];
 }
 
-Wage::MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool editable) {
-	Wage::MacWindow *w = new Wage::MacWindow(_lastId, scrollable, resizable, editable, this);
+MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool editable) {
+	MacWindow *w = new MacWindow(_lastId, scrollable, resizable, editable, this);
 
     _windows.push_back(w);
     _windowStack.push_back(w);
@@ -246,8 +246,8 @@ void MacWindowManager::draw() {
 	if (_fullRefresh)
 		drawDesktop();
 
-    for (Common::List<Wage::BaseMacWindow *>::const_iterator it = _windowStack.begin(); it != _windowStack.end(); it++) {
-		Wage::BaseMacWindow *w = *it;
+    for (Common::List<BaseMacWindow *>::const_iterator it = _windowStack.begin(); it != _windowStack.end(); it++) {
+		BaseMacWindow *w = *it;
         if (w->draw(_screen, _fullRefresh)) {
             w->setDirty(false);
 
@@ -274,8 +274,8 @@ bool MacWindowManager::processEvent(Common::Event &event) {
             event.type != Common::EVENT_LBUTTONUP)
         return false;
 
-	if (_windows[_activeWindow]->isEditable() && _windows[_activeWindow]->getType() == Wage::kWindowWindow &&
-			((Wage::MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y)) {
+	if (_windows[_activeWindow]->isEditable() && _windows[_activeWindow]->getType() == kWindowWindow &&
+			((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y)) {
 		if (_cursorIsArrow) {
 			CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
 			_cursorIsArrow = false;
@@ -287,9 +287,9 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 		}
 	}
 
-    for (Common::List<Wage::BaseMacWindow *>::const_iterator it = _windowStack.end(); it != _windowStack.begin();) {
+    for (Common::List<BaseMacWindow *>::const_iterator it = _windowStack.end(); it != _windowStack.begin();) {
         it--;
-		Wage::BaseMacWindow *w = *it;
+		BaseMacWindow *w = *it;
 
         if (w->hasAllFocus() || w->getDimensions().contains(event.mouse.x, event.mouse.y)) {
             if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)

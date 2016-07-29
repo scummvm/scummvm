@@ -55,7 +55,7 @@
 
 #include "graphics/fontman.h"
 
-#include "engines\wage\macwindow.h"
+#include "engines/wage/macwindow.h"
 
 namespace Wage {
 	class MacWindow;
@@ -97,7 +97,7 @@ public:
 	bool hasBuiltInFonts() { return _builtInFonts; }
 	const Font *getFont(const char *name, FontManager::FontUsage fallback);
 
-	Wage::MacWindow *addWindow(bool scrollable, bool resizable, bool editable);
+	MacWindow *addWindow(bool scrollable, bool resizable, bool editable);
 	Wage::Menu *addMenu();
 	void setActive(int id);
 
@@ -107,7 +107,7 @@ public:
 
 	bool processEvent(Common::Event &event);
 
-	Wage::BaseMacWindow *getWindow(int id) { return _windows[id]; }
+	BaseMacWindow *getWindow(int id) { return _windows[id]; }
 
 	Patterns &getPatterns() { return _patterns; }
 	void drawFilledRoundRect(ManagedSurface *surface, Common::Rect &rect, int arc, int color);
@@ -122,8 +122,8 @@ private:
 private:
 	ManagedSurface *_screen;
 
-	Common::List<Wage::BaseMacWindow *> _windowStack;
-	Common::Array<Wage::BaseMacWindow *> _windows;
+	Common::List<BaseMacWindow *> _windowStack;
+	Common::Array<BaseMacWindow *> _windows;
 
 	int _lastId;
 	int _activeWindow;

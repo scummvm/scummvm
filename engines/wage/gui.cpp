@@ -110,8 +110,8 @@ static void cursorTimerHandler(void *refCon) {
 	gui->_cursorDirty = true;
 }
 
-static bool sceneWindowCallback(WindowClick click, Common::Event &event, void *gui);
-static bool consoleWindowCallback(WindowClick click, Common::Event &event, void *gui);
+static bool sceneWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui);
+static bool consoleWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui);
 static void menuCommandsCallback(int action, Common::String &text, void *data);
 
 
@@ -235,14 +235,14 @@ void Gui::drawScene() {
 	_consoleFullRedraw = true;
 }
 
-static bool sceneWindowCallback(WindowClick click, Common::Event &event, void *g) {
+static bool sceneWindowCallback(Graphics::WindowClick click, Common::Event &event, void *g) {
 	Gui *gui = (Gui *)g;
 
 	return gui->processSceneEvents(click, event);
 }
 
-bool Gui::processSceneEvents(WindowClick click, Common::Event &event) {
-	if (click == kBorderInner && event.type == Common::EVENT_LBUTTONUP) {
+bool Gui::processSceneEvents(Graphics::WindowClick click, Common::Event &event) {
+	if (click == Graphics::kBorderInner && event.type == Common::EVENT_LBUTTONUP) {
 		Designed *obj = _scene->lookUpEntity(event.mouse.x - _sceneWindow->getDimensions().left,
 												  event.mouse.y - _sceneWindow->getDimensions().top);
 
@@ -260,12 +260,12 @@ void Gui::drawConsole() {
 	if (!_consoleDirty && !_consoleFullRedraw && !_sceneDirty)
 		return;
 
-	renderConsole(_consoleWindow->getSurface(), Common::Rect(kBorderWidth - 2, kBorderWidth - 2,
+	renderConsole(_consoleWindow->getSurface(), Common::Rect(Graphics::kBorderWidth - 2, Graphics::kBorderWidth - 2,
 				_consoleWindow->getDimensions().width(), _consoleWindow->getDimensions().height()));
 	_consoleWindow->setDirty(true);
 }
 
-static bool consoleWindowCallback(WindowClick click, Common::Event &event, void *g) {
+static bool consoleWindowCallback(Graphics::WindowClick click, Common::Event &event, void *g) {
 	Gui *gui = (Gui *)g;
 
 	return gui->processConsoleEvents(click, event);

@@ -50,6 +50,7 @@
 
 namespace Graphics {
 	class MacWindowManager;
+	class BaseMacWindow;
 }
 
 namespace Wage {
@@ -103,7 +104,7 @@ struct MenuData {
 	bool enabled;
 };
 
-class Menu : public BaseMacWindow {
+class Menu : public Graphics::BaseMacWindow {
 public:
 	Menu(int id, const Common::Rect &bounds, Graphics::MacWindowManager *wm);
 	~Menu();

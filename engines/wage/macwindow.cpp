@@ -52,9 +52,9 @@
 
 #include "wage/macwindow.h"
 
-namespace Wage {
+namespace Graphics {
 
-BaseMacWindow::BaseMacWindow(int id, bool editable, Graphics::MacWindowManager *wm) :
+BaseMacWindow::BaseMacWindow(int id, bool editable, MacWindowManager *wm) :
 		_id(id), _editable(editable), _wm(wm) {
 	_callback = 0;
 	_dataPtr = 0;
@@ -64,7 +64,7 @@ BaseMacWindow::BaseMacWindow(int id, bool editable, Graphics::MacWindowManager *
 	_type = kWindowUnknown;
 }
 
-MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm) :
+MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, MacWindowManager *wm) :
 		BaseMacWindow(id, editable, wm), _scrollable(scrollable), _resizable(resizable) {
 	_active = false;
 	_borderIsDirty = true;
@@ -84,8 +84,8 @@ MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Gra
 MacWindow::~MacWindow() {
 }
 
-const Graphics::Font *MacWindow::getTitleFont() {
-	return _wm->getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
+const Font *MacWindow::getTitleFont() {
+	return _wm->getFont("Chicago-12", FontManager::kBigGUIFont);
 }
 
 void MacWindow::setActive(bool active) {
@@ -101,11 +101,11 @@ void MacWindow::resize(int w, int h) {
 		return;
 
 	_surface.free();
-	_surface.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+	_surface.create(w, h, PixelFormat::createFormatCLUT8());
 	_borderSurface.free();
-	_borderSurface.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+	_borderSurface.create(w, h, PixelFormat::createFormatCLUT8());
 	_composeSurface.free();
-	_composeSurface.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+	_composeSurface.create(w, h, PixelFormat::createFormatCLUT8());
 
 	_dims.setWidth(w);
 	_dims.setHeight(h);
@@ -134,7 +134,7 @@ void MacWindow::setDimensions(const Common::Rect &r) {
 	_contentIsDirty = true;
 }
 
-bool MacWindow::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
+bool MacWindow::draw(ManagedSurface *g, bool forceRedraw) {
 	if (!_borderIsDirty && !_contentIsDirty && !forceRedraw)
 		return false;
 
@@ -163,7 +163,7 @@ const int arrowPixels[ARROW_H][ARROW_W] = {
 		{1,1,1,1,1,1,1,1,1,1,1,1}};
 
 static void drawPixelInverted(int x, int y, int color, void *data) {
-	Graphics::ManagedSurface *surface = (Graphics::ManagedSurface *)data;
+	ManagedSurface *surface = (ManagedSurface *)data;
 
 	if (x >= 0 && x < surface->w && y >= 0 && y < surface->h) {
 		byte *p = (byte *)surface->getBasePtr(x, y);
@@ -186,7 +186,7 @@ void MacWindow::drawBorder() {
 	int y = 0;
 	int width = _borderSurface.w;
 	int height = _borderSurface.h;
-	Graphics::ManagedSurface *g = &_borderSurface;
+	ManagedSurface *g = &_borderSurface;
 
 	// We draw rect with outer kColorGreen2 and inner kColorGreen, so on 2 passes we cut out
 	// scene by external shape of the border
@@ -233,7 +233,7 @@ void MacWindow::drawBorder() {
 				int ry2 = ry1 + _dims.height() * _scrollSize;
 				Common::Rect rr(rx1, ry1, rx2, ry2);
 
-				Graphics::drawFilledRect(rr, kColorBlack, drawPixelInverted, g);
+				drawFilledRect(rr, kColorBlack, drawPixelInverted, g);
 			}
 		}
 		if (closeable) {
@@ -246,7 +246,7 @@ void MacWindow::drawBorder() {
 	}
 
 	if (drawTitle) {
-		const Graphics::Font *font = getTitleFont();
+		const Font *font = getTitleFont();
 		int yOff = _wm->hasBuiltInFonts() ? 3 : 1;
 
 		int w = font->getStringWidth(_title) + 10;
@@ -276,14 +276,14 @@ void MacWindow::setScroll(float scrollPos, float scrollSize) {
 }
 
 
-void MacWindow::drawBox(Graphics::ManagedSurface *g, int x, int y, int w, int h) {
+void MacWindow::drawBox(ManagedSurface *g, int x, int y, int w, int h) {
 	Common::Rect r(x, y, x + w + 1, y + h + 1);
 
 	g->fillRect(r, kColorWhite);
 	g->frameRect(r, kColorBlack);
 }
 
-void MacWindow::fillRect(Graphics::ManagedSurface *g, int x, int y, int w, int h, int color) {
+void MacWindow::fillRect(ManagedSurface *g, int x, int y, int w, int h, int color) {
 	Common::Rect r(x, y, x + w, y + h);
 
 	g->fillRect(r, color);

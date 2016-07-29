@@ -92,8 +92,8 @@ public:
 	void disableAllMenus();
 	void enableNewGameMenus();
 
-	bool processSceneEvents(WindowClick click, Common::Event &event);
-	bool processConsoleEvents(WindowClick click, Common::Event &event);
+	bool processSceneEvents(Graphics::WindowClick click, Common::Event &event);
+	bool processConsoleEvents(Graphics::WindowClick click, Common::Event &event);
 	void executeMenuCommand(int action, Common::String &text);
 
 private:
@@ -123,8 +123,8 @@ public:
 	Scene *_scene;
 
 	Graphics::MacWindowManager _wm;
-	MacWindow *_sceneWindow;
-	MacWindow *_consoleWindow;
+	Graphics::MacWindow *_sceneWindow;
+	Graphics::MacWindow *_consoleWindow;
 
 private:
 	Graphics::ManagedSurface _console;

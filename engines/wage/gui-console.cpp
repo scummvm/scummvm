@@ -424,8 +424,8 @@ void Gui::enableNewGameMenus() {
 	_menu->enableCommand(kMenuFile, kMenuActionQuit, true);
 }
 
-bool Gui::processConsoleEvents(WindowClick click, Common::Event &event) {
-	if (click == kBorderScrollUp || click == kBorderScrollDown) {
+bool Gui::processConsoleEvents(Graphics::WindowClick click, Common::Event &event) {
+	if (click == Graphics::kBorderScrollUp || click == Graphics::kBorderScrollDown) {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
 			int consoleHeight = _consoleWindow->getInnerDimensions().height();
 			int textFullSize = _lines.size() * _consoleLineHeight + consoleHeight;
@@ -439,14 +439,14 @@ bool Gui::processConsoleEvents(WindowClick click, Common::Event &event) {
 			int oldScrollPos = _scrollPos;
 
 			switch (click) {
-			case kBorderScrollUp:
+			case Graphics::kBorderScrollUp:
 				_scrollPos = MAX<int>(0, _scrollPos - _consoleLineHeight);
 				undrawCursor();
 				_cursorY -= (_scrollPos - oldScrollPos);
 				_consoleDirty = true;
 				_consoleFullRedraw = true;
 				break;
-			case kBorderScrollDown:
+			case Graphics::kBorderScrollDown:
 				_scrollPos = MIN<int>((_lines.size() - 2) * _consoleLineHeight, _scrollPos + _consoleLineHeight);
 				undrawCursor();
 				_cursorY -= (_scrollPos - oldScrollPos);
@@ -463,14 +463,14 @@ bool Gui::processConsoleEvents(WindowClick click, Common::Event &event) {
 		return false;
 	}
 
-	if (click == kBorderResizeButton) {
+	if (click == Graphics::kBorderResizeButton) {
 		_consoleDirty = true;
 		_consoleFullRedraw = true;
 
 		return true;
 	}
 
-	if (click == kBorderInner) {
+	if (click == Graphics::kBorderInner) {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
 			startMarking(event.mouse.x, event.mouse.y);
 

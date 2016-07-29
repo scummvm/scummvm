@@ -45,16 +45,14 @@
  *
  */
 
-#ifndef WAGE_MACWINDOW_H
-#define WAGE_MACWINDOW_H
+#ifndef GRAPHICS_MACWINDOW_H
+#define GRAPHICS_MACWINDOW_H
 
 #include "graphics/managed_surface.h"
 
 namespace Graphics {
-	class MacWindowManager;
-}
 
-namespace Wage {
+class MacWindowManager;
 
 enum WindowType {
 	kWindowUnknown,
@@ -78,18 +76,18 @@ enum WindowClick {
 
 class BaseMacWindow {
 public:
-	BaseMacWindow(int id, bool editable, Graphics::MacWindowManager *wm);
+	BaseMacWindow(int id, bool editable, MacWindowManager *wm);
 	virtual ~BaseMacWindow() {}
 
 	const Common::Rect &getDimensions() { return _dims; }
 	int getId() { return _id; }
 	WindowType getType() { return _type; }
 	bool isEditable() { return _editable; }
-	Graphics::ManagedSurface *getSurface() { return &_surface; }
+	ManagedSurface *getSurface() { return &_surface; }
 	virtual void setActive(bool active) = 0;
 	void setDirty(bool dirty) { _contentIsDirty = dirty; }
 
-	virtual bool draw(Graphics::ManagedSurface *g, bool forceRedraw = false) = 0;
+	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) = 0;
 	virtual bool processEvent(Common::Event &event) = 0;
 
 	virtual bool hasAllFocus() = 0;
@@ -102,7 +100,7 @@ protected:
 
 	bool _editable;
 
-	Graphics::ManagedSurface _surface;
+	ManagedSurface _surface;
 	bool _contentIsDirty;
 
 	Common::Rect _dims;
@@ -110,19 +108,19 @@ protected:
 	bool (*_callback)(WindowClick, Common::Event &, void *);
 	void *_dataPtr;
 
-	Graphics::MacWindowManager *_wm;
+	MacWindowManager *_wm;
 };
 
 class MacWindow : public BaseMacWindow {
 public:
-	MacWindow(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm);
+	MacWindow(int id, bool scrollable, bool resizable, bool editable, MacWindowManager *wm);
 	virtual ~MacWindow();
 	void move(int x, int y);
 	void resize(int w, int h);
 	void setDimensions(const Common::Rect &r);
 	const Common::Rect &getInnerDimensions() { return _innerDims; }
 
-	bool draw(Graphics::ManagedSurface *g, bool forceRedraw = false);
+	bool draw(ManagedSurface *g, bool forceRedraw = false);
 
 	void setActive(bool active);
 	void setTitle(Common::String &title) { _title = title; }
@@ -133,15 +131,15 @@ public:
 
 private:
 	void drawBorder();
-	void drawBox(Graphics::ManagedSurface *g, int x, int y, int w, int h);
-	void fillRect(Graphics::ManagedSurface *g, int x, int y, int w, int h, int color);
-	const Graphics::Font *getTitleFont();
+	void drawBox(ManagedSurface *g, int x, int y, int w, int h);
+	void fillRect(ManagedSurface *g, int x, int y, int w, int h, int color);
+	const Font *getTitleFont();
 	void updateInnerDims();
 	WindowClick isInBorder(int x, int y);
 
 private:
-	Graphics::ManagedSurface _borderSurface;
-	Graphics::ManagedSurface _composeSurface;
+	ManagedSurface _borderSurface;
+	ManagedSurface _composeSurface;
 	bool _scrollable;
 	bool _resizable;
 	bool _active;
@@ -158,6 +156,7 @@ private:
 	Common::String _title;
 };
 
-} // End of namespace Wage
+} // End of namespace Graphics
+
 
 #endif
