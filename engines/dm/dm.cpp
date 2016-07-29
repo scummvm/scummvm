@@ -509,11 +509,11 @@ void DMEngine::f441_processEntrance() {
 
 void DMEngine::f444_endGame(bool doNotDrawCreditsOnly) {
 	// TODO: localization
-	static Box G0013_s_Graphic562_Box_Endgame_Restart_Outer = {103, 217, 145, 159};
-	static Box G0014_s_Graphic562_Box_Endgame_Restart_Inner = {105, 215, 147, 157};
-	static Box G0012_s_Graphic562_Box_Endgame_TheEnd = {120, 199, 95, 108};
-	static Box G0015_s_Graphic562_Box_Endgame_ChampionMirror = {11, 74, 7, 49};
-	static Box G0016_s_Graphic562_Box_Endgame_ChampionPortrait = {27, 58, 13, 41};
+	static Box G0013_s_Graphic562_Box_Endgame_Restart_Outer = Box(103, 217, 145, 159);
+	static Box G0014_s_Graphic562_Box_Endgame_Restart_Inner = Box(105, 215, 147, 157);
+	static Box G0012_s_Graphic562_Box_Endgame_TheEnd = Box(120, 199, 95, 108);
+	static Box G0015_s_Graphic562_Box_Endgame_ChampionMirror = Box(11, 74, 7, 49);
+	static Box G0016_s_Graphic562_Box_Endgame_ChampionPortrait = Box(27, 58, 13, 41);
 	int16 L1409_i_Multiple;
 #define AL1409_i_Color              L1409_i_Multiple
 #define AL1409_i_ChampionIndex      L1409_i_Multiple
