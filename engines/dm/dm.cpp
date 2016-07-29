@@ -472,8 +472,6 @@ void DMEngine::f441_processEntrance() {
 	}
 	do {
 		f439_drawEntrance();
-		//_eventMan->f77_hideMouse();
-		//_eventMan->f77_hideMouse();
 		_eventMan->f78_showMouse();
 		_eventMan->f357_discardAllInput();
 		_g298_newGame = k99_modeWaitingOnEntrance;

@@ -2327,7 +2327,7 @@ void ChampionMan::f281_renameChampion(Champion* champ) {
 			{
 				eventType = _vm->_eventMan->processInput(&event, &event);
 				_vm->_displayMan->updateScreen();
-				_vm->f22_delay(1);
+				//_vm->f22_delay(1);
 			}
 			if (eventType == Common::EVENT_LBUTTONDOWN) { /* If left mouse button status has changed */
 				Common::Point mousePos = _vm->_eventMan->getMousePos();

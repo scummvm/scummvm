@@ -45,4 +45,3 @@ Finish stuff:
 
 Refactoring
 	Places implementing mini mainloop and where input doesn't really matter should call discardInput instead of processInput
-	While reanming a champion, the mouse lags
