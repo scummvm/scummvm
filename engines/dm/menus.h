@@ -116,6 +116,7 @@ public:
 	void f389_processCommands116To119_setActingChampion(uint16 champIndex); // @ F0389_MENUS_ProcessCommands116To119_SetActingChampion
 	void f383_setActionList(ActionSet *actionSet); // @ F0383_MENUS_SetActionList
 	int16 f382_getActionObjectChargeCount(); // @ F0382_MENUS_GetActionObjectChargeCount
+	void f385_drawActionDamage(int16 damage); // @ F0385_MENUS_DrawActionDamage
 };
 
 }

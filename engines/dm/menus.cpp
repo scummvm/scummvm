@@ -228,7 +228,7 @@ void MenuMan::f390_refreshActionAreaAndSetChampDirMaxDamageReceived() {
 	if (_g508_refreshActionArea) {
 		if (!champMan._g506_actingChampionOrdinal) {
 			if (_g513_actionDamage) {
-				warning(false, "MISSING CODE: F0385_MENUS_DrawActionDamage");
+				f385_drawActionDamage(_g513_actionDamage);
 				_g513_actionDamage = 0;
 			} else {
 				_g509_actionAreaContainsIcons = true;
@@ -403,7 +403,7 @@ void MenuMan::f394_setMagicCasterAndDrawSpellArea(int16 champIndex) {
 	}
 	if (_vm->_championMan->_g514_magicCasterChampionIndex == kM1_ChampionNone) {
 		_vm->_eventMan->f78_showMouse();
-		_vm->_displayMan->f21_blitToScreen(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k9_MenuSpellAreaBackground), &g0_BoxSpellArea, k48_byteWidth, kM1_ColorNoTransparency, 33); 
+		_vm->_displayMan->f21_blitToScreen(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k9_MenuSpellAreaBackground), &g0_BoxSpellArea, k48_byteWidth, kM1_ColorNoTransparency, 33);
 		_vm->_eventMan->f77_hideMouse();
 	}
 	if (champIndex == kM1_ChampionNone) {
@@ -1665,5 +1665,77 @@ int16 MenuMan::f382_getActionObjectChargeCount() {
 	default:
 		return 1;
 	}
+}
+
+void MenuMan::f385_drawActionDamage(int16 damage) {
+	static Box G0502_s_Graphic560_Box_ActionAreaMediumDamage = {242, 305, 81, 117};
+	static Box G0503_s_Graphic560_Box_ActionAreaSmallDamage = {251, 292, 81, 117};
+
+	uint16 L1174_ui_Multiple;
+#define AL1174_ui_DerivedBitmapIndex L1174_ui_Multiple
+#define AL1174_ui_CharacterIndex     L1174_ui_Multiple
+	int16 L1175_i_ByteWidth;
+	int16 L1176_i_Multiple;
+#define AL1176_i_X          L1176_i_Multiple
+#define AL1176_i_PixelWidth L1176_i_Multiple
+	byte* L1177_puc_Bitmap;
+	unsigned char* L1178_puc_Multiple;
+#define AL1178_puc_String L1178_puc_Multiple
+#define AL1178_puc_Bitmap L1178_puc_Multiple
+	char L1179_ac_String[6];
+	Box* L1180_ps_Box;
+	int16 L1643_i_Width;
+
+	_vm->_eventMan->f78_showMouse();
+	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
+	_vm->_displayMan->D24_fillScreenBox(g1_BoxActionArea, k0_ColorBlack);
+	if (damage < 0) {
+		if (damage == kM1_damageCantReach) {
+			AL1176_i_X = 242;
+			AL1178_puc_String = (unsigned char*)"CAN'T REACH"; // TODO: localization
+		} else {
+			AL1176_i_X = 248;
+			AL1178_puc_String = (unsigned char*)"NEED AMMO"; // TODO: localization
+		}
+		_vm->_textMan->f53_printToLogicalScreen(AL1176_i_X, 100, k4_ColorCyan, k0_ColorBlack, (char *)AL1178_puc_String);
+	} else {
+		if (damage > 40) {
+			L1180_ps_Box = &g499_BoxActionArea3ActionMenu;
+			L1177_puc_Bitmap = _vm->_displayMan->f489_getNativeBitmapOrGraphic(k14_damageToCreatureIndice);
+			L1175_i_ByteWidth = k48_byteWidth;
+			L1643_i_Width = 45;
+		} else {
+			if (damage > 15) {
+				AL1174_ui_DerivedBitmapIndex = k2_DerivedBitmapDamageToCreatureMedium;
+				AL1176_i_PixelWidth = 64;
+				L1175_i_ByteWidth = k32_byteWidth;
+				L1180_ps_Box = &G0502_s_Graphic560_Box_ActionAreaMediumDamage;
+			} else {
+				AL1174_ui_DerivedBitmapIndex = k3_DerivedBitmapDamageToCreatureSmall;
+				AL1176_i_PixelWidth = 42;
+				L1175_i_ByteWidth = k24_byteWidth;
+				L1180_ps_Box = &G0503_s_Graphic560_Box_ActionAreaSmallDamage;
+			}
+			L1643_i_Width = 37;
+			if (!_vm->_displayMan->f491_isDerivedBitmapInCache(AL1174_ui_DerivedBitmapIndex)) {
+				AL1178_puc_Bitmap = _vm->_displayMan->f489_getNativeBitmapOrGraphic(k14_damageToCreatureIndice);
+				_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(AL1178_puc_Bitmap, L1177_puc_Bitmap = _vm->_displayMan->f492_getDerivedBitmap(AL1174_ui_DerivedBitmapIndex), 96, 45, AL1176_i_PixelWidth, 37, g17_PalChangesNoChanges);
+				_vm->_displayMan->f493_addDerivedBitmap(AL1174_ui_DerivedBitmapIndex);
+			} else {
+				L1177_puc_Bitmap = _vm->_displayMan->f492_getDerivedBitmap(AL1174_ui_DerivedBitmapIndex);
+			}
+		}
+		_vm->_displayMan->f21_blitToScreen(L1177_puc_Bitmap, L1180_ps_Box, L1175_i_ByteWidth, kM1_ColorNoTransparency, L1643_i_Width);
+		/* Convert damage value to string */
+		AL1174_ui_CharacterIndex = 5;
+		AL1176_i_X = 274;
+		L1179_ac_String[5] = '\0';
+		do {
+			L1179_ac_String[--AL1174_ui_CharacterIndex] = '0' + (damage % 10);
+			AL1176_i_X -= 3;
+		} while (damage /= 10);
+		_vm->_textMan->f53_printToLogicalScreen(AL1176_i_X, 100, k4_ColorCyan, k0_ColorBlack, &L1179_ac_String[AL1174_ui_CharacterIndex]);
+	}
+	_vm->_eventMan->f77_hideMouse();
 }
 }

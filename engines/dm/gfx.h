@@ -212,6 +212,7 @@ enum GraphicIndice {
 	k10_MenuActionAreaIndice = 10, // @ C010_GRAPHIC_MENU_ACTION_AREA
 	k11_MenuSpellAreLinesIndice = 11, // @ C011_GRAPHIC_MENU_SPELL_AREA_LINES
 	k13_MovementArrowsIndice = 13, // @ C013_GRAPHIC_MOVEMENT_ARROWS
+	k14_damageToCreatureIndice = 14, // @ C014_GRAPHIC_DAMAGE_TO_CREATURE
 	k15_damageToChampionSmallIndice = 15, // @ C015_GRAPHIC_DAMAGE_TO_CHAMPION_SMALL
 	k16_damageToChampionBig = 16, // @ C016_GRAPHIC_DAMAGE_TO_CHAMPION_BIG
 	k17_InventoryGraphicIndice = 17, // @ C017_GRAPHIC_INVENTORY
@@ -276,6 +277,7 @@ enum GraphicIndice {
 	k557_FontGraphicIndice = 557 // @ C557_GRAPHIC_FONT 
 };
 
+extern byte g17_PalChangesNoChanges[16];
 extern uint16 gK57_PalSwoosh[16]; // @ K0057_aui_Palette_Swoosh
 extern uint16 gK150_PalMousePointer[16];	// @ K0150_aui_Palette_MousePointer
 extern uint16 g19_PalCredits[16];  // @ G0019_aui_Graphic562_Palette_Credits
