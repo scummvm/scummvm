@@ -242,7 +242,7 @@ static bool sceneWindowCallback(WindowClick click, Common::Event &event, void *g
 }
 
 bool Gui::processSceneEvents(WindowClick click, Common::Event &event) {
-	if (click == Graphics::kBorderInner && event.type == Common::EVENT_LBUTTONUP) {
+	if (click == kBorderInner && event.type == Common::EVENT_LBUTTONUP) {
 		Designed *obj = _scene->lookUpEntity(event.mouse.x - _sceneWindow->getDimensions().left,
 												  event.mouse.y - _sceneWindow->getDimensions().top);
 
@@ -260,7 +260,7 @@ void Gui::drawConsole() {
 	if (!_consoleDirty && !_consoleFullRedraw && !_sceneDirty)
 		return;
 
-	renderConsole(_consoleWindow->getSurface(), Common::Rect(Graphics::kBorderWidth - 2, Graphics::kBorderWidth - 2,
+	renderConsole(_consoleWindow->getSurface(), Common::Rect(kBorderWidth - 2, kBorderWidth - 2,
 				_consoleWindow->getDimensions().width(), _consoleWindow->getDimensions().height()));
 	_consoleWindow->setDirty(true);
 }
