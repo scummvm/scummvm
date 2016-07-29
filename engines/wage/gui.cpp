@@ -61,23 +61,23 @@
 
 namespace Wage {
 
-static const MenuData menuSubItems[] = {
-	{ kMenuHighLevel, "File",	0, 0, false },
-	{ kMenuHighLevel, "Edit",	0, 0, false },
-	{ kMenuFile, "New",			kMenuActionNew, 0, false },
-	{ kMenuFile, "Open...",		kMenuActionOpen, 0, true },
-	{ kMenuFile, "Close",		kMenuActionClose, 0, true },
-	{ kMenuFile, "Save",		kMenuActionSave, 0, true },
-	{ kMenuFile, "Save as...",	kMenuActionSaveAs, 0, true },
-	{ kMenuFile, "Revert",		kMenuActionRevert, 0, false },
-	{ kMenuFile, "Quit",		kMenuActionQuit, 0, true },
+static const Graphics::MenuData menuSubItems[] = {
+	{ Graphics::kMenuHighLevel, "File",	0, 0, false },
+	{ Graphics::kMenuHighLevel, "Edit",	0, 0, false },
+	{ Graphics::kMenuFile, "New",			Graphics::kMenuActionNew, 0, false },
+	{ Graphics::kMenuFile, "Open...",		Graphics::kMenuActionOpen, 0, true },
+	{ Graphics::kMenuFile, "Close",			Graphics::kMenuActionClose, 0, true },
+	{ Graphics::kMenuFile, "Save",			Graphics::kMenuActionSave, 0, true },
+	{ Graphics::kMenuFile, "Save as...",	Graphics::kMenuActionSaveAs, 0, true },
+	{ Graphics::kMenuFile, "Revert",		Graphics::kMenuActionRevert, 0, false },
+	{ Graphics::kMenuFile, "Quit",			Graphics::kMenuActionQuit, 0, true },
 
-	{ kMenuEdit, "Undo",		kMenuActionUndo, 'Z', false },
-	{ kMenuEdit, NULL,			0, 0, false },
-	{ kMenuEdit, "Cut",			kMenuActionCut, 'K', false },
-	{ kMenuEdit, "Copy",		kMenuActionCopy, 'C', false },
-	{ kMenuEdit, "Paste",		kMenuActionPaste, 'V', false },
-	{ kMenuEdit, "Clear",		kMenuActionClear, 'B', false },
+	{ Graphics::kMenuEdit, "Undo",			Graphics::kMenuActionUndo, 'Z', false },
+	{ Graphics::kMenuEdit, NULL,			0, 0, false },
+	{ Graphics::kMenuEdit, "Cut",			Graphics::kMenuActionCut, 'K', false },
+	{ Graphics::kMenuEdit, "Copy",			Graphics::kMenuActionCopy, 'C', false },
+	{ Graphics::kMenuEdit, "Paste",			Graphics::kMenuActionPaste, 'V', false },
+	{ Graphics::kMenuEdit, "Clear",			Graphics::kMenuActionClear, 'B', false },
 
 	{ 0, NULL,			0, 0, false }
 };
@@ -148,7 +148,7 @@ Gui::Gui(WageEngine *engine) {
 	_menu->setCommandsCallback(menuCommandsCallback, this);
 
 	_menu->addStaticMenus(menuSubItems);
-	_menu->addMenuSubItem(kMenuAbout, _engine->_world->getAboutMenuItemName(), kMenuActionAbout);
+	_menu->addMenuSubItem(Graphics::kMenuAbout, _engine->_world->getAboutMenuItemName(), Graphics::kMenuActionAbout);
 
 	_commandsMenuId = _menu->addMenuItem(_engine->_world->_commandsMenuName.c_str());
 	regenCommandsMenu();
@@ -298,7 +298,7 @@ void Gui::regenWeaponsMenu() {
 			command += " ";
 			command += obj->_name;
 
-			_menu->addMenuSubItem(_weaponsMenuId, command.c_str(), kMenuActionCommand, 0, 0, true);
+			_menu->addMenuSubItem(_weaponsMenuId, command.c_str(), Graphics::kMenuActionCommand, 0, 0, true);
 
 			empty = false;
 		}
@@ -321,39 +321,39 @@ void menuCommandsCallback(int action, Common::String &text, void *data) {
 
 void Gui::executeMenuCommand(int action, Common::String &text) {
 	switch(action) {
-	case kMenuActionAbout:
-	case kMenuActionNew:
-	case kMenuActionClose:
-	case kMenuActionRevert:
-	case kMenuActionQuit:
+	case Graphics::kMenuActionAbout:
+	case Graphics::kMenuActionNew:
+	case Graphics::kMenuActionClose:
+	case Graphics::kMenuActionRevert:
+	case Graphics::kMenuActionQuit:
 		break;
 
-	case kMenuActionOpen:
+	case Graphics::kMenuActionOpen:
 		_engine->scummVMSaveLoadDialog(false);
 		break;
 
-	case kMenuActionSave:
-	case kMenuActionSaveAs:
+	case Graphics::kMenuActionSave:
+	case Graphics::kMenuActionSaveAs:
 		_engine->scummVMSaveLoadDialog(true);
 		break;
 
-	case kMenuActionUndo:
+	case Graphics::kMenuActionUndo:
 		actionUndo();
 		break;
-	case kMenuActionCut:
+	case Graphics::kMenuActionCut:
 		actionCut();
 		break;
-	case kMenuActionCopy:
+	case Graphics::kMenuActionCopy:
 		actionCopy();
 		break;
-	case kMenuActionPaste:
+	case Graphics::kMenuActionPaste:
 		actionPaste();
 		break;
-	case kMenuActionClear:
+	case Graphics::kMenuActionClear:
 		actionClear();
 		break;
 
-	case kMenuActionCommand:
+	case Graphics::kMenuActionCommand:
 		_engine->processTurn(&text, NULL);
 		break;
 

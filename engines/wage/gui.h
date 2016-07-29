@@ -59,7 +59,6 @@
 
 namespace Wage {
 
-class Menu;
 class Scene;
 class WageEngine;
 
@@ -127,7 +126,7 @@ public:
 
 private:
 	Graphics::ManagedSurface _console;
-	Menu *_menu;
+	Graphics::Menu *_menu;
 	bool _sceneDirty;
 	bool _consoleDirty;
 

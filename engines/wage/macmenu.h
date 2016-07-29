@@ -45,15 +45,10 @@
  *
  */
 
-#ifndef WAGE_MACMENU_H
-#define WAGE_MACMENU_H
+#ifndef GRAPHICS_MACMENU_H
+#define GRAPHICS_MACMENU_H
 
 namespace Graphics {
-	class MacWindowManager;
-	class BaseMacWindow;
-}
-
-namespace Wage {
 
 struct MenuItem;
 struct MenuSubItem;
@@ -104,9 +99,9 @@ struct MenuData {
 	bool enabled;
 };
 
-class Menu : public Graphics::BaseMacWindow {
+class Menu : public BaseMacWindow {
 public:
-	Menu(int id, const Common::Rect &bounds, Graphics::MacWindowManager *wm);
+	Menu(int id, const Common::Rect &bounds, MacWindowManager *wm);
 	~Menu();
 
 	void setCommandsCallback(void (*callback)(int, Common::String &, void *), void *data) { _ccallback = callback; _cdata = data; }
@@ -119,7 +114,7 @@ public:
 	void createSubMenuFromString(int id, const char *string);
 	void clearSubMenu(int id);
 
-	bool draw(Graphics::ManagedSurface *g, bool forceRedraw = false);
+	bool draw(ManagedSurface *g, bool forceRedraw = false);
 	bool processEvent(Common::Event &event);
 
 	void enableCommand(int menunum, int action, bool state);
@@ -131,11 +126,11 @@ public:
 	Common::Rect _bbox;
 
 private:
-	Graphics::ManagedSurface _screen;
-	Graphics::ManagedSurface _tempSurface;
+	ManagedSurface _screen;
+	ManagedSurface _tempSurface;
 
 private:
-	const Graphics::Font *getMenuFont();
+	const Font *getMenuFont();
 	const char *getAcceleratorString(MenuSubItem *item, const char *prefix);
 	int calculateMenuWidth(MenuItem *menu);
 	void calcMenuBounds(MenuItem *menu);
@@ -150,7 +145,7 @@ private:
 
 	Common::Array<MenuItem *> _items;
 
-	const Graphics::Font *_font;
+	const Font *_font;
 
 	bool _menuActivated;
 
@@ -161,6 +156,6 @@ private:
 	void *_cdata;
 };
 
-} // End of namespace Wage
+} // End of namespace Graphics
 
 #endif
