@@ -599,6 +599,9 @@ Common::EventType EventManager::processInput(Common::Event *grabKey, Common::Eve
 			f544_resetPressingEyeOrMouth();
 			break;
 		}
+		case Common::EVENT_QUIT:
+			_vm->_engineShouldQuit = true;
+			break;
 		default:
 			break;
 		}
@@ -1171,6 +1174,8 @@ void EventManager::f282_commandProcessCommands160To162ClickInResurrectReincarnat
 
 	if (commandType == k161_CommandClickInPanelReincarnate) {
 		champMan.f281_renameChampion(champ);
+		if (_vm->_engineShouldQuit)
+			return;
 		champ->resetSkillsToZero();
 
 		for (uint16 i = 0; i < 12; i++) {
@@ -1209,7 +1214,7 @@ void EventManager::f378_commandProcess81ClickInPanel(int16 x, int16 y) {
 			return;
 		commandType = f358_getCommandTypeFromMouseInput(g456_MouseInput_PanelChest, Common::Point(x, y), k1_LeftMouseButton);
 		if (commandType != k0_CommandNone)
-			_vm->_championMan->f302_processCommands28to65_clickOnSlotBox(commandType - k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand); 
+			_vm->_championMan->f302_processCommands28to65_clickOnSlotBox(commandType - k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand);
 		break;
 	case k5_PanelContentResurrectReincarnate:
 		if (!champMan._g415_leaderEmptyHanded)
@@ -1302,8 +1307,10 @@ void EventManager::f379_drawSleepScreen() {
 
 void EventManager::f357_discardAllInput() {
 	Common::Event event;
-	while (_vm->_system->getEventManager()->pollEvent(event))
-		;
+	while (_vm->_system->getEventManager()->pollEvent(event) && !_vm->_engineShouldQuit) {
+		if (event.type == Common::EVENT_QUIT)
+			_vm->_engineShouldQuit = true;
+	}
 	_commandQueue.clear();
 }
 
@@ -1535,6 +1542,24 @@ void EventManager::f544_resetPressingEyeOrMouth() {
 	if (_vm->_g333_pressingMouth) {
 		_g597_ignoreMouseMovements = false;
 		_vm->_g334_stopPressingMouth = true;
+	}
+}
+
+void EventManager::f541_waitForMouseOrKeyActivity() {
+	Common::Event event;
+	while (true) {
+		if (_vm->_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+				_vm->_engineShouldQuit = true;
+			case Common::EVENT_KEYDOWN: // Intentional fall through
+			case Common::EVENT_LBUTTONDOWN:
+			case Common::EVENT_RBUTTONDOWN:
+				return;
+			}
+		}
+		_vm->f22_delay(1);
+		_vm->_displayMan->updateScreen();
 	}
 }
 } // end of namespace DM

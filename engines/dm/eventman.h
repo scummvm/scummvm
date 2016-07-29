@@ -316,7 +316,8 @@ public:
 	void f370_commandProcessType100_clickInSpellArea(uint16 posX, uint16 posY); // @ F0370_COMMAND_ProcessType100_ClickInSpellArea
 	void f369_commandProcessTypes101To108_clickInSpellSymbolsArea(CommandType cmdType); // @ F0369_COMMAND_ProcessTypes101To108_ClickInSpellSymbolsArea_CPSE
 	void f371_commandProcessType111To115_ClickInActionArea(int16 posX, int16 posY); // @ F0371_COMMAND_ProcessType111To115_ClickInActionArea_CPSE
-	void f544_resetPressingEyeOrMouth();// @ F0544_INPUT_ResetPressingEyeOrMouth
+	void f544_resetPressingEyeOrMouth(); // @ F0544_INPUT_ResetPressingEyeOrMouth
+	void f541_waitForMouseOrKeyActivity(); // @ F0541_INPUT_WaitForMouseOrKeyboardActivity
 };
 
 }

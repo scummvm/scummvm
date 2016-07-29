@@ -55,6 +55,7 @@ public:
 	void f54_textInitialize(); // @ F0054_TEXT_Initialize
 	void f42_messageAreaMoveCursor(int16 column, int16 row); // @ F0042_TEXT_MESSAGEAREA_MoveCursor
 	void f44_messageAreaClearExpiredRows(); // @ F0044_TEXT_MESSAGEAREA_ClearExpiredRows
+	void f443_endgamePrintString(int16 x, int16 y, Color textColor, char *text); // @ F0443_STARTEND_EndgamePrintString
 
 };
 

@@ -719,6 +719,10 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 										Frame(136, 159, 17, 102, 48, 88, 48, 0),	/* Right Horizontal Closed half */
 										Frame(124, 159, 17, 102, 48, 88, 48, 0)	/* Right Horizontal Closed three fourth */
 	);
+	for (uint16 i = 0; i < 16; ++i) {
+		_g347_paletteTopAndBottomScreen[i] = 0;
+		_g346_paletteMiddleScreen[i] = 0;
+	}
 }
 
 DisplayMan::~DisplayMan() {
@@ -3689,6 +3693,19 @@ byte* DisplayMan::f492_getDerivedBitmap(int16 derivedBitmapIndex) {
 
 void DisplayMan::f493_addDerivedBitmap(int16 derivedBitmapIndex) {
 	warning(false, "f493_addDerivedBitmap DOES NOTHING");
+}
+
+uint16 DisplayMan::f431_getDarkenedColor(uint16 RGBcolor) {
+	if (getFlag(RGBcolor, D12_MASK_BLUE_COMPONENT)) {
+		RGBcolor--;
+	}
+	if (getFlag(RGBcolor, D11_MASK_GREEN_COMPONENT)) {
+		RGBcolor -= 16;
+	}
+	if (getFlag(RGBcolor, D10_MASK_RED_COMPONENT)) {
+		RGBcolor -= 256;
+	}
+	return RGBcolor;
 }
 
 }

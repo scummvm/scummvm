@@ -298,7 +298,7 @@ void DMEngine::f433_processCommand140_saveGame(uint16 slot, const Common::String
 
 	if (!saveAndPlayChoice) {
 		_eventMan->f77_hideMouse();
-		warning(false, "MISSING CODE: F0444_STARTEND_Endgame");
+		f444_endGame(false);
 	}
 	if (!_championMan->_g415_leaderEmptyHanded) {
 		_championMan->_gK71_champions[_championMan->_g411_leaderIndex]._load += champHandObjWeight;

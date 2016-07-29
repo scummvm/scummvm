@@ -221,6 +221,7 @@ public:
 	void f433_processCommand140_saveGame(uint16 slot, const Common::String desc); // @ F0433_STARTEND_ProcessCommand140_SaveGame_CPSCDF
 	LoadgameResponse f435_loadgame(int16 slot); // @ F0435_STARTEND_LoadGame_CPSF
 	void f441_processEntrance(); // @ F0441_STARTEND_ProcessEntrance
+	void f444_endGame(bool doNotDrawCreditsOnly); // @ F0444_STARTEND_Endgame
 
 	void f064_SOUND_RequestPlay_CPSD(uint16 P0088_ui_SoundIndex, int16 P0089_i_MapX, int16 P0090_i_MapY, uint16 P0091_ui_Mode) { warning(true, "STUB: f064_SOUND_RequestPlay_CPSD"); }
 
@@ -247,6 +248,8 @@ public:
 	ProjExpl *_projexpl;
 	DialogMan *_dialog;
 
+
+	bool _engineShouldQuit;
 
 	int16 _g298_newGame; // @ G0298_B_NewGame
 	bool _g523_restartGameRequest; // @ G0523_B_RestartGameRequested

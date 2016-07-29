@@ -703,7 +703,7 @@ void Timeline::f248_timelineProcessEvent6_squareWall(TimelineEvent* event) {
 								_vm->f22_delay(60 * L0638_ps_Sensor->getValue());
 								_vm->_g524_restartGameAllowed = false;
 								_vm->_g302_gameWon = true;
-								warning(false, "MISSING CODE: F0444_STARTEND_Endgame");
+								_vm->f444_endGame(true);
 							}
 						}
 					}

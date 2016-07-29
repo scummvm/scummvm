@@ -207,6 +207,7 @@ enum GraphicIndice {
 	k3_entranceRightDoorGraphicIndice = 3, // @ C003_GRAPHIC_ENTRANCE_RIGHT_DOOR
 	k4_entranceGraphicIndice = 4, // @ C004_GRAPHIC_ENTRANCE
 	k5_creditsGraphicIndice = 5, // @ C005_GRAPHIC_CREDITS
+	k6_theEndIndice = 6, // @ C006_GRAPHIC_THE_END
 	k8_StatusBoxDeadChampion = 8, // @ C008_GRAPHIC_STATUS_BOX_DEAD_CHAMPION
 	k9_MenuSpellAreaBackground = 9, // @ C009_GRAPHIC_MENU_SPELL_AREA_BACKGROUND
 	k10_MenuActionAreaIndice = 10, // @ C010_GRAPHIC_MENU_ACTION_AREA
@@ -266,6 +267,7 @@ enum GraphicIndice {
 	k69_FieldMask_D3R_GraphicIndice = 69, // @ C069_GRAPHIC_FIELD_MASK_D3R
 	k73_FieldTeleporterGraphicIndice = 73, // @ C073_GRAPHIC_FIELD_TELEPORTER
 	k120_InscriptionFontIndice = 120, // @ C120_GRAPHIC_INSCRIPTION_FONT
+	k208_wallOrn_43_champMirror = 208, // @ C208_GRAPHIC_WALL_ORNAMENT_43_CHAMPION_MIRROR
 	k241_FloorOrn_15_D3L_footprints = 241, // @ C241_GRAPHIC_FLOOR_ORNAMENT_15_D3L_FOOTPRINTS
 	k301_DoorMaskDestroyedIndice = 301, // @ C301_GRAPHIC_DOOR_MASK_DESTROYED
 	k315_firstDoorButton_GraphicIndice = 315, // @ C315_GRAPHIC_FIRST_DOOR_BUTTON
@@ -304,7 +306,7 @@ public:
 	bool isPointInside(Common::Point point) {
 		return (_x1 <= point.x) && (point.x <= _x2) && (_y1 <= point.y) && (point.y <= _y2); // <= because incluseive boundaries
 	}
-	bool isPointInside(int16 x, int16 y) { return isPointInside(Common::Point(x, y));  }
+	bool isPointInside(int16 x, int16 y) { return isPointInside(Common::Point(x, y)); }
 	void setToZero() { _x1 = _x2 = _y1 = _y2 = 0; }
 }; // @ BOX_BYTE, BOX_WORD
 
@@ -503,6 +505,21 @@ public:
 	}
 }; // @ DOOR_FRAMES
 
+#define D00_RGB_BLACK                                0x0000
+#define D01_RGB_DARK_BLUE                            0x0004
+#define D02_RGB_LIGHT_BROWN                          0x0842
+#define D03_RGB_PINK                                 0x086F
+#define D04_RGB_LIGHTER_BROWN                        0x0A62
+#define D05_RGB_DARK_GOLD                            0x0A82
+#define D06_RGB_GOLD                                 0x0CA2
+#define D07_RGB_RED                                  0x0F00
+#define D08_RGB_YELLOW                               0x0FF4
+#define D09_RGB_WHITE                                0x0FFF
+#define D10_MASK_RED_COMPONENT                       0x0F00
+#define D10_MASK_RED_COMPONENT 0x0F00
+#define D11_MASK_GREEN_COMPONENT 0x00F0
+#define D12_MASK_BLUE_COMPONENT 0x000F
+
 class DisplayMan {
 	friend class DM::TextMan;
 
@@ -579,7 +596,9 @@ class DisplayMan {
 	byte *_g696_bitmapWallSet_Wall_D3R2; // @ G0696_puc_Bitmap_WallSet_Wall_D3R2
 	byte *_g698_bitmapWallSet_Wall_D3LCR; // @ G0698_puc_Bitmap_WallSet_Wall_D3LCR
 	byte *_g699_bitmapWallSet_Wall_D2LCR; // @ G0699_puc_Bitmap_WallSet_Wall_D2LCR
+public:
 	byte *_g700_bitmapWallSet_Wall_D1LCR; // @ G0700_puc_Bitmap_WallSet_Wall_D1LCR
+private:
 	byte *_g701_bitmapWallSet_Wall_D0L; // @ G0701_puc_Bitmap_WallSet_Wall_D0L
 	byte *_g702_bitmapWallSet_Wall_D0R; // @ G0702_puc_Bitmap_WallSet_Wall_D0R
 	byte *_g703_bitmapWallSet_DoorFrameTop_D2LCR; // @ G0703_puc_Bitmap_WallSet_DoorFrameTop_D2LCR
@@ -611,6 +630,7 @@ class DisplayMan {
 	int16 _g694_doorNativeBitmapIndex_Front_D2LCR[2]; // @ G0694_ai_DoorNativeBitmapIndex_Front_D2LCR
 	int16 _g695_doorNativeBitmapIndex_Front_D1LCR[2]; // @ G0695_ai_DoorNativeBitmapIndex_Front_D1LCR
 public:
+
 	uint16 _screenWidth;
 	uint16 _screenHeight;
 	byte *_g348_bitmapScreen; // @ G0348_pl_Bitmap_Screen
@@ -622,6 +642,7 @@ public:
 	bool _g342_refreshDungeonViewPaleteRequested; // @ G0342_B_RefreshDungeonViewPaletteRequested
 	int16 _g304_dungeonViewPaletteIndex; // @ G0304_i_DungeonViewPaletteIndex
 	uint16 _g347_paletteTopAndBottomScreen[16]; // @ G0347_aui_Palette_TopAndBottomScreen
+	uint16 _g346_paletteMiddleScreen[16]; // @ G0346_aui_Palette_MiddleScreen
 
 	explicit DisplayMan(DMEngine *dmEngine);
 	~DisplayMan();
@@ -657,19 +678,19 @@ public:
 	void f20_blitToViewport(byte *bitmap, int16 *box, int16 byteWidth, Color transparent, int16 height); // @ F0020_MAIN_BlitToViewport
 	void f21_blitToScreen(byte* bitmap, int16 *box, int16 viewDoorOrnIndex, Color transparent, int16 doorOrnOrdinal); // @ F0021_MAIN_BlitToScreen
 	void f21_blitToScreen(byte* bitmap, Box *box, int16 viewDoorOrnIndex, Color transparent, int16 doorOrnOrdinal); // @ F0021_MAIN_BlitToScreen
-	
 
-	/* srcHeight and destHeight are not necessary for blitting, only error checking, thus they are defaulted for existing code which 
+
+	/* srcHeight and destHeight are not necessary for blitting, only error checking, thus they are defaulted for existing code which
 	does not pass anything, newly imported calls do pass srcHeght and srcWidth, so this is a ceonvenience change so the the parameters
 	match the original exatcly, if need arises for heights then we'll have to retrospectively add them in old function calls*/
 	/* Expects inclusive boundaries in box */
 	void f132_blitToBitmap(byte *srcBitmap, byte *destBitmap, Box &box, uint16 srcX, uint16 srcY, uint16 srcByteWidth,
-					  uint16 destByteWidth, Color transparent = kM1_ColorNoTransparency, int16 srcHeight = -1, int16 destHight = -1); // @ F0132_VIDEO_Blit
-/* Expects inclusive boundaries in box */
+						   uint16 destByteWidth, Color transparent = kM1_ColorNoTransparency, int16 srcHeight = -1, int16 destHight = -1); // @ F0132_VIDEO_Blit
+	 /* Expects inclusive boundaries in box */
 	void f133_blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask, byte *tmp, Box &box, int16 lastUnitIndex,
-									   int16 firstUnitIndex, int16 destByteWidth, Color transparent,
-									   int16 xPos, int16 yPos, int16 destHeight, int16 height2); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
-	// this function takes pixel widths
+											int16 firstUnitIndex, int16 destByteWidth, Color transparent,
+											int16 xPos, int16 yPos, int16 destHeight, int16 height2); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
+		 // this function takes pixel widths
 	void f129_blitToBitmapShrinkWithPalChange(byte *srcBitmap, byte *destBitmap,
 											  int16 srcPixelWidth, int16 srcHight, int16 destPixelWidth, int16 destHeight, byte *palChange); // @ F0129_VIDEO_BlitShrinkWithPaletteChanges
 	void f130_flipBitmapHorizontal(byte *bitmap, uint16 byteWidth, uint16 height); // @ F0130_VIDEO_FlipHorizontal
@@ -695,8 +716,8 @@ public:
 	int16 f459_getScaledBitmapByteCount(int16 byteWidth, int16 height, int16 scale); // @ F0459_START_GetScaledBitmapByteCount
 	int16 M78_getScaledDimension(int16 dimension, int16 scale); // @ M78_SCALED_DIMENSION
 	void f115_cthulhu(Thing thingParam, Direction directionParam,
-				 int16 mapXpos, int16 mapYpos, int16 viewSquareIndex,
-				 uint16 orderedViewCellOrdinals); // @ F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
+					  int16 mapXpos, int16 mapYpos, int16 viewSquareIndex,
+					  uint16 orderedViewCellOrdinals); // @ F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
 	uint16 M77_getNormalizedByteWidth(uint16 byteWidth); // @ M77_NORMALIZED_BYTE_WIDTH
 	uint16 M23_getVerticalOffsetM23(uint16 val); // @ M23_VERTICAL_OFFSET
 	uint16 M22_getHorizontalOffsetM22(uint16 val); // @ M22_HORIZONTAL_OFFSET
@@ -726,10 +747,7 @@ public:
 	bool f491_isDerivedBitmapInCache(int16 derivedBitmapIndex); // @  F0491_CACHE_IsDerivedBitmapInCache
 	byte *f492_getDerivedBitmap(int16 derivedBitmapIndex); // @ F0492_CACHE_GetDerivedBitmap
 	void f493_addDerivedBitmap(int16 derivedBitmapIndex); // @ F0493_CACHE_AddDerivedBitmap
-
-
-
-
+	uint16 f431_getDarkenedColor(uint16 RGBcolor);
 };
 
 }

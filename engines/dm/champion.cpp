@@ -2326,6 +2326,8 @@ void ChampionMan::f281_renameChampion(Champion* champ) {
 			Common::EventType eventType;
 			{
 				eventType = _vm->_eventMan->processInput(&event, &event);
+				if (_vm->_engineShouldQuit)
+					return;
 				_vm->_displayMan->updateScreen();
 				//_vm->f22_delay(1);
 			}

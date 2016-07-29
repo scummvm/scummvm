@@ -44,6 +44,24 @@ Box g35_BoxFood = Box(112, 159, 60, 68); // @ G0035_s_Graphic562_Box_Food
 Box g36_BoxWater = Box(112, 159, 83, 91); // @ G0036_s_Graphic562_Box_Water
 Box g37_BoxPoisoned = Box(112, 207, 105, 119); // @ G0037_s_Graphic562_Box_Poisoned
 
+// TODO: localization
+char* G0428_apc_SkillLevelNames[15] = { // @ G0428_apc_SkillLevelNames
+	"NEOPHYTE",
+	"NOVICE",
+	"APPRENTICE",
+	"JOURNEYMAN",
+	"CRAFTSMAN",
+	"ARTISAN",
+	"ADEPT",
+	"EXPERT",
+	"` MASTER",
+	"a MASTER",
+	"b MASTER",
+	"c MASTER",
+	"d MASTER",
+	"e MASTER",
+	"ARCHMASTER"};
+
 InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {
 	_g432_inventoryChampionOrdinal = 0;
 	_g424_panelContent = k0_PanelContentFoodWaterPoisoned;
@@ -659,23 +677,6 @@ void InventoryMan::f338_decreaseTorchesLightPower() {
 }
 
 void InventoryMan::f351_drawChampionSkillsAndStatistics() {
-	// TODO: localization
-	static char* G0428_apc_SkillLevelNames[15] = {
-		"NEOPHYTE",
-		"NOVICE",
-		"APPRENTICE",
-		"JOURNEYMAN",
-		"CRAFTSMAN",
-		"ARTISAN",
-		"ADEPT",
-		"EXPERT",
-		"` MASTER",
-		"a MASTER",
-		"b MASTER",
-		"c MASTER",
-		"d MASTER",
-		"e MASTER",
-		"ARCHMASTER"};
 
 	uint16 L1090_ui_Multiple;
 #define AL1090_ui_SkillIndex     L1090_ui_Multiple
@@ -902,7 +903,9 @@ void InventoryMan::f349_processCommand70_clickOnMouth() {
 	if (L1081_B_RemoveObjectFromLeaderHand) {
 		for (L1086_ui_Counter = 5; --L1086_ui_Counter; _vm->f22_delay(8)) { /* Animate mouth icon */
 			_vm->_objectMan->f37_drawIconToScreen(k205_IconIndiceMouthOpen + !(L1086_ui_Counter & 0x0001), 56, 46);
-			_vm->_eventMan->processInput();
+			_vm->_eventMan->f357_discardAllInput();
+			if (_vm->_engineShouldQuit)
+				return;
 			_vm->_displayMan->updateScreen();
 		}
 	} else {

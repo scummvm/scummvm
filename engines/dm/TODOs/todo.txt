@@ -31,6 +31,9 @@ Todo:
 	I forgot to add a bunch of warning for show/hide mouse pointer and other mouse functions
 
 Finish stuff:
+	F0444_STARTEND_Endgame
+	Make missing code warnings to STUB methods
+	Add quit resuest from scummvm
 	f380_processCommandQueue
 	Missing main loop methods
 	Save file f433_processCommand140_saveGame fails silently
@@ -40,7 +43,7 @@ Finish stuff:
 	G0335_ui_SelectedDialogChoice
 	Add dialogs
 	Add failcheck to saveing and loading
-	F0444_STARTEND_Endgame
+	
 
 
 Refactoring

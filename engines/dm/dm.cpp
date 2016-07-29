@@ -150,6 +150,7 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	_projexpl = nullptr;
 	_displayMan = nullptr;
 
+	_engineShouldQuit = false;
 	_g528_saveFormat = 0;
 	_g527_platform = 0;
 	_g526_dungeonId = 0;
@@ -230,10 +231,11 @@ void DMEngine::f463_initializeGame() {
 	_textMan->f54_textInitialize();
 	_objectMan->loadObjectNames();
 	_eventMan->initMouse();
-	f441_processEntrance();
-	while (f435_loadgame(1) != k1_LoadgameSuccess) {
+	do {
 		f441_processEntrance();
-	}
+		if (_engineShouldQuit)
+			return;
+	} while (f435_loadgame(1) != k1_LoadgameSuccess);
 	//F0396_MENUS_LoadSpellAreaLinesBitmap() is not needed, every bitmap has been loaded
 
 	// There was some memory wizardy for the Amiga platform, I skipped that part
@@ -327,7 +329,9 @@ Common::Error DMEngine::run() {
 	f463_initializeGame();
 	while (true) {
 		f2_gameloop();
-		warning(false, "TODO: F0444_STARTEND_Endgame(G0303_B_PartyDead);");
+		if (_engineShouldQuit)
+			return Common::kNoError;
+		f444_endGame(_championMan->_g303_partyDead);
 	}
 
 	return Common::kNoError;
@@ -343,6 +347,8 @@ void DMEngine::f2_gameloop() {
 
 	_g318_waitForInputMaxVerticalBlankCount = 10;
 	while (true) {
+		if (_engineShouldQuit)
+			return;
 		if (_g327_newPartyMapIndex != kM1_mapIndexNone) {
 T0002002:
 			f3_processNewPartyMap(_g327_newPartyMapIndex);
@@ -416,8 +422,10 @@ T0002002:
 			}
 
 			_eventMan->f380_processCommandQueue();
+			if (_engineShouldQuit)
+				return;
 			_displayMan->updateScreen();
-			// if (!_vm->_g321_stopWaitingForPlayerInput) {
+			// if (!_g321_stopWaitingForPlayerInput) {
 			//		F0363_COMMAND_HighlightBoxDisable();
 			// }
 
@@ -477,6 +485,8 @@ void DMEngine::f441_processEntrance() {
 		_g298_newGame = k99_modeWaitingOnEntrance;
 		do {
 			_eventMan->processInput();
+			if (_engineShouldQuit)
+				return;
 			_eventMan->f380_processCommandQueue();
 			_displayMan->updateScreen();
 		} while (_g298_newGame == k99_modeWaitingOnEntrance);
@@ -492,6 +502,161 @@ void DMEngine::f441_processEntrance() {
 	for (uint16 i = 0; i < 10; ++i)
 		_g562_entranceDoorAnimSteps[i] = nullptr;
 }
+
+void DMEngine::f444_endGame(bool doNotDrawCreditsOnly) {
+	// TODO: localization
+	static Box G0013_s_Graphic562_Box_Endgame_Restart_Outer = {103, 217, 145, 159};
+	static Box G0014_s_Graphic562_Box_Endgame_Restart_Inner = {105, 215, 147, 157};
+	static Box G0012_s_Graphic562_Box_Endgame_TheEnd = {120, 199, 95, 108};
+	static Box G0015_s_Graphic562_Box_Endgame_ChampionMirror = {11, 74, 7, 49};
+	static Box G0016_s_Graphic562_Box_Endgame_ChampionPortrait = {27, 58, 13, 41};
+	int16 L1409_i_Multiple;
+#define AL1409_i_Color              L1409_i_Multiple
+#define AL1409_i_ChampionIndex      L1409_i_Multiple
+#define AL1409_i_VerticalBlankCount L1409_i_Multiple
+	int16 L1410_i_Multiple;
+#define AL1410_i_Counter L1410_i_Multiple
+#define AL1410_i_Y       L1410_i_Multiple
+	int16 L1411_i_Multiple;
+#define AL1411_i_X          L1411_i_Multiple
+#define AL1411_i_SkillIndex L1411_i_Multiple
+	int16 L1412_i_SkillLevel;
+	char L1415_c_ChampionTitleFirstCharacter;
+	Champion* L1416_ps_Champion;
+	uint16 L1419_aui_Palette[16];
+	uint16 L1420_aui_Palette_TopAndBottomScreen[16];
+	uint16 L1421_aui_Palette_DarkBlue[16];
+	char L1422_ac_String[20];
+	// Strangerke: Not so sure it's useless. 
+	bool L1423_B_WaitBeforeDrawingRestart; /* BUG0_00 Useless code */
+	L1423_B_WaitBeforeDrawingRestart = true; /* BUG0_00 Useless code */
+
+	_eventMan->f67_setMousePointerToNormal(k0_pointerArrow);
+	_eventMan->f78_showMouse();
+	_eventMan->_g441_primaryMouseInput = nullptr;
+	_eventMan->_g442_secondaryMouseInput = nullptr;
+	_eventMan->_g443_primaryKeyboardInput = nullptr;
+	_eventMan->_g444_secondaryKeyboardInput = nullptr;
+	if (doNotDrawCreditsOnly && !_g302_gameWon) {
+		f064_SOUND_RequestPlay_CPSD(k06_soundSCREAM, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY, k0_soundModePlayImmediately);
+		f22_delay(240);
+	}
+	
+	if (_displayMan->_g322_paletteSwitchingEnabled) {
+		for (uint16 i = 0; i < 16; ++i)
+			L1420_aui_Palette_TopAndBottomScreen[i] = _displayMan->_g347_paletteTopAndBottomScreen[i];
+		for (AL1410_i_Counter = 0; AL1410_i_Counter <= 7; AL1410_i_Counter++) {
+			f22_delay(1);
+			for (AL1409_i_Color = 0; AL1409_i_Color < 16; AL1409_i_Color++) {
+				_displayMan->_g346_paletteMiddleScreen[AL1409_i_Color] = _displayMan->f431_getDarkenedColor(_displayMan->_g346_paletteMiddleScreen[AL1409_i_Color]);
+				_displayMan->_g347_paletteTopAndBottomScreen[AL1409_i_Color] = _displayMan->f431_getDarkenedColor(_displayMan->_g347_paletteTopAndBottomScreen[AL1409_i_Color]);
+			}
+		}
+		_displayMan->_g322_paletteSwitchingEnabled = false;
+		f22_delay(1);
+		for (uint16 i = 0; i < 16; ++i)
+			_displayMan->_g347_paletteTopAndBottomScreen[i] = L1420_aui_Palette_TopAndBottomScreen[i];
+	} else {
+		warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette(G0345_aui_BlankBuffer)");
+	}
+	if (doNotDrawCreditsOnly) {
+		if (_g302_gameWon) {
+			// Strangerke: Related to portraits. Game data could be missing for earlier versions of the game.
+			_displayMan->fillScreen(k12_ColorDarkestGray);
+			for (AL1409_i_ChampionIndex = k0_ChampionFirst; AL1409_i_ChampionIndex < _championMan->_g305_partyChampionCount; AL1409_i_ChampionIndex++) {
+				AL1410_i_Y = AL1409_i_ChampionIndex * 48;
+				L1416_ps_Champion = &_championMan->_gK71_champions[AL1409_i_ChampionIndex];
+				_displayMan->f21_blitToScreen(_displayMan->f489_getNativeBitmapOrGraphic(k208_wallOrn_43_champMirror), &G0015_s_Graphic562_Box_Endgame_ChampionMirror, k32_byteWidth, k10_ColorFlesh, 43);
+				_displayMan->f21_blitToScreen(L1416_ps_Champion->_portrait, &G0016_s_Graphic562_Box_Endgame_ChampionPortrait, k16_byteWidth, k1_ColorDarkGary, 29);
+				_textMan->f443_endgamePrintString(87, AL1410_i_Y += 14, k9_ColorGold, L1416_ps_Champion->_name);
+				AL1411_i_X = (6 * strlen(L1416_ps_Champion->_name)) + 87;
+				L1415_c_ChampionTitleFirstCharacter = L1416_ps_Champion->_title[0];
+				if ((L1415_c_ChampionTitleFirstCharacter != ',') && (L1415_c_ChampionTitleFirstCharacter != ';') && (L1415_c_ChampionTitleFirstCharacter != '-')) {
+					AL1411_i_X += 6;
+				}
+				_textMan->f443_endgamePrintString(AL1411_i_X, AL1410_i_Y++, k9_ColorGold, L1416_ps_Champion->_title);
+				for (AL1411_i_SkillIndex = k0_ChampionSkillFighter; AL1411_i_SkillIndex <= k3_ChampionSkillWizard; AL1411_i_SkillIndex++) {
+					L1412_i_SkillLevel = MIN((uint16)16, _championMan->f303_getSkillLevel(AL1409_i_ChampionIndex, AL1411_i_SkillIndex | (k0x4000_IgnoreObjectModifiers | k0x8000_IgnoreTemporaryExperience)));
+					if (L1412_i_SkillLevel == 1)
+						continue;
+					strcpy(L1422_ac_String, G0428_apc_SkillLevelNames[L1412_i_SkillLevel - 2]);
+					strcat(L1422_ac_String, " ");
+					strcat(L1422_ac_String, g417_baseSkillName[AL1411_i_SkillIndex]);
+					_textMan->f443_endgamePrintString(105, AL1410_i_Y = AL1410_i_Y + 8, k13_ColorLightestGray, L1422_ac_String);
+				}
+				G0015_s_Graphic562_Box_Endgame_ChampionMirror._y1 += 48;
+				G0015_s_Graphic562_Box_Endgame_ChampionMirror._y2 += 48;
+				G0016_s_Graphic562_Box_Endgame_ChampionPortrait._y1 += 48;
+				G0016_s_Graphic562_Box_Endgame_ChampionPortrait._y1 += 48;
+			}
+			warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette(_displayMan->_g347_paletteTopAndBottomScreen);");
+			_engineShouldQuit = true;
+			return;
+		}
+T0444017:
+		_displayMan->fillScreen(k0_ColorBlack);
+		_displayMan->f21_blitToScreen(_displayMan->f489_getNativeBitmapOrGraphic(k6_theEndIndice), &G0012_s_Graphic562_Box_Endgame_TheEnd, k40_byteWidth, kM1_ColorNoTransparency, 14);
+		for (uint16 i = 0; i < 16; ++i)
+			L1421_aui_Palette_DarkBlue[i] = D01_RGB_DARK_BLUE;
+		for (uint16 i = 0; i < 16; ++i)
+			L1419_aui_Palette[i] = L1421_aui_Palette_DarkBlue[i];
+		L1419_aui_Palette[15] = D09_RGB_WHITE;
+		warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette(L1419_aui_Palette);");
+		if (L1423_B_WaitBeforeDrawingRestart) { /* BUG0_00 Useless code */
+			f22_delay(300);
+		} /* BUG0_00 Useless code */
+
+		if (_g524_restartGameAllowed) {
+			_displayMan->_g578_useByteBoxCoordinates = false;
+			_displayMan->D24_fillScreenBox(G0013_s_Graphic562_Box_Endgame_Restart_Outer, k12_ColorDarkestGray);
+			_displayMan->D24_fillScreenBox(G0014_s_Graphic562_Box_Endgame_Restart_Inner, k0_ColorBlack);
+			_textMan->f53_printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "RESTART THIS GAME");
+			L1419_aui_Palette[1] = D03_RGB_PINK;
+			L1419_aui_Palette[4] = D09_RGB_WHITE;
+			_eventMan->_g441_primaryMouseInput = g446_PrimaryMouseInput_RestartGame;
+			_eventMan->f357_discardAllInput();
+			_eventMan->f77_hideMouse();
+			warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette");
+			for (AL1409_i_VerticalBlankCount = 900; --AL1409_i_VerticalBlankCount && !_g523_restartGameRequest; f22_delay(1)) {
+				_eventMan->f380_processCommandQueue();
+			}
+			_eventMan->f78_showMouse();
+			if (_g523_restartGameRequest) {
+				warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette");
+				_displayMan->fillScreen(k0_ColorBlack);
+				warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette");
+				_g298_newGame = k0_modeLoadSavedGame;
+				if (f435_loadgame(1) != kM1_LoadgameFailure) {
+					f462_startGame();
+					_g523_restartGameRequest = false;
+					_eventMan->f77_hideMouse();
+					_eventMan->f357_discardAllInput();
+					return;
+				}
+			}
+		}
+
+		warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette");
+	}
+	{
+		Box box(0, 319, 0, 199);
+		_displayMan->f132_blitToBitmap(_displayMan->f489_getNativeBitmapOrGraphic(k5_creditsGraphicIndice), _displayMan->_g348_bitmapScreen, box, 0, 0, 160, 160, kM1_ColorNoTransparency);
+	}
+	warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette");
+	_eventMan->f541_waitForMouseOrKeyActivity();
+	if (_engineShouldQuit)
+		return;
+
+	if (_g524_restartGameAllowed && doNotDrawCreditsOnly) {
+		L1423_B_WaitBeforeDrawingRestart = false;
+		warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette");
+		goto T0444017;
+	}
+
+	_engineShouldQuit = true;
+	return;
+}
+
 
 void DMEngine::f439_drawEntrance() {
 	static Box K0079_s_Box_Entrance_DoorsUpperHalf = Box(0, 231, 0, 80);

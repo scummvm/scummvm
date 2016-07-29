@@ -211,4 +211,18 @@ void TextMan::f44_messageAreaClearExpiredRows() {
 		_g360_messageAreaRowExpirationTime[L0026_ui_RowIndex] = -1;
 	}
 }
+
+void TextMan::f443_endgamePrintString(int16 x, int16 y, Color textColor, char* text) {
+	char* L1407_pc_Character;
+	char L1408_ac_ModifiedString[50];
+
+	L1407_pc_Character = L1408_ac_ModifiedString;
+	while (*L1407_pc_Character = *text++) {
+		if ((*L1407_pc_Character >= 'A') && (*L1407_pc_Character <= 'Z')) {
+			*L1407_pc_Character -= 64; /* Use the same font as the one used for scrolls */
+		}
+		L1407_pc_Character++;
+	}
+	_vm->_textMan->f53_printToLogicalScreen(x, y, textColor, k12_ColorDarkestGray, L1408_ac_ModifiedString);
+}
 }
