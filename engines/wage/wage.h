@@ -208,7 +208,9 @@ public:
 	void redrawScene();
 	void saveGame();
 
-	Common::Error saveGameState(int slot, const Common::String &description);
+	virtual Common::Error loadGameState(int slot);
+	virtual Common::Error saveGameState(int slot, const Common::String &description);
+	bool scummVMSaveLoadDialog(bool isSave);
 
 private:
 	int getSceneIndex(Scene *scene) const;

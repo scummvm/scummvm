@@ -721,12 +721,50 @@ Common::String WageEngine::getSavegameFilename(int16 slotId) const {
 	return saveLoadSlot;
 }
 
+Common::Error WageEngine::loadGameState(int slot) {	
+	if (loadGame(slot) == 0)
+		return Common::kNoError;
+	else
+		return Common::kUnknownError;
+}
+
 Common::Error WageEngine::saveGameState(int slot, const Common::String &description) {
 	Common::String saveLoadSlot = getSavegameFilename(slot);
 	if (saveGame(saveLoadSlot, description) == 0)
 		return Common::kNoError;
 	else
 		return Common::kUnknownError;
+}
+
+bool WageEngine::scummVMSaveLoadDialog(bool isSave) {
+	if (!isSave) {
+		// do loading
+		GUI::SaveLoadChooser dialog = GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+		int slot = dialog.runModalWithCurrentTarget();
+
+		if (slot < 0)
+			return true;
+
+		return loadGameState(slot).getCode() == Common::kNoError;
+	}
+
+	// do saving
+	GUI::SaveLoadChooser dialog = GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	int slot = dialog.runModalWithCurrentTarget();
+	Common::String desc = dialog.getResultString();
+
+	if (desc.empty()) {
+		// create our own description for the saved game, the user didnt enter it
+		desc = dialog.createDefaultSaveDescription(slot);
+	}
+
+	if (desc.size() > 28)
+		desc = Common::String(desc.c_str(), 28);
+
+	if (slot < 0)
+		return true;
+
+	return saveGameState(slot, desc).getCode() == Common::kNoError;
 }
 
 } // End of namespace Agi

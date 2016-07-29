@@ -253,8 +253,6 @@ bool WageEngine::saveDialog() {
 
 void WageEngine::saveGame() {
 	warning("STUB: saveGame()");
-	Common::String fileName = getSavegameFilename(1), desc = "test save #1";
-	saveGame(fileName, desc);
 }
 
 void WageEngine::performInitialSetup() {

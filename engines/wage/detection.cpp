@@ -142,11 +142,11 @@ void WageMetaEngine::removeSaveState(const char *target, int slot) const {
 namespace Wage {
 
 bool WageEngine::canLoadGameStateCurrently() {
-	return false;
+	return true;
 }
 
 bool WageEngine::canSaveGameStateCurrently() {
-	return false;
+	return true;
 }
 
 } // End of namespace Wage

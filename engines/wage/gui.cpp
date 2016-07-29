@@ -65,9 +65,9 @@ static const MenuData menuSubItems[] = {
 	{ kMenuHighLevel, "File",	0, 0, false },
 	{ kMenuHighLevel, "Edit",	0, 0, false },
 	{ kMenuFile, "New",			kMenuActionNew, 0, false },
-	{ kMenuFile, "Open...",		kMenuActionOpen, 0, false },
+	{ kMenuFile, "Open...",		kMenuActionOpen, 0, true },
 	{ kMenuFile, "Close",		kMenuActionClose, 0, true },
-	{ kMenuFile, "Save",		kMenuActionSave, 0, false },
+	{ kMenuFile, "Save",		kMenuActionSave, 0, true },
 	{ kMenuFile, "Save as...",	kMenuActionSaveAs, 0, true },
 	{ kMenuFile, "Revert",		kMenuActionRevert, 0, false },
 	{ kMenuFile, "Quit",		kMenuActionQuit, 0, true },
@@ -323,12 +323,19 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 	switch(action) {
 	case kMenuActionAbout:
 	case kMenuActionNew:
-	case kMenuActionOpen:
 	case kMenuActionClose:
-	case kMenuActionSave:
-	case kMenuActionSaveAs:
 	case kMenuActionRevert:
 	case kMenuActionQuit:
+		break;
+
+	case kMenuActionOpen:
+		_engine->scummVMSaveLoadDialog(false);
+		break;
+
+	case kMenuActionSave:
+	case kMenuActionSaveAs:
+		_engine->scummVMSaveLoadDialog(true);
+		break;
 
 	case kMenuActionUndo:
 		actionUndo();
