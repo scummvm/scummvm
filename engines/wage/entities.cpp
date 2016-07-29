@@ -80,6 +80,8 @@ Context::Context() {
 }
 
 Scene::Scene() {
+	_resourceId = 0;
+
 	_script = NULL;
 	_design = NULL;
 	_textBounds = NULL;
@@ -103,6 +105,8 @@ Scene::Scene(Common::String name, Common::SeekableReadStream *data) {
 	_name = name;
 	_classType = SCENE;
 	_design = new Design(data);
+
+	_resourceId = 0;
 
 	_script = NULL;
 	_textBounds = NULL;
@@ -221,6 +225,7 @@ Designed *Scene::lookUpEntity(int x, int y) {
 
 Obj::Obj() : _currentOwner(NULL), _currentScene(NULL) {
 	_index = 0;
+	_resourceId = 0;
 	_namePlural = false;
 	_value = 0;
 	_attackType = 0;
@@ -231,7 +236,9 @@ Obj::Obj() : _currentOwner(NULL), _currentScene(NULL) {
 	_damage = 0;
 }
 
-Obj::Obj(Common::String name, Common::SeekableReadStream *data) {
+Obj::Obj(Common::String name, Common::SeekableReadStream *data, int resourceId) {
+	_resourceId = resourceId;
+
 	_name = name;
 	_classType = OBJ;
 	_currentOwner = NULL;
@@ -322,6 +329,7 @@ Chr::Chr(Common::String name, Common::SeekableReadStream *data) {
 	_design = new Design(data);
 
 	_index = 0;
+	_resourceId = 0;
 	_currentScene = NULL;
 
 	setDesignBounds(readRect(data));

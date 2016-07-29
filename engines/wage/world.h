@@ -48,10 +48,12 @@
 #ifndef WAGE_WORLD_H
 #define WAGE_WORLD_H
 
+#include "wage/entities.h"
 #include "wage/macwindowmanager.h"
 
 namespace Wage {
 
+class Script;
 class Sound;
 
 class World {
@@ -90,6 +92,7 @@ public:
 	Patterns *_patterns;
 	Scene *_storageScene;
 	Chr *_player;
+	int _signature;
 	//List<MoveListener> moveListeners;
 
 	Common::String *_gameOverMessage;
