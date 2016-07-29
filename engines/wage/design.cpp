@@ -102,7 +102,7 @@ void Design::paint(Graphics::ManagedSurface *surface, Graphics::MacPatterns &pat
 		_surface->create(_bounds->width(), _bounds->height(), Graphics::PixelFormat::createFormatCLUT8());
 
 		_surface->clear(kColorGreen);
-
+		
 		needRender = true;
 	}
 
@@ -263,7 +263,7 @@ void drawPixelPlain(int x, int y, int color, void *data) {
 	if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h)
 		*((byte *)p->surface->getBasePtr(x, y)) = (byte)color;
 }
-/*
+
 void Design::drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 	Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 	int16 y1 = in.readSint16BE();
@@ -280,41 +280,6 @@ void Design::drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 	PlotData pd(surface, &patterns, fillType, 1, this);
 
 	if (fillType <= patterns.size())
-		Graphics::drawFilledRect(r, kColorBlack, drawPixel, &pd);
-
-	pd.fillType = borderFillType;
-	pd.thickness = borderThickness;
-
-	if (borderThickness > 0 && borderFillType <= patterns.size()) {
-		Graphics::drawLine(x1, y1, x2, y1, kColorBlack, drawPixel, &pd);
-		Graphics::drawLine(x2, y1, x2, y2, kColorBlack, drawPixel, &pd);
-		Graphics::drawLine(x2, y2, x1, y2, kColorBlack, drawPixel, &pd);
-		Graphics::drawLine(x1, y2, x1, y1, kColorBlack, drawPixel, &pd);
-	}
-}
-*/
-
-void Design::drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
-	Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
-	int16 y1 = in.readSint16BE();
-	int16 x1 = in.readSint16BE();
-	int16 y2 = in.readSint16BE();
-	int16 x2 = in.readSint16BE();
-
-	if (x1 > x2)
-		SWAP(x1, x2);
-	if (y1 > y2)
-		SWAP(y1, y2);
-
-	Common::Rect r(x1, y1, x2, y2);
-	PlotData pd(surface, &patterns, fillType, 1, this);
-
-	const Graphics::Surface s(*surface);
-	Graphics::TransparentSurface *ts = new Graphics::TransparentSurface(*surface);
-	Graphics::NinePatchBitmap bmp(ts, true);
-	//bmp.blit(s, x1, y1, (x2 - x1), (y2 - y1));
-
-	if (fillType <= patterns.size())		
 		Graphics::drawFilledRect(r, kColorBlack, drawPixel, &pd);
 
 	pd.fillType = borderFillType;
