@@ -29,7 +29,7 @@
 
 namespace Titanic {
 
-int BellbotScript::_oldId;
+uint BellbotScript::_oldId;
 
 BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2) :
@@ -187,7 +187,7 @@ int BellbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 	return TTnpcScript::handleQuote(roomScript, sentence, val, tagId, remainder);
 }
 
-int BellbotScript::updateState(int oldId, int newId, int index) {
+int BellbotScript::updateState(uint oldId, uint newId, int index) {
 	if (!getValue(25)) {
 		newId = 202043 - getValue(1) <= 2 ? 994 : 0;
 		CTrueTalkManager::setFlags(25, 1);

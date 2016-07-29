@@ -157,9 +157,9 @@ public:
 struct TTupdateState3 {
 	uint _newId;
 	uint _newValue;
-	uint _idMatch;
+	uint _dialBits;
 
-	TTupdateState3() : _newId(0), _newValue(0), _idMatch(0) {}
+	TTupdateState3() : _newId(0), _newValue(0), _dialBits(0) {}
 };
 
 class TTupdateState3Array : public Common::Array<TTupdateState3> {

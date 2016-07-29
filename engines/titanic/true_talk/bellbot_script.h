@@ -29,7 +29,7 @@ namespace Titanic {
 
 class BellbotScript : public TTnpcScript {
 private:
-	static int _oldId;
+	static uint _oldId;
 	TTupdateState2Array _states;
 	int _array[150];
 	int _field2D0;
@@ -78,7 +78,7 @@ public:
 	/**
 	 * Handles updating NPC state based on specified dialogue Ids and dial positions
 	 */
-	virtual int updateState(int oldId, int newId, int index);
+	virtual int updateState(uint oldId, uint newId, int index);
 
 	virtual int proc22(int id) const;
 	virtual int proc23() const;

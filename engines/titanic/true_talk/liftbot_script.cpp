@@ -211,7 +211,7 @@ int LiftbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 	return TTnpcScript::handleQuote(roomScript, sentence, val, tagId, remainder);
 }
 
-int LiftbotScript::updateState(int oldId, int newId, int index) {
+int LiftbotScript::updateState(uint oldId, uint newId, int index) {
 	warning("TODO");
 	return 0;
 }

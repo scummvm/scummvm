@@ -187,7 +187,7 @@ void TTupdateState3Array::load(const char *name) {
 		TTupdateState3 ue;
 		ue._newId = r->readUint32LE();
 		ue._newValue = r->readUint32LE();
-		ue._idMatch = r->readUint32LE();
+		ue._dialBits = r->readUint32LE();
 
 		push_back(ue);
 	}

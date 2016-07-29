@@ -183,7 +183,7 @@ int DeskbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 
 }
 
-int DeskbotScript::updateState(int oldId, int newId, int index) {
+int DeskbotScript::updateState(uint oldId, uint newId, int index) {
 	if (isDial1Medium() || getValue(1) < 4)
 		CTrueTalkManager::setFlags(22, 1);
 

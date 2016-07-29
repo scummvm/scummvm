@@ -965,9 +965,36 @@ int BarbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 	return TTnpcScript::handleQuote(roomScript, sentence, val, tagId, remainder);
 }
 
-int BarbotScript::updateState(int oldId, int newId, int index) {
-	warning("TODO");
-	return 0;
+int BarbotScript::updateState(uint oldId, uint newId, int index) {
+	if (newId == 250538) {
+		CTrueTalkManager::triggerAction(28, 0);
+		return 250538;
+	}
+	if (newId == 251704) {
+		return 251701 + _field7C ? 3 : 0;
+	}
+
+	for (const TTupdateState3 *us = &_states[0]; us->_newId; ++us) {
+		if (us->_newId == newId) {
+			if ((us->_dialBits & 1) && !getDialRegion(0))
+				continue;
+			if ((us->_dialBits & 2) && getDialRegion(0))
+				continue;
+			if ((us->_dialBits & 4) && !getDialRegion(1))
+				continue;
+			if ((us->_dialBits & 8) && getDialRegion(1))
+				continue;
+			if ((us->_dialBits & 0x10) && !getDialRegion(2))
+				continue;
+			if ((us->_dialBits & 0x20) && getDialRegion(2))
+				continue;
+
+			setState(us->_newValue);
+			break;
+		}
+	}
+
+	return newId;
 }
 
 int BarbotScript::proc22(int id) const {

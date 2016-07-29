@@ -251,7 +251,7 @@ int DoorbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 	return TTnpcScript::handleQuote(roomScript, sentence, val, tagId, remainder);
 }
 
-int DoorbotScript::updateState(int oldId, int newId, int index) {
+int DoorbotScript::updateState(uint oldId, uint newId, int index) {
 	warning("TODO");
 	return 0;
 }

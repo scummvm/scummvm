@@ -82,7 +82,7 @@ public:
 	/**
 	 * Handles updating NPC state based on specified dialogue Ids and dial positions
 	 */
-	virtual int updateState(int oldId, int newId, int index);
+	virtual int updateState(uint oldId, uint newId, int index);
 
 	virtual int proc22(int id) const;
 	virtual int proc23() const;

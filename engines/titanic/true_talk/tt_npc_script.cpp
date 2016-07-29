@@ -372,7 +372,7 @@ void TTnpcScript::resetRange(int id) {
 		range->_priorIndex = 0;
 }
 
-int TTnpcScript::updateState(int oldId, int newId, int index) {
+int TTnpcScript::updateState(uint oldId, uint newId, int index) {
 	return newId;
 }
 
