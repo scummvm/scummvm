@@ -190,8 +190,9 @@ void Lingo::c_assign() {
 		delete d2.u.arr;
 	} else if (d2.type == SYMBOL) {
 		d1.u.sym->u.i = d2.u.i;
-	else
-		error("c_assign: unhandled type: %s", d2.type2str());
+	} else {
+		warning("c_assign: unhandled type: %s", d2.type2str());
+	}
 
 	d1.u.sym->type = d2.type;
 
@@ -236,7 +237,7 @@ void Lingo::c_eval() {
 	else if (d.u.sym->type == SYMBOL)
 		d.u.i = d.u.sym->u.i;
 	else
-		error("c_eval: unhandled type: %s", d.type2str());
+		warning("c_eval: unhandled type: %s", d.type2str());
 
 	g_lingo->push(d);
 }
