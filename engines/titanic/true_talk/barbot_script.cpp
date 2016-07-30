@@ -23,6 +23,7 @@
 #include "common/textconsole.h"
 #include "titanic/true_talk/barbot_script.h"
 #include "titanic/true_talk/true_talk_manager.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -204,6 +205,7 @@ int BarbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
 	CTrueTalkManager::setFlags(33, getValue(33) - 1);
 	CTrueTalkManager::setFlags(34, getValue(34) - 1);
 	
+	TTtreeResult treeResult;
 	int val34 = getState();
 	setState(0);
 
@@ -297,18 +299,15 @@ int BarbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
 			return applySentenceIds(getDialogueId(250946));
 		break;
 	case 15:
-		/* TODO 
 		if (flag || sentence->contains("or")) {
 			return applySentenceIds(getDialogueId(250526), 16);
 		} else {
-			TTtreeResult treeResult;
-			if (TTquotesTree::search(sentence->_normalizedLine.c_str(), 
-					&TTnpcScript_BTREE_3, &treeResult, 0, 0) != -1) {
-				id = getDialogueId(250526);
-				return applySentenceIds(id, 16);
+			if (g_vm->_trueTalkManager->_quotesTree.search(
+					sentence->_normalizedLine.c_str(), TREE_3, &treeResult, 0, nullptr) != -1) {
+				uint newId = getDialogueId(250526);
+				return applySentenceIds(newId, 16);
 			}
 		}
-		*/
 		break;
 	case 17:
 		if (flag) {
@@ -358,12 +357,10 @@ int BarbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
 			return applySentenceIds(50215);
 		break;
 	case 26:
-		/* TODO
-		v43 = TTstring_cstr(&sentence->normalizedLine);
-		if (TTquotesTree_Search(v43, &TTnpcScript_BTREE_3, &buffer, 0, 0) == -1)
-			break;
-		*/
-		return applySentenceIds(getDialogueId(251899), 26);
+		if (g_vm->_trueTalkManager->_quotesTree.search(
+				sentence->_normalizedLine.c_str(), TREE_3, &treeResult, 0, nullptr) != -1)
+			return applySentenceIds(getDialogueId(251899), 26);
+		break;
 
 	case 27:
 		if (flag)
