@@ -52,6 +52,7 @@ BarbotScript::BarbotScript(int val1, const char *charClass, int v2,
 	_tagMappings.load("TagMap/Barbot");
 	_quotes.load("Quotes/Barbot");
 	_states.load("States/Barbot");
+	_preResponses.load("PreResponses/Barbot");
 }
 
 void BarbotScript::setupSentences() {
@@ -975,7 +976,7 @@ int BarbotScript::updateState(uint oldId, uint newId, int index) {
 	}
 
 	for (uint idx = 0; idx < _states.size(); ++idx) {
-		const TTupdateState3 &us = _states[idx];
+		const TTupdateState &us = _states[idx];
 		if (us._newId == newId) {
 			if ((us._dialBits & 1) && !getDialRegion(0))
 				continue;
@@ -998,9 +999,11 @@ int BarbotScript::updateState(uint oldId, uint newId, int index) {
 	return newId;
 }
 
-int BarbotScript::proc22(int id) const {
-	warning("TODO");
-	return 0;
+int BarbotScript::preResponse(uint id) {
+	if (getDialRegion(0) == 0 && getRandomNumber(100) > 80)
+		return 251250;
+
+	return _preResponses.find(id);
 }
 
 uint BarbotScript::getDialsBitset() const {

@@ -376,7 +376,7 @@ int TTnpcScript::updateState(uint oldId, uint newId, int index) {
 	return newId;
 }
 
-int TTnpcScript::proc22(int id) const {
+int TTnpcScript::preResponse(uint id) {
 	return 0;
 }
 
@@ -742,7 +742,7 @@ int TTnpcScript::processEntries(const TTsentenceEntries *entries, uint entryCoun
 						return 2;	
 					addResponse(dialogueId);
 
-					id = proc22(dialogueId);
+					id = preResponse(dialogueId);
 					if (id)
 						addResponse(getDialogueId(id));
 					applyResponse();

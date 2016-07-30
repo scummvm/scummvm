@@ -32,7 +32,8 @@ private:
 	int _state;
 	int _arrIndex;
 	TTsentenceEntries _entries2;
-	TTupdateState3Array _states;
+	TTupdateStateArray _states;
+	TTmapEntryArray _preResponses;
 private:
 	/**
 	 * Adjust a given dial number by a given delta amount
@@ -79,7 +80,10 @@ public:
 	 */
 	virtual int updateState(uint oldId, uint newId, int index);
 
-	virtual int proc22(int id) const;
+	/**
+	 * Handles getting a pre-response
+	 */
+	virtual int preResponse(uint id);
 
 	/**
 	 * Returns a bitset of the first three dialgs being on or not

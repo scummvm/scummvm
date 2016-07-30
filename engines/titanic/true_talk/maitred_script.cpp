@@ -254,7 +254,7 @@ int MaitreDScript::updateState(uint oldId, uint newId, int index) {
 	}
 
 	if (!getValue(12)) {
-		static const int FLAG_IDS[] = {
+		static const uint FLAG_IDS[] = {
 			260080, 260066, 260067, 260062, 260050, 260087, 260090, 260171, 260173,
 			260184, 260193, 260202, 260205, 260220, 260221, 260223, 260231, 260232,
 			260365, 260373, 260374, 260387, 260421, 260622, 260695, 0
@@ -294,8 +294,10 @@ int MaitreDScript::updateState(uint oldId, uint newId, int index) {
 	return newId;
 }
 
-int MaitreDScript::proc22(int id) const {
-	warning("TODO");
+int MaitreDScript::preResponse(uint id) {
+	if (id == 60911)
+		return 260101;
+
 	return 0;
 }
 
@@ -376,10 +378,10 @@ void MaitreDScript::setFlags12() {
 	}
 }
 
-void MaitreDScript::setFlags10(int newId, int index) {
+void MaitreDScript::setFlags10(uint newId, uint index) {
 	int val = 28;
 	for (uint idx = 0; idx < _states.size(); ++idx) {
-		TTupdateState2 &us = _states[idx];
+		TTmapEntry &us = _states[idx];
 		if (us._src == newId) {
 			val = us._dest;
 			break;

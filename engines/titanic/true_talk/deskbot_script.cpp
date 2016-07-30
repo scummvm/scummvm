@@ -251,9 +251,15 @@ exit:
 	return newId;
 }
 
-int DeskbotScript::proc22(int id) const {
-	warning("TODO");
-	return 0;
+int DeskbotScript::preResponse(uint id) {
+	int newId = 0;
+	if (getValue(1) >= 3 && (id == 41176 || id == 41738 || id == 41413 || id == 41740))
+		newId = 241601;
+
+	if (id == 42114)
+		CTrueTalkManager::triggerAction(20, 0);
+
+	return newId;
 }
 
 int DeskbotScript::proc23() const {
@@ -330,7 +336,7 @@ bool DeskbotScript::isDial1Low() const {
 	return getDialRegion(1) == 0;
 }
 
-int DeskbotScript::addAssignedRoomDialogue() {
+uint DeskbotScript::addAssignedRoomDialogue() {
 	if (isDial1Medium()) {
 		addResponse(getDialogueId(240407));
 		addResponse(getDialogueId(241510));
@@ -351,7 +357,7 @@ int DeskbotScript::addAssignedRoomDialogue() {
 	}
 }
 
-int DeskbotScript::addAssignedRoomDialogue2() {
+uint DeskbotScript::addAssignedRoomDialogue2() {
 	addResponse(getDialogueId(241355));
 	int roomNum = 0, floorNum = 0, elevatorNum = 0;
 	getAssignedRoom(&roomNum, &floorNum, &elevatorNum);
@@ -385,7 +391,7 @@ void DeskbotScript::addAssignedRoomDialogue3() {
 	applyResponse();
 }
 
-int DeskbotScript::getStateDialogueId() const {
+uint DeskbotScript::getStateDialogueId() const {
 	switch (getValue(1)) {
 	case 1:
 		return 241503;
@@ -396,11 +402,11 @@ int DeskbotScript::getStateDialogueId() const {
 	}
 }
 
-void DeskbotScript::setFlags17(int newId, int index) {
+void DeskbotScript::setFlags17(uint newId, uint index) {
 	int newValue = getValue(17);
 
 	for (uint idx = 0; idx < _states.size(); ++idx) {
-		const TTupdateState3 &us = _states[idx];
+		const TTupdateState &us = _states[idx];
 		if (newId == (idx == 0 ? 0 : us._newId)) {
 			uint bits = us._dialBits;
 

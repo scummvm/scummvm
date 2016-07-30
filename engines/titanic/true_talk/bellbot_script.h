@@ -30,7 +30,8 @@ namespace Titanic {
 class BellbotScript : public TTnpcScript {
 private:
 	static uint _oldId;
-	TTupdateState2Array _states;
+	TTmapEntryArray _states;
+	TTmapEntryArray _preResponses;
 	int _array[150];
 	int _field2D0;
 	int _field2D4;
@@ -80,7 +81,11 @@ public:
 	 */
 	virtual int updateState(uint oldId, uint newId, int index);
 
-	virtual int proc22(int id) const;
+	/**
+	 * Handles getting a pre-response
+	 */
+	virtual int preResponse(uint id);
+
 	virtual int proc23() const;
 
 	virtual int proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence);

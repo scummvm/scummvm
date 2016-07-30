@@ -302,7 +302,7 @@ int DoorbotScript::updateState(uint oldId, uint newId, int index) {
 	}
 
 	for (uint idx = 0; idx < _states.size(); ++idx) {
-		TTupdateState3 &us = _states[idx];
+		TTupdateState &us = _states[idx];
 		if (us._newId == newId) {
 			uint bits = us._dialBits;
 
@@ -320,9 +320,14 @@ int DoorbotScript::updateState(uint oldId, uint newId, int index) {
 	return newId;
 }
 
-int DoorbotScript::proc22(int id) const {
-	warning("TODO");
-	return 0;
+int DoorbotScript::preResponse(uint id) {
+	uint newId = 0;
+	if (getDialRegion(0) != 1 && getRandomNumber(100) > 60) {
+		addResponse(11195);
+		newId = 222193;
+	}
+
+	return newId;
 }
 
 uint DoorbotScript::getDialsBitset() const {

@@ -213,7 +213,7 @@ int LiftbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 
 int LiftbotScript::updateState(uint oldId, uint newId, int index) {
 	for (uint idx = 0; idx < _states.size(); ++idx) {
-		TTupdateState2 &us = _states[idx];
+		TTmapEntry &us = _states[idx];
 		if (us._src == newId) {
 			setState(us._dest);
 			break;
@@ -223,8 +223,14 @@ int LiftbotScript::updateState(uint oldId, uint newId, int index) {
 	return newId;
 }
 
-int LiftbotScript::proc22(int id) const {
-	warning("TODO");
+int LiftbotScript::preResponse(uint id) {
+	if (id == 30565 || id == 30566 || id == 30567 || id == 30568
+			|| id == 30569 || id == 30570 || id == 30571)
+		return 210901;
+
+	if (getDialRegion(0) == 0 && getRandomNumber(100) > 60)
+		return 210830;
+
 	return 0;
 }
 

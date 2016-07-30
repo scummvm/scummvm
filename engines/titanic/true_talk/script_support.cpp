@@ -164,11 +164,11 @@ void TThandleQuoteEntries::load(const char *name) {
 
 /*------------------------------------------------------------------------*/
 
-void TTupdateState2Array::load(const char *name) {
+void TTmapEntryArray::load(const char *name) {
 	Common::SeekableReadStream *r = g_vm->_filesManager->getResource(name);
 
 	while (r->pos() < r->size()) {
-		TTupdateState2 us;
+		TTmapEntry us;
 		us._src = r->readUint32LE();
 		us._dest = r->readUint32LE();
 
@@ -178,13 +178,23 @@ void TTupdateState2Array::load(const char *name) {
 	delete r;
 }
 
+int TTmapEntryArray::find(uint id) const {
+	for (uint idx = 0; idx < size(); ++idx) {
+		const TTmapEntry &me = (*this)[idx];
+		if (me._src == id)
+			return me._dest;
+	}
+
+	return 0;
+}
+
 /*------------------------------------------------------------------------*/
 
-void TTupdateState3Array::load(const char *name) {
+void TTupdateStateArray::load(const char *name) {
 	Common::SeekableReadStream *r = g_vm->_filesManager->getResource(name);
 
 	while (r->pos() < r->size()) {
-		TTupdateState3 ue;
+		TTupdateState ue;
 		ue._newId = r->readUint32LE();
 		ue._newValue = r->readUint32LE();
 		ue._dialBits = r->readUint32LE();

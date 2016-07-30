@@ -29,7 +29,7 @@ namespace Titanic {
 
 class MaitreDScript : public TTnpcScript {
 private:
-	TTupdateState2Array _states;
+	TTmapEntryArray _states;
 private:
 	/**
 	 * Setup sentence data
@@ -50,7 +50,7 @@ private:
 	 * Sets flags 10 to different values based on the passed
 	 * dialogue Id
 	 */
-	void setFlags10(int newId, int index);
+	void setFlags10(uint newId, uint index);
 
 	/**
 	 * Trigers 12
@@ -83,7 +83,11 @@ public:
 	 */
 	virtual int updateState(uint oldId, uint newId, int index);
 
-	virtual int proc22(int id) const;
+	/**
+	 * Handles getting a pre-response
+	 */
+	virtual int preResponse(uint id);
+
 	virtual int proc23() const;
 	virtual int proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence);
 	virtual void proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence);

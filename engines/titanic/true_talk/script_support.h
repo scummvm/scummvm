@@ -142,27 +142,32 @@ public:
 	void load(const char *name);
 };
 
-struct TTupdateState2 {
+struct TTmapEntry {
 	uint _src;
 	uint _dest;
 
-	TTupdateState2() : _src(0), _dest(0) {}
+	TTmapEntry() : _src(0), _dest(0) {}
 };
 
-class TTupdateState2Array : public Common::Array<TTupdateState2> {
+class TTmapEntryArray : public Common::Array<TTmapEntry> {
 public:
 	void load(const char *name);
+
+	/**
+	 * Finds a record by Id, and returns it's associated value
+	 */
+	int find(uint id) const;
 };
 
-struct TTupdateState3 {
+struct TTupdateState {
 	uint _newId;
 	uint _newValue;
 	uint _dialBits;
 
-	TTupdateState3() : _newId(0), _newValue(0), _dialBits(0) {}
+	TTupdateState() : _newId(0), _newValue(0), _dialBits(0) {}
 };
 
-class TTupdateState3Array : public Common::Array<TTupdateState3> {
+class TTupdateStateArray : public Common::Array<TTupdateState> {
 public:
 	void load(const char *name);
 };

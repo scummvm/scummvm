@@ -51,6 +51,7 @@ BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
 	_words.load("Words/Bellbot");
 	_quotes.load("Quotes/Bellbot");
 	_states.load("States/Bellbot");
+	_preResponses.load("PreResponses/Bellbot");
 }
 
 void BellbotScript::setupSentences() {
@@ -299,9 +300,22 @@ int BellbotScript::updateState(uint oldId, uint newId, int index) {
 	return newId;
 }
 
-int BellbotScript::proc22(int id) const {
-	warning("TODO");
-	return 0;
+int BellbotScript::preResponse(uint id) {
+	int newId = _preResponses.find(id);
+
+	if (newId == 202277) {
+		applyResponse();
+		CTrueTalkManager::triggerAction(1, 0);
+	}
+	if (newId == 200769) {
+		applyResponse();
+		CTrueTalkManager::triggerAction(18, 0);
+	}
+
+	if (id == 21790)
+		CTrueTalkManager::triggerAction(13, 0);
+
+	return newId;
 }
 
 int BellbotScript::proc23() const {
@@ -427,7 +441,7 @@ int BellbotScript::getStateDialogueId() const {
 void BellbotScript::setValue23(uint id) {
 	uint val = 0;
 	for (uint idx = 0; idx < _states.size() && !val; ++idx) {
-		TTupdateState2 &us = _states[idx];
+		TTmapEntry &us = _states[idx];
 		if (us._src == id)
 			val = us._dest;
 	}

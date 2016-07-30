@@ -29,7 +29,7 @@ namespace Titanic {
 
 class DoorbotScript : public TTnpcScript {
 private:
-	TTupdateState3Array _states;
+	TTupdateStateArray _states;
 	int _stateIndex;
 private:
 	/**
@@ -78,7 +78,10 @@ public:
 	 */
 	virtual int updateState(uint oldId, uint newId, int index);
 
-	virtual int proc22(int id) const;
+	/**
+	 * Handles getting a pre-response
+	 */
+	virtual int preResponse(uint id);
 
 	/**
 	 * Returns a bitset of the dials being off or not
