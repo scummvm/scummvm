@@ -196,6 +196,7 @@ void MacWindow::drawBorder() {
 	_borderIsDirty = false;
 
 	ManagedSurface *g = &_borderSurface;
+
 	if (_macBorder.hasBorder(_active)) {
 		drawBorderFromSurface(g);
 	} else {
@@ -303,19 +304,18 @@ void MacWindow::setHighlight(WindowClick highlightedPart) {
 
 	_highlightedPart = highlightedPart;
 	_borderIsDirty = true;
- }
+}
 
- void MacWindow::setScroll(float scrollPos, float scrollSize) {
+void MacWindow::setScroll(float scrollPos, float scrollSize) {
 	if (_scrollPos == scrollPos && _scrollSize == scrollSize)
 		return;
 
 	_scrollPos = scrollPos;
 	_scrollSize = scrollSize;
 	_borderIsDirty = true;
- }
+}
 
- void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, int lo, int ro, int to, int bo) {
-
+void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, int lo, int ro, int to, int bo) {
 	Image::BitmapDecoder bmpDecoder;
 	Graphics::Surface source;
 	Graphics::TransparentSurface *surface = new Graphics::TransparentSurface();
@@ -328,20 +328,20 @@ void MacWindow::setHighlight(WindowClick highlightedPart) {
 	surface->copyFrom(source);
 	surface->applyColorKey(255, 0, 255, false);
 
-	 if (active)
-		 _macBorder.addActiveBorder(*surface);
-	 else
-		 _macBorder.addInactiveBorder(*surface);
+	if (active)
+		_macBorder.addActiveBorder(*surface);
+	else
+		_macBorder.addInactiveBorder(*surface);
 
-		if (!_macBorder.hasOffsets())
-			_macBorder.setOffsets(lo, ro, to, bo);
+	if (!_macBorder.hasOffsets())
+		_macBorder.setOffsets(lo, ro, to, bo);
 
-		updateInnerDims();
- }
+	updateInnerDims();
+}
 
- void MacWindow::setCloseable(bool closeable) {
-	 _closeable = closeable;
- }
+void MacWindow::setCloseable(bool closeable) {
+	_closeable = closeable;
+}
 
 void MacWindow::drawBox(ManagedSurface *g, int x, int y, int w, int h) {
 	Common::Rect r(x, y, x + w + 1, y + h + 1);
