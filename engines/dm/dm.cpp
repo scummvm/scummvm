@@ -76,9 +76,17 @@ void warning(bool repeat, const char* s, ...) {
 	}
 }
 
-void turnDirRight(Direction &dir) { dir = (Direction)((dir + 1) & 3); }
-void turnDirLeft(Direction &dir) { dir = (Direction)((dir - 1) & 3); }
-Direction returnOppositeDir(Direction dir) { return (Direction)((dir + 2) & 3); }
+void turnDirRight(Direction &dir) {
+	dir = (Direction)((dir + 1) & 3);
+}
+
+void turnDirLeft(Direction &dir) {
+	dir = (Direction)((dir - 1) & 3);
+}
+
+Direction returnOppositeDir(Direction dir) {
+	return (Direction)((dir + 2) & 3);
+}
 
 uint16 returnPrevVal(uint16 val) {
 	return (Direction)((val + 3) & 3);
@@ -88,7 +96,9 @@ uint16 returnNextVal(uint16 val) {
 	return (val + 1) & 0x3;
 }
 
-bool isOrientedWestEast(Direction dir) { return dir & 1; }
+bool isOrientedWestEast(Direction dir) {
+	return dir & 1;
+}
 
 uint16 toggleFlag(uint16& val, uint16 mask) {
 	return val ^= mask;
@@ -134,7 +144,7 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	DebugMan.addDebugChannel(kDMDebugExample, "example", "example desc");
 
 	// register random source
-	_rnd = new Common::RandomSource("quux");
+	_rnd = new Common::RandomSource("dm");
 
 	_dungeonMan = nullptr;
 	_displayMan = nullptr;
@@ -351,17 +361,19 @@ void DMEngine::f2_gameloop() {
 	while (true) {
 		if (_engineShouldQuit)
 			return;
-		if (_g327_newPartyMapIndex != kM1_mapIndexNone) {
-T0002002:
-			f3_processNewPartyMap(_g327_newPartyMapIndex);
-			_moveSens->f267_getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
-			_g327_newPartyMapIndex = kM1_mapIndexNone;
-			_eventMan->f357_discardAllInput();
-		}
-		_timeline->f261_processTimeline();
 
-		if (_g327_newPartyMapIndex != kM1_mapIndexNone)
-			goto T0002002;
+		for (;;) {
+			if (_g327_newPartyMapIndex != kM1_mapIndexNone) {
+				f3_processNewPartyMap(_g327_newPartyMapIndex);
+				_moveSens->f267_getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
+				_g327_newPartyMapIndex = kM1_mapIndexNone;
+				_eventMan->f357_discardAllInput();
+			}
+			_timeline->f261_processTimeline();
+
+			if (_g327_newPartyMapIndex == kM1_mapIndexNone)
+				break;
+		}
 
 		if (!_inventoryMan->_g432_inventoryChampionOrdinal && !_championMan->_g300_partyIsSleeping) {
 			Box box(0, 223, 0, 135);
