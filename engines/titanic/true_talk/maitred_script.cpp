@@ -311,9 +311,6 @@ int MaitreDScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript,
 	return 0;
 }
 
-void MaitreDScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence) {
-}
-
 uint MaitreDScript::getStateDialogueId(uint oldId, uint newId) {
 	if (getValue(8) || getValue(9))
 		return newId;

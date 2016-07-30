@@ -390,9 +390,6 @@ int TTnpcScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript, T
 	return 0;
 }
 
-void TTnpcScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence) {
-}
-
 void TTnpcScript::save(SimpleFile *file) {
 	file->writeNumber(charId());
 	saveBody(file);
@@ -748,7 +745,7 @@ int TTnpcScript::processEntries(const TTsentenceEntries *entries, uint entryCoun
 					applyResponse();
 
 					if (entry._field30)
-						proc26(entry._field30, &entry, roomScript, sentence);
+						postResponse(entry._field30, &entry, roomScript, sentence);
 
 					return 2;
 				}

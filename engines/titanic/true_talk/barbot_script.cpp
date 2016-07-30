@@ -1155,9 +1155,6 @@ int BarbotScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript, 
 	return 2;
 }
 
-void BarbotScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence) {
-}
-
 void BarbotScript::setDialRegion(int dialNum, int region) {
 	TTnpcScript::setDialRegion(dialNum, region);
 	selectResponse(250365);

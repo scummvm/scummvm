@@ -407,9 +407,6 @@ int BellbotScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript,
 	return 0;
 }
 
-void BellbotScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence) {
-}
-
 int BellbotScript::proc36(int id) const {
 	warning("TODO");
 	return 0;

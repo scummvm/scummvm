@@ -515,9 +515,6 @@ int DoorbotScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript,
 	return 0;
 }
 
-void DoorbotScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence) {
-}
-
 void DoorbotScript::setDialRegion(int dialNum, int region) {
 	TTnpcScript::setDialRegion(dialNum, region);
 	if (dialNum == 1 && region != 1) {

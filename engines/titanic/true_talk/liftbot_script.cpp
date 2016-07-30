@@ -354,9 +354,6 @@ int LiftbotScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript,
 	return 0;
 }
 
-void LiftbotScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence) {
-}
-
 void LiftbotScript::setDialRegion(int dialNum, int region) {
 	TTnpcScript::setDialRegion(dialNum, region);
 	addResponse(getDialogueId(210688));

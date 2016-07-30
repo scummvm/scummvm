@@ -99,7 +99,4 @@ int SuccUBusScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript
 	return 0;
 }
 
-void SuccUBusScript::proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence) {
-}
-
 } // End of namespace Titanic

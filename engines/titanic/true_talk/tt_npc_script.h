@@ -273,7 +273,12 @@ public:
 	
 	virtual const TTscriptMapping *getMapping(int index);
 	virtual int proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence);
-	virtual void proc26(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence);
+
+	/**
+	 * Handles any post-response NPC processing
+	 */
+	virtual void postResponse(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence) {}
+	
 	virtual void save(SimpleFile *file);
 	virtual void load(SimpleFile *file);
 	virtual void saveBody(SimpleFile *file);
