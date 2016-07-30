@@ -115,7 +115,10 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 	reg_t planeObj = readSelector(_segMan, controlObject, SELECTOR(plane));
 	Plane *sourcePlane = g_sci->_gfxFrameout->getVisiblePlanes().findByObject(planeObj);
 	if (sourcePlane == nullptr) {
-		error("Could not find plane %04x:%04x", PRINT_REG(planeObj));
+		sourcePlane = g_sci->_gfxFrameout->getPlanes().findByObject(planeObj);
+		if (sourcePlane == nullptr) {
+			error("Could not find plane %04x:%04x", PRINT_REG(planeObj));
+		}
 	}
 	editorPlaneRect.translate(sourcePlane->_gameRect.left, sourcePlane->_gameRect.top);
 
