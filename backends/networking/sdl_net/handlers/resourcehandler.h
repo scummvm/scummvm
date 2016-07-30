@@ -28,13 +28,12 @@
 namespace Networking {
 
 class ResourceHandler: public BaseHandler {
-	void handle(Client &client);
 	static const char *determineMimeType(Common::String &filename);
 public:
 	ResourceHandler();
 	virtual ~ResourceHandler();
 
-	virtual ClientHandlerCallback getHandler();
+	virtual void handle(Client &client);
 };
 
 } // End of namespace Networking

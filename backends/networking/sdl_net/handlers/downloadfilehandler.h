@@ -28,12 +28,11 @@
 namespace Networking {
 
 class DownloadFileHandler: public FilesBaseHandler {
-	void handle(Client &client);
 public:
 	DownloadFileHandler();
 	virtual ~DownloadFileHandler();
 
-	virtual ClientHandlerCallback getHandler();
+	virtual void handle(Client &client);
 };
 
 } // End of namespace Networking

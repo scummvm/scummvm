@@ -61,8 +61,8 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	Client _client[MAX_CONNECTIONS];
 	int _clients;
 	bool _timerStarted, _stopOnIdle;
-	Common::HashMap<Common::String, ClientHandlerCallback> _pathHandlers;
-	ClientHandlerCallback _defaultHandler;
+	Common::HashMap<Common::String, BaseHandler*> _pathHandlers;
+	BaseHandler *_defaultHandler;
 	IndexPageHandler _indexPageHandler;
 	FilesPageHandler _filesPageHandler;
 	CreateDirectoryHandler _createDirectoryHandler;
@@ -82,7 +82,7 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	void handleClient(uint32 i);
 	void acceptClient();
 	void resolveAddress(void *ipAddress);
-	void addPathHandler(Common::String path, ClientHandlerCallback handler);
+	void addPathHandler(Common::String path, BaseHandler *handler);
 
 public:
 	static const uint32 DEFAULT_SERVER_PORT = 12345;

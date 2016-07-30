@@ -37,8 +37,6 @@ class FilesPageHandler: public FilesBaseHandler {
 		IT_UNKNOWN
 	};
 
-	void handle(Client &client);
-
 	/**
 	 * Lists the directory <path>.
 	 *
@@ -56,7 +54,7 @@ public:
 	FilesPageHandler();
 	virtual ~FilesPageHandler();
 
-	virtual ClientHandlerCallback getHandler();
+	virtual void handle(Client &client);
 };
 
 } // End of namespace Networking

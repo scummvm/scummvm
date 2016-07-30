@@ -30,22 +30,6 @@ ResourceHandler::ResourceHandler() {}
 
 ResourceHandler::~ResourceHandler() {}
 
-void ResourceHandler::handle(Client &client) {
-	Common::String filename = client.path();
-	filename.deleteChar(0);
-
-	// if archive hidden file is requested, ignore
-	if (filename.size() && filename[0] == '.')
-		return;
-
-	// if file not found, don't set handler either
-	Common::SeekableReadStream *file = HandlerUtils::getArchiveFile(filename);
-	if (file == nullptr)
-		return;
-
-	LocalWebserver::setClientGetHandler(client, file, 200, determineMimeType(filename));
-}
-
 const char *ResourceHandler::determineMimeType(Common::String &filename) {
 	// text
 	if (filename.hasSuffix(".html")) return "text/html";
@@ -68,8 +52,20 @@ const char *ResourceHandler::determineMimeType(Common::String &filename) {
 
 /// public
 
-ClientHandlerCallback ResourceHandler::getHandler() {
-	return new Common::Callback<ResourceHandler, Client &>(this, &ResourceHandler::handle);
+void ResourceHandler::handle(Client &client) {
+	Common::String filename = client.path();
+	filename.deleteChar(0);
+
+	// if archive hidden file is requested, ignore
+	if (filename.size() && filename[0] == '.')
+		return;
+
+	// if file not found, don't set handler either
+	Common::SeekableReadStream *file = HandlerUtils::getArchiveFile(filename);
+	if (file == nullptr)
+		return;
+
+	LocalWebserver::setClientGetHandler(client, file, 200, determineMimeType(filename));
 }
 
 } // End of namespace Networking

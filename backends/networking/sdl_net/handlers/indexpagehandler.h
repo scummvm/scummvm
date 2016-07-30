@@ -31,14 +31,12 @@ class LocalWebserver;
 
 class IndexPageHandler: public BaseHandler, public GUI::CommandSender {
 	Common::String _code;
-
-	void handle(Client &client);
 public:
 	IndexPageHandler();
 	virtual ~IndexPageHandler();
 
 	Common::String code() const;
-	virtual ClientHandlerCallback getHandler();
+	virtual void handle(Client &client);
 };
 
 } // End of namespace Networking

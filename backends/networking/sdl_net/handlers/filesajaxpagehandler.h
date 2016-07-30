@@ -28,13 +28,11 @@
 namespace Networking {
 
 class FilesAjaxPageHandler: public FilesBaseHandler {
-	void handle(Client &client);
-
 public:
 	FilesAjaxPageHandler();
 	virtual ~FilesAjaxPageHandler();
 
-	virtual ClientHandlerCallback getHandler();
+	virtual void handle(Client &client);
 };
 
 } // End of namespace Networking

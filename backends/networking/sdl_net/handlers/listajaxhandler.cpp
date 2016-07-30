@@ -32,13 +32,6 @@ ListAjaxHandler::ListAjaxHandler() {}
 
 ListAjaxHandler::~ListAjaxHandler() {}
 
-void ListAjaxHandler::handle(Client &client) {
-	Common::String path = client.queryParameter("path");
-	Common::JSONValue jsonResponse = listDirectory(path);
-	Common::String response = jsonResponse.stringify(true);
-	LocalWebserver::setClientGetHandler(client, response);
-}
-
 Common::JSONObject ListAjaxHandler::listDirectory(Common::String path) {
 	Common::JSONArray itemsList;
 	Common::JSONObject errorResult;
@@ -145,8 +138,11 @@ void ListAjaxHandler::addItem(Common::JSONArray &responseItemsList, ItemType ite
 
 /// public
 
-ClientHandlerCallback ListAjaxHandler::getHandler() {
-	return new Common::Callback<ListAjaxHandler, Client &>(this, &ListAjaxHandler::handle);
+void ListAjaxHandler::handle(Client &client) {
+	Common::String path = client.queryParameter("path");
+	Common::JSONValue jsonResponse = listDirectory(path);
+	Common::String response = jsonResponse.stringify(true);
+	LocalWebserver::setClientGetHandler(client, response);
 }
 
 } // End of namespace Networking

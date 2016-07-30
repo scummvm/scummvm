@@ -74,61 +74,6 @@ Common::String getDisplayPath(Common::String s) {
 }
 }
 
-void FilesPageHandler::handle(Client &client) {
-	Common::String response =
-		"<html>" \
-			"<head><title>ScummVM</title></head>" \
-			"<body>" \
-				"<p>{create_directory_desc}</p>" \
-				"<form action=\"create\">" \
-					"<input type=\"hidden\" name=\"path\" value=\"{path}\"/>" \
-					"<input type=\"text\" name=\"directory_name\" value=\"\"/>" \
-					"<input type=\"submit\" value=\"{create_directory_button}\"/>" \
-				"</form>" \
-				"<hr/>" \
-				"<p>{upload_file_desc}</p>" \
-				"<form action=\"upload?path={path}\" method=\"post\" enctype=\"multipart/form-data\">" \
-					"<input type=\"file\" name=\"upload_file-f\" allowdirs multiple/>" \
-					"<span>{or_upload_directory_desc}</span>" \
-					"<input type=\"file\" name=\"upload_file-d\" directory webkitdirectory multiple/>" \
-					"<input type=\"submit\" value=\"{upload_file_button}\"/>" \
-				"</form>"
-				"<hr/>" \
-				"<h1>{index_of_directory}</h1>" \
-				"<table>{content}</table>" \
-			"</body>" \
-		"</html>";
-	Common::String itemTemplate = "<tr><td><img src=\"icons/{icon}\"/></td><td><a href=\"{link}\">{name}</a></td><td>{size}</td></tr>\n"; //TODO: load this template too?
-
-	// load stylish response page from the archive
-	Common::SeekableReadStream *const stream = HandlerUtils::getArchiveFile(FILES_PAGE_NAME);
-	if (stream)
-		response = HandlerUtils::readEverythingFromStream(stream);
-
-	Common::String path = client.queryParameter("path");
-	Common::String content = "";
-
-	// show an error message if failed to list directory
-	if (!listDirectory(path, content, itemTemplate)) {
-		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("ScummVM couldn't list the directory you specified."));
-		return;
-	}
-
-	//these occur twice:
-	replace(response, "{create_directory_button}", _("Create directory"));
-	replace(response, "{create_directory_button}", _("Create directory"));
-	replace(response, "{path}", encodeDoubleQuotes(client.queryParameter("path")));
-	replace(response, "{path}", encodeDoubleQuotes(client.queryParameter("path")));
-	replace(response, "{upload_files_button}", _("Upload files")); //tab
-	replace(response, "{upload_file_button}", _("Upload files")); //button in the tab
-	replace(response, "{create_directory_desc}", _("Type new directory name:"));
-	replace(response, "{upload_file_desc}", _("Select a file to upload:"));
-	replace(response, "{or_upload_directory_desc}", _("Or select a directory (works in Chrome only):"));
-	replace(response, "{index_of_directory}", Common::String::format(_("Index of %s"), encodeHtmlEntities(getDisplayPath(client.queryParameter("path"))).c_str()));
-	replace(response, "{content}", content);
-	LocalWebserver::setClientGetHandler(client, response);
-}
-
 bool FilesPageHandler::listDirectory(Common::String path, Common::String &content, const Common::String &itemTemplate) {
 	if (path == "" || path == "/") {
 		addItem(content, itemTemplate, IT_DIRECTORY, "/root/", _("File system root"));
@@ -225,8 +170,59 @@ void FilesPageHandler::addItem(Common::String &content, const Common::String &it
 
 /// public
 
-ClientHandlerCallback FilesPageHandler::getHandler() {
-	return new Common::Callback<FilesPageHandler, Client &>(this, &FilesPageHandler::handle);
+void FilesPageHandler::handle(Client &client) {
+	Common::String response =
+		"<html>" \
+		"<head><title>ScummVM</title></head>" \
+		"<body>" \
+		"<p>{create_directory_desc}</p>" \
+		"<form action=\"create\">" \
+		"<input type=\"hidden\" name=\"path\" value=\"{path}\"/>" \
+		"<input type=\"text\" name=\"directory_name\" value=\"\"/>" \
+		"<input type=\"submit\" value=\"{create_directory_button}\"/>" \
+		"</form>" \
+		"<hr/>" \
+		"<p>{upload_file_desc}</p>" \
+		"<form action=\"upload?path={path}\" method=\"post\" enctype=\"multipart/form-data\">" \
+		"<input type=\"file\" name=\"upload_file-f\" allowdirs multiple/>" \
+		"<span>{or_upload_directory_desc}</span>" \
+		"<input type=\"file\" name=\"upload_file-d\" directory webkitdirectory multiple/>" \
+		"<input type=\"submit\" value=\"{upload_file_button}\"/>" \
+		"</form>"
+		"<hr/>" \
+		"<h1>{index_of_directory}</h1>" \
+		"<table>{content}</table>" \
+		"</body>" \
+		"</html>";
+	Common::String itemTemplate = "<tr><td><img src=\"icons/{icon}\"/></td><td><a href=\"{link}\">{name}</a></td><td>{size}</td></tr>\n"; //TODO: load this template too?
+
+																																		  // load stylish response page from the archive
+	Common::SeekableReadStream *const stream = HandlerUtils::getArchiveFile(FILES_PAGE_NAME);
+	if (stream)
+		response = HandlerUtils::readEverythingFromStream(stream);
+
+	Common::String path = client.queryParameter("path");
+	Common::String content = "";
+
+	// show an error message if failed to list directory
+	if (!listDirectory(path, content, itemTemplate)) {
+		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("ScummVM couldn't list the directory you specified."));
+		return;
+	}
+
+	//these occur twice:
+	replace(response, "{create_directory_button}", _("Create directory"));
+	replace(response, "{create_directory_button}", _("Create directory"));
+	replace(response, "{path}", encodeDoubleQuotes(client.queryParameter("path")));
+	replace(response, "{path}", encodeDoubleQuotes(client.queryParameter("path")));
+	replace(response, "{upload_files_button}", _("Upload files")); //tab
+	replace(response, "{upload_file_button}", _("Upload files")); //button in the tab
+	replace(response, "{create_directory_desc}", _("Type new directory name:"));
+	replace(response, "{upload_file_desc}", _("Select a file to upload:"));
+	replace(response, "{or_upload_directory_desc}", _("Or select a directory (works in Chrome only):"));
+	replace(response, "{index_of_directory}", Common::String::format(_("Index of %s"), encodeHtmlEntities(getDisplayPath(client.queryParameter("path"))).c_str()));
+	replace(response, "{content}", content);
+	LocalWebserver::setClientGetHandler(client, response);
 }
 
 } // End of namespace Networking

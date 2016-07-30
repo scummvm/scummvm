@@ -33,6 +33,8 @@ DownloadFileHandler::DownloadFileHandler() {}
 
 DownloadFileHandler::~DownloadFileHandler() {}
 
+/// public
+
 void DownloadFileHandler::handle(Client &client) {
 	Common::String path = client.queryParameter("path");
 
@@ -71,12 +73,6 @@ void DownloadFileHandler::handle(Client &client) {
 	handler->setHeader("Content-Disposition", "attachment; filename=\"" + node->getDisplayName() + "\"");
 	handler->setHeader("Content-Transfer-Encoding", "binary");
 	client.setHandler(handler);
-}
-
-/// public
-
-ClientHandlerCallback DownloadFileHandler::getHandler() {
-	return new Common::Callback<DownloadFileHandler, Client &>(this, &DownloadFileHandler::handle);
 }
 
 } // End of namespace Networking

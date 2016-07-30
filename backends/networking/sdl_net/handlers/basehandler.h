@@ -24,18 +24,15 @@
 #define BACKENDS_NETWORKING_SDL_NET_BASEHANDLER_H
 
 #include "backends/networking/sdl_net/client.h"
-#include "common/callback.h"
 
 namespace Networking {
-
-typedef Common::BaseCallback<Client &> *ClientHandlerCallback;
 
 class BaseHandler {
 public:
 	BaseHandler() {}
 	virtual ~BaseHandler() {}
 
-	virtual ClientHandlerCallback getHandler() = 0;
+	virtual void handle(Client &) = 0;
 };
 
 } // End of namespace Networking

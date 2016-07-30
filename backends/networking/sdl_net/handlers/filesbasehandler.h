@@ -43,6 +43,8 @@ protected:
 public:
 	FilesBaseHandler();
 	virtual ~FilesBaseHandler();
+
+	virtual void handle(Client &client) = 0;
 };
 
 } // End of namespace Networking

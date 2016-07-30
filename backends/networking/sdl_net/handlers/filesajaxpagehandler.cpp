@@ -50,6 +50,8 @@ Common::String encodeDoubleQuotesAndSlashes(Common::String s) {
 
 }
 
+/// public
+
 void FilesAjaxPageHandler::handle(Client &client) {
 	// load stylish response page from the archive
 	Common::SeekableReadStream *const stream = HandlerUtils::getArchiveFile(FILES_PAGE_NAME);
@@ -74,12 +76,6 @@ void FilesAjaxPageHandler::handle(Client &client) {
 	replace(response, "{error}", _("Error occurred"));
 	replace(response, "{start_path}", encodeDoubleQuotesAndSlashes(path));
 	LocalWebserver::setClientGetHandler(client, response);
-}
-
-/// public
-
-ClientHandlerCallback FilesAjaxPageHandler::getHandler() {
-	return new Common::Callback<FilesAjaxPageHandler, Client &>(this, &FilesAjaxPageHandler::handle);
 }
 
 } // End of namespace Networking

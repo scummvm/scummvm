@@ -33,6 +33,8 @@ UploadFileHandler::UploadFileHandler() {}
 
 UploadFileHandler::~UploadFileHandler() {}
 
+/// public
+
 void UploadFileHandler::handle(Client &client) {
 	Common::String path = client.queryParameter("path");
 
@@ -62,12 +64,6 @@ void UploadFileHandler::handle(Client &client) {
 
 	// if all OK, set special handler
 	client.setHandler(new UploadFileClientHandler(path));
-}
-
-/// public
-
-ClientHandlerCallback UploadFileHandler::getHandler() {
-	return new Common::Callback<UploadFileHandler, Client &>(this, &UploadFileHandler::handle);
 }
 
 } // End of namespace Networking

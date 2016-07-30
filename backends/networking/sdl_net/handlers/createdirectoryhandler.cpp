@@ -25,12 +25,31 @@
 #include "backends/networking/sdl_net/handlerutils.h"
 #include "backends/networking/sdl_net/localwebserver.h"
 #include "common/translation.h"
+#include <common/callback.h>
 
 namespace Networking {
 
 CreateDirectoryHandler::CreateDirectoryHandler() {}
 
 CreateDirectoryHandler::~CreateDirectoryHandler() {}
+
+void CreateDirectoryHandler::handleError(Client &client, Common::String message) const {
+	if (client.queryParameter("answer_json") == "true")
+		setJsonResponseHandler(client, "error", message);
+	else
+		HandlerUtils::setFilesManagerErrorMessageHandler(client, message);
+}
+
+void CreateDirectoryHandler::setJsonResponseHandler(Client &client, Common::String type, Common::String message) const {
+	Common::JSONObject response;
+	response.setVal("type", new Common::JSONValue(type));
+	response.setVal("message", new Common::JSONValue(message));
+
+	Common::JSONValue json = response;
+	LocalWebserver::setClientGetHandler(client, json.stringify(true));
+}
+
+/// public
 
 void CreateDirectoryHandler::handle(Client &client) {
 	Common::String path = client.queryParameter("path");
@@ -95,28 +114,6 @@ void CreateDirectoryHandler::handle(Client &client) {
 		(client.queryParameter("ajax") == "true" ? "/filesAJAX?path=" : "/files?path=") +
 		LocalWebserver::urlEncodeQueryParameterValue(client.queryParameter("path"))
 	);
-}
-
-void CreateDirectoryHandler::handleError(Client &client, Common::String message) const {
-	if (client.queryParameter("answer_json") == "true")
-		setJsonResponseHandler(client, "error", message);
-	else
-		HandlerUtils::setFilesManagerErrorMessageHandler(client, message);
-}
-
-void CreateDirectoryHandler::setJsonResponseHandler(Client &client, Common::String type, Common::String message) const {
-	Common::JSONObject response;
-	response.setVal("type", new Common::JSONValue(type));
-	response.setVal("message", new Common::JSONValue(message));
-
-	Common::JSONValue json = response;
-	LocalWebserver::setClientGetHandler(client, json.stringify(true));
-}
-
-/// public
-
-ClientHandlerCallback CreateDirectoryHandler::getHandler() {
-	return new Common::Callback<CreateDirectoryHandler, Client &>(this, &CreateDirectoryHandler::handle);
 }
 
 } // End of namespace Networking

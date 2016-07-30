@@ -50,14 +50,14 @@ namespace Networking {
 
 LocalWebserver::LocalWebserver(): _set(nullptr), _serverSocket(nullptr), _timerStarted(false),
 	_stopOnIdle(false), _clients(0), _idlingFrames(0), _serverPort(DEFAULT_SERVER_PORT) {
-	addPathHandler("/", _indexPageHandler.getHandler());
-	addPathHandler("/files", _filesPageHandler.getHandler());
-	addPathHandler("/create", _createDirectoryHandler.getHandler());
-	addPathHandler("/download", _downloadFileHandler.getHandler());
-	addPathHandler("/upload", _uploadFileHandler.getHandler());
-	addPathHandler("/list", _listAjaxHandler.getHandler());
-	addPathHandler("/filesAJAX", _filesAjaxPageHandler.getHandler());
-	_defaultHandler = _resourceHandler.getHandler();
+	addPathHandler("/", &_indexPageHandler);
+	addPathHandler("/files", &_filesPageHandler);
+	addPathHandler("/create", &_createDirectoryHandler);
+	addPathHandler("/download", &_downloadFileHandler);
+	addPathHandler("/upload", &_uploadFileHandler);
+	addPathHandler("/list", &_listAjaxHandler);
+	addPathHandler("/filesAJAX", &_filesAjaxPageHandler);
+	_defaultHandler = &_resourceHandler;
 }
 
 LocalWebserver::~LocalWebserver() {
@@ -147,7 +147,7 @@ void LocalWebserver::stop() {
 
 void LocalWebserver::stopOnIdle() { _stopOnIdle = true; }
 
-void LocalWebserver::addPathHandler(Common::String path, ClientHandlerCallback handler) {
+void LocalWebserver::addPathHandler(Common::String path, BaseHandler *handler) {
 	if (_pathHandlers.contains(path))
 		warning("LocalWebserver::addPathHandler: path already had a handler");
 	_pathHandlers[path] = handler;
@@ -215,9 +215,9 @@ void LocalWebserver::handleClient(uint32 i) {
 		//if GET, check whether we know a handler for such URL
 		//if PUT, check whether we know a handler for that URL
 		if (_pathHandlers.contains(_client[i].path()))
-			(*_pathHandlers[_client[i].path()])(_client[i]);
+			_pathHandlers[_client[i].path()]->handle(_client[i]);
 		else if (_defaultHandler)
-			(*_defaultHandler)(_client[i]); //try default handler
+			_defaultHandler->handle(_client[i]); //try default handler
 
 		if (_client[i].state() == BEING_HANDLED || _client[i].state() == INVALID)
 			break;

@@ -38,8 +38,6 @@ class ListAjaxHandler: public FilesBaseHandler {
 		IT_UNKNOWN
 	};
 
-	void handle(Client &client);
-
 	/**
 	 * Lists the directory <path>.
 	 *
@@ -57,7 +55,7 @@ public:
 	ListAjaxHandler();
 	virtual ~ListAjaxHandler();
 
-	virtual ClientHandlerCallback getHandler();
+	virtual void handle(Client &client);
 };
 
 } // End of namespace Networking

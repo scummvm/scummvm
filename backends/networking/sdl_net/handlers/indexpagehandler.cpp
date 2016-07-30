@@ -32,6 +32,10 @@ IndexPageHandler::IndexPageHandler(): CommandSender(nullptr) {}
 
 IndexPageHandler::~IndexPageHandler() {}
 
+/// public
+
+Common::String IndexPageHandler::code() const { return _code; }
+
 void IndexPageHandler::handle(Client &client) {
 	Common::String code = client.queryParameter("code");
 
@@ -52,14 +56,6 @@ void IndexPageHandler::handle(Client &client) {
 	_code = code;
 	sendCommand(GUI::kStorageCodePassedCmd, 0);
 	HandlerUtils::setMessageHandler(client, _("ScummVM got the code and already connects to your cloud storage!"));
-}
-
-/// public
-
-Common::String IndexPageHandler::code() const { return _code; }
-
-ClientHandlerCallback IndexPageHandler::getHandler() {
-	return new Common::Callback<IndexPageHandler, Client &>(this, &IndexPageHandler::handle);
 }
 
 } // End of namespace Networking
