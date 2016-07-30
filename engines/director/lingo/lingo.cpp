@@ -290,22 +290,24 @@ Common::String *Datum::toString() {
 	return u.s;
 }
 
-const char *Datum::type2str() {
+const char *Datum::type2str(bool isk) {
 	static char res[20];
 
-	switch (type) {
+	switch (isk ? u.i : type) {
 	case INT:
-		return "INT";
+		return isk ? "#integer" : "INT";
 	case FLOAT:
-		return "FLOAT";
+		return isk ? "#float" : "FLOAT";
 	case STRING:
-		return "STRING";
+		return isk ? "#string" : "STRING";
 	case CASTREF:
 		return "CASTREF";
 	case VOID:
-		return "VOID";
+		return isk ? "#void" : "VOID";
 	case POINT:
-		return "POINT";
+		return isk ? "#point" : "POINT";
+	case SYMBOL:
+		return isk ? "#symbol" : "SYMBOL";
 	default:
 		snprintf(res, 20, "-- (%d) --", type);
 		return res;

@@ -49,6 +49,7 @@ static struct BuiltinProto {
 	{ "string",	Lingo::b_string, 1},
 	// Misc
 	{ "dontpassevent", Lingo::b_dontpassevent, -1 },
+	{ "ilk",	 Lingo::b_ilk, 1 },
 	// point
 	{ "point",	Lingo::b_point, 2},
 	{ 0, 0, 0 }
@@ -216,6 +217,13 @@ void Lingo::b_string() {
 ///////////////////
 void Lingo::b_dontpassevent() {
 	warning("STUB: b_dontpassevent");
+}
+
+void Lingo::b_ilk() {
+	Datum d = g_lingo->pop();
+	d.u.i = d.type;
+	d.type = SYMBOL;
+	g_lingo->push(d);
 }
 
 ///////////////////

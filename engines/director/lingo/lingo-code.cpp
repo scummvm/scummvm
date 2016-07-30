@@ -96,7 +96,10 @@ void Lingo::c_printtop(void) {
 		warning("%s", d.u.s->c_str());
 		break;
 	case POINT:
-		warning("point (%d, %d)", (int)((*d.u.arr)[0]), (int)((*d.u.arr)[1]));
+		warning("point(%d, %d)", (int)((*d.u.arr)[0]), (int)((*d.u.arr)[1]));
+		break;
+	case SYMBOL:
+		warning("%s", d.type2str(true));
 		break;
 	default:
 		warning("--unknown--");
@@ -180,6 +183,8 @@ void Lingo::c_assign() {
 		d1.u.sym->u.s = new Common::String(*d2.u.s);
 	else if (d2.type == POINT)
 		d1.u.sym->u.arr = d2.u.arr;
+	else if (d2.type == SYMBOL)
+		d1.u.sym->u.i = d2.u.i;
 	else
 		error("c_assign: unhandled type: %s", d2.type2str());
 
@@ -223,6 +228,8 @@ void Lingo::c_eval() {
 		d.u.s = new Common::String(*d.u.sym->u.s);
 	else if (d.u.sym->type == POINT)
 		d.u.arr = d.u.sym->u.arr;
+	else if (d.u.sym->type == SYMBOL)
+		d.u.i = d.u.sym->u.i;
 	else
 		error("c_eval: unhandled type: %s", d.type2str());
 

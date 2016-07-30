@@ -111,7 +111,7 @@ struct Datum {	/* interpreter stack type */
 	int toInt();
 	Common::String *toString();
 
-	const char *type2str();
+	const char *type2str(bool isk = false);
 };
 
 struct Builtin {
@@ -260,6 +260,7 @@ public:
 	static void b_tan();
 
 	static void b_dontpassevent();
+	static void b_ilk();
 
 	static void b_point();
 
