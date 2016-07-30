@@ -13,19 +13,19 @@
 #include "graphics/surface.h"
 #include "graphics/screen.h"
 #include "cryo/eden.h"
- 
+
 namespace Cryo {
- 
+
 class Console;
- 
+
 // our engine debug channels
 enum {
 	kCryoDebugExample = 1 << 0,
 	kCryoDebugExample2 = 1 << 1
-	// next new channel must be 1 << 2 (4)
-	// the current limitation is 32 debug channels (1 << 31 is the last one)
+	                     // next new channel must be 1 << 2 (4)
+	                     // the current limitation is 32 debug channels (1 << 31 is the last one)
 };
- 
+
 class CryoEngine : public Engine {
 public:
 	CryoEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -56,7 +56,7 @@ public:
 	Console(CryoEngine *vm) {}
 	virtual ~Console(void) {}
 };
- 
+
 } // End of namespace Cryo
- 
+
 #endif

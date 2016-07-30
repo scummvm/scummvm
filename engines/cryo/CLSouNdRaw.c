@@ -1,13 +1,11 @@
 #include "cryolib.h"
 
-sound_t* CLSoundRaw_New(short arg1, float rate, short sampleSize, short mode)
-{
+sound_t *CLSoundRaw_New(short arg1, float rate, short sampleSize, short mode) {
 	sound_t *sound;
 	CLBeginCheck;
-	
-	sound = (sound_t*)CLMemory_Alloc(sizeof(*sound));
-	if(sound)
-	{
+
+	sound = (sound_t *)CLMemory_Alloc(sizeof(*sound));
+	if (sound) {
 		sound->ff_1A = arg1;
 		sound->rate = rate;
 		sound->sampleSize = sampleSize;
@@ -24,31 +22,27 @@ sound_t* CLSoundRaw_New(short arg1, float rate, short sampleSize, short mode)
 			CLSound_PrepareSample(sound, mode);
 			CLNoError;
 		}
-	}
-	else
-	{
+	} else {
 		__libError = -1;
 		__osError = MemError();
 		CLCheckError();
 	}
-	
+
 	CLEndCheck;
 	return sound;
 }
 
-void CLSoundRaw_Free(sound_t *sound)
-{
-	while(sound->locked) ;
+void CLSoundRaw_Free(sound_t *sound) {
+	while (sound->locked) ;
 //	CLMemory_FreeHandle(sound->sndHandle);
 	CLMemory_Free(sound);
 }
 
-void CLSoundRaw_AssignBuffer(sound_t *sound, void *buffer, int bufferOffs, int length)
-{
+void CLSoundRaw_AssignBuffer(sound_t *sound, void *buffer, int bufferOffs, int length) {
 	char *buf;
 	CLSound_SetLength(sound, length);
 	sound->length = length;
-	buf = bufferOffs + (char*)buffer;
+	buf = bufferOffs + (char *)buffer;
 //	if(CLSound_GetWantsDesigned())
 //		CLSound_Signed2NonSigned(buf, length);
 	sound->buffer = buf;

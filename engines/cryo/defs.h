@@ -7,17 +7,17 @@
 /*
 static inline void* AGetElem(unsigned char *arr, short index)
 {
-	unsigned char *p = arr + num * 2;
-	unsigned char o0 = *p++;
-	unsigned char o1 = *p++;
-	unsigned short ofs = (o1 << 8) | o0;
-	return arr + ofs;
+    unsigned char *p = arr + num * 2;
+    unsigned char o0 = *p++;
+    unsigned char o1 = *p++;
+    unsigned short ofs = (o1 << 8) | o0;
+    return arr + ofs;
 }
 */
 
 ///////////////// Game defs
 
-#define FONT_HEIGHT	9
+#define FONT_HEIGHT 9
 
 
 /*
@@ -40,7 +40,8 @@ enum Phases {
 	phNewGame = 0
 };
 
-namespace Areas { enum Areas {
+namespace Areas {
+enum Areas {
 	arMo = 1,
 	arTausCave,
 	arChamaar,
@@ -53,7 +54,8 @@ namespace Areas { enum Areas {
 	arEmbalmersCave,
 	arWhiteArch,
 	arMoorkusLair
-}; };
+};
+};
 
 #define MKRM(a,l) (((a) << 8) | (l))
 
@@ -63,22 +65,22 @@ enum OBJECT {
 	OBJ_2,
 	OBJ_3,
 	OBJ_4,
-	OBJ_PRISME,	// 5
+	OBJ_PRISME, // 5
 	OBJ_6,
 	OBJ_7,
-	OBJ_OEUF,	// 8
+	OBJ_OEUF,   // 8
 	OBJ_9,
 	OBJ_10,
-	OBJ_CHAMPB,	// 11
-	OBJ_CHAMPM,	// 12
-	OBJ_COUTEAU,	// 13
-	OBJ_NIDV,	// 14
-	OBJ_NIDO,	// 15
-	OBJ_OR,		// 16
+	OBJ_CHAMPB, // 11
+	OBJ_CHAMPM, // 12
+	OBJ_COUTEAU,    // 13
+	OBJ_NIDV,   // 14
+	OBJ_NIDO,   // 15
+	OBJ_OR,     // 16
 	OBJ_17,
 	OBJ_18,
-	OBJ_SOLEIL,	// 19
-	OBJ_CORNE,	// 20
+	OBJ_SOLEIL, // 19
+	OBJ_CORNE,  // 20
 	OBJ_21,
 	OBJ_22,
 	OBJ_23,
@@ -94,152 +96,157 @@ enum OBJECT {
 	OBJ_33,
 	OBJ_34,
 	OBJ_35,
-	OBJ_36,		// 36 is 1st plaque, 6 total
+	OBJ_36,     // 36 is 1st plaque, 6 total
 	OBJ_37,
-	OBJ_PLAQUE,	// 38
+	OBJ_PLAQUE, // 38
 	OBJ_39,
 	OBJ_40,
 	OBJ_41,
 };
 
-namespace Objects { enum Objects {
+namespace Objects {
+enum Objects {
 	obNone,
 	obWayStone,
 	obShell,
 	obTalisman,
 	obTooth,
-	obPrism,	// 5
+	obPrism,    // 5
 	obFlute,
 	obApple,
-	obEgg,		// 8
+	obEgg,      // 8
 	obRoot,
 	obUnused10,
-	obShroom,	// 11
-	obBadShroom,	// 12
-	obKnife,	// 13
-	obNest,	// 14
-	obFullNest,	// 15
-	obGold,		// 16
+	obShroom,   // 11
+	obBadShroom,    // 12
+	obKnife,    // 13
+	obNest, // 14
+	obFullNest, // 15
+	obGold,     // 16
 	obMoonStone,
 	obBag,
-	obSunStone,	// 19
-	obHorn,	// 20
+	obSunStone, // 19
+	obHorn, // 20
 	obSword,
 
 	obMaskOfDeath,
 	obMaskOfBonding,
 	obMaskOfBirth,
 
-	obEyeInTheStorm,	// 25
+	obEyeInTheStorm,    // 25
 	obSkyHammer,
 	obFireInTheClouds,
 	obWithinAndWithout,
 	obEyeInTheCyclone,
 	obRiverThatWinds,
 
-	obTrumpet,		// 31
+	obTrumpet,      // 31
 	obUnused32,
 	obDrum,
 	obUnused34,
 	obUnused35,
 	obRing,
 
-	obTablet1,		// 37 is 1st plaque, 6 total
+	obTablet1,      // 37 is 1st plaque, 6 total
 	obTablet2,
-	obTablet3,	// 39
+	obTablet3,  // 39
 	obTablet4,
 	obTablet5,
 	obTablet6
-}; };
+};
+};
 
 enum PERSO {
 	PER_ROI = 0,
-	PER_DINA,		// 0x12
-	PER_THOO,		// 0x24
-	PER_MONK,		// 0x36
-	PER_BOURREAU,	// 0x48
-	PER_MESSAGER,	// 0x5A
-	PER_MANGO,		// 0x6C
-	PER_EVE,		// 0x7E
-	PER_AZIA,		// 0x90
-	PER_MAMMI,		// 0xA2
-	PER_MAMMI_1,	// 0xB4
-	PER_MAMMI_2,	// 0xC6
-	PER_MAMMI_3,	// 0xD8
-	PER_MAMMI_4,	// 0xEA
-	PER_MAMMI_5,	// 0xFC
-	PER_MAMMI_6,	// 0x10E
-	PER_BAMBOO,		// 0x120
-	PER_KABUKA,		// 0x132
-	PER_GARDES,		// 0x144
-	PER_UNKN_156,	// 0x156
-	PER_FISHER,		// 0x168
-	PER_MORKUS,		// 0x17A
-	PER_UNKN_18C,	// 0x18C
-	PER_UNKN_19E,	// 0x19E
-	PER_UNKN_1B0,	// 0x1B0
-	PER_UNKN_1C2,	// 0x1C2
-	PER_UNKN_1D4,	// 0x1D4
-	PER_UNKN_1E6,	// 0x1E6
-	PER_UNKN_1F8,	// 0x1F8
-	PER_UNKN_20A,	// 0x20A
-	PER_UNKN_21C,	// 0x21C
-	PER_UNKN_22E,	// 0x22E
-	PER_UNKN_240,	// 0x240
-	PER_UNKN_252,	// 0x252
-	PER_UNKN_264,	// 0x264
-	PER_UNKN_276,	// 0x276
-	PER_UNKN_288,	// 0x288
-	PER_UNKN_29A,	// 0x29A
-	PER_UNKN_2AC,	// 0x2AC
-	PER_UNKN_2BE,	// 0x2BE
-	PER_UNKN_2D0,	// 0x2D0
-	PER_UNKN_2E2,	// 0x2E2
-	PER_UNKN_2F4,	// 0x2F4
-	PER_UNKN_306,	// 0x306
-	PER_UNKN_318,	// 0x318
-	PER_UNKN_32A,	// 0x32A
-	PER_UNKN_33C,	// 0x33C
-	PER_UNKN_34E,	// 0x34E
-	PER_UNKN_360,	// 0x360
-	PER_UNKN_372,	// 0x372
-	PER_UNKN_384,	// 0x384
-	PER_UNKN_396,	// 0x396
-	PER_UNKN_3A8,	// 0x3A8
-	PER_UNKN_3BA,	// 0x3BA
-	PER_UNKN_3CC,	// 0x3CC
-	PER_UNKN_3DE,	// 0x3DE
-	PER_UNKN_3F0,	// 0x3F0
-	PER_UNKN_402	// 0x402
+	PER_DINA,       // 0x12
+	PER_THOO,       // 0x24
+	PER_MONK,       // 0x36
+	PER_BOURREAU,   // 0x48
+	PER_MESSAGER,   // 0x5A
+	PER_MANGO,      // 0x6C
+	PER_EVE,        // 0x7E
+	PER_AZIA,       // 0x90
+	PER_MAMMI,      // 0xA2
+	PER_MAMMI_1,    // 0xB4
+	PER_MAMMI_2,    // 0xC6
+	PER_MAMMI_3,    // 0xD8
+	PER_MAMMI_4,    // 0xEA
+	PER_MAMMI_5,    // 0xFC
+	PER_MAMMI_6,    // 0x10E
+	PER_BAMBOO,     // 0x120
+	PER_KABUKA,     // 0x132
+	PER_GARDES,     // 0x144
+	PER_UNKN_156,   // 0x156
+	PER_FISHER,     // 0x168
+	PER_MORKUS,     // 0x17A
+	PER_UNKN_18C,   // 0x18C
+	PER_UNKN_19E,   // 0x19E
+	PER_UNKN_1B0,   // 0x1B0
+	PER_UNKN_1C2,   // 0x1C2
+	PER_UNKN_1D4,   // 0x1D4
+	PER_UNKN_1E6,   // 0x1E6
+	PER_UNKN_1F8,   // 0x1F8
+	PER_UNKN_20A,   // 0x20A
+	PER_UNKN_21C,   // 0x21C
+	PER_UNKN_22E,   // 0x22E
+	PER_UNKN_240,   // 0x240
+	PER_UNKN_252,   // 0x252
+	PER_UNKN_264,   // 0x264
+	PER_UNKN_276,   // 0x276
+	PER_UNKN_288,   // 0x288
+	PER_UNKN_29A,   // 0x29A
+	PER_UNKN_2AC,   // 0x2AC
+	PER_UNKN_2BE,   // 0x2BE
+	PER_UNKN_2D0,   // 0x2D0
+	PER_UNKN_2E2,   // 0x2E2
+	PER_UNKN_2F4,   // 0x2F4
+	PER_UNKN_306,   // 0x306
+	PER_UNKN_318,   // 0x318
+	PER_UNKN_32A,   // 0x32A
+	PER_UNKN_33C,   // 0x33C
+	PER_UNKN_34E,   // 0x34E
+	PER_UNKN_360,   // 0x360
+	PER_UNKN_372,   // 0x372
+	PER_UNKN_384,   // 0x384
+	PER_UNKN_396,   // 0x396
+	PER_UNKN_3A8,   // 0x3A8
+	PER_UNKN_3BA,   // 0x3BA
+	PER_UNKN_3CC,   // 0x3CC
+	PER_UNKN_3DE,   // 0x3DE
+	PER_UNKN_3F0,   // 0x3F0
+	PER_UNKN_402    // 0x402
 };
 
-namespace PersonId { enum PersonId {
-	pidGregor = 0,							// The King
-	pidDina,								// Pink dino
-	pidTau,									// Late grandpa
-	pidMonk,								// Old wizard
-	pidJabber,								// Executioner
-	pidEloi,								// Evergreen ptero
-	pidMungo,								// Dina's husband
-	pidEve,									// Blonde girl
-	pidShazia,								// Big boobs sis
-	pidLeadersBegin,						// 9
-	pidChongOfChamaar = pidLeadersBegin,	// Dogface
-	pidKommalaOfKoto,						// Clones
-	pidUlanOfUlele,							// Shaman
-	pidCabukaOfCantura,						// Stone people
-	pidMarindaOfEmbalmers,					// Gods
-	pidFuggOfTamara,						// Boar-like
-	pidThugg,								// Bodyguard
-	pidNarrator,							// 16, Old Eloi, also BGM
-	pidNarrim,								// Sea snake
-	pidMorkus,								// Vicious tyran
-	pidDinosaur,							// different species of friendly dino
-	pidEnemy								// different species of enemy dino
-}; };
+namespace PersonId {
+enum PersonId {
+	pidGregor = 0,                          // The King
+	pidDina,                                // Pink dino
+	pidTau,                                 // Late grandpa
+	pidMonk,                                // Old wizard
+	pidJabber,                              // Executioner
+	pidEloi,                                // Evergreen ptero
+	pidMungo,                               // Dina's husband
+	pidEve,                                 // Blonde girl
+	pidShazia,                              // Big boobs sis
+	pidLeadersBegin,                        // 9
+	pidChongOfChamaar = pidLeadersBegin,    // Dogface
+	pidKommalaOfKoto,                       // Clones
+	pidUlanOfUlele,                         // Shaman
+	pidCabukaOfCantura,                     // Stone people
+	pidMarindaOfEmbalmers,                  // Gods
+	pidFuggOfTamara,                        // Boar-like
+	pidThugg,                               // Bodyguard
+	pidNarrator,                            // 16, Old Eloi, also BGM
+	pidNarrim,                              // Sea snake
+	pidMorkus,                              // Vicious tyran
+	pidDinosaur,                            // different species of friendly dino
+	pidEnemy                                // different species of enemy dino
+};
+};
 
 // person in room mask bits
-namespace PersonMask { enum PersonMask {
+namespace PersonMask {
+enum PersonMask {
 	pmGregor = 1,
 	pmDina   = 2,
 	pmTau    = 4,
@@ -249,15 +256,17 @@ namespace PersonMask { enum PersonMask {
 	pmMungo  = 0x40,
 	pmEve    = 0x80,
 	pmShazia = 0x100,
-	pmLeader = 0x200,	// valley tribe leader
+	pmLeader = 0x200,   // valley tribe leader
 	pmThugg  = 0x400,
-	pmQuest  = 0x800,	// special quest person
+	pmQuest  = 0x800,   // special quest person
 	pmDino   = 0x1000,
 	pmEnemy  = 0x2000,
 	pmMorkus = 0x4000
-}; };
+};
+};
 
-namespace PersonFlags { enum PersonFlags {
+namespace PersonFlags {
+enum PersonFlags {
 	pfType0 = 0,
 	pftTyrann,
 	pfType2,
@@ -279,116 +288,124 @@ namespace PersonFlags { enum PersonFlags {
 	pf20 = 0x20,
 	pfInParty = 0x40,
 	pf80 = 0x80
-}; };
+};
+};
 
 #pragma pack(push, 1)
 struct perso_t {
-unsigned short	roomNum;	// room this person currently in
-unsigned short	actionId;	// TODO: checkme
-unsigned short	party;		// party bit mask
-unsigned char	id;			// character
-unsigned char	flags;		// flags and kind
-unsigned char	roomBankIdx;// index in kPersoRoomBankTable for specific room banks
-unsigned char	bank;		// sprite bank
-unsigned short	items;		// inventory
-unsigned short	powers;		// obj of power bitmask
-unsigned char	targetLoc;	// For party member this is mini sprite index
-unsigned char	lastLoc;	// For party member this is mini sprite x offset
-unsigned char	speed;		// num ticks per step
-unsigned char	steps;		// current ticks
+	unsigned short  roomNum;    // room this person currently in
+	unsigned short  actionId;   // TODO: checkme
+	unsigned short  party;      // party bit mask
+	unsigned char   id;         // character
+	unsigned char   flags;      // flags and kind
+	unsigned char   roomBankIdx;// index in kPersoRoomBankTable for specific room banks
+	unsigned char   bank;       // sprite bank
+	unsigned short  items;      // inventory
+	unsigned short  powers;     // obj of power bitmask
+	unsigned char   targetLoc;  // For party member this is mini sprite index
+	unsigned char   lastLoc;    // For party member this is mini sprite x offset
+	unsigned char   speed;      // num ticks per step
+	unsigned char   steps;      // current ticks
 };
 typedef struct perso_t perso_t;
 
 struct phase_t {
-short			id;
-void			(EdenGameImpl::*disp)();
+	short           id;
+	void (EdenGameImpl::*disp)();
 };
 typedef struct phase_t phase_t;
 
-namespace ObjectFlags { enum ObjectFlags {
+namespace ObjectFlags {
+enum ObjectFlags {
 	ofFlag1 = 1,
-	ofInHands = 2		// Currently holding this object in hands
-}; };
+	ofInHands = 2       // Currently holding this object in hands
+};
+};
 
-#define MAX_OBJECTS	42
+#define MAX_OBJECTS 42
 struct object_t {
-unsigned char	id;
-unsigned char	flags;
-int				locations;		// index in kObjectLocations
-short			itemMask;
-short			powerMask;			// object of power bitmask
-short			count;
+	unsigned char   id;
+	unsigned char   flags;
+	int             locations;      // index in kObjectLocations
+	short           itemMask;
+	short           powerMask;          // object of power bitmask
+	short           count;
 };
 typedef struct object_t object_t;
 
-namespace DialogFlags { enum DialogFlags {
+namespace DialogFlags {
+enum DialogFlags {
 	df20 = 0x20,
 	dfRepeatable = 0x40,
 	dfSpoken = 0x80
-}; };
+};
+};
 
-namespace DialogType { enum DialogType {
+namespace DialogType {
+enum DialogType {
 	dtTalk = 0,
 	dtDinoAction,
 	dtDinoItem,
 	dtItem,
 	dtEvent,
-	dtInspect, 
+	dtInspect,
 	dtHint
-}; };
+};
+};
 
 struct dial_t {
-char		flags;			// 0-3 - action index, 4 - highest bit of contidion index, rest is DialogFlags
-char		condNumLow;		// condition index low bits
-char		textCondHiMask;	// 0-1 text index hi bits, 2-5 - perso mask num, 6-7 condition index hi bits
-char		textNumLow;		// text line index low bits
+	char        flags;          // 0-3 - action index, 4 - highest bit of contidion index, rest is DialogFlags
+	char        condNumLow;     // condition index low bits
+	char        textCondHiMask; // 0-1 text index hi bits, 2-5 - perso mask num, 6-7 condition index hi bits
+	char        textNumLow;     // text line index low bits
 };
 typedef struct dial_t dial_t;
 
 struct tape_t {
-short		textNum;
-perso_t		*perso;
-short		party;
-short		roomNum;
-short		bgBankNum;
-dial_t		*dialog;
+	short       textNum;
+	perso_t     *perso;
+	short       party;
+	short       roomNum;
+	short       bgBankNum;
+	dial_t      *dialog;
 };
 typedef struct tape_t tape_t;
 
-struct suiveur_t {		// Characters on Mirror screen
-char		id;			// character
-char		image;		// sprite number
-short		sx;
-short		sy;
-short		ex;
-short		ey;
-short		bank;
-short		ff_C;
-short		ff_E;
+struct suiveur_t {      // Characters on Mirror screen
+	char        id;         // character
+	char        image;      // sprite number
+	short       sx;
+	short       sy;
+	short       ex;
+	short       ey;
+	short       bank;
+	short       ff_C;
+	short       ff_E;
 };
 typedef struct suiveur_t suiveur_t;
 
 struct icon_t {
-short		sx;
-short		sy;
-short		ex;
-short		ey;
-unsigned short	cursor_id;			// & 0x8000 - inactive/hidden
-unsigned int	action_id;
-unsigned int	object_id;
+	short       sx;
+	short       sy;
+	short       ex;
+	short       ey;
+	unsigned short  cursor_id;          // & 0x8000 - inactive/hidden
+	unsigned int    action_id;
+	unsigned int    object_id;
 };
 typedef struct icon_t icon_t;
 
 struct goto_t {
-unsigned char	areaNum;	// target area
-unsigned char	curAreaNum;	// current area
-unsigned char	departVid;
-unsigned char	travelTime;		// time to skip while in travel
-unsigned char	arriveVid;
+	unsigned char   areaNum;    // target area
+	unsigned char   curAreaNum; // current area
+	unsigned char   departVid;
+	unsigned char   travelTime;     // time to skip while in travel
+	unsigned char   arriveVid;
 };
 typedef struct goto_t goto_t;
 
-namespace RoomFlags { enum RoomFlags {
+namespace RoomFlags {
+enum RoomFlags {
 	rf01 = 1,
 	rf02 = 2,
 	rf04 = 4,
@@ -397,22 +414,24 @@ namespace RoomFlags { enum RoomFlags {
 	rfHasCitadel = 0x20,
 	rf40 = 0x40,
 	rf80 = 0x80
-}; };
+};
+};
 
 struct room_t {
-unsigned char	ff_0;
-unsigned char	exits[4];	//TODO: signed?
-unsigned char	flags;
-unsigned short	bank;
-unsigned short	party;
-unsigned char	level;		// Citadel level
-unsigned char	video;
-unsigned char	location;
-unsigned char	background;	// bg/mirror image number (relative)
+	unsigned char   ff_0;
+	unsigned char   exits[4];   //TODO: signed?
+	unsigned char   flags;
+	unsigned short  bank;
+	unsigned short  party;
+	unsigned char   level;      // Citadel level
+	unsigned char   video;
+	unsigned char   location;
+	unsigned char   background; // bg/mirror image number (relative)
 };
 typedef struct room_t room_t;
 
-namespace AreaFlags { enum AreaFlags {
+namespace AreaFlags {
+enum AreaFlags {
 	afFlag1 = 1,
 	afFlag2 = 2,
 	afFlag4 = 4,
@@ -426,27 +445,31 @@ namespace AreaFlags { enum AreaFlags {
 
 	TyrannSighted = 0x4000,
 	afFlag8000 = 0x8000
-}; };
+};
+};
 
-namespace AreaType { enum AreaType {
+namespace AreaType {
+enum AreaType {
 	atCitadel = 1,
 	atValley = 2,
 	atCave = 3
-}; };
+};
+};
 
 struct area_t {
-unsigned char	num;
-unsigned char	type;
-unsigned short	flags;
-unsigned short	firstRoomIndex;
-unsigned char	citadelLevel;
-unsigned char	salNum;
-room_t			*citadelRoom;
-short			visitCount;
+	unsigned char   num;
+	unsigned char   type;
+	unsigned short  flags;
+	unsigned short  firstRoomIndex;
+	unsigned char   citadelLevel;
+	unsigned char   salNum;
+	room_t          *citadelRoom;
+	short           visitCount;
 };
 typedef struct area_t area_t;
 
-namespace ValleyNews { enum ValleyNews {
+namespace ValleyNews {
+enum ValleyNews {
 	vnAreaMask = 0xF,
 
 	vnTriceraptorsIn = 0x10,
@@ -459,9 +482,11 @@ namespace ValleyNews { enum ValleyNews {
 	vnFree = 0,
 	vnHidden = 0x80,
 	vnEnd = 0xFF
-}; };
+};
+};
 
-namespace DisplayFlags { enum DisplayFlags {
+namespace DisplayFlags {
+enum DisplayFlags {
 	dfFlag1 = 1,
 	dfFlag2 = 2,
 	dfMirror = 4,
@@ -470,34 +495,42 @@ namespace DisplayFlags { enum DisplayFlags {
 	dfPanable = 0x20,
 	dfFlag40 = 0x40,
 	dfFlag80 = 0x80
-}; };
+};
+};
 
-namespace DrawFlags { enum DrawFlags {
+namespace DrawFlags {
+enum DrawFlags {
 	drDrawInventory = 1,
 	drDrawFlag2 = 2,
 	drDrawTopScreen = 4,
 	drDrawFlag8 = 8,
 	drDrawMenu = 0x10,
 	drDrawFlag20 = 0x20
-}; };
+};
+};
 
-namespace MenuFlags { enum MenuFlags {
+namespace MenuFlags {
+enum MenuFlags {
 	mfFlag1 = 1,
 	mfFlag2 = 2,
 	mfFlag4 = 4,
 	mfFlag8 = 8,
 	mfFlag10 = 0x10
-}; };
+};
+};
 
-namespace MusicType { enum MusicType {	//TODO: same as DialogType?
+namespace MusicType {
+enum MusicType {  //TODO: same as DialogType?
 	mtDontChange = 0,
 	mtNormal = 1,
 	mt2 = 2,
 	mtEvent = 4,
 	mtFF = 0xFF
-}; };
+};
+};
 
-namespace EventType { enum EventType {
+namespace EventType {
+enum EventType {
 	etEvent1 = 1,
 	etEvent2 = 2,
 	etEvent3 = 3,
@@ -514,10 +547,12 @@ namespace EventType { enum EventType {
 	etEventF = 15,
 	etEvent10 = 16,
 	etEvent12 = 18,
-	etGotoArea = 0x80	// + area id
-}; };
+	etGotoArea = 0x80   // + area id
+};
+};
 
-namespace GameFlags { enum GameFlags {
+namespace GameFlags {
+enum GameFlags {
 	gfMummyOpened = 1,
 	gfFlag2 = 2,
 	gfFlag4 = 4,
@@ -534,194 +569,195 @@ namespace GameFlags { enum GameFlags {
 	gfFlag2000 = 0x2000,
 	gfFlag4000 = 0x4000,
 	gfFlag8000 = 0x8000
-}; };
+};
+};
 
 struct global_t {
-unsigned char	areaNum;
-unsigned char	areaVisitCount;
-unsigned char	menuItemIdLo;
-unsigned char	menuItemIdHi;	//TODO: pad?
-unsigned short	randomNumber;	//TODO: this is randomized in pc ver and used by some conds. always zero on mac
-unsigned short	gameTime;
-unsigned short	gameDays;
-unsigned short	chrono;
-unsigned short	eloiDepartureDay;
-unsigned short	roomNum;		// current room number
-unsigned short	newRoomNum;		// target room number selected on world map
-unsigned short	phaseNum;
-unsigned short	metPersonsMask1;
-unsigned short	party;
-unsigned short	partyOutside;
-unsigned short	metPersonsMask2;
-unsigned short	__UNUSED_1C;	//TODO: write-only?
-unsigned short	phaseActionsCount;
-unsigned short	curAreaFlags;
-unsigned short	curItemsMask;
-unsigned short	curPowersMask;
-unsigned short	curPersoItems;
-unsigned short	curPersoPowers;
-unsigned short	wonItemsMask;
-unsigned short	wonPowersMask;
-unsigned short	stepsToFindAppleFast;
-unsigned short	stepsToFindAppleNormal;
-unsigned short	roomPersoItems;	//TODO: write-only?
-unsigned short	roomPersoPowers;	//TODO: write-only?
-unsigned short	gameFlags;
-unsigned short	curVideoNum;
-unsigned short	morkusSpyVideoNum1;	//TODO: pad?
-unsigned short	morkusSpyVideoNum2;	//TODO: pad?
-unsigned short	morkusSpyVideoNum3;	//TODO: pad?
-unsigned short	morkusSpyVideoNum4;	//TODO: pad?
-unsigned char	newMusicType;
-unsigned char	ff_43;
-unsigned char	videoSubtitleIndex;
-unsigned char	partyInstruments;	// &1 - Bell for Monk, &2 - Drum for Thugg
-unsigned char	monkGotRing;
-unsigned char	chrono_on;
-unsigned char	curRoomFlags;
-unsigned char	endGameFlag;
-unsigned char	last_info;
-unsigned char	autoDialog;
-unsigned char	worldTyrannSighted;
-unsigned char	ff_4D;
-unsigned char	ff_4E;
-unsigned char	worldGaveGold;
-unsigned char	worldHasTriceraptors;
-unsigned char	worldHasVelociraptors;
-unsigned char	worldHasTyrann;
-unsigned char	ff_53;
-unsigned char	ff_54;
-unsigned char	ff_55;	//TODO: pad?
-unsigned char	ff_56;
-unsigned char	textToken1;
-unsigned char	textToken2;	//TODO: pad?
-unsigned char	eloiHaveNews;
-unsigned char	dialogFlags;
-unsigned char	curAreaType;
-unsigned char	curCitadelLevel;
-unsigned char	newLocation;
-unsigned char	prevLocation;
-unsigned char	curPersoFlags;
-unsigned char	ff_60;
-unsigned char	eventType;
-unsigned char	ff_62;	//TODO: pad?
-unsigned char	curObjectId;
-unsigned char	curObjectFlags;
-unsigned char	ff_65;	//TODO: pad?
-unsigned char	roomPersoType;
-unsigned char	roomPersoFlags;
-unsigned char	narratorSequence;
-unsigned char	ff_69;
-unsigned char	ff_6A;
-unsigned char	fresqNumber;
-unsigned char	ff_6C;	//TODO: pad?
-unsigned char	ff_6D;	//TODO: pad?
-unsigned char	labyrinthDirections;
-unsigned char	labyrinthRoom;
-void			*__UNUSED_70;	//TODO: pad?
-dial_t			*dialog_ptr;
-tape_t			*tape_ptr;
-dial_t			*next_dialog_ptr;
-dial_t			*narrator_dialog_ptr;
-dial_t			*last_dialog_ptr;
-icon_t			*nextRoomIcon;
-unsigned char	*phraseBufferPtr;
-unsigned char	*__UNUSED_90;	//TODO: write-only?
-unsigned char	*__UNUSED_94;	//TODO: write-only?
-room_t			*room_ptr;
-area_t			*area_ptr;
-area_t			*last_area_ptr;
-area_t			*cur_area_ptr;
-room_t			*cita_area_firstRoom;
-perso_t			*perso_ptr;
-perso_t			*room_perso;
-unsigned char	last_info_idx;
-unsigned char	next_info_idx;
-unsigned char	*persoSpritePtr;
-unsigned char	*persoSpritePtr2;
-unsigned char	*curPersoAnimPtr;
-unsigned char	*ff_C2;	//TODO: image desc arr
-short			iconsIndex;
-short			curObjectCursor;	// TODO: useless?
-short			ff_CA;
-short			__UNUSED_CC;		//TODO: unused/pad
-short			perso_img_bank;	//TODO: unsigned?
-unsigned short	roomImgBank;
-unsigned short	persoBackgroundBankIdx;
-unsigned short	ff_D4;	//TODO: unsigned?
-unsigned short	fresqWidth;
-unsigned short	fresqImgBank;
-unsigned short	ff_DA;	//TODO: pad?
-unsigned short	ff_DC;	//TODO: pad?
-unsigned short	room_x_base;
-unsigned short	ff_E0;	//TODO: pad?
-unsigned short	dialogType;
-unsigned short	ff_E4;	//TODO: pad?
-unsigned short	currentMusicNum;
-short			textNum;
-unsigned short	travelTime;
-unsigned short	ff_EC;	//TODO: pad?
-unsigned char	displayFlags;
-unsigned char	oldDisplayFlags;
-unsigned char	drawFlags;
-unsigned char	ff_F1;
-unsigned char	ff_F2;
-unsigned char	menuFlags;
-unsigned char	ff_F4;	//TODO: write-only?
-unsigned char	ff_F5;
-unsigned char	ff_F6;
-unsigned char	ff_F7;
-unsigned char	ff_F8;	//TODO: pad?
-unsigned char	ff_F9;	//TODO: pad?
-unsigned char	ff_FA;	//TODO: pad?
-unsigned char	animationFlags;
-unsigned char	__UNUSED_FC;	//TODO: pad?
-unsigned char	giveobj1;
-unsigned char	giveobj2;
-unsigned char	giveobj3;
-unsigned char	ff_100;
-unsigned char	roomVidNum;
-unsigned char	ff_102;
-unsigned char	ff_103;
-unsigned char	roomBgBankNum;
-unsigned char	valleyVidNum;
-unsigned char	updatePaletteFlag;
-unsigned char	inventoryScrollPos;
-unsigned char	obj_count;
-unsigned char	ff_109;	//TODO: write-only?
-unsigned char	textBankIndex;
-unsigned char	pref_language;
-unsigned char	pref_10C[2];	//TODO: volume
-unsigned char	pref_10E[2];	// -//-
-unsigned char	pref_110[2];	// -//-
-unsigned char	cita_area_num;
-unsigned char	ff_113;
-unsigned char	lastSalNum;
-unsigned char	save_end;
-short			textWidthLimit;
-unsigned char	numGiveObjs;
-unsigned char	ff_119;		// unused
+	unsigned char   areaNum;
+	unsigned char   areaVisitCount;
+	unsigned char   menuItemIdLo;
+	unsigned char   menuItemIdHi;   //TODO: pad?
+	unsigned short  randomNumber;   //TODO: this is randomized in pc ver and used by some conds. always zero on mac
+	unsigned short  gameTime;
+	unsigned short  gameDays;
+	unsigned short  chrono;
+	unsigned short  eloiDepartureDay;
+	unsigned short  roomNum;        // current room number
+	unsigned short  newRoomNum;     // target room number selected on world map
+	unsigned short  phaseNum;
+	unsigned short  metPersonsMask1;
+	unsigned short  party;
+	unsigned short  partyOutside;
+	unsigned short  metPersonsMask2;
+	unsigned short  __UNUSED_1C;    //TODO: write-only?
+	unsigned short  phaseActionsCount;
+	unsigned short  curAreaFlags;
+	unsigned short  curItemsMask;
+	unsigned short  curPowersMask;
+	unsigned short  curPersoItems;
+	unsigned short  curPersoPowers;
+	unsigned short  wonItemsMask;
+	unsigned short  wonPowersMask;
+	unsigned short  stepsToFindAppleFast;
+	unsigned short  stepsToFindAppleNormal;
+	unsigned short  roomPersoItems; //TODO: write-only?
+	unsigned short  roomPersoPowers;    //TODO: write-only?
+	unsigned short  gameFlags;
+	unsigned short  curVideoNum;
+	unsigned short  morkusSpyVideoNum1; //TODO: pad?
+	unsigned short  morkusSpyVideoNum2; //TODO: pad?
+	unsigned short  morkusSpyVideoNum3; //TODO: pad?
+	unsigned short  morkusSpyVideoNum4; //TODO: pad?
+	unsigned char   newMusicType;
+	unsigned char   ff_43;
+	unsigned char   videoSubtitleIndex;
+	unsigned char   partyInstruments;   // &1 - Bell for Monk, &2 - Drum for Thugg
+	unsigned char   monkGotRing;
+	unsigned char   chrono_on;
+	unsigned char   curRoomFlags;
+	unsigned char   endGameFlag;
+	unsigned char   last_info;
+	unsigned char   autoDialog;
+	unsigned char   worldTyrannSighted;
+	unsigned char   ff_4D;
+	unsigned char   ff_4E;
+	unsigned char   worldGaveGold;
+	unsigned char   worldHasTriceraptors;
+	unsigned char   worldHasVelociraptors;
+	unsigned char   worldHasTyrann;
+	unsigned char   ff_53;
+	unsigned char   ff_54;
+	unsigned char   ff_55;  //TODO: pad?
+	unsigned char   ff_56;
+	unsigned char   textToken1;
+	unsigned char   textToken2; //TODO: pad?
+	unsigned char   eloiHaveNews;
+	unsigned char   dialogFlags;
+	unsigned char   curAreaType;
+	unsigned char   curCitadelLevel;
+	unsigned char   newLocation;
+	unsigned char   prevLocation;
+	unsigned char   curPersoFlags;
+	unsigned char   ff_60;
+	unsigned char   eventType;
+	unsigned char   ff_62;  //TODO: pad?
+	unsigned char   curObjectId;
+	unsigned char   curObjectFlags;
+	unsigned char   ff_65;  //TODO: pad?
+	unsigned char   roomPersoType;
+	unsigned char   roomPersoFlags;
+	unsigned char   narratorSequence;
+	unsigned char   ff_69;
+	unsigned char   ff_6A;
+	unsigned char   fresqNumber;
+	unsigned char   ff_6C;  //TODO: pad?
+	unsigned char   ff_6D;  //TODO: pad?
+	unsigned char   labyrinthDirections;
+	unsigned char   labyrinthRoom;
+	void            *__UNUSED_70;   //TODO: pad?
+	dial_t          *dialog_ptr;
+	tape_t          *tape_ptr;
+	dial_t          *next_dialog_ptr;
+	dial_t          *narrator_dialog_ptr;
+	dial_t          *last_dialog_ptr;
+	icon_t          *nextRoomIcon;
+	unsigned char   *phraseBufferPtr;
+	unsigned char   *__UNUSED_90;   //TODO: write-only?
+	unsigned char   *__UNUSED_94;   //TODO: write-only?
+	room_t          *room_ptr;
+	area_t          *area_ptr;
+	area_t          *last_area_ptr;
+	area_t          *cur_area_ptr;
+	room_t          *cita_area_firstRoom;
+	perso_t         *perso_ptr;
+	perso_t         *room_perso;
+	unsigned char   last_info_idx;
+	unsigned char   next_info_idx;
+	unsigned char   *persoSpritePtr;
+	unsigned char   *persoSpritePtr2;
+	unsigned char   *curPersoAnimPtr;
+	unsigned char   *ff_C2; //TODO: image desc arr
+	short           iconsIndex;
+	short           curObjectCursor;    // TODO: useless?
+	short           ff_CA;
+	short           __UNUSED_CC;        //TODO: unused/pad
+	short           perso_img_bank; //TODO: unsigned?
+	unsigned short  roomImgBank;
+	unsigned short  persoBackgroundBankIdx;
+	unsigned short  ff_D4;  //TODO: unsigned?
+	unsigned short  fresqWidth;
+	unsigned short  fresqImgBank;
+	unsigned short  ff_DA;  //TODO: pad?
+	unsigned short  ff_DC;  //TODO: pad?
+	unsigned short  room_x_base;
+	unsigned short  ff_E0;  //TODO: pad?
+	unsigned short  dialogType;
+	unsigned short  ff_E4;  //TODO: pad?
+	unsigned short  currentMusicNum;
+	short           textNum;
+	unsigned short  travelTime;
+	unsigned short  ff_EC;  //TODO: pad?
+	unsigned char   displayFlags;
+	unsigned char   oldDisplayFlags;
+	unsigned char   drawFlags;
+	unsigned char   ff_F1;
+	unsigned char   ff_F2;
+	unsigned char   menuFlags;
+	unsigned char   ff_F4;  //TODO: write-only?
+	unsigned char   ff_F5;
+	unsigned char   ff_F6;
+	unsigned char   ff_F7;
+	unsigned char   ff_F8;  //TODO: pad?
+	unsigned char   ff_F9;  //TODO: pad?
+	unsigned char   ff_FA;  //TODO: pad?
+	unsigned char   animationFlags;
+	unsigned char   __UNUSED_FC;    //TODO: pad?
+	unsigned char   giveobj1;
+	unsigned char   giveobj2;
+	unsigned char   giveobj3;
+	unsigned char   ff_100;
+	unsigned char   roomVidNum;
+	unsigned char   ff_102;
+	unsigned char   ff_103;
+	unsigned char   roomBgBankNum;
+	unsigned char   valleyVidNum;
+	unsigned char   updatePaletteFlag;
+	unsigned char   inventoryScrollPos;
+	unsigned char   obj_count;
+	unsigned char   ff_109; //TODO: write-only?
+	unsigned char   textBankIndex;
+	unsigned char   pref_language;
+	unsigned char   pref_10C[2];    //TODO: volume
+	unsigned char   pref_10E[2];    // -//-
+	unsigned char   pref_110[2];    // -//-
+	unsigned char   cita_area_num;
+	unsigned char   ff_113;
+	unsigned char   lastSalNum;
+	unsigned char   save_end;
+	short           textWidthLimit;
+	unsigned char   numGiveObjs;
+	unsigned char   ff_119;     // unused
 };
 typedef struct global_t global_t;
 
 struct pakfile_t {
-char			name[16];
-long			size;
-long			offs;
-char			flag;
+	char            name[16];
+	long            size;
+	long            offs;
+	char            flag;
 };
 typedef struct pakfile_t pakfile_t;
 
 struct pak_t {
-unsigned short	count;
-pakfile_t		files[10];
+	unsigned short  count;
+	pakfile_t       files[10];
 };
 typedef struct pak_t pak_t;
 #pragma pack(pop)
 
 struct cita_t {
-short	ff_0;
-short	ff_2[8 * 2];
+	short   ff_0;
+	short   ff_2[8 * 2];
 };
 typedef struct cita_t cita_t;
 
@@ -761,24 +797,24 @@ enum {
 	LAB_W
 };
 
-#define LAB(toCrypt, toThrone)	\
+#define LAB(toCrypt, toThrone)  \
 	(((LAB_##toCrypt) << 4) | (LAB_##toThrone))
 
 unsigned char kLabyrinthPath[] = {
 // each nibble tells wich direction to choose to exit the labyrinth
-0x11, 0x11, 0x11, 0x22, 0x33, 0x55, 0x25, 0x44, 0x25, 0x11, 0x11, 0x11,
-0x11, 0x35, 0x55, 0x45, 0x45, 0x44, 0x44, 0x34, 0x44, 0x34, 0x32, 0x52,
-0x33, 0x23, 0x24, 0x44, 0x24, 0x22, 0x54, 0x22, 0x54, 0x54, 0x44, 0x22,
-0x22, 0x42, 0x45, 0x22, 0x42, 0x45, 0x35, 0x11, 0x44, 0x34, 0x52, 0x11,
-0x44, 0x32, 0x55, 0x11, 0x11, 0x33, 0x11, 0x11, 0x53, 0x11, 0x11, 0x53,
-0x54, 0x24, 0x11, 0x22, 0x25, 0x33, 0x53, 0x54, 0x23, 0x44
+	0x11, 0x11, 0x11, 0x22, 0x33, 0x55, 0x25, 0x44, 0x25, 0x11, 0x11, 0x11,
+	0x11, 0x35, 0x55, 0x45, 0x45, 0x44, 0x44, 0x34, 0x44, 0x34, 0x32, 0x52,
+	0x33, 0x23, 0x24, 0x44, 0x24, 0x22, 0x54, 0x22, 0x54, 0x54, 0x44, 0x22,
+	0x22, 0x42, 0x45, 0x22, 0x42, 0x45, 0x35, 0x11, 0x44, 0x34, 0x52, 0x11,
+	0x44, 0x32, 0x55, 0x11, 0x11, 0x33, 0x11, 0x11, 0x53, 0x11, 0x11, 0x53,
+	0x54, 0x24, 0x11, 0x22, 0x25, 0x33, 0x53, 0x54, 0x23, 0x44
 };
 
 #undef LAB
 
 char kDinoSpeedForCitaLevel[16] = { 1, 2, 3, 4, 4, 5, 6, 7, 8, 9 };
 
-char kTabletView[] = {			//TODO: make as struct?
+char kTabletView[] = {          //TODO: make as struct?
 	// opposite tablet id, video id
 	Objects::obUnused10, 83,
 	Objects::obUnused10, 84,
@@ -791,25 +827,25 @@ char kTabletView[] = {			//TODO: make as struct?
 // special character backgrounds for specific rooms
 char kPersoRoomBankTable[] = {
 	// first entry is default bank, then pairs of [roomNum, bankNum], terminated by -1
-	 0,  3, 33, -1,
+	0,  3, 33, -1,
 	21, 17, 35, -1,
-	 0,  2, 36, -1,
+	0,  2, 36, -1,
 	22,  9, 38,  3, 39, -1,
 	23,  8, 40, -1,
-	 0,  3, 41,  7, 42, -1,
+	0,  3, 41,  7, 42, -1,
 	25, -1,
 	27, 17, 45, -1,
 	28, 26, 46, -1,
 	29, 51, 48, -1,
 	30, 53, 49, -1,
-	 0, 27, 50, -1,
+	0, 27, 50, -1,
 	32, 17, 51, -1,
 	52,  2, 52, -1,
 	-3,  3, -3, -1,
 	31, -1,
 	24,  6, 43, -1,
 	47, -1,
-	 0,  2, 64, -1, 
+	0,  2, 64, -1,
 	54,  3, 54, -1,
 	27, -1,
 	26, 17, 45, -1
@@ -954,13 +990,13 @@ goto_t gotos[] = {
 	(start), (end) | 0x8000
 
 short tab_2D24C[] = {
-	SUB_LINE( 68, 120 ),
-	 123, 32964,
-	 199, 33042,
-	 276, 33138,
-	 799, 33653,
-	 888, 33708,
-	 947, 33768,
+	SUB_LINE(68, 120),
+	123, 32964,
+	199, 33042,
+	276, 33138,
+	799, 33653,
+	888, 33708,
+	947, 33768,
 	1319, 34146,
 	1380, 34208,
 	1854, 34666,
@@ -974,7 +1010,7 @@ short tab_2D24C[] = {
 };
 
 short tab_2D28E[] = {
-	 99, 32923,
+	99, 32923,
 	157, 33024,
 	-1
 };
@@ -1009,53 +1045,53 @@ short tab_2D2C4[] = {
 #undef SUB_LINE
 
 object_t objects[] = {
-	//id,fl,loc,masklow,maskhi,ct 
-	{  1, 0,  3,      1,     0, 0},		// Eve's Way Stone
-	{  2, 0,  3,      2,     0, 0},		// Thau's Seashell
-	{  3, 0,  3,      4,     0, 0},		// Talisman of bravery
-	{  4, 0,  3,      8,     0, 0},		// An old tooth. Very old! Whoever lost it most certainly has no further use for it!
-	{  5, 0,  0,   0x10,     0, 0},		// Prism
-	{  6, 0,  3,      0,     0, 0},		// Flute
-	{  7, 0,  3, 0x4000,     0, 0},		// Apple
-	{  8, 0,  4, 0x1000,     0, 0},		// Egg of Destiny
-	{  9, 0,  3,  0x800,     0, 0},		// Root
-	{ 10, 0,  3,      0,     0, 0},		// ???
-	{ 11, 0,  6,      0,     0, 0},		// Mushroom
-	{ 12, 0, 13,      0,     0, 0},		// Poisonous Mushroom
-	{ 13, 0,  2,  0x400,     0, 0},		// Graa's Knife
-	{ 14, 0, 22,      0,     0, 0},		// Empty Nest
-	{ 15, 0, 26,      0,     0, 0},		// Full Nest
-	{ 16, 0, 33,   0x20,     0, 0},		// Gold
-	{ 17, 0,  3,      0,     0, 0},		// Sign of Shadow Mistress	(moon stone)
-	{ 18, 0,  3,      0,     0, 0},		// Sign of Mother of all	(bag of soil)
-	{ 19, 0, 40,      0,     0, 0},		// Sign of the life-giving	(sun star)
-	{ 20, 0, 20,  0x200,     0, 0},		// King's Horn
-	{ 21, 0,  3,      0,     0, 0},		// Golden Sword of Mashaar
-										// Masks
-	{ 22, 0,  3,   0x40,     0, 0},		// Mask of Death
-	{ 23, 0,  3,   0x80,     0, 0},		// Mask of Bonding
-	{ 24, 0,  3,  0x100,     0, 0},		// Mask of Birth
-										// Objects of power
-	{ 25, 0,  3,      0,     1, 0},		// Eye in the Storm
-	{ 26, 0,  3,      0,     2, 0},		// Sky Hammer
-	{ 27, 0,  3,      0,     4, 0},		// Fire in the Clouds
-	{ 28, 0,  3,      0,     8, 0},		// Within and Without
-	{ 29, 0,  3,      0,  0x10, 0},		// Eye in the Cyclone
-	{ 30, 0,  3,      0,  0x20, 0},		// River that Winds
-										// Musical instruments
-	{ 31, 0,  3,      0,  0x40, 0},		// Trumpet
-	{ 32, 0,  3,      0,  0x80, 0},		// -- unused (but still has a dialog line)
-	{ 33, 0,  3,      0, 0x100, 0},		// Drum
-	{ 34, 0,  3,      0, 0x200, 0},		// -- unused (but still has a dialog line)
-	{ 35, 0,  3,      0, 0x400, 0},		// -- unused (but still has a dialog line)
-	{ 36, 0,  3,      0, 0x800, 0},		// Ring
-										// Tablets
-	{ 37, 0,  3,      0,     0, 0},		// Tablet #1 (Mo)
-	{ 38, 0, 42, 0x2000,     0, 0},		// Tablet #2 (Morkus' Lair)
-	{ 39, 0,  3,      0,     0, 0},		// Tablet #3 (White Arch?)
-	{ 40, 0,  3,      0,     0, 0},		// Tablet #4
-	{ 41, 0,  3,      0,     0, 0},		// Tablet #5
-	{ 42, 0,  3, 0x8000,     0, 0}		// Tablet #6 (Castra)
+	//id,fl,loc,masklow,maskhi,ct
+	{  1, 0,  3,      1,     0, 0},     // Eve's Way Stone
+	{  2, 0,  3,      2,     0, 0},     // Thau's Seashell
+	{  3, 0,  3,      4,     0, 0},     // Talisman of bravery
+	{  4, 0,  3,      8,     0, 0},     // An old tooth. Very old! Whoever lost it most certainly has no further use for it!
+	{  5, 0,  0,   0x10,     0, 0},     // Prism
+	{  6, 0,  3,      0,     0, 0},     // Flute
+	{  7, 0,  3, 0x4000,     0, 0},     // Apple
+	{  8, 0,  4, 0x1000,     0, 0},     // Egg of Destiny
+	{  9, 0,  3,  0x800,     0, 0},     // Root
+	{ 10, 0,  3,      0,     0, 0},     // ???
+	{ 11, 0,  6,      0,     0, 0},     // Mushroom
+	{ 12, 0, 13,      0,     0, 0},     // Poisonous Mushroom
+	{ 13, 0,  2,  0x400,     0, 0},     // Graa's Knife
+	{ 14, 0, 22,      0,     0, 0},     // Empty Nest
+	{ 15, 0, 26,      0,     0, 0},     // Full Nest
+	{ 16, 0, 33,   0x20,     0, 0},     // Gold
+	{ 17, 0,  3,      0,     0, 0},     // Sign of Shadow Mistress  (moon stone)
+	{ 18, 0,  3,      0,     0, 0},     // Sign of Mother of all    (bag of soil)
+	{ 19, 0, 40,      0,     0, 0},     // Sign of the life-giving  (sun star)
+	{ 20, 0, 20,  0x200,     0, 0},     // King's Horn
+	{ 21, 0,  3,      0,     0, 0},     // Golden Sword of Mashaar
+	// Masks
+	{ 22, 0,  3,   0x40,     0, 0},     // Mask of Death
+	{ 23, 0,  3,   0x80,     0, 0},     // Mask of Bonding
+	{ 24, 0,  3,  0x100,     0, 0},     // Mask of Birth
+	// Objects of power
+	{ 25, 0,  3,      0,     1, 0},     // Eye in the Storm
+	{ 26, 0,  3,      0,     2, 0},     // Sky Hammer
+	{ 27, 0,  3,      0,     4, 0},     // Fire in the Clouds
+	{ 28, 0,  3,      0,     8, 0},     // Within and Without
+	{ 29, 0,  3,      0,  0x10, 0},     // Eye in the Cyclone
+	{ 30, 0,  3,      0,  0x20, 0},     // River that Winds
+	// Musical instruments
+	{ 31, 0,  3,      0,  0x40, 0},     // Trumpet
+	{ 32, 0,  3,      0,  0x80, 0},     // -- unused (but still has a dialog line)
+	{ 33, 0,  3,      0, 0x100, 0},     // Drum
+	{ 34, 0,  3,      0, 0x200, 0},     // -- unused (but still has a dialog line)
+	{ 35, 0,  3,      0, 0x400, 0},     // -- unused (but still has a dialog line)
+	{ 36, 0,  3,      0, 0x800, 0},     // Ring
+	// Tablets
+	{ 37, 0,  3,      0,     0, 0},     // Tablet #1 (Mo)
+	{ 38, 0, 42, 0x2000,     0, 0},     // Tablet #2 (Morkus' Lair)
+	{ 39, 0,  3,      0,     0, 0},     // Tablet #3 (White Arch?)
+	{ 40, 0,  3,      0,     0, 0},     // Tablet #4
+	{ 41, 0,  3,      0,     0, 0},     // Tablet #5
+	{ 42, 0,  3, 0x8000,     0, 0}      // Tablet #6 (Castra)
 };
 
 short kObjectLocations[100] = {
@@ -1130,7 +1166,7 @@ perso_t kPersons[] = {
 	{ 0x828, 242, PersonMask::pmDino  , PersonId::pidDinosaur          , PersonFlags::pftVelociraptor                    ,  0,  0, 0, 0,  0,   0, 1, 0 },
 	{ 0x84B, 242, PersonMask::pmDino  , PersonId::pidDinosaur          , PersonFlags::pf80 | PersonFlags::pftMosasaurus  ,  0,  0, 0, 0,  0,   0, 0, 0 },
 
-	{ 0xB03, 242, PersonMask::pmDino  , PersonId::pidDinosaur          , PersonFlags::pfType8                            , 58,252, 0, 0,  0,   0, 0, 0 },
+	{ 0xB03, 242, PersonMask::pmDino  , PersonId::pidDinosaur          , PersonFlags::pfType8                            , 58, 252, 0, 0,  0,   0, 0, 0 },
 	// enemy dinos
 	{ 0x311, 243, PersonMask::pmEnemy , PersonId::pidEnemy             , PersonFlags::pf80 | PersonFlags::pftTyrann      ,  0,  0, 0, 0,  0,   0, 0, 0 },
 	{ 0x410, 243, PersonMask::pmEnemy , PersonId::pidEnemy             , PersonFlags::pf80 | PersonFlags::pftTyrann      ,  0,  0, 0, 0,  0,   0, 0, 0 },
@@ -1138,47 +1174,75 @@ perso_t kPersons[] = {
 	{ 0x618, 243, PersonMask::pmEnemy , PersonId::pidEnemy             , PersonFlags::pf80 | PersonFlags::pftTyrann      ,  0,  0, 0, 0,  0,   0, 0, 0 },
 	{ 0x71B, 243, PersonMask::pmEnemy , PersonId::pidEnemy             , PersonFlags::pf80 | PersonFlags::pftTyrann      ,  0,  0, 0, 0,  0,   0, 0, 0 },
 	{ 0x81B, 243, PersonMask::pmEnemy , PersonId::pidEnemy             , PersonFlags::pf80 | PersonFlags::pftTyrann      ,  0,  0, 0, 0,  0,   0, 0, 0 },
-	{    -1,  -1,                   -1,                              -1,                                               -1, -1, -1,-1,-1, -1,  -1,-1,-1 },
+	{    -1,  -1,                   -1,                              -1,                                               -1, -1, -1, -1, -1, -1,  -1, -1, -1 },
 	{ 0x628, 237, PersonMask::pmEve   , PersonId::pidEve               ,                                                0, 80,  9, 0, 0,  8,  35, 0, 0 },
 	{ 0x628, 237, PersonMask::pmEve   , PersonId::pidEve               ,                                                0, 78, 10, 0, 0,  7,  35, 0, 0 }
 };
 
 cita_t cita_list[] = {
-	{1,
-	{163, 182,   0, 0,
-	 124, 147, 193, 0,
-	   0,   0,   0, 0,
-	   0,   0,   0, 0}},
-	{48,
-	{285, 286,   0, 0,
-	 287, 288, 284, 0,
-	 114, 115,   0, 0,
-	 116, 117, 113, 0}},
-	{63,
-	{290, 291,   0, 0,
-	 292, 293, 289, 0,
-	 119, 120,   0, 0,
-	 121, 122, 118, 0}},
-	{95,
-	{295, 296,   0, 0,
-	 297, 298, 294, 0,
-	 124, 125,   0, 0,
-	 126, 127, 123, 0}},
-	{127,
-	{300, 301,   0, 0,
-	 302, 303, 299, 0,
-	 129, 130,   0, 0,
-	 131, 132, 128, 0}},
-	{159,
-	{305, 306,   0, 0,
-	 307, 308, 304, 0,
-	 134, 135,   0, 0,
-	 136, 137, 133, 0}},
-	{255,
-	{310, 311,   0, 0,
-	 312, 313, 309, 0,
-	 139, 140,   0, 0,
-	 141, 142, 138, 0}}
+	{
+		1,
+		{
+			163, 182,   0, 0,
+			124, 147, 193, 0,
+			0,   0,   0, 0,
+			0,   0,   0, 0
+		}
+	},
+	{
+		48,
+		{
+			285, 286,   0, 0,
+			287, 288, 284, 0,
+			114, 115,   0, 0,
+			116, 117, 113, 0
+		}
+	},
+	{
+		63,
+		{
+			290, 291,   0, 0,
+			292, 293, 289, 0,
+			119, 120,   0, 0,
+			121, 122, 118, 0
+		}
+	},
+	{
+		95,
+		{
+			295, 296,   0, 0,
+			297, 298, 294, 0,
+			124, 125,   0, 0,
+			126, 127, 123, 0
+		}
+	},
+	{
+		127,
+		{
+			300, 301,   0, 0,
+			302, 303, 299, 0,
+			129, 130,   0, 0,
+			131, 132, 128, 0
+		}
+	},
+	{
+		159,
+		{
+			305, 306,   0, 0,
+			307, 308, 304, 0,
+			134, 135,   0, 0,
+			136, 137, 133, 0
+		}
+	},
+	{
+		255,
+		{
+			310, 311,   0, 0,
+			312, 313, 309, 0,
+			139, 140,   0, 0,
+			141, 142, 138, 0
+		}
+	}
 };
 
 
@@ -1196,11 +1260,11 @@ char tab_2CB1E[8][4] = {
 };
 
 struct prect_t {
-short	sx, sy, ex, ey;
+	short   sx, sy, ex, ey;
 };
 typedef struct prect_t prect_t;
 
-prect_t perso_rects[] = {	//TODO: just an array of shorts?
+prect_t perso_rects[] = {   //TODO: just an array of shorts?
 	{  93,  69, 223, 176},
 	{ 102,  86, 162, 126},
 	{  88, 103, 168, 163},
@@ -1222,7 +1286,7 @@ prect_t perso_rects[] = {	//TODO: just an array of shorts?
 	{ 188,  83, 251, 158}
 };
 
-unsigned char tab_persxx[][5] = {	//TODO: struc?
+unsigned char tab_persxx[][5] = {   //TODO: struc?
 	{  8, 15, 23, 25, -1},
 	{  0,  9, -1        },
 	{  0,  9, -1        },
@@ -1262,68 +1326,68 @@ area_t kAreasTable[] = {
 
 short tab_2CEF0[64] = {
 	25, 257,  0,   0, 37, 258, 38, 259,  0,   0, 24, 260, 0, 0, 0, 0,
-	 0,   0, 53, 265,  0,   0,  0,   0,  0,   0,  0,   0, 0, 0, 0, 0,
+	0,   0, 53, 265,  0,   0,  0,   0,  0,   0,  0,   0, 0, 0, 0, 0,
 	39, 261,  0,   0, 40, 262, 62, 263,  0,   0, 63, 264, 0, 0, 0, 0,
 	18, 275,  0,   0, 35, 254, 36, 255, 19, 318, 23, 256, 0, 0, 0, 0
 };
 
 short tab_2CF70[64] = {
 	65, 266,  0,   0, 66, 267, 67, 268,  0,   0, 68, 269, 0, 0, 0, 0,
-	 0,   0, 73, 274,  0,   0,  0,   0,  0,   0,  0,   0, 0, 0, 0, 0,
+	0,   0, 73, 274,  0,   0,  0,   0,  0,   0,  0,   0, 0, 0, 0, 0,
 	69, 270,  0,   0, 70, 271, 71, 272,  0,   0, 72, 273, 0, 0, 0, 0,
 	18, 275,  0,   0, 35, 254, 36, 255, 19, 318, 23, 256, 0, 0, 0, 0,
 };
 
 short kActionCursors[299] = {
-	 3, 1, 2, 4, 5, 5, 5, 0, 5, 5,
-	 5, 5, 5, 3, 2, 5, 5, 5, 3, 2,
-	 4, 5, 7, 7, 4, 5, 5, 0, 0, 0,
-	 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-	 5, 5, 0, 0, 0, 0, 5, 5, 5, 5,
-	 5, 5, 5, 5, 5, 5, 5, 5, 0, 0,
-	 0, 0, 5, 5, 5, 5, 5, 5, 5, 5,
-	 5, 5, 5, 5, 0, 0, 0, 0, 5, 5,
-	 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-	 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-	 6, 6, 6, 6, 6, 6, 6, 0, 5, 6,
-	 6, 1, 6, 6, 0, 0, 6, 0, 0, 0,
-	 0, 0, 0, 0, 0, 0, 0, 0, 6, 0,
-	 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-	 8, 8, 8, 8, 8, 8, 0, 0, 6, 6,
+	3, 1, 2, 4, 5, 5, 5, 0, 5, 5,
+	5, 5, 5, 3, 2, 5, 5, 5, 3, 2,
+	4, 5, 7, 7, 4, 5, 5, 0, 0, 0,
+	5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+	5, 5, 0, 0, 0, 0, 5, 5, 5, 5,
+	5, 5, 5, 5, 5, 5, 5, 5, 0, 0,
+	0, 0, 5, 5, 5, 5, 5, 5, 5, 5,
+	5, 5, 5, 5, 0, 0, 0, 0, 5, 5,
+	5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
+	6, 6, 6, 6, 6, 6, 6, 0, 5, 6,
+	6, 1, 6, 6, 0, 0, 6, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 6, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+	8, 8, 8, 8, 8, 8, 0, 0, 6, 6,
 	53, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	 0, 0, 0, 0, 0, 0, 0, 0, 0
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
 
 struct cubeface_t {
-int				tri;
-char			ff_4;
-char			ff_5;
+	int             tri;
+	char            ff_4;
+	char            ff_5;
 
-unsigned char	*texptr;
-unsigned short	*indices;
-short			*uv;
+	unsigned char   *texptr;
+	unsigned short  *indices;
+	short           *uv;
 };
 typedef struct cubeface_t cubeface_t;
 
 struct cube_t {
-int				num;
-cubeface_t		**faces;
-short			*projection;	// projected XYZ coords
-short			*vertices;
+	int             num;
+	cubeface_t      **faces;
+	short           *projection;    // projected XYZ coords
+	short           *vertices;
 };
 typedef struct cube_t cube_t;
 
@@ -1339,8 +1403,8 @@ short cube_texcoords[3][6 * 2 * 3 * 2] = {
 		32, 32,  0, 32,  0,  0,
 		32, 32,  0,  0, 32,  0,
 
-		 0, 32,  0,  0, 32,  0,
-		 0, 32, 32,  0, 32, 32,
+		0, 32,  0,  0, 32,  0,
+		0, 32, 32,  0, 32, 32,
 
 		32, 32,  0, 32,  0,  0,
 		32, 32,  0,  0, 32,  0,
@@ -1348,11 +1412,11 @@ short cube_texcoords[3][6 * 2 * 3 * 2] = {
 		32,  0, 32, 32,  0, 32,
 		32,  0,  0, 32,  0,  0,
 
-		 0,  0, 32,  0, 32, 32,
-		 0,  0, 32, 32,  0, 32,
+		0,  0, 32,  0, 32, 32,
+		0,  0, 32, 32,  0, 32,
 
-		 0, 32,  0,  0, 32,  0,
-		 0, 32, 32,  0, 32, 32
+		0, 32,  0,  0, 32,  0,
+		0, 32, 32,  0, 32, 32
 	}, {
 		32, 32,  0, 32,  0,  0,
 		32, 32,  0,  0, 32,  0,
@@ -1363,8 +1427,8 @@ short cube_texcoords[3][6 * 2 * 3 * 2] = {
 		32,  0, 32, 32,  0, 32,
 		32,  0,  0, 32,  0,  0,
 
-		 0, 32,  0,  0, 32,  0,
-		 0, 32, 32,  0, 32, 32,
+		0, 32,  0,  0, 32,  0,
+		0, 32, 32,  0, 32, 32,
 
 		32,  0, 32, 32,  0, 32,
 		32,  0,  0, 32,  0,  0,
@@ -1375,8 +1439,8 @@ short cube_texcoords[3][6 * 2 * 3 * 2] = {
 		30, 30,  2, 30,  2,  2,
 		30, 30,  2,  2, 30,  2,
 
-		 2, 30,  2,  2, 30,  2,
-		 2, 30, 30,  2, 30, 30,
+		2, 30,  2,  2, 30,  2,
+		2, 30, 30,  2, 30, 30,
 
 		30, 30,  2, 30,  2,  2,
 		30, 30,  2,  2, 30,  2,
@@ -1384,12 +1448,12 @@ short cube_texcoords[3][6 * 2 * 3 * 2] = {
 		30,  2, 30, 30,  2, 30,
 		30,  2,  2, 30,  2,  2,
 
-		 2,  2, 30,  2, 30, 30,
-		 2,  2, 30, 30,  2, 30,
+		2,  2, 30,  2, 30, 30,
+		2,  2, 30, 30,  2, 30,
 
-		 2, 30,  2,  2, 30,  2,
-		 2, 30, 30,  2, 30, 30
-	 }
+		2, 30,  2,  2, 30,  2,
+		2, 30, 30,  2, 30, 30
+	}
 };
 
 char tab_2E138[4 * 3] = {
