@@ -41,7 +41,7 @@ class DecompressorData;
  */
 class File : public Common::File {
 public:
-	virtual bool open(const Common::String &name);
+	virtual bool open(const Common::String &filename);
 };
 
 /**
@@ -293,7 +293,7 @@ public:
 	/**
 	 * Open up the specified file
 	 */
-	void open(const CString &name);
+	virtual bool open(const Common::String &filename);
 
 	/**
 	 * Return a reference to the read stream

@@ -39,12 +39,12 @@ int QSoundManager::loadSound(const CString &name) {
 	return 0;
 }
 
-int QSoundManager::proc4() {
+int QSoundManager::proc4() const {
 	warning("TODO");
 	return 0;
 }
 
-int QSoundManager::proc5() {
+int QSoundManager::proc5() const {
 	warning("TODO");
 	return 0;
 }
@@ -91,7 +91,7 @@ bool QSoundManager::isActive(int handle) const {
 	return false;
 }
 
-int QSoundManager::proc16() {
+int QSoundManager::proc16() const {
 	warning("TODO");
 	return 0;
 }

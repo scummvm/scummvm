@@ -50,24 +50,24 @@ CString CLinkItem::formName() {
 	switch (_linkMode) {
 	case 1:
 		return CString::format("_PANL,%d,%s,%s", node->_nodeNumber,
-			view->getName(), destView->getName());
+			view->getName().c_str(), destView->getName().c_str());
 
 	case 2:
 		return CString::format("_PANR,%d,%s,%s", node->_nodeNumber,
-			view->getName(), destView->getName());
+			view->getName().c_str(), destView->getName().c_str());
 
 	case 3:
 		return CString::format("_TRACK,%d,%s,%d,%s", 
-			node->_nodeNumber, view->getName(), 
-			destNode->_nodeNumber, destView->getName());
+			node->_nodeNumber, view->getName().c_str(), 
+			destNode->_nodeNumber, destView->getName().c_str());
 
 	case 4:
 		return CString::format("_EXIT,%d,%d,%s,%d,%d,%s",
-			room->_roomNumber, node->_nodeNumber, view->getName(),
-			destRoom->_roomNumber, destNode->_nodeNumber, destView->getName());
+			room->_roomNumber, node->_nodeNumber, view->getName().c_str(),
+			destRoom->_roomNumber, destNode->_nodeNumber, destView->getName().c_str());
 
 	default:
-		return getName();
+		return getName().c_str();
 	}
 }
 

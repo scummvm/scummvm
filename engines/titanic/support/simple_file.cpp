@@ -36,9 +36,9 @@ CString readStringFromStream(Common::SeekableReadStream *s) {
 
 /*------------------------------------------------------------------------*/
 
-bool File::open(const Common::String &name) {
-	if (!Common::File::open(name))
-		error("Could not open file - %s", name.c_str());
+bool File::open(const Common::String &filename) {
+	if (!Common::File::open(filename))
+		error("Could not open file - %s", filename.c_str());
 	return true;
 }
 
@@ -466,8 +466,9 @@ void SimpleFile::skipSpaces() {
 
 /*------------------------------------------------------------------------*/
 
-void StdCWadFile::open(const CString &name) {
+bool StdCWadFile::open(const Common::String &filename) {
 	File f;
+	CString name = filename;
 
 	// Check for whether it is indeed a file/resource pair
 	int idx = name.indexOf('#');
@@ -478,17 +479,17 @@ void StdCWadFile::open(const CString &name) {
 		f.open(name);
 
 		SimpleFile::open(f.readStream(f.size()));
-		return;
+		return true;
 	}
 
 	// Split up the name and resource, and get the resource index
-	CString filename = name.left(idx) + ".st";
+	CString fname = name.left(idx) + ".st";
 	int extPos = name.lastIndexOf('.');
 	CString resStr = name.mid(idx + 1, extPos - idx - 1);
 	int resIndex = resStr.readInt();
 
 	// Open up the index for access 
-	f.open(filename);
+	f.open(fname);
 	int indexSize = f.readUint32LE() / 4;
 	assert(resIndex < indexSize);
 
@@ -505,6 +506,7 @@ void StdCWadFile::open(const CString &name) {
 	SimpleFile::open(stream);
 
 	f.close();
+	return true;
 }
 
 } // End of namespace Titanic

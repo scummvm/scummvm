@@ -119,8 +119,8 @@ public:
 	 */
 	virtual int loadSound(const CString &name);
 
-	virtual int proc4();
-	virtual int proc5();
+	virtual int proc4() const;
+	virtual int proc5() const;
 	virtual void proc6();
 	virtual void proc7();
 	virtual void proc8(int v);
@@ -131,7 +131,7 @@ public:
 	virtual void proc13();
 	virtual bool proc14();
 	virtual bool isActive(int handle) const;
-	virtual int proc16();
+	virtual int proc16() const;
 	virtual void WaveMixPump();
 
 	
