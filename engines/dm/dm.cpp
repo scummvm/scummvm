@@ -350,6 +350,7 @@ Common::Error DMEngine::run() {
 }
 
 void DMEngine::f2_gameloop() {
+	//HACK: Remove this block to get real starting position in the Hall of Champions
 	if (_g298_newGame) {
 		warning(false, "DUMMY CODE: SETTING PARTY POS AND DIRECTION");
 		_dungeonMan->_g306_partyMapX = 9;
@@ -399,6 +400,7 @@ void DMEngine::f2_gameloop() {
 		_championMan->f320_applyAndDrawPendingDamageAndWounds();
 		if (_championMan->_g303_partyDead)
 			break;
+
 		_g313_gameTime++;
 
 		if (!(_g313_gameTime & 511))
@@ -458,7 +460,6 @@ int16 DMEngine::M0_indexToOrdinal(int16 val) {
 	return val + 1;
 }
 
-
 void DMEngine::f441_processEntrance() {
 	_eventMan->_g441_primaryMouseInput = g445_PrimaryMouseInput_Entrance;
 	_eventMan->_g442_secondaryMouseInput = nullptr;
@@ -503,6 +504,7 @@ void DMEngine::f441_processEntrance() {
 			_displayMan->updateScreen();
 		} while (_g298_newGame == k99_modeWaitingOnEntrance);
 	} while (_g298_newGame == k202_CommandEntranceDrawCredits);
+
 	//Strangerke: CHECKME: Earlier versions were using G0566_puc_Graphic534_Sound01Switch
 	f060_SOUND_Play(k01_soundSWITCH, 112, 0x40, 0x40);
 	f22_delay(20);
@@ -517,31 +519,13 @@ void DMEngine::f441_processEntrance() {
 
 void DMEngine::f444_endGame(bool doNotDrawCreditsOnly) {
 	// TODO: localization
-	static Box G0013_s_Graphic562_Box_Endgame_Restart_Outer = Box(103, 217, 145, 159);
-	static Box G0014_s_Graphic562_Box_Endgame_Restart_Inner = Box(105, 215, 147, 157);
-	static Box G0012_s_Graphic562_Box_Endgame_TheEnd = Box(120, 199, 95, 108);
-	static Box G0015_s_Graphic562_Box_Endgame_ChampionMirror = Box(11, 74, 7, 49);
-	static Box G0016_s_Graphic562_Box_Endgame_ChampionPortrait = Box(27, 58, 13, 41);
-	int16 L1409_i_Multiple;
-#define AL1409_i_Color              L1409_i_Multiple
-#define AL1409_i_ChampionIndex      L1409_i_Multiple
-#define AL1409_i_VerticalBlankCount L1409_i_Multiple
-	int16 L1410_i_Multiple;
-#define AL1410_i_Counter L1410_i_Multiple
-#define AL1410_i_Y       L1410_i_Multiple
-	int16 L1411_i_Multiple;
-#define AL1411_i_X          L1411_i_Multiple
-#define AL1411_i_SkillIndex L1411_i_Multiple
-	int16 L1412_i_SkillLevel;
-	char L1415_c_ChampionTitleFirstCharacter;
-	Champion* L1416_ps_Champion;
-	uint16 L1419_aui_Palette[16];
-	uint16 L1420_aui_Palette_TopAndBottomScreen[16];
-	uint16 L1421_aui_Palette_DarkBlue[16];
-	char L1422_ac_String[20];
-	// Strangerke: Not so sure it's useless. 
-	bool L1423_B_WaitBeforeDrawingRestart; /* BUG0_00 Useless code */
-	L1423_B_WaitBeforeDrawingRestart = true; /* BUG0_00 Useless code */
+	static Box restartOuterBox = Box(103, 217, 145, 159);
+	static Box restartInnerBox = Box(105, 215, 147, 157);
+	static Box theEndBox = Box(120, 199, 95, 108);
+	static Box championMirrorBox = Box(11, 74, 7, 49);
+	static Box championPortraitBox = Box(27, 58, 13, 41);
+
+	bool waitBeforeDrawingRestart = true;
 
 	_eventMan->f67_setMousePointerToNormal(k0_pointerArrow);
 	_eventMan->f78_showMouse();
@@ -555,51 +539,55 @@ void DMEngine::f444_endGame(bool doNotDrawCreditsOnly) {
 	}
 	
 	if (_displayMan->_g322_paletteSwitchingEnabled) {
+		uint16 oldPalTopAndBottomScreen[16];
 		for (uint16 i = 0; i < 16; ++i)
-			L1420_aui_Palette_TopAndBottomScreen[i] = _displayMan->_g347_paletteTopAndBottomScreen[i];
-		for (AL1410_i_Counter = 0; AL1410_i_Counter <= 7; AL1410_i_Counter++) {
+			oldPalTopAndBottomScreen[i] = _displayMan->_g347_paletteTopAndBottomScreen[i];
+		for (int i = 0; i <= 7; i++) {
 			f22_delay(1);
-			for (AL1409_i_Color = 0; AL1409_i_Color < 16; AL1409_i_Color++) {
-				_displayMan->_g346_paletteMiddleScreen[AL1409_i_Color] = _displayMan->f431_getDarkenedColor(_displayMan->_g346_paletteMiddleScreen[AL1409_i_Color]);
-				_displayMan->_g347_paletteTopAndBottomScreen[AL1409_i_Color] = _displayMan->f431_getDarkenedColor(_displayMan->_g347_paletteTopAndBottomScreen[AL1409_i_Color]);
+			for (int colIdx = 0; colIdx < 16; colIdx++) {
+				_displayMan->_g346_paletteMiddleScreen[colIdx] = _displayMan->f431_getDarkenedColor(_displayMan->_g346_paletteMiddleScreen[colIdx]);
+				_displayMan->_g347_paletteTopAndBottomScreen[colIdx] = _displayMan->f431_getDarkenedColor(_displayMan->_g347_paletteTopAndBottomScreen[colIdx]);
 			}
 		}
 		_displayMan->_g322_paletteSwitchingEnabled = false;
 		f22_delay(1);
 		for (uint16 i = 0; i < 16; ++i)
-			_displayMan->_g347_paletteTopAndBottomScreen[i] = L1420_aui_Palette_TopAndBottomScreen[i];
+			_displayMan->_g347_paletteTopAndBottomScreen[i] = oldPalTopAndBottomScreen[i];
 	} else
 		_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g345_aui_BlankBuffer);
 
+	uint16 darkBluePalette[16];
 	if (doNotDrawCreditsOnly) {
 		if (_g302_gameWon) {
 			// Strangerke: Related to portraits. Game data could be missing for earlier versions of the game.
 			_displayMan->fillScreen(k12_ColorDarkestGray);
-			for (AL1409_i_ChampionIndex = k0_ChampionFirst; AL1409_i_ChampionIndex < _championMan->_g305_partyChampionCount; AL1409_i_ChampionIndex++) {
-				AL1410_i_Y = AL1409_i_ChampionIndex * 48;
-				L1416_ps_Champion = &_championMan->_gK71_champions[AL1409_i_ChampionIndex];
-				_displayMan->f21_blitToScreen(_displayMan->f489_getNativeBitmapOrGraphic(k208_wallOrn_43_champMirror), &G0015_s_Graphic562_Box_Endgame_ChampionMirror, k32_byteWidth, k10_ColorFlesh, 43);
-				_displayMan->f21_blitToScreen(L1416_ps_Champion->_portrait, &G0016_s_Graphic562_Box_Endgame_ChampionPortrait, k16_byteWidth, k1_ColorDarkGary, 29);
-				_textMan->f443_endgamePrintString(87, AL1410_i_Y += 14, k9_ColorGold, L1416_ps_Champion->_name);
-				AL1411_i_X = (6 * strlen(L1416_ps_Champion->_name)) + 87;
-				L1415_c_ChampionTitleFirstCharacter = L1416_ps_Champion->_title[0];
-				if ((L1415_c_ChampionTitleFirstCharacter != ',') && (L1415_c_ChampionTitleFirstCharacter != ';') && (L1415_c_ChampionTitleFirstCharacter != '-')) {
-					AL1411_i_X += 6;
-				}
-				_textMan->f443_endgamePrintString(AL1411_i_X, AL1410_i_Y++, k9_ColorGold, L1416_ps_Champion->_title);
-				for (AL1411_i_SkillIndex = k0_ChampionSkillFighter; AL1411_i_SkillIndex <= k3_ChampionSkillWizard; AL1411_i_SkillIndex++) {
-					L1412_i_SkillLevel = MIN((uint16)16, _championMan->f303_getSkillLevel(AL1409_i_ChampionIndex, AL1411_i_SkillIndex | (k0x4000_IgnoreObjectModifiers | k0x8000_IgnoreTemporaryExperience)));
-					if (L1412_i_SkillLevel == 1)
+			for (int16 championIndex = k0_ChampionFirst; championIndex < _championMan->_g305_partyChampionCount; championIndex++) {
+				int16 textPosY = championIndex * 48;
+				Champion *curChampion = &_championMan->_gK71_champions[championIndex];
+				_displayMan->f21_blitToScreen(_displayMan->f489_getNativeBitmapOrGraphic(k208_wallOrn_43_champMirror), &championMirrorBox, k32_byteWidth, k10_ColorFlesh, 43);
+				_displayMan->f21_blitToScreen(curChampion->_portrait, &championPortraitBox, k16_byteWidth, k1_ColorDarkGary, 29);
+				_textMan->f443_endgamePrintString(87, textPosY += 14, k9_ColorGold, curChampion->_name);
+				int textPosX = (6 * strlen(curChampion->_name)) + 87;
+				char championTitleFirstCharacter = curChampion->_title[0];
+				if ((championTitleFirstCharacter != ',') && (championTitleFirstCharacter != ';') && (championTitleFirstCharacter != '-'))
+					textPosX += 6;
+
+				_textMan->f443_endgamePrintString(textPosX, textPosY++, k9_ColorGold, curChampion->_title);
+				for (int16 idx = k0_ChampionSkillFighter; idx <= k3_ChampionSkillWizard; idx++) {
+					uint16 skillLevel = MIN<uint16>(16, _championMan->f303_getSkillLevel(championIndex, idx | (k0x4000_IgnoreObjectModifiers | k0x8000_IgnoreTemporaryExperience)));
+					if (skillLevel == 1)
 						continue;
-					strcpy(L1422_ac_String, G0428_apc_SkillLevelNames[L1412_i_SkillLevel - 2]);
-					strcat(L1422_ac_String, " ");
-					strcat(L1422_ac_String, g417_baseSkillName[AL1411_i_SkillIndex]);
-					_textMan->f443_endgamePrintString(105, AL1410_i_Y = AL1410_i_Y + 8, k13_ColorLightestGray, L1422_ac_String);
+
+					char displStr[20];
+					strcpy(displStr, G0428_apc_SkillLevelNames[skillLevel - 2]);
+					strcat(displStr, " ");
+					strcat(displStr, g417_baseSkillName[idx]);
+					_textMan->f443_endgamePrintString(105, textPosY = textPosY + 8, k13_ColorLightestGray, displStr);
 				}
-				G0015_s_Graphic562_Box_Endgame_ChampionMirror._y1 += 48;
-				G0015_s_Graphic562_Box_Endgame_ChampionMirror._y2 += 48;
-				G0016_s_Graphic562_Box_Endgame_ChampionPortrait._y1 += 48;
-				G0016_s_Graphic562_Box_Endgame_ChampionPortrait._y1 += 48;
+				championMirrorBox._y1 += 48;
+				championMirrorBox._y2 += 48;
+				championPortraitBox._y1 += 48;
+				championPortraitBox._y1 += 48;
 			}
 			_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g347_paletteTopAndBottomScreen);
 			_engineShouldQuit = true;
@@ -607,34 +595,34 @@ void DMEngine::f444_endGame(bool doNotDrawCreditsOnly) {
 		}
 T0444017:
 		_displayMan->fillScreen(k0_ColorBlack);
-		_displayMan->f21_blitToScreen(_displayMan->f489_getNativeBitmapOrGraphic(k6_theEndIndice), &G0012_s_Graphic562_Box_Endgame_TheEnd, k40_byteWidth, kM1_ColorNoTransparency, 14);
+		_displayMan->f21_blitToScreen(_displayMan->f489_getNativeBitmapOrGraphic(k6_theEndIndice), &theEndBox, k40_byteWidth, kM1_ColorNoTransparency, 14);
 		for (uint16 i = 0; i < 16; ++i)
-			L1421_aui_Palette_DarkBlue[i] = D01_RGB_DARK_BLUE;
-		for (uint16 i = 0; i < 16; ++i)
-			L1419_aui_Palette[i] = L1421_aui_Palette_DarkBlue[i];
-		L1419_aui_Palette[15] = D09_RGB_WHITE;
-		_displayMan->f436_STARTEND_FadeToPalette(L1419_aui_Palette);
-		if (L1423_B_WaitBeforeDrawingRestart) { /* BUG0_00 Useless code */
+			darkBluePalette[i] = D01_RGB_DARK_BLUE;
+		uint16 curPalette[16];
+		for (uint16 i = 0; i < 15; ++i)
+			curPalette[i] = darkBluePalette[i];
+		curPalette[15] = D09_RGB_WHITE;
+		_displayMan->f436_STARTEND_FadeToPalette(curPalette);
+		if (waitBeforeDrawingRestart)
 			f22_delay(300);
-		} /* BUG0_00 Useless code */
 
 		if (_g524_restartGameAllowed) {
 			_displayMan->_g578_useByteBoxCoordinates = false;
-			_displayMan->D24_fillScreenBox(G0013_s_Graphic562_Box_Endgame_Restart_Outer, k12_ColorDarkestGray);
-			_displayMan->D24_fillScreenBox(G0014_s_Graphic562_Box_Endgame_Restart_Inner, k0_ColorBlack);
+			_displayMan->D24_fillScreenBox(restartOuterBox, k12_ColorDarkestGray);
+			_displayMan->D24_fillScreenBox(restartInnerBox, k0_ColorBlack);
 			_textMan->f53_printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "RESTART THIS GAME");
-			L1419_aui_Palette[1] = D03_RGB_PINK;
-			L1419_aui_Palette[4] = D09_RGB_WHITE;
+			curPalette[1] = D03_RGB_PINK;
+			curPalette[4] = D09_RGB_WHITE;
 			_eventMan->_g441_primaryMouseInput = g446_PrimaryMouseInput_RestartGame;
 			_eventMan->f357_discardAllInput();
 			_eventMan->f77_hideMouse();
-			_displayMan->f436_STARTEND_FadeToPalette(L1419_aui_Palette);
-			for (AL1409_i_VerticalBlankCount = 900; --AL1409_i_VerticalBlankCount && !_g523_restartGameRequest; f22_delay(1)) {
+			_displayMan->f436_STARTEND_FadeToPalette(curPalette);
+			for (int16 verticalBlankCount = 900; --verticalBlankCount && !_g523_restartGameRequest; f22_delay(1))
 				_eventMan->f380_processCommandQueue();
-			}
+
 			_eventMan->f78_showMouse();
 			if (_g523_restartGameRequest) {
-				_displayMan->f436_STARTEND_FadeToPalette(L1421_aui_Palette_DarkBlue);
+				_displayMan->f436_STARTEND_FadeToPalette(darkBluePalette);
 				_displayMan->fillScreen(k0_ColorBlack);
 				_displayMan->f436_STARTEND_FadeToPalette(g21_PalDungeonView[0]);
 				_g298_newGame = k0_modeLoadSavedGame;
@@ -648,7 +636,7 @@ T0444017:
 			}
 		}
 
-		_displayMan->f436_STARTEND_FadeToPalette(L1421_aui_Palette_DarkBlue);
+		_displayMan->f436_STARTEND_FadeToPalette(darkBluePalette);
 	}
 	Box box(0, 319, 0, 199);
 	_displayMan->f132_blitToBitmap(_displayMan->f489_getNativeBitmapOrGraphic(k5_creditsGraphicIndice), _displayMan->_g348_bitmapScreen, box, 0, 0, 160, 160, kM1_ColorNoTransparency);
@@ -659,8 +647,8 @@ T0444017:
 		return;
 
 	if (_g524_restartGameAllowed && doNotDrawCreditsOnly) {
-		L1423_B_WaitBeforeDrawingRestart = false;
-		_displayMan->f436_STARTEND_FadeToPalette(L1421_aui_Palette_DarkBlue);
+		waitBeforeDrawingRestart = false;
+		_displayMan->f436_STARTEND_FadeToPalette(darkBluePalette);
 		goto T0444017;
 	}
 
