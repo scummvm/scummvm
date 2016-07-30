@@ -1158,10 +1158,6 @@ void BarbotScript::setDialRegion(int dialNum, int region) {
 	applyResponse();
 }
 
-int BarbotScript::proc36(int tagId) const {
-	return 0;
-}
-
 void BarbotScript::adjustDial(int dialNum, int amount) {
 	int level = CLIP(getDialLevel(dialNum) + amount, 0, 100);
 	setDial(dialNum, level);

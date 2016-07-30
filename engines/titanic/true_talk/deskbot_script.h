@@ -99,7 +99,10 @@ public:
 	 */
 	virtual int doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence);
 
-	virtual int proc36(int val) const;
+	/**
+	 * Handles a randomzied response
+	 */
+	virtual bool randomResponse(int index);
 
 	/**
 	 * Returns true if dial 1 is the medium (1) region

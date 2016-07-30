@@ -98,7 +98,10 @@ public:
 	 */
 	virtual void setDialRegion(int dialNum, int region);
 
-	virtual int proc36(int val) const;
+	/**
+	 * Handles a randomzied response
+	 */
+	virtual bool randomResponse(int index);
 };
 
 } // End of namespace Titanic

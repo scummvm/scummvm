@@ -99,8 +99,6 @@ public:
 	 * Sets a given dial to be pointing in a specified region (0 to 2)
 	 */
 	virtual void setDialRegion(int dialNum, int region);
-
-	virtual int proc36(int val) const;
 };
 
 } // End of namespace Titanic

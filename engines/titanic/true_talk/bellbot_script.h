@@ -71,8 +71,6 @@ public:
 	 */
 	virtual ScriptChangedResult scriptChanged(TTscriptBase *roomScript, uint id);
 
-	virtual int proc15() const;
-
 	virtual int handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 		uint val, uint tagId, uint remainder);
 
@@ -91,7 +89,10 @@ public:
 	 */
 	virtual int doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence);
 
-	virtual int proc36(int val) const;
+	/**
+	 * Handles a randomzied response
+	 */
+	virtual bool randomResponse(int index);
 };
 
 } // End of namespace Titanic

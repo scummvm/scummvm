@@ -38,7 +38,7 @@ DeskbotScript::DeskbotScript(int val1, const char *charClass, int v2,
 	CTrueTalkManager::setFlags(22, 0);
 
 	setupDials(0, 0, 0);
-	_array[0] = 100;
+	_data[0] = 100;
 	if (_currentDialNum == 1)
 		_currentDialNum = 0;
 
@@ -314,9 +314,19 @@ int DeskbotScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *ro
 	return 0;
 }
 
-int DeskbotScript::proc36(int id) const {
-	warning("TODO");
-	return 0;
+bool DeskbotScript::randomResponse(int index) {
+	if (getValue(1) == 1 || getRandomNumber(100) > 10 || getRandomNumber(2) <= index)
+		return 0;
+
+	if (getRandomNumber(100) > 95) {
+		deleteResponses();
+		addResponse(getDialogueId(241195));
+		applyResponse();
+	} else {
+		setResponseFromArray(index, 241193);
+	}
+
+	return true;
 }
 
 bool DeskbotScript::isDial0Medium() const {

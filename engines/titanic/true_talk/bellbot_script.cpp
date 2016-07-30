@@ -72,11 +72,6 @@ ScriptChangedResult BellbotScript::scriptChanged(TTscriptBase *roomScript, uint 
 	return SCR_1;
 }
 
-int BellbotScript::proc15() const {
-	warning("TODO");
-	return 0;
-}
-
 int BellbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 		uint val, uint tagId, uint remainder) {
 	switch (tagId) {
@@ -402,9 +397,19 @@ int BellbotScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *ro
 	return 0;
 }
 
-int BellbotScript::proc36(int id) const {
-	warning("TODO");
-	return 0;
+bool BellbotScript::randomResponse(int index) {
+	if (getRandomNumber(100) > 10 || getRandomNumber(10) <= index)
+		return 0;
+
+	if (getRandomNumber(100) > 95) {
+		deleteResponses();
+		addResponse(getDialogueId(201695));
+		applyResponse();
+	} else {
+		setResponseFromArray(index, 201696);
+	}
+
+	return true;
 }
 
 int BellbotScript::addLocation() {

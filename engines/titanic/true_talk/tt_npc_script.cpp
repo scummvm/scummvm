@@ -105,6 +105,16 @@ static const uint RANDOM9[] = {
 
 /*------------------------------------------------------------------------*/
 
+TTnpcData::TTnpcData() {
+	Common::fill(&_array[0], &_array[136], 0);
+}
+
+void TTnpcData::resetFlags() {
+	Common::fill(&_array[20], &_array[136], 0);
+}
+
+/*------------------------------------------------------------------------*/
+
 TTnpcScriptBase::TTnpcScriptBase(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTscriptBase(0, charClass, v2, charName, v3, v4, v5, v6, v7),
@@ -130,7 +140,6 @@ TTnpcScript::TTnpcScript(int charId, const char *charClass, int v2,
 		_currentDialNum(0), _dialDelta(0), _field7C(0), _itemStringP(nullptr), _field2CC(false) {
 	CTrueTalkManager::_v2 = 0;
 	Common::fill(&_dialValues[0], &_dialValues[DIALS_ARRAY_COUNT], 0);
-	Common::fill(&_array[0], &_array[136], 0);
 
 	if (!CTrueTalkManager::_v10) {
 		Common::fill(&CTrueTalkManager::_v11[0], &CTrueTalkManager::_v11[41], 0);
@@ -178,7 +187,7 @@ void TTnpcScript::loadRanges(const char *name) {
 }
 
 void TTnpcScript::resetFlags() {
-	Common::fill(&_array[20], &_array[136], 0);
+	_data.resetFlags();
 	_field2CC = false;
 }
 
@@ -402,7 +411,7 @@ void TTnpcScript::save(SimpleFile *file) {
 	
 	file->writeNumber(10);
 	for (int idx = 0; idx < 10; ++idx)
-		file->writeNumber(_array[idx]);
+		file->writeNumber(_data[idx]);
 }
 
 void TTnpcScript::load(SimpleFile *file) {
@@ -421,7 +430,7 @@ void TTnpcScript::load(SimpleFile *file) {
 	for (int idx = 0; idx < count; ++idx) {
 		int v = file->readNumber();
 		if (idx < 10)
-			_array[idx] = v;
+			_data[idx] = v;
 	}
 }
 
@@ -533,8 +542,8 @@ int TTnpcScript::getDialLevel(uint dialNum, bool randomizeFlag) {
 	return result;
 }
 
-int TTnpcScript::proc36(int id) const {
-	return 0;
+bool TTnpcScript::randomResponse(int index) {
+	return false;
 }
 
 uint TTnpcScript::translateId(uint id) const {
@@ -624,7 +633,7 @@ uint TTnpcScript::getDialogueId(uint tagId) {
 		_field2CC = true;
 		int val = translateByArray(tagId);
 		if (val > 0) {
-			if (proc36(val))
+			if (randomResponse(val))
 				return 4;
 		}
 	}
@@ -651,28 +660,32 @@ uint TTnpcScript::getDialogueId(uint tagId) {
 	}
 	uint newVal = tableP->_values[oldTagId];
 
+	// First slot dialogue Ids
 	idx = 0;
-	int *arrP = &_array[26];
+	int *arrP = _data.getSlot(0);
 	while (idx < 4 && arrP[idx])
 		++idx;
+
 	if (idx == 4)
 		return newVal;
-
-	_array[26] = origId;
+	arrP[idx] = origId;
+	
+	// Second slot dialogue Ids
 	idx = 0;
-	arrP = &_array[30];
+	arrP = _data.getSlot(1);
 	while (idx < 4 && arrP[idx])
 		++idx;
+	
 	if (idx == 4)
 		return newVal;
-
 	arrP[idx] = newVal;
+
 	return newVal;
 }
 
 int TTnpcScript::translateByArray(int id) {
 	for (uint idx = 1, arrIndex = 35; idx < 15; ++idx, arrIndex += 8) {
-		if (_array[idx - 1] == id && _array[idx] == 0)
+		if (_data[idx - 1] == id && _data[idx] == 0)
 			return idx;
 	}
 
@@ -975,6 +988,26 @@ void TTnpcScript::getAssignedRoom(int *roomNum, int *floorNum, int *elevatorNum)
 		*roomNum = CLIP(*roomNum, 1, 18);
 	if (elevatorNum)
 		*elevatorNum = CLIP(*elevatorNum, 1, 4);
+}
+
+void TTnpcScript::setResponseFromArray(int index, int id) {
+	if (index >= 0 && index <= 15) {
+		deleteResponses();
+		if (id)
+			addResponse(getDialogueId(id));
+		
+		// Add any loaded responses
+		int *vals = _data.getSlot(index + 1);
+		for (int idx = 0; idx < 4; ++idx) {
+			if (vals[idx])
+				addResponse(vals[idx]);
+		}
+		applyResponse();
+
+		// Clear out the values used
+		if (index)
+			Common::fill(vals, vals + 4, 0);
+	}
 }
 
 } // End of namespace Titanic

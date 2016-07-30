@@ -35,6 +35,16 @@ class CGameManager;
 class CPetControl;
 class TTroomScript;
 
+struct TTnpcData {
+private:
+	int _array[136];
+public:
+	TTnpcData();
+	int &operator[](int idx) { return _array[idx]; }
+	int *getSlot(int idx) { return &_array[16 + idx * 4]; }
+	void resetFlags();
+};
+
 class TTnpcScriptBase : public TTscriptBase {
 protected:
 	int _field54;
@@ -93,7 +103,7 @@ protected:
 	int _field7C;
 	const char *_itemStringP;
 	int _dialValues[DIALS_ARRAY_COUNT];
-	int _array[136];
+	TTnpcData _data;
 	bool _field2CC;
 protected:
 	/**
@@ -194,6 +204,11 @@ protected:
 	 * Gets the assigned room's room, floor, and elevator number
 	 */
 	void getAssignedRoom(int *roomNum, int *floorNum, int *elevatorNum) const;
+
+	/**
+	 * Uses a porition of the state _array to set up a new response
+	 */
+	void setResponseFromArray(int index, int id);
 public:
 	static void init();
 	static void deinit();
@@ -308,7 +323,11 @@ public:
 	 */
 	virtual int getDialLevel(uint dialNum, bool randomizeFlag = true);
 
-	virtual int proc36(int val) const;
+	/**
+	 * Handles a randomzied response
+	 */
+	virtual bool randomResponse(int index);
+	
 	virtual uint translateId(uint id) const;
 
 	void preLoad();

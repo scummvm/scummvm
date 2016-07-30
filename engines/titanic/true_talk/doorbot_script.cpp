@@ -525,9 +525,41 @@ void DoorbotScript::setDialRegion(int dialNum, int region) {
 	}
 }
 
-int DoorbotScript::proc36(int id) const {
-	warning("TODO");
-	return 0;
+bool DoorbotScript::randomResponse(int index) {
+	static const int DIALOGUE_IDS[] = {
+		220133, 220074, 220000, 220008, 220009, 220010, 220011,
+		220012, 220013, 220014, 220015, 220016, 221053, 221054,
+		221055, 221056, 221057, 221058, 221059, 221060, 221061,
+		221173, 221174, 221175, 221176, 221177, 222415, 222416,
+		221157, 221165, 221166, 221167, 221168, 221169, 221170,
+		221171, 221172, 221158, 221159, 221356, 221364, 221365,
+		221366, 221367, 221368, 221369, 221370, 221371, 221357,
+		221358, 221359, 221360, 221252, 221019, 221355, 220952,
+		220996, 220916, 220924, 220926, 220931, 220948, 220956,
+		220965, 220967, 220968, 220980, 220981, 220982, 220983,
+		220984, 220988, 220903, 221095, 222202, 222239, 221758,
+		221759, 221762, 221763, 221766, 221767, 221768, 0
+	};
+
+	int *dataP = _data.getSlot(index);
+	bool flag = false;
+	for (const int *idP = DIALOGUE_IDS; *idP && !flag; ++idP) {
+		flag = *idP == *dataP;
+	}
+
+	if (flag || (getDialRegion(1) != 1 && getRandomNumber(100) > 33)
+			|| getRandomNumber(8) <= index)
+		return false;
+
+	if (getRandomNumber(100) > 40) {
+		deleteResponses();
+		addResponse(getDialogueId(221242));
+		applyResponse();
+	} else {
+		setResponseFromArray(index, 221245);
+	}
+
+	return true;
 }
 
 int DoorbotScript::setResponse(int dialogueId, int v34) {
