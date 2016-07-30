@@ -130,7 +130,7 @@ void CPetConversations::draw(CScreenManager *screenManager) {
 		_npcIcons[_npcNum].draw(screenManager);
 }
 
-Rect CPetConversations::getBounds() {
+Rect CPetConversations::getBounds() const {
 	Rect rect = _dials[0].getBounds();
 	rect.combine(_dials[1].getBounds());
 	rect.combine(_dials[2].getBounds());

@@ -143,7 +143,7 @@ public:
 	/**
 	 * Gets the bounds occupied by the item
 	 */
-	virtual Rect getBounds();
+	virtual Rect getBounds() const;
 
 	/**
 	 * Setups the sections within the PET

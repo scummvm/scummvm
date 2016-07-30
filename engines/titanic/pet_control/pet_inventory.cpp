@@ -53,7 +53,7 @@ void CPetInventory::draw(CScreenManager *screenManager) {
 	_text.draw(screenManager);
 }
 
-Rect CPetInventory::getBounds() { 
+Rect CPetInventory::getBounds() const { 
 	return _movie ? _movie->getBounds() : Rect();
 }
 

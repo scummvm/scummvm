@@ -172,7 +172,7 @@ CPetText *CPetRooms::getText() {
 	return &_text;
 }
 
-CGameObject *CPetRooms::getBackground(int index) {
+CGameObject *CPetRooms::getBackground(int index) const {
 	switch (index) {
 	case 8:
 		return _chevLeftOnDim;

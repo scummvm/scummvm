@@ -145,7 +145,7 @@ public:
 	/**
 	 * Special retrieval of glyph background image
 	 */
-	virtual CGameObject *getBackground(int index);
+	virtual CGameObject *getBackground(int index) const;
 
 	/**
 	 * Reset the highlight

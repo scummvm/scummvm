@@ -160,7 +160,7 @@ public:
 	/**
 	 * Get the bounds for the section
 	 */
-	virtual Rect getBounds();
+	virtual Rect getBounds() const;
 	
 	/**
 	 * Returns true if the object is in a valid state

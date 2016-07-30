@@ -142,7 +142,7 @@ void CPetControl::draw(CScreenManager *screenManager) {
 	}
 }
 
-Rect CPetControl::getBounds() {
+Rect CPetControl::getBounds() const {
 	return _sections[_currentArea]->getBounds();
 }
 
