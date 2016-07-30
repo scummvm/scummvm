@@ -235,6 +235,8 @@ public:
 	void f444_endGame(bool doNotDrawCreditsOnly); // @ F0444_STARTEND_Endgame
 
 	void f064_SOUND_RequestPlay_CPSD(uint16 P0088_ui_SoundIndex, int16 P0089_i_MapX, int16 P0090_i_MapY, uint16 P0091_ui_Mode) { warning(true, "STUB: f064_SOUND_RequestPlay_CPSD"); }
+	void f060_SOUND_Play(uint16 P0921_ui_SoundIndex, uint16 P0085_i_Period, uint8 leftVol, uint8 rightVol) { warning(true, "STUB: f060_SOUND_Play"); }
+	void f438_STARTEND_OpenEntranceDoors() { warning(true, "STUB: f438_STARTEND_OpenEntranceDoors"); }
 
 private:
 	int16 _g528_saveFormat; // @ G0528_i_Format

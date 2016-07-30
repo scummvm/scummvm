@@ -140,20 +140,22 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 	if (_g298_newGame) {
 		_timeline->f233_initTimeline();
 		_groupMan->f196_initActiveGroups();
-		warning(false, "MISSING CODE: missing fadePlette stuff in f435_loadgame on newGame");
-		/*
+
+#if 0
+		// always false?
 		if (L1366_B_FadePalette) {
-			F0436_STARTEND_FadeToPalette(G0345_aui_BlankBuffer);
+			_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g345_aui_BlankBuffer);
 			D26_WaitForVerticalBlank();
 			D18_FillScreenBlack();
-			F0436_STARTEND_FadeToPalette(_vm->_displayMan->_g347_paletteTopAndBottomScreen);
-		}*/
+			_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g347_paletteTopAndBottomScreen);
+		}
+#endif
 	} else {
 		_g528_saveFormat = dmSaveHeader._saveFormat;
 		_g527_platform = dmSaveHeader._platform;
 		_g526_dungeonId = dmSaveHeader._dungeonId;
 
-			_g524_restartGameAllowed = true;
+		_g524_restartGameAllowed = true;
 		warning(false, "MISSING CDOE: F0427_DIALOG_Draw in f435_loadgame");
 	}
 	_championMan->_g303_partyDead = false;

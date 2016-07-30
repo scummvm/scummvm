@@ -179,7 +179,6 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 		_g562_entranceDoorAnimSteps[i] = nullptr;
 	_g564_interfaceCredits = nullptr;
 	debug("DMEngine::DMEngine");
-
 }
 
 DMEngine::~DMEngine() {
@@ -259,10 +258,9 @@ void DMEngine::f448_initMemoryManager() {
 }
 
 void DMEngine::f462_startGame() {
-	static Box g61_boxScreenTop(0, 319, 0, 32); // @ G0061_s_Graphic562_Box_ScreenTop
-	static Box g62_boxScreenRight(224, 319, 33, 169); // @ G0062_s_Graphic562_Box_ScreenRight
-	static Box g63_boxScreenBottom(0, 319, 169, 199); // @ G0063_s_Graphic562_Box_ScreenBottom
-
+	static Box boxScreenTop(0, 319, 0, 32); // @ G0061_s_Graphic562_Box_ScreenTop
+	static Box boxScreenRight(224, 319, 33, 169); // @ G0062_s_Graphic562_Box_ScreenRight
+	static Box boxScreenBottom(0, 319, 169, 199); // @ G0063_s_Graphic562_Box_ScreenBottom
 
 	_g331_pressingEye = false;
 	_g332_stopPressingEye = false;
@@ -285,14 +283,14 @@ void DMEngine::f462_startGame() {
 	if (!_g298_newGame) {
 		_displayMan->_g578_useByteBoxCoordinates = false;
 		f22_delay(1);
-		_displayMan->D24_fillScreenBox(g61_boxScreenTop, k0_ColorBlack);
-		_displayMan->D24_fillScreenBox(g62_boxScreenRight, k0_ColorBlack);
-		_displayMan->D24_fillScreenBox(g63_boxScreenBottom, k0_ColorBlack);
+		_displayMan->D24_fillScreenBox(boxScreenTop, k0_ColorBlack);
+		_displayMan->D24_fillScreenBox(boxScreenRight, k0_ColorBlack);
+		_displayMan->D24_fillScreenBox(boxScreenBottom, k0_ColorBlack);
 	} else {
 		_displayMan->_g578_useByteBoxCoordinates = false;
-		_displayMan->D24_fillScreenBox(g61_boxScreenTop, k0_ColorBlack);
-		_displayMan->D24_fillScreenBox(g62_boxScreenRight, k0_ColorBlack);
-		_displayMan->D24_fillScreenBox(g63_boxScreenBottom, k0_ColorBlack);
+		_displayMan->D24_fillScreenBox(boxScreenTop, k0_ColorBlack);
+		_displayMan->D24_fillScreenBox(boxScreenRight, k0_ColorBlack);
+		_displayMan->D24_fillScreenBox(boxScreenBottom, k0_ColorBlack);
 	}
 
 	warning(false, "TODO: build copper");
@@ -399,9 +397,8 @@ T0002002:
 
 		_menuMan->f390_refreshActionAreaAndSetChampDirMaxDamageReceived();
 
-		if (!(_g313_gameTime & (_championMan->_g300_partyIsSleeping ? 15 : 63))) {
+		if (!(_g313_gameTime & (_championMan->_g300_partyIsSleeping ? 15 : 63)))
 			_championMan->f331_applyTimeEffects();
-		}
 
 		if (_g310_disabledMovementTicks)
 			_g310_disabledMovementTicks--;
@@ -451,17 +448,14 @@ int16 DMEngine::M0_indexToOrdinal(int16 val) {
 
 
 void DMEngine::f441_processEntrance() {
-	uint16 L1402_ui_AnimationStep;
-	Box L1405_s_Box;
-
 	_eventMan->_g441_primaryMouseInput = g445_PrimaryMouseInput_Entrance;
 	_eventMan->_g442_secondaryMouseInput = nullptr;
 	_eventMan->_g443_primaryKeyboardInput = nullptr;
 	_eventMan->_g444_secondaryKeyboardInput = nullptr;
 	_g562_entranceDoorAnimSteps[0] = new byte[128 * 161 * 12];
-	for (L1402_ui_AnimationStep = 1; L1402_ui_AnimationStep < 8; L1402_ui_AnimationStep++) {
-		_g562_entranceDoorAnimSteps[L1402_ui_AnimationStep] = _g562_entranceDoorAnimSteps[L1402_ui_AnimationStep - 1] + 128 * 161;
-	}
+	for (uint16 idx = 1; idx < 8; idx++)
+		_g562_entranceDoorAnimSteps[idx] = _g562_entranceDoorAnimSteps[idx - 1] + 128 * 161;
+
 	_g562_entranceDoorAnimSteps[8] = _g562_entranceDoorAnimSteps[7] + 128 * 161;
 	_g562_entranceDoorAnimSteps[9] = _g562_entranceDoorAnimSteps[8] + 128 * 161 * 2;
 
@@ -469,19 +463,21 @@ void DMEngine::f441_processEntrance() {
 	_displayMan->f466_loadIntoBitmap(k2_entranceLeftDoorGraphicIndice, _g562_entranceDoorAnimSteps[0]);
 	_g564_interfaceCredits = _displayMan->f489_getNativeBitmapOrGraphic(k5_creditsGraphicIndice);
 	_displayMan->_g578_useByteBoxCoordinates = false;
-	L1405_s_Box._x1 = 0;
-	L1405_s_Box._x2 = 100;
-	L1405_s_Box._y1 = 0;
-	L1405_s_Box._y2 = 160;
-	for (L1402_ui_AnimationStep = 1; L1402_ui_AnimationStep < 4; L1402_ui_AnimationStep++) {
-		_displayMan->f132_blitToBitmap(_g562_entranceDoorAnimSteps[0], _g562_entranceDoorAnimSteps[L1402_ui_AnimationStep], L1405_s_Box, L1402_ui_AnimationStep << 2, 0, k64_byteWidth, k64_byteWidth, kM1_ColorNoTransparency, 161, 161);
-		L1405_s_Box._x2 -= 4;
+	Box displayBox;
+	displayBox._x1 = 0;
+	displayBox._x2 = 100;
+	displayBox._y1 = 0;
+	displayBox._y2 = 160;
+	for (uint16 idx = 1; idx < 4; idx++) {
+		_displayMan->f132_blitToBitmap(_g562_entranceDoorAnimSteps[0], _g562_entranceDoorAnimSteps[idx], displayBox, idx << 2, 0, k64_byteWidth, k64_byteWidth, kM1_ColorNoTransparency, 161, 161);
+		displayBox._x2 -= 4;
 	}
-	L1405_s_Box._x2 = 127;
-	for (L1402_ui_AnimationStep = 5; L1402_ui_AnimationStep < 8; L1402_ui_AnimationStep++) {
-		L1405_s_Box._x1 += 4;
-		_displayMan->f132_blitToBitmap(_g562_entranceDoorAnimSteps[4], _g562_entranceDoorAnimSteps[L1402_ui_AnimationStep], L1405_s_Box, 0, 0, k64_byteWidth, k64_byteWidth, kM1_ColorNoTransparency, 161, 161);
+	displayBox._x2 = 127;
+	for (uint16 idx = 5; idx < 8; idx++) {
+		displayBox._x1 += 4;
+		_displayMan->f132_blitToBitmap(_g562_entranceDoorAnimSteps[4], _g562_entranceDoorAnimSteps[idx], displayBox, 0, 0, k64_byteWidth, k64_byteWidth, kM1_ColorNoTransparency, 161, 161);
 	}
+
 	do {
 		f439_drawEntrance();
 		_eventMan->f78_showMouse();
@@ -496,12 +492,12 @@ void DMEngine::f441_processEntrance() {
 		} while (_g298_newGame == k99_modeWaitingOnEntrance);
 	} while (_g298_newGame == k202_CommandEntranceDrawCredits);
 	//Strangerke: CHECKME: Earlier versions were using G0566_puc_Graphic534_Sound01Switch
-	warning(false, "MISSING CODE: F0060_SOUND_Play");
+	f060_SOUND_Play(k01_soundSWITCH, 112, 0x40, 0x40);
 	f22_delay(20);
 	_eventMan->f78_showMouse();
-	if (_g298_newGame) {
-		warning(false, "MISSING CODE: F0438_STARTEND_OpenEntranceDoors();");
-	}
+	if (_g298_newGame)
+		f438_STARTEND_OpenEntranceDoors();
+
 	delete[] _g562_entranceDoorAnimSteps[0];
 	for (uint16 i = 0; i < 10; ++i)
 		_g562_entranceDoorAnimSteps[i] = nullptr;
@@ -560,9 +556,9 @@ void DMEngine::f444_endGame(bool doNotDrawCreditsOnly) {
 		f22_delay(1);
 		for (uint16 i = 0; i < 16; ++i)
 			_displayMan->_g347_paletteTopAndBottomScreen[i] = L1420_aui_Palette_TopAndBottomScreen[i];
-	} else {
-		warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette(G0345_aui_BlankBuffer)");
-	}
+	} else
+		_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g345_aui_BlankBuffer);
+
 	if (doNotDrawCreditsOnly) {
 		if (_g302_gameWon) {
 			// Strangerke: Related to portraits. Game data could be missing for earlier versions of the game.
@@ -593,7 +589,7 @@ void DMEngine::f444_endGame(bool doNotDrawCreditsOnly) {
 				G0016_s_Graphic562_Box_Endgame_ChampionPortrait._y1 += 48;
 				G0016_s_Graphic562_Box_Endgame_ChampionPortrait._y1 += 48;
 			}
-			warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette(_displayMan->_g347_paletteTopAndBottomScreen);");
+			_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g347_paletteTopAndBottomScreen);
 			_engineShouldQuit = true;
 			return;
 		}
@@ -605,7 +601,7 @@ T0444017:
 		for (uint16 i = 0; i < 16; ++i)
 			L1419_aui_Palette[i] = L1421_aui_Palette_DarkBlue[i];
 		L1419_aui_Palette[15] = D09_RGB_WHITE;
-		warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette(L1419_aui_Palette);");
+		_displayMan->f436_STARTEND_FadeToPalette(L1419_aui_Palette);
 		if (L1423_B_WaitBeforeDrawingRestart) { /* BUG0_00 Useless code */
 			f22_delay(300);
 		} /* BUG0_00 Useless code */
@@ -620,15 +616,15 @@ T0444017:
 			_eventMan->_g441_primaryMouseInput = g446_PrimaryMouseInput_RestartGame;
 			_eventMan->f357_discardAllInput();
 			_eventMan->f77_hideMouse();
-			warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette");
+			_displayMan->f436_STARTEND_FadeToPalette(L1419_aui_Palette);
 			for (AL1409_i_VerticalBlankCount = 900; --AL1409_i_VerticalBlankCount && !_g523_restartGameRequest; f22_delay(1)) {
 				_eventMan->f380_processCommandQueue();
 			}
 			_eventMan->f78_showMouse();
 			if (_g523_restartGameRequest) {
-				warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette");
+				_displayMan->f436_STARTEND_FadeToPalette(L1421_aui_Palette_DarkBlue);
 				_displayMan->fillScreen(k0_ColorBlack);
-				warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette");
+				_displayMan->f436_STARTEND_FadeToPalette(g21_PalDungeonView[0]);
 				_g298_newGame = k0_modeLoadSavedGame;
 				if (f435_loadgame(1) != kM1_LoadgameFailure) {
 					f462_startGame();
@@ -640,20 +636,19 @@ T0444017:
 			}
 		}
 
-		warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette");
+		_displayMan->f436_STARTEND_FadeToPalette(L1421_aui_Palette_DarkBlue);
 	}
-	{
-		Box box(0, 319, 0, 199);
-		_displayMan->f132_blitToBitmap(_displayMan->f489_getNativeBitmapOrGraphic(k5_creditsGraphicIndice), _displayMan->_g348_bitmapScreen, box, 0, 0, 160, 160, kM1_ColorNoTransparency);
-	}
-	warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette");
+	Box box(0, 319, 0, 199);
+	_displayMan->f132_blitToBitmap(_displayMan->f489_getNativeBitmapOrGraphic(k5_creditsGraphicIndice), _displayMan->_g348_bitmapScreen, box, 0, 0, 160, 160, kM1_ColorNoTransparency);
+
+	_displayMan->f436_STARTEND_FadeToPalette(g19_PalCredits);
 	_eventMan->f541_waitForMouseOrKeyActivity();
 	if (_engineShouldQuit)
 		return;
 
 	if (_g524_restartGameAllowed && doNotDrawCreditsOnly) {
 		L1423_B_WaitBeforeDrawingRestart = false;
-		warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette");
+		_displayMan->f436_STARTEND_FadeToPalette(L1421_aui_Palette_DarkBlue);
 		goto T0444017;
 	}
 
@@ -687,7 +682,7 @@ void DMEngine::f439_drawEntrance() {
 		L1399_auc_MicroDungeonSquares[L1397_ui_ColumnIndex + 10] = Square(k1_CorridorElemType, 0);
 	}
 	L1399_auc_MicroDungeonSquares[7] = Square(k1_CorridorElemType, 0);
-	warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette(G0345_aui_BlankBuffer);");
+	_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g345_aui_BlankBuffer);
 
 	// note, a global variable is used here in the original
 	_displayMan->f466_loadIntoBitmap(k4_entranceGraphicIndice, _displayMan->_g348_bitmapScreen);
@@ -699,6 +694,6 @@ void DMEngine::f439_drawEntrance() {
 
 	_displayMan->f21_blitToScreen(_g562_entranceDoorAnimSteps[0], &G0010_s_Graphic562_Box_Entrance_ClosedDoorLeft, k64_byteWidth, kM1_ColorNoTransparency, 161);
 	_displayMan->f21_blitToScreen(_g562_entranceDoorAnimSteps[4], &G0011_s_Graphic562_Box_Entrance_ClosedDoorRight, k64_byteWidth, kM1_ColorNoTransparency, 161);
-	warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette(g20_PalEntrance);");
+	_displayMan->f436_STARTEND_FadeToPalette(g20_PalEntrance);
 }
 } // End of namespace DM
