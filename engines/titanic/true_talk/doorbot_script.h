@@ -101,7 +101,7 @@ public:
 	/**
 	 * Handles a randomzied response
 	 */
-	virtual bool randomResponse(int index);
+	virtual bool randomResponse(uint index);
 };
 
 } // End of namespace Titanic

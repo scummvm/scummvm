@@ -314,7 +314,7 @@ int DeskbotScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *ro
 	return 0;
 }
 
-bool DeskbotScript::randomResponse(int index) {
+bool DeskbotScript::randomResponse(uint index) {
 	if (getValue(1) == 1 || getRandomNumber(100) > 10 || getRandomNumber(2) <= index)
 		return 0;
 

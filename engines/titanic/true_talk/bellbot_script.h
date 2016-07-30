@@ -57,6 +57,16 @@ private:
 	 * Sets the state value 25 based on the passed Id
 	 */
 	void setValue23(uint id);
+
+	/**
+	 * Does preprocessing for the sentence
+	 */
+	int preProcess(TTroomScript *roomScript, TTsentence *sentence);
+
+	/**
+	 * Checks for good, better, or bad in the sentence
+	 */
+	bool better(TTsentence *sentence, uint id1, uint id2);
 public:
 	BellbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2);
@@ -92,7 +102,7 @@ public:
 	/**
 	 * Handles a randomzied response
 	 */
-	virtual bool randomResponse(int index);
+	virtual bool randomResponse(uint index);
 };
 
 } // End of namespace Titanic

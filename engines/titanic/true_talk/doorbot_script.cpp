@@ -525,7 +525,7 @@ void DoorbotScript::setDialRegion(int dialNum, int region) {
 	}
 }
 
-bool DoorbotScript::randomResponse(int index) {
+bool DoorbotScript::randomResponse(uint index) {
 	static const int DIALOGUE_IDS[] = {
 		220133, 220074, 220000, 220008, 220009, 220010, 220011,
 		220012, 220013, 220014, 220015, 220016, 221053, 221054,

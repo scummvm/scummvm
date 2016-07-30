@@ -542,7 +542,7 @@ int TTnpcScript::getDialLevel(uint dialNum, bool randomizeFlag) {
 	return result;
 }
 
-bool TTnpcScript::randomResponse(int index) {
+bool TTnpcScript::randomResponse(uint index) {
 	return false;
 }
 

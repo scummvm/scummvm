@@ -102,7 +102,7 @@ public:
 	/**
 	 * Handles a randomzied response
 	 */
-	virtual bool randomResponse(int index);
+	virtual bool randomResponse(uint index);
 
 	/**
 	 * Returns true if dial 1 is the medium (1) region

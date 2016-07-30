@@ -326,7 +326,7 @@ public:
 	/**
 	 * Handles a randomzied response
 	 */
-	virtual bool randomResponse(int index);
+	virtual bool randomResponse(uint index);
 	
 	virtual uint translateId(uint id) const;
 

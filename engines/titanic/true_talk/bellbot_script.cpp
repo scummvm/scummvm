@@ -397,7 +397,7 @@ int BellbotScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *ro
 	return 0;
 }
 
-bool BellbotScript::randomResponse(int index) {
+bool BellbotScript::randomResponse(uint index) {
 	if (getRandomNumber(100) > 10 || getRandomNumber(10) <= index)
 		return 0;
 
@@ -444,6 +444,817 @@ void BellbotScript::setValue23(uint id) {
 	}
 
 	CTrueTalkManager::setFlags(23, val);
+}
+
+int BellbotScript::preProcess(TTroomScript *roomScript, TTsentence *sentence) {
+	if (!roomScript || !sentence)
+		return true;
+
+	bool applyFlag = false, stateFlag = true;
+	switch (getValue(23)) {
+	case 1:
+		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+			addResponse(getDialogueId(200818));
+			applyFlag = true;
+		}
+		if (sentence->_field2C == 12) {
+			addResponse(getDialogueId(200817));
+			applyFlag = true;
+		}
+		break;
+
+	case 2:
+		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+			addResponse(getDialogueId(200835));
+			addResponse(getDialogueId(200830));
+			applyFlag = true;
+		} else if (sentence->_field2C == 12) {
+			addResponse(getDialogueId(200834));
+			addResponse(getDialogueId(200830));
+			applyFlag = true;
+		}
+		break;
+
+	case 3:
+		if (sentence->_field2C >= 11 && sentence->_field2C <= 13) {
+			addResponse(getDialogueId(200831));
+			addResponse(getDialogueId(200833));
+			applyFlag = true;
+		}
+		break;
+
+	case 4:
+		if (sentence->_field2C == 11) {
+			addResponse(getDialogueId(200872));
+			applyFlag = true;
+		}
+		if (sentence->_field2C == 12 || sentence->_field2C == 13) {
+			addResponse(getDialogueId(200873));
+			applyFlag = true;
+		}
+		break;
+	
+	case 5:
+		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+			addResponse(getDialogueId(200492));
+			applyFlag = true;
+		}
+		if (sentence->_field2C == 12) {
+			addResponse(getDialogueId(200491));
+			applyFlag = true;
+		}
+		break;
+
+	case 6:
+		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+			addResponse(getDialogueId(200496));
+			applyResponse();
+			setState(0);
+			CTrueTalkManager::setFlags(23, 7);
+			return 2;
+		}
+		if (sentence->_field2C == 12) {
+			addResponse(getDialogueId(200127));
+			applyFlag = true;
+		}
+		break;
+
+	case 7:
+		addResponse(getDialogueId(200504));
+		addResponse(getDialogueId(200496));
+		applyFlag = true;
+		stateFlag = false;
+		break;
+
+	case 8:
+		addResponse(getDialogueId(200494));
+		applyFlag = true;
+		stateFlag = false;
+		break;
+
+	case 9:
+		addResponse(getDialogueId(sentence->localWord("guess") ? 200495 : 200493));
+		applyFlag = true;
+		break;
+
+	case 10:
+		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+			addResponse(getDialogueId(200317));
+			applyResponse();
+			setState(0);
+			CTrueTalkManager::setFlags(23, 11);
+			return 2;
+		}
+
+		addResponse(getDialogueId(sentence->_field2C == 12 ? 200316 : 200315));
+		applyFlag = true;
+		break;
+
+	case 11:
+		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+			addResponse(getDialogueId(200055));
+		} else if (sentence->_field2C == 12) {
+			addResponse(getDialogueId(200318));
+		} else {
+			addResponse(getDialogueId(200315));
+		}
+
+		applyFlag = true;
+		break;
+
+	case 12:
+		if (sentence->_field2C == 6) {
+			addResponse(getDialogueId(200259));
+			applyFlag = true;
+		}
+		break;
+
+	case 13:
+		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+			addResponse(getDialogueId(200207));
+			applyFlag = true;
+		} else if (sentence->_field2C == 12) {
+			addResponse(getDialogueId(200206));
+			applyFlag = true;
+		}
+		break;
+
+	case 14:
+		if (sentence->_field2C == 6) {
+			addResponse(getDialogueId(200349));
+			applyFlag = true;
+		}
+
+	case 15:
+		if (sentence->_field2C == 6) {
+			addResponse(getDialogueId(200130));
+			applyResponse();
+			setState(0);
+			CTrueTalkManager::setFlags(23, 16);
+			return 2;
+		}
+		break;
+
+	case 16:
+		if (sentence->localWord("invented")) {
+			addResponse(getDialogueId(200131));
+			applyFlag = true;
+		}
+		break;
+
+	case 17:
+		if ((sentence->_field2C == 3 && sentence->localWord("code"))
+				|| (sentence->localWord("which") && sentence->localWord("is"))
+				|| sentence->localWord("remember")
+				|| sentence->localWord("know")
+		) {
+			addResponse(getDialogueId(200044));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 19:
+		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+			addResponse(getDialogueId(200223));
+			applyFlag = true;
+		}
+		break;
+
+	case 20:
+		addResponse(getDialogueId(200254));
+		applyFlag = true;
+		break;
+
+	case 21:
+		if (sentence->contains("hiker") || sentence->contains("hug")) {
+			addResponse(getDialogueId(200379));
+			applyFlag = true;
+		}
+		break;
+
+	case 22:
+		if (sentence->localWord("get") || sentence->localWord("it")) {
+			addResponse(getDialogueId(200474));
+			applyFlag = true;
+		}
+		break;
+
+	case 23:
+		addResponse(getDialogueId(sentence->localWord("long") ? 200870 : 200871));
+		applyFlag = true;
+		break;
+
+	case 24:
+		addResponse(getDialogueId(200793));
+		applyFlag = true;
+		stateFlag = false;
+		break;
+
+	case 25:
+		if (sentence->localWord("parrot")) {
+			addResponse(getDialogueId(200255));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 26:
+		if (sentence->localWord("cage")) {
+			addResponse(getDialogueId(200380));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 27:
+		addResponse(getDialogueId(200347));
+		applyFlag = true;
+		stateFlag = false;
+		break;
+
+	case 28:
+		if (sentence->localWord("perch")) {
+			addResponse(getDialogueId(200242));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 29:
+		if (sentence->localWord("brain") || sentence->localWord("titania")) {
+			addResponse(getDialogueId(200392));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 30:
+		if ((sentence->localWord("did") || sentence->localWord("not"))
+				|| (sentence->localWord("would") || sentence->localWord("not"))
+				|| (sentence->localWord("could") || sentence->localWord("not"))
+				|| sentence->localWord("tried")) {
+			addResponse(getDialogueId(200416));
+			applyFlag = true;
+		}
+		break;
+
+	case 31:
+		addResponse(getDialogueId(sentence->_field2C == 11 ? 200810 : 200811));
+		applyFlag = true;
+		break;
+
+	case 32:
+		addResponse(getDialogueId(sentence->_field2C == 11 ? 200810 : 200812));
+		applyFlag = true;
+		break;
+
+	case 33:
+		addResponse(getDialogueId(200822));
+		applyFlag = true;
+		break;
+
+	case 34:
+		addResponse(getDialogueId(200824));
+		applyFlag = true;
+		break;
+
+	case 35:
+		if (sentence->_field2C == 3 && sentence->localWord("it")
+				&& (sentence->localWord("for") || sentence->localWord("do"))) {
+			addResponse(getDialogueId(200768));
+			applyFlag = true;
+		}
+		break;
+
+	case 36:
+		if (sentence->_field2C == 11) {
+			CTrueTalkManager::triggerAction(14, 0);
+			addResponse(getDialogueId(200761));
+			applyFlag = true;
+		}
+		break;
+
+	case 37:
+		addResponse(getDialogueId(200630));
+		applyFlag = true;
+		break;
+
+	case 38:
+		if (sentence->_field2C == 12) {
+			addResponse(getDialogueId(200631));
+			applyFlag = true;
+		}
+		break;
+
+	case 39:
+		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+			addResponse(getDialogueId(200632));
+			stateFlag = false;
+		} else {
+			addResponse(getDialogueId(200633));
+		}
+		applyFlag = true;
+		break;
+
+	case 40:
+		addResponse(getDialogueId(200633));
+		applyFlag = true;
+		break;
+
+	case 41:
+		addResponse(getDialogueId(sentence->contains("42") ? 200139 : 200627));
+		applyFlag = true;
+		break;
+
+	case 42:
+		if ((sentence->localWord("carry") && sentence->localWord("on"))
+				|| (sentence->localWord("go") && sentence->localWord("on"))
+				|| sentence->localWord("more")
+				|| sentence->localWord("going")
+				|| sentence->localWord("elaborate")
+				|| sentence->localWord("suspicious")
+				|| sentence->localWord("they")) {
+			addResponse(getDialogueId(200642));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 43:
+		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+			addResponse(getDialogueId(200643));
+			applyFlag = true;
+		}
+		break;
+
+	case 44:
+case44:
+		if (better(sentence, 200615, 200613)) {
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 45:
+		if (sentence->contains("surprise")) {
+			addResponse(getDialogueId(200614));
+			applyFlag = true;
+			stateFlag = false;
+			break;
+		}
+		goto case44;
+
+	case 46:
+		if (sentence->contains("good")) {
+			addResponse(getDialogueId(200616));
+			applyFlag = true;
+			stateFlag = false;
+			break;
+		}
+		goto case44;
+
+	case 47:
+		if (sentence->_field2C == 12)
+			addResponse(getDialogueId(200368));
+		addResponse(getDialogueId(200366));
+		applyFlag = true;
+		stateFlag = false;
+		break;
+
+	case 48:
+		if ((sentence->localWord("carry") && sentence->localWord("on"))
+				|| sentence->localWord("more")
+				|| (sentence->localWord("go") && sentence->localWord("on"))
+				|| sentence->localWord("going")
+				|| sentence->localWord("yes")
+				|| sentence->localWord("really")) {
+			addResponse(getDialogueId(200367));
+			applyFlag = true;
+		}
+		break;
+
+	case 49:
+		if (sentence->_field2C >= 11 && sentence->_field2C <= 13) {
+			addResponse(getDialogueId(200407));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 50:
+		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+			addResponse(getDialogueId(200408));
+			stateFlag = false;
+		} else {
+			addResponse(getDialogueId(200409));
+		}
+		applyFlag = true;
+		break;
+
+	case 51:
+		if (sentence->localWord("no") || sentence->localWord("it")
+				|| sentence->localWord("is") || sentence->localWord("not")
+				|| sentence->contains("yeah right")) {
+			addResponse(getDialogueId(200636));
+			applyFlag = true;
+		}
+		break;
+
+	case 52:
+		if (sentence->_field2C >= 11 && sentence->_field2C <= 13) {
+			addResponse(getDialogueId(200872));
+			applyFlag = true;
+		}
+		break;
+
+	case 53:
+		if (sentence->_field2C == 12) {
+			addResponse(getDialogueId(200525));
+			applyFlag = true;
+		} else if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+			addResponse(getDialogueId(200526));
+			applyFlag = true;
+		}
+		break;
+
+	case 54:
+		if (sentence->_field2C == 12) {
+			addResponse(getDialogueId(200095));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 55:
+		if (sentence->_field2C == 6) {
+			addResponse(getDialogueId(200112));
+			applyFlag = true;
+		}
+		break;
+
+	case 56:
+		if (sentence->localWord("sure")
+			|| (sentence->localWord("nothing") && sentence->localWord("else"))) {
+			addResponse(getDialogueId(200649));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 57:
+		if (sentence->localWord("bad")
+				|| (sentence->localWord("not") && sentence->localWord("good"))) {
+			addResponse(getDialogueId(200654));
+		} else {
+			addResponse(getDialogueId(200655));
+			stateFlag = false;
+		}
+		applyFlag = true;
+		break;
+
+	case 58:
+		if (sentence->localWord("more")
+				|| (sentence->localWord("go") && sentence->localWord("on"))
+				|| (sentence->_field2C == 11 && sentence->localWord("really"))) {
+			addResponse(getDialogueId(200650));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 59:
+		if (!sentence->localWord("shutup")) {
+			addResponse(getDialogueId(200651));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 60:
+		if (sentence->_field2C == 3 && sentence->localWord("they") && sentence->localWord("do")) {
+			addResponse(getDialogueId(200652));
+			applyFlag = true;
+stateFlag = false;
+		}
+		break;
+
+	case 61:
+		if ((sentence->localWord("that") && sentence->localWord("all"))
+			|| (sentence->localWord("anything") && sentence->localWord("else"))) {
+			addResponse(getDialogueId(200653));
+			applyFlag = true;
+		}
+		break;
+
+	case 62:
+		if (sentence->localWord("meant") || sentence->localWord("woman")) {
+			addResponse(getDialogueId(200743));
+			applyFlag = true;
+		}
+		break;
+
+	case 63:
+		addResponse(getDialogueId(200208));
+		applyFlag = true;
+		break;
+
+	case 64:
+		if (sentence->localWord("rowboat")) {
+			addResponse(getDialogueId(200052));
+			applyFlag = true;
+		}
+		break;
+
+	case 65:
+		if (sentence->localWord("sorry")) {
+			addResponse(getDialogueId(200056));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 66:
+		if (sentence->localWord("sorry")) {
+			addResponse(getDialogueId(200057));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 67:
+		if (sentence->localWord("sorry")) {
+			addResponse(getDialogueId(200055));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 68:
+		if ((sentence->localWord("i") && sentence->localWord("care"))
+			|| sentence->localWord("do")
+			|| sentence->localWord("me")) {
+			addResponse(getDialogueId(201006));
+			applyFlag = true;
+		}
+		break;
+
+	case 69:
+		if ((sentence->localWord("what") && sentence->localWord("happen"))
+			|| sentence->localWord("filigon")) {
+			addResponse(getDialogueId(201011));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 70:
+		if (sentence->_field2C == 12) {
+			addResponse(getDialogueId(201012));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 71:
+		if (sentence->localWord("why")) {
+			addResponse(getDialogueId(201013));
+			applyFlag = true;
+		}
+		break;
+
+	case 72:
+		if (sentence->_field2C == 12) {
+			addResponse(getDialogueId(200921));
+			applyFlag = true;
+		} else if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+			addResponse(getDialogueId(200920));
+			applyFlag = true;
+		}
+		break;
+
+	case 73:
+		if (sentence->localWord("mood") && (charId() == 7 || charId() == 5)) {
+			addResponse(getDialogueId(201021));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 74:
+		if (sentence->_field2C == 6) {
+			addResponse(getDialogueId(201022));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 75:
+		if (sentence->_field2C == 3) {
+			if (sentence->localWord("that") || sentence->localWord("worb")) {
+				addResponse(getDialogueId(201802));
+				applyFlag = true;
+			}
+		}
+		break;
+
+	case 76:
+		if (sentence->_field2C == 2 && (sentence->localWord("that") || sentence->localWord("gat"))) {
+			addResponse(getDialogueId(201034));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 77:
+		if (sentence->_field2C == 4 || sentence->_field2C == 3) {
+			if (sentence->localWord("that") || sentence->localWord("blerontis")) {
+				addResponse(getDialogueId(201035));
+				applyFlag = true;
+			}
+		}
+		break;
+
+	case 78:
+		if (sentence->_field2C == 12) {
+			addResponse(getDialogueId(201034));
+			applyFlag = true;
+			stateFlag = false;
+		} else if (sentence->_field2C == 11) {
+			addResponse(getDialogueId(201040));
+			applyFlag = true;
+		} else if ((sentence->localWord("not") && sentence->localWord("remember"))
+				|| sentence->localWord("forgot")) {
+			addResponse(getDialogueId(201041));
+			applyFlag = true;
+			stateFlag = false;
+		} else if (sentence->localWord("why")) {
+			addResponse(getDialogueId(201042));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 79:
+		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+			addResponse(getDialogueId(201052));
+			CTrueTalkManager::triggerAction(14, 0);
+			applyFlag = true;
+			stateFlag = false;
+		} else if (sentence->_field2C == 12) {
+			addResponse(getDialogueId(202119));
+			addResponse(getDialogueId(200256));
+			applyFlag = true;
+		}
+		break;
+
+	case 80:
+		if ((!sentence->localWord("what") && sentence->localWord("how"))
+				|| sentence->localWord("about")
+				|| sentence->localWord("you")) {
+			if (sentence->_field2C != 3 && sentence->_field2C != 4 && sentence->_field2C != 7) {
+				addResponse(getDialogueId(201694));
+				applyFlag = true;
+				stateFlag = false;
+			}
+		} else {
+			addResponse(getDialogueId(201135));
+			applyFlag = true;
+		}
+		break;
+
+	case 81:
+		if ((!sentence->localWord("what") && !sentence->localWord("how"))
+				|| !sentence->localWord("about")
+				|| !sentence->localWord("you")) {
+			if (!sentence->localWord("and") || !sentence->localWord("yourself"))
+				break;
+		}
+		addResponse(getDialogueId(201135));
+		applyFlag = true;
+		break;
+
+	case 82:
+		if ((sentence->_field2C == 3 && sentence->localWord("mean"))
+				|| sentence->localWord("surf")
+				|| (sentence->localWord("what") && sentence->localWord("talk")
+					&& sentence->localWord("about"))) {
+			addResponse(getDialogueId(201694));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 83:
+		if (sentence->_field2C != 3 && sentence->_field2C != 4 && sentence->_field2C != 7) {
+			addResponse(getDialogueId(201083));
+			applyFlag = true;
+		}
+		break;
+
+	case 84:
+		if (sentence->_field2C == 12) {
+			addResponse(getDialogueId(202119));
+			
+			switch (getValue(1)) {
+			case 1:
+				addResponse(getDialogueId(202024));
+				applyFlag = true;
+				break;
+			case 2:
+				addResponse(getDialogueId(201812));
+				applyFlag = true;
+				stateFlag = false;
+				break;
+			default:
+				break;
+			}
+		} else if (sentence->_field2C == 11) {
+			addResponse(getDialogueId(201060));
+			addResponse(getDialogueId(201079));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 85:
+		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+			addResponse(getDialogueId(201814));
+			applyFlag = true;
+		}
+		if (sentence->_field2C == 12) {
+			addResponse(getDialogueId(201813));
+			applyFlag = true;
+		}
+		break;
+
+	case 86:
+		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+			addResponse(getDialogueId(202109));
+			applyFlag = true;
+		}
+		if (sentence->_field2C == 12) {
+			addResponse(getDialogueId(202108));
+			applyFlag = true;
+		}
+		break;
+
+	case 87:
+		if (better(sentence, 201993, 200720)) {
+			applyFlag = true;
+		}
+		break;
+
+	case 88:
+		if (sentence->_field2C == 6 || sentence->contains("upside down")) {
+			addResponse(getDialogueId(202142));
+			applyFlag = true;
+		}
+		break;
+
+	case 89:
+		if (sentence->_field2C == 2) {
+			addResponse(getDialogueId(200739));
+			applyFlag = true;
+			stateFlag = false;
+		}
+		break;
+
+	case 90:
+		if (sentence->contains("like") && (sentence->contains("slug") || sentence->contains("snail"))) {
+			addResponse(getDialogueId(201029));
+			applyFlag = true;
+			stateFlag = false;
+		} else if (sentence->contains("slime") || sentence->localWord("what")) {
+			addResponse(getDialogueId(201220));
+			applyFlag = true;
+			stateFlag = false;
+		}
+
+	default:
+		break;
+	}
+
+	if (applyFlag)
+		applyResponse();
+	if (stateFlag) {
+		setState(0);
+		CTrueTalkManager::setFlags(23, 0);
+	}
+
+	return applyFlag ? 2 : 1;
+}
+
+bool BellbotScript::better(TTsentence *sentence, uint id1, uint id2) {
+	if (sentence->contains("good") || sentence->localWord("better")) {
+		addResponse(getDialogueId(id1));
+	} else if (sentence->localWord("bad")) {
+		addResponse(getDialogueId(id2));
+	} else {
+		return false;
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic
