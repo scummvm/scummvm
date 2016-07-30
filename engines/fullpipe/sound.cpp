@@ -132,7 +132,7 @@ bool Sound::load(MfcArchive &file, NGIArchive *archive) {
 }
 
 void Sound::updateVolume() {
-	debug(3, "STUB Sound::updateVolume()");
+	debug(9, "STUB Sound::updateVolume()");
 }
 
 void Sound::setPanAndVolumeByStaticAni() {
