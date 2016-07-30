@@ -52,7 +52,9 @@ public:
 	 */
 	virtual ScriptChangedResult scriptChanged(TTscriptBase *roomScript, uint id);
 
-	virtual int proc23() const;
+	/**
+	 * Process a sentence fragment entry
+	 */
 	virtual int doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence);
 };
 

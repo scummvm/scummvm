@@ -103,10 +103,6 @@ ScriptChangedResult ParrotScript::scriptChanged(TTscriptBase *roomScript, uint i
 	return (id == 3) ? SCR_2 : SCR_1;
 }
 
-int ParrotScript::proc23() const {
-	return 0;
-}
-
 int ParrotScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
 	return 0;
 }

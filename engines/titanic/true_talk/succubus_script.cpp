@@ -89,11 +89,6 @@ int SuccUBusScript::updateState(uint oldId, uint newId, int index) {
 	return 0;
 }
 
-int SuccUBusScript::proc23() const {
-	warning("TODO");
-	return 0;
-}
-
 int SuccUBusScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
 	warning("TODO");
 	return 0;

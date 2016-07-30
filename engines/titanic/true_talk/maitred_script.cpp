@@ -301,11 +301,6 @@ int MaitreDScript::preResponse(uint id) {
 	return 0;
 }
 
-int MaitreDScript::proc23() const {
-	warning("TODO");
-	return 0;
-}
-
 int MaitreDScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
 	warning("TODO");
 	return 0;

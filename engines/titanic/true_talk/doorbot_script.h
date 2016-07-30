@@ -88,6 +88,9 @@ public:
 	 */
 	virtual uint getDialsBitset() const;
 
+	/**
+	 * Process a sentence fragment entry
+	 */
 	virtual int doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence);
 
 	/**

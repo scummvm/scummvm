@@ -262,9 +262,11 @@ int DeskbotScript::preResponse(uint id) {
 	return newId;
 }
 
-int DeskbotScript::proc23() const {
-	warning("TODO");
-	return 0;
+uint DeskbotScript::getDialsBitset() const {
+	if (getDialRegion(1))
+		return getDialRegion(0) ? 2 : 3;
+	else
+		return getDialRegion(0) ? 0 : 1;
 }
 
 int DeskbotScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {

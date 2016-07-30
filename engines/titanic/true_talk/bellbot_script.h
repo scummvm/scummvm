@@ -86,8 +86,9 @@ public:
 	 */
 	virtual int preResponse(uint id);
 
-	virtual int proc23() const;
-
+	/**
+	 * Process a sentence fragment entry
+	 */
 	virtual int doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence);
 
 	virtual int proc36(int val) const;

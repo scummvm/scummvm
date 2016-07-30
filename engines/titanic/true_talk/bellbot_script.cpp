@@ -318,11 +318,6 @@ int BellbotScript::preResponse(uint id) {
 	return newId;
 }
 
-int BellbotScript::proc23() const {
-	warning("TODO");
-	return 0;
-}
-
 int BellbotScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
 	switch (val1) {
 	case 1:
