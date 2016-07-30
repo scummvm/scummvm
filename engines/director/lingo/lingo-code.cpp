@@ -175,15 +175,20 @@ void Lingo::c_assign() {
 	if (d1.u.sym->type == STRING) // Free memory if needed
 		delete d1.u.sym->u.s;
 
-	if (d2.type == INT)
+	if (d1.u.sym->type == POINT || d1.u.sym->type == RECT || d1.u.sym->type == ARRAY)
+		delete d1.u.sym->u.arr;
+
+	if (d2.type == INT) {
 		d1.u.sym->u.i = d2.u.i;
-	else if (d2.type == FLOAT)
+	} else if (d2.type == FLOAT) {
 		d1.u.sym->u.f = d2.u.f;
-	else if (d2.type == STRING)
+	} else if (d2.type == STRING) {
 		d1.u.sym->u.s = new Common::String(*d2.u.s);
-	else if (d2.type == POINT)
-		d1.u.sym->u.arr = d2.u.arr;
-	else if (d2.type == SYMBOL)
+		delete d2.u.s;
+	} else if (d2.type == POINT) {
+		d1.u.sym->u.arr = new FloatArray(*d2.u.arr);
+		delete d2.u.arr;
+	} else if (d2.type == SYMBOL) {
 		d1.u.sym->u.i = d2.u.i;
 	else
 		error("c_assign: unhandled type: %s", d2.type2str());
