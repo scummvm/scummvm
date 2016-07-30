@@ -306,7 +306,7 @@ int MaitreDScript::proc23() const {
 	return 0;
 }
 
-int MaitreDScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
+int MaitreDScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
 	warning("TODO");
 	return 0;
 }

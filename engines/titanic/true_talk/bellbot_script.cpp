@@ -323,7 +323,7 @@ int BellbotScript::proc23() const {
 	return 0;
 }
 
-int BellbotScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
+int BellbotScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
 	switch (val1) {
 	case 1:
 		addResponse(getDialogueId(*srcIdP));

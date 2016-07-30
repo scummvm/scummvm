@@ -386,7 +386,7 @@ const TTscriptMapping *TTnpcScript::getMapping(int index) {
 	return nullptr;
 }
 
-int TTnpcScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
+int TTnpcScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
 	return 0;
 }
 
@@ -722,7 +722,7 @@ int TTnpcScript::processEntries(const TTsentenceEntries *entries, uint entryCoun
 					if (!flag2) {
 						flag = false;
 					} else {
-						int result = proc25(entry._field2C & 0xFFFFFF, &entry._field0,
+						int result = doSentenceEntry(entry._field2C & 0xFFFFFF, &entry._field0,
 							roomScript, sentence);
 						if (result == 2)
 							return 2;

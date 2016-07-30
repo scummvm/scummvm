@@ -94,7 +94,7 @@ int SuccUBusScript::proc23() const {
 	return 0;
 }
 
-int SuccUBusScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
+int SuccUBusScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
 	warning("TODO");
 	return 0;
 }

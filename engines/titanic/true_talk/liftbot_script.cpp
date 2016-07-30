@@ -247,7 +247,7 @@ uint LiftbotScript::getDialsBitset() const {
 }
 
 
-int LiftbotScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
+int LiftbotScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
 	static const int ARRAY13[] = {
 		210724, 210735, 210746, 210757, 210758, 210759, 210760,
 		210761, 210762, 210725, 210726, 210727, 210728, 210729,

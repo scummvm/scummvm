@@ -340,7 +340,7 @@ uint DoorbotScript::getDialsBitset() const {
 	return bits;
 }
 
-int DoorbotScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
+int DoorbotScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
 	int id2, id = 0;
 
 	switch (val1) {

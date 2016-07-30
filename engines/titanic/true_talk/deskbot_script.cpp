@@ -267,7 +267,7 @@ int DeskbotScript::proc23() const {
 	return 0;
 }
 
-int DeskbotScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
+int DeskbotScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
 	uint id;
 
 	switch (val1) {

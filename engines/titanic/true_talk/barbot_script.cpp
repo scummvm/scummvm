@@ -1015,7 +1015,7 @@ uint BarbotScript::getDialsBitset() const {
 	return bits;
 }
 
-int BarbotScript::proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
+int BarbotScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
 	int v34 = getState();
 	uint id = 0;
 

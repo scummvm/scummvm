@@ -89,7 +89,7 @@ public:
 	virtual int preResponse(uint id);
 
 	virtual int proc23() const;
-	virtual int proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence);
+	virtual int doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence);
 };
 
 } // End of namespace Titanic

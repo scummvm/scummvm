@@ -272,7 +272,7 @@ public:
 	virtual uint getDialsBitset() const { return 0; }
 	
 	virtual const TTscriptMapping *getMapping(int index);
-	virtual int proc25(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence);
+	virtual int doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence);
 
 	/**
 	 * Handles any post-response NPC processing
