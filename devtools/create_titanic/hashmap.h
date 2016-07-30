@@ -50,7 +50,7 @@
 #endif
 
 #ifdef USE_HASHMAP_MEMORY_POOL
-#include "common/memorypool.h"
+#include "memorypool.h"
 #endif
 
 

@@ -22,7 +22,7 @@
 
 #include "common/hash-str.h"
 #include "common/list.h"
-#include "common/memorypool.h"
+#include "memorypool.h"
 #include "common/str.h"
 #include "common/util.h"
 
