@@ -959,7 +959,7 @@ SciBitmap *SegManager::allocateBitmap(reg_t *addr, const int16 width, const int1
 	offset = table->allocEntry();
 
 	*addr = make_reg(_bitmapSegId, offset);
-	SciBitmap *bitmap = &table->at(offset);
+	SciBitmap *bitmap = table->at(offset);
 
 	if (bitmap == nullptr) {
 		*addr = NULL_REG;
@@ -977,21 +977,20 @@ SciBitmap *SegManager::lookupBitmap(const reg_t addr) {
 	BitmapTable &bitmapTable = *(BitmapTable *)_heap[addr.getSegment()];
 
 	if (!bitmapTable.isValidEntry(addr.getOffset()))
-		error("Attempt to use non-bitmap %04x:%04x as bitmap", PRINT_REG(addr));
+		error("Attempt to use invalid entry %04x:%04x as bitmap", PRINT_REG(addr));
 
-	return &(bitmapTable.at(addr.getOffset()));
+	return (bitmapTable.at(addr.getOffset()));
 }
 
 void SegManager::freeBitmap(const reg_t addr) {
 	if (_heap[addr.getSegment()]->getType() != SEG_TYPE_BITMAP)
-		error("Attempt to use non-bitmap %04x:%04x as bitmap", PRINT_REG(addr));
+		error("Attempt to free non-bitmap %04x:%04x as bitmap", PRINT_REG(addr));
 
 	BitmapTable &bitmapTable = *(BitmapTable *)_heap[addr.getSegment()];
 
 	if (!bitmapTable.isValidEntry(addr.getOffset()))
-		error("Attempt to use non-bitmap %04x:%04x as bitmap", PRINT_REG(addr));
+		error("Attempt to free invalid entry %04x:%04x as bitmap", PRINT_REG(addr));
 
-	bitmapTable.at(addr.getOffset()).destroy();
 	bitmapTable.freeEntry(addr.getOffset());
 }
 

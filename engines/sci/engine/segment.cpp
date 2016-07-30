@@ -313,17 +313,6 @@ SegmentRef StringTable::dereference(reg_t pointer) {
 	return ret;
 }
 
-#pragma mark -
-#pragma mark Bitmaps
-
-SegmentRef BitmapTable::dereference(reg_t pointer) {
-	SegmentRef ret;
-	ret.isRaw = true;
-	ret.maxSize = at(pointer.getOffset()).getRawSize();
-	ret.raw = at(pointer.getOffset()).getRawData();
-	return ret;
-}
-
 #endif
 
 } // End of namespace Sci
