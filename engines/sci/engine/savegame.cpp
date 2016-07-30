@@ -159,7 +159,7 @@ void syncWithSerializer(Common::Serializer &s, SciString &obj) {
 	}
 }
 
-void syncWithSerializer(Common::Serializer &s, SciBitmap &obj) {
+void syncWithSerializer(Common::Serializer &s, SciBitmap *obj) {
 	debug("TODO: Sync bitmap");
 
 //	if (s.isSaving()) {

@@ -535,6 +535,8 @@ inline void set##property(uint##size value) {\
 	WRITE_SCI11ENDIAN_UINT##size(_data + (offset), (value));\
 }
 
+class BitmapTable;
+
 /**
  * A convenience class for creating and modifying in-memory
  * bitmaps.
@@ -583,6 +585,39 @@ public:
 
 	inline SciBitmap() : _data(nullptr), _dataSize(0), _gc(true) {}
 
+	inline SciBitmap(const SciBitmap &other) {
+		_dataSize = other._dataSize;
+		_data = (byte *)malloc(other._dataSize);
+		memcpy(_data, other._data, other._dataSize);
+		if (_dataSize) {
+			_buffer = Buffer(getWidth(), getHeight(), getPixels());
+		}
+		_gc = other._gc;
+	}
+
+	inline ~SciBitmap() {
+		free(_data);
+		_data = nullptr;
+		_dataSize = 0;
+	}
+
+	inline SciBitmap &operator=(const SciBitmap &other) {
+		if (this == &other) {
+			return *this;
+		}
+
+		free(_data);
+		_dataSize = other._dataSize;
+		_data = (byte *)malloc(other._dataSize);
+		memcpy(_data, other._data, _dataSize);
+		if (_dataSize) {
+			_buffer = Buffer(getWidth(), getHeight(), getPixels());
+		}
+		_gc = other._gc;
+
+		return *this;
+	}
+
 	/**
 	 * Allocates and initialises a new bitmap.
 	 */
@@ -611,12 +646,6 @@ public:
 		setScaledHeight(scaledHeight);
 
 		_buffer = Buffer(getWidth(), getHeight(), getPixels());
-	}
-
-	inline void destroy() {
-		free(_data);
-		_data = nullptr;
-		_dataSize = 0;
 	}
 
 	inline int getRawSize() const {
@@ -746,16 +775,46 @@ public:
 	}
 };
 
-struct BitmapTable : public SegmentObjTable<SciBitmap> {
-	BitmapTable() : SegmentObjTable<SciBitmap>(SEG_TYPE_BITMAP) {}
+struct BitmapTable : public SegmentObjTable<SciBitmap *> {
+	BitmapTable() : SegmentObjTable<SciBitmap *>(SEG_TYPE_BITMAP) {}
 
-	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) {
-		at(sub_addr.getOffset()).destroy();
+	virtual ~BitmapTable() {
+		for (uint i = 0; i < _table.size(); i++) {
+			if (isValidEntry(i)) {
+				freeEntryContents(i);
+			}
+		}
+	}
+
+	int allocEntry() {
+		int offset = SegmentObjTable<SciBitmap *>::allocEntry();
+		at(offset) = new SciBitmap;
+		return offset;
+	}
+
+	void freeEntryContents(const int offset) {
+		delete at(offset);
+		at(offset) = nullptr;
+	}
+
+	virtual void freeEntry(const int offset) override {
+		SegmentObjTable<SciBitmap *>::freeEntry(offset);
+		freeEntryContents(offset);
+	}
+
+	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) override {
 		freeEntry(sub_addr.getOffset());
 	}
 
+	SegmentRef dereference(reg_t pointer) {
+		SegmentRef ret;
+		ret.isRaw = true;
+		ret.maxSize = at(pointer.getOffset())->getRawSize();
+		ret.raw = at(pointer.getOffset())->getRawData();
+		return ret;
+	}
+
 	void saveLoadWithSerializer(Common::Serializer &ser);
-	SegmentRef dereference(reg_t pointer);
 };
 
 #endif

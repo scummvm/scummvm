@@ -160,7 +160,7 @@ AddrSet *findAllActiveReferences(EngineState *s) {
 				BitmapTable *bt = static_cast<BitmapTable *>(heap[i]);
 
 				for (uint j = 0; j < bt->_table.size(); j++) {
-					if (!bt->_table[j].data.getShouldGC()) {
+					if (bt->_table[j].data && bt->_table[j].data->getShouldGC() == false) {
 						wm.push(make_reg(i, j));
 					}
 				}
