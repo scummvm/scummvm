@@ -202,6 +202,54 @@ const NumberEntry NUMBERS[76] = {
 	{ "hundredth", 100, 6 }
 };
 
+struct CommonPhrase {
+	const char *_str;
+	uint _dialogueId;
+	uint _roomNum;
+	uint _val1;
+};
+
+static const CommonPhrase BELLBOT_COMMON_PHRASES[] = {
+	{ "what is wrong with her", 0x30FF9, 0x7B, 0 },
+	{ "what is wrong with titania", 0x30FF9, 0x7B, 0 },
+	{ "something for the weekend", 0x30D8B, 0x00, 0 },
+	{ "other food", 0x30E1D, 0x00, 3 },
+	{ "different food", 0x30E1D, 0x00, 3 },
+	{ "alternative food", 0x30E1D, 0x00, 3 },
+	{ "decent food", 0x30E1D, 0x00, 3 },
+	{ "nice food", 0x30E1D, 0x00, 3 },
+	{ "nicer food", 0x30E1D, 0x00, 3 },
+	{ "make me happy", 0x31011, 0x00, 0 },
+	{ "cheer me up", 0x31011, 0x00, 0 },
+	{ "help me if im unhappy", 0x31011, 0x00, 0 },
+	{ "i obtain a better room", 0x30E8A, 0x00, 3 },
+	{ "i obtain a better room", 0x30E8A, 0x00, 2 },
+	{ "i get a better room", 0x30E8A, 0x00, 3 },
+	{ "i get a better room", 0x30E8A, 0x00, 2 },
+	{ "i want a better room", 0x30E8A, 0x00, 3 },
+	{ "i want a better room", 0x30E8A, 0x00, 2 },
+	{ "i understood", 0x30D75, 0x6D, 0 },
+	{ "i knew", 0x30D75, 0x6D, 0 },
+	{ "i know", 0x30D75, 0x6D, 0 },
+	{ "not stupid", 0x30D75, 0x6D, 0 },
+	{ "cheeky", 0x30D75, 0x6D, 0 },
+	{ "not help", 0x30D6F, 0x6D, 0 },
+	{ "not helpful", 0x30D6F, 0x6D, 0 },
+	{ "dont help", 0x30D6F, 0x6D, 0 },
+	{ "no help", 0x30D6F, 0x6D, 0 },
+	{ "sorry", 0x30D76, 0x6D, 0 },
+	{ "not mean that", 0x30D76, 0x6D, 0 },
+	{ "didnt mean that", 0x30D76, 0x6D, 0 },
+	{ "apologise", 0x30D76, 0x6D, 0 },
+	{ "play golf", 0x313B6, 0x00, 0 },
+	{ "is not the captain meant to go down with the ship", 0x31482, 0x00, 0 },
+	{ "is not the captain supposed to go down with the ship", 0x31482, 0x00, 0 },
+	{ "sauce sticks to the chicken", 0x3156B, 0x00, 0 },
+	{ "sauce gets stuck to the chicken", 0x3156B, 0x00, 0 },
+	{ nullptr, 0, 0, 0 }
+};
+
+
 void NORETURN_PRE error(const char *s, ...) {
 	printf("%s\n", s);
 	exit(1);
@@ -514,6 +562,20 @@ void writeStarfieldPoints2() {
 	dataOffset += size;
 }
 
+void writePhrases(const char *name, const CommonPhrase *phrases) {
+	for (uint idx = 0; phrases->_str; ++idx, ++phrases) {
+		outputFile.seek(dataOffset + idx * 4);
+		outputFile.writeString(phrases->_str);
+		outputFile.writeLong(phrases->_dialogueId);
+		outputFile.writeLong(phrases->_roomNum);
+		outputFile.writeLong(phrases->_val1);
+	}
+
+	uint size = outputFile.size() - dataOffset;
+	writeEntryHeader("Phrases/Bellbot", dataOffset, size);
+	dataOffset += size;
+}
+
 void writeHeader() {
 	// Write out magic string
 	const char *MAGIC_STR = "SVTN";
@@ -604,6 +666,7 @@ void writeData() {
 	writeWords("Words/Deskbot", 0x5EAAA8);
 	writeWords("Words/Doorbot", 0x601098, 3);
 	writeWords("Words/Liftbot", 0x60C788);
+	writePhrases("Phrases/Bellbot", BELLBOT_COMMON_PHRASES);
 
 	writeResponseTree();
 	writeNumbers();
