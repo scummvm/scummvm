@@ -45,8 +45,8 @@
 *
 */
 
-#ifndef GRAPHICS_MACWINDOWBORDER_H
-#define GRAPHICS_MACWINDOWBORDER_H
+#ifndef GRAPHICS_MACGUI_MACWINDOWBORDER_H
+#define GRAPHICS_MACGUI_MACWINDOWBORDER_H
 
 #include "common/str.h"
 #include "common/list.h"

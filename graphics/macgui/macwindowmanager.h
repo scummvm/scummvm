@@ -45,8 +45,8 @@
  *
  */
 
-#ifndef GRAPHICS_MACWINDOWMANAGER_H
-#define GRAPHICS_MACWINDOWMANAGER_H
+#ifndef GRAPHICS_MACGUI_MACWINDOWMANAGER_H
+#define GRAPHICS_MACGUI_MACWINDOWMANAGER_H
 
 #include "common/array.h"
 #include "common/list.h"

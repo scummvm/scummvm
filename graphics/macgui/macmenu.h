@@ -45,8 +45,8 @@
  *
  */
 
-#ifndef GRAPHICS_MACMENU_H
-#define GRAPHICS_MACMENU_H
+#ifndef GRAPHICS_MACGUI_MACMENU_H
+#define GRAPHICS_MACGUI_MACMENU_H
 
 namespace Graphics {
 

@@ -45,8 +45,8 @@
  *
  */
 
-#ifndef GRAPHICS_MACWINDOW_H
-#define GRAPHICS_MACWINDOW_H
+#ifndef GRAPHICS_MACGUI_MACWINDOW_H
+#define GRAPHICS_MACGUI_MACWINDOW_H
 
 #include "graphics/managed_surface.h"
 #include "graphics/transparent_surface.h"
