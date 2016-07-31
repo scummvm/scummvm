@@ -53,7 +53,7 @@ void MaitreDScript::setupSentences() {
 	_entryCount = 0;
 }
 
-int MaitreDScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {
+int MaitreDScript::chooseResponse(const TTroomScript *roomScript, const TTsentence *sentence, uint tag) {
 	if (tag == MKTAG('F', 'O', 'O', 'D') || tag == MKTAG('F', 'I', 'S', 'H') ||
 			tag == MKTAG('C', 'H', 'S', 'E')) {
 		addResponse(getDialogueId(260388));
@@ -65,17 +65,17 @@ int MaitreDScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence
 	return TTnpcScript::chooseResponse(roomScript, sentence, tag);
 }
 
-int MaitreDScript::process(TTroomScript *roomScript, TTsentence *sentence) {
+int MaitreDScript::process(const TTroomScript *roomScript, const TTsentence *sentence) {
 	// TODO
 	return 0;
 }
 
-ScriptChangedResult MaitreDScript::scriptChanged(TTroomScript *roomScript, uint id) {
+ScriptChangedResult MaitreDScript::scriptChanged(const TTroomScript *roomScript, uint id) {
 	warning("TODO");
 	return SCR_1;
 }
 
-int MaitreDScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
+int MaitreDScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
 		uint val, uint tagId, uint remainder) {
 	switch (tagId) {
 	case MKTAG('A', 'D', 'V', 'T'):
@@ -301,7 +301,7 @@ int MaitreDScript::preResponse(uint id) {
 	return 0;
 }
 
-int MaitreDScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
+int MaitreDScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
 	warning("TODO");
 	return 0;
 }

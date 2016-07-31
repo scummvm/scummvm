@@ -56,7 +56,7 @@ void LiftbotScript::setupSentences() {
 	_entryCount = 0;
 }
 
-int LiftbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {
+int LiftbotScript::chooseResponse(const TTroomScript *roomScript, const TTsentence *sentence, uint tag) {
 	switch (tag) {
 	case MKTAG('D', 'N', 'A', '1'):
 	case MKTAG('H', 'H', 'G', 'Q'):
@@ -85,7 +85,7 @@ int LiftbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence
 	}
 }
 
-int LiftbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
+int LiftbotScript::process(const TTroomScript *roomScript, const TTsentence *sentence) {
 	// TODO
 	return 0;
 }
@@ -95,12 +95,12 @@ int LiftbotScript::proc9() const {
 	return 0;
 }
 
-ScriptChangedResult LiftbotScript::scriptChanged(TTroomScript *roomScript, uint id) {
+ScriptChangedResult LiftbotScript::scriptChanged(const TTroomScript *roomScript, uint id) {
 	warning("TODO");
 	return SCR_1;
 }
 
-int LiftbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
+int LiftbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
 		uint val, uint tagId, uint remainder) {
 	switch (tagId) {
 	case MKTAG('A', 'D', 'V', 'T'):
@@ -247,7 +247,7 @@ uint LiftbotScript::getDialsBitset() const {
 }
 
 
-int LiftbotScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
+int LiftbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
 	static const int ARRAY13[] = {
 		210724, 210735, 210746, 210757, 210758, 210759, 210760,
 		210761, 210762, 210725, 210726, 210727, 210728, 210729,

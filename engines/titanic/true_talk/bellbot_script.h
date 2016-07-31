@@ -64,28 +64,28 @@ private:
 	/**
 	 * Does preprocessing for the sentence
 	 */
-	int preprocess(TTroomScript *roomScript, TTsentence *sentence);
+	int preprocess(const TTroomScript *roomScript, const TTsentence *sentence);
 
 	/**
 	 * Checks for good, better, or bad in the sentence
 	 */
-	bool better(TTsentence *sentence, uint id1, uint id2);
+	bool better(const TTsentence *sentence, uint id1, uint id2);
 
-	bool randomResponse0(TTroomScript *roomScript, uint id);
-	bool randomResponse1(TTroomScript *roomScript, uint id);
-	bool randomResponse2(TTroomScript *roomScript, uint id);
-	void randomResponse3(TTroomScript *roomScript, uint id);
-	void randomResponse4(TTroomScript *roomScript, uint id);
+	bool randomResponse0(const TTroomScript *roomScript, uint id);
+	bool randomResponse1(const TTroomScript *roomScript, uint id);
+	bool randomResponse2(const TTroomScript *roomScript, uint id);
+	void randomResponse3(const TTroomScript *roomScript, uint id);
+	void randomResponse4(const TTroomScript *roomScript, uint id);
 
-	int checkCommonSentences(TTroomScript *roomScript, TTsentence *sentence);
-	bool checkCommonWords(TTroomScript *roomScript, TTsentence *sentence);
+	int checkCommonSentences(const TTroomScript *roomScript, const TTsentence *sentence);
+	bool checkCommonWords(const TTroomScript *roomScript, const TTsentence *sentence);
 
-	uint getRoomDialogueId(TTroomScript *roomScript);
+	uint getRoomDialogueId(const TTroomScript *roomScript);
 	
 	/**
 	 * Adds a description of the room to the conversation response
 	 */
-	bool addRoomDescription(TTroomScript *roomScript);
+	bool addRoomDescription(const TTroomScript *roomScript);
 public:
 	BellbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2);
@@ -93,14 +93,14 @@ public:
 	/**
 	 * Does NPC specific processing of the parsed sentence
 	 */
-	virtual int process(TTroomScript *roomScript, TTsentence *sentence);
+	virtual int process(const TTroomScript *roomScript, const TTsentence *sentence);
 
 	/**
 	 * Called when the script/id changes
 	 */
-	virtual ScriptChangedResult scriptChanged(TTroomScript *roomScript, uint id);
+	virtual ScriptChangedResult scriptChanged(const TTroomScript *roomScript, uint id);
 
-	virtual int handleQuote(TTroomScript *roomScript, TTsentence *sentence,
+	virtual int handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
 		uint val, uint tagId, uint remainder);
 
 	/**
@@ -116,7 +116,7 @@ public:
 	/**
 	 * Process a sentence fragment entry
 	 */
-	virtual int doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence);
+	virtual int doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence);
 
 	/**
 	 * Handles a randomzied response

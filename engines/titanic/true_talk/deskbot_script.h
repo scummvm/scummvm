@@ -94,14 +94,14 @@ public:
 	/**
 	 * Does NPC specific processing of the parsed sentence
 	 */
-	virtual int process(TTroomScript *roomScript, TTsentence *sentence);
+	virtual int process(const TTroomScript *roomScript, const TTsentence *sentence);
 
 	/**
 	 * Called when the script/id changes
 	 */
-	virtual ScriptChangedResult scriptChanged(TTroomScript *roomScript, uint id);
+	virtual ScriptChangedResult scriptChanged(const TTroomScript *roomScript, uint id);
 
-	virtual int handleQuote(TTroomScript *roomScript, TTsentence *sentence,
+	virtual int handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
 		uint val, uint tagId, uint remainder);
 
 	/**
@@ -122,7 +122,7 @@ public:
 	/**
 	 * Process a sentence fragment entry
 	 */
-	virtual int doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence);
+	virtual int doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence);
 
 	/**
 	 * Handles a randomzied response

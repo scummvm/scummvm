@@ -101,7 +101,7 @@ public:
 	/**
 	 * Get the bounds for the glyph
 	 */
-	virtual Rect getBounds() { return Rect(); }
+	virtual Rect getBounds() const { return Rect(); }
 
 	/**
 	 * Called for mouse button down messages

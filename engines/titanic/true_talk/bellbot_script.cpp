@@ -77,7 +77,7 @@ void BellbotScript::setupSentences() {
 	_entryCount = 0;
 }
 
-int BellbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
+int BellbotScript::process(const TTroomScript *roomScript, const TTsentence *sentence) {
 	int val24 = getValue(24);
 	CTrueTalkManager::setFlags(24, 0);
 
@@ -344,7 +344,7 @@ int BellbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
 	return 2;
 }
 
-ScriptChangedResult BellbotScript::scriptChanged(TTroomScript *roomScript, uint id) {
+ScriptChangedResult BellbotScript::scriptChanged(const TTroomScript *roomScript, uint id) {
 	if (!roomScript)
 		return SCR_2;
 
@@ -415,7 +415,7 @@ ScriptChangedResult BellbotScript::scriptChanged(TTroomScript *roomScript, uint 
 	return SCR_2;
 }
 
-int BellbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
+int BellbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
 		uint val, uint tagId, uint remainder) {
 	switch (tagId) {
 	case MKTAG('A', 'D', 'V', 'T'):
@@ -656,7 +656,7 @@ int BellbotScript::preResponse(uint id) {
 	return newId;
 }
 
-int BellbotScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
+int BellbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
 	switch (val1) {
 	case 1:
 		addResponse(getDialogueId(*srcIdP));
@@ -789,7 +789,7 @@ void BellbotScript::setValue23(uint id) {
 	CTrueTalkManager::setFlags(23, val);
 }
 
-int BellbotScript::preprocess(TTroomScript *roomScript, TTsentence *sentence) {
+int BellbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *sentence) {
 	if (!roomScript || !sentence)
 		return true;
 
@@ -1588,7 +1588,7 @@ stateFlag = false;
 	return applyFlag ? 2 : 1;
 }
 
-bool BellbotScript::better(TTsentence *sentence, uint id1, uint id2) {
+bool BellbotScript::better(const TTsentence *sentence, uint id1, uint id2) {
 	if (sentence->contains("good") || sentence->localWord("better")) {
 		addResponse(getDialogueId(id1));
 	} else if (sentence->localWord("bad")) {
@@ -1600,7 +1600,7 @@ bool BellbotScript::better(TTsentence *sentence, uint id1, uint id2) {
 	return true;
 }
 
-bool BellbotScript::randomResponse0(TTroomScript *roomScript, uint id) {
+bool BellbotScript::randomResponse0(const TTroomScript *roomScript, uint id) {
 	bool dr0 = getDialRegion(0) == 1;
 	uint newId = getValue(1);
 
@@ -1621,7 +1621,7 @@ bool BellbotScript::randomResponse0(TTroomScript *roomScript, uint id) {
 	return true;
 }
 
-bool BellbotScript::randomResponse1(TTroomScript *roomScript, uint id) {
+bool BellbotScript::randomResponse1(const TTroomScript *roomScript, uint id) {
 	if (getRandomNumber(100) < 10) {
 		addResponse(getDialogueId(201978));
 		applyResponse();
@@ -1636,7 +1636,7 @@ bool BellbotScript::randomResponse1(TTroomScript *roomScript, uint id) {
 	return false;
 }
 
-bool BellbotScript::randomResponse2(TTroomScript *roomScript, uint id) {
+bool BellbotScript::randomResponse2(const TTroomScript *roomScript, uint id) {
 	if (getRandomNumber(100) < 5) {
 		addResponse(getDialogueId(202262));
 		applyResponse();
@@ -1651,7 +1651,7 @@ bool BellbotScript::randomResponse2(TTroomScript *roomScript, uint id) {
 	return false;
 }
 
-void BellbotScript::randomResponse3(TTroomScript *roomScript, uint id) {
+void BellbotScript::randomResponse3(const TTroomScript *roomScript, uint id) {
 	bool result = false;
 	if (roomScript && getRandomNumber(100) < 50)
 		result = addRoomDescription(roomScript);
@@ -1676,7 +1676,7 @@ void BellbotScript::randomResponse3(TTroomScript *roomScript, uint id) {
 	addResponse(getDialogueId(id == 1 ? 202265 : 202263));
 }
 
-void BellbotScript::randomResponse4(TTroomScript *roomScript, uint id) {
+void BellbotScript::randomResponse4(const TTroomScript *roomScript, uint id) {
 	if (getRandomNumber(100) < 4 && id <= 2) {
 		addResponse(getDialogueId(202268));
 	} else {
@@ -1684,7 +1684,7 @@ void BellbotScript::randomResponse4(TTroomScript *roomScript, uint id) {
 	}
 }
 
-int BellbotScript::checkCommonSentences(TTroomScript *roomScript, TTsentence *sentence) {
+int BellbotScript::checkCommonSentences(const TTroomScript *roomScript, const TTsentence *sentence) {
 	if (!roomScript || !sentence)
 		return 1;
 
@@ -1707,7 +1707,7 @@ int BellbotScript::checkCommonSentences(TTroomScript *roomScript, TTsentence *se
 	return 0;
 }
 
-bool BellbotScript::checkCommonWords(TTroomScript *roomScript, TTsentence *sentence) {
+bool BellbotScript::checkCommonWords(const TTroomScript *roomScript, const TTsentence *sentence) {
 	if (!roomScript || !sentence)
 		return 0;
 	CTrueTalkManager::setFlags(23, 0);
@@ -1812,7 +1812,7 @@ bool BellbotScript::checkCommonWords(TTroomScript *roomScript, TTsentence *sente
 	return true;
 }
 
-uint BellbotScript::getRoomDialogueId(TTroomScript *roomScript) {
+uint BellbotScript::getRoomDialogueId(const TTroomScript *roomScript) {
 	if (!roomScript)
 		return 0;
 
@@ -1824,7 +1824,7 @@ uint BellbotScript::getRoomDialogueId(TTroomScript *roomScript) {
 	return 0;
 }
 
-bool BellbotScript::addRoomDescription(TTroomScript *roomScript) {
+bool BellbotScript::addRoomDescription(const TTroomScript *roomScript) {
 	if (!roomScript)
 		return false;
 

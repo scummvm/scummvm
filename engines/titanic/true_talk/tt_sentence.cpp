@@ -108,19 +108,19 @@ int TTsentence::storeVocabHit(TTword *word) {
 }
 
 bool TTsentence::fn1(const CString &str, int wordId1, const CString &str1, const CString &str2,
-		const CString &str3, int wordId2, int val, int val2, const TTconceptNode *node) {
+		const CString &str3, int wordId2, int val, int val2, const TTconceptNode *node) const {
 	// TODO
 	return false;
 }
 
 bool TTsentence::fn3(const CString &str1, const CString &str2, const CString &str3,
 		const CString &str4, const CString &str5, const CString &str6,
-		int val, int val2, const TTconceptNode *node) {
+		int val, int val2, const TTconceptNode *node) const {
 	// TODO
 	return false;
 }
 
-bool TTsentence::fn2(int slotIndex, const TTstring &str, TTconceptNode *conceptNode) {
+bool TTsentence::fn2(int slotIndex, const TTstring &str, const TTconceptNode *conceptNode) const {
 	if (!conceptNode)
 		conceptNode = &_sentenceConcept;
 	TTconcept *concept = getFrameSlot(slotIndex, conceptNode);
@@ -199,7 +199,7 @@ exit:
 	return abortFlag;
 }
 
-bool TTsentence::fn4(int mode, int wordId, TTconceptNode *node) {
+bool TTsentence::fn4(int mode, int wordId, const TTconceptNode *node) const {
 	if (!node)
 		node = &_sentenceConcept;
 
@@ -256,7 +256,7 @@ int TTsentence::is1C(int val, const TTconceptNode *node) const {
 	return node->_field1C == val;
 }
 
-bool TTsentence::isConcept34(int slotIndex, TTconceptNode *node) {
+bool TTsentence::isConcept34(int slotIndex, const TTconceptNode *node) const {
 	TTconcept *concept = getFrameEntry(slotIndex, node);
 	return concept && concept->getState();
 }

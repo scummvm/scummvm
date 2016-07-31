@@ -70,7 +70,7 @@ void BarbotScript::setupSentences() {
 	_words.load("Words/Barbot");
 }
 
-int BarbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {
+int BarbotScript::chooseResponse(const TTroomScript *roomScript, const TTsentence *sentence, uint tag) {
 	if (tag == MKTAG('D', 'N', 'A', '1') || tag == MKTAG('H', 'H', 'G', 'Q') ||
 			tag == MKTAG('A', 'N', 'S', 'W') || tag == MKTAG('S', 'U', 'M', 'S')) {
 		if (_state < 7) {
@@ -132,7 +132,7 @@ int BarbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence,
 	return TTnpcScript::chooseResponse(roomScript, sentence, tag);
 }
 
-int BarbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
+int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sentence) {
 	int dialogueId = 0;
 
 	if (roomScript->_scriptId != 112)
@@ -756,7 +756,7 @@ done:
 	return 2;
 }
 
-ScriptChangedResult BarbotScript::scriptChanged(TTroomScript *roomScript, uint id) {
+ScriptChangedResult BarbotScript::scriptChanged(const TTroomScript *roomScript, uint id) {
 	switch (id) {
 	case 1:
 	case 100:
@@ -840,7 +840,7 @@ ScriptChangedResult BarbotScript::scriptChanged(TTroomScript *roomScript, uint i
 	return SCR_2;
 }
 
-int BarbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
+int BarbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
 		uint val, uint tagId, uint remainder) {
 	switch (tagId) {
 	case MKTAG('A', 'D', 'V', 'T'):
@@ -1015,7 +1015,7 @@ uint BarbotScript::getDialsBitset() const {
 	return bits;
 }
 
-int BarbotScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
+int BarbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
 	int v34 = getState();
 	uint id = 0;
 

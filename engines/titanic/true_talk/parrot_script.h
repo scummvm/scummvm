@@ -40,22 +40,22 @@ public:
 	/**
 	 * Chooses and adds a conversation response based on a specified tag Id.
 	 */
-	virtual int chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag);
+	virtual int chooseResponse(const TTroomScript *roomScript, const TTsentence *sentence, uint tag);
 
 	/**
 	 * Does NPC specific processing of the parsed sentence
 	 */
-	virtual int process(TTroomScript *roomScript, TTsentence *sentence);
+	virtual int process(const TTroomScript *roomScript, const TTsentence *sentence);
 
 	/**
 	 * Called when the script/id changes
 	 */
-	virtual ScriptChangedResult scriptChanged(TTroomScript *roomScript, uint id);
+	virtual ScriptChangedResult scriptChanged(const TTroomScript *roomScript, uint id);
 
 	/**
 	 * Process a sentence fragment entry
 	 */
-	virtual int doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence);
+	virtual int doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence);
 };
 
 } // End of namespace Titanic

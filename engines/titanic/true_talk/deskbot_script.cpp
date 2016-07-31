@@ -60,7 +60,7 @@ void DeskbotScript::setupSentences() {
 	_entryCount = 0;
 }
 
-int DeskbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
+int DeskbotScript::process(const TTroomScript *roomScript, const TTsentence *sentence) {
 	if (roomScript->_scriptId != 110)
 		return 2;
 
@@ -76,12 +76,12 @@ int DeskbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
 	return 0;
 }
 
-ScriptChangedResult DeskbotScript::scriptChanged(TTroomScript *roomScript, uint id) {
+ScriptChangedResult DeskbotScript::scriptChanged(const TTroomScript *roomScript, uint id) {
 	warning("TODO");
 	return SCR_1;
 }
 
-int DeskbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
+int DeskbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
 		uint val, uint tagId, uint remainder) {
 	switch (tagId) {
 	case MKTAG('A', 'D', 'V', 'T'):
@@ -281,7 +281,7 @@ uint DeskbotScript::getDialsBitset() const {
 		return getDialRegion(0) ? 0 : 1;
 }
 
-int DeskbotScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
+int DeskbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
 	uint id;
 
 	switch (val1) {

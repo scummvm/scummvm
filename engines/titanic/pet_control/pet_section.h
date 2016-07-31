@@ -89,7 +89,7 @@ public:
 	/**
 	 * Get the bounds for the section
 	 */
-	virtual Rect getBounds() { return Rect(); }
+	virtual Rect getBounds() const { return Rect(); }
 	
 	/**
 	 * Called when a general change occurs

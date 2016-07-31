@@ -41,7 +41,7 @@ void SuccUBusScript::setupSentences() {
 	_entryCount = 0;
 }
 
-int SuccUBusScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {
+int SuccUBusScript::chooseResponse(const TTroomScript *roomScript, const TTsentence *sentence, uint tag) {
 	uint dialogueId = tag;
 
 	switch (tag) {
@@ -74,12 +74,12 @@ int SuccUBusScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentenc
 	}
 }
 
-int SuccUBusScript::process(TTroomScript *roomScript, TTsentence *sentence) {
+int SuccUBusScript::process(const TTroomScript *roomScript, const TTsentence *sentence) {
 	// TODO
 	return 0;
 }
 
-ScriptChangedResult SuccUBusScript::scriptChanged(TTroomScript *roomScript, uint id) {
+ScriptChangedResult SuccUBusScript::scriptChanged(const TTroomScript *roomScript, uint id) {
 	warning("TODO");
 	return SCR_1;
 }
@@ -89,7 +89,7 @@ int SuccUBusScript::updateState(uint oldId, uint newId, int index) {
 	return 0;
 }
 
-int SuccUBusScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
+int SuccUBusScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
 	warning("TODO");
 	return 0;
 }

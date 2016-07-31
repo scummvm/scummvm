@@ -71,7 +71,7 @@ void DoorbotScript::setupSentences() {
 	_entryCount = 0;
 }
 
-int DoorbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {
+int DoorbotScript::chooseResponse(const TTroomScript *roomScript, const TTsentence *sentence, uint tag) {
 	if (tag == MKTAG('D', 'N', 'A', '1') || tag == MKTAG('H', 'H', 'G', 'Q') ||
 		tag == MKTAG('A', 'N', 'S', 'W') || tag == MKTAG('S', 'U', 'M', 'S')) {
 		if (_stateIndex > 9)
@@ -127,17 +127,17 @@ int DoorbotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence
 	return TTnpcScript::chooseResponse(roomScript, sentence, tag);
 }
 
-int DoorbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
+int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sentence) {
 	// TODO
 	return 0;
 }
 
-ScriptChangedResult DoorbotScript::scriptChanged(TTroomScript *roomScript, uint id) {
+ScriptChangedResult DoorbotScript::scriptChanged(const TTroomScript *roomScript, uint id) {
 	warning("TODO");
 	return SCR_1;
 }
 
-int DoorbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
+int DoorbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
 		uint val, uint tagId, uint remainder) {
 	switch (tagId) {
 	case MKTAG('A', 'D', 'V', 'T'):
@@ -336,7 +336,7 @@ uint DoorbotScript::getDialsBitset() const {
 	return bits;
 }
 
-int DoorbotScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
+int DoorbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
 	int id2, id = 0;
 
 	switch (val1) {

@@ -210,7 +210,7 @@ void TTnpcScript::addResponse(int id) {
 	TTscriptBase::addResponse(id);
 }
 
-int TTnpcScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {
+int TTnpcScript::chooseResponse(const TTroomScript *roomScript, const TTsentence *sentence, uint tag) {
 	for (uint idx = 0; idx < _responses.size(); ++idx) {
 		const TTnpcScriptResponse &response = _responses[idx];
 
@@ -231,7 +231,7 @@ int TTnpcScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, 
 	return 1;
 }
 
-int TTnpcScript::process(TTroomScript *roomScript, TTsentence *sentence) {
+int TTnpcScript::process(const TTroomScript *roomScript, const TTsentence *sentence) {
 	return processEntries(&_entries, _entryCount, roomScript, sentence);
 }
 
@@ -275,7 +275,7 @@ bool TTnpcScript::handleWord(uint id) const {
 	return true;
 }
 
-int TTnpcScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
+int TTnpcScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
 		uint val, uint tagId, uint remainder) {
 	if (_quotes.empty())
 		return 1;
@@ -395,7 +395,7 @@ const TTscriptMapping *TTnpcScript::getMapping(int index) {
 	return nullptr;
 }
 
-int TTnpcScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
+int TTnpcScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
 	return 0;
 }
 
@@ -698,7 +698,7 @@ CPetControl *TTnpcScript::getPetControl(CGameManager *gameManager) {
 	return nullptr;
 }
 
-int TTnpcScript::processEntries(const TTsentenceEntries *entries, uint entryCount, TTroomScript *roomScript, TTsentence *sentence) {
+int TTnpcScript::processEntries(const TTsentenceEntries *entries, uint entryCount, const TTroomScript *roomScript, const TTsentence *sentence) {
 	if (!entries)
 		return SS_1;
 	if (!entryCount)
@@ -769,7 +769,7 @@ int TTnpcScript::processEntries(const TTsentenceEntries *entries, uint entryCoun
 	return 1;
 }
 
-bool TTnpcScript::defaultProcess(TTroomScript *roomScript, TTsentence *sentence) {
+bool TTnpcScript::defaultProcess(const TTroomScript *roomScript, const TTsentence *sentence) {
 	uint remainder;
 	TTtreeResult results[32];
 	const TTstring &line = sentence->_normalizedLine;
@@ -803,7 +803,7 @@ TTscriptRange *TTnpcScript::findRange(uint id) {
 	return nullptr;
 }
 
-void TTnpcScript::checkItems(TTroomScript *roomScript, TTsentence *sentence) {
+void TTnpcScript::checkItems(const TTroomScript *roomScript, const TTsentence *sentence) {
 	_field2CC = 0;
 	++CTrueTalkManager::_v2;
 

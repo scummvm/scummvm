@@ -59,12 +59,12 @@ public:
 	/**
 	 * Chooses and adds a conversation response based on a specified tag Id.
 	 */
-	virtual int chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) = 0;
+	virtual int chooseResponse(const TTroomScript *roomScript, const TTsentence *sentence, uint tag) = 0;
 
 	/**
 	 * Does NPC specific processing of the parsed sentence
 	 */
-	virtual int process(TTroomScript *roomScript, TTsentence *sentence) = 0;
+	virtual int process(const TTroomScript *roomScript, const TTsentence *sentence) = 0;
 
 	virtual int proc8() const = 0;
 	virtual int proc9() const = 0;
@@ -72,7 +72,7 @@ public:
 	/**
 	 * Called when the script/id changes
 	 */
-	virtual ScriptChangedResult scriptChanged(TTroomScript *roomScript, uint id) = 0;
+	virtual ScriptChangedResult scriptChanged(const TTroomScript *roomScript, uint id) = 0;
 
 	virtual int proc11() const = 0;
 	virtual int proc12() const = 0;
@@ -168,18 +168,18 @@ protected:
 	/**
 	 * Scans through a list of sentence entries for a matching standardized response
 	 */
-	int processEntries(const TTsentenceEntries *entries, uint entryCount, TTroomScript *roomScript, TTsentence *sentence);
+	int processEntries(const TTsentenceEntries *entries, uint entryCount, const TTroomScript *roomScript, const TTsentence *sentence);
 
 	/**
 	 * Scans through a list of sentence entries for a matching standardized response
 	 */
-	int processEntries(TTroomScript *roomScript, TTsentence *sentence) {
+	int processEntries(const TTroomScript *roomScript, const TTsentence *sentence) {
 		return processEntries(&_entries, _entryCount, roomScript, sentence);
 	}
 
-	bool defaultProcess(TTroomScript *roomScript, TTsentence *sentence);
+	bool defaultProcess(const TTroomScript *roomScript, const TTsentence *sentence);
 
-	void checkItems(TTroomScript *roomScript, TTsentence *sentence);
+	void checkItems(const TTroomScript *roomScript, const TTsentence *sentence);
 
 	/**
 	 * Adds a random conversation response
@@ -224,12 +224,12 @@ public:
 	 * This default implementation does a lookup into a list of known tags,
 	 * and chooses a random dialogue Id from the available ones for that tag
 	 */
-	virtual int chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag);
+	virtual int chooseResponse(const TTroomScript *roomScript, const TTsentence *sentence, uint tag);
 
 	/**
 	 * Does NPC specific processing of the parsed sentence
 	 */
-	virtual int process(TTroomScript *roomScript, TTsentence *sentence);
+	virtual int process(const TTroomScript *roomScript, const TTsentence *sentence);
 
 	virtual int proc8() const;
 	virtual int proc9() const;
@@ -237,7 +237,7 @@ public:
 	/**
 	 * Called when the script/id changes
 	 */
-	virtual ScriptChangedResult scriptChanged(TTroomScript *roomScript, uint id) {
+	virtual ScriptChangedResult scriptChanged(const TTroomScript *roomScript, uint id) {
 		return SCR_2;
 	}
 
@@ -256,7 +256,7 @@ public:
 	 */
 	virtual bool handleWord(uint id) const;
 
-	virtual int handleQuote(TTroomScript *roomScript, TTsentence *sentence,
+	virtual int handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
 		uint val, uint tagId, uint remainder);
 
 	/**
@@ -287,12 +287,12 @@ public:
 	virtual uint getDialsBitset() const { return 0; }
 	
 	virtual const TTscriptMapping *getMapping(int index);
-	virtual int doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence);
+	virtual int doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence);
 
 	/**
 	 * Handles any post-response NPC processing
 	 */
-	virtual void postResponse(int v1, const TTsentenceEntry *entry, TTroomScript *roomScript, TTsentence *sentence) {}
+	virtual void postResponse(int v1, const TTsentenceEntry *entry, const TTroomScript *roomScript, const TTsentence *sentence) {}
 	
 	virtual void save(SimpleFile *file);
 	virtual void load(SimpleFile *file);

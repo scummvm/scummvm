@@ -67,7 +67,7 @@ public:
 	/**
 	 * Get the bounds for the section
 	 */
-	virtual Rect getBounds() { return Rect(); }
+	virtual Rect getBounds() const { return Rect(); }
 	
 	/**
 	 * Following are handlers for the various messages that the PET can

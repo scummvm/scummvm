@@ -41,7 +41,7 @@ void ParrotScript::setupSentences() {
 	_entryCount = 0;
 }
 
-int ParrotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence, uint tag) {
+int ParrotScript::chooseResponse(const TTroomScript *roomScript, const TTsentence *sentence, uint tag) {
 	if (tag == MKTAG('B', 'Y', 'Z', 'A')) {
 		addResponse(getDialogueId(280246));
 		applyResponse();
@@ -51,7 +51,7 @@ int ParrotScript::chooseResponse(TTroomScript *roomScript, TTsentence *sentence,
 	}
 }
 
-int ParrotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
+int ParrotScript::process(const TTroomScript *roomScript, const TTsentence *sentence) {
 	if (processEntries(roomScript, sentence) == 2) {
 		int tagId = g_vm->_trueTalkManager->_quotes.find(sentence->_normalizedLine);
 		if (!tagId || chooseResponse(roomScript, sentence, tagId) != 2) {
@@ -63,7 +63,7 @@ int ParrotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
 	return 2;
 }
 
-ScriptChangedResult ParrotScript::scriptChanged(TTroomScript *roomScript, uint id) {
+ScriptChangedResult ParrotScript::scriptChanged(const TTroomScript *roomScript, uint id) {
 	if (id >= 280000 && id <= 280276) {
 		if (id == 280258) {
 			if (CTrueTalkManager::_currentNPC) {
@@ -103,7 +103,7 @@ ScriptChangedResult ParrotScript::scriptChanged(TTroomScript *roomScript, uint i
 	return (id == 3) ? SCR_2 : SCR_1;
 }
 
-int ParrotScript::doSentenceEntry(int val1, const int *srcIdP, TTroomScript *roomScript, TTsentence *sentence) {
+int ParrotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
 	return 0;
 }
 
