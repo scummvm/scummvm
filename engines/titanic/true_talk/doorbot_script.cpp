@@ -24,6 +24,7 @@
 #include "titanic/true_talk/doorbot_script.h"
 #include "titanic/true_talk/tt_room_script.h"
 #include "titanic/true_talk/true_talk_manager.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -63,12 +64,20 @@ void DoorbotScript::setupSentences() {
 	for (int idx = 35; idx < 40; ++idx)
 		CTrueTalkManager::setFlags(idx, 0);
 	_state = 1;
+	_field68 = 0;
+	_entryCount = 0;
 	_dialValues[0] = _dialValues[1] = 100;
 
 	_mappings.load("Mappings/Doorbot", 4);
 	_entries.load("Sentences/Doorbot");
-	_field68 = 0;
-	_entryCount = 0;
+	
+	static const int SENTENCE_NUMS[11] = {
+		2, 100, 101, 102, 107, 110, 111, 124, 129, 131, 132
+	};
+	for (int idx = 0; idx < 11; ++idx) {
+		_sentences[idx] = TTsentenceEntries();
+		_sentences[idx].load(CString::format("Sentences/Doorbot/%d", SENTENCE_NUMS[idx]));
+	}
 }
 
 int DoorbotScript::chooseResponse(const TTroomScript *roomScript, const TTsentence *sentence, uint tag) {
@@ -128,8 +137,368 @@ int DoorbotScript::chooseResponse(const TTroomScript *roomScript, const TTsenten
 }
 
 int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sentence) {
-	// TODO
-	return 0;
+	int currState;
+
+	switch (roomScript->_scriptId) {
+	case 100:
+	case 101:
+	case 102:
+	case 103:
+	case 104:
+	case 106:
+	case 107:
+	case 108:
+	case 109:
+	case 110:
+	case 111:
+	case 113:
+	case 116:
+	case 117:
+	case 118:
+	case 122:
+	case 123:
+	case 124:
+	case 125:
+	case 126:
+	case 127:
+	case 128:
+	case 129:
+	case 130:
+	case 131:
+	case 132:
+		break;
+
+	default:
+		return 2;
+	}
+
+	checkItems(nullptr, nullptr);
+	if (getState() == 0) {
+		if (CTrueTalkManager::_v2 > getValue(36)) {
+			if (getDialRegion(1) == 1 && getRandomBit()) {
+				setDialRegion(0, getDialRegion(1) ? 0 : 1);
+			} else {
+				setDialRegion(1, getDialRegion(1) ? 0 : 1);
+			}
+			CTrueTalkManager::setFlags(36, CTrueTalkManager::_v2 + 3 + getRandomNumber(5));
+
+			if (getValue(37)) {
+				CTrueTalkManager::setFlags(37, 0);
+				setState(0);
+				return setResponse(getDialogueId(221140));
+			}
+		}
+	}
+
+	if (getValue(35) == 0 && roomScript->_scriptId != 100 && sentence->localWord("parrot")) {
+		CTrueTalkManager::setFlags(35, 1);
+		setState(0);
+		return setResponse(getDialogueId(220113));
+	}
+
+	if (sentence->_field2C == 6 && sentence->contains("why not")) {
+		return setResponse(11871, 8);
+	}
+
+	currState = getState();
+	if (currState) {
+		int sentMode = sentence->_field2C;
+		bool al = sentMode == 11 || sentMode == 13;
+		bool bl = sentMode == 12;
+
+		switch (currState) {
+		case 1:
+			if (al)
+				return setResponse(11828, 2);
+			if (bl)
+				return setResponse(11827, 0);
+			break;
+
+		case 2:
+			if (al)
+				return setResponse(11827, 0);
+			break;
+
+		case 3:
+			if (sentMode == 3)
+				return setResponse(10406, 0);
+			break;
+
+		case 4:
+			if (al)
+				return setResponse(11332, 0);
+			if (bl)
+				return setResponse(11331, 0);
+			break;
+
+		case 5:
+			return setResponse(11868, 0);
+
+		case 6:
+			return setResponse(11872, 0);
+
+		case 7:
+			return setResponse(11869, 0);
+
+		case 8:
+			return setResponse(11870, 0);
+
+		case 12:
+			if (al)
+				return setResponse(11894, 13);
+			if (bl)
+				return setResponse(11893, 13);
+			break;
+
+		case 13:
+			return setResponse(11895, 12);
+
+		case 15:
+			if (sentMode == 3 || sentMode == 6)
+				return setResponse(10257, 0);
+			break;
+
+		case 16: {
+			TTtreeResult treeResult;
+			if (g_vm->_trueTalkManager->_quotesTree.search(sentence->_normalizedLine.c_str(),
+					TREE_3, &treeResult, 0, nullptr) != -1)
+				return setResponse(getDialogueId(221380), 0);
+			break;
+		}
+
+		case 17:
+			return setResponse(getDialogueId(221126), 0);
+
+		case 18:
+			if (al)
+				return setResponse(getDialogueId(221135), 0);
+			if (bl)
+				return setResponse(getDialogueId(221134), 0);
+			break;
+
+		case 19:
+			if (al) {
+				if (addRandomResponse(true)) {
+					setState(10);
+					return 2;
+				}
+			}
+			if (bl)
+				return setResponse(getDialogueId(221966), 0);
+			break;
+
+		case 20:
+			if (al) {
+				if (addRandomResponse(true)) {
+					setState(19);
+					return 2;
+				}
+			}
+			if (bl || sentMode == 7 || sentMode == 10) {
+				return setResponse(getDialogueId(221879), 0);
+			}
+			break;
+
+		case 21:
+			if (bl)
+				return setResponse(10935, 0);
+			break;
+
+		case 22:
+			if (al) {
+				if (getRandomBit()) {
+					return setResponse(11211, 23);
+				} else {
+					return setResponse(10127, 0);
+				}
+			}
+			if (bl)
+				return setResponse(10136, 0);
+			break;
+
+		case 23:
+			return setResponse(10212, 0);
+
+		case 24:
+			if (al)
+				return setResponse(11151, 0);
+			if (bl)
+				return setResponse(11150, 0);
+			break;
+
+		case 25:
+		case 26:
+			if (bl) {
+				if (getRandomBit()) {
+					return setResponse(11211, 23);
+				} else {
+					return setResponse(10127, 0);
+				}
+			}
+			if (al)
+				return setResponse(10136, 0);
+			break;
+
+		case 27:
+			if (al || sentence->localWord("did") || sentence->contains("did"))
+				return setResponse(221175, 28);
+			break;
+
+		case 28:
+			if (al || sentence->localWord("did") || sentence->contains("did"))
+				return setResponse(getDialogueId(221176), 29);
+			break;
+
+		case 29:
+			if (al || sentence->localWord("did") || sentence->contains("did"))
+				return setResponse(getDialogueId(221177), 30);
+			break;
+
+		case 30:
+			return setResponse(getDialogueId(221178), 31);
+
+		case 31:
+			if (sentMode == 3 || sentMode == 10)
+				return setResponse(10350, 0);
+			break;
+
+		case 32:
+			return setResponse(10110, 0);
+			
+		case 33:
+			if (sentence->contains("sieve") || sentence->contains("colander")
+					|| sentence->contains("vegetable") || sentence->contains("ground")
+					|| sentence->contains("earth") || sentence->contains("garden")
+					|| sentence->contains("cheese") || sentence->contains("strainer")) {
+				return setResponse(getDialogueId(221375), 0);
+			} else if (getRandomNumber(100) > 30) {
+				return setResponse(getDialogueId(221376), 33);
+			} else {
+				return setResponse(getDialogueId(221376), 0);
+			}
+			break;
+
+		case 34:
+			if (sentence->localWord("bellbot"))
+				return setResponse(10094, 0);
+			if (sentence->localWord("bellbot"))
+				return setResponse(10349, 0);
+			if (sentence->localWord("deskbot") || sentence->localWord("titania"))
+				return setResponse(10148, 0);
+			if (sentence->localWord("barbot") || sentence->localWord("rowbot")
+				|| sentence->localWord("liftbot") || sentence->localWord("maitredbot"))
+				return setResponse(10147, 0);
+			break;
+
+		case 35:
+			return setResponse(10811, 36);
+
+		case 36:
+			if (al)
+				return setResponse(10813, 37);
+			if (bl)
+				return setResponse(10812, 37);
+			break;
+
+		case 37:
+			if (al)
+				return setResponse(10815, 37);
+			if (bl)
+				return setResponse(10814, 37);
+			break;
+
+		case 38:
+			return setResponse(10848, 39);
+
+		case 39:
+			return setResponse(10823, 40);
+
+		case 40:
+			return setResponse(10832, 41);
+
+		case 41:
+			addResponse(10833);
+			return setResponse(10835, 0);
+
+		case 42:
+			if (sentence->localWord("please"))
+				return setResponse(10840, 43);
+			return setResponse(10844, 0);
+
+		case 43:
+		case 45:
+			return setResponse(10844, 0);
+
+		case 44:
+			if (sentence->localWord("thanks"))
+				return setResponse(10843, 45);
+			return setResponse(10844, 0);
+
+		case 46:
+			if (al)
+				return setResponse(getDialogueId(222251), 0);
+			if (bl)
+				return setResponse(10713, 0);
+			break;
+
+		}
+	}
+
+	if (currState != 14)
+		setState(0);
+
+	if (getDialRegion(1) != 1 && getRandomNumber(100) > 92)
+		return setResponse(getDialogueId(221043), 0);
+
+	int result = 0;
+	switch (roomScript->_scriptId) {
+	case 100:
+	case 101:
+	case 102:
+	case 107:
+	case 110:
+	case 111:
+	case 124:
+	case 129:
+	case 131:
+	case 132:
+		result = processEntries(&_sentences[roomScript->_scriptId], 0, roomScript, sentence);
+		break;
+	default:
+		break;
+	}
+	if (result == 2)
+		return 2;
+
+	if (processEntries(&_entries, _entryCount, roomScript, sentence) == 2
+			|| processEntries(_defaultEntries, 0, roomScript, sentence) == 2
+			|| defaultProcess(roomScript, sentence))
+		return 2;
+
+	switch (sentence->_field2C) {
+	case 11:
+		if (getRandomNumber(100) > 90)
+			return setResponse(10839, 42);
+		return setResponse(222415, 0);
+
+	case 12:
+		if (getRandomNumber(100) > 90)
+			return setResponse(10841, 44);
+		return setResponse(getDialogueId(222416), 0);
+
+	case 13:
+		return setResponse(getDialogueId(222415), 0);
+
+	default:
+		if (getRandomNumber(100) > 75 && getStateValue())
+			return setResponse(getDialogueId(221095));
+
+		if (processEntries(&_sentences[2], 0, roomScript, sentence) != 2)
+			return setResponse(getDialogueId(220000));
+		break;
+	}
+	
+	return 2;
 }
 
 ScriptChangedResult DoorbotScript::scriptChanged(const TTroomScript *roomScript, uint id) {

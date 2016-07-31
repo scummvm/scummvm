@@ -23,13 +23,16 @@
 #ifndef TITANIC_DOORBOT_SCRIPT_H
 #define TITANIC_DOORBOT_SCRIPT_H
 
+#include "common/hashmap.h"
 #include "titanic/true_talk/tt_npc_script.h"
 
 namespace Titanic {
 
 class DoorbotScript : public TTnpcScript {
+	typedef Common::HashMap<uint, TTsentenceEntries> SentenceEntriesMap;
 private:
 	TTupdateStateArray _states;
+	SentenceEntriesMap _sentences;
 	int _stateIndex;
 private:
 	/**

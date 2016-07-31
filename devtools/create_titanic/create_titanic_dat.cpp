@@ -55,7 +55,7 @@
  */
 
 #define VERSION_NUMBER 1
-#define HEADER_SIZE 0xB00
+#define HEADER_SIZE 0xD00
 
 Common::File inputFile, outputFile;
 Common::PEResources res;
@@ -650,7 +650,20 @@ void writeData() {
 	writeSentenceEntries("Sentences/Deskbot", 0x5DCD10);
 	writeSentenceEntries("Sentences/Deskbot/2", 0x5E8E18);
 	writeSentenceEntries("Sentences/Deskbot/3", 0x5E8BA8);
+	
 	writeSentenceEntries("Sentences/Doorbot", 0x5EC110);
+	writeSentenceEntries("Sentences/Doorbot/2", 0x5FD930);
+	writeSentenceEntries("Sentences/Doorbot/100", 0x5FD930);
+	writeSentenceEntries("Sentences/Doorbot/101", 0x5FE668);
+	writeSentenceEntries("Sentences/Doorbot/102", 0x5FDD40);
+	writeSentenceEntries("Sentences/Doorbot/107", 0x5FFF08);
+	writeSentenceEntries("Sentences/Doorbot/110", 0x5FE3C0);
+	writeSentenceEntries("Sentences/Doorbot/111", 0x5FF0C8);
+	writeSentenceEntries("Sentences/Doorbot/124", 0x5FF780);
+	writeSentenceEntries("Sentences/Doorbot/129", 0x5FFAC0);
+	writeSentenceEntries("Sentences/Doorbot/131", 0x5FFC30);
+	writeSentenceEntries("Sentences/Doorbot/132", 0x6000E0);
+
 	writeSentenceEntries("Sentences/Liftbot", 0x6026B0);
 	writeSentenceEntries("Sentences/MaitreD", 0x60CFD8);
 	writeSentenceEntries("Sentences/Parrot", 0x615858);
