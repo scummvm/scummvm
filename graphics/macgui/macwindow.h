@@ -94,7 +94,7 @@ public:
 	/**
 	 * Base constructor.
 	 * @param id ID of the window.
-	 * @param editable True if the window is editable (e.g. for resizing).
+	 * @param editable True if the window is editable.
 	 * @param wm Pointer to the MacWindowManager that owns the window.
 	 */
 	BaseMacWindow(int id, bool editable, MacWindowManager *wm);
@@ -190,29 +190,116 @@ protected:
 	MacWindowManager *_wm;
 };
 
+/**
+ * An implementation of an ordinary window in the Mac interface.
+ * It supports custom resizing, scrolling, borders, etc.
+ */
 class MacWindow : public BaseMacWindow {
 public:
+	/**
+	 * Construct a simple window, with the default settings.
+	 * Note that the scroll must be implemented in the event handling,
+	 * even if the scrollable flag is set to true.
+	 * @param id See BaseMacWindow.
+	 * @param scrollable True if the window can be scrolled.
+	 * @param resizable True if the window can be resized.
+	 * @param editable See BaseMacWindow.
+	 * @param wm See BaseMacWindow.
+	 */
 	MacWindow(int id, bool scrollable, bool resizable, bool editable, MacWindowManager *wm);
 	virtual ~MacWindow();
+
+	/**
+	 * Change the window's location to fixed coordinates (not delta).
+	 * @param x New left position of the window relative to the WM's screen.
+	 * @param y New top position of the window relative to the WM's screen.
+	 */
 	void move(int x, int y);
+
+	/*
+	 * Change the width and the height of the window.
+	 * @param w New width of the window.
+	 * @param h New height of the window.
+	 */
 	void resize(int w, int h);
+
+	/**
+	 * Change the dimensions of the window ([0, 0, 0, 0] by default).
+	 * Note that this can be used to update both the position and the size
+	 * of the window, although move() and resize() might be more comfortable.
+	 * @param r The desired dimensions of the window.
+	 */
 	void setDimensions(const Common::Rect &r);
+
+	/**
+	 * Accessor to retrieve the dimensions of the inner surface of the window
+	 * (i.e. without taking borders into account).
+	 * Note that the returned dimensions' position is relative to the WM's
+	 * screen, just like in getDimensions().
+	 * @return The inner dimensions of the window.
+	 */
 	const Common::Rect &getInnerDimensions() { return _innerDims; }
 
+	/**
+	 * Similar to that described in BaseMacWindow.
+	 * @param g See BaseMacWindow.
+	 * @param forceRedraw If true, the borders are guarranteed to redraw.
+	 */
 	bool draw(ManagedSurface *g, bool forceRedraw = false);
 
+	/**
+	 * Mutator to change the active state of the window.
+	 * Most often called from the WM.
+	 * @param active Target state.
+	 */
 	void setActive(bool active);
+	/**
+	 * Accessor to determine whether a window is active.
+	 * @return True if the window is active.
+	 */
 	bool isActive();
 
+	/**
+	 * Mutator to change the title of the window.
+	 * @param title Target title of the window.
+	 */
 	void setTitle(Common::String &title) { _title = title; }
+	/**
+	 * Highlight the target part of the window.
+	 * Used for the default borders.
+	 * @param highlightedPart Part to be highlighted.
+	 */
 	void setHighlight(WindowClick highlightedPart);
+	/**
+	 * Set the scroll poisition.
+	 * @param scrollPos Target scroll position.
+	 * @param scrollSize Size of the scrolling bar.
+	 */
 	void setScroll(float scrollPos, float scrollSize);
+	/**
+	 * See BaseMacWindow.
+	 */
 	bool processEvent(Common::Event &event);
 	bool hasAllFocus() { return _beingDragged || _beingResized; }
 
+	/**
+	 * Set arbitrary border from a BMP data stream, with custom border offsets.
+	 * Note that the BMP has to be 9patch compliant. For examples, go to:
+	 * https://github.com/blorente/MacVenture-Extract-Guide/tree/master/borders
+	 * @param file The BMP data stream with the desired border.
+	 * @param active Whether the border corresponds with the active state of the window.
+	 * @param lo Width of the left side of the border, in pixels.
+	 * @param ro Width of the right side of the border, in pixels.
+	 * @param to Width of the top side of the border, in pixels.
+	 * @param bo Width of the bottom side of the border, in pixels.
+	 */
 	void loadBorder(Common::SeekableReadStream &file, bool active, int lo, int ro, int to, int bo);
 	//void setBorder(TransparentSurface &border, bool active);
 
+	/**
+	 * Indicate whether the window can be closed (false by default).
+	 * @param closeable True if the window can be closed.
+	 */
 	void setCloseable(bool closeable);
 
 private:
