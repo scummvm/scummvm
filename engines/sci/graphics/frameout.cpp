@@ -1332,7 +1332,7 @@ bool GfxFrameout::isOnMe(const ScreenItem &screenItem, const Plane &plane, const
 	return true;
 }
 
-void GfxFrameout::kernelSetNowSeen(const reg_t screenItemObject) const {
+bool GfxFrameout::kernelSetNowSeen(const reg_t screenItemObject) const {
 	const reg_t planeObject = readSelector(_segMan, screenItemObject, SELECTOR(plane));
 
 	Plane *plane = _planes.findByObject(planeObject);
@@ -1342,7 +1342,7 @@ void GfxFrameout::kernelSetNowSeen(const reg_t screenItemObject) const {
 
 	ScreenItem *screenItem = plane->_screenItemList.findByObject(screenItemObject);
 	if (screenItem == nullptr) {
-		error("kSetNowSeen: Screen item %04x:%04x not found in plane %04x:%04x", PRINT_REG(screenItemObject), PRINT_REG(planeObject));
+		return false;
 	}
 
 	Common::Rect result = screenItem->getNowSeenRect(*plane);
@@ -1350,6 +1350,7 @@ void GfxFrameout::kernelSetNowSeen(const reg_t screenItemObject) const {
 	writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsTop), result.top);
 	writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsRight), result.right - 1);
 	writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsBottom), result.bottom - 1);
+	return true;
 }
 
 void GfxFrameout::remapMarkRedraw() {
