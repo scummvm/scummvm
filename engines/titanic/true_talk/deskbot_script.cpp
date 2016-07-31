@@ -55,6 +55,8 @@ DeskbotScript::DeskbotScript(int val1, const char *charClass, int v2,
 void DeskbotScript::setupSentences() {
 	_mappings.load("Mappings/Deskbot", 4);
 	_entries.load("Sentences/Deskbot");
+	_entries2.load("Sentences/Deskbot/2");
+	_entries3.load("Sentences/Deskbot/3");
 	_dialValues[0] = _dialValues[1] = 0;
 	_field68 = 0;
 	_entryCount = 0;
@@ -72,8 +74,66 @@ int DeskbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 	if (preprocess(roomScript, sentence) != 1)
 		return 1;
 
-	// TODO
-	return 0;
+	CTrueTalkManager::setFlags(17, 0);
+	setState(0);
+	updateCurrentDial(false);
+
+	if (getValue(1) == 3) {
+		if (sentence->localWord("competition") || sentence->contains("competition")
+				|| sentence->localWord("won") || sentence->contains("won")
+				|| sentence->localWord("winning") || sentence->contains("winning")
+				|| sentence->localWord("winner") || sentence->contains("winner")
+				|| sentence->contains("35279") || sentence->contains("3 5 2 7 9")
+				) {
+			addResponse(getDialogueId(41773));
+			applyResponse();
+			return 2;
+		} else if (sentence->localWord("magazine") || sentence->contains("magazine")) {
+			addResponse(getDialogueId(41771));
+			applyResponse();
+			return 2;
+		} else if (sentence->localWord("upgrade") || sentence->contains("upgrade")) {
+			if (CTrueTalkManager::_currentNPC) {
+				CGameObject *obj;
+				if (CTrueTalkManager::_currentNPC->find("Magazine", &obj, FIND_PET)) {
+					addResponse(getDialogueId(41773));
+					applyResponse();
+					return 2;
+				}
+			}
+		}
+	}
+
+	if (processEntries(&_entries, _entryCount, roomScript, sentence) != 2
+			&& processEntries(&_entries2, 0, roomScript, sentence) != 2) {
+		if (sentence->localWord("sauce") || sentence->localWord("pureed")) {
+			addResponse(getDialogueId(240398));
+			applyResponse();
+		} else if (sentence->contains("cherries")) {
+			addResponse(getDialogueId(240358));
+			applyResponse();
+		} else if (sentence->contains("42")) {
+			addResponse(getDialogueId(240453));
+			applyResponse();
+		} else if (searchQuotes(roomScript, sentence)) {
+			addResponse(getDialogueId(241778));
+			applyResponse();
+		} else {
+			if (sentence->contains("98129812"))
+				setDialRegion(1, 1);
+
+			if (!defaultProcess(roomScript, sentence)
+					&& processEntries(&_entries3, 0, roomScript, sentence) != 2
+					&& processEntries(_defaultEntries, 0, roomScript, sentence) != 2) {
+				if (flag20)
+					CTrueTalkManager::setFlags(20, 1);
+				addResponse(getDialogueId(240569));
+				applyResponse();
+			}
+		}
+	}
+
+	return 2;
 }
 
 ScriptChangedResult DeskbotScript::scriptChanged(const TTroomScript *roomScript, uint id) {

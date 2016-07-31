@@ -32,6 +32,8 @@ class DeskbotScript : public TTnpcScript {
 private:
 	static int _oldId;
 	TTupdateStateArray _states;
+	TTsentenceEntries _entries2;
+	TTsentenceEntries _entries3;
 private:
 	/**
 	 * Setup sentence data
