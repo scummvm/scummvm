@@ -235,9 +235,6 @@ void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, in
 
 		drawRegions(srf, dx, dy, dw, dh);
 
-		byte black = getColorIndex(TS_RGB(0, 0, 0), palette);
-		byte white = getColorIndex(TS_RGB(255, 255, 255), palette);
-
 		for (uint i = 0; i < srf.w; ++i) {
 			for (uint j = 0; j < srf.h; ++j) {
 				uint32 color = *(uint32*)srf.getBasePtr(i, j);

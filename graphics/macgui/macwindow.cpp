@@ -394,12 +394,10 @@ bool MacWindow::isInResizeButton(int x, int y) {
 }
 
 WindowClick MacWindow::isInScroll(int x, int y) {
-	int bLeft = kBorderWidth;
 	int bTop = kBorderWidth;
 	int bRight = kBorderWidth;
 	int bBottom = kBorderWidth;
 	if (_macBorder.hasOffsets()) {
-		bLeft = _macBorder.getOffset(kBorderOffsetLeft);
 		bTop = _macBorder.getOffset(kBorderOffsetTop);
 		bRight = _macBorder.getOffset(kBorderOffsetRight);
 		bBottom = _macBorder.getOffset(kBorderOffsetBottom);
