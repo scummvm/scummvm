@@ -51,7 +51,6 @@ MODULE_OBJS := \
 	carry/plug_in.o \
 	carry/speech_centre.o \
 	carry/sweets.o \
-	carry/test_carry.o \
 	carry/vision_centre.o \
 	core/background.o \
 	core/click_responder.o \
