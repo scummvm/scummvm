@@ -65,6 +65,7 @@
 
 #ifdef ENABLE_SCI32
 #include "sci/graphics/controls32.h"
+#include "sci/graphics/cursor32.h"
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/remap32.h"
@@ -96,6 +97,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 #ifdef ENABLE_SCI32
 	_audio32 = nullptr;
 	_video32 = nullptr;
+	_gfxCursor32 = nullptr;
 #endif
 	_features = 0;
 	_resMan = 0;
@@ -176,6 +178,7 @@ SciEngine::~SciEngine() {
 	// destruction of screen items in the Video32 destructor relies on these
 	// components
 	delete _video32;
+	delete _gfxCursor32;
 	delete _gfxPalette32;
 	delete _gfxTransitions32;
 	delete _gfxFrameout;
@@ -708,6 +711,7 @@ void SciEngine::initGraphics() {
 	_gfxPalette32 = 0;
 	_gfxRemap32 = 0;
 	_gfxTransitions32 = 0;
+	_gfxCursor32 = 0;
 #endif
 
 	if (hasMacIconBar())
@@ -727,23 +731,25 @@ void SciEngine::initGraphics() {
 #endif
 
 	_gfxCache = new GfxCache(_resMan, _gfxScreen, _gfxPalette16);
-	_gfxCursor = new GfxCursor(_resMan, _gfxPalette16, _gfxScreen);
 
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
 		// SCI32 graphic objects creation
 		_gfxCoordAdjuster = new GfxCoordAdjuster32(_gamestate->_segMan);
-		_gfxCursor->init(_gfxCoordAdjuster, _eventMan);
+		_gfxCursor32 = new GfxCursor32();
 		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
 		_gfxPaint32 = new GfxPaint32(_gamestate->_segMan);
 		_robotDecoder = new RobotDecoder(getPlatform() == Common::kPlatformMacintosh);
 		_gfxTransitions32 = new GfxTransitions32(_gamestate->_segMan);
-		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxPalette32, _gfxTransitions32);
+		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxPalette32, _gfxTransitions32, _gfxCursor32);
+		_gfxCursor32->init(_gfxFrameout->getCurrentBuffer());
 		_gfxText32 = new GfxText32(_gamestate->_segMan, _gfxCache);
 		_gfxControls32 = new GfxControls32(_gamestate->_segMan, _gfxCache, _gfxText32);
 		_gfxFrameout->run();
 	} else {
 #endif
+		_gfxCursor = new GfxCursor(_resMan, _gfxPalette16, _gfxScreen);
+
 		// SCI0-SCI1.1 graphic objects creation
 		_gfxPorts = new GfxPorts(_gamestate->_segMan, _gfxScreen);
 		_gfxCoordAdjuster = new GfxCoordAdjuster16(_gfxPorts);

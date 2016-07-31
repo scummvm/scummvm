@@ -86,11 +86,14 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2)
 		mousePos = curEvent.mousePosSci;
-	else
+	else {
 #endif
 		mousePos = curEvent.mousePos;
-	// Limit the mouse cursor position, if necessary
-	g_sci->_gfxCursor->refreshPosition();
+		// Limit the mouse cursor position, if necessary
+		g_sci->_gfxCursor->refreshPosition();
+#ifdef ENABLE_SCI32
+	}
+#endif
 
 	if (g_sci->getVocabulary())
 		g_sci->getVocabulary()->parser_event = NULL_REG; // Invalidate parser event

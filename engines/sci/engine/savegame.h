@@ -37,7 +37,7 @@ struct EngineState;
  *
  * Version - new/changed feature
  * =============================
- *      37 - Segment entry data changed to pointers
+ *      37 - Segment entry data changed to pointers, SCI32 cursor
  *      36 - SCI32 bitmap segment
  *      35 - SCI32 remap
  *      34 - SCI32 palettes, and store play time in ticks

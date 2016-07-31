@@ -42,6 +42,7 @@
 #include "sci/graphics/cache.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/compare.h"
+#include "sci/graphics/cursor32.h"
 #include "sci/graphics/font.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/paint32.h"
@@ -56,9 +57,10 @@
 
 namespace Sci {
 
-GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxPalette32 *palette, GfxTransitions32 *transitions) :
+GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxPalette32 *palette, GfxTransitions32 *transitions, GfxCursor32 *cursor) :
 	_isHiRes(ConfMan.getBool("enable_high_resolution_graphics")),
 	_palette(palette),
+	_cursor(cursor),
 	_resMan(resMan),
 	_segMan(segMan),
 	_transitions(transitions),
@@ -1120,6 +1122,10 @@ void GfxFrameout::mergeToShowList(const Common::Rect &drawRect, RectList &showLi
 }
 
 void GfxFrameout::showBits() {
+	if (!_showList.size()) {
+		return;
+	}
+
 	for (RectList::const_iterator rect = _showList.begin(); rect != _showList.end(); ++rect) {
 		Common::Rect rounded(**rect);
 		// NOTE: SCI engine used BR-inclusive rects so used slightly
@@ -1127,13 +1133,10 @@ void GfxFrameout::showBits() {
 		// was always even.
 		rounded.left &= ~1;
 		rounded.right = (rounded.right + 1) & ~1;
-
-		// TODO:
-		// _cursor->GonnaPaint(rounded);
+		_cursor->gonnaPaint(rounded);
 	}
 
-	// TODO:
-	// _cursor->PaintStarting();
+	_cursor->paintStarting();
 
 	for (RectList::const_iterator rect = _showList.begin(); rect != _showList.end(); ++rect) {
 		Common::Rect rounded(**rect);
@@ -1155,8 +1158,7 @@ void GfxFrameout::showBits() {
 		g_system->copyRectToScreen(sourceBuffer, _currentBuffer.screenWidth, rounded.left, rounded.top, rounded.width(), rounded.height());
 	}
 
-	// TODO:
-	// _cursor->DonePainting();
+	_cursor->donePainting();
 
 	_showList.clear();
 }

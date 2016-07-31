@@ -30,6 +30,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #ifdef ENABLE_SCI32
+#include "sci/graphics/cursor32.h"
 #include "sci/graphics/frameout.h"
 #endif
 #include "sci/graphics/screen.h"
@@ -168,9 +169,17 @@ SciEvent EventManager::getScummVMEvent() {
 	if (getSciVersion() >= SCI_VERSION_2) {
 		const Buffer &screen = g_sci->_gfxFrameout->getCurrentBuffer();
 
+		if (ev.type == Common::EVENT_MOUSEMOVE) {
+			// This will clamp `mousePos` according to the restricted zone,
+			// so any cursor or screen item associated with the mouse position
+			// does not bounce when it hits the edge (or ignore the edge)
+			g_sci->_gfxCursor32->deviceMoved(mousePos);
+		}
+
 		Common::Point mousePosSci = mousePos;
 		mulru(mousePosSci, Ratio(screen.scriptWidth, screen.screenWidth), Ratio(screen.scriptHeight, screen.screenHeight));
 		noEvent.mousePosSci = input.mousePosSci = mousePosSci;
+
 	} else {
 #endif
 		g_sci->_gfxScreen->adjustBackUpscaledCoordinates(mousePos.y, mousePos.x);

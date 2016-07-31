@@ -48,6 +48,7 @@
 #include "sci/sound/music.h"
 
 #ifdef ENABLE_SCI32
+#include "sci/graphics/cursor32.h"
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/remap32.h"
@@ -887,6 +888,29 @@ void GfxRemap32::saveLoadWithSerializer(Common::Serializer &s) {
 
 	if (s.isLoading()) {
 		_needsUpdate = true;
+	}
+}
+
+void GfxCursor32::saveLoadWithSerializer(Common::Serializer &s) {
+	if (s.getVersion() < 37) {
+		return;
+	}
+
+	s.syncAsSint32LE(_hideCount);
+	s.syncAsSint16LE(_restrictedArea.left);
+	s.syncAsSint16LE(_restrictedArea.top);
+	s.syncAsSint16LE(_restrictedArea.right);
+	s.syncAsSint16LE(_restrictedArea.bottom);
+	s.syncAsUint16LE(_cursorInfo.resourceId);
+	s.syncAsUint16LE(_cursorInfo.loopNo);
+	s.syncAsUint16LE(_cursorInfo.celNo);
+
+	if (s.isLoading()) {
+		hide();
+		setView(_cursorInfo.resourceId, _cursorInfo.loopNo, _cursorInfo.celNo);
+		if (!_hideCount) {
+			show();
+		}
 	}
 }
 #endif

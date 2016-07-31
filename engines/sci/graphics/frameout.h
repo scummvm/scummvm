@@ -30,6 +30,7 @@ namespace Sci {
 typedef Common::Array<DrawList> ScreenItemListList;
 typedef Common::Array<RectList> EraseListList;
 
+class GfxCursor32;
 class GfxCoordAdjuster32;
 class GfxTransitions32;
 struct PlaneShowStyle;
@@ -40,13 +41,14 @@ struct PlaneShowStyle;
  */
 class GfxFrameout {
 private:
+	GfxCursor32 *_cursor;
 	GfxCoordAdjuster32 *_coordAdjuster;
 	GfxPalette32 *_palette;
 	ResourceManager *_resMan;
 	SegManager *_segMan;
 
 public:
-	GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxPalette32 *palette, GfxTransitions32 *transitions);
+	GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxPalette32 *palette, GfxTransitions32 *transitions, GfxCursor32 *cursor);
 	~GfxFrameout();
 
 	bool _isHiRes;
@@ -196,13 +198,6 @@ private:
 	bool _remapOccurred;
 
 	/**
-	 * Whether or not the data in the current buffer is what
-	 * is visible to the user. During rendering updates,
-	 * this flag is set to false.
-	 */
-	bool _frameNowVisible;
-
-	/**
 	 * TODO: Document
 	 * TODO: Depending upon if the engine ever modifies this
 	 * rect, it may be stupid to store it separately instead
@@ -308,6 +303,13 @@ private:
 	}
 
 public:
+	/**
+	 * Whether or not the data in the current buffer is what
+	 * is visible to the user. During rendering updates,
+	 * this flag is set to false.
+	 */
+	bool _frameNowVisible;
+
 	/**
 	 * Whether palMorphFrameOut should be used instead of
 	 * frameOut for rendering. Used by kMorphOn to
