@@ -1,0 +1,109 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#ifndef TITANIC_FILES_MANAGER_H
+#define TITANIC_FILES_MANAGER_H
+
+#include "common/hashmap.h"
+#include "titanic/core/list.h"
+#include "titanic/support/screen_manager.h"
+
+namespace Titanic {
+
+class CGameManager;
+
+class CFilesManagerList : public List<ListItem> {
+};
+
+class CFilesManager {
+	struct ResourceEntry {
+		uint _offset;
+		uint _size;
+		
+		ResourceEntry() : _offset(0), _size(0) {}
+		ResourceEntry(uint offset, uint size) : _offset(offset), _size(size) {}
+	};
+	typedef Common::HashMap<Common::String, ResourceEntry> ResourceHash;
+private:
+	CGameManager *_gameManager;
+	Common::File _datFile;
+	ResourceHash _resources;
+	CFilesManagerList _list;
+	CString _string1;
+	CString _string2;
+	int _field0;
+	int _drive;
+	int _field18;
+	int _field1C;
+	int _field3C;
+	const CString _assetsPath;
+private:
+	void loadResourceIndex();
+public:
+	CFilesManager();
+	~CFilesManager();
+
+	/**
+	 * Sets the game manager
+	 */
+	void setGameManager(CGameManager *gameManager) {
+		_gameManager = gameManager;
+	}
+
+	/**
+	 * Returns true if a file of the given name exists
+	 */
+	static bool fileExists(const CString &name);
+
+	/**
+	 * Scans for a file with a matching name
+	 */
+	bool scanForFile(const CString &name);
+
+	/**
+	 * Handles displaying a load drive view if necessary
+	 */
+	void loadDrive();
+
+	void debug(CScreenManager *screenManager);
+
+	/**
+	 * Resets the view being displayed
+	 */
+	void resetView();
+
+	void fn4(const CString &name);
+
+	/**
+	 * Preloads and caches a file for access shortly
+	 */
+	void preload(const CString &name);
+
+	/**
+	 * Get a resource from the executable
+	 */
+	Common::SeekableReadStream *getResource(const CString &str);
+};
+
+} // End of namespace Titanic
+
+#endif /* TITANIC_FILES_MANAGER_H */
