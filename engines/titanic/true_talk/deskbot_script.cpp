@@ -137,8 +137,35 @@ int DeskbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 }
 
 ScriptChangedResult DeskbotScript::scriptChanged(const TTroomScript *roomScript, uint id) {
-	warning("TODO");
-	return SCR_1;
+	switch (id) {
+	case 3:
+	case 100:
+	case 108:
+		CTrueTalkManager::setFlags(21, getValue(21) + 1);
+		addResponse(getDialogueId(getValue(22) ? 240577 : 241261));
+		applyResponse();
+		break;
+
+	case 109:
+		addResponse(getDialogueId(241627));
+		applyResponse();
+		break;
+
+	case 140:
+		if (getValue(1) == 3)
+			addAssignedRoomDialogue3();
+		break;
+
+	case 148:
+		CTrueTalkManager::setFlags(3, 1);
+		break;
+
+	case 150:
+		CTrueTalkManager::setFlags(2, 1);
+		break;
+	}
+
+	return SCR_2;
 }
 
 int DeskbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
