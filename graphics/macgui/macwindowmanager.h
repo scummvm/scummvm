@@ -87,28 +87,96 @@ class Menu;
 
 typedef Common::Array<byte *> MacPatterns;
 
+/**
+ * A manager class to handle window creation, destruction,
+ * drawing, moving and event handling.
+ */
 class MacWindowManager {
 public:
 	MacWindowManager();
 	~MacWindowManager();
 
+	/**
+	 * Mutator to indicate the surface onto which the desktop will be drawn.
+	 * Note that this method should be called as soon as the WM is created.
+	 * @param screen Surface on which the desktop will be drawn.
+	 */
 	void setScreen(ManagedSurface *screen) { _screen = screen; }
+	/**
+	 * Accessor method to check the presence of built-in fonts.
+	 * @return True if there are bult-in fonts.
+	 */
 	bool hasBuiltInFonts() { return _builtInFonts; }
+	/**
+	 * Retrieve a font from the available ones.
+	 * @param name Name of the desired font.
+	 * @param fallback Fallback policy in case the desired font isn't there.
+	 * @return The requested font or the fallback.
+	 */
 	const Font *getFont(const char *name, FontManager::FontUsage fallback);
 
+	/**
+	 * Create a window with the given parameters.
+	 * Note that this method allocates the necessary memory for the window.
+	 * @param scrollable True if the window has to be scrollable.
+	 * @param resizable True if the window can be resized.
+	 * @param editable True if the window can be edited.
+	 * @return Pointer to the newly created window.
+	 */
 	MacWindow *addWindow(bool scrollable, bool resizable, bool editable);
+	/**
+	 * Add the menu to the desktop.
+	 * Note that the returned menu is empty, and therefore must be filled
+	 * afterwards.
+	 * @return Pointer to a new empty menu.
+	 */
 	Menu *addMenu();
+	/**
+	 * Set the desired window state to active.
+	 * @param id ID of the window that has to be set to active.
+	 */
 	void setActive(int id);
+	/**
+	 * Mark a window for removal.
+	 * Note that the window data will be destroyed.
+	 * @param target Window to be removed.
+	 */
 	void removeWindow(MacWindow *target);
 
+	/**
+	 * Mutator to indicate that the entire desktop must be refreshed.
+	 * @param redraw Currently unused.
+	 */
 	void setFullRefresh(bool redraw) { _fullRefresh = true; }
 
+	/**
+	 * Method to draw the desktop into the screen,
+	 * It will take into accout the contents set as dirty.
+	 * Note that this method does not refresh the screen,
+	 * g_system must be called separately.
+	 */
 	void draw();
 
+	/**
+	 * Method to process the events from the engine.
+	 * Most often this method will be called from the engine's GUI, and
+	 * will send the event to the relevant windows for them to process.
+	 * @param event The event to be processed.
+	 * @return True if the event was processed.
+	 */
 	bool processEvent(Common::Event &event);
 
+	/**
+	 * Accessor to retrieve an arbitrary window.
+	 * @param id The id of the desired window.
+	 * @return Pointer to the requested window, if it exists.
+	 */
 	BaseMacWindow *getWindow(int id) { return _windows[id]; }
 
+	/**
+	 * Retrieve the patterns used to fill surfaces.
+	 * @return A MacPatterns object reference with the patterns.
+	 */
 	MacPatterns &getPatterns() { return _patterns; }
 	void drawFilledRoundRect(ManagedSurface *surface, Common::Rect &rect, int arc, int color);
 
