@@ -129,8 +129,8 @@ void OSMovie::playClip(const Point &drawPos, uint startFrame, uint endFrame) {
 	bool widthLess = _videoSurface->getWidth() < 600;
 	bool heightLess = _videoSurface->getHeight() < 340;
 	Rect r(drawPos.x, drawPos.y,
-		drawPos.x + widthLess ? CLIP_WIDTH_REDUCED : CLIP_WIDTH,
-		drawPos.y + heightLess ? CLIP_HEIGHT_REDUCED : CLIP_HEIGHT
+		drawPos.x + (widthLess ? CLIP_WIDTH_REDUCED : CLIP_WIDTH),
+		drawPos.y + (heightLess ? CLIP_HEIGHT_REDUCED : CLIP_HEIGHT)
 	);
 
 	uint timePerFrame = 1000 / _aviSurface._frameRate;

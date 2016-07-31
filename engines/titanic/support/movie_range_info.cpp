@@ -94,7 +94,7 @@ void CMovieRangeInfo::process(CGameObject *owner) {
 	
 	for (CMovieEventList::iterator i = _events.begin(); i != _events.end(); ++i) {
 		CMovieEvent *movieEvent = *i;
-		if (!movieEvent->_type == MET_PLAY) {
+		if (movieEvent->_type == MET_MOVIE_END) {
 			flags |= CLIPFLAG_PLAY;
 			break;
 		}
