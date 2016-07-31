@@ -192,7 +192,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 			initGraphics(_displayWidth, _displayHeight + 28 + 2, _displayWidth > 320);
 		else
 			error("Unknown SCI1.1 Mac game");
-	} else if (getSciVersion() < SCI_VERSION_2)
+	} else
 		initGraphics(_displayWidth, _displayHeight, _displayWidth > 320);
 }
 

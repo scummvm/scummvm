@@ -791,6 +791,43 @@ void CelObj::scaleDrawUncompNoMD(Buffer &target, const Ratio &scaleX, const Rati
 #pragma mark -
 #pragma mark CelObjView
 
+int16 CelObjView::getNumLoops(const GuiResourceId viewId) {
+	Resource *resource = g_sci->getResMan()->findResource(ResourceId(kResourceTypeView, viewId), false);
+
+	if (!resource) {
+		return 0;
+	}
+
+	return resource->data[2];
+}
+
+int16 CelObjView::getNumCels(const GuiResourceId viewId, const int16 loopNo) {
+	Resource *resource = g_sci->getResMan()->findResource(ResourceId(kResourceTypeView, viewId), false);
+
+	if (!resource) {
+		return 0;
+	}
+
+	byte *data = resource->data;
+
+	uint16 loopCount = data[2];
+	if (loopNo >= loopCount) {
+		return 0;
+	}
+
+	const uint16 viewHeaderSize = READ_SCI11ENDIAN_UINT16(data);
+	const uint8 loopHeaderSize = data[12];
+	const uint8 viewHeaderFieldSize = 2;
+
+	byte *loopHeader = data + viewHeaderFieldSize + viewHeaderSize + (loopHeaderSize * loopNo);
+
+	if ((int8)loopHeader[0] != -1) {
+		loopHeader = data + viewHeaderFieldSize + viewHeaderSize + (loopHeaderSize * (int8)loopHeader[0]);
+	}
+
+	return loopHeader[2];
+}
+
 CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int16 celNo) {
 	_info.type = kCelTypeView;
 	_info.resourceId = viewId;
