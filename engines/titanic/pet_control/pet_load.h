@@ -42,7 +42,7 @@ public:
 	/**
 	 * Highlight any currently highlighted element
 	 */
-	virtual void highlightCurrent() { resetSlots(); }
+	virtual void highlightCurrent(const Point &pt) { resetSlots(); }
 
 	/**
 	 * Returns the tooltip text for when the glyph is selected

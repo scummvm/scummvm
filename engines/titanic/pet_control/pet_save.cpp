@@ -48,7 +48,7 @@ bool CPetSave::MouseButtonUpMsg(const Point &pt) {
 	}
 }
 
-void CPetSave::highlightCurrent() {
+void CPetSave::highlightCurrent(const Point &pt) {
 	resetSlots();
 	highlightSave(_savegameSlotNum);
 }

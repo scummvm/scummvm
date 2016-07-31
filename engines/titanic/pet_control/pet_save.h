@@ -47,7 +47,7 @@ public:
 	/**
 	 * Highlight any currently highlighted element
 	 */
-	virtual void highlightCurrent();
+	virtual void highlightCurrent(const Point &pt);
 
 	/**
 	 * Returns the tooltip text for when the glyph is selected

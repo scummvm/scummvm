@@ -29,16 +29,14 @@ CStarField::CStarField() : _val1(0), _val2(0), _val3(0), _val4(true),
 	_val5(0), _val6(false) {
 }
 
-void CStarField::load(SimpleFile *file, int param) {
-	if (!param) {
-		_sub7.load(file);
-		_sub8.load(file);
-		_val1 = file->readNumber();
-		_val2 = file->readNumber();
-		_val3 = file->readNumber();
-		_val4 = file->readNumber();
-		_val6 = file->readNumber();
-	}
+void CStarField::load(SimpleFile *file) {
+	_sub7.load(file);
+	_sub8.load(file);
+	_val1 = file->readNumber();
+	_val2 = file->readNumber();
+	_val3 = file->readNumber();
+	_val4 = file->readNumber();
+	_val6 = file->readNumber();
 }
 
 void CStarField::save(SimpleFile *file, int indent) {

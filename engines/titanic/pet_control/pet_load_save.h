@@ -91,7 +91,7 @@ public:
 	/**
 	 * Handles keypresses when the glyph is focused
 	 */
-	virtual bool KeyCharMsg(Common::KeyCode key);
+	virtual bool KeyCharMsg(int key);
 
 	/**
 	 * Resets highlighting on the save slots

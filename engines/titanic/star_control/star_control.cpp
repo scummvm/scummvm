@@ -60,7 +60,7 @@ void CStarControl::load(SimpleFile *file) {
 	int val = file->readNumber();
 	
 	if (!val) {
-		_starField.load(file, 0);
+		_starField.load(file);
 		if (!_starField.initDocument())
 			error("Couldn't initialise the StarField document");
 

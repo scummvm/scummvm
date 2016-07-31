@@ -51,7 +51,7 @@ public:
 	/**
 	 * Load the data for the class from file
 	 */
-	void load(SimpleFile *file, int param);
+	void load(SimpleFile *file);
 
 	/**
 	 * Save the data for the class to file

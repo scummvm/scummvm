@@ -81,7 +81,7 @@ bool CPetLoadSave::MouseButtonDownMsg(const Point &pt) {
 	return false;
 }
 
-bool CPetLoadSave::KeyCharMsg(Common::KeyCode key) {
+bool CPetLoadSave::KeyCharMsg(int key) {
 	switch (key) {
 	case Common::KEYCODE_TAB:
 	case Common::KEYCODE_DOWN:

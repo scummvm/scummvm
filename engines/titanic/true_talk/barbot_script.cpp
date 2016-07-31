@@ -650,7 +650,7 @@ done:
 					val += 4;
 				if (val < 9) {
 					val = val / 2;
-					dval = 250081 + flag ? 0 : 267;
+					dval = 250081 + (flag ? 0 : 267);
 				}
 				CTrueTalkManager::setFlags(29, val);
 				break;
@@ -661,7 +661,7 @@ done:
 					val += 4;
 				if (val < 9) {
 					val = val / 2;
-					dval = 250081 + flag ? 0 : 243;
+					dval = 250081 + (flag ? 0 : 243);
 				}
 				CTrueTalkManager::setFlags(30, val);
 				break;
@@ -672,7 +672,7 @@ done:
 					val += 4;
 				if (val < 9) {
 					val = val / 2;
-					dval = 250081 + flag ? 0 : 256;
+					dval = 250081 + (flag ? 0 : 256);
 				}
 				CTrueTalkManager::setFlags(31, val);
 				break;
@@ -683,7 +683,7 @@ done:
 					val += 4;
 				if (val < 9) {
 					val = val / 2;
-					dval = 250081 + flag ? 0 : 251;
+					dval = 250081 + (flag ? 0 : 251);
 				}
 				CTrueTalkManager::setFlags(32, val);
 				break;
@@ -694,7 +694,7 @@ done:
 					val += 4;
 				if (val < 9) {
 					val = val / 2;
-					dval = 250081 + flag ? 0 : 273;
+					dval = 250081 + (flag ? 0 : 273);
 				}
 				CTrueTalkManager::setFlags(33, val);
 				break;
@@ -705,7 +705,7 @@ done:
 					val += 4;
 				if (val < 9) {
 					val = val / 2;
-					dval = 250081 + flag ? 0 : 236;
+					dval = 250081 + (flag ? 0 : 236);
 				}
 				CTrueTalkManager::setFlags(34, val);
 				break;
@@ -969,7 +969,7 @@ int BarbotScript::updateState(uint oldId, uint newId, int index) {
 		return 250538;
 	}
 	if (newId == 251704) {
-		return 251701 + _field7C ? 3 : 0;
+		return 251701 + (_field7C ? 3 : 0);
 	}
 
 	for (uint idx = 0; idx < _states.size(); ++idx) {
@@ -1078,14 +1078,14 @@ int BarbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScrip
 
 			if (bit2) {
 				if (!bit0) {
-					id = 250085 - bit3 ? 0 : 199715;
+					id = 250085 - (bit3 ? 0 : 199715);
 					break;
 				} else if (!bit3) {
 					id = 250627;
 				}
 			} else {
 				if (!bit0) {
-					id = 50365 + bit3 ? 0 : 2;
+					id = 50365 + (bit3 ? 0 : 2);
 				} else if (!bit3) {
 					id = 50370;
 				}
