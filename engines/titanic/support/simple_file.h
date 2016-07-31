@@ -296,6 +296,16 @@ public:
 	virtual bool open(const Common::String &filename);
 
 	/**
+	 * Unsupported open method from parent class
+	 */
+	virtual void open(Common::SeekableReadStream *stream) {}
+
+	/**
+	 * Unsupported open method from parent class
+	 */
+	virtual void open(Common::OutSaveFile *stream) {}
+
+	/**
 	 * Return a reference to the read stream
 	 */
 	Common::SeekableReadStream *readStream() const { return _inStream; }

@@ -86,6 +86,13 @@ public:
 	void setSurface(CScreenManager *screenManager, DirectDrawSurface *surface);
 
 	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file) {
+		ListItem::load(file);
+	}
+
+	/**
 	 * Load the surface with the passed resource
 	 */
 	virtual void loadResource(const CResourceKey &key) = 0;
