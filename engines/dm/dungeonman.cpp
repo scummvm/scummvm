@@ -767,34 +767,28 @@ void DungeonMan::f174_setCurrentMapAndPartyMap(uint16 mapIndex) {
 
 
 Square DungeonMan::f151_getSquare(int16 mapX, int16 mapY) {
-	int16 L0248_i_Multiple;
-#define AL0248_B_IsMapXInBounds L0248_i_Multiple
-#define AL0248_i_SquareType     L0248_i_Multiple
-	int16 L0249_i_Multiple;
-#define AL0249_B_IsMapYInBounds L0249_i_Multiple
-#define AL0249_i_SquareType     L0249_i_Multiple
+	bool isMapYInBounds = (mapY >= 0) && (mapY < _vm->_dungeonMan->_g274_currMapHeight);
+	bool isMapXInBounds = (mapX >= 0) && (mapX < _vm->_dungeonMan->_g273_currMapWidth);
 
-	AL0249_B_IsMapYInBounds = (mapY >= 0) && (mapY < _vm->_dungeonMan->_g274_currMapHeight);
-	if ((AL0248_B_IsMapXInBounds = (mapX >= 0) && (mapX < _vm->_dungeonMan->_g273_currMapWidth)) && AL0249_B_IsMapYInBounds) {
+	if (isMapXInBounds && isMapYInBounds)
 		return Square(_vm->_dungeonMan->_g271_currMapData[mapX][mapY]);
-	}
 
-	if (AL0249_B_IsMapYInBounds) {
-		if (((mapX == -1) && ((AL0249_i_SquareType = Square(_vm->_dungeonMan->_g271_currMapData[0][mapY]).getType()) == k1_CorridorElemType)) || (AL0249_i_SquareType == k2_ElementTypePit)) {
+	if (isMapYInBounds) {
+		SquareType squareType = Square(_vm->_dungeonMan->_g271_currMapData[0][mapY]).getType();
+		if (((mapX == -1) && (squareType == k1_CorridorElemType)) || (squareType == k2_ElementTypePit))
 			return Square(k0_ElementTypeWall, k0x0004_WallEastRandOrnAllowed);
-		}
-		if (((mapX == _vm->_dungeonMan->_g273_currMapWidth) && ((AL0249_i_SquareType = Square(_vm->_dungeonMan->_g271_currMapData[_vm->_dungeonMan->_g273_currMapWidth - 1][mapY]).getType()) == k1_CorridorElemType)) || (AL0249_i_SquareType == k2_ElementTypePit)) {
+
+		squareType = Square(_vm->_dungeonMan->_g271_currMapData[_vm->_dungeonMan->_g273_currMapWidth - 1][mapY]).getType();
+		if (((mapX == _vm->_dungeonMan->_g273_currMapWidth) && (squareType == k1_CorridorElemType)) || (squareType == k2_ElementTypePit))
 			return Square(k0_ElementTypeWall, k0x0001_WallWestRandOrnAllowed);
-		}
-	} else {
-		if (AL0248_B_IsMapXInBounds) {
-			if (((mapY == -1) && ((AL0248_i_SquareType = Square(_vm->_dungeonMan->_g271_currMapData[mapX][0]).getType()) == k1_CorridorElemType)) || (AL0248_i_SquareType == k2_ElementTypePit)) {
-				return Square(k0_ElementTypeWall, k0x0002_WallSouthRandOrnAllowed);
-			}
-			if (((mapY == _vm->_dungeonMan->_g274_currMapHeight) && ((AL0248_i_SquareType = Square(_vm->_dungeonMan->_g271_currMapData[mapX][_vm->_dungeonMan->_g274_currMapHeight - 1]).getType()) == k1_CorridorElemType)) || (AL0248_i_SquareType == k2_ElementTypePit)) {
-				return Square(k0_ElementTypeWall, k0x0008_WallNorthRandOrnAllowed);
-			}
-		}
+	} else if (isMapXInBounds) {
+		SquareType squareType = Square(_vm->_dungeonMan->_g271_currMapData[mapX][0]).getType();
+		if (((mapY == -1) && (squareType == k1_CorridorElemType)) || (squareType == k2_ElementTypePit))
+			return Square(k0_ElementTypeWall, k0x0002_WallSouthRandOrnAllowed);
+
+		squareType = Square(_vm->_dungeonMan->_g271_currMapData[mapX][_vm->_dungeonMan->_g274_currMapHeight - 1]).getType();
+		if (((mapY == _vm->_dungeonMan->_g274_currMapHeight) && (squareType == k1_CorridorElemType)) || (squareType == k2_ElementTypePit))
+			return Square(k0_ElementTypeWall, k0x0008_WallNorthRandOrnAllowed);
 	}
 	return Square(k0_ElementTypeWall, 0);
 }
