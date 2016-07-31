@@ -61,27 +61,27 @@ class MacWindowManager;
 class MacWindowBorder;
 
 namespace MacWindowConstants {
-	enum WindowType {
-		kWindowUnknown,
-		kWindowWindow,
-		kWindowMenu
-	};
+enum WindowType {
+	kWindowUnknown,
+	kWindowWindow,
+	kWindowMenu
+};
 
-	enum {
-		kBorderWidth = 17
-	};
+enum {
+	kBorderWidth = 17
+};
 
-	enum WindowClick {
-		kBorderNone = 0,
-		kBorderScrollUp,
-		kBorderScrollDown,
-		kBorderScrollLeft,
-		kBorderScrollRight,
-		kBorderCloseButton,
-		kBorderInner,
-		kBorderBorder,
-		kBorderResizeButton
-	};
+enum WindowClick {
+	kBorderNone = 0,
+	kBorderScrollUp,
+	kBorderScrollDown,
+	kBorderScrollLeft,
+	kBorderScrollRight,
+	kBorderCloseButton,
+	kBorderInner,
+	kBorderBorder,
+	kBorderResizeButton
+};
 }
 using namespace MacWindowConstants;
 

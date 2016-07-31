@@ -59,25 +59,25 @@
 namespace Graphics {
 
 namespace MacGUIConstants {
-	enum {
-		kDesktopArc = 7
-	};
+enum {
+	kDesktopArc = 7
+};
 
-	enum {
-		kColorBlack = 0,
-		kColorGray = 1,
-		kColorWhite = 2,
-		kColorGreen = 3,
-		kColorGreen2 = 4,
-		kColorCount
-	};
+enum {
+	kColorBlack = 0,
+	kColorGray = 1,
+	kColorWhite = 2,
+	kColorGreen = 3,
+	kColorGreen2 = 4,
+	kColorCount
+};
 
-	enum {
-		kPatternSolid = 1,
-		kPatternStripes = 2,
-		kPatternCheckers = 3,
-		kPatternCheckers2 = 4
-	};
+enum {
+	kPatternSolid = 1,
+	kPatternStripes = 2,
+	kPatternCheckers = 3,
+	kPatternCheckers2 = 4
+};
 }
 using namespace MacGUIConstants;
 
