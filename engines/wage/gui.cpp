@@ -66,18 +66,18 @@ static const Graphics::MenuData menuSubItems[] = {
 	{ kMenuHighLevel, "Edit",	0, 0, false },
 	{ kMenuFile, "New",			kMenuActionNew, 0, false },
 	{ kMenuFile, "Open...",		kMenuActionOpen, 0, true },
-	{ kMenuFile, "Close",			kMenuActionClose, 0, true },
-	{ kMenuFile, "Save",			kMenuActionSave, 0, true },
+	{ kMenuFile, "Close",		kMenuActionClose, 0, true },
+	{ kMenuFile, "Save",		kMenuActionSave, 0, true },
 	{ kMenuFile, "Save as...",	kMenuActionSaveAs, 0, true },
 	{ kMenuFile, "Revert",		kMenuActionRevert, 0, false },
-	{ kMenuFile, "Quit",			kMenuActionQuit, 0, true },
+	{ kMenuFile, "Quit",		kMenuActionQuit, 0, true },
 
-	{ kMenuEdit, "Undo",			kMenuActionUndo, 'Z', false },
-	{ kMenuEdit, NULL,				0, 0, false },
-	{ kMenuEdit, "Cut",				kMenuActionCut, 'K', false },
-	{ kMenuEdit, "Copy",			kMenuActionCopy, 'C', false },
-	{ kMenuEdit, "Paste",			kMenuActionPaste, 'V', false },
-	{ kMenuEdit, "Clear",			kMenuActionClear, 'B', false },
+	{ kMenuEdit, "Undo",		kMenuActionUndo, 'Z', false },
+	{ kMenuEdit, NULL,			0, 0, false },
+	{ kMenuEdit, "Cut",			kMenuActionCut, 'K', false },
+	{ kMenuEdit, "Copy",		kMenuActionCopy, 'C', false },
+	{ kMenuEdit, "Paste",		kMenuActionPaste, 'V', false },
+	{ kMenuEdit, "Clear",		kMenuActionClear, 'B', false },
 
 	{ 0, NULL,			0, 0, false }
 };

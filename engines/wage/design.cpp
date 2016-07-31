@@ -102,7 +102,7 @@ void Design::paint(Graphics::ManagedSurface *surface, Graphics::MacPatterns &pat
 		_surface->create(_bounds->width(), _bounds->height(), Graphics::PixelFormat::createFormatCLUT8());
 
 		_surface->clear(kColorGreen);
-		
+
 		needRender = true;
 	}
 
@@ -265,7 +265,7 @@ void drawPixelPlain(int x, int y, int color, void *data) {
 }
 
 void Design::drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
-	Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
+				Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 	int16 y1 = in.readSint16BE();
 	int16 x1 = in.readSint16BE();
 	int16 y2 = in.readSint16BE();
@@ -294,7 +294,7 @@ void Design::drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 }
 
 void Design::drawRoundRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
-	Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
+				Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 	int16 y1 = in.readSint16BE();
 	int16 x1 = in.readSint16BE();
 	int16 y2 = in.readSint16BE();
@@ -397,7 +397,7 @@ void Design::drawPolygon(Graphics::ManagedSurface *surface, Common::ReadStream &
 }
 
 void Design::drawOval(Graphics::ManagedSurface *surface, Common::ReadStream &in,
-	Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
+			Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 	int16 y1 = in.readSint16BE();
 	int16 x1 = in.readSint16BE();
 	int16 y2 = in.readSint16BE();
