@@ -177,6 +177,18 @@ public:
 	void load(const char *name);
 };
 
+struct TTcommonPhrase {
+	CString _str;
+	uint _dialogueId;
+	uint _roomNum;
+	uint _val1;
+};
+
+class TTcommonPhraseArray : public Common::Array<TTcommonPhrase> {
+public:
+	void load(const char *name);
+};
+
 } // End of namespace Titanic
 
 #endif /* TITANIC_TT_NPC_SCRIPT_H */

@@ -194,12 +194,30 @@ void TTupdateStateArray::load(const char *name) {
 	Common::SeekableReadStream *r = g_vm->_filesManager->getResource(name);
 
 	while (r->pos() < r->size()) {
-		TTupdateState ue;
-		ue._newId = r->readUint32LE();
-		ue._newValue = r->readUint32LE();
-		ue._dialBits = r->readUint32LE();
+		TTupdateState us;
+		us._newId = r->readUint32LE();
+		us._newValue = r->readUint32LE();
+		us._dialBits = r->readUint32LE();
 
-		push_back(ue);
+		push_back(us);
+	}
+
+	delete r;
+}
+
+/*------------------------------------------------------------------------*/
+
+void TTcommonPhraseArray::load(const char *name) {
+	Common::SeekableReadStream *r = g_vm->_filesManager->getResource(name);
+
+	while (r->pos() < r->size()) {
+		TTcommonPhrase cp;
+		cp._str = readStringFromStream(r);
+		cp._dialogueId = r->readUint32LE();
+		cp._roomNum = r->readUint32LE();
+		cp._val1 = r->readUint32LE();
+
+		push_back(cp);
 	}
 
 	delete r;

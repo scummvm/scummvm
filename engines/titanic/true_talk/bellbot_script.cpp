@@ -31,6 +31,16 @@ namespace Titanic {
 
 uint BellbotScript::_oldId;
 
+static const RoomDialogueId ROOM_DIALOGUE_IDS[] = {
+	{ 100, 201442 },{ 101, 201417 },{ 107, 201491 },{ 108, 201421 },
+	{ 109, 201437 },{ 110, 201431 },{ 111, 201457 },{ 112, 201411 },
+	{ 113, 201424 },{ 114, 201464 },{ 115, 201407 },{ 116, 201468 },
+	{ 117, 201447 },{ 122, 201491 },{ 123, 201299 },{ 124, 201479 },
+	{ 125, 201480 },{ 126, 201476 },{ 127, 201483 },{ 128, 201399 },
+	{ 129, 201400 },{ 130, 201387 },{ 131, 201395 },{ 132, 201388 },
+	{ 0, 0 }
+};
+
 BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2) :
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, -1, -1, -1, 0),
@@ -53,6 +63,7 @@ BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
 	_quotes.load("Quotes/Bellbot");
 	_states.load("States/Bellbot");
 	_preResponses.load("PreResponses/Bellbot");
+	_phrases.load("Phrases/Bellbot");
 }
 
 void BellbotScript::setupSentences() {
@@ -1608,28 +1619,137 @@ void BellbotScript::randomResponse4(TTroomScript *roomScript, uint id) {
 }
 
 int BellbotScript::checkCommonSentences(TTroomScript *roomScript, TTsentence *sentence) {
-	// TODO
+	if (!roomScript || !sentence)
+		return 1;
+
+	uint val1 = getValue(1);
+	uint newId = 0;
+	for (uint idx = 0; idx < _phrases.size(); ++idx) {
+		TTcommonPhrase &cp = _phrases[idx];
+
+		if (cp._roomNum != 0 && cp._roomNum != roomScript->_scriptId)
+			continue;
+		if (cp._val1 != 0 && cp._val1 != val1 && (cp._val1 == 3 || val1 != 4))
+			continue;
+		if (!sentence->contains(cp._str.c_str()))
+			continue;
+
+		addResponse(getDialogueId(cp._dialogueId));
+		applyResponse();
+		return 2;
+	}
+
 	return 0;
 }
 
-int BellbotScript::checkCommonWords(TTroomScript *roomScript, TTsentence *sentence) {
-	// TODO
-	return 0;
+bool BellbotScript::checkCommonWords(TTroomScript *roomScript, TTsentence *sentence) {
+	if (!roomScript || !sentence)
+		return 0;
+	CTrueTalkManager::setFlags(23, 0);
+	if (sentence->_field2C != 4)
+		return 0;
+
+	if (sentence->localWord("garage")) {
+		addResponse(getDialogueId(200874));
+	} else if (sentence->localWord("parrotfoodshop")) {
+		addResponse(getDialogueId(200821));
+	} else if (sentence->localWord("sgt") && sentence->localWord("restaurant")) {
+		addResponse(getDialogueId(200857));
+	} else if (sentence->localWord("firstclass") && sentence->localWord("restaurant")) {
+		addResponse(getDialogueId(200839));
+	} else if (sentence->localWord("restaurant")) {
+		addResponse(getDialogueId(getValue(1) == 1 ? 200839 : 200857));
+	} else if (getValue(1) == 1 && sentence->localWord("canal") && sentence->localWord("firstclass")) {
+		addResponse(getDialogueId(200846));
+	} else if (getValue(1) == 2 && sentence->localWord("canal") && sentence->localWord("secondclass")) {
+		addResponse(getDialogueId(200847));
+	} else if (sentence->localWord("canal")) {
+		addResponse(getDialogueId(getValue(1) == 1 ? 200846 : 200847));
+	} else if (sentence->localWord("firstclass") && 
+			(sentence->localWord("stateroom") || sentence->localWord("room"))) {
+		addResponse(getDialogueId(getValue(1) == 1 ? 200840 : 200306));
+	} else if (sentence->localWord("secondclass") && sentence->localWord("stateroom") && sentence->localWord("room")) {
+		addResponse(getDialogueId(getValue(1) < 3 ? 202231 : 200306));
+	} else if (sentence->localWord("stateroom") || sentence->contains("my room")) {
+		addResponse(getDialogueId(202231));
+	} else if (sentence->localWord("firstclass")) {
+		addResponse(getDialogueId(200840));
+	} else if (sentence->localWord("secondclass")) {
+		addResponse(getDialogueId(200841));
+	} else if (sentence->localWord("thirdclass")) {
+		addResponse(getDialogueId(202231));
+	} else if (sentence->localWord("arboretum")) {
+		addResponse(getDialogueId(200842));
+	} else if (sentence->localWord("bar")) {
+		addResponse(getDialogueId(200843));
+	} else if (sentence->localWord("bottomofwell")) {
+		addResponse(getDialogueId(200860));
+	} else if (sentence->localWord("topwell") || sentence->localWord("well")) {
+		addResponse(getDialogueId(200861));
+	} else if (sentence->localWord("bridge")) {
+		addResponse(getDialogueId(202213));
+	} else if (sentence->localWord("creatorroom")) {
+		addResponse(getDialogueId(200848));
+	} else if (sentence->localWord("servicelift")) {
+		addResponse(getDialogueId(200855));
+	} else if (sentence->localWord("lift")) {
+		addResponse(getDialogueId(202256));
+	} else if (sentence->localWord("bilgeroom")) {
+		addResponse(getDialogueId(202255));
+	} else if (sentence->localWord("musicroom")) {
+		addResponse(getDialogueId(200851));
+	} else if (sentence->localWord("parrotlobby")) {
+		addResponse(getDialogueId(200852));
+	} else if (sentence->localWord("parrot") &&
+			(sentence->localWord("room") || sentence->localWord("lobby"))) {
+		addResponse(getDialogueId(200852));
+	} else if (sentence->localWord("promenade")) {
+		addResponse(getDialogueId(200853));
+	} else if (sentence->localWord("sculpture") || sentence->localWord("sculptureroom")
+				|| sentence->localWord("statue")) {
+		addResponse(getDialogueId(200854));
+	} else if (sentence->localWord("lounge")) {
+		addResponse(getDialogueId(200856));
+	} else if (sentence->localWord("titania")) {
+		if (sentence->localWord("room")) {
+			addResponse(getDialogueId(200859));
+		} else if (sentence->localWord("nose")) {
+			addResponse(getDialogueId(200703));
+		} else if (sentence->localWord("mouth")) {
+			addResponse(getDialogueId(200702));
+		} else if (sentence->localWord("eyes")) {
+			addResponse(getDialogueId(200701));
+		} else if (sentence->localWord("ear")) {
+			addResponse(getDialogueId(200698));
+		} else if (sentence->localWord("brain")) {
+			addResponse(getDialogueId(200693));
+		} else {
+			addResponse(getDialogueId(200686));
+		}
+	} else if (sentence->localWord("embarklobby") 
+			|| sentence->localWord("lobby")) {
+		addResponse(getDialogueId(200850));
+	} else if (sentence->localWord("pellerator")) {
+		addResponse(getDialogueId(200862));
+	} else if (sentence->localWord("servicelift") 
+			|| (sentence->localWord("service") && sentence->localWord("elevator"))) {
+		addResponse(getDialogueId(200855));
+	} else if (sentence->localWord("elevator")) {
+		addResponse(getDialogueId(202256));
+	} else if (sentence->localWord("now")) {
+		addResponse(getDialogueId(200788));
+	} else if (sentence->localWord("room")) {
+		addResponse(getDialogueId(200311));
+	} else {
+		return false;
+	}
+
+	return true;
 }
 
 uint BellbotScript::getRoomDialogueId(TTroomScript *roomScript) {
 	if (!roomScript)
 		return 0;
-
-	static const RoomDialogueId ROOM_DIALOGUE_IDS[] = {
-		{ 100, 201442 }, { 101, 201417 }, { 107, 201491 }, { 108, 201421 },
-		{ 109, 201437 }, { 110, 201431 }, { 111, 201457 }, { 112, 201411 },
-		{ 113, 201424 }, { 114, 201464 }, { 115, 201407 }, { 116, 201468 },
-		{ 117, 201447 }, { 122, 201491 }, { 123, 201299 }, { 124, 201479 },
-		{ 125, 201480 }, { 126, 201476 }, { 127, 201483 }, { 128, 201399 },
-		{ 129, 201400 }, { 130, 201387 }, { 131, 201395 }, { 132, 201388 },
-		{ 0, 0 }
-	};
 
 	for (int idx = 0; ROOM_DIALOGUE_IDS[idx]._roomNum; ++idx) {
 		if (ROOM_DIALOGUE_IDS[idx]._roomNum == roomScript->_scriptId)

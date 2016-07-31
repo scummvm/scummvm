@@ -33,6 +33,7 @@ private:
 	TTmapEntryArray _states;
 	TTmapEntryArray _preResponses;
 	TTsentenceEntries _sentences[20];
+	TTcommonPhraseArray _phrases;
 	int _array[150];
 	int _field2D0;
 	int _field2D4;
@@ -77,7 +78,7 @@ private:
 	void randomResponse4(TTroomScript *roomScript, uint id);
 
 	int checkCommonSentences(TTroomScript *roomScript, TTsentence *sentence);
-	int checkCommonWords(TTroomScript *roomScript, TTsentence *sentence);
+	bool checkCommonWords(TTroomScript *roomScript, TTsentence *sentence);
 
 	uint getRoomDialogueId(TTroomScript *roomScript);
 	
