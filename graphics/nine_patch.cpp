@@ -235,6 +235,11 @@ void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, in
 
 		drawRegions(srf, dx, dy, dw, dh);
 
+		//TODO: This can be further optimized by keeping the data between draws,
+		// and using a unique identifier for each palette, so that it only gets
+		// recalculated when the palette changes.
+		_cached_colors.clear();
+
 		for (uint i = 0; i < srf.w; ++i) {
 			for (uint j = 0; j < srf.h; ++j) {
 				uint32 color = *(uint32*)srf.getBasePtr(i, j);
@@ -334,18 +339,21 @@ static inline uint32 dist(uint32 a, uint32 b) {
 }
 
 byte NinePatchBitmap::closestGrayscale(uint32 color, byte* palette, byte paletteLength) {
-	byte target = grayscale(color);
-	byte bestNdx = 0;
-	byte bestColor = grayscale(palette[0], palette[1], palette[2]);
-	for (byte i = 1; i < paletteLength; ++i) {
-		byte current = grayscale(palette[i * 3], palette[(i * 3) + 1], palette[(i * 3) + 2]);
-		if (dist(target, bestColor) >= dist(target, current)) {
-			bestColor = current;
-			bestNdx = i;
+	if (!_cached_colors.contains(color)) {
+		byte target = grayscale(color);
+		byte bestNdx = 0;
+		byte bestColor = grayscale(palette[0], palette[1], palette[2]);
+		for (byte i = 1; i < paletteLength; ++i) {
+			byte current = grayscale(palette[i * 3], palette[(i * 3) + 1], palette[(i * 3) + 2]);
+			if (dist(target, bestColor) >= dist(target, current)) {
+				bestColor = current;
+				bestNdx = i;
+			}
 		}
+		_cached_colors[color] = bestNdx;
 	}
 
-	return bestNdx;
+	return _cached_colors[color];
 }
 
 } // end of namespace Graphics

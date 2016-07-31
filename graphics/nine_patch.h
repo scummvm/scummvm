@@ -48,6 +48,7 @@
 
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/hashmap.h"
 
 namespace Graphics {
 
@@ -81,6 +82,7 @@ class NinePatchBitmap {
 	bool _destroy_bmp;
 	int _width, _height;
 	int _cached_dw, _cached_dh;
+	Common::HashMap<uint32, int> _cached_colors;
 
 public:
 	NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bitmap);
@@ -88,7 +90,7 @@ public:
 
 	void blit(Graphics::Surface &target, int dx, int dy, int dw, int dh, byte *palette = NULL, byte numColors = 0);
 	void blitClip(Graphics::Surface &target, Common::Rect clip, int dx, int dy, int dw, int dh);
-		
+
 	int getWidth() { return _width; }
 	int getHeight() { return _height; }
 	int getMinWidth() { return _h._fix; }
