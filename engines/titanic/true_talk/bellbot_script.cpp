@@ -344,9 +344,75 @@ int BellbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
 	return 2;
 }
 
-ScriptChangedResult BellbotScript::scriptChanged(TTscriptBase *roomScript, uint id) {
-	warning("TODO");
-	return SCR_1;
+ScriptChangedResult BellbotScript::scriptChanged(TTroomScript *roomScript, uint id) {
+	if (!roomScript)
+		return SCR_2;
+
+	switch (id) {
+	case 104:
+		addResponse(getDialogueId(200617));
+		applyResponse();
+		break;
+
+	case 105:
+		addResponse(getDialogueId(200732));
+		applyResponse();
+		break;
+
+	case 106:
+		addResponse(getDialogueId(200733));
+		applyResponse();
+		break;
+
+	case 107:
+		addResponse(getDialogueId(200731));
+		applyResponse();
+		break;
+
+	case 157:
+		_field2DC = 1;
+		break;
+
+	case 158:
+		CTrueTalkManager::setFlags(26, 1);
+		break;
+
+	case 3:
+		if (_field2DC) {
+			if (randomResponse0(roomScript, id))
+				return SCR_2;
+		} else {
+			addResponse(getDialogueId(201693));
+			applyResponse();
+		}
+
+		_field2DC = 0;
+		CTrueTalkManager::_v9 = 0;
+		// Deliberate fall-through
+	default:
+		if (roomScript->_scriptId == 115 && id == 103) {
+			switch (getValue(4)) {
+			case 0:
+				addResponse(getDialogueId(200014));
+				applyResponse();
+				break;
+			case 1:
+			case 2:
+				addResponse(getDialogueId(200011));
+				applyResponse();
+				break;
+			case 3:
+				addResponse(getDialogueId(200007));
+				applyResponse();
+				break;
+			default:
+				break;
+			}
+		}
+		break;
+	}
+
+	return SCR_2;
 }
 
 int BellbotScript::handleQuote(TTroomScript *roomScript, TTsentence *sentence,
@@ -1623,7 +1689,6 @@ int BellbotScript::checkCommonSentences(TTroomScript *roomScript, TTsentence *se
 		return 1;
 
 	uint val1 = getValue(1);
-	uint newId = 0;
 	for (uint idx = 0; idx < _phrases.size(); ++idx) {
 		TTcommonPhrase &cp = _phrases[idx];
 

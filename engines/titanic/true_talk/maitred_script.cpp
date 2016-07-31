@@ -70,7 +70,7 @@ int MaitreDScript::process(TTroomScript *roomScript, TTsentence *sentence) {
 	return 0;
 }
 
-ScriptChangedResult MaitreDScript::scriptChanged(TTscriptBase *roomScript, uint id) {
+ScriptChangedResult MaitreDScript::scriptChanged(TTroomScript *roomScript, uint id) {
 	warning("TODO");
 	return SCR_1;
 }

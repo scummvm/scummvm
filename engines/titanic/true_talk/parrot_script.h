@@ -50,7 +50,7 @@ public:
 	/**
 	 * Called when the script/id changes
 	 */
-	virtual ScriptChangedResult scriptChanged(TTscriptBase *roomScript, uint id);
+	virtual ScriptChangedResult scriptChanged(TTroomScript *roomScript, uint id);
 
 	/**
 	 * Process a sentence fragment entry

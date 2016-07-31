@@ -64,7 +64,7 @@ int DeskbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
 	return 0;
 }
 
-ScriptChangedResult DeskbotScript::scriptChanged(TTscriptBase *roomScript, uint id) {
+ScriptChangedResult DeskbotScript::scriptChanged(TTroomScript *roomScript, uint id) {
 	warning("TODO");
 	return SCR_1;
 }

@@ -95,7 +95,7 @@ int LiftbotScript::proc9() const {
 	return 0;
 }
 
-ScriptChangedResult LiftbotScript::scriptChanged(TTscriptBase *roomScript, uint id) {
+ScriptChangedResult LiftbotScript::scriptChanged(TTroomScript *roomScript, uint id) {
 	warning("TODO");
 	return SCR_1;
 }

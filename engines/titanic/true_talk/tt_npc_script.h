@@ -72,7 +72,7 @@ public:
 	/**
 	 * Called when the script/id changes
 	 */
-	virtual ScriptChangedResult scriptChanged(TTscriptBase *roomScript, uint id) = 0;
+	virtual ScriptChangedResult scriptChanged(TTroomScript *roomScript, uint id) = 0;
 
 	virtual int proc11() const = 0;
 	virtual int proc12() const = 0;
@@ -237,7 +237,7 @@ public:
 	/**
 	 * Called when the script/id changes
 	 */
-	virtual ScriptChangedResult scriptChanged(TTscriptBase *roomScript, uint id) {
+	virtual ScriptChangedResult scriptChanged(TTroomScript *roomScript, uint id) {
 		return SCR_2;
 	}
 
@@ -335,8 +335,8 @@ public:
 	/**
 	 * Called with the script and id changes
 	 */
-	ScriptChangedResult notifyScript(TTscriptBase *npcScript, int id) {
-		return scriptChanged(npcScript, id);
+	ScriptChangedResult notifyScript(TTroomScript *roomScript, int id) {
+		return scriptChanged(roomScript, id);
 	}
 };
 

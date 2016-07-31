@@ -79,7 +79,7 @@ int SuccUBusScript::process(TTroomScript *roomScript, TTsentence *sentence) {
 	return 0;
 }
 
-ScriptChangedResult SuccUBusScript::scriptChanged(TTscriptBase *roomScript, uint id) {
+ScriptChangedResult SuccUBusScript::scriptChanged(TTroomScript *roomScript, uint id) {
 	warning("TODO");
 	return SCR_1;
 }

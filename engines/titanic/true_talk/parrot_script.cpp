@@ -63,7 +63,7 @@ int ParrotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
 	return 2;
 }
 
-ScriptChangedResult ParrotScript::scriptChanged(TTscriptBase *roomScript, uint id) {
+ScriptChangedResult ParrotScript::scriptChanged(TTroomScript *roomScript, uint id) {
 	if (id >= 280000 && id <= 280276) {
 		if (id == 280258) {
 			if (CTrueTalkManager::_currentNPC) {

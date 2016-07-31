@@ -70,7 +70,7 @@ public:
 	/**
 	 * Called when the script/id changes
 	 */
-	virtual ScriptChangedResult scriptChanged(TTscriptBase *roomScript, uint id);
+	virtual ScriptChangedResult scriptChanged(TTroomScript *roomScript, uint id);
 
 	virtual int handleQuote(TTroomScript *roomScript, TTsentence *sentence,
 		uint val, uint tagId, uint remainder);

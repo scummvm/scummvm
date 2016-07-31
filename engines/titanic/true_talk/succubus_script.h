@@ -52,7 +52,7 @@ public:
 	/**
 	 * Called when the script/id changes
 	 */
-	virtual ScriptChangedResult scriptChanged(TTscriptBase *roomScript, uint id);
+	virtual ScriptChangedResult scriptChanged(TTroomScript *roomScript, uint id);
 
 	/**
 	 * Handles updating NPC state based on specified dialogue Ids and dial positions

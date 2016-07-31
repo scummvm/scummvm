@@ -132,7 +132,7 @@ int DoorbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
 	return 0;
 }
 
-ScriptChangedResult DoorbotScript::scriptChanged(TTscriptBase *roomScript, uint id) {
+ScriptChangedResult DoorbotScript::scriptChanged(TTroomScript *roomScript, uint id) {
 	warning("TODO");
 	return SCR_1;
 }

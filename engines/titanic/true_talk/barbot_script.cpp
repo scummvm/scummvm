@@ -756,7 +756,7 @@ done:
 	return 2;
 }
 
-ScriptChangedResult BarbotScript::scriptChanged(TTscriptBase *roomScript, uint id) {
+ScriptChangedResult BarbotScript::scriptChanged(TTroomScript *roomScript, uint id) {
 	switch (id) {
 	case 1:
 	case 100:
