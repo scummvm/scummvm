@@ -260,6 +260,7 @@ public:
 	static void b_tan();
 
 	static void b_dontpassevent();
+	static void b_updatestage();
 	static void b_ilk();
 
 	static void b_point();

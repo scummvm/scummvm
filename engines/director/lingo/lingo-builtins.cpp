@@ -49,6 +49,7 @@ static struct BuiltinProto {
 	{ "string",	Lingo::b_string, 1},
 	// Misc
 	{ "dontpassevent", Lingo::b_dontpassevent, -1 },
+	{ "updatestage", Lingo::b_updatestage, -1 },
 	{ "ilk",	 Lingo::b_ilk, 1 },
 	// point
 	{ "point",	Lingo::b_point, 2},
@@ -217,6 +218,10 @@ void Lingo::b_string() {
 ///////////////////
 void Lingo::b_dontpassevent() {
 	warning("STUB: b_dontpassevent");
+}
+
+void Lingo::b_updatestage() {
+	warning("STUB: b_updatestage");
 }
 
 void Lingo::b_ilk() {
