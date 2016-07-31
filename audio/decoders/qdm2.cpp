@@ -1666,8 +1666,7 @@ void QDM2Stream::synthfilt_build_sb_samples(Common::BitStream *gb, int length, i
 								for (k = 0; k < 5; k++) {
 									if ((j + 2 * k) >= 128)
 										break;
-										samples[2 * k] = gb->getBit() ? dequant_1bit[joined_stereo][2 * gb->getBit()] : 0;
-									}
+									samples[2 * k] = gb->getBit() ? dequant_1bit[joined_stereo][2 * gb->getBit()] : 0;
 								}
 							} else {
 								n = gb->getBits(8);
