@@ -183,10 +183,11 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 		_height = view._height;
 
 		// SSCI never increased the size of cursors, but some of the cursors
-		// in early SSCI games were designed for low-resolution screens and so
-		// are kind of hard to pick out when running in high-resolution mode.
+		// in early SCI32 games were designed for low-resolution display mode
+		// and so are kind of hard to pick out when running in high-resolution
+		// mode.
 		// To address this, we make some slight adjustments to cursor display
-		// in a couple of games.
+		// in these early games:
 		// GK1: All the cursors are increased in size since they all appear to
 		//      be designed for low-res display.
 		// PQ4: We only make the cursors bigger if they are above a set
@@ -342,20 +343,21 @@ void GfxCursor32::move() {
 		return;
 	}
 
-	// If it was off the screen, just show it and return
+	// Cursor moved onto the screen after being offscreen
 	_cursor.rect.moveTo(_position.x - _hotSpot.x, _position.y - _hotSpot.y);
 	if (_cursorBack.rect.isEmpty()) {
 		revealCursor();
 		return;
 	}
 
-	// If we just moved entirely off screen, remove background & return
+	// Cursor moved offscreen
 	if (!_cursor.rect.intersects(_vmapRegion.rect)) {
 		drawToHardware(_cursorBack);
 		return;
 	}
 
 	if (!_cursor.rect.intersects(_cursorBack.rect)) {
+		// Cursor moved to a completely different part of the screen
 		_drawBuff1.rect = _cursor.rect;
 		_drawBuff1.rect.clip(_vmapRegion.rect);
 		readVideo(_drawBuff1);
@@ -366,13 +368,13 @@ void GfxCursor32::move() {
 		paint(_drawBuff1, _cursor);
 		drawToHardware(_drawBuff1);
 
-		// erase
 		drawToHardware(_cursorBack);
 
 		_cursorBack.rect = _cursor.rect;
 		_cursorBack.rect.clip(_vmapRegion.rect);
 		copy(_cursorBack, _drawBuff2);
 	} else {
+		// Cursor moved, but still overlaps the previous cursor location
 		Common::Rect mergedRect(_cursorBack.rect);
 		mergedRect.extend(_cursor.rect);
 		mergedRect.clip(_vmapRegion.rect);

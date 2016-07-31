@@ -72,7 +72,7 @@ GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAd
 	_overdrawThreshold(0),
 	_palMorphIsOn(false) {
 
-	// QFG4 is the only SCI32 game that doesn't have a high-resolution toggle
+	// QFG4 is the only SCI32 game that doesn't have a high-resolution version
 	if (g_sci->getGameId() == GID_QFG4) {
 		_isHiRes = false;
 	}
