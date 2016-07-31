@@ -265,10 +265,13 @@ Common::Error SciEngine::run() {
 		_forceHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
 	}
 
-	// TODO: Get rid of GfxScreen when running SCI32 games
-	// Initialize the game screen
-	_gfxScreen = new GfxScreen(_resMan);
-	_gfxScreen->enableUndithering(ConfMan.getBool("disable_dithering"));
+	if (getSciVersion() < SCI_VERSION_2) {
+		// Initialize the game screen
+		_gfxScreen = new GfxScreen(_resMan);
+		_gfxScreen->enableUndithering(ConfMan.getBool("disable_dithering"));
+	} else {
+		_gfxScreen = nullptr;
+	}
 
 	_kernel = new Kernel(_resMan, segMan);
 	_kernel->init();
@@ -737,7 +740,7 @@ void SciEngine::initGraphics() {
 		// SCI32 graphic objects creation
 		_gfxCoordAdjuster = new GfxCoordAdjuster32(_gamestate->_segMan);
 		_gfxCursor32 = new GfxCursor32();
-		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
+		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, nullptr, _gfxCoordAdjuster);
 		_gfxPaint32 = new GfxPaint32(_gamestate->_segMan);
 		_robotDecoder = new RobotDecoder(getPlatform() == Common::kPlatformMacintosh);
 		_gfxTransitions32 = new GfxTransitions32(_gamestate->_segMan);
@@ -748,9 +751,8 @@ void SciEngine::initGraphics() {
 		_gfxFrameout->run();
 	} else {
 #endif
-		_gfxCursor = new GfxCursor(_resMan, _gfxPalette16, _gfxScreen);
-
 		// SCI0-SCI1.1 graphic objects creation
+		_gfxCursor = new GfxCursor(_resMan, _gfxPalette16, _gfxScreen);
 		_gfxPorts = new GfxPorts(_gamestate->_segMan, _gfxScreen);
 		_gfxCoordAdjuster = new GfxCoordAdjuster16(_gfxPorts);
 		_gfxCursor->init(_gfxCoordAdjuster, _eventMan);

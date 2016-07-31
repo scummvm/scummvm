@@ -505,6 +505,9 @@ public:
 
 	using CelObj::draw;
 
+	static int16 getNumLoops(const GuiResourceId viewId);
+	static int16 getNumCels(const GuiResourceId viewId, const int16 loopNo);
+
 	/**
 	 * Draws the cel to the target buffer using the
 	 * positioning, mirroring, and scaling information from

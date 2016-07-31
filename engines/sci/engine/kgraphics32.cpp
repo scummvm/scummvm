@@ -64,6 +64,45 @@ namespace Sci {
 
 extern void showScummVMDialog(const Common::String &message);
 
+reg_t kBaseSetter32(EngineState *s, int argc, reg_t *argv) {
+	reg_t object = argv[0];
+
+	const GuiResourceId viewId = readSelectorValue(s->_segMan, object, SELECTOR(view));
+	const int16 loopNo = readSelectorValue(s->_segMan, object, SELECTOR(loop));
+	const int16 celNo = readSelectorValue(s->_segMan, object, SELECTOR(cel));
+	const int16 x = readSelectorValue(s->_segMan, object, SELECTOR(x));
+	const int16 y = readSelectorValue(s->_segMan, object, SELECTOR(y));
+
+	CelObjView celObj(viewId, loopNo, celNo);
+
+	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+
+	const Ratio scaleX(scriptWidth, celObj._scaledWidth);
+	const Ratio scaleY(scriptHeight, celObj._scaledHeight);
+
+	int16 brLeft;
+
+	if (celObj._mirrorX) {
+		brLeft = x - ((celObj._width - celObj._displace.x) * scaleX).toInt();
+	} else {
+		brLeft = x - (celObj._displace.x * scaleX).toInt();
+	}
+
+	const int16 brRight = brLeft + (celObj._width * scaleX).toInt() - 1;
+
+	writeSelectorValue(s->_segMan, object, SELECTOR(brLeft), brLeft);
+	writeSelectorValue(s->_segMan, object, SELECTOR(brRight), brRight);
+	writeSelectorValue(s->_segMan, object, SELECTOR(brBottom), y + 1);
+	writeSelectorValue(s->_segMan, object, SELECTOR(brTop), y + 1 - readSelectorValue(s->_segMan, object, SELECTOR(yStep)));
+
+	return s->r_acc;
+}
+
+reg_t kSetNowSeen32(EngineState *s, int argc, reg_t *argv) {
+	return make_reg(0, g_sci->_gfxFrameout->kernelSetNowSeen(argv[0]));
+}
+
 reg_t kSetCursor32(EngineState *s, int argc, reg_t *argv) {
 	switch (argc) {
 	case 1: {

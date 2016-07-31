@@ -569,7 +569,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(Animate),           SIG_EVERYWHERE,           "(l0)(i)",               NULL,            NULL },
 	{ MAP_CALL(AssertPalette),     SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(AvoidPath),         SIG_EVERYWHERE,           "ii(.*)",                NULL,            NULL },
-	{ MAP_CALL(BaseSetter),        SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+	{ MAP_CALL(BaseSetter),        SIG_SCI16, SIGFOR_ALL,    "o",                     NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ "BaseSetter", kBaseSetter32, SIG_SCI32, SIGFOR_ALL,    "o",                     NULL,            NULL },
+#endif
 	{ MAP_CALL(CanBeHere),         SIG_EVERYWHERE,           "o(l)",                  NULL,            NULL },
 	{ MAP_CALL(CantBeHere),        SIG_SCI16, SIGFOR_ALL,    "o(l)",                  NULL,            NULL },
 #ifdef ENABLE_SCI32
@@ -703,7 +706,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(SetMenu),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
 	{ MAP_CALL(SetNowSeen),        SIG_SCI16, SIGFOR_ALL,    "o(i)",                  NULL,            NULL },
 #ifdef ENABLE_SCI32
-	{ MAP_CALL(SetNowSeen),        SIG_SCI32, SIGFOR_ALL,    "o",                     NULL,            NULL },
+	{ "SetNowSeen", kSetNowSeen32, SIG_SCI32, SIGFOR_ALL,    "o",                     NULL,            NULL },
 #endif
 	{ MAP_CALL(SetPort),           SIG_EVERYWHERE,           "i(iiiii)(i)",           NULL,            kSetPort_workarounds },
 	{ MAP_CALL(SetQuitStr),        SIG_EVERYWHERE,           "r",                     NULL,            NULL },
