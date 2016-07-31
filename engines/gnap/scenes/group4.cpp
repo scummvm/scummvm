@@ -2691,7 +2691,7 @@ void Scene46::run() {
 			case kHS46WalkArea1:
 				if (gnap._actionStatus < 0)
 					gnap.walkTo(Common::Point(-1, -1), -1, -1, 1);
-					break;
+				break;
 			}
 		}
 
