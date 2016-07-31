@@ -62,6 +62,31 @@ private:
 	 * Sets state data in flags 17
 	 */
 	void setFlags17(uint newId, uint index);
+
+	/**
+	 * Does preprocessing for the sentence
+	 */
+	int preprocess(const TTroomScript *roomScript, const TTsentence *sentence);
+
+	/**
+	 * Scans the quotes tree
+	 */
+	int searchQuotes(const TTroomScript *roomScript, const TTsentence *sentence);
+
+	/**
+	 * Checks for common words
+	 */
+	int checkCommonWords(const TTsentence *sentence);
+
+	/**
+	 * Adds response dialogue 241716
+	 */
+	void add241716();
+
+	/**
+	 * Adds a dialogue description for the player's assigned room
+	 */
+	void addAssignedRoom();
 public:
 	DeskbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2);

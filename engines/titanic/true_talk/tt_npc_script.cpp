@@ -959,7 +959,7 @@ bool TTnpcScript::getStateValue() const {
 	return false;
 }
 
-bool TTnpcScript::sentence2C(TTsentence *sentence) {
+bool TTnpcScript::sentence2C(const TTsentence *sentence) {
 	return sentence->_field2C >= 2 && sentence->_field2C <= 7;
 }
 

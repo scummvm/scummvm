@@ -193,7 +193,7 @@ protected:
 
 	bool fn10(bool flag);
 
-	static bool sentence2C(TTsentence *sentence);
+	static bool sentence2C(const TTsentence *sentence);
 
 	/**
 	 * Gets the True Talk state value

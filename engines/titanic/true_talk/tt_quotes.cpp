@@ -26,11 +26,9 @@
 
 namespace Titanic {
 
-TTquotes::TTquotes() {
+TTquotes::TTquotes() : _loaded(false), _dataP(nullptr), _dataSize(0),
+		_field544(0) {
 	Common::fill(&_tags[0], &_tags[256], 0);
-	_dataP = nullptr;
-	_dataSize = 0;
-	_field544 = 0;
 }
 
 TTquotes::~TTquotes() {
@@ -40,6 +38,7 @@ TTquotes::~TTquotes() {
 void TTquotes::load() {
 	Common::SeekableReadStream *r = g_vm->_filesManager->getResource("TEXT/JRQUOTES.TXT");
 	size_t size = r->readUint32LE();
+	_loaded = true;
 
 	_dataSize = _field544 = size;
 	_dataP = new char[size + 0x10];
@@ -68,7 +67,7 @@ void TTquotes::load() {
 	delete r;
 }
 
-int TTquotes::find(const char *str) {
+int TTquotes::find(const char *str)  const {
 	if (!str || !*str)
 		return 0;
 
@@ -95,7 +94,7 @@ int TTquotes::find(const char *str) {
 	return 0;
 }
 
-int TTquotes::find(const char *startP, const char *endP) {
+int TTquotes::find(const char *startP, const char *endP) const {
 	int size = endP - startP;
 	if (size < 3)
 		return 0;
