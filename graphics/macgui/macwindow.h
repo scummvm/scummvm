@@ -85,24 +85,92 @@ enum WindowClick {
 }
 using namespace MacWindowConstants;
 
+/**
+ * Abstract class that defines common functionality for all window classes.
+ * It supports event callbacks and drawing.
+ */
 class BaseMacWindow {
 public:
+	/**
+	 * Base constructor.
+	 * @param id ID of the window.
+	 * @param editable True if the window is editable (e.g. for resizing).
+	 * @param wm Pointer to the MacWindowManager that owns the window.
+	 */
 	BaseMacWindow(int id, bool editable, MacWindowManager *wm);
 	virtual ~BaseMacWindow() {}
 
+	/**
+	 * Accessor method for the complete dimensions of the window.
+	 * @return Dimensions of the window (including border) relative to the WM's screen.
+	 */
 	const Common::Rect &getDimensions() { return _dims; }
+
+	/**
+	 * Accessor method to the id of the window.
+	 * @return The id set in the constructor.
+	 */
 	int getId() { return _id; }
+
+	/**
+	 * Accessor method to the type of window.
+	 * Each subclass must indicate it's type.
+	 * @return The type of the window.
+	 */
 	WindowType getType() { return _type; }
+
+	/**
+	 * Accessor method to check whether the window is editable (e.g. for resizing).
+	 * @return True if the window is editable as indicated in the constructor.
+	 */
 	bool isEditable() { return _editable; }
+
+	/**
+	 * Method to access the entire surface of the window (e.g. to draw an image).
+	 * @return A pointer to the entire surface of the window.
+	 */
 	ManagedSurface *getSurface() { return &_surface; }
+
+	/**
+	 * Abstract method for indicating whether the window is active or inactive.
+	 * Used by the WM to handle focus on windows, etc.
+	 * @param active Desired state of the window.
+	 */
 	virtual void setActive(bool active) = 0;
+
+	/**
+	 * Method for marking the window for redraw.
+	 * @param dirty True if the window needs to be redrawn.
+	 */
 	void setDirty(bool dirty) { _contentIsDirty = dirty; }
 
+	/**
+	 * Method called to draw the window into the target surface.
+	 * This method is most often called by the WM, and relies on
+	 * the window being marked as dirty unless otherwise specified.
+	 * @param g Surface on which to draw the window.
+	 * @param forceRedraw It's behavior depends on the subclass.
+	 */
 	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) = 0;
+
+	/**
+	 * Method called by the WM when there is an event concerning the window.
+	 * Note that depending on the subclass of the window, it might not be called
+	 * if the window is not active.
+	 * @param event Event to be processed.
+	 * @return true If the event was successfully consumed and processed.
+	 */
 	virtual bool processEvent(Common::Event &event) = 0;
 
 	virtual bool hasAllFocus() = 0;
 
+	/**
+	 * Set the callback that will be used when an event needs to be processed.
+	 * @param callback A function pointer to a function that accepts:
+	 *					- A WindowClick, the pert of the window that was clicked.
+	 *					- The event to be processed.
+	 *					- Any additional required data (e.g. the engine's GUI).
+	 */
 	void setCallback(bool (*callback)(WindowClick, Common::Event &, void *), void *data) { _callback = callback; _dataPtr = data; }
 
 protected:
