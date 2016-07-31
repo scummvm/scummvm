@@ -87,7 +87,7 @@ void TTscriptBase::reset() {
 	_oldResponseP = nullptr;
 }
 
-int TTscriptBase::preprocess(TTsentence *sentence) {
+int TTscriptBase::scriptPreprocess(TTsentence *sentence) {
 	delete _hist1P;
 	_hist1P = new TTscriptHist(sentence);
 

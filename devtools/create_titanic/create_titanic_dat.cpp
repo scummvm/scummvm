@@ -55,7 +55,7 @@
  */
 
 #define VERSION_NUMBER 1
-#define HEADER_SIZE 0x900
+#define HEADER_SIZE 0xB00
 
 Common::File inputFile, outputFile;
 Common::PEResources res;
@@ -565,6 +565,26 @@ void writeData() {
 	writeSentenceEntries("Sentences/Barbot", 0x5ABE60);
 	writeSentenceEntries("Sentences/Barbot2", 0x5BD4E8);
 	writeSentenceEntries("Sentences/Bellbot", 0x5C2230);
+	writeSentenceEntries("Sentences/Bellbot/1", 0x5D1670);
+	writeSentenceEntries("Sentences/Bellbot/2", 0x5D1A80);
+	writeSentenceEntries("Sentences/Bellbot/3", 0x5D1AE8);
+	writeSentenceEntries("Sentences/Bellbot/4", 0x5D1B88);
+	writeSentenceEntries("Sentences/Bellbot/5", 0x5D2A60);
+	writeSentenceEntries("Sentences/Bellbot/6", 0x5D2CD0);
+	writeSentenceEntries("Sentences/Bellbot/7", 0x5D3488);
+	writeSentenceEntries("Sentences/Bellbot/8", 0x5D3900);
+	writeSentenceEntries("Sentences/Bellbot/9", 0x5D3968);
+	writeSentenceEntries("Sentences/Bellbot/10", 0x5D4668);
+	writeSentenceEntries("Sentences/Bellbot/11", 0x5D47A0);
+	writeSentenceEntries("Sentences/Bellbot/12", 0x5D4EC0);
+	writeSentenceEntries("Sentences/Bellbot/13", 0x5D5100);
+	writeSentenceEntries("Sentences/Bellbot/14", 0x5D5370);
+	writeSentenceEntries("Sentences/Bellbot/15", 0x5D5548);
+	writeSentenceEntries("Sentences/Bellbot/16", 0x5D56B8);
+	writeSentenceEntries("Sentences/Bellbot/17", 0x5D57C0);
+	writeSentenceEntries("Sentences/Bellbot/18", 0x5D5B38);
+	writeSentenceEntries("Sentences/Bellbot/19", 0x5D61B8);
+
 	writeSentenceEntries("Sentences/Deskbot", 0x5DCD10);
 	writeSentenceEntries("Sentences/Doorbot", 0x5EC110);
 	writeSentenceEntries("Sentences/Liftbot", 0x6026B0);

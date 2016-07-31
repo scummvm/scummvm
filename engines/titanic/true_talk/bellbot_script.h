@@ -32,6 +32,7 @@ private:
 	static uint _oldId;
 	TTmapEntryArray _states;
 	TTmapEntryArray _preResponses;
+	TTsentenceEntries _sentences[20];
 	int _array[150];
 	int _field2D0;
 	int _field2D4;
@@ -61,12 +62,24 @@ private:
 	/**
 	 * Does preprocessing for the sentence
 	 */
-	int preProcess(TTroomScript *roomScript, TTsentence *sentence);
+	int preprocess(TTroomScript *roomScript, TTsentence *sentence);
 
 	/**
 	 * Checks for good, better, or bad in the sentence
 	 */
 	bool better(TTsentence *sentence, uint id1, uint id2);
+
+	bool randomResponse1(TTroomScript *roomScript, uint id);
+	bool randomResponse2(TTroomScript *roomScript, uint id);
+	bool randomResponse3(TTroomScript *roomScript, uint id);
+	bool randomResponse4(TTroomScript *roomScript);
+	bool randomResponse5(TTroomScript *roomScript, uint id);
+
+	int checkCommonSentences(TTroomScript *roomScript, TTsentence *sentence);
+	int checkCommonWords(TTroomScript *roomScript, TTsentence *sentence);
+
+	int getRoomDialogueId(TTroomScript *roomScript);
+
 public:
 	BellbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2);

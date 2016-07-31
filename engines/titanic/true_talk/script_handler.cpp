@@ -83,8 +83,8 @@ int CScriptHandler::processInput(TTroomScript *roomScript, TTnpcScript *npcScrip
 	
 	TTsentence *sentence = new TTsentence(_inputCtr++, line, this, roomScript, npcScript);
 	int result = _parser.preprocess(sentence);
-	roomScript->preprocess(sentence);
-	npcScript->preprocess(sentence);
+	roomScript->scriptPreprocess(sentence);
+	npcScript->scriptPreprocess(sentence);
 
 	int canProcess = 0;
 	if (result) {

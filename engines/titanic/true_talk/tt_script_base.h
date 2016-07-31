@@ -121,7 +121,7 @@ public:
 	/**
 	 * Gets passed a newly created input wrapper during conversation text processing
 	 */
-	int preprocess(TTsentence *sentence);
+	int scriptPreprocess(TTsentence *sentence);
 
 };
 

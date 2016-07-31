@@ -57,14 +57,279 @@ BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
 void BellbotScript::setupSentences() {
 	_mappings.load("Mappings/Bellbot", 1);
 	_entries.load("Sentences/Bellbot");
+	for (int idx = 1; idx < 20; ++idx)
+		_sentences[idx].load(CString::format("Sentences/Bellbot/%d", idx));
+
 	_field2DC = 0;
 	_field68 = 0;
 	_entryCount = 0;
 }
 
 int BellbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
-	// TODO
-	return 0;
+	int val24 = getValue(24);
+	CTrueTalkManager::setFlags(24, 0);
+
+	int result = preprocess(roomScript, sentence);
+	if (result != 1)
+		return 1;
+
+	CTrueTalkManager::setFlags(23, 0);
+	setState(0);
+	if (getValue(1) <= 2)
+		updateCurrentDial(1);
+
+	// Handle room specific sentences
+	switch (roomScript->_scriptId) {
+	case 101:
+		if (getValue(2) == 1) {
+			result = processEntries(&_sentences[11], 0, roomScript, sentence);
+		}
+		break;
+
+	case 107:
+		result = processEntries(&_sentences[5], 0, roomScript, sentence);
+		break;
+
+	case 108:
+		result = processEntries(&_sentences[7], 0, roomScript, sentence);
+		break;
+
+	case 109:
+		result = processEntries(&_sentences[13], 0, roomScript, sentence);
+		break;
+
+	case 110:
+		result = processEntries(&_sentences[16], 0, roomScript, sentence);
+		break;
+
+	case 111:
+		result = processEntries(&_sentences[10], 0, roomScript, sentence);
+		break;
+
+	case 112:
+		result = processEntries(&_sentences[15], 0, roomScript, sentence);
+		break;
+
+	case 113:
+		result = processEntries(&_sentences[9], 0, roomScript, sentence);
+		break;
+
+	case 114:
+		result = processEntries(&_sentences[18], 0, roomScript, sentence);
+		break;
+
+	case 115:
+		result = processEntries(&_sentences[12], 0, roomScript, sentence);
+		break;
+
+	case 116:
+		result = processEntries(&_sentences[8], 0, roomScript, sentence);
+		break;
+
+	case 117:
+		result = processEntries(&_sentences[6], 0, roomScript, sentence);
+		break;
+
+	case 123:
+		result = processEntries(&_sentences[17], 0, roomScript, sentence);
+		break;
+
+	case 125:
+		result = processEntries(&_sentences[14], 0, roomScript, sentence);
+		break;
+
+	case 131:
+		if (getValue(26) == 0) {
+			result = processEntries(&_sentences[getValue(6) ? 5 : 4], 0, roomScript, sentence);
+		}
+		break;
+	}
+
+	if (result == 2)
+		return 2;
+	if (sentence->contains("pretend you summoned yourself") ||
+		sentence->contains("pretend you just summoned yourself")) {
+		if (scriptChanged(roomScript, 157) == 2)
+			return 2;
+	}
+
+	if (sentence->localWord("television") || roomScript->_scriptId == 111) {
+		if (sentence->localWord("drop") || sentence->localWord("throw")
+			|| sentence->localWord("smash") || sentence->localWord("destroy")
+			|| sentence->localWord("toss") || sentence->localWord("put")
+			|| sentence->localWord("pitch") || sentence->localWord("heft")) {
+			if (getValue(40) == 1) {
+				addResponse(getDialogueId(201687));
+				applyResponse();
+				return 2;
+			}
+			else if (roomScript->_scriptId == 111) {
+				addResponse(getDialogueId(201687));
+				applyResponse();
+				CTrueTalkManager::triggerAction(17, 0);
+				CTrueTalkManager::setFlags(40, 1);
+				return 2;
+			}
+			else {
+				addResponse(getDialogueId(200710));
+				addResponse(getDialogueId(201334));
+				applyResponse();
+				return 2;
+			}
+		}
+	}
+
+	if (sentence->contains("what should i do here")
+		|| sentence->contains("what do i do here")
+		|| sentence->contains("what shall i do in here")
+		|| sentence->contains("what shall i do in this room")
+		|| sentence->contains("what should i do in this room")
+		|| sentence->contains("what am i supposed to do in here")
+		|| sentence->contains("what should i do in here")
+		|| sentence->contains("what do i do in this room")) {
+		if (randomResponse4(roomScript)) {
+			applyResponse();
+			return 2;
+		}
+	}
+
+	if (sentence->contains("help")
+			|| sentence->contains("what now")
+			|| sentence->contains("what next")
+			|| sentence->contains("give me a hint")
+			|| sentence->contains("i need a hint")
+			|| sentence->contains("what should i be doing")
+			|| sentence->contains("what do you reckon i should do now")
+			|| sentence->contains("what shall i do")
+			|| sentence->contains("what would you do")
+			|| sentence->contains("what should i do")
+			|| sentence->contains("what do i do")) {
+		if (getDialRegion(0) == 1) {
+			randomResponse5(roomScript, getValue(1));
+			applyResponse();
+			return 2;
+		} else {
+			randomResponse3(roomScript, getValue(1));
+		}
+	}
+
+	if (sentence->get58() > 6 && sentence->contains("please")) {
+		addResponse(getDialogueId(200432));
+		applyResponse();
+		return 2;
+	}
+
+	if (checkCommonSentences(roomScript, sentence) == 2)
+		return 2;
+
+	// WORKAROUND: Skip processEntries call on unassigned sentence array
+
+	// Standard sentence list
+	if (processEntries(&_entries, _entryCount, roomScript, sentence) == 2)
+		return 2;
+
+	if ((sentence->_field2C == 4 && sentence->localWord("am") && sentence->localWord("i"))
+			|| (sentence->localWord("are") && sentence->localWord("we"))
+			|| (sentence->_field2C == 3 && sentence->localWord("room")
+					&& sentence->localWord("we") && sentence->localWord("in"))
+			|| (sentence->_field2C == 3 && sentence->localWord("rom")
+					&& sentence->localWord("is") && sentence->localWord("this"))
+			) { 
+		uint id = getRangeValue(getRoomDialogueId(roomScript));
+		addResponse(getDialogueId(id ? id : 201384));
+		applyResponse();
+		return 2;
+	}
+
+	if (getValue(1) >= 3) {
+		result = processEntries(&_sentences[1], 0, roomScript, sentence);
+	} else if (getValue(1) == 2) {
+		result = processEntries(&_sentences[2], 0, roomScript, sentence);
+	} else if (getValue(1) == 1) {
+		result = processEntries(&_sentences[3], 0, roomScript, sentence);
+		
+		if (sentence->contains("shrinkbot")) {
+			addResponse(getDialogueId(200583));
+			applyResponse();
+			return 2;
+		}
+	}
+
+	if (sentence->localWord("television") || sentence->localWord("tv")
+			|| sentence->localWord("crush") || sentence->localWord("crushed")) {
+		if (roomScript->_scriptId == 111 || getRandomBit()) {
+			addResponse(getDialogueId(getRandomBit() ? 200912 : 200913));
+		} else {
+			addResponse(getDialogueId(200710));
+			addResponse(getDialogueId(201334));
+		}
+
+		applyResponse();
+		return 2;
+	}
+
+	if (checkCommonWords(roomScript, sentence)) {
+		applyResponse();
+		setState(0);
+		return 2;
+	}
+
+	if (sentence->contains("my") && (sentence->contains("where can i find")
+			|| sentence->contains("where is")
+			|| sentence->contains("wheres")
+			|| sentence->contains("help me find")
+			|| sentence->contains("what have you done with")
+			|| sentence->contains("have you got")
+			|| sentence->contains("id like")
+			|| sentence->contains("i would like")
+			|| sentence->contains("have you seen")
+			)) {
+		addResponse(getDialogueId(200799));
+		applyResponse();
+		return 2;
+	}
+
+	setupSentences();
+	uint tagId = g_vm->_trueTalkManager->_quotes.find(sentence->_normalizedLine);
+	if (tagId && chooseResponse(roomScript, sentence, tagId) == 2)
+		return 2;
+	if (defaultProcess(roomScript, sentence))
+		return 2;
+	if (!processEntries(&_sentences[19], 0, roomScript, sentence))
+		return 2;
+	if (!processEntries(_defaultEntries, 0, roomScript, sentence))
+		return 2;
+
+	if (sentence->contains("42")) {
+		addResponse(getDialogueId(200515));
+		applyResponse();
+		return 2;
+	}
+
+	CTrueTalkManager::setFlags(24, val24 + 1);
+	if (getValue(24) > 3) {
+		addResponse(getDialogueId(200200));
+		applyResponse();
+		return 2;
+	}
+
+	if (sentence->localWord("get")) {
+		addResponse(getDialogueId(200475));
+		applyResponse();
+		return 2;
+	}
+
+	if (getRandomNumber(100) <= 75) {
+		addResponse(getDialogueId(200060));
+		applyResponse();
+		return 2;
+	}
+
+	addResponse(getDialogueId(200140));
+	addResponse(getDialogueId(getRandomBit() ? 200192 : 200157));
+	addResponse(getDialogueId(200176));
+	applyResponse();
+	return 2;
 }
 
 ScriptChangedResult BellbotScript::scriptChanged(TTscriptBase *roomScript, uint id) {
@@ -446,7 +711,7 @@ void BellbotScript::setValue23(uint id) {
 	CTrueTalkManager::setFlags(23, val);
 }
 
-int BellbotScript::preProcess(TTroomScript *roomScript, TTsentence *sentence) {
+int BellbotScript::preprocess(TTroomScript *roomScript, TTsentence *sentence) {
 	if (!roomScript || !sentence)
 		return true;
 
@@ -1255,6 +1520,46 @@ bool BellbotScript::better(TTsentence *sentence, uint id1, uint id2) {
 	}
 
 	return true;
+}
+
+bool BellbotScript::randomResponse1(TTroomScript *roomScript, uint id) {
+	// TODO
+	return false;
+}
+
+bool BellbotScript::randomResponse2(TTroomScript *roomScript, uint id) {
+	// TODO
+	return false;
+}
+
+bool BellbotScript::randomResponse3(TTroomScript *roomScript, uint id) {
+	// TODO
+	return false;
+}
+
+bool BellbotScript::randomResponse4(TTroomScript *roomScript) {
+	// TODO
+	return false;
+}
+
+bool BellbotScript::randomResponse5(TTroomScript *roomScript, uint id) {
+	// TODO
+	return false;
+}
+
+int BellbotScript::checkCommonSentences(TTroomScript *roomScript, TTsentence *sentence) {
+	// TODO
+	return 0;
+}
+
+int BellbotScript::checkCommonWords(TTroomScript *roomScript, TTsentence *sentence) {
+	// TODO
+	return 0;
+}
+
+int BellbotScript::getRoomDialogueId(TTroomScript *roomScript) {
+	// TODO
+	return 0;
 }
 
 } // End of namespace Titanic
