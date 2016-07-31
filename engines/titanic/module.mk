@@ -82,7 +82,6 @@ MODULE_OBJS := \
 	game/arboretum_gate.o \
 	game/auto_animate.o \
 	game/bilge_succubus.o \
-	game/bomb.o \
 	game/bar_menu.o \
 	game/bar_menu_button.o \
 	game/bar_bell.o \
