@@ -658,30 +658,30 @@ T0444017:
 
 
 void DMEngine::f439_drawEntrance() {
-	static Box K0079_s_Box_Entrance_DoorsUpperHalf = Box(0, 231, 0, 80);
-	static Box K0152_s_Box_Entrance_DoorsLowerHalf = Box(0, 231, 81, 160);
-	static Box G0010_s_Graphic562_Box_Entrance_ClosedDoorLeft = Box(0, 104, 30, 190);
-	static Box G0011_s_Graphic562_Box_Entrance_ClosedDoorRight = Box(105, 231, 30, 190);
+	static Box doorsUpperHalfBox = Box(0, 231, 0, 80);
+	static Box doorsLowerHalfBox = Box(0, 231, 81, 160);
+	static Box closedDoorLeftBox = Box(0, 104, 30, 190);
+	static Box closedDoorRightBox = Box(105, 231, 30, 190);
 
-	uint16 L1397_ui_ColumnIndex;
-	byte* L1398_apuc_MicroDungeonCurrentMapData[32];
-	Square L1399_auc_MicroDungeonSquares[25];
+	byte *microDungeonCurrentMapData[32];
 
 	_dungeonMan->_g309_partyMapIndex = k255_mapIndexEntrance;
 	_displayMan->_g297_drawFloorAndCeilingRequested = true;
 	_dungeonMan->_g273_currMapWidth = 5;
 	_dungeonMan->_g274_currMapHeight = 5;
-	_dungeonMan->_g271_currMapData = L1398_apuc_MicroDungeonCurrentMapData;
+	_dungeonMan->_g271_currMapData = microDungeonCurrentMapData;
 
 	Map map; // uninitialized, won't be used
 	_dungeonMan->_g269_currMap = &map;
+	Square microDungeonSquares[25];
 	for (uint16 i = 0; i < 25; ++i)
-		L1399_auc_MicroDungeonSquares[i] = Square(k0_ElementTypeWall, 0);
-	for (L1397_ui_ColumnIndex = 0; L1397_ui_ColumnIndex < 5; L1397_ui_ColumnIndex++) {
-		L1398_apuc_MicroDungeonCurrentMapData[L1397_ui_ColumnIndex] = (byte*)&L1399_auc_MicroDungeonSquares[L1397_ui_ColumnIndex * 5];
-		L1399_auc_MicroDungeonSquares[L1397_ui_ColumnIndex + 10] = Square(k1_CorridorElemType, 0);
+		microDungeonSquares[i] = Square(k0_ElementTypeWall, 0);
+
+	for (int16 idx = 0; idx < 5; idx++) {
+		microDungeonCurrentMapData[idx] = (byte*)&microDungeonSquares[idx * 5];
+		microDungeonSquares[idx + 10] = Square(k1_CorridorElemType, 0);
 	}
-	L1399_auc_MicroDungeonSquares[7] = Square(k1_CorridorElemType, 0);
+	microDungeonSquares[7] = Square(k1_CorridorElemType, 0);
 	_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g345_aui_BlankBuffer);
 
 	// note, a global variable is used here in the original
@@ -689,11 +689,11 @@ void DMEngine::f439_drawEntrance() {
 	_displayMan->f128_drawDungeon(kDirSouth, 2, 0);
 	warning(false, "IGNORED CODE: G0324_B_DrawViewportRequested = false;");
 
-	_displayMan->_g578_useByteBoxCoordinates = false, _displayMan->f132_blitToBitmap(_displayMan->_g348_bitmapScreen, _g562_entranceDoorAnimSteps[8], K0079_s_Box_Entrance_DoorsUpperHalf, 0, 30, k160_byteWidthScreen, k128_byteWidth, kM1_ColorNoTransparency, 200, 161);
-	_displayMan->_g578_useByteBoxCoordinates = false, _displayMan->f132_blitToBitmap(_displayMan->_g348_bitmapScreen, _g562_entranceDoorAnimSteps[8], K0152_s_Box_Entrance_DoorsLowerHalf, 0, 111, k160_byteWidthScreen, k128_byteWidth, kM1_ColorNoTransparency, 200, 161);
+	_displayMan->_g578_useByteBoxCoordinates = false, _displayMan->f132_blitToBitmap(_displayMan->_g348_bitmapScreen, _g562_entranceDoorAnimSteps[8], doorsUpperHalfBox, 0, 30, k160_byteWidthScreen, k128_byteWidth, kM1_ColorNoTransparency, 200, 161);
+	_displayMan->_g578_useByteBoxCoordinates = false, _displayMan->f132_blitToBitmap(_displayMan->_g348_bitmapScreen, _g562_entranceDoorAnimSteps[8], doorsLowerHalfBox, 0, 111, k160_byteWidthScreen, k128_byteWidth, kM1_ColorNoTransparency, 200, 161);
 
-	_displayMan->f21_blitToScreen(_g562_entranceDoorAnimSteps[0], &G0010_s_Graphic562_Box_Entrance_ClosedDoorLeft, k64_byteWidth, kM1_ColorNoTransparency, 161);
-	_displayMan->f21_blitToScreen(_g562_entranceDoorAnimSteps[4], &G0011_s_Graphic562_Box_Entrance_ClosedDoorRight, k64_byteWidth, kM1_ColorNoTransparency, 161);
+	_displayMan->f21_blitToScreen(_g562_entranceDoorAnimSteps[0], &closedDoorLeftBox, k64_byteWidth, kM1_ColorNoTransparency, 161);
+	_displayMan->f21_blitToScreen(_g562_entranceDoorAnimSteps[4], &closedDoorRightBox, k64_byteWidth, kM1_ColorNoTransparency, 161);
 	_displayMan->f436_STARTEND_FadeToPalette(g20_PalEntrance);
 }
 } // End of namespace DM
