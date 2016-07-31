@@ -31,6 +31,11 @@ namespace Titanic {
 
 enum ScriptArrayFlag { SF_NONE = 0, SF_RANDOM = 1, SF_SEQUENTIAL = 2 };
 
+struct RoomDialogueId {
+	uint _roomNum;
+	uint _dialogueId;
+};
+
 struct TTnpcScriptResponse {
 	uint _tag;
 	uint _values[4];

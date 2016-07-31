@@ -45,7 +45,7 @@ TTnpcScript *TTnpcScriptList::findById(int charId) const {
 
 /*------------------------------------------------------------------------*/
 
-TTroomScript *TTroomScriptList::findById(int scriptId) const {
+TTroomScript *TTroomScriptList::findById(uint scriptId) const {
 	for (TTroomScriptList::const_iterator i = begin(); i != end(); ++i) {
 		const TTroomScriptListItem *item = *i;
 		if (item->_item->_scriptId == scriptId)

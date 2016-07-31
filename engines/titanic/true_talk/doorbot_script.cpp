@@ -31,10 +31,6 @@ static const int STATE_ARRAY[9] = {
 	0x2E2A, 0x2E2B, 0x2E2C, 0x2E2D, 0x2E2E, 0x2E2F, 0x2E30, 0x2E31, 0x2E32
 };
 
-struct RoomDialogueId {
-	int _roomNum;
-	int _dialogueId;
-};
 static const RoomDialogueId ROOM_DIALOGUES1[] = {
 	{ 100, 10523 }, { 101, 10499 }, { 107, 10516 }, { 108, 10500 },
 	{ 109, 10490 }, { 110, 10504 }, { 111, 10506 }, { 112, 10498 },
@@ -573,7 +569,7 @@ int DoorbotScript::setResponse(int dialogueId, int v34) {
 
 int DoorbotScript::getRoomDialogueId1(const TTroomScript *roomScript) {
 	for (const RoomDialogueId *r = ROOM_DIALOGUES1; r->_roomNum; ++r) {
-		if (r->_roomNum == roomScript->_scriptId == r->_roomNum)
+		if (r->_roomNum == roomScript->_scriptId)
 			return getDialogueId(r->_dialogueId);
 	}
 
@@ -582,7 +578,7 @@ int DoorbotScript::getRoomDialogueId1(const TTroomScript *roomScript) {
 
 int DoorbotScript::getRoomDialogueId2(const TTroomScript *roomScript) {
 	for (const RoomDialogueId *r = ROOM_DIALOGUES2; r->_roomNum; ++r) {
-		if (r->_roomNum == roomScript->_scriptId == r->_roomNum)
+		if (r->_roomNum == roomScript->_scriptId)
 			return getDialogueId(r->_dialogueId);
 	}
 

@@ -51,7 +51,7 @@ public:
 
 class TTroomScriptList : public List<TTroomScriptListItem> {
 public:
-	TTroomScript *findById(int scriptId) const;
+	TTroomScript *findById(uint scriptId) const;
 };
 
 class TTscripts {

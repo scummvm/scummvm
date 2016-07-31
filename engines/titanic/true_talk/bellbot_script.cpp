@@ -34,7 +34,8 @@ uint BellbotScript::_oldId;
 BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2) :
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, -1, -1, -1, 0),
-		_field2D0(0), _field2D4(0), _field2D8(0), _field2DC(0) {
+		_field2D0(0), _field2D4(0), _field2D8(0), _field2DC(0),
+		_room107First(false) {
 	CTrueTalkManager::setFlags(25, 0);
 	CTrueTalkManager::setFlags(24, 0);
 	CTrueTalkManager::setFlags(40, 0);
@@ -187,7 +188,7 @@ int BellbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
 		|| sentence->contains("what am i supposed to do in here")
 		|| sentence->contains("what should i do in here")
 		|| sentence->contains("what do i do in this room")) {
-		if (randomResponse4(roomScript)) {
+		if (addRoomDescription(roomScript)) {
 			applyResponse();
 			return 2;
 		}
@@ -205,7 +206,7 @@ int BellbotScript::process(TTroomScript *roomScript, TTsentence *sentence) {
 			|| sentence->contains("what should i do")
 			|| sentence->contains("what do i do")) {
 		if (getDialRegion(0) == 1) {
-			randomResponse5(roomScript, getValue(1));
+			randomResponse4(roomScript, getValue(1));
 			applyResponse();
 			return 2;
 		} else {
@@ -1522,29 +1523,88 @@ bool BellbotScript::better(TTsentence *sentence, uint id1, uint id2) {
 	return true;
 }
 
+bool BellbotScript::randomResponse0(TTroomScript *roomScript, uint id) {
+	bool dr0 = getDialRegion(0) == 1;
+	uint newId = getValue(1);
+
+	if (getValue(25) == 0) {
+		CTrueTalkManager::setFlags(25, 1);
+		if (getValue(1) > 2) {
+			addResponse(getDialogueId(202043));
+			applyResponse();
+			return true;
+		}
+	}
+
+	bool result = dr0 ? randomResponse1(roomScript, newId) :
+		randomResponse2(roomScript, newId);
+	if (result)
+		CTrueTalkManager::triggerAction(1, 0);
+
+	return true;
+}
+
 bool BellbotScript::randomResponse1(TTroomScript *roomScript, uint id) {
-	// TODO
+	if (getRandomNumber(100) < 10) {
+		addResponse(getDialogueId(201978));
+		applyResponse();
+	} else {
+		if (getRandomNumber(100) < 50)
+			addResponse(getDialogueId(202259));
+
+		randomResponse3(roomScript, id);
+		applyResponse();
+	}
+	
 	return false;
 }
 
 bool BellbotScript::randomResponse2(TTroomScript *roomScript, uint id) {
-	// TODO
+	if (getRandomNumber(100) < 5) {
+		addResponse(getDialogueId(202262));
+		applyResponse();
+	} else {
+		if (getRandomNumber(100) < 40)
+			addResponse(getDialogueId(202258));
+
+		randomResponse4(roomScript, id);
+		applyResponse();
+	}
+
 	return false;
 }
 
-bool BellbotScript::randomResponse3(TTroomScript *roomScript, uint id) {
-	// TODO
-	return false;
+void BellbotScript::randomResponse3(TTroomScript *roomScript, uint id) {
+	bool result = false;
+	if (roomScript && getRandomNumber(100) < 50)
+		result = addRoomDescription(roomScript);
+
+	if (result)
+		return;
+	if (getRandomNumber(100) >= 50) {
+		addResponse(getDialogueId(202262));
+		return;
+	}
+
+	if (id <= 2) {
+		if (getRandomNumber(100) < 50) {
+			addResponse(getDialogueId(202266));
+			return;
+		} else if (id == 2) {
+			addResponse(getDialogueId(202264));
+			return;
+		}
+	}
+
+	addResponse(getDialogueId(id == 1 ? 202265 : 202263));
 }
 
-bool BellbotScript::randomResponse4(TTroomScript *roomScript) {
-	// TODO
-	return false;
-}
-
-bool BellbotScript::randomResponse5(TTroomScript *roomScript, uint id) {
-	// TODO
-	return false;
+void BellbotScript::randomResponse4(TTroomScript *roomScript, uint id) {
+	if (getRandomNumber(100) < 4 && id <= 2) {
+		addResponse(getDialogueId(202268));
+	} else {
+		addResponse(getDialogueId(202267));
+	}
 }
 
 int BellbotScript::checkCommonSentences(TTroomScript *roomScript, TTsentence *sentence) {
@@ -1557,9 +1617,104 @@ int BellbotScript::checkCommonWords(TTroomScript *roomScript, TTsentence *senten
 	return 0;
 }
 
-int BellbotScript::getRoomDialogueId(TTroomScript *roomScript) {
-	// TODO
+uint BellbotScript::getRoomDialogueId(TTroomScript *roomScript) {
+	if (!roomScript)
+		return 0;
+
+	static const RoomDialogueId ROOM_DIALOGUE_IDS[] = {
+		{ 100, 201442 }, { 101, 201417 }, { 107, 201491 }, { 108, 201421 },
+		{ 109, 201437 }, { 110, 201431 }, { 111, 201457 }, { 112, 201411 },
+		{ 113, 201424 }, { 114, 201464 }, { 115, 201407 }, { 116, 201468 },
+		{ 117, 201447 }, { 122, 201491 }, { 123, 201299 }, { 124, 201479 },
+		{ 125, 201480 }, { 126, 201476 }, { 127, 201483 }, { 128, 201399 },
+		{ 129, 201400 }, { 130, 201387 }, { 131, 201395 }, { 132, 201388 },
+		{ 0, 0 }
+	};
+
+	for (int idx = 0; ROOM_DIALOGUE_IDS[idx]._roomNum; ++idx) {
+		if (ROOM_DIALOGUE_IDS[idx]._roomNum == roomScript->_scriptId)
+			return ROOM_DIALOGUE_IDS[idx]._dialogueId;
+	}
+
 	return 0;
 }
+
+bool BellbotScript::addRoomDescription(TTroomScript *roomScript) {
+	if (!roomScript)
+		return false;
+
+	switch (roomScript->_scriptId) {
+	case 101:
+		addResponse(getDialogueId(getValue(2) == 1 ? 20185 : 201832));
+		break;
+	case 107:
+		if (_room107First) {
+			addResponse(getDialogueId(202162));
+		} else {
+			addResponse(getDialogueId(202162));
+			_room107First = true;
+		}
+		break;
+	case 108:
+		addResponse(getDialogueId(201844));
+		break;
+	case 109:
+		addResponse(getDialogueId(200303));
+		break;
+	case 110:
+		addResponse(getDialogueId(202257));
+		break;
+	case 111:
+		addResponse(getDialogueId(202056));
+		break;
+	case 112:
+		addResponse(getDialogueId(201828));
+		break;
+	case 113:
+		addResponse(getDialogueId(201859));
+		break;
+	case 114:
+		addResponse(getDialogueId(202052));
+		break;
+	case 115:
+		addResponse(getDialogueId(202004));
+		break;
+	case 116:
+		addResponse(getDialogueId(202092));
+		break;
+	case 117:
+		addResponse(getDialogueId(202027));
+		break;
+	case 124:
+		addResponse(getDialogueId(202110));
+		break;
+	case 125:
+		addResponse(getDialogueId(202103));
+		break;
+	case 126:
+		addResponse(getDialogueId(202116));
+		break;
+	case 127:
+		addResponse(getDialogueId(202111));
+		break;
+	case 128:
+		addResponse(getDialogueId(201815));
+		break;
+	case 129:
+		addResponse(getDialogueId(201816));
+		break;
+	case 131:
+		addResponse(getDialogueId(201930));
+		break;
+	case 132:
+		addResponse(getDialogueId(201924));
+		break;
+	default:
+		return false;
+	}
+
+	return true;
+}
+
 
 } // End of namespace Titanic

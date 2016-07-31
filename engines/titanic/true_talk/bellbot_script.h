@@ -38,6 +38,7 @@ private:
 	int _field2D4;
 	int _field2D8;
 	int _field2DC;
+	bool _room107First;
 private:
 	/**
 	 * Setup sentence data
@@ -69,17 +70,21 @@ private:
 	 */
 	bool better(TTsentence *sentence, uint id1, uint id2);
 
+	bool randomResponse0(TTroomScript *roomScript, uint id);
 	bool randomResponse1(TTroomScript *roomScript, uint id);
 	bool randomResponse2(TTroomScript *roomScript, uint id);
-	bool randomResponse3(TTroomScript *roomScript, uint id);
-	bool randomResponse4(TTroomScript *roomScript);
-	bool randomResponse5(TTroomScript *roomScript, uint id);
+	void randomResponse3(TTroomScript *roomScript, uint id);
+	void randomResponse4(TTroomScript *roomScript, uint id);
 
 	int checkCommonSentences(TTroomScript *roomScript, TTsentence *sentence);
 	int checkCommonWords(TTroomScript *roomScript, TTsentence *sentence);
 
-	int getRoomDialogueId(TTroomScript *roomScript);
-
+	uint getRoomDialogueId(TTroomScript *roomScript);
+	
+	/**
+	 * Adds a description of the room to the conversation response
+	 */
+	bool addRoomDescription(TTroomScript *roomScript);
 public:
 	BellbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2);
