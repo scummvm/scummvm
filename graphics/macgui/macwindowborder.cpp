@@ -45,12 +45,10 @@
 *
 */
 
-#include "macwindowborder.h"
-
 #include "common/system.h"
 
+#include "graphics/macgui/macwindowborder.h"
 #include "graphics/macgui/macwindowmanager.h"
-
 
 namespace Graphics {
 
