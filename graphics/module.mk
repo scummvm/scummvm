@@ -12,6 +12,10 @@ MODULE_OBJS := \
 	fonts/ttf.o \
 	fonts/winfont.o \
 	maccursor.o \
+	macgui/macmenu.o \
+	macgui/macwindow.o \
+	macgui/macwindowborder.o \
+	macgui/macwindowmanager.o\
 	managed_surface.o \
 	nine_patch.o \
 	pixelformat.o \
@@ -28,11 +32,7 @@ MODULE_OBJS := \
 	VectorRenderer.o \
 	VectorRendererSpec.o \
 	wincursor.o \
-	yuv_to_rgb.o \
-	macgui/macwindowmanager.o\
-	macgui/macwindow.o \
-	macgui/macmenu.o \
-	macgui/macwindowborder.o
+	yuv_to_rgb.o
 
 ifdef USE_SCALERS
 MODULE_OBJS += \
