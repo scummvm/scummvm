@@ -116,9 +116,9 @@ static const byte macCursorBeam[] = {
 };
 
 MacWindowManager::MacWindowManager() {
-    _screen = 0;
-    _lastId = 0;
-    _activeWindow = -1;
+	_screen = 0;
+	_lastId = 0;
+	_activeWindow = -1;
 
 	_menu = 0;
 
@@ -140,21 +140,21 @@ MacWindowManager::MacWindowManager() {
 }
 
 MacWindowManager::~MacWindowManager() {
-    for (int i = 0; i < _lastId; i++)
-        delete _windows[i];
+	for (int i = 0; i < _lastId; i++)
+		delete _windows[i];
 }
 
 MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool editable) {
 	MacWindow *w = new MacWindow(_lastId, scrollable, resizable, editable, this);
 
-    _windows.push_back(w);
-    _windowStack.push_back(w);
+	_windows.push_back(w);
+	_windowStack.push_back(w);
 
-    setActive(_lastId);
+	setActive(_lastId);
 
-    _lastId++;
+	_lastId++;
 
-    return w;
+	return w;
 }
 
 Menu *MacWindowManager::addMenu() {
@@ -168,20 +168,20 @@ Menu *MacWindowManager::addMenu() {
 }
 
 void MacWindowManager::setActive(int id) {
-    if (_activeWindow == id)
-        return;
+	if (_activeWindow == id)
+		return;
 
-    if (_activeWindow != -1)
-        _windows[_activeWindow]->setActive(false);
+	if (_activeWindow != -1)
+		_windows[_activeWindow]->setActive(false);
 
-    _activeWindow = id;
+	_activeWindow = id;
 
-    _windows[id]->setActive(true);
+	_windows[id]->setActive(true);
 
-    _windowStack.remove(_windows[id]);
-    _windowStack.push_back(_windows[id]);
+	_windowStack.remove(_windows[id]);
+	_windowStack.push_back(_windows[id]);
 
-    _fullRefresh = true;
+	_fullRefresh = true;
 }
 
 void MacWindowManager::removeWindow(MacWindow *target) {
@@ -245,30 +245,30 @@ void MacWindowManager::drawDesktop() {
 }
 
 void MacWindowManager::draw() {
-    assert(_screen);
+	assert(_screen);
 
-		removeMarked();
+	removeMarked();
 
 	if (_fullRefresh)
 		drawDesktop();
 
-    for (Common::List<BaseMacWindow *>::const_iterator it = _windowStack.begin(); it != _windowStack.end(); it++) {
+	for (Common::List<BaseMacWindow *>::const_iterator it = _windowStack.begin(); it != _windowStack.end(); it++) {
 		BaseMacWindow *w = *it;
-        if (w->draw(_screen, _fullRefresh)) {
-            w->setDirty(false);
+		if (w->draw(_screen, _fullRefresh)) {
+			w->setDirty(false);
 
 			Common::Rect clip(w->getDimensions().left - 2, w->getDimensions().top - 2, w->getDimensions().right - 2, w->getDimensions().bottom - 2);
 			clip.clip(_screen->getBounds());
 
-            g_system->copyRectToScreen(_screen->getBasePtr(clip.left, clip.top), _screen->pitch, clip.left, clip.top, clip.width(), clip.height());
-        }
-    }
+			g_system->copyRectToScreen(_screen->getBasePtr(clip.left, clip.top), _screen->pitch, clip.left, clip.top, clip.width(), clip.height());
+		}
+	}
 
 	// Menu is drawn on top of everything and always
 	if (_menu)
 		_menu->draw(_screen, _fullRefresh);
 
-    _fullRefresh = false;
+	_fullRefresh = false;
 }
 
 bool MacWindowManager::processEvent(Common::Event &event) {
@@ -276,9 +276,9 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 	if (_menu && _menu->processEvent(event))
 		return true;
 
-  if (event.type != Common::EVENT_MOUSEMOVE && event.type != Common::EVENT_LBUTTONDOWN &&
-          event.type != Common::EVENT_LBUTTONUP)
-      return false;
+	if (event.type != Common::EVENT_MOUSEMOVE && event.type != Common::EVENT_LBUTTONDOWN &&
+			event.type != Common::EVENT_LBUTTONUP)
+		return false;
 
 	if (_windows[_activeWindow]->isEditable() && _windows[_activeWindow]->getType() == kWindowWindow &&
 			((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y)) {
@@ -293,20 +293,20 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 		}
 	}
 
-    for (Common::List<BaseMacWindow *>::const_iterator it = _windowStack.end(); it != _windowStack.begin();) {
-        it--;
+	for (Common::List<BaseMacWindow *>::const_iterator it = _windowStack.end(); it != _windowStack.begin();) {
+		it--;
 		BaseMacWindow *w = *it;
 
 
-        if (w->hasAllFocus() || w->getDimensions().contains(event.mouse.x, event.mouse.y)) {
-            if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)
-                setActive(w->getId());
+		if (w->hasAllFocus() || w->getDimensions().contains(event.mouse.x, event.mouse.y)) {
+			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)
+				setActive(w->getId());
 
-            return w->processEvent(event);
-        }
-    }
+			return w->processEvent(event);
+		}
+	}
 
-    return false;
+	return false;
 }
 
 void MacWindowManager::removeMarked() {
