@@ -688,6 +688,7 @@ const SciWorkaroundEntry kPaletteUnsetFlag_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
 const SciWorkaroundEntry kSetCursor_workarounds[] = {
 	{ GID_KQ5,            -1,   768,  0,           "KQCursor", "init",                      NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // CD: gets called with 4 additional "900d" parameters
+	{ GID_MOTHERGOOSEHIRES,0,     0, -1,                 "MG", "setCursor",                 NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // At the start of the game, an object is passed as the cel number
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 

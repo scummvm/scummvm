@@ -693,10 +693,11 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(Said),              SIG_EVERYWHERE,           "[r0]",                  NULL,            NULL },
 	{ MAP_CALL(SaveGame),          SIG_EVERYWHERE,           "[r0]i[r0](r0)",         NULL,            NULL },
 	{ MAP_CALL(ScriptID),          SIG_EVERYWHERE,           "[io](i)",               NULL,            NULL },
-	{ MAP_CALL(SetCursor),         SIG_SINCE_SCI21, SIGFOR_ALL, "i(i)([io])(i*)",     NULL,            NULL },
-	// TODO: SCI2.1 may supply an object optionally (mother goose sci21 right on startup) - find out why
 	{ MAP_CALL(SetCursor),         SIG_SCI11, SIGFOR_ALL,    "i(i)(i)(i)(iiiiii)",    NULL,            NULL },
-	{ MAP_CALL(SetCursor),         SIG_EVERYWHERE,           "i(i)(i)(i)(i)",         NULL,            kSetCursor_workarounds },
+	{ MAP_CALL(SetCursor),         SIG_SCI16, SIGFOR_ALL,    "i(i)(i)(i)(i)",         NULL,            kSetCursor_workarounds },
+#ifdef ENABLE_SCI32
+	{ "SetCursor", kSetCursor32,   SIG_SCI32, SIGFOR_ALL,    "i(i)(i)(i)",            NULL,            kSetCursor_workarounds },
+#endif
 	{ MAP_CALL(SetDebug),          SIG_EVERYWHERE,           "(i*)",                  NULL,            NULL },
 	{ MAP_CALL(SetJump),           SIG_EVERYWHERE,           "oiii",                  NULL,            NULL },
 	{ MAP_CALL(SetMenu),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },

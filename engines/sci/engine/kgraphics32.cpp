@@ -38,7 +38,6 @@
 #include "sci/graphics/compare.h"
 #include "sci/graphics/controls16.h"
 #include "sci/graphics/coordadjuster.h"
-#include "sci/graphics/cursor.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/picture.h"
@@ -48,6 +47,7 @@
 #include "sci/graphics/text16.h"
 #include "sci/graphics/view.h"
 #ifdef ENABLE_SCI32
+#include "sci/graphics/cursor32.h"
 #include "sci/graphics/celobj32.h"
 #include "sci/graphics/controls32.h"
 #include "sci/graphics/font.h"	// TODO: remove once kBitmap is moved in a separate class
@@ -63,6 +63,44 @@ namespace Sci {
 #ifdef ENABLE_SCI32
 
 extern void showScummVMDialog(const Common::String &message);
+
+reg_t kSetCursor32(EngineState *s, int argc, reg_t *argv) {
+	switch (argc) {
+	case 1: {
+		if (argv[0].toSint16() == -2) {
+			g_sci->_gfxCursor32->clearRestrictedArea();
+		} else {
+			if (argv[0].isNull()) {
+				g_sci->_gfxCursor32->hide();
+			} else {
+				g_sci->_gfxCursor32->show();
+			}
+		}
+		break;
+	}
+	case 2: {
+		const Common::Point position(argv[0].toSint16(), argv[1].toSint16());
+		g_sci->_gfxCursor32->setPosition(position);
+		break;
+	}
+	case 3: {
+		g_sci->_gfxCursor32->setView(argv[0].toUint16(), argv[1].toSint16(), argv[2].toSint16());
+		break;
+	}
+	case 4: {
+		const Common::Rect restrictRect(argv[0].toSint16(),
+										argv[1].toSint16(),
+										argv[2].toSint16() + 1,
+										argv[3].toSint16() + 1);
+		g_sci->_gfxCursor32->setRestrictedArea(restrictRect);
+		break;
+	}
+	default:
+		error("kSetCursor: Invalid number of arguments (%d)", argc);
+	}
+
+	return s->r_acc;
+}
 
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv) {
 	const Buffer &buffer = g_sci->_gfxFrameout->getCurrentBuffer();

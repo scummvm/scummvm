@@ -98,6 +98,7 @@ class GfxFrameout;
 class Audio32;
 class Video32;
 class GfxTransitions32;
+class GfxCursor32;
 #endif
 
 // our engine debug levels
@@ -391,6 +392,7 @@ public:
 	RobotDecoder *_robotDecoder;
 	GfxFrameout *_gfxFrameout; // kFrameout and the like for 32-bit gfx
 	GfxTransitions32 *_gfxTransitions32;
+	GfxCursor32 *_gfxCursor32;
 #endif
 
 	AudioPlayer *_audio;

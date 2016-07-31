@@ -421,6 +421,8 @@ reg_t kStubNull(EngineState *s, int argc, reg_t *argv);
 
 #ifdef ENABLE_SCI32
 // SCI2 Kernel Functions
+reg_t kSetCursor32(EngineState *s, int argc, reg_t *argv);
+
 reg_t kDoAudio32(EngineState *s, int argc, reg_t *argv);
 reg_t kDoAudioInit(EngineState *s, int argc, reg_t *argv);
 reg_t kDoAudioWaitForPlay(EngineState *s, int argc, reg_t *argv);

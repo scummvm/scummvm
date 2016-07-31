@@ -93,6 +93,7 @@ MODULE_OBJS += \
 	graphics/text32.o \
 	graphics/transitions32.o \
 	graphics/video32.o \
+	graphics/cursor32.o \
 	sound/audio32.o \
 	sound/decoders/sol.o \
 	video/robot_decoder.o

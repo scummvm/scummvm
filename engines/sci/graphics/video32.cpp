@@ -31,7 +31,7 @@
 #include "sci/engine/vm_types.h"         // for reg_t
 #include "sci/event.h"                   // for SciEvent, EventManager, SCI_...
 #include "sci/graphics/celobj32.h"       // for CelInfo32, ::kLowResX, ::kLo...
-#include "sci/graphics/cursor.h"         // for GfxCursor
+#include "sci/graphics/cursor32.h"       // for GfxCursor32
 #include "sci/graphics/frameout.h"       // for GfxFrameout
 #include "sci/graphics/helpers.h"        // for Color, Palette
 #include "sci/graphics/palette32.h"      // for GfxPalette32
@@ -597,7 +597,7 @@ VMDPlayer::IOStatus VMDPlayer::close() {
 	}
 
 	if (!_showCursor) {
-		g_sci->_gfxCursor->kernelShow();
+		g_sci->_gfxCursor32->unhide();
 	}
 
 	_lastYieldedFrameNo = 0;
@@ -658,7 +658,7 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 		_isInitialized = true;
 
 		if (!_showCursor) {
-			g_sci->_gfxCursor->kernelHide();
+			g_sci->_gfxCursor32->hide();
 		}
 
 		Common::Rect vmdRect(_x,
