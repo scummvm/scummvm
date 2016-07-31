@@ -648,6 +648,8 @@ void writeData() {
 	writeSentenceEntries("Sentences/Bellbot/19", 0x5D61B8);
 
 	writeSentenceEntries("Sentences/Deskbot", 0x5DCD10);
+	writeSentenceEntries("Sentences/Deskbot/2", 0x5E8E18);
+	writeSentenceEntries("Sentences/Deskbot/3", 0x5E8BA8);
 	writeSentenceEntries("Sentences/Doorbot", 0x5EC110);
 	writeSentenceEntries("Sentences/Liftbot", 0x6026B0);
 	writeSentenceEntries("Sentences/MaitreD", 0x60CFD8);
