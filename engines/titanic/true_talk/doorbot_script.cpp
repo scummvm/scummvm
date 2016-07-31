@@ -63,7 +63,7 @@ DoorbotScript::DoorbotScript(int val1, const char *charClass, int v2,
 void DoorbotScript::setupSentences() {
 	for (int idx = 35; idx < 40; ++idx)
 		CTrueTalkManager::setFlags(idx, 0);
-	_state = 1;
+	_doorbotState = 1;
 	_field68 = 0;
 	_entryCount = 0;
 	_dialValues[0] = _dialValues[1] = 100;
@@ -502,8 +502,59 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 }
 
 ScriptChangedResult DoorbotScript::scriptChanged(const TTroomScript *roomScript, uint id) {
-	warning("TODO");
-	return SCR_1;
+	if (id == 3) {
+		if (roomScript != nullptr  && roomScript->_scriptId != 100) {
+			if (CTrueTalkManager::_v9 == 101) {
+				addResponse(getDialogueId(220873));
+				applyResponse();
+			} else {
+				bool flag = false;
+				if (CTrueTalkManager::_currentNPC) {
+					CGameObject *obj;
+					if (CTrueTalkManager::_currentNPC->find("Magazine", &obj, FIND_PET)) {
+						setResponse(getDialogueId(222248), 46);
+						flag = true;
+					}
+				}
+
+				if (!flag) {
+					if (getRandomNumber(100) > 80 && getStateValue()) {
+						addResponse(getDialogueId(221095));
+						applyResponse();
+						flag = true;
+					}
+
+					if (!flag && (_doorbotState || !fn10(true))) {
+						addResponse(getDialogueId(220074));
+						applyResponse();
+					}
+				}
+			}
+		}
+
+		_doorbotState = 0;
+		resetFlags();
+		CTrueTalkManager::_v9 = 0;
+	} else if (id == 4) {
+		setState(0);
+		if (getValue(38) == 0) {
+			addResponse(getDialogueId(220883));
+			applyResponse();
+		}
+
+		CTrueTalkManager::setFlags(38, 0);
+		CTrueTalkManager::setFlags(39, 0);
+	}
+
+	if (id >= 220000 && id <= 222418) {
+		addResponse(getDialogueId(id));
+		applyResponse();
+	} else if (id >= 10000 && id <= 11986) {
+		addResponse(id);
+		applyResponse();
+	}
+
+	return SCR_2;
 }
 
 int DoorbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
@@ -876,8 +927,13 @@ int DoorbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 		break;
 	}
 
-	warning("TODO");
-	return 0;
+	if (id) {
+		addResponse(getDialogueId(id));
+		applyResponse();
+		return 2;
+	} else {
+		return 0;
+	}
 }
 
 void DoorbotScript::setDialRegion(int dialNum, int region) {

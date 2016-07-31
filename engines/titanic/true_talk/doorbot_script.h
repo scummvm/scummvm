@@ -34,6 +34,7 @@ private:
 	TTupdateStateArray _states;
 	SentenceEntriesMap _sentences;
 	int _stateIndex;
+	int _doorbotState;
 private:
 	/**
 	 * Setup sentence data
