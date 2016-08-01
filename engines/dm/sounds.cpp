@@ -31,23 +31,15 @@
 #include "dm.h"
 #include "gfx.h"
 #include <audio/mixer.h>
+#include "timeline.h"
+#include "dungeonman.h"
 
 
 namespace DM {
 
-class Sound {
-public:
-	int16 _graphicIndex;
-	byte _period;
-	byte _priority;
-	byte _loudDistance;
-	byte _softDistance;
-	Sound(int16 index, byte period, byte priority, byte loudDist, byte softDist) :
-		_graphicIndex(index), _period(period), _priority(priority), _loudDistance(loudDist), _softDistance(softDist) {}
-}; // @ Sound
 
 
-Sound G0060_as_Graphic562_Sounds[k34_D13_soundCount] = {
+Sound g60_sounds[k34_D13_soundCount] = {
 	Sound(533, 112,  11, 3, 6), /* k00_soundMETALLIC_THUD 0 */
 	Sound(534, 112,  15, 0, 3), /* k01_soundSWITCH 1 */
 	Sound(535, 112,  72, 3, 6), /* k02_soundDOOR_RATTLE 2 */
@@ -87,7 +79,7 @@ void DMEngine::f503_loadSounds() {
 	for (uint16 soundIndex = 0; soundIndex < k34_D13_soundCount; ++soundIndex) {
 		SoundData *soundData = _gK24_soundData + soundIndex;
 
-		uint16 graphicIndex = G0060_as_Graphic562_Sounds[soundIndex]._graphicIndex;
+		uint16 graphicIndex = g60_sounds[soundIndex]._graphicIndex;
 		soundData->_byteCount = _displayMan->getCompressedDataSize(graphicIndex) - 2; // the header is 2 bytes long
 		soundData->_firstSample = new byte[soundData->_byteCount];
 
@@ -98,14 +90,115 @@ void DMEngine::f503_loadSounds() {
 }
 
 void DMEngine::f060_SOUND_Play(uint16 soundIndex, uint16 period, uint8 leftVolume, uint8 rightVolume) {
-	byte soundFlags = Audio::FLAG_STEREO;
 	SoundData *sound = &_gK24_soundData[soundIndex];
-	Audio::AudioStream *stream = Audio::makeRawStream(sound->_firstSample, sound->_byteCount, 72800 / period, soundFlags, DisposeAfterUse::NO);
+	Audio::AudioStream *stream = Audio::makeRawStream(sound->_firstSample, sound->_byteCount, (72800 / period) * 8, 0, DisposeAfterUse::NO);
 
 	signed char balance = ((int16)rightVolume - (int16)leftVolume) / 2;
 
 	Audio::SoundHandle handle;
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, stream, - 1, 127, balance);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, stream, -1, 127, balance);
+}
+
+void DMEngine::f65_playPendingSound() {
+	while (!_pendingSounds.empty()) {
+		PendingSound pendingSound = _pendingSounds.pop();
+		f060_SOUND_Play(pendingSound._soundIndex, g60_sounds[pendingSound._soundIndex]._period, pendingSound._leftVolume, pendingSound._rightVolume);
+	}
+}
+
+bool DMEngine::f505_soundGetVolume(int16 mapX, int16 mapY, uint8* leftVolume, uint8* rightVolume) {
+	static byte K0030_aauc_DistanceToSoundVolume[25][25] = {
+		{1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 4,  5,  5,  5,  5,  5,  5,  5, 5, 4, 4, 4, 4, 4},
+		{1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 5,  6,  6,  6,  6,  5,  5,  5, 5, 5, 5, 4, 4, 4},
+		{1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5,  6,  6,  6,  6,  6,  6,  5, 5, 5, 5, 5, 4, 4},
+		{1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5,  7,  7,  7,  7,  6,  6,  6, 6, 5, 5, 5, 5, 4},
+		{1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5,  8,  8,  7,  7,  7,  7,  6, 6, 6, 5, 5, 5, 4},
+		{1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 4, 6,  9,  9,  8,  8,  8,  7,  7, 6, 6, 6, 5, 5, 5},
+		{1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 6, 10, 10, 10,  9,  8,  8,  7, 7, 6, 6, 5, 5, 5},
+		{1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 7, 12, 12, 11, 10,  9,  9,  8, 7, 7, 6, 6, 5, 5},
+		{1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 4, 7, 15, 14, 13, 12, 11,  9,  8, 8, 7, 6, 6, 5, 5},
+		{1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 4, 8, 20, 19, 16, 14, 12, 10,  9, 8, 7, 7, 6, 6, 5},
+		{1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 4, 8, 29, 26, 21, 16, 13, 11, 10, 8, 7, 7, 6, 6, 5},
+		{1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 4, 8, 58, 41, 26, 19, 14, 12, 10, 9, 8, 7, 6, 6, 5},
+		{1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 6, 64, 58, 29, 20, 15, 12, 10, 9, 8, 7, 6, 6, 5},
+		{0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 3, 6, 41, 29, 19, 13, 10,  8,  7, 6, 6, 5, 5, 4, 4},
+		{0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 3, 6, 21, 19, 15, 12, 10,  8,  7, 6, 5, 5, 4, 4, 4},
+		{0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 3, 6, 14, 13, 12, 10,  9,  7,  7, 6, 5, 5, 4, 4, 4},
+		{0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 5, 11, 10, 10,  9,  8,  7,  6, 6, 5, 5, 4, 4, 4},
+		{0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 5,  9,  8,  8,  7,  7,  6,  6, 5, 5, 4, 4, 4, 4},
+		{0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 5,  7,  7,  7,  7,  6,  6,  5, 5, 5, 4, 4, 4, 4},
+		{0, 1, 1, 1, 1, 1, 1, 2, 2, 1, 3, 4,  6,  6,  6,  6,  6,  5,  5, 5, 4, 4, 4, 4, 3},
+		{1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 4,  6,  6,  5,  5,  5,  5,  5, 4, 4, 4, 4, 3, 3},
+		{1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 4,  5,  5,  5,  5,  5,  4,  4, 4, 4, 4, 3, 3, 3},
+		{1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3,  5,  5,  4,  4,  4,  4,  4, 4, 4, 3, 3, 3, 3},
+		{1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3,  4,  4,  4,  4,  4,  4,  4, 4, 3, 3, 3, 3, 3},
+		{1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3,  4,  4,  4,  4,  4,  4,  4, 3, 3, 3, 3, 3, 3}};
+
+	int16 L1678_i_RightVolumeColumnIndex = 0;
+	int16 L1679_i_LineIndex = 0;
+	int16 L1680_i_LeftVolumeColumnIndex = 0;
+
+
+	switch (_dungeonMan->_g308_partyDir) {
+	case kDirNorth:
+		L1678_i_RightVolumeColumnIndex = mapX - _dungeonMan->_g306_partyMapX;
+		L1679_i_LineIndex = mapY - _dungeonMan->_g307_partyMapY;
+		break;
+	case kDirEast:
+		L1678_i_RightVolumeColumnIndex = mapY - _dungeonMan->_g307_partyMapY;
+		L1679_i_LineIndex = -(mapX - _dungeonMan->_g306_partyMapX);
+		break;
+	case kDirSouth:
+		L1678_i_RightVolumeColumnIndex = -(mapX - _dungeonMan->_g306_partyMapX);
+		L1679_i_LineIndex = -(mapY - _dungeonMan->_g307_partyMapY);
+		break;
+	case kDirWest:
+		L1678_i_RightVolumeColumnIndex = -(mapY - _dungeonMan->_g307_partyMapY);
+		L1679_i_LineIndex = mapX - _dungeonMan->_g306_partyMapX;
+		break;
+	}
+	if ((L1678_i_RightVolumeColumnIndex < -12) || (L1678_i_RightVolumeColumnIndex > 12)) { /* Sound is not audible if source is more than 12 squares away from the party */
+		return false;
+	}
+	if ((L1679_i_LineIndex < -12) || (L1679_i_LineIndex > 12)) { /* Sound is not audible if source is more than 12 squares away from the party */
+		return false;
+	}
+	L1680_i_LeftVolumeColumnIndex = -L1678_i_RightVolumeColumnIndex + 12;
+	L1678_i_RightVolumeColumnIndex += 12;
+	L1679_i_LineIndex += 12;
+	*rightVolume = K0030_aauc_DistanceToSoundVolume[L1679_i_LineIndex][L1678_i_RightVolumeColumnIndex];
+	*leftVolume = K0030_aauc_DistanceToSoundVolume[L1679_i_LineIndex][L1680_i_LeftVolumeColumnIndex];
+	return true;
+}
+
+void DMEngine::f064_SOUND_RequestPlay_CPSD(uint16 soundIndex, int16 mapX, int16 mapY, uint16 mode) {
+	Sound* sound;
+	uint8 leftVolume, rightVolume;
+
+	if (mode && (_dungeonMan->_g272_currMapIndex != _dungeonMan->_g309_partyMapIndex))
+		return;
+
+	sound = &g60_sounds[soundIndex];
+	if (mode > k1_soundModePlayIfPrioritized) { /* Add an event in the timeline to play the sound (mode - 1) ticks later */
+		TimelineEvent event;
+		M33_setMapAndTime(event._mapTime, _dungeonMan->_g272_currMapIndex, _g313_gameTime + mode - 1);
+		event._type = k20_TMEventTypePlaySound;
+		event._priority = sound->_priority;
+		event._C._soundIndex = soundIndex;
+		event._B._location._mapX = mapX;
+		event._B._location._mapY = mapY;
+		_timeline->f238_addEventGetEventIndex(&event);
+		return;
+	}
+
+	if (!f505_soundGetVolume(mapX, mapY, &leftVolume, &rightVolume)) {
+		return;
+	}
+	if (!mode) { /* Play the sound immediately */
+		f060_SOUND_Play(soundIndex, sound->_period, leftVolume, rightVolume);
+		return;
+	}
+	_pendingSounds.push(PendingSound(leftVolume, rightVolume, soundIndex));
 }
 
 }

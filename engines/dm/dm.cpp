@@ -396,7 +396,7 @@ void DMEngine::f2_gameloop() {
 			}
 		}
 		// F0363_COMMAND_HighlightBoxDisable();
-		// F0065_SOUND_PlayPendingSound_CPSD();
+		f65_playPendingSound();
 		_championMan->f320_applyAndDrawPendingDamageAndWounds();
 		if (_championMan->_g303_partyDead)
 			break;
