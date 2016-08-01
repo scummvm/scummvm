@@ -541,7 +541,7 @@ class BitmapTable;
  * A convenience class for creating and modifying in-memory
  * bitmaps.
  */
-class SciBitmap {
+class SciBitmap : public Common::Serializable {
 	byte *_data;
 	int _dataSize;
 	Buffer _buffer;
@@ -773,6 +773,8 @@ public:
 		}
 		return _data + getHunkPaletteOffset();
 	}
+
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
 struct BitmapTable : public SegmentObjTable<SciBitmap *> {

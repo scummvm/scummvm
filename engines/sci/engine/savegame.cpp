@@ -159,16 +159,22 @@ void syncWithSerializer(Common::Serializer &s, SciString &obj) {
 	}
 }
 
-void syncWithSerializer(Common::Serializer &s, SciBitmap *obj) {
-	debug("TODO: Sync bitmap");
+void syncWithSerializer(Common::Serializer &s, SciBitmap *&obj) {
+	bool hasEntry;
+	if (s.isSaving()) {
+		hasEntry = obj != nullptr;
+	}
+	s.syncAsByte(hasEntry);
 
-//	if (s.isSaving()) {
-//		size = obj.getSize();
-//		s.syncAsUint32LE(size);
-//	} else {
-//		s.syncAsUint32LE(size);
-//		obj.setSize(size);
-//	}
+	if (hasEntry) {
+		if (s.isLoading()) {
+			obj = new SciBitmap;
+		}
+
+		obj->saveLoadWithSerializer(s);
+	} else {
+		obj = nullptr;
+	}
 }
 #endif
 
@@ -703,11 +709,28 @@ void StringTable::saveLoadWithSerializer(Common::Serializer &ser) {
 }
 
 void BitmapTable::saveLoadWithSerializer(Common::Serializer &ser) {
-	if (ser.getVersion() < 36)
+	if (ser.getVersion() < 36) {
 		return;
+	}
 
-	// TODO: Should only include bitmaps with gc = true
 	sync_Table(ser, *this);
+}
+
+void SciBitmap::saveLoadWithSerializer(Common::Serializer &s) {
+	if (s.getVersion() < 36) {
+		return;
+	}
+
+	s.syncAsByte(_gc);
+	s.syncAsUint32LE(_dataSize);
+	if (s.isLoading()) {
+		_data = (byte *)malloc(_dataSize);
+	}
+	s.syncBytes(_data, _dataSize);
+
+	if (s.isLoading()) {
+		_buffer = Buffer(getWidth(), getHeight(), getPixels());
+	}
 }
 #endif
 
