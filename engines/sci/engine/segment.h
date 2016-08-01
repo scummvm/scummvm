@@ -535,7 +535,7 @@ inline void set##property(uint##size value) {\
 	WRITE_SCI11ENDIAN_UINT##size(_data + (offset), (value));\
 }
 
-class BitmapTable;
+struct BitmapTable;
 
 /**
  * A convenience class for creating and modifying in-memory

@@ -33,7 +33,7 @@ typedef Common::Array<RectList> EraseListList;
 class GfxCoordAdjuster32;
 class GfxScreen;
 class GfxTransitions32;
-class PlaneShowStyle;
+struct PlaneShowStyle;
 
 /**
  * Frameout class, kFrameout and relevant functions for SCI32 games.
