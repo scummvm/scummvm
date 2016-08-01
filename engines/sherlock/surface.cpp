@@ -29,9 +29,9 @@ BaseSurface::BaseSurface() : Graphics::Screen(0, 0), Fonts() {
 	free();		// Free the 0x0 surface allocated by Graphics::Screen
 }
 
-BaseSurface::BaseSurface(int width, int height) : Graphics::Screen(width, height),
+BaseSurface::BaseSurface(int width_, int height_) : Graphics::Screen(width_, height_),
 		Fonts() {
-	create(width, height);
+	create(width_, height_);
 }
 
 void BaseSurface::writeString(const Common::String &str, const Common::Point &pt, uint overrideColor) {
@@ -61,7 +61,7 @@ void BaseSurface::SHtransBlitFrom(const Graphics::Surface &src, const Common::Po
 	Common::Rect srcRect(0, 0, src.w, src.h);
 	Common::Rect destRect(pt.x, pt.y, pt.x + src.w * SCALE_THRESHOLD / scaleVal,
 		pt.y + src.h * SCALE_THRESHOLD / scaleVal);
-	
+
 	Graphics::Screen::transBlitFrom(src, srcRect, destRect, TRANSPARENCY,
 		flipped, overrideColor);
 }
