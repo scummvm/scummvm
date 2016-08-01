@@ -30,6 +30,8 @@ namespace Titanic {
 class MaitreDScript : public TTnpcScript {
 private:
 	TTmapEntryArray _states;
+	TTsentenceEntries _sentences1;
+	int _answerCtr;
 private:
 	/**
 	 * Setup sentence data
@@ -56,6 +58,11 @@ private:
 	 * Trigers 12
 	 */
 	void trigger12(bool flag);
+
+	/**
+	 * Does preprocessing for the sentence
+	 */
+	int preprocess(const TTroomScript *roomScript, const TTsentence *sentence);
 public:
 	MaitreDScript(int val1, const char *charClass, int v2,
 			const char *charName, int v3, int val2);

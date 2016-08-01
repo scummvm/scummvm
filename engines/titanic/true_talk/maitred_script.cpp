@@ -29,6 +29,8 @@ namespace Titanic {
 MaitreDScript::MaitreDScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2) :
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, -1, -1, -1, 0) {
+	_answerCtr = 0;
+
 	CTrueTalkManager::setFlags(9, 1);
 	CTrueTalkManager::setFlags(10, 0);
 	CTrueTalkManager::setFlags(11, 0);
@@ -49,6 +51,7 @@ MaitreDScript::MaitreDScript(int val1, const char *charClass, int v2,
 void MaitreDScript::setupSentences() {
 	_mappings.load("Mappings/MaitreD", 1);
 	_entries.load("Sentences/MaitreD");
+	_sentences1.load("Sentences/MaitreD/1");
 	_field68 = 0;
 	_entryCount = 0;
 }
@@ -66,8 +69,75 @@ int MaitreDScript::chooseResponse(const TTroomScript *roomScript, const TTsenten
 }
 
 int MaitreDScript::process(const TTroomScript *roomScript, const TTsentence *sentence) {
-	// TODO
-	return 0;
+	if (roomScript->_scriptId != 132)
+		return 2;
+	if (preprocess(roomScript, sentence) == 1)
+		return 1;
+
+	CTrueTalkManager::setFlags(10, 0);
+	setState(0);
+
+	if (getValue(12) == 0) {
+		trigger12(false);
+		_answerCtr = 0;
+
+		if (sentence->contains("restaurant at the end of the universe")
+				|| sentence->contains("milliway")
+				|| sentence->contains("big bang burger bar")) {
+			addResponse(getDialogueId(260975));
+			applyResponse();
+		} else if (processEntries(&_entries, _entryCount, roomScript, sentence) == 2) {
+			// Do nothing further
+		} else if (sentence->localWord("menu")) {
+			addResponse(getDialogueId(260683));
+			applyResponse();
+		} else if (sentence->localWord("table") && sentence->localWord("other")) {
+			addResponse(getDialogueId(260091));
+			applyResponse();
+		} else if ((sentence->localWord("not") && sentence->localWord("busy"))
+				|| (sentence->localWord("no") && sentence->localWord("people"))
+				|| sentence->localWord("empty")) {
+			addResponse(getDialogueId(260087));
+			applyResponse();
+		} else if (!defaultProcess(roomScript, sentence)
+				&& processEntries(&_sentences1, 0, roomScript, sentence) != 2
+				&& processEntries(_defaultEntries, 0, roomScript, sentence) != 2) {
+			addResponse(getDialogueId(260975));
+			applyResponse();
+		}
+
+		return 2;		
+	}
+
+	if (++_answerCtr > 50 || sentence->localWord("stop") || sentence->localWord("enough")
+			|| sentence->contains("i give up") || sentence->contains("i give in")
+			|| sentence->contains("i surrender") || sentence->contains("i submit")) {
+		_answerCtr = 0;
+		trigger12(false);
+		addResponse(getDialogueId(260063));
+	} else if (sentence->localWord("not") && sentence->localWord("fight") &&
+			(sentence->localWord("feel") || sentence->localWord("want")
+			|| sentence->localWord("do") || sentence->localWord("will"))) {
+		_answerCtr = 0;
+		trigger12(false);
+		addResponse(getDialogueId(260678));
+	} else if (sentence->contains("touche") || sentence->contains("toushe")) {
+		addResponse(getDialogueId(260098));
+	} else if (sentence->contains("have at you")) {
+		addResponse(getDialogueId(260047));
+	} else if (sentence->contains("en garde") || sentence->contains("on guard")) {
+		addResponse(getDialogueId(260008));
+	} else if ((sentence->localWord("surrender") && !sentence->contains("i surrender"))
+			|| (sentence->contains("give up") && !sentence->contains("i give up"))
+			|| (sentence->contains("give in") && !sentence->contains("i give in"))
+			|| (sentence->contains("submit") && !sentence->contains("i submit"))) {
+		addResponse(getDialogueId(260086));
+	} else {
+		addResponse(getDialogueId(260031));
+	}
+
+	applyResponse();
+	return 2;
 }
 
 ScriptChangedResult MaitreDScript::scriptChanged(const TTroomScript *roomScript, uint id) {
@@ -389,6 +459,379 @@ void MaitreDScript::trigger12(bool flag) {
 
 	if (val) {
 		CTrueTalkManager::triggerAction(flag ? 10 : 9, 0);
+	}
+}
+
+int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *sentence) {
+	if (!roomScript || !sentence || getValue(8))
+		return 1;
+
+	bool ebx = true, edi = false;
+	switch (getValue(10)) {
+	case 1:
+		if (!getValue(11) && !getValue(8)) {
+			addResponse(getDialogueId(260052));
+			edi = true;
+			ebx = false;
+		}
+		break;
+
+	case 2:
+		if (sentence->localWord("change") || sentence->localWord("music")) {
+			addResponse(getDialogueId(200684));
+			edi = true;
+		}
+		break;
+
+	case 3:
+		if (sentence->localWord("chance") && (sentence->localWord("another")
+				|| sentence->localWord("other") || sentence->localWord("more"))) {
+			addResponse(getDialogueId(260106));
+		} else {
+			addResponse(getDialogueId(260107));
+		}
+		edi = true;
+		break;
+
+	case 4:
+		if (sentence->contains("unless what")) {
+			addResponse(getDialogueId(260099));
+		} else {
+			addResponse(getDialogueId(260131));
+			edi = true;
+			ebx = false;
+		}
+		break;
+
+	case 5:
+		addResponse(getDialogueId(260096));
+		edi = true;
+		ebx = false;
+		break;
+
+	case 6:
+		addResponse(getDialogueId(260097));
+		edi = true;
+		ebx = false;
+		break;
+
+	case 7:
+		if (sentence->_field2C == 12) {
+			addResponse(getDialogueId(260089));
+			edi = true;
+			ebx = false;
+		} else {
+			addResponse(getDialogueId(260094));
+			edi = true;
+			CTrueTalkManager::setFlags(11, 1);
+		}
+		break;
+
+	case 8:
+		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+			trigger12(false);
+			addResponse(getDialogueId(260094));
+			CTrueTalkManager::setFlags(11, 1);
+		} else {
+			setFlags12();
+			addResponse(getDialogueId(260131));
+		}
+		edi = true;
+		break;
+
+	case 9:
+		setFlags12();
+		break;
+
+	case 11:
+		if ((sentence->localWord("say") || sentence->localWord("talk")) ||
+				sentence->localWord("you")) {
+			addResponse(getDialogueId(260216));
+			edi = true;
+		}
+		break;
+
+	case 12:
+		if (sentence->localWord("why") && sentence->localWord("naughty")) {
+			addResponse(getDialogueId(260196));
+			edi = true;
+			ebx = false;
+		} else if (sentence->localWord("what") && sentence->localWord("his")
+				&& sentence->localWord("name")) {
+			addResponse(getDialogueId(260197));
+			edi = true;
+			ebx = false;
+		} else if (sentence->localWord("i") && sentence->localWord("meet")) {
+			addResponse(getDialogueId(260198));
+			edi = true;
+			ebx = false;
+		} else if (sentence->localWord("i") && sentence->localWord("speak")) {
+			addResponse(getDialogueId(260206));
+			edi = true;
+			ebx = false;
+		}
+		break;
+
+	case 13:
+		if (sentence->localWord("why") || sentence->localWord("please")
+				|| sentence->contains("go on") || sentence->localWord("need")
+				|| sentence->contains("got to") || sentence->localWord("must")) {
+			addResponse(getDialogueId(260199));
+			edi = true;
+			ebx = false;
+		}
+		break;
+
+	case 14:
+		if (sentence->localWord("what") || sentence->localWord("why")
+				|| sentence->localWord("kill")) {
+			addResponse(getDialogueId(260200));
+			edi = true;
+			ebx = false;
+		} else if (sentence->localWord("you") && sentence->localWord("kill")) {
+			addResponse(getDialogueId(260574));
+			edi = true;
+			ebx = false;
+		} else if (sentence->localWord("how") && sentence->localWord("kill")) {
+			addResponse(getDialogueId(260557));
+			edi = true;
+			ebx = false;
+		}
+		break;
+
+	case 15:
+		if ((sentence->localWord("what") && sentence->localWord("way"))
+				|| sentence->localWord("how")) {
+			addResponse(getDialogueId(260201));
+			edi = true;
+			ebx = false;
+		}
+		break;
+
+	case 16:
+		addResponse(getDialogueId(sentence->_field2C == 11 ? 260209 : 260210));
+		edi = true;
+		ebx = false;
+		break;
+
+	case 17:
+		if (sentence->localWord("what") && sentence->localWord("mean")) {
+			addResponse(getDialogueId(260222));
+			edi = true;
+			ebx = false;
+		} else if (sentence->localWord("laugh") && sentence->localWord("with")
+				&& sentence->localWord("you")) {
+			addResponse(getDialogueId(260221));
+			edi = true;
+			ebx = false;
+		} else {
+			setFlags12();
+			addResponse(getDialogueId(260221));
+			edi = true;
+			ebx = false;
+		}
+		break;
+
+	case 18:
+		if (sentence->_field2C == 11) {
+			addResponse(getDialogueId(260232));
+			edi = true;
+		} else if (sentence->_field2C == 12) {
+			addResponse(getDialogueId(260231));
+			edi = true;
+		} else if (sentence->_field2C == 13) {
+			addResponse(getDialogueId(260444));
+			addResponse(getDialogueId(260233));
+			edi = true;
+			ebx = false;
+		} else if (sentence->localWord("what") && sentence->localWord("happen")) {
+			addResponse(getDialogueId(260233));
+			edi = true;
+			ebx = false;
+		} else if (sentence->localWord("why") && sentence->localWord("stressed")) {
+			addResponse(getDialogueId(260245));
+			addResponse(getDialogueId(260233));
+			edi = true;
+			ebx = false;
+		} else if (sentence->localWord("why")) {
+			addResponse(getDialogueId(260453));
+			addResponse(getDialogueId(260233));
+			edi = true;
+			ebx = false;
+		}
+		break;
+
+	case 19:
+		if ((sentence->localWord("what") && sentence->localWord("scral"))
+				|| (sentence->localWord("what") && sentence->localWord("happen"))
+				|| sentence->contains("go on") || sentence->contains("and then")) {
+			addResponse(getDialogueId(260234));
+			edi = true;
+			ebx = false;
+		} else if (sentence->localWord("why") && sentence->localWord("stressed")) {
+			addResponse(getDialogueId(260245));
+			addResponse(getDialogueId(260234));
+			edi = true;
+			ebx = false;
+		} else if (sentence->localWord("why")) {
+			addResponse(getDialogueId(260276));
+			addResponse(getDialogueId(260237));
+			addResponse(getDialogueId(260234));
+			edi = true;
+			ebx = false;
+		}
+		break;
+
+	case 20:
+		if ((sentence->localWord("what") && sentence->localWord("leovinus"))
+				|| (sentence->localWord("what") && sentence->localWord("happen"))) {
+			addResponse(getDialogueId(260235));
+			edi = true;
+			ebx = false;
+		} else if (sentence->localWord("where") && sentence->localWord("leovinus")) {
+			addResponse(getDialogueId(260236));
+			edi = true;
+			ebx = false;
+		} else if (sentence->localWord("why") && sentence->localWord("stressed")) {
+			addResponse(getDialogueId(260245));
+			addResponse(getDialogueId(260235));
+			edi = true;
+			ebx = false;
+		} else {
+			addResponse(getDialogueId(260237));
+			edi = true;
+			ebx = false;
+		}
+		break;
+
+	case 21:
+	case 22:
+		if (sentence->contains("cooking")
+				|| (sentence->localWord("what") && sentence->localWord("mean"))) {
+			addResponse(getDialogueId(260238));
+			edi = true;
+			ebx = false;
+		} else if (sentence->localWord("where") && sentence->localWord("now")) {
+			addResponse(getDialogueId(260236));
+			edi = true;
+			ebx = false;
+		} else if (sentence->localWord("why") && sentence->localWord("stressed")) {
+			addResponse(getDialogueId(260245));
+			edi = true;
+			ebx = false;
+		} else if (sentence->localWord("why")) {
+			addResponse(getDialogueId(260239));
+			edi = true;
+			ebx = false;
+		}
+		break;
+
+	case 23:
+		if (sentence->_field2C == 11) {
+			addResponse(getDialogueId(260237));
+			edi = true;
+			ebx = false;
+		}
+		break;
+
+	case 24:
+		if ((sentence->localWord("can") && sentence->localWord("i")
+				&& sentence->localWord("have"))
+				|| (sentence->localWord("give") && sentence->localWord("me"))
+				|| (sentence->localWord("i") && sentence->localWord("want"))
+				|| (sentence->localWord("i") && sentence->localWord("need"))
+			) {
+			addResponse(getDialogueId(260251));
+			edi = true;
+		}
+
+	case 25:
+		if ((sentence->localWord("open") && sentence->localWord("it"))
+				|| (sentence->localWord("how") && sentence->localWord("open"))
+				|| (sentence->localWord("how") && sentence->localWord("get") && sentence->localWord("in"))
+				|| (sentence->localWord("how") && sentence->localWord("change") && sentence->localWord("music"))
+			) {
+			addResponse(getDialogueId(260253));
+			edi = true;
+			ebx = false;
+		} else if (sentence->localWord("where") && (sentence->localWord("it")
+				|| sentence->localWord("that"))) {
+			addResponse(getDialogueId(260252));
+			edi = true;
+			ebx = false;
+		} else if (sentence->localWord("where") && sentence->localWord("key")) {
+			addResponse(getDialogueId(260254));
+			edi = true;
+			ebx = false;
+		} else if ((sentence->localWord("how") && sentence->localWord("work"))
+				|| (sentence->localWord("what") && sentence->localWord("i") && sentence->localWord("do"))) {
+			addResponse(getDialogueId(260259));
+			edi = true;
+			ebx = false;
+		}
+		break;
+
+	case 26:
+		if (sentence->localWord("where") && (sentence->localWord("key")
+				|| sentence->localWord("it"))) {
+			addResponse(getDialogueId(260254));
+			edi = true;
+			ebx = false;
+		} else if (sentence->localWord("where") && (sentence->localWord("hand")
+			|| sentence->localWord("that"))) {
+			addResponse(getDialogueId(260256));
+			edi = true;
+			ebx = false;
+		} else if (sentence->_field2C == 12) {
+			addResponse(getDialogueId(260255));
+			edi = true;
+			ebx = false;
+		} else if (sentence->localWord("why") && sentence->localWord("need")) {
+			addResponse(getDialogueId(260685));
+			edi = true;
+			ebx = false;
+		}
+		break;
+
+	case 27:
+		if (sentence->localWord("where") && (sentence->localWord("that")
+				|| sentence->localWord("it"))) {
+			addResponse(getDialogueId(260262));
+			edi = true;
+		}
+		break;
+
+	case 28:
+		if (sentence->localWord("why")) {
+			addResponse(getDialogueId(260386));
+			edi = true;
+			ebx = false;
+		} else if (sentence->localWord("insist")) {
+			addResponse(getDialogueId(260387));
+			edi = true;
+			ebx = false;
+		}
+		break;
+
+	case 29:
+		if (sentence->_field2C == 11) {
+			setFlags12();
+			addResponse(getDialogueId(260131));
+		} else {
+			addResponse(getDialogueId(260966));
+		}
+		edi = true;
+		break;
+
+	case 30:
+		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+			addResponse(getDialogueId(260695));
+			edi = true;
+		} else if (sentence->_field2C == 12) {
+			addResponse(getDialogueId(260696));
+			edi = true;
+		}
+		break;
 	}
 }
 
