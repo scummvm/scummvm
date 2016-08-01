@@ -174,7 +174,7 @@ void CPetRoomsGlyph::saveGlyph(SimpleFile *file, int indent) {
 bool CPetRoomsGlyph::proc33(CPetGlyph *glyph) {
 	CPetRoomsGlyph *roomGlyph = static_cast<CPetRoomsGlyph *>(glyph);
 
-	return proc33(glyph) && _roomFlags == roomGlyph->_roomFlags;
+	return CPetGlyph::proc33(glyph) && _roomFlags == roomGlyph->_roomFlags;
 }
 
 void CPetRoomsGlyph::loadFlags(SimpleFile *file, int val) {
