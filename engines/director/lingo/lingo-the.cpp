@@ -242,7 +242,60 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheConstraint:
 		sprite->_constraint = d.u.i;
 		break;
-
+	case kTheMoveable:
+		sprite->_moveable = d.u.i;
+		break;
+	case kTheBackColor:
+		sprite->_backColor = d.u.i;
+		break;
+	case kTheForeColor:
+		sprite->_foreColor = d.u.i;
+		break;
+	case kTheLeft:
+		sprite->_left = d.u.i;
+		break;
+	case kTheRight:
+		sprite->_right = d.u.i;
+		break;
+	case kTheTop:
+		sprite->_top = d.u.i;
+		break;
+	case kTheBottom:
+		sprite->_bottom = d.u.i;
+		break;
+	case kTheBlend:
+		sprite->_blend = d.u.i;
+		break;
+	case kTheVisible:
+		sprite->_visible = (d.u.i == 0 ? false : true);
+		break;
+	case kTheType:
+		sprite->_type = d.u.i;
+		break;
+	case kTheMovieRate:
+		sprite->_movieRate = d.u.i;
+		break;
+	case kTheMovieTime:
+		sprite->_movieTime = d.u.i;
+		break;
+	case kTheStopTime:
+		sprite->_stopTime = d.u.i;
+		break;
+	case kTheStartTime:
+		sprite->_startTime = d.u.i;
+		break;
+	case kTheStretch:
+		sprite->_stretch = d.u.i;
+		break;
+	case kTheVolume:
+		sprite->_volume = d.u.i;
+		break;
+	case kTheLineSize:
+		sprite->_lineSize = d.u.i;
+		break;
+	case kTheEditableText:
+		sprite->_editableText = *d.toString();
+		break;
 	default:
 		warning("Unprocessed setting field %d of sprite", field);
 	}
@@ -320,6 +373,61 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 	case kTheConstraint:
 		d.u.i = sprite->_constraint;
 		break;
+	case kTheMoveable:
+		d.u.i = sprite->_moveable;
+		break;
+	case kTheBackColor:
+		d.u.i = sprite->_backColor;
+		break;
+	case kTheForeColor:
+		d.u.i = sprite->_foreColor;
+		break;
+	case kTheLeft:
+		d.u.i = sprite->_left;
+		break;
+	case kTheRight:
+		d.u.i = sprite->_right;
+		break;
+	case kTheBottom:
+		d.u.i = sprite->_bottom;
+		break;
+	case kTheTop:
+		d.u.i = sprite->_top;
+		break;
+	case kTheBlend:
+		d.u.i = sprite->_blend;
+		break;
+	case kTheVisible:
+		d.u.i = (sprite->_visible ? 1 : 0);
+		break;
+	case kTheType:
+		d.u.i = sprite->_type;
+		break;
+	case kTheMovieRate:
+		d.u.i = sprite->_movieRate;
+		break;
+	case kTheMovieTime:
+		d.u.i = sprite->_movieTime;
+		break;
+	case kTheStopTime:
+		d.u.i = sprite->_stopTime;
+		break;
+	case kTheStartTime:
+		d.u.i = sprite->_startTime;
+		break;
+	case kTheVolume:
+		d.u.i = sprite->_volume;
+		break;
+	case kTheStretch:
+		d.u.i = sprite->_stretch;
+		break;
+	case kTheLineSize:
+		d.u.i = sprite->_lineSize;
+		break;
+	case kTheEditableText:
+		d.toString();
+		d.u.s = &sprite->_editableText;
+		break;
 	default:
 		warning("Unprocessed getting field %d of sprite", field);
 		d.type = VOID;
@@ -345,6 +453,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	}
 
 	Cast *cast;
+	CastInfo *castInfo;
 	if (!_vm->_currentScore->_casts.contains(id)) {
 		if (field == kTheLoaded) {
 			d.type = INT;
@@ -357,12 +466,25 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		return d;
 	}
 	cast = _vm->_currentScore->_casts[id];
+	castInfo = _vm->_currentScore->_castsInfo[id];
 
 	d.type = INT;
 
 	switch (field) {
 	case kTheCastType:
 		d.u.i = cast->type;
+		break;
+	case kTheFilename:
+		d.toString();
+		d.u.s = &castInfo->fileName;
+		break;
+	case kTheName:
+		d.toString();
+		d.u.s = &castInfo->name;
+		break;
+	case kTheScriptText:
+		d.toString();
+		d.u.s = &castInfo->script;
 		break;
 	case kTheWidth:
 		d.u.i = cast->initialRect.width();
@@ -422,6 +544,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	}
 
 	Cast *cast = _vm->_currentScore->_casts[id];
+	CastInfo *castInfo = _vm->_currentScore->_castsInfo[id];
 
 	if (!cast) {
 		warning("The cast %d found", id);
@@ -432,6 +555,15 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	case kTheCastType:
 		cast->type = static_cast<CastType>(d.u.i);
 		cast->modified = 1;
+		break;
+	case kTheFilename:
+		castInfo->fileName = *d.u.s;
+		break;
+	case kTheName:
+		castInfo->name = *d.u.s;
+		break;
+	case kTheScriptText:
+		castInfo->script = *d.u.s;
 		break;
 	case kTheWidth:
 		cast->initialRect.setWidth(d.u.i);
