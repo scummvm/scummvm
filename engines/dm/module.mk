@@ -44,6 +44,7 @@ MODULE_OBJS := \
 	movesens.o \
 	objectman.o \
 	projexpl.o \
+	sounds.o \
 	text.o \
 	timeline.o
 

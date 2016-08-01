@@ -202,6 +202,9 @@ DMEngine::~DMEngine() {
 	delete _projexpl;
 	delete _dialog;
 
+	for (uint16 i = 0; i < k34_D13_soundCount; ++i)
+		delete[] _gK24_soundData[i]._firstSample;
+
 	// clear debug channels
 	DebugMan.clearAllDebugChannels();
 }
@@ -227,7 +230,8 @@ void DMEngine::f463_initializeGame() {
 	_displayMan->loadPalette(g21_PalDungeonView[0]);
 	_displayMan->f94_loadFloorSet(k0_FloorSetStone);
 	_displayMan->f95_loadWallSet(k0_WallSetStone);
-
+	f503_loadSounds();
+	warning(false, "MISSING CODE: F0437_STARTEND_DrawTitle");
 	_textMan->f54_textInitialize();
 	_objectMan->loadObjectNames();
 	_eventMan->initMouse();
@@ -697,5 +701,4 @@ void DMEngine::f439_drawEntrance() {
 	_displayMan->f21_blitToScreen(_g562_entranceDoorAnimSteps[4], &G0011_s_Graphic562_Box_Entrance_ClosedDoorRight, k64_byteWidth, kM1_ColorNoTransparency, 161);
 	warning(false, "MISSING CODE: F0436_STARTEND_FadeToPalette(g20_PalEntrance);");
 }
-
 } // End of namespace DM

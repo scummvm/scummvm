@@ -149,7 +149,6 @@ public:
 #define k255_immobile 255 // @ C255_IMMOBILE
 #define kM1_wholeCreatureGroup -1 // @ CM1_WHOLE_CREATURE_GROUP 
 
-#define k34_D13_soundCount 34 // @ D13_SOUND_COUNT
 
 int32 M32_setTime(int32 &map_time, int32 time); // @ M32_SET_TIME
 

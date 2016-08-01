@@ -195,6 +195,16 @@ struct SaveGameHeader {
 };
 
 
+#define k34_D13_soundCount 34 // @ D13_SOUND_COUNT
+
+class SoundData {
+public:
+	uint32 _byteCount;
+	byte* _firstSample;
+	uint32 _sampleCount;
+	SoundData(): _byteCount(0), _firstSample(nullptr), _sampleCount(0) {}
+}; // @ SOUND_DATA
+
 class DMEngine : public Engine {
 	void f462_startGame(); // @ F0462_START_StartGame_CPSF
 	void f3_processNewPartyMap(uint16 mapIndex); // @ F0003_MAIN_ProcessNewPartyMap_CPSE
@@ -206,6 +216,7 @@ class DMEngine : public Engine {
 	void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName);
 	bool readSaveGameHeader(Common::InSaveFile *file, SaveGameHeader *header);
 	void f439_drawEntrance(); // @ F0439_STARTEND_DrawEntrance
+	void f503_loadSounds(); // @ F0503_SOUND_LoadAll
 public:
 	explicit DMEngine(OSystem *syst);
 	~DMEngine();
@@ -233,6 +244,7 @@ private:
 	byte *_g562_entranceDoorAnimSteps[10]; // @ G0562_apuc_Bitmap_EntranceDoorAnimationSteps
 	byte *_g564_interfaceCredits; // @ G0564_puc_Graphic5_InterfaceCredits
 	Common::RandomSource *_rnd;
+	SoundData _gK24_soundData[k34_D13_soundCount]; // @ K0024_as_SoundData
 public:
 	DisplayMan *_displayMan;
 	DungeonMan *_dungeonMan;

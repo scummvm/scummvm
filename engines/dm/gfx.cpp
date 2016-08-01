@@ -2642,9 +2642,11 @@ Common::MemoryReadStream DisplayMan::getCompressedData(uint16 index) {
 	return Common::MemoryReadStream(_packedBitmaps + _packedItemPos[index], getCompressedDataSize(index), DisposeAfterUse::NO);
 }
 
+
 uint32 DisplayMan::getCompressedDataSize(uint16 index) {
 	return _packedItemPos[index + 1] - _packedItemPos[index];
 }
+
 
 /* Field Aspect Mask */
 #define kMaskFieldAspectFlipMask 0x0080 // @ MASK0x0080_FLIP_MASK 
