@@ -206,7 +206,6 @@ void SoundAsset::decode1a(Common::SeekableReadStream *stream) {
 }
 
 void SoundAsset::decode44(Common::SeekableReadStream *stream) {
-	warning("Decode sound 0x44 untested");
 	stream->seek(0x5e, SEEK_SET);
 	_length = stream->readUint32BE();
 	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
@@ -216,7 +215,6 @@ void SoundAsset::decode44(Common::SeekableReadStream *stream) {
 }
 
 void SoundAsset::decode78(Common::SeekableReadStream *stream) {
-	warning("Decode sound 0x78 untested");
 	Common::Array<byte> wavtable;
 	stream->seek(0xba, SEEK_SET);
 	for (uint i = 0; i < 16; i++) {
