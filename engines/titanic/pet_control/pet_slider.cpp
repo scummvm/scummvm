@@ -157,7 +157,7 @@ int CPetSlider::calcSliderOffset(const Point &pt) const {
 	if (_orientation & ORIENTATION_HORIZONTAL) {
 		result = CLIP(pt.x, _slidingRect.left, _slidingRect.right) - _slidingRect.left;
 	}
-	
+
 	if (_orientation & ORIENTATION_VERTICAL) {
 		result = CLIP(pt.y, _slidingRect.top, _slidingRect.bottom) - _slidingRect.top;
 	}
@@ -173,9 +173,9 @@ void CPetSlider::stepPosition(int direction) {
 	double val = getOffsetPixels();
 
 	if (direction == -1) {
-		val = MAX(val - 0.1, 0.0);
+		val = MAX<double>(val - 0.1, 0.0);
 	} else if (direction == 1) {
-		val = MIN(val + 0.1, 1.0);
+		val = MIN<double>(val + 0.1, 1.0);
 	}
 
 	setSliderOffset(val);
@@ -200,7 +200,7 @@ void CPetSoundSlider::setupBackground2(const CString &name, CPetControl *petCont
 		CString numStr = "3";
 		int mode = petControl->getPassengerClass();
 		if (mode <= 3) {
-			numStr = CString(mode);			
+			numStr = CString(mode);
 		} else if (mode == 4) {
 			mode = petControl->getPriorClass();
 			if (mode == 1) {
