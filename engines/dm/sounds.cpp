@@ -30,6 +30,7 @@
 
 #include "dm.h"
 #include "gfx.h"
+#include <audio/mixer.h>
 
 
 namespace DM {
@@ -94,6 +95,17 @@ void DMEngine::f503_loadSounds() {
 		soundData->_sampleCount = stream.readUint16BE();
 		stream.read(soundData->_firstSample, soundData->_byteCount);
 	}
+}
+
+void DMEngine::f060_SOUND_Play(uint16 soundIndex, uint16 period, uint8 leftVolume, uint8 rightVolume) {
+	byte soundFlags = Audio::FLAG_STEREO;
+	SoundData *sound = &_gK24_soundData[soundIndex];
+	Audio::AudioStream *stream = Audio::makeRawStream(sound->_firstSample, sound->_byteCount, 72800 / period, soundFlags, DisposeAfterUse::NO);
+
+	signed char balance = ((int16)rightVolume - (int16)leftVolume) / 2;
+
+	Audio::SoundHandle handle;
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, stream, - 1, 127, balance);
 }
 
 }
