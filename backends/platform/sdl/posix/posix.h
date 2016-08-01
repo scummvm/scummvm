@@ -38,6 +38,8 @@ public:
 	virtual void init();
 	virtual void initBackend();
 
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
+
 protected:
 	/**
 	 * Base string for creating the default path and filename for the
