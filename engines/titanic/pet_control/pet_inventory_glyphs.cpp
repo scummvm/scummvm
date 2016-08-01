@@ -43,13 +43,13 @@ void CPetInventoryGlyph::leave() {
 	stopMovie();
 }
 
-void CPetInventoryGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool isHighlighted) {
+void CPetInventoryGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool isHighlighted_) {
 	if (!_field34)
 		return;
 
 	if (_image) {
 		if (_image->hasActiveMovie()) {
-			if (isHighlighted)
+			if (isHighlighted_)
 				_image->draw(screenManager);
 			else
 				_image->draw(screenManager, pt);
@@ -57,14 +57,14 @@ void CPetInventoryGlyph::drawAt(CScreenManager *screenManager, const Point &pt, 
 		}
 
 		_image = nullptr;
-		if (_background && isHighlighted) {
+		if (_background && isHighlighted_) {
 			_background->setPosition(pt);
 			startBackgroundMovie();
 		}
 	}
 
 	if (_background) {
-		if (isHighlighted)
+		if (isHighlighted_)
 			_background->draw(screenManager);
 		else
 			_background->draw(screenManager, pt);

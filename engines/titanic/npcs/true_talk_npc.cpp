@@ -156,14 +156,14 @@ bool CTrueTalkNPC::MovieEndMsg(CMovieEndMsg *msg) {
 		CNPCPlayAnimationMsg msg2(msg1._names, msg1._value1);
 		msg2.execute(this);
 	}
-	
+
 	return true;
 }
 
 bool CTrueTalkNPC::NPCQueueIdleAnimMsg(CNPCQueueIdleAnimMsg *msg) {
 	int rndVal = g_vm->getRandomNumber(_fieldF8 - 1) - (_fieldF8 / 2);
 	_speechTimerId = startAnimTimer("NPCIdleAnim", _fieldF4 + rndVal, 0);
-	
+
 	return true;
 }
 
@@ -222,13 +222,13 @@ void CTrueTalkNPC::startTalker(CViewItem *view) {
 		gameManager->getTalkManager()->start4(this, view);
 }
 
-void CTrueTalkNPC::performAction(bool startTalking, CViewItem *view) {
+void CTrueTalkNPC::performAction(bool startTalking, CViewItem *view_) {
 	CPetControl *pet = getPetControl();
 	if (pet)
 		pet->resetActiveNPC();
 
 	if (startTalking)
-		startTalker(view);
+		startTalker(view_);
 
 	if (pet)
 		pet->convResetNPC();

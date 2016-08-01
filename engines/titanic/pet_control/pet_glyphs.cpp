@@ -32,7 +32,7 @@ bool CPetGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	return true;
 }
 
-void CPetGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool isHighlighted) {
+void CPetGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool isHighlighted_) {
 	_element.translate(pt.x, pt.y);
 	_element.draw(screenManager);
 	_element.translate(-pt.x, -pt.y);
@@ -149,7 +149,7 @@ void CPetGlyphs::draw(CScreenManager *screenManager) {
 		}
 	}
 
-	// Iterate through displaying glyphs on the screen 
+	// Iterate through displaying glyphs on the screen
 	int listSize = size();
 	for (int index = 0; index < _numVisibleGlyphs; ++index) {
 		int itemIndex = getItemIndex(index);
@@ -267,7 +267,7 @@ void CPetGlyphs::setFirstVisible(int index) {
 
 		if ((_flags & GFLAG_8) && _highlightIndex != -1) {
 			CPetGlyph *glyph = getGlyph(_highlightIndex);
-			
+
 			if (glyph) {
 				int idx = getHighlightedIndex(_highlightIndex);
 				if (idx != -1) {

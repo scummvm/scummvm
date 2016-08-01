@@ -115,10 +115,10 @@ void TTnpcData::resetFlags() {
 
 /*------------------------------------------------------------------------*/
 
-TTnpcScriptBase::TTnpcScriptBase(int charId, const char *charClass, int v2,
+TTnpcScriptBase::TTnpcScriptBase(int charId_, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTscriptBase(0, charClass, v2, charName, v3, v4, v5, v6, v7),
-		_charId(charId), _field54(0), _val2(val2) {
+		_charId(charId_), _field54(0), _val2(val2) {
 }
 
 /*------------------------------------------------------------------------*/
@@ -133,9 +133,9 @@ void TTnpcScript::deinit() {
 	_defaultEntries = nullptr;
 }
 
-TTnpcScript::TTnpcScript(int charId, const char *charClass, int v2,
+TTnpcScript::TTnpcScript(int charId_, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
-		TTnpcScriptBase(charId, charClass, v2, charName, v3, val2, v4, v5, v6, v7),
+		TTnpcScriptBase(charId_, charClass, v2, charName, v3, val2, v4, v5, v6, v7),
 		_entryCount(0), _field68(0), _field6C(0), _rangeResetCtr(0),
 		_currentDialNum(0), _dialDelta(0), _field7C(0), _itemStringP(nullptr), _field2CC(false) {
 	CTrueTalkManager::_v2 = 0;
@@ -158,7 +158,7 @@ void TTnpcScript::loadResponses(const char *name, int valuesPerResponse) {
 		sr._tag = r->readUint32LE();
 		for (int idx = 0; idx < valuesPerResponse; ++idx)
 			sr._values[idx] = r->readUint32LE();
-		
+
 		_responses.push_back(sr);
 	}
 
@@ -222,7 +222,7 @@ int TTnpcScript::chooseResponse(const TTroomScript *roomScript, const TTsentence
 				uint diagId = getDialogueId(response._values[valIndex]);
 				addResponse(diagId);
 			}
-			
+
 			applyResponse();
 			return 2;
 		}
@@ -306,7 +306,7 @@ int TTnpcScript::handleQuote(const TTroomScript *roomScript, const TTsentence *s
 				dialogueId -= _quotes._rangeStart;
 				if (dialogueId > 3)
 					error("Invalid dialogue index in BarbotScript");
-				
+
 				const int RANDOM_LIMITS[4] = { 30, 50, 70, 60 };
 				int rangeLimit = RANDOM_LIMITS[dialogueId];
 				int dialRegion = getDialRegion(0);
@@ -315,7 +315,7 @@ int TTnpcScript::handleQuote(const TTroomScript *roomScript, const TTsentence *s
 					rangeLimit = MAX(rangeLimit - 20, 20);
 				}
 
-				dialogueId = (((int)remainder + 25) % 100) >= rangeLimit 
+				dialogueId = (((int)remainder + 25) % 100) >= rangeLimit
 					? _quotes._tag1 : _quotes._tag2;
 			}
 
@@ -364,7 +364,7 @@ uint TTnpcScript::getRangeValue(uint id) {
 	default:
 		if (range->_values[range->_priorIndex])
 			return range->_values[range->_priorIndex++];
-		
+
 		range->_priorIndex = 1;
 		++_rangeResetCtr;
 		return range->_values[0];
@@ -404,7 +404,7 @@ void TTnpcScript::save(SimpleFile *file) {
 	file->writeNumber(_currentDialNum);
 	file->writeNumber(_dialDelta);
 	file->writeNumber(_field7C);
-	
+
 	file->writeNumber(10);
 	for (int idx = 0; idx < 10; ++idx)
 		file->writeNumber(_data[idx]);
@@ -565,7 +565,7 @@ int TTnpcScript::getValue(int testNum) const {
 	switch (testNum) {
 	case 0:
 		return CTrueTalkManager::_v2;
-	
+
 	case 1:
 		if (g_vm->_trueTalkManager)
 			CTrueTalkManager::_v3 = g_vm->_trueTalkManager->getPassengerClass();
@@ -576,7 +576,7 @@ int TTnpcScript::getValue(int testNum) const {
 
 	case 3:
 		return CTrueTalkManager::_v5 != 0;
-	
+
 	case 4:
 		if (g_vm->_trueTalkManager) {
 			switch (g_vm->_trueTalkManager->getState14()) {
@@ -593,7 +593,7 @@ int TTnpcScript::getValue(int testNum) const {
 				CTrueTalkManager::_v6 = 2;
 				break;
 			}
-		}		
+		}
 		return CTrueTalkManager::_v6;
 
 	case 5:
@@ -665,13 +665,13 @@ uint TTnpcScript::getDialogueId(uint tagId) {
 	if (idx == 4)
 		return newVal;
 	arrP[idx] = origId;
-	
+
 	// Second slot dialogue Ids
 	idx = 0;
 	arrP = _data.getSlot(1);
 	while (idx < 4 && arrP[idx])
 		++idx;
-	
+
 	if (idx == 4)
 		return newVal;
 	arrP[idx] = newVal;
@@ -745,7 +745,7 @@ int TTnpcScript::processEntries(const TTsentenceEntries *entries, uint entryCoun
 					if (!dialogueId)
 						return 1;
 					else if (dialogueId == 4)
-						return 2;	
+						return 2;
 					addResponse(dialogueId);
 
 					id = preResponse(dialogueId);
@@ -867,7 +867,7 @@ bool TTnpcScript::addRandomResponse(bool flag) {
 
 	if (flag)
 		addResponse(getDialogueId(290224));
-	
+
 	addResponse(id);
 	applyResponse();
 	return true;
@@ -991,7 +991,7 @@ void TTnpcScript::setResponseFromArray(int index, int id) {
 		deleteResponses();
 		if (id)
 			addResponse(getDialogueId(id));
-		
+
 		// Add any loaded responses
 		int *vals = _data.getSlot(index + 1);
 		for (int idx = 0; idx < 4; ++idx) {

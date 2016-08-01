@@ -57,7 +57,7 @@ bool CPetRoomsGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	return true;
 }
 
-void CPetRoomsGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool isHighlighted) {
+void CPetRoomsGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool isHighlighted_) {
 	// Clear background
 	Rect rect(pt.x, pt.y, pt.x + 52, pt.y + 52);
 	screenManager->fillRect(SURFACE_BACKBUFFER, &rect, 0, 0, 0);
@@ -74,7 +74,7 @@ void CPetRoomsGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool
 	CGameObject *obj4 = _object4;
 	CGameObject *obj5 = _object5;
 
-	if (_field38 == 1 || isHighlighted) {
+	if (_field38 == 1 || isHighlighted_) {
 		_object0 = _object2;
 		_object1 = _object3;
 		_object4 = _object6;
@@ -203,7 +203,7 @@ int CPetRoomsGlyph::getSelection(const Point &topLeft, const Point &pt) {
 		for (int i = 0; i < 4; ++i) {
 			if (rects[i].contains(pt))
 				return btnIndex - i;
-			
+
 			rects[i].translate(0, 10);
 		}
 	}

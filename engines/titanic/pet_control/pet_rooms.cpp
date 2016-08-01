@@ -235,7 +235,7 @@ void CPetRooms::resetHighlight() {
 uint CPetRooms::getRoomFlags() const {
 	CRoomFlags roomFlags;
 	CString roomName = _petControl->getRoomName();
-	
+
 	uint flags = roomFlags.getSpecialRoomFlags(roomName);
 	if (flags)
 		return flags;
@@ -258,7 +258,7 @@ uint CPetRooms::getRoomFlags() const {
 				roomFlags.setElevatorNum(_elevatorNum == 1 || _elevatorNum == 2 ? 2 : 4);
 			}
 
-			roomFlags.setRoomBits(((_roomNum - 1) & 1) + (_field1CC > 1 ? 3 : 2));			
+			roomFlags.setRoomBits(((_roomNum - 1) & 1) + (_field1CC > 1 ? 3 : 2));
 		} else {
 			roomFlags.setRoomBits(0);
 		}
@@ -292,11 +292,11 @@ void CPetRooms::reassignRoom(int passClassNum) {
 	}
 }
 
-CPetRoomsGlyph *CPetRooms::addRoom(uint roomFlags, bool highlight) {
+CPetRoomsGlyph *CPetRooms::addRoom(uint roomFlags, bool highlight_) {
 	// Ensure that we don't add room if the room is already present
 	if (_glyphs.hasFlags(roomFlags))
 		return nullptr;
-	
+
 	if (_glyphs.size() >= 32)
 		// Too many rooms already
 		return nullptr;
@@ -312,17 +312,17 @@ CPetRoomsGlyph *CPetRooms::addRoom(uint roomFlags, bool highlight) {
 	}
 
 	// Add the glyph
-	return addGlyph(roomFlags, highlight);
+	return addGlyph(roomFlags, highlight_);
 }
 
-CPetRoomsGlyph *CPetRooms::addGlyph(uint roomFlags, bool highlight) {
+CPetRoomsGlyph *CPetRooms::addGlyph(uint roomFlags, bool highlight_) {
 	CPetRoomsGlyph *glyph = new CPetRoomsGlyph(roomFlags);
 	if (!glyph->setup(_petControl, &_glyphs)) {
 		delete glyph;
 		return nullptr;
 	} else {
 		_glyphs.push_back(glyph);
-		if (highlight)
+		if (highlight_)
 			_glyphs.highlight(glyph);
 
 		return glyph;
