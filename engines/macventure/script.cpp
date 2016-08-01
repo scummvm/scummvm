@@ -453,7 +453,8 @@ bool ScriptEngine::runFunc(EngineFrame *frame) {
 				opdbROBQ(state, frame);
 				break;
 			case 0xdc: //run sound queue
-				opdcRSQ(state, frame);
+				if (opdcRSQ(state, frame))
+					return true;
 				break;
 			case 0xdd: //run text queue
 				opddRTQ(state, frame);
@@ -1109,8 +1110,8 @@ void ScriptEngine::opdbROBQ(EngineState * state, EngineFrame * frame) {
 	_engine->runObjQueue();
 }
 
-void ScriptEngine::opdcRSQ(EngineState * state, EngineFrame * frame) {
-	op00NOOP(0xdc);
+bool ScriptEngine::opdcRSQ(EngineState * state, EngineFrame * frame) {
+	return _engine->playSounds(true);
 }
 
 void ScriptEngine::opddRTQ(EngineState * state, EngineFrame * frame) {
