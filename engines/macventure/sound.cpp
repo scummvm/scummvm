@@ -35,10 +35,13 @@ SoundAsset::SoundAsset(Container *container, ObjID id) :
 
 	stream->seek(5, SEEK_SET);
 	SoundType type = (SoundType)stream->readByte();
-
+	debug(2, "Decoding sound of type %x", type);
 	switch(type) {
 	case kSound10:
 		decode10(stream);
+		break;
+	case kSound7e:
+		decode7e(stream);
 		break;
 	default:
 		warning("Unrecognized sound type: %x", type);
@@ -59,8 +62,41 @@ uint32 SoundAsset::getPlayLength() {
 }
 
 void SoundAsset::decode10(Common::SeekableReadStream *stream) {
-	//TODO: Decode 10
-	debug("Decoding sound type 10");
+	Common::Array<byte> wavtable;
+	stream->seek(0x198, SEEK_SET);
+	for (int i = 0; i < 16; i++) {
+		wavtable.push_back(stream->readByte());
+	}
+	_length = stream->readUint32BE() * 2;
+	//Unused
+	stream->readUint16BE();
+	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
+	byte ch = 0;
+	for (int i = 0; i < _length; i++) {
+		if (i & 1) ch >>= 4;
+		else ch = stream->readByte();
+		_data.push_back(wavtable[ch & 0xf]);
+	}
+}
+
+void SoundAsset::decode7e(Common::SeekableReadStream *stream) {
+	Common::Array<byte> wavtable;
+	stream->seek(0xc2, SEEK_SET);
+	for (int i = 0; i < 16; i++) {
+		wavtable.push_back(stream->readByte());
+	}
+	//Unused
+	stream->readUint32BE();
+	_length = stream->readUint32BE();
+	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
+	uint32 last=0x80;
+	byte ch = 0;
+	for (int i = 0; i < _length; i++) {
+		if (i & 1) ch <<= 4;
+		else ch = stream->readByte();
+		last += wavtable[(ch >> 4) & 0xf];
+		_data.push_back(last & 0xff);
+	}
 }
 
 // SoundManager
@@ -68,7 +104,7 @@ SoundManager::SoundManager(MacVentureEngine *engine) {
 	_container = nullptr;
 	Common::String filename = engine->getFilePath(kSoundPathID);
 	_container = new Container(filename);
-	debug("Created sound manager with file %s", filename.c_str());
+	debug(1, "Created sound manager with file %s", filename.c_str());
 }
 
 SoundManager::~SoundManager(){

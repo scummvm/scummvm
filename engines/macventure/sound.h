@@ -53,6 +53,7 @@ public:
 private:
 
 	void decode10(Common::SeekableReadStream *stream);
+	void decode7e(Common::SeekableReadStream *stream);
 
 private:
 
