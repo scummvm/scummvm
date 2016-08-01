@@ -291,6 +291,26 @@ public:
 	//As i know, constrainted != 0 only if sprite moveable
 	byte _constraint;
 	byte _moveable;
+	byte _backColor;
+	byte _foreColor;
+	uint16 _left;
+	uint16 _right;
+	uint16 _top;
+	uint16 _bottom;
+	byte _blend;
+	bool _visible;
+	byte _type;
+	//Using in digital movie sprites
+	byte _movieRate;
+	uint16 _movieTime;
+	uint16 _startTime;
+	uint16 _stopTime;
+	byte _volume;
+	byte _stretch;
+	//Using in shape sprites
+	byte _lineSize;
+	//Using in text sprites
+	Common::String _editableText;
 };
 
 class Frame {

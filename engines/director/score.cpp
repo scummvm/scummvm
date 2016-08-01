@@ -1604,6 +1604,20 @@ Sprite::Sprite() {
 	_constraint = 0;
 	_moveable = 0;
 	_castId = 0;
+	_backColor = 0;
+	_foreColor = 0;
+	_left = 0;
+	_right = 0;
+	_top = 0;
+	_bottom = 0;
+	_visible = false;
+	_movieRate = 0;
+	_movieTime = 0;
+	_startTime = 0;
+	_stopTime = 0;
+	_volume = 0;
+	_stretch = 0;
+	_type = 0;
 }
 
 Sprite::Sprite(const Sprite &sprite) {
@@ -1616,6 +1630,19 @@ Sprite::Sprite(const Sprite &sprite) {
 	_height = sprite._height;
 	_startPoint.x = sprite._startPoint.x;
 	_startPoint.y = sprite._startPoint.y;
+	_backColor = sprite._backColor;
+	_foreColor = sprite._foreColor;
+	_left = sprite._left;
+	_right = sprite._right;
+	_top = sprite._top;
+	_bottom = sprite._bottom;
+	_visible = sprite._visible;
+	_movieRate = sprite._movieRate;
+	_movieTime = sprite._movieTime;
+	_stopTime = sprite._stopTime;
+	_volume = sprite._volume;
+	_stretch = sprite._stretch;
+	_type = sprite._type;
 }
 
 Sprite::~Sprite() {
