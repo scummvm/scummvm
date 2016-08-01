@@ -39,7 +39,12 @@ private:
 
 	int addResponse1(int mode, bool flag, int id);
 	int sentence1(const TTsentence *sentence);
-	int getState5() const;
+
+	/**
+	 * Gets the current floor
+	 */
+	int getCurrentFloor() const;
+
 	int getState6() const;
 
 	/**
@@ -60,7 +65,10 @@ public:
 	 */
 	virtual int process(const TTroomScript *roomScript, const TTsentence *sentence);
 
-	virtual int proc9() const;
+	/**
+	 * Called when the script/id changes
+	 */
+	virtual ScriptChangedResult scriptChanged(uint id);
 
 	/**
 	 * Called when the script/id changes

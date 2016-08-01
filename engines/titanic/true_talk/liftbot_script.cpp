@@ -23,6 +23,7 @@
 #include "common/textconsole.h"
 #include "titanic/true_talk/liftbot_script.h"
 #include "titanic/true_talk/true_talk_manager.h"
+#include "titanic./titanic.h"
 
 namespace Titanic {
 
@@ -86,18 +87,125 @@ int LiftbotScript::chooseResponse(const TTroomScript *roomScript, const TTsenten
 }
 
 int LiftbotScript::process(const TTroomScript *roomScript, const TTsentence *sentence) {
-	// TODO
-	return 0;
+	if (roomScript->_scriptId != 103)
+		return 2;
+
+	checkItems(roomScript, sentence);
+	int currState = getState();
+	int sentMode = sentence->_field2C;
+	TTtreeResult treeResult;
+
+	if (currState) {
+		setState(0);
+		bool flag1 = sentMode == 11 || sentMode == 13;
+		bool flag2 = sentMode == 12;
+
+		switch (currState) {
+		case 2:
+			if (flag1)
+				return addDialogueAndState(30920, 3);
+			if (flag2)
+				return addDialogueAndState(30919, 1);
+			break;
+
+		case 3:
+			if (flag1)
+				return addDialogueAndState(30919, 1);
+			break;
+
+		case 4:
+			return addDialogueAndState(210391, 1);
+
+		case 5:
+			if (sentence->contains("reborzo") || sentence->contains("is that"))
+				return addDialogueAndState(30515, 1);
+			break;
+
+		case 6:
+			if (sentMode == 6)
+				return addDialogueAndState(getDialogueId(210771), 1);
+			break;
+
+		case 7:
+		case 8:
+			if (sentMode == 6 || sentMode == 10)
+				return addDialogueAndState(getDialogueId(210099), 1);
+			break;
+
+		case 9:
+			if (sentMode == 10 || g_vm->_trueTalkManager->_quotesTree.search(
+				sentence->_normalizedLine.c_str(), TREE_2, &treeResult, 0, 0) != -1)
+				return addDialogueAndState(getDialogueId(210970), 9);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	updateCurrentDial(true);
+	if (processEntries(&_entries, _entryCount, roomScript, sentence) == 2)
+		return 2;
+
+	if (sentence->localWord("injury") || sentence->localWord("illness")) {
+		addResponse(getDialogueId(210059));
+		applyResponse();
+	} else if (processEntries(_defaultEntries, 0, roomScript, sentence) != 2
+			&& !defaultProcess(roomScript, sentence)
+			&& !sentence1(sentence)) {
+		if (getDialRegion(1) != 0 && getRandomNumber(100) <= 20) {
+			addResponse(getDialogueId(210906));
+			addResponse(getDialogueId(210901));
+		} else {
+			addResponse(getDialogueId(210590));
+		}
+		applyResponse();
+	}
+
+	return 2;
 }
 
-int LiftbotScript::proc9() const {
-	warning("TODO");
-	return 0;
+ScriptChangedResult LiftbotScript::scriptChanged(uint id) {
+	return scriptChanged(nullptr, id);
 }
 
 ScriptChangedResult LiftbotScript::scriptChanged(const TTroomScript *roomScript, uint id) {
-	warning("TODO");
-	return SCR_1;
+	switch (id) {
+	case 3:
+		if (getValue(27) == 0) {
+			addResponse(getDialogueId(210018));
+		} else if (getStateValue()) {
+			addResponse(getDialogueId(210682));
+		} else {
+			addResponse(getDialogueId(210033));
+		}
+		CTrueTalkManager::setFlags(27, 1);
+		break;
+
+	case 155:
+		selectResponse(30446);
+		applyResponse();
+		break;
+
+	case 156:
+		if (getCurrentFloor() == 1) {
+			addResponse(getDialogueId(210614));
+		} else {
+			selectResponse(30270);
+		}
+		applyResponse();
+		break;
+
+	default:
+		break;
+	}
+
+	if (id >= 210000 && id <= 211001) {
+		addResponse(getDialogueId(id));
+		applyResponse();
+	}
+
+	return SCR_2;
 }
 
 int LiftbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
@@ -316,7 +424,7 @@ int LiftbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 			return 1;
 		break;
 	case 13:
-		selectResponse(ARRAY13[getState5()]);
+		selectResponse(ARRAY13[getCurrentFloor()]);
 		applyResponse();
 		return 2;
 	case 14:
@@ -360,7 +468,7 @@ void LiftbotScript::setDialRegion(int dialNum, int region) {
 	applyResponse();
 }
 
-int LiftbotScript::getState5() const {
+int LiftbotScript::getCurrentFloor() const {
 	int val = CTrueTalkManager::getStateValue(5);
 	return CLIP(val, 1, 39);
 }
@@ -395,7 +503,7 @@ int LiftbotScript::addResponse1(int index, bool flag, int id) {
 		addResponse(getDialogueId(maxIndex == 27 ? 210587 : 210586));
 		applyResponse();
 		return 1;
-	} else if (index == getState5()) {
+	} else if (index == getCurrentFloor()) {
 		if (index == 1) {
 			addResponse(30558 - getRandomBit() ? 290 : 0);
 			addResponse(getDialogueId(210589));
@@ -455,8 +563,132 @@ int LiftbotScript::addResponse1(int index, bool flag, int id) {
 }
 
 int LiftbotScript::sentence1(const TTsentence *sentence) {
-	warning("TODO: LiftbotScript::sentence1");
-	return 0;
+	if (CTrueTalkManager::_v1 >= 0) {
+		if (sentence->localWord("room")) {
+			addResponse1(getStateValue(), true, 0);
+		} else if (CTrueTalkManager::_v1 >= 1 && CTrueTalkManager::_v1 <= 39) {
+			if (CTrueTalkManager::_v1 != 1 || !sentence->localWord("floor")) {
+				addResponse1(CTrueTalkManager::_v1, true, 0);
+			} else if (sentence->localWord("up") || sentence->localWord("above")) {
+				addResponse1(getCurrentFloor() - 1, true, 0);
+			} else if (sentence->localWord("down") || sentence->localWord("below")) {
+				addResponse1(getCurrentFloor() + 1, true, 0);
+			} else {
+				addResponse1(CTrueTalkManager::_v1, true, 0);
+			}
+		}
+		return 1;
+	}
+
+	int classNum = 1;
+	bool classSet = true;
+	if (sentence->localWord("firstclass"))
+		classNum = 1;
+	else if (sentence->localWord("secondclass"))
+		classNum = 2;
+	else if (sentence->localWord("thirdclass"))
+		classNum = 3;
+	else
+		classSet = false;
+
+	uint newId = 0, diff = 1;
+	if (sentence->localWord("promenade")) {
+		newId = 210718;
+	} else if (sentence->localWord("bar")) {
+		newId = 210894 - (getRandomBit() ? 178 : 0);
+	} else if (sentence->localWord("musicroom")) {
+		newId = 210897 - (getRandomBit() ? 180 : 0);
+	} else if (sentence->localWord("creatorroom")) {
+		newId = 210713;
+	} else if (sentence->localWord("sculpture") || sentence->localWord("sculptureroom")) {
+		newId = 210722;
+	} else if (sentence->localWord("embarklobby")) {
+		newId = 210714;
+	} else if (sentence->localWord("parrotlobby")) {
+		newId = 210721;
+	} else if (sentence->localWord("arboretum")) {
+		newId = 210711;
+	} else if (sentence->localWord("canal")) {
+		newId = 210896;
+	} else if (sentence->localWord("bar")) {
+		newId = 210894;
+	} else if (sentence->localWord("bilgeroom")) {
+		newId = 210895;
+	} else if (sentence->localWord("titaniaroom")) {
+		newId = 210723;
+	} else if (sentence->localWord("restaurant")) {
+		if (classNum == 1) {
+			newId = 210719;
+			diff = 1;
+		} else {
+			newId = 210898;
+			diff = -98;
+		}
+	} else if (sentence->localWord("topwell") || sentence->localWord("servicelift")
+			|| sentence->localWord("bridge") || sentence->localWord("dome")
+			|| sentence->localWord("pellerator") || sentence->localWord("top")) {
+		diff = 1;
+	} else {
+		diff = -100;
+	}
+
+	if (sentence->localWord("lobby"))
+		diff = (getValue(1) == 0 ? 1 : 0) - 99;
+	if (sentence->localWord("bottomofwell") || sentence->contains("bottom"))
+		diff = 39;
+
+	if (diff == -99 || (diff == -100 && classSet)) {
+		if (classNum == 1)
+			addResponse(getDialogueId(210235));
+		else if (classNum == 2)
+			addResponse(getDialogueId(210241));
+		else
+			addResponse(getDialogueId(210242));
+		applyResponse();
+
+		return 1;
+	}
+
+	if (sentence->_field2C == 4 || sentence->localWord("find")
+			|| sentence->contains("get to")) {
+		if (getCurrentFloor() != diff) {
+			selectResponse(diff == 1 ? 210769 : 210764);
+			applyResponse();
+		} else if (!newId) {
+			selectResponse(210764);
+			applyResponse();
+		} else if (newId >= 210715 && newId <= 210719) {
+			selectResponse(newId);
+			applyResponse();
+		} else {
+			addResponse(getDialogueId(210720));
+			selectResponse(210715);
+			applyResponse();
+		}
+
+		return 1;
+	}
+
+	if (diff == -98) {
+		addResponse1(getStateValue(), true, newId);
+		return 1;
+	} else if (diff >= 0) {
+		addResponse1(diff, true, newId);
+		return 1;
+	} else if (sentence->localWord("up") || sentence->localWord("ascend")) {
+		selectResponse(210128);
+		applyResponse();
+		return 1;
+	} else if (sentence->localWord("down") || sentence->localWord("descend")) {
+		selectResponse(210138);
+		applyResponse();
+		return 1;
+	} else if (diff >= 0) {
+		addResponse1(diff, true, newId);
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 } // End of namespace Titanic

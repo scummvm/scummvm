@@ -67,7 +67,11 @@ public:
 	virtual int process(const TTroomScript *roomScript, const TTsentence *sentence) = 0;
 
 	virtual int proc8() const = 0;
-	virtual int proc9() const = 0;
+
+	/**
+	 * Called when the script/id changes
+	 */
+	virtual ScriptChangedResult scriptChanged(uint id) = 0;
 
 	/**
 	 * Called when the script/id changes
@@ -232,7 +236,13 @@ public:
 	virtual int process(const TTroomScript *roomScript, const TTsentence *sentence);
 
 	virtual int proc8() const;
-	virtual int proc9() const;
+
+	/**
+	 * Called when the script/id changes
+	 */
+	virtual ScriptChangedResult scriptChanged(uint id) {
+		return SCR_2;
+	}
 
 	/**
 	 * Called when the script/id changes

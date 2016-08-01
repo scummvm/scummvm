@@ -203,19 +203,19 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 	currState = getState();
 	if (currState) {
 		int sentMode = sentence->_field2C;
-		bool al = sentMode == 11 || sentMode == 13;
-		bool bl = sentMode == 12;
+		bool flag1 = sentMode == 11 || sentMode == 13;
+		bool flag2 = sentMode == 12;
 
 		switch (currState) {
 		case 1:
-			if (al)
+			if (flag1)
 				return setResponse(11828, 2);
-			if (bl)
+			if (flag2)
 				return setResponse(11827, 0);
 			break;
 
 		case 2:
-			if (al)
+			if (flag1)
 				return setResponse(11827, 0);
 			break;
 
@@ -225,9 +225,9 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 			break;
 
 		case 4:
-			if (al)
+			if (flag1)
 				return setResponse(11332, 0);
-			if (bl)
+			if (flag2)
 				return setResponse(11331, 0);
 			break;
 
@@ -244,9 +244,9 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 			return setResponse(11870, 0);
 
 		case 12:
-			if (al)
+			if (flag1)
 				return setResponse(11894, 13);
-			if (bl)
+			if (flag2)
 				return setResponse(11893, 13);
 			break;
 
@@ -270,49 +270,49 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 			return setResponse(getDialogueId(221126), 0);
 
 		case 18:
-			if (al)
+			if (flag1)
 				return setResponse(getDialogueId(221135), 0);
-			if (bl)
+			if (flag2)
 				return setResponse(getDialogueId(221134), 0);
 			break;
 
 		case 19:
-			if (al) {
+			if (flag1) {
 				if (addRandomResponse(true)) {
 					setState(10);
 					return 2;
 				}
 			}
-			if (bl)
+			if (flag2)
 				return setResponse(getDialogueId(221966), 0);
 			break;
 
 		case 20:
-			if (al) {
+			if (flag1) {
 				if (addRandomResponse(true)) {
 					setState(19);
 					return 2;
 				}
 			}
-			if (bl || sentMode == 7 || sentMode == 10) {
+			if (flag2 || sentMode == 7 || sentMode == 10) {
 				return setResponse(getDialogueId(221879), 0);
 			}
 			break;
 
 		case 21:
-			if (bl)
+			if (flag2)
 				return setResponse(10935, 0);
 			break;
 
 		case 22:
-			if (al) {
+			if (flag1) {
 				if (getRandomBit()) {
 					return setResponse(11211, 23);
 				} else {
 					return setResponse(10127, 0);
 				}
 			}
-			if (bl)
+			if (flag2)
 				return setResponse(10136, 0);
 			break;
 
@@ -320,37 +320,37 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 			return setResponse(10212, 0);
 
 		case 24:
-			if (al)
+			if (flag1)
 				return setResponse(11151, 0);
-			if (bl)
+			if (flag2)
 				return setResponse(11150, 0);
 			break;
 
 		case 25:
 		case 26:
-			if (bl) {
+			if (flag2) {
 				if (getRandomBit()) {
 					return setResponse(11211, 23);
 				} else {
 					return setResponse(10127, 0);
 				}
 			}
-			if (al)
+			if (flag1)
 				return setResponse(10136, 0);
 			break;
 
 		case 27:
-			if (al || sentence->localWord("did") || sentence->contains("did"))
+			if (flag1 || sentence->localWord("did") || sentence->contains("did"))
 				return setResponse(221175, 28);
 			break;
 
 		case 28:
-			if (al || sentence->localWord("did") || sentence->contains("did"))
+			if (flag1 || sentence->localWord("did") || sentence->contains("did"))
 				return setResponse(getDialogueId(221176), 29);
 			break;
 
 		case 29:
-			if (al || sentence->localWord("did") || sentence->contains("did"))
+			if (flag1 || sentence->localWord("did") || sentence->contains("did"))
 				return setResponse(getDialogueId(221177), 30);
 			break;
 
@@ -394,16 +394,16 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 			return setResponse(10811, 36);
 
 		case 36:
-			if (al)
+			if (flag1)
 				return setResponse(10813, 37);
-			if (bl)
+			if (flag2)
 				return setResponse(10812, 37);
 			break;
 
 		case 37:
-			if (al)
+			if (flag1)
 				return setResponse(10815, 37);
-			if (bl)
+			if (flag2)
 				return setResponse(10814, 37);
 			break;
 
@@ -435,9 +435,9 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 			return setResponse(10844, 0);
 
 		case 46:
-			if (al)
+			if (flag1)
 				return setResponse(getDialogueId(222251), 0);
-			if (bl)
+			if (flag2)
 				return setResponse(10713, 0);
 			break;
 

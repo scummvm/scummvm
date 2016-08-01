@@ -239,10 +239,6 @@ int TTnpcScript::proc8() const {
 	return 0;
 }
 
-int TTnpcScript::proc9() const {
-	return 2;
-}
-
 int TTnpcScript::proc11() const {
 	return 2;
 }
