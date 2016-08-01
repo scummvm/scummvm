@@ -18,6 +18,10 @@ install:
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(docdir)"
 	$(INSTALL) -d "$(DESTDIR)$(datadir)"
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
+	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/applications"
+	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.desktop" "$(DESTDIR)$(datarootdir)/applications/scummvm.desktop"
+	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/appdata"
+	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.appdata.xml" "$(DESTDIR)$(datarootdir)/appdata/scummvm.appdata.xml"
 ifdef DYNAMIC_MODULES
 	$(INSTALL) -d "$(DESTDIR)$(libdir)/scummvm/"
 	$(INSTALL) -c -m 644 $(PLUGINS) "$(DESTDIR)$(libdir)/scummvm/"
@@ -36,6 +40,10 @@ install-strip:
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(docdir)"
 	$(INSTALL) -d "$(DESTDIR)$(datadir)"
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
+	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/applications"
+	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.desktop" "$(DESTDIR)$(datarootdir)/applications/scummvm.desktop"
+	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/appdata"
+	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.appdata.xml" "$(DESTDIR)$(datarootdir)/appdata/scummvm.appdata.xml"
 ifdef DYNAMIC_MODULES
 	$(INSTALL) -d "$(DESTDIR)$(libdir)/scummvm/"
 	$(INSTALL) -c -s -m 644 $(PLUGINS) "$(DESTDIR)$(libdir)/scummvm/"
@@ -48,6 +56,8 @@ uninstall:
 	rm -f "$(DESTDIR)$(datarootdir)/icons/hicolor/scalable/apps/scummvm.svg"
 	rm -rf "$(DESTDIR)$(docdir)"
 	rm -rf "$(DESTDIR)$(datadir)"
+	rm -f "$(DESTDIR)$(datarootdir)/applications/scummvm.desktop"
+	rm -f "$(DESTDIR)$(datarootdir)/appdata/scummvm.appdata.xml"
 ifdef DYNAMIC_MODULES
 	rm -rf "$(DESTDIR)$(libdir)/scummvm/"
 endif
