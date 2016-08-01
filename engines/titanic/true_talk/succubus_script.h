@@ -29,12 +29,17 @@ namespace Titanic {
 
 class SuccUBusScript : public TTnpcScript {
 private:
-	int _field2D0;
+	bool _isRoom101;
 private:
 	/**
 	 * Setup sentence data
 	 */
 	void setupSentences(); 
+
+	/**
+	 * Add a response and optionally set the state
+	 */
+	int setResponse(int dialogueId, int state = -1);
 public:
 	SuccUBusScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7);
