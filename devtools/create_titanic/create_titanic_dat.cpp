@@ -666,6 +666,7 @@ void writeData() {
 
 	writeSentenceEntries("Sentences/Liftbot", 0x6026B0);
 	writeSentenceEntries("Sentences/MaitreD", 0x60CFD8);
+	writeSentenceEntries("Sentences/MaitreD/1", 0x614288);
 	writeSentenceEntries("Sentences/Parrot", 0x615858);
 	writeSentenceEntries("Sentences/SuccUBus", 0x616698);
 	writeSentenceMappings("Mappings/Barbot", 0x5B28A0, 8);
