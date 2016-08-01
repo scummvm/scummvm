@@ -125,7 +125,7 @@ Common::String HandlerUtils::normalizePath(const Common::String &path) {
 }
 
 bool HandlerUtils::hasForbiddenCombinations(const Common::String &path) {
-	return (path.contains("../") || path.contains("..\\"));
+	return (path.contains("/../") || path.contains("\\..\\") || path.contains("\\../") || path.contains("/..\\"));
 }
 
 bool HandlerUtils::isBlacklisted(const Common::String &path) {
