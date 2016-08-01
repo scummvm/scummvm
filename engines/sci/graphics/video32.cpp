@@ -269,6 +269,11 @@ void AVIPlayer::init() {
 		g_sci->_gfxFrameout->addScreenItem(*_screenItem);
 		g_sci->_gfxFrameout->frameOut(true);
 	} else {
+		// Attempting to draw a palettized cursor into a 24bpp surface will
+		// cause memory corruption, so hide the cursor in this mode (SCI did not
+		// have a 24bpp mode but just directed VFW to display videos instead)
+		g_sci->_gfxCursor32->hide();
+
 		const Buffer &currentBuffer = g_sci->_gfxFrameout->getCurrentBuffer();
 		const Graphics::PixelFormat format = _decoder->getPixelFormat();
 		initGraphics(currentBuffer.screenWidth, currentBuffer.screenHeight, g_sci->_gfxFrameout->_isHiRes, &format);
@@ -326,6 +331,7 @@ AVIPlayer::IOStatus AVIPlayer::close() {
 		const Buffer &currentBuffer = g_sci->_gfxFrameout->getCurrentBuffer();
 		const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 		initGraphics(currentBuffer.screenWidth, currentBuffer.screenHeight, isHiRes, &format);
+		g_sci->_gfxCursor32->unhide();
 	}
 
 	_decoder->close();
