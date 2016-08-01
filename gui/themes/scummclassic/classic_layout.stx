@@ -584,6 +584,18 @@
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'RootPathButton'
+						type = 'Button'
+				/>
+				<widget name = 'RootPath'
+						height = 'Globals.Line.Height'
+				/>
+				<widget name = 'RootPathClearButton'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'ServerPortDesc'
 						type = 'OptionsLabel'
 				/>

@@ -103,7 +103,9 @@ enum {
 	kDownloadStorageCmd = 'dlst',
 	kRunServerCmd = 'rnsv',
 	kCloudTabContainerReflowCmd = 'ctcr',
-	kServerPortClearCmd = 'spcl'
+	kServerPortClearCmd = 'spcl',
+	kChooseRootDirCmd = 'chrp',
+	kRootPathClearCmd = 'clrp'
 };
 #endif
 
@@ -1319,6 +1321,15 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_runServerButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.RunServerButton", _("Run server"), _("Run local webserver"), kRunServerCmd);
 	_serverInfoLabel = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.ServerInfoLabel", _("Not running"));
 
+	// Root path
+	if (g_system->getOverlayWidth() > 320)
+		_rootPathButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.RootPathButton", _("/root/ Path:"), _("Specifies where Files Manager can access to"), kChooseRootDirCmd);
+	else
+		_rootPathButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.RootPathButton", _c("/root/ Path:", "lowres"), _("Specifies where Files Manager can access to"), kChooseRootDirCmd);
+	_rootPath = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.RootPath", "/foo/bar", _("Specifies where Files Manager can access to"));
+
+	_rootPathClearButton = addClearButton(container, "GlobalOptions_Cloud_Container.RootPathClearButton", kRootPathClearCmd);
+
 #ifdef USE_SDL_NET
 	uint32 port = Networking::LocalWebserver::getPort();
 #else
@@ -1411,6 +1422,15 @@ void GlobalOptionsDialog::open() {
 	if (mode == ThemeEngine::kGfxDisabled)
 		mode = ThemeEngine::_defaultRendererMode;
 	_rendererPopUp->setSelectedTag(mode);
+
+#ifdef USE_CLOUD
+	Common::String rootPath(ConfMan.get("rootpath", "cloud"));
+	if (rootPath.empty() || !ConfMan.hasKey("rootpath", "cloud")) {
+		_rootPath->setLabel(_c("None", "path"));
+	} else {
+		_rootPath->setLabel(rootPath);
+	}
+#endif
 }
 
 void GlobalOptionsDialog::close() {
@@ -1439,6 +1459,14 @@ void GlobalOptionsDialog::close() {
 			ConfMan.set("pluginspath", pluginsPath, _domain);
 		else
 			ConfMan.removeKey("pluginspath", _domain);
+#endif
+
+#ifdef USE_CLOUD
+		Common::String rootPath(_rootPath->getLabel());
+		if (!rootPath.empty() && (rootPath != _c("None", "path")))
+			ConfMan.set("rootpath", rootPath, "cloud");
+		else
+			ConfMan.removeKey("rootpath", "cloud");
 #endif
 
 		ConfMan.setInt("autosave_period", _autosavePeriodPopUp->getSelectedTag(), _domain);
@@ -1571,6 +1599,21 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 #endif
+#ifdef USE_CLOUD
+	case kChooseRootDirCmd: {
+		BrowserDialog browser(_("Select directory for Files Manager /root/"), true);
+		if (browser.runModal() > 0) {
+			// User made his choice...
+			Common::FSNode dir(browser.getResult());
+			Common::String path = dir.getPath();
+			if (path.empty())
+				path = "/"; // absolute root
+			_rootPath->setLabel(path);
+			draw();
+		}
+		break;
+	}
+#endif
 	case kThemePathClearCmd:
 		_themePath->setLabel(_c("None", "path"));
 		break;
@@ -1580,6 +1623,11 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	case kSavePathClearCmd:
 		_savePath->setLabel(_("Default"));
 		break;
+#ifdef USE_CLOUD
+	case kRootPathClearCmd:
+		_rootPath->setLabel(_c("None", "path"));
+		break;
+#endif
 	case kChooseSoundFontCmd: {
 		BrowserDialog browser(_("Select SoundFont"), false);
 		if (browser.runModal() > 0) {
@@ -1868,13 +1916,26 @@ void GlobalOptionsDialog::setupCloudTab() {
 	//determine original widget's positions
 	int16 x, y;
 	uint16 w, h;
-	int serverButtonY, serverInfoY, serverPortDescY, serverPortY, serverPortClearButtonY;
+	int serverButtonY, serverInfoY;
+	int serverRootButtonY, serverRootY, serverRootClearButtonY;
+	int serverPortDescY, serverPortY, serverPortClearButtonY;
 	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.RunServerButton", x, y, w, h))
 		warning("GlobalOptions_Cloud_Container.RunServerButton's position is undefined");
 	serverButtonY = y;
 	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.ServerInfoLabel", x, y, w, h))
 		warning("GlobalOptions_Cloud_Container.ServerInfoLabel's position is undefined");
 	serverInfoY = y;
+
+	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.RootPathButton", x, y, w, h))
+		warning("GlobalOptions_Cloud_Container.RootPathButton's position is undefined");
+	serverRootButtonY = y;
+	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.RootPath", x, y, w, h))
+		warning("GlobalOptions_Cloud_Container.RootPath's position is undefined");
+	serverRootY = y;
+	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.RootPathClearButton", x, y, w, h))
+		warning("GlobalOptions_Cloud_Container.RootPathClearButton's position is undefined");
+	serverRootClearButtonY = y;
+
 	if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.ServerPortDesc", x, y, w, h))
 		warning("GlobalOptions_Cloud_Container.ServerPortDesc's position is undefined");
 	serverPortDescY = y;
@@ -1902,6 +1963,18 @@ void GlobalOptionsDialog::setupCloudTab() {
 			_serverInfoLabel->setLabel(LocalServer.getAddress());
 		else
 			_serverInfoLabel->setLabel(_("Not running"));
+	}
+	if (_rootPathButton) {
+		_rootPathButton->setVisible(true);
+		_rootPathButton->setPos(_rootPathButton->getRelX(), serverLabelPosition + serverRootButtonY - serverInfoY);
+	}
+	if (_rootPath) {
+		_rootPath->setVisible(true);
+		_rootPath->setPos(_rootPath->getRelX(), serverLabelPosition + serverRootY - serverInfoY);
+	}
+	if (_rootPathClearButton) {
+		_rootPathClearButton->setVisible(true);
+		_rootPathClearButton->setPos(_rootPathClearButton->getRelX(), serverLabelPosition + serverRootClearButtonY - serverInfoY);
 	}
 #ifdef NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
 	if (_serverPortDesc) {
@@ -1932,6 +2005,12 @@ void GlobalOptionsDialog::setupCloudTab() {
 		_runServerButton->setVisible(false);
 	if (_serverInfoLabel)
 		_serverInfoLabel->setVisible(false);
+	if (_rootPathButton)
+		_rootPathButton->setVisible(false);
+	if (_rootPath)
+		_rootPath->setVisible(false);
+	if (_rootPathClearButton)
+		_rootPathClearButton->setVisible(false);
 	if (_serverPortDesc)
 		_serverPortDesc->setVisible(false);
 	if (_serverPort)

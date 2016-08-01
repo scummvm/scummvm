@@ -268,6 +268,9 @@ protected:
 	ButtonWidget	 *_storageDownloadButton;
 	ButtonWidget	 *_runServerButton;
 	StaticTextWidget *_serverInfoLabel;
+	ButtonWidget	 *_rootPathButton;
+	StaticTextWidget *_rootPath;
+	ButtonWidget	 *_rootPathClearButton;
 	StaticTextWidget *_serverPortDesc;
 	EditTextWidget *_serverPort;
 	ButtonWidget	 *_serverPortClearButton;
