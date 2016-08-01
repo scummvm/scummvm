@@ -32,7 +32,6 @@ namespace MacVenture {
 ScriptEngine::ScriptEngine(MacVentureEngine * engine, World * world) {
 	_engine = engine;
 	_world = world;
-	// HACK
 	_scripts = new Container(_engine->getFilePath(kFilterPathID));
 }
 
@@ -989,17 +988,17 @@ void ScriptEngine::opc6P2(EngineState * state, EngineFrame * frame) {
 }
 
 void ScriptEngine::opc7PLBG(EngineState * state, EngineFrame * frame) {
-	state->pop();
-	op00NOOP(0xc7);
+	word target = state->pop();
+	_engine->enqueueSound(kSoundPlay, target);
 }
 
 void ScriptEngine::opc8PLAW(EngineState * state, EngineFrame * frame) {
-	state->pop();
-	op00NOOP(0xc8);
+	word target = state->pop();
+	_engine->enqueueSound(kSoundPlayAndWait, target);
 }
 
 void ScriptEngine::opc9WAIT(EngineState * state, EngineFrame * frame) {
-	op00NOOP(0xc9);
+	_engine->enqueueSound(kSoundWait, 0);
 }
 
 void ScriptEngine::opcaTIME(EngineState * state, EngineFrame * frame) {

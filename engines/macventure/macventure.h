@@ -41,6 +41,7 @@
 #include "macventure/script.h"
 #include "macventure/controls.h"
 #include "macventure/windows.h"
+#include "macventure/sound.h"
 
 struct ADGameDescription;
 
@@ -51,6 +52,8 @@ class SaveFileManager;
 class Console;
 class World;
 class ScriptEngine;
+
+class SoundManager;
 
 typedef uint32 ObjID;
 
@@ -161,6 +164,17 @@ struct QueuedText {
 	ObjID asset;
 };
 
+enum SoundQueueID {
+	kSoundPlay = 1,
+	kSoundPlayAndWait = 2,
+	kSoundWait = 3
+};
+
+struct QueuedSound {
+	SoundQueueID id;
+	ObjID reference;
+};
+
 class MacVentureEngine : public Engine {
 
 public:
@@ -191,9 +205,11 @@ public:
 
 	void enqueueObject(ObjectQueueID type, ObjID objID, ObjID target = 0);
 	void enqueueText(TextQueueID type, ObjID target, ObjID source, ObjID text);
+	void enqueueSound(SoundQueueID type, ObjID target);
 
 	void runObjQueue();
 	bool printTexts();
+	bool playSounds(bool pause);
 
 	void handleObjectSelect(ObjID objID, WindowReference win, bool shiftPressed, bool isDoubleClick);
 	void handleObjectDrop(ObjID objID, Common::Point delta, ObjID newParent);
@@ -204,7 +220,6 @@ public:
 	bool showTextEntry(ObjID text, ObjID srcObj, ObjID destObj);
 	void setTextInput(Common::String content);
 	Common::String getUserInput();
-
 
 	// Data retrieval
 	Common::String getStartGameFileName();
@@ -296,6 +311,8 @@ private: // Attributes
 	StringTable *_decodingNamingArticles;
 	StringTable *_decodingIndirectArticles;
 
+	SoundManager *_soundManager;
+
 	// Engine state
 	GameState _gameState;
 	GlobalSettings _globalSettings;
@@ -308,7 +325,7 @@ private: // Attributes
 
 	Common::Array<QueuedObject> _objQueue;
 	Common::Array<QueuedObject> _inQueue;
-	Common::Array<QueuedObject> _soundQueue;
+	Common::Array<QueuedSound> _soundQueue;
 	Common::Array<QueuedText> _textQueue;
 
 	// Selections

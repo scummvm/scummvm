@@ -54,6 +54,8 @@ MacVentureEngine::MacVentureEngine(OSystem *syst, const ADGameDescription *gameD
 	_debugger = NULL;
 	_gui = NULL;
 
+	_soundManager = NULL;
+
 	debug("MacVenture::MacVentureEngine()");
 }
 
@@ -80,6 +82,9 @@ MacVentureEngine::~MacVentureEngine() {
 
 	if (_textHuffman)
 		delete _textHuffman;
+
+	if (_soundManager)
+		delete _soundManager;
 }
 
 Common::Error MacVentureEngine::run() {
@@ -111,6 +116,8 @@ Common::Error MacVentureEngine::run() {
 	_gui = new Gui(this, _resourceManager);
 	_world = new World(this, _resourceManager);
 	_scriptEngine = new ScriptEngine(this, _world);
+
+	_soundManager = new SoundManager(this);
 
 	_paused = false;
 	_halted = false;
@@ -314,26 +321,11 @@ void MacVentureEngine::enqueueText(TextQueueID type, ObjID target, ObjID source,
 	_textQueue.push_back(newText);
 }
 
-bool MacVentureEngine::printTexts() {
-	for (uint i = 0; i < _textQueue.size(); i++) {
-		QueuedText text = _textQueue.front();
-		_textQueue.remove_at(0);
-		switch (text.id) {
-		case kTextNumber:
-			_gui->printText(Common::String(text.asset));
-			gameChanged();
-			break;
-		case kTextNewLine:
-			_gui->printText(Common::String(""));
-			gameChanged();
-			break;
-		case kTextPlain:
-			_gui->printText(_world->getText(text.asset, text.source, text.destination));
-			gameChanged();
-			break;
-		}
-	}
-	return false;
+void MacVentureEngine::enqueueSound(SoundQueueID type, ObjID target) {
+	QueuedSound newSound;
+	newSound.id = type;
+	newSound.reference = target;
+	_soundQueue.push_back(newSound);
 }
 
 void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, bool shiftPressed, bool isDoubleClick) {
@@ -529,6 +521,8 @@ void MacVentureEngine::endGame() {
 bool MacVentureEngine::updateState() {
 	runObjQueue();
 	bool wait = printTexts();
+	// HACK playSounds should accept a bool passed to updateState
+	wait |= playSounds(true);
 	return wait;
 }
 
@@ -579,6 +573,54 @@ void MacVentureEngine::runObjQueue() {
 			break;
 		}
 	}
+}
+
+bool MacVentureEngine::printTexts() {
+	for (uint i = 0; i < _textQueue.size(); i++) {
+		QueuedText text = _textQueue.front();
+		_textQueue.remove_at(0);
+		switch (text.id) {
+		case kTextNumber:
+			_gui->printText(Common::String(text.asset));
+			gameChanged();
+			break;
+		case kTextNewLine:
+			_gui->printText(Common::String(""));
+			gameChanged();
+			break;
+		case kTextPlain:
+			_gui->printText(_world->getText(text.asset, text.source, text.destination));
+			gameChanged();
+			break;
+		}
+	}
+	return false;
+}
+
+bool MacVentureEngine::playSounds(bool pause) {
+	int delay=0;
+	while (!_soundQueue.empty()) {
+		QueuedSound item = _soundQueue.front();
+		_soundQueue.remove_at(0);
+		switch (item.id) {
+		case kSoundPlay:
+			_soundManager->playSound(item.reference);
+			break;
+		case kSoundPlayAndWait:
+			delay = _soundManager->playSound(item.reference);
+			break;
+		case kSoundWait:
+			//wait for sound to finish?
+			break;
+		}
+	}
+	if (pause && delay > 0) {
+		warning("Sound pausing not yet tested. Pausing for %d", delay * 1000);
+		g_system->delayMillis(delay * 1000);
+		preparedToRun();
+		return true;
+	}
+	return false;
 }
 
 void MacVentureEngine::updateControls() {
