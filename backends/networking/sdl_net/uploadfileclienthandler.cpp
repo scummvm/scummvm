@@ -127,6 +127,8 @@ void UploadFileClientHandler::handleBlockHeaders(Client *client) {
 	if (filename.empty())
 		return;
 
+	// TODO: handle <filename>, <path> + <filename>
+
 	// check that <path>/<filename> doesn't exist
 	Common::String path = _parentDirectoryPath;
 	if (path.lastChar() != '/' && path.lastChar() != '\\')

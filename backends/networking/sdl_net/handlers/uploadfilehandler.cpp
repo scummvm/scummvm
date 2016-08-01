@@ -51,6 +51,8 @@ void UploadFileHandler::handle(Client &client) {
 		return;
 	}
 
+	// TODO: handle <path>
+
 	// check that <path> exists and is directory
 	AbstractFSNode *node = g_system->getFilesystemFactory()->makeFileNodePath(path);
 	if (!node->exists()) {

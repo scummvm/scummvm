@@ -50,9 +50,14 @@ Common::JSONObject ListAjaxHandler::listDirectory(Common::String path) {
 	if (!transformPath(path, prefixToRemove, prefixToAdd))
 		return errorResult;
 
+	// TODO: handle <path>
+
 	Common::FSNode node = Common::FSNode(path);
 	if (path == "/")
 		node = node.getParent(); // absolute root
+
+	// TODO: handle <path>
+
 	if (!node.isDirectory())
 		return errorResult;
 

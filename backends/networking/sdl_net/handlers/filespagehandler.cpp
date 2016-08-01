@@ -85,9 +85,14 @@ bool FilesPageHandler::listDirectory(Common::String path, Common::String &conten
 	if (!transformPath(path, prefixToRemove, prefixToAdd))
 		return false;
 
+	// TODO: handle <path>
+
 	Common::FSNode node = Common::FSNode(path);
 	if (path == "/")
 		node = node.getParent(); // absolute root
+
+	// TODO: handle <path>
+
 	if (!node.isDirectory())
 		return false;
 
