@@ -23,6 +23,7 @@
 #include "backends/networking/sdl_net/handlers/filespagehandler.h"
 #include "backends/networking/sdl_net/handlerutils.h"
 #include "backends/networking/sdl_net/localwebserver.h"
+#include "common/config-manager.h"
 #include "common/translation.h"
 
 namespace Networking {
@@ -76,7 +77,8 @@ Common::String getDisplayPath(Common::String s) {
 
 bool FilesPageHandler::listDirectory(Common::String path, Common::String &content, const Common::String &itemTemplate) {
 	if (path == "" || path == "/") {
-		addItem(content, itemTemplate, IT_DIRECTORY, "/root/", _("File system root"));
+		if (ConfMan.hasKey("rootpath", "cloud")) 
+			addItem(content, itemTemplate, IT_DIRECTORY, "/root/", _("File system root"));
 		addItem(content, itemTemplate, IT_DIRECTORY, "/saves/", _("Saved games"));
 		return true;
 	}

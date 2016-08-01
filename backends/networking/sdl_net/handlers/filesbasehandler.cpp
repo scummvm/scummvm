@@ -50,9 +50,9 @@ bool FilesBaseHandler::transformPath(Common::String &path, Common::String &prefi
 	if (isDirectory && path.lastChar() != '/' && path.lastChar() != '\\')
 		path += '/';
 
-	if (path.hasPrefix("/root")) {
+	if (path.hasPrefix("/root") && ConfMan.hasKey("rootpath", "cloud")) {
 		prefixToAdd = "/root/";
-		prefixToRemove = (ConfMan.hasKey("rootpath", "cloud") ? ConfMan.get("rootpath", "cloud") : "");
+		prefixToRemove = ConfMan.get("rootpath", "cloud");
 		if (prefixToRemove.size() && prefixToRemove.lastChar() != '/' && prefixToRemove.lastChar() != '\\')
 			prefixToRemove += '/';
 		if (prefixToRemove == "/") prefixToRemove = "";

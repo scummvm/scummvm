@@ -23,8 +23,9 @@
 #include "backends/networking/sdl_net/handlers/listajaxhandler.h"
 #include "backends/networking/sdl_net/handlerutils.h"
 #include "backends/networking/sdl_net/localwebserver.h"
-#include "common/translation.h"
+#include "common/config-manager.h"
 #include "common/json.h"
+#include "common/translation.h"
 
 namespace Networking {
 
@@ -40,7 +41,8 @@ Common::JSONObject ListAjaxHandler::listDirectory(Common::String path) {
 	errorResult.setVal("type", new Common::JSONValue("error"));
 
 	if (path == "" || path == "/") {
-		addItem(itemsList, IT_DIRECTORY, "/root/", _("File system root"));
+		if (ConfMan.hasKey("rootpath", "cloud"))
+			addItem(itemsList, IT_DIRECTORY, "/root/", _("File system root"));
 		addItem(itemsList, IT_DIRECTORY, "/saves/", _("Saved games"));
 		successResult.setVal("items", new Common::JSONValue(itemsList));
 		return successResult;
