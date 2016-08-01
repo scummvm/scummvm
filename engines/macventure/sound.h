@@ -29,6 +29,8 @@
 #include "common/file.h"
 #include "common/hashmap.h"
 
+#include "audio/mixer.h"
+
 namespace MacVenture {
 
 enum SoundType {
@@ -47,7 +49,7 @@ public:
 	SoundAsset(Container *container, ObjID id);
 	~SoundAsset();
 
-	void play();
+	void play(Audio::Mixer *mixer, Audio::SoundHandle *soundHandle);
 	uint32 getPlayLength();
 
 private:
@@ -72,7 +74,7 @@ private:
 
 class SoundManager {
 public:
-	SoundManager(MacVentureEngine *engine);
+	SoundManager(MacVentureEngine *engine, Audio::Mixer *mixer);
 	~SoundManager();
 
 	uint32 playSound(ObjID sound);
@@ -84,6 +86,8 @@ private:
 
 	Container *_container;
 	Common::HashMap<ObjID, SoundAsset*> _assets;
+	Audio::SoundHandle _handle;
+	Audio::Mixer *_mixer;
 
 };
 } // End of namespace MacVenture

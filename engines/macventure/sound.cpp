@@ -22,12 +22,45 @@
 
 #include "macventure/sound.h"
 
+#include "audio/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
+
 namespace MacVenture {
+
+// SoundManager
+SoundManager::SoundManager(MacVentureEngine *engine, Audio::Mixer *mixer) {
+	_container = nullptr;
+	Common::String filename = engine->getFilePath(kSoundPathID);
+	_container = new Container(filename);
+	_mixer = mixer;
+	debug(1, "Created sound manager with file %s", filename.c_str());
+}
+
+SoundManager::~SoundManager(){
+	if (_container)
+	delete _container;
+
+	Common::HashMap<ObjID, SoundAsset*>::iterator it;
+	for (it = _assets.begin(); it != _assets.end(); it++) {
+		delete it->_value;
+	}
+}
+
+uint32 SoundManager::playSound(ObjID sound) {
+	ensureLoaded(sound);
+	_assets[sound]->play(_mixer, &_handle);
+	return _assets[sound]->getPlayLength();
+}
+
+void SoundManager::ensureLoaded(ObjID sound) {
+	if (!_assets.contains(sound))
+	_assets[sound] = new SoundAsset(_container, sound);
+}
 
 SoundAsset::SoundAsset(Container *container, ObjID id) :
 	_container(container), _id(id) {
 
-	//TODO Decode the sound
 	if (_container->getItemByteSize(_id) == 0)
 		warning("Trying to load an empty sound asset.");
 
@@ -67,9 +100,9 @@ SoundAsset::SoundAsset(Container *container, ObjID id) :
 
 SoundAsset::~SoundAsset() {}
 
-void SoundAsset::play() {
-	//TODO: Play song
-	warning("SoundAsset::play() not yet implemented");
+void SoundAsset::play(Audio::Mixer *mixer, Audio::SoundHandle *soundHandle) {
+	Audio::AudioStream *sound = Audio::makeRawStream(&_data.front(), _length, _frequency, Audio::FLAG_UNSIGNED);
+	mixer->playStream(Audio::Mixer::kPlainSoundType, soundHandle, sound);
 }
 
 uint32 SoundAsset::getPlayLength() {
@@ -219,35 +252,6 @@ void SoundAsset::decode7e(Common::SeekableReadStream *stream) {
 		last += wavtable[(ch >> 4) & 0xf];
 		_data.push_back(last & 0xff);
 	}
-}
-
-// SoundManager
-SoundManager::SoundManager(MacVentureEngine *engine) {
-	_container = nullptr;
-	Common::String filename = engine->getFilePath(kSoundPathID);
-	_container = new Container(filename);
-	debug(1, "Created sound manager with file %s", filename.c_str());
-}
-
-SoundManager::~SoundManager(){
-	if (_container)
-		delete _container;
-
-	Common::HashMap<ObjID, SoundAsset*>::iterator it;
-	for (it = _assets.begin(); it != _assets.end(); it++) {
-		delete it->_value;
-	}
-}
-
-uint32 SoundManager::playSound(ObjID sound) {
-	ensureLoaded(sound);
-	_assets[sound]->play();
-	return _assets[sound]->getPlayLength();
-}
-
-void SoundManager::ensureLoaded(ObjID sound) {
-	if (!_assets.contains(sound))
-		_assets[sound] = new SoundAsset(_container, sound);
 }
 
 } //End of namespace MacVenture

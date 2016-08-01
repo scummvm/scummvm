@@ -117,7 +117,7 @@ Common::Error MacVentureEngine::run() {
 	_world = new World(this, _resourceManager);
 	_scriptEngine = new ScriptEngine(this, _world);
 
-	_soundManager = new SoundManager(this);
+	_soundManager = new SoundManager(this, _mixer);
 
 	_paused = false;
 	_halted = false;
