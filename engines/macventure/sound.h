@@ -53,6 +53,11 @@ public:
 private:
 
 	void decode10(Common::SeekableReadStream *stream);
+	void decode12(Common::SeekableReadStream *stream);
+	void decode18(Common::SeekableReadStream *stream);
+	void decode1a(Common::SeekableReadStream *stream);
+	void decode44(Common::SeekableReadStream *stream);
+	void decode78(Common::SeekableReadStream *stream);
 	void decode7e(Common::SeekableReadStream *stream);
 
 private:

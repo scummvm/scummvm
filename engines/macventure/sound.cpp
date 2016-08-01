@@ -40,6 +40,21 @@ SoundAsset::SoundAsset(Container *container, ObjID id) :
 	case kSound10:
 		decode10(stream);
 		break;
+	case kSound12:
+		decode12(stream);
+		break;
+	case kSound18:
+		decode18(stream);
+		break;
+	case kSound1a:
+		decode1a(stream);
+		break;
+	case kSound44:
+		decode44(stream);
+		break;
+	case kSound78:
+		decode78(stream);
+		break;
 	case kSound7e:
 		decode7e(stream);
 		break;
@@ -62,9 +77,10 @@ uint32 SoundAsset::getPlayLength() {
 }
 
 void SoundAsset::decode10(Common::SeekableReadStream *stream) {
+	warning("Decode sound 0x10 untested");
 	Common::Array<byte> wavtable;
 	stream->seek(0x198, SEEK_SET);
-	for (int i = 0; i < 16; i++) {
+	for (uint i = 0; i < 16; i++) {
 		wavtable.push_back(stream->readByte());
 	}
 	_length = stream->readUint32BE() * 2;
@@ -72,17 +88,123 @@ void SoundAsset::decode10(Common::SeekableReadStream *stream) {
 	stream->readUint16BE();
 	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
 	byte ch = 0;
-	for (int i = 0; i < _length; i++) {
+	for (uint i = 0; i < _length; i++) {
 		if (i & 1) ch >>= 4;
 		else ch = stream->readByte();
 		_data.push_back(wavtable[ch & 0xf]);
 	}
 }
 
+void SoundAsset::decode12(Common::SeekableReadStream *stream) {
+	warning("Decode sound 0x12 untested");
+	stream->seek(0xc, SEEK_SET);
+	uint32 repeat = stream->readUint16BE();
+	stream->seek(0x34, SEEK_SET);
+	uint32 base = stream->readUint16BE() + 0x34;
+	stream->seek(base, SEEK_SET);
+	_length = stream->readUint32BE() - 6;
+	stream->readUint16BE();
+	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
+	stream->seek(0xe2, SEEK_SET);
+	// TODO: Possible source of bugs, the original just assigns the seek to the scales
+	uint32 scales = stream->pos() + 0xe2;
+	for (uint i = 0; i < repeat; i++) {
+		stream->seek(scales + i * 2, SEEK_SET);
+		uint32 scale = stream->readUint16BE();
+		stream->seek(base + 0xa, SEEK_SET);
+		for (uint j = 0; j < _length; j++) {
+			byte ch = stream->readByte();
+			if (ch & 0x80) {
+				ch -= 0x80;
+				uint32 env= ch * scale;
+				ch = (env >> 8) & 0xff;
+				if (ch & 0x80) ch = 0x7f;
+				ch += 0x80;
+			} else {
+				ch = (ch ^ 0xff) + 1;
+				ch -= 0x80;
+				uint32 env = ch * scale;
+				ch = (env >> 8) & 0xff;
+				if (ch & 0x80) ch = 0x7f;
+				ch += 0x80;
+				ch = (ch ^ 0xff) + 1;
+			}
+			_data.push_back(ch);
+		}
+	}
+}
+
+void SoundAsset::decode18(Common::SeekableReadStream *stream) {
+	warning("Decode sound 0x18 untested");
+	Common::Array<byte> wavtable;
+	stream->seek(0x252, SEEK_SET);
+	for (uint i = 0; i < 16; i++) {
+		wavtable.push_back(stream->readByte());
+	}
+	_length = stream->readUint32BE() * 2;
+	//Unused
+	stream->readUint16BE();
+	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
+	byte ch = 0;
+	for (uint i = 0; i < _length; i++) {
+		if (i & 1) ch >>= 4;
+		else ch = stream->readByte();
+		_data.push_back(wavtable[ch & 0xf]);
+	}
+}
+
+void SoundAsset::decode1a(Common::SeekableReadStream *stream) {
+	warning("Decode sound 0x1a untested");
+	Common::Array<byte> wavtable;
+	stream->seek(0x220, SEEK_SET);
+	for (uint i = 0; i < 16; i++) {
+		wavtable.push_back(stream->readByte());
+	}
+	_length = stream->readUint32BE();
+	//Unused
+	stream->readUint16BE();
+	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
+	byte ch = 0;
+	for (uint i = 0; i < _length; i++) {
+		if (i & 1) ch >>= 4;
+		else ch = stream->readByte();
+		_data.push_back(wavtable[ch & 0xf]);
+	}
+}
+
+void SoundAsset::decode44(Common::SeekableReadStream *stream) {
+	warning("Decode sound 0x44 untested");
+	stream->seek(0x5e, SEEK_SET);
+	_length = stream->readUint32BE();
+	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
+	for (uint i = 0; i < _length; i++) {
+		_data.push_back(stream->readByte());
+	}
+}
+
+void SoundAsset::decode78(Common::SeekableReadStream *stream) {
+	warning("Decode sound 0x78 untested");
+	Common::Array<byte> wavtable;
+	stream->seek(0xba, SEEK_SET);
+	for (uint i = 0; i < 16; i++) {
+		wavtable.push_back(stream->readByte());
+	}
+	//Unused
+	stream->readUint32BE();
+	_length = stream->readUint32BE();
+	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
+	byte ch = 0;
+	for (uint i = 0; i < _length; i++) {
+		if (i & 1) ch <<= 4;
+		else ch = stream->readByte();
+		_data.push_back(wavtable[(ch >> 4) & 0xf]);
+	}
+}
+
 void SoundAsset::decode7e(Common::SeekableReadStream *stream) {
 	Common::Array<byte> wavtable;
 	stream->seek(0xc2, SEEK_SET);
-	for (int i = 0; i < 16; i++) {
+	for (uint i = 0; i < 16; i++) {
 		wavtable.push_back(stream->readByte());
 	}
 	//Unused
@@ -91,7 +213,7 @@ void SoundAsset::decode7e(Common::SeekableReadStream *stream) {
 	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
 	uint32 last=0x80;
 	byte ch = 0;
-	for (int i = 0; i < _length; i++) {
+	for (uint i = 0; i < _length; i++) {
 		if (i & 1) ch <<= 4;
 		else ch = stream->readByte();
 		last += wavtable[(ch >> 4) & 0xf];
