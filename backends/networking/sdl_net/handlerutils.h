@@ -35,6 +35,12 @@ public:
 	static Common::SeekableReadStream *getArchiveFile(Common::String name);
 	static Common::String readEverythingFromStream(Common::SeekableReadStream *const stream);
 
+	static Common::String normalizePath(const Common::String &path);
+	static bool hasForbiddenCombinations(const Common::String &path);
+	static bool isBlacklisted(const Common::String &path);
+	static bool hasPermittedPrefix(const Common::String &path);
+	static bool permittedPath(const Common::String path);
+
 	static void setMessageHandler(Client &client, Common::String message, Common::String redirectTo = "");
 	static void setFilesManagerErrorMessageHandler(Client &client, Common::String message, Common::String redirectTo = "");
 };

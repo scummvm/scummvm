@@ -127,13 +127,18 @@ void UploadFileClientHandler::handleBlockHeaders(Client *client) {
 	if (filename.empty())
 		return;
 
-	// TODO: handle <filename>, <path> + <filename>
+	if (HandlerUtils::hasForbiddenCombinations(filename))
+		return;
 
 	// check that <path>/<filename> doesn't exist
 	Common::String path = _parentDirectoryPath;
 	if (path.lastChar() != '/' && path.lastChar() != '\\')
 		path += '/';
 	AbstractFSNode *originalNode = g_system->getFilesystemFactory()->makeFileNodePath(path + filename);
+	if (!HandlerUtils::permittedPath(originalNode->getPath())) {
+		setErrorMessageHandler(*client, _("Invalid path!"));
+		return;
+	}
 	if (originalNode->exists()) {
 		setErrorMessageHandler(*client, _("There is a file with that name in the parent directory!"));
 		return;

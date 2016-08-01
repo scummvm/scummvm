@@ -44,6 +44,12 @@ void UploadFileHandler::handle(Client &client) {
 		return;
 	}
 
+	// check that <path> contains no '../'
+	if (HandlerUtils::hasForbiddenCombinations(path)) {
+		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("Invalid path!"));
+		return;
+	}
+
 	// transform virtual path to actual file system one
 	Common::String prefixToRemove = "", prefixToAdd = "";
 	if (!transformPath(path, prefixToRemove, prefixToAdd, false) || path.empty()) {
@@ -51,10 +57,12 @@ void UploadFileHandler::handle(Client &client) {
 		return;
 	}
 
-	// TODO: handle <path>
-
-	// check that <path> exists and is directory
+	// check that <path> exists, is directory and isn't forbidden
 	AbstractFSNode *node = g_system->getFilesystemFactory()->makeFileNodePath(path);
+	if (!HandlerUtils::permittedPath(node->getPath())) {
+		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("Invalid path!"));
+		return;
+	}
 	if (!node->exists()) {
 		HandlerUtils::setFilesManagerErrorMessageHandler(client, _("The parent directory doesn't exist!"));
 		return;

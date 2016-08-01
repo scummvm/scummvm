@@ -46,17 +46,19 @@ Common::JSONObject ListAjaxHandler::listDirectory(Common::String path) {
 		return successResult;
 	}
 
+	if (HandlerUtils::hasForbiddenCombinations(path))
+		return errorResult;
+
 	Common::String prefixToRemove = "", prefixToAdd = "";
 	if (!transformPath(path, prefixToRemove, prefixToAdd))
 		return errorResult;
-
-	// TODO: handle <path>
 
 	Common::FSNode node = Common::FSNode(path);
 	if (path == "/")
 		node = node.getParent(); // absolute root
 
-	// TODO: handle <path>
+	if (!HandlerUtils::permittedPath(node.getPath()))
+		return errorResult;
 
 	if (!node.isDirectory())
 		return errorResult;

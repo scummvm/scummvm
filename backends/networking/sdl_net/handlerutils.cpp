@@ -22,6 +22,7 @@
 
 #include "backends/networking/sdl_net/handlerutils.h"
 #include "backends/networking/sdl_net/localwebserver.h"
+#include "backends/saves/default/default-saves.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -96,6 +97,75 @@ Common::String HandlerUtils::readEverythingFromStream(Common::SeekableReadStream
 		result += Common::String(buf, readBytes);
 	}
 	return result;
+}
+
+Common::String HandlerUtils::normalizePath(const Common::String &path) {
+	Common::String normalized;
+	bool slash = false;
+	for (uint32 i = 0; i < path.size(); ++i) {
+		char c = path[i];
+		if (c == '\\' || c == '/') {
+			slash = true;
+			continue;
+		}
+
+		if (slash) {
+			normalized += '/';
+			slash = false;
+		}
+
+		if ('A' <= c && c <= 'Z') {
+			normalized += c - 'A' + 'a';
+		} else {
+			normalized += c;
+		}
+	}
+	if (slash) normalized += '/';
+	return normalized;
+}
+
+bool HandlerUtils::hasForbiddenCombinations(const Common::String &path) {
+	return (path.contains("../") || path.contains("..\\"));
+}
+
+bool HandlerUtils::isBlacklisted(const Common::String &path) {
+	const char *blacklist[] = {
+		"/etc",
+		"/bin",
+		"c:/windows" // just saying: I know guys who install windows on another drives
+	};
+
+	// normalize path
+	Common::String normalized = normalizePath(path);
+
+	uint32 size = sizeof(blacklist) / sizeof(const char *);
+	for (uint32 i = 0; i < size; ++i)
+		if (normalized.hasPrefix(blacklist[i]))
+			return true;
+
+	return false;
+}
+
+bool HandlerUtils::hasPermittedPrefix(const Common::String &path) {
+	// normalize path
+	Common::String normalized = normalizePath(path);
+
+	// prefix for /root/
+	Common::String prefix;
+	if (ConfMan.hasKey("rootpath", "cloud")) {
+		prefix = normalizePath(ConfMan.get("rootpath", "cloud"));
+		if (prefix == "/" || normalized.hasPrefix(prefix))
+			return true;
+	}
+
+	// prefix for /saves/
+	DefaultSaveFileManager *manager = dynamic_cast<DefaultSaveFileManager *>(g_system->getSavefileManager());
+	prefix = (manager ? manager->concatWithSavesPath("") : ConfMan.get("savepath"));
+	return (normalized.hasPrefix(normalizePath(prefix)));
+}
+
+bool HandlerUtils::permittedPath(const Common::String path) {
+	return hasPermittedPrefix(path) && !isBlacklisted(path);
 }
 
 void HandlerUtils::setMessageHandler(Client &client, Common::String message, Common::String redirectTo) {

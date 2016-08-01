@@ -52,12 +52,16 @@ bool FilesBaseHandler::transformPath(Common::String &path, Common::String &prefi
 
 	if (path.hasPrefix("/root")) {
 		prefixToAdd = "/root/";
-		prefixToRemove = "";
+		prefixToRemove = (ConfMan.hasKey("rootpath", "cloud") ? ConfMan.get("rootpath", "cloud") : "");
+		if (prefixToRemove.size() && prefixToRemove.lastChar() != '/' && prefixToRemove.lastChar() != '\\')
+			prefixToRemove += '/';
+		if (prefixToRemove == "/") prefixToRemove = "";
 		path.erase(0, 5);
+		if (path.size() && (path[0] == '/' || path[0] == '\\'))
+			path.deleteChar(0); // if that was "/root/ab/c", it becomes "/ab/c", but we need "ab/c"
+		path = prefixToRemove + path; 
 		if (path == "")
 			path = "/"; // absolute root is '/'
-		if (path != "/")
-			path.deleteChar(0); // if that was "/root/ab/c", it becomes "/ab/c", but we need "ab/c"
 		return true;
 	}
 

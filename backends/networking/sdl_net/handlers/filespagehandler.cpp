@@ -81,17 +81,19 @@ bool FilesPageHandler::listDirectory(Common::String path, Common::String &conten
 		return true;
 	}
 
+	if (HandlerUtils::hasForbiddenCombinations(path))
+		return false;
+
 	Common::String prefixToRemove = "", prefixToAdd = "";
 	if (!transformPath(path, prefixToRemove, prefixToAdd))
 		return false;
-
-	// TODO: handle <path>
 
 	Common::FSNode node = Common::FSNode(path);
 	if (path == "/")
 		node = node.getParent(); // absolute root
 
-	// TODO: handle <path>
+	if (!HandlerUtils::permittedPath(node.getPath()))
+		return false;
 
 	if (!node.isDirectory())
 		return false;
