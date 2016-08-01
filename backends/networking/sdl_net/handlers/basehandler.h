@@ -33,6 +33,7 @@ public:
 	virtual ~BaseHandler() {}
 
 	virtual void handle(Client &) = 0;
+	virtual bool minimalModeSupported() { return false; }
 };
 
 } // End of namespace Networking

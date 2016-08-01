@@ -34,6 +34,7 @@ public:
 	virtual ~ResourceHandler();
 
 	virtual void handle(Client &client);
+	virtual bool minimalModeSupported();
 };
 
 } // End of namespace Networking

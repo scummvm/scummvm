@@ -60,7 +60,7 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	TCPsocket _serverSocket;
 	Client _client[MAX_CONNECTIONS];
 	int _clients;
-	bool _timerStarted, _stopOnIdle;
+	bool _timerStarted, _stopOnIdle, _minimalMode;
 	Common::HashMap<Common::String, BaseHandler*> _pathHandlers;
 	BaseHandler *_defaultHandler;
 	IndexPageHandler _indexPageHandler;
@@ -90,7 +90,7 @@ public:
 	LocalWebserver();
 	virtual ~LocalWebserver();
 
-	void start();
+	void start(bool useMinimalMode = false);
 	void stop();
 	void stopOnIdle();
 

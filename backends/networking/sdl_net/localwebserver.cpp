@@ -49,7 +49,7 @@ DECLARE_SINGLETON(Networking::LocalWebserver);
 namespace Networking {
 
 LocalWebserver::LocalWebserver(): _set(nullptr), _serverSocket(nullptr), _timerStarted(false),
-	_stopOnIdle(false), _clients(0), _idlingFrames(0), _serverPort(DEFAULT_SERVER_PORT) {
+	_stopOnIdle(false), _minimalMode(false), _clients(0), _idlingFrames(0), _serverPort(DEFAULT_SERVER_PORT) {
 	addPathHandler("/", &_indexPageHandler);
 	addPathHandler("/files", &_filesPageHandler);
 	addPathHandler("/create", &_createDirectoryHandler);
@@ -83,7 +83,7 @@ void LocalWebserver::stopTimer() {
 	_timerStarted = false;
 }
 
-void LocalWebserver::start() {
+void LocalWebserver::start(bool useMinimalMode) {
 	_handleMutex.lock();
 	_serverPort = getPort();
 	_stopOnIdle = false;
@@ -91,6 +91,7 @@ void LocalWebserver::start() {
 		_handleMutex.unlock();
 		return;
 	}
+	_minimalMode = useMinimalMode;
 	startTimer();
 
 	// Create a listening TCP socket
@@ -211,18 +212,28 @@ void LocalWebserver::handleClient(uint32 i) {
 	case READING_HEADERS:
 		_client[i].readHeaders();
 		break;
-	case READ_HEADERS: //decide what to do next with that client
-		//if GET, check whether we know a handler for such URL
-		//if PUT, check whether we know a handler for that URL
-		if (_pathHandlers.contains(_client[i].path()))
-			_pathHandlers[_client[i].path()]->handle(_client[i]);
-		else if (_defaultHandler)
-			_defaultHandler->handle(_client[i]); //try default handler
+	case READ_HEADERS: {
+		// decide what to do next with that client
+		// check whether we know a handler for such URL
+		BaseHandler *handler = nullptr;
+		if (_pathHandlers.contains(_client[i].path())) {
+			handler = _pathHandlers[_client[i].path()];
+		} else {
+			// try default handler
+			handler = _defaultHandler;
+		}
+
+		// if server's in "minimal mode", only handlers which support it are used
+		if (handler && (!_minimalMode || handler->minimalModeSupported()))
+			handler->handle(_client[i]);
 
 		if (_client[i].state() == BEING_HANDLED || _client[i].state() == INVALID)
 			break;
-		//if no handler, answer with default BAD REQUEST
-		//fallthrough
+
+		// if no handler, answer with default BAD REQUEST
+		// fallthrough
+	}
+
 	case BAD_REQUEST:
 		setClientGetHandler(_client[i], "<html><head><title>ScummVM - Bad Request</title></head><body>BAD REQUEST</body></html>", 400);
 		break;

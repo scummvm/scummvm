@@ -37,6 +37,7 @@ public:
 
 	Common::String code() const;
 	virtual void handle(Client &client);
+	virtual bool minimalModeSupported();
 };
 
 } // End of namespace Networking

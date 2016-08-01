@@ -68,4 +68,8 @@ void ResourceHandler::handle(Client &client) {
 	LocalWebserver::setClientGetHandler(client, file, 200, determineMimeType(filename));
 }
 
+bool ResourceHandler::minimalModeSupported() {
+	return true;
+}
+
 } // End of namespace Networking

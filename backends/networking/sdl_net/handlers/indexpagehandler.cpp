@@ -58,4 +58,8 @@ void IndexPageHandler::handle(Client &client) {
 	HandlerUtils::setMessageHandler(client, _("ScummVM got the code and already connects to your cloud storage!"));
 }
 
+bool IndexPageHandler::minimalModeSupported() {
+	return true;
+}
+
 } // End of namespace Networking

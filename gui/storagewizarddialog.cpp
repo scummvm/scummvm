@@ -132,7 +132,7 @@ void StorageWizardDialog::open() {
 #ifdef USE_SDL_NET
 	if (Cloud::CloudManager::couldUseLocalServer()) {
 		_stopServerOnClose = !LocalServer.isRunning();
-		LocalServer.start();
+		LocalServer.start(true); // using "minimal mode" (no "/files", "/download", etc available)
 		LocalServer.indexPageHandler().setTarget(this);
 	}
 #endif
