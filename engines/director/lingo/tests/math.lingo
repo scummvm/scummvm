@@ -12,6 +12,8 @@ set x = 2 + 3 * (4 / 2)
 put x
 
 put power(2, 8)
+put power(2, 8, 0)
+put power(2)
 updatestage
 
 -- Type conversion

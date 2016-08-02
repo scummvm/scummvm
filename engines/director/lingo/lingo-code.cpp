@@ -702,7 +702,20 @@ void Lingo::c_call() {
 
 	Symbol *sym = g_lingo->_handlers[name];
 
+	if (sym->nargs < nargs) {
+		warning("Incorrect number of arguments for function %s. Dropping extra %d", name.c_str(), nargs - sym->nargs);
+		for (int i = 0; i < nargs - sym->nargs; i++)
+			g_lingo->pop();
+	}
+
 	if (sym->type == BLTIN) {
+		if (sym->nargs > 0 && nargs < sym->nargs) {
+			warning("Too few arguments for function %s. Expecting %d but got %d", name.c_str(), sym->nargs, nargs);
+			for (int i = 0; i < nargs; i++)
+				g_lingo->pop();
+
+				return;
+			}
 		(*sym->u.func)();
 
 		return;
