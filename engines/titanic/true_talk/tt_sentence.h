@@ -109,12 +109,12 @@ public:
 	int storeVocabHit(TTword *word);
 
 	bool fn1(const CString &str, int wordId1, const CString &str1, const CString &str2,
-		const CString &str3, int wordId2, int val, int val2, const TTconceptNode *node) const;
+		const CString &str3, int wordId2, int val1, int val2, const TTconceptNode *node) const;
 	bool fn3(const CString &str1, const CString &str2, const CString &str3,
 		const CString &str4, const CString &str5, const CString &str6,
-		int val, int val2, const TTconceptNode *node) const;
-	bool fn2(int slotIndex, const TTstring &str, const TTconceptNode *conceptNode) const;
-	bool fn4(int mode, int wordId, const TTconceptNode *node) const;
+		int val1, int val2, const TTconceptNode *node) const;
+	bool fn2(int slotIndex, const TTstring &str, const TTconceptNode *node = nullptr) const;
+	bool fn4(int mode, int wordId, const TTconceptNode *node = nullptr) const;
 
 	bool isConcept34(int slotIndex, const TTconceptNode *node = nullptr) const;
 
