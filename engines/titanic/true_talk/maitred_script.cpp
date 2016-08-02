@@ -141,8 +141,223 @@ int MaitreDScript::process(const TTroomScript *roomScript, const TTsentence *sen
 }
 
 ScriptChangedResult MaitreDScript::scriptChanged(const TTroomScript *roomScript, uint id) {
-	warning("TODO");
-	return SCR_1;
+	resetFlags();
+	bool flag1 = false, flag2 = false;
+
+	switch (id) {
+	case 3:
+		if (getValue(4))
+			addResponse(getDialogueId(260655));
+		else if (getValue(12))
+			addResponse(getDialogueId(260622));
+		else if (getValue(9) && getValue(16))
+			addResponse(getDialogueId(getValue(16)));
+		else if (getValue(15))
+			addResponse(getDialogueId(260649));
+		else
+			addResponse(getDialogueId(260112));
+
+		CTrueTalkManager::setFlags(16, 0);
+		CTrueTalkManager::setFlags(15, 1);
+		applyResponse();
+		break;
+
+	case 110:
+		addResponse(getDialogueId(260118));
+		applyResponse();
+		trigger12(true);
+		CTrueTalkManager::setFlags(8, 1);
+		CTrueTalkManager::setFlags(9, 1);
+		break;
+
+	case 111:
+		CTrueTalkManager::setFlags(16, 260680);
+		CTrueTalkManager::setFlags(8, 0);
+		CTrueTalkManager::setFlags(9, 1);
+		break;
+
+	case 112:
+		addResponse(getDialogueId(getValue(8) ? 260095 : 260127));
+		applyResponse();
+		break;
+
+	case 113:
+		CTrueTalkManager::setFlags(16, 260266);
+		CTrueTalkManager::setFlags(8, 0);
+		CTrueTalkManager::setFlags(9, 1);
+		break;
+
+	case 114:
+		CTrueTalkManager::setFlags(16, 260267);
+		CTrueTalkManager::setFlags(8, 0);
+		CTrueTalkManager::setFlags(9, 1);
+		break;
+
+	case 115:
+		CTrueTalkManager::setFlags(16, 260268);
+		CTrueTalkManager::setFlags(8, 0);
+		CTrueTalkManager::setFlags(9, 1);
+		break;
+
+	case 116:
+		CTrueTalkManager::setFlags(8, 0);
+		CTrueTalkManager::setFlags(9, 1);
+		break;
+
+	case 117:
+		CTrueTalkManager::setFlags(8, 0);
+		CTrueTalkManager::setFlags(9, 0);
+		setFlags12();
+		break;
+
+	case 132:
+		addResponse(getDialogueId(260655));
+		applyResponse();
+		break;
+
+	default:
+		flag1 = true;
+		break;
+	}
+
+	if (!getValue(8)) {
+		switch (id - 118) {
+		case 0:
+			addResponse(getDialogueId(260676));
+			applyResponse();
+			break;
+		case 1:
+			addResponse(getDialogueId(260677));
+			applyResponse();
+			break;
+		case 2:
+			addResponse(getDialogueId(260189));
+			applyResponse();
+			break;
+		case 3:
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+			CTrueTalkManager::setFlags(13, id - 120);
+			break;
+		case 8:
+			CTrueTalkManager::setFlags(13, 0);
+			break;
+		case 9:
+			if (!getValue(12)) {
+				addResponse(getDialogueId(getValue(14) == 1 ? 260063 : 260120));
+				applyResponse();
+			} else if (getRandomNumber(4) == 1) {
+				addResponse(getDialogueId(260067));
+				applyResponse();
+			} else {
+				addResponse(getDialogueId(260131));
+				applyResponse();
+			}
+			break;
+
+		case 10:
+			if (getValue(12) == 0) {
+				addResponse(getDialogueId(getValue(14) == 1 ? 260063 : 260119));
+				applyResponse();
+			} else if (getRandomNumber(4) == 1) {
+				addResponse(getDialogueId(260077));
+				applyResponse();
+			} else {
+				addResponse(getDialogueId(260131));
+				applyResponse();
+			}
+			break;
+
+		case 11:
+			if (getValue(12)) {
+				addResponse(getDialogueId(260121));
+				applyResponse();
+			} else {
+				addResponse(getDialogueId(getValue(14) == 1 ? 260063 : 260119));
+				applyResponse();
+			}
+			break;
+
+		case 12:
+			if (getValue(12)) {
+				addResponse(getDialogueId(260131));
+				applyResponse();
+			} else {
+				addResponse(getDialogueId(getValue(14) == 1 ? 260063 : 260119));
+				applyResponse();
+			}
+			break;
+
+		case 13:
+			setFlags12();
+			addResponse(getDialogueId(260131));
+			applyResponse();
+			break;
+
+		case 15:
+			CTrueTalkManager::setFlags(13, 1);
+			if (getValue(12)) {
+				addResponse(getDialogueId(260122));
+				applyResponse();
+			} else {
+				addResponse(getDialogueId(getValue(14) == 1 ? 260063 : 260119));
+				applyResponse();
+			}
+			break;
+
+		case 16:
+			CTrueTalkManager::setFlags(13, 2);
+			if (getValue(12)) {
+				addResponse(getDialogueId(260123));
+				applyResponse();
+			} else {
+				addResponse(getDialogueId(getValue(14) == 1 ? 260063 : 260119));
+				applyResponse();
+			}
+			break;
+
+		case 17:
+			CTrueTalkManager::setFlags(13, 3);
+			if (getValue(12)) {
+				addResponse(getDialogueId(260124));
+				applyResponse();
+			} else {
+				addResponse(getDialogueId(getValue(14) == 1 ? 260063 : 260119));
+				applyResponse();
+			}
+			break;
+
+		case 18:
+			CTrueTalkManager::setFlags(13, 4);
+			if (getValue(12)) {
+				addResponse(getDialogueId(260125));
+				applyResponse();
+			} else {
+				addResponse(getDialogueId(getValue(14) == 1 ? 260063 : 260119));
+				applyResponse();
+			}
+			break;
+
+		case 19:
+			CTrueTalkManager::setFlags(13, 5);
+			if (getValue(12)) {
+				addResponse(getDialogueId(260126));
+				applyResponse();
+			} else {
+				addResponse(getDialogueId(getValue(14) == 1 ? 260063 : 260119));
+				applyResponse();
+			}
+			break;
+
+		default:
+			flag2 = true;
+			break;
+		}
+	}
+
+	return !flag1 || !flag2 ? SCR_2 : SCR_0;
 }
 
 int MaitreDScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
@@ -368,11 +583,6 @@ int MaitreDScript::preResponse(uint id) {
 	if (id == 60911)
 		return 260101;
 
-	return 0;
-}
-
-int MaitreDScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
-	warning("TODO");
 	return 0;
 }
 
