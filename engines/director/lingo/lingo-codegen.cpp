@@ -206,6 +206,15 @@ void Lingo::codeArgStore() {
 	}
 }
 
+int Lingo::codeFunc(Common::String *s, int numpar) {
+	g_lingo->code1(g_lingo->c_call);
+	g_lingo->codeString(s->c_str());
+
+	inst num = 0;
+	WRITE_UINT32(&num, numpar);
+	g_lingo->code1(num);
+}
+
 void Lingo::codeLabel(int label) {
 	_labelstack.push_back(label);
 }

@@ -356,12 +356,7 @@ expr: INT		{
 		$$ = g_lingo->code2(g_lingo->c_constpush, 0); // Put dummy value
 		delete $1; }
 	| ID '(' arglist ')'	{
-		$$ = g_lingo->code1(g_lingo->c_call);
-		g_lingo->codeString($1->c_str());
-
-		inst numpar = 0;
-		WRITE_UINT32(&numpar, $3);
-		g_lingo->code1(numpar);
+		$$ = g_lingo->codeFunc($1, $3);
 		delete $1; }
 	| ID		{
 		$$ = g_lingo->code1(g_lingo->c_eval);
