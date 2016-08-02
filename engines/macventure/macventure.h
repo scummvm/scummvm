@@ -181,7 +181,11 @@ public:
 	MacVentureEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~MacVentureEngine();
 
+	virtual bool hasFeature(EngineFeature f) const;
+
 	virtual Common::Error run();
+
+	bool scummVMSaveLoadDialog(bool isSave);
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 

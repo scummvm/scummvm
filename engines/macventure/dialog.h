@@ -39,7 +39,7 @@ extern PrebuiltDialog prebuiltDialogs[];
 class Dialog {
 public:
 	Dialog(Gui *gui, Common::Point pos, uint width, uint height);
-  Dialog(Gui *gui, PrebuiltDialogs prebuilt);
+ 	Dialog(Gui *gui, PrebuiltDialogs prebuilt);
 
 	~Dialog();
 

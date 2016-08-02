@@ -32,9 +32,7 @@ namespace MacVenture {
 const char *MacVentureEngine::getGameFileName() const {
 	return _gameDescription->filesDescriptions[0].fileName;
 }
-}
-
-namespace MacVenture {
+} // End of namespace MacVenture
 
 #include "macventure/detection_tables.h"
 
@@ -44,6 +42,8 @@ static const PlainGameDescriptor macventureGames[] = {
 	{ "deja_vu2", "Deja Vu II"},
 	{ 0, 0 }
 };
+
+namespace MacVenture {
 
 SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot);
 
@@ -71,6 +71,12 @@ bool MacVentureMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup);
+}
+
+bool MacVentureEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
 }
 
 SaveStateList MacVentureMetaEngine::listSaves(const char *target) const {
@@ -116,13 +122,10 @@ int MacVentureMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 bool MacVentureMetaEngine::createInstance(OSystem * syst, Engine ** engine, const ADGameDescription *game) const {
 	if (game) {
-		*engine = new MacVentureEngine(syst, game);
+		*engine = new MacVenture::MacVentureEngine(syst, game);
 	}
 	return game != 0;
 }
-
-
-
 
 } // End of namespace MacVenture
 

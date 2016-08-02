@@ -25,6 +25,7 @@
 #include "common/error.h"
 #include "common/savefile.h"
 #include "engines/savestate.h"
+#include "gui/saveload.h"
 
 namespace MacVenture {
 
@@ -71,19 +72,55 @@ void writeMetaData(Common::OutSaveFile *file, Common::String desc) {
 }
 
 Common::Error MacVentureEngine::loadGameState(int slot) {
-	Common::InSaveFile *file = getSaveFileManager()->openForLoading("shadowgate.001");
+	Common::String saveFileName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
+	Common::InSaveFile *file;
+	if(!(file = getSaveFileManager()->openForLoading(saveFileName))) {
+		error("missing savegame file %s", saveFileName.c_str());
+	}
 	_world->loadGameFrom(file);
 	reset();
 	return Common::kNoError;
 }
 
 Common::Error MacVentureEngine::saveGameState(int slot, const Common::String &desc) {
+	Common::String saveFileName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
 	Common::SaveFileManager *manager = getSaveFileManager();
 	// HACK Get a real name!
-	Common::OutSaveFile *file = manager->openForSaving(desc);
+	Common::OutSaveFile *file = manager->openForSaving(saveFileName);
 	_world->saveGameInto(file);
 	writeMetaData(file, desc);
 	delete file;
+}
+
+bool MacVentureEngine::scummVMSaveLoadDialog(bool isSave) {
+	if (!isSave) {
+		// do loading
+		GUI::SaveLoadChooser dialog = GUI::SaveLoadChooser(Common::String("Load game:"), Common::String("Load"), false);
+		int slot = dialog.runModalWithCurrentTarget();
+
+		if (slot < 0)
+			return true;
+
+		return loadGameState(slot).getCode() == Common::kNoError;
+	}
+
+	// do saving
+	GUI::SaveLoadChooser dialog = GUI::SaveLoadChooser(Common::String("Save game:"), Common::String("Save"), true);
+	int slot = dialog.runModalWithCurrentTarget();
+	Common::String desc = dialog.getResultString();
+
+	if (desc.empty()) {
+		// create our own description for the saved game, the user didnt enter it
+		desc = dialog.createDefaultSaveDescription(slot);
+	}
+
+	if (desc.size() > (1 << MACVENTURE_DESC_LENGTH * 4) - 1)
+		desc = Common::String(desc.c_str(), (1 << MACVENTURE_DESC_LENGTH * 4) - 1);
+
+	if (slot < 0)
+		return true;
+
+	return saveGameState(slot, desc).getCode() == Common::kNoError;
 }
 
 } // End of namespace MacVenture

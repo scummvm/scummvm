@@ -1081,15 +1081,15 @@ void Gui::handleMenuAction(MenuAction action) {
 		break;
 	case MacVenture::kMenuActionOpen:
 		debug("MacVenture Menu Action: Open");
-		loadGame(0);
+		_engine->scummVMSaveLoadDialog(false);
 		break;
 	case MacVenture::kMenuActionSave:
 		debug("MacVenture Menu Action: Save");
-		saveInto(0);
+		_engine->scummVMSaveLoadDialog(true);
 		break;
 	case MacVenture::kMenuActionSaveAs:
 		debug("MacVenture Menu Action: Save As");
-		showPrebuiltDialog(kSaveAsDialog);
+		_engine->scummVMSaveLoadDialog(true);
 		break;
 	case MacVenture::kMenuActionQuit:
 		debug("MacVenture Menu Action: Quit");

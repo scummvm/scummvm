@@ -35,7 +35,7 @@ enum DialogAction {
 };
 
 enum PrebuiltDialogs {
-  kSaveAsDialog = 0,
+  kSaveAsDialog = 0, //TODO: Currently unused, we are using ScummVM dialogs instead.
   kSpeakDialog = 1,
   kPrebuiltDialogCount
 };
