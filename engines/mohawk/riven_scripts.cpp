@@ -50,7 +50,7 @@ RivenScriptManager::~RivenScriptManager() {
 }
 
 RivenScriptPtr RivenScriptManager::readScript(Common::ReadStream *stream) {
-	RivenScriptPtr script = RivenScriptPtr(new RivenScript(_vm));
+	RivenScriptPtr script = RivenScriptPtr(new RivenScript());
 
 	uint16 commandCount = stream->readUint16BE();
 
@@ -112,8 +112,7 @@ void RivenScriptManager::clearStoredMovieOpcode() {
 	_storedMovieOpcode.id = 0;
 }
 
-RivenScript::RivenScript(MohawkEngine_Riven *vm) :
-		_vm(vm) {
+RivenScript::RivenScript() {
 	_continueRunning = true;
 }
 

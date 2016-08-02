@@ -49,26 +49,41 @@ enum {
 class MohawkEngine_Riven;
 class RivenCommand;
 
+/**
+ * Scripts in Riven are a list of Commands
+ *
+ * This class should only be used through the RivenScriptPtr
+ * type to ensure the underlying memory is not freed when changing card.
+ */
 class RivenScript {
 public:
-	RivenScript(MohawkEngine_Riven *vm);
+	RivenScript();
 	~RivenScript();
 
+	/** Append a command to the script */
 	void addCommand(RivenCommand *command);
 
+	/** Run the script */
 	void runScript();
+
+	/** Print script details to the standard output */
 	void dumpScript(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs);
+
+	/** Stop the script after the current command */
 	void stopRunning() { _continueRunning = false; }
 
 private:
-	MohawkEngine_Riven *_vm;
-
 	Common::Array<RivenCommand *> _commands;
 	bool _continueRunning;
 };
 
 typedef Common::SharedPtr<RivenScript> RivenScriptPtr;
 
+/**
+ * A script and its type
+ *
+ * The type defines when the script should be run
+ */
 struct RivenTypedScript {
 	uint16 type;
 	RivenScriptPtr script;
@@ -76,12 +91,21 @@ struct RivenTypedScript {
 
 typedef Common::Array<RivenTypedScript> RivenScriptList;
 
+/**
+ * Script manager
+ *
+ * Reads scripts from raw data.
+ * Can run scripts immediatly, or store them for future execution.
+ */
 class RivenScriptManager {
 public:
 	RivenScriptManager(MohawkEngine_Riven *vm);
 	~RivenScriptManager();
 
+	/** Read a single script from a stream */
 	RivenScriptPtr readScript(Common::ReadStream *stream);
+
+	/** Read a list of typed scripts from a stream */
 	RivenScriptList readScripts(Common::ReadStream *stream);
 	void stopAllScripts();
 
@@ -99,25 +123,38 @@ public:
 
 private:
 	MohawkEngine_Riven *_vm;
-
 	StoredMovieOpcode _storedMovieOpcode;
 
 	RivenCommand *readCommand(Common::ReadStream *stream);
 };
 
+/**
+ * An abstract command
+ *
+ * Commands are unit operations part of a script
+ */
 class RivenCommand {
 public:
 	RivenCommand(MohawkEngine_Riven *vm);
 	virtual ~RivenCommand();
 
+	/** Print details about the command to standard output */
 	virtual void dump(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs) = 0;
 
+	/** Execute the command */
 	virtual void execute() = 0;
 
 protected:
 	MohawkEngine_Riven *_vm;
 };
 
+/**
+ * A simple Command
+ *
+ * Simple commands have a type and a list of arguments.
+ * The operation to be executed when running the command
+ * depends on the type.
+ */
 class RivenSimpleCommand : public RivenCommand {
 public:
 	static RivenSimpleCommand *createFromStream(MohawkEngine_Riven *vm, int type, Common::ReadStream *stream);
@@ -129,18 +166,14 @@ public:
 
 private:
 	typedef Common::Array<uint16> ArgumentArray;
-
-	RivenSimpleCommand(MohawkEngine_Riven *vm, int type, const ArgumentArray &arguments);
-
-	int _type;
-	ArgumentArray _arguments;
-
 	typedef void (RivenSimpleCommand::*OpcodeProcRiven)(uint16 op, uint16 argc, uint16 *argv);
 	struct RivenOpcode {
 		OpcodeProcRiven proc;
 		const char *desc;
 	};
-	const RivenOpcode *_opcodes;
+
+	RivenSimpleCommand(MohawkEngine_Riven *vm, int type, const ArgumentArray &arguments);
+
 	void setupOpcodes();
 
 	DECLARE_OPCODE(empty) { warning ("Unknown Opcode %04x", op); }
@@ -180,8 +213,21 @@ private:
 	DECLARE_OPCODE(activateFLST);
 	DECLARE_OPCODE(zipMode);
 	DECLARE_OPCODE(activateMLST);
+
+	const RivenOpcode *_opcodes;
+
+	int _type;
+	ArgumentArray _arguments;
 };
 
+/**
+ * A switch branch command
+ *
+ * Switch commands have a variable id and a list of branches.
+ * Each branch associates a value to a script.
+ * The branch matching the variable's value is executed,
+ * if not found an optional default branch can be executed.
+ */
 class RivenSwitchCommand : public RivenCommand {
 public:
 	static RivenSwitchCommand *createFromStream(MohawkEngine_Riven *vm, int type, Common::ReadStream *stream);
