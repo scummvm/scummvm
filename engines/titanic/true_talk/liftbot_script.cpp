@@ -591,7 +591,8 @@ int LiftbotScript::sentence1(const TTsentence *sentence) {
 	else
 		classSet = false;
 
-	uint newId = 0, diff = 1;
+	uint newId = 0;
+	int diff = 1;
 	if (sentence->localWord("promenade")) {
 		newId = 210718;
 	} else if (sentence->localWord("bar")) {

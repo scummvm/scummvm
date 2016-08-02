@@ -198,7 +198,7 @@ int SuccUBusScript::updateState(uint oldId, uint newId, int index) {
 			return 230125;
 	}
 
-	static const int UPDATE_STATES[][2] = {
+	static const uint UPDATE_STATES[][2] = {
 		{ 230078, 1 }, { 230106, 2 }, { 230112, 3 }, { 230115, 4 },
 		{ 230127, 5 }, { 230140, 6 }, { 230156, 7 }, { 230157, 8 },
 		{ 230159, 9 }, { 230160, 10 }, { 230161, 11 }, { 230072, 12 }

@@ -35,16 +35,7 @@ namespace Titanic {
 enum WordClass { 
 	WC_UNKNOWN = 0, WC_ACTION = 1, WC_THING = 2, WC_ABSTRACT = 3,
 	WC_ARTICLE = 4, WC_CONJUNCTION = 5, WC_PRONOUN = 6,
-	WC_PREPOSITION = 7, WC_ADJECTIVE = 8, WC_ADVERB = 9,
-	// TODO: These may not actually be part of this enum
-	WC_UNK_ACTION = 10,
-	WC_ATRANS = 11,		// transfer possession, eg: give/take
-	WC_PTRANS = 12,		// physical transfer, eg: go
-	WC_PROPEL = 13,		// act of applying a force, eg: hit
-	WC_MTRANS = 14,		// mental transfer, eg: see, hear
-	WC_BUILD = 15, WC_ATTEND = 16, WC_SPEAK = 17, WC_GRASP = 18,
-	WC_MOVE = 19, WC_INGEST = 20, WC_EXPEL = 21, WC_STRANS = 22,
-	WC_ISA = 23
+	WC_PREPOSITION = 7, WC_ADJECTIVE = 8, WC_ADVERB = 9
 };
 
 class TTword {
