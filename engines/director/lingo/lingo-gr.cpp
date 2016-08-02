@@ -211,7 +211,7 @@ extern int yyparse();
 using namespace Director;
 void yyerror(char *s) {
 	g_lingo->_hadError = true;
-	error("%s at line %d col %d", s, g_lingo->_linenumber, g_lingo->_colnumber);
+	warning("%s at line %d col %d", s, g_lingo->_linenumber, g_lingo->_colnumber);
 }
 
 
