@@ -340,6 +340,7 @@ public:
 	ConsoleText(Gui *gui) {
 		_gui = gui;
 		_lines.push_back("");
+		updateScroll();
 	}
 
 	~ConsoleText() {
@@ -377,11 +378,10 @@ public:
 	}
 
 	void scrollDown() {
-		if (_scrollPos < _lines.size() - 1) _scrollPos++;
+		if (_scrollPos < (int)(_lines.size() - 1)) _scrollPos++;
 	}
 
 	void scrollUp() {
-		debug("scroll up");
 		if (_scrollPos > 0) _scrollPos--;
 	}
 
