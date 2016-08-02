@@ -206,21 +206,6 @@ void Lingo::codeArgStore() {
 	}
 }
 
-int Lingo::codeId(Common::String &s) {
-	return codeId_(s);
-}
-
-int Lingo::codeId_(Common::String &name) {
-	int ret;
-
-	ret = code1(c_varpush);
-
-	codeString(name.c_str());
-	code1(c_eval);
-
-	return ret;
-}
-
 void Lingo::codeLabel(int label) {
 	_labelstack.push_back(label);
 }

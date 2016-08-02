@@ -220,6 +220,8 @@ bool Lingo::verify(Symbol *s) {
 }
 
 void Lingo::c_eval() {
+	g_lingo->c_varpush();
+
 	Datum d;
 	d = g_lingo->pop();
 

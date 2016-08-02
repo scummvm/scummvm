@@ -184,8 +184,6 @@ public:
 
 	void codeArg(Common::String *s);
 	void codeArgStore();
-	int codeId(Common::String &s);
-	int codeId_(Common::String &s);
 	int codeFloat(double f);
 	void codeFactory(Common::String &s);
 

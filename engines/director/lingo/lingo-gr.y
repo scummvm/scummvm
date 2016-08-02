@@ -364,7 +364,8 @@ expr: INT		{
 		g_lingo->code1(numpar);
 		delete $1; }
 	| ID		{
-		$$ = g_lingo->codeId(*$1);
+		$$ = g_lingo->code1(g_lingo->c_eval);
+		g_lingo->codeString($1->c_str());
 		delete $1; }
 	| THEENTITY	{
 		$$ = g_lingo->code2(g_lingo->c_constpush, 0); // Put dummy id
