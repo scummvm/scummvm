@@ -34,11 +34,11 @@ namespace Mohawk {
 // Script Types
 enum {
 	kMouseDownScript = 0,
-	kMouseDownScriptAlt = 1,
+	kMouseDragScript = 1,
 	kMouseUpScript = 2,
-	kMouseMovedPressedReleasedScript = 3,
+	kMouseEnterScript = 3,
 	kMouseInsideScript = 4,
-	kMouseLeaveScript = 5, // This is unconfirmed
+	kMouseLeaveScript = 5,
 
 	kCardLoadScript = 6,
 	kCardLeaveScript = 7,
