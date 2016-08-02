@@ -44,7 +44,12 @@ public:
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file);	
+	virtual void load(SimpleFile *file);
+
+	/**
+	 * Gets the relative position of the node within the owning room
+	 */
+	void getPosition(double &xp, double &yp, double &zp);
 };
 
 } // End of namespace Titanic

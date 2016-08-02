@@ -47,8 +47,8 @@ CViewItem::CViewItem() : CNamedItem() {
 
 void CViewItem::setAngle(double angle) {
 	_angle = angle;
-	_position.x = (int16)(cos(_angle) * 30.0);
-	_position.y = (int16)(sin(_angle) * -30.0);
+	_viewPos.x = (int16)(cos(_angle) * 30.0);
+	_viewPos.y = (int16)(sin(_angle) * -30.0);
 }
 
 void CViewItem::save(SimpleFile *file, int indent) {
@@ -304,8 +304,15 @@ void CViewItem::handleButtonUpMsg(CMouseButtonUpMsg *msg) {
 	}
 }
 
-void CViewItem::fn1(double val1, double val2, double val3) {
-	warning("TODO: CViewItem::fn1");
+void CViewItem::getPosition(double &xp, double &yp, double &zp) {
+	// Get the position of the owning node within the room
+	CNodeItem *node = findNode();
+	node->getPosition(xp, yp, zp);
+
+	// Adjust the position slightly to compensate for view's angle,
+	// ensuring different direction views don't all have the same position
+	xp += cos(_angle) * 0.5;
+	yp -= sin(_angle) * 0.5;
 }
 
 CString CViewItem::getFullViewName() const {

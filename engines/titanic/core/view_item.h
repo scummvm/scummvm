@@ -40,7 +40,7 @@ private:
 	CTreeItem *_buttonUpTargets[4];
 private:
 	/**
-	 * Sets the angle of the view item
+	 * Sets the angle of the view relative to the node it belongs to
 	 */
 	void setAngle(double angle);
 
@@ -57,7 +57,7 @@ protected:
 	int _field24;
 	CResourceKey _resourceKey;
 	double _angle;
-	Point _position;
+	Point _viewPos;
 public:
 	int _viewNumber;
 public:
@@ -111,7 +111,10 @@ public:
 	 */
 	CString getNodeViewName() const;
 
-	void fn1(double val1, double val2, double val3);
+	/**
+	 * Gets the relative position of the view within the owning room
+	 */
+	void getPosition(double &xp, double &yp, double &zp);
 };
 
 } // End of namespace Titanic

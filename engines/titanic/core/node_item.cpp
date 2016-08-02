@@ -21,6 +21,7 @@
  */
 
 #include "titanic/core/node_item.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
 
@@ -51,6 +52,12 @@ void CNodeItem::load(SimpleFile *file) {
 	_nodeNumber = file->readNumber();
 
 	CNamedItem::load(file);
+}
+
+void CNodeItem::getPosition(double &xp, double &yp, double &zp) {
+	CRoomItem *room = findRoom();
+	room->calcNodePosition(_nodePos, xp, yp);
+	zp = 0.0;
 }
 
 } // End of namespace Titanic

@@ -46,9 +46,9 @@ public:
 	double _field2C;
 	double _field30;
 	int _field34;
-	double _double1;
-	double _double2;
-	double _double3;
+	double _posX;
+	double _posY;
+	double _posZ;
 	int _field44;
 	int _field48;
 	int _field4C;

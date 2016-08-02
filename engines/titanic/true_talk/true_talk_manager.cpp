@@ -510,7 +510,7 @@ void CTrueTalkManager::playSpeech(TTtalker *talker, TTroomScript *roomScript, CV
 		p3._field30 = 1.0;
 		p3._field34 = 0;
 
-		p3._field8 = (index * 3) / 4;
+		p2._field8 = (index * 3) / 4;
 		p2._field28 = 0;
 		p2._field2C = 135.0;
 		p2._field30 = 1.0;
@@ -520,7 +520,7 @@ void CTrueTalkManager::playSpeech(TTtalker *talker, TTroomScript *roomScript, CV
 	_gameManager->_sound.managerProc8(p1._field24);
 	if (view) {
 		p1._field28 = 2;
-		view->fn1(p1._double1, p1._double2, p1._double3);	
+		view->getPosition(p1._posX, p1._posY, p1._posZ);
 	}
 
 	for (uint idx = 0; idx < _titleEngine._indexes.size(); ++idx) {
