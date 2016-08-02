@@ -44,6 +44,7 @@ public:
 	void reset(CScriptHandler *owner, int val1, int val2);
 
 	bool is18Equals(int val) const { return _field18 == val; }
+	int get18() const { return _field18; }
 };
 
 } // End of namespace Titanic

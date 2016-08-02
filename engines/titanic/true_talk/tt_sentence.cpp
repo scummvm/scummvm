@@ -262,8 +262,42 @@ bool TTsentence::isConcept34(int slotIndex, const TTconceptNode *node) const {
 }
 
 bool TTsentence::localWord(const char *str) const {
-	// TODO
-	return false;
+	CScriptHandler &scriptHandler = *g_vm->_exeResources._owner;
+	bool foundMatch = false;
+
+	if (scriptHandler._concept1P) {
+		TTstring s = scriptHandler._concept1P->getText();
+		if (s == str)
+			foundMatch = true;
+	} else if (scriptHandler._concept2P) {
+			TTstring s = scriptHandler._concept2P->getText();
+			if (s == str)
+				foundMatch = true;
+	}
+
+	int val = g_vm->_exeResources.get18();
+	bool result = false;
+
+	for (TTsentenceNode *nodeP = _nodesP; nodeP && !result;
+			nodeP = static_cast<TTsentenceNode *>(nodeP->_nextP)) {
+		TTsynonym syn;
+		if (!nodeP->_wordP)
+			continue;
+
+		const TTstring wordStr = nodeP->_wordP->_text;
+		if (val == 3 && wordStr == str) {
+			result = true;
+		} else if (nodeP->_wordP->findSynByName(str, &syn, val)) {
+			result = true;
+		} else if (foundMatch) {
+			result = wordStr == "it" || wordStr == "that" || wordStr == "he"
+				|| wordStr == "she" || wordStr == "him" || wordStr == "her"
+				|| wordStr == "them" || wordStr == "they" || wordStr == "those"
+				|| wordStr == "1" || wordStr == "thing";
+		}
+	}
+
+	return result;
 }
 
 bool TTsentence::contains(const char *str) const {
