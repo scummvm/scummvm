@@ -188,8 +188,30 @@ ScriptChangedResult SuccUBusScript::scriptChanged(const TTroomScript *roomScript
 }
 
 int SuccUBusScript::updateState(uint oldId, uint newId, int index) {
-	warning("TODO");
-	return 0;
+	if (newId == 230199) {
+		return _isRoom101 ? 230148 : newId;
+	} else if (newId >= 230208 && newId <= 230235) {
+		addResponse(70158 - getRandomBit());
+		return newId;
+	} else if (newId >= 230061 && newId <= 230063) {
+		if (getValue(2))
+			return 230125;
+	}
+
+	static const int UPDATE_STATES[][2] = {
+		{ 230078, 1 }, { 230106, 2 }, { 230112, 3 }, { 230115, 4 },
+		{ 230127, 5 }, { 230140, 6 }, { 230156, 7 }, { 230157, 8 },
+		{ 230159, 9 }, { 230160, 10 }, { 230161, 11 }, { 230072, 12 }
+	};
+
+	for (int idx = 0; idx < 12; ++idx) {
+		if (UPDATE_STATES[idx][0] == newId) {
+			setState(UPDATE_STATES[idx][1]);
+			break;
+		}
+	}
+
+	return newId;
 }
 
 int SuccUBusScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {

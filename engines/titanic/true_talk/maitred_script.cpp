@@ -676,20 +676,20 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 	if (!roomScript || !sentence || getValue(8))
 		return 1;
 
-	bool ebx = true, edi = false;
+	bool stateFlag = true, applyFlag = false;
 	switch (getValue(10)) {
 	case 1:
 		if (!getValue(11) && !getValue(8)) {
 			addResponse(getDialogueId(260052));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		}
 		break;
 
 	case 2:
 		if (sentence->localWord("change") || sentence->localWord("music")) {
 			addResponse(getDialogueId(200684));
-			edi = true;
+			applyFlag = true;
 		}
 		break;
 
@@ -700,7 +700,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		} else {
 			addResponse(getDialogueId(260107));
 		}
-		edi = true;
+		applyFlag = true;
 		break;
 
 	case 4:
@@ -708,31 +708,31 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			addResponse(getDialogueId(260099));
 		} else {
 			addResponse(getDialogueId(260131));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		}
 		break;
 
 	case 5:
 		addResponse(getDialogueId(260096));
-		edi = true;
-		ebx = false;
+		applyFlag = true;
+		stateFlag = false;
 		break;
 
 	case 6:
 		addResponse(getDialogueId(260097));
-		edi = true;
-		ebx = false;
+		applyFlag = true;
+		stateFlag = false;
 		break;
 
 	case 7:
 		if (sentence->_field2C == 12) {
 			addResponse(getDialogueId(260089));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else {
 			addResponse(getDialogueId(260094));
-			edi = true;
+			applyFlag = true;
 			CTrueTalkManager::setFlags(11, 1);
 		}
 		break;
@@ -746,7 +746,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			setFlags12();
 			addResponse(getDialogueId(260131));
 		}
-		edi = true;
+		applyFlag = true;
 		break;
 
 	case 9:
@@ -757,28 +757,28 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		if ((sentence->localWord("say") || sentence->localWord("talk")) ||
 				sentence->localWord("you")) {
 			addResponse(getDialogueId(260216));
-			edi = true;
+			applyFlag = true;
 		}
 		break;
 
 	case 12:
 		if (sentence->localWord("why") && sentence->localWord("naughty")) {
 			addResponse(getDialogueId(260196));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->localWord("what") && sentence->localWord("his")
 				&& sentence->localWord("name")) {
 			addResponse(getDialogueId(260197));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->localWord("i") && sentence->localWord("meet")) {
 			addResponse(getDialogueId(260198));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->localWord("i") && sentence->localWord("speak")) {
 			addResponse(getDialogueId(260206));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		}
 		break;
 
@@ -787,8 +787,8 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 				|| sentence->contains("go on") || sentence->localWord("need")
 				|| sentence->contains("got to") || sentence->localWord("must")) {
 			addResponse(getDialogueId(260199));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		}
 		break;
 
@@ -796,16 +796,16 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		if (sentence->localWord("what") || sentence->localWord("why")
 				|| sentence->localWord("kill")) {
 			addResponse(getDialogueId(260200));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->localWord("you") && sentence->localWord("kill")) {
 			addResponse(getDialogueId(260574));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->localWord("how") && sentence->localWord("kill")) {
 			addResponse(getDialogueId(260557));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		}
 		break;
 
@@ -813,61 +813,61 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		if ((sentence->localWord("what") && sentence->localWord("way"))
 				|| sentence->localWord("how")) {
 			addResponse(getDialogueId(260201));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		}
 		break;
 
 	case 16:
 		addResponse(getDialogueId(sentence->_field2C == 11 ? 260209 : 260210));
-		edi = true;
-		ebx = false;
+		applyFlag = true;
+		stateFlag = false;
 		break;
 
 	case 17:
 		if (sentence->localWord("what") && sentence->localWord("mean")) {
 			addResponse(getDialogueId(260222));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->localWord("laugh") && sentence->localWord("with")
 				&& sentence->localWord("you")) {
 			addResponse(getDialogueId(260221));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else {
 			setFlags12();
 			addResponse(getDialogueId(260221));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		}
 		break;
 
 	case 18:
 		if (sentence->_field2C == 11) {
 			addResponse(getDialogueId(260232));
-			edi = true;
+			applyFlag = true;
 		} else if (sentence->_field2C == 12) {
 			addResponse(getDialogueId(260231));
-			edi = true;
+			applyFlag = true;
 		} else if (sentence->_field2C == 13) {
 			addResponse(getDialogueId(260444));
 			addResponse(getDialogueId(260233));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->localWord("what") && sentence->localWord("happen")) {
 			addResponse(getDialogueId(260233));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->localWord("why") && sentence->localWord("stressed")) {
 			addResponse(getDialogueId(260245));
 			addResponse(getDialogueId(260233));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->localWord("why")) {
 			addResponse(getDialogueId(260453));
 			addResponse(getDialogueId(260233));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		}
 		break;
 
@@ -876,19 +876,19 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 				|| (sentence->localWord("what") && sentence->localWord("happen"))
 				|| sentence->contains("go on") || sentence->contains("and then")) {
 			addResponse(getDialogueId(260234));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->localWord("why") && sentence->localWord("stressed")) {
 			addResponse(getDialogueId(260245));
 			addResponse(getDialogueId(260234));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->localWord("why")) {
 			addResponse(getDialogueId(260276));
 			addResponse(getDialogueId(260237));
 			addResponse(getDialogueId(260234));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		}
 		break;
 
@@ -896,21 +896,21 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		if ((sentence->localWord("what") && sentence->localWord("leovinus"))
 				|| (sentence->localWord("what") && sentence->localWord("happen"))) {
 			addResponse(getDialogueId(260235));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->localWord("where") && sentence->localWord("leovinus")) {
 			addResponse(getDialogueId(260236));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->localWord("why") && sentence->localWord("stressed")) {
 			addResponse(getDialogueId(260245));
 			addResponse(getDialogueId(260235));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else {
 			addResponse(getDialogueId(260237));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		}
 		break;
 
@@ -919,28 +919,28 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		if (sentence->contains("cooking")
 				|| (sentence->localWord("what") && sentence->localWord("mean"))) {
 			addResponse(getDialogueId(260238));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->localWord("where") && sentence->localWord("now")) {
 			addResponse(getDialogueId(260236));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->localWord("why") && sentence->localWord("stressed")) {
 			addResponse(getDialogueId(260245));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->localWord("why")) {
 			addResponse(getDialogueId(260239));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		}
 		break;
 
 	case 23:
 		if (sentence->_field2C == 11) {
 			addResponse(getDialogueId(260237));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		}
 		break;
 
@@ -952,7 +952,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 				|| (sentence->localWord("i") && sentence->localWord("need"))
 			) {
 			addResponse(getDialogueId(260251));
-			edi = true;
+			applyFlag = true;
 		}
 
 	case 25:
@@ -962,22 +962,22 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 				|| (sentence->localWord("how") && sentence->localWord("change") && sentence->localWord("music"))
 			) {
 			addResponse(getDialogueId(260253));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->localWord("where") && (sentence->localWord("it")
 				|| sentence->localWord("that"))) {
 			addResponse(getDialogueId(260252));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->localWord("where") && sentence->localWord("key")) {
 			addResponse(getDialogueId(260254));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if ((sentence->localWord("how") && sentence->localWord("work"))
 				|| (sentence->localWord("what") && sentence->localWord("i") && sentence->localWord("do"))) {
 			addResponse(getDialogueId(260259));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		}
 		break;
 
@@ -985,21 +985,21 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		if (sentence->localWord("where") && (sentence->localWord("key")
 				|| sentence->localWord("it"))) {
 			addResponse(getDialogueId(260254));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->localWord("where") && (sentence->localWord("hand")
 			|| sentence->localWord("that"))) {
 			addResponse(getDialogueId(260256));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->_field2C == 12) {
 			addResponse(getDialogueId(260255));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->localWord("why") && sentence->localWord("need")) {
 			addResponse(getDialogueId(260685));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		}
 		break;
 
@@ -1007,19 +1007,19 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		if (sentence->localWord("where") && (sentence->localWord("that")
 				|| sentence->localWord("it"))) {
 			addResponse(getDialogueId(260262));
-			edi = true;
+			applyFlag = true;
 		}
 		break;
 
 	case 28:
 		if (sentence->localWord("why")) {
 			addResponse(getDialogueId(260386));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		} else if (sentence->localWord("insist")) {
 			addResponse(getDialogueId(260387));
-			edi = true;
-			ebx = false;
+			applyFlag = true;
+			stateFlag = false;
 		}
 		break;
 
@@ -1030,19 +1030,28 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		} else {
 			addResponse(getDialogueId(260966));
 		}
-		edi = true;
+		applyFlag = true;
 		break;
 
 	case 30:
 		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
 			addResponse(getDialogueId(260695));
-			edi = true;
+			applyFlag = true;
 		} else if (sentence->_field2C == 12) {
 			addResponse(getDialogueId(260696));
-			edi = true;
+			applyFlag = true;
 		}
 		break;
 	}
+
+	if (applyFlag)
+		applyResponse();
+	if (stateFlag) {
+		setState(0);
+		CTrueTalkManager::setFlags(10, 0);
+	}
+
+	return applyFlag ? 2 : 1;
 }
 
 } // End of namespace Titanic
