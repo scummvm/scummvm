@@ -477,7 +477,7 @@ gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
 //
 // See also:
 //   on keyword
-defn: tMACRO ID { g_lingo->_indef = true; }
+defn: tMACRO ID { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); }
 		begin argdef nl argstore stmtlist 		{
 			g_lingo->code2(g_lingo->c_constpush, (inst)0); // Push fake value on stack
 			g_lingo->code1(g_lingo->c_procret);

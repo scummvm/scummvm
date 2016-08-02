@@ -207,12 +207,25 @@ void Lingo::codeArgStore() {
 }
 
 int Lingo::codeFunc(Common::String *s, int numpar) {
-	g_lingo->code1(g_lingo->c_call);
-	g_lingo->codeString(s->c_str());
+	int ret = g_lingo->code1(g_lingo->c_call);
+
+	if (s->equalsIgnoreCase("me")) {
+		if (!g_lingo->_currentFactory.empty()) {
+			g_lingo->codeString(g_lingo->_currentFactory.c_str());
+			debug(2, "Repaced 'me' with %s", g_lingo->_currentFactory.c_str());
+		} else {
+			warning("'me' out of factory method");
+			g_lingo->codeString(s->c_str());
+		}
+	} else {
+		g_lingo->codeString(s->c_str());
+	}
 
 	inst num = 0;
 	WRITE_UINT32(&num, numpar);
 	g_lingo->code1(num);
+
+	return ret;
 }
 
 void Lingo::codeLabel(int label) {
@@ -239,7 +252,7 @@ void Lingo::processIf(int elselabel, int endlabel) {
 			break;
 
 		WRITE_UINT32(&ielse1, else1);
-		(*_currentScript)[label + 2] = ielse1;     /* elsepart */
+		(*_currentScript)[label + 2] = ielse1;    /* elsepart */
 		(*_currentScript)[label + 3] = iend;      /* end, if cond fails */
 
 		else1 = label;

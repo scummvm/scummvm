@@ -2377,7 +2377,7 @@ yyreduce:
 
   case 105:
 #line 480 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->_indef = true; ;}
+    { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); ;}
     break;
 
   case 106:
