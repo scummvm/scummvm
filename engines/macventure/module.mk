@@ -14,7 +14,8 @@ MODULE_OBJS := \
 	prebuilt_dialogs.o \
 	windows.o \
 	sound.o \
-	saveload.o
+	saveload.o \
+	datafiles.o
 
 
 MODULE_DIRS += \

@@ -86,6 +86,9 @@ MacVentureEngine::~MacVentureEngine() {
 
 	if (_soundManager)
 		delete _soundManager;
+
+	if (_dataBundle)
+		delete _dataBundle;
 }
 
 Common::Error MacVentureEngine::run() {
@@ -112,6 +115,8 @@ Common::Error MacVentureEngine::run() {
 	_decodingDirectArticles = new StringTable(this, _resourceManager, kCommonArticlesStringTableID);
 	_decodingNamingArticles = new StringTable(this, _resourceManager, kNamingArticlesStringTableID);
 	_decodingIndirectArticles = new StringTable(this, _resourceManager, kIndirectArticlesStringTableID);
+
+	loadDataBundle();
 
 	// Big class instantiation
 	_gui = new Gui(this, _resourceManager);

@@ -215,40 +215,35 @@ void Gui::initWindows() {
 	_controlsWindow->setDimensions(getWindowData(kCommandsWindow).bounds);
 	_controlsWindow->setActive(false);
 	_controlsWindow->setCallback(commandsWindowCallback, this);
-	loadBorder(_controlsWindow, "border_command.bmp", false, findWindowData(kCommandsWindow).type);
-	loadBorder(_controlsWindow, "border_command.bmp", true, findWindowData(kCommandsWindow).type);
+	loadBorders(_controlsWindow, findWindowData(kCommandsWindow).type);
 
 	// Main Game Window
 	_mainGameWindow = _wm.addWindow(true, true, true);
 	_mainGameWindow->setDimensions(getWindowData(kMainGameWindow).bounds);
 	_mainGameWindow->setActive(false);
 	_mainGameWindow->setCallback(mainGameWindowCallback, this);
-	loadBorder(_mainGameWindow, "border_no_scroll_inac.bmp", false, findWindowData(kMainGameWindow).type);
-	loadBorder(_mainGameWindow, "border_no_scroll_act.bmp", true, findWindowData(kMainGameWindow).type);
+	loadBorders(_mainGameWindow, findWindowData(kMainGameWindow).type);
 
 	// In-game Output Console
 	_outConsoleWindow = _wm.addWindow(true, true, false);
 	_outConsoleWindow->setDimensions(getWindowData(kOutConsoleWindow).bounds);
 	_outConsoleWindow->setActive(false);
 	_outConsoleWindow->setCallback(outConsoleWindowCallback, this);
-	loadBorder(_outConsoleWindow, "border_left_scroll_inac.bmp", false, findWindowData(kOutConsoleWindow).type);
-	loadBorder(_outConsoleWindow, "border_left_scroll_act.bmp", true, findWindowData(kOutConsoleWindow).type);
+	loadBorders(_outConsoleWindow, findWindowData(kOutConsoleWindow).type);
 
 	// Self Window
 	_selfWindow = _wm.addWindow(false, true, false);
 	_selfWindow->setDimensions(getWindowData(kSelfWindow).bounds);
 	_selfWindow->setActive(false);
 	_selfWindow->setCallback(selfWindowCallback, this);
-	loadBorder(_selfWindow, "border_none.bmp", false, findWindowData(kSelfWindow).type);
-	loadBorder(_selfWindow, "border_none.bmp", true, findWindowData(kSelfWindow).type);
+	loadBorders(_selfWindow, findWindowData(kSelfWindow).type);
 
 	// Exits Window
 	_exitsWindow = _wm.addWindow(false, false, false);
 	_exitsWindow->setDimensions(getWindowData(kExitsWindow).bounds);
 	_exitsWindow->setActive(false);
 	_exitsWindow->setCallback(exitsWindowCallback, this);
-	loadBorder(_exitsWindow, "border_no_scroll_inac.bmp", false, findWindowData(kExitsWindow).type);
-	loadBorder(_exitsWindow, "border_no_scroll_act.bmp", true, findWindowData(kExitsWindow).type);
+	loadBorders(_exitsWindow, findWindowData(kExitsWindow).type);
 }
 
 const WindowData& Gui::getWindowData(WindowReference reference) {
@@ -336,35 +331,28 @@ WindowReference Gui::createInventoryWindow(ObjID objRef) {
 	newWindow->setDimensions(newData.bounds);
 	newWindow->setCallback(inventoryWindowCallback, this);
 	newWindow->setCloseable(true);
-	loadBorder(newWindow, "border_both_scroll_inac.bmp", false, newData.type);
-	loadBorder(newWindow, "border_both_scroll_act.bmp", true, newData.type);
+	loadBorders(newWindow, newData.type);
 	_inventoryWindows.push_back(newWindow);
 
 	debug("Create new inventory window. Reference: %d", newData.refcon);
 	return newData.refcon;
 }
 
-void Gui::loadBorder(Graphics::MacWindow *target, Common::String filename, bool active, MVWindowType type) {
-	Common::File borderfile;
+void Gui::loadBorders(Graphics::MacWindow * target, MVWindowType type) {
+	loadBorder(target, type, false);
+	loadBorder(target, type, true);
+}
 
-	if (!borderfile.open(filename)) {
-		debug(1, "Cannot open border file");
-		return;
-	}
+void Gui::loadBorder(Graphics::MacWindow * target, MVWindowType type, bool active) {
 
-	Image::BitmapDecoder bmpDecoder;
-	Common::SeekableReadStream *stream = borderfile.readStream(borderfile.size());
-	Graphics::Surface source;
-	Graphics::TransparentSurface *surface = new Graphics::TransparentSurface();
+	Common::SeekableReadStream *stream = _engine->getBorderFile(type, active);
 
 	if (stream) {
 		BorderBounds bbs = borderBounds(type);
-		debug(4, "Loading %s border from %s", (active ? "active" : "inactive"), filename.c_str());
 		target->loadBorder(*stream, active, bbs.leftOffset, bbs.rightOffset, bbs.topOffset, bbs.bottomOffset);
 
 		delete stream;
 	}
-	borderfile.close();
 }
 
 void Gui::loadGraphics() {

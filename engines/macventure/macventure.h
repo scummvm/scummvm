@@ -191,6 +191,10 @@ public:
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 
+	// datafiles.cpp
+	void loadDataBundle();
+	Common::SeekableReadStream *getBorderFile(MVWindowType windowType, bool isActive);
+
 	void reset();
 	void resetInternals();
 	void resetGui();
@@ -318,6 +322,8 @@ private: // Attributes
 	StringTable *_decodingIndirectArticles;
 
 	SoundManager *_soundManager;
+
+	Common::Archive *_dataBundle;
 
 	// Engine state
 	GameState _gameState;

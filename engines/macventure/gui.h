@@ -156,7 +156,6 @@ public:
 	void setTextInput(Common::String str);
 	void closeDialog();
 
-
 	// TODO: Currently unused, we are using ScummVM dialogs instead.
 	void loadGame(int slot);
 	void saveInto(int slot);
@@ -205,7 +204,8 @@ private: // Methods
 	bool loadMenus();
 	bool loadWindows();
 	bool loadControls();
-	void loadBorder(Graphics::MacWindow * target, Common::String filename, bool active, MVWindowType type);
+	void loadBorders(Graphics::MacWindow *target, MVWindowType type);
+	void loadBorder(Graphics::MacWindow *target, MVWindowType type, bool active);
 	void loadGraphics();
 
 	// Drawers
