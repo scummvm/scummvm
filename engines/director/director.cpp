@@ -114,18 +114,19 @@ Common::Error DirectorEngine::run() {
 	}
 
 	//FIXME
-	_mainArchive = new RIFFArchive();
-	_mainArchive->openFile("bookshelf_example.mmm");
-	_currentScore = new Score(this);
-	debug(0, "Score name %s", _currentScore->getMacName().c_str());
-
-	_currentScore->loadArchive();
-	_currentScore->startLoop();
+	//_mainArchive = new RIFFArchive();
+	//_mainArchive->openFile("bookshelf_example.mmm");
 
 	if (getPlatform() == Common::kPlatformWindows)
 		loadEXE();
 	else
 		loadMac();
+
+	_currentScore = new Score(this);
+	debug(0, "Score name %s", _currentScore->getMacName().c_str());
+
+	_currentScore->loadArchive();
+	_currentScore->startLoop();
 
 	return Common::kNoError;
 }
