@@ -63,8 +63,13 @@ public:
 	/** Append a command to the script */
 	void addCommand(RivenCommand *command);
 
-	/** Run the script */
-	void runScript();
+	/**
+	 * Run the script
+	 *
+	 * Script execution must go through the ScriptManager,
+	 * this method should not be called directly.
+	 */
+	void run();
 
 	/** Print script details to the standard output */
 	void dumpScript(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs);
@@ -107,6 +112,10 @@ public:
 
 	/** Read a list of typed scripts from a stream */
 	RivenScriptList readScripts(Common::ReadStream *stream);
+
+	/** Run a script */
+	void runScript(const RivenScriptPtr &script, bool queue);
+
 	void stopAllScripts();
 
 	struct StoredMovieOpcode {
@@ -123,6 +132,8 @@ public:
 
 private:
 	MohawkEngine_Riven *_vm;
+
+	Common::Array<RivenScriptPtr> _queue;
 	StoredMovieOpcode _storedMovieOpcode;
 
 	RivenCommand *readCommand(Common::ReadStream *stream);
@@ -178,7 +189,7 @@ private:
 
 	DECLARE_OPCODE(empty) { warning ("Unknown Opcode %04x", op); }
 
-	//Opcodes
+	// Opcodes
 	DECLARE_OPCODE(drawBitmap);
 	DECLARE_OPCODE(switchCard);
 	DECLARE_OPCODE(playScriptSLST);

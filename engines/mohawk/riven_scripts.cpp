@@ -101,7 +101,7 @@ void RivenScriptManager::setStoredMovieOpcode(const StoredMovieOpcode &op) {
 
 void RivenScriptManager::runStoredMovieOpcode() {
 	if (_storedMovieOpcode.script) {
-		_storedMovieOpcode.script->runScript();
+		runScript(_storedMovieOpcode.script, false);
 		clearStoredMovieOpcode();
 	}
 }
@@ -110,6 +110,14 @@ void RivenScriptManager::clearStoredMovieOpcode() {
 	_storedMovieOpcode.script = RivenScriptPtr();
 	_storedMovieOpcode.time = 0;
 	_storedMovieOpcode.id = 0;
+}
+
+void RivenScriptManager::runScript(const RivenScriptPtr &script, bool queue) {
+	if (!queue) {
+		script->run();
+	} else {
+		_queue.push_back(script);
+	}
 }
 
 RivenScript::RivenScript() {
@@ -128,7 +136,7 @@ void RivenScript::dumpScript(const Common::StringArray &varNames, const Common::
 	}
 }
 
-void RivenScript::runScript() {
+void RivenScript::run() {
 	for (uint16 i = 0; i < _commands.size() && _continueRunning; i++) {
 		_commands[i]->execute();
 	}
@@ -521,7 +529,7 @@ void RivenSimpleCommand::storeMovieOpcode(uint16 op, uint16 argc, uint16 *argv) 
 		_vm->_scriptMan->setStoredMovieOpcode(storedOp);
 	} else {
 		// Run immediately if we have no delay
-		script->runScript();
+		_vm->_scriptMan->runScript(script, false);
 	}
 
 	delete scriptStream;
@@ -712,7 +720,7 @@ void RivenSwitchCommand::execute() {
 	// Look for a case matching the value
 	for (uint i = 0; i < _branches.size(); i++) {
 		if  (_branches[i].value == value) {
-			_branches[i].script->runScript();
+			_vm->_scriptMan->runScript(_branches[i].script, false);
 			return;
 		}
 	}
@@ -720,7 +728,7 @@ void RivenSwitchCommand::execute() {
 	// Look for the default case if any
 	for (uint i = 0; i < _branches.size(); i++) {
 		if  (_branches[i].value == 0Xffff) {
-			_branches[i].script->runScript();
+			_vm->_scriptMan->runScript(_branches[i].script, false);
 			return;
 		}
 	}
