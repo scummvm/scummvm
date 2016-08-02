@@ -65,12 +65,14 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
+	virtual void removeSaveState(const char *target, int slot) const;
 };
 
 bool MacVentureMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup);
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsDeleteSave);
 }
 
 bool MacVentureEngine::hasFeature(EngineFeature f) const {
@@ -125,6 +127,10 @@ bool MacVentureMetaEngine::createInstance(OSystem * syst, Engine ** engine, cons
 		*engine = new MacVenture::MacVentureEngine(syst, game);
 	}
 	return game != 0;
+}
+
+void MacVentureMetaEngine::removeSaveState(const char *target, int slot) const {
+	g_system->getSavefileManager()->removeSavefile(Common::String::format("%s.%03d", target, slot));
 }
 
 } // End of namespace MacVenture

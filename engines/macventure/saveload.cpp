@@ -89,6 +89,11 @@ Common::Error MacVentureEngine::saveGameState(int slot, const Common::String &de
 	Common::OutSaveFile *file = manager->openForSaving(saveFileName);
 	_world->saveGameInto(file);
 	writeMetaData(file, desc);
+
+	file->finalize();
+	if (file->err()) {
+		warning("Could not save '%s' correctly.", saveFileName.c_str());
+	}
 	delete file;
 }
 
