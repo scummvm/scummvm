@@ -58,6 +58,7 @@ enum TheEntityType {
 	kTheRightMouseDown,
 	kTheStillDown,
 	kTheKey,
+	kTheKeyCode,
 	kTheControlDown,
 	kTheCommandDown,
 	kTheShiftDown,

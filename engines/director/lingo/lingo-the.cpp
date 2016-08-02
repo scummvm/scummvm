@@ -39,6 +39,7 @@ TheEntity entities[] = {
 	{ kTheFrame,			"frame",			false },
 	{ kTheItemDelimiter,	"itemDelimiter",	false },
 	{ kTheKey,				"key",				false },
+	{ kTheKeyCode,			"keycode",			false },
 	{ kTheLastClick,		"lastClick",		false },
 	{ kTheLastEvent,		"lastEvent",		false },
 	{ kTheLastFrame,		"lastFrame",		false },
