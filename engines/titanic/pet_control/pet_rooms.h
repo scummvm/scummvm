@@ -47,7 +47,7 @@ private:
 	int _elevatorNum;
 	int _roomNum;
 	int _field1CC;
-	int _field1D0;
+	int _wellEntry;
 	int _field1D4;
 private:
 	/**
@@ -200,8 +200,17 @@ public:
 	int getRoomNum() const { return _roomNum; }
 	void set1CC(int val) { _field1CC = val; }
 	int get1CC() const { return _field1CC; }
-	void set1D0(int val) { _field1D0 = val; }
-	int get1D0() const { return _field1D0; }
+
+	/**
+	 * Sets the entry number for arriving at the well
+	 */
+	void setWellEntry(int val) { _wellEntry = val; }
+
+	/**
+	 * Gets the entry number used when last arriving at the well
+	 */
+	int getWellEntry() const { return _wellEntry; }
+
 	void set1D4(int val) { _field1D4 = val; }
 };
 

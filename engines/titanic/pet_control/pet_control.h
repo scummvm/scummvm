@@ -470,12 +470,20 @@ public:
 		return _rooms.getRoomNum();
 	}
 
-	void setRooms1D0(int v) {
-		_rooms.set1D0(v);
+	/**
+	 * Sets the entry number for arriving at the well
+	 */
+	void setRoomsWellEntry(int entryNum) {
+		_rooms.setWellEntry(entryNum);
 	}
-	int getRooms1D0() const {
-		return _rooms.get1D0();
+
+	/**
+	 * Gets the entry number used when last arriving at the well
+	 */
+	int getRoomsWellEntry() const {
+		return _rooms.getWellEntry();
 	}
+
 	void setRooms1CC(int v) {
 		_rooms.set1CC(v);
 	}

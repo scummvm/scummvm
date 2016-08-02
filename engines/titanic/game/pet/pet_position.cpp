@@ -53,7 +53,119 @@ bool CPETPosition::EnterRoomMsg(CEnterRoomMsg *msg) {
 }
 
 bool CPETPosition::EnterViewMsg(CEnterViewMsg *msg) {
-	// TODO
+	CPetControl *pet = getPetControl();
+	CString viewStr = msg->_newView->getNodeViewName();
+	CString tempStr;
+
+	if (compareRoomNameTo("TopOfWell")) {
+		tempStr = msg->_newView->getNodeViewName();
+		int wellEntry = 0;
+
+		if (tempStr == "Node 25.N")
+			wellEntry = 1;
+		else if (tempStr == "Node 24.SE")
+			wellEntry = 2;
+		else if (tempStr == "Node 26.N")
+			wellEntry = 3;
+		else if (tempStr == "Node 27.N")
+			wellEntry = 4;
+
+		if (wellEntry != 0)
+			petSetRoomsWellEntry(wellEntry);
+	} else if (compareRoomNameTo("1stClassLobby")) {
+		int roomNum = 0;
+
+		if (viewStr == "Node 2.N")
+			roomNum = 1;
+		else if (viewStr == "Node 3.N")
+			roomNum = 2;
+		else if (viewStr == "Node 4.N")
+			roomNum = 3;
+		else if (viewStr == "Node 5.N")
+			roomNum = 1;
+		else if (viewStr == "Node 6.N")
+			roomNum = 2;
+		else if (viewStr == "Node 7.N")
+			roomNum = 3;
+
+		if (pet) {
+			pet->setRoomsRoomNum(roomNum);
+			pet->resetRoomsHighlight();
+
+			int elevatorNum = pet->getRoomsElevatorNum();
+			int wellEntry = 0;
+
+			if (viewStr == "Node 10.S")
+				wellEntry = (elevatorNum == 1 || elevatorNum == 2) ? 1 : 3;
+			else if (viewStr == "Node 9.S")
+				wellEntry = (elevatorNum == 1 || elevatorNum == 2) ? 2 : 4;
+
+			if (wellEntry)
+				petSetRoomsWellEntry(wellEntry);
+		}
+	} else if (compareRoomNameTo("2ndClassLobby")) {
+		int roomNum = 0;
+
+		if (viewStr == "Node 3.N")
+			roomNum = 1;
+		else if (viewStr == "Node 4.N")
+			roomNum = 2;
+		else if (viewStr == "Node 5.N")
+			roomNum = 3;
+		else if (viewStr == "Node 6.N")
+			roomNum = 4;
+
+		if (pet) {
+			pet->setRoomsRoomNum(roomNum);
+			pet->resetRoomsHighlight();
+
+			int elevatorNum = pet->getRoomsElevatorNum();
+			int wellEntry = 0;
+
+			if (viewStr == "Node 8.S")
+				wellEntry = (elevatorNum == 1 || elevatorNum == 2) ? 1 : 3;
+			else if (viewStr == "Node 1.S")
+				wellEntry = (elevatorNum == 1 || elevatorNum == 2) ? 2 : 4;
+
+			if (wellEntry)
+				petSetRoomsWellEntry(wellEntry);
+		}
+	} else if (compareRoomNameTo("SecClassLittleLift")) {
+		if (pet && viewStr == "Node 1.N")
+			pet->resetRoomsHighlight();
+	} else  if (compareRoomNameTo("SGTLittleLift")) {
+		if (pet && viewStr == "Node 1.N")
+			pet->resetRoomsHighlight();
+	} else if (compareRoomNameTo("SgtLobby")) {
+		int roomNum = 0;
+
+		if (viewStr == "Node 4.N")
+			roomNum = 1;
+		else if (viewStr == "Node 5.N")
+			roomNum = 2;
+		else if (viewStr == "Node 6.N")
+			roomNum = 3;
+		else if (viewStr == "Node 7.N")
+			roomNum = 4;
+		else if (viewStr == "Node 8.N")
+			roomNum = 5;
+		else if (viewStr == "Node 9.N")
+			roomNum = 6;
+
+		if (pet) {
+			pet->setRooms1CC(1);
+			pet->setRoomsRoomNum(roomNum);
+
+			if (viewStr == "Node 1.S")
+				pet->setRoomsWellEntry(pet->getRoomsElevatorNum());
+		}
+	} else if (compareRoomNameTo("BottomOfWell")) {
+		if (viewStr == "Node 10.E")
+			petSetRoomsWellEntry(3);
+		else if (viewStr == "Node 11.W")
+			petSetRoomsWellEntry(1);
+	}
+
 	return true;
 }
 

@@ -1371,11 +1371,6 @@ void CGameObject::petDisplayMessage(const CString &msg) {
 		pet->displayMessage(msg);
 }
 
-int CGameObject::petGetRooms1D0() const {
-	CPetControl *petControl = getPetControl();
-	return petControl ? petControl->getRooms1D0() : 0;
-}
-
 void CGameObject::petInvChange() {
 	CPetControl *pet = getPetControl();
 	if (pet)
@@ -1406,10 +1401,15 @@ void CGameObject::petSetArea(PetArea newArea) const {
 		pet->setArea(newArea);
 }
 
-void CGameObject::petSetRooms1D0(int val) {
+void CGameObject::petSetRoomsWellEntry(int entryNum) {
 	CPetControl *petControl = getPetControl();
 	if (petControl)
-		petControl->setRooms1D0(val);
+		petControl->setRoomsWellEntry(entryNum);
+}
+
+int CGameObject::petGetRoomsWellEntry() const {
+	CPetControl *petControl = getPetControl();
+	return petControl ? petControl->getRoomsWellEntry() : 0;
 }
 
 void CGameObject::petSetRooms1D4(int v) {

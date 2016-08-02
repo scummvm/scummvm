@@ -31,7 +31,7 @@ CPetRooms::CPetRooms() :
 		_chevLeftOnLit(nullptr), _chevLeftOffLit(nullptr),
 		_chevRightOnLit(nullptr), _chevRightOffLit(nullptr),
 		_floorNum(0), _elevatorNum(0), _roomNum(0), _field1CC(0),
-		_field1D0(0), _field1D4(0) {
+		_wellEntry(0), _field1D4(0) {
 }
 
 bool CPetRooms::setup(CPetControl *petControl) {
@@ -139,7 +139,7 @@ void CPetRooms::load(SimpleFile *file, int param) {
 		_elevatorNum = file->readNumber();
 		_roomNum = file->readNumber();
 		_field1CC = file->readNumber();
-		_field1D0 = file->readNumber();
+		_wellEntry = file->readNumber();
 		_field1D4 = file->readNumber();
 	}
 }
@@ -155,7 +155,7 @@ void CPetRooms::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_elevatorNum, indent);
 	file->writeNumberLine(_roomNum, indent);
 	file->writeNumberLine(_field1CC, indent);
-	file->writeNumberLine(_field1D0, indent);
+	file->writeNumberLine(_wellEntry, indent);
 	file->writeNumberLine(_field1D4, indent);
 }
 

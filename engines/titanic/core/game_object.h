@@ -744,7 +744,10 @@ public:
 	 */
 	void petDisplayMessage(const CString &msg);
 
-	int petGetRooms1D0() const;
+	/**
+	 * Gets the entry number used when last arriving at the well
+	 */
+	int petGetRoomsWellEntry() const;
 
 	/**
 	 * Hide the PET
@@ -786,7 +789,11 @@ public:
 	 */
 	void petSetRemoteTarget();
 
-	void petSetRooms1D0(int val);
+	/**
+	 * Sets the entry number for arriving at the well
+	 */
+	void petSetRoomsWellEntry(int entryNum);
+
 	void petSetRooms1D4(int v);
 
 
