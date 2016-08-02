@@ -260,12 +260,14 @@ void STFont::checkLineWrap(Point &textSize, int maxWidth, const char *&str) cons
 		if (*srcPtr == ' ' && flag)
 			break;
 
-		if (*srcPtr == TEXTCMD_NPC)
+		if (*srcPtr == TEXTCMD_NPC) {
 			srcPtr += 3;
-		else if (*srcPtr == TEXTCMD_SET_COLOR)
+		} else if (*srcPtr == TEXTCMD_SET_COLOR) {
 			srcPtr += 4;
-		else
+		} else {
 			totalWidth += _chars[(byte)*srcPtr]._width;
+			flag = true;
+		}
 	}
 	
 	if ((textSize.x + totalWidth) >= maxWidth && totalWidth < maxWidth) {

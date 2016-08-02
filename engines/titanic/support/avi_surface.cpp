@@ -258,7 +258,7 @@ void AVISurface::setupDecompressor() {
 			g_system->getScreenFormat());
 
 		// TODO: See whether this simplified form of original works
-		if (idx == 2)
+		if (idx == 1)
 			_videoSurface->_transBlitFlag = true;
 	}
 }

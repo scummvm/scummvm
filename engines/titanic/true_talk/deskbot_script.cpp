@@ -69,7 +69,6 @@ int DeskbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 	bool flag20 = getValue(20) != 0;
 	CTrueTalkManager::setFlags(20, 0);
 	checkItems(nullptr, nullptr);
-	getState();
 
 	if (preprocess(roomScript, sentence) != 1)
 		return 1;

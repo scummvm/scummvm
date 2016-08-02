@@ -250,7 +250,7 @@ bool CViewItem::MouseMoveMsg(CMouseMoveMsg *msg) {
 
 bool CViewItem::handleMouseMsg(CMouseMsg *msg, bool flag) {
 	CMouseButtonUpMsg *upMsg = dynamic_cast<CMouseButtonUpMsg *>(msg);
-	if (msg->isButtonUpMsg()) {
+	if (upMsg) {
 		handleButtonUpMsg(upMsg);
 		return true;
 	}
