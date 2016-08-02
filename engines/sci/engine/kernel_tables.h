@@ -712,7 +712,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(SetQuitStr),        SIG_EVERYWHERE,           "r",                     NULL,            NULL },
 	{ MAP_CALL(SetSynonyms),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(SetVideoMode),      SIG_EVERYWHERE,           "i",                     NULL,            NULL },
-	{ MAP_CALL(ShakeScreen),       SIG_EVERYWHERE,           "(i)(i)",                NULL,            NULL },
+	{ MAP_CALL(ShakeScreen),       SIG_SCI16, SIGFOR_ALL,    "(i)(i)",                NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ "ShakeScreen", kShakeScreen32, SIG_SCI32, SIGFOR_ALL,  "i(i)",                  NULL,            NULL },
+#endif
 	{ MAP_CALL(ShowMovie),         SIG_SCI16, SIGFOR_ALL,    "(.*)",                  NULL,            NULL },
 #ifdef ENABLE_SCI32
 	{ "ShowMovie", kShowMovie32,   SIG_SCI32, SIGFOR_DOS,    "ri(i)(i)",              NULL,            NULL },

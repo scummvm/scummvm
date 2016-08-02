@@ -1274,6 +1274,30 @@ void GfxFrameout::showRect(const Common::Rect &rect) {
 	}
 }
 
+void GfxFrameout::shakeScreen(int16 numShakes, const ShakeDirection direction) {
+	if (direction & kShakeHorizontal) {
+		// Used by QFG4 room 750
+		warning("TODO: Horizontal shake not implemented");
+		return;
+	}
+
+	while (numShakes--) {
+		if (direction & kShakeVertical) {
+			g_system->setShakePos(_isHiRes ? 8 : 4);
+		}
+
+		g_system->updateScreen();
+		g_sci->getEngineState()->wait(3);
+
+		if (direction & kShakeVertical) {
+			g_system->setShakePos(0);
+		}
+
+		g_system->updateScreen();
+		g_sci->getEngineState()->wait(3);
+	}
+}
+
 #pragma mark -
 #pragma mark Mouse cursor
 

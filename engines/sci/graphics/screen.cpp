@@ -30,9 +30,6 @@
 #include "sci/engine/state.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/view.h"
-#ifdef ENABLE_SCI32
-#include "sci/graphics/frameout.h"
-#endif
 
 namespace Sci {
 
@@ -612,13 +609,13 @@ void GfxScreen::setVerticalShakePos(uint16 shakePos) {
 
 void GfxScreen::kernelShakeScreen(uint16 shakeCount, uint16 directions) {
 	while (shakeCount--) {
-		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
+		if (directions & kShakeVertical)
 			setVerticalShakePos(10);
 		// TODO: horizontal shakes
 		g_system->updateScreen();
 		g_sci->getEngineState()->wait(3);
 
-		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
+		if (directions & kShakeVertical)
 			setVerticalShakePos(0);
 
 		g_system->updateScreen();
