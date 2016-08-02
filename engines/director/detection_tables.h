@@ -42,6 +42,20 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"theapartment",
+			"",
+			AD_ENTRY1s("Main Menu", "9e838fe1a6af7992d656ca325e38dee5", 47911),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		3
+	},
+
+	{
+		{
 			"gundam0079",
 			"",
 			AD_ENTRY1("Gundam0079.exe", "1a7acbba10a7246ba58c1d53fc7203f5"),
