@@ -697,7 +697,8 @@ void MohawkEngine_Riven::runCardScript(uint16 scriptType) {
 	assert(_cardData.hasData);
 	for (uint16 i = 0; i < _cardData.scripts.size(); i++)
 		if (_cardData.scripts[i]->getScriptType() == scriptType) {
-			_cardData.scripts[i]->runScript();
+			RivenScriptPtr script = _cardData.scripts[i];
+			script->runScript();
 			break;
 		}
 }
@@ -706,7 +707,8 @@ void MohawkEngine_Riven::runHotspotScript(uint16 hotspot, uint16 scriptType) {
 	assert(hotspot < _hotspotCount);
 	for (uint16 i = 0; i < _hotspots[hotspot].scripts.size(); i++)
 		if (_hotspots[hotspot].scripts[i]->getScriptType() == scriptType) {
-			_hotspots[hotspot].scripts[i]->runScript();
+			RivenScriptPtr script = _hotspots[hotspot].scripts[i];
+			script->runScript();
 			break;
 		}
 }

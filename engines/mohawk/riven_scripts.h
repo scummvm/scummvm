@@ -49,41 +49,99 @@ enum {
 };
 
 class MohawkEngine_Riven;
-class RivenScript;
+class RivenCommand;
 
 class RivenScript {
 public:
-	RivenScript(MohawkEngine_Riven *vm, Common::SeekableReadStream *stream, uint16 scriptType, uint16 parentStack, uint16 parentCard);
+	RivenScript(MohawkEngine_Riven *vm, uint16 scriptType);
 	~RivenScript();
+
+	void addCommand(RivenCommand *command);
 
 	void runScript();
 	void dumpScript(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs);
 	uint16 getScriptType() { return _scriptType; }
-	uint16 getParentStack() { return _parentStack; }
-	uint16 getParentCard() { return _parentCard; }
-	bool isRunning() { return _isRunning; }
 	void stopRunning() { _continueRunning = false; }
 
-	static uint32 calculateScriptSize(Common::SeekableReadStream *script);
+private:
+	MohawkEngine_Riven *_vm;
+
+	Common::Array<RivenCommand *> _commands;
+	uint16 _scriptType;
+	bool _continueRunning;
+
+	void dumpCommands(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs);
+};
+
+typedef Common::SharedPtr<RivenScript> RivenScriptPtr;
+typedef Common::Array<RivenScriptPtr> RivenScriptList;
+
+class RivenScriptManager {
+public:
+	RivenScriptManager(MohawkEngine_Riven *vm);
+	~RivenScriptManager();
+
+	RivenScriptPtr readScript(Common::ReadStream *stream, uint16 scriptType);
+	RivenScriptList readScripts(Common::ReadStream *stream);
+	void stopAllScripts();
+
+	struct StoredMovieOpcode {
+		RivenScriptPtr script;
+		uint32 time;
+		uint16 id;
+	};
+
+	uint16 getStoredMovieOpcodeID() { return _storedMovieOpcode.id; }
+	uint32 getStoredMovieOpcodeTime() { return _storedMovieOpcode.time; }
+	void setStoredMovieOpcode(const StoredMovieOpcode &op);
+	void runStoredMovieOpcode();
+	void clearStoredMovieOpcode();
 
 private:
-	typedef void (RivenScript::*OpcodeProcRiven)(uint16 op, uint16 argc, uint16 *argv);
+	MohawkEngine_Riven *_vm;
+
+	StoredMovieOpcode _storedMovieOpcode;
+
+	RivenCommand *readCommand(Common::ReadStream *stream);
+};
+
+class RivenCommand {
+public:
+	RivenCommand(MohawkEngine_Riven *vm);
+	virtual ~RivenCommand();
+
+	virtual void dump(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs) = 0;
+
+	virtual void execute() = 0;
+
+protected:
+	MohawkEngine_Riven *_vm;
+};
+
+class RivenSimpleCommand : public RivenCommand {
+public:
+	static RivenSimpleCommand *createFromStream(MohawkEngine_Riven *vm, int type, Common::ReadStream *stream);
+	virtual ~RivenSimpleCommand();
+
+	// RivenCommand API
+	virtual void dump(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs) override;
+	virtual void execute() override;
+
+private:
+	typedef Common::Array<uint16> ArgumentArray;
+
+	RivenSimpleCommand(MohawkEngine_Riven *vm, int type, const ArgumentArray &arguments);
+
+	int _type;
+	ArgumentArray _arguments;
+
+	typedef void (RivenSimpleCommand::*OpcodeProcRiven)(uint16 op, uint16 argc, uint16 *argv);
 	struct RivenOpcode {
 		OpcodeProcRiven proc;
 		const char *desc;
 	};
 	const RivenOpcode *_opcodes;
 	void setupOpcodes();
-
-	MohawkEngine_Riven *_vm;
-	Common::SeekableReadStream *_stream;
-	uint16 _scriptType, _parentStack, _parentCard;
-	bool _isRunning, _continueRunning;
-
-	void dumpCommands(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs);
-	void processCommands(bool runCommands);
-
-	static uint32 calculateCommandSize(Common::SeekableReadStream *script);
 
 	DECLARE_OPCODE(empty) { warning ("Unknown Opcode %04x", op); }
 
@@ -124,34 +182,25 @@ private:
 	DECLARE_OPCODE(activateMLST);
 };
 
-typedef Common::Array<RivenScript *> RivenScriptList;
-
-class RivenScriptManager {
+class RivenSwitchCommand : public RivenCommand {
 public:
-	RivenScriptManager(MohawkEngine_Riven *vm);
-	~RivenScriptManager();
+	static RivenSwitchCommand *createFromStream(MohawkEngine_Riven *vm, int type, Common::ReadStream *stream);
+	virtual ~RivenSwitchCommand();
 
-	RivenScriptList readScripts(Common::SeekableReadStream *stream, bool garbageCollect = true);
-	void stopAllScripts();
-
-	struct StoredMovieOpcode {
-		RivenScript *script;
-		uint32 time;
-		uint16 id;
-	};
-
-	uint16 getStoredMovieOpcodeID() { return _storedMovieOpcode.id; }
-	uint32 getStoredMovieOpcodeTime() { return _storedMovieOpcode.time; }
-	void setStoredMovieOpcode(const StoredMovieOpcode &op);
-	void runStoredMovieOpcode();
-	void clearStoredMovieOpcode();
+	// RivenCommand API
+	virtual void dump(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs) override;
+	virtual void execute() override;
 
 private:
-	void unloadUnusedScripts();
-	RivenScriptList _currentScripts;
-	MohawkEngine_Riven *_vm;
+	RivenSwitchCommand(MohawkEngine_Riven *vm);
 
-	StoredMovieOpcode _storedMovieOpcode;
+	struct Branch {
+		uint16 value;
+		RivenScriptPtr script;
+	};
+
+	uint16 _variableId;
+	Common::Array<Branch> _branches;
 };
 
 } // End of namespace Mohawk
