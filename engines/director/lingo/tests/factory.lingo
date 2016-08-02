@@ -7,6 +7,8 @@ factory aim2
 method mNew
     dontpassevent
     global aim1
+	when mousedown then aim1(fire)
+	when keydown then aim1(mExit)
     set the locv of sprite 24 to 540
 method mMove x, y
     set the locH of sprite 15 to x
@@ -31,6 +33,7 @@ method mDispose
 factory fire2
 method mNew
     dontpassevent
+	when mousedown then nothing
     set the castnum of sprite 14 to f15
 method mAtFrame
     Global StartH, StartV, targetv, stepH, stepV, bcast
