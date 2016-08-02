@@ -30,29 +30,29 @@ static struct BuiltinProto {
 	int nparams;
 } builtins[] = {
 	// Math
-	{ "abs",	Lingo::b_abs, 1},
-	{ "atan",	Lingo::b_atan, 1},
-	{ "cos",	Lingo::b_cos, 1},
-	{ "exp",	Lingo::b_exp, 1},
-	{ "float",	Lingo::b_float, 1},
-	{ "integer",Lingo::b_integer, 1},
-	{ "log",	Lingo::b_log, 1},
-	{ "pi",		Lingo::b_pi, 0},
-	{ "power",	Lingo::b_power, 2},
-	{ "random",	Lingo::b_random, 1},
-	{ "sin",	Lingo::b_sin, 1},
-	{ "sqrt",	Lingo::b_sqrt, 1},
-	{ "tan",	Lingo::b_tan, 1},
+	{ "abs",	Lingo::b_abs, 1 },
+	{ "atan",	Lingo::b_atan, 1 },
+	{ "cos",	Lingo::b_cos, 1 },
+	{ "exp",	Lingo::b_exp, 1 },
+	{ "float",	Lingo::b_float, 1 },
+	{ "integer",Lingo::b_integer, 1 },
+	{ "log",	Lingo::b_log, 1 },
+	{ "pi",		Lingo::b_pi, 0 },
+	{ "power",	Lingo::b_power, 2 },
+	{ "random",	Lingo::b_random, 1 },
+	{ "sin",	Lingo::b_sin, 1 },
+	{ "sqrt",	Lingo::b_sqrt, 1 },
+	{ "tan",	Lingo::b_tan, 1 },
 	// String
-	{ "chars",	Lingo::b_chars, 3},
-	{ "length",	Lingo::b_length, 1},
-	{ "string",	Lingo::b_string, 1},
+	{ "chars",	Lingo::b_chars, 3 },
+	{ "length",	Lingo::b_length, 1 },
+	{ "string",	Lingo::b_string, 1 },
 	// Misc
 	{ "dontpassevent", Lingo::b_dontpassevent, -1 },
 	{ "updatestage", Lingo::b_updatestage, -1 },
 	{ "ilk",	 Lingo::b_ilk, 1 },
 	// point
-	{ "point",	Lingo::b_point, 2},
+	{ "point",	Lingo::b_point, 2 },
 	{ 0, 0, 0 }
 };
 
