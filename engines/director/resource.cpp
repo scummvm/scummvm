@@ -215,7 +215,7 @@ bool MacArchive::openStream(Common::SeekableReadStream *stream, uint32 startOffs
 Common::SeekableSubReadStreamEndian *MacArchive::getResource(uint32 tag, uint16 id) {
 	assert(_resFork);
 	Common::SeekableReadStream *stream = _resFork->getResource(tag, id);
-	return new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), DisposeAfterUse::NO);
+	return new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), true, DisposeAfterUse::NO);
 }
 
 // RIFF Archive code
