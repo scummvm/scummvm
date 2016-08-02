@@ -39,7 +39,10 @@ class CViewItem : public CNamedItem {
 private:
 	CTreeItem *_buttonUpTargets[4];
 private:
-	void setData(double v);
+	/**
+	 * Sets the angle of the view item
+	 */
+	void setAngle(double angle);
 
 	/**
 	 * Called to handle mouse messagaes on the view
@@ -52,10 +55,9 @@ private:
 	void handleButtonUpMsg(CMouseButtonUpMsg *msg);
 protected:
 	int _field24;
-	double _field28;
 	CResourceKey _resourceKey;
-	int _field50;
-	int _field54;
+	double _angle;
+	Point _position;
 public:
 	int _viewNumber;
 public:
@@ -96,6 +98,18 @@ public:
 	 * Finds a link which connects to another designated view
 	 */
 	CLinkItem *findLink(CViewItem *newView);
+
+	/**
+	 * Return the full Id of the current view in a
+	 * room.node.view tuplet form
+	 */
+	CString getFullViewName() const;
+
+	/**
+	 * Return the Id of the current view in a
+	 * room.node.view tuplet form
+	 */
+	CString getNodeViewName() const;
 
 	void fn1(double val1, double val2, double val3);
 };
