@@ -37,7 +37,7 @@ Reader::Reader() {
 	_windowUsed = 0;
 	_windowSize = 0;
 
-	_headers = "";
+	_headersStream = nullptr;
 	_firstBlock = true;
 
 	_contentLength = 0;
@@ -65,6 +65,9 @@ Reader &Reader::operator=(Reader &r) {
 	_windowSize = r._windowSize;
 	r._window = nullptr;
 
+	_headersStream = r._headersStream;
+	r._headersStream = nullptr;
+
 	_headers = r._headers;
 	_method = r._method;
 	_path = r._path;
@@ -84,6 +87,9 @@ Reader &Reader::operator=(Reader &r) {
 void Reader::cleanup() {
 	//_content is not to be freed, it's not owned by Reader
 
+	if (_headersStream != nullptr)
+		delete _headersStream;
+
 	if (_window != nullptr)
 		freeWindow();
 }
@@ -92,14 +98,20 @@ bool Reader::readAndHandleFirstHeaders() {
 	Common::String boundary = "\r\n\r\n";
 	if (_window == nullptr) {
 		makeWindow(boundary.size());
-		_headers = "";
+	}
+	if (_headersStream == nullptr) {
+		_headersStream = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
 	}
 
-	while (readOneByteInString(_headers, boundary)) {
+	while (readOneByteInStream(_headersStream, boundary)) {
+		if (_headersStream->size() > SUSPICIOUS_HEADERS_SIZE) {
+			_isBadRequest = true;
+			return true;
+		}
 		if (!bytesLeft())
 			return false;
 	}
-	handleFirstHeaders(_headers);
+	handleFirstHeaders(_headersStream);
 
 	freeWindow();
 	_state = RS_READING_CONTENT;
@@ -136,22 +148,23 @@ void readFromThatUntilLineEnd(const char *cstr, Common::String needle, Common::S
 }
 }
 
-void Reader::handleFirstHeaders(Common::String headers) {
+void Reader::handleFirstHeaders(Common::MemoryReadWriteStream *headersStream) {
 	if (!_boundary.empty()) {
 		warning("Reader: handleFirstHeaders() called when first headers were already handled");
 		return;
 	}
 
 	//parse method, path, query, fragment
-	parseFirstLine(headers);
+	_headers = readEverythingFromMemoryStream(headersStream);
+	parseFirstLine(_headers);
 
 	//find boundary
 	_boundary = "";
-	readFromThatUntilLineEnd(headers.c_str(), "boundary=", _boundary);
+	readFromThatUntilLineEnd(_headers.c_str(), "boundary=", _boundary);
 
 	//find content length
 	Common::String contentLength = "";
-	readFromThatUntilLineEnd(headers.c_str(), "Content-Length: ", contentLength);
+	readFromThatUntilLineEnd(_headers.c_str(), "Content-Length: ", contentLength);
 	_contentLength = contentLength.asUint64();
 	_availableBytes = _contentLength;
 }
@@ -160,48 +173,43 @@ void Reader::parseFirstLine(const Common::String &headers) {
 	uint32 headersSize = headers.size();
 	bool bad = false;
 
-	const uint32 SUSPICIOUS_HEADERS_SIZE = 128 * 1024;
-	if (headersSize > SUSPICIOUS_HEADERS_SIZE) bad = true;
-
-	if (!bad) {
-		if (headersSize > 0) {
-			const char *cstr = headers.c_str();
-			const char *position = strstr(cstr, "\r\n");
-			if (position) { //we have at least one line - and we want the first one
-				//"<METHOD> <path> HTTP/<VERSION>\r\n"
-				Common::String method, path, http, buf;
-				uint32 length = position - cstr;
-				if (headersSize > length)
-					headersSize = length;
-				for (uint32 i = 0; i < headersSize; ++i) {
-					if (headers[i] != ' ')
-						buf += headers[i];
-					if (headers[i] == ' ' || i == headersSize - 1) {
-						if (method == "") {
-							method = buf;
-						} else if (path == "") {
-							path = buf;
-						} else if (http == "") {
-							http = buf;
-						} else {
-							bad = true;
-							break;
-						}
-						buf = "";
+	if (headersSize > 0) {
+		const char *cstr = headers.c_str();
+		const char *position = strstr(cstr, "\r\n");
+		if (position) { //we have at least one line - and we want the first one
+			//"<METHOD> <path> HTTP/<VERSION>\r\n"
+			Common::String method, path, http, buf;
+			uint32 length = position - cstr;
+			if (headersSize > length)
+				headersSize = length;
+			for (uint32 i = 0; i < headersSize; ++i) {
+				if (headers[i] != ' ')
+					buf += headers[i];
+				if (headers[i] == ' ' || i == headersSize - 1) {
+					if (method == "") {
+						method = buf;
+					} else if (path == "") {
+						path = buf;
+					} else if (http == "") {
+						http = buf;
+					} else {
+						bad = true;
+						break;
 					}
+					buf = "";
 				}
-
-				//check that method is supported
-				if (method != "GET" && method != "PUT" && method != "POST")
-					bad = true;
-
-				//check that HTTP/<VERSION> is OK
-				if (!http.hasPrefix("HTTP/"))
-					bad = true;
-
-				_method = method;
-				parsePathQueryAndAnchor(path);
 			}
+
+			//check that method is supported
+			if (method != "GET" && method != "PUT" && method != "POST")
+				bad = true;
+
+			//check that HTTP/<VERSION> is OK
+			if (!http.hasPrefix("HTTP/"))
+				bad = true;
+
+			_method = method;
+			parsePathQueryAndAnchor(path);
 		}
 	}
 
@@ -308,6 +316,20 @@ void Reader::freeWindow() {
 	_windowUsed = _windowSize = 0;
 }
 
+namespace {
+bool windowEqualsString(const byte *window, uint32 windowSize, const Common::String &boundary) {
+	if (boundary.size() != windowSize)
+		return false;
+
+	for (uint32 i = 0; i < windowSize; ++i) {
+		if (window[i] != boundary[i])
+			return false;
+	}
+
+	return true;
+}
+}
+
 bool Reader::readOneByteInStream(Common::WriteStream *stream, const Common::String &boundary) {
 	byte b = readOne();
 	_window[_windowUsed++] = b;
@@ -315,30 +337,12 @@ bool Reader::readOneByteInStream(Common::WriteStream *stream, const Common::Stri
 		return true;
 
 	//when window is filled, check whether that's the boundary
-	if (Common::String((char *)_window, _windowSize) == boundary)
+	if (windowEqualsString(_window, _windowSize, boundary))
 		return false;
 
 	//if not, add the first byte of the window to the string
 	if (stream)
 		stream->writeByte(_window[0]);
-	for (uint32 i = 1; i < _windowSize; ++i)
-		_window[i - 1] = _window[i];
-	--_windowUsed;
-	return true;
-}
-
-bool Reader::readOneByteInString(Common::String &buffer, const Common::String &boundary) {
-	byte b = readOne();
-	_window[_windowUsed++] = b;
-	if (_windowUsed < _windowSize)
-		return true;
-
-	//when window is filled, check whether that's the boundary
-	if (Common::String((char *)_window, _windowSize) == boundary)
-		return false;
-
-	//if not, add the first byte of the window to the string
-	buffer += _window[0];
 	for (uint32 i = 1; i < _windowSize; ++i)
 		_window[i - 1] = _window[i];
 	--_windowUsed;
@@ -419,7 +423,7 @@ bool Reader::readBlockContent(Common::WriteStream *stream) {
 	return true;
 }
 
-uint32 Reader::bytesLeft() { return _bytesLeft; }
+uint32 Reader::bytesLeft() const { return _bytesLeft; }
 
 void Reader::setContent(Common::MemoryReadWriteStream *stream) {
 	_content = stream;
@@ -441,5 +445,18 @@ Common::String Reader::query() const { return _query; }
 Common::String Reader::queryParameter(Common::String name) const { return _queryParameters[name]; }
 
 Common::String Reader::anchor() const { return _anchor; }
+
+Common::String Reader::readEverythingFromMemoryStream(Common::MemoryReadWriteStream *stream) {
+	Common::String result;
+	char buf[1024];
+	uint32 readBytes;
+	while (true) {
+		readBytes = stream->read(buf, 1024);
+		if (readBytes == 0)
+			break;
+		result += Common::String(buf, readBytes);
+	}
+	return result;
+}
 
 } // End of namespace Networking

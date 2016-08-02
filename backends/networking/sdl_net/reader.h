@@ -80,6 +80,8 @@ class Reader {
 	byte *_window;
 	uint32 _windowUsed, _windowSize;
 
+	Common::MemoryReadWriteStream *_headersStream;
+
 	Common::String _headers;
 	Common::String _method, _path, _query, _anchor;
 	Common::HashMap<Common::String, Common::String> _queryParameters;
@@ -96,7 +98,7 @@ class Reader {
 	bool readBlockHeadersIntoStream(Common::WriteStream *stream); //true when ended reading
 	bool readContentIntoStream(Common::WriteStream *stream); //true when ended reading
 
-	void handleFirstHeaders(Common::String headers);
+	void handleFirstHeaders(Common::MemoryReadWriteStream *headers);
 	void parseFirstLine(const Common::String &headers);
 	void parsePathQueryAndAnchor(Common::String path);
 	void parseQueryParameters();
@@ -104,12 +106,13 @@ class Reader {
 	void makeWindow(uint32 size);
 	void freeWindow();
 	bool readOneByteInStream(Common::WriteStream *stream, const Common::String &boundary);
-	bool readOneByteInString(Common::String &buffer, const Common::String &boundary);
 
 	byte readOne();
-	uint32 bytesLeft();
+	uint32 bytesLeft() const;
 
 public:
+	static const uint32 SUSPICIOUS_HEADERS_SIZE = 1024 * 1024; // 1 MB is really a lot
+
 	Reader();
 	~Reader();
 
@@ -131,6 +134,8 @@ public:
 	Common::String query() const;
 	Common::String queryParameter(Common::String name) const;
 	Common::String anchor() const;
+
+	static Common::String readEverythingFromMemoryStream(Common::MemoryReadWriteStream *stream);
 };
 
 } // End of namespace Networking

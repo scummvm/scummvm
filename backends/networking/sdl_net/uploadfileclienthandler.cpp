@@ -24,6 +24,7 @@
 #include "backends/fs/fs-factory.h"
 #include "backends/networking/sdl_net/handlerutils.h"
 #include "backends/networking/sdl_net/localwebserver.h"
+#include "backends/networking/sdl_net/reader.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/translation.h"
@@ -62,6 +63,11 @@ void UploadFileClientHandler::handle(Client *client) {
 				handleBlockHeaders(client);
 				continue;
 			}
+
+			// fail on suspicious headers
+			if (_headersStream->size() > Reader::SUSPICIOUS_HEADERS_SIZE) {
+				setErrorMessageHandler(*client, _("Invalid request: headers are too long!"));
+			}
 			break;
 
 		case UFH_READING_BLOCK_CONTENT:
@@ -95,26 +101,18 @@ void readFromThatUntilDoubleQuote(const char *cstr, Common::String needle, Commo
 		}
 	}
 }
-
-Common::String readEverythingFromMemoryStream(Common::MemoryReadWriteStream *stream) {
-	Common::String result;
-	char buf[1024];
-	uint32 readBytes;
-	while (true) {
-		readBytes = stream->read(buf, 1024);
-		if (readBytes == 0)
-			break;
-		result += Common::String(buf, readBytes);
-	}
-	return result;
-}
 }
 
 void UploadFileClientHandler::handleBlockHeaders(Client *client) {
 	_state = UFH_READING_BLOCK_CONTENT;
 
+	// fail on suspicious headers
+	if (_headersStream->size() > Reader::SUSPICIOUS_HEADERS_SIZE) {
+		setErrorMessageHandler(*client, _("Invalid request: headers are too long!"));
+	}
+
 	// search for "upload_file" field
-	Common::String headers = readEverythingFromMemoryStream(_headersStream);
+	Common::String headers = Reader::readEverythingFromMemoryStream(_headersStream);
 	Common::String fieldName = "";
 	readFromThatUntilDoubleQuote(headers.c_str(), "name=\"", fieldName);
 	if (!fieldName.hasPrefix("upload_file"))
