@@ -189,6 +189,8 @@ public:
 	int codeFloat(double f);
 	void codeFactory(Common::String &s);
 
+	void pushVoid();
+
 	static void c_xpop();
 	static void c_printtop();
 

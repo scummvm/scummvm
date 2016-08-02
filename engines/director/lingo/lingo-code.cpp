@@ -55,6 +55,13 @@ void Lingo::push(Datum d) {
 	_stack.push_back(d);
 }
 
+void Lingo::pushVoid() {
+	Datum d;
+	d.u.i = 0;
+	d.type = VOID;
+	push(d);
+}
+
 Datum Lingo::pop(void) {
 	if (_stack.size() == 0)
 		error("stack underflow");
@@ -692,10 +699,7 @@ void Lingo::c_call() {
 			g_lingo->pop();
 
 		// Push dummy value
-		Datum d;
-		d.u.i = 0;
-		d.type = VOID;
-		g_lingo->push(d);
+		g_lingo->pushVoid();
 
 		return;
 	}
@@ -714,8 +718,10 @@ void Lingo::c_call() {
 			for (int i = 0; i < nargs; i++)
 				g_lingo->pop();
 
-				return;
-			}
+			g_lingo->pushVoid();
+
+			return;
+		}
 		(*sym->u.func)();
 
 		return;
