@@ -27,9 +27,9 @@
 
 namespace Titanic {
 
-typedef bool (*CProximityFn)(int val);
-
 class TTtalker;
+
+typedef void (*CEndTalkerFn)(TTtalker *talker);
 
 class CProximity {
 public:
@@ -43,8 +43,8 @@ public:
 	int _field20;
 	int _field24;
 	int _field28;
-	uint32 _field2C;
-	int _field30;
+	double _field2C;
+	double _field30;
 	int _field34;
 	double _double1;
 	double _double2;
@@ -57,7 +57,7 @@ public:
 	int _field58;
 	int _field5C;
 	int _field60;
-	CProximityFn _method1;
+	CEndTalkerFn _endTalkerFn;
 	TTtalker *_talker;
 	int _field6C;
 public:

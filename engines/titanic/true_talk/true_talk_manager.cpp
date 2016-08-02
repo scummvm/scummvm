@@ -506,14 +506,14 @@ void CTrueTalkManager::playSpeech(TTtalker *talker, TTroomScript *roomScript, CV
 	if (milli > 0) {
 		p3._field8 = (index * 3) / 2;
 		p3._field28 = 1;
-		p3._field2C = 0xC3070000;
-		p3._field30 = 0x3F800000;
+		p3._field2C = -135.0;
+		p3._field30 = 1.0;
 		p3._field34 = 0;
 
 		p3._field8 = (index * 3) / 4;
 		p2._field28 = 0;
-		p2._field2C = 0x43070000;
-		p2._field30 = 0x3F800000;
+		p2._field2C = 135.0;
+		p2._field30 = 1.0;
 		p2._field34 = 0;
 	}
 
@@ -530,11 +530,11 @@ void CTrueTalkManager::playSpeech(TTtalker *talker, TTroomScript *roomScript, CV
 
 		if (idx == (_titleEngine._indexes.size() - 1)) {
 			// Final iteration of speech segments to play
-			p1._method1 = &proximityMethod1;
+			p1._endTalkerFn = &talkerEnd;
 			p1._talker = talker;
 		}
 
-		// Start the 
+		// Start the speech
 		p1._speechHandle = _gameManager->_sound.playSpeech(_dialogueFile, id - _dialogueId, p1);
 		if (!milli)
 			continue;
@@ -568,9 +568,9 @@ bool CTrueTalkManager::triggerAction(int action, int param) {
 	return true;
 }
 
-bool CTrueTalkManager::proximityMethod1(int val) {
-	// TODO
-	return false;
+void CTrueTalkManager::talkerEnd(TTtalker *talker) {
+	if (talker)
+		talker->endSpeech(0);
 }
 
 CGameManager *CTrueTalkManager::getGameManager() const {

@@ -109,7 +109,10 @@ private:
 	 */
 	void playSpeech(TTtalker *talker, TTroomScript *roomScript, CViewItem *view, bool isParrot);
 
-	static bool proximityMethod1(int val);
+	/**
+	 * Called when a talker finishes
+	 */
+	static void talkerEnd(TTtalker *talker);
 
 	/**
 	 * Return the game state
