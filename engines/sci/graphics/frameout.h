@@ -366,6 +366,11 @@ public:
 	 */
 	void showRect(const Common::Rect &rect);
 
+	/**
+	 * Shakes the screen.
+	 */
+	void shakeScreen(const int16 numShakes, const ShakeDirection direction);
+
 #pragma mark -
 #pragma mark Mouse cursor
 private:

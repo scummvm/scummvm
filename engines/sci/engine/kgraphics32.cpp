@@ -141,6 +141,11 @@ reg_t kSetCursor32(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kShakeScreen32(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxFrameout->shakeScreen(argv[0].toSint16(), (ShakeDirection)argv[1].toSint16());
+	return s->r_acc;
+}
+
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv) {
 	const Buffer &buffer = g_sci->_gfxFrameout->getCurrentBuffer();
 	if (buffer.screenWidth < 640 || buffer.screenHeight < 400)
