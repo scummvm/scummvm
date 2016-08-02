@@ -29,10 +29,9 @@
 
 namespace MacVenture {
 
-	const char *MacVentureEngine::getGameFileName() const {
-		return _gameDescription->filesDescriptions[0].fileName;
-	}
-
+const char *MacVentureEngine::getGameFileName() const {
+	return _gameDescription->filesDescriptions[0].fileName;
+}
 }
 
 namespace MacVenture {
@@ -45,6 +44,8 @@ static const PlainGameDescriptor macventureGames[] = {
 	{ "deja_vu2", "Deja Vu II"},
 	{ 0, 0 }
 };
+
+SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot);
 
 class MacVentureMetaEngine : public AdvancedMetaEngine {
 public:
@@ -62,11 +63,56 @@ public:
 
 	virtual bool createInstance(OSystem * syst, Engine ** engine, const ADGameDescription * desc) const;
 	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual SaveStateList listSaves(const char *target) const;
+	virtual int getMaximumSaveSlot() const;
 };
 
 bool MacVentureMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
+	return
+		(f == kSupportsListSaves) ||
+		(f == kSupportsLoadingDuringStartup);
 }
+
+SaveStateList MacVentureMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray filenames;
+	Common::String pattern = target;
+	pattern += ".###";
+
+	filenames = saveFileMan->listSavefiles(pattern);
+
+	SaveStateList saveList;
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		int slotNum = atoi(file->c_str() + file->size() - 3);
+		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
+
+		SaveStateDescriptor desc;
+		// Do not allow save slot 0 (used for auto-saving) to be deleted or
+		// overwritten.
+		desc.setDeletableFlag(slotNum != 0);
+		desc.setWriteProtectedFlag(slotNum == 0);
+
+		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
+			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
+			if (in) {
+				SaveStateDescriptor desc = loadMetaData(in, slotNum);
+				if (desc.getSaveSlot() != slotNum) {
+					// invalid
+					delete in;
+					continue;
+				}
+				saveList.push_back(desc);
+				delete in;
+			}
+		}
+	}
+
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
+	return saveList;
+}
+
+int MacVentureMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 bool MacVentureMetaEngine::createInstance(OSystem * syst, Engine ** engine, const ADGameDescription *game) const {
 	if (game) {

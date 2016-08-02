@@ -178,21 +178,6 @@ Common::Error MacVentureEngine::run() {
 	return Common::kNoError;
 }
 
-Common::Error MacVentureEngine::loadGameState(int slot) {
-	Common::InSaveFile *file = getSaveFileManager()->openForLoading("Shadowgate.1");
-	_world->loadGameFrom(file);
-	reset();
-	return Common::kNoError;
-}
-
-Common::Error MacVentureEngine::saveGameState(int slot, const Common::String &desc) {
-	Common::SaveFileManager *manager = getSaveFileManager();
-	// HACK Get a real name!
-	Common::OutSaveFile *file = manager->openForSaving("Shadowgate.1");
-	_world->saveGameInto(file);
-	delete file;
-}
-
 void MacVentureEngine::reset() {
 	resetInternals();
 	resetGui();

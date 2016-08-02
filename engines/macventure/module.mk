@@ -13,7 +13,8 @@ MODULE_OBJS := \
 	controls.o \
 	prebuilt_dialogs.o \
 	windows.o \
-	sound.o
+	sound.o \
+	saveload.o
 
 
 MODULE_DIRS += \
