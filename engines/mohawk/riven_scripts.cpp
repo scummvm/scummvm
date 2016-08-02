@@ -49,8 +49,8 @@ RivenScriptManager::~RivenScriptManager() {
 	clearStoredMovieOpcode();
 }
 
-RivenScriptPtr RivenScriptManager::readScript(Common::ReadStream *stream, uint16 scriptType) {
-	RivenScriptPtr script = RivenScriptPtr(new RivenScript(_vm, scriptType));
+RivenScriptPtr RivenScriptManager::readScript(Common::ReadStream *stream) {
+	RivenScriptPtr script = RivenScriptPtr(new RivenScript(_vm));
 
 	uint16 commandCount = stream->readUint16BE();
 
@@ -77,8 +77,9 @@ RivenScriptList RivenScriptManager::readScripts(Common::ReadStream *stream) {
 
 	uint16 scriptCount = stream->readUint16BE();
 	for (uint16 i = 0; i < scriptCount; i++) {
-		uint16 scriptType = stream->readUint16BE();
-		RivenScriptPtr script = readScript(stream, scriptType);
+		RivenTypedScript script;
+		script.type = stream->readUint16BE();
+		script.script = readScript(stream);
 		scriptList.push_back(script);
 	}
 
@@ -111,9 +112,8 @@ void RivenScriptManager::clearStoredMovieOpcode() {
 	_storedMovieOpcode.id = 0;
 }
 
-RivenScript::RivenScript(MohawkEngine_Riven *vm, uint16 scriptType) :
-		_vm(vm),
-		_scriptType(scriptType) {
+RivenScript::RivenScript(MohawkEngine_Riven *vm) :
+		_vm(vm) {
 	_continueRunning = true;
 }
 
@@ -124,11 +124,6 @@ RivenScript::~RivenScript() {
 }
 
 void RivenScript::dumpScript(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs) {
-	printTabs(tabs); debugN("Stream Type %d:\n", _scriptType);
-	dumpCommands(varNames, xNames, tabs + 1);
-}
-
-void RivenScript::dumpCommands(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs) {
 	for (uint16 i = 0; i < _commands.size(); i++) {
 		_commands[i]->dump(varNames, xNames, tabs);
 	}
@@ -512,7 +507,7 @@ void RivenSimpleCommand::storeMovieOpcode(uint16 op, uint16 argc, uint16 *argv) 
 
 	// Build a script out of 'er
 	Common::SeekableReadStream *scriptStream = new Common::MemoryReadStream(scriptBuf, scriptSize, DisposeAfterUse::YES);
-	RivenScriptPtr script = _vm->_scriptMan->readScript(scriptStream, kStoredOpcodeScript);
+	RivenScriptPtr script = _vm->_scriptMan->readScript(scriptStream);
 
 	uint32 delayTime = (argv[1] << 16) + argv[2];
 
@@ -691,7 +686,7 @@ RivenSwitchCommand *RivenSwitchCommand::createFromStream(MohawkEngine_Riven *vm,
 
 		// Value for this logic block
 		branch.value = stream->readUint16BE();
-		branch.script = vm->_scriptMan->readScript(stream, kStoredOpcodeScript);
+		branch.script = vm->_scriptMan->readScript(stream);
 	}
 
 	return command;
