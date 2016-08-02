@@ -131,7 +131,7 @@ whitespace [\t ]
 				return THEENTITY;
 		}
 
-		error("Unhandled the entity %s", ptr);
+		warning("Unhandled the entity %s", ptr);
 	}
 (?i:the[ \t]+[[:alpha:]]+)		{
 		count();
@@ -150,7 +150,7 @@ whitespace [\t ]
 				return THEENTITY;
 		}
 
-		error("Unhandled the entity %s", ptr);
+		warning("Unhandled the entity %s", ptr);
 	}
 (?i:then)			{ count(); return tTHEN; }
 (?i:to)				{ count(); return tTO; }

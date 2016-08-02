@@ -1149,7 +1149,7 @@ YY_RULE_SETUP
 				return THEENTITY;
 		}
 
-		error("Unhandled the entity %s", ptr);
+		warning("Unhandled the entity %s", ptr);
 	}
 	YY_BREAK
 case 35:
@@ -1172,7 +1172,7 @@ YY_RULE_SETUP
 				return THEENTITY;
 		}
 
-		error("Unhandled the entity %s", ptr);
+		warning("Unhandled the entity %s", ptr);
 	}
 	YY_BREAK
 case 36:
