@@ -696,8 +696,8 @@ uint32 MohawkEngine_Riven::getCurCardRMAP() {
 void MohawkEngine_Riven::runCardScript(uint16 scriptType) {
 	assert(_cardData.hasData);
 	for (uint16 i = 0; i < _cardData.scripts.size(); i++)
-		if (_cardData.scripts[i]->getScriptType() == scriptType) {
-			RivenScriptPtr script = _cardData.scripts[i];
+		if (_cardData.scripts[i].type == scriptType) {
+			RivenScriptPtr script = _cardData.scripts[i].script;
 			script->runScript();
 			break;
 		}
@@ -706,8 +706,8 @@ void MohawkEngine_Riven::runCardScript(uint16 scriptType) {
 void MohawkEngine_Riven::runHotspotScript(uint16 hotspot, uint16 scriptType) {
 	assert(hotspot < _hotspotCount);
 	for (uint16 i = 0; i < _hotspots[hotspot].scripts.size(); i++)
-		if (_hotspots[hotspot].scripts[i]->getScriptType() == scriptType) {
-			RivenScriptPtr script = _hotspots[hotspot].scripts[i];
+		if (_hotspots[hotspot].scripts[i].type == scriptType) {
+			RivenScriptPtr script = _hotspots[hotspot].scripts[i].script;
 			script->runScript();
 			break;
 		}

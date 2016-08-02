@@ -43,9 +43,7 @@ enum {
 	kCardLoadScript = 6,
 	kCardLeaveScript = 7,
 	kCardOpenScript = 9,
-	kCardUpdateScript = 10,
-
-	kStoredOpcodeScript // This is ScummVM-only to denote the script from a storeMovieOpcode() call
+	kCardUpdateScript = 10
 };
 
 class MohawkEngine_Riven;
@@ -53,35 +51,37 @@ class RivenCommand;
 
 class RivenScript {
 public:
-	RivenScript(MohawkEngine_Riven *vm, uint16 scriptType);
+	RivenScript(MohawkEngine_Riven *vm);
 	~RivenScript();
 
 	void addCommand(RivenCommand *command);
 
 	void runScript();
 	void dumpScript(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs);
-	uint16 getScriptType() { return _scriptType; }
 	void stopRunning() { _continueRunning = false; }
 
 private:
 	MohawkEngine_Riven *_vm;
 
 	Common::Array<RivenCommand *> _commands;
-	uint16 _scriptType;
 	bool _continueRunning;
-
-	void dumpCommands(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs);
 };
 
 typedef Common::SharedPtr<RivenScript> RivenScriptPtr;
-typedef Common::Array<RivenScriptPtr> RivenScriptList;
+
+struct RivenTypedScript {
+	uint16 type;
+	RivenScriptPtr script;
+};
+
+typedef Common::Array<RivenTypedScript> RivenScriptList;
 
 class RivenScriptManager {
 public:
 	RivenScriptManager(MohawkEngine_Riven *vm);
 	~RivenScriptManager();
 
-	RivenScriptPtr readScript(Common::ReadStream *stream, uint16 scriptType);
+	RivenScriptPtr readScript(Common::ReadStream *stream);
 	RivenScriptList readScripts(Common::ReadStream *stream);
 	void stopAllScripts();
 

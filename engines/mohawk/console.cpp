@@ -619,7 +619,8 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 		cardStream->seek(4);
 		RivenScriptList scriptList = _vm->_scriptMan->readScripts(cardStream);
 		for (uint32 i = 0; i < scriptList.size(); i++) {
-			scriptList[i]->dumpScript(varNames, xNames, 0);
+			debugN("Stream Type %d:\n", scriptList[i].type);
+			scriptList[i].script->dumpScript(varNames, xNames, 0);
 		}
 		delete cardStream;
 	} else if (!scumm_stricmp(argv[2], "HSPT")) {
@@ -636,7 +637,8 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 			hsptStream->seek(22, SEEK_CUR);	// Skip non-script related stuff
 			RivenScriptList scriptList = _vm->_scriptMan->readScripts(hsptStream);
 			for (uint32 j = 0; j < scriptList.size(); j++) {
-				scriptList[j]->dumpScript(varNames, xNames, 1);
+				debugN("\tStream Type %d:\n", scriptList[i].type);
+				scriptList[j].script->dumpScript(varNames, xNames, 1);
 			}
 		}
 
