@@ -106,7 +106,6 @@ public:
 	void updateWindow(WindowReference winID, bool containerOpen);
 	void invertWindowColors(WindowReference winID);
 
-
 	WindowReference createInventoryWindow(ObjID objRef);
 	bool tryCloseWindow(WindowReference winID);
 
@@ -138,6 +137,7 @@ public:
 	void bringToFront(WindowReference window);
 	void setWindowTitle(WindowReference winID, Common::String string);
 	void updateWindowInfo(WindowReference ref, ObjID objID, const Common::Array<ObjID> &children);
+	void ensureInventoryOpen(WindowReference reference, ObjID id);
 
 	void addChild(WindowReference target, ObjID child);
 	void removeChild(WindowReference target, ObjID child);

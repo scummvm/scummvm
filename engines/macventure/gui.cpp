@@ -951,6 +951,13 @@ Graphics::MacWindow * Gui::findWindow(WindowReference reference) {
 	return nullptr;
 }
 
+void Gui::ensureInventoryOpen(WindowReference reference, ObjID id) {
+	assert(reference < 0x80 && reference >= kInventoryStart);
+	if (reference - kInventoryStart == _inventoryWindows.size()) {
+		createInventoryWindow(id);
+	}
+}
+
 WindowReference Gui::getObjWindow(ObjID objID) {
 	switch (objID) {
 	case 0xfffc: return kExitsWindow;

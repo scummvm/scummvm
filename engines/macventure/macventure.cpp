@@ -24,6 +24,7 @@
 #include "common/debug-channels.h"
 #include "common/debug.h"
 #include "common/error.h"
+#include "common/config-manager.h"
 #include "engines/util.h"
 
 #include "macventure/macventure.h"
@@ -129,11 +130,18 @@ Common::Error MacVentureEngine::run() {
 	_destObject = 0;
 	_prepared = true;
 
-	_cmdReady = true;
+	int directSaveSlotLoading = ConfMan.getInt("save_slot");
+	if (directSaveSlotLoading >= 0) {
+		if (loadGameState(directSaveSlotLoading).getCode() != Common::kNoError) {
+			error("Could not load game from slot '%d'", directSaveSlotLoading);
+		}
+	} else {
+		_cmdReady = true;
+		ObjID playerParent = _world->getObjAttr(1, kAttrParentObject);
+		_currentSelection.push_back(playerParent);// Push the parent of the player
+		_world->setObjAttr(playerParent, kAttrContainerOpen, 1);
+	}
 	_selectedControl = kStartOrResume;
-	ObjID playerParent = _world->getObjAttr(1, kAttrParentObject);
-	_currentSelection.push_back(playerParent);// Push the parent of the player
-	_world->setObjAttr(playerParent, kAttrContainerOpen, 1);
 
 	_gui->addChild(kSelfWindow, 1);
 	_gui->updateWindow(kSelfWindow, false);
@@ -194,6 +202,7 @@ void MacVentureEngine::resetInternals() {
 void MacVentureEngine::resetGui() {
 	_gui->updateWindowInfo(kMainGameWindow, getParent(1), _world->getChildren(getParent(1), true));
 	// HACK! should update all inventories
+	_gui->ensureInventoryOpen(kInventoryStart, 1);
 	_gui->updateWindowInfo(kInventoryStart, 1, _world->getChildren(1, true));
 	updateControls();
 	updateExits();
