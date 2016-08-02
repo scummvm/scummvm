@@ -11,6 +11,9 @@ put cos(z2)
 set x = 2 + 3 * (4 / 2)
 put x
 
+put power(2, 8)
+updatestage
+
 -- Type conversion
 put (1024/4096)*100         -- 0
 put (1024/4096)*100.0       -- 0.0

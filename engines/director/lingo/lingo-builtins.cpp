@@ -58,7 +58,15 @@ static struct BuiltinProto {
 
 void Lingo::initBuiltIns() {
 	for (BuiltinProto *blt = builtins; blt->name; blt++) {
-		_builtins[blt->name] = new Builtin(blt->func, blt->nparams);
+		Symbol *sym = new Symbol;
+
+		sym->name = (char *)calloc(strlen(blt->name) + 1, 1);
+		Common::strlcpy(sym->name, blt->name, strlen(blt->name));
+		sym->type = BLTIN;
+		sym->nargs = blt->nparams;
+		sym->u.func = blt->func;
+
+		_handlers[blt->name] = sym;
 	}
 }
 

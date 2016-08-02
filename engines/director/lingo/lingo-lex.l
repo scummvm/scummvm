@@ -169,11 +169,9 @@ whitespace [\t ]
 		count();
 		yylval.s = new Common::String(yytext);
 
-		if (g_lingo->_builtins.contains(yytext)) {
-			if (g_lingo->_builtins[yytext]->nargs == -1)
+		if (g_lingo->_handlers.contains(yytext)) {
+			if (g_lingo->_handlers[yytext]->type == BLTIN && g_lingo->_handlers[yytext]->nargs == -1)
 				return BLTINNOARGS;
-			else
-				return BLTIN;
 		}
 
 		return ID;

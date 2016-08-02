@@ -702,6 +702,12 @@ void Lingo::c_call() {
 
 	Symbol *sym = g_lingo->_handlers[name];
 
+	if (sym->type == BLTIN) {
+		(*sym->u.func)();
+
+		return;
+	}
+
 	for (int i = nargs; i < sym->nargs; i++) {
 		Datum d;
 

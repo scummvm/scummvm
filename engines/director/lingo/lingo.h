@@ -85,6 +85,7 @@ struct Symbol {	/* symbol table entry */
 		int		i;			/* VAR */
 		double	f;			/* FLOAT */
 		ScriptData	*defn;	/* FUNCTION, PROCEDURE */
+		void (*func)(void); /* BUILTIN */
 		Common::String	*s;	/* STRING */
 		FloatArray *arr;	/* ARRAY, POINT, RECT */
 	} u;
@@ -288,10 +289,11 @@ public:
 
 	Common::Array<CFrame *> _callstack;
 	Common::Array<Common::String *> _argstack;
-	BuiltinHash _builtins;
 	TheEntityHash _theEntities;
 	TheEntityFieldHash _theEntityFields;
 	Common::Array<int> _labelstack;
+
+	SymbolHash _handlers;
 
 	int _linenumber;
 	int _colnumber;
@@ -315,7 +317,6 @@ private:
 
 	SymbolHash _globalvars;
 	SymbolHash *_localvars;
-	SymbolHash _handlers;
 
 	int _pc;
 
