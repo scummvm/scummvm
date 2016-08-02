@@ -128,4 +128,12 @@ bool MacVentureEngine::scummVMSaveLoadDialog(bool isSave) {
 	return saveGameState(slot, desc).getCode() == Common::kNoError;
 }
 
+bool MacVentureEngine::canLoadGameStateCurrently() {
+	return true;
+}
+
+bool MacVentureEngine::canSaveGameStateCurrently() {
+	return true;
+}
+
 } // End of namespace MacVenture

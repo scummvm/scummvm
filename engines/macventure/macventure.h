@@ -186,6 +186,8 @@ public:
 	virtual Common::Error run();
 
 	bool scummVMSaveLoadDialog(bool isSave);
+	bool canLoadGameStateCurrently();
+	bool canSaveGameStateCurrently();
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 
