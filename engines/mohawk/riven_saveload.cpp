@@ -22,6 +22,7 @@
 
 #include "mohawk/resource.h"
 #include "mohawk/riven.h"
+#include "mohawk/riven_card.h"
 #include "mohawk/riven_saveload.h"
 
 #include "common/system.h"
@@ -403,7 +404,7 @@ Common::Error RivenSaveLoad::saveGame(const int slot, const Common::String &desc
 
 	// Convert class variables to variable numbers
 	_vm->_vars["currentstackid"] = _vm->getCurStack();
-	_vm->_vars["currentcardid"] = _vm->getCurCard();
+	_vm->_vars["currentcardid"] = _vm->getCurCard()->getId();
 
 	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(filename);
 	if (!saveFile)

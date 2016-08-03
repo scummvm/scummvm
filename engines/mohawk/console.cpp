@@ -41,6 +41,7 @@
 
 #ifdef ENABLE_RIVEN
 #include "mohawk/riven.h"
+#include "mohawk/riven_card.h"
 #include "mohawk/riven_external.h"
 #include "mohawk/riven_sound.h"
 #endif
@@ -410,7 +411,7 @@ bool RivenConsole::Cmd_ChangeCard(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_CurCard(int argc, const char **argv) {
-	debugPrintf("Current Card: %d\n", _vm->getCurCard());
+	debugPrintf("Current Card: %d\n", _vm->getCurCard()->getId());
 
 	return true;
 }
@@ -457,7 +458,7 @@ bool RivenConsole::Cmd_PlaySLST(int argc, const char **argv) {
 	_vm->_sound->stopSound();
 	_vm->_sound->stopAllSLST();
 
-	uint16 card = (argc == 3) ? (uint16)atoi(argv[2]) : _vm->getCurCard();
+	uint16 card = (argc == 3) ? (uint16)atoi(argv[2]) : _vm->getCurCard()->getId();
 
 	_vm->_sound->playSLST((uint16)atoi(argv[1]), card);
 	return false;
@@ -511,7 +512,7 @@ bool RivenConsole::Cmd_ChangeStack(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_Hotspots(int argc, const char **argv) {
-	debugPrintf("Current card (%d) has %d hotspots:\n", _vm->getCurCard(), _vm->getHotspotCount());
+	debugPrintf("Current card (%d) has %d hotspots:\n", _vm->getCurCard()->getId(), _vm->getHotspotCount());
 
 	for (uint16 i = 0; i < _vm->getHotspotCount(); i++) {
 		debugPrintf("Hotspot %d, index %d, BLST ID %d (", i, _vm->_hotspots[i].index, _vm->_hotspots[i].blstID);
@@ -671,7 +672,7 @@ bool RivenConsole::Cmd_ListZipCards(int argc, const char **argv) {
 
 bool RivenConsole::Cmd_GetRMAP(int argc, const char **argv) {
 	uint32 rmapCode = _vm->getCurCardRMAP();
-	debugPrintf("RMAP for %s %d = %08x\n", _vm->getStackName(_vm->getCurStack()).c_str(), _vm->getCurCard(), rmapCode);
+	debugPrintf("RMAP for %s %d = %08x\n", _vm->getStackName(_vm->getCurStack()).c_str(), _vm->getCurCard()->getId(), rmapCode);
 	return true;
 }
 

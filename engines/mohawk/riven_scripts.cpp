@@ -22,6 +22,7 @@
 
 #include "mohawk/cursors.h"
 #include "mohawk/riven.h"
+#include "mohawk/riven_card.h"
 #include "mohawk/riven_external.h"
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_scripts.h"
@@ -552,19 +553,19 @@ void RivenSimpleCommand::activateSLST(uint16 op, uint16 argc, uint16 *argv) {
 	if (_vm->getCurStack() == kStackTspit && _vm->getCurCardRMAP() == 0x6e9a && argv[0] == 2)
 		return;
 
-	_vm->_sound->playSLST(argv[0], _vm->getCurCard());
+	_vm->_sound->playSLST(argv[0], _vm->getCurCard()->getId());
 	_vm->_activatedSLST = true;
 }
 
 // Command 41: activate MLST record and play
 void RivenSimpleCommand::activateMLSTAndPlay(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_video->activateMLST(argv[0], _vm->getCurCard());
+	_vm->_video->activateMLST(argv[0], _vm->getCurCard()->getId());
 	_vm->_video->playMovieRiven(argv[0]);
 }
 
 // Command 43: activate BLST record (card hotspot enabling lists)
 void RivenSimpleCommand::activateBLST(uint16 op, uint16 argc, uint16 *argv) {
-	Common::SeekableReadStream* blst = _vm->getResource(ID_BLST, _vm->getCurCard());
+	Common::SeekableReadStream* blst = _vm->getResource(ID_BLST, _vm->getCurCard()->getId());
 	uint16 recordCount = blst->readUint16BE();
 
 	for (uint16 i = 0; i < recordCount; i++) {
@@ -586,7 +587,7 @@ void RivenSimpleCommand::activateBLST(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 44: activate FLST record (information on which SFXE resource this card should use)
 void RivenSimpleCommand::activateFLST(uint16 op, uint16 argc, uint16 *argv) {
-	Common::SeekableReadStream* flst = _vm->getResource(ID_FLST, _vm->getCurCard());
+	Common::SeekableReadStream* flst = _vm->getResource(ID_FLST, _vm->getCurCard()->getId());
 	uint16 recordCount = flst->readUint16BE();
 
 	for (uint16 i = 0; i < recordCount; i++) {
@@ -619,7 +620,7 @@ void RivenSimpleCommand::zipMode(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 46: activate MLST record (movie lists)
 void RivenSimpleCommand::activateMLST(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_video->activateMLST(argv[0], _vm->getCurCard());
+	_vm->_video->activateMLST(argv[0], _vm->getCurCard()->getId());
 }
 
 void RivenSimpleCommand::dump(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs) {
