@@ -31,6 +31,7 @@
 #include "mohawk/installer_archive.h"
 #include "mohawk/resource.h"
 #include "mohawk/riven.h"
+#include "mohawk/riven_card.h"
 #include "mohawk/riven_external.h"
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_saveload.h"
@@ -51,7 +52,6 @@ Common::Rect *g_demoExitRect;
 
 MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {
 	_showHotspots = false;
-	_cardData.hasData = false;
 	_gameOver = false;
 	_activatedSLST = false;
 	_ignoreNextMouseUp = false;
@@ -67,6 +67,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_saveLoad = nullptr;
 	_optionsDialog = nullptr;
 	_curCard = 0;
+	_card = nullptr;
 	_hotspotCount = 0;
 	_curHotspot = -1;
 	removeTimer();
@@ -94,6 +95,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 }
 
 MohawkEngine_Riven::~MohawkEngine_Riven() {
+	delete _card;
 	delete _sound;
 	delete _gfx;
 	delete _console;
@@ -392,10 +394,12 @@ void MohawkEngine_Riven::changeToCard(uint16 dest) {
 			}
 	}
 
-	if (_cardData.hasData)
-		runCardScript(kCardLeaveScript);
+	if (_card)
+		_card->runScript(kCardLeaveScript);
 
-	loadCard(_curCard);
+	delete _card;
+	_card = new RivenCard(this, dest);
+
 	refreshCard(); // Handles hotspots and scripts
 }
 
@@ -412,9 +416,10 @@ void MohawkEngine_Riven::refreshCard() {
 	_gfx->drawPLST(1);
 	_activatedSLST = false;
 
-	runCardScript(kCardLoadScript);
+	_card->runScript(kCardLoadScript);
 	_gfx->updateScreen();
-	runCardScript(kCardOpenScript);
+	_card->runScript(kCardOpenScript);
+	_card->open();
 
 	// Activate the first sound list if none have been activated
 	if (!_activatedSLST)
@@ -429,30 +434,6 @@ void MohawkEngine_Riven::refreshCard() {
 
 	// Finally, install any hardcoded timer
 	installCardTimer();
-}
-
-void MohawkEngine_Riven::loadCard(uint16 id) {
-	// NOTE: The card scripts are cleared by the RivenScriptManager automatically.
-
-	Common::SeekableReadStream* inStream = getResource(ID_CARD, id);
-
-	_cardData.name = inStream->readSint16BE();
-	_cardData.zipModePlace = inStream->readUint16BE();
-	_cardData.scripts = _scriptMan->readScripts(inStream);
-	_cardData.hasData = true;
-
-	delete inStream;
-
-	if (_cardData.zipModePlace) {
-		Common::String cardName = getName(CardNames, _cardData.name);
-		if (cardName.empty())
-			return;
-		ZipMode zip;
-		zip.name = cardName;
-		zip.id = id;
-		if (!(Common::find(_zipModeData.begin(), _zipModeData.end(), zip) != _zipModeData.end()))
-			_zipModeData.push_back(zip);
-	}
 }
 
 void MohawkEngine_Riven::loadHotspots(uint16 id) {
@@ -691,16 +672,6 @@ uint32 MohawkEngine_Riven::getCurCardRMAP() {
 	uint32 rmapCode = rmapStream->readUint32BE();
 	delete rmapStream;
 	return rmapCode;
-}
-
-void MohawkEngine_Riven::runCardScript(uint16 scriptType) {
-	assert(_cardData.hasData);
-	for (uint16 i = 0; i < _cardData.scripts.size(); i++)
-		if (_cardData.scripts[i].type == scriptType) {
-			RivenScriptPtr script = _cardData.scripts[i].script;
-			_scriptMan->runScript(script, false);
-			break;
-		}
 }
 
 void MohawkEngine_Riven::runHotspotScript(uint16 hotspot, uint16 scriptType) {
@@ -1020,6 +991,21 @@ void MohawkEngine_Riven::checkSunnerAlertClick() {
 		return;
 
 	sunners = 1;
+}
+
+void MohawkEngine_Riven::addZipVisitedCard(uint16 cardId, uint16 cardNameId) {
+	Common::String cardName = getName(CardNames, cardNameId);
+	if (cardName.empty())
+		return;
+	ZipMode zip;
+	zip.name = cardName;
+	zip.id = cardId;
+	if (!(Common::find(_zipModeData.begin(), _zipModeData.end(), zip) != _zipModeData.end()))
+		_zipModeData.push_back(zip);
+}
+
+void MohawkEngine_Riven::runUpdateScreenScript() {
+	_card->runScript(kCardUpdateScript);
 }
 
 bool ZipMode::operator== (const ZipMode &z) const {
