@@ -657,7 +657,7 @@ void Score::loadFontMap(Common::SeekableSubReadStreamEndian &stream) {
 		}
 
 		_fontMap[id] = font;
-		debug(3, "ID %d Font %s", id, font.c_str());
+		debug(3, "Fontmap. ID %d Font %s", id, font.c_str());
 		currentRawPosition = stream.pos();
 		stream.seek(positionInfo);
 	}
@@ -1435,7 +1435,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID) {
 	const Graphics::Font *font = FontMan.getFontByName(_vm->_currentScore->_fontMap[textCast->fontId]);
 
 	if (!font) {
-		error("Cannot load font %s", _vm->_currentScore->_fontMap[textCast->fontId].c_str());
+		error("Cannot load font '%s', id %d", _vm->_currentScore->_fontMap[textCast->fontId].c_str(), textCast->fontId);
 	}
 
 	font->drawString(&surface, text, x, y, width, 0);
