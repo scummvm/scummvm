@@ -278,7 +278,7 @@ public:
 	 * Set up a stream for write access
 	 */
 	virtual void open(Common::OutSaveFile *stream) {
-		SimpleFile::open(Common::wrapCompressedWriteStream(stream));
+		SimpleFile::open(new Common::OutSaveFile(Common::wrapCompressedWriteStream(stream)));
 	}
 };
 
