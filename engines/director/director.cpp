@@ -36,6 +36,7 @@
 #include "engines/util.h"
 
 #include "graphics/surface.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
 #include "director/dib.h"
@@ -64,6 +65,8 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_macBinary = nullptr;
 
 	_movies = nullptr;
+
+	_wm = nullptr;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
@@ -96,6 +99,8 @@ Common::Error DirectorEngine::run() {
 
 	_macBinary = nullptr;
 	_soundManager = nullptr;
+
+	_wm = new Graphics::MacWindowManager;
 
 	_lingo = new Lingo(this);
 	_soundManager = new DirectorSound();

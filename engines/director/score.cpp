@@ -38,6 +38,7 @@
 #include "common/events.h"
 #include "engines/util.h"
 #include "graphics/managed_surface.h"
+#include "graphics/macgui/macwindowmanager.h"
 #include "image/bmp.h"
 #include "graphics/fontman.h"
 #include "graphics/fonts/bdf.h"
@@ -111,7 +112,6 @@ static byte defaultPalette[768] = {
 	255, 255, 102, 255, 255, 153, 255, 255, 204, 255, 255, 255 };
 
 Score::Score(DirectorEngine *vm) {
-	loadMacFonts();
 	_vm = vm;
 	_surface = new Graphics::ManagedSurface;
 	_trailSurface = new Graphics::ManagedSurface;
@@ -661,47 +661,6 @@ void Score::loadFontMap(Common::SeekableSubReadStreamEndian &stream) {
 		currentRawPosition = stream.pos();
 		stream.seek(positionInfo);
 	}
-}
-
-void Score::loadMacFonts() {
-	//Copy from Wage
-	Common::Archive *dat;
-
-	dat = Common::makeZipArchive("classicmacfonts.dat");
-
-	if (!dat) {
-		warning("Could not find classicmacfonts.dat. Falling back to built-in fonts");
-		return;
-	}
-
-	Common::ArchiveMemberList list;
-	dat->listMembers(list);
-
-	for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it) {
-		Common::SeekableReadStream *stream = dat->createReadStreamForMember((*it)->getName());
-
-		Graphics::BdfFont *font = Graphics::BdfFont::loadFont(*stream);
-
-		delete stream;
-
-		Common::String fontName = (*it)->getName();
-
-		// Trim the .bdf extension
-		for (int i = fontName.size() - 1; i >= 0; --i) {
-			if (fontName[i] == '.') {
-				while ((uint)i < fontName.size()) {
-					fontName.deleteLastChar();
-				}
-				break;
-			}
-		}
-
-		FontMan.assignFontToName(fontName, font);
-
-		debug(" %s", fontName.c_str());
-	}
-
-	delete dat;
 }
 
 BitmapCast::BitmapCast(Common::SeekableSubReadStreamEndian &stream) {
@@ -1432,11 +1391,16 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID) {
 	int height = _sprites[spriteID]->_height;
 	int width = _sprites[spriteID]->_width;
 
-	const Graphics::Font *font = FontMan.getFontByName(_vm->_currentScore->_fontMap[textCast->fontId]);
+	const char *fontName;
 
-	if (!font) {
-		error("Cannot load font '%s', id %d", _vm->_currentScore->_fontMap[textCast->fontId].c_str(), textCast->fontId);
+	if (_vm->_currentScore->_fontMap.contains(textCast->fontId)) {
+		fontName = _vm->_currentScore->_fontMap[textCast->fontId].c_str();
+	} else if ((fontName = _vm->_wm->getFontName(textCast->fontId)) == NULL) {
+		warning("Unknown font id %d, falling back to default", textCast->fontId);
+		fontName = _vm->_wm->getFontName(0);
 	}
+
+	const Graphics::Font *font = _vm->_wm->getFont(fontName, Graphics::FontManager::kBigGUIFont);
 
 	font->drawString(&surface, text, x, y, width, 0);
 

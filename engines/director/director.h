@@ -36,6 +36,10 @@ namespace Common {
 class MacResManager;
 }
 
+namespace Graphics {
+class MacWindowManager;
+}
+
 namespace Director {
 
 enum DirectorGameID {
@@ -79,6 +83,7 @@ public:
 	Score *_currentScore;
 
 	Common::RandomSource _rnd;
+	Graphics::MacWindowManager *_wm;
 
 protected:
 	virtual Common::Error run();
