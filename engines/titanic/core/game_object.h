@@ -424,14 +424,6 @@ protected:
 	 */
 	void petUnlockInput();
 
-	void setState1C(bool flag);
-	void stateInc14();
-	int stateGet14() const;
-	void stateSet24();
-	int stateGet24() const;
-	void stateInc38();
-	int stateGet38() const;
-
 	/**
 	 * Flag to quit the game
 	 */
@@ -847,7 +839,7 @@ public:
 	/**
 	 * Gets a dial region for a given NPC
 	 */
-	int talkGetDIalRegion(const CString &name, int dialNum);
+	int talkGetDialRegion(const CString &name, int dialNum);
 
 	/*--- CVideoSurface Methods ---*/
 
@@ -861,6 +853,26 @@ public:
 	 * playing ranges
 	 */
 	void movieEvent();
+
+	/*--- CGameState Methods ---*/
+
+	void setState1C(bool flag);
+	void stateInc14();
+	int stateGet14() const;
+	void stateSet24();
+	int stateGet24() const;
+	void stateInc38();
+	int stateGet38() const;
+
+	/**
+	 * Gets the game state node changed counter
+	 */
+	uint getNodeChangedCtr() const;
+
+	/**
+	 * Gets the game state node enter ticks
+	 */
+	uint getNodeEnterTicks() const;
 };
 
 } // End of namespace Titanic

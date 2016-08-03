@@ -1493,7 +1493,7 @@ void CGameObject::talkSetDialRegion(const CString &name, int dialNum, int region
 	}
 }
 
-int CGameObject::talkGetDIalRegion(const CString &name, int dialNum) {
+int CGameObject::talkGetDialRegion(const CString &name, int dialNum) {
 	CGameManager *gameManager = getGameManager();
 	if (gameManager) {
 		CTrueTalkManager *talkManager = gameManager->getTalkManager();
@@ -1506,5 +1506,16 @@ int CGameObject::talkGetDIalRegion(const CString &name, int dialNum) {
 
 	return 0;
 }
+
+/*------------------------------------------------------------------------*/
+
+uint CGameObject::getNodeChangedCtr() const {
+	return getGameManager()->_gameState.getNodeChangedCtr();
+}
+
+uint CGameObject::getNodeEnterTicks() const {
+	return getGameManager()->_gameState.getNodeEnterTicks();
+}
+
 
 } // End of namespace Titanic
