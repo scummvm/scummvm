@@ -22,6 +22,7 @@
 
 #include "mohawk/resource.h"
 #include "mohawk/riven.h"
+#include "mohawk/riven_card.h"
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_sound.h"
 
@@ -82,7 +83,7 @@ void RivenGraphics::copyImageToScreen(uint16 image, uint32 left, uint32 top, uin
 }
 
 void RivenGraphics::drawPLST(uint16 x) {
-	Common::SeekableReadStream* plst = _vm->getResource(ID_PLST, _vm->getCurCard());
+	Common::SeekableReadStream* plst = _vm->getResource(ID_PLST, _vm->getCurCard()->getId());
 	uint16 recordCount = plst->readUint16BE();
 
 	for (uint16 i = 0; i < recordCount; i++) {

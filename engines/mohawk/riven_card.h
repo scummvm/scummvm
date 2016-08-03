@@ -38,6 +38,8 @@ public:
 	void initializeZipMode();
 	void runScript(uint16 scriptType);
 
+	uint16 getId() const;
+
 private:
 	void loadCardResource(uint16 id);
 

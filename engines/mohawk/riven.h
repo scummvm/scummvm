@@ -144,7 +144,6 @@ private:
 	InstallerArchive _installerArchive;
 
 	// Stack/Card-related functions and variables
-	uint16 _curCard;
 	uint16 _curStack;
 	void handleEvents();
 
@@ -176,7 +175,7 @@ public:
 	Common::String getName(uint16 nameResource, uint16 nameID);
 	Common::String getStackName(uint16 stack) const;
 	void runUpdateScreenScript();
-	uint16 getCurCard() const { return _curCard; }
+	RivenCard *getCurCard() const { return _card; }
 	uint16 getCurStack() const { return _curStack; }
 	uint16 matchRMAPToCard(uint32);
 	uint32 getCurCardRMAP();

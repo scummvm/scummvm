@@ -66,4 +66,8 @@ void RivenCard::runScript(uint16 scriptType) {
 		}
 }
 
+uint16 RivenCard::getId() const {
+	return _id;
+}
+
 } // End of namespace Mohawk

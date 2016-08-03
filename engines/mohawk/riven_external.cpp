@@ -22,6 +22,7 @@
 
 #include "mohawk/cursors.h"
 #include "mohawk/riven.h"
+#include "mohawk/riven_card.h"
 #include "mohawk/riven_external.h"
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_sound.h"
@@ -770,11 +771,11 @@ void RivenExternal::xblabbooknextpage(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xsoundplug(uint16 argc, uint16 *argv) {
 	if (_vm->_vars["bheat"] != 0)
-		_vm->_sound->playSLST(1, _vm->getCurCard());
+		_vm->_sound->playSLST(1, _vm->getCurCard()->getId());
 	else if (_vm->_vars["bcratergg"] != 0)
-		_vm->_sound->playSLST(2, _vm->getCurCard());
+		_vm->_sound->playSLST(2, _vm->getCurCard()->getId());
 	else
-		_vm->_sound->playSLST(3, _vm->getCurCard());
+		_vm->_sound->playSLST(3, _vm->getCurCard()->getId());
 }
 
 void RivenExternal::xbchangeboiler(uint16 argc, uint16 *argv) {
@@ -789,60 +790,60 @@ void RivenExternal::xbchangeboiler(uint16 argc, uint16 *argv) {
 		// Water is filling/draining from the boiler
 		if (water == 0) {
 			if (platform == 1)
-				_vm->_video->activateMLST(12, _vm->getCurCard());
+				_vm->_video->activateMLST(12, _vm->getCurCard()->getId());
 			else
-				_vm->_video->activateMLST(10, _vm->getCurCard());
+				_vm->_video->activateMLST(10, _vm->getCurCard()->getId());
 		} else if (heat == 1) {
 			if (platform == 1)
-				_vm->_video->activateMLST(22, _vm->getCurCard());
+				_vm->_video->activateMLST(22, _vm->getCurCard()->getId());
 			else
-				_vm->_video->activateMLST(19, _vm->getCurCard());
+				_vm->_video->activateMLST(19, _vm->getCurCard()->getId());
 		} else {
 			if (platform == 1)
-				_vm->_video->activateMLST(16, _vm->getCurCard());
+				_vm->_video->activateMLST(16, _vm->getCurCard()->getId());
 			else
-				_vm->_video->activateMLST(13, _vm->getCurCard());
+				_vm->_video->activateMLST(13, _vm->getCurCard()->getId());
 		}
 	} else if (argv[0] == 2 && water != 0) {
 		if (heat == 1) {
 			// Turning on the heat
 			if (platform == 1)
-				_vm->_video->activateMLST(23, _vm->getCurCard());
+				_vm->_video->activateMLST(23, _vm->getCurCard()->getId());
 			else
-				_vm->_video->activateMLST(20, _vm->getCurCard());
+				_vm->_video->activateMLST(20, _vm->getCurCard()->getId());
 		} else {
 			// Turning off the heat
 			if (platform == 1)
-				_vm->_video->activateMLST(18, _vm->getCurCard());
+				_vm->_video->activateMLST(18, _vm->getCurCard()->getId());
 			else
-				_vm->_video->activateMLST(15, _vm->getCurCard());
+				_vm->_video->activateMLST(15, _vm->getCurCard()->getId());
 		}
 	} else if (argv[0] == 3) {
 		if (platform == 1) {
 			// Lowering the platform
 			if (water == 1) {
 				if (heat == 1)
-					_vm->_video->activateMLST(24, _vm->getCurCard());
+					_vm->_video->activateMLST(24, _vm->getCurCard()->getId());
 				else
-					_vm->_video->activateMLST(17, _vm->getCurCard());
+					_vm->_video->activateMLST(17, _vm->getCurCard()->getId());
 			} else
-				_vm->_video->activateMLST(11, _vm->getCurCard());
+				_vm->_video->activateMLST(11, _vm->getCurCard()->getId());
 		} else {
 			// Raising the platform
 			if (water == 1) {
 				if (heat == 1)
-					_vm->_video->activateMLST(21, _vm->getCurCard());
+					_vm->_video->activateMLST(21, _vm->getCurCard()->getId());
 				else
-					_vm->_video->activateMLST(14, _vm->getCurCard());
+					_vm->_video->activateMLST(14, _vm->getCurCard()->getId());
 			} else
-				_vm->_video->activateMLST(9, _vm->getCurCard());
+				_vm->_video->activateMLST(9, _vm->getCurCard()->getId());
 		}
 	}
 
 	if (argc > 1)
-		_vm->_sound->playSLST(argv[1], _vm->getCurCard());
+		_vm->_sound->playSLST(argv[1], _vm->getCurCard()->getId());
 	else if (argv[0] == 2)
-		_vm->_sound->playSLST(1, _vm->getCurCard());
+		_vm->_sound->playSLST(1, _vm->getCurCard()->getId());
 
 	_vm->_cursor->setCursor(kRivenHideCursor);
 	_vm->_video->playMovieBlockingRiven(11);
@@ -851,10 +852,10 @@ void RivenExternal::xbchangeboiler(uint16 argc, uint16 *argv) {
 void RivenExternal::xbupdateboiler(uint16 argc, uint16 *argv) {
 	if (_vm->_vars["bheat"] != 0) {
 		if (_vm->_vars["bblrgrt"] == 0) {
-			_vm->_video->activateMLST(8, _vm->getCurCard());
+			_vm->_video->activateMLST(8, _vm->getCurCard()->getId());
 			_vm->_video->playMovieRiven(8);
 		} else {
-			_vm->_video->activateMLST(7, _vm->getCurCard());
+			_vm->_video->activateMLST(7, _vm->getCurCard()->getId());
 			_vm->_video->playMovieRiven(7);
 		}
 	} else {
@@ -972,11 +973,11 @@ void RivenExternal::xbfreeytram(uint16 argc, uint16 *argv) {
 	}
 
 	// Activate the MLST and play the video
-	_vm->_video->activateMLST(mlstId, _vm->getCurCard());
+	_vm->_video->activateMLST(mlstId, _vm->getCurCard()->getId());
 	_vm->_video->playMovieBlockingRiven(11);
 
 	// Now play the second movie
-	_vm->_video->activateMLST(mlstId + 5, _vm->getCurCard());
+	_vm->_video->activateMLST(mlstId + 5, _vm->getCurCard()->getId());
 	_vm->_video->playMovieBlockingRiven(12);
 }
 
@@ -1381,19 +1382,19 @@ void RivenExternal::xgplaywhark(uint16 argc, uint16 *argv) {
 	// Activate the correct video based on the amount of times we've been visited
 	switch (wharkVisits) {
 	case 1:
-		_vm->_video->activateMLST(3, _vm->getCurCard());
+		_vm->_video->activateMLST(3, _vm->getCurCard()->getId());
 		break;
 	case 2:
 		// One of two random videos
-		_vm->_video->activateMLST(4 + _vm->_rnd->getRandomBit(), _vm->getCurCard());
+		_vm->_video->activateMLST(4 + _vm->_rnd->getRandomBit(), _vm->getCurCard()->getId());
 		break;
 	case 3:
 		// One of two random videos
-		_vm->_video->activateMLST(6 + _vm->_rnd->getRandomBit(), _vm->getCurCard());
+		_vm->_video->activateMLST(6 + _vm->_rnd->getRandomBit(), _vm->getCurCard()->getId());
 		break;
 	case 4:
 		// Red alert! Shields online! Brace yourself for impact!
-		_vm->_video->activateMLST(8, _vm->getCurCard());
+		_vm->_video->activateMLST(8, _vm->getCurCard()->getId());
 		break;
 	}
 
@@ -1468,7 +1469,7 @@ static void catherineViewerIdleTimer(MohawkEngine_Riven *vm) {
 		cathState = 3;
 
 	// Begin playing the new movie
-	vm->_video->activateMLST(movie, vm->getCurCard());
+	vm->_video->activateMLST(movie, vm->getCurCard()->getId());
 	VideoHandle videoHandle = vm->_video->playMovieRiven(30);
 
 	// Reset the timer
@@ -1509,7 +1510,7 @@ void RivenExternal::xglview_prisonon(uint16 argc, uint16 *argv) {
 
 	// Begin playing a movie immediately if Catherine is already in the viewer
 	if (cathMovie == 8 || (cathMovie >= 13 && cathMovie <= 16)) {
-		_vm->_video->activateMLST(cathMovie, _vm->getCurCard());
+		_vm->_video->activateMLST(cathMovie, _vm->getCurCard()->getId());
 		VideoHandle videoHandle = _vm->_video->playMovieRiven(30);
 
 		timeUntilNextMovie = videoHandle->getDuration().msecs() + _vm->_rnd->getRandomNumber(60) * 1000;
@@ -2111,7 +2112,7 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 					_vm->_gfx->drawPLST(3);                             // Black out the screen
 					_vm->_gfx->updateScreen();                          // Update the screen
 					_vm->_sound->playSound(0);                          // Play the link sound
-					_vm->_video->activateMLST(7, _vm->getCurCard());    // Activate Gehn Link Video
+					_vm->_video->activateMLST(7, _vm->getCurCard()->getId());    // Activate Gehn Link Video
 					_vm->_video->playMovieBlockingRiven(1);             // Play Gehn Link Video
 					_vm->_vars["agehn"] = 4;                            // Set Gehn to the trapped state
 					_vm->_vars["atrapbook"] = 1;                        // We've got the trap book again
@@ -2252,7 +2253,7 @@ void RivenExternal::xgwatch(uint16 argc, uint16 *argv) {
 	}
 
 	// Now play the video for the watch
-	_vm->_video->activateMLST(1, _vm->getCurCard());
+	_vm->_video->activateMLST(1, _vm->getCurCard()->getId());
 	_vm->_video->playMovieBlockingRiven(1);
 
 	// And, finally, refresh
@@ -2336,7 +2337,7 @@ void RivenExternal::xrhideinventory(uint16 argc, uint16 *argv) {
 static void rebelPrisonWindowTimer(MohawkEngine_Riven *vm) {
 	// Randomize a video out in the middle of Tay
 	uint16 movie = vm->_rnd->getRandomNumberRng(2, 13);
-	vm->_video->activateMLST(movie, vm->getCurCard());
+	vm->_video->activateMLST(movie, vm->getCurCard()->getId());
 	VideoHandle handle = vm->_video->playMovieRiven(movie);
 
 	// Ensure the next video starts after this one ends
@@ -2404,25 +2405,25 @@ void RivenExternal::xtexterior300_telescopedown(uint16 argc, uint16 *argv) {
 			if (_vm->_vars["pcage"] == 2) {
 				// The best ending: Catherine is free, Gehn is trapped, Atrus comes to rescue you.
 				// And now we fall back to Earth... all the way...
-				_vm->_video->activateMLST(8, _vm->getCurCard());
+				_vm->_video->activateMLST(8, _vm->getCurCard()->getId());
 				runEndGame(8, 5000);
 			} else if (_vm->_vars["agehn"] == 4) {
 				// The ok ending: Catherine is still trapped, Gehn is trapped, Atrus comes to rescue you.
 				// Nice going! Catherine and the islanders are all dead now! Just go back to your home...
-				_vm->_video->activateMLST(9, _vm->getCurCard());
+				_vm->_video->activateMLST(9, _vm->getCurCard()->getId());
 				runEndGame(9, 5000);
 			} else if (_vm->_vars["atrapbook"] == 1) {
 				// The bad ending: Catherine is trapped, Gehn is free, Atrus gets shot by Gehn,
 				// And then you get shot by Cho. Nice going! Catherine and the islanders are dead
 				// and you have just set Gehn free from Riven, not to mention you're dead.
-				_vm->_video->activateMLST(10, _vm->getCurCard());
+				_vm->_video->activateMLST(10, _vm->getCurCard()->getId());
 				runEndGame(10, 5000);
 			} else {
 				// The impossible ending: You don't have Catherine's journal and yet you were somehow
 				// able to open the hatch on the telescope. The game provides an ending for those who
 				// cheat, load a saved game with the combo, or just guess the telescope combo. Atrus
 				// doesn't come and you just fall into the fissure.
-				_vm->_video->activateMLST(11, _vm->getCurCard());
+				_vm->_video->activateMLST(11, _vm->getCurCard()->getId());
 				runEndGame(11, 5000);
 			}
 		} else {

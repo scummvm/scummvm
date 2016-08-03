@@ -66,7 +66,6 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_console = nullptr;
 	_saveLoad = nullptr;
 	_optionsDialog = nullptr;
-	_curCard = 0;
 	_card = nullptr;
 	_hotspotCount = 0;
 	_curHotspot = -1;
@@ -379,8 +378,7 @@ static const RivenSpecialChange rivenSpecialChange[] = {
 };
 
 void MohawkEngine_Riven::changeToCard(uint16 dest) {
-	_curCard = dest;
-	debug (1, "Changing to card %d", _curCard);
+	debug (1, "Changing to card %d", dest);
 
 	// Clear the graphics cache (images typically aren't used
 	// on different cards).
@@ -388,9 +386,9 @@ void MohawkEngine_Riven::changeToCard(uint16 dest) {
 
 	if (!(getFeatures() & GF_DEMO)) {
 		for (byte i = 0; i < 13; i++)
-			if (_curStack == rivenSpecialChange[i].startStack && _curCard == matchRMAPToCard(rivenSpecialChange[i].startCardRMAP)) {
+			if (_curStack == rivenSpecialChange[i].startStack && dest == matchRMAPToCard(rivenSpecialChange[i].startCardRMAP)) {
 				changeToStack(rivenSpecialChange[i].targetStack);
-				_curCard = matchRMAPToCard(rivenSpecialChange[i].targetCardRMAP);
+				dest = matchRMAPToCard(rivenSpecialChange[i].targetCardRMAP);
 			}
 	}
 
@@ -407,7 +405,7 @@ void MohawkEngine_Riven::refreshCard() {
 	// Clear any timer still floating around
 	removeTimer();
 
-	loadHotspots(_curCard);
+	loadHotspots(_card->getId());
 
 	_gfx->_updatesEnabled = true;
 	_gfx->clearWaterEffects();
@@ -423,7 +421,7 @@ void MohawkEngine_Riven::refreshCard() {
 
 	// Activate the first sound list if none have been activated
 	if (!_activatedSLST)
-		_sound->playSLST(1, _curCard);
+		_sound->playSLST(1, _card->getId());
 
 	if (_showHotspots)
 		for (uint16 i = 0; i < _hotspotCount; i++)
@@ -462,7 +460,7 @@ void MohawkEngine_Riven::loadHotspots(uint16 id) {
 		// Known weird hotspots:
 		// - tspit 371 (DVD: 377), hotspot 4
 		if (left >= right || top >= bottom) {
-			warning("%s %d hotspot %d is invalid: (%d, %d, %d, %d)", getStackName(_curStack).c_str(), _curCard, i, left, top, right, bottom);
+			warning("%s %d hotspot %d is invalid: (%d, %d, %d, %d)", getStackName(_curStack).c_str(), id, i, left, top, right, bottom);
 			left = top = right = bottom = 0;
 			_hotspots[i].enabled = 0;
 		}
@@ -554,10 +552,10 @@ void MohawkEngine_Riven::checkInventoryClick() {
 	// In the demo, check if we've clicked the exit button
 	if (getFeatures() & GF_DEMO) {
 		if (g_demoExitRect->contains(mousePos)) {
-			if (_curStack == kStackAspit && _curCard == 1) {
+			if (_curStack == kStackAspit && _card->getId() == 1) {
 				// From the main menu, go to the "quit" screen
 				changeToCard(12);
-			} else if (_curStack == kStackAspit && _curCard == 12) {
+			} else if (_curStack == kStackAspit && _card->getId() == 12) {
 				// From the "quit" screen, just quit
 				_gameOver = true;
 			} else {
@@ -576,7 +574,7 @@ void MohawkEngine_Riven::checkInventoryClick() {
 
 	// Set the return stack/card id's.
 	_vars["returnstackid"] = _curStack;
-	_vars["returncardid"] = _curCard;
+	_vars["returncardid"] = _card->getId();
 
 	// See RivenGraphics::showInventory() for an explanation
 	// of the variables' meanings.
@@ -668,7 +666,7 @@ uint16 MohawkEngine_Riven::matchRMAPToCard(uint32 rmapCode) {
 
 uint32 MohawkEngine_Riven::getCurCardRMAP() {
 	Common::SeekableReadStream *rmapStream = getResource(ID_RMAP, 1);
-	rmapStream->seek(_curCard * 4);
+	rmapStream->seek(_card->getId() * 4);
 	uint32 rmapCode = rmapStream->readUint32BE();
 	delete rmapStream;
 	return rmapCode;
@@ -785,7 +783,7 @@ static void catherineIdleTimer(MohawkEngine_Riven *vm) {
 		cathState = 1;
 
 	// Play the movie, blocking
-	vm->_video->activateMLST(movie, vm->getCurCard());
+	vm->_video->activateMLST(movie, vm->getCurCard()->getId());
 	vm->_cursor->hideCursor();
 	vm->_video->playMovieBlockingRiven(movie);
 	vm->_cursor->showCursor();
@@ -919,7 +917,7 @@ static void sunnersBeachTimer(MohawkEngine_Riven *vm) {
 			// Unlike the other cards' scripts which automatically
 			// activate the MLST, we have to set it manually here.
 			uint16 mlstID = vm->_rnd->getRandomNumberRng(3, 8);
-			vm->_video->activateMLST(mlstID, vm->getCurCard());
+			vm->_video->activateMLST(mlstID, vm->getCurCard()->getId());
 			VideoHandle handle = vm->_video->playMovieRiven(mlstID);
 
 			timerTime = handle->getDuration().msecs() + vm->_rnd->getRandomNumberRng(1, 30) * 1000;
