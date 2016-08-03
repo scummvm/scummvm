@@ -133,7 +133,7 @@ void OSMovie::playClip(const Point &drawPos, uint startFrame, uint endFrame) {
 		drawPos.y + (heightLess ? CLIP_HEIGHT_REDUCED : CLIP_HEIGHT)
 	);
 
-	uint timePerFrame = 1000 / _aviSurface._frameRate;
+	uint timePerFrame = (uint)(1000.0 / _aviSurface._frameRate);
 
 	for (; endFrame >= startFrame; ++startFrame) {
 		// Set the frame

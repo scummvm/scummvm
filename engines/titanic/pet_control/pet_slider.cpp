@@ -94,10 +94,10 @@ double CPetSlider::getOffsetPixels() const {
 
 void CPetSlider::setSliderOffset(double offset) {
 	if (_orientation & ORIENTATION_HORIZONTAL)
-		_sliderOffset = offset * (_slidingRect.right - _slidingRect.left);
+		_sliderOffset = (int)(offset * (_slidingRect.right - _slidingRect.left));
 
 	if (_orientation & ORIENTATION_VERTICAL)
-		_sliderOffset = offset * (_slidingRect.bottom - _slidingRect.top);
+		_sliderOffset = (int)(offset * (_slidingRect.bottom - _slidingRect.top));
 }
 
 void CPetSlider::setOffsetPixels(int offset) {

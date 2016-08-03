@@ -222,13 +222,13 @@ void CTrueTalkNPC::startTalker(CViewItem *view) {
 		gameManager->getTalkManager()->start4(this, view);
 }
 
-void CTrueTalkNPC::performAction(bool startTalking, CViewItem *view_) {
+void CTrueTalkNPC::performAction(bool startTalkingFlag, CViewItem *destView) {
 	CPetControl *pet = getPetControl();
 	if (pet)
 		pet->resetActiveNPC();
 
-	if (startTalking)
-		startTalker(view_);
+	if (startTalkingFlag)
+		startTalker(destView);
 
 	if (pet)
 		pet->convResetNPC();
