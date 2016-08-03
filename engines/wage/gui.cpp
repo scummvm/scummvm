@@ -49,19 +49,19 @@
 #include "common/system.h"
 #include "graphics/cursorman.h"
 #include "graphics/primitives.h"
+#include "graphics/macgui/macwindowmanager.h"
+#include "graphics/macgui/macwindow.h"
+#include "graphics/macgui/macmenu.h"
 
 #include "wage/wage.h"
 #include "wage/design.h"
 #include "wage/entities.h"
 #include "wage/gui.h"
-#include "wage/macwindow.h"
-#include "wage/macwindowmanager.h"
-#include "wage/macmenu.h"
 #include "wage/world.h"
 
 namespace Wage {
 
-static const MenuData menuSubItems[] = {
+static const Graphics::MenuData menuSubItems[] = {
 	{ kMenuHighLevel, "File",	0, 0, false },
 	{ kMenuHighLevel, "Edit",	0, 0, false },
 	{ kMenuFile, "New",			kMenuActionNew, 0, false },
@@ -168,6 +168,9 @@ Gui::Gui(WageEngine *engine) {
 
 	_consoleWindow = _wm.addWindow(true, true, true);
 	_consoleWindow->setCallback(consoleWindowCallback, this);
+
+	loadBorders();
+
 }
 
 Gui::~Gui() {
@@ -360,6 +363,32 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 	default:
 		warning("Unknown action: %d", action);
 
+	}
+}
+
+void Gui::loadBorders() {
+	// Do not load borders for now
+	//loadBorder(_sceneWindow, "border_inac.bmp", false);
+	//loadBorder(_sceneWindow, "border_act.bmp", true);
+}
+
+void Gui::loadBorder(Graphics::MacWindow *target, Common::String filename, bool active) {
+	Common::File borderfile;
+
+	if (!borderfile.open(filename)) {
+		debug(1, "Cannot open border file");
+		return;
+	}
+
+	Image::BitmapDecoder bmpDecoder;
+	Common::SeekableReadStream *stream = borderfile.readStream(borderfile.size());
+	if (stream) {
+
+		target->loadBorder(*stream, active, 10, 10, 1, 1);
+
+		borderfile.close();
+
+		delete stream;
 	}
 }
 

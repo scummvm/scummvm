@@ -50,12 +50,11 @@
 
 #include "graphics/primitives.h"
 #include "graphics/font.h"
+#include "graphics/macgui/macwindowmanager.h"
+#include "graphics/macgui/macwindow.h"
+#include "graphics/macgui/macmenu.h"
 
-#include "wage/macwindowmanager.h"
-#include "wage/macwindow.h"
-#include "wage/macmenu.h"
-
-namespace Wage {
+namespace Graphics {
 
 enum {
 	kMenuHeight = 20,
@@ -66,6 +65,25 @@ enum {
 	kMenuDropdownItemHeight = 16,
 	kMenuItemHeight = 20
 };
+
+enum {
+	kMenuHighLevel = -1
+};
+
+enum {
+	kFontStyleBold = 1,
+	kFontStyleItalic = 2,
+	kFontStyleUnderline = 4,
+	kFontStyleOutline = 8,
+	kFontStyleShadow = 16,
+	kFontStyleCondensed = 32,
+	kFontStyleExtended = 64
+};
+
+enum {
+	kMenuActionCommand
+};
+
 
 struct MenuSubItem {
 	Common::String text;
@@ -93,7 +111,7 @@ Menu::Menu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 		: BaseMacWindow(id, false, wm) {
 	_font = getMenuFont();
 
-	_screen.create(bounds.width(), bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
+	_screen.create(bounds.width(), bounds.height(), PixelFormat::createFormatCLUT8());
 
 	_bbox.left = 0;
 	_bbox.top = 0;
@@ -107,7 +125,7 @@ Menu::Menu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 	_ccallback = NULL;
 	_cdata = NULL;
 
-	_tempSurface.create(_screen.w, _font->getFontHeight(), Graphics::PixelFormat::createFormatCLUT8());
+	_tempSurface.create(_screen.w, _font->getFontHeight(), PixelFormat::createFormatCLUT8());
 }
 
 Menu::~Menu() {
@@ -250,8 +268,8 @@ void Menu::createSubMenuFromString(int id, const char *str) {
 	calcMenuBounds(menu);
 }
 
-const Graphics::Font *Menu::getMenuFont() {
-	return _wm->getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
+const Font *Menu::getMenuFont() {
+	return _wm->getFont("Chicago-12", FontManager::kBigGUIFont);
 }
 
 const char *Menu::getAcceleratorString(MenuSubItem *item, const char *prefix) {
@@ -299,17 +317,17 @@ void Menu::calcMenuBounds(MenuItem *menu) {
 }
 
 static void drawPixelPlain(int x, int y, int color, void *data) {
-	Graphics::ManagedSurface *surface = (Graphics::ManagedSurface *)data;
+	ManagedSurface *surface = (ManagedSurface *)data;
 
 	if (x >= 0 && x < surface->w && y >= 0 && y < surface->h)
 		*((byte *)surface->getBasePtr(x, y)) = (byte)color;
 }
 
-static void drawFilledRoundRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int arc, int color) {
-	Graphics::drawRoundRect(rect, arc, color, true, drawPixelPlain, surface);
+static void drawFilledRoundRect(ManagedSurface *surface, Common::Rect &rect, int arc, int color) {
+	drawRoundRect(rect, arc, color, true, drawPixelPlain, surface);
 }
 
-bool Menu::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
+bool Menu::draw(ManagedSurface *g, bool forceRedraw) {
 	Common::Rect r(_bbox);
 
 	if (!_contentIsDirty && !forceRedraw)
@@ -385,7 +403,7 @@ void Menu::renderSubmenu(MenuItem *menu) {
 		}
 
 		if (!text.empty()) {
-			Graphics::ManagedSurface *s = &_screen;
+			ManagedSurface *s = &_screen;
 			int tx = x, ty = y;
 
 			if (!menu->subitems[i]->enabled) {

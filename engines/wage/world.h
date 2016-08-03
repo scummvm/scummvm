@@ -49,9 +49,12 @@
 #define WAGE_WORLD_H
 
 #include "wage/entities.h"
-#include "wage/macwindowmanager.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 namespace Wage {
+
+// Import the enum definitions
+using Graphics::MacPatterns;
 
 class Script;
 class Sound;
@@ -89,7 +92,7 @@ public:
 	ObjArray _orderedObjs;
 	ChrArray _orderedChrs;
 	Common::Array<Sound *> _orderedSounds;
-	Patterns *_patterns;
+	Graphics::MacPatterns *_patterns;
 	Scene *_storageScene;
 	Chr *_player;
 	int _signature;

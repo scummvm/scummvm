@@ -57,12 +57,11 @@
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
 #include "graphics/primitives.h"
+#include "graphics/macgui/macwindowmanager.h"
+#include "graphics/macgui/macwindow.h"
+#include "graphics/macgui/macmenu.h"
 
-#include "wage/macwindowmanager.h"
-#include "wage/macwindow.h"
-#include "wage/macmenu.h"
-
-namespace Wage {
+namespace Graphics {
 
 static const byte palette[] = {
 	0, 0, 0,           // Black
@@ -185,13 +184,18 @@ void MacWindowManager::setActive(int id) {
 	_fullRefresh = true;
 }
 
+void MacWindowManager::removeWindow(MacWindow *target) {
+	_windowsToRemove.push_back(target);
+	_needsRemoval = true;
+}
+
 struct PlotData {
 	Graphics::ManagedSurface *surface;
-	Patterns *patterns;
+	MacPatterns *patterns;
 	uint fillType;
 	int thickness;
 
-	PlotData(Graphics::ManagedSurface *s, Patterns *p, int f, int t) :
+	PlotData(Graphics::ManagedSurface *s, MacPatterns *p, int f, int t) :
 		surface(s), patterns(p), fillType(f), thickness(t) {}
 };
 
@@ -243,6 +247,8 @@ void MacWindowManager::drawDesktop() {
 void MacWindowManager::draw() {
 	assert(_screen);
 
+	removeMarked();
+
 	if (_fullRefresh)
 		drawDesktop();
 
@@ -291,6 +297,7 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 		it--;
 		BaseMacWindow *w = *it;
 
+
 		if (w->hasAllFocus() || w->getDimensions().contains(event.mouse.x, event.mouse.y)) {
 			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)
 				setActive(w->getId());
@@ -300,6 +307,42 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 	}
 
 	return false;
+}
+
+void MacWindowManager::removeMarked() {
+	if (!_needsRemoval) return;
+
+	Common::List<BaseMacWindow *>::const_iterator it;
+	for (it = _windowsToRemove.begin(); it != _windowsToRemove.end(); it++) {
+		removeFromStack(*it);
+		removeFromWindowList(*it);
+		delete *it;
+		_activeWindow = 0;
+		_fullRefresh = true;
+	}
+	_windowsToRemove.clear();
+	_needsRemoval = false;
+}
+
+void MacWindowManager::removeFromStack(BaseMacWindow *target) {
+	Common::List<BaseMacWindow *>::iterator stackIt;
+	for (stackIt = _windowStack.begin(); stackIt != _windowStack.end(); stackIt++) {
+		if (*stackIt == target) {
+			stackIt = _windowStack.erase(stackIt);
+			stackIt--;
+		}
+	}
+}
+
+void MacWindowManager::removeFromWindowList(BaseMacWindow *target) {
+	int size = _windows.size();
+	int ndx = 0;
+	for (int i = 0; i < size; i++) {
+		if (_windows[i] == target) {
+			ndx = i;
+		}
+	}
+	_windows.remove_at(ndx);
 }
 
 //////////////////////
@@ -376,4 +419,5 @@ void MacWindowManager::popCursor() {
 	CursorMan.popCursor();
 }
 
-} // End of namespace Wage
+
+} // End of namespace Graphics

@@ -48,8 +48,9 @@
 #include "common/system.h"
 #include "common/events.h"
 
+#include "graphics/macgui/macwindowmanager.h"
+
 #include "wage/wage.h"
-#include "wage/macwindowmanager.h"
 #include "wage/design.h"
 #include "wage/gui.h"
 #include "wage/dialog.h"

@@ -47,20 +47,20 @@
 
 #include "graphics/managed_surface.h"
 #include "graphics/primitives.h"
+#include "graphics/macgui/macwindowmanager.h"
 
-#include "wage/macwindowmanager.h"
 #include "wage/design.h"
 
 namespace Wage {
 
 struct PlotData {
 	Graphics::ManagedSurface *surface;
-	Patterns *patterns;
+	Graphics::MacPatterns *patterns;
 	uint fillType;
 	int thickness;
 	Design *design;
 
-	PlotData(Graphics::ManagedSurface *s, Patterns *p, int f, int t, Design *d) :
+	PlotData(Graphics::ManagedSurface *s, Graphics::MacPatterns *p, int f, int t, Design *d) :
 		surface(s), patterns(p), fillType(f), thickness(t), design(d) {}
 };
 
@@ -85,7 +85,7 @@ Design::~Design() {
 	delete _surface;
 }
 
-void Design::paint(Graphics::ManagedSurface *surface, Patterns &patterns, int x, int y) {
+void Design::paint(Graphics::ManagedSurface *surface, Graphics::MacPatterns &patterns, int x, int y) {
 	bool needRender = false;
 
 	if (_surface == NULL) {
@@ -141,7 +141,7 @@ void Design::paint(Graphics::ManagedSurface *surface, Patterns &patterns, int x,
 	}
 }
 
-void Design::render(Patterns &patterns) {
+void Design::render(Graphics::MacPatterns &patterns) {
 	Common::MemoryReadStream in(_data, _len);
 	bool needRender = true;
 
@@ -265,7 +265,7 @@ void drawPixelPlain(int x, int y, int color, void *data) {
 }
 
 void Design::drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
-				Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
+				Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 	int16 y1 = in.readSint16BE();
 	int16 x1 = in.readSint16BE();
 	int16 y2 = in.readSint16BE();
@@ -294,7 +294,7 @@ void Design::drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 }
 
 void Design::drawRoundRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
-				Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
+				Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 	int16 y1 = in.readSint16BE();
 	int16 x1 = in.readSint16BE();
 	int16 y2 = in.readSint16BE();
@@ -320,7 +320,7 @@ void Design::drawRoundRect(Graphics::ManagedSurface *surface, Common::ReadStream
 }
 
 void Design::drawPolygon(Graphics::ManagedSurface *surface, Common::ReadStream &in,
-	Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
+	Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 
 	byte ignored = in.readSint16BE(); // ignored
 
@@ -397,7 +397,7 @@ void Design::drawPolygon(Graphics::ManagedSurface *surface, Common::ReadStream &
 }
 
 void Design::drawOval(Graphics::ManagedSurface *surface, Common::ReadStream &in,
-			Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
+			Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 	int16 y1 = in.readSint16BE();
 	int16 x1 = in.readSint16BE();
 	int16 y2 = in.readSint16BE();
@@ -501,11 +501,11 @@ void Design::drawBitmap(Graphics::ManagedSurface *surface, Common::SeekableReadS
 	tmp.free();
 }
 
-void Design::drawRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int thickness, int color, Patterns &patterns, byte fillType) {
+void Design::drawRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int thickness, int color, Graphics::MacPatterns &patterns, byte fillType) {
 	drawRect(surface, rect.left, rect.top, rect.right, rect.bottom, thickness, color, patterns, fillType);
 }
 
-void Design::drawRect(Graphics::ManagedSurface *surface, int x1, int y1, int x2, int y2, int thickness, int color, Patterns &patterns, byte fillType) {
+void Design::drawRect(Graphics::ManagedSurface *surface, int x1, int y1, int x2, int y2, int thickness, int color, Graphics::MacPatterns &patterns, byte fillType) {
 	PlotData pd(surface, &patterns, fillType, thickness, nullptr);
 
 	Graphics::drawLine(x1, y1, x2, y1, kColorBlack, drawPixel, &pd);
@@ -515,26 +515,26 @@ void Design::drawRect(Graphics::ManagedSurface *surface, int x1, int y1, int x2,
 }
 
 
-void Design::drawFilledRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int color, Patterns &patterns, byte fillType) {
+void Design::drawFilledRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int color, Graphics::MacPatterns &patterns, byte fillType) {
 	PlotData pd(surface, &patterns, fillType, 1, nullptr);
 
 	for (int y = rect.top; y <= rect.bottom; y++)
 		Graphics::drawHLine(rect.left, rect.right, y, color, drawPixel, &pd);
 }
 
-void Design::drawFilledRoundRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int arc, int color, Patterns &patterns, byte fillType) {
+void Design::drawFilledRoundRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int arc, int color, Graphics::MacPatterns &patterns, byte fillType) {
 	PlotData pd(surface, &patterns, fillType, 1, nullptr);
 
 	Graphics::drawRoundRect(rect, arc, color, true, drawPixel, &pd);
 }
 
-void Design::drawHLine(Graphics::ManagedSurface *surface, int x1, int x2, int y, int thickness, int color, Patterns &patterns, byte fillType) {
+void Design::drawHLine(Graphics::ManagedSurface *surface, int x1, int x2, int y, int thickness, int color, Graphics::MacPatterns &patterns, byte fillType) {
 	PlotData pd(surface, &patterns, fillType, thickness, nullptr);
 
 	Graphics::drawHLine(x1, x2, y, color, drawPixel, &pd);
 }
 
-void Design::drawVLine(Graphics::ManagedSurface *surface, int x, int y1, int y2, int thickness, int color, Patterns &patterns, byte fillType) {
+void Design::drawVLine(Graphics::ManagedSurface *surface, int x, int y1, int y2, int thickness, int color, Graphics::MacPatterns &patterns, byte fillType) {
 	PlotData pd(surface, &patterns, fillType, thickness, nullptr);
 
 	Graphics::drawVLine(x, y1, y2, color, drawPixel, &pd);

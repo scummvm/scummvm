@@ -48,6 +48,8 @@
 #include "graphics/transparent_surface.h"
 #include "graphics/nine_patch.h"
 
+#include "graphics/managed_surface.h"
+
 namespace Graphics {
 
 NinePatchSide::~NinePatchSide() {
@@ -201,7 +203,7 @@ bad_bitmap:
 	}
 }
 
-void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, int dh) {
+void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, int dh, byte *palette, byte numColors) {
 	/* don't draw bitmaps that are smaller than the fixed area */
 	if (dw < _h._fix || dh < _v._fix)
 		return;
@@ -223,6 +225,43 @@ void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, in
 		_cached_dh = dh;
 	}
 
+	/* Handle CLUT8 */
+	if (target.format.bytesPerPixel == 1) {
+		if (!palette)
+			warning("Trying to blit into a surface with 1bpp, you need the palette.");
+
+		Surface srf;
+		srf.create(target.w, target.h, _bmp->format);
+
+		drawRegions(srf, dx, dy, dw, dh);
+
+		//TODO: This can be further optimized by keeping the data between draws,
+		// and using a unique identifier for each palette, so that it only gets
+		// recalculated when the palette changes.
+		_cached_colors.clear();
+
+		for (uint i = 0; i < srf.w; ++i) {
+			for (uint j = 0; j < srf.h; ++j) {
+				uint32 color = *(uint32*)srf.getBasePtr(i, j);
+				if (color > 0) {
+					*((byte *)target.getBasePtr(i, j)) = closestGrayscale(color, palette, numColors);
+				}
+			}
+		}
+
+		return;
+	}
+
+	/* Else, draw regions normally */
+	drawRegions(target, dx, dy, dw, dh);
+}
+
+NinePatchBitmap::~NinePatchBitmap() {
+	if (_destroy_bmp)
+		delete _bmp;
+}
+
+void NinePatchBitmap::drawRegions(Graphics::Surface &target, int dx, int dy, int dw, int dh) {
 	/* draw each region */
 	for (uint i = 0; i < _v._m.size(); ++i) {
 		for (uint j = 0; j < _h._m.size(); ++j) {
@@ -271,9 +310,50 @@ void NinePatchBitmap::blitClip(Graphics::Surface &target, Common::Rect clip, int
 	}
 }
 
-NinePatchBitmap::~NinePatchBitmap() {
-	if (_destroy_bmp)
-		delete _bmp;
+byte NinePatchBitmap::getColorIndex(uint32 target, byte* palette) {
+	byte *pal = palette;
+	uint i = 0;
+	uint32 color = TS_RGB(pal[0], pal[1], pal[2]);
+	while (color != target) {
+		i += 3;
+		color = TS_RGB(pal[i], pal[i + 1], pal[i + 2]);
+	}
+	return (i / 3);
+}
+
+uint32 NinePatchBitmap::grayscale(uint32 color) {
+	byte r, g, b;
+	_bmp->format.colorToRGB(color, r, g, b);
+	return grayscale(r, g, b);
+}
+
+uint32 NinePatchBitmap::grayscale(byte r, byte g, byte b) {
+	return (0.29 * r + 0.58 * g + 0.11 * b) / 3;
+}
+
+static inline uint32 dist(uint32 a, uint32 b) {
+	if (a > b)
+		return (a - b);
+
+	return b - a;
+}
+
+byte NinePatchBitmap::closestGrayscale(uint32 color, byte* palette, byte paletteLength) {
+	if (!_cached_colors.contains(color)) {
+		byte target = grayscale(color);
+		byte bestNdx = 0;
+		byte bestColor = grayscale(palette[0], palette[1], palette[2]);
+		for (byte i = 1; i < paletteLength; ++i) {
+			byte current = grayscale(palette[i * 3], palette[(i * 3) + 1], palette[(i * 3) + 2]);
+			if (dist(target, bestColor) >= dist(target, current)) {
+				bestColor = current;
+				bestNdx = i;
+			}
+		}
+		_cached_colors[color] = bestNdx;
+	}
+
+	return _cached_colors[color];
 }
 
 } // end of namespace Graphics

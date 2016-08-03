@@ -45,97 +45,79 @@
  *
  */
 
-#ifndef WAGE_MACWINDOWMANAGER_H
-#define WAGE_MACWINDOWMANAGER_H
-
-#include "common/array.h"
-#include "common/list.h"
-#include "common/events.h"
-#include "common/archive.h"
-
-#include "graphics/fontman.h"
+#ifndef GRAPHICS_MACGUI_MACMENU_H
+#define GRAPHICS_MACGUI_MACMENU_H
 
 namespace Graphics {
-class ManagedSurface;
-}
 
-namespace Wage {
+struct MenuItem;
+struct MenuSubItem;
 
-enum {
-	kDesktopArc = 7
+struct MenuData {
+	int menunum;
+	const char *title;
+	int action;
+	byte shortcut;
+	bool enabled;
 };
 
-enum {
-	kColorBlack  = 0,
-	kColorGray   = 1,
-	kColorWhite  = 2,
-	kColorGreen  = 3,
-	kColorGreen2 = 4
-};
-
-enum {
-	kPatternSolid = 1,
-	kPatternStripes = 2,
-	kPatternCheckers = 3,
-	kPatternCheckers2 = 4
-};
-
-class BaseMacWindow;
-class MacWindow;
-class Menu;
-
-typedef Common::Array<byte *> Patterns;
-
-class MacWindowManager {
+class Menu : public BaseMacWindow {
 public:
-	MacWindowManager();
-	~MacWindowManager();
+	Menu(int id, const Common::Rect &bounds, MacWindowManager *wm);
+	~Menu();
 
-	void setScreen(Graphics::ManagedSurface *screen) { _screen = screen; }
-	bool hasBuiltInFonts() { return _builtInFonts; }
-	const Graphics::Font *getFont(const char *name, Graphics::FontManager::FontUsage fallback);
+	void setCommandsCallback(void (*callback)(int, Common::String &, void *), void *data) { _ccallback = callback; _cdata = data; }
 
-	MacWindow *addWindow(bool scrollable, bool resizable, bool editable);
-	Menu *addMenu();
-	void setActive(int id);
+	void addStaticMenus(const MenuData *data);
+	void calcDimensions();
 
-	void setFullRefresh(bool redraw) { _fullRefresh = true; }
+	int addMenuItem(const char *name);
+	void addMenuSubItem(int id, const char *text, int action, int style = 0, char shortcut = 0, bool enabled = true);
+	void createSubMenuFromString(int id, const char *string);
+	void clearSubMenu(int id);
 
-	void draw();
-
+	bool draw(ManagedSurface *g, bool forceRedraw = false);
 	bool processEvent(Common::Event &event);
 
-	BaseMacWindow *getWindow(int id) { return _windows[id]; }
+	void enableCommand(int menunum, int action, bool state);
+	void disableAllMenus();
 
-	Patterns &getPatterns() { return _patterns; }
-	void drawFilledRoundRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int arc, int color);
+	void setActive(bool active) { _menuActivated = active; }
+	bool hasAllFocus() { return _menuActivated; }
 
-	void pushArrowCursor();
-	void popCursor();
-
-private:
-	void drawDesktop();
-	void loadFonts();
+	Common::Rect _bbox;
 
 private:
-	Graphics::ManagedSurface *_screen;
+	ManagedSurface _screen;
+	ManagedSurface _tempSurface;
 
-	Common::List<BaseMacWindow *> _windowStack;
-	Common::Array<BaseMacWindow *> _windows;
+private:
+	const Font *getMenuFont();
+	const char *getAcceleratorString(MenuSubItem *item, const char *prefix);
+	int calculateMenuWidth(MenuItem *menu);
+	void calcMenuBounds(MenuItem *menu);
+	void renderSubmenu(MenuItem *menu);
 
-	int _lastId;
-	int _activeWindow;
+	bool keyEvent(Common::Event &event);
+	bool mouseClick(int x, int y);
+	bool mouseRelease(int x, int y);
+	bool mouseMove(int x, int y);
 
-	bool _fullRefresh;
+	bool processMenuShortCut(byte flags, uint16 ascii);
 
-	Patterns _patterns;
+	Common::Array<MenuItem *> _items;
 
-	Menu *_menu;
+	const Font *_font;
 
-	bool _builtInFonts;
-	bool _cursorIsArrow;
+	bool _menuActivated;
+
+	int _activeItem;
+	int _activeSubItem;
+
+	void (*_ccallback)(int action, Common::String &text, void *data);
+	void *_cdata;
 };
 
-} // End of namespace Wage
+} // End of namespace Graphics
 
 #endif
