@@ -116,6 +116,13 @@ public:
 	const Font *getFont(const char *name, FontManager::FontUsage fallback);
 
 	/**
+	 * Return font name from standard ID
+	 * @param id ID of the font
+	 * @return the font name or NULL if ID goes beyond the mapping
+	 */
+	const char *getFontName(int id);
+
+	/**
 	 * Create a window with the given parameters.
 	 * Note that this method allocates the necessary memory for the window.
 	 * @param scrollable True if the window has to be scrollable.

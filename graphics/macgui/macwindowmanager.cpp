@@ -408,6 +408,57 @@ const Graphics::Font *MacWindowManager::getFont(const char *name, Graphics::Font
 	return font;
 }
 
+// Source: Apple IIGS Technical Note #41, "Font Family Numbers"
+// http://apple2.boldt.ca/?page=til/tn.iigs.041
+static const char *const fontNames[] = {
+	"Chicago",	// system font
+	"Geneva",	// application font
+	"New York",
+	"Geneva",
+
+	"Monaco",
+	"Venice",
+	"London",
+	"Athens",
+
+	"San Francisco",
+	"Toronto",
+	NULL,
+	"Cairo",
+	"Los Angeles", // 12
+
+	"Zapf Dingbats",
+	"Bookman",
+	"Helvetica Narrow",
+	"Palatino",
+	NULL,
+	"Zapf Chancery",
+	NULL,
+
+	"Times", // 20
+	"Helvetica",
+	"Courier",
+	"Symbol",
+	"Taliesin", // mobile?
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL, // 30
+	NULL,
+	NULL,
+	"Avant Garde",
+	"New Century Schoolbook"
+};
+
+const char *MacWindowManager::getFontName(int id) {
+	if (id > ARRAYSIZE(fontNames))
+		return NULL;
+
+	return fontNames[id];
+}
+
 /////////////////
 // Cursor stuff
 /////////////////
