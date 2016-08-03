@@ -309,6 +309,8 @@ Common::Error MohawkEngine_Myst::run() {
 
 					_canSafelySaveLoad = true;
 					runDialog(*_optionsDialog);
+					if (_optionsDialog->getLoadSlot() >= 0)
+						loadGameState(_optionsDialog->getLoadSlot());
 					_canSafelySaveLoad = false;
 
 					if (_needsPageDrop) {

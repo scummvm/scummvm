@@ -258,6 +258,8 @@ void MohawkEngine_Riven::handleEvents() {
 				break;
 			case Common::KEYCODE_F5:
 				runDialog(*_optionsDialog);
+				if (_optionsDialog->getLoadSlot() >= 0)
+					loadGameState(_optionsDialog->getLoadSlot());
 				updateZipMode();
 				break;
 			case Common::KEYCODE_r:
