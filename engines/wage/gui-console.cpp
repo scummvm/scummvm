@@ -63,12 +63,9 @@
 namespace Wage {
 
 const Graphics::Font *Gui::getConsoleFont() {
-	char fontName[128];
 	Scene *scene = _engine->_world->_player->_currentScene;
 
-	snprintf(fontName, 128, "%s-%d", scene->getFontName(), scene->_fontSize);
-
-	return _wm.getFont(fontName, Graphics::FontManager::kConsoleFont);
+	return _wm.getFont(scene->getFontName(), Graphics::FontManager::kConsoleFont);
 }
 
 void Gui::clearOutput() {

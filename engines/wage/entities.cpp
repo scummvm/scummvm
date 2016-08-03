@@ -158,7 +158,7 @@ void Scene::paint(Graphics::ManagedSurface *surface, int x, int y) {
 }
 
 const char *Scene::getFontName() {
-	const char *name = ((WageEngine *)g_engine)->_gui->_wm.getFontName(_fontType);
+	const char *name = ((WageEngine *)g_engine)->_gui->_wm.getFontName(_fontType, _fontSize);
 
 	if (!name)
 		return "Unknown";

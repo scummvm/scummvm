@@ -452,11 +452,15 @@ static const char *const fontNames[] = {
 	"New Century Schoolbook"
 };
 
-const char *MacWindowManager::getFontName(int id) {
+const char *MacWindowManager::getFontName(int id, int size) {
+	static char name[128];
+
 	if (id > ARRAYSIZE(fontNames))
 		return NULL;
 
-	return fontNames[id];
+	snprintf(name, 128, "%s-%d", fontNames[id], size);
+
+	return name;
 }
 
 /////////////////

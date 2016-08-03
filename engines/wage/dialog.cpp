@@ -92,7 +92,7 @@ Dialog::~Dialog() {
 }
 
 const Graphics::Font *Dialog::getDialogFont() {
-	return _gui->_wm.getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
+	return _gui->_wm.getFont(_gui->_wm.getFontName(0, 12), Graphics::FontManager::kBigGUIFont); // Default is Chicago
 }
 
 void Dialog::paint() {

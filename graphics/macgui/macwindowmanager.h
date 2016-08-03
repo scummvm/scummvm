@@ -118,9 +118,10 @@ public:
 	/**
 	 * Return font name from standard ID
 	 * @param id ID of the font
+	 * @param size size of the font
 	 * @return the font name or NULL if ID goes beyond the mapping
 	 */
-	const char *getFontName(int id);
+	const char *getFontName(int id, int size);
 
 	/**
 	 * Create a window with the given parameters.
