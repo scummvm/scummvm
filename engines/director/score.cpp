@@ -1395,9 +1395,9 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID) {
 
 	if (_vm->_currentScore->_fontMap.contains(textCast->fontId)) {
 		fontName = _vm->_currentScore->_fontMap[textCast->fontId].c_str();
-	} else if ((fontName = _vm->_wm->getFontName(textCast->fontId)) == NULL) {
+	} else if ((fontName = _vm->_wm->getFontName(textCast->fontId, textCast->fontSize)) == NULL) {
 		warning("Unknown font id %d, falling back to default", textCast->fontId);
-		fontName = _vm->_wm->getFontName(0);
+		fontName = _vm->_wm->getFontName(0, 12);
 	}
 
 	const Graphics::Font *font = _vm->_wm->getFont(fontName, Graphics::FontManager::kBigGUIFont);
