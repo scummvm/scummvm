@@ -29,6 +29,10 @@
 
 #define DECLARE_OPCODE(x) void x(uint16 op, uint16 argc, uint16 *argv)
 
+namespace Common {
+class ReadStream;
+}
+
 namespace Mohawk {
 
 // Script Types

@@ -53,6 +53,7 @@ endif
 ifdef ENABLE_RIVEN
 MODULE_OBJS += \
 	riven.o \
+	riven_card.o \
 	riven_external.o \
 	riven_graphics.o \
 	riven_saveload.o \

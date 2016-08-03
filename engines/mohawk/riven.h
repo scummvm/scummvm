@@ -41,6 +41,7 @@ class RivenExternal;
 class RivenConsole;
 class RivenSaveLoad;
 class RivenOptionsDialog;
+class RivenCard;
 class RivenSoundManager;
 
 // Riven Stack Types
@@ -99,13 +100,6 @@ struct RivenHotspot {
 	bool enabled;
 };
 
-struct Card {
-	int16 name;
-	uint16 zipModePlace;
-	bool hasData;
-	RivenScriptList scripts;
-};
-
 struct ZipMode {
 	Common::String name;
 	uint16 id;
@@ -128,7 +122,7 @@ public:
 	Common::RandomSource *_rnd;
 	RivenScriptManager *_scriptMan;
 
-	Card _cardData;
+	RivenCard *_card;
 
 	GUI::Debugger *getDebugger();
 
@@ -152,7 +146,6 @@ private:
 	// Stack/Card-related functions and variables
 	uint16 _curCard;
 	uint16 _curStack;
-	void loadCard(uint16);
 	void handleEvents();
 
 	// Hotspot related functions and variables
@@ -182,8 +175,7 @@ public:
 	void refreshCard();
 	Common::String getName(uint16 nameResource, uint16 nameID);
 	Common::String getStackName(uint16 stack) const;
-	void runCardScript(uint16 scriptType);
-	void runUpdateScreenScript() { runCardScript(kCardUpdateScript); }
+	void runUpdateScreenScript();
 	uint16 getCurCard() const { return _curCard; }
 	uint16 getCurStack() const { return _curStack; }
 	uint16 matchRMAPToCard(uint32);
@@ -198,6 +190,7 @@ public:
 	int32 getCurHotspot() const { return _curHotspot; }
 	Common::String getHotspotName(uint16 hotspot);
 	void updateCurrentHotspot();
+	void addZipVisitedCard(uint16 cardId, uint16 cardNameId);
 
 	// Variables
 	RivenVariableMap _vars;
