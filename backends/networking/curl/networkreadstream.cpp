@@ -25,7 +25,6 @@
 #include "backends/networking/curl/networkreadstream.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "base/version.h"
-#include "common/debug.h"
 #include <curl/curl.h>
 
 namespace Networking {

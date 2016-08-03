@@ -24,7 +24,6 @@
 #define BACKENDS_CLOUD_BOX_BOXSTORAGE_H
 
 #include "backends/cloud/id/idstorage.h"
-#include "common/callback.h"
 #include "backends/networking/curl/curljsonrequest.h"
 
 namespace Cloud {
