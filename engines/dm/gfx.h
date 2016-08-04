@@ -295,7 +295,8 @@ public:
 
 	Box(uint16 x1, uint16 x2, uint16 y1, uint16 y2) : _x1(x1), _x2(x2), _y1(y1), _y2(y2) {}
 	Box() {}
-	explicit Box(uint16 *ptr) {
+	template <typename T>
+	explicit Box(T *ptr) {
 		_x1 = *ptr++;
 		_x2 = *ptr++;
 		_y1 = *ptr++;

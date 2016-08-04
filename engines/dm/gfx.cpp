@@ -254,7 +254,7 @@ byte g195_FloorOrnCoordSetIndices[9] = { // @ G0195_auc_Graphic558_FloorOrnament
 	2,   /* Floor Ornament 07 Tiny Pressure Pad */
 	0}; /* Floor Ornament 08 Puddle */
 
-uint16 g205_WallOrnCoordSets[8][13][6] = { // @ G0205_aaauc_Graphic558_WallOrnamentCoordinateSets
+byte g205_WallOrnCoordSets[8][13][6] = { // @ G0205_aaauc_Graphic558_WallOrnamentCoordinateSets
 										   /* { X1, X2, Y1, Y2, PixelWidth, Height } */
 	{{80,  83, 41,  45,  8,   5},     /* D3L */
 	{140, 143, 41,  45,  8,   5},     /* D3R */
@@ -709,16 +709,16 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 
 	g186_doorFrame_D1C = new DoorFrames( // @ G0186_s_Graphic558_Frames_Door_D1C
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-		Frame(64, 159, 17, 102, 48, 88, 0, 0),	/* Closed Or Destroyed */
-		Frame(64, 159, 17, 38, 48, 88, 0, 66),	/* Vertical Closed one fourth */
-		Frame(64, 159, 17, 60, 48, 88, 0, 44),	/* Vertical Closed half */
-		Frame(64, 159, 17, 82, 48, 88, 0, 22),	/* Vertical Closed three fourth */
-		Frame(64, 75, 17, 102, 48, 88, 36, 0),	/* Left Horizontal Closed one fourth */
-		Frame(64, 87, 17, 102, 48, 88, 24, 0),	/* Left Horizontal Closed half */
-		Frame(64, 99, 17, 102, 48, 88, 12, 0),	/* Left Horizontal Closed three fourth */
-		Frame(148, 159, 17, 102, 48, 88, 48, 0),	/* Right Horizontal Closed one fourth */
-		Frame(136, 159, 17, 102, 48, 88, 48, 0),	/* Right Horizontal Closed half */
-		Frame(124, 159, 17, 102, 48, 88, 48, 0)	/* Right Horizontal Closed three fourth */
+										Frame(64, 159, 17, 102, 48, 88, 0, 0),	/* Closed Or Destroyed */
+										Frame(64, 159, 17, 38, 48, 88, 0, 66),	/* Vertical Closed one fourth */
+										Frame(64, 159, 17, 60, 48, 88, 0, 44),	/* Vertical Closed half */
+										Frame(64, 159, 17, 82, 48, 88, 0, 22),	/* Vertical Closed three fourth */
+										Frame(64, 75, 17, 102, 48, 88, 36, 0),	/* Left Horizontal Closed one fourth */
+										Frame(64, 87, 17, 102, 48, 88, 24, 0),	/* Left Horizontal Closed half */
+										Frame(64, 99, 17, 102, 48, 88, 12, 0),	/* Left Horizontal Closed three fourth */
+										Frame(148, 159, 17, 102, 48, 88, 48, 0),	/* Right Horizontal Closed one fourth */
+										Frame(136, 159, 17, 102, 48, 88, 48, 0),	/* Right Horizontal Closed half */
+										Frame(124, 159, 17, 102, 48, 88, 48, 0)	/* Right Horizontal Closed three fourth */
 	);
 
 	for (uint16 i = 0; i < 32; i++)
@@ -2452,7 +2452,7 @@ void DisplayMan::f105_drawFloorPitOrStairsBitmapFlippedHorizontally(uint16 nativ
 }
 
 bool DisplayMan::f107_isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex) {
-	static const Box boxWallPatchBehindInscription = Box(110, 113, 37, 63); // @ G0202_ac_Graphic558_Box_WallPatchBehindInscription 
+	static Box boxWallPatchBehindInscription = Box(110, 113, 37, 63); // @ G0202_ac_Graphic558_Box_WallPatchBehindInscription 
 	static const byte inscriptionLineY[4] = { // @ G0203_auc_Graphic558_InscriptionLineY
 		48,   /* 1 Line  */
 		59,   /* 2 lines */
@@ -2474,7 +2474,7 @@ bool DisplayMan::f107_isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWall
 		4    /* D1R Left */
 	};
 
-	static const byte unreadableInscriptionBoxY2[15] = { // @ G0204_auc_Graphic558_UnreadableInscriptionBoxY2
+	static byte unreadableInscriptionBoxY2[15] = { // @ G0204_auc_Graphic558_UnreadableInscriptionBoxY2
 		/* { Y for 1 line, Y for 2 lines, Y for 3 lines } */
 		45, 48, 53,   /* D3L Right, D3R Left */
 		43, 49, 56,   /* D3L Front, D3C Front, D3R Front */
@@ -2483,155 +2483,174 @@ bool DisplayMan::f107_isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWall
 		46, 57, 68    /* D1L Right, D1R Left */
 	};
 
-	static const Box boxChampionPortraitOnWall = Box(96, 127, 35, 63); // G0109_s_Graphic558_Box_ChampionPortraitOnWall
+	static Box boxChampionPortraitOnWall = Box(96, 127, 35, 63); // G0109_s_Graphic558_Box_ChampionPortraitOnWall
+
+#define AP0116_i_CharacterCount    wallOrnOrd
+#define AP0116_i_WallOrnamentIndex wallOrnOrd
+	int16 L0088_i_Multiple;
+#define AL0088_i_NativeBitmapIndex       L0088_i_Multiple
+#define AL0088_i_UnreadableTextLineCount L0088_i_Multiple
+	int16 L0089_i_Multiple;
+#define AL0089_i_WallOrnamentCoordinateSetIndex L0089_i_Multiple
+#define AL0089_i_FountainOrnamentIndex          L0089_i_Multiple
+#define AL0089_i_PixelWidth                     L0089_i_Multiple
+#define AL0089_i_X                              L0089_i_Multiple
+	byte* L0090_puc_Multiple;
+#define AL0090_puc_String        L0090_puc_Multiple
+#define AL0090_puc_CoordinateSet L0090_puc_Multiple
+	byte* L0091_puc_Multiple;
+#define AL0091_puc_Character     L0091_puc_Multiple
+#define AL0091_puc_Bitmap        L0091_puc_Multiple
+#define AL0091_puc_CoordinateSet L0091_puc_Multiple
+	byte* L0092_puc_Bitmap;
+	int16 L0093_i_CoordinateSetOffset;
+	bool L0094_B_FlipHorizontal;
+	bool L0095_B_IsInscription;
+	bool L0096_B_IsAlcove;
+	int16 L0097_i_TextLineIndex;
+	Frame L0098_s_Frame;
+	byte tmpCoordSet[6];
+	unsigned char L0099_auc_InscriptionString[70];
+
 
 	if (wallOrnOrd) {
-		int16 wallOrnamentIndex = wallOrnOrd - 1;
-		int16 nativeBitmapIndex = _g101_currMapWallOrnInfo[wallOrnamentIndex][k0_NativeBitmapIndex];
-		int16 wallOrnamentCoordinateSetIndex = _g101_currMapWallOrnInfo[wallOrnamentIndex][k1_CoordinateSet];
-		uint16 *coordinateSet = g205_WallOrnCoordSets[wallOrnamentCoordinateSetIndex][viewWallIndex];
-
-		bool isAlcove = _vm->_dungeonMan->f149_isWallOrnAnAlcove(wallOrnamentIndex);
-		bool isInscription = (wallOrnamentIndex == _vm->_dungeonMan->_g265_currMapInscriptionWallOrnIndex);
-		byte inscriptionString[70];
-		if (isInscription)
-			_vm->_dungeonMan->f168_decodeText((char *)inscriptionString, _g290_inscriptionThing, k0_TextTypeInscription);
-
-		byte *displayBitmap;
-		int16 boxSrcX;
+		wallOrnOrd--;
+		AL0088_i_NativeBitmapIndex = _g101_currMapWallOrnInfo[AP0116_i_WallOrnamentIndex][k0_NativeBitmapIndex];
+		AL0090_puc_CoordinateSet = g205_WallOrnCoordSets[AL0089_i_WallOrnamentCoordinateSetIndex = _g101_currMapWallOrnInfo[AP0116_i_WallOrnamentIndex][k1_CoordinateSet]][viewWallIndex];
+		L0096_B_IsAlcove = _vm->_dungeonMan->f149_isWallOrnAnAlcove(AP0116_i_WallOrnamentIndex);
+		if (L0095_B_IsInscription = (AP0116_i_WallOrnamentIndex == _vm->_dungeonMan->_g265_currMapInscriptionWallOrnIndex)) {
+			_vm->_dungeonMan->f168_decodeText((char *)L0099_auc_InscriptionString, _g290_inscriptionThing, k0_TextTypeInscription);
+		}
 		if (viewWallIndex >= k10_ViewWall_D1L_RIGHT) {
 			if (viewWallIndex == k12_ViewWall_D1C_FRONT) {
-				if (isInscription) {
-					f132_blitToBitmap(_g700_bitmapWallSet_Wall_D1LCR, _g296_bitmapViewport,
-									  (Box &)boxWallPatchBehindInscription, 94, 28,
-									  g163_FrameWalls[k6_ViewSquare_D1C]._srcByteWidth,
-									  k112_byteWidthViewport, kM1_ColorNoTransparency, g163_FrameWalls[k6_ViewSquare_D1C]._srcHeight, k136_heightViewport);
-					byte *tmpString = inscriptionString;
-					byte *fontBitmap = f489_getNativeBitmapOrGraphic(k120_InscriptionFont);
-					int16 textLineIndex = 0;
+				if (L0095_B_IsInscription) {
+					f132_blitToBitmap(_g700_bitmapWallSet_Wall_D1LCR, _g296_bitmapViewport, boxWallPatchBehindInscription, 94, 28, g163_FrameWalls[k6_ViewSquare_D1C]._srcByteWidth, k112_byteWidthViewport, kM1_ColorNoTransparency, g163_FrameWalls[k6_ViewSquare_D1C]._srcHeight, k136_heightViewport);
+					AL0090_puc_String = L0099_auc_InscriptionString;
+					L0092_puc_Bitmap = f489_getNativeBitmapOrGraphic(k120_InscriptionFont);
+					L0097_i_TextLineIndex = 0;
 					do {
-						int16 characterCount = 0;
-						byte *curCharacter = tmpString;
-						while (*curCharacter++ < 128) { /* Hexadecimal: 0x80 (Megamax C does not support hexadecimal character constants) */
-							characterCount++;
+						AP0116_i_CharacterCount = 0;
+						AL0091_puc_Character = AL0090_puc_String;
+						while (*AL0091_puc_Character++ < 128) { /* Hexadecimal: 0x80 (Megamax C does not support hexadecimal character constants) */
+							AP0116_i_CharacterCount++;
 						}
-						Frame curFrame;
-						curFrame._box._x2 = (curFrame._box._x1 = 112 - (characterCount << 2)) + 7;
-						curFrame._box._y1 = (curFrame._box._y2 = inscriptionLineY[textLineIndex++]) - 7;
-						while (characterCount--) {
-							f132_blitToBitmap(fontBitmap, _g296_bitmapViewport, curFrame._box,
-											  *tmpString++ << 3, 0, 144, k112_byteWidthViewport, k10_ColorFlesh, 8, k136_heightViewport);
-							curFrame._box._x1 += 8;
-							curFrame._box._x2 += 8;
+						L0098_s_Frame._box._x2 = (L0098_s_Frame._box._x1 = 112 - (AP0116_i_CharacterCount << 2)) + 7;
+						L0098_s_Frame._box._y1 = (L0098_s_Frame._box._y2 = inscriptionLineY[L0097_i_TextLineIndex++]) - 7;
+						while (AP0116_i_CharacterCount--) {
+							f132_blitToBitmap(L0092_puc_Bitmap, _g296_bitmapViewport, L0098_s_Frame._box, *AL0090_puc_String++ << 3, 0, k144_byteWidth, k112_byteWidthViewport, k10_ColorFlesh, 8, k136_heightViewport);
+							L0098_s_Frame._box._x1 += 8;
+							L0098_s_Frame._box._x2 += 8;
 						}
-					} while (*tmpString++ != 129); /* Hexadecimal: 0x81 (Megamax C does not support hexadecimal character constants) */
-					return isAlcove;
+					} while (*AL0090_puc_String++ != 129); /* Hexadecimal: 0x81 (Megamax C does not support hexadecimal character constants) */
+					goto T0107031;
 				}
-				nativeBitmapIndex++;
-				_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._x1 = coordinateSet[0];
-				_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._x2 = coordinateSet[1];
-				_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._y1 = coordinateSet[2];
-				_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._y2 = coordinateSet[3];
-
-				_vm->_dungeonMan->_g286_isFacingAlcove = isAlcove;
+				AL0088_i_NativeBitmapIndex++;
+				_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn] = Box(AL0090_puc_CoordinateSet);
+				_vm->_dungeonMan->_g286_isFacingAlcove = L0096_B_IsAlcove;
 				_vm->_dungeonMan->_g287_isFacingViAltar =
-					(wallOrnamentIndex == _g266_currMapViAltarIndex);
+					(AP0116_i_WallOrnamentIndex == _g266_currMapViAltarIndex);
 				_vm->_dungeonMan->_g288_isFacingFountain = false;
-				for (int16 idx = 0; idx < k1_FountainOrnCount; idx++) {
-					if (_g268_currMapFountainOrnIndices[idx] == wallOrnamentIndex) {
+				for (AL0089_i_FountainOrnamentIndex = 0; AL0089_i_FountainOrnamentIndex < k1_FountainOrnCount; AL0089_i_FountainOrnamentIndex++) {
+					if (_g268_currMapFountainOrnIndices[AL0089_i_FountainOrnamentIndex] == AP0116_i_WallOrnamentIndex) {
 						_vm->_dungeonMan->_g288_isFacingFountain = true;
 						break;
 					}
 				}
 			}
-			displayBitmap = f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
+			AL0091_puc_Bitmap = f489_getNativeBitmapOrGraphic(AL0088_i_NativeBitmapIndex);
 			if (viewWallIndex == k11_ViewWall_D1R_LEFT) {
-				f99_copyBitmapAndFlipHorizontal(displayBitmap, _g74_tmpBitmap, coordinateSet[4], coordinateSet[5]);
-				displayBitmap = _g74_tmpBitmap;
+				f99_copyBitmapAndFlipHorizontal(AL0091_puc_Bitmap, _g74_tmpBitmap, AL0090_puc_CoordinateSet[4], AL0090_puc_CoordinateSet[5]);
+				AL0091_puc_Bitmap = _g74_tmpBitmap;
 			}
-			boxSrcX = 0;
+			AL0089_i_X = 0;
 		} else {
-			uint16 *coordinateSet;
-			int16 coordinateSetOffset = 0;
-			bool flipHorizontal = (viewWallIndex == k6_ViewWall_D2R_LEFT);
-			if (flipHorizontal || (viewWallIndex == k1_ViewWall_D3R_LEFT)) {
-				coordinateSet = g205_WallOrnCoordSets[wallOrnamentCoordinateSetIndex][k11_ViewWall_D1R_LEFT];
-			} else if ((viewWallIndex == k5_ViewWall_D2L_RIGHT) || (viewWallIndex == k0_ViewWall_D3L_RIGHT))
-				coordinateSet = g205_WallOrnCoordSets[wallOrnamentCoordinateSetIndex][k10_ViewWall_D1L_RIGHT];
-			else {
-				nativeBitmapIndex++;
-				coordinateSet = g205_WallOrnCoordSets[wallOrnamentCoordinateSetIndex][k12_ViewWall_D1C_FRONT];
-				if (viewWallIndex == k7_ViewWall_D2L_FRONT)
-					coordinateSetOffset = 6;
-				else if (viewWallIndex == k9_ViewWall_D2R_FRONT)
-					coordinateSetOffset = -6;
-			}
-			int16 pixelWidth = (coordinateSet + coordinateSetOffset)[1] - (coordinateSet + coordinateSetOffset)[0];
-			wallOrnamentIndex = k4_DerivedBitmapFirstWallOrnament + (wallOrnamentIndex << 2) + wallOrnDerivedBitmapIndexIncrement[viewWallIndex];
-			if (!f491_isDerivedBitmapInCache(wallOrnamentIndex)) {
-				byte *L0092_puc_Bitmap = f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
-				f129_blitToBitmapShrinkWithPalChange(L0092_puc_Bitmap, f492_getDerivedBitmap(wallOrnamentIndex),
-													 coordinateSet[4] << 1,
-													 coordinateSet[5], pixelWidth + 1,
-													 coordinateSet[5],
-													 (viewWallIndex <= k4_ViewWall_D3R_FRONT) ? g198_PalChangesDoorButtonAndWallOrn_D3 : g199_PalChangesDoorButtonAndWallOrn_D2);
-				f493_addDerivedBitmap(wallOrnamentIndex);
-			}
-			displayBitmap = f492_getDerivedBitmap(wallOrnamentIndex);
-			if (flipHorizontal) {
-				f99_copyBitmapAndFlipHorizontal(displayBitmap, _g74_tmpBitmap, coordinateSet[4], coordinateSet[5]);
-				displayBitmap = _g74_tmpBitmap;
-				boxSrcX = 15 - (boxSrcX & 0x000F);
-			} else if (viewWallIndex == k7_ViewWall_D2L_FRONT)
-				boxSrcX = pixelWidth - (coordinateSet[1] - coordinateSet[0]);
-			else
-				boxSrcX = 0;
-		}
-		if (isInscription) {
-			byte *tmpString = inscriptionString;
-			int16 unreadableTextLineCount = 0;
-			do {
-				while (*tmpString < 128) { /* Hexadecimal: 0x80 (Megamax C does not support hexadecimal character constants) */
-					tmpString++;
+			L0093_i_CoordinateSetOffset = 0;
+			if (L0094_B_FlipHorizontal = (viewWallIndex == k6_ViewWall_D2R_LEFT) || (viewWallIndex == k1_ViewWall_D3R_LEFT)) {
+				AL0091_puc_CoordinateSet = g205_WallOrnCoordSets[AL0089_i_WallOrnamentCoordinateSetIndex][k11_ViewWall_D1R_LEFT];
+			} else {
+				if ((viewWallIndex == k5_ViewWall_D2L_RIGHT) || (viewWallIndex == k0_ViewWall_D3L_RIGHT)) {
+					AL0091_puc_CoordinateSet = g205_WallOrnCoordSets[AL0089_i_WallOrnamentCoordinateSetIndex][k10_ViewWall_D1L_RIGHT];
+				} else {
+					AL0088_i_NativeBitmapIndex++;
+					AL0091_puc_CoordinateSet = g205_WallOrnCoordSets[AL0089_i_WallOrnamentCoordinateSetIndex][k12_ViewWall_D1C_FRONT];
+					if (viewWallIndex == k7_ViewWall_D2L_FRONT) {
+						L0093_i_CoordinateSetOffset = 6;
+					} else {
+						if (viewWallIndex == k9_ViewWall_D2R_FRONT) {
+							L0093_i_CoordinateSetOffset = -6;
+						}
+					}
 				}
-				unreadableTextLineCount++;
-			} while (*tmpString++ != 129); /* Hexadecimal: 0x81 (Megamax C does not support hexadecimal character constants) */
-			if (unreadableTextLineCount < 4) {
-				uint16 tmp[6];
-				for (uint16 i = 0; i < 6; ++i)
-					tmp[i] = coordinateSet[i];
-				coordinateSet = tmp;
-				coordinateSet[3] = unreadableInscriptionBoxY2[wallOrnDerivedBitmapIndexIncrement[viewWallIndex] * 3 + unreadableTextLineCount - 1];
+			}
+			AL0089_i_PixelWidth = (AL0090_puc_CoordinateSet + L0093_i_CoordinateSetOffset)[1] - (AL0090_puc_CoordinateSet + L0093_i_CoordinateSetOffset)[0];
+			if (!f491_isDerivedBitmapInCache(AP0116_i_WallOrnamentIndex = k4_DerivedBitmapFirstWallOrnament + (AP0116_i_WallOrnamentIndex << 2) + wallOrnDerivedBitmapIndexIncrement[viewWallIndex])) {
+				L0092_puc_Bitmap = f489_getNativeBitmapOrGraphic(AL0088_i_NativeBitmapIndex);
+				f129_blitToBitmapShrinkWithPalChange(L0092_puc_Bitmap, f492_getDerivedBitmap(AP0116_i_WallOrnamentIndex), AL0091_puc_CoordinateSet[4] << 1, AL0091_puc_CoordinateSet[5], AL0089_i_PixelWidth + 1, AL0090_puc_CoordinateSet[5], (viewWallIndex <= k4_ViewWall_D3R_FRONT) ? g198_PalChangesDoorButtonAndWallOrn_D3 : g199_PalChangesDoorButtonAndWallOrn_D2);
+				f493_addDerivedBitmap(AP0116_i_WallOrnamentIndex);
+			}
+			AL0091_puc_Bitmap = f492_getDerivedBitmap(AP0116_i_WallOrnamentIndex);
+			if (L0094_B_FlipHorizontal) {
+				f99_copyBitmapAndFlipHorizontal(AL0091_puc_Bitmap, _g74_tmpBitmap, AL0090_puc_CoordinateSet[4], AL0090_puc_CoordinateSet[5]);
+				AL0091_puc_Bitmap = _g74_tmpBitmap;
+				AL0089_i_X = 15 - (AL0089_i_X & 0x000F);
+			} else {
+				if (viewWallIndex == k7_ViewWall_D2L_FRONT) {
+					AL0089_i_X -= AL0090_puc_CoordinateSet[1] - AL0090_puc_CoordinateSet[0];
+				} else {
+					AL0089_i_X = 0;
+				}
 			}
 		}
-		f132_blitToBitmap(displayBitmap, _g296_bitmapViewport,
-						  *(Box *)coordinateSet, boxSrcX, 0,
-						  coordinateSet[4], k112_byteWidthViewport, k10_ColorFlesh, coordinateSet[5], k136_heightViewport);
-		if ((viewWallIndex == k12_ViewWall_D1C_FRONT) && _g289_championPortraitOrdinal--) {
-			f132_blitToBitmap(f489_getNativeBitmapOrGraphic(k26_ChampionPortraitsIndice),
-							  _g296_bitmapViewport, (Box &)boxChampionPortraitOnWall,
-							  (_g289_championPortraitOrdinal & 0x0007) << 5,
-							  (_g289_championPortraitOrdinal >> 3) * 29, 128, k112_byteWidthViewport, k1_ColorDarkGary, 87, k136_heightViewport);
+		if (L0095_B_IsInscription) {
+			L0092_puc_Bitmap = AL0090_puc_CoordinateSet;
+			AL0090_puc_String = L0099_auc_InscriptionString;
+			AL0088_i_UnreadableTextLineCount = 0;
+			do {
+				while (*AL0090_puc_String < 128) { /* Hexadecimal: 0x80 (Megamax C does not support hexadecimal character constants) */
+					AL0090_puc_String++;
+				}
+				AL0088_i_UnreadableTextLineCount++;
+			} while (*AL0090_puc_String++ != 129); /* Hexadecimal: 0x81 (Megamax C does not support hexadecimal character constants) */
+			AL0090_puc_CoordinateSet = L0092_puc_Bitmap;
+			if (AL0088_i_UnreadableTextLineCount < 4) {
+				for (uint16 i = 0; i < 6; ++i)
+					tmpCoordSet[i] = AL0090_puc_CoordinateSet[i];
+				AL0090_puc_CoordinateSet = tmpCoordSet;
+				AL0090_puc_CoordinateSet[3] = unreadableInscriptionBoxY2[wallOrnDerivedBitmapIndexIncrement[viewWallIndex] * 3 + AL0088_i_UnreadableTextLineCount - 1];
+			}
 		}
-		return isAlcove;
+		{
+			Box tmpBox(AL0090_puc_CoordinateSet);
+			f132_blitToBitmap(AL0091_puc_Bitmap, _g296_bitmapViewport, tmpBox, AL0089_i_X, 0, AL0090_puc_CoordinateSet[4], k112_byteWidthViewport, k10_ColorFlesh, AL0090_puc_CoordinateSet[5], k136_heightViewport);
+		}
+		if ((viewWallIndex == k12_ViewWall_D1C_FRONT) && _g289_championPortraitOrdinal--) { /* BUG0_05 A champion portrait sensor on a wall square is visible on all sides of the wall. If there is another sensor with a wall ornament on one side of the wall then the champion portrait is drawn over that wall ornament */
+			f132_blitToBitmap(f489_getNativeBitmapOrGraphic(k26_ChampionPortraitsIndice), _g296_bitmapViewport, boxChampionPortraitOnWall, (_g289_championPortraitOrdinal & 0x0007) << 5, (_g289_championPortraitOrdinal >> 3) * 29, k128_byteWidth, k112_byteWidthViewport, k1_ColorDarkGary, 87, k136_heightViewport); /* A portrait is 32x29 pixels */
+		}
+T0107031:
+		return L0096_B_IsAlcove;
 	}
 	return false;
 }
 
 
-void DisplayMan::f129_blitToBitmapShrinkWithPalChange(byte *srcBitmap, byte *destBitmap, int16 srcPixelWidth, int16 srcHeight, int16 destPixelWidth, int16 destHeight, byte *palChange) {
-	double rateW = srcPixelWidth / destPixelWidth;
-	double rateH = srcHeight / destHeight;
+void DisplayMan::f129_blitToBitmapShrinkWithPalChange(byte *srcBitmap, byte *destBitmap,
+													  int16 srcPixelWidth, int16 srcHeight,
+													  int16 destPixelWidth, int16 destHeight, byte *palChange) {
+	const uint32 SCALE_THRESHOLD = 32768;
+	uint32 scaleX = (SCALE_THRESHOLD * srcPixelWidth) / destPixelWidth;
+	uint32 scaleY = (SCALE_THRESHOLD * srcHeight) / destHeight;
 
-	for (uint16 y = 0; y < destHeight; ++y) {
-		for (uint16 x = 0; x < destPixelWidth; ++x) {
-			if (palChange)
-				destBitmap[y * destPixelWidth + x] = palChange[srcBitmap[(int)(y * rateH * srcPixelWidth) + (int)(x * rateW)]];
-			else
-				destBitmap[y * destPixelWidth + x] = srcBitmap[(int)(y * rateH * srcPixelWidth) + (int)(x * rateW)];
+	// Loop through drawing output lines
+	for (uint32 destY = 0, scaleYCtr = 0; destY < destHeight; ++destY, scaleYCtr += scaleY) {
+
+		const byte *srcLine = &srcBitmap[(scaleYCtr / SCALE_THRESHOLD) * srcPixelWidth];
+		byte *destLine = &destBitmap[destY * destPixelWidth];
+
+		// Loop through drawing the pixels of the row
+		for (uint32 destX = 0, xCtr = 0, scaleXCtr = 0; destX < destPixelWidth; ++destX, ++xCtr, scaleXCtr += scaleX) {
+			destLine[xCtr] = srcLine[scaleXCtr / SCALE_THRESHOLD];
 		}
 	}
-
 }
 
 byte* DisplayMan::f489_getNativeBitmapOrGraphic(uint16 index) {
@@ -3685,8 +3704,10 @@ bool DisplayMan::f491_isDerivedBitmapInCache(int16 derivedBitmapIndex) {
 		// * 2, because the original uses 4 bits instead of 8 bits to store a pixel
 		_g638_derivedBitmaps[derivedBitmapIndex] = new byte[_g639_derivedBitmapByteCount[derivedBitmapIndex] * 2];
 		return false;
-	} else
-		return true;
+	} else {
+		warning(false, "f491_isDerivedBitmapInCache always returns false");
+		return false;
+	}
 }
 
 byte* DisplayMan::f492_getDerivedBitmap(int16 derivedBitmapIndex) {
