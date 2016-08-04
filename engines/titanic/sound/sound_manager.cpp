@@ -34,14 +34,14 @@ QSoundManager::QSoundManager() : _field18(0), _field1C(0) {
 	Common::fill(&_field4A0[0], &_field4A0[16], 0);
 }
 
-int QSoundManager::loadSound(const CString &name) {
+CSoundResource *QSoundManager::loadSound(const CString &name) {
 	warning("TODO");
-	return 0;
+	return nullptr;
 }
 
-int QSoundManager::proc4() const {
+CSoundResource *QSoundManager::loadSpeech(CDialogueFile *dialogueFile, int speechId) {
 	warning("TODO");
-	return 0;
+	return nullptr;
 }
 
 int QSoundManager::proc5() const {
@@ -49,8 +49,9 @@ int QSoundManager::proc5() const {
 	return 0;
 }
 
-void QSoundManager::proc6() {
+int QSoundManager::playSound(CSoundResource &soundRes, CProximity &prox) {
 	warning("TODO");
+	return 0;
 }
 
 void QSoundManager::proc7() {
@@ -86,7 +87,7 @@ bool QSoundManager::proc14() {
 	return false;
 }
 
-bool QSoundManager::isActive(int handle) const {
+bool QSoundManager::isActive(const CSoundResource *soundRes) const {
 	warning("TODO");
 	return false;
 }

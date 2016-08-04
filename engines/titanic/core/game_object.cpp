@@ -644,7 +644,17 @@ int CGameObject::playSound(const CString &name, int val2, int val3, int val4) {
 
 int CGameObject::playSound(const CString &name, CProximity &prox) {
 	if (prox._field28 == 2) {
-		// TODO
+		// If the proximity doesn't have a position defined, default it to
+		// the position of the view to which the game object belongs
+		if (prox._posX == 0.0 && prox._posY == 0.0 && prox._posZ == 0.0)
+			findView()->getPosition(prox._posX, prox._posY, prox._posZ);
+	}
+
+	CGameManager *gameManager = getGameManager();
+	if (gameManager) {
+		g_vm->_filesManager->preload(name);
+
+		gameManager->_sound.playSound(name, prox);
 	}
 
 	return 0;

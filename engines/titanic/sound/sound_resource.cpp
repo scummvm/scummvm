@@ -20,18 +20,13 @@
  *
  */
 
-#include "titanic/support/proximity.h"
-#include "titanic/true_talk/tt_talker.h"
+#include "titanic/sound/sound_resource.h"
 
 namespace Titanic {
 
-CProximity::CProximity() : _field4(0), _field8(100), _fieldC(0),
-		_speechHandle(-1), _field14(0), _field18(0), _field1C(1.875),
-		_field20(0), _field24(10), _field28(0), _field2C(0.0),
-		_field30(0.5), _field34(0), _posX(0.0), _posY(0.0), _posZ(0.0),
-		_field44(0), _field48(0), _field4C(0), _field50(0), _field54(0),
-		_field58(0), _field5C(0), _field60(0), _endTalkerFn(nullptr),
-		_talker(nullptr), _field6C(0) {
+int CSoundResource::fn1() {
+	// TODO
+	return 0;
 }
 
-} // End of namespace Titanic
+} // End of namespace Titanic z

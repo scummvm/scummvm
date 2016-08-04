@@ -26,7 +26,7 @@
 #include "titanic/support/mouse_cursor.h"
 #include "titanic/support/credit_text.h"
 #include "titanic/support/movie_range_info.h"
-#include "titanic/support/proximity.h"
+#include "titanic/sound/proximity.h"
 #include "titanic/support/rect.h"
 #include "titanic/support/movie_clip.h"
 #include "titanic/core/named_item.h"

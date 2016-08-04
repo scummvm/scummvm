@@ -24,6 +24,9 @@
 #define TITANIC_SOUND_MANAGER_H
 
 #include "titanic/support/simple_file.h"
+#include "titanic/sound/proximity.h"
+#include "titanic/sound/sound_resource.h"
+#include "titanic/true_talk/dialogue_file.h"
 
 namespace Titanic {
 
@@ -43,11 +46,22 @@ public:
 	 * @param name		Name of sound resource
 	 * @returns			Loaded sound handle
 	 */
-	virtual int loadSound(const CString &name) { return 0; }
+	virtual CSoundResource *loadSound(const CString &name) { return nullptr; }
 
-	virtual int proc4() const { return 0; }
+	/**
+	 * Loads a speech resource from a dialogue file
+	 * @param name		Name of sound resource
+	 * @returns			Loaded sound handle
+	 */
+	virtual CSoundResource *loadSpeech(CDialogueFile *dialogueFile, int speechId) { return 0; }
+
 	virtual int proc5() const { return 0; }
-	virtual void proc6() = 0;
+
+	/**
+	 * Start playing a previously loaded sound resource
+	 */
+	virtual int playSound(CSoundResource &soundRes, CProximity &prox) = 0;
+
 	virtual void proc7() = 0;
 	virtual void proc8(int v) = 0;
 	virtual void proc9() {}
@@ -56,7 +70,12 @@ public:
 	virtual void proc12() {}
 	virtual void proc13() {}
 	virtual bool proc14() = 0;
-	virtual bool isActive(int handle) const { return false; }
+
+	/**
+	 * Returns true if the given sound is currently active
+	 */
+	virtual bool isActive(const CSoundResource *soundRes) const { return false; }
+
 	virtual int proc16() const { return 0; }
 	virtual void WaveMixPump() {}
 	
@@ -117,11 +136,22 @@ public:
 	 * @param name		Name of sound resource
 	 * @returns			Loaded sound handle
 	 */
-	virtual int loadSound(const CString &name);
+	virtual CSoundResource *loadSound(const CString &name);
 
-	virtual int proc4() const;
+	/**
+	 * Loads a speech resource from a dialogue file
+	 * @param name		Name of sound resource
+	 * @returns			Loaded sound handle
+	 */
+	virtual CSoundResource *loadSpeech(CDialogueFile *dialogueFile, int speechId);
+
 	virtual int proc5() const;
-	virtual void proc6();
+
+	/**
+	 * Start playing a previously loaded sound resource
+	 */
+	virtual int playSound(CSoundResource &soundRes, CProximity &prox);
+	
 	virtual void proc7();
 	virtual void proc8(int v);
 	virtual void proc9();
@@ -130,7 +160,12 @@ public:
 	virtual void proc12();
 	virtual void proc13();
 	virtual bool proc14();
-	virtual bool isActive(int handle) const;
+
+	/**
+	 * Returns true if the given sound is currently active
+	 */
+	virtual bool isActive(const CSoundResource *soundRes) const;
+
 	virtual int proc16() const;
 	virtual void WaveMixPump();
 

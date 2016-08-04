@@ -402,6 +402,7 @@ MODULE_OBJS := \
 	sound/music_room.o \
 	sound/music_player.o \
 	sound/node_auto_sound_player.o \
+	sound/proximity.o \
 	sound/restricted_auto_music_player.o \
 	sound/room_auto_sound_player.o \
 	sound/room_trigger_auto_music_player.o \
@@ -409,6 +410,7 @@ MODULE_OBJS := \
 	sound/seasonal_music_player.o \
 	sound/sound.o \
 	sound/sound_manager.o \
+	sound/sound_resource.o \
 	sound/titania_speech.o \
 	sound/trigger_auto_music_player.o \
 	sound/view_auto_sound_player.o \
@@ -460,7 +462,6 @@ MODULE_OBJS := \
 	support/movie_range_info.o \
 	support/movie_manager.o \
 	support/credit_text.o \
-	support/proximity.o \
 	support/rect.o \
 	support/screen_manager.o \
 	support/simple_file.o \

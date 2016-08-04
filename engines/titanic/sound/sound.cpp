@@ -71,51 +71,15 @@ void CSound::fn3(int handle, int val2, int val3) {
 	warning("TODO: CSound::fn3");
 }
 
-int CSound::playSpeech(CDialogueFile *dialogueFile, int speechId, const CProximity &prox) {
-	warning("TODO: CSound::playSpeech");
-	return 0;
-}
-
-uint CSound::loadSound(const CString &name) {
-	checkSounds();
-
-	// Check whether an entry for the given name is already active
-	for (CSoundItemList::iterator i = _sounds.begin(); i != _sounds.end(); ++i) {
-		CSoundItem *soundItem = *i;
-		if (soundItem->_name == name) {
-			// Found it, so move it to the front of the list and return
-			_sounds.remove(soundItem);
-			_sounds.push_front(soundItem);
-			return soundItem->_soundHandle;
-		}
-	}
-
-	// Create new sound item
-	CSoundItem *soundItem = new CSoundItem(name);
-	soundItem->_soundHandle = _soundManager.loadSound(name);
-
-	if (!soundItem->_soundHandle) {
-		// Could load sound, so destroy new item and return
-		delete soundItem;
-		return 0;
-	}
-
-	// Add the item to the list of sounds
-	_sounds.push_front(soundItem);
-
-	// If there are more than 10 sounds loaded, remove the last one,
-	// which is the least recently used of all of them
-	if (_sounds.size() > 10)
-		removeOldest();
-
-	return soundItem->_soundHandle;
+void CSound::fn4(CSoundResource *soundRes, int val) {
+	// TODO
 }
 
 void CSound::checkSounds() {
 	for (CSoundItemList::iterator i = _sounds.begin(); i != _sounds.end(); ++i) {
 		CSoundItem *soundItem = *i;
 		if (soundItem->_field24 && soundItem->_field28) {
-			if (_soundManager.isActive(soundItem->_soundHandle)) {
+			if (_soundManager.isActive(soundItem->_soundResource)) {
 				_sounds.remove(soundItem);
 				delete soundItem;
 			}
@@ -127,7 +91,7 @@ void CSound::removeOldest() {
 	for (CSoundItemList::iterator i = _sounds.reverse_begin();
 			i != _sounds.end(); --i) {
 		CSoundItem *soundItem = *i;
-		if (soundItem->_field28 && !_soundManager.isActive(soundItem->_soundHandle)) {
+		if (soundItem->_field28 && !_soundManager.isActive(soundItem->_soundResource)) {
 			_sounds.remove(soundItem);
 			delete soundItem;
 			break;
@@ -140,4 +104,97 @@ CSoundItem *CSound::getTrueTalkSound(CDialogueFile *dialogueFile, int index) {
 	return nullptr;
 }
 
-} // End of namespace Titanic z
+CSoundResource *CSound::loadSound(const CString &name) {
+	checkSounds();
+
+	// Check whether an entry for the given name is already active
+	for (CSoundItemList::iterator i = _sounds.begin(); i != _sounds.end(); ++i) {
+		CSoundItem *soundItem = *i;
+		if (soundItem->_name == name) {
+			// Found it, so move it to the front of the list and return
+			_sounds.remove(soundItem);
+			_sounds.push_front(soundItem);
+			return soundItem->_soundResource;
+		}
+	}
+
+	// Create new sound item
+	CSoundItem *soundItem = new CSoundItem(name);
+	soundItem->_soundResource = _soundManager.loadSound(name);
+
+	if (!soundItem->_soundResource) {
+		// Couldn't load sound, so destroy new item and return
+		delete soundItem;
+		return 0;
+	}
+
+	// Add the item to the list of sounds
+	_sounds.push_front(soundItem);
+
+	// If there are more than 10 sounds loaded, remove the last one,
+	// which is the least recently used of all of them
+	if (_sounds.size() > 10)
+		removeOldest();
+
+	return soundItem->_soundResource;
+}
+
+int CSound::playSound(const CString &name, CProximity &prox) {
+	CSoundResource *soundRes  = loadSound(name);
+	if (!soundRes)
+		return -1;
+
+	prox._field6C = soundRes->fn1();
+	fn4(soundRes, prox._field60);
+
+	return _soundManager.playSound(*soundRes, prox);
+}
+
+CSoundResource *CSound::loadSpeech(CDialogueFile *dialogueFile, int speechId) {
+	checkSounds();
+
+	// Check whether an entry for the given name is already active
+	for (CSoundItemList::iterator i = _sounds.begin(); i != _sounds.end(); ++i) {
+		CSoundItem *soundItem = *i;
+		if (soundItem->_dialogueFileHandle == dialogueFile->getFile()
+				&& soundItem->_speechId == speechId) {
+			// Found it, so move it to the front of the list and return
+			_sounds.remove(soundItem);
+			_sounds.push_front(soundItem);
+			return soundItem->_soundResource;
+		}
+	}
+
+	// Create new sound item
+	CSoundItem *soundItem = new CSoundItem(dialogueFile->getFile(), speechId);
+	soundItem->_soundResource = _soundManager.loadSpeech(dialogueFile, speechId);
+
+	if (!soundItem->_soundResource) {
+		// Couldn't load speech, so destroy new item and return
+		delete soundItem;
+		return 0;
+	}
+
+	// Add the item to the list of sounds
+	_sounds.push_front(soundItem);
+
+	// If there are more than 10 sounds loaded, remove the last one,
+	// which is the least recently used of all of them
+	if (_sounds.size() > 10)
+		removeOldest();
+
+	return soundItem->_soundResource;
+}
+
+int CSound::playSpeech(CDialogueFile *dialogueFile, int speechId, CProximity &prox) {
+	CSoundResource *soundRes = loadSpeech(dialogueFile, speechId);
+	if (!soundRes)
+		return -1;
+
+	prox._field6C = soundRes->fn1();
+	fn4(soundRes, prox._field60);
+
+	return _soundManager.playSound(*soundRes, prox);
+}
+
+} // End of namespace Titanic

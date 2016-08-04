@@ -23,7 +23,7 @@
 #ifndef TITANIC_DIALOGUE_FILE_H
 #define TITANIC_DIALOGUE_FILE_H
 
-#include "common/file.h"
+#include "titanic/support/simple_file.h"
 #include "titanic/support/string.h"
 
 namespace Titanic {
@@ -51,7 +51,7 @@ struct DialogueResource {
 
 class CDialogueFile {
 private:
-	Common::File _file;
+	File _file;
 	Common::Array<DialogueIndexEntry> _index;
 	Common::Array<DialogueResource> _cache;
 private:
@@ -67,6 +67,8 @@ public:
 	 * Clear the loaded data
 	 */
 	void clear();
+
+	File *getFile() { return &_file; }
 
 	/**
 	 * Sets up a text entry within the dialogue file for access
