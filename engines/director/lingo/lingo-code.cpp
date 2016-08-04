@@ -723,6 +723,18 @@ void Lingo::c_beep() {
 	g_lingo->func_beep(d.u.i);
 }
 
+void Lingo::c_cursor() {
+	Datum d = g_lingo->pop();
+	d.toInt();
+	warning("STUB: c_cursor(%d)", d.u.i);
+}
+
+void Lingo::c_delay() {
+	Datum d = g_lingo->pop();
+	d.toInt();
+	warning("STUB: c_delay(%d)", d.u.i);
+}
+
 void Lingo::c_call() {
 	Common::String name((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
 	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());

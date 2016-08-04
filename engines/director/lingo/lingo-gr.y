@@ -86,6 +86,7 @@ void yyerror(char *s) {
 %token tDOWN tELSE tNLELSIF tEND tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
 %token tMCI tMCIWAIT tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tNLELSE tFACTORY tMETHOD tALERT tBEEP tCLOSERESFILE tCLOSEXLIB
+%token tCURSOR tDELAY
 %token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT
 %token tCONCAT tCONTAINS tSTARTS
 %token tSPRITE tINTERSECTS tWITHIN
@@ -419,6 +420,8 @@ func: tMCI vSTRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c
 	| tCLOSEXLIB 		{
 		g_lingo->codeConst(0);
 		g_lingo->code1(g_lingo->c_closeXlib); }
+	| tCURSOR expr		{ g_lingo->code1(g_lingo->c_cursor); }
+	| tDELAY expr		{ g_lingo->code1(g_lingo->c_delay); }
 	;
 
 globallist: ID				{ g_lingo->code1(g_lingo->c_global); g_lingo->codeString($1->c_str()); delete $1; }

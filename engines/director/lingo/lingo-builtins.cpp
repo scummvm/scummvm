@@ -49,6 +49,7 @@ static struct BuiltinProto {
 	{ "string",	Lingo::b_string, 1 },
 	// Misc
 	{ "closeDA",	 	Lingo::b_closeDA, -1 },
+	{ "continue",		Lingo::b_continue, -1 },
 	{ "dontpassevent",	Lingo::b_dontpassevent, -1 },
 	{ "updatestage",	Lingo::b_updatestage, -1 },
 	{ "ilk",	 		Lingo::b_ilk, 1 },
@@ -242,6 +243,10 @@ void Lingo::b_ilk() {
 
 void Lingo::b_closeDA() {
 	warning("STUB: b_closeDA");
+}
+
+void Lingo::b_continue() {
+	warning("STUB: b_continue");
 }
 
 ///////////////////

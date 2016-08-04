@@ -249,6 +249,8 @@ public:
 	static void c_beep();
 	static void c_closeResFile();
 	static void c_closeXlib();
+	static void c_cursor();
+	static void c_delay();
 
 	static void b_abs();
 	static void b_atan();
@@ -271,6 +273,7 @@ public:
 	static void b_updatestage();
 	static void b_ilk();
 	static void b_closeDA();
+	static void b_continue();
 
 	static void b_point();
 
