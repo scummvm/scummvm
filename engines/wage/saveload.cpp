@@ -335,6 +335,10 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 	}
 
 	// the following is appended by ScummVM
+	int32 appendixOffset = out->pos();
+	if (appendixOffset < 0) {
+		warning("OutSaveFile::pos() failed");
+	}
 	out->writeUint32BE(WAGEflag);
 
 	// Write description of saved game, limited to WAGE_SAVEDGAME_DESCRIPTION_LEN characters + terminating NUL
@@ -351,6 +355,8 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 
 	// Thumbnail
 	Graphics::saveThumbnail(*out);
+
+	out->writeUint32BE(appendixOffset);
 
 	// this one to make checking easier:
 	// it couldn't be added to the beginning
