@@ -2640,6 +2640,12 @@ void DisplayMan::f129_blitToBitmapShrinkWithPalChange(byte *srcBitmap, byte *des
 	uint32 scaleX = (SCALE_THRESHOLD * srcPixelWidth) / destPixelWidth;
 	uint32 scaleY = (SCALE_THRESHOLD * srcHeight) / destHeight;
 
+	warning(false, "MISSING CODE: No palette change takes place in f129_blitToBitmapShrinkWithPalChange");
+
+	// HACK
+	if (destPixelWidth % 2)
+		destPixelWidth++;
+
 	// Loop through drawing output lines
 	for (uint32 destY = 0, scaleYCtr = 0; destY < destHeight; ++destY, scaleYCtr += scaleY) {
 
