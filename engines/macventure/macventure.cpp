@@ -172,6 +172,7 @@ Common::Error MacVentureEngine::run() {
 						_paused = false;
 						if (!updateState()) {
 							updateControls();
+							updateExits();
 						}
 					}
 				}
