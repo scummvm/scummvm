@@ -15,7 +15,7 @@ MODULE_OBJS := \
 	macgui/macmenu.o \
 	macgui/macwindow.o \
 	macgui/macwindowborder.o \
-	macgui/macwindowmanager.o\
+	macgui/macwindowmanager.o \
 	managed_surface.o \
 	nine_patch.o \
 	pixelformat.o \
