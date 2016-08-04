@@ -53,6 +53,7 @@ Common::Rect *g_demoExitRect;
 MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {
 	_showHotspots = false;
 	_gameOver = false;
+	_activatedPLST = false;
 	_activatedSLST = false;
 	_ignoreNextMouseUp = false;
 	_extrasFile = nullptr;
@@ -409,19 +410,9 @@ void MohawkEngine_Riven::refreshCard() {
 
 	_gfx->_updatesEnabled = true;
 	_gfx->clearWaterEffects();
-	_gfx->_activatedPLSTs.clear();
 	_video->stopVideos();
-	_gfx->drawPLST(1);
-	_activatedSLST = false;
 
-	_card->runScript(kCardLoadScript);
-	_gfx->updateScreen();
-	_card->runScript(kCardOpenScript);
 	_card->open();
-
-	// Activate the first sound list if none have been activated
-	if (!_activatedSLST)
-		_sound->playSLST(1, _card->getId());
 
 	if (_showHotspots)
 		for (uint16 i = 0; i < _hotspotCount; i++)

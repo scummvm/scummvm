@@ -82,42 +82,12 @@ void RivenGraphics::copyImageToScreen(uint16 image, uint32 left, uint32 top, uin
 	_dirtyScreen = true;
 }
 
-void RivenGraphics::drawPLST(uint16 x) {
-	Common::SeekableReadStream* plst = _vm->getResource(ID_PLST, _vm->getCurCard()->getId());
-	uint16 recordCount = plst->readUint16BE();
-
-	for (uint16 i = 0; i < recordCount; i++) {
-		uint16 index = plst->readUint16BE();
-		uint16 id = plst->readUint16BE();
-		uint16 left = plst->readUint16BE();
-		uint16 top = plst->readUint16BE();
-		uint16 right = plst->readUint16BE();
-		uint16 bottom = plst->readUint16BE();
-
-		// We are also checking here to make sure we haven't drawn the image yet on screen.
-		// This fixes problems with drawing PLST 1 twice and some other images twice. PLST
-		// 1 is sometimes not called by the scripts, so some cards don't appear if we don't
-		// draw PLST 1 each time. This "hack" is here to catch any PLST attempting to draw
-		// twice. There should never be a problem with doing it this way.
-		if (index == x && !(Common::find(_activatedPLSTs.begin(), _activatedPLSTs.end(), x) != _activatedPLSTs.end())) {
-			debug(0, "Drawing image %d", id);
-			copyImageToScreen(id, left, top, right, bottom);
-			_activatedPLSTs.push_back(x);
-			break;
-		}
-	}
-
-	delete plst;
-}
-
 void RivenGraphics::updateScreen(Common::Rect updateRect) {
 	if (_updatesEnabled) {
 		_vm->runUpdateScreenScript();
 		_vm->_sound->triggerDrawSound();
 
 		if (_dirtyScreen) {
-			_activatedPLSTs.clear();
-
 			// Copy to screen if there's no transition. Otherwise transition. ;)
 			if (_scheduledTransition < 0)
 				_vm->_system->copyRectToScreen(_mainScreen->getBasePtr(updateRect.left, updateRect.top), _mainScreen->pitch, updateRect.left, updateRect.top, updateRect.width(), updateRect.height());

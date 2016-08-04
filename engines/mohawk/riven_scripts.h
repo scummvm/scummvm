@@ -52,6 +52,9 @@ enum {
 
 class MohawkEngine_Riven;
 class RivenCommand;
+class RivenScript;
+
+typedef Common::SharedPtr<RivenScript> RivenScriptPtr;
 
 /**
  * Scripts in Riven are a list of Commands
@@ -86,8 +89,6 @@ private:
 	bool _continueRunning;
 };
 
-typedef Common::SharedPtr<RivenScript> RivenScriptPtr;
-
 /**
  * A script and its type
  *
@@ -113,6 +114,9 @@ public:
 
 	/** Read a single script from a stream */
 	RivenScriptPtr readScript(Common::ReadStream *stream);
+
+	/** Create a script from the caller provided arguments containing raw data */
+	RivenScriptPtr createScriptFromData(uint16 commandCount, ...);
 
 	/** Read a list of typed scripts from a stream */
 	RivenScriptList readScripts(Common::ReadStream *stream);

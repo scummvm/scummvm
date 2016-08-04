@@ -34,11 +34,9 @@ public:
 	RivenGraphics(MohawkEngine_Riven *vm);
 	~RivenGraphics();
 
-	void copyImageToScreen(uint16, uint32, uint32, uint32, uint32);
+	void copyImageToScreen(uint16 image, uint32 left, uint32 top, uint32 right, uint32 bottom);
 	void updateScreen(Common::Rect updateRect = Common::Rect(0, 0, 608, 392));
 	bool _updatesEnabled;
-	Common::Array<uint16> _activatedPLSTs;
-	void drawPLST(uint16 x);
 	void drawRect(Common::Rect rect, bool active);
 	void drawImageRect(uint16 id, Common::Rect srcRect, Common::Rect dstRect);
 	void drawExtrasImage(uint16 id, Common::Rect dstRect);
