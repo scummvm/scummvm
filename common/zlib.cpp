@@ -405,6 +405,8 @@ public:
 
 		return dataSize - _stream.avail_in;
 	}
+
+	virtual int32 pos() const { return _wrapped->pos(); }
 };
 
 #endif	// USE_ZLIB

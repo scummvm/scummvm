@@ -111,7 +111,7 @@ public:
 		return dataSize;
 	}
 
-	uint32 pos() const { return _pos; }
+	int32 pos() const { return _pos; }
 	uint32 size() const { return _bufSize; }
 
 	virtual bool err() const { return _err; }
@@ -201,7 +201,7 @@ public:
 		return dataSize;
 	}
 
-	uint32 pos() const { return _pos; }
+	int32 pos() const { return _pos; }
 	uint32 size() const { return _size; }
 
 	byte *getData() { return _data; }
