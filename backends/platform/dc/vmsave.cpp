@@ -275,6 +275,7 @@ private:
 
 public:
   uint32 write(const void *buf, uint32 cnt);
+  virtual int32 pos() const { return pos; }
 
   OutVMSave(const char *_filename)
     : pos(0), committed(-1), iofailed(false)
