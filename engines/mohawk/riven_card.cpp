@@ -23,7 +23,6 @@
 #include "mohawk/riven_card.h"
 
 #include "mohawk/riven_graphics.h"
-#include "mohawk/riven_sound.h"
 
 #include "mohawk/resource.h"
 #include "mohawk/riven.h"
@@ -35,6 +34,7 @@ RivenCard::RivenCard(MohawkEngine_Riven *vm, uint16 id) :
 	_id(id) {
 	loadCardResource(id);
 	loadCardPictureList(id);
+	loadCardSoundList(id);
 }
 
 RivenCard::~RivenCard() {
@@ -91,7 +91,7 @@ void RivenCard::defaultLoadScript() {
 
 	// Activate the first sound list if none have been activated
 	if (!_vm->_activatedSLST)
-		_vm->_sound->playSLST(1, _id);
+		playSound(1);
 }
 
 void RivenCard::loadCardPictureList(uint16 id) {
@@ -127,6 +127,73 @@ RivenCard::Picture RivenCard::getPicture(uint16 index) const {
 	}
 
 	error("Could not find picture %d in card %d", index, _id);
+}
+
+void RivenCard::loadCardSoundList(uint16 id) {
+	Common::SeekableReadStream *slstStream = _vm->getResource(ID_SLST, id);
+
+	uint16 recordCount = slstStream->readUint16BE();
+	_soundList.resize(recordCount);
+
+	for (uint16 i = 0; i < recordCount; i++) {
+		SLSTRecord &slstRecord = _soundList[i];
+		slstRecord.index = slstStream->readUint16BE();
+
+		uint16 soundCount = slstStream->readUint16BE();
+
+		slstRecord.soundIds.resize(soundCount);
+		for (uint16 j = 0; j < soundCount; j++)
+			slstRecord.soundIds[j] = slstStream->readUint16BE();
+
+		slstRecord.fadeFlags = slstStream->readUint16BE();
+		slstRecord.loop = slstStream->readUint16BE();
+		slstRecord.globalVolume = slstStream->readUint16BE();
+		slstRecord.u0 = slstStream->readUint16BE();			// Unknown
+
+		if (slstRecord.u0 > 1)
+			warning("slstRecord.u0: %d non-boolean", slstRecord.u0);
+
+		slstRecord.suspend = slstStream->readUint16BE();
+
+		if (slstRecord.suspend != 0)
+			warning("slstRecord.suspend: %d non-zero", slstRecord.suspend);
+
+		slstRecord.volumes.resize(soundCount);
+		slstRecord.balances.resize(soundCount);
+		slstRecord.u2.resize(soundCount);
+
+		for (uint16 j = 0; j < soundCount; j++)
+			slstRecord.volumes[j] = slstStream->readUint16BE();
+
+		for (uint16 j = 0; j < soundCount; j++)
+			slstRecord.balances[j] = slstStream->readSint16BE();	// negative = left, 0 = center, positive = right
+
+		for (uint16 j = 0; j < soundCount; j++) {
+			slstRecord.u2[j] = slstStream->readUint16BE();		// Unknown
+
+			if (slstRecord.u2[j] != 255 && slstRecord.u2[j] != 256)
+				warning("slstRecord.u2[%d]: %d not 255 or 256", j, slstRecord.u2[j]);
+		}
+	}
+
+	delete slstStream;
+}
+
+void RivenCard::playSound(uint16 index, bool queue) {
+	if (index > 0 && index <= _soundList.size()) {
+		RivenScriptPtr script = _vm->_scriptMan->createScriptFromData(1, 40, 1, index);
+		_vm->_scriptMan->runScript(script, queue);
+	}
+}
+
+SLSTRecord RivenCard::getSound(uint16 index) const {
+	for (uint16 i = 0; i < _soundList.size(); i++) {
+		if (_soundList[i].index == index) {
+			return _soundList[i];
+		}
+	}
+
+	error("Could not find sound %d in card %d", index, _id);
 }
 
 } // End of namespace Mohawk

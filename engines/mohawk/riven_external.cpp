@@ -771,11 +771,11 @@ void RivenExternal::xblabbooknextpage(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xsoundplug(uint16 argc, uint16 *argv) {
 	if (_vm->_vars["bheat"] != 0)
-		_vm->_sound->playSLST(1, _vm->getCurCard()->getId());
+		_vm->getCurCard()->playSound(1);
 	else if (_vm->_vars["bcratergg"] != 0)
-		_vm->_sound->playSLST(2, _vm->getCurCard()->getId());
+		_vm->getCurCard()->playSound(2);
 	else
-		_vm->_sound->playSLST(3, _vm->getCurCard()->getId());
+		_vm->getCurCard()->playSound(3);
 }
 
 void RivenExternal::xbchangeboiler(uint16 argc, uint16 *argv) {
@@ -841,9 +841,9 @@ void RivenExternal::xbchangeboiler(uint16 argc, uint16 *argv) {
 	}
 
 	if (argc > 1)
-		_vm->_sound->playSLST(argv[1], _vm->getCurCard()->getId());
+		_vm->getCurCard()->playSound(argv[1]);
 	else if (argv[0] == 2)
-		_vm->_sound->playSLST(1, _vm->getCurCard()->getId());
+		_vm->getCurCard()->playSound(1);
 
 	_vm->_cursor->setCursor(kRivenHideCursor);
 	_vm->_video->playMovieBlockingRiven(11);

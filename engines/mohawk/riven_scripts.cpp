@@ -580,7 +580,8 @@ void RivenSimpleCommand::activateSLST(uint16 op, uint16 argc, uint16 *argv) {
 		return;
 
 	_vm->_activatedSLST = true;
-	_vm->_sound->playSLST(argv[0], _vm->getCurCard()->getId());
+	SLSTRecord picture = _vm->getCurCard()->getSound(argv[0]);
+	_vm->_sound->playSLST(picture);
 }
 
 // Command 41: activate MLST record and play

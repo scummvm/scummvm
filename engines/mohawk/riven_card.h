@@ -24,6 +24,7 @@
 #define RIVEN_CARD_H
 
 #include "mohawk/riven_scripts.h"
+#include "mohawk/riven_sound.h"
 
 #include "common/rect.h"
 #include "common/system.h"
@@ -67,9 +68,16 @@ public:
 	/** Draw one of the card's pictures synchronously or asynchronously */
 	void drawPicture(uint16 index, bool queue = false);
 
+	/** Play the card's ambient sounds with the specified index */
+	void playSound(uint16 index, bool queue = false);
+
+	/** Get the card's sound description with the specified index */
+	SLSTRecord getSound(uint16 index) const;
+
 private:
 	void loadCardResource(uint16 id);
 	void loadCardPictureList(uint16 id);
+	void loadCardSoundList(uint16 id);
 
 	void initializeZipMode();
 	void defaultLoadScript();
@@ -84,6 +92,7 @@ private:
 
 	// Resource lists
 	Common::Array<Picture> _pictureList;
+	Common::Array<SLSTRecord> _soundList;
 };
 
 } // End of namespace Mohawk

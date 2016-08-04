@@ -450,7 +450,7 @@ bool RivenConsole::Cmd_PlaySound(int argc, const char **argv) {
 
 bool RivenConsole::Cmd_PlaySLST(int argc, const char **argv) {
 	if (argc < 2) {
-		debugPrintf("Usage: playSLST <slst index> <card, default = current>\n");
+		debugPrintf("Usage: playSLST <slst index>\n");
 
 		return true;
 	}
@@ -458,9 +458,7 @@ bool RivenConsole::Cmd_PlaySLST(int argc, const char **argv) {
 	_vm->_sound->stopSound();
 	_vm->_sound->stopAllSLST();
 
-	uint16 card = (argc == 3) ? (uint16)atoi(argv[2]) : _vm->getCurCard()->getId();
-
-	_vm->_sound->playSLST((uint16)atoi(argv[1]), card);
+	_vm->getCurCard()->playSound((uint16)atoi(argv[1]));
 	return false;
 }
 
