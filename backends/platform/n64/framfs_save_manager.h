@@ -71,6 +71,9 @@ private:
 
 public:
 	uint32 write(const void *buf, uint32 cnt);
+	virtual int32 pos() const {
+		return framfs_tell(fd);
+	}
 
 	OutFRAMSave(const char *_filename) : fd(NULL) {
 		fd = framfs_open(_filename, "w");
