@@ -77,10 +77,12 @@ private:
 	void decodeHuffGraphic(const PPICHuff &huff, Common::BitStream &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
 	byte walkHuff(const PPICHuff &huff, Common::BitStream &stream);
 
-	void blitDirect(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
-	void blitBIC(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
-	void blitOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
-	void blitXOR(Graphics::ManagedSurface * target, uint32 ox, uint32 oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
+	void blitDirect(Graphics::ManagedSurface * target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
+	void blitBIC(Graphics::ManagedSurface * target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
+	void blitOR(Graphics::ManagedSurface * target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
+	void blitXOR(Graphics::ManagedSurface * target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
+
+	void calculateSubsection(int &ox, int &oy, uint bitWidth, uint bitHeight, uint &sx, uint &sy, uint &w, uint &h);
 
 private:
 	ObjID _id;
