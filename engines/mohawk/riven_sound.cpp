@@ -68,64 +68,6 @@ void RivenSoundManager::playSound(uint16 id, uint16 volume, bool playOnDraw) {
 	}
 }
 
-void RivenSoundManager::playSLST(uint16 index, uint16 card) {
-	Common::SeekableReadStream *slstStream = _vm->getResource(ID_SLST, card);
-
-	uint16 recordCount = slstStream->readUint16BE();
-
-	for (uint16 i = 0; i < recordCount; i++) {
-		SLSTRecord slstRecord;
-		slstRecord.index = slstStream->readUint16BE();
-
-		uint16 soundCount = slstStream->readUint16BE();
-		slstRecord.soundIds.resize(soundCount);
-
-		for (uint16 j = 0; j < soundCount; j++)
-			slstRecord.soundIds[j] = slstStream->readUint16BE();
-
-		slstRecord.fadeFlags = slstStream->readUint16BE();
-		slstRecord.loop = slstStream->readUint16BE();
-		slstRecord.globalVolume = slstStream->readUint16BE();
-		slstRecord.u0 = slstStream->readUint16BE();			// Unknown
-
-		if (slstRecord.u0 > 1)
-			warning("slstRecord.u0: %d non-boolean", slstRecord.u0);
-
-		slstRecord.suspend = slstStream->readUint16BE();
-
-		if (slstRecord.suspend != 0)
-			warning("slstRecord.u1: %d non-zero", slstRecord.suspend);
-
-		slstRecord.volumes.resize(soundCount);
-		slstRecord.balances.resize(soundCount);
-		slstRecord.u2.resize(soundCount);
-
-		for (uint16 j = 0; j < soundCount; j++)
-			slstRecord.volumes[j] = slstStream->readUint16BE();
-
-		for (uint16 j = 0; j < soundCount; j++)
-			slstRecord.balances[j] = slstStream->readSint16BE();	// negative = left, 0 = center, positive = right
-
-		for (uint16 j = 0; j < soundCount; j++) {
-			slstRecord.u2[j] = slstStream->readUint16BE();		// Unknown
-
-			if (slstRecord.u2[j] != 255 && slstRecord.u2[j] != 256)
-				warning("slstRecord.u2[%d]: %d not 255 or 256", j, slstRecord.u2[j]);
-		}
-
-		if (slstRecord.index == index) {
-			playSLST(slstRecord);
-			delete slstStream;
-			return;
-		}
-	}
-
-	delete slstStream;
-
-	// If we have no matching entries, we do nothing and just let
-	// the previous ambient sounds continue.
-}
-
 void RivenSoundManager::playSLST(const SLSTRecord &slstRecord) {
 	if (slstRecord.soundIds.empty()) {
 		return;

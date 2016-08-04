@@ -86,9 +86,6 @@ public:
 	/** Start playing an ambient sound list */
 	void playSLST(const SLSTRecord &slstRecord);
 
-	/** Start playing an ambient sound list from a resource */
-	void playSLST(uint16 index, uint16 card);
-
 	/** Stop playing the current ambient sounds */
 	void stopAllSLST(bool fade = false);
 
