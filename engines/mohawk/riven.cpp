@@ -408,7 +408,6 @@ void MohawkEngine_Riven::refreshCard() {
 
 	loadHotspots(_card->getId());
 
-	_gfx->_updatesEnabled = true;
 	_gfx->clearWaterEffects();
 	_video->stopVideos();
 
@@ -991,10 +990,6 @@ void MohawkEngine_Riven::addZipVisitedCard(uint16 cardId, uint16 cardNameId) {
 	zip.id = cardId;
 	if (!(Common::find(_zipModeData.begin(), _zipModeData.end(), zip) != _zipModeData.end()))
 		_zipModeData.push_back(zip);
-}
-
-void MohawkEngine_Riven::runUpdateScreenScript() {
-	_card->runScript(kCardUpdateScript);
 }
 
 bool ZipMode::operator== (const ZipMode &z) const {

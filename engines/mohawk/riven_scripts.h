@@ -212,8 +212,8 @@ private:
 	DECLARE_OPCODE(runExternalCommand);
 	DECLARE_OPCODE(transition);
 	DECLARE_OPCODE(refreshCard);
-	DECLARE_OPCODE(disableScreenUpdate);
-	DECLARE_OPCODE(enableScreenUpdate);
+	DECLARE_OPCODE(beginScreenUpdate);
+	DECLARE_OPCODE(applyScreenUpdate);
 	DECLARE_OPCODE(incrementVariable);
 	DECLARE_OPCODE(changeStack);
 	DECLARE_OPCODE(disableMovie);

@@ -486,7 +486,7 @@ void RivenExternal::xaatrusbookprevpage(uint16 argc, uint16 *argv) {
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(1);
-	_vm->_gfx->updateScreen();
+	_vm->_card->drawPicture(page);
 }
 
 void RivenExternal::xaatrusbooknextpage(uint16 argc, uint16 *argv) {
@@ -506,7 +506,7 @@ void RivenExternal::xaatrusbooknextpage(uint16 argc, uint16 *argv) {
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(0);
-	_vm->_gfx->updateScreen();
+	_vm->_card->drawPicture(page);
 }
 
 void RivenExternal::xacathopenbook(uint16 argc, uint16 *argv) {
@@ -572,7 +572,7 @@ void RivenExternal::xacathbookprevpage(uint16 argc, uint16 *argv) {
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(3);
-	_vm->_gfx->updateScreen();
+	_vm->_card->drawPicture(page);
 }
 
 void RivenExternal::xacathbooknextpage(uint16 argc, uint16 *argv) {
@@ -589,7 +589,7 @@ void RivenExternal::xacathbooknextpage(uint16 argc, uint16 *argv) {
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(2);
-	_vm->_gfx->updateScreen();
+	_vm->_card->drawPicture(page);
 }
 
 void RivenExternal::xtrapbookback(uint16 argc, uint16 *argv) {
@@ -749,7 +749,7 @@ void RivenExternal::xblabbookprevpage(uint16 argc, uint16 *argv) {
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(1);
-	_vm->_gfx->updateScreen();
+	_vm->_card->drawPicture(page);
 }
 
 void RivenExternal::xblabbooknextpage(uint16 argc, uint16 *argv) {
@@ -766,7 +766,7 @@ void RivenExternal::xblabbooknextpage(uint16 argc, uint16 *argv) {
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(0);
-	_vm->_gfx->updateScreen();
+	_vm->_card->drawPicture(page);
 }
 
 void RivenExternal::xsoundplug(uint16 argc, uint16 *argv) {
@@ -950,7 +950,6 @@ void RivenExternal::xbait(uint16 argc, uint16 *argv) {
 	if (_vm->_hotspots[9].rect.contains(_vm->_system->getEventManager()->getMousePos())) {
 		_vm->_vars["bbait"] = 1;
 		_vm->getCurCard()->drawPicture(4);
-		_vm->_gfx->updateScreen();
 		_vm->_hotspots[3].enabled = false; // Disable bait hotspot
 		_vm->_hotspots[9].enabled = true; // Enable baitplate hotspot
 	}
@@ -983,9 +982,8 @@ void RivenExternal::xbfreeytram(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xbaitplate(uint16 argc, uint16 *argv) {
 	// Remove the pellet from the plate and put it in your hand
-	_vm->getCurCard()->drawPicture(3);
 	_vm->_cursor->setCursor(kRivenPelletCursor);
-	_vm->_gfx->updateScreen();
+	_vm->getCurCard()->drawPicture(3);
 
 	// Loop until the player lets go (or quits)
 	Common::Event event;
@@ -1011,7 +1009,6 @@ void RivenExternal::xbaitplate(uint16 argc, uint16 *argv) {
 	if (_vm->_hotspots[9].rect.contains(_vm->_system->getEventManager()->getMousePos())) {
 		_vm->_vars["bbait"] = 1;
 		_vm->getCurCard()->drawPicture(4);
-		_vm->_gfx->updateScreen();
 		_vm->_hotspots[3].enabled = false; // Disable bait hotspot
 		_vm->_hotspots[9].enabled = true; // Enable baitplate hotspot
 	} else {
@@ -1427,21 +1424,18 @@ void RivenExternal::xglviewer(uint16 argc, uint16 *argv) {
 
 	// And update the screen with the new image
 	_vm->getCurCard()->drawPicture(curPos + 2);
-	_vm->_gfx->updateScreen();
 }
 
 void RivenExternal::xglview_villageon(uint16 argc, uint16 *argv) {
 	// Turn on the left viewer to 'village mode'
 	_vm->_vars["glview"] = 2;
 	_vm->getCurCard()->drawPicture(_vm->_vars["glviewpos"] + 2);
-	_vm->_gfx->updateScreen();
 }
 
 void RivenExternal::xglview_villageoff(uint16 argc, uint16 *argv) {
 	// Turn off the left viewer when in 'village mode' (why is this external?)
 	_vm->_vars["glview"] = 0;
 	_vm->getCurCard()->drawPicture(1);
-	_vm->_gfx->updateScreen();
 }
 
 static void catherineViewerIdleTimer(MohawkEngine_Riven *vm) {
@@ -1518,7 +1512,6 @@ void RivenExternal::xglview_prisonon(uint16 argc, uint16 *argv) {
 		// Otherwise, just redraw the imager
 		timeUntilNextMovie = _vm->_rnd->getRandomNumberRng(10, 20) * 1000;
 		_vm->getCurCard()->drawPicture(8);
-		_vm->_gfx->updateScreen();
 	}
 
 	// Create the timer for the next video
@@ -1542,7 +1535,6 @@ void RivenExternal::xglview_prisonoff(uint16 argc, uint16 *argv) {
 
 	// Redraw the viewer
 	_vm->getCurCard()->drawPicture(1);
-	_vm->_gfx->updateScreen();
 }
 
 // ------------------------------------------------------------------------------------
@@ -2109,8 +2101,7 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 					_vm->_scriptMan->stopAllScripts();                  // Stop all running scripts (so we don't remain in the cage)
 					_vm->_video->stopVideos();                          // Stop all videos
 					_vm->_cursor->setCursor(kRivenHideCursor);          // Hide the cursor
-					_vm->getCurCard()->drawPicture(3);                             // Black out the screen
-					_vm->_gfx->updateScreen();                          // Update the screen
+					_vm->getCurCard()->drawPicture(3);                  // Black out the screen
 					_vm->_sound->playSound(0);                          // Play the link sound
 					_vm->_video->activateMLST(7, _vm->getCurCard()->getId());    // Activate Gehn Link Video
 					_vm->_video->playMovieBlockingRiven(1);             // Play Gehn Link Video
@@ -2199,7 +2190,7 @@ void RivenExternal::xogehnbookprevpage(uint16 argc, uint16 *argv) {
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(1);
-	_vm->_gfx->updateScreen();
+	_vm->_card->drawPicture(page);
 }
 
 void RivenExternal::xogehnbooknextpage(uint16 argc, uint16 *argv) {
@@ -2216,7 +2207,7 @@ void RivenExternal::xogehnbooknextpage(uint16 argc, uint16 *argv) {
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(0);
-	_vm->_gfx->updateScreen();
+	_vm->_card->drawPicture(page);
 }
 
 uint16 RivenExternal::getComboDigit(uint32 correctCombo, uint32 digit) {
@@ -2662,10 +2653,6 @@ void RivenExternal::drawMarbles() {
 void RivenExternal::xdrawmarbles(uint16 argc, uint16 *argv) {
 	// Draw marbles in the closeup
 	drawMarbles();
-
-	// We have to re-enable the updates here
-	// Would be really nice if the scripts did this for us, but alas...
-	_vm->_gfx->_updatesEnabled = true;
 }
 
 void RivenExternal::xtakeit(uint16 argc, uint16 *argv) {
@@ -2686,7 +2673,6 @@ void RivenExternal::xtakeit(uint16 argc, uint16 *argv) {
 
 	// Redraw the background
 	_vm->getCurCard()->drawPicture(1);
-	_vm->_gfx->updateScreen();
 
 	// Loop until the player lets go (or quits)
 	Common::Event event;

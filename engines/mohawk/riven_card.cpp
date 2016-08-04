@@ -23,7 +23,7 @@
 #include "mohawk/riven_card.h"
 
 #include "mohawk/riven_graphics.h"
-#include "mohawk/sound.h"
+#include "mohawk/riven_sound.h"
 
 #include "mohawk/resource.h"
 #include "mohawk/riven.h"
@@ -55,11 +55,12 @@ void RivenCard::open() {
 	_vm->_activatedPLST = false;
 	_vm->_activatedSLST = false;
 
+	_vm->_gfx->beginScreenUpdate();
 	runScript(kCardLoadScript);
 	defaultLoadScript();
 
 	initializeZipMode();
-	_vm->_gfx->updateScreen();
+	_vm->_gfx->applyScreenUpdate(true);
 
 	runScript(kCardOpenScript);
 }
