@@ -1,0 +1,7 @@
+put ilk(10)
+put ilk(20.0)
+put ilk("Macromedia")
+put ilk(point(10, 20))
+put ilk(ilk(10))
+set x = point(10, 20)
+put ilk(x)

@@ -1,0 +1,42 @@
+--
+macro SHIPX
+global x, y
+set x = Random(5)
+if x = 1 then
+go "Zoom"
+exit
+end if
+if x >1 then
+set y = 10
+exit
+end if
+put 100
+
+--
+macro ZIPX
+set x = Random(5)
+if x = 1 then
+go "ZIP"
+exit
+end if
+if x >1 then
+put x
+exit
+end if
+
+--
+macro check par1, par2
+, par3
+if par1 = 3 then
+put -3
+else
+put 0
+end if
+if par2 = 2 then
+put 2
+else
+put 0
+end if
+put par1
+put par2
+put par3

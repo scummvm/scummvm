@@ -1,0 +1,5 @@
+go to frame "Open23" of movie "OpenCabin23"
+go "CARDBACK"
+go movie "BAR 1"
+go to "Open23" of movie "OpenCabin23"
+go to "Chair"
