@@ -76,7 +76,7 @@ void yyerror(char *s) {
 	Common::Array<double> *arr;
 }
 
-%token CASTREF UNARY VOID VAR POINT RECT ARRAY SYMBOL
+%token CASTREF UNARY VOIDVAL VAR POINT RECT ARRAY SYMBOL
 %token<i> INT
 %token<e> THEENTITY THEENTITYWITHID
 %token<f> FLOAT

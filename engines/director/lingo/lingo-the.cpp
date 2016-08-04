@@ -320,7 +320,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	default:
 		warning("Unprocessed getting field %d of entity %d", field, entity);
-		d.type = VOID;
+		d.type = VOIDVAL;
 	}
 
 	return d;
@@ -431,7 +431,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		break;
 	default:
 		warning("Unprocessed getting field %d of sprite", field);
-		d.type = VOID;
+		d.type = VOIDVAL;
 	}
 
 	return d;
@@ -497,7 +497,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		{
 			if (cast->type != kCastShape) {
 				warning("Field %d of cast %d not found", field, id);
-				d.type = VOID;
+				d.type = VOIDVAL;
 				return d;
 			}
 
@@ -509,7 +509,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		{
 			if (cast->type != kCastShape) {
 				warning("Field %d of cast %d not found", field, id);
-				d.type = VOID;
+				d.type = VOIDVAL;
 				return d;
 			}
 
@@ -522,7 +522,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		break;
 	default:
 		warning("Unprocessed getting field %d of cast %d", field, id);
-		d.type = VOID;
+		d.type = VOIDVAL;
 	//TODO find out about String fields
 	}
 

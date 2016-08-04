@@ -69,7 +69,7 @@ struct EventHandlerType {
 
 Symbol::Symbol() {
 	name = NULL;
-	type = VOID;
+	type = VOIDVAL;
 	u.s = NULL;
 	nargs = 0;
 	global = false;
@@ -302,8 +302,8 @@ const char *Datum::type2str(bool isk) {
 		return isk ? "#string" : "STRING";
 	case CASTREF:
 		return "CASTREF";
-	case VOID:
-		return isk ? "#void" : "VOID";
+	case VOIDVAL:
+		return isk ? "#void" : "VOIDVAL";
 	case POINT:
 		return isk ? "#point" : "POINT";
 	case SYMBOL:

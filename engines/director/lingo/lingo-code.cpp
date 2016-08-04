@@ -58,7 +58,7 @@ void Lingo::push(Datum d) {
 void Lingo::pushVoid() {
 	Datum d;
 	d.u.i = 0;
-	d.type = VOID;
+	d.type = VOIDVAL;
 	push(d);
 }
 
@@ -80,7 +80,7 @@ void Lingo::c_printtop(void) {
 	Datum d = g_lingo->pop();
 
 	switch (d.type) {
-	case VOID:
+	case VOIDVAL:
 		warning("Void");
 		break;
 	case INT:
@@ -173,7 +173,7 @@ void Lingo::c_assign() {
 		return;
 	}
 
-	if (d1.u.sym->type != INT && d1.u.sym->type != VOID &&
+	if (d1.u.sym->type != INT && d1.u.sym->type != VOIDVAL &&
 			d1.u.sym->type != FLOAT && d1.u.sym->type != STRING) {
 		warning("assignment to non-variable '%s'", d1.u.sym->name);
 		return;
@@ -207,13 +207,13 @@ void Lingo::c_assign() {
 }
 
 bool Lingo::verify(Symbol *s) {
-	if (s->type != INT && s->type != VOID && s->type != FLOAT && s->type != STRING && s->type != POINT) {
+	if (s->type != INT && s->type != VOIDVAL && s->type != FLOAT && s->type != STRING && s->type != POINT) {
 		warning("attempt to evaluate non-variable '%s'", s->name);
 
 		return false;
 	}
 
-	if (s->type == VOID)
+	if (s->type == VOIDVAL)
 		warning("Variable used before assigning a value '%s'", s->name);
 
 	return true;
@@ -733,7 +733,7 @@ void Lingo::c_call() {
 		Datum d;
 
 		d.u.i = 0;
-		d.type = VOID;
+		d.type = VOIDVAL;
 		g_lingo->push(d);
 	}
 

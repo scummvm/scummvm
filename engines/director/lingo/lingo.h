@@ -106,7 +106,7 @@ struct Datum {	/* interpreter stack type */
 		FloatArray *arr;	/* ARRAY, POINT, RECT */
 	} u;
 
-	Datum() { u.sym = NULL; type = VOID; }
+	Datum() { u.sym = NULL; type = VOIDVAL; }
 
 	double toFloat();
 	int toInt();

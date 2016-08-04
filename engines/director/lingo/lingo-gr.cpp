@@ -68,7 +68,7 @@
    enum yytokentype {
      CASTREF = 258,
      UNARY = 259,
-     VOID = 260,
+     VOIDVAL = 260,
      VAR = 261,
      POINT = 262,
      RECT = 263,
@@ -132,7 +132,7 @@
 /* Tokens.  */
 #define CASTREF 258
 #define UNARY 259
-#define VOID 260
+#define VOIDVAL 260
 #define VAR 261
 #define POINT 262
 #define RECT 263
@@ -623,7 +623,7 @@ static const yytype_uint16 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "CASTREF", "UNARY", "VOID", "VAR",
+  "$end", "error", "$undefined", "CASTREF", "UNARY", "VOIDVAL", "VAR",
   "POINT", "RECT", "ARRAY", "SYMBOL", "INT", "THEENTITY",
   "THEENTITYWITHID", "FLOAT", "BLTIN", "BLTINNOARGS", "ID", "STRING",
   "HANDLER", "tDOWN", "tELSE", "tNLELSIF", "tEND", "tEXIT", "tFRAME",

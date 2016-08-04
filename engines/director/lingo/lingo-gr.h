@@ -41,7 +41,7 @@
    enum yytokentype {
      CASTREF = 258,
      UNARY = 259,
-     VOID = 260,
+     VOIDVAL = 260,
      VAR = 261,
      POINT = 262,
      RECT = 263,
@@ -105,7 +105,7 @@
 /* Tokens.  */
 #define CASTREF 258
 #define UNARY 259
-#define VOID 260
+#define VOIDVAL 260
 #define VAR 261
 #define POINT 262
 #define RECT 263

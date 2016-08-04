@@ -95,7 +95,7 @@ Symbol *Lingo::lookupVar(const char *name, bool create, bool putInGlobalList) {
 		sym = new Symbol;
 		sym->name = (char *)calloc(strlen(name) + 1, 1);
 		Common::strlcpy(sym->name, name, strlen(name) + 1);
-		sym->type = VOID;
+		sym->type = VOIDVAL;
 		sym->u.i = 0;
 
 		(*_localvars)[name] = sym;
