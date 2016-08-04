@@ -132,7 +132,7 @@ asgn: tPUT expr tINTO ID 		{
 		$$ = $4;
 		delete $2; }
 	| tSET vTHEENTITY '=' expr	{
-		g_lingo->code2(g_lingo->c_constpush, 0); // Put dummy id
+		g_lingo->codeConst(0); // Put dummy id
 		g_lingo->code1(g_lingo->c_theentityassign);
 		inst e = 0, f = 0;
 		WRITE_UINT32(&e, $2[0]);
@@ -154,7 +154,7 @@ asgn: tPUT expr tINTO ID 		{
 		$$ = $4;
 		delete $2; }
 	| tSET vTHEENTITY tTO expr	{
-		g_lingo->code2(g_lingo->c_constpush, 0); // Put dummy id
+		g_lingo->codeConst(0); // Put dummy id
 		g_lingo->code1(g_lingo->c_theentityassign);
 		inst e = 0, f = 0;
 		WRITE_UINT32(&e, $2[0]);
@@ -342,11 +342,7 @@ stmtlist: /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
 	| stmtlist stmt
 	;
 
-expr: vINT		{
-		$$ = g_lingo->code1(g_lingo->c_constpush);
-		inst i = 0;
-		WRITE_UINT32(&i, $1);
-		g_lingo->code1(i); }
+expr: vINT		{ $$ = g_lingo->codeConst($1); }
 	| vFLOAT		{
 		$$ = g_lingo->code1(g_lingo->c_fconstpush);
 		g_lingo->codeFloat($1); }
@@ -355,7 +351,7 @@ expr: vINT		{
 		g_lingo->codeString($1->c_str()); }
 	| vBLTINNOARGS 	{
 		$$ = g_lingo->code1(g_lingo->_handlers[*$1]->u.func);
-		$$ = g_lingo->code2(g_lingo->c_constpush, 0); // Put dummy value
+		g_lingo->codeConst(0); // Put dummy value
 		delete $1; }
 	| ID '(' arglist ')'	{
 		$$ = g_lingo->codeFunc($1, $3);
@@ -365,7 +361,7 @@ expr: vINT		{
 		g_lingo->codeString($1->c_str());
 		delete $1; }
 	| vTHEENTITY	{
-		$$ = g_lingo->code2(g_lingo->c_constpush, 0); // Put dummy id
+		$$ = g_lingo->codeConst(0); // Put dummy id
 		g_lingo->code1(g_lingo->c_theentitypush);
 		inst e = 0, f = 0;
 		WRITE_UINT32(&e, $1[0]);
@@ -405,35 +401,23 @@ func: tMCI vSTRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c
 	| tMCIWAIT ID			{ g_lingo->code1(g_lingo->c_mciwait); g_lingo->codeString($2->c_str()); delete $2; }
 	| tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| gotofunc
-	| tEXIT					{ g_lingo->code2(g_lingo->c_constpush, (inst)0); // Push fake value on stack
+	| tEXIT					{ g_lingo->codeConst(0); // Push fake value on stack
 							  g_lingo->code1(g_lingo->c_procret); }
 	| tGLOBAL globallist
 	| tALERT expr			{ g_lingo->code1(g_lingo->c_alert); }
 	| tBEEP vINT			{
-		g_lingo->code1(g_lingo->c_constpush);
-		inst i = 0;
-		WRITE_UINT32(&i, $2);
-		g_lingo->code1(i);
+		g_lingo->codeConst($2);
 		g_lingo->code1(g_lingo->c_beep); }
 	| tBEEP 				{
-		g_lingo->code1(g_lingo->c_constpush);
-		inst i = 0;
-		WRITE_UINT32(&i, 0);
-		g_lingo->code1(i);
+		g_lingo->codeConst(0);
 		g_lingo->code1(g_lingo->c_beep); }
 	| tCLOSERESFILE expr	{ g_lingo->code1(g_lingo->c_closeResFile); }
 	| tCLOSERESFILE 		{
-		g_lingo->code1(g_lingo->c_constpush);
-		inst i = 0;
-		WRITE_UINT32(&i, 0);
-		g_lingo->code1(i);
+		g_lingo->codeConst(0);
 		g_lingo->code1(g_lingo->c_closeResFile); }
 	| tCLOSEXLIB expr	{ g_lingo->code1(g_lingo->c_closeXlib); }
 	| tCLOSEXLIB 		{
-		g_lingo->code1(g_lingo->c_constpush);
-		inst i = 0;
-		WRITE_UINT32(&i, 0);
-		g_lingo->code1(i);
+		g_lingo->codeConst(0);
 		g_lingo->code1(g_lingo->c_closeXlib); }
 	;
 
@@ -508,7 +492,7 @@ gotomovie: tOF tMOVIE vSTRING	{ $$ = $3; }
 //   on keyword
 defn: tMACRO ID { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); }
 		begin argdef nl argstore stmtlist 		{
-			g_lingo->code2(g_lingo->c_constpush, (inst)0); // Push fake value on stack
+			g_lingo->codeConst(0); // Push fake value on stack
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$2, $4, $5);
 			g_lingo->_indef = false; }
@@ -517,7 +501,7 @@ defn: tMACRO ID { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); }
 		}
 	| tMETHOD ID { g_lingo->_indef = true; }
 		begin argdef nl argstore stmtlist 		{
-			g_lingo->code2(g_lingo->c_constpush, (inst)0); // Push fake value on stack
+			g_lingo->codeConst(0); // Push fake value on stack
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$2, $4, $5, &g_lingo->_currentFactory);
 			g_lingo->_indef = false; }	;

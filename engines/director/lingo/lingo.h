@@ -173,6 +173,7 @@ public:
 	int code3(inst code_1, inst code_2, inst code_3) { int o = code1(code_1); code1(code_2); code1(code_3); return o; }
 	int codeString(const char *s);
 	void codeLabel(int label);
+	int codeConst(int val);
 
 	int calcStringAlignment(const char *s) {
 		return calcCodeAlignment(strlen(s) + 1);
