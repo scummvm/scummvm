@@ -370,7 +370,7 @@ void Score::loadLabels(Common::SeekableSubReadStreamEndian &stream) {
 }
 
 int Score::compareLabels(const void *a, const void *b) {
-	return ((Label *)a)->number - ((Label *)b)->number;
+	return ((const Label *)a)->number - ((const Label *)b)->number;
 }
 
 void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
@@ -1322,6 +1322,9 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		break;
 	case kTypeButton:
 		surface.frameRect(Common::Rect(x, y, x + width, y + height), 0);
+		break;
+	case kTypeRadio:
+		warning("STUB: renderButton: kTypeRadio");
 		break;
 	}
 }

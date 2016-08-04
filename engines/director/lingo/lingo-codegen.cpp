@@ -54,10 +54,10 @@ namespace Director {
 void Lingo::execute(int pc) {
 	for(_pc = pc; (*_currentScript)[_pc] != STOP && !_returning;) {
 
-		for (int i = 0; i < _stack.size(); i++) {
+		for (uint i = 0; i < _stack.size(); i++) {
 			debugN(5, "%d ", _stack[i].u.i);
 		}
-		debug(5, "");
+		debug(5, "%s", "");
 
 		_pc++;
 		(*((*_currentScript)[_pc - 1]))();

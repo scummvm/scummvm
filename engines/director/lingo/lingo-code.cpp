@@ -427,7 +427,7 @@ void Lingo::c_intersects() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	warning("STUB: c_intersects");
+	warning("STUB: c_intersects: %d", d2.u.i);
 
 	g_lingo->push(d1);
 }
@@ -436,7 +436,7 @@ void Lingo::c_within() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	warning("STUB: c_within");
+	warning("STUB: c_within: %d", d2.u.i);
 
 	g_lingo->push(d1);
 }
