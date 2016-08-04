@@ -408,10 +408,10 @@ int CTrueTalkManager::readDialogSound() {
 	_field18 = 0;
 
 	for (uint idx = 0; idx < _titleEngine._indexes.size(); ++idx) {
-		CSoundItem *soundItem = _gameManager->_sound.getTrueTalkSound(
+		WaveFile *waveFile = _gameManager->_sound.getTrueTalkSound(
 			_dialogueFile, _titleEngine._indexes[idx] - _dialogueId);
-		if (soundItem) {			
-			_field18 = soundItem->fn1();
+		if (waveFile) {			
+			_field18 = waveFile->fn1();
 		}
 	}
 

@@ -47,6 +47,8 @@ public:
 	WaveFile() : _field0(2), _field4(0), _field8(0), _handle(0),
 		_owner(nullptr), _field14(1), _field18(0), _field1C(0),
 		_field20(0), _field24(0), _field28(0), _field2C(-1) {}
+
+	int fn1();
 };
 
 } // End of namespace Titanic

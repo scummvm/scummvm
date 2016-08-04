@@ -410,7 +410,6 @@ MODULE_OBJS := \
 	sound/seasonal_music_player.o \
 	sound/sound.o \
 	sound/sound_manager.o \
-	sound/sound_resource.o \
 	sound/titania_speech.o \
 	sound/trigger_auto_music_player.o \
 	sound/view_auto_sound_player.o \

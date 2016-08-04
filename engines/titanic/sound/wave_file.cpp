@@ -24,4 +24,9 @@
 
 namespace Titanic {
 
+int WaveFile::fn1() {
+	// TODO
+	return 0;
+}
+
 } // End of namespace Titanic z

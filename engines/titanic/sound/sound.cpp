@@ -71,7 +71,7 @@ void CSound::fn3(int handle, int val2, int val3) {
 	warning("TODO: CSound::fn3");
 }
 
-void CSound::fn4(CSoundResource *soundRes, int val) {
+void CSound::fn4(WaveFile *waveFile, int val) {
 	// TODO
 }
 
@@ -79,7 +79,7 @@ void CSound::checkSounds() {
 	for (CSoundItemList::iterator i = _sounds.begin(); i != _sounds.end(); ++i) {
 		CSoundItem *soundItem = *i;
 		if (soundItem->_field24 && soundItem->_field28) {
-			if (_soundManager.isActive(soundItem->_soundResource)) {
+			if (_soundManager.isActive(soundItem->_waveFile)) {
 				_sounds.remove(soundItem);
 				delete soundItem;
 			}
@@ -91,7 +91,7 @@ void CSound::removeOldest() {
 	for (CSoundItemList::iterator i = _sounds.reverse_begin();
 			i != _sounds.end(); --i) {
 		CSoundItem *soundItem = *i;
-		if (soundItem->_field28 && !_soundManager.isActive(soundItem->_soundResource)) {
+		if (soundItem->_field28 && !_soundManager.isActive(soundItem->_waveFile)) {
 			_sounds.remove(soundItem);
 			delete soundItem;
 			break;
@@ -99,12 +99,11 @@ void CSound::removeOldest() {
 	}
 }
 
-CSoundItem *CSound::getTrueTalkSound(CDialogueFile *dialogueFile, int index) {
-	warning("TODO: CSound::getTrueTalkSound");
-	return nullptr;
+WaveFile *CSound::getTrueTalkSound(CDialogueFile *dialogueFile, int index) {
+	return loadSpeech(dialogueFile, index);
 }
 
-CSoundResource *CSound::loadSound(const CString &name) {
+WaveFile *CSound::loadSound(const CString &name) {
 	checkSounds();
 
 	// Check whether an entry for the given name is already active
@@ -114,15 +113,15 @@ CSoundResource *CSound::loadSound(const CString &name) {
 			// Found it, so move it to the front of the list and return
 			_sounds.remove(soundItem);
 			_sounds.push_front(soundItem);
-			return soundItem->_soundResource;
+			return soundItem->_waveFile;
 		}
 	}
 
 	// Create new sound item
 	CSoundItem *soundItem = new CSoundItem(name);
-	soundItem->_soundResource = _soundManager.loadSound(name);
+	soundItem->_waveFile = _soundManager.loadSound(name);
 
-	if (!soundItem->_soundResource) {
+	if (!soundItem->_waveFile) {
 		// Couldn't load sound, so destroy new item and return
 		delete soundItem;
 		return 0;
@@ -136,21 +135,21 @@ CSoundResource *CSound::loadSound(const CString &name) {
 	if (_sounds.size() > 10)
 		removeOldest();
 
-	return soundItem->_soundResource;
+	return soundItem->_waveFile;
 }
 
 int CSound::playSound(const CString &name, CProximity &prox) {
-	CSoundResource *soundRes  = loadSound(name);
-	if (!soundRes)
+	WaveFile *waveFile  = loadSound(name);
+	if (!waveFile)
 		return -1;
 
-	prox._field6C = soundRes->fn1();
-	fn4(soundRes, prox._field60);
+	prox._field6C = waveFile->fn1();
+	fn4(waveFile, prox._field60);
 
-	return _soundManager.playSound(*soundRes, prox);
+	return _soundManager.playSound(*waveFile, prox);
 }
 
-CSoundResource *CSound::loadSpeech(CDialogueFile *dialogueFile, int speechId) {
+WaveFile *CSound::loadSpeech(CDialogueFile *dialogueFile, int speechId) {
 	checkSounds();
 
 	// Check whether an entry for the given name is already active
@@ -161,15 +160,15 @@ CSoundResource *CSound::loadSpeech(CDialogueFile *dialogueFile, int speechId) {
 			// Found it, so move it to the front of the list and return
 			_sounds.remove(soundItem);
 			_sounds.push_front(soundItem);
-			return soundItem->_soundResource;
+			return soundItem->_waveFile;
 		}
 	}
 
 	// Create new sound item
 	CSoundItem *soundItem = new CSoundItem(dialogueFile->getFile(), speechId);
-	soundItem->_soundResource = _soundManager.loadSpeech(dialogueFile, speechId);
+	soundItem->_waveFile = _soundManager.loadSpeech(dialogueFile, speechId);
 
-	if (!soundItem->_soundResource) {
+	if (!soundItem->_waveFile) {
 		// Couldn't load speech, so destroy new item and return
 		delete soundItem;
 		return 0;
@@ -183,18 +182,18 @@ CSoundResource *CSound::loadSpeech(CDialogueFile *dialogueFile, int speechId) {
 	if (_sounds.size() > 10)
 		removeOldest();
 
-	return soundItem->_soundResource;
+	return soundItem->_waveFile;
 }
 
 int CSound::playSpeech(CDialogueFile *dialogueFile, int speechId, CProximity &prox) {
-	CSoundResource *soundRes = loadSpeech(dialogueFile, speechId);
-	if (!soundRes)
+	WaveFile *waveFile = loadSpeech(dialogueFile, speechId);
+	if (!waveFile)
 		return -1;
 
-	prox._field6C = soundRes->fn1();
-	fn4(soundRes, prox._field60);
+	prox._field6C = waveFile->fn1();
+	fn4(waveFile, prox._field60);
 
-	return _soundManager.playSound(*soundRes, prox);
+	return _soundManager.playSound(*waveFile, prox);
 }
 
 } // End of namespace Titanic

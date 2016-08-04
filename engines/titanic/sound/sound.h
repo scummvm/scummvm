@@ -26,7 +26,7 @@
 #include "titanic/support/simple_file.h"
 #include "titanic/sound/proximity.h"
 #include "titanic/sound/sound_manager.h"
-#include "titanic/sound/sound_resource.h"
+#include "titanic/sound/wave_file.h"
 #include "titanic/core/list.h"
 #include "titanic/core/view_item.h"
 #include "titanic/true_talk/dialogue_file.h"
@@ -38,17 +38,17 @@ class CGameManager;
 class CSoundItem : public ListItem {
 public:
 	CString _name;
-	CSoundResource *_soundResource;
+	WaveFile *_waveFile;
 	File *_dialogueFileHandle;
 	int _speechId;
 	int _field24;
 	int _field28;
 public:
-	CSoundItem() : ListItem(), _soundResource(nullptr), _dialogueFileHandle(nullptr),
+	CSoundItem() : ListItem(), _waveFile(nullptr), _dialogueFileHandle(nullptr),
 		_speechId(0), _field24(0), _field28(0) {}
-	CSoundItem(const CString &name) : ListItem(), _name(name), _soundResource(nullptr),
+	CSoundItem(const CString &name) : ListItem(), _name(name), _waveFile(nullptr),
 		_dialogueFileHandle(nullptr), _speechId(0), _field24(0), _field28(0) {}
-	CSoundItem(File *dialogueFile, int speechId) : ListItem(), _soundResource(nullptr),
+	CSoundItem(File *dialogueFile, int speechId) : ListItem(), _waveFile(nullptr),
 		_dialogueFileHandle(dialogueFile), _speechId(speechId), _field24(0), _field28(0) {}
 
 	int fn1();
@@ -115,21 +115,31 @@ public:
 	bool fn1(int val);
 	void fn2(int handle);
 	void fn3(int handle, int val2, int val3);
-	void fn4(CSoundResource *soundRes, int val);
+	void fn4(WaveFile *waveFile, int val);
 		
 	void managerProc8(int v) { _soundManager.proc8(v); }
 
-	CSoundItem *getTrueTalkSound(CDialogueFile *dialogueFile, int index);
+	/**
+	 * Loads a TrueTalk dialogue
+	 * @param dialogueFile	Dialogue file reference
+	 * @param speechId		Speech Id within dialogue
+	 * @returns				Wave file instance
+	 */
+	WaveFile *getTrueTalkSound(CDialogueFile *dialogueFile, int index);
 
 	/**
-	 * Load a sound
-	 * @param name		Name of sound resource
-	 * @returns			Sound item record
+	 * Load a speech resource
+	 * @param dialogueFile	Dialogue file reference
+	 * @param speechId		Speech Id within dialogue
+	 * @returns				Wave file instance
 	 */
-	CSoundResource *loadSpeech(CDialogueFile *dialogueFile, int speechId);
+	WaveFile *loadSpeech(CDialogueFile *dialogueFile, int speechId);
 
 	/**
 	 * Play a speech
+	 * @param dialogueFile	Dialogue file reference
+	 * @param speechId		Speech Id within dialogue
+	 * @param prox			Proximity instance
 	 */
 	int playSpeech(CDialogueFile *dialogueFile, int speechId, CProximity &prox);
 
@@ -138,7 +148,7 @@ public:
 	 * @param name		Name of sound resource
 	 * @returns			Sound item record
 	 */
-	CSoundResource *loadSound(const CString &name);
+	WaveFile *loadSound(const CString &name);
 
 	/**
 	 * Play a sound
