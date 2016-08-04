@@ -244,6 +244,9 @@ public:
 	static void c_gotoprevious();
 	static void c_global();
 
+	static void c_alert();
+	static void c_beep();
+
 	static void b_abs();
 	static void b_atan();
 	static void b_chars();
@@ -273,6 +276,8 @@ public:
 	void func_gotoloop();
 	void func_gotonext();
 	void func_gotoprevious();
+	void func_alert(Common::String &s);
+	void func_beep(int num);
 
 public:
 	void setTheEntity(int entity, Datum &id, int field, Datum &d);

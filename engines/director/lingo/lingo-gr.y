@@ -85,7 +85,7 @@ void yyerror(char *s) {
 %token<s> ID
 %token tDOWN tELSE tNLELSIF tEND tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
 %token tMCI tMCIWAIT tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
-%token tWITH tWHILE tNLELSE tFACTORY tMETHOD
+%token tWITH tWHILE tNLELSE tFACTORY tMETHOD tALERT tBEEP
 %token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT
 %token tCONCAT tCONTAINS tSTARTS
 %token tSPRITE tINTERSECTS tWITHIN
@@ -408,6 +408,19 @@ func: tMCI vSTRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c
 	| tEXIT					{ g_lingo->code2(g_lingo->c_constpush, (inst)0); // Push fake value on stack
 							  g_lingo->code1(g_lingo->c_procret); }
 	| tGLOBAL globallist
+	| tALERT expr			{ g_lingo->code1(g_lingo->c_alert); }
+	| tBEEP vINT			{
+		g_lingo->code1(g_lingo->c_constpush);
+		inst i = 0;
+		WRITE_UINT32(&i, $2);
+		g_lingo->code1(i);
+		g_lingo->code1(g_lingo->c_beep); }
+	| tBEEP 				{
+		g_lingo->code1(g_lingo->c_constpush);
+		inst i = 0;
+		WRITE_UINT32(&i, 0);
+		g_lingo->code1(i);
+		g_lingo->code1(g_lingo->c_beep); }
 	;
 
 globallist: ID				{ g_lingo->code1(g_lingo->c_global); g_lingo->codeString($1->c_str()); delete $1; }

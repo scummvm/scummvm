@@ -222,4 +222,12 @@ void Lingo::func_gotoprevious() {
 	_vm->_currentScore->gotoprevious();
 }
 
+void Lingo::func_alert(Common::String &s) {
+	warning("STUB: func_alert(%s)", s.c_str());
+}
+
+void Lingo::func_beep(int num) {
+	warning("STUB: func_beep(%d)", num);
+}
+
 }

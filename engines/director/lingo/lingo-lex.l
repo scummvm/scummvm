@@ -68,7 +68,9 @@ whitespace [\t ]
 ^{whitespace}+		{ count(); }
 [\t]+				{ count(); return ' '; }
 
+(?i:alert)			{ count(); return tALERT; }
 (?i:and)			{ count(); return tAND; }
+(?i:beep)			{ count(); return tBEEP; }
 (?i:contains)		{ count(); return tCONTAINS; }
 (?i:down)			{ count(); return tDOWN; }
 (?i:if)				{ count(); return tIF; }

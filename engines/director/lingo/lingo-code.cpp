@@ -688,6 +688,21 @@ void Lingo::c_gotoprevious() {
 	g_lingo->func_gotoprevious();
 }
 
+void Lingo::c_alert() {
+	Datum d = g_lingo->pop();
+
+	d.toString();
+
+	g_lingo->func_alert(*d.u.s);
+
+	delete d.u.s;
+}
+
+void Lingo::c_beep() {
+	Datum d = g_lingo->pop();
+	g_lingo->func_beep(d.u.i);
+}
+
 void Lingo::c_call() {
 	Common::String name((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
 	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
