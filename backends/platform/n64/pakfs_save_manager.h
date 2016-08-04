@@ -72,7 +72,7 @@ private:
 public:
 	uint32 write(const void *buf, uint32 cnt);
 
-	int32 pos() {
+	virtual int32 pos() {
 		return pakfs_tell(fd);
 	}
 
