@@ -20,9 +20,7 @@
 *
 */
 
-
 #include "common/file.h"
-#include "common/timer.h"
 #include "common/system.h"
 #include "image/bmp.h"
 
@@ -92,11 +90,6 @@ static const Graphics::MenuData menuSubItems[] = {
 };
 
 
-static void cursorTimerHandler(void *refCon) {
-	Gui *gui = (Gui *)refCon;
-	gui->processCursorTick();
-}
-
 bool commandsWindowCallback(Graphics::WindowClick, Common::Event &event, void *gui);
 bool mainGameWindowCallback(Graphics::WindowClick, Common::Event &event, void *gui);
 bool outConsoleWindowCallback(Graphics::WindowClick, Common::Event &event, void *gui);
@@ -117,7 +110,6 @@ Gui::Gui(MacVentureEngine *engine, Common::MacResManager *resman) {
 	_dialog = nullptr;
 
 	_cursor = new Cursor(this);
-	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 500000, this, "macVentureCursor");
 
 	_consoleText = new ConsoleText(this);
 
@@ -886,8 +878,7 @@ WindowReference Gui::findWindowAtPoint(Common::Point point) {
 		win = findWindow(it->refcon);
 		if (win && it->refcon != kDiplomaWindow) { //HACK, diploma should be cosnidered
 			if (win->getDimensions().contains(point)) {
-				if (win->isActive())
-					return it->refcon;
+				return it->refcon;
 			}
 		}
 	}
@@ -979,7 +970,10 @@ void Gui::checkSelect(const WindowData &data, const Common::Event &event, const 
 			child = (*it).obj;
 		}
 	}
-	if (child != 0) selectDraggable(child, ref, event.mouse, data.scrollPos);
+	if (child != 0) {
+		selectDraggable(child, ref, event.mouse, data.scrollPos);
+		bringToFront(ref);
+	}
 }
 
 bool Gui::canBeSelected(ObjID obj, const Common::Event &event, const Common::Rect &clickRect, WindowReference ref) {
@@ -1373,10 +1367,6 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event & event) {
 		}
 	}
 	return true;
-}
-
-void Gui::processCursorTick() {
-	_cursor->tick();
 }
 
 void Gui::handleSingleClick(Common::Point pos) {

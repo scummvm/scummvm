@@ -29,6 +29,8 @@
 
 #include "graphics/font.h"
 
+#include "common/timer.h"
+
 #include "macventure/macventure.h"
 #include "macventure/container.h"
 #include "macventure/image.h"
@@ -122,8 +124,6 @@ public:
 	bool processExitsEvents(WindowClick click, Common::Event &event);
 	bool processDiplomaEvents(WindowClick click, Common::Event &event);
 	bool processInventoryEvents(WindowClick click, Common::Event &event);
-
-	void processCursorTick();
 
 	const WindowData& getWindowData(WindowReference reference);
 
@@ -244,32 +244,35 @@ private: // Methods
 
 };
 
+static void cursorTimerHandler(void *refCon);
+
 class Cursor {
 enum ClickState {
 	kCursorIdle = 0,
-	kCursorSC = 1,
-	kCursorNoTick = 2,
-	kCursorSCTrans = 3,
-	kCursorExecSC = 4,
-	kCursorExecDC = 5,
+	kCursorSCStart = 1,
+	kCursorSCDrag = 2,
+	kCursorDCStart = 3,
+	kCursorDCDo = 4,
+	kCursorSCSink = 5,
 	kCursorStateCount
 };
 
 enum CursorInput { // Columns for the FSM transition table
-	kTickCol = 0,
-	kButtonDownCol = 1,
-	kButtonUpCol = 2,
+	kButtonDownCol = 0,
+	kButtonUpCol = 1,
+	kTickCol = 2,
 	kCursorInputCount
 };
 
 
 ClickState _transitionTable[kCursorStateCount][kCursorInputCount] = {
-	/* kCursorIdle */	{kCursorIdle,	kCursorIdle,	kCursorSC		},
-	/* kCursorSC */		{kCursorExecSC,	kCursorSCTrans,	kCursorExecDC	},
-	/* IgnoreTick */	{kCursorNoTick, kCursorNoTick,	kCursorExecSC	},
-	/* SC Transition */	{kCursorNoTick,	kCursorNoTick,	kCursorExecDC	},
-	/* Exec SC */		{kCursorIdle,	kCursorExecSC,	kCursorExecSC	},	// Trap state
-	/* Exec DC */		{kCursorIdle,	kCursorExecDC,	kCursorExecDC	}	// Trap state
+	/*				Button down,		Button Up,		Tick		*/
+	/* Idle */		{kCursorSCStart,	kCursorIdle,	kCursorIdle	},
+	/* SC Start */	{kCursorSCStart,	kCursorDCStart,	kCursorSCDrag},
+	/* SC Do */		{kCursorSCDrag, 	kCursorIdle,	kCursorSCDrag},
+	/* DC Start */	{kCursorDCDo,		kCursorDCStart,	kCursorSCSink},
+	/* DC Do */		{kCursorDCDo,		kCursorIdle,	kCursorDCDo	},
+	/* SC Sink */	{kCursorIdle,		kCursorIdle,	kCursorIdle	},
 };
 
 public:
@@ -281,12 +284,10 @@ public:
 	~Cursor() {}
 
 	void tick() {
-		executeState();
 		changeState(kTickCol);
 	}
 
 	bool processEvent(const Common::Event &event) {
-
 		if (event.type == Common::EVENT_MOUSEMOVE) {
 			_pos = event.mouse;
 			return true;
@@ -310,17 +311,49 @@ public:
 private:
 
 	void changeState(CursorInput input) {
-		debug(4, "Change cursor state: [%d] -> [%d]", _state, _transitionTable[_state][input]);
-		_state = _transitionTable[_state][input];
+		debug(1, "Change cursor state: [%d] -> [%d]", _state, _transitionTable[_state][input]);
+		if (_state != _transitionTable[_state][input]) {
+			executeStateOut();
+			_state = _transitionTable[_state][input];
+			executeStateIn();
+		}
 	}
 
-	void executeState() {
-		if (_state == kCursorExecSC) {
+	void executeStateIn() {
+		switch (_state) {
+		case kCursorSCStart:
+			g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 300000, this, "macVentureCursor");
+			break;
+		case kCursorDCStart:
+			g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 300000, this, "macVentureCursor");
+			break;
+		case kCursorSCSink:
 			_gui->handleSingleClick(_pos);
 			changeState(kTickCol);
-		} else if (_state == kCursorExecDC) {
+			break;
+		default:
+			break;
+		}
+	}
+
+	void executeStateOut() {
+		switch (_state) {
+		case kCursorIdle:
+			break;
+		case kCursorSCStart:
+			g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
+			break;
+		case kCursorSCDrag:
+			_gui->handleSingleClick(_pos);
+			break;
+		case kCursorDCStart:
+			g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
+			break;
+		case kCursorDCDo:
 			_gui->handleDoubleClick(_pos);
-			changeState(kTickCol);
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -330,8 +363,13 @@ private:
 
 	Common::Point _pos;
 	ClickState _state;
-
 };
+
+static void cursorTimerHandler(void *refCon) {
+	Cursor *cursor = (Cursor *)refCon;
+	cursor->tick();
+}
+
 
 class ConsoleText {
 
