@@ -963,22 +963,22 @@ WindowReference Gui::findObjWindow(ObjID objID) {
 	return kNoWindow;
 }
 
-void Gui::checkSelect(const WindowData &data, const Common::Event &event, const Common::Rect &clickRect, WindowReference ref) {
+void Gui::checkSelect(const WindowData &data, Common::Point pos, const Common::Rect &clickRect, WindowReference ref) {
 	ObjID child = 0;
 	for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
-		if (canBeSelected((*it).obj, event, clickRect, ref)) {
+		if (canBeSelected((*it).obj, clickRect, ref)) {
 			child = (*it).obj;
 		}
 	}
 	if (child != 0) {
-		selectDraggable(child, ref, event.mouse, data.scrollPos);
+		selectDraggable(child, ref, pos, data.scrollPos);
 		bringToFront(ref);
 	}
 }
 
-bool Gui::canBeSelected(ObjID obj, const Common::Event &event, const Common::Rect &clickRect, WindowReference ref) {
+bool Gui::canBeSelected(ObjID obj, const Common::Rect &clickRect, WindowReference ref) {
 	return (_engine->isObjClickable(obj) &&
-					isRectInsideObject(clickRect, obj));
+			isRectInsideObject(clickRect, obj));
 }
 
 bool Gui::isRectInsideObject(Common::Rect target, ObjID obj) {
@@ -1007,6 +1007,7 @@ void Gui::selectDraggable(ObjID child, WindowReference origin, Common::Point cli
 }
 
 void Gui::handleDragRelease(Common::Point pos, bool shiftPressed, bool isDoubleClick) {
+
 	if (_draggedObj.id != 0) {
 		WindowReference destinationWindow = findWindowAtPoint(pos);
 		if (destinationWindow == kNoWindow) return;
@@ -1250,13 +1251,6 @@ bool MacVenture::Gui::processMainGameEvents(WindowClick click, Common::Event & e
 	if (_engine->needsClickToContinue())
 		return true;
 
-	if (click == kBorderInner && event.type == Common::EVENT_LBUTTONDOWN) {
-		WindowData &data = findWindowData(kMainGameWindow);
-		Common::Point pos;
-		// Click rect to local coordinates. We assume the click is inside the window ^
-		Common::Rect clickRect = calculateClickRect(event.mouse + data.scrollPos, _mainGameWindow->getDimensions());
-		checkSelect(data, event, clickRect, kMainGameWindow);
-	}
 	return false;
 }
 
@@ -1342,8 +1336,7 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event & event) {
 		// Find the appropriate window
 		WindowReference ref = findWindowAtPoint(event.mouse);
 		if (ref == kNoWindow) return false;
-
-		Graphics::MacWindow *win = findWindow(ref);
+		
 		WindowData &data = findWindowData((WindowReference) ref);
 
 		if (click == kBorderScrollUp) {
@@ -1358,15 +1351,19 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event & event) {
 		if (click == kBorderScrollRight) {
 			data.scrollPos.x += kScrollAmount;
 		}
-
-		if (click == kBorderInner) {
-			Common::Point pos;
-			// Click rect to local coordinates. We assume the click is inside the window ^
-			Common::Rect clickRect = calculateClickRect(event.mouse + data.scrollPos, win->getDimensions());
-			checkSelect(data, event, clickRect, (WindowReference)ref);
-		}
 	}
 	return true;
+}
+
+void Gui::selectForDrag(Common::Point pos) {
+	WindowReference ref = findWindowAtPoint(pos);
+	if (ref == kNoWindow) return;
+
+	Graphics::MacWindow *win = findWindow(ref);
+	WindowData &data = findWindowData((WindowReference) ref);
+
+	Common::Rect clickRect = calculateClickRect(pos + data.scrollPos, win->getDimensions());
+	checkSelect(data, pos, clickRect, (WindowReference)ref);
 }
 
 void Gui::handleSingleClick(Common::Point pos) {
