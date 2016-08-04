@@ -460,7 +460,7 @@ void RivenExternal::xaatrusopenbook(uint16 argc, uint16 *argv) {
 	}
 
 	// Draw the image of the page
-	_vm->_gfx->drawPLST(page);
+	_vm->getCurCard()->drawPicture(page);
 }
 
 void RivenExternal::xaatrusbookback(uint16 argc, uint16 *argv) {
@@ -525,13 +525,13 @@ void RivenExternal::xacathopenbook(uint16 argc, uint16 *argv) {
 	}
 
 	// Draw the image of the page
-	_vm->_gfx->drawPLST(page);
+	_vm->getCurCard()->drawPicture(page);
 
 	// Draw the white page edges
 	if (page > 1 && page < 5)
-		_vm->_gfx->drawPLST(50);
+		_vm->getCurCard()->drawPicture(50);
 	else if (page > 5)
-		_vm->_gfx->drawPLST(51);
+		_vm->getCurCard()->drawPicture(51);
 
 	if (page == 28) {
 		// Draw the telescope combination
@@ -708,7 +708,7 @@ void RivenExternal::xblabopenbook(uint16 argc, uint16 *argv) {
 	uint32 page = _vm->_vars["blabpage"];
 
 	// Draw the image of the page based on the blabbook variable
-	_vm->_gfx->drawPLST(page);
+	_vm->getCurCard()->drawPicture(page);
 
 	if (page == 14) {
 		// Draw the dome combination
@@ -949,7 +949,7 @@ void RivenExternal::xbait(uint16 argc, uint16 *argv) {
 	// Set the bait if we put it on the plate
 	if (_vm->_hotspots[9].rect.contains(_vm->_system->getEventManager()->getMousePos())) {
 		_vm->_vars["bbait"] = 1;
-		_vm->_gfx->drawPLST(4);
+		_vm->getCurCard()->drawPicture(4);
 		_vm->_gfx->updateScreen();
 		_vm->_hotspots[3].enabled = false; // Disable bait hotspot
 		_vm->_hotspots[9].enabled = true; // Enable baitplate hotspot
@@ -983,7 +983,7 @@ void RivenExternal::xbfreeytram(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xbaitplate(uint16 argc, uint16 *argv) {
 	// Remove the pellet from the plate and put it in your hand
-	_vm->_gfx->drawPLST(3);
+	_vm->getCurCard()->drawPicture(3);
 	_vm->_cursor->setCursor(kRivenPelletCursor);
 	_vm->_gfx->updateScreen();
 
@@ -1010,7 +1010,7 @@ void RivenExternal::xbaitplate(uint16 argc, uint16 *argv) {
 	// Set the bait if we put it on the plate, remove otherwise
 	if (_vm->_hotspots[9].rect.contains(_vm->_system->getEventManager()->getMousePos())) {
 		_vm->_vars["bbait"] = 1;
-		_vm->_gfx->drawPLST(4);
+		_vm->getCurCard()->drawPicture(4);
 		_vm->_gfx->updateScreen();
 		_vm->_hotspots[3].enabled = false; // Disable bait hotspot
 		_vm->_hotspots[9].enabled = true; // Enable baitplate hotspot
@@ -1426,21 +1426,21 @@ void RivenExternal::xglviewer(uint16 argc, uint16 *argv) {
 	curPos = newPos % 6; // Clip it to 0-5
 
 	// And update the screen with the new image
-	_vm->_gfx->drawPLST(curPos + 2);
+	_vm->getCurCard()->drawPicture(curPos + 2);
 	_vm->_gfx->updateScreen();
 }
 
 void RivenExternal::xglview_villageon(uint16 argc, uint16 *argv) {
 	// Turn on the left viewer to 'village mode'
 	_vm->_vars["glview"] = 2;
-	_vm->_gfx->drawPLST(_vm->_vars["glviewpos"] + 2);
+	_vm->getCurCard()->drawPicture(_vm->_vars["glviewpos"] + 2);
 	_vm->_gfx->updateScreen();
 }
 
 void RivenExternal::xglview_villageoff(uint16 argc, uint16 *argv) {
 	// Turn off the left viewer when in 'village mode' (why is this external?)
 	_vm->_vars["glview"] = 0;
-	_vm->_gfx->drawPLST(1);
+	_vm->getCurCard()->drawPicture(1);
 	_vm->_gfx->updateScreen();
 }
 
@@ -1517,7 +1517,7 @@ void RivenExternal::xglview_prisonon(uint16 argc, uint16 *argv) {
 	} else {
 		// Otherwise, just redraw the imager
 		timeUntilNextMovie = _vm->_rnd->getRandomNumberRng(10, 20) * 1000;
-		_vm->_gfx->drawPLST(8);
+		_vm->getCurCard()->drawPicture(8);
 		_vm->_gfx->updateScreen();
 	}
 
@@ -1541,7 +1541,7 @@ void RivenExternal::xglview_prisonoff(uint16 argc, uint16 *argv) {
 	_vm->_cursor->showCursor();
 
 	// Redraw the viewer
-	_vm->_gfx->drawPLST(1);
+	_vm->getCurCard()->drawPicture(1);
 	_vm->_gfx->updateScreen();
 }
 
@@ -1620,19 +1620,19 @@ void RivenExternal::xjtunnel103_pictfix(uint16 argc, uint16 *argv) {
 
 	// Now, draw which icons are depressed based on the bits of the variable
 	if (iconsDepressed & (1 << 0))
-		_vm->_gfx->drawPLST(2);
+		_vm->getCurCard()->drawPicture(2);
 	if (iconsDepressed & (1 << 1))
-		_vm->_gfx->drawPLST(3);
+		_vm->getCurCard()->drawPicture(3);
 	if (iconsDepressed & (1 << 2))
-		_vm->_gfx->drawPLST(4);
+		_vm->getCurCard()->drawPicture(4);
 	if (iconsDepressed & (1 << 3))
-		_vm->_gfx->drawPLST(5);
+		_vm->getCurCard()->drawPicture(5);
 	if (iconsDepressed & (1 << 22))
-		_vm->_gfx->drawPLST(6);
+		_vm->getCurCard()->drawPicture(6);
 	if (iconsDepressed & (1 << 23))
-		_vm->_gfx->drawPLST(7);
+		_vm->getCurCard()->drawPicture(7);
 	if (iconsDepressed & (1 << 24))
-		_vm->_gfx->drawPLST(8);
+		_vm->getCurCard()->drawPicture(8);
 }
 
 void RivenExternal::xjtunnel104_pictfix(uint16 argc, uint16 *argv) {
@@ -1641,21 +1641,21 @@ void RivenExternal::xjtunnel104_pictfix(uint16 argc, uint16 *argv) {
 
 	// Now, draw which icons are depressed based on the bits of the variable
 	if (iconsDepressed & (1 << 9))
-		_vm->_gfx->drawPLST(2);
+		_vm->getCurCard()->drawPicture(2);
 	if (iconsDepressed & (1 << 10))
-		_vm->_gfx->drawPLST(3);
+		_vm->getCurCard()->drawPicture(3);
 	if (iconsDepressed & (1 << 11))
-		_vm->_gfx->drawPLST(4);
+		_vm->getCurCard()->drawPicture(4);
 	if (iconsDepressed & (1 << 12))
-		_vm->_gfx->drawPLST(5);
+		_vm->getCurCard()->drawPicture(5);
 	if (iconsDepressed & (1 << 13))
-		_vm->_gfx->drawPLST(6);
+		_vm->getCurCard()->drawPicture(6);
 	if (iconsDepressed & (1 << 14))
-		_vm->_gfx->drawPLST(7);
+		_vm->getCurCard()->drawPicture(7);
 	if (iconsDepressed & (1 << 15))
-		_vm->_gfx->drawPLST(8);
+		_vm->getCurCard()->drawPicture(8);
 	if (iconsDepressed & (1 << 16))
-		_vm->_gfx->drawPLST(9);
+		_vm->getCurCard()->drawPicture(9);
 }
 
 void RivenExternal::xjtunnel105_pictfix(uint16 argc, uint16 *argv) {
@@ -1664,19 +1664,19 @@ void RivenExternal::xjtunnel105_pictfix(uint16 argc, uint16 *argv) {
 
 	// Now, draw which icons are depressed based on the bits of the variable
 	if (iconsDepressed & (1 << 3))
-		_vm->_gfx->drawPLST(2);
+		_vm->getCurCard()->drawPicture(2);
 	if (iconsDepressed & (1 << 4))
-		_vm->_gfx->drawPLST(3);
+		_vm->getCurCard()->drawPicture(3);
 	if (iconsDepressed & (1 << 5))
-		_vm->_gfx->drawPLST(4);
+		_vm->getCurCard()->drawPicture(4);
 	if (iconsDepressed & (1 << 6))
-		_vm->_gfx->drawPLST(5);
+		_vm->getCurCard()->drawPicture(5);
 	if (iconsDepressed & (1 << 7))
-		_vm->_gfx->drawPLST(6);
+		_vm->getCurCard()->drawPicture(6);
 	if (iconsDepressed & (1 << 8))
-		_vm->_gfx->drawPLST(7);
+		_vm->getCurCard()->drawPicture(7);
 	if (iconsDepressed & (1 << 9))
-		_vm->_gfx->drawPLST(8);
+		_vm->getCurCard()->drawPicture(8);
 }
 
 void RivenExternal::xjtunnel106_pictfix(uint16 argc, uint16 *argv) {
@@ -1685,21 +1685,21 @@ void RivenExternal::xjtunnel106_pictfix(uint16 argc, uint16 *argv) {
 
 	// Now, draw which icons are depressed based on the bits of the variable
 	if (iconsDepressed & (1 << 16))
-		_vm->_gfx->drawPLST(2);
+		_vm->getCurCard()->drawPicture(2);
 	if (iconsDepressed & (1 << 17))
-		_vm->_gfx->drawPLST(3);
+		_vm->getCurCard()->drawPicture(3);
 	if (iconsDepressed & (1 << 18))
-		_vm->_gfx->drawPLST(4);
+		_vm->getCurCard()->drawPicture(4);
 	if (iconsDepressed & (1 << 19))
-		_vm->_gfx->drawPLST(5);
+		_vm->getCurCard()->drawPicture(5);
 	if (iconsDepressed & (1 << 20))
-		_vm->_gfx->drawPLST(6);
+		_vm->getCurCard()->drawPicture(6);
 	if (iconsDepressed & (1 << 21))
-		_vm->_gfx->drawPLST(7);
+		_vm->getCurCard()->drawPicture(7);
 	if (iconsDepressed & (1 << 22))
-		_vm->_gfx->drawPLST(8);
+		_vm->getCurCard()->drawPicture(8);
 	if (iconsDepressed & (1 << 23))
-		_vm->_gfx->drawPLST(9);
+		_vm->getCurCard()->drawPicture(9);
 }
 
 void RivenExternal::xvga1300_carriage(uint16 argc, uint16 *argv) {
@@ -1947,8 +1947,8 @@ void RivenExternal::xjschool280_resetright(uint16 argc, uint16 *argv) {
 void RivenExternal::redrawWharkNumberPuzzle(uint16 overlay, uint16 number) {
 	// Update the screen for the whark number puzzle
 	// We don't update the whole screen here because we don't want to overwrite the video data
-	_vm->_gfx->drawPLST(overlay);
-	_vm->_gfx->drawPLST(number + 1);
+	_vm->getCurCard()->drawPicture(overlay);
+	_vm->getCurCard()->drawPicture(number + 1);
 	_vm->_gfx->updateScreen(Common::Rect(80, 212, 477, 392));
 	_vm->_system->updateScreen();
 }
@@ -2109,7 +2109,7 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 					_vm->_scriptMan->stopAllScripts();                  // Stop all running scripts (so we don't remain in the cage)
 					_vm->_video->stopVideos();                          // Stop all videos
 					_vm->_cursor->setCursor(kRivenHideCursor);          // Hide the cursor
-					_vm->_gfx->drawPLST(3);                             // Black out the screen
+					_vm->getCurCard()->drawPicture(3);                             // Black out the screen
 					_vm->_gfx->updateScreen();                          // Update the screen
 					_vm->_sound->playSound(0);                          // Play the link sound
 					_vm->_video->activateMLST(7, _vm->getCurCard()->getId());    // Activate Gehn Link Video
@@ -2182,7 +2182,7 @@ void RivenExternal::xobedroom5_closedrawer(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xogehnopenbook(uint16 argc, uint16 *argv) {
-	_vm->_gfx->drawPLST(_vm->_vars["ogehnpage"]);
+	_vm->getCurCard()->drawPicture(_vm->_vars["ogehnpage"]);
 }
 
 void RivenExternal::xogehnbookprevpage(uint16 argc, uint16 *argv) {
@@ -2685,7 +2685,7 @@ void RivenExternal::xtakeit(uint16 argc, uint16 *argv) {
 	assert(marble != 0);
 
 	// Redraw the background
-	_vm->_gfx->drawPLST(1);
+	_vm->getCurCard()->drawPicture(1);
 	_vm->_gfx->updateScreen();
 
 	// Loop until the player lets go (or quits)

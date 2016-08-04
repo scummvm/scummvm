@@ -199,6 +199,7 @@ public:
 	void setGameOver() { _gameOver = true; }
 	void ignoreNextMouseUp() { _ignoreNextMouseUp = true; }
 	Common::SeekableReadStream *getExtrasResource(uint32 tag, uint16 id);
+	bool _activatedPLST;
 	bool _activatedSLST;
 	void runLoadDialog();
 	void delayAndUpdate(uint32 ms);

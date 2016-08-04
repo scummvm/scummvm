@@ -121,6 +121,38 @@ void RivenScriptManager::runScript(const RivenScriptPtr &script, bool queue) {
 	}
 }
 
+RivenScriptPtr RivenScriptManager::createScriptFromData(uint16 commandCount, ...) {
+	va_list args;
+	va_start(args, commandCount);
+
+	// Build a script from the variadic arguments
+	Common::MemoryWriteStreamDynamic writeStream = Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
+	writeStream.writeUint16BE(commandCount);
+
+	for (uint i = 0; i < commandCount; i++) {
+		uint16 command = va_arg(args, int);
+		writeStream.writeUint16BE(command);
+
+		if (command == 8) {
+			// The switch command has a different format that is not implemented
+			error("Cannot create a Switch command from data");
+		}
+
+		uint16 argumentCount = va_arg(args, int);
+		writeStream.writeUint16BE(argumentCount);
+
+		for (uint j = 0; j < commandCount; j++) {
+			uint16 argument = va_arg(args, int);
+			writeStream.writeUint16BE(argument);
+		}
+	}
+
+	va_end(args);
+
+	Common::MemoryReadStream readStream = Common::MemoryReadStream(writeStream.getData(), writeStream.size());
+	return readScript(&readStream);
+}
+
 RivenScript::RivenScript() {
 	_continueRunning = true;
 }
@@ -538,7 +570,11 @@ void RivenSimpleCommand::storeMovieOpcode(uint16 op, uint16 argc, uint16 *argv) 
 
 // Command 39: activate PLST record (card picture lists)
 void RivenSimpleCommand::activatePLST(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_gfx->drawPLST(argv[0]);
+	_vm->_activatedPLST = true;
+
+	RivenCard::Picture picture = _vm->getCurCard()->getPicture(argv[0]);
+
+	_vm->_gfx->copyImageToScreen(picture.id, picture.rect.left, picture.rect.top, picture.rect.right, picture.rect.bottom);
 
 	// An update is automatically sent here as long as it's not a load or update script and updates are enabled.
 	// TODO: Fix the graphics manager
