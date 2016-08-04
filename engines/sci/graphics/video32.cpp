@@ -161,9 +161,18 @@ AVIPlayer::IOStatus AVIPlayer::open(const Common::String &fileName) {
 }
 
 AVIPlayer::IOStatus AVIPlayer::init1x(const int16 x, const int16 y, int16 width, int16 height) {
+
+	_pixelDouble = false;
+
 	if (!width || !height) {
 		width = _decoder->getWidth();
 		height = _decoder->getHeight();
+	} else if (getSciVersion() == SCI_VERSION_2_1_EARLY && g_sci->getGameId() == GID_KQ7) {
+		// KQ7 1.51 provides an explicit width and height when it wants scaling,
+		// though the width and height it provides are not scaled
+		_pixelDouble = true;
+		width *= 2;
+		height *= 2;
 	}
 
 	// QFG4CD gives non-multiple-of-2 values for width and height,
@@ -177,7 +186,7 @@ AVIPlayer::IOStatus AVIPlayer::init1x(const int16 x, const int16 y, int16 width,
 	_drawRect.right = x + width;
 	_drawRect.bottom = y + height;
 
-	// SCI2.1 uses init2x to draw a pixel-doubled AVI, but SCI2 has only the
+	// SCI2.1mid uses init2x to draw a pixel-doubled AVI, but SCI2 has only the
 	// one play routine which automatically pixel-doubles in hi-res mode
 	if (getSciVersion() == SCI_VERSION_2) {
 		// NOTE: This is somewhat of a hack; credits.avi from GK1 is not
@@ -201,7 +210,6 @@ AVIPlayer::IOStatus AVIPlayer::init1x(const int16 x, const int16 y, int16 width,
 		}
 	}
 
-	_pixelDouble = false;
 	init();
 
 	return kIOSuccess;
@@ -223,7 +231,24 @@ void AVIPlayer::init() {
 	int16 xRes;
 	int16 yRes;
 
+	bool useScreenDimensions = false;
 	if (g_sci->_gfxFrameout->_isHiRes && _decoder->getWidth() > 320) {
+		useScreenDimensions = true;
+	}
+
+	// KQ7 1.51 gives video position in screen coordinates, not game
+	// coordinates, because in SSCI they are passed to Video for Windows, which
+	// renders as an overlay on the game video. Because we put the video into a
+	// ScreenItem instead of rendering directly to the hardware surface, the
+	// coordinates need to be converted to game script coordinates
+	if (g_sci->getGameId() == GID_KQ7 && getSciVersion() == SCI_VERSION_2_1_EARLY) {
+		useScreenDimensions = !_pixelDouble;
+		// This y-translation is arbitrary, based on what roughly centers the
+		// videos in the game window
+		_drawRect.translate(-_drawRect.left / 2, -_drawRect.top * 2 / 3);
+	}
+
+	if (useScreenDimensions) {
 		xRes = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
 		yRes = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
 	} else {
@@ -265,9 +290,12 @@ AVIPlayer::IOStatus AVIPlayer::play(const int16 from, const int16 to, const int1
 
 	if (!async) {
 		renderVideo();
+	} else if (getSciVersion() == SCI_VERSION_2_1_EARLY) {
+		playUntilEvent((EventFlags)(kEventFlagEnd | kEventFlagEscapeKey));
+	} else {
+		_status = kAVIPlaying;
 	}
 
-	_status = kAVIPlaying;
 	return kIOSuccess;
 }
 
