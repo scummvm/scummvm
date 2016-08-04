@@ -17,10 +17,8 @@ MODULE_OBJS = \
 	lingo/lingo-lex.o \
 	lingo/lingo-the.o
 
-engines/director/lingo/lingo-lex.cpp: engines/director/lingo/lingo-lex.l
+director-grammar:
 	flex -o engines/director/lingo/lingo-lex.cpp engines/director/lingo/lingo-lex.l
-
-engines/director/lingo/lingo-gr.cpp: engines/director/lingo/lingo-gr.y
 	bison -dv -o engines/director/lingo/lingo-gr.cpp engines/director/lingo/lingo-gr.y
 	mv engines/director/lingo/lingo-gr.hpp engines/director/lingo/lingo-gr.h
 
