@@ -95,6 +95,7 @@ Common::Error MacVentureEngine::saveGameState(int slot, const Common::String &de
 		warning("Could not save '%s' correctly.", saveFileName.c_str());
 	}
 	delete file;
+	return Common::kNoError;
 }
 
 bool MacVentureEngine::scummVMSaveLoadDialog(bool isSave) {
