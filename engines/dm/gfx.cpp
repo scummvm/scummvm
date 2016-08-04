@@ -2585,7 +2585,12 @@ bool DisplayMan::f107_isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWall
 			AL0089_i_PixelWidth = (AL0090_puc_CoordinateSet + L0093_i_CoordinateSetOffset)[1] - (AL0090_puc_CoordinateSet + L0093_i_CoordinateSetOffset)[0];
 			if (!f491_isDerivedBitmapInCache(AP0116_i_WallOrnamentIndex = k4_DerivedBitmapFirstWallOrnament + (AP0116_i_WallOrnamentIndex << 2) + wallOrnDerivedBitmapIndexIncrement[viewWallIndex])) {
 				L0092_puc_Bitmap = f489_getNativeBitmapOrGraphic(AL0088_i_NativeBitmapIndex);
-				f129_blitToBitmapShrinkWithPalChange(L0092_puc_Bitmap, f492_getDerivedBitmap(AP0116_i_WallOrnamentIndex), AL0091_puc_CoordinateSet[4] << 1, AL0091_puc_CoordinateSet[5], AL0089_i_PixelWidth + 1, AL0090_puc_CoordinateSet[5], (viewWallIndex <= k4_ViewWall_D3R_FRONT) ? g198_PalChangesDoorButtonAndWallOrn_D3 : g199_PalChangesDoorButtonAndWallOrn_D2);
+				// HACK: originally AL0089_i_PixelWidth + 1 is passed as the 5th parameter, but then later  AL0090_puc_CoordinateSet[4]'s value is used
+				//		to get the width of the shrunk bitmap, dunno why that is
+				f129_blitToBitmapShrinkWithPalChange(L0092_puc_Bitmap, f492_getDerivedBitmap(AP0116_i_WallOrnamentIndex),
+													 AL0091_puc_CoordinateSet[4] << 1, AL0091_puc_CoordinateSet[5],
+													 AL0090_puc_CoordinateSet[4] << 1, AL0090_puc_CoordinateSet[5],
+													 (viewWallIndex <= k4_ViewWall_D3R_FRONT) ? g198_PalChangesDoorButtonAndWallOrn_D3 : g199_PalChangesDoorButtonAndWallOrn_D2);
 				f493_addDerivedBitmap(AP0116_i_WallOrnamentIndex);
 			}
 			AL0091_puc_Bitmap = f492_getDerivedBitmap(AP0116_i_WallOrnamentIndex);
