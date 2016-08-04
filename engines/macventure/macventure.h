@@ -210,7 +210,7 @@ public:
 	void loseGame();
 	void clickToContinue();
 
-	bool updateState();
+	void updateState(bool pause);
 	void revert();
 
 	void enqueueObject(ObjectQueueID type, ObjID objID, ObjID target = 0);
@@ -218,8 +218,8 @@ public:
 	void enqueueSound(SoundQueueID type, ObjID target);
 
 	void runObjQueue();
-	bool printTexts();
-	bool playSounds(bool pause);
+	void printTexts();
+	void playSounds(bool pause);
 
 	void handleObjectSelect(ObjID objID, WindowReference win, bool shiftPressed, bool isDoubleClick);
 	void handleObjectDrop(ObjID objID, Common::Point delta, ObjID newParent);

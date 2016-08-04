@@ -453,8 +453,7 @@ bool ScriptEngine::runFunc(EngineFrame *frame) {
 				opdbROBQ(state, frame);
 				break;
 			case 0xdc: //run sound queue
-				if (opdcRSQ(state, frame))
-					return true;
+				opdcRSQ(state, frame);
 				break;
 			case 0xdd: //run text queue
 				opddRTQ(state, frame);
@@ -1102,7 +1101,7 @@ void ScriptEngine::opd9SLEEP(EngineState * state, EngineFrame * frame) {
 }
 
 void ScriptEngine::opdaCLICK(EngineState * state, EngineFrame * frame) {
-	_engine->updateState();
+	_engine->updateState(false);
 	_engine->clickToContinue();
 }
 
@@ -1110,8 +1109,8 @@ void ScriptEngine::opdbROBQ(EngineState * state, EngineFrame * frame) {
 	_engine->runObjQueue();
 }
 
-bool ScriptEngine::opdcRSQ(EngineState * state, EngineFrame * frame) {
-	return _engine->playSounds(true);
+void ScriptEngine::opdcRSQ(EngineState * state, EngineFrame * frame) {
+	_engine->playSounds(true);
 }
 
 void ScriptEngine::opddRTQ(EngineState * state, EngineFrame * frame) {
@@ -1119,7 +1118,7 @@ void ScriptEngine::opddRTQ(EngineState * state, EngineFrame * frame) {
 }
 
 void ScriptEngine::opdeUPSC(EngineState * state, EngineFrame * frame) {
-	_engine->updateState();
+	_engine->updateState(true);
 }
 
 void ScriptEngine::opdfFMAI(EngineState * state, EngineFrame * frame) {

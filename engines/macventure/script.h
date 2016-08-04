@@ -257,7 +257,7 @@ private:
 	void opd9SLEEP(EngineState *state, EngineFrame *frame);	//sleep
 	void opdaCLICK(EngineState *state, EngineFrame *frame);	//click to continue
 	void opdbROBQ(EngineState *state, EngineFrame *frame);	//run queue
-	bool opdcRSQ(EngineState *state, EngineFrame *frame);	//run sound queue
+	void opdcRSQ(EngineState *state, EngineFrame *frame);	//run sound queue
 	void opddRTQ(EngineState *state, EngineFrame *frame);	//run text queue
 	void opdeUPSC(EngineState *state, EngineFrame *frame);	//update screen
 	void opdfFMAI(EngineState *state, EngineFrame *frame);	//flash main window

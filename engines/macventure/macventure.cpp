@@ -160,20 +160,18 @@ Common::Error MacVentureEngine::run() {
 				_prepared = false;
 
 				if (!_halted)
-					updateState();
+					updateState(false);
 
 				if (_cmdReady || _halted) {
 					_halted = false;
 					if (runScriptEngine()) {
 						_halted = true;
 						_paused = true;
-					}
-					else {
+					} else {
 						_paused = false;
-						if (!updateState()) {
-							updateControls();
-							updateExits();
-						}
+						updateState(true);
+						updateControls();
+						updateExits();
 					}
 				}
 
@@ -485,8 +483,7 @@ bool MacVenture::MacVentureEngine::runScriptEngine() {
 			_haltedInSelection = true;
 			return true;
 		}
-		if (updateState())
-			return true;
+		updateState(true);
 	}
 
 	while (!_currentSelection.empty()) {
@@ -497,9 +494,7 @@ bool MacVenture::MacVentureEngine::runScriptEngine() {
 				_haltedInSelection = true;
 				return true;
 			}
-			if (updateState()) {
-				return true;
-			}
+			updateState(true);
 		}
 	}
 	if (_selectedControl == 1)
@@ -518,12 +513,10 @@ void MacVentureEngine::endGame() {
 	requestQuit();
 }
 
-bool MacVentureEngine::updateState() {
+void MacVentureEngine::updateState(bool pause) {
 	runObjQueue();
-	bool wait = printTexts();
-	// HACK playSounds should accept a bool passed to updateState
-	wait |= playSounds(true);
-	return wait;
+	printTexts();
+	playSounds(pause);
 }
 
 void MacVentureEngine::revert() {
@@ -575,7 +568,7 @@ void MacVentureEngine::runObjQueue() {
 	}
 }
 
-bool MacVentureEngine::printTexts() {
+void MacVentureEngine::printTexts() {
 	for (uint i = 0; i < _textQueue.size(); i++) {
 		QueuedText text = _textQueue.front();
 		_textQueue.remove_at(0);
@@ -594,10 +587,9 @@ bool MacVentureEngine::printTexts() {
 			break;
 		}
 	}
-	return false;
 }
 
-bool MacVentureEngine::playSounds(bool pause) {
+void MacVentureEngine::playSounds(bool pause) {
 	int delay=0;
 	while (!_soundQueue.empty()) {
 		QueuedSound item = _soundQueue.front();
@@ -618,9 +610,7 @@ bool MacVentureEngine::playSounds(bool pause) {
 		warning("Sound pausing not yet tested. Pausing for %d", delay * 1000);
 		g_system->delayMillis(delay * 1000);
 		preparedToRun();
-		return true;
 	}
-	return false;
 }
 
 void MacVentureEngine::updateControls() {
