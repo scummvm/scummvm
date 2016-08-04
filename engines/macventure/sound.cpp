@@ -59,7 +59,7 @@ void SoundManager::ensureLoaded(ObjID sound) {
 }
 
 SoundAsset::SoundAsset(Container *container, ObjID id) :
-	_container(container), _id(id) {
+	_container(container), _id(id), _length(0), _frequency(1) {
 
 	if (_container->getItemByteSize(_id) == 0)
 		warning("Trying to load an empty sound asset.");
@@ -93,6 +93,7 @@ SoundAsset::SoundAsset(Container *container, ObjID id) :
 		break;
 	default:
 		warning("Unrecognized sound type: %x", type);
+		break;
 	}
 
 	delete stream;
@@ -101,11 +102,13 @@ SoundAsset::SoundAsset(Container *container, ObjID id) :
 SoundAsset::~SoundAsset() {}
 
 void SoundAsset::play(Audio::Mixer *mixer, Audio::SoundHandle *soundHandle) {
+	if (_data.size() == 0) return;
 	Audio::AudioStream *sound = Audio::makeRawStream(&_data.front(), _length, _frequency, Audio::FLAG_UNSIGNED);
 	mixer->playStream(Audio::Mixer::kPlainSoundType, soundHandle, sound);
 }
 
 uint32 SoundAsset::getPlayLength() {
+
 	return _length / _frequency;
 }
 
