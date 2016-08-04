@@ -80,7 +80,7 @@ Symbol *Lingo::lookupVar(const char *name, bool create, bool putInGlobalList) {
 				int val = (tolower(name[0]) - 'a') * 64 + (name[1] - '1') * 8 + (name[2] - '1') + 1;
 				sym = new Symbol;
 
-				sym->type = CASTREF;
+				sym->type = vCASTREF;
 				sym->u.i = val;
 
 				return sym;
@@ -95,7 +95,7 @@ Symbol *Lingo::lookupVar(const char *name, bool create, bool putInGlobalList) {
 		sym = new Symbol;
 		sym->name = (char *)calloc(strlen(name) + 1, 1);
 		Common::strlcpy(sym->name, name, strlen(name) + 1);
-		sym->type = VOIDVAL;
+		sym->type = vVOID;
 		sym->u.i = 0;
 
 		(*_localvars)[name] = sym;
@@ -136,7 +136,7 @@ void Lingo::define(Common::String &name, int start, int nargs, Common::String *p
 
 		sym->name = (char *)calloc(name.size() + 1, 1);
 		Common::strlcpy(sym->name, name.c_str(), name.size() + 1);
-		sym->type = HANDLER;
+		sym->type = vHANDLER;
 
 		_handlers[name] = sym;
 	} else {

@@ -58,7 +58,7 @@ void Lingo::push(Datum d) {
 void Lingo::pushVoid() {
 	Datum d;
 	d.u.i = 0;
-	d.type = VOIDVAL;
+	d.type = vVOID;
 	push(d);
 }
 
@@ -80,16 +80,16 @@ void Lingo::c_printtop(void) {
 	Datum d = g_lingo->pop();
 
 	switch (d.type) {
-	case VOIDVAL:
+	case vVOID:
 		warning("Void");
 		break;
-	case INT:
+	case vINT:
 		warning("%d", d.u.i);
 		break;
-	case FLOAT:
+	case vFLOAT:
 		warning(g_lingo->_floatPrecisionFormat.c_str(), d.u.f);
 		break;
-	case VAR:
+	case vVAR:
 		if (!d.u.sym) {
 			warning("Inconsistent stack: var, val: %d", d.u.i);
 		} else {
@@ -99,13 +99,13 @@ void Lingo::c_printtop(void) {
 				warning("Nameless var. val: %d", d.u.sym->u.i);
 		}
 		break;
-	case STRING:
+	case vSTRING:
 		warning("%s", d.u.s->c_str());
 		break;
-	case POINT:
+	case vPOINT:
 		warning("point(%d, %d)", (int)((*d.u.arr)[0]), (int)((*d.u.arr)[1]));
 		break;
-	case SYMBOL:
+	case vSYMBOL:
 		warning("%s", d.type2str(true));
 		break;
 	default:
@@ -117,7 +117,7 @@ void Lingo::c_constpush() {
 	Datum d;
 	inst i = (*g_lingo->_currentScript)[g_lingo->_pc++];
 	d.u.i = READ_UINT32(&i);
-	d.type = INT;
+	d.type = vINT;
 	g_lingo->push(d);
 }
 
@@ -125,7 +125,7 @@ void Lingo::c_fconstpush() {
 	Datum d;
 	inst i = (*g_lingo->_currentScript)[g_lingo->_pc];
 	d.u.f = *((double *)&i);
-	d.type = FLOAT;
+	d.type = vFLOAT;
 
 	g_lingo->_pc += g_lingo->calcCodeAlignment(sizeof(double));
 
@@ -138,7 +138,7 @@ void Lingo::c_stringpush() {
 	g_lingo->_pc += g_lingo->calcStringAlignment(s);
 
 	d.u.s = new Common::String(s);
-	d.type = STRING;
+	d.type = vSTRING;
 	g_lingo->push(d);
 }
 
@@ -147,15 +147,15 @@ void Lingo::c_varpush() {
 	Datum d;
 
 	d.u.sym = g_lingo->lookupVar(name);
-	if (d.u.sym->type == CASTREF) {
-		d.type = INT;
+	if (d.u.sym->type == vCASTREF) {
+		d.type = vINT;
 		int val = d.u.sym->u.i;
 
 		delete d.u.sym;
 
 		d.u.i = val;
 	} else {
-		d.type = VAR;
+		d.type = vVAR;
 	}
 
 	g_lingo->_pc += g_lingo->calcStringAlignment(name);
@@ -168,34 +168,34 @@ void Lingo::c_assign() {
 	d1 = g_lingo->pop();
 	d2 = g_lingo->pop();
 
-	if (d1.type != VAR) {
+	if (d1.type != vVAR) {
 		warning("assignment to non-variable");
 		return;
 	}
 
-	if (d1.u.sym->type != INT && d1.u.sym->type != VOIDVAL &&
-			d1.u.sym->type != FLOAT && d1.u.sym->type != STRING) {
+	if (d1.u.sym->type != vINT && d1.u.sym->type != vVOID &&
+			d1.u.sym->type != vFLOAT && d1.u.sym->type != vSTRING) {
 		warning("assignment to non-variable '%s'", d1.u.sym->name);
 		return;
 	}
 
-	if (d1.u.sym->type == STRING) // Free memory if needed
+	if (d1.u.sym->type == vSTRING) // Free memory if needed
 		delete d1.u.sym->u.s;
 
-	if (d1.u.sym->type == POINT || d1.u.sym->type == RECT || d1.u.sym->type == ARRAY)
+	if (d1.u.sym->type == vPOINT || d1.u.sym->type == vRECT || d1.u.sym->type == vARRAY)
 		delete d1.u.sym->u.arr;
 
-	if (d2.type == INT) {
+	if (d2.type == vINT) {
 		d1.u.sym->u.i = d2.u.i;
-	} else if (d2.type == FLOAT) {
+	} else if (d2.type == vFLOAT) {
 		d1.u.sym->u.f = d2.u.f;
-	} else if (d2.type == STRING) {
+	} else if (d2.type == vSTRING) {
 		d1.u.sym->u.s = new Common::String(*d2.u.s);
 		delete d2.u.s;
-	} else if (d2.type == POINT) {
+	} else if (d2.type == vPOINT) {
 		d1.u.sym->u.arr = new FloatArray(*d2.u.arr);
 		delete d2.u.arr;
-	} else if (d2.type == SYMBOL) {
+	} else if (d2.type == vSYMBOL) {
 		d1.u.sym->u.i = d2.u.i;
 	} else {
 		warning("c_assign: unhandled type: %s", d2.type2str());
@@ -207,13 +207,13 @@ void Lingo::c_assign() {
 }
 
 bool Lingo::verify(Symbol *s) {
-	if (s->type != INT && s->type != VOIDVAL && s->type != FLOAT && s->type != STRING && s->type != POINT) {
+	if (s->type != vINT && s->type != vVOID && s->type != vFLOAT && s->type != vSTRING && s->type != vPOINT) {
 		warning("attempt to evaluate non-variable '%s'", s->name);
 
 		return false;
 	}
 
-	if (s->type == VOIDVAL)
+	if (s->type == vVOID)
 		warning("Variable used before assigning a value '%s'", s->name);
 
 	return true;
@@ -225,7 +225,7 @@ void Lingo::c_eval() {
 	Datum d;
 	d = g_lingo->pop();
 
-	if (d.type != VAR) { // It could be cast ref
+	if (d.type != vVAR) { // It could be cast ref
 		g_lingo->push(d);
 		return;
 	}
@@ -235,15 +235,15 @@ void Lingo::c_eval() {
 
 	d.type = d.u.sym->type;
 
-	if (d.u.sym->type == INT)
+	if (d.u.sym->type == vINT)
 		d.u.i = d.u.sym->u.i;
-	else if (d.u.sym->type == FLOAT)
+	else if (d.u.sym->type == vFLOAT)
 		d.u.f = d.u.sym->u.f;
-	else if (d.u.sym->type == STRING)
+	else if (d.u.sym->type == vSTRING)
 		d.u.s = new Common::String(*d.u.sym->u.s);
-	else if (d.u.sym->type == POINT)
+	else if (d.u.sym->type == vPOINT)
 		d.u.arr = d.u.sym->u.arr;
-	else if (d.u.sym->type == SYMBOL)
+	else if (d.u.sym->type == vSYMBOL)
 		d.u.i = d.u.sym->u.i;
 	else
 		warning("c_eval: unhandled type: %s", d.type2str());
@@ -288,7 +288,7 @@ void Lingo::c_add() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+	if (g_lingo->alignTypes(d1, d2) == vFLOAT) {
 		d1.u.f += d2.u.f;
 	} else {
 		d1.u.i += d2.u.i;
@@ -300,7 +300,7 @@ void Lingo::c_sub() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+	if (g_lingo->alignTypes(d1, d2) == vFLOAT) {
 		d1.u.f -= d2.u.f;
 	} else {
 		d1.u.i -= d2.u.i;
@@ -312,7 +312,7 @@ void Lingo::c_mul() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+	if (g_lingo->alignTypes(d1, d2) == vFLOAT) {
 		d1.u.f *= d2.u.f;
 	} else {
 		d1.u.i *= d2.u.i;
@@ -323,13 +323,13 @@ void Lingo::c_mul() {
 void Lingo::c_div() {
 	Datum d2 = g_lingo->pop();
 
-	if ((d2.type == INT && d2.u.i == 0) ||
-			(d2.type == FLOAT && d2.u.f == 0.0))
+	if ((d2.type == vINT && d2.u.i == 0) ||
+			(d2.type == vFLOAT && d2.u.f == 0.0))
 		error("division by zero");
 
 	Datum d1 = g_lingo->pop();
 
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+	if (g_lingo->alignTypes(d1, d2) == vFLOAT) {
 		d1.u.f /= d2.u.f;
 	} else {
 		d1.u.i /= d2.u.i;
@@ -340,9 +340,9 @@ void Lingo::c_div() {
 void Lingo::c_negate() {
 	Datum d = g_lingo->pop();
 
-	if (d.type == INT)
+	if (d.type == vINT)
 		d.u.i = -d.u.i;
-	else if (d.type == FLOAT)
+	else if (d.type == vFLOAT)
 		d.u.f = -d.u.f;
 
 	g_lingo->push(d);
@@ -394,7 +394,7 @@ void Lingo::c_contains() {
 	delete s1;
 	delete s2;
 
-	d1.type = INT;
+	d1.type = vINT;
 	d1.u.i = res;
 
 	g_lingo->push(d1);
@@ -417,7 +417,7 @@ void Lingo::c_starts() {
 	delete s1;
 	delete s2;
 
-	d1.type = INT;
+	d1.type = vINT;
 	d1.u.i = res;
 
 	g_lingo->push(d1);
@@ -479,9 +479,9 @@ void Lingo::c_eq() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+	if (g_lingo->alignTypes(d1, d2) == vFLOAT) {
 		d1.u.i = (d1.u.f == d2.u.f) ? 1 : 0;
-		d1.type = INT;
+		d1.type = vINT;
 	} else {
 		d1.u.i = (d1.u.i == d2.u.i) ? 1 : 0;
 	}
@@ -492,9 +492,9 @@ void Lingo::c_neq() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+	if (g_lingo->alignTypes(d1, d2) == vFLOAT) {
 		d1.u.i = (d1.u.f != d2.u.f) ? 1 : 0;
-		d1.type = INT;
+		d1.type = vINT;
 	} else {
 		d1.u.i = (d1.u.i != d2.u.i) ? 1 : 0;
 	}
@@ -505,9 +505,9 @@ void Lingo::c_gt() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+	if (g_lingo->alignTypes(d1, d2) == vFLOAT) {
 		d1.u.i = (d1.u.f > d2.u.f) ? 1 : 0;
-		d1.type = INT;
+		d1.type = vINT;
 	} else {
 		d1.u.i = (d1.u.i > d2.u.i) ? 1 : 0;
 	}
@@ -518,9 +518,9 @@ void Lingo::c_lt() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+	if (g_lingo->alignTypes(d1, d2) == vFLOAT) {
 		d1.u.i = (d1.u.f < d2.u.f) ? 1 : 0;
-		d1.type = INT;
+		d1.type = vINT;
 	} else {
 		d1.u.i = (d1.u.i < d2.u.i) ? 1 : 0;
 	}
@@ -531,9 +531,9 @@ void Lingo::c_ge() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+	if (g_lingo->alignTypes(d1, d2) == vFLOAT) {
 		d1.u.i = (d1.u.f >= d2.u.f) ? 1 : 0;
-		d1.type = INT;
+		d1.type = vINT;
 	} else {
 		d1.u.i = (d1.u.i >= d2.u.i) ? 1 : 0;
 	}
@@ -544,9 +544,9 @@ void Lingo::c_le() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+	if (g_lingo->alignTypes(d1, d2) == vFLOAT) {
 		d1.u.i = (d1.u.f <= d2.u.f) ? 1 : 0;
-		d1.type = INT;
+		d1.type = vINT;
 	} else {
 		d1.u.i = (d1.u.i <= d2.u.i) ? 1 : 0;
 	}
@@ -590,7 +590,7 @@ void Lingo::c_repeatwithcode(void) {
 	Common::String countername((char *)&(*g_lingo->_currentScript)[savepc + 5]);
 	Symbol *counter = g_lingo->lookupVar(countername.c_str());
 
-	if (counter->type == CASTREF) {
+	if (counter->type == vCASTREF) {
 		error("Cast ref used as index: %s", countername.c_str());
 	}
 
@@ -598,7 +598,7 @@ void Lingo::c_repeatwithcode(void) {
 	d = g_lingo->pop();
 	d.toInt();
 	counter->u.i = d.u.i;
-	counter->type = INT;
+	counter->type = vINT;
 
 	while (true) {
 		g_lingo->execute(body);	/* body */
@@ -714,7 +714,7 @@ void Lingo::c_call() {
 			g_lingo->pop();
 	}
 
-	if (sym->type == BLTIN) {
+	if (sym->type == vBLTIN) {
 		if (sym->nargs > 0 && nargs < sym->nargs) {
 			warning("Too few arguments for function %s. Expecting %d but got %d", name.c_str(), sym->nargs, nargs);
 			for (int i = 0; i < nargs; i++)
@@ -733,7 +733,7 @@ void Lingo::c_call() {
 		Datum d;
 
 		d.u.i = 0;
-		d.type = VOIDVAL;
+		d.type = vVOID;
 		g_lingo->push(d);
 	}
 

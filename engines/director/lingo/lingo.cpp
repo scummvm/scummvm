@@ -69,7 +69,7 @@ struct EventHandlerType {
 
 Symbol::Symbol() {
 	name = NULL;
-	type = VOIDVAL;
+	type = vVOID;
 	u.s = NULL;
 	nargs = 0;
 	global = false;
@@ -224,10 +224,10 @@ void Lingo::processEvent(LEvent event, int entityId) {
 }
 
 int Lingo::alignTypes(Datum &d1, Datum &d2) {
-	int opType = INT;
+	int opType = vINT;
 
-	if (d1.type == FLOAT || d2.type == FLOAT) {
-		opType = FLOAT;
+	if (d1.type == vFLOAT || d2.type == vFLOAT) {
+		opType = vFLOAT;
 		d1.toFloat();
 		d2.toFloat();
 	}
@@ -237,12 +237,12 @@ int Lingo::alignTypes(Datum &d1, Datum &d2) {
 
 int Datum::toInt() {
 	switch (type) {
-	case INT:
+	case vINT:
 		// no-op
 		break;
-	case FLOAT:
+	case vFLOAT:
 		u.i = (int)u.f;
-		type = INT;
+		type = vINT;
 		break;
 	default:
 		warning("Incorrect operation toInt() for type: %s", type2str());
@@ -253,11 +253,11 @@ int Datum::toInt() {
 
 double Datum::toFloat() {
 	switch (type) {
-	case INT:
+	case vINT:
 		u.f = (double)u.i;
-		type = FLOAT;
+		type = vFLOAT;
 		break;
-	case FLOAT:
+	case vFLOAT:
 		// no-op
 		break;
 	default:
@@ -270,13 +270,13 @@ double Datum::toFloat() {
 Common::String *Datum::toString() {
 	Common::String *s = new Common::String;
 	switch (type) {
-	case INT:
+	case vINT:
 		s->format("%d", u.i);
 		break;
-	case FLOAT:
+	case vFLOAT:
 		s->format(g_lingo->_floatPrecisionFormat.c_str(), u.f);
 		break;
-	case STRING:
+	case vSTRING:
 		delete s;
 		s = u.s;
 		break;
@@ -285,7 +285,7 @@ Common::String *Datum::toString() {
 	}
 
 	u.s = s;
-	type = STRING;
+	type = vSTRING;
 
 	return u.s;
 }
@@ -294,20 +294,20 @@ const char *Datum::type2str(bool isk) {
 	static char res[20];
 
 	switch (isk ? u.i : type) {
-	case INT:
-		return isk ? "#integer" : "INT";
-	case FLOAT:
-		return isk ? "#float" : "FLOAT";
-	case STRING:
-		return isk ? "#string" : "STRING";
-	case CASTREF:
-		return "CASTREF";
-	case VOIDVAL:
-		return isk ? "#void" : "VOIDVAL";
-	case POINT:
-		return isk ? "#point" : "POINT";
-	case SYMBOL:
-		return isk ? "#symbol" : "SYMBOL";
+	case vINT:
+		return isk ? "#integer" : "vINT";
+	case vFLOAT:
+		return isk ? "#float" : "vFLOAT";
+	case vSTRING:
+		return isk ? "#string" : "vSTRING";
+	case vCASTREF:
+		return "vCASTREF";
+	case vVOID:
+		return isk ? "#void" : "vVOID";
+	case vPOINT:
+		return isk ? "#point" : "vPOINT";
+	case vSYMBOL:
+		return isk ? "#symbol" : "vSYMBOL";
 	default:
 		snprintf(res, 20, "-- (%d) --", type);
 		return res;

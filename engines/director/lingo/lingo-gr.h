@@ -39,23 +39,23 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     CASTREF = 258,
-     UNARY = 259,
-     VOIDVAL = 260,
-     VAR = 261,
-     POINT = 262,
-     RECT = 263,
-     ARRAY = 264,
-     SYMBOL = 265,
-     INT = 266,
-     THEENTITY = 267,
-     THEENTITYWITHID = 268,
-     FLOAT = 269,
-     BLTIN = 270,
-     BLTINNOARGS = 271,
-     ID = 272,
-     STRING = 273,
-     HANDLER = 274,
+     UNARY = 258,
+     vCASTREF = 259,
+     vVOID = 260,
+     vVAR = 261,
+     vPOINT = 262,
+     vRECT = 263,
+     vARRAY = 264,
+     vSYMBOL = 265,
+     vINT = 266,
+     vTHEENTITY = 267,
+     vTHEENTITYWITHID = 268,
+     vFLOAT = 269,
+     vBLTIN = 270,
+     vBLTINNOARGS = 271,
+     vSTRING = 272,
+     vHANDLER = 273,
+     ID = 274,
      tDOWN = 275,
      tELSE = 276,
      tNLELSIF = 277,
@@ -103,23 +103,23 @@
    };
 #endif
 /* Tokens.  */
-#define CASTREF 258
-#define UNARY 259
-#define VOIDVAL 260
-#define VAR 261
-#define POINT 262
-#define RECT 263
-#define ARRAY 264
-#define SYMBOL 265
-#define INT 266
-#define THEENTITY 267
-#define THEENTITYWITHID 268
-#define FLOAT 269
-#define BLTIN 270
-#define BLTINNOARGS 271
-#define ID 272
-#define STRING 273
-#define HANDLER 274
+#define UNARY 258
+#define vCASTREF 259
+#define vVOID 260
+#define vVAR 261
+#define vPOINT 262
+#define vRECT 263
+#define vARRAY 264
+#define vSYMBOL 265
+#define vINT 266
+#define vTHEENTITY 267
+#define vTHEENTITYWITHID 268
+#define vFLOAT 269
+#define vBLTIN 270
+#define vBLTINNOARGS 271
+#define vSTRING 272
+#define vHANDLER 273
+#define ID 274
 #define tDOWN 275
 #define tELSE 276
 #define tNLELSIF 277
