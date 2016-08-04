@@ -46,7 +46,8 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm
 	_mainScreen = new Graphics::Surface();
 	_mainScreen->create(608, 392, _pixelFormat);
 
-	_updatesEnabled = true;
+	_screenUpdateNesting = 0;
+	_screenUpdateRunning = false;
 	_scheduledTransition = -1;	// no transition
 	_dirtyScreen = false;
 	_inventoryDrawn = false;
@@ -72,6 +73,8 @@ MohawkSurface *RivenGraphics::decodeImage(uint16 id) {
 void RivenGraphics::copyImageToScreen(uint16 image, uint32 left, uint32 top, uint32 right, uint32 bottom) {
 	Graphics::Surface *surface = findImage(image)->getSurface();
 
+	beginScreenUpdate();
+
 	// Clip the width to fit on the screen. Fixes some images.
 	if (left + surface->w > 608)
 		surface->w = 608 - left;
@@ -80,24 +83,20 @@ void RivenGraphics::copyImageToScreen(uint16 image, uint32 left, uint32 top, uin
 		memcpy(_mainScreen->getBasePtr(left, i + top), surface->getBasePtr(0, i), surface->w * surface->format.bytesPerPixel);
 
 	_dirtyScreen = true;
+	applyScreenUpdate();
 }
 
 void RivenGraphics::updateScreen(Common::Rect updateRect) {
-	if (_updatesEnabled) {
-		_vm->runUpdateScreenScript();
-		_vm->_sound->triggerDrawSound();
+	if (_dirtyScreen) {
+		// Copy to screen if there's no transition. Otherwise transition. ;)
+		if (_scheduledTransition < 0)
+			_vm->_system->copyRectToScreen(_mainScreen->getBasePtr(updateRect.left, updateRect.top), _mainScreen->pitch, updateRect.left, updateRect.top, updateRect.width(), updateRect.height());
+		else
+			runScheduledTransition();
 
-		if (_dirtyScreen) {
-			// Copy to screen if there's no transition. Otherwise transition. ;)
-			if (_scheduledTransition < 0)
-				_vm->_system->copyRectToScreen(_mainScreen->getBasePtr(updateRect.left, updateRect.top), _mainScreen->pitch, updateRect.left, updateRect.top, updateRect.width(), updateRect.height());
-			else
-				runScheduledTransition();
-
-			// Finally, update the screen.
-			_vm->_system->updateScreen();
-			_dirtyScreen = false;
-		}
+		// Finally, update the screen.
+		_vm->_system->updateScreen();
+		_dirtyScreen = false;
 	}
 }
 
@@ -414,6 +413,30 @@ void RivenGraphics::updateCredits() {
 		// Now flush the new screen
 		_vm->_system->copyRectToScreen(_mainScreen->getPixels(), _mainScreen->pitch, 0, 0, _mainScreen->w, _mainScreen->h);
 		_vm->_system->updateScreen();
+	}
+}
+
+void RivenGraphics::beginScreenUpdate() {
+	_screenUpdateNesting++;
+}
+
+void RivenGraphics::applyScreenUpdate(bool force) {
+	if (force) {
+		_screenUpdateNesting = 0;
+	} else {
+		_screenUpdateNesting--;
+	}
+
+	// The screen is only updated when the outermost screen update ends
+	if (_screenUpdateNesting <= 0 && !_screenUpdateRunning) {
+		_screenUpdateRunning = true;
+
+		_vm->getCurCard()->runScript(kCardUpdateScript);
+		_vm->_sound->triggerDrawSound();
+		updateScreen();
+
+		_screenUpdateNesting = 0;
+		_screenUpdateRunning = false;
 	}
 }
 

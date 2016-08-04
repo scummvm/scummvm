@@ -34,9 +34,12 @@ public:
 	RivenGraphics(MohawkEngine_Riven *vm);
 	~RivenGraphics();
 
+	// Screen updates
+	void beginScreenUpdate();
+	void applyScreenUpdate(bool force = false);
+
 	void copyImageToScreen(uint16 image, uint32 left, uint32 top, uint32 right, uint32 bottom);
 	void updateScreen(Common::Rect updateRect = Common::Rect(0, 0, 608, 392));
-	bool _updatesEnabled;
 	void drawRect(Common::Rect rect, bool active);
 	void drawImageRect(uint16 id, Common::Rect srcRect, Common::Rect dstRect);
 	void drawExtrasImage(uint16 id, Common::Rect dstRect);
@@ -68,6 +71,8 @@ protected:
 private:
 	MohawkEngine_Riven *_vm;
 	MohawkBitmap *_bitmapDecoder;
+	int _screenUpdateNesting;
+	bool _screenUpdateRunning;
 
 	// Water Effects
 	struct SFXERecord {

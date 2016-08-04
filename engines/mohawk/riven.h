@@ -174,7 +174,6 @@ public:
 	void refreshCard();
 	Common::String getName(uint16 nameResource, uint16 nameID);
 	Common::String getStackName(uint16 stack) const;
-	void runUpdateScreenScript();
 	RivenCard *getCurCard() const { return _card; }
 	uint16 getCurStack() const { return _curStack; }
 	uint16 matchRMAPToCard(uint32);

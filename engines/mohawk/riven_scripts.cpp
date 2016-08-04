@@ -241,8 +241,8 @@ void RivenSimpleCommand::setupOpcodes() {
 		OPCODE(transition),
 		OPCODE(refreshCard),
 		// 0x14 (20 decimal)
-		OPCODE(disableScreenUpdate),
-		OPCODE(enableScreenUpdate),
+		OPCODE(beginScreenUpdate),
+		OPCODE(applyScreenUpdate),
 		OPCODE(empty),						// Empty
 		OPCODE(empty),						// Empty
 		// 0x18 (24 decimal)
@@ -290,9 +290,6 @@ void RivenSimpleCommand::drawBitmap(uint16 op, uint16 argc, uint16 *argv) {
 		_vm->_gfx->copyImageToScreen(argv[0], 0, 0, 608, 392);
 	else          // Copy the image to a certain part of the screen
 		_vm->_gfx->copyImageToScreen(argv[0], argv[1], argv[2], argv[3], argv[4]);
-
-	// Now, update the screen
-	_vm->_gfx->updateScreen();
 }
 
 // Command 2: go to card (card id)
@@ -443,17 +440,16 @@ void RivenSimpleCommand::refreshCard(uint16 op, uint16 argc, uint16 *argv) {
 	_vm->refreshCard();
 }
 
-// Command 20: disable screen update
-void RivenSimpleCommand::disableScreenUpdate(uint16 op, uint16 argc, uint16 *argv) {
+// Command 20: begin screen update
+void RivenSimpleCommand::beginScreenUpdate(uint16 op, uint16 argc, uint16 *argv) {
 	debug(2, "Screen update disabled");
-	_vm->_gfx->_updatesEnabled = false;
+	_vm->_gfx->beginScreenUpdate();
 }
 
-// Command 21: enable screen update
-void RivenSimpleCommand::enableScreenUpdate(uint16 op, uint16 argc, uint16 *argv) {
+// Command 21: apply screen update
+void RivenSimpleCommand::applyScreenUpdate(uint16 op, uint16 argc, uint16 *argv) {
 	debug(2, "Screen update enabled");
-	_vm->_gfx->_updatesEnabled = true;
-	_vm->_gfx->updateScreen();
+	_vm->_gfx->applyScreenUpdate();
 }
 
 // Command 24: increment variable (variable, value)
@@ -573,13 +569,7 @@ void RivenSimpleCommand::activatePLST(uint16 op, uint16 argc, uint16 *argv) {
 	_vm->_activatedPLST = true;
 
 	RivenCard::Picture picture = _vm->getCurCard()->getPicture(argv[0]);
-
 	_vm->_gfx->copyImageToScreen(picture.id, picture.rect.left, picture.rect.top, picture.rect.right, picture.rect.bottom);
-
-	// An update is automatically sent here as long as it's not a load or update script and updates are enabled.
-	// TODO: Fix the graphics manager
-	//if (_scriptType != kCardLoadScript && _scriptType != kCardUpdateScript)
-		_vm->_gfx->updateScreen();
 }
 
 // Command 40: activate SLST record (card ambient sound lists)
@@ -589,8 +579,8 @@ void RivenSimpleCommand::activateSLST(uint16 op, uint16 argc, uint16 *argv) {
 	if (_vm->getCurStack() == kStackTspit && _vm->getCurCardRMAP() == 0x6e9a && argv[0] == 2)
 		return;
 
-	_vm->_sound->playSLST(argv[0], _vm->getCurCard()->getId());
 	_vm->_activatedSLST = true;
+	_vm->_sound->playSLST(argv[0], _vm->getCurCard()->getId());
 }
 
 // Command 41: activate MLST record and play
