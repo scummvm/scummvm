@@ -657,9 +657,14 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 			pos.y,
 			mode);
 
-		if (_engine->isObjSelected(child))
-			_assets[child]->blitInto(
-				surface, pos.x, pos.y, kBlitOR);
+		if (_engine->isObjVisible(child)) {
+			if (_engine->isObjSelected(child) ||
+				child == _draggedObj.id) {
+
+				_assets[child]->blitInto(
+					surface, pos.x, pos.y, kBlitOR);
+			}
+		}
 
 		// For test
 		if (MACVENTURE_DEBUG_GUI) {
@@ -1336,7 +1341,7 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event & event) {
 		// Find the appropriate window
 		WindowReference ref = findWindowAtPoint(event.mouse);
 		if (ref == kNoWindow) return false;
-		
+
 		WindowData &data = findWindowData((WindowReference) ref);
 
 		if (click == kBorderScrollUp) {
