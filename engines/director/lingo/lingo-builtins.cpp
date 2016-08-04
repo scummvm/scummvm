@@ -48,9 +48,10 @@ static struct BuiltinProto {
 	{ "length",	Lingo::b_length, 1 },
 	{ "string",	Lingo::b_string, 1 },
 	// Misc
-	{ "dontpassevent", Lingo::b_dontpassevent, -1 },
-	{ "updatestage", Lingo::b_updatestage, -1 },
-	{ "ilk",	 Lingo::b_ilk, 1 },
+	{ "closeDA",	 	Lingo::b_closeDA, -1 },
+	{ "dontpassevent",	Lingo::b_dontpassevent, -1 },
+	{ "updatestage",	Lingo::b_updatestage, -1 },
+	{ "ilk",	 		Lingo::b_ilk, 1 },
 	// point
 	{ "point",	Lingo::b_point, 2 },
 	{ 0, 0, 0 }
@@ -237,6 +238,10 @@ void Lingo::b_ilk() {
 	d.u.i = d.type;
 	d.type = vSYMBOL;
 	g_lingo->push(d);
+}
+
+void Lingo::b_closeDA() {
+	warning("STUB: b_closeDA");
 }
 
 ///////////////////

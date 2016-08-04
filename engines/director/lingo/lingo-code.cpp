@@ -698,6 +698,26 @@ void Lingo::c_alert() {
 	delete d.u.s;
 }
 
+void Lingo::c_closeResFile() {
+	Datum d = g_lingo->pop();
+
+	d.toString();
+
+	warning("STUB: c_closeResFile(%s)", d.u.s->c_str());
+
+	delete d.u.s;
+}
+
+void Lingo::c_closeXlib() {
+	Datum d = g_lingo->pop();
+
+	d.toString();
+
+	warning("STUB: c_closeXlib(%s)", d.u.s->c_str());
+
+	delete d.u.s;
+}
+
 void Lingo::c_beep() {
 	Datum d = g_lingo->pop();
 	g_lingo->func_beep(d.u.i);

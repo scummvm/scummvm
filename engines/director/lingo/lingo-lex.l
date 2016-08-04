@@ -71,6 +71,8 @@ whitespace [\t ]
 (?i:alert)			{ count(); return tALERT; }
 (?i:and)			{ count(); return tAND; }
 (?i:beep)			{ count(); return tBEEP; }
+(?i:closeResFile)	{ count(); return tCLOSERESFILE; }
+(?i:closeXlib)		{ count(); return tCLOSEXLIB; }
 (?i:contains)		{ count(); return tCONTAINS; }
 (?i:down)			{ count(); return tDOWN; }
 (?i:if)				{ count(); return tIF; }
