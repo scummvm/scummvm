@@ -37,6 +37,11 @@ static void count() {
 	g_lingo->_colnumber += strlen(yytext);
 }
 
+#ifdef __PLAYSTATION2__
+// Stub for missing function
+int isatty(int fileno) { return 0; }
+#endif
+
 static void countnl() {
 	char *p = yytext;
 
