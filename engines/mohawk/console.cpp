@@ -514,15 +514,16 @@ bool RivenConsole::Cmd_Hotspots(int argc, const char **argv) {
 
 	for (uint16 i = 0; i < _vm->_hotspots.size(); i++) {
 		RivenHotspot *hotspot = _vm->_hotspots[i];
-		debugPrintf("Hotspot %d, index %d, BLST ID %d (", i, hotspot->index, hotspot->blstID);
+		debugPrintf("Hotspot %d, index %d, BLST ID %d (", i, hotspot->getIndex(), hotspot->getBlstId());
 
 		if (hotspot->isEnabled())
 			debugPrintf("enabled");
 		else
 			debugPrintf("disabled");
 
-		debugPrintf(") - (%d, %d, %d, %d)\n", hotspot->rect.left, hotspot->rect.top, hotspot->rect.right, hotspot->rect.bottom);
-		debugPrintf("    Name = %s\n", _vm->getHotspotName(hotspot).c_str());
+		Common::Rect rect = hotspot->getRect();
+		debugPrintf(") - (%d, %d, %d, %d)\n", rect.left, rect.top, rect.right, rect.bottom);
+		debugPrintf("    Name = %s\n", hotspot->getName().c_str());
 	}
 
 	return true;

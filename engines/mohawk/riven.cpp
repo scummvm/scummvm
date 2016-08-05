@@ -258,7 +258,7 @@ void MohawkEngine_Riven::handleEvents() {
 				_showHotspots = !_showHotspots;
 				if (_showHotspots) {
 					for (uint16 i = 0; i < _hotspots.size(); i++)
-						_gfx->drawRect(_hotspots[i]->rect, _hotspots[i]->isEnabled());
+						_gfx->drawRect(_hotspots[i]->getRect(), _hotspots[i]->isEnabled());
 					needsUpdate = true;
 				} else
 					refreshCard();
@@ -415,7 +415,7 @@ void MohawkEngine_Riven::refreshCard() {
 
 	if (_showHotspots)
 		for (uint16 i = 0; i < _hotspots.size(); i++)
-			_gfx->drawRect(_hotspots[i]->rect, _hotspots[i]->isEnabled());
+			_gfx->drawRect(_hotspots[i]->getRect(), _hotspots[i]->isEnabled());
 
 	// Now we need to redraw the cursor if necessary and handle mouse over scripts
 	updateCurrentHotspot();
@@ -449,7 +449,7 @@ void MohawkEngine_Riven::updateZipMode() {
 		if (_hotspots[i]->isZip()) {
 			if (_vars["azip"] != 0) {
 				// Check if a zip mode hotspot is enabled by checking the name/id against the ZIPS records.
-				Common::String hotspotName = getName(HotspotNames, _hotspots[i]->name_resource);
+				Common::String hotspotName = _hotspots[i]->getName();
 
 				bool foundMatch = false;
 
@@ -470,14 +470,14 @@ void MohawkEngine_Riven::updateZipMode() {
 void MohawkEngine_Riven::checkHotspotChange() {
 	RivenHotspot *hotspot = nullptr;
 	for (uint16 i = 0; i < _hotspots.size(); i++)
-		if (_hotspots[i]->isEnabled() && _hotspots[i]->rect.contains(_eventMan->getMousePos())) {
+		if (_hotspots[i]->isEnabled() && _hotspots[i]->containsPoint(_eventMan->getMousePos())) {
 			hotspot = _hotspots[i];
 		}
 
 	if (hotspot) {
 		if (_curHotspot != hotspot) {
 			_curHotspot = hotspot;
-			_cursor->setCursor(hotspot->mouse_cursor);
+			_cursor->setCursor(hotspot->getMouseCursor());
 			_system->updateScreen();
 		}
 	} else {
@@ -490,13 +490,6 @@ void MohawkEngine_Riven::checkHotspotChange() {
 void MohawkEngine_Riven::updateCurrentHotspot() {
 	_curHotspot = nullptr;
 	checkHotspotChange();
-}
-
-Common::String MohawkEngine_Riven::getHotspotName(const RivenHotspot *hotspot) {
-	if (hotspot->name_resource < 0)
-		return Common::String();
-
-	return getName(HotspotNames, hotspot->name_resource);
 }
 
 void MohawkEngine_Riven::checkInventoryClick() {
@@ -927,7 +920,7 @@ void MohawkEngine_Riven::checkSunnerAlertClick() {
 		return;
 
 	// Only set the sunners variable on the forward hotspot
-	if ((rmapCode == 0x79bd && _curHotspot->index != 2) || (rmapCode == 0x7beb && _curHotspot->index != 3))
+	if ((rmapCode == 0x79bd && _curHotspot->getIndex() != 2) || (rmapCode == 0x7beb && _curHotspot->getIndex() != 3))
 		return;
 
 	// If the alert video is no longer playing, we have nothing left to do

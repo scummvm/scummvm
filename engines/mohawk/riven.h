@@ -170,7 +170,6 @@ public:
 	RivenHotspot *_curHotspot;
 	Common::Array<ZipMode> _zipModeData;
 	RivenHotspot *getCurHotspot() const { return _curHotspot; }
-	Common::String getHotspotName(const RivenHotspot *hotspot);
 	void updateCurrentHotspot();
 	void addZipVisitedCard(uint16 cardId, uint16 cardNameId);
 

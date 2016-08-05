@@ -117,11 +117,26 @@ public:
 	/** Is the hotspot's purpose to zip to another card */
 	bool isZip() const;
 
-	uint16 blstID;
-	int16 name_resource;
-	uint16 index;
-	Common::Rect rect;
-	uint16 mouse_cursor;
+	/** Get the hotspot'a rect in Card coordinates */
+	Common::Rect getRect() const;
+
+	/** Does the hotspot contain the specified point? */
+	bool containsPoint(const Common::Point &point) const;
+
+	/** Override the hotspot's default rect */
+	void setRect(const Common::Rect &rect);
+
+	/** Get the default mouse cursor id to be used when hovering the hostpot */
+	uint16 getMouseCursor() const;
+
+	/** Get the hotspot's name from the current stack's name list */
+	Common::String getName() const;
+
+	/** Get the hotspot's index in the view */
+	uint16 getIndex() const;
+
+	/** Get the hotspot's enable list id */
+	uint16 getBlstId() const;
 
 private:
 	enum {
@@ -133,7 +148,12 @@ private:
 
 	MohawkEngine_Riven *_vm;
 
+	uint16 _blstID;
+	int16 _nameResource;
+	Common::Rect _rect;
 	uint16 _u0;
+	uint16 _mouseCursor;
+	uint16 _index;
 	int16 _u1;
 	uint16 _flags;
 	RivenScriptList _scripts;
