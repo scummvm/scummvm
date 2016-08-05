@@ -196,7 +196,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	int id = 0;
 
-	if (id1.type == vINT) {
+	if (id1.type == INT) {
 		id = id1.u.i;
 	} else {
 		warning("Unknown the sprite id type: %s", id1.type2str());
@@ -315,12 +315,12 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		warning("STUB: getting the perframehook");
 		break;
 	case kTheFloatPrecision:
-		d.type = vINT;
+		d.type = INT;
 		d.u.i = _floatPrecision;
 		break;
 	default:
 		warning("Unprocessed getting field %d of entity %d", field, entity);
-		d.type = vVOID;
+		d.type = VOID;
 	}
 
 	return d;
@@ -330,7 +330,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 	Datum d;
 	int id = 0;
 
-	if (id1.type == vINT) {
+	if (id1.type == INT) {
 		id = id1.u.i;
 	} else {
 		warning("Unknown the sprite id type: %s", id1.type2str());
@@ -347,7 +347,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 	if (!sprite)
 		return d;
 
-	d.type = vINT;
+	d.type = INT;
 
 	switch (field) {
 	case kTheCastNum:
@@ -431,7 +431,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		break;
 	default:
 		warning("Unprocessed getting field %d of sprite", field);
-		d.type = vVOID;
+		d.type = VOID;
 	}
 
 	return d;
@@ -441,7 +441,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	Datum d;
 	int id = 0;
 
-	if (id1.type == vINT) {
+	if (id1.type == INT) {
 		id = id1.u.i;
 	} else {
 		warning("Unknown the cast id type: %s", id1.type2str());
@@ -457,7 +457,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	CastInfo *castInfo;
 	if (!_vm->_currentScore->_casts.contains(id)) {
 		if (field == kTheLoaded) {
-			d.type = vINT;
+			d.type = INT;
 			d.u.i = 0;
 		}
 
@@ -469,7 +469,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	cast = _vm->_currentScore->_casts[id];
 	castInfo = _vm->_currentScore->_castsInfo[id];
 
-	d.type = vINT;
+	d.type = INT;
 
 	switch (field) {
 	case kTheCastType:
@@ -497,7 +497,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		{
 			if (cast->type != kCastShape) {
 				warning("Field %d of cast %d not found", field, id);
-				d.type = vVOID;
+				d.type = VOID;
 				return d;
 			}
 
@@ -509,7 +509,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		{
 			if (cast->type != kCastShape) {
 				warning("Field %d of cast %d not found", field, id);
-				d.type = vVOID;
+				d.type = VOID;
 				return d;
 			}
 
@@ -522,7 +522,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		break;
 	default:
 		warning("Unprocessed getting field %d of cast %d", field, id);
-		d.type = vVOID;
+		d.type = VOID;
 	//TODO find out about String fields
 	}
 
@@ -532,7 +532,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	int id = 0;
 
-	if (id1.type == vINT) {
+	if (id1.type == INT) {
 		id = id1.u.i;
 	} else {
 		warning("Unknown the cast id type: %s", id1.type2str());

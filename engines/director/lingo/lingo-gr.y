@@ -77,12 +77,11 @@ void yyerror(char *s) {
 }
 
 %token UNARY
-%token vCASTREF vVOID vVAR vPOINT vRECT vARRAY vSYMBOL
-%token<i> vINT
-%token<e> vTHEENTITY vTHEENTITYWITHID
-%token<f> vFLOAT
-%token<s> vBLTIN vBLTINNOARGS vSTRING vHANDLER
-%token<s> ID
+%token CASTREF VOID VAR POINT RECT ARRAY SYMBOL
+%token<i> INT
+%token<e> THEENTITY THEENTITYWITHID
+%token<f> FLOAT
+%token<s> BLTIN BLTINNOARGS ID STRING HANDLER
 %token tDOWN tELSE tNLELSIF tEND tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
 %token tMCI tMCIWAIT tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tNLELSE tFACTORY tMETHOD tALERT tBEEP tCLOSERESFILE tCLOSEXLIB
@@ -132,7 +131,7 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(g_lingo->c_assign);
 		$$ = $4;
 		delete $2; }
-	| tSET vTHEENTITY '=' expr	{
+	| tSET THEENTITY '=' expr	{
 		g_lingo->codeConst(0); // Put dummy id
 		g_lingo->code1(g_lingo->c_theentityassign);
 		inst e = 0, f = 0;
@@ -140,7 +139,7 @@ asgn: tPUT expr tINTO ID 		{
 		WRITE_UINT32(&f, $2[1]);
 		g_lingo->code2(e, f);
 		$$ = $4; }
-	| tSET vTHEENTITYWITHID expr '=' expr	{
+	| tSET THEENTITYWITHID expr '=' expr	{
 		g_lingo->code1(g_lingo->c_swap);
 		g_lingo->code1(g_lingo->c_theentityassign);
 		inst e = 0, f = 0;
@@ -154,7 +153,7 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(g_lingo->c_assign);
 		$$ = $4;
 		delete $2; }
-	| tSET vTHEENTITY tTO expr	{
+	| tSET THEENTITY tTO expr	{
 		g_lingo->codeConst(0); // Put dummy id
 		g_lingo->code1(g_lingo->c_theentityassign);
 		inst e = 0, f = 0;
@@ -162,7 +161,7 @@ asgn: tPUT expr tINTO ID 		{
 		WRITE_UINT32(&f, $2[1]);
 		g_lingo->code2(e, f);
 		$$ = $4; }
-	| tSET vTHEENTITYWITHID expr tTO expr	{
+	| tSET THEENTITYWITHID expr tTO expr	{
 		g_lingo->code1(g_lingo->c_swap);
 		g_lingo->code1(g_lingo->c_theentityassign);
 		inst e = 0, f = 0;
@@ -343,14 +342,14 @@ stmtlist: /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
 	| stmtlist stmt
 	;
 
-expr: vINT		{ $$ = g_lingo->codeConst($1); }
-	| vFLOAT		{
+expr: INT		{ $$ = g_lingo->codeConst($1); }
+	| FLOAT		{
 		$$ = g_lingo->code1(g_lingo->c_fconstpush);
 		g_lingo->codeFloat($1); }
-	| vSTRING		{
+	| STRING		{
 		$$ = g_lingo->code1(g_lingo->c_stringpush);
 		g_lingo->codeString($1->c_str()); }
-	| vBLTINNOARGS 	{
+	| BLTINNOARGS 	{
 		$$ = g_lingo->code1(g_lingo->_handlers[*$1]->u.func);
 		g_lingo->codeConst(0); // Put dummy value
 		delete $1; }
@@ -361,14 +360,14 @@ expr: vINT		{ $$ = g_lingo->codeConst($1); }
 		$$ = g_lingo->code1(g_lingo->c_eval);
 		g_lingo->codeString($1->c_str());
 		delete $1; }
-	| vTHEENTITY	{
+	| THEENTITY	{
 		$$ = g_lingo->codeConst(0); // Put dummy id
 		g_lingo->code1(g_lingo->c_theentitypush);
 		inst e = 0, f = 0;
 		WRITE_UINT32(&e, $1[0]);
 		WRITE_UINT32(&f, $1[1]);
 		g_lingo->code2(e, f); }
-	| vTHEENTITYWITHID expr	{
+	| THEENTITYWITHID expr	{
 		$$ = g_lingo->code1(g_lingo->c_theentitypush);
 		inst e = 0, f = 0;
 		WRITE_UINT32(&e, $1[0]);
@@ -398,7 +397,7 @@ expr: vINT		{ $$ = g_lingo->codeConst($1); }
 	| tSPRITE expr tWITHIN expr		 	{ g_lingo->code1(g_lingo->c_within); }
 	;
 
-func: tMCI vSTRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c_str()); delete $2; }
+func: tMCI STRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c_str()); delete $2; }
 	| tMCIWAIT ID			{ g_lingo->code1(g_lingo->c_mciwait); g_lingo->codeString($2->c_str()); delete $2; }
 	| tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| gotofunc
@@ -406,7 +405,7 @@ func: tMCI vSTRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c
 							  g_lingo->code1(g_lingo->c_procret); }
 	| tGLOBAL globallist
 	| tALERT expr			{ g_lingo->code1(g_lingo->c_alert); }
-	| tBEEP vINT			{
+	| tBEEP INT			{
 		g_lingo->codeConst($2);
 		g_lingo->code1(g_lingo->c_beep); }
 	| tBEEP 				{
@@ -457,15 +456,15 @@ gotofunc: tGO tLOOP				{ g_lingo->code1(g_lingo->c_gotoloop); }
 		delete $2; }
 	;
 
-gotoframe: tTO tFRAME vSTRING	{ $$ = $3; }
-	| tFRAME vSTRING			{ $$ = $2; }
-	| tTO vSTRING				{ $$ = $2; }
-	| vSTRING					{ $$ = $1; }
+gotoframe: tTO tFRAME STRING	{ $$ = $3; }
+	| tFRAME STRING				{ $$ = $2; }
+	| tTO STRING				{ $$ = $2; }
+	| STRING					{ $$ = $1; }
 	;
 
-gotomovie: tOF tMOVIE vSTRING	{ $$ = $3; }
-	| tMOVIE vSTRING			{ $$ = $2; }
-	| tTO tMOVIE vSTRING		{ $$ = $3; }
+gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
+	| tMOVIE STRING				{ $$ = $2; }
+	| tTO tMOVIE STRING			{ $$ = $3; }
 	;
 
 // macro

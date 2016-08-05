@@ -141,9 +141,9 @@ whitespace [\t ]
 			yylval.e[1] = g_lingo->_theEntityFields[field]->field;
 
 			if (g_lingo->_theEntities[ptr]->hasId)
-				return vTHEENTITYWITHID;
+				return THEENTITYWITHID;
 			else
-				return vTHEENTITY;
+				return THEENTITY;
 		}
 
 		warning("Unhandled the entity %s", ptr);
@@ -160,9 +160,9 @@ whitespace [\t ]
 			yylval.e[1] = 0;	// No field
 
 			if (g_lingo->_theEntities[ptr]->hasId)
-				return vTHEENTITYWITHID;
+				return THEENTITYWITHID;
 			else
-				return vTHEENTITY;
+				return THEENTITY;
 		}
 
 		warning("Unhandled the entity %s", ptr);
@@ -185,17 +185,17 @@ whitespace [\t ]
 		yylval.s = new Common::String(yytext);
 
 		if (g_lingo->_handlers.contains(yytext)) {
-			if (g_lingo->_handlers[yytext]->type == vBLTIN && g_lingo->_handlers[yytext]->nargs == -1)
-				return vBLTINNOARGS;
+			if (g_lingo->_handlers[yytext]->type == BLTIN && g_lingo->_handlers[yytext]->nargs == -1)
+				return BLTINNOARGS;
 		}
 
 		return ID;
 	}
-{constfloat}	{ count(); yylval.f = atof(yytext); return vFLOAT; }
-{constinteger}	{ count(); yylval.i = strtol(yytext, NULL, 10); return vINT; }
+{constfloat}	{ count(); yylval.f = atof(yytext); return FLOAT; }
+{constinteger}	{ count(); yylval.i = strtol(yytext, NULL, 10); return INT; }
 {operator}		{ count(); return *yytext; }
 {newline}		{ return '\n'; }
-{conststring}	{ count(); yylval.s = new Common::String(&yytext[1]); yylval.s->deleteLastChar(); return vSTRING; }
+{conststring}	{ count(); yylval.s = new Common::String(&yytext[1]); yylval.s->deleteLastChar(); return STRING; }
 .
 
 %%

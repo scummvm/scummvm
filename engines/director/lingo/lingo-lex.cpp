@@ -1209,9 +1209,9 @@ YY_RULE_SETUP
 			yylval.e[1] = g_lingo->_theEntityFields[field]->field;
 
 			if (g_lingo->_theEntities[ptr]->hasId)
-				return vTHEENTITYWITHID;
+				return THEENTITYWITHID;
 			else
-				return vTHEENTITY;
+				return THEENTITY;
 		}
 
 		warning("Unhandled the entity %s", ptr);
@@ -1232,9 +1232,9 @@ YY_RULE_SETUP
 			yylval.e[1] = 0;	// No field
 
 			if (g_lingo->_theEntities[ptr]->hasId)
-				return vTHEENTITYWITHID;
+				return THEENTITYWITHID;
 			else
-				return vTHEENTITY;
+				return THEENTITY;
 		}
 
 		warning("Unhandled the entity %s", ptr);
@@ -1303,8 +1303,8 @@ YY_RULE_SETUP
 		yylval.s = new Common::String(yytext);
 
 		if (g_lingo->_handlers.contains(yytext)) {
-			if (g_lingo->_handlers[yytext]->type == vBLTIN && g_lingo->_handlers[yytext]->nargs == -1)
-				return vBLTINNOARGS;
+			if (g_lingo->_handlers[yytext]->type == BLTIN && g_lingo->_handlers[yytext]->nargs == -1)
+				return BLTINNOARGS;
 		}
 
 		return ID;
@@ -1313,12 +1313,12 @@ YY_RULE_SETUP
 case 54:
 YY_RULE_SETUP
 #line 194 "engines/director/lingo/lingo-lex.l"
-{ count(); yylval.f = atof(yytext); return vFLOAT; }
+{ count(); yylval.f = atof(yytext); return FLOAT; }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
 #line 195 "engines/director/lingo/lingo-lex.l"
-{ count(); yylval.i = strtol(yytext, NULL, 10); return vINT; }
+{ count(); yylval.i = strtol(yytext, NULL, 10); return INT; }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
@@ -1334,7 +1334,7 @@ YY_RULE_SETUP
 case 58:
 YY_RULE_SETUP
 #line 198 "engines/director/lingo/lingo-lex.l"
-{ count(); yylval.s = new Common::String(&yytext[1]); yylval.s->deleteLastChar(); return vSTRING; }
+{ count(); yylval.s = new Common::String(&yytext[1]); yylval.s->deleteLastChar(); return STRING; }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP

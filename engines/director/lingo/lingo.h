@@ -82,12 +82,12 @@ struct Symbol {	/* symbol table entry */
 	char *name;
 	int type;
 	union {
-		int		i;			/* vVAR */
-		double	f;			/* vFLOAT */
-		ScriptData	*defn;	/* vFUNCTION, vPROCEDURE */
-		void (*func)(void); /* vBUILTIN */
-		Common::String	*s;	/* vSTRING */
-		FloatArray *arr;	/* vARRAY, vPOINT, vRECT */
+		int		i;			/* VAR */
+		double	f;			/* FLOAT */
+		ScriptData	*defn;	/* FUNCTION, PROCEDURE */
+		void (*func)(void); /* BUILTIN */
+		Common::String	*s;	/* STRING */
+		FloatArray *arr;	/* ARRAY, POINT, RECT */
 	} u;
 	int nargs;
 	bool global;
@@ -103,10 +103,10 @@ struct Datum {	/* interpreter stack type */
 		double f;
 		Common::String *s;
 		Symbol	*sym;
-		FloatArray *arr;	/* vARRAY, vPOINT, vRECT */
+		FloatArray *arr;	/* ARRAY, POINT, RECT */
 	} u;
 
-	Datum() { u.sym = NULL; type = vVOID; }
+	Datum() { u.sym = NULL; type = VOID; }
 
 	double toFloat();
 	int toInt();

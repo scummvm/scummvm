@@ -64,7 +64,7 @@ void Lingo::initBuiltIns() {
 
 		sym->name = (char *)calloc(strlen(blt->name) + 1, 1);
 		Common::strlcpy(sym->name, blt->name, strlen(blt->name));
-		sym->type = vBLTIN;
+		sym->type = BLTIN;
 		sym->nargs = blt->nparams;
 		sym->u.func = blt->func;
 
@@ -78,9 +78,9 @@ void Lingo::initBuiltIns() {
 void Lingo::b_abs() {
 	Datum d = g_lingo->pop();
 
-	if (d.type == vINT)
+	if (d.type == INT)
 		d.u.i = ABS(d.u.i);
-	else if (d.type == vFLOAT)
+	else if (d.type == FLOAT)
 		d.u.f = ABS(d.u.f);
 
 	g_lingo->push(d);
@@ -150,7 +150,7 @@ void Lingo::b_random() {
 	max.toInt();
 
 	res.u.i = g_lingo->_vm->_rnd.getRandomNumber(max.u.i);
-	res.type = vINT;
+	res.type = INT;
 
 	g_lingo->push(res);
 }
@@ -184,7 +184,7 @@ void Lingo::b_chars() {
 	Datum from = g_lingo->pop();
 	Datum s = g_lingo->pop();
 
-	if (s.type != vSTRING)
+	if (s.type != STRING)
 		error("Incorrect type for 'chars' function: %s", s.type2str());
 
 	to.toInt();
@@ -199,21 +199,21 @@ void Lingo::b_chars() {
 	delete s.u.s;
 
 	s.u.s = res;
-	s.type = vSTRING;
+	s.type = STRING;
 	g_lingo->push(s);
 }
 
 void Lingo::b_length() {
 	Datum d = g_lingo->pop();
 
-	if (d.type != vSTRING)
+	if (d.type != STRING)
 		error("Incorrect type for 'length' function: %s", d.type2str());
 
 	int len = strlen(d.u.s->c_str());
 	delete d.u.s;
 
 	d.u.i = len;
-	d.type = vINT;
+	d.type = INT;
 	g_lingo->push(d);
 }
 
@@ -237,7 +237,7 @@ void Lingo::b_updatestage() {
 void Lingo::b_ilk() {
 	Datum d = g_lingo->pop();
 	d.u.i = d.type;
-	d.type = vSYMBOL;
+	d.type = SYMBOL;
 	g_lingo->push(d);
 }
 
@@ -264,7 +264,7 @@ void Lingo::b_point() {
 
 	d.u.arr->push_back(x.u.f);
 	d.u.arr->push_back(y.u.f);
-	d.type = vPOINT;
+	d.type = POINT;
 
 	g_lingo->push(d);
 }
