@@ -199,8 +199,8 @@ int OSMovie::getFrame() const {
 }
 
 void OSMovie::movieStarted() {
-	if (_aviSurface._hasAudio)
-		_aviSurface._soundManager->movieStarted();
+	//if (_aviSurface._hasAudio)
+	//	_aviSurface._soundManager->movieStarted();
 
 	// Register the movie in the playing list
 	addToPlayingMovies();

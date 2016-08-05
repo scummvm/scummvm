@@ -24,4 +24,29 @@
 
 namespace Titanic {
 
+QMixer::QMixer(Audio::Mixer *mixer) : _mixer(mixer) {
+}
+
+bool QMixer::qsWaveMixInitEx(const QMIXCONFIG &config) {
+	// Not current implemented in ScummVM
+	return true;
+}
+
+void QMixer::qsWaveMixActivate(bool fActivate) {
+	// Not current implemented in ScummVM
+}
+
+int QMixer::qsWaveMixOpenChannel(int iChannel, WaveMixOpenChannel mode) {
+	// Not current implemented in ScummVM
+	return 0;
+}
+
+void QMixer::qsWaveMixCloseSession() {
+	_mixer->stopAll();
+}
+
+void QMixer::qsWaveMixFreeWave(Audio::SoundHandle &handle) {
+	_mixer->stopHandle(handle);
+}
+
 } // End of namespace Titanic z

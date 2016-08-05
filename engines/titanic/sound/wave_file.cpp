@@ -20,13 +20,35 @@
  *
  */
 
+#include "audio/decoders/wave.h"
 #include "titanic/sound/wave_file.h"
+#include "titanic/sound/sound_manager.h"
+#include "titanic/support/simple_file.h"
 
 namespace Titanic {
+
+CWaveFile::~CWaveFile() {
+	if (_stream) {
+		_owner->soundFreed(_soundHandle);
+		delete _stream;
+	}
+}
 
 int CWaveFile::fn1() {
 	// TODO
 	return 0;
 }
+
+bool CWaveFile::loadSound(const CString &name) {
+	assert(!_stream);
+
+	StdCWadFile file;
+	if (!file.open(name))
+		return false;
+
+	Common::SeekableReadStream *stream = file.readStream();
+	_stream = Audio::makeWAVStream(stream->readStream(stream->size()), DisposeAfterUse::YES);
+}
+
 
 } // End of namespace Titanic z

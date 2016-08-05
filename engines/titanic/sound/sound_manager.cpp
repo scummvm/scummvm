@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+const uint SAMPLING_RATE = 22050;
+const uint LATENCY = 100;
+const uint CHANNELS_COUNT = 16;
+
 CSoundManager::CSoundManager() : _musicPercent(75.0), _speechPercent(75.0),
 	_masterPercent(75.0), _parrotPercent(75.0), _field14(1) {
 }
@@ -33,11 +37,27 @@ CSoundManager::CSoundManager() : _musicPercent(75.0), _speechPercent(75.0),
 QSoundManager::QSoundManager(Audio::Mixer *mixer) : CSoundManager(), QMixer(mixer),
 		_field18(0), _field1C(0) {
 	Common::fill(&_field4A0[0], &_field4A0[16], 0);
+
+	qsWaveMixInitEx(QMIXCONFIG(SAMPLING_RATE, CHANNELS_COUNT, LATENCY));
+	qsWaveMixActivate(true);
+	qsWaveMixOpenChannel(0, QMIX_OPENALL);
+}
+
+QSoundManager::~QSoundManager() {
+	// Close down the mixer
+	qsWaveMixCloseSession();
 }
 
 CWaveFile *QSoundManager::loadSound(const CString &name) {
-	warning("TODO");
-	return nullptr;
+	CWaveFile *waveFile = new CWaveFile();
+
+	// Try to load the specified sound
+	if (!waveFile->loadSound(name)) {
+		delete waveFile;
+		return nullptr;
+	}
+
+	return waveFile;
 }
 
 CWaveFile *QSoundManager::loadSpeech(CDialogueFile *dialogueFile, int speechId) {
@@ -98,13 +118,8 @@ int QSoundManager::proc16() const {
 	return 0;
 }
 
-void QSoundManager::WaveMixPump() {
-	warning("TODO");
-}
-
-bool QSoundManager::movieStarted() const {
-	// TODO
-	return 0;
+uint QSoundManager::getLatency() const {
+	return LATENCY;
 }
 
 void QSoundManager::proc19(int v) {
@@ -125,6 +140,10 @@ void QSoundManager::proc29() {
 
 void QSoundManager::proc30() {
 	warning("TODO");
+}
+
+void QSoundManager::soundFreed(Audio::SoundHandle &handle) {
+	qsWaveMixFreeWave(handle);
 }
 
 } // End of namespace Titanic z

@@ -81,12 +81,11 @@ public:
 	virtual bool isActive(const CWaveFile *waveFile) const { return false; }
 
 	virtual int proc16() const { return 0; }
-	virtual void WaveMixPump() {}
 	
 	/**
-	 * Called when a movie with audio is started
+	 * Returns the movie latency
 	 */
-	virtual bool movieStarted() const { return false; }
+	virtual uint getLatency() const { return 0; }
 
 	virtual void setMusicPercent(double percent) { _musicPercent = percent; }
 	virtual void setSpeechPercent(double percent) { _speechPercent = percent; }
@@ -138,7 +137,7 @@ public:
 	int _field4A0[16];
 public:
 	QSoundManager(Audio::Mixer *mixer);
-	virtual ~QSoundManager() {}
+	virtual ~QSoundManager();
 
 	/**
 	 * Loads a sound
@@ -176,13 +175,11 @@ public:
 	virtual bool isActive(const CWaveFile *soundRes) const;
 
 	virtual int proc16() const;
-	virtual void WaveMixPump();
-
 	
 	/**
-	 * Called when a movie with audio is started
+	 * Returns the movie latency
 	 */
-	virtual bool movieStarted() const;
+	virtual uint getLatency() const;
 
 	virtual void proc19(int v);
 	virtual void proc20(int v);
@@ -190,6 +187,11 @@ public:
 
 	virtual void proc29();
 	virtual void proc30();
+
+	/**
+	 * Called when a wave file is freed
+	 */
+	void soundFreed(Audio::SoundHandle &handle);
 };
 
 } // End of namespace Titanic

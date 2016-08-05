@@ -23,32 +23,35 @@
 #ifndef TITANIC_WAVE_FILE_H
 #define TITANIC_WAVE_FILE_H
 
-#include "titanic/support/simple_file.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "titanic/support/string.h"
 
 namespace Titanic {
 
-class CSoundManager;
+class QSoundManager;
 
 class CWaveFile {
 public:
-	int _field0;
-	int _field4;
-	int _field8;
-	uint _handle;
-	CSoundManager *_owner;
-	int _field14;
-	int _field18;
-	int _field1C;
-	int _field20;
-	int _field24;
-	int _field28;
-	int _field2C;
+	QSoundManager *_owner;
+	Audio::AudioStream *_stream;
+	Audio::SoundHandle _soundHandle;
 public:
-	CWaveFile() : _field0(2), _field4(0), _field8(0), _handle(0),
-		_owner(nullptr), _field14(1), _field18(0), _field1C(0),
-		_field20(0), _field24(0), _field28(0), _field2C(-1) {}
+	CWaveFile() : _owner(nullptr), _stream(nullptr) {}
+	CWaveFile(QSoundManager *owner) : _owner(owner), _stream(nullptr) {}
+	~CWaveFile();
 
 	int fn1();
+
+	/**
+	 * Tries to load the specified wave file sound
+	 */
+	bool loadSound(const CString &name);
+
+	/**
+	 * Returns true if the wave file has data loaded
+	 */
+	bool isLoaded() const { return _stream != nullptr; }
 };
 
 } // End of namespace Titanic
