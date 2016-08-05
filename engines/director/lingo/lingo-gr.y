@@ -81,7 +81,7 @@ void yyerror(char *s) {
 %token<i> INT
 %token<e> THEENTITY THEENTITYWITHID
 %token<f> FLOAT
-%token<s> BLTIN BLTINNOARGS ID STRING HANDLER
+%token<s> BLTIN BLTINNOARGS BLTINNOARGSORONE BLTINONEARG ID STRING HANDLER
 %token tDOWN tELSE tNLELSIF tEND tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
 %token tMCI tMCIWAIT tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tNLELSE tFACTORY tMETHOD tALERT tBEEP tCLOSERESFILE tCLOSEXLIB
@@ -404,7 +404,16 @@ func: tMCI STRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c_
 	| tEXIT					{ g_lingo->codeConst(0); // Push fake value on stack
 							  g_lingo->code1(g_lingo->c_procret); }
 	| tGLOBAL globallist
-	| tALERT expr			{ g_lingo->code1(g_lingo->c_alert); }
+	| BLTINONEARG expr		{
+		g_lingo->code1(g_lingo->_handlers[*$1]->u.func);
+		delete $1; }
+	| BLTINNOARGSORONE expr	{
+		g_lingo->code1(g_lingo->_handlers[*$1]->u.func);
+		delete $1; }
+	| BLTINNOARGSORONE 		{
+		g_lingo->code2(g_ling->c_voidpush, g_lingo->_handlers[*$1]->u.func);
+		delete $1; }
+	| tALERT expr		{ g_lingo->code1(g_lingo->c_alert); }
 	| tBEEP INT			{
 		g_lingo->codeConst($2);
 		g_lingo->code1(g_lingo->c_beep); }

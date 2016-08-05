@@ -185,11 +185,21 @@ whitespace [\t ]
 		yylval.s = new Common::String(yytext);
 
 		if (g_lingo->_handlers.contains(yytext)) {
-			if (g_lingo->_handlers[yytext]->type == BLTIN &&
-					g_lingo->_handlers[yytext]->nargs == 0 &&
-					g_lingo->_handlers[yytext]->maxArgs == 0 &&
-					!g_lingo->_handlers[yytext]->parens)
-				return BLTINNOARGS;
+			if (g_lingo->_handlers[yytext]->type == BLTIN && g_lingo->_handlers[yytext]->parens == false) {
+				if (g_lingo->_handlers[yytext]->nargs == 0) {
+					if (g_lingo->_handlers[yytext]->maxArgs == 0)
+						return BLTINNOARGS;
+					else if (g_lingo->_handlers[yytext]->maxArgs == 1)
+						return BLTINNOARGSORONE;
+					else
+						error("Incorrect setup for builtin: %s", yytext);
+				} else if (g_lingo->_handlers[yytext]->nargs == 1 &&
+							g_lingo->_handlers[yytext]->maxArgs == 1) {
+					return BLTINONEARG;
+				} else {
+					error("Incorrect setup for builtin: %s", yytext);
+				}
+			}
 		}
 
 		return ID;

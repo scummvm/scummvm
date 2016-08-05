@@ -216,6 +216,7 @@ public:
 	static void c_within();
 
 	static void c_constpush();
+	static void c_voidpush();
 	static void c_fconstpush();
 	static void c_stringpush();
 	static void c_varpush();

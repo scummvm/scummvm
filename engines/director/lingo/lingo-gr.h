@@ -53,59 +53,61 @@
      FLOAT = 269,
      BLTIN = 270,
      BLTINNOARGS = 271,
-     ID = 272,
-     STRING = 273,
-     HANDLER = 274,
-     tDOWN = 275,
-     tELSE = 276,
-     tNLELSIF = 277,
-     tEND = 278,
-     tEXIT = 279,
-     tFRAME = 280,
-     tGLOBAL = 281,
-     tGO = 282,
-     tIF = 283,
-     tINTO = 284,
-     tLOOP = 285,
-     tMACRO = 286,
-     tMCI = 287,
-     tMCIWAIT = 288,
-     tMOVIE = 289,
-     tNEXT = 290,
-     tOF = 291,
-     tPREVIOUS = 292,
-     tPUT = 293,
-     tREPEAT = 294,
-     tSET = 295,
-     tTHEN = 296,
-     tTO = 297,
-     tWHEN = 298,
-     tWITH = 299,
-     tWHILE = 300,
-     tNLELSE = 301,
-     tFACTORY = 302,
-     tMETHOD = 303,
-     tALERT = 304,
-     tBEEP = 305,
-     tCLOSERESFILE = 306,
-     tCLOSEXLIB = 307,
-     tCURSOR = 308,
-     tDELAY = 309,
-     tGE = 310,
-     tLE = 311,
-     tGT = 312,
-     tLT = 313,
-     tEQ = 314,
-     tNEQ = 315,
-     tAND = 316,
-     tOR = 317,
-     tNOT = 318,
-     tCONCAT = 319,
-     tCONTAINS = 320,
-     tSTARTS = 321,
-     tSPRITE = 322,
-     tINTERSECTS = 323,
-     tWITHIN = 324
+     BLTINNOARGSORONE = 272,
+     BLTINONEARG = 273,
+     ID = 274,
+     STRING = 275,
+     HANDLER = 276,
+     tDOWN = 277,
+     tELSE = 278,
+     tNLELSIF = 279,
+     tEND = 280,
+     tEXIT = 281,
+     tFRAME = 282,
+     tGLOBAL = 283,
+     tGO = 284,
+     tIF = 285,
+     tINTO = 286,
+     tLOOP = 287,
+     tMACRO = 288,
+     tMCI = 289,
+     tMCIWAIT = 290,
+     tMOVIE = 291,
+     tNEXT = 292,
+     tOF = 293,
+     tPREVIOUS = 294,
+     tPUT = 295,
+     tREPEAT = 296,
+     tSET = 297,
+     tTHEN = 298,
+     tTO = 299,
+     tWHEN = 300,
+     tWITH = 301,
+     tWHILE = 302,
+     tNLELSE = 303,
+     tFACTORY = 304,
+     tMETHOD = 305,
+     tALERT = 306,
+     tBEEP = 307,
+     tCLOSERESFILE = 308,
+     tCLOSEXLIB = 309,
+     tCURSOR = 310,
+     tDELAY = 311,
+     tGE = 312,
+     tLE = 313,
+     tGT = 314,
+     tLT = 315,
+     tEQ = 316,
+     tNEQ = 317,
+     tAND = 318,
+     tOR = 319,
+     tNOT = 320,
+     tCONCAT = 321,
+     tCONTAINS = 322,
+     tSTARTS = 323,
+     tSPRITE = 324,
+     tINTERSECTS = 325,
+     tWITHIN = 326
    };
 #endif
 /* Tokens.  */
@@ -123,59 +125,61 @@
 #define FLOAT 269
 #define BLTIN 270
 #define BLTINNOARGS 271
-#define ID 272
-#define STRING 273
-#define HANDLER 274
-#define tDOWN 275
-#define tELSE 276
-#define tNLELSIF 277
-#define tEND 278
-#define tEXIT 279
-#define tFRAME 280
-#define tGLOBAL 281
-#define tGO 282
-#define tIF 283
-#define tINTO 284
-#define tLOOP 285
-#define tMACRO 286
-#define tMCI 287
-#define tMCIWAIT 288
-#define tMOVIE 289
-#define tNEXT 290
-#define tOF 291
-#define tPREVIOUS 292
-#define tPUT 293
-#define tREPEAT 294
-#define tSET 295
-#define tTHEN 296
-#define tTO 297
-#define tWHEN 298
-#define tWITH 299
-#define tWHILE 300
-#define tNLELSE 301
-#define tFACTORY 302
-#define tMETHOD 303
-#define tALERT 304
-#define tBEEP 305
-#define tCLOSERESFILE 306
-#define tCLOSEXLIB 307
-#define tCURSOR 308
-#define tDELAY 309
-#define tGE 310
-#define tLE 311
-#define tGT 312
-#define tLT 313
-#define tEQ 314
-#define tNEQ 315
-#define tAND 316
-#define tOR 317
-#define tNOT 318
-#define tCONCAT 319
-#define tCONTAINS 320
-#define tSTARTS 321
-#define tSPRITE 322
-#define tINTERSECTS 323
-#define tWITHIN 324
+#define BLTINNOARGSORONE 272
+#define BLTINONEARG 273
+#define ID 274
+#define STRING 275
+#define HANDLER 276
+#define tDOWN 277
+#define tELSE 278
+#define tNLELSIF 279
+#define tEND 280
+#define tEXIT 281
+#define tFRAME 282
+#define tGLOBAL 283
+#define tGO 284
+#define tIF 285
+#define tINTO 286
+#define tLOOP 287
+#define tMACRO 288
+#define tMCI 289
+#define tMCIWAIT 290
+#define tMOVIE 291
+#define tNEXT 292
+#define tOF 293
+#define tPREVIOUS 294
+#define tPUT 295
+#define tREPEAT 296
+#define tSET 297
+#define tTHEN 298
+#define tTO 299
+#define tWHEN 300
+#define tWITH 301
+#define tWHILE 302
+#define tNLELSE 303
+#define tFACTORY 304
+#define tMETHOD 305
+#define tALERT 306
+#define tBEEP 307
+#define tCLOSERESFILE 308
+#define tCLOSEXLIB 309
+#define tCURSOR 310
+#define tDELAY 311
+#define tGE 312
+#define tLE 313
+#define tGT 314
+#define tLT 315
+#define tEQ 316
+#define tNEQ 317
+#define tAND 318
+#define tOR 319
+#define tNOT 320
+#define tCONCAT 321
+#define tCONTAINS 322
+#define tSTARTS 323
+#define tSPRITE 324
+#define tINTERSECTS 325
+#define tWITHIN 326
 
 
 
@@ -193,7 +197,7 @@ typedef union YYSTYPE
 	Common::Array<double> *arr;
 }
 /* Line 1529 of yacc.c.  */
-#line 197 "engines/director/lingo/lingo-gr.hpp"
+#line 201 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

@@ -121,6 +121,13 @@ void Lingo::c_constpush() {
 	g_lingo->push(d);
 }
 
+void Lingo::c_voidpush() {
+	Datum d;
+	d.u.i = 0;
+	d.type = VOID;
+	g_lingo->push(d);
+}
+
 void Lingo::c_fconstpush() {
 	Datum d;
 	inst i = (*g_lingo->_currentScript)[g_lingo->_pc];
