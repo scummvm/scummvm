@@ -196,4 +196,50 @@ SLSTRecord RivenCard::getSound(uint16 index) const {
 	error("Could not find sound %d in card %d", index, _id);
 }
 
+RivenHotspot::RivenHotspot(MohawkEngine_Riven *vm, Common::ReadStream *stream) :
+		_vm(vm) {
+	loadFromStream(stream);
+}
+
+void RivenHotspot::loadFromStream(Common::ReadStream *stream) {
+	enabled = true;
+
+	blstID = stream->readUint16BE();
+	name_resource = stream->readSint16BE();
+
+	int16 left = stream->readSint16BE();
+	int16 top = stream->readSint16BE();
+	int16 right = stream->readSint16BE();
+	int16 bottom = stream->readSint16BE();
+
+	// Riven has some invalid rects, disable them here
+	// Known weird hotspots:
+	// - tspit 371 (DVD: 377), hotspot 4
+	if (left >= right || top >= bottom) {
+		warning("Invalid hotspot: (%d, %d, %d, %d)", left, top, right, bottom);
+		left = top = right = bottom = 0;
+		enabled = 0;
+	}
+
+	rect = Common::Rect(left, top, right, bottom);
+
+	_u0 = stream->readUint16BE();
+	mouse_cursor = stream->readUint16BE();
+	index = stream->readUint16BE();
+	_u1 = stream->readSint16BE();
+	zipModeHotspot = stream->readUint16BE();
+
+	// Read in the scripts now
+	_scripts = _vm->_scriptMan->readScripts(stream);
+}
+
+void RivenHotspot::runScript(uint16 scriptType) {
+	for (uint16 i = 0; i < _scripts.size(); i++)
+		if (_scripts[i].type == scriptType) {
+			RivenScriptPtr script = _scripts[i].script;
+			_vm->_scriptMan->runScript(script, false);
+			break;
+		}
+}
+
 } // End of namespace Mohawk

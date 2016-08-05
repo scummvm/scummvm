@@ -42,6 +42,7 @@ class RivenConsole;
 class RivenSaveLoad;
 class RivenOptionsDialog;
 class RivenCard;
+class RivenHotspot;
 class RivenSoundManager;
 
 // Riven Stack Types
@@ -85,20 +86,6 @@ extern Common::Rect *g_atrusJournalRect3;
 extern Common::Rect *g_cathJournalRect3;
 extern Common::Rect *g_trapBookRect3;
 extern Common::Rect *g_demoExitRect;
-
-struct RivenHotspot {
-	uint16 blstID;
-	int16 name_resource;
-	Common::Rect rect;
-	uint16 u0;
-	uint16 mouse_cursor;
-	uint16 index;
-	int16 u1;
-	int16 zipModeHotspot;
-	RivenScriptList scripts;
-
-	bool enabled;
-};
 
 struct ZipMode {
 	Common::String name;
@@ -148,7 +135,6 @@ private:
 	void handleEvents();
 
 	// Hotspot related functions and variables
-	uint16 _hotspotCount;
 	void loadHotspots(uint16);
 	void checkInventoryClick();
 	bool _showHotspots;
@@ -180,10 +166,9 @@ public:
 	uint32 getCurCardRMAP();
 
 	// Hotspot functions/variables
-	RivenHotspot *_hotspots;
+	Common::Array<RivenHotspot *> _hotspots;
 	int32 _curHotspot;
 	Common::Array<ZipMode> _zipModeData;
-	uint16 getHotspotCount() const { return _hotspotCount; }
 	void runHotspotScript(uint16 hotspot, uint16 scriptType);
 	int32 getCurHotspot() const { return _curHotspot; }
 	Common::String getHotspotName(uint16 hotspot);
