@@ -185,7 +185,10 @@ whitespace [\t ]
 		yylval.s = new Common::String(yytext);
 
 		if (g_lingo->_handlers.contains(yytext)) {
-			if (g_lingo->_handlers[yytext]->type == BLTIN && g_lingo->_handlers[yytext]->nargs == -1)
+			if (g_lingo->_handlers[yytext]->type == BLTIN &&
+					g_lingo->_handlers[yytext]->nargs == 0 &&
+					g_lingo->_handlers[yytext]->maxArgs == 0 &&
+					!g_lingo->_handlers[yytext]->parens)
 				return BLTINNOARGS;
 		}
 

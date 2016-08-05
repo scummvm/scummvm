@@ -72,6 +72,8 @@ Symbol::Symbol() {
 	type = VOID;
 	u.s = NULL;
 	nargs = 0;
+	maxArgs = 0;
+	parens = true;
 	global = false;
 }
 

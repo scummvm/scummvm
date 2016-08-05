@@ -27,35 +27,37 @@ namespace Director {
 static struct BuiltinProto {
 	const char *name;
 	void (*func)(void);
-	int nparams;
+	int minArgs;
+	int maxArgs;
+	bool parens;
 } builtins[] = {
 	// Math
-	{ "abs",	Lingo::b_abs, 1 },
-	{ "atan",	Lingo::b_atan, 1 },
-	{ "cos",	Lingo::b_cos, 1 },
-	{ "exp",	Lingo::b_exp, 1 },
-	{ "float",	Lingo::b_float, 1 },
-	{ "integer",Lingo::b_integer, 1 },
-	{ "log",	Lingo::b_log, 1 },
-	{ "pi",		Lingo::b_pi, 0 },
-	{ "power",	Lingo::b_power, 2 },
-	{ "random",	Lingo::b_random, 1 },
-	{ "sin",	Lingo::b_sin, 1 },
-	{ "sqrt",	Lingo::b_sqrt, 1 },
-	{ "tan",	Lingo::b_tan, 1 },
+	{ "abs",	Lingo::b_abs,		1, 1, true },
+	{ "atan",	Lingo::b_atan,		1, 1, true },
+	{ "cos",	Lingo::b_cos,		1, 1, true },
+	{ "exp",	Lingo::b_exp,		1, 1, true },
+	{ "float",	Lingo::b_float,		1, 1, true },
+	{ "integer",Lingo::b_integer,	1, 1, true },
+	{ "log",	Lingo::b_log,		1, 1, true },
+	{ "pi",		Lingo::b_pi,		0, 0, true },
+	{ "power",	Lingo::b_power,		2, 2, true },
+	{ "random",	Lingo::b_random,	1, 1, true },
+	{ "sin",	Lingo::b_sin,		1, 1, true },
+	{ "sqrt",	Lingo::b_sqrt,		1, 1, true },
+	{ "tan",	Lingo::b_tan,		1, 1, true },
 	// String
-	{ "chars",	Lingo::b_chars, 3 },
-	{ "length",	Lingo::b_length, 1 },
-	{ "string",	Lingo::b_string, 1 },
+	{ "chars",	Lingo::b_chars,		3, 3, true },
+	{ "length",	Lingo::b_length,	1, 1, true },
+	{ "string",	Lingo::b_string,	1, 1, true },
 	// Misc
-	{ "closeDA",	 	Lingo::b_closeDA, -1 },
-	{ "continue",		Lingo::b_continue, -1 },
-	{ "dontpassevent",	Lingo::b_dontpassevent, -1 },
-	{ "updatestage",	Lingo::b_updatestage, -1 },
-	{ "ilk",	 		Lingo::b_ilk, 1 },
+	{ "closeDA",	 	Lingo::b_closeDA, 		0, 0, false },
+	{ "continue",		Lingo::b_continue,		0, 0, false },
+	{ "dontpassevent",	Lingo::b_dontpassevent,	0, 0, false },
+	{ "updatestage",	Lingo::b_updatestage,	0, 0, false },
+	{ "ilk",	 		Lingo::b_ilk,			1, 2, true },
 	// point
-	{ "point",	Lingo::b_point, 2 },
-	{ 0, 0, 0 }
+	{ "point",	Lingo::b_point, 2, 2, true },
+	{ 0, 0, 0, 0, false }
 };
 
 void Lingo::initBuiltIns() {
@@ -65,7 +67,9 @@ void Lingo::initBuiltIns() {
 		sym->name = (char *)calloc(strlen(blt->name) + 1, 1);
 		Common::strlcpy(sym->name, blt->name, strlen(blt->name));
 		sym->type = BLTIN;
-		sym->nargs = blt->nparams;
+		sym->nargs = blt->minArgs;
+		sym->maxArgs = blt->maxArgs;
+		sym->parens = blt->parens;
 		sym->u.func = blt->func;
 
 		_handlers[blt->name] = sym;

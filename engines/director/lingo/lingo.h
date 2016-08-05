@@ -89,7 +89,10 @@ struct Symbol {	/* symbol table entry */
 		Common::String	*s;	/* STRING */
 		FloatArray *arr;	/* ARRAY, POINT, RECT */
 	} u;
-	int nargs;
+	int nargs;		/* number of arguments */
+	int maxArgs;	/* maximal number of arguments, for builtins */
+	bool parens;	/* whether parens required or not, for builitins */
+
 	bool global;
 
 	Symbol();

@@ -740,10 +740,27 @@ void Lingo::c_call() {
 	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
 
 	int nargs = READ_UINT32(&(*g_lingo->_currentScript)[g_lingo->_pc++]);
+	bool drop = false;
+
+	Symbol *sym;
 
 	if (!g_lingo->_handlers.contains(name)) {
 		warning("Call to undefined handler '%s'. Dropping %d stack items", name.c_str(), nargs);
+		drop = true;
+	} else {
+		sym = g_lingo->_handlers[name];
 
+		if (sym->type == BLTIN && sym->nargs != nargs && sym->maxArgs != nargs) {
+			if (sym->nargs == sym->maxArgs)
+				warning("Incorrect number of arguments to handler '%s', expecting %d. Dropping %d stack items", name.c_str(), sym->nargs, nargs);
+			else
+				warning("Incorrect number of arguments to handler '%s', expecting %d or %d. Dropping %d stack items", name.c_str(), sym->nargs, sym->maxArgs, nargs);
+
+			drop = true;
+		}
+	}
+
+	if (drop) {
 		for (int i = 0; i < nargs; i++)
 			g_lingo->pop();
 
@@ -753,8 +770,6 @@ void Lingo::c_call() {
 		return;
 	}
 
-	Symbol *sym = g_lingo->_handlers[name];
-
 	if (sym->nargs < nargs) {
 		warning("Incorrect number of arguments for function %s. Dropping extra %d", name.c_str(), nargs - sym->nargs);
 		for (int i = 0; i < nargs - sym->nargs; i++)
@@ -762,15 +777,8 @@ void Lingo::c_call() {
 	}
 
 	if (sym->type == BLTIN) {
-		if (sym->nargs > 0 && nargs < sym->nargs) {
-			warning("Too few arguments for function %s. Expecting %d but got %d", name.c_str(), sym->nargs, nargs);
-			for (int i = 0; i < nargs; i++)
-				g_lingo->pop();
+		// FIXME. TODO. Pass nargs
 
-			g_lingo->pushVoid();
-
-			return;
-		}
 		(*sym->u.func)();
 
 		return;
