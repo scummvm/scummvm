@@ -408,7 +408,7 @@ int CTrueTalkManager::readDialogSound() {
 	_field18 = 0;
 
 	for (uint idx = 0; idx < _titleEngine._indexes.size(); ++idx) {
-		WaveFile *waveFile = _gameManager->_sound.getTrueTalkSound(
+		CWaveFile *waveFile = _gameManager->_sound.getTrueTalkSound(
 			_dialogueFile, _titleEngine._indexes[idx] - _dialogueId);
 		if (waveFile) {			
 			_field18 = waveFile->fn1();

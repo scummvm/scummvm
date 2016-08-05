@@ -71,7 +71,7 @@ void CSound::fn3(int handle, int val2, int val3) {
 	warning("TODO: CSound::fn3");
 }
 
-void CSound::fn4(WaveFile *waveFile, int val) {
+void CSound::fn4(CWaveFile *waveFile, int val) {
 	// TODO
 }
 
@@ -99,11 +99,11 @@ void CSound::removeOldest() {
 	}
 }
 
-WaveFile *CSound::getTrueTalkSound(CDialogueFile *dialogueFile, int index) {
+CWaveFile *CSound::getTrueTalkSound(CDialogueFile *dialogueFile, int index) {
 	return loadSpeech(dialogueFile, index);
 }
 
-WaveFile *CSound::loadSound(const CString &name) {
+CWaveFile *CSound::loadSound(const CString &name) {
 	checkSounds();
 
 	// Check whether an entry for the given name is already active
@@ -139,7 +139,7 @@ WaveFile *CSound::loadSound(const CString &name) {
 }
 
 int CSound::playSound(const CString &name, CProximity &prox) {
-	WaveFile *waveFile  = loadSound(name);
+	CWaveFile *waveFile  = loadSound(name);
 	if (!waveFile)
 		return -1;
 
@@ -149,7 +149,7 @@ int CSound::playSound(const CString &name, CProximity &prox) {
 	return _soundManager.playSound(*waveFile, prox);
 }
 
-WaveFile *CSound::loadSpeech(CDialogueFile *dialogueFile, int speechId) {
+CWaveFile *CSound::loadSpeech(CDialogueFile *dialogueFile, int speechId) {
 	checkSounds();
 
 	// Check whether an entry for the given name is already active
@@ -186,7 +186,7 @@ WaveFile *CSound::loadSpeech(CDialogueFile *dialogueFile, int speechId) {
 }
 
 int CSound::playSpeech(CDialogueFile *dialogueFile, int speechId, CProximity &prox) {
-	WaveFile *waveFile = loadSpeech(dialogueFile, speechId);
+	CWaveFile *waveFile = loadSpeech(dialogueFile, speechId);
 	if (!waveFile)
 		return -1;
 

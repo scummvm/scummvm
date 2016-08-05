@@ -38,7 +38,7 @@ class CGameManager;
 class CSoundItem : public ListItem {
 public:
 	CString _name;
-	WaveFile *_waveFile;
+	CWaveFile *_waveFile;
 	File *_dialogueFileHandle;
 	int _speechId;
 	int _field24;
@@ -115,7 +115,7 @@ public:
 	bool fn1(int val);
 	void fn2(int handle);
 	void fn3(int handle, int val2, int val3);
-	void fn4(WaveFile *waveFile, int val);
+	void fn4(CWaveFile *waveFile, int val);
 		
 	void managerProc8(int v) { _soundManager.proc8(v); }
 
@@ -125,7 +125,7 @@ public:
 	 * @param speechId		Speech Id within dialogue
 	 * @returns				Wave file instance
 	 */
-	WaveFile *getTrueTalkSound(CDialogueFile *dialogueFile, int index);
+	CWaveFile *getTrueTalkSound(CDialogueFile *dialogueFile, int index);
 
 	/**
 	 * Load a speech resource
@@ -133,7 +133,7 @@ public:
 	 * @param speechId		Speech Id within dialogue
 	 * @returns				Wave file instance
 	 */
-	WaveFile *loadSpeech(CDialogueFile *dialogueFile, int speechId);
+	CWaveFile *loadSpeech(CDialogueFile *dialogueFile, int speechId);
 
 	/**
 	 * Play a speech
@@ -148,7 +148,7 @@ public:
 	 * @param name		Name of sound resource
 	 * @returns			Sound item record
 	 */
-	WaveFile *loadSound(const CString &name);
+	CWaveFile *loadSound(const CString &name);
 
 	/**
 	 * Play a sound

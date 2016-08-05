@@ -46,21 +46,21 @@ public:
 	 * @param name		Name of sound resource
 	 * @returns			Loaded wave file
 	 */
-	virtual WaveFile *loadSound(const CString &name) { return nullptr; }
+	virtual CWaveFile *loadSound(const CString &name) { return nullptr; }
 
 	/**
 	 * Loads a speech resource from a dialogue file
 	 * @param name		Name of sound resource
 	 * @returns			Loaded wave file
 	 */
-	virtual WaveFile *loadSpeech(CDialogueFile *dialogueFile, int speechId) { return 0; }
+	virtual CWaveFile *loadSpeech(CDialogueFile *dialogueFile, int speechId) { return 0; }
 
 	virtual int proc5() const { return 0; }
 
 	/**
 	 * Start playing a previously loaded wave file
 	 */
-	virtual int playSound(WaveFile &waveFile, CProximity &prox) = 0;
+	virtual int playSound(CWaveFile &waveFile, CProximity &prox) = 0;
 
 	virtual void proc7() = 0;
 	virtual void proc8(int v) = 0;
@@ -74,7 +74,7 @@ public:
 	/**
 	 * Returns true if the given sound is currently active
 	 */
-	virtual bool isActive(const WaveFile *waveFile) const { return false; }
+	virtual bool isActive(const CWaveFile *waveFile) const { return false; }
 
 	virtual int proc16() const { return 0; }
 	virtual void WaveMixPump() {}
@@ -136,21 +136,21 @@ public:
 	 * @param name		Name of sound resource
 	 * @returns			Loaded wave file
 	 */
-	virtual WaveFile *loadSound(const CString &name);
+	virtual CWaveFile *loadSound(const CString &name);
 
 	/**
 	 * Loads a speech resource from a dialogue file
 	 * @param name		Name of sound resource
 	 * @returns			Loaded wave file
 	 */
-	virtual WaveFile *loadSpeech(CDialogueFile *dialogueFile, int speechId);
+	virtual CWaveFile *loadSpeech(CDialogueFile *dialogueFile, int speechId);
 
 	virtual int proc5() const;
 
 	/**
 	 * Start playing a previously loaded sound resource
 	 */
-	virtual int playSound(WaveFile &waveFile, CProximity &prox);
+	virtual int playSound(CWaveFile &waveFile, CProximity &prox);
 	
 	virtual void proc7();
 	virtual void proc8(int v);
@@ -164,7 +164,7 @@ public:
 	/**
 	 * Returns true if the given sound is currently active
 	 */
-	virtual bool isActive(const WaveFile *soundRes) const;
+	virtual bool isActive(const CWaveFile *soundRes) const;
 
 	virtual int proc16() const;
 	virtual void WaveMixPump();

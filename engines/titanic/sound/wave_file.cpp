@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-int WaveFile::fn1() {
+int CWaveFile::fn1() {
 	// TODO
 	return 0;
 }
