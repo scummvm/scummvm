@@ -220,8 +220,19 @@ void Gui::draw() {
 	_wm.draw();
 
 	if (_cursorDirty && _cursorRect.left < _screen.w && _cursorRect.bottom < _screen.h) {
-		g_system->copyRectToScreen(_screen.getBasePtr(_cursorRect.left, _cursorRect.top), _screen.pitch,
-				_cursorRect.left, _cursorRect.top, _cursorRect.width(), _cursorRect.height());
+		int x = _cursorRect.left, y = _cursorRect.top, w = _cursorRect.width(), h = _cursorRect.height();
+		if (x < 0) {
+			w += x;
+			x = 0;
+		}
+		if (y < 0) {
+			h += y;
+			y = 0;
+		}
+		if (x + w > _screen.w) w = _screen.w - x;
+		if (y + h > _screen.h) h = _screen.h - y;
+		if (w != 0 && h != 0)
+			g_system->copyRectToScreen(_screen.getBasePtr(x, y), _screen.pitch, x, y, w, h);
 
 		_cursorDirty = false;
 	}
