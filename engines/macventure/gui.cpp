@@ -696,22 +696,34 @@ void Gui::drawWindowTitle(WindowReference target, Graphics::ManagedSurface * sur
 
 void Gui::drawDraggedObject() {
 	if (_draggedObj.id != 0 &&
-			_engine->isObjVisible(_draggedObj.id)) {
+		_engine->isObjVisible(_draggedObj.id)) {
 		ensureAssetLoaded(_draggedObj.id);
 		ImageAsset *asset = _assets[_draggedObj.id];
 
-		_draggedSurface.create(asset->getWidth(), asset->getHeight(), _screen.format);
+		// In case of overflow from the right/top
+		uint w = asset->getWidth() + MIN((int16)0, _draggedObj.pos.x);
+		uint h = asset->getHeight() + MIN((int16)0, _draggedObj.pos.y);
 
-		asset->blitInto(&_draggedSurface, 0, 0, kBlitBIC);
+		// In case of overflow from the bottom/left
+		if (_draggedObj.pos.x > 0 && _draggedObj.pos.x + w > kScreenWidth) { w = kScreenWidth - _draggedObj.pos.x; }
+		if (_draggedObj.pos.y > 0 && _draggedObj.pos.y + h > kScreenHeight) { h = kScreenHeight - _draggedObj.pos.y; }
+
+		_draggedSurface.create(w, h, _screen.format);
+
+		asset->blitInto(&_draggedSurface, MIN((int16)0, _draggedObj.pos.x), MIN((int16)0, _draggedObj.pos.y), kBlitBIC);
+
+		Common::Point target = _draggedObj.pos;
+		if (target.x < 0) { target.x = 0; }
+		if (target.y < 0) { target.y = 0; }
 
 		g_system->copyRectToScreen(
-			_draggedSurface.getPixels(),
+			_draggedSurface.getBasePtr(0, 0),
 			_draggedSurface.pitch,
-			_draggedObj.pos.x,
-			_draggedObj.pos.y,
+			target.x,
+			target.y,
 			_draggedSurface.w,
-			_draggedSurface.h);
-
+			_draggedSurface.h
+		);
 	}
 }
 
@@ -846,25 +858,11 @@ void Gui::saveInto(int slot) {
 }
 
 void Gui::moveDraggedObject(Common::Point target) {
-	Common::Point newPos = target + _draggedObj.mouseOffset;
-	bool movement = false;
-	// If we overflow, move the mouseOffset, not the position.
-	if (newPos.x < 0 || newPos.x + _assets[_draggedObj.id]->getWidth() >= kScreenWidth) {
-		_draggedObj.mouseOffset.x = _draggedObj.pos.x - target.x;
-	} else {
-		_draggedObj.pos.x = newPos.x;
-		movement = true;
-	}
-
-	if (newPos.y < 0 || newPos.y + _assets[_draggedObj.id]->getHeight() >= kScreenHeight) {
-		_draggedObj.mouseOffset.y = _draggedObj.pos.y - target.y;
-	} else {
-		_draggedObj.pos.y = newPos.y;
-		movement = true;
-	}
+	ensureAssetLoaded(_draggedObj.id);
+	_draggedObj.pos = target + _draggedObj.mouseOffset;
 
 	// TODO FInd more elegant way of making pow2
-	_draggedObj.hasMoved = movement && (_draggedObj.startPos.sqrDist(_draggedObj.pos) >= (kDragThreshold * kDragThreshold));
+	_draggedObj.hasMoved = (_draggedObj.startPos.sqrDist(_draggedObj.pos) >= (kDragThreshold * kDragThreshold));
 
 	debug(4, "Dragged obj position: (%d, %d), mouse offset: (%d, %d), hasMoved: %d, dist: %d, threshold: %d",
 		_draggedObj.pos.x, _draggedObj.pos.y,

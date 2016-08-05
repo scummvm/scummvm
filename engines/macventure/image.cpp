@@ -412,7 +412,7 @@ int ImageAsset::getHeight() {
 
 void ImageAsset::blitDirect(Graphics::ManagedSurface * target, int ox, int oy, const Common::Array<byte>& data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	uint sx, sy, w, h;
-	calculateSubsection(ox, oy, bitWidth, bitHeight, sx, sy, w, h);
+	calculateSubsection(target, ox, oy, bitWidth, bitHeight, sx, sy, w, h);
 
 	for (uint y = 0; y < h; y++) {
 		uint bmpofs = (y + sy) * rowBytes;
@@ -427,12 +427,12 @@ void ImageAsset::blitDirect(Graphics::ManagedSurface * target, int ox, int oy, c
 
 void ImageAsset::blitBIC(Graphics::ManagedSurface * target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	uint sx, sy, w, h;
-	calculateSubsection(ox, oy, bitWidth, bitHeight, sx, sy, w, h);
+	calculateSubsection(target, ox, oy, bitWidth, bitHeight, sx, sy, w, h);
 
 	for (uint y = 0; y < h; y++) {
 		uint bmpofs = (y + sy) * rowBytes;
 		byte pix = 0;
-		for (uint x = sx; x < w; x++) {
+		for (uint x = 0; x < w; x++) {
 			pix = data[bmpofs + ((x + sx) >> 3)] & (1 << (7 - ((x + sx) & 7)));
 			if (pix) *((byte *)target->getBasePtr(ox + x, oy + y)) = kColorWhite;
 		}
@@ -441,7 +441,7 @@ void ImageAsset::blitBIC(Graphics::ManagedSurface * target, int ox, int oy, cons
 
 void ImageAsset::blitOR(Graphics::ManagedSurface * target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	uint sx, sy, w, h;
-	calculateSubsection(ox, oy, bitWidth, bitHeight, sx, sy, w, h);
+	calculateSubsection(target, ox, oy, bitWidth, bitHeight, sx, sy, w, h);
 
 	for (uint y = 0; y < h; y++) {
 		uint bmpofs = (y + sy) * rowBytes;
@@ -455,7 +455,7 @@ void ImageAsset::blitOR(Graphics::ManagedSurface * target, int ox, int oy, const
 
 void ImageAsset::blitXOR(Graphics::ManagedSurface * target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	uint sx, sy, w, h;
-	calculateSubsection(ox, oy, bitWidth, bitHeight, sx, sy, w, h);
+	calculateSubsection(target, ox, oy, bitWidth, bitHeight, sx, sy, w, h);
 
 	for (uint y = 0; y < h; y++) {
 		uint bmpofs = (y + sy) * rowBytes;
@@ -471,13 +471,15 @@ void ImageAsset::blitXOR(Graphics::ManagedSurface * target, int ox, int oy, cons
 	}
 }
 
-void ImageAsset::calculateSubsection(int &ox, int &oy, uint bitWidth, uint bitHeight, uint &sx, uint &sy, uint &w, uint &h) {
+void ImageAsset::calculateSubsection(Graphics::ManagedSurface *target, int &ox, int &oy, uint bitWidth, uint bitHeight, uint &sx, uint &sy, uint &w, uint &h) {
 	sx = (ox < 0) ? -ox : 0;
 	sy = (oy < 0) ? -oy : 0;
 	ox = (ox < 0) ? 0 : ox;
 	oy = (oy < 0) ? 0 : oy;
 	w = MAX((int)(bitWidth - sx), 0);
 	h = MAX((int)(bitHeight - sy), 0);
+	w = w > target->w ? target->w : w;
+	h = h > target->h ? target->h : h;
 }
 
 } // End of namespace MacVenture
