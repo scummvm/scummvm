@@ -1035,7 +1035,8 @@ void DisplayMan::f110_drawDoorButton(int16 doorButtonOrdinal, int16 viewDoorButt
 				byte *bitmapNative = f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
 				f129_blitToBitmapShrinkWithPalChange(bitmapNative, f492_getDerivedBitmap(doorButtonOrdinal),
 													 coordSetBlueGoat[4] << 1, coordSetBlueGoat[5],
-													 coordSetRedEagle[1] - coordSetRedEagle[0] + 1,
+													 // modified code line
+													 coordSetRedEagle[4] << 1,
 													 coordSetRedEagle[5],
 													 (viewDoorButtonIndex == k2_viewDoorButton_D2C) ? g199_PalChangesDoorButtonAndWallOrn_D2 : g198_PalChangesDoorButtonAndWallOrn_D3);
 
@@ -2644,14 +2645,14 @@ T0107031:
 void DisplayMan::f129_blitToBitmapShrinkWithPalChange(byte *srcBitmap, byte *destBitmap,
 													  int16 srcPixelWidth, int16 srcHeight,
 													  int16 destPixelWidth, int16 destHeight, byte *palChange) {
+	if (destPixelWidth % 8)
+		destPixelWidth = (destPixelWidth / 8) * 8 + 8;
+
 	const uint32 SCALE_THRESHOLD = 32768;
 	uint32 scaleX = (SCALE_THRESHOLD * srcPixelWidth) / destPixelWidth;
 	uint32 scaleY = (SCALE_THRESHOLD * srcHeight) / destHeight;
 
 	warning(false, "MISSING CODE: No palette change takes place in f129_blitToBitmapShrinkWithPalChange");
-
-	if (destPixelWidth % 2)
-		destPixelWidth++;
 
 	// Loop through drawing output lines
 	for (uint32 destY = 0, scaleYCtr = 0; destY < (uint32)destHeight; ++destY, scaleYCtr += scaleY) {
