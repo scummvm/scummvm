@@ -510,17 +510,17 @@ bool RivenConsole::Cmd_ChangeStack(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_Hotspots(int argc, const char **argv) {
-	debugPrintf("Current card (%d) has %d hotspots:\n", _vm->getCurCard()->getId(), _vm->getHotspotCount());
+	debugPrintf("Current card (%d) has %d hotspots:\n", _vm->getCurCard()->getId(), _vm->_hotspots.size());
 
-	for (uint16 i = 0; i < _vm->getHotspotCount(); i++) {
-		debugPrintf("Hotspot %d, index %d, BLST ID %d (", i, _vm->_hotspots[i].index, _vm->_hotspots[i].blstID);
+	for (uint16 i = 0; i < _vm->_hotspots.size(); i++) {
+		debugPrintf("Hotspot %d, index %d, BLST ID %d (", i, _vm->_hotspots[i]->index, _vm->_hotspots[i]->blstID);
 
-		if (_vm->_hotspots[i].enabled)
+		if (_vm->_hotspots[i]->enabled)
 			debugPrintf("enabled");
 		else
 			debugPrintf("disabled");
 
-		debugPrintf(") - (%d, %d, %d, %d)\n", _vm->_hotspots[i].rect.left, _vm->_hotspots[i].rect.top, _vm->_hotspots[i].rect.right, _vm->_hotspots[i].rect.bottom);
+		debugPrintf(") - (%d, %d, %d, %d)\n", _vm->_hotspots[i]->rect.left, _vm->_hotspots[i]->rect.top, _vm->_hotspots[i]->rect.right, _vm->_hotspots[i]->rect.bottom);
 		debugPrintf("    Name = %s\n", _vm->getHotspotName(i).c_str());
 	}
 

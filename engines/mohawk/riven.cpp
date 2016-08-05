@@ -58,7 +58,6 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_ignoreNextMouseUp = false;
 	_extrasFile = nullptr;
 	_curStack = kStackUnknown;
-	_hotspots = nullptr;
 	_gfx = nullptr;
 	_sound = nullptr;
 	_externalScriptHandler = nullptr;
@@ -68,7 +67,6 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_saveLoad = nullptr;
 	_optionsDialog = nullptr;
 	_card = nullptr;
-	_hotspotCount = 0;
 	_curHotspot = -1;
 	removeTimer();
 
@@ -105,7 +103,9 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _scriptMan;
 	delete _optionsDialog;
 	delete _rnd;
-	delete[] _hotspots;
+	for (uint i = 0; i < _hotspots.size(); i++) {
+		delete _hotspots[i];
+	}
 	delete g_atrusJournalRect1;
 	delete g_atrusJournalRect2;
 	delete g_cathJournalRect2;
@@ -257,8 +257,8 @@ void MohawkEngine_Riven::handleEvents() {
 			case Common::KEYCODE_F4:
 				_showHotspots = !_showHotspots;
 				if (_showHotspots) {
-					for (uint16 i = 0; i < _hotspotCount; i++)
-						_gfx->drawRect(_hotspots[i].rect, _hotspots[i].enabled);
+					for (uint16 i = 0; i < _hotspots.size(); i++)
+						_gfx->drawRect(_hotspots[i]->rect, _hotspots[i]->enabled);
 					needsUpdate = true;
 				} else
 					refreshCard();
@@ -414,8 +414,8 @@ void MohawkEngine_Riven::refreshCard() {
 	_card->open();
 
 	if (_showHotspots)
-		for (uint16 i = 0; i < _hotspotCount; i++)
-			_gfx->drawRect(_hotspots[i].rect, _hotspots[i].enabled);
+		for (uint16 i = 0; i < _hotspots.size(); i++)
+			_gfx->drawRect(_hotspots[i]->rect, _hotspots[i]->enabled);
 
 	// Now we need to redraw the cursor if necessary and handle mouse over scripts
 	updateCurrentHotspot();
@@ -425,46 +425,17 @@ void MohawkEngine_Riven::refreshCard() {
 }
 
 void MohawkEngine_Riven::loadHotspots(uint16 id) {
-	// Clear old hotspots
-	delete[] _hotspots;
-
-	// NOTE: The hotspot scripts are cleared by the RivenScriptManager automatically.
+	for (uint i = 0; i < _hotspots.size(); i++) {
+		delete _hotspots[i];
+	}
 
 	Common::SeekableReadStream *inStream = getResource(ID_HSPT, id);
 
-	_hotspotCount = inStream->readUint16BE();
-	_hotspots = new RivenHotspot[_hotspotCount];
+	uint16 hotspotCount = inStream->readUint16BE();
+	_hotspots.resize(hotspotCount);
 
-	for (uint16 i = 0; i < _hotspotCount; i++) {
-		_hotspots[i].enabled = true;
-
-		_hotspots[i].blstID = inStream->readUint16BE();
-		_hotspots[i].name_resource = inStream->readSint16BE();
-
-		int16 left = inStream->readSint16BE();
-		int16 top = inStream->readSint16BE();
-		int16 right = inStream->readSint16BE();
-		int16 bottom = inStream->readSint16BE();
-
-		// Riven has some invalid rects, disable them here
-		// Known weird hotspots:
-		// - tspit 371 (DVD: 377), hotspot 4
-		if (left >= right || top >= bottom) {
-			warning("%s %d hotspot %d is invalid: (%d, %d, %d, %d)", getStackName(_curStack).c_str(), id, i, left, top, right, bottom);
-			left = top = right = bottom = 0;
-			_hotspots[i].enabled = 0;
-		}
-
-		_hotspots[i].rect = Common::Rect(left, top, right, bottom);
-
-		_hotspots[i].u0 = inStream->readUint16BE();
-		_hotspots[i].mouse_cursor = inStream->readUint16BE();
-		_hotspots[i].index = inStream->readUint16BE();
-		_hotspots[i].u1 = inStream->readSint16BE();
-		_hotspots[i].zipModeHotspot = inStream->readUint16BE();
-
-		// Read in the scripts now
-		_hotspots[i].scripts = _scriptMan->readScripts(inStream);
+	for (uint16 i = 0; i < hotspotCount; i++) {
+		_hotspots[i] = new RivenHotspot(this, inStream);
 	}
 
 	delete inStream;
@@ -474,11 +445,11 @@ void MohawkEngine_Riven::loadHotspots(uint16 id) {
 void MohawkEngine_Riven::updateZipMode() {
 	// Check if a zip mode hotspot is enabled by checking the name/id against the ZIPS records.
 
-	for (uint32 i = 0; i < _hotspotCount; i++) {
-		if (_hotspots[i].zipModeHotspot) {
+	for (uint32 i = 0; i < _hotspots.size(); i++) {
+		if (_hotspots[i]->zipModeHotspot) {
 			if (_vars["azip"] != 0) {
 				// Check if a zip mode hotspot is enabled by checking the name/id against the ZIPS records.
-				Common::String hotspotName = getName(HotspotNames, _hotspots[i].name_resource);
+				Common::String hotspotName = getName(HotspotNames, _hotspots[i]->name_resource);
 
 				bool foundMatch = false;
 
@@ -489,9 +460,9 @@ void MohawkEngine_Riven::updateZipMode() {
 							break;
 						}
 
-				_hotspots[i].enabled = foundMatch;
+				_hotspots[i]->enabled = foundMatch;
 			} else // Disable the hotspot if zip mode is disabled
-				_hotspots[i].enabled = false;
+				_hotspots[i]->enabled = false;
 		}
 	}
 }
@@ -499,8 +470,8 @@ void MohawkEngine_Riven::updateZipMode() {
 void MohawkEngine_Riven::checkHotspotChange() {
 	uint16 hotspotIndex = 0;
 	bool foundHotspot = false;
-	for (uint16 i = 0; i < _hotspotCount; i++)
-		if (_hotspots[i].enabled && _hotspots[i].rect.contains(_eventMan->getMousePos())) {
+	for (uint16 i = 0; i < _hotspots.size(); i++)
+		if (_hotspots[i]->enabled && _hotspots[i]->rect.contains(_eventMan->getMousePos())) {
 			foundHotspot = true;
 			hotspotIndex = i;
 		}
@@ -508,7 +479,7 @@ void MohawkEngine_Riven::checkHotspotChange() {
 	if (foundHotspot) {
 		if (_curHotspot != hotspotIndex) {
 			_curHotspot = hotspotIndex;
-			_cursor->setCursor(_hotspots[_curHotspot].mouse_cursor);
+			_cursor->setCursor(_hotspots[_curHotspot]->mouse_cursor);
 			_system->updateScreen();
 		}
 	} else {
@@ -524,12 +495,12 @@ void MohawkEngine_Riven::updateCurrentHotspot() {
 }
 
 Common::String MohawkEngine_Riven::getHotspotName(uint16 hotspot) {
-	assert(hotspot < _hotspotCount);
+	assert(hotspot < _hotspots.size());
 
-	if (_hotspots[hotspot].name_resource < 0)
+	if (_hotspots[hotspot]->name_resource < 0)
 		return Common::String();
 
-	return getName(HotspotNames, _hotspots[hotspot].name_resource);
+	return getName(HotspotNames, _hotspots[hotspot]->name_resource);
 }
 
 void MohawkEngine_Riven::checkInventoryClick() {
@@ -663,13 +634,7 @@ uint32 MohawkEngine_Riven::getCurCardRMAP() {
 }
 
 void MohawkEngine_Riven::runHotspotScript(uint16 hotspot, uint16 scriptType) {
-	assert(hotspot < _hotspotCount);
-	for (uint16 i = 0; i < _hotspots[hotspot].scripts.size(); i++)
-		if (_hotspots[hotspot].scripts[i].type == scriptType) {
-			RivenScriptPtr script = _hotspots[hotspot].scripts[i].script;
-			_scriptMan->runScript(script, false);
-			break;
-		}
+	_hotspots[hotspot]->runScript(scriptType);
 }
 
 void MohawkEngine_Riven::delayAndUpdate(uint32 ms) {

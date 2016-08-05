@@ -95,6 +95,38 @@ private:
 	Common::Array<SLSTRecord> _soundList;
 };
 
+/**
+ * A Card Hotspot
+ *
+ * Hotspots are named rectangular areas of the view.
+ * Hotspots can be interactive through their scripts.
+ */
+class RivenHotspot {
+public:
+	RivenHotspot(MohawkEngine_Riven *vm, Common::ReadStream *stream);
+
+	/** Run one of the hotspot's scripts */
+	void runScript(uint16 scriptType);
+
+	uint16 blstID;
+	int16 name_resource;
+	uint16 index;
+	Common::Rect rect;
+	uint16 mouse_cursor;
+	int16 zipModeHotspot;
+
+	bool enabled; // TODO: Remove
+
+private:
+	void loadFromStream(Common::ReadStream *stream);
+
+	MohawkEngine_Riven *_vm;
+
+	uint16 _u0;
+	int16 _u1;
+	RivenScriptList _scripts;
+};
+
 } // End of namespace Mohawk
 
 #endif
