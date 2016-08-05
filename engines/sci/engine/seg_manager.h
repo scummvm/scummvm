@@ -30,8 +30,7 @@
 #include "sci/engine/vm_types.h"
 #include "sci/engine/segment.h"
 #ifdef ENABLE_SCI32
-// TODO: Baaaad?
-#include "sci/graphics/celobj32.h"
+#include "sci/graphics/celobj32.h" // kLowResX, kLowResY
 #endif
 
 namespace Sci {
