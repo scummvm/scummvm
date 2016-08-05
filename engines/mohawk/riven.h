@@ -167,11 +167,10 @@ public:
 
 	// Hotspot functions/variables
 	Common::Array<RivenHotspot *> _hotspots;
-	int32 _curHotspot;
+	RivenHotspot *_curHotspot;
 	Common::Array<ZipMode> _zipModeData;
-	void runHotspotScript(uint16 hotspot, uint16 scriptType);
-	int32 getCurHotspot() const { return _curHotspot; }
-	Common::String getHotspotName(uint16 hotspot);
+	RivenHotspot *getCurHotspot() const { return _curHotspot; }
+	Common::String getHotspotName(const RivenHotspot *hotspot);
 	void updateCurrentHotspot();
 	void addZipVisitedCard(uint16 cardId, uint16 cardNameId);
 
