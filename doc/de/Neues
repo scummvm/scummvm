@@ -8,6 +8,9 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für Myst: Masterpiece Edition hinzugefügt.
    - Unterstützung für U.F.O.s./Gnap: Der Schurke aus dem All hinzugefügt.
 
+ Allgemein:
+   - Probleme mit dem MS ADPCM-Decoder behoben.
+
  AGI:
    - Unterstützung für Hercules-Darstellung (Grün + Bernstein) hinzugefügt.
    - Unterstützung für hochauflösende Hercules-Schriftart hinzugefügt
@@ -16,13 +19,50 @@ Programmcodes finden Sie auf Englisch unter:
      Diese Funktion war im originalen Interpreter nur im Hercules-Darstellungsmodus
      verfügbar.
 
+ Beneath a Steel Sky:
+   - Fehlerhafte Animation für Officer Blunt behoben, die dafür sorgte, dass das
+     Spiel nicht komplett durchgespielt werden konnte, da eine weitere Interaktion mit
+     diesem Charakter nicht möglich war.
+
+ Gob:
+   - Grafikfehler in Gobliiins (EGA-Version) behoben.
+
+ Kyra:
+   - Italienische Übersetzung von EOB1 aktualisiert.
+
+ Mohawk:
+   - Grafikfehler in der spanischen Version von Myst behoben.
+   - Der "Abbrechen"-Button im Optionen-Dialog von Riven speichert die Einstellungen nicht mehr.
+   - Spielstände in Riven, die von ScummVM erstellt wurden, können nun im Originalspiel geladen 
+     werden.
+   - In Myst wurde der Mauszeiger nicht angezeigt, wenn ein Spielstand geladen wurde, während
+     das Intro läuft. Dieser Fehler wurde behoben.
+
  SCI:
    - Fehlende Dialogzeile in QfG3 hinzugefügt, die mit drei zusätzlichen Punkten
      belohnt wird. Diese Dialogzeile fehlt im Originalspiel, weshalb
      es bislang unmöglich war, die maximale Punktzahl im Spiel zu erreichen.
+   - Fehler in "Space Quest 1" behoben, der Probleme mit dem Spinnenroboter verursachte.
+   - Fehler in "Laura Bow: The Colonel's Bequest" behoben, der einen Absturz verursachte,
+     wenn mit der Rüstung in Raum 37 (Haupthaus, Untergeschoss) interagiert wird. Dieser
+     Fehler existiert auch im Originalspiel.
+   - Automatisches Speichern im Fan-Spiel "Cascade Quest" repariert.
+   - Fehler in "Conquest of the Longbow: The Adventures of Robin Hood" behoben, der einen
+     Absturz verursacht, wenn sich der Spieler durch den Sherwood Forest bewegt.
+   - Erkennungseintrag für die Demo-Version des "ImagiNation Network (INN)" hinzugefügt.
+
+ SCUMM:
+   - Fehlende Übersetzungen in den "Beenden"- und "Neustart"-Dialogen in "Pyjama Sam 1" behoben.
+   - Grafikfehler in DOTT behoben, die auftraten, wenn ein Spielstand geladen wurde, in dem
+     die Stereoanlage in Grüntentakels Zimmer eingeschaltet ist.
+   - Timing und Wegfindung in "Maniac Mansion (C64- und Apple II-Version)" verbessert.
+
+ WAGE:
+   - Speicherleck geschlossen.
 
  Windows-Portierung:
    - Taskleisten-Integration unter Windows 10 und höher repariert.
+   - Tastenbelegung für Tastaturen korrigiert, die keine QWERTY-Tastaturen sind.
 
 1.8.1 (25.05.2016)
  Neue Portierungen:
