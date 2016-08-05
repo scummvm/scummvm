@@ -24,47 +24,47 @@
 
 namespace MacVenture {
 CommandButton::CommandButton() {
- _gui = nullptr;
+	_gui = nullptr;
 }
 
 CommandButton::CommandButton(ControlData data, Gui *g) {
-  _data = data;
-  _gui = g;
-  _selected = false;
+	_data = data;
+	_gui = g;
+	_selected = false;
 }
 
 void CommandButton::draw(Graphics::ManagedSurface &surface) const {
 
-  uint colorFill = _selected ? kColorBlack : kColorWhite;
-  uint colorText = _selected ? kColorWhite : kColorBlack;
+	uint colorFill = _selected ? kColorBlack : kColorWhite;
+	uint colorText = _selected ? kColorWhite : kColorBlack;
 
-  surface.fillRect(_data.bounds, colorFill);
-  surface.frameRect(_data.bounds, kColorBlack);
+	surface.fillRect(_data.bounds, colorFill);
+	surface.frameRect(_data.bounds, kColorBlack);
 
-  if (_data.titleLength > 0) {
-    const Graphics::Font &font = _gui->getCurrentFont();
-    Common::String title(_data.title);
-    font.drawString(
-      &surface,
-      title,
-      _data.bounds.left,
-      _data.bounds.top,
-      _data.bounds.right - _data.bounds.left,
-      colorText,
-      Graphics::kTextAlignCenter);
-  }
+	if (_data.titleLength > 0) {
+		const Graphics::Font &font = _gui->getCurrentFont();
+		Common::String title(_data.title);
+		font.drawString(
+			&surface,
+			title,
+			_data.bounds.left,
+			_data.bounds.top,
+			_data.bounds.right - _data.bounds.left,
+			colorText,
+			Graphics::kTextAlignCenter);
+	}
 }
 
 bool CommandButton::isInsideBounds(const Common::Point point) const {
-  return _data.bounds.contains(point);
+	return _data.bounds.contains(point);
 }
 
 const ControlData& CommandButton::getData() const {
-  return _data;
+	return _data;
 }
 
 void CommandButton::select() {
-  _selected = true;
+	_selected = true;
 }
 
 void CommandButton::unselect() {
@@ -72,6 +72,6 @@ void CommandButton::unselect() {
 }
 
 bool CommandButton::isSelected() {
-  return _selected;
+	return _selected;
 }
 }
