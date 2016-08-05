@@ -258,7 +258,7 @@ void MohawkEngine_Riven::handleEvents() {
 				_showHotspots = !_showHotspots;
 				if (_showHotspots) {
 					for (uint16 i = 0; i < _hotspots.size(); i++)
-						_gfx->drawRect(_hotspots[i]->rect, _hotspots[i]->enabled);
+						_gfx->drawRect(_hotspots[i]->rect, _hotspots[i]->isEnabled());
 					needsUpdate = true;
 				} else
 					refreshCard();
@@ -415,7 +415,7 @@ void MohawkEngine_Riven::refreshCard() {
 
 	if (_showHotspots)
 		for (uint16 i = 0; i < _hotspots.size(); i++)
-			_gfx->drawRect(_hotspots[i]->rect, _hotspots[i]->enabled);
+			_gfx->drawRect(_hotspots[i]->rect, _hotspots[i]->isEnabled());
 
 	// Now we need to redraw the cursor if necessary and handle mouse over scripts
 	updateCurrentHotspot();
@@ -446,7 +446,7 @@ void MohawkEngine_Riven::updateZipMode() {
 	// Check if a zip mode hotspot is enabled by checking the name/id against the ZIPS records.
 
 	for (uint32 i = 0; i < _hotspots.size(); i++) {
-		if (_hotspots[i]->zipModeHotspot) {
+		if (_hotspots[i]->isZip()) {
 			if (_vars["azip"] != 0) {
 				// Check if a zip mode hotspot is enabled by checking the name/id against the ZIPS records.
 				Common::String hotspotName = getName(HotspotNames, _hotspots[i]->name_resource);
@@ -460,9 +460,9 @@ void MohawkEngine_Riven::updateZipMode() {
 							break;
 						}
 
-				_hotspots[i]->enabled = foundMatch;
+				_hotspots[i]->enable(foundMatch);
 			} else // Disable the hotspot if zip mode is disabled
-				_hotspots[i]->enabled = false;
+				_hotspots[i]->enable(false);
 		}
 	}
 }
@@ -470,7 +470,7 @@ void MohawkEngine_Riven::updateZipMode() {
 void MohawkEngine_Riven::checkHotspotChange() {
 	RivenHotspot *hotspot = nullptr;
 	for (uint16 i = 0; i < _hotspots.size(); i++)
-		if (_hotspots[i]->enabled && _hotspots[i]->rect.contains(_eventMan->getMousePos())) {
+		if (_hotspots[i]->isEnabled() && _hotspots[i]->rect.contains(_eventMan->getMousePos())) {
 			hotspot = _hotspots[i];
 		}
 

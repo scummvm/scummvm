@@ -316,12 +316,12 @@ void RivenExternal::checkDomeSliders(uint16 resetSlidersHotspot, uint16 openDome
 	// Let's see if we're all matched up...
 	if (_vm->_vars["adomecombo"] == _sliderState) {
 		// Set the button hotspot to the open dome hotspot
-		_vm->_hotspots[resetSlidersHotspot]->enabled = false;
-		_vm->_hotspots[openDomeHotspot]->enabled = true;
+		_vm->_hotspots[resetSlidersHotspot]->enable(false);
+		_vm->_hotspots[openDomeHotspot]->enable(true);
 	} else {
 		// Set the button hotspot to the reset sliders hotspot
-		_vm->_hotspots[resetSlidersHotspot]->enabled = true;
-		_vm->_hotspots[openDomeHotspot]->enabled = false;
+		_vm->_hotspots[resetSlidersHotspot]->enable(true);
+		_vm->_hotspots[openDomeHotspot]->enable(false);
 	}
 }
 
@@ -450,13 +450,13 @@ void RivenExternal::xaatrusopenbook(uint16 argc, uint16 *argv) {
 
 	// Set hotspots depending on the page
 	if (page == 1) {
-		_vm->_hotspots[1]->enabled = false;
-		_vm->_hotspots[2]->enabled = false;
-		_vm->_hotspots[3]->enabled = true;
+		_vm->_hotspots[1]->enable(false);
+		_vm->_hotspots[2]->enable(false);
+		_vm->_hotspots[3]->enable(true);
 	} else {
-		_vm->_hotspots[1]->enabled = true;
-		_vm->_hotspots[2]->enabled = true;
-		_vm->_hotspots[3]->enabled = false;
+		_vm->_hotspots[1]->enable(true);
+		_vm->_hotspots[2]->enable(true);
+		_vm->_hotspots[3]->enable(false);
 	}
 
 	// Draw the image of the page
@@ -515,13 +515,13 @@ void RivenExternal::xacathopenbook(uint16 argc, uint16 *argv) {
 
 	// Set hotspots depending on the page
 	if (page == 1) {
-		_vm->_hotspots[1]->enabled = false;
-		_vm->_hotspots[2]->enabled = false;
-		_vm->_hotspots[3]->enabled = true;
+		_vm->_hotspots[1]->enable(false);
+		_vm->_hotspots[2]->enable(false);
+		_vm->_hotspots[3]->enable(true);
 	} else {
-		_vm->_hotspots[1]->enabled = true;
-		_vm->_hotspots[2]->enabled = true;
-		_vm->_hotspots[3]->enabled = false;
+		_vm->_hotspots[1]->enable(true);
+		_vm->_hotspots[2]->enable(true);
+		_vm->_hotspots[3]->enable(false);
 	}
 
 	// Draw the image of the page
@@ -950,8 +950,8 @@ void RivenExternal::xbait(uint16 argc, uint16 *argv) {
 	if (_vm->_hotspots[9]->rect.contains(_vm->_system->getEventManager()->getMousePos())) {
 		_vm->_vars["bbait"] = 1;
 		_vm->getCurCard()->drawPicture(4);
-		_vm->_hotspots[3]->enabled = false; // Disable bait hotspot
-		_vm->_hotspots[9]->enabled = true; // Enable baitplate hotspot
+		_vm->_hotspots[3]->enable(false); // Disable bait hotspot
+		_vm->_hotspots[9]->enable(true); // Enable baitplate hotspot
 	}
 }
 
@@ -1009,12 +1009,12 @@ void RivenExternal::xbaitplate(uint16 argc, uint16 *argv) {
 	if (_vm->_hotspots[9]->rect.contains(_vm->_system->getEventManager()->getMousePos())) {
 		_vm->_vars["bbait"] = 1;
 		_vm->getCurCard()->drawPicture(4);
-		_vm->_hotspots[3]->enabled = false; // Disable bait hotspot
-		_vm->_hotspots[9]->enabled = true; // Enable baitplate hotspot
+		_vm->_hotspots[3]->enable(false); // Disable bait hotspot
+		_vm->_hotspots[9]->enable(true); // Enable baitplate hotspot
 	} else {
 		_vm->_vars["bbait"] = 0;
-		_vm->_hotspots[3]->enabled = true; // Enable bait hotspot
-		_vm->_hotspots[9]->enabled = false; // Disable baitplate hotspot
+		_vm->_hotspots[3]->enable(true); // Enable bait hotspot
+		_vm->_hotspots[9]->enable(false); // Disable baitplate hotspot
 	}
 }
 
@@ -1995,8 +1995,8 @@ void RivenExternal::xschool280_playwhark(uint16 argc, uint16 *argv) {
 	}
 
 	// Enable the correct hotspots for the movement now
-	_vm->_hotspots[2]->enabled = !_vm->_hotspots[2]->enabled;
-	_vm->_hotspots[3]->enabled = !_vm->_hotspots[3]->enabled;
+	_vm->_hotspots[2]->enable(!_vm->_hotspots[2]->isEnabled());
+	_vm->_hotspots[3]->enable(!_vm->_hotspots[3]->isEnabled());
 
 	// Update the cursor
 	_vm->updateCurrentHotspot();
@@ -2157,9 +2157,9 @@ void RivenExternal::xooffice30_closebook(uint16 argc, uint16 *argv) {
 	_vm->_video->playMovieBlockingRiven(1);
 
 	// Set the hotspots into their correct states
-	_vm->_hotspots[2]->enabled = false;
-	_vm->_hotspots[5]->enabled = false;
-	_vm->_hotspots[6]->enabled = true;
+	_vm->_hotspots[2]->enable(false);
+	_vm->_hotspots[5]->enable(false);
+	_vm->_hotspots[6]->enable(true);
 
 	// We now need to draw PLST 1 and refresh, but PLST 1 is
 	// drawn when refreshing anyway, so don't worry about that.
@@ -2484,7 +2484,7 @@ void RivenExternal::xtisland390_covercombo(uint16 argc, uint16 *argv) {
 
 	// If we have hit the correct 5 buttons in a row, activate the hotspot to open up the
 	// telescope cover.
-	_vm->_hotspots[9]->enabled = (correctDigits == 5);
+	_vm->_hotspots[9]->enable(correctDigits == 5);
 }
 
 // Atrus' Journal and Trap Book are added to inventory

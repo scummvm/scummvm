@@ -202,7 +202,7 @@ RivenHotspot::RivenHotspot(MohawkEngine_Riven *vm, Common::ReadStream *stream) :
 }
 
 void RivenHotspot::loadFromStream(Common::ReadStream *stream) {
-	enabled = true;
+	_flags = kFlagEnabled;
 
 	blstID = stream->readUint16BE();
 	name_resource = stream->readSint16BE();
@@ -218,7 +218,7 @@ void RivenHotspot::loadFromStream(Common::ReadStream *stream) {
 	if (left >= right || top >= bottom) {
 		warning("Invalid hotspot: (%d, %d, %d, %d)", left, top, right, bottom);
 		left = top = right = bottom = 0;
-		enabled = 0;
+		enable(false);
 	}
 
 	rect = Common::Rect(left, top, right, bottom);
@@ -227,7 +227,7 @@ void RivenHotspot::loadFromStream(Common::ReadStream *stream) {
 	mouse_cursor = stream->readUint16BE();
 	index = stream->readUint16BE();
 	_u1 = stream->readSint16BE();
-	zipModeHotspot = stream->readUint16BE();
+	_flags |= stream->readUint16BE();
 
 	// Read in the scripts now
 	_scripts = _vm->_scriptMan->readScripts(stream);
@@ -240,6 +240,22 @@ void RivenHotspot::runScript(uint16 scriptType) {
 			_vm->_scriptMan->runScript(script, false);
 			break;
 		}
+}
+
+bool RivenHotspot::isEnabled() const {
+	return (_flags & kFlagEnabled) != 0;
+}
+
+void RivenHotspot::enable(bool e) {
+	if (e) {
+		_flags |= kFlagEnabled;
+	} else {
+		_flags &= ~kFlagEnabled;
+	}
+}
+
+bool RivenHotspot::isZip() const {
+	return (_flags & kFlagZip) != 0;
 }
 
 } // End of namespace Mohawk
