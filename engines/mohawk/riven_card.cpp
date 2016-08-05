@@ -204,8 +204,8 @@ RivenHotspot::RivenHotspot(MohawkEngine_Riven *vm, Common::ReadStream *stream) :
 void RivenHotspot::loadFromStream(Common::ReadStream *stream) {
 	_flags = kFlagEnabled;
 
-	blstID = stream->readUint16BE();
-	name_resource = stream->readSint16BE();
+	_blstID = stream->readUint16BE();
+	_nameResource = stream->readSint16BE();
 
 	int16 left = stream->readSint16BE();
 	int16 top = stream->readSint16BE();
@@ -221,11 +221,11 @@ void RivenHotspot::loadFromStream(Common::ReadStream *stream) {
 		enable(false);
 	}
 
-	rect = Common::Rect(left, top, right, bottom);
+	_rect = Common::Rect(left, top, right, bottom);
 
 	_u0 = stream->readUint16BE();
-	mouse_cursor = stream->readUint16BE();
-	index = stream->readUint16BE();
+	_mouseCursor = stream->readUint16BE();
+	_index = stream->readUint16BE();
 	_u1 = stream->readSint16BE();
 	_flags |= stream->readUint16BE();
 
@@ -256,6 +256,37 @@ void RivenHotspot::enable(bool e) {
 
 bool RivenHotspot::isZip() const {
 	return (_flags & kFlagZip) != 0;
+}
+
+Common::Rect RivenHotspot::getRect() const {
+	return _rect;
+}
+
+bool RivenHotspot::containsPoint(const Common::Point &point) const {
+	return _rect.contains(point);
+}
+
+uint16 RivenHotspot::getMouseCursor() const {
+	return _mouseCursor;
+}
+
+Common::String RivenHotspot::getName() const {
+	if (_nameResource < 0)
+		return Common::String();
+
+	return _vm->getName(HotspotNames, _nameResource);
+}
+
+uint16 RivenHotspot::getIndex() const {
+	return _index;
+}
+
+uint16 RivenHotspot::getBlstId() const {
+	return _blstID;
+}
+
+void RivenHotspot::setRect(const Common::Rect &rect) {
+	_rect = rect;
 }
 
 } // End of namespace Mohawk

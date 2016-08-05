@@ -328,7 +328,7 @@ void RivenExternal::checkDomeSliders(uint16 resetSlidersHotspot, uint16 openDome
 void RivenExternal::checkSliderCursorChange(uint16 startHotspot) {
 	// Set the cursor based on _sliderState and what hotspot we're over
 	for (uint16 i = 0; i < kDomeSliderSlotCount; i++) {
-		if (_vm->_hotspots[i + startHotspot]->rect.contains(_vm->_system->getEventManager()->getMousePos())) {
+		if (_vm->_hotspots[i + startHotspot]->containsPoint(_vm->_system->getEventManager()->getMousePos())) {
 			if (_sliderState & (1 << (24 - i)))
 				_vm->_cursor->setCursor(kRivenOpenHandCursor);
 			else
@@ -343,7 +343,7 @@ void RivenExternal::dragDomeSlider(uint16 soundId, uint16 resetSlidersHotspot, u
 	int16 foundSlider = -1;
 
 	for (uint16 i = 0; i < kDomeSliderSlotCount; i++) {
-		if (_vm->_hotspots[i + startHotspot]->rect.contains(_vm->_system->getEventManager()->getMousePos())) {
+		if (_vm->_hotspots[i + startHotspot]->containsPoint(_vm->_system->getEventManager()->getMousePos())) {
 			// If the slider is not at this hotspot, we can't do anything else
 			if (!(_sliderState & (1 << (24 - i))))
 				return;
@@ -367,7 +367,7 @@ void RivenExternal::dragDomeSlider(uint16 soundId, uint16 resetSlidersHotspot, u
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
-				if (foundSlider < 24 && !(_sliderState & (1 << (23 - foundSlider))) && _vm->_hotspots[foundSlider + startHotspot + 1]->rect.contains(event.mouse)) {
+				if (foundSlider < 24 && !(_sliderState & (1 << (23 - foundSlider))) && _vm->_hotspots[foundSlider + startHotspot + 1]->containsPoint(event.mouse)) {
 					// We've moved the slider right one space
 					_sliderState &= ~(_sliderState & (1 << (24 - foundSlider)));
 					foundSlider++;
@@ -376,7 +376,7 @@ void RivenExternal::dragDomeSlider(uint16 soundId, uint16 resetSlidersHotspot, u
 					// Now play a click sound and redraw
 					_vm->_sound->playSound(soundId);
 					drawDomeSliders(startHotspot);
-				} else if (foundSlider > 0 && !(_sliderState & (1 << (25 - foundSlider))) && _vm->_hotspots[foundSlider + startHotspot - 1]->rect.contains(event.mouse)) {
+				} else if (foundSlider > 0 && !(_sliderState & (1 << (25 - foundSlider))) && _vm->_hotspots[foundSlider + startHotspot - 1]->containsPoint(event.mouse)) {
 					// We've moved the slider left one space
 					_sliderState &= ~(_sliderState & (1 << (24 - foundSlider)));
 					foundSlider--;
@@ -414,10 +414,10 @@ void RivenExternal::drawDomeSliders(uint16 startHotspot) {
 	uint16 bitmapId = _vm->findResourceID(ID_TBMP, "*sliders*");
 
 	for (uint16 i = 0; i < kDomeSliderSlotCount; i++) {
-		Common::Rect srcRect = _vm->_hotspots[startHotspot + i]->rect;
+		Common::Rect srcRect = _vm->_hotspots[startHotspot + i]->getRect();
 		srcRect.translate(-dstAreaRect.left, -dstAreaRect.top); // Adjust the rect so it's in the destination area
 
-		Common::Rect dstRect = _vm->_hotspots[startHotspot + i]->rect;
+		Common::Rect dstRect = _vm->_hotspots[startHotspot + i]->getRect();
 
 		if (_sliderState & (1 << (24 - i)))
 			_vm->_gfx->drawImageRect(bitmapId, srcRect, dstRect);
@@ -947,7 +947,7 @@ void RivenExternal::xbait(uint16 argc, uint16 *argv) {
 	_vm->_system->updateScreen();
 
 	// Set the bait if we put it on the plate
-	if (_vm->_hotspots[9]->rect.contains(_vm->_system->getEventManager()->getMousePos())) {
+	if (_vm->_hotspots[9]->containsPoint(_vm->_system->getEventManager()->getMousePos())) {
 		_vm->_vars["bbait"] = 1;
 		_vm->getCurCard()->drawPicture(4);
 		_vm->_hotspots[3]->enable(false); // Disable bait hotspot
@@ -1006,7 +1006,7 @@ void RivenExternal::xbaitplate(uint16 argc, uint16 *argv) {
 	_vm->_system->updateScreen();
 
 	// Set the bait if we put it on the plate, remove otherwise
-	if (_vm->_hotspots[9]->rect.contains(_vm->_system->getEventManager()->getMousePos())) {
+	if (_vm->_hotspots[9]->containsPoint(_vm->_system->getEventManager()->getMousePos())) {
 		_vm->_vars["bbait"] = 1;
 		_vm->getCurCard()->drawPicture(4);
 		_vm->_hotspots[3]->enable(false); // Disable bait hotspot
@@ -1194,8 +1194,8 @@ void RivenExternal::xgpincontrols(uint16 argc, uint16 *argv) {
 
 	// Get our mouse position and adjust it to the beginning of the hotspot
 	Common::Point mousePos = _vm->_system->getEventManager()->getMousePos();
-	mousePos.x -= _vm->_hotspots[3]->rect.left;
-	mousePos.y -= _vm->_hotspots[3]->rect.top;
+	mousePos.x -= _vm->_hotspots[3]->getRect().left;
+	mousePos.y -= _vm->_hotspots[3]->getRect().top;
 
 	// And now adjust it to which box we hit
 	mousePos.x /= 10;
@@ -1342,7 +1342,7 @@ void RivenExternal::xgrviewer(uint16 argc, uint16 *argv) {
 	// Calculate how much we're moving
 	static const uint16 hotspotPositions[] = { 2, 1, 5, 4, 3 };
 	uint32 &curPos = _vm->_vars["grviewpos"];
-	uint32 newPos = curPos + hotspotPositions[_vm->_curHotspot->index - 2];
+	uint32 newPos = curPos + hotspotPositions[_vm->_curHotspot->getIndex() - 2];
 
 	// Now play the movie
 	VideoHandle handle = _vm->_video->playMovieRiven(1);
@@ -1411,7 +1411,7 @@ void RivenExternal::xglviewer(uint16 argc, uint16 *argv) {
 	// Calculate how much we're moving
 	static const uint16 hotspotPositions[] = { 1, 5, 4, 2, 0, 0, 3 };
 	uint32 &curPos = _vm->_vars["glviewpos"];
-	uint32 newPos = curPos + hotspotPositions[_vm->_curHotspot->index - 2];
+	uint32 newPos = curPos + hotspotPositions[_vm->_curHotspot->getIndex() - 2];
 
 	// Now play the movie
 	VideoHandle handle = _vm->_video->playMovieRiven(1);
@@ -2048,7 +2048,7 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 	// Track down our hotspot
 	// Of course, they're not in any sane order...
 	static const uint16 hotspotMap[] = { 1, 3, 2, 0 };
-	Common::Rect hotspotRect = _vm->_hotspots[hotspotMap[argv[3] - 1]]->rect;
+	Common::Rect hotspotRect = _vm->_hotspots[hotspotMap[argv[3] - 1]]->getRect();
 
 	debug(0, "xbookclick:");
 	debug(0, "\tVideo Code = %d", argv[0]);
@@ -2617,9 +2617,9 @@ void RivenExternal::setMarbleHotspots() {
 		uint32 &marblePos = _vm->_vars[s_marbleNames[i]];
 
 		if (marblePos == 0) // In the receptacle
-			_vm->_hotspots[i + 3]->rect = _marbleBaseHotspots[i];
+			_vm->_hotspots[i + 3]->setRect(_marbleBaseHotspots[i]);
 		else                 // On the grid
-			_vm->_hotspots[i + 3]->rect = generateMarbleGridRect(getMarbleX(marblePos), getMarbleY(marblePos));
+			_vm->_hotspots[i + 3]->setRect(generateMarbleGridRect(getMarbleX(marblePos), getMarbleY(marblePos)));
 	}
 }
 
@@ -2627,7 +2627,7 @@ void RivenExternal::xt7800_setup(uint16 argc, uint16 *argv) {
 	// First, let's store the base receptacle hotspots for the marbles
 	if (_marbleBaseHotspots.empty())
 		for (uint16 i = 0; i < kMarbleCount; i++)
-			_marbleBaseHotspots.push_back(_vm->_hotspots[i + 3]->rect);
+			_marbleBaseHotspots.push_back(_vm->_hotspots[i + 3]->getRect());
 
 	// Move the marble hotspots based on their position variables
 	setMarbleHotspots();
@@ -2640,7 +2640,7 @@ void RivenExternal::drawMarbles() {
 		if (_vm->_vars["themarble"] - 1 == i)
 			continue;
 
-		Common::Rect rect = _vm->_hotspots[i + 3]->rect;
+		Common::Rect rect = _vm->_hotspots[i + 3]->getRect();
 		// Trim the rect down a bit
 		rect.left += 3;
 		rect.top += 3;
@@ -2663,7 +2663,7 @@ void RivenExternal::xtakeit(uint16 argc, uint16 *argv) {
 	marble = 0;
 
 	for (uint32 i = 0; i < kMarbleCount; i++)
-		if (_vm->_hotspots[i + 3]->rect.contains(_vm->_system->getEventManager()->getMousePos())) {
+		if (_vm->_hotspots[i + 3]->containsPoint(_vm->_system->getEventManager()->getMousePos())) {
 			marble = i + 1;
 			break;
 		}

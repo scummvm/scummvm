@@ -359,7 +359,7 @@ void RivenSimpleCommand::mohawkSwitch(uint16 op, uint16 argc, uint16 *argv) {
 // Command 9: enable hotspot (blst_id)
 void RivenSimpleCommand::enableHotspot(uint16 op, uint16 argc, uint16 *argv) {
 	for (uint16 i = 0; i < _vm->_hotspots.size(); i++) {
-		if (_vm->_hotspots[i]->blstID == argv[0]) {
+		if (_vm->_hotspots[i]->getBlstId() == argv[0]) {
 			debug(2, "Enabling hotspot with BLST ID %d", argv[0]);
 			_vm->_hotspots[i]->enable(true);
 		}
@@ -372,7 +372,7 @@ void RivenSimpleCommand::enableHotspot(uint16 op, uint16 argc, uint16 *argv) {
 // Command 10: disable hotspot (blst_id)
 void RivenSimpleCommand::disableHotspot(uint16 op, uint16 argc, uint16 *argv) {
 	for (uint16 i = 0; i < _vm->_hotspots.size(); i++) {
-		if (_vm->_hotspots[i]->blstID == argv[0]) {
+		if (_vm->_hotspots[i]->getBlstId() == argv[0]) {
 			debug(2, "Disabling hotspot with BLST ID %d", argv[0]);
 			_vm->_hotspots[i]->enable(false);
 		}
@@ -602,7 +602,7 @@ void RivenSimpleCommand::activateBLST(uint16 op, uint16 argc, uint16 *argv) {
 
 		if (argv[0] == index)
 			for (uint16 j = 0; j < _vm->_hotspots.size(); j++)
-				if (_vm->_hotspots[j]->blstID == hotspotID)
+				if (_vm->_hotspots[j]->getBlstId() == hotspotID)
 					_vm->_hotspots[j]->enable(enabled == 1);
 	}
 
@@ -635,8 +635,10 @@ void RivenSimpleCommand::activateFLST(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 45: do zip mode
 void RivenSimpleCommand::zipMode(uint16 op, uint16 argc, uint16 *argv) {
+	assert(_vm->getCurHotspot());
+
 	// Check the ZIPS records to see if we have a match to the hotspot name
-	Common::String hotspotName = _vm->getHotspotName(_vm->getCurHotspot());
+	Common::String hotspotName = _vm->getCurHotspot()->getName();
 
 	for (uint16 i = 0; i < _vm->_zipModeData.size(); i++)
 		if (_vm->_zipModeData[i].name == hotspotName) {
