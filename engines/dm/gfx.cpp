@@ -255,7 +255,7 @@ byte g195_FloorOrnCoordSetIndices[9] = { // @ G0195_auc_Graphic558_FloorOrnament
 	0}; /* Floor Ornament 08 Puddle */
 
 byte g205_WallOrnCoordSets[8][13][6] = { // @ G0205_aaauc_Graphic558_WallOrnamentCoordinateSets
-										   /* { X1, X2, Y1, Y2, PixelWidth, Height } */
+										 /* { X1, X2, Y1, Y2, ByteWidth, Height } */
 	{{80,  83, 41,  45,  8,   5},     /* D3L */
 	{140, 143, 41,  45,  8,   5},     /* D3R */
 	{16,  29, 39,  50,  8,  12},     /* D3L */
@@ -349,9 +349,9 @@ byte g205_WallOrnCoordSets[8][13][6] = { // @ G0205_aaauc_Graphic558_WallOrnamen
 	{64, 159,  9, 119, 48, 111}},   /* D1C */
 	{{74,  85, 25,  75,  8,  51},     /* D3L */
 	{137, 149, 25,  75,  8,  51},     /* D3R */
-	{0,  75, 25,  75, 40,  51},     /* D3L Atari ST: {   0,  83, 25,  75, 48*2,  51 } */
-	{74, 149, 25,  75, 40,  51},     /* D3C Atari ST: {  74, 149, 25,  75, 48*2,  51 } */
-	{148, 223, 25,  75, 40,  51},     /* D3R Atari ST: { 139, 223, 25,  75, 48*2,  51 } */
+	{0,  75, 25,  75, 40,  51},     /* D3L Atari ST: {   0,  83, 25,  75, 48,  51 } */
+	{74, 149, 25,  75, 40,  51},     /* D3C Atari ST: {  74, 149, 25,  75, 48,  51 } */
+	{148, 223, 25,  75, 40,  51},     /* D3R Atari ST: { 139, 223, 25,  75, 48,  51 } */
 	{60,  77, 20,  90, 16,  71},     /* D2L */
 	{146, 163, 20,  90, 16,  71},     /* D2R */
 	{0,  74, 20,  90, 56,  71},     /* D2L */
@@ -1616,10 +1616,10 @@ void DisplayMan::f118_drawSquareD3C(Direction dir, int16 posX, int16 posY) {
 													  Frame(118, 135, 28, 67, 24, 41, 24, 0)		/* Right Horizontal Closed three fourth */
 	);
 	int16 order;
-	int16 squareAspect[5];
+	uint16 squareAspect[5];
 
 
-	_vm->_dungeonMan->f172_setSquareAspect((uint16 *)squareAspect, dir, posX, posY);
+	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
 	switch (squareAspect[k0_ElemAspect]) {
 	case k19_ElementTypeStaisFront:
 		if (squareAspect[k2_StairsUpAspect]) {
@@ -1681,9 +1681,9 @@ void DisplayMan::f119_drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 	);
 
 	int16 order;
-	int16 squareAspect[5];
+	uint16 squareAspect[5];
 
-	_vm->_dungeonMan->f172_setSquareAspect((uint16 *)squareAspect, dir, posX, posY);
+	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
 	switch (squareAspect[k0_ElemAspect]) {
 	case k19_ElementTypeStaisFront:
 		if (squareAspect[k2_StairsUpAspect]) {
@@ -1747,10 +1747,10 @@ void DisplayMan::f120_drawSquareD2R(Direction dir, int16 posX, int16 posY) {
 	);
 
 	int16 order;
-	int16 squareAspect[5];
+	uint16 squareAspect[5];
 
 
-	_vm->_dungeonMan->f172_setSquareAspect((uint16 *)squareAspect, dir, posX, posY);
+	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
 	switch (squareAspect[k0_ElemAspect]) {
 	case k19_ElementTypeStaisFront:
 		if (squareAspect[k2_StairsUpAspect]) {
@@ -1815,10 +1815,10 @@ void DisplayMan::f121_drawSquareD2C(Direction dir, int16 posX, int16 posY) {
 	);
 
 	int16 order;
-	int16 squareAspect[5];
+	uint16 squareAspect[5];
 
 
-	_vm->_dungeonMan->f172_setSquareAspect((uint16 *)squareAspect, dir, posX, posY);
+	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
 	switch (squareAspect[k0_ElemAspect]) {
 	case k19_ElementTypeStaisFront:
 		if (squareAspect[k2_StairsUpAspect]) {
@@ -1881,10 +1881,10 @@ void DisplayMan::f122_drawSquareD1L(Direction dir, int16 posX, int16 posY) {
 	);
 
 	int16 order;
-	int16 squareAspect[5];
+	uint16 squareAspect[5];
 
 
-	_vm->_dungeonMan->f172_setSquareAspect((uint16 *)squareAspect, dir, posX, posY);
+	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
 	switch (squareAspect[k0_ElemAspect]) {
 	case k19_ElementTypeStaisFront:
 		if (squareAspect[k2_StairsUpAspect]) {
@@ -1948,10 +1948,10 @@ void DisplayMan::f123_drawSquareD1R(Direction dir, int16 posX, int16 posY) {
 	); /* Right Horizontal Closed three fourth */
 
 	int16 order;
-	int16 squareAspect[5];
+	uint16 squareAspect[5];
 
 
-	_vm->_dungeonMan->f172_setSquareAspect((uint16 *)squareAspect, dir, posX, posY);
+	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
 	switch (squareAspect[k0_ElemAspect]) {
 	case k19_ElementTypeStaisFront:
 		if (squareAspect[k2_StairsUpAspect]) {
@@ -2001,11 +2001,11 @@ T0123021:
 void DisplayMan::f124_drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 	static Box g107_BoxThievesEyeVisibleArea(0, 95, 0, 94); // @ G0107_s_Graphic558_Box_ThievesEye_VisibleArea 
 	int16 order;
-	int16 squareAspect[5];
+	uint16 squareAspect[5];
 	byte* bitmap;
 
 
-	_vm->_dungeonMan->f172_setSquareAspect((uint16 *)squareAspect, dir, posX, posY);
+	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
 	switch (_vm->_dungeonMan->_g285_squareAheadElement = (ElementType)squareAspect[k0_ElemAspect]) {
 	case k19_ElementTypeStaisFront:
 		if (squareAspect[k2_StairsUpAspect]) {
@@ -2089,10 +2089,10 @@ void DisplayMan::f125_drawSquareD0L(Direction dir, int16 posX, int16 posY) {
 }
 
 void DisplayMan::f126_drawSquareD0R(Direction dir, int16 posX, int16 posY) {
-	int16 squareAspect[5];
+	uint16 squareAspect[5];
 
 
-	_vm->_dungeonMan->f172_setSquareAspect((uint16 *)squareAspect, dir, posX, posY);
+	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
 	switch (squareAspect[k0_ElemAspect]) {
 	case k18_ElementTypeStairsSide:
 		f105_drawFloorPitOrStairsBitmapFlippedHorizontally(_g692_stairsNativeBitmapIndex_Side_D0L, g139_FrameStairsSide_D0R);
@@ -2118,9 +2118,9 @@ void DisplayMan::f126_drawSquareD0R(Direction dir, int16 posX, int16 posY) {
 void DisplayMan::f127_drawSquareD0C(Direction dir, int16 posX, int16 posY) {
 	static Box g108_BoxThievesEyeHoleInDoorFrame(0, 31, 19, 113); // @ G0108_s_Graphic558_Box_ThievesEye_HoleInDoorFrame 
 
-	int16 squareAspect[5];
+	uint16 squareAspect[5];
 
-	_vm->_dungeonMan->f172_setSquareAspect((uint16 *)squareAspect, dir, posX, posY);
+	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
 	switch (squareAspect[k0_ElemAspect]) {
 	case k16_DoorSideElemType:
 		if (_vm->_championMan->_g407_party._event73Count_ThievesEye) {
@@ -2378,26 +2378,27 @@ void DisplayMan::f96_loadCurrentMapGraphics() {
 
 	_g266_currMapViAltarIndex = -1;
 
-	for (uint16 i = 0; i < currMap._wallOrnCount; ++i) {
-		uint16 ornIndice = _g261_currMapWallOrnIndices[i];
-		uint16 nativeIndice = k121_FirstWallOrn + ornIndice * 2;
-
-		_g101_currMapWallOrnInfo[i][k0_NativeBitmapIndex] = nativeIndice;
-		for (uint16 ornCounter = 0; ornCounter < k3_AlcoveOrnCount; ++ornCounter) {
-			if (ornIndice == g192_AlcoveOrnIndices[ornCounter]) {
-				_g267_currMapAlcoveOrnIndices[alcoveCount++] = i;
-				if (ornIndice == 2)
-					_g266_currMapViAltarIndex = i;
+	for (int16 ornamentIndex = 0; ornamentIndex <= currMap._wallOrnCount; ornamentIndex++) {
+		int16 greenOrn = _g261_currMapWallOrnIndices[ornamentIndex];
+		int16 counter = k121_FirstWallOrn + greenOrn * 2; /* Each wall ornament has 2 graphics */
+		_g101_currMapWallOrnInfo[ornamentIndex][k0_NativeBitmapIndex] = counter;
+		for (int16 ornamentCounter = 0; ornamentCounter < k3_AlcoveOrnCount; ornamentCounter++) {
+			if (greenOrn == g192_AlcoveOrnIndices[ornamentCounter]) {
+				_g267_currMapAlcoveOrnIndices[alcoveCount++] = ornamentIndex;
+				if (greenOrn == 2) { /* Wall ornament #2 is the Vi Altar */
+					_g266_currMapViAltarIndex = ornamentIndex;
+				}
+			}
+		}
+		for (int16 ornamentCounter = 0; ornamentCounter < k1_FountainOrnCount; ornamentCounter++) {
+			if (greenOrn == g193_FountainOrnIndices[ornamentCounter]) {
+				_g268_currMapFountainOrnIndices[fountainCount++] = ornamentIndex;
 			}
 		}
 
-		for (uint16 ornCounter = 0; ornCounter < k1_FountainOrnCount; ++ornCounter) {
-			if (ornIndice == g193_FountainOrnIndices[ornCounter])
-				_g268_currMapFountainOrnIndices[fountainCount++] = i;
-		}
-
-		_g101_currMapWallOrnInfo[i][k1_CoordinateSet] = g194_WallOrnCoordSetIndices[ornIndice];
+		_g101_currMapWallOrnInfo[ornamentIndex][k1_CoordinateSet] = g194_WallOrnCoordSetIndices[greenOrn];
 	}
+
 
 	for (uint16 i = 0; i < currMap._floorOrnCount; ++i) {
 		uint16 ornIndice = _g262_currMapFloorOrnIndices[i];
@@ -2586,7 +2587,7 @@ bool DisplayMan::f107_isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWall
 			AL0089_i_PixelWidth = (AL0090_puc_CoordinateSet + L0093_i_CoordinateSetOffset)[1] - (AL0090_puc_CoordinateSet + L0093_i_CoordinateSetOffset)[0];
 			if (!f491_isDerivedBitmapInCache(AP0116_i_WallOrnamentIndex = k4_DerivedBitmapFirstWallOrnament + (AP0116_i_WallOrnamentIndex << 2) + wallOrnDerivedBitmapIndexIncrement[viewWallIndex])) {
 				L0092_puc_Bitmap = f489_getNativeBitmapOrGraphic(AL0088_i_NativeBitmapIndex);
-				f129_blitToBitmapShrinkWithPalChange(L0092_puc_Bitmap, f492_getDerivedBitmap(AP0116_i_WallOrnamentIndex), AL0091_puc_CoordinateSet[4] << 1, AL0091_puc_CoordinateSet[5], AL0089_i_PixelWidth + 1, AL0090_puc_CoordinateSet[5], (viewWallIndex <= k4_ViewWall_D3R_FRONT) ? g198_PalChangesDoorButtonAndWallOrn_D3 : g199_PalChangesDoorButtonAndWallOrn_D2);
+				f129_blitToBitmapShrinkWithPalChange(L0092_puc_Bitmap, f492_getDerivedBitmap(AP0116_i_WallOrnamentIndex), AL0091_puc_CoordinateSet[4] << 1, AL0091_puc_CoordinateSet[5], AL0090_puc_CoordinateSet[4] << 1, AL0090_puc_CoordinateSet[5], (viewWallIndex <= k4_ViewWall_D3R_FRONT) ? g198_PalChangesDoorButtonAndWallOrn_D3 : g199_PalChangesDoorButtonAndWallOrn_D2);
 				f493_addDerivedBitmap(AP0116_i_WallOrnamentIndex);
 			}
 			AL0091_puc_Bitmap = f492_getDerivedBitmap(AP0116_i_WallOrnamentIndex);
@@ -2623,12 +2624,15 @@ bool DisplayMan::f107_isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWall
 		}
 		{
 			Box tmpBox(AL0090_puc_CoordinateSet);
-			f132_blitToBitmap(AL0091_puc_Bitmap, _g296_bitmapViewport, tmpBox, AL0089_i_X, 0, AL0090_puc_CoordinateSet[4], k112_byteWidthViewport, k10_ColorFlesh, AL0090_puc_CoordinateSet[5], k136_heightViewport);
+			f132_blitToBitmap(AL0091_puc_Bitmap, _g296_bitmapViewport, tmpBox,
+							  AL0089_i_X, 0,
+							  AL0090_puc_CoordinateSet[4], k112_byteWidthViewport, k10_ColorFlesh, AL0090_puc_CoordinateSet[5], k136_heightViewport);
 		}
 
 		if ((viewWallIndex == k12_ViewWall_D1C_FRONT) && _g289_championPortraitOrdinal--) { 
 			f132_blitToBitmap(f489_getNativeBitmapOrGraphic(k26_ChampionPortraitsIndice), _g296_bitmapViewport, boxChampionPortraitOnWall,
-				(_g289_championPortraitOrdinal & 0x0007) << 5, (_g289_championPortraitOrdinal >> 3) * 29, k128_byteWidth, k112_byteWidthViewport, k1_ColorDarkGary, 87, k136_heightViewport); /* A portrait is 32x29 pixels */
+				(_g289_championPortraitOrdinal & 0x0007) << 5, (_g289_championPortraitOrdinal >> 3) * 29,
+							  k128_byteWidth, k112_byteWidthViewport, k1_ColorDarkGary, 87, k136_heightViewport); /* A portrait is 32x29 pixels */
 		}
 T0107031:
 		return L0096_B_IsAlcove;
@@ -2646,18 +2650,17 @@ void DisplayMan::f129_blitToBitmapShrinkWithPalChange(byte *srcBitmap, byte *des
 
 	warning(false, "MISSING CODE: No palette change takes place in f129_blitToBitmapShrinkWithPalChange");
 
-	// HACK
 	if (destPixelWidth % 2)
 		destPixelWidth++;
 
 	// Loop through drawing output lines
-	for (uint32 destY = 0, scaleYCtr = 0; destY < destHeight; ++destY, scaleYCtr += scaleY) {
+	for (uint32 destY = 0, scaleYCtr = 0; destY < (uint32)destHeight; ++destY, scaleYCtr += scaleY) {
 
 		const byte *srcLine = &srcBitmap[(scaleYCtr / SCALE_THRESHOLD) * srcPixelWidth];
 		byte *destLine = &destBitmap[destY * destPixelWidth];
 
 		// Loop through drawing the pixels of the row
-		for (uint32 destX = 0, xCtr = 0, scaleXCtr = 0; destX < destPixelWidth; ++destX, ++xCtr, scaleXCtr += scaleX) {
+		for (uint32 destX = 0, xCtr = 0, scaleXCtr = 0; destX < (uint32)destPixelWidth; ++destX, ++xCtr, scaleXCtr += scaleX) {
 			destLine[xCtr] = srcLine[scaleXCtr / SCALE_THRESHOLD];
 		}
 	}
