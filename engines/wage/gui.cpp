@@ -96,16 +96,22 @@ static void cursorTimerHandler(void *refCon) {
 
 	x += gui->_consoleWindow->getInnerDimensions().left;
 	y += gui->_consoleWindow->getInnerDimensions().top;
+	int h = kCursorHeight;
 
-	gui->_screen.vLine(x, y, y + kCursorHeight, gui->_cursorState ? kColorBlack : kColorWhite);
+	if (y + h > gui->_consoleWindow->getInnerDimensions().bottom) {
+		h = gui->_consoleWindow->getInnerDimensions().bottom - y;
+	}
+
+	if (h > 0)
+		gui->_screen.vLine(x, y, y + h, gui->_cursorState ? kColorBlack : kColorWhite);
 
 	if (!gui->_cursorOff)
 		gui->_cursorState = !gui->_cursorState;
 
 	gui->_cursorRect.left = x;
 	gui->_cursorRect.right = MIN<uint16>(x + 1, gui->_screen.w);
-	gui->_cursorRect.top = y;
-	gui->_cursorRect.bottom = MIN<uint16>(y + kCursorHeight, gui->_screen.h);
+	gui->_cursorRect.top = MIN<uint16>(y - 1, gui->_consoleWindow->getInnerDimensions().top);
+	gui->_cursorRect.bottom = MIN<uint16>(MIN<uint16>(y + h, gui->_screen.h), gui->_consoleWindow->getInnerDimensions().bottom);
 
 	gui->_cursorDirty = true;
 }
