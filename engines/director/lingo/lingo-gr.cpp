@@ -2355,7 +2355,7 @@ yyreduce:
   case 92:
 #line 413 "engines/director/lingo/lingo-gr.y"
     {
-		g_lingo->code2(g_ling->c_voidpush, g_lingo->_handlers[*(yyvsp[(1) - (1)].s)]->u.func);
+		g_lingo->code2(g_lingo->c_voidpush, g_lingo->_handlers[*(yyvsp[(1) - (1)].s)]->u.func);
 		delete (yyvsp[(1) - (1)].s); ;}
     break;
 

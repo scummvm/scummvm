@@ -411,7 +411,7 @@ func: tMCI STRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c_
 		g_lingo->code1(g_lingo->_handlers[*$1]->u.func);
 		delete $1; }
 	| BLTINNOARGSORONE 		{
-		g_lingo->code2(g_ling->c_voidpush, g_lingo->_handlers[*$1]->u.func);
+		g_lingo->code2(g_lingo->c_voidpush, g_lingo->_handlers[*$1]->u.func);
 		delete $1; }
 	| tALERT expr		{ g_lingo->code1(g_lingo->c_alert); }
 	| tBEEP INT			{
