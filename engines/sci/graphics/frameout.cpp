@@ -56,7 +56,7 @@
 namespace Sci {
 
 GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette32 *palette, GfxTransitions32 *transitions) :
-	_isHiRes(false),
+	_isHiRes(ConfMan.getBool("enable_high_resolution_graphics")),
 	_palette(palette),
 	_resMan(resMan),
 	_screen(screen),
@@ -75,13 +75,9 @@ GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAd
 
 	_currentBuffer.setPixels(calloc(1, screen->getDisplayWidth() * screen->getDisplayHeight()));
 
-	// TODO: Make hires detection work uniformly across all SCI engine
-	// versions (this flag is normally passed by SCI::MakeGraphicsMgr
-	// to the GraphicsMgr constructor depending upon video configuration,
-	// so should be handled upstream based on game configuration instead
-	// of here)
-	if (getSciVersion() >= SCI_VERSION_2_1_EARLY && _resMan->detectHires()) {
-		_isHiRes = true;
+	// QFG4 is the only SCI32 game that doesn't have a high-resolution toggle
+	if (g_sci->getGameId() == GID_QFG4) {
+		_isHiRes = false;
 	}
 
 	switch (g_sci->getGameId()) {

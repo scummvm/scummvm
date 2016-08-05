@@ -41,7 +41,6 @@ struct PlaneShowStyle;
  */
 class GfxFrameout {
 private:
-	bool _isHiRes;
 	GfxCoordAdjuster32 *_coordAdjuster;
 	GfxPalette32 *_palette;
 	ResourceManager *_resMan;
@@ -309,6 +308,8 @@ private:
 	}
 
 public:
+	bool _isHiRes;
+
 	/**
 	 * Whether palMorphFrameOut should be used instead of
 	 * frameOut for rendering. Used by kMorphOn to
