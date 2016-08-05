@@ -1342,7 +1342,7 @@ void RivenExternal::xgrviewer(uint16 argc, uint16 *argv) {
 	// Calculate how much we're moving
 	static const uint16 hotspotPositions[] = { 2, 1, 5, 4, 3 };
 	uint32 &curPos = _vm->_vars["grviewpos"];
-	uint32 newPos = curPos + hotspotPositions[_vm->_curHotspot - 1];
+	uint32 newPos = curPos + hotspotPositions[_vm->_curHotspot->index - 2];
 
 	// Now play the movie
 	VideoHandle handle = _vm->_video->playMovieRiven(1);
@@ -1411,7 +1411,7 @@ void RivenExternal::xglviewer(uint16 argc, uint16 *argv) {
 	// Calculate how much we're moving
 	static const uint16 hotspotPositions[] = { 1, 5, 4, 2, 0, 0, 3 };
 	uint32 &curPos = _vm->_vars["glviewpos"];
-	uint32 newPos = curPos + hotspotPositions[_vm->_curHotspot - 1];
+	uint32 newPos = curPos + hotspotPositions[_vm->_curHotspot->index - 2];
 
 	// Now play the movie
 	VideoHandle handle = _vm->_video->playMovieRiven(1);

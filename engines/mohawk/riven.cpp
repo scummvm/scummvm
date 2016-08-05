@@ -67,7 +67,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_saveLoad = nullptr;
 	_optionsDialog = nullptr;
 	_card = nullptr;
-	_curHotspot = -1;
+	_curHotspot = nullptr;
 	removeTimer();
 
 	// NOTE: We can never really support CD swapping. All of the music files
@@ -227,17 +227,17 @@ void MohawkEngine_Riven::handleEvents() {
 			needsUpdate = true;
 			break;
 		case Common::EVENT_LBUTTONDOWN:
-			if (_curHotspot >= 0) {
+			if (_curHotspot) {
 				checkSunnerAlertClick();
-				runHotspotScript(_curHotspot, kMouseDownScript);
+				_curHotspot->runScript(kMouseDownScript);
 			}
 			break;
 		case Common::EVENT_LBUTTONUP:
 			// See RivenScript::switchCard() for more information on why we sometimes
 			// disable the next up event.
 			if (!_ignoreNextMouseUp) {
-				if (_curHotspot >= 0)
-					runHotspotScript(_curHotspot, kMouseUpScript);
+				if (_curHotspot)
+					_curHotspot->runScript(kMouseUpScript);
 				else
 					checkInventoryClick();
 			}
@@ -294,8 +294,8 @@ void MohawkEngine_Riven::handleEvents() {
 		}
 	}
 
-	if (_curHotspot >= 0)
-		runHotspotScript(_curHotspot, kMouseInsideScript);
+	if (_curHotspot)
+		_curHotspot->runScript(kMouseInsideScript);
 
 	// Update the screen if we need to
 	if (needsUpdate)
@@ -468,39 +468,35 @@ void MohawkEngine_Riven::updateZipMode() {
 }
 
 void MohawkEngine_Riven::checkHotspotChange() {
-	uint16 hotspotIndex = 0;
-	bool foundHotspot = false;
+	RivenHotspot *hotspot = nullptr;
 	for (uint16 i = 0; i < _hotspots.size(); i++)
 		if (_hotspots[i]->enabled && _hotspots[i]->rect.contains(_eventMan->getMousePos())) {
-			foundHotspot = true;
-			hotspotIndex = i;
+			hotspot = _hotspots[i];
 		}
 
-	if (foundHotspot) {
-		if (_curHotspot != hotspotIndex) {
-			_curHotspot = hotspotIndex;
-			_cursor->setCursor(_hotspots[_curHotspot]->mouse_cursor);
+	if (hotspot) {
+		if (_curHotspot != hotspot) {
+			_curHotspot = hotspot;
+			_cursor->setCursor(hotspot->mouse_cursor);
 			_system->updateScreen();
 		}
 	} else {
-		_curHotspot = -1;
+		_curHotspot = nullptr;
 		_cursor->setCursor(kRivenMainCursor);
 		_system->updateScreen();
 	}
 }
 
 void MohawkEngine_Riven::updateCurrentHotspot() {
-	_curHotspot = -1;
+	_curHotspot = nullptr;
 	checkHotspotChange();
 }
 
-Common::String MohawkEngine_Riven::getHotspotName(uint16 hotspot) {
-	assert(hotspot < _hotspots.size());
-
-	if (_hotspots[hotspot]->name_resource < 0)
+Common::String MohawkEngine_Riven::getHotspotName(const RivenHotspot *hotspot) {
+	if (hotspot->name_resource < 0)
 		return Common::String();
 
-	return getName(HotspotNames, _hotspots[hotspot]->name_resource);
+	return getName(HotspotNames, hotspot->name_resource);
 }
 
 void MohawkEngine_Riven::checkInventoryClick() {
@@ -631,10 +627,6 @@ uint32 MohawkEngine_Riven::getCurCardRMAP() {
 	uint32 rmapCode = rmapStream->readUint32BE();
 	delete rmapStream;
 	return rmapCode;
-}
-
-void MohawkEngine_Riven::runHotspotScript(uint16 hotspot, uint16 scriptType) {
-	_hotspots[hotspot]->runScript(scriptType);
 }
 
 void MohawkEngine_Riven::delayAndUpdate(uint32 ms) {
@@ -935,7 +927,7 @@ void MohawkEngine_Riven::checkSunnerAlertClick() {
 		return;
 
 	// Only set the sunners variable on the forward hotspot
-	if ((rmapCode == 0x79bd && _curHotspot != 1) || (rmapCode == 0x7beb && _curHotspot != 2))
+	if ((rmapCode == 0x79bd && _curHotspot->index != 2) || (rmapCode == 0x7beb && _curHotspot->index != 3))
 		return;
 
 	// If the alert video is no longer playing, we have nothing left to do
