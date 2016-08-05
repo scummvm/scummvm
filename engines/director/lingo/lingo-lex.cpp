@@ -685,7 +685,7 @@ static void count() {
 	g_lingo->_colnumber += strlen(yytext);
 }
 
-#ifdef __PLAYSTATION2__
+#if defined(__PLAYSTATION2__) || defined(_MSC_VER)
 // Stub for missing function
 int isatty(int fileno) { return 0; }
 #endif
@@ -703,6 +703,10 @@ static void countnl() {
 #line 704 "engines/director/lingo/lingo-lex.cpp"
 
 #define INITIAL 0
+
+#ifdef _MSC_VER
+#define YY_NO_UNISTD_H
+#endif
 
 #ifndef YY_NO_UNISTD_H
 /* Special case for "unistd.h", since it is non-ANSI. We include it way
