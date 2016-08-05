@@ -50,6 +50,8 @@ Common::String windowTypeName(MVWindowType windowType) {
 		return "ZoomDoc";
 	case kZoomNoGrow:
 		return "ZoomNoGrow";
+	case kInvWindow:
+		return "InvWindow";
 	case kRDoc16:
 		return "RDoc16";
 	case kRDoc4:

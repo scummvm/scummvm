@@ -50,6 +50,8 @@ enum MVWindowType {
 	kMovableDBox = 0x05,
 	kZoomDoc = 0x08,
 	kZoomNoGrow = 0x0c,
+	// WebVenture assigns arbitrary kinds post-loading
+	kInvWindow = 0x0e,
 	kRDoc16 = 0x10,
 	kRDoc4 = 0x12,
 	kRDoc6 = 0x14,

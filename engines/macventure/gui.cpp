@@ -218,7 +218,11 @@ void Gui::initWindows() {
 
 	// In-game Output Console
 	_outConsoleWindow = _wm.addWindow(true, true, false);
-	_outConsoleWindow->setDimensions(getWindowData(kOutConsoleWindow).bounds);
+	// HACK We have to hand-create the dimensions, otherwise they don't fit
+	const WindowData &wd = getWindowData(kOutConsoleWindow);
+	Common::Rect dimensions = wd.bounds;
+	dimensions.setWidth(dimensions.width() - borderBounds(wd.type).rightOffset);
+	_outConsoleWindow->setDimensions(dimensions);
 	_outConsoleWindow->setActive(false);
 	_outConsoleWindow->setCallback(outConsoleWindowCallback, this);
 	loadBorders(_outConsoleWindow, findWindowData(kOutConsoleWindow).type);
@@ -306,15 +310,15 @@ WindowReference Gui::createInventoryWindow(ObjID objRef) {
 	if (_windowData->back().refcon < 0x80) { // There is already another inventory window
 		newData.bounds = _windowData->back().bounds; // Inventory windows are always last
 		newData.bounds.translate(newData.bounds.left + settings.invOffsetX, newData.bounds.top + settings.invOffsetY);
-	}
-	else {
+	} else {
+		BorderBounds bbs = borderBounds(kInvWindow);
 		newData.bounds = Common::Rect(
-			settings.invLeft,
-			settings.invTop,
+			settings.invLeft - bbs.leftOffset,
+			settings.invTop - bbs.topOffset,
 			settings.invLeft + settings.invWidth,
 			settings.invTop + settings.invHeight);
 	}
-	newData.type = kZoomDoc;
+	newData.type = kInvWindow;
 	newData.hasCloseBox = true;
 	newData.visible = true;
 	newData.objRef = objRef;
@@ -431,11 +435,13 @@ bool Gui::loadWindows() {
 		bottom = res->readUint16BE();
 		right = res->readUint16BE();
 		data.type = (MVWindowType)res->readUint16BE();
+		BorderBounds bbs = borderBounds(data.type);
 		data.bounds = Common::Rect(
-			left - borderBounds(data.type).leftOffset,
-			top - borderBounds(data.type).topOffset,
-			right + borderBounds(data.type).rightOffset * 2,
-			bottom + borderBounds(data.type).bottomOffset * 2);
+			left - bbs.leftOffset,
+			top - bbs.topOffset,
+			right + bbs.rightOffset,
+			bottom + bbs.bottomOffset);
+
 		data.visible = res->readUint16BE();
 		data.hasCloseBox = res->readUint16BE();
 		data.refcon = (WindowReference)id; id++;
@@ -492,11 +498,14 @@ bool Gui::loadControls() {
 			res->read(data.title, data.titleLength);
 			data.title[data.titleLength] = '\0';
 		}
-		if (data.type != kControlExitBox)
-			data.border = commandsBorder;
+		if (data.type != kControlExitBox) {
+			BorderBounds bbs = borderBounds(getWindowData(kCommandsWindow).type);
+			// We just want to move the button, not change it's size
+			data.bounds = Common::Rect(left + bbs.leftOffset, top + bbs.topOffset, right + bbs.leftOffset, bottom + bbs.topOffset);
+		} else {
+			data.bounds = Common::Rect(left, top, right, bottom);
+		}
 
-		Common::Rect bounds(left, top, right, bottom); // For some reason, if I remove this it segfaults
-		data.bounds = Common::Rect(left + data.border, top + data.border, right + data.border, bottom + data.border);
 
 		i++;
 	}
