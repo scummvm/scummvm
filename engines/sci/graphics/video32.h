@@ -268,6 +268,15 @@ public:
 		kEventFlagReverse      = 0x80
 	};
 
+	enum VMDStatus {
+		kVMDNotOpen  = 0,
+		kVMDOpen     = 1,
+		kVMDPlaying  = 2,
+		kVMDPaused   = 3,
+		kVMDStopped  = 4,
+		kVMDFinished = 5
+	};
+
 	VMDPlayer(SegManager *segMan, EventManager *eventMan);
 	~VMDPlayer();
 
@@ -294,6 +303,11 @@ public:
 	 * Stops playback and closes the currently open VMD stream.
 	 */
 	IOStatus close();
+
+	/**
+	 * Gets the playback status of the VMD player.
+	 */
+	VMDStatus getStatus() const;
 
 	// NOTE: Was WaitForEvent in SSCI
 	EventFlags kernelPlayUntilEvent(const EventFlags flags, const int16 lastFrameNo, const int16 yieldInterval);

@@ -451,6 +451,7 @@ static const SciKernelMapSubEntry kPlayVMD_subops[] = {
 	{ SIG_SINCE_SCI21,     0, MAP_CALL(PlayVMDOpen),               "r(i)(i)",              NULL },
 	{ SIG_SINCE_SCI21,     1, MAP_CALL(PlayVMDInit),               "ii(i)(i)(ii)",         NULL },
 	{ SIG_SINCE_SCI21,     6, MAP_CALL(PlayVMDClose),              "",                     NULL },
+	{ SIG_SINCE_SCI21,    10, MAP_CALL(PlayVMDGetStatus),          "",                     NULL },
 	{ SIG_SINCE_SCI21,    14, MAP_CALL(PlayVMDPlayUntilEvent),     "i(i)(i)",              NULL },
 	{ SIG_SINCE_SCI21,    16, MAP_CALL(PlayVMDShowCursor),         "i",                    NULL },
 	{ SIG_SINCE_SCI21,    17, MAP_DUMMY(PlayVMDStartBlob),         "",                     NULL },

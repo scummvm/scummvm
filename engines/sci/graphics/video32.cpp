@@ -613,6 +613,22 @@ VMDPlayer::IOStatus VMDPlayer::close() {
 	return kIOSuccess;
 }
 
+VMDPlayer::VMDStatus VMDPlayer::getStatus() const {
+	if (!_isOpen) {
+		return kVMDNotOpen;
+	}
+	if (_decoder->isPaused()) {
+		return kVMDPaused;
+	}
+	if (_decoder->isPlaying()) {
+		return kVMDPlaying;
+	}
+	if (_decoder->endOfVideo()) {
+		return kVMDFinished;
+	}
+	return kVMDOpen;
+}
+
 VMDPlayer::EventFlags VMDPlayer::kernelPlayUntilEvent(const EventFlags flags, const int16 lastFrameNo, const int16 yieldInterval) {
 	assert(lastFrameNo >= -1);
 

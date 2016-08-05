@@ -425,6 +425,10 @@ reg_t kPlayVMDClose(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, g_sci->_video32->getVMDPlayer().close());
 }
 
+reg_t kPlayVMDGetStatus(EngineState *s, int argc, reg_t *argv) {
+	return make_reg(0, g_sci->_video32->getVMDPlayer().getStatus());
+}
+
 reg_t kPlayVMDPlayUntilEvent(EngineState *s, int argc, reg_t *argv) {
 	const VMDPlayer::EventFlags flags = (VMDPlayer::EventFlags)argv[0].toUint16();
 	const int16 lastFrameNo = argc > 1 ? argv[1].toSint16() : -1;
