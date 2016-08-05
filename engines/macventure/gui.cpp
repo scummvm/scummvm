@@ -708,13 +708,20 @@ void Gui::drawDraggedObject() {
 		if (_draggedObj.pos.x > 0 && _draggedObj.pos.x + w > kScreenWidth) { w = kScreenWidth - _draggedObj.pos.x; }
 		if (_draggedObj.pos.y > 0 && _draggedObj.pos.y + h > kScreenHeight) { h = kScreenHeight - _draggedObj.pos.y; }
 
-		_draggedSurface.create(w, h, _screen.format);
-
-		asset->blitInto(&_draggedSurface, MIN((int16)0, _draggedObj.pos.x), MIN((int16)0, _draggedObj.pos.y), kBlitBIC);
-
 		Common::Point target = _draggedObj.pos;
 		if (target.x < 0) { target.x = 0; }
 		if (target.y < 0) { target.y = 0; }
+
+		_draggedSurface.create(w, h, _screen.format);
+		_draggedSurface.blitFrom(
+			_screen,
+			Common::Rect(
+				target.x,
+				target.y,
+				target.x + _draggedSurface.w,
+				target.y + _draggedSurface.h),
+			Common::Point(0, 0));
+		asset->blitInto(&_draggedSurface, MIN((int16)0, _draggedObj.pos.x), MIN((int16)0, _draggedObj.pos.y), kBlitBIC);
 
 		g_system->copyRectToScreen(
 			_draggedSurface.getBasePtr(0, 0),
