@@ -108,22 +108,34 @@ public:
 	/** Run one of the hotspot's scripts */
 	void runScript(uint16 scriptType);
 
+	/** Enable or disable the hotspot */
+	void enable(bool e);
+
+	/** Can the hotspot be interacted with? */
+	bool isEnabled() const;
+
+	/** Is the hotspot's purpose to zip to another card */
+	bool isZip() const;
+
 	uint16 blstID;
 	int16 name_resource;
 	uint16 index;
 	Common::Rect rect;
 	uint16 mouse_cursor;
-	int16 zipModeHotspot;
-
-	bool enabled; // TODO: Remove
 
 private:
+	enum {
+		kFlagZip = 1,
+		kFlagEnabled = 2
+	};
+
 	void loadFromStream(Common::ReadStream *stream);
 
 	MohawkEngine_Riven *_vm;
 
 	uint16 _u0;
 	int16 _u1;
+	uint16 _flags;
 	RivenScriptList _scripts;
 };
 

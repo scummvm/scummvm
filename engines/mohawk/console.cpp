@@ -516,7 +516,7 @@ bool RivenConsole::Cmd_Hotspots(int argc, const char **argv) {
 		RivenHotspot *hotspot = _vm->_hotspots[i];
 		debugPrintf("Hotspot %d, index %d, BLST ID %d (", i, hotspot->index, hotspot->blstID);
 
-		if (hotspot->enabled)
+		if (hotspot->isEnabled())
 			debugPrintf("enabled");
 		else
 			debugPrintf("disabled");

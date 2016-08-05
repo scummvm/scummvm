@@ -361,7 +361,7 @@ void RivenSimpleCommand::enableHotspot(uint16 op, uint16 argc, uint16 *argv) {
 	for (uint16 i = 0; i < _vm->_hotspots.size(); i++) {
 		if (_vm->_hotspots[i]->blstID == argv[0]) {
 			debug(2, "Enabling hotspot with BLST ID %d", argv[0]);
-			_vm->_hotspots[i]->enabled = true;
+			_vm->_hotspots[i]->enable(true);
 		}
 	}
 
@@ -374,7 +374,7 @@ void RivenSimpleCommand::disableHotspot(uint16 op, uint16 argc, uint16 *argv) {
 	for (uint16 i = 0; i < _vm->_hotspots.size(); i++) {
 		if (_vm->_hotspots[i]->blstID == argv[0]) {
 			debug(2, "Disabling hotspot with BLST ID %d", argv[0]);
-			_vm->_hotspots[i]->enabled = false;
+			_vm->_hotspots[i]->enable(false);
 		}
 	}
 
@@ -603,7 +603,7 @@ void RivenSimpleCommand::activateBLST(uint16 op, uint16 argc, uint16 *argv) {
 		if (argv[0] == index)
 			for (uint16 j = 0; j < _vm->_hotspots.size(); j++)
 				if (_vm->_hotspots[j]->blstID == hotspotID)
-					_vm->_hotspots[j]->enabled = (enabled == 1);
+					_vm->_hotspots[j]->enable(enabled == 1);
 	}
 
 	delete blst;
