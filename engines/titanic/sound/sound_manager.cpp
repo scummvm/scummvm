@@ -30,7 +30,8 @@ CSoundManager::CSoundManager() : _musicPercent(75.0), _speechPercent(75.0),
 
 /*------------------------------------------------------------------------*/
 
-QSoundManager::QSoundManager() : _field18(0), _field1C(0) {
+QSoundManager::QSoundManager(Audio::Mixer *mixer) : CSoundManager(), QMixer(mixer),
+		_field18(0), _field1C(0) {
 	Common::fill(&_field4A0[0], &_field4A0[16], 0);
 }
 

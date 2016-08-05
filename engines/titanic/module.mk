@@ -403,6 +403,7 @@ MODULE_OBJS := \
 	sound/music_player.o \
 	sound/node_auto_sound_player.o \
 	sound/proximity.o \
+	sound/qmixer.o \
 	sound/restricted_auto_music_player.o \
 	sound/room_auto_sound_player.o \
 	sound/room_trigger_auto_music_player.o \

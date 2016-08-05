@@ -78,7 +78,7 @@ public:
 	CMusicRoom _musicRoom;
 	CSound _sound;
 public:
-	CGameManager(CProjectItem *project, CGameView *gameView);
+	CGameManager(CProjectItem *project, CGameView *gameView, Audio::Mixer *mixer);
 	~CGameManager();
 
 	/**

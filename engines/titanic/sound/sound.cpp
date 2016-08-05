@@ -31,7 +31,8 @@ int CSoundItem::fn1() {
 	return 0;
 }
 
-CSound::CSound(CGameManager *owner) : _gameManager(owner) {
+CSound::CSound(CGameManager *owner, Audio::Mixer *mixer) : 
+		_gameManager(owner), _soundManager(mixer) {
 	g_vm->_movieManager.setSoundManager(&_soundManager);
 }
 

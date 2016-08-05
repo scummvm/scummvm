@@ -69,7 +69,7 @@ void CMainGameWindow::applicationStarting() {
 
 	// Create game view and manager
 	_gameView = new CSTGameView(this);
-	_gameManager = new CGameManager(_project, _gameView);
+	_gameManager = new CGameManager(_project, _gameView, g_vm->_mixer);
 	_gameView->setGameManager(_gameManager);
 
 	// Load either a new game or selected existing save

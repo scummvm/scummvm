@@ -25,11 +25,15 @@
 
 #include "titanic/support/simple_file.h"
 #include "titanic/sound/proximity.h"
+#include "titanic/sound/qmixer.h"
 #include "titanic/sound/wave_file.h"
 #include "titanic/true_talk/dialogue_file.h"
 
 namespace Titanic {
 
+/**
+ * Abstract interface class for a sound manager
+ */
 class CSoundManager {
 protected:
 	double _musicPercent;
@@ -122,14 +126,19 @@ public:
 	virtual void proc29() {}
 };
 
-class QSoundManager : public CSoundManager {
+/**
+ * Concrete sound manager class that handles interfacing with
+ * the QMixer sound mixer class
+ */
+class QSoundManager : public CSoundManager, public QMixer {
 public:
 	int _field18;
 	int _field1C;
 
 	int _field4A0[16];
 public:
-	QSoundManager();
+	QSoundManager(Audio::Mixer *mixer);
+	virtual ~QSoundManager() {}
 
 	/**
 	 * Loads a sound
