@@ -41,7 +41,7 @@ protected:
 	double _speechPercent;
 	double _masterPercent;
 	double _parrotPercent;
-	int _field14;
+	uint _handleCtr;
 public:
 	CSoundManager();
 	virtual ~CSoundManager() {}
@@ -211,7 +211,7 @@ public:
 	/**
 	 * Flushes a wave file attached to the specified channel
 	 */
-	void flushChannel(int v1, int iChannel);
+	void flushChannel(CWaveFile *waveFile, int iChannel);
 
 	/**
 	 * Returns true if the list contains the specified wave file
@@ -225,12 +225,13 @@ public:
  */
 class QSoundManager : public CSoundManager, public QMixer {
 	struct Slot {
-		uint _val1;
+		CWaveFile *_waveFile;
 		uint _val2;
 		uint _ticks;
 		int _channel;
 		uint _handle;
-		Slot() : _val1(0), _val2(0), _ticks(0), _channel(0), _handle(0) {}
+		uint _val3;
+		Slot() : _waveFile(0), _val2(0), _ticks(0), _channel(0), _handle(0), _val3(0) {}
 	};
 private:
 	QSoundManagerSounds _sounds;
@@ -254,6 +255,21 @@ private:
 	 * Updates all the volumes
 	 */
 	void updateVolumes();
+
+	/**
+	 * Called by the QMixer when a sound finishes playing
+	 */
+	static void soundFinished(int iChannel, CWaveFile *waveFile, void *soundManager);
+
+	/**
+	 * Finds the first free slot
+	 */
+	int findFreeSlot();
+
+	/**
+	 * Sets a channel volume
+	 */
+	void setChannelVolume(int iChannel, uint volume, uint mode);
 public:
 	int _field18;
 	int _field1C;
@@ -361,8 +377,16 @@ public:
 	 */
 	virtual void setParrotPercent(double percent);
 
-	virtual void proc29();
-	virtual void proc30();
+	/**
+	 * Sets the position and orientation for the listener (player)
+	 */
+	virtual void setListenerPosition(double posX, double posY, double posZ,
+		double directionX, double directionY, double directionZ, bool stopSounds);
+
+	/**
+	 * Starts a wave file playing
+	 */
+	virtual int playWave(CWaveFile *waveFile, int iChannel, uint flags, CProximity &prox);
 
 	/**
 	 * Called when a wave file is freed

@@ -51,5 +51,8 @@ bool CWaveFile::loadSound(const CString &name) {
 	return true;
 }
 
+uint CWaveFile::getFrequency() const {
+	return _stream->getRate();
+}
 
 } // End of namespace Titanic z

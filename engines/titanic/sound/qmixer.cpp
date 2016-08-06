@@ -41,6 +41,11 @@ int QMixer::qsWaveMixOpenChannel(int iChannel, QMixFlag mode) {
 	return 0;
 }
 
+int QMixer::qsWaveMixEnableChannel(int iChannel, uint flags, bool enabled) {
+	// Not currently implemented in ScummVM
+	return 0;
+}
+
 void QMixer::qsWaveMixCloseSession() {
 	_mixer->stopAll();
 }
@@ -67,6 +72,31 @@ void QMixer::qsWaveMixSetSourcePosition(int iChannel, uint flags, const QSVECTOR
 
 void QMixer::qsWaveMixSetPolarPosition(int iChannel, uint flags, const QSPOLAR &position) {
 	// Not currently implemented in ScummVM
+}
+
+void QMixer::qsWaveMixSetListenerPosition(const QSVECTOR &position, uint flags) {
+	// Not currently implemented in ScummVM
+}
+
+void QMixer::qsWaveMixSetListenerOrientation(const QSVECTOR &direction, const QSVECTOR &up, uint flags) {
+	// Not currently implemented in ScummVM
+}
+
+void QMixer::qsWaveMixSetDistanceMapping(int iChannel, uint flags, const QMIX_DISTANCES &distances) {
+	// Not currently implemented in ScummVM
+}
+
+void QMixer::qsWaveMixSetFrequency(int iChannel, uint flags, uint frequency) {
+	// Not currently implemented in ScummVM
+}
+
+void QMixer::qsWaveMixSetSourceVelocity(int iChannel, uint flags, const QSVECTOR &velocity) {
+	// Not currently implemented in ScummVM
+}
+
+int QMixer::qsWaveMixPlayEx(int iChannel, uint flags, CWaveFile *mixWave, int loops, const QMIXPLAYPARAMS &params) {
+	// Not currently implemented in ScummVM
+	return 0;
 }
 
 } // End of namespace Titanic z

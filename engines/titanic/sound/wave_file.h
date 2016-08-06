@@ -52,6 +52,11 @@ public:
 	 * Returns true if the wave file has data loaded
 	 */
 	bool isLoaded() const { return _stream != nullptr; }
+
+	/**
+	 * Return the frequency of the loaded wave file
+	 */
+	uint getFrequency() const;
 };
 
 } // End of namespace Titanic

@@ -504,17 +504,17 @@ void CTrueTalkManager::playSpeech(TTtalker *talker, TTroomScript *roomScript, CV
 	}
 
 	if (milli > 0) {
-		p3._field8 = (index * 3) / 2;
+		p3._channelVolume = (index * 3) / 2;
 		p3._field28 = 1;
-		p3._field2C = -135.0;
-		p3._field30 = 1.0;
-		p3._field34 = 0;
+		p3._azimuth = -135.0;
+		p3._range = 1.0;
+		p3._elevation = 0;
 
-		p2._field8 = (index * 3) / 4;
+		p2._channelVolume = (index * 3) / 4;
 		p2._field28 = 0;
-		p2._field2C = 135.0;
-		p2._field30 = 1.0;
-		p2._field34 = 0;
+		p2._azimuth = 135.0;
+		p2._range = 1.0;
+		p2._elevation = 0;
 	}
 
 	_gameManager->_sound.managerProc8(p1._field24);

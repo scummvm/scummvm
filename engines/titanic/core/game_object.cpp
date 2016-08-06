@@ -634,11 +634,11 @@ void CGameObject::loadSound(const CString &name) {
 	}
 }
 
-int CGameObject::playSound(const CString &name, int val2, int val3, int val4) {
+int CGameObject::playSound(const CString &name, uint volume, int val3, bool repeated) {
 	CProximity prox;
-	prox._field8 = val2;
+	prox._channelVolume = volume;
 	prox._fieldC = val3;
-	prox._field20 = val4;
+	prox._repeated = repeated;
 	return playSound(name, prox);
 }
 

@@ -183,7 +183,7 @@ protected:
 	/**
 	 * Plays a sound
 	 */
-	int playSound(const CString &name, int val2 = 100, int val3 = 0, int val4 = 0);
+	int playSound(const CString &name, uint volume = 100, int val3 = 0, bool repeated = false);
 
 	/**
 	 * Plays a sound

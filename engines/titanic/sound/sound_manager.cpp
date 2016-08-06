@@ -29,7 +29,7 @@ const uint LATENCY = 100;
 const uint CHANNELS_COUNT = 16;
 
 CSoundManager::CSoundManager() : _musicPercent(75.0), _speechPercent(75.0),
-	_masterPercent(75.0), _parrotPercent(75.0), _field14(1) {
+	_masterPercent(75.0), _parrotPercent(75.0), _handleCtr(1) {
 }
 
 /*------------------------------------------------------------------------*/
@@ -52,7 +52,7 @@ void QSoundManagerSounds::flushChannel(int iChannel) {
 	}
 }
 
-void QSoundManagerSounds::flushChannel(int v1, int iChannel) {
+void QSoundManagerSounds::flushChannel(CWaveFile *waveFile, int iChannel) {
 	for (iterator i = begin(); i != end(); ++i) {
 		QSoundManagerSound *item = *i;
 		if (item->_waveFile->isLoaded() && item->_iChannel == iChannel) {
@@ -223,12 +223,75 @@ void QSoundManager::setParrotPercent(double percent) {
 	_parrotPercent = percent;
 }
 
-void QSoundManager::proc29() {
-	warning("TODO");
+void QSoundManager::setListenerPosition(double posX, double posY, double posZ,
+		double directionX, double directionY, double directionZ, bool stopSounds) {
+	if (stopSounds) {
+		// Stop any running sounds
+		for (uint idx = 0; idx < _slots.size(); ++idx) {
+			if (_slots[idx]._val3)
+				stopSound(_slots[idx]._handle);
+		}
+	}
+
+	qsWaveMixSetListenerPosition(QSVECTOR(posX, posY, posZ));
+	qsWaveMixSetListenerOrientation(QSVECTOR(directionX, directionY, directionZ),
+		QSVECTOR(0.0, 0.0, -1.0));
 }
 
-void QSoundManager::proc30() {
-	warning("TODO");
+int QSoundManager::playWave(CWaveFile *waveFile, int iChannel, uint flags, CProximity &prox) {
+	if (!waveFile || !waveFile->isLoaded())
+		return 0;
+
+	prox._channelVolume = CLIP(prox._channelVolume, 0, 100);
+	prox._fieldC = CLIP(prox._fieldC, -100, 100);
+
+	int slotIndex = findFreeSlot();
+	if (slotIndex == -1)
+		return -1;
+
+	switch (prox._field28) {
+	case 1:
+		qsWaveMixSetPolarPosition(iChannel, 8, QSPOLAR(prox._azimuth, prox._range, prox._elevation));
+		qsWaveMixEnableChannel(iChannel, QMIX_CHANNEL_ELEVATION, true);
+		qsWaveMixSetDistanceMapping(iChannel, 8, QMIX_DISTANCES(5.0, 3.0, 1.0));
+		break;
+
+	case 2:
+		qsWaveMixSetSourcePosition(iChannel, 8, QSVECTOR(prox._posX, prox._posY, prox._posZ));
+		qsWaveMixEnableChannel(iChannel, QMIX_CHANNEL_ELEVATION, true);
+		qsWaveMixSetDistanceMapping(iChannel, 8, QMIX_DISTANCES(5.0, 3.0, 1.0));
+		break;
+
+	default:
+		qsWaveMixEnableChannel(iChannel, QMIX_CHANNEL_ELEVATION, true);
+		qsWaveMixSetPolarPosition(iChannel, 8, QSPOLAR(0.0, 1.0, 0.0));
+		break;
+	}
+
+	if (prox._frequencyMultiplier || prox._field1C != 1.875) {
+		uint freq = (uint)(waveFile->getFrequency() * prox._frequencyMultiplier);
+		qsWaveMixSetFrequency(iChannel, 8, freq);
+	}
+
+	_sounds.add(waveFile, iChannel, prox._endTalkerFn, prox._talker);
+
+	QMIXPLAYPARAMS playParams;
+	playParams.callback = soundFinished;
+	playParams.dwUser = this;
+	if (!qsWaveMixPlayEx(iChannel, flags, waveFile, prox._repeated ? -1 : 0, playParams)) {
+		Slot &slot = _slots[slotIndex];
+		slot._handle = _handleCtr++;
+		slot._channel = iChannel;
+		slot._waveFile = waveFile;
+		slot._val3 = prox._field28;
+
+		return slot._handle;
+	} else {
+		_sounds.flushChannel(waveFile, iChannel);
+		if (prox._field60)
+			delete waveFile;
+		return 0;
+	}
 }
 
 void QSoundManager::soundFreed(Audio::SoundHandle &handle) {
@@ -290,6 +353,25 @@ void QSoundManager::updateVolume(int channel, uint panRate) {
 void QSoundManager::updateVolumes() {
 	for (int idx = 0; idx < CHANNELS_COUNT; ++idx)
 		updateVolume(idx, 250);
+}
+
+void QSoundManager::soundFinished(int iChannel, CWaveFile *waveFile, void *soundManager) {
+	static_cast<QSoundManager *>(soundManager)->_sounds.flushChannel(waveFile, iChannel);
+}
+
+int QSoundManager::findFreeSlot() {
+	for (uint idx = 0; idx < _slots.size(); ++idx) {
+		if (!_slots[idx]._waveFile)
+			return idx;
+	}
+
+	return -1;
+}
+
+void QSoundManager::setChannelVolume(int iChannel, uint volume, uint mode) {
+	_channelsVolume[iChannel] = volume;
+	_channelsMode[iChannel] = mode;
+	updateVolume(iChannel, 250);
 }
 
 } // End of namespace Titanic z
