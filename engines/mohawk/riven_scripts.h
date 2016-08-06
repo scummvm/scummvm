@@ -79,7 +79,7 @@ public:
 	void run();
 
 	/** Print script details to the standard output */
-	void dumpScript(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs);
+	void dumpScript(byte tabs);
 
 	/** Stop the script after the current command */
 	void stopRunning() { _continueRunning = false; }
@@ -158,7 +158,7 @@ public:
 	virtual ~RivenCommand();
 
 	/** Print details about the command to standard output */
-	virtual void dump(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs) = 0;
+	virtual void dump(byte tabs) = 0;
 
 	/** Execute the command */
 	virtual void execute() = 0;
@@ -180,7 +180,7 @@ public:
 	virtual ~RivenSimpleCommand();
 
 	// RivenCommand API
-	virtual void dump(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs) override;
+	virtual void dump(byte tabs) override;
 	virtual void execute() override;
 
 private:
@@ -253,7 +253,7 @@ public:
 	virtual ~RivenSwitchCommand();
 
 	// RivenCommand API
-	virtual void dump(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs) override;
+	virtual void dump(byte tabs) override;
 	virtual void execute() override;
 
 private:

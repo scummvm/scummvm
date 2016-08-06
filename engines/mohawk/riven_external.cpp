@@ -198,7 +198,7 @@ void RivenExternal::setupCommands() {
 }
 
 void RivenExternal::runCommand(uint16 argc, uint16 *argv) {
-	Common::String externalCommandName = _vm->getName(ExternalCommandNames, argv[0]);
+	Common::String externalCommandName = _vm->getName(kExternalCommandNames, argv[0]);
 
 	for (uint16 i = 0; i < _externalCommands.size(); i++)
 		if (externalCommandName == _externalCommands[i]->desc) {

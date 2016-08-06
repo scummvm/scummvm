@@ -25,6 +25,7 @@
 
 #include "mohawk/installer_archive.h"
 #include "mohawk/mohawk.h"
+#include "mohawk/riven_stack.h"
 #include "mohawk/riven_scripts.h"
 
 #include "common/hashmap.h"
@@ -63,11 +64,11 @@ enum {
 
 // NAME Resource ID's
 enum {
-	CardNames = 1,
-	HotspotNames = 2,
-	ExternalCommandNames = 3,
-	VariableNames = 4,
-	StackNames = 5
+	kCardNames = 1,
+	kHotspotNames = 2,
+	kExternalCommandNames = 3,
+	kVariableNames = 4,
+	kStackNames = 5
 };
 
 enum RivenTransitionSpeed {
@@ -133,6 +134,13 @@ private:
 	// Stack/Card-related functions and variables
 	uint16 _curStack;
 	void handleEvents();
+
+	// Stack resource names
+	RivenNameList _varNames;
+	RivenNameList _externalCommandNames;
+	RivenNameList _hotspotNames;
+	RivenNameList _cardNames;
+	RivenNameList _stackNames;
 
 	// Hotspot related functions and variables
 	void checkInventoryClick();

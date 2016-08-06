@@ -50,7 +50,8 @@ Common::Rect *g_cathJournalRect3;
 Common::Rect *g_trapBookRect3;
 Common::Rect *g_demoExitRect;
 
-MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {
+MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc) :
+		MohawkEngine(syst, gamedesc) {
 	_showHotspots = false;
 	_gameOver = false;
 	_activatedPLST = false;
@@ -345,6 +346,13 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 	if (_mhk.empty())
 		error("Could not load stack %s", getStackName(_curStack).c_str());
 
+	// Load stack specific names
+	_varNames = RivenNameList(this, kVariableNames);
+	_externalCommandNames = RivenNameList(this, kExternalCommandNames);
+	_stackNames = RivenNameList(this, kStackNames);
+	_cardNames = RivenNameList(this, kCardNames);
+	_hotspotNames = RivenNameList(this, kHotspotNames);
+
 	// Stop any currently playing sounds
 	_sound->stopAllSLST();
 }
@@ -514,65 +522,6 @@ void MohawkEngine_Riven::checkInventoryClick() {
 
 Common::SeekableReadStream *MohawkEngine_Riven::getExtrasResource(uint32 tag, uint16 id) {
 	return _extrasFile->getResource(tag, id);
-}
-
-Common::String MohawkEngine_Riven::getName(uint16 nameResource, uint16 nameID) {
-	Common::SeekableReadStream* nameStream = getResource(ID_NAME, nameResource);
-	uint16 fieldCount = nameStream->readUint16BE();
-	uint16* stringOffsets = new uint16[fieldCount];
-	Common::String name;
-	char c;
-
-	if (nameID < fieldCount) {
-		for (uint16 i = 0; i < fieldCount; i++)
-			stringOffsets[i] = nameStream->readUint16BE();
-		for (uint16 i = 0; i < fieldCount; i++)
-			nameStream->readUint16BE();	// Skip unknown values
-
-		nameStream->seek(stringOffsets[nameID], SEEK_CUR);
-		c = (char)nameStream->readByte();
-
-		while (c) {
-			name += c;
-			c = (char)nameStream->readByte();
-		}
-	}
-
-	delete nameStream;
-	delete[] stringOffsets;
-	return name;
-}
-
-int16 MohawkEngine_Riven::getIdFromName(uint16 nameResource, const Common::String &name) {
-	//TODO: Use proper data structures
-
-	Common::SeekableReadStream *nameStream = getResource(ID_NAME, nameResource);
-	uint16 fieldCount = nameStream->readUint16BE();
-	uint16 *stringOffsets = new uint16[fieldCount];
-
-	for (uint16 i = 0; i < fieldCount; i++)
-		stringOffsets[i] = nameStream->readUint16BE();
-	for (uint16 i = 0; i < fieldCount; i++)
-		nameStream->readUint16BE();	// Skip unknown values
-
-	for (uint16 i = 0; i < fieldCount; i++) {
-		nameStream->seek(stringOffsets[i], SEEK_CUR);
-
-		Common::String readName;
-		char c = (char)nameStream->readByte();
-		while (c) {
-			readName += c;
-			c = (char)nameStream->readByte();
-		}
-
-		if (readName.equalsIgnoreCase(name)) {
-			return i;
-		}
-	}
-
-	delete nameStream;
-	delete[] stringOffsets;
-	return -1;
 }
 
 uint16 MohawkEngine_Riven::matchRMAPToCard(uint32 rmapCode) {
@@ -911,7 +860,7 @@ void MohawkEngine_Riven::checkSunnerAlertClick() {
 }
 
 void MohawkEngine_Riven::addZipVisitedCard(uint16 cardId, uint16 cardNameId) {
-	Common::String cardName = getName(CardNames, cardNameId);
+	Common::String cardName = getName(kCardNames, cardNameId);
 	if (cardName.empty())
 		return;
 	ZipMode zip;
@@ -932,6 +881,40 @@ bool MohawkEngine_Riven::isZipVisitedCard(const Common::String &hotspotName) con
 			}
 
 	return foundMatch;
+}
+
+Common::String MohawkEngine_Riven::getName(uint16 nameResource, uint16 nameID) {
+	switch (nameResource) {
+		case kVariableNames:
+			return _varNames.getName(nameID);
+		case kExternalCommandNames:
+			return _externalCommandNames.getName(nameID);
+		case kStackNames:
+			return _stackNames.getName(nameID);
+		case kCardNames:
+			return _cardNames.getName(nameID);
+		case kHotspotNames:
+			return _hotspotNames.getName(nameID);
+		default:
+			error("Unknown name resource %d", nameResource);
+	}
+}
+
+int16 MohawkEngine_Riven::getIdFromName(uint16 nameResource, const Common::String &name) {
+	switch (nameResource) {
+		case kVariableNames:
+			return _varNames.getNameId(name);
+		case kExternalCommandNames:
+			return _externalCommandNames.getNameId(name);
+		case kStackNames:
+			return _stackNames.getNameId(name);
+		case kCardNames:
+			return _cardNames.getNameId(name);
+		case kHotspotNames:
+			return _hotspotNames.getNameId(name);
+		default:
+			error("Unknown name resource %d", nameResource);
+	}
 }
 
 bool ZipMode::operator== (const ZipMode &z) const {
