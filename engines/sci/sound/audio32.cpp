@@ -309,11 +309,6 @@ int Audio32::readBuffer(Audio::st_sample_t *buffer, const int numSamples) {
 			continue;
 		}
 
-		if (channel.vmd) {
-			// TODO: VMD audio into output buffer
-			continue;
-		}
-
 		Audio::st_volume_t leftVolume, rightVolume;
 
 		if (channel.pan == -1 || !isStereo()) {
@@ -605,7 +600,6 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 	channel.resource = resource;
 	channel.loop = loop;
 	channel.robot = false;
-	channel.vmd = false;
 	channel.fadeStartTick = 0;
 	channel.soundNode = soundNode;
 	channel.volume = volume < 0 || volume > kMaxVolume ? (int)kMaxVolume : volume;

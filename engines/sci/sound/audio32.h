@@ -123,12 +123,6 @@ struct AudioChannel {
 	bool robot;
 
 	/**
-	 * Whether or not this channel contains a VMD audio
-	 * track.
-	 */
-	bool vmd;
-
-	/**
 	 * For digital sound effects, the related VM
 	 * Sound::nodePtr object for the sound.
 	 */
