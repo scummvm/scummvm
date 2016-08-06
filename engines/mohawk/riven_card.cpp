@@ -36,6 +36,7 @@ RivenCard::RivenCard(MohawkEngine_Riven *vm, uint16 id) :
 	loadHotspots(id);
 	loadCardPictureList(id);
 	loadCardSoundList(id);
+	loadCardHotspotEnableList(id);
 }
 
 RivenCard::~RivenCard() {
@@ -265,6 +266,33 @@ RivenHotspot *RivenCard::getHotspotByBlstId(const uint16 blstId) const {
 	}
 
 	return nullptr;
+}
+
+void RivenCard::loadCardHotspotEnableList(uint16 id) {
+	Common::SeekableReadStream* blst = _vm->getResource(ID_BLST, id);
+
+	uint16 recordCount = blst->readUint16BE();
+	_hotspotEnableList.resize(recordCount);
+
+	for (uint16 i = 0; i < recordCount; i++) {
+		HotspotEnableRecord &record = _hotspotEnableList[i];
+		record.index = blst->readUint16BE();
+		record.enabled = blst->readUint16BE();
+		record.hotspotId = blst->readUint16BE();
+	}
+
+	delete blst;
+}
+
+void RivenCard::activateHotspotEnableRecord(uint16 index) {
+	for (uint16 i = 0; i < _hotspotEnableList.size(); i++) {
+		const HotspotEnableRecord &record = _hotspotEnableList[i];
+		if (record.index == index) {
+			RivenHotspot *hotspot = getHotspotByBlstId(record.hotspotId);
+			hotspot->enable(record.enabled == 1);
+			break;
+		}
+	}
 }
 
 RivenHotspot::RivenHotspot(MohawkEngine_Riven *vm, Common::ReadStream *stream) :

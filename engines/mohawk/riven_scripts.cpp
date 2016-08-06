@@ -576,8 +576,8 @@ void RivenSimpleCommand::activateSLST(uint16 op, uint16 argc, uint16 *argv) {
 		return;
 
 	_vm->_activatedSLST = true;
-	SLSTRecord picture = _vm->getCurCard()->getSound(argv[0]);
-	_vm->_sound->playSLST(picture);
+	SLSTRecord slstRecord = _vm->getCurCard()->getSound(argv[0]);
+	_vm->_sound->playSLST(slstRecord);
 }
 
 // Command 41: activate MLST record and play
@@ -588,23 +588,7 @@ void RivenSimpleCommand::activateMLSTAndPlay(uint16 op, uint16 argc, uint16 *arg
 
 // Command 43: activate BLST record (card hotspot enabling lists)
 void RivenSimpleCommand::activateBLST(uint16 op, uint16 argc, uint16 *argv) {
-	Common::SeekableReadStream* blst = _vm->getResource(ID_BLST, _vm->getCurCard()->getId());
-	uint16 recordCount = blst->readUint16BE();
-
-	for (uint16 i = 0; i < recordCount; i++) {
-		uint16 index = blst->readUint16BE();	// record index
-		uint16 enabled = blst->readUint16BE();
-		uint16 hotspotID = blst->readUint16BE();
-
-		if (argv[0] == index) {
-			RivenHotspot *hotspot = _vm->getCurCard()->getHotspotByBlstId(hotspotID);
-			if (hotspot) {
-				hotspot->enable(enabled == 1);
-			}
-		}
-	}
-
-	delete blst;
+	_vm->getCurCard()->activateHotspotEnableRecord(argv[0]);
 
 	// Recheck our current hotspot because it may have now changed
 	_vm->updateCurrentHotspot();
