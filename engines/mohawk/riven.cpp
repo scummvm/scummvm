@@ -56,7 +56,6 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_gameOver = false;
 	_activatedPLST = false;
 	_activatedSLST = false;
-	_ignoreNextMouseUp = false;
 	_extrasFile = nullptr;
 	_curStack = kStackUnknown;
 	_gfx = nullptr;
@@ -230,13 +229,8 @@ void MohawkEngine_Riven::handleEvents() {
 			_card->onMouseDown(_eventMan->getMousePos());
 			break;
 		case Common::EVENT_LBUTTONUP:
-			// See RivenScript::switchCard() for more information on why we sometimes
-			// disable the next up event.
-			if (!_ignoreNextMouseUp) {
-				_card->onMouseUp(_eventMan->getMousePos());
-				checkInventoryClick();
-			}
-			_ignoreNextMouseUp = false;
+			_card->onMouseUp(_eventMan->getMousePos());
+			checkInventoryClick();
 			break;
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {

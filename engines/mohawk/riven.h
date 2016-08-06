@@ -155,7 +155,6 @@ private:
 
 	// Miscellaneous
 	bool _gameOver;
-	bool _ignoreNextMouseUp;
 	void checkSunnerAlertClick();
 
 public:
@@ -183,7 +182,6 @@ public:
 
 	// Miscellaneous
 	void setGameOver() { _gameOver = true; }
-	void ignoreNextMouseUp() { _ignoreNextMouseUp = true; }
 	Common::SeekableReadStream *getExtrasResource(uint32 tag, uint16 id);
 	bool _activatedPLST;
 	bool _activatedSLST;
