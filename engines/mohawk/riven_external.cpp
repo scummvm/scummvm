@@ -312,23 +312,27 @@ void RivenExternal::resetDomeSliders(uint16 soundId, uint16 startHotspot) {
 	assert(_sliderState == kDomeSliderDefaultState);
 }
 
-void RivenExternal::checkDomeSliders(uint16 resetSlidersHotspot, uint16 openDomeHotspot) {
+void RivenExternal::checkDomeSliders() {
+	RivenHotspot *resetSlidersHotspot = _vm->getCurCard()->getHotspotByName("ResetSliders");
+	RivenHotspot *openDomeHotspot = _vm->getCurCard()->getHotspotByName("OpenDome");
+
 	// Let's see if we're all matched up...
 	if (_vm->_vars["adomecombo"] == _sliderState) {
 		// Set the button hotspot to the open dome hotspot
-		_vm->_hotspots[resetSlidersHotspot]->enable(false);
-		_vm->_hotspots[openDomeHotspot]->enable(true);
+		resetSlidersHotspot->enable(false);
+		openDomeHotspot->enable(true);
 	} else {
 		// Set the button hotspot to the reset sliders hotspot
-		_vm->_hotspots[resetSlidersHotspot]->enable(true);
-		_vm->_hotspots[openDomeHotspot]->enable(false);
+		resetSlidersHotspot->enable(true);
+		openDomeHotspot->enable(false);
 	}
 }
 
 void RivenExternal::checkSliderCursorChange(uint16 startHotspot) {
 	// Set the cursor based on _sliderState and what hotspot we're over
 	for (uint16 i = 0; i < kDomeSliderSlotCount; i++) {
-		if (_vm->_hotspots[i + startHotspot]->containsPoint(_vm->_system->getEventManager()->getMousePos())) {
+		RivenHotspot *hotspot = _vm->getCurCard()->getHotspotByBlstId(startHotspot + i);
+		if (hotspot->containsPoint(_vm->_system->getEventManager()->getMousePos())) {
 			if (_sliderState & (1 << (24 - i)))
 				_vm->_cursor->setCursor(kRivenOpenHandCursor);
 			else
@@ -339,11 +343,12 @@ void RivenExternal::checkSliderCursorChange(uint16 startHotspot) {
 	}
 }
 
-void RivenExternal::dragDomeSlider(uint16 soundId, uint16 resetSlidersHotspot, uint16 openDomeHotspot, uint16 startHotspot) {
+void RivenExternal::dragDomeSlider(uint16 soundId, uint16 startHotspot) {
 	int16 foundSlider = -1;
 
 	for (uint16 i = 0; i < kDomeSliderSlotCount; i++) {
-		if (_vm->_hotspots[i + startHotspot]->containsPoint(_vm->_system->getEventManager()->getMousePos())) {
+		RivenHotspot *hotspot = _vm->getCurCard()->getHotspotByBlstId(startHotspot + i);
+		if (hotspot->containsPoint(_vm->_system->getEventManager()->getMousePos())) {
 			// If the slider is not at this hotspot, we can't do anything else
 			if (!(_sliderState & (1 << (24 - i))))
 				return;
@@ -367,24 +372,30 @@ void RivenExternal::dragDomeSlider(uint16 soundId, uint16 resetSlidersHotspot, u
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
-				if (foundSlider < 24 && !(_sliderState & (1 << (23 - foundSlider))) && _vm->_hotspots[foundSlider + startHotspot + 1]->containsPoint(event.mouse)) {
-					// We've moved the slider right one space
-					_sliderState &= ~(_sliderState & (1 << (24 - foundSlider)));
-					foundSlider++;
-					_sliderState |= 1 << (24 - foundSlider);
+				if (foundSlider < 24 && !(_sliderState & (1 << (23 - foundSlider)))) {
+					RivenHotspot *nextHotspot = _vm->getCurCard()->getHotspotByBlstId(startHotspot + foundSlider + 1);
+					if (nextHotspot->containsPoint(event.mouse)) {
+						// We've moved the slider right one space
+						_sliderState &= ~(_sliderState & (1 << (24 - foundSlider)));
+						foundSlider++;
+						_sliderState |= 1 << (24 - foundSlider);
 
-					// Now play a click sound and redraw
-					_vm->_sound->playSound(soundId);
-					drawDomeSliders(startHotspot);
-				} else if (foundSlider > 0 && !(_sliderState & (1 << (25 - foundSlider))) && _vm->_hotspots[foundSlider + startHotspot - 1]->containsPoint(event.mouse)) {
-					// We've moved the slider left one space
-					_sliderState &= ~(_sliderState & (1 << (24 - foundSlider)));
-					foundSlider--;
-					_sliderState |= 1 << (24 - foundSlider);
+						// Now play a click sound and redraw
+						_vm->_sound->playSound(soundId);
+						drawDomeSliders(startHotspot);
+					}
+				} else if (foundSlider > 0 && !(_sliderState & (1 << (25 - foundSlider)))) {
+					RivenHotspot *previousHotspot = _vm->getCurCard()->getHotspotByBlstId(startHotspot + foundSlider - 1);
+					if (previousHotspot->containsPoint(event.mouse)) {
+						// We've moved the slider left one space
+						_sliderState &= ~(_sliderState & (1 << (24 - foundSlider)));
+						foundSlider--;
+						_sliderState |= 1 << (24 - foundSlider);
 
-					// Now play a click sound and redraw
-					_vm->_sound->playSound(soundId);
-					drawDomeSliders(startHotspot);
+						// Now play a click sound and redraw
+						_vm->_sound->playSound(soundId);
+						drawDomeSliders(startHotspot);
+					}
 				} else
 					_vm->_system->updateScreen(); // A normal update for the cursor
 				break;
@@ -399,7 +410,7 @@ void RivenExternal::dragDomeSlider(uint16 soundId, uint16 resetSlidersHotspot, u
 	}
 
 	// Check to see if we have the right combination
-	checkDomeSliders(resetSlidersHotspot, openDomeHotspot);
+	checkDomeSliders();
 }
 
 void RivenExternal::drawDomeSliders(uint16 startHotspot) {
@@ -414,10 +425,12 @@ void RivenExternal::drawDomeSliders(uint16 startHotspot) {
 	uint16 bitmapId = _vm->findResourceID(ID_TBMP, "*sliders*");
 
 	for (uint16 i = 0; i < kDomeSliderSlotCount; i++) {
-		Common::Rect srcRect = _vm->_hotspots[startHotspot + i]->getRect();
+		RivenHotspot *hotspot = _vm->getCurCard()->getHotspotByBlstId(startHotspot + i);
+
+		Common::Rect srcRect = hotspot->getRect();
 		srcRect.translate(-dstAreaRect.left, -dstAreaRect.top); // Adjust the rect so it's in the destination area
 
-		Common::Rect dstRect = _vm->_hotspots[startHotspot + i]->getRect();
+		Common::Rect dstRect = hotspot->getRect();
 
 		if (_sliderState & (1 << (24 - i)))
 			_vm->_gfx->drawImageRect(bitmapId, srcRect, dstRect);
@@ -449,14 +462,17 @@ void RivenExternal::xaatrusopenbook(uint16 argc, uint16 *argv) {
 	uint32 &page = _vm->_vars["aatruspage"];
 
 	// Set hotspots depending on the page
+	RivenHotspot *openBook = _vm->_card->getHotspotByName("openBook");
+	RivenHotspot *nextPage = _vm->_card->getHotspotByName("nextpage");
+	RivenHotspot *prevPage = _vm->_card->getHotspotByName("prevpage");
 	if (page == 1) {
-		_vm->_hotspots[1]->enable(false);
-		_vm->_hotspots[2]->enable(false);
-		_vm->_hotspots[3]->enable(true);
+		prevPage->enable(false);
+		nextPage->enable(false);
+		openBook->enable(true);
 	} else {
-		_vm->_hotspots[1]->enable(true);
-		_vm->_hotspots[2]->enable(true);
-		_vm->_hotspots[3]->enable(false);
+		prevPage->enable(true);
+		nextPage->enable(true);
+		openBook->enable(false);
 	}
 
 	// Draw the image of the page
@@ -514,14 +530,17 @@ void RivenExternal::xacathopenbook(uint16 argc, uint16 *argv) {
 	uint32 page = _vm->_vars["acathpage"];
 
 	// Set hotspots depending on the page
+	RivenHotspot *openBook = _vm->_card->getHotspotByName("openBook");
+	RivenHotspot *nextPage = _vm->_card->getHotspotByName("nextpage");
+	RivenHotspot *prevPage = _vm->_card->getHotspotByName("prevpage");
 	if (page == 1) {
-		_vm->_hotspots[1]->enable(false);
-		_vm->_hotspots[2]->enable(false);
-		_vm->_hotspots[3]->enable(true);
+		prevPage->enable(false);
+		nextPage->enable(false);
+		openBook->enable(true);
 	} else {
-		_vm->_hotspots[1]->enable(true);
-		_vm->_hotspots[2]->enable(true);
-		_vm->_hotspots[3]->enable(false);
+		prevPage->enable(true);
+		nextPage->enable(true);
+		openBook->enable(false);
 	}
 
 	// Draw the image of the page
@@ -946,12 +965,16 @@ void RivenExternal::xbait(uint16 argc, uint16 *argv) {
 	_vm->_cursor->setCursor(kRivenMainCursor);
 	_vm->_system->updateScreen();
 
+	RivenHotspot *bait = _vm->getCurCard()->getHotspotByBlstId(9);
+	RivenHotspot *baitPlate = _vm->getCurCard()->getHotspotByBlstId(16);
+
 	// Set the bait if we put it on the plate
-	if (_vm->_hotspots[9]->containsPoint(_vm->_system->getEventManager()->getMousePos())) {
+	if (baitPlate->containsPoint(_vm->_system->getEventManager()->getMousePos())) {
 		_vm->_vars["bbait"] = 1;
 		_vm->getCurCard()->drawPicture(4);
-		_vm->_hotspots[3]->enable(false); // Disable bait hotspot
-		_vm->_hotspots[9]->enable(true); // Enable baitplate hotspot
+
+		bait->enable(false); // Disable bait hotspot
+		baitPlate->enable(true); // Enable baitplate hotspot
 	}
 }
 
@@ -1005,33 +1028,36 @@ void RivenExternal::xbaitplate(uint16 argc, uint16 *argv) {
 	_vm->_cursor->setCursor(kRivenMainCursor);
 	_vm->_system->updateScreen();
 
+	RivenHotspot *bait = _vm->getCurCard()->getHotspotByBlstId(9);
+	RivenHotspot *baitPlate = _vm->getCurCard()->getHotspotByBlstId(16);
+
 	// Set the bait if we put it on the plate, remove otherwise
-	if (_vm->_hotspots[9]->containsPoint(_vm->_system->getEventManager()->getMousePos())) {
+	if (baitPlate->containsPoint(_vm->_system->getEventManager()->getMousePos())) {
 		_vm->_vars["bbait"] = 1;
 		_vm->getCurCard()->drawPicture(4);
-		_vm->_hotspots[3]->enable(false); // Disable bait hotspot
-		_vm->_hotspots[9]->enable(true); // Enable baitplate hotspot
+		bait->enable(false); // Disable bait hotspot
+		baitPlate->enable(true); // Enable baitplate hotspot
 	} else {
 		_vm->_vars["bbait"] = 0;
-		_vm->_hotspots[3]->enable(true); // Enable bait hotspot
-		_vm->_hotspots[9]->enable(false); // Disable baitplate hotspot
+		bait->enable(true); // Enable bait hotspot
+		baitPlate->enable(false); // Disable baitplate hotspot
 	}
 }
 
 void RivenExternal::xbisland190_opencard(uint16 argc, uint16 *argv) {
-	checkDomeSliders(27, 28);
+	checkDomeSliders();
 }
 
 void RivenExternal::xbisland190_resetsliders(uint16 argc, uint16 *argv) {
-	resetDomeSliders(41, 2);
+	resetDomeSliders(41, 9);
 }
 
 void RivenExternal::xbisland190_slidermd(uint16 argc, uint16 *argv) {
-	dragDomeSlider(41, 27, 28, 2);
+	dragDomeSlider(41, 9);
 }
 
 void RivenExternal::xbisland190_slidermw(uint16 argc, uint16 *argv) {
-	checkSliderCursorChange(2);
+	checkSliderCursorChange(9);
 }
 
 void RivenExternal::xbscpbtn(uint16 argc, uint16 *argv) {
@@ -1192,10 +1218,12 @@ void RivenExternal::xgrotatepins(uint16 argc, uint16 *argv) {
 void RivenExternal::xgpincontrols(uint16 argc, uint16 *argv) {
 	// Handle a click on a section of an island
 
+	RivenHotspot *panel = _vm->getCurCard()->getHotspotByBlstId(13);
+
 	// Get our mouse position and adjust it to the beginning of the hotspot
 	Common::Point mousePos = _vm->_system->getEventManager()->getMousePos();
-	mousePos.x -= _vm->_hotspots[3]->getRect().left;
-	mousePos.y -= _vm->_hotspots[3]->getRect().top;
+	mousePos.x -= panel->getRect().left;
+	mousePos.y -= panel->getRect().top;
 
 	// And now adjust it to which box we hit
 	mousePos.x /= 10;
@@ -1280,19 +1308,19 @@ void RivenExternal::xgpincontrols(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xgisland25_opencard(uint16 argc, uint16 *argv) {
-	checkDomeSliders(28, 29);
+	checkDomeSliders();
 }
 
 void RivenExternal::xgisland25_resetsliders(uint16 argc, uint16 *argv) {
-	resetDomeSliders(16, 2);
+	resetDomeSliders(16, 11);
 }
 
 void RivenExternal::xgisland25_slidermd(uint16 argc, uint16 *argv) {
-	dragDomeSlider(16, 28, 29, 2);
+	dragDomeSlider(16, 11);
 }
 
 void RivenExternal::xgisland25_slidermw(uint16 argc, uint16 *argv) {
-	checkSliderCursorChange(2);
+	checkSliderCursorChange(11);
 }
 
 void RivenExternal::xgscpbtn(uint16 argc, uint16 *argv) {
@@ -1340,9 +1368,11 @@ void RivenExternal::xgrviewer(uint16 argc, uint16 *argv) {
 	}
 
 	// Calculate how much we're moving
-	static const uint16 hotspotPositions[] = { 2, 1, 5, 4, 3 };
+	Common::String buttonName = _vm->_curHotspot->getName();
+	uint32 buttonPos = buttonName.lastChar() - '0';
+
 	uint32 &curPos = _vm->_vars["grviewpos"];
-	uint32 newPos = curPos + hotspotPositions[_vm->_curHotspot->getIndex() - 2];
+	uint32 newPos = curPos + buttonPos;
 
 	// Now play the movie
 	VideoHandle handle = _vm->_video->playMovieRiven(1);
@@ -1409,9 +1439,11 @@ void RivenExternal::xglviewer(uint16 argc, uint16 *argv) {
 	// (It shows the village from the middle of the lake)
 
 	// Calculate how much we're moving
-	static const uint16 hotspotPositions[] = { 1, 5, 4, 2, 0, 0, 3 };
+	Common::String buttonName = _vm->_curHotspot->getName();
+	uint32 buttonPos = buttonName.lastChar() - '0';
+
 	uint32 &curPos = _vm->_vars["glviewpos"];
-	uint32 newPos = curPos + hotspotPositions[_vm->_curHotspot->getIndex() - 2];
+	uint32 newPos = curPos + buttonPos;
 
 	// Now play the movie
 	VideoHandle handle = _vm->_video->playMovieRiven(1);
@@ -1756,15 +1788,15 @@ void RivenExternal::xvga1300_carriage(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xjdome25_resetsliders(uint16 argc, uint16 *argv) {
-	resetDomeSliders(81, 2);
+	resetDomeSliders(81, 10);
 }
 
 void RivenExternal::xjdome25_slidermd(uint16 argc, uint16 *argv) {
-	dragDomeSlider(81, 29, 28, 2);
+	dragDomeSlider(81, 10);
 }
 
 void RivenExternal::xjdome25_slidermw(uint16 argc, uint16 *argv) {
-	checkSliderCursorChange(2);
+	checkSliderCursorChange(10);
 }
 
 void RivenExternal::xjscpbtn(uint16 argc, uint16 *argv) {
@@ -1995,8 +2027,10 @@ void RivenExternal::xschool280_playwhark(uint16 argc, uint16 *argv) {
 	}
 
 	// Enable the correct hotspots for the movement now
-	_vm->_hotspots[2]->enable(!_vm->_hotspots[2]->isEnabled());
-	_vm->_hotspots[3]->enable(!_vm->_hotspots[3]->isEnabled());
+	RivenHotspot *rotateLeft = _vm->getCurCard()->getHotspotByName("rotateLeft");
+	RivenHotspot *rotateRight = _vm->getCurCard()->getHotspotByName("rotateRight");
+	rotateLeft->enable(!rotateLeft->isEnabled());
+	rotateRight->enable(!rotateRight->isEnabled());
 
 	// Update the cursor
 	_vm->updateCurrentHotspot();
@@ -2046,15 +2080,15 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 	uint32 endTime = argv[2] * 1000 / 600;
 
 	// Track down our hotspot
-	// Of course, they're not in any sane order...
-	static const uint16 hotspotMap[] = { 1, 3, 2, 0 };
-	Common::Rect hotspotRect = _vm->_hotspots[hotspotMap[argv[3] - 1]]->getRect();
+	Common::String hotspotName = Common::String::format("touchBook%d", argv[3]);
+	RivenHotspot *hotspot = _vm->getCurCard()->getHotspotByName(hotspotName);
+	Common::Rect hotspotRect = hotspot->getRect();
 
 	debug(0, "xbookclick:");
 	debug(0, "\tVideo Code = %d", argv[0]);
 	debug(0, "\tStart Time = %dms", startTime);
 	debug(0, "\tEnd Time   = %dms", endTime);
-	debug(0, "\tHotspot    = %d -> %d", argv[3], hotspotMap[argv[3] - 1]);
+	debug(0, "\tHotspot    = %d -> %s", argv[3], hotspotName.c_str());
 
 	// Just let the video play while we wait until Gehn opens the trap book for us
 	while (video->getTime() < startTime && !_vm->shouldQuit()) {
@@ -2157,9 +2191,13 @@ void RivenExternal::xooffice30_closebook(uint16 argc, uint16 *argv) {
 	_vm->_video->playMovieBlockingRiven(1);
 
 	// Set the hotspots into their correct states
-	_vm->_hotspots[2]->enable(false);
-	_vm->_hotspots[5]->enable(false);
-	_vm->_hotspots[6]->enable(true);
+	RivenHotspot *closeBook = _vm->getCurCard()->getHotspotByName("closeBook");
+	RivenHotspot *nullHotspot = _vm->getCurCard()->getHotspotByName("null");
+	RivenHotspot *openBook = _vm->getCurCard()->getHotspotByName("openBook");
+
+	closeBook->enable(false);
+	nullHotspot->enable(false);
+	openBook->enable(true);
 
 	// We now need to draw PLST 1 and refresh, but PLST 1 is
 	// drawn when refreshing anyway, so don't worry about that.
@@ -2284,19 +2322,19 @@ void RivenExternal::xpisland290_domecheck(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xpisland25_opencard(uint16 argc, uint16 *argv) {
-	checkDomeSliders(31, 5);
+	checkDomeSliders();
 }
 
 void RivenExternal::xpisland25_resetsliders(uint16 argc, uint16 *argv) {
-	resetDomeSliders(10, 6);
+	resetDomeSliders(10, 14);
 }
 
 void RivenExternal::xpisland25_slidermd(uint16 argc, uint16 *argv) {
-	dragDomeSlider(10, 31, 5, 6);
+	dragDomeSlider(10, 14);
 }
 
 void RivenExternal::xpisland25_slidermw(uint16 argc, uint16 *argv) {
-	checkSliderCursorChange(6);
+	checkSliderCursorChange(14);
 }
 
 // ------------------------------------------------------------------------------------
@@ -2484,7 +2522,8 @@ void RivenExternal::xtisland390_covercombo(uint16 argc, uint16 *argv) {
 
 	// If we have hit the correct 5 buttons in a row, activate the hotspot to open up the
 	// telescope cover.
-	_vm->_hotspots[9]->enable(correctDigits == 5);
+	RivenHotspot *openCover = _vm->getCurCard()->getHotspotByName("openCover");
+	openCover->enable(correctDigits == 5);
 }
 
 // Atrus' Journal and Trap Book are added to inventory
@@ -2614,20 +2653,23 @@ void RivenExternal::xt7600_setupmarbles(uint16 argc, uint16 *argv) {
 void RivenExternal::setMarbleHotspots() {
 	// Set the hotspots
 	for (uint16 i = 0; i < kMarbleCount; i++) {
-		uint32 &marblePos = _vm->_vars[s_marbleNames[i]];
+		uint32 marblePos = _vm->_vars[s_marbleNames[i]];
+		RivenHotspot *marbleHotspot = _vm->getCurCard()->getHotspotByName(s_marbleNames[i]);
 
 		if (marblePos == 0) // In the receptacle
-			_vm->_hotspots[i + 3]->setRect(_marbleBaseHotspots[i]);
+			marbleHotspot->setRect(_marbleBaseHotspots[i]);
 		else                 // On the grid
-			_vm->_hotspots[i + 3]->setRect(generateMarbleGridRect(getMarbleX(marblePos), getMarbleY(marblePos)));
+			marbleHotspot->setRect(generateMarbleGridRect(getMarbleX(marblePos), getMarbleY(marblePos)));
 	}
 }
 
 void RivenExternal::xt7800_setup(uint16 argc, uint16 *argv) {
 	// First, let's store the base receptacle hotspots for the marbles
 	if (_marbleBaseHotspots.empty())
-		for (uint16 i = 0; i < kMarbleCount; i++)
-			_marbleBaseHotspots.push_back(_vm->_hotspots[i + 3]->getRect());
+		for (uint16 i = 0; i < kMarbleCount; i++) {
+			RivenHotspot *marbleHotspot = _vm->getCurCard()->getHotspotByName(s_marbleNames[i]);
+			_marbleBaseHotspots.push_back(marbleHotspot->getRect());
+		}
 
 	// Move the marble hotspots based on their position variables
 	setMarbleHotspots();
@@ -2640,7 +2682,9 @@ void RivenExternal::drawMarbles() {
 		if (_vm->_vars["themarble"] - 1 == i)
 			continue;
 
-		Common::Rect rect = _vm->_hotspots[i + 3]->getRect();
+		RivenHotspot *marbleHotspot = _vm->getCurCard()->getHotspotByName(s_marbleNames[i]);
+
+		Common::Rect rect = marbleHotspot->getRect();
 		// Trim the rect down a bit
 		rect.left += 3;
 		rect.top += 3;
@@ -2662,11 +2706,13 @@ void RivenExternal::xtakeit(uint16 argc, uint16 *argv) {
 	uint32 &marble = _vm->_vars["themarble"];
 	marble = 0;
 
-	for (uint32 i = 0; i < kMarbleCount; i++)
-		if (_vm->_hotspots[i + 3]->containsPoint(_vm->_system->getEventManager()->getMousePos())) {
+	for (uint32 i = 0; i < kMarbleCount; i++) {
+		RivenHotspot *marbleHotspot = _vm->getCurCard()->getHotspotByName(s_marbleNames[i]);
+		if (marbleHotspot->containsPoint(_vm->_system->getEventManager()->getMousePos())) {
 			marble = i + 1;
 			break;
 		}
+	}
 
 	// xtakeit() shouldn't be called if we're not on a marble hotspot
 	assert(marble != 0);
@@ -2735,19 +2781,19 @@ void RivenExternal::xtisland4990_domecheck(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xtisland5056_opencard(uint16 argc, uint16 *argv) {
-	checkDomeSliders(29, 30);
+	checkDomeSliders();
 }
 
 void RivenExternal::xtisland5056_resetsliders(uint16 argc, uint16 *argv) {
-	resetDomeSliders(37, 3);
+	resetDomeSliders(37, 24);
 }
 
 void RivenExternal::xtisland5056_slidermd(uint16 argc, uint16 *argv) {
-	dragDomeSlider(37, 29, 30, 3);
+	dragDomeSlider(37, 24);
 }
 
 void RivenExternal::xtisland5056_slidermw(uint16 argc, uint16 *argv) {
-	checkSliderCursorChange(3);
+	checkSliderCursorChange(24);
 }
 
 void RivenExternal::xtatboundary(uint16 argc, uint16 *argv) {

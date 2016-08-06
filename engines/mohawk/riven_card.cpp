@@ -33,12 +33,15 @@ RivenCard::RivenCard(MohawkEngine_Riven *vm, uint16 id) :
 	_vm(vm),
 	_id(id) {
 	loadCardResource(id);
+	loadHotspots(id);
 	loadCardPictureList(id);
 	loadCardSoundList(id);
 }
 
 RivenCard::~RivenCard() {
-
+	for (uint i = 0; i < _hotspots.size(); i++) {
+		delete _hotspots[i];
+	}
 }
 
 void RivenCard::loadCardResource(uint16 id) {
@@ -68,6 +71,20 @@ void RivenCard::open() {
 void RivenCard::initializeZipMode() {
 	if (_zipModePlace) {
 		_vm->addZipVisitedCard(_id, _name);
+	}
+
+	// Check if a zip mode hotspot is enabled by checking the name/id against the ZIPS records.
+	for (uint32 i = 0; i < _hotspots.size(); i++) {
+		if (_hotspots[i]->isZip()) {
+			if (_vm->_vars["azip"] != 0) {
+				// Check if a zip mode hotspot is enabled by checking the name/id against the ZIPS records.
+				Common::String hotspotName = _hotspots[i]->getName();
+				bool visited = _vm->isZipVisitedCard(hotspotName);
+
+				_hotspots[i]->enable(visited);
+			} else // Disable the hotspot if zip mode is disabled
+				_hotspots[i]->enable(false);
+		}
 	}
 }
 
@@ -196,6 +213,60 @@ SLSTRecord RivenCard::getSound(uint16 index) const {
 	error("Could not find sound %d in card %d", index, _id);
 }
 
+void RivenCard::loadHotspots(uint16 id) {
+	Common::SeekableReadStream *inStream = _vm->getResource(ID_HSPT, id);
+
+	uint16 hotspotCount = inStream->readUint16BE();
+	_hotspots.resize(hotspotCount);
+
+	for (uint16 i = 0; i < hotspotCount; i++) {
+		_hotspots[i] = new RivenHotspot(_vm, inStream);
+	}
+
+	delete inStream;
+}
+
+void RivenCard::drawHotspotRects() {
+	for (uint16 i = 0; i < _hotspots.size(); i++)
+		_vm->_gfx->drawRect(_hotspots[i]->getRect(), _hotspots[i]->isEnabled());
+}
+
+RivenHotspot *RivenCard::getHotspotContainingPoint(const Common::Point &point) const {
+	RivenHotspot *hotspot = nullptr;
+	for (uint16 i = 0; i < _hotspots.size(); i++)
+		if (_hotspots[i]->isEnabled() && _hotspots[i]->containsPoint(point)) {
+			hotspot = _hotspots[i];
+		}
+
+	return hotspot;
+}
+
+Common::Array<RivenHotspot *> RivenCard::getHotspots() const {
+	return _hotspots;
+}
+
+RivenHotspot *RivenCard::getHotspotByName(const Common::String &name) const {
+	int16 nameId = _vm->getIdFromName(HotspotNames, name);
+
+	for (uint i = 0; i < _hotspots.size(); i++) {
+		if (_hotspots[i]->getNameId() == nameId) {
+			return _hotspots[i];
+		}
+	}
+
+	error("Card %d does not have an hotspot named %s", _id, name.c_str());
+}
+
+RivenHotspot *RivenCard::getHotspotByBlstId(const uint16 blstId) const {
+	for (uint i = 0; i < _hotspots.size(); i++) {
+		if (_hotspots[i]->getBlstId() == blstId) {
+			return _hotspots[i];
+		}
+	}
+
+	return nullptr;
+}
+
 RivenHotspot::RivenHotspot(MohawkEngine_Riven *vm, Common::ReadStream *stream) :
 		_vm(vm) {
 	loadFromStream(stream);
@@ -287,6 +358,10 @@ uint16 RivenHotspot::getBlstId() const {
 
 void RivenHotspot::setRect(const Common::Rect &rect) {
 	_rect = rect;
+}
+
+int16 RivenHotspot::getNameId() const {
+	return _nameResource;
 }
 
 } // End of namespace Mohawk
