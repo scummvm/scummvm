@@ -303,13 +303,6 @@ void RivenSimpleCommand::drawBitmap(uint16 op, uint16 argc, uint16 *argv) {
 // Command 2: go to card (card id)
 void RivenSimpleCommand::switchCard(uint16 op, uint16 argc, uint16 *argv) {
 	_vm->changeToCard(argv[0]);
-
-	// WORKAROUND: If we changed card on a mouse down event,
-	// we want to ignore the next mouse up event so we don't
-	// change card when lifting the mouse on the next card.
-// TODO: Restore
-//	if (_scriptType == kMouseDownScript)
-//		_vm->ignoreNextMouseUp();
 }
 
 // Command 3: play an SLST from the script
