@@ -37,6 +37,7 @@ RivenCard::RivenCard(MohawkEngine_Riven *vm, uint16 id) :
 	loadCardPictureList(id);
 	loadCardSoundList(id);
 	loadCardHotspotEnableList(id);
+	loadCardWaterEffectList(id);
 }
 
 RivenCard::~RivenCard() {
@@ -269,7 +270,7 @@ RivenHotspot *RivenCard::getHotspotByBlstId(const uint16 blstId) const {
 }
 
 void RivenCard::loadCardHotspotEnableList(uint16 id) {
-	Common::SeekableReadStream* blst = _vm->getResource(ID_BLST, id);
+	Common::SeekableReadStream *blst = _vm->getResource(ID_BLST, id);
 
 	uint16 recordCount = blst->readUint16BE();
 	_hotspotEnableList.resize(recordCount);
@@ -290,6 +291,36 @@ void RivenCard::activateHotspotEnableRecord(uint16 index) {
 		if (record.index == index) {
 			RivenHotspot *hotspot = getHotspotByBlstId(record.hotspotId);
 			hotspot->enable(record.enabled == 1);
+			break;
+		}
+	}
+}
+
+void RivenCard::loadCardWaterEffectList(uint16 id) {
+	Common::SeekableReadStream *flst = _vm->getResource(ID_FLST, id);
+
+	uint16 recordCount = flst->readUint16BE();
+	_waterEffectList.resize(recordCount);
+
+	for (uint16 i = 0; i < recordCount; i++) {
+		WaterEffectRecord &record = _waterEffectList[i];
+		record.index = flst->readUint16BE();
+		record.sfxeId = flst->readUint16BE();
+		record.u0 = flst->readUint16BE();
+
+		if (record.u0 != 0) {
+			warning("FLST u0 non-zero");
+		}
+	}
+
+	delete flst;
+}
+
+void RivenCard::activateWaterEffect(uint16 index) {
+	for (uint16 i = 0; i < _waterEffectList.size(); i++) {
+		const WaterEffectRecord &record = _waterEffectList[i];
+		if (record.index == index) {
+			_vm->_gfx->scheduleWaterEffect(record.sfxeId);
 			break;
 		}
 	}

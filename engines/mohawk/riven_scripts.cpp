@@ -596,23 +596,7 @@ void RivenSimpleCommand::activateBLST(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 44: activate FLST record (information on which SFXE resource this card should use)
 void RivenSimpleCommand::activateFLST(uint16 op, uint16 argc, uint16 *argv) {
-	Common::SeekableReadStream* flst = _vm->getResource(ID_FLST, _vm->getCurCard()->getId());
-	uint16 recordCount = flst->readUint16BE();
-
-	for (uint16 i = 0; i < recordCount; i++) {
-		uint16 index = flst->readUint16BE();
-		uint16 sfxeID = flst->readUint16BE();
-
-		if (flst->readUint16BE() != 0)
-			warning("FLST u0 non-zero");
-
-		if (index == argv[0]) {
-			_vm->_gfx->scheduleWaterEffect(sfxeID);
-			break;
-		}
-	}
-
-	delete flst;
+	_vm->getCurCard()->activateWaterEffect(argv[0]);
 }
 
 // Command 45: do zip mode
