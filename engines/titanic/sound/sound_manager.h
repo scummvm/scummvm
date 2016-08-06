@@ -240,9 +240,9 @@ private:
 	int _channelsMode[16];
 private:
 	/**
-	 * Flushes designated channels
+	 * Stops a designated range of channels
 	 */
-	void flushChannels(int channel);
+	void stopChannels(int channel);
 
 	/**
 	 * Updates the volume for a channel
@@ -270,6 +270,11 @@ private:
 	 * Sets a channel volume
 	 */
 	void setChannelVolume(int iChannel, uint volume, uint mode);
+
+	/**
+	 * Flushes channels
+	 */
+	int flushChannels(int iChannel);
 public:
 	int _field18;
 	int _field1C;

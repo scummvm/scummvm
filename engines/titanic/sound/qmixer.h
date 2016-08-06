@@ -38,7 +38,7 @@ enum QMixFlag {
 	QMIX_ALL				= 0x01,	// apply to all channels
 	QMIX_NOREMIX			= 0x02,	// don't remix
 	QMIX_CONTROL_NOREMIX	= 0x04,	// don't remix
-	QMIX_USEONCE			= 0x10,	// settings are temporary
+	QMIX_USEONCE			= 0x10	// settings are temporary
 };
 
 // qsWaveMixEnableChannel flags:  if mode==0, use conventional, high-performance

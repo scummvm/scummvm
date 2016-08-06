@@ -535,18 +535,18 @@ void CTrueTalkManager::playSpeech(TTtalker *talker, TTroomScript *roomScript, CV
 		}
 
 		// Start the speech
-		p1._speechHandle = _gameManager->_sound.playSpeech(_dialogueFile, id - _dialogueId, p1);
+		p1._soundHandle = _gameManager->_sound.playSpeech(_dialogueFile, id - _dialogueId, p1);
 		if (!milli)
 			continue;
 
 		if (idx == 0)
 			g_vm->_events->sleep(milli);
 
-		p3._speechHandle = _gameManager->_sound.playSpeech(_dialogueFile, id - _dialogueId, p3);
+		p3._soundHandle = _gameManager->_sound.playSpeech(_dialogueFile, id - _dialogueId, p3);
 		if (idx == 0)
 			g_vm->_events->sleep(milli);
 
-		p2._speechHandle = _gameManager->_sound.playSpeech(_dialogueFile, id - _dialogueId, p2);
+		p2._soundHandle = _gameManager->_sound.playSpeech(_dialogueFile, id - _dialogueId, p2);
 	}
 }
 

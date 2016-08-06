@@ -117,8 +117,22 @@ int QSoundManager::proc5() const {
 	return 0;
 }
 
-int QSoundManager::playSound(CWaveFile &soundRes, CProximity &prox) {
-	warning("TODO");
+int QSoundManager::playSound(CWaveFile &waveFile, CProximity &prox) {
+	int channel = -1;
+	uint flags = QMIX_CLEARQUEUE;
+
+	for (uint idx = 0; idx < _slots.size(); ++idx) {
+		if (_slots[idx]._handle == prox._soundHandle) {
+			channel = _slots[idx]._channel;
+			flags = QMIX_QUEUEWAVE;
+			break;
+		}
+	}
+
+	if (channel >= 0 || (channel = flushChannels(prox._field24)) != -1) {
+		return playWave(&waveFile, channel, flags, prox);
+	}
+
 	return 0;
 }
 
@@ -143,6 +157,11 @@ void QSoundManager::stopAllChannels() {
 	for (int idx = 0; idx < 16; ++idx)
 		_sounds.flushChannel(idx);
 	flushChannels(10);
+}
+
+int QSoundManager::flushChannels(int iChannel) {
+	// TODO
+	return -1;
 }
 
 void QSoundManager::setVolume(uint handle, uint volume, uint seconds) {
@@ -298,7 +317,7 @@ void QSoundManager::soundFreed(Audio::SoundHandle &handle) {
 	qsWaveMixFreeWave(handle);
 }
 
-void QSoundManager::flushChannels(int channel) {
+void QSoundManager::stopChannels(int channel) {
 	int endChannel;
 	switch (channel) {
 	case 0:
