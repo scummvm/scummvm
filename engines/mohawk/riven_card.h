@@ -94,13 +94,23 @@ public:
 	/** Get all the hotspots in the card. To be used for debugging features only */
 	Common::Array<RivenHotspot *> getHotspots() const;
 
+	/** Activate a hotspot using a hotspot enable list entry */
+	void activateHotspotEnableRecord(uint16 index);
+
 private:
 	void loadCardResource(uint16 id);
 	void loadHotspots(uint16 id);
 	void loadCardPictureList(uint16 id);
 	void loadCardSoundList(uint16 id);
+	void loadCardHotspotEnableList(uint16 id);
 
 	void defaultLoadScript();
+
+	struct HotspotEnableRecord {
+		uint16 index;
+		uint16 enabled;
+		uint16 hotspotId;
+	};
 
 	MohawkEngine_Riven *_vm;
 
@@ -115,6 +125,7 @@ private:
 	// Resource lists
 	Common::Array<Picture> _pictureList;
 	Common::Array<SLSTRecord> _soundList;
+	Common::Array<HotspotEnableRecord> _hotspotEnableList;
 };
 
 /**
