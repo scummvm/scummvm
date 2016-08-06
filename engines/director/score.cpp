@@ -1263,6 +1263,14 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				continue;
 			}
 
+			if (!img->getSurface()) {
+				//TODO
+				//BMPDecoder doesnt cover all BITD resources (not all have first two bytes 'BM')
+				//Some BITD's first two bytes 0x6 0x0
+				warning("Can not load image %d", _sprites[i]->_castId);
+				continue;
+			}
+
 			uint32 regX = static_cast<BitmapCast *>(_sprites[i]->_cast)->regX;
 			uint32 regY = static_cast<BitmapCast *>(_sprites[i]->_cast)->regY;
 			uint32 rectLeft = static_cast<BitmapCast *>(_sprites[i]->_cast)->initialRect.left;
@@ -1339,7 +1347,7 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 		return img;
 	}
 
-	if (_vm->getSharedDIB()->contains(imgId)) {
+	if (_vm->getSharedDIB() != NULL && _vm->getSharedDIB()->contains(imgId)) {
 		img = new DIBDecoder();
 		img->loadStream(*_vm->getSharedDIB()->getVal(imgId));
 		return img;
@@ -1351,7 +1359,7 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 		return img;
 	}
 
-	if (_vm->getSharedBMP()->contains(imgId)) {
+	if (_vm->getSharedBMP() != NULL && _vm->getSharedBMP()->contains(imgId)) {
 		img = new Image::BitmapDecoder();
 		img->loadStream(*_vm->getSharedBMP()->getVal(imgId));
 		return img;
