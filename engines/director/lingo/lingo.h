@@ -266,9 +266,13 @@ public:
 	static void b_string();
 	static void b_tan();
 
-	static void b_dontpassevent();
+	static void b_dontPassEvent();
+	static void b_editableText();
+	static void b_installMenu();
 	static void b_updatestage();
 	static void b_ilk();
+	static void b_moveableSprite();
+	static void b_nothing();
 	static void b_closeDA();
 	static void b_continue();
 

@@ -49,20 +49,26 @@ static struct BuiltinProto {
 	{ "chars",	Lingo::b_chars,		3, 3, true },
 	{ "length",	Lingo::b_length,	1, 1, true },
 	{ "string",	Lingo::b_string,	1, 1, true },
-	// Misc
-	{ "alert",	 		Lingo::b_alert,			1, 1, false },
-	{ "beep",	 		Lingo::b_beep,			0, 1, false },
+	// Files
 	{ "closeDA",	 	Lingo::b_closeDA, 		0, 0, false },
 	{ "closeResFile",	Lingo::b_closeResFile,	0, 1, false },
 	{ "closeXlib",		Lingo::b_closeXlib,		0, 1, false },
+	// Misc
+	{ "alert",	 		Lingo::b_alert,			1, 1, false },
 	{ "continue",		Lingo::b_continue,		0, 0, false },
 	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },
 	{ "delay",	 		Lingo::b_delay,			1, 1, false },
-	{ "dontpassevent",	Lingo::b_dontpassevent,	0, 0, false },
+	{ "dontPassEvent",	Lingo::b_dontPassEvent,	0, 0, false },
+	{ "editableText",	Lingo::b_editableText,	0, 0, false },
+	{ "installMenu",	Lingo::b_installMenu,	1, 1, false },
+	{ "moveableSprite",	Lingo::b_moveableSprite,0, 0, false },
+	{ "nothing",		Lingo::b_nothing,		0, 0, false },
 	{ "updatestage",	Lingo::b_updatestage,	0, 0, false },
 	{ "ilk",	 		Lingo::b_ilk,			1, 2, true },
-	// point
+	// Point
 	{ "point",	Lingo::b_point, 2, 2, true },
+	// Sound
+	{ "beep",	 		Lingo::b_beep,			0, 1, false },
 	{ 0, 0, 0, 0, false }
 };
 
@@ -236,8 +242,8 @@ void Lingo::b_string() {
 ///////////////////
 // Misc
 ///////////////////
-void Lingo::b_dontpassevent() {
-	warning("STUB: b_dontpassevent");
+void Lingo::b_dontPassEvent() {
+	warning("STUB: b_dontPassEvent");
 }
 
 void Lingo::b_updatestage() {
@@ -257,6 +263,10 @@ void Lingo::b_closeDA() {
 
 void Lingo::b_continue() {
 	warning("STUB: b_continue");
+}
+
+void Lingo::b_nothing() {
+	warning("STUB: b_nothing");
 }
 
 void Lingo::b_alert() {
@@ -291,19 +301,33 @@ void Lingo::b_closeXlib() {
 
 void Lingo::b_beep() {
 	Datum d = g_lingo->pop();
-	warning("STUB: c_closeResFile(%d)", d.u.i);
+	warning("STUB: b_beep(%d)", d.u.i);
 }
 
 void Lingo::b_cursor() {
 	Datum d = g_lingo->pop();
 	d.toInt();
-	warning("STUB: c_cursor(%d)", d.u.i);
+	warning("STUB: b_cursor(%d)", d.u.i);
 }
 
 void Lingo::b_delay() {
 	Datum d = g_lingo->pop();
 	d.toInt();
-	warning("STUB: c_delay(%d)", d.u.i);
+	warning("STUB: b_delay(%d)", d.u.i);
+}
+
+void Lingo::b_editableText() {
+	warning("STUB: b_editableText");
+}
+
+void Lingo::b_installMenu() {
+	Datum d = g_lingo->pop();
+	warning("STUB: b_installMenu(%d)", d.u.i);
+}
+
+void Lingo::b_moveableSprite() {
+	Datum d = g_lingo->pop();
+	warning("STUB: b_moveableSprite(%d)", d.u.i);
 }
 
 
