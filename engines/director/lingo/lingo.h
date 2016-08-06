@@ -268,25 +268,31 @@ public:
 	static void b_string();
 	static void b_tan();
 
-	static void b_dontPassEvent();
 	static void b_editableText();
 	static void b_installMenu();
 	static void b_updatestage();
 	static void b_ilk();
 	static void b_moveableSprite();
-	static void b_nothing();
-	static void b_closeDA();
-	static void b_continue();
-
 	static void b_alert();
-	static void b_beep();
-	static void b_closeResFile();
-	static void b_closeXlib();
 	static void b_cursor();
+
+	static void b_dontPassEvent();
 	static void b_delay();
 	static void b_do();
+	static void b_nothing();
+	static void b_continue();
+	static void b_pause();
+
+	static void b_closeDA();
+	static void b_closeResFile();
+	static void b_closeXlib();
+	static void b_openDA();
+	static void b_openResFile();
+	static void b_openXlib();
 
 	static void b_point();
+
+	static void b_beep();
 
 	void func_mci(Common::String &s);
 	void func_mciwait(Common::String &s);

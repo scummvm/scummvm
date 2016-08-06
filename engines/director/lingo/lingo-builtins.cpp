@@ -53,17 +53,22 @@ static struct BuiltinProto {
 	{ "closeDA",	 	Lingo::b_closeDA, 		0, 0, false },
 	{ "closeResFile",	Lingo::b_closeResFile,	0, 1, false },
 	{ "closeXlib",		Lingo::b_closeXlib,		0, 1, false },
-	// Misc
-	{ "alert",	 		Lingo::b_alert,			1, 1, false },
+	{ "openDA",	 		Lingo::b_openDA, 		1, 1, false },
+	{ "openResFile",	Lingo::b_openResFile,	1, 1, false },
+	{ "openXlib",		Lingo::b_openXlib,		1, 1, false },
+	// Control
 	{ "continue",		Lingo::b_continue,		0, 0, false },
-	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },
+	{ "dontPassEvent",	Lingo::b_dontPassEvent,	0, 0, false },
 	{ "delay",	 		Lingo::b_delay,			1, 1, false },
 	{ "do",		 		Lingo::b_do,			1, 1, false },
-	{ "dontPassEvent",	Lingo::b_dontPassEvent,	0, 0, false },
+	{ "nothing",		Lingo::b_nothing,		0, 0, false },
+	{ "pause",			Lingo::b_pause,			0, 0, false },
+	// Misc
+	{ "alert",	 		Lingo::b_alert,			1, 1, false },
+	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },
 	{ "editableText",	Lingo::b_editableText,	0, 0, false },
 	{ "installMenu",	Lingo::b_installMenu,	1, 1, false },
 	{ "moveableSprite",	Lingo::b_moveableSprite,0, 0, false },
-	{ "nothing",		Lingo::b_nothing,		0, 0, false },
 	{ "updatestage",	Lingo::b_updatestage,	0, 0, false },
 	{ "ilk",	 		Lingo::b_ilk,			1, 2, true },
 	// Point
@@ -241,12 +246,97 @@ void Lingo::b_string() {
 }
 
 ///////////////////
-// Misc
+// Files
+///////////////////
+void Lingo::b_closeDA() {
+	warning("STUB: b_closeDA");
+}
+
+void Lingo::b_closeResFile() {
+	Datum d = g_lingo->pop();
+
+	d.toString();
+
+	warning("STUB: b_closeResFile(%s)", d.u.s->c_str());
+
+	delete d.u.s;
+}
+
+void Lingo::b_closeXlib() {
+	Datum d = g_lingo->pop();
+
+	d.toString();
+
+	warning("STUB: b_closeXlib(%s)", d.u.s->c_str());
+
+	delete d.u.s;
+}
+
+void Lingo::b_openDA() {
+	Datum d = g_lingo->pop();
+
+	d.toString();
+
+	warning("STUB: b_openDA(%s)", d.u.s->c_str());
+
+	delete d.u.s;
+}
+
+void Lingo::b_openResFile() {
+	Datum d = g_lingo->pop();
+
+	d.toString();
+
+	warning("STUB: b_openResFile(%s)", d.u.s->c_str());
+
+	delete d.u.s;
+}
+
+void Lingo::b_openXlib() {
+	Datum d = g_lingo->pop();
+
+	d.toString();
+
+	warning("STUB: b_openXlib(%s)", d.u.s->c_str());
+
+	delete d.u.s;
+}
+
+///////////////////
+// Control
 ///////////////////
 void Lingo::b_dontPassEvent() {
 	warning("STUB: b_dontPassEvent");
 }
 
+void Lingo::b_continue() {
+	warning("STUB: b_continue");
+}
+
+void Lingo::b_nothing() {
+	warning("STUB: b_nothing");
+}
+
+void Lingo::b_delay() {
+	Datum d = g_lingo->pop();
+	d.toInt();
+	warning("STUB: b_delay(%d)", d.u.i);
+}
+
+void Lingo::b_do() {
+	Datum d = g_lingo->pop();
+	d.toString();
+	warning("STUB: b_do(%s)", d.u.s->c_str());
+}
+
+void Lingo::b_pause() {
+	warning("STUB: b_pause");
+}
+
+
+///////////////////
+// Misc
+///////////////////
 void Lingo::b_updatestage() {
 	warning("STUB: b_updatestage");
 }
@@ -256,18 +346,6 @@ void Lingo::b_ilk() {
 	d.u.i = d.type;
 	d.type = SYMBOL;
 	g_lingo->push(d);
-}
-
-void Lingo::b_closeDA() {
-	warning("STUB: b_closeDA");
-}
-
-void Lingo::b_continue() {
-	warning("STUB: b_continue");
-}
-
-void Lingo::b_nothing() {
-	warning("STUB: b_nothing");
 }
 
 void Lingo::b_alert() {
@@ -280,41 +358,10 @@ void Lingo::b_alert() {
 	delete d.u.s;
 }
 
-void Lingo::b_closeResFile() {
-	Datum d = g_lingo->pop();
-
-	d.toString();
-
-	warning("STUB: c_closeResFile(%s)", d.u.s->c_str());
-
-	delete d.u.s;
-}
-
-void Lingo::b_closeXlib() {
-	Datum d = g_lingo->pop();
-
-	d.toString();
-
-	warning("STUB: c_closeXlib(%s)", d.u.s->c_str());
-
-	delete d.u.s;
-}
-
-void Lingo::b_beep() {
-	Datum d = g_lingo->pop();
-	warning("STUB: b_beep(%d)", d.u.i);
-}
-
 void Lingo::b_cursor() {
 	Datum d = g_lingo->pop();
 	d.toInt();
 	warning("STUB: b_cursor(%d)", d.u.i);
-}
-
-void Lingo::b_delay() {
-	Datum d = g_lingo->pop();
-	d.toInt();
-	warning("STUB: b_delay(%d)", d.u.i);
 }
 
 void Lingo::b_editableText() {
@@ -330,13 +377,6 @@ void Lingo::b_moveableSprite() {
 	Datum d = g_lingo->pop();
 	warning("STUB: b_moveableSprite(%d)", d.u.i);
 }
-
-void Lingo::b_do() {
-	Datum d = g_lingo->pop();
-	d.toString();
-	warning("STUB: b_do(%s)", d.u.s->c_str());
-}
-
 
 
 ///////////////////
@@ -358,6 +398,16 @@ void Lingo::b_point() {
 
 	g_lingo->push(d);
 }
+
+
+///////////////////
+// Sound
+///////////////////
+void Lingo::b_beep() {
+	Datum d = g_lingo->pop();
+	warning("STUB: b_beep(%d)", d.u.i);
+}
+
 
 
 } // End of namespace Director
