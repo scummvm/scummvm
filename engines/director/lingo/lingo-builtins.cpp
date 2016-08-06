@@ -50,8 +50,14 @@ static struct BuiltinProto {
 	{ "length",	Lingo::b_length,	1, 1, true },
 	{ "string",	Lingo::b_string,	1, 1, true },
 	// Misc
+	{ "alert",	 		Lingo::b_alert,			1, 1, false },
+	{ "beep",	 		Lingo::b_beep,			0, 1, false },
 	{ "closeDA",	 	Lingo::b_closeDA, 		0, 0, false },
+	{ "closeResFile",	Lingo::b_closeResFile,	0, 1, false },
+	{ "closeXlib",		Lingo::b_closeXlib,		0, 1, false },
 	{ "continue",		Lingo::b_continue,		0, 0, false },
+	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },
+	{ "delay",	 		Lingo::b_delay,			1, 1, false },
 	{ "dontpassevent",	Lingo::b_dontpassevent,	0, 0, false },
 	{ "updatestage",	Lingo::b_updatestage,	0, 0, false },
 	{ "ilk",	 		Lingo::b_ilk,			1, 2, true },
@@ -252,6 +258,54 @@ void Lingo::b_closeDA() {
 void Lingo::b_continue() {
 	warning("STUB: b_continue");
 }
+
+void Lingo::b_alert() {
+	Datum d = g_lingo->pop();
+
+	d.toString();
+
+	warning("STUB: b_alert");
+
+	delete d.u.s;
+}
+
+void Lingo::b_closeResFile() {
+	Datum d = g_lingo->pop();
+
+	d.toString();
+
+	warning("STUB: c_closeResFile(%s)", d.u.s->c_str());
+
+	delete d.u.s;
+}
+
+void Lingo::b_closeXlib() {
+	Datum d = g_lingo->pop();
+
+	d.toString();
+
+	warning("STUB: c_closeXlib(%s)", d.u.s->c_str());
+
+	delete d.u.s;
+}
+
+void Lingo::b_beep() {
+	Datum d = g_lingo->pop();
+	warning("STUB: c_closeResFile(%d)", d.u.i);
+}
+
+void Lingo::b_cursor() {
+	Datum d = g_lingo->pop();
+	d.toInt();
+	warning("STUB: c_cursor(%d)", d.u.i);
+}
+
+void Lingo::b_delay() {
+	Datum d = g_lingo->pop();
+	d.toInt();
+	warning("STUB: c_delay(%d)", d.u.i);
+}
+
 
 ///////////////////
 // Point

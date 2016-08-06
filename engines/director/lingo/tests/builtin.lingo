@@ -1,0 +1,4 @@
+beep
+beep 3
+alert "Hi"
+alert "Hi" && "there"

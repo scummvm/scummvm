@@ -84,8 +84,7 @@ void yyerror(char *s) {
 %token<s> BLTIN BLTINNOARGS BLTINNOARGSORONE BLTINONEARG ID STRING HANDLER
 %token tDOWN tELSE tNLELSIF tEND tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
 %token tMCI tMCIWAIT tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
-%token tWITH tWHILE tNLELSE tFACTORY tMETHOD tALERT tBEEP tCLOSERESFILE tCLOSEXLIB
-%token tCURSOR tDELAY
+%token tWITH tWHILE tNLELSE tFACTORY tMETHOD
 %token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT
 %token tCONCAT tCONTAINS tSTARTS
 %token tSPRITE tINTERSECTS tWITHIN
@@ -413,23 +412,6 @@ func: tMCI STRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c_
 	| BLTINNOARGSORONE 		{
 		g_lingo->code2(g_lingo->c_voidpush, g_lingo->_handlers[*$1]->u.func);
 		delete $1; }
-	| tALERT expr		{ g_lingo->code1(g_lingo->c_alert); }
-	| tBEEP INT			{
-		g_lingo->codeConst($2);
-		g_lingo->code1(g_lingo->c_beep); }
-	| tBEEP 				{
-		g_lingo->codeConst(0);
-		g_lingo->code1(g_lingo->c_beep); }
-	| tCLOSERESFILE expr	{ g_lingo->code1(g_lingo->c_closeResFile); }
-	| tCLOSERESFILE 		{
-		g_lingo->codeConst(0);
-		g_lingo->code1(g_lingo->c_closeResFile); }
-	| tCLOSEXLIB expr	{ g_lingo->code1(g_lingo->c_closeXlib); }
-	| tCLOSEXLIB 		{
-		g_lingo->codeConst(0);
-		g_lingo->code1(g_lingo->c_closeXlib); }
-	| tCURSOR expr		{ g_lingo->code1(g_lingo->c_cursor); }
-	| tDELAY expr		{ g_lingo->code1(g_lingo->c_delay); }
 	;
 
 globallist: ID				{ g_lingo->code1(g_lingo->c_global); g_lingo->codeString($1->c_str()); delete $1; }

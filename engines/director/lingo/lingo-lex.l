@@ -72,14 +72,8 @@ whitespace [\t ]
 ^{whitespace}+		{ count(); }
 [\t]+				{ count(); return ' '; }
 
-(?i:alert)			{ count(); return tALERT; }
 (?i:and)			{ count(); return tAND; }
-(?i:beep)			{ count(); return tBEEP; }
-(?i:closeResFile)	{ count(); return tCLOSERESFILE; }
-(?i:closeXlib)		{ count(); return tCLOSEXLIB; }
 (?i:contains)		{ count(); return tCONTAINS; }
-(?i:cursor)			{ count(); return tCURSOR; }
-(?i:delay)			{ count(); return tDELAY; }
 (?i:down)			{ count(); return tDOWN; }
 (?i:if)				{ count(); return tIF; }
 (?i:[\n\r]+[\t ]*else[\t ]+if)	{ countnl(); return tNLELSIF; }

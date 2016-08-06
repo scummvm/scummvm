@@ -249,13 +249,6 @@ public:
 	static void c_gotoprevious();
 	static void c_global();
 
-	static void c_alert();
-	static void c_beep();
-	static void c_closeResFile();
-	static void c_closeXlib();
-	static void c_cursor();
-	static void c_delay();
-
 	static void b_abs();
 	static void b_atan();
 	static void b_chars();
@@ -279,6 +272,13 @@ public:
 	static void b_closeDA();
 	static void b_continue();
 
+	static void b_alert();
+	static void b_beep();
+	static void b_closeResFile();
+	static void b_closeXlib();
+	static void b_cursor();
+	static void b_delay();
+
 	static void b_point();
 
 	void func_mci(Common::String &s);
@@ -287,8 +287,6 @@ public:
 	void func_gotoloop();
 	void func_gotonext();
 	void func_gotoprevious();
-	void func_alert(Common::String &s);
-	void func_beep(int num);
 
 public:
 	void setTheEntity(int entity, Datum &id, int field, Datum &d);

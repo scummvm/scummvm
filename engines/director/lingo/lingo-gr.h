@@ -87,27 +87,21 @@
      tNLELSE = 303,
      tFACTORY = 304,
      tMETHOD = 305,
-     tALERT = 306,
-     tBEEP = 307,
-     tCLOSERESFILE = 308,
-     tCLOSEXLIB = 309,
-     tCURSOR = 310,
-     tDELAY = 311,
-     tGE = 312,
-     tLE = 313,
-     tGT = 314,
-     tLT = 315,
-     tEQ = 316,
-     tNEQ = 317,
-     tAND = 318,
-     tOR = 319,
-     tNOT = 320,
-     tCONCAT = 321,
-     tCONTAINS = 322,
-     tSTARTS = 323,
-     tSPRITE = 324,
-     tINTERSECTS = 325,
-     tWITHIN = 326
+     tGE = 306,
+     tLE = 307,
+     tGT = 308,
+     tLT = 309,
+     tEQ = 310,
+     tNEQ = 311,
+     tAND = 312,
+     tOR = 313,
+     tNOT = 314,
+     tCONCAT = 315,
+     tCONTAINS = 316,
+     tSTARTS = 317,
+     tSPRITE = 318,
+     tINTERSECTS = 319,
+     tWITHIN = 320
    };
 #endif
 /* Tokens.  */
@@ -159,27 +153,21 @@
 #define tNLELSE 303
 #define tFACTORY 304
 #define tMETHOD 305
-#define tALERT 306
-#define tBEEP 307
-#define tCLOSERESFILE 308
-#define tCLOSEXLIB 309
-#define tCURSOR 310
-#define tDELAY 311
-#define tGE 312
-#define tLE 313
-#define tGT 314
-#define tLT 315
-#define tEQ 316
-#define tNEQ 317
-#define tAND 318
-#define tOR 319
-#define tNOT 320
-#define tCONCAT 321
-#define tCONTAINS 322
-#define tSTARTS 323
-#define tSPRITE 324
-#define tINTERSECTS 325
-#define tWITHIN 326
+#define tGE 306
+#define tLE 307
+#define tGT 308
+#define tLT 309
+#define tEQ 310
+#define tNEQ 311
+#define tAND 312
+#define tOR 313
+#define tNOT 314
+#define tCONCAT 315
+#define tCONTAINS 316
+#define tSTARTS 317
+#define tSPRITE 318
+#define tINTERSECTS 319
+#define tWITHIN 320
 
 
 
@@ -197,7 +185,7 @@ typedef union YYSTYPE
 	Common::Array<double> *arr;
 }
 /* Line 1529 of yacc.c.  */
-#line 201 "engines/director/lingo/lingo-gr.hpp"
+#line 189 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

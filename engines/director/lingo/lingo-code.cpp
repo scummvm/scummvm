@@ -695,53 +695,6 @@ void Lingo::c_gotoprevious() {
 	g_lingo->func_gotoprevious();
 }
 
-void Lingo::c_alert() {
-	Datum d = g_lingo->pop();
-
-	d.toString();
-
-	g_lingo->func_alert(*d.u.s);
-
-	delete d.u.s;
-}
-
-void Lingo::c_closeResFile() {
-	Datum d = g_lingo->pop();
-
-	d.toString();
-
-	warning("STUB: c_closeResFile(%s)", d.u.s->c_str());
-
-	delete d.u.s;
-}
-
-void Lingo::c_closeXlib() {
-	Datum d = g_lingo->pop();
-
-	d.toString();
-
-	warning("STUB: c_closeXlib(%s)", d.u.s->c_str());
-
-	delete d.u.s;
-}
-
-void Lingo::c_beep() {
-	Datum d = g_lingo->pop();
-	g_lingo->func_beep(d.u.i);
-}
-
-void Lingo::c_cursor() {
-	Datum d = g_lingo->pop();
-	d.toInt();
-	warning("STUB: c_cursor(%d)", d.u.i);
-}
-
-void Lingo::c_delay() {
-	Datum d = g_lingo->pop();
-	d.toInt();
-	warning("STUB: c_delay(%d)", d.u.i);
-}
-
 void Lingo::c_call() {
 	Common::String name((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
 	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
