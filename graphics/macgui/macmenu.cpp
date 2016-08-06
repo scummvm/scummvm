@@ -249,7 +249,7 @@ void Menu::createSubMenuFromString(int id, const char *str) {
 
 			Common::String tmpitem(item);
 			tmpitem.trim();
-			if (tmpitem[0] == '(') {
+			if (tmpitem.size() > 0 && tmpitem[0] == '(') {
 				enabled = false;
 
 				for (uint j = 0; j < item.size(); j++)
