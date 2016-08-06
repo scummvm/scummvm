@@ -97,12 +97,16 @@ public:
 	/** Activate a hotspot using a hotspot enable list entry */
 	void activateHotspotEnableRecord(uint16 index);
 
+	/** Activate a water effect list entry */
+	void activateWaterEffect(uint16 index);
+
 private:
 	void loadCardResource(uint16 id);
 	void loadHotspots(uint16 id);
 	void loadCardPictureList(uint16 id);
 	void loadCardSoundList(uint16 id);
 	void loadCardHotspotEnableList(uint16 id);
+	void loadCardWaterEffectList(uint16 id);
 
 	void defaultLoadScript();
 
@@ -110,6 +114,12 @@ private:
 		uint16 index;
 		uint16 enabled;
 		uint16 hotspotId;
+	};
+
+	struct WaterEffectRecord {
+		uint16 index;
+		uint16 sfxeId;
+		uint16 u0;
 	};
 
 	MohawkEngine_Riven *_vm;
@@ -126,6 +136,7 @@ private:
 	Common::Array<Picture> _pictureList;
 	Common::Array<SLSTRecord> _soundList;
 	Common::Array<HotspotEnableRecord> _hotspotEnableList;
+	Common::Array<WaterEffectRecord> _waterEffectList;
 };
 
 /**
