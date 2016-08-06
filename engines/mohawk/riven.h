@@ -145,7 +145,6 @@ private:
 	// Hotspot related functions and variables
 	void checkInventoryClick();
 	bool _showHotspots;
-	void checkHotspotChange();
 
 	// Variables
 	void initVars();
@@ -173,9 +172,7 @@ public:
 	uint32 getCurCardRMAP();
 
 	// Hotspot functions/variables
-	RivenHotspot *_curHotspot;
 	Common::Array<ZipMode> _zipModeData;
-	RivenHotspot *getCurHotspot() const { return _curHotspot; }
 	void updateCurrentHotspot();
 	void addZipVisitedCard(uint16 cardId, uint16 cardNameId);
 	bool isZipVisitedCard(const Common::String &hotspotName) const;

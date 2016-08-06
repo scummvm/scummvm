@@ -68,7 +68,6 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_saveLoad = nullptr;
 	_optionsDialog = nullptr;
 	_card = nullptr;
-	_curHotspot = nullptr;
 	removeTimer();
 
 	// NOTE: We can never really support CD swapping. All of the music files
@@ -212,7 +211,7 @@ void MohawkEngine_Riven::handleEvents() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_MOUSEMOVE:
-			checkHotspotChange();
+			_card->onMouseMove(event.mouse);
 
 			if (!(getFeatures() & GF_DEMO)) {
 				// Check to show the inventory, but it is always "showing" in the demo
@@ -225,19 +224,17 @@ void MohawkEngine_Riven::handleEvents() {
 			needsUpdate = true;
 			break;
 		case Common::EVENT_LBUTTONDOWN:
-			if (_curHotspot) {
+			if (_card->getCurHotspot()) {
 				checkSunnerAlertClick();
-				_curHotspot->runScript(kMouseDownScript);
 			}
+			_card->onMouseDown(_eventMan->getMousePos());
 			break;
 		case Common::EVENT_LBUTTONUP:
 			// See RivenScript::switchCard() for more information on why we sometimes
 			// disable the next up event.
 			if (!_ignoreNextMouseUp) {
-				if (_curHotspot)
-					_curHotspot->runScript(kMouseUpScript);
-				else
-					checkInventoryClick();
+				_card->onMouseUp(_eventMan->getMousePos());
+				checkInventoryClick();
 			}
 			_ignoreNextMouseUp = false;
 			break;
@@ -291,8 +288,7 @@ void MohawkEngine_Riven::handleEvents() {
 		}
 	}
 
-	if (_curHotspot)
-		_curHotspot->runScript(kMouseInsideScript);
+	_card->onMouseUpdate();
 
 	// Update the screen if we need to
 	if (needsUpdate)
@@ -425,26 +421,8 @@ void MohawkEngine_Riven::refreshCard() {
 	installCardTimer();
 }
 
-void MohawkEngine_Riven::checkHotspotChange() {
-	Common::Point mousePos = _eventMan->getMousePos();
-	RivenHotspot *hotspot = _card->getHotspotContainingPoint(mousePos);
-
-	if (hotspot) {
-		if (_curHotspot != hotspot) {
-			_curHotspot = hotspot;
-			_cursor->setCursor(hotspot->getMouseCursor());
-			_system->updateScreen();
-		}
-	} else {
-		_curHotspot = nullptr;
-		_cursor->setCursor(kRivenMainCursor);
-		_system->updateScreen();
-	}
-}
-
 void MohawkEngine_Riven::updateCurrentHotspot() {
-	_curHotspot = nullptr;
-	checkHotspotChange();
+	_card->onMouseMove(_eventMan->getMousePos());
 }
 
 void MohawkEngine_Riven::checkInventoryClick() {
@@ -848,7 +826,7 @@ void MohawkEngine_Riven::checkSunnerAlertClick() {
 		return;
 
 	// Only set the sunners variable on the forward hotspot
-	if (_curHotspot->getBlstId() != 3)
+	if (_card->getCurHotspot()->getBlstId() != 3)
 		return;
 
 	// If the alert video is no longer playing, we have nothing left to do

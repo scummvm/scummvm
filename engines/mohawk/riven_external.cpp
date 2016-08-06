@@ -1368,7 +1368,7 @@ void RivenExternal::xgrviewer(uint16 argc, uint16 *argv) {
 	}
 
 	// Calculate how much we're moving
-	Common::String buttonName = _vm->_curHotspot->getName();
+	Common::String buttonName = _vm->getCurCard()->getCurHotspot()->getName();
 	uint32 buttonPos = buttonName.lastChar() - '0';
 
 	uint32 &curPos = _vm->_vars["grviewpos"];
@@ -1439,7 +1439,7 @@ void RivenExternal::xglviewer(uint16 argc, uint16 *argv) {
 	// (It shows the village from the middle of the lake)
 
 	// Calculate how much we're moving
-	Common::String buttonName = _vm->_curHotspot->getName();
+	Common::String buttonName = _vm->getCurCard()->getCurHotspot()->getName();
 	uint32 buttonPos = buttonName.lastChar() - '0';
 
 	uint32 &curPos = _vm->_vars["glviewpos"];

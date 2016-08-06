@@ -91,6 +91,8 @@ public:
 	/** Get the hotspot with the specified BLST id */
 	RivenHotspot *getHotspotByBlstId(const uint16 blstId) const;
 
+	RivenHotspot *getCurHotspot() const;
+
 	/** Get all the hotspots in the card. To be used for debugging features only */
 	Common::Array<RivenHotspot *> getHotspots() const;
 
@@ -99,6 +101,21 @@ public:
 
 	/** Activate a water effect list entry */
 	void activateWaterEffect(uint16 index);
+
+	/** Handle a mouse down event */
+	void onMouseDown(const Common::Point &mouse);
+
+	/** Handle a mouse up event */
+	void onMouseUp(const Common::Point &mouse);
+
+	/** Handle a mouse move event */
+	void onMouseMove(const Common::Point &mouse);
+
+	/** Frame update handler for the mouse cursor */
+	void onMouseUpdate();
+
+	/** Frame update handler for mouse dragging */
+	void onMouseDragUpdate();
 
 private:
 	void loadCardResource(uint16 id);
@@ -131,12 +148,16 @@ private:
 	RivenScriptList _scripts;
 
 	Common::Array<RivenHotspot *> _hotspots;
+	RivenHotspot *_hoveredHotspot;
+	RivenHotspot *_pressedHotspot;
 
 	// Resource lists
 	Common::Array<Picture> _pictureList;
 	Common::Array<SLSTRecord> _soundList;
 	Common::Array<HotspotEnableRecord> _hotspotEnableList;
 	Common::Array<WaterEffectRecord> _waterEffectList;
+
+	void updateMouseCursor();
 };
 
 /**
@@ -149,8 +170,8 @@ class RivenHotspot {
 public:
 	RivenHotspot(MohawkEngine_Riven *vm, Common::ReadStream *stream);
 
-	/** Run one of the hotspot's scripts */
-	void runScript(uint16 scriptType);
+	/** Get the one of the hotspot's scripts */
+	RivenScriptPtr getScript(uint16 scriptType) const;
 
 	/** Enable or disable the hotspot */
 	void enable(bool e);
