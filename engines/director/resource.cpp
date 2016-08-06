@@ -200,9 +200,9 @@ bool MacArchive::openFile(const Common::String &fileName) {
 
 			res.offset = res.size = 0; // unused
 			res.name = _resFork->getResName(tagArray[i], idArray[j]);
+			debug(3, "Found MacArchive resource '%s' %d: %s", tag2str(tagArray[i]), idArray[j], res.name.c_str());
 		}
 	}
-
 
 	return true;
 }
