@@ -163,9 +163,9 @@ RivenScript::~RivenScript() {
 	}
 }
 
-void RivenScript::dumpScript(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs) {
+void RivenScript::dumpScript(byte tabs) {
 	for (uint16 i = 0; i < _commands.size(); i++) {
-		_commands[i]->dump(varNames, xNames, tabs);
+		_commands[i]->dump(tabs);
 	}
 }
 
@@ -455,7 +455,7 @@ void RivenSimpleCommand::incrementVariable(uint16 op, uint16 argc, uint16 *argv)
 
 // Command 27: go to stack (stack name, code high, code low)
 void RivenSimpleCommand::changeStack(uint16 op, uint16 argc, uint16 *argv) {
-	Common::String stackName = _vm->getName(StackNames, argv[0]);
+	Common::String stackName = _vm->getName(kStackNames, argv[0]);
 	int8 index = -1;
 
 	for (byte i = 0; i < 8; i++)
@@ -650,14 +650,15 @@ void RivenSimpleCommand::activateMLST(uint16 op, uint16 argc, uint16 *argv) {
 	_vm->_video->activateMLST(argv[0], _vm->getCurCard()->getId());
 }
 
-void RivenSimpleCommand::dump(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs) {
+void RivenSimpleCommand::dump(byte tabs) {
 	printTabs(tabs);
 
 	if (_type == 7) { // Use the variable name
-		uint16 var = _arguments[0];
-		debugN("%s = %d;\n", varNames[var].c_str(), _arguments[1]);
+		Common::String varName = _vm->getName(kVariableNames, _arguments[0]);
+		debugN("%s = %d;\n", varName.c_str(), _arguments[1]);
 	} else if (_type == 17) { // Use the external command name
-		debugN("%s(", xNames[_arguments[0]].c_str());
+		Common::String externalCommandName = _vm->getName(kVariableNames, _arguments[0]);
+		debugN("%s(", externalCommandName.c_str());
 		uint16 varCount = _arguments[1];
 		for (uint16 j = 0; j < varCount; j++) {
 			debugN("%d", _arguments[1 + j]);
@@ -666,8 +667,8 @@ void RivenSimpleCommand::dump(const Common::StringArray &varNames, const Common:
 		}
 		debugN(");\n");
 	} else if (_type == 24) { // Use the variable name
-		uint16 var = _arguments[0];
-		debugN("%s += %d;\n", varNames[var].c_str(), _arguments[1]);
+		Common::String varName = _vm->getName(kVariableNames, _arguments[0]);
+		debugN("%s += %d;\n", varName.c_str(), _arguments[1]);
 	} else {
 		debugN("%s(", _opcodes[_type].desc);
 		for (uint16 j = 0; j < _arguments.size(); j++) {
@@ -727,15 +728,16 @@ RivenSwitchCommand *RivenSwitchCommand::createFromStream(MohawkEngine_Riven *vm,
 	return command;
 }
 
-void RivenSwitchCommand::dump(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs) {
-	printTabs(tabs); debugN("switch (%s) {\n", varNames[_variableId].c_str());
+void RivenSwitchCommand::dump(byte tabs) {
+	Common::String varName = _vm->getName(kVariableNames, _variableId);
+	printTabs(tabs); debugN("switch (%s) {\n", varName.c_str());
 	for (uint16 j = 0; j < _branches.size(); j++) {
 		printTabs(tabs + 1);
 		if (_branches[j].value == 0xFFFF)
 			debugN("default:\n");
 		else
 			debugN("case %d:\n", _branches[j].value);
-		_branches[j].script->dumpScript(varNames, xNames, tabs + 2);
+		_branches[j].script->dumpScript(tabs + 2);
 		printTabs(tabs + 2); debugN("break;\n");
 	}
 	printTabs(tabs); debugN("}\n");
