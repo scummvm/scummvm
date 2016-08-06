@@ -70,6 +70,9 @@ public:
 	/** Append a command to the script */
 	void addCommand(RivenCommand *command);
 
+	/** True if the script does not contain any command */
+	bool empty() const;
+
 	/**
 	 * Run the script
 	 *

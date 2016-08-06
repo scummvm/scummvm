@@ -114,6 +114,10 @@ void RivenScriptManager::clearStoredMovieOpcode() {
 }
 
 void RivenScriptManager::runScript(const RivenScriptPtr &script, bool queue) {
+	if (!script || script->empty()) {
+		return;
+	}
+
 	if (!queue) {
 		script->run();
 	} else {
@@ -177,6 +181,10 @@ void RivenScript::run() {
 
 void RivenScript::addCommand(RivenCommand *command) {
 	_commands.push_back(command);
+}
+
+bool RivenScript::empty() const {
+	return _commands.empty();
 }
 
 RivenCommand::RivenCommand(MohawkEngine_Riven *vm) :
@@ -601,10 +609,10 @@ void RivenSimpleCommand::activateFLST(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 45: do zip mode
 void RivenSimpleCommand::zipMode(uint16 op, uint16 argc, uint16 *argv) {
-	assert(_vm->getCurHotspot());
+	assert(_vm->getCurCard() && _vm->getCurCard()->getCurHotspot());
 
 	// Check the ZIPS records to see if we have a match to the hotspot name
-	Common::String hotspotName = _vm->getCurHotspot()->getName();
+	Common::String hotspotName = _vm->getCurCard()->getCurHotspot()->getName();
 
 	for (uint16 i = 0; i < _vm->_zipModeData.size(); i++)
 		if (_vm->_zipModeData[i].name == hotspotName) {

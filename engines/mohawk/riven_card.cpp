@@ -22,6 +22,7 @@
 
 #include "mohawk/riven_card.h"
 
+#include "mohawk/cursors.h"
 #include "mohawk/riven_graphics.h"
 
 #include "mohawk/resource.h"
@@ -31,7 +32,9 @@ namespace Mohawk {
 
 RivenCard::RivenCard(MohawkEngine_Riven *vm, uint16 id) :
 	_vm(vm),
-	_id(id) {
+	_id(id),
+	_hoveredHotspot(nullptr),
+	_pressedHotspot(nullptr) {
 	loadCardResource(id);
 	loadHotspots(id);
 	loadCardPictureList(id);
@@ -326,6 +329,82 @@ void RivenCard::activateWaterEffect(uint16 index) {
 	}
 }
 
+RivenHotspot *RivenCard::getCurHotspot() const {
+	return _hoveredHotspot;
+}
+
+void RivenCard::onMouseDown(const Common::Point &mouse) {
+	onMouseMove(mouse);
+
+	_pressedHotspot = _hoveredHotspot;
+	if (_pressedHotspot) {
+		RivenScriptPtr script = _pressedHotspot->getScript(kMouseDownScript);
+		_vm->_scriptMan->runScript(script, false);
+	}
+}
+
+void RivenCard::onMouseUp(const Common::Point &mouse) {
+	onMouseMove(mouse);
+
+	if (_pressedHotspot && _pressedHotspot == _hoveredHotspot) {
+		RivenScriptPtr script = _pressedHotspot->getScript(kMouseUpScript);
+		_vm->_scriptMan->runScript(script, false);
+	}
+
+	_pressedHotspot = nullptr;
+}
+
+void RivenCard::onMouseMove(const Common::Point &mouse) {
+	RivenHotspot *hotspot = getHotspotContainingPoint(mouse);
+
+	if (hotspot) {
+		if (hotspot != _hoveredHotspot) {
+			if (_hoveredHotspot) {
+				RivenScriptPtr script = _hoveredHotspot->getScript(kMouseLeaveScript);
+				_vm->_scriptMan->runScript(script, false);
+			}
+
+			_hoveredHotspot = hotspot;
+			RivenScriptPtr script = _hoveredHotspot->getScript(kMouseEnterScript);
+			_vm->_scriptMan->runScript(script, false);
+		}
+	} else {
+		_hoveredHotspot = nullptr;
+	}
+}
+
+void RivenCard::onMouseDragUpdate() {
+	if (_pressedHotspot) {
+		RivenScriptPtr script = _pressedHotspot->getScript(kMouseDragScript);
+		_vm->_scriptMan->runScript(script, false);
+	}
+}
+
+void RivenCard::onMouseUpdate() {
+	RivenScriptPtr script;
+	if (_hoveredHotspot) {
+		script = _hoveredHotspot->getScript(kMouseInsideScript);
+	}
+
+	if (script && !script->empty()) {
+		_vm->_scriptMan->runScript(script, false);
+	} else {
+		updateMouseCursor();
+	}
+}
+
+void RivenCard::updateMouseCursor() {
+	uint16 cursor;
+	if (_hoveredHotspot) {
+		cursor = _hoveredHotspot->getMouseCursor();
+	} else {
+		cursor = kRivenMainCursor;
+	}
+
+	_vm->_cursor->setCursor(cursor);
+	_vm->_system->updateScreen();
+}
+
 RivenHotspot::RivenHotspot(MohawkEngine_Riven *vm, Common::ReadStream *stream) :
 		_vm(vm) {
 	loadFromStream(stream);
@@ -363,13 +442,13 @@ void RivenHotspot::loadFromStream(Common::ReadStream *stream) {
 	_scripts = _vm->_scriptMan->readScripts(stream);
 }
 
-void RivenHotspot::runScript(uint16 scriptType) {
+RivenScriptPtr RivenHotspot::getScript(uint16 scriptType) const {
 	for (uint16 i = 0; i < _scripts.size(); i++)
 		if (_scripts[i].type == scriptType) {
-			RivenScriptPtr script = _scripts[i].script;
-			_vm->_scriptMan->runScript(script, false);
-			break;
+			return _scripts[i].script;
 		}
+
+	return RivenScriptPtr();
 }
 
 bool RivenHotspot::isEnabled() const {
