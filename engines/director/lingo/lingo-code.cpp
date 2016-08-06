@@ -806,4 +806,14 @@ void Lingo::c_global() {
 	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
 }
 
+void Lingo::c_open() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	d1.toString();
+	d2.toString();
+
+	warning("STUB: c_open(%s, %s)", d1.u.s->c_str(), d2.u.s->c_str());
+}
+
 }

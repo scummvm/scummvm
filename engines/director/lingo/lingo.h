@@ -249,6 +249,8 @@ public:
 	static void c_gotoprevious();
 	static void c_global();
 
+	static void c_open();
+
 	static void b_abs();
 	static void b_atan();
 	static void b_chars();
@@ -282,6 +284,7 @@ public:
 	static void b_closeXlib();
 	static void b_cursor();
 	static void b_delay();
+	static void b_do();
 
 	static void b_point();
 

@@ -96,6 +96,7 @@ whitespace [\t ]
 (?i:next)			{ count(); return tNEXT; }
 (?i:not)			{ count(); return tNOT; }
 (?i:of)				{ count(); return tOF; }
+(?i:open)			{ count(); return tOPEN; }
 (?i:or)				{ count(); return tOR; }
 (?i:previous)		{ count(); return tPREVIOUS; }
 (?i:put)			{ count(); return tPUT; }

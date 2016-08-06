@@ -2,3 +2,7 @@ beep
 beep 3
 alert "Hi"
 alert "Hi" && "there"
+
+open "Hello"
+open "Hello" with "Finder"
+open "Hello" && "more" with "Finder"

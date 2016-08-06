@@ -58,6 +58,7 @@ static struct BuiltinProto {
 	{ "continue",		Lingo::b_continue,		0, 0, false },
 	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },
 	{ "delay",	 		Lingo::b_delay,			1, 1, false },
+	{ "do",		 		Lingo::b_do,			1, 1, false },
 	{ "dontPassEvent",	Lingo::b_dontPassEvent,	0, 0, false },
 	{ "editableText",	Lingo::b_editableText,	0, 0, false },
 	{ "installMenu",	Lingo::b_installMenu,	1, 1, false },
@@ -329,6 +330,13 @@ void Lingo::b_moveableSprite() {
 	Datum d = g_lingo->pop();
 	warning("STUB: b_moveableSprite(%d)", d.u.i);
 }
+
+void Lingo::b_do() {
+	Datum d = g_lingo->pop();
+	d.toString();
+	warning("STUB: b_do(%s)", d.u.s->c_str());
+}
+
 
 
 ///////////////////
