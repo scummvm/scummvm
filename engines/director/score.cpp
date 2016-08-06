@@ -1584,7 +1584,7 @@ Sprite::Sprite() {
 	_stopTime = 0;
 	_volume = 0;
 	_stretch = 0;
-	_type = 0;
+	_type = kInactiveSprite;
 }
 
 Sprite::Sprite(const Sprite &sprite) {

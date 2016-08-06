@@ -271,7 +271,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_visible = (d.u.i == 0 ? false : true);
 		break;
 	case kTheType:
-		sprite->_type = d.u.i;
+		sprite->_type = static_cast<SpriteType>(d.u.i);
 		break;
 	case kTheMovieRate:
 		sprite->_movieRate = d.u.i;

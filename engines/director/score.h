@@ -315,7 +315,7 @@ public:
 	uint16 _bottom;
 	byte _blend;
 	bool _visible;
-	byte _type;
+	SpriteType _type;
 	//Using in digital movie sprites
 	byte _movieRate;
 	uint16 _movieTime;
