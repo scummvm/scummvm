@@ -23,6 +23,7 @@
 #ifndef TITANIC_SOUND_MANAGER_H
 #define TITANIC_SOUND_MANAGER_H
 
+#include "titanic/core/list.h"
 #include "titanic/support/simple_file.h"
 #include "titanic/sound/proximity.h"
 #include "titanic/sound/qmixer.h"
@@ -125,11 +126,49 @@ public:
 	virtual void proc29() {}
 };
 
+class QSoundManagerSound : public ListItem {
+public:
+	CWaveFile *_waveFile;
+	int _iChannel;
+	CEndTalkerFn _endFn;
+	TTtalker *_talker;
+public:
+	QSoundManagerSound() : ListItem(), _waveFile(nullptr),
+		_iChannel(0), _endFn(nullptr), _talker(nullptr) {}
+	QSoundManagerSound(CWaveFile *waveFile, int iChannel, CEndTalkerFn endFn, TTtalker *talker) :
+		ListItem(), _waveFile(waveFile), _iChannel(iChannel), _endFn(endFn), _talker(talker) {}
+};
+
+class QSoundManagerSounds : public List<QSoundManagerSound> {
+public:
+	/**
+	 * Adds a new sound entry to the list
+	 */
+	void add(CWaveFile *waveFile, int iChannel, CEndTalkerFn endFn, TTtalker *talker);
+
+	/**
+	 * Flushes a wave file attached to the specified channel
+	 */
+	void flushChannel(int iChannel);
+
+	/**
+	 * Flushes a wave file attached to the specified channel
+	 */
+	void flushChannel(int v1, int iChannel);
+
+	/**
+	 * Returns true if the list contains the specified wave file
+	 */
+	bool contains(const CWaveFile *waveFile) const;
+};
+
 /**
  * Concrete sound manager class that handles interfacing with
  * the QMixer sound mixer class
  */
 class QSoundManager : public CSoundManager, public QMixer {
+private:
+	QSoundManagerSounds _sounds;
 public:
 	int _field18;
 	int _field1C;

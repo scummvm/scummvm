@@ -34,6 +34,51 @@ CSoundManager::CSoundManager() : _musicPercent(75.0), _speechPercent(75.0),
 
 /*------------------------------------------------------------------------*/
 
+void QSoundManagerSounds::add(CWaveFile *waveFile, int iChannel, CEndTalkerFn endFn, TTtalker *talker) {
+	push_back(new QSoundManagerSound(waveFile, iChannel, endFn, talker));
+}
+
+void QSoundManagerSounds::flushChannel(int iChannel) {
+	for (iterator i = begin(); i != end(); ++i) {
+		QSoundManagerSound *item = *i;
+		if (item->_iChannel == iChannel) {
+			if (item->_endFn)
+				item->_endFn(item->_talker);
+
+			remove(item);
+			delete item;
+			break;
+		}
+	}
+}
+
+void QSoundManagerSounds::flushChannel(int v1, int iChannel) {
+	for (iterator i = begin(); i != end(); ++i) {
+		QSoundManagerSound *item = *i;
+		if (item->_waveFile->isLoaded() && item->_iChannel == iChannel) {
+			if (item->_endFn)
+				item->_endFn(item->_talker);
+
+			remove(item);
+			delete item;
+			break;
+		}
+	}
+}
+
+bool QSoundManagerSounds::contains(const CWaveFile *waveFile) const {
+	for (const_iterator i = begin(); i != end(); ++i) {
+		const QSoundManagerSound *item = *i;
+		if (item->_waveFile == waveFile)
+			return true;
+	}
+
+	return false;
+}
+
+
+/*------------------------------------------------------------------------*/
+
 QSoundManager::QSoundManager(Audio::Mixer *mixer) : CSoundManager(), QMixer(mixer),
 		_field18(0), _field1C(0) {
 	Common::fill(&_field4A0[0], &_field4A0[16], 0);

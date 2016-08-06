@@ -48,6 +48,7 @@ bool CWaveFile::loadSound(const CString &name) {
 
 	Common::SeekableReadStream *stream = file.readStream();
 	_stream = Audio::makeWAVStream(stream->readStream(stream->size()), DisposeAfterUse::YES);
+	return true;
 }
 
 
