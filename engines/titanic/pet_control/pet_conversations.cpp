@@ -541,14 +541,10 @@ void CPetConversations::npcDialChange(uint dialNum, int oldLevel, int newLevel) 
 		}
 
 		int64 val1 = (oldLevel * dest) + (100 - oldLevel) * src;
-		val1 *= 0x51EB851F;
-		val1 >>= 37;
-		uint startFrame = val1 + (val1 >> 31);
+		uint startFrame = val1 / 100;
 
 		int64 val2 = (newLevel * dest) + (100 - newLevel) * src;
-		val2 *= 0x51EB851F;
-		val2 >>= 37;
-		uint endFrame = val2 + (val2 >> 31);
+		uint endFrame = val2 / 100;
 
 		if (startFrame != endFrame)
 			_dials[dialNum].playMovie(startFrame, endFrame);

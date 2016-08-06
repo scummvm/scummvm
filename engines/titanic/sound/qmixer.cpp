@@ -28,16 +28,16 @@ QMixer::QMixer(Audio::Mixer *mixer) : _mixer(mixer) {
 }
 
 bool QMixer::qsWaveMixInitEx(const QMIXCONFIG &config) {
-	// Not current implemented in ScummVM
+	// Not currently implemented in ScummVM
 	return true;
 }
 
 void QMixer::qsWaveMixActivate(bool fActivate) {
-	// Not current implemented in ScummVM
+	// Not currently implemented in ScummVM
 }
 
-int QMixer::qsWaveMixOpenChannel(int iChannel, WaveMixOpenChannel mode) {
-	// Not current implemented in ScummVM
+int QMixer::qsWaveMixOpenChannel(int iChannel, QMixFlag mode) {
+	// Not currently implemented in ScummVM
 	return 0;
 }
 
@@ -47,6 +47,26 @@ void QMixer::qsWaveMixCloseSession() {
 
 void QMixer::qsWaveMixFreeWave(Audio::SoundHandle &handle) {
 	_mixer->stopHandle(handle);
+}
+
+void QMixer::qsWaveMixFlushChannel(int iChannel, uint flags) {
+	// Not currently implemented in ScummVM
+}
+
+void QMixer::qsWaveMixSetPanRate(int iChannel, uint flags, uint rate) {
+	// Not currently implemented in ScummVM
+}
+
+void QMixer::qsWaveMixSetVolume(int iChannel, uint flags, uint volume) {
+	// Not currently implemented in ScummVM
+}
+
+void QMixer::qsWaveMixSetSourcePosition(int iChannel, uint flags, const QSVECTOR &position) {
+	// Not currently implemented in ScummVM
+}
+
+void QMixer::qsWaveMixSetPolarPosition(int iChannel, uint flags, const QSPOLAR &position) {
+	// Not currently implemented in ScummVM
 }
 
 } // End of namespace Titanic z

@@ -112,7 +112,11 @@ public:
 	 */
 	void preEnterView(CViewItem *newView, bool isNewRoom);
 
-	bool fn1(int val);
+	/**
+	 * Returns true if a sound with the specified handle is active
+	 */
+	bool isActive(int handle) const;
+
 	void fn2(int handle);
 	void fn3(int handle, int val2, int val3);
 	void fn4(CWaveFile *waveFile, int val);

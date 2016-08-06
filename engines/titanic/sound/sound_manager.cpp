@@ -21,7 +21,7 @@
  */
 
 #include "titanic/sound/sound_manager.h"
-
+#include "titanic/titanic.h"
 namespace Titanic {
 
 const uint SAMPLING_RATE = 22050;
@@ -81,7 +81,9 @@ bool QSoundManagerSounds::contains(const CWaveFile *waveFile) const {
 
 QSoundManager::QSoundManager(Audio::Mixer *mixer) : CSoundManager(), QMixer(mixer),
 		_field18(0), _field1C(0) {
-	Common::fill(&_field4A0[0], &_field4A0[16], 0);
+	_slots.resize(48);
+	Common::fill(&_channelsVolume[0], &_channelsVolume[16], 0);
+	Common::fill(&_channelsMode[0], &_channelsMode[16], 0);
 
 	qsWaveMixInitEx(QMIXCONFIG(SAMPLING_RATE, CHANNELS_COUNT, LATENCY));
 	qsWaveMixActivate(true);
@@ -120,7 +122,7 @@ int QSoundManager::playSound(CWaveFile &soundRes, CProximity &prox) {
 	return 0;
 }
 
-void QSoundManager::proc7() {
+void QSoundManager::stopSound(uint handle) {
 	warning("TODO");
 }
 
@@ -128,55 +130,97 @@ void QSoundManager::proc8(int v) {
 	warning("TODO");
 }
 
-void QSoundManager::proc9() {
-	warning("TODO");
+void QSoundManager::proc9(uint handle) {
+	for (uint idx = 0; idx < _slots.size(); ++idx) {
+		if (_slots[idx]._handle == handle)
+			_slots[idx]._val2 = 1;
+	}
 }
 
-void QSoundManager::proc10() {
-	warning("TODO");
+void QSoundManager::stopAllChannels() {
+	qsWaveMixFlushChannel(0, QMIX_OPENALL);
+
+	for (int idx = 0; idx < 16; ++idx)
+		_sounds.flushChannel(idx);
+	flushChannels(10);
 }
 
-void QSoundManager::proc11() {
-	warning("TODO");
+void QSoundManager::setVolume(uint handle, uint volume, uint seconds) {
+	for (uint idx = 0; idx < _slots.size(); ++idx) {
+		Slot &slot = _slots[idx];
+		if (slot._handle == handle) {
+			_channelsVolume[slot._channel] = volume;
+			updateVolume(slot._channel, seconds * 1000);
+
+			if (volume) {
+				uint ticks = g_vm->_events->getTicksCount() + seconds * 1000;
+				if (!slot._ticks || ticks >= slot._ticks)
+					slot._ticks = ticks;
+			} else {
+				slot._ticks = 0;
+			}
+			break;
+		}
+	}
 }
 
-void QSoundManager::proc12() {
-	warning("TODO");
+void QSoundManager::setVectorPosition(uint handle, double x, double y, double z, uint panRate) {
+	for (uint idx = 0; idx < _slots.size(); ++idx) {
+		Slot &slot = _slots[idx];
+		if (slot._handle == handle) {
+			qsWaveMixSetPanRate(slot._channel, QMIX_USEONCE, panRate);
+			qsWaveMixSetSourcePosition(slot._channel, QMIX_USEONCE, QSVECTOR(x, y, z));
+			break;
+		}
+	}
 }
 
-void QSoundManager::proc13() {
-	warning("TODO");
+void QSoundManager::setPolarPosition(uint handle, double range, double azimuth, double elevation, uint panRate) {
+	for (uint idx = 0; idx < _slots.size(); ++idx) {
+		Slot &slot = _slots[idx];
+		if (slot._handle == handle) {
+			qsWaveMixSetPanRate(slot._channel, QMIX_USEONCE, panRate);
+			qsWaveMixSetPolarPosition(slot._channel, QMIX_USEONCE, 
+				QSPOLAR(azimuth, range, elevation));
+			break;
+		}
+	}
 }
 
-bool QSoundManager::proc14() {
-	warning("TODO");
+bool QSoundManager::isActive(uint handle) const {
+	for (uint idx = 0; idx < _slots.size(); ++idx) {
+		if (_slots[idx]._handle == handle)
+			return true;
+	}
+
 	return false;
 }
 
 bool QSoundManager::isActive(const CWaveFile *waveFile) const {
-	warning("TODO");
-	return false;
-}
-
-int QSoundManager::proc16() const {
-	warning("TODO");
-	return 0;
+	return _sounds.contains(waveFile);
 }
 
 uint QSoundManager::getLatency() const {
 	return LATENCY;
 }
 
-void QSoundManager::proc19(int v) {
-	warning("TODO");
+void QSoundManager::setMusicPercent(double percent) {
+	_musicPercent = percent;
+	updateVolumes();
 }
 
-void QSoundManager::proc20(int v) {
-	warning("TODO");
+void QSoundManager::setSpeechPercent(double percent) {
+	_speechPercent = percent;
+	updateVolumes();
 }
 
-void QSoundManager::proc21(int v) {
-	warning("TODO");
+void QSoundManager::setMasterPercent(double percent) {
+	_masterPercent = percent;
+	updateVolumes();
+}
+
+void QSoundManager::setParrotPercent(double percent) {
+	_parrotPercent = percent;
 }
 
 void QSoundManager::proc29() {
@@ -189,6 +233,63 @@ void QSoundManager::proc30() {
 
 void QSoundManager::soundFreed(Audio::SoundHandle &handle) {
 	qsWaveMixFreeWave(handle);
+}
+
+void QSoundManager::flushChannels(int channel) {
+	int endChannel;
+	switch (channel) {
+	case 0:
+	case 3:
+		endChannel = channel + 3;
+		break;
+	case 6:
+		endChannel = 10;
+		break;
+	case 10:
+		endChannel = 48;
+		break;
+	default:
+		return;
+	}
+
+	for (; channel < endChannel; ++channel) {
+		qsWaveMixFlushChannel(channel);
+		_sounds.flushChannel(channel);
+	}
+}
+
+void QSoundManager::updateVolume(int channel, uint panRate) {
+	uint volume = _channelsVolume[channel] * 327;
+
+	switch (_channelsMode[channel]) {
+	case 0:
+	case 1:
+	case 2:
+		volume = (_speechPercent * volume) / 100;
+		break;
+	case 3:
+	case 4:
+	case 5:
+		volume = (24525 * volume) / 100;
+		break;
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+		volume = (_masterPercent * volume) / 100;
+		break;
+	default:
+		break;
+	}
+	
+	volume = (_musicPercent * volume) / 100;
+	qsWaveMixSetPanRate(channel, 0, panRate);
+	qsWaveMixSetVolume(channel, 0, volume);
+}
+
+void QSoundManager::updateVolumes() {
+	for (int idx = 0; idx < CHANNELS_COUNT; ++idx)
+		updateVolume(idx, 250);
 }
 
 } // End of namespace Titanic z

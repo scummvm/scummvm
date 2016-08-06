@@ -55,11 +55,9 @@ void CSound::preEnterView(CViewItem *newView, bool isNewRoom) {
 	warning("CSound::preEnterView");
 }
 
-bool CSound::fn1(int val) {
-	if (val == 0 || val == -1) {
-		if (!_soundManager.proc14())
-			return true;
-	}
+bool CSound::isActive(int handle) const {
+	if (handle != 0 && handle != -1)
+		return _soundManager.isActive(handle);
 
 	return false;
 }

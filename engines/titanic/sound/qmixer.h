@@ -27,11 +27,13 @@
 
 namespace Titanic {
 
-enum WaveMixOpenChannel {
+enum QMixFlag {
 	QMIX_OPENSINGLE		= 0,	// Open the single channel specified by iChannel
 	QMIX_OPENALL		= 1,	// Opens all the channels, iChannel ignored
 	QMIX_OPENCOUNT		= 2,	// Open iChannel Channels (eg. if iChannel = 4 will create channels 0-3)
-	QMIX_OPENAVAILABLE	= 3		// Open the first unopened channel, and return channel number
+	QMIX_OPENAVAILABLE	= 3,	// Open the first unopened channel, and return channel number
+
+	QMIX_USEONCE		= 0x10	// settings are temporary
 };
 
 /**
@@ -63,6 +65,22 @@ struct QSVECTOR {
 	double x;
 	double y;
 	double z;
+
+	QSVECTOR() : x(0.0), y(0.0), z(0.0) {}
+	QSVECTOR(double xp, double yp, double zp) : x(xp), y(yp), z(zp) {}
+};
+
+/**
+ * Polar positioning
+ */
+struct QSPOLAR {
+	double azimuth;		// degrees
+	double range;		// meters
+	double elevation;	// degrees
+
+	QSPOLAR() : azimuth(0.0), range(0.0), elevation(0.0) {}
+	QSPOLAR(double azimuth_, double range_, double elevation_) :
+		azimuth(azimuth_), range(range_), elevation(elevation_) {}
 };
 
 /**
@@ -96,7 +114,7 @@ public:
 	/**
 	 * Opens channels in the mixer for access
 	 */
-	int qsWaveMixOpenChannel(int iChannel, WaveMixOpenChannel mode);
+	int qsWaveMixOpenChannel(int iChannel, QMixFlag mode);
 
 	/**
 	 * Closes down the mixer
@@ -107,6 +125,42 @@ public:
 	 * Stops a sound from playing
 	 */
 	void qsWaveMixFreeWave(Audio::SoundHandle &handle);
+
+	/**
+	 * Flushes a channel
+	 */
+	void qsWaveMixFlushChannel(int iChannel, uint flags = 0);
+
+	/**
+	 * Sets the amount of time, in milliseconds, to effect a change in
+	 * a channel property (e.g. volume, position).  Non-zero values
+	 * smooth out changes
+	 * @param iChannel		Channel to change
+	 * @param flags			Flags
+	 * @param rate			Pan rate in milliseconds
+	*/
+	void qsWaveMixSetPanRate(int iChannel, uint flags, uint rate);
+
+	/**
+	* Sets the volume for a channel
+	*/
+	void qsWaveMixSetVolume(int iChannel, uint flags, uint volume);
+
+	/**
+	 * Sets the relative position of a channel
+	 * @param iChannel		Channel number
+	 * @param Flags			Flags
+	 * @param position		Vector position for channel
+	 */
+	void qsWaveMixSetSourcePosition(int iChannel, uint flags, const QSVECTOR &position);
+
+	/**
+	 * Sets the relative position of a channel using polar co-ordinates
+	 * @param iChannel		Channel number
+	 * @param Flags			Flags
+	 * @param position		Polar position for channel
+	 */
+	void qsWaveMixSetPolarPosition(int iChannel, uint flags, const QSPOLAR &position);
 };
 
 } // End of namespace Titanic

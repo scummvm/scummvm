@@ -425,11 +425,11 @@ void CGameObject::makeDirty() {
 	makeDirty(_bounds);
 }
 
-bool CGameObject::soundFn1(int handle) {
+bool CGameObject::isSoundActive(int handle) const {
 	if (handle != 0 && handle != -1) {
 		CGameManager *gameManager = getGameManager();
 		if (gameManager)
-			return gameManager->_sound.fn1(handle);
+			return gameManager->_sound.isActive(handle);
 	}
 
 	return false;

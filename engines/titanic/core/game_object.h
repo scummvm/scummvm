@@ -195,7 +195,10 @@ protected:
 	 */
 	void stopSound(int handle, int val2 = 0);
 
-	bool soundFn1(int handle);
+	/**
+	 * Returns true if a sound with the specified handle is active
+	 */
+	bool isSoundActive(int handle) const;
 
 	void soundFn2(const CString &resName, int v1, int v2, int v3, int handleIndex);
 

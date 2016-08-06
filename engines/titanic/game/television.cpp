@@ -103,7 +103,7 @@ void CTelevision::load(SimpleFile *file) {
 bool CTelevision::LeaveViewMsg(CLeaveViewMsg *msg) {
 	petClear();
 	if (_isOn) {
-		if (soundFn1(_soundHandle))
+		if (isSoundActive(_soundHandle))
 			stopSound(_soundHandle, 0);
 
 		loadFrame(622);
@@ -153,7 +153,7 @@ static const int END_FRAMES[8] = { 0, 55, 111, 167, 223, 279, 335, 391 };
 
 bool CTelevision::PETUpMsg(CPETUpMsg *msg) {
 	if (msg->_name == "Television" && _isOn) {
-		if (soundFn1(_soundHandle))
+		if (isSoundActive(_soundHandle))
 			stopSound(_soundHandle, 0);
 
 		_fieldE0 = _fieldE0 % _fieldE4 + 1;
@@ -166,7 +166,7 @@ bool CTelevision::PETUpMsg(CPETUpMsg *msg) {
 
 bool CTelevision::PETDownMsg(CPETDownMsg *msg) {
 	if (msg->_name == "Television" && _isOn) {
-		if (soundFn1(_soundHandle))
+		if (isSoundActive(_soundHandle))
 			stopSound(_soundHandle, 0);
 		if (--_fieldE0 < 1)
 			_fieldE0 += _fieldE4;
@@ -215,7 +215,7 @@ bool CTelevision::PETActivateMsg(CPETActivateMsg *msg) {
 			_fieldE0 = 1;
 		} else {
 			stopMovie();
-			if (soundFn1(_soundHandle))
+			if (isSoundActive(_soundHandle))
 				stopSound(_soundHandle, 0);
 			
 			setVisible(false);

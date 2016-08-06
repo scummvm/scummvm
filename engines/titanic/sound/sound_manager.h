@@ -67,14 +67,51 @@ public:
 	 */
 	virtual int playSound(CWaveFile &waveFile, CProximity &prox) = 0;
 
-	virtual void proc7() = 0;
+	/**
+	 * Stop playing the specified sound
+	 */
+	virtual void stopSound(uint handle) = 0;
+
 	virtual void proc8(int v) = 0;
-	virtual void proc9() {}
-	virtual void proc10() = 0;
-	virtual void proc11() = 0;
-	virtual void proc12() {}
-	virtual void proc13() {}
-	virtual bool proc14() = 0;
+	virtual void proc9(uint handle) {}
+
+	/**
+	 * Stops sounds on all playing channels
+	 */
+	virtual void stopAllChannels() = 0;
+
+	/**
+	 * Sets the volume for a sound
+	 * @param handle	Handle for sound
+	 * @param volume	New volume
+	 * @param seconds	Number of seconds to transition to the new volume
+	 */
+	virtual void setVolume(uint handle, uint volume, uint seconds) = 0;
+
+	/**
+	 * Set the position for a sound
+	 * @param handle	Handle for sound
+	 * @param x			x position in metres
+	 * @param y			y position in metres
+	 * @param z			z position in metres
+	 * @param panRate	Rate in milliseconds to transition
+	 */
+	virtual void setVectorPosition(uint handle, double x, double y, double z, uint panRate) {}
+
+	/**
+	 * Set the position for a sound
+	 * @param handle	Handle for sound
+	 * @param range		Range value in metres
+	 * @param azimuth	Azimuth value in degrees
+	 * @param elevation	Elevation value in degrees
+	 * @param panRate	Rate in milliseconds to transition
+	 */
+	virtual void setPolarPosition(uint handle, double range, double azimuth, double elevation, uint panRate) {}
+
+	/**
+	 * Returns true if the given sound is currently active
+	 */
+	virtual bool isActive(uint handle) const = 0;
 
 	/**
 	 * Returns true if the given sound is currently active
@@ -88,15 +125,30 @@ public:
 	 */
 	virtual uint getLatency() const { return 0; }
 
-	virtual void setMusicPercent(double percent) { _musicPercent = percent; }
-	virtual void setSpeechPercent(double percent) { _speechPercent = percent; }
-	virtual void setMasterPercent(double percent) { _masterPercent = percent; }
-	virtual void setParrotPercent(double percent) { _parrotPercent = percent; }
+	/**
+	 * Sets the music volume percent
+	 */
+	virtual void setMusicPercent(double percent) = 0;
+
+	/**
+	 * Sets the speech volume percent
+	 */
+	virtual void setSpeechPercent(double percent) = 0;
+
+	/**
+	 * Sets the master volume percent
+	 */
+	virtual void setMasterPercent(double percent) = 0;
+
+	/**
+	 * Sets the Parrot NPC volume percent
+	 */
+	virtual void setParrotPercent(double percent) = 0;
 
 	/**
 	 * Called when a game is about to be loaded
 	 */
-	virtual void preLoad() { proc10(); }
+	virtual void preLoad() { stopAllChannels(); }
 
 	/**
 	 * Load the data for the class from file
@@ -124,6 +176,11 @@ public:
 	virtual void postSave() {}
 	
 	virtual void proc29() {}
+
+	/**
+	 * Returns the parrot volume percent
+	 */
+	int getParrotVolume() const { return _parrotPercent; }
 };
 
 class QSoundManagerSound : public ListItem {
@@ -167,13 +224,40 @@ public:
  * the QMixer sound mixer class
  */
 class QSoundManager : public CSoundManager, public QMixer {
+	struct Slot {
+		uint _val1;
+		uint _val2;
+		uint _ticks;
+		int _channel;
+		uint _handle;
+		Slot() : _val1(0), _val2(0), _ticks(0), _channel(0), _handle(0) {}
+	};
 private:
 	QSoundManagerSounds _sounds;
+	Common::Array<Slot> _slots;
+	uint _channelsVolume[16];
+	int _channelsMode[16];
+private:
+	/**
+	 * Flushes designated channels
+	 */
+	void flushChannels(int channel);
+
+	/**
+	 * Updates the volume for a channel
+	 * @param channel	Channel to be update
+	 * @param panRate	Time in milliseconds for change to occur
+	 */
+	void updateVolume(int channel, uint panRate);
+
+	/**
+	 * Updates all the volumes
+	 */
+	void updateVolumes();
 public:
 	int _field18;
 	int _field1C;
 
-	int _field4A0[16];
 public:
 	QSoundManager(Audio::Mixer *mixer);
 	virtual ~QSoundManager();
@@ -199,30 +283,83 @@ public:
 	 */
 	virtual int playSound(CWaveFile &waveFile, CProximity &prox);
 	
-	virtual void proc7();
+	/**
+	 * Stop playing the specified sound
+	 */
+	virtual void stopSound(uint handle);
+
 	virtual void proc8(int v);
-	virtual void proc9();
-	virtual void proc10();
-	virtual void proc11();
-	virtual void proc12();
-	virtual void proc13();
-	virtual bool proc14();
+	virtual void proc9(uint handle);
+
+	/**
+	 * Stops sounds on all playing channels
+	 */
+	virtual void stopAllChannels();
+
+	/**
+	 * Sets the volume for a sound
+	 * @param handle	Handle for sound
+	 * @param volume	New volume
+	 * @param seconds	Number of seconds to transition to the new volume
+	 */
+	virtual void setVolume(uint handle, uint volume, uint seconds);
+
+	/**
+	 * Set the position for a sound
+	 * @param handle	Handle for sound
+	 * @param x			x position in metres
+	 * @param y			y position in metres
+	 * @param z			z position in metres
+	 * @param panRate	Rate in milliseconds to transition
+	 */
+	virtual void setVectorPosition(uint handle, double x, double y, double z, uint panRate);
+
+	/**
+	 * Set the position for a sound
+	 * @param handle	Handle for sound
+	 * @param range		Range value in metres
+	 * @param azimuth	Azimuth value in degrees
+	 * @param elevation	Elevation value in degrees
+	 * @param panRate	Rate in milliseconds to transition
+	 */
+	virtual void setPolarPosition(uint handle, double range, double azimuth, double elevation, uint panRate);
 
 	/**
 	 * Returns true if the given sound is currently active
 	 */
-	virtual bool isActive(const CWaveFile *soundRes) const;
+	virtual bool isActive(uint handle) const;
 
-	virtual int proc16() const;
+	/**
+	 * Returns true if the given sound is currently active
+	 */
+	virtual bool isActive(const CWaveFile *waveFile) const;
+
+	virtual int proc16() const { return 1; }
 	
 	/**
 	 * Returns the movie latency
 	 */
 	virtual uint getLatency() const;
 
-	virtual void proc19(int v);
-	virtual void proc20(int v);
-	virtual void proc21(int v);
+	/**
+	 * Sets the music volume percent
+	 */
+	virtual void setMusicPercent(double percent);
+
+	/**
+	 * Sets the speech volume percent
+	 */
+	virtual void setSpeechPercent(double percent);
+
+	/**
+	 * Sets the master volume percent
+	 */
+	virtual void setMasterPercent(double percent);
+
+	/**
+	 * Sets the Parrot NPC volume percent
+	 */
+	virtual void setParrotPercent(double percent);
 
 	virtual void proc29();
 	virtual void proc30();
