@@ -422,6 +422,7 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
 		g_sci->_gfxPalette32->saveLoadWithSerializer(s);
+		g_sci->_gfxRemap32->saveLoadWithSerializer(s);
 	} else
 #endif
 		g_sci->_gfxPalette16->saveLoadWithSerializer(s);
