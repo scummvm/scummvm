@@ -358,11 +358,9 @@ void RivenSimpleCommand::mohawkSwitch(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 9: enable hotspot (blst_id)
 void RivenSimpleCommand::enableHotspot(uint16 op, uint16 argc, uint16 *argv) {
-	for (uint16 i = 0; i < _vm->_hotspots.size(); i++) {
-		if (_vm->_hotspots[i]->getBlstId() == argv[0]) {
-			debug(2, "Enabling hotspot with BLST ID %d", argv[0]);
-			_vm->_hotspots[i]->enable(true);
-		}
+	RivenHotspot *hotspot = _vm->getCurCard()->getHotspotByBlstId(argv[0]);
+	if (hotspot) {
+		hotspot->enable(true);
 	}
 
 	// Recheck our current hotspot because it may have now changed
@@ -371,11 +369,9 @@ void RivenSimpleCommand::enableHotspot(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 10: disable hotspot (blst_id)
 void RivenSimpleCommand::disableHotspot(uint16 op, uint16 argc, uint16 *argv) {
-	for (uint16 i = 0; i < _vm->_hotspots.size(); i++) {
-		if (_vm->_hotspots[i]->getBlstId() == argv[0]) {
-			debug(2, "Disabling hotspot with BLST ID %d", argv[0]);
-			_vm->_hotspots[i]->enable(false);
-		}
+	RivenHotspot *hotspot = _vm->getCurCard()->getHotspotByBlstId(argv[0]);
+	if (hotspot) {
+		hotspot->enable(false);
 	}
 
 	// Recheck our current hotspot because it may have now changed
@@ -600,10 +596,12 @@ void RivenSimpleCommand::activateBLST(uint16 op, uint16 argc, uint16 *argv) {
 		uint16 enabled = blst->readUint16BE();
 		uint16 hotspotID = blst->readUint16BE();
 
-		if (argv[0] == index)
-			for (uint16 j = 0; j < _vm->_hotspots.size(); j++)
-				if (_vm->_hotspots[j]->getBlstId() == hotspotID)
-					_vm->_hotspots[j]->enable(enabled == 1);
+		if (argv[0] == index) {
+			RivenHotspot *hotspot = _vm->getCurCard()->getHotspotByBlstId(hotspotID);
+			if (hotspot) {
+				hotspot->enable(enabled == 1);
+			}
+		}
 	}
 
 	delete blst;

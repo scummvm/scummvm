@@ -103,9 +103,6 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _scriptMan;
 	delete _optionsDialog;
 	delete _rnd;
-	for (uint i = 0; i < _hotspots.size(); i++) {
-		delete _hotspots[i];
-	}
 	delete g_atrusJournalRect1;
 	delete g_atrusJournalRect2;
 	delete g_cathJournalRect2;
@@ -257,8 +254,7 @@ void MohawkEngine_Riven::handleEvents() {
 			case Common::KEYCODE_F4:
 				_showHotspots = !_showHotspots;
 				if (_showHotspots) {
-					for (uint16 i = 0; i < _hotspots.size(); i++)
-						_gfx->drawRect(_hotspots[i]->getRect(), _hotspots[i]->isEnabled());
+					_card->drawHotspotRects();
 					needsUpdate = true;
 				} else
 					refreshCard();
@@ -267,7 +263,7 @@ void MohawkEngine_Riven::handleEvents() {
 				runDialog(*_optionsDialog);
 				if (_optionsDialog->getLoadSlot() >= 0)
 					loadGameState(_optionsDialog->getLoadSlot());
-				updateZipMode();
+				_card->initializeZipMode();
 				break;
 			case Common::KEYCODE_r:
 				// Return to the main menu in the demo on ctrl+r
@@ -406,16 +402,13 @@ void MohawkEngine_Riven::refreshCard() {
 	// Clear any timer still floating around
 	removeTimer();
 
-	loadHotspots(_card->getId());
-
 	_gfx->clearWaterEffects();
 	_video->stopVideos();
 
 	_card->open();
 
 	if (_showHotspots)
-		for (uint16 i = 0; i < _hotspots.size(); i++)
-			_gfx->drawRect(_hotspots[i]->getRect(), _hotspots[i]->isEnabled());
+		_card->drawHotspotRects();
 
 	// Now we need to redraw the cursor if necessary and handle mouse over scripts
 	updateCurrentHotspot();
@@ -424,55 +417,9 @@ void MohawkEngine_Riven::refreshCard() {
 	installCardTimer();
 }
 
-void MohawkEngine_Riven::loadHotspots(uint16 id) {
-	for (uint i = 0; i < _hotspots.size(); i++) {
-		delete _hotspots[i];
-	}
-
-	Common::SeekableReadStream *inStream = getResource(ID_HSPT, id);
-
-	uint16 hotspotCount = inStream->readUint16BE();
-	_hotspots.resize(hotspotCount);
-
-	for (uint16 i = 0; i < hotspotCount; i++) {
-		_hotspots[i] = new RivenHotspot(this, inStream);
-	}
-
-	delete inStream;
-	updateZipMode();
-}
-
-void MohawkEngine_Riven::updateZipMode() {
-	// Check if a zip mode hotspot is enabled by checking the name/id against the ZIPS records.
-
-	for (uint32 i = 0; i < _hotspots.size(); i++) {
-		if (_hotspots[i]->isZip()) {
-			if (_vars["azip"] != 0) {
-				// Check if a zip mode hotspot is enabled by checking the name/id against the ZIPS records.
-				Common::String hotspotName = _hotspots[i]->getName();
-
-				bool foundMatch = false;
-
-				if (!hotspotName.empty())
-					for (uint16 j = 0; j < _zipModeData.size(); j++)
-						if (_zipModeData[j].name == hotspotName) {
-							foundMatch = true;
-							break;
-						}
-
-				_hotspots[i]->enable(foundMatch);
-			} else // Disable the hotspot if zip mode is disabled
-				_hotspots[i]->enable(false);
-		}
-	}
-}
-
 void MohawkEngine_Riven::checkHotspotChange() {
-	RivenHotspot *hotspot = nullptr;
-	for (uint16 i = 0; i < _hotspots.size(); i++)
-		if (_hotspots[i]->isEnabled() && _hotspots[i]->containsPoint(_eventMan->getMousePos())) {
-			hotspot = _hotspots[i];
-		}
+	Common::Point mousePos = _eventMan->getMousePos();
+	RivenHotspot *hotspot = _card->getHotspotContainingPoint(mousePos);
 
 	if (hotspot) {
 		if (_curHotspot != hotspot) {
@@ -594,6 +541,38 @@ Common::String MohawkEngine_Riven::getName(uint16 nameResource, uint16 nameID) {
 	delete nameStream;
 	delete[] stringOffsets;
 	return name;
+}
+
+int16 MohawkEngine_Riven::getIdFromName(uint16 nameResource, const Common::String &name) {
+	//TODO: Use proper data structures
+
+	Common::SeekableReadStream *nameStream = getResource(ID_NAME, nameResource);
+	uint16 fieldCount = nameStream->readUint16BE();
+	uint16 *stringOffsets = new uint16[fieldCount];
+
+	for (uint16 i = 0; i < fieldCount; i++)
+		stringOffsets[i] = nameStream->readUint16BE();
+	for (uint16 i = 0; i < fieldCount; i++)
+		nameStream->readUint16BE();	// Skip unknown values
+
+	for (uint16 i = 0; i < fieldCount; i++) {
+		nameStream->seek(stringOffsets[i], SEEK_CUR);
+
+		Common::String readName;
+		char c = (char)nameStream->readByte();
+		while (c) {
+			readName += c;
+			c = (char)nameStream->readByte();
+		}
+
+		if (readName.equalsIgnoreCase(name)) {
+			return i;
+		}
+	}
+
+	delete nameStream;
+	delete[] stringOffsets;
+	return -1;
 }
 
 uint16 MohawkEngine_Riven::matchRMAPToCard(uint32 rmapCode) {
@@ -920,7 +899,7 @@ void MohawkEngine_Riven::checkSunnerAlertClick() {
 		return;
 
 	// Only set the sunners variable on the forward hotspot
-	if ((rmapCode == 0x79bd && _curHotspot->getIndex() != 2) || (rmapCode == 0x7beb && _curHotspot->getIndex() != 3))
+	if (_curHotspot->getBlstId() != 3)
 		return;
 
 	// If the alert video is no longer playing, we have nothing left to do
@@ -940,6 +919,19 @@ void MohawkEngine_Riven::addZipVisitedCard(uint16 cardId, uint16 cardNameId) {
 	zip.id = cardId;
 	if (!(Common::find(_zipModeData.begin(), _zipModeData.end(), zip) != _zipModeData.end()))
 		_zipModeData.push_back(zip);
+}
+
+bool MohawkEngine_Riven::isZipVisitedCard(const Common::String &hotspotName) const {
+	bool foundMatch = false;
+
+	if (!hotspotName.empty())
+		for (uint16 j = 0; j < _zipModeData.size(); j++)
+			if (_zipModeData[j].name == hotspotName) {
+				foundMatch = true;
+				break;
+			}
+
+	return foundMatch;
 }
 
 bool ZipMode::operator== (const ZipMode &z) const {

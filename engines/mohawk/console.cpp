@@ -510,10 +510,12 @@ bool RivenConsole::Cmd_ChangeStack(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_Hotspots(int argc, const char **argv) {
-	debugPrintf("Current card (%d) has %d hotspots:\n", _vm->getCurCard()->getId(), _vm->_hotspots.size());
+	Common::Array<RivenHotspot *> hotspots = _vm->_card->getHotspots();
 
-	for (uint16 i = 0; i < _vm->_hotspots.size(); i++) {
-		RivenHotspot *hotspot = _vm->_hotspots[i];
+	debugPrintf("Current card (%d) has %d hotspots:\n", _vm->getCurCard()->getId(), hotspots.size());
+
+	for (uint16 i = 0; i < hotspots.size(); i++) {
+		RivenHotspot *hotspot = hotspots[i];
 		debugPrintf("Hotspot %d, index %d, BLST ID %d (", i, hotspot->getIndex(), hotspot->getBlstId());
 
 		if (hotspot->isEnabled())

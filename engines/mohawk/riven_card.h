@@ -31,6 +31,8 @@
 
 namespace Mohawk {
 
+class RivenHotspot;
+
 /**
  * A game view
  *
@@ -74,12 +76,30 @@ public:
 	/** Get the card's sound description with the specified index */
 	SLSTRecord getSound(uint16 index) const;
 
+	/** Draw borders for all the hotspots in the card */
+	void drawHotspotRects();
+
+	/** Enable the zip hotspots if they match to already visited locations */
+	void initializeZipMode();
+
+	/** Get the hotspot containing the specified point */
+	RivenHotspot *getHotspotContainingPoint(const Common::Point &point) const;
+
+	/** Get the hotspot with the specified name */
+	RivenHotspot *getHotspotByName(const Common::String &name) const;
+
+	/** Get the hotspot with the specified BLST id */
+	RivenHotspot *getHotspotByBlstId(const uint16 blstId) const;
+
+	/** Get all the hotspots in the card. To be used for debugging features only */
+	Common::Array<RivenHotspot *> getHotspots() const;
+
 private:
 	void loadCardResource(uint16 id);
+	void loadHotspots(uint16 id);
 	void loadCardPictureList(uint16 id);
 	void loadCardSoundList(uint16 id);
 
-	void initializeZipMode();
 	void defaultLoadScript();
 
 	MohawkEngine_Riven *_vm;
@@ -89,6 +109,8 @@ private:
 	int16 _name;
 	uint16 _zipModePlace;
 	RivenScriptList _scripts;
+
+	Common::Array<RivenHotspot *> _hotspots;
 
 	// Resource lists
 	Common::Array<Picture> _pictureList;
@@ -132,7 +154,10 @@ public:
 	/** Get the hotspot's name from the current stack's name list */
 	Common::String getName() const;
 
-	/** Get the hotspot's index in the view */
+	/** Get the hotspot's name id */
+	int16 getNameId() const;
+
+	/** Get the hotspot's order in the view */
 	uint16 getIndex() const;
 
 	/** Get the hotspot's enable list id */

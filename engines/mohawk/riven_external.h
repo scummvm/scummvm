@@ -64,9 +64,9 @@ private:
 	void runDomeCheck();
 	void runDomeButtonMovie();
 	void resetDomeSliders(uint16 soundId, uint16 startHotspot);
-	void checkDomeSliders(uint16 resetSlidersHotspot, uint16 openDomeHotspot);
+	void checkDomeSliders();
 	void checkSliderCursorChange(uint16 startHotspot);
-	void dragDomeSlider(uint16 soundId, uint16 resetSlidersHotspot, uint16 openDomeHotspot, uint16 startHotspot);
+	void dragDomeSlider(uint16 soundId, uint16 startHotspot);
 	void drawDomeSliders(uint16 startHotspot);
 	void drawMarbles();
 	void setMarbleHotspots();
