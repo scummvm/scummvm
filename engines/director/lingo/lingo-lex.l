@@ -61,7 +61,7 @@ static void countnl() {
 identifier [_[:alpha:]][_[:alnum:]]*
 constfloat [[:digit:]]+\.[[:digit:]]*
 constinteger [[:digit:]]+
-conststring \"[^\"\n]*\"
+conststring \"[^\"\r\n]*\"
 operator [-+*/%=^:,()><&]
 newline [ \t]*[\n\r]
 whitespace [\t ]
