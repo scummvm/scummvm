@@ -249,6 +249,9 @@ public:
 	static void c_gotoprevious();
 	static void c_global();
 
+	static void c_play();
+	static void c_playdone();
+
 	static void c_open();
 
 	static void b_abs();

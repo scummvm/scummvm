@@ -88,21 +88,23 @@
      tFACTORY = 304,
      tMETHOD = 305,
      tOPEN = 306,
-     tGE = 307,
-     tLE = 308,
-     tGT = 309,
-     tLT = 310,
-     tEQ = 311,
-     tNEQ = 312,
-     tAND = 313,
-     tOR = 314,
-     tNOT = 315,
-     tCONCAT = 316,
-     tCONTAINS = 317,
-     tSTARTS = 318,
-     tSPRITE = 319,
-     tINTERSECTS = 320,
-     tWITHIN = 321
+     tPLAY = 307,
+     tDONE = 308,
+     tGE = 309,
+     tLE = 310,
+     tGT = 311,
+     tLT = 312,
+     tEQ = 313,
+     tNEQ = 314,
+     tAND = 315,
+     tOR = 316,
+     tNOT = 317,
+     tCONCAT = 318,
+     tCONTAINS = 319,
+     tSTARTS = 320,
+     tSPRITE = 321,
+     tINTERSECTS = 322,
+     tWITHIN = 323
    };
 #endif
 /* Tokens.  */
@@ -155,21 +157,23 @@
 #define tFACTORY 304
 #define tMETHOD 305
 #define tOPEN 306
-#define tGE 307
-#define tLE 308
-#define tGT 309
-#define tLT 310
-#define tEQ 311
-#define tNEQ 312
-#define tAND 313
-#define tOR 314
-#define tNOT 315
-#define tCONCAT 316
-#define tCONTAINS 317
-#define tSTARTS 318
-#define tSPRITE 319
-#define tINTERSECTS 320
-#define tWITHIN 321
+#define tPLAY 307
+#define tDONE 308
+#define tGE 309
+#define tLE 310
+#define tGT 311
+#define tLT 312
+#define tEQ 313
+#define tNEQ 314
+#define tAND 315
+#define tOR 316
+#define tNOT 317
+#define tCONCAT 318
+#define tCONTAINS 319
+#define tSTARTS 320
+#define tSPRITE 321
+#define tINTERSECTS 322
+#define tWITHIN 323
 
 
 
@@ -187,7 +191,7 @@ typedef union YYSTYPE
 	Common::Array<double> *arr;
 }
 /* Line 1529 of yacc.c.  */
-#line 191 "engines/director/lingo/lingo-gr.hpp"
+#line 195 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

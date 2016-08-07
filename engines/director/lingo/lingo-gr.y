@@ -84,7 +84,7 @@ void yyerror(char *s) {
 %token<s> BLTIN BLTINNOARGS BLTINNOARGSORONE BLTINONEARG ID STRING HANDLER
 %token tDOWN tELSE tNLELSIF tEND tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
 %token tMCI tMCIWAIT tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
-%token tWITH tWHILE tNLELSE tFACTORY tMETHOD tOPEN
+%token tWITH tWHILE tNLELSE tFACTORY tMETHOD tOPEN tPLAY tDONE
 %token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT
 %token tCONCAT tCONTAINS tSTARTS
 %token tSPRITE tINTERSECTS tWITHIN
@@ -400,6 +400,7 @@ func: tMCI STRING			{ g_lingo->code1(g_lingo->c_mci); g_lingo->codeString($2->c_
 	| tMCIWAIT ID			{ g_lingo->code1(g_lingo->c_mciwait); g_lingo->codeString($2->c_str()); delete $2; }
 	| tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| gotofunc
+	| playfunc
 	| tEXIT					{ g_lingo->codeConst(0); // Push fake value on stack
 							  g_lingo->code1(g_lingo->c_procret); }
 	| tGLOBAL globallist
@@ -449,15 +450,31 @@ gotofunc: tGO tLOOP				{ g_lingo->code1(g_lingo->c_gotoloop); }
 		delete $2; }
 	;
 
-gotoframe: tTO tFRAME STRING	{ $$ = $3; }
-	| tFRAME STRING				{ $$ = $2; }
-	| tTO STRING				{ $$ = $2; }
+gotoframe: tFRAME STRING		{ $$ = $2; }
 	| STRING					{ $$ = $1; }
 	;
 
 gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
 	| tMOVIE STRING				{ $$ = $2; }
-	| tTO tMOVIE STRING			{ $$ = $3; }
+	;
+
+playfunc: tPLAY tDONE			{ g_lingo->code1(g_lingo->c_playdone); }
+	| tPLAY gotoframe 			{
+		g_lingo->code1(g_lingo->c_play);
+		g_lingo->codeString($2->c_str());
+		g_lingo->codeString("");
+		delete $2; }
+	| tPLAY gotoframe gotomovie	{
+		g_lingo->code1(g_lingo->c_play);
+		g_lingo->codeString($2->c_str());
+		g_lingo->codeString($3->c_str());
+		delete $2;
+		delete $3; }
+	| tPLAY gotomovie				{
+		g_lingo->code1(g_lingo->c_play);
+		g_lingo->codeString("");
+		g_lingo->codeString($2->c_str());
+		delete $2; }
 	;
 
 // macro

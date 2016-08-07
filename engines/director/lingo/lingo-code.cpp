@@ -695,6 +695,20 @@ void Lingo::c_gotoprevious() {
 	g_lingo->func_gotoprevious();
 }
 
+void Lingo::c_play() {
+	Common::String frame((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
+	g_lingo->_pc += g_lingo->calcStringAlignment(frame.c_str());
+
+	Common::String movie((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
+	g_lingo->_pc += g_lingo->calcStringAlignment(movie.c_str());
+
+	warning("STUB: c_play(%s, %s)", frame.c_str(), movie.c_str());
+}
+
+void Lingo::c_playdone() {
+	warning("STUB: c_playdone()");
+}
+
 void Lingo::c_call() {
 	Common::String name((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
 	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());

@@ -74,6 +74,7 @@ whitespace [\t ]
 
 (?i:and)			{ count(); return tAND; }
 (?i:contains)		{ count(); return tCONTAINS; }
+(?i:done)			{ count(); return tDONE; }
 (?i:down)			{ count(); return tDOWN; }
 (?i:if)				{ count(); return tIF; }
 (?i:[\n\r]+[\t ]*else[\t ]+if)	{ countnl(); return tNLELSIF; }
@@ -85,6 +86,7 @@ whitespace [\t ]
 (?i:frame)			{ count(); return tFRAME; }
 (?i:global)			{ count(); return tGLOBAL; }
 (?i:go)				{ count(); return tGO; }
+(?i:go[\t ]+to)		{ count(); return tGO; }
 (?i:intersects)		{ count(); return tINTERSECTS; }
 (?i:into)			{ count(); return tINTO; }
 (?i:loop)			{ count(); return tLOOP; }
@@ -98,6 +100,7 @@ whitespace [\t ]
 (?i:of)				{ count(); return tOF; }
 (?i:open)			{ count(); return tOPEN; }
 (?i:or)				{ count(); return tOR; }
+(?i:play)			{ count(); return tPLAY; }
 (?i:previous)		{ count(); return tPREVIOUS; }
 (?i:put)			{ count(); return tPUT; }
 (?i:repeat)			{ count(); return tREPEAT; }
