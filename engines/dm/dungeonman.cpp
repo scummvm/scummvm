@@ -1220,14 +1220,14 @@ uint16 DungeonMan::f140_getObjectWeight(Thing thing) {
 	// Initialization is not present in original
 	// Set to 0 by default as it's the default value used for Thing::_none
 	uint16 weight = 0;
-	Junk *junk = (Junk*)f156_getThingData(thing);
+	Junk *junk = (Junk *)f156_getThingData(thing);
 
 	switch (thing.getType()) {
 	case k5_WeaponThingType:
-		weight = g238_WeaponInfo[((Weapon*)junk)->getType()]._weight;
+		weight = g238_WeaponInfo[((Weapon *)junk)->getType()]._weight;
 		break;
 	case k6_ArmourThingType:
-		weight = g239_ArmourInfo[((Armour*)junk)->getType()]._weight;
+		weight = g239_ArmourInfo[((Armour *)junk)->getType()]._weight;
 		break;
 	case k10_JunkThingType:
 		weight = junkInfo[junk->getType()];
@@ -1257,7 +1257,6 @@ uint16 DungeonMan::f140_getObjectWeight(Thing thing) {
 	return weight; // this is garbage if none of the branches were taken
 }
 
-
 int16 DungeonMan::f141_getObjectInfoIndex(Thing thing) {
 	uint16 *rawType = f156_getThingData(thing);
 	switch (thing.getType()) {
@@ -1282,43 +1281,42 @@ void DungeonMan::f163_linkThingToList(Thing thingToLink, Thing thingInList, int1
 	if (thingToLink == Thing::_endOfList)
 		return;
 
-	Thing *L0269_ps_Generic = (Thing *)f156_getThingData(thingToLink);
-	*L0269_ps_Generic = Thing::_endOfList;
+	Thing *thingPtr = (Thing *)f156_getThingData(thingToLink);
+	*thingPtr = Thing::_endOfList;
 	/* If mapX >= 0 then the thing is linked to the list of things on the specified square else it is linked at the end of the specified thing list */
 	if (mapX >= 0) {
-		byte *L0268_puc_Square = &_g271_currMapData[mapX][mapY];
-		if (getFlag(*L0268_puc_Square, k0x0010_ThingListPresent)) {
+		byte *currSquare = &_g271_currMapData[mapX][mapY];
+		if (getFlag(*currSquare, k0x0010_ThingListPresent)) {
 			thingInList = f161_getSquareFirstThing(mapX, mapY);
 		} else {
-			setFlag(*L0268_puc_Square, k0x0010_ThingListPresent);
+			setFlag(*currSquare, k0x0010_ThingListPresent);
 			uint16 * tmp = _g270_currMapColCumulativeSquareFirstThingCount + mapX + 1;
-			uint16 AL0266_ui_Column = _g282_dungeonColumCount - (_g281_dungeonMapsFirstColumnIndex[_g272_currMapIndex] + mapX) - 1;
-			while (AL0266_ui_Column--) { /* For each column starting from and after the column containing the square where the thing is added */
+			uint16 currColumn = _g282_dungeonColumCount - (_g281_dungeonMapsFirstColumnIndex[_g272_currMapIndex] + mapX) - 1;
+			while (currColumn--) { /* For each column starting from and after the column containing the square where the thing is added */
 				(*tmp++)++; /* Increment the cumulative first thing count */
 			}
-			uint16 L0270_ui_MapY = 0;
-			L0268_puc_Square -= mapY;
-			uint16 AL0266_ui_SquareFirstThingIndex = _g270_currMapColCumulativeSquareFirstThingCount[mapX];
-			while (L0270_ui_MapY++ != mapY) {
-				if (getFlag(*L0268_puc_Square++, k0x0010_ThingListPresent)) {
-					AL0266_ui_SquareFirstThingIndex++;
-				}
+			uint16 currMapY = 0;
+			currSquare -= mapY;
+			uint16 currSquareFirstThingIndex = _g270_currMapColCumulativeSquareFirstThingCount[mapX];
+			while (currMapY++ != mapY) {
+				if (getFlag(*currSquare++, k0x0010_ThingListPresent))
+					currSquareFirstThingIndex++;
 			}
-			Thing *L0267_pT_Thing = &_g283_squareFirstThings[AL0266_ui_SquareFirstThingIndex];
+			Thing *currThing = &_g283_squareFirstThings[currSquareFirstThingIndex];
 			// the second '- 1' is for the loop initialization, > 0 is because we are copying from one behind
-			for (int16 i = _g278_dungeonFileHeader._squareFirstThingCount - AL0266_ui_SquareFirstThingIndex - 1 - 1; i > 0; --i)
-				L0267_pT_Thing[i] = L0267_pT_Thing[i - 1];
+			for (int16 i = _g278_dungeonFileHeader._squareFirstThingCount - currSquareFirstThingIndex - 1 - 1; i > 0; --i)
+				currThing[i] = currThing[i - 1];
 
-			*L0267_pT_Thing = thingToLink;
+			*currThing = thingToLink;
 			return;
 		}
 	}
-	Thing L0265_T_Thing = f159_getNextThing(thingInList);
-	while (L0265_T_Thing != Thing::_endOfList) {
-		L0265_T_Thing = f159_getNextThing(thingInList = L0265_T_Thing);
-	}
-	L0269_ps_Generic = (Thing *)f156_getThingData(thingInList);
-	*L0269_ps_Generic = thingToLink;
+	Thing nextThing = f159_getNextThing(thingInList);
+	while (nextThing != Thing::_endOfList)
+		nextThing = f159_getNextThing(thingInList = nextThing);
+
+	thingPtr = (Thing *)f156_getThingData(thingInList);
+	*thingPtr = thingToLink;
 }
 
 WeaponInfo* DungeonMan::f158_getWeaponInfo(Thing thing) {
@@ -1327,11 +1325,8 @@ WeaponInfo* DungeonMan::f158_getWeaponInfo(Thing thing) {
 }
 
 int16 DungeonMan::f142_getProjectileAspect(Thing thing) {
-	ThingType thingType;
-	int16 projAspOrd;
-	WeaponInfo *weaponInfo;
-
-	if ((thingType = thing.getType()) == k15_ExplosionThingType) {
+	ThingType thingType = thing.getType();
+	if (thingType == k15_ExplosionThingType) {
 		if (thing == Thing::_explFireBall)
 			return -_vm->M0_indexToOrdinal(k10_ProjectileAspectExplosionFireBall);
 		if (thing == Thing::_explSlime)
@@ -1343,8 +1338,9 @@ int16 DungeonMan::f142_getProjectileAspect(Thing thing) {
 
 		return -_vm->M0_indexToOrdinal(k11_ProjectileAspectExplosionDefault);
 	} else if (thingType == k5_WeaponThingType) {
-		weaponInfo = f158_getWeaponInfo(thing);
-		if (projAspOrd = weaponInfo->getProjectileAspectOrdinal())
+		WeaponInfo *weaponInfo = f158_getWeaponInfo(thing);
+		int16 projAspOrd = weaponInfo->getProjectileAspectOrdinal();
+		if (projAspOrd)
 			return -projAspOrd;
 	}
 
@@ -1352,25 +1348,20 @@ int16 DungeonMan::f142_getProjectileAspect(Thing thing) {
 }
 
 int16 DungeonMan::f154_getLocationAfterLevelChange(int16 mapIndex, int16 levelDelta, int16* mapX, int16* mapY) {
-	int16 newMapX;
-	int16 newMapY;
-	int16 newLevel;
-	int16 offset;
-	Map* map;
-	int16 targetMapIndex;
-
-
-	if (_g309_partyMapIndex == k255_mapIndexEntrance) {
+	if (_g309_partyMapIndex == k255_mapIndexEntrance)
 		return kM1_mapIndexNone;
-	}
-	map = _g277_dungeonMaps + mapIndex;
-	newMapX = map->_offsetMapX + *mapX;
-	newMapY = map->_offsetMapY + *mapY;
-	newLevel = map->_level + levelDelta;
+
+	Map *map = _g277_dungeonMaps + mapIndex;
+	int16 newMapX = map->_offsetMapX + *mapX;
+	int16 newMapY = map->_offsetMapY + *mapY;
+	int16 newLevel = map->_level + levelDelta;
 	map = _g277_dungeonMaps;
-	for (targetMapIndex = 0; targetMapIndex < _g278_dungeonFileHeader._mapCount; targetMapIndex++) {
-		if ((map->_level == newLevel) && (newMapX >= (offset = map->_offsetMapX)) && (newMapX <= (offset + map->_width)) && (newMapY >= (offset = map->_offsetMapY)) && (newMapY <= (offset + map->_height))) {
-			*mapY = newMapY - offset;
+
+	for (int16 targetMapIndex = 0; targetMapIndex < _g278_dungeonFileHeader._mapCount; targetMapIndex++) {
+		if ((map->_level == newLevel)
+		&& (newMapX >= map->_offsetMapX) && (newMapX <= map->_offsetMapX + map->_width)
+		&& (newMapY >= map->_offsetMapY) && (newMapY <= map->_offsetMapY + map->_height)) {
+			*mapY = newMapY - map->_offsetMapY;
 			*mapX = newMapX - map->_offsetMapX;
 			return targetMapIndex;
 		}
@@ -1381,9 +1372,9 @@ int16 DungeonMan::f154_getLocationAfterLevelChange(int16 mapIndex, int16 levelDe
 
 Thing DungeonMan::f162_getSquareFirstObject(int16 mapX, int16 mapY) {
 	Thing thing = f161_getSquareFirstThing(mapX, mapY);
-	while ((thing != Thing::_endOfList) && (thing.getType() < k4_GroupThingType)) {
+	while ((thing != Thing::_endOfList) && (thing.getType() < k4_GroupThingType))
 		thing = f159_getNextThing(thing);
-	}
+
 	return thing;
 }
 
