@@ -588,7 +588,7 @@ static void catherineIdleTimer(MohawkEngine_Riven *vm) {
 		cathState = 1;
 
 	// Play the movie, blocking
-	vm->_video->activateMLST(movie, vm->getCurCard()->getId());
+	vm->_video->activateMLST(movie, vm->getCard()->getId());
 	vm->_cursor->hideCursor();
 	vm->_video->playMovieBlockingRiven(movie);
 	vm->_cursor->showCursor();
@@ -722,7 +722,7 @@ static void sunnersBeachTimer(MohawkEngine_Riven *vm) {
 			// Unlike the other cards' scripts which automatically
 			// activate the MLST, we have to set it manually here.
 			uint16 mlstID = vm->_rnd->getRandomNumberRng(3, 8);
-			vm->_video->activateMLST(mlstID, vm->getCurCard()->getId());
+			vm->_video->activateMLST(mlstID, vm->getCard()->getId());
 			VideoHandle handle = vm->_video->playMovieRiven(mlstID);
 
 			timerTime = handle->getDuration().msecs() + vm->_rnd->getRandomNumberRng(1, 30) * 1000;
@@ -797,7 +797,7 @@ void MohawkEngine_Riven::checkSunnerAlertClick() {
 }
 
 void MohawkEngine_Riven::addZipVisitedCard(uint16 cardId, uint16 cardNameId) {
-	Common::String cardName = getCurStack()->getName(kCardNames, cardNameId);
+	Common::String cardName = getStack()->getName(kCardNames, cardNameId);
 	if (cardName.empty())
 		return;
 	ZipMode zip;

@@ -113,7 +113,7 @@ uint16 RivenStack::getCardStackId(uint32 globalId) const {
 }
 
 uint32 RivenStack::getCurrentCardGlobalId() const {
-	return _cardIdMap[_vm->getCurCard()->getId()];
+	return _cardIdMap[_vm->getCard()->getId()];
 }
 
 RivenNameList::RivenNameList() {

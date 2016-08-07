@@ -412,7 +412,7 @@ bool RivenConsole::Cmd_ChangeCard(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_CurCard(int argc, const char **argv) {
-	debugPrintf("Current Card: %d\n", _vm->getCurCard()->getId());
+	debugPrintf("Current Card: %d\n", _vm->getCard()->getId());
 
 	return true;
 }
@@ -459,7 +459,7 @@ bool RivenConsole::Cmd_PlaySLST(int argc, const char **argv) {
 	_vm->_sound->stopSound();
 	_vm->_sound->stopAllSLST();
 
-	_vm->getCurCard()->playSound((uint16)atoi(argv[1]));
+	_vm->getCard()->playSound((uint16)atoi(argv[1]));
 	return false;
 }
 
@@ -472,7 +472,7 @@ bool RivenConsole::Cmd_StopSound(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_CurStack(int argc, const char **argv) {
-	debugPrintf("Current Stack: %s\n", _vm->getStackName(_vm->getCurStack()->getId()).c_str());
+	debugPrintf("Current Stack: %s\n", _vm->getStackName(_vm->getStack()->getId()).c_str());
 
 	return true;
 }
@@ -511,9 +511,9 @@ bool RivenConsole::Cmd_ChangeStack(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_Hotspots(int argc, const char **argv) {
-	Common::Array<RivenHotspot *> hotspots = _vm->getCurCard()->getHotspots();
+	Common::Array<RivenHotspot *> hotspots = _vm->getCard()->getHotspots();
 
-	debugPrintf("Current card (%d) has %d hotspots:\n", _vm->getCurCard()->getId(), hotspots.size());
+	debugPrintf("Current card (%d) has %d hotspots:\n", _vm->getCard()->getId(), hotspots.size());
 
 	for (uint16 i = 0; i < hotspots.size(); i++) {
 		RivenHotspot *hotspot = hotspots[i];
@@ -548,7 +548,7 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 		return true;
 	}
 
-	uint16 oldStack = _vm->getCurStack()->getId();
+	uint16 oldStack = _vm->getStack()->getId();
 	uint newStack = kStackUnknown;
 
 	for (uint i = kStackFirst; i <= kStackLast; i++) {
@@ -630,8 +630,8 @@ bool RivenConsole::Cmd_ListZipCards(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_GetRMAP(int argc, const char **argv) {
-	uint32 rmapCode = _vm->getCurStack()->getCurrentCardGlobalId();
-	debugPrintf("RMAP for %s %d = %08x\n", _vm->getStackName(_vm->getCurStack()->getId()).c_str(), _vm->getCurCard()->getId(), rmapCode);
+	uint32 rmapCode = _vm->getStack()->getCurrentCardGlobalId();
+	debugPrintf("RMAP for %s %d = %08x\n", _vm->getStackName(_vm->getStack()->getId()).c_str(), _vm->getCard()->getId(), rmapCode);
 	return true;
 }
 

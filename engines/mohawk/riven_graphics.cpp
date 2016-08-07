@@ -264,7 +264,7 @@ void RivenGraphics::showInventory() {
 		drawInventoryImage(101, g_demoExitRect);
 	} else {
 		// We don't want to show the inventory on setup screens or in other journals.
-		if (_vm->getCurStack()->getId() == kStackAspit)
+		if (_vm->getStack()->getId() == kStackAspit)
 			return;
 
 		// There are three books and three vars. We have three different
@@ -432,7 +432,7 @@ void RivenGraphics::applyScreenUpdate(bool force) {
 	if (_screenUpdateNesting <= 0 && !_screenUpdateRunning) {
 		_screenUpdateRunning = true;
 
-		_vm->getCurCard()->runScript(kCardUpdateScript);
+		_vm->getCard()->runScript(kCardUpdateScript);
 		_vm->_sound->triggerDrawSound();
 		updateScreen();
 
