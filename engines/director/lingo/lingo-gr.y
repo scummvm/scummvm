@@ -102,7 +102,7 @@ void yyerror(char *s) {
 
 program: program nl programline
 	| programline
-	| error	'\n'		{ yyerrok; }
+	| error	nl		{ yyerrok; }
 	;
 
 nl:	'\n' {

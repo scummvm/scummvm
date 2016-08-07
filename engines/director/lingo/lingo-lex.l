@@ -63,7 +63,7 @@ constfloat [[:digit:]]+\.[[:digit:]]*
 constinteger [[:digit:]]+
 conststring \"[^\"\n]*\"
 operator [-+*/%=^:,()><&]
-newline [ \t]*[\n\r]+
+newline [ \t]*[\n\r]
 whitespace [\t ]
 
 %%
