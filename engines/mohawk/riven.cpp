@@ -387,9 +387,6 @@ void MohawkEngine_Riven::changeToCard(uint16 dest) {
 			}
 	}
 
-	if (_card)
-		_card->runScript(kCardLeaveScript);
-
 	delete _card;
 	_card = new RivenCard(this, dest);
 
@@ -399,9 +396,6 @@ void MohawkEngine_Riven::changeToCard(uint16 dest) {
 void MohawkEngine_Riven::refreshCard() {
 	// Clear any timer still floating around
 	removeTimer();
-
-	_gfx->clearWaterEffects();
-	_video->stopVideos();
 
 	_card->open();
 
@@ -838,7 +832,7 @@ void MohawkEngine_Riven::addZipVisitedCard(uint16 cardId, uint16 cardNameId) {
 	ZipMode zip;
 	zip.name = cardName;
 	zip.id = cardId;
-	if (!(Common::find(_zipModeData.begin(), _zipModeData.end(), zip) != _zipModeData.end()))
+	if (Common::find(_zipModeData.begin(), _zipModeData.end(), zip) == _zipModeData.end())
 		_zipModeData.push_back(zip);
 }
 

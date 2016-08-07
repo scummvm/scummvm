@@ -44,9 +44,14 @@ RivenCard::RivenCard(MohawkEngine_Riven *vm, uint16 id) :
 }
 
 RivenCard::~RivenCard() {
+	runLeaveScripts();
+
 	for (uint i = 0; i < _hotspots.size(); i++) {
 		delete _hotspots[i];
 	}
+
+	_vm->_gfx->clearWaterEffects();
+	_vm->_video->stopVideos();
 }
 
 void RivenCard::loadCardResource(uint16 id) {
@@ -93,13 +98,18 @@ void RivenCard::initializeZipMode() {
 	}
 }
 
-void RivenCard::runScript(uint16 scriptType) {
+RivenScriptPtr RivenCard::getScript(uint16 scriptType) const {
 	for (uint16 i = 0; i < _scripts.size(); i++)
 		if (_scripts[i].type == scriptType) {
-			RivenScriptPtr script = _scripts[i].script;
-			_vm->_scriptMan->runScript(script, false);
-			break;
+			return _scripts[i].script;
 		}
+
+	return RivenScriptPtr(new RivenScript());
+}
+
+void RivenCard::runScript(uint16 scriptType) {
+	RivenScriptPtr script = getScript(scriptType);
+	_vm->_scriptMan->runScript(script, false);
 }
 
 uint16 RivenCard::getId() const {
@@ -381,12 +391,12 @@ void RivenCard::onMouseDragUpdate() {
 }
 
 void RivenCard::onMouseUpdate() {
-	RivenScriptPtr script;
+	RivenScriptPtr script(new RivenScript());
 	if (_hoveredHotspot) {
 		script = _hoveredHotspot->getScript(kMouseInsideScript);
 	}
 
-	if (script && !script->empty()) {
+	if (!script->empty()) {
 		_vm->_scriptMan->runScript(script, false);
 	} else {
 		updateMouseCursor();
@@ -403,6 +413,22 @@ void RivenCard::updateMouseCursor() {
 
 	_vm->_cursor->setCursor(cursor);
 	_vm->_system->updateScreen();
+}
+
+void RivenCard::runLeaveScripts() {
+	RivenScriptPtr script(new RivenScript());
+
+	if (_pressedHotspot) {
+		script += _pressedHotspot->getScript(kMouseUpScript);
+	}
+
+	if (_hoveredHotspot) {
+		script += _hoveredHotspot->getScript(kMouseLeaveScript);
+	}
+
+	script += getScript(kCardLeaveScript);
+
+	_vm->_scriptMan->runScript(script, false);
 }
 
 RivenHotspot::RivenHotspot(MohawkEngine_Riven *vm, Common::ReadStream *stream) :
@@ -448,7 +474,7 @@ RivenScriptPtr RivenHotspot::getScript(uint16 scriptType) const {
 			return _scripts[i].script;
 		}
 
-	return RivenScriptPtr();
+	return RivenScriptPtr(new RivenScript());
 }
 
 bool RivenHotspot::isEnabled() const {

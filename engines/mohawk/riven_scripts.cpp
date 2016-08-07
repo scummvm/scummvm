@@ -114,10 +114,6 @@ void RivenScriptManager::clearStoredMovieOpcode() {
 }
 
 void RivenScriptManager::runScript(const RivenScriptPtr &script, bool queue) {
-	if (!script || script->empty()) {
-		return;
-	}
-
 	if (!queue) {
 		script->run();
 	} else {
@@ -185,6 +181,16 @@ void RivenScript::addCommand(RivenCommand *command) {
 
 bool RivenScript::empty() const {
 	return _commands.empty();
+}
+
+RivenScript &RivenScript::operator+=(const RivenScript &other) {
+	_commands.push_back(other._commands);
+	return *this;
+}
+
+RivenScriptPtr &operator+=(RivenScriptPtr &lhs, const RivenScriptPtr &rhs) {
+	*lhs += *rhs;
+	return lhs;
 }
 
 RivenCommand::RivenCommand(MohawkEngine_Riven *vm) :

@@ -87,10 +87,16 @@ public:
 	/** Stop the script after the current command */
 	void stopRunning() { _continueRunning = false; }
 
+	/** Append the commands of the other script to this script */
+	RivenScript &operator+=(const RivenScript &other);
+
 private:
 	Common::Array<RivenCommand *> _commands;
 	bool _continueRunning;
 };
+
+/** Append the commands of the rhs Script to those of the lhs Script */
+RivenScriptPtr &operator+=(RivenScriptPtr &lhs, const RivenScriptPtr &rhs);
 
 /**
  * A script and its type
