@@ -51,14 +51,14 @@ bool ScriptEngine::runControl(ControlAction action, ObjID source, ObjID destinat
 	frame.haltedInFirst = false;
 	frame.haltedInFamily = false;
 	_frames.push_back(frame);
-	debug(3, "SCRIPT: Stored frame %d, action: %d src: %d dest: %d point: (%d, %d)",
+	debugC(3, kMVDebugScript, "SCRIPT: Stored frame %d, action: %d src: %d dest: %d point: (%d, %d)",
 		_frames.size() - 1, frame.action, frame.src, frame.dest, frame.x, frame.y);
 
 	return resume(true);
 }
 
 bool ScriptEngine::resume(bool execAll) {
-	debug(3, "SCRIPT: Resume");
+	debugC(3, kMVDebugScript, "SCRIPT: Resume");
 	while (_frames.size()) {
 		bool fail = execFrame(execAll);
 		if (fail) return true;
@@ -146,7 +146,7 @@ bool ScriptEngine::execFrame(bool execAll) {
 
 bool ScriptEngine::loadScript(EngineFrame * frame, uint32 scriptID) {
 	if (_scripts->getItemByteSize(scriptID) > 0) {
-		debug(2, "SCRIPT: Loading function %d", scriptID);
+		debugC(2, kMVDebugScript, "SCRIPT: Loading function %d", scriptID);
 		// Insert the new script at the front
 		frame->scripts.push_front(ScriptAsset(scriptID, _scripts));
 		return runFunc(frame);
@@ -169,7 +169,7 @@ bool ScriptEngine::runFunc(EngineFrame *frame) {
 	byte op;
 	while (script.hasNext()) {
 		op = script.fetch();
-		debug(3, "SCRIPT: I'm running operation %d", op);
+		debugC(3, kMVDebugScript, "SCRIPT: I'm running operation %d", op);
 		if (!(op & 0x80)) {
 			state->push(op);
 		} else {
@@ -924,12 +924,12 @@ bool ScriptEngine::opbcCALL(EngineState * state, EngineFrame * frame, ScriptAsse
 	word id = state->pop();
 	ScriptAsset newfun = ScriptAsset(id, _scripts);
 	ScriptAsset current = script;
-	debug(2, "SCRIPT: Call function: %d", id);
+	debugC(2, kMVDebugScript, "SCRIPT: Call function: %d", id);
 	if (loadScript(frame, id))
 		return true;
 	frame->scripts.pop_front();
 	script = frame->scripts.front();
-	debug(2, "SCRIPT: Return from fuction %d", id);
+	debugC(2, kMVDebugScript, "SCRIPT: Return from fuction %d", id);
 }
 
 void ScriptEngine::opbdFOOB(EngineState * state, EngineFrame * frame) {
@@ -1013,7 +1013,7 @@ void ScriptEngine::opcaTIME(EngineState * state, EngineFrame * frame) {
 	totalPlayTime %= 60;
 	state->push(minutes);
 	state->push(totalPlayTime);
-	debug("Saved time: h[%d] m[%d] s[%d]", hours, minutes, totalPlayTime);
+	debugC(2, kMVDebugScript, "Saved time: h[%d] m[%d] s[%d]", hours, minutes, totalPlayTime);
 }
 
 void ScriptEngine::opcbDAY(EngineState * state, EngineFrame * frame) {
@@ -1168,7 +1168,7 @@ void ScriptEngine::ope7CFIB(EngineState * state, EngineFrame * frame) {
 }
 
 void ScriptEngine::op00NOOP(byte op) {
-	debug("SCRIPT: Opcode not implemented => %x", op);
+	warning("SCRIPT: Opcode not implemented => %x", op);
 }
 
 
@@ -1208,7 +1208,7 @@ void ScriptAsset::loadInstructions() {
 	for (uint i = 0; i < amount; i++) {
 		_instructions.push_back(res->readByte());
 	}
-	debug(2, "SCRIPT: Load %d instructions for script %d", amount, _id);
+	debugC(2, kMVDebugScript, "SCRIPT: Load %d instructions for script %d", amount, _id);
 }
 
 } // End of namespace MacVenture

@@ -34,7 +34,7 @@ SoundManager::SoundManager(MacVentureEngine *engine, Audio::Mixer *mixer) {
 	Common::String filename = engine->getFilePath(kSoundPathID);
 	_container = new Container(filename);
 	_mixer = mixer;
-	debug(1, "Created sound manager with file %s", filename.c_str());
+	debugC(1, kMVDebugSound, "Created sound manager with file %s", filename.c_str());
 }
 
 SoundManager::~SoundManager(){
@@ -68,7 +68,7 @@ SoundAsset::SoundAsset(Container *container, ObjID id) :
 
 	stream->seek(5, SEEK_SET);
 	SoundType type = (SoundType)stream->readByte();
-	debug(2, "Decoding sound of type %x", type);
+	debugC(2, kMVDebugSound, "Decoding sound of type %x", type);
 	switch(type) {
 	case kSound10:
 		decode10(stream);

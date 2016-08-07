@@ -45,9 +45,6 @@ public:
 	Container(Common::String filename) {
 		_filename = filename;
 
-		//FSNode node = FSDirectory(".");
-		//debug(node.getDisplayName().c_str());
-
 		if (!_file.open(_filename))
 			error("Could not open %s", _filename.c_str());
 
@@ -100,11 +97,10 @@ public:
 
 				for (uint j = 0; j < 64; ++j) {
 					uint32 length = 0;
-					//debug("reading mask from address %x", _res->pos());
 					uint32 mask = _res->readUint32BE();
 					mask >>= (16 - bits);
 					mask &= 0xFFFF;
-					debug(11, "Load mask of object &%d:%d is %x", i, j, mask);
+					debugC(11, kMVDebugContainer, "Load mask of object &%d:%d is %x", i, j, mask);
 					_res->seek(-4, SEEK_CUR);
 					// Look in the Huffman table
 					int x = 0;
@@ -143,7 +139,7 @@ public:
 					}
 
 					group.lengths[j] = length;
-					debug(11, "Load legth of object %d:%d is %d", i, j, length);
+					debugC(11, kMVDebugContainer, "Load legth of object %d:%d is %d", i, j, length);
 				}
 
 				_groups.push_back(group);
@@ -213,7 +209,6 @@ protected:
 	Common::String _filename;
 	Common::File _file;
 	Common::SeekableReadStream *_res;
-
 
 };
 

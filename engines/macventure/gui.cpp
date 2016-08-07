@@ -330,7 +330,7 @@ WindowReference Gui::createInventoryWindow(ObjID objRef) {
 	loadBorders(newWindow, newData.type);
 	_inventoryWindows.push_back(newWindow);
 
-	debug("Create new inventory window. Reference: %d", newData.refcon);
+	debugC(1, kMVDebugGUI, "Create new inventory window. Reference: %d", newData.refcon);
 	return newData.refcon;
 }
 
@@ -455,7 +455,7 @@ bool Gui::loadWindows() {
 		}
 		data.scrollPos = Common::Point(0, 0);
 
-		debug(4, "Window loaded: %s", data.title.c_str());
+		debugC(4, kMVDebugGUI, "Window loaded: %s", data.title.c_str());
 
 		_windowData->push_back(data);
 	}
@@ -834,7 +834,7 @@ void Gui::updateExit(ObjID obj) {
 }
 
 void Gui::printText(const Common::String & text) {
-	debug(1, "Print Text: %s", text.c_str());
+	debugC(1, kMVDebugGUI, "Print Text: %s", text.c_str());
 	_consoleText->printLine(text, _outConsoleWindow->getDimensions().width());
 }
 
@@ -880,7 +880,7 @@ void Gui::moveDraggedObject(Common::Point target) {
 	// TODO FInd more elegant way of making pow2
 	_draggedObj.hasMoved = (_draggedObj.startPos.sqrDist(_draggedObj.pos) >= (kDragThreshold * kDragThreshold));
 
-	debug(4, "Dragged obj position: (%d, %d), mouse offset: (%d, %d), hasMoved: %d, dist: %d, threshold: %d",
+	debugC(4, kMVDebugGUI, "Dragged obj position: (%d, %d), mouse offset: (%d, %d), hasMoved: %d, dist: %d, threshold: %d",
 		_draggedObj.pos.x, _draggedObj.pos.y,
 		_draggedObj.mouseOffset.x, _draggedObj.mouseOffset.y,
 		_draggedObj.hasMoved,
@@ -1037,7 +1037,7 @@ void Gui::handleDragRelease(bool shiftPressed, bool isDoubleClick) {
 			ObjID destObject = destinationWindowData.objRef;
 			Common::Point dropPosition = _draggedObj.pos - _draggedObj.startPos;
 			dropPosition = localizeTravelledDistance(dropPosition, _draggedObj.startWin, destinationWindow);
-			debug(3, "drop the object %d at obj %d, pos (%d, %d)", _draggedObj.id, destObject, dropPosition.x, dropPosition.y);
+			debugC(3, kMVDebugGUI, "Drop the object %d at obj %d, pos (%d, %d)", _draggedObj.id, destObject, dropPosition.x, dropPosition.y);
 
 			_engine->handleObjectDrop(_draggedObj.id, dropPosition, destObject);
 		}
@@ -1082,49 +1082,46 @@ void Gui::removeInventoryWindow(WindowReference ref) {
 void Gui::handleMenuAction(MenuAction action) {
 	switch (action)	{
 	case MacVenture::kMenuActionAbout:
-		debug("MacVenture Menu Action: About");
+		warning("Unimplemented MacVenture Menu Action: About");
 		break;
 	case MacVenture::kMenuActionNew:
-		debug("MacVenture Menu Action: New");
+		warning("Unimplemented MacVenture Menu Action: New");
 		break;
 	case MacVenture::kMenuActionOpen:
-		debug("MacVenture Menu Action: Open");
 		_engine->scummVMSaveLoadDialog(false);
 		break;
 	case MacVenture::kMenuActionSave:
-		debug("MacVenture Menu Action: Save");
 		_engine->scummVMSaveLoadDialog(true);
 		break;
 	case MacVenture::kMenuActionSaveAs:
-		debug("MacVenture Menu Action: Save As");
 		_engine->scummVMSaveLoadDialog(true);
 		break;
 	case MacVenture::kMenuActionQuit:
 		debug("MacVenture Menu Action: Quit");
 		break;
 	case MacVenture::kMenuActionUndo:
-		debug("MacVenture Menu Action: Undo");
+		warning("Unimplemented MacVenture Menu Action: Undo");
 		break;
 	case MacVenture::kMenuActionCut:
-		debug("MacVenture Menu Action: Cut");
+		warning("Unimplemented MacVenture Menu Action: Cut");
 		break;
 	case MacVenture::kMenuActionCopy:
-		debug("MacVenture Menu Action: Copy");
+		warning("Unimplemented MacVenture Menu Action: Copy");
 		break;
 	case MacVenture::kMenuActionPaste:
-		debug("MacVenture Menu Action: Paste");
+		warning("Unimplemented MacVenture Menu Action: Paste");
 		break;
 	case MacVenture::kMenuActionClear:
-		debug("MacVenture Menu Action: Clear");
+		warning("Unimplemented MacVenture Menu Action: Clear");
 		break;
 	case MacVenture::kMenuActionCleanUp:
-		debug("MacVenture Menu Action: Clean Up");
+		warning("Unimplemented MacVenture Menu Action: Clean Up");
 		break;
 	case MacVenture::kMenuActionMessUp:
-		debug("MacVenture Menu Action: Mess Up");
+		warning("Unimplemented MacVenture Menu Action: Mess Up");
 		break;
 	case MacVenture::kMenuActionCommand:
-		debug("MacVenture Menu Action: GENERIC");
+		warning("Unimplemented MacVenture Menu Action: GENERIC");
 		break;
 	default:
 		break;
@@ -1385,14 +1382,14 @@ void Gui::selectForDrag(Common::Point cursorPosition) {
 }
 
 void Gui::handleSingleClick() {
-	debug("Single Click");
+	debugC(2, kMVDebugGUI, "Registered Single Click");
 	// HACK THERE HAS TO BE A MORE ELEGANT WAY
 	if (_dialog) return;
 	handleDragRelease(false, false);
 }
 
 void Gui::handleDoubleClick() {
-	debug("Double Click");
+	debugC(2, kMVDebugGUI, "Registered Double Click");
 	if (_dialog) return;
 	handleDragRelease(false, true);
 }

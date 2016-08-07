@@ -37,7 +37,7 @@ TextAsset::TextAsset(MacVentureEngine *engine, ObjID objid, ObjID source, ObjID 
 	}
 	else {
 		decodeHuffman();
-	}	
+	}
 }
 
 void TextAsset::decodeOld() {
@@ -110,7 +110,7 @@ void TextAsset::decodeOld() {
 	}
 
 	str[strLen] = '\0';
-	debug(7, "Decoded %d string (old): %s", _id, str);
+	debugC(3, kMVDebugText, "Decoded %d string (old): %s", _id, str);
 	_decoded = Common::String(str);
 }
 
@@ -136,7 +136,7 @@ void TextAsset::decodeHuffman() {
 		// Find the length index
 		for (entry = 0; entry < _huffman->getNumEntries(); entry++) {
 			if (mask < _huffman->getMask(entry)) break;
-		}			
+		}
 
 		stream.skip(_huffman->getLength(entry));
 
@@ -171,10 +171,10 @@ void TextAsset::decodeHuffman() {
 		} else { // Plain ascii
 			c = symbol & 0xFF;
 			_decoded.replace(_decoded.end(), _decoded.end(), Common::String(c));
-		}		
+		}
 	}
 	_decoded += '\0';
-	debug(7, "Decoded %d'th string (new): %s", _id, _decoded.c_str());	
+	debugC(4, kMVDebugText, "Decoded %d'th string (new): %s", _id, _decoded.c_str());
 }
 Common::String TextAsset::getNoun(ObjID subval) {
 	ObjID obj;
@@ -208,7 +208,7 @@ Common::String TextAsset::getNoun(ObjID subval) {
 		name.toUppercase();
 		name.replace(1, name.size() - 1, tmp, 1, tmp.size() - 1);
 	}
-		
+
 	return name;
 }
 

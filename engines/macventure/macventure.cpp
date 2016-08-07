@@ -36,7 +36,7 @@ namespace MacVenture {
 
 // HACK, see below
 void toASCII(Common::String &str) {
-	debug("toASCII: %s", str.c_str());
+	debugC(1, kMVDebugMain, "toASCII: %s", str.c_str());
 	Common::String::iterator it = str.begin();
 	for (; it != str.end(); it++) {
 		if (*it == '\216') { str.replace(it, it + 1, "e"); }
@@ -52,10 +52,13 @@ MacVentureEngine::MacVentureEngine(OSystem *syst, const ADGameDescription *gameD
 	_gameDescription = gameDesc;
 	_rnd = new Common::RandomSource("macventure");
 
+	initDebugChannels();
+
 	_debugger = NULL;
 	_gui = NULL;
 
 	_soundManager = NULL;
+
 
 	debug("MacVenture::MacVentureEngine()");
 }
@@ -89,6 +92,16 @@ MacVentureEngine::~MacVentureEngine() {
 
 	if (_dataBundle)
 		delete _dataBundle;
+}
+
+void MacVentureEngine::initDebugChannels() {
+	DebugMan.addDebugChannel(kMVDebugMain, "main", "Engine state");
+	DebugMan.addDebugChannel(kMVDebugGUI, "gui", "Gui");
+	DebugMan.addDebugChannel(kMVDebugText, "text", "Text decoders and printers");
+	DebugMan.addDebugChannel(kMVDebugImage, "image", "Image decoders and renderers");
+	DebugMan.addDebugChannel(kMVDebugScript, "script", "Script engine");
+	DebugMan.addDebugChannel(kMVDebugSound, "sound", "Sound decoders");
+	DebugMan.addDebugChannel(kMVDebugContainer, "container", "Containers");
 }
 
 Common::Error MacVentureEngine::run() {
@@ -224,7 +237,7 @@ void MacVentureEngine::requestUnpause() {
 }
 
 void MacVentureEngine::selectControl(ControlAction id) {
-	debug(2, "Select control %x", id);
+	debugC(2, kMVDebugMain, "Select control %x", id);
 	_selectedControl = id;
 }
 
@@ -239,7 +252,7 @@ void MacVentureEngine::activateCommand(ControlAction id) {
 			_activeControl = kNoCommand;
 		_activeControl = id;
 	}
-	debug(2, "Activating Command %x... Command %x is active", id, _activeControl);
+	debugC(2, kMVDebugMain, "Activating Command %x... Command %x is active", id, _activeControl);
 	refreshReady();
 }
 
@@ -392,7 +405,7 @@ void MacVentureEngine::handleObjectDrop(ObjID objID, Common::Point delta, ObjID 
 }
 
 void MacVentureEngine::updateDelta(Common::Point newPos) {
-	debug("Update delta: Old(%d, %d), New(%d, %d)",
+	debugC(4, kMVDebugMain, "Update delta: Old(%d, %d), New(%d, %d)",
 		_deltaPoint.x, _deltaPoint.y,
 		newPos.x, newPos.y);
 	_deltaPoint = newPos;
@@ -407,7 +420,7 @@ void MacVentureEngine::updateWindow(WindowReference winID) {
 }
 
 bool MacVentureEngine::showTextEntry(ObjID text, ObjID srcObj, ObjID destObj) {
-	debug("Showing speech dialog, asset %d from %d to %d", text, srcObj, destObj);
+	debugC(3, kMVDebugMain, "Showing speech dialog, asset %d from %d to %d", text, srcObj, destObj);
 	_gui->getTextFromUser();
 
 	// HACK WITH FLAGS
@@ -467,7 +480,7 @@ void MacVentureEngine::processEvents() {
 }
 
 bool MacVenture::MacVentureEngine::runScriptEngine() {
-	debug(4, "MAIN: Running script engine");
+	debugC(4, kMVDebugMain, "MAIN: Running script engine");
 	if (_haltedAtEnd) {
 		_haltedAtEnd = false;
 		if (_scriptEngine->resume(false)) {
@@ -745,7 +758,7 @@ void MacVentureEngine::focusObjectWindow(ObjID objID) {
 
 void MacVentureEngine::openObject(ObjID objID) {
 
-	debug("Open Object[%d] parent[%d] x[%d] y[%d]",
+	debugC(1, kMVDebugMain, "Open Object[%d] parent[%d] x[%d] y[%d]",
 		objID,
 		_world->getObjAttr(objID, kAttrParentObject),
 		_world->getObjAttr(objID, kAttrPosX),
@@ -775,7 +788,7 @@ void MacVentureEngine::closeObject(ObjID objID) {
 void MacVentureEngine::checkObject(QueuedObject old) {
 	//warning("checkObject: unimplemented");
 	bool hasChanged = false;
-	debug("Check Object[%d] parent[%d] x[%d] y[%d]",
+	debugC(1, kMVDebugMain, "Check Object[%d] parent[%d] x[%d] y[%d]",
 		old.object,
 		old.parent,
 		old.x,
@@ -842,7 +855,7 @@ void MacVentureEngine::reflectSwap(ObjID fromID, ObjID toID) {
 	WindowReference from = getObjWindow(fromID);
 	WindowReference to = getObjWindow(toID);
 	WindowReference tmp = to;
-	debug("Swap Object[%d] to Object[%d], from win[%d] to win[%d] ",
+	debugC(1, kMVDebugMain, "Swap Object[%d] to Object[%d], from win[%d] to win[%d] ",
 		fromID, toID, from, to);
 
 	if (!to) {
@@ -1098,7 +1111,7 @@ bool MacVentureEngine::loadTextHuffman() {
 			values[i] = res->readByte();
 
 		_textHuffman = new HuffmanLists(numEntries, lengths, masks, values);
-		debug(4, "Text is huffman-encoded");
+		debugC(4, kMVDebugMain, "Text is huffman-encoded");
 		return true;
 	}
 	return false;

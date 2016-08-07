@@ -85,7 +85,7 @@ private:
 			// HACK until a proper special char implementation is found, this will have to do.
 			Common::String result = Common::String(str);
 			toASCII(result);
-			debug(11, "Loaded string %s", str);
+			debugC(5, kMVDebugText, "Loaded string %s", str);
 			_strings.push_back(Common::String(result));
 			delete[] str;
 		}

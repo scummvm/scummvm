@@ -34,6 +34,7 @@
 
 #include "gui/debugger.h"
 
+#include "macventure/debug.h"
 #include "macventure/gui.h"
 #include "macventure/world.h"
 #include "macventure/hufflists.h"
@@ -63,13 +64,6 @@ extern void toASCII(Common::String &str);
 enum {
 	kScreenWidth = 512,
 	kScreenHeight = 342
-};
-
-enum {
-	kMacVentureDebugExample = 1 << 0,
-	kMacVentureDebugExample2 = 1 << 1
-	// next new level must be 1 << 2 (4)
-	// the current limitation is 32 debug levels (1 << 31 is the last one)
 };
 
 enum {
@@ -190,6 +184,8 @@ public:
 	bool canSaveGameStateCurrently();
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+
+	void initDebugChannels();
 
 	// datafiles.cpp
 	void loadDataBundle();
