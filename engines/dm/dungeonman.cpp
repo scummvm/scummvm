@@ -1379,13 +1379,11 @@ Thing DungeonMan::f162_getSquareFirstObject(int16 mapX, int16 mapY) {
 }
 
 uint16 DungeonMan::f143_getArmourDefense(ArmourInfo* armourInfo, bool useSharpDefense) {
-	uint16 L0244_ui_Defense;
+	uint16 defense = armourInfo->_defense;
+	if (useSharpDefense)
+		defense = _vm->f30_getScaledProduct(defense, 3, getFlag(armourInfo->_attributes, k0x0007_ArmourAttributeSharpDefense) + 4);
 
-	L0244_ui_Defense = armourInfo->_defense;
-	if (useSharpDefense) {
-		L0244_ui_Defense = _vm->f30_getScaledProduct(L0244_ui_Defense, 3, getFlag(armourInfo->_attributes, k0x0007_ArmourAttributeSharpDefense) + 4);
-	}
-	return L0244_ui_Defense;
+	return defense;
 }
 
 Thing DungeonMan::f165_getDiscardTHing(uint16 thingType) {
@@ -1404,25 +1402,27 @@ Thing DungeonMan::f165_getDiscardTHing(uint16 thingType) {
 	static unsigned char G0294_auc_LastDiscardedThingMapIndex[16];
 
 
-	if (thingType == k15_ExplosionThingType) {
+	if (thingType == k15_ExplosionThingType)
 		return Thing::_none;
-	}
+
 	L0284_i_CurrentMapIndex = _vm->_dungeonMan->_g272_currMapIndex;
-	if (((L0279_ui_MapIndex = G0294_auc_LastDiscardedThingMapIndex[thingType]) == _vm->_dungeonMan->_g309_partyMapIndex) && (++L0279_ui_MapIndex >= _vm->_dungeonMan->_g278_dungeonFileHeader._mapCount)) {
+	if (((L0279_ui_MapIndex = G0294_auc_LastDiscardedThingMapIndex[thingType]) == _vm->_dungeonMan->_g309_partyMapIndex) && (++L0279_ui_MapIndex >= _vm->_dungeonMan->_g278_dungeonFileHeader._mapCount))
 		L0279_ui_MapIndex = 0;
-	}
+
 	L0283_ui_DiscardThingMapIndex = L0279_ui_MapIndex;
 	for (;;) { /*_Infinite loop_*/
 		L0285_ui_MapWidth = _vm->_dungeonMan->_g277_dungeonMaps[L0279_ui_MapIndex]._width;
 		L0286_ui_MapHeight = _vm->_dungeonMan->_g277_dungeonMaps[L0279_ui_MapIndex]._height;
 		L0280_puc_Square = _vm->_dungeonMan->_g279_dungeonMapData[L0279_ui_MapIndex][0];
 		L0281_pT_SquareFirstThing = &_vm->_dungeonMan->_g283_squareFirstThings[_vm->_dungeonMan->_g280_dungeonColumnsCumulativeSquareThingCount[_vm->_dungeonMan->_g281_dungeonMapsFirstColumnIndex[L0279_ui_MapIndex]]];
+		
 		for (L0276_ui_MapX = 0; L0276_ui_MapX <= L0285_ui_MapWidth; L0276_ui_MapX++) {
 			for (L0277_ui_MapY = 0; L0277_ui_MapY <= L0286_ui_MapHeight; L0277_ui_MapY++) {
 				if (getFlag(*L0280_puc_Square++, k0x0010_ThingListPresent)) {
 					L0278_T_Thing = *L0281_pT_SquareFirstThing++;
 					if ((L0279_ui_MapIndex == _vm->_dungeonMan->_g309_partyMapIndex) && ((L0276_ui_MapX - _vm->_dungeonMan->_g306_partyMapX + 5) <= 10) && ((L0277_ui_MapY - _vm->_dungeonMan->_g307_partyMapY + 5) <= 10)) /* If square is too close to the party */
-						goto T0165029;
+						continue;
+
 					do {
 						if ((L0287_i_ThingType = L0278_T_Thing.getType()) == k3_SensorThingType) {
 							L0282_ps_Generic = (Thing*)_vm->_dungeonMan->f156_getThingData(L0278_T_Thing);
@@ -1449,21 +1449,31 @@ Thing DungeonMan::f165_getDiscardTHing(uint16 thingType) {
 								case k6_ArmourThingType:
 									if (((Armour*)L0282_ps_Generic)->getDoNotDiscard())
 										continue;
-									goto T0165026;
+
+									_vm->_dungeonMan->f173_setCurrentMap(L0279_ui_MapIndex);
+									_vm->_moveSens->f267_getMoveResult(L0278_T_Thing, L0276_ui_MapX, L0277_ui_MapY, kM1_MapXNotOnASquare, 0);
+									break;
 								case k5_WeaponThingType:
 									if (((Weapon*)L0282_ps_Generic)->getDoNotDiscard())
 										continue;
-									goto T0165026;
+
+									_vm->_dungeonMan->f173_setCurrentMap(L0279_ui_MapIndex);
+									_vm->_moveSens->f267_getMoveResult(L0278_T_Thing, L0276_ui_MapX, L0277_ui_MapY, kM1_MapXNotOnASquare, 0);
+									break;
 								case k10_JunkThingType:
 									if (((Junk*)L0282_ps_Generic)->getDoNotDiscard())
 										continue;
-									goto T0165026;
+
+									_vm->_dungeonMan->f173_setCurrentMap(L0279_ui_MapIndex);
+									_vm->_moveSens->f267_getMoveResult(L0278_T_Thing, L0276_ui_MapX, L0277_ui_MapY, kM1_MapXNotOnASquare, 0);
+									break;
 								case k8_PotionThingType:
 									if (((Potion*)L0282_ps_Generic)->getDoNotDiscard())
 										continue;
-T0165026:
+
 									_vm->_dungeonMan->f173_setCurrentMap(L0279_ui_MapIndex);
 									_vm->_moveSens->f267_getMoveResult(L0278_T_Thing, L0276_ui_MapX, L0277_ui_MapY, kM1_MapXNotOnASquare, 0);
+									break;
 								}
 								_vm->_dungeonMan->f173_setCurrentMap(L0284_i_CurrentMapIndex);
 								G0294_auc_LastDiscardedThingMapIndex[thingType] = L0279_ui_MapIndex;
@@ -1471,8 +1481,6 @@ T0165026:
 							}
 						}
 					} while ((L0278_T_Thing = _vm->_dungeonMan->f159_getNextThing(L0278_T_Thing)) != Thing::_endOfList);
-T0165029:
-					;
 				}
 			}
 		}
@@ -1481,13 +1489,13 @@ T0165029:
 			return Thing::_none;
 		}
 		do {
-			if (++L0279_ui_MapIndex >= _vm->_dungeonMan->_g278_dungeonFileHeader._mapCount) {
+			if (++L0279_ui_MapIndex >= _vm->_dungeonMan->_g278_dungeonFileHeader._mapCount)
 				L0279_ui_MapIndex = 0;
-			}
+
 		} while (L0279_ui_MapIndex == _vm->_dungeonMan->_g309_partyMapIndex);
-		if (L0279_ui_MapIndex == L0283_ui_DiscardThingMapIndex) {
+
+		if (L0279_ui_MapIndex == L0283_ui_DiscardThingMapIndex)
 			L0279_ui_MapIndex = _vm->_dungeonMan->_g309_partyMapIndex;
-		}
 	}
 }
 
