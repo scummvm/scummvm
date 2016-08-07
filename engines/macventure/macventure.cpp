@@ -56,9 +56,17 @@ MacVentureEngine::MacVentureEngine(OSystem *syst, const ADGameDescription *gameD
 
 	_debugger = NULL;
 	_gui = NULL;
+	_scriptEngine = NULL;
+	_filenames = NULL;
+
+	_decodingDirectArticles = NULL;
+	_decodingNamingArticles = NULL;
+	_decodingIndirectArticles = NULL;
+	_textHuffman = NULL;
 
 	_soundManager = NULL;
 
+	_dataBundle = NULL;
 
 	debug("MacVenture::MacVentureEngine()");
 }
@@ -67,10 +75,18 @@ MacVentureEngine::~MacVentureEngine() {
 	debug("MacVenture::~MacVentureEngine()");
 
 	DebugMan.clearAllDebugChannels();
-	delete _rnd;
-	delete _debugger;
-	delete _gui;
-	delete _scriptEngine;
+
+	if (_rnd)
+		delete _rnd;
+
+	if (_debugger)
+		delete _debugger;
+
+	if (_gui)
+		delete _gui;
+
+	if (_scriptEngine)
+		delete _scriptEngine;
 
 	if (_filenames)
 		delete _filenames;
@@ -106,7 +122,6 @@ void MacVentureEngine::initDebugChannels() {
 
 Common::Error MacVentureEngine::run() {
 	debug("MacVenture::MacVentureEngine::init()");
-
 	initGraphics(kScreenWidth, kScreenHeight, true);
 
 	_debugger = new Console(this);
