@@ -699,7 +699,7 @@ public:
 	int16 f154_getLocationAfterLevelChange(int16 mapIndex, int16 levelDelta, int16 *mapX, int16 *mapY); // @ F0154_DUNGEON_GetLocationAfterLevelChange
 	Thing f162_getSquareFirstObject(int16 mapX, int16 mapY); // @ F0162_DUNGEON_GetSquareFirstObject
 	uint16 f143_getArmourDefense(ArmourInfo *armourInfo, bool useSharpDefense); // @ F0143_DUNGEON_GetArmourDefense
-	Thing f165_getDiscardTHing(uint16 thingType); // @ F0165_DUNGEON_GetDiscardedThing
+	Thing f165_getDiscardThing(uint16 thingType); // @ F0165_DUNGEON_GetDiscardedThing
 	uint16 f144_getCreatureAttributes(Thing thing); // @ F0144_DUNGEON_GetCreatureAttributes
 	void f146_setGroupCells(Group *group, uint16 cells, uint16 mapIndex); // @ F0146_DUNGEON_SetGroupCells
 	void f148_setGroupDirections(Group *group, int16 dir, uint16 mapIndex); // @ F0148_DUNGEON_SetGroupDirections

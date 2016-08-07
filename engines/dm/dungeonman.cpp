@@ -1174,7 +1174,7 @@ Thing DungeonMan::f166_getUnusedThing(uint16 thingType) {
 		if (--thingIdx) { /* If there are thing data left to process */
 			thingPtr += thingDataByteCount; /* Proceed to the next thing data */
 		} else {
-			curThing = f165_getDiscardTHing(thingType);
+			curThing = f165_getDiscardThing(thingType);
 			if (curThing == Thing::_none)
 				return Thing::_none;
 
@@ -1386,116 +1386,104 @@ uint16 DungeonMan::f143_getArmourDefense(ArmourInfo* armourInfo, bool useSharpDe
 	return defense;
 }
 
-Thing DungeonMan::f165_getDiscardTHing(uint16 thingType) {
-	uint16 L0276_ui_MapX;
-	uint16 L0277_ui_MapY;
-	Thing L0278_T_Thing;
-	uint16 L0279_ui_MapIndex;
-	byte* L0280_puc_Square;
-	Thing* L0281_pT_SquareFirstThing;
-	Thing* L0282_ps_Generic;
-	uint16 L0283_ui_DiscardThingMapIndex;
-	int L0284_i_CurrentMapIndex;
-	uint16 L0285_ui_MapWidth;
-	uint16 L0286_ui_MapHeight;
-	int L0287_i_ThingType;
-	static unsigned char G0294_auc_LastDiscardedThingMapIndex[16];
-
+Thing DungeonMan::f165_getDiscardThing(uint16 thingType) {
+	// CHECKME: Shouldn't it be saved in the savegames?
+	static unsigned char lastDiscardedThingMapIndex[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 	if (thingType == k15_ExplosionThingType)
 		return Thing::_none;
 
-	L0284_i_CurrentMapIndex = _vm->_dungeonMan->_g272_currMapIndex;
-	if (((L0279_ui_MapIndex = G0294_auc_LastDiscardedThingMapIndex[thingType]) == _vm->_dungeonMan->_g309_partyMapIndex) && (++L0279_ui_MapIndex >= _vm->_dungeonMan->_g278_dungeonFileHeader._mapCount))
-		L0279_ui_MapIndex = 0;
+	int16 currentMapIdx = _vm->_dungeonMan->_g272_currMapIndex;
+	uint16 mapIndex = lastDiscardedThingMapIndex[thingType];
+	if ((mapIndex == _vm->_dungeonMan->_g309_partyMapIndex) && (++mapIndex >= _vm->_dungeonMan->_g278_dungeonFileHeader._mapCount))
+		mapIndex = 0;
 
-	L0283_ui_DiscardThingMapIndex = L0279_ui_MapIndex;
+	uint16 discardThingMapIndex = mapIndex;
 	for (;;) { /*_Infinite loop_*/
-		L0285_ui_MapWidth = _vm->_dungeonMan->_g277_dungeonMaps[L0279_ui_MapIndex]._width;
-		L0286_ui_MapHeight = _vm->_dungeonMan->_g277_dungeonMaps[L0279_ui_MapIndex]._height;
-		L0280_puc_Square = _vm->_dungeonMan->_g279_dungeonMapData[L0279_ui_MapIndex][0];
-		L0281_pT_SquareFirstThing = &_vm->_dungeonMan->_g283_squareFirstThings[_vm->_dungeonMan->_g280_dungeonColumnsCumulativeSquareThingCount[_vm->_dungeonMan->_g281_dungeonMapsFirstColumnIndex[L0279_ui_MapIndex]]];
+		uint16 mapWidth = _vm->_dungeonMan->_g277_dungeonMaps[mapIndex]._width;
+		uint16 mapHeight = _vm->_dungeonMan->_g277_dungeonMaps[mapIndex]._height;
+		byte *currSquare = _vm->_dungeonMan->_g279_dungeonMapData[mapIndex][0];
+		Thing *squareFirstThing = &_vm->_dungeonMan->_g283_squareFirstThings[_vm->_dungeonMan->_g280_dungeonColumnsCumulativeSquareThingCount[_vm->_dungeonMan->_g281_dungeonMapsFirstColumnIndex[mapIndex]]];
 		
-		for (L0276_ui_MapX = 0; L0276_ui_MapX <= L0285_ui_MapWidth; L0276_ui_MapX++) {
-			for (L0277_ui_MapY = 0; L0277_ui_MapY <= L0286_ui_MapHeight; L0277_ui_MapY++) {
-				if (getFlag(*L0280_puc_Square++, k0x0010_ThingListPresent)) {
-					L0278_T_Thing = *L0281_pT_SquareFirstThing++;
-					if ((L0279_ui_MapIndex == _vm->_dungeonMan->_g309_partyMapIndex) && ((L0276_ui_MapX - _vm->_dungeonMan->_g306_partyMapX + 5) <= 10) && ((L0277_ui_MapY - _vm->_dungeonMan->_g307_partyMapY + 5) <= 10)) /* If square is too close to the party */
+		for (int16 currMapX = 0; currMapX <= mapWidth; currMapX++) {
+			for (int16 currMapY = 0; currMapY <= mapHeight; currMapY++) {
+				if (getFlag(*currSquare++, k0x0010_ThingListPresent)) {
+					Thing squareThing = *squareFirstThing++;
+					if ((mapIndex == _vm->_dungeonMan->_g309_partyMapIndex) && ((currMapX - _vm->_dungeonMan->_g306_partyMapX + 5) <= 10) && ((currMapY - _vm->_dungeonMan->_g307_partyMapY + 5) <= 10)) /* If square is too close to the party */
 						continue;
 
 					do {
-						if ((L0287_i_ThingType = L0278_T_Thing.getType()) == k3_SensorThingType) {
-							L0282_ps_Generic = (Thing*)_vm->_dungeonMan->f156_getThingData(L0278_T_Thing);
-							if (((Sensor*)L0282_ps_Generic)->getType()) /* If sensor is not disabled */
+						ThingType squareThingType = squareThing.getType();
+						if (squareThingType == k3_SensorThingType) {
+							Thing *squareThingData = (Thing*)_vm->_dungeonMan->f156_getThingData(squareThing);
+							if (((Sensor*)squareThingData)->getType()) /* If sensor is not disabled */
 								break;
-						} else {
-							if (L0287_i_ThingType == thingType) {
-								L0282_ps_Generic = (Thing*)_vm->_dungeonMan->f156_getThingData(L0278_T_Thing);
-								switch (thingType) {
-								case k4_GroupThingType:
-									if (((Group*)L0282_ps_Generic)->getDoNotDiscard())
-										continue;
-								case k14_ProjectileThingType:
-									_vm->_dungeonMan->f173_setCurrentMap(L0279_ui_MapIndex);
-									if (thingType == k4_GroupThingType) {
-										_vm->_groupMan->f188_dropGroupPossessions(L0276_ui_MapX, L0277_ui_MapY, L0278_T_Thing, kM1_soundModeDoNotPlaySound);
-										_vm->_groupMan->f189_delete(L0276_ui_MapX, L0277_ui_MapY);
-									} else {
-										_vm->_projexpl->f214_projectileDeleteEvent(L0278_T_Thing);
-										f164_unlinkThingFromList(L0278_T_Thing, Thing(0), L0276_ui_MapX, L0277_ui_MapY);
-										_vm->_projexpl->f215_projectileDelete(L0278_T_Thing, 0, L0276_ui_MapX, L0277_ui_MapY);
-									}
-									break;
-								case k6_ArmourThingType:
-									if (((Armour*)L0282_ps_Generic)->getDoNotDiscard())
-										continue;
-
-									_vm->_dungeonMan->f173_setCurrentMap(L0279_ui_MapIndex);
-									_vm->_moveSens->f267_getMoveResult(L0278_T_Thing, L0276_ui_MapX, L0277_ui_MapY, kM1_MapXNotOnASquare, 0);
-									break;
-								case k5_WeaponThingType:
-									if (((Weapon*)L0282_ps_Generic)->getDoNotDiscard())
-										continue;
-
-									_vm->_dungeonMan->f173_setCurrentMap(L0279_ui_MapIndex);
-									_vm->_moveSens->f267_getMoveResult(L0278_T_Thing, L0276_ui_MapX, L0277_ui_MapY, kM1_MapXNotOnASquare, 0);
-									break;
-								case k10_JunkThingType:
-									if (((Junk*)L0282_ps_Generic)->getDoNotDiscard())
-										continue;
-
-									_vm->_dungeonMan->f173_setCurrentMap(L0279_ui_MapIndex);
-									_vm->_moveSens->f267_getMoveResult(L0278_T_Thing, L0276_ui_MapX, L0277_ui_MapY, kM1_MapXNotOnASquare, 0);
-									break;
-								case k8_PotionThingType:
-									if (((Potion*)L0282_ps_Generic)->getDoNotDiscard())
-										continue;
-
-									_vm->_dungeonMan->f173_setCurrentMap(L0279_ui_MapIndex);
-									_vm->_moveSens->f267_getMoveResult(L0278_T_Thing, L0276_ui_MapX, L0277_ui_MapY, kM1_MapXNotOnASquare, 0);
-									break;
+						} else if (squareThingType == thingType) {
+							Thing *squareThingData = (Thing*)_vm->_dungeonMan->f156_getThingData(squareThing);
+							switch (thingType) {
+							case k4_GroupThingType:
+								if (((Group*)squareThingData)->getDoNotDiscard())
+									continue;
+							case k14_ProjectileThingType:
+								_vm->_dungeonMan->f173_setCurrentMap(mapIndex);
+								if (thingType == k4_GroupThingType) {
+									_vm->_groupMan->f188_dropGroupPossessions(currMapX, currMapY, squareThing, kM1_soundModeDoNotPlaySound);
+									_vm->_groupMan->f189_delete(currMapX, currMapY);
+								} else {
+									_vm->_projexpl->f214_projectileDeleteEvent(squareThing);
+									f164_unlinkThingFromList(squareThing, Thing(0), currMapX, currMapY);
+									_vm->_projexpl->f215_projectileDelete(squareThing, 0, currMapX, currMapY);
 								}
-								_vm->_dungeonMan->f173_setCurrentMap(L0284_i_CurrentMapIndex);
-								G0294_auc_LastDiscardedThingMapIndex[thingType] = L0279_ui_MapIndex;
-								return Thing(L0278_T_Thing.getTypeAndIndex());
+								break;
+							case k6_ArmourThingType:
+								if (((Armour*)squareThingData)->getDoNotDiscard())
+									continue;
+
+								_vm->_dungeonMan->f173_setCurrentMap(mapIndex);
+								_vm->_moveSens->f267_getMoveResult(squareThing, currMapX, currMapY, kM1_MapXNotOnASquare, 0);
+								break;
+							case k5_WeaponThingType:
+								if (((Weapon*)squareThingData)->getDoNotDiscard())
+									continue;
+
+								_vm->_dungeonMan->f173_setCurrentMap(mapIndex);
+								_vm->_moveSens->f267_getMoveResult(squareThing, currMapX, currMapY, kM1_MapXNotOnASquare, 0);
+								break;
+							case k10_JunkThingType:
+								if (((Junk*)squareThingData)->getDoNotDiscard())
+									continue;
+
+								_vm->_dungeonMan->f173_setCurrentMap(mapIndex);
+								_vm->_moveSens->f267_getMoveResult(squareThing, currMapX, currMapY, kM1_MapXNotOnASquare, 0);
+								break;
+							case k8_PotionThingType:
+								if (((Potion*)squareThingData)->getDoNotDiscard())
+									continue;
+
+								_vm->_dungeonMan->f173_setCurrentMap(mapIndex);
+								_vm->_moveSens->f267_getMoveResult(squareThing, currMapX, currMapY, kM1_MapXNotOnASquare, 0);
+								break;
 							}
+							_vm->_dungeonMan->f173_setCurrentMap(currentMapIdx);
+							lastDiscardedThingMapIndex[thingType] = mapIndex;
+							return Thing(squareThing.getTypeAndIndex());
 						}
-					} while ((L0278_T_Thing = _vm->_dungeonMan->f159_getNextThing(L0278_T_Thing)) != Thing::_endOfList);
+					} while ((squareThing = _vm->_dungeonMan->f159_getNextThing(squareThing)) != Thing::_endOfList);
 				}
 			}
 		}
-		if ((L0279_ui_MapIndex == _vm->_dungeonMan->_g309_partyMapIndex) || (_vm->_dungeonMan->_g278_dungeonFileHeader._mapCount <= 1)) {
-			G0294_auc_LastDiscardedThingMapIndex[thingType] = L0279_ui_MapIndex;
+		if ((mapIndex == _vm->_dungeonMan->_g309_partyMapIndex) || (_vm->_dungeonMan->_g278_dungeonFileHeader._mapCount <= 1)) {
+			lastDiscardedThingMapIndex[thingType] = mapIndex;
 			return Thing::_none;
 		}
+
 		do {
-			if (++L0279_ui_MapIndex >= _vm->_dungeonMan->_g278_dungeonFileHeader._mapCount)
-				L0279_ui_MapIndex = 0;
+			if (++mapIndex >= _vm->_dungeonMan->_g278_dungeonFileHeader._mapCount)
+				mapIndex = 0;
+		} while (mapIndex == _vm->_dungeonMan->_g309_partyMapIndex);
 
-		} while (L0279_ui_MapIndex == _vm->_dungeonMan->_g309_partyMapIndex);
-
-		if (L0279_ui_MapIndex == L0283_ui_DiscardThingMapIndex)
-			L0279_ui_MapIndex = _vm->_dungeonMan->_g309_partyMapIndex;
+		if (mapIndex == discardThingMapIndex)
+			mapIndex = _vm->_dungeonMan->_g309_partyMapIndex;
 	}
 }
 
