@@ -130,9 +130,9 @@ public:
 	const Graphics::Font& getCurrentFont();
 
 	// Clicks
-	void selectForDrag(Common::Point pos);
-	void handleSingleClick(Common::Point pos);
-	void handleDoubleClick(Common::Point pos);
+	void selectForDrag(Common::Point cursorPosition);
+	void handleSingleClick();
+	void handleDoubleClick();
 
 	// Modifiers
 	void bringToFront(WindowReference window);
@@ -227,7 +227,7 @@ private: // Methods
 
 	// Finders
 	WindowReference findWindowAtPoint(Common::Point point);
-	Common::Point getWindowSurfacePos(WindowReference reference);
+	Common::Point getGlobalScrolledSurfacePosition(WindowReference reference);
 	WindowData& findWindowData(WindowReference reference);
 	Graphics::MacWindow *findWindow(WindowReference reference);
 
@@ -235,10 +235,10 @@ private: // Methods
 	void checkSelect(const WindowData &data, Common::Point pos, const Common::Rect &clickRect, WindowReference ref);
 	bool canBeSelected(ObjID obj, const Common::Rect &clickRect, WindowReference ref);
 	bool isRectInsideObject(Common::Rect target, ObjID obj);
-	void selectDraggable(ObjID child, WindowReference origin, Common::Point startPos, Common::Point scroll);
-	void handleDragRelease(Common::Point pos, bool shiftPressed, bool isDoubleClick);
+	void selectDraggable(ObjID child, WindowReference origin, Common::Point startPos);
+	void handleDragRelease(bool shiftPressed, bool isDoubleClick);
 	Common::Rect calculateClickRect(Common::Point clickPos, Common::Rect windowBounds);
-	Common::Point localize(Common::Point point, WindowReference origin, WindowReference target);
+	Common::Point localizeTravelledDistance(Common::Point point, WindowReference origin, WindowReference target);
 	void removeInventoryWindow(WindowReference ref);
 
 	void ensureAssetLoaded(ObjID obj);
@@ -334,7 +334,7 @@ private:
 			g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 300000, this, "macVentureCursor");
 			break;
 		case kCursorSCSink:
-			_gui->handleSingleClick(_pos);
+			_gui->handleSingleClick();
 			changeState(kTickCol);
 			break;
 		default:
@@ -350,13 +350,13 @@ private:
 			g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
 			break;
 		case kCursorSCDrag:
-			_gui->handleSingleClick(_pos);
+			_gui->handleSingleClick();
 			break;
 		case kCursorDCStart:
 			g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
 			break;
 		case kCursorDCDo:
-			_gui->handleDoubleClick(_pos);
+			_gui->handleDoubleClick();
 			break;
 		default:
 			break;

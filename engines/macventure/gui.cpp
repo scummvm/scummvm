@@ -904,12 +904,14 @@ WindowReference Gui::findWindowAtPoint(Common::Point point) {
 	return kNoWindow;
 }
 
-Common::Point Gui::getWindowSurfacePos(WindowReference reference) {
+Common::Point Gui::getGlobalScrolledSurfacePosition(WindowReference reference) {
 	const WindowData &data = getWindowData(reference);
 	BorderBounds border = borderBounds(data.type);
 	Graphics::MacWindow *win = findWindow(reference);
 	if (!win) return Common::Point(0, 0);
-	return Common::Point(win->getDimensions().left + border.leftOffset, win->getDimensions().top + border.topOffset);
+	return Common::Point(
+		win->getDimensions().left + border.leftOffset - data.scrollPos.x,
+		win->getDimensions().top + border.topOffset - data.scrollPos.y);
 }
 
 WindowData & Gui::findWindowData(WindowReference reference) {
@@ -990,7 +992,7 @@ void Gui::checkSelect(const WindowData &data, Common::Point pos, const Common::R
 		}
 	}
 	if (child != 0) {
-		selectDraggable(child, ref, pos, data.scrollPos);
+		selectDraggable(child, ref, pos);
 		bringToFront(ref);
 	}
 }
@@ -1014,29 +1016,30 @@ bool Gui::isRectInsideObject(Common::Rect target, ObjID obj) {
 	return _assets[obj]->isRectInside(intersection);
 }
 
-void Gui::selectDraggable(ObjID child, WindowReference origin, Common::Point click, Common::Point scroll) {
+void Gui::selectDraggable(ObjID child, WindowReference origin, Common::Point click) {
 	if (_engine->isObjClickable(child) && _draggedObj.id == 0) {
 		_draggedObj.hasMoved = false;
 		_draggedObj.id = child;
 		_draggedObj.startWin = origin;
-		_draggedObj.mouseOffset = (_engine->getObjPosition(child) + getWindowSurfacePos(origin)) - click - scroll;
+		Common::Point localizedClick = click - getGlobalScrolledSurfacePosition(origin);
+		_draggedObj.mouseOffset = _engine->getObjPosition(child) - localizedClick;
 		_draggedObj.pos = click + _draggedObj.mouseOffset;
 		_draggedObj.startPos = _draggedObj.pos;
 	}
 }
 
-void Gui::handleDragRelease(Common::Point pos, bool shiftPressed, bool isDoubleClick) {
-
+void Gui::handleDragRelease(bool shiftPressed, bool isDoubleClick) {
 	if (_draggedObj.id != 0) {
-		WindowReference destinationWindow = findWindowAtPoint(pos);
+		WindowReference destinationWindow = findWindowAtPoint(_draggedObj.pos);
 		if (destinationWindow == kNoWindow) return;
 		if (_draggedObj.hasMoved) {
-			ObjID destObject = getWindowData(destinationWindow).objRef;
-			pos -= (_draggedObj.startPos - _draggedObj.mouseOffset);
-			pos = localize(pos, _draggedObj.startWin, destinationWindow);
-			debug("drop the object %d at obj %d, pos (%d, %d)", _draggedObj.id, destObject, pos.x, pos.y);
+			const WindowData &destinationWindowData = getWindowData(destinationWindow);
+			ObjID destObject = destinationWindowData.objRef;
+			Common::Point dropPosition = _draggedObj.pos - _draggedObj.startPos;
+			dropPosition = localizeTravelledDistance(dropPosition, _draggedObj.startWin, destinationWindow);
+			debug(3, "drop the object %d at obj %d, pos (%d, %d)", _draggedObj.id, destObject, dropPosition.x, dropPosition.y);
 
-			_engine->handleObjectDrop(_draggedObj.id, pos, destObject);
+			_engine->handleObjectDrop(_draggedObj.id, dropPosition, destObject);
 		}
 		_engine->handleObjectSelect(_draggedObj.id, destinationWindow, shiftPressed, isDoubleClick);
 		_draggedObj.id = 0;
@@ -1050,17 +1053,13 @@ Common::Rect Gui::calculateClickRect(Common::Point clickPos, Common::Rect window
 	return Common::Rect(left - kCursorWidth, top - kCursorHeight, left + kCursorWidth, top + kCursorHeight);
 }
 
-Common::Point Gui::localize(Common::Point point, WindowReference origin, WindowReference target) {
-	Graphics::MacWindow *oriWin = findWindow(origin);
-	Graphics::MacWindow *destWin = findWindow(target);
+Common::Point Gui::localizeTravelledDistance(Common::Point point, WindowReference origin, WindowReference target) {
 	if (origin != target) {
 		// ori.local to global
-		point.x += oriWin->getDimensions().left;
-		point.y += oriWin->getDimensions().top;
-		if (destWin) {
+		point += getGlobalScrolledSurfacePosition(origin);
+		if (findWindow(target)) {
 			// dest.globalToLocal
-			point.x -= destWin->getDimensions().left;
-			point.y -= destWin->getDimensions().top;
+			point -= getGlobalScrolledSurfacePosition(target);
 		}
 	}
 	return point;
@@ -1374,28 +1373,28 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event & event) {
 	return true;
 }
 
-void Gui::selectForDrag(Common::Point pos) {
-	WindowReference ref = findWindowAtPoint(pos);
+void Gui::selectForDrag(Common::Point cursorPosition) {
+	WindowReference ref = findWindowAtPoint(cursorPosition);
 	if (ref == kNoWindow) return;
 
 	Graphics::MacWindow *win = findWindow(ref);
 	WindowData &data = findWindowData((WindowReference) ref);
 
-	Common::Rect clickRect = calculateClickRect(pos + data.scrollPos, win->getDimensions());
-	checkSelect(data, pos, clickRect, (WindowReference)ref);
+	Common::Rect clickRect = calculateClickRect(cursorPosition + data.scrollPos, win->getDimensions());
+	checkSelect(data, cursorPosition, clickRect, (WindowReference)ref);
 }
 
-void Gui::handleSingleClick(Common::Point pos) {
+void Gui::handleSingleClick() {
 	debug("Single Click");
 	// HACK THERE HAS TO BE A MORE ELEGANT WAY
 	if (_dialog) return;
-	handleDragRelease(pos, false, false);
+	handleDragRelease(false, false);
 }
 
-void Gui::handleDoubleClick(Common::Point pos) {
+void Gui::handleDoubleClick() {
 	debug("Double Click");
 	if (_dialog) return;
-	handleDragRelease(pos, false, true);
+	handleDragRelease(false, true);
 }
 
 void Gui::ensureAssetLoaded(ObjID obj) {
