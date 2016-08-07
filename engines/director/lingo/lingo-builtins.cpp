@@ -63,12 +63,14 @@ static struct BuiltinProto {
 	{ "do",		 		Lingo::b_do,			1, 1, false },
 	{ "nothing",		Lingo::b_nothing,		0, 0, false },
 	{ "pause",			Lingo::b_pause,			0, 0, false },
+	{ "playAccel",		Lingo::b_playAccel,		-1,0, false }, // variable number of parameters
 	// Misc
 	{ "alert",	 		Lingo::b_alert,			1, 1, false },
 	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },
 	{ "editableText",	Lingo::b_editableText,	0, 0, false },
 	{ "installMenu",	Lingo::b_installMenu,	1, 1, false },
 	{ "moveableSprite",	Lingo::b_moveableSprite,0, 0, false },
+	{ "printFrom",	 	Lingo::b_printFrom,		-1,0, false },
 	{ "updatestage",	Lingo::b_updatestage,	0, 0, false },
 	{ "ilk",	 		Lingo::b_ilk,			1, 2, true },
 	// Point
@@ -333,6 +335,13 @@ void Lingo::b_pause() {
 	warning("STUB: b_pause");
 }
 
+void Lingo::b_playAccel() {
+	warning("STUB: b_playAccel");
+}
+
+void Lingo::b_printFrom() {
+	warning("STUB: b_printFrom");
+}
 
 ///////////////////
 // Misc

@@ -278,6 +278,7 @@ public:
 	static void b_moveableSprite();
 	static void b_alert();
 	static void b_cursor();
+	static void b_printFrom();
 
 	static void b_dontPassEvent();
 	static void b_delay();
@@ -285,6 +286,7 @@ public:
 	static void b_nothing();
 	static void b_continue();
 	static void b_pause();
+	static void b_playAccel();
 
 	static void b_closeDA();
 	static void b_closeResFile();

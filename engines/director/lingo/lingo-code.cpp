@@ -724,7 +724,7 @@ void Lingo::c_call() {
 	} else {
 		sym = g_lingo->_handlers[name];
 
-		if (sym->type == BLTIN && sym->nargs != nargs && sym->maxArgs != nargs) {
+		if (sym->type == BLTIN && sym->nargs != -1 && sym->nargs != nargs && sym->maxArgs != nargs) {
 			if (sym->nargs == sym->maxArgs)
 				warning("Incorrect number of arguments to handler '%s', expecting %d. Dropping %d stack items", name.c_str(), sym->nargs, nargs);
 			else

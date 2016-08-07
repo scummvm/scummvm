@@ -85,8 +85,8 @@ whitespace [\t ]
 (?i:exit)			{ count(); return tEXIT; }
 (?i:frame)			{ count(); return tFRAME; }
 (?i:global)			{ count(); return tGLOBAL; }
-(?i:go)				{ count(); return tGO; }
 (?i:go[\t ]+to)		{ count(); return tGO; }
+(?i:go)				{ count(); return tGO; }
 (?i:intersects)		{ count(); return tINTERSECTS; }
 (?i:into)			{ count(); return tINTO; }
 (?i:loop)			{ count(); return tLOOP; }
@@ -194,6 +194,8 @@ whitespace [\t ]
 				} else if (g_lingo->_handlers[yytext]->nargs == 1 &&
 							g_lingo->_handlers[yytext]->maxArgs == 1) {
 					return BLTINONEARG;
+				} else if (g_lingo->_handlers[yytext]->nargs == -1) {
+					return BLTINARGLIST;
 				} else {
 					error("Incorrect setup for builtin: %s", yytext);
 				}

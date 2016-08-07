@@ -21,3 +21,6 @@ play movie "Desert Scene"
 play frame 23 of movie "Chicago"
 play frame varframe of movie varmovie
 play frame "main loop" of movie "Basic With"
+
+playAccel "Lungs.mma"
+playAccel "Bolitas.mma", loop, clickStop, whatFits
