@@ -204,4 +204,8 @@ void CSound::setCanFree(int handle) {
 		_soundManager.setCanFree(handle);
 }
 
+void CSound::updateMixer() {
+	_soundManager.waveMixPump();
+}
+
 } // End of namespace Titanic

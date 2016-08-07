@@ -183,11 +183,15 @@ protected:
 
 	/**
 	 * Plays a sound
+	 * @param resName	Filename of sound to play
+	 * @param volume	Volume level
 	 */
 	int playSound(const CString &name, uint volume = 100, int val3 = 0, bool repeated = false);
 
 	/**
 	 * Plays a sound
+	 * @param resName	Filename of sound to play
+	 * @param prox		Proximity object with the sound data
 	 */
 	int playSound(const CString &name, CProximity &prox);
 
@@ -203,8 +207,6 @@ protected:
 	 */
 	bool isSoundActive(int handle) const;
 
-	void soundFn2(const CString &resName, int v1, int v2, int v3, int handleIndex);
-
 	/**
 	 * Sets the volume for a sound
 	 * @param handle	Sound handle
@@ -213,9 +215,30 @@ protected:
 	 */
 	void setSoundVolume(uint handle, uint percent, uint seconds);
 
-	void soundFn4(int v1, int v2, int v3);
+	/**
+	 * Plays a sound, and saves it's handle in the global sound handles list
+	 * @param resName		Filename of sound to play
+	 * @param mode			Volume mode level
+	 * @param initialMute	If set, sound transitions in from mute over 2 seconds
+	 * @param repeated		Flag for repeating sounds
+	 * @param handleIndex	Slot 0 to 3 in the shared sound handle list to store the sound's handle
+	 */
+	void playGlobalSound(const CString &resName, int mode, bool initialMute, bool repeated, int handleIndex);
 
-	void soundFn5(int v1, int v2, int v3);
+	/**
+	 * Stops a sound saved in the global sound handle list
+	 * @param transition	If set, the sound transitions to silent before stopping
+	 * @param handleIndex	Index of sound to stop. If -1, all global sounds are stopped
+	 */
+	void stopGlobalSound(bool transition, int handleIndex);
+
+	/**
+	 * Updates the volume for a global sound based on the specified mode's volume
+	 * @param mode			Volume level mode
+	 * @param seconds		Number of seconds to transition to new volume
+	 * @param handleIndex	Index of global sound to update. If -1, all global sounds are updated
+	 */
+	void setGlobalSoundVolume(int mode, uint seconds, int handleIndex);
 
 	void sound8(bool flag) const;
 

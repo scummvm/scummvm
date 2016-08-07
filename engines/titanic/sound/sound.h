@@ -177,6 +177,11 @@ public:
 	 * Flags that a sound can be freed if a timeout is set
 	 */
 	void setCanFree(int handle);
+
+	/**
+	 * Handles regularly updating the mixer
+	 */
+	void updateMixer();
 };
 
 } // End of namespace Titanic

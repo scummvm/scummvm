@@ -32,6 +32,19 @@ CSoundManager::CSoundManager() : _musicPercent(75.0), _speechPercent(75.0),
 	_masterPercent(75.0), _parrotPercent(75.0), _handleCtr(1) {
 }
 
+uint CSoundManager::getModeVolume(int mode) {
+	switch (mode) {
+	case -1:
+		return _masterPercent;
+	case -2:
+		return _masterPercent * 30 / 100;
+	case -3:
+		return _masterPercent * 15 / 100;
+	default:
+		return 0;
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 void QSoundManagerSounds::add(CWaveFile *waveFile, int iChannel, CEndTalkerFn endFn, TTtalker *talker) {

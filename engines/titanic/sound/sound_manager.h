@@ -202,6 +202,11 @@ public:
 	 * Returns the parrot volume percent
 	 */
 	int getParrotVolume() const { return _parrotPercent; }
+
+	/**
+	 * Gets the volume for a given mode? value
+	 */
+	uint getModeVolume(int mode);
 };
 
 class QSoundManagerSound : public ListItem {

@@ -437,8 +437,53 @@ bool CGameObject::isSoundActive(int handle) const {
 	return false;
 }
 
-void CGameObject::soundFn2(const CString &resName, int v1, int v2, int v3, int handleIndex) {
-	warning("TODO: CGameObject::soundFn2");
+void CGameObject::playGlobalSound(const CString &resName, int mode, bool initialMute, bool repeated, int handleIndex) {
+	if (handleIndex < 0 || handleIndex > 3)
+		return;
+	CGameManager *gameManager = getGameManager();
+	if (!gameManager)
+		return;
+
+	// Preload the file, and stop any existing sound using the given slot
+	CSound &sound = gameManager->_sound;
+	g_vm->_filesManager->preload(resName);
+	if (_soundHandles[handleIndex] != -1) {
+		sound.stopSound(_soundHandles[handleIndex]);
+		_soundHandles[handleIndex] = -1;
+	}
+
+	// If no new name specified, then exit
+	if (resName.empty())
+		return;
+
+	uint newVolume = sound._soundManager.getModeVolume(mode);
+	uint volume = initialMute ? 0 : newVolume;
+
+	CProximity prox;
+	prox._channelVolume = newVolume;
+	prox._repeated = repeated;
+
+	switch (handleIndex) {
+	case 0:
+		prox._channel = 6;
+		break;
+	case 1:
+		prox._channel = 7;
+		break;
+	case 2:
+		prox._channel = 8;
+		break;
+	case 3:
+		prox._channel = 9;
+		break;
+	default:
+		break;
+	}
+
+	_soundHandles[handleIndex] = sound.playSound(resName, prox);
+
+	if (_soundHandles[handleIndex])
+		sound.setVolume(_soundHandles[handleIndex], newVolume, 2);
 }
 
 void CGameObject::setSoundVolume(uint handle, uint percent, uint seconds) {
@@ -449,12 +494,47 @@ void CGameObject::setSoundVolume(uint handle, uint percent, uint seconds) {
 	}
 }
 
-void CGameObject::soundFn4(int v1, int v2, int v3) {
+void CGameObject::stopGlobalSound(bool transition, int handleIndex) {
+	CGameManager *gameManager = getGameManager();
+	if (!gameManager)
+		return;
+	CSound &sound = gameManager->_sound;
+
+	if (handleIndex == -1) {
+		for (int idx = 0; idx < 3; ++idx) {
+			if (_soundHandles[idx] != -1) {
+				sound.setVolume(_soundHandles[idx], 0, transition ? 1 : 0);
+				sound.setCanFree(_soundHandles[idx]);
+				_soundHandles[idx] = -1;
+			}
+		}
+	} else if (handleIndex >= 0 && handleIndex <= 2 && _soundHandles[handleIndex] != -1) {
+		if (transition) {
+			// Transitioning to silent over 1 second
+			sound.setVolume(_soundHandles[handleIndex], 0, 1);
+			sleep(1000);
+		}
+
+		sound.stopSound(_soundHandles[handleIndex]);
+		_soundHandles[handleIndex] = -1;
+	}
 	warning("CGameObject::soundFn4");
 }
 
-void CGameObject::soundFn5(int v1, int v2, int v3) {
-	warning("CGameObject::soundFn5");
+void CGameObject::setGlobalSoundVolume(int mode, uint seconds, int handleIndex) {
+	CGameManager *gameManager = getGameManager();
+	if (!gameManager)
+		return;
+	CSound &sound = gameManager->_sound;
+
+	if (handleIndex == -1) {
+		// Iterate through calling the method for each handle
+		for (int idx = 0; idx < 3; ++idx)
+			setGlobalSoundVolume(mode, seconds, idx);
+	} else if (handleIndex >= 0 && handleIndex <= 2 && _soundHandles[handleIndex] != -1) {
+		uint newVolume = sound._soundManager.getModeVolume(mode);
+		sound.setVolume(_soundHandles[handleIndex], newVolume, seconds);
+	}
 }
 
 void CGameObject::sound8(bool flag) const {

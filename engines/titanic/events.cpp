@@ -114,9 +114,11 @@ uint32 Events::getTicksCount() const {
 
 void Events::sleep(uint time) {
 	uint32 delayEnd = g_system->getMillis() + time;
+	CSound &sound = g_vm->_window->_gameManager->_sound;
 
 	while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd) {
 		pollEventsAndWait();
+		sound.updateMixer();
 	}
 }
 
