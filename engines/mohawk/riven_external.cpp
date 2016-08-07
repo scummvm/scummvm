@@ -1734,12 +1734,12 @@ void RivenExternal::xvga1300_carriage(uint16 argc, uint16 *argv) {
 	_vm->_system->updateScreen();                      // Update
 	_vm->_video->playMovieBlockingRiven(1);            // Play handle movie
 	_vm->_gfx->scheduleTransition(15);                 // Set pan down transition
-	_vm->changeToCard(_vm->matchRMAPToCard(0x18e77));  // Change to card facing up
+	_vm->changeToCard(_vm->getCurStack()->getCardStackId(0x18e77));  // Change to card facing up
 	_vm->_cursor->setCursor(kRivenHideCursor);         // Hide the cursor (again)
 	_vm->_system->updateScreen();                      // Update
 	_vm->_video->playMovieBlockingRiven(4);            // Play carriage beginning to drop
 	_vm->_gfx->scheduleTransition(14);                 // Set pan up transition
-	_vm->changeToCard(_vm->matchRMAPToCard(0x183a9));  // Change to card looking straight again
+	_vm->changeToCard(_vm->getCurStack()->getCardStackId(0x183a9));  // Change to card looking straight again
 	_vm->_video->playMovieBlockingRiven(2);
 
 	if (_vm->_vars["jgallows"] == 1) {
@@ -1774,16 +1774,16 @@ void RivenExternal::xvga1300_carriage(uint16 argc, uint16 *argv) {
 
 	if (gotClick) {
 		_vm->_gfx->scheduleTransition(16);                 // Schedule dissolve transition
-		_vm->changeToCard(_vm->matchRMAPToCard(0x18d4d));  // Move forward
+		_vm->changeToCard(_vm->getCurStack()->getCardStackId(0x18d4d));  // Move forward
 		_vm->_cursor->setCursor(kRivenHideCursor);         // Hide the cursor
 		_vm->_system->updateScreen();                      // Update
 		_vm->_system->delayMillis(500);                    // Delay a half second before changing again
 		_vm->_gfx->scheduleTransition(12);                 // Schedule pan left transition
-		_vm->changeToCard(_vm->matchRMAPToCard(0x18ab5));  // Turn right
+		_vm->changeToCard(_vm->getCurStack()->getCardStackId(0x18ab5));  // Turn right
 		_vm->_cursor->setCursor(kRivenHideCursor);         // Hide the cursor
 		_vm->_system->updateScreen();                      // Update
 		_vm->_video->playMovieBlockingRiven(1);            // Play carriage ride movie
-		_vm->changeToCard(_vm->matchRMAPToCard(0x17167));  // We have arrived at the top
+		_vm->changeToCard(_vm->getCurStack()->getCardStackId(0x17167));  // We have arrived at the top
 	} else
 		_vm->_video->playMovieBlockingRiven(3);            // Too slow!
 }
@@ -1849,7 +1849,7 @@ void RivenExternal::xhandlecontrolup(uint16 argc, uint16 *argv) {
 	if (changeLevel == -1) {
 		_vm->_video->playMovieBlockingRiven(1);
 		_vm->_video->playMovieBlockingRiven(2);
-		_vm->changeToCard(_vm->matchRMAPToCard(0x1e374));
+		_vm->changeToCard(_vm->getCurStack()->getCardStackId(0x1e374));
 	}
 }
 
@@ -1860,7 +1860,7 @@ void RivenExternal::xhandlecontroldown(uint16 argc, uint16 *argv) {
 	if (changeLevel == 1) {
 		_vm->_video->playMovieBlockingRiven(1);
 		_vm->_video->playMovieBlockingRiven(2);
-		_vm->changeToCard(_vm->matchRMAPToCard(0x1e374));
+		_vm->changeToCard(_vm->getCurStack()->getCardStackId(0x1e374));
 	}
 }
 
@@ -1887,10 +1887,10 @@ void RivenExternal::xhandlecontrolmid(uint16 argc, uint16 *argv) {
 	// Play the elevator video and then change the card
 	if (changeLevel == 1) {
 		_vm->_video->playMovieBlockingRiven(5);
-		_vm->changeToCard(_vm->matchRMAPToCard(0x1e597));
+		_vm->changeToCard(_vm->getCurStack()->getCardStackId(0x1e597));
 	} else {
 		_vm->_video->playMovieBlockingRiven(4);
-		_vm->changeToCard(_vm->matchRMAPToCard(0x1e29c));
+		_vm->changeToCard(_vm->getCurStack()->getCardStackId(0x1e29c));
 	}
 }
 
@@ -2143,7 +2143,7 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 					_vm->_vars["agehn"] = 4;                            // Set Gehn to the trapped state
 					_vm->_vars["atrapbook"] = 1;                        // We've got the trap book again
 					_vm->_sound->playSound(0);                          // Play the link sound again
-					_vm->changeToCard(_vm->matchRMAPToCard(0x2885));    // Link out!
+					_vm->changeToCard(_vm->getCurStack()->getCardStackId(0x2885));    // Link out!
 					return;
 				}
 				break;

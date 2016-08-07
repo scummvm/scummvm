@@ -89,8 +89,15 @@ public:
 	 * The search is case insensitive.
 	 */
 	int16 getIdFromName(RivenNameResource nameResource, const Common::String &name) const;
+
+	/** Get the id of a card in the card from its global identifier */
+	uint16 getCardStackId(uint32 globalId) const;
+
+	/** Get the global id of the currently active card */
+	uint32 getCurrentCardGlobalId() const;
 private:
 	void loadResourceNames();
+	void loadCardIdMap();
 
 	MohawkEngine_Riven *_vm;
 
@@ -102,6 +109,8 @@ private:
 	RivenNameList _hotspotNames;
 	RivenNameList _cardNames;
 	RivenNameList _stackNames;
+
+	Common::Array<uint32> _cardIdMap;
 };
 
 } // End of namespace Mohawk

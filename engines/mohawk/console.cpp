@@ -630,7 +630,7 @@ bool RivenConsole::Cmd_ListZipCards(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_GetRMAP(int argc, const char **argv) {
-	uint32 rmapCode = _vm->getCurCardRMAP();
+	uint32 rmapCode = _vm->getCurStack()->getCurrentCardGlobalId();
 	debugPrintf("RMAP for %s %d = %08x\n", _vm->getStackName(_vm->getCurStack()->getId()).c_str(), _vm->getCurCard()->getId(), rmapCode);
 	return true;
 }
