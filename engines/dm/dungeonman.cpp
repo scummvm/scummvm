@@ -956,6 +956,7 @@ T0172010_ClosedFakeWall:
 
 		if (AL0307_uc_FootprintsAllowed && (AL0307_uc_ScentOrdinal = _vm->_championMan->f315_getScentOrdinal(mapX, mapY)) && (--AL0307_uc_ScentOrdinal >= _vm->_championMan->_g407_party._firstScentIndex) && (AL0307_uc_ScentOrdinal < _vm->_championMan->_g407_party._lastScentIndex))
 			setFlag(aspectArray[k4_FloorOrnOrdAspect], k0x8000_FootprintsAspect);
+		break;
 	}
 	aspectArray[k1_FirstGroupOrObjectAspect] = curThing.toUint16();
 }
@@ -1008,108 +1009,88 @@ Thing DungeonMan::f159_getNextThing(Thing thing) {
 	return Thing(f156_getThingData(thing)[0]);
 }
 
-char g255_MessageAndScrollEscReplacementStrings[32][8] = { // @ G0255_aac_Graphic559_MessageAndScrollEscapeReplacementStrings
-	{'x',  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { '?',  0,  0,  0, 0, 0, 0, 0 }, */
-	{'y',  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { '!',  0,  0,  0, 0, 0, 0, 0 }, */
-	{'T','H','E',' ', 0, 0, 0, 0},
-	{'Y','O','U',' ', 0, 0, 0, 0},
-	{'z',  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-	{'{',  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-	{'|',  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-	{'}',  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-	{'~',  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-	{'',  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0}};
-char g256_EscReplacementCharacters[32][2] = { // @ G0256_aac_Graphic559_EscapeReplacementCharacters
-	{'a', 0},
-	{'b', 0},
-	{'c', 0},
-	{'d', 0},
-	{'e', 0},
-	{'f', 0},
-	{'g', 0},
-	{'h', 0},
-	{'i', 0},
-	{'j', 0},
-	{'k', 0},
-	{'l', 0},
-	{'m', 0},
-	{'n', 0},
-	{'o', 0},
-	{'p', 0},
-	{'q', 0},
-	{'r', 0},
-	{'s', 0},
-	{'t', 0},
-	{'u', 0},
-	{'v', 0},
-	{'w', 0},
-	{'x', 0},
-	{'0', 0},
-	{'1', 0},
-	{'2', 0},
-	{'3', 0},
-	{'4', 0},
-	{'5', 0},
-	{'6', 0},
-	{'7', 0}};
-char g257_InscriptionEscReplacementStrings[32][8] = { // @ G0257_aac_Graphic559_InscriptionEscapeReplacementStrings
-	{28,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-	{29,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-	{19,  7,  4, 26, 0, 0, 0, 0},
-	{24, 14, 20, 26, 0, 0, 0, 0},
-	{30,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-	{31,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-	{32,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-	{33,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-	{34,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-	{35,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0},
-	{0,  0,  0,  0, 0, 0, 0, 0}};
-
-
 void DungeonMan::f168_decodeText(char *destString, Thing thing, TextType type) {
+	static char messageAndScrollEscReplacementStrings[32][8] = { // @ G0255_aac_Graphic559_MessageAndScrollEscapeReplacementStrings
+		{'x',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { '?',  0,  0,  0, 0, 0, 0, 0 }, */
+		{'y',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { '!',  0,  0,  0, 0, 0, 0, 0 }, */
+		{'T', 'H', 'E', ' ', 0, 0, 0, 0},
+		{'Y', 'O', 'U', ' ', 0, 0, 0, 0},
+		{'z',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		{'{',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		{'|',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		{'}',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		{'~',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		{'',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		{0,     0,   0,   0, 0, 0, 0, 0},
+		{0,     0,   0,   0, 0, 0, 0, 0},
+		{0,     0,   0,   0, 0, 0, 0, 0},
+		{0,     0,   0,   0, 0, 0, 0, 0},
+		{0,     0,   0,   0, 0, 0, 0, 0},
+		{0,     0,   0,   0, 0, 0, 0, 0},
+		{0,     0,   0,   0, 0, 0, 0, 0},
+		{0,     0,   0,   0, 0, 0, 0, 0},
+		{0,     0,   0,   0, 0, 0, 0, 0},
+		{0,     0,   0,   0, 0, 0, 0, 0},
+		{0,     0,   0,   0, 0, 0, 0, 0},
+		{0,     0,   0,   0, 0, 0, 0, 0},
+		{0,     0,   0,   0, 0, 0, 0, 0},
+		{0,     0,   0,   0, 0, 0, 0, 0},
+		{0,     0,   0,   0, 0, 0, 0, 0},
+		{0,     0,   0,   0, 0, 0, 0, 0},
+		{0,     0,   0,   0, 0, 0, 0, 0},
+		{0,     0,   0,   0, 0, 0, 0, 0},
+		{0,     0,   0,   0, 0, 0, 0, 0},
+		{0,     0,   0,   0, 0, 0, 0, 0},
+		{0,     0,   0,   0, 0, 0, 0, 0},
+		{0,     0,   0,   0, 0, 0, 0, 0}
+	};
+
+	static char escReplacementCharacters[32][2] = { // @ G0256_aac_Graphic559_EscapeReplacementCharacters
+		{'a', 0}, {'b', 0}, {'c', 0}, {'d', 0},
+		{'e', 0}, {'f', 0}, {'g', 0}, {'h', 0},
+		{'i', 0}, {'j', 0}, {'k', 0}, {'l', 0},
+		{'m', 0}, {'n', 0}, {'o', 0}, {'p', 0},
+		{'q', 0}, {'r', 0}, {'s', 0}, {'t', 0},
+		{'u', 0}, {'v', 0}, {'w', 0}, {'x', 0},
+		{'0', 0}, {'1', 0}, {'2', 0}, {'3', 0},
+		{'4', 0}, {'5', 0}, {'6', 0}, {'7', 0}
+	};
+
+	static char inscriptionEscReplacementStrings[32][8] = { // @ G0257_aac_Graphic559_InscriptionEscapeReplacementStrings
+		{28,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		{29,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		{19,  7,  4, 26, 0, 0, 0, 0},
+		{24, 14, 20, 26, 0, 0, 0, 0},
+		{30,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		{31,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		{32,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		{33,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		{34,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		{35,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		{0,   0,  0,  0, 0, 0, 0, 0},
+		{0,   0,  0,  0, 0, 0, 0, 0},
+		{0,   0,  0,  0, 0, 0, 0, 0},
+		{0,   0,  0,  0, 0, 0, 0, 0},
+		{0,   0,  0,  0, 0, 0, 0, 0},
+		{0,   0,  0,  0, 0, 0, 0, 0},
+		{0,   0,  0,  0, 0, 0, 0, 0},
+		{0,   0,  0,  0, 0, 0, 0, 0},
+		{0,   0,  0,  0, 0, 0, 0, 0},
+		{0,   0,  0,  0, 0, 0, 0, 0},
+		{0,   0,  0,  0, 0, 0, 0, 0},
+		{0,   0,  0,  0, 0, 0, 0, 0},
+		{0,   0,  0,  0, 0, 0, 0, 0},
+		{0,   0,  0,  0, 0, 0, 0, 0},
+		{0,   0,  0,  0, 0, 0, 0, 0},
+		{0,   0,  0,  0, 0, 0, 0, 0},
+		{0,   0,  0,  0, 0, 0, 0, 0},
+		{0,   0,  0,  0, 0, 0, 0, 0},
+		{0,   0,  0,  0, 0, 0, 0, 0},
+		{0,   0,  0,  0, 0, 0, 0, 0},
+		{0,   0,  0,  0, 0, 0, 0, 0},
+		{0,   0,  0,  0, 0, 0, 0, 0}
+	};
+
 	TextString textString(_g284_thingData[k2_TextstringType] + thing.getIndex() * g235_ThingDataWordCount[k2_TextstringType]);
 	if ((textString.isVisible()) || (type & k0x8000_DecodeEvenIfInvisible)) {
 		type = (TextType)(type & ~k0x8000_DecodeEvenIfInvisible);
@@ -1142,82 +1123,73 @@ void DungeonMan::f168_decodeText(char *destString, Thing thing, TextType type) {
 			if (escChar) {
 				*destString = '\0';
 				if (escChar == 30) {
-					if (type != k0_TextTypeInscription) {
-						escReplString = g255_MessageAndScrollEscReplacementStrings[code];
-					} else {
-						escReplString = g257_InscriptionEscReplacementStrings[code];
-					}
-				} else {
-					escReplString = g256_EscReplacementCharacters[code];
-				}
+					if (type != k0_TextTypeInscription)
+						escReplString = messageAndScrollEscReplacementStrings[code];
+					else
+						escReplString = inscriptionEscReplacementStrings[code];
+				} else
+					escReplString = escReplacementCharacters[code];
+
 				strcat(destString, escReplString);
 				destString += strlen(escReplString);
 				escChar = 0;
 			} else if (code < 28) {
 				if (type != k0_TextTypeInscription) {
-					if (code == 26) {
+					if (code == 26)
 						code = ' ';
-					} else if (code == 27) {
+					else if (code == 27)
 						code = '.';
-					} else {
+					else
 						code += 'A';
-					}
 				}
 				*destString++ = code;
-			} else if (code == 28) {
+			} else if (code == 28)
 				*destString++ = sepChar;
-			} else if (code <= 30) {
+			else if (code <= 30)
 				escChar = code;
-			} else {
+			else
 				break;
-			}
 		}
 	}
 	*destString = ((type == k0_TextTypeInscription) ? 0x81 : '\0');
 }
 
 Thing DungeonMan::f166_getUnusedThing(uint16 thingType) {
-	int16 L0288_i_ThingIndex;
-	int16 L0289_i_ThingDataByteCount;
-	int16 L0290_i_ThingCount;
-	Thing* L0291_ps_Generic;
-	Thing L0292_T_Thing;
-
-
-	L0290_i_ThingCount = _vm->_dungeonMan->_g278_dungeonFileHeader._thingCounts[getFlag(thingType, k0x7FFF_thingType)];
+	int16 thingCount = _vm->_dungeonMan->_g278_dungeonFileHeader._thingCounts[getFlag(thingType, k0x7FFF_thingType)];
 	if (thingType == (k0x8000_championBones | k10_JunkThingType)) {
 		thingType = k10_JunkThingType;
-	} else {
-		if (thingType == k10_JunkThingType) {
-			L0290_i_ThingCount -= 3; /* Always keep 3 unused JUNK things for the bones of dead champions */
-		}
-	}
-	L0288_i_ThingIndex = L0290_i_ThingCount;
-	L0289_i_ThingDataByteCount = g235_ThingDataWordCount[thingType] >> 1;
-	L0291_ps_Generic = (Thing*)_vm->_dungeonMan->_g284_thingData[thingType];
-	for (;;) { /*_Infinite loop_*/
-		if (*L0291_ps_Generic == Thing::_none) { /* If thing data is unused */
-			L0292_T_Thing = Thing((thingType << 10) | (L0290_i_ThingCount - L0288_i_ThingIndex));
-			break;
-		}
-		if (--L0288_i_ThingIndex) { /* If there are thing data left to process */
-			L0291_ps_Generic += L0289_i_ThingDataByteCount; /* Proceed to the next thing data */
-		} else {
-			if ((L0292_T_Thing = f165_getDiscardTHing(thingType)) == Thing::_none) {
-				return Thing::_none;
-			}
-			L0291_ps_Generic = (Thing*)_vm->_dungeonMan->f156_getThingData(L0292_T_Thing);
-			break;
-		}
-	}
-	memset(L0291_ps_Generic, 0, L0289_i_ThingDataByteCount * 2);
+	} else if (thingType == k10_JunkThingType)
+		thingCount -= 3; /* Always keep 3 unused JUNK things for the bones of dead champions */
 
-	*L0291_ps_Generic = Thing::_endOfList;
-	return L0292_T_Thing;
+	int16 thingIdx = thingCount;
+	int16 thingDataByteCount = g235_ThingDataWordCount[thingType] >> 1;
+	Thing *thingPtr = (Thing *)_vm->_dungeonMan->_g284_thingData[thingType];
+
+	Thing curThing;
+	for (;;) { /*_Infinite loop_*/
+		if (*thingPtr == Thing::_none) { /* If thing data is unused */
+			curThing = Thing((thingType << 10) | (thingCount - thingIdx));
+			break;
+		}
+		if (--thingIdx) { /* If there are thing data left to process */
+			thingPtr += thingDataByteCount; /* Proceed to the next thing data */
+		} else {
+			curThing = f165_getDiscardTHing(thingType);
+			if (curThing == Thing::_none)
+				return Thing::_none;
+
+			thingPtr = (Thing *)_vm->_dungeonMan->f156_getThingData(curThing);
+			break;
+		}
+	}
+	memset(thingPtr, 0, thingDataByteCount * 2);
+
+	*thingPtr = Thing::_endOfList;
+	return curThing;
 }
 
 uint16 DungeonMan::f140_getObjectWeight(Thing thing) {
-	static const uint16 g241_junkInfo[] = { // @ G0241_auc_Graphic559_JunkInfo
+	static const uint16 junkInfo[] = { // @ G0241_auc_Graphic559_JunkInfo
 		// COMPASS - WATERSKIN - JEWEL SYMAL - ILLUMULET - ASHES
 		1, 3, 2, 2, 4,
 		// BONES - COPPER COIN - SILVER COIN - GOLD COIN - IRON KEY
@@ -1242,13 +1214,14 @@ uint16 DungeonMan::f140_getObjectWeight(Thing thing) {
 		2, 0, 8
 	};
 
-	Junk* junk;
-	uint16 weight = (uint16)-1; // initialization is not present in original
-
 	if (thing == Thing::_none)
 		return 0;
 
-	junk = (Junk*)f156_getThingData(thing);
+	// Initialization is not present in original
+	// Set to 0 by default as it's the default value used for Thing::_none
+	uint16 weight = 0;
+	Junk *junk = (Junk*)f156_getThingData(thing);
+
 	switch (thing.getType()) {
 	case k5_WeaponThingType:
 		weight = g238_WeaponInfo[((Weapon*)junk)->getType()]._weight;
@@ -1257,10 +1230,10 @@ uint16 DungeonMan::f140_getObjectWeight(Thing thing) {
 		weight = g239_ArmourInfo[((Armour*)junk)->getType()]._weight;
 		break;
 	case k10_JunkThingType:
-		weight = g241_junkInfo[junk->getType()];
-		if (junk->getType() == k1_JunkTypeWaterskin) {
+		weight = junkInfo[junk->getType()];
+		if (junk->getType() == k1_JunkTypeWaterskin)
 			weight += junk->getChargeCount() << 1;
-		}
+
 		break;
 	case k9_ContainerThingType:
 		weight = 50;
@@ -1271,14 +1244,14 @@ uint16 DungeonMan::f140_getObjectWeight(Thing thing) {
 		}
 		break;
 	case k8_PotionThingType:
-		if (((Potion*)junk)->getType() == k20_PotionTypeEmptyFlask) {
+		if (((Potion*)junk)->getType() == k20_PotionTypeEmptyFlask)
 			weight = 1;
-		} else {
+		else
 			weight = 3;
-		}
 		break;
 	case k7_ScrollThingType:
 		weight = 1;
+		break;
 	}
 
 	return weight; // this is garbage if none of the branches were taken
