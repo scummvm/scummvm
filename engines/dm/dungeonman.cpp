@@ -1488,43 +1488,31 @@ Thing DungeonMan::f165_getDiscardThing(uint16 thingType) {
 }
 
 uint16 DungeonMan::f144_getCreatureAttributes(Thing thing) {
-	Group* L0245_ps_Group;
-
-	L0245_ps_Group = (Group*)_vm->_dungeonMan->f156_getThingData(thing);
-	return g243_CreatureInfo[L0245_ps_Group->_type]._attributes;
+	Group *currGroup = (Group *)_vm->_dungeonMan->f156_getThingData(thing);
+	return g243_CreatureInfo[currGroup->_type]._attributes;
 }
 
 void DungeonMan::f146_setGroupCells(Group* group, uint16 cells, uint16 mapIndex) {
-	if (mapIndex == _vm->_dungeonMan->_g309_partyMapIndex) {
+	if (mapIndex == _vm->_dungeonMan->_g309_partyMapIndex)
 		_vm->_groupMan->_g375_activeGroups[group->getActiveGroupIndex()]._cells = cells;
-	} else {
+	else
 		group->_cells = cells;
-	}
 }
 
 void DungeonMan::f148_setGroupDirections(Group* group, int16 dir, uint16 mapIndex) {
-	if (mapIndex == _vm->_dungeonMan->_g309_partyMapIndex) {
+	if (mapIndex == _vm->_dungeonMan->_g309_partyMapIndex)
 		_vm->_groupMan->_g375_activeGroups[group->getActiveGroupIndex()]._directions = (Direction)dir;
-	} else {
+	else
 		group->setDir(M21_normalizeModulo4(dir));
-	}
 }
 
 bool DungeonMan::f139_isCreatureAllowedOnMap(Thing thing, uint16 mapIndex) {
-	int16 L0234_i_Counter;
-	int16 L0235_i_CreatureType;
-	byte* L0236_puc_Multiple;
-#define AL0236_puc_Group               L0236_puc_Multiple
-#define AL0236_puc_AllowedCreatureType L0236_puc_Multiple
-	Map* L0237_ps_Map;
-
-	L0235_i_CreatureType = ((Group*)_vm->_dungeonMan->f156_getThingData(thing))->_type;
-	L0237_ps_Map = &_vm->_dungeonMan->_g277_dungeonMaps[mapIndex];
-	AL0236_puc_AllowedCreatureType = _vm->_dungeonMan->_g279_dungeonMapData[mapIndex][L0237_ps_Map->_width] + L0237_ps_Map->_height + 1;
-	for (L0234_i_Counter = L0237_ps_Map->_creatureTypeCount; L0234_i_Counter > 0; L0234_i_Counter--) {
-		if (*AL0236_puc_AllowedCreatureType++ == L0235_i_CreatureType) {
+	int16 creatureType = ((Group*)_vm->_dungeonMan->f156_getThingData(thing))->_type;
+	Map *map = &_vm->_dungeonMan->_g277_dungeonMaps[mapIndex];
+	byte *allowedCreatureType = _vm->_dungeonMan->_g279_dungeonMapData[mapIndex][map->_width] + map->_height + 1;
+	for (int16 L0234_i_Counter = map->_creatureTypeCount; L0234_i_Counter > 0; L0234_i_Counter--) {
+		if (*allowedCreatureType++ == creatureType)
 			return true;
-		}
 	}
 	return false;
 }
