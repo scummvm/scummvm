@@ -20,45 +20,27 @@
  *
  */
 
-#include "common/textconsole.h"
-#include "titanic/sound/music_room.h"
-#include "titanic/sound/sound.h"
-#include "titanic/game_manager.h"
-#include "titanic/titanic.h"
+#ifndef TITANIC_MUSIC_HANDLER_H
+#define TITANIC_MUSIC_HANDLER_H
 
 namespace Titanic {
 
-CMusicHandler *CMusicRoom::_musicHandler;
+class CProjectItem;
+class CSoundManager;
 
-CMusicRoom::CMusicRoom(CGameManager *gameManager) :
-		_gameManager(gameManager) {
-	_sound = &_gameManager->_sound;
-	_items.resize(4);
-}
+class CMusicHandler {
+private:
+	CProjectItem *_project;
+	CSoundManager *_soundManager;
+	int _field124;
+public:
+	CMusicHandler(CProjectItem *project, CSoundManager *soundManager);
 
-CMusicRoom::~CMusicRoom() {
-	destroyMusicHandler();
-}
+	bool isBusy();
 
-CMusicHandler *CMusicRoom::createMusicHandler() {
-	if (_musicHandler)
-		destroyMusicHandler();
-
-	_musicHandler = new CMusicHandler(_gameManager->_project, &_sound->_soundManager);
-	return _musicHandler;
-}
-
-void CMusicRoom::destroyMusicHandler() {
-	delete _musicHandler;
-	_musicHandler = nullptr;
-}
-
-void CMusicRoom::startMusic(int musicId) {
-	// TODO
-}
-
-void CMusicRoom::stopMusic() {
-	// TODO
-}
+	void set124(int val) { _field124 = val; }
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_MUSIC_HANDLER_H */

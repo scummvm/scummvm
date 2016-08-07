@@ -250,7 +250,7 @@ protected:
 	/**
 	 * Adds a timer
 	 */
-	int addTimer(uint firstDuration, uint repeatDuration);
+	int addTimer(uint firstDuration, uint repeatDuration = 0);
 
 	/**
 	 * Stops a timer

@@ -85,6 +85,7 @@ class CGameObject;
 class CRoomItem;
 class CNodeItem;
 class CViewItem;
+class CMusicPlayer;
 
 class CMessage : public CSaveableObject {
 private:
@@ -321,7 +322,7 @@ MESSAGE2(CShipSettingMsg, int, value, 0, CString, name, "");
 MESSAGE1(CShowTextMsg, CString, value, "NO TEXT INCLUDED!!!");
 MESSAGE2(CSignalObject, CString, strValue, "", int, numValue, 0);
 MESSAGE2(CSpeechFallsFromTreeMsg, int, value1, 0, int, value2, 0);
-MESSAGE1(CStartMusicMsg, int, value, 0);
+MESSAGE1(CStartMusicMsg, CMusicPlayer *, musicPlayer, (CMusicPlayer *)nullptr);
 MESSAGE3(CStatusChangeMsg, int, oldStatus, 0, int, newStatus, 0, bool, success, false);
 MESSAGE1(CStopMusicMsg, int, value, 0);
 MESSAGE4(CSubAcceptCCarryMsg, CString, string1, "", int, value1, 0, int, value2, 0, CCarry *, item, nullptr);

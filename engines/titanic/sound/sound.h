@@ -50,8 +50,6 @@ public:
 		_dialogueFileHandle(nullptr), _speechId(0), _field24(0), _field28(0) {}
 	CSoundItem(File *dialogueFile, int speechId) : ListItem(), _waveFile(nullptr),
 		_dialogueFileHandle(dialogueFile), _speechId(speechId), _field24(0), _field28(0) {}
-
-	int fn1();
 };
 
 class CSoundItemList : public List<CSoundItem> {

@@ -28,6 +28,13 @@
 
 namespace Titanic {
 
+CWaveFile::CWaveFile() : _owner(nullptr), _stream(nullptr), _soundType(SOUND_SFX) {
+}
+
+CWaveFile::CWaveFile(QSoundManager *owner) : _owner(owner), _stream(nullptr),
+		_soundType(SOUND_SFX) {
+}
+
 CWaveFile::~CWaveFile() {
 	if (_stream) {
 		_owner->soundFreed(_soundHandle);
@@ -48,7 +55,8 @@ bool CWaveFile::loadSound(const CString &name) {
 		return false;
 
 	Common::SeekableReadStream *stream = file.readStream();
-	_stream = Audio::makeWAVStream(stream->readStream(stream->size()), DisposeAfterUse::YES);
+	_size = stream->size();
+	_stream = Audio::makeWAVStream(stream->readStream(_size), DisposeAfterUse::YES);
 	_soundType = SOUND_SFX;
 	return true;
 }
@@ -61,7 +69,8 @@ bool CWaveFile::loadSpeech(CDialogueFile *dialogueFile, int speechIndex) {
 	byte *data = (byte *)malloc(res->_size);
 	dialogueFile->read(res, data, res->_size);
 
-	_stream = Audio::makeWAVStream(new Common::MemoryReadStream(data, res->_size, DisposeAfterUse::YES),
+	_size = res->_size;
+	_stream = Audio::makeWAVStream(new Common::MemoryReadStream(data, _size, DisposeAfterUse::YES),
 		DisposeAfterUse::YES);
 	_soundType = SOUND_SPEECH;
 	return true;

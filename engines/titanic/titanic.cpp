@@ -58,6 +58,7 @@ TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDe
 	_screenManager = nullptr;
 	_scriptHandler = nullptr;
 	_script = nullptr;
+	CMusicRoom::_musicHandler = nullptr;
 }
 
 TitanicEngine::~TitanicEngine() {

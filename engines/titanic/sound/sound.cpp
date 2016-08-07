@@ -26,11 +26,6 @@
 
 namespace Titanic {
 
-int CSoundItem::fn1() {
-	// TODO
-	return 0;
-}
-
 CSound::CSound(CGameManager *owner, Audio::Mixer *mixer) : 
 		_gameManager(owner), _soundManager(mixer) {
 	g_vm->_movieManager.setSoundManager(&_soundManager);
@@ -48,11 +43,22 @@ void CSound::preLoad() {
 	_soundManager.preLoad();
 
 	if (_gameManager)
-		_gameManager->_musicRoom.preLoad();
+		_gameManager->_musicRoom.destroyMusicHandler();
 }
 
 void CSound::preEnterView(CViewItem *newView, bool isNewRoom) {
-	warning("CSound::preEnterView");
+	CNodeItem *node = newView->findNode();
+	CRoomItem *room = node->findRoom();
+	double xp, yp, zp;
+	node->getPosition(xp, yp, zp);
+
+	double cosVal = cos(newView->_angle);
+	double sinVal = -sin(newView->_angle);
+
+	// WORKAROUND: The original does a weird call below, doing the room's
+	// (width + height) / 2 and passing it in the isNewRoom field, along with
+	// two extra unused parameters that aren't used
+	_soundManager.setListenerPosition(xp, yp, zp, cosVal, sinVal, 0, isNewRoom);
 }
 
 bool CSound::isActive(int handle) const {
@@ -66,7 +72,7 @@ void CSound::setVolume(uint handle, uint volume, uint seconds) {
 	_soundManager.setVolume(handle, volume, seconds);
 }
 
-void CSound::fn4(CWaveFile *waveFile, int val) {
+void CSound::fn4(CWaveFile *waveFile, int val) {	
 	// TODO
 }
 

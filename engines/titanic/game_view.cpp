@@ -33,6 +33,11 @@ namespace Titanic {
 CGameView::CGameView() : _gameManager(nullptr), _surface(nullptr) {
 }
 
+CGameView::~CGameView() {
+	if (_surface)
+		delete _surface;
+}
+
 void CGameView::setGameManager(CGameManager *gameManager) {
 	_gameManager = gameManager;
 }

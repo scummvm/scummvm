@@ -23,20 +23,60 @@
 #ifndef TITANIC_MUSIC_ROOM_H
 #define TITANIC_MUSIC_ROOM_H
 
+#include "common/array.h"
+#include "titanic/sound/music_handler.h"
+
 namespace Titanic {
 
 class CGameManager;
+class CSound;
 
 class CMusicRoom {
+	struct Entry {
+		uint _val1;
+		uint _val2;
+		uint _val3;
+		uint _val4;
+		uint _val5;
+
+		Entry() : _val1(0), _val2(0), _val3(0), _val4(0), _val5(0) {}
+	};
+private:
+	Common::Array<Entry> _items;
+public:
+	static CMusicHandler *_musicHandler;
 public:
 	CGameManager *_gameManager;
+	CSound *_sound;
 public:
 	CMusicRoom(CGameManager *owner);
+	~CMusicRoom();
 
 	/**
-	 * Called when a game is about to be loaded
+	 * Creates a music handler
 	 */
-	void preLoad();
+	CMusicHandler *createMusicHandler();
+
+	/**
+	 * Destroys and currently active music handler
+	 */
+	void destroyMusicHandler();
+
+	void setItem1(int index, int val) { _items[index]._val1 = val; }
+	void setItem2(int index, int val) { _items[index]._val2 = val; }
+	void setItem3(int index, int val) { _items[index]._val3 = val; }
+	void setItem4(int index, int val) { _items[index]._val4 = val; }
+	void setItem5(int index, int val) { _items[index]._val5 = val; }
+
+	/**
+	 * Start playing a given music number
+	 */
+	void startMusic(int musicId);
+
+	/**
+	 * Stop playing music
+	 */
+	void stopMusic();
 };
 
 } // End of namespace Titanic

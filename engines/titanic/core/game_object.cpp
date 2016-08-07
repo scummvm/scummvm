@@ -460,7 +460,7 @@ void CGameObject::playGlobalSound(const CString &resName, int mode, bool initial
 	uint volume = initialMute ? 0 : newVolume;
 
 	CProximity prox;
-	prox._channelVolume = newVolume;
+	prox._channelVolume = volume;
 	prox._repeated = repeated;
 
 	switch (handleIndex) {
@@ -1397,6 +1397,8 @@ int CGameObject::getNewRandomNumber(int max, int *oldVal) {
 		int startingVal = *oldVal;
 		while (*oldVal == startingVal && max > 0)
 			*oldVal = g_vm->getRandomNumber(max);
+
+		return *oldVal;
 	} else {
 		return g_vm->getRandomNumber(max);
 	}

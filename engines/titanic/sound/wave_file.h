@@ -38,17 +38,24 @@ enum SoundType {
 };
 
 class CWaveFile {
+private:
+	uint _size;
 public:
 	QSoundManager *_owner;
 	Audio::AudioStream *_stream;
 	Audio::SoundHandle _soundHandle;
 	SoundType _soundType;
 public:
-	CWaveFile() : _owner(nullptr), _stream(nullptr), _soundType(SOUND_SFX) {}
-	CWaveFile(QSoundManager *owner) : _owner(owner), _stream(nullptr), _soundType(SOUND_SFX) {}
+	CWaveFile();
+	CWaveFile(QSoundManager *owner);
 	~CWaveFile();
 
 	int fn1();
+
+	/**
+	 * Return the size of the wave file
+	 */
+	uint size() const { return _size; }
 
 	/**
 	 * Tries to load the specified wave file sound

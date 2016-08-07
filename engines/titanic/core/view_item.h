@@ -56,10 +56,10 @@ private:
 protected:
 	int _field24;
 	CResourceKey _resourceKey;
-	double _angle;
 	Point _viewPos;
 public:
 	int _viewNumber;
+	double _angle;
 public:
 	CLASSDEF;
 	CViewItem();

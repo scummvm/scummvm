@@ -29,16 +29,24 @@
 namespace Titanic {
 
 class CMusicPlayer : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool StartMusicMsg(CStartMusicMsg *msg);
+	bool StopMusicMsg(CStopMusicMsg *msg);
+	bool FrameMsg(CFrameMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
+	bool CreateMusicPlayerMsg(CCreateMusicPlayerMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
+	bool LoadSuccessMsg(CLoadSuccessMsg *msg);
 protected:
-	int _fieldBC;
-	CString _string1;
+	bool _isActive;
+	CString _stopTarget;
 	int _fieldCC;
-	int _fieldD0;
+	int _musicId;
 public:
 	CLASSDEF;
 	CMusicPlayer() : CGameObject(),
-		_fieldBC(0), _fieldCC(0), _fieldD0(100) {}
+		_isActive(false), _fieldCC(0), _musicId(100) {}
 
 	/**
 	 * Save the data for the class to file
