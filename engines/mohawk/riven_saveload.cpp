@@ -24,6 +24,7 @@
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
 #include "mohawk/riven_saveload.h"
+#include "mohawk/riven_stack.h"
 
 #include "common/system.h"
 #include "graphics/thumbnail.h"

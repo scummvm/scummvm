@@ -28,27 +28,14 @@
 namespace Mohawk {
 
 class MohawkEngine_Riven;
-class RivenNameList;
 
-/**
- * A game level
- *
- * The names Card and Stack are legacy from the HyperCard engine used in
- * the original mac version of Myst.
- *
- * Stacks contain behaviors that are specific to a game level.
- */
-class RivenStack {
-public:
-	RivenStack(MohawkEngine_Riven *vm, uint16 id);
-	virtual ~RivenStack();
-
-	/** Get the id of the stack */
-	uint16 getId() const;
-private:
-	MohawkEngine_Riven *_vm;
-
-	uint16 _id;
+// NAME Resource ID's
+enum RivenNameResource {
+	kCardNames = 1,
+	kHotspotNames = 2,
+	kExternalCommandNames = 3,
+	kVariableNames = 4,
+	kStackNames = 5
 };
 
 /**
@@ -71,10 +58,50 @@ public:
 	int16 getNameId(const Common::String &name) const;
 
 private:
+	void loadResource(MohawkEngine_Riven *vm, uint16 id);
+
 	Common::StringArray _names;
 	Common::Array<uint16> _index;
+};
 
-	void loadResource(MohawkEngine_Riven *vm, uint16 id);
+/**
+ * A game level
+ *
+ * The names Card and Stack are legacy from the HyperCard engine used in
+ * the original mac version of Myst.
+ *
+ * Stacks contain behaviors and data that are specific to a game level.
+ */
+class RivenStack {
+public:
+	RivenStack(MohawkEngine_Riven *vm, uint16 id);
+	virtual ~RivenStack();
+
+	/** Get the id of the stack */
+	uint16 getId() const;
+
+	/** Get the name of a resource using its id */
+	Common::String getName(RivenNameResource nameResource, uint16 nameId) const;
+
+	/**
+	 * Get the id of a resource using its name
+	 *
+	 * The search is case insensitive.
+	 */
+	int16 getIdFromName(RivenNameResource nameResource, const Common::String &name) const;
+private:
+	void loadResourceNames();
+
+	MohawkEngine_Riven *_vm;
+
+	uint16 _id;
+
+	// Stack resource names
+	RivenNameList _varNames;
+	RivenNameList _externalCommandNames;
+	RivenNameList _hotspotNames;
+	RivenNameList _cardNames;
+	RivenNameList _stackNames;
 };
 
 } // End of namespace Mohawk

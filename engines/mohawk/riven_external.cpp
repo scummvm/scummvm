@@ -26,6 +26,7 @@
 #include "mohawk/riven_external.h"
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_sound.h"
+#include "mohawk/riven_stack.h"
 #include "mohawk/video.h"
 
 #include "gui/message.h"
@@ -198,7 +199,7 @@ void RivenExternal::setupCommands() {
 }
 
 void RivenExternal::runCommand(uint16 argc, uint16 *argv) {
-	Common::String externalCommandName = _vm->getName(kExternalCommandNames, argv[0]);
+	Common::String externalCommandName = _vm->getCurStack()->getName(kExternalCommandNames, argv[0]);
 
 	for (uint16 i = 0; i < _externalCommands.size(); i++)
 		if (externalCommandName == _externalCommands[i]->desc) {

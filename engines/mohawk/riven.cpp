@@ -36,6 +36,7 @@
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_saveload.h"
 #include "mohawk/riven_sound.h"
+#include "mohawk/riven_stack.h"
 #include "mohawk/dialogs.h"
 #include "mohawk/video.h"
 #include "mohawk/console.h"
@@ -305,9 +306,6 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 	if (_stack && _stack->getId() == n && !_mhk.empty())
 		return;
 
-	delete _stack;
-	_stack = new RivenStack(this, n);
-
 	// Stop any videos playing
 	_video->stopVideos();
 	_video->clearMLST();
@@ -338,15 +336,11 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 	if (_mhk.empty())
 		error("Could not load stack %s", getStackName(n).c_str());
 
-	// Load stack specific names
-	_varNames = RivenNameList(this, kVariableNames);
-	_externalCommandNames = RivenNameList(this, kExternalCommandNames);
-	_stackNames = RivenNameList(this, kStackNames);
-	_cardNames = RivenNameList(this, kCardNames);
-	_hotspotNames = RivenNameList(this, kHotspotNames);
-
 	// Stop any currently playing sounds
 	_sound->stopAllSLST();
+
+	delete _stack;
+	_stack = new RivenStack(this, n);
 }
 
 // Riven uses some hacks to change stacks for linking books
@@ -828,7 +822,7 @@ void MohawkEngine_Riven::checkSunnerAlertClick() {
 }
 
 void MohawkEngine_Riven::addZipVisitedCard(uint16 cardId, uint16 cardNameId) {
-	Common::String cardName = getName(kCardNames, cardNameId);
+	Common::String cardName = getCurStack()->getName(kCardNames, cardNameId);
 	if (cardName.empty())
 		return;
 	ZipMode zip;
@@ -849,40 +843,6 @@ bool MohawkEngine_Riven::isZipVisitedCard(const Common::String &hotspotName) con
 			}
 
 	return foundMatch;
-}
-
-Common::String MohawkEngine_Riven::getName(uint16 nameResource, uint16 nameID) {
-	switch (nameResource) {
-		case kVariableNames:
-			return _varNames.getName(nameID);
-		case kExternalCommandNames:
-			return _externalCommandNames.getName(nameID);
-		case kStackNames:
-			return _stackNames.getName(nameID);
-		case kCardNames:
-			return _cardNames.getName(nameID);
-		case kHotspotNames:
-			return _hotspotNames.getName(nameID);
-		default:
-			error("Unknown name resource %d", nameResource);
-	}
-}
-
-int16 MohawkEngine_Riven::getIdFromName(uint16 nameResource, const Common::String &name) {
-	switch (nameResource) {
-		case kVariableNames:
-			return _varNames.getNameId(name);
-		case kExternalCommandNames:
-			return _externalCommandNames.getNameId(name);
-		case kStackNames:
-			return _stackNames.getNameId(name);
-		case kCardNames:
-			return _cardNames.getNameId(name);
-		case kHotspotNames:
-			return _hotspotNames.getNameId(name);
-		default:
-			error("Unknown name resource %d", nameResource);
-	}
 }
 
 bool ZipMode::operator== (const ZipMode &z) const {
