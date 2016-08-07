@@ -33,6 +33,7 @@ RivenStack::RivenStack(MohawkEngine_Riven *vm, uint16 id) :
 		_id(id) {
 	loadResourceNames();
 	loadCardIdMap();
+	setCurrentStackVariable();
 }
 
 RivenStack::~RivenStack() {
@@ -114,6 +115,10 @@ uint16 RivenStack::getCardStackId(uint32 globalId) const {
 
 uint32 RivenStack::getCurrentCardGlobalId() const {
 	return _cardIdMap[_vm->getCard()->getId()];
+}
+
+void RivenStack::setCurrentStackVariable() {
+	_vm->_vars["currentstackid"] = _id;
 }
 
 RivenNameList::RivenNameList() {

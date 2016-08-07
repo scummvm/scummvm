@@ -98,6 +98,7 @@ public:
 private:
 	void loadResourceNames();
 	void loadCardIdMap();
+	void setCurrentStackVariable();
 
 	MohawkEngine_Riven *_vm;
 
