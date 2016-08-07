@@ -24,6 +24,7 @@
 
 #include "mohawk/cursors.h"
 #include "mohawk/riven_graphics.h"
+#include "mohawk/riven_stack.h"
 
 #include "mohawk/resource.h"
 #include "mohawk/riven.h"
@@ -261,7 +262,7 @@ Common::Array<RivenHotspot *> RivenCard::getHotspots() const {
 }
 
 RivenHotspot *RivenCard::getHotspotByName(const Common::String &name) const {
-	int16 nameId = _vm->getIdFromName(kHotspotNames, name);
+	int16 nameId = _vm->getCurStack()->getIdFromName(kHotspotNames, name);
 
 	for (uint i = 0; i < _hotspots.size(); i++) {
 		if (_hotspots[i]->getNameId() == nameId) {
@@ -509,7 +510,7 @@ Common::String RivenHotspot::getName() const {
 	if (_nameResource < 0)
 		return Common::String();
 
-	return _vm->getName(kHotspotNames, _nameResource);
+	return _vm->getCurStack()->getName(kHotspotNames, _nameResource);
 }
 
 uint16 RivenHotspot::getIndex() const {

@@ -27,6 +27,7 @@
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_scripts.h"
 #include "mohawk/riven_sound.h"
+#include "mohawk/riven_stack.h"
 #include "mohawk/video.h"
 
 #include "common/memstream.h"
@@ -462,7 +463,7 @@ void RivenSimpleCommand::incrementVariable(uint16 op, uint16 argc, uint16 *argv)
 
 // Command 27: go to stack (stack name, code high, code low)
 void RivenSimpleCommand::changeStack(uint16 op, uint16 argc, uint16 *argv) {
-	Common::String stackName = _vm->getName(kStackNames, argv[0]);
+	Common::String stackName = _vm->getCurStack()->getName(kStackNames, argv[0]);
 	int8 index = -1;
 
 	for (byte i = 0; i < 8; i++)
@@ -629,10 +630,10 @@ void RivenSimpleCommand::dump(byte tabs) {
 	printTabs(tabs);
 
 	if (_type == 7) { // Use the variable name
-		Common::String varName = _vm->getName(kVariableNames, _arguments[0]);
+		Common::String varName = _vm->getCurStack()->getName(kVariableNames, _arguments[0]);
 		debugN("%s = %d;\n", varName.c_str(), _arguments[1]);
 	} else if (_type == 17) { // Use the external command name
-		Common::String externalCommandName = _vm->getName(kVariableNames, _arguments[0]);
+		Common::String externalCommandName = _vm->getCurStack()->getName(kVariableNames, _arguments[0]);
 		debugN("%s(", externalCommandName.c_str());
 		uint16 varCount = _arguments[1];
 		for (uint16 j = 0; j < varCount; j++) {
@@ -642,7 +643,7 @@ void RivenSimpleCommand::dump(byte tabs) {
 		}
 		debugN(");\n");
 	} else if (_type == 24) { // Use the variable name
-		Common::String varName = _vm->getName(kVariableNames, _arguments[0]);
+		Common::String varName = _vm->getCurStack()->getName(kVariableNames, _arguments[0]);
 		debugN("%s += %d;\n", varName.c_str(), _arguments[1]);
 	} else {
 		debugN("%s(", _opcodes[_type].desc);
@@ -704,7 +705,7 @@ RivenSwitchCommand *RivenSwitchCommand::createFromStream(MohawkEngine_Riven *vm,
 }
 
 void RivenSwitchCommand::dump(byte tabs) {
-	Common::String varName = _vm->getName(kVariableNames, _variableId);
+	Common::String varName = _vm->getCurStack()->getName(kVariableNames, _variableId);
 	printTabs(tabs); debugN("switch (%s) {\n", varName.c_str());
 	for (uint16 j = 0; j < _branches.size(); j++) {
 		printTabs(tabs + 1);

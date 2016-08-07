@@ -25,7 +25,6 @@
 
 #include "mohawk/installer_archive.h"
 #include "mohawk/mohawk.h"
-#include "mohawk/riven_stack.h"
 #include "mohawk/riven_scripts.h"
 
 #include "common/hashmap.h"
@@ -42,6 +41,7 @@ class RivenExternal;
 class RivenConsole;
 class RivenSaveLoad;
 class RivenOptionsDialog;
+class RivenStack;
 class RivenCard;
 class RivenHotspot;
 class RivenSoundManager;
@@ -60,15 +60,6 @@ enum {
 
 	kStackFirst = kStackOspit,
 	kStackLast = kStackAspit
-};
-
-// NAME Resource ID's
-enum {
-	kCardNames = 1,
-	kHotspotNames = 2,
-	kExternalCommandNames = 3,
-	kVariableNames = 4,
-	kStackNames = 5
 };
 
 enum RivenTransitionSpeed {
@@ -134,13 +125,6 @@ private:
 	RivenStack *_stack;
 	void handleEvents();
 
-	// Stack resource names
-	RivenNameList _varNames;
-	RivenNameList _externalCommandNames;
-	RivenNameList _hotspotNames;
-	RivenNameList _cardNames;
-	RivenNameList _stackNames;
-
 	// Hotspot related functions and variables
 	void checkInventoryClick();
 	bool _showHotspots;
@@ -161,8 +145,6 @@ public:
 	void changeToCard(uint16 dest);
 	void changeToStack(uint16);
 	void refreshCard();
-	Common::String getName(uint16 nameResource, uint16 nameID);
-	int16 getIdFromName(uint16 nameResource, const Common::String &name);
 	Common::String getStackName(uint16 stack) const;
 	RivenCard *getCurCard() const { return _card; }
 	RivenStack *getCurStack() const { return _stack; }

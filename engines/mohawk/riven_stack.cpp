@@ -30,7 +30,7 @@ namespace Mohawk {
 RivenStack::RivenStack(MohawkEngine_Riven *vm, uint16 id) :
 		_vm(vm),
 		_id(id) {
-
+	loadResourceNames();
 }
 
 RivenStack::~RivenStack() {
@@ -39,6 +39,48 @@ RivenStack::~RivenStack() {
 
 uint16 RivenStack::getId() const {
 	return _id;
+}
+
+void RivenStack::loadResourceNames() {
+	_varNames = RivenNameList(_vm, kVariableNames);
+	_externalCommandNames = RivenNameList(_vm, kExternalCommandNames);
+	_stackNames = RivenNameList(_vm, kStackNames);
+	_cardNames = RivenNameList(_vm, kCardNames);
+	_hotspotNames = RivenNameList(_vm, kHotspotNames);
+}
+
+Common::String RivenStack::getName(RivenNameResource nameResource, uint16 nameId) const {
+	switch (nameResource) {
+		case kVariableNames:
+			return _varNames.getName(nameId);
+		case kExternalCommandNames:
+			return _externalCommandNames.getName(nameId);
+		case kStackNames:
+			return _stackNames.getName(nameId);
+		case kCardNames:
+			return _cardNames.getName(nameId);
+		case kHotspotNames:
+			return _hotspotNames.getName(nameId);
+		default:
+			error("Unknown name resource %d", nameResource);
+	}
+}
+
+int16 RivenStack::getIdFromName(RivenNameResource nameResource, const Common::String &name) const {
+	switch (nameResource) {
+		case kVariableNames:
+			return _varNames.getNameId(name);
+		case kExternalCommandNames:
+			return _externalCommandNames.getNameId(name);
+		case kStackNames:
+			return _stackNames.getNameId(name);
+		case kCardNames:
+			return _cardNames.getNameId(name);
+		case kHotspotNames:
+			return _hotspotNames.getNameId(name);
+		default:
+			error("Unknown name resource %d", nameResource);
+	}
 }
 
 RivenNameList::RivenNameList() {

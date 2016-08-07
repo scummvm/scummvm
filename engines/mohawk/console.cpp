@@ -44,6 +44,7 @@
 #include "mohawk/riven_card.h"
 #include "mohawk/riven_external.h"
 #include "mohawk/riven_sound.h"
+#include "mohawk/riven_stack.h"
 #endif
 
 namespace Mohawk {

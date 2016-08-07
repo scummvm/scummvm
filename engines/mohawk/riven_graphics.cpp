@@ -25,6 +25,7 @@
 #include "mohawk/riven_card.h"
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_sound.h"
+#include "mohawk/riven_stack.h"
 
 #include "common/system.h"
 #include "engines/util.h"
