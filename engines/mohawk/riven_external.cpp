@@ -418,7 +418,7 @@ void RivenExternal::drawDomeSliders(uint16 startHotspot) {
 
 	// On pspit, the rect is different by two pixels
 	// (alternatively, we could just use hotspot 3 here, but only on pspit is there a hotspot for this)
-	if (_vm->getCurStack() == kStackPspit)
+	if (_vm->getCurStack()->getId() == kStackPspit)
 		dstAreaRect.translate(-2, 0);
 
 	// Find out bitmap id
@@ -462,9 +462,9 @@ void RivenExternal::xaatrusopenbook(uint16 argc, uint16 *argv) {
 	uint32 &page = _vm->_vars["aatruspage"];
 
 	// Set hotspots depending on the page
-	RivenHotspot *openBook = _vm->_card->getHotspotByName("openBook");
-	RivenHotspot *nextPage = _vm->_card->getHotspotByName("nextpage");
-	RivenHotspot *prevPage = _vm->_card->getHotspotByName("prevpage");
+	RivenHotspot *openBook = _vm->getCurCard()->getHotspotByName("openBook");
+	RivenHotspot *nextPage = _vm->getCurCard()->getHotspotByName("nextpage");
+	RivenHotspot *prevPage = _vm->getCurCard()->getHotspotByName("prevpage");
 	if (page == 1) {
 		prevPage->enable(false);
 		nextPage->enable(false);
@@ -502,7 +502,7 @@ void RivenExternal::xaatrusbookprevpage(uint16 argc, uint16 *argv) {
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(1);
-	_vm->_card->drawPicture(page);
+	_vm->getCurCard()->drawPicture(page);
 }
 
 void RivenExternal::xaatrusbooknextpage(uint16 argc, uint16 *argv) {
@@ -522,7 +522,7 @@ void RivenExternal::xaatrusbooknextpage(uint16 argc, uint16 *argv) {
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(0);
-	_vm->_card->drawPicture(page);
+	_vm->getCurCard()->drawPicture(page);
 }
 
 void RivenExternal::xacathopenbook(uint16 argc, uint16 *argv) {
@@ -530,9 +530,9 @@ void RivenExternal::xacathopenbook(uint16 argc, uint16 *argv) {
 	uint32 page = _vm->_vars["acathpage"];
 
 	// Set hotspots depending on the page
-	RivenHotspot *openBook = _vm->_card->getHotspotByName("openBook");
-	RivenHotspot *nextPage = _vm->_card->getHotspotByName("nextpage");
-	RivenHotspot *prevPage = _vm->_card->getHotspotByName("prevpage");
+	RivenHotspot *openBook = _vm->getCurCard()->getHotspotByName("openBook");
+	RivenHotspot *nextPage = _vm->getCurCard()->getHotspotByName("nextpage");
+	RivenHotspot *prevPage = _vm->getCurCard()->getHotspotByName("prevpage");
 	if (page == 1) {
 		prevPage->enable(false);
 		nextPage->enable(false);
@@ -591,7 +591,7 @@ void RivenExternal::xacathbookprevpage(uint16 argc, uint16 *argv) {
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(3);
-	_vm->_card->drawPicture(page);
+	_vm->getCurCard()->drawPicture(page);
 }
 
 void RivenExternal::xacathbooknextpage(uint16 argc, uint16 *argv) {
@@ -608,7 +608,7 @@ void RivenExternal::xacathbooknextpage(uint16 argc, uint16 *argv) {
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(2);
-	_vm->_card->drawPicture(page);
+	_vm->getCurCard()->drawPicture(page);
 }
 
 void RivenExternal::xtrapbookback(uint16 argc, uint16 *argv) {
@@ -768,7 +768,7 @@ void RivenExternal::xblabbookprevpage(uint16 argc, uint16 *argv) {
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(1);
-	_vm->_card->drawPicture(page);
+	_vm->getCurCard()->drawPicture(page);
 }
 
 void RivenExternal::xblabbooknextpage(uint16 argc, uint16 *argv) {
@@ -785,7 +785,7 @@ void RivenExternal::xblabbooknextpage(uint16 argc, uint16 *argv) {
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(0);
-	_vm->_card->drawPicture(page);
+	_vm->getCurCard()->drawPicture(page);
 }
 
 void RivenExternal::xsoundplug(uint16 argc, uint16 *argv) {
@@ -2228,7 +2228,7 @@ void RivenExternal::xogehnbookprevpage(uint16 argc, uint16 *argv) {
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(1);
-	_vm->_card->drawPicture(page);
+	_vm->getCurCard()->drawPicture(page);
 }
 
 void RivenExternal::xogehnbooknextpage(uint16 argc, uint16 *argv) {
@@ -2245,7 +2245,7 @@ void RivenExternal::xogehnbooknextpage(uint16 argc, uint16 *argv) {
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(0);
-	_vm->_card->drawPicture(page);
+	_vm->getCurCard()->drawPicture(page);
 }
 
 uint16 RivenExternal::getComboDigit(uint32 correctCombo, uint32 digit) {

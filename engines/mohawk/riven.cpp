@@ -57,7 +57,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_activatedPLST = false;
 	_activatedSLST = false;
 	_extrasFile = nullptr;
-	_curStack = kStackUnknown;
+	_stack = nullptr;
 	_gfx = nullptr;
 	_sound = nullptr;
 	_externalScriptHandler = nullptr;
@@ -93,6 +93,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 
 MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _card;
+	delete _stack;
 	delete _sound;
 	delete _gfx;
 	delete _console;
@@ -260,7 +261,7 @@ void MohawkEngine_Riven::handleEvents() {
 			case Common::KEYCODE_r:
 				// Return to the main menu in the demo on ctrl+r
 				if (event.kbd.flags & Common::KBD_CTRL && getFeatures() & GF_DEMO) {
-					if (_curStack != kStackAspit)
+					if (_stack->getId() != kStackAspit)
 						changeToStack(kStackAspit);
 					changeToCard(1);
 				}
@@ -268,7 +269,7 @@ void MohawkEngine_Riven::handleEvents() {
 			case Common::KEYCODE_p:
 				// Play the intro videos in the demo on ctrl+p
 				if (event.kbd.flags & Common::KBD_CTRL && getFeatures() & GF_DEMO) {
-					if (_curStack != kStackAspit)
+					if (_stack->getId() != kStackAspit)
 						changeToStack(kStackAspit);
 					changeToCard(6);
 				}
@@ -301,10 +302,11 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 	static const char *endings[] = { "_Data3.mhk", "_Data2.mhk", "_Data1.mhk", "_Data.mhk", "_Sounds.mhk" };
 
 	// Don't change stack to the current stack (if the files are loaded)
-	if (_curStack == n && !_mhk.empty())
+	if (_stack && _stack->getId() == n && !_mhk.empty())
 		return;
 
-	_curStack = n;
+	delete _stack;
+	_stack = new RivenStack(this, n);
 
 	// Stop any videos playing
 	_video->stopVideos();
@@ -319,7 +321,7 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 	_mhk.clear();
 
 	// Get the prefix character for the destination stack
-	char prefix = getStackName(_curStack)[0];
+	char prefix = getStackName(n)[0];
 
 	// Load any file that fits the patterns
 	for (int i = 0; i < ARRAYSIZE(endings); i++) {
@@ -334,7 +336,7 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 
 	// Make sure we have loaded files
 	if (_mhk.empty())
-		error("Could not load stack %s", getStackName(_curStack).c_str());
+		error("Could not load stack %s", getStackName(n).c_str());
 
 	// Load stack specific names
 	_varNames = RivenNameList(this, kVariableNames);
@@ -381,7 +383,7 @@ void MohawkEngine_Riven::changeToCard(uint16 dest) {
 
 	if (!(getFeatures() & GF_DEMO)) {
 		for (byte i = 0; i < 13; i++)
-			if (_curStack == rivenSpecialChange[i].startStack && dest == matchRMAPToCard(rivenSpecialChange[i].startCardRMAP)) {
+			if (_stack->getId() == rivenSpecialChange[i].startStack && dest == matchRMAPToCard(rivenSpecialChange[i].startCardRMAP)) {
 				changeToStack(rivenSpecialChange[i].targetStack);
 				dest = matchRMAPToCard(rivenSpecialChange[i].targetCardRMAP);
 			}
@@ -423,15 +425,15 @@ void MohawkEngine_Riven::checkInventoryClick() {
 	// In the demo, check if we've clicked the exit button
 	if (getFeatures() & GF_DEMO) {
 		if (g_demoExitRect->contains(mousePos)) {
-			if (_curStack == kStackAspit && _card->getId() == 1) {
+			if (_stack->getId() == kStackAspit && _card->getId() == 1) {
 				// From the main menu, go to the "quit" screen
 				changeToCard(12);
-			} else if (_curStack == kStackAspit && _card->getId() == 12) {
+			} else if (_stack->getId() == kStackAspit && _card->getId() == 12) {
 				// From the "quit" screen, just quit
 				_gameOver = true;
 			} else {
 				// Otherwise, return to the main menu
-				if (_curStack != kStackAspit)
+				if (_stack->getId() != kStackAspit)
 					changeToStack(kStackAspit);
 				changeToCard(1);
 			}
@@ -440,11 +442,11 @@ void MohawkEngine_Riven::checkInventoryClick() {
 	}
 
 	// No inventory shown on aspit
-	if (_curStack == kStackAspit)
+	if (_stack->getId() == kStackAspit)
 		return;
 
 	// Set the return stack/card id's.
-	_vars["returnstackid"] = _curStack;
+	_vars["returnstackid"] = _stack->getId();
 	_vars["returncardid"] = _card->getId();
 
 	// See RivenGraphics::showInventory() for an explanation
