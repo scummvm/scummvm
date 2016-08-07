@@ -125,7 +125,11 @@ private:
 	void loadCardHotspotEnableList(uint16 id);
 	void loadCardWaterEffectList(uint16 id);
 
+	RivenScriptPtr getScript(uint16 scriptType) const;
 	void defaultLoadScript();
+	void runLeaveScripts();
+
+	void updateMouseCursor();
 
 	struct HotspotEnableRecord {
 		uint16 index;
@@ -156,8 +160,6 @@ private:
 	Common::Array<SLSTRecord> _soundList;
 	Common::Array<HotspotEnableRecord> _hotspotEnableList;
 	Common::Array<WaterEffectRecord> _waterEffectList;
-
-	void updateMouseCursor();
 };
 
 /**
