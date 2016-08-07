@@ -124,6 +124,7 @@ private:
 	void loadCardSoundList(uint16 id);
 	void loadCardHotspotEnableList(uint16 id);
 	void loadCardWaterEffectList(uint16 id);
+	void setCurrentCardVariable();
 
 	RivenScriptPtr getScript(uint16 scriptType) const;
 	void defaultLoadScript();

@@ -42,6 +42,7 @@ RivenCard::RivenCard(MohawkEngine_Riven *vm, uint16 id) :
 	loadCardSoundList(id);
 	loadCardHotspotEnableList(id);
 	loadCardWaterEffectList(id);
+	setCurrentCardVariable();
 }
 
 RivenCard::~RivenCard() {
@@ -430,6 +431,10 @@ void RivenCard::runLeaveScripts() {
 	script += getScript(kCardLeaveScript);
 
 	_vm->_scriptMan->runScript(script, false);
+}
+
+void RivenCard::setCurrentCardVariable() {
+	_vm->_vars["currentcardid"] = _id;
 }
 
 RivenHotspot::RivenHotspot(MohawkEngine_Riven *vm, Common::ReadStream *stream) :
