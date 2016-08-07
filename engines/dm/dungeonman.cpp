@@ -822,7 +822,6 @@ Thing DungeonMan::f161_getSquareFirstThing(int16 mapX, int16 mapY) {
 	return _g283_squareFirstThings[index];
 }
 
-// TODO: produce more GOTOs
 void DungeonMan::f172_setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX, int16 mapY) {	
 	unsigned char L0307_uc_Multiple;
 #define AL0307_uc_Square            L0307_uc_Multiple
@@ -903,6 +902,7 @@ T0172010_ClosedFakeWall:
 		}
 		aspectArray[k0_ElemAspect] = k1_CorridorElemType;
 		AL0307_uc_FootprintsAllowed = getFlag(AL0307_uc_Square, k0x0008_FakeWallRandOrnOrFootPAllowed) ? 8 : 0;
+		// No break on purpose
 	case k1_CorridorElemType:
 	case k2_ElementTypePit:
 	case k5_ElementTypeTeleporter:
@@ -929,12 +929,18 @@ T0172010_ClosedFakeWall:
 			}
 			curThing = f159_getNextThing(curThing);
 		}
-		goto T0172049_Footprints;
+
+		if (AL0307_uc_FootprintsAllowed && (AL0307_uc_ScentOrdinal = _vm->_championMan->f315_getScentOrdinal(mapX, mapY)) && (--AL0307_uc_ScentOrdinal >= _vm->_championMan->_g407_party._firstScentIndex) && (AL0307_uc_ScentOrdinal < _vm->_championMan->_g407_party._lastScentIndex))
+			setFlag(aspectArray[k4_FloorOrnOrdAspect], k0x8000_FootprintsAspect);
+
+		break;
 	case k3_ElementTypeStairs:
 		aspectArray[k0_ElemAspect] = (bool((getFlag(AL0307_uc_Square, k0x0008_StairsNorthSouthOrient) >> 3)) == isOrientedWestEast(dir)) ? k18_ElementTypeStairsSide : k19_ElementTypeStaisFront;
 		aspectArray[k2_StairsUpAspect] = getFlag(AL0307_uc_Square, k0x0004_StairsUp);
 		AL0307_uc_FootprintsAllowed = false;
-		goto T0172046_Stairs;
+		while ((curThing != Thing::_endOfList) && (curThing.getType() <= k3_SensorThingType))
+			curThing = f159_getNextThing(curThing);
+		break;
 	case k4_DoorElemType:
 		if (bool((getFlag(AL0307_uc_Square, k0x0008_DoorNorthSouthOrient) >> 3)) == isOrientedWestEast(dir)) {
 			aspectArray[k0_ElemAspect] = k16_DoorSideElemType;
@@ -944,14 +950,12 @@ T0172010_ClosedFakeWall:
 			aspectArray[k3_DoorThingIndexAspect] = f161_getSquareFirstThing(mapX, mapY).getIndex();
 		}
 		AL0307_uc_FootprintsAllowed = true;
-T0172046_Stairs:
-		while ((curThing != Thing::_endOfList) && (curThing.getType() <= k3_SensorThingType)) {
+
+		while ((curThing != Thing::_endOfList) && (curThing.getType() <= k3_SensorThingType))
 			curThing = f159_getNextThing(curThing);
-		}
-T0172049_Footprints:
-		if (AL0307_uc_FootprintsAllowed && (AL0307_uc_ScentOrdinal = _vm->_championMan->f315_getScentOrdinal(mapX, mapY)) && (--AL0307_uc_ScentOrdinal >= _vm->_championMan->_g407_party._firstScentIndex) && (AL0307_uc_ScentOrdinal < _vm->_championMan->_g407_party._lastScentIndex)) {
+
+		if (AL0307_uc_FootprintsAllowed && (AL0307_uc_ScentOrdinal = _vm->_championMan->f315_getScentOrdinal(mapX, mapY)) && (--AL0307_uc_ScentOrdinal >= _vm->_championMan->_g407_party._firstScentIndex) && (AL0307_uc_ScentOrdinal < _vm->_championMan->_g407_party._lastScentIndex))
 			setFlag(aspectArray[k4_FloorOrnOrdAspect], k0x8000_FootprintsAspect);
-		}
 	}
 	aspectArray[k1_FirstGroupOrObjectAspect] = curThing.toUint16();
 }
