@@ -366,7 +366,7 @@ void RivenSimpleCommand::mohawkSwitch(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 9: enable hotspot (blst_id)
 void RivenSimpleCommand::enableHotspot(uint16 op, uint16 argc, uint16 *argv) {
-	RivenHotspot *hotspot = _vm->getCurCard()->getHotspotByBlstId(argv[0]);
+	RivenHotspot *hotspot = _vm->getCard()->getHotspotByBlstId(argv[0]);
 	if (hotspot) {
 		hotspot->enable(true);
 	}
@@ -377,7 +377,7 @@ void RivenSimpleCommand::enableHotspot(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 10: disable hotspot (blst_id)
 void RivenSimpleCommand::disableHotspot(uint16 op, uint16 argc, uint16 *argv) {
-	RivenHotspot *hotspot = _vm->getCurCard()->getHotspotByBlstId(argv[0]);
+	RivenHotspot *hotspot = _vm->getCard()->getHotspotByBlstId(argv[0]);
 	if (hotspot) {
 		hotspot->enable(false);
 	}
@@ -394,8 +394,8 @@ void RivenSimpleCommand::stopSound(uint16 op, uint16 argc, uint16 *argv) {
 	// would cause all ambient sounds not to play. An alternative
 	// fix would be to stop all scripts on a stack change, but this
 	// does fine for now.
-	if (_vm->getCurStack()->getId() == kStackTspit && (_vm->getCurStack()->getCurrentCardGlobalId() == 0x6e9a ||
-			_vm->getCurStack()->getCurrentCardGlobalId() == 0xfeeb))
+	if (_vm->getStack()->getId() == kStackTspit && (_vm->getStack()->getCurrentCardGlobalId() == 0x6e9a ||
+			_vm->getStack()->getCurrentCardGlobalId() == 0xfeeb))
 		return;
 
 	// The argument is a bitflag for the setting.
@@ -464,7 +464,7 @@ void RivenSimpleCommand::incrementVariable(uint16 op, uint16 argc, uint16 *argv)
 
 // Command 27: go to stack (stack name, code high, code low)
 void RivenSimpleCommand::changeStack(uint16 op, uint16 argc, uint16 *argv) {
-	Common::String stackName = _vm->getCurStack()->getName(kStackNames, argv[0]);
+	Common::String stackName = _vm->getStack()->getName(kStackNames, argv[0]);
 	int8 index = -1;
 
 	for (byte i = 0; i < 8; i++)
@@ -478,7 +478,7 @@ void RivenSimpleCommand::changeStack(uint16 op, uint16 argc, uint16 *argv) {
 
 	_vm->changeToStack(index);
 	uint32 rmapCode = (argv[1] << 16) + argv[2];
-	uint16 cardID = _vm->getCurStack()->getCardStackId(rmapCode);
+	uint16 cardID = _vm->getStack()->getCardStackId(rmapCode);
 	_vm->changeToCard(cardID);
 }
 
@@ -573,7 +573,7 @@ void RivenSimpleCommand::storeMovieOpcode(uint16 op, uint16 argc, uint16 *argv) 
 void RivenSimpleCommand::activatePLST(uint16 op, uint16 argc, uint16 *argv) {
 	_vm->_activatedPLST = true;
 
-	RivenCard::Picture picture = _vm->getCurCard()->getPicture(argv[0]);
+	RivenCard::Picture picture = _vm->getCard()->getPicture(argv[0]);
 	_vm->_gfx->copyImageToScreen(picture.id, picture.rect.left, picture.rect.top, picture.rect.right, picture.rect.bottom);
 }
 
@@ -581,23 +581,23 @@ void RivenSimpleCommand::activatePLST(uint16 op, uint16 argc, uint16 *argv) {
 void RivenSimpleCommand::activateSLST(uint16 op, uint16 argc, uint16 *argv) {
 	// WORKAROUND: Disable the SLST that is played during Riven's intro.
 	// Riven X does this too (spoke this over with Jeff)
-	if (_vm->getCurStack()->getId() == kStackTspit && _vm->getCurStack()->getCurrentCardGlobalId() == 0x6e9a && argv[0] == 2)
+	if (_vm->getStack()->getId() == kStackTspit && _vm->getStack()->getCurrentCardGlobalId() == 0x6e9a && argv[0] == 2)
 		return;
 
 	_vm->_activatedSLST = true;
-	SLSTRecord slstRecord = _vm->getCurCard()->getSound(argv[0]);
+	SLSTRecord slstRecord = _vm->getCard()->getSound(argv[0]);
 	_vm->_sound->playSLST(slstRecord);
 }
 
 // Command 41: activate MLST record and play
 void RivenSimpleCommand::activateMLSTAndPlay(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_video->activateMLST(argv[0], _vm->getCurCard()->getId());
+	_vm->_video->activateMLST(argv[0], _vm->getCard()->getId());
 	_vm->_video->playMovieRiven(argv[0]);
 }
 
 // Command 43: activate BLST record (card hotspot enabling lists)
 void RivenSimpleCommand::activateBLST(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->getCurCard()->activateHotspotEnableRecord(argv[0]);
+	_vm->getCard()->activateHotspotEnableRecord(argv[0]);
 
 	// Recheck our current hotspot because it may have now changed
 	_vm->updateCurrentHotspot();
@@ -605,15 +605,15 @@ void RivenSimpleCommand::activateBLST(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 44: activate FLST record (information on which SFXE resource this card should use)
 void RivenSimpleCommand::activateFLST(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->getCurCard()->activateWaterEffect(argv[0]);
+	_vm->getCard()->activateWaterEffect(argv[0]);
 }
 
 // Command 45: do zip mode
 void RivenSimpleCommand::zipMode(uint16 op, uint16 argc, uint16 *argv) {
-	assert(_vm->getCurCard() && _vm->getCurCard()->getCurHotspot());
+	assert(_vm->getCard() && _vm->getCard()->getCurHotspot());
 
 	// Check the ZIPS records to see if we have a match to the hotspot name
-	Common::String hotspotName = _vm->getCurCard()->getCurHotspot()->getName();
+	Common::String hotspotName = _vm->getCard()->getCurHotspot()->getName();
 
 	for (uint16 i = 0; i < _vm->_zipModeData.size(); i++)
 		if (_vm->_zipModeData[i].name == hotspotName) {
@@ -624,17 +624,17 @@ void RivenSimpleCommand::zipMode(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 46: activate MLST record (movie lists)
 void RivenSimpleCommand::activateMLST(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_video->activateMLST(argv[0], _vm->getCurCard()->getId());
+	_vm->_video->activateMLST(argv[0], _vm->getCard()->getId());
 }
 
 void RivenSimpleCommand::dump(byte tabs) {
 	printTabs(tabs);
 
 	if (_type == 7) { // Use the variable name
-		Common::String varName = _vm->getCurStack()->getName(kVariableNames, _arguments[0]);
+		Common::String varName = _vm->getStack()->getName(kVariableNames, _arguments[0]);
 		debugN("%s = %d;\n", varName.c_str(), _arguments[1]);
 	} else if (_type == 17) { // Use the external command name
-		Common::String externalCommandName = _vm->getCurStack()->getName(kVariableNames, _arguments[0]);
+		Common::String externalCommandName = _vm->getStack()->getName(kExternalCommandNames, _arguments[0]);
 		debugN("%s(", externalCommandName.c_str());
 		uint16 varCount = _arguments[1];
 		for (uint16 j = 0; j < varCount; j++) {
@@ -644,7 +644,7 @@ void RivenSimpleCommand::dump(byte tabs) {
 		}
 		debugN(");\n");
 	} else if (_type == 24) { // Use the variable name
-		Common::String varName = _vm->getCurStack()->getName(kVariableNames, _arguments[0]);
+		Common::String varName = _vm->getStack()->getName(kVariableNames, _arguments[0]);
 		debugN("%s += %d;\n", varName.c_str(), _arguments[1]);
 	} else {
 		debugN("%s(", _opcodes[_type].desc);
@@ -706,7 +706,7 @@ RivenSwitchCommand *RivenSwitchCommand::createFromStream(MohawkEngine_Riven *vm,
 }
 
 void RivenSwitchCommand::dump(byte tabs) {
-	Common::String varName = _vm->getCurStack()->getName(kVariableNames, _variableId);
+	Common::String varName = _vm->getStack()->getName(kVariableNames, _variableId);
 	printTabs(tabs); debugN("switch (%s) {\n", varName.c_str());
 	for (uint16 j = 0; j < _branches.size(); j++) {
 		printTabs(tabs + 1);

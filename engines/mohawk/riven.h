@@ -146,8 +146,8 @@ public:
 	void changeToStack(uint16);
 	void refreshCard();
 	Common::String getStackName(uint16 stack) const;
-	RivenCard *getCurCard() const { return _card; }
-	RivenStack *getCurStack() const { return _stack; }
+	RivenCard *getCard() const { return _card; }
+	RivenStack *getStack() const { return _stack; }
 
 	// Hotspot functions/variables
 	Common::Array<ZipMode> _zipModeData;

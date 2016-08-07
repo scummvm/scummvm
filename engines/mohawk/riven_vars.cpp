@@ -269,7 +269,7 @@ static const char *variableNames[] = {
 };
 
 uint32 &MohawkEngine_Riven::getStackVar(uint32 index) {
-	Common::String name = getCurStack()->getName(kVariableNames, index);
+	Common::String name = getStack()->getName(kVariableNames, index);
 
 	if (!_vars.contains(name))
 		error("Could not find variable '%s' (stack variable %d)", name.c_str(), index);
