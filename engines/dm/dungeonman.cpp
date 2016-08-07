@@ -824,74 +824,71 @@ Thing DungeonMan::f161_getSquareFirstThing(int16 mapX, int16 mapY) {
 
 // TODO: produce more GOTOs
 void DungeonMan::f172_setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX, int16 mapY) {	
-#define AP0318_i_ThingType dir
 	unsigned char L0307_uc_Multiple;
 #define AL0307_uc_Square            L0307_uc_Multiple
 #define AL0307_uc_FootprintsAllowed L0307_uc_Multiple
 #define AL0307_uc_ScentOrdinal      L0307_uc_Multiple
-	Sensor* L0308_ps_Sensor;
-	bool L0309_B_LeftRandomWallOrnamentAllowed = 0;
-	int16 L0310_i_Multiple = 0;
-#define AL0310_B_FrontRandomWallOrnamentAllowed L0310_i_Multiple
-#define AL0310_i_SideIndex                      L0310_i_Multiple
-	bool L0311_B_RightRandomWallOrnamentAllowed = 0;
-	int16 L0312_i_ThingType;
-	bool L0313_B_SquareIsFakeWall;
-	Thing L0314_T_Thing;
-
 
 	for (uint16 i = 0; i < 5; ++i)
 		aspectArray[i] = 0;
-	L0314_T_Thing = f161_getSquareFirstThing(mapX, mapY);
+
+	Thing curThing = f161_getSquareFirstThing(mapX, mapY);
 	AL0307_uc_Square = f151_getSquare(mapX, mapY).toByte();
+	bool leftRandomWallOrnamentAllowed = false;
+	bool rightRandomWallOrnamentAllowed = false;
+	bool frontRandomWallOrnamentAllowed = false;
+	bool squareIsFakeWall;
+
 	switch (aspectArray[k0_ElemAspect] = Square(AL0307_uc_Square).getType()) {
 	case k0_ElementTypeWall:
 		switch (dir) {
 		case kDirNorth:
-			L0309_B_LeftRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0004_WallEastRandOrnAllowed);
-			AL0310_B_FrontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0002_WallSouthRandOrnAllowed);
-			L0311_B_RightRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0001_WallWestRandOrnAllowed);
+			leftRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0004_WallEastRandOrnAllowed);
+			frontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0002_WallSouthRandOrnAllowed);
+			rightRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0001_WallWestRandOrnAllowed);
 			break;
 		case kDirEast:
-			L0309_B_LeftRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0002_WallSouthRandOrnAllowed);
-			AL0310_B_FrontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0001_WallWestRandOrnAllowed);
-			L0311_B_RightRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0008_WallNorthRandOrnAllowed);
+			leftRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0002_WallSouthRandOrnAllowed);
+			frontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0001_WallWestRandOrnAllowed);
+			rightRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0008_WallNorthRandOrnAllowed);
 			break;
 		case kDirSouth:
-			L0309_B_LeftRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0001_WallWestRandOrnAllowed);
-			AL0310_B_FrontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0008_WallNorthRandOrnAllowed);
-			L0311_B_RightRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0004_WallEastRandOrnAllowed);
+			leftRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0001_WallWestRandOrnAllowed);
+			frontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0008_WallNorthRandOrnAllowed);
+			rightRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0004_WallEastRandOrnAllowed);
 			break;
 		case kDirWest:
-			L0309_B_LeftRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0008_WallNorthRandOrnAllowed);
-			AL0310_B_FrontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0004_WallEastRandOrnAllowed);
-			L0311_B_RightRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0002_WallSouthRandOrnAllowed);
+			leftRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0008_WallNorthRandOrnAllowed);
+			frontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0004_WallEastRandOrnAllowed);
+			rightRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0002_WallSouthRandOrnAllowed);
 			break;
 		default:
 			assert(false);
 		}
 		_vm->_displayMan->_g289_championPortraitOrdinal = 0; 
-		L0313_B_SquareIsFakeWall = false;
+		squareIsFakeWall = false;
 T0172010_ClosedFakeWall:
-		f171_setSquareAspectOrnOrdinals(aspectArray, L0309_B_LeftRandomWallOrnamentAllowed, AL0310_B_FrontRandomWallOrnamentAllowed, L0311_B_RightRandomWallOrnamentAllowed, dir, mapX, mapY, L0313_B_SquareIsFakeWall);
-		while ((L0314_T_Thing != Thing::_endOfList) && ((L0312_i_ThingType = L0314_T_Thing.getType()) <= k3_SensorThingType)) {
-			if (AL0310_i_SideIndex = M21_normalizeModulo4(L0314_T_Thing.getCell() - dir)) { /* Invisible on the back wall if 0 */
-				L0308_ps_Sensor = (Sensor*)f156_getThingData(L0314_T_Thing);
-				if (L0312_i_ThingType == k2_TextstringType) {
-					if (((TextString*)L0308_ps_Sensor)->isVisible()) {
+		f171_setSquareAspectOrnOrdinals(aspectArray, leftRandomWallOrnamentAllowed, frontRandomWallOrnamentAllowed, rightRandomWallOrnamentAllowed, dir, mapX, mapY, squareIsFakeWall);
+		while ((curThing != Thing::_endOfList) && (curThing.getType() <= k3_SensorThingType)) {
+			ThingType curThingType = curThing.getType();
+			int16 AL0310_i_SideIndex = M21_normalizeModulo4(curThing.getCell() - dir);
+			if (AL0310_i_SideIndex) { /* Invisible on the back wall if 0 */
+				Sensor *curSensor = (Sensor*)f156_getThingData(curThing);
+				if (curThingType == k2_TextstringType) {
+					if (((TextString*)curSensor)->isVisible()) {
 						aspectArray[AL0310_i_SideIndex + 1] = _g265_currMapInscriptionWallOrnIndex + 1;
-						_vm->_displayMan->_g290_inscriptionThing = L0314_T_Thing; /* BUG0_76 The same text is drawn on multiple sides of a wall square. The engine stores only a single text to draw on a wall in a global variable. Even if different texts are placed on differents sides of the wall, the same text is drawn on each affected side */
+						_vm->_displayMan->_g290_inscriptionThing = curThing; /* BUG0_76 The same text is drawn on multiple sides of a wall square. The engine stores only a single text to draw on a wall in a global variable. Even if different texts are placed on different sides of the wall, the same text is drawn on each affected side */
 					}
 				} else {
-					aspectArray[AL0310_i_SideIndex + 1] = L0308_ps_Sensor->getOrnOrdinal();
-					if (L0308_ps_Sensor->getType() == k127_SensorWallChampionPortrait) {
-						_vm->_displayMan->_g289_championPortraitOrdinal = _vm->M0_indexToOrdinal(L0308_ps_Sensor->getData());
+					aspectArray[AL0310_i_SideIndex + 1] = curSensor->getOrnOrdinal();
+					if (curSensor->getType() == k127_SensorWallChampionPortrait) {
+						_vm->_displayMan->_g289_championPortraitOrdinal = _vm->M0_indexToOrdinal(curSensor->getData());
 					}
 				}
 			}
-			L0314_T_Thing = f159_getNextThing(L0314_T_Thing);
+			curThing = f159_getNextThing(curThing);
 		}
-		if (L0313_B_SquareIsFakeWall && (_g306_partyMapX != mapX) && (_g307_partyMapY != mapY)) {
+		if (squareIsFakeWall && (_g306_partyMapX != mapX) && (_g307_partyMapY != mapY)) {
 			aspectArray[k1_FirstGroupOrObjectAspect] = Thing::_endOfList.toUint16();
 			return;
 		}
@@ -908,8 +905,8 @@ T0172010_ClosedFakeWall:
 	case k6_ElementTypeFakeWall:
 		if (!getFlag(AL0307_uc_Square, k0x0004_FakeWallOpen)) {
 			aspectArray[k0_ElemAspect] = k0_ElementTypeWall;
-			L0309_B_LeftRandomWallOrnamentAllowed = L0311_B_RightRandomWallOrnamentAllowed = AL0310_B_FrontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0008_FakeWallRandOrnOrFootPAllowed);
-			L0313_B_SquareIsFakeWall = true;
+			leftRandomWallOrnamentAllowed = rightRandomWallOrnamentAllowed = frontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0008_FakeWallRandOrnOrFootPAllowed);
+			squareIsFakeWall = true;
 			goto T0172010_ClosedFakeWall;
 		}
 		aspectArray[k0_ElemAspect] = k1_CorridorElemType;
@@ -919,12 +916,12 @@ T0172010_ClosedFakeWall:
 T0172029_Teleporter:
 		AL0307_uc_FootprintsAllowed = true;
 T0172030_Pit:
-		while ((L0314_T_Thing != Thing::_endOfList) && ((AP0318_i_ThingType = (Direction)L0314_T_Thing.getType()) <= k3_SensorThingType)) {
-			if (AP0318_i_ThingType == k3_SensorThingType) {
-				L0308_ps_Sensor = (Sensor*)f156_getThingData(L0314_T_Thing);
-				aspectArray[k4_FloorOrnOrdAspect] = L0308_ps_Sensor->getOrnOrdinal();
+		while ((curThing != Thing::_endOfList) && ((Direction)curThing.getType() <= k3_SensorThingType)) {
+			if (curThing.getType() == k3_SensorThingType) {
+				Sensor *curSensor = (Sensor*)f156_getThingData(curThing);
+				aspectArray[k4_FloorOrnOrdAspect] = curSensor->getOrnOrdinal();
 			}
-			L0314_T_Thing = f159_getNextThing(L0314_T_Thing);
+			curThing = f159_getNextThing(curThing);
 		}
 		goto T0172049_Footprints;
 	case k5_ElementTypeTeleporter:
@@ -945,15 +942,15 @@ T0172030_Pit:
 		}
 		AL0307_uc_FootprintsAllowed = true;
 T0172046_Stairs:
-		while ((L0314_T_Thing != Thing::_endOfList) && (L0314_T_Thing.getType() <= k3_SensorThingType)) {
-			L0314_T_Thing = f159_getNextThing(L0314_T_Thing);
+		while ((curThing != Thing::_endOfList) && (curThing.getType() <= k3_SensorThingType)) {
+			curThing = f159_getNextThing(curThing);
 		}
 T0172049_Footprints:
 		if (AL0307_uc_FootprintsAllowed && (AL0307_uc_ScentOrdinal = _vm->_championMan->f315_getScentOrdinal(mapX, mapY)) && (--AL0307_uc_ScentOrdinal >= _vm->_championMan->_g407_party._firstScentIndex) && (AL0307_uc_ScentOrdinal < _vm->_championMan->_g407_party._lastScentIndex)) {
 			setFlag(aspectArray[k4_FloorOrnOrdAspect], k0x8000_FootprintsAspect);
 		}
 	}
-	aspectArray[k1_FirstGroupOrObjectAspect] = L0314_T_Thing.toUint16();
+	aspectArray[k1_FirstGroupOrObjectAspect] = curThing.toUint16();
 }
 
 void DungeonMan::f171_setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowed, bool frontAllowed, bool rightAllowed, int16 dir,
