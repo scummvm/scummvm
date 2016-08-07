@@ -471,7 +471,7 @@ bool RivenConsole::Cmd_StopSound(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_CurStack(int argc, const char **argv) {
-	debugPrintf("Current Stack: %s\n", _vm->getStackName(_vm->getCurStack()).c_str());
+	debugPrintf("Current Stack: %s\n", _vm->getStackName(_vm->getCurStack()->getId()).c_str());
 
 	return true;
 }
@@ -510,7 +510,7 @@ bool RivenConsole::Cmd_ChangeStack(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_Hotspots(int argc, const char **argv) {
-	Common::Array<RivenHotspot *> hotspots = _vm->_card->getHotspots();
+	Common::Array<RivenHotspot *> hotspots = _vm->getCurCard()->getHotspots();
 
 	debugPrintf("Current card (%d) has %d hotspots:\n", _vm->getCurCard()->getId(), hotspots.size());
 
@@ -547,7 +547,7 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 		return true;
 	}
 
-	uint16 oldStack = _vm->getCurStack();
+	uint16 oldStack = _vm->getCurStack()->getId();
 	uint newStack = kStackUnknown;
 
 	for (uint i = kStackFirst; i <= kStackLast; i++) {
@@ -630,7 +630,7 @@ bool RivenConsole::Cmd_ListZipCards(int argc, const char **argv) {
 
 bool RivenConsole::Cmd_GetRMAP(int argc, const char **argv) {
 	uint32 rmapCode = _vm->getCurCardRMAP();
-	debugPrintf("RMAP for %s %d = %08x\n", _vm->getStackName(_vm->getCurStack()).c_str(), _vm->getCurCard()->getId(), rmapCode);
+	debugPrintf("RMAP for %s %d = %08x\n", _vm->getStackName(_vm->getCurStack()->getId()).c_str(), _vm->getCurCard()->getId(), rmapCode);
 	return true;
 }
 

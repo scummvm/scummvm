@@ -403,7 +403,7 @@ Common::Error RivenSaveLoad::saveGame(const int slot, const Common::String &desc
 	Common::String filename = buildSaveFilename(slot);
 
 	// Convert class variables to variable numbers
-	_vm->_vars["currentstackid"] = _vm->getCurStack();
+	_vm->_vars["currentstackid"] = _vm->getCurStack()->getId();
 	_vm->_vars["currentcardid"] = _vm->getCurCard()->getId();
 
 	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(filename);

@@ -393,7 +393,7 @@ void RivenSimpleCommand::stopSound(uint16 op, uint16 argc, uint16 *argv) {
 	// would cause all ambient sounds not to play. An alternative
 	// fix would be to stop all scripts on a stack change, but this
 	// does fine for now.
-	if (_vm->getCurStack() == kStackTspit && (_vm->getCurCardRMAP() == 0x6e9a || _vm->getCurCardRMAP() == 0xfeeb))
+	if (_vm->getCurStack()->getId() == kStackTspit && (_vm->getCurCardRMAP() == 0x6e9a || _vm->getCurCardRMAP() == 0xfeeb))
 		return;
 
 	// The argument is a bitflag for the setting.
@@ -579,7 +579,7 @@ void RivenSimpleCommand::activatePLST(uint16 op, uint16 argc, uint16 *argv) {
 void RivenSimpleCommand::activateSLST(uint16 op, uint16 argc, uint16 *argv) {
 	// WORKAROUND: Disable the SLST that is played during Riven's intro.
 	// Riven X does this too (spoke this over with Jeff)
-	if (_vm->getCurStack() == kStackTspit && _vm->getCurCardRMAP() == 0x6e9a && argv[0] == 2)
+	if (_vm->getCurStack()->getId() == kStackTspit && _vm->getCurCardRMAP() == 0x6e9a && argv[0] == 2)
 		return;
 
 	_vm->_activatedSLST = true;

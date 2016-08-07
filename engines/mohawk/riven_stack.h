@@ -28,6 +28,28 @@
 namespace Mohawk {
 
 class MohawkEngine_Riven;
+class RivenNameList;
+
+/**
+ * A game level
+ *
+ * The names Card and Stack are legacy from the HyperCard engine used in
+ * the original mac version of Myst.
+ *
+ * Stacks contain behaviors that are specific to a game level.
+ */
+class RivenStack {
+public:
+	RivenStack(MohawkEngine_Riven *vm, uint16 id);
+	virtual ~RivenStack();
+
+	/** Get the id of the stack */
+	uint16 getId() const;
+private:
+	MohawkEngine_Riven *_vm;
+
+	uint16 _id;
+};
 
 /**
  * Name lists provide bidirectional association between an object's name and its id

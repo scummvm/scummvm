@@ -110,8 +110,6 @@ public:
 	Common::RandomSource *_rnd;
 	RivenScriptManager *_scriptMan;
 
-	RivenCard *_card;
-
 	GUI::Debugger *getDebugger();
 
 	bool canLoadGameStateCurrently() { return !(getFeatures() & GF_DEMO); }
@@ -132,7 +130,8 @@ private:
 	InstallerArchive _installerArchive;
 
 	// Stack/Card-related functions and variables
-	uint16 _curStack;
+	RivenCard *_card;
+	RivenStack *_stack;
 	void handleEvents();
 
 	// Stack resource names
@@ -166,7 +165,7 @@ public:
 	int16 getIdFromName(uint16 nameResource, const Common::String &name);
 	Common::String getStackName(uint16 stack) const;
 	RivenCard *getCurCard() const { return _card; }
-	uint16 getCurStack() const { return _curStack; }
+	RivenStack *getCurStack() const { return _stack; }
 	uint16 matchRMAPToCard(uint32);
 	uint32 getCurCardRMAP();
 

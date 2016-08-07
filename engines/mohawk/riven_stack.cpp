@@ -27,6 +27,20 @@
 
 namespace Mohawk {
 
+RivenStack::RivenStack(MohawkEngine_Riven *vm, uint16 id) :
+		_vm(vm),
+		_id(id) {
+
+}
+
+RivenStack::~RivenStack() {
+
+}
+
+uint16 RivenStack::getId() const {
+	return _id;
+}
+
 RivenNameList::RivenNameList() {
 
 }
