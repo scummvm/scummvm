@@ -1529,15 +1529,12 @@ void DungeonMan::f164_unlinkThingFromList(Thing thingToUnlink, Thing thingInList
 #define AL0275_pui_CumulativeFirstThingCount L0275_pui_Multiple
 
 
-	if (thingToUnlink == Thing::_endOfList) {
+	if (thingToUnlink == Thing::_endOfList)
 		return;
-	}
 
-	{
-		uint16 tmp = thingToUnlink.toUint16();
-		clearFlag(tmp, 0xC000);
-		thingToUnlink = Thing(tmp);
-	}
+	uint16 tmp = thingToUnlink.toUint16();
+	clearFlag(tmp, 0xC000);
+	thingToUnlink = Thing(tmp);
 
 	if (mapX >= 0) {
 		L0274_ps_Generic = (Thing*)_vm->_dungeonMan->f156_getThingData(thingToUnlink);
@@ -1554,25 +1551,27 @@ void DungeonMan::f164_unlinkThingFromList(Thing thingToUnlink, Thing thingInList
 			while (AL0272_ui_Column--) { /* For each column starting from and after the column containing the square where the thing is unlinked */
 				(*(uint16*)AL0275_pui_CumulativeFirstThingCount++)--; /* Decrement the cumulative first thing count */
 			}
-			goto T0164011;
+			*L0274_ps_Generic = Thing::_endOfList;
+			return;
 		}
 		if (((Thing*)AL0275_pT_Thing)->getTypeAndIndex() == thingToUnlink.toUint16()) {
 			*AL0275_pT_Thing = *L0274_ps_Generic;
-			goto T0164011;
+			*L0274_ps_Generic = Thing::_endOfList;
+			return;
 		}
 		thingInList = *AL0275_pT_Thing;
 	}
 	L0273_T_Thing = _vm->_dungeonMan->f159_getNextThing(thingInList);
 	while (L0273_T_Thing.getTypeAndIndex() != thingToUnlink.toUint16()) {
 		if ((L0273_T_Thing == Thing::_endOfList) || (L0273_T_Thing == Thing::_none)) {
-			goto T0164011;
+			*L0274_ps_Generic = Thing::_endOfList;
+			return;
 		}
 		L0273_T_Thing = _vm->_dungeonMan->f159_getNextThing(thingInList = L0273_T_Thing);
 	}
 	L0274_ps_Generic = (Thing*)_vm->_dungeonMan->f156_getThingData(thingInList);
 	*L0274_ps_Generic = _vm->_dungeonMan->f159_getNextThing(L0273_T_Thing);
 	L0274_ps_Generic = (Thing*)_vm->_dungeonMan->f156_getThingData(thingToUnlink);
-T0164011:
 	*L0274_ps_Generic = Thing::_endOfList;
 }
 
