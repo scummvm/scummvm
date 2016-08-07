@@ -275,6 +275,16 @@ public:
 	 * @param params		Playback parameter data
 	 */
 	int qsWaveMixPlayEx(int iChannel, uint flags, CWaveFile *waveFile, int loops, const QMIXPLAYPARAMS &params);
+
+	/**
+	 * Returns true if there are no more buffers playing or queued on the channel
+	 */
+	bool qsWaveMixIsChannelDone(int iChannel) const;
+
+	/**
+	 * Handles regularly updating the mixer
+	 */
+	void qsWaveMixPump();
 };
 
 } // End of namespace Titanic

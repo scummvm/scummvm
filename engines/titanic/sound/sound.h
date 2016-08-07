@@ -117,11 +117,20 @@ public:
 	 */
 	bool isActive(int handle) const;
 
-	void fn2(int handle);
-	void fn3(int handle, int val2, int val3);
+	/**
+	 * Sets the volume for a sound
+	 * @param handle	Sound handle
+	 * @param volume	Volume percentage (0 to 100)
+	 * @param seconds	Number of seconds to transition to the new volume
+	 */
+	void setVolume(uint handle, uint volume, uint seconds);
+
 	void fn4(CWaveFile *waveFile, int val);
-		
-	void managerProc8(int v) { _soundManager.proc8(v); }
+
+	/**
+	 * Stops any sounds attached to a given channel
+	 */
+	void stopChannel(int channel);
 
 	/**
 	 * Loads a TrueTalk dialogue
@@ -158,6 +167,16 @@ public:
 	 * Play a sound
 	 */
 	int playSound(const CString &name, CProximity &prox);
+
+	/**
+	 * Stop a sound
+	 */
+	void stopSound(uint handle);
+
+	/**
+	 * Flags that a sound can be freed if a timeout is set
+	 */
+	void setCanFree(int handle);
 };
 
 } // End of namespace Titanic

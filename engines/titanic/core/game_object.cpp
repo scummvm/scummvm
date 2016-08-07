@@ -38,9 +38,11 @@ namespace Titanic {
 EMPTY_MESSAGE_MAP(CGameObject, CNamedItem);
 
 CCreditText *CGameObject::_credits;
+int CGameObject::_soundHandles[3];
 
 void CGameObject::init() {
 	_credits = nullptr;
+	_soundHandles[0] = _soundHandles[1] = _soundHandles[2] = -1;
 }
 
 void CGameObject::deinit() {
@@ -439,11 +441,11 @@ void CGameObject::soundFn2(const CString &resName, int v1, int v2, int v3, int h
 	warning("TODO: CGameObject::soundFn2");
 }
 
-void CGameObject::soundFn3(int handle, int val2, int val3) {
+void CGameObject::setSoundVolume(uint handle, uint percent, uint seconds) {
 	if (handle != 0 && handle != -1) {
 		CGameManager *gameManager = getGameManager();
 		if (gameManager)
-			return gameManager->_sound.fn3(handle, val2, val3);
+			return gameManager->_sound.setVolume(handle, percent, seconds);
 	}
 }
 
@@ -456,7 +458,7 @@ void CGameObject::soundFn5(int v1, int v2, int v3) {
 }
 
 void CGameObject::sound8(bool flag) const {
-	getGameManager()->_sound.managerProc8(flag ? 3 : 0);
+	getGameManager()->_sound.stopChannel(flag ? 3 : 0);
 }
 
 void CGameObject::setVisible(bool val) {
@@ -660,14 +662,16 @@ int CGameObject::playSound(const CString &name, CProximity &prox) {
 	return 0;
 }
 
-void CGameObject::stopSound(int handle, int val2) {
+void CGameObject::stopSound(int handle, uint seconds) {
 	if (handle != 0 && handle != -1) {
 		CGameManager *gameManager = getGameManager();
 		if (gameManager) {
-			if (val2)
-				gameManager->_sound.fn3(handle, 0, val2);
-			else
-				gameManager->_sound.fn2(handle);
+			if (seconds) {
+				gameManager->_sound.setVolume(handle, 0, seconds);
+				gameManager->_sound.setCanFree(handle);
+			} else {
+				gameManager->_sound.stopSound(handle);
+			}
 		}
 	}
 }

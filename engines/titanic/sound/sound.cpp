@@ -62,16 +62,16 @@ bool CSound::isActive(int handle) const {
 	return false;
 }
 
-void CSound::fn2(int handle) {
-	warning("TODO: CSound::fn3");
-}
-
-void CSound::fn3(int handle, int val2, int val3) {
-	warning("TODO: CSound::fn3");
+void CSound::setVolume(uint handle, uint volume, uint seconds) {
+	_soundManager.setVolume(handle, volume, seconds);
 }
 
 void CSound::fn4(CWaveFile *waveFile, int val) {
 	// TODO
+}
+
+void CSound::stopChannel(int channel) {
+	_soundManager.stopChannel(channel);
 }
 
 void CSound::checkSounds() {
@@ -193,6 +193,15 @@ int CSound::playSpeech(CDialogueFile *dialogueFile, int speechId, CProximity &pr
 	fn4(waveFile, prox._field60);
 
 	return _soundManager.playSound(*waveFile, prox);
+}
+
+void CSound::stopSound(uint handle) {
+	_soundManager.stopSound(handle);
+}
+
+void CSound::setCanFree(int handle) {
+	if (handle != 0 && handle != -1)
+		_soundManager.setCanFree(handle);
 }
 
 } // End of namespace Titanic

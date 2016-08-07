@@ -53,6 +53,7 @@ class CGameObject : public CNamedItem {
 	DECLARE_MESSAGE_MAP;
 private:
 	static CCreditText *_credits;
+	static int _soundHandles[3];
 private:
 	/**
 	 * Load a visual resource for the object
@@ -192,8 +193,10 @@ protected:
 
 	/**
 	 * Stop a sound
+	 * @param handle	Sound handle
+	 * @param seconds	Optional number of seconds to transition sound off
 	 */
-	void stopSound(int handle, int val2 = 0);
+	void stopSound(int handle, uint seconds = 0);
 
 	/**
 	 * Returns true if a sound with the specified handle is active
@@ -202,7 +205,13 @@ protected:
 
 	void soundFn2(const CString &resName, int v1, int v2, int v3, int handleIndex);
 
-	void soundFn3(int handle, int val2, int val3);
+	/**
+	 * Sets the volume for a sound
+	 * @param handle	Sound handle
+	 * @param volume	Volume percentage (0 to 100)
+	 * @param seconds	Number of seconds to transition to the new volume
+	 */
+	void setSoundVolume(uint handle, uint percent, uint seconds);
 
 	void soundFn4(int v1, int v2, int v3);
 

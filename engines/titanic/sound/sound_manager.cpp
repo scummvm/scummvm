@@ -76,6 +76,16 @@ bool QSoundManagerSounds::contains(const CWaveFile *waveFile) const {
 	return false;
 }
 
+/*------------------------------------------------------------------------*/
+
+void QSoundManager::Slot::clear() {
+	_waveFile = nullptr;
+	_isTimed = false;
+	_ticks = 0;
+	_channel = -1;
+	_handle = 0;
+	_val3 = 0;
+}
 
 /*------------------------------------------------------------------------*/
 
@@ -108,12 +118,19 @@ CWaveFile *QSoundManager::loadSound(const CString &name) {
 }
 
 CWaveFile *QSoundManager::loadSpeech(CDialogueFile *dialogueFile, int speechId) {
-	warning("TODO");
-	return nullptr;
+	CWaveFile *waveFile = new CWaveFile();
+
+	// Try to load the specified sound
+	if (!waveFile->loadSpeech(dialogueFile, speechId)) {
+		delete waveFile;
+		return nullptr;
+	}
+
+	return waveFile;
 }
 
 int QSoundManager::proc5() const {
-	warning("TODO");
+	error("TODO");
 	return 0;
 }
 
@@ -129,7 +146,7 @@ int QSoundManager::playSound(CWaveFile &waveFile, CProximity &prox) {
 		}
 	}
 
-	if (channel >= 0 || (channel = flushChannels(prox._field24)) != -1) {
+	if (channel >= 0 || (channel = resetChannel(prox._channel)) != -1) {
 		return playWave(&waveFile, channel, flags, prox);
 	}
 
@@ -137,17 +154,45 @@ int QSoundManager::playSound(CWaveFile &waveFile, CProximity &prox) {
 }
 
 void QSoundManager::stopSound(uint handle) {
-	warning("TODO");
+	resetChannel(10);
+
+	for (uint idx = 0; idx < _slots.size(); ++idx) {
+		Slot &slot = _slots[idx];
+		if (slot._handle == handle) {
+			qsWaveMixFlushChannel(slot._channel);
+			_sounds.flushChannel(slot._channel);
+			resetChannel(10);
+		}
+	}
 }
 
-void QSoundManager::proc8(int v) {
-	warning("TODO");
+void QSoundManager::stopChannel(int channel) {
+	int endChannel;
+	switch (channel) {
+	case 0:
+	case 3:
+		endChannel = channel + 3;
+		break;
+	case 6:
+		endChannel = 10;
+		break;
+	case 10:
+		endChannel = 48;
+		break;
+	default:
+		return;
+	}
+
+	for (; channel < endChannel; ++channel) {
+		qsWaveMixFlushChannel(channel);
+		_sounds.flushChannel(channel);
+	}
 }
 
-void QSoundManager::proc9(uint handle) {
+void QSoundManager::setCanFree(uint handle) {
 	for (uint idx = 0; idx < _slots.size(); ++idx) {
 		if (_slots[idx]._handle == handle)
-			_slots[idx]._val2 = 1;
+			_slots[idx]._isTimed = true;
 	}
 }
 
@@ -156,12 +201,46 @@ void QSoundManager::stopAllChannels() {
 
 	for (int idx = 0; idx < 16; ++idx)
 		_sounds.flushChannel(idx);
-	flushChannels(10);
+	resetChannel(10);
 }
 
-int QSoundManager::flushChannels(int iChannel) {
-	// TODO
-	return -1;
+int QSoundManager::resetChannel(int iChannel) {
+	int newChannel = -1;
+	int channelStart = 10;
+	int channelEnd = 16;
+
+	if (iChannel != 10) {
+		qsWaveMixFlushChannel(iChannel);
+		_sounds.flushChannel(iChannel);
+		channelStart = iChannel;
+		channelEnd = iChannel + 1;
+	} else {
+		uint ticks = g_vm->_events->getTicksCount();
+
+		for (uint idx = 0; idx < _slots.size(); ++idx) {
+			Slot &slot = _slots[idx];
+			if (slot._isTimed && slot._ticks && ticks > slot._ticks) {
+				qsWaveMixFlushChannel(slot._channel);
+				_sounds.flushChannel(slot._channel);
+			}
+		}
+	}
+
+	for (iChannel = channelStart; iChannel < channelEnd; ++iChannel) {
+		if (qsWaveMixIsChannelDone(iChannel)) {
+			// Scan through the slots, and reset any slot using the channel
+			for (uint idx = 0; idx < _slots.size(); ++idx) {
+				Slot &slot = _slots[idx];
+				if (slot._channel == iChannel)
+					slot.clear();
+			}
+
+			// Use the empty channel
+			newChannel = iChannel;
+		}
+	}
+
+	return newChannel;
 }
 
 void QSoundManager::setVolume(uint handle, uint volume, uint seconds) {
@@ -217,6 +296,10 @@ bool QSoundManager::isActive(uint handle) const {
 
 bool QSoundManager::isActive(const CWaveFile *waveFile) const {
 	return _sounds.contains(waveFile);
+}
+
+void QSoundManager::waveMixPump() {
+
 }
 
 uint QSoundManager::getLatency() const {
@@ -315,29 +398,6 @@ int QSoundManager::playWave(CWaveFile *waveFile, int iChannel, uint flags, CProx
 
 void QSoundManager::soundFreed(Audio::SoundHandle &handle) {
 	qsWaveMixFreeWave(handle);
-}
-
-void QSoundManager::stopChannels(int channel) {
-	int endChannel;
-	switch (channel) {
-	case 0:
-	case 3:
-		endChannel = channel + 3;
-		break;
-	case 6:
-		endChannel = 10;
-		break;
-	case 10:
-		endChannel = 48;
-		break;
-	default:
-		return;
-	}
-
-	for (; channel < endChannel; ++channel) {
-		qsWaveMixFlushChannel(channel);
-		_sounds.flushChannel(channel);
-	}
 }
 
 void QSoundManager::updateVolume(int channel, uint panRate) {

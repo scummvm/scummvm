@@ -112,7 +112,7 @@ bool CComputerScreen::TimerMsg(CTimerMsg *msg) {
 		stopSound(handle);
 
 		playSound("y#662.wav");
-		soundFn3(handle, 10, 2);
+		setSoundVolume(handle, 10, 2);
 		playClip(392, 450);
 		startTalking("Doorbot", 0x3611A);
 		sleep(8000);
@@ -120,10 +120,10 @@ bool CComputerScreen::TimerMsg(CTimerMsg *msg) {
 		playClip(450, 492);
 		startTalking("Doorbot", 0x36121);
 		playClip(492, 522);
-		soundFn3(handle, 30, 2);
+		setSoundVolume(handle, 30, 2);
 
 		playClip(523, 540);
-		soundFn3(handle, 0, 1);
+		setSoundVolume(handle, 0, 1);
 
 		playClip(541, 551);
 		stopSound(handle);

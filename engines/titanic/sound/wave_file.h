@@ -26,19 +26,26 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "titanic/support/string.h"
+#include "titanic/true_talk/dialogue_file.h"
 
 namespace Titanic {
 
 class QSoundManager;
+
+enum SoundType {
+	SOUND_SFX = 0,
+	SOUND_SPEECH = 1
+};
 
 class CWaveFile {
 public:
 	QSoundManager *_owner;
 	Audio::AudioStream *_stream;
 	Audio::SoundHandle _soundHandle;
+	SoundType _soundType;
 public:
-	CWaveFile() : _owner(nullptr), _stream(nullptr) {}
-	CWaveFile(QSoundManager *owner) : _owner(owner), _stream(nullptr) {}
+	CWaveFile() : _owner(nullptr), _stream(nullptr), _soundType(SOUND_SFX) {}
+	CWaveFile(QSoundManager *owner) : _owner(owner), _stream(nullptr), _soundType(SOUND_SFX) {}
 	~CWaveFile();
 
 	int fn1();
@@ -47,6 +54,11 @@ public:
 	 * Tries to load the specified wave file sound
 	 */
 	bool loadSound(const CString &name);
+
+	/**
+	 * Tries to load speech from a specified dialogue file
+	 */
+	bool loadSpeech(CDialogueFile *dialogueFile, int speechIndex);
 
 	/**
 	 * Returns true if the wave file has data loaded

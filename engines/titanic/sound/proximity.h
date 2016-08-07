@@ -41,7 +41,7 @@ public:
 	double _frequencyMultiplier;
 	double _field1C;
 	bool _repeated;
-	int _field24;
+	int _channel;
 	int _field28;
 	double _azimuth;
 	double _range;

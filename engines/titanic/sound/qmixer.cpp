@@ -99,4 +99,13 @@ int QMixer::qsWaveMixPlayEx(int iChannel, uint flags, CWaveFile *mixWave, int lo
 	return 0;
 }
 
+bool QMixer::qsWaveMixIsChannelDone(int iChannel) const {
+	// Not currently implemented in ScummVM
+	return true;
+}
+
+void QMixer::qsWaveMixPump() {
+	// TODO: Handle checking for done sounds, and calling their end functions
+}
+
 } // End of namespace Titanic z

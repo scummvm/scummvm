@@ -21,6 +21,7 @@
  */
 
 #include "audio/decoders/wave.h"
+#include "common/memstream.h"
 #include "titanic/sound/wave_file.h"
 #include "titanic/sound/sound_manager.h"
 #include "titanic/support/simple_file.h"
@@ -48,6 +49,21 @@ bool CWaveFile::loadSound(const CString &name) {
 
 	Common::SeekableReadStream *stream = file.readStream();
 	_stream = Audio::makeWAVStream(stream->readStream(stream->size()), DisposeAfterUse::YES);
+	_soundType = SOUND_SFX;
+	return true;
+}
+
+bool CWaveFile::loadSpeech(CDialogueFile *dialogueFile, int speechIndex) {
+	DialogueResource *res = dialogueFile->openWaveEntry(speechIndex);
+	if (!res)
+		return false;
+
+	byte *data = (byte *)malloc(res->_size);
+	dialogueFile->read(res, data, res->_size);
+
+	_stream = Audio::makeWAVStream(new Common::MemoryReadStream(data, res->_size, DisposeAfterUse::YES),
+		DisposeAfterUse::YES);
+	_soundType = SOUND_SPEECH;
 	return true;
 }
 

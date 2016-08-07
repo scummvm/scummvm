@@ -72,7 +72,11 @@ public:
 	 */
 	virtual void stopSound(uint handle) = 0;
 
-	virtual void proc8(int v) = 0;
+	/**
+	 * Stops a designated range of channels
+	 */
+	virtual void stopChannel(int channel) = 0;
+
 	virtual void proc9(uint handle) {}
 
 	/**
@@ -118,8 +122,11 @@ public:
 	 */
 	virtual bool isActive(const CWaveFile *waveFile) const { return false; }
 
-	virtual int proc16() const { return 0; }
-	
+	/**
+	 * Handles regularly updating the mixer
+	 */
+	virtual void waveMixPump() = 0;
+
 	/**
 	 * Returns the movie latency
 	 */
@@ -175,7 +182,21 @@ public:
 	 */
 	virtual void postSave() {}
 	
-	virtual void proc29() {}
+	/**
+	 * Sets the position and orientation for the listener (player)
+	 */
+	virtual void setListenerPosition(double posX, double posY, double posZ,
+		double directionX, double directionY, double directionZ, bool stopSounds) {}
+
+	/**
+	 * Returns the music volume percent
+	 */
+	int getMusicVolume() const { return _musicPercent; }
+
+	/**
+	 * Returns the speech volume percent
+	 */
+	int getSpeechVolume() const { return _speechPercent; }
 
 	/**
 	 * Returns the parrot volume percent
@@ -226,12 +247,14 @@ public:
 class QSoundManager : public CSoundManager, public QMixer {
 	struct Slot {
 		CWaveFile *_waveFile;
-		uint _val2;
+		bool _isTimed;
 		uint _ticks;
 		int _channel;
 		uint _handle;
 		uint _val3;
-		Slot() : _waveFile(0), _val2(0), _ticks(0), _channel(0), _handle(0), _val3(0) {}
+
+		Slot() : _waveFile(0), _isTimed(0), _ticks(0), _channel(-1), _handle(0), _val3(0) {}
+		void clear();
 	};
 private:
 	QSoundManagerSounds _sounds;
@@ -239,11 +262,6 @@ private:
 	uint _channelsVolume[16];
 	int _channelsMode[16];
 private:
-	/**
-	 * Stops a designated range of channels
-	 */
-	void stopChannels(int channel);
-
 	/**
 	 * Updates the volume for a channel
 	 * @param channel	Channel to be update
@@ -272,9 +290,9 @@ private:
 	void setChannelVolume(int iChannel, uint volume, uint mode);
 
 	/**
-	 * Flushes channels
+	 * Resets the specified channel and returns a new free one
 	 */
-	int flushChannels(int iChannel);
+	int resetChannel(int iChannel);
 public:
 	int _field18;
 	int _field1C;
@@ -303,14 +321,21 @@ public:
 	 * Start playing a previously loaded sound resource
 	 */
 	virtual int playSound(CWaveFile &waveFile, CProximity &prox);
-	
+
 	/**
 	 * Stop playing the specified sound
 	 */
 	virtual void stopSound(uint handle);
 
-	virtual void proc8(int v);
-	virtual void proc9(uint handle);
+	/**
+	 * Stops a designated range of channels
+	 */
+	virtual void stopChannel(int channel);
+
+	/**
+	 * Flags that a sound can be freed if a timeout is set
+	 */
+	virtual void setCanFree(uint handle);
 
 	/**
 	 * Stops sounds on all playing channels
@@ -355,8 +380,11 @@ public:
 	 */
 	virtual bool isActive(const CWaveFile *waveFile) const;
 
-	virtual int proc16() const { return 1; }
-	
+	/**
+	 * Handles regularly updating the mixer
+	 */
+	virtual void waveMixPump();
+
 	/**
 	 * Returns the movie latency
 	 */
