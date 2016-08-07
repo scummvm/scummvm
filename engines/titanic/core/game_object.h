@@ -513,6 +513,11 @@ protected:
 	 * Scroll text down
 	 */
 	void scrollTextDown();
+
+	/**
+	 * Gets a new random number
+	 */
+	int getNewRandomNumber(int max, int *oldVal = nullptr);
 public:
 	bool _isMail;
 	int _id;

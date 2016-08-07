@@ -1392,6 +1392,16 @@ void CGameObject::resetMail() {
 		mailMan->resetValue();
 }
 
+int CGameObject::getNewRandomNumber(int max, int *oldVal) {
+	if (oldVal) {
+		int startingVal = *oldVal;
+		while (*oldVal == startingVal && max > 0)
+			*oldVal = g_vm->getRandomNumber(max);
+	} else {
+		return g_vm->getRandomNumber(max);
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 CRoomItem *CGameObject::getRoom() const {
