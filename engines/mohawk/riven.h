@@ -148,8 +148,6 @@ public:
 	Common::String getStackName(uint16 stack) const;
 	RivenCard *getCurCard() const { return _card; }
 	RivenStack *getCurStack() const { return _stack; }
-	uint16 matchRMAPToCard(uint32);
-	uint32 getCurCardRMAP();
 
 	// Hotspot functions/variables
 	Common::Array<ZipMode> _zipModeData;

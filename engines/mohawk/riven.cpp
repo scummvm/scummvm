@@ -377,9 +377,10 @@ void MohawkEngine_Riven::changeToCard(uint16 dest) {
 
 	if (!(getFeatures() & GF_DEMO)) {
 		for (byte i = 0; i < 13; i++)
-			if (_stack->getId() == rivenSpecialChange[i].startStack && dest == matchRMAPToCard(rivenSpecialChange[i].startCardRMAP)) {
+			if (_stack->getId() == rivenSpecialChange[i].startStack && dest == _stack->getCardStackId(
+					rivenSpecialChange[i].startCardRMAP)) {
 				changeToStack(rivenSpecialChange[i].targetStack);
-				dest = matchRMAPToCard(rivenSpecialChange[i].targetCardRMAP);
+				dest = _stack->getCardStackId(rivenSpecialChange[i].targetCardRMAP);
 			}
 	}
 
@@ -484,32 +485,6 @@ void MohawkEngine_Riven::checkInventoryClick() {
 
 Common::SeekableReadStream *MohawkEngine_Riven::getExtrasResource(uint32 tag, uint16 id) {
 	return _extrasFile->getResource(tag, id);
-}
-
-uint16 MohawkEngine_Riven::matchRMAPToCard(uint32 rmapCode) {
-	uint16 index = 0;
-	Common::SeekableReadStream *rmapStream = getResource(ID_RMAP, 1);
-
-	for (uint16 i = 1; rmapStream->pos() < rmapStream->size(); i++) {
-		uint32 code = rmapStream->readUint32BE();
-		if (code == rmapCode)
-			index = i;
-	}
-
-	delete rmapStream;
-
-	if (!index)
-		error ("Could not match RMAP code %08x", rmapCode);
-
-	return index - 1;
-}
-
-uint32 MohawkEngine_Riven::getCurCardRMAP() {
-	Common::SeekableReadStream *rmapStream = getResource(ID_RMAP, 1);
-	rmapStream->seek(_card->getId() * 4);
-	uint32 rmapCode = rmapStream->readUint32BE();
-	delete rmapStream;
-	return rmapCode;
 }
 
 void MohawkEngine_Riven::delayAndUpdate(uint32 ms) {
@@ -760,7 +735,7 @@ static void sunnersBeachTimer(MohawkEngine_Riven *vm) {
 }
 
 void MohawkEngine_Riven::installCardTimer() {
-	switch (getCurCardRMAP()) {
+	switch (_stack->getCurrentCardGlobalId()) {
 	case 0x3a85: // Top of elevator on prison island
 		// Handle Catherine hardcoded videos
 		installTimer(&catherineIdleTimer, _rnd->getRandomNumberRng(1, 33) * 1000);
@@ -803,7 +778,7 @@ void MohawkEngine_Riven::checkSunnerAlertClick() {
 	if (sunners != 0)
 		return;
 
-	uint32 rmapCode = getCurCardRMAP();
+	uint32 rmapCode = _stack->getCurrentCardGlobalId();
 
 	// This is only for the mid/lower staircase sections
 	if (rmapCode != 0x79bd && rmapCode != 0x7beb)

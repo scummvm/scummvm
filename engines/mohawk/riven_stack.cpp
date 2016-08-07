@@ -23,6 +23,7 @@
 #include "mohawk/riven_stack.h"
 
 #include "mohawk/riven.h"
+#include "mohawk/riven_card.h"
 #include "mohawk/resource.h"
 
 namespace Mohawk {
@@ -31,6 +32,7 @@ RivenStack::RivenStack(MohawkEngine_Riven *vm, uint16 id) :
 		_vm(vm),
 		_id(id) {
 	loadResourceNames();
+	loadCardIdMap();
 }
 
 RivenStack::~RivenStack() {
@@ -81,6 +83,37 @@ int16 RivenStack::getIdFromName(RivenNameResource nameResource, const Common::St
 		default:
 			error("Unknown name resource %d", nameResource);
 	}
+}
+
+void RivenStack::loadCardIdMap() {
+	Common::SeekableReadStream *rmapStream = _vm->getResource(ID_RMAP, 1);
+
+	uint count = rmapStream->size() / sizeof(uint32);
+	_cardIdMap.resize(count);
+
+	for (uint i = 0; i < count; i++) {
+		_cardIdMap[i] = rmapStream->readUint32BE();
+	}
+
+	delete rmapStream;
+}
+
+uint16 RivenStack::getCardStackId(uint32 globalId) const {
+	int16 index = -1;
+
+	for (uint16 i = 0; i < _cardIdMap.size(); i++) {
+		if (_cardIdMap[i] == globalId)
+			index = i;
+	}
+
+	if (index < 0)
+		error ("Could not match RMAP code %08x", globalId);
+
+	return index;
+}
+
+uint32 RivenStack::getCurrentCardGlobalId() const {
+	return _cardIdMap[_vm->getCurCard()->getId()];
 }
 
 RivenNameList::RivenNameList() {
