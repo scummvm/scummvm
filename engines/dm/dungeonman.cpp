@@ -839,7 +839,8 @@ void DungeonMan::f172_setSquareAspect(uint16 *aspectArray, Direction dir, int16 
 	bool frontRandomWallOrnamentAllowed = false;
 	bool squareIsFakeWall;
 
-	switch (aspectArray[k0_ElemAspect] = Square(AL0307_uc_Square).getType()) {
+	aspectArray[k0_ElemAspect] = Square(AL0307_uc_Square).getType();
+	switch (aspectArray[k0_ElemAspect]) {
 	case k0_ElementTypeWall:
 		switch (dir) {
 		case kDirNorth:
@@ -893,15 +894,6 @@ T0172010_ClosedFakeWall:
 			return;
 		}
 		break;
-	case k2_ElementTypePit:
-		if (getFlag(AL0307_uc_Square, k0x0008_PitOpen)) {
-			aspectArray[k2_PitInvisibleAspect] = getFlag(AL0307_uc_Square, k0x0004_PitInvisible);
-			AL0307_uc_FootprintsAllowed &= 0x0001;
-		} else {
-			aspectArray[k0_ElemAspect] = k1_CorridorElemType;
-			AL0307_uc_FootprintsAllowed = true;
-		}
-		goto T0172030_Pit;
 	case k6_ElementTypeFakeWall:
 		if (!getFlag(AL0307_uc_Square, k0x0004_FakeWallOpen)) {
 			aspectArray[k0_ElemAspect] = k0_ElementTypeWall;
@@ -912,10 +904,24 @@ T0172010_ClosedFakeWall:
 		aspectArray[k0_ElemAspect] = k1_CorridorElemType;
 		AL0307_uc_FootprintsAllowed = getFlag(AL0307_uc_Square, k0x0008_FakeWallRandOrnOrFootPAllowed) ? 8 : 0;
 	case k1_CorridorElemType:
-		aspectArray[k4_FloorOrnOrdAspect] = f170_getRandomOrnOrdinal(getFlag(AL0307_uc_Square, k0x0008_CorridorRandOrnAllowed), _g269_currMap->_randFloorOrnCount, mapX, mapY, 30);
-T0172029_Teleporter:
-		AL0307_uc_FootprintsAllowed = true;
-T0172030_Pit:
+	case k2_ElementTypePit:
+	case k5_ElementTypeTeleporter:
+		if (aspectArray[k0_ElemAspect] == k1_CorridorElemType) {
+			aspectArray[k4_FloorOrnOrdAspect] = f170_getRandomOrnOrdinal(getFlag(AL0307_uc_Square, k0x0008_CorridorRandOrnAllowed), _g269_currMap->_randFloorOrnCount, mapX, mapY, 30);
+			AL0307_uc_FootprintsAllowed = true;
+		} else if (aspectArray[k0_ElemAspect] == k2_ElementTypePit) {
+			if (getFlag(AL0307_uc_Square, k0x0008_PitOpen)) {
+				aspectArray[k2_PitInvisibleAspect] = getFlag(AL0307_uc_Square, k0x0004_PitInvisible);
+				AL0307_uc_FootprintsAllowed &= 0x0001;
+			} else {
+				aspectArray[k0_ElemAspect] = k1_CorridorElemType;
+				AL0307_uc_FootprintsAllowed = true;
+			}
+		} else { // k5_ElementTypeTeleporter
+			aspectArray[k2_TeleporterVisibleAspect] = getFlag(AL0307_uc_Square, k0x0008_TeleporterOpen) && getFlag(AL0307_uc_Square, k0x0004_TeleporterVisible);
+			AL0307_uc_FootprintsAllowed = true;
+		}
+
 		while ((curThing != Thing::_endOfList) && ((Direction)curThing.getType() <= k3_SensorThingType)) {
 			if (curThing.getType() == k3_SensorThingType) {
 				Sensor *curSensor = (Sensor*)f156_getThingData(curThing);
@@ -924,9 +930,6 @@ T0172030_Pit:
 			curThing = f159_getNextThing(curThing);
 		}
 		goto T0172049_Footprints;
-	case k5_ElementTypeTeleporter:
-		aspectArray[k2_TeleporterVisibleAspect] = getFlag(AL0307_uc_Square, k0x0008_TeleporterOpen) && getFlag(AL0307_uc_Square, k0x0004_TeleporterVisible);
-		goto T0172029_Teleporter;
 	case k3_ElementTypeStairs:
 		aspectArray[k0_ElemAspect] = (bool((getFlag(AL0307_uc_Square, k0x0008_StairsNorthSouthOrient) >> 3)) == isOrientedWestEast(dir)) ? k18_ElementTypeStairsSide : k19_ElementTypeStaisFront;
 		aspectArray[k2_StairsUpAspect] = getFlag(AL0307_uc_Square, k0x0004_StairsUp);
