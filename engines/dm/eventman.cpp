@@ -1002,7 +1002,7 @@ void EventManager::setMousePointerFromSpriteData(byte* mouseSprite) {
 		}
 	}
 
-	CursorMan.replaceCursor(bitmap, 16, 32, 0, 0, 0);
+	CursorMan.replaceCursor(bitmap, 16, 18, 0, 0, 0);
 }
 
 void EventManager::f368_commandSetLeader(ChampionIndex champIndex) {
