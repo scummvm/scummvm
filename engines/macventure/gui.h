@@ -161,6 +161,8 @@ public:
 	void loadGame(int slot);
 	void saveInto(int slot);
 
+	void createInnerSurface(Graphics::ManagedSurface *innerSurface, Graphics::ManagedSurface *outerSurface, const BorderBounds &borders);
+
 
 private: // Attributes
 
@@ -377,6 +379,10 @@ static void cursorTimerHandler(void *refCon) {
 }
 
 
+enum {
+	kConsoleLeftOffset = 2
+};
+
 class ConsoleText {
 
 public:
@@ -407,14 +413,23 @@ public:
 		updateScroll();
 	}
 
-	void renderInto(Graphics::ManagedSurface *target, uint leftOffset) {
+	void renderInto(Graphics::ManagedSurface *target, const BorderBounds borders, int textOffset) {
 		target->fillRect(target->getBounds(), kColorWhite);
+
+		Graphics::ManagedSurface *composeSurface = new Graphics::ManagedSurface();
+		_gui->createInnerSurface(composeSurface, target, borders);
+		composeSurface->clear(kColorGreen);
+
 		const Graphics::Font *font = &_gui->getCurrentFont();
 		uint y = target->h - font->getFontHeight();
 		for (uint i = _scrollPos; i != 0; i--) {
-			font->drawString(target, _lines[i], leftOffset, y, font->getStringWidth(_lines[i]), kColorBlack);
+			font->drawString(target, _lines[i], textOffset, y, font->getStringWidth(_lines[i]), kColorBlack);
 			y -= font->getFontHeight();
 		}
+
+		Common::Point composePosition = Common::Point(borders.leftOffset, borders.topOffset);
+		target->transBlitFrom(*composeSurface, composePosition, kColorGreen);
+		delete composeSurface;
 	}
 
 	void updateScroll() {
