@@ -24,43 +24,112 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CSeasonalMusicPlayer, CAutoMusicPlayerBase)
+	ON_MESSAGE(ChangeSeasonMsg)
+	ON_MESSAGE(ArboretumGateMsg)
+	ON_MESSAGE(ChangeMusicMsg)
+END_MESSAGE_MAP()
+
 CSeasonalMusicPlayer::CSeasonalMusicPlayer() : CAutoMusicPlayerBase() {
-	_fieldD8 = 0;
-	_fieldDC = 1;
-	_fieldE0 = 0;
-	_fieldE4 = 0;
-	_fieldE8 = -4;
-	_fieldEC = -2;
-	_fieldF0 = -4;
-	_fieldF4 = -4;
+	_isSpring = false;
+	_isSummer = true;
+	_isAutumn = false;
+	_isWinter = false;
+	_springMode = -4;
+	_summerMode = -2;
+	_autumnMode = -4;
+	_winterMode = -4;
 }
 
 void CSeasonalMusicPlayer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldD8, indent);
-	file->writeNumberLine(_fieldDC, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
-	file->writeNumberLine(_fieldE8, indent);
-	file->writeNumberLine(_fieldEC, indent);
-	file->writeNumberLine(_fieldF0, indent);
-	file->writeNumberLine(_fieldF4, indent);
+	file->writeNumberLine(_isSpring, indent);
+	file->writeNumberLine(_isSummer, indent);
+	file->writeNumberLine(_isAutumn, indent);
+	file->writeNumberLine(_isWinter, indent);
+	file->writeNumberLine(_springMode, indent);
+	file->writeNumberLine(_summerMode, indent);
+	file->writeNumberLine(_autumnMode, indent);
+	file->writeNumberLine(_winterMode, indent);
 
 	CAutoMusicPlayerBase::save(file, indent);
 }
 
 void CSeasonalMusicPlayer::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldD8 = file->readNumber();
-	_fieldDC = file->readNumber();
-	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
-	_fieldE8 = file->readNumber();
-	_fieldEC = file->readNumber();
-	_fieldF0 = file->readNumber();
-	_fieldF4 = file->readNumber();
+	_isSpring = file->readNumber();
+	_isSummer = file->readNumber();
+	_isAutumn = file->readNumber();
+	_isWinter = file->readNumber();
+	_springMode = file->readNumber();
+	_summerMode = file->readNumber();
+	_autumnMode = file->readNumber();
+	_winterMode = file->readNumber();
 
 	CAutoMusicPlayerBase::load(file);
+}
+
+bool CSeasonalMusicPlayer::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
+	_isSpring = msg->_season == "spring";
+	_isSummer = msg->_season == "summer";
+	_isAutumn = msg->_season == "autumn";
+	_isWinter = msg->_season == "winter";
+
+	_springMode = _isSpring ? -2 : -4;
+	_summerMode = _isSummer ? -2 : -4;
+	_autumnMode = _isAutumn ? -2 : -4;
+	_winterMode = _isWinter ? -2 : -4;
+
+	CChangeMusicMsg changeMsg;
+	changeMsg._filename = msg->_season;
+	changeMsg.execute(this);
+
+	return true;
+}
+
+bool CSeasonalMusicPlayer::ArboretumGateMsg(CArboretumGateMsg *msg) {
+	CChangeMusicMsg changeMsg;
+	changeMsg._flags = msg->_value ? 2 : 1;
+	changeMsg.execute(this);
+
+	return true;
+}
+
+bool CSeasonalMusicPlayer::ChangeMusicMsg(CChangeMusicMsg *msg) {
+	if (_isRepeated && msg->_flags == 1) {
+		_isRepeated = false;
+		stopGlobalSound(_transition, -1);
+	}
+
+	if (!msg->_filename.empty()) {
+		if (_isSummer) {
+			setGlobalSoundVolume(-4, 2, 0);
+			setGlobalSoundVolume(-2, 2, 1);
+		} else if (_isAutumn) {
+			setGlobalSoundVolume(-4, 2, 1);
+			setGlobalSoundVolume(-2, 2, 2);
+		} else if (_isWinter) {
+			setGlobalSoundVolume(-4, 2, 2);
+			setGlobalSoundVolume(-2, 2, 3);
+		} else if (_isSpring) {
+			setGlobalSoundVolume(-4, 2, 3);
+			setGlobalSoundVolume(-2, 2, 0);
+		}
+	}
+
+	if (!_isRepeated && msg->_flags == 2) {
+		_isRepeated = true;
+		loadSound("c#64.wav");
+		loadSound("c#63.wav");
+		loadSound("c#65.wav");
+		loadSound("c#62.wav");
+		playGlobalSound("c#64.wav", _springMode, _isSpring, true, 0);
+		playGlobalSound("c#63.wav", _summerMode, _isSummer, true, 1);
+		playGlobalSound("c#65.wav", _autumnMode, _isAutumn, true, 2);
+		playGlobalSound("c#62.wav", _winterMode, _isWinter, true, 3);
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

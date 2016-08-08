@@ -53,7 +53,7 @@ class CGameObject : public CNamedItem {
 	DECLARE_MESSAGE_MAP;
 private:
 	static CCreditText *_credits;
-	static int _soundHandles[3];
+	static int _soundHandles[4];
 private:
 	/**
 	 * Load a visual resource for the object

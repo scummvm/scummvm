@@ -38,11 +38,12 @@ namespace Titanic {
 EMPTY_MESSAGE_MAP(CGameObject, CNamedItem);
 
 CCreditText *CGameObject::_credits;
-int CGameObject::_soundHandles[3];
+int CGameObject::_soundHandles[4];
 
 void CGameObject::init() {
 	_credits = nullptr;
-	_soundHandles[0] = _soundHandles[1] = _soundHandles[2] = -1;
+	_soundHandles[0] = _soundHandles[1] = 0;
+	_soundHandles[2] = _soundHandles[3] = -1;
 }
 
 void CGameObject::deinit() {
@@ -501,7 +502,7 @@ void CGameObject::stopGlobalSound(bool transition, int handleIndex) {
 	CSound &sound = gameManager->_sound;
 
 	if (handleIndex == -1) {
-		for (int idx = 0; idx < 3; ++idx) {
+		for (int idx = 0; idx < 4; ++idx) {
 			if (_soundHandles[idx] != -1) {
 				sound.setVolume(_soundHandles[idx], 0, transition ? 1 : 0);
 				sound.setCanFree(_soundHandles[idx]);
@@ -531,7 +532,7 @@ void CGameObject::setGlobalSoundVolume(int mode, uint seconds, int handleIndex) 
 		// Iterate through calling the method for each handle
 		for (int idx = 0; idx < 3; ++idx)
 			setGlobalSoundVolume(mode, seconds, idx);
-	} else if (handleIndex >= 0 && handleIndex <= 2 && _soundHandles[handleIndex] != -1) {
+	} else if (handleIndex >= 0 && handleIndex <= 3 && _soundHandles[handleIndex] != -1) {
 		uint newVolume = sound._soundManager.getModeVolume(mode);
 		sound.setVolume(_soundHandles[handleIndex], newVolume, seconds);
 	}
