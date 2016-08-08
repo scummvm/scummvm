@@ -992,7 +992,6 @@ bool EventManager::f375_processType80_clickDungeonView_isLeaderHandObjThrown(int
 
 void EventManager::setMousePointerFromSpriteData(byte* mouseSprite) {
 	byte bitmap[16 * 18];
-	memset(bitmap, 0, 16 * 18);
 	for (int16 imgPart = 0; imgPart < 4; ++imgPart) {
 		for (byte *line = mouseSprite + 72 * imgPart, *pixel = bitmap; line < mouseSprite + 72 * (imgPart + 1); line += 4) {
 			uint16 words[2];
