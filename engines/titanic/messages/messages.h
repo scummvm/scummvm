@@ -208,7 +208,7 @@ MESSAGE0(CArmPickedUpFromTableMsg);
 MESSAGE0(CBodyInBilgeRoomMsg);
 MESSAGE1(CBowlStateChange, int, value, 0);
 MESSAGE2(CCarryObjectArrivedMsg, CString, strValue, "", int, numValue, 0);
-MESSAGE2(CChangeMusicMsg, CString, strValue, "", int, numValue, 0);
+MESSAGE2(CChangeMusicMsg, CString, filename, "", int, flags, 0);
 MESSAGE1(CChangeSeasonMsg, CString, season, "Summer");
 MESSAGE0(CCheckAllPossibleCodes);
 MESSAGE2(CCheckChevCode, int, value1, 0, int, value2, 0);

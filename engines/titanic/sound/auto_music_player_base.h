@@ -28,12 +28,17 @@
 namespace Titanic {
 
 class CAutoMusicPlayerBase : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
+	bool LoadSuccessMsg(CLoadSuccessMsg *msg);
+	bool ChangeMusicMsg(CChangeMusicMsg *msg);
 protected:
-	CString _string1;
-	int _fieldC8;
-	int _fieldCC;
-	int _fieldD0;
-	int _fieldD4;
+	CString _filename;
+	bool _initialMute;
+	bool _isRepeated;
+	int _volumeMode;
+	int _transition;
 public:
 	CLASSDEF;
 	CAutoMusicPlayerBase();

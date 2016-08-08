@@ -42,8 +42,10 @@ void CAutoMusicPlayer::load(SimpleFile *file) {
 }
 
 bool CAutoMusicPlayer::EnterRoomMsg(CEnterRoomMsg *msg) {
-	if (!_fieldCC) {
-		warning("TODO");
+	if (!_isRepeated) {
+		CRoomItem *room = findRoom();
+		if (msg->_newRoom == room)
+			addTimer(2000);
 	}
 
 	return true;
