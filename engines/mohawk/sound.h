@@ -116,6 +116,8 @@ struct DataChunk {
 	Common::SeekableReadStream *audioData;
 };
 
+Audio::RewindableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *stream, CueList *cueList = nullptr);
+
 class MohawkEngine;
 
 class Sound {
@@ -158,7 +160,6 @@ private:
 	MidiParser *_midiParser;
 	byte *_midiData;
 
-	static Audio::RewindableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *stream, CueList *cueList = NULL);
 	static Audio::RewindableAudioStream *makeLivingBooksWaveStream_v1(Common::SeekableReadStream *stream);
 	void initMidi();
 
